@@ -1,0 +1,151 @@
+#include "bf533_audio_core.h"
+
+void init_EBIU(void) {
+  *pEBIU_AMBCTL0	= 0x7bb07bb0;
+  *pEBIU_AMBCTL1	= 0x7bb07bb0;
+  *pEBIU_AMGCTL	= 0x000f;
+}
+
+
+// port A in flash -> output to AD1836_reset
+// TODO: determine if we're actually gonna use this flash controllle
+void init_flash(void) {
+  *pFlashA_PortA_Dir = 0x1;
+}
+
+// setup SPI -> AD1836 config
+void init_1836(void) {
+  int i;
+  int j;
+  //??
+  //  static unsigned char ucActive_LED = 0x01;
+  
+  // write to Port A to reset AD1836
+  *pFlashA_PortA_Data = 0x00;
+  
+  // write to Port A to enable AD1836
+  *pFlashA_PortA_Data = 0x01;
+  
+  // wait to recover from reset
+  for (i=0; i<0xf0000; i++) asm("nop;");
+  
+  // Enable PF4 peripheral function
+  *pSPI_FLG = FLS4;
+  // Set baud rate SCK = HCLK/(2*SPIBAUD) SCK = 2MHz	
+  *pSPI_BAUD = 16;
+  // configure spi port
+  // SPI DMA write, 16-bit data, MSB first, SPI Master
+  *pSPI_CTL = TIMOD_DMA_TX | SIZE | MSTR;
+  
+  // Set up DMA5 to transmit
+  // Map DMA5 to SPI
+  *pDMA5_PERIPHERAL_MAP	= 0x5000;
+  
+  // Configure DMA5
+  // 16-bit transfers
+  *pDMA5_CONFIG = WDSIZE_16;
+  // Start address of data buffer
+  *pDMA5_START_ADDR = (void *)sCodec1836TxRegs;
+  // DMA inner loop count
+  *pDMA5_X_COUNT = CODEC_1836_REGS_LENGTH;
+  // Inner loop address increment
+  *pDMA5_X_MODIFY = 2;
+  // enable DMAs
+  *pDMA5_CONFIG = (*pDMA5_CONFIG | DMAEN);
+  // enable spi
+  *pSPI_CTL = (*pSPI_CTL | SPE);
+
+  // wait until DMA transfers for spi are finished 
+  for (j=0; j<0xaff0; j++) asm("nop;");
+  // disable spi
+  *pSPI_CTL = 0x0000;
+}
+
+
+//--------------------------------------------------------------------------//
+// Function:	Init_sport0						
+//									
+// Description:	Configure Sport0 for I2S mode, to transmit/receive data 
+//		to/from the AD1836. Configure Sport for external clocks and
+//	        frame syncs.						
+//--------------------------------------------------------------------------//
+void init_sport0(void)
+{
+	// Sport0 receive configuration
+	// External CLK, External Frame sync, MSB first, Active Low
+	// 24-bit data, Stereo frame sync enable
+	*pSPORT0_RCR1 = RFSR | RCKFE;
+	*pSPORT0_RCR2 = SLEN_24 | RXSE | RSFSE;
+	
+	// Sport0 transmit configuration
+	// External CLK, External Frame sync, MSB first, Active Low
+	// 24-bit data, Secondary side enable, Stereo frame sync enable
+	*pSPORT0_TCR1 = TFSR | TCKFE;
+	*pSPORT0_TCR2 = SLEN_24 | TXSE | TSFSE;
+}
+
+//--------------------------------------------------------------------------//
+// Function:	init_DMA						
+//							
+// Description:	Initialize DMA1 in autobuffer mode to receive and DMA2 in
+//	        autobuffer mode to transmit		
+//--------------------------------------------------------------------------//
+void init_DMA(void)
+{
+	// Set up DMA1 to receive
+	// Map DMA1 to Sport0 RX
+	*pDMA1_PERIPHERAL_MAP = 0x1000;
+	
+	// Configure DMA1
+	// 32-bit transfers, Interrupt on completion, Autobuffer mode
+	*pDMA1_CONFIG = WNR | WDSIZE_32 | DI_EN | FLOW_1;
+	// Start address of data buffer
+	*pDMA1_START_ADDR = (void *)iRxBuf;
+	// DMA inner loop count
+	*pDMA1_X_COUNT = 4;
+	// Inner loop address increment
+	*pDMA1_X_MODIFY = 4;
+	
+	// Set up DMA2 to transmit
+	// Map DMA2 to Sport0 TX
+	*pDMA2_PERIPHERAL_MAP = 0x2000;
+	
+	// Configure DMA2
+	// 32-bit transfers, Autobuffer mode
+	*pDMA2_CONFIG = WDSIZE_32 | FLOW_1;
+	// Start address of data buffer
+	*pDMA2_START_ADDR = (void *)iTxBuf;
+	// DMA inner loop count
+	*pDMA2_X_COUNT = 4;
+	// Inner loop address increment
+	*pDMA2_X_MODIFY = 4;
+}
+
+void enable_DMA_sport0(void)
+{
+  // enable DMAs
+  *pDMA2_CONFIG	= (*pDMA2_CONFIG | DMAEN);
+  *pDMA1_CONFIG	= (*pDMA1_CONFIG | DMAEN);
+  
+  // enable Sport0 TX and RX
+  *pSPORT0_TCR1 	= (*pSPORT0_TCR1 | TSPEN);
+  *pSPORT0_RCR1 	= (*pSPORT0_RCR1 | RSPEN);
+}
+
+void init_interrupts(void)
+{
+  int i;
+  // Set Sport0 RX (DMA1) interrupt priority to 2 = IVG9 
+  *pSIC_IAR0 = 0xffffffff;
+  *pSIC_IAR1 = 0xffffff2f;
+  *pSIC_IAR2 = 0xffffffff;
+  
+  // assign ISRs to interrupt vectors
+  // Sport0 RX ISR -> IVG 9
+  //	register_handler(ik_ivg9, Sport0_RX_ISR);
+  *pEVT9 = sport0_RX_ISR;
+  asm volatile ("cli %0; bitset (%0, 9); sti %0; csync;": "+d"(i));
+  
+  // enable Sport0 RX interrupt
+  *pSIC_IMASK = 0x00000200;
+}
