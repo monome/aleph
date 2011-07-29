@@ -15,10 +15,10 @@
     <file path="src/SOFTWARE_FRAMEWORK/BOARDS/EVK1100/evk1100.h" framework="com.atmel.avr32.sf.uc3" version="1.7.0" source="BOARDS/EVK1100/evk1100.h" changed="false"/>
     <file path="src/SOFTWARE_FRAMEWORK/DRIVERS/INTC/intc.h" framework="com.atmel.avr32.sf.uc3a" version="1.7.0" source="DRIVERS/INTC/intc.h" changed="false"/>
     <file path="src/SOFTWARE_FRAMEWORK/UTILS/STARTUP_FILES/GCC/crt0.x" framework="com.atmel.avr32.sf.uc3" version="1.7.0" source="UTILS/STARTUP_FILES/GCC/crt0.S" changed="false"/>
-    <file path="src/SOFTWARE_FRAMEWORK/UTILS/LINKER_SCRIPTS/AT32UC3A/0512/GCC/link_uc3a0512.lds" framework="com.atmel.avr32.sf.uc3" version="1.7.0" source="UTILS/LINKER_SCRIPTS/AT32UC3A/0512/GCC/link_uc3a0512.lds" changed="false"/>
     <file path="src/SOFTWARE_FRAMEWORK/UTILS/PREPROCESSOR/stringz.h" framework="com.atmel.avr32.sf.uc3a" version="1.7.0" source="UTILS/PREPROCESSOR/stringz.h" changed="false"/>
-    <file path="src/SOFTWARE_FRAMEWORK/UTILS/PREPROCESSOR/mrepeat.h" framework="com.atmel.avr32.sf.uc3a" version="1.7.0" source="UTILS/PREPROCESSOR/mrepeat.h" changed="false"/>
+    <file path="src/SOFTWARE_FRAMEWORK/UTILS/LINKER_SCRIPTS/AT32UC3A/0512/GCC/link_uc3a0512.lds" framework="com.atmel.avr32.sf.uc3" version="1.7.0" source="UTILS/LINKER_SCRIPTS/AT32UC3A/0512/GCC/link_uc3a0512.lds" changed="false"/>
     <file path="src/SOFTWARE_FRAMEWORK/BOARDS/board.h" framework="com.atmel.avr32.sf.uc3" version="1.7.0" source="BOARDS/board.h" changed="false"/>
+    <file path="src/SOFTWARE_FRAMEWORK/UTILS/PREPROCESSOR/mrepeat.h" framework="com.atmel.avr32.sf.uc3a" version="1.7.0" source="UTILS/PREPROCESSOR/mrepeat.h" changed="false"/>
     <file path="src/SOFTWARE_FRAMEWORK/UTILS/PREPROCESSOR/preprocessor.h" framework="com.atmel.avr32.sf.uc3a" version="1.7.0" source="UTILS/PREPROCESSOR/preprocessor.h" changed="false"/>
     <file path="src/SOFTWARE_FRAMEWORK/DRIVERS/GPIO/gpio.h" framework="com.atmel.avr32.sf.uc3a" version="1.7.0" source="DRIVERS/GPIO/gpio.h" changed="false"/>
     <file path="src/SOFTWARE_FRAMEWORK/UTILS/compiler.h" framework="com.atmel.avr32.sf.uc3a" version="1.7.0" source="UTILS/compiler.h" changed="false"/>

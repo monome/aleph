@@ -1,0 +1,27 @@
+//////// inter-chip protocol
+
+BF to AVR
+
+_ set parameter
+___ default scene parameters
+___ midi/osc
+
+_ user interface update (parameters, polled by AVR)
+
+_ patch management
+___ respond with available patches
+___ report success/failure for operations
+
+
+AVR to BF
+
+_ set parameter
+
+_ poll for user interface updates
+
+_ patch management
+___ request available patches
+___ run patch
+______ with or without default scene
+___ erase patch
+___ transmit patch to be stored on BF 
