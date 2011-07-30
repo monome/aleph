@@ -8,7 +8,7 @@
   </options>
   <files>
     <file path="src/SOFTWARE_FRAMEWORK/UTILS/LIBS/NEWLIB_ADDONS/INCLUDE/nlao_interrupts.h" framework="com.atmel.avr32.sf.uc3a" version="1.7.0" source="UTILS/LIBS/NEWLIB_ADDONS/INCLUDE/nlao_interrupts.h" changed="false"/>
-    <file path="src/SOFTWARE_FRAMEWORK/DRIVERS/INTC/exception.x" framework="com.atmel.avr32.sf.uc3a" version="1.7.0" source="DRIVERS/INTC/exception.S" changed="false"/>
+    <file path="src/SOFTWARE_FRAMEWORK/DRIVERS/INTC/exception.x" framework="com.atmel.avr32.sf.uc3a" version="1.7.0" source="DRIVERS/INTC/exception.S" changed="true"/>
     <file path="src/SOFTWARE_FRAMEWORK/UTILS/parts.h" framework="com.atmel.avr32.sf.uc3a" version="1.7.0" source="UTILS/parts.h" changed="false"/>
     <file path="src/SOFTWARE_FRAMEWORK/ASM/trampoline.x" framework="com.atmel.avr32.sf.uc3" version="1.7.0" source="UTILS/STARTUP_FILES/GCC/trampoline.S" changed="false"/>
     <file path="src/SOFTWARE_FRAMEWORK/DRIVERS/INTC/intc.c" framework="com.atmel.avr32.sf.uc3a" version="1.7.0" source="DRIVERS/INTC/intc.c" changed="false"/>

@@ -4,26 +4,49 @@
 #include "power_clocks_lib.h"
 #include "gpio.h"
 #include "spi.h"
+#include "eic.h"
+#include "tc.h"
+#include "intc.h"
+#include "config.h"
+#include "protocol.h"
 
-// define SPI pins
-#define BFIN_SPI                   (&AVR32_SPI0)
-#define BFIN_SPI_NPCS              0
-#define BFIN_SPI_SCK_PIN           AVR32_SPI0_SCK_0_0_PIN
-#define BFIN_SPI_SCK_FUNCTION      AVR32_SPI0_SCK_0_0_FUNCTION
-#define BFIN_SPI_MISO_PIN          AVR32_SPI0_MISO_0_0_PIN
-#define BFIN_SPI_MISO_FUNCTION     AVR32_SPI0_MISO_0_0_FUNCTION
-#define BFIN_SPI_MOSI_PIN          AVR32_SPI0_MOSI_0_0_PIN
-#define BFIN_SPI_MOSI_FUNCTION     AVR32_SPI0_MOSI_0_0_FUNCTION
-#define BFIN_SPI_NPCS_PIN          AVR32_SPI0_NPCS_0_0_PIN
-#define BFIN_SPI_NPCS_FUNCTION     AVR32_SPI0_NPCS_0_0_FUNCTION
+typedef struct {
+	unsigned char pos_now, pos_old;
 
-// static functions
+	int value;
+	int min, max;
+	float step, multiply;
+} enc_t;
+
+static enc_t enc[4];
+static unsigned int param_delivery[3];
+
+const int enc_map[4][4] = { {0,1,-1,0}, {-1,0,0,1}, {1,0,0,-1}, {0,-1,1,0} };
+
+
+//---------------- static variables
+
+
+//---------------  static function prototypes
 static void init_spi( void );
-//static void init_sys_clocks(void);
+void HandleEncInterrupt( U8 pin );
+static inline void checkEncInterruptPin(const U8 pin);
+static void register_interrupts( void );
+static void init_enc( void );
 
-// static variables
-static U64 counter = 0;
-static U32 poog = 0;
+
+//---------------- ints
+__attribute__((__interrupt__))
+static void int_handler_port0_line0( void )
+{
+	gpio_tgl_gpio_pin(LED0_GPIO);
+
+	checkEncInterruptPin(CON_ENC0_S0);
+	checkEncInterruptPin(CON_ENC0_S1);
+}
+
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
 
 int main(void) {
 
@@ -31,22 +54,20 @@ int main(void) {
 
 	init_spi();
 
+	init_enc();
+	Disable_global_interrupt();
+	register_interrupts();
+	Enable_global_interrupt();
+
+
 	while(1) {
-		counter++;
-		if (counter == (FOSC0 / 96)) {
-			counter = 0;
-
-			// flip LED1
-			gpio_tgl_gpio_pin(LED1_GPIO);
-
-			// write some poogs to the bfin spi
-			poog = (poog + 1) % 16;
-			spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-			spi_write(BFIN_SPI, (U8)poog);
-			spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-		}
+		;;
 	}
 }
+
+
+
+//--------------- static function definitions
 
 void init_spi(void) {
 	static const gpio_map_t BFIN_SPI_GPIO_MAP = {
@@ -71,7 +92,6 @@ void init_spi(void) {
   gpio_enable_module(BFIN_SPI_GPIO_MAP,
 					 sizeof(BFIN_SPI_GPIO_MAP) / sizeof(BFIN_SPI_GPIO_MAP[0]));
 
-
   // Initialize as master.
   spi_initMaster(BFIN_SPI, &spiOptions);
 
@@ -84,4 +104,56 @@ void init_spi(void) {
   // intialize the chip register
   spi_setupChipReg(BFIN_SPI, &spiOptions, FOSC0);
 
+}
+
+void HandleEncInterrupt( U8 pin )
+{
+	enc[0].pos_now = gpio_get_pin_value(CON_ENC0_S0) + (gpio_get_pin_value(CON_ENC0_S1) << 1);
+	if(enc[0].pos_now != enc[0].pos_old) {
+		enc[0].value += enc_map[enc[0].pos_old][enc[0].pos_now];
+		if(enc[0].value < enc[0].min) enc[0].value = enc[0].min;
+		else if(enc[0].value > enc[0].max) enc[0].value = enc[0].max;
+
+		param_delivery[0] = P_PARAM_COM_SETI & 0; // 0 = param
+		param_delivery[1] = enc[0].value >> 8;
+		param_delivery[2] = enc[0].value & 0xffff;
+
+		spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+		spi_write(BFIN_SPI, param_delivery[0]);
+		spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+		spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+		spi_write(BFIN_SPI, param_delivery[1]);
+		spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+		spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+		spi_write(BFIN_SPI, param_delivery[2]);
+		spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+	}
+
+	enc[0].pos_old = enc[0].pos_now;
+}
+
+static inline void checkEncInterruptPin(const U8 pin)
+{
+	if(gpio_get_pin_interrupt_flag(pin))
+	{
+		HandleEncInterrupt( pin );
+		gpio_clear_pin_interrupt_flag(pin);
+	}
+}
+
+static void register_interrupts( void )
+{
+	gpio_enable_pin_interrupt( CON_ENC0_S0,	GPIO_PIN_CHANGE);
+	gpio_enable_pin_interrupt( CON_ENC0_S1,	GPIO_PIN_CHANGE);
+
+	INTC_register_interrupt( &int_handler_port0_line0, AVR32_GPIO_IRQ_0, AVR32_INTC_INT1 );
+}
+static void init_enc( void )
+{
+	gpio_enable_pin_pull_up(CON_ENC0_S0);
+	gpio_enable_pin_pull_up(CON_ENC0_S1);
+
+	enc[0].pos_old = gpio_get_pin_value(CON_ENC0_S0) + (gpio_get_pin_value(CON_ENC0_S1) << 1);
+	enc[0].min = 0;
+	enc[0].max = 1023;
 }

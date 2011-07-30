@@ -50,6 +50,9 @@
 <listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/BOARDS"/>
 <listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/SPI"/>
 <listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/PM"/>
+<listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/EIC"/>
+<listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/TC"/>
+<listOptionValue builtIn="false" value="../../../common"/>
 </option>
 <option id="avr32.c.compiler.option.mcu.118405470" name="Microcontroller Unit" superClass="avr32.c.compiler.option.mcu" value="-mpart=uc3a0512" valueType="string"/>
 <option id="avr32.c.compiler.option.flashvault.978526561" name="Enable FlashVault support" superClass="avr32.c.compiler.option.flashvault" value="false" valueType="boolean"/>
@@ -91,6 +94,9 @@
 <listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/BOARDS"/>
 <listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/SPI"/>
 <listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/PM"/>
+<listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/EIC"/>
+<listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/TC"/>
+<listOptionValue builtIn="false" value="../../../common"/>
 </option>
 <option id="avr32.both.asm.option.mcu.172349882" name="Microcontroller Unit" superClass="avr32.both.asm.option.mcu" value="-mpart=uc3a0512" valueType="string"/>
 </tool>
@@ -667,6 +673,8 @@
 <listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/UTILS"/>
 <listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/INTC"/>
 </option>
+<option id="avr32.cpp.compiler.option.mcu.445990274" name="Microcontroller Unit" superClass="avr32.cpp.compiler.option.mcu" value="-mpart=uc3a0512" valueType="string"/>
+<option id="avr32.cpp.compiler.option.flashvault.804597177" name="Enable FlashVault support" superClass="avr32.cpp.compiler.option.flashvault" value="false" valueType="boolean"/>
 </tool>
 <tool id="avr32.managedbuild.tool.gnu.c.compiler.exe.release.1008799699" name="32-bit AVR/GNU C Compiler" superClass="avr32.managedbuild.tool.gnu.c.compiler.exe.release">
 <option defaultValue="gnu.c.optimization.level.most" id="avr32.c.compiler.option.optimization.level.release.601659449" name="Optimization Level" superClass="avr32.c.compiler.option.optimization.level.release" valueType="enumerated"/>
@@ -684,7 +692,12 @@
 <listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/BOARDS"/>
 <listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/SPI"/>
 <listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/PM"/>
+<listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/EIC"/>
+<listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/TC"/>
+<listOptionValue builtIn="false" value="../../../common"/>
 </option>
+<option id="avr32.c.compiler.option.mcu.1287802298" name="Microcontroller Unit" superClass="avr32.c.compiler.option.mcu" value="-mpart=uc3a0512" valueType="string"/>
+<option id="avr32.c.compiler.option.flashvault.2029431454" name="Enable FlashVault support" superClass="avr32.c.compiler.option.flashvault" value="false" valueType="boolean"/>
 <inputType id="avr32.managedbuild.tool.gnu.c.compiler.input.880979578" superClass="avr32.managedbuild.tool.gnu.c.compiler.input"/>
 </tool>
 <tool id="avr32.managedbuild.tool.gnu.c.linker.exe.release.1250141402" name="32-bit AVR/GNU C Linker" superClass="avr32.managedbuild.tool.gnu.c.linker.exe.release">
@@ -697,6 +710,7 @@
 <option id="gnu.c.link.option.libs.400991953" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
 <listOptionValue builtIn="false" value="newlib_addons-at32ucr2-speed_opt"/>
 </option>
+<option id="avr32.c.linker.option.mcu.1111519407" name="Microcontroller Unit" superClass="avr32.c.linker.option.mcu" value="-mpart=uc3a0512" valueType="string"/>
 <inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1542972997" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 <additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 <additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -709,6 +723,7 @@
 <option id="gnu.cpp.link.option.paths.1805820630" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 <listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/UTILS/LIBS/NEWLIB_ADDONS"/>
 </option>
+<option id="avr32.cpp.linker.option.mcu.1452028913" name="Microcontroller Unit" superClass="avr32.cpp.linker.option.mcu" value="-mpart=uc3a0512" valueType="string"/>
 </tool>
 <tool id="avr32.managedbuild.tool.gnu.assembler.exe.release.1387623813" name="32-bit AVR/GNU Assembler" superClass="avr32.managedbuild.tool.gnu.assembler.exe.release">
 <option id="avr32.both.asm.option.debugging.level.251483882" name="Debug Level" superClass="avr32.both.asm.option.debugging.level" value="avr32.both.asm.debugging.level.none" valueType="enumerated"/>
@@ -722,7 +737,11 @@
 <listOptionValue builtIn="false" value="/home/e/avr/wackspace/bfin_spi_test/src/SOFTWARE_FRAMEWORK/DRIVERS/SPI"/>
 <listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/SPI"/>
 <listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/PM"/>
+<listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/EIC"/>
+<listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/TC"/>
+<listOptionValue builtIn="false" value="../../../common"/>
 </option>
+<option id="avr32.both.asm.option.mcu.62720334" name="Microcontroller Unit" superClass="avr32.both.asm.option.mcu" value="-mpart=uc3a0512" valueType="string"/>
 </tool>
 <tool id="avr32.managedbuild.tool.gnu.preprocessor.exe.release.336751636" name="32-bit AVR/GNU Preprocessing Assembler" superClass="avr32.managedbuild.tool.gnu.preprocessor.exe.release">
 <option id="avr32.both.preprocessor.option.debugging.level.723662208" name="Debug Level" superClass="avr32.both.preprocessor.option.debugging.level" value="avr32.both.preprocessor.debugging.level.none" valueType="enumerated"/>
@@ -737,6 +756,7 @@
 <listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/SPI"/>
 <listOptionValue builtIn="false" value="../src/SOFTWARE_FRAMEWORK/DRIVERS/PM"/>
 </option>
+<option id="avr32.both.preprocessor.option.mcu.1662603994" name="Microcontroller Unit" superClass="avr32.both.preprocessor.option.mcu" value="-mpart=uc3a0512" valueType="string"/>
 <inputType id="avr32.managedbuild.tool.gnu.preprocessor.input.1446473708" superClass="avr32.managedbuild.tool.gnu.preprocessor.input"/>
 </tool>
 </toolChain>
