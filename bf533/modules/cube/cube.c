@@ -9,17 +9,15 @@
 //#include "../common/Module.h"
 //#include "../common/Param.h"
 
-//---------- defines
-
 //---------- static function prototypes
 void process_channel(const int* in, int* out );
 
 //---------- static variables
-
-// TODO: params
 static float preGain = 2.0;
 static float dist = 0.5;
 static float postGain = 0.75;
+// TODO: port the parameter engine
+
 
 void process_frame(void) {
   process_channel(&iIn00, &iOut00); 
@@ -42,11 +40,17 @@ void process_channel(const int* in, int* out) {
   *(out) = y * postGain;
 }
 
-void set_param(unsigned int idx, unsigned int val, unsigned int bitDepth) {
+// set parameter, linear scaling from unsigned int, variabe bit depth
+void set_param_int(unsigned int idx, unsigned int val, unsigned int bitDepth) {
   float fVal;
+
+  // TODO: this should use a lookup table.
+  // but we still haven't figured out how to use SDRAM...
+  // so for now just scale the float value with an arbitrary linear mapping 
   const float bitScale = (float)((1 << bitDepth) - 1);
   fVal = (float)val / bitScale;
-  // fVal is now scaled to [0, 1]
+  // fVal is now scaled to [0, 1]...
+
   switch(idx) {
   case 0:
     preGain = fVal * 2.0;
@@ -62,3 +66,19 @@ void set_param(unsigned int idx, unsigned int val, unsigned int bitDepth) {
   }
 }
 
+// set parameter, 
+void set_param_float(unsigned int idx, float val) {
+  switch(idx) {
+  case 0:
+    preGain = val;
+    break;
+  case 1:
+    dist = val;
+    break;
+  case 2:
+    postGain = val;
+    break;
+  default:
+    return;
+  }
+}

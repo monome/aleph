@@ -87,7 +87,9 @@ void spi_rx_isr() __attribute__((interrupt_handler));
 // ------ defined in custom module sources!
 // frame processing function
 void process_frame(void);
-// set parameter function
-void set_param(unsigned int idx, unsigned int val, unsigned int bitDepth);
-
-#endif //__Talkthrough_DEFINED
+// set parameter functions
+// scaled to linear range with unsigned int, variable bit depth
+void set_param_int(unsigned int idx, unsigned int val, unsigned int bitDepth);
+// direct set with float
+void set_param_float(unsigned int idx, float val);
+#endif // header guard

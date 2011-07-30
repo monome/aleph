@@ -1,7 +1,13 @@
 #include "bf533_audio_core.h"
-#include "../../common/foo.h"
+#include "../../common/protocol.h"
 
-
+// state machine and variables for receiving parameter changes/requests
+static eParamMsgState paramMsgState = eCommand;
+static char paramMsgCom;
+static short int paramMsgIdx;
+static short int paramMsgDataL;
+static short int paramMsgDataH; 
+static unsigned int paramMsgData;
 
 // sport0 receive interrupt (audio input from codec)
 void sport0_rx_isr() {
@@ -33,11 +39,37 @@ void spi_rx_isr() {
   // reading the spi receive data register also clears the interrupt
   spiData = *pSPI_RDBR;
 
-  
+  switch(paramMsgState) {
+  case eCommand:
+// TODO: check for tx command, load up parameter MSW
+    paramMsgCom = P_GET_PARAM_COM(spiData);
+    paramMsgIdx = P_GET_PARAM_IDX(spiData);
+    break;
+  case eDataH:
+    // TODO: check for tx command, load up parameter LSW
+    paramMsgDataL = spiData;
+    break;
+  case eDataL:
+    paramMsgDataL = spiData;
+    paramMsgData = P_GET_PARAM_DATA(paramMsgDataH, paramMsgDataL);
+    if (paramMsgCom == P_PARAM_COM_SETI) {
+      // TODO: standardize the bit depth of params (or just always use 32.)
+      // for, now, testing with 10 bits
+      set_param_int(paramMsgIdx, paramMsgData, 10);
+    }
+    if (paramMsgCom == P_PARAM_COM_SETF) {
+      set_param_float(paramMsgIdx, paramMsgData);
+    }
+    break;
+  default:
+    // fucked
+    break;
+   }
+  // increment the state machine... woe to thee if thou misseth an spi transaction.
+  paramMsgState = (paramMsgState + 1) % eNumParamMsgStates; 
 
   // TEST: set LEDs to last 6 bits of spi data
   *pFlashA_PortB_Data &= (~spiData & 0x3F) ;
   *pFlashA_PortB_Data |= (spiData & 0x3F) ;
 
-  // 
 }
