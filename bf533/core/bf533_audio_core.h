@@ -4,9 +4,14 @@
 #include <sys/exception.h>
 #include <cdefBF533.h>
 
-// addresses for Port B in Flash A
+// addresses for Port A in Flash A
+// PA0 -> reset pin for ad1836
 #define pFlashA_PortA_Dir	(volatile unsigned char *)0x20270006
 #define pFlashA_PortA_Data	(volatile unsigned char *)0x20270004
+// addresses for Port B in Flash A
+// [PB0, PB05] -> [LED1, LED6]
+#define pFlashA_PortB_Dir	(volatile unsigned char *)0x20270007
+#define pFlashA_PortB_Data	(volatile unsigned char *)0x20270005
 
 // names for codec registers, used for sCodec1836TxRegs[]
 #define DAC_CONTROL_1		0x0000
@@ -62,20 +67,27 @@ extern volatile int iRxBuf[];
 extern volatile int iTxBuf[];
 
 //--------- function prototypes
-// in file init.c
+//----- in file init.c
 void init_EBIU(void);
 void init_flash(void);
 void init_1836(void);
+void init_spi_slave(void);
 void init_sport0(void);
 void init_DMA(void);
 void init_interrupts(void);
 void enable_DMA_sport0(void);
 
-// in file isr.c
-void sport0_RX_ISR() __attribute((interrupt_handler));
+//----- in file isr.c
+// sport0 receive interrupt (ad1836)
+void sport0_rx_isr() __attribute((interrupt_handler));
+// spi data receive interrupt (avr32)
+void spi_rx_isr() __attribute__((interrupt_handler));
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// frame processing function. must be defined in custom module!
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// ------ defined in custom module sources!
+// frame processing function
 void process_frame(void);
+// set parameter function
+void set_param(unsigned int idx, unsigned int val, unsigned int bitDepth);
 
 #endif //__Talkthrough_DEFINED

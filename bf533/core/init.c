@@ -6,20 +6,18 @@ void init_EBIU(void) {
   *pEBIU_AMGCTL	= 0x000f;
 }
 
-
-// port A in flash -> output to AD1836_reset
-// TODO: determine if we're actually gonna use this flash controllle
 void init_flash(void) {
+  // flash A, port A0 -> AD1836_reset
   *pFlashA_PortA_Dir = 0x1;
+  // flash A, ports [B0, B5] -> [led1, led6]
+  *pFlashA_PortB_Dir = 0x3f;
 }
 
-// setup SPI -> AD1836 config
+// setup SPI0 -> AD1836 config
 void init_1836(void) {
   int i;
   int j;
-  //??
-  //  static unsigned char ucActive_LED = 0x01;
-  
+   
   // write to Port A to reset AD1836
   *pFlashA_PortA_Data = 0x00;
   
@@ -59,6 +57,75 @@ void init_1836(void) {
   for (j=0; j<0xaff0; j++) asm("nop;");
   // disable spi
   *pSPI_CTL = 0x0000;
+
+  /*
+  /// uhh, wait some more?
+  for (j=0; j<0xaff0; j++) asm("nop;");
+  /// uhh, wait some more?
+  for (j=0; j<0xaff0; j++) asm("nop;");
+  /// uhh, wait some more?
+  for (j=0; j<0xaff0; j++) asm("nop;");
+  /// uhh, wait some more?
+  for (j=0; j<0xaff0; j++) asm("nop;");
+  /// uhh, wait some more?
+  for (j=0; j<0xaff0; j++) asm("nop;");
+  /// uhh, wait some more?
+  for (j=0; j<0xaff0; j++) asm("nop;");
+  /// uhh, wait some more?
+  for (j=0; j<0xaff0; j++) asm("nop;");
+  */
+}
+
+//--------------------------------------------------------------------//
+// init_spi_slave()
+// (re-)onfigure spi in slave mode to receive control data from avr32 
+void init_spi_slave(void) {
+  int j;
+  int spi_stat_debug;
+ 
+
+  /// gotta reset these fucks as inputs???
+  // *pFIO_INEN = 0x0100;
+  // *pFIO_DIR = 0x0000;
+  
+  //don't try to prouce a clock, you dumbass 
+  *pSPI_BAUD = 0;
+  // reset the flags register? to defaults?
+  *pSPI_FLG = 0xff00;
+
+  /// uhh, wait some more?
+  //for (j=0; j<0xaff0; j++) asm("nop;");
+    /// uhh, wait some more?
+  //for (j=0; j<0xaff0; j++) asm("nop;");
+  
+  spi_stat_debug = *pSPI_STAT;
+
+  // try clearing the rx error bit? (sticky - W1C)
+  *pSPI_STAT |= 0x10;  
+  *pSPI_STAT |= 0x10;  
+
+  spi_stat_debug = *pSPI_STAT;
+
+  // slave mode, 8 bit transfers, non-dma receive mode (interrupt when SPI_RDBR is full) 
+  *pSPI_CTL = 0x0400;
+  // uh, gotta write this guy again? (SSEL)
+  // no, PSSE is only for master
+  //  *pSPI_CTL |= PSSE;
+  // enable transmit on MISO
+  // *pSPI_CTL |= EMISO;
+  
+  spi_stat_debug = *pSPI_STAT;
+
+  // enable spi (now in slave mode)
+  *pSPI_CTL = (*pSPI_CTL | SPE);
+
+  spi_stat_debug = *pSPI_STAT;
+
+  // try clearing the rx error bit? (sticky - W1C)
+  *pSPI_STAT |= 0x10;
+  *pSPI_STAT |= 0x10;  
+
+  spi_stat_debug = *pSPI_STAT;
 }
 
 
@@ -121,6 +188,27 @@ void init_DMA(void)
 	*pDMA2_X_MODIFY = 4;
 }
 
+void init_interrupts(void)
+{
+  int i;
+  // set sport0 rx (dma1) interrupt priority to 2 = IVG9 
+  // set spi rx interrupt priority to 3 = IVG10
+  *pSIC_IAR0 = 0xffffffff;
+  *pSIC_IAR1 = 0xff3fff2f;
+  *pSIC_IAR2 = 0xffffffff;
+  
+  // assign ISRs to interrupt vectors
+  // sport0 rx isr -> ivg 9
+  // spi rx isr -> ivg 10 
+  *pEVT9 = sport0_rx_isr;
+  *pEVT10 = spi_rx_isr;
+  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
+  
+  // enable Sport0 RX interrupt, spi/dma5 interrupt
+  *pSIC_IMASK = 0x2200;
+}
+
+
 void enable_DMA_sport0(void)
 {
   // enable DMAs
@@ -130,22 +218,4 @@ void enable_DMA_sport0(void)
   // enable Sport0 TX and RX
   *pSPORT0_TCR1 	= (*pSPORT0_TCR1 | TSPEN);
   *pSPORT0_RCR1 	= (*pSPORT0_RCR1 | RSPEN);
-}
-
-void init_interrupts(void)
-{
-  int i;
-  // Set Sport0 RX (DMA1) interrupt priority to 2 = IVG9 
-  *pSIC_IAR0 = 0xffffffff;
-  *pSIC_IAR1 = 0xffffff2f;
-  *pSIC_IAR2 = 0xffffffff;
-  
-  // assign ISRs to interrupt vectors
-  // Sport0 RX ISR -> IVG 9
-  //	register_handler(ik_ivg9, Sport0_RX_ISR);
-  *pEVT9 = sport0_RX_ISR;
-  asm volatile ("cli %0; bitset (%0, 9); sti %0; csync;": "+d"(i));
-  
-  // enable Sport0 RX interrupt
-  *pSIC_IMASK = 0x00000200;
 }

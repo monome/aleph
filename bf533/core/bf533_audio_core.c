@@ -27,6 +27,10 @@ volatile int iTxBuf[4];
 // SPORT0 DMA receive buffer
 volatile int iRxBuf[4];
 
+/// debug
+static int spi_status;
+static int i=0;
+
 //-------------------------------
 // main function
 int main(void) {
@@ -34,12 +38,18 @@ int main(void) {
   // sysreg_write(reg_SYSCFG, 0x32);
   init_EBIU();
   init_flash();
-  init_1836();
+  /// no //test: // don't config the codec
+  // init_1836();
   init_sport0();
   init_DMA();
   init_interrupts();
+  init_spi_slave();
   enable_DMA_sport0();
   
   // do everything else from ISRs
-  while(1);
+  while(1) {
+    //debug
+    spi_status = *pSPI_STAT;
+    i++;
+  }
 }

@@ -20,7 +20,7 @@ LDRFLAGS = --bits 16 --dma 8 --bmode para
 INCLUDE = "../../core/"
 
 APP_DIR = ../
-APP = echo
+APP = cube
 
 all: $(APP)
 
