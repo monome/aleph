@@ -1,11 +1,7 @@
 #include "bf533_audio_core.h"
+#include "../../common/foo.h"
 
-//------- static variables
 
-// TODO: setup 
-struct {
-unsigned int 
-}
 
 // sport0 receive interrupt (audio input from codec)
 void sport0_rx_isr() {
@@ -36,6 +32,8 @@ void spi_rx_isr() {
   unsigned int spiData; 
   // reading the spi receive data register also clears the interrupt
   spiData = *pSPI_RDBR;
+
+  
 
   // TEST: set LEDs to last 6 bits of spi data
   *pFlashA_PortB_Data &= (~spiData & 0x3F) ;
