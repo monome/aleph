@@ -1,11 +1,11 @@
-done. avr to bf via spi
-..... bf audio
 ..... inter-chip protocol
-..... avr encoder/switch
+..... avr encoder/switch code cleanup
 ..... bf remote param changes
 ..... display
 
-..... dynamic patch loading
+..... SDRAM
+..... dynamic patch loading using UART and UBOOT
+
 ..... patch uploading via network
 
 ..... hid
