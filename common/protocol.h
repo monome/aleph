@@ -11,6 +11,10 @@
 // abcd 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
 //
 // (A) COMMAND (4 bit) left aligned for extensibility
+//		(a) 0 = int, 1 = float
+//		(b) 0 = get, 1 = set
+//		(c) 0 = immediate, 1 = interpolate (does not apply to all commands)
+//		(d) 0 = param, 1 = interpolation time
 // (B) INDEX (12 bit)
 // (C) VALUE (32 bit) unsigned int or float depending on COMMAND
 //
