@@ -80,9 +80,9 @@ void init_spi(void) {
 	spi_options_t spiOptions = {
 		.reg          = BFIN_SPI_NPCS,
 		.baudrate     = 1000000,
-	    .bits         = 8,
+	    .bits         = 16,
 	    .spck_delay   = 0,
-	    .trans_delay  = 0,
+	    .trans_delay  = 100, // TODO: calculate correct transfer delay
 	    .stay_act     = 1,
 	    .spi_mode     = 0,
 	    .modfdis      = 1
@@ -114,17 +114,13 @@ void HandleEncInterrupt( U8 pin )
 		if(enc[0].value < enc[0].min) enc[0].value = enc[0].min;
 		else if(enc[0].value > enc[0].max) enc[0].value = enc[0].max;
 
-		param_delivery[0] = P_PARAM_COM_SETI & 0; // 0 = param
-		param_delivery[1] = enc[0].value >> 8;
-		param_delivery[2] = enc[0].value & 0xffff;
+		param_delivery[0] = P_SET_PARAM_COMMAND_WORD(P_PARAM_COM_SETI, 0);
+		param_delivery[1] = P_SET_PARAM_DATA_WORD_H(enc[0].value);
+		param_delivery[2] = P_SET_PARAM_DATA_WORD_L(enc[0].value);
 
 		spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
 		spi_write(BFIN_SPI, param_delivery[0]);
-		spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-		spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
 		spi_write(BFIN_SPI, param_delivery[1]);
-		spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-		spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
 		spi_write(BFIN_SPI, param_delivery[2]);
 		spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 	}
