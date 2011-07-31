@@ -1,13 +1,13 @@
 #include "bf533_audio_core.h"
+#include "params.h"
 #include "../../common/protocol.h"
 
-// state machine and variables for receiving parameter changes/requests
-static eParamMsgState paramMsgState = eCommand;
-static char paramMsgCom;
-static short int paramMsgIdx;
-static short int paramMsgDataL;
-static short int paramMsgDataH; 
-static unsigned int paramMsgData;
+// ringbuffer for incoming spi data
+unsigned short int spiRxRing[P_PARAM_MSG_WORD_COUNT];
+// counter for inndexing spi ringbufer
+unsigned short int spiRxRingIdx = 0;
+// flag indicating spi rx data needs handling
+unsigned char spiRxFlag = 0;
 
 // sport0 receive interrupt (audio input from codec)
 void sport0_rx_isr() {
@@ -22,7 +22,10 @@ void sport0_rx_isr() {
   iIn10 = iRxBuf[INTERNAL_ADC_L1] << 8;
   iIn11 = iRxBuf[INTERNAL_ADC_R1] << 8;
   
-  // call the module-defined process function
+  // if we have new spi data, deal with it
+  if (spiRxFlag) { handle_spi_rx(); }
+
+  // call the module-defined process function on this frame
   process_frame();
   
   // copy processed data from variables into dma output buffer
@@ -31,67 +34,19 @@ void sport0_rx_isr() {
   iTxBuf[INTERNAL_DAC_R0] = iOut01 >> 8;
   iTxBuf[INTERNAL_DAC_L1] = iOut10 >> 8;
   iTxBuf[INTERNAL_DAC_R1] = iOut11 >> 8;
+
 }
 
 // DEBUG: capure a bunh of spi rx's
-static unsigned short int debugSpiRx[300];
-static unsigned int debugSpiRxCount=0;
+// static unsigned short int debugSpiRx[300];
+// static unsigned int debugSpiRxCount=0;
 
 // spi receive interrupt (control change from avr32)
 void spi_rx_isr() {
-  unsigned short int spiData; 
-  // reading the spi receive data register also clears the interrupt
-  spiData = *pSPI_RDBR;
-  spiStatus = *pSPI_STAT;
-
-  if (debugSpiRxCount < 300) {
-    debugSpiRx[debugSpiRxCount] = spiData;
-    debugSpiRxCount++;
-  }
-
-  if (debugSpiRxCount == 300) {
-    int i=0;
-    i++;
-  }
-
-  /// TODO: !!!!!!
-  // this shit should not be all done in the ISR
-  // because:
-  // the avr32 has to add a delay between each spi transmit to accomodate the ISR's completion time.
-  // so, we want that delay to be as small and consistent as possible. 
-  /*
-  switch(paramMsgState) {
-  case eCommand:
-// TODO: check for tx command, load up parameter MSW
-    paramMsgCom = P_GET_PARAM_COM(spiData);
-    paramMsgIdx = P_GET_PARAM_IDX(spiData);
-    break;
-  case eDataH:
-    // TODO: check for tx command, load up parameter LSW
-    paramMsgDataL = spiData;
-    break;
-  case eDataL:
-    paramMsgDataL = spiData;
-    paramMsgData = P_GET_PARAM_DATA(paramMsgDataH, paramMsgDataL);
-    if (paramMsgCom == P_PARAM_COM_SETI) {
-      // TODO: standardize the bit depth of params (or just always use 32.)
-      // for, now, testing with 10 bits
-      set_param_int(paramMsgIdx, paramMsgData, 10);
-    }
-    if (paramMsgCom == P_PARAM_COM_SETF) {
-      set_param_float(paramMsgIdx, paramMsgData);
-    }
-    break;
-  default:
-    // fucked
-    break;
-   }
-  // increment the state machine... woe to thee if thou misseth an spi transaction.
-  paramMsgState = (paramMsgState + 1) % eNumParamMsgStates; 
-  */
-
-
-  // TEST: set LEDs to last 6 bits of spi data
-  *pFlashA_PortB_Data = (spiData & 0x3F) ;
+  // copy rx data to ringbuffer and get the fuck out of here
+  // reading from the rx data register also clears the rx interrupt
+  spiRxRingIdx = (spiRxRingIdx + 1) % P_PARAM_MSG_WORD_COUNT;
+  spiRxRing[spiRxRingIdx] = *pSPI_RDBR;
+  spiRxFlag = 1;
 
 }

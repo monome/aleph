@@ -1,8 +1,14 @@
+/* bf533_audio_core.h
+ * aleph-blackfin audio core
+ *
+ */
+
 #ifndef __BF533_CORE_H__
 #define __BF533_CORE_H__
 
 #include <sys/exception.h>
 #include <cdefBF533.h>
+#include "../../common/protocol.h"
 
 // addresses for Port A in Flash A
 // PA0 -> reset pin for ad1836
@@ -47,7 +53,6 @@
 #define TIMOD_DMA_TX 0x0003
 #define TIMOD_DMA_RX 0x0002
 
-
 // SPORT0 word length
 #define SLEN_24	0x0017
 
@@ -71,9 +76,12 @@ extern volatile short sCodec1836TxRegs[];
 extern volatile int iRxBuf[];
 extern volatile int iTxBuf[];
 
-// SPI data/status copies
-extern int spiStatus;
-extern unsigned short int spiData;
+// flag indicating spi rx data needs dealing with
+extern unsigned char spiRxFlag;
+// ringbuffer for dealing with spi rx data outside the ISR
+extern unsigned short int spiRxRing[P_PARAM_MSG_WORD_COUNT];
+// counter for indexing spi ringbufer
+extern unsigned short int spiRxRingIdx;
 
 //--------- function prototypes
 //----- in file init.c

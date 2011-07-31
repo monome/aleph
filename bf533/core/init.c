@@ -94,8 +94,10 @@ void init_spi_slave(void) {
   j = *pSPI_RDBR;
   // clear the rx error bit (sticky - W1C)
   *pSPI_STAT |= 0x10;
- }
 
+  // setx the ringbuffer index to max, so the next rx will bump it to zero
+  spiRxRingIdx = P_PARAM_MSG_WORD_COUNT - 1;
+}
 
 //--------------------------------------------------------------------------//
 // Function:	Init_sport0						

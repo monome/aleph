@@ -1,3 +1,6 @@
+#ifndef _SERIAL_PROTOCOL_H_
+#define _SERIAL_PROTOCOL_H_
+
 // protocol
 
 // P_PARAM from AVR to bf, param channel 
@@ -37,16 +40,16 @@
 // and, macros:
 #define P_GET_PARAM_COM(WORD) (WORD & P_PARAM_COM_MASK) >> P_PARAM_COM_RSHIFT
 #define P_GET_PARAM_IDX(WORD) (WORD & P_PARAM_IDX_MASK)
-#define P_GET_PARAM_DATA(WORD_H, WORD_L) (WORD_H << 16 & WORD_L)
+#define P_GET_PARAM_DATA(WORD_H, WORD_L) (WORD_H << 16 | WORD_L)
 
 #define P_SET_PARAM_COMMAND_WORD(COM, IDX) ((IDX & P_PARAM_IDX_MASK) | (COM << P_PARAM_COM_LSHIFT))
 #define P_SET_PARAM_DATA_WORD_H(DATA) (DATA >> 16)
 #define P_SET_PARAM_DATA_WORD_L(DATA) (DATA & 0xffffffff)
 
-// enum for 3-state machine
-typedef enum {
-  eCommand = 0,
-  eDataH = 1,
-  eDataL = 2,
-  eNumParamMsgStates = 3
-} eParamMsgState;
+//// word order:
+#define P_PARAM_MSG_WORD_COM     0
+#define P_PARAM_MSG_WORD_DATAH   1
+#define P_PARAM_MSG_WORD_DATAL   2
+#define P_PARAM_MSG_WORD_COUNT   3
+
+#endif // header guard

@@ -1,16 +1,12 @@
 #include "bf533_audio_core.h"
 #include "sysreg.h"
 #include "ccblkfn.h"
-#include "../../common/protocol.h"
 
-//----------------- global variables
+//--------- global variables (initialized here)
 // 4 channels of input from ad1836
 int iIn00, iIn01, iIn10, iIn11;
 // 4 channels of output to ad1836
 int iOut00, iOut01, iOut10, iOut11;
-
-// ringbuffer for incoming spi data
-// unsigned short int spiDataRing[eNumParamMsgStates];
 
 // array of 1836 config registers
 volatile short sCodec1836TxRegs[CODEC_1836_REGS_LENGTH] = {
@@ -36,9 +32,6 @@ volatile int iRxBuf[4];
 int spiStatus;
 unsigned short int spiData;
 
-//--------- local
-// static int i=0;
-
 //-------------------------------
 // main function
 int main(void) {
@@ -51,12 +44,9 @@ int main(void) {
   init_DMA();
   init_interrupts();
   init_spi_slave();
-  enable_DMA_sport0();
-  
-  // do everything else from ISRs
+  enable_DMA_sport0();  
+
   while(1) {
-    //debug
-    // spiStatus = *pSPI_STAT;
-    // i++;
+    ;;
   }
 }
