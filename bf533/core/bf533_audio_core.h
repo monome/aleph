@@ -45,6 +45,8 @@
 
 // SPI transfer mode
 #define TIMOD_DMA_TX 0x0003
+#define TIMOD_DMA_RX 0x0002
+
 
 // SPORT0 word length
 #define SLEN_24	0x0017
@@ -53,6 +55,7 @@
 #define FLOW_1	0x1000
 
 //------- global variables
+// per-channel audio i/o
 extern int iIn00;
 extern int iIn01;
 extern int iIn10;
@@ -62,9 +65,15 @@ extern int iOut01;
 extern int iOut10;
 extern int iOut11;
 
+// ad1836 cnofiguration register
 extern volatile short sCodec1836TxRegs[];
+// audio DMA registers
 extern volatile int iRxBuf[];
 extern volatile int iTxBuf[];
+
+// SPI data/status copies
+extern int spiStatus;
+extern unsigned short int spiData;
 
 //--------- function prototypes
 //----- in file init.c
