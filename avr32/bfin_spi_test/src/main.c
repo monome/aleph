@@ -23,6 +23,10 @@ static unsigned int param_delivery[3];
 
 const int enc_map[4][4] = { {0,1,-1,0}, {-1,0,0,1}, {1,0,0,-1}, {0,-1,1,0} };
 
+// DEBUG
+static unsigned short int debugSpiTx[300];
+static unsigned int debugSpiTxCount = 0;
+
 
 //---------------- static variables
 
@@ -84,7 +88,7 @@ void init_spi(void) {
 	    .spck_delay   = 0,
 	    .trans_delay  = 100, // TODO: calculate correct transfer delay
 	    .stay_act     = 1,
-	    .spi_mode     = 0,
+	    .spi_mode     = 1,
 	    .modfdis      = 1
 	  };
 
@@ -103,7 +107,6 @@ void init_spi(void) {
 
   // intialize the chip register
   spi_setupChipReg(BFIN_SPI, &spiOptions, FOSC0);
-
 }
 
 void HandleEncInterrupt( U8 pin )
@@ -120,8 +123,35 @@ void HandleEncInterrupt( U8 pin )
 
 		spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
 		spi_write(BFIN_SPI, param_delivery[0]);
+
+		// DEBUG:
+		if(debugSpiTxCount < 300) {
+			debugSpiTx[debugSpiTxCount] = param_delivery[0];
+			debugSpiTxCount++;
+		}
+
 		spi_write(BFIN_SPI, param_delivery[1]);
+
+		// DEBUG:
+		if(debugSpiTxCount < 300) {
+			debugSpiTx[debugSpiTxCount] = param_delivery[1];
+			debugSpiTxCount++;
+		}
+
+
 		spi_write(BFIN_SPI, param_delivery[2]);
+
+		// DEBUG:
+		if(debugSpiTxCount < 300) {
+			debugSpiTx[debugSpiTxCount] = param_delivery[2];
+			debugSpiTxCount++;
+		}
+
+		if (debugSpiTxCount==300) {
+			int i=0;
+			i++;
+		}
+
 		spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 	}
 
