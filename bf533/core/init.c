@@ -19,8 +19,7 @@ void init_1836(void) {
   int j;
    
   // write to Port A to reset AD1836
-  *pFlashA_PortA_Data = 0x00;
-  
+  *pFlashA_PortA_Data = 0x00;  
   // write to Port A to enable AD1836
   *pFlashA_PortA_Data = 0x01;
   
@@ -57,23 +56,9 @@ void init_1836(void) {
   for (j=0; j<0xaff0; j++) asm("nop;");
   // disable spi
   *pSPI_CTL = 0x0000;
+  // disable dma5
+  *pDMA5_CONFIG = (*pDMA5_CONFIG & ~DMAEN);
 
-  /*
-  /// uhh, wait some more?
-  for (j=0; j<0xaff0; j++) asm("nop;");
-  /// uhh, wait some more?
-  for (j=0; j<0xaff0; j++) asm("nop;");
-  /// uhh, wait some more?
-  for (j=0; j<0xaff0; j++) asm("nop;");
-  /// uhh, wait some more?
-  for (j=0; j<0xaff0; j++) asm("nop;");
-  /// uhh, wait some more?
-  for (j=0; j<0xaff0; j++) asm("nop;");
-  /// uhh, wait some more?
-  for (j=0; j<0xaff0; j++) asm("nop;");
-  /// uhh, wait some more?
-  for (j=0; j<0xaff0; j++) asm("nop;");
-  */
 }
 
 //--------------------------------------------------------------------//
@@ -83,36 +68,20 @@ void init_spi_slave(void) {
   int j;
   int spi_stat_debug;
  
-
-  /// gotta reset these fucks as inputs???
-  // *pFIO_INEN = 0x0100;
-  // *pFIO_DIR = 0x0000;
-  
-  //don't try to prouce a clock, you dumbass 
+  //don't try to produce a clock, you dumbass 
   *pSPI_BAUD = 0;
   // reset the flags register? to defaults?
   *pSPI_FLG = 0xff00;
-
-  /// uhh, wait some more?
-  //for (j=0; j<0xaff0; j++) asm("nop;");
-    /// uhh, wait some more?
-  //for (j=0; j<0xaff0; j++) asm("nop;");
-  
-  spi_stat_debug = *pSPI_STAT;
 
   // try clearing the rx error bit? (sticky - W1C)
   *pSPI_STAT |= 0x10;  
   *pSPI_STAT |= 0x10;  
 
-  spi_stat_debug = *pSPI_STAT;
+  // slave mode, 16 bit transfers, MSB first, non-dma rx mode, overwrite (interrupt when SPI_RDBR is full) 
+  *pSPI_CTL = CPHA | SIZE | GM;
 
-  // slave mode, 8 bit transfers, non-dma receive mode (interrupt when SPI_RDBR is full) 
-  *pSPI_CTL = 0x0400;
-  // uh, gotta write this guy again? (SSEL)
-  // no, PSSE is only for master
-  //  *pSPI_CTL |= PSSE;
   // enable transmit on MISO
-  // *pSPI_CTL |= EMISO;
+  *pSPI_CTL |= EMISO;
   
   spi_stat_debug = *pSPI_STAT;
 
@@ -121,12 +90,11 @@ void init_spi_slave(void) {
 
   spi_stat_debug = *pSPI_STAT;
 
-  // try clearing the rx error bit? (sticky - W1C)
+  // clear the spir rx register by reading from it
+  j = *pSPI_RDBR;
+  // clear the rx error bit (sticky - W1C)
   *pSPI_STAT |= 0x10;
-  *pSPI_STAT |= 0x10;  
-
-  spi_stat_debug = *pSPI_STAT;
-}
+ }
 
 
 //--------------------------------------------------------------------------//
@@ -138,17 +106,17 @@ void init_spi_slave(void) {
 //--------------------------------------------------------------------------//
 void init_sport0(void)
 {
-	// Sport0 receive configuration
-	// External CLK, External Frame sync, MSB first, Active Low
-	// 24-bit data, Stereo frame sync enable
-	*pSPORT0_RCR1 = RFSR | RCKFE;
-	*pSPORT0_RCR2 = SLEN_24 | RXSE | RSFSE;
-	
-	// Sport0 transmit configuration
-	// External CLK, External Frame sync, MSB first, Active Low
-	// 24-bit data, Secondary side enable, Stereo frame sync enable
-	*pSPORT0_TCR1 = TFSR | TCKFE;
-	*pSPORT0_TCR2 = SLEN_24 | TXSE | TSFSE;
+  // Sport0 receive configuration
+  // External CLK, External Frame sync, MSB first, Active Low
+  // 24-bit data, Stereo frame sync enable
+  *pSPORT0_RCR1 = RFSR | RCKFE;
+  *pSPORT0_RCR2 = SLEN_24 | RXSE | RSFSE;
+  
+  // Sport0 transmit configuration
+  // External CLK, External Frame sync, MSB first, Active Low
+  // 24-bit data, Secondary side enable, Stereo frame sync enable
+  *pSPORT0_TCR1 = TFSR | TCKFE;
+  *pSPORT0_TCR2 = SLEN_24 | TXSE | TSFSE;
 }
 
 //--------------------------------------------------------------------------//
@@ -159,33 +127,33 @@ void init_sport0(void)
 //--------------------------------------------------------------------------//
 void init_DMA(void)
 {
-	// Set up DMA1 to receive
-	// Map DMA1 to Sport0 RX
-	*pDMA1_PERIPHERAL_MAP = 0x1000;
-	
-	// Configure DMA1
-	// 32-bit transfers, Interrupt on completion, Autobuffer mode
-	*pDMA1_CONFIG = WNR | WDSIZE_32 | DI_EN | FLOW_1;
-	// Start address of data buffer
-	*pDMA1_START_ADDR = (void *)iRxBuf;
-	// DMA inner loop count
-	*pDMA1_X_COUNT = 4;
-	// Inner loop address increment
-	*pDMA1_X_MODIFY = 4;
-	
-	// Set up DMA2 to transmit
-	// Map DMA2 to Sport0 TX
-	*pDMA2_PERIPHERAL_MAP = 0x2000;
-	
-	// Configure DMA2
-	// 32-bit transfers, Autobuffer mode
-	*pDMA2_CONFIG = WDSIZE_32 | FLOW_1;
-	// Start address of data buffer
-	*pDMA2_START_ADDR = (void *)iTxBuf;
-	// DMA inner loop count
-	*pDMA2_X_COUNT = 4;
-	// Inner loop address increment
-	*pDMA2_X_MODIFY = 4;
+  // Set up DMA1 to receive
+  // Map DMA1 to Sport0 RX
+  *pDMA1_PERIPHERAL_MAP = 0x1000;
+  
+  // Configure DMA1
+  // 32-bit transfers, Interrupt on completion, Autobuffer mode
+  *pDMA1_CONFIG = WNR | WDSIZE_32 | DI_EN | FLOW_1;
+  // Start address of data buffer
+  *pDMA1_START_ADDR = (void *)iRxBuf;
+  // DMA inner loop count
+  *pDMA1_X_COUNT = 4;
+  // Inner loop address increment
+  *pDMA1_X_MODIFY = 4;
+  
+  // Set up DMA2 to transmit
+  // Map DMA2 to Sport0 TX
+  *pDMA2_PERIPHERAL_MAP = 0x2000;
+  
+  // Configure DMA2
+  // 32-bit transfers, Autobuffer mode
+  *pDMA2_CONFIG = WDSIZE_32 | FLOW_1;
+  // Start address of data buffer
+  *pDMA2_START_ADDR = (void *)iTxBuf;
+  // DMA inner loop count
+  *pDMA2_X_COUNT = 4;
+  // Inner loop address increment
+  *pDMA2_X_MODIFY = 4;
 }
 
 void init_interrupts(void)
@@ -207,7 +175,6 @@ void init_interrupts(void)
   // enable Sport0 RX interrupt, spi/dma5 interrupt
   *pSIC_IMASK = 0x2200;
 }
-
 
 void enable_DMA_sport0(void)
 {

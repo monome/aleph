@@ -33,12 +33,33 @@ void sport0_rx_isr() {
   iTxBuf[INTERNAL_DAC_R1] = iOut11 >> 8;
 }
 
+// DEBUG: capure a bunh of spi rx's
+static unsigned short int debugSpiRx[300];
+static unsigned int debugSpiRxCount=0;
+
 // spi receive interrupt (control change from avr32)
 void spi_rx_isr() {
-  unsigned int spiData; 
+  unsigned short int spiData; 
   // reading the spi receive data register also clears the interrupt
   spiData = *pSPI_RDBR;
+  spiStatus = *pSPI_STAT;
 
+  if (debugSpiRxCount < 300) {
+    debugSpiRx[debugSpiRxCount] = spiData;
+    debugSpiRxCount++;
+  }
+
+  if (debugSpiRxCount == 300) {
+    int i=0;
+    i++;
+  }
+
+  /// TODO: !!!!!!
+  // this shit should not be all done in the ISR
+  // because:
+  // the avr32 has to add a delay between each spi transmit to accomodate the ISR's completion time.
+  // so, we want that delay to be as small and consistent as possible. 
+  /*
   switch(paramMsgState) {
   case eCommand:
 // TODO: check for tx command, load up parameter MSW
@@ -67,9 +88,10 @@ void spi_rx_isr() {
    }
   // increment the state machine... woe to thee if thou misseth an spi transaction.
   paramMsgState = (paramMsgState + 1) % eNumParamMsgStates; 
+  */
+
 
   // TEST: set LEDs to last 6 bits of spi data
-  *pFlashA_PortB_Data &= (~spiData & 0x3F) ;
-  *pFlashA_PortB_Data |= (spiData & 0x3F) ;
+  *pFlashA_PortB_Data = (spiData & 0x3F) ;
 
 }
