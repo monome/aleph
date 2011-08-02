@@ -1,4 +1,77 @@
+//////// param/list scheme
+
+PARAM data structure
+
+.id	unique id
+.val	32bit
+.inc	???? y/n included in current preset saving
+.int	interpolation time ????(float or int?)
+
+should .inc and .int be included in the param object or only inside a list struct?
+
+id list for all params in system.
+constant for hardware/config ie. /enc/0/value
+dynamic for patch params ie. /dsp/feedback (these ids provided at patch boot)
+
+ie.
+
+0	/enc/0/value
+1	/enc/0/dest
+2	/enc/1/value
+...
+4928	/dsp/feedback
+4929	/dsp/delaytime
+
+lists = scene = preset?
+linked list struct
+.id
+.val
+.int
+.prev_elem
+.next_elem
+
+lists additionally have an global pre-delay before self-executing.
+
+/sw/0/up is a list (keyed by number) which is called on switch up
+/sw/0/down etc
+/sw/0/up is also a param id, which can be changed just like any other param
+
+params need to know what to do when receiving a SET command.
+
+ie. /dsp/feedback x
+	sends x over SPI
+ie. /sw/0/up x
+	sets preset to x when releasing switch 0
+ie. /enc/0/dest x
+	sets enc output destination to ID x (routing)
+ie. /enc/0/val x
+	sets enc 0 value to x, executes sendthrough to /enc/0/dest
+ie. /preset/recall x
+	process preset x
+
+
+
+preset note: must prevent inf loop recalls with tiny/no delays?
+
+"preset" is used both for value recall (UI scheme for making these) but also simply value assignment techniques like making a switch into a toggle
+
+
+things not addressed: complex functions like splitting ranges into event triggers.
+
+perhaps a bank of PARAM ids can simply be functions?
+
+
+
+
+
+
 //////// inter-chip protocol
+
+all PATCH commands (save/load/list) happen via UART
+
+
+
+------ OUTDATED ------------
 
 BF to AVR
 
