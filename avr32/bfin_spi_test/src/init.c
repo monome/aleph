@@ -51,8 +51,14 @@ void init_spi(void) {
 }
 
 
-void init_enc( void )
+void init_control_pins( void )
 {
 	gpio_enable_pin_pull_up(CON_ENC0_S0);
 	gpio_enable_pin_pull_up(CON_ENC0_S1);
+	gpio_enable_pin_pull_up(CON_ENC1_S0);
+	gpio_enable_pin_pull_up(CON_ENC1_S1);
+
+	gpio_enable_pin_pull_up(CON_SW0);
+	gpio_enable_pin_pull_up(CON_SW1);
+	gpio_enable_pin_pull_up(CON_SW2);
 }

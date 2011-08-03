@@ -1,15 +1,27 @@
+..... cpu benchmarking
+
 ..... inter-chip protocol
 ..... avr encoder/switch code cleanup
 ..... bf remote param changes
+
 ..... display
+..... user interface design
 
 ..... SDRAM
-..... dynamic patch loading using UART and UBOOT
+..... patch flash storage
+..... dynamic patch loading using UART, safe bootloader
+
+..... analog design
+..... analog matrix spec
+
+..... network avr, OSC server/client
+..... network zeroconf
 
 ..... patch uploading via network
+
+..... usb
 
 ..... hid
 ..... osc 
 
 ///// interface
-///// methods (set/scene/transform)
