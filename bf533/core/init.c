@@ -1,9 +1,31 @@
 #include "bf533_audio_core.h"
 
 void init_EBIU(void) {
+  // access times for asynchronous memory
   *pEBIU_AMBCTL0	= 0x7bb07bb0;
   *pEBIU_AMBCTL1	= 0x7bb07bb0;
-  *pEBIU_AMGCTL	= 0x000f;
+  // all banks enabled
+  *pEBIU_AMGCTL	        = 0x000f;
+  
+
+
+  // this shit is BROOO KENNNNNNN
+  /***********************/
+  // optimized SDRAM settings (from manual) for ez-kit SDRAM (MT47LC32M14A2TG-75)
+  // assuming 118.8 Mhz clock:
+
+  /*
+  //first disable SDC before changing timing configs ?
+  *pEBIU_SDGCTL &= 0xFFFFFFFE;
+  *pEBIU_SDGCTL  = 0x0091998C;
+
+  // page size == 10 bits
+  // external bank size == 64MB
+  // external bank enabled 
+  *pEBIU_SDBCTL = 0x00000025;
+  // enable SDC
+  *pEBIU_SDGCTL |= 0x00000001;
+  */
 }
 
 void init_flash(void) {

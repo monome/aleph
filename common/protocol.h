@@ -65,4 +65,7 @@
 #define P_PARAM_MSG_WORD_DATAL   2
 #define P_PARAM_MSG_WORD_COUNT   3
 
+// bit depth of integer values
+#define P_PARAM_MSG_INT_BIT_DEPTH  32
+
 #endif

@@ -9,6 +9,7 @@
 #include <sys/exception.h>
 #include <cdefBF533.h>
 #include "../../common/protocol.h"
+#include "module.h"
 
 // addresses for Port A in Flash A
 // PA0 -> reset pin for ad1836
@@ -100,13 +101,5 @@ void sport0_rx_isr() __attribute((interrupt_handler));
 // spi data receive interrupt (avr32)
 void spi_rx_isr() __attribute__((interrupt_handler));
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// ------ defined in custom module sources!
-// frame processing function
-void process_frame(void);
-// set parameter functions
-// scaled to linear range with unsigned int, variable bit depth
-void set_param_int(unsigned int idx, unsigned int val, unsigned int bitDepth);
-// direct set with float
-void set_param_float(unsigned int idx, float val);
+
 #endif // header guard

@@ -37,13 +37,24 @@ unsigned short int spiData;
 int main(void) {
   // if we were in VDSP++, this would turn on the execution cycle counter.
   // sysreg_write(reg_SYSCFG, 0x32);
-  init_EBIU();
+  
+// intialize the sdram controller
+ init_EBIU();
+ // intialize the flash controller (which, weirdly, handles gpio)
   init_flash();
+  // initialize the codec (spi in master, blast config regs, disable spi)
   init_1836();
+  // intialize the sport0 for audio rx/tx
   init_sport0();
+  // intialize the DMA to shove that audio data around
   init_DMA();
-  init_interrupts();
+  // put the spi back in slave mode to receive param changes from avr32
   init_spi_slave();
+  // intialize the audio processing unit (assign memory)
+  init_module();
+  // assign interrupts
+  init_interrupts();
+  // start the audio engine
   enable_DMA_sport0();  
 
   while(1) {
