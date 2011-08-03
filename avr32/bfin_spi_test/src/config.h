@@ -2,6 +2,11 @@
 #define CON_ENC0_S0		AVR32_PIN_PA00
 #define CON_ENC0_S1		AVR32_PIN_PA01
 
+// define switch pins
+#define CON_SW0			AVR32_PIN_PX16
+#define CON_SW1			AVR32_PIN_PX19
+#define CON_SW2			AVR32_PIN_PX22
+
 // define SPI pins
 #define BFIN_SPI                   (&AVR32_SPI0)
 #define BFIN_SPI_NPCS              0
