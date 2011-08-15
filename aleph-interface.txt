@@ -1,0 +1,50 @@
+interface notes
+
+PATCH
+	currently running
+	info?
+	switch
+		list available
+
+PARAM
+	view filter > dsp / analog / control / all
+	list
+		param/val pairs. graph?
+		include/exclude in preset
+		visible/invisible in view
+		interpolation time
+	autolearn
+	
+	notes:
+		smart control config, don't display irrelevant params,
+			(such as toggle vars when in switch mode)
+		pages? views? view 1/2/3/4?
+		BIG NUMBER MODE. performance vs. edit?
+		smart mapping. tree selection for param destinations
+
+PRESET
+	current (preset view = BIG NUMBER + name)
+	recall
+	manage
+		copy/paste
+		naming
+	series
+	(#) delay time pre-recall
+	(y/n) save patch in preset
+	
+	notes:
+		series = set of presets
+			save/load from flash
+			
+UTILITY
+	battery meter, memory/flash meter
+	ip/zerconf
+	usb viewer?
+	patch management
+		net host patch loading mode
+		delete
+		
+
+misc notes:
+	DSP VIEW: patch (bf) direct control of screen
+	analog routing helper?
