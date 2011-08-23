@@ -1,6 +1,7 @@
 #include "bf533_audio_core.h"
 #include "sysreg.h"
 #include "ccblkfn.h"
+#include "init.h"
 
 //--------- global variables (initialized here)
 // 4 channels of input from ad1836
@@ -28,9 +29,14 @@ volatile int iTxBuf[4];
 // SPORT0 DMA receive buffer
 volatile int iRxBuf[4];
 
+// audio ISR ready flag
+// unsigned char needAudioFrame = 0;
+
 /// debug
 int spiStatus;
 unsigned short int spiData;
+
+static char processAudio(void);
 
 //-------------------------------
 // main function
@@ -58,6 +64,19 @@ int main(void) {
   enable_DMA_sport0();  
 
   while(1) {
-    ;;
+    processAudio();
   }
+}
+
+//--------------------------
+// processAudio
+// if we need
+char processAudio(void) {
+  if(needAudioFrame) {
+    // call the module-defined process function on this frame
+    process_frame();
+    needAudioFrame = 1;
+    return 0;
+  } 
+  return 1;
 }

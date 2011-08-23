@@ -1,13 +1,14 @@
 #include "bf533_audio_core.h"
+#include "init.h"
 
 void init_EBIU(void) {
+  /* this is from the blink example
   // access times for asynchronous memory
   *pEBIU_AMBCTL0	= 0x7bb07bb0;
   *pEBIU_AMBCTL1	= 0x7bb07bb0;
   // all banks enabled
   *pEBIU_AMGCTL	        = 0x000f;
-  
-
+  */
 
   // this shit is BROOO KENNNNNNN
   /***********************/
@@ -26,6 +27,34 @@ void init_EBIU(void) {
   // enable SDC
   *pEBIU_SDGCTL |= 0x00000001;
   */
+
+  // this shit is straight from the self-test example project
+// Initalize EBIU control registers to enable all banks	
+  *pEBIU_AMBCTL1 = 0xFFFFFF02;
+  ssync();
+  
+  // -- not sure why there is a read here, possibly anomaly 05000157?
+  //temp = *pEBIU_AMBCTL1;
+  //temp++;
+  
+  *pEBIU_AMGCTL = 0x00FF;
+  ssync();
+    
+  // Check if already enabled
+  if( SDRS != ((*pEBIU_SDSTAT) & SDRS) ) {
+      return;
+  }
+    
+  //SDRAM Refresh Rate Control Register
+  *pEBIU_SDRRC = 0x01A0; 
+  
+  //SDRAM Memory Bank Control Register
+  *pEBIU_SDBCTL = 0x0025; //1.7	64 MB
+  //	*pEBIU_SDBCTL = 0x0013;	//1.6 and below 32 MB
+  
+  //SDRAM Memory Global Control Register	
+  *pEBIU_SDGCTL = 0x0091998d;//0x998D0491;
+  ssync();
 }
 
 void init_flash(void) {
@@ -182,7 +211,7 @@ void init_DMA(void)
 
 void init_interrupts(void)
 {
-  int i;
+  int i=0;
   // set sport0 rx (dma1) interrupt priority to 2 = IVG9 
   // set spi rx interrupt priority to 3 = IVG10
   *pSIC_IAR0 = 0xffffffff;

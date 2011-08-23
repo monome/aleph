@@ -9,6 +9,9 @@ unsigned short int spiRxRingIdx = 0;
 // flag indicating spi rx data needs handling
 unsigned char spiRxFlag = 0;
 
+// flag to signal audio frame processing
+volatile unsigned char needAudioFrame = 0;
+
 // sport0 receive interrupt (audio input from codec)
 void sport0_rx_isr() {
   // confirm interrupt handling
@@ -26,7 +29,7 @@ void sport0_rx_isr() {
   if (spiRxFlag) { handle_spi_rx(); }
 
   // call the module-defined process function on this frame
-  process_frame();
+  //  process_frame();
   
   // copy processed data from variables into dma output buffer
   // shift right to 24-bit
@@ -35,9 +38,12 @@ void sport0_rx_isr() {
   iTxBuf[INTERNAL_DAC_L1] = iOut10 >> 8;
   iTxBuf[INTERNAL_DAC_R1] = iOut11 >> 8;
 
+  // tell main loop we need audio
+  needAudioFrame = 1;
+
 }
 
-// DEBUG: capure a bunh of spi rx's
+// DEBUG: capure a bunch of spi rx's
 // static unsigned short int debugSpiRx[300];
 // static unsigned int debugSpiRxCount=0;
 

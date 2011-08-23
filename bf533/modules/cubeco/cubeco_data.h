@@ -13,6 +13,8 @@
 #define CUBECO_GAIN_TABLE_SIZE 1024
 #define CUBECO_RATIO_TABLE_SIZE 161
 #define CUBECO_ECHO_FRAMES 2880000 // 1 minute at 48k 
+////// TEST: data on heap, so, a very  very short delay
+//#define CUBECO_ECHO_FRAMES 1000
 
 typedef struct { // __attribute__((__packed_b init_m_)) {
   // parameters

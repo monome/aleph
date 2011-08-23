@@ -17,6 +17,13 @@ static signed int ftoi_clip(float f);
 //---------- static variables
 // module data lives in SDRAM... is this stupid?
 cubecoData* data;
+
+///////////////
+// there is something fucked up with SDRAM access time.
+// attempting to stick the data on the heap to test
+// static cubecoData theData;
+// cubecoData * data = &theData;
+
 static int chan;
 static unsigned int iIndex;
 static float fIndex, frac, echoMix;
@@ -31,10 +38,9 @@ static const int  kNumShits = 4096;
 void init_module(void) {
   unsigned int i;
  
-  // point the data at start of SDRAM, a horrible hack
+  // point the data at start of SDRAM
   data = (cubecoData*)BF533_SDRAM_START;
-  // data =  (cubecoData*)malloc(sizeof(cubecoData));
-
+  
   // populate parameter tables
   populateGainTable(data->gainTable24, CUBECO_GAIN_TABLE_SIZE, 12.f, -24.f, 100);
   populateGainTable(data->gainTable6, CUBECO_GAIN_TABLE_SIZE, 6.f, -24.f, 100);
@@ -46,7 +52,7 @@ void init_module(void) {
   initParamWithTable(&(data->postGain), "postGain", data->gainTable6, CUBECO_GAIN_TABLE_SIZE, 1.0);
   initParamWithTable(&(data->echoTimeRatio), "echoTimeRatio", data->ratioTable, CUBECO_RATIO_TABLE_SIZE, 1.0);
   initParamWithTable(&(data->echoMix), "echoMix", data->gainTable0, CUBECO_GAIN_TABLE_SIZE, 0.5);
-  initParamWithTable(&(data->feedback), "feedback", data->gainTable0, CUBECO_GAIN_TABLE_SIZE, 0.5);
+  initParamWithTable(&(data->feedback), "feedback", data->gainTable0, CUBECO_GAIN_TABLE_SIZE, 0.7);
   // clear the echo buffer, or be destroyed
   for(i=0; i< CUBECO_ECHO_FRAMES; i++) {
     data->echoBuf[i][0] = 0.f;
@@ -70,12 +76,14 @@ shit[0] = 0;
 
 void process_frame(void) {
   // process parameters (interpolation)
+  /*
   processParamFrame(&(data->preGain));
   processParamFrame(&(data->distortion));
   processParamFrame(&(data->postGain));
   processParamFrame(&(data->echoTimeRatio));
   processParamFrame(&(data->echoMix));
   processParamFrame(&(data->feedback));
+  */
 
   // calculate echo parameters
   fIndex = (float)(data->wcount) - (getParamFloat(&(data->echoTimeRatio)) * (float)MODULE_SAMPLERATE);
