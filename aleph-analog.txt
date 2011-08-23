@@ -1,0 +1,73 @@
+aleph/one analog routing and subsystem
+
+all paths are stereo
+
+
+>> input
+
+in 1/2 (jack) ---- dsp-in 1/2
+
+
+>> matrix
+
+o = software controllable switch/gate
+
+			dsp-in 3/4	f1-in		f2-in		sh-in		n-in
+dsp-out 3/4				o		o		o		o
+f1-out			o				o		o		o
+f2-out			o		o				o		o
+sh-out			o		o		o				o
+n-out			o		o		o		o
+
+
+>> output (mix)
+
+the vca on dsp-out can be removed unless there's a compelling analog sound quality reason to keep it.
+
+the other modules can be mixed direct to out instead of resampling then pushed to output.
+
+dsp-out 1/2 ---- vca ---- out 1/2 (jack)
+f1-out ---- vca ---- out 1/2 (jack)
+f2-out ---- vca ---- out 1/2 (jack)
+sh-out ---- vca ---- out 1/2 (jack)
+n-out ---- vca ---- out 1/2 (jack)
+
+
+>> filter 1 (f1)
+
+f1-in ---- [circuit] ---- vca ---- f1-out
+
+control inputs:
+mode - (hp/lp/bp/?) digital i/o lines
+cutoff - cv/pwm
+res - cv/pwm
+level - (to vca) cv/pwm
+
+
+>> filter 2 (f2)
+
+f2-in ---- [circuit] ---- vca ---- f2-out
+
+(same as filter 1)
+
+
+>> shaper (sh)
+
+sh-in ---- [circuit] ---- vca ---- sh-out
+
+control inputs:
+mode?
+drive/bias?
+level - (to vca) cv/pwm
+
+
+>> noise (n)
+
+input is mixed
+
+n-in ---- n-out
+[circuit] ---- vca ---- n-out
+
+control inputs:
+bias?
+level - (to vca) cv/pwm

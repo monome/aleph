@@ -76,15 +76,19 @@ static void HandleSwInterrupt( U8 pin );
 static inline void checkEncInterruptPin(const U8 pin);
 static inline void checkSwInterruptPin(const U8 pin);
 
+static void init_control( void );
+
 
 //////////// interrupts
 __attribute__((__interrupt__))
-static void int_handler_port0_line0( void )
+static void int_handler_enc( void )
 {
 	gpio_tgl_gpio_pin(LED0_GPIO);
 
 	checkEncInterruptPin(CON_ENC0_S0);
 	checkEncInterruptPin(CON_ENC0_S1);
+	checkEncInterruptPin(CON_ENC1_S0);
+	checkEncInterruptPin(CON_ENC1_S1);
 }
 
 __attribute__((__interrupt__))
@@ -104,27 +108,9 @@ int main(void) {
 	pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP);
 
 	init_spi();
-	init_enc();
+	init_control_pins();
 
-	gpio_enable_pin_pull_up(CON_SW0);
-	gpio_enable_pin_pull_up(CON_SW1);
-	gpio_enable_pin_pull_up(CON_SW2);
-
-
-	enc[0].pos_old = gpio_get_pin_value(CON_ENC0_S0) + (gpio_get_pin_value(CON_ENC0_S1) << 1);
-	enc[0].min = 0;
-	enc[0].max = 1023;
-	enc[0].event_id = 0;
-	enc[0].event_type = EVENT_PARAM;
-
-	sw[0].state = 0;
-	sw[0].mode = SW_MODE_NORMAL;
-	sw[0].value_on = 255;
-	sw[0].value_off = 0;
-	sw[0].send_on = 1;
-	sw[0].send_off = 1;
-	sw[0].event_id = 1;
-	sw[0].event_type = EVENT_PARAM;
+	init_control();
 
 	Disable_global_interrupt();
 	register_interrupts();
@@ -139,23 +125,83 @@ int main(void) {
 
 //////////// function definitions
 
+// init control values
+void init_control( void ) {
+	enc[0].pos_old = gpio_get_pin_value(CON_ENC0_S0) + (gpio_get_pin_value(CON_ENC0_S1) << 1);
+	enc[0].min = 0;
+	enc[0].max = 0xffffffff;
+	enc[0].event_id = 0;
+	enc[0].event_type = EVENT_PARAM;
+
+	enc[1].pos_old = gpio_get_pin_value(CON_ENC1_S0) + (gpio_get_pin_value(CON_ENC1_S1) << 1);
+	enc[1].min = 0;
+	enc[1].max = 0xffffffff;
+	enc[1].event_id = 1;
+	enc[1].event_type = EVENT_PARAM;
+
+	sw[0].state = 0;
+	sw[0].mode = SW_MODE_NORMAL;
+	sw[0].value_on = 0xffffffff;
+	sw[0].value_off = 0;
+	sw[0].send_on = 1;
+	sw[0].send_off = 1;
+	sw[0].event_id = 2;
+	sw[0].event_type = EVENT_PARAM;
+
+	sw[1].state = 0;
+	sw[1].mode = SW_MODE_NORMAL;
+	sw[1].value_on = 0xffffffff;
+	sw[1].value_off = 0;
+	sw[1].send_on = 1;
+	sw[1].send_off = 1;
+	sw[1].event_id = 3;
+	sw[1].event_type = EVENT_PARAM;
+
+	sw[2].state = 0;
+	sw[2].mode = SW_MODE_NORMAL;
+	sw[2].value_on = 0xffffffff;
+	sw[2].value_off = 0;
+	sw[2].send_on = 1;
+	sw[2].send_off = 1;
+	sw[2].event_id = 4;
+	sw[2].event_type = EVENT_PARAM;
+}
+
+
 // encoder interrupt
 void HandleEncInterrupt( U8 pin )
 {
-	enc[0].pos_now = gpio_get_pin_value(CON_ENC0_S0) + (gpio_get_pin_value(CON_ENC0_S1) << 1);
-	if(enc[0].pos_now != enc[0].pos_old) {
-		enc[0].value += enc_map[enc[0].pos_old][enc[0].pos_now];
-		if(enc[0].value < enc[0].min) enc[0].value = enc[0].min;
-		else if(enc[0].value > enc[0].max) enc[0].value = enc[0].max;
+	int e, p1, p2;
 
-		if(enc[0].event_type == EVENT_CONTROL) {
-			*control_id[enc[0].event_id] = enc[0].value;
+	switch(pin) {
+		case CON_ENC0_S0:
+		case CON_ENC0_S1:
+			e = 0;
+			p1 = CON_ENC0_S0;
+			p2 = CON_ENC0_S1;
+			break;
+		case CON_ENC1_S0:
+		case CON_ENC1_S1:
+			e = 1;
+			p1 = CON_ENC1_S0;
+			p2 = CON_ENC1_S1;
+			break;
+	}
+
+	enc[e].pos_now = gpio_get_pin_value(p1) + (gpio_get_pin_value(p2) << 1);
+	if(enc[e].pos_now != enc[e].pos_old) {
+		enc[e].value += enc_map[enc[e].pos_old][enc[e].pos_now];
+		if(enc[e].value < enc[e].min) enc[0].value = enc[e].min;
+		else if(enc[e].value > enc[e].max) enc[0].value = enc[e].max;
+
+		if(enc[e].event_type == EVENT_CONTROL) {
+			*control_id[enc[e].event_id] = enc[e].value;
 		}
-		else if (enc[0].event_type == EVENT_PARAM) {
+		else if (enc[e].event_type == EVENT_PARAM) {
 			param_delivery[0] = P_SET_PARAM_COMMAND_WORD(P_PARAM_COM_SETI,
 					enc[0].event_id);
-			param_delivery[1] = P_SET_PARAM_DATA_WORD_H(enc[0].value);
-			param_delivery[2] = P_SET_PARAM_DATA_WORD_L(enc[0].value);
+			param_delivery[1] = P_SET_PARAM_DATA_WORD_H(enc[e].value);
+			param_delivery[2] = P_SET_PARAM_DATA_WORD_L(enc[e].value);
 
 			spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
 			spi_write(BFIN_SPI, param_delivery[0]);
@@ -166,55 +212,67 @@ void HandleEncInterrupt( U8 pin )
 		// no EVENT_PRESET for encoders
 	}
 
-	enc[0].pos_old = enc[0].pos_now;
+	enc[e].pos_old = enc[e].pos_now;
 }
 
 // sw interrupt
 void HandleSwInterrupt( U8 pin )
 {
-	int v, nosend = 0;
+	int v, s, p, nosend = 0;
 
 	switch(pin) {
-	case CON_SW0:
-		if(sw[0].mode == SW_MODE_NORMAL)
-			sw[0].state = gpio_get_pin_value(CON_ENC0_S0);
-		else {
-			if(gpio_get_pin_value(CON_ENC0_S0)) {
-				sw[0].state ^= 1;
-			}
-			else nosend = 1;
-		}
+		case CON_SW0:
+			s = 0;
+			p = CON_SW0;
+			break;
+		case CON_SW1:
+			s = 1;
+			p = CON_SW1;
+			break;
+		case CON_SW2:
+			s = 2;
+			p = CON_SW2;
+			break;
+	}
 
-		if(sw[0].state) {
-			v = sw[0].value_on;
-			if(!sw[0].send_on)
-				nosend++;
+	if(sw[s].mode == SW_MODE_NORMAL)
+		sw[s].state = gpio_get_pin_value(p);
+	else {
+		if(gpio_get_pin_value(p)) {
+			sw[s].state ^= 1;
 		}
-		else {
-			v = sw[0].value_off;
-			if(!sw[0].send_off)
-				nosend++;
+		else nosend = 1;
+	}
+
+	if(sw[s].state) {
+		v = sw[s].value_on;
+		if(!sw[s].send_on)
+			nosend++;
+	}
+	else {
+		v = sw[s].value_off;
+		if(!sw[s].send_off)
+			nosend++;
+	}
+
+	if(!nosend) {
+		if(sw[s].event_type == EVENT_CONTROL) {
+			*control_id[sw[0].event_id] = v;
 		}
+		else if(sw[s].event_type == EVENT_PARAM) {
+			param_delivery[0] = P_SET_PARAM_COMMAND_WORD(P_PARAM_COM_SETI,
+				sw[s].event_id);
+			param_delivery[1] = P_SET_PARAM_DATA_WORD_H(v);
+			param_delivery[2] = P_SET_PARAM_DATA_WORD_L(v);
 
-		if(!nosend) {
-			if(sw[0].event_type == EVENT_CONTROL) {
-				*control_id[sw[0].event_id] = v;
-			}
-			else if(sw[0].event_type == EVENT_PARAM) {
-				param_delivery[0] = P_SET_PARAM_COMMAND_WORD(P_PARAM_COM_SETI,
-					sw[0].event_id);
-				param_delivery[1] = P_SET_PARAM_DATA_WORD_H(v);
-				param_delivery[2] = P_SET_PARAM_DATA_WORD_L(v);
-
-				spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-				spi_write(BFIN_SPI, param_delivery[0]);
-				spi_write(BFIN_SPI, param_delivery[1]);
-				spi_write(BFIN_SPI, param_delivery[2]);
-				spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-			}
-			else if(sw[0].event_type == EVENT_PRESET) {
-				// recall preset
-			}
+			spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+			spi_write(BFIN_SPI, param_delivery[0]);
+			spi_write(BFIN_SPI, param_delivery[1]);
+			spi_write(BFIN_SPI, param_delivery[2]);
+			spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+		}
+		else if(sw[0].event_type == EVENT_PRESET) {
+			// recall preset
 		}
 	}
 }
@@ -245,8 +303,11 @@ static void register_interrupts( void )
 {
 	gpio_enable_pin_interrupt( CON_ENC0_S0,	GPIO_PIN_CHANGE);
 	gpio_enable_pin_interrupt( CON_ENC0_S1,	GPIO_PIN_CHANGE);
+	gpio_enable_pin_interrupt( CON_ENC1_S0,	GPIO_PIN_CHANGE);
+	gpio_enable_pin_interrupt( CON_ENC1_S1,	GPIO_PIN_CHANGE);
 
-	INTC_register_interrupt( &int_handler_port0_line0, AVR32_GPIO_IRQ_0, AVR32_INTC_INT1 );
+	INTC_register_interrupt( &int_handler_enc, AVR32_GPIO_IRQ_0 + (CON_ENC0_S0/8), AVR32_INTC_INT1 );
+	INTC_register_interrupt( &int_handler_enc, AVR32_GPIO_IRQ_0 + (CON_ENC1_S0/8), AVR32_INTC_INT1 );
 
 	gpio_enable_pin_interrupt( CON_SW0,	GPIO_PIN_CHANGE);
 	gpio_enable_pin_interrupt( CON_SW1,	GPIO_PIN_CHANGE);
@@ -254,5 +315,5 @@ static void register_interrupts( void )
 
 	INTC_register_interrupt( &int_handler_sw, AVR32_GPIO_IRQ_0 + (CON_SW0/8), AVR32_INTC_INT1 );
 	INTC_register_interrupt( &int_handler_sw, AVR32_GPIO_IRQ_0 + (CON_SW1/8), AVR32_INTC_INT1 );
-	INTC_register_interrupt( &int_handler_sw, AVR32_GPIO_IRQ_0 + (CON_SW2/8), AVR32_INTC_INT1 );
+//	INTC_register_interrupt( &int_handler_sw, AVR32_GPIO_IRQ_0 + (CON_SW2/8), AVR32_INTC_INT1 );
 }

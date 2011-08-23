@@ -1,6 +1,8 @@
 // define encoder pins
-#define CON_ENC0_S0		AVR32_PIN_PA00
-#define CON_ENC0_S1		AVR32_PIN_PA01
+#define CON_ENC0_S0		AVR32_PIN_PA25
+#define CON_ENC0_S1		AVR32_PIN_PA26
+#define CON_ENC1_S0		AVR32_PIN_PA27
+#define CON_ENC1_S1		AVR32_PIN_PA28
 
 // define switch pins
 #define CON_SW0			AVR32_PIN_PX16
