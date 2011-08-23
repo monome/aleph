@@ -13,24 +13,28 @@
 #define CUBECO_GAIN_TABLE_SIZE 1024
 #define CUBECO_RATIO_TABLE_SIZE 161
 #define CUBECO_ECHO_FRAMES 2880000 // 1 minute at 48k 
-////// TEST: data on heap, so, a very  very short delay
-//#define CUBECO_ECHO_FRAMES 1000
 
+// data structure for heap variables
 typedef struct { // __attribute__((__packed_b init_m_)) {
   // parameters
   Param preGain;
   Param distortion;
   Param postGain;
   Param echoTimeRatio;
-  // Param echoTimeMultiplier;
+  // Param echoTimeBase;
   Param echoMix;
   Param feedback;
+  // other data
+  long unsigned int wcount;
+} cubecoData;
+
+
+// data structure for variables that must live in external memory
+typedef struct {
   // tables
   float gainTable24[CUBECO_GAIN_TABLE_SIZE];
   float gainTable6[CUBECO_GAIN_TABLE_SIZE];
   float gainTable0[CUBECO_GAIN_TABLE_SIZE];
   float ratioTable[CUBECO_RATIO_TABLE_SIZE];
-  // other data
-  long unsigned int wcount;
   float echoBuf[CUBECO_ECHO_FRAMES][4];
-} cubecoData;
+} cubecoExtData;

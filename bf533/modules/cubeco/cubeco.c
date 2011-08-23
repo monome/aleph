@@ -15,15 +15,14 @@ static float itof_scale(signed int i);
 static signed int ftoi_clip(float f);
 
 //---------- static variables
-// module data lives in SDRAM... is this stupid?
-cubecoData* data;
+// heap variables
+cubecoData mData;
+cubecoData* data = &mData;
 
-///////////////
-// there is something fucked up with SDRAM access time.
-// attempting to stick the data on the heap to test
-// static cubecoData theData;
-// cubecoData * data = &theData;
+// SDRAM variables (much slower access)
+cubecoExtData* extData;
 
+// local
 static int chan;
 static unsigned int iIndex;
 static float fIndex, frac, echoMix;
@@ -39,26 +38,26 @@ void init_module(void) {
   unsigned int i;
  
   // point the data at start of SDRAM
-  data = (cubecoData*)BF533_SDRAM_START;
+  extData = (cubecoExtData*)BF533_SDRAM_START;
   
   // populate parameter tables
-  populateGainTable(data->gainTable24, CUBECO_GAIN_TABLE_SIZE, 12.f, -24.f, 100);
-  populateGainTable(data->gainTable6, CUBECO_GAIN_TABLE_SIZE, 6.f, -24.f, 100);
-  populateGainTable(data->gainTable0, CUBECO_GAIN_TABLE_SIZE, 0.f, -24.f, 100);
-  populateRatioTable(data->ratioTable, CUBECO_RATIO_TABLE_SIZE, 5, 0.125);
+  populateGainTable(extData->gainTable24, CUBECO_GAIN_TABLE_SIZE, 12.f, -24.f, 100);
+  populateGainTable(extData->gainTable6, CUBECO_GAIN_TABLE_SIZE, 6.f, -24.f, 100);
+  populateGainTable(extData->gainTable0, CUBECO_GAIN_TABLE_SIZE, 0.f, -24.f, 100);
+  populateRatioTable(extData->ratioTable, CUBECO_RATIO_TABLE_SIZE, 5, 0.125);
   // point parameters at tables, assign names and values
-  initParamWithTable(&(data->preGain), "preGain", data->gainTable24, CUBECO_GAIN_TABLE_SIZE, 1.0);
-  initParamWithTable(&(data->distortion), "distortion", data->gainTable6, CUBECO_GAIN_TABLE_SIZE, 0.8);
-  initParamWithTable(&(data->postGain), "postGain", data->gainTable6, CUBECO_GAIN_TABLE_SIZE, 1.0);
-  initParamWithTable(&(data->echoTimeRatio), "echoTimeRatio", data->ratioTable, CUBECO_RATIO_TABLE_SIZE, 1.0);
-  initParamWithTable(&(data->echoMix), "echoMix", data->gainTable0, CUBECO_GAIN_TABLE_SIZE, 0.5);
-  initParamWithTable(&(data->feedback), "feedback", data->gainTable0, CUBECO_GAIN_TABLE_SIZE, 0.7);
+  initParamWithTable(&(data->preGain), "preGain", extData->gainTable24, CUBECO_GAIN_TABLE_SIZE, 1.0);
+  initParamWithTable(&(data->distortion), "distortion", extData->gainTable6, CUBECO_GAIN_TABLE_SIZE, 0.8);
+  initParamWithTable(&(data->postGain), "postGain", extData->gainTable6, CUBECO_GAIN_TABLE_SIZE, 1.0);
+  initParamWithTable(&(data->echoTimeRatio), "echoTimeRatio", extData->ratioTable, CUBECO_RATIO_TABLE_SIZE, 1.0);
+  initParamWithTable(&(data->echoMix), "echoMix", extData->gainTable0, CUBECO_GAIN_TABLE_SIZE, 0.5);
+  initParamWithTable(&(data->feedback), "feedback", extData->gainTable0, CUBECO_GAIN_TABLE_SIZE, 0.7);
   // clear the echo buffer, or be destroyed
   for(i=0; i< CUBECO_ECHO_FRAMES; i++) {
-    data->echoBuf[i][0] = 0.f;
-    data->echoBuf[i][1] = 0.f;
-    data->echoBuf[i][2] = 0.f;
-    data->echoBuf[i][3] = 0.f;
+    extData->echoBuf[i][0] = 0.f;
+    extData->echoBuf[i][1] = 0.f;
+    extData->echoBuf[i][2] = 0.f;
+    extData->echoBuf[i][3] = 0.f;
   }
 
   /*
@@ -86,8 +85,12 @@ void process_frame(void) {
   */
 
   // calculate echo parameters
-  fIndex = (float)(data->wcount) - (getParamFloat(&(data->echoTimeRatio)) * (float)MODULE_SAMPLERATE);
-  while (fIndex < 0.f) { fIndex += CUBECO_ECHO_FRAMES; }
+
+  // fIndex = (float)(data->wcount) - (getParamFloat(&(data->echoTimeRatio)) * (float)MODULE_SAMPLERATE);
+  // TEST:
+  fIndex = (float)(data->wcount) - MODULE_SAMPLERATE;
+
+while (fIndex < 0.f) { fIndex += CUBECO_ECHO_FRAMES; }
   iIndex = (unsigned int)fIndex;
   frac = fIndex - iIndex;
   echoMix = getParamFloat(&(data->echoMix));
@@ -194,10 +197,10 @@ void processDistortion(float* in, float* out) {
 
 void processEcho(float* in, float* out) {
   
-  const float x0 = (data->echoBuf)[(iIndex) % CUBECO_ECHO_FRAMES][chan];
-  const float x1 = (data->echoBuf)[(iIndex+1) % CUBECO_ECHO_FRAMES][chan];
+  const float x0 = (extData->echoBuf)[(iIndex) % CUBECO_ECHO_FRAMES][chan];
+  const float x1 = (extData->echoBuf)[(iIndex+1) % CUBECO_ECHO_FRAMES][chan];
   const float y = x0 * (1.f- frac) + x1 * frac;
-  (data->echoBuf)[data->wcount][chan] = *in + (y * getParamFloat(&(data->feedback)));
+  (extData->echoBuf)[data->wcount][chan] = *in + (y * getParamFloat(&(data->feedback)));
   *out = ((*in) * (1.f - echoMix)) + (y * echoMix);
   
   /*
