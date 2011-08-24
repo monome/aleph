@@ -11,8 +11,10 @@ LDR = $(CROSS_COMPILE)ldr
 
 CPU = bf533
 DEVICE = /dev/ttyUSB0
-CFLAGS ?= -g -O1
+CFLAGS ?= -g
+# CFLAGS += -O1
 CFLAGS += -mcpu=$(CPU)
+CFLAGS += -mfast-fp
 CFLAGS += -Wall 
 # CFLAGS += --verbose
 LDFLAGS = -lm 

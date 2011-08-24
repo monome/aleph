@@ -21,11 +21,11 @@ const char* getParamName(Param* param) {
   return (param->name);
 }
 
-u16 getParamStep(Param* param) {
+u16 getParamI(Param* param) {
   return param->iVal;
 }
 
-f32 getParamFloat(Param* param) {
+f32 getParamF(Param* param) {
    return param->fVal;
 }
 
@@ -53,7 +53,7 @@ void stepParam(Param* param, s16 inc) {
   param->fVal = (param->table)[ival];
 }
 
-void setParamFloat(Param* param, f32 val, u8 sync, u8 ramp) {
+void setParamF(Param* param, f32 val, u8 sync, u8 ramp) {
   if (ramp) {    
     param->fTarget = val;  
     param->rampFlag = 1;
@@ -66,7 +66,7 @@ void setParamFloat(Param* param, f32 val, u8 sync, u8 ramp) {
   if (sync) { syncParamStepValue(param); }
 }
 
-void setParamInt(Param* param, u32 val) {
+void setParamI(Param* param, u32 val) {
   param->iVal = (u32)((float)val / param->iScale);
   param->fVal = param->table[param->iVal];
 }

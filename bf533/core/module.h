@@ -20,12 +20,12 @@ void init_module(void);
 void process_frame(void);
 // set parameter functions
 // scaled to linear range with unsigned int
-void request_param_set_int(unsigned int idx, unsigned int val);
+void request_param_set_int(unsigned short idx, unsigned long val);
 // direct set with float
-void request_param_set_float(unsigned int idx, float val, char ramp, char sync);
+void request_param_set_float(unsigned short idx, float val, char ramp, char sync);
 // get float value
-float request_param_get_float(unsigned int index);
+float request_param_get_float(unsigned short index);
 // get int value
-float request_param_get_int(unsigned int index);
+float request_param_get_int(unsigned short index);
 
 #endif // header guard

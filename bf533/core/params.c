@@ -21,7 +21,7 @@ void handle_spi_rx(void) {
     paramMsgCom = P_GET_PARAM_COM(spiRxRing[P_PARAM_MSG_WORD_COM]);
     paramMsgIdx = P_GET_PARAM_IDX(spiRxRing[P_PARAM_MSG_WORD_COM]);
     if (paramMsgCom == P_PARAM_COM_GETI) {
-      // TODO: load param integer MSW for nexty transmissiom
+      // TODO: load param integer MSW for next transmissiom
     }
     if (paramMsgCom == P_PARAM_COM_GETF) {
       // TODO: load param float MSw for next transmission

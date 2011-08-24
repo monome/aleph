@@ -1,9 +1,7 @@
 /* cube_data.h
  * cube module
  *
- * defines data struture for the "cube" processing module
- * this should include all the parameters and runtime data the module needs
- * cause it is going to just live at a specified location in the memory map (start of SDRAM) 
+ * data structures for fast and slow memory
 */  
 
 #include "../paramTables/gainTable24db.h"
@@ -12,9 +10,13 @@
 
 #define CUBECO_GAIN_TABLE_SIZE 1024
 #define CUBECO_RATIO_TABLE_SIZE 161
-#define CUBECO_ECHO_FRAMES 2880000 // 1 minute at 48k 
 
-// data structure for heap variables
+// TEST: make this a power of two always!
+// 2**20 = 1048576, ~= 21 seconds
+#define CUBECO_ECHO_FRAMES 1048576
+#define CUBECO_ECHO_FRAMES_1 1048575
+
+// data structure for cached variables
 typedef struct { // __attribute__((__packed_b init_m_)) {
   // parameters
   Param preGain;
@@ -25,7 +27,7 @@ typedef struct { // __attribute__((__packed_b init_m_)) {
   Param echoMix;
   Param feedback;
   // other data
-  long unsigned int wcount;
+  unsigned long long wcount;
 } cubecoData;
 
 
@@ -36,5 +38,8 @@ typedef struct {
   float gainTable6[CUBECO_GAIN_TABLE_SIZE];
   float gainTable0[CUBECO_GAIN_TABLE_SIZE];
   float ratioTable[CUBECO_RATIO_TABLE_SIZE];
-  float echoBuf[CUBECO_ECHO_FRAMES][4];
+  //  float echoBuf[CUBECO_ECHO_FRAMES][4];
+  // fixme: interleave channels
+  int echoBuf[CUBECO_ECHO_FRAMES];
+
 } cubecoExtData;

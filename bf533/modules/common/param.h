@@ -13,7 +13,7 @@ TODO: encapsulation is all messed up now that params no longer live in an array/
 
 #include "types.h"
 
-#define PARAM_NAME_LEN 64
+#define PARAM_NAME_LEN 32
 // TODO: this should go somewhere else, of course
 #define MODULE_SAMPLERATE 48000
 
@@ -42,27 +42,27 @@ s16 getParamIndex(const char* name);
 // get name from index
 // const char* getParamName(Param* param);
 // get the value of a parameter, scaled to [0, ((2^SBX_PARAM_BITS)-1)]
-u16 getParamInt(Param* param);
+u16 getParamI(Param* param);
 // get the actual used value (e.g. hz) of a parameter, as a float
-f32 getParamFloat(Param* param);
+f32 getParamF(Param* param);
 // get maximum step value (table size)
 u16 getParamImax(Param* param);
 // get maximum float value;
 u16 getParamFmax(Param* param);
 // get the ramp time
-f32 getParamRampTime(Param* param);
+f32 getParamRamp(Param* param);
 
 //----- setters
 // move the param value by a specified number of steps
 void stepParam(Param* param, s16 inc);
 // move the param value to a specified float
-void setParamFloat(Param* param, f32 val, u8 sync, u8 ramp);
+void setParamF(Param* param, f32 val, u8 sync, u8 ramp);
 // move the param value to a specified int, convert to internal scaling
-void setParamInt(Param* param, u32 val);
+void setParamI(Param* param, u32 val);
 // set the ramp time
-void setParamRampTime(Param* param, f32 val);
+void setParamRamp(Param* param, f32 val);
 // set the scene storage flag
-void setParamSceneFlag(Param* param, u8 val);
+// void setParamSceneFlag(Param* param, u8 val);
 
 // intialize a given param with values
 void initParamWithTable(Param* param, char name[PARAM_NAME_LEN], f32* table, u16 tableSize, f32 val);

@@ -29,7 +29,7 @@ void sport0_rx_isr() {
   if (spiRxFlag) { handle_spi_rx(); }
 
   // call the module-defined process function on this frame
-  //  process_frame();
+   process_frame();
   
   // copy processed data from variables into dma output buffer
   // shift right to 24-bit
@@ -39,7 +39,7 @@ void sport0_rx_isr() {
   iTxBuf[INTERNAL_DAC_R1] = iOut11 >> 8;
 
   // tell main loop we need audio
-  needAudioFrame = 1;
+  // needAudioFrame = 1;
 
 }
 

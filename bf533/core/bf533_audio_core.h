@@ -8,6 +8,7 @@
 
 #include <sys/exception.h>
 #include <cdefBF533.h>
+#include <fract_typedef.h>
 #include "../../common/protocol.h"
 #include "module.h"
 
@@ -37,14 +38,14 @@
 
 //------- global variables
 // per-channel audio i/o
-extern int iIn00;
-extern int iIn01;
-extern int iIn10;
-extern int iIn11;
-extern int iOut00;
-extern int iOut01;
-extern int iOut10;
-extern int iOut11;
+extern fract32 iIn00;
+extern fract32 iIn01;
+extern fract32 iIn10;
+extern fract32 iIn11;
+extern fract32 iOut00;
+extern fract32 iOut01;
+extern fract32 iOut10;
+extern fract32 iOut11;
 
 // ad1836 configuration register
 extern volatile short sCodec1836TxRegs[];

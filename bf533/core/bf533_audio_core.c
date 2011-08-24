@@ -5,9 +5,9 @@
 
 //--------- global variables (initialized here)
 // 4 channels of input from ad1836
-int iIn00, iIn01, iIn10, iIn11;
+fract32 iIn00, iIn01, iIn10, iIn11;
 // 4 channels of output to ad1836
-int iOut00, iOut01, iOut10, iOut11;
+fract32 iOut00, iOut01, iOut10, iOut11;
 
 // array of 1836 config registers
 volatile short sCodec1836TxRegs[CODEC_1836_REGS_LENGTH] = {
@@ -42,7 +42,8 @@ static char processAudio(void);
 // main function
 int main(void) {
   // if we were in VDSP++, this would turn on the execution cycle counter.
-  // sysreg_write(reg_SYSCFG, 0x32);
+  //  sysreg_write(reg_SYSCFG, 0x32);
+  __asm__ __volatile__("R0 = 0x32; SYSCFG = R0; CSYNC;":::"R0");
   
 // intialize the sdram controller
  init_EBIU();
@@ -68,15 +69,27 @@ int main(void) {
   }
 }
 
+
+
+
+
 //--------------------------
 // processAudio
-// if we need
 char processAudio(void) {
+  // benchmark
+  //  int start, stop, cycles;
+  // static int minCycles=0xffffffff, maxCycles=0;  
+
   if(needAudioFrame) {
-    // call the module-defined process function on this frame
+
+       // call the module-defined process function on this frame
     process_frame();
+
     needAudioFrame = 1;
     return 0;
   } 
+
+
+
   return 1;
 }
