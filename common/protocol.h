@@ -14,14 +14,15 @@
 // abcd 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
 //
 // (A) COMMAND (4 bit) left aligned for extensibility
-//		(a) 0 = int, 1 = float
-//		(b) 0 = get, 1 = set
-//		(c) 0 = immediate, 1 = interpolate (does not apply to all commands)
-//		(d) 0 = param, 1 = interpolation time
+//		(a) 0 = get, 1 = set
+//		(b) 0 = immediate, 1 = interpolate (does not apply to all commands)
+//		(c) 0 = param, 1 = interpolation time
 // (B) INDEX (12 bit)
 // (C) VALUE (32 bit) unsigned int or float depending on COMMAND
 //
 // P_PARAM COMMANDS (4-bit nibble)
+
+/*
 #define P_PARAM_COM_GETI	0b0000
 #define P_PARAM_COM_GETF	0b1000
 #define P_PARAM_COM_SETI	0b0100
@@ -30,6 +31,16 @@
 #define P_PARAM_COM_ISETF	0b1110
 #define P_PARAM_COM_SETINTI	0b0101
 #define P_PARAM_COM_SETINTF	0b1101
+*/
+
+
+// don't provide separate commands for int and float params.
+// a parameter always holds value in 4 bytes.
+// whether it's float or int is declared in the param's descriptor
+#define P_PARAM_COM_GET	      0b0000
+#define P_PARAM_COM_SET	      0b0001
+#define P_PARAM_COM_SETI      0b0011
+#define P_PARAM_COM_SETINT    0b0101
 
 // parameter command nibble mask
 #define P_PARAM_COM_MASK 0xF000
@@ -64,6 +75,7 @@
 #define P_PARAM_MSG_WORD_DATAH   1
 #define P_PARAM_MSG_WORD_DATAL   2
 #define P_PARAM_MSG_WORD_COUNT   3
+#define P_PARAM_MSG_WORD_COUNT_1 2
 
 // bit depth of integer values
 #define P_PARAM_MSG_INT_BIT_DEPTH  32

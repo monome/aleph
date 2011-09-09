@@ -1,5 +1,5 @@
-#ifndef _BF533_INIT_H_
-#define _BF533_INIT_H_
+#ifndef _ALEPH_BFIN_INIT_H_
+#define _ALEPH_BFIN_INIT_H_
 
 //----------- defines
 // addresses for Port A in Flash A
@@ -28,6 +28,19 @@
 #define ADC_CONTROL_2		0xD000
 #define ADC_CONTROL_3		0xE000
 
+// size of array sCodec1836TxRegs
+#define CODEC_1836_REGS_LENGTH	11
+
+// SPI transfer mode
+#define TIMOD_DMA_TX 0x0003
+#define TIMOD_DMA_RX 0x0002
+
+// SPORT0 word length
+#define SLEN_24	0x0017
+
+// DMA flow mode
+#define FLOW_1	0x1000
+ 
 //--------- function prototypes
 void init_EBIU(void);
 void init_flash(void);
