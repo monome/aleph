@@ -1,5 +1,5 @@
 #include "types.h"
-#include "../../common/protocol.h"
+#include "../common/protocol.h"
 #include "spi.h"
 
 //------ global variables (initialized here)
