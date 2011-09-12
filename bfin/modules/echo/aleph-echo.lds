@@ -76,6 +76,21 @@ SECTIONS
   .rel.plt        : { *(.rel.plt) }
   .rela.plt       : { *(.rela.plt) }
 
+  .sdram.text :
+  {
+	echo_data.o(.text)
+  } >MEM_SDRAM =0
+
+  .sdram.data :
+  {
+	echo_data.o(.data .rodata .rodata.*)
+  } >MEM_SDRAM =0
+  
+  .sdram.bss :
+  {
+	echo_data.o(.bss)
+  } >MEM_SDRAM =0
+  
   .l2             :
   {
     *(.l2 .l2.*)

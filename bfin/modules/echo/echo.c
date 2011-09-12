@@ -4,6 +4,10 @@
 #include "module.h"
 #include "echo_data.h"
 
+// forward declaration from echo_data.c
+// (this seems to be necessary for the linker script to work)
+//extern fract32 echoBuf[];
+
 //------- global variable definitions
 ParamData paramData[MODULE_NUM_PARAMS];
 

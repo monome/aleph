@@ -15,4 +15,8 @@ ParamDesc paramDesc[MODULE_NUM_PARAMS] = {
   {"feedback", eParamFract}
 };
 
-fract32 echoBuf[ECHO_NUMFRAMES * 4];
+// EXTERNAL ARRAYS:
+// array must be assigned here to get linked to SDRAM...
+// an empty assignment will put it in .sdram.bss,
+// a real assignment will go in .sdram.data 
+fract32 echoBuf[ECHO_NUMFRAMES * 4] = {};

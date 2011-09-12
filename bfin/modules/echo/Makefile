@@ -12,8 +12,7 @@
 # you must edit the appropriate line in the .lds file
 # to use [yourname]_data.o
 #
-# if you want to use multiople source files, you must edit these targets.
-# it should not be too hard.
+# if you want to use multiple source files, you must edit these targets.
 
 module_name = echo
 
