@@ -1,7 +1,7 @@
 #include <fract_math.h>
-#include "../../bfin_core.h"
-#include "../../param.h"
-#include "../../module.h"
+#include "bfin_core.h"
+#include "param.h"
+#include "module.h"
 #include "echo_data.h"
 
 //------- global variable definitions

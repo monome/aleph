@@ -6,7 +6,7 @@
  * the resulting output should be linked to SDRAM section in memory map
  */
 
-#include "../../param.h"
+#include "param.h"
 #include "echo_data.h"
 
 ParamDesc paramDesc[MODULE_NUM_PARAMS] = {

@@ -7,7 +7,7 @@
 #ifndef _ALEPH_BFIN_ECHO_DATA_H_
 #define _ALEPH_BFIN_ECHO_DATA_H_
 
-#include "../../types.h"
+#include "types.h"
 
 #define MODULE_NUM_PARAMS 3
 
