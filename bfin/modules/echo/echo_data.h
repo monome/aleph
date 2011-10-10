@@ -9,19 +9,42 @@
 
 #include "types.h"
 
-#define MODULE_NUM_PARAMS 3
-
-#define ECHO_NUMFRAMES 1048576
-#define ECHO_NUMFRAMES_1 104875
-
-// #define ECHO_NUMFRAMES 64 * 1024 * 1024 / 4 - 1024
-// #define ECHO_NUMFRAMES_1 ECHO_NUMFRAMES - 1
-
-// test...
-//#define ECHO_NUMFRAMES 100
-//#define ECHO_NUMFRAMES_1 99
-
 #define ECHO_SAMPLERATE 48000
+
+// 30 seconds at 48k
+#define ECHO_NUMFRAMES   1440000
+#define ECHO_NUMFRAMES_1 1439999
+// 4 * frames
+#define ECHO_NUMSAMPS    5760000
+
+#define MODULE_NUM_PARAMS 24
+// parameter indices
+enum {
+  eParamMix0  ,
+  eParamMix1  ,
+  eParamMix2  ,
+  eParamMix3  ,
+  eParamTime0 ,
+  eParamTime1 ,
+  eParamTime2 ,
+  eParamTime3 ,
+  eParamFb00  ,
+  eParamFb01  ,
+  eParamFb02  ,
+  eParamFb03  ,
+  eParamFb10  ,
+  eParamFb11  ,
+  eParamFb12  ,
+  eParamFb13  ,
+  eParamFb20  ,
+  eParamFb21  ,
+  eParamFb22  ,
+  eParamFb23  ,
+  eParamFb30  ,
+  eParamFb31  ,
+  eParamFb32  ,
+  eParamFb33
+};
 
 // echo buffer
 extern fract32 echoBuf[];

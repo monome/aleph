@@ -5,14 +5,15 @@
 core_src = main.c init.c isr.c spi.c
 core_obj = $(patsubst %.c, %.o, $(core_src))
 
-core_srcdir = ../../src/
-core_objdir = ../../obj/
+core_dir = ../../
+core_srcdir = $(core_dir)src/
+core_objdir = $(core_dir)obj/
 
 CROSS_COMPILE = bfin-elf-
 CC = $(CROSS_COMPILE)gcc
 LDR = $(CROSS_COMPILE)ldr
 CPU = bf533
-CFLAGS += -Wall -mcpu=$(CPU)
+CFLAGS += -Wall -g -mcpu=$(CPU) -I$(core_srcdir) -I$(core_dir)../common/
 LDFLAGS += -mcpu=$(CPU)
 LDRFLAGS += --initcode $(core_objdir)init.o
 

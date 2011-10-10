@@ -28,14 +28,14 @@
 
 //------- global variables
 // per-channel audio i/o
-extern fract32 in00;
-extern fract32 in01;
-extern fract32 in10;
-extern fract32 in11;
-extern fract32 out00;
-extern fract32 out01;
-extern fract32 out10;
-extern fract32 out11;
+extern fract32 in0;
+extern fract32 in1;
+extern fract32 in2;
+extern fract32 in3;
+extern fract32 out0;
+extern fract32 out1;
+extern fract32 out2;
+extern fract32 out3;
 
 // audio DMA registers
 extern volatile s32 iRxBuf[];

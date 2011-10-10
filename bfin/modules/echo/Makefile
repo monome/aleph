@@ -21,8 +21,8 @@ all: aleph-$(module_name).ldr
 include ../../core.mk
 
 aleph-$(module_name): core_target $(module_name).c $(module_name)_data.c
-	$(CC) $(CFLAGS) -I../../src/ -c $(module_name).c -o $(module_name).o
-	$(CC) $(CFLAGS) -I../../src/ -c $(module_name)_data.c -o $(module_name)_data.o
+	$(CC) $(CFLAGS) -c $(module_name).c -o $(module_name).o
+	$(CC) $(CFLAGS) -c $(module_name)_data.c -o $(module_name)_data.o
 	$(CC) $(LDFLAGS) -T aleph-$(module_name).lds \
 	$(patsubst %.o, $(core_objdir)%.o, $(core_obj)) \
 	$(module_name).o $(module_name)_data.o \
