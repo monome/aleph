@@ -1,50 +1,129 @@
-interface notes
+interface prototype
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
 
-PATCH
-	currently running
-	info?
-	switch
-		list available
+see aleph-interface-design.pdf for physical layout.
 
-PARAM
-	view filter > dsp / analog / control / all
-	list
-		param/val pairs. graph?
-		include/exclude in preset
-		visible/invisible in view
-		interpolation time
-	autolearn
+
+
+navigation
+------------------------------------------------------------------------------------
+
+screen: [root]
+display: current patch, last changed param, current preset, % batt, etc?
+ops: [patch] [param] [preset] [setup] 
+x: [play]
+notes: functions for e/y?
+
+
+screen: [play]
+display: depends on source, mode
+ops: text not displayed, but keys toggle source: meters, preset, param, dsp
+	pushing key again after selected, cycles through modes
+	(ie, meter mode can show both in/out, just in, just out, combined modes, etc)
+y: [root]
+
+
+screen: [patch]
+display: list
+	start with cursor on currently loaded patch.
+ops: load, delete, download
+	confirmation screens where necessary
+	download enters webserver mode
+x: [root]
+y: [patch-info]
+e: scroll list
+
+screen: [patch-info]
+display: patch name, text description
+ops: same as [patch]
+x: [patch] (back to list)
+e: scroll description text
+
+
+screen: [param]
+display: list
+	sorted according to tree
+	cursor indicator
+	highlight "included in preset" params
+	"included in preset" params listed under the /preset section
+ops: inc-pre, [param-learn]
+	maybe keys to jump up/down by section
+	param learn only when applicable
+x: [root]
+y: [param-edit]
+e: scroll list
+
+screen: [param-edit] (for numerical param)
+display: param name, big number
+ops: copy/paste? min/max? patch default?
+x: [param]
+	should x be "cancel" (revert to old val) and y be "confirm?"
+e: change value (acceleration?)
+
+screen: [param-edit] (for pattern param)
+display: param name, pattern
+ops: left, right, patch default?
+x: [param]
+e: change value (smartly traverse tree)
+
+screen: [param-learn]
+display: pattern to map, live display of input patterns to match
+ops: ?
+
+
+screen: [preset]
+display: list
+	start on last loaded preset
+ops: recall, [preset-store], [preset-delete], [preset-series]
+x: [root]
+y: [preset-detail]
+e: scroll list
+
+screen: [preset-detail]
+display: preset number, name, param list
+ops: recall, remove-param, [add-param]
+	[add-param] gives a pattern selection screen, confirm, move to [preset-detail-edit]
+x: [preset]
+y: [preset-detail-edit] (use same screen as [param-edit])
+e: scroll list
+
+screen: [preset-store]
+display: number, name entry
+ops: overwrite, insert, clear name
+	might need left/right cursor for continuity
+x: [preset]
+e: change letter
+
+screen: [preset-delete]
+choice: delete, clear
+
+screen: [preset-series]
+choice: read, write
+
+
+screen: [setup]
+display: ?
+relevant:
+	set ip
+	set OSC receive port
+	set OSC destination ip, port
+	usb util?
+	midi util?
+	fw ver, bat %, flash %
+
+
+
+
+
+////////////////////// general notes
+
+lists
+	for top/bottom, show blank space
+	cursor stay in same place? list moves?
 	
-	notes:
-		smart control config, don't display irrelevant params,
-			(such as toggle vars when in switch mode)
-		pages? views? view 1/2/3/4?
-		BIG NUMBER MODE. performance vs. edit?
-		smart mapping. tree selection for param destinations
-
-PRESET
-	current (preset view = BIG NUMBER + name)
-	recall
-	manage
-		copy/paste
-		naming
-	series
-	(#) delay time pre-recall
-	(y/n) save patch in preset
-	
-	notes:
-		series = set of presets
-			save/load from flash
-			
-UTILITY
-	battery meter, memory/flash meter
-	ip/zerconf
-	usb viewer?
-	patch management
-		net host patch loading mode
-		delete
-		
-
-misc notes:
-	DSP VIEW: patch (bf) direct control of screen
-	analog routing helper?
+presets
+	need new term/name instead of "preset"
+	may be useful to split preset with sub-groups. 10-02 for example.
+	perhaps preset-file (series) should be in setup if it is primarily for backup?
+	allows for next/pre, next/group etc. song structure etc.
