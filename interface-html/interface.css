@@ -1,0 +1,99 @@
+ul, h2, p, a {
+	font-family: courier;
+}
+
+p {
+	font-size: 20px;
+}
+
+pre, ul {
+	font-size: 12px;
+}
+
+pre.ops {
+	color: #666;
+}
+
+a:link, a:visited{
+	color: #bbb;
+}
+
+#outline {
+	border-radius: 10px;
+	position:relative;
+	width: 490px;
+	height: 205px;
+	top: 100px;
+	left: 100px;
+	background: #ddd;
+}
+
+#screen {
+	border-radius: 3px;	
+	position:absolute;
+	padding-left:10px;
+	width: 300px;
+	height: 150px;
+	top: 10px;
+	left: 10px;
+	color: #fff;
+	background: #000;
+}
+
+#ops {
+	position:absolute;
+	padding-left:10px;
+	width: 300px;
+	top: 130px;
+	left: 10px;
+}
+
+#enc {
+	border-radius: 40px;
+	position:absolute;
+	top: 55px;
+	width: 65px;
+	left: 375px;
+	background: #bbb;
+	color: #bbb;
+}
+
+#notes {
+	position: absolute;
+	top: 350px;
+	left: 120px;
+	width: 500px;
+}
+
+#key1, #key2, #key3, #key4, #keyx, #keyy {
+	border-radius: 3px;
+	position:absolute;
+	top: 170px;
+	width: 70px;
+	text-align: center;
+	background: #bbb;
+}
+
+#key1 {
+	left: 10px;
+}
+
+#key2 {
+	left: 90px;
+}
+
+#key3 {
+	left: 170px;
+}
+
+#key4 {
+	left: 250px;
+}
+
+#keyx {
+	left: 330px;
+}
+
+#keyy {
+	left: 410px;
+}
