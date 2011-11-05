@@ -1,3 +1,5 @@
+..... avr32 freertos. serial/spi start
+
 ..... cpu benchmarking
 
 ..... inter-chip protocol
@@ -15,8 +17,6 @@
 ..... analog matrix spec
 
 ..... network avr, OSC server/client
-..... network zeroconf
-
 ..... patch uploading via network
 
 ..... usb
