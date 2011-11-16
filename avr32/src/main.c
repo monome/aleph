@@ -198,7 +198,7 @@ void HandleEncInterrupt( U8 pin )
 			*control_id[enc[e].event_id] = enc[e].value;
 		}
 		else if (enc[e].event_type == EVENT_PARAM) {
-			param_delivery[0] = P_SET_PARAM_COMMAND_WORD(P_PARAM_COM_SETI,
+			param_delivery[0] = P_SET_PARAM_COMMAND_WORD(P_PARAM_COM_SET,
 					enc[0].event_id);
 			param_delivery[1] = P_SET_PARAM_DATA_WORD_H(enc[e].value);
 			param_delivery[2] = P_SET_PARAM_DATA_WORD_L(enc[e].value);
@@ -260,7 +260,7 @@ void HandleSwInterrupt( U8 pin )
 			*control_id[sw[0].event_id] = v;
 		}
 		else if(sw[s].event_type == EVENT_PARAM) {
-			param_delivery[0] = P_SET_PARAM_COMMAND_WORD(P_PARAM_COM_SETI,
+			param_delivery[0] = P_SET_PARAM_COMMAND_WORD(P_PARAM_COM_SET,
 				sw[s].event_id);
 			param_delivery[1] = P_SET_PARAM_DATA_WORD_H(v);
 			param_delivery[2] = P_SET_PARAM_DATA_WORD_L(v);

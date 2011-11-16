@@ -14,6 +14,7 @@ CC = $(CROSS_COMPILE)gcc
 LDR = $(CROSS_COMPILE)ldr
 CPU = bf533
 CFLAGS += -Wall -g -mcpu=$(CPU) -I$(core_srcdir) -I$(core_dir)../common/
+INC += -I$(core_srcdir) -I$(core_dir)../common/
 LDFLAGS += -mcpu=$(CPU)
 LDRFLAGS += --initcode $(core_objdir)init.o
 
@@ -21,7 +22,7 @@ core_target: $(patsubst %.o, $(core_objdir)%.o, $(core_obj))
 	@echo core objects are complete in $(core_objdir)
 
 $(core_objdir)%.o : # $(core_srcdir)%.c
-	$(CC) $(CFLAGS) -c \
+	$(CC) $(CFLAGS) $(INC) -c \
 	$(patsubst $(core_objdir)%.o, $(core_srcdir)%.c, $@) \
 	-o $@
 

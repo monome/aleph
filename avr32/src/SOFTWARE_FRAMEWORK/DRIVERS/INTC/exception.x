@@ -1,4 +1,4 @@
-/* This file is part of the ATMEL AVR-UC3-SoftwareFramework-1.7.0 Release */
+/* This file is part of the ATMEL AVR32-UC3-SoftwareFramework-1.6.0 Release */
 
 /*This file is prepared for Doxygen automatic documentation generation.*/
 /*! \file *********************************************************************
@@ -96,8 +96,7 @@ _handle_Bus_Error_Instruction_Fetch:
         .org  0x010
         // NMI.
 _handle_NMI:
-		//lda.w   pc, eic_nmi_handler
-		rjmp $
+        rjmp $
 
         .org  0x014
         // Instruction Address.
