@@ -1,27 +1,35 @@
-..... avr32 freertos. serial/spi start
+::::: general
+..... interface design
+..... hardware design
+..... use cases
+..... example blackfin patches
 
-..... cpu benchmarking
+::::: avr32
+..... parameter engine
+..... usb device: mass storage
+..... usb device: virtual serial
+..... usb bootloader
+..... usb host: hid midi
+..... usb host: monome (ftdi)
 
-..... inter-chip protocol
-..... avr encoder/switch code cleanup
-..... bf remote param changes
 
-..... display
-..... user interface design
-
-..... SDRAM
-..... patch flash storage
+::::: blackfin
 ..... dynamic patch loading using UART, safe bootloader
 
-..... analog design
-..... analog matrix spec
 
-..... network avr, OSC server/client
-..... patch uploading via network
+::::: shared avr32/blackfin
+..... SPI communication
+..... FAT
+..... benchmarking
+..... display library
 
-..... usb
 
-..... hid
-..... osc 
+::::: analog
+..... design and prototype
+..... matrix spec
 
-///// interface
+
+::::: hardware
+..... battery prototypes
+..... initial protoboard: avr32, screen, keypads, encoders, aux-in,
+		usb-device, power/battery, pinouts to blackfin
