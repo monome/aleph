@@ -1,7 +1,6 @@
 # Universal AVR32 Makefile for firmware without operating system.
 # Wolfgang Wieser 07/2008.
-
-# PART = uc3a1128
+# stolen and mutilated by emb, 2011
 
 PART = uc3a0512
 BOARD = EVK1100
@@ -15,9 +14,9 @@ LDFLAGS += -mpart=$(PART)
 LDFLAGS += -Wl,--gc-sections --rodata-writable -Wl,--direct-data
 LDFLAGS += -g
 #LDFLAGS += -v
-	
-SRC = src/main.c src/init.c
-OBJ = src/main.o src/init.o
+
+SRC = src/main.c src/init.c src/switch.c
+OBJ = src/main.o src/init.o src/switch.o
 INC += -I../common
 
 # Atmel Software Framework
@@ -36,7 +35,7 @@ wtf:
 	@echo $(OBJ)
 	@echo "\n"
 	@echo $(INC)
-	
+
 run: $(ELF) program
 
 clean:
@@ -47,7 +46,6 @@ $(ELF): $(OBJ)
 
 program: $(ELF)
 	avr32program -c USB -pjtagicemkii program -finternal@0x80000000 -v -e --run -R -cint $(ELF)
-
 reset:
 	avr32program -c USB -pjtagicemkii reset -r
 cont:
