@@ -4,6 +4,8 @@
  * operator implmentation (base and derived classes)
  */
 
+#include <stdio.h>
+
 #include "compiler.h"
 #include "ctl_op.h"
 #include "ctl_interface.h"
@@ -43,6 +45,7 @@ static void op_sw_in_val(op_sw_t* sw, const S32* v) {
   } else {
     sw->val = (v != 0);
   }
+  printf("switch at %d got value input %d\n", (int)sw, *v); 
   if (sw->outs[0] >= 0) {
     ctl_go(sw->outs[0], &(sw->val));
   }

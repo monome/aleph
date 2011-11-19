@@ -24,16 +24,15 @@
 // ------ node types
 // in: p to operator, p to input function
 typedef struct ctl_inode_struct { 
-  //  ctl_op_t* op;
   U8 opIdx;
   ctl_in_t in;
 } ctl_inode_t;
 
 // out: p to op, idx in op's output array
 typedef struct ctl_onode_struct { 
-  //  ctl_op_t* op;
-  U8 opIdx;
-  U8 out;
+  U8 opIdx;   // index of parent op in oplist
+  U8 outIdx;  // index of this output in parent op's outlist
+  //  U8 out;     // target output index
 } ctl_onode_t;
 
 //------- network type
@@ -61,7 +60,6 @@ typedef struct ctl_net_struct {
 //====================================
 //============ static variables
 static ctl_net_t net;
-
 
 //==================================================
 //========= public functions
@@ -168,8 +166,8 @@ S16 ctl_add_op(opid_t opId) {
     net.numIns++;
   }
   for(i=0; i<outs; i++) {
-    net.outs[net.numOuts].out = op->out[i];
     net.outs[net.numOuts].opIdx = net.numOps;
+    net.outs[net.numOuts].outIdx = i;
     net.numOuts++;
   }
   net.numOps++;
@@ -180,7 +178,28 @@ S16 ctl_add_op(opid_t opId) {
 // void ctl_remove_op(U32 opIdx);
 
 // create a connection between given idx pair
-// void ctl_connect(U32 outIdx, U32 inIdx);
+void ctl_connect(U32 oIdx, U32 iIdx) {
+  net.ops[net.outs[oIdx].opIdx]->out[net.outs[oIdx].outIdx] = iIdx;
+}
+
+// queries
+
+
+// get current count of operators
+const U16 ctl_num_ops(void) {
+  return net.numOps;
+}
+
+// get current count of inputs
+const U16 ctl_num_ins(void) {
+  return net.numIns;
+}
+
+// get current count of outputs
+const U16 ctl_num_outs(void) {
+  return net.numOuts;
+}
+
 
 // disconnect idx pair
 // void ctl_disconnect(U32 outIdx, U32 inIdx);

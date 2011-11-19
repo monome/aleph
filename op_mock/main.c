@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include "ctl_interface.h"
 
+static void printInputs(void) {
+  //  ctl_op_name
+}
+
 int main(const int argc, const char** argv) {
   S16 sw_idx;
   S32 sw_val;
