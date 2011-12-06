@@ -8,20 +8,40 @@
 #include "ctl_op.h"
 #include "ctl_interface.h"
 
+#include <stdio.h>
+
 //=========================
 // vars
+
+// operator class registry
+// must be laid out idenitcally to eOpId enum
+op_desc_t op_registry[numOpClasses] = {
+  { "SWITCH", sizeof(op_sw_t) },
+  { "ENCODER", sizeof(op_enc_t) },
+  { "ADD", sizeof(op_add_t) },
+  { "MULTIPLY", sizeof(op_mul_t) },
+  { "GATE", sizeof(op_gate_t) },
+  { "ACCUMULATE", sizeof(op_accum_t) },
+  { "SELECT", sizeof(op_sel_t) },
+  { "LINEAR MAP", sizeof(op_lin_t) },
+  { "PARAMETER", sizeof(op_param_t) },
+  { "PRESET", sizeof(op_preset_t) }
+};
+
 // input and output strings are all the same length, concatenated
 // this is lazy, but also efficient.
 static const U8 inStringChars = 7;
 static const U8 outStringChars = 7;
 
+
+
 //=====================================
 //===  base class definitions
-const U8* ctl_op_getInString(ctl_op_t* op, const U8 idx) {
+const U8* ctl_op_in_name(ctl_op_t* op, const U8 idx) {
   return (op->inString + (inStringChars * idx));
 }
 
-const U8* ctl_op_getOutString(ctl_op_t* op, const U8 idx) {
+const U8* ctl_op_out_name(ctl_op_t* op, const U8 idx) {
   return (op->outString + (outStringChars * idx));
 }
 
@@ -34,6 +54,7 @@ static const char* op_sw_outstring = "VALUE ";
 static const char* op_sw_opstring = "SWITCH";
 
 static void op_sw_in_val(op_sw_t* sw, const S32* v) {
+  printf("switch at %d received value %d\n", (int)sw, *v);
   if(sw->tog) {
     if (v == 0) {
       return;

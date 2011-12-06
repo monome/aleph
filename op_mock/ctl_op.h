@@ -48,9 +48,9 @@ typedef struct ctl_op_struct {
 } ctl_op_t;
 
 /// get input name
-const U8* ctl_op_getInString(ctl_op_t* op, const U8 idx);
+const U8* ctl_op_in_name(ctl_op_t* op, const U8 idx);
 // get output name
-const U8* ctl_op_getOutString(ctl_op_t* op, const U8 idx);
+const U8* ctl_op_out_name(ctl_op_t* op, const U8 idx);
 
 /// ===== operator subclasses
 // each of these structures holds the superclass and private state vairables

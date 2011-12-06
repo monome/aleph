@@ -1,5 +1,20 @@
 #include <stdio.h>
+#include "compiler.h"
 #include "ctl_interface.h"
+
+static void print_ops (void) {
+  U8 i;
+  for(i=0; i<ctl_num_ops(); i++) {
+    printf("%d) %s\n", i, ctl_op_name(i));
+  }
+}
+  
+static void print_inputs(void) {
+  U8 i, j;
+  for(i=0; i<ctl_num_ins(); i++) {
+    printf("%d) %s\n", i, ctl_in_name(i));
+  } 
+}
 
 int main(const int argc, const char** argv) {
   S16 sw_idx;
