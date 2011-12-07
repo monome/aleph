@@ -1,7 +1,8 @@
-OBJ = ctl_op.o ctl_net.o main.o
+OBJ = ctl_op.o ctl_net.o main.o ui.o
 
 CC = gcc
 CFLAGS = -g -c
+# CFLAGS += -Wall
 LDFLAGS = -lm
 
 WHAT = bees
@@ -9,7 +10,7 @@ WHAT = bees
 all : $(WHAT)
 
 $(WHAT) : $(OBJ)
-	$(CC) $(LDFLAGS) -o$@ $^
+	$(CC) $(LDFLAGS) -o $@ $^
 
 %.o : %.c
 	$(CC) $(CFLAGS) $(INC) -o$@ $<

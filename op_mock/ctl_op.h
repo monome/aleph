@@ -38,19 +38,19 @@ typedef struct ctl_op_struct {
   // array of pointer indices for output targets.
   ctl_out_t* out; 
   // name string
-  const U8* opString;
+  const char* opString;
   // input names concatenated into a single string
-  const U8* inString;
+  const char* inString;
   // output names concatenated into a single string
-  const U8* outString;
+  const char* outString;
   // offset in statically allocated op memory pool
   //  U32 memOffset;
 } ctl_op_t;
 
 /// get input name
-const U8* ctl_op_in_name(ctl_op_t* op, const U8 idx);
+const char* ctl_op_in_name(ctl_op_t* op, const U8 idx);
 // get output name
-const U8* ctl_op_out_name(ctl_op_t* op, const U8 idx);
+const char* ctl_op_out_name(ctl_op_t* op, const U8 idx);
 
 /// ===== operator subclasses
 // each of these structures holds the superclass and private state vairables
@@ -69,20 +69,26 @@ void op_sw_init(op_sw_t* sw);
 typedef struct op_enc_struct {
   ctl_op_t super;
   U8 pos_now, pos_old;
+  S32 val;
+  ctl_out_t outs[1];
 } op_enc_t;
 void op_enc_init(op_enc_t* sw);
 
 //--- op_add_t : addition
 typedef struct op_add_struct {
   ctl_op_t super;
-  S32 a, b;
+  S32 a, b, val;
+  U8 btrig;
+  ctl_out_t outs[1];
 } op_add_t;
 void op_add_init(op_add_t* add);
 
 //--- op_mul_t : multiplication 
 typedef struct op_mul_struct {
   ctl_op_t super;
-  S32 a, b;
+  S32 a, b, val;
+  U8 btrig;
+  ctl_out_t outs[1];
 } op_mul_t;
 void op_mul_init(op_mul_t* mul);
 

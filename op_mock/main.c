@@ -1,29 +1,16 @@
 #include <stdio.h>
 #include "compiler.h"
 #include "ctl_interface.h"
-
-static void print_ops (void) {
-  U8 i;
-  for(i=0; i<ctl_num_ops(); i++) {
-    printf("%d) %s\n", i, ctl_op_name(i));
-  }
-}
-  
-static void print_inputs(void) {
-  U8 i, j;
-  for(i=0; i<ctl_num_ins(); i++) {
-    printf("%d) %s\n", i, ctl_in_name(i));
-  } 
-}
+#include "ui.h"
 
 int main(const int argc, const char** argv) {
-  S16 sw_idx;
-  S32 sw_val;
-
-  sw_val = 1;
-
-  ctl_net_init();
-  sw_idx = ctl_add_op(eOpSwitch);
-
-  ctl_go(sw_idx, &sw_val);
+  U8 run = 1; 
+  
+  ui_init();
+  
+  while (run != 0) {
+    run = ui_loop();
+  }
+  
+  return 0;
 }

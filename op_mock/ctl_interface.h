@@ -27,7 +27,7 @@ typedef enum {
 
 typedef struct op_desc_struct {
   const char* name;
-  const U16 size;
+  const U32 size;
 } op_desc_t;
 
 //----- variables
@@ -43,22 +43,22 @@ S16 ctl_add_op(opid_t opId);
 // activate a node with some input data
 void ctl_go(U16 nodeIdx, const S32* val);
 // get current count of operators
-const U8 ctl_num_ops(void);
+U8 ctl_num_ops(void);
 // get current count of inputs
-const U8 ctl_num_ins(void);
+U8 ctl_num_ins(void);
 // get current count of outputs
-const U8 ctl_num_outs(void);
+U8 ctl_num_outs(void);
 
 // get string for operator at given idx
-const char* const ctl_op_name(const U8 idx);
+const char* ctl_op_name(const U8 idx);
 // get name for input at given idx
-const char* const ctl_in_name(const U8 idx);
+const char* ctl_in_name(const U8 idx);
 // get name for output at given idx
-const char* const ctl_out_name(const U8 idx);
+const char* ctl_out_name(const U8 idx);
 // get op index for input at given idx
-const U8 ctl_in_op_idx(const U8 idx);
+U8 ctl_in_op_idx(const U8 idx);
 // get op index for output at given idx
-const U8 ctl_out_op_idx(const U8 idx);
+U8 ctl_out_op_idx(const U8 idx);
 
 //void ctl_remove_op(const U8 idx);
 //void ctl_connect(U32 outIdx, U32 inIdx);

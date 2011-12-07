@@ -78,7 +78,7 @@ void ctl_net_init(void) {
   net.numIns = 0;
   net.numOuts = 0;
   net.opPoolOffset = 0;
-  printf("initialized network, using %d bytes\n", sizeof(ctl_net_t));
+  printf("initialized network, using %d bytes\n", (S32)sizeof(ctl_net_t));
 }
 
 // activate an input node by calling its function pointer
@@ -202,41 +202,41 @@ void ctl_connect(U32 oIdx, U32 iIdx) {
 //---- queries
 
 // get current count of operators
-const U8 ctl_num_ops(void) {
+U8 ctl_num_ops(void) {
   return net.numOps;
 }
 
 // get current count of inputs
-const U8 ctl_num_ins(void) {
+U8 ctl_num_ins(void) {
   return net.numIns;
 }
 
 // get current count of outputs
-const U8 ctl_num_outs(void) {
+U8 ctl_num_outs(void) {
   return net.numOuts;
 }
 
 // get string for operator at given idx
-const char* const ctl_op_name(const U8 idx) {
+const char* ctl_op_name(const U8 idx) {
   return net.ops[idx]->opString;
 }
 // get name for input at given idx
-const char* const ctl_in_name(const U8 idx) {
+const char* ctl_in_name(const U8 idx) {
   return ctl_op_in_name(net.ops[net.ins[idx].opIdx], net.ins[idx].inIdx);
 }
 
 // get name for output at given idx
-const char* const ctl_out_name(const U8 idx) {
+const char* ctl_out_name(const U8 idx) {
   return ctl_op_out_name(net.ops[net.outs[idx].opIdx], net.outs[idx].outIdx);
 }
 
 // get op index for input at given idx
-const U8 ctl_in_op_idx(const U8 idx) {
+U8 ctl_in_op_idx(const U8 idx) {
   return net.ins[idx].opIdx;
 }
 
 // get op index for output at given idx
-const U8 ctl_out_op_idx(const U8 idx) {
+U8 ctl_out_op_idx(const U8 idx) {
   return net.outs[idx].opIdx;
 }
 
