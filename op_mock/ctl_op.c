@@ -68,7 +68,7 @@ static const char* op_sw_outstring = "VALUE  ";
 static const char* op_sw_opstring = "SWITCH";
 
 static void op_sw_in_val(op_sw_t* sw, const S32* v) {
-  printf("switch at %d received value %d\n", (int)sw, *v);
+  printf("switch at %d received VALUE %d\n", (int)sw, *v);
   if(sw->tog) {
     if (v == 0) {
       return;
@@ -78,9 +78,9 @@ static void op_sw_in_val(op_sw_t* sw, const S32* v) {
   } else {
     sw->val = (v != 0);
   }
-  if (sw->outs[0] >= 0) {
+  //if (sw->outs[0] >= 0) {
     ctl_go(sw->outs[0], &(sw->val));
-  }
+  //}
 }
 
 static void op_sw_in_tog(op_sw_t* sw, const S32* v) {
@@ -112,6 +112,7 @@ static const char* op_enc_opstring = "ENCODER";
 static const int enc_map[4][4] = { {0,1,-1,0}, {-1,0,0,1}, {1,0,0,-1}, {0,-1,1,0} };
 
 static void op_enc_in_pin1(op_enc_t* enc, const S32* v) {
+  printf("enc at %d received PIN1 %d\n", (int)enc, *v);
   enc->pos_now = ((enc->pos_now) & 1) | ((U32)*v & 1) ;
   if (enc->pos_now != enc->pos_old) {
     enc->val = enc_map[enc->pos_old][enc->pos_now];
@@ -121,6 +122,7 @@ static void op_enc_in_pin1(op_enc_t* enc, const S32* v) {
 }
 
 static void op_enc_in_pin2(op_enc_t* enc, const S32* v) {
+  printf("enc at %d received PIN2 %d\n", (int)enc, *v);
   enc->pos_now = ((enc->pos_now) & 2) | (((U32)*v & 1) << 1) ;
   if (enc->pos_now != enc->pos_old) {
     enc->val = enc_map[enc->pos_old][enc->pos_now];
@@ -153,12 +155,14 @@ static const char* op_add_outstring = "SUM     ";
 static const char* op_add_opstring = "ADDER";
 
 static void op_add_in_a(op_add_t* add, const S32* v) {
+  printf("add at %d received A %d\n", (int)add, *v);
   add->a = *v;
   add->val = add->a + add->b;
   ctl_go(add->outs[0], &(add->val));
 }
 
 static void op_add_in_b(op_add_t* add, const S32* v) {
+  printf("add at %d received B %d\n", (int)add, *v);
   add->b = *v;
   add->val = add->a + add->b;
   if(add->btrig) {
@@ -167,6 +171,7 @@ static void op_add_in_b(op_add_t* add, const S32* v) {
 }
 
 static void op_add_in_btrig(op_add_t* add, const S32* v) {
+  printf("add at %d received BTRIG %d\n", (int)add, *v);
   add->btrig = (v != 0);
 }
 
@@ -196,12 +201,14 @@ static const char* op_mul_outstring = "PRODUCT ";
 static const char* op_mul_opstring = "MULTIPLIER";
 
 static void op_mul_in_a(op_mul_t* mul, const S32* v) {
+  printf("mul at %d received A %d\n", (int)mul, *v);
   mul->a = *v;
   mul->val = mul->a * mul->b;
   ctl_go(mul->outs[0], &(mul->val));
 }
 
 static void op_mul_in_b(op_mul_t* mul, const S32* v) {
+  printf("mul at %d received B %d\n", (int)mul, *v);
   mul->b = *v;
   mul->val = mul->a * mul->b;
   if(mul->btrig) {
@@ -210,6 +217,7 @@ static void op_mul_in_b(op_mul_t* mul, const S32* v) {
 }
 
 static void op_mul_in_btrig(op_mul_t* mul, const S32* v) {
+  printf("mul at %d received BTRIG %d\n", (int)mul, *v);
   mul->btrig = (v != 0);
 }
 
@@ -238,6 +246,7 @@ static const char* op_gate_outstring = "GATED   ";
 static const char* op_gate_opstring = "GATE";
 
 static void op_gate_in_value(op_gate_t* gate, const S32* v) {
+  printf("gate at %d received VALUE %d\n", (int)gate, *v);
   gate->val = *v;
   if(gate->gate) {
     ctl_go(gate->outs[0], &(gate->val));
@@ -245,6 +254,7 @@ static void op_gate_in_value(op_gate_t* gate, const S32* v) {
 }
 
 static void op_gate_in_gate(op_gate_t* gate, const S32* v) {
+  printf("gate at %d received GATE %d\n", (int)gate, *v);
   gate->val = (*v != 0);
   if (gate->val) {
     if (gate->store) {
@@ -254,6 +264,7 @@ static void op_gate_in_gate(op_gate_t* gate, const S32* v) {
 }
 
 static void op_gate_in_store(op_gate_t* gate, const S32* v) {
+  printf("gate at %d received STORE %d\n", (int)gate, *v);
   gate->store = (*v != 0);
 }
 
@@ -305,26 +316,31 @@ static void op_accum_boundscheck(op_accum_t* accum) {
 }
 
 static void op_accum_in_value(op_accum_t* accum, const S32* v) {
+  printf("accum at %d received VALUE %d\n", (int)accum, *v);
   accum->val = *v;
   op_accum_boundscheck(accum);
   ctl_go(accum->outs[0], &(accum->val));
 }
 
 static void op_accum_in_count(op_accum_t* accum, const S32* v) {
+  printf("accum at %d received COUNT %d\n", (int)accum, *v);
   accum->val += *v;
   op_accum_boundscheck(accum);
   ctl_go(accum->outs[0], &(accum->val));
 }
 
 static void op_accum_in_min(op_accum_t* accum, const S32* v) {
+  printf("accum at %d received MIN %d\n", (int)accum, *v);
   accum->min = *v;
 }
 
 static void op_accum_in_max(op_accum_t* accum, const S32* v) {
+  printf("accum at %d received MAX %d\n", (int)accum, *v);
   accum->max = *v;
 }
 
 static void op_accum_in_carry(op_accum_t* accum, const S32* v) {
+  printf("accum at %d received CARRY %d\n", (int)accum, *v);
   accum->carry = (v != 0);
 }
 
@@ -340,6 +356,7 @@ void op_accum_init(op_accum_t* accum) {
   accum->super.numInputs = 5;
   accum->super.numOutputs = 2;
   accum->outs[0] = -1;
+  accum->outs[1] = -1;
   accum->super.in = op_accum_inputs;
   accum->super.out = accum->outs;
   accum->super.opString = op_accum_opstring;

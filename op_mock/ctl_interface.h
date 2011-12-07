@@ -40,8 +40,8 @@ extern op_desc_t op_registry[numOpClasses];
 void ctl_net_init(void);
 // create a new operator given class ID, return index (-1 == fail)
 S16 ctl_add_op(opid_t opId);
-// activate a node with some input data
-void ctl_go(U16 nodeIdx, const S32* val);
+// activate an input node with some input data
+void ctl_go(S16 inIdx, const S32* val);
 // get current count of operators
 U8 ctl_num_ops(void);
 // get current count of inputs

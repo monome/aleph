@@ -82,8 +82,10 @@ void ctl_net_init(void) {
 }
 
 // activate an input node by calling its function pointer
-void ctl_go(U16 inIdx, const S32* val) {
-  (*(net.ins[inIdx].in))(net.ops[net.ins[inIdx].opIdx], val);
+void ctl_go(S16 inIdx, const S32* val) {
+  if(inIdx >= 0) {
+    (*(net.ins[inIdx].in))(net.ops[net.ins[inIdx].opIdx], val);
+  }
 }
 
 // attempt to allocate a new operator from the pool, return index
