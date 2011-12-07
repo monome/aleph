@@ -22,7 +22,7 @@
 //============= data types
 
 // ------ node types
-// in: p to operator, p to input function
+// in
 typedef struct ctl_inode_struct { 
   ctl_in_t in; // function pointer
   S32 val; // value for scene management
@@ -31,7 +31,7 @@ typedef struct ctl_inode_struct {
   U8 scene; // flag if included in scene
 } ctl_inode_t;
 
-// out: p to op, idx in op's output array
+// out
 typedef struct ctl_onode_struct { 
   U8 opIdx;   // index of parent op in oplist
   U8 outIdx;  // index of this output in parent op's outlist
@@ -111,19 +111,19 @@ S16 ctl_add_op(opid_t opId) {
     op_sw_init((void*) op);
     break;
   case eOpEnc:
-    return -1;
+    op_enc_init((void*)op);
     break;
-  case eOpAdd:
-    return -1;
+    case eOpAdd:
+      op_add_init((void*)op);
     break;
-  case eOpMul:
-    return -1;
-    break;
-  case eOpAccum:
-    return -1;
-    break;
-  case eOpGate:
-    return -1;
+    case eOpMul:
+      op_mul_init((void*)op);
+      break;
+    case eOpGate:
+      op_gate_init((void*)op);
+      break;
+    case eOpAccum:
+      op_accum_init((void*)op);
     break;
   case eOpSelect:
     return -1;

@@ -60,8 +60,10 @@ U8 ctl_in_op_idx(const U8 idx);
 // get op index for output at given idx
 U8 ctl_out_op_idx(const U8 idx);
 
+
+void ctl_connect(U32 outIdx, U32 inIdx);
+
 //void ctl_remove_op(const U8 idx);
-//void ctl_connect(U32 outIdx, U32 inIdx);
 //void ctl_disconnect(U32 outIdx, U32 inIdx);
 
 #endif // header guard

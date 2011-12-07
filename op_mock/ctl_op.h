@@ -96,14 +96,18 @@ void op_mul_init(op_mul_t* mul);
 typedef struct op_gate_struct {
   ctl_op_t super;
   S32 val;
-  U32 gate;
+  U8 gate;
+  U8 store;
+  ctl_out_t outs[1];
 } op_gate_t;
 void op_gate_init(op_gate_t* gate);
 
 //--- op_accum_t : accumulator
 typedef struct op_accum_struct {
   ctl_op_t super;
-  S32 val, min, max, step;
+  S32 val, min, max;
+  U8 carry;
+  ctl_out_t outs[2];
 } op_accum_t;
 void op_accum_init(op_accum_t* accum);
 
@@ -113,7 +117,6 @@ typedef struct op_sel_struct {
   S32 min, max;
 } op_sel_t;
 void op_sel_init(op_sel_t* sel);
-
 
 //--- op_lin_t : linear map
 typedef struct op_lin_struct {

@@ -33,19 +33,35 @@ op_desc_t op_registry[numOpClasses] = {
 static const U8 inStringChars = 8;
 static const U8 outStringChars = 8;
 
-//=====================================
+//===============================================
 //===  base class definitions
 const char* ctl_op_in_name(ctl_op_t* op, const U8 idx) {
-  return (op->inString + (inStringChars * idx));
+  static char str[64];
+  U8 i;
+  // str = (op->inString + (inStringChars * idx));
+  for(i=0; i<inStringChars; i++) {
+    str[i] = *(op->inString + (inStringChars * idx) + i);
+  }
+  str[inStringChars] = '\0';
+  return str;
 }
 
 const char* ctl_op_out_name(ctl_op_t* op, const U8 idx) {
-  return (op->outString + (outStringChars * idx));
+  static char str[64];
+  U8 i;
+//  str = (op->outString + (outStringChars * idx));
+  
+  for(i=0; i<outStringChars; i++) {
+    str[i] = *(op->outString + (outStringChars * idx) + i);
+  }
+  str[outStringChars] = '\0';
+  return str;
 }
 
-//===========================
+//============================================
 //=== subclass definitions
 
+//-------------------------------------------------
 //----- switch
 static const char* op_sw_instring = "VALUE   TOGGLE  ";
 static const char* op_sw_outstring = "VALUE  ";
@@ -83,9 +99,12 @@ void op_sw_init(op_sw_t* sw) {
   sw->super.in = op_sw_inputs;
   sw->super.out = sw->outs;
   sw->super.opString = op_sw_opstring;
+  sw->super.inString = op_sw_instring;
+  sw->super.outString = op_sw_outstring;
   sw->super.size = sizeof(op_sw_t);
 }
 
+//-------------------------------------------------
 //----- encoder
 static const char* op_enc_instring = "PIN1    PIN2    ";
 static const char* op_enc_outstring = "DIRECTION";
@@ -122,12 +141,15 @@ void op_enc_init(op_enc_t* enc) {
   enc->super.in = op_enc_inputs;
   enc->super.out = enc->outs;
   enc->super.opString = op_enc_opstring;
+  enc->super.inString = op_enc_instring;
+  enc->super.outString = op_enc_outstring;
   enc->super.size = sizeof(op_enc_t);
 }
 
+//-------------------------------------------------
 //---- adder
 static const char* op_add_instring = "A       B       B_TRIG  ";
-static const char* op_add_outstring = "SUM";
+static const char* op_add_outstring = "SUM     ";
 static const char* op_add_opstring = "ADDER";
 
 static void op_add_in_a(op_add_t* add, const S32* v) {
@@ -162,22 +184,25 @@ void op_add_init(op_add_t* add) {
   add->super.in = op_add_inputs;
   add->super.out = add->outs;
   add->super.opString = op_add_opstring;
+  add->super.inString = op_add_instring;
+  add->super.outString = op_add_outstring;
   add->super.size = sizeof(op_add_t);
 }
 
+//-------------------------------------------------
 //----- multiplier
 static const char* op_mul_instring = "A       B       B_TRIG  ";
-static const char* op_mul_outstring = "SUM";
-static const char* op_mul_opstring = "ADDER";
+static const char* op_mul_outstring = "PRODUCT ";
+static const char* op_mul_opstring = "MULTIPLIER";
 
 static void op_mul_in_a(op_mul_t* mul, const S32* v) {
-  mul->a = v;
+  mul->a = *v;
   mul->val = mul->a * mul->b;
   ctl_go(mul->outs[0], &(mul->val));
 }
 
 static void op_mul_in_b(op_mul_t* mul, const S32* v) {
-  mul->b = v;
+  mul->b = *v;
   mul->val = mul->a * mul->b;
   if(mul->btrig) {
     ctl_go(mul->outs[0], &(mul->val));
@@ -188,31 +213,153 @@ static void op_mul_in_btrig(op_mul_t* mul, const S32* v) {
   mul->btrig = (v != 0);
 }
 
-
 static ctl_in_t op_mul_inputs[3] = {
   (ctl_in_t)&op_mul_in_a,
   (ctl_in_t)&op_mul_in_b, 
   (ctl_in_t)&op_mul_in_btrig
 };
 
-
 void op_mul_init(op_mul_t* mul) {
+  mul->super.numInputs = 3;
+  mul->super.numOutputs = 1;
+  mul->outs[0] = -1;
+  mul->super.in = op_mul_inputs;
+  mul->super.out = mul->outs;
+  mul->super.opString = op_mul_opstring;
+  mul->super.inString = op_mul_instring;
+  mul->super.outString = op_mul_outstring;
+  mul->super.size = sizeof(op_mul_t);
 }
 
+//-------------------------------------------------
 //----- gate
-void op_gate_init(op_gate_t* gate);
+static const char* op_gate_instring = "VALUE   GATE    STORE   ";
+static const char* op_gate_outstring = "GATED   ";
+static const char* op_gate_opstring = "GATE";
 
+static void op_gate_in_value(op_gate_t* gate, const S32* v) {
+  gate->val = *v;
+  if(gate->gate) {
+    ctl_go(gate->outs[0], &(gate->val));
+  }
+}
+
+static void op_gate_in_gate(op_gate_t* gate, const S32* v) {
+  gate->val = (*v != 0);
+  if (gate->val) {
+    if (gate->store) {
+      ctl_go(gate->outs[0], &(gate->val));
+    }
+  }
+}
+
+static void op_gate_in_store(op_gate_t* gate, const S32* v) {
+  gate->store = (*v != 0);
+}
+
+static ctl_in_t op_gate_inputs[3] = {
+  (ctl_in_t)&op_gate_in_value,
+  (ctl_in_t)&op_gate_in_gate, 
+  (ctl_in_t)&op_gate_in_store
+};
+
+void op_gate_init(op_gate_t* gate) {
+  gate->super.numInputs = 3;
+  gate->super.numOutputs = 1;
+  gate->outs[0] = -1;
+  gate->super.in = op_gate_inputs;
+  gate->super.out = gate->outs;
+  gate->super.opString = op_gate_opstring;
+  gate->super.inString = op_gate_instring;
+  gate->super.outString = op_gate_outstring;
+  gate->super.size = sizeof(op_gate_t);
+}
+
+//-------------------------------------------------
 //------ accumulator
-void op_accum_init(op_accum_t* accum);
+static const char* op_accum_instring = "VALUE   COUNT   MIN     MAX     CARRY   ";
+static const char* op_accum_outstring = "VALUE   CARRY";
+static const char* op_accum_opstring = "ACCUMULATOR";
 
+static void op_accum_boundscheck(op_accum_t* accum) {
+  if(accum->val > accum->max) {
+    if(accum->carry) {
+      while(accum->val > accum->max) {
+        accum->val -= (accum->max > 0 ? accum->max : accum->max * -1);
+      }
+      ctl_go(accum->outs[1], &(accum->val)); // carry output with wrapped value
+    } else {
+      accum->val = accum->max;
+    }
+  }
+  if(accum->val < accum->min) {
+    if(accum->carry) {
+      while(accum->val < accum->min) {
+        accum->val += (accum->min > 0 ? accum->min : accum->min * -1);
+      }
+      ctl_go(accum->outs[1], &(accum->val)); // carry output with wrapped value
+    } else {
+      accum->val = accum->min;
+    }
+  }  
+}
+
+static void op_accum_in_value(op_accum_t* accum, const S32* v) {
+  accum->val = *v;
+  op_accum_boundscheck(accum);
+  ctl_go(accum->outs[0], &(accum->val));
+}
+
+static void op_accum_in_count(op_accum_t* accum, const S32* v) {
+  accum->val += *v;
+  op_accum_boundscheck(accum);
+  ctl_go(accum->outs[0], &(accum->val));
+}
+
+static void op_accum_in_min(op_accum_t* accum, const S32* v) {
+  accum->min = *v;
+}
+
+static void op_accum_in_max(op_accum_t* accum, const S32* v) {
+  accum->max = *v;
+}
+
+static void op_accum_in_carry(op_accum_t* accum, const S32* v) {
+  accum->carry = (v != 0);
+}
+
+static ctl_in_t op_accum_inputs[5] = {
+(ctl_in_t)&op_accum_in_value,
+(ctl_in_t)&op_accum_in_count,
+(ctl_in_t)&op_accum_in_min, 
+(ctl_in_t)&op_accum_in_max,
+(ctl_in_t)&op_accum_in_carry
+};
+
+void op_accum_init(op_accum_t* accum) {
+  accum->super.numInputs = 5;
+  accum->super.numOutputs = 2;
+  accum->outs[0] = -1;
+  accum->super.in = op_accum_inputs;
+  accum->super.out = accum->outs;
+  accum->super.opString = op_accum_opstring;
+  accum->super.inString = op_accum_instring;
+  accum->super.outString = op_accum_outstring;
+  accum->super.size = sizeof(op_accum_t);
+}
+
+//-------------------------------------------------
 //------ range selector
 void op_sel_init(op_sel_t* sel);
 
+//-------------------------------------------------
 //----- linear map
 void op_lin_init(op_lin_t* lin);
 
+//-------------------------------------------------
 //---- param value receiver
 void op_param_init(op_param_t* param);
 
+//-------------------------------------------------
 //----- preset manipulator
 void op_preset_init(op_preset_t* preset);

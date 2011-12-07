@@ -6,6 +6,7 @@
 int main(const int argc, const char** argv) {
   U8 run = 1; 
   
+  ctl_net_init();
   ui_init();
   
   while (run != 0) {
