@@ -28,6 +28,7 @@ ie:
 key/1/tmode		  0
 key/1/tstate	  0
 key/1/val+		/44
+	  /dsp/feedback
 key/2/tmode		  0
 key/2/tstate	  0
 (a) (b) (c) (d)
@@ -94,6 +95,12 @@ perhaps the outputs should look like this:
 /44  ../accum/out+
 /2   ../1/val+
 
+accum/1/
+accum1
+accum[1]
+
+key/1
+
 where the names are concatenated to fit?
 
 
@@ -119,7 +126,7 @@ bits
 
 perhaps we shouldn't have headings, as we probably know what we're doing by this point. learning curve.
 
-a list, for scrolling and selection. basically a huge parameter list, same as the normal param list. perhaps instead it should be hierarchical for selection. start at the root, < > to navigate until you hit a final param. 
+a list, for scrolling and selection. basically a huge parameter list, same as the normal param listt but with outputs filtered ou. perhaps instead it should be hierarchical for selection. start at the root, < > to navigate until you hit a final param. 
 
 left encoders = top scroll section, bottom scroll individually
 
@@ -152,8 +159,8 @@ scroll list.
 /min
 /max
 /modulus
-/output+
-/carry+
+
+
 ----------------------
 
 making stuff up, above.
