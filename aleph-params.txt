@@ -1,7 +1,9 @@
 aleph param tree
 
-/i is interpolation, which is really only relevant to /dsp and /analog as i haven't come up with reasons for scheduler-level control interpolation?
+/i is interpolation.
+dsp defines /i as separate params where needed.
 
+should the routing scheme for the analog matrix always be stereo, or should we be able to decouple the two channels? decoupling might get super complicated? tons of params.
 
 /dsp/
 

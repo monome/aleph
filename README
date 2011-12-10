@@ -1,35 +1,60 @@
-::::: general
-..... interface design
-..... hardware design
-..... use cases
-..... example blackfin patches
-
-::::: avr32
-..... parameter engine
-..... usb device: mass storage
-..... usb device: virtual serial
-..... usb bootloader
-..... usb host: hid midi
-..... usb host: monome (ftdi)
+aleph todo.
 
 
-::::: blackfin
-..... dynamic patch loading using UART, safe bootloader
+bone
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+x-compiler
+kernel updates? how?
+user program (engine) updates? how?
+virtual serial to ethernet? how does it work?
+spi
+display library
+
+device driver model for i/o, spi, etc
+usb host: hid midi
+usb host: monome (ftdi)
 
 
-::::: shared avr32/blackfin
-..... SPI communication
-..... FAT
-..... benchmarking
-..... display library
+fin
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+dynamic patch loading using UART, safe bootloader
+more patches, to test the system: fft, granulator
 
 
-::::: analog
-..... design and prototype
-..... matrix spec
+shared bone/fin
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+spi protocol - floats? allowance for non-param data?
+benchmarking
 
 
-::::: hardware
-..... battery prototypes
-..... initial protoboard: avr32, screen, keypads, encoders, aux-in,
-		usb-device, power/battery, pinouts to blackfin
+engine/ui
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+parameter engine
+param navigation
+play modes
+visualization plugin
+operator deletion
+
+refine interface design
+
+
+analog
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+input switching inst/line
+matrix proto
+filter/shaper/noise protos, layout and mechanical size constraints
+
+
+hardware
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+battery prototypes
+power jack
+aux input proto
+
+refine mechanical layout, identify mechanical constaints
+
+general
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+nomenclature: preset vs. pset, series, op, output/input, network
+use cases
+spec apps: mlr, etc
