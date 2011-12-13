@@ -1,18 +1,21 @@
 #include <stdio.h>
+#include "compiler.h"
 #include "ctl_interface.h"
+#include "ui.h"
 
 static void printInputs(void) {
   //  ctl_op_name
 }
 
 int main(const int argc, const char** argv) {
-  S16 sw_idx;
-  S32 sw_val;
-
-  sw_val = 1;
-
+  U8 run = 1; 
+  
   ctl_net_init();
-  sw_idx = ctl_add_op(eOpSwitch);
-
-  ctl_go(sw_idx, &sw_val);
+  ui_init();
+  
+  while (run != 0) {
+    run = ui_loop();
+  }
+  
+  return 0;
 }
