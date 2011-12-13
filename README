@@ -1,27 +1,60 @@
-..... avr32 freertos. serial/spi start
+aleph todo.
 
-..... cpu benchmarking
 
-..... inter-chip protocol
-..... avr encoder/switch code cleanup
-..... bf remote param changes
+bone
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+x-compiler
+kernel updates? how?
+user program (engine) updates? how?
+virtual serial to ethernet? how does it work?
+spi
+display library
 
-..... display
-..... user interface design
+device driver model for i/o, spi, etc
+usb host: hid midi
+usb host: monome (ftdi)
 
-..... SDRAM
-..... patch flash storage
-..... dynamic patch loading using UART, safe bootloader
 
-..... analog design
-..... analog matrix spec
+fin
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+dynamic patch loading using UART, safe bootloader
+more patches, to test the system: fft, granulator
 
-..... network avr, OSC server/client
-..... patch uploading via network
 
-..... usb
+shared bone/fin
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+spi protocol - floats? allowance for non-param data?
+benchmarking
 
-..... hid
-..... osc 
 
-///// interface
+engine/ui
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+parameter engine
+param navigation
+play modes
+visualization plugin
+operator deletion
+
+refine interface design
+
+
+analog
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+input switching inst/line
+matrix proto
+filter/shaper/noise protos, layout and mechanical size constraints
+
+
+hardware
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+battery prototypes
+power jack
+aux input proto
+
+refine mechanical layout, identify mechanical constaints
+
+general
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+nomenclature: preset vs. pset, series, op, output/input, network
+use cases
+spec apps: mlr, etc
