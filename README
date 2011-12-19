@@ -51,10 +51,11 @@ battery prototypes
 power jack
 aux input proto
 
-refine mechanical layout, identify mechanical constaints
+refine mechanical layout, identify mechanical constraints
+
 
 general
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-nomenclature: preset vs. pset, series, op, output/input, network
+nomenclature: preset vs. pset, series, op, output/input, network, vis plug
 use cases
 spec apps: mlr, etc
