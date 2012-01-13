@@ -12,6 +12,14 @@ http://kottke.org/plus/type/silkscreen/
 ------------------------------------------------------------------------------------
 
 
+a note about PLAY mode:
+
+PLAY screen is conditionally/dynamically controlled by any op. which op is updates
+the screen is simply another parameter. one idea for how this would work is for the
+"screen" itself to have an output which sends a "frame request" by definition to
+only one op.
+
+
 
 play < > root < > patch / param / preset / setup
 

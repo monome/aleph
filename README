@@ -32,7 +32,7 @@ engine/ui
 parameter engine
 param navigation
 play modes
-visualization plugin
+screen control method via ops (play mode)
 operator deletion
 
 refine interface design
@@ -56,6 +56,6 @@ refine mechanical layout, identify mechanical constraints
 
 general
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-nomenclature: preset vs. pset, series, op, output/input, network, vis plug
+nomenclature: preset vs. pset, series, op, output/input, network
 use cases
 spec apps: mlr, etc

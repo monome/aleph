@@ -3,9 +3,10 @@ aleph/one analog routing and subsystem
 all paths are stereo
 
 
->> input
+>> input w/ bypass
 
-in 1/2 (jack) ---- dsp-in 1/2
+in 1/2 (jack) ---- (bypass off) ---- dsp-in 1/2
+in 1/2 (jack) ---- (bypass on) ---- out 1/2 (jack)
 
 
 >> matrix
