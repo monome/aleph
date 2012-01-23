@@ -1,0 +1,45 @@
+rear unit elements
+
+notes: dc/power on right. audio on left.
+usb client ~ 12mm
+usb host ~ 15mm
+dc ~ 9mm
+
+headphone jack
+in1 jack
+in1 inst/line switch
+in2 jack
+in2 inst/line switch
+out1 jack
+out2 jack
+aux 1/2/3/4 jacks
+usb device (connect to computer)
+usb host (connect to monome/midi/etc)
+dc in
+power switch
+
+
+top unit elements
+
+notes: possible single led meters for in/out levels?
+
+headphone pot
+in1 pot
+in2 pot
+output pot (stereo)
+
+screen
+4x enc
+4x switch
+2x switch
+
+
+
+possible parts
+
+audio pots: bourns prs11s (11mm smd audio pot)
+mono single 1/4" jack: neutrik NJR4HH (15.7mm wide, 12.7mm high, 24.3mm deep)
+mono double 1/4" jack: neutrik NSJ8HC (17mm wide, 29mm high, 24.3 deep)
+switches:
+EG2449-ND
+CKN5007-ND 6.6mm wide

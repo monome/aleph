@@ -1,5 +1,18 @@
 aleph todo.
 
+discussions for sf
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+signal levels? centered at 0 or 2.5v?
+THAT 2162 
+balanced vs unbalanced
+buffers
+gates vs switches
+audio pots http://tangentsoft.net/audio/atten.html
+led vu
+
+
+general http://tangentsoft.net/audio/atten.html
+
 
 bone
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -53,9 +66,12 @@ aux input proto
 
 refine mechanical layout, identify mechanical constraints
 
+schematic breakdown, part lists
 
 general
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 nomenclature: preset vs. pset, series, op, output/input, network
 use cases
 spec apps: mlr, etc
+
+cost analysis and projections
