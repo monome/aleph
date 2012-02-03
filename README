@@ -2,16 +2,13 @@ aleph todo.
 
 discussions for sf
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-signal levels? centered at 0 or 2.5v?
 THAT 2162 
 balanced vs unbalanced
-buffers
-gates vs switches
 audio pots http://tangentsoft.net/audio/atten.html
 led vu
 
 
-general http://tangentsoft.net/audio/atten.html
+general http://tangentsoft.net/audio/
 
 
 bone
@@ -74,4 +71,6 @@ nomenclature: preset vs. pset, series, op, output/input, network
 use cases
 spec apps: mlr, etc
 
-cost analysis and projections
+cost analysis
+development and production analysis
+description, abstract, functional uses
