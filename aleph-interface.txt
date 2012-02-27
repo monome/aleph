@@ -20,7 +20,6 @@ the screen is simply another parameter. one idea for how this would work is for 
 only one op.
 
 
-
 play < > root < > patch / param / preset / setup
 
 

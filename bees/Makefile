@@ -1,4 +1,4 @@
-OBJ = ctl_op.o ctl_net.o main.o ui.o
+OBJ = op.o ctlnet.o main.o ui.o
 
 CC = gcc
 CFLAGS = -g -c

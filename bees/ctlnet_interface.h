@@ -9,6 +9,11 @@
 
 #include "compiler.h"
 
+// maximum allocated IO points and operators
+#define CTLNET_INS_MAX 128
+#define CTLNET_OUTS_MAX 128
+#define CTLNET_OPS_MAX 128
+
 //---- types
 
 typedef enum {
@@ -37,33 +42,40 @@ extern op_desc_t op_registry[numOpClasses];
 //---- public functions
 
 // initialize the network 
-void ctl_net_init(void);
+void net_init(void);
 // create a new operator given class ID, return index (-1 == fail)
-S16 ctl_add_op(opid_t opId);
+S16 net_add_op(opid_t opId);
+// remove the last created operator
+S16 net_pop_op(void);
+// remove an arbitrary operator
+// TODO
+// void remove_op(const U8 idx);
 // activate an input node with some input data
-void ctl_go(S16 inIdx, const S32* val);
+void net_activate(S16 inIdx, const S32* val);
 // get current count of operators
-U8 ctl_num_ops(void);
+U8 net_num_ops(void);
 // get current count of inputs
-U8 ctl_num_ins(void);
+U8 net_num_ins(void);
 // get current count of outputs
-U8 ctl_num_outs(void);
-
+U8 net_num_outs(void);
 // get string for operator at given idx
-const char* ctl_op_name(const U8 idx);
+const char* net_op_name(const U8 idx);
 // get name for input at given idx
-const char* ctl_in_name(const U8 idx);
+const char* net_in_name(const U8 idx);
 // get name for output at given idx
-const char* ctl_out_name(const U8 idx);
+const char* net_out_name(const U8 idx);
 // get op index for input at given idx
-U8 ctl_in_op_idx(const U8 idx);
+U8 net_in_op_idx(const U8 idx);
 // get op index for output at given idx
-U8 ctl_out_op_idx(const U8 idx);
+U8 net_out_op_idx(const U8 idx);
 
+// connect a given output and input idx pair
+void net_connect(U32 outIdx, U32 inIdx);
+// disconnect a given output
+void net_disconnect(U32 outIdx);
 
-void ctl_connect(U32 outIdx, U32 inIdx);
-
-//void ctl_remove_op(const U8 idx);
-//void ctl_disconnect(U32 outIdx, U32 inIdx);
+// populate an array with indices of all connected outputs for a given index
+// returns count of connections
+U32 net_gather(U32 iIdx, U32(*outs)[CTLNET_OUTS_MAX]);
 
 #endif // header guard
