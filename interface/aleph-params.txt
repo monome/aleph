@@ -1,0 +1,159 @@
+aleph param tree
+
+/i is interpolation.
+dsp defines /i as separate params where needed.
+
+should the routing scheme for the analog matrix always be stereo, or should we be able to decouple the two channels? decoupling might get super complicated? tons of params.
+
+/dsp/
+
+(autofilled on patch launch)
+
+/analog/
+	/bypass
+	/output12/
+		/mix
+			/i
+	/filter1/
+		/cutoff
+			/i
+		/res
+			/i
+		/gain
+			/i
+		/mode
+		/vca
+			/i
+		/route/
+			/dspin34
+			/filter2
+			/shaper
+			/noise
+		/mix
+			/i
+	/filter2/
+		/cutoff
+			/i
+		/res
+			/i
+		/gain
+			/i
+		/mode
+		/vca
+			/i
+		/route/
+			/dspin34
+			/filter1
+			/shaper
+			/noise
+		/mix
+			/i
+	/shaper/
+		/bias
+			/i
+		/gain
+			/i
+		/vca
+			/i
+		/route/
+			/dspin34
+			/filter1
+			/filter2
+			/noise
+		/mix
+			/i
+	/noise/
+		/bias
+			/i
+		/vca
+			/i
+		/route/
+			/dspin34
+			/filter1
+			/filter2
+			/shaper
+		/mix
+			/i
+
+/preset (maybe should call this /pset for "param set")
+	/includepatch
+	/autorecallnext
+	/nextpre
+	/delaybeforenext
+	/recall
+		/next
+		/previous
+		/back
+		/forward
+	/store
+	
+/control (i guess keys/encs/etc get numbered?)
+	/key/
+		/togglemode
+		/state
+		/on/
+			/val
+			/output
+		/off/
+			/val
+			/output
+	/enc/
+		/delta/
+			/output
+		/val
+		/sensitivity
+		/step
+		/accel
+		/output
+	/aux/
+		/mode
+		/expr/
+			/min		// could use operator instead of min/max
+			/max
+			/output
+		/switch/
+			/togglemode
+			/state
+			/on/
+				/val
+				/output
+			/off/
+				/val
+				/output
+
+/operator/
+	/rand/
+		/trig		// better name? /go /execute /trigger /start /call /input
+		/min
+		/max
+		/step
+		/output
+	/accum
+		/val
+		/operand
+		/min
+			/output		// send /output when /val equals /min
+		/max
+			/output		// could be called /event ?
+		/modulus
+		/output
+	/maplin
+		/in/
+			/high
+			/low
+		/out
+			/high
+			/low
+		/output
+	/mapexp
+		/in/
+			/high
+			/low
+		/out
+			/high
+			/low
+		/output
+	/delay
+		/input
+		/time
+		/output

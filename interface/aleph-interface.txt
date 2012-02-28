@@ -1,0 +1,323 @@
+interface design specification
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+
+http://new.myfonts.com/fonts/minifonts/mini7/mini-7/
+http://new.myfonts.com/fonts/minifonts/mini7/mini-7-condensed/
+http://kottke.org/plus/type/silkscreen/
+
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+
+
+a note about PLAY mode:
+
+PLAY screen is conditionally/dynamically controlled by any op. which op is updates
+the screen is simply another parameter. one idea for how this would work is for the
+"screen" itself to have an output which sends a "frame request" by definition to
+only one op.
+
+
+
+play < > root < > patch / param / preset / setup
+
+
+param ------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+
+initial screen: flat list, with heading for "section" (dsp/analog/op/control/preset)
+
+ie:
+
+----------------------
+/control/
+key/1/tmode		  0
+key/1/tstate	  0
+key/1/val+		/44
+	  /dsp/feedback
+key/2/tmode		  0
+key/2/tstate	  0
+(a) (b) (c) (d)
+----------------------
+
+parameter names on left. corresponding values on right, right aligned.
+
+bottom key links inverted for clear division.
+
+top line is the section, stays put while scrolling 5 lines of list below. section changes as user scrolls into new section. 
+
+a static, faint highlight stays on line 3. this is the focussed edit point.
+
+params that are included in the preset are full brightness. others are dimmer.
+
+params with a trailing + are an output. the value shown to the right is the output node id. node ids need some sort of textual distinction, like a leading front slash.
+
+left encoders map to navigation/scrolling. top moves sections. bottom moves single lines.
+
+right encoders edit in-place. top is fast, bottom is slow.
+
+
+behavior when INPUT field is selected ----------------------------------------------
+
+a = INC, toggle parameter inclusion in preset
+b =
+c =
+d = GATHER
+
+< = back to root
+
+> = subwindow, rightwards, large full editor. param name at top, large value. abcd same. < to return to list:
+
+----------------------
+/control/key/1/tstate
+
+      ----
+     |    |
+      ----
+
+----------------------
+
+
+GATHER creates a new list, rightwards. shows all outputs that send to this value. show parameter at top, and maybe FROM or something to know what we're looking at. "outputs sending to /44 /this" or something?
+
+----------------------
+/control/key/1/tstate
+
+/op/accum/out+
+/control/key/1/val+
+
+
+----------------------
+
+scroll to move cursor
+
+a = CLR, remove this link (changes val of remote output to null)
+
+< = back to param list
+> = go to this param in the list
+
+perhaps the outputs should look like this:
+
+/44  ../accum/out+
+/2   ../1/val+
+
+accum/1/
+accum1
+accum[1]
+
+key/1
+
+where the names are concatenated to fit?
+
+
+behavior when OUTPUT field is selected ---------------------------------------------
+
+a = INC, toggle inclusion in preset
+d = FOLLOW, move cursor to list position of value of offset
+	ie, /control/key/1/val+ is set to /20 /dsp/feedback
+	pushing FOLLOW would jump list highlight/position to /dsp/feedback
+
+< = back to root
+> = SPECIFY input target, new rightward screen.
+
+----------------------
+destination for
+/control/key/1/val+
+/dsp/
+feedback
+resonance
+cutoff
+bits
+----------------------
+
+perhaps we shouldn't have headings, as we probably know what we're doing by this point. learning curve.
+
+a list, for scrolling and selection. basically a huge parameter list, same as the normal param listt but with outputs filtered ou. perhaps instead it should be hierarchical for selection. start at the root, < > to navigate until you hit a final param. 
+
+left encoders = top scroll section, bottom scroll individually
+
+> = SELECT, chooses value, returns to list
+< = cancels, returns to list
+
+a = CREATE, create op screen, rightwards
+d = CLEAR, sets output to null
+
+
+CREATE op screen:
+
+----------------------
+accum
+split
+rand
+maplin
+mapexp
+delay
+----------------------
+
+scroll list.
+
+< = back to previous screen
+> = select op, create op, rightwards screen to choose input for routing:
+
+----------------------
+/val
+/operand
+/min
+/max
+/modulus
+
+
+----------------------
+
+making stuff up, above.
+
+< = previous screen, destroy op (perhaps just delay creation)
+> = confirm destination, back to list
+
+
+
+
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+
+BELOW MAY NEED REVISION, OUTDATED
+
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+
+
+navigation
+------------------------------------------------------------------------------------
+
+screen: [root]
+display: current patch, last changed param, current preset, % batt, etc?
+ops: [patch] [param] [preset] [setup] 
+x: [play]
+notes: functions for e/y?
+
+
+screen: [play]
+display: depends on source, mode
+ops: text not displayed, but keys toggle source: meters, preset, param, dsp
+	pushing key again after selected, cycles through modes
+	(ie, meter mode can show both in/out, just in, just out, combined modes, etc)
+y: [root]
+
+
+screen: [patch]
+display: list
+	start with cursor on currently loaded patch.
+ops: load, delete, download
+	confirmation screens where necessary
+	download enters webserver mode
+x: [root]
+y: [patch-info]
+e: scroll list
+
+screen: [patch-info]
+display: patch name, text description
+ops: same as [patch]
+x: [patch] (back to list)
+e: scroll description text
+
+
+screen: [param]
+display: list
+	sorted according to tree
+	cursor indicator
+	highlight "included in preset" params
+	"included in preset" params listed under the /preset section
+ops: inc-pre, [param-learn]
+	maybe keys to jump up/down by section
+	param learn only when applicable
+x: [root]
+y: [param-edit]
+e: scroll list
+
+screen: [param-edit] (for numerical param)
+display: param name, big number
+ops: copy/paste? min/max? patch default?
+x: [param]
+	should x be "cancel" (revert to old val) and y be "confirm?"
+e: change value (acceleration?)
+
+screen: [param-edit] (for pattern param)
+display: param name, pattern
+ops: left, right, patch default?
+x: [param]
+e: change value (smartly traverse tree)
+
+screen: [param-learn]
+display: pattern to map, live display of input patterns to match
+ops: ?
+
+
+screen: [preset]
+display: list
+	start on last loaded preset
+ops: recall, [preset-store], [preset-delete], [preset-series]
+x: [root]
+y: [preset-detail]
+e: scroll list
+
+screen: [preset-detail]
+display: preset number, name, param list
+ops: recall, remove-param, [add-param]
+	[add-param] gives a pattern selection screen, confirm, move to [preset-detail-edit]
+x: [preset]
+y: [preset-detail-edit] (use same screen as [param-edit])
+e: scroll list
+
+screen: [preset-store]
+display: number, name entry
+ops: overwrite, insert, clear name
+	might need left/right cursor for continuity
+x: [preset]
+e: change letter
+
+screen: [preset-delete]
+choice: delete, clear
+
+screen: [preset-series]
+choice: read, write
+
+
+screen: [setup]
+display: ?
+relevant:
+	set ip
+	set OSC receive port
+	set OSC destination ip, port
+	usb util?
+	midi util?
+	fw ver, bat %, flash %
+
+
+
+
+
+////////////////////// general notes
+
+lists
+	for top/bottom, show blank space
+	cursor stay in same place? list moves?
+	
+presets
+	need new term/name instead of "preset"
+	may be useful to split preset with sub-groups. 10-02 for example.
+	perhaps preset-file (series) should be in setup if it is primarily for backup?
+	allows for next/pre, next/group etc. song structure etc.

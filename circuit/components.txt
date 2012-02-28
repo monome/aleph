@@ -1,0 +1,66 @@
+hardware
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+DC in 5x5 x 2.1 mm
+	CP-057AH-ND
+power switch (soft)
+	CKN10352-ND
+power switch cap
+	401-1195-ND 
+1/4" stereo jack
+	568-NRJ6HM1
+1/4" jack nut
+	568-NRJ-NUT-MN
+usb A
+	609-1041-ND
+usb B
+	WM17113-ND
+slide switch
+	EG2478-ND
+panasonic EVJ - audio pot
+	P2G1103-ND
+
+lipo battery
+
+
+
+
+bone
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+processor
+	AM3358
+power management
+	TPS65217B
+over-voltage
+	NCP349
+memory 256mb SDRAM
+	MT47H128M16RT-25E:C
+usb device driving
+	TPS2051
+	TPD4S012
+eeprom (needed?)
+	CAT24C256W
+microSD connector
+	SCHA5B0200
+
+
+
+fish
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+DSP
+	ADSP-BF533-600
+audio codec
+	AD1836AASZ
+512mb SDRAM
+	MT48LC32M16A2TG-75
+
+
+
+
+
+analog
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+THAT 2162 - VCA
+
+AD5318 - 8 ch 10 bit DAC
+AD5314 - 4 ch 10 bit DAC
