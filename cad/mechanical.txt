@@ -12,7 +12,6 @@ in2 jack
 in2 inst/line switch
 out1 jack
 out2 jack
-aux 1/2/3/4 jacks
 usb device (connect to computer)
 usb host (connect to monome/midi/etc)
 dc in
@@ -23,7 +22,7 @@ top unit elements
 
 notes: possible single led meters for in/out levels?
 
-headphone pot
+headphone pot (stereo)
 in1 pot
 in2 pot
 output pot (stereo)
@@ -34,12 +33,28 @@ screen
 2x switch
 
 
+front:
+
+aux 1/2/3/4 jacks
+
+
+
 
 possible parts
 
-audio pots: bourns prs11s (11mm smd audio pot)
+audio pots: bourns prs11s (11mm smd audio pot) audio version not available anywhere?
+audio pot: panasonic EVJ, need to find some short actuator length
+
 mono single 1/4" jack: neutrik NJR4HH (15.7mm wide, 12.7mm high, 24.3mm deep)
 mono double 1/4" jack: neutrik NSJ8HC (17mm wide, 29mm high, 24.3 deep)
+
 switches:
 EG2449-ND
 CKN5007-ND 6.6mm wide
+1101M2S4AQE2
+EG2478-ND
+
+power switch:
+EG1026-ND
+cap: EG1091-ND
+360-2192-ND	(expensive)

@@ -1,15 +1,15 @@
 aleph todo.
 
-discussions for sf
+random notes
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-THAT 2162 
-balanced vs unbalanced
 audio pots http://tangentsoft.net/audio/atten.html
-led vu
-
-
 general http://tangentsoft.net/audio/
 
+bf boot via spi
+
+power design
+	Switching Regulator Design Considerations for ADSP-BF533 Blackfin Processors (EE-228)
+	Estimating Power for the ADSP-BF531/BF532/BF533 Blackfin Processors (EE-229)
 
 bone
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -29,6 +29,7 @@ fin
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 dynamic patch loading using UART, safe bootloader
 more patches, to test the system: fft, granulator
+SPORT-SPI for analog section
 
 
 shared bone/fin
@@ -41,9 +42,9 @@ engine/ui
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 parameter engine
 param navigation
-play modes
 screen control method via ops (play mode)
 operator deletion
+design ops, play modes
 
 refine interface design
 
@@ -51,26 +52,45 @@ refine interface design
 analog
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 input switching inst/line
-matrix proto
-filter/shaper/noise protos, layout and mechanical size constraints
+matrix
+filter
+shaper
+noise (test for usability)
+preamps
+bypass
+LED driving
+output gain stages
+
+layout and mechanical size constraints
+
+
+circuit
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+battery (???)
+power jack
+
+layout and mechanical size constraints
+
+schematic breakdown, part lists
 
 
 hardware
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-battery prototypes
-power jack
-aux input proto
+assembly
 
-refine mechanical layout, identify mechanical constraints
 
-schematic breakdown, part lists
 
 general
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-nomenclature: preset vs. pset, series, op, output/input, network
+nomenclature
+	preset, param-set
+	series
+	op
+	output/input
+	network
+	controller, dsp
 use cases
 spec apps: mlr, etc
 
 cost analysis
-development and production analysis
 description, abstract, functional uses
