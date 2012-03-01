@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "compiler.h"
-#include "ctl_interface.h"
+#include "ctlnet_interface.h"
 #include "ui.h"
 
 //================ 
@@ -36,22 +36,22 @@ static void print_op_types(void) {
 
 static void print_ops (void) {
   U8 i;
-  for(i=0; i<ctl_num_ops(); i++) {
-    printf("%d) %s\n", i, ctl_op_name(i));
+  for(i=0; i<net_num_ops(); i++) {
+    printf("%d) %s\n", i, net_op_name(i));
   }
 }
 
 static void print_inputs(void) {
   U8 i;
-  for(i=0; i<ctl_num_ins(); i++) {
-    printf("%d) %s : %s\n", i, ctl_op_name(ctl_in_op_idx(i)), ctl_in_name(i));
+  for(i=0; i<net_num_ins(); i++) {
+    printf("%d) %s : %s\n", i, net_op_name(net_in_op_idx(i)), net_in_name(i));
   } 
 }
 
 static void print_outputs(void) {
   U8 i;
-  for(i=0; i<ctl_num_outs(); i++) {
-    printf("%d) %s : %s\n", i, ctl_op_name(ctl_out_op_idx(i)), ctl_out_name(i));
+  for(i=0; i<net_num_outs(); i++) {
+    printf("%d) %s : %s\n", i, net_op_name(net_out_op_idx(i)), net_out_name(i));
   } 
 }
 
@@ -69,7 +69,7 @@ static void create_op(void) {
   } else {
     type = (U8)atoi(str);
     if(type < numOpClasses) {
-      idx = ctl_add_op(type);
+      idx = net_add_op(type);
       if (idx >= 0) {
         printf("created a new operator of type %s at index %d\n", op_registry[type].name, idx);
       } else {
@@ -94,7 +94,7 @@ static void connect(void) {
     connect(); // recurse
   } else {
     in = (U32)atoi(str);
-    if (in < ctl_num_ins()) {
+    if (in < net_num_ins()) {
       
       printf("enter an output index, or (l) to list outputs\n");
       scanf("%s", &str);
@@ -117,16 +117,16 @@ static void connect(void) {
   dum = getchar();
 
   in = (U32)atoi(str);
-  if (in < ctl_num_ins()) {
+  if (in < net_num_ins()) {
     print_outputs();
     printf("enter an output index\n");
     scanf("%s", &str);
     dum = getchar();
     
     out = (U32)atoi(str);
-    if (out < ctl_num_outs()) {
+    if (out < net_num_outs()) {
       printf("connecting input %d to output %d\n", in, out);
-      ctl_connect(out, in);
+      net_connect(out, in);
     } else {
       printf("invalid output index\n");
     }
@@ -153,7 +153,7 @@ static void activate(void) {
   dum = getchar();
   val = (S32)atoi(str);
   
-  ctl_go(in, &val);
+  net_activate(in, &val);
   
 }
 
@@ -184,6 +184,7 @@ U8 ui_loop(void) {
         return ui_loop(); // recurse
       } 
       else if (cmd == 'a') {
+
         activate();
         return ui_loop(); // recurse
       } 

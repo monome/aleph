@@ -7,8 +7,8 @@
 #include <stdio.h>
 
 #include "compiler.h"
-#include "ctl_op.h"
-#include "ctl_interface.h"
+#include "op.h"
+#include "ctlnet_interface.h"
 
 #include <stdio.h>
 
@@ -36,8 +36,8 @@ static const U8 inStringChars = 8;
 static const U8 outStringChars = 8;
 
 //===============================================
-//===  base class definitions
-const char* ctl_op_in_name(ctl_op_t* op, const U8 idx) {
+//===  base class definittions
+const char* op_in_name(op_t* op, const U8 idx) {
   static char str[64];
   U8 i;
   // str = (op->inString + (inStringChars * idx));
@@ -48,7 +48,7 @@ const char* ctl_op_in_name(ctl_op_t* op, const U8 idx) {
   return str;
 }
 
-const char* ctl_op_out_name(ctl_op_t* op, const U8 idx) {
+const char* op_out_name(op_t* op, const U8 idx) {
   static char str[64];
   U8 i;
 //  str = (op->outString + (outStringChars * idx));
@@ -81,7 +81,7 @@ static void op_sw_in_val(op_sw_t* sw, const S32* v) {
     sw->val = (v != 0);
   }
   //if (sw->outs[0] >= 0) {
-    ctl_go(sw->outs[0], &(sw->val));
+    net_activate(sw->outs[0], &(sw->val));
   //}
 }
 
@@ -89,9 +89,9 @@ static void op_sw_in_tog(op_sw_t* sw, const S32* v) {
   sw->tog = (v != 0);
 }
 
-static ctl_in_t op_sw_inputs[2] = {
-  (ctl_in_t)&op_sw_in_val,
-  (ctl_in_t)&op_sw_in_tog 
+static op_in_t op_sw_inputs[2] = {
+  (op_in_t)&op_sw_in_val,
+  (op_in_t)&op_sw_in_tog 
 };
 
 void op_sw_init(op_sw_t* sw) {
@@ -103,7 +103,8 @@ void op_sw_init(op_sw_t* sw) {
   sw->super.opString = op_sw_opstring;
   sw->super.inString = op_sw_instring;
   sw->super.outString = op_sw_outstring;
-  sw->super.size = sizeof(op_sw_t);
+  sw->super.type = eOpSwitch;
+//  sw->super.size = sizeof(op_sw_t);
 }
 
 //-------------------------------------------------
@@ -119,7 +120,7 @@ static void op_enc_in_pin1(op_enc_t* enc, const S32* v) {
   if (enc->pos_now != enc->pos_old) {
     enc->val = enc_map[enc->pos_old][enc->pos_now];
     enc->pos_old = enc->pos_now;
-    ctl_go(enc->outs[0], &(enc->val));
+    net_activate(enc->outs[0], &(enc->val));
   }
 }
 
@@ -129,13 +130,13 @@ static void op_enc_in_pin2(op_enc_t* enc, const S32* v) {
   if (enc->pos_now != enc->pos_old) {
     enc->val = enc_map[enc->pos_old][enc->pos_now];
     enc->pos_old = enc->pos_now;
-    ctl_go(enc->outs[0], &(enc->val));
+    net_activate(enc->outs[0], &(enc->val));
   }
 }
 
-static ctl_in_t op_enc_inputs[2] = {
-  (ctl_in_t)&op_enc_in_pin1,
-  (ctl_in_t)&op_enc_in_pin2
+static op_in_t op_enc_inputs[2] = {
+  (op_in_t)&op_enc_in_pin1,
+  (op_in_t)&op_enc_in_pin2
 };
 
 void op_enc_init(op_enc_t* enc) {
@@ -147,7 +148,8 @@ void op_enc_init(op_enc_t* enc) {
   enc->super.opString = op_enc_opstring;
   enc->super.inString = op_enc_instring;
   enc->super.outString = op_enc_outstring;
-  enc->super.size = sizeof(op_enc_t);
+  enc->super.type = eOpEnc;
+//  enc->super.size = sizeof(op_enc_t);
 }
 
 //-------------------------------------------------
@@ -160,7 +162,7 @@ static void op_add_in_a(op_add_t* add, const S32* v) {
   printf("add at %d received A %d\n", (int)add, *v);
   add->a = *v;
   add->val = add->a + add->b;
-  ctl_go(add->outs[0], &(add->val));
+  net_activate(add->outs[0], &(add->val));
 }
 
 static void op_add_in_b(op_add_t* add, const S32* v) {
@@ -168,7 +170,7 @@ static void op_add_in_b(op_add_t* add, const S32* v) {
   add->b = *v;
   add->val = add->a + add->b;
   if(add->btrig) {
-    ctl_go(add->outs[0], &(add->val));
+    net_activate(add->outs[0], &(add->val));
   }
 }
 
@@ -178,10 +180,10 @@ static void op_add_in_btrig(op_add_t* add, const S32* v) {
 }
 
 
-static ctl_in_t op_add_inputs[3] = {
-  (ctl_in_t)&op_add_in_a,
-  (ctl_in_t)&op_add_in_b, 
-  (ctl_in_t)&op_add_in_btrig
+static op_in_t op_add_inputs[3] = {
+  (op_in_t)&op_add_in_a,
+  (op_in_t)&op_add_in_b, 
+  (op_in_t)&op_add_in_btrig
 };
 
 void op_add_init(op_add_t* add) {
@@ -193,7 +195,8 @@ void op_add_init(op_add_t* add) {
   add->super.opString = op_add_opstring;
   add->super.inString = op_add_instring;
   add->super.outString = op_add_outstring;
-  add->super.size = sizeof(op_add_t);
+  add->super.type = eOpAdd;  
+//  add->super.size = sizeof(op_add_t);
 }
 
 //-------------------------------------------------
@@ -206,7 +209,7 @@ static void op_mul_in_a(op_mul_t* mul, const S32* v) {
   printf("mul at %d received A %d\n", (int)mul, *v);
   mul->a = *v;
   mul->val = mul->a * mul->b;
-  ctl_go(mul->outs[0], &(mul->val));
+  net_activate(mul->outs[0], &(mul->val));
 }
 
 static void op_mul_in_b(op_mul_t* mul, const S32* v) {
@@ -214,7 +217,7 @@ static void op_mul_in_b(op_mul_t* mul, const S32* v) {
   mul->b = *v;
   mul->val = mul->a * mul->b;
   if(mul->btrig) {
-    ctl_go(mul->outs[0], &(mul->val));
+    net_activate(mul->outs[0], &(mul->val));
   }
 }
 
@@ -223,10 +226,10 @@ static void op_mul_in_btrig(op_mul_t* mul, const S32* v) {
   mul->btrig = (v != 0);
 }
 
-static ctl_in_t op_mul_inputs[3] = {
-  (ctl_in_t)&op_mul_in_a,
-  (ctl_in_t)&op_mul_in_b, 
-  (ctl_in_t)&op_mul_in_btrig
+static op_in_t op_mul_inputs[3] = {
+  (op_in_t)&op_mul_in_a,
+  (op_in_t)&op_mul_in_b, 
+  (op_in_t)&op_mul_in_btrig
 };
 
 void op_mul_init(op_mul_t* mul) {
@@ -238,7 +241,8 @@ void op_mul_init(op_mul_t* mul) {
   mul->super.opString = op_mul_opstring;
   mul->super.inString = op_mul_instring;
   mul->super.outString = op_mul_outstring;
-  mul->super.size = sizeof(op_mul_t);
+  mul->super.type = eOpMul;  
+//  mul->super.size = sizeof(op_mul_t);
 }
 
 //-------------------------------------------------
@@ -251,7 +255,7 @@ static void op_gate_in_value(op_gate_t* gate, const S32* v) {
   printf("gate at %d received VALUE %d\n", (int)gate, *v);
   gate->val = *v;
   if(gate->gate) {
-    ctl_go(gate->outs[0], &(gate->val));
+    net_activate(gate->outs[0], &(gate->val));
   }
 }
 
@@ -260,7 +264,7 @@ static void op_gate_in_gate(op_gate_t* gate, const S32* v) {
   gate->val = (*v != 0);
   if (gate->val) {
     if (gate->store) {
-      ctl_go(gate->outs[0], &(gate->val));
+      net_activate(gate->outs[0], &(gate->val));
     }
   }
 }
@@ -270,10 +274,10 @@ static void op_gate_in_store(op_gate_t* gate, const S32* v) {
   gate->store = (*v != 0);
 }
 
-static ctl_in_t op_gate_inputs[3] = {
-  (ctl_in_t)&op_gate_in_value,
-  (ctl_in_t)&op_gate_in_gate, 
-  (ctl_in_t)&op_gate_in_store
+static op_in_t op_gate_inputs[3] = {
+  (op_in_t)&op_gate_in_value,
+  (op_in_t)&op_gate_in_gate, 
+  (op_in_t)&op_gate_in_store
 };
 
 void op_gate_init(op_gate_t* gate) {
@@ -285,7 +289,8 @@ void op_gate_init(op_gate_t* gate) {
   gate->super.opString = op_gate_opstring;
   gate->super.inString = op_gate_instring;
   gate->super.outString = op_gate_outstring;
-  gate->super.size = sizeof(op_gate_t);
+  gate->super.type = eOpGate;  
+//  gate->super.size = sizeof(op_gate_t);
 }
 
 //-------------------------------------------------
@@ -300,7 +305,7 @@ static void op_accum_boundscheck(op_accum_t* accum) {
       while(accum->val > accum->max) {
         accum->val -= (accum->max > 0 ? accum->max : accum->max * -1);
       }
-      ctl_go(accum->outs[1], &(accum->val)); // carry output with wrapped value
+      net_activate(accum->outs[1], &(accum->val)); // carry output with wrapped value
     } else {
       accum->val = accum->max;
     }
@@ -310,7 +315,7 @@ static void op_accum_boundscheck(op_accum_t* accum) {
       while(accum->val < accum->min) {
         accum->val += (accum->min > 0 ? accum->min : accum->min * -1);
       }
-      ctl_go(accum->outs[1], &(accum->val)); // carry output with wrapped value
+      net_activate(accum->outs[1], &(accum->val)); // carry output with wrapped value
     } else {
       accum->val = accum->min;
     }
@@ -321,14 +326,14 @@ static void op_accum_in_value(op_accum_t* accum, const S32* v) {
   printf("accum at %d received VALUE %d\n", (int)accum, *v);
   accum->val = *v;
   op_accum_boundscheck(accum);
-  ctl_go(accum->outs[0], &(accum->val));
+  net_activate(accum->outs[0], &(accum->val));
 }
 
 static void op_accum_in_count(op_accum_t* accum, const S32* v) {
   printf("accum at %d received COUNT %d\n", (int)accum, *v);
   accum->val += *v;
   op_accum_boundscheck(accum);
-  ctl_go(accum->outs[0], &(accum->val));
+  net_activate(accum->outs[0], &(accum->val));
 }
 
 static void op_accum_in_min(op_accum_t* accum, const S32* v) {
@@ -346,12 +351,12 @@ static void op_accum_in_carry(op_accum_t* accum, const S32* v) {
   accum->carry = (v != 0);
 }
 
-static ctl_in_t op_accum_inputs[5] = {
-(ctl_in_t)&op_accum_in_value,
-(ctl_in_t)&op_accum_in_count,
-(ctl_in_t)&op_accum_in_min, 
-(ctl_in_t)&op_accum_in_max,
-(ctl_in_t)&op_accum_in_carry
+static op_in_t op_accum_inputs[5] = {
+(op_in_t)&op_accum_in_value,
+(op_in_t)&op_accum_in_count,
+(op_in_t)&op_accum_in_min, 
+(op_in_t)&op_accum_in_max,
+(op_in_t)&op_accum_in_carry
 };
 
 void op_accum_init(op_accum_t* accum) {
@@ -364,12 +369,13 @@ void op_accum_init(op_accum_t* accum) {
   accum->super.opString = op_accum_opstring;
   accum->super.inString = op_accum_instring;
   accum->super.outString = op_accum_outstring;
-  accum->super.size = sizeof(op_accum_t);
+  accum->super.type = eOpAccum; 
+//  accum->super.size = sizeof(op_accum_t);
 }
 
 //-------------------------------------------------
 //------ range selector
-void op_sel_init(op_sel_t* sel);
+void op_sel_initg(op_sel_t* sel);
 
 //-------------------------------------------------
 //----- linear map

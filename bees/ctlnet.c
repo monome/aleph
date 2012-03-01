@@ -9,37 +9,34 @@
 
 #include "compiler.h"
 #include "util.h"
-#include "ctl_op.h"
-#include "ctl_interface.h"
+#include "op.h"
+#include "ctlnet_interface.h"
 
-// maximum allocated and operators
-#define CTL_INS_MAX 128
-#define CTL_OUTS_MAX 128
-#define CTL_OPS_MAX 128
-#define CTL_OP_POOL_SIZE 8192
+// total size of operator pool!
+#define CTLNET_OP_POOL_SIZE 8192
 
 //====================================================
 //============= data types
 
 // ------ node types
 // in
-typedef struct ctl_inode_struct { 
-  ctl_in_t in; // function pointer
+typedef struct inode_struct { 
+  op_in_t in; // function pointer
   S32 val; // value for scene management
   U8 opIdx; // index of parent op in oplist
   U8 inIdx; // index of input in parent op's inlist
   U8 scene; // flag if included in scene
-} ctl_inode_t;
+} inode_t;
 
 // out
-typedef struct ctl_onode_struct { 
+typedef struct onode_struct { 
   U8 opIdx;   // index of parent op in oplist
   U8 outIdx;  // index of this output in parent op's outlist
-  U8 out;     // target output index
-} ctl_onode_t;
+  U8 target;     // target index in inodes
+} onode_t;
 
 //------- network type
-typedef struct ctl_net_struct {
+typedef struct ctlnet_struct {
   // count of operators
   U16 numOps;
   // count of inputs
@@ -47,30 +44,30 @@ typedef struct ctl_net_struct {
   // count of outputs
   U16 numOuts;
   // list of operator pointers
-  ctl_op_t* ops[CTL_OPS_MAX];
+  op_t* ops[CTLNET_OPS_MAX];
   // list of inputs
-  ctl_inode_t ins[CTL_INS_MAX];
+  inode_t ins[CTLNET_INS_MAX];
   // list of outputs
-  ctl_onode_t outs[CTL_OUTS_MAX];
+  onode_t outs[CTLNET_OUTS_MAX];
   // operator memory pool
-  U8 opPoolMem[CTL_OP_POOL_SIZE];
+  U8 opPoolMem[CTLNET_OP_POOL_SIZE];
   // pointer to access the pool
   void* opPool;
   // current offset to free space within the pool 
   U32 opPoolOffset;
-} ctl_net_t;
+} ctlnet_t;
 
 //====================================
 //============ static variables
-static ctl_net_t net;
+static ctlnet_t net;
 
 //==================================================
 //========= public functions
 
 // "singleton" intializer
-void ctl_net_init(void) {
+void net_init(void) {
   U32 i;
-  for(i=0; i<CTL_OP_POOL_SIZE; i++) {
+  for(i=0; i<CTLNET_OP_POOL_SIZE; i++) {
     net.opPoolMem[i] = (U8)0;
   }
   net.opPool = (void*)&(net.opPoolMem);
@@ -78,35 +75,33 @@ void ctl_net_init(void) {
   net.numIns = 0;
   net.numOuts = 0;
   net.opPoolOffset = 0;
-  printf("initialized network, using %d bytes\n", (S32)sizeof(ctl_net_t));
+  printf("initialized network, using %d bytes\n", (S32)sizeof(ctlnet_t));
 }
 
 // activate an input node by calling its function pointer
-void ctl_go(S16 inIdx, const S32* val) {
+void net_activate(S16 inIdx, const S32* val) {
   if(inIdx >= 0) {
     (*(net.ins[inIdx].in))(net.ops[net.ins[inIdx].opIdx], val);
   }
 }
 
 // attempt to allocate a new operator from the pool, return index
-S16 ctl_add_op(opid_t opId) {
-  //  static U8 scratch[CTL_OP_MAX_SIZE];
+S16 net_add_op(opid_t opId) {
   U8 idx;
-  // U8 size;
-  U8 ins;// = op->getNumInputs;
-  U8 outs;// = op->getNumOutputs;
+  U8 ins;
+  U8 outs;
   U8 i;
-  ctl_op_t* op;
+  op_t* op;
 
-  if (net.numOps >= CTL_OPS_MAX) {
+  if (net.numOps >= CTLNET_OPS_MAX) {
     return -1;
   }
 
-  if (op_registry[opId].size > CTL_OP_POOL_SIZE - net.opPoolOffset) {
+  if (op_registry[opId].size > CTLNET_OP_POOL_SIZE - net.opPoolOffset) {
     return -1;
   }
 
-  op = (ctl_op_t*)(net.opPool + net.opPoolOffset);
+  op = (op_t*)(net.opPool + net.opPoolOffset);
   // use the class ID to initialize a new object in scratch
   switch(opId) {
   case eOpSwitch:
@@ -143,39 +138,21 @@ S16 ctl_add_op(opid_t opId) {
     return -1;
   }
 
-      //  size = ((ctl_op_t*)scratch)->size;
-
-  /*
-  ins = ((ctl_op_t*)scratch)->numInputs;
-  outs = ((ctl_op_t*)scratch)->numOutputs;
-  */
   ins = op->numInputs;
   outs = op->numOutputs;
-
-      /*
-  if (size > CTL_OP_POOL_SIZE - net.opPoolOffset) {
-    return -1;
-  }
-      */
+  op->type = opId;
  
-  if (ins > (CTL_INS_MAX - net.numIns)) {
+  if (ins > (CTLNET_INS_MAX - net.numIns)) {
     return -1;
   }
 
-  if (outs > (CTL_OUTS_MAX - net.numOuts)) {
+  if (outs > (CTLNET_OUTS_MAX - net.numOuts)) {
     return -1;
   }
-  
-  /*
-  // copy scratch to op pool (1 byte at a time...)
-  for(i=0; i<(((ctl_op_t*)scratch)->size); i++) {
-    net.opPoolMem[net.opPoolOffset + i] = scratch[i];
-  }
-  */
- 
+
   // add op pointer to list
   net.ops[net.numOps] = op;
-  net.opPoolOffset += op->size;
+  net.opPoolOffset += op_registry[opId].size;
 
  // add inputs and outputs to node list
   for(i=0; i<ins; i++) {
@@ -194,52 +171,76 @@ S16 ctl_add_op(opid_t opId) {
 }
 
 // destroy last operator created
-// void ctl_remove_op(U32 opIdx);
+S16 net_pop_op(void) {
+  op_t* op = net.ops[net.numOps - 1];
+  net.numIns -= op->numInputs;
+  net.numOuts -= op->numOutputs;
+  net.opPoolOffset += op_registry[op->type].size;
+  net.numOps -= 1;
+}
 
 // create a connection between given idx pair
-void ctl_connect(U32 oIdx, U32 iIdx) {
+void net_connect(U32 oIdx, U32 iIdx) {
   net.ops[net.outs[oIdx].opIdx]->out[net.outs[oIdx].outIdx] = iIdx;
+}
+
+// disconnect given output
+void net_disconnect(U32 outIdx) {
+  net.ops[net.outs[outIdx].opIdx]->out[net.outs[outIdx].outIdx] = -1;
 }
 
 //---- queries
 
 // get current count of operators
-U8 ctl_num_ops(void) {
+U8 net_num_ops(void) {
   return net.numOps;
 }
 
 // get current count of inputs
-U8 ctl_num_ins(void) {
+U8 net_num_ins(void) {
   return net.numIns;
 }
 
 // get current count of outputs
-U8 ctl_num_outs(void) {
+U8 net_num_outs(void) {
   return net.numOuts;
 }
 
 // get string for operator at given idx
-const char* ctl_op_name(const U8 idx) {
+const char* net_op_name(const U8 idx) {
   return net.ops[idx]->opString;
 }
 // get name for input at given idx
-const char* ctl_in_name(const U8 idx) {
-  return ctl_op_in_name(net.ops[net.ins[idx].opIdx], net.ins[idx].inIdx);
+const char* net_in_name(const U8 idx) {
+  return op_in_name(net.ops[net.ins[idx].opIdx], net.ins[idx].inIdx);
 }
 
 // get name for output at given idx
-const char* ctl_out_name(const U8 idx) {
-  return ctl_op_out_name(net.ops[net.outs[idx].opIdx], net.outs[idx].outIdx);
+const char* net_out_name(const U8 idx) {
+  return op_out_name(net.ops[net.outs[idx].opIdx], net.outs[idx].outIdx);
 }
 
 // get op index for input at given idx
-U8 ctl_in_op_idx(const U8 idx) {
+U8 net_in_op_idx(const U8 idx) {
   return net.ins[idx].opIdx;
 }
 
 // get op index for output at given idx
-U8 ctl_out_op_idx(const U8 idx) {
+U8 net_out_op_idx(const U8 idx) {
   return net.outs[idx].opIdx;
 }
-// disconnect idx pair
-// void ctl_disconnect(U32 outIdx, U32 inIdx);
+
+// populate an array with indices of all connected outputs for a given index
+// returns count of connections
+U32 net_gather(U32 iIdx, U32(*outs)[CTLNET_OUTS_MAX]) {
+  U32 iTest;
+  U32 iOut=0;
+  for(iTest=0; iTest<CTLNET_OUTS_MAX; iTest++) {
+    if(net.outs[iTest].target == iIdx) {
+      (*outs)[iOut] = iTest;
+      iOut++;
+    }
+  }
+  return iOut;
+}
+
