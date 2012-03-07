@@ -64,3 +64,5 @@ THAT 2162 - VCA
 
 AD5318 - 8 ch 10 bit DAC
 AD5314 - 4 ch 10 bit DAC
+
+12 bit DAC for filter cutoffs
