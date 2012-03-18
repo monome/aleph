@@ -7,29 +7,25 @@ general http://tangentsoft.net/audio/
 
 bf boot via spi
 
-power design
-	Switching Regulator Design Considerations for ADSP-BF533 Blackfin Processors (EE-228)
-	Estimating Power for the ADSP-BF531/BF532/BF533 Blackfin Processors (EE-229)
-
 bone
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-x-compiler
-kernel updates? how?
-user program (engine) updates? how?
+operators as a shared lib dir
+filesystem update method
 virtual serial to ethernet? how does it work?
-spi
+spidev
 display library
 
-device driver model for i/o, spi, etc
 usb host: hid midi
 usb host: monome (ftdi)
 
 
 fin
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-dynamic patch loading using UART, safe bootloader
-more patches, to test the system: fft, granulator
+dynamic patch loading using SPI
+UART or duplex SPI for publishing params
 SPORT-SPI for analog section
+
+more patches, to test the system: fft, granulator
 
 
 shared bone/fin
