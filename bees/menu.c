@@ -49,5 +49,3 @@ static void scroll(S8 dir) {
 
 static void gatherInputs(void) {
 }
-
-static void
