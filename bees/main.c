@@ -1,16 +1,16 @@
 #include <stdio.h>
 #include "compiler.h"
-#include "ctl_interface.h"
+#include "ctlnet_interface.h"
 #include "ui.h"
 
 static void printInputs(void) {
-  //  ctl_op_name
+  //  ctl_op_nameet
 }
 
 int main(const int argc, const char** argv) {
   U8 run = 1; 
   
-  ctl_net_init();
+  net_init();
   ui_init();
   
   while (run != 0) {

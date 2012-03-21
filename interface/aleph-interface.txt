@@ -94,8 +94,6 @@ is LEARN impractical due to the need for accums and limits etc?
 for top/bottom, show blank space
 cursor stay in same place, list moves
 
-------------------------------------------------------------------------------------
-
 root < > patch / param / preset / setup
 
 ----------------------
@@ -316,3 +314,18 @@ screen: [setup]
 
 
 
+<<<<<<< HEAD
+=======
+
+////////////////////// general notes
+
+lists
+	for top/bottom, show blank space
+	cursor stay in same place? list moves?
+	
+presets
+	need new term/name instead of "preset"
+	may be useful to split preset with sub-groups. 10-02 for example.
+	perhaps preset-file (series) should be in setup if it is primarily for backup?
+	allows for next/pre, next/group etc. song structure etc.
+>>>>>>> explody
