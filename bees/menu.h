@@ -6,12 +6,12 @@
   menu logic, public interface
 */
 
-#ifnedf _MENU_H_
+#ifndef _MENU_H_
 #define _MENU_H_
 
 #include "compiler.h"
 
-/////// enums for menu state machine
+//----- enums
 // top-level state
 typedef enum eTopMenuState {
   eMenuStateRoot,   // ROOT menu
@@ -26,7 +26,7 @@ typedef enum eTopMenuState {
 // PARAM submenu substate
 typedef enum eParamMenuState {
   eParamMenuStateList,      // editing main list
-  eParamMenuStateGathered,  // editing gathered list of outputs
+  eParamMenuStateGathered  // editing gathered list of outputs
 } paramMenuState;
 
 // PARAM selection substate
@@ -34,5 +34,8 @@ typedef enum eParamSelectState {
   eParamSelectInput,
   eParamSelectOutput
 } paramSelectState;
+
+//----- public functions
+//extern scroll void(S8 dir);
 
 #endif // header guard

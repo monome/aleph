@@ -17,5 +17,7 @@ int main(const int argc, const char** argv) {
     run = ui_loop();
   }
   
+  ui_deinit();
+  net_deinit();
   return 0;
 }

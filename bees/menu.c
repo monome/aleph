@@ -16,7 +16,12 @@ static S16 selected = 0;
 
 //------- static functions
 
-static void scroll(S8 dir) {
+static void gatherInputs(void) {
+}
+
+//----- public functions
+
+void scroll(S8 dir) {
   switch(topState) {
   case eMenuStateRoot:
     // nothing
@@ -25,6 +30,7 @@ static void scroll(S8 dir) {
     // nothing
     break;
   case eMenuStatePatch:
+    // patch selection
     selected += dir;
     if (selected < 0) { selected = 0; }
     if (selected > (patch_num_patches -1)) { selected = patch_num_patches - 1; }
@@ -46,8 +52,3 @@ static void scroll(S8 dir) {
     break;
   }
 }
-
-static void gatherInputs(void) {
-}
-
-static void
