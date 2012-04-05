@@ -3,14 +3,14 @@ OBJ = op.o ctlnet.o main.o ui.o
 CC = gcc
 CFLAGS = -g -c
 # CFLAGS += -Wall
-LDFLAGS = -lm
+LDFLAGS = -lm -lncurses
 
 WHAT = bees
 
 all : $(WHAT)
 
 $(WHAT) : $(OBJ)
-	$(CC) $(LDFLAGS) -o $@ $^
+	$(CC) -o $@ $^ $(LDFLAGS)
 
 %.o : %.c
 	$(CC) $(CFLAGS) $(INC) -o$@ $<
