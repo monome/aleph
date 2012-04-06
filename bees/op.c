@@ -6,11 +6,10 @@
 
 #include <stdio.h>
 
-#include "compiler.h"
+#include "../common/types.h"
+#include "net.h"
 #include "op.h"
-#include "ctlnet_interface.h"
 
-#include <stdio.h>
 
 //=========================
 // vars

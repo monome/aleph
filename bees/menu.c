@@ -4,6 +4,7 @@
   aleph
 */
 
+#include "ui.h"
 #include "menu.h" 
 
 //------- static variables
@@ -14,7 +15,16 @@ static paramMenuState paramState;
 // (usually an index in a list of patches/params/inputs/whatever)
 static S16 selected = 0;
 
-//------- static functions
+//------- static functions declaration
+static void printOpList(void);
+static void printTopMenu(void);
+
+static void gatherInputs(void);
+static void scroll(s8 dir);
+
+//------- static functions definition
+static void listOps(void) {
+}
 
 static void gatherInputs(void) {
 }

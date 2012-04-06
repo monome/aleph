@@ -9,7 +9,7 @@
 #ifndef _UI_H_
 #define _UI_H_
 
-#include "compiler.h"
+#include "../common/types.h"
 #include "ncurses.h"
 
 //---- defines
@@ -19,18 +19,7 @@
 #define SCREEN_H   8
 #define SCREEN_H_1 7
 
-//----- commands
-///// for ascii input
-
-
-//---- external function declarations
-// initialize low-level user interface (screen, keys)
-#define CMD_KEY_UP       KEY_UP
-#define CMD_KEY_DOWN     KEY_DOWN
-#define CMD_KEY_LEFT     KEY_LEFT
-#define CMD_KEY_RIGHT    KEY_RIGHT
-
-//public functions
+//---- public functions
 // init
 void ui_init(void);
 // de-init

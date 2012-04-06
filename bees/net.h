@@ -7,7 +7,7 @@
 #ifndef _CTL_INTERFACE_H_
 #define _CTL_INTERFACE_H_
 
-#include "compiler.h"
+#include "../common/types.h"
 
 // maximum allocated IO points and operators
 #define CTLNET_INS_MAX 128

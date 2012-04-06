@@ -14,7 +14,7 @@ void ui_init(void) {
 #include <stdio.h>
 #include <string.h>
 #include <ncurses.h>
-#include "compiler.h"
+#include "../common/types.h"
 #include "menu.h"
 #include "ui.h"
 
