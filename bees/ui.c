@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
-#include "compiler.h"
-#include "ctlnet_interface.h"
+#include "../common/types.h"
+#include "net.h"
 #include "ui.h"
 
 //================ 
