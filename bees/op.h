@@ -16,6 +16,27 @@
 // WARNING please do not exceed this!
 // #define OP_MAX_SIZE 128
 
+//---- operator list enum
+typedef enum {
+  eOpSwitch,
+  eOpEnc,
+  eOpAdd,
+  eOpMul,
+  eOpGate,
+  eOpAccum,
+  eOpSelect,
+  eOpMapLin,
+  eOpParam,
+  eOpPreset,
+  numOpClasses
+} opid_t;
+
+//---- op descriptor type
+typedef struct op_desc_struct {
+  const char* name;
+  const U32 size;
+} op_desc_t;
+
 //---- input type
 // a function pointer to represent an operator's input
 // each function is passed a void* to its receiver
@@ -152,5 +173,10 @@ typedef struct op_preset_struct {
   U16 idx;
 } op_preset_t;
 void op_preset_init(op_preset_t* preset);
+
+//-----------------------------------
+//----- externally visible variables
+extern const op_desc_t op_registry[numOpClasses];
+
 
 #endif // header guard

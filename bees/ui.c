@@ -18,6 +18,13 @@ void ui_init(void) {
 #include "menu.h"
 #include "ui.h"
 
+//---- defines
+#define CMD_KEY_QUIT     'q'
+#define CMD_KEY_UP       KEY_UP
+#define CMD_KEY_DOWN     KEY_DOWN
+#define CMD_KEY_LEFT     KEY_LEFT
+#define CMD_KEY_RIGHT    KEY_RIGHT
+
 //---- external function definitions
 
 // initialize low-level user interface (screen, keys)
@@ -41,7 +48,7 @@ void ui_deinit(void) {
 U8 ui_loop(void) {
   // use standard character input
   static U16 cmd;
-  static U8 dum;  
+  static U8 dum, ch, run;  
   cmd = getchar();
   
   switch(cmd) {  
@@ -50,11 +57,11 @@ U8 ui_loop(void) {
        
     ch = getch();
     if ((ch == 'y') || (ch == 'Y')) {
-      run = false;
+      run = 0;
     } else {
-      //      refreshHeaderDisplay();
+      run = 1;
     }
-    return 0;
+    return run;
     break;
   case CMD_KEY_UP:
     break;

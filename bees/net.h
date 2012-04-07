@@ -8,41 +8,19 @@
 #define _CTL_INTERFACE_H_
 
 #include "../common/types.h"
+#include "op.h"
 
 // maximum allocated IO points and operators
 #define CTLNET_INS_MAX 128
 #define CTLNET_OUTS_MAX 128
 #define CTLNET_OPS_MAX 128
 
-//---- types
-
-typedef enum {
-  eOpSwitch,
-  eOpEnc,
-  eOpAdd,
-  eOpMul,
-  eOpGate,
-  eOpAccum,
-  eOpSelect,
-  eOpMapLin,
-  eOpParam,
-  eOpPreset,
-  numOpClasses
-} opid_t;
-
-typedef struct op_desc_struct {
-  const char* name;
-  const U32 size;
-} op_desc_t;
-
-//----- variables
-
-extern op_desc_t op_registry[numOpClasses];
-
 //---- public functions
 
 // initialize the network 
 void net_init(void);
+// de-initialize the network 
+void net_deinit(void);
 // create a new operator given class ID, return index (-1 == fail)
 S16 net_add_op(opid_t opId);
 // remove the last created operator

@@ -11,23 +11,21 @@
 #include "op.h"
 
 
-//=========================
-// vars
-
 // operator class registry
 // must be laid out idenitcally to eOpId enum
-op_desc_t op_registry[numOpClasses] = {
-  { "SWITCH", sizeof(op_sw_t) },
-  { "ENCODER", sizeof(op_enc_t) },
-  { "ADD", sizeof(op_add_t) },
-  { "MULTIPLY", sizeof(op_mul_t) },
-  { "GATE", sizeof(op_gate_t) },
-  { "ACCUMULATE", sizeof(op_accum_t) },
-  { "SELECT", sizeof(op_sel_t) },
-  { "LINEAR MAP", sizeof(op_lin_t) },
-  { "PARAMETER", sizeof(op_param_t) },
-  { "PRESET", sizeof(op_preset_t) }
+const op_desc_t op_registry[numOpClasses] = {
+{ "SWITCH", sizeof(op_sw_t) },
+{ "ENCODER", sizeof(op_enc_t) },
+{ "ADD", sizeof(op_add_t) },
+{ "MULTIPLY", sizeof(op_mul_t) },
+{ "GATE", sizeof(op_gate_t) },
+{ "ACCUMULATE", sizeof(op_accum_t) },
+{ "SELECT", sizeof(op_sel_t) },
+{ "LINEAR MAP", sizeof(op_lin_t) },
+{ "PARAMETER", sizeof(op_param_t) },
+{ "PRESET", sizeof(op_preset_t) }
 };
+
 
 // input and output strings are all the same length, concatenated
 // this is lazy, but also efficient.
