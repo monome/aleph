@@ -78,7 +78,12 @@ void net_init(void) {
   printf("initialized network, using %d bytes\n", (S32)sizeof(ctlnet_t));
 }
 
-// activate an input node by calling its function pointer
+// de-initialize network
+void net_deinit(void) {
+  ;;
+}
+
+// activate an input node with a value
 void net_activate(S16 inIdx, const S32* val) {
   if(inIdx >= 0) {
     (*(net.ins[inIdx].in))(net.ops[net.ins[inIdx].opIdx], val);

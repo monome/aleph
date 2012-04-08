@@ -43,6 +43,8 @@ extern op_desc_t op_registry[numOpClasses];
 
 // initialize the network 
 void net_init(void);
+// de-initialize
+void net_deinit(void);
 // create a new operator given class ID, return index (-1 == fail)
 S16 net_add_op(opid_t opId);
 // remove the last created operator

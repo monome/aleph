@@ -19,16 +19,8 @@
 #define SCREEN_H   8
 #define SCREEN_H_1 7
 
-//----- commands
-///// for ascii input
-
-
 //---- external function declarations
 // initialize low-level user interface (screen, keys)
-#define CMD_KEY_UP       KEY_UP
-#define CMD_KEY_DOWN     KEY_DOWN
-#define CMD_KEY_LEFT     KEY_LEFT
-#define CMD_KEY_RIGHT    KEY_RIGHT
 
 //public functions
 // init
