@@ -9,7 +9,7 @@
 #ifndef _UI_H_
 #define _UI_H_
 
-#include "compiler.h"
+#include "../common/types.h"
 #include "ncurses.h"
 
 //---- defines
@@ -22,7 +22,7 @@
 //---- external function declarations
 // initialize low-level user interface (screen, keys)
 
-//public functions
+//---- public functions
 // init
 void ui_init(void);
 // de-init

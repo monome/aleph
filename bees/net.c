@@ -7,10 +7,10 @@
 
 #include <stdio.h>
 
-#include "compiler.h"
+#include "../common/types.h"
 #include "util.h"
 #include "op.h"
-#include "ctlnet_interface.h"
+#include "net.h"
 
 // total size of operator pool!
 #define CTLNET_OP_POOL_SIZE 8192

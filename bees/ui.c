@@ -14,17 +14,16 @@ void ui_init(void) {
 #include <stdio.h>
 #include <string.h>
 #include <ncurses.h>
-#include "compiler.h"
+#include "../common/types.h"
 #include "menu.h"
 #include "ui.h"
 
-/// static const
-//static const U16 cmdKeyQuit  = 'q';
-#define CMD_KEY_QUIT  'q'
-#define CMD_KEY_UP KEY_UP
-#define CMD_KEY_DOWN KEY_DOWN
-#define CMD_KEY_LEFT KEY_LEFT
-#define CMD_KEY_RIGHT KEY_RIGHT
+//---- defines
+#define CMD_KEY_QUIT     'q'
+#define CMD_KEY_UP       KEY_UP
+#define CMD_KEY_DOWN     KEY_DOWN
+#define CMD_KEY_LEFT     KEY_LEFT
+#define CMD_KEY_RIGHT    KEY_RIGHT
 
 //---- external function definitions
 
@@ -60,7 +59,6 @@ U8 ui_loop(void) {
     if ((ch == 'y') || (ch == 'Y')) {
       dum = 0;
     } else {
-      //refreshHeaderDisplay();
       dum = 1;
     }
     return dum;
