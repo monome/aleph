@@ -79,7 +79,7 @@ static void scrollPage(S8 dir) {
   if (pageIdx < 0) {
     pageIdx = 0;
   }
-  if (pageIdx >= ePageMax) { pageIdx = ePageMax - 1; }
+  if (pageIdx >= ePageMax) { pageIdx = 0; }
   setPage(pageIdx);
 }
 
@@ -120,7 +120,7 @@ void keyHandlerOps(key_t key) {
     scrollPage(1);
     break;
   case eKeyDownA:
-    scrollPage(1);
+    scrollPage(-1);
     break;
     //// encoder B: scroll selection
   case eKeyUpB:
@@ -165,7 +165,7 @@ void keyHandlerIns(key_t key) {
     scrollPage(1);
     break;
   case eKeyDownA:
-    scrollPage(1);
+    scrollPage(-1);
     break;
     //// encoder B: scroll selection
   case eKeyUpB:
@@ -210,7 +210,7 @@ void keyHandlerOuts(key_t key) {
     scrollPage(1);
     break;
   case eKeyDownA:
-    scrollPage(1);
+    scrollPage(-1);
     break;
     //// encoder B: scroll selection
   case eKeyUpB:
@@ -245,18 +245,18 @@ void keyHandlerOuts(key_t key) {
 // operator network 
 extern void redrawOps(void) {
   // draw the header
-  ui_println(0, "_OPS");
+  ui_println(0, "__OPS____");
 }
 // inputs 
 extern void redrawIns(void) {
   // draw the header
-  ui_println(0, "_INS");
+  ui_println(0, "__INS____");
 }
 
 // outputs
 extern void redrawOuts(void) {
   // draw the header
-  ui_println(0, "_OUTS");
+  ui_println(0, "__OUTS___");
 }
 
 

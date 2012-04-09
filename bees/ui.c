@@ -62,7 +62,7 @@ U8 ui_loop(void) {
   switch(cmd) {  
   case KEY_QUIT:
     mvprintw(0, 1, "really quit? (y)");
-       
+    refresh();      
     ch = getch();
     if ((ch == 'y') || (ch == 'Y')) {
       run = 0;
@@ -112,46 +112,11 @@ U8 ui_loop(void) {
 
 // print a line of text
 void ui_println(U8 y, char* str) {
-  mvprintw(y, 0, str);
+ mvprintw(y, 1, str);
+ refresh();
 }
 
 // print some characters of text
 void ui_print(U8 y, U8 x, char* str) {
   mvprintw(y, x, str);
 }
-
-/*
-  U8 ui_loop(void) {
-  U8 cmd, dum;
-  switch(state) {
-  case eMain:
-  printf("main menu: \n(l) list ops, (c) create op, (t) connect, (a) activate input, (q) quit\n");
-  cmd = getchar();
-  dum = getchar(); // newline
-  if (cmd == 'l') {
-  print_ops();
-  return ui_loop(); // recurse
-  }
-  else if (cmd == 'c') {
-  create_op();
-  return ui_loop(); // recurse
-  } 
-  else if (cmd == 't') {
-  connect();
-  return ui_loop(); // recurse
-  } 
-  else if (cmd == 'a') {
-
-  activate();
-  return ui_loop(); // recurse
-  } 
-  else if (cmd == 'q') {
-  return 0; // quit
-  }
-  break;
-  default:
-  return 0; // whoops, quit
-  }
-  return 0; // whoops, quit
-  }
-*/
