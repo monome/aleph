@@ -242,21 +242,52 @@ void keyHandlerOuts(key_t key) {
 //========================================
 //======= redraws
 
-// operator network 
+// redraw ops page
 extern void redrawOps(void) {
+  U8 y = 0;                       // which line
+  S32 n = page->selected;         // which list entry
+  const U16 num = net_num_ops(); // how many
+  const U16 num_1 = num - 1;
+
   // draw the header
-  ui_println(0, "__OPS____");
+  ui_print(y, 0, "__OPS____");
+
+  // deal with empty list
+  if (num<1) { 
+  } else {
+    //// draw the ops list...
+    // draw selection at center
+    y = SCREEN_ROW_CENTER;
+    ui_print(y, 0, ">");
+    ui_print(y, 1, net_op_name(n));
+    // draw higher entries if they exist
+    n++;
+    y++;
+    while ((y<SCREEN_H_1) && (n < num_1)) {
+      ui_print(y, 1, net_op_name(n));
+      n++;      
+      y++;
+    } 
+    // draw lower entries if they exist
+    n = page->selected - 1;
+    y = SCREEN_ROW_CENTER - 1;
+    while ((y >= 1) && (n >= 0)) {
+      ui_print(y, 1, net_op_name(n));
+      n--;
+      y--;
+    }
+  } 
+  // draw footer (function labels)
 }
-// inputs 
+
+// redraw inputs page
 extern void redrawIns(void) {
   // draw the header
   ui_println(0, "__INS____");
 }
 
-// outputs
+// redraw outputs page
 extern void redrawOuts(void) {
   // draw the header
   ui_println(0, "__OUTS___");
 }
-
-

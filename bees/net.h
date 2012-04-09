@@ -31,11 +31,11 @@ S16 net_pop_op(void);
 // activate an input node with some input data
 void net_activate(S16 inIdx, const S32* val);
 // get current count of operators
-U8 net_num_ops(void);
+U16 net_num_ops(void);
 // get current count of inputs
-U8 net_num_ins(void);
+U16 net_num_ins(void);
 // get current count of outputs
-U8 net_num_outs(void);
+U16 net_num_outs(void);
 // get string for operator at given idx
 const char* net_op_name(const U8 idx);
 // get name for input at given idx

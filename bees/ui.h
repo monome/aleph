@@ -15,9 +15,11 @@
 //---- defines
 // screen width in characters
 #define SCREEN_W 32
-// screen height in characters
-#define SCREEN_H   8
-#define SCREEN_H_1 7
+// screen height in lines
+#define SCREEN_H   16
+#define SCREEN_H_1 15
+// which line to center/highlight for editing
+#define SCREEN_ROW_CENTER 7
 
 //---- external function declarations
 // initialize low-level user interface (screen, keys)
@@ -30,8 +32,8 @@ void ui_deinit(void);
 // loop over user input
 U8 ui_loop(void);
 // print a line of text
-void ui_println(U8 y, char* str);
+void ui_println(U8 y, const char* str);
 // print some characters of text
-void ui_print(U8 y, U8 x, char* str);
+void ui_print(U8 y, U8 x, const char* str);
 
 #endif // header guard

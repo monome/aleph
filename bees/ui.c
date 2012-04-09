@@ -1,5 +1,3 @@
-
-
 /* ui,c
   * bees
   * aleph
@@ -111,12 +109,13 @@ U8 ui_loop(void) {
 }
 
 // print a line of text
-void ui_println(U8 y, char* str) {
- mvprintw(y, 1, str);
+void ui_println(U8 y, const char* str) {
+ mvprintw(y, 0, str);
  refresh();
 }
 
 // print some characters of text
-void ui_print(U8 y, U8 x, char* str) {
+void ui_print(U8 y, U8 x, const char* str) {
   mvprintw(y, x, str);
+  refresh();
 }
