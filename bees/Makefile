@@ -2,7 +2,7 @@ OBJ = op.o net.o main.o ui.o menu.o
 
 CC = gcc
 CFLAGS = -g -c
-# CFLAGS += -Wall
+CFLAGS += -Wall
 LDFLAGS = -lm -lncurses
 
 WHAT = bees

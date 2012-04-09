@@ -5,6 +5,7 @@
 */
 
 #include "ui.h"
+#include "net.h"
 #include "menu.h"
 
 //-----------------------------------
@@ -12,63 +13,45 @@
 
 // set current page
 static void setPage(ePage n);
-// refresh whatever for current page
-static void menuRedraw(void);
-
-// print the top menu selections
-static void printTopMenu(void);
-// print operator list given current selection
-static void printOpList(void);
-// print parameter list given current selection
-static void printParamList(void);
+// scroll page
+static void scrollPage(S8 dir);
+// scroll selection in page
+static void scrollSelect(S8 dir, U32 max);
 
 // find and print inputs to selected parameter
-static void gatherInputs(void);
+// static void gatherInputs(void);
 
 //// page-specific key handlers
-static void keyHandlerRoot(key_t key);
-static void keyHandlerPlay(key_t key);
-static void keyHandlerPatch(key_t key);
-static void keyHandlerParam(key_t key);
-static void keyHandlerPreset(key_t key);
-static void keyHandlerSetup(key_t key);
+static void keyHandlerOps(key_t key);
+static void keyHandlerIns(key_t key);
+static void keyHandlerOuts(key_t key);
 
 //// page-specific redraws
-static void redrawRoot(void);
-static void redrawPlay(void);
-static void redrawPatch(void);
-static void redrawParam(void);
-static void redrawPreset(void);
-static void redrawSetup(void);
-static void redrawSetup(void);
+static void redrawOps(void);
+static void redrawIns(void);
+static void redrawOuts(void);
 
 //-----------------------------------
 //------- static variables
 
-// page titles - syncronize with ePage enum
+// page titles - synchronize with ePage enum
 static page_t pages[ePageMax] = {
-{ "ROOT",   (keyHandler_t)&keyHandlerRoot,    (redraw_t)&redrawRoot, 0 },
-{ "PLAY",   (keyHandler_t)&keyHandlerPlay,    (redraw_t)&redrawPlay , 0 },
-{ "PATCH",  (keyHandler_t)&keyHandlerPatch,   (redraw_t)&redrawPatch , 0 },
-{ "PARAM",  (keyHandler_t)&keyHandlerParam,   (redraw_t)&redrawParam , 0 },
-{ "PRESET", (keyHandler_t)&keyHandlerPreset,  (redraw_t)&redrawPreset , 0 },
-{ "SETUP",  (keyHandler_t)&keyHandlerSetup,   (redraw_t)&redrawSetup , 0 }
+  { "OPS",    (keyHandler_t)&keyHandlerOps,    (redraw_t)&redrawOps, 0 },
+  { "INS",    (keyHandler_t)&keyHandlerIns,    (redraw_t)&redrawIns, 0 },
+  { "OUTS",   (keyHandler_t)&keyHandlerOuts,    (redraw_t)&redrawOuts, 0 }
 };
 
-// which page
-static page_t page;
-// which line is currently selected
-// (usually an index in a list of patches/params/inputs/whatever)
-// static S16 selected = 0;
-
-
+// pointer to current page
+static page_t* page;
+// idx of current page
+static u8 pageIdx = 0;
 
 //-----------------------------------
 //----- external function definitions
 
 // init
 extern void menu_init(void) {
-  setPage(ePageRoot);
+  setPage(0);
 }
 
 // de-init
@@ -77,7 +60,7 @@ extern void menu_deinit(void) {
 
 // top level key handler
 void handleKey(key_t key) {
-  page.keyHandler(key);
+  page->keyHandler(key);
 }
 
 //-----------------------------------
@@ -85,291 +68,195 @@ void handleKey(key_t key) {
 
 // set current page
 static void setPage(ePage n) {
-  page = pages[n];
-  page.redraw();
+  pageIdx = n;
+  page = &(pages[pageIdx]);
+  page->redraw();
 }
 
-// refresh current page
-void menuRedraw(void) {
-  page.redraw();
+// scroll current page
+static void scrollPage(S8 dir) {
+  pageIdx += dir;
+  if (pageIdx < 0) {
+    pageIdx = 0;
+  }
+  if (pageIdx >= ePageMax) { pageIdx = ePageMax - 1; }
+  setPage(pageIdx);
 }
 
+
+// scroll current page selection
+static void scrollSelect(S8 dir, U32 max) {
+  page->selected += dir;
+  if (page->selected < 0) {
+    page->selected = 0;
+  }
+  if (page->selected > max) { page->selected = max; }
+  // redraw with the new selection
+  page->redraw();
+}
+
+
+/*
 // find and print connected output nodes
 static void gatherInputs(void) {
 }
+*/
 
 //========================================
 //====== key handlers
-// ROOT
-void keyHandlerRoot (key_t key) {
+// OPS
+void keyHandlerOps(key_t key) {
   switch(key) {
-    case eKeyLeft:
-      // nothing
-      break;
-    case eKeyRight:
-      // go to the currently selected menu
-      if ( (page.selected > 0)
-          && (page.selected != ePageRoot)
-          && (page.selected < ePageMax)
-          ) {
-        setPage(page.selected);
-      }
-      break;
-    case eKeyFunctionA:
-      break;
-    case eKeyFunctionB:
-      break;
-    case eKeyFunctionC:
-      break;
-    case eKeyFunctionD:
-      break;
-      //// encoder A: scroll slow
-    case eKeyUpA:
-      page.selected += 1;
-      if (page.selected >= ePageMax) {
-        page.selected = ePageMax - 1;
-        redrawRoot();
-      }
-      break;
-    case eKeyDownA:
-      page.selected -= 1;
-      if (page.selected < 0) {
-        page.selected = 0;
-        redrawRoot();
-      }
-      break;
-      //// encoder B: scroll fast
-    case eKeyUpB:
-      // nothing
-      break;
-    case eKeyDownB:
-      // nothing
-      break;
-    case eKeyUpC:
-      // nothing
-      break;
-    case eKeyDownC:
-      // nothing
-      break;
-    case eKeyUpD:
-      // nothing
-      break;
-    case eKeyDownD:
-      // nothing
-      break;
-    case eKeyMax: // dummy
-      // nothing
-      break;
-    default:
-      ;; // nothing
+  case eKeyFunctionA:
+    break;
+  case eKeyFunctionB:
+    break;
+  case eKeyFunctionC:
+    break;
+  case eKeyFunctionD:
+    break;
+    //// encoder A: scroll pages
+  case eKeyUpA:
+    scrollPage(1);
+    break;
+  case eKeyDownA:
+    scrollPage(1);
+    break;
+    //// encoder B: scroll selection
+  case eKeyUpB:
+    scrollSelect(1, net_num_ops());
+    break;
+  case eKeyDownB:
+    scrollSelect(-1, net_num_ops());      
+    break;
+  case eKeyUpC:
+    // nothing
+    break;
+  case eKeyDownC:
+    // nothing
+    break;
+  case eKeyUpD:
+    // nothing
+    break;
+  case eKeyDownD:
+    // nothing
+    break;
+  case eKeyMax: // dummy
+    // nothing
+    break;
+  default:
+    ;; // nothing
   }  
 }
 
-// PLAY
-void keyHandlerPlay (key_t key) {
+// INS
+void keyHandlerIns(key_t key) {
   switch(key) {
-    case eKeyLeft:
-      break;
-    case eKeyRight:
-      break;
-    case eKeyFunctionA:
-      break;
-    case eKeyFunctionB:
-      break;
-    case eKeyFunctionC:
-      break;
-    case eKeyFunctionD:
-      break;
-    case eKeyUpA:
-      break;
-    case eKeyDownA:
-      break;
-    case eKeyUpB:
-      break;
-    case eKeyDownB:
-      break;
-    case eKeyUpC:
-      break;
-    case eKeyDownC:
-      break;
-    case eKeyUpD:
-      break;
-    case eKeyDownD:
-      break;
-    case eKeyMax: // dummy
-      break;
-      //default:
+  case eKeyFunctionA:
+    break;
+  case eKeyFunctionB:
+    break;
+  case eKeyFunctionC:
+    break;
+  case eKeyFunctionD:
+    break;
+    //// encoder A: scroll pages
+  case eKeyUpA:
+    scrollPage(1);
+    break;
+  case eKeyDownA:
+    scrollPage(1);
+    break;
+    //// encoder B: scroll selection
+  case eKeyUpB:
+    scrollSelect(1, net_num_ops());
+    break;
+  case eKeyDownB:
+    scrollSelect(-1, net_num_ops());      
+    break;
+  case eKeyUpC:
+    // nothing
+    break;
+  case eKeyDownC:
+    // nothing
+    break;
+  case eKeyUpD:
+    // nothing
+    break;
+  case eKeyDownD:
+    // nothing
+    break;
+  case eKeyMax: // dummy
+    // nothing
+    break;
+  default:
+    ;; // nothing
   }  
 }
 
-
-// PATCH
-void keyHandlerPatch (key_t key) {
+// OUTS
+void keyHandlerOuts(key_t key) {
   switch(key) {
-    case eKeyLeft:
-      break;
-    case eKeyRight:
-      break;
-    case eKeyFunctionA:
-      break;
-    case eKeyFunctionB:
-      break;
-    case eKeyFunctionC:
-      break;
-    case eKeyFunctionD:
-      break;
-    case eKeyUpA:
-      break;
-    case eKeyDownA:
-      break;
-    case eKeyUpB:
-      break;
-    case eKeyDownB:
-      break;
-    case eKeyUpC:
-      break;
-    case eKeyDownC:
-      break;
-    case eKeyUpD:
-      break;
-    case eKeyDownD:
-      break;
-    case eKeyMax: // dummy
-      break;
-      //default:
-  }  
-}
-
-// PARAM
-void keyHandlerParam (key_t key) {
-  switch(key) {
-    case eKeyLeft:
-      break;
-    case eKeyRight:
-      break;
-    case eKeyFunctionA:
-      break;
-    case eKeyFunctionB:
-      break;
-    case eKeyFunctionC:
-      break;
-    case eKeyFunctionD:
-      break;
-    case eKeyUpA:
-      break;
-    case eKeyDownA:
-      break;
-    case eKeyUpB:
-      break;
-    case eKeyDownB:
-      break;
-    case eKeyUpC:
-      break;
-    case eKeyDownC:
-      break;
-    case eKeyUpD:
-      break;
-    case eKeyDownD:
-      break;
-    case eKeyMax: // dummy
-      break;
-      //default:
-  }  
-}
-
-
-// PRESET
-void keyHandlerPreset (key_t key) {
-  switch(key) {
-    case eKeyLeft:
-      break;
-    case eKeyRight:
-      break;
-    case eKeyFunctionA:
-      break;
-    case eKeyFunctionB:
-      break;
-    case eKeyFunctionC:
-      break;
-    case eKeyFunctionD:
-      break;
-    case eKeyUpA:
-      break;
-    case eKeyDownA:
-      break;
-    case eKeyUpB:
-      break;
-    case eKeyDownB:
-      break;
-    case eKeyUpC:
-      break;
-    case eKeyDownC:
-      break;
-    case eKeyUpD:
-      break;
-    case eKeyDownD:
-      break;
-    case eKeyMax: // dummy
-      break;
-      //default:
-  }  
-}
-
-// SETUP
-void keyHandlerSetup (key_t key) {
-  switch(key) {
-    case eKeyLeft:
-      break;
-    case eKeyRight:
-      break;
-    case eKeyFunctionA:
-      break;
-    case eKeyFunctionB:
-      break;
-    case eKeyFunctionC:
-      break;
-    case eKeyFunctionD:
-      break;
-    case eKeyUpA:
-      break;
-    case eKeyDownA:
-      break;
-    case eKeyUpB:
-      break;
-    case eKeyDownB:
-      break;
-    case eKeyUpC:
-      break;
-    case eKeyDownC:
-      break;
-    case eKeyUpD:
-      break;
-    case eKeyDownD:
-      break;
-    case eKeyMax: // dummy
-      break;
-      //default:
+  case eKeyFunctionA:
+    break;
+  case eKeyFunctionB:
+    break;
+  case eKeyFunctionC:
+    break;
+  case eKeyFunctionD:
+    break;
+    //// encoder A: scroll pages
+  case eKeyUpA:
+    scrollPage(1);
+    break;
+  case eKeyDownA:
+    scrollPage(1);
+    break;
+    //// encoder B: scroll selection
+  case eKeyUpB:
+    scrollSelect(1, net_num_ops());
+    break;
+  case eKeyDownB:
+    scrollSelect(-1, net_num_ops());      
+    break;
+  case eKeyUpC:
+    // nothing
+    break;
+  case eKeyDownC:
+    // nothing
+    break;
+  case eKeyUpD:
+    // nothing
+    break;
+  case eKeyDownD:
+    // nothing
+    break;
+  case eKeyMax: // dummy
+    // nothing
+    break;
+  default:
+    ;; // nothing
   }  
 }
 
 //========================================
 //======= redraws
 
-extern void redrawRoot(void) {
+// operator network 
+extern void redrawOps(void) {
+  // draw the header
+  ui_println(0, "_OPS");
+}
+// operator network 
+extern void redrawIns(void) {
+  // draw the header
+  ui_println(0, "_INS");
 }
 
-extern void redrawPlay(void) {
+// operator network 
+extern void redrawOuts(void) {
+  // draw the header
+  ui_println(0, "_OUTS");
 }
 
-extern void redrawPatch(void) {
-}
-
-extern void redrawParam(void) {
-}
-
-extern void redrawPreset(void) {
-}
-
-extern void redrawSetup(void) {
-}
 

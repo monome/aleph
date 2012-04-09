@@ -17,13 +17,10 @@
 
 // top-level state
 typedef enum ePage_t {
-  ePageRoot,   // ROOT menu
-  ePagePlay,   // PLAY mode
-  ePagePatch,  // PATCH menu
-  ePageParam,  // PARAM menu
-  ePagePreset, // PRESET menu
-  ePageSetup,  // SETUP menu
-  ePageMax     // dummy
+	ePageOps,
+	ePageIns,
+	ePageOuts,
+	ePageMax     // dummy
 } ePage;
 
 // keys
