@@ -3,10 +3,6 @@
 #include "net.h"
 #include "ui.h"
 
-static void printInputs(void) {
-  //  ctl_op_nameet
-}
-
 int main(const int argc, const char** argv) {
   U8 run = 1; 
   

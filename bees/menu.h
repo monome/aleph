@@ -25,12 +25,11 @@ typedef enum ePage_t {
 
 // keys
 typedef enum eKey {
-  eKeyLeft,
-  eKeyRight,
-  eKeyFunctionA,
-  eKeyFunctionB,
-  eKeyFunctionC,
-  eKeyFunctionD,
+  eKeyEdit,
+  eKeyFnA,
+  eKeyFnB,
+  eKeyFnC,
+  eKeyFnD,
   eKeyUpA,
   eKeyDownA,
   eKeyUpB,

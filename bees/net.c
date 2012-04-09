@@ -75,7 +75,7 @@ void net_init(void) {
   net.numIns = 0;
   net.numOuts = 0;
   net.opPoolOffset = 0;
-  printf("initialized network, using %d bytes\n", (S32)sizeof(ctlnet_t));
+  printf("initialized network, using %d bytes\n", (int)sizeof(ctlnet_t));
 }
 
 // de-initialize network
@@ -92,7 +92,7 @@ void net_activate(S16 inIdx, const S32* val) {
 
 // attempt to allocate a new operator from the pool, return index
 S16 net_add_op(opid_t opId) {
-  U8 idx;
+  //U8 idx;
   U8 ins;
   U8 outs;
   U8 i;
@@ -182,6 +182,7 @@ S16 net_pop_op(void) {
   net.numOuts -= op->numOutputs;
   net.opPoolOffset += op_registry[op->type].size;
   net.numOps -= 1;
+  return 0;
 }
 
 // create a connection between given idx pair

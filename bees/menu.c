@@ -59,7 +59,7 @@ extern void menu_deinit(void) {
 }
 
 // top level key handler
-void handleKey(key_t key) {
+void menu_handleKey(key_t key) {
   page->keyHandler(key);
 }
 
@@ -107,13 +107,13 @@ static void gatherInputs(void) {
 // OPS
 void keyHandlerOps(key_t key) {
   switch(key) {
-  case eKeyFunctionA:
+  case eKeyFnA:
     break;
-  case eKeyFunctionB:
+  case eKeyFnB:
     break;
-  case eKeyFunctionC:
+  case eKeyFnC:
     break;
-  case eKeyFunctionD:
+  case eKeyFnD:
     break;
     //// encoder A: scroll pages
   case eKeyUpA:
@@ -152,13 +152,13 @@ void keyHandlerOps(key_t key) {
 // INS
 void keyHandlerIns(key_t key) {
   switch(key) {
-  case eKeyFunctionA:
+  case eKeyFnA:
     break;
-  case eKeyFunctionB:
+  case eKeyFnB:
     break;
-  case eKeyFunctionC:
+  case eKeyFnC:
     break;
-  case eKeyFunctionD:
+  case eKeyFnD:
     break;
     //// encoder A: scroll pages
   case eKeyUpA:
@@ -197,13 +197,13 @@ void keyHandlerIns(key_t key) {
 // OUTS
 void keyHandlerOuts(key_t key) {
   switch(key) {
-  case eKeyFunctionA:
+  case eKeyFnA:
     break;
-  case eKeyFunctionB:
+  case eKeyFnB:
     break;
-  case eKeyFunctionC:
+  case eKeyFnC:
     break;
-  case eKeyFunctionD:
+  case eKeyFnD:
     break;
     //// encoder A: scroll pages
   case eKeyUpA:
@@ -247,13 +247,13 @@ extern void redrawOps(void) {
   // draw the header
   ui_println(0, "_OPS");
 }
-// operator network 
+// inputs 
 extern void redrawIns(void) {
   // draw the header
   ui_println(0, "_INS");
 }
 
-// operator network 
+// outputs
 extern void redrawOuts(void) {
   // draw the header
   ui_println(0, "_OUTS");

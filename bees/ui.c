@@ -1,15 +1,12 @@
 
 
-/*
-void ui_init(void) {
-  state = eMain;
-}/* ui,c
- * bees
- * aleph
- *
- * lowest-level user interface routines
- * (screen drawing, key reading, etc)
- */
+/* ui,c
+  * bees
+  * aleph
+  *
+  * lowest-level user interface routines
+  * (screen drawing, key reading, etc)
+  */
 
 #include <stdio.h>
 #include <string.h>
@@ -19,11 +16,20 @@ void ui_init(void) {
 #include "ui.h"
 
 //---- defines
-#define CMD_KEY_QUIT     'q'
-#define CMD_KEY_UP       KEY_UP
-#define CMD_KEY_DOWN     KEY_DOWN
-#define CMD_KEY_LEFT     KEY_LEFT
-#define CMD_KEY_RIGHT    KEY_RIGHT
+#define KEY_QUIT     'q'
+
+#define KEY_ENC_A_UP    '='
+#define KEY_ENC_A_DOWN  '-'
+#define KEY_ENC_B_UP    ']'
+#define KEY_ENC_B_DOWN  '['
+#define KEY_ENC_C_UP    '\''
+#define KEY_ENC_C_DOWN  ';'
+#define KEY_ENC_D_UP    '/'
+#define KEY_ENC_D_DOWN  '.'
+#define KEY_FN_A 'z'
+#define KEY_FN_B 'x'
+#define KEY_FN_C 'c'
+#define KEY_FN_D 'y'
 
 //---- external function definitions
 
@@ -48,30 +54,60 @@ void ui_deinit(void) {
 U8 ui_loop(void) {
   // use standard character input
   static U16 cmd;
-  static U8 dum, ch;  
+  static U8 run, ch;  
   cmd = getchar();
   
+  run = 1;
+
   switch(cmd) {  
-  case CMD_KEY_QUIT:
+  case KEY_QUIT:
     mvprintw(0, 1, "really quit? (y)");
        
     ch = getch();
     if ((ch == 'y') || (ch == 'Y')) {
-      dum = 0;
-    } else {
-      dum = 1;
+      run = 0;
     }
-    return dum;
     break;
-  case CMD_KEY_UP:
+  case KEY_ENC_A_UP:
+    menu_handleKey(eKeyUpA);
     break;
-  case CMD_KEY_DOWN:
+  case KEY_ENC_A_DOWN:
+    menu_handleKey(eKeyDownA);
     break;
-  case CMD_KEY_LEFT:
+  case KEY_ENC_B_UP:
+    menu_handleKey(eKeyUpB);
     break;
-  case CMD_KEY_RIGHT:
+  case KEY_ENC_B_DOWN:
+    menu_handleKey(eKeyDownB);
+    break;
+  case KEY_ENC_C_UP:
+    menu_handleKey(eKeyUpC);
+    break;
+  case KEY_ENC_C_DOWN:
+    menu_handleKey(eKeyDownC);
+    break;
+  case KEY_ENC_D_UP:
+    menu_handleKey(eKeyUpD);
+    break;
+  case KEY_ENC_D_DOWN:
+    menu_handleKey(eKeyDownD);
+    break;
+  case KEY_FN_A:
+    menu_handleKey(eKeyFnA);
+    break;
+  case KEY_FN_B:
+    menu_handleKey(eKeyFnB);
+    break;
+  case KEY_FN_C:
+    menu_handleKey(eKeyFnC);
+    break;
+  case KEY_FN_D:
+    menu_handleKey(eKeyFnD);
+    break;
+  default:
     break;
   }
+  return run;
 }
 
 // print a line of text
@@ -85,37 +121,37 @@ void ui_print(U8 y, U8 x, char* str) {
 }
 
 /*
-U8 ui_loop(void) {
+  U8 ui_loop(void) {
   U8 cmd, dum;
   switch(state) {
-    case eMain:
-    printf("main menu: \n(l) list ops, (c) create op, (t) connect, (a) activate input, (q) quit\n");
-      cmd = getchar();
-      dum = getchar(); // newline
-      if (cmd == 'l') {
-        print_ops();
-        return ui_loop(); // recurse
-      }
-      else if (cmd == 'c') {
-        create_op();
-        return ui_loop(); // recurse
-      } 
-      else if (cmd == 't') {
-        connect();
-        return ui_loop(); // recurse
-      } 
-      else if (cmd == 'a') {
+  case eMain:
+  printf("main menu: \n(l) list ops, (c) create op, (t) connect, (a) activate input, (q) quit\n");
+  cmd = getchar();
+  dum = getchar(); // newline
+  if (cmd == 'l') {
+  print_ops();
+  return ui_loop(); // recurse
+  }
+  else if (cmd == 'c') {
+  create_op();
+  return ui_loop(); // recurse
+  } 
+  else if (cmd == 't') {
+  connect();
+  return ui_loop(); // recurse
+  } 
+  else if (cmd == 'a') {
 
-        activate();
-        return ui_loop(); // recurse
-      } 
-      else if (cmd == 'q') {
-        return 0; // quit
-      }
-      break;
-    default:
-      return 0; // whoops, quit
+  activate();
+  return ui_loop(); // recurse
+  } 
+  else if (cmd == 'q') {
+  return 0; // quit
+  }
+  break;
+  default:
+  return 0; // whoops, quit
   }
   return 0; // whoops, quit
-}
+  }
 */
