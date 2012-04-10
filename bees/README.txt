@@ -79,7 +79,7 @@ fnC  : overwrite preset value (and include)
 fnD  : toggle preset inclusion
 
 encC : change value (slow)
-encD : select new operator to be created (by fnA)
+encD : change value (fast)
 
 
 ---------------
@@ -94,7 +94,7 @@ fnC  : re-send value [overwriting preset?]
 fnD  : toggle preset inclusion (this connection)
 
 encC : scroll target
-
+encD : ?
 
 ////////////////////////////////////
 //// TODO!
