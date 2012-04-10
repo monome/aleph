@@ -26,7 +26,7 @@
 #define KEY_FN_A        'z'
 #define KEY_FN_B        'x'
 #define KEY_FN_C        'c'
-#define KEY_FN_D        'y'
+#define KEY_FN_D        'v'
 
 
 //---- external function definitions

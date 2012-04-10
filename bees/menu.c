@@ -116,6 +116,7 @@ static void gatherInputs(void) {
 //====== key handlers
 // OPS
 void keyHandlerOps(key_t key) {
+  U16 n;
   switch(key) {
     case eKeyFnA: 
       // go to selected operator's inputs on INS page
@@ -137,6 +138,10 @@ void keyHandlerOps(key_t key) {
       // FIXME: need to add arbitrary op deletion.
       // right now this will destroy the last created op
       net_pop_op();
+      n = net_num_ops() - 1;
+      if (page->selected > n) {
+	page->selected = n;
+      }
       redrawOps();
     break;
     //// encoder A: scroll pages
@@ -148,11 +153,10 @@ void keyHandlerOps(key_t key) {
     break;
     //// encoder B: scroll selection
   case eKeyUpB:
-      // extra selection at end is for new operator
-    scrollSelect(1, net_num_ops() + 1);
+    scrollSelect(1, net_num_ops() - 1);
     break;
   case eKeyDownB:
-    scrollSelect(-1, net_num_ops() + 1);      
+    scrollSelect(-1, net_num_ops() - 1);      
     break;
     //// encoder C: move up/down in order of execution
   case eKeyUpC:
@@ -278,7 +282,8 @@ void keyHandlerOuts(key_t key) {
 //========================================
 //======= redraws
 
-// redraw ops page
+//==================================================
+//==== redraw ops page
 extern void redrawOps(void) {
   U8 y = 0;                       // which line
   S32 n, nCenter;         // which list entry
@@ -346,7 +351,8 @@ extern void redrawOps(void) {
   ui_println(SCREEN_H_1, "|| INS    ||  OUTS   ||  CREATE  ||  DELETE ");
 }
 
-// redraw inputs page
+//==================================================
+//==== redraw inputs page
 extern void redrawIns(void) {
   static char buf[SCREEN_W];
   // draw the header
@@ -355,7 +361,9 @@ extern void redrawIns(void) {
   ui_print(0, 0, buf);
 }
 
-// redraw outputs page
+
+//==================================================
+//==== redraw outputs page
 extern void redrawOuts(void) {
   static char buf[SCREEN_W];
   // draw the header
