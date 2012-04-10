@@ -286,7 +286,8 @@ extern void redrawOps(void) {
   static char buf[SCREEN_W];
   
   // draw the header
-  ui_print(y, 0, "__OPS____");
+  snprintf(buf, SCREEN_W, "|||||||| OPS ||||||||||||||||||||||||||||||||||||||||||||||||");
+  ui_print(0, 0, buf);
 
   nCenter = page->selected;
   if (nCenter >= num) {
@@ -300,9 +301,8 @@ extern void redrawOps(void) {
     snprintf(buf, SCREEN_W, ">> %d __ %s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
              (int)n, net_op_name(n));
   } else {
-    // selection is new operator
-    snprintf(buf, SCREEN_W, "[ +++ %s ++++++++++++++++++++++++++++++++++++++++++++++++++++++",
-             op_registry[newOpType].name);
+    // no selection
+    snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
   }
   ui_print(y, 0, buf);
   
@@ -328,34 +328,37 @@ extern void redrawOps(void) {
   while (y < SCREEN_H_2) {
     n++;
     y++;
-    if (n > num) {
+    if (n >= num) {
       snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
     } else {
-      if (n < num) { 
-        // selection is existing operator
-        snprintf(buf, SCREEN_W, ">> %d __ %s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+        snprintf(buf, SCREEN_W, "   %d __ %s                                                          ",  
                  (int)n, net_op_name(n));
-      } else {
-        // selection is new operator
-        snprintf(buf, SCREEN_W, "[ +++ %s ++++++++++++++++++++++++++++++++++++++++++++++++++++++",
-                 op_registry[newOpType].name);
-      }
     }
     ui_print(y, 0, buf);
   }
       
-  // draw footer (function labels)
-  ui_println(SCREEN_H_1, " INS    | OUTS   | CREATE | DELETE ");
+  // draw footer 
+// (new op type)
+  snprintf(buf, SCREEN_W, "[ +++ %s ++++++++++++++++++++++++++++++++++++++++++++++++++++++",
+         op_registry[newOpType].name);
+  ui_print(SCREEN_H_2, 0, buf);
+// (function labels)
+  ui_println(SCREEN_H_1, "|| INS    ||  OUTS   ||  CREATE  ||  DELETE ");
 }
 
 // redraw inputs page
 extern void redrawIns(void) {
+  static char buf[SCREEN_W];
   // draw the header
-  ui_println(0, "__INS____");
+  snprintf(buf, SCREEN_W, "|||||||| INS ||||||||||||||||||||||||||||||||||||||||||||||||");
+  
+  ui_print(0, 0, buf);
 }
 
 // redraw outputs page
 extern void redrawOuts(void) {
+  static char buf[SCREEN_W];
   // draw the header
-  ui_println(0, "__OUTS___");
+  snprintf(buf, SCREEN_W, "|||||||| OUTS ||||||||||||||||||||||||||||||||||||||||||||||||");
+  ui_print(0, 0, buf);
 }
