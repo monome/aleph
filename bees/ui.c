@@ -14,8 +14,7 @@
 #include "ui.h"
 
 //---- defines
-#define KEY_QUIT     'q'
-
+#define KEY_QUIT        'q'
 #define KEY_ENC_A_UP    '='
 #define KEY_ENC_A_DOWN  '-'
 #define KEY_ENC_B_UP    ']'
@@ -24,10 +23,11 @@
 #define KEY_ENC_C_DOWN  ';'
 #define KEY_ENC_D_UP    '/'
 #define KEY_ENC_D_DOWN  '.'
-#define KEY_FN_A 'z'
-#define KEY_FN_B 'x'
-#define KEY_FN_C 'c'
-#define KEY_FN_D 'y'
+#define KEY_FN_A        'z'
+#define KEY_FN_B        'x'
+#define KEY_FN_C        'c'
+#define KEY_FN_D        'y'
+
 
 //---- external function definitions
 

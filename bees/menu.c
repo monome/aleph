@@ -6,6 +6,7 @@
 
 #include "ui.h"
 #include "net.h"
+#include "op.h"
 #include "menu.h"
 
 //-----------------------------------
@@ -34,7 +35,7 @@ static void redrawOuts(void);
 //-----------------------------------
 //------- static variables
 
-// page titles - synchronize with ePage enum
+// page structures - synchronize with ePage enum
 static page_t pages[ePageMax] = {
   { "OPS",    (keyHandler_t)&keyHandlerOps,    (redraw_t)&redrawOps, 0 },
   { "INS",    (keyHandler_t)&keyHandlerIns,    (redraw_t)&redrawIns, 0 },
@@ -44,7 +45,12 @@ static page_t pages[ePageMax] = {
 // pointer to current page
 static page_t* page;
 // idx of current page
-static u8 pageIdx = 0;
+static s8 pageIdx = 0;
+
+// some random/ugly page-specific varibles.
+// would be marginally cleaner for page_t to store pointers to specific page contexts?
+// but not really clean enough to be worth it i think
+static opid_t newOpType = 0;
 
 //-----------------------------------
 //----- external function definitions
@@ -60,7 +66,11 @@ extern void menu_deinit(void) {
 
 // top level key handler
 void menu_handleKey(key_t key) {
-  page->keyHandler(key);
+  if (key == eKeyEdit) {
+    // flip edit/play mode...
+  } else {
+    page->keyHandler(key);
+  }
 }
 
 //-----------------------------------
@@ -107,11 +117,18 @@ static void gatherInputs(void) {
 // OPS
 void keyHandlerOps(key_t key) {
   switch(key) {
-  case eKeyFnA:
+    case eKeyFnA: 
+      // go to selected operator's inputs on INS page
+      pages[ePageIns].selected = net_op_in_idx(page->selected, 0);
+      setPage(ePageIns);
     break;
   case eKeyFnB:
+      // go to this operator's outputs on OUTS page
+      pages[ePageOuts].selected = net_op_out_idx(page->selected, 0);
+      setPage(ePageOuts);
     break;
   case eKeyFnC:
+      // create new operator of specified type
     break;
   case eKeyFnD:
     break;
@@ -129,16 +146,27 @@ void keyHandlerOps(key_t key) {
   case eKeyDownB:
     scrollSelect(-1, net_num_ops());      
     break;
+    //// encoder C: move up/down in order of execution
   case eKeyUpC:
-    // nothing
+    // TODO
     break;
   case eKeyDownC:
-    // nothing
+    // TODO
     break;
+    //// encoder D: select new operator type for creation
   case eKeyUpD:
-    // nothing
+      newOpType++;
+      if (newOpType >= numOpClasses) {
+        newOpType = 0;
+      }
+      redrawOps();
     break;
-  case eKeyDownD:
+    case eKeyDownD:
+      newOpType--;
+      if (newOpType >= numOpClasses) {
+        newOpType = numOpClasses - 1;
+      }
+      redrawOps();
     // nothing
     break;
   case eKeyMax: // dummy
@@ -197,7 +225,7 @@ void keyHandlerIns(key_t key) {
 // OUTS
 void keyHandlerOuts(key_t key) {
   switch(key) {
-  case eKeyFnA:
+  case eKeyFnA: 
     break;
   case eKeyFnB:
     break;
@@ -254,6 +282,7 @@ extern void redrawOps(void) {
 
   // deal with empty list
   if (num<1) { 
+    ;; // shouldn't really happen
   } else {
     //// draw the ops list...
     // draw selection at center
@@ -278,6 +307,7 @@ extern void redrawOps(void) {
     }
   } 
   // draw footer (function labels)
+  ui_println(SCREEN_H_1, " INS    | OUTS   | CREATE | DELETE ");
 }
 
 // redraw inputs page

@@ -23,16 +23,16 @@
 typedef struct inode_struct { 
   op_in_t in; // function pointer
   S32 val; // value for scene management
-  U8 opIdx; // index of parent op in oplist
-  U8 inIdx; // index of input in parent op's inlist
+  U16 opIdx; // index of parent op in oplist
+  U16 inIdx; // index of input in parent op's inlist
   U8 scene; // flag if included in scene
 } inode_t;
 
 // out
 typedef struct onode_struct { 
-  U8 opIdx;   // index of parent op in oplist
-  U8 outIdx;  // index of this output in parent op's outlist
-  U8 target;     // target index in inodes
+  U16 opIdx;   // index of parent op in oplist
+  U16 outIdx;  // index of this output in parent op's outlist
+  U16 target;     // target index in inodes
 } onode_t;
 
 //------- network type
@@ -92,9 +92,8 @@ void net_activate(S16 inIdx, const S32* val) {
 
 // attempt to allocate a new operator from the pool, return index
 S16 net_add_op(opid_t opId) {
-  //U8 idx;
-  U8 ins;
-  U8 outs;
+  U16 ins;
+  U16 outs;
   U8 i;
   op_t* op;
 
@@ -198,42 +197,65 @@ void net_disconnect(U32 outIdx) {
 //---- queries
 
 // get current count of operators
-U8 net_num_ops(void) {
+U16 net_num_ops(void) {
   return net.numOps;
 }
 
 // get current count of inputs
-U8 net_num_ins(void) {
+U16 net_num_ins(void) {
   return net.numIns;
 }
 
 // get current count of outputs
-U8 net_num_outs(void) {
+U16 net_num_outs(void) {
   return net.numOuts;
 }
 
 // get string for operator at given idx
-const char* net_op_name(const U8 idx) {
+const char* net_op_name(const U16 idx) {
   return net.ops[idx]->opString;
 }
 // get name for input at given idx
-const char* net_in_name(const U8 idx) {
+const char* net_in_name(const U16 idx) {
   return op_in_name(net.ops[net.ins[idx].opIdx], net.ins[idx].inIdx);
 }
 
 // get name for output at given idx
-const char* net_out_name(const U8 idx) {
+const char* net_out_name(const U16 idx) {
   return op_out_name(net.ops[net.outs[idx].opIdx], net.outs[idx].outIdx);
 }
 
 // get op index for input at given idx
-U8 net_in_op_idx(const U8 idx) {
+U16 net_in_op_idx(const U16 idx) {
   return net.ins[idx].opIdx;
 }
 
 // get op index for output at given idx
-U8 net_out_op_idx(const U8 idx) {
+U16 net_out_op_idx(const U16 idx) {
   return net.outs[idx].opIdx;
+}
+
+
+// get global index for a given input of given op
+U16 net_op_in_idx(const U16 opIdx, const U16 inIdx) {
+  U16 which;
+  for(which=0; which<net.numIns; which++) {
+    if(net.ins[which].opIdx == opIdx) {
+      return (which + inIdx);
+    }
+  }
+  return 0; // shouldn't get here
+}
+
+// get global index for a given output of given op
+U16 net_op_out_idx(const U16 opIdx, const U16 outIdx) {
+  U16 which;
+  for(which=0; which<net.numOuts; which++) {
+    if(net.outs[which].opIdx == opIdx) {
+      return (which + outIdx);
+    }
+  }
+  return 0; // shouldn't get here
 }
 
 // populate an array with indices of all connected outputs for a given index

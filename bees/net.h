@@ -37,15 +37,19 @@ U16 net_num_ins(void);
 // get current count of outputs
 U16 net_num_outs(void);
 // get string for operator at given idx
-const char* net_op_name(const U8 idx);
+const char* net_op_name(const U16 idx);
 // get name for input at given idx
-const char* net_in_name(const U8 idx);
+const char* net_in_name(const U16 idx);
 // get name for output at given idx
-const char* net_out_name(const U8 idx);
+const char* net_out_name(const U16 idx);
 // get op index for input at given idx
-U8 net_in_op_idx(const U8 idx);
+U16 net_in_op_idx(const U16 idx);
 // get op index for output at given idx
-U8 net_out_op_idx(const U8 idx);
+U16 net_out_op_idx(const U16 idx);
+// get global index for a given input of given op
+U16 net_op_in_idx(const U16 opIdx, const U16 inIdx);
+// get global index for a given output of given op
+U16 net_op_out_idx(const U16 opIdx, const U16 outIdx);
 
 // connect a given output and input idx pair
 void net_connect(U32 outIdx, U32 inIdx);
