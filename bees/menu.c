@@ -129,8 +129,15 @@ void keyHandlerOps(key_t key) {
     break;
   case eKeyFnC:
       // create new operator of specified type
+      net_add_op(newOpType);
+      redrawOps();
     break;
   case eKeyFnD:
+      // delete
+      // FIXME: need to add arbitrary op deletion.
+      // right now this will destroy the last created op
+      net_pop_op();
+      redrawOps();
     break;
     //// encoder A: scroll pages
   case eKeyUpA:
@@ -141,10 +148,11 @@ void keyHandlerOps(key_t key) {
     break;
     //// encoder B: scroll selection
   case eKeyUpB:
-    scrollSelect(1, net_num_ops());
+      // extra selection at end is for new operator
+    scrollSelect(1, net_num_ops() + 1);
     break;
   case eKeyDownB:
-    scrollSelect(-1, net_num_ops());      
+    scrollSelect(-1, net_num_ops() + 1);      
     break;
     //// encoder C: move up/down in order of execution
   case eKeyUpC:
@@ -273,39 +281,69 @@ void keyHandlerOuts(key_t key) {
 // redraw ops page
 extern void redrawOps(void) {
   U8 y = 0;                       // which line
-  S32 n = page->selected;         // which list entry
-  const U16 num = net_num_ops(); // how many
-  const U16 num_1 = num - 1;
-
+  S32 n, nCenter;         // which list entry
+  const U16 num = net_num_ops(); // how many ops
+  static char buf[SCREEN_W];
+  
   // draw the header
   ui_print(y, 0, "__OPS____");
 
-  // deal with empty list
-  if (num<1) { 
-    ;; // shouldn't really happen
+  nCenter = page->selected;
+  if (nCenter >= num) {
+    nCenter = num;
+  }
+  n = nCenter;
+  // print selection at center
+  y = SCREEN_ROW_CENTER;
+  if (n < num) { 
+    // selection is existing operator
+    snprintf(buf, SCREEN_W, ">> %d __ %s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+             (int)n, net_op_name(n));
   } else {
-    //// draw the ops list...
-    // draw selection at center
-    y = SCREEN_ROW_CENTER;
-    ui_print(y, 0, ">");
-    ui_print(y, 1, net_op_name(n));
-    // draw higher entries if they exist
+    // selection is new operator
+    snprintf(buf, SCREEN_W, "[ +++ %s ++++++++++++++++++++++++++++++++++++++++++++++++++++++",
+             op_registry[newOpType].name);
+  }
+  ui_print(y, 0, buf);
+  
+  // print lower entries
+  while (y > 1) {
+//  while ((n > 0) && (y > 1)) {
+    n--;
+    y--;
+    if (n < 0) {
+      snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+    } else {
+    snprintf(buf, SCREEN_W, "   %d __ %s                                                          ",
+             (int)n, net_op_name(n));
+    }
+    ui_print(y, 0, buf);
+  }
+  
+  // re-center
+  n = nCenter;
+  y = SCREEN_ROW_CENTER;
+  
+  // print higher entries
+  while (y < SCREEN_H_2) {
     n++;
     y++;
-    while ((y<SCREEN_H_1) && (n < num_1)) {
-      ui_print(y, 1, net_op_name(n));
-      n++;      
-      y++;
-    } 
-    // draw lower entries if they exist
-    n = page->selected - 1;
-    y = SCREEN_ROW_CENTER - 1;
-    while ((y >= 1) && (n >= 0)) {
-      ui_print(y, 1, net_op_name(n));
-      n--;
-      y--;
+    if (n > num) {
+      snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+    } else {
+      if (n < num) { 
+        // selection is existing operator
+        snprintf(buf, SCREEN_W, ">> %d __ %s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+                 (int)n, net_op_name(n));
+      } else {
+        // selection is new operator
+        snprintf(buf, SCREEN_W, "[ +++ %s ++++++++++++++++++++++++++++++++++++++++++++++++++++++",
+                 op_registry[newOpType].name);
+      }
     }
-  } 
+    ui_print(y, 0, buf);
+  }
+      
   // draw footer (function labels)
   ui_println(SCREEN_H_1, " INS    | OUTS   | CREATE | DELETE ");
 }

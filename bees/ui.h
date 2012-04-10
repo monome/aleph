@@ -18,6 +18,7 @@
 // screen height in lines
 #define SCREEN_H   16
 #define SCREEN_H_1 15
+#define SCREEN_H_2 14
 // which line to center/highlight for editing
 #define SCREEN_ROW_CENTER 7
 

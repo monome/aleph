@@ -175,7 +175,7 @@ typedef struct op_preset_struct {
 void op_preset_init(op_preset_t* preset);
 
 //-----------------------------------
-//----- externally visible variables
+//---- public data
 extern const op_desc_t op_registry[numOpClasses];
 
 
