@@ -22,7 +22,7 @@
 // in
 typedef struct inode_struct { 
   op_in_t in; // function pointer
-  S32 val; // value for scene management
+  F32 val; // value for scene management
   U16 opIdx; // index of parent op in oplist
   U16 inIdx; // index of input in parent op's inlist
   U8 scene; // flag if included in scene
@@ -270,4 +270,17 @@ U32 net_gather(U32 iIdx, U32(*outs)[CTLNET_OUTS_MAX]) {
     }
   }
   return iOut;
+}
+// get / set / increment input value
+f32 net_get_in_value(U16 inIdx) {
+ return net.ins[inIdx].val;
+}
+
+void net_set_in_value(U16 inIdx, f32 val) {
+  net.ins[inIdx].val = val;
+}
+
+f32 net_inc_in_value(U16 inIdx, f32 inc) {
+  net.ins[inIdx].val += inc;
+  return net.ins[inIdx].val;
 }

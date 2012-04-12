@@ -9,7 +9,6 @@
 #include "op.h"
 #include "menu.h"
 
-
 //-----------------------------------
 //----- static function declarations
 
@@ -37,6 +36,10 @@ static void redrawOps(void);
 static void redrawIns(void);
 static void redrawOuts(void);
 static void redrawGathered(void);
+
+// constants
+static const f32 kParamValStepSmall = 0.001;
+static const f32 kParamValStepLarge = 0.05;
 
 //-----------------------------------
 //------- static variables
@@ -125,14 +128,6 @@ static void scrollPage(S8 dir) {
     break;
   }
   setPage(pageIdx);
-  /*
-  pageIdx += dir;
-  if (pageIdx < 0) {
-    pageIdx = 0;
-  }
-  if (pageIdx >= ePageMax) { pageIdx = 0; }
-  setPage(pageIdx);
-  */
 }
 
 
@@ -146,13 +141,6 @@ static void scrollSelect(S8 dir, U32 max) {
   // redraw with the new selection
   page->redraw();
 }
-
-
-/*
-// find and print connected output nodes
-static void gatherInputs(void) {
-}
-*/
 
 // create operators for systme hardware
 static void addSystemOperators(void) {
@@ -289,17 +277,21 @@ void keyHandlerIns(key_t key) {
     break;
   case eKeyUpC:
     // encoder C : value slow
-    
+    net_inc_in_value(page->selected, kParamValStepSmall);
+    redrawIns();
     break;
   case eKeyDownC:
-    
+    net_inc_in_value(page->selected, kParamValStepSmall * -1.f);
+    redrawIns();
     break;
   case eKeyUpD:
     // encoder D : value fast
-
+    net_inc_in_value(page->selected, kParamValStepLarge);
+    redrawIns();
     break;
   case eKeyDownD:
-    
+    net_inc_in_value(page->selected, kParamValStepLarge * -1.f);
+    redrawIns();
     break;
   case eKeyMax: // dummy
     // nothing
@@ -448,8 +440,8 @@ extern void redrawIns(void) {
   // print selection at center
   y = SCREEN_ROW_CENTER;
   if (n < num) { 
-    snprintf(buf, SCREEN_W, ">> %d_(%d)%s/%s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
-             (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n));
+    snprintf(buf, SCREEN_W, ">> %d_(%d)%s/%s_%f <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+             (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n), net_get_in_value(n));
   } else {
     // no selection
     snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
@@ -463,8 +455,8 @@ extern void redrawIns(void) {
     if (n < 0) {
       snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
     } else {
-    snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s                                                          ",
-             (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n));
+    snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s_%f                                                          ",
+             (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n), net_get_in_value(n));
     }
     ui_print(y, 0, buf);
   }
@@ -480,8 +472,8 @@ extern void redrawIns(void) {
     if (n >= num) {
       snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
     } else {
-        snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s                                                          ",  
-             (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n));
+        snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s_%f                                                         ",  
+             (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n), net_get_in_value(n));
     }
     ui_print(y, 0, buf);
   }

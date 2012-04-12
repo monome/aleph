@@ -51,6 +51,11 @@ U16 net_op_in_idx(const U16 opIdx, const U16 inIdx);
 // get global index for a given output of given op
 U16 net_op_out_idx(const U16 opIdx, const U16 outIdx);
 
+// get / set / increment input value
+f32 net_get_in_value(U16 inIdx);
+void net_set_in_value(U16 inIdx, f32 val);
+f32 net_inc_in_value(U16 inIdx, f32 inc);
+
 // connect a given output and input idx pair
 void net_connect(U32 outIdx, U32 inIdx);
 // disconnect a given output
