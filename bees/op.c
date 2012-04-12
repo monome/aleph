@@ -107,7 +107,7 @@ void op_sw_init(op_sw_t* sw) {
 //-------------------------------------------------
 //----- encoder
 static const char* op_enc_instring = "PIN1    PIN2    ";
-static const char* op_enc_outstring = "DIRECTION";
+static const char* op_enc_outstring = "DIR     ";
 static const char* op_enc_opstring = "ENCODER";
 static const int enc_map[4][4] = { {0,1,-1,0}, {-1,0,0,1}, {1,0,0,-1}, {0,-1,1,0} };
 

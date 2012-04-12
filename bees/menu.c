@@ -58,6 +58,8 @@ static s8 pageIdx = 0;
 static opid_t newOpType = 0;
 // array of onode pointers for gathering
 static U32(*gathered)[CTLNET_OUTS_MAX];
+// how many gathered
+static u32 numGathered;
 
 //-----------------------------------
 //----- external function definitions
@@ -250,14 +252,18 @@ void keyHandlerOps(key_t key) {
 
 // INS
 void keyHandlerIns(key_t key) {
+  u32 i;
   switch(key) {
   case eKeyFnA:
     // fnA : gather
-    net_gather(page->selected, gathered);
+    numGathered = net_gather(page->selected, gathered);
     break;
   case eKeyFnB:
     // fnB : disconnect
-    // TODO
+    numGathered = net_gather(page->selected, gathered);
+    for(i=0; i<numGathered; i++) {
+      net_disconnect(*(gathered[i]));
+    }
     break;
   case eKeyFnC:
     // fnC : overwrite preset value (and include)
@@ -385,7 +391,6 @@ extern void redrawOps(void) {
   
   // print lower entries
   while (y > 1) {
-//  while ((n > 0) && (y > 1)) {
     n--;
     y--;
     if (n < 0) {
@@ -443,8 +448,8 @@ extern void redrawIns(void) {
   // print selection at center
   y = SCREEN_ROW_CENTER;
   if (n < num) { 
-    snprintf(buf, SCREEN_W, ">> %d__%s/%s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
-             (int)n, net_op_name(net_in_op_idx(n)), net_in_name(n));
+    snprintf(buf, SCREEN_W, ">> %d_(%d)%s/%s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+             (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n));
   } else {
     // no selection
     snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
@@ -453,14 +458,13 @@ extern void redrawIns(void) {
   
   // print lower entries
   while (y > 1) {
-//  while ((n > 0) && (y > 1)) {
     n--;
     y--;
     if (n < 0) {
       snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
     } else {
-    snprintf(buf, SCREEN_W, "   %d__%s/%s                                                          ",
-             (int)n, net_op_name(net_in_op_idx(n)), net_in_name(n));
+    snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s                                                          ",
+             (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n));
     }
     ui_print(y, 0, buf);
   }
@@ -476,9 +480,8 @@ extern void redrawIns(void) {
     if (n >= num) {
       snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
     } else {
-        snprintf(buf, SCREEN_W, "   %d__%s/%s                                                          ",  
-             (int)n, net_op_name(net_in_op_idx(n)), net_in_name(n));
-
+        snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s                                                          ",  
+             (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n));
     }
     ui_print(y, 0, buf);
   }
@@ -492,10 +495,64 @@ extern void redrawIns(void) {
 //==================================================
 //==== redraw outputs page
 extern void redrawOuts(void) {
+  U8 y = 0;                       // which line
+  S32 n, nCenter;         // which list entry
+  const U16 num = net_num_outs(); // how many ops
   static char buf[SCREEN_W];
+  
   // draw the header
-  snprintf(buf, SCREEN_W, "|||||||| ROUTING ||||||||||||||||||||||||||||||||||||||||||||||||");
+  snprintf(buf, SCREEN_W, "|||||||| ROUTING ||||||||||||||||||||||||||||||||||||||||||||||");
   ui_print(0, 0, buf);
+
+  nCenter = page->selected;
+  if (nCenter >= num) {
+    nCenter = num;
+  }
+  n = nCenter;
+  // print selection at center
+  y = SCREEN_ROW_CENTER;
+  if (n < num) { 
+    snprintf(buf, SCREEN_W, ">> %d_(%d)%s/%s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+             (int)n, net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
+  } else {
+    // no selection
+    snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+  }
+  ui_print(y, 0, buf);
+  
+  // print lower entries
+  while (y > 1) {
+    n--;
+    y--;
+    if (n < 0) {
+      snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+    } else {
+    snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s                                                          ",
+             (int)n, net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
+    }
+    ui_print(y, 0, buf);
+  }
+  
+  // re-center
+  n = nCenter;
+  y = SCREEN_ROW_CENTER;
+  
+  // print higher entries
+  while (y < SCREEN_H_1) {
+    n++;
+    y++;
+    if (n >= num) {
+      snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+    } else {
+        snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s                                                          ",  
+             (int)n, net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
+    }
+    ui_print(y, 0, buf);
+  }
+      
+  // draw footer 
+// (function labels)
+  ui_println(SCREEN_H_1, "|| GATHER ||  DISCONNECT || STORE || PRESET ");
 }
 
 /// redraw gathered outputs
