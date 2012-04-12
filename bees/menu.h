@@ -20,6 +20,7 @@ typedef enum ePage_t {
 	ePageOps,
 	ePageIns,
 	ePageOuts,
+	ePageGathered,
 	ePageMax     // dummy
 } ePage;
 

@@ -9,10 +9,14 @@
 #include "op.h"
 #include "menu.h"
 
+
 //-----------------------------------
 //----- static function declarations
 
-// set current page
+// create operators for system hardware
+static void addSystemOperators(void);
+
+// set current pages
 static void setPage(ePage n);
 // scroll page
 static void scrollPage(S8 dir);
@@ -26,11 +30,13 @@ static void scrollSelect(S8 dir, U32 max);
 static void keyHandlerOps(key_t key);
 static void keyHandlerIns(key_t key);
 static void keyHandlerOuts(key_t key);
+static void keyHandlerGathered(key_t key);
 
 //// page-specific redraws
 static void redrawOps(void);
 static void redrawIns(void);
 static void redrawOuts(void);
+static void redrawGathered(void);
 
 //-----------------------------------
 //------- static variables
@@ -39,18 +45,19 @@ static void redrawOuts(void);
 static page_t pages[ePageMax] = {
   { "OPS",    (keyHandler_t)&keyHandlerOps,    (redraw_t)&redrawOps, 0 },
   { "INS",    (keyHandler_t)&keyHandlerIns,    (redraw_t)&redrawIns, 0 },
-  { "OUTS",   (keyHandler_t)&keyHandlerOuts,    (redraw_t)&redrawOuts, 0 }
+  { "OUTS",   (keyHandler_t)&keyHandlerOuts,    (redraw_t)&redrawOuts, 0 },
+  { "GATHERED" ,   (keyHandler_t)&keyHandlerGathered,    (redraw_t)&redrawGathered, 0 }
 };
 
+///// random/ugly
 // pointer to current page
 static page_t* page;
 // idx of current page
 static s8 pageIdx = 0;
-
-// some random/ugly page-specific varibles.
-// would be marginally cleaner for page_t to store pointers to specific page contexts?
-// but not really clean enough to be worth it i think
+// new operator class index
 static opid_t newOpType = 0;
+// array of onode pointers for gathering
+static U32(*gathered)[CTLNET_OUTS_MAX];
 
 //-----------------------------------
 //----- external function definitions
@@ -85,12 +92,45 @@ static void setPage(ePage n) {
 
 // scroll current page
 static void scrollPage(S8 dir) {
+  switch(pageIdx) {
+  case ePageOps:
+    if (dir > 0) {
+      pageIdx = ePageIns;
+    } else {
+      pageIdx = ePageOuts;
+    }
+    break;
+  case ePageIns:
+    if (dir > 0) {
+      pageIdx = ePageOuts;
+    } else {
+      pageIdx = ePageOps;
+    }
+    break;
+  case ePageOuts:
+    if (dir > 0) {
+      pageIdx = ePageOps;
+    } else {
+      pageIdx = ePageIns;
+    }
+    break;
+  case ePageGathered:
+    if (dir > 0) {
+      pageIdx = ePageIns;
+    } else {
+      pageIdx = ePageOuts;
+    }
+    break;
+  }
+  setPage(pageIdx);
+  /*
   pageIdx += dir;
   if (pageIdx < 0) {
     pageIdx = 0;
   }
   if (pageIdx >= ePageMax) { pageIdx = 0; }
   setPage(pageIdx);
+  */
 }
 
 
@@ -112,6 +152,25 @@ static void gatherInputs(void) {
 }
 */
 
+// create operators for systme hardware
+static void addSystemOperators(void) {
+  // 4 encoders
+  net_add_op(eOpEnc);
+  net_add_op(eOpEnc);
+  net_add_op(eOpEnc);
+  net_add_op(eOpEnc);
+  // 4 switches
+  net_add_op(eOpSwitch);
+  net_add_op(eOpSwitch);
+  net_add_op(eOpSwitch);
+  net_add_op(eOpSwitch);
+}
+
+
+//////////////////////////////////
+///////////////////
+///// page specific functions
+
 //========================================
 //====== key handlers
 // OPS
@@ -119,22 +178,22 @@ void keyHandlerOps(key_t key) {
   U16 n;
   switch(key) {
     case eKeyFnA: 
-      // go to selected operator's inputs on INS page
+      // fnA go to selected operator's inputs on INS page
       pages[ePageIns].selected = net_op_in_idx(page->selected, 0);
       setPage(ePageIns);
     break;
   case eKeyFnB:
-      // go to this operator's outputs on OUTS page
+      // fnB : go to this operator's outputs on OUTS page
       pages[ePageOuts].selected = net_op_out_idx(page->selected, 0);
       setPage(ePageOuts);
     break;
   case eKeyFnC:
-      // create new operator of specified type
+      // fnC : create new operator of specified type
       net_add_op(newOpType);
       redrawOps();
     break;
   case eKeyFnD:
-      // delete
+      // fnD : delete
       // FIXME: need to add arbitrary op deletion.
       // right now this will destroy the last created op
       net_pop_op();
@@ -193,12 +252,20 @@ void keyHandlerOps(key_t key) {
 void keyHandlerIns(key_t key) {
   switch(key) {
   case eKeyFnA:
+    // fnA : gather
+    net_gather(page->selected, gathered);
     break;
   case eKeyFnB:
+    // fnB : disconnect
+    // TODO
     break;
   case eKeyFnC:
+    // fnC : overwrite preset value (and include)
+    // TODO
     break;
   case eKeyFnD:
+    // toggle preset inclusion
+    // TODO
     break;
     //// encoder A: scroll pages
   case eKeyUpA:
@@ -209,22 +276,24 @@ void keyHandlerIns(key_t key) {
     break;
     //// encoder B: scroll selection
   case eKeyUpB:
-    scrollSelect(1, net_num_ops());
+    scrollSelect(1, net_num_ins());
     break;
   case eKeyDownB:
-    scrollSelect(-1, net_num_ops());      
+    scrollSelect(-1, net_num_ins());      
     break;
   case eKeyUpC:
-    // nothing
+    // encoder C : value slow
+    
     break;
   case eKeyDownC:
-    // nothing
+    
     break;
   case eKeyUpD:
-    // nothing
+    // encoder D : value fast
+
     break;
   case eKeyDownD:
-    // nothing
+    
     break;
   case eKeyMax: // dummy
     // nothing
@@ -279,6 +348,10 @@ void keyHandlerOuts(key_t key) {
   }  
 }
 
+static void keyHandlerGathered(key_t key) {
+  keyHandlerOuts(key);
+}
+
 //========================================
 //======= redraws
 
@@ -291,7 +364,7 @@ extern void redrawOps(void) {
   static char buf[SCREEN_W];
   
   // draw the header
-  snprintf(buf, SCREEN_W, "|||||||| OPS ||||||||||||||||||||||||||||||||||||||||||||||||");
+  snprintf(buf, SCREEN_W, "|||||||| OPERATORS ||||||||||||||||||||||||||||||||||||||||||||||||");
   ui_print(0, 0, buf);
 
   nCenter = page->selected;
@@ -302,8 +375,7 @@ extern void redrawOps(void) {
   // print selection at center
   y = SCREEN_ROW_CENTER;
   if (n < num) { 
-    // selection is existing operator
-    snprintf(buf, SCREEN_W, ">> %d __ %s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+    snprintf(buf, SCREEN_W, ">> %d__%s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
              (int)n, net_op_name(n));
   } else {
     // no selection
@@ -319,7 +391,7 @@ extern void redrawOps(void) {
     if (n < 0) {
       snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
     } else {
-    snprintf(buf, SCREEN_W, "   %d __ %s                                                          ",
+    snprintf(buf, SCREEN_W, "   %d__%s                                                          ",
              (int)n, net_op_name(n));
     }
     ui_print(y, 0, buf);
@@ -336,7 +408,7 @@ extern void redrawOps(void) {
     if (n >= num) {
       snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
     } else {
-        snprintf(buf, SCREEN_W, "   %d __ %s                                                          ",  
+        snprintf(buf, SCREEN_W, "   %d__%s                                                      ",  
                  (int)n, net_op_name(n));
     }
     ui_print(y, 0, buf);
@@ -348,17 +420,72 @@ extern void redrawOps(void) {
          op_registry[newOpType].name);
   ui_print(SCREEN_H_2, 0, buf);
 // (function labels)
-  ui_println(SCREEN_H_1, "|| INS    ||  OUTS   ||  CREATE  ||  DELETE ");
+  ui_println(SCREEN_H_1, "|| PARAMS  || ROUTING ||  CREATE  ||  DELETE ");
 }
 
 //==================================================
 //==== redraw inputs page
 extern void redrawIns(void) {
+  U8 y = 0;                       // which line
+  S32 n, nCenter;         // which list entry
+  const U16 num = net_num_ins(); // how many ops
   static char buf[SCREEN_W];
-  // draw the header
-  snprintf(buf, SCREEN_W, "|||||||| INS ||||||||||||||||||||||||||||||||||||||||||||||||");
   
+  // draw the header
+  snprintf(buf, SCREEN_W, "|||||||| PARAMS ||||||||||||||||||||||||||||||||||||||||||||||||");
   ui_print(0, 0, buf);
+
+  nCenter = page->selected;
+  if (nCenter >= num) {
+    nCenter = num;
+  }
+  n = nCenter;
+  // print selection at center
+  y = SCREEN_ROW_CENTER;
+  if (n < num) { 
+    snprintf(buf, SCREEN_W, ">> %d__%s/%s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+             (int)n, net_op_name(net_in_op_idx(n)), net_in_name(n));
+  } else {
+    // no selection
+    snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+  }
+  ui_print(y, 0, buf);
+  
+  // print lower entries
+  while (y > 1) {
+//  while ((n > 0) && (y > 1)) {
+    n--;
+    y--;
+    if (n < 0) {
+      snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+    } else {
+    snprintf(buf, SCREEN_W, "   %d__%s/%s                                                          ",
+             (int)n, net_op_name(net_in_op_idx(n)), net_in_name(n));
+    }
+    ui_print(y, 0, buf);
+  }
+  
+  // re-center
+  n = nCenter;
+  y = SCREEN_ROW_CENTER;
+  
+  // print higher entries
+  while (y < SCREEN_H_1) {
+    n++;
+    y++;
+    if (n >= num) {
+      snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+    } else {
+        snprintf(buf, SCREEN_W, "   %d__%s/%s                                                          ",  
+             (int)n, net_op_name(net_in_op_idx(n)), net_in_name(n));
+
+    }
+    ui_print(y, 0, buf);
+  }
+      
+  // draw footer 
+// (function labels)
+  ui_println(SCREEN_H_1, "|| GATHER ||  DISCONNECT || STORE || PRESET ");
 }
 
 
@@ -367,6 +494,10 @@ extern void redrawIns(void) {
 extern void redrawOuts(void) {
   static char buf[SCREEN_W];
   // draw the header
-  snprintf(buf, SCREEN_W, "|||||||| OUTS ||||||||||||||||||||||||||||||||||||||||||||||||");
+  snprintf(buf, SCREEN_W, "|||||||| ROUTING ||||||||||||||||||||||||||||||||||||||||||||||||");
   ui_print(0, 0, buf);
+}
+
+/// redraw gathered outputs
+static void redrawGathered(void) {
 }

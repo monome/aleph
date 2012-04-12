@@ -271,4 +271,3 @@ U32 net_gather(U32 iIdx, U32(*outs)[CTLNET_OUTS_MAX]) {
   }
   return iOut;
 }
-

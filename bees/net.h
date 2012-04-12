@@ -10,7 +10,7 @@
 #include "../common/types.h"
 #include "op.h"
 
-// maximum allocated IO points and operators
+// maximum allocated parameters, connections, and operators
 #define CTLNET_INS_MAX 128
 #define CTLNET_OUTS_MAX 128
 #define CTLNET_OPS_MAX 128
