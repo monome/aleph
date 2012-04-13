@@ -97,7 +97,7 @@ S16 net_add_op(opId_t opId) {
     op_enc_init((void*)op);
     break;
   case eOpParam:
-    //return -1;
+    op_param_init((void*)op);
     break;
   case eOpPreset:
     //    return -1;
@@ -141,7 +141,7 @@ S16 net_add_op(opId_t opId) {
   net.opPoolOffset += op_registry[opId].size;
 
   //---- add inputs and outputs to node list
-  // don't add inputs fo system control ops
+  // don't add inputs for system control ops
   if (op->status != eSysCtlOp) {
     for(i=0; i<ins; i++) {
       net.ins[net.numIns].in = op->in[i];
@@ -203,8 +203,10 @@ U16 net_num_outs(void) {
 const char* net_op_name(const U16 idx) {
   return net.ops[idx]->opString;
 }
+
 // get name for input at given idx
 const char* net_in_name(const U16 idx) {
+  if (idx > net.numIns) return "";
   return op_in_name(net.ops[net.ins[idx].opIdx], net.ins[idx].inIdx);
 }
 
@@ -214,12 +216,14 @@ const char* net_out_name(const U16 idx) {
 }
 
 // get op index for input at given idx
-U16 net_in_op_idx(const U16 idx) {
+S16 net_in_op_idx(const U16 idx) {
+  if (idx > net.numIns) return -1;
   return net.ins[idx].opIdx;
 }
 
 // get op index for output at given idx
-U16 net_out_op_idx(const U16 idx) {
+S16 net_out_op_idx(const U16 idx) {
+ if (idx > net.numOuts) return -1;
   return net.outs[idx].opIdx;
 }
 
@@ -287,11 +291,12 @@ f32 net_get_in_value(U16 inIdx) {
   return net.ins[inIdx].val;
 }
 
-void net_set_in_value(U16 inIdx, f32 val) {
+void net_set_in_value(U16 inIdx, S32 val) {
   net.ins[inIdx].val = val;
 }
 
-f32 net_inc_in_value(U16 inIdx, f32 inc) {
+f32 net_inc_in_value(U16 inIdx, S32 inc) {
   net.ins[inIdx].val += inc;
+  net_activate(inIdx, (const S32*)(&(net.ins[inIdx].val)));
   return net.ins[inIdx].val;
 }

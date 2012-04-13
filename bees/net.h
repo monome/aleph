@@ -48,9 +48,9 @@ const char* net_in_name(const U16 idx);
 const char* net_out_name(const U16 idx);
 
 // get op index for input at given idx
-U16 net_in_op_idx(const U16 idx);
+S16 net_in_op_idx(const U16 idx);
 // get op index for output at given idx
-U16 net_out_op_idx(const U16 idx);
+S16 net_out_op_idx(const U16 idx);
 // get global index for a given input of given op
 U16 net_op_in_idx(const U16 opIdx, const U16 inIdx);
 // get global index for a given output of given op
@@ -64,8 +64,8 @@ opStatus_t net_op_status(U16 opIdx);
 
 // get / set / increment input value
 f32 net_get_in_value(U16 inIdx);
-void net_set_in_value(U16 inIdx, f32 val);
-f32 net_inc_in_value(U16 inIdx, f32 inc);
+void net_set_in_value(U16 inIdx, S32 val);
+f32 net_inc_in_value(U16 inIdx, S32 inc);
 
 // connect a given output and input idx pair
 void net_connect(U32 outIdx, U32 inIdx);

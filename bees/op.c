@@ -8,6 +8,7 @@
 
 #include "../common/types.h"
 #include "net.h"
+#include "ui.h"
 #include "op.h"
 
 
@@ -386,7 +387,37 @@ void op_lin_init(op_lin_t* lin);
 
 //-------------------------------------------------
 //---- param value receiver
-void op_param_init(op_param_t* param);
+static const char* op_param_instring = "INDEX   VALUE   ";
+static const char* op_param_opstring = "PARAM";
+
+static void op_param_in_idx(op_param_t* param, const S32* v) {
+  // FIXME: limit by DSP param count
+  param->idx = (U32)(*v);
+}
+
+static void op_param_in_val(op_param_t* param, const S32* v) {
+  // FIXME: set DSP param
+  static char buf[SCREEN_W];
+  param->val = *v;
+  snprintf(buf, SCREEN_W, "setting parameter value %d at index%d", (int)(param->val), (int)(param->idx));
+  ui_print(SCREEN_H, 0, buf, 0);
+
+}
+
+static op_in_t op_param_inputs[2] = {
+  (op_in_t)&op_param_in_idx,
+  (op_in_t)&op_param_in_val
+};
+
+void op_param_init(op_param_t* op) {
+  op->super.numInputs = 2;
+  op->super.numOutputs = 0;
+  op->super.in = op_param_inputs;
+  op->super.opString = op_param_opstring;
+  op->super.inString = op_param_instring;
+  op->super.type = eOpParam;  
+  op->super.status = eSysRecOp;  
+}
 
 //-------------------------------------------------
 //----- preset manipulator

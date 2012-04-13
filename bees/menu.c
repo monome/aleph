@@ -36,8 +36,8 @@ static void redrawOuts(void);
 static void redrawGathered(void);
 
 // constants
-static const f32 kParamValStepSmall = 0.001;
-static const f32 kParamValStepLarge = 0.05;
+static const S32 kParamValStepSmall = 1;
+static const S32 kParamValStepLarge = 512;
 
 // const array of user-creatable operator type id's
 #define NUM_USER_OP_TYPES 6
@@ -162,31 +162,34 @@ static void scrollSelect(S8 dir, U32 max) {
 void keyHandlerOps(key_t key) {
   U16 n;
   switch(key) {
-    case eKeyFnA: 
-      // fnA go to selected operator's inputs on INS page
-      pages[ePageIns].selected = net_op_in_idx(page->selected, 0);
-      setPage(ePageIns);
+  case eKeyFnA: 
+    // fnA go to selected operator's inputs on INS page
+    pages[ePageIns].selected = net_op_in_idx(page->selected, 0);
+    setPage(ePageIns);
     break;
   case eKeyFnB:
-      // fnB : go to this operator's outputs on OUTS page
-      pages[ePageOuts].selected = net_op_out_idx(page->selected, 0);
-      setPage(ePageOuts);
+    // fnB : go to this operator's outputs on OUTS page
+    pages[ePageOuts].selected = net_op_out_idx(page->selected, 0);
+    setPage(ePageOuts);
     break;
   case eKeyFnC:
-      // fnC : create new operator of specified type
+    // fnC : create new operator of specified type
     net_add_op(userOpTypes[newOpType]);
-      redrawOps();
+    redrawOps();
     break;
   case eKeyFnD:
-      // fnD : delete
-      // FIXME: need to add arbitrary op deletion.
-      // right now this will destroy the last created op
-      net_pop_op();
-      n = net_num_ops() - 1;
-      if (page->selected > n) {
-	page->selected = n;
-      }
-      redrawOps();
+    // fnD : delete
+    // FIXME: need to add arbitrary op deletion.
+    // right now this will destroy the last created op
+    if (net_op_status(net_num_ops() - 1) != eUserOp) {
+      return;
+    }
+    net_pop_op();
+    n = net_num_ops() - 1;
+    if (page->selected > n) {
+      page->selected = n;
+    }
+    redrawOps();
     break;
     //// encoder A: scroll pages
   case eKeyUpA:
@@ -211,18 +214,18 @@ void keyHandlerOps(key_t key) {
     break;
     //// encoder D: select new operator type for creation
   case eKeyUpD:
-      newOpType++;
-      if (newOpType >= NUM_USER_OP_TYPES) {
-        newOpType = 0;
-      }
-      redrawOps();
+    newOpType++;
+    if (newOpType >= NUM_USER_OP_TYPES) {
+      newOpType = 0;
+    }
+    redrawOps();
     break;
-    case eKeyDownD:
-      newOpType--;
-      if (newOpType >= NUM_USER_OP_TYPES) {
-        newOpType = NUM_USER_OP_TYPES_1;
-      }
-      redrawOps();
+  case eKeyDownD:
+    newOpType--;
+    if (newOpType >= NUM_USER_OP_TYPES) {
+      newOpType = NUM_USER_OP_TYPES_1;
+    }
+    redrawOps();
     // nothing
     break;
   case eKeyMax: // dummy
@@ -276,7 +279,7 @@ void keyHandlerIns(key_t key) {
     redrawIns();
     break;
   case eKeyDownC:
-    net_inc_in_value(page->selected, kParamValStepSmall * -1.f);
+    net_inc_in_value(page->selected, kParamValStepSmall * -1);
     redrawIns();
     break;
   case eKeyUpD:
@@ -285,7 +288,7 @@ void keyHandlerIns(key_t key) {
     redrawIns();
     break;
   case eKeyDownD:
-    net_inc_in_value(page->selected, kParamValStepLarge * -1.f);
+    net_inc_in_value(page->selected, kParamValStepLarge * -1);
     redrawIns();
     break;
   case eKeyMax: // dummy
@@ -362,7 +365,7 @@ static void keyHandlerGathered(key_t key) {
 extern void redrawOps(void) {
   U8 y = 0;                       // which line
   S32 n, nCenter;         // which list entry
-  opStatus_t status;
+  opStatus_t status = eUserOp;
   // total count of ops, including system-controlled
   const U16 num = net_num_ops();
   static char buf[SCREEN_W];
@@ -380,13 +383,13 @@ extern void redrawOps(void) {
   y = SCREEN_ROW_CENTER;
   status = net_op_status(n);
   if (n < num) { 
-    snprintf(buf, SCREEN_W, "   %d_%s",
+    snprintf(buf, SCREEN_W, "   %d__%s",
              (int)n, net_op_name(n));
     ui_print(y, 0, buf, 4 + status);
   } else {
     // no selection
-    snprintf(buf, SCREEN_W, "   ...");
-    ui_print(y, 0, buf, 1 + status);
+    snprintf(buf, SCREEN_W, "   .");
+    ui_print(y, 0, buf, 0);
   }
   
   // print lower entries
@@ -394,13 +397,13 @@ extern void redrawOps(void) {
     n--;
     y--;
     if (n < 0) {
-      snprintf(buf, SCREEN_W, "   ...");
-    ui_print(y, 0, buf, 1);
+      snprintf(buf, SCREEN_W, "   .");
+      ui_print(y, 0, buf, 0);
     } else {
       status = net_op_status(n);
       snprintf(buf, SCREEN_W, "   %d__%s",
 	       (int)n, net_op_name(n));
-    ui_print(y, 0, buf, 1 + status);
+      ui_print(y, 0, buf, 1 + status);
     }
   }
   
@@ -413,23 +416,28 @@ extern void redrawOps(void) {
     n++;
     y++;
     if (n >= num) {
-      snprintf(buf, SCREEN_W, "   ...");
-      ui_print(y, 0, buf, 1);
+      snprintf(buf, SCREEN_W, "   .");
+      ui_print(y, 0, buf, 0);
     } else {
       status = net_op_status(n);
       snprintf(buf, SCREEN_W, "   %d__%s",
 	       (int)n, net_op_name(n));
-	ui_print(y, 0, buf, 1 + status);
+      ui_print(y, 0, buf, 1 + status);
     }
   }
       
   // draw footer 
-// (new op type)
+  // (new op type)
   snprintf(buf, SCREEN_W, "[ +++ %s",
-         op_registry[userOpTypes[newOpType]].name);
+	   op_registry[userOpTypes[newOpType]].name);
   ui_print(SCREEN_H_2, 0, buf, 1);
-// (function labels)
-  ui_print(SCREEN_H_1, 0, " A_PARAMS   B_ROUTING   C_CREATE  D_DELETE ", 3);
+  // (function labels)
+  // don't allow deletion of system operators
+  if (net_op_status(net_num_ops() - 1) == eUserOp) {
+    ui_print(SCREEN_H_1, 0, " A_PARAMS   B_ROUTING   C_CREATE  D_DELETE ", 3);
+  } else  {
+    ui_print(SCREEN_H_1, 0, " A_PARAMS   B_ROUTING   C_CREATE  ", 3);
+  }
 }
 
 //==================================================
@@ -452,18 +460,18 @@ extern void redrawIns(void) {
   // print selection at center
   y = SCREEN_ROW_CENTER;
   if (n < num) { 
-    snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s_%f",
+    snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s_%d",
              (int)n,
 	     net_in_op_idx(n), 
 	     net_op_name(net_in_op_idx(n)), 
 	     net_in_name(n), 
-	     net_get_in_value(n));
+	     (int)net_get_in_value(n));
     ui_print(y, 0, buf, 4);
 
   } else {
     // no selection
-    snprintf(buf, SCREEN_W, "   ...");
-    ui_print(y, 0, buf, 1);
+    snprintf(buf, SCREEN_W, "   .");
+    ui_print(y, 0, buf, 0);
   }
   
   // print lower entries
@@ -471,11 +479,11 @@ extern void redrawIns(void) {
     n--;
     y--;
     if (n < 0) {
-      snprintf(buf, SCREEN_W, "   ...");
-      ui_print(y, 0, buf, 1);
+      snprintf(buf, SCREEN_W, "   .");
+      ui_print(y, 0, buf, 0);
     } else {
-      snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s_%f",
-	       (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n), net_get_in_value(n));
+      snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s_%d",
+	       (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n), (int)net_get_in_value(n));
       ui_print(y, 0, buf, 1);
     }
   }
@@ -489,26 +497,26 @@ extern void redrawIns(void) {
     n++;
     y++;
     if (n >= num) {
-      snprintf(buf, SCREEN_W, "   ...");
-      ui_print(y, 0, buf, 1);
+      snprintf(buf, SCREEN_W, "   .");
+      ui_print(y, 0, buf, 0);
     } else {
-        snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s_%f                                                         ",  
-             (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n), net_get_in_value(n));
-    ui_print(y, 0, buf, 1);
+      snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s_%d",  
+	       (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n), (int)net_get_in_value(n));
+      ui_print(y, 0, buf, 1);
     }
   }
       
   // draw footer 
-// (function labels)
+  // (function labels)
   ui_print(SCREEN_H_1, 0, "A_GATHER  B_DISCONNECT  C_STORE  D_PRESET ", 3);
 }
-
 
 //==================================================
 //==== redraw outputs page
 extern void redrawOuts(void) {
   U8 y = 0;                       // which line
   S32 n, nCenter;         // which list entry
+  S16 target; U8 status;
   const U16 num = net_num_outs(); // how many ops
   static char buf[SCREEN_W];
   
@@ -524,13 +532,23 @@ extern void redrawOuts(void) {
   // print selection at center
   y = SCREEN_ROW_CENTER;
   if (n < num) { 
-    snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s",
-             (int)n, net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
-    ui_print(y, 0, buf, 4);
+    target = net_get_target(n);
+    status = net_op_status(net_out_op_idx(n));
+    if (target >= 0) {
+      snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s-->%s/%s",
+	       (int)n, net_out_op_idx(n),
+	       net_op_name(net_out_op_idx(n)), net_out_name(n), 
+	       net_op_name(net_in_op_idx(target)), net_in_name(target)
+	       );
+    } else {
+      snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s",
+	       (int)n, net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
+    }
+    ui_print(y, 0, buf, 4+status);
   } else {
     // no selection
-    snprintf(buf, SCREEN_W, "   ...");
-    ui_print(y, 0, buf, 1);
+    snprintf(buf, SCREEN_W, "   .");
+    ui_print(y, 0, buf, 0);
   }
   
   // print lower entries
@@ -538,12 +556,22 @@ extern void redrawOuts(void) {
     n--;
     y--;
     if (n < 0) {
-      snprintf(buf, SCREEN_W, "   ...");
-    ui_print(y, 0, buf, 1);
+      snprintf(buf, SCREEN_W, "   .");
+      ui_print(y, 0, buf, 0);
     } else {
-    snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s",
-             (int)n, net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
-    ui_print(y, 0, buf, 1);
+      target = net_get_target(n);
+      status = net_op_status(net_out_op_idx(n));
+      if (target >= 0) {
+	snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s-->%s/%s",
+		 (int)n, net_out_op_idx(n),
+		 net_op_name(net_out_op_idx(n)), net_out_name(n), 
+		 net_op_name(net_in_op_idx(target)), net_in_name(target)
+		 );
+      } else {
+	snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s",
+		 (int)n, net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
+      }
+      ui_print(y, 0, buf, 1+status);
     }
   }
   
@@ -556,19 +584,31 @@ extern void redrawOuts(void) {
     n++;
     y++;
     if (n >= num) {
-      snprintf(buf, SCREEN_W, "   ...");
-    ui_print(y, 0, buf, 1);
+      snprintf(buf, SCREEN_W, "   .");
+      ui_print(y, 0, buf, 0);
     } else {
-        snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s",  
-             (int)n, net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
-    ui_print(y, 0, buf, 1);
+      target = net_get_target(n);
+      status = net_op_status(net_out_op_idx(n));
+      if (target >= 0) {
+	snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s-->%s/%s",
+		 (int)n, net_out_op_idx(n),
+		 net_op_name(net_out_op_idx(n)), net_out_name(n), 
+		 net_op_name(net_in_op_idx(target)), net_in_name(target)
+		 );
+      } else {
+	snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s",
+		 (int)n, net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
+      }
+
+
+      ui_print(y, 0, buf, 1+status);
     }
   }
   
   //  snprintf("");
 
   // draw footer 
-// (function labels)
+  // (function labels)
   ui_print(SCREEN_H_1, 0, " A_FOLLOW  B_DISCONNECT C_STORE  D_PRESET ", 3);
 }
 

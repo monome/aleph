@@ -171,7 +171,7 @@ void op_exp_init(op_exp_t* exp);
 //--- op_param_t : receive parameter change
 typedef struct op_param_struct {
   op_t super;
-  U16 idx;
+  U32 idx;
   S32 val;
 } op_param_t;
 void op_param_init(op_param_t* param);
