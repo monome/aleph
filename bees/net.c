@@ -18,7 +18,6 @@
 //----- external
 ctlnet_t net;
 
-
 //==================================================
 //========= static functions
 
@@ -28,22 +27,59 @@ static void addSysOps(void);
 static void addSysOp(opid_t id, U8 recFlag);
 
 // create a single system operator
-static void addSysOps(opid_t id, U8 recFlag) {
-  static U8 inOff = 0;
-  static U8 outOff = 0;
+static void addSysOp(opid_t id, U8 recFlag) {
+  static U8 inIdx = 0;
+  static U8 outIdx = 0;
   static U8 recIdx = 0;
   static U8 ctlIdx = 0;
 
-  U16 ins;
-  U16 outs;
+  U16 ins, outs;
+  U8 idx, i;
   op_t* op;
 
   if (recFlag) {
+    idx = recIdx;
     op = &(net.sysReceiveOps[idx]);
+    recIdx++;
   } else {
+    idx = ctlIdx;
     op = &(net.sysControlOps[idx]);
+    ctlIdx++;
   }  
+  
+  switch(id) {
+  case eOpSwitch:
+    op_sw_init((void*) op);
+    break;
+  case eOpEnc:
+    op_enc_init((void*)op);
+    break;
+  case eOpParam:
+    //return -1;
+    break;
+  case eOpPreset:
+    //    return -1;
+    break;
+  default:
+    break;
+  }
 
+  ins = op->numInputs;
+  outs = op->numOutputs;
+  op->type = id;
+  
+  for(i=0; i<ins; i++) {
+    net.sysIns[inIdx].in = op->in[i];
+    net.sysIns[inIdx].opIdx = idx;
+    net.sysIns[inIdx].inIdx = i;
+    inIdx++;
+  }
+  for(i=0; i<outs; i++) {
+    net.sysOuts[outIdx].opIdx = idx;
+    net.sysOuts[outIdx].outIdx = i;
+    net.sysOuts[outIdx].target = -1;
+    outIdx++;
+  }
 }
 
 // create system operators
@@ -79,6 +115,7 @@ void net_init(void) {
   net.numOuts = 0;
   net.opPoolOffset = 0;
   printf("initialized network, using %d bytes\n", (int)sizeof(ctlnet_t));
+  addSysOps();
 }
 
 // de-initialize network
@@ -95,8 +132,7 @@ void net_activate(S16 inIdx, const S32* val) {
 
 // attempt to allocate a new operator from the pool, return index
 S16 net_add_op(opid_t opId) {
-  U16 ins;
-  U16 outs;
+  U16 ins, outs;
   U8 i;
   op_t* op;
 
@@ -111,34 +147,22 @@ S16 net_add_op(opid_t opId) {
   op = (op_t*)(net.opPool + net.opPoolOffset);
   // use the class ID to initialize a new object in scratch
   switch(opId) {
-  case eOpSwitch:
-    op_sw_init((void*) op);
+  case eOpAdd:
+    op_add_init((void*)op);
     break;
-  case eOpEnc:
-    op_enc_init((void*)op);
+  case eOpMul:
+    op_mul_init((void*)op);
     break;
-    case eOpAdd:
-      op_add_init((void*)op);
+  case eOpGate:
+    op_gate_init((void*)op);
     break;
-    case eOpMul:
-      op_mul_init((void*)op);
-      break;
-    case eOpGate:
-      op_gate_init((void*)op);
-      break;
-    case eOpAccum:
-      op_accum_init((void*)op);
+  case eOpAccum:
+    op_accum_init((void*)op);
     break;
   case eOpSelect:
     return -1;
     break;
   case eOpMapLin:
-    return -1;
-    break;
-  case eOpParam:
-    return -1;
-    break;
-  case eOpPreset:
     return -1;
     break;
   default:
@@ -161,7 +185,7 @@ S16 net_add_op(opid_t opId) {
   net.ops[net.numOps] = op;
   net.opPoolOffset += op_registry[opId].size;
 
- // add inputs and outputs to node list
+  // add inputs and outputs to node list
   for(i=0; i<ins; i++) {
     net.ins[net.numIns].in = op->in[i];
     net.ins[net.numIns].opIdx = net.numOps;
@@ -277,9 +301,9 @@ U32 net_gather(U32 iIdx, U32(*outs)[NET_OUTS_MAX]) {
   }
   return iOut;
 }
-// get / set / increment input value
+//--- get / set / increment input value
 f32 net_get_in_value(U16 inIdx) {
- return net.ins[inIdx].val;
+  return net.ins[inIdx].val;
 }
 
 void net_set_in_value(U16 inIdx, f32 val) {
