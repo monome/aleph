@@ -11,9 +11,17 @@
 #include "op.h"
 
 // maximum allocated parameters, connections, and operators
-#define CTLNET_INS_MAX 128
-#define CTLNET_OUTS_MAX 128
-#define CTLNET_OPS_MAX 128
+#define NET_INS_MAX 128
+#define NET_OUTS_MAX 128
+#define NET_OPS_MAX 128
+
+// count of system operators and parameters
+// 4 encoders, 4 switches
+#define SYS_NUM_CTL_OPS  8
+// 1 param receiver, 1 preset receiver
+#define SYS_NUM_REC_OPS  2
+#define SYS_NUM_INS  5
+#define SYS_NUM_OUTS 8
 
 //---- public functions
 
@@ -28,20 +36,24 @@ S16 net_pop_op(void);
 // remove an arbitrary operator
 // TODO
 // void remove_op(const U8 idx);
+
 // activate an input node with some input data
 void net_activate(S16 inIdx, const S32* val);
+
 // get current count of operators
 U16 net_num_ops(void);
 // get current count of inputs
 U16 net_num_ins(void);
 // get current count of outputs
 U16 net_num_outs(void);
+
 // get string for operator at given idx
 const char* net_op_name(const U16 idx);
 // get name for input at given idx
 const char* net_in_name(const U16 idx);
 // get name for output at given idx
 const char* net_out_name(const U16 idx);
+
 // get op index for input at given idx
 U16 net_in_op_idx(const U16 idx);
 // get op index for output at given idx
@@ -66,7 +78,7 @@ void net_disconnect(U32 outIdx);
 
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections
-U32 net_gather(U32 iIdx, U32(*outs)[CTLNET_OUTS_MAX]);
+U32 net_gather(U32 iIdx, U32(*outs)[NET_OUTS_MAX]);
 
 // is this input connected to anything?
 U8 net_in_connected(U32 iIdx);

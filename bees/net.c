@@ -11,55 +11,58 @@
 #include "util.h"
 #include "op.h"
 #include "net.h"
+#include "net_protected.h"
 
-// total size of operator pool!
-#define CTLNET_OP_POOL_SIZE 8192
+//=========================================
+//===== variables
+//----- external
+ctlnet_t net;
 
-//====================================================
-//============= data types
 
-// ------ node types
-// in
-typedef struct inode_struct { 
-  op_in_t in; // function pointer
-  F32 val; // value for scene management
-  U16 opIdx; // index of parent op in oplist
-  U16 inIdx; // index of input in parent op's inlist
-  U8 preset; // flag if included in scene
-} inode_t;
+//==================================================
+//========= static functions
 
-// out
-typedef struct onode_struct { 
-  U16 opIdx;   // index of parent op in oplist
-  U16 outIdx;  // index of this output in parent op's outlist
-  S16 target;  // target index in inodes
-} onode_t;
+// create all system operators
+static void addSysOps(void);
+// create a single system operator
+static void addSysOp(opid_t id, U8 recFlag);
 
-//------- network type
-typedef struct ctlnet_struct {
-  // count of operators
-  U16 numOps;
-  // count of inputs
-  U16 numIns;
-  // count of outputs
-  U16 numOuts;
-  // list of operator pointers
-  op_t* ops[CTLNET_OPS_MAX];
-  // list of inputs
-  inode_t ins[CTLNET_INS_MAX];
-  // list of outputs
-  onode_t outs[CTLNET_OUTS_MAX];
-  // operator memory pool
-  U8 opPoolMem[CTLNET_OP_POOL_SIZE];
-  // pointer to access the pool
-  void* opPool;
-  // current offset to free space within the pool 
-  U32 opPoolOffset;
-} ctlnet_t;
+// create a single system operator
+static void addSysOps(opid_t id, U8 recFlag) {
+  static U8 inOff = 0;
+  static U8 outOff = 0;
+  static U8 recIdx = 0;
+  static U8 ctlIdx = 0;
 
-//====================================
-//============ static variables
-static ctlnet_t net;
+  U16 ins;
+  U16 outs;
+  op_t* op;
+
+  if (recFlag) {
+    op = &(net.sysReceiveOps[idx]);
+  } else {
+    op = &(net.sysControlOps[idx]);
+  }  
+
+}
+
+// create system operators
+static void addSysOps(void) {
+  // 4 encoders
+  addSysOp(eOpEnc, 0);
+  addSysOp(eOpEnc, 0);
+  addSysOp(eOpEnc, 0);
+  addSysOp(eOpEnc, 0);
+  // 4 switches
+  addSysOp(eOpSwitch, 0);
+  addSysOp(eOpSwitch, 0);
+  addSysOp(eOpSwitch, 0);
+  addSysOp(eOpSwitch, 0);
+  // 1 param receiver
+  addSysOp(eOpParam, 1);
+  // 1 preset receiver
+  addSysOp(eOpPreset, 1);
+}
 
 //==================================================
 //========= public functions
@@ -67,7 +70,7 @@ static ctlnet_t net;
 // "singleton" intializer
 void net_init(void) {
   U32 i;
-  for(i=0; i<CTLNET_OP_POOL_SIZE; i++) {
+  for(i=0; i<NET_OP_POOL_SIZE; i++) {
     net.opPoolMem[i] = (U8)0;
   }
   net.opPool = (void*)&(net.opPoolMem);
@@ -97,11 +100,11 @@ S16 net_add_op(opid_t opId) {
   U8 i;
   op_t* op;
 
-  if (net.numOps >= CTLNET_OPS_MAX) {
+  if (net.numOps >= NET_OPS_MAX) {
     return -1;
   }
 
-  if (op_registry[opId].size > CTLNET_OP_POOL_SIZE - net.opPoolOffset) {
+  if (op_registry[opId].size > NET_OP_POOL_SIZE - net.opPoolOffset) {
     return -1;
   }
 
@@ -146,11 +149,11 @@ S16 net_add_op(opid_t opId) {
   outs = op->numOutputs;
   op->type = opId;
  
-  if (ins > (CTLNET_INS_MAX - net.numIns)) {
+  if (ins > (NET_INS_MAX - net.numIns)) {
     return -1;
   }
 
-  if (outs > (CTLNET_OUTS_MAX - net.numOuts)) {
+  if (outs > (NET_OUTS_MAX - net.numOuts)) {
     return -1;
   }
 
@@ -263,10 +266,10 @@ U16 net_op_out_idx(const U16 opIdx, const U16 outIdx) {
 
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections
-U32 net_gather(U32 iIdx, U32(*outs)[CTLNET_OUTS_MAX]) {
+U32 net_gather(U32 iIdx, U32(*outs)[NET_OUTS_MAX]) {
   U32 iTest;
   U32 iOut=0;
-  for(iTest=0; iTest<CTLNET_OUTS_MAX; iTest++) {
+  for(iTest=0; iTest<NET_OUTS_MAX; iTest++) {
     if(net.outs[iTest].target == iIdx) {
       (*outs)[iOut] = iTest;
       iOut++;
@@ -305,3 +308,4 @@ U8 net_in_connected(U32 iIdx) {
   }
   return f;
 }
+

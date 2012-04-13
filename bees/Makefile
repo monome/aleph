@@ -1,4 +1,4 @@
-OBJ = op.o net.o main.o ui.o menu.o
+OBJ = op.o net.o main.o ui.o menu.o preset.o
 
 CC = gcc
 CFLAGS = -g -c

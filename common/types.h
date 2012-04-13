@@ -1,6 +1,7 @@
 #ifndef _ALEPH_TYPES_H_
 #define _ALEPH_TYPES_H_
 
+//---- basic numerical datatypes
 typedef signed char             s8 ;  //!< 8-bit signed integer.
 typedef unsigned char           u8 ;  //!< 8-bit unsigned integer.
 typedef signed short int        s16;  //!< 16-bit signed integer.

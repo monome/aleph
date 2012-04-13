@@ -12,8 +12,6 @@
 //-----------------------------------
 //----- static function declarations
 
-// create operators for system hardware
-static void addSystemOperators(void);
 
 // set current pages
 static void setPage(ePage n);
@@ -60,7 +58,7 @@ static s8 pageIdx = 0;
 // new operator class index
 static opid_t newOpType = 0;
 // array of onode pointers for gathering
-static U32(*gathered)[CTLNET_OUTS_MAX];
+static U32(*gathered)[NET_OUTS_MAX];
 // how many gathered
 static u32 numGathered;
 
@@ -141,21 +139,6 @@ static void scrollSelect(S8 dir, U32 max) {
   // redraw with the new selection
   page->redraw();
 }
-
-// create operators for systme hardware
-static void addSystemOperators(void) {
-  // 4 encoders
-  net_add_op(eOpEnc);
-  net_add_op(eOpEnc);
-  net_add_op(eOpEnc);
-  net_add_op(eOpEnc);
-  // 4 switches
-  net_add_op(eOpSwitch);
-  net_add_op(eOpSwitch);
-  net_add_op(eOpSwitch);
-  net_add_op(eOpSwitch);
-}
-
 
 //////////////////////////////////
 ///////////////////
