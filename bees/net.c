@@ -22,7 +22,6 @@ ctlnet_t net;
 //==================================================
 //========= static functions
 
-
 // create all system operators
 static void addSysOps(void);
 
@@ -141,12 +140,15 @@ S16 net_add_op(opId_t opId) {
   net.ops[net.numOps] = op;
   net.opPoolOffset += op_registry[opId].size;
 
-  // add inputs and outputs to node list
-  for(i=0; i<ins; i++) {
-    net.ins[net.numIns].in = op->in[i];
-    net.ins[net.numIns].opIdx = net.numOps;
-    net.ins[net.numIns].inIdx = i;
-    net.numIns++;
+  //---- add inputs and outputs to node list
+  // don't add inputs fo system control ops
+  if (op->status != eSysCtlOp) {
+    for(i=0; i<ins; i++) {
+      net.ins[net.numIns].in = op->in[i];
+      net.ins[net.numIns].opIdx = net.numOps;
+      net.ins[net.numIns].inIdx = i;
+      net.numIns++;
+    }
   }
   for(i=0; i<outs; i++) {
     net.outs[net.numOuts].opIdx = net.numOps;

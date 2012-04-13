@@ -14,7 +14,7 @@
 
 //---- defines
 // screen width in characters
-#define SCREEN_W 32
+#define SCREEN_W 64
 // screen height in lines
 #define SCREEN_H   16
 #define SCREEN_H_1 15

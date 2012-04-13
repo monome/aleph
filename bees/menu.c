@@ -39,6 +39,18 @@ static void redrawGathered(void);
 static const f32 kParamValStepSmall = 0.001;
 static const f32 kParamValStepLarge = 0.05;
 
+// const array of user-creatable operator type id's
+#define NUM_USER_OP_TYPES 6
+#define NUM_USER_OP_TYPES_1 5
+static const opId_t userOpTypes[NUM_USER_OP_TYPES] = {
+  eOpAdd,
+  eOpMul,
+  eOpGate,
+  eOpAccum,
+  eOpSelect,
+  eOpMapLin
+};
+
 //-----------------------------------
 //------- static variables
 
@@ -162,7 +174,7 @@ void keyHandlerOps(key_t key) {
     break;
   case eKeyFnC:
       // fnC : create new operator of specified type
-    net_add_op(newOpType);
+    net_add_op(userOpTypes[newOpType]);
       redrawOps();
     break;
   case eKeyFnD:
@@ -200,15 +212,15 @@ void keyHandlerOps(key_t key) {
     //// encoder D: select new operator type for creation
   case eKeyUpD:
       newOpType++;
-      if (newOpType >= numOpClasses) {
+      if (newOpType >= NUM_USER_OP_TYPES) {
         newOpType = 0;
       }
       redrawOps();
     break;
     case eKeyDownD:
       newOpType--;
-      if (newOpType >= numOpClasses) {
-        newOpType = numOpClasses - 1;
+      if (newOpType >= NUM_USER_OP_TYPES) {
+        newOpType = NUM_USER_OP_TYPES_1;
       }
       redrawOps();
     // nothing
@@ -414,7 +426,7 @@ extern void redrawOps(void) {
   // draw footer 
 // (new op type)
   snprintf(buf, SCREEN_W, "[ +++ %s",
-         op_registry[newOpType].name);
+         op_registry[userOpTypes[newOpType]].name);
   ui_print(SCREEN_H_2, 0, buf, 1);
 // (function labels)
   ui_print(SCREEN_H_1, 0, " A_PARAMS   B_ROUTING   C_CREATE  D_DELETE ", 3);
