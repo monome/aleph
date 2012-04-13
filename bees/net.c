@@ -25,14 +25,14 @@ typedef struct inode_struct {
   F32 val; // value for scene management
   U16 opIdx; // index of parent op in oplist
   U16 inIdx; // index of input in parent op's inlist
-  U8 scene; // flag if included in scene
+  U8 preset; // flag if included in scene
 } inode_t;
 
 // out
 typedef struct onode_struct { 
   U16 opIdx;   // index of parent op in oplist
   U16 outIdx;  // index of this output in parent op's outlist
-  U16 target;     // target index in inodes
+  S16 target;  // target index in inodes
 } onode_t;
 
 //------- network type
@@ -168,6 +168,7 @@ S16 net_add_op(opid_t opId) {
   for(i=0; i<outs; i++) {
     net.outs[net.numOuts].opIdx = net.numOps;
     net.outs[net.numOuts].outIdx = i;
+    net.outs[net.numOuts].target = -1;
     net.numOuts++;
   }
   net.numOps++;
@@ -187,11 +188,13 @@ S16 net_pop_op(void) {
 // create a connection between given idx pair
 void net_connect(U32 oIdx, U32 iIdx) {
   net.ops[net.outs[oIdx].opIdx]->out[net.outs[oIdx].outIdx] = iIdx;
+  net.outs[oIdx].target = iIdx;
 }
 
 // disconnect given output
 void net_disconnect(U32 outIdx) {
   net.ops[net.outs[outIdx].opIdx]->out[net.outs[outIdx].outIdx] = -1;
+  net.outs[outIdx].target = -1;
 }
 
 //---- queries
@@ -283,4 +286,22 @@ void net_set_in_value(U16 inIdx, f32 val) {
 f32 net_inc_in_value(U16 inIdx, f32 inc) {
   net.ins[inIdx].val += inc;
   return net.ins[inIdx].val;
+}
+
+// get connection index for output
+S16 net_get_target(U16 outIdx) {
+  return net.outs[outIdx].target;
+}
+
+// is this input connected to anything?
+U8 net_in_connected(U32 iIdx) {
+  U8 f=0;
+  U16 i;
+  for(i=0; i<net.numOuts; i++) {
+    if(net.outs[i].target == iIdx) {
+      f = 1;
+      break;
+    }
+  }
+  return f;
 }

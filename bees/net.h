@@ -56,6 +56,9 @@ f32 net_get_in_value(U16 inIdx);
 void net_set_in_value(U16 inIdx, f32 val);
 f32 net_inc_in_value(U16 inIdx, f32 inc);
 
+// get connection index for output
+S16 net_get_target(U16 outIdx);
+
 // connect a given output and input idx pair
 void net_connect(U32 outIdx, U32 inIdx);
 // disconnect a given output
@@ -64,5 +67,8 @@ void net_disconnect(U32 outIdx);
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections
 U32 net_gather(U32 iIdx, U32(*outs)[CTLNET_OUTS_MAX]);
+
+// is this input connected to anything?
+U8 net_in_connected(U32 iIdx);
 
 #endif // header guard

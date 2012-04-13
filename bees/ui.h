@@ -35,6 +35,6 @@ U8 ui_loop(void);
 // print a line of text
 void ui_println(U8 y, const char* str);
 // print some characters of text
-void ui_print(U8 y, U8 x, const char* str);
+void ui_print(U8 y, U8 x, const char* str, U8 hl);
 
 #endif // header guard

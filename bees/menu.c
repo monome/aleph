@@ -303,14 +303,23 @@ void keyHandlerIns(key_t key) {
 
 // OUTS
 void keyHandlerOuts(key_t key) {
+  S16 i;
   switch(key) {
   case eKeyFnA: 
+    // follow
+    i = net_get_target(page->selected);
+    if (i == -1) { return; } 
+    pages[ePageIns].selected = i;
+    setPage(ePageIns);
     break;
   case eKeyFnB:
+    // disconnect
     break;
   case eKeyFnC:
+    // re-send? store?
     break;
   case eKeyFnD:
+    // toggle preset (target)
     break;
     //// encoder A: scroll pages
   case eKeyUpA:
@@ -362,8 +371,8 @@ extern void redrawOps(void) {
   static char buf[SCREEN_W];
   
   // draw the header
-  snprintf(buf, SCREEN_W, "|||||||| OPERATORS ||||||||||||||||||||||||||||||||||||||||||||||||");
-  ui_print(0, 0, buf);
+  snprintf(buf, SCREEN_W, "         OPERATORS");
+  ui_print(0, 0, buf, 6);
 
   nCenter = page->selected;
   if (nCenter >= num) {
@@ -373,25 +382,27 @@ extern void redrawOps(void) {
   // print selection at center
   y = SCREEN_ROW_CENTER;
   if (n < num) { 
-    snprintf(buf, SCREEN_W, ">> %d__%s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+    snprintf(buf, SCREEN_W, "   %d_%s",
              (int)n, net_op_name(n));
+    ui_print(y, 0, buf, 4);
   } else {
     // no selection
-    snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+    snprintf(buf, SCREEN_W, "   ...");
+    ui_print(y, 0, buf, 1);
   }
-  ui_print(y, 0, buf);
   
   // print lower entries
   while (y > 1) {
     n--;
     y--;
     if (n < 0) {
-      snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+      snprintf(buf, SCREEN_W, "   ...");
+    ui_print(y, 0, buf, 1);
     } else {
-    snprintf(buf, SCREEN_W, "   %d__%s                                                          ",
-             (int)n, net_op_name(n));
+      snprintf(buf, SCREEN_W, "   %d__%s",
+	       (int)n, net_op_name(n));
+    ui_print(y, 0, buf, 1);
     }
-    ui_print(y, 0, buf);
   }
   
   // re-center
@@ -403,21 +414,23 @@ extern void redrawOps(void) {
     n++;
     y++;
     if (n >= num) {
-      snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+      snprintf(buf, SCREEN_W, "   ...");
+      ui_print(y, 0, buf, 1);
     } else {
-        snprintf(buf, SCREEN_W, "   %d__%s                                                      ",  
+        snprintf(buf, SCREEN_W, "   %d__%s",  
                  (int)n, net_op_name(n));
+
+	ui_print(y, 0, buf, 1);
     }
-    ui_print(y, 0, buf);
   }
       
   // draw footer 
 // (new op type)
-  snprintf(buf, SCREEN_W, "[ +++ %s ++++++++++++++++++++++++++++++++++++++++++++++++++++++",
+  snprintf(buf, SCREEN_W, "[ +++ %s",
          op_registry[newOpType].name);
-  ui_print(SCREEN_H_2, 0, buf);
+  ui_print(SCREEN_H_2, 0, buf, 1);
 // (function labels)
-  ui_println(SCREEN_H_1, "|| PARAMS  || ROUTING ||  CREATE  ||  DELETE ");
+  ui_print(SCREEN_H_1, 0, " A_PARAMS   B_ROUTING   C_CREATE  D_DELETE ", 3);
 }
 
 //==================================================
@@ -429,8 +442,8 @@ extern void redrawIns(void) {
   static char buf[SCREEN_W];
   
   // draw the header
-  snprintf(buf, SCREEN_W, "|||||||| PARAMS ||||||||||||||||||||||||||||||||||||||||||||||||");
-  ui_print(0, 0, buf);
+  snprintf(buf, SCREEN_W, "       PARAMS ");
+  ui_print(0, 0, buf, 6);
 
   nCenter = page->selected;
   if (nCenter >= num) {
@@ -440,25 +453,32 @@ extern void redrawIns(void) {
   // print selection at center
   y = SCREEN_ROW_CENTER;
   if (n < num) { 
-    snprintf(buf, SCREEN_W, ">> %d_(%d)%s/%s_%f <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
-             (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n), net_get_in_value(n));
+    snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s_%f",
+             (int)n,
+	     net_in_op_idx(n), 
+	     net_op_name(net_in_op_idx(n)), 
+	     net_in_name(n), 
+	     net_get_in_value(n));
+    ui_print(y, 0, buf, 4);
+
   } else {
     // no selection
-    snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+    snprintf(buf, SCREEN_W, "   ...");
+    ui_print(y, 0, buf, 1);
   }
-  ui_print(y, 0, buf);
   
   // print lower entries
   while (y > 1) {
     n--;
     y--;
     if (n < 0) {
-      snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+      snprintf(buf, SCREEN_W, "   ...");
+      ui_print(y, 0, buf, 1);
     } else {
-    snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s_%f                                                          ",
-             (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n), net_get_in_value(n));
+      snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s_%f",
+	       (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n), net_get_in_value(n));
+      ui_print(y, 0, buf, 1);
     }
-    ui_print(y, 0, buf);
   }
   
   // re-center
@@ -470,17 +490,18 @@ extern void redrawIns(void) {
     n++;
     y++;
     if (n >= num) {
-      snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+      snprintf(buf, SCREEN_W, "   ...");
+      ui_print(y, 0, buf, 1);
     } else {
         snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s_%f                                                         ",  
              (int)n, net_in_op_idx(n), net_op_name(net_in_op_idx(n)), net_in_name(n), net_get_in_value(n));
+    ui_print(y, 0, buf, 1);
     }
-    ui_print(y, 0, buf);
   }
       
   // draw footer 
 // (function labels)
-  ui_println(SCREEN_H_1, "|| GATHER ||  DISCONNECT || STORE || PRESET ");
+  ui_print(SCREEN_H_1, 0, "A_GATHER  B_DISCONNECT  C_STORE  D_PRESET ", 3);
 }
 
 
@@ -493,8 +514,8 @@ extern void redrawOuts(void) {
   static char buf[SCREEN_W];
   
   // draw the header
-  snprintf(buf, SCREEN_W, "|||||||| ROUTING ||||||||||||||||||||||||||||||||||||||||||||||");
-  ui_print(0, 0, buf);
+  snprintf(buf, SCREEN_W, "      ROUTING");
+  ui_print(0, 0, buf, 6);
 
   nCenter = page->selected;
   if (nCenter >= num) {
@@ -504,25 +525,27 @@ extern void redrawOuts(void) {
   // print selection at center
   y = SCREEN_ROW_CENTER;
   if (n < num) { 
-    snprintf(buf, SCREEN_W, ">> %d_(%d)%s/%s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+    snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s",
              (int)n, net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
+    ui_print(y, 0, buf, 4);
   } else {
     // no selection
-    snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+    snprintf(buf, SCREEN_W, "   ...");
+    ui_print(y, 0, buf, 1);
   }
-  ui_print(y, 0, buf);
   
   // print lower entries
   while (y > 1) {
     n--;
     y--;
     if (n < 0) {
-      snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+      snprintf(buf, SCREEN_W, "   ...");
+    ui_print(y, 0, buf, 1);
     } else {
-    snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s                                                          ",
+    snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s",
              (int)n, net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
+    ui_print(y, 0, buf, 1);
     }
-    ui_print(y, 0, buf);
   }
   
   // re-center
@@ -530,21 +553,24 @@ extern void redrawOuts(void) {
   y = SCREEN_ROW_CENTER;
   
   // print higher entries
-  while (y < SCREEN_H_1) {
+  while (y < SCREEN_H_2) {
     n++;
     y++;
     if (n >= num) {
-      snprintf(buf, SCREEN_W, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+      snprintf(buf, SCREEN_W, "   ...");
+    ui_print(y, 0, buf, 1);
     } else {
-        snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s                                                          ",  
+        snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s",  
              (int)n, net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
+    ui_print(y, 0, buf, 1);
     }
-    ui_print(y, 0, buf);
   }
-      
+  
+  //  snprintf("");
+
   // draw footer 
 // (function labels)
-  ui_println(SCREEN_H_1, "|| GATHER ||  DISCONNECT || STORE || PRESET ");
+  ui_print(SCREEN_H_1, 0, " A_FOLLOW  B_DISCONNECT C_STORE  D_PRESET ", 3);
 }
 
 /// redraw gathered outputs
