@@ -1,5 +1,6 @@
-/* ctl_network.c
- * aleph-avr32
+/* net.c
+ * bees
+ * aleph
  *
  * definition of a network of control operators
  * and points of IO connection between them
@@ -21,83 +22,26 @@ ctlnet_t net;
 //==================================================
 //========= static functions
 
+
 // create all system operators
 static void addSysOps(void);
-// create a single system operator
-static void addSysOp(opid_t id, U8 recFlag);
-
-// create a single system operator
-static void addSysOp(opid_t id, U8 recFlag) {
-  static U8 inIdx = 0;
-  static U8 outIdx = 0;
-  static U8 recIdx = 0;
-  static U8 ctlIdx = 0;
-
-  U16 ins, outs;
-  U8 idx, i;
-  op_t* op;
-
-  if (recFlag) {
-    idx = recIdx;
-    op = &(net.sysReceiveOps[idx]);
-    recIdx++;
-  } else {
-    idx = ctlIdx;
-    op = &(net.sysControlOps[idx]);
-    ctlIdx++;
-  }  
-  
-  switch(id) {
-  case eOpSwitch:
-    op_sw_init((void*) op);
-    break;
-  case eOpEnc:
-    op_enc_init((void*)op);
-    break;
-  case eOpParam:
-    //return -1;
-    break;
-  case eOpPreset:
-    //    return -1;
-    break;
-  default:
-    break;
-  }
-
-  ins = op->numInputs;
-  outs = op->numOutputs;
-  op->type = id;
-  
-  for(i=0; i<ins; i++) {
-    net.sysIns[inIdx].in = op->in[i];
-    net.sysIns[inIdx].opIdx = idx;
-    net.sysIns[inIdx].inIdx = i;
-    inIdx++;
-  }
-  for(i=0; i<outs; i++) {
-    net.sysOuts[outIdx].opIdx = idx;
-    net.sysOuts[outIdx].outIdx = i;
-    net.sysOuts[outIdx].target = -1;
-    outIdx++;
-  }
-}
 
 // create system operators
 static void addSysOps(void) {
   // 4 encoders
-  addSysOp(eOpEnc, 0);
-  addSysOp(eOpEnc, 0);
-  addSysOp(eOpEnc, 0);
-  addSysOp(eOpEnc, 0);
+  net_add_op(eOpEnc);
+  net_add_op(eOpEnc);
+  net_add_op(eOpEnc);
+  net_add_op(eOpEnc);
   // 4 switches
-  addSysOp(eOpSwitch, 0);
-  addSysOp(eOpSwitch, 0);
-  addSysOp(eOpSwitch, 0);
-  addSysOp(eOpSwitch, 0);
+  net_add_op(eOpSwitch);
+  net_add_op(eOpSwitch);
+  net_add_op(eOpSwitch);
+  net_add_op(eOpSwitch);
   // 1 param receiver
-  addSysOp(eOpParam, 1);
+  net_add_op(eOpParam);
   // 1 preset receiver
-  addSysOp(eOpPreset, 1);
+  net_add_op(eOpPreset);
 }
 
 //==================================================
@@ -131,7 +75,7 @@ void net_activate(S16 inIdx, const S32* val) {
 }
 
 // attempt to allocate a new operator from the pool, return index
-S16 net_add_op(opid_t opId) {
+S16 net_add_op(opId_t opId) {
   U16 ins, outs;
   U8 i;
   op_t* op;
@@ -147,6 +91,18 @@ S16 net_add_op(opid_t opId) {
   op = (op_t*)(net.opPool + net.opPoolOffset);
   // use the class ID to initialize a new object in scratch
   switch(opId) {
+  case eOpSwitch:
+    op_sw_init((void*) op);
+    break;
+  case eOpEnc:
+    op_enc_init((void*)op);
+    break;
+  case eOpParam:
+    //return -1;
+    break;
+  case eOpPreset:
+    //    return -1;
+    break;
   case eOpAdd:
     op_add_init((void*)op);
     break;
@@ -288,6 +244,29 @@ U16 net_op_out_idx(const U16 opIdx, const U16 outIdx) {
   return 0; // shouldn't get here
 }
 
+// get connection index for output
+S16 net_get_target(U16 outIdx) {
+  return net.outs[outIdx].target;
+}
+
+// is this input connected to anything?
+U8 net_in_connected(U32 iIdx) {
+  U8 f=0;
+  U16 i;
+  for(i=0; i<net.numOuts; i++) {
+    if(net.outs[i].target == iIdx) {
+      f = 1;
+      break;
+    }
+  }
+  return f;
+}
+
+// get status (user/system) of op at given idx
+opStatus_t net_op_status(U16 opIdx) {
+  return net.ops[opIdx]->status;
+}
+
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections
 U32 net_gather(U32 iIdx, U32(*outs)[NET_OUTS_MAX]) {
@@ -314,22 +293,3 @@ f32 net_inc_in_value(U16 inIdx, f32 inc) {
   net.ins[inIdx].val += inc;
   return net.ins[inIdx].val;
 }
-
-// get connection index for output
-S16 net_get_target(U16 outIdx) {
-  return net.outs[outIdx].target;
-}
-
-// is this input connected to anything?
-U8 net_in_connected(U32 iIdx) {
-  U8 f=0;
-  U16 i;
-  for(i=0; i<net.numOuts; i++) {
-    if(net.outs[i].target == iIdx) {
-      f = 1;
-      break;
-    }
-  }
-  return f;
-}
-

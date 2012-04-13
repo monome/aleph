@@ -1,5 +1,6 @@
-/* ctl_interface.h
- * aleph-avrr32
+/* net.h
+ * bees
+ * aleph 
  *
  * public interface functions for using and manipulating the controller network
  */
@@ -15,14 +16,6 @@
 #define NET_OUTS_MAX 128
 #define NET_OPS_MAX 128
 
-// count of system operators and parameters
-// 4 encoders, 4 switches
-#define SYS_NUM_CTL_OPS  8
-// 1 param receiver, 1 preset receiver
-#define SYS_NUM_REC_OPS  2
-#define SYS_NUM_INS  5
-#define SYS_NUM_OUTS 8
-
 //---- public functions
 
 // initialize the network 
@@ -30,7 +23,7 @@ void net_init(void);
 // de-initialize the network 
 void net_deinit(void);
 // create a new operator given class ID, return index (-1 == fail)
-S16 net_add_op(opid_t opId);
+S16 net_add_op(opId_t opId);
 // remove the last created operator
 S16 net_pop_op(void);
 // remove an arbitrary operator
@@ -62,14 +55,17 @@ U16 net_out_op_idx(const U16 idx);
 U16 net_op_in_idx(const U16 opIdx, const U16 inIdx);
 // get global index for a given output of given op
 U16 net_op_out_idx(const U16 opIdx, const U16 outIdx);
+// get connection index for output
+S16 net_get_target(U16 outIdx);
+// is this input connected to anything?
+U8 net_in_connected(U32 iIdx);
+// get status (user/system) of op at given idx
+opStatus_t net_op_status(U16 opIdx);
 
 // get / set / increment input value
 f32 net_get_in_value(U16 inIdx);
 void net_set_in_value(U16 inIdx, f32 val);
 f32 net_inc_in_value(U16 inIdx, f32 inc);
-
-// get connection index for output
-S16 net_get_target(U16 outIdx);
 
 // connect a given output and input idx pair
 void net_connect(U32 outIdx, U32 inIdx);
@@ -79,8 +75,5 @@ void net_disconnect(U32 outIdx);
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections
 U32 net_gather(U32 iIdx, U32(*outs)[NET_OUTS_MAX]);
-
-// is this input connected to anything?
-U8 net_in_connected(U32 iIdx);
 
 #endif // header guard

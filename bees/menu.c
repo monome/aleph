@@ -56,7 +56,7 @@ static page_t* page;
 // idx of current page
 static s8 pageIdx = 0;
 // new operator class index
-static opid_t newOpType = 0;
+static opId_t newOpType = 0;
 // array of onode pointers for gathering
 static U32(*gathered)[NET_OUTS_MAX];
 // how many gathered
@@ -162,7 +162,7 @@ void keyHandlerOps(key_t key) {
     break;
   case eKeyFnC:
       // fnC : create new operator of specified type
-      net_add_op(newOpType);
+    net_add_op(newOpType);
       redrawOps();
     break;
   case eKeyFnD:
@@ -350,7 +350,9 @@ static void keyHandlerGathered(key_t key) {
 extern void redrawOps(void) {
   U8 y = 0;                       // which line
   S32 n, nCenter;         // which list entry
-  const U16 num = net_num_ops(); // how many ops
+  opStatus_t status;
+  // total count of ops, including system-controlled
+  const U16 num = net_num_ops();
   static char buf[SCREEN_W];
   
   // draw the header
@@ -364,14 +366,15 @@ extern void redrawOps(void) {
   n = nCenter;
   // print selection at center
   y = SCREEN_ROW_CENTER;
+  status = net_op_status(n);
   if (n < num) { 
     snprintf(buf, SCREEN_W, "   %d_%s",
              (int)n, net_op_name(n));
-    ui_print(y, 0, buf, 4);
+    ui_print(y, 0, buf, 4 + status);
   } else {
     // no selection
     snprintf(buf, SCREEN_W, "   ...");
-    ui_print(y, 0, buf, 1);
+    ui_print(y, 0, buf, 1 + status);
   }
   
   // print lower entries
@@ -382,9 +385,10 @@ extern void redrawOps(void) {
       snprintf(buf, SCREEN_W, "   ...");
     ui_print(y, 0, buf, 1);
     } else {
+      status = net_op_status(n);
       snprintf(buf, SCREEN_W, "   %d__%s",
 	       (int)n, net_op_name(n));
-    ui_print(y, 0, buf, 1);
+    ui_print(y, 0, buf, 1 + status);
     }
   }
   
@@ -400,10 +404,10 @@ extern void redrawOps(void) {
       snprintf(buf, SCREEN_W, "   ...");
       ui_print(y, 0, buf, 1);
     } else {
-        snprintf(buf, SCREEN_W, "   %d__%s",  
-                 (int)n, net_op_name(n));
-
-	ui_print(y, 0, buf, 1);
+      status = net_op_status(n);
+      snprintf(buf, SCREEN_W, "   %d__%s",
+	       (int)n, net_op_name(n));
+	ui_print(y, 0, buf, 1 + status);
     }
   }
       

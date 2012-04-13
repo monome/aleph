@@ -28,8 +28,16 @@ typedef enum {
   eOpMapLin,
   eOpParam,
   eOpPreset,
-  numOpClasses
-} opid_t;
+  numOpClasses // dummy/count 
+} opId_t;
+
+//---- operator status enum
+typedef enum {
+  eUserOp = 0,    // user-created
+  eSysCtlOp,  // system controller (e.g. encoder)
+  eSysRecOp,  // system receiver (e.g. parameter)
+  numOpStatuses // dummy/count
+} opStatus_t;
 
 //---- op descriptor type
 typedef struct op_desc_struct {
@@ -67,6 +75,8 @@ typedef struct op_struct {
   const char* outString;
   // operator type index in registry
   U8 type;
+  // user/system status
+  opStatus_t status;
   // offset in statically allocated op memory pool
   //  U32 memOffset;
 } op_t;

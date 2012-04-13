@@ -101,6 +101,7 @@ void op_sw_init(op_sw_t* sw) {
   sw->super.inString = op_sw_instring;
   sw->super.outString = op_sw_outstring;
   sw->super.type = eOpSwitch;
+  sw->super.status = eSysCtlOp;
 //  sw->super.size = sizeof(op_sw_t);
 }
 
@@ -146,6 +147,7 @@ void op_enc_init(op_enc_t* enc) {
   enc->super.inString = op_enc_instring;
   enc->super.outString = op_enc_outstring;
   enc->super.type = eOpEnc;
+  enc->super.status = eSysCtlOp;
 //  enc->super.size = sizeof(op_enc_t);
 }
 
@@ -193,6 +195,7 @@ void op_add_init(op_add_t* add) {
   add->super.inString = op_add_instring;
   add->super.outString = op_add_outstring;
   add->super.type = eOpAdd;  
+  add->super.status = eUserOp;  
 //  add->super.size = sizeof(op_add_t);
 }
 
@@ -239,6 +242,7 @@ void op_mul_init(op_mul_t* mul) {
   mul->super.inString = op_mul_instring;
   mul->super.outString = op_mul_outstring;
   mul->super.type = eOpMul;  
+  mul->super.status = eUserOp;  
 //  mul->super.size = sizeof(op_mul_t);
 }
 
@@ -287,6 +291,7 @@ void op_gate_init(op_gate_t* gate) {
   gate->super.inString = op_gate_instring;
   gate->super.outString = op_gate_outstring;
   gate->super.type = eOpGate;  
+  gate->super.status = eUserOp;  
 //  gate->super.size = sizeof(op_gate_t);
 }
 
@@ -367,6 +372,7 @@ void op_accum_init(op_accum_t* accum) {
   accum->super.inString = op_accum_instring;
   accum->super.outString = op_accum_outstring;
   accum->super.type = eOpAccum; 
+  accum->super.status = eUserOp;  
 //  accum->super.size = sizeof(op_accum_t);
 }
 
