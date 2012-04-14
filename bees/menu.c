@@ -31,7 +31,10 @@ static void redrawIns(void);
 static void redrawOuts(void);
 static void redrawGathered(void);
 
-// constants
+//-----------------------------------
+//------- static variables
+
+//---- constants
 static const S32 kParamValStepSmall = 1;
 static const S32 kParamValStepLarge = 512;
 
@@ -46,9 +49,6 @@ static const opId_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpSelect,
   eOpMapLin
 };
-
-//-----------------------------------
-//------- static variables
 
 // page structures - synchronize with ePage enum
 static page_t pages[ePageMax] = {
@@ -69,6 +69,8 @@ static opId_t newOpType = 0;
 static U32(*gathered)[NET_OUTS_MAX];
 // how many gathered
 static u32 numGathered;
+// selected target input on OUTS screen
+// static S32 targetSelection = -1;
 
 //-----------------------------------
 //----- external function definitions
@@ -297,6 +299,7 @@ void keyHandlerIns(key_t key) {
 // OUTS
 void keyHandlerOuts(key_t key) {
   S16 i;
+  static S32 target;
   switch(key) {
   case eKeyFnA: 
     // follow
@@ -331,11 +334,22 @@ void keyHandlerOuts(key_t key) {
   case eKeyDownB:
     scrollSelect(-1, net_num_outs()-1);      
     break;
+    //// encoder C: scroll target
   case eKeyUpC:
-    // nothing
+    target++;
+    if (target == net_num_ins()) {
+      target = -1;
+    }
+    net_connect(page->selected, target);
+    redrawOuts();
     break;
   case eKeyDownC:
-    // nothing
+    target--;
+    if (target == -2) {
+      target = net_num_ins() - 1;
+    }
+    net_connect(page->selected, target);
+    redrawOuts();
     break;
   case eKeyUpD:
     // nothing
@@ -597,15 +611,21 @@ extern void redrawOuts(void) {
 	snprintf(buf, SCREEN_W, "   %d_(%d)%s/%s",
 		 (int)n, net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
       }
-
-
       ui_print(y, 0, buf, 1+status);
     }
   }
-  
-  //  snprintf("");
 
   // draw footer 
+  // (target)
+  target = net_get_target(nCenter);
+  if(target == -1) {
+    ui_print(SCREEN_H_2, 0, "[ NO TARGET ]", 1);
+  } else {
+    snprintf(buf, SCREEN_W, "  --> %s/%s",
+	     net_op_name(net_in_op_idx(target)), net_in_name(target));
+    ui_print(SCREEN_H_2, 0, buf, 1);
+  }
+
   // (function labels)
   ui_print(SCREEN_H_1, 0, " A_FOLLOW  B_DISCONNECT C_STORE  D_PRESET ", 5);
 }
