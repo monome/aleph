@@ -12,16 +12,12 @@
 //-----------------------------------
 //----- static function declarations
 
-
 // set current pages
 static void setPage(ePage n);
 // scroll page
 static void scrollPage(S8 dir);
 // scroll selection in page
 static void scrollSelect(S8 dir, U32 max);
-
-// find and print inputs to selected parameter
-// static void gatherInputs(void);
 
 //// page-specific key handlers
 static void keyHandlerOps(key_t key);
@@ -56,10 +52,10 @@ static const opId_t userOpTypes[NUM_USER_OP_TYPES] = {
 
 // page structures - synchronize with ePage enum
 static page_t pages[ePageMax] = {
-  { "OPS",    (keyHandler_t)&keyHandlerOps,    (redraw_t)&redrawOps, 0 },
-  { "INS",    (keyHandler_t)&keyHandlerIns,    (redraw_t)&redrawIns, 0 },
-  { "OUTS",   (keyHandler_t)&keyHandlerOuts,    (redraw_t)&redrawOuts, 0 },
-  { "GATHERED" ,   (keyHandler_t)&keyHandlerGathered,    (redraw_t)&redrawGathered, 0 }
+  { "OPS", (keyHandler_t)&keyHandlerOps, (redraw_t)&redrawOps, 0 },
+  { "INS", (keyHandler_t)&keyHandlerIns, (redraw_t)&redrawIns, 0 },
+  { "OUTS", (keyHandler_t)&keyHandlerOuts, (redraw_t)&redrawOuts, 0 },
+  { "GATHERED" , (keyHandler_t)&keyHandlerGathered, (redraw_t)&redrawGathered, 0 }
 };
 
 ///// random/ugly
@@ -139,7 +135,6 @@ static void scrollPage(S8 dir) {
   }
   setPage(pageIdx);
 }
-
 
 // scroll current page selection
 static void scrollSelect(S8 dir, U32 max) {
@@ -257,7 +252,7 @@ void keyHandlerIns(key_t key) {
     break;
   case eKeyFnD:
     // toggle preset inclusion
-    // TODO
+    net_toggle_preset_in(page->selected);
     break;
     //// encoder A: scroll pages
   case eKeyUpA:
@@ -318,6 +313,9 @@ void keyHandlerOuts(key_t key) {
     break;
   case eKeyFnD:
     // toggle preset (target)
+    i = net_get_target(page->selected);
+    if(i>=0) { net_toggle_preset_in(i); }
+    redrawOuts();
     break;
     //// encoder A: scroll pages
   case eKeyUpA:

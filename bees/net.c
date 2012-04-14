@@ -300,3 +300,23 @@ f32 net_inc_in_value(U16 inIdx, S32 inc) {
   net_activate(inIdx, (const S32*)(&(net.ins[inIdx].val)));
   return net.ins[inIdx].val;
 }
+
+// toggle preset inclusion for input
+void net_toggle_preset_in(U32 inIdx) {
+  net.ins[inIdx].preset ^= 1;
+}
+
+// toggle preset inclusion for output
+void net_toggle_preset_out(U32 outIdx) {
+  net.outs[outIdx].preset ^= 1;
+}
+
+// get preset inclusion for input
+U8 net_get_preset_in(U32 inIdx) {
+  return net.ins[inIdx].preset;
+}
+
+// get preset inclusion for output
+U8 net_get_preset_out(U32 outIdx) {
+  return net.outs[outIdx].preset;
+}

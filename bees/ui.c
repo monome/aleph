@@ -15,6 +15,7 @@
 
 //---- defines
 #define KEY_QUIT        'q'
+#define KEY_EDIT        '`'
 #define KEY_ENC_A_UP    '='
 #define KEY_ENC_A_DOWN  '-'
 #define KEY_ENC_B_UP    ']'
@@ -68,6 +69,9 @@ U8 ui_loop(void) {
     if ((ch == 'y') || (ch == 'Y')) {
       run = 0;
     }
+    break;
+  case KEY_EDIT:
+    menu_handleKey(eKeyEdit);
     break;
   case KEY_ENC_A_UP:
     menu_handleKey(eKeyUpA);

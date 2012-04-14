@@ -72,6 +72,15 @@ void net_connect(U32 outIdx, U32 inIdx);
 // disconnect a given output
 void net_disconnect(U32 outIdx);
 
+// toggle preset inclusion for input
+void net_toggle_preset_in(U32 inIdx);
+// toggle preset inclusion for output
+void net_toggle_preset_out(U32 outIdx);
+// get preset inclusion for input
+U8 net_get_preset_in(U32 inIdx);
+// get preset inclusion for output
+U8 net_get_preset_out(U32 outIdx);
+
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections
 U32 net_gather(U32 iIdx, U32(*outs)[NET_OUTS_MAX]);

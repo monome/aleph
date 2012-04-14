@@ -188,5 +188,4 @@ void op_preset_init(op_preset_t* preset);
 //---- public data
 extern const op_desc_t op_registry[numOpClasses];
 
-
 #endif // header guard
