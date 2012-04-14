@@ -268,10 +268,10 @@ void keyHandlerIns(key_t key) {
     break;
     //// encoder B: scroll selection
   case eKeyUpB:
-    scrollSelect(1, net_num_ins());
+    scrollSelect(1, net_num_ins()-1);
     break;
   case eKeyDownB:
-    scrollSelect(-1, net_num_ins());      
+    scrollSelect(-1, net_num_ins()-1);      
     break;
   case eKeyUpC:
     // encoder C : value slow
@@ -328,10 +328,10 @@ void keyHandlerOuts(key_t key) {
     break;
     //// encoder B: scroll selection
   case eKeyUpB:
-    scrollSelect(1, net_num_ops());
+    scrollSelect(1, net_num_outs()-1);
     break;
   case eKeyDownB:
-    scrollSelect(-1, net_num_ops());      
+    scrollSelect(-1, net_num_outs()-1);      
     break;
   case eKeyUpC:
     // nothing
@@ -434,9 +434,9 @@ extern void redrawOps(void) {
   // (function labels)
   // don't allow deletion of system operators
   if (net_op_status(net_num_ops() - 1) == eUserOp) {
-    ui_print(SCREEN_H_1, 0, " A_PARAMS   B_ROUTING   C_CREATE  D_DELETE ", 3);
+    ui_print(SCREEN_H_1, 0, " A_PARAMS   B_ROUTING   C_CREATE  D_DELETE ", 5);
   } else  {
-    ui_print(SCREEN_H_1, 0, " A_PARAMS   B_ROUTING   C_CREATE  ", 3);
+    ui_print(SCREEN_H_1, 0, " A_PARAMS   B_ROUTING   C_CREATE  ", 5);
   }
 }
 
@@ -508,7 +508,7 @@ extern void redrawIns(void) {
       
   // draw footer 
   // (function labels)
-  ui_print(SCREEN_H_1, 0, "A_GATHER  B_DISCONNECT  C_STORE  D_PRESET ", 3);
+  ui_print(SCREEN_H_1, 0, "A_GATHER  B_DISCONNECT  C_STORE  D_PRESET ", 5);
 }
 
 //==================================================
@@ -609,7 +609,7 @@ extern void redrawOuts(void) {
 
   // draw footer 
   // (function labels)
-  ui_print(SCREEN_H_1, 0, " A_FOLLOW  B_DISCONNECT C_STORE  D_PRESET ", 3);
+  ui_print(SCREEN_H_1, 0, " A_FOLLOW  B_DISCONNECT C_STORE  D_PRESET ", 5);
 }
 
 /// redraw gathered outputs

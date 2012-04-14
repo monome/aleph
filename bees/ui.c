@@ -30,7 +30,7 @@
 
 // static vars
 static char printBuf[SCREEN_W];
-static const char hlChars[7] = {' ', '.', '-','~','=','+', '#'};
+static const char hlChars[7] = {' ', '.', '-','~','=','*', '#'};
 
 //---- external function definitions
 
