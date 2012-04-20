@@ -1,9 +1,9 @@
-OBJ = op.o net.o main.o ui.o menu.o preset.o
+OBJ = op.o net.o main.o ui.o menu.o preset.o param.o audio.o
 
 CC = gcc
 CFLAGS = -g -c
 CFLAGS += -Wall
-LDFLAGS = -lm -lncurses
+LDFLAGS = -lm -lncurses -lasound
 
 WHAT = bees
 

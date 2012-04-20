@@ -26,7 +26,7 @@ typedef enum {
   eOpAccum,
   eOpSelect,
   eOpMapLin,
-  eOpParam,
+  //  eOpParam,
   eOpPreset,
   numOpClasses // dummy/count 
 } opId_t;
@@ -168,6 +168,7 @@ typedef struct op_exp_struct {
 void op_exp_init(op_exp_t* exp);
 */
 
+/*
 //--- op_param_t : receive parameter change
 typedef struct op_param_struct {
   op_t super;
@@ -175,7 +176,7 @@ typedef struct op_param_struct {
   S32 val;
 } op_param_t;
 void op_param_init(op_param_t* param);
-
+*/
 
 //--- op_preset_t : preset store / recall
 typedef struct op_preset_struct {

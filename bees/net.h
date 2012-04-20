@@ -12,9 +12,12 @@
 #include "op.h"
 
 // maximum allocated parameters, connections, and operators
-#define NET_INS_MAX 128
-#define NET_OUTS_MAX 128
-#define NET_OPS_MAX 128
+// operator inputs
+#define NET_INS_MAX 256
+// opertor outputs
+#define NET_OUTS_MAX 256
+// total count of operators
+#define NET_OPS_MAX 256
 
 //---- public functions
 
@@ -80,6 +83,11 @@ void net_toggle_preset_out(U32 outIdx);
 U8 net_get_preset_in(U32 inIdx);
 // get preset inclusion for output
 U8 net_get_preset_out(U32 outIdx);
+// add a new parameter
+void net_add_param(u32 idx, const char* name, f32 min, f32 max, f32 val);
+// clear existing parameters
+void net_clear_params(void);
+
 
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections

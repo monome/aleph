@@ -23,7 +23,7 @@ const op_desc_t op_registry[numOpClasses] = {
 { "ACCUMULATE", sizeof(op_accum_t) },
 { "SELECT", sizeof(op_sel_t) },
 { "LINEAR MAP", sizeof(op_lin_t) },
-{ "PARAMETER", sizeof(op_param_t) },
+//{ "PARAMETER", sizeof(op_param_t) },
 { "PRESET", sizeof(op_preset_t) }
 };
 
@@ -387,6 +387,7 @@ void op_lin_init(op_lin_t* lin);
 
 //-------------------------------------------------
 //---- param value receiver
+/*
 static const char* op_param_instring = "INDEX   VALUE   ";
 static const char* op_param_opstring = "PARAM";
 
@@ -397,11 +398,7 @@ static void op_param_in_idx(op_param_t* param, const S32* v) {
 
 static void op_param_in_val(op_param_t* param, const S32* v) {
   // FIXME: set DSP param
-  static char buf[SCREEN_W];
-  param->val = *v;
-  snprintf(buf, SCREEN_W, "setting parameter value %d at index%d", (int)(param->val), (int)(param->idx));
-  ui_print(SCREEN_H, 0, buf, 0);
-
+ 
 }
 
 static op_in_t op_param_inputs[2] = {
@@ -418,6 +415,8 @@ void op_param_init(op_param_t* op) {
   op->super.type = eOpParam;  
   op->super.status = eSysRecOp;  
 }
+
+*/
 
 //-------------------------------------------------
 //----- preset manipulator

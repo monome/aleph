@@ -38,7 +38,7 @@ static void addSysOps(void) {
   net_add_op(eOpSwitch);
   net_add_op(eOpSwitch);
   // 1 param receiver
-  net_add_op(eOpParam);
+  //net_add_op(eOpParam);
   // 1 preset receiver
   net_add_op(eOpPreset);
 }
@@ -56,9 +56,11 @@ void net_init(void) {
   net.numOps = 0;
   net.numIns = 0;
   net.numOuts = 0;
+  net.numParams = 0;
   net.opPoolOffset = 0;
   printf("initialized network, using %d bytes\n", (int)sizeof(ctlnet_t));
   addSysOps();
+  
 }
 
 // de-initialize network
@@ -69,8 +71,18 @@ void net_deinit(void) {
 // activate an input node with a value
 void net_activate(S16 inIdx, const S32* val) {
   if(inIdx >= 0) {
-    (*(net.ins[inIdx].in))(net.ops[net.ins[inIdx].opIdx], val);
-  }
+    if(inIdx < net.numIns) {
+      (*(net.ins[inIdx].in))(net.ops[net.ins[inIdx].opIdx], val);
+    } else { 
+      // index in dsp param list
+      inIdx -= net.numIns;
+      if (inIdx >= net.numParams) {
+	return ;
+      } else {
+	param_set(inIdx, *val);
+      }
+    }
+  }  
 }
 
 // attempt to allocate a new operator from the pool, return index
@@ -96,9 +108,11 @@ S16 net_add_op(opId_t opId) {
   case eOpEnc:
     op_enc_init((void*)op);
     break;
+    /*
   case eOpParam:
     op_param_init((void*)op);
     break;
+    */
   case eOpPreset:
     //    return -1;
     break;
@@ -191,7 +205,7 @@ U16 net_num_ops(void) {
 
 // get current count of inputs
 U16 net_num_ins(void) {
-  return net.numIns;
+  return net.numIns + net.numParams;
 }
 
 // get current count of outputs
@@ -319,4 +333,26 @@ U8 net_get_preset_in(U32 inIdx) {
 // get preset inclusion for output
 U8 net_get_preset_out(U32 outIdx) {
   return net.outs[outIdx].preset;
+}
+
+//------------------------------------
+//------ params
+
+// add a new parameter
+void net_add_param(u32 idx, const char* name, f32 min, f32 max, f32 val) {
+  net.params[net.numParams].idx = idx;
+  net.params[net.numParams].name = name;
+  net.params[net.numParams].min = min;
+  net.params[net.numParams].max = max;
+  net.params[net.numParams].val = val;
+  net.numParams++;
+}
+
+// clear existing parameters
+void net_clear_params(void) {
+  // u32 i;
+  // for(i=0; i<net.numParams; i++) {
+   
+  //  }
+  net.numParams = 0;
 }
