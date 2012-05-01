@@ -1,0 +1,27 @@
+aleph/tests/spi_boot
+
+blackfin and avr32 programs to test booting the blackfin in SPI slave mode.
+
+
+aleph/tests/spi_boot/bfin/
+contains a simple blinky program. the only thing notable about this is that the .ldr format must include the GPIO pin number to use as HWAIT, encoded in each block header. (in this case, the pin is PF13.) this is accomplished with an appropriate call to bfin-elf-ldr in the Makefile.
+
+aleph/tests/spi_boot/bintool.c 
+this is a small program that reads bf533_blink.ldr and produces two files:
+bf533_blink.ldr.inc is an ASCII representation of the bytes in the loader file, suitable for inclusion in a C array.
+bf533_blink.ldr_size.inc is just the number of bytes in the loader file (this is the most straightforward solution i could come up with...)
+
+aleph/tests/spi_boot/avr32/
+an avr32 program which does nothing but send the .ldr data out over SPI0, pausing transfer whenever the bfin holds HWAIT high. 
+
+
+HARDWARE notes:
+on the EZKIT_LITE board, SW11 settings control the boot mode; should be set to [1, 0]
+RESET on the bf533 should be connected to PB00 on the avr32.
+PF13 on the bf533 should be connected to PB01 on the avr32. this is the HWAIT signal.
+
+FURTHER READING:
+AD application note EE-240 provides a clear and complete description of the boot process and SPI slave boot mode in particular.
+
+-emb 4/30/2012
+
