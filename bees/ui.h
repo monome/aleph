@@ -33,8 +33,10 @@ void ui_deinit(void);
 // loop over user input
 U8 ui_loop(void);
 // print a line of text
-void ui_println(U8 y, const char* str);
+void ui_println(U8 y, const char* str, U8 hl);
 // print some characters of text
-void ui_print(U8 y, U8 x, const char* str, U8 hl);
+//void ui_print(U8 y, U8 x, const char* str, U8 hl);
+// update the physical display with screen buffer
+void ui_refresh(void);
 
 #endif // header guard

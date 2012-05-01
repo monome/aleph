@@ -12,8 +12,6 @@
 #include "init.h"
 
 // static vars
-
-
 void init_spi(void) {
 	static const gpio_map_t BFIN_SPI_GPIO_MAP = {
 		{ BFIN_SPI_SCK_PIN, BFIN_SPI_SCK_FUNCTION },

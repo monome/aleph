@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <pthread.h>
 #include "../common/types.h"
 #include "net.h"
 #include "menu.h"

@@ -1,6 +1,10 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
+// debug
+#define DEBUG
+//#define DEBUG(x) printw(x);
+
 // TODO: fract/float conversion
 
 // some bitfield and bit-array utilities
