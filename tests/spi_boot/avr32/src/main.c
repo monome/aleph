@@ -59,10 +59,10 @@ int main(void) {
   gpio_clr_gpio_pin(BFIN_RESET_PIN);
   // wait a little
   delay = 10; while (--delay > 0) {;;}
-  gpio_set_gpio_pin(BFIN_RESET_PIN);
-  
+  gpio_set_gpio_pin(BFIN_RESET_PIN);  
   // wait a lot
   delay = 1000; while (--delay > 0) {;;}
+
   // loop over .ldr data
   byte = 0;
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
