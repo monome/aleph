@@ -19,8 +19,11 @@ slide switch
 panasonic EVJ - audio pot
 	P2G1103-ND
 
-lipo battery
 
+
+
+avr32
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 
 
@@ -54,6 +57,10 @@ audio codec
 	MT48LC32M16A2TG-75
 
 
+power
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
 
 
 
@@ -66,3 +73,11 @@ AD5318 - 8 ch 10 bit DAC
 AD5314 - 4 ch 10 bit DAC
 
 12 bit DAC for filter cutoffs
+
+AD8606 - op amps for i/o buffering
+
+
+control 
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+AD7923 - 4 ch 12 bit ADC SPI
