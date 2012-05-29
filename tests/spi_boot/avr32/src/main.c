@@ -60,7 +60,7 @@ int main(void) {
   // wait a little
   delay = 10; while (--delay > 0) {;;}
   gpio_set_gpio_pin(BFIN_RESET_PIN);  
-  // wait a lot
+  // wait a little more
   delay = 1000; while (--delay > 0) {;;}
 
   // loop over .ldr data

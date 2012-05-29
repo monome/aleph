@@ -1,8 +1,6 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-
-
 //--------------------------------------------------------------
 // SYSTEM CLOCKS:
 
@@ -33,39 +31,18 @@
 // UART1 : OLED, SPI mode
 #define OLED_SPI_UART               (&AVR32_UART1)
 #define OLED_SPI_UART_IRQ   
-// rx pin is  PA00
-#define OLED_SPI_UART_RX_PIN       	AVR32_USART1_RXD_0_0_PIN
+// rx pin is  PA05
+#define OLED_SPI_UART_RX_PIN        AVR32_USART1_RXD_0_0_PIN
 #define OLED_SPI_UART_RX_FUNCTION   AVR32_USART1_RXD_0_0_FUNCTION
-// tx pin is PA01
+// tx pin is PA06
 #define OLED_SPI_UART_TX_PIN        AVR32_USART1_TXD_0_0_PIN
 #define OLED_SPI_UART_TX_FUNCTION   AVR32_USART1_TXD_0_0_FUNCTION
 // clk pin is PA07
 #define OLED_SPI_UART_CLC_PIN        AVR32_USART1_CLK_0_0_PIN
 #define OLED_SPI_UART_CLK_FUNCTION   AVR32_USART1_CLK_0_0_FUNCTION
 
-// SPI0 : ADC
-
-// SPI1 : bf533
-
-
-
-
-
-
-/*
-// define encoder pins
-#define CON_ENC0_S0		AVR32_PIN_PA25
-#define CON_ENC0_S1		AVR32_PIN_PA26
-#define CON_ENC1_S0		AVR32_PIN_PA27
-#define CON_ENC1_S1		AVR32_PIN_PA28
-
-// define switch pins
-#define CON_SW0			AVR32_PIN_PX16
-#define CON_SW1			AVR32_PIN_PX19
-#define CON_SW2			AVR32_PIN_PX22
-
-// define SPI pins
-#define BFIN_SPI                   (&AVR32_SPI0)
+// SPI0 : blackfin
+#define BFIN_3SPI                   (&AVR32_SPI0)
 #define BFIN_SPI_NPCS              0
 #define BFIN_SPI_SCK_PIN           AVR32_SPI0_SCK_0_0_PIN
 #define BFIN_SPI_SCK_FUNCTION      AVR32_SPI0_SCK_0_0_FUNCTION
@@ -76,10 +53,42 @@
 #define BFIN_SPI_NPCS_PIN          AVR32_SPI0_NPCS_0_0_PIN
 #define BFIN_SPI_NPCS_FUNCTION     AVR32_SPI0_NPCS_0_0_FUNCTION
 
-// define UART pins
-// #define BFIN_UART
-// #define DBG_UART
-*/
+// SPI1 : ADC
+#define ADC_SPI                   (&AVR32_SPI1)
+#define ADC_SPI_NPCS              0
+#define ADC_SPI_SCK_PIN           AVR32_SPI1_SCK_0_0_PIN
+#define ADC_SPI_SCK_FUNCTION      AVR32_SPI1_SCK_0_0_FUNCTION
+#define ADC_SPI_MISO_PIN          AVR32_SPI1_MISO_0_0_PIN
+#define ADC_SPI_MISO_FUNCTION     AVR32_SPI1_MISO_0_0_FUNCTION
+#define ADC_SPI_MOSI_PIN          AVR32_SPI1_MOSI_0_0_PIN
+#define ADC_SPI_MOSI_FUNCTION     AVR32_SPI1_MOSI_0_0_FUNCTION
+#define ADC_SPI_NPCS_PIN          AVR32_SPI1_NPCS_0_0_PIN
+#define ADC_SPI_NPCS_FUNCTION     AVR32_SPI1_NPCS_0_0_FUNCTION
 
+// PA21 : usb host ID
+#define USB_HOST_ID_PIN         AVR32_PIN_PA21
+// PA22 : usb host VBOF
+#define USB_HOST_VBOF_PIN       AVR32_PIN_PA22
+
+// PA24 : edit mode LED
+#define EDIT_LED_PIN		AVR32_PIN_PA24
+// PA25 : edit mode switch
+#define EDIT_SW_PIN		AVR32_PIN_PA25
+
+// PA26 - PA29 : switches
+#define SW0_PIN		AVR32_PIN_PA26
+#define SW1_PIN		AVR32_PIN_PA27
+#define SW2_PIN		AVR32_PIN_PA28
+#define SW3_PIN		AVR32_PIN_PA29
+
+// PB00 - PB07 : encoders
+#define ENC0_S0_PIN		AVR32_PIN_PB00
+#define ENC0_S1_PIN		AVR32_PIN_PB01
+#define ENC1_S0_PIN		AVR32_PIN_PB02
+#define ENC1_S1_PIN		AVR32_PIN_PB03
+#define ENC2_S0_PIN		AVR32_PIN_PB04
+#define ENC2_S1_PIN		AVR32_PIN_PB05
+#define ENC3_S0_PIN		AVR32_PIN_PB06
+#define ENC3_S1_PIN		AVR32_PIN_PB07
 
 #endif // header guard
