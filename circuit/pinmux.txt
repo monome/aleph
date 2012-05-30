@@ -5,6 +5,7 @@ PA05	UART1 RX	SPI - OLED (not used)
 PA06	UART1 TX	SPI - OLED data
 PA07	UART1 CLK	SPI - OLED clock
 PA08	UART1 RTS	SPI - OLED select
+PA09    GPIO09		OLED command/data register select
 
 PA10    SPIO CS0        SPI - BF select
 PA11	SPI0 MISO	SPI - BF miso
