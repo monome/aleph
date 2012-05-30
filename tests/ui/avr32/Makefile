@@ -2,9 +2,12 @@
 # Wolfgang Wieser 07/2008.
 # stolen and mutilated by emb, 2011
 
-PART = uc3a0512
-BOARD = EVK1100
-CFLAGS = -g -O2 -Wall -ffunction-sections 
+PART     = uc3a0512
+BOARD    = EVK1100
+CFLAGS   += -g
+CFLAGS   += -O2
+CFLAGS   += -Wall 
+CFLAGS   += -ffunction-sections 
 ASMFLAGS = -Wa,-g -Wa,-g3
 
 LDFLAGS += -nostartfiles -Lsrc/SOFTWARE_FRAMEWORK/UTILS/LIBS/NEWLIB_ADDONS -Lsrc/SOFTWARE_FRAMEWORK/BOARDS 

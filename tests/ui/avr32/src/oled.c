@@ -16,18 +16,18 @@ static U8 screen[NPIXELS];
 
 static void write_data(U8 c);
 static void write_data(U8 c) {
+  usart_spi_selectChip(OLED_USART_SPI);
   // pull register select high to write data
   gpio_set_gpio_pin(OLED_REGISTER_PIN);
-  usart_spi_selectChip(OLED_USART_SPI);
   usart_putchar(OLED_USART_SPI, c);
   usart_spi_unselectChip(OLED_USART_SPI);
 }
 
 static void write_command(U8 c);
 static void write_command(U8 c) {
+  usart_spi_selectChip(OLED_USART_SPI);
   // pull register select low to write a command
   gpio_clr_gpio_pin(OLED_REGISTER_PIN);
-  usart_spi_selectChip(OLED_USART_SPI);
   usart_putchar(OLED_USART_SPI, c);
   usart_spi_unselectChip(OLED_USART_SPI);
 }
@@ -120,5 +120,4 @@ void oled_draw_string(U16 x, U16 y, U8 *str, U8 a) {
 void oled_refresh(void) {
   U16 i;
   for(i=0; i<4096; i++) { write_data(screen[i]); }
-
 }

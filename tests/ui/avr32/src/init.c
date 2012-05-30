@@ -37,8 +37,10 @@ void init_usart(void) {
 }
 
 void init_avr(void) {
+  // Switch main clock to external oscillator 0 (crystal).
+  pm_switch_to_osc0(&AVR32_PM, FOSC0, OSC0_STARTUP);
   // initialize interrupt vectors
   // necessary here because various peripheral drivers register interrupts internally
-  INTC_init_interrupts();
+  // INTC_init_interrupts();
   init_usart(); 
 }
