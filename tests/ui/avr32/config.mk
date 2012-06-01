@@ -62,11 +62,8 @@ CSRCS = \
         avr32/drivers/pm/pm.c                              \
         avr32/drivers/pm/pm_conf_clocks.c                  \
         avr32/drivers/pm/power_clocks_lib.c                \
-        avr32/drivers/usart/usart.c			  \
-        ./src/font.c \
-        ./src/init.c \
-	./src/main.c \
-	./src/oled.c
+        avr32/drivers/usart/usart.c			   \
+	./src/main.c
 
 # List of assembler source files.
 ASSRCS = \
