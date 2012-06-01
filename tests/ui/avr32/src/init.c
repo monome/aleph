@@ -3,13 +3,8 @@
 #include "board.h"
 #include "power_clocks_lib.h"
 #include "gpio.h"
-//#include "spi.h"
-//#include "eic.h"
-//#include "tc.h"
-#include "intc.h"
 #include "config.h"
 #include "usart.h"
-//#include "protocol.h"
 #include "init.h"
 
 static void init_usart(void);
@@ -24,7 +19,7 @@ static const usart_spi_options_t USART_SPI_OPTIONS = {
   .baudrate     = 60000,
   .charlength   = 8,
   .spimode      = 0,
-    .channelmode  = USART_NORMAL_CHMODE
+  .channelmode  = USART_NORMAL_CHMODE
 };
 
 void init_usart(void) {

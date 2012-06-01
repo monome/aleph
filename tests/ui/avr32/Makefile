@@ -1,67 +1,63 @@
-# Universal AVR32 Makefile for firmware without operating system.
-# Wolfgang Wieser 07/2008.
-# stolen and mutilated by emb, 2011
+# List of available make goals:
+#
+# all                     Default target, builds the project
+# clean                   Clean up the project
+# rebuild                 Rebuild the project
+#
+# isp                     Use BatchISP instead of avr32program when interfacing
+#                         the target device.
+#
+# chiperase               Perform a JTAG chip erase command
+# cpuinfo                 Get CPU information
+# debug                   Open a debug connection with the MCU
+# erase                   Perform a flash erase
+# halt                    Stop CPU execution
+# program                 Program MCU memory from ELF output file
+# reset                   Reset MCU
+# readregs                Read CPU registers
+# run                     Start CPU execution
+# secureflash             Protect chip by setting security bit
+#
+# doc                     Build the documentation
+# cleandoc                Clean up the documentation
+# rebuilddoc              Rebuild the documentation
+#
+#
+# Copyright (c) 2009-2010 Atmel Corporation. All rights reserved.
+#
+# \asf_license_start
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice,
+#    this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# 3. The name of Atmel may not be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+# 4. This software may only be redistributed and used in connection with an
+#    Atmel microcontroller product.
+#
+# THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
+# EXPRESSLY AND SPECIFICALLY DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+# STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# \asf_license_stop
+#
 
-PART     = uc3a0512
-BOARD    = EVK1100
-CFLAGS   += -g
-CFLAGS   += -O2
-CFLAGS   += -Wall 
-CFLAGS   += -ffunction-sections 
-ASMFLAGS = -Wa,-g -Wa,-g3
-
-LDFLAGS += -nostartfiles -Lsrc/SOFTWARE_FRAMEWORK/UTILS/LIBS/NEWLIB_ADDONS -Lsrc/SOFTWARE_FRAMEWORK/BOARDS 
-LDFLAGS += -Wl,--gc-sections -Wl,-e,_trampoline
-LDFLAGS += -Tsrc/SOFTWARE_FRAMEWORK/UTILS/LINKER_SCRIPTS/AT32UC3A/0512/GCC/link_uc3a0512.lds
-LDFLAGS += -mpart=$(PART)
-LDFLAGS += -Wl,--gc-sections --rodata-writable -Wl,--direct-data
-LDFLAGS += -g
-#LDFLAGS += -v
-
-SRC = src/main.c src/init.c src/oled.c
-OBJ = src/main.o src/init.o src/oled.o
-INC += -I../common
-
-# Atmel Software Framework
-include asf.mk
-SRC += $(ASF_SRC)
-OBJ += $(ASF_OBJ)
-INC += $(ASF_INC)
-
-ELF = ui.elf
-
-all: $(ELF)
-
-wtf:
-	@echo $(SRC)
-	@echo "\n"
-	@echo $(OBJ)
-	@echo "\n"
-	@echo $(INC)
-
-run: $(ELF) program
-
-clean:
-	rm -f $(OBJ)
-
-$(ELF): $(OBJ)
-	avr32-gcc $(LDFLAGS) -mpart=$(PART) -o$(ELF) $(OBJ)
-
-program: $(ELF)
-	avr32program -c USB -pjtagicemkii program -finternal@0x80000000 -v -e --run -R -cint $(ELF)
-reset:
-	avr32program -c USB -pjtagicemkii reset -r
-cont:
-	avr32program -c USB -pjtagicemkii run
-erase:
-	avr32program -c USB -pjtagicemkii erase -finternal@0x80000000
-chiperase:
-	avr32program -c USB -pjtagicemkii chiperase
-
-%.o : %.c
-	avr32-gcc -c $(CFLAGS) $(INC) -DBOARD=$(BOARD) -mpart=$(PART) -o$@ $<
-
-%.o : %.x	
-	avr32-gcc -x assembler-with-cpp -c $(ASMFLAGS) $(INC) -DBOARD=$(BOARD) -mpart=$(PART) -o$@ $<
-
-.PHONY: all run clean program reset cont erase	
+# Include the common Makefile, which will also include the project specific
+# config.mk file.
+include ../../../avr32/asf-3.1.3/avr32/utils/make/Makefile.in
