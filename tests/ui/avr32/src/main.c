@@ -16,41 +16,25 @@
 #include "board.h"
 #include "power_clocks_lib.h"
 #include "usart.h"
+#include "delay.h"
+
+//-----------------------------
+//---- defines
+// number of columns
+#define NCOLS 128
+#define NCOLS_2 64
+// number of rows
+#define NROWS 64
+#define NROWS_2 32
+// pixels in graphics ram 
+#define GRAM_PIX 8192 // ncols * nrows
+// bytes in graphics RAM
+#define GRAM_BYTES 4096 // 2 pixels per byte
 
 //-----------------------------
 //---- static variables
 static U8 alpha = 0;
-
-//-----------------------------
-//---- static functions
-
-static void write_data(U8 c);
-static void write_data(U8 c) {
-  // pull register select high to write data
-  gpio_set_gpio_pin(OLED_REGISTER_PIN);
-  usart_spi_selectChip(OLED_USART_SPI);
-  usart_putchar(OLED_USART_SPI, (c & 0x0f));
-  usart_spi_unselectChip(OLED_USART_SPI);
-}
-
-static void write_command(U8 c);
-static void write_command(U8 c) {
-  // pull register select low to write a command
-  gpio_clr_gpio_pin(OLED_REGISTER_PIN);
-  usart_spi_selectChip(OLED_USART_SPI);
-  usart_putchar(OLED_USART_SPI, c);
-  usart_spi_unselectChip(OLED_USART_SPI);
-}
-
-// main function
-int main(void) {  
-  U64 delay;
-  
-  //init_avr();
-  //init_oled();
-  //  register_interrupts();
-
-  pm_switch_to_osc0(&AVR32_PM, FOSC0, OSC0_STARTUP);
+static U8 data = 0; // 2 pixels, i guess
 
   static const gpio_map_t USART_SPI_GPIO_MAP = {
     {OLED_USART_SPI_SCK_PIN,  OLED_USART_SPI_SCK_FUNCTION },
@@ -62,9 +46,41 @@ int main(void) {
   static const usart_spi_options_t USART_SPI_OPTIONS = {
     .baudrate     = 60000,
     .charlength   = 8,
-    .spimode      = 2, // clock starts high, sample on rising edge
+    .spimode      = 3, // clock starts high, sample on rising edge
     .channelmode  = USART_NORMAL_CHMODE
   };
+  
+//-----------------------------
+//---- static functions
+
+static void write_data(U8 c);
+static void write_data(U8 c) {
+  usart_spi_selectChip(OLED_USART_SPI);
+  // pull register select high to write data
+  gpio_set_gpio_pin(OLED_REGISTER_PIN);
+  usart_putchar(OLED_USART_SPI, c);
+  usart_spi_unselectChip(OLED_USART_SPI);
+}
+
+static void write_command(U8 c);
+static void write_command(U8 c) {
+  usart_spi_selectChip(OLED_USART_SPI);
+  // pull register select low to write a command
+  gpio_clr_gpio_pin(OLED_REGISTER_PIN);
+  usart_putchar(OLED_USART_SPI, c);
+  usart_spi_unselectChip(OLED_USART_SPI);
+}
+
+// main function
+int main(void) {  
+  U32 i, j;
+
+//init_avr();
+  //init_oled();
+  //  register_interrupts();
+
+  pm_switch_to_osc0(&AVR32_PM, FOSC0, OSC0_STARTUP);
+  delay_init(FOSC0);
 
   // Assign GPIO to SPI.
   gpio_enable_module(USART_SPI_GPIO_MAP,
@@ -73,11 +89,10 @@ int main(void) {
   // Initialize USART in SPI mode.
   usart_init_spi_master(OLED_USART_SPI, &USART_SPI_OPTIONS, FOSC0);
   
-  delay = 100;
-  while (delay > 0) { delay--; }
-
+  delay_ms(10);
   
   //// initialize OLED
+  /// todo: maybe toggle oled RESET to clear its shift register?
   write_command(0xAE);	// off
   write_command(0x86);	// full current range
   write_command(0xA4);	// normal display
@@ -100,6 +115,7 @@ int main(void) {
   write_command(0xB1);	// set phase
   write_command(0x55);
 	
+	
   // set update box (to full screen)
   write_command(0x15);
   write_command(0);
@@ -107,18 +123,40 @@ int main(void) {
   write_command(0x75);
   write_command(0);
   write_command(63);
-	
+		
+  // clear OLED RAM
+  for(i=0; i<GRAM_BYTES; i++) { write_data(0); }
+   
   write_command(0xAF);	// on
 
+  delay_ms(20);
   
-  /////////
+  // checkerboard, hopefully
+  for (i=0; i<NROWS_2; i++) {
+    for (j=0; j<NCOLS_2; j++) {
+      data = 0x0f & alpha;
+      write_data(data);
+      delay_ms(10);
+    }
+    for (j=0; j<NCOLS_2; j++) {
+      data = (alpha << 4) & 0xf0;
+      write_data(data);
+      delay_ms(10);
+    }
+    alpha++;
+    alpha &= 0x0f;
+  }
 
-  while(1) {
-    
-    write_data(alpha);
+  /* 
+  for(pix = 0; pix < ; pix++) {
+    data = 0;
+    data |= alpha;
     alpha = (alpha + 1) % 0x0f;
+    data |= (alpha << 4);
     
-    
+    write_data(data);
+    delay_ms(50);
+  */
     /*
     usart_spi_selectChip(OLED_USART_SPI);
     usart_putchar(OLED_USART_SPI, 0x0f);
@@ -134,7 +172,9 @@ int main(void) {
     delay=1000;
     while(delay > 0) { delay--; }
     */
-  }
+
+
  
   return 0;
 }
+

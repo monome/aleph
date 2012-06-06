@@ -11,28 +11,33 @@
 #include "oled.h"
 #include "font.h"
 
+//-----------------------------
+//---- static variables
 static U8 screen[NPIXELS];
+
+//-----------------------------
+//---- static functions
 
 static void write_data(U8 c);
 static void write_data(U8 c) {
-  usart_spi_selectChip(OLED_USART_SPI);
   // pull register select high to write data
-  //  gpio_set_gpio_pin(OLED_REGISTER_PIN);
-  //? 
-  usart_putchar(OLED_USART_SPI, 0x55);
-  usart_putchar(OLED_USART_SPI, c);
+  gpio_set_gpio_pin(OLED_REGISTER_PIN);
+  usart_spi_selectChip(OLED_USART_SPI);
+  usart_putchar(OLED_USART_SPI, (c & 0x0f));
   usart_spi_unselectChip(OLED_USART_SPI);
 }
 
 static void write_command(U8 c);
 static void write_command(U8 c) {
-  usart_spi_selectChip(OLED_USART_SPI);
   // pull register select low to write a command
-  //  gpio_clr_gpio_pin(OLED_REGISTER_PIN);
+  gpio_clr_gpio_pin(OLED_REGISTER_PIN);
+  usart_spi_selectChip(OLED_USART_SPI);
   usart_putchar(OLED_USART_SPI, c);
   usart_spi_unselectChip(OLED_USART_SPI);
 }
 
+//------------------
+// external functions
 void init_oled(void) {
   U16 i;
   write_command(0xAE);	// off
@@ -66,11 +71,11 @@ void init_oled(void) {
   write_command(63);
 	
   // clear data
-  for(i = 0; i < 4096; i++){
+  for(i = 0; i < NPIXELS; i++){
     write_data(0);	
   }
 	
-  for(i = 0; i < 512; i++){
+  for(i = 0; i < NPIXELS; i++){
     screen[i] = 0;
   }
   write_command(0xAF);	// on
@@ -79,11 +84,8 @@ void init_oled(void) {
 
 /////// testing...
 void oled_draw_pixel_raw(U16 pos, U8 a) {
-  a &= 0x0f;
-  screen[pos] &= 0xf0;
-  screen[pos] |= a;
+  screen[pos] = (a & 0x0f);
 }
-
 
 //// FIXME: clarify and get rid of magic numbers
 void oled_draw_pixel(U16 x, U16 y, U8 a) {

@@ -8,7 +8,7 @@
 
 #include "compiler.h"
 
-#define NPIXELS 512
+#define NPIXELS 8192 // 128 * 64
 
 void init_oled(void);
 void oled_draw_pixel_raw(U16 pos, U8 a);
