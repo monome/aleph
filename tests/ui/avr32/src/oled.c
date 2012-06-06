@@ -6,6 +6,7 @@
 // ASF
 #include "gpio.h"
 #include "usart.h"
+#include "delay.h"
 // aleph
 #include "config.h"
 #include "oled.h"
@@ -13,25 +14,24 @@
 
 //-----------------------------
 //---- static variables
-static U8 screen[NPIXELS];
+static U8 screen[GRAM_BYTES];
 
 //-----------------------------
 //---- static functions
-
 static void write_data(U8 c);
 static void write_data(U8 c) {
+  usart_spi_selectChip(OLED_USART_SPI);
   // pull register select high to write data
   gpio_set_gpio_pin(OLED_REGISTER_PIN);
-  usart_spi_selectChip(OLED_USART_SPI);
-  usart_putchar(OLED_USART_SPI, (c & 0x0f));
+  usart_putchar(OLED_USART_SPI, c);
   usart_spi_unselectChip(OLED_USART_SPI);
 }
 
 static void write_command(U8 c);
 static void write_command(U8 c) {
+  usart_spi_selectChip(OLED_USART_SPI);
   // pull register select low to write a command
   gpio_clr_gpio_pin(OLED_REGISTER_PIN);
-  usart_spi_selectChip(OLED_USART_SPI);
   usart_putchar(OLED_USART_SPI, c);
   usart_spi_unselectChip(OLED_USART_SPI);
 }
@@ -39,7 +39,9 @@ static void write_command(U8 c) {
 //------------------
 // external functions
 void init_oled(void) {
-  U16 i;
+  U32 i;
+  //// initialize OLED
+  /// todo: maybe toggle oled RESET to clear its shift register?
   write_command(0xAE);	// off
   write_command(0x86);	// full current range
   write_command(0xA4);	// normal display
@@ -69,58 +71,58 @@ void init_oled(void) {
   write_command(0x75);
   write_command(0);
   write_command(63);
-	
-  // clear data
-  for(i = 0; i < NPIXELS; i++){
-    write_data(0);	
-  }
-	
-  for(i = 0; i < NPIXELS; i++){
-    screen[i] = 0;
-  }
+		
+  // clear OLED RAM
+  for(i=0; i<GRAM_BYTES; i++) { write_data(0); }
+   
   write_command(0xAF);	// on
+
+  delay_ms(20);
        
 }
 
 /////// testing...
-void oled_draw_pixel_raw(U16 pos, U8 a) {
-  screen[pos] = (a & 0x0f);
+void oled_draw_screen_raw(U16 pos, U8 data) {
+  screen[pos] = (data);
 }
 
-//// FIXME: clarify and get rid of magic numbers
 void oled_draw_pixel(U16 x, U16 y, U8 a) {
-  a &= 0x0f; // scrub off left four bits
-  U16 position = (y * 64) + (x/2);
-  if(!(x & 1)) {
-    screen[position] &= 0xf0;
-    screen[position] |= a;
-  }
-  else {
-    screen[position] &= 0x0f;
-    screen[position] |= (a<<4);
+  static U32 pos;
+  pos = (y * NCOLS_2) + (x>>1);
+  if (x%2) {
+    screen[pos] &= 0x0f;
+    screen[pos] |= (a << 4);
+  } else {
+    screen[pos] &= 0xf0;
+    screen[pos] |= (a & 0x0f);
+
   }
 }
 
-void oled_draw_char(U16 x, U16 y, U8 c, U8 a) {
-  //magic numbers: 8 = height, 8 = width
-  U16 row, col;
-  for(row=0;row<6;row++) {
-    for(col=0;col<6;col++) {
-      oled_draw_pixel(x+col, y+row, ((rom_font[(c*7)+row+1] & (1<<col))!=0)*a);
+void oled_draw_char(U16 col, U16 row, char c, U8 a) {
+  static U8 x, y;
+  for(y=0; y<FONT_CHARH; y++) {
+    for(x=0; x<FONT_CHARW; x++) {
+      if((rom_font[c * FONT_CHARH + y] & (0x80 >> x)) > 0) {
+	oled_draw_pixel(x+col, y+row, a);
+      } else {
+	oled_draw_pixel(x+col, y+row, 0);
+      }
     }
   }
 }
 
 
-void oled_draw_string(U16 x, U16 y, U8 *str, U8 a) {
+void oled_draw_string(U16 x, U16 y, char *str, U8 a) {
   while(*str != 0) {
     oled_draw_char(x, y, *str, a);
-    x += rom_font[(*str * 7)];
+    x += FONT_CHARW;
+    //x += rom_font[(*str * 7)];
     str++;
   }
 }
 
 void oled_refresh(void) {
   U16 i;
-  for(i=0; i<NPIXELS; i++) { write_data(screen[i]); }
+  for(i=0; i<GRAM_BYTES; i++) { write_data(screen[i]); }
 }

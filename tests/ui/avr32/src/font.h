@@ -1,8 +1,10 @@
 #ifndef _FONT_H_
 #define _FONT_H_
 
-// 128 * 7
-#define FONT_COUNT 896
-extern const char rom_font[FONT_COUNT];
+#define FONT_NCHAR 128
+#define FONT_CHARW 8
+#define FONT_CHARH 8
+#define FONT_NBYTES 1024 // NCHAR * CHARH
+extern const U8 rom_font[FONT_NBYTES];
 
 #endif // header guard
