@@ -82,9 +82,11 @@ void init_oled(void) {
 }
 
 /////// testing...
+/*
 void oled_draw_screen_raw(U16 pos, U8 data) {
   screen[pos] = (data);
 }
+*/
 
 void oled_draw_pixel(U16 x, U16 y, U8 a) {
   static U32 pos;
@@ -103,7 +105,14 @@ void oled_draw_char(U16 col, U16 row, char c, U8 a) {
   static U8 x, y;
   for(y=0; y<FONT_CHARH; y++) {
     for(x=0; x<FONT_CHARW; x++) {
-      if((rom_font[c * FONT_CHARH + y] & (0x80 >> x)) > 0) {
+      // for brians font:  
+      /*
+	for(y=0; y<6; y++) {
+	for(x=0; x<6; x++) {
+      */
+      if((rom_font[c * FONT_CHARH + y] & (FONT_COLMASK >> x)) > 0) {
+	// for brians font:
+	// if((rom_font[c * FONT_CHARH + y + FONT_ROW_OFFSET] & (1 << x)) > 0) {
 	oled_draw_pixel(x+col, y+row, a);
       } else {
 	oled_draw_pixel(x+col, y+row, 0);

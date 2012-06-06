@@ -406,6 +406,8 @@ const unsigned char rom_font[2048] =
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00	// Char 255 (.)
 };
 */
+
+
 const char rom_font[896] = {
 	0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,

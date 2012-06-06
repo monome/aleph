@@ -18,95 +18,17 @@
 #include "usart.h"
 #include "delay.h"
 
-
-//-----------------------------
-//---- static variables
-//static U8 alpha = 0;
-
 // main function
 int main(void) {  
-  //U32 i, j, x, y;
+  U32 i, x, y;
+  U8 alpha;
 
   init_avr();
   init_oled();
+
   //  register_interrupts();
-  
-  // checkerboard, hopefully
-  //... ok!
+
   /*
-  for (i=0; i<NROWS_2; i++) {
-    for (j=0; j<NCOLS_2; j++) {
-      data = 0x0f & alpha;
-      write_data(data);
-      delay_ms(10);
-    }
-    for (j=0; j<NCOLS_2; j++) {
-      data = (alpha << 4) & 0xf0;
-      write_data(data);
-      delay_ms(10);
-    }
-    alpha++;
-    alpha &= 0x0f;
-  }
-  */
-  
-  // try with drawing functions...
-  // sort of...
-  /*
-  for (i=0; i<NROWS_2; i++) {
-      y = i*2;
-    for (j=0; j<NCOLS_2; j++) {
-      x = j*2;
-      oled_draw_pixel(x, y, alpha);
-      x++;
-      oled_draw_pixel(x, y, 0);
-    }
-    y++;
-    for (j=0; j<NCOLS_2; j++) {
-      x = j * 2;
-      oled_draw_pixel(x, y, 0);
-      x++;
-      oled_draw_pixel(x, y, alpha);
-    }
-    alpha++;
-    alpha &= 0x0f;
-  }
-  oled_refresh();
-*/
-
-  // simpler...
-  /*
- for (i=0; i<NROWS; i++) {
-   for (j=0; j<NCOLS; j++) {
-     oled_draw_pixel(j, i, alpha);
-   }
-    alpha++;
-    if (alpha > 0x0f) alpha = 0;
-
-  }
-  oled_refresh();
-  */
-
-  // something... 
-  
-
-  /*  
-  for (i=0; i<NROWS; i++) {
-    for (j=0; j<NCOLS; j++) {
-      if ((j < NCOLS_2) && (i < NROWS_2)) {
-	alpha = 0x0f;
-      } else {
-	alpha = 0x02;
-      }
-      oled_draw_pixel(j, i, alpha);
-    }
-  }
-  oled_refresh();
-  */
-  
-  
-  //  oled_draw_string(0, 0, "ABCDEFGH//12345678", 0x0f);
-  
   oled_draw_char(0, 0, *("W"), 0x04);
   oled_draw_char(8, 8, *("T"), 0x07);
   oled_draw_char(16, 16, *("F"), 0x0c);
@@ -119,17 +41,23 @@ int main(void) {
   oled_draw_string(64, 56, "YYEEEAHHHH....", 0x04);
 
   oled_refresh();
-
-
-  /*
-  // try with raw drawing function
-  for(i=0; i<GRAM_PIXELS; i++) {
-    if(i % 2) {
-
-    }
-  }
   */
-
+  x = 0;
+  y = 0;
+  alpha = 1;
+  for(i=0; i<(CHAR_ROWS * CHAR_COLS); i++) {
+    oled_draw_char(x, y, i, alpha);
+    x += FONT_CHARW;
+    if (x >= NCOLS) {
+      x = 0;
+      y += FONT_CHARH;
+    }
+    alpha++;
+    if(alpha > 0x0f) {
+      alpha = 1;
+    } 
+  }
+  oled_refresh();
   return 0;
 }
 
