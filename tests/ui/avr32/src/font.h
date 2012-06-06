@@ -10,7 +10,7 @@
 // total bytes: NCHAR * CHARH
 #define FONT_NBYTES 896
 // column mask: 1 << FONT_CHARW
-#define FONT_COLMASK 0x40
+#define FONT_COLMASK 0x80
 // font array
 extern const U8 rom_font[FONT_NBYTES];
 
