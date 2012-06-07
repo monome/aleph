@@ -27,21 +27,6 @@ int main(void) {
   init_oled();
 
   //  register_interrupts();
-
-  /*
-  oled_draw_char(0, 0, *("W"), 0x04);
-  oled_draw_char(8, 8, *("T"), 0x07);
-  oled_draw_char(16, 16, *("F"), 0x0c);
-  oled_draw_char(32, 32, *("!"), 0x0f);
-  
-  oled_refresh();
-  
-  delay_ms(1000);
-  oled_draw_string(64, 48, "($^&%*#$", 0x0a);
-  oled_draw_string(64, 56, "YYEEEAHHHH....", 0x04);
-
-  oled_refresh();
-  */
   x = 0;
   y = 0;
   alpha = 1;
