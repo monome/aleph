@@ -7,6 +7,7 @@
  * adapted for aleph project by monome 2012
 */
 
+// ordering is column-first for easier variable spacing
 /* (0,0) = top left
  * pixel(x,y) = (bool)(font_data[x].data & (1 << y)) */
 
@@ -22,6 +23,7 @@
 
 //static U32 const fontliqminus_attr_nentries= sizeof(fontliqminus_attr)/sizeof(glyph_attr_t);
 
+// FIXME: store last column as (FONTW-[this])
 const glyph font_data[]= {
   { /* 0x00020UL, 0, 2UL, */ 2, 1, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
   { /* 0x00021UL, 0, 0UL, */ 3, 2, { 0x00, 0x00, 0x00, 0x5e, 0x00, 0x00 } },

@@ -10,7 +10,8 @@
 
 #include "config.h"
 #include "init.h"
-#include "oled.h"
+#include "screen.h"
+#include "font.h"
 
 // test
 #include "board.h"
@@ -30,9 +31,9 @@ int main(void) {
   x = 0;
   y = 0;
   alpha = 1;
-  for(i=0; i<(CHAR_ROWS * CHAR_COLS); i++) {
-    oled_draw_char(x, y, i, alpha);
-    x += FONT_CHARW;
+  for(i=FONT_ASCII_OFFSET; i<(CHAR_ROWS * CHAR_COLS); i++) {
+    x += screen_draw_char_squeeze(x, y, i, alpha) + 1;
+    //    x += FONT_CHARW;
     if (x >= NCOLS) {
       x = 0;
       y += FONT_CHARH;
@@ -42,7 +43,7 @@ int main(void) {
       alpha = 1;
     } 
   }
-  oled_refresh();
+  screen_refresh();
   return 0;
 }
 

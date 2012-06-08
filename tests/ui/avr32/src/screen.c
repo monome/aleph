@@ -9,12 +9,13 @@
 #include "delay.h"
 // aleph
 #include "config.h"
-#include "oled.h"
+#include "screen.h"
 #include "font.h"
 
 //-----------------------------
 //---- static variables
 static U8 screen[GRAM_BYTES];
+//static glyph gl;
 
 //-----------------------------
 //---- static functions
@@ -83,12 +84,12 @@ void init_oled(void) {
 
 /////// testing...
 /*
-void oled_draw_screen_raw(U16 pos, U8 data) {
+void screen_draw_screen_raw(U16 pos, U8 data) {
   screen[pos] = (data);
 }
 */
 
-void oled_draw_pixel(U16 x, U16 y, U8 a) {
+void screen_draw_pixel(U16 x, U16 y, U8 a) {
   static U32 pos;
   pos = (y * NCOLS_2) + (x>>1);
   if (x%2) {
@@ -102,7 +103,7 @@ void oled_draw_pixel(U16 x, U16 y, U8 a) {
 }
 
 /*
-void oled_draw_char(U16 col, U16 row, char c, U8 a) {
+void screen_draw_char(U16 col, U16 row, char c, U8 a) {
   static U8 x, y;
   for(y=0; y<FONT_CHARH; y++) {
     for(x=0; x<FONT_CHARW; x++) {
@@ -114,40 +115,69 @@ void oled_draw_char(U16 col, U16 row, char c, U8 a) {
       if((rom_font[c * FONT_CHARH + y] & (FONT_COLMASK >> x)) > 0) {
 	// for brians font:
 	// if((rom_font[c * FONT_CHARH + y + FONT_ROW_OFFSET] & (1 << x)) > 0) {
-	oled_draw_pixel(x+col, y+row, a);
+	screen_draw_pixel(x+col, y+row, a);
       } else {
-	oled_draw_pixel(x+col, y+row, 0);
+	screen_draw_pixel(x+col, y+row, 0);
       }
     }
   }
 }
 */
 
-void oled_draw_char(U16 col, U16 row, char glyph, U8 a) {
+// draw a single character glyph with fixed spacing
+U8 screen_draw_char(U16 col, U16 row, char glyph, U8 a) {
   static U8 x, y;
   for(y=0; y<FONT_CHARH; y++) {
     for(x=0; x<FONT_CHARW; x++) {
       if( (font_data[glyph - FONT_ASCII_OFFSET].data[x] & (1 << y))) {
-	oled_draw_pixel(x+col, y+row, a);
-      } else {
-	oled_draw_pixel(x+col, y+row, 0);
+	screen_draw_pixel(x+col, y+row, a);
+       } else {
+	screen_draw_pixel(x+col, y+row, 0);
       }
     }
   }
+  return x+1;
 }
 
+// draw a single character glyph with proportional spacing
+U8 screen_draw_char_squeeze(U16 col, U16 row, char gl, U8 a) {
+  static U8 y, x;
+  static U8 xnum;
+  static const glyph * g;
+  g = &(font_data[gl - FONT_ASCII_OFFSET]);
+  xnum = FONT_CHARW - g->first - g->last;
+  
+  for(y=0; y<FONT_CHARH; y++) {
+    for(x=0; x<xnum; x++) {
+      if( (g->data[x + g->first] & (1 << y))) {
+	screen_draw_pixel(x + col, y + row, a);
+      } else {
+	screen_draw_pixel(x + col, y + row, 0);
+      }
+    }
+  }
+  return xnum;
+}
 
-
-void oled_draw_string(U16 x, U16 y, char *str, U8 a) {
+// draw a string with fixed spacing
+U8 screen_draw_string(U16 x, U16 y, char *str, U8 a) {
   while(*str != 0) {
-    oled_draw_char(x, y, *str, a);
-    x += FONT_CHARW;
-    //x += rom_font[(*str * 7)];
+    x += screen_draw_char(x, y, *str, a) + 1;
     str++;
   }
+  return x;
 }
 
-void oled_refresh(void) {
+// draw a string with proportional spacing
+U8 screen_draw_string_squeeze(U16 x, U16 y, char *str, U8 a) {
+  while(*str != 0) {
+    x += screen_draw_char_squeeze(x, y, *str, a) + 1;
+    str++;
+  }
+  return x;
+}
+
+void screen_refresh(void) {
   U16 i;
   for(i=0; i<GRAM_BYTES; i++) { write_data(screen[i]); }
 }

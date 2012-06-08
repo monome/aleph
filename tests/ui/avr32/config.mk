@@ -20,7 +20,7 @@ FLASH = internal@0x80000000
 # Clock source to use when programming; xtal, extclk or int
 PROG_CLOCK = int
 
-# Application target name. Given with suffix .a for library and .elf for a
+# Applicat	ion target name. Given with suffix .a for library and .elf for a
 # standalone application.
 TARGET = oled_test.elf
 
@@ -36,7 +36,7 @@ CSRCS = \
         avr32/services/delay/delay.c			   \
 	./src/main.c \
 	./src/init.c \
-	./src/oled.c \
+	./src/screen.c \
 	./src/font.c
 
 # List of assembler source files.
