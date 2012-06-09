@@ -3,6 +3,8 @@
    aleph
 */
 
+// std
+#include <stdio.h>
 // ASF
 #include "gpio.h"
 #include "usart.h"
@@ -14,8 +16,9 @@
 
 //-----------------------------
 //---- static variables
+// screen buffer
 static U8 screen[GRAM_BYTES];
-//static glyph gl;
+
 
 //-----------------------------
 //---- static functions
@@ -82,13 +85,6 @@ void init_oled(void) {
        
 }
 
-/////// testing...
-/*
-void screen_draw_screen_raw(U16 pos, U8 data) {
-  screen[pos] = (data);
-}
-*/
-
 void screen_draw_pixel(U16 x, U16 y, U8 a) {
   static U32 pos;
   pos = (y * NCOLS_2) + (x>>1);
@@ -101,28 +97,6 @@ void screen_draw_pixel(U16 x, U16 y, U8 a) {
 
   }
 }
-
-/*
-void screen_draw_char(U16 col, U16 row, char c, U8 a) {
-  static U8 x, y;
-  for(y=0; y<FONT_CHARH; y++) {
-    for(x=0; x<FONT_CHARW; x++) {
-      // for brians font:  
-      
-//	for(y=0; y<6; y++) {
-//	for(x=0; x<6; x++) {
-      
-      if((rom_font[c * FONT_CHARH + y] & (FONT_COLMASK >> x)) > 0) {
-	// for brians font:
-	// if((rom_font[c * FONT_CHARH + y + FONT_ROW_OFFSET] & (1 << x)) > 0) {
-	screen_draw_pixel(x+col, y+row, a);
-      } else {
-	screen_draw_pixel(x+col, y+row, 0);
-      }
-    }
-  }
-}
-*/
 
 // draw a single character glyph with fixed spacing
 U8 screen_draw_char(U16 col, U16 row, char glyph, U8 a) {
@@ -177,6 +151,22 @@ U8 screen_draw_string_squeeze(U16 x, U16 y, char *str, U8 a) {
   return x;
 }
 
+// print a formatted integer
+U8 screen_draw_int(U16 x, U16 y, S32 i, U8 a) {
+  static char buf[32];
+  snprintf(buf, 32, "%d", (int)i);
+  return screen_draw_string_squeeze(x, y, buf, a);
+}
+
+// print a formatted float
+U8 screen_draw_float(U16 x, U16 y, F32 f, U8 a) {
+  static char buf[32];
+  snprintf(buf, 32, "%f", (float)f);
+  return screen_draw_string_squeeze(x, y, buf, a);
+}
+
+
+// send screen buffer contents to OLED
 void screen_refresh(void) {
   U16 i;
   for(i=0; i<GRAM_BYTES; i++) { write_data(screen[i]); }

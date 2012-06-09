@@ -1,51 +1,54 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-/*
-///// UASRT1 in spi mode for OLED
-#define OLED_USART_SPI                 (&AVR32_USART1)
-// clock is PA07
-#define OLED_USART_SPI_SCK_PIN         AVR32_USART1_CLK_0_PIN
-#define OLED_USART_SPI_SCK_FUNCTION    AVR32_USART1_CLK_0_FUNCTION
-// rx is PA05
-#define OLED_USART_SPI_MISO_PIN        AVR32_USART1_RXD_0_0_PIN
-#define OLED_USART_SPI_MISO_FUNCTION   AVR32_USART1_RXD_0_0_FUNCTION
-// tx is PA06 
-#define OLED_USART_SPI_MOSI_PIN        AVR32_USART1_TXD_0_0_PIN
-#define OLED_USART_SPI_MOSI_FUNCTION   AVR32_USART1_TXD_0_0_FUNCTION
-// rts (chip select) is PA08
-#define OLED_USART_SPI_NSS_PIN         AVR32_USART1_RTS_0_0_PIN
-#define OLED_USART_SPI_NSS_FUNCTION    AVR32_USART1_RTS_0_0_FUNCTION
-// PA09 in GPIO for OLED command/data register select
-#define OLED_REGISTER_PIN AVR32_PIN_PA09
-*/
+//--------------------------------------------------------------
+// SYSTEM CLOCKS:
 
-// weird shit with the clock with EVK, i wonder if RS232 driver is interfering, 
-// trying USART2 instead...
+#define FOSC32          32768                                   //!< Osc32 frequency: Hz.
+#define OSC32_STARTUP   AVR32_PM_OSCCTRL32_STARTUP_8192_RCOSC //!< Osc32 startup time: RCOsc periods.
 
-#  define OLED_USART_SPI                 (&AVR32_USART2)
-#  define OLED_USART_SPI_SCK_PIN         AVR32_USART2_CLK_0_PIN
-#  define OLED_USART_SPI_SCK_FUNCTION    AVR32_USART2_CLK_0_FUNCTION
-#  define OLED_USART_SPI_MISO_PIN        AVR32_USART2_RXD_0_0_PIN
-#  define OLED_USART_SPI_MISO_FUNCTION   AVR32_USART2_RXD_0_0_FUNCTION
-#  define OLED_USART_SPI_MOSI_PIN        AVR32_USART2_TXD_0_0_PIN
-#  define OLED_USART_SPI_MOSI_FUNCTION   AVR32_USART2_TXD_0_0_FUNCTION
-#  define OLED_USART_SPI_NSS_PIN         AVR32_USART2_RTS_0_0_PIN
-#  define OLED_USART_SPI_NSS_FUNCTION    AVR32_USART2_RTS_0_0_FUNCTION
+#define FOSC0           12000000                                //!< Osc0 frequency: Hz.
+#define OSC0_STARTUP    AVR32_PM_OSCCTRL0_STARTUP_2048_RCOSC  //!< Osc0 startup time: RCOsc periods.
+
+// System Clock Frequencies
+#define FMCK_HZ   		66000000L
+#define FCPU_HZ   		FMCK_HZ
+#define FHSB_HZ   		FCPU_HZ
+#define FPBA_HZ   		FMCK_HZ
+#define FPBB_HZ   		FMCK_HZ
+
+// USART in SPI master mode for OLED
+// FIXME: only works with USART2 on the EVK1100.. 
+#define OLED_USART_SPI                 (&AVR32_USART2)
+#define OLED_USART_SPI_SCK_PIN         AVR32_USART2_CLK_0_PIN
+#define OLED_USART_SPI_SCK_FUNCTION    AVR32_USART2_CLK_0_FUNCTION
+#define OLED_USART_SPI_MISO_PIN        AVR32_USART2_RXD_0_0_PIN
+#define OLED_USART_SPI_MISO_FUNCTION   AVR32_USART2_RXD_0_0_FUNCTION
+#define OLED_USART_SPI_MOSI_PIN        AVR32_USART2_TXD_0_0_PIN
+#define OLED_USART_SPI_MOSI_FUNCTION   AVR32_USART2_TXD_0_0_FUNCTION
+#define OLED_USART_SPI_NSS_PIN         AVR32_USART2_RTS_0_0_PIN
+#define OLED_USART_SPI_NSS_FUNCTION    AVR32_USART2_RTS_0_0_FUNCTION
 // PA09 in GPIO for OLED command/data register select
 #define OLED_REGISTER_PIN AVR32_PIN_PA09
 
 
-// that works, going back to USART1... wow, just doesn't work (on EVK at least)
-/*
-#  define OLED_USART_SPI                 (&AVR32_USART2)
-#  define OLED_USART_SPI_SCK_PIN         AVR32_USART1_CLK_0_PIN
-#  define OLED_USART_SPI_SCK_FUNCTION    AVR32_USART1_CLK_0_FUNCTION
-#  define OLED_USART_SPI_MISO_PIN        AVR32_USART1_RXD_0_0_PIN
-#  define OLED_USART_SPI_MISO_FUNCTION   AVR32_USART1_RXD_0_0_FUNCTION
-#  define OLED_USART_SPI_MOSI_PIN        AVR32_USART1_TXD_0_0_PIN
-#  define OLED_USART_SPI_MOSI_FUNCTION   AVR32_USART1_TXD_0_0_FUNCTION
-#  define OLED_USART_SPI_NSS_PIN         AVR32_USART1_RTS_0_0_PIN
-#  define OLED_USART_SPI_NSS_FUNCTION    AVR32_USART1_RTS_0_0_FUNCTION
-*/
+// PB00 - PB07 : encoders
+#define ENC0_S0_PIN		AVR32_PIN_PB00
+#define ENC0_S1_PIN		AVR32_PIN_PB01
+#define ENC1_S0_PIN		AVR32_PIN_PB02
+#define ENC1_S1_PIN		AVR32_PIN_PB03
+#define ENC2_S0_PIN		AVR32_PIN_PB04
+#define ENC2_S1_PIN		AVR32_PIN_PB05
+#define ENC3_S0_PIN		AVR32_PIN_PB06
+#define ENC3_S1_PIN		AVR32_PIN_PB07
+
+
+// PA26 - PA29 : switches
+#define SW0_PIN		AVR32_PIN_PA26
+#define SW1_PIN		AVR32_PIN_PA27
+#define SW2_PIN		AVR32_PIN_PA28
+// for now, PA29 is CS for OLED-SPI
+// #define SW3_PIN		AVR32_PIN_PA29
+#define SW3_PIN		AVR32_PIN_PA30
+
 #endif // header guard

@@ -124,7 +124,7 @@ const glyph font_data[]= {
   { /* 0x0007eUL, 0, 0UL, */ 1, 1, { 0x00, 0x04, 0x02, 0x04, 0x02, 0x00 } },
 };
 
-//static const U32 font_nglyphs = sizeof(font_data)/sizeof(glyph) - 1;
+const U32 font_nglyphs = sizeof(font_data)/sizeof(glyph) - 1;
 
 ///// functions
 //const U32 getNumGlyphs(void) { return font_nglyphs; }

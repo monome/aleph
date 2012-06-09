@@ -22,7 +22,7 @@
 // bytes in graphics RAM
 #define GRAM_BYTES 4096 // 2 pixels per byte
 // how many lines of text
-#define CHAR_ROWS 8  // NROWS / FONT_CHARH
+//#define CHAR_ROWS 8  // NROWS / FONT_CHARH
 #define CHAR_COLS 16 // NCOLS / FONT_CHARW
 
 // send startup commands
@@ -38,6 +38,11 @@ U8 screen_draw_char_squeeze(U16 x, U16 y, char c, U8 a);
 U8 screen_draw_string(U16 x, U16 y, char* str, U8 a);
 // draw a string with proportional spacing
 U8 screen_draw_string_squeeze(U16 x, U16 y, char* str, U8 a);
+// print a formatted integer
+U8 screen_draw_int(U16 x, U16 y, S32 i, U8 a);
+// print a formatted float
+U8 screen_draw_float(U16 x, U16 y, F32 f, U8 a);
+// write screen buffer to OLED graphics RAM
 void screen_refresh(void);
 
 #endif // header guard

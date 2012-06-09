@@ -17,4 +17,6 @@ typedef struct _glyph {
 
 extern const glyph font_data[];
 
+extern const U32 font_nglyphs;
+
 #endif // header guard
