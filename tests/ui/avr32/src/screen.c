@@ -40,6 +40,15 @@ static void write_command(U8 c) {
   usart_spi_unselectChip(OLED_USART_SPI);
 }
 
+// fill one column in a line of text with blank pixels (for spacing)
+static void zero_col(U16 x, U16 y);
+static void zero_col(U16 x, U16 y) {
+  static U8 i;
+  for(i=0; i<FONT_CHARH; i++) {
+    screen_draw_pixel(x, y+i, 0);
+  }
+}
+
 //------------------
 // external functions
 void init_oled(void) {
@@ -146,7 +155,10 @@ U8 screen_draw_string(U16 x, U16 y, char *str, U8 a) {
 // draw a string with proportional spacing
 U8 screen_draw_string_squeeze(U16 x, U16 y, char *str, U8 a) {
   while(*str != 0) {
-    x += screen_draw_char_squeeze(x, y, *str, a) + 1;
+    x += screen_draw_char_squeeze(x, y, *str, a);
+    zero_col(x, y);
+    // extra pixel... TODO: maybe variable spacing here
+    x++;
     str++;
   }
   return x;
@@ -156,16 +168,15 @@ U8 screen_draw_string_squeeze(U16 x, U16 y, char *str, U8 a) {
 U8 screen_draw_int(U16 x, U16 y, S32 i, U8 a) {
   static char buf[32];
   snprintf(buf, 32, "%d", (int)i);
-  return screen_draw_string(x, y, buf, a);
+  return screen_draw_string_squeeze(x, y, buf, a);
 }
 
 // print a formatted float
 U8 screen_draw_float(U16 x, U16 y, F32 f, U8 a) {
   static char buf[32];
   snprintf(buf, 32, "%f", (float)f);
-  return screen_draw_string(x, y, buf, a);
+  return screen_draw_string_squeeze(x, y, buf, a);
 }
-
 
 // send screen buffer contents to OLED
 void screen_refresh(void) {

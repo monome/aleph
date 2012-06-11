@@ -8,12 +8,21 @@
 #include "compiler.h"
 
 #define NUM_ENC    4
-#define NUM_ENC_x2 8
+
+typedef struct _enc {
+  // pin numbers
+  U8 pin[2];
+  // current position (p0 | (p1 << 1))
+  U8 pos;
+  // event number to post on change
+  eEventType event;
+} enc_t;
 
 // encoder pin array (see interrupt handler for usage)
-extern const U16 encPins[NUM_ENC_x2];
+extern enc_t enc[NUM_ENC];
 // generate events from encoder interrupts
-extern void handle_enc( const U8 encIdx, const U8 p0, const U8 p1 );
+extern void process_enc( const U8 encIdx );
 // intialize encoder positions
 extern void init_encoders(void);
+
 #endif // header guard

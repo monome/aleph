@@ -34,14 +34,14 @@ CSRCS = \
         avr32/drivers/pm/power_clocks_lib.c                \
         avr32/drivers/usart/usart.c			   \
         avr32/services/delay/delay.c			   \
-	./src/encoder_test.c 
-#	./src/main.c \
-#	./src/init.c \
-#	./src/screen.c \
-#	./src/font.c \
-#	./src/timers.c \
-#	./src/events.c \
-#	./src/encoders.c
+	./src/main.c \
+	./src/init.c \
+	./src/screen.c \
+	./src/font.c \
+	./src/timers.c \
+	./src/events.c \
+	./src/encoders.c
+#	./src/encoder_test.c 
 
 # List of assembler source files.
 ASSRCS = \
@@ -81,7 +81,7 @@ DBGFLAGS =
 
 # Application optimization used during compilation and linking:
 # -O0, -O1, -O2, -O3 or -Os
-OPTIMIZATION = -Os
+OPTIMIZATION = -O3
 
 # Extra flags to use when archiving.
 ARFLAGS = 

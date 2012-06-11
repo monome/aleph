@@ -10,30 +10,19 @@
 #include "events.h"
 #include "eventTypes.h"
 #include "encoders.h"
+//// TEST
+#include "screen.h"
 
 //--------------------------
 //---- external variables
-const U16 encPins[NUM_ENC_x2] = {
-  ENC0_S0_PIN, ENC0_S1_PIN,
-  ENC1_S0_PIN, ENC1_S1_PIN,
-  ENC2_S0_PIN, ENC2_S1_PIN,
-  ENC3_S0_PIN, ENC3_S1_PIN,
-};
+
+enc_t enc[NUM_ENC];
 
 //---------------------------
 //---- static variables
-static const eEventType encEvents[NUM_ENC_x2] = {
-  kEventEncoder0,
-  kEventEncoder1,
-  kEventEncoder2,
-  kEventEncoder3,
-};
 
 // encoder movement map
 static const S8 enc_map[4][4] = { {0,1,-1,0}, {-1,0,0,1}, {1,0,0,-1}, {0,-1,1,0} };
-
-// current encoder positions
-static U8 enc_pos[NUM_ENC];
 
 
 //------------------------------
@@ -42,28 +31,50 @@ static U8 enc_pos[NUM_ENC];
 // initialize encoder positions
 void init_encoders(void) {
   U8 i;
+  // constant data
+  enc[0].pin[0] = ENC0_S0_PIN;
+  enc[0].pin[1] = ENC0_S1_PIN;
+  enc[0].event = kEventEncoder0;
+  enc[1].pin[0] = ENC1_S0_PIN;
+  enc[1].pin[1] = ENC1_S1_PIN;
+  enc[1].event = kEventEncoder1;
+  enc[2].pin[0] = ENC2_S0_PIN;
+  enc[2].pin[1] = ENC2_S1_PIN;
+  enc[2].event = kEventEncoder2;
+  enc[3].pin[0] = ENC3_S0_PIN;
+  enc[3].pin[1] = ENC3_S1_PIN;
+  enc[3].event = kEventEncoder3;
+  
+  // realtime initial pin values
   for(i=0; i<NUM_ENC; i++) {
-    enc_pos[i] = gpio_get_pin_value(encPins[i*2]) + (gpio_get_pin_value(encPins[i*2 + 1]) << 1);
+    enc[i].pos = gpio_get_pin_value(enc[i].pin[0]) + (gpio_get_pin_value(enc[i].pin[1]) << 1);
   }
 }
-
-volatile U8 pos;
 
 // post events based on encoder movements
-void handle_enc( const U8 idx, const U8 p0, const U8 p1 ) {
-  event_t e;
-  
+void process_enc( const U8 idx) {
+  event_t e;  
   S8 val = 0;
-  pos = gpio_get_pin_value(p0) + (gpio_get_pin_value(p1) << 1);
-  if (pos != enc_pos[idx]) {
-    val = enc_map[enc_pos[idx]][pos];
-    enc_pos[idx] = pos;
+  U8 pos;
+  
+  pos = gpio_get_pin_value(enc[idx].pin[0]) + (gpio_get_pin_value(enc[idx].pin[1]) << 1);
+
+  if (pos != enc[idx].pos) {
+    val = enc_map[enc[idx].pos][pos];
+    enc[idx].pos = pos;
   }
   if (val != 0) {
-    e.eventNum = encEvents[idx];
+    e.eventNum = enc[idx].event;
     e.eventData = val;
     post_event(&e);
+    
+    /*
+    //// TEST
+    encVal[idx] += val;
+    screen_draw_int(0, SCREEN_LINE(0), encVal[idx], 0x0f);
+    screen_refresh();
+    */
   }
 }
-
+  
 

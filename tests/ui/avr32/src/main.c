@@ -56,23 +56,16 @@ static void check_events(void);
 __attribute__((__interrupt__))
 static void int_handler_port0_line0(void) {
  U8 i; 
- /////// TEST:
-  gpio_tgl_gpio_pin(LED2_GPIO);
-  ////////  
 
   // check for encoder movement:
-  for(i = 0; i<NUM_ENC_x2; i++) {
-    if(gpio_get_pin_interrupt_flag(encPins[i])) {
-      
-      if (i % 2) {
-	// pin 1 (odd entry in pin array)
-	handle_enc(i, encPins[i-1], encPins[i]);
-      } else {
-	// pin 0 (even entry in pin array)
-	handle_enc(i, encPins[i], encPins[i+1]);
-      }
-      
-      gpio_clear_pin_interrupt_flag(encPins[i]);
+  for(i = 0; i<NUM_ENC; i++) {
+    if(gpio_get_pin_interrupt_flag(enc[i].pin[0])) {
+      process_enc(i);
+      gpio_clear_pin_interrupt_flag(enc[i].pin[0]);
+    }
+    if(gpio_get_pin_interrupt_flag(enc[i].pin[1])) {
+      process_enc(i);
+      gpio_clear_pin_interrupt_flag(enc[i].pin[1]);
     }
   }
 }
@@ -86,20 +79,6 @@ static void int_handler_port1_line0(void) {
   /////// TEST:
   gpio_tgl_gpio_pin(LED1_GPIO);
   /////////
-
-  // check for encoder movement:
-  for(i = 0; i<NUM_ENC_x2; i++) {
-    if(gpio_get_pin_interrupt_flag(encPins[i])) {
-      if (i % 2) {
-	// pin 1 (odd entry in pin array)
-	handle_enc(i, encPins[i-1], encPins[i]);
-      } else {
-	// pin 0 (even entry in pin array)
-	handle_enc(i, encPins[i], encPins[i+1]);
-      }
-      gpio_clear_pin_interrupt_flag(encPins[i]);
-    }
-  }
  
 }
 
@@ -107,12 +86,9 @@ static void int_handler_port1_line0(void) {
 // register interrupts
 static void register_interrupts(void) {
   // enable interrupts on encoder pins
-  
-  
   gpio_enable_pin_interrupt( ENC0_S0_PIN,	GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( ENC0_S1_PIN,	GPIO_PIN_CHANGE);
   
-
   /*
   gpio_enable_pin_interrupt( ENC1_S0_PIN,	GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( ENC1_S1_PIN,	GPIO_PIN_CHANGE);
@@ -127,15 +103,7 @@ static void register_interrupts(void) {
 
   // testing ENC0 on PA06, PA07...   
  INTC_register_interrupt( &int_handler_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), AVR32_INTC_INT1 );
-
-  
-  ///////
-  ///// TEST!
-  // PA00 - PA07
-  //  gpio_enable_pin_interrupt(AVR32_PIN_PA06, GPIO_FALLING_EDGE);
-  //  INTC_register_interrupt( &int_handler_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), AVR32_INTC_INT1 );
-  //////////
-  
+    
 }
 
 //=========================================== 
@@ -144,8 +112,8 @@ static void check_events(void) {
   static event_t e;
 
   ///// debug
-  static S8 encValLast = 0;
-  static U8 i = 0;
+  // static S8 encValLast = 0;
+  // static U8 i = 0;
   ///// 
   
   U8 refresh = 0;
@@ -154,6 +122,7 @@ static void check_events(void) {
     switch(e.eventNum) {
 
     case kEventEncoder0:
+      /*
       ///// debug
       if(e.eventData == encValLast) {
 	i++;
@@ -161,9 +130,9 @@ static void check_events(void) {
       if((e.eventData != 1) && (e.eventData != -1)) {
 	i++;
       }
-
       encValLast = e.eventData;
       ///////
+      */
       encVal[0] += e.eventData;
       screen_draw_int(0, SCREEN_LINE(0), encVal[0], 0x0f);
       refresh = 1;
