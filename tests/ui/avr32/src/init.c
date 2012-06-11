@@ -58,7 +58,33 @@ void init_usart(void) {
   delay_ms(10);
 }
 
+static void init_gpio(void) {
+
+  ///////// TEST!!
+  //gpio_enable_pin_pull_up(AVR32_PIN_PA06);
+    //////
+
+  
+  gpio_enable_pin_pull_up(ENC0_S0_PIN);
+  gpio_enable_pin_pull_up(ENC0_S1_PIN);
+  
+
+  /*
+  gpio_enable_pin_pull_up(ENC1_S0_PIN);
+  gpio_enable_pin_pull_up(ENC1_S1_PIN);
+  gpio_enable_pin_pull_up(ENC2_S0_PIN);
+  gpio_enable_pin_pull_up(ENC2_S1_PIN);
+  gpio_enable_pin_pull_up(ENC3_S0_PIN);
+  gpio_enable_pin_pull_up(ENC3_S1_PIN);
+  */
+}
+
 void init_avr(void) {
+  // clocks
   init_clocks();
+  // GPIO
+  init_gpio();
+  // USARTs
   init_usart(); 
+
 }

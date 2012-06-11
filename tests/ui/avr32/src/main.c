@@ -4,20 +4,40 @@
  */
 
 #include <avr32/io.h>
+
+//// test;
+#include "board.h"
+//////
+
 #include "compiler.h"
 #include "gpio.h"
-//#include "intc.h"
+#include "intc.h"
 
 #include "config.h"
 #include "init.h"
 #include "screen.h"
-#include "font.h"
+//#include "font.h"
+#include "events.h"
+#include "eventTypes.h"
+#include "timers.h"
+#include "encoders.h"
 
-// test
-#include "board.h"
-#include "power_clocks_lib.h"
-#include "usart.h"
-#include "delay.h"
+
+//-----------------------------
+//---- static variables
+
+// switch pin array
+static const U16 swPins[4] = {
+  SW0_PIN,
+  SW1_PIN,
+  SW2_PIN,
+  SW3_PIN,
+};
+
+/////////////
+//// TEST
+static S32 encVal[4] = { 0, 0, 0, 0 };
+////////////
 
 //--------------------
 //--- static functions
@@ -26,76 +46,167 @@
 static void int_handler_port1_line0(void);
 // register interrupts
 static void register_interrupts(void);
-// interrupt handlers
-static void handle_enc( U8 pin );
-static void handle_sw( U8 pin );
-// determine which pin triggered the interrupt
-static inline void check_sw_pin(const U8 pin);
-static inline void check_enc_pin(const U8 pin);
+// generate events from switch interrupts
+//static void handle_sw( const U8 swIdx );
+// UI event loop
+static void check_events(void);
+
+
+// interrupt handler for PA00-PA07
+__attribute__((__interrupt__))
+static void int_handler_port0_line0(void) {
+ U8 i; 
+ /////// TEST:
+  gpio_tgl_gpio_pin(LED2_GPIO);
+  ////////  
+
+  // check for encoder movement:
+  for(i = 0; i<NUM_ENC_x2; i++) {
+    if(gpio_get_pin_interrupt_flag(encPins[i])) {
+      
+      if (i % 2) {
+	// pin 1 (odd entry in pin array)
+	handle_enc(i, encPins[i-1], encPins[i]);
+      } else {
+	// pin 0 (even entry in pin array)
+	handle_enc(i, encPins[i], encPins[i+1]);
+      }
+      
+      gpio_clear_pin_interrupt_flag(encPins[i]);
+    }
+  }
+}
 
 
 // interrupt handler for PB00-PB07
+__attribute__((__interrupt__))
 static void int_handler_port1_line0(void) {
-  /*
-  if(gpio_get_pin_interrupt_flag(BFIN_HWAIT_PIN)) {
-    hwait = gpio_get_pin_value(BFIN_HWAIT_PIN);
-    gpio_clear_pin_interrupt_flag(BFIN_HWAIT_PIN);
+  U8 i;
+
+  /////// TEST:
+  gpio_tgl_gpio_pin(LED1_GPIO);
+  /////////
+
+  // check for encoder movement:
+  for(i = 0; i<NUM_ENC_x2; i++) {
+    if(gpio_get_pin_interrupt_flag(encPins[i])) {
+      if (i % 2) {
+	// pin 1 (odd entry in pin array)
+	handle_enc(i, encPins[i-1], encPins[i]);
+      } else {
+	// pin 0 (even entry in pin array)
+	handle_enc(i, encPins[i], encPins[i+1]);
+      }
+      gpio_clear_pin_interrupt_flag(encPins[i]);
+    }
   }
-  */
+ 
 }
+
 
 // register interrupts
 static void register_interrupts(void) {
-  // generate an interrupt when bfin HWAIT changes
-  //gpio_enable_pin_interrupt( BFIN_HWAIT_PIN, GPIO_PIN_CHANGE);
-  // assign interrupt handler
+  // enable interrupts on encoder pins
+  
+  
+  gpio_enable_pin_interrupt( ENC0_S0_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC0_S1_PIN,	GPIO_PIN_CHANGE);
+  
+
+  /*
+  gpio_enable_pin_interrupt( ENC1_S0_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC1_S1_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC2_S0_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC2_S1_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC3_S0_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC3_S1_PIN,	GPIO_PIN_CHANGE);
+  */
+
+  // register PB00-PB07 and assign interrupt handler
   //INTC_register_interrupt( &int_handler_port1_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB00 / 8), AVR32_INTC_INT1 );
+
+  // testing ENC0 on PA06, PA07...   
+ INTC_register_interrupt( &int_handler_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), AVR32_INTC_INT1 );
+
+  
+  ///////
+  ///// TEST!
+  // PA00 - PA07
+  //  gpio_enable_pin_interrupt(AVR32_PIN_PA06, GPIO_FALLING_EDGE);
+  //  INTC_register_interrupt( &int_handler_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), AVR32_INTC_INT1 );
+  //////////
+  
 }
 
+//=========================================== 
+// application event loop
+static void check_events(void) {
+  static event_t e;
+
+  ///// debug
+  static S8 encValLast = 0;
+  static U8 i = 0;
+  ///// 
+  
+  U8 refresh = 0;
+
+  if( get_next_event(&e) ) {
+    switch(e.eventNum) {
+
+    case kEventEncoder0:
+      ///// debug
+      if(e.eventData == encValLast) {
+	i++;
+      }
+      if((e.eventData != 1) && (e.eventData != -1)) {
+	i++;
+      }
+
+      encValLast = e.eventData;
+      ///////
+      encVal[0] += e.eventData;
+      screen_draw_int(0, SCREEN_LINE(0), encVal[0], 0x0f);
+      refresh = 1;
+      break;
+
+    default:
+      break;
+    }
+  }
+
+  if(refresh) {
+    screen_refresh();
+  }
+
+}
+
+//===========================================
 // main function
 int main(void) {  
-  U32 i, x, y;
-  U8 alpha;
 
+   // initialize AVR32 peripherals
   init_avr();
-  init_oled();
 
+  // disable interrupts
   Disable_global_interrupt();
+
+  // initialize the OLED screen
+  init_oled();
+  // intialize the event queue
+  init_events();
+  // intialize encoders
+  init_encoders();
+  // register interrupts
   register_interrupts();
+
+  // enable interrupts
   Enable_global_interrupt();
-  
-  x = 0;
-  y = 0;
-  alpha = 1;
-  for(i=0; i<font_nglyphs; i++) {
-    x += screen_draw_char_squeeze(x, y, i + FONT_ASCII_OFFSET, alpha) + 1;
-    //    x += FONT_CHARW;
-    if (x >= NCOLS) {
-      x = 0;
-      y += FONT_CHARH;
-    }
-    alpha++;
-    if(alpha > 0x0f) {
-      alpha = 1;
-    } 
+
+  // check for application events in an infinite loop
+  while(1) {
+    check_events();
   }
-  y += FONT_CHARH;
-  screen_draw_string_squeeze(0, y, "this is a \"STRING\" : ?!?", 0x0f);
-  y += FONT_CHARH;
-  x = 0;
-  x += screen_draw_int(x, y, 2919, 0x0f);
-  x += screen_draw_string_squeeze(x, y, "/", 0x0f);
-  y += FONT_CHARH;
-  x = screen_draw_float(0, y, 2919.0, 0x0f);
-  y += FONT_CHARH;
-  x = 0;
-  x = screen_draw_string_squeeze(x, y, " this", 0x0f);
-  x = screen_draw_string_squeeze(x, y, " plus?", 0x0f);
-  x = screen_draw_string_squeeze(x, y, " this!", 0x0f);
-  x = screen_draw_string_squeeze(x, y, " OK.", 0x0f);
-
-
-  screen_refresh();
+  
   return 0;
 }
 

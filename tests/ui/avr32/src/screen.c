@@ -85,6 +85,7 @@ void init_oled(void) {
        
 }
 
+// draw a single pixel
 void screen_draw_pixel(U16 x, U16 y, U8 a) {
   static U32 pos;
   pos = (y * NCOLS_2) + (x>>1);
@@ -99,11 +100,11 @@ void screen_draw_pixel(U16 x, U16 y, U8 a) {
 }
 
 // draw a single character glyph with fixed spacing
-U8 screen_draw_char(U16 col, U16 row, char glyph, U8 a) {
+U8 screen_draw_char(U16 col, U16 row, char gl, U8 a) {
   static U8 x, y;
   for(y=0; y<FONT_CHARH; y++) {
     for(x=0; x<FONT_CHARW; x++) {
-      if( (font_data[glyph - FONT_ASCII_OFFSET].data[x] & (1 << y))) {
+      if( (font_data[gl - FONT_ASCII_OFFSET].data[x] & (1 << y))) {
 	screen_draw_pixel(x+col, y+row, a);
        } else {
 	screen_draw_pixel(x+col, y+row, 0);
@@ -117,7 +118,7 @@ U8 screen_draw_char(U16 col, U16 row, char glyph, U8 a) {
 U8 screen_draw_char_squeeze(U16 col, U16 row, char gl, U8 a) {
   static U8 y, x;
   static U8 xnum;
-  static const glyph * g;
+  static const glyph_t * g;
   g = &(font_data[gl - FONT_ASCII_OFFSET]);
   xnum = FONT_CHARW - g->first - g->last;
   
@@ -155,14 +156,14 @@ U8 screen_draw_string_squeeze(U16 x, U16 y, char *str, U8 a) {
 U8 screen_draw_int(U16 x, U16 y, S32 i, U8 a) {
   static char buf[32];
   snprintf(buf, 32, "%d", (int)i);
-  return screen_draw_string_squeeze(x, y, buf, a);
+  return screen_draw_string(x, y, buf, a);
 }
 
 // print a formatted float
 U8 screen_draw_float(U16 x, U16 y, F32 f, U8 a) {
   static char buf[32];
   snprintf(buf, 32, "%f", (float)f);
-  return screen_draw_string_squeeze(x, y, buf, a);
+  return screen_draw_string(x, y, buf, a);
 }
 
 

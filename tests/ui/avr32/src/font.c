@@ -24,7 +24,7 @@
 //static U32 const fontliqminus_attr_nentries= sizeof(fontliqminus_attr)/sizeof(glyph_attr_t);
 
 // FIXME: store last column as (FONTW-[this])
-const glyph font_data[]= {
+const glyph_t font_data[]= {
   { /* 0x00020UL, 0, 2UL, */ 2, 1, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
   { /* 0x00021UL, 0, 0UL, */ 3, 2, { 0x00, 0x00, 0x00, 0x5e, 0x00, 0x00 } },
   { /* 0x00022UL, 0, 0UL, */ 2, 1, { 0x00, 0x00, 0x06, 0x00, 0x06, 0x00 } },
@@ -124,7 +124,7 @@ const glyph font_data[]= {
   { /* 0x0007eUL, 0, 0UL, */ 1, 1, { 0x00, 0x04, 0x02, 0x04, 0x02, 0x00 } },
 };
 
-const U32 font_nglyphs = sizeof(font_data)/sizeof(glyph) - 1;
+const U32 font_nglyphs = sizeof(font_data)/sizeof(glyph_t) - 1;
 
 ///// functions
 //const U32 getNumGlyphs(void) { return font_nglyphs; }

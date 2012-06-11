@@ -31,17 +31,21 @@
 // PA09 in GPIO for OLED command/data register select
 #define OLED_REGISTER_PIN AVR32_PIN_PA09
 
-
 // PB00 - PB07 : encoders
+/*
 #define ENC0_S0_PIN		AVR32_PIN_PB00
 #define ENC0_S1_PIN		AVR32_PIN_PB01
+*/
+//// TEST
+#define ENC0_S0_PIN		AVR32_PIN_PA06
+#define ENC0_S1_PIN		AVR32_PIN_PA07
+////
 #define ENC1_S0_PIN		AVR32_PIN_PB02
 #define ENC1_S1_PIN		AVR32_PIN_PB03
 #define ENC2_S0_PIN		AVR32_PIN_PB04
 #define ENC2_S1_PIN		AVR32_PIN_PB05
 #define ENC3_S0_PIN		AVR32_PIN_PB06
 #define ENC3_S1_PIN		AVR32_PIN_PB07
-
 
 // PA26 - PA29 : switches
 #define SW0_PIN		AVR32_PIN_PA26

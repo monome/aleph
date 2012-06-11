@@ -34,10 +34,14 @@ CSRCS = \
         avr32/drivers/pm/power_clocks_lib.c                \
         avr32/drivers/usart/usart.c			   \
         avr32/services/delay/delay.c			   \
-	./src/main.c \
-	./src/init.c \
-	./src/screen.c \
-	./src/font.c
+	./src/encoder_test.c 
+#	./src/main.c \
+#	./src/init.c \
+#	./src/screen.c \
+#	./src/font.c \
+#	./src/timers.c \
+#	./src/events.c \
+#	./src/encoders.c
 
 # List of assembler source files.
 ASSRCS = \

@@ -25,6 +25,9 @@
 //#define CHAR_ROWS 8  // NROWS / FONT_CHARH
 #define CHAR_COLS 16 // NCOLS / FONT_CHARW
 
+// get y pixel coordinate of a given line of text
+#define SCREEN_LINE(n) FONT_CHARH * (n)
+
 // send startup commands
 void init_oled(void);
 // draw a pixel

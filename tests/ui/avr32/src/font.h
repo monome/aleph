@@ -13,9 +13,9 @@ typedef struct _glyph {
   U8    first     ; /* first column to be displayed in proportional mode */
   U8    last      ; /* last  column to be displayed in proportional mode */
   U8    data[FONT_CHARW]; /* column data */
-} glyph;
+} glyph_t;
 
-extern const glyph font_data[];
+extern const glyph_t font_data[];
 
 extern const U32 font_nglyphs;
 
