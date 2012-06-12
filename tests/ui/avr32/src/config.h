@@ -4,18 +4,33 @@
 //--------------------------------------------------------------
 // SYSTEM CLOCKS:
 
-#define FOSC32          32768                                   //!< Osc32 frequency: Hz.
-#define OSC32_STARTUP   AVR32_PM_OSCCTRL32_STARTUP_8192_RCOSC //!< Osc32 startup time: RCOsc periods.
+//#define FOSC32          32768                                   //!< Osc32 frequency: Hz.
+//#define OSC32_STARTUP   AVR32_PM_OSCCTRL32_STARTUP_8192_RCOSC //!< Osc32 startup time: RCOsc periods.
 
-#define FOSC0           12000000                                //!< Osc0 frequency: Hz.
-#define OSC0_STARTUP    AVR32_PM_OSCCTRL0_STARTUP_2048_RCOSC  //!< Osc0 startup time: RCOsc periods.
+//#define FOSC0           12000000                                //!< Osc0 frequency: Hz.
+//#define OSC0_STARTUP    AVR32_PM_OSCCTRL0_STARTUP_2048_RCOSC  //!< Osc0 startup time: RCOsc periods.
 
+
+
+// PLL output frequency
+#define PLL_OUTPUT_FREQ 132000000UL
+
+
+/*
 // System Clock Frequencies
 #define FMCK_HZ   		66000000L
 #define FCPU_HZ   		FMCK_HZ
 #define FHSB_HZ   		FCPU_HZ
 #define FPBA_HZ   		FMCK_HZ
 #define FPBB_HZ   		FMCK_HZ
+*/
+
+// application timer
+#define APP_TC                 (&AVR32_TC)
+#define APP_TC_CHANNEL         0
+#define APP_TC_IRQ             AVR32_TC_IRQ0
+#define APP_TC_IRQ_GROUP       AVR32_TC_IRQ_GROUP
+#define APP_TC_IRQ_PRIORITY    AVR32_INTC_INT0
 
 // USART in SPI master mode for OLED
 // FIXME: only works with USART2 on the EVK1100.. 

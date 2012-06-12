@@ -29,11 +29,10 @@ CSRCS = \
         avr32/drivers/flashc/flashc.c                      \
         avr32/drivers/gpio/gpio.c                          \
         avr32/drivers/intc/intc.c                          \
-        avr32/drivers/pm/pm.c                              \
-        avr32/drivers/pm/pm_conf_clocks.c                  \
-        avr32/drivers/pm/power_clocks_lib.c                \
+        avr32/drivers/tc/tc.c                          \
         avr32/drivers/usart/usart.c			   \
         avr32/services/delay/delay.c			   \
+        common/services/clock/uc3a0_a1/sysclk.c            \
 	./src/main.c \
 	./src/init.c \
 	./src/screen.c \
@@ -41,7 +40,11 @@ CSRCS = \
 	./src/timers.c \
 	./src/events.c \
 	./src/encoders.c
+#        avr32/drivers/pm/pm.c                              \
+        avr32/drivers/pm/pm_conf_clocks.c                  \
+#       avr32/drivers/pm/power_clocks_lib.c                \
 #	./src/encoder_test.c 
+#    avr32/boards/evk1100/init.c                        \
 
 # List of assembler source files.
 ASSRCS = \
@@ -56,15 +59,18 @@ INC_PATH = \
        avr32/drivers/flashc                               \
        avr32/drivers/gpio                                 \
        avr32/drivers/intc                                 \
-       avr32/drivers/pm                                   \
+       avr32/drivers/tc                                 \
        avr32/drivers/usart                                \
        avr32/drivers/cpu/cycle_counter/                                \
        avr32/utils                                        \
        avr32/utils/preprocessor                           \
-       avr32/services/delay                           \
+       avr32/services/delay                               \
        common/boards                                      \
+       common/services/clock                              \
        common/utils \
-       ./
+       ./ \
+	../../tests/ui/avr32
+#       avr32/drivers/pm                                   \
 
 # Additional search paths for libraries.
 LIB_PATH = 

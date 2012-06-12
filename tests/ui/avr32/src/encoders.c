@@ -67,13 +67,6 @@ void process_enc( const U8 idx) {
     e.eventNum = enc[idx].event;
     e.eventData = val;
     post_event(&e);
-    
-    /*
-    //// TEST
-    encVal[idx] += val;
-    screen_draw_int(0, SCREEN_LINE(0), encVal[idx], 0x0f);
-    screen_refresh();
-    */
   }
 }
   

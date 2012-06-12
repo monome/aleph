@@ -3,20 +3,18 @@
  * avr32 interface board test
  */
 
+// asf
 #include <avr32/io.h>
-
-//// test;
-#include "board.h"
-//////
-
 #include "compiler.h"
 #include "gpio.h"
 #include "intc.h"
+/// debug
+#include "sysclk.h"
 
+// aleph
 #include "config.h"
 #include "init.h"
 #include "screen.h"
-//#include "font.h"
 #include "events.h"
 #include "eventTypes.h"
 #include "timers.h"
@@ -110,11 +108,6 @@ static void register_interrupts(void) {
 // application event loop
 static void check_events(void) {
   static event_t e;
-
-  ///// debug
-  // static S8 encValLast = 0;
-  // static U8 i = 0;
-  ///// 
   
   U8 refresh = 0;
 
@@ -122,17 +115,7 @@ static void check_events(void) {
     switch(e.eventNum) {
 
     case kEventEncoder0:
-      /*
-      ///// debug
-      if(e.eventData == encValLast) {
-	i++;
-      }
-      if((e.eventData != 1) && (e.eventData != -1)) {
-	i++;
-      }
-      encValLast = e.eventData;
-      ///////
-      */
+
       encVal[0] += e.eventData;
       screen_draw_int(0, SCREEN_LINE(0), encVal[0], 0x0f);
       refresh = 1;
@@ -152,6 +135,7 @@ static void check_events(void) {
 //===========================================
 // main function
 int main(void) {  
+  //  int dum;
 
    // initialize AVR32 peripherals
   init_avr();
