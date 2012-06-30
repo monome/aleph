@@ -12,7 +12,7 @@
 #define NET_PARAMS_MAX 256
 
 // parameter I/O node
-typedef struct pnode_struct {
+typedef struct _pnode {
   // current value
   f32 val;
   // min value

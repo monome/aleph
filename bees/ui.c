@@ -30,7 +30,7 @@
 #define KEY_FN_D        'v'
 
 // static vars
-static char printBuf[SCREEN_H][SCREEN_W];
+static char printBuf[SCREEN_W];
 static const char hlChars[7] = {' ', '.', '-','~','=','*', '#'};
 
 //---- external function definitions
@@ -116,32 +116,28 @@ U8 ui_loop(void) {
 }
 
 // print a line of text
-void ui_println(U8 y, const char* str, u8 hl) {
+/*
+void ui_println(U8 y, const char* str) {
+ mvprintw(y, 0, str);
+ refresh();
+}
+*/
+
+// print some characters of text
+void ui_print(U8 y, U8 x, const char* str, u8 hl) {
   u8 i;
   for(i=0; i<SCREEN_W; i++) {
-    printBuf[y][i] = ' ';
+    printBuf[i] = ' ';
   }
-  strcpy(printBuf[y], str);
+  strcpy(printBuf, str);
   // fill spaces in output string according to hilight
   i=0; 
   
   for(i=0; i<SCREEN_W; i++) {   
-    if ((printBuf[y][i] == ' ') || (printBuf[y][i] == 0)) {
-      printBuf[y][i] = hlChars[hl];
+    if ((printBuf[i] == ' ') || (printBuf[i] == 0)) {
+      printBuf[i] = hlChars[hl];
     }
   }
-  //  mvprintw(y, x, printBuf);
-  // refresh();
-}
-
-/// refresh using entire screen buffer
-void ui_refresh(void) {
-  static u8 y;
-  static u8 x;
-  for(y=0; y<SCREEN_H; y++) {
-    for(x=0; x<SCREEN_W; x++) {
-      mvprintw(y, 0, printBuf[y]);
-    }
-  }
+  mvprintw(y, x, printBuf);
   refresh();
 }

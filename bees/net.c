@@ -11,6 +11,7 @@
 #include "../common/types.h"
 #include "util.h"
 #include "op.h"
+#include "param.h"
 #include "net.h"
 #include "net_protected.h"
 
@@ -213,15 +214,35 @@ U16 net_num_outs(void) {
   return net.numOuts;
 }
 
+// get param index given index
+S16 net_param_idx(U16 inIdx) {
+  return inIdx - net.numIns;
+}
+
 // get string for operator at given idx
-const char* net_op_name(const U16 idx) {
+const char* net_op_name(const S16 idx) {
+  if (idx < 0) {
+    return "";
+  }
   return net.ops[idx]->opString;
 }
 
 // get name for input at given idx
-const char* net_in_name(const U16 idx) {
-  if (idx > net.numIns) return "";
-  return op_in_name(net.ops[net.ins[idx].opIdx], net.ins[idx].inIdx);
+const char* net_in_name(U16 idx) {
+  if (idx >= net.numIns) {
+    // not an operator input
+    idx -= net.numIns;
+    if (idx >= net.numParams) {
+      // not a param input either
+      return "";
+    } else {
+      // param input
+      return net.params[idx].name;
+    }
+  } else {
+    // op input
+    return op_in_name(net.ops[net.ins[idx].opIdx], net.ins[idx].inIdx);
+  }
 }
 
 // get name for output at given idx
@@ -231,7 +252,7 @@ const char* net_out_name(const U16 idx) {
 
 // get op index for input at given idx
 S16 net_in_op_idx(const U16 idx) {
-  if (idx > net.numIns) return -1;
+  if (idx >= net.numIns) return -1;
   return net.ins[idx].opIdx;
 }
 
@@ -302,7 +323,12 @@ U32 net_gather(U32 iIdx, U32(*outs)[NET_OUTS_MAX]) {
 }
 //--- get / set / increment input value
 f32 net_get_in_value(U16 inIdx) {
-  return net.ins[inIdx].val;
+  if (inIdx >= net.numIns) {
+    inIdx -= net.numIns;
+    return net.params[inIdx].val;
+  } else {
+    return net.ins[inIdx].val;
+  }
 }
 
 void net_set_in_value(U16 inIdx, S32 val) {

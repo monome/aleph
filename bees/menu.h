@@ -44,15 +44,15 @@ typedef enum eKey {
 
 // function pointer for input handling on a given page
 typedef void(*keyHandler_t)(key_t key);
-// function pointer for refreshing given line on given page
-typedef void(*drawLine_t)(u8 y);
+// function pointer for redraw on a given page
+typedef void(*redraw_t)(void);
 
 // class representing a page in a menu
 // includes a title and a key input handler (function pointer)
 typedef struct page_struct {
   const char* pageString;
   keyHandler_t keyHandler;
-  drawLine_t drawLine;
+  redraw_t redraw;
   s16 selected;
 } page_t;
 

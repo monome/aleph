@@ -27,7 +27,7 @@
 const char* get_module_name(void);
 const u16 get_module_minor_version(void);
 const u16 get_module_major_version(void);
-u16 getNumParams(void);
+u16 get_(void);
 
 // TODO: move param allocation to Module.c and get rid of these fucked up access functions
 // get a parameter handle... use responsibly

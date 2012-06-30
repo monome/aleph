@@ -42,11 +42,13 @@ U16 net_num_ops(void);
 U16 net_num_ins(void);
 // get current count of outputs
 U16 net_num_outs(void);
+// get param index given index
+S16 net_param_idx(U16 inIdx);
 
 // get string for operator at given idx
-const char* net_op_name(const U16 idx);
+const char* net_op_name(const S16 idx);
 // get name for input at given idx
-const char* net_in_name(const U16 idx);
+const char* net_in_name(U16 idx);
 // get name for output at given idx
 const char* net_out_name(const U16 idx);
 

@@ -389,7 +389,7 @@ void op_lin_init(op_lin_t* lin);
 //---- param value receiver
 /*
 static const char* op_param_instring = "INDEX   VALUE   ";
-static const char* op_param_opstring = "PARAM";
+static const char* op_param_opxstring = "PARAM";
 
 static void op_param_in_idx(op_param_t* param, const S32* v) {
   // FIXME: limit by DSP param count
