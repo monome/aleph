@@ -24,10 +24,10 @@ ctlnet_t net;
 //========= static functions
 
 // create all system operators
-static void addSysOps(void);
+static void add_sys_ops(void);
 
 // create system operators
-static void addSysOps(void) {
+static void add_sys_ops(void) {
   // 4 encoders
   net_add_op(eOpEnc);
   net_add_op(eOpEnc);
@@ -60,7 +60,7 @@ void net_init(void) {
   net.numParams = 0;
   net.opPoolOffset = 0;
   printf("initialized network, using %d bytes\n", (int)sizeof(ctlnet_t));
-  addSysOps();
+  add_sys_ops();
   
 }
 
@@ -80,7 +80,7 @@ void net_activate(S16 inIdx, const S32* val) {
       if (inIdx >= net.numParams) {
 	return ;
       } else {
-	param_set(inIdx, *val);
+	set_param_value(inIdx, *val);
       }
     }
   }  
@@ -214,7 +214,7 @@ U16 net_num_outs(void) {
   return net.numOuts;
 }
 
-// get param index given index
+// get param index given input index
 S16 net_param_idx(U16 inIdx) {
   return inIdx - net.numIns;
 }
@@ -342,22 +342,24 @@ f32 net_inc_in_value(U16 inIdx, S32 inc) {
 }
 
 // toggle preset inclusion for input
-void net_toggle_preset_in(U32 inIdx) {
+u8 net_toggle_in_preset(U32 inIdx) {
   net.ins[inIdx].preset ^= 1;
+  return net.ins[inIdx].preset;
 }
 
 // toggle preset inclusion for output
-void net_toggle_preset_out(U32 outIdx) {
+u8 net_toggle_out_preset(U32 outIdx) {
   net.outs[outIdx].preset ^= 1;
+  return net.outs[outIdx].preset;
 }
 
 // get preset inclusion for input
-U8 net_get_preset_in(U32 inIdx) {
+U8 net_get_in_preset(U32 inIdx) {
   return net.ins[inIdx].preset;
 }
 
 // get preset inclusion for output
-U8 net_get_preset_out(U32 outIdx) {
+U8 net_get_out_preset(U32 outIdx) {
   return net.outs[outIdx].preset;
 }
 

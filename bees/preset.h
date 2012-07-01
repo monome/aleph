@@ -6,8 +6,6 @@
 #ifndef _PRESET_H_
 #define _PRESET_H_
 
-#define NUM_PRESETS 100
-
 // intialize
 void preset_init(void);
 // de-initialize

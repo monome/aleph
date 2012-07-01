@@ -35,12 +35,33 @@ typedef struct _onode {
   // output idx in parent op's output list
   u16 outIdx;
   // target input idx in net list
-  u16 target;
+  s16 target;
   // parent op's index in net list
   u16 opIdx;
   // preset inclusion flag
   u8 preset;
 } onode_t;
+
+// parameter I/O node
+typedef struct _pnode {
+  // current value
+  f32 val;
+  // min value
+  f32 min;
+  // max value
+  f32 max;
+  // parameter idx in DSP plugin
+  u32 idx;
+  // parameter name
+  const char* name;
+  // plugin name
+  //  const char* dspName;
+  // preset flag
+  u8 preset;
+  // TODO:
+  // scaling functions/tables ?
+  // units ?
+} pnode_t;
 
 // network type
 typedef struct _ctlnet {

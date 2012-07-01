@@ -32,7 +32,7 @@ void init_events( void ) {
 
   // zero out the event records
   for ( k = 0; k < MAX_EVENTS; k++ ) {
-    sysEvents[ k ].eventNum = 0;
+    sysEvents[ k ].eventType = 0;
     sysEvents[ k ].eventData = 0;
   }
 }
@@ -48,11 +48,11 @@ bool get_next_event( event_t *e ) {
   // if pointers are equal, the queue is empty... don't allow idx's to wrap!
   if ( getIdx != putIdx ) {
     INCR_EVENT_INDEX( getIdx );
-    e->eventNum = sysEvents[ getIdx ].eventNum;
+    e->eventType = sysEvents[ getIdx ].eventType;
     e->eventData = sysEvents[ getIdx ].eventData;
     status = true;
   } else {
-    e->eventNum  = 0xff;
+    e->eventType  = 0xff;
     e->eventData = 0;
   }
 
@@ -76,7 +76,7 @@ bool post_event( event_t *e ) {
   saveIndex = putIdx;
   INCR_EVENT_INDEX( putIdx );
   if ( putIdx != getIdx  ) {
-    sysEvents[ putIdx ].eventNum = e->eventNum;
+    sysEvents[ putIdx ].eventType = e->eventType;
     sysEvents[ putIdx ].eventData = e->eventData;
     status = true;
   } else {

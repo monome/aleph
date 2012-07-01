@@ -17,5 +17,6 @@ typedef enum {
   kEventEncoder1,
   kEventEncoder2,
   kEventEncoder3,
+  kEventRefresh,
   kNumEvents
 } eEventType;

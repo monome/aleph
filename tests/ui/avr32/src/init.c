@@ -170,6 +170,7 @@ static void init_tc(volatile avr32_tc_t *tc)
     .lovrs = 0,
     .covfs = 0
   };
+
   // Initialize the timer/counter.
   tc_init_waveform(tc, &waveform_opt);
 
@@ -190,7 +191,6 @@ static void init_tc(volatile avr32_tc_t *tc)
 void init_avr(void) {
   avr32_tc_t tc;
 
-
   // clocks
   init_clocks();
   // GPIO
@@ -198,6 +198,6 @@ void init_avr(void) {
   // USARTs
   init_usart();
   // timer/counter
-  //  init_tc(&tc);
+  init_tc(&tc);
 
 }

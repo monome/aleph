@@ -12,12 +12,16 @@
 #include "op.h"
 
 // maximum allocated parameters, connections, and operators
-// operator inputs
+// mac operator inputs
 #define NET_INS_MAX 256
-// opertor outputs
+// max opertor outputs
 #define NET_OUTS_MAX 256
-// total count of operators
+// max  operators
 #define NET_OPS_MAX 256
+// max DSP parameter inputs
+#define NET_PARAMS_MAX 256
+// max presets
+#define NET_PRESETS_MAX 256
 
 //---- public functions
 
@@ -78,13 +82,13 @@ void net_connect(U32 outIdx, U32 inIdx);
 void net_disconnect(U32 outIdx);
 
 // toggle preset inclusion for input
-void net_toggle_preset_in(U32 inIdx);
+u8 net_toggle_in_preset(U32 inIdx);
 // toggle preset inclusion for output
-void net_toggle_preset_out(U32 outIdx);
+u8 net_toggle_out_preset(U32 outIdx);
 // get preset inclusion for input
-U8 net_get_preset_in(U32 inIdx);
+U8 net_get_in_preset(U32 inIdx);
 // get preset inclusion for output
-U8 net_get_preset_out(U32 outIdx);
+U8 net_get_out_preset(U32 outIdx);
 // add a new parameter
 void net_add_param(u32 idx, const char* name, f32 min, f32 max, f32 val);
 // clear existing parameters

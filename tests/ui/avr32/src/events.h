@@ -8,7 +8,7 @@
 #include <compiler.h>
 
 typedef struct {
-  U32   eventNum;
+  U32   eventType;
   S32	eventData;
 } event_t;
 

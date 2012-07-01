@@ -11,7 +11,6 @@
 
 #include "../common/types.h"
 
-
 //-----------------------------------
 //----- data types
 
@@ -63,6 +62,5 @@ extern void menu_init(void);
 extern void menu_deinit(void);
 // handle key
 extern void menu_handleKey(key_t key);
-
 
 #endif // header guard

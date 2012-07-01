@@ -7,6 +7,7 @@
 #include "preset.h"
 #include "audio.h"
 
+// main function
 int main(const int argc, const char** argv) {
   U8 run = 1; 
   

@@ -37,11 +37,19 @@ static const U16 swPins[4] = {
 static S32 encVal[4] = { 0, 0, 0, 0 };
 ////////////
 
+// tick counter for main app timer
+static U64 tcTicks;
+// display refresh flag
+static U8 refresh = 0;
+
 //--------------------
 //--- static functions
-
+// interrupt handler for PA00-PA07
+static void irq_port0_line0(void);
 // interrupt handler for PB00-PB07
-static void int_handler_port1_line0(void);
+static void irq_port1_line0(void);
+// interrupt handler for TC
+static void irq_tc(void);
 // register interrupts
 static void register_interrupts(void);
 // generate events from switch interrupts
@@ -52,9 +60,8 @@ static void check_events(void);
 
 // interrupt handler for PA00-PA07
 __attribute__((__interrupt__))
-static void int_handler_port0_line0(void) {
+static void irq_port0_line0(void) {
  U8 i; 
-
   // check for encoder movement:
   for(i = 0; i<NUM_ENC; i++) {
     if(gpio_get_pin_interrupt_flag(enc[i].pin[0])) {
@@ -71,15 +78,24 @@ static void int_handler_port0_line0(void) {
 
 // interrupt handler for PB00-PB07
 __attribute__((__interrupt__))
-static void int_handler_port1_line0(void) {
+static void irq_port1_line0(void) {
   U8 i;
-
   /////// TEST:
   gpio_tgl_gpio_pin(LED1_GPIO);
-  /////////
- 
+  ///////// 
 }
 
+// timer irq
+__attribute__((__interrupt__))
+static void irq_tc(void) {
+  event_t e;
+  tcTicks++;
+  if(refresh) {
+    e.eventType = kEventRefresh;
+    post_event(&e);
+    refresh = 0;
+  }
+}
 
 // register interrupts
 static void register_interrupts(void) {
@@ -100,8 +116,14 @@ static void register_interrupts(void) {
   //INTC_register_interrupt( &int_handler_port1_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB00 / 8), AVR32_INTC_INT1 );
 
   // testing ENC0 on PA06, PA07...   
- INTC_register_interrupt( &int_handler_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), AVR32_INTC_INT1 );
-    
+ INTC_register_interrupt( &irq_port0_line0,
+			  AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8),
+			  AVR32_INTC_INT1 );
+
+ // register TC interrupt
+ INTC_register_interrupt(&irq_tc,
+			 APP_TC_IRQ,
+			 APP_TC_IRQ_PRIORITY);
 }
 
 //=========================================== 
@@ -109,27 +131,22 @@ static void register_interrupts(void) {
 static void check_events(void) {
   static event_t e;
   
-  U8 refresh = 0;
-
   if( get_next_event(&e) ) {
-    switch(e.eventNum) {
+    switch(e.eventType) {
 
     case kEventEncoder0:
-
       encVal[0] += e.eventData;
       screen_draw_int(0, SCREEN_LINE(0), encVal[0], 0x0f);
       refresh = 1;
       break;
-
+    case kEventRefresh:
+      screen_refresh();
+      refresh = 0;
+      break;
     default:
       break;
     }
   }
-
-  if(refresh) {
-    screen_refresh();
-  }
-
 }
 
 //===========================================

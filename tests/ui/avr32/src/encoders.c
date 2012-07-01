@@ -64,7 +64,7 @@ void process_enc( const U8 idx) {
     enc[idx].pos = pos;
   }
   if (val != 0) {
-    e.eventNum = enc[idx].event;
+    e.eventType = enc[idx].event;
     e.eventData = val;
     post_event(&e);
   }
