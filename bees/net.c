@@ -155,15 +155,15 @@ S16 net_add_op(opId_t opId) {
   net.opPoolOffset += op_registry[opId].size;
 
   //---- add inputs and outputs to node list
-  // don't add inputs for system control ops
-  if (op->status != eSysCtlOp) {
+  //no // don't add inputs for system control ops
+  //if (op->status != eSysCtlOp) {
     for(i=0; i<ins; i++) {
       net.ins[net.numIns].in = op->in[i];
       net.ins[net.numIns].opIdx = net.numOps;
       net.ins[net.numIns].inIdx = i;
       net.numIns++;
     }
-  }
+    //}
   for(i=0; i<outs; i++) {
     net.outs[net.numOuts].opIdx = net.numOps;
     net.outs[net.numOuts].outIdx = i;
@@ -321,12 +321,12 @@ U32 net_gather(U32 iIdx, U32(*outs)[NET_OUTS_MAX]) {
   return iOut;
 }
 //--- get / set / increment input value
-f32 net_get_in_value(U16 inIdx) {
+s32 net_get_in_value(U16 inIdx) {
   if (inIdx >= net.numIns) {
     inIdx -= net.numIns;
     return net.params[inIdx].val;
   } else {
-    return net.ins[inIdx].val;
+    return (net.ins[inIdx].val);
   }
 }
 
@@ -334,10 +334,16 @@ void net_set_in_value(U16 inIdx, S32 val) {
   net.ins[inIdx].val = val;
 }
 
-f32 net_inc_in_value(U16 inIdx, S32 inc) {
-  net.ins[inIdx].val += inc;
-  net_activate(inIdx, (const S32*)(&(net.ins[inIdx].val)));
-  return net.ins[inIdx].val;
+s32 net_inc_in_value(U16 inIdx, S32 inc) {
+  if (inIdx >= net.numIns) {
+    inIdx -= net.numIns;
+    set_param_value(inIdx, net.params[inIdx].val + inc);
+    return net.params[inIdx].val;
+  } else {
+    net.ins[inIdx].val += inc;
+    net_activate(inIdx, (const S32*)(&(net.ins[inIdx].val)));
+    return net.ins[inIdx].val;
+  }
 }
 
 // toggle preset inclusion for input
@@ -366,12 +372,13 @@ U8 net_get_out_preset(U32 outIdx) {
 //------ params
 
 // add a new parameter
-void net_add_param(u32 idx, const char* name, f32 min, f32 max, f32 val) {
+void net_add_param(u32 idx, const char* name, f32 min, f32 max, s32 val) {
   net.params[net.numParams].idx = idx;
   net.params[net.numParams].name = name;
   net.params[net.numParams].min = min;
   net.params[net.numParams].max = max;
-  net.params[net.numParams].val = val;
+  //  net.params[net.numParams].fval = val;
+  set_param_value(net.numParams, val);
   net.numParams++;
 }
 

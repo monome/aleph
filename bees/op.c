@@ -8,7 +8,8 @@
 
 #include "../common/types.h"
 #include "net.h"
-#include "ui.h"
+//#include "ui.h"
+#include "param.h"
 #include "op.h"
 
 
@@ -212,6 +213,11 @@ void op_enc_init(op_enc_t* enc) {
   enc->super.outString = op_enc_outstring;
   enc->super.type = eOpEnc;
   enc->super.status = eSysCtlOp;
+  enc->min = PARAM_MIN;
+  enc->max = PARAM_MAX;
+  enc->val = 0;
+  enc->step = 1;
+  enc->wrap = 1;
 //  enc->super.size = sizeof(op_enc_t);
 }
 

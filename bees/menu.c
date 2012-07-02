@@ -9,6 +9,7 @@
 #include "op.h"
 #include "key_handler.h"
 #include "redraw.h"
+#include "param.h"
 #include "menu.h"
 #include "menu_protected.h"
 
@@ -44,7 +45,7 @@ u32(*gathered)[NET_OUTS_MAX];
 // how many gathered
 u32 numGathered;
 // last touchede parameter indices
-u16 touchedParams[SCREEN_H];
+touched_t touchedParams[SCREEN_H];
 
 //-----------------------
 //------ static vars
@@ -139,7 +140,10 @@ void scrollSelect(S8 dir, U32 max) {
 void param_feedback(u16 paramIdx) {
   int i;
   for (i = 1; i < SCREEN_H; i++) {
-    touchedParams[i-1] = touchedParams[i];
+    touchedParams[i-1].idx = touchedParams[i].idx;
+    touchedParams[i-1].val = touchedParams[i].val;
   }
-  touchedParams[SCREEN_H_1] = paramIdx;
+  touchedParams[SCREEN_H_1].idx = paramIdx;
+  touchedParams[SCREEN_H_1].val = get_param_value(paramIdx );
+
 }

@@ -9,11 +9,11 @@
 #include "param.h"
 
 // enable to print debug values
-#define PARAM_PRINT_TEST 1
+#define PARAM_PRINT_TEST 0
 
 // get value for param at given idx
 f32 get_param_value(u32 idx) {
-  return net.params[idx].val;
+  return net.params[idx].fval;
 }
 
 // get preset-enabled for param at given idx
@@ -21,17 +21,36 @@ u8 get_param_preset(u32 idx) {
   return net.params[idx].preset;
 }
 
-// set value for param at given idx
-void set_param_value(u32 idx, f32 val) {
+/////////
+////// TODO: flexible / accurate param scaling using tables!
+////////
 
+// set value for param at given idx
+void set_param_value(u32 idx, s32 val) {
+  f32 fval;
 #if PARAM_PRINT_TEST
   static char buf[SCREEN_W];
 #endif 
 
-  if (val < net.params[idx].min) { val = net.params[idx].min; }
-  if (val > net.params[idx].max) { val = net.params[idx].max; }
+  //  if (val < net.params[idx].min) { val = net.params[idx].min; }
+  //  if (val > net.params[idx].max) { val = net.params[idx].max; }
 
+  // net.params[idx].val = val;
   net.params[idx].val = val;
+  //////
+  // DEBUG
+  fval = (f32)val * PARAM_MAX_RF;
+  fval += 1.f;
+  fval *= 0.5f;
+  fval *= (net.params[idx].max - net.params[idx].min);
+  fval += net.params[idx].min;
+  //////
+  net.params[idx].fval = fval;
+  
+  /*
+  if (fval < net.params[idx].min) { fval = net.params[idx].min; }
+  if (fval > net.params[idx].max) { fval = net.params[idx].max; }
+  */
 
   param_feedback(idx);
 

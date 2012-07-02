@@ -19,7 +19,7 @@
 // input node type (function pointer)
 typedef struct _inode {
   // last value
-  f32 val;
+  s32 val;
   // function pointer
   op_in_t in;
   // input idx in net list
@@ -44,12 +44,14 @@ typedef struct _onode {
 
 // parameter I/O node
 typedef struct _pnode {
-  // current value
-  f32 val;
-  // min value
+// min value
   f32 min;
   // max value
   f32 max;
+  // current value (step)
+  s32 val;  
+// current value (float)
+  f32 fval;
   // parameter idx in DSP plugin
   u32 idx;
   // parameter name

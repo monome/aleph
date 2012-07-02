@@ -72,9 +72,9 @@ U8 net_in_connected(U32 iIdx);
 opStatus_t net_op_status(U16 opIdx);
 
 // get / set / increment input value
-f32 net_get_in_value(U16 inIdx);
+s32 net_get_in_value(U16 inIdx);
 void net_set_in_value(U16 inIdx, S32 val);
-f32 net_inc_in_value(U16 inIdx, S32 inc);
+s32 net_inc_in_value(U16 inIdx, S32 inc);
 
 // connect a given output and input idx pair
 void net_connect(U32 outIdx, U32 inIdx);
@@ -90,7 +90,7 @@ U8 net_get_in_preset(U32 inIdx);
 // get preset inclusion for output
 U8 net_get_out_preset(U32 outIdx);
 // add a new parameter
-void net_add_param(u32 idx, const char* name, f32 min, f32 max, f32 val);
+void net_add_param(u32 idx, const char* name, f32 min, f32 max, s32 val);
 // clear existing parameters
 void net_clear_params(void);
 
