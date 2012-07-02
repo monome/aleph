@@ -63,37 +63,51 @@ const char* op_out_name(op_t* op, const U8 idx) {
 
 //-------------------------------------------------
 //----- switch
-static const char* op_sw_instring = "VALUE   TOGGLE  ";
+static const char* op_sw_instring = "VALUE   TOGGLE  MULT    ";
 static const char* op_sw_outstring = "VALUE  ";
 static const char* op_sw_opstring = "SWITCH";
 
 static void op_sw_in_val(op_sw_t* sw, const S32* v) {
-  printf("switch at %d received VALUE %d\n", (int)sw, (int)*v);
-  if(sw->tog) {
-    if (v == 0) {
-      return;
-    } else {
-      sw->val = (sw->val == 0); 
+  if (sw->tog) {
+    // toggle mode, sw value toggles on positive input
+    if ( *v > 0) {
+      if (sw-> val > 0) { 
+	sw->val = 0; 
+      } else {
+	sw->val = sw->mul;
+      }
+      net_activate(sw->outs[0], &(sw->val));
     }
   } else {
-    sw->val = (v != 0);
-  }
-  //if (sw->outs[0] >= 0) {
+    // momentary mode, sw value takes input
+    sw->val = ((*v) > 0) * sw->mul;
     net_activate(sw->outs[0], &(sw->val));
-  //}
+  }
 }
 
 static void op_sw_in_tog(op_sw_t* sw, const S32* v) {
-  sw->tog = (v != 0);
-}
+  sw->tog = (*v > 0);
+  /*
+  if (sw-> val > 0) { sw->val = 0; }
+  else { sw->val = sw->mul; }
+  net_activate(sw->outs[0], &(sw->val));
+  */
+ }
 
-static op_in_t op_sw_inputs[2] = {
+static void op_sw_in_mul(op_sw_t* sw, const S32* v) {
+  sw->mul = *v;
+  sw->val = (sw->val > 0) * sw->mul;
+  net_activate(sw->outs[0], &(sw->val));
+ }
+
+static op_in_t op_sw_inputs[3] = {
   (op_in_t)&op_sw_in_val,
-  (op_in_t)&op_sw_in_tog 
+  (op_in_t)&op_sw_in_tog,
+  (op_in_t)&op_sw_in_mul
 };
 
 void op_sw_init(op_sw_t* sw) {
-  sw->super.numInputs = 2;
+  sw->super.numInputs = 3;
   sw->super.numOutputs = 1;
   sw->outs[0] = -1;
   sw->super.in = op_sw_inputs;
@@ -108,40 +122,89 @@ void op_sw_init(op_sw_t* sw) {
 
 //-------------------------------------------------
 //----- encoder
-static const char* op_enc_instring = "PIN1    PIN2    ";
-static const char* op_enc_outstring = "DIR     ";
+
+static const char* op_enc_instring = "MOVE    MIN     MAX     STEP    WRAP    ";
+static const char* op_enc_outstring = "VALUE   WRAP    ";
 static const char* op_enc_opstring = "ENCODER";
-static const int enc_map[4][4] = { {0,1,-1,0}, {-1,0,0,1}, {1,0,0,-1}, {0,-1,1,0} };
+static void op_enc_perform(op_enc_t* enc);
 
-static void op_enc_in_pin1(op_enc_t* enc, const S32* v) {
-  printf("enc at %d received PIN1 %d\n", (int)enc, (int)*v);
-  enc->pos_now = ((enc->pos_now) & 1) | ((U32)*v & 1) ;
-  if (enc->pos_now != enc->pos_old) {
-    enc->val = enc_map[enc->pos_old][enc->pos_now];
-    enc->pos_old = enc->pos_now;
-    net_activate(enc->outs[0], &(enc->val));
+// step
+static void op_enc_in_step(op_enc_t* enc, const S32* v) {
+  enc->step = *v;
+  // op_enc_perform(enc);
+}
+
+// move
+static void op_enc_in_move(op_enc_t* enc, const S32* v) {
+  enc->val += enc->step * (*v); 
+  op_enc_perform(enc);
+}
+// max
+static void op_enc_in_min(op_enc_t* enc, const S32* v) {
+  enc->min = *v;
+  op_enc_perform(enc);
+}
+
+// max
+static void op_enc_in_max(op_enc_t* enc, const S32* v) {
+  enc->max = *v;
+  op_enc_perform(enc);
+}
+
+// wrap behavior
+static void op_enc_in_wrap(op_enc_t* enc, const S32* v) {
+  enc->wrap = (*v > 0);
+  //  op_enc_perform(enc);
+}
+
+// perform wrapping and output
+static void op_enc_perform(op_enc_t* enc) {
+  s32 wrap = 0;
+  s32 dif = 0;
+  if (wrap) { // wrapping...
+    // if value needs wrapping, output the applied difference
+    while (enc->val > enc->max) { 
+      dif = enc->min - enc->max;
+      wrap += dif;
+      enc->val += dif;
+    }
+    while (enc->val < enc->min) { 
+      dif = enc->max - enc->min;
+      wrap += dif;
+      enc->val += dif;
+    }
+  } else { // saturating...
+    if (enc->val > enc->max) {
+      enc->val = enc->max;
+      dif = 1; // force wrap output with value 0
+    }
+    if (enc->val < enc->min) {
+      enc->val = enc->min;
+      dif = -1; // force wrap output with value 0
+    }
+  }
+  // output the value
+  net_activate(enc->outs[0], &(enc->val));
+
+  // output the wrap amount
+  if (dif != 0) {
+    net_activate(enc->outs[1], &(wrap));  
   }
 }
 
-static void op_enc_in_pin2(op_enc_t* enc, const S32* v) {
-  printf("enc at %d received PIN2 %d\n", (int)enc, (int)*v);
-  enc->pos_now = ((enc->pos_now) & 2) | (((U32)*v & 1) << 1) ;
-  if (enc->pos_now != enc->pos_old) {
-    enc->val = enc_map[enc->pos_old][enc->pos_now];
-    enc->pos_old = enc->pos_now;
-    net_activate(enc->outs[0], &(enc->val));
-  }
-}
-
-static op_in_t op_enc_inputs[2] = {
-  (op_in_t)&op_enc_in_pin1,
-  (op_in_t)&op_enc_in_pin2
+static op_in_t op_enc_inputs[5] = {
+  (op_in_t)&op_enc_in_move,
+  (op_in_t)&op_enc_in_min,
+  (op_in_t)&op_enc_in_max,
+  (op_in_t)&op_enc_in_step,
+  (op_in_t)&op_enc_in_wrap,
 };
 
 void op_enc_init(op_enc_t* enc) {
-  enc->super.numInputs = 2;
-  enc->super.numOutputs = 1;
+  enc->super.numInputs = 5;
+  enc->super.numOutputs = 2;
   enc->outs[0] = -1;
+  enc->outs[1] = -1;
   enc->super.in = op_enc_inputs;
   enc->super.out = enc->outs;
   enc->super.opString = op_enc_opstring;

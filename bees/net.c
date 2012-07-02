@@ -25,8 +25,6 @@ ctlnet_t net;
 
 // create all system operators
 static void add_sys_ops(void);
-
-// create system operators
 static void add_sys_ops(void) {
   // 4 encoders
   net_add_op(eOpEnc);
@@ -39,6 +37,7 @@ static void add_sys_ops(void) {
   net_add_op(eOpSwitch);
   net_add_op(eOpSwitch);
   // 1 param receiver
+  //// no, params are specialized input nodes
   //net_add_op(eOpParam);
   // 1 preset receiver
   net_add_op(eOpPreset);

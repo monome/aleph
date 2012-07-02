@@ -5,6 +5,7 @@
 #include "ui.h"
 #include "net.h"
 #include "net_protected.h"
+#include "menu.h"
 #include "param.h"
 
 // enable to print debug values
@@ -31,6 +32,8 @@ void set_param_value(u32 idx, f32 val) {
   if (val > net.params[idx].max) { val = net.params[idx].max; }
 
   net.params[idx].val = val;
+
+  param_feedback(idx);
 
 #if PARAM_PRINT_TEST
   snprintf(buf, SCREEN_W, "setting parameter value %d at index%d", (int)(val), (int)(net.params[idx].idx));

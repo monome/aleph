@@ -24,35 +24,39 @@ const opId_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpMapLin
 };
 
-opId_t newOpType;
-
-
 // page structures - synchronize with ePage enum
 page_t pages[ePageMax] = {
   { "OPS", (keyHandler_t)&key_handler_ops, (redraw_t)&redraw_ops, 0 },
   { "INS", (keyHandler_t)&key_handler_ins, (redraw_t)&redraw_ins, 0 },
   { "OUTS", (keyHandler_t)&key_handler_outs, (redraw_t)&redraw_outs, 0 },
-  { "GATHERED" , (keyHandler_t)&key_handler_gathered, (redraw_t)&redraw_gathered, 0 }
+  { "GATHERED" , (keyHandler_t)&key_handler_gathered, (redraw_t)&redraw_gathered, 0 },
+  { "PLAY" , (keyHandler_t)&key_handler_play, (redraw_t)&redraw_play, 0 }
 };
 
-///// random/ugly
 // pointer to current page
 page_t* page;
 // idx of current page
 s8 pageIdx = 0;
-
+// new operator type
+opId_t newOpType;
 // array of onode pointers for gathering
 u32(*gathered)[NET_OUTS_MAX];
 // how many gathered
 u32 numGathered;
+// last touchede parameter indices
+u16 touchedParams[SCREEN_H];
 
+//-----------------------
+//------ static vars
+// saved idx for toggling in play mode
+static s8 savedPageIdx = 0;
 
 //-----------------------------------
 //----- external function definitions
 
 // init
 extern void menu_init(void) {
-  setPage(0);
+  setPage(pageIdx);
 }
 
 // de-init
@@ -62,7 +66,14 @@ extern void menu_deinit(void) {
 // top level key handler
 void menu_handleKey(key_t key) {
   if (key == eKeyEdit) {
-    // flip edit/play mode...
+    if (pageIdx == ePagePlay) {
+      // restore saved page
+      setPage(savedPageIdx);
+    } else {
+      // save the page and switch to Play mode
+      savedPageIdx = pageIdx;
+      setPage(ePagePlay);
+    }
   } else {
     page->keyHandler(key);
   }
@@ -124,7 +135,11 @@ void scrollSelect(S8 dir, U32 max) {
   page->redraw();
 }
 
-//////////////////////////////////
-///////////////////
-///// page specific functions
-
+// parameter feedback
+void param_feedback(u16 paramIdx) {
+  int i;
+  for (i = 1; i < SCREEN_H; i++) {
+    touchedParams[i-1] = touchedParams[i];
+  }
+  touchedParams[SCREEN_H_1] = paramIdx;
+}

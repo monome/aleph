@@ -16,44 +16,34 @@
 
 // top-level state
 typedef enum ePage_t {
-	ePageOps,
-	ePageIns,
-	ePageOuts,
-	ePageGathered,
-	ePageMax     // dummy
+  ePageOps,
+  ePageIns,
+  ePageOuts,
+  ePageGathered,
+  ePagePlay,
+  ePageMax
 } ePage;
 
 // keys
 typedef enum eKey {
   eKeyEdit,
-  eKeyFnA,
-  eKeyFnB,
-  eKeyFnC,
-  eKeyFnD,
-  eKeyUpA,
-  eKeyDownA,
-  eKeyUpB,
-  eKeyDownB,
-  eKeyUpC,
-  eKeyDownC,
-  eKeyUpD,
-  eKeyDownD,
-  eKeyMax // dummy
+  eKeyFnDownA,
+  eKeyFnUpA,
+  eKeyFnDownB,
+  eKeyFnUpB,
+  eKeyFnDownC,
+  eKeyFnUpC,
+  eKeyFnDownD,
+  eKeyFnUpD,
+  eKeyEncUpA,
+  eKeyEncDownA,
+  eKeyEncUpB,
+  eKeyEncDownB,
+  eKeyEncUpC,
+  eKeyEncDownC,
+  eKeyEncUpD,
+  eKeyEncDownD,
 } key_t;
-
-// function pointer for input handling on a given page
-typedef void(*keyHandler_t)(key_t key);
-// function pointer for redraw on a given page
-typedef void(*redraw_t)(void);
-
-// class representing a page in a menu
-// includes a title and a key input handler (function pointer)
-typedef struct page_struct {
-  const char* pageString;
-  keyHandler_t keyHandler;
-  redraw_t redraw;
-  s16 selected;
-} page_t;
 
 //----- public functions
 // init
@@ -62,5 +52,8 @@ extern void menu_init(void);
 extern void menu_deinit(void);
 // handle key
 extern void menu_handleKey(key_t key);
+
+// parameter feedback
+extern void param_feedback(u16 paramIdx);
 
 #endif // header guard

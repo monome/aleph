@@ -93,8 +93,7 @@ const char* op_out_name(op_t* op, const U8 idx);
 //--- op_sw_t : switch
 typedef struct op_sw_struct {
   op_t super;
-  S32 val; // anything to be used as output needs 4 bytes
-  U8 tog;
+  S32 val, mul, tog;
   op_out_t outs[1];
 } op_sw_t;
 void op_sw_init(op_sw_t* sw);
@@ -102,9 +101,8 @@ void op_sw_init(op_sw_t* sw);
 //--- op_enc_t : encoder
 typedef struct op_enc_struct {
   op_t super;
-  U8 pos_now, pos_old;
-  S32 val;
-  op_out_t outs[1];
+  S32 val, step, min, max, wrap;
+  op_out_t outs[2];
 } op_enc_t;
 void op_enc_init(op_enc_t* sw);
 

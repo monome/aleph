@@ -4,6 +4,8 @@
   *
   * lowest-level user interface routines
   * (screen drawing, key reading, etc)
+  *
+  * this test version of the layer runs on linux with lncurses
   */
 
 #include <stdio.h>
@@ -24,10 +26,14 @@
 #define KEY_ENC_C_DOWN  ';'
 #define KEY_ENC_D_UP    '/'
 #define KEY_ENC_D_DOWN  '.'
-#define KEY_FN_A        'z'
-#define KEY_FN_B        'x'
-#define KEY_FN_C        'c'
-#define KEY_FN_D        'v'
+#define KEY_FN_A_UP     'a'
+#define KEY_FN_A_DOWN   'z'
+#define KEY_FN_B_UP     's'
+#define KEY_FN_B_DOWN   'x'
+#define KEY_FN_C_UP     'd'
+#define KEY_FN_C_DOWN   'c'
+#define KEY_FN_D_UP     'f'
+#define KEY_FN_D_DOWN   'v'
 
 // static vars
 static char printBuf[SCREEN_W];
@@ -73,41 +79,55 @@ U8 ui_loop(void) {
   case KEY_EDIT:
     menu_handleKey(eKeyEdit);
     break;
+    /// "encoders"
   case KEY_ENC_A_UP:
-    menu_handleKey(eKeyUpA);
+    menu_handleKey(eKeyEncUpA);
     break;
   case KEY_ENC_A_DOWN:
-    menu_handleKey(eKeyDownA);
+    menu_handleKey(eKeyEncDownA);
     break;
   case KEY_ENC_B_UP:
-    menu_handleKey(eKeyUpB);
+    menu_handleKey(eKeyEncUpB);
     break;
   case KEY_ENC_B_DOWN:
-    menu_handleKey(eKeyDownB);
+    menu_handleKey(eKeyEncDownB);
     break;
   case KEY_ENC_C_UP:
-    menu_handleKey(eKeyUpC);
+    menu_handleKey(eKeyEncUpC);
     break;
   case KEY_ENC_C_DOWN:
-    menu_handleKey(eKeyDownC);
+    menu_handleKey(eKeyEncDownC);
     break;
   case KEY_ENC_D_UP:
-    menu_handleKey(eKeyUpD);
+    menu_handleKey(eKeyEncUpD);
     break;
   case KEY_ENC_D_DOWN:
-    menu_handleKey(eKeyDownD);
+    menu_handleKey(eKeyEncDownD);
     break;
-  case KEY_FN_A:
-    menu_handleKey(eKeyFnA);
+    // function keys
+  case KEY_FN_A_DOWN:
+    menu_handleKey(eKeyFnDownA);
     break;
-  case KEY_FN_B:
-    menu_handleKey(eKeyFnB);
+  case KEY_FN_A_UP:
+    menu_handleKey(eKeyFnUpA);
     break;
-  case KEY_FN_C:
-    menu_handleKey(eKeyFnC);
+  case KEY_FN_B_DOWN:
+    menu_handleKey(eKeyFnDownB);
     break;
-  case KEY_FN_D:
-    menu_handleKey(eKeyFnD);
+  case KEY_FN_B_UP:
+    menu_handleKey(eKeyFnUpB);
+    break;
+  case KEY_FN_C_DOWN:
+    menu_handleKey(eKeyFnDownC);
+    break;
+  case KEY_FN_C_UP:
+    menu_handleKey(eKeyFnUpC);
+    break;
+  case KEY_FN_D_DOWN:
+    menu_handleKey(eKeyFnDownD);
+    break;
+  case KEY_FN_D_UP:
+    menu_handleKey(eKeyFnUpD);
     break;
   default:
     break;
