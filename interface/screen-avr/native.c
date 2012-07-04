@@ -644,14 +644,50 @@ int main(void)
 	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPI2X); //Enable SPI, Master, set clock rate fck/16
 	
 	PORTB = 0;
+	
+	// AE		off
+	// B3 91	clock to 135 fps
+	// A8 3F	multiplex ratio 1/64
+	// A2 4C	display offset
+	// A1 00	start line
+	// AD 02	disable DCDC
+	// A0 50	remap
+	// 84|02	current range
+	
+	// oled_Command(0xB8);			// Set Gray Scale Table
+	// 	oled_Command(0x01);			//   Gray Scale Level 1
+	// 	oled_Command(0x11);			//   Gray Scale Level 3 & 2
+	// 	oled_Command(0x22);			//   Gray Scale Level 5 & 4
+	// 	oled_Command(0x32);			//   Gray Scale Level 7 & 6
+	// 	oled_Command(0x43);			//   Gray Scale Level 9 & 8
+	// 	oled_Command(0x54);			//   Gray Scale Level 11 & 10
+	// 	oled_Command(0x65);			//   Gray Scale Level 13 & 12
+	// 	oled_Command(0x76);			//   Gray Scale Level 15 & 14
+	
+	// 81 7F	contrast
+	// B2 51	frame freq
+	// B1 55	phase length
+	// BC 10	phase precharge
+	// B4 02	precharge comp
+	// B0 28	precharge comp
+	// BE 1C	vcomh
+	// BF 0d|02	vsl
+	// A4		disp mode
+	// AF		on
 		
+	
 	PORTB |= PIN_RESET;
 	_delay_ms(1);
 	write_command(0xAE);	// off
+	write_command(0xB3);	// clock rate
+	write_command(0x91);
+	write_command(0xA8);	// multiplex
+	write_command(0x3F);
 	write_command(0x86);	// full current range
-	write_command(0xA4);	// normal display
 	write_command(0x81);	// contrast to full
 	write_command(0x7F);
+	write_command(0xB2);	// frame freq
+	write_command(0x51);
 	write_command(0xA8);	// multiplex
 	write_command(0x3F);
 	write_command(0xBC);	// precharge
@@ -668,6 +704,24 @@ int main(void)
 	write_command(0x4C);
 	write_command(0xB1);	// set phase
 	write_command(0x55);
+	write_command(0xB4);	// precharge
+	write_command(0x02);
+	write_command(0xB0);	// precharge
+	write_command(0x28);
+	write_command(0xBF);	// vsl
+	write_command(0x0F);
+	write_command(0xA4);	// normal display
+	
+	write_command(0xB8);		// greyscale table
+	write_command(0x01);
+	write_command(0x11);
+	write_command(0x22);
+	write_command(0x32);
+	write_command(0x43);
+	write_command(0x54);
+	write_command(0x65);
+	write_command(0x76);	
+	
 	
 	// set update box (to full screen)
 	write_command(0x15);
@@ -685,6 +739,7 @@ int main(void)
 	for(i = 0; i < 512; i++){
 		screen[i] = 0;
 	}
+	
 	
 	write_command(0xAF);	// on
 	
