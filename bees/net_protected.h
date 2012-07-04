@@ -19,13 +19,15 @@
 // input node type (function pointer)
 typedef struct _inode {
   // last value
-  s32 val;
+  //  s32 val;
   // function pointer
-  op_in_t in;
+  //op_in_t in;
   // input idx in net list
-  u16 inIdx;
+  //  u16 netInIdx;
   // parent op index in net list
   u16 opIdx;
+  // input index in parent op list
+  u16 opInIdx;
   // preset inclusion flag
   u8 preset;
 } inode_t;

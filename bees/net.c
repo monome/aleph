@@ -69,17 +69,20 @@ void net_deinit(void) {
 }
 
 // activate an input node with a value
-void net_activate(S16 inIdx, const S32* val) {
+void net_activate(S16 inIdx, const S32 val) {
   if(inIdx >= 0) {
     if(inIdx < net.numIns) {
-      (*(net.ins[inIdx].in))(net.ops[net.ins[inIdx].opIdx], val);
+      //(*(net.ins[inIdx].in))(net.ops[net.ins[inIdx].opIdx], val);
+      op_set_in_val(net.ops[net.ins[inIdx].opIdx],
+		    net.ins[inIdx].opInIdx,
+		    val);
     } else { 
       // index in dsp param list
       inIdx -= net.numIns;
       if (inIdx >= net.numParams) {
 	return ;
       } else {
-	set_param_value(inIdx, *val);
+	set_param_value(inIdx, val);
       }
     }
   }  
@@ -158,9 +161,10 @@ S16 net_add_op(opId_t opId) {
   //no // don't add inputs for system control ops
   //if (op->status != eSysCtlOp) {
     for(i=0; i<ins; i++) {
-      net.ins[net.numIns].in = op->in[i];
+      //      net.ins[net.numIns].in = op->in[i];
       net.ins[net.numIns].opIdx = net.numOps;
-      net.ins[net.numIns].inIdx = i;
+      net.ins[net.numIns].opInIdx = i;
+      //      net.ins[net.numIns].netInIdx = net.numIns;
       net.numIns++;
     }
     //}
@@ -240,7 +244,7 @@ const char* net_in_name(U16 idx) {
     }
   } else {
     // op input
-    return op_in_name(net.ops[net.ins[idx].opIdx], net.ins[idx].inIdx);
+    return op_in_name(net.ops[net.ins[idx].opIdx], net.ins[idx].opInIdx);
   }
 }
 
@@ -326,23 +330,36 @@ s32 net_get_in_value(U16 inIdx) {
     inIdx -= net.numIns;
     return net.params[inIdx].val;
   } else {
-    return (net.ins[inIdx].val);
+    //return (net.ins[inIdx].val);
+    return op_get_in_val(net.ops[net.ins[inIdx].opIdx], net.ins[inIdx].opInIdx);
   }
 }
 
 void net_set_in_value(U16 inIdx, S32 val) {
-  net.ins[inIdx].val = val;
+  //net.ins[inIdx].val = val;
+  if (inIdx < 0) return;
+  if (inIdx < net.numIns) {
+    op_set_in_val(net.ops[net.ins[inIdx].opIdx], net.ins[inIdx].opInIdx, val);
+  } else {
+    
+  }
 }
 
-s32 net_inc_in_value(U16 inIdx, S32 inc) {
+s32 net_inc_in_value(s16 inIdx, S32 inc) {
   if (inIdx >= net.numIns) {
     inIdx -= net.numIns;
     set_param_value(inIdx, net.params[inIdx].val + inc);
     return net.params[inIdx].val;
   } else {
-    net.ins[inIdx].val += inc;
-    net_activate(inIdx, (const S32*)(&(net.ins[inIdx].val)));
-    return net.ins[inIdx].val;
+    //net.ins[inIdx].val += inc;
+    //net_activate(inIdx, (const S32*)(&(net.ins[inIdx].val)));
+    //return net.ins[inIdx].
+    net_activate( inIdx,
+		  op_get_in_val( net.ops[net.ins[inIdx].opIdx],
+				   net.ins[inIdx].opInIdx )
+		  + inc );
+    return op_get_in_val( net.ops[net.ins[inIdx].opIdx],
+			    net.ins[inIdx].opInIdx ); 
   }
 }
 

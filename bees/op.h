@@ -49,7 +49,7 @@ typedef struct op_desc_struct {
 // a function pointer to represent an operator's input
 // each function is passed a void* to its receiver
 // and a pointer to const S32 for input value
-typedef void(*op_in_t)(void* rec, const S32* input );
+typedef void(*op_in_func_t)(void* rec, const S32* input );
 
 // ---- output type
 // an index into the global output table
@@ -63,10 +63,12 @@ typedef struct op_struct {
   // U16 size;
   U8 numInputs;
   U8 numOutputs;
-  // array of function pointers for input
-  op_in_t* in;
-  // array of pointer indices for output targets.
-  op_out_t* out; 
+  // array of input function pointers
+  op_in_func_t* in_func;
+  // array of input values
+  S32 * in_val;
+  // array of indices for output targets.
+  op_out_t * out; 
   // name string
   const char* opString;
   // input names concatenated into a single string
@@ -85,6 +87,10 @@ typedef struct op_struct {
 const char* op_in_name(op_t* op, const U8 idx);
 // get output name
 const char* op_out_name(op_t* op, const U8 idx);
+// get input value
+S32 op_get_in_val(op_t* op, s16 idx);
+// set input value
+void op_set_in_val(op_t* op, s16 idx, const S32 val);
 
 /// ===== operator subclasses
 // each of these structures holds the superclass and private state vairables

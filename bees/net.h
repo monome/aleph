@@ -38,7 +38,7 @@ S16 net_pop_op(void);
 // void remove_op(const U8 idx);
 
 // activate an input node with some input data
-void net_activate(S16 inIdx, const S32* val);
+void net_activate(S16 inIdx, const S32 val);
 
 // get current count of operators
 U16 net_num_ops(void);
@@ -74,7 +74,7 @@ opStatus_t net_op_status(U16 opIdx);
 // get / set / increment input value
 s32 net_get_in_value(U16 inIdx);
 void net_set_in_value(U16 inIdx, S32 val);
-s32 net_inc_in_value(U16 inIdx, S32 inc);
+s32 net_inc_in_value(s16 inIdx, S32 inc);
 
 // connect a given output and input idx pair
 void net_connect(U32 outIdx, U32 inIdx);
