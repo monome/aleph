@@ -55,13 +55,19 @@ void init_oled(void) {
   U32 i;
   //  cpu_irq_disable();
   Disable_global_interrupt();
+  delay_ms(100);
   //// initialize OLED
   /// todo: maybe toggle oled RESET to clear its shift register?
   write_command(0xAE);	// off
+  write_command(0xB3);	// clock rate
+  write_command(0x91);
+  write_command(0xA8);	// multiplex
+  write_command(0x3F);
   write_command(0x86);	// full current range
-  write_command(0xA4);	// normal display
   write_command(0x81);	// contrast to full
   write_command(0x7F);
+  write_command(0xB2);	// frame freq
+  write_command(0x51);
   write_command(0xA8);	// multiplex
   write_command(0x3F);
   write_command(0xBC);	// precharge
@@ -78,6 +84,24 @@ void init_oled(void) {
   write_command(0x4C);
   write_command(0xB1);	// set phase
   write_command(0x55);
+  write_command(0xB4);	// precharge
+  write_command(0x02);
+  write_command(0xB0);	// precharge
+  write_command(0x28);
+  write_command(0xBF);	// vsl
+  write_command(0x0F);
+  write_command(0xA4);	// normal display
+	
+  write_command(0xB8);		// greyscale table
+  write_command(0x01);
+  write_command(0x11);
+  write_command(0x22);
+  write_command(0x32);
+  write_command(0x43);
+  write_command(0x54);
+  write_command(0x65);
+  write_command(0x76);	
+	
 	
   // set update box (to full screen)
   write_command(0x15);
@@ -86,15 +110,18 @@ void init_oled(void) {
   write_command(0x75);
   write_command(0);
   write_command(63);
+	
+
 		
   // clear OLED RAM
-
   for(i=0; i<GRAM_BYTES; i++) { write_data(0); }
   write_command(0xAF);	// on
 
+  delay_ms(100);
+
   //  cpu_irq_enable();
   Enable_global_interrupt();
-  delay_ms(20);
+
        
 }
 
@@ -118,7 +145,7 @@ U8 screen_draw_char(U16 col, U16 row, char gl, U8 a) {
     for(x=0; x<FONT_CHARW; x++) {
       if( (font_data[gl - FONT_ASCII_OFFSET].data[x] & (1 << y))) {
 	screen_draw_pixel(x+col, y+row, a);
-       } else {
+      } else {
 	screen_draw_pixel(x+col, y+row, 0);
       }
     }
@@ -185,8 +212,8 @@ U8 screen_draw_float(U16 x, U16 y, F32 f, U8 a) {
 void screen_refresh(void) {
   U16 i;
   //  cpu_irq_disable();
-  //  Disable_global_interrupt();
+  Disable_global_interrupt();
   for(i=0; i<GRAM_BYTES; i++) { write_data(screen[i]); }
   //  cpu_irq_enable();
-  // Enable_global_interrupt();
+  Enable_global_interrupt();
 }

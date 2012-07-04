@@ -63,7 +63,7 @@ static void check_events(void);
 __attribute__((__interrupt__))
 static void irq_port0_line0(void) {
   U8 i; 
-  gpio_tgl_gpio_pin(LED1_GPIO);
+  //  gpio_tgl_gpio_pin(LED1_GPIO);
   // check for encoder movement:
   for(i = 0; i<NUM_ENC; i++) {
     if(gpio_get_pin_interrupt_flag(enc[i].pin[0])) {
@@ -94,14 +94,6 @@ __attribute__((__interrupt__))
 static void irq_tc(void) {
   event_t e;
   tcTicks++;
-  gpio_tgl_gpio_pin(LED2_GPIO);
-  if ((tcTicks % 200) == 0) {
-    gpio_tgl_gpio_pin(LED3_GPIO);
-  }
-
-  if ((tcTicks % 20) == 0) {
-    screen_refresh();
-  }
 
   // Clear the interrupt flag. This is a side effect of reading the TC SR.
   tc_read_sr(APP_TC, APP_TC_CHANNEL);
@@ -136,7 +128,7 @@ static void register_interrupts(void) {
   // testing ENC0 on PA06, PA07...   
  INTC_register_interrupt( &irq_port0_line0,
 			  AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8),
-			  AVR32_INTC_INT1 );
+			  AVR32_INTC_INT2 );
 
  // register TC interrupt
  INTC_register_interrupt(&irq_tc,
@@ -157,13 +149,13 @@ static void check_events(void) {
     case kEventEncoder0:
       encVal[0] += e.eventData;
       screen_draw_int(0, SCREEN_LINE(0), encVal[0], 0x0f);
-      //refresh = 1;
+      refresh = 1;
       //    screen_refresh();
       break;
       
     case kEventRefresh:
-      //  screen_refresh();
-      //refresh = 0;
+      screen_refresh();
+      refresh = 0;
       break;
      
     default:
