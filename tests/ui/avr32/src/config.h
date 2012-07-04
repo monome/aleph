@@ -15,7 +15,6 @@
 // PLL output frequency
 #define PLL_OUTPUT_FREQ 132000000UL
 
-
 /*
 // System Clock Frequencies
 #define FMCK_HZ   		66000000L

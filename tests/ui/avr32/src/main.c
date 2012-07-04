@@ -8,6 +8,8 @@
 #include "compiler.h"
 #include "gpio.h"
 #include "intc.h"
+#include "tc.h"
+#include "delay.h"
 /// debug
 #include "sysclk.h"
 
@@ -47,7 +49,7 @@ static U8 refresh = 0;
 // interrupt handler for PA00-PA07
 static void irq_port0_line0(void);
 // interrupt handler for PB00-PB07
-static void irq_port1_line0(void);
+//static void irq_port1_line0(void);
 // interrupt handler for TC
 static void irq_tc(void);
 // register interrupts
@@ -57,11 +59,11 @@ static void register_interrupts(void);
 // UI event loop
 static void check_events(void);
 
-
 // interrupt handler for PA00-PA07
 __attribute__((__interrupt__))
 static void irq_port0_line0(void) {
- U8 i; 
+  U8 i; 
+  gpio_tgl_gpio_pin(LED1_GPIO);
   // check for encoder movement:
   for(i = 0; i<NUM_ENC; i++) {
     if(gpio_get_pin_interrupt_flag(enc[i].pin[0])) {
@@ -76,6 +78,7 @@ static void irq_port0_line0(void) {
 }
 
 
+/*
 // interrupt handler for PB00-PB07
 __attribute__((__interrupt__))
 static void irq_port1_line0(void) {
@@ -84,12 +87,24 @@ static void irq_port1_line0(void) {
   gpio_tgl_gpio_pin(LED1_GPIO);
   ///////// 
 }
+*/
 
 // timer irq
 __attribute__((__interrupt__))
 static void irq_tc(void) {
   event_t e;
   tcTicks++;
+  gpio_tgl_gpio_pin(LED2_GPIO);
+  if ((tcTicks % 200) == 0) {
+    gpio_tgl_gpio_pin(LED3_GPIO);
+  }
+
+  if ((tcTicks % 20) == 0) {
+    screen_refresh();
+  }
+
+  // Clear the interrupt flag. This is a side effect of reading the TC SR.
+  tc_read_sr(APP_TC, APP_TC_CHANNEL);
   if(refresh) {
     e.eventType = kEventRefresh;
     post_event(&e);
@@ -99,6 +114,9 @@ static void irq_tc(void) {
 
 // register interrupts
 static void register_interrupts(void) {
+  // Initialize interrupt vectors.
+  INTC_init_interrupts();
+
   // enable interrupts on encoder pins
   gpio_enable_pin_interrupt( ENC0_S0_PIN,	GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( ENC0_S1_PIN,	GPIO_PIN_CHANGE);
@@ -124,7 +142,9 @@ static void register_interrupts(void) {
  INTC_register_interrupt(&irq_tc,
 			 APP_TC_IRQ,
 			 APP_TC_IRQ_PRIORITY);
+ 
 }
+ 
 
 //=========================================== 
 // application event loop
@@ -137,15 +157,22 @@ static void check_events(void) {
     case kEventEncoder0:
       encVal[0] += e.eventData;
       screen_draw_int(0, SCREEN_LINE(0), encVal[0], 0x0f);
-      refresh = 1;
+      //refresh = 1;
+      //    screen_refresh();
       break;
+      
     case kEventRefresh:
-      screen_refresh();
-      refresh = 0;
+      //  screen_refresh();
+      //refresh = 0;
       break;
+     
     default:
       break;
     }
+
+    //////// TEST
+    // if(refresh) { screen_refresh(); refresh = 0; }
+    /////////
   }
 }
 
@@ -153,24 +180,37 @@ static void check_events(void) {
 // main function
 int main(void) {  
   //  int dum;
+  volatile avr32_tc_t *tc = APP_TC;
 
-   // initialize AVR32 peripherals
-  init_avr();
-
+  // clocks
+  init_clocks();
   // disable interrupts
-  Disable_global_interrupt();
+  cpu_irq_disable();
+
+  // GPIO
+  init_gpio();
+  // USARTs
+  init_usart();
 
   // initialize the OLED screen
   init_oled();
+
+  //  delay_ms(20);
+
+  // register interrupts
+  register_interrupts();
+
   // intialize the event queue
   init_events();
   // intialize encoders
   init_encoders();
-  // register interrupts
-  register_interrupts();
+  // timer/counter
+  init_tc(tc);
+
+  //  delay_ms(20);
 
   // enable interrupts
-  Enable_global_interrupt();
+  cpu_irq_enable();
 
   // check for application events in an infinite loop
   while(1) {
@@ -179,4 +219,3 @@ int main(void) {
   
   return 0;
 }
-

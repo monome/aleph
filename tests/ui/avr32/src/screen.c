@@ -9,6 +9,7 @@
 #include "gpio.h"
 #include "usart.h"
 #include "delay.h"
+#include "intc.h"
 // aleph
 #include "config.h"
 #include "screen.h"
@@ -18,7 +19,6 @@
 //---- static variables
 // screen buffer
 static U8 screen[GRAM_BYTES];
-
 
 //-----------------------------
 //---- static functions
@@ -53,6 +53,8 @@ static void zero_col(U16 x, U16 y) {
 // external functions
 void init_oled(void) {
   U32 i;
+  //  cpu_irq_disable();
+  Disable_global_interrupt();
   //// initialize OLED
   /// todo: maybe toggle oled RESET to clear its shift register?
   write_command(0xAE);	// off
@@ -86,10 +88,12 @@ void init_oled(void) {
   write_command(63);
 		
   // clear OLED RAM
+
   for(i=0; i<GRAM_BYTES; i++) { write_data(0); }
-   
   write_command(0xAF);	// on
 
+  //  cpu_irq_enable();
+  Enable_global_interrupt();
   delay_ms(20);
        
 }
@@ -104,7 +108,6 @@ void screen_draw_pixel(U16 x, U16 y, U8 a) {
   } else {
     screen[pos] &= 0xf0;
     screen[pos] |= (a & 0x0f);
-
   }
 }
 
@@ -181,5 +184,9 @@ U8 screen_draw_float(U16 x, U16 y, F32 f, U8 a) {
 // send screen buffer contents to OLED
 void screen_refresh(void) {
   U16 i;
+  //  cpu_irq_disable();
+  //  Disable_global_interrupt();
   for(i=0; i<GRAM_BYTES; i++) { write_data(screen[i]); }
+  //  cpu_irq_enable();
+  // Enable_global_interrupt();
 }

@@ -19,6 +19,8 @@
 #include "config.h"
 #include "init.h"
 
+#define FASTCLOCK 1
+
 //-------------------
 //  static variables
 // gpio map for oled-usart
@@ -36,19 +38,51 @@ static const usart_spi_options_t USART_SPI_OPTIONS = {
   .spimode      = 3, // clock starts high, sample on rising edge
   .channelmode  = USART_NORMAL_CHMODE
 };
+
+static const tc_waveform_opt_t waveform_opt = {
+  .channel  = APP_TC_CHANNEL,  // channel
+  .bswtrg   = TC_EVT_EFFECT_NOOP, // software trigger action on TIOB
+  .beevt    = TC_EVT_EFFECT_NOOP, // external event action
+  .bcpc     = TC_EVT_EFFECT_NOOP, // rc compare action
+  .bcpb     = TC_EVT_EFFECT_NOOP, // rb compare
+  .aswtrg   = TC_EVT_EFFECT_NOOP, // soft trig on TIOA
+  .aeevt    = TC_EVT_EFFECT_NOOP, // etc
+  .acpc     = TC_EVT_EFFECT_NOOP,
+  .acpa     = TC_EVT_EFFECT_NOOP,
+  // Waveform selection: Up mode with automatic trigger(reset) on RC compare.
+  .wavsel   = TC_WAVEFORM_SEL_UP_MODE_RC_TRIGGER,
+  .enetrg   = false,             // external event trig
+  .eevt     = 0,                 // extern event select
+  .eevtedg  = TC_SEL_NO_EDGE,    // extern event edge
+  .cpcdis   = false,             // counter disable when rc compare
+  .cpcstop  = false,            // counter stopped when rc compare
+  .burst    = false,
+  .clki     = false,
+  // Internal source clock 5, connected to fPBA / 128.
+  .tcclks   = TC_CLOCK_SOURCE_TC5
+};
+
+// Options for enabling TC interrupts
+static const tc_interrupt_t tc_interrupt = {
+  .etrgs = 0,
+  .ldrbs = 0,
+  .ldras = 0,
+  .cpcs  = 1, // Enable interrupt on RC compare alone
+  .cpbs  = 0,
+  .cpas  = 0,
+  .lovrs = 0,
+  .covfs = 0
+};
   
-
-//--------------------
-// static function declarations
-static void init_clocks(void);
-static void init_usart(void);
-
-//----------------------
-// static function definitions
+//---------------------------
+//-----  function definitions
 
 // initialize clocks
 void init_clocks(void) {
+
+#if FASTCLOCK
   struct pll_config pllcfg;
+#endif
 
   /* Initialize the synchronous clock system to the default configuration
    * set in conf_clock.h.
@@ -63,6 +97,9 @@ void init_clocks(void) {
   sysclk_enable_pba_module(SYSCLK_GPIO);
   // usart
   sysclk_enable_pba_module(SYSCLK_USART2);
+  // tc
+  sysclk_enable_peripheral_clock(APP_TC);
+
 
   /*
    * Enable the PLL at PLL_OUTPUT_FREQ MHz and use
@@ -77,6 +114,8 @@ void init_clocks(void) {
    * => the PLL output frequency will be running at:
    * (mul / div) times the frequency of OSC0
    */
+
+#if FASTCLOCK
   pll_config_init(&pllcfg, PLL_SRC_OSC0, 1,
 		  PLL_OUTPUT_FREQ / BOARD_OSC0_HZ);
   // Configure and enable the PLL.
@@ -101,11 +140,12 @@ void init_clocks(void) {
   sysclk_set_source(SYSCLK_SRC_PLL0);
   //wait_for_switches();
 
-    // Switch main clock to external oscillator 0 (crystal).
+  // Switch main clock to external oscillator 0 (crystal).
   ///  pm_switch_to_osc0(&AVR32_PM, FOSC0, OSC0_STARTUP);
+#endif
 
   // intitialize millisecond delay engine
-  delay_init(FOSC0);
+  delay_init(sysclk_get_cpu_hz());
 }
 
 // initialize usart
@@ -118,7 +158,7 @@ void init_usart(void) {
   delay_ms(10);
 }
 
-static void init_gpio(void) {
+void init_gpio(void) {
 
   gpio_enable_pin_pull_up(ENC0_S0_PIN);
   gpio_enable_pin_pull_up(ENC0_S1_PIN);
@@ -134,70 +174,36 @@ static void init_gpio(void) {
 }
 
 // intialize timer/counter
-static void init_tc(volatile avr32_tc_t *tc)
+void init_tc(volatile avr32_tc_t *tc)
 {
-  static const tc_waveform_opt_t waveform_opt = {
-    .channel  = APP_TC_CHANNEL,  // channel
-    .bswtrg   = TC_EVT_EFFECT_NOOP, // software trigger action on TIOB
-    .beevt    = TC_EVT_EFFECT_NOOP, // external event action
-    .bcpc     = TC_EVT_EFFECT_NOOP, // rc compare action
-    .bcpb     = TC_EVT_EFFECT_NOOP, // rb compare
-    .aswtrg   = TC_EVT_EFFECT_NOOP, // soft trig on TIOA
-    .aeevt    = TC_EVT_EFFECT_NOOP, // etc
-    .acpc     = TC_EVT_EFFECT_NOOP,
-    .acpa     = TC_EVT_EFFECT_NOOP,
-     // Waveform selection: Up mode with automatic trigger(reset) on RC compare.
-    .wavsel   = TC_WAVEFORM_SEL_UP_MODE_RC_TRIGGER,
-    .enetrg   = false,             // external event trig
-    .eevt     = 0,                 // extern event select
-    .eevtedg  = TC_SEL_NO_EDGE,    // extern event edge
-    .cpcdis   = false,             // counter disable when rc compare
-    .cpcstop  = false,            // counter stopped when rc compare
-    .burst    = false,
-    .clki     = false,
-    // Internal source clock 3, connected to fPBA / 8.
-    .tcclks   = TC_CLOCK_SOURCE_TC3
-  };
-
-  // Options for enabling TC interrupts
-  static const tc_interrupt_t tc_interrupt = {
-    .etrgs = 0,
-    .ldrbs = 0,
-    .ldras = 0,
-    .cpcs  = 1, // Enable interrupt on RC compare alone
-    .cpbs  = 0,
-    .cpas  = 0,
-    .lovrs = 0,
-    .covfs = 0
-  };
 
   // Initialize the timer/counter.
   tc_init_waveform(tc, &waveform_opt);
 
-  /*
-   * Set the compare triggers.
-   * We configure it to count every 1 milliseconds.
-   * We want: (1 / (fPBA / 8)) * RC = 1 ms, hence RC = (fPBA / 8) / 1000
-   * to get an interrupt every 10 ms.
-   */
-  tc_write_rc(tc, APP_TC_CHANNEL, (sysclk_get_pba_hz() / 8 / 1000));
+  // set timer compare trigger.
+  // we want it to overflow and generate an interrupt every 10 ms
+  // so (1 / fPBA / 128) * RC = 10,
+  // so RC = fPBA / 128 / 1000
+
+  tc_write_rc(tc, APP_TC_CHANNEL, (sysclk_get_pba_hz() / 128 / 1000));
   // configure the timer interrupt
   tc_configure_interrupts(tc, APP_TC_CHANNEL, &tc_interrupt);
   // Start the timer/counter.
   tc_start(tc, APP_TC_CHANNEL);
 }
 
+/*
 // high-level init function
 void init_avr(void) {
-  avr32_tc_t tc;
+avr32_tc_t tc;
 
-  // clocks
-  init_clocks();
-  // GPIO
-  init_gpio();
-  // USARTs
-  init_usart();
-  // timer/counter
-  init_tc(&tc);
-
+// clocks
+init_clocks();
+// GPIO
+init_gpio();
+// USARTs
+init_usart();
+// timer/counter
+init_tc(&tc);
 }
+*/
