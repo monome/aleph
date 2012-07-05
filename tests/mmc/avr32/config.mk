@@ -22,29 +22,29 @@ PROG_CLOCK = int
 
 # Applicat	ion target name. Given with suffix .a for library and .elf for a
 # standalone application.
-TARGET = ui_test.elf
+TARGET = oled_test.elf
 
 # List of C source files.
 CSRCS = \
-        avr32/drivers/flashc/flashc.c                      \
-        avr32/drivers/gpio/gpio.c                          \
-        avr32/drivers/intc/intc.c                          \
-        avr32/drivers/tc/tc.c                          \
-        avr32/drivers/usart/usart.c			   \
-        avr32/services/delay/delay.c			   \
-        common/services/clock/uc3a0_a1/sysclk.c            \
-	./src/main.c \
-	./src/init.c \
-	./src/screen.c \
-	./src/font.c \
-	./src/timers.c \
-	./src/events.c \
-	./src/encoders.c
-#        avr32/drivers/pm/pm.c                              \
-        avr32/drivers/pm/pm_conf_clocks.c                  \
-#       avr32/drivers/pm/power_clocks_lib.c                \
-#	./src/encoder_test.c 
-#    avr32/boards/evk1100/init.c                        \
+	avr32/boards/evk1100/led.c                         \
+	avr32/drivers/flashc/flashc.c                      \
+	avr32/drivers/gpio/gpio.c                          \
+	avr32/drivers/intc/intc.c                          \
+	avr32/drivers/pm/pm.c                              \
+	avr32/drivers/pm/pm_conf_clocks.c                  \
+	avr32/drivers/pm/power_clocks_lib.c                \
+	avr32/drivers/spi/spi.c                            \
+	avr32/drivers/usart/usart.c                        \
+	avr32/services/fs/fat/fat.c                        \
+	avr32/services/fs/fat/fat_unusual.c                \
+	avr32/services/fs/fat/file.c                       \
+	avr32/services/fs/fat/navigation.c                 \
+	avr32/utils/debug/print_funcs.c                    \
+        common/components/memory/data_flash/at45dbx/_asf_v1/at45dbx.c \
+	common/components/memory/data_flash/at45dbx/_asf_v1/at45dbx_mem.c \
+	common/services/storage/ctrl_access/ctrl_access.c \
+	./src/main.c
+
 
 # List of assembler source files.
 ASSRCS = \
@@ -59,18 +59,19 @@ INC_PATH = \
        avr32/drivers/flashc                               \
        avr32/drivers/gpio                                 \
        avr32/drivers/intc                                 \
-       avr32/drivers/tc                                 \
+       avr32/drivers/pm                                   \
+       avr32/drivers/spi                                  \
        avr32/drivers/usart                                \
-       avr32/drivers/cpu/cycle_counter/                                \
+       avr32/services/fs/fat                              \
+       avr32/services/fs/fat/fat_example                  \
        avr32/utils                                        \
+       avr32/utils/debug                                  \
        avr32/utils/preprocessor                           \
-       avr32/services/delay                               \
        common/boards                                      \
-       common/services/clock                              \
+       common/components/memory/data_flash/at45dbx/_asf_v1 \
+       common/services/storage/ctrl_access                \
        common/utils \
-       ./ \
-	../../tests/ui/avr32
-#       avr32/drivers/pm                                   \
+	./
 
 # Additional search paths for libraries.
 LIB_PATH = 

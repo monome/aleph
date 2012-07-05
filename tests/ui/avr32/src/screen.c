@@ -212,8 +212,8 @@ U8 screen_draw_float(U16 x, U16 y, F32 f, U8 a) {
 void screen_refresh(void) {
   U16 i;
   //  cpu_irq_disable();
-  Disable_global_interrupt();
+  //  Disable_global_interrupt();
   for(i=0; i<GRAM_BYTES; i++) { write_data(screen[i]); }
   //  cpu_irq_enable();
-  Enable_global_interrupt();
+  //  Enable_global_interrupt();
 }
