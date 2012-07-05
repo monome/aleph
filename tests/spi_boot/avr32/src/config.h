@@ -1,7 +1,7 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-///// SPI
+///// blackfin SPI
 #define BFIN_SPI                   (&AVR32_SPI0)
 #define BFIN_SPI_NPCS              0
 #define BFIN_SPI_SCK_PIN           AVR32_SPI0_SCK_0_0_PIN
@@ -13,7 +13,6 @@
 #define BFIN_SPI_NPCS_PIN          AVR32_SPI0_NPCS_0_0_PIN
 #define BFIN_SPI_NPCS_FUNCTION     AVR32_SPI0_NPCS_0_0_FUNCTION
 
-///// GPIO
 // (input) receive HWAIT from the blackfin during boot process
 #define BFIN_HWAIT_PIN    AVR32_PIN_PB00
 // (output) pull low to reset the blackfin

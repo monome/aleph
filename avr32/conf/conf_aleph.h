@@ -7,8 +7,27 @@
 #ifndef _CONF_ALEPH_H_
 #define _CONF_ALEPH_H_
 
+//==============================================
+//==== clocks
 
-// debug with USART1
+// target PBA clock frequency
+#define PBA_HZ                FOSC0
+// PLL output frequency
+#define PLL_OUTPUT_FREQ 132000000UL
+
+//==============================================
+//==== timers
+
+// application timer
+#define APP_TC                 (&AVR32_TC)
+#define APP_TC_CHANNEL         0
+#define APP_TC_IRQ             AVR32_TC_IRQ0
+#define APP_TC_IRQ_GROUP       AVR32_TC_IRQ_GROUP
+#define APP_TC_IRQ_PRIORITY    AVR32_INTC_INT0
+
+//==============================================
+//==== USART
+// debug usart
 #define DBG_USART               (&AVR32_USART1)
 #define DBG_USART_RX_PIN        AVR32_USART1_RXD_0_0_PIN
 #define DBG_USART_RX_FUNCTION   AVR32_USART1_RXD_0_0_FUNCTION
@@ -16,13 +35,66 @@
 #define DBG_USART_TX_FUNCTION   AVR32_USART1_TXD_0_0_FUNCTION
 #define DBG_USART_BAUDRATE      57600
 
+// oled usart (in spi mode)
+#define OLED_USART_SPI                 (&AVR32_USART2)
+#define OLED_USART_SPI_SCK_PIN         AVR32_USART2_CLK_0_PIN
+#define OLED_USART_SPI_SCK_FUNCTION    AVR32_USART2_CLK_0_FUNCTION
+#define OLED_USART_SPI_MISO_PIN        AVR32_USART2_RXD_0_0_PIN
+#define OLED_USART_SPI_MISO_FUNCTION   AVR32_USART2_RXD_0_0_FUNCTION
+#define OLED_USART_SPI_MOSI_PIN        AVR32_USART2_TXD_0_0_PIN
+#define OLED_USART_SPI_MOSI_FUNCTION   AVR32_USART2_TXD_0_0_FUNCTION
+#define OLED_USART_SPI_NSS_PIN         AVR32_USART2_RTS_0_0_PIN
+#define OLED_USART_SPI_NSS_FUNCTION    AVR32_USART2_RTS_0_0_FUNCTION
+//==============================================
+//==== SPI
+// blackfin SPI
+#define BFIN_SPI                   (&AVR32_SPI0)
+#define BFIN_SPI_NPCS              0
+#define BFIN_SPI_SCK_PIN           AVR32_SPI0_SCK_0_0_PIN
+#define BFIN_SPI_SCK_FUNCTION      AVR32_SPI0_SCK_0_0_FUNCTION
+#define BFIN_SPI_MISO_PIN          AVR32_SPI0_MISO_0_0_PIN
+#define BFIN_SPI_MISO_FUNCTION     AVR32_SPI0_MISO_0_0_FUNCTION
+#define BFIN_SPI_MOSI_PIN          AVR32_SPI0_MOSI_0_0_PIN
+#define BFIN_SPI_MOSI_FUNCTION     AVR32_SPI0_MOSI_0_0_FUNCTION
+#define BFIN_SPI_NPCS_PIN          AVR32_SPI0_NPCS_0_0_PIN
+#define BFIN_SPI_NPCS_FUNCTION     AVR32_SPI0_NPCS_0_0_FUNCTION
+
+// sdcard SPI
+#define SD_MMC_SPI                  (&AVR32_SPI1)
+#define SD_MMC_SPI_NPCS             1
+#define SD_MMC_SPI_SCK_PIN          AVR32_SPI1_SCK_0_0_PIN
+#define SD_MMC_SPI_SCK_FUNCTION     AVR32_SPI1_SCK_0_0_FUNCTION
+#define SD_MMC_SPI_MISO_PIN         AVR32_SPI1_MISO_0_0_PIN
+#define SD_MMC_SPI_MISO_FUNCTION    AVR32_SPI1_MISO_0_0_FUNCTION
+#define SD_MMC_SPI_MOSI_PIN         AVR32_SPI1_MOSI_0_0_PIN
+#define SD_MMC_SPI_MOSI_FUNCTION    AVR32_SPI1_MOSI_0_0_FUNCTION
+#define SD_MMC_SPI_NPCS_PIN         AVR32_SPI1_NPCS_1_0_PIN
+#define SD_MMC_SPI_NPCS_FUNCTION    AVR32_SPI1_NPCS_1_0_FUNCTION
+
+
+//==============================================
+//==== peripheral DMA controller
+// SDRAM
 #define AVR32_PDCA_CHANNEL_USED_RX AVR32_PDCA_PID_SPI1_RX
 #define AVR32_PDCA_CHANNEL_USED_TX AVR32_PDCA_PID_SPI1_TX
+#define AVR32_PDCA_CHANNEL_SPI_RX 0 
+#define AVR32_PDCA_CHANNEL_SPI_TX 1 
 
-// target PBA clock frequency (Hz)
-#define PBA_HZ                FOSC0
+//==============================================
+//==== GPIO
+// sd card
+#define SD_MMC_CARD_DETECT_PIN      AVR32_PIN_PA02
+#define SD_MMC_WRITE_PROTECT_PIN    AVR32_PIN_PA07
 
-#define AVR32_PDCA_CHANNEL_SPI_RX 0 // In the example we will use the pdca channel 0.
-#define AVR32_PDCA_CHANNEL_SPI_TX 1 // In the example we will use the 
+// PA09 in GPIO for OLED command/data register select
+#define OLED_REGISTER_PIN AVR32_PIN_PA09
+
+// (input) receive HWAIT from the blackfin during boot process
+#define BFIN_HWAIT_PIN    AVR32_PIN_PB00
+// (output) pull low to reset the blackfin
+#define BFIN_RESET_PIN    AVR32_PIN_PB01
+
+// encoders (8 pins)
+// switches (6 pins)
 
 #endif 

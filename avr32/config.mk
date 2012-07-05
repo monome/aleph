@@ -44,6 +44,7 @@ CSRCS = \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.c \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.c \
 	common/services/storage/ctrl_access/ctrl_access.c \
+	./src/bfin.c \
 	./src/files.c \
 	./src/main.c \
 	./src/init.c	\

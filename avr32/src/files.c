@@ -12,6 +12,7 @@
 #include "file.h"
 #include "print_funcs.h"
 // aleph
+#include "bfin.h"
 #include "conf_aleph.h"
 #include "files.h"
 
@@ -54,9 +55,8 @@ void load_bfin_elf(void) {
   if (size > 0) {
     load_buf = (char*)malloc( size );
   }
-  ///// do stuff
-  // ...
-  // ...
+  ///////
+  bfin_load(size, load_buf);
   ////////
   free(load_buf);
 }
