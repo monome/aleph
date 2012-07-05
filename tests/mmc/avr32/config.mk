@@ -30,7 +30,7 @@ CSRCS = \
 	avr32/drivers/flashc/flashc.c                      \
 	avr32/drivers/gpio/gpio.c                          \
 	avr32/drivers/intc/intc.c                          \
-       avr32/drivers/pdca/pdca.c                                   \
+       avr32/drivers/pdca/pdca.c                           \
 	avr32/drivers/pm/pm.c                              \
 	avr32/drivers/pm/pm_conf_clocks.c                  \
 	avr32/drivers/pm/power_clocks_lib.c                \
