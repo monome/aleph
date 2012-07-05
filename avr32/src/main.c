@@ -1,259 +1,141 @@
-#include <avr32/io.h>
+/* main,c
+ * mmc_test
+ * aleph
+ *
+ * test program for accessing FAT filesystem on SD, vi SPI
+ */
+
+
+//ASF
+#include <string.h>
+#include "board.h"
+#include "conf_sd_mmc_spi.h"
 #include "compiler.h"
+#include "ctrl_access.h"
+#include "fat.h"
+#include "file.h"
+#include "gpio.h"
+#include "intc.h"
+#include "navigation.h"
+#include "pdca.h"
+#include "power_clocks_lib.h"
+//#include "preprocessor.h"
+#include "print_funcs.h"
+#include "sd_mmc_spi.h"
+// aleph
+#include "conf_aleph.h"
 #include "init.h"
 
-//////////// typedefs
+//! buffer for filename
+static char str_buf[MAX_FILE_PATH_LENGTH];
 
-// encoder struct
-typedef struct {
-  unsigned char pos_now, pos_old;
+// Used to indicate the end of PDCA transfer
+volatile bool end_of_transfer;
 
-  int value;
-  int min, max;
-  int step;
+//=============================
+//===== static functions
 
-  int event_id;
-  int event_type;
-} enc_t;
+// Software wait
+static void wait(void);
+void wait(void)
+{
+  volatile int i;
+  for(i = 0 ; i < 5000; i++);
+}
 
-typedef struct {
-  unsigned char state;
+/// register interrutps 
+//static void register_interrupts(void); 
 
-  int mode; // normal, toggle
-  int toggle_state;
-  int value_on;
-  int value_off;
-  int send_on;
-  int send_off;
+////main function
+int main (void) {
+  //uint32_t tmp;
 
-  int event_id;
-  int event_type;
-} sw_t;
+  // switch to osc0 for main clock
+  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP); 
 
-#define SW_MODE_NORMAL 0
-#define SW_MODE_TOGGLE 1
+  // Initialize RS232 shell text output.
+  init_dbg_usart(PBA_HZ);
 
-// event types: (enum?) control = avr32, param = bf, preset
-#define EVENT_CONTROL	0
-#define EVENT_PARAM		1
-#define EVENT_PRESET	2
+  // Initialize Interrupt Controller
+  INTC_init_interrupts();
 
-//////////// static vars
+  // Initialize SD/MMC driver resources: GPIO, SPI and SD/MMC.
+  init_sd_mmc_resources();
 
-static unsigned int param_delivery[3];
+  // Initialize PDCA controller before starting a transfer
+  init_local_pdca();
 
-// array of pointers for local control variables.
-// possibly should be turned into a class with public functions
-static int *control_id[] = {
-  &enc[0].value,
-  &enc[0].min,
-  &enc[0].max,
-  &enc[0].step,
-  &enc[0].event_id,
-  &enc[0].event_type
-};
-
-
-//////////// function declarations
-
-
-static void init_control( void );
-
-
-
-/////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////
-
-int main(void) {
-  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP);
-
-  init_spi();
-  init_control_pins();
-
-  init_control();
-
-  Disable_global_interrupt();
+  // register interrupts
   register_interrupts();
+  
+  // Enable all interrupts.
   Enable_global_interrupt();
 
-  while(1) {
-    ;;
-  }
-}
+  // Wait for a card to be inserted
+  while (!sd_mmc_spi_mem_check());
+  print_dbg("\r\nCard detected!");
 
+  // Read Card capacity
+  sd_mmc_spi_get_capacity();
+  print_dbg("Capacity = ");
+  print_dbg_ulong(capacity >> 20);
+  print_dbg(" MBytes");
 
+  ///// LS  
+  // Reset navigators .
+  nav_reset();
+  // Use the last drive available as default.
+  nav_drive_set(nav_drive_nb() - 1);
+  // Mount it.
+  nav_partition_mount();
 
-//////////// function definitions
-
-// init control values
-void init_control( void ) {
-  enc[0].pos_old = gpio_get_pin_value(CON_ENC0_S0) + (gpio_get_pin_value(CON_ENC0_S1) << 1);
-  enc[0].min = 0;
-  enc[0].max = 0xffffffff;
-  v	enc[0].event_id = 0;
-  enc[0].event_type = EVENT_PARAM;
-
-  enc[1].pos_old = gpio_get_pin_value(CON_ENC1_S0) + (gpio_get_pin_value(CON_ENC1_S1) << 1);
-  enc[1].min = 0;
-  enc[1].max = 0xffffffff;
-  enc[1].event_id = 1;
-  enc[1].event_type = EVENT_PARAM;
-
-  sw[0].state = 0;
-  sw[0].mode = SW_MODE_NORMAL;
-  sw[0].value_on = 0xffffffff;
-  sw[0].value_off = 0;
-  sw[0].send_on = 1;
-  sw[0].send_off = 1;
-  sw[0].event_id = 2;
-  sw[0].event_type = EVENT_PARAM;
-
-  sw[1].state = 0;
-  sw[1].mode = SW_MODE_NORMAL;
-  sw[1].value_on = 0xffffffff;
-  sw[1].value_off = 0;
-  sw[1].send_on = 1;
-  sw[1].send_off = 1;
-  sw[1].event_id = 3;
-  sw[1].event_type = EVENT_PARAM;
-
-  sw[2].state = 0;
-  sw[2].mode = SW_MODE_NORMAL;
-  sw[2].value_on = 0xffffffff;
-  sw[2].value_off = 0;
-  sw[2].send_on = 1;
-  sw[2].send_off = 1;
-  sw[2].event_id = 4;
-  sw[2].event_type = EVENT_PARAM;
-}
-
-
-// encoder interrupt
-void HandleEncInterrupt( U8 pin )
-{
-  int e, p1, p2;
-
-  switch(pin) {
-  case CON_ENC0_S0:
-  case CON_ENC0_S1:
-    e = 0;
-    p1 = CON_ENC0_S0;
-    p2 = CON_ENC0_S1;
-    break;
-  case CON_ENC1_S0:
-  case CON_ENC1_S1:
-    e = 1;
-    p1 = CON_ENC1_S0;
-    p2 = CON_ENC1_S1;
-    break;
-  }
-
-  enc[e].pos_now = gpio_get_pin_value(p1) + (gpio_get_pin_value(p2) << 1);
-  if(enc[e].pos_now != enc[e].pos_old) {
-    enc[e].value += enc_map[enc[e].pos_old][enc[e].pos_now];
-    if(enc[e].value < enc[e].min) enc[0].value = enc[e].min;
-    else if(enc[e].value > enc[e].max) enc[0].value = enc[e].max;
-
-    if(enc[e].event_type == EVENT_CONTROL) {
-      *control_id[enc[e].event_id] = enc[e].value;
-    }
-    else if (enc[e].event_type == EVENT_PARAM) {
-      param_delivery[0] = P_SET_PARAM_COMMAND_WORD(P_PARAM_COM_SET,
-						   enc[0].event_id);
-      param_delivery[1] = P_SET_PARAM_DATA_WORD_H(enc[e].value);
-      param_delivery[2] = P_SET_PARAM_DATA_WORD_L(enc[e].value);
-
-      spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-      spi_write(BFIN_SPI, param_delivery[0]);
-      spi_write(BFIN_SPI, param_delivery[1]);
-      spi_write(BFIN_SPI, param_delivery[2]);
-      spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    }
-    // no EVENT_PRESET for encoders
-  }
-
-  enc[e].pos_old = enc[e].pos_now;
-}
-
-// sw interrupt
-void HandleSwInterrupt( U8 pin )
-{
-  int v, s, p, nosend = 0;
-
-  switch(pin) {
-  case CON_SW0:
-    s = 0;
-    p = CON_SW0;
-    break;
-  case CON_SW1:
-    s = 1;
-    p = CON_SW1;
-    break;
-  case CON_SW2:
-    s = 2;
-    p = CON_SW2;
-    break;
-  }
-
-  if(sw[s].mode == SW_MODE_NORMAL)
-    sw[s].state = gpio_get_pin_value(p);
-  else {
-    if(gpio_get_pin_value(p)) {
-      sw[s].state ^= 1;
-    }
-    else nosend = 1;
-  }
-
-  if(sw[s].state) {
-    v = sw[s].value_on;
-    if(!sw[s].send_on)
-      nosend++;
-  }
-  else {
-    v = sw[s].value_off;
-    if(!sw[s].send_off)
-      nosend++;
-  }
-
-  if(!nosend) {
-    if(sw[s].event_type == EVENT_CONTROL) {
-      *control_id[sw[0].event_id] = v;
-    }
-    else if(sw[s].event_type == EVENT_PARAM) {
-      param_delivery[0] = P_SET_PARAM_COMMAND_WORD(P_PARAM_COM_SET,
-						   sw[s].event_id);
-      param_delivery[1] = P_SET_PARAM_DATA_WORD_H(v);
-      param_delivery[2] = P_SET_PARAM_DATA_WORD_L(v);
-
-      spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-      spi_write(BFIN_SPI, param_delivery[0]);
-      spi_write(BFIN_SPI, param_delivery[1]);
-      spi_write(BFIN_SPI, param_delivery[2]);
-      spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    }
-    else if(sw[0].event_type == EVENT_PRESET) {
-      // recall preset
-    }
-  }
-}
-
-
-// check pin for interrupt, call handler if so
-static inline void checkEncInterruptPin(const U8 pin)
-{
-  if(gpio_get_pin_interrupt_flag(pin))
+  // Get the volume name
+  nav_dir_name((FS_STRING)str_buf, MAX_FILE_PATH_LENGTH);
+  // Display general informations (drive letter and current path)
+  print(DBG_USART, "\r\nVolume is ");
+  print_char(DBG_USART, 'A' + nav_drive_get());
+  print(DBG_USART, ":\r\nDir name is ");
+  print(DBG_USART, str_buf);
+  print(DBG_USART, CRLF);
+  // Try to sort items by folders
+  if (!nav_filelist_first(FS_DIR))
     {
-      HandleEncInterrupt( pin );
-      gpio_clear_pin_interrupt_flag(pin);
+      // Sort items by files
+      nav_filelist_first(FS_FILE);
     }
-}
-
-// check pin for interrupt, call handler if so
-static inline void checkSwInterruptPin(const U8 pin)
-{
-  if(gpio_get_pin_interrupt_flag(pin))
+  // Display items informations
+  print(DBG_USART, "\tSize (Bytes)\tName\r\n");
+  // reset filelist before to start the listing
+  nav_filelist_reset();
+  // While an item can be found
+  while (nav_filelist_set(0, FS_FIND_NEXT))
     {
-      HandleSwInterrupt( pin );
-      gpio_clear_pin_interrupt_flag(pin);
+      // Get and display current item informations
+      print(DBG_USART, (nav_file_isdir()) ? "Dir\t" : "   \t");
+      print_ulong(DBG_USART, nav_file_lgt());
+      print(DBG_USART, "\t\t");
+      nav_file_name((FS_STRING)str_buf, MAX_FILE_PATH_LENGTH, FS_NAME_GET, true);
+      print(DBG_USART, str_buf);
+      print(DBG_USART, CRLF);
+      
+      // Open the file.
+      file_open(FOPEN_MODE_R);
+      // While the end isn't reached
+      while (!file_eof())
+	{
+	  // Display next char from file.
+	  print_char(DBG_USART, file_getc());
+	}
+      // Close the file.
+      file_close();
+      print(DBG_USART, CRLF);
+
     }
+  // Display the files number
+  print_ulong(DBG_USART, nav_filelist_nb(FS_FILE));
+  print(DBG_USART, "  Files\r\n");
+  // Display the folders number
+  print_ulong(DBG_USART, nav_filelist_nb(FS_DIR));
+  print(DBG_USART, "  Dir\r\n");
+
 }
