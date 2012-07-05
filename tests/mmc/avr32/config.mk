@@ -30,6 +30,7 @@ CSRCS = \
 	avr32/drivers/flashc/flashc.c                      \
 	avr32/drivers/gpio/gpio.c                          \
 	avr32/drivers/intc/intc.c                          \
+       avr32/drivers/pdca/pdca.c                                   \
 	avr32/drivers/pm/pm.c                              \
 	avr32/drivers/pm/pm_conf_clocks.c                  \
 	avr32/drivers/pm/power_clocks_lib.c                \
@@ -40,8 +41,8 @@ CSRCS = \
 	avr32/services/fs/fat/file.c                       \
 	avr32/services/fs/fat/navigation.c                 \
 	avr32/utils/debug/print_funcs.c                    \
-        common/components/memory/data_flash/at45dbx/_asf_v1/at45dbx.c \
-	common/components/memory/data_flash/at45dbx/_asf_v1/at45dbx_mem.c \
+	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.c \
+	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.c \
 	common/services/storage/ctrl_access/ctrl_access.c \
 	./src/main.c
 
@@ -59,19 +60,21 @@ INC_PATH = \
        avr32/drivers/flashc                               \
        avr32/drivers/gpio                                 \
        avr32/drivers/intc                                 \
+       avr32/drivers/pdca                                   \
        avr32/drivers/pm                                   \
        avr32/drivers/spi                                  \
        avr32/drivers/usart                                \
        avr32/services/fs/fat                              \
-       avr32/services/fs/fat/fat_example                  \
        avr32/utils                                        \
        avr32/utils/debug                                  \
        avr32/utils/preprocessor                           \
        common/boards                                      \
-       common/components/memory/data_flash/at45dbx/_asf_v1 \
+	avr32/components/memory/sd_mmc/sd_mmc_spi \
        common/services/storage/ctrl_access                \
        common/utils \
-	./
+	. \
+	../../tests/mmc/avr32 \
+	../../tests/mmc/avr32/conf
 
 # Additional search paths for libraries.
 LIB_PATH = 
