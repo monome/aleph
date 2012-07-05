@@ -5,9 +5,12 @@
 */
 //ASF
 #include "compiler.h"
+#include "gpio.h"
 #include "spi.h"
 // aleph
+#include "conf_aleph.h"
 #include "bfin.h"
+
 
 // HWAIT status from blackfin
 volatile U8 hwait = 0;
@@ -32,7 +35,7 @@ void bfin_load(U32 size, U8 * data) {
     while(hwait > 0) {
       ;;
     }
-    spi_write(BFIN_SPI, ldrData[byte]);
+    spi_write(BFIN_SPI, data[byte]);
     byte++;
   }
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
