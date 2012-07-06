@@ -14,7 +14,7 @@ extern volatile U8 hwait;
 
 // load an .ldr file over SPI
 void bfin_load(U32 size, char * data);
-// perform a param transaction over SPI
+// perform a parameter transaction over SPI
 void bfin_param(U32 idx, F32 val);
 
 #endif // header guard

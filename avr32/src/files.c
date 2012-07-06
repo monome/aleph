@@ -43,6 +43,7 @@ void init_files(void) {
 //// load the first LDR file found
 void load_bfin_sdcard_test(void) {
   U32 size;
+  U32 byte = 0;
   U8 len;
   U8 found = 0;
   // sort by folders, then by files
@@ -72,10 +73,20 @@ void load_bfin_sdcard_test(void) {
   print_dbg_ulong( size);
   print_dbg( "\r\n loading...");
   if (size > 0) {
+    // allocate RAM buffer
     load_buf = (char*)malloc( size );
-    ///////
+    // copy file to buf
+    file_open(FOPEN_MODE_R);
+    // While the end isn't reached
+    while (!file_eof()) {
+      load_buf[byte] = file_getc();
+      byte++;
+    }
+    // Close the file.
+    file_close();
+    // load from the buf
     bfin_load(size, load_buf);
-    ////////
+    // de-allocate the buf
     free(load_buf);
   }
 }
