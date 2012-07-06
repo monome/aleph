@@ -32,21 +32,19 @@ volatile avr32_pdca_channel_t* pdca_channeltx ;
 // initialize debug USART
 void init_dbg_usart (long pba_hz) {
   // GPIO map for USART.
-  static const gpio_map_t DBG_USART_GPIO_MAP =
-    {
-      {DBG_USART_RX_PIN, DBG_USART_RX_FUNCTION},
-      {DBG_USART_TX_PIN, DBG_USART_TX_FUNCTION}
-    };
-
+  static const gpio_map_t DBG_USART_GPIO_MAP = {
+    { DBG_USART_RX_PIN, DBG_USART_RX_FUNCTION },
+    { DBG_USART_TX_PIN, DBG_USART_TX_FUNCTION }
+  };
+  
   // Options for USART.
-  static const usart_options_t DBG_USART_OPTIONS =
-    {
-      .baudrate = DBG_USART_BAUDRATE,
-      .charlength = 8,
-      .paritytype = USART_NO_PARITY,
-      .stopbits = USART_1_STOPBIT,
-      .channelmode = USART_NORMAL_CHMODE
-    };
+  static const usart_options_t DBG_USART_OPTIONS = {
+    .baudrate = DBG_USART_BAUDRATE,
+    .charlength = 8,
+    .paritytype = USART_NO_PARITY,
+    .stopbits = USART_1_STOPBIT,
+    .channelmode = USART_NORMAL_CHMODE
+  };
 
   // Set up GPIO for DBG_USART
   gpio_enable_module(DBG_USART_GPIO_MAP,
@@ -59,11 +57,11 @@ void init_dbg_usart (long pba_hz) {
 // initialize sd/mms resources: SPI. GPIO, SD_MMC
 void init_sd_mmc_resources(void) {
   // GPIO pins used for SD/MMC interface
-  static const gpio_map_t SD_MMC_SPI_GPIO_MAP = { { SD_MMC_SPI_SCK_PIN,
-						    SD_MMC_SPI_SCK_FUNCTION }, // SPI Clock.
-						  { SD_MMC_SPI_MISO_PIN, SD_MMC_SPI_MISO_FUNCTION }, // MISO.
-						  { SD_MMC_SPI_MOSI_PIN, SD_MMC_SPI_MOSI_FUNCTION }, // MOSI.
-						  { SD_MMC_SPI_NPCS_PIN, SD_MMC_SPI_NPCS_FUNCTION } // Chip Select NPCS.
+  static const gpio_map_t SD_MMC_SPI_GPIO_MAP = {
+    { SD_MMC_SPI_SCK_PIN, SD_MMC_SPI_SCK_FUNCTION }, // SPI Clock.
+    { SD_MMC_SPI_MISO_PIN, SD_MMC_SPI_MISO_FUNCTION }, // MISO.
+    { SD_MMC_SPI_MOSI_PIN, SD_MMC_SPI_MOSI_FUNCTION }, // MOSI.
+    { SD_MMC_SPI_NPCS_PIN, SD_MMC_SPI_NPCS_FUNCTION } // Chip Select NPCS.
   };
 
   // SPI options.
@@ -135,7 +133,6 @@ void init_bfin_resources(void) {
     { BFIN_SPI_MOSI_PIN, BFIN_SPI_MOSI_FUNCTION },
     { BFIN_SPI_NPCS_PIN, BFIN_SPI_NPCS_FUNCTION }
   };
-
   
   spi_options_t spiOptions = {
     .reg          = BFIN_SPI_NPCS,

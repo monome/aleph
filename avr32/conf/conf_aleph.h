@@ -75,10 +75,10 @@
 //==============================================
 //==== peripheral DMA controller
 // SDRAM
-#define AVR32_PDCA_CHANNEL_USED_RX AVR32_PDCA_PID_SPI1_RX
-#define AVR32_PDCA_CHANNEL_USED_TX AVR32_PDCA_PID_SPI1_TX
-#define AVR32_PDCA_CHANNEL_SPI_RX 0 
-#define AVR32_PDCA_CHANNEL_SPI_TX 1 
+#define AVR32_PDCA_CHANNEL_USED_RX  AVR32_PDCA_PID_SPI1_RX
+#define AVR32_PDCA_CHANNEL_USED_TX  AVR32_PDCA_PID_SPI1_TX
+#define AVR32_PDCA_CHANNEL_SPI_RX   0 
+#define AVR32_PDCA_CHANNEL_SPI_TX   1 
 
 //==============================================
 //==== GPIO
@@ -90,7 +90,8 @@
 #define OLED_REGISTER_PIN AVR32_PIN_PA09
 
 // (input) receive HWAIT from the blackfin during boot process
-#define BFIN_HWAIT_PIN    AVR32_PIN_PB00
+//#define BFIN_HWAIT_PIN    AVR32_PIN_PB00
+#define BFIN_HWAIT_PIN    AVR32_PIN_PA03
 // (output) pull low to reset the blackfin
 #define BFIN_RESET_PIN    AVR32_PIN_PB01
 

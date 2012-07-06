@@ -10,5 +10,5 @@ extern void files_list(void);
 
 //// TEST:
 //// load the first file found as a blackfin ELF
-extern void load_bfin_elf(void);
+extern void load_bfin_sdcard_test(void);
 #endif // header guard 

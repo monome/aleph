@@ -4,8 +4,10 @@
    filesystem routines
 */
 
-// asf
+// std
 #include <stdlib.h>
+#include <string.h>
+// asf
 #include "compiler.h"
 #include "navigation.h"
 #include "fat.h"
@@ -38,74 +40,79 @@ void init_files(void) {
 		    
 
 //// TEST:
-//// load the first file found as a blackfin ELF
-void load_bfin_elf(void) {
+//// load the first LDR file found
+void load_bfin_sdcard_test(void) {
   U32 size;
+  U8 len;
+  U8 found = 0;
   // sort by folders, then by files
   if (!nav_filelist_first(FS_DIR)) {
     nav_filelist_first(FS_FILE);
   }
   // take the first file
   nav_filelist_reset();
-  nav_filelist_set( 0 , FS_FIND_NEXT);
-  // get name
-  nav_file_name((FS_STRING)name_buf, MAX_FILE_PATH_LENGTH, FS_NAME_GET, true);
+  // search for an .ldr extension
+  while(found == 0) {
+    nav_filelist_set( 0 , FS_FIND_NEXT);
+    nav_file_name((FS_STRING)name_buf, MAX_FILE_PATH_LENGTH, FS_NAME_GET, true);
+    len = strlen(name_buf);
+    if (
+	(name_buf[len-4] == '.') &&
+	(name_buf[len-3] == 'l') &&
+	(name_buf[len-2] == 'd') &&
+	(name_buf[len-1] == 'r') ) {
+      found = 1;
+    }
+  }
   // get size
   size = nav_file_lgt();
+  print_dbg( "\r\n found .ldr file: ");
+  print_dbg( name_buf);
+  print_dbg( "\r\n size: ");
+  print_dbg_ulong( size);
+  print_dbg( "\r\n loading...");
   if (size > 0) {
     load_buf = (char*)malloc( size );
+    ///////
+    bfin_load(size, load_buf);
+    ////////
+    free(load_buf);
   }
-  ///////
-  bfin_load(size, load_buf);
-  ////////
-  free(load_buf);
 }
 
 void files_list(void) {
-  ///// LS  
   // Get the volume name
   nav_dir_name((FS_STRING)name_buf, MAX_FILE_PATH_LENGTH);
   // Display general informations (drive letter and current path)
-  print(DBG_USART, "\r\nVolume is ");
-  print_char(DBG_USART, 'A' + nav_drive_get());
-  print(DBG_USART, ":\r\nDir name is ");
-  print(DBG_USART, name_buf);
-  print(DBG_USART, CRLF);
+  print_dbg( "\r\nVolume is ");
+  print_dbg_char( 'A' + nav_drive_get());
+  print_dbg( ":\r\nDir name is ");
+  print_dbg( name_buf);
+  print_dbg( CRLF);
   // Try to sort items by folders
   if (!nav_filelist_first(FS_DIR)) {
     // Sort items by files
     nav_filelist_first(FS_FILE);
   }
   // Display items informations
-  print(DBG_USART, "\tSize (Bytes)\tName\r\n");
+  print_dbg( "\tSize (Bytes)\tName\r\n");
   // reset filelist before to start the listing
   nav_filelist_reset();
   // While an item can be found
   while (nav_filelist_set(0, FS_FIND_NEXT)) {
     // Get and display current item informations
-    print(DBG_USART, (nav_file_isdir()) ? "Dir\t" : "   \t");
-    print_ulong(DBG_USART, nav_file_lgt());
-    print(DBG_USART, "\t\t");
+    print_dbg( (nav_file_isdir()) ? "Dir\t" : "   \t");
+    print_dbg_ulong(nav_file_lgt());
+    print_dbg( "\t\t");
     nav_file_name((FS_STRING)name_buf, MAX_FILE_PATH_LENGTH, FS_NAME_GET, true);
-    print(DBG_USART, name_buf);
-    print(DBG_USART, CRLF);
-    
-    // Open the file.
-    file_open(FOPEN_MODE_R);
-    // While the end isn't reached
-    while (!file_eof()) {
-      // Display next char from file.
-      print_char(DBG_USART, file_getc());
-    }
-    // Close the file.
-    file_close();
-    print(DBG_USART, CRLF);
-    
+    print_dbg( name_buf);
+    print_dbg( CRLF);
+
   }
   // Display the files number
-  print_ulong(DBG_USART, nav_filelist_nb(FS_FILE));
-  print(DBG_USART, "  Files\r\n");
+  print_dbg_ulong( nav_filelist_nb(FS_FILE));
+  print_dbg( "  Files\r\n");
   // Display the folders number
-  print_ulong(DBG_USART, nav_filelist_nb(FS_DIR));
-  print(DBG_USART, "  Dir\r\n");
+  print_dbg_ulong( nav_filelist_nb(FS_DIR));
+  print_dbg( "  Dir\r\n");
 }

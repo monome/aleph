@@ -15,7 +15,7 @@
 // HWAIT status from blackfin
 volatile U8 hwait = 0;
 
-void bfin_load(U32 size, U8 * data) {
+void bfin_load(U32 size, char * data) {
   U64 delay;
   U64 byte;
 
