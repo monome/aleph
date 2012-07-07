@@ -14,6 +14,7 @@
 
 #define MODULE_NUM_PARAMS 2
 #define WAVETABLE_NUM 1024
+#define WAVETABLE_NUM_1 1023
 
 // parameter indices
 enum {
@@ -29,10 +30,8 @@ typedef struct _oscData {
   // parameter data
   ParamData paramData[MODULE_NUM_PARAMS];
   // sine wavetable
-  const fract32 sineTable[WAVETABLE_NUM];
+  f32 sineTable[WAVETABLE_NUM];
 } oscData_t;
 
-// manuale locate the data structure at start of SDRAM
-extern oscData_t * data;
 
 #endif // header guard

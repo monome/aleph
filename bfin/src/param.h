@@ -46,12 +46,11 @@ typedef struct __attribute__((__packed__)) ParamDescStruct {
 // current realtime param data, should be stored in L1
 typedef struct __attribute__((__packed__)) ParamDataStruct {
   // a 4-byte union. the correct interpretation should be chosen for a given parameter's datatype.
-  union {
-    //    u32      asInt32; 
+  volatile union {
     fract32  asFract;
     f32      asFloat; 
   } value;
-  // other stuff? (interpolation state?)
+  volatile u8 changed;
 } ParamData;
 
 /*

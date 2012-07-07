@@ -10,8 +10,10 @@
 #include "types.h"
 #include "param.h"
 
- #define SDRAM_ADDRESS 0x00000000
- #define SDRAM_SIZE    0x07ffffff
+#define SDRAM_ADDRESS 0x00000000
+#define SDRAM_SIZE    0x07ffffff
+
+#define SAMPLERATE 48000
 
 //-------- global variables
 // parameter descriptor table
