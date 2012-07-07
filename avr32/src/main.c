@@ -10,21 +10,18 @@
 #include "conf_sd_mmc_spi.h"
 #include "compiler.h"
 #include "ctrl_access.h"
-//#include "fat.h"
-//#include "file.h"
 #include "gpio.h"
 #include "intc.h"
-//#include "navigation.h"
 #include "pdca.h"
 #include "power_clocks_lib.h"
-//#include "preprocessor.h"
 #include "print_funcs.h"
-//#include "sd_mmc_spi.h"
 // aleph
 #include "bfin.h"
 #include "conf_aleph.h"
+#include "events.h"
 #include "files.h"
 #include "init.h"
+#include "screen.h"
 
 
 //------------------------
