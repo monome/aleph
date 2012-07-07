@@ -6,6 +6,7 @@
 #define _ENCODERS_H_
 
 #include "compiler.h"
+#include "eventTypes.h"
 
 #define NUM_ENC    4
 

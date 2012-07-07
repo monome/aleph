@@ -11,7 +11,7 @@
 #include "delay.h"
 #include "intc.h"
 // aleph
-#include "config.h"
+#include "conf_aleph.h"
 #include "screen.h"
 #include "font.h"
 

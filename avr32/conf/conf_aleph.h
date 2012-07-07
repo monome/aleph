@@ -11,7 +11,7 @@
 //==== clocks
 
 // target PBA clock frequency
-#define PBA_HZ                FOSC0
+//#define PBA_HZ                FOSC0
 // PLL output frequency
 #define PLL_OUTPUT_FREQ 132000000UL
 
@@ -96,6 +96,20 @@
 #define BFIN_RESET_PIN    AVR32_PIN_PB01
 
 // encoders (8 pins)
+#define ENC0_S0_PIN		AVR32_PIN_PA23
+#define ENC0_S1_PIN		AVR32_PIN_PA24
+#define ENC1_S0_PIN		AVR32_PIN_PA25
+#define ENC1_S1_PIN		AVR32_PIN_PA26
+#define ENC2_S0_PIN		AVR32_PIN_PA27
+#define ENC2_S1_PIN		AVR32_PIN_PA28
+#define ENC3_S0_PIN		AVR32_PIN_PA30
+#define ENC3_S1_PIN		AVR32_PIN_PB02
+
 // switches (6 pins)
+#define SW0_PIN		AVR32_PIN_PB03
+#define SW1_PIN		AVR32_PIN_PB04
+#define SW2_PIN		AVR32_PIN_PB05
+#define SW3_PIN		AVR32_PIN_PB06
+#define SW_EDIT_PIN     AVR32_PIN_PB07
 
 #endif 

@@ -30,12 +30,13 @@ CSRCS = \
 	avr32/drivers/flashc/flashc.c                      \
 	avr32/drivers/gpio/gpio.c                          \
 	avr32/drivers/intc/intc.c                          \
-       avr32/drivers/pdca/pdca.c                           \
+	avr32/drivers/pdca/pdca.c                          \
 	avr32/drivers/pm/pm.c                              \
 	avr32/drivers/pm/pm_conf_clocks.c                  \
 	avr32/drivers/pm/power_clocks_lib.c                \
 	avr32/drivers/spi/spi.c                            \
 	avr32/drivers/usart/usart.c                        \
+        avr32/services/delay/delay.c			   \
 	avr32/services/fs/fat/fat.c                        \
 	avr32/services/fs/fat/fat_unusual.c                \
 	avr32/services/fs/fat/file.c                       \
@@ -43,13 +44,18 @@ CSRCS = \
 	avr32/utils/debug/print_funcs.c                    \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.c \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.c \
+        common/services/clock/uc3a0_a1/sysclk.c            \
 	common/services/storage/ctrl_access/ctrl_access.c \
 	./src/bfin.c \
+	./src/events.c \
+	./src/encoders.c \
 	./src/files.c \
-	./src/main.c \
+	./src/font.c \
 	./src/init.c	\
-	./src/interrupts.c	
-
+	./src/interrupts.c \
+	./src/screen.c \
+	./src/timers.c \
+	./src/main.c
 
 # List of assembler source files.
 ASSRCS = \
@@ -61,13 +67,16 @@ ASSRCS = \
 INC_PATH = \
        avr32/boards                                       \
        avr32/boards/evk1100                               \
+	avr32/drivers/cpu/cycle_counter/                 \
        avr32/drivers/flashc                               \
        avr32/drivers/gpio                                 \
        avr32/drivers/intc                                 \
        avr32/drivers/pdca                                   \
        avr32/drivers/pm                                   \
        avr32/drivers/spi                                  \
+       avr32/drivers/tc                                 \
        avr32/drivers/usart                                \
+       avr32/services/delay                               \
        avr32/services/fs/fat                              \
        avr32/utils                                        \
        avr32/utils/debug                                  \
@@ -75,6 +84,7 @@ INC_PATH = \
        common/boards                                      \
 	avr32/components/memory/sd_mmc/sd_mmc_spi \
        common/services/storage/ctrl_access                \
+       common/services/clock                              \
        common/utils \
 	. \
 	../ \
@@ -95,7 +105,7 @@ DBGFLAGS =
 
 # Application optimization used during compilation and linking:
 # -O0, -O1, -O2, -O3 or -Os
-OPTIMIZATION = -O0
+OPTIMIZATION = -O1
 
 # Extra flags to use when archiving.
 ARFLAGS = 

@@ -5,8 +5,12 @@
 */
 
 //ASF
+#include <flashc.h>
+#include <pll.h>
+#include <sysclk.h>
 #include "compiler.h"
 #include "conf_sd_mmc_spi.h"
+#include "delay.h"
 #include "gpio.h"
 #include "pdca.h"
 #include "sd_mmc_spi.h"
@@ -16,6 +20,10 @@
 #include "conf_aleph.h"
 #include "init.h"
 
+#define FASTCLOCK 1
+
+//===========================
+//==== static variables
 
 // Dummy char table
 const char dummy_data[] =
@@ -29,8 +37,11 @@ volatile char ram_buffer[1000];
 volatile avr32_pdca_channel_t* pdca_channelrx ;
 volatile avr32_pdca_channel_t* pdca_channeltx ;
 
+//===================================
+//==== external functions
+
 // initialize debug USART
-void init_dbg_usart (long pba_hz) {
+void init_dbg_usart (void) {
   // GPIO map for USART.
   static const gpio_map_t DBG_USART_GPIO_MAP = {
     { DBG_USART_RX_PIN, DBG_USART_RX_FUNCTION },
@@ -51,7 +62,7 @@ void init_dbg_usart (long pba_hz) {
                      sizeof(DBG_USART_GPIO_MAP) / sizeof(DBG_USART_GPIO_MAP[0]));
 
   // Initialize in RS232 mode.
-  usart_init_rs232(DBG_USART, &DBG_USART_OPTIONS, pba_hz);
+  usart_init_rs232(DBG_USART, &DBG_USART_OPTIONS, sysclk_get_pba_hz());
 }
 
 // initialize sd/mms resources: SPI. GPIO, SD_MMC
@@ -86,7 +97,7 @@ void init_sd_mmc_resources(void) {
   spi_enable(SD_MMC_SPI);
 
   // Initialize SD/MMC driver with SPI clock (PBA).
-  sd_mmc_spi_init(spiOptions, PBA_HZ);
+  sd_mmc_spi_init(spiOptions, sysclk_get_pba_hz());
 }
 
 // init PDCA (Peripheral DMA Controller A) resources for the SPI transfer and start a dummy transfer
@@ -166,4 +177,53 @@ void init_bfin_resources(void) {
   
   // enable pullup on bfin RESET line
   gpio_enable_pin_pull_up(BFIN_RESET_PIN);
+}
+
+
+// initialize clocks
+void init_clocks(void) {
+
+#if FASTCLOCK
+  struct pll_config pllcfg;
+#endif
+  // default: conf_clock.h
+  // also disables non-essential peripheral clocks
+  sysclk_init();
+  
+  ///// re-enable desired peripheral clocks
+  // interrupt controller
+  sysclk_enable_pba_module(SYSCLK_INTC);
+  // gpio
+  sysclk_enable_pba_module(SYSCLK_GPIO);
+  // usart
+  sysclk_enable_pba_module(SYSCLK_USART1);
+  sysclk_enable_pba_module(SYSCLK_USART2);
+  // tc
+  sysclk_enable_peripheral_clock(APP_TC);
+
+#if FASTCLOCK
+  // use phase-lock-loop for master clock source
+  
+  // PLL src : OSC0
+  // div     : 1
+  // mul     : PLL_OUTPUT_FREQ / BOARD_OSC0_HZ
+  pll_config_init(&pllcfg, PLL_SRC_OSC0, 1,
+		  PLL_OUTPUT_FREQ / BOARD_OSC0_HZ);
+  pll_enable(&pllcfg, 0);
+  pll_wait_for_lock(0);
+  // prescalers:
+  // CPU and HSB : PLL / 2
+  // PBA         : PLL / 4
+  // PBB         : PLL / 2
+  sysclk_set_prescalers(1, 2, 1);
+  
+  // set flash wait BEFORE changing main clock!
+  flash_set_bus_freq(PLL_OUTPUT_FREQ / 2);
+  
+  // Switch the main clock to PLL0.
+  sysclk_set_source(SYSCLK_SRC_PLL0);
+#endif
+
+  // intitialize millisecond delay engine
+  delay_init(sysclk_get_cpu_hz());
 }

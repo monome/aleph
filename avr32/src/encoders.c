@@ -6,7 +6,7 @@
 #include "compiler.h"
 #include "gpio.h"
 // aleph
-#include "config.h"
+#include "conf_aleph.h"
 #include "events.h"
 #include "eventTypes.h"
 #include "encoders.h"

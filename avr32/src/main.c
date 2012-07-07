@@ -6,6 +6,7 @@
 
 //ASF
 #include <string.h>
+//#include <sysclk.h>
 #include "board.h"
 #include "conf_sd_mmc_spi.h"
 #include "compiler.h"
@@ -18,6 +19,7 @@
 // aleph
 #include "bfin.h"
 #include "conf_aleph.h"
+#include "encoders.h"
 #include "events.h"
 #include "files.h"
 #include "init.h"
@@ -62,7 +64,7 @@ static U32 dum = 0;
 
 // interrupt handler for PB00-PB07
 __attribute__((__interrupt__))
-static void irq_port1_line0(void) {
+static void irq_port0_line0(void) {
   // BFIN_HWAIT: set value
   if(gpio_get_pin_interrupt_flag(BFIN_HWAIT_PIN)) {
     if ((dum++ % 2000) == 0) { 
@@ -82,7 +84,7 @@ static void register_interrupts(void) {
   //  INTC_register_interrupt( &irq_port1_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB00 / 8), AVR32_INTC_INT1 );
   
   // register IRQ for port A, 0-7
-  INTC_register_interrupt( &irq_port1_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), AVR32_INTC_INT1 );
+  INTC_register_interrupt( &irq_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), AVR32_INTC_INT1 );
   
   // register IRQ for PDCA transfer
   INTC_register_interrupt(&irq_pdca, AVR32_PDCA_IRQ_0, AVR32_INTC_INT1); 
@@ -93,16 +95,21 @@ int main (void) {
   U32 waitForCard = 0;
 
   // switch to osc0 for main clock
-  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP); 
-
+  //  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP); 
+  
+  init_clocks();
+  
   // initialize Interrupt Controller
   INTC_init_interrupts();
 
   // disable interrupts
   Disable_global_interrupt();
 
-  // initialize RS232 text output.
-  init_dbg_usart(PBA_HZ);
+  // initialize RS232 debug uart
+  init_dbg_usart();
+
+  // initialize oled uart in SPI mode
+  //init_oled_usart();
 
   // initialize SD/MMC driver resources: GPIO, SPI and SD/MMC.
   init_sd_mmc_resources();
@@ -113,30 +120,28 @@ int main (void) {
   // initialize blackfin resources
   init_bfin_resources();
 
+  // initialize the OLED screen
+  init_oled();
+
   // register interrupts
   register_interrupts();
+
+  // intialize the event queue
+  init_events();
   
+// intialize encoders
+  init_encoders();
+
   // Enable all interrupts.
   Enable_global_interrupt();
 
   print_dbg("\r\nwaiting for SD card... ");
   // Wait for a card to be inserted
 
-  gpio_set_gpio_pin(LED3_GPIO);
-  gpio_set_gpio_pin(LED4_GPIO);
-  gpio_set_gpio_pin(LED5_GPIO);  
-
   while (!sd_mmc_spi_mem_check()) {
     waitForCard++;
   }
   print_dbg("\r\ncard detected! ");
-
-  // Read Card capacity
-  sd_mmc_spi_get_capacity();
-  print_dbg("capacity = ");
-  print_dbg_ulong(capacity >> 20);
-  print_dbg(" MBytes");
-
 
   // set up file navigation using available drives
   init_files();
@@ -144,7 +149,11 @@ int main (void) {
   // list files
   files_list();
   
-  ///// TEST:
   // load blackfin from first .ldr file in filesystem
   load_bfin_sdcard_test();
+
+  // event loop
+  while(1) {
+  }
+
 }
