@@ -19,7 +19,7 @@ int main(void) {
   init_1836();
   // intialize the sport0 for audio rx/tx
   init_sport0();
-  // intialize the DMA to shove that audio data around
+  // intialize the DMA to shove audio data around
   init_DMA();
   // put the spi back in slave mode to receive param changes from avr32
   init_spi_slave();
@@ -29,6 +29,9 @@ int main(void) {
   init_interrupts();
   // start the audio engine
   enable_DMA_sport0();  
+
+  // TEST
+  *pFlashA_PortB_Data = 0x05;
 
   while(1) {
     ;;

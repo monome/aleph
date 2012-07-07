@@ -1,3 +1,4 @@
+
 /* echo_data.h
  * aleph-blackfin echo module
  *
@@ -47,6 +48,6 @@ enum {
 };
 
 // echo buffer
-extern fract32 echoBuf[];
+extern fract32 * echoBuf;
 
 #endif // header guard

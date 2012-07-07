@@ -56,7 +56,7 @@ void init_module(void) {
 
   // intial values for parameters
   for(iChan=0; iChan<4; iChan++) {
-    paramData[timeParam[iChan]].value.asFloat = 1.f * (f32)iChan;
+    paramData[timeParam[iChan]].value.asFloat = 1.f * (f32)(iChan + 1);
     paramData[mixParam[iChan]].value.asFract = FRACT32_MAX * 0.5;
     for(jChan=0; jChan<4; jChan++) {
       if(iChan == jChan) {

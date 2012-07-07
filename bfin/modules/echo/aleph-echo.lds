@@ -21,7 +21,6 @@ MEMORY
   MEM_L1_SCRATCH : ORIGIN = 0xFFB00000, LENGTH = 0x1000
   MEM_L1_DATA_B : ORIGIN = 0xFF900000, LENGTH = 0x8000
   MEM_L1_DATA_A : ORIGIN = 0xFF800000, LENGTH = 0x8000
-  MEM_SDRAM : ORIGIN = 0x00000000, LENGTH = 64 * 1024 * 1024
   MEM_L2 : ORIGIN = 0xFEB00000, LENGTH = 0x0
 }
 
@@ -76,21 +75,6 @@ SECTIONS
   .rel.plt        : { *(.rel.plt) }
   .rela.plt       : { *(.rela.plt) }
 
-  .sdram.text :
-  {
-	echo_data.o(.text)
-  } >MEM_SDRAM =0
-
-  .sdram.data :
-  {
-	echo_data.o(.data .rodata .rodata.*)
-  } >MEM_SDRAM =0
-  
-  .sdram.bss :
-  {
-	echo_data.o(.bss)
-  } >MEM_SDRAM =0
-  
   .l2             :
   {
     *(.l2 .l2.*)

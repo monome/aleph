@@ -1,7 +1,8 @@
 #include "bfin_core.h"
-#include "types.h"
+#include "init.h"
 #include "module.h"
 #include "spi.h"
+#include "types.h"
 #include "isr.h"
 
 //--------- global variables (initialized here)
@@ -12,6 +13,8 @@ fract32 out0, out1, out2, out3;
 
 // sport0 receive interrupt (audio input from codec)
 void sport0_rx_isr() {
+  fract32 outLevel;
+  u8 leds = 0;
   // confirm interrupt handling
   *pDMA1_IRQ_STATUS = 0x0001;
   
@@ -23,6 +26,28 @@ void sport0_rx_isr() {
   in2 = iRxBuf[INTERNAL_ADC_L1] << 8;
   in3 = iRxBuf[INTERNAL_ADC_R1] << 8;
   
+  //// output level meter
+  outLevel = max_fr1x32(
+			max_fr1x32(
+				   max_fr1x32(
+					      abs_fr1x32(out0),
+					      abs_fr1x32(out1)
+					      ),
+				   abs_fr1x32(out2)
+				   ),
+			abs_fr1x32(out3)
+			);
+  
+  if (outLevel > 1076291388)      { leds = 0x3f; }
+  else if (outLevel > 539423503)  { leds = 0x3e; }
+  else if (outLevel > 135497058)  { leds = 0x3c; }
+  else if (outLevel > 53942350)   { leds = 0x38; }
+  else if (outLevel > 8549286)    { leds = 0x30; }
+  else if (outLevel > 2147484)    { leds = 0x20; }
+
+  *pFlashA_PortB_Data = leds;
+  /////
+
   // copy last frame's processing result to DMA output buffer
   // shift right to 24-bit
   iTxBuf[INTERNAL_DAC_L0] = out0 >> 8;

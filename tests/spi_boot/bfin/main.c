@@ -22,13 +22,16 @@ int main(void)
   while(1) {
     if ((ledState != gLedState) || (butState != gButState)) {
       ledState = gLedState;
+      
       butState = gButState;
       
+      
       if(gButState > 0) {
-	*pFlashA_PortB_Data = ~ledState & 0x3f;
+		*pFlashA_PortB_Data = ~ledState & 0x3f;
       } else {
-	*pFlashA_PortB_Data = ledState;
+		*pFlashA_PortB_Data = ledState;
       }
+      
       
       //*pFlashA_PortB_Data = gButState;
     }

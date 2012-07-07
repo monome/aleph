@@ -47,14 +47,12 @@ typedef struct __attribute__((__packed__)) ParamDescStruct {
 typedef struct __attribute__((__packed__)) ParamDataStruct {
   // a 4-byte union. the correct interpretation should be chosen for a given parameter's datatype.
   union {
-    u32      asInt32; 
+    //    u32      asInt32; 
     fract32  asFract;
     f32      asFloat; 
   } value;
   // other stuff? (interpolation state?)
 } ParamData;
-
-
 
 /*
 //-------- function prototypes

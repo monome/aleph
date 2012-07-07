@@ -25,7 +25,6 @@ volatile s32 iTxBuf[4];
 // SPORT0 DMA receive buffer
 volatile s32 iRxBuf[4];
 
-
 //----- function definitions
 void init_EBIU(void) {
   //  straight from the self-test example project

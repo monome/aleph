@@ -16,7 +16,10 @@ CPU = bf533
 CFLAGS += -Wall -g -mcpu=$(CPU) -I$(core_srcdir) -I$(core_dir)../common/
 INC += -I$(core_srcdir) -I$(core_dir)../common/
 LDFLAGS += -mcpu=$(CPU)
-LDRFLAGS += --initcode $(core_objdir)init.o
+# LDRFLAGS += --initcode $(core_objdir)init.o
+LDRFLAGS += --bits 16 --dma 8
+LDRFLAGS += --bmode spi_slave --port F --gpio 11
+LDRFLAGS += --verbose
 
 core_target: $(patsubst %.o, $(core_objdir)%.o, $(core_obj))
 	@echo core objects are complete in $(core_objdir)

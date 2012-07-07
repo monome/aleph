@@ -145,9 +145,9 @@ int main (void) {
   init_files();
 
   // list files
-    files_list();
-
+  files_list();
+  
   ///// TEST:
   // load blackfin from first .ldr file in filesystem
-   load_bfin_sdcard_test();
+  load_bfin_sdcard_test();
 }

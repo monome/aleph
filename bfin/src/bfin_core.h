@@ -7,8 +7,6 @@
 #ifndef _ALEPH_BFIN_CORE_H_
 #define _ALEPH_BFIN_CORE_H_ 
 
-//#include <sys/exception.h>
-//#include <cdefBF533.h>
 #include <sys/exception.h>
 #include <cdefBF533.h>
 #include <fract.h>

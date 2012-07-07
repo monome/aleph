@@ -1,5 +1,6 @@
 #include "types.h"
 #include "../../common/protocol.h"
+#include "module.h"
 #include "spi.h"
 
 //------ global variables (initialized here)
@@ -35,10 +36,12 @@ void handle_spi_rx(void) {
   if (spiRxRingIdx ==  P_PARAM_MSG_WORD_DATAL) {
     // we just received the last word, do something    
     if(paramMsgCom == P_PARAM_COM_SET) {
+	u32 iParamData = P_GET_PARAM_DATA(spiRxRing[P_PARAM_MSG_WORD_DATAH], spiRxRing[P_PARAM_MSG_WORD_DATAL]);
+	
       /*
-      u32 iParamData = P_GET_PARAM_DATA(spiRxRing[P_PARAM_MSG_WORD_DATAH], spiRxRing[P_PARAM_MSG_WORD_DATAL]);
-      // request_param_set_int(paramMsgIdx, iParamData);
-      */
+	u32 iParamData = P_GET_PARAM_DATA(spiRxRing[P_PARAM_MSG_WORD_DATAH], spiRxRing[P_PARAM_MSG_WORD_DATAL]);
+	// request_param_set_int(paramMsgIdx, iParamData);
+	*/
     }
-   } 
+  } 
 }
