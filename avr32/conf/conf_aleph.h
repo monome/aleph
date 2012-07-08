@@ -14,7 +14,8 @@
 //#define PBA_HZ                FOSC0
 // PLL output frequency
 #define PLL_OUTPUT_FREQ 132000000UL
-
+#define CPU_HZ 66000000L
+#define PBA_HZ 66000000L
 //==============================================
 //==== timers
 
@@ -94,22 +95,24 @@
 #define BFIN_HWAIT_PIN    AVR32_PIN_PA03
 // (output) pull low to reset the blackfin
 #define BFIN_RESET_PIN    AVR32_PIN_PB01
+// (output) pull low to reset the OLED
+#define OLED_RESET_PIN    AVR32_PIN_PB09
 
 // encoders (8 pins)
-#define ENC0_S0_PIN		AVR32_PIN_PA23
-#define ENC0_S1_PIN		AVR32_PIN_PA24
-#define ENC1_S0_PIN		AVR32_PIN_PA25
-#define ENC1_S1_PIN		AVR32_PIN_PA26
-#define ENC2_S0_PIN		AVR32_PIN_PA27
-#define ENC2_S1_PIN		AVR32_PIN_PA28
-#define ENC3_S0_PIN		AVR32_PIN_PA30
-#define ENC3_S1_PIN		AVR32_PIN_PB02
+#define ENC0_S0_PIN		AVR32_PIN_PA24
+#define ENC0_S1_PIN		AVR32_PIN_PA25
+#define ENC1_S0_PIN		AVR32_PIN_PA26
+#define ENC1_S1_PIN		AVR32_PIN_PA27
+#define ENC2_S0_PIN		AVR32_PIN_PA28
+#define ENC2_S1_PIN		AVR32_PIN_PA30
+#define ENC3_S0_PIN		AVR32_PIN_PB02
+#define ENC3_S1_PIN		AVR32_PIN_PB03
 
 // switches (6 pins)
-#define SW0_PIN		AVR32_PIN_PB03
-#define SW1_PIN		AVR32_PIN_PB04
-#define SW2_PIN		AVR32_PIN_PB05
-#define SW3_PIN		AVR32_PIN_PB06
-#define SW_EDIT_PIN     AVR32_PIN_PB07
+#define SW0_PIN		AVR32_PIN_PB04
+#define SW1_PIN		AVR32_PIN_PB05
+#define SW2_PIN		AVR32_PIN_PB06
+#define SW3_PIN		AVR32_PIN_PB07
+#define SW_EDIT_PIN     AVR32_PIN_PB08
 
 #endif 

@@ -76,12 +76,17 @@ __attribute__((__interrupt__))
 static void irq_tc(void) {
   event_t e;
   tcTicks++;
+  if ((tcTicks % 1000) == 0) {
+    gpio_tgl_gpio_pin(LED0_GPIO);
+  }
   // clear interrupt flag by reading timer SR
   tc_read_sr(APP_TC, APP_TC_CHANNEL);
-  if(refresh) {
-    e.eventType = kEventRefresh;
-    post_event(&e);
-    refresh = 0;
+  if ((tcTicks % 4) == 0) {
+    if(refresh) {
+      e.eventType = kEventRefresh;
+      post_event(&e);
+      refresh = 0;
+    }
   }
 }
 
@@ -98,45 +103,46 @@ static void irq_port0_line0(void) {
 // interrupt handler for PA23-PA30
 __attribute__((__interrupt__))
 static void irq_port0_line3(void) {
+  // TEST
+  gpio_tgl_gpio_pin(LED1_GPIO);
   // this interrupt line includes enc0 - enc2
-  if(gpio_get_pin_interrupt_flag(enc[0].pin[0])) {
+  if(gpio_get_pin_interrupt_flag(ENC0_S0_PIN)) {
     process_enc(0);
-    gpio_clear_pin_interrupt_flag(enc[0].pin[0]);
+    gpio_clear_pin_interrupt_flag(ENC0_S0_PIN);
   }  
-  if(gpio_get_pin_interrupt_flag(enc[0].pin[1])) {
+  if(gpio_get_pin_interrupt_flag(ENC0_S1_PIN)) {
     process_enc(0);
-    gpio_clear_pin_interrupt_flag(enc[0].pin[1]);
+    gpio_clear_pin_interrupt_flag(ENC0_S1_PIN);
   }
-  if(gpio_get_pin_interrupt_flag(enc[1].pin[0])) {
-    process_enc(0);
-    gpio_clear_pin_interrupt_flag(enc[1].pin[0]);
+  if(gpio_get_pin_interrupt_flag(ENC1_S0_PIN)) {
+    process_enc(1);
+    gpio_clear_pin_interrupt_flag(ENC1_S0_PIN);
   }  
-  if(gpio_get_pin_interrupt_flag(enc[1].pin[1])) {
-    process_enc(0);
-    gpio_clear_pin_interrupt_flag(enc[1].pin[1]);
+  if(gpio_get_pin_interrupt_flag(ENC1_S1_PIN)) {
+    process_enc(1);
+    gpio_clear_pin_interrupt_flag(ENC1_S1_PIN);
   }
-  if(gpio_get_pin_interrupt_flag(enc[2].pin[0])) {
-    process_enc(0);
-    gpio_clear_pin_interrupt_flag(enc[2].pin[0]);
+  if(gpio_get_pin_interrupt_flag(ENC2_S0_PIN)) {
+    process_enc(2);
+    gpio_clear_pin_interrupt_flag(ENC2_S0_PIN);
   }  
-  if(gpio_get_pin_interrupt_flag(enc[2].pin[1])) {
-    process_enc(0);
-    gpio_clear_pin_interrupt_flag(enc[2].pin[1]);
+  if(gpio_get_pin_interrupt_flag(ENC2_S1_PIN)) {
+    process_enc(2);
+    gpio_clear_pin_interrupt_flag(ENC2_S1_PIN);
   }
 }
-
 
 // interrupt handler for PB00-PB07
 __attribute__((__interrupt__))
 static void irq_port1_line0(void) {
   // this interrupt line includes enc3....
-  if(gpio_get_pin_interrupt_flag(enc[3].pin[0])) {
-    process_enc(0);
-    gpio_clear_pin_interrupt_flag(enc[3].pin[0]);
+  if(gpio_get_pin_interrupt_flag(ENC3_S0_PIN)) {
+    process_enc(3);
+    gpio_clear_pin_interrupt_flag(ENC3_S0_PIN);
   }  
-  if(gpio_get_pin_interrupt_flag(enc[3].pin[1])) {
-    process_enc(0);
-    gpio_clear_pin_interrupt_flag(enc[3].pin[1]);
+  if(gpio_get_pin_interrupt_flag(ENC3_S1_PIN)) {
+    process_enc(3);
+    gpio_clear_pin_interrupt_flag(ENC3_S1_PIN);
   }
   // ...and switches
   // TODO
@@ -147,28 +153,40 @@ static void irq_port1_line0(void) {
 
 // register interrupts
 void register_interrupts(void) {
-  U8 i;
+  //  U8 i;
   // generate an interrupt when bfin HWAIT changes
   gpio_enable_pin_interrupt( BFIN_HWAIT_PIN, GPIO_PIN_CHANGE);
-
+  
+  /*
   // generate interrupts when encoder pins change
   for(i=0; i<NUM_ENC; i++) {
     gpio_enable_pin_interrupt( enc[i].pin[0], GPIO_PIN_CHANGE);
     gpio_enable_pin_interrupt( enc[i].pin[1], GPIO_PIN_CHANGE);
   }
+  */
 
+  // enable interrupts on encoder pins
+  gpio_enable_pin_interrupt( ENC0_S0_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC0_S1_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC1_S0_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC1_S1_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC2_S0_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC2_S1_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC3_S0_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC3_S1_PIN,	GPIO_PIN_CHANGE);
+  
   // register IRQ for port A, 0-7
-  INTC_register_interrupt( &irq_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), AVR32_INTC_INT1 );
+  INTC_register_interrupt( &irq_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), AVR32_INTC_INT2 );
   
   // register IRQ for port A, 24-30
-  INTC_register_interrupt( &irq_port0_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA24 / 8), AVR32_INTC_INT1 );
+  INTC_register_interrupt( &irq_port0_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA24 / 8), AVR32_INTC_INT2 );
   
   // register IRQ for port B, 0-7
-  INTC_register_interrupt( &irq_port1_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB00 / 8), AVR32_INTC_INT1 );
+  INTC_register_interrupt( &irq_port1_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB00 / 8), AVR32_INTC_INT2 );
   
   // register IRQ for PDCA transfer
   INTC_register_interrupt(&irq_pdca, AVR32_PDCA_IRQ_0, AVR32_INTC_INT1); 
 
- // register TC interrupt
- INTC_register_interrupt(&irq_tc, APP_TC_IRQ, APP_TC_IRQ_PRIORITY);
+  // register TC interrupt
+  INTC_register_interrupt(&irq_tc, APP_TC_IRQ, APP_TC_IRQ_PRIORITY);
 }

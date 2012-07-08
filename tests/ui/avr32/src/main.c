@@ -121,11 +121,7 @@ static void register_interrupts(void) {
   gpio_enable_pin_interrupt( ENC3_S0_PIN,	GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( ENC3_S1_PIN,	GPIO_PIN_CHANGE);
   */
-
-  // register PB00-PB07 and assign interrupt handler
-  //INTC_register_interrupt( &int_handler_port1_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB00 / 8), AVR32_INTC_INT1 );
-
-  // testing ENC0 on PA06, PA07...   
+  
  INTC_register_interrupt( &irq_port0_line0,
 			  AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA24 / 8),
 			  AVR32_INTC_INT2 );
@@ -204,7 +200,12 @@ int main(void) {
   // enable interrupts
   cpu_irq_enable();
 
+  screen_draw_string_squeeze(0, FONT_CHARH * 2, "cpu clock speed:", 0xf);
+  screen_draw_int(0, FONT_CHARH * 3, sysclk_get_cpu_hz(), 0x0f);
+  screen_refresh();
+
   // check for application events in an infinite loop
+  
   while(1) {
     check_events();
   }

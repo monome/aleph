@@ -44,7 +44,7 @@ pinmux in current use with the EVK1100...
 (B) PB06 SW_3
 (B) PB07 SW_4
 (B) PB08 SW_EDIT
-(B) PB09SW_?
+(B) PB09 OLED RESET
     PB10
     PB11
     PB12

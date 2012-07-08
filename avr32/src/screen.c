@@ -10,6 +10,7 @@
 #include "usart.h"
 #include "delay.h"
 #include "intc.h"
+#include "print_funcs.h"
 // aleph
 #include "conf_aleph.h"
 #include "screen.h"
@@ -55,7 +56,13 @@ void init_oled(void) {
   U32 i;
   //  cpu_irq_disable();
   Disable_global_interrupt();
-  delay_ms(100);
+  // flip the reset pin
+  gpio_set_gpio_pin(OLED_RESET_PIN);
+  delay_ms(1);
+  gpio_clr_gpio_pin(OLED_RESET_PIN);
+  delay_ms(1);
+  gpio_set_gpio_pin(OLED_RESET_PIN);
+  delay_ms(10);
   //// initialize OLED
   /// todo: maybe toggle oled RESET to clear its shift register?
   write_command(0xAE);	// off
@@ -101,8 +108,7 @@ void init_oled(void) {
   write_command(0x54);
   write_command(0x65);
   write_command(0x76);	
-	
-	
+		
   // set update box (to full screen)
   write_command(0x15);
   write_command(0);
@@ -110,19 +116,16 @@ void init_oled(void) {
   write_command(0x75);
   write_command(0);
   write_command(63);
-	
-
 		
   // clear OLED RAM
   for(i=0; i<GRAM_BYTES; i++) { write_data(0); }
   write_command(0xAF);	// on
 
-  delay_ms(100);
+  delay_ms(10);
 
   //  cpu_irq_enable();
   Enable_global_interrupt();
 
-       
 }
 
 // draw a single pixel
@@ -213,7 +216,9 @@ void screen_refresh(void) {
   U16 i;
   //  cpu_irq_disable();
   //  Disable_global_interrupt();
-  for(i=0; i<GRAM_BYTES; i++) { write_data(screen[i]); }
+  for(i=0; i<GRAM_BYTES; i++) { 
+    write_data(screen[i]);  
+  }
   //  cpu_irq_enable();
   //  Enable_global_interrupt();
 }
