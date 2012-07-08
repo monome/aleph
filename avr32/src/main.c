@@ -63,9 +63,9 @@ int main (void) {
   U32 waitForCard = 0;
   volatile avr32_tc_t *tc = APP_TC;
   // switch to osc0 for main clock
-  //  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP); 
+  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP); 
   // initialize clocks:
-  init_clocks();
+  //init_clocks();
   
   // initialize Interrupt Controller
   INTC_init_interrupts();
@@ -77,7 +77,7 @@ int main (void) {
   init_dbg_usart();
 
   // initialize oled uart in SPI mode
-  //init_oled_usart();
+  //  init_oled_usart();
 
   // initialize SD/MMC driver resources: GPIO, SPI and SD/MMC.
   init_sd_mmc_resources();
@@ -88,26 +88,23 @@ int main (void) {
   // initialize blackfin resources
   init_bfin_resources();
 
-  // initialize OLED USART
-  init_oled_usart();
-
   // initialize application timer
-  init_tc(tc);
+  //init_tc(tc);
 
   // initialize other GPIO
-  init_gpio();
+  //init_gpio();
 
   // register interrupts
   register_interrupts();
 
   // initialize the OLED screen
-  init_oled();
+  //init_oled();
   
   // intialize the event queue
-  init_events();
+  //init_events();
   
   // intialize encoders
-  init_encoders();
+  //init_encoders();
 
   // Enable all interrupts.
   Enable_global_interrupt();
