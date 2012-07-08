@@ -1,8 +1,6 @@
 development
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-kernel/environment customization
-linux device drivers
 control engine
 dsp engine
 host communication (usb drivers, serial, etc)
