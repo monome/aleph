@@ -15,6 +15,7 @@
 #include "pdca.h"
 #include "sd_mmc_spi.h"
 #include "spi.h"
+#include "tc.h"
 #include "usart.h"
 // aleph
 #include "conf_aleph.h"
@@ -40,6 +41,18 @@ volatile avr32_pdca_channel_t* pdca_channeltx ;
 //===================================
 //==== external functions
 
+// initialize other GPIO
+void init_gpio(void) {
+  gpio_enable_pin_pull_up(ENC0_S0_PIN);
+  gpio_enable_pin_pull_up(ENC0_S1_PIN);
+  gpio_enable_pin_pull_up(ENC1_S0_PIN);
+  gpio_enable_pin_pull_up(ENC1_S1_PIN);
+  gpio_enable_pin_pull_up(ENC2_S0_PIN);
+  gpio_enable_pin_pull_up(ENC2_S1_PIN);
+  gpio_enable_pin_pull_up(ENC3_S0_PIN);
+  gpio_enable_pin_pull_up(ENC3_S1_PIN);
+}
+
 // initialize debug USART
 void init_dbg_usart (void) {
   // GPIO map for USART.
@@ -63,6 +76,87 @@ void init_dbg_usart (void) {
 
   // Initialize in RS232 mode.
   usart_init_rs232(DBG_USART, &DBG_USART_OPTIONS, sysclk_get_pba_hz());
+}
+
+
+
+// initialize OLED USART in SPI mode
+extern void init_oled_usart (void) {
+  static const gpio_map_t USART_SPI_GPIO_MAP = {
+    {OLED_USART_SPI_SCK_PIN,  OLED_USART_SPI_SCK_FUNCTION },
+    {OLED_USART_SPI_MISO_PIN, OLED_USART_SPI_MISO_FUNCTION},
+    {OLED_USART_SPI_MOSI_PIN, OLED_USART_SPI_MOSI_FUNCTION},
+    {OLED_USART_SPI_NSS_PIN,  OLED_USART_SPI_NSS_FUNCTION }
+  };
+
+  // SPI options for OLED
+  static const usart_spi_options_t USART_SPI_OPTIONS = {
+    .baudrate     = 3300000, // seems about maximum
+    .charlength   = 8,
+    .spimode      = 3, // clock starts high, sample on rising edge
+    .channelmode  = USART_NORMAL_CHMODE
+  };
+
+  // Assign GPIO to SPI.
+  gpio_enable_module(USART_SPI_GPIO_MAP,
+		     sizeof(USART_SPI_GPIO_MAP) / sizeof(USART_SPI_GPIO_MAP[0]));
+  // Initialize USART in SPI mode.
+  usart_init_spi_master(OLED_USART_SPI, &USART_SPI_OPTIONS, FOSC0);
+  delay_ms(10);
+
+}
+
+// initialize application timer
+extern void init_tc (volatile avr32_tc_t *tc) {
+  // waveform options
+  static const tc_waveform_opt_t waveform_opt = {
+    .channel  = APP_TC_CHANNEL,  // channel
+    .bswtrg   = TC_EVT_EFFECT_NOOP, // software trigger action on TIOB
+    .beevt    = TC_EVT_EFFECT_NOOP, // external event action
+    .bcpc     = TC_EVT_EFFECT_NOOP, // rc compare action
+    .bcpb     = TC_EVT_EFFECT_NOOP, // rb compare
+    .aswtrg   = TC_EVT_EFFECT_NOOP, // soft trig on TIOA
+    .aeevt    = TC_EVT_EFFECT_NOOP, // etc
+    .acpc     = TC_EVT_EFFECT_NOOP,
+    .acpa     = TC_EVT_EFFECT_NOOP,
+    // Waveform selection: Up mode with automatic trigger(reset) on RC compare.
+    .wavsel   = TC_WAVEFORM_SEL_UP_MODE_RC_TRIGGER,
+    .enetrg   = false,             // external event trig
+    .eevt     = 0,                 // extern event select
+    .eevtedg  = TC_SEL_NO_EDGE,    // extern event edge
+    .cpcdis   = false,             // counter disable when rc compare
+    .cpcstop  = false,            // counter stopped when rc compare
+    .burst    = false,
+    .clki     = false,
+    // Internal source clock 5, connected to fPBA / 128.
+    .tcclks   = TC_CLOCK_SOURCE_TC5
+  };
+
+  // Options for enabling TC interrupts
+  static const tc_interrupt_t tc_interrupt = {
+    .etrgs = 0,
+    .ldrbs = 0,
+    .ldras = 0,
+    .cpcs  = 1, // Enable interrupt on RC compare alone
+    .cpbs  = 0,
+    .cpas  = 0,
+    .lovrs = 0,
+    .covfs = 0
+  };
+  // Initialize the timer/counter.
+  tc_init_waveform(tc, &waveform_opt);
+
+  // set timer compare trigger.
+  // we want it to overflow and generate an interrupt every 10 ms
+  // so (1 / fPBA / 128) * RC = 10,
+  // so RC = fPBA / 128 / 1000
+
+  tc_write_rc(tc, APP_TC_CHANNEL, (sysclk_get_pba_hz() / 128 / 1000));
+  // configure the timer interrupt
+  tc_configure_interrupts(tc, APP_TC_CHANNEL, &tc_interrupt);
+  // Start the timer/counter.
+  tc_start(tc, APP_TC_CHANNEL);
+
 }
 
 // initialize sd/mms resources: SPI. GPIO, SD_MMC
@@ -195,11 +289,16 @@ void init_clocks(void) {
   sysclk_enable_pba_module(SYSCLK_INTC);
   // gpio
   sysclk_enable_pba_module(SYSCLK_GPIO);
+  // PDCA
+  sysclk_enable_pba_module(SYSCLK_PDCA_PB);
+  // SPI
+  sysclk_enable_pba_module(SYSCLK_SPI0);
+  sysclk_enable_pba_module(SYSCLK_SPI1);
+  // tc
+  sysclk_enable_peripheral_clock(APP_TC);
   // usart
   sysclk_enable_pba_module(SYSCLK_USART1);
   sysclk_enable_pba_module(SYSCLK_USART2);
-  // tc
-  sysclk_enable_peripheral_clock(APP_TC);
 
 #if FASTCLOCK
   // use phase-lock-loop for master clock source

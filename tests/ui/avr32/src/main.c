@@ -127,7 +127,7 @@ static void register_interrupts(void) {
 
   // testing ENC0 on PA06, PA07...   
  INTC_register_interrupt( &irq_port0_line0,
-			  AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8),
+			  AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA24 / 8),
 			  AVR32_INTC_INT2 );
 
  // register TC interrupt

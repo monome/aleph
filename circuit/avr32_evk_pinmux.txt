@@ -26,7 +26,7 @@ pinmux in current use with the EVK1100...
     PA20
     PA21
     PA22
-(B) PA23 
+(B) PA23 OLED register select
 (B) PA24 ENC_1_A
 (B) PA25 ENC_1_B
 (B) PA26 ENC_2_A

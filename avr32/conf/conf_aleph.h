@@ -87,7 +87,7 @@
 #define SD_MMC_WRITE_PROTECT_PIN    AVR32_PIN_PA07
 
 // PA09 in GPIO for OLED command/data register select
-#define OLED_REGISTER_PIN AVR32_PIN_PA09
+#define OLED_REGISTER_PIN AVR32_PIN_PA23
 
 // (input) receive HWAIT from the blackfin during boot process
 //#define BFIN_HWAIT_PIN    AVR32_PIN_PB00
