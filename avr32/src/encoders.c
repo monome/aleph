@@ -24,7 +24,6 @@ enc_t enc[NUM_ENC];
 // encoder movement map
 static const S8 enc_map[4][4] = { {0,1,-1,0}, {-1,0,0,1}, {1,0,0,-1}, {0,-1,1,0} };
 
-
 //------------------------------
 //----- external functions
 

@@ -26,25 +26,25 @@ pinmux in current use with the EVK1100...
     PA20
     PA21
     PA22
-(B) PA23 ENC_1_A
-(B) PA24 ENC_1_B
-(B) PA25 ENC_2_A
-(B) PA26 ENC_2_B
-(B) PA27 ENC_3_A
-(B) PA28 ENC_3_B
+(B) PA23 
+(B) PA24 ENC_1_A
+(B) PA25 ENC_1_B
+(B) PA26 ENC_2_A
+(B) PA27 ENC_2_B
+(B) PA28 ENC_3_A
 (B) PA29 USART2 RTS (OLED chip select)
-(B) PA30 ENC_4_A
+(B) PA30 ENC_3_B
 
 (B) PB00 stolen!!! (by what, i do not know)
 (B) PB01 BFIN_RESET
-(B) PB02 ENC_4_B
-(B) PB03 SW_1
-(B) PB04 SW_2
-(B) PB05 SW_3
-(B) PB06 SW_4
-(B) PB07 SW_EDIT
-(B) PB08 SW_?
-(B) PB09
+(B) PB02 ENC_4_A
+(B) PB03 ENC_4_B
+(B) PB04 SW_1
+(B) PB05 SW_2
+(B) PB06 SW_3
+(B) PB07 SW_4
+(B) PB08 SW_EDIT
+(B) PB09SW_?
     PB10
     PB11
     PB12

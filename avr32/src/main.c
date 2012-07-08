@@ -22,17 +22,48 @@
 #include "encoders.h"
 #include "events.h"
 #include "files.h"
+#include "global.h"
 #include "init.h"
 #include "interrupts.h"
 #include "screen.h"
 
+//=========================================
+//==== static variables
+static S32 encVal[4] = { 0, 0, 0, 0 };
+
+//=========================================== 
+// application event loop
+static void check_events(void);
+static void check_events(void) {
+  static event_t e;
+  
+  if( get_next_event(&e) ) {
+    switch(e.eventType) {
+
+    case kEventEncoder0:
+      encVal[0] += e.eventData;
+      screen_draw_int(0, SCREEN_LINE(0), encVal[0], 0x0f);
+      refresh = 1;
+      break;
+      
+    case kEventRefresh:
+      screen_refresh();
+      refresh = 0;
+      break;
+     
+    default:
+      break;
+    }
+  }
+}
+
+
 ////main function
 int main (void) {
   U32 waitForCard = 0;
-
   // switch to osc0 for main clock
   //  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP); 
-  
+  // initialize clocks:
   init_clocks();
   
   // initialize Interrupt Controller
@@ -65,7 +96,7 @@ int main (void) {
   // intialize the event queue
   init_events();
   
-// intialize encoders
+  // intialize encoders
   init_encoders();
 
   // Enable all interrupts.
@@ -73,7 +104,7 @@ int main (void) {
 
   print_dbg("\r\nwaiting for SD card... ");
   // Wait for a card to be inserted
-
+  
   while (!sd_mmc_spi_mem_check()) {
     waitForCard++;
   }
@@ -90,6 +121,7 @@ int main (void) {
 
   // event loop
   while(1) {
+    check_events();
   }
 
 }
