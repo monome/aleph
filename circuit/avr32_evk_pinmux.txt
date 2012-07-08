@@ -9,7 +9,7 @@ pinmux in current use with the EVK1100...
 (B) PA03 BFIN_HWAIT
     PA04
     PA05                       + USART1_RX (debug)
-    PA06		       + USART1_TX (debug)
+    PA06		               + USART1_TX (debug)
     PA07 SD_MMC_WRITE_PROTECT  + USART1_CLK (debug)
     PA08 		       
     PA09		       
@@ -64,7 +64,7 @@ pinmux in current use with the EVK1100...
     PB26
     PB27
     PB28
-(B) PB29
-(B) PB30
-(B) PB30
+(B) PB29 UART2 RX (OLED) - not really used
+(B) PB30 UART2 TX (OLED)
+(B) PB31 UART2 CLOCK
 
