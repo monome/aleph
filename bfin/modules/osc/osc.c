@@ -11,8 +11,8 @@
 
 // external data, manually located at start of SDRAM
 oscData_t * data = (oscData_t *)SDRAM_ADDRESS;
-// define twice for preprocesor and for core modules
-const u32 kNumParams = MODULE_NUM_PARAMS;
+// pointer to data superclass (for access by bfin core routines)
+moduleData_t* moduleData;
 
 //---------------------------
 //---- static vars
@@ -53,19 +53,26 @@ static fract32 wavetable_interp(f32 phase) {
 
 //----- init
 void init_module(void) {
+  // set the superclass pointer
+  moduleData = &(data->super);
+
+  // initialize superclass internals
+  moduleData->paramDesc = data->paramDesc_p;  
+  moduleData->paramData = data->paramData_p;  
+  moduleData->numParams = MODULE_NUM_PARAMS;
 
   // initialize parameter descriptors
-  strcpy(data->paramDesc[eParamAmp].name, "amp");
-  strcpy(data->paramDesc[eParamAmp].unit, "amp");
-  data->paramDesc[eParamAmp].type = eParamFract;
+  strcpy(moduleData->paramDesc[eParamAmp].name, "amp");
+  strcpy(moduleData->paramDesc[eParamAmp].unit, "amp");
+  moduleData->paramDesc[eParamAmp].type = eParamFract;
 
-  strcpy(data->paramDesc[eParamFreq].name, "freq");
-  strcpy(data->paramDesc[eParamFreq].unit, "hz");
-  data->paramDesc[eParamFreq].type = eParamFloat;
+  strcpy(moduleData->paramDesc[eParamFreq].name, "freq");
+  strcpy(moduleData->paramDesc[eParamFreq].unit, "hz");
+  moduleData->paramDesc[eParamFreq].type = eParamFloat;
 
   // initialize parameter values
-  data->paramData[eParamAmp].value.asFract = float_to_fr32(0.125f);
-  data->paramData[eParamAmp].value.asFloat = 440;
+  moduleData->paramData[eParamAmp].value.asFract = float_to_fr32(0.125f);
+  moduleData->paramData[eParamAmp].value.asFloat = 440;
 
   // initialize wavetable
   init_wavetable();
@@ -77,15 +84,15 @@ void init_module(void) {
 //------ process frame
 void process_frame(void) {
   // check  if freq param changed
-  if(data->paramData[eParamFreq].changed) {
-    data->paramData[eParamFreq].changed = 0;
-    phaseInc = data->paramData[eParamFreq].value.asFloat * rho;
+  if(moduleData->paramData[eParamFreq].changed) {
+    moduleData->paramData[eParamFreq].changed = 0;
+    phaseInc = moduleData->paramData[eParamFreq].value.asFloat * rho;
   }
   phase += phaseInc;
   while (phase > (f32)WAVETABLE_NUM_1) {
     phase -= (f32)WAVETABLE_NUM_1;
   }
-  output = mult_fr1x32x32(data->paramData[eParamAmp].value.asFract,
+  output = mult_fr1x32x32(moduleData->paramData[eParamAmp].value.asFract,
 			  wavetable_interp(phase));
   out0 = output;
   out1 = output;

@@ -15,13 +15,15 @@
 
 #define SAMPLERATE 48000
 
-//-------- global variables
-// parameter descriptor table
-extern ParamDesc paramDesc[];
-// parameter data table
-extern ParamData paramData[];
-// count of parameters
-extern const u32 kNumParams;
+//-----------------------
+//---- module data
+typedef struct _moduleData {
+  ParamDesc* paramDesc;
+  ParamData* paramData;
+  u32 numParams;
+} moduleData_t;
+
+extern moduleData_t* moduleData;
 
 //-------- function prototypes 
 // intialize

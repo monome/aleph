@@ -22,16 +22,18 @@ enum {
   eParamFreq
 };
 
-// define a module data structure
-// this should be everything to be located in external memory
+// module data structure
+// inhereits from moduleData_t
+// located in external memory
 typedef struct _oscData {
+  moduleData_t super;
+  //// private:
 // parameter descriptors
-  ParamDesc paramDesc[MODULE_NUM_PARAMS];
+  ParamDesc paramDesc_p[MODULE_NUM_PARAMS];
   // parameter data
-  ParamData paramData[MODULE_NUM_PARAMS];
+  ParamData paramData_p[MODULE_NUM_PARAMS];
   // sine wavetable
   f32 sineTable[WAVETABLE_NUM];
 } oscData_t;
-
 
 #endif // header guard

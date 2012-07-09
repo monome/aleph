@@ -1,6 +1,75 @@
 #ifndef _SERIAL_PROTOCOL_H_
 #define _SERIAL_PROTOCOL_H_
 
+#include "types.h"
+#include "param.h"
+
+// AVR32 <-> BLACKFIN
+// SPI communication protocol
+
+// all transactions will be 8 bits;
+// this is necessary for bf533 spi-boot mode,
+// and it seems easier to keep it always the same
+
+// going with an 8-byte protocol
+// to allow for some degree of expansion.
+
+//--------------------
+//--- types and defines
+
+#define MSG_BYTES 7
+#define MSG_BYTES_1 6
+#define DATA_BYTES 6
+
+/* first we define structs for each message type
+ *  including the generic case.
+ */
+
+// generic 
+typedef struct _msgGeneric{
+  u8 command;
+  u8 data[DATA_BYTES];
+} msgGeneric_t;
+
+// set parameter
+typedef struct _msgSetParam {
+  u8 command;
+  u16 idx;
+  ParamValue value; // 4 bytes
+} msgSetParam_t;
+
+/* then we define a union of all these formats
+   so that callers can choose
+*/
+
+typedef union {
+  u8 raw[MSG_BYTES];
+  msgGeneric_t generic;
+  msgSetParam_t setParam;
+} msg_t;
+
+//----- command types
+// set parameter value
+#define COM_SET_PARAM 0
+// get current parameter value
+#define COM_GET_PARAM 1
+// report back the number of parameters
+#define COM_REPORT_NUMPARAMS 2
+// report data on a particular parameter
+#define COM_REPORT_PARAM 3
+
+// indices of bytes 
+enum {
+  eComByte,
+  eDataByte0,
+  eDataByte1,
+  eDataByte2,
+  eDataByte3,
+  eDataByte4,
+  eDataByte5,
+};
+
+/*
 // spi protocol
 
 // P_PARAM 	(SPI) param changes and reads, AVR32 controlled
@@ -66,5 +135,5 @@
 
 // bit depth of integer values
 #define P_PARAM_MSG_INT_BIT_DEPTH  32
-
+*/
 #endif

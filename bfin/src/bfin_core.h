@@ -11,8 +11,8 @@
 #include <cdefBF533.h>
 #include <fract.h>
 #include <fract_typedef.h>
-#include "types.h"
-#include "../../common/protocol.h"
+//#include "types.h"
+#include "protocol.h"
 
 // names for slots in ad1836 audio frame
 #define INTERNAL_ADC_L0			0

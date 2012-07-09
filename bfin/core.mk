@@ -2,7 +2,7 @@
 #
 # this should be included from module makefiles.
 
-core_src = main.c init.c isr.c spi.c
+core_src = main.c init.c isr.c spi.c util.c
 core_obj = $(patsubst %.c, %.o, $(core_src))
 
 core_dir = ../../

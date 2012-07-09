@@ -5,9 +5,9 @@
 
 //-------- global variables
 // ringbuffer for spi rx data
-extern u16 spiRxRing[];
+extern u8 spiRxRing[];
 // counter 
-extern u16 spiRxRingIdx;
+extern u8 spiRxRingIdx;
 
 //------- function prototypes
 // handle new data in the spi RX ringbuffer

@@ -89,7 +89,8 @@ INC_PATH = \
        common/utils \
 	. \
 	../ \
-	../conf
+	../conf \
+	../../common
 
 # Additional search paths for libraries.
 LIB_PATH = 

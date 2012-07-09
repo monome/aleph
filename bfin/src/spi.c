@@ -1,47 +1,35 @@
-#include "types.h"
-#include "../../common/protocol.h"
 #include "module.h"
+#include "protocol.h"
+#include "types.h"
 #include "spi.h"
 
 //------ global variables (initialized here)
 // ringbuffer for spi rx data
-u16 spiRxRing[P_PARAM_MSG_WORD_COUNT];
-// counter 
-u16 spiRxRingIdx = P_PARAM_MSG_WORD_COUNT_1;
+u8 spiRxRing[MSG_BYTES];
+// byte counter, intiailize to last value
+u8 spiRxRingIdx = MSG_BYTES_1;
 
 //--------- static vars
-// command segment of current SPI message
-static u8 paramMsgCom;
-// data segment of current SPI message
-static u16 paramMsgIdx;
+// generic message 
+static msg_t msg;
 
 //------- function definitions
 // deal with new data in the spi rx ringbuffer
 void handle_spi_rx(void) {
+  // copy the raw byte value
+  msg.raw[spiRxRingIdx] = spiRxRing[spiRxRingIdx];
 
-  if (spiRxRingIdx == P_PARAM_MSG_WORD_COM) {
-    paramMsgCom = P_GET_PARAM_COM(spiRxRing[P_PARAM_MSG_WORD_COM]);
-    paramMsgIdx = P_GET_PARAM_IDX(spiRxRing[P_PARAM_MSG_WORD_COM]);
-    if (paramMsgCom == P_PARAM_COM_GET) {
-      // TODO: load param integer MSW for next transmission?
+  if (spiRxRingIdx == MSG_BYTES_1) {
+    // on receiving the final byte, do something 
+    if (msg.generic.command == COM_SET_PARAM) {
+      // avr32 is big endian! so shitty
+      byte_swap(&(msg.setParam.idx), 2);
+      if (msg.setParam.idx < moduleData->numParams) {
+	byte_swap(&(msg.setParam.value), 4);
+	moduleData->paramData[msg.setParam.idx].value = msg.setParam.value;
+	moduleData->paramData[msg.setParam.idx].changed = 1;
+      }
     }
   }
-
-  if (spiRxRingIdx ==  P_PARAM_MSG_WORD_DATAH) {
-    if (paramMsgCom == P_PARAM_COM_GET) {
-      // TODO: load param integer LSW for next transmission?
-    }
-  }
-
-  if (spiRxRingIdx ==  P_PARAM_MSG_WORD_DATAL) {
-    // we just received the last word, do something    
-    if(paramMsgCom == P_PARAM_COM_SET) {
-	u32 iParamData = P_GET_PARAM_DATA(spiRxRing[P_PARAM_MSG_WORD_DATAH], spiRxRing[P_PARAM_MSG_WORD_DATAL]);
-	
-      /*
-	u32 iParamData = P_GET_PARAM_DATA(spiRxRing[P_PARAM_MSG_WORD_DATAH], spiRxRing[P_PARAM_MSG_WORD_DATAL]);
-	// request_param_set_int(paramMsgIdx, iParamData);
-	*/
-    }
-  } 
+  // TODO: check if we need to load something for MISO!
 }

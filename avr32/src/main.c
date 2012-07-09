@@ -30,7 +30,7 @@
 
 //=========================================
 //==== static variables
-static S32 encVal[4] = { 0, 0, 0, 0 };
+S32 encVal[4] = { 0, 0, 0, 0 };
 
 //=========================================== 
 // application event loop
@@ -46,6 +46,7 @@ static void check_events(void) {
       screen_draw_int(0, SCREEN_LINE(0), encVal[0], 0x0f);
       print_dbg("\r\nencoder 0 value: ");
       print_dbg_ulong(encVal[0]);
+      bfin_param(1, encVal[0]);
       refresh = 1;
       break;
       
@@ -129,9 +130,9 @@ int main (void) {
   // load blackfin from first .ldr file in filesystem
   load_bfin_sdcard_test();
 
-  screen_draw_string_squeeze(0, FONT_CHARH * 2, "cpu clock speed:", 0xf);
-  screen_draw_int(0, FONT_CHARH * 3, sysclk_get_cpu_hz(), 0x0f);
-  screen_refresh();
+  // screen_draw_string_squeeze(0, FONT_CHARH * 2, "cpu clock speed:", 0xf);
+  // screen_draw_int(0, FONT_CHARH * 3, sysclk_get_cpu_hz(), 0x0f);
+  // screen_refresh();
 
   print_dbg("done.\n\r");
 

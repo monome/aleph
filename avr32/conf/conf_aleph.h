@@ -10,12 +10,23 @@
 //==============================================
 //==== clocks
 
-// target PBA clock frequency
-//#define PBA_HZ                FOSC0
+#define FOSC32          32768                                   //!< Osc32 frequency: Hz.
+#define OSC32_STARTUP   AVR32_PM_OSCCTRL32_STARTUP_8192_RCOSC //!< Osc32 startup time: RCOsc periods.
+
+#define FOSC0           12000000                                //!< Osc0 frequency: Hz.
+#define OSC0_STARTUP    AVR32_PM_OSCCTRL0_STARTUP_2048_RCOSC  //!< Osc0 startup time: RCOsc periods.
+
 // PLL output frequency
 #define PLL_OUTPUT_FREQ 132000000UL
-#define CPU_HZ 66000000L
-#define PBA_HZ 66000000L
+
+// System Clock Frequencies
+#define FMCK_HZ   		66000000L
+#define FCPU_HZ   		FMCK_HZ
+#define FHSB_HZ   		FCPU_HZ
+#define FPBA_HZ   		FMCK_HZ
+#define FPBB_HZ   		FMCK_HZ
+
+
 //==============================================
 //==== timers
 

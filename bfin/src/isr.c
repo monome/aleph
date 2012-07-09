@@ -61,9 +61,10 @@ void sport0_rx_isr() {
 
 // spi receive interrupt (control change from avr32)
 void spi_rx_isr() {
+  // increment first so the handler is in sync
+  spiRxRingIdx = (spiRxRingIdx + 1) % MSG_BYTES;
   // copy rx data to ringbuffer
   // reading from the rx data register also clears the rx interrupt
-  spiRxRingIdx = (spiRxRingIdx + 1) % P_PARAM_MSG_WORD_COUNT;
   spiRxRing[spiRxRingIdx] = *pSPI_RDBR;
   handle_spi_rx();
 }

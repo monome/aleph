@@ -76,7 +76,7 @@ void init_dbg_usart (void) {
                      sizeof(DBG_USART_GPIO_MAP) / sizeof(DBG_USART_GPIO_MAP[0]));
 
   // Initialize in RS232 mode.
-  usart_init_rs232(DBG_USART, &DBG_USART_OPTIONS, PBA_HZ);
+  usart_init_rs232(DBG_USART, &DBG_USART_OPTIONS, FPBA_HZ);
 }
 
 // initialize OLED USART in SPI mode
@@ -146,11 +146,11 @@ extern void init_tc (volatile avr32_tc_t *tc) {
   tc_init_waveform(tc, &waveform_opt);
 
   // set timer compare trigger.
-  // we want it to overflow and generate an interrupt every 10 ms
-  // so (1 / fPBA / 128) * RC = 10,
+  // we want it to overflow and generate an interrupt every 1 ms
+  // so (1 / fPBA / 128) * RC = 0.001
   // so RC = fPBA / 128 / 1000
 
-  tc_write_rc(tc, APP_TC_CHANNEL, (PBA_HZ / 128 / 1000));
+  tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 128 / 1000));
   // configure the timer interrupt
   tc_configure_interrupts(tc, APP_TC_CHANNEL, &tc_interrupt);
   // Start the timer/counter.
@@ -190,7 +190,7 @@ void init_sd_mmc_resources(void) {
   spi_enable(SD_MMC_SPI);
 
   // Initialize SD/MMC driver with SPI clock (PBA).
-  sd_mmc_spi_init(spiOptions, PBA_HZ);
+  sd_mmc_spi_init(spiOptions, FPBA_HZ);
 }
 
 // init PDCA (Peripheral DMA Controller A) resources for the SPI transfer and start a dummy transfer
@@ -240,10 +240,11 @@ void init_bfin_resources(void) {
   
   spi_options_t spiOptions = {
     .reg          = BFIN_SPI_NPCS,
-    .baudrate     = 20000000,
+    .baudrate     = 2000000,
     .bits         = 8,
     .spck_delay   = 0,
-    .trans_delay  = 0,
+    //    .trans_delay  = 0,
+    .trans_delay  = 1,
     .stay_act     = 1,
     .spi_mode     = 1,
     .modfdis      = 1
@@ -263,7 +264,7 @@ void init_bfin_resources(void) {
   spi_enable(BFIN_SPI);
 
   // intialize the chip register
-  spi_setupChipReg(BFIN_SPI, &spiOptions, FOSC0);
+  spi_setupChipReg(BFIN_SPI, &spiOptions, FPBA_HZ);
  // enable pulldown on bfin HWAIT line
   //// shit! not implemented... 
   // gpio_enable_pin_pull_down(BFIN_HWAIT_PIN);
@@ -309,6 +310,7 @@ void init_clocks(void) {
 
   // Switch to PLL0 as the master clock
   pm_switch_to_clock( &AVR32_PM, AVR32_PM_MCCTRL_MCSEL_PLL0) ;
+  
 
   /*
 #if FASTCLOCK
