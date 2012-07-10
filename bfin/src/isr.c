@@ -1,8 +1,10 @@
 #include "bfin_core.h"
 #include "init.h"
 #include "module.h"
+#include "protocol.h"
 #include "spi.h"
 #include "types.h"
+
 #include "isr.h"
 
 //--------- global variables (initialized here)
@@ -62,18 +64,20 @@ void sport0_rx_isr() {
 
 // spi receive interrupt (from avr32)
 void spi_rx_isr() {
+  u8 txByte;
   // increment first so the message handler stays in sync
-  spiByte = (spiByte + 1) % MSG_BYTES;
-
-  // *pSPI_TDBR = txMsg.raw[spiByte];
-  // load the NEXT byte for MISO, we already missed this one  
-  // *pSPI_TDBR = txMsg.raw[(spiByte + 1) % MSG_BYTES];
-
-  /// TEST:
-  *pSPI_TDBR = spiByte;
-
-  // reading from the rx data register also clears the rx interrupt
+  spiByte++;
+  if (spiByte > spiLastByte) spiByte = 0;
+  // load the tx buffer with the next byte in the tx message data
+  txByte = spiByte + 1;
+  if (txByte <= spiLastByte) {
+    *pSPI_TDBR = txMsg.raw[txByte];
+  }
+  // read from the rx data register
+  // this also clears the rx interrupt
   rxMsg.raw[spiByte] = *pSPI_RDBR;
+
   // figure out what to do with the data...
   handle_spi_rx();
+
 }

@@ -10,6 +10,8 @@ extern msg_t rxMsg;
 extern msg_t txMsg;
 // SPI byte counter
 extern u8 spiByte;
+// final byte index for current transaction
+extern u8 spiLastByte;
 
 //------- function prototypes
 // handle new data in the spi RX ringbuffer

@@ -8,7 +8,7 @@
 #include "delay.h"
 #include "gpio.h"
 #include "spi.h"
-///// DBUG
+///// DEBUG
 #include "print_funcs.h"
 /////
 // aleph
@@ -59,6 +59,7 @@ void bfin_load(U32 size, char * data) {
 // set a parameter
 void bfin_set_param(U32 idx, F32 val) {
   U8 i;
+  // U16 tmp;
   msg.generic.command = COM_SET_PARAM;
   msg.setParam.idx = idx;
   msg.setParam.value.asFloat = val;
@@ -66,6 +67,8 @@ void bfin_set_param(U32 idx, F32 val) {
   for(i=0; i<MSG_BYTES; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
     spi_write(BFIN_SPI, msg.raw[i]);
+    //// TEST
+    // spi_read(BFIN_SPI, &tmp);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   }
 }
@@ -75,26 +78,28 @@ U16 bfin_get_num_params(void) {
   u8 i;
   // annnoying; spi_read requires pointer to u16
   u16 tmp;
+
   /// TEST: fill with an unacceptable value to catch byte order problems
-  tmp = 0xFFFF;
+  // tmp = 0xFFFF;
+
   // send command word
-  msg.generic.command = COM_GET_NUM_PARAMS;
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  spi_write(BFIN_SPI, msg.generic.command);
+  spi_write(BFIN_SPI, (U8)COM_GET_NUM_PARAMS);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
   // read data bytes
   for(i=1; i<MSG_BYTES; i++) {
     
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    // each read needs a dummy write...
+    spi_write(BFIN_SPI, i);
     spi_read(BFIN_SPI, &tmp);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-
-      print_dbg("\r\n getNumParams got u16 value: ");
-      print_dbg_ulong(tmp);
-
+    //    print_dbg("\r\n getNumParams got u16 value: ");
+    //   print_dbg_ulong(tmp);
     msg.raw[i]= (U8)(tmp & 0xff);
   }
-  print_dbg("\r\n");
+  // print_dbg("\r\n");
   return msg.numParams.value;
 }
 
@@ -134,6 +139,20 @@ void bfin_get_param_name(u16 paramIdx, char * name) {
   }
 }
 
+//// arrg
+void bfin_hack(U8 num) {
+  U8 i;
+  U16 x;
+  /// send some dummy bytes over SPI for no god damn fucking reason
+  for(i=0; i<num; i++) {        
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, (U8)i);
+    spi_read(BFIN_SPI, &x);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    // print_dbg("\r\n bfin_hack got u16 value: ");
+    // print_dbg_ulong(x);
+  }
+}
 
 // get parameter descriptor
 //void bfin_get_param_name(u16 paramIdx, ParamDesc* pDesc);

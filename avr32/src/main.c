@@ -11,6 +11,7 @@
 #include "conf_sd_mmc_spi.h"
 #include "compiler.h"
 #include "ctrl_access.h"
+#include "delay.h"
 #include "gpio.h"
 #include "intc.h"
 #include "pdca.h"
@@ -142,7 +143,11 @@ int main (void) {
   // screen_refresh();
 
   print_dbg("done.\n\r");
+
+  //// wait!
+  delay_ms(30);
  
+  bfin_hack(7);
   post_num_params();
 
   print_dbg("starting event loop.\n\r");
