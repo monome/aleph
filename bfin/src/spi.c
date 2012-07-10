@@ -17,18 +17,12 @@ void handle_spi_rx(void) {
  
   // on the first byte, check if this transaction requires MISO
   if (spiByte =  eComByte) {
-    if (rxMsg.generic.command == COM_REPORT_NUMPARAMS) {
-      // fill tx message with number-of-params
-      txMsg.getNumParams.numParams = moduleData->numParams;
-      // byte swap for the fucking avr32
-      byte_swap(&(txMsg.getNumParams.numParams), 2);
-    }
 
     if (rxMsg.generic.command == COM_REPORT_NUMPARAMS) {
       // fill tx message with number-of-params
-      txMsg.getNumParams.numParams = moduleData->numParams;
+      txMsg.getNumParams.value = moduleData->numParams;
       // byte swap for the fucking avr32
-      byte_swap(&(txMsg.getNumParams.numParams), 2);
+      byte_swap(&(txMsg.getNumParams.value), 2);
     }
 
     // TODO: param name

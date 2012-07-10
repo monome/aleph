@@ -44,13 +44,16 @@ typedef struct _msgSetParam {
 // get number of parameters
 typedef struct _msgGetNumParams {
   u8 command;
-  u16 numParams;
+  u16 value;
   u8 dummy[7];
 } msgGetNumParams_t;
 
 // get parameter label
+// needs to be split to accomodate labels of reasonable length
+// so, first message carries command word and 9 data words,
+// second message carries only data words
 typedef struct _msgGetParamLabel {
-  //  u8 command;
+  u8 command;
   char label[10];
 } msgGetParamLabel_t;
 
@@ -71,8 +74,8 @@ typedef union {
   msgGeneric_t generic;
   msgSetParam_t setParam;
   msgGetNumParams_t numParams;
-  msgGetParamLabel_t paramLabel;
-
+  msgGetParamLabel_t paramLabel1;
+  msgGetParamLabel_t paramLabel2;
   msgGetParamDesc_t paramDesc;
 } msg_t;
 

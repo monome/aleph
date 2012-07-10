@@ -46,7 +46,7 @@ static void check_events(void) {
       screen_draw_int(0, SCREEN_LINE(0), encVal[0], 0x0f);
       print_dbg("\r\nencoder 0 value: ");
       print_dbg_ulong(encVal[0]);
-      bfin_param(1, encVal[0]);
+      bfin_set_param(1, encVal[0]);
       refresh = 1;
       break;
       
@@ -135,8 +135,8 @@ int main (void) {
 
   print_dbg("done.\n\r");
   print_dbg("\n\requesting parameters..."); 
-    print_dbg("done.\n\r");
-
+  print_dbg("done.\n\r");
+    
   print_dbg("starting event loop.\n\r");
   // event loop
   while(1) {
