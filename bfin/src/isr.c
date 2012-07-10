@@ -51,6 +51,7 @@ void sport0_rx_isr() {
   // copy last frame's processing result to DMA output buffer
   // shift right to 24-bit
   iTxBuf[INTERNAL_DAC_L0] = out0 >> 8;
+
   iTxBuf[INTERNAL_DAC_R0] = out1 >> 8;
   iTxBuf[INTERNAL_DAC_L1] = out2 >> 8;
   iTxBuf[INTERNAL_DAC_R1] = out3 >> 8;
@@ -61,10 +62,11 @@ void sport0_rx_isr() {
 
 // spi receive interrupt (control change from avr32)
 void spi_rx_isr() {
-  // increment first so the handler is in sync
-  spiRxRingIdx = (spiRxRingIdx + 1) % MSG_BYTES;
+  // increment first so the message handler stays in sync
+  spiByte = (spiByte + 1) % MSG_BYTES;
   // copy rx data to ringbuffer
   // reading from the rx data register also clears the rx interrupt
-  spiRxRing[spiRxRingIdx] = *pSPI_RDBR;
+  rxMsg.raw[spiByte] = *pSPI_RDBR;
+  *pSPI_TDBR = txMsg.raw[spiByte];
   handle_spi_rx();
 }

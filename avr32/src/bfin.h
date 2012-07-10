@@ -12,9 +12,14 @@
 // blackfin HWAIT status
 extern volatile U8 hwait;
 
-// load an .ldr file over SPI
+// load a blackfin executable
 void bfin_load(U32 size, char * data);
-// perform a parameter transaction over SPI
-void bfin_param(U32 idx, F32 val);
-
+// set a parameter
+void bfin_set_param(U32 idx, F32 val);
+// get number of parameters 
+u16 bfin_get_num_params();
+// get a parameter name
+void bfin_get_param_name(u16 paramIdx, char * name);
+// get parameter descriptor
+void bfin_get_param_name(u16 paramIdx, ParamDesc* pDesc);
 #endif // header guard

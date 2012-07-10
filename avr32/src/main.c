@@ -61,7 +61,6 @@ static void check_events(void) {
   }
 }
 
-
 ////main function
 int main (void) {
   U32 waitForCard = 0;
@@ -135,6 +134,8 @@ int main (void) {
   // screen_refresh();
 
   print_dbg("done.\n\r");
+  print_dbg("\n\requesting parameters..."); 
+    print_dbg("done.\n\r");
 
   print_dbg("starting event loop.\n\r");
   // event loop

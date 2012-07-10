@@ -4,10 +4,12 @@
 #include "types.h"
 
 //-------- global variables
-// ringbuffer for spi rx data
-extern u8 spiRxRing[];
-// counter 
-extern u8 spiRxRingIdx;
+// receive message data
+extern msg_t rxMsg;
+// transmit message data
+extern msg_t rxMsg;
+// SPI byte counter
+extern u8 spiByte;
 
 //------- function prototypes
 // handle new data in the spi RX ringbuffer

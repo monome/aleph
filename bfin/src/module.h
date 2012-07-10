@@ -20,7 +20,7 @@
 typedef struct _moduleData {
   ParamDesc* paramDesc;
   ParamData* paramData;
-  u32 numParams;
+  u16 numParams;
 } moduleData_t;
 
 extern moduleData_t* moduleData;

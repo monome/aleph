@@ -9,21 +9,23 @@
 
 // all transactions will be 8 bits;
 // this is necessary for bf533 spi-boot mode,
-// and it seems easier to keep it always the same
-
-// going with an 8-byte protocol
-// to allow for some degree of expansion.
 
 //--------------------
 //--- types and defines
 
-#define MSG_BYTES 7
-#define MSG_BYTES_1 6
-#define DATA_BYTES 6
+// number of bytes in a message
+#define MSG_BYTES 10
+#define MSG_BYTES_1 9
+#define DATA_BYTES 9
 
 /* first we define structs for each message type
  *  including the generic case.
  */
+
+
+///// WARNING:
+///// these structs should NEVER exceed MSG_BYTES in size.
+///// better, they should be equal, and padded with dummy bytes.
 
 // generic 
 typedef struct _msgGeneric{
@@ -36,16 +38,42 @@ typedef struct _msgSetParam {
   u8 command;
   u16 idx;
   ParamValue value; // 4 bytes
+  u8 dummy[3];
 } msgSetParam_t;
 
+// get number of parameters
+typedef struct _msgGetNumParams {
+  u8 command;
+  u16 numParams;
+  u8 dummy[7];
+} msgGetNumParams_t;
+
+// get parameter label
+typedef struct _msgGetParamLabel {
+  //  u8 command;
+  char label[10];
+} msgGetParamLabel_t;
+
+// get parameter type and range
+typedef struct _msgGetParamDesc {
+  u8 command;
+  u8 paramType;
+  f32 min;
+  f32 max;
+} msgGetParamDesc_t;
+
 /* then we define a union of all these formats
-   so that callers can choose
+   so that callers can decide which to use
 */
 
 typedef union {
   u8 raw[MSG_BYTES];
   msgGeneric_t generic;
   msgSetParam_t setParam;
+  msgGetNumParams_t numParams;
+  msgGetParamLabel_t paramLabel;
+
+  msgGetParamDesc_t paramDesc;
 } msg_t;
 
 //----- command types
@@ -54,9 +82,13 @@ typedef union {
 // get current parameter value
 #define COM_GET_PARAM 1
 // report back the number of parameters
-#define COM_REPORT_NUMPARAMS 2
-// report data on a particular parameter
-#define COM_REPORT_PARAM 3
+#define COM_GET_NUM_PARAMS 2
+// report label for a particular parameter
+#define COM_GET_PARAM_LABEL_1 3
+// label is split into 2 messages....
+#define COM_GET_PARAM_LABEL_2 4
+// report type and range of a particular parameter
+#define COM_GET_PARAM_DESC 5
 
 // indices of bytes 
 enum {
