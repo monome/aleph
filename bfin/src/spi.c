@@ -45,8 +45,8 @@ void handle_spi_rx(void) {
   // FIXME: hacky way to check for index byte
   if (spiByte == 1) {
     if (rxMsg.generic.command == MSG_GET_PARAM_DESC_COM) {
-      // byte swap the index
       idx = rxMsg.getParamDesc.idx;
+      // byte swap the index
       byte_swap((U8*)&idx, 2);
       txMsg.getParamDesc.desc = moduleData->paramDesc[idx];
       /// byte-swap the float fields
@@ -76,6 +76,4 @@ void handle_spi_rx(void) {
       }
     }
   }
-
-  
 }

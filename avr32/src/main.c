@@ -50,7 +50,9 @@ static void check_events(void) {
       screen_draw_int(0, SCREEN_LINE(0), encVal[0], 0x0f);
       print_dbg("\r\nencoder 0 value: ");
       print_dbg_ulong(encVal[0]);
-      bfin_set_param(1, encVal[0]);
+      if(encVal[0] > 0) {
+	bfin_set_param(1, encVal[0]);
+      }
       refresh = 1;
       break;
       
@@ -138,17 +140,13 @@ int main (void) {
   // load blackfin from first .ldr file in filesystem
   load_bfin_sdcard_test();
 
-  // screen_draw_string_squeeze(0, FONT_CHARH * 2, "cpu clock speed:", 0xf);
-  // screen_draw_int(0, FONT_CHARH * 3, sysclk_get_cpu_hz(), 0x0f);
-  // screen_refresh();
-
   print_dbg("done.\n\r");
 
   //// wait!
   delay_ms(30);
  
-  bfin_hack(7);
-  post_num_params();
+  //bfin_hack(7);
+  //post_num_params();
 
   print_dbg("starting event loop.\n\r");
   // event loop
@@ -157,7 +155,7 @@ int main (void) {
   }
 }
 
-static void post_num_params(void) {
+static void report_params(void) {
   U8 col;
   U8 numParams;
   print_dbg("\n\requesting parameters..."); 
