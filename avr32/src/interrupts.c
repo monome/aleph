@@ -148,7 +148,7 @@ static void irq_port1_line0(void) {
   // ...and switches 0-3
   if(gpio_get_pin_interrupt_flag(SW0_PIN)) {
     process_sw(0);
-    gpio_clear_pin_interrupt_flag(SWO_PIN);
+    gpio_clear_pin_interrupt_flag(SW0_PIN);
   }
   if(gpio_get_pin_interrupt_flag(SW1_PIN)) {
     process_sw(1);
