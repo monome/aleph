@@ -23,7 +23,8 @@ void handle_spi_rx(void) {
       // fill tx message with number-of-params
       txMsg.numParams.value = moduleData->numParams;
       // byte swap for the fucking avr32
-      byte_swap((U8*)&(txMsg.numParams.value), 2);
+      //?????
+            byte_swap((U8*)&(txMsg.numParams.value), 2);
     }
 
     // TODO: param name

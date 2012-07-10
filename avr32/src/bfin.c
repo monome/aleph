@@ -89,13 +89,12 @@ U16 bfin_get_num_params(void) {
     spi_read(BFIN_SPI, &tmp);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 
-    
-      print_dbg("\r\n getNumParams got short value: ");
+      print_dbg("\r\n getNumParams got u16 value: ");
       print_dbg_ulong(tmp);
-
 
     msg.raw[i]= (U8)(tmp & 0xff);
   }
+  print_dbg("\r\n");
   return msg.numParams.value;
 }
 

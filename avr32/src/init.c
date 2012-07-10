@@ -248,7 +248,7 @@ void init_bfin_resources(void) {
     .baudrate     = 2000000,
     .bits         = 8,
     .spck_delay   = 0,
-    .trans_delay  = 0,
+    //  .trans_delay  = 0,
     .trans_delay  = 1,
     .stay_act     = 1,
     .spi_mode     = 1,

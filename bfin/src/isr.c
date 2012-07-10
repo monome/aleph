@@ -60,13 +60,20 @@ void sport0_rx_isr() {
    process_frame();
 }
 
-// spi receive interrupt (control change from avr32)
+// spi receive interrupt (from avr32)
 void spi_rx_isr() {
   // increment first so the message handler stays in sync
   spiByte = (spiByte + 1) % MSG_BYTES;
-  // copy rx data to ringbuffer
+
+  // *pSPI_TDBR = txMsg.raw[spiByte];
+  // load the NEXT byte for MISO, we already missed this one  
+  // *pSPI_TDBR = txMsg.raw[(spiByte + 1) % MSG_BYTES];
+
+  /// TEST:
+  *pSPI_TDBR = spiByte;
+
   // reading from the rx data register also clears the rx interrupt
-  *pSPI_TDBR = txMsg.raw[spiByte];
   rxMsg.raw[spiByte] = *pSPI_RDBR;
+  // figure out what to do with the data...
   handle_spi_rx();
 }

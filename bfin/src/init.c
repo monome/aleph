@@ -128,10 +128,15 @@ void init_spi_slave(void) {
   *pSPI_STAT |= 0x10;  
 
   // slave mode, 16 bit transfers, MSB first, non-dma rx mode, overwrite (interrupt when SPI_RDBR is full) 
-  //  *pSPI_CTL = CPHA | SIZE | GM;
-  // actually need 8 bits to be compatible with SPI-boot
-  *pSPI_CTL = CPHA | GM;
   // phase: seems crazy but i think bfin and avr32 have opposite definitions of clock phase! oh lordy
+  //  *pSPI_CTL = CPHA | SIZE | GM;
+
+  // actually need 8 bits to be compatible with SPI-boot
+  //----->>>>>  *pSPI_CTL = CPHA | GM;
+
+  // TEST: send zeros after TDBR is emptied
+  *pSPI_CTL = CPHA | GM | SZ;
+
 
   // enable transmit on MISO
   *pSPI_CTL |= EMISO;
