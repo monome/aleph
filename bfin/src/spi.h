@@ -7,7 +7,7 @@
 // receive message data
 extern msg_t rxMsg;
 // transmit message data
-extern msg_t rxMsg;
+extern msg_t txMsg;
 // SPI byte counter
 extern u8 spiByte;
 

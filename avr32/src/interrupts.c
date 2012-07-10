@@ -8,11 +8,12 @@
 // aleph
 #include "bfin.h"
 #include "conf_aleph.h"
-#include "global.h"
-#include "interrupts.h"
 #include "encoders.h"
 #include "events.h"
 #include "eventTypes.h"
+#include "global.h"
+#include "interrupts.h"
+#include "switches.h"
 //#include "timers.h"
 
 
@@ -144,8 +145,24 @@ static void irq_port1_line0(void) {
     process_enc(3);
     gpio_clear_pin_interrupt_flag(ENC3_S1_PIN);
   }
-  // ...and switches
-  // TODO
+  // ...and switches 0-3
+  if(gpio_get_pin_interrupt_flag(SW0_PIN)) {
+    process_sw(0);
+    gpio_clear_pin_interrupt_flag(SWO_PIN);
+  }
+  if(gpio_get_pin_interrupt_flag(SW1_PIN)) {
+    process_sw(1);
+    gpio_clear_pin_interrupt_flag(SW1_PIN);
+  }
+  if(gpio_get_pin_interrupt_flag(SW2_PIN)) {
+    process_sw(2);
+    gpio_clear_pin_interrupt_flag(SW2_PIN);
+  }
+  if(gpio_get_pin_interrupt_flag(SW3_PIN)) {
+    process_sw(3);
+    gpio_clear_pin_interrupt_flag(SW3_PIN);
+  }
+
 }
 
 //-----------------------------
@@ -174,6 +191,12 @@ void register_interrupts(void) {
   gpio_enable_pin_interrupt( ENC2_S1_PIN,	GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( ENC3_S0_PIN,	GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( ENC3_S1_PIN,	GPIO_PIN_CHANGE);
+
+  gpio_enable_pin_interrupt( SW0_PIN,	        GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW1_PIN,	        GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW2_PIN,	        GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW3_PIN,	        GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW_EDIT_PIN,	GPIO_PIN_CHANGE);
   
   // register IRQ for port A, 0-7
   INTC_register_interrupt( &irq_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), AVR32_INTC_INT2 );

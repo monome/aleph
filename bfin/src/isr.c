@@ -66,7 +66,7 @@ void spi_rx_isr() {
   spiByte = (spiByte + 1) % MSG_BYTES;
   // copy rx data to ringbuffer
   // reading from the rx data register also clears the rx interrupt
-  rxMsg.raw[spiByte] = *pSPI_RDBR;
   *pSPI_TDBR = txMsg.raw[spiByte];
+  rxMsg.raw[spiByte] = *pSPI_RDBR;
   handle_spi_rx();
 }

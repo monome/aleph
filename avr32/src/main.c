@@ -65,6 +65,8 @@ static void check_events(void) {
 int main (void) {
   U32 waitForCard = 0;
   volatile avr32_tc_t *tc = APP_TC;
+  U16 numParams = 0;
+  U8 col = 0;
   // switch to osc0 for main clock
   //  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP); 
   // initialize clocks:
@@ -134,9 +136,16 @@ int main (void) {
   // screen_refresh();
 
   print_dbg("done.\n\r");
+  
   print_dbg("\n\requesting parameters..."); 
+  numParams =  bfin_get_num_params();
   print_dbg("done.\n\r");
-    
+
+  col = screen_draw_string_squeeze(0, FONT_CHARH * 2, "found parameters:", 0xf);
+  col++;
+  screen_draw_int(col, FONT_CHARH * 2, numParams, 0x0f);
+  screen_refresh();
+
   print_dbg("starting event loop.\n\r");
   // event loop
   while(1) {

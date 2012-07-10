@@ -32,7 +32,7 @@
 void init_oled(void);
 // draw a pixel
 void screen_draw_pixel(U16 x, U16 y, U8 a);
-//// all the character-drawing routines now return last use column position
+//// all the character-drawing routines now return last used column position
 // draw a single character glyph with fixed spacing
 U8 screen_draw_char(U16 x, U16 y, char c, U8 a);
 // draw a single glyph with proportional spacing

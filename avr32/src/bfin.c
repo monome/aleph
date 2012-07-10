@@ -8,6 +8,9 @@
 #include "delay.h"
 #include "gpio.h"
 #include "spi.h"
+///// DBUG
+#include "print_funcs.h"
+/////
 // aleph
 #include "conf_aleph.h"
 #include "global.h"
@@ -68,7 +71,7 @@ void bfin_set_param(U32 idx, F32 val) {
 }
 
 // get number of parameters 
-u16 bfin_get_num_params(void) {
+U16 bfin_get_num_params(void) {
   u8 i;
   // annnoying; spi_read requires pointer to u16
   u16 tmp;
@@ -81,9 +84,16 @@ u16 bfin_get_num_params(void) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   // read data bytes
   for(i=1; i<MSG_BYTES; i++) {
+    
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
     spi_read(BFIN_SPI, &tmp);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+    
+      print_dbg("\r\n getNumParams got short value: ");
+      print_dbg_ulong(tmp);
+
+
     msg.raw[i]= (U8)(tmp & 0xff);
   }
   return msg.numParams.value;
