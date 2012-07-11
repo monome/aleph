@@ -135,7 +135,7 @@ void bfin_get_param_desc(u16 paramIdx, ParamDesc* pDesc) {
   spi_write(BFIN_SPI, 0); //dont care
   spi_read(BFIN_SPI, &x);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  pDesc->type = (eParamType)(x & 0xff);
+  pDesc->type = (U8)(x & 0xff);
   // read min
   for(i=0; i<4; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);

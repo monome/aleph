@@ -210,33 +210,31 @@ u8 spi_process(u8 rx) {
     return pval.asByte[2];
       break;
   case eParamDescMin1 :
-    byte = eParamDescMin1;
+    byte = eParamDescMin2;
     return pval.asByte[1];
 
     break;
   case eParamDescMin2 :
-    byte = eParamDescMin1;
+    byte = eParamDescMin3;
     return pval.asByte[0]; // min, low byte
-  
     break;
   case eParamDescMin3 :
     byte = eParamDescMax0;
     pval.asFloat = moduleData->paramDesc[idx].max;
     return pval.asByte[3]; // max, high byte
-      break;
+    break;
   // max  // === byteswap for BE on avr32
   case eParamDescMax0 :
     byte = eParamDescMax1;
     return pval.asByte[2];
-     break;
+    break;
   case eParamDescMax1 :
     byte = eParamDescMax2;
     return pval.asByte[1];
-     break;
+    break;
   case eParamDescMax2 :
     byte = eParamDescMax3;
     return pval.asByte[0]; // max, low byte
-  
     break;
   case eParamDescMax3 :
     byte = eCom; // reset

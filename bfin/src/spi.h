@@ -7,8 +7,8 @@
 // receive message data
 #define SPI_RX_BUF_NUM 32
 extern u8 spiBuf;
-extern u8 spiRxIdx = 0;
-extern u8 spiProcIdx = 0;
+//extern u8 spiRxIdx = 0;
+//extern u8 spiProcIdx = 0;
 
 /*
 extern msg_t rxMsg;
