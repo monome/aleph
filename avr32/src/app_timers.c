@@ -33,13 +33,13 @@ static void screen_timer_callback(int tag) {
 }
 
 static void enc_timer_callback(int tag) {
-  u16 val;
+  s16 val;
   for(i=0; i<NUM_ENC; i++) {
     //     if(enc[i].val != 0) {
     val = enc[i].val;
    if ( (val > enc[i].thresh) || (val < (enc[i].thresh * -1)) ) {
        e.eventType = enc[i].event;
-       e.eventData = enc[i].val;
+       e.eventData = val;
        enc[i].val = 0;
        post_event(&e);
     }
@@ -67,6 +67,6 @@ static void sw_timer_callback(int tag) {
 
 //====== external
 void init_app_timers(void) {
-  set_timer(&screenTimer, eScreenTimerTag, 2, &screen_timer_callback, 1);
-  set_timer(&encTimer, eEncTimerTag, 1, &enc_timer_callback, 1);
+  set_timer(&screenTimer, eScreenTimerTag, 5, &screen_timer_callback, 1);
+  set_timer(&encTimer, eEncTimerTag, 2, &enc_timer_callback, 1);
 }

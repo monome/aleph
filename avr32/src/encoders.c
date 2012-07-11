@@ -50,7 +50,7 @@ void init_encoders(void) {
 
   ////// TEST:
   /// enc3 scrolls a menu, make it slower
-  enc[3].thresh = 8;
+  enc[3].thresh = 12;
 
 }
 

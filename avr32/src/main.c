@@ -71,12 +71,14 @@ static void check_events(void) {
       break;
 
     case kEventEncoder3:
+      print_dbg("\nenc3 event: ");
+      print_dbg_ulong(e.eventData);
       //encVal[0] += e.eventData;
       //      sel = (sel + e.eventData);
       if(e.eventData > 0) sel++;
       if(e.eventData < 0) sel--;
-      while (sel < 0) { sel += numParams; }
-      while (sel >= numParams) { sel -= numParams; }
+      if (sel < 0) { sel = (numParams - 1); }
+      if (sel >= numParams) { sel = 0; }
       refresh_params();
       break;
       
