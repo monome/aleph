@@ -20,7 +20,7 @@ void bfin_load(U32 size, char * data);
 void bfin_set_param(U32 idx, F32 val);
 
 // get number of parameters 
-u16 bfin_get_num_params(void);
+u8 bfin_get_num_params(void);
 // get a parameter name
 void bfin_get_param_name(u16 paramIdx, char * name);
 // get parameter descriptor

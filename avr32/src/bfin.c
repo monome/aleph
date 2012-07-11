@@ -25,15 +25,6 @@ volatile U8 hwait = 0;
 //static msg_t rxMsg;
 //static msg_t txMsg;
 
-// so bad
-static void badswap4(u32* a, u32* b) {
-  *( (u8*)(&b) + 0) = *( (u8*)(&a) + 3) ;
-  *( (u8*)(&b) + 1) = *( (u8*)(&a) + 2) ;
-  *( (u8*)(&b) + 2) = *( (u8*)(&a) + 1) ;
-  *( (u8*)(&b) + 3) = *( (u8*)(&a) + 0) ;
-}
-
-
 // load a blackfin executable
 void bfin_load(U32 size, char * data) {
   U64 delay;
@@ -106,7 +97,7 @@ u8 bfin_get_num_params(void) {
 }
 
 void bfin_get_param_desc(u16 paramIdx, ParamDesc* pDesc) {
-  ParamVal pval;
+  ParamValue pval;
   u16 x; // u16 for spi_read()
   u8 i;
   // command 
@@ -115,10 +106,10 @@ void bfin_get_param_desc(u16 paramIdx, ParamDesc* pDesc) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   // idx
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  spi_write(BFIN_SPI, idx);
+  spi_write(BFIN_SPI, paramIdx);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   // read label
-  for(i=0; i<PARAM_LABEL_LEN) {
+  for(i=0; i<PARAM_LABEL_LEN; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
     spi_write(BFIN_SPI, 0); //dont care
     spi_read(BFIN_SPI, &x);
@@ -126,7 +117,7 @@ void bfin_get_param_desc(u16 paramIdx, ParamDesc* pDesc) {
     pDesc->label[i] = (char)(x & 0xff);
   }
   // read unit
-  for(i=0; i<PARAM_UNIT_LEN) {
+  for(i=0; i<PARAM_UNIT_LEN; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
     spi_write(BFIN_SPI, 0); //dont care
     spi_read(BFIN_SPI, &x);
@@ -134,7 +125,7 @@ void bfin_get_param_desc(u16 paramIdx, ParamDesc* pDesc) {
     pDesc->unit[i] = (char)(x & 0xff);
   }
   // read type
-  for(i=0; i<PARAM_LABEL_LEN) {
+  for(i=0; i<PARAM_LABEL_LEN; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
     spi_write(BFIN_SPI, 0); //dont care
     spi_read(BFIN_SPI, &x);
@@ -142,23 +133,24 @@ void bfin_get_param_desc(u16 paramIdx, ParamDesc* pDesc) {
     pDesc->label[i] = (char)(x & 0xff);
   }
   // read min
-  for(i=0; i<4) {
+  for(i=0; i<4; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
     spi_write(BFIN_SPI, 0); //dont care
     spi_read(BFIN_SPI, &x);
-    spi_read(BFIN_SPI, &(pval.asByte[i]));
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    pDesc->min[i] = pval.asFloat;
+    pval.asByte[i] = (u8)(x & 0xff);
   }
+  pDesc->min = pval.asFloat;
 
   // read max
-  for(i=0; i<4) {
+  for(i=0; i<4; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
     spi_write(BFIN_SPI, 0); //dont care
-    spi_read(BFIN_SPI, &(pval.asByte[i]));
+    spi_read(BFIN_SPI, &x);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    pDesc->max = pval.asFloat;
+    pval.asByte[i] = (u8)(x & 0xff);
   }
+  pDesc->max = pval.asFloat;
 }
 
 /*
@@ -272,6 +264,8 @@ void bfin_get_param_name(u16 paramIdx, char * name) {
 }
 */
 
+
+/*
 //// arrg
 void bfin_hack(U8 num) {
   U8 i;
@@ -286,6 +280,10 @@ void bfin_hack(U8 num) {
     print_dbg_ulong(x);
   }
 }
+
+
+*/
+
 
 // get parameter descriptor
 //void bfin_get_param_desc(u16 paramIdx, ParamDesc* pDesc);
