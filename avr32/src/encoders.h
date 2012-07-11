@@ -15,6 +15,10 @@ typedef struct _enc {
   U8 pin[2];
   // current position (p0 | (p1 << 1))
   U8 pos;
+  // current value of accumulator
+  S16 val;
+  // threshold to set sensitivity
+  S16 thresh;
   // event number to post on change
   eEventType event;
 } enc_t;

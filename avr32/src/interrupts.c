@@ -14,7 +14,7 @@
 #include "global.h"
 #include "interrupts.h"
 #include "switches.h"
-//#include "timers.h"
+#include "timers.h"
 
 
 //------------------------
@@ -75,26 +75,20 @@ static void irq_pdca(void) {
 // timer irq
 __attribute__((__interrupt__))
 static void irq_tc(void) {
-  event_t e;
+  //event_t e;
   tcTicks++;
-  // 1-second heartbeat LED
-  if ((tcTicks % 1000) == 0) {
+
+
+  process_timers();
+
+  // 1/2 sec heartbeat LED
+  if ((tcTicks % 500) == 0) {
     gpio_tgl_gpio_pin(LED0_GPIO);
   }
-  
-
-
+ 
   // clear interrupt flag by reading timer SR
   tc_read_sr(APP_TC, APP_TC_CHANNEL);
-  
-  // refresh ticks
-  if ((tcTicks % 4) == 0) {
-    if(refresh) {
-      e.eventType = kEventRefresh;
-      post_event(&e);
-      refresh = 0;
-    }
-  }
+
 }
 
 // interrupt handler for PA00-PA07

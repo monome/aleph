@@ -47,6 +47,7 @@ CSRCS = \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.c \
         common/services/clock/uc3a0_a1/sysclk.c            \
 	common/services/storage/ctrl_access/ctrl_access.c \
+	./src/app_timers.c \
 	./src/bfin.c \
 	./src/events.c \
 	./src/encoders.c \
@@ -108,7 +109,7 @@ DBGFLAGS =
 
 # Application optimization used during compilation and linking:
 # -O0, -O1, -O2, -O3 or -Os
-OPTIMIZATION = -O2
+OPTIMIZATION = -O0
 
 # Extra flags to use when archiving.
 ARFLAGS = 
