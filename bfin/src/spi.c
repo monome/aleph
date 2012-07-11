@@ -248,9 +248,6 @@ u8 spi_process(u8 rx) {
   }
 }
 
-
-
-
   /*
   // on the first byte, check the message type
   if (spiByte == 0) {

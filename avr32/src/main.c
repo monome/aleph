@@ -27,6 +27,7 @@
 #include "global.h"
 #include "init.h"
 #include "interrupts.h"
+#include "param.h"
 #include "screen.h"
 
 //=========================================

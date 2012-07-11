@@ -131,13 +131,11 @@ void bfin_get_param_desc(u16 paramIdx, ParamDesc* pDesc) {
     pDesc->unit[i] = (char)(x & 0xff);
   }
   // read type
-  for(i=0; i<PARAM_LABEL_LEN; i++) {
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, 0); //dont care
-    spi_read(BFIN_SPI, &x);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    pDesc->label[i] = (char)(x & 0xff);
-  }
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, 0); //dont care
+  spi_read(BFIN_SPI, &x);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  pDesc->type = (eParamType)(x & 0xff);
   // read min
   for(i=0; i<4; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
@@ -147,7 +145,6 @@ void bfin_get_param_desc(u16 paramIdx, ParamDesc* pDesc) {
     pval.asByte[i] = (u8)(x & 0xff);
   }
   pDesc->min = pval.asFloat;
-
   // read max
   for(i=0; i<4; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
