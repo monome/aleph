@@ -173,14 +173,6 @@ void register_interrupts(void) {
   //  U8 i;
   // generate an interrupt when bfin HWAIT changes
   gpio_enable_pin_interrupt( BFIN_HWAIT_PIN, GPIO_PIN_CHANGE);
-  
-  /*
-  // generate interrupts when encoder pins change
-  for(i=0; i<NUM_ENC; i++) {
-    gpio_enable_pin_interrupt( enc[i].pin[0], GPIO_PIN_CHANGE);
-    gpio_enable_pin_interrupt( enc[i].pin[1], GPIO_PIN_CHANGE);
-  }
-  */
 
   // enable interrupts on encoder pins
   gpio_enable_pin_interrupt( ENC0_S0_PIN,	GPIO_PIN_CHANGE);
@@ -196,7 +188,9 @@ void register_interrupts(void) {
   gpio_enable_pin_interrupt( SW1_PIN,	        GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( SW2_PIN,	        GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( SW3_PIN,	        GPIO_PIN_CHANGE);
-  gpio_enable_pin_interrupt( SW_EDIT_PIN,	GPIO_PIN_CHANGE);
+  
+  // FIXME: 
+  //gpio_enable_pin_interrupt( SW_EDIT_PIN,	GPIO_PIN_CHANGE);
   
   // register IRQ for port A, 0-7
   INTC_register_interrupt( &irq_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), AVR32_INTC_INT2 );

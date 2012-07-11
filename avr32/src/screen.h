@@ -47,5 +47,11 @@ U8 screen_draw_int(U16 x, U16 y, S32 i, U8 a);
 U8 screen_draw_float(U16 x, U16 y, F32 f, U8 a);
 // write screen buffer to OLED graphics RAM
 void screen_refresh(void);
+// fill a line with blank space to end
+void screen_blank_line(U16 x, U16 y);
+// highlight a line
+void screen_hilite_line(U16 y, U8 a);
+// get the value at a pixel
+U8 screen_get_pixel(U8 x, U8 y);
 
 #endif // header guard

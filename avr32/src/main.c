@@ -32,12 +32,24 @@
 
 //=========================================
 //==== static variables
-S32 encVal[4] = { 0, 0, 0, 0 };
+
+/////////////////////////////////////////
+///// these are for testing, will use BEES
+#define MAX_NUM_PARAMS 32
+
+//static S32 encVal[4] = { 0, 0, 0, 0 };
+static ParamValue paramVal[MAX_NUM_PARAMS];
+static ParamDesc paramDesc[MAX_NUM_PARAMS];
+static U8 numParams = 0;
+// selection
+static S8 sel = 0;
+/////////
 
 //=========================================== 
 //==== static functions
 static void check_events(void);
 static void report_params(void);
+static void refresh_params(void);
 
 // application event loop
 static void check_events(void) {
@@ -47,14 +59,21 @@ static void check_events(void) {
     switch(e.eventType) {
 
     case kEventEncoder0:
-      encVal[0] += e.eventData;
-      screen_draw_int(0, SCREEN_LINE(0), encVal[0], 0x0f);
-      print_dbg("\r\nencoder 0 value: ");
-      print_dbg_ulong(encVal[0]);
-      if(encVal[0] > 0) {
-	bfin_set_param(1, encVal[0]);
+      paramVal[sel].asFloat += e.eventData;
+      if((paramVal[sel].asFloat >= paramDesc[sel].min)
+	 && (paramVal[sel].asFloat <= paramDesc[sel].max))
+	{
+	bfin_set_param(sel, paramVal[sel].asFloat);
       }
-      refresh = 1;
+      refresh_params();
+      break;
+
+    case kEventEncoder1:
+      //encVal[0] += e.eventData;
+      sel = (sel + e.eventData);
+      while (sel < 0) { sel += numParams; }
+      while (sel >= numParams) { sel -= numParams; }
+      refresh_params();
       break;
       
     case kEventSwitchDown0:
@@ -144,10 +163,9 @@ int main (void) {
   print_dbg("done.\n\r");
 
   //// wait!
-  delay_ms(30);
+  delay_ms(4000);
  
-  //bfin_hack(7);
-  //post_num_params();
+  report_params();
 
   print_dbg("starting event loop.\n\r");
   // event loop
@@ -157,44 +175,43 @@ int main (void) {
 }
 
 static void report_params(void) {
-  U8 col;
-  U16 numParams, i;
-  ParamDesc desc;
+  //U8 col;
+  U8 i;
+
   print_dbg("\n\requesting parameters..."); 
   numParams =  bfin_get_num_params();
   print_dbg("done.\n\r");
 
-  col = screen_draw_string_squeeze(0, FONT_CHARH, "found parameters:", 0xf);
-  col++;
-  screen_draw_int(col, FONT_CHARH, numParams, 0x0f);
-  screen_refresh();
-  
   for(i=0; i<numParams; i++) {
-    bfin_get_param_desc(i, &desc);
+    bfin_get_param_desc(i,&( paramDesc[i]));
+    paramVal[i].asFloat = paramDesc[i].min;
+  }
+  refresh_params();
 
-    /*
+  /*
     print_dbg(desc.label);
     print_dbg("\r\n");
     print_dbg(desc.unit);
     print_dbg("\r\n");
-    */
+  */
+}
 
-    col = screen_draw_string_squeeze(0, FONT_CHARH * (2+i), desc.label, 0xf);
+static void refresh_params(void) {
+  u8 i, col, line;
+  for(i=0; i<numParams; i++) {
+    line = FONT_CHARH * (i);
+    screen_blank_line(0, line);
+    col = screen_draw_string_squeeze(0, line, paramDesc[i].label, 0xf);
     col++;
-    col = screen_draw_string_squeeze(col, FONT_CHARH * (2+i), " : ", 0xf);
+    col = screen_draw_string_squeeze(col, line, " : ", 0xf);
     col++;
-    col = screen_draw_float(col, FONT_CHARH * (2+i), desc.min, 0xf);
+    col = screen_draw_float(col, line, paramVal[i].asFloat, 0xf);
     col++;
-    col = screen_draw_string_squeeze(col, FONT_CHARH * (2+i), " - ", 0xf);
+    col = screen_draw_string_squeeze(col, line, " ", 0xf);
     col++;
-    col = screen_draw_float(col, FONT_CHARH * (2+i), desc.max, 0xf);
-    col++;
-    col = screen_draw_string_squeeze(col, FONT_CHARH * (2+i), " ", 0xf);
-    col++;
-    screen_draw_string_squeeze(col, FONT_CHARH * (2+i), desc.unit, 0x0f);
-    screen_refresh();
-    
+    col = screen_draw_string_squeeze(col, line, paramDesc[i].unit, 0x0f);
+    screen_blank_line(col, line);
+    if(i == sel) { screen_hilite_line(line, 0x01); }
+    refresh = 1;
   }
-
-
 }

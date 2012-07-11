@@ -249,6 +249,11 @@ void init_bfin_resources(void) {
     .bits         = 8,
     .spck_delay   = 0,
     //  .trans_delay  = 0,
+    //// FIXME:
+    //// trans_delay is to allow bfin calculation time between spi irqs
+    //// (and acommodating audio irqs!)
+    //// would be better to delay maunally
+    //// so bfin boot can stay fast
     .trans_delay  = 20,
     .stay_act     = 1,
     .spi_mode     = 1,

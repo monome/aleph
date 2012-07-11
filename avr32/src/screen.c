@@ -143,6 +143,19 @@ void screen_draw_pixel(U16 x, U16 y, U8 a) {
   }
 }
 
+// get value of pixel
+U8 screen_get_pixel(U8 x, U8 y) {
+  static U32 pos;
+  // if (x >= NCOLS) return;
+  // if (y >= NROWS) return;
+  pos = (y * NCOLS_2) + (x>>1);
+  if (x%2) {
+    return (screen[pos] & 0xf0) >> 4; 
+   } else {
+    return screen[pos] & 0x0f;
+  }
+}
+
 // draw a single character glyph with fixed spacing
 U8 screen_draw_char(U16 col, U16 row, char gl, U8 a) {
   static U8 x, y;
@@ -223,4 +236,27 @@ void screen_refresh(void) {
   }
   //  cpu_irq_enable();
   //  Enable_global_interrupt();
+}
+
+
+// fill a line with blank space to end
+void screen_blank_line(U16 x, U16 y) {
+  U8 i, j;
+  for(i=x; i<NCOLS; i++) {
+    for(j=y; j<FONT_CHARH; j++) {
+      screen_draw_pixel(i, j, 0);
+    }
+  }
+}
+
+// highlight a line
+void screen_hilite_line(U16 y, U8 a) {
+  U8 i, j;
+  for(i=0; i<NCOLS; i++) {
+    for(j=y; j<(y+FONT_CHARH); j++) {
+      if (screen_get_pixel(i, j) == 0) {
+	screen_draw_pixel(i, j, a);
+      }
+    }
+  }
 }
