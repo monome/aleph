@@ -18,8 +18,8 @@
 
 // parameter indices
 enum {
-  eParamAmp  ,
-  eParamFreq
+  eParamAmp = 0,
+  eParamFreq = 1
 };
 
 // module data structure

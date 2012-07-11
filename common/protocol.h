@@ -15,52 +15,47 @@
 // it is relatively easy to implemement variable-length messaging.
 
 // generic message structure
-typedef struct _msgGeneric {
+typedef struct __attribute__((__packed__)) _msgGeneric {
   u8 command;
   u8 * data;
 } msgGeneric_t;
 
 // 0: set parameter
 #define MSG_SET_PARAM_COM 0
-typedef struct _msgSetParam {
+typedef struct __attribute__((__packed__)) _msgSetParam {
   u8 command;
-  u16 idx;
+  u8 idx;
   ParamValue value; // 4 bytes
 } msgSetParam_t;
-//#define MSG_SET_PARAM_BYTES 7
 
 // 1: get parameter
 #define MSG_GET_PARAM_COM 1
-typedef struct _msgGetParam {
+typedef struct __attribute__((__packed__)) _msgGetParam {
   u8 command;
-  u16 idx;
+  u8 idx;
   ParamValue value; // 4 bytes
 } msgGetParam_t;
-//#define MSG_GET_PARAM_BYTES 7
 
 // 2: get number of parameters
 #define MSG_GET_NUM_PARAMS_COM 2
-typedef struct _msgGetNumParams {
+typedef struct __attribute__((__packed__)) _msgGetNumParams {
   u8 command;
-  u16 value;
+  u8 value;
 } msgGetNumParams_t;
-//#define MSG_GET_NUM_PARAMS_BYTES 3
 
 // 3: get parameter descriptor
 #define MSG_GET_PARAM_DESC_COM 3
-typedef struct _msgGetParamDesc {
+typedef struct __attribute__((__packed__)) _msgGetParamDesc {
   u8 command;
-  u16 idx;
+  u8 idx;
   ParamDesc desc;
 } msgGetParamDesc_t;
-/// WARNING: hack. must agree with param.h 
-//#define MSG_GET_PARAM_DESC_BYTES (PARAM_DESC_BYTES + 1)
 
 // abstract message type is a large union
 //#define MSG_MAX_BYTES MSG_GET_PARAM_DESC_BYTES
 // whatever...
 #define MSG_MAX_BYTES 64
-typedef union {
+typedef union __attribute__((__packed__)) {
   u8 raw[MSG_MAX_BYTES];
   msgGeneric_t generic;
   msgSetParam_t setParam;

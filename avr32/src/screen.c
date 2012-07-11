@@ -131,6 +131,8 @@ void init_oled(void) {
 // draw a single pixel
 void screen_draw_pixel(U16 x, U16 y, U8 a) {
   static U32 pos;
+  // if (x >= NCOLS) return;
+  // if (y >= NROWS) return;
   pos = (y * NCOLS_2) + (x>>1);
   if (x%2) {
     screen[pos] &= 0x0f;
@@ -207,7 +209,7 @@ U8 screen_draw_int(U16 x, U16 y, S32 i, U8 a) {
 // print a formatted float
 U8 screen_draw_float(U16 x, U16 y, F32 f, U8 a) {
   static char buf[32];
-  snprintf(buf, 32, "%f", (float)f);
+  snprintf(buf, 32, "%.1f", (float)f);
   return screen_draw_string_squeeze(x, y, buf, a);
 }
 

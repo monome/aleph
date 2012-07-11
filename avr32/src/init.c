@@ -245,11 +245,11 @@ void init_bfin_resources(void) {
   
   spi_options_t spiOptions = {
     .reg          = BFIN_SPI_NPCS,
-    .baudrate     = 10000000,
+    .baudrate     = 5000000,
     .bits         = 8,
     .spck_delay   = 0,
     //  .trans_delay  = 0,
-    .trans_delay  = 10,
+    .trans_delay  = 2,
     .stay_act     = 1,
     .spi_mode     = 1,
     .modfdis      = 1

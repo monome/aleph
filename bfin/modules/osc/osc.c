@@ -62,21 +62,21 @@ void init_module(void) {
   moduleData->numParams = MODULE_NUM_PARAMS;
 
   // initialize parameter descriptors
-  strcpy(moduleData->paramDesc[eParamAmp].name, "amp");
+  strcpy(moduleData->paramDesc[eParamAmp].label, "amp");
   strcpy(moduleData->paramDesc[eParamAmp].unit, "amp");
   moduleData->paramDesc[eParamAmp].type = PARAM_TYPE_FRACT;
   moduleData->paramDesc[eParamAmp].min = 0.f;
   moduleData->paramDesc[eParamAmp].max = 1.f;
 
-  strcpy(moduleData->paramDesc[eParamFreq].name, "freq");
+  strcpy(moduleData->paramDesc[eParamFreq].label, "freq");
   strcpy(moduleData->paramDesc[eParamFreq].unit, "hz");
   moduleData->paramDesc[eParamFreq].type = PARAM_TYPE_FLOAT;
   moduleData->paramDesc[eParamFreq].min = 20.f;
   moduleData->paramDesc[eParamFreq].max = 10000.f;
 
   // initialize parameter values
-  moduleData->paramData[eParamAmp].value.asFract = float_to_fr32(0.125f);
-  moduleData->paramData[eParamAmp].value.asFloat = 440;
+  moduleData->paramData[eParamAmp].value.asFract = FRACT32_MAX >> 3;
+  moduleData->paramData[eParamFreq].value.asFloat = 440;
 
   // initialize wavetable
   init_wavetable();

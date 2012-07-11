@@ -1,7 +1,7 @@
 #include "types.h"
 #include "util.h"
 
-// swap some bytes
+// swap the next N bytes starting from pointer
 void byte_swap(u8* pData, u8 nb) {
   u8 tmp[nb];
   u8 i;

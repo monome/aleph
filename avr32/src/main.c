@@ -36,7 +36,7 @@ S32 encVal[4] = { 0, 0, 0, 0 };
 //=========================================== 
 //==== static functions
 static void check_events(void);
-static void post_num_params(void);
+static void report_params(void);
 
 // application event loop
 static void check_events(void) {
@@ -57,7 +57,7 @@ static void check_events(void) {
       break;
       
     case kEventSwitchDown0:
-      post_num_params();
+      report_params();
       break;
 
     case kEventRefresh:
@@ -157,14 +157,43 @@ int main (void) {
 
 static void report_params(void) {
   U8 col;
-  U8 numParams;
+  U16 numParams, i;
+  ParamDesc desc;
   print_dbg("\n\requesting parameters..."); 
   numParams =  bfin_get_num_params();
   print_dbg("done.\n\r");
 
-  col = screen_draw_string_squeeze(0, FONT_CHARH * 2, "found parameters:", 0xf);
+  col = screen_draw_string_squeeze(0, FONT_CHARH, "found parameters:", 0xf);
   col++;
-  screen_draw_int(col, FONT_CHARH * 2, numParams, 0x0f);
+  screen_draw_int(col, FONT_CHARH, numParams, 0x0f);
   screen_refresh();
+  
+  for(i=0; i<numParams; i++) {
+    bfin_get_param_desc(i, &desc);
+
+    /*
+    print_dbg(desc.label);
+    print_dbg("\r\n");
+    print_dbg(desc.unit);
+    print_dbg("\r\n");
+    */
+
+    col = screen_draw_string_squeeze(0, FONT_CHARH * (2+i), desc.label, 0xf);
+    col++;
+    col = screen_draw_string_squeeze(col, FONT_CHARH * (2+i), " : ", 0xf);
+    col++;
+    col = screen_draw_float(col, FONT_CHARH * (2+i), desc.min, 0xf);
+    col++;
+    col = screen_draw_string_squeeze(col, FONT_CHARH * (2+i), " - ", 0xf);
+    col++;
+    col = screen_draw_float(col, FONT_CHARH * (2+i), desc.max, 0xf);
+    col++;
+    col = screen_draw_string_squeeze(col, FONT_CHARH * (2+i), " ", 0xf);
+    col++;
+    screen_draw_string_squeeze(col, FONT_CHARH * (2+i), desc.unit, 0x0f);
+    screen_refresh();
+    
+  }
+
 
 }

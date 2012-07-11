@@ -21,8 +21,18 @@
 
 // HWAIT status from blackfin
 volatile U8 hwait = 0;
-// message data structure for param handling
-static msg_t msg;
+// message data structures for param handling
+//static msg_t rxMsg;
+//static msg_t txMsg;
+
+// so bad
+static void badswap4(u32* a, u32* b) {
+  *( (u8*)(&b) + 0) = *( (u8*)(&a) + 3) ;
+  *( (u8*)(&b) + 1) = *( (u8*)(&a) + 2) ;
+  *( (u8*)(&b) + 2) = *( (u8*)(&a) + 1) ;
+  *( (u8*)(&b) + 3) = *( (u8*)(&a) + 0) ;
+}
+
 
 // load a blackfin executable
 void bfin_load(U32 size, char * data) {
@@ -56,17 +66,113 @@ void bfin_load(U32 size, char * data) {
   Enable_global_interrupt();
 }
 
+void bfin_set_param(u32 idx, f32 x ) {
+  static ParamValue pval;
+  pval.asFloat = x;
+  // command
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, MSG_SET_PARAM_COM);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  //val0
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, pval.asByte[0]);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  // val1
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, pval.asByte[1]);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  //val2
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, pval.asByte[2]);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  //val3
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, pval.asByte[3]);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+}
+
+u8 bfin_get_num_params(void) {
+  u16 x;
+  // command 
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, MSG_GET_NUM_PARAMS_COM);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  // read num
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, 0); //dont care
+  spi_read(BFIN_SPI, &x);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  return (u8)(x & 0xff);
+}
+
+void bfin_get_param_desc(u16 paramIdx, ParamDesc* pDesc) {
+  ParamVal pval;
+  u16 x; // u16 for spi_read()
+  u8 i;
+  // command 
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, MSG_GET_PARAM_DESC_COM);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  // idx
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, idx);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  // read label
+  for(i=0; i<PARAM_LABEL_LEN) {
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, 0); //dont care
+    spi_read(BFIN_SPI, &x);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    pDesc->label[i] = (char)(x & 0xff);
+  }
+  // read unit
+  for(i=0; i<PARAM_UNIT_LEN) {
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, 0); //dont care
+    spi_read(BFIN_SPI, &x);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    pDesc->unit[i] = (char)(x & 0xff);
+  }
+  // read type
+  for(i=0; i<PARAM_LABEL_LEN) {
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, 0); //dont care
+    spi_read(BFIN_SPI, &x);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    pDesc->label[i] = (char)(x & 0xff);
+  }
+  // read min
+  for(i=0; i<4) {
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, 0); //dont care
+    spi_read(BFIN_SPI, &x);
+    spi_read(BFIN_SPI, &(pval.asByte[i]));
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    pDesc->min[i] = pval.asFloat;
+  }
+
+  // read max
+  for(i=0; i<4) {
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, 0); //dont care
+    spi_read(BFIN_SPI, &(pval.asByte[i]));
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    pDesc->max = pval.asFloat;
+  }
+}
+
+/*
 // set a parameter
 void bfin_set_param(U32 idx, F32 val) {
   U8 i;
   // U16 tmp;
-  msg.generic.command = MSG_SET_PARAM_COM;
-  msg.setParam.idx = idx;
-  msg.setParam.value.asFloat = val;
+  txMsg.generic.command = MSG_SET_PARAM_COM;
+  txMsg.setParam.idx = idx;
+  txMsg.setParam.value.asFloat = val;
 
   for(i=0; i<sizeof(msgSetParam_t); i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, msg.raw[i]);
+    spi_write(BFIN_SPI, txMsg.raw[i]);
     //// TEST
     // spi_read(BFIN_SPI, &tmp);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
@@ -78,34 +184,55 @@ U16 bfin_get_num_params(void) {
   u8 i;
   // annnoying; spi_read requires pointer to u16
   u16 tmp;
-  u8 bytes;
+  u8 bytes = sizeof(msgGetNumParams_t);
 
-  /// TEST: fill with an unacceptable value to catch byte order problems
-  // tmp = 0xFFFF;
+  // set command
+  txMsg.getNumParams.command = MSG_GET_NUM_PARAMS_COM;
 
-  // send command word
-  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  spi_write(BFIN_SPI, (U8)MSG_GET_NUM_PARAMS_COM);
-  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-
-
-  bytes = sizeof(msgGetNumParams_t);
-  
-  // read data bytes
-  for(i=1; i<bytes; i++) {
-    
+  // read/write
+  for(i=0; i<bytes; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
     // each read needs a dummy write...
-    spi_write(BFIN_SPI, i);
+    spi_write(BFIN_SPI, txMsg.raw[i]);
     spi_read(BFIN_SPI, &tmp);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-       print_dbg("\r\n getNumParams got u16 value: ");
-       print_dbg_ulong(tmp);
-    msg.raw[i]= (U8)(tmp & 0xff);
+    print_dbg("\r\n getNumParams got u16 value: ");
+    print_dbg_ulong(tmp);
+    rxMsg.raw[i]= (U8)(tmp & 0xff);
   }
-   print_dbg("\r\n\r\n");
-  return msg.getNumParams.value;
+  print_dbg("\r\n\r\n");
+  return rxMsg.getNumParams.value;
 }
+
+void bfin_get_param_desc(u16 paramIdx, ParamDesc* pDesc) {
+  u8 i;
+  u16 tmp;
+  u8 bytes = sizeof(msgGetParamDesc_t);
+  
+  print_dbg("\r\n requesting parameter descrtiptor at idx ");
+  print_dbg_ulong(paramIdx);
+
+  // set command and idx
+  txMsg.getParamDesc.command = MSG_GET_PARAM_DESC_COM;
+  txMsg.getParamDesc.idx = paramIdx;
+
+  // write/read
+  for(i=0; i<bytes; i++) {
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, txMsg.raw[i]);
+    spi_read(BFIN_SPI, &tmp);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+    print_dbg("\r\n getParamDesc got u16 value: ");
+    print_dbg_ulong(tmp);
+
+    rxMsg.raw[i]= (U8)(tmp & 0xff);
+  }
+  *(pDesc) = rxMsg.getParamDesc.desc;
+  print_dbg("\r\n\r\n");
+}
+
+*/
 
 /*
 // get a parameter name

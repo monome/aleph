@@ -14,6 +14,7 @@ CC = $(CROSS_COMPILE)gcc
 LDR = $(CROSS_COMPILE)ldr
 CPU = bf533
 CFLAGS += -Wall -g -mcpu=$(CPU) -I$(core_srcdir) -I$(core_dir)../common/
+CFLAGS += -02
 INC += -I$(core_srcdir) -I$(core_dir)../common/
 LDFLAGS += -mcpu=$(CPU)
 # LDRFLAGS += --initcode $(core_objdir)init.o

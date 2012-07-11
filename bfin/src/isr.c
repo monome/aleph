@@ -64,6 +64,7 @@ void sport0_rx_isr() {
 
 // spi receive interrupt (from avr32)
 void spi_rx_isr() {
+  /*
   u8 txByte;
   // increment first so the message handler stays in sync
   spiByte++;
@@ -79,5 +80,7 @@ void spi_rx_isr() {
 
   // figure out what to do with the data...
   handle_spi_rx();
+  */
+  *pSPI_TDBR = handle_spi_rx(*pSPI_RDBR);
 
 }

@@ -28,7 +28,7 @@
 #define PARAM_TYPE_UINT  2
 
 // 4-byte union of value representations
-typedef union {
+typedef union __attribute__((__packed__)) {
   f32 asFloat;
   fract32 asFract;
   u32 asUint;
@@ -39,7 +39,7 @@ typedef union {
 // parameter descriptor
 typedef struct __attribute__((__packed__)) ParamDescStruct {
   // parameter name
-  char name[PARAM_LABEL_LEN];
+  char label[PARAM_LABEL_LEN];
   // parameter unit name
   char unit[PARAM_UNIT_LEN];
   // type: fract, int, or float
@@ -49,7 +49,6 @@ typedef struct __attribute__((__packed__)) ParamDescStruct {
   f32 max;
   // other stuff: range? curve?
 } ParamDesc;
-//#define PARAM_DESC_BYTES 33
 
 // parameter data
 typedef struct __attribute__((__packed__)) ParamDataStruct {
