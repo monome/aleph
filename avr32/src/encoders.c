@@ -45,26 +45,28 @@ void init_encoders(void) {
   // realtime initial pin values
   for(i=0; i<NUM_ENC; i++) {
     enc[i].pos = gpio_get_pin_value(enc[i].pin[0]) + (gpio_get_pin_value(enc[i].pin[1]) << 1);
+    enc[i].thresh = 0;
   }
+
+  ////// TEST:
+  /// enc3 scrolls a menu, make it slower
+  enc[3].thresh = 8;
+
 }
 
 // post events based on encoder movements
 void process_enc( const U8 idx) {
-  event_t e;  
-  S8 val = 0;
+  //event_t e;  
+  // S8 val = 0;
   U8 pos;
   
   pos = gpio_get_pin_value(enc[idx].pin[0]) + (gpio_get_pin_value(enc[idx].pin[1]) << 1);
 
   if (pos != enc[idx].pos) {
-    val = enc_map[enc[idx].pos][pos];
+    enc[idx].val += enc_map[enc[idx].pos][pos];
     enc[idx].pos = pos;
   }
-  if (val != 0) {
-    e.eventType = enc[idx].event;
-    e.eventData = val;
-    post_event(&e);
-  }
+
 }
   
 

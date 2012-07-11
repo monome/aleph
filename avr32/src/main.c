@@ -19,6 +19,7 @@
 #include "print_funcs.h"
 #include "sysclk.h"
 // aleph
+#include "app_timers.h"
 #include "bfin.h"
 #include "conf_aleph.h"
 #include "encoders.h"
@@ -29,6 +30,7 @@
 #include "interrupts.h"
 #include "param.h"
 #include "screen.h"
+#include "timers.h"
 
 //=========================================
 //==== static variables
@@ -68,9 +70,11 @@ static void check_events(void) {
       refresh_params();
       break;
 
-    case kEventEncoder1:
+    case kEventEncoder3:
       //encVal[0] += e.eventData;
-      sel = (sel + e.eventData);
+      //      sel = (sel + e.eventData);
+      if(e.eventData > 0) sel++;
+      if(e.eventData < 0) sel--;
       while (sel < 0) { sel += numParams; }
       while (sel >= numParams) { sel -= numParams; }
       refresh_params();
@@ -101,7 +105,7 @@ int main (void) {
   // initialize clocks:
   init_clocks();
   
-  // initialize Interrupt Controller
+  // initialize Interrupt Controllvoider
   INTC_init_interrupts();
 
   // disable interrupts
@@ -142,10 +146,11 @@ int main (void) {
 
   // Enable all interrupts.
   Enable_global_interrupt();
-  print_dbg("\r\nALEPH ");
-  print_dbg("\r\nwaiting for SD card... ");
+
+  print_dbg("\r\nALEPH\r\n ");
+
   // Wait for a card to be inserted
-  
+  print_dbg("\r\nwaiting for SD card... ");
   while (!sd_mmc_spi_mem_check()) {
     waitForCard++;
   }
@@ -165,7 +170,9 @@ int main (void) {
   //// wait!
   delay_ms(4000);
  
-  report_params();
+  // report_params();
+
+  init_app_timers();
 
   print_dbg("starting event loop.\n\r");
   // event loop
