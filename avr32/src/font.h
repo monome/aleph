@@ -3,6 +3,7 @@
 
 #define FONT_CHARW 6
 #define FONT_CHARH 8
+#define FONT_CHARH_1 7
 // glyph table doesn't include the initial non-ascii chars
 #define FONT_ASCII_OFFSET 0x20
 

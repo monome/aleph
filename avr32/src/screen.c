@@ -243,7 +243,7 @@ void screen_refresh(void) {
 void screen_blank_line(U16 x, U16 y) {
   U8 i, j;
   for(i=x; i<NCOLS; i++) {
-    for(j=y; j<FONT_CHARH; j++) {
+    for(j=y; j<(FONT_CHARH + y); j++) {
       screen_draw_pixel(i, j, 0);
     }
   }

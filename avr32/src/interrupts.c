@@ -77,11 +77,17 @@ __attribute__((__interrupt__))
 static void irq_tc(void) {
   event_t e;
   tcTicks++;
+  // 1-second heartbeat LED
   if ((tcTicks % 1000) == 0) {
     gpio_tgl_gpio_pin(LED0_GPIO);
   }
+  
+
+
   // clear interrupt flag by reading timer SR
   tc_read_sr(APP_TC, APP_TC_CHANNEL);
+  
+  // refresh ticks
   if ((tcTicks % 4) == 0) {
     if(refresh) {
       e.eventType = kEventRefresh;

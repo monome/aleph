@@ -210,7 +210,6 @@ static void refresh_params(void) {
     col = screen_draw_string_squeeze(col, line, " ", 0xf);
     col++;
     col = screen_draw_string_squeeze(col, line, paramDesc[i].unit, 0x0f);
-    screen_blank_line(col, line);
     if(i == sel) { screen_hilite_line(line, 0x01); }
     refresh = 1;
   }
