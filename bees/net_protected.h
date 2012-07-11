@@ -8,7 +8,7 @@
 #ifndef _NET_PROTECTED_H_
 #define _NET_PROTECTED_H_
 
-#include "../common/types.h"
+#include "types.h"
 #include "op.h"
 #include "param.h"
 #include "net.h"

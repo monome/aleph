@@ -9,7 +9,7 @@
 #ifndef _MENU_H_
 #define _MENU_H_
 
-#include "../common/types.h"
+#include "types.h"
 
 //-----------------------------------
 //----- data types

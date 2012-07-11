@@ -8,7 +8,7 @@
 #ifndef _CTL_INTERFACE_H_
 #define _CTL_INTERFACE_H_
 
-#include "../common/types.h"
+#include "types.h"
 #include "op.h"
 
 // maximum allocated parameters, connections, and operators

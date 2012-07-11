@@ -6,7 +6,7 @@
 #ifndef _PARAM_H_ 
 #define _PARAM_H_
 
-#include "../common/types.h"
+#include "types.h"
 #include "net_protected.h"
 
 #define PARAM_BITS 16

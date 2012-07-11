@@ -9,7 +9,7 @@
 #ifndef _UI_H_
 #define _UI_H_
 
-#include "../common/types.h"
+#include "types.h"
 #include "ncurses.h"
 
 //---- defines

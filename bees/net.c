@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 
-#include "../common/types.h"
+#include "types.h"
 #include "util.h"
 #include "op.h"
 #include "param.h"

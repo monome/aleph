@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ncurses.h>
-#include "../common/types.h"
+#include "types.h"
 #include "menu.h"
 #include "ui.h"
 

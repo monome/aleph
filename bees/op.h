@@ -10,7 +10,7 @@
 #ifndef _BEES_OP_H_
 #define _BEES_OP_H_
 
-#include "../common/types.h"
+#include "types.h"
 
 // maximum bytes of operator classes
 // WARNING please do not exceed this!

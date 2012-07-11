@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 
-#include "../common/types.h"
+#include "types.h"
 #include "net.h"
 //#include "ui.h"
 #include "param.h"

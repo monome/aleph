@@ -7,7 +7,7 @@
 #ifndef _SBX_MODULE_INTERFACE_H_
 #define _SBX_MODULE_INTERFACE_H_
 
-#include "../common/types.h"
+#include "types.h"
 #include "util.h"
 #include "param.h"
 
