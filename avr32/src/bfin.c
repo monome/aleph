@@ -15,7 +15,8 @@
 #include "conf_aleph.h"
 #include "global.h"
 #include "param.h"
-#include "protocol.h"
+//#include "protocol.h"
+#include "protocol_dumb.h"
 #include "types.h"
 #include "bfin.h"
 
@@ -57,12 +58,17 @@ void bfin_load(U32 size, char * data) {
   Enable_global_interrupt();
 }
 
-void bfin_set_param(u32 idx, f32 x ) {
+
+void bfin_set_param(u8 idx, f32 x ) {
   static ParamValue pval;
   pval.asFloat = x;
   // command
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, MSG_SET_PARAM_COM);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  //idx
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, idx);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   //val0
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);

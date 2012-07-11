@@ -249,7 +249,7 @@ void init_bfin_resources(void) {
     .bits         = 8,
     .spck_delay   = 0,
     //  .trans_delay  = 0,
-    .trans_delay  = 2,
+    .trans_delay  = 20,
     .stay_act     = 1,
     .spi_mode     = 1,
     .modfdis      = 1

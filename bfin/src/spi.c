@@ -33,7 +33,7 @@ static u8 idx;
 
 //------- function definitions
 // deal with new data in the spi rx ringbuffer
-u8 handle_spi_rx(u8 rx) {
+u8 spi_process(u8 rx) {
   static ParamValue pval;
   switch(byte) {
   /// caveman style
@@ -56,6 +56,7 @@ u8 handle_spi_rx(u8 rx) {
     default:
       break;
     }
+    return 0;
     break;
   //---- set param
   case eSetParamIdx :
@@ -85,12 +86,12 @@ u8 handle_spi_rx(u8 rx) {
     // byte-swap from BE on avr32
     moduleData->paramData[idx].value.asByte[0] = rx;
     moduleData->paramData[idx].changed = 1; // done -> mark changed
-    byte = 0; //reset
+    byte = eCom; //reset
     return 0; // don't care
     break;
   //---- get num params
   case eNumParamsVal :
-    byte = 0; //reset
+    byte = eCom; //reset
     return 0; // don't care 
     break;
   //---- get param descriptor

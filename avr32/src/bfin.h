@@ -17,7 +17,7 @@ extern volatile U8 hwait;
 // load a blackfin executable
 void bfin_load(U32 size, char * data);
 // set a parameter
-void bfin_set_param(U32 idx, F32 val);
+void bfin_set_param(U8 idx, F32 val);
 
 // get number of parameters 
 u8 bfin_get_num_params(void);

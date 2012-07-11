@@ -81,6 +81,6 @@ void spi_rx_isr() {
   // figure out what to do with the data...
   handle_spi_rx();
   */
-  *pSPI_TDBR = handle_spi_rx(*pSPI_RDBR);
+  *pSPI_TDBR = spi_process(*pSPI_RDBR);
 
 }

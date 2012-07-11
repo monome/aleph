@@ -5,6 +5,11 @@
 
 //-------- global variables
 // receive message data
+#define SPI_RX_BUF_NUM 32
+extern u8 spiBuf;
+extern u8 spiRxIdx = 0;
+extern u8 spiProcIdx = 0;
+
 /*
 extern msg_t rxMsg;
 // transmit message data
@@ -17,6 +22,6 @@ extern u8 spiLastByte;
 //------- function prototypes
 // handle new data in the spi RX ringbuffer
 // return tx data
-u8 handle_spi_rx(u8 rx);
+u8 spi_process(u8 rx);
 
 #endif // header guard
