@@ -10,7 +10,7 @@
 #include "conf_aleph.h"
 #include "encoders.h"
 #include "events.h"
-#include "eventTypes.h"
+#include "event_types.h"
 #include "global.h"
 #include "interrupts.h"
 #include "switches.h"

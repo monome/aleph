@@ -6,7 +6,7 @@
 #define _SWITCHES_H_
 
 #include "compiler.h"
-#include "eventTypes.h"
+#include "event_types.h"
 
 #define NUM_SW    4
 

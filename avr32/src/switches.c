@@ -8,7 +8,7 @@
 // aleph
 #include "conf_aleph.h"
 #include "events.h"
-#include "eventTypes.h"
+#include "event_types.h"
 #include "switches.h"
 
 static const U8 kSwitchPins[] = {
