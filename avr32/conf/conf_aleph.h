@@ -71,6 +71,10 @@
 #define BFIN_SPI_NPCS_PIN          AVR32_SPI0_NPCS_0_0_PIN
 #define BFIN_SPI_NPCS_FUNCTION     AVR32_SPI0_NPCS_0_0_FUNCTION
 
+// ADC, multiplexed
+#define ADC_SPI          BFIN_SPI
+#define ADC_SPI_NPCS     1
+
 // sdcard SPI
 #define SD_MMC_SPI                  (&AVR32_SPI1)
 #define SD_MMC_SPI_NPCS             1

@@ -86,6 +86,13 @@ static void check_events(void) {
       report_params();
       break;
 
+    case kEventAdc0:
+      print_dbg("\r\n got adc0 event: ");
+      print_dbg_ulong(e.eventData);
+      screen_draw_int(0, FONT_CHARH * (NROWS - 1), e.eventData, 0xf);
+      refresh = 1;
+      break;
+
     case kEventRefresh:
       screen_refresh();
       refresh = 0;
@@ -169,8 +176,11 @@ int main (void) {
 
   print_dbg("done.\n\r");
 
+  // send ADC config
+  init_adc();
+
   //// wait!
-  delay_ms(4000);
+  //  delay_ms(4000);
  
   // report_params();
 

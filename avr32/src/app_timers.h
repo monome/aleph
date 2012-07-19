@@ -12,6 +12,7 @@ enum {
   eScreenTimerTag = 0,
   eEncTimerTag = 1,
   eSwTimerTag = 2,
+  eAdcTimerTag = 3
 };
 
 // create application timers

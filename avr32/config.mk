@@ -47,6 +47,7 @@ CSRCS = \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.c \
         common/services/clock/uc3a0_a1/sysclk.c            \
 	common/services/storage/ctrl_access/ctrl_access.c \
+	./src/adc.c \
 	./src/app_timers.c \
 	./src/bfin.c \
 	./src/events.c \
