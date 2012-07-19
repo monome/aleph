@@ -19,6 +19,7 @@
 #include "print_funcs.h"
 #include "sysclk.h"
 // aleph
+#include "adc.h"
 #include "app_timers.h"
 #include "bfin.h"
 #include "conf_aleph.h"
