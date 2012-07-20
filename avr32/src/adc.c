@@ -56,6 +56,9 @@ static void adc_convert(U16 (*dst)[4]) {
   // so, always lshift the command before sending
   cmd = ( AD7927_CMD_BASE ) << 4;
 
+  //  print_dbg("\r\nsetting up channel 0 with command: ");
+  //  print_dbg_ulong(cmd);
+
   // write to set up channel 0
   spi_selectChip(ADC_SPI, ADC_SPI_NPCS);
   spi_write(ADC_SPI, cmd);
@@ -67,7 +70,11 @@ static void adc_convert(U16 (*dst)[4]) {
   spi_write(ADC_SPI, cmd);
   spi_read(ADC_SPI, &val);
   spi_unselectChip(ADC_SPI, ADC_SPI_NPCS);
-  (*dst)[0] = val & 0xfff;
+  // values need lshift because of extremely weird timing...
+  (*dst)[0] = (val >> 1) & 0xfff;
+  
+  //  print_dbg("\r\n got channel 0 data: ");
+  //  print_dbg_ulong(val);
 
   // get channel 1, setup channel 2
   cmd = ( AD7927_CMD_BASE | AD7923_CTL_ADD1 ) << 4;
@@ -75,7 +82,7 @@ static void adc_convert(U16 (*dst)[4]) {
   spi_write(ADC_SPI, cmd);
   spi_read(ADC_SPI, &val);
   spi_unselectChip(ADC_SPI, ADC_SPI_NPCS);
-  (*dst)[1] = val & 0xfff;
+  (*dst)[1] = (val >> 1) & 0xfff;
 
   // get channel 2, setup channel 3
   cmd = ( AD7927_CMD_BASE | AD7923_CTL_ADD1 | AD7923_CTL_ADD0 ) << 4;
@@ -83,7 +90,7 @@ static void adc_convert(U16 (*dst)[4]) {
   spi_write(ADC_SPI, cmd);
   spi_read(ADC_SPI, &val);
   spi_unselectChip(ADC_SPI, ADC_SPI_NPCS);
-  (*dst)[2] = val & 0xfff;
+  (*dst)[2] = (val >> 1) & 0xfff;
   
   // get channel 3, dummy write
   cmd = ( AD7927_CMD_BASE ) << 4;
@@ -91,7 +98,7 @@ static void adc_convert(U16 (*dst)[4]) {
   spi_write(ADC_SPI, cmd);
   spi_read(ADC_SPI, &val);
   spi_unselectChip(ADC_SPI, ADC_SPI_NPCS);
-  (*dst)[3] = val & 0xfff;
+  (*dst)[3] = (val >> 1) & 0xfff;
 }
 
 // setup ad7923
@@ -134,7 +141,7 @@ void adc_poll(void) {
   adc_convert(&adcVal);
   
   for(i=0; i<4; i++) {
-    if (i==0) {
+    if (0) { //(i==0) {
       print_dbg("\r\n got adc conversion on channel: ");
       print_dbg_ulong(i);
       print_dbg(" , value: ");
@@ -147,8 +154,7 @@ void adc_poll(void) {
       adcOldVal[i] = adcVal[i];
       e.eventType = getAdcEvent(i); //kAdcEvents[i];
       e.eventData = (S16)(adcVal[i]);
-      
-
+      post_event(&e);
     }
   }
 }
