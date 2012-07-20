@@ -240,7 +240,8 @@ void init_bfin_resources(void) {
     { BFIN_SPI_SCK_PIN, BFIN_SPI_SCK_FUNCTION },
     { BFIN_SPI_MISO_PIN, BFIN_SPI_MISO_FUNCTION },
     { BFIN_SPI_MOSI_PIN, BFIN_SPI_MOSI_FUNCTION },
-    { BFIN_SPI_NPCS_PIN, BFIN_SPI_NPCS_FUNCTION }
+    { BFIN_SPI_NPCS0_PIN, BFIN_SPI_NPCS0_FUNCTION },
+    { BFIN_SPI_NPCS1_PIN, BFIN_SPI_NPCS1_FUNCTION }
   };
   
   spi_options_t spiOptions = {
@@ -254,6 +255,7 @@ void init_bfin_resources(void) {
     //// (and acommodating audio irqs!)
     //// would be better to delay maunally
     //// so bfin boot can stay fast
+    //// or possibly set up 2nd register with same chipselect?
     .trans_delay  = 20,
     .stay_act     = 1,
     .spi_mode     = 1,
@@ -279,19 +281,32 @@ void init_bfin_resources(void) {
   //// shit! not implemented... 
   // gpio_enable_pin_pull_down(BFIN_HWAIT_PIN);
   
-  ////////// TEST
-  // add a second chip register for the serial ADC
+    // add a second chip register for the serial ADC
   // chip select 1 is AD7923 12-bit ADC
+  
   spiOptions.reg = 1;
   spiOptions.baudrate = 10000000;	// range in datasheet is 10kHz - 20MHz
   spiOptions.bits = 16;		// 1 bit leading zero, 3 channel address, 12 data 
   spiOptions.spi_mode = 2;	// sample on falling edge, idle high
   spiOptions.spck_delay = 40;	// delay between CS and transfer
-  spiOptions.trans_delay = 5;	// delay between transfers
+  spiOptions.trans_delay = 10;	// delay between transfers
   spiOptions.stay_act = 1;
   spiOptions.modfdis = 0;
   spi_setupChipReg( BFIN_SPI, &spiOptions, FPBA_HZ );
-  /////////////
+  
+  // TEST: slow for scope
+  /*
+  spiOptions.reg = 1;
+  spiOptions.baudrate = 1000000;	// range in datasheet is 10kHz - 20MHz
+  spiOptions.bits = 16;		// 1 bit leading zero, 3 channel address, 12 data 
+  spiOptions.spi_mode = 2;	// sample on falling edge, idle high
+  spiOptions.spck_delay = 2;	// delay between CS and transfer
+  spiOptions.trans_delay = 2;	// delay between transfers
+  spiOptions.stay_act = 1;
+  spiOptions.modfdis = 0;
+  spi_setupChipReg( BFIN_SPI, &spiOptions, FPBA_HZ );
+  */
+ /////////////
 
   // enable pullup on bfin RESET line
   gpio_enable_pin_pull_up(BFIN_RESET_PIN);
