@@ -40,7 +40,7 @@ static void add_sys_ops(void) {
   //// no, params are specialized input nodes
   //net_add_op(eOpParam);
   // 1 preset receiver
-  net_add_op(eOpPreset);
+  //  net_add_op(eOpPreset);
 }
 
 //==================================================
@@ -116,9 +116,11 @@ S16 net_add_op(opId_t opId) {
     op_param_init((void*)op);
     break;
     */
+#if 0
   case eOpPreset:
     //    return -1;
     break;
+#endif
   case eOpAdd:
     op_add_init((void*)op);
     break;
@@ -128,6 +130,7 @@ S16 net_add_op(opId_t opId) {
   case eOpGate:
     op_gate_init((void*)op);
     break;
+#if 0
   case eOpAccum:
     op_accum_init((void*)op);
     break;
@@ -137,6 +140,7 @@ S16 net_add_op(opId_t opId) {
   case eOpMapLin:
     return -1;
     break;
+#endif
   default:
     return -1;
   }

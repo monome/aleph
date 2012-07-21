@@ -1,11 +1,9 @@
-
 #include <stdio.h>
-#include "types.h"
-#include "net.h"
 #include "menu.h"
-#include "ui.h"
+#include "net.h"
 #include "preset.h"
-#include "audio.h"
+#include "types.h"
+#include "ui.h"
 
 // main function
 int main(const int argc, const char** argv) {
