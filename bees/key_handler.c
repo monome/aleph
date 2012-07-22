@@ -7,6 +7,7 @@
 
 //#include "compiler.h"
 #include "op.h"
+#include "op_math.h"
 #include "menu_protected.h"
 #include "redraw.h"
 #include "param.h"
@@ -16,8 +17,11 @@
 //----- static variables
 
 // param step constants
-static const S32 kParamValStepSmall = 1;
-static const S32 kParamValStepLarge = PARAM_MAX >> 11;
+
+// static const S32 kParamValStepSmall = 1;
+// static const S32 kParamValStepLarge = PARAM_MAX >> 11;
+static const io_t kParamValStepSmall = 0.015625;
+static const io_t kParamValStepLarge = 1.f;
 
 //========================================
 //====== key handlers

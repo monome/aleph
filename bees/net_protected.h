@@ -51,7 +51,7 @@ typedef struct _pnode {
   // max value
   f32 max;
   // current value (step)
-  s32 val;  
+  s32 ival;  
 // current value (float)
   f32 fval;
   // parameter idx in DSP plugin

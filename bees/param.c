@@ -8,12 +8,9 @@
 #include "menu.h"
 #include "param.h"
 
-// enable to print debug values
-#define PARAM_PRINT_TEST 0
-
 // get value for param at given idx
-f32 get_param_value(u32 idx) {
-  return net.params[idx].fval;
+io_t get_param_value(u32 idx) {
+  return (io_t)net.params[idx].fval;
 }
 
 // get preset-enabled for param at given idx
@@ -21,22 +18,21 @@ u8 get_param_preset(u32 idx) {
   return net.params[idx].preset;
 }
 
-/////////
-////// TODO: flexible / accurate param scaling using tables!
-////////
-
 // set value for param at given idx
-void set_param_value(u32 idx, s32 val) {
+void set_param_value(u32 idx, io_t val) {
+  // NOTE: io_t is float, change this if it becomes otherwise
+  // don't cast, hopefully we get a warning
+  set_param_float_value(idx, val);
+}
+
+
+// set a parameter value using a 32bit integer
+// mapped to the parameter's float range
+void set_param_step_value(u32 idx, s32 val) {
+
   f32 fval;
-#if PARAM_PRINT_TEST
-  static char buf[SCREEN_W];
-#endif 
-
-  //  if (val < net.params[idx].min) { val = net.params[idx].min; }
-  //  if (val > net.params[idx].max) { val = net.params[idx].max; }
-
-  // net.params[idx].val = val;
-  net.params[idx].val = val;
+  
+  net.params[idx].ival = val;
   //////
   // DEBUG
   fval = (f32)val * PARAM_MAX_RF;
@@ -46,17 +42,20 @@ void set_param_value(u32 idx, s32 val) {
   fval += net.params[idx].min;
   //////
   net.params[idx].fval = fval;
-  
-  /*
-  if (fval < net.params[idx].min) { fval = net.params[idx].min; }
-  if (fval > net.params[idx].max) { fval = net.params[idx].max; }
-  */
-
   param_feedback(idx);
-
-#if PARAM_PRINT_TEST
-  snprintf(buf, SCREEN_W, "setting parameter value %d at index%d", (int)(val), (int)(net.params[idx].idx));
-  ui_print(SCREEN_H, 0, buf, 0);
-#endif
-
 }
+
+// set a parameter value using float
+void set_param_float_value(u32 idx, f32 val) {
+  s32 ival;
+  f32 fmin, fmax;
+  fmin = net.params[idx].min;
+  fmax = net.params[idx].max;
+  if (val < fmin) { val = fmin; }
+  if (val > fmax) { val = fmax; }
+  ival = (s32)( (val - fmin) / (fmax - fmin) * PARAM_MAX_F );
+  net.params[idx].fval = val;
+  net.params[idx].ival = ival;
+  param_feedback(idx);
+}
+

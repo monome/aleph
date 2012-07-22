@@ -20,9 +20,9 @@ const opId_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAdd,
   eOpMul,
   eOpGate,
-  eOpAccum,
-  eOpSelect,
-  eOpMapLin
+  // eOpAccum,
+  // eOpSelect,
+  // eOpMapLin
 };
 
 // page structures - synchronize with ePage enum

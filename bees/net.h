@@ -10,6 +10,7 @@
 
 #include "types.h"
 #include "op.h"
+#include "op_math.h"
 
 // maximum allocated parameters, connections, and operators
 // mac operator inputs
@@ -38,7 +39,7 @@ S16 net_pop_op(void);
 // void remove_op(const U8 idx);
 
 // activate an input node with some input data
-void net_activate(S16 inIdx, const S32 val);
+void net_activate(S16 inIdx, const io_t val);
 
 // get current count of operators
 U16 net_num_ops(void);
@@ -67,14 +68,14 @@ U16 net_op_out_idx(const U16 opIdx, const U16 outIdx);
 // get connection index for output
 S16 net_get_target(U16 outIdx);
 // is this input connected to anything?
-U8 net_in_connected(U32 iIdx);
+U8 net_in_connected(S32 iIdx);
 // get status (user/system) of op at given idx
 opStatus_t net_op_status(U16 opIdx);
 
 // get / set / increment input value
-s32 net_get_in_value(U16 inIdx);
-void net_set_in_value(U16 inIdx, S32 val);
-s32 net_inc_in_value(s16 inIdx, S32 inc);
+io_t net_get_in_value(s32 inIdx);
+void net_set_in_value(s32 inIdx, io_t val);
+io_t net_inc_in_value(s32 inIdx, io_t inc);
 
 // connect a given output and input idx pair
 void net_connect(U32 outIdx, U32 inIdx);
@@ -97,6 +98,6 @@ void net_clear_params(void);
 
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections
-U32 net_gather(U32 iIdx, U32(*outs)[NET_OUTS_MAX]);
+U32 net_gather(S32 iIdx, U32(*outs)[NET_OUTS_MAX]);
 
 #endif // header guard

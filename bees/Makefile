@@ -2,7 +2,7 @@ OBJ = op.o net.o main.o ui.o menu.o preset.o param.o key_handler.o redraw.o
 
 CC = gcc
 CFLAGS = -g -c
-CFLAGS += -Wall
+CFLAGS += -Wall -Wextra
 LDFLAGS = -lm -lncurses #-lportaudio #-lasound
 
 WHAT = bees

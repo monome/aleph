@@ -69,7 +69,7 @@ void net_deinit(void) {
 }
 
 // activate an input node with a value
-void net_activate(S16 inIdx, const S32 val) {
+void net_activate(S16 inIdx, const io_t val) {
   if(inIdx >= 0) {
     if(inIdx < net.numIns) {
       //(*(net.ins[inIdx].in))(net.ops[net.ins[inIdx].opIdx], val);
@@ -298,7 +298,7 @@ S16 net_get_target(U16 outIdx) {
 }
 
 // is this input connected to anything?
-U8 net_in_connected(U32 iIdx) {
+U8 net_in_connected(S32 iIdx) {
   U8 f=0;
   U16 i;
   for(i=0; i<net.numOuts; i++) {
@@ -317,7 +317,7 @@ opStatus_t net_op_status(U16 opIdx) {
 
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections
-U32 net_gather(U32 iIdx, U32(*outs)[NET_OUTS_MAX]) {
+U32 net_gather(S32 iIdx, U32(*outs)[NET_OUTS_MAX]) {
   U32 iTest;
   U32 iOut=0;
   for(iTest=0; iTest<NET_OUTS_MAX; iTest++) {
@@ -329,39 +329,41 @@ U32 net_gather(U32 iIdx, U32(*outs)[NET_OUTS_MAX]) {
   return iOut;
 }
 //--- get / set / increment input value
-s32 net_get_in_value(U16 inIdx) {
+io_t net_get_in_value(s32 inIdx) {
   if (inIdx >= net.numIns) {
     inIdx -= net.numIns;
-    return net.params[inIdx].val;
+    return get_param_value(inIdx);
   } else {
     //return (net.ins[inIdx].val);
     return op_get_in_val(net.ops[net.ins[inIdx].opIdx], net.ins[inIdx].opInIdx);
   }
 }
 
-void net_set_in_value(U16 inIdx, S32 val) {
+void net_set_in_value(S32 inIdx, io_t val) {
   //net.ins[inIdx].val = val;
   if (inIdx < 0) return;
   if (inIdx < net.numIns) {
     op_set_in_val(net.ops[net.ins[inIdx].opIdx], net.ins[inIdx].opInIdx, val);
   } else {
-    
+    // parameter
+    inIdx -= net.numIns;
+    set_param_value(inIdx, val);
   }
 }
 
-s32 net_inc_in_value(s16 inIdx, S32 inc) {
+io_t net_inc_in_value(s32 inIdx, io_t inc) {
   if (inIdx >= net.numIns) {
     inIdx -= net.numIns;
-    set_param_value(inIdx, net.params[inIdx].val + inc);
-    return net.params[inIdx].val;
+    set_param_value(inIdx, OPADD(get_param_value(inIdx), inc));
+    return get_param_value(inIdx);
   } else {
     //net.ins[inIdx].val += inc;
     //net_activate(inIdx, (const S32*)(&(net.ins[inIdx].val)));
     //return net.ins[inIdx].
-    net_activate( inIdx,
-		  op_get_in_val( net.ops[net.ins[inIdx].opIdx],
-				   net.ins[inIdx].opInIdx )
-		  + inc );
+    net_activate( inIdx, 
+		  OPADD(
+			op_get_in_val( net.ops[net.ins[inIdx].opIdx],
+				       net.ins[inIdx].opInIdx ), inc));
     return op_get_in_val( net.ops[net.ins[inIdx].opIdx],
 			    net.ins[inIdx].opInIdx ); 
   }

@@ -208,7 +208,7 @@ static void op_enc_perform(op_enc_t* enc) {
   }
 }
 
-// input functions
+// input functionsm
 static op_in_func_t op_enc_in_func[5] = {
   (op_in_func_t)&op_enc_in_move,
   (op_in_func_t)&op_enc_in_min,
@@ -234,9 +234,9 @@ void op_enc_init(op_enc_t* enc) {
   enc->super.status = eSysCtlOp;
 
   enc->in_val[0] = &(enc->move);
-  enc->in_val[1] = &(enc->step);
-  enc->in_val[2] = &(enc->min);
-  enc->in_val[3] = &(enc->max);
+  enc->in_val[1] = &(enc->min);
+  enc->in_val[2] = &(enc->max);
+  enc->in_val[3] = &(enc->step);
   enc->in_val[4] = &(enc->wrap);
 }
 

@@ -228,12 +228,12 @@ static void draw_line_ins(S32 n, U16 num, U8 y, U8 hl) {
   if ( (n < num) && (n >= 0) ) { 
     opIdx = net_in_op_idx(n);
     if (opIdx >=0 ) {
-      snprintf(lineBuf, SCREEN_W, "   %d_(%d)%s/%s_%d",
+      snprintf(lineBuf, SCREEN_W, "   %d_(%d)%s/%s_%f",
 	       (int)n,
 	       opIdx, 
 	       net_op_name(net_in_op_idx(n)), 
 	       net_in_name(n), 
-	       (int)net_get_in_value(n));
+	       net_get_in_value(n));
     } else {
       /// parameter
       snprintf(lineBuf, SCREEN_W, "   %d_P%d_%s_%f",
