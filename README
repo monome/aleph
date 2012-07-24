@@ -17,6 +17,7 @@ BEES port / finish
      presets page
      scenes page
      numerical representation abstraction
+     op re-ordering and deletion
 
 new operators:
     linear map
@@ -31,8 +32,8 @@ new operators:
 
 UI refinement
      right-alignment
-     setter fields
-     inversion
+     setter fields (numbers and strings)
+     line inversion
      timed select / scroll
      encoder acceleration
 
