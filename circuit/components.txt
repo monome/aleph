@@ -18,6 +18,13 @@ slide switch
 	EG2478-ND
 panasonic EVJ - audio pot
 	P2G1103-ND
+	
+	
+midi jack 180 degree 5pin din
+	CP-2350-ND
+	
+3.5mm jack
+	SJ-3523-SMT
 
 
 
