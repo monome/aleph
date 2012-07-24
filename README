@@ -10,36 +10,76 @@ general http://tangentsoft.net/audio/
 
 avr32
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-operators as plugins
-filesystem, bf loading
-bootloader for avr32, from mmc
-display library
+BEES port / finish
+     UI glue
+     filesystem glue
+     DSP selection page
+     presets page
+     scenes page
+     numerical representation abstraction
 
-usb host: hid midi, monome (ftdi)
+new operators:
+    linear map
+    range select
+    split
+    metronome
+    sequence
+    CV input
+    HID input
+    (HID output ?)
+    (CV output ?)
+
+UI refinement
+     right-alignment
+     setter fields
+     inversion
+     timed select / scroll
+     encoder acceleration
+
+operators as plugins
+
+operator timing layer
+
+HID layer
+
+FTDI layer
+
+MMC bootloader
 
 
 fin
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-duplex spi
 SPORT-SPI for analog section
 
-more patches, to test the system: fft, granulator
+patches
+	FM synth
+		envelopes
+	   	waveshaping tables
 
+	granular engine
+		envelopes
+		scheduler 
+
+	echo
+		parameter scaling
+		looping-mode controls
+
+	analysis / resynth  / dynamics
+		 fft centroid / flatness
+		 fundamental (autocorrelation)
+		 amplitude
+
+	phase vocoder
+	      fft (high res)
+	      ifft (phase preserving)
 
 shared avr/fin
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-spi protocol - floats? allowance for non-param data?
+
 benchmarking
-
-
-engine/ui
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-parameter engine
-param navigation
-screen control method via ops (play mode)
-design ops, play modes
-
-refine interface design
+	have access to uptime counter in CPU cycles on both cores.
+	attempt to calculate % load based on event loop period?
+	can also watch for event handling jitter on scope
 
 
 analog
