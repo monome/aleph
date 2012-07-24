@@ -283,8 +283,7 @@ void init_bfin_resources(void) {
   
     // add a second chip register for the serial ADC
   // chip select 1 is AD7923 12-bit ADC
-  
-  spiOptions.reg = 1;
+    spiOptions.reg = 1;
   spiOptions.baudrate = 10000000;	// range in datasheet is 10kHz - 20MHz
   spiOptions.bits = 16;		// 1 bit leading zero, 3 channel address, 12 data 
   spiOptions.spi_mode = 2;	// sample on falling edge, idle high
@@ -294,20 +293,6 @@ void init_bfin_resources(void) {
   spiOptions.modfdis = 0;
   spi_setupChipReg( BFIN_SPI, &spiOptions, FPBA_HZ );
   
-  // TEST: slow for scope
-  /*
-  spiOptions.reg = 1;
-  spiOptions.baudrate = 1000000;	// range in datasheet is 10kHz - 20MHz
-  spiOptions.bits = 16;		// 1 bit leading zero, 3 channel address, 12 data 
-  spiOptions.spi_mode = 2;	// sample on falling edge, idle high
-  spiOptions.spck_delay = 2;	// delay between CS and transfer
-  spiOptions.trans_delay = 2;	// delay between transfers
-  spiOptions.stay_act = 1;
-  spiOptions.modfdis = 0;
-  spi_setupChipReg( BFIN_SPI, &spiOptions, FPBA_HZ );
-  */
- /////////////
-
   // enable pullup on bfin RESET line
   gpio_enable_pin_pull_up(BFIN_RESET_PIN);
 }
