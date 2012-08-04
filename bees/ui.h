@@ -10,7 +10,6 @@
 #define _UI_H_
 
 #include "types.h"
-#include "ncurses.h"
 
 //---- defines
 // screen width in characters

@@ -59,7 +59,13 @@ CSRCS = \
 	./src/screen.c \
 	./src/switches.c \
 	./src/timers.c \
-	./src/main.c
+	./src/main.c \
+	../bees/key_handler.c \
+	../bees/net.c \
+	../bees/op.c \
+	../bees/param.c \
+	../bees/preset.c \
+	../bees/redraw.c 
 
 # List of assembler source files.
 ASSRCS = \
@@ -93,7 +99,8 @@ INC_PATH = \
 	. \
 	../ \
 	../conf \
-	../../common
+	../../common \
+	../../bees
 
 # Additional search paths for libraries.
 LIB_PATH = 
@@ -131,7 +138,7 @@ CFLAGS =
 #   BOARD      Target board in use, see boards/board.h for a list.
 #   EXT_BOARD  Optional extension board in use, see boards/board.h for a list.
 CPPFLAGS = \
-       -D BOARD=EVK1100
+       -D BOARD=EVK1100 -D LINUX=0
 
 # Extra flags to use when linking
 LDFLAGS = \

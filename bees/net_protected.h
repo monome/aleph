@@ -91,7 +91,6 @@ typedef struct _ctlnet {
   onode_t outs[NET_OUTS_MAX];
   // DSP params
   pnode_t params[NET_PARAMS_MAX];
-
 } ctlnet_t;
 
 //// external variables

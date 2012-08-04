@@ -156,6 +156,24 @@ void bfin_get_param_desc(u16 paramIdx, ParamDesc* pDesc) {
   pDesc->max = pval.asFloat;
 }
 
+// get module name
+void bfin_get_module_name(const char* buf) {
+  char name[MODULE_NAME_LEN];
+  u16 x; // u16 for spi_read()
+  u8 i;
+  // command 
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, MSG_GET_MODULE_NAME_COM);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  for(i=0; i<MODULE_NAME_LEN; i++) {
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, 0); //dont care
+    spi_read(BFIN_SPI, &x);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    name[i] = (char)(x & 0xff);
+  }
+}
+
 /*
 // set a parameter
 void bfin_set_param(U32 idx, F32 val) {

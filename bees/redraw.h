@@ -18,5 +18,7 @@ extern void redraw_gathered(void);
 extern void redraw_presets(void);
 // play
 extern void redraw_play(void);
+// scene
+extern void redraw_scenes(void);
 
 #endif // header guard

@@ -25,6 +25,8 @@ u8 bfin_get_num_params(void);
 void bfin_get_param_name(u16 paramIdx, char * name);
 // get parameter descriptor
 void bfin_get_param_desc(u16 paramIdx, ParamDesc* pDesc);
+// get current module name
+void bfin_get_module_name(const char* buf);
 
 /// send some dummy bytes over SPI for no god damn fucking reason
 void bfin_hack(U8 num);

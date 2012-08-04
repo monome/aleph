@@ -26,7 +26,7 @@ static const io_t kParamValStepLarge = 1.f;
 //========================================
 //====== key handlers
 // OPS
-void key_handler_ops(key_t key) {
+void key_handler_ops(uiKey_t key) {
   U16 n;
   switch(key) {
   case eKeyFnDownA: 
@@ -102,7 +102,7 @@ void key_handler_ops(key_t key) {
 }
 
 // INS
-void key_handler_ins(key_t key) {
+void key_handler_ins(uiKey_t key) {
   u32 i;
   switch(key) {
   case eKeyFnDownA:
@@ -163,7 +163,7 @@ void key_handler_ins(key_t key) {
 }
 
 // OUTS
-void key_handler_outs(key_t key) {
+void key_handler_outs(uiKey_t key) {
   S16 i;
   static S32 target;
   switch(key) {
@@ -229,14 +229,14 @@ void key_handler_outs(key_t key) {
 }
 
 //// GATHERED
-void key_handler_gathered(key_t key) {
+void key_handler_gathered(uiKey_t key) {
   key_handler_outs(key);
 }
 
 ///// PLAy
 
 
-void key_handler_play(key_t key) {
+void key_handler_play(uiKey_t key) {
   s32 val;
   s16 inIdx = -1;
   ///// FIXME; bad bad bad hacking
@@ -326,3 +326,10 @@ void key_handler_play(key_t key) {
 
 /// PRESET
 
+// presets
+extern void key_handler_presets(uiKey_t key) {
+}
+
+// scenes
+extern void key_handler_scenes(uiKey_t key) {
+}

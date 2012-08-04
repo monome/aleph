@@ -18,7 +18,7 @@
 //////// types
 
 // function pointer for input handling on a given page
-typedef void(*keyHandler_t)(key_t key);
+typedef void(*keyHandler_t)(uiKey_t key);
 // function pointer for redraw on a given page
 typedef void(*redraw_t)(void);
 
