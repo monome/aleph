@@ -33,6 +33,7 @@ static u8 idx;
 
 //------- function definitions
 // deal with new data in the spi rx ringbuffer
+// return byte to load for next MISO
 u8 spi_process(u8 rx) {
   static ParamValue pval;
   switch(byte) {
@@ -212,7 +213,6 @@ u8 spi_process(u8 rx) {
   case eParamDescMin1 :
     byte = eParamDescMin2;
     return pval.asByte[1];
-
     break;
   case eParamDescMin2 :
     byte = eParamDescMin3;
@@ -239,6 +239,107 @@ u8 spi_process(u8 rx) {
   case eParamDescMax3 :
     byte = eCom; // reset
     return 0; // dont care
+    break;
+    //----- get module name
+  case eGetModuleName :
+    byte = eModuleName0;
+    return moduleData->name[0];
+    break;
+  case eModuleName0 :
+    byte = eModuleName1;
+    return moduleData->name[1];
+    break;
+  case eModuleName1 :
+    byte = eModuleName2;
+    return moduleData->name[2];
+    break;
+  case eModuleName2 :
+    byte = eModuleName3;
+    return moduleData->name[3];
+    break;
+  case eModuleName3 :
+    byte = eModuleName4;
+    return moduleData->name[4];
+    break;
+  case eModuleName4 :
+    byte = eModuleName5;
+    return moduleData->name[5];
+    break;
+  case eModuleName5 :
+    byte = eModuleName6;
+    return moduleData->name[6];
+    break;
+  case eModuleName6 :
+    byte = eModuleName7;
+    return moduleData->name[7];
+    break;
+  case eModuleName7 :
+    byte = eModuleName8;
+    return moduleData->name[8];
+    break;
+  case eModuleName8 :
+    byte = eModuleName9;
+    return moduleData->name[9];
+    break;
+  case eModuleName9 :
+    byte = eModuleName10;
+    return moduleData->name[10];
+    break;
+  case eModuleName10 :
+    byte = eModuleName11
+    return moduleData->name[11];
+    break;
+  case eModuleName11 :
+    byte = eModuleName12;
+    return moduleData->name[12];
+    break;
+  case eModuleName12 :
+    byte = eModuleName13;
+    return moduleData->name[13];
+    break;
+  case eModuleName13 :
+    byte = eModuleName14;
+    return moduleData->name[14];
+    break;
+  case eModuleName14 :
+    byte = eModuleName15;
+    return moduleData->name[15];
+    break;
+  case eModuleName15 :
+    byte = eModuleName16;
+    return moduleData->name[16];
+    break;
+  case eModuleName16 :
+    byte = eModuleName17;
+    return moduleData->name[17];
+    break;
+  case eModuleName17 :
+    byte = eModuleName18;
+    return moduleData->name[18];
+    break;
+  case eModuleName18 :
+    byte = eModuleName19;
+    return moduleData->name[19];
+    break;
+  case eModuleName19 :
+    byte = eModuleName20;
+    return moduleData->name[20];
+    break;
+  case eModuleName20 :
+    byte = eModuleName21;
+    return moduleData->name[21];
+    break;
+  case eModuleName21 :
+    byte = eModuleName22;
+    return moduleData->name[22];
+    break;
+  case eModuleName22 :
+    byte = eModuleName23;
+    return moduleData->name[23];
+    break;
+  case eModuleName23 :
+    byte = eCom; // reset
+    return 0;    // don't care
     break;
   default:
     return 0;

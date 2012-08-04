@@ -27,9 +27,13 @@ const opId_t userOpTypes[NUM_USER_OP_TYPES] = {
 
 // page structures - synchronize with ePage enum
 page_t pages[ePageMax] = {
+  // list:
   { "OPS", (keyHandler_t)&key_handler_ops, (redraw_t)&redraw_ops, 0 },
   { "INS", (keyHandler_t)&key_handler_ins, (redraw_t)&redraw_ins, 0 },
   { "OUTS", (keyHandler_t)&key_handler_outs, (redraw_t)&redraw_outs, 0 },
+  { "PRESETS", (keyHandler_t)&key_handler_presets, (redraw_t)&redraw_presets, 0 },
+  { "SCENES", (keyHandler_t)&key_handler_scenes, (redraw_t)&redraw_scenes, 0 },
+  // modal:
   { "GATHERED" , (keyHandler_t)&key_handler_gathered, (redraw_t)&redraw_gathered, 0 },
   { "PLAY" , (keyHandler_t)&key_handler_play, (redraw_t)&redraw_play, 0 }
 };

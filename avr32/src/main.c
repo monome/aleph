@@ -90,7 +90,7 @@ static void check_events(void) {
     case kEventAdc0:
       print_dbg("\r\n got adc0 event: ");
       print_dbg_ulong(e.eventData);
-      screen_draw_int(0, FONT_CHARH * (NROWS - 1), e.eventData, 0xf);
+      screen_draw_int(0, FONT_CHARH * (NROWS - 2), e.eventData, 0xf);
       refresh = 1;
       break;
 

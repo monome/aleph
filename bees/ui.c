@@ -10,7 +10,17 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <ncurses.h>
+
+#if LINUX
+
+#include "ncurses.h"
+
+#else
+
+#include "screen.h"
+
+#endif
+
 #include "types.h"
 #include "menu.h"
 #include "ui.h"
@@ -41,15 +51,17 @@ static const char hlChars[7] = {' ', '.', '-','~','=','*', '#'};
 
 //---- external function definitions
 
+#if LINUX // only need init/deinit/loop in ascii mockup
+
 // initialize low-level user interface (screen, keys)
 void ui_init(void) {
-  // using ncurses in the dumbest way (no fields, no windows)
-  // (dont want to rely on it overly much)
+
   initscr();             // start curses mode
   raw();                 // no line buffering
   keypad(stdscr, TRUE);   // capture function keys, etc
   noecho();
   curs_set(0); // invisible cursor
+
 }
 
 // cleanup UI
@@ -161,3 +173,10 @@ void ui_print(U8 y, U8 x, const char* str, u8 hl) {
   mvprintw(y, x, printBuf);
   refresh();
 }
+#else
+void ui_print(U8 y, U8 x, const char* str, u8 hl) {
+  screen_
+}
+
+
+#endif

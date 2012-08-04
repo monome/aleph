@@ -4,11 +4,14 @@
  *
  * page-specific redraw functinos.
  */
+#include <stdio.h>
 
-#include "types.h"
-#include "ui.h"
 #include "param.h"
 #include "redraw.h"
+#include "types.h"
+#include "ui.h"
+
+
 
 //------------------------
 //----- static vairables
@@ -185,6 +188,12 @@ void redraw_gathered(void) {
 //==== redraw presets page
 void redraw_presets(void) {
 }
+
+//==================================================
+//==== redraw scenes page
+void redraw_scenes(void) {
+}
+
 
 
 //==================================================

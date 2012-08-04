@@ -33,6 +33,45 @@ operators as plugins
 
 operator timing layer
 
+<<<<<<< HEAD
+HID layer
+
+FTDI layer
+
+=======
+avr32
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+BEES port / finish
+     UI glue
+     filesystem glue
+     DSP selection page
+     presets page
+     scenes page
+     numerical representation abstraction
+     op re-ordering and deletion
+
+new operators:
+    linear map
+    range select
+    split
+    metronome
+    sequence
+    CV input
+    HID input
+    (HID output ?)
+    (CV output ?)
+
+UI refinement
+     right-alignment
+     setter fields (numbers and strings)
+     line inversion
+     timed select / scroll
+     encoder acceleration
+
+operators as plugins
+
+operator timing layer
+
 HID layer
 
 FTDI layer
@@ -118,6 +157,7 @@ use cases
 spec apps: mlr, etc
 
 cost analysis
+
 description, abstract, functional uses
 
 
@@ -128,3 +168,4 @@ http://docs.blackfin.uclinux.org/doku.php?id=hw:checklist
 
 audio pots http://tangentsoft.net/audio/atten.html
 general http://tangentsoft.net/audio/
+

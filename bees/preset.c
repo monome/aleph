@@ -9,8 +9,6 @@
 
  */
 
-
-
 #include "types.h"
 #include "net_protected.h"
 #include "param.h"

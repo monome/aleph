@@ -19,6 +19,8 @@ typedef enum ePage_t {
   ePageOps,
   ePageIns,
   ePageOuts,
+  ePagePresets,
+  ePageScenes,
   ePageGathered,
   ePagePlay,
   ePageMax
@@ -43,7 +45,7 @@ typedef enum eKey {
   eKeyEncDownC,
   eKeyEncUpD,
   eKeyEncDownD,
-} key_t;
+} uiKey_t;
 
 //----- public functions
 // init
@@ -51,7 +53,7 @@ extern void menu_init(void);
 // de-init
 extern void menu_deinit(void);
 // handle key
-extern void menu_handleKey(key_t key);
+extern void menu_handleKey(uiKey_t key);
 
 // parameter feedback
 extern void param_feedback(u16 paramIdx);
