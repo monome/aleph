@@ -12,9 +12,8 @@
 #include "ui.h"
 
 
-
 //------------------------
-//----- static vairables
+//----- static variables
 
 // line buffer
 static char lineBuf[SCREEN_W];
@@ -264,6 +263,30 @@ static void draw_line_ins(S32 n, U16 num, U8 y, U8 hl) {
 }
 
 // draw line of outputs page
+static void draw_line_outs(S32 n, U16 num, U8 y, U8 hl) {
+  S16 target; U8 status;
+  if ( (n < num) && (n >= 0) ) { 
+    target = net_get_target(n);
+    status = net_op_status(net_out_op_idx(n));
+    if (target >= 0) {
+      snprintf(lineBuf, SCREEN_W, "   %d_(%d)%s/%s-->%s/%s",
+	       (int)n, net_out_op_idx(n),
+	       net_op_name(net_out_op_idx(n)), net_out_name(n), 
+	       net_op_name(net_in_op_idx(target)), net_in_name(target)
+	       );
+    } else {
+      snprintf(lineBuf, SCREEN_W, "   %d_(%d)%s/%s",
+	       (int)n, net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
+    }
+    ui_print(y, 0, lineBuf, hl + status);
+  } else {
+    // no selection
+    snprintf(lineBuf, SCREEN_W, "   .");
+    ui_print(y, 0, lineBuf, 0);
+  }
+}
+
+// draw line of scenes page
 static void draw_line_outs(S32 n, U16 num, U8 y, U8 hl) {
   S16 target; U8 status;
   if ( (n < num) && (n >= 0) ) { 
