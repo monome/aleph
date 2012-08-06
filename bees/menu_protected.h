@@ -68,6 +68,6 @@ extern void setPage(ePage n);
 // scroll current page
 extern void scrollPage(S8 dir);
 // scroll selection in current page
-extern void scrollSelect(S8 dir, U32 max);
+extern void scrollSelect(S8 dir, S32 max);
 
 #endif // header guard

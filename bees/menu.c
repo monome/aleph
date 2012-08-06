@@ -69,7 +69,7 @@ extern void menu_deinit(void) {
 }
 
 // top level key handler
-void menu_handleKey(key_t key) {
+void menu_handleKey(uiKey_t key) {
   if (key == eKeyEdit) {
     if (pageIdx == ePagePlay) {
       // restore saved page
@@ -130,7 +130,7 @@ void scrollPage(S8 dir) {
 }
 
 // scroll current page selection
-void scrollSelect(S8 dir, U32 max) {
+void scrollSelect(S8 dir, S32 max) {
   page->selected += dir;
   if (page->selected < 0) {
     page->selected = 0;

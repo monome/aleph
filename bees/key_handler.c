@@ -325,9 +325,67 @@ void key_handler_play(uiKey_t key) {
 
 
 /// PRESET
+/*
 
+index _ name _ values dirty? _ op list dirty?
+...
+[NEW]
+
+fnA  : store current
+fnB  : recall stored
+fnC  : ?
+fnD  : delete
+
+encC : select position in name
+encD : change character in selected position
+ 
+ */
 // presets
 extern void key_handler_presets(uiKey_t key) {
+  S16 i;
+  switch(key) {
+  case eKeyFnDownA: 
+    // store current
+    break;
+  case eKeyFnDownB:
+    // recall stored
+    break;
+  case eKeyFnDownC:
+    // ??
+    break;
+  case eKeyFnDownD:
+    // delete
+    break;
+    //// encoder A: scroll pages
+  case eKeyEncUpA:
+    scrollPage(1);
+    break;
+  case eKeyEncDownA:
+    scrollPage(-1);
+    break;
+    //// encoder B: scroll selection
+  case eKeyEncUpB:
+    scrollSelect(1, net_num_outs()-1);
+    break;
+  case eKeyEncDownB:
+    scrollSelect(-1, net_num_outs()-1);      
+    break;
+    //// encoder C: scroll name pos
+  case eKeyEncUpC:
+    redraw_outs();
+    break;
+  case eKeyEncDownC:
+    redraw_outs();
+    break;
+  case eKeyEncUpD:
+    // scroll name char
+    break;
+  case eKeyEncDownD:
+    // scroll name char
+    break;
+    default:
+    ;; // nothing
+  }  
 }
 
 // scenes

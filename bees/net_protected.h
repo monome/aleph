@@ -8,10 +8,12 @@
 #ifndef _NET_PROTECTED_H_
 #define _NET_PROTECTED_H_
 
-#include "types.h"
+#include "module_common.h"
+#include "net.h"
 #include "op.h"
 #include "param.h"
-#include "net.h"
+#include "types.h"
+
 
 // size of operator pool inn bytes
 #define NET_OP_POOL_SIZE 65536
@@ -91,6 +93,8 @@ typedef struct _ctlnet {
   onode_t outs[NET_OUTS_MAX];
   // DSP params
   pnode_t params[NET_PARAMS_MAX];
+  // module name
+  char moduleName[MODULE_NAME_LEN];
 } ctlnet_t;
 
 //// external variables

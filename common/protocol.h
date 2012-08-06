@@ -1,67 +1,104 @@
 #ifndef _ALEPH_COMMON_PROTOCOL_H_
 #define _ALEPH_COMMON_PROTOCOL_H_
 
-#include "types.h"
+#include "module_common.h"
 #include "param.h"
+#include "types.h"
 
+// super caveman version of SPI protocol
 
-// AVR32 <-> BLACKFIN
-// SPI communication protocol
-
-// all transactions will be 8 bits;
-// this is necessary for bf533 spi-boot mode.
-
-// since there is a transaction on each byte, 
-// it is relatively easy to implemement variable-length messaging.
-
-// generic message structure
-typedef struct __attribute__((__packed__)) _msgGeneric {
-  u8 command;
-  u8 * data;
-} msgGeneric_t;
-
-// 0: set parameter
+//---- com byte defines
 #define MSG_SET_PARAM_COM 0
-typedef struct __attribute__((__packed__)) _msgSetParam {
-  u8 command;
-  u8 idx;
-  ParamValue value; // 4 bytes
-} msgSetParam_t;
-
-// 1: get parameter
 #define MSG_GET_PARAM_COM 1
-typedef struct __attribute__((__packed__)) _msgGetParam {
-  u8 command;
-  u8 idx;
-  ParamValue value; // 4 bytes
-} msgGetParam_t;
-
-// 2: get number of parameters
 #define MSG_GET_NUM_PARAMS_COM 2
-typedef struct __attribute__((__packed__)) _msgGetNumParams {
-  u8 command;
-  u8 value;
-} msgGetNumParams_t;
-
-// 3: get parameter descriptor
 #define MSG_GET_PARAM_DESC_COM 3
-typedef struct __attribute__((__packed__)) _msgGetParamDesc {
-  u8 command;
-  u8 idx;
-  ParamDesc desc;
-} msgGetParamDesc_t;
+#define MSG_GET_MODULE_NAME_COM 4
 
-// abstract message type is a large union
-//#define MSG_MAX_BYTES MSG_GET_PARAM_DESC_BYTES
-// whatever...
-#define MSG_MAX_BYTES 64
-typedef union __attribute__((__packed__)) {
-  u8 raw[MSG_MAX_BYTES];
-  msgGeneric_t generic;
-  msgSetParam_t setParam;
-  msgGetParam_t getParam;
-  msgGetNumParams_t getNumParams;
-  msgGetParamDesc_t getParamDesc;
-} msg_t;
+// nodes in a state machine
+typedef enum {
+  //---- command
+  eCom,
+  //---- set param
+  eSetParamIdx,
+  eSetParamData0,
+  eSetParamData1,
+  eSetParamData2,
+  eSetParamData3,
+  //---- get param
+  eGetParamIdx,
+  eGetParamData0,
+  eGetParamData1,
+  eGetParamData2,
+  eGetParamData3,
+  //---- get num params
+  eNumParamsVal,
+  //---- get param descriptor
+  eParamDescIdx,
+  // label
+  eParamDescLabel0,
+  eParamDescLabel1,
+  eParamDescLabel2,
+  eParamDescLabel3,
+  eParamDescLabel4,
+  eParamDescLabel5,
+  eParamDescLabel6,
+  eParamDescLabel7,
+  eParamDescLabel8,
+  eParamDescLabel9,
+  eParamDescLabel10,
+  eParamDescLabel11,
+  eParamDescLabel12,
+  eParamDescLabel13,
+  eParamDescLabel14,
+  eParamDescLabel15,
+  // unit
+  eParamDescUnit0,
+  eParamDescUnit1,
+  eParamDescUnit2,
+  eParamDescUnit3,
+  eParamDescUnit4,
+  eParamDescUnit5,
+  eParamDescUnit6,
+  eParamDescUnit7,
+  // type
+  eParamDescType,
+  // min
+  eParamDescMin0,
+  eParamDescMin1,
+  eParamDescMin2,
+  eParamDescMin3,
+  // max
+  eParamDescMax0,
+  eParamDescMax1,
+  eParamDescMax2,
+  eParamDescMax3,
+  // get module name
+  eGetModuleName,
+  // module name bytes
+  eModuleName0,
+  eModuleName1,
+  eModuleName2,
+  eModuleName3,
+  eModuleName4,
+  eModuleName5,
+  eModuleName6,
+  eModuleName7,
+  eModuleName8,
+  eModuleName9,
+  eModuleName10,
+  eModuleName11,
+  eModuleName12,
+  eModuleName13,
+  eModuleName14,
+  eModuleName15,
+  eModuleName16,
+  eModuleName17,
+  eModuleName18,
+  eModuleName19,
+  eModuleName20,
+  eModuleName21,
+  eModuleName22,
+  eModuleName23,
+} eSpiByte;
 
 #endif
