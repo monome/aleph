@@ -9,8 +9,9 @@
 #include "op.h"
 #include "op_math.h"
 #include "menu_protected.h"
-#include "redraw.h"
 #include "param.h"
+#include "redraw.h"
+#include "scene.h"
 #include "key_handler.h"
 
 //--------------------
@@ -332,4 +333,48 @@ extern void key_handler_presets(uiKey_t key) {
 
 // scenes
 extern void key_handler_scenes(uiKey_t key) {
+  switch(key) {
+  case eKeyFnDownA: 
+    // clear
+    break;
+  case eKeyFnDownB:
+    // copy
+    break;
+  case eKeyFnDownC:
+    // store
+    break;
+  case eKeyFnDownD:
+    // recall
+  break;
+    //// encoder A: scroll pages
+  case eKeyEncUpA:
+    scrollPage(1);
+    break;
+  case eKeyEncDownA:
+    scrollPage(-1);
+    break;
+    //// encoder B: scroll selection
+  case eKeyEncUpB:
+    scrollSelect(1, SCENE_COUNT -1 );
+    break;
+  case eKeyEncDownB:
+    scrollSelect(-1, SCENE_COUNT -1 );
+    break;
+    //// encoder C: scroll name pos
+  case eKeyEncUpC:
+
+    break;
+  case eKeyEncDownC:
+
+    break;
+  case eKeyEncUpD:
+    // scroll name char at pos
+    break;
+  case eKeyEncDownD:
+    // nothing
+    break;
+    default:
+    ;; // nothing
+  }  
+
 }

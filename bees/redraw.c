@@ -8,9 +8,9 @@
 
 #include "param.h"
 #include "redraw.h"
+#include "scene.h"
 #include "types.h"
 #include "ui.h"
-
 
 //------------------------
 //----- static variables
@@ -28,6 +28,8 @@ static void draw_line_ops(S32 n, U16 num, U8 y, U8 statMod);
 static void draw_line_ins(S32 n, U16 num, U8 y, U8 statMod);
 // out
 static void draw_line_outs(S32 n, U16 num, U8 y, U8 statMod);
+// scenes
+static void draw_line_scenes(S32 n, U16 num, U8 y, U8 statMod);
 
 //==================================================
 //==== redraw ops page
@@ -186,14 +188,51 @@ void redraw_gathered(void) {
 //==================================================
 //==== redraw presets page
 void redraw_presets(void) {
+
 }
 
 //==================================================
 //==== redraw scenes page
 void redraw_scenes(void) {
+  U8 y = 0;                       // which line
+  S32 n, nCenter;         // which list entry
+  const U16 num = SCENE_COUNT; // how many 
+  
+  // draw the header
+  snprintf(lineBuf, SCREEN_W, "      SCENES");
+  ui_print(0, 0, lineBuf, 6);
+
+  nCenter = page->selected;
+  if (nCenter >= num) {
+    nCenter = num;
+  }
+  n = nCenter;
+  // print selection at center
+  y = SCREEN_ROW_CENTER;
+  draw_line_scenes(n, num, y, 4);  
+  // print lower entries
+  while (y > 1) {
+    n--;
+    y--;
+    draw_line_scenes(n, num, y, 1);
+  }
+  
+  // re-center
+  n = nCenter;
+  y = SCREEN_ROW_CENTER;
+  
+  // print higher entries
+  while (y < SCREEN_H_2) {
+    n++;
+    y++;
+    draw_line_scenes(n, num, y, 1);
+  }
+
+  // draw footer 
+  // (function labels)
+  ui_print(SCREEN_H_1, 0, " A_CLEAR B_COPY C_STORE D_RECALL ", 5);
+
 }
-
-
 
 //==================================================
 //==== redraw play page
@@ -287,25 +326,15 @@ static void draw_line_outs(S32 n, U16 num, U8 y, U8 hl) {
 }
 
 // draw line of scenes page
-static void draw_line_outs(S32 n, U16 num, U8 y, U8 hl) {
-  S16 target; U8 status;
+void draw_line_scenes(S32 n, U16 num, U8 y, U8 hl) {
+  //  S16 target; U8 status;
   if ( (n < num) && (n >= 0) ) { 
-    target = net_get_target(n);
-    status = net_op_status(net_out_op_idx(n));
-    if (target >= 0) {
-      snprintf(lineBuf, SCREEN_W, "   %d_(%d)%s/%s-->%s/%s",
-	       (int)n, net_out_op_idx(n),
-	       net_op_name(net_out_op_idx(n)), net_out_name(n), 
-	       net_op_name(net_in_op_idx(target)), net_in_name(target)
-	       );
-    } else {
-      snprintf(lineBuf, SCREEN_W, "   %d_(%d)%s/%s",
-	       (int)n, net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
-    }
-    ui_print(y, 0, lineBuf, hl + status);
+    snprintf(lineBuf, SCREEN_W, "  %s  ", scene_name(n));
+    ui_print(y, 0, lineBuf, hl);
   } else {
     // no selection
     snprintf(lineBuf, SCREEN_W, "   .");
     ui_print(y, 0, lineBuf, 0);
   }
 }
+

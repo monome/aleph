@@ -61,11 +61,13 @@ CSRCS = \
 	./src/timers.c \
 	./src/main.c \
 	../bees/key_handler.c \
+	../bees/menu.c \
 	../bees/net.c \
 	../bees/op.c \
 	../bees/param.c \
 	../bees/preset.c \
-	../bees/redraw.c 
+	../bees/redraw.c \
+	../bees/scene.c
 
 # List of assembler source files.
 ASSRCS = \

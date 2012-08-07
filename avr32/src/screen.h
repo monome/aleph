@@ -50,7 +50,7 @@ void screen_refresh(void);
 // fill a line with blank space to end
 void screen_blank_line(U16 x, U16 y);
 // highlight a line
-void screen_hilite_line(U16 y, U8 a);
+void screen_hilite_line(U16 x, U16 y, U8 a);
 // get the value at a pixel
 U8 screen_get_pixel(U8 x, U8 y);
 

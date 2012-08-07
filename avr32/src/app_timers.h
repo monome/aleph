@@ -19,4 +19,3 @@ enum {
 extern void init_app_timers(void);
 
 #endif
-

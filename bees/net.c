@@ -102,7 +102,7 @@ S16 net_add_op(opId_t opId) {
     return -1;
   }
 
-  op = (op_t*)(net.opPool + net.opPoolOffset);
+  op = (op_t*)((u8*)net.opPool + net.opPoolOffset);
   // use the class ID to initialize a new object in scratch
   switch(opId) {
   case eOpSwitch:

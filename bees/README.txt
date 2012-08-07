@@ -107,10 +107,10 @@ index _ name _ values dirty? _ op list dirty?
 ...
 [NEW]
 
-fnA  : store current
-fnB  : recall stored
-fnC  : ?
-fnD  : delete
+fnA  : clear
+fnB  : copy
+fnC  : store 
+fnD  : recall
 
 encC : select position in name
 encD : change character in selected position
@@ -123,10 +123,10 @@ index _ name _ values dirty? _ op list dirty?
 ...
 [NEW]
 
-fnA  : store current
-fnB  : recall stored
-fnC  : ?
-fnD  : delete
+fnA  : clear 
+fnB  : copy
+fnC  : store
+fnD  : recall
 
 encC : select position in name
 encD : change character in selected position

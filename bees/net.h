@@ -96,6 +96,7 @@ void net_add_param(u32 idx, const char* name, f32 min, f32 max, s32 val);
 void net_clear_params(void);
 
 
+
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections
 U32 net_gather(S32 iIdx, U32(*outs)[NET_OUTS_MAX]);

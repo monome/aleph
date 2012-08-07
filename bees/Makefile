@@ -1,8 +1,8 @@
-OBJ = op.o net.o main.o ui.o menu.o preset.o param.o key_handler.o redraw.o
+OBJ = op.o net.o main.o ui.o menu.o preset.o param.o key_handler.o redraw.o scene.o
 
 CC = gcc
 CFLAGS = -g -c
-CFLAGS += -Wall -Wextra -D LINUX=1
+CFLAGS += -Wall -Wextra -D ARCH_LINUX=1 -I../common/
 LDFLAGS = -lm -lncurses #-lportaudio #-lasound
 
 WHAT = bees

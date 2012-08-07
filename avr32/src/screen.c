@@ -250,9 +250,9 @@ void screen_blank_line(U16 x, U16 y) {
 }
 
 // highlight a line
-void screen_hilite_line(U16 y, U8 a) {
+void screen_hilite_line(U16 x, U16 y, U8 a) {
   U8 i, j;
-  for(i=0; i<NCOLS; i++) {
+  for(i=x; i<NCOLS; i++) {
     for(j=y; j<(y+FONT_CHARH); j++) {
       if (screen_get_pixel(i, j) == 0) {
 	screen_draw_pixel(i, j, a);

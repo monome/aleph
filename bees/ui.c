@@ -11,14 +11,12 @@
 #include <stdio.h>
 #include <string.h>
 
-#if LINUX
-
+#ifdef ARCH_LINUX
 #include "ncurses.h"
+#endif
 
-#else
-
+#ifdef ARCH_AVR32
 #include "screen.h"
-
 #endif
 
 #include "types.h"
@@ -51,11 +49,10 @@ static const char hlChars[7] = {' ', '.', '-','~','=','*', '#'};
 
 //---- external function definitions
 
-#if LINUX // only need init/deinit/loop in ascii mockup
+#ifdef ARCH_LINUX // only need init/deinit/loop in ascii mockup
 
 // initialize low-level user interface (screen, keys)
 void ui_init(void) {
-
   initscr();             // start curses mode
   raw();                 // no line buffering
   keypad(stdscr, TRUE);   // capture function keys, etc
@@ -156,7 +153,7 @@ void ui_println(U8 y, const char* str) {
 */
 
 // print some characters of text
-void ui_print(U8 y, U8 x, const char* str, u8 hl) {
+u16 ui_print(U8 y, U8 x, const char* str, u8 hl) {
   u8 i;
   for(i=0; i<SCREEN_W; i++) {
     printBuf[i] = ' ';
@@ -172,11 +169,15 @@ void ui_print(U8 y, U8 x, const char* str, u8 hl) {
   }
   mvprintw(y, x, printBuf);
   refresh();
+  return SCREEN_W;
 }
-#else
-void ui_print(U8 y, U8 x, const char* str, u8 hl) {
-  screen_
+#endif // linux
+
+#ifdef ARCH_AVR32
+u16 ui_print(U8 y, U8 x, const char* str, u8 hl, u8 alpha) {
+  u8 alpha;
+  screen_blank_line(x, y);
+  screen_hilite_line(x, y, hl);
+  return screen_draw_screen_squeeze(x, y, str, alpha);
 }
-
-
 #endif
