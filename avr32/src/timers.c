@@ -11,17 +11,17 @@
 //---- static variables
 
 // pointers to timers
-static timer_t*  timers[ MAX_TIMERS ];
+static swTimer_t*  timers[ MAX_TIMERS ];
 
 //-----------------------------------------------
 //---- static functions
-static timer_t* find_timer( timerCallback callback, int tag );
-static bool add_timer( timer_t* newTimer );
+static swTimer_t* find_timer( timerCallback callback, int tag );
+static bool add_timer( swTimer_t* newTimer );
 
 // find a timer given a tag and optional callback
-static timer_t* find_timer( timerCallback callback, int tag ) {
+static swTimer_t* find_timer( timerCallback callback, int tag ) {
   int k;
-  timer_t* t;
+  swTimer_t* t;
   bool fReenableInterrupts = Is_interrupt_level_enabled( TIMER_INT_LEVEL );
 
   Disable_interrupt_level( TIMER_INT_LEVEL );
@@ -61,7 +61,7 @@ static timer_t* find_timer( timerCallback callback, int tag ) {
 }
 
 // Add timer to pointer array. Finds first empty slot.
-static bool add_timer( timer_t* newTimer) {
+static bool add_timer( swTimer_t* newTimer) {
   int k;
   bool fReenableInterrupts = Is_interrupt_level_enabled( TIMER_INT_LEVEL );
 
@@ -96,7 +96,7 @@ void init_timers( void ) {
 }
 
 // Add a callback timer to the list.
-bool set_timer(  timer_t* t, int tag, int ticks, timerCallback callback,
+bool set_timer(  swTimer_t* t, int tag, int ticks, timerCallback callback,
 		 bool fPeriodic ) {
   if ( callback == NULL ) {
     return false;
@@ -143,7 +143,7 @@ bool kill_timer( int tag ) {
 // called by client at desired tick interval.
 void process_timers( void ) {
   int k;
-  timer_t* t;
+  swTimer_t* t;
 
   // Process the timer list 
   for ( k = 0; k < MAX_TIMERS; k++ ) {

@@ -4,6 +4,9 @@
 #include "module_common.h"
 #include "types.h"
 
+#define SCENE_COUNT 16
+#define SCENE_NAME_LEN 24
+
 // initialize memory
 void scene_init(void);
 // de-init

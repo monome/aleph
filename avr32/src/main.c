@@ -6,6 +6,7 @@
 
 //ASF
 #include <string.h>
+#include <stdio.h>
 //#include <sysclk.h>
 #include "board.h"
 #include "conf_sd_mmc_spi.h"
@@ -26,6 +27,7 @@
 #include "encoders.h"
 #include "events.h"
 #include "files.h"
+#include "font.h"
 #include "global.h"
 #include "init.h"
 #include "interrupts.h"
@@ -90,7 +92,7 @@ static void check_events(void) {
     case kEventAdc0:
       print_dbg("\r\n got adc0 event: ");
       print_dbg_ulong(e.eventData);
-      screen_draw_int(0, FONT_CHARH * (NROWS - 2), e.eventData, 0xf);
+      screen_int(0, FONT_CHARH * (NROWS - 2), e.eventData, 0xf);
       refresh = 1;
       break;
 
@@ -220,17 +222,17 @@ static void refresh_params(void) {
   u8 i, col, line;
   for(i=0; i<numParams; i++) {
     line = FONT_CHARH * (i);
-    screen_blank_line(0, line);
-    col = screen_draw_string_squeeze(0, line, paramDesc[i].label, 0xf);
+    //screen_blank_line(0, line);
+    col = screen_string_squeeze(0, line, paramDesc[i].label, 0xf);
     col++;
-    col = screen_draw_string_squeeze(col, line, " : ", 0xf);
+    col = screen_string_squeeze(col, line, " : ", 0xf);
     col++;
-    col = screen_draw_float(col, line, paramVal[i].asFloat, 0xf);
+    col = screen_float(col, line, paramVal[i].asFloat, 0xf);
     col++;
-    col = screen_draw_string_squeeze(col, line, " ", 0xf);
+    col = screen_string_squeeze(col, line, " ", 0xf);
     col++;
-    col = screen_draw_string_squeeze(col, line, paramDesc[i].unit, 0x0f);
-    if(i == sel) { screen_hilite_line(0, line, 0x01); }
+    col = screen_string_squeeze(col, line, paramDesc[i].unit, 0x0f);
+    //if(i == sel) { screen_hilite_line(0, line, 0x01); }
     refresh = 1;
   }
 }

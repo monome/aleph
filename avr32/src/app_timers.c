@@ -15,13 +15,13 @@
 
 //----- timers
 // refresh the screen periodically
-static timer_t screenTimer;
+static swTimer_t screenTimer;
 // poll encoder accumulators periodically
-static timer_t encTimer;
+static swTimer_t encTimer;
 // debounce switches
-//static timer_t swTimer;
+//static swTimer_t swTimer;
 // poll ADC
-static timer_t adcTimer;
+static swTimer_t adcTimer;
 
 //--- static misc
 static u8 i;

@@ -43,7 +43,7 @@ void scene_init(void) {
 // store 
 void scene_store(u32 idx) {
   memcpy(&(pSceneData[idx].net), &net, sizeof(net));
-s}
+}
 
 // recall
 void scene_recall(u32 idx) {

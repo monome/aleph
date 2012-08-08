@@ -98,6 +98,7 @@ INC_PATH = \
        common/services/storage/ctrl_access                \
        common/services/clock                              \
        common/utils         \
+	../../aleph.avr32/    \
 	../../aleph/avr32/src  \
 	../../aleph/avr32/conf \
 	../../aleph/common     \
