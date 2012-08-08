@@ -11,7 +11,7 @@
 #include "conf_sd_mmc_spi.h"
 #include "compiler.h"
 #include "ctrl_access.h"
-#include "delay.h"
+#include "util.h"
 #include "gpio.h"
 #include "intc.h"
 #include "pdca.h"
@@ -230,7 +230,7 @@ static void refresh_params(void) {
     col = screen_draw_string_squeeze(col, line, " ", 0xf);
     col++;
     col = screen_draw_string_squeeze(col, line, paramDesc[i].unit, 0x0f);
-    if(i == sel) { screen_hilite_line(line, 0x01); }
+    if(i == sel) { screen_hilite_line(0, line, 0x01); }
     refresh = 1;
   }
 }

@@ -1,29 +1,31 @@
-/* ui,c
+/* screen,c
   * bees
   * aleph
   *
   * lowest-level user interface routines
   * (screen drawing, key reading, etc)
   *
-  * this test version of the layer runs on linux with lncurses
+  * this version of the layer runs on linux with lncurses
+  * it should only be compiled/linked from a linsux make session
+  * (e.g., lives in aleph/bees, not aleph/avr32)
   */
+
+
+#ifndef ARCH_LINUX
+#error using the wrong screen.c (linux/ncurses)
+#endif
 
 #include <stdio.h>
 #include <string.h>
-
-#if LINUX
-
 #include "ncurses.h"
 
-#else
 
 #include "screen.h"
 
-#endif
 
 #include "types.h"
 #include "menu.h"
-#include "ui.h"
+// #include "ui.h"
 
 //---- defines
 #define KEY_QUIT        'q'
@@ -46,22 +48,44 @@
 #define KEY_FN_D_DOWN   'v'
 
 // static vars
-static char printBuf[SCREEN_W];
 static const char hlChars[7] = {' ', '.', '-','~','=','*', '#'};
 
 //---- external function definitions
 
-#if LINUX // only need init/deinit/loop in ascii mockup
+#ifdef ARCH_LINUX // only need init/deinit/loop in ascii mockup
 
 // initialize low-level user interface (screen, keys)
 void ui_init(void) {
+  u8 i;
 
   initscr();             // start curses mode
   raw();                 // no line buffering
   keypad(stdscr, TRUE);   // capture function keys, etc
   noecho();
   curs_set(0); // invisible cursor
+  
+  start_color();
 
+  // weird hacky color definitions to make an 8-point grayscale kinda
+
+  if(can_change_color()) {
+    for(i=0; i<8; i++) {
+      init_color(i, i*140, i*140, i*140 );
+    }
+    // now use pair(i), i in [0, 7], for background color
+    for(i=0; i<8; i++) {
+      init_pair(i+1, i, (i + 4) % 7);
+    }
+  } else {
+    init_pair(1, COLOR_BLACK, COLOR_WHITE);
+    init_pair(2, COLOR_BLACK, COLOR_BLUE);
+    init_pair(3, COLOR_BLUE, COLOR_WHITE);
+    init_pair(4, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(5, COLOR_RED, COLOR_BLACK);
+    init_pair(6, COLOR_RED, COLOR_WHITE);
+    init_pair(7, COLOR_CYAN, COLOR_BLACK);
+    init_pair(8, COLOR_CYAN, COLOR_MAGENTA);
+  }
 }
 
 // cleanup UI
@@ -156,27 +180,22 @@ void ui_println(U8 y, const char* str) {
 */
 
 // print some characters of text
-void ui_print(U8 y, U8 x, const char* str, u8 hl) {
-  u8 i;
-  for(i=0; i<SCREEN_W; i++) {
-    printBuf[i] = ' ';
-  }
-  strcpy(printBuf, str);
-  // fill spaces in output string according to hilight
-  i=0; 
-  
-  for(i=0; i<SCREEN_W; i++) {   
-    if ((printBuf[i] == ' ') || (printBuf[i] == 0)) {
-      printBuf[i] = hlChars[hl];
-    }
-  }
-  mvprintw(y, x, printBuf);
+U8 screen_draw_string(U16 x, U16 y, char* str, U8 hl) {
+  S8 l = 7 - hl;      // 8-point level of background
+  if (l < 0) {l = 0;} 
+  if (l > 7) {l = 7;}
+  attron(COLOR_PAIR(l));
+  mvprintw(y, x, str);
   refresh();
+  return strlen(str);
 }
-#else
-void ui_print(U8 y, U8 x, const char* str, u8 hl) {
-  screen_
+#endif // linux
+
+#ifdef ARCH_AVR32
+u16 ui_print(U8 y, U8 x, const char* str, u8 hl, u8 alpha) {
+  u8 alpha;
+  screen_blank_line(x, y);
+  screen_hilite_line(x, y, hl);
+  return screen_draw_screen_squeeze(x, y, str, alpha);
 }
-
-
 #endif

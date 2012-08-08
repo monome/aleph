@@ -74,7 +74,7 @@ typedef struct _ctlnet {
   // operator memory, statically allocated as char array
   U8 opPoolMem[NET_OP_POOL_SIZE];
   // pointer to managed op memory
-  void * opPool;
+  u8 * opPool;
   // current offset into op memory
   U32 opPoolOffset;
   // number of instantiated operators

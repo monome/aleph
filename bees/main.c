@@ -2,6 +2,7 @@
 #include "menu.h"
 #include "net.h"
 #include "preset.h"
+#include "scene.h"
 #include "types.h"
 #include "ui.h"
 
@@ -13,7 +14,7 @@ int main(const int argc, const char** argv) {
   ui_init();
   menu_init();
   preset_init();
-  //  audio_init();
+  scene_init();
 
   // TEST:
   // create some dummy parameters
@@ -25,7 +26,7 @@ int main(const int argc, const char** argv) {
     run = ui_loop();
   }
 
-  // audio_deinit();
+  scene_deinit();
   preset_deinit();
   menu_deinit();
   ui_deinit();
