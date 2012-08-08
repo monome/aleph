@@ -13,6 +13,7 @@ typedef unsigned long long int  u64;  //!< 64-bit unsigned integer.
 typedef float                   f32;  //!< 32-bit floating-point number.
 typedef double                  f64;  //!< 64-bit floating-point number.
 
+
 typedef s8  S8;  //!< 8-bit signed integer.
 typedef u8  U8;  //!< 8-bit unsigned integer.
 typedef s16 S16;  //!< 16-bit signed integer.
@@ -23,5 +24,6 @@ typedef s64 S64;  //!< 64-bit signed integer.
 typedef u64 U64;  //!< 64-bit unsigned integer.
 typedef f32 F32;  //!< 32-bit floating-point number.
 typedef f64 F64;  //!< 64-bit floating-point number.
+
 
 #endif // header guard

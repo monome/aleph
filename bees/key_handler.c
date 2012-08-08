@@ -343,6 +343,7 @@ extern void key_handler_scenes(uiKey_t key) {
       break;
     case eModeClear:
       //scene_clear(page->selected);
+      page->mode = eModeNone;
       break;
     default:
       page->mode = eModeNone;
@@ -355,6 +356,7 @@ extern void key_handler_scenes(uiKey_t key) {
       break;
     case eModeCopy:
       //scene_copy(page->selected);
+      page->mode = eModeNone;
       break;
     default:
       page->mode = eModeNone;
@@ -367,6 +369,7 @@ extern void key_handler_scenes(uiKey_t key) {
       break;
     case eModeStore:
       scene_store(page->selected);
+      page->mode = eModeNone;
       break;
     default:
       page->mode = eModeNone;
@@ -379,6 +382,7 @@ extern void key_handler_scenes(uiKey_t key) {
       break;
     case eModeRecall:
       scene_recall(page->selected);
+      page->mode = eModeNone;
       break;
     default:
       page->mode = eModeNone;
