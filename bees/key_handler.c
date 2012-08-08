@@ -13,16 +13,19 @@
 #include "redraw.h"
 #include "scene.h"
 #include "key_handler.h"
-
 //--------------------
 //----- static variables
 
 // param step constants
-
-// static const S32 kParamValStepSmall = 1;
-// static const S32 kParamValStepLarge = PARAM_MAX >> 11;
 static const io_t kParamValStepSmall = 0.015625;
 static const io_t kParamValStepLarge = 1.f;
+// character selection tablei
+static const char kLabelChars[] = "abcdefghijklmnopqrstuvwxyz_012345789";
+#define NUM_LABEL_CHARS 47
+// index in the selection table 
+static S8 selectedLabelChar = 0;
+// position in name
+//static S8 selectedLabelPos = 0;
 
 //========================================
 //====== key handlers
@@ -235,8 +238,6 @@ void key_handler_gathered(uiKey_t key) {
 }
 
 ///// PLAy
-
-
 void key_handler_play(uiKey_t key) {
   s32 val;
   s16 inIdx = -1;
@@ -327,25 +328,62 @@ void key_handler_play(uiKey_t key) {
 
 /// PRESET
 
+
 // presets
 extern void key_handler_presets(uiKey_t key) {
 }
 
-// scenes
+/// SCENES
 extern void key_handler_scenes(uiKey_t key) {
   switch(key) {
-  case eKeyFnDownA: 
-    // clear
+  case eKeyFnDownA: // clear
+    switch(page->mode) {
+    case eModeNone:
+      page->mode = eModeClear;
+      break;
+    case eModeClear:
+      //scene_clear(page->selected);
+      break;
+    default:
+      page->mode = eModeNone;
+    }
     break;
-  case eKeyFnDownB:
-    // copy
+  case eKeyFnDownB: // copy
+    switch(page->mode) {
+    case eModeNone:
+      page->mode = eModeCopy;
+      break;
+    case eModeCopy:
+      //scene_copy(page->selected);
+      break;
+    default:
+      page->mode = eModeNone;
+    }
     break;
-  case eKeyFnDownC:
-    // store
+  case eKeyFnDownC: // store
+    switch(page->mode) {
+    case eModeNone:
+      page->mode = eModeStore;
+      break;
+    case eModeStore:
+      scene_store(page->selected);
+      break;
+    default:
+      page->mode = eModeNone;
+    }
     break;
-  case eKeyFnDownD:
-    // recall
-  break;
+  case eKeyFnDownD: // recall
+    switch(page->mode) {
+    case eModeNone:
+      page->mode = eModeRecall;
+      break;
+    case eModeRecall:
+      scene_recall(page->selected);
+      break;
+    default:
+      page->mode = eModeNone;
+    }
+    break;
     //// encoder A: scroll pages
   case eKeyEncUpA:
     scrollPage(1);
@@ -360,21 +398,34 @@ extern void key_handler_scenes(uiKey_t key) {
   case eKeyEncDownB:
     scrollSelect(-1, SCENE_COUNT -1 );
     break;
-    //// encoder C: scroll name pos
-  case eKeyEncUpC:
+  case eKeyEncUpC: // cursor: position in name
+    page->cursor++;
+    if (page->cursor > NUM_LABEL_CHARS) {
+      page->cursor = 0;
+    } 
+    break;
+  case eKeyEncDownC:  // cursor: position in name
+    page->cursor--;
+    if (page->cursor < 0) {
+      page->cursor = NUM_LABEL_CHARS - 1;
+    } 
+    break;
+  case eKeyEncUpD:     // scroll name char at pos
+    selectedLabelChar++;
+    if (selectedLabelChar > NUM_LABEL_CHARS) {
+      selectedLabelChar = 0;
+    } 
 
     break;
-  case eKeyEncDownC:
-
+  case eKeyEncDownD:     // scroll name char at pos
+    page->cursor--;
+    if (page->cursor < 0) {
+      page->cursor = NUM_LABEL_CHARS - 1;
+    } 
+    
     break;
-  case eKeyEncUpD:
-    // scroll name char at pos
-    break;
-  case eKeyEncDownD:
-    // nothing
-    break;
-    default:
+  default:
     ;; // nothing
   }  
-
+  (*(page->redraw))();
 }

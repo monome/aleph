@@ -296,14 +296,14 @@ static const char* op_mul_outstring = "PRODUCT ";
 static const char* op_mul_opstring = "MULTIPLIER";
 
 static void op_mul_in_a(op_mul_t* mul, const io_t* v) {
-  printf("mul at %d received A %d\n", (int)mul, (int)*v);
+  // printf("mul at %d received A %d\n", (int)mul, (int)*v);
   mul->a = *v;
   mul->val = OPMUL(mul->a, mul->b);
   net_activate(mul->outs[0], mul->val);
 }
 
 static void op_mul_in_b(op_mul_t* mul, const io_t* v) {
-  printf("mul at %d received B %d\n", (int)mul, (int)*v);
+  //printf("mul at %d received B %d\n", (int)mul, (int)*v);
   mul->b = *v;
   mul->val = OPMUL(mul->a, mul->b);
   if(mul->btrig) {
@@ -312,7 +312,7 @@ static void op_mul_in_b(op_mul_t* mul, const io_t* v) {
 }
 
 static void op_mul_in_btrig(op_mul_t* mul, const io_t* v) {
-  printf("mul at %d received BTRIG %d\n", (int)mul, (int)*v);
+  //printf("mul at %d received BTRIG %d\n", (int)mul, (int)*v);
   mul->btrig = (io_t)(v != 0);
 }
 

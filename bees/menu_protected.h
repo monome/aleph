@@ -22,6 +22,16 @@ typedef void(*keyHandler_t)(uiKey_t key);
 // function pointer for redraw on a given page
 typedef void(*redraw_t)(void);
 
+// messy page mode enum
+typedef enum  { 
+   eModeNone,
+   eModeClear,
+   eModeCopy,
+   eModeStore,
+   eModeRecall,
+} ePageMode;
+
+
 // class representing a page in a menu
 // includes a title and a key input handler (function pointer)
 typedef struct page_struct {
@@ -29,6 +39,8 @@ typedef struct page_struct {
   keyHandler_t keyHandler;
   redraw_t redraw;
   s16 selected;
+  ePageMode mode;
+  S8 cursor;
 } page_t;
 
 ///////////////////////

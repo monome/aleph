@@ -5,7 +5,8 @@
 #
 
 # Path to top level ASF directory relative to this project directory.
-PRJ_PATH = asf-3.1.3/
+# moved this to the top level Makefile cause it needs to know too
+# PRJ_PATH = ../../avr/asf-3.3.0/
 
 # Target CPU architecture: ap, ucr1, ucr2 or ucr3
 ARCH = ucr2
@@ -37,7 +38,6 @@ CSRCS = \
 	avr32/drivers/spi/spi.c                            \
         avr32/drivers/tc/tc.c                          \
 	avr32/drivers/usart/usart.c                        \
-        avr32/services/delay/delay.c			   \
 	avr32/services/fs/fat/fat.c                        \
 	avr32/services/fs/fat/fat_unusual.c                \
 	avr32/services/fs/fat/file.c                       \
@@ -56,10 +56,10 @@ CSRCS = \
 	./src/font.c \
 	./src/init.c	\
 	./src/interrupts.c \
+	./src/main.c \
 	./src/screen.c \
 	./src/switches.c \
 	./src/timers.c \
-	./src/main.c \
 	../bees/key_handler.c \
 	../bees/menu.c \
 	../bees/net.c \

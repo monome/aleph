@@ -15,7 +15,6 @@ int main(const int argc, const char** argv) {
   menu_init();
   preset_init();
   scene_init();
-  //  audio_init();
 
   // TEST:
   // create some dummy parameters
@@ -27,7 +26,6 @@ int main(const int argc, const char** argv) {
     run = ui_loop();
   }
 
-  // audio_deinit();
   scene_deinit();
   preset_deinit();
   menu_deinit();
