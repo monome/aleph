@@ -97,12 +97,11 @@ INC_PATH = \
 	avr32/components/memory/sd_mmc/sd_mmc_spi \
        common/services/storage/ctrl_access                \
        common/services/clock                              \
-       common/utils \
-	. \
-	../ \
-	../conf \
-	../../common \
-	../../bees
+       common/utils         \
+	../../aleph/avr32/src  \
+	../../aleph/avr32/conf \
+	../../aleph/common     \
+	../../aleph/bees       \
 
 # Additional search paths for libraries.
 LIB_PATH = 

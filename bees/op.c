@@ -17,10 +17,10 @@
 // operator class registry
 // must be laid out identically to eOpId enum
 const op_desc_t op_registry[numOpClasses] = {
-{ "SWITCH", sizeof(op_sw_t) },
-{ "ENCODER", sizeof(op_enc_t) },
+{ "SW", sizeof(op_sw_t) },
+{ "ENC", sizeof(op_enc_t) },
 { "ADD", sizeof(op_add_t) },
-{ "MULTIPLY", sizeof(op_mul_t) },
+{ "MUL", sizeof(op_mul_t) },
 { "GATE", sizeof(op_gate_t) },
 // { "ACCUMULATE", sizeof(op_accum_t) },
 // { "SELECT", sizeof(op_sel_t) },
@@ -75,9 +75,9 @@ void op_set_in_val(op_t* op, s16 idx, io_t val) {
 
 //-------------------------------------------------
 //----- switch
-static const char* op_sw_instring = "STATE   TOGGLE  MULT    ";
-static const char* op_sw_outstring = "STATE  ";
-static const char* op_sw_opstring = "SWITCH";
+static const char* op_sw_instring = "VAL     TOG     MUL    ";
+static const char* op_sw_outstring = "VAL     ";
+static const char* op_sw_opstring = "SW";
 
 static void op_sw_in_state(op_sw_t* sw, const io_t* v) {
   if (sw->tog) {
@@ -89,7 +89,7 @@ static void op_sw_in_state(op_sw_t* sw, const io_t* v) {
 	sw->state = sw->mul;
       }
       net_activate(sw->outs[0], sw->state);
-    }
+    } 
   } else {
     // momentary mode, sw value takes input
     sw->state = (((*v) > 0) ? sw->mul : 0);
@@ -138,9 +138,9 @@ void op_sw_init(op_sw_t* sw) {
 //-------------------------------------------------
 //----- encoder
 
-static const char* op_enc_instring = "MOVE    MIN     MAX     STEP    WRAP    ";
-static const char* op_enc_outstring = "VALUE   WRAP    ";
-static const char* op_enc_opstring = "ENCODER";
+static const char* op_enc_instring = "DIR     MIN     MAX     STEP    WRAP    ";
+static const char* op_enc_outstring = "VAL     WRAP    ";
+static const char* op_enc_opstring = "ENC";
 static void op_enc_perform(op_enc_t* enc);
 
 // step

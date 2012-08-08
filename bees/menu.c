@@ -101,7 +101,7 @@ void scrollPage(S8 dir) {
     if (dir > 0) {
       pageIdx = ePageIns;
     } else {
-      pageIdx = ePageOuts;
+      pageIdx = ePageScenes;
     }
     break;
   case ePageIns:

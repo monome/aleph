@@ -42,8 +42,7 @@ void redraw_ops(void) {
   const U16 num = net_num_ops();
 
   // draw the header
-  snprintf(lineBuf, SCREEN_W, "         OPERATORS");
-  screen_draw_string(0, 0, lineBuf, 6);
+  screen_line(0, 0, "OPERATORS", 3);
 
   nCenter = page->selected;
   if (nCenter >= num) {
@@ -76,13 +75,13 @@ void redraw_ops(void) {
   // (new op type)
   snprintf(lineBuf, SCREEN_W, "[ +++ %s",
 	   op_registry[userOpTypes[newOpType]].name);
-  screen_draw_string(0, SCREEN_H_2, lineBuf, 1);
+  screen_line(0, SCREEN_H_2, lineBuf, 5);
   // (function labels)
   // don't allow deletion of system operators
   if (net_op_status(net_num_ops() - 1) == eUserOp) {
-    screen_draw_string(0, SCREEN_H_1, " A_PARAMS   B_ROUTING   C_CREATE  D_DELETE ", 5);
+    screen_line(0, SCREEN_H_1, "PARAMS ROUTING CREATE DELETE", 3);
   } else  { 
-    screen_draw_string(0, SCREEN_H_1, " A_PARAMS   B_ROUTING   C_CREATE  ", 5);
+    screen_line(0, SCREEN_H_1, "PARAMS ROUTING CREATE", 3);
   }
 }
 
@@ -95,8 +94,8 @@ void redraw_ins(void) {
   const U16 num = net_num_ins(); // how many ops
     
   // draw the header
-  snprintf(lineBuf, SCREEN_W, "       PARAMS ");
-  screen_draw_string(0, 0, lineBuf, 6);
+  snprintf(lineBuf, SCREEN_W, "PARAMS ");
+  screen_line(0, 0, lineBuf, 3);
 
   nCenter = page->selected;
   if (nCenter >= num) {
@@ -126,7 +125,7 @@ void redraw_ins(void) {
   }    
   // draw footer 
   // (function labels)
-  screen_draw_string(0, SCREEN_H_1, "A_GATHER  B_DISCONNECT  C_STORE  D_PRESET ", 5);
+  screen_line(0, SCREEN_H_1, "GATHER  DISCONNECT  STORE  PRESET ", 3);
 }
 
 //==================================================
@@ -138,8 +137,8 @@ void redraw_outs(void) {
   const U16 num = net_num_outs(); // how many ops
   
   // draw the header
-  snprintf(lineBuf, SCREEN_W, "      ROUTING");
-  screen_draw_string(0, 0, lineBuf, 6);
+  snprintf(lineBuf, SCREEN_W, "ROUTING");
+  screen_line(0, 0, lineBuf, 3);
 
   nCenter = page->selected;
   if (nCenter >= num) {
@@ -171,15 +170,15 @@ void redraw_outs(void) {
   // (target)
   target = net_get_target(nCenter);
   if(target == -1) {
-    screen_draw_string(0, SCREEN_H_2, "[ NO TARGET ]", 1);
+    screen_line(0, SCREEN_H_2, "NO TARGET", 1);
   } else {
     snprintf(lineBuf, SCREEN_W, "  --> %s/%s",
 	     net_op_name(net_in_op_idx(target)), net_in_name(target));
-    screen_draw_string(0, SCREEN_H_2, lineBuf, 1);
+    screen_line(0, SCREEN_H_2, lineBuf, 1);
   }
 
   // (function labels)
-  screen_draw_string(0, SCREEN_H_1, " A_FOLLOW  B_DISCONNECT C_STORE  D_PRESET ", 5);
+  screen_line(0, SCREEN_H_1, "FOLLOW  DISCONNECT STORE PRESET ", 5);
 }
 
 /// redraw gathered outputs
@@ -200,8 +199,8 @@ void redraw_scenes(void) {
   const U16 num = SCENE_COUNT; // how many 
   
   // draw the header
-  snprintf(lineBuf, SCREEN_W, "      SCENES");
-  screen_draw_string(0, 0, lineBuf, 6);
+  snprintf(lineBuf, SCREEN_W, "SCENES");
+  screen_line(0, 0, lineBuf, 3);
 
   nCenter = page->selected;
   if (nCenter >= num) {
@@ -212,16 +211,16 @@ void redraw_scenes(void) {
   y = SCREEN_ROW_CENTER;
   switch(page->mode) { 
   case eModeClear:
-    screen_draw_string(0, y, "CLEAR?", 6);
+    screen_line(0, y, "CLEAR?", 6);
     break;
   case eModeCopy:
-    screen_draw_string(0, y, "COPY?", 6);
+    screen_line(0, y, "COPY?", 6);
     break;
   case eModeStore:
-    screen_draw_string(0, y, "STORE?", 6);
+    screen_line(0, y, "STORE?", 6);
     break;
   case eModeRecall:
-    screen_draw_string(0, y, "RECALL?", 6);
+    screen_line(0, y, "RECALL?", 6);
     break;
   case eModeNone:
   default:
@@ -248,7 +247,7 @@ void redraw_scenes(void) {
 
   // draw footer 
   // (function labels)
-  screen_draw_string(0, SCREEN_H_1, " A_CLEAR B_COPY C_STORE D_RECALL ", 5);
+  screen_line(0, SCREEN_H_1, "CLEAR COPY STORE RECALL", 3);
 
 }
 
@@ -257,14 +256,14 @@ void redraw_scenes(void) {
 void redraw_play(void) {
   U8 y, n;
 // draw the header
-  snprintf(lineBuf, SCREEN_W, "      PLAY");
-  screen_draw_string(0, 0, lineBuf, 6);
+  snprintf(lineBuf, SCREEN_W, "PLAY");
+  screen_line(0, 0, lineBuf, 6);
   n = SCREEN_H_1;
   for(y = 1; y < SCREEN_H; y++ ) {
-    snprintf(lineBuf, SCREEN_W, "param %d : %f",
+    snprintf(lineBuf, SCREEN_W, "p%d : %f",
 	     touchedParams[n].idx,
 	     touchedParams[n].val );
-    screen_draw_string(0, y, lineBuf, 1);
+    screen_line(0, y, lineBuf, 1);
     n--;
   }
 }
@@ -276,13 +275,14 @@ void redraw_play(void) {
 // draw line of ops page
 static void draw_line_ops(S32 n, U16 num, U8 y, U8 hl) {
   if ( (n < num) && (n >= 0) ) { 
-    snprintf(lineBuf, SCREEN_W, "   %d__%s",
+    snprintf(lineBuf, SCREEN_W, " %d_%s",
              (int)n, net_op_name(n));
-    screen_draw_string(0, y, lineBuf, hl + net_op_status(n));
+    //    screen_line(0, y, lineBuf, hl + net_op_status(n));
+    screen_line(0, y, lineBuf, hl);
   } else {
     // no selection
     snprintf(lineBuf, SCREEN_W, "   .");
-    screen_draw_string(0, y, lineBuf, 0);
+    screen_line(0, y, lineBuf, 0);
   }
   
 }
@@ -293,7 +293,7 @@ static void draw_line_ins(S32 n, U16 num, U8 y, U8 hl) {
   if ( (n < num) && (n >= 0) ) { 
     opIdx = net_in_op_idx(n);
     if (opIdx >=0 ) {
-      snprintf(lineBuf, SCREEN_W, "   %d_(%d)%s/%s_%f",
+      snprintf(lineBuf, SCREEN_W, "%d_(%d)%s/%s_%f",
 	       (int)n,
 	       opIdx, 
 	       net_op_name(net_in_op_idx(n)), 
@@ -301,7 +301,7 @@ static void draw_line_ins(S32 n, U16 num, U8 y, U8 hl) {
 	       net_get_in_value(n));
     } else {
       /// parameter
-      snprintf(lineBuf, SCREEN_W, "   %d_P%d_%s_%f",
+      snprintf(lineBuf, SCREEN_W, "%d_P%d_%s_%f",
 	       (int)n,
 	       (int)net_param_idx(n),
 	       net_in_name(n),
@@ -309,37 +309,40 @@ static void draw_line_ins(S32 n, U16 num, U8 y, U8 hl) {
 	       //!!!!!  the param / input stuff is really messy
 	       get_param_value(net_param_idx(n)) );
     }
-    screen_draw_string(0, y, lineBuf, hl);
+    screen_line(0, y, lineBuf, hl);
 
   } else {
     // no selection
-    snprintf(lineBuf, SCREEN_W, "   .");
-    screen_draw_string(0, y, lineBuf, 0);
+    snprintf(lineBuf, SCREEN_W, ".");
+    screen_line(0, y, lineBuf, 0);
   }
 
 }
 
 // draw line of outputs page
 static void draw_line_outs(S32 n, U16 num, U8 y, U8 hl) {
-  S16 target; U8 status;
+  S16 target;
+  //U8 status;
   if ( (n < num) && (n >= 0) ) { 
     target = net_get_target(n);
-    status = net_op_status(net_out_op_idx(n));
+    //status = net_op_status(net_out_op_idx(n));
     if (target >= 0) {
-      snprintf(lineBuf, SCREEN_W, "   %d_(%d)%s/%s-->%s/%s",
-	       (int)n, net_out_op_idx(n),
+      snprintf(lineBuf, SCREEN_W, "%d.%s/%s->%d.%s/%s",
+	       net_out_op_idx(n),
 	       net_op_name(net_out_op_idx(n)), net_out_name(n), 
+	       net_in_op_idx(target),
 	       net_op_name(net_in_op_idx(target)), net_in_name(target)
 	       );
     } else {
-      snprintf(lineBuf, SCREEN_W, "   %d_(%d)%s/%s",
-	       (int)n, net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
+      snprintf(lineBuf, SCREEN_W, "%d.%s/%s",
+	       net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
     }
-    screen_draw_string(0, y, lineBuf, hl + status);
+    //    screen_line(0, y, lineBuf, hl + status);
+    screen_line(0, y, lineBuf, hl);
   } else {
     // no selection
-    snprintf(lineBuf, SCREEN_W, "   .");
-    screen_draw_string(0, y, lineBuf, 0);
+    snprintf(lineBuf, SCREEN_W, ".");
+    screen_line(0, y, lineBuf, 0);
   }
 }
 
@@ -347,12 +350,12 @@ static void draw_line_outs(S32 n, U16 num, U8 y, U8 hl) {
 void draw_line_scenes(S32 n, U16 num, U8 y, U8 hl) {
   //  S16 target; U8 status;
   if ( (n < num) && (n >= 0) ) { 
-    snprintf(lineBuf, SCREEN_W, "  %s  ", scene_name(n));
-    screen_draw_string(0, y, lineBuf, hl);
+    snprintf(lineBuf, SCREEN_W, "%s ", scene_name(n));
+    screen_line(0, y, lineBuf, hl);
   } else {
     // no selection
-    snprintf(lineBuf, SCREEN_W, "   .");
-    screen_draw_string(0, y, lineBuf, 0);
+    snprintf(lineBuf, SCREEN_W, ".");
+    screen_line(0, y, lineBuf, 0);
   }
 }
 

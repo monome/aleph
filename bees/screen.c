@@ -47,12 +47,12 @@
 #define KEY_FN_D_UP     'f'
 #define KEY_FN_D_DOWN   'v'
 
-// static vars
-static const char hlChars[7] = {' ', '.', '-','~','=','*', '#'};
+//---- static vars
+
+// line buffer
+static char linebuf[CHAR_COLS]; // line buffer
 
 //---- external function definitions
-
-#ifdef ARCH_LINUX // only need init/deinit/loop in ascii mockup
 
 // initialize low-level user interface (screen, keys)
 void ui_init(void) {
@@ -67,8 +67,7 @@ void ui_init(void) {
   start_color();
 
   // weird hacky color definitions to make an 8-point grayscale kinda
-
-  if(can_change_color()) {
+  if(0) { // (can_change_color()) {
     for(i=0; i<8; i++) {
       init_color(i, i*140, i*140, i*140 );
     }
@@ -77,14 +76,18 @@ void ui_init(void) {
       init_pair(i+1, i, (i + 4) % 7);
     }
   } else {
-    init_pair(1, COLOR_BLACK, COLOR_WHITE);
-    init_pair(2, COLOR_BLACK, COLOR_BLUE);
-    init_pair(3, COLOR_BLUE, COLOR_WHITE);
-    init_pair(4, COLOR_YELLOW, COLOR_BLACK);
+
+    
+
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+    init_pair(2, COLOR_BLUE, COLOR_BLACK);
+    init_pair(3, COLOR_BLACK, COLOR_CYAN);
+    init_pair(4, COLOR_WHITE, COLOR_BLUE);
     init_pair(5, COLOR_RED, COLOR_BLACK);
-    init_pair(6, COLOR_RED, COLOR_WHITE);
-    init_pair(7, COLOR_CYAN, COLOR_BLACK);
-    init_pair(8, COLOR_CYAN, COLOR_MAGENTA);
+    init_pair(6, COLOR_WHITE, COLOR_RED);
+    //init_pair(7, COLOR_CYAN, COLOR_BLACK);
+    //init_pair(8, COLOR_CYAN, COLOR_MAGENTA);
+    
   }
 }
 
@@ -180,7 +183,7 @@ void ui_println(U8 y, const char* str) {
 */
 
 // print some characters of text
-U8 screen_draw_string(U16 x, U16 y, char* str, U8 hl) {
+U8 screen_string(U16 x, U16 y, char* str, U8 hl) {
   S8 l = 7 - hl;      // 8-point level of background
   if (l < 0) {l = 0;} 
   if (l > 7) {l = 7;}
@@ -189,13 +192,27 @@ U8 screen_draw_string(U16 x, U16 y, char* str, U8 hl) {
   refresh();
   return strlen(str);
 }
-#endif // linux
 
-#ifdef ARCH_AVR32
-u16 ui_print(U8 y, U8 x, const char* str, u8 hl, u8 alpha) {
-  u8 alpha;
-  screen_blank_line(x, y);
-  screen_hilite_line(x, y, hl);
-  return screen_draw_screen_squeeze(x, y, str, alpha);
+// print and blank line to end
+U8 screen_line(U16 x, U16 y, char* str, U8 hl) {
+  //  S8 l = 7 - hl;      // 8-point level of background
+  U8 i=0;
+  U8 len = strlen(str);
+  
+  //if (l < 0) {l = 0;} 
+  //if (l > 7) {l = 7;}
+ 
+  for(i=0; i<CHAR_COLS; i++) {
+    if(i<len) { 
+      linebuf[i] = str[i];
+    } else {
+      linebuf[i] = ' ';
+    }
+  }
+
+  attron(COLOR_PAIR(hl));
+  mvprintw(y, x, linebuf);
+  refresh();
+  
+  return CHAR_COLS;
 }
-#endif
