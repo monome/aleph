@@ -48,9 +48,9 @@ static void add_sys_ops(void) {
 
 // "singleton" intializer
 void net_init(void) {
-  U32 i;
+  u32 i;
   for(i=0; i<NET_OP_POOL_SIZE; i++) {
-    net.opPoolMem[i] = (U8)0;
+    net.opPoolMem[i] = (u8)0;
   }
   net.opPool = (void*)&(net.opPoolMem);
   net.numOps = 0;
@@ -69,7 +69,7 @@ void net_deinit(void) {
 }
 
 // activate an input node with a value
-void net_activate(S16 inIdx, const io_t val) {
+void net_activate(s16 inIdx, const io_t val) {
   if(inIdx >= 0) {
     if(inIdx < net.numIns) {
       //(*(net.ins[inIdx].in))(net.ops[net.ins[inIdx].opIdx], val);
@@ -89,9 +89,9 @@ void net_activate(S16 inIdx, const io_t val) {
 }
 
 // attempt to allocate a new operator from the pool, return index
-S16 net_add_op(opId_t opId) {
-  U16 ins, outs;
-  U8 i;
+s16 net_add_op(opId_t opId) {
+  u16 ins, outs;
+  u8 i;
   op_t* op;
 
   if (net.numOps >= NET_OPS_MAX) {
@@ -163,6 +163,7 @@ S16 net_add_op(opId_t opId) {
 
   //---- add inputs and outputs to node list
   //no // don't add inputs for system control ops
+  // yes actually do
   //if (op->status != eSysCtlOp) {
     for(i=0; i<ins; i++) {
       //      net.ins[net.numIns].in = op->in[i];
@@ -183,7 +184,7 @@ S16 net_add_op(opId_t opId) {
 }
 
 // destroy last operator created
-S16 net_pop_op(void) {
+s16 net_pop_op(void) {
   op_t* op = net.ops[net.numOps - 1];
   net.numIns -= op->numInputs;
   net.numOuts -= op->numOutputs;
@@ -193,13 +194,13 @@ S16 net_pop_op(void) {
 }
 
 // create a connection between given idx pair
-void net_connect(U32 oIdx, U32 iIdx) {
+void net_connect(u32 oIdx, u32 iIdx) {
   net.ops[net.outs[oIdx].opIdx]->out[net.outs[oIdx].outIdx] = iIdx;
   net.outs[oIdx].target = iIdx;
 }
 
 // disconnect given output
-void net_disconnect(U32 outIdx) {
+void net_disconnect(u32 outIdx) {
   net.ops[net.outs[outIdx].opIdx]->out[net.outs[outIdx].outIdx] = -1;
   net.outs[outIdx].target = -1;
 }
@@ -207,27 +208,32 @@ void net_disconnect(U32 outIdx) {
 //---- queries
 
 // get current count of operators
-U16 net_num_ops(void) {
+u16 net_num_ops(void) {
   return net.numOps;
 }
 
 // get current count of inputs
-U16 net_num_ins(void) {
+u16 net_num_ins(void) {
   return net.numIns + net.numParams;
 }
 
 // get current count of outputs
-U16 net_num_outs(void) {
+u16 net_num_outs(void) {
   return net.numOuts;
 }
 
+// get num params (subset of inputs)
+u16 net_num_params(void) {
+  return net.numParams;
+}
+
 // get param index given input index
-S16 net_param_idx(U16 inIdx) {
+s16 net_param_idx(u16 inIdx) {
   return inIdx - net.numIns;
 }
 
 // get string for operator at given idx
-const char* net_op_name(const S16 idx) {
+const char* net_op_name(const s16 idx) {
   if (idx < 0) {
     return "";
   }
@@ -235,7 +241,7 @@ const char* net_op_name(const S16 idx) {
 }
 
 // get name for input at given idx
-const char* net_in_name(U16 idx) {
+const char* net_in_name(u16 idx) {
   if (idx >= net.numIns) {
     // not an operator input
     idx -= net.numIns;
@@ -253,26 +259,26 @@ const char* net_in_name(U16 idx) {
 }
 
 // get name for output at given idx
-const char* net_out_name(const U16 idx) {
+const char* net_out_name(const u16 idx) {
   return op_out_name(net.ops[net.outs[idx].opIdx], net.outs[idx].outIdx);
 }
 
 // get op index for input at given idx
-S16 net_in_op_idx(const U16 idx) {
+s16 net_in_op_idx(const u16 idx) {
   if (idx >= net.numIns) return -1;
   return net.ins[idx].opIdx;
 }
 
 // get op index for output at given idx
-S16 net_out_op_idx(const U16 idx) {
+s16 net_out_op_idx(const u16 idx) {
  if (idx > net.numOuts) return -1;
   return net.outs[idx].opIdx;
 }
 
 
 // get global index for a given input of given op
-U16 net_op_in_idx(const U16 opIdx, const U16 inIdx) {
-  U16 which;
+u16 net_op_in_idx(const u16 opIdx, const u16 inIdx) {
+  u16 which;
   for(which=0; which<net.numIns; which++) {
     if(net.ins[which].opIdx == opIdx) {
       return (which + inIdx);
@@ -282,8 +288,8 @@ U16 net_op_in_idx(const U16 opIdx, const U16 inIdx) {
 }
 
 // get global index for a given output of given op
-U16 net_op_out_idx(const U16 opIdx, const U16 outIdx) {
-  U16 which;
+u16 net_op_out_idx(const u16 opIdx, const u16 outIdx) {
+  u16 which;
   for(which=0; which<net.numOuts; which++) {
     if(net.outs[which].opIdx == opIdx) {
       return (which + outIdx);
@@ -293,14 +299,14 @@ U16 net_op_out_idx(const U16 opIdx, const U16 outIdx) {
 }
 
 // get connection index for output
-S16 net_get_target(U16 outIdx) {
+s16 net_get_target(u16 outIdx) {
   return net.outs[outIdx].target;
 }
 
 // is this input connected to anything?
-U8 net_in_connected(S32 iIdx) {
-  U8 f=0;
-  U16 i;
+u8 net_in_connected(s32 iIdx) {
+  u8 f=0;
+  u16 i;
   for(i=0; i<net.numOuts; i++) {
     if(net.outs[i].target == iIdx) {
       f = 1;
@@ -311,15 +317,15 @@ U8 net_in_connected(S32 iIdx) {
 }
 
 // get status (user/system) of op at given idx
-opStatus_t net_op_status(U16 opIdx) {
+opStatus_t net_op_status(u16 opIdx) {
   return net.ops[opIdx]->status;
 }
 
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections
-U32 net_gather(S32 iIdx, U32(*outs)[NET_OUTS_MAX]) {
-  U32 iTest;
-  U32 iOut=0;
+u32 net_gather(s32 iIdx, u32(*outs)[NET_OUTS_MAX]) {
+  u32 iTest;
+  u32 iOut=0;
   for(iTest=0; iTest<NET_OUTS_MAX; iTest++) {
     if(net.outs[iTest].target == iIdx) {
       (*outs)[iOut] = iTest;
@@ -339,7 +345,7 @@ io_t net_get_in_value(s32 inIdx) {
   }
 }
 
-void net_set_in_value(S32 inIdx, io_t val) {
+void net_set_in_value(s32 inIdx, io_t val) {
   //net.ins[inIdx].val = val;
   if (inIdx < 0) return;
   if (inIdx < net.numIns) {
@@ -358,7 +364,7 @@ io_t net_inc_in_value(s32 inIdx, io_t inc) {
     return get_param_value(inIdx);
   } else {
     //net.ins[inIdx].val += inc;
-    //net_activate(inIdx, (const S32*)(&(net.ins[inIdx].val)));
+    //net_activate(inIdx, (const s32*)(&(net.ins[inIdx].val)));
     //return net.ins[inIdx].
     net_activate( inIdx, 
 		  OPADD(
@@ -370,24 +376,24 @@ io_t net_inc_in_value(s32 inIdx, io_t inc) {
 }
 
 // toggle preset inclusion for input
-u8 net_toggle_in_preset(U32 inIdx) {
+u8 net_toggle_in_preset(u32 inIdx) {
   net.ins[inIdx].preset ^= 1;
   return net.ins[inIdx].preset;
 }
 
 // toggle preset inclusion for output
-u8 net_toggle_out_preset(U32 outIdx) {
+u8 net_toggle_out_preset(u32 outIdx) {
   net.outs[outIdx].preset ^= 1;
   return net.outs[outIdx].preset;
 }
 
 // get preset inclusion for input
-U8 net_get_in_preset(U32 inIdx) {
+u8 net_get_in_preset(u32 inIdx) {
   return net.ins[inIdx].preset;
 }
 
 // get preset inclusion for output
-U8 net_get_out_preset(U32 outIdx) {
+u8 net_get_out_preset(u32 outIdx) {
   return net.outs[outIdx].preset;
 }
 

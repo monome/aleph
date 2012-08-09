@@ -40,7 +40,7 @@ typedef struct page_struct {
   redraw_t redraw;
   s16 selected;
   ePageMode mode;
-  S8 cursor;
+  s8 cursor;
 } page_t;
 
 ///////////////////////
@@ -52,7 +52,7 @@ extern page_t* page;
 extern s8 pageIdx;
 
 // array of onode pointers for gathering
-extern U32(*gathered)[NET_OUTS_MAX];
+extern u32(*gathered)[NET_OUTS_MAX];
 // how many gathered
 extern u32 numGathered;
 // page structures
@@ -67,7 +67,7 @@ extern opId_t newOpType;
 
 // list of recently touched parameter idxs
 typedef struct _touched {
-  U16 idx;
+  u16 idx;
   f32 val;
 } touched_t;
 extern touched_t touchedParams[SCREEN_H];
@@ -78,8 +78,8 @@ extern touched_t touchedParams[SCREEN_H];
 // set current page
 extern void setPage(ePage n);
 // scroll current page
-extern void scrollPage(S8 dir);
+extern void scrollPage(s8 dir);
 // scroll selection in current page
-extern void scrollSelect(S8 dir, S32 max);
+extern void scrollSelect(s8 dir, s32 max);
 
 #endif // header guard

@@ -4,7 +4,7 @@
 #include "module_common.h"
 #include "types.h"
 
-#define SCENE_COUNT 16
+#define SCENE_COUNT 8
 #define SCENE_NAME_LEN 24
 
 // initialize memory

@@ -8,6 +8,10 @@
 #include "menu.h"
 #include "param.h"
 
+#ifdef ARCH_AVR32
+#include "bfin.h"
+#endif
+
 // get value for param at given idx
 io_t get_param_value(u32 idx) {
   return (io_t)net.params[idx].fval;
@@ -57,5 +61,9 @@ void set_param_float_value(u32 idx, f32 val) {
   net.params[idx].fval = val;
   net.params[idx].ival = ival;
   param_feedback(idx);
+#ifdef ARCH_AVR32
+  bfin_set_param(idx, net.params[idx].fval);
+#endif
+
 }
 

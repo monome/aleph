@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "files.h"
 #include "net_protected.h"
 #include "preset.h"
 #include "types.h"

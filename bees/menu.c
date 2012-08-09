@@ -95,7 +95,7 @@ void setPage(ePage n) {
 }
 
 // scroll current page
-void scrollPage(S8 dir) {
+void scrollPage(s8 dir) {
   switch(pageIdx) {
   case ePageOps:
     if (dir > 0) {
@@ -137,7 +137,7 @@ void scrollPage(S8 dir) {
 }
 
 // scroll current page selection
-void scrollSelect(S8 dir, S32 max) {
+void scrollSelect(s8 dir, s32 max) {
   page->selected += dir;
   if (page->selected < 0) {
     page->selected = 0;

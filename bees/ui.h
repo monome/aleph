@@ -30,10 +30,10 @@ void ui_init(void);
 // de-init
 void ui_deinit(void);
 // loop over user input
-U8 ui_loop(void);
+u8 ui_loop(void);
 // print a line of text
-void ui_println(U8 y, const char* str);
+void ui_println(u8 y, const char* str);
 // print some characters of text
-u16 ui_print(U8 y, U8 x, const char* str, U8 hl);
+u16 ui_print(u8 y, u8 x, const char* str, u8 hl);
 
 #endif // header guard

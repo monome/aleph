@@ -39,27 +39,27 @@ typedef enum {
 //---- op descriptor type
 typedef struct op_desc_struct {
   const char* name;
-  const U32 size;
+  const u32 size;
 } op_desc_t;
 
 //---- input type
 // a function pointer to represent an operator's input
 // each function is passed a void* to its receiver
-// and a pointer to const S32 for input value
+// and a pointer to const s32 for input value
 typedef void(*op_in_func_t)(void* rec, const io_t* input );
 
 // ---- output type
 // an index into the global output table
 // a negative index is not evaluated
-typedef S16 op_out_t; 
+typedef s16 op_out_t; 
 
 // ---- op_t
 // base class for all processors in a control network
 // exposes a set of IO points and takes action when (some) inputs are activated
 typedef struct op_struct {
-  // U16 size;
-  U8 numInputs;
-  U8 numOutputs;
+  // u16 size;
+  u8 numInputs;
+  u8 numOutputs;
   // array of input function pointers
   op_in_func_t* in_func;
   // dynamic array of pointers to input values
@@ -73,17 +73,17 @@ typedef struct op_struct {
   // output names concatenated into a single string
   const char* outString;
   // operator type index in registry
-  U8 type;
+  u8 type;
   // user/system status
   opStatus_t status;
   // offset in statically allocated op memory pool
-  //  U32 memOffset;
+  //  u32 memOffset;
 } op_t;
 
 /// get input name
-const char* op_in_name(op_t* op, const U8 idx);
+const char* op_in_name(op_t* op, const u8 idx);
 // get output name
-const char* op_out_name(op_t* op, const U8 idx);
+const char* op_out_name(op_t* op, const u8 idx);
 // get input value
 io_t op_get_in_val(op_t* op, s16 idx);
 // set input valueo
@@ -185,7 +185,7 @@ void op_exp_init(op_exp_t* exp);
 //--- op_param_t : receive parameter change
 typedef struct op_param_struct {
   op_t super;
-  U32 idx;
+  u32 idx;
   io_t val;
 } op_param_t;
 void op_param_init(op_param_t* param);

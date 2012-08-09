@@ -8,7 +8,7 @@
 
 // main function
 int main(const int argc, const char** argv) {
-  U8 run = 1; 
+  u8 run = 1; 
   
   net_init();
   ui_init();

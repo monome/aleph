@@ -238,7 +238,6 @@ void screen_refresh(void) {
   //  Enable_global_interrupt();
 }
 
-
 // fill a line with blank space to end
 void screen_blank_line(U16 x, U16 y) {
   U8 i, j;
@@ -259,4 +258,10 @@ void screen_hilite_line(U16 x, U16 y, U8 a) {
       }
     }
   }
+}
+
+// draw a line and blank to end
+U8 screen_line(U16 x, U16 y, char *str, U8 a) {
+  x = screen_string(x, y, str, a);
+  screen_blank_line(x, y);
 }

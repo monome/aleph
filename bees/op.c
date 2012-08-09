@@ -32,14 +32,14 @@ const op_desc_t op_registry[numOpClasses] = {
 
 // input and output strings are all the same length, concatenated
 // this is lazy, but also efficient.
-static const U8 inStringChars = 8;
-static const U8 outStringChars = 8;
+static const u8 inStringChars = 8;
+static const u8 outStringChars = 8;
 
 //===============================================
 //===  base class definittions
-const char* op_in_name(op_t* op, const U8 idx) {
+const char* op_in_name(op_t* op, const u8 idx) {
   static char str[64];
-  U8 i;
+  u8 i;
   // str = (op->inString + (inStringChars * idx));
   for(i=0; i<inStringChars; i++) {
     str[i] = *(op->inString + (inStringChars * idx) + i);
@@ -48,9 +48,9 @@ const char* op_in_name(op_t* op, const U8 idx) {
   return str;
 }
 
-const char* op_out_name(op_t* op, const U8 idx) {
+const char* op_out_name(op_t* op, const u8 idx) {
   static char str[64];
-  U8 i;
+  u8 i;
   for(i=0; i<outStringChars; i++) {
     str[i] = *(op->outString + (outStringChars * idx) + i);
   }
@@ -496,7 +496,7 @@ static const char* op_param_opxstring = "PARAM";
 
 static void op_param_in_idx(op_param_t* param, const io_t* v) {
   // FIXME: limit by DSP param count
-  param->idx = (U32)(*v);
+  param->idx = (u32)(*v);
 }
 
 static void op_param_in_val(op_param_t* param, const io_t* v) {

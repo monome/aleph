@@ -140,7 +140,7 @@ CFLAGS =
 #   BOARD      Target board in use, see boards/board.h for a list.
 #   EXT_BOARD  Optional extension board in use, see boards/board.h for a list.
 CPPFLAGS = \
-       -D BOARD=EVK1100 -D LINUX=0
+       -D BOARD=EVK1100 -D ARCH_AVR32=1
 
 # Extra flags to use when linking
 LDFLAGS = \

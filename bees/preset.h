@@ -48,12 +48,12 @@ void preset_init(void);
 // de-initialize
 void preset_deinit(void);
 // store (and enable) a particular input
-void preset_store_in(U32 preIdx, U32 inIdx);
+void preset_store_in(u32 preIdx, u32 inIdx);
 // store (and enable) a particular output
-void preset_store_out(U32 preIdx, U32 outIdx);
+void preset_store_out(u32 preIdx, u32 outIdx);
 // store everything enabled in given preset
-void preset_store(U32 preIdx);
+void preset_store(u32 preIdx);
 // recall everything enabled in given preset
-void preset_recall(U32 preIdx);
+void preset_recall(u32 preIdx);
 
 #endif

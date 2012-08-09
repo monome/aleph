@@ -98,10 +98,10 @@ void ui_deinit(void) {
 }
 
 // loop over user input events
-U8 ui_loop(void) {
+u8 ui_loop(void) {
   // use standard character input
-  static U16 cmd;
-  static U8 run, ch;  
+  static u16 cmd;
+  static u8 run, ch;  
   cmd = getchar();
   
   run = 1;
@@ -176,15 +176,15 @@ U8 ui_loop(void) {
 
 // print a line of text
 /*
-void ui_println(U8 y, const char* str) {
+void ui_println(u8 y, const char* str) {
  mvprintw(y, 0, str);
  refresh();
 }
 */
 
 // print some characters of text
-U8 screen_string(U16 x, U16 y, char* str, U8 hl) {
-  S8 l = 7 - hl;      // 8-point level of background
+u8 screen_string(u16 x, u16 y, char* str, u8 hl) {
+  s8 l = 7 - hl;      // 8-point level of background
   if (l < 0) {l = 0;} 
   if (l > 7) {l = 7;}
   attron(COLOR_PAIR(l));
@@ -194,10 +194,10 @@ U8 screen_string(U16 x, U16 y, char* str, U8 hl) {
 }
 
 // print and blank line to end
-U8 screen_line(U16 x, U16 y, char* str, U8 hl) {
-  //  S8 l = 7 - hl;      // 8-point level of background
-  U8 i=0;
-  U8 len = strlen(str);
+u8 screen_line(u16 x, u16 y, char* str, u8 hl) {
+  //  s8 l = 7 - hl;      // 8-point level of background
+  u8 i=0;
+  u8 len = strlen(str);
   
   //if (l < 0) {l = 0;} 
   //if (l > 7) {l = 7;}

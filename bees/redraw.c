@@ -24,22 +24,22 @@ static char lineBuf[SCREEN_W];
 
 //// line redraws
 // op
-static void draw_line_ops(S32 n, U16 num, U8 y, U8 statMod);
+static void draw_line_ops(s32 n, u16 num, u8 y, u8 statMod);
 // in
-static void draw_line_ins(S32 n, U16 num, U8 y, U8 statMod);
+static void draw_line_ins(s32 n, u16 num, u8 y, u8 statMod);
 // out
-static void draw_line_outs(S32 n, U16 num, U8 y, U8 statMod);
+static void draw_line_outs(s32 n, u16 num, u8 y, u8 statMod);
 // scenes
-static void draw_line_scenes(S32 n, U16 num, U8 y, U8 statMod);
+static void draw_line_scenes(s32 n, u16 num, u8 y, u8 statMod);
 
 //==================================================
 //==== redraw ops page
 void redraw_ops(void) {
-  U8 y = 0;                       // which line
-  S32 n, nCenter;         // which list entry
+  u8 y = 0;                       // which line
+  s32 n, nCenter;         // which list entry
   //  opStatus_t status = eUserOp;
   // total count of ops, including system-controlled
-  const U16 num = net_num_ops();
+  const u16 num = net_num_ops();
 
   // draw the header
   screen_line(0, 0, "OPERATORS", 3);
@@ -88,10 +88,10 @@ void redraw_ops(void) {
 //==================================================
 //==== redraw inputs page
 void redraw_ins(void) {
-  U8 y = 0;                       // which line
-  S32 n, nCenter;         // which list entry
-  //  S16 opIdx; // index of operator
-  const U16 num = net_num_ins(); // how many ops
+  u8 y = 0;                       // which line
+  s32 n, nCenter;         // which list entry
+  //  s16 opIdx; // index of operator
+  const u16 num = net_num_ins(); // how many 
     
   // draw the header
   snprintf(lineBuf, SCREEN_W, "PARAMS ");
@@ -131,10 +131,10 @@ void redraw_ins(void) {
 //==================================================
 //==== redraw outputs page
 void redraw_outs(void) {
-  U8 y = 0;                       // which line
-  S32 n, nCenter;         // which list entry
-  S16 target;
-  const U16 num = net_num_outs(); // how many ops
+  u8 y = 0;                       // which line
+  s32 n, nCenter;         // which list entry
+  s16 target;
+  const u16 num = net_num_outs(); // how many ops
   
   // draw the header
   snprintf(lineBuf, SCREEN_W, "ROUTING");
@@ -194,9 +194,9 @@ void redraw_presets(void) {
 //==================================================
 //==== redraw scenes page
 void redraw_scenes(void) {
-  U8 y = 0;                       // which line
-  S32 n, nCenter;         // which list entry
-  const U16 num = SCENE_COUNT; // how many 
+  u8 y = 0;                       // which line
+  s32 n, nCenter;         // which list entry
+  const u16 num = SCENE_COUNT; // how many 
   
   // draw the header
   snprintf(lineBuf, SCREEN_W, "SCENES");
@@ -254,7 +254,7 @@ void redraw_scenes(void) {
 //==================================================
 //==== redraw play page
 void redraw_play(void) {
-  U8 y, n;
+  u8 y, n;
 // draw the header
   snprintf(lineBuf, SCREEN_W, "PLAY");
   screen_line(0, 0, lineBuf, 6);
@@ -273,7 +273,7 @@ void redraw_play(void) {
 /////  line redraws
 
 // draw line of ops page
-static void draw_line_ops(S32 n, U16 num, U8 y, U8 hl) {
+static void draw_line_ops(s32 n, u16 num, u8 y, u8 hl) {
   if ( (n < num) && (n >= 0) ) { 
     snprintf(lineBuf, SCREEN_W, " %d_%s",
              (int)n, net_op_name(n));
@@ -288,8 +288,16 @@ static void draw_line_ops(S32 n, U16 num, U8 y, U8 hl) {
 }
 
 // draw line of inputs page
-static void draw_line_ins(S32 n, U16 num, U8 y, U8 hl) {
-  S16 opIdx;
+static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
+  s16 opIdx;
+  // ok since params are at end of list,
+  // and we want to print them first, simply transform n...
+  // this param indexing stuff should be fixed.
+  if(n < net_num_params()) {
+    n += (net_num_ins() - net_num_params());
+  } else {
+    n += net_num_params();
+  }
   if ( (n < num) && (n >= 0) ) { 
     opIdx = net_in_op_idx(n);
     if (opIdx >=0 ) {
@@ -305,8 +313,7 @@ static void draw_line_ins(S32 n, U16 num, U8 y, U8 hl) {
 	       (int)n,
 	       (int)net_param_idx(n),
 	       net_in_name(n),
-	       ////// FIXME:
-	       //!!!!!  the param / input stuff is really messy
+	       ////// FIXME
 	       get_param_value(net_param_idx(n)) );
     }
     screen_line(0, y, lineBuf, hl);
@@ -320,9 +327,9 @@ static void draw_line_ins(S32 n, U16 num, U8 y, U8 hl) {
 }
 
 // draw line of outputs page
-static void draw_line_outs(S32 n, U16 num, U8 y, U8 hl) {
-  S16 target;
-  //U8 status;
+static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
+  s16 target;
+  //u8 status;
   if ( (n < num) && (n >= 0) ) { 
     target = net_get_target(n);
     //status = net_op_status(net_out_op_idx(n));
@@ -347,8 +354,8 @@ static void draw_line_outs(S32 n, U16 num, U8 y, U8 hl) {
 }
 
 // draw line of scenes page
-void draw_line_scenes(S32 n, U16 num, U8 y, U8 hl) {
-  //  S16 target; U8 status;
+void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
+  //  s16 target; u8 status;
   if ( (n < num) && (n >= 0) ) { 
     snprintf(lineBuf, SCREEN_W, "%s ", scene_name(n));
     screen_line(0, y, lineBuf, hl);

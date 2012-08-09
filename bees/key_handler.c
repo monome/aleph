@@ -23,15 +23,15 @@ static const io_t kParamValStepLarge = 1.f;
 static const char kLabelChars[] = "abcdefghijklmnopqrstuvwxyz_012345789";
 #define NUM_LABEL_CHARS 47
 // index in the selection table 
-static S8 selectedLabelChar = 0;
+static s8 selectedLabelChar = 0;
 // position in name
-//static S8 selectedLabelPos = 0;
+//static s8 selectedLabelPos = 0;
 
 //========================================
 //====== key handlers
 // OPS
 void key_handler_ops(uiKey_t key) {
-  U16 n;
+  u16 n;
   switch(key) {
   case eKeyFnDownA: 
     // fnA go to selected operator's inputs on INS page
@@ -168,8 +168,8 @@ void key_handler_ins(uiKey_t key) {
 
 // OUTS
 void key_handler_outs(uiKey_t key) {
-  S16 i;
-  static S32 target;
+  s16 i;
+  static s32 target;
   switch(key) {
   case eKeyFnDownA: 
     // follow
@@ -327,7 +327,7 @@ void key_handler_play(uiKey_t key) {
 
 // presets
 extern void key_handler_presets(uiKey_t key) {
-  S16 i;
+  //  s16 i;
   switch(key) {
   case eKeyFnDownA: 
     // store current

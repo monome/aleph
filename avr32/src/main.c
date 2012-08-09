@@ -4,7 +4,7 @@
  */
 
 
-//ASF
+//// ASF
 #include <string.h>
 #include <stdio.h>
 //#include <sysclk.h>
@@ -19,20 +19,28 @@
 #include "power_clocks_lib.h"
 #include "print_funcs.h"
 #include "sysclk.h"
-// aleph
+//// aleph
+// bees
+#include "menu.h"
+#include "net.h"
+#include "preset.h"
+#include "scene.h"
+// common
+#include "files.h"
+#include "param.h"
+#include "screen.h"
+#include "types.h"
+// avr32
 #include "adc.h"
 #include "app_timers.h"
 #include "bfin.h"
 #include "conf_aleph.h"
 #include "encoders.h"
 #include "events.h"
-#include "files.h"
 #include "font.h"
 #include "global.h"
 #include "init.h"
 #include "interrupts.h"
-#include "param.h"
-#include "screen.h"
 #include "timers.h"
 
 //=========================================
@@ -64,6 +72,8 @@ static void check_events(void) {
     switch(e.eventType) {
 
     case kEventEncoder0:
+      menu_handleKey(eKeyEncDownA);
+	/*
       paramVal[sel].asFloat += e.eventData;
       if((paramVal[sel].asFloat >= paramDesc[sel].min)
 	 && (paramVal[sel].asFloat <= paramDesc[sel].max))
@@ -71,6 +81,7 @@ static void check_events(void) {
 	bfin_set_param(sel, paramVal[sel].asFloat);
       }
       refresh_params();
+	*/
       break;
 
     case kEventEncoder3:

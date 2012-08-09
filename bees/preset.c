@@ -32,19 +32,19 @@ void preset_deinit(void) {
 }
 
 // store a particular input
-void preset_store_in(U32 preIdx, U32 inIdx) {  
+void preset_store_in(u32 preIdx, u32 inIdx) {  
   presets[preIdx].ins[inIdx].enabled = net_get_in_preset(inIdx);
   presets[preIdx].ins[inIdx].value = net_get_in_value(inIdx);
 }
 
 // store a particular output
-void preset_store_out(U32 preIdx, U32 outIdx) {
+void preset_store_out(u32 preIdx, u32 outIdx) {
   presets[preIdx].outs[outIdx].enabled = net_get_out_preset(outIdx);
   presets[preIdx].outs[outIdx].target = net_get_target(outIdx);  
 }
 
 // store everything enabled in given preset
-void preset_store(U32 preIdx) {
+void preset_store(u32 preIdx) {
   u16 i;
   // ins
   for(i=0; i<NET_INS_MAX; i++) {
@@ -70,7 +70,7 @@ void preset_store(U32 preIdx) {
 }
 
 // recall everything enabled in given preset
-void preset_recall(U32 preIdx) {
+void preset_recall(u32 preIdx) {
   u16 i;
   // ins
   for(i=0; i<NET_INS_MAX; i++) {
