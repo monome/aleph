@@ -140,9 +140,13 @@ void scrollPage(s8 dir) {
 void scrollSelect(s8 dir, s32 max) {
   page->selected += dir;
   if (page->selected < 0) {
-    page->selected = 0;
+    page->selected += max;
+      //    page->selected = 0;
   }
-  if (page->selected > max) { page->selected = max; }
+  if (page->selected > max) {
+    // page->selected = max;
+    page->selected -= max;
+  }
   // redraw with the new selection
   page->redraw();
 }

@@ -13,8 +13,8 @@ void scene_init(void);
 void scene_deinit(void);
 // store 
 void scene_store(u32 idx);
-// load
-void scene_load(u32 idx);
+// recall
+void scene_recall(u32 idx);
 // clear
 void scene_clear(u32 idx);
 // get scene name

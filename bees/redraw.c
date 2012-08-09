@@ -73,7 +73,7 @@ void redraw_ops(void) {
       
   // draw footer 
   // (new op type)
-  snprintf(lineBuf, SCREEN_W, "[ +++ %s",
+  snprintf(lineBuf, SCREEN_W, " + %s",
 	   op_registry[userOpTypes[newOpType]].name);
   screen_line(0, SCREEN_H_2, lineBuf, 5);
   // (function labels)
@@ -172,13 +172,13 @@ void redraw_outs(void) {
   if(target == -1) {
     screen_line(0, SCREEN_H_2, "NO TARGET", 1);
   } else {
-    snprintf(lineBuf, SCREEN_W, "  --> %s/%s",
+    snprintf(lineBuf, SCREEN_W, " -> %s/%s",
 	     net_op_name(net_in_op_idx(target)), net_in_name(target));
     screen_line(0, SCREEN_H_2, lineBuf, 1);
   }
 
   // (function labels)
-  screen_line(0, SCREEN_H_1, "FOLLOW  DISCONNECT STORE PRESET ", 5);
+  screen_line(0, SCREEN_H_1, "FOLLOW  DISCONNECT STORE PRESET ", 3);
 }
 
 /// redraw gathered outputs
@@ -273,86 +273,109 @@ void redraw_play(void) {
 
 // draw line of ops page
 static void draw_line_ops(s32 n, u16 num, u8 y, u8 hl) {
-  if ( (n < num) && (n >= 0) ) { 
-    snprintf(lineBuf, SCREEN_W, " %d_%s",
+
+  // wrap
+  if (n < 0) {
+    n += num;
+  } else if (n >= num) {
+    n -= num;
+  } 
+
+  //  if ( (n < num) && (n >= 0) ) { 
+    snprintf(lineBuf, SCREEN_W, "%d.%s",
              (int)n, net_op_name(n));
     //    screen_line(0, y, lineBuf, hl + net_op_status(n));
     screen_line(0, y, lineBuf, hl);
-  } else {
+    /*  } else {
     // no selection
     snprintf(lineBuf, SCREEN_W, "   .");
     screen_line(0, y, lineBuf, 0);
   }
+    */
   
 }
 
 // draw line of inputs page
 static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
   s16 opIdx;
-  if ( (n < num) && (n >= 0) ) { 
+  // wrap
+  if (n < 0) {
+    n += num;
+  } else if (n >= num) {
+    n -= num;
+  } 
+  //  if ( (n < num) && (n >= 0) ) { 
     opIdx = net_in_op_idx(n);
     if (opIdx >=0 ) {
-      snprintf(lineBuf, SCREEN_W, "%d_(%d)%s/%s_%f",
-	       (int)n,
+      snprintf(lineBuf, SCREEN_W, "%d.%s/%s_%f",
+	       //	       (int)n,
 	       opIdx, 
 	       net_op_name(net_in_op_idx(n)), 
 	       net_in_name(n), 
 	       net_get_in_value(n));
     } else {
       /// parameter
-      snprintf(lineBuf, SCREEN_W, "%d_P%d_%s_%f",
-	       (int)n,
+      snprintf(lineBuf, SCREEN_W, "p%d.%s_%f",
+	       //	       (int)n,
 	       (int)net_param_idx(n),
 	       net_in_name(n),
-	       ////// FIXME
+	       ////// FIXME (?)
 	       get_param_value(net_param_idx(n)) );
     }
     screen_line(0, y, lineBuf, hl);
 
-  } else {
+    //} else {
     // no selection
-    snprintf(lineBuf, SCREEN_W, ".");
-    screen_line(0, y, lineBuf, 0);
-  }
+    //snprintf(lineBuf, SCREEN_W, ".");
+    //screen_line(0, y, lineBuf, 0);
+    // }
 
 }
 
 // draw line of outputs page
 static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
   s16 target;
-  //u8 status;
-  if ( (n < num) && (n >= 0) ) { 
-    target = net_get_target(n);
-    //status = net_op_status(net_out_op_idx(n));
-    if (target >= 0) {
-      snprintf(lineBuf, SCREEN_W, "%d.%s/%s->%d.%s/%s",
-	       net_out_op_idx(n),
-	       net_op_name(net_out_op_idx(n)), net_out_name(n), 
-	       net_in_op_idx(target),
-	       net_op_name(net_in_op_idx(target)), net_in_name(target)
-	       );
-    } else {
-      snprintf(lineBuf, SCREEN_W, "%d.%s/%s",
-	       net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
-    }
-    //    screen_line(0, y, lineBuf, hl + status);
-    screen_line(0, y, lineBuf, hl);
+  //  u8 status;
+  // wrap
+  if (n < 0) {
+    n += num;
+  } else if (n >= num) {
+    n -= num;
+  } 
+  target = net_get_target(n);
+  //  status = net_op_status(net_out_op_idx(n));    // no selection
+  if (target >= 0) {
+    snprintf(lineBuf, SCREEN_W, "%d.%s/%s->%d.%s/%s",
+	     net_out_op_idx(n),
+	     net_op_name(net_out_op_idx(n)), net_out_name(n), 
+	     net_in_op_idx(target),
+	     net_op_name(net_in_op_idx(target)), net_in_name(target)
+	     );
   } else {
-    // no selection
-    snprintf(lineBuf, SCREEN_W, ".");
-    screen_line(0, y, lineBuf, 0);
+    snprintf(lineBuf, SCREEN_W, "%d.%s/%s",
+	     net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
   }
+  screen_line(0, y, lineBuf, hl);// + status);
+  
+  //  snprintf(lineBuf, SCREEN_W, ".");
+  //  screen_line(0, y, lineBuf, 0);
 }
 
 // draw line of scenes page
 void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
-  //  s16 target; u8 status;
-  if ( (n < num) && (n >= 0) ) { 
+  // wrap
+  if (n < 0) {
+    n += num;
+  } else if (n >= num) {
+    n -= num;
+  } 
+ //  s16 target; u8 status;
+  //  if ( (n < num) && (n >= 0) ) { 
     snprintf(lineBuf, SCREEN_W, "%s ", scene_name(n));
     screen_line(0, y, lineBuf, hl);
-  } else {
+    //  } else {
     // no selection
-    snprintf(lineBuf, SCREEN_W, ".");
-    screen_line(0, y, lineBuf, 0);
-  }
+    //    snprintf(lineBuf, SCREEN_W, ".");
+    //    screen_line(0, y, lineBuf, 0);
+    //}
 }
