@@ -17,7 +17,7 @@
 
 // size of operator pool in bytes
 //#define NET_OP_POOL_SIZE 65536
-#define NET_OP_POOL_SIZE 1024
+#define NET_OP_POOL_SIZE 8192
 
 // input node type (function pointer)
 typedef struct _inode {

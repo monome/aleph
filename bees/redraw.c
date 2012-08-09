@@ -79,9 +79,9 @@ void redraw_ops(void) {
   // (function labels)
   // don't allow deletion of system operators
   if (net_op_status(net_num_ops() - 1) == eUserOp) {
-    screen_line(0, SCREEN_H_1, "PARAMS ROUTING CREATE DELETE", 3);
+    screen_line(0, SCREEN_H_1, "PARAM ROUTE CREATE DELETE", 3);
   } else  { 
-    screen_line(0, SCREEN_H_1, "PARAMS ROUTING CREATE", 3);
+    screen_line(0, SCREEN_H_1, "PARAM ROUTE CREATE", 3);
   }
 }
 
@@ -125,7 +125,7 @@ void redraw_ins(void) {
   }    
   // draw footer 
   // (function labels)
-  screen_line(0, SCREEN_H_1, "GATHER  DISCONNECT  STORE  PRESET ", 3);
+  screen_line(0, SCREEN_H_1, "GATHER DISCONNECT STORE  PRESET ", 3);
 }
 
 //==================================================
@@ -248,7 +248,6 @@ void redraw_scenes(void) {
   // draw footer 
   // (function labels)
   screen_line(0, SCREEN_H_1, "CLEAR COPY STORE RECALL", 3);
-
 }
 
 //==================================================
@@ -290,14 +289,6 @@ static void draw_line_ops(s32 n, u16 num, u8 y, u8 hl) {
 // draw line of inputs page
 static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
   s16 opIdx;
-  // ok since params are at end of list,
-  // and we want to print them first, simply transform n...
-  // this param indexing stuff should be fixed.
-  if(n < net_num_params()) {
-    n += (net_num_ins() - net_num_params());
-  } else {
-    n += net_num_params();
-  }
   if ( (n < num) && (n >= 0) ) { 
     opIdx = net_in_op_idx(n);
     if (opIdx >=0 ) {
@@ -365,4 +356,3 @@ void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
     screen_line(0, y, lineBuf, 0);
   }
 }
-

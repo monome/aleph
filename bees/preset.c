@@ -91,3 +91,9 @@ void preset_recall(u32 preIdx) {
     }
   }
 }
+
+
+//// so dirty
+preset_t* preset_get_presets(void) {
+  return presets;
+}

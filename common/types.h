@@ -2,9 +2,9 @@
 #define _ALEPH_TYPES_H_
 
 
-//#ifdef ARCH_AVR32
+#ifdef ARCH_AVR32
 #include "compiler.h"
-//#endif
+#endif
 
 //---- basic numerical datatypes
 typedef signed char             s8 ;  //!< 8-bit signed integer.
