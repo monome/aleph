@@ -18,9 +18,9 @@
 // max opertor outputs
 #define NET_OUTS_MAX 128
 // max  operators
-#define NET_OPS_MAX 128
+#define NET_OPS_MAX 32
 // max DSP parameter inputs
-#define NET_PARAMS_MAX 128
+#define NET_PARAMS_MAX 64
 // max presets
 #define NET_PRESETS_MAX 16
 
@@ -96,8 +96,6 @@ u8 net_get_out_preset(u32 outIdx);
 void net_add_param(u32 idx, const char* name, f32 min, f32 max, s32 val);
 // clear existing parameters
 void net_clear_params(void);
-
-
 
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections

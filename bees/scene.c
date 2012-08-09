@@ -28,7 +28,7 @@ static scene_t* sceneData;
 
 void scene_init(void) {
   u8 i;
-    sceneData = (scene_t*)malloc(SCENE_COUNT * sizeof(scene_t));
+  sceneData = (scene_t*)malloc(SCENE_COUNT * sizeof(scene_t));
   
   for(i=0; i<SCENE_COUNT; i++) {
     snprintf(sceneData[i].sceneName, SCENE_NAME_LEN, " scene %d", i);
@@ -38,7 +38,7 @@ void scene_init(void) {
 }
 
 void scene_deinit(void) {
-    free(sceneData);
+  free(sceneData);
 }
 
 // store 
