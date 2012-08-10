@@ -31,8 +31,8 @@ void scene_init(void) {
   sceneData = (scene_t*)malloc(SCENE_COUNT * sizeof(scene_t));
   
   for(i=0; i<SCENE_COUNT; i++) {
-    snprintf(sceneData[i].sceneName, SCENE_NAME_LEN, " scene %d", i);
-    snprintf(sceneData[i].moduleName, MODULE_NAME_LEN, " no module");
+    snprintf(sceneData[i].sceneName, SCENE_NAME_LEN, "scene_%d", i);
+    snprintf(sceneData[i].moduleName, MODULE_NAME_LEN, "none");
   }
   
 }
@@ -54,7 +54,7 @@ void scene_store(u32 idx) {
   // store network
   fwrite((u8*)(&net), 1, sizeof(ctlnet_t), pSceneFile);
   // store presets 
-  fwrite((u8*)preset_get_presets(), 1, sizeof(preset_t) * NET_PRESETS_MAX, pSceneFile);
+  fwrite((u8*)(*(preset_get_presets())), 1, sizeof(preset_t) * NET_PRESETS_MAX, pSceneFile);
   // close file
   fclose(pSceneFile);
 }
@@ -71,7 +71,7 @@ void scene_recall(u32 idx) {
   // load network
   fread((u8*)(&net), 1, sizeof(ctlnet_t), pSceneFile);
   // loda  presets 
-  fread((u8*)preset_get_presets(), 1, sizeof(preset_t) * NET_PRESETS_MAX, pSceneFile);
+  fread((u8*)(*(preset_get_presets())), 1, sizeof(preset_t) * NET_PRESETS_MAX, pSceneFile);
   // close file
   fclose(pSceneFile);
   //  memcpy(&net, &(sceneData[idx].net), sizeof(net));

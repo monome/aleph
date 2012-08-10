@@ -19,7 +19,7 @@
 
 /// aarray of presets
 static preset_t presets[NET_PRESETS_MAX];
-
+ 
 //=================================
 //====== function definitions
 
@@ -94,6 +94,6 @@ void preset_recall(u32 preIdx) {
 
 
 //// so dirty
-preset_t* preset_get_presets(void) {
-  return presets;
+preset_t** preset_get_presets(void) {
+  return (preset_t**)&presets;
 }

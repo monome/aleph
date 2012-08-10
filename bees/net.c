@@ -250,7 +250,7 @@ const char* net_in_name(u16 idx) {
       return "";
     } else {
       // param input
-      return net.params[idx].name;
+      return net.params[idx].desc.label;
     }
   } else {
     // op input
@@ -401,13 +401,11 @@ u8 net_get_out_preset(u32 outIdx) {
 //------ params
 
 // add a new parameter
-void net_add_param(u32 idx, const char* name, f32 min, f32 max, s32 val) {
+//void net_add_param(u32 idx, const char* name, f32 min, f32 max, s32 val) {
+void net_add_param(u32 idx, ParamDesc* pdesc) {
+  net.params[net.numParams].desc = *pdesc;
   net.params[net.numParams].idx = idx;
-  net.params[net.numParams].name = name;
-  net.params[net.numParams].min = min;
-  net.params[net.numParams].max = max;
-  //  net.params[net.numParams].fval = val;
-  set_param_value(net.numParams, val);
+  net.params[net.numParams].preset = 1;
   net.numParams++;
 }
 

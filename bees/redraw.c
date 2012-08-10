@@ -371,11 +371,11 @@ void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
   } 
  //  s16 target; u8 status;
   //  if ( (n < num) && (n >= 0) ) { 
-    snprintf(lineBuf, SCREEN_W, "%s ", scene_name(n));
-    screen_line(0, y, lineBuf, hl);
-    //  } else {
-    // no selection
-    //    snprintf(lineBuf, SCREEN_W, ".");
+  snprintf(lineBuf, SCREEN_W, "%d.%s ", (int)n, scene_name(n));
+  screen_line(0, y, lineBuf, hl);
+  //  } else {
+  // no selection
+  //    snprintf(lineBuf, SCREEN_W, ".");
     //    screen_line(0, y, lineBuf, 0);
     //}
 }

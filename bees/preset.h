@@ -56,6 +56,6 @@ void preset_store(u32 preIdx);
 // recall everything enabled in given preset
 void preset_recall(u32 preIdx);
 ////// this is so terrible and dirty
-preset_t* preset_get_presets(void);
+preset_t** preset_get_presets(void);
 
 #endif

@@ -6,9 +6,11 @@
 #ifndef _PARAM_H_ 
 #define _PARAM_H_
 
-#include "op_math.h"
+// common
 #include "types.h"
+// bees
 #include "net_protected.h"
+#include "op_math.h"
 
 #define PARAM_BITS 16
 #define PARAM_MAX 32767

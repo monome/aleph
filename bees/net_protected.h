@@ -16,9 +16,10 @@
 
 
 // size of operator pool in bytes
+#define NET_OP_POOL_SIZE 8192
+//#define NET_OP_POOL_SIZE 12288
+//#define NET_OP_POOL_SIZE 16384
 //#define NET_OP_POOL_SIZE 65536
-//#define NET_OP_POOL_SIZE 8192
-#define NET_OP_POOL_SIZE 16384
 
 // input node type (function pointer)
 typedef struct _inode {
@@ -50,25 +51,10 @@ typedef struct _onode {
 
 // parameter I/O node
 typedef struct _pnode {
-// min value
-  f32 min;
-  // max value
-  f32 max;
-  // current value (step)
-  s32 ival;  
-// current value (float)
-  f32 fval;
-  // parameter idx in DSP plugin
-  u32 idx;
-  // parameter name
-  const char* name;
-  // plugin name
-  //  const char* dspName;
-  // preset flag
+  ParamDesc desc;
+  ParamData data;
+  u8 idx;
   u8 preset;
-  // TODO:
-  // scaling functions/tables ?
-  // units ?
 } pnode_t;
 
 // network type

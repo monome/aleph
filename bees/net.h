@@ -8,21 +8,29 @@
 #ifndef _CTL_INTERFACE_H_
 #define _CTL_INTERFACE_H_
 
-#include "types.h"
-#include "op.h"
-#include "op_math.h"
 
+/// blech
 // maximum allocated parameters, connections, and operators
-// mac operator inputs
+// max operator inputs
 #define NET_INS_MAX 128
 // max opertor outputs
 #define NET_OUTS_MAX 128
 // max  operators
-#define NET_OPS_MAX 32
+#define NET_OPS_MAX 48
 // max DSP parameter inputs
 #define NET_PARAMS_MAX 64
 // max presets
 #define NET_PRESETS_MAX 16
+
+
+#include "param_common.h"
+#include "param.h"
+// parameter data
+#include "types.h"
+#include "op.h"
+#include "op_math.h"
+
+
 
 //---- public functions
 
@@ -93,7 +101,8 @@ u8 net_get_in_preset(u32 inIdx);
 // get preset inclusion for output
 u8 net_get_out_preset(u32 outIdx);
 // add a new parameter
-void net_add_param(u32 idx, const char* name, f32 min, f32 max, s32 val);
+void net_add_param(u32 idx, ParamDesc* pdesc);
+//void net_add_param(u32 idx, const char* name, f32 min, f32 max, s32 val);
 // clear existing parameters
 void net_clear_params(void);
 

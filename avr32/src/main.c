@@ -27,7 +27,7 @@
 #include "scene.h"
 // common
 #include "files.h"
-#include "param.h"
+#include "param_common.h"
 #include "screen.h"
 #include "types.h"
 // avr32
@@ -45,59 +45,98 @@
 
 //=========================================
 //==== static variables
-
-/////////////////////////////////////////
-///// these are for testing, will use BEES
-#define MAX_NUM_PARAMS 32
-
-//static S32 encVal[4] = { 0, 0, 0, 0 };
-static ParamValue paramVal[MAX_NUM_PARAMS];
-static ParamDesc paramDesc[MAX_NUM_PARAMS];
-static U8 numParams = 0;
-// selection
-static S8 sel = 0;
-/////////
+static u8 initFlag = 1;
 
 //=========================================== 
 //==== static functions
-static void check_events(void);
-static void report_params(void);
-static void refresh_params(void);
 
-// application event loop
+//------  declare
+//  app event loop
+static void check_events(void);
+// wait for first UI event after startup
+static U8 check_init(void);
+// get params from bfin
+static void report_params(void);
+
+//------- define
+// app event loop
 static void check_events(void) {
+  static uiKey_t key = eKeyDummy;
   static event_t e;
   
   if( get_next_event(&e) ) {
     switch(e.eventType) {
-
+      
     case kEventEncoder0:
-      menu_handleKey(eKeyEncDownA);
-	/*
-      paramVal[sel].asFloat += e.eventData;
-      if((paramVal[sel].asFloat >= paramDesc[sel].min)
-	 && (paramVal[sel].asFloat <= paramDesc[sel].max))
-	{
-	bfin_set_param(sel, paramVal[sel].asFloat);
+      if (check_init()) { return; }
+      if(e.eventData > 0) {
+	key = eKeyEncUpA;
+      } else {
+	key = eKeyEncDownA;
       }
-      refresh_params();
-	*/
+      break;
+
+    case kEventEncoder1:
+      if (check_init()) { return; }
+      if(e.eventData > 0) {
+	key = eKeyEncUpB;
+      } else {
+	key = eKeyEncDownB;
+      }
+      break;
+
+    case kEventEncoder2:
+      if (check_init()) { return; }
+      if(e.eventData > 0) {
+	key = eKeyEncUpC;
+      } else {
+	key = eKeyEncDownC;
+      }
       break;
 
     case kEventEncoder3:
-      print_dbg("\nenc3 event: ");
-      print_dbg_ulong(e.eventData);
-      //encVal[0] += e.eventData;
-      //      sel = (sel + e.eventData);
-      if(e.eventData > 0) sel++;
-      if(e.eventData < 0) sel--;
-      if (sel < 0) { sel = (numParams - 1); }
-      if (sel >= numParams) { sel = 0; }
-      refresh_params();
+      if (check_init()) { return; }
+      if(e.eventData > 0) {
+	key = eKeyEncUpD;
+      } else {
+	key = eKeyEncDownD;
+      }
+      break;
+
+    case kEventSwitchDown0:
+      if (check_init()) { return; }
+      key = eKeyFnDownA;
+      break;
+    case kEventSwitchUp0:
+      if (check_init()) { return; }
+      key = eKeyFnUpA;
+      break;
+
+    case kEventSwitchDown1:
+      if (check_init()) { return; }
+      key = eKeyFnDownB;
+      break;
+    case kEventSwitchUp1:
+      if (check_init()) { return; }
+      key = eKeyFnUpB;
       break;
       
-    case kEventSwitchDown0:
-      report_params();
+    case kEventSwitchDown2:
+      if (check_init()) { return; }
+      key = eKeyFnDownC;
+      break;
+    case kEventSwitchUp2:
+      if (check_init()) { return; }
+      key = eKeyFnUpC;
+      break;
+      
+    case kEventSwitchDown3:
+      if (check_init()) { return; }
+      key = eKeyFnDownD;
+      break;
+    case kEventSwitchUp3:
+      if (check_init()) { return; }
+      key = eKeyFnUpD;
       break;
 
     case kEventAdc0:
@@ -111,12 +150,14 @@ static void check_events(void) {
       screen_refresh();
       refresh = 0;
       break;
-     
-    default:
-      break;
-    }
-  }
+
+
+    if(key != eKeyDummy) { menu_handleKey(key); }
+
+    } // switch event
+  } // if event
 }
+
 
 ////main function
 int main (void) {
@@ -174,41 +215,79 @@ int main (void) {
 
   // Wait for a card to be inserted
   print_dbg("\r\nwaiting for SD card... ");
+
+  screen_string(0, 0, "waiting for card...", 2); refresh=1;
   while (!sd_mmc_spi_mem_check()) {
     waitForCard++;
   }
-  print_dbg("\r\ncard detected! ");
+  screen_string(0, 0, "card detected.", 2); refresh=1;
 
   // set up file navigation using available drives
   init_files();
 
-  // list files
+  // list files to USART
   files_list();
   
   // load blackfin from first .ldr file in filesystem
   load_bfin_sdcard_test();
 
-  print_dbg("done.\n\r");
+  print_dbg("loaded dsp program.\n\r");
 
   // send ADC config
   init_adc();
 
-  //// wait!
-  //  delay_ms(4000);
- 
-  // report_params();
-
   init_app_timers();
 
   print_dbg("starting event loop.\n\r");
-  // event loop
-  while(1) {
-    check_events();
+  screen_string(0, 0, "ALEPH hardware initialized.", 2); 
+  screen_string(0, 0, "use any key to begin BEES.", 2); refresh=1;
+  
+// event loop
+    while(1) {
+      check_events();
+    }
+}
+
+// wait for a button press to initialize 
+U8 check_init(void) {
+  if(initFlag) {
+
+    // initialize BEES components
+    net_init();
+    menu_init();
+    preset_init();
+    scene_init();
+
+    // get default parameters
+    report_params();
+
+    // load scene 0
+   
+    initFlag = 0;
+    return 1;
+  } else {
+    return 0;
   }
 }
 
 static void report_params(void) {
+  ParamDesc pdesc;
+  u8 np, i;
+
+  np = bfin_get_num_params();
+  if(np > 0) {
+    net_clear_params();
+    for(i=0; i<np; i++) {
+      bfin_get_param_desc(i, &pdesc);
+      net_add_param(i, &pdesc);
+    }
+  }
+}
+
+    /*
+static void report_params(void) {
   //U8 col;
+
   U8 i;
 
   print_dbg("\n\requesting parameters..."); 
@@ -221,12 +300,12 @@ static void report_params(void) {
   }
   refresh_params();
 
-  /*
+  
     print_dbg(desc.label);
     print_dbg("\r\n");
     print_dbg(desc.unit);
     print_dbg("\r\n");
-  */
+  
 }
 
 static void refresh_params(void) {
@@ -234,7 +313,7 @@ static void refresh_params(void) {
   for(i=0; i<numParams; i++) {
     line = FONT_CHARH * (i);
     //screen_blank_line(0, line);
-    col = screen_string_squeeze(0, line, paramDesc[i].label, 0xf);
+    col = screen_string_sqapplicationvoid ueeze(0, line, paramDesc[i].label, 0xf);
     col++;
     col = screen_string_squeeze(col, line, " : ", 0xf);
     col++;
@@ -247,3 +326,4 @@ static void refresh_params(void) {
     refresh = 1;
   }
 }
+*/

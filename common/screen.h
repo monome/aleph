@@ -56,9 +56,9 @@ U8 screen_float(U16 x, U16 y, F32 f, U8 a);
 // write screen buffer to OLED graphics RAM
 void screen_refresh(void);
 // fill a line with blank space from x to end
-void screen_blank(U16 x, U16 y);
+void screen_blank_line(U16 x, U16 y);
 // highlight a region
-void screen_hl(U16 x, U16 y, U8 a, S8 len);
+void screen_hl_line(U16 x, U16 y, U8 a, S8 len);
 // get the value at a pixel
 U8 screen_get_pixel(U8 x, U8 y);
 

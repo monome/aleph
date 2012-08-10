@@ -249,7 +249,7 @@ void screen_blank_line(U16 x, U16 y) {
 }
 
 // highlight a line
-void screen_hilite_line(U16 x, U16 y, U8 a) {
+void screen_hl_line(U16 x, U16 y, U8 a, S8 len) {
   U8 i, j;
   for(i=x; i<NCOLS; i++) {
     for(j=y; j<(y+FONT_CHARH); j++) {
@@ -261,7 +261,10 @@ void screen_hilite_line(U16 x, U16 y, U8 a) {
 }
 
 // draw a line and blank to end
-U8 screen_line(U16 x, U16 y, char *str, U8 a) {
-  x = screen_string(x, y, str, a);
+U8 screen_line(U16 x, U16 y, char *str, U8 hl) {
+  // FIXME
+  hl = ( (hl << 1) & 0xf); 
+  x = screen_string(x, y, str, hl);
   screen_blank_line(x, y);
+  return NCOLS;
 }
