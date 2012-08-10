@@ -113,7 +113,7 @@ void scrollPage(s8 dir) {
     break;
   case ePageOuts:
     if (dir > 0) {
-      pageIdx = ePageScenes;
+      pageIdx = ePagePresets;
     } else {
       pageIdx = ePageIns;
     }
@@ -125,11 +125,18 @@ void scrollPage(s8 dir) {
       pageIdx = ePageOuts;
     }
     break;
+  case ePagePresets:
+    if (dir > 0) {
+      pageIdx = ePageScenes;
+    } else {
+      pageIdx = ePageOuts;
+    }
+    break;
   case ePageScenes:
     if (dir > 0) {
       pageIdx = ePageOps;
     } else {
-      pageIdx = ePageOuts;
+      pageIdx = ePagePresets;
     }
     break;
   }
@@ -143,7 +150,7 @@ void scrollSelect(s8 dir, s32 max) {
     page->selected += max;
       //    page->selected = 0;
   }
-  if (page->selected > max) {
+  if (page->selected >= max) {
     // page->selected = max;
     page->selected -= max;
   }

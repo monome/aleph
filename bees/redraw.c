@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 #include "param.h"
+#include "preset.h"
 #include "redraw.h"
 #include "scene.h"
 #include "screen.h"
@@ -29,6 +30,8 @@ static void draw_line_ops(s32 n, u16 num, u8 y, u8 statMod);
 static void draw_line_ins(s32 n, u16 num, u8 y, u8 statMod);
 // out
 static void draw_line_outs(s32 n, u16 num, u8 y, u8 statMod);
+// presets
+static void draw_line_presets(s32 n, u16 num, u8 y, u8 statMod);
 // scenes
 static void draw_line_scenes(s32 n, u16 num, u8 y, u8 statMod);
 
@@ -188,6 +191,62 @@ void redraw_gathered(void) {
 //==================================================
 //==== redraw presets page
 void redraw_presets(void) {
+  u8 y = 0;                       // which line
+  s32 n, nCenter;         // which list entry
+  const u16 num = SCENE_COUNT; // how many 
+  
+  // draw the header
+  snprintf(lineBuf, SCREEN_W, "PRESETS");
+  screen_line(0, 0, lineBuf, 3);
+
+  nCenter = page->selected;
+  if (nCenter >= num) {
+    nCenter = num;
+  }
+  n = nCenter;
+ 
+ // print selection at center
+  y = SCREEN_ROW_CENTER;
+
+  switch(page->mode) { 
+  case eModeClear:
+    screen_line(0, y, "CLEAR?", 6);
+    break;
+  case eModeCopy:
+    screen_line(0, y, "COPY?", 6);
+    break;
+  case eModeStore:
+    screen_line(0, y, "STORE?", 6);
+    break;
+  case eModeRecall:
+    screen_line(0, y, "RECALL?", 6);
+    break;
+  case eModeNone:
+  default:
+    draw_line_presets(n, num, y, 4);  
+    break;
+  }
+  // print lower entries
+  while (y > 1) {
+    n--;
+    y--;
+    draw_line_presets(n, num, y, 1);
+  }
+  
+  // re-center
+  n = nCenter;
+  y = SCREEN_ROW_CENTER;
+  
+  // print higher entries
+  while (y < SCREEN_H_2) {
+    n++;
+    y++;
+    draw_line_presets(n, num, y, 1);
+  }
+
+  // draw footer 
+  // (function labels)
+  screen_line(0, SCREEN_H_1, "CLEAR COPY STORE RECALL", 3);
 
 }
 
@@ -361,6 +420,24 @@ static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
   //  screen_line(0, y, lineBuf, 0);
 }
 
+// draw line of presets page
+void draw_line_presets(s32 n, u16 num, u8 y, u8 hl) {
+  // wrap
+  if (n < 0) {
+    n += num;
+  } else if (n >= num) {
+    n -= num;
+  } 
+   //  if ( (n < num) && (n >= 0) ) { 
+  snprintf(lineBuf, SCREEN_W, "%d.%s ", (int)n, preset_name(n));
+  screen_line(0, y, lineBuf, hl);
+  //  } else {
+  // no selection
+  //    snprintf(lineBuf, SCREEN_W, ".");
+    //    screen_line(0, y, lineBuf, 0);
+    //}
+}
+
 // draw line of scenes page
 void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
   // wrap
@@ -369,8 +446,7 @@ void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
   } else if (n >= num) {
     n -= num;
   } 
- //  s16 target; u8 status;
-  //  if ( (n < num) && (n >= 0) ) { 
+   //  if ( (n < num) && (n >= 0) ) { 
   snprintf(lineBuf, SCREEN_W, "%d.%s ", (int)n, scene_name(n));
   screen_line(0, y, lineBuf, hl);
   //  } else {

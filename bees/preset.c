@@ -9,6 +9,8 @@
 
  */
 
+#include <stdio.h>
+
 #include "types.h"
 #include "net_protected.h"
 #include "param.h"
@@ -18,13 +20,17 @@
 //====== variables
 
 /// aarray of presets
-static preset_t presets[NET_PRESETS_MAX];
+preset_t presets[NET_PRESETS_MAX];
  
 //=================================
 //====== function definitions
 
 // initialize
 void preset_init(void) {
+  u8 i;
+  for(i=0; i<NET_PRESETS_MAX; i++) {
+    snprintf(presets[i].name, PRESET_NAME_LEN, "preset_%d", i);
+  }
 }
 
 // de-initialize
@@ -90,6 +96,11 @@ void preset_recall(u32 preIdx) {
       set_param_value( i, presets[preIdx].params[i].value );
     }
   }
+}
+
+// preset name
+char* preset_name(u32 id) {
+  return presets[id].name;
 }
 
 
