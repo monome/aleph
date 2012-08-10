@@ -357,6 +357,7 @@ static void draw_line_ops(s32 n, u16 num, u8 y, u8 hl) {
 // draw line of inputs page
 static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
   s16 opIdx;
+  char pch;
   // wrap
   if (n < 0) {
     n += num;
@@ -365,18 +366,21 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
   } 
   //  if ( (n < num) && (n >= 0) ) { 
     opIdx = net_in_op_idx(n);
+    if (net_get_in_preset(n)) { pch = '*'; } else { pch = '.'; }
     if (opIdx >=0 ) {
-      snprintf(lineBuf, SCREEN_W, "%d.%s/%s_%f",
+      snprintf(lineBuf, SCREEN_W, "%d%c%s/%s_%f",
 	       //	       (int)n,
 	       opIdx, 
+	       pch,
 	       net_op_name(net_in_op_idx(n)), 
 	       net_in_name(n), 
-	       net_get_in_value(n));
+	       net_get_in_value(n) );
     } else {
       /// parameter
-      snprintf(lineBuf, SCREEN_W, "p%d.%s_%f",
+      snprintf(lineBuf, SCREEN_W, "p%d%c%s_%f",
 	       //	       (int)n,
 	       (int)net_param_idx(n),
+	       pch,
 	       net_in_name(n),
 	       ////// FIXME (?)
 	       get_param_value(net_param_idx(n)) );
@@ -394,6 +398,7 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
 // draw line of outputs page
 static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
   s16 target;
+  char pch;
   //  u8 status;
   // wrap
   if (n < 0) {
@@ -403,16 +408,22 @@ static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
   } 
   target = net_get_target(n);
   //  status = net_op_status(net_out_op_idx(n));    // no selection
+  if (net_get_out_preset(n)) { pch = '*'; } else { pch = '.'; }
   if (target >= 0) {
-    snprintf(lineBuf, SCREEN_W, "%d.%s/%s->%d.%s/%s",
+    snprintf(lineBuf, SCREEN_W, "%d%c%s/%s->%d.%s/%s",
 	     net_out_op_idx(n),
-	     net_op_name(net_out_op_idx(n)), net_out_name(n), 
+	     pch,
+	     net_op_name(net_out_op_idx(n)),
+	     net_out_name(n), 
 	     net_in_op_idx(target),
-	     net_op_name(net_in_op_idx(target)), net_in_name(target)
-	     );
+	     net_op_name(net_in_op_idx(target)),
+	     net_in_name(target) );
   } else {
-    snprintf(lineBuf, SCREEN_W, "%d.%s/%s",
-	     net_out_op_idx(n), net_op_name(net_out_op_idx(n)), net_out_name(n));
+    snprintf(lineBuf, SCREEN_W, "%d%c%s/%s",
+	     net_out_op_idx(n),
+	     pch,
+	     net_op_name(net_out_op_idx(n)),
+	     net_out_name(n) );
   }
   screen_line(0, y, lineBuf, hl);// + status);
   

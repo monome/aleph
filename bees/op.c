@@ -38,7 +38,7 @@ static const u8 outStringChars = 8;
 //===============================================
 //===  base class definittions
 const char* op_in_name(op_t* op, const u8 idx) {
-  static char str[64];
+  static char str[16];
   u8 i;
   // str = (op->inString + (inStringChars * idx));
   for(i=0; i<inStringChars; i++) {
@@ -49,7 +49,7 @@ const char* op_in_name(op_t* op, const u8 idx) {
 }
 
 const char* op_out_name(op_t* op, const u8 idx) {
-  static char str[64];
+  static char str[16];
   u8 i;
   for(i=0; i<outStringChars; i++) {
     str[i] = *(op->outString + (outStringChars * idx) + i);
@@ -75,7 +75,7 @@ void op_set_in_val(op_t* op, s16 idx, io_t val) {
 
 //-------------------------------------------------
 //----- switch
-static const char* op_sw_instring = "VAL     TOG     MUL    ";
+static const char* op_sw_instring = "VAL     TOG     MUL     ";
 static const char* op_sw_outstring = "VAL     ";
 static const char* op_sw_opstring = "SW";
 

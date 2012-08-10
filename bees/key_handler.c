@@ -144,25 +144,21 @@ void key_handler_ins(uiKey_t key) {
   case eKeyEncUpC:
     // encoder C : value slow
     net_inc_in_value(page->selected, kParamValStepSmall);
-    redraw_ins();
     break;
   case eKeyEncDownC:
     net_inc_in_value(page->selected, kParamValStepSmall * -1);
-    redraw_ins();
     break;
   case eKeyEncUpD:
     // encoder D : value fast
     net_inc_in_value(page->selected, kParamValStepLarge);
-    redraw_ins();
     break;
   case eKeyEncDownD:
     net_inc_in_value(page->selected, kParamValStepLarge * -1);
-    redraw_ins();
     break;
-  
   default:
     ;; // nothing
   }  
+  (*(page->redraw))();
 }
 
 // OUTS
@@ -187,7 +183,6 @@ void key_handler_outs(uiKey_t key) {
     // toggle preset (target)
     i = net_get_target(page->selected);
     if(i>=0) { net_toggle_in_preset(i); }
-    redraw_outs();
     break;
     //// encoder A: scroll pages
   case eKeyEncUpA:
@@ -210,7 +205,6 @@ void key_handler_outs(uiKey_t key) {
       target = -1;
     }
     net_connect(page->selected, target);
-    redraw_outs();
     break;
   case eKeyEncDownC:
     target--;
@@ -218,7 +212,6 @@ void key_handler_outs(uiKey_t key) {
       target = net_num_ins() - 1;
     }
     net_connect(page->selected, target);
-    redraw_outs();
     break;
   case eKeyEncUpD:
     // nothing
@@ -229,6 +222,7 @@ void key_handler_outs(uiKey_t key) {
     default:
     ;; // nothing
   }  
+  (*(page->redraw))();
 }
 
 //// GATHERED
