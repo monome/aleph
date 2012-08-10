@@ -25,8 +25,6 @@ static const char kLabelChars[] = "abcdefghijklmnopqrstuvwxyz_012345789";
 #define NUM_LABEL_CHARS 47
 // index in the selection table 
 static s8 selectedLabelChar = 0;
-// position in name
-//static s8 selectedLabelPos = 0;
 
 //========================================
 //====== key handlers
@@ -72,10 +70,10 @@ void key_handler_ops(uiKey_t key) {
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scrollSelect(1, net_num_ops() - 1);
+    scrollSelect(1, net_num_ops() );
     break;
   case eKeyEncDownB:
-    scrollSelect(-1, net_num_ops() - 1);      
+    scrollSelect(-1, net_num_ops() ); 
     break;
     //// encoder C: move up/down in order of execution
   case eKeyEncUpC:
@@ -138,10 +136,10 @@ void key_handler_ins(uiKey_t key) {
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scrollSelect(1, net_num_ins()-1);
+    scrollSelect(1, net_num_ins() );
     break;
   case eKeyEncDownB:
-    scrollSelect(-1, net_num_ins()-1);      
+    scrollSelect(-1, net_num_ins() );      
     break;
   case eKeyEncUpC:
     // encoder C : value slow
@@ -200,10 +198,10 @@ void key_handler_outs(uiKey_t key) {
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scrollSelect(1, net_num_outs()-1);
+    scrollSelect(1, net_num_outs() );
     break;
   case eKeyEncDownB:
-    scrollSelect(-1, net_num_outs()-1);      
+    scrollSelect(-1, net_num_outs() );      
     break;
     //// encoder C: scroll target
   case eKeyEncUpC:
@@ -391,10 +389,10 @@ extern void key_handler_presets(uiKey_t key) {
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scrollSelect(1, NET_PRESETS_MAX - 1);
+    scrollSelect(1, NET_PRESETS_MAX );
     break;
   case eKeyEncDownB:
-    scrollSelect(-1, NET_PRESETS_MAX - 1);      
+    scrollSelect(-1, NET_PRESETS_MAX ); 
     break;
     //// encoder C: scroll name pos
   case eKeyEncUpC:
@@ -477,10 +475,10 @@ extern void key_handler_scenes(uiKey_t key) {
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scrollSelect(1, SCENE_COUNT -1 );
+    scrollSelect(1, SCENE_COUNT );
     break;
   case eKeyEncDownB:
-    scrollSelect(-1, SCENE_COUNT -1 );
+    scrollSelect(-1, SCENE_COUNT );
     break;
   case eKeyEncUpC: // cursor: position in name
     page->cursor++;

@@ -193,7 +193,7 @@ void redraw_gathered(void) {
 void redraw_presets(void) {
   u8 y = 0;                       // which line
   s32 n, nCenter;         // which list entry
-  const u16 num = SCENE_COUNT; // how many 
+  const u16 num = NET_PRESETS_MAX; // how many 
   
   // draw the header
   snprintf(lineBuf, SCREEN_W, "PRESETS");
