@@ -1,6 +1,8 @@
 #ifndef _FONT_H_
 #define _FONT_H_
 
+#include "compiler.h"
+
 #define FONT_CHARW 6
 #define FONT_CHARH 8
 #define FONT_CHARH_1 7

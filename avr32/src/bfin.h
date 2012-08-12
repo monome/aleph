@@ -8,7 +8,7 @@
 #define _BFIN_H_
 
 #include "compiler.h"
-#include "param.h"
+#include "param_common.h"
 #include "types.h"
 
 // blackfin HWAIT status

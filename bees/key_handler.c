@@ -10,6 +10,7 @@
 #include "op_math.h"
 #include "menu_protected.h"
 #include "param.h"
+#include "preset.h"
 #include "redraw.h"
 #include "scene.h"
 #include "key_handler.h"
@@ -23,15 +24,13 @@ static const io_t kParamValStepLarge = 1.f;
 static const char kLabelChars[] = "abcdefghijklmnopqrstuvwxyz_012345789";
 #define NUM_LABEL_CHARS 47
 // index in the selection table 
-static S8 selectedLabelChar = 0;
-// position in name
-//static S8 selectedLabelPos = 0;
+static s8 selectedLabelChar = 0;
 
 //========================================
 //====== key handlers
 // OPS
 void key_handler_ops(uiKey_t key) {
-  U16 n;
+  u16 n;
   switch(key) {
   case eKeyFnDownA: 
     // fnA go to selected operator's inputs on INS page
@@ -71,10 +70,10 @@ void key_handler_ops(uiKey_t key) {
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scrollSelect(1, net_num_ops() - 1);
+    scrollSelect(1, net_num_ops() );
     break;
   case eKeyEncDownB:
-    scrollSelect(-1, net_num_ops() - 1);      
+    scrollSelect(-1, net_num_ops() ); 
     break;
     //// encoder C: move up/down in order of execution
   case eKeyEncUpC:
@@ -137,10 +136,10 @@ void key_handler_ins(uiKey_t key) {
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scrollSelect(1, net_num_ins()-1);
+    scrollSelect(1, net_num_ins() );
     break;
   case eKeyEncDownB:
-    scrollSelect(-1, net_num_ins()-1);      
+    scrollSelect(-1, net_num_ins() );      
     break;
   case eKeyEncUpC:
     // encoder C : value slow
@@ -168,8 +167,8 @@ void key_handler_ins(uiKey_t key) {
 
 // OUTS
 void key_handler_outs(uiKey_t key) {
-  S16 i;
-  static S32 target;
+  s16 i;
+  static s32 target;
   switch(key) {
   case eKeyFnDownA: 
     // follow
@@ -199,10 +198,10 @@ void key_handler_outs(uiKey_t key) {
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scrollSelect(1, net_num_outs()-1);
+    scrollSelect(1, net_num_outs() );
     break;
   case eKeyEncDownB:
-    scrollSelect(-1, net_num_outs()-1);      
+    scrollSelect(-1, net_num_outs() );      
     break;
     //// encoder C: scroll target
   case eKeyEncUpC:
@@ -327,19 +326,59 @@ void key_handler_play(uiKey_t key) {
 
 // presets
 extern void key_handler_presets(uiKey_t key) {
-  S16 i;
+  //  s16 i;
   switch(key) {
-  case eKeyFnDownA: 
-    // store current
+  case eKeyFnDownA: // clear
+    switch(page->mode) {
+    case eModeNone:
+      page->mode = eModeClear;
+      break;
+    case eModeClear:
+      //preset_clear(page->selected);
+      page->mode = eModeNone;
+      break;
+    default:
+      page->mode = eModeNone;
+    }
     break;
-  case eKeyFnDownB:
-    // recall stored
+  case eKeyFnDownB: // copy
+    switch(page->mode) {
+    case eModeNone:
+      page->mode = eModeCopy;
+      break;
+    case eModeCopy:
+      //preset_copy(page->selected);
+      page->mode = eModeNone;
+      break;
+    default:
+      page->mode = eModeNone;
+    }
     break;
-  case eKeyFnDownC:
-    // ??
+  case eKeyFnDownC: // store
+    switch(page->mode) {
+    case eModeNone:
+      page->mode = eModeStore;
+      break;
+    case eModeStore:
+      preset_store(page->selected);
+      page->mode = eModeNone;
+      break;
+    default:
+      page->mode = eModeNone;
+    }
     break;
-  case eKeyFnDownD:
-    // delete
+  case eKeyFnDownD: // recall
+    switch(page->mode) {
+    case eModeNone:
+      page->mode = eModeRecall;
+      break;
+    case eModeRecall:
+      preset_recall(page->selected);
+      page->mode = eModeNone;
+      break;
+    default:
+      page->mode = eModeNone;
+    }
     break;
     //// encoder A: scroll pages
   case eKeyEncUpA:
@@ -350,17 +389,15 @@ extern void key_handler_presets(uiKey_t key) {
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scrollSelect(1, net_num_outs()-1);
+    scrollSelect(1, NET_PRESETS_MAX );
     break;
   case eKeyEncDownB:
-    scrollSelect(-1, net_num_outs()-1);      
+    scrollSelect(-1, NET_PRESETS_MAX ); 
     break;
     //// encoder C: scroll name pos
   case eKeyEncUpC:
-    redraw_presets();
     break;
   case eKeyEncDownC:
-    redraw_presets();
     break;
   case eKeyEncUpD:
     // scroll name char
@@ -371,6 +408,7 @@ extern void key_handler_presets(uiKey_t key) {
     default:
     ;; // nothing
   }  
+  (*(page->redraw))();
 }
 
 /// SCENES
@@ -437,10 +475,10 @@ extern void key_handler_scenes(uiKey_t key) {
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scrollSelect(1, SCENE_COUNT -1 );
+    scrollSelect(1, SCENE_COUNT );
     break;
   case eKeyEncDownB:
-    scrollSelect(-1, SCENE_COUNT -1 );
+    scrollSelect(-1, SCENE_COUNT );
     break;
   case eKeyEncUpC: // cursor: position in name
     page->cursor++;

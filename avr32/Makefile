@@ -60,7 +60,7 @@
 
 
 # Path to top level ASF directory relative to this project directory.
-PRJ_PATH = ../../avr/asf-3.3.0/
+PRJ_PATH = ../../avr/asf-3.1.3/
 
 # Include the common Makefile, which will also include the project specific
 # config.mk file.

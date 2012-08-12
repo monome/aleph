@@ -19,17 +19,17 @@
 typedef void (*timerCallback)( int tag );
 
 // timer descriptor struct
-typedef struct _timer
+typedef struct _swTimer
 {
   int        fperiodic;   	// !0 for periodic timer, else one-shot 
   int        tag;        	// unique ID value 
   int        timeout;           // timer expiration period in ticks
   int        timeoutReload;     // reload value for periodic timer 
   timerCallback callback;   	// callback function prototype 
-} timer_t;
+} swTimer_t;
 
 // create a timer with a callback
-bool set_timer( timer_t * timer, int tag, int ticks,
+bool set_timer( swTimer_t * timer, int tag, int ticks,
 		timerCallback callback, bool fPeriodic );
 
 // kill a timer

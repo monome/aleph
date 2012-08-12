@@ -46,7 +46,7 @@ static void zero_col(U16 x, U16 y);
 static void zero_col(U16 x, U16 y) {
   static U8 i;
   for(i=0; i<FONT_CHARH; i++) {
-    screen_draw_pixel(x, y+i, 0);
+    screen_pixel(x, y+i, 0);
   }
 }
 
@@ -129,7 +129,7 @@ void init_oled(void) {
 }
 
 // draw a single pixel
-void screen_draw_pixel(U16 x, U16 y, U8 a) {
+void screen_pixel(U16 x, U16 y, U8 a) {
   static U32 pos;
   // if (x >= NCOLS) return;
   // if (y >= NROWS) return;
@@ -157,14 +157,14 @@ U8 screen_get_pixel(U8 x, U8 y) {
 }
 
 // draw a single character glyph with fixed spacing
-U8 screen_draw_char(U16 col, U16 row, char gl, U8 a) {
+U8 screen_char(U16 col, U16 row, char gl, U8 a) {
   static U8 x, y;
   for(y=0; y<FONT_CHARH; y++) {
     for(x=0; x<FONT_CHARW; x++) {
       if( (font_data[gl - FONT_ASCII_OFFSET].data[x] & (1 << y))) {
-	screen_draw_pixel(x+col, y+row, a);
+	screen_pixel(x+col, y+row, a);
       } else {
-	screen_draw_pixel(x+col, y+row, 0);
+	screen_pixel(x+col, y+row, 0);
       }
     }
   }
@@ -172,7 +172,7 @@ U8 screen_draw_char(U16 col, U16 row, char gl, U8 a) {
 }
 
 // draw a single character glyph with proportional spacing
-U8 screen_draw_char_squeeze(U16 col, U16 row, char gl, U8 a) {
+U8 screen_char_squeeze(U16 col, U16 row, char gl, U8 a) {
   static U8 y, x;
   static U8 xnum;
   static const glyph_t * g;
@@ -182,9 +182,9 @@ U8 screen_draw_char_squeeze(U16 col, U16 row, char gl, U8 a) {
   for(y=0; y<FONT_CHARH; y++) {
     for(x=0; x<xnum; x++) {
       if( (g->data[x + g->first] & (1 << y))) {
-	screen_draw_pixel(x + col, y + row, a);
+	screen_pixel(x + col, y + row, a);
       } else {
-	screen_draw_pixel(x + col, y + row, 0);
+	screen_pixel(x + col, y + row, 0);
       }
     }
   }
@@ -192,18 +192,18 @@ U8 screen_draw_char_squeeze(U16 col, U16 row, char gl, U8 a) {
 }
 
 // draw a string with fixed spacing
-U8 screen_draw_string(U16 x, U16 y, char *str, U8 a) {
+U8 screen_string(U16 x, U16 y, char *str, U8 a) {
   while(*str != 0) {
-    x += screen_draw_char(x, y, *str, a) + 1;
+    x += screen_char(x, y, *str, a) + 1;
     str++;
   }
   return x;
 }
 
 // draw a string with proportional spacing
-U8 screen_draw_string_squeeze(U16 x, U16 y, char *str, U8 a) {
+U8 screen_string_squeeze(U16 x, U16 y, char *str, U8 a) {
   while(*str != 0) {
-    x += screen_draw_char_squeeze(x, y, *str, a);
+    x += screen_char_squeeze(x, y, *str, a);
     zero_col(x, y);
     // extra pixel... TODO: maybe variable spacing here
     x++;
@@ -213,17 +213,17 @@ U8 screen_draw_string_squeeze(U16 x, U16 y, char *str, U8 a) {
 }
 
 // print a formatted integer
-U8 screen_draw_int(U16 x, U16 y, S32 i, U8 a) {
+U8 screen_int(U16 x, U16 y, S32 i, U8 a) {
   static char buf[32];
   snprintf(buf, 32, "%d", (int)i);
-  return screen_draw_string_squeeze(x, y, buf, a);
+  return screen_string_squeeze(x, y, buf, a);
 }
 
 // print a formatted float
-U8 screen_draw_float(U16 x, U16 y, F32 f, U8 a) {
+U8 screen_float(U16 x, U16 y, F32 f, U8 a) {
   static char buf[32];
   snprintf(buf, 32, "%.1f", (float)f);
-  return screen_draw_string_squeeze(x, y, buf, a);
+  return screen_string_squeeze(x, y, buf, a);
 }
 
 // send screen buffer contents to OLED
@@ -238,25 +238,33 @@ void screen_refresh(void) {
   //  Enable_global_interrupt();
 }
 
-
 // fill a line with blank space to end
 void screen_blank_line(U16 x, U16 y) {
   U8 i, j;
   for(i=x; i<NCOLS; i++) {
     for(j=y; j<(FONT_CHARH + y); j++) {
-      screen_draw_pixel(i, j, 0);
+      screen_pixel(i, j, 0);
     }
   }
 }
 
 // highlight a line
-void screen_hilite_line(U16 x, U16 y, U8 a) {
+void screen_hl_line(U16 x, U16 y, U8 a, S8 len) {
   U8 i, j;
   for(i=x; i<NCOLS; i++) {
     for(j=y; j<(y+FONT_CHARH); j++) {
       if (screen_get_pixel(i, j) == 0) {
-	screen_draw_pixel(i, j, a);
+	screen_pixel(i, j, a);
       }
     }
   }
+}
+
+// draw a line and blank to end
+U8 screen_line(U16 x, U16 y, char *str, U8 hl) {
+  // FIXME
+  hl = ( (hl << 1) & 0xf); 
+  x = screen_string(x, y, str, hl);
+  screen_blank_line(x, y);
+  return NCOLS;
 }

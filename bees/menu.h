@@ -45,6 +45,7 @@ typedef enum eKey {
   eKeyEncDownC,
   eKeyEncUpD,
   eKeyEncDownD,
+  eKeyDummy
 } uiKey_t;
 
 //----- public functions
@@ -54,7 +55,6 @@ extern void menu_init(void);
 extern void menu_deinit(void);
 // handle key
 extern void menu_handleKey(uiKey_t key);
-
 // parameter feedback
 extern void param_feedback(u16 paramIdx);
 

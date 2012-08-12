@@ -10,11 +10,13 @@
 
 #include "types.h"
 
-////////
-/////// WARNING:
-// because of stupid hack reasons,
-// any changes here must be reflected
-// in the bytecount #defines in protocol.h
+//======@@@@@@@++++++########!!!!!!!
+//!!!!!!====== BEWARE !!!!!!********
+/// there are all kinds of dirty hacks 
+/// dependent on the layout of data types in this header:
+///// in the bytecount #defines in protocol.h
+///// in param.c:get_param_value
+/////____change the layouts only with extraordinary caution!!! _ez
 
 // max characters in param name
 #define PARAM_LABEL_LEN 16

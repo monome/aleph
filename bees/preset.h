@@ -6,6 +6,7 @@
 #ifndef _PRESET_H_
 #define _PRESET_H_
 
+#define PRESET_NAME_LEN 16
 
 //=================================
 //===== types
@@ -38,7 +39,12 @@ typedef struct _preset {
   presetIn_t ins[NET_INS_MAX];
   presetOut_t outs[NET_OUTS_MAX];
   presetParam_t params[NET_PARAMS_MAX];
+  char name[PRESET_NAME_LEN];  
 } preset_t;
+
+//==============================
+//=== vars
+extern preset_t presets[NET_PRESETS_MAX];
 
 //========================
 //==== functions
@@ -48,12 +54,16 @@ void preset_init(void);
 // de-initialize
 void preset_deinit(void);
 // store (and enable) a particular input
-void preset_store_in(U32 preIdx, U32 inIdx);
+void preset_store_in(u32 preIdx, u32 inIdx);
 // store (and enable) a particular output
-void preset_store_out(U32 preIdx, U32 outIdx);
+void preset_store_out(u32 preIdx, u32 outIdx);
 // store everything enabled in given preset
-void preset_store(U32 preIdx);
+void preset_store(u32 preIdx);
 // recall everything enabled in given preset
-void preset_recall(U32 preIdx);
+void preset_recall(u32 preIdx);
+// preset name
+char* preset_name(u32 id);
+////// this is so terrible and dirty
+preset_t** preset_get_presets(void);
 
 #endif

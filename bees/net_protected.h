@@ -15,8 +15,11 @@
 #include "types.h"
 
 
-// size of operator pool inn bytes
-#define NET_OP_POOL_SIZE 65536
+// size of operator pool in bytes
+#define NET_OP_POOL_SIZE 8192
+//#define NET_OP_POOL_SIZE 12288
+//#define NET_OP_POOL_SIZE 16384
+//#define NET_OP_POOL_SIZE 65536
 
 // input node type (function pointer)
 typedef struct _inode {
@@ -48,43 +51,28 @@ typedef struct _onode {
 
 // parameter I/O node
 typedef struct _pnode {
-// min value
-  f32 min;
-  // max value
-  f32 max;
-  // current value (step)
-  s32 ival;  
-// current value (float)
-  f32 fval;
-  // parameter idx in DSP plugin
-  u32 idx;
-  // parameter name
-  const char* name;
-  // plugin name
-  //  const char* dspName;
-  // preset flag
+  ParamDesc desc;
+  ParamData data;
+  u8 idx;
   u8 preset;
-  // TODO:
-  // scaling functions/tables ?
-  // units ?
 } pnode_t;
 
 // network type
 typedef struct _ctlnet {
   // operator memory, statically allocated as char array
-  U8 opPoolMem[NET_OP_POOL_SIZE];
+  u8 opPoolMem[NET_OP_POOL_SIZE];
   // pointer to managed op memory
   u8 * opPool;
   // current offset into op memory
-  U32 opPoolOffset;
+  u32 opPoolOffset;
   // number of instantiated operators
-  U16 numOps;
+  u16 numOps;
   // number of instantiated inputs
-  U16 numIns;
+  u16 numIns;
   // number of instantiated outputs
-  U16 numOuts;
+  u16 numOuts;
   // number of instantiated params
-  U16 numParams;
+  u16 numParams;
   //  op pointers
   op_t * ops[NET_OPS_MAX];
   // inputs

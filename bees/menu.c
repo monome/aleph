@@ -95,13 +95,13 @@ void setPage(ePage n) {
 }
 
 // scroll current page
-void scrollPage(S8 dir) {
+void scrollPage(s8 dir) {
   switch(pageIdx) {
   case ePageOps:
     if (dir > 0) {
       pageIdx = ePageIns;
     } else {
-      pageIdx = ePageOuts;
+      pageIdx = ePageScenes;
     }
     break;
   case ePageIns:
@@ -113,7 +113,7 @@ void scrollPage(S8 dir) {
     break;
   case ePageOuts:
     if (dir > 0) {
-      pageIdx = ePageScenes;
+      pageIdx = ePagePresets;
     } else {
       pageIdx = ePageIns;
     }
@@ -125,11 +125,18 @@ void scrollPage(S8 dir) {
       pageIdx = ePageOuts;
     }
     break;
+  case ePagePresets:
+    if (dir > 0) {
+      pageIdx = ePageScenes;
+    } else {
+      pageIdx = ePageOuts;
+    }
+    break;
   case ePageScenes:
     if (dir > 0) {
       pageIdx = ePageOps;
     } else {
-      pageIdx = ePageOuts;
+      pageIdx = ePagePresets;
     }
     break;
   }
@@ -137,12 +144,16 @@ void scrollPage(S8 dir) {
 }
 
 // scroll current page selection
-void scrollSelect(S8 dir, S32 max) {
+void scrollSelect(s8 dir, s32 max) {
   page->selected += dir;
   if (page->selected < 0) {
-    page->selected = 0;
+    page->selected += max;
+      //    page->selected = 0;
   }
-  if (page->selected > max) { page->selected = max; }
+  if (page->selected >= max) {
+    // page->selected = max;
+    page->selected -= max;
+  }
   // redraw with the new selection
   page->redraw();
 }
