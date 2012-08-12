@@ -1,0 +1,69 @@
+#include <fract_math.h>
+#include <string.h>
+#include <math.h>
+
+#include "bfin_core.h"
+#include "param.h"
+#include "module.h"
+#include "osc.h"
+
+// external data, manually located at start of SDRAM
+oscData_t * data = (oscData_t *)SDRAM_ADDRESS;
+// define twice for preprocesor and for core modules
+const u32 kNumParams = MODULE_NUM_PARAMS;
+
+//---------------------------
+//---- static vars
+static f32 phase = 0.f;
+static f32 phaseInc = (f32)WAVETABLE_NUM_1 / (f32)SAMPLERATE;
+
+//---------------------------
+//----- static functions
+static void init_wavetable(void) {
+  const f32 inc = M_TWOPI / (f32)WAVETABLE_NUM;
+  f32 x = 0.f;
+  u16 i;
+  for (i=0; i<WAVETABLE_NUM; i++) {
+    data->sineTable[i] = sin(x);
+    x += inc;
+  }
+}
+
+// linear-interpolated lookup
+static fract32 wavetable_interp(f32 phase) {
+  const s16 x = (s16)phase;
+  const f32 fx = phase - x;
+  s16 xnext = x + 1;
+  f32 y;
+  if ( xnext > WAVETABLE_NUM_1) {
+    xnext -= WAVETABLE_NUM_1;
+  }
+  y = data->sineTable[x];
+  y += data->sineTable[xnext] * fx;
+  return float_to_fr32(y);
+}
+
+//----- init
+void init_module(void) {
+
+  // initialize parameter descriptors
+  strcpy(data->paramDesc[eParamAmp].name, "amp");
+  strcpy(data->paramDesc[eParamAmp].unit, "amp");
+  data->paramDesc[eParamAmp].type = eParamFract;
+
+  strcpy(data->paramDesc[eParamFreq].name, "freq");
+  strcpy(data->paramDesc[eParamFreq].unit, "hz");
+  data->paramDesc[eParamFreq].type = eParamFloat;
+
+  // initialize parameter values
+  data->paramData[eParamAmp].value.asFract = float_to_f32(0.5f);
+  data->paramData[eParamAmp].value.asFloat = 440;
+}
+
+//------ process frame
+void process_frame(void) {
+  out0 = in0;
+  out1 = in1;
+  out2 = in2;
+  out3 = in3;
+}

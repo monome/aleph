@@ -1,0 +1,215 @@
+;; -*- mode: emacs-lisp; coding: emacs-mule; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Mon Jul 16 00:08:18 2012
+;; Desktop file format version 206
+;; Emacs version 23.1.1
+
+;; Global section:
+(setq desktop-missing-file-warning nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+(setq search-ring '("lerp" "LIB" "((leaf"))
+(setq regexp-search-ring nil)
+(setq register-alist nil)
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 206
+  "/home/e/aleph/bfin/modules/osc2/osc2.c"
+  "osc2.c"
+  'c-mode
+  '(abbrev-mode)
+  3807
+  '(141 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/e/aleph/bfin/modules/osc2/osc2.h"
+  "osc2.h"
+  'c-mode
+  '(abbrev-mode)
+  195
+  '(138 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/e/lib/libfixmath/fix16.h"
+  "fix16.h"
+  'c-mode
+  '(abbrev-mode text-scale-mode)
+  1
+  '(4450 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-dos)))
+
+(desktop-create-buffer 206
+  nil
+  "libfixmath"
+  'dired-mode
+  nil
+  210
+  '(nil nil)
+  t
+  '("/home/e/lib/libfixmath/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/e/lib/libfixmath/fix16.c"
+  "fix16.c"
+  'c-mode
+  '(abbrev-mode text-scale-mode)
+  11692
+  '(494 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/e/lib/libfixmath/int64.h"
+  "int64.h"
+  'c-mode
+  '(abbrev-mode)
+  2069
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/e/scratch/fixed/main.c"
+  "main.c"
+  'c-mode
+  '(abbrev-mode)
+  21
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/e/scratch/fixed/Makefile"
+  "Makefile<2>"
+  'makefile-gmake-mode
+  nil
+  135
+  '(184 nil)
+  nil
+  nil
+  '((indent-tabs-mode . t) (buffer-file-coding-system . utf-8-emacs-unix)))
+
+(desktop-create-buffer 206
+  "/home/e/lib/libfixmath/Makefile"
+  "Makefile"
+  'makefile-gmake-mode
+  '(text-scale-mode)
+  361
+  '(460 nil)
+  nil
+  nil
+  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/e/lib/libfixmath/uint32.c"
+  "uint32.c"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/e/lib/libfixmath/fix16_trig_sin_lut.h"
+  "fix16_trig_sin_lut.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/e/lib/libfixmath/fixmath.h"
+  "fixmath.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/e/lib/libfixmath/fract32.h"
+  "fract32.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/e/lib/libfixmath/uint32.h"
+  "uint32.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/e/lib/libfixmath/fix16_exp.c"
+  "fix16_exp.c"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/e/lib/libfixmath/fix16_sqrt.c"
+  "fix16_sqrt.c"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/e/lib/libfixmath/fix16_trig.c"
+  "fix16_trig.c"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-dos)))
+
+(desktop-create-buffer 206
+  "/home/e/lib/libfixmath/fract32.c"
+  "fract32.c"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
