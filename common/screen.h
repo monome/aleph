@@ -25,14 +25,25 @@
 // bytes in graphics RAM
 #define GRAM_BYTES 4096 // 2 pixels per byte
 // how many lines of text
-//#define CHAR_ROWS 8  // NROWS / FONT_CHARH
-
+#define CHAR_ROWS 8  // NROWS / FONT_CHARH
 //#define CHAR_COLS 16 // NCOLS / FONT_CHARW
-// what? thats fucked up...
 #define CHAR_COLS 32
+// center row of text
+#define SCREEN_ROW_CENTER 3
 
 // get y pixel coordinate of a given line of text
-#define SCREEN_LINE(n) FONT_CHARH * (n)
+// #define SCREEN_LINE(n) FONT_CHARH * (n)
+
+//-----------------------------
+//----  variables
+// get y pixel coordinate of a given line of text
+// cheating with magic numbers instead of FONT_CHARH
+// for const-ability
+extern const u8 kScreenLines[];
+
+
+//-----------------------------
+//----  functions
 
 // send startup commands
 void init_oled(void);
@@ -44,9 +55,11 @@ U8 screen_char(U16 x, U16 y, char c, U8 a);
 // draw a single glyph with proportional spacing
 U8 screen_char_squeeze(U16 x, U16 y, char c, U8 a);
 // draw a string with fixed spacing
-U8 screen_string(U16 x, U16 y, char* str, U8 a);
+U8 screen_string_fixed(U16 x, U16 y, char* str, U8 a);
 // draw a string with proportional spacing
 U8 screen_string_squeeze(U16 x, U16 y, char* str, U8 a);
+// draw a string (default)
+U8 screen_string(U16 x, U16 y, char* str, U8 a);
 // draw a line to the end with fixed spacing
 U8 screen_line(U16 x, U16 y, char* str, U8 a);
 // print a formatted integer

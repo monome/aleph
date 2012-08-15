@@ -45,12 +45,12 @@ void init_encoders(void) {
   // realtime initial pin values
   for(i=0; i<NUM_ENC; i++) {
     enc[i].pos = gpio_get_pin_value(enc[i].pin[0]) + (gpio_get_pin_value(enc[i].pin[1]) << 1);
-    enc[i].thresh = 0;
+    enc[i].thresh = 15;
   }
 
   ////// TEST:
   /// enc3 scrolls a menu, make it slower
-  enc[3].thresh = 12;
+  enc[3].thresh = 40;
 
 }
 

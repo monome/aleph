@@ -51,11 +51,12 @@ void redraw_ops(void) {
   if (nCenter >= num) {
     nCenter = num;
   }
+
   n = nCenter;
   // print selection at center
   y = SCREEN_ROW_CENTER;
-
   draw_line_ops(n, num, y, 4);
+
   // print lower entries
   while (y > 1) {
     n--;
@@ -78,13 +79,13 @@ void redraw_ops(void) {
   // (new op type)
   snprintf(lineBuf, SCREEN_W, " + %s",
 	   op_registry[userOpTypes[newOpType]].name);
-  screen_line(0, SCREEN_H_2, lineBuf, 5);
+  screen_line(0, kScreenLines[CHAR_ROWS - 2], lineBuf, 5);
   // (function labels)
   // don't allow deletion of system operators
   if (net_op_status(net_num_ops() - 1) == eUserOp) {
-    screen_line(0, SCREEN_H_1, "PARAM ROUTE CREATE DELETE", 3);
+    screen_line(0, kScreenLines[CHAR_ROWS-1], "PARAM ROUTE CREATE DELETE", 3);
   } else  { 
-    screen_line(0, SCREEN_H_1, "PARAM ROUTE CREATE", 3);
+    screen_line(0, kScreenLines[CHAR_ROWS-1], "PARAM ROUTE CREATE", 3);
   }
 }
 
@@ -96,10 +97,6 @@ void redraw_ins(void) {
   //  s16 opIdx; // index of operator
   const u16 num = net_num_ins(); // how many 
     
-  // draw the header
-  snprintf(lineBuf, SCREEN_W, "PARAMS ");
-  screen_line(0, 0, lineBuf, 3);
-
   nCenter = page->selected;
   if (nCenter >= num) {
     nCenter = num;
@@ -126,9 +123,14 @@ void redraw_ins(void) {
     y++;
     draw_line_ins(n, num, y, 1);
   }    
+
+  // draw the header
+  snprintf(lineBuf, SCREEN_W, "PARAMS ");
+  screen_line(0, 0, lineBuf, 3);
+
   // draw footer 
   // (function labels)
-  screen_line(0, SCREEN_H_1, "GATHER DISCONNECT STORE  PRESET ", 3);
+  screen_line(0, kScreenLines[CHAR_ROWS - 1], "GATHER DISCONNECT STORE  PRESET ", 3);
 }
 
 //==================================================
@@ -139,10 +141,6 @@ void redraw_outs(void) {
   s16 target;
   const u16 num = net_num_outs(); // how many ops
   
-  // draw the header
-  snprintf(lineBuf, SCREEN_W, "ROUTING");
-  screen_line(0, 0, lineBuf, 3);
-
   nCenter = page->selected;
   if (nCenter >= num) {
     nCenter = num;
@@ -173,15 +171,20 @@ void redraw_outs(void) {
   // (target)
   target = net_get_target(nCenter);
   if(target == -1) {
-    screen_line(0, SCREEN_H_2, "NO TARGET", 1);
+    screen_line(0, kScreenLines[CHAR_ROWS - 2], "NO TARGET", 1);
   } else {
     snprintf(lineBuf, SCREEN_W, " -> %s/%s",
 	     net_op_name(net_in_op_idx(target)), net_in_name(target));
-    screen_line(0, SCREEN_H_2, lineBuf, 1);
+    screen_line(0, kScreenLines[CHAR_ROWS - 2], lineBuf, 1);
   }
 
+
+  // draw the header
+  snprintf(lineBuf, SCREEN_W, "ROUTING");
+  screen_line(0, 0, lineBuf, 3);
+
   // (function labels)
-  screen_line(0, SCREEN_H_1, "FOLLOW  DISCONNECT STORE PRESET ", 3);
+  screen_line(0, kScreenLines[CHAR_ROWS - 1], "FOLLOW DISCONNECT STORE PRESET", 3);
 }
 
 /// redraw gathered outputs
@@ -194,10 +197,6 @@ void redraw_presets(void) {
   u8 y = 0;                       // which line
   s32 n, nCenter;         // which list entry
   const u16 num = NET_PRESETS_MAX; // how many 
-  
-  // draw the header
-  snprintf(lineBuf, SCREEN_W, "PRESETS");
-  screen_line(0, 0, lineBuf, 3);
 
   nCenter = page->selected;
   if (nCenter >= num) {
@@ -246,7 +245,11 @@ void redraw_presets(void) {
 
   // draw footer 
   // (function labels)
-  screen_line(0, SCREEN_H_1, "CLEAR COPY STORE RECALL", 3);
+  screen_line(0, kScreenLines[CHAR_ROWS - 1], "CLEAR COPY STORE RECALL", 3);
+  
+  // draw the header
+  snprintf(lineBuf, SCREEN_W, "PRESETS");
+  screen_line(0, 0, lineBuf, 3);
 
 }
 
@@ -256,10 +259,6 @@ void redraw_scenes(void) {
   u8 y = 0;                       // which line
   s32 n, nCenter;         // which list entry
   const u16 num = SCENE_COUNT; // how many 
-  
-  // draw the header
-  snprintf(lineBuf, SCREEN_W, "SCENES");
-  screen_line(0, 0, lineBuf, 3);
 
   nCenter = page->selected;
   if (nCenter >= num) {
@@ -304,26 +303,32 @@ void redraw_scenes(void) {
     draw_line_scenes(n, num, y, 1);
   }
 
+  
+  // draw the header
+  snprintf(lineBuf, SCREEN_W, "SCENES");
+  screen_line(0, 0, lineBuf, 3);
+
   // draw footer 
   // (function labels)
-  screen_line(0, SCREEN_H_1, "CLEAR COPY STORE RECALL", 3);
+  screen_line(0, kScreenLines[CHAR_ROWS - 1], "CLEAR COPY STORE RECALL", 3);
 }
 
 //==================================================
 //==== redraw play page
 void redraw_play(void) {
   u8 y, n;
-// draw the header
-  snprintf(lineBuf, SCREEN_W, "PLAY");
-  screen_line(0, 0, lineBuf, 6);
   n = SCREEN_H_1;
   for(y = 1; y < SCREEN_H; y++ ) {
     snprintf(lineBuf, SCREEN_W, "p%d : %f",
 	     touchedParams[n].idx,
 	     touchedParams[n].val );
-    screen_line(0, y, lineBuf, 1);
+    screen_line(0, kScreenLines[y], lineBuf, 1);
     n--;
   }
+// draw the header
+  snprintf(lineBuf, SCREEN_W, "PLAY");
+  screen_line(0, 0, lineBuf, 6);
+
 }
 
 
@@ -343,12 +348,12 @@ static void draw_line_ops(s32 n, u16 num, u8 y, u8 hl) {
   //  if ( (n < num) && (n >= 0) ) { 
     snprintf(lineBuf, SCREEN_W, "%d.%s",
              (int)n, net_op_name(n));
-    //    screen_line(0, y, lineBuf, hl + net_op_status(n));
-    screen_line(0, y, lineBuf, hl);
+    //    screen_line(0, kScreenLines[y], lineBuf, hl + net_op_status(n));
+    screen_line(0, kScreenLines[y], lineBuf, hl);
     /*  } else {
     // no selection
     snprintf(lineBuf, SCREEN_W, "   .");
-    screen_line(0, y, lineBuf, 0);
+    screen_line(0, kScreenLines[y], lineBuf, 0);
   }
     */
   
@@ -385,12 +390,12 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
 	       ////// FIXME (?)
 	       get_param_value(net_param_idx(n)) );
     }
-    screen_line(0, y, lineBuf, hl);
+    screen_line(0, kScreenLines[y], lineBuf, hl);
 
     //} else {
     // no selection
     //snprintf(lineBuf, SCREEN_W, ".");
-    //screen_line(0, y, lineBuf, 0);
+    //screen_line(0, kScreenLines[y], lineBuf, 0);
     // }
 
 }
@@ -425,10 +430,10 @@ static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
 	     net_op_name(net_out_op_idx(n)),
 	     net_out_name(n) );
   }
-  screen_line(0, y, lineBuf, hl);// + status);
+  screen_line(0, kScreenLines[y], lineBuf, hl);// + status);
   
   //  snprintf(lineBuf, SCREEN_W, ".");
-  //  screen_line(0, y, lineBuf, 0);
+  //  screen_line(0, kScreenLines[y], lineBuf, 0);
 }
 
 // draw line of presets page
@@ -441,11 +446,11 @@ void draw_line_presets(s32 n, u16 num, u8 y, u8 hl) {
   } 
    //  if ( (n < num) && (n >= 0) ) { 
   snprintf(lineBuf, SCREEN_W, "%d.%s ", (int)n, preset_name(n));
-  screen_line(0, y, lineBuf, hl);
+  screen_line(0, kScreenLines[y], lineBuf, hl);
   //  } else {
   // no selection
   //    snprintf(lineBuf, SCREEN_W, ".");
-    //    screen_line(0, y, lineBuf, 0);
+    //    screen_line(0, kScreenLines[y], lineBuf, 0);
     //}
 }
 
@@ -459,10 +464,10 @@ void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
   } 
    //  if ( (n < num) && (n >= 0) ) { 
   snprintf(lineBuf, SCREEN_W, "%d.%s ", (int)n, scene_name(n));
-  screen_line(0, y, lineBuf, hl);
+  screen_line(0, kScreenLines[y], lineBuf, hl);
   //  } else {
   // no selection
   //    snprintf(lineBuf, SCREEN_W, ".");
-    //    screen_line(0, y, lineBuf, 0);
+    //    screen_line(0, kScreenLines[y], lineBuf, 0);
     //}
 }

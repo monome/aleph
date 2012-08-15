@@ -66,11 +66,8 @@ static void report_params(void);
 static void check_events(void) {
   static event_t e;  
  uiKey_t key = eKeyDummy;
-  
-  
+    
   if( get_next_event(&e) ) {
-
-
 
     switch(e.eventType) {
       
@@ -149,15 +146,15 @@ static void check_events(void) {
       if(refresh == 1) {
 	screen_refresh();
 	//	print_dbg("\nrefresh");
-	refresh = 0;
+		refresh = 0;
       }
       break;
     } // switch event
 
     if(key != eKeyDummy) { 
-      print_dbg("\ngot key event: ");
+      print_dbg("  key: ");
       print_dbg_ulong(key);
-      //     menu_handleKey(key); 
+      menu_handleKey(key); 
       refresh = 1;
     }
     
@@ -247,7 +244,7 @@ int main (void) {
 
   print_dbg("starting event loop.\n\r");
   screen_string_squeeze(0, 0, "ALEPH hardware initialized.", 2); 
-  screen_string_squeeze(0, 0, "any key to begin BEES.", 2); refresh=1;
+  screen_string_squeeze(0, 0, "any key to begin BEES. -FFF", 2); refresh=1;
   
 // event loop
     while(1) {

@@ -277,13 +277,13 @@ void init_bfin_resources(void) {
 
   // intialize the chip register
   spi_setupChipReg(BFIN_SPI, &spiOptions, FPBA_HZ);
- // enable pulldown on bfin HWAIT line
+  // enable pulldown on bfin HWAIT line
   //// shit! not implemented... 
   // gpio_enable_pin_pull_down(BFIN_HWAIT_PIN);
   
-    // add a second chip register for the serial ADC
+  // add a second chip register for the serial ADC
   // chip select 1 is AD7923 12-bit ADC
-    spiOptions.reg = 1;
+  spiOptions.reg = 1;
   spiOptions.baudrate = 10000000;	// range in datasheet is 10kHz - 20MHz
   spiOptions.bits = 16;		// 1 bit leading zero, 3 channel address, 12 data 
   spiOptions.spi_mode = 2;	// sample on falling edge, idle high

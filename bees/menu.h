@@ -28,24 +28,24 @@ typedef enum ePage_t {
 
 // keys
 typedef enum eKey {
-  eKeyEdit,
-  eKeyFnDownA,
-  eKeyFnUpA,
-  eKeyFnDownB,
-  eKeyFnUpB,
-  eKeyFnDownC,
-  eKeyFnUpC,
-  eKeyFnDownD,
-  eKeyFnUpD,
-  eKeyEncUpA,
-  eKeyEncDownA,
-  eKeyEncUpB,
-  eKeyEncDownB,
-  eKeyEncUpC,
-  eKeyEncDownC,
-  eKeyEncUpD,
-  eKeyEncDownD,
-  eKeyDummy
+  eKeyEdit = 0,
+  eKeyFnDownA = 1,
+  eKeyFnUpA = 2,
+  eKeyFnDownB = 3,
+  eKeyFnUpB = 4,
+  eKeyFnDownC = 5,
+  eKeyFnUpC = 6,
+  eKeyFnDownD = 7,
+  eKeyFnUpD = 8,
+  eKeyEncUpA = 9,
+  eKeyEncDownA = 10 ,
+  eKeyEncUpB = 11 ,
+  eKeyEncDownB = 12 ,
+  eKeyEncUpC = 13 ,
+  eKeyEncDownC = 14 ,
+  eKeyEncUpD = 15 ,
+  eKeyEncDownD = 16,
+  eKeyDummy = 17
 } uiKey_t;
 
 //----- public functions

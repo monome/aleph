@@ -77,9 +77,12 @@ bool post_event( event_t *e ) {
   Disable_interrupt_level( TIMER_INT_LEVEL );
 
   // debug hook
+  /*
   if (e->eventType < kEventAdc0) {
-    print_dbg("\n posting a knob/switch event.\n");
+    print_dbg(" ... posted knob/switch event, type ");
+    print_dbg_ulong(e->eventType); print_dbg(".");
   } 
+  */
 
   // increment write idx, posbily wrapping
   saveIndex = putIdx;
