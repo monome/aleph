@@ -6,8 +6,11 @@
  */
 
 #include "compiler.h"
+#include "print_funcs.h"
+
 #include "timers.h" // for timer interrupt priority level
 #include "events.h"
+#include "event_types.h"
 
 #define MAX_EVENTS   32
 
@@ -40,7 +43,7 @@ void init_events( void ) {
 // get next event
 // Returns non-zero if an event was available
 bool get_next_event( event_t *e ) {
-  bool status = false;
+  bool status;
   bool fReenableInterrupts = Is_interrupt_level_enabled( TIMER_INT_LEVEL );
 
   Disable_interrupt_level( TIMER_INT_LEVEL );
@@ -54,6 +57,7 @@ bool get_next_event( event_t *e ) {
   } else {
     e->eventType  = 0xff;
     e->eventData = 0;
+    status = false;
   }
 
   if (fReenableInterrupts) {
@@ -71,6 +75,11 @@ bool post_event( event_t *e ) {
   bool fReenableInterrupts = Is_interrupt_level_enabled( TIMER_INT_LEVEL );
 
   Disable_interrupt_level( TIMER_INT_LEVEL );
+
+  // debug hook
+  if (e->eventType < kEventAdc0) {
+    print_dbg("\n posting a knob/switch event.\n");
+  } 
 
   // increment write idx, posbily wrapping
   saveIndex = putIdx;

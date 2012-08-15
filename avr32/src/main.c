@@ -1,5 +1,5 @@
 /* main,c
- * aleph-avr32
+h * aleph-avr32
  *
  */
 
@@ -43,6 +43,9 @@
 #include "interrupts.h"
 #include "timers.h"
 
+// DEBUG: skip sdcard setuo
+#define SKIPSD 1
+
 //=========================================
 //==== static variables
 static u8 initFlag = 1;
@@ -61,14 +64,17 @@ static void report_params(void);
 //------- define
 // app event loop
 static void check_events(void) {
-  static uiKey_t key = eKeyDummy;
-  static event_t e;
+  static event_t e;  
+ uiKey_t key = eKeyDummy;
+  
   
   if( get_next_event(&e) ) {
+
+
+
     switch(e.eventType) {
       
     case kEventEncoder0:
-      if (check_init()) { return; }
       if(e.eventData > 0) {
 	key = eKeyEncUpA;
       } else {
@@ -77,7 +83,6 @@ static void check_events(void) {
       break;
 
     case kEventEncoder1:
-      if (check_init()) { return; }
       if(e.eventData > 0) {
 	key = eKeyEncUpB;
       } else {
@@ -86,7 +91,6 @@ static void check_events(void) {
       break;
 
     case kEventEncoder2:
-      if (check_init()) { return; }
       if(e.eventData > 0) {
 	key = eKeyEncUpC;
       } else {
@@ -95,7 +99,6 @@ static void check_events(void) {
       break;
 
     case kEventEncoder3:
-      if (check_init()) { return; }
       if(e.eventData > 0) {
 	key = eKeyEncUpD;
       } else {
@@ -108,7 +111,6 @@ static void check_events(void) {
       key = eKeyFnDownA;
       break;
     case kEventSwitchUp0:
-      if (check_init()) { return; }
       key = eKeyFnUpA;
       break;
 
@@ -117,7 +119,6 @@ static void check_events(void) {
       key = eKeyFnDownB;
       break;
     case kEventSwitchUp1:
-      if (check_init()) { return; }
       key = eKeyFnUpB;
       break;
       
@@ -126,7 +127,6 @@ static void check_events(void) {
       key = eKeyFnDownC;
       break;
     case kEventSwitchUp2:
-      if (check_init()) { return; }
       key = eKeyFnUpC;
       break;
       
@@ -135,26 +135,33 @@ static void check_events(void) {
       key = eKeyFnDownD;
       break;
     case kEventSwitchUp3:
-      if (check_init()) { return; }
       key = eKeyFnUpD;
       break;
 
     case kEventAdc0:
-      print_dbg("\r\n got adc0 event: ");
-      print_dbg_ulong(e.eventData);
+      // print_dbg("\r\n got adc0 event: ");
+      //      print_dbg_ulong(e.eventData);
       screen_int(0, FONT_CHARH * (NROWS - 2), e.eventData, 0xf);
       refresh = 1;
       break;
 
     case kEventRefresh:
-      screen_refresh();
-      refresh = 0;
+      if(refresh == 1) {
+	screen_refresh();
+	//	print_dbg("\nrefresh");
+	refresh = 0;
+      }
       break;
-
-
-    if(key != eKeyDummy) { menu_handleKey(key); }
-
     } // switch event
+
+    if(key != eKeyDummy) { 
+      print_dbg("\ngot key event: ");
+      print_dbg_ulong(key);
+      //     menu_handleKey(key); 
+      refresh = 1;
+    }
+    
+
   } // if event
 }
 
@@ -213,6 +220,7 @@ int main (void) {
 
   print_dbg("\r\nALEPH\r\n ");
 
+#ifndef SKIPSD
   // Wait for a card to be inserted
   print_dbg("\r\nwaiting for SD card... ");
 
@@ -227,20 +235,19 @@ int main (void) {
 
   // list files to USART
   files_list();
-  
+
   // load blackfin from first .ldr file in filesystem
   load_bfin_sdcard_test();
-
   print_dbg("loaded dsp program.\n\r");
+#endif 
 
   // send ADC config
   init_adc();
-
   init_app_timers();
 
   print_dbg("starting event loop.\n\r");
-  screen_string(0, 0, "ALEPH hardware initialized.", 2); 
-  screen_string(0, 0, "use any key to begin BEES.", 2); refresh=1;
+  screen_string_squeeze(0, 0, "ALEPH hardware initialized.", 2); 
+  screen_string_squeeze(0, 0, "any key to begin BEES.", 2); refresh=1;
   
 // event loop
     while(1) {
@@ -250,7 +257,11 @@ int main (void) {
 
 // wait for a button press to initialize 
 U8 check_init(void) {
+ 
+
   if(initFlag) {
+
+    print_dbg( "hit manual-init routine\n");
 
     // initialize BEES components
     net_init();
@@ -258,11 +269,16 @@ U8 check_init(void) {
     preset_init();
     scene_init();
 
+#ifndef SKIPSD
     // get default parameters
     report_params();
-
+    // load the default DSP
+    load_bfin_sdcard_test();
     // load scene 0
-   
+    //...
+#endif
+
+    refresh = 1;
     initFlag = 0;
     return 1;
   } else {
@@ -273,7 +289,6 @@ U8 check_init(void) {
 static void report_params(void) {
   ParamDesc pdesc;
   u8 np, i;
-
   np = bfin_get_num_params();
   if(np > 0) {
     net_clear_params();
