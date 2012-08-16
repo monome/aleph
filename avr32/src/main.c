@@ -11,6 +11,7 @@ h * aleph-avr32
 #include "board.h"
 #include "conf_sd_mmc_spi.h"
 #include "compiler.h"
+#include "cycle_counter.h"
 #include "ctrl_access.h"
 #include "util.h"
 #include "gpio.h"
@@ -18,6 +19,7 @@ h * aleph-avr32
 #include "pdca.h"
 #include "power_clocks_lib.h"
 #include "print_funcs.h"
+#include "sdramc.h"
 #include "sysclk.h"
 //// aleph
 // bees
@@ -65,8 +67,13 @@ static void report_params(void);
 // app event loop
 static void check_events(void) {
   static event_t e;  
- uiKey_t key = eKeyDummy;
-    
+  uiKey_t key;
+  
+  static U64 cycles = 0;
+  static U64 cyclesNow = 0;
+
+  key = eKeyDummy;
+  
   if( get_next_event(&e) ) {
 
     switch(e.eventType) {
@@ -152,13 +159,18 @@ static void check_events(void) {
     } // switch event
 
     if(key != eKeyDummy) { 
-      print_dbg("  key: ");
-      print_dbg_ulong(key);
+      // print_dbg("  key: ");
+      // print_dbg_ulong(key);
+      cycles = Get_system_register(AVR32_COUNT);
+
       menu_handleKey(key); 
+      
+      cyclesNow = Get_system_register(AVR32_COUNT);
+
+      print_dbg(" event:"); print_dbg_ulong(e.eventType);
+      print_dbg(" cycles:"); print_dbg_ulong(cyclesNow - cycles);
       refresh = 1;
     }
-    
-
   } // if event
 }
 
@@ -167,6 +179,12 @@ static void check_events(void) {
 int main (void) {
   U32 waitForCard = 0;
   volatile avr32_tc_t *tc = APP_TC;
+
+  /////////
+  /// SDRAM test
+  unsigned long sdram_size, progress_inc, i, j, tmp, noErrors = 0;
+  volatile unsigned long *sdram = SDRAM;
+  /////////
   
   // switch to osc0 for main clock
   //  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP); 
@@ -246,6 +264,58 @@ int main (void) {
   screen_string_squeeze(0, 0, "ALEPH hardware initialized.", 2); 
   screen_string_squeeze(0, 0, "any key to begin BEES. -FFF", 2); refresh=1;
   
+  ////////
+  /// SDRAM test
+
+
+  sdram_size = SDRAM_SIZE >> 2;
+  print_dbg("\x0CSDRAM size: ");
+  print_dbg_ulong(SDRAM_SIZE >> 20);
+  print_dbg(" MB\r\n");
+
+  // Initialize the external SDRAM chip.
+  sdramc_init(FMCK_HZ);
+  print_dbg("SDRAM initialized\r\n");
+
+  // Determine the increment of SDRAM word address requiring an update of the
+  // printed progression status.
+  progress_inc = (sdram_size + 50) / 100;
+  
+  // Fill the SDRAM with the test pattern.
+  for (i = 0, j = 0; i < sdram_size; i++)
+  {
+    if (i == j * progress_inc)
+    {
+       print_dbg("\rFilling SDRAM with test pattern: ");
+      print_dbg_ulong(j++);
+      print_dbg_char('%');
+    }
+    sdram[i] = i;
+  }
+   print_dbg("\rSDRAM filled with test pattern       \r\n");
+
+  // Recover the test pattern from the SDRAM and verify it.
+  for (i = 0, j = 0; i < sdram_size; i++)
+  {
+    if (i == j * progress_inc)
+    {
+      print_dbg("\rRecovering test pattern from SDRAM: ");
+      print_dbg_ulong(j++);
+      print_dbg_char('%');
+    }
+    tmp = sdram[i];
+    if (tmp != i)
+    {
+      noErrors++;
+    }
+  }
+  print_dbg("\rSDRAM tested: ");
+  print_dbg_ulong(noErrors);
+  print_dbg(" corrupted word(s)       \r\n");
+
+  ////////
+
+
 // event loop
     while(1) {
       check_events();
@@ -315,7 +385,7 @@ static void report_params(void) {
   
     print_dbg(desc.label);
     print_dbg("\r\n");
-    print_dbg(desc.unit);
+b    print_dbg(desc.unit);
     print_dbg("\r\n");
   
 }

@@ -80,6 +80,10 @@ void menu_handleKey(uiKey_t key) {
       setPage(ePagePlay);
     }
   } else {
+    // FIXME: TEST
+    switch(pageIdx) {
+      
+    }
     page->keyHandler(key);
   }
 }
