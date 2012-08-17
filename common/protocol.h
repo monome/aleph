@@ -2,7 +2,7 @@
 #define _ALEPH_COMMON_PROTOCOL_H_
 
 #include "module_common.h"
-#include "param.h"
+#include "param_common.h"
 #include "types.h"
 
 // super caveman version of SPI protocol

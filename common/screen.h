@@ -60,7 +60,7 @@ U8 screen_string_fixed(U16 x, U16 y, char* str, U8 a);
 U8 screen_string_squeeze(U16 x, U16 y, char* str, U8 a);
 // draw a string (default)
 U8 screen_string(U16 x, U16 y, char* str, U8 a);
-// draw a line to the end with fixed spacing
+// draw a line to the end with default spacing
 U8 screen_line(U16 x, U16 y, char* str, U8 a);
 // print a formatted integer
 U8 screen_int(U16 x, U16 y, S32 i, U8 a);

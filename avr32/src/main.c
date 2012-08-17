@@ -21,6 +21,7 @@ h * aleph-avr32
 #include "print_funcs.h"
 #include "sdramc.h"
 #include "sysclk.h"
+#include "usart.h"
 //// aleph
 // bees
 #include "menu.h"
@@ -46,7 +47,7 @@ h * aleph-avr32
 #include "timers.h"
 
 // DEBUG: skip sdcard setuo
-#define SKIPSD 1
+// #define SKIPSD 1
 
 //=========================================
 //==== static variables
@@ -56,6 +57,8 @@ static u8 initFlag = 1;
 //==== static functions
 
 //------  declare
+// debug events
+static void check_debug_events(void);
 //  app event loop
 static void check_events(void);
 // wait for first UI event after startup
@@ -143,8 +146,6 @@ static void check_events(void) {
       break;
 
     case kEventAdc0:
-      // print_dbg("\r\n got adc0 event: ");
-      //      print_dbg_ulong(e.eventData);
       screen_int(0, FONT_CHARH * (NROWS - 2), e.eventData, 0xf);
       refresh = 1;
       break;
@@ -152,23 +153,20 @@ static void check_events(void) {
     case kEventRefresh:
       if(refresh == 1) {
 	screen_refresh();
-	//	print_dbg("\nrefresh");
-		refresh = 0;
+
+	refresh = 0;
       }
       break;
     } // switch event
 
     if(key != eKeyDummy) { 
-      // print_dbg("  key: ");
-      // print_dbg_ulong(key);
-      cycles = Get_system_register(AVR32_COUNT);
+      // cycles = Get_system_register(AVR32_COUNT);
 
       menu_handleKey(key); 
       
-      cyclesNow = Get_system_register(AVR32_COUNT);
-
-      print_dbg(" event:"); print_dbg_ulong(e.eventType);
-      print_dbg(" cycles:"); print_dbg_ulong(cyclesNow - cycles);
+      // cyclesNow = Get_system_register(AVR32_COUNT);
+      // print_dbg(" event:"); print_dbg_ulong(e.eventType);
+      // print_dbg(" cycles:"); print_dbg_ulong(cyclesNow - cycles);
       refresh = 1;
     }
   } // if event
@@ -182,8 +180,10 @@ int main (void) {
 
   /////////
   /// SDRAM test
+  /*
   unsigned long sdram_size, progress_inc, i, j, tmp, noErrors = 0;
   volatile unsigned long *sdram = SDRAM;
+  */
   /////////
   
   // switch to osc0 for main clock
@@ -239,11 +239,11 @@ int main (void) {
   // Wait for a card to be inserted
   print_dbg("\r\nwaiting for SD card... ");
 
-  screen_string(0, 0, "waiting for card...", 2); refresh=1;
+  screen_line(0, 0, "waiting for card...", 2); refresh=1;
   while (!sd_mmc_spi_mem_check()) {
     waitForCard++;
   }
-  screen_string(0, 0, "card detected.", 2); refresh=1;
+  screen_line(0, 0, "card detected.", 2); refresh=1;
 
   // set up file navigation using available drives
   init_files();
@@ -251,9 +251,6 @@ int main (void) {
   // list files to USART
   files_list();
 
-  // load blackfin from first .ldr file in filesystem
-  load_bfin_sdcard_test();
-  print_dbg("loaded dsp program.\n\r");
 #endif 
 
   // send ADC config
@@ -261,13 +258,13 @@ int main (void) {
   init_app_timers();
 
   print_dbg("starting event loop.\n\r");
-  screen_string_squeeze(0, 0, "ALEPH hardware initialized.", 2); 
-  screen_string_squeeze(0, 0, "any key to begin BEES. -FFF", 2); refresh=1;
+  screen_line(0, 0, "ALEPH hardware initialized.", 2); 
+  screen_line(0, FONT_CHARH, "press FN1 key to begin BEES.", 2); refresh=1;
   
   ////////
   /// SDRAM test
 
-
+  /*
   sdram_size = SDRAM_SIZE >> 2;
   print_dbg("\x0CSDRAM size: ");
   print_dbg_ulong(SDRAM_SIZE >> 20);
@@ -312,24 +309,20 @@ int main (void) {
   print_dbg("\rSDRAM tested: ");
   print_dbg_ulong(noErrors);
   print_dbg(" corrupted word(s)       \r\n");
-
+*/
   ////////
 
 
 // event loop
     while(1) {
+      check_debug_events();
       check_events();
     }
 }
 
 // wait for a button press to initialize 
 U8 check_init(void) {
- 
-
   if(initFlag) {
-
-    print_dbg( "hit manual-init routine\n");
-
     // initialize BEES components
     net_init();
     menu_init();
@@ -337,10 +330,10 @@ U8 check_init(void) {
     scene_init();
 
 #ifndef SKIPSD
+    // load the default DSP
+    load_bfin_sdcard_test();   
     // get default parameters
     report_params();
-    // load the default DSP
-    load_bfin_sdcard_test();
     // load scene 0
     //...
 #endif
@@ -357,6 +350,10 @@ static void report_params(void) {
   ParamDesc pdesc;
   u8 np, i;
   np = bfin_get_num_params();
+  
+  print_dbg("\r\nnumparams: ");
+  print_dbg_ulong(np);
+
   if(np > 0) {
     net_clear_params();
     for(i=0; i<np; i++) {
@@ -366,46 +363,67 @@ static void report_params(void) {
   }
 }
 
-    /*
-static void report_params(void) {
-  //U8 col;
+void check_debug_events(void) {
+  static event_t e;
+  static int c;
 
-  U8 i;
+  e.eventType = kNumEvents;
 
-  print_dbg("\n\requesting parameters..."); 
-  numParams =  bfin_get_num_params();
-  print_dbg("done.\n\r");
+  if(usart_test_hit(DBG_USART)) {
+    usart_read_char(DBG_USART, &c);
+    
+    print_dbg("\r\ndbg: ");
+    print_dbg_ulong(c);
 
-  for(i=0; i<numParams; i++) {
-    bfin_get_param_desc(i,&( paramDesc[i]));
-    paramVal[i].asFloat = paramDesc[i].min;
+    switch(c) {
+    case '-':
+      e.eventType = kEventEncoder0;
+      e.eventData = -1;
+      break;
+    case '=':
+      e.eventType = kEventEncoder0;
+      e.eventData = 1;
+      break;
+    case '[':
+      e.eventType = kEventEncoder1;
+      e.eventData = -1;
+      break;
+    case ']':
+      e.eventType = kEventEncoder1;
+      e.eventData = 1;
+      break;
+    case ';':
+      e.eventType = kEventEncoder2;
+      e.eventData = -1;
+      break;
+    case '\'':
+      e.eventType = kEventEncoder2;
+      e.eventData = 1;
+      break;
+    case '.':
+      e.eventType = kEventEncoder3;
+      e.eventData = -1;
+      break;
+    case '/':
+      e.eventType = kEventEncoder3;
+      e.eventData = 1;
+      break;
+    case 'z':
+      e.eventType = kEventSwitchDown0;
+      break;
+    case 'x':
+      e.eventType = kEventSwitchDown1;
+      break;
+    case 'c':
+      e.eventType = kEventSwitchDown2;
+      break;
+    case 'v':
+      e.eventType = kEventSwitchDown3;
+      break;
+    }
+
+    if(e.eventType != kNumEvents) {
+      post_event(&e);
+    }
   }
-  refresh_params();
-
-  
-    print_dbg(desc.label);
-    print_dbg("\r\n");
-b    print_dbg(desc.unit);
-    print_dbg("\r\n");
-  
 }
-
-static void refresh_params(void) {
-  u8 i, col, line;
-  for(i=0; i<numParams; i++) {
-    line = FONT_CHARH * (i);
-    //screen_blank_line(0, line);
-    col = screen_string_sqapplicationvoid ueeze(0, line, paramDesc[i].label, 0xf);
-    col++;
-    col = screen_string_squeeze(col, line, " : ", 0xf);
-    col++;
-    col = screen_float(col, line, paramVal[i].asFloat, 0xf);
-    col++;
-    col = screen_string_squeeze(col, line, " ", 0xf);
-    col++;
-    col = screen_string_squeeze(col, line, paramDesc[i].unit, 0x0f);
-    //if(i == sel) { screen_hilite_line(0, line, 0x01); }
-    refresh = 1;
-  }
-}
-*/

@@ -67,11 +67,11 @@ void load_bfin_sdcard_test(void) {
   }
   // get size
   size = nav_file_lgt();
-  print_dbg( "\r\n found .ldr file: ");
-  print_dbg( name_buf);
-  print_dbg( "\r\n size: ");
-  print_dbg_ulong( size);
-  print_dbg( "\r\n loading...");
+  //  print_dbg( "\r\n found .ldr file: ");
+  //  print_dbg( name_buf);
+  //  print_dbg( "\r\n size: ");
+  //  print_dbg_ulong( size);
+  //  print_dbg( "\r\n loading...");
   if (size > 0) {
     // allocate RAM buffer
     load_buf = (char*)malloc( size );
