@@ -8,8 +8,8 @@
 #define _BF533_CORE_MODULE_H_
 
 #include "module_common.h"
+#include "param_common.h"
 #include "types.h"
-#include "param.h"
 
 #define SDRAM_ADDRESS 0x00000000
 #define SDRAM_SIZE    0x07ffffff
@@ -19,7 +19,7 @@
 //-----------------------
 //---- module data
 typedef struct _moduleData {
-  char name[MODULE_NAME_LENGTH];
+  char name[MODULE_NAME_LEN];
   ParamDesc* paramDesc;
   ParamData* paramData;
   u16 numParams;

@@ -15,8 +15,7 @@
 #include "conf_aleph.h"
 #include "global.h"
 #include "param.h"
-//#include "protocol.h"
-#include "protocol_dumb.h"
+#include "protocol.h"
 #include "types.h"
 #include "bfin.h"
 

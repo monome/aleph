@@ -9,7 +9,7 @@
 #define _ALEPH_BFIN_OSC2_H_
 
 #include "module.h"
-#include "param.h"
+#include "param_common.h"
 #include "types.h"
 
 //#define OSC_SAMPLERATE 48000

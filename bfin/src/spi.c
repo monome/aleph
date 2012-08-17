@@ -1,7 +1,7 @@
 #include "module.h"
 //#include "protocol.h"
-#include "param.h"
-#include "protocol_dumb.h"
+#include "param_common.h"
+#include "protocol.h"
 #include "types.h"
 #include "util.h"
 #include "spi.h"
@@ -286,7 +286,7 @@ u8 spi_process(u8 rx) {
     return moduleData->name[10];
     break;
   case eModuleName10 :
-    byte = eModuleName11
+    byte = eModuleName11;
     return moduleData->name[11];
     break;
   case eModuleName11 :

@@ -271,9 +271,15 @@ void screen_hl_line(U16 x, U16 y, U8 a, S8 len) {
 // draw a line and blank to end
 U8 screen_line(U16 x, U16 y, char *str, U8 hl) {
   // FIXME
-    hl = ( (hl << 1) & 0xf);
+  hl = ( (hl << 1) & 0xf);
   //  if (hl ) { hl =0xf;a }
+
   x = screen_string(x, y, str, hl);
   screen_blank_line(x, y);
+
+  print_dbg("\r\n");
+  if(hl > 2) { print_dbg("__"); }
+  print_dbg(str);
+
   return NCOLS;
 }
