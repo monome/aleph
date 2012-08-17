@@ -3,6 +3,7 @@
 #include "gpio.h"
 #include "intc.h"
 #include "pdca.h"
+#include "print_funcs.h"
 #include "sd_mmc_spi.h"
 #include "tc.h"
 // aleph
@@ -148,18 +149,22 @@ static void irq_port1_line0(void) {
   // ...and switches 0-3
   if(gpio_get_pin_interrupt_flag(SW0_PIN)) {
     process_sw(0);
+    print_dbg( "  irq:sw:0" );
     gpio_clear_pin_interrupt_flag(SW0_PIN);
   }
   if(gpio_get_pin_interrupt_flag(SW1_PIN)) {
     process_sw(1);
+    print_dbg( "  irq:sw:1" );
     gpio_clear_pin_interrupt_flag(SW1_PIN);
   }
   if(gpio_get_pin_interrupt_flag(SW2_PIN)) {
     process_sw(2);
+    print_dbg( "  irq:sw:2" );
     gpio_clear_pin_interrupt_flag(SW2_PIN);
   }
   if(gpio_get_pin_interrupt_flag(SW3_PIN)) {
     process_sw(3);
+    print_dbg( "  irq:sw:3" );
     gpio_clear_pin_interrupt_flag(SW3_PIN);
   }
 

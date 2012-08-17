@@ -30,10 +30,21 @@ static event_t e;
 //----- callbacks
 // screen refresh callback
 static void screen_timer_callback(int tag) {  
+  
+  //// PROFILE
+  /*
+  static U64 cycles = 0;
+  static U64 cyclesNow = 0;
+  
+  cyclesNow = Get_system_register(AVR32_COUNT);
+  print_dbg(" \lcycles:"); print_dbg_ulong(cyclesNow - cycles);
+  cycles = cyclesNow;
+  */
+
   if(refresh) {
     e.eventType = kEventRefresh;
     post_event(&e);
-    refresh = 0;
+    //  refresh = 0;
   }
 }
 
@@ -66,7 +77,9 @@ static void adc_timer_callback(int tag) {
 
 //====== external
 void init_app_timers(void) {
-  set_timer(&screenTimer, eScreenTimerTag, 5,   &screen_timer_callback, 1);
-  set_timer(&encTimer,    eEncTimerTag,    2,   &enc_timer_callback,    1);
-  set_timer(&adcTimer,    eAdcTimerTag,    5,   &adc_timer_callback,    1);
+  set_timer(&screenTimer, eScreenTimerTag, 15,   &screen_timer_callback, 1);
+  set_timer(&encTimer,    eEncTimerTag,    5,   &enc_timer_callback,    1);
+  //  set_timer(&adcTimer,    eAdcTimerTag,    5,   &adc_timer_callback,    1);
+  // test:
+  set_timer(&adcTimer,    eAdcTimerTag,    5000,   &adc_timer_callback,    1);
 }

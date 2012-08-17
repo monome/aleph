@@ -19,7 +19,8 @@
 #define SCREEN_H_1 15
 #define SCREEN_H_2 14
 // which line to center/highlight for editing
-#define SCREEN_ROW_CENTER 7
+// FIXME: breaking this for avr32
+///#define SCREEN_ROW_CENTER 7
 
 //---- external function declarations
 // initialize low-level user interface (screen, keys)

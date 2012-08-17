@@ -1,5 +1,5 @@
 /* main,c
- * aleph-avr32
+h * aleph-avr32
  *
  */
 
@@ -11,6 +11,7 @@
 #include "board.h"
 #include "conf_sd_mmc_spi.h"
 #include "compiler.h"
+#include "cycle_counter.h"
 #include "ctrl_access.h"
 #include "util.h"
 #include "gpio.h"
@@ -18,6 +19,7 @@
 #include "pdca.h"
 #include "power_clocks_lib.h"
 #include "print_funcs.h"
+#include "sdramc.h"
 #include "sysclk.h"
 //// aleph
 // bees
@@ -43,6 +45,9 @@
 #include "interrupts.h"
 #include "timers.h"
 
+// DEBUG: skip sdcard setuo
+#define SKIPSD 1
+
 //=========================================
 //==== static variables
 static u8 initFlag = 1;
@@ -61,14 +66,19 @@ static void report_params(void);
 //------- define
 // app event loop
 static void check_events(void) {
-  static uiKey_t key = eKeyDummy;
-  static event_t e;
+  static event_t e;  
+  uiKey_t key;
+  
+  static U64 cycles = 0;
+  static U64 cyclesNow = 0;
+
+  key = eKeyDummy;
   
   if( get_next_event(&e) ) {
+
     switch(e.eventType) {
       
     case kEventEncoder0:
-      if (check_init()) { return; }
       if(e.eventData > 0) {
 	key = eKeyEncUpA;
       } else {
@@ -77,7 +87,6 @@ static void check_events(void) {
       break;
 
     case kEventEncoder1:
-      if (check_init()) { return; }
       if(e.eventData > 0) {
 	key = eKeyEncUpB;
       } else {
@@ -86,7 +95,6 @@ static void check_events(void) {
       break;
 
     case kEventEncoder2:
-      if (check_init()) { return; }
       if(e.eventData > 0) {
 	key = eKeyEncUpC;
       } else {
@@ -95,7 +103,6 @@ static void check_events(void) {
       break;
 
     case kEventEncoder3:
-      if (check_init()) { return; }
       if(e.eventData > 0) {
 	key = eKeyEncUpD;
       } else {
@@ -108,7 +115,6 @@ static void check_events(void) {
       key = eKeyFnDownA;
       break;
     case kEventSwitchUp0:
-      if (check_init()) { return; }
       key = eKeyFnUpA;
       break;
 
@@ -117,7 +123,6 @@ static void check_events(void) {
       key = eKeyFnDownB;
       break;
     case kEventSwitchUp1:
-      if (check_init()) { return; }
       key = eKeyFnUpB;
       break;
       
@@ -126,7 +131,6 @@ static void check_events(void) {
       key = eKeyFnDownC;
       break;
     case kEventSwitchUp2:
-      if (check_init()) { return; }
       key = eKeyFnUpC;
       break;
       
@@ -135,26 +139,38 @@ static void check_events(void) {
       key = eKeyFnDownD;
       break;
     case kEventSwitchUp3:
-      if (check_init()) { return; }
       key = eKeyFnUpD;
       break;
 
     case kEventAdc0:
-      print_dbg("\r\n got adc0 event: ");
-      print_dbg_ulong(e.eventData);
+      // print_dbg("\r\n got adc0 event: ");
+      //      print_dbg_ulong(e.eventData);
       screen_int(0, FONT_CHARH * (NROWS - 2), e.eventData, 0xf);
       refresh = 1;
       break;
 
     case kEventRefresh:
-      screen_refresh();
-      refresh = 0;
+      if(refresh == 1) {
+	screen_refresh();
+	//	print_dbg("\nrefresh");
+		refresh = 0;
+      }
       break;
-
-
-    if(key != eKeyDummy) { menu_handleKey(key); }
-
     } // switch event
+
+    if(key != eKeyDummy) { 
+      // print_dbg("  key: ");
+      // print_dbg_ulong(key);
+      cycles = Get_system_register(AVR32_COUNT);
+
+      menu_handleKey(key); 
+      
+      cyclesNow = Get_system_register(AVR32_COUNT);
+
+      print_dbg(" event:"); print_dbg_ulong(e.eventType);
+      print_dbg(" cycles:"); print_dbg_ulong(cyclesNow - cycles);
+      refresh = 1;
+    }
   } // if event
 }
 
@@ -163,6 +179,12 @@ static void check_events(void) {
 int main (void) {
   U32 waitForCard = 0;
   volatile avr32_tc_t *tc = APP_TC;
+
+  /////////
+  /// SDRAM test
+  unsigned long sdram_size, progress_inc, i, j, tmp, noErrors = 0;
+  volatile unsigned long *sdram = SDRAM;
+  /////////
   
   // switch to osc0 for main clock
   //  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP); 
@@ -213,6 +235,7 @@ int main (void) {
 
   print_dbg("\r\nALEPH\r\n ");
 
+#ifndef SKIPSD
   // Wait for a card to be inserted
   print_dbg("\r\nwaiting for SD card... ");
 
@@ -227,21 +250,72 @@ int main (void) {
 
   // list files to USART
   files_list();
-  
+
   // load blackfin from first .ldr file in filesystem
   load_bfin_sdcard_test();
-
   print_dbg("loaded dsp program.\n\r");
+#endif 
 
   // send ADC config
   init_adc();
-
   init_app_timers();
 
   print_dbg("starting event loop.\n\r");
-  screen_string(0, 0, "ALEPH hardware initialized.", 2); 
-  screen_string(0, 0, "use any key to begin BEES.", 2); refresh=1;
+  screen_string_squeeze(0, 0, "ALEPH hardware initialized.", 2); 
+  screen_string_squeeze(0, 0, "any key to begin BEES. -FFF", 2); refresh=1;
   
+  ////////
+  /// SDRAM test
+
+
+  sdram_size = SDRAM_SIZE >> 2;
+  print_dbg("\x0CSDRAM size: ");
+  print_dbg_ulong(SDRAM_SIZE >> 20);
+  print_dbg(" MB\r\n");
+
+  // Initialize the external SDRAM chip.
+  sdramc_init(FMCK_HZ);
+  print_dbg("SDRAM initialized\r\n");
+
+  // Determine the increment of SDRAM word address requiring an update of the
+  // printed progression status.
+  progress_inc = (sdram_size + 50) / 100;
+  
+  // Fill the SDRAM with the test pattern.
+  for (i = 0, j = 0; i < sdram_size; i++)
+  {
+    if (i == j * progress_inc)
+    {
+       print_dbg("\rFilling SDRAM with test pattern: ");
+      print_dbg_ulong(j++);
+      print_dbg_char('%');
+    }
+    sdram[i] = i;
+  }
+   print_dbg("\rSDRAM filled with test pattern       \r\n");
+
+  // Recover the test pattern from the SDRAM and verify it.
+  for (i = 0, j = 0; i < sdram_size; i++)
+  {
+    if (i == j * progress_inc)
+    {
+      print_dbg("\rRecovering test pattern from SDRAM: ");
+      print_dbg_ulong(j++);
+      print_dbg_char('%');
+    }
+    tmp = sdram[i];
+    if (tmp != i)
+    {
+      noErrors++;
+    }
+  }
+  print_dbg("\rSDRAM tested: ");
+  print_dbg_ulong(noErrors);
+  print_dbg(" corrupted word(s)       \r\n");
+
+  ////////
+
+
 // event loop
     while(1) {
       check_events();
@@ -250,7 +324,11 @@ int main (void) {
 
 // wait for a button press to initialize 
 U8 check_init(void) {
+ 
+
   if(initFlag) {
+
+    print_dbg( "hit manual-init routine\n");
 
     // initialize BEES components
     net_init();
@@ -258,11 +336,16 @@ U8 check_init(void) {
     preset_init();
     scene_init();
 
+#ifndef SKIPSD
     // get default parameters
     report_params();
-
+    // load the default DSP
+    load_bfin_sdcard_test();
     // load scene 0
-   
+    //...
+#endif
+
+    refresh = 1;
     initFlag = 0;
     return 1;
   } else {
@@ -273,7 +356,6 @@ U8 check_init(void) {
 static void report_params(void) {
   ParamDesc pdesc;
   u8 np, i;
-
   np = bfin_get_num_params();
   if(np > 0) {
     net_clear_params();
@@ -303,7 +385,7 @@ static void report_params(void) {
   
     print_dbg(desc.label);
     print_dbg("\r\n");
-    print_dbg(desc.unit);
+b    print_dbg(desc.unit);
     print_dbg("\r\n");
   
 }

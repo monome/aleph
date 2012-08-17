@@ -376,25 +376,35 @@ io_t net_inc_in_value(s32 inIdx, io_t inc) {
 }
 
 // toggle preset inclusion for input
-u8 net_toggle_in_preset(u32 inIdx) {
-  net.ins[inIdx].preset ^= 1;
-  return net.ins[inIdx].preset;
+u8 net_toggle_in_preset(u32 id) {
+  net.ins[id].preset ^= 1;
+  return net.ins[id].preset;
 }
 
 // toggle preset inclusion for output
-u8 net_toggle_out_preset(u32 outIdx) {
-  net.outs[outIdx].preset ^= 1;
-  return net.outs[outIdx].preset;
+u8 net_toggle_out_preset(u32 id) {
+  net.outs[id].preset ^= 1;
+  return net.outs[id].preset;
+}
+
+// set preset inclusion for input
+void net_set_in_preset(u32 id, u8 val) {
+  net.ins[id].preset = val;
+}
+
+// set preset inclusion for output
+void net_set_out_preset(u32 outIdx, u8 val) {
+ net.outs[outIdx].preset = val;
 }
 
 // get preset inclusion for input
-u8 net_get_in_preset(u32 inIdx) {
-  return net.ins[inIdx].preset;
+u8 net_get_in_preset(u32 id) {
+  return net.ins[id].preset;
 }
 
 // get preset inclusion for output
-u8 net_get_out_preset(u32 outIdx) {
-  return net.outs[outIdx].preset;
+u8 net_get_out_preset(u32 id) {
+  return net.outs[id].preset;
 }
 
 //------------------------------------

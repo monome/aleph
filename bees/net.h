@@ -96,6 +96,10 @@ void net_disconnect(u32 outIdx);
 u8 net_toggle_in_preset(u32 inIdx);
 // toggle preset inclusion for output
 u8 net_toggle_out_preset(u32 outIdx);
+// set preset inclusion for input
+void net_set_in_preset(u32 inIdx, u8 val);
+// set preset inclusion for output
+void net_set_out_preset(u32 outIdx, u8 val);
 // get preset inclusion for input
 u8 net_get_in_preset(u32 inIdx);
 // get preset inclusion for output

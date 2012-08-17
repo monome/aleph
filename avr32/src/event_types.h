@@ -8,24 +8,24 @@
 #define _EVENT_TYPES_H_
 
 typedef enum {
-  kEventSwitchDown0,
-  kEventSwitchUp0,
-  kEventSwitchDown1,
-  kEventSwitchUp1,
-  kEventSwitchDown2,
-  kEventSwitchUp2,
-  kEventSwitchDown3,
-  kEventSwitchUp3,
-  kEventEncoder0,
-  kEventEncoder1,
-  kEventEncoder2,
-  kEventEncoder3,
-  kEventAdc0,
-  kEventAdc1,
-  kEventAdc2,
-  kEventAdc3,
-  kEventRefresh,
-  kNumEvents
+  kEventSwitchDown0 = 0,
+  kEventSwitchUp0 = 1,
+  kEventSwitchDown1 = 2,
+  kEventSwitchUp1 = 3,
+  kEventSwitchDown2 = 4,
+  kEventSwitchUp2 = 5,
+  kEventSwitchDown3 = 6,
+  kEventSwitchUp3 = 7,
+  kEventEncoder0 = 8,
+  kEventEncoder1 = 9,
+  kEventEncoder2 = 10,
+  kEventEncoder3 = 11,
+  kEventAdc0 = 12,
+  kEventAdc1 = 13,
+  kEventAdc2 = 14,
+  kEventAdc3 = 15,
+  kEventRefresh = 16,
+  kNumEvents = 17
 } eEventType;
 
 #endif

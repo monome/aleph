@@ -17,7 +17,9 @@
 #include "font.h"
 
 //-----------------------------
-//---- static variables
+//---- variables
+const U8 kScreenLines[CHAR_ROWS] = { 0, 8, 16, 24, 32, 40, 48, 56 };
+
 // screen buffer
 static U8 screen[GRAM_BYTES];
 
@@ -191,8 +193,9 @@ U8 screen_char_squeeze(U16 col, U16 row, char gl, U8 a) {
   return xnum;
 }
 
+
 // draw a string with fixed spacing
-U8 screen_string(U16 x, U16 y, char *str, U8 a) {
+U8 screen_string_fixed(U16 x, U16 y, char *str, U8 a) {
   while(*str != 0) {
     x += screen_char(x, y, *str, a) + 1;
     str++;
@@ -210,6 +213,11 @@ U8 screen_string_squeeze(U16 x, U16 y, char *str, U8 a) {
     str++;
   }
   return x;
+}
+
+// draw a string (default) 
+inline U8 screen_string(U16 x, U16 y, char *str, U8 a) {
+  return screen_string_squeeze(x, y, str, a);
 }
 
 // print a formatted integer
@@ -263,7 +271,8 @@ void screen_hl_line(U16 x, U16 y, U8 a, S8 len) {
 // draw a line and blank to end
 U8 screen_line(U16 x, U16 y, char *str, U8 hl) {
   // FIXME
-  hl = ( (hl << 1) & 0xf); 
+    hl = ( (hl << 1) & 0xf);
+  //  if (hl ) { hl =0xf;a }
   x = screen_string(x, y, str, hl);
   screen_blank_line(x, y);
   return NCOLS;

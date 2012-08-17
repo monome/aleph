@@ -28,6 +28,7 @@ TARGET = aleph.elf
 # List of C source files.
 CSRCS = \
 	avr32/boards/evk1100/led.c                         \
+	avr32/drivers/ebi/sdramc/sdramc.c                         \
 	avr32/drivers/flashc/flashc.c                      \
 	avr32/drivers/gpio/gpio.c                          \
 	avr32/drivers/intc/intc.c                          \
@@ -79,7 +80,9 @@ ASSRCS = \
 INC_PATH = \
        avr32/boards                                       \
        avr32/boards/evk1100                               \
+	avr32/components/memory/sdram			 \
 	avr32/drivers/cpu/cycle_counter/                 \
+	avr32/drivers/ebi/sdramc/                            \
        avr32/drivers/flashc                               \
        avr32/drivers/gpio                                 \
        avr32/drivers/intc                                 \
@@ -119,7 +122,9 @@ DBGFLAGS =
 
 # Application optimization used during compilation and linking:
 # -O0, -O1, -O2, -O3 or -Os
-OPTIMIZATION = -O2
+# OPTIMIZATION = -O2
+OPTIMIZATION = -O3
+
 
 # Extra flags to use when archiving.
 ARFLAGS = 
