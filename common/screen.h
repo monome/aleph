@@ -26,8 +26,8 @@
 #define GRAM_BYTES 4096 // 2 pixels per byte
 // how many lines of text
 #define CHAR_ROWS 8  // NROWS / FONT_CHARH
-//#define CHAR_COLS 16 // NCOLS / FONT_CHARW
-#define CHAR_COLS 32
+// arbitrary maximum for protportionally spaced line drawing
+#define CHAR_COLS 42
 // center row of text
 #define SCREEN_ROW_CENTER 3
 
@@ -51,7 +51,7 @@ void init_oled(void);
 void screen_pixel(U16 x, U16 y, U8 a);
 //// all the character-drawing routines now return last used column position
 // draw a single character glyph with fixed spacing
-U8 screen_char(U16 x, U16 y, char c, U8 a);
+U8 screen_char_fixed(U16 x, U16 y, char c, U8 a);
 // draw a single glyph with proportional spacing
 U8 screen_char_squeeze(U16 x, U16 y, char c, U8 a);
 // draw a string with fixed spacing

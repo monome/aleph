@@ -1,10 +1,12 @@
-/* oled.c
-   ui test
+/* screen.c
+   avr32
    aleph
 */
 
 // std
 #include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 // ASF
 #include "gpio.h"
 #include "usart.h"
@@ -159,7 +161,7 @@ U8 screen_get_pixel(U8 x, U8 y) {
 }
 
 // draw a single character glyph with fixed spacing
-U8 screen_char(U16 col, U16 row, char gl, U8 a) {
+U8 screen_char_fixed(U16 col, U16 row, char gl, U8 a) {
   static U8 x, y;
   for(y=0; y<FONT_CHARH; y++) {
     for(x=0; x<FONT_CHARW; x++) {
@@ -197,7 +199,7 @@ U8 screen_char_squeeze(U16 col, U16 row, char gl, U8 a) {
 // draw a string with fixed spacing
 U8 screen_string_fixed(U16 x, U16 y, char *str, U8 a) {
   while(*str != 0) {
-    x += screen_char(x, y, *str, a) + 1;
+    x += screen_char_fixed(x, y, *str, a) + 1;
     str++;
   }
   return x;
@@ -224,6 +226,7 @@ inline U8 screen_string(U16 x, U16 y, char *str, U8 a) {
 U8 screen_int(U16 x, U16 y, S32 i, U8 a) {
   static char buf[32];
   snprintf(buf, 32, "%d", (int)i);
+  //buf = ultoa(int);
   return screen_string_squeeze(x, y, buf, a);
 }
 
@@ -254,7 +257,7 @@ void screen_blank_line(U16 x, U16 y) {
       screen_pixel(i, j, 0);
     }
   }
-}
+ }
 
 // highlight a line
 void screen_hl_line(U16 x, U16 y, U8 a, S8 len) {

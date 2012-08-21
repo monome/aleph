@@ -2,7 +2,7 @@
 ;; --------------------------------------------------------------------------
 ;; Desktop File for Emacs
 ;; --------------------------------------------------------------------------
-;; Created Thu Aug 16 02:35:37 2012
+;; Created Fri Aug 17 16:56:06 2012
 ;; Desktop file format version 206
 ;; Emacs version 23.3.1
 
@@ -13,9 +13,141 @@
 (setq search-ring '("lerp" "LIB" "((leaf"))
 (setq regexp-search-ring nil)
 (setq register-alist nil)
-(setq file-name-history '("~/aleph/bfin/modules/osc2/osc2.h" "~/aleph/bfin/src/spi.c"))
+(setq file-name-history '("~/aleph/avr32/src/bfin.c" "~/aleph/avr32/src/files.c" "~/aleph/tests/spi_boot/avr32/src/config.h" "~/aleph/bfin/core.mk" "~/aleph/bfin/modules/osc2/Makefile" "~/aleph/tests/spi_boot/avr32/src/init.c" "~/aleph/tests/spi_boot/avr32/src/main.c" "~/aleph/avr32/src/bfin.c" "~/aleph/avr32/conf/conf_aleph.h" "~/aleph/tests/spi_boot/avr32/src/init.c" "~/aleph/tests/spi_boot/avr32/src/main.c" "~/aleph/avr32/src/init.c" "~/aleph/avr32/src/files.c" "~/aleph/avr32/src/files.x" "~/aleph/avr32/src/bfin.c" "~/aleph/avr32/src/init.c" "~/aleph/avr32/src/bfin.c" "~/aleph/avr32/src/files.c" "~/aleph/avr32/" "~/aleph/bfin/modules/osc2/osc2.h" "~/aleph/bfin/src/spi.c"))
 
 ;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/bfin.c"
+  "bfin.c"
+  'c-mode
+  '(abbrev-mode)
+  692
+  '(570 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/tests/spi_boot/avr32/src/main.c"
+  "main.c<2>"
+  'c-mode
+  '(abbrev-mode)
+  1599
+  '(767 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/files.c"
+  "files.c"
+  'c-mode
+  '(abbrev-mode)
+  1542
+  '(1453 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/main.c"
+  "main.c"
+  'c-mode
+  '(abbrev-mode)
+  6373
+  '(6647 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/init.c"
+  "init.c"
+  'c-mode
+  '(abbrev-mode)
+  10025
+  '(9743 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/tests/spi_boot/avr32/src/init.c"
+  "init.c<2>"
+  'c-mode
+  '(abbrev-mode)
+  1156
+  '(815 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/conf/conf_aleph.h"
+  "conf_aleph.h"
+  'c-mode
+  '(abbrev-mode)
+  4459
+  '(4459 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/tests/spi_boot/avr32/src/config.h"
+  "config.h"
+  'c-mode
+  '(abbrev-mode)
+  265
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bfin/core.mk"
+  "core.mk"
+  'makefile-gmake-mode
+  nil
+  612
+  '(1014 nil)
+  nil
+  nil
+  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bfin/modules/osc2/Makefile"
+  "Makefile"
+  'makefile-gmake-mode
+  nil
+  784
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  nil
+  "avr32"
+  'dired-mode
+  nil
+  172
+  '(nil nil)
+  t
+  '("/home/emb/aleph/avr32/")
+  nil)
+
+(desktop-create-buffer 206
+  nil
+  "src"
+  'dired-mode
+  nil
+  2415
+  '(nil nil)
+  t
+  '("/home/emb/aleph/avr32/src/")
+  nil)
+
 (desktop-create-buffer 206
   "/home/emb/aleph/bfin/modules/osc2/osc2.h"
   "osc2.h"

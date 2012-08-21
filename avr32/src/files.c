@@ -25,6 +25,8 @@
 static char name_buf[MAX_FILE_PATH_LENGTH];
 // dynamically-allocated memory for bfin load
 static char * load_buf;
+// TEST: malloc fail? yep
+//static char load_buf[1024];
 
 //-------------------------
 //----- function def
@@ -67,14 +69,17 @@ void load_bfin_sdcard_test(void) {
   }
   // get size
   size = nav_file_lgt();
-  //  print_dbg( "\r\n found .ldr file: ");
-  //  print_dbg( name_buf);
-  //  print_dbg( "\r\n size: ");
-  //  print_dbg_ulong( size);
+  print_dbg( "\r\n found .ldr file: ");
+  print_dbg( name_buf);
+  print_dbg( "\r\n size: ");
+  print_dbg_ulong( size);
+
+
   //  print_dbg( "\r\n loading...");
   if (size > 0) {
     // allocate RAM buffer
     load_buf = (char*)malloc( size );
+
     // copy file to buf
     file_open(FOPEN_MODE_R);
     // While the end isn't reached

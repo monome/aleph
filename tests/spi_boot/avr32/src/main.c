@@ -68,9 +68,7 @@ int main(void) {
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   while(byte < ldrBytes) {
     // pause if hwait is held high by the blackfin
-    while(hwait > 0) {
-      ;;
-    }
+    while(hwait > 0) { ;; }
     spi_write(BFIN_SPI, ldrData[byte]);
     byte++;
   }

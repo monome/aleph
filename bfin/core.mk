@@ -20,7 +20,7 @@ INC += -I$(core_srcdir) -I$(core_dir)../common/
 LDFLAGS += -mcpu=$(CPU)
 # LDRFLAGS += --initcode $(core_objdir)init.o
 LDRFLAGS += --bits 16 --dma 8
-LDRFLAGS += --bmode spi_slave --port F --gpio 11
+LDRFLAGS += --bmode spi_slave --port F --gpio 13
 LDRFLAGS += --verbose
 
 core_target: $(patsubst %.o, $(core_objdir)%.o, $(core_obj))

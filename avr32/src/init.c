@@ -32,7 +32,7 @@ const char dummy_data[] =
 #include "dummy.h"
   ;
 
-// Local RAM buffer for the example to store data received from the SD/MMC card
+// Local RAM buffer to store data received from the SD/MMC card
 volatile char ram_buffer[1000];
 
 // PDCA Channel pointer
@@ -178,7 +178,10 @@ void init_sd_mmc_resources(void) {
     .reg = SD_MMC_SPI_NPCS,
     .baudrate = SD_MMC_SPI_MASTER_SPEED, // Defined in conf_sd_mmc_spi.h.
     .bits = SD_MMC_SPI_BITS, // Defined in conf_sd_mmc_spi.h.
-    .spck_delay = 0, .trans_delay = 0, .stay_act = 1, .spi_mode = 0,
+    .spck_delay = 0, 
+    .trans_delay = 0, 
+    .stay_act = 1, 
+    .spi_mode = 0,
     .modfdis = 1 };
 
   // Assign I/Os to SPI.
@@ -246,17 +249,17 @@ void init_bfin_resources(void) {
   
   spi_options_t spiOptions = {
     .reg          = BFIN_SPI_NPCS,
-    .baudrate     = 5000000,
+    .baudrate     = 20000000,
     .bits         = 8,
     .spck_delay   = 0,
-    //  .trans_delay  = 0,
+    .trans_delay  = 0,
     //// FIXME:
     //// trans_delay is to allow bfin calculation time between spi irqs
     //// (and acommodating audio irqs!)
     //// would be better to delay maunally
     //// so bfin boot can stay fast
     //// or possibly set up 2nd register with same chipselect?
-    .trans_delay  = 20,
+    //    .trans_delay  = 20,
     .stay_act     = 1,
     .spi_mode     = 1,
     .modfdis      = 1
@@ -283,7 +286,7 @@ void init_bfin_resources(void) {
   
   // add a second chip register for the serial ADC
   // chip select 1 is AD7923 12-bit ADC
-  spiOptions.reg = 1;
+  spiOptions.reg = ADC_SPI_NPCS;
   spiOptions.baudrate = 10000000;	// range in datasheet is 10kHz - 20MHz
   spiOptions.bits = 16;		// 1 bit leading zero, 3 channel address, 12 data 
   spiOptions.spi_mode = 2;	// sample on falling edge, idle high

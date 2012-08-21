@@ -17,14 +17,12 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "font.h"
 #include "ncurses.h"
-
-
 #include "screen.h"
-
-
 #include "types.h"
 #include "menu.h"
+
 // #include "ui.h"
 
 //---- defines
@@ -47,10 +45,15 @@
 #define KEY_FN_D_UP     'f'
 #define KEY_FN_D_DOWN   'v'
 
-//---- static vars
+//-----------------------------
+//---- variables
+const U8 kScreenLines[CHAR_ROWS] = { 0, 8, 16, 24, 32, 40, 48, 56 };
 
-// line buffer
-static char linebuf[CHAR_COLS]; // line buffer
+// pixel buffer
+static U8 screen[GRAM_BYTES];
+static U8 text[CHAR_ROWS][CHAR_COLS];
+
+//static char linebuf[CHAR_COLS]; // line buffer
 
 //---- external function definitions
 
@@ -64,8 +67,9 @@ void ui_init(void) {
   noecho();
   curs_set(0); // invisible cursor
   
-  start_color();
+  //  start_color();
 
+  /*
   // weird hacky color definitions to make an 8-point grayscale kinda
   if(0) { // (can_change_color()) {
     for(i=0; i<8; i++) {
@@ -86,9 +90,10 @@ void ui_init(void) {
     init_pair(5, COLOR_RED, COLOR_BLACK);
     init_pair(6, COLOR_WHITE, COLOR_RED);
     //init_pair(7, COLOR_CYAN, COLOR_BLACK);
-    //init_pair(8, COLOR_CYAN, COLOR_MAGENTA);
-    
+    //init_pair(8, COLOR_CYAN, COLOR_MAGENTA);    
   }
+  */
+
 }
 
 // cleanup UI
@@ -174,16 +179,101 @@ u8 ui_loop(void) {
   return run;
 }
 
-// print a line of text
-/*
-void ui_println(u8 y, const char* str) {
- mvprintw(y, 0, str);
- refresh();
+////////////////////
+// drawing routines
+
+// zero one column in one glyph
+static void zero_col(U16 x, U16 y);
+static void zero_col(U16 x, U16 y) {
+  static U8 i;
+  for(i=0; i<FONT_CHARH; i++) {
+    screen_pixel(x, y+i, 0);
+  }
 }
-*/
+
+// draw a single pixel
+void screen_pixel(U16 x, U16 y, U8 a) {
+  static U32 pos;
+  // if (x >= NCOLS) return;
+  // if (y >= NROWS) return;
+  pos = (y * NCOLS_2) + (x>>1);
+  if (x%2) {
+    screen[pos] &= 0x0f;
+    screen[pos] |= (a << 4);
+  } else {
+    screen[pos] &= 0xf0;
+    screen[pos] |= (a & 0x0f);
+  }
+}
+
+// draw a single character glyph with fixed spacing
+U8 screen_char(U16 col, U16 row, char gl, U8 a) {
+  static U8 x, y;
+  for(y=0; y<FONT_CHARH; y++) {
+    for(x=0; x<FONT_CHARW; x++) {
+      if( (font_data[gl - FONT_ASCII_OFFSET].data[x] & (1 << y))) {
+	screen_pixel(x+col, y+row, a);
+      } else {
+	screen_pixel(x+col, y+row, 0);
+      }
+    }
+  }
+  return x+1;
+}
+
+
+// draw a single character glyph with proportional spacing
+U8 screen_char_squeeze(U16 col, U16 row, char gl, U8 a) {
+  static U8 y, x;
+  static U8 xnum;
+  static const glyph_t * g;
+  g = &(font_data[gl - FONT_ASCII_OFFSET]);
+  xnum = FONT_CHARW - g->first - g->last;
+  
+  for(y=0; y<FONT_CHARH; y++) {
+    for(x=0; x<xnum; x++) {
+      if( (g->data[x + g->first] & (1 << y))) {
+	screen_pixel(x + col, y + row, a);
+      } else {
+	screen_pixel(x + col, y + row, 0);
+      }
+    }
+  }
+  return xnum;
+}
+
+// draw a string with fixed spacing
+U8 screen_string_fixed(U16 x, U16 y, char *str, U8 a) {
+  while(*str != 0) {
+    x += screen_char(x, y, *str, a) + 1;
+    str++;
+  }
+  return x;
+}
+
+// draw a string with proportional spacing
+U8 screen_string_squeeze(U16 x, U16 y, char *str, U8 a) {
+  while(*str != 0) {
+    x += screen_char_squeeze(x, y, *str, a);
+    zero_col(x, y);
+    // extra pixel... TODO: maybe variable spacing here
+    x++;
+    str++;
+  }
+  return x;
+}
+
+// draw a string (default) 
+inline U8 screen_string(U16 x, U16 y, char *str, U8 a) {
+  return screen_string_squeeze(x, y, str, a);
+}
+////////////////////////
+
 
 // print some characters of text
 u8 screen_string(u16 x, u16 y, char* str, u8 hl) {
+  
+
   s8 l = 7 - hl;      // 8-point level of background
   if (l < 0) {l = 0;} 
   if (l > 7) {l = 7;}
@@ -215,4 +305,7 @@ u8 screen_line(u16 x, u16 y, char* str, u8 hl) {
   refresh();
   
   return CHAR_COLS;
+}
+
+void screen_refresh(void) {
 }

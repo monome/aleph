@@ -54,7 +54,6 @@ CSRCS = \
 	./src/events.c \
 	./src/encoders.c \
 	./src/files.c \
-	./src/font.c \
 	./src/init.c	\
 	./src/interrupts.c \
 	./src/main.c \
@@ -68,7 +67,10 @@ CSRCS = \
 	../bees/param.c \
 	../bees/preset.c \
 	../bees/redraw.c \
-	../bees/scene.c
+	../bees/scene.c \
+	../common/font.c \
+	../common/fix.c \
+	../common/libfixmath/fix16.c
 
 # List of assembler source files.
 ASSRCS = \
@@ -106,6 +108,7 @@ INC_PATH = \
 	../../aleph/avr32/conf \
 	../../aleph/common     \
 	../../aleph/bees       \
+	../../aleph/common/libfixmath
 
 # Additional search paths for libraries.
 LIB_PATH = 

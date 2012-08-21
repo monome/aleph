@@ -72,8 +72,8 @@ static void check_events(void) {
   static event_t e;  
   uiKey_t key;
   
-  static U64 cycles = 0;
-  static U64 cyclesNow = 0;
+  //static U64 cycles = 0;
+  //static U64 cyclesNow = 0;
 
   key = eKeyDummy;
   

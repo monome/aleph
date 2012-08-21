@@ -12,7 +12,8 @@
 #include "scene.h"
 #include "screen.h"
 #include "types.h"
-//#include "ui.h"
+
+#define SNPRINTF
 
 //------------------------
 //----- static variables
@@ -77,8 +78,11 @@ void redraw_ops(void) {
       
   // draw footer 
   // (new op type)
+#ifdef SNPRINTF
   snprintf(lineBuf, SCREEN_W, " + %s",
 	   op_registry[userOpTypes[newOpType]].name);
+#else
+#endif
   screen_line(0, kScreenLines[CHAR_ROWS - 2], lineBuf, 5);
   // (function labels)
   // don't allow deletion of system operators
@@ -125,7 +129,10 @@ void redraw_ins(void) {
   }    
 
   // draw the header
+#ifdef SNPRINTF
   snprintf(lineBuf, SCREEN_W, "PARAMS ");
+#else
+#endif
   screen_line(0, 0, lineBuf, 3);
 
   // draw footer 
@@ -173,14 +180,20 @@ void redraw_outs(void) {
   if(target == -1) {
     screen_line(0, kScreenLines[CHAR_ROWS - 2], "NO TARGET", 1);
   } else {
+#ifdef SNPRINTF
     snprintf(lineBuf, SCREEN_W, " -> %s/%s",
 	     net_op_name(net_in_op_idx(target)), net_in_name(target));
+#else
+#endif
     screen_line(0, kScreenLines[CHAR_ROWS - 2], lineBuf, 1);
   }
 
 
   // draw the header
+#ifdef SNPRINTF
   snprintf(lineBuf, SCREEN_W, "ROUTING");
+#else
+#endif
   screen_line(0, 0, lineBuf, 3);
 
   // (function labels)
@@ -248,7 +261,10 @@ void redraw_presets(void) {
   screen_line(0, kScreenLines[CHAR_ROWS - 1], "CLEAR COPY STORE RECALL", 3);
   
   // draw the header
+#ifdef SNPRINTF
   snprintf(lineBuf, SCREEN_W, "PRESETS");
+#else
+#endif
   screen_line(0, 0, lineBuf, 3);
 
 }
@@ -305,7 +321,10 @@ void redraw_scenes(void) {
 
   
   // draw the header
+#ifdef SNPRINTF
   snprintf(lineBuf, SCREEN_W, "SCENES");
+#else
+#endif
   screen_line(0, 0, lineBuf, 3);
 
   // draw footer 
@@ -319,14 +338,20 @@ void redraw_play(void) {
   u8 y, n;
   n = SCREEN_H_1;
   for(y = 1; y < SCREEN_H; y++ ) {
+#ifdef SNPRINTF
     snprintf(lineBuf, SCREEN_W, "p%d : %f",
 	     touchedParams[n].idx,
 	     touchedParams[n].val );
+#else
+#endif
     screen_line(0, kScreenLines[y], lineBuf, 1);
     n--;
   }
 // draw the header
+#ifdef SNPRINTF
   snprintf(lineBuf, SCREEN_W, "PLAY");
+#else
+#endif
   screen_line(0, 0, lineBuf, 6);
 
 }
@@ -346,13 +371,17 @@ static void draw_line_ops(s32 n, u16 num, u8 y, u8 hl) {
   } 
 
   //  if ( (n < num) && (n >= 0) ) { 
-    snprintf(lineBuf, SCREEN_W, "%d.%s",
+#ifdef SNPRINTF
+  snprintf(lineBuf, SCREEN_W, "%d.%s",
              (int)n, net_op_name(n));
+#else
+#endif
     //    screen_line(0, kScreenLines[y], lineBuf, hl + net_op_status(n));
     screen_line(0, kScreenLines[y], lineBuf, hl);
     /*  } else {
     // no selection
-    snprintf(lineBuf, SCREEN_W, "   .");
+#ifdef SNPRINTF
+snprintf(lineBuf, SCREEN_W, "   .");
     screen_line(0, kScreenLines[y], lineBuf, 0);
   }
     */
@@ -373,6 +402,7 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
     opIdx = net_in_op_idx(n);
     if (net_get_in_preset(n)) { pch = '*'; } else { pch = '.'; }
     if (opIdx >=0 ) {
+#ifdef SNPRINTF
       snprintf(lineBuf, SCREEN_W, "%d%c%s/%s_%f",
 	       //	       (int)n,
 	       opIdx, 
@@ -380,8 +410,11 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
 	       net_op_name(net_in_op_idx(n)), 
 	       net_in_name(n), 
 	       net_get_in_value(n) );
+#else
+#endif
     } else {
       /// parameter
+#ifdef SNPRINTF
       snprintf(lineBuf, SCREEN_W, "p%d%c%s_%f",
 	       //	       (int)n,
 	       (int)net_param_idx(n),
@@ -389,11 +422,14 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
 	       net_in_name(n),
 	       ////// FIXME (?)
 	       get_param_value(net_param_idx(n)) );
+#else
+#endif
     }
     screen_line(0, kScreenLines[y], lineBuf, hl);
 
     //} else {
     // no selection
+    //#ifdef SNPRINTF
     //snprintf(lineBuf, SCREEN_W, ".");
     //screen_line(0, kScreenLines[y], lineBuf, 0);
     // }
@@ -415,6 +451,7 @@ static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
   //  status = net_op_status(net_out_op_idx(n));    // no selection
   if (net_get_out_preset(n)) { pch = '*'; } else { pch = '.'; }
   if (target >= 0) {
+#ifdef SNPRINTF
     snprintf(lineBuf, SCREEN_W, "%d%c%s/%s->%d.%s/%s",
 	     net_out_op_idx(n),
 	     pch,
@@ -423,17 +460,20 @@ static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
 	     net_in_op_idx(target),
 	     net_op_name(net_in_op_idx(target)),
 	     net_in_name(target) );
+#else
+#endif
   } else {
+#ifdef SNPRINTF
     snprintf(lineBuf, SCREEN_W, "%d%c%s/%s",
 	     net_out_op_idx(n),
 	     pch,
 	     net_op_name(net_out_op_idx(n)),
 	     net_out_name(n) );
+#else
+#endif
   }
   screen_line(0, kScreenLines[y], lineBuf, hl);// + status);
   
-  //  snprintf(lineBuf, SCREEN_W, ".");
-  //  screen_line(0, kScreenLines[y], lineBuf, 0);
 }
 
 // draw line of presets page
@@ -444,14 +484,12 @@ void draw_line_presets(s32 n, u16 num, u8 y, u8 hl) {
   } else if (n >= num) {
     n -= num;
   } 
-   //  if ( (n < num) && (n >= 0) ) { 
+  
+#ifdef SNPRINTF
   snprintf(lineBuf, SCREEN_W, "%d.%s ", (int)n, preset_name(n));
+#else
+#endif
   screen_line(0, kScreenLines[y], lineBuf, hl);
-  //  } else {
-  // no selection
-  //    snprintf(lineBuf, SCREEN_W, ".");
-    //    screen_line(0, kScreenLines[y], lineBuf, 0);
-    //}
 }
 
 // draw line of scenes page
@@ -462,12 +500,9 @@ void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
   } else if (n >= num) {
     n -= num;
   } 
-   //  if ( (n < num) && (n >= 0) ) { 
+#ifdef SNPRINTF
   snprintf(lineBuf, SCREEN_W, "%d.%s ", (int)n, scene_name(n));
+#else
+#endif
   screen_line(0, kScreenLines[y], lineBuf, hl);
-  //  } else {
-  // no selection
-  //    snprintf(lineBuf, SCREEN_W, ".");
-    //    screen_line(0, kScreenLines[y], lineBuf, 0);
-    //}
 }
