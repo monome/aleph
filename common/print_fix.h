@@ -15,5 +15,7 @@
 
 // print to a buffer (assumed length is FIX_DIG_ALL)
 void print_fix16(char* buf , fix16_t x);
+// print integer to buffer, return num digits
+int itoa_int(int val, char* buf);
 
 #endif

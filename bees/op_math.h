@@ -20,20 +20,26 @@
 typedef fix16_t io_t;
 
 // arithmetic macros
+
 // #define OPADD(a, b) ((a) + (b))
 // #define OPSUB(a, b) ((a) - (b))
 // #define OPMUL(a, b) ((a) * (b))
 // #define OPDIV(a, b) ((a) / (b))
 
-#define OPADD(a, b) (fix16_add((a), (b)))
-#define OPSUB(a, b) (fix16_sub((a), (b)))
-#define OPSADD(a, b) (fix16_sadd((a), (b)))
-#define OPSSUB(a, b) (fix16_ssub((a), (b)))
-#define OPMUL(a, b) (fix16_mul((a), (b)))
-#define OPDIV(a, b) (fix16_div((a), (b)))
-#define OPSMUL(a, b) (fix16_smul((a), (b)))
-#define OPSDIV(a, b) (fix16_sdiv((a), (b)))
+// standard (overflow)
+#define OP_ADD(a, b) (fix16_add((a), (b)))
+#define OP_SUB(a, b) (fix16_sub((a), (b)))
+#define OP_MUL(a, b) (fix16_mul((a), (b)))
+#define OP_DIV(a, b) (fix16_div((a), (b)))
+// saturating
+#define OP_SADD(a, b) (fix16_sadd((a), (b)))
+#define OP_SSUB(a, b) (fix16_ssub((a), (b)))
+#define OP_SMUL(a, b) (fix16_smul((a), (b)))
+#define OP_SDIV(a, b) (fix16_sdiv((a), (b)))
 
+
+///// print formatted string
+#define OP_PRINT(buf, x) print_fix16( (buf), (x) )
 
 
 #endif

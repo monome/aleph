@@ -69,7 +69,7 @@ CSRCS = \
 	../bees/redraw.c \
 	../bees/scene.c \
 	../common/font.c \
-	../common/fix.c \
+	../common/print_fix.c \
 	../common/libfixmath/fix16.c
 
 # List of assembler source files.

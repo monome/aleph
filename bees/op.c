@@ -152,7 +152,7 @@ static void op_enc_in_step(op_enc_t* enc, const io_t* v) {
 // move
 static void op_enc_in_move(op_enc_t* enc, const io_t* v) {
   //  enc->val += enc->step * (*v); 
-  enc->val = OPADD(enc->val, OPMUL(enc->step, *v));
+  enc->val = OP_ADD(enc->val, OP_MUL(enc->step, *v));
   op_enc_perform(enc);
 }
 // max
@@ -180,14 +180,14 @@ static void op_enc_perform(op_enc_t* enc) {
   if (wrap) { // wrapping...
     // if value needs wrapping, output the applied difference
     while (enc->val > enc->max) { 
-      dif = OPSUB(enc->min, enc->max);
-      wrap = OPADD(wrap, dif);
-      enc->val = OPADD(enc->val, dif);
+      dif = OP_SUB(enc->min, enc->max);
+      wrap = OP_ADD(wrap, dif);
+      enc->val = OP_ADD(enc->val, dif);
     }
     while (enc->val < enc->min) { 
-      dif = OPSUB(enc->max, enc->min);
-      wrap = OPADD(wrap, dif);
-      enc->val = OPADD(enc->val, dif);
+      dif = OP_SUB(enc->max, enc->min);
+      wrap = OP_ADD(wrap, dif);
+      enc->val = OP_ADD(enc->val, dif);
     }
   } else { // saturating...
     if (enc->val > enc->max) {
@@ -248,13 +248,13 @@ static const char* op_add_opstring = "ADDER";
 
 static void op_add_in_a(op_add_t* add, const io_t* v) {
   add->a = *v;
-  add->val = OPADD(add->a, add->b);
+  add->val = OP_ADD(add->a, add->b);
   net_activate(add->outs[0], add->val);
 }
 
 static void op_add_in_b(op_add_t* add, const io_t* v) {
   add->b = *v;
-  add->val = OPADD(add->a, add->b);
+  add->val = OP_ADD(add->a, add->b);
   if(add->btrig) {
     net_activate(add->outs[0], add->val);
   }
@@ -298,14 +298,14 @@ static const char* op_mul_opstring = "MULTIPLIER";
 static void op_mul_in_a(op_mul_t* mul, const io_t* v) {
   // printf("mul at %d received A %d\n", (int)mul, (int)*v);
   mul->a = *v;
-  mul->val = OPMUL(mul->a, mul->b);
+  mul->val = OP_MUL(mul->a, mul->b);
   net_activate(mul->outs[0], mul->val);
 }
 
 static void op_mul_in_b(op_mul_t* mul, const io_t* v) {
   //printf("mul at %d received B %d\n", (int)mul, (int)*v);
   mul->b = *v;
-  mul->val = OPMUL(mul->a, mul->b);
+  mul->val = OP_MUL(mul->a, mul->b);
   if(mul->btrig) {
     net_activate(mul->outs[0], mul->val);
   }
@@ -401,9 +401,9 @@ static void op_accum_boundscheck(op_accum_t* accum) {
       while(accum->val > accum->max) {
         //accum->val -= (accum->max > 0 ? accum->max : accum->max * -1);
 	if(accum->max > 0) {
-	  accum->val = OPSUB(accum->val, accum_max);
+	  accum->val = OP_SUB(accum->val, accum_max);
 	} else {
-	  accum->val = OPADD(accum->val, accum_max);
+	  accum->val = OP_ADD(accum->val, accum_max);
 	}
       }
       net_activate(accum->outs[1], accum->val); // carry output with wrapped value
@@ -415,9 +415,9 @@ static void op_accum_boundscheck(op_accum_t* accum) {
     if(accum->carry) {
       while(accum->val < accum->min) {
 	if(accum->min < 0) {
-	  accum->val = OPSUB(accum->val, accum_min);
+	  accum->val = OP_SUB(accum->val, accum_min);
 	} else {
-	  accum->val = OPADD(accum->val, accum_min);
+	  accum->val = OP_ADD(accum->val, accum_min);
 	}
       }
       net_activate(accum->outs[1], accum->val); // carry output with wrapped value
@@ -436,7 +436,7 @@ static void op_accum_in_value(op_accum_t* accum, const io_t* v) {
 
 static void op_accum_in_count(op_accum_t* accum, const io_t* v) {
   printf("accum at %d received COUNT %d\n", (int)accum, (int)*v);
-  acum->val = OPADD(accum->val, *v);
+  acum->val = OP_ADD(accum->val, *v);
   op_accum_boundscheck(accum);
   net_activate(accum->outs[0], accum->val);
 }

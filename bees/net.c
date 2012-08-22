@@ -360,14 +360,14 @@ void net_set_in_value(s32 inIdx, io_t val) {
 io_t net_inc_in_value(s32 inIdx, io_t inc) {
   if (inIdx >= net.numIns) {
     inIdx -= net.numIns;
-    set_param_value(inIdx, OPADD(get_param_value(inIdx), inc));
+    set_param_value(inIdx, OP_ADD(get_param_value(inIdx), inc));
     return get_param_value(inIdx);
   } else {
     //net.ins[inIdx].val += inc;
     //net_activate(inIdx, (const s32*)(&(net.ins[inIdx].val)));
     //return net.ins[inIdx].
     net_activate( inIdx, 
-		  OPADD(
+		  OP_ADD(
 			op_get_in_val( net.ops[net.ins[inIdx].opIdx],
 				       net.ins[inIdx].opInIdx ), inc));
     return op_get_in_val( net.ops[net.ins[inIdx].opIdx],
