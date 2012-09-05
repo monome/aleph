@@ -43,7 +43,6 @@ void scene_deinit(void) {
 
 // store 
 void scene_store(u32 idx) {
-  //  memcpy(&(sceneData[idx].net), &net, sizeof(net));
   // open file  
   snprintf(sceneFilename, 32, "aleph_scene_%d", (int)idx);
   pSceneFile = fopen(sceneFilename, "wb");
@@ -57,6 +56,8 @@ void scene_store(u32 idx) {
   fwrite((u8*)(&presets), 1, sizeof(preset_t) * NET_PRESETS_MAX, pSceneFile);
   // close file
   fclose(pSceneFile);
+  //
+  //  memcpy(&(sceneData[idx].net), &net, sizeof(net));
 }
 
 // recall
@@ -74,6 +75,7 @@ void scene_recall(u32 idx) {
   fread((u8*)(&presets), 1, sizeof(preset_t) * NET_PRESETS_MAX, pSceneFile);
   // close file
   fclose(pSceneFile);
+  //
   //  memcpy(&net, &(sceneData[idx].net), sizeof(net));
 }
 

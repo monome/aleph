@@ -57,6 +57,7 @@ CSRCS = \
 	./src/init.c	\
 	./src/interrupts.c \
 	./src/main.c \
+	./src/memory.c \
 	./src/screen.c \
 	./src/switches.c \
 	./src/timers.c \

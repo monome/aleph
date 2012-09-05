@@ -13,18 +13,23 @@
 #include "fat.h"
 #include "file.h"
 #include "print_funcs.h"
+#include "sdramc.h"
 // aleph
 #include "bfin.h"
 #include "conf_aleph.h"
 #include "files.h"
+#include "memory.h"
+
+// grab an sdram buffer big enough for bf533s instruction SRAM
+#define BFIN_LDR_MAX_BYTES 10240
 
 //------------------------------
 //----- -static vars
 
 // buffer for filename
 static char name_buf[MAX_FILE_PATH_LENGTH];
-// dynamically-allocated memory for bfin load
-static char * load_buf;
+// memory for bfin load
+volatile u8*  load_buf;
 // TEST: malloc fail? yep
 //static char load_buf[1024];
 
@@ -32,12 +37,21 @@ static char * load_buf;
 //----- function def
 
 void init_files(void) {
+  heap_t tmp;
   // Reset navigators .
   nav_reset();
   // Use the last drive available as default.
   nav_drive_set(nav_drive_nb() - 1);
   // Mount it.
   nav_partition_mount();
+  // allocate SDRAM for blackfin boot image
+  tmp = alloc_mem(BFIN_LDR_MAX_BYTES);
+  if(tmp != ALLOC_FAIL) load_buf = tmp;
+  print_dbg("\r\nallocated bfin load buffer at ");
+  print_dbg_ulong((u32)load_buf);
+
+  print_dbg("\r\nSDRAM starts at at ");
+  print_dbg_ulong((u32)SDRAM);
 }
 		    
 
@@ -76,9 +90,9 @@ void load_bfin_sdcard_test(void) {
 
 
   //  print_dbg( "\r\n loading...");
-  if (size > 0) {
+  if ( (size > 0) && (size < BFIN_LDR_MAX_BYTES) ) {
     // allocate RAM buffer
-    load_buf = (char*)malloc( size );
+    //    load_buf = (char*)malloc( size );
 
     // copy file to buf
     file_open(FOPEN_MODE_R);
@@ -89,10 +103,20 @@ void load_bfin_sdcard_test(void) {
     }
     // Close the file.
     file_close();
+
+    /*
+    /// debug print first 1024 bytes
+    print_dbg("\r\n");
+    for(byte=0; byte < 1024; byte++) {
+      print_dbg_ulong((u32)load_buf[byte]);
+      print_dbg(" ");
+    }
+    */
+
     // load from the buf
     bfin_load(size, load_buf);
     // de-allocate the buf
-    free(load_buf);
+    //free(load_buf);
   }
 }
 

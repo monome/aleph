@@ -26,7 +26,7 @@ volatile U8 hwait = 0;
 //static msg_t txMsg;
 
 // load a blackfin executable
-void bfin_load(U32 size, char * data) {
+void bfin_load(U32 size, volatile u8 * data) {
   U64 delay;
   U64 byte;
 
@@ -35,6 +35,7 @@ void bfin_load(U32 size, char * data) {
   print_dbg(" bytes...");
 
   Disable_global_interrupt();
+
   
   // reset the blackfin
   gpio_clr_gpio_pin(BFIN_RESET_PIN);
@@ -47,11 +48,26 @@ void bfin_load(U32 size, char * data) {
   // loop over .ldr data
   byte = 0;
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+
+   print_dbg("\r\n");
+
   while(byte < size) {
     // pause if hwait is held high by the blackfin
     while(hwait > 0) { ;; }
 
     spi_write(BFIN_SPI, data[byte]);
+
+    /////// test
+    
+    if(byte < 1024) {
+      print_dbg_ulong((u32)data[byte]);
+      print_dbg(" ");
+    }
+    
+    //    delay = 10; while (--delay > 0) {;;}
+    /////////
+
     byte++;
   }
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
