@@ -21,9 +21,11 @@
 #include "memory.h"
 
 // grab an sdram buffer big enough for bf533s instruction SRAM
-#define BFIN_LDR_MAX_BYTES 64000
+#define MAX_BFIN_LDR_BYTES 64000
 // list of names
 //#define FILES_LIST_MAX_ENTRIES 128; 
+#define MAX_NUM_DSP 64
+#define DSP_NAME_LEN 32
 
 //------------------------------
 //----- -static vars
@@ -32,6 +34,10 @@
 static char name_buf[MAX_FILE_PATH_LENGTH];
 // memory for bfin load
 volatile u8*  load_buf;
+// memory for list of dsp filenames
+volatile char* dsp_name_buf;
+// count of dsp files
+static u8 numDsp = 0;
 
 //---------------------------------
 //------ function declaration
@@ -42,14 +48,12 @@ volatile u8*  load_buf;
 
 void init_files(void) {
   heap_t tmp;
-  // Reset navigators .
   nav_reset();
-  // Use the last drive available as default.
+  // use the last drive available
   nav_drive_set(nav_drive_nb() - 1);
-  // Mount it.
   nav_partition_mount();
   // allocate SDRAM for blackfin boot image
-  tmp = alloc_mem(BFIN_LDR_MAX_BYTES);
+  tmp = alloc_mem(MAX_BFIN_LDR_BYTES);
   if(tmp != ALLOC_FAIL) {
     load_buf = tmp;
   } else {
@@ -64,17 +68,18 @@ void init_files(void) {
     print_dbg("\r\n\ allocation error in files init");
   }
   */
+  
+  // allocate SDRAM for dsp list
+  tmp = (heap_t)alloc_mem(MAX_NUM_DSP * MAX_FILE_PATH_LENGTH);
+  if(tmp != ALLOC_FAIL) {
+    dsp_name_buf = (char*)tmp;
+  } else {
+    print_dbg("\r\n allocation error in files init");
+  }
 
-
-  /*
-  print_dbg("\r\nallocated bfin load buffer at ");
-  print_dbg_ulong((u32)load_buf);
-
-  print_dbg("\r\nSDRAM starts at at ");
-  print_dbg_ulong((u32)SDRAM);
-  */
 
   files_check_scenes();
+  files_check_dsp();
 }
 		    
 /*
@@ -182,7 +187,6 @@ void files_check_scenes(void) {
   }
 }
 
-
 // look for dsp dir, create if it doesn't exist
 void files_check_dsp(void) {
   nav_dir_root();
@@ -199,15 +203,47 @@ void files_check_dsp(void) {
   }
 }
 
-// load a blackfin executable from the "dsp" directory
-void files_load_dsp(const char* name) {
+// populate the dsp filelist with names
+void files_scan_dsp(void) {
+  u8 i = 0;
+  nav_dir_root();
+  if (nav_filelist_findname("dsp", false)) {
+    nav_filelist_first(FS_FILE);
+    nav_filelist_reset();
+    while (nav_filelist_set(0, FS_FIND_NEXT)) {
+      nav_file_name( (FS_STRING)(dsp_name_buf + (i * MAX_FILE_PATH_LENGTH)), 
+				MAX_FILE_PATH_LENGTH, 
+				FS_NAME_GET, 
+				true );
+      i++;
+    }
+    numDsp = nav_filelist_nb(FS_FILE);
+  } else {
+    print_dbg("\r\ndsp scan failed (no dsp directory)");
+    numDsp = 0;
+  }
+
+}
+
+// return filename for given index
+volatile char* files_get_dsp_filename(u8 idx) {
+  return dsp_name_buf + (idx * MAX_FILE_PATH_LENGTH);
+}
+
+// load a blacfkin executable by index
+void files_load_dsp(u8 idx) {
+  files_load_dsp_name(files_get_dsp_filename(idx));
+}
+
+// load a blackfin executable by name
+void files_load_dsp_name(const char* name) {
   u32 size;
   u32 byte = 0;
   nav_dir_root();
   if (nav_filelist_findname("dsp", false)) {
     if(nav_filelist_findname((FS_STRING)name, false)) {
       size = nav_file_lgt();
-      if ( (size > 0) && (size < BFIN_LDR_MAX_BYTES) ) {
+      if ( (size > 0) && (size < MAX_BFIN_LDR_BYTES) ) {
 	file_open(FOPEN_MODE_R);
 
 	while (!file_eof()) {
@@ -228,6 +264,11 @@ void files_load_dsp(const char* name) {
       print_dbg("\r\ndsp load failed (no dsp directory): ");
       print_dbg(name);
   }
+}
+
+// return count of dsp files
+u8 files_get_dsp_count(void) {
+  return numDsp;
 }
 
 /*

@@ -8,8 +8,12 @@
 // undefine to use fixed-point output formatting
 //#define SNPRINTF
 
-#include <string.h>
+// std
+//#include <string.h>
 //#include "print_fix.h"
+
+// aleph
+#include "files.h"
 #include "fix.h"
 #include "param.h"
 #include "preset.h"
@@ -322,8 +326,7 @@ void redraw_dsp(void) {
   s32 n, nCenter;         // which list entry
   u16 num;
   
-  //  num = files_get_num_dsp();
-  num = 16; // whatever just compile
+  num = files_get_dsp_count();
 
   nCenter = page->selected;
   if (nCenter >= num) {
@@ -550,12 +553,27 @@ void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
   } 
 #ifdef SNPRINTF
   snprintf(lineBuf, SCREEN_W, "%d.%s ", (int)n, scene_name(n));
+#else
+  println_int(n);
+  appendln_char('.');
+  appendln(scene_name(n));
 #endif
   screen_line(0, kScreenLines[y], lineBuf, hl);
 }
 
 // draw line of dsp page
 void draw_line_dsp(s32 n, u16 num, u8 y, u8 hl) {
+    // wrap
+  if (n < 0) {
+    n += num;
+  } else if (n >= num) {
+    n -= num;
+  } 
+  println_int(n);
+  appendln_char('.');
+  appendln(scene_name(n));
+  screen_line(0, kScreenLines[y], lineBuf, hl);
+
 }
 
 
@@ -590,5 +608,6 @@ static inline void appendln_int(int x, int len) {
 
 // append char to line buffer
 static inline void appendln_char(char c) {
+  *pline++ = c;
 }
 

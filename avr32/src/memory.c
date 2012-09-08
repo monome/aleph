@@ -3,7 +3,7 @@
    aleph
 
    a hacky sort of interface to explicitly allocate regions of SDRAM
-   like malloc without free
+   like malloc() without the free() !
  */
 
 
@@ -38,9 +38,12 @@ void init_mem(void) {
 // allocate and return pointer
 heap_t alloc_mem(u32 bytes) {
   u32 tmp = heapOffset + bytes;
+  u8 mtmp = tmp % 4;
   heap_t ret;
-  // fixme: align to 4 bytes?
-
+  // align to 4 bytes
+  if ( mtmp != 0) {
+    tmp += ( 4 - mtmp );
+  }
   if (tmp < heapSize) {
     ret = pHeapStart;
     heapOffset = tmp;

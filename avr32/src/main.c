@@ -299,7 +299,7 @@ U8 check_init(void) {
 #ifndef SKIPSD
     // load the default DSP
     //load_bfin_sdcard_test();   
-    files_load_dsp("aleph-osc2.ldr");
+    files_load_dsp_name("aleph-osc2.ldr");
     // get parameters
     print_dbg("\r\nwaiting to read params...");
     //    delay_ms(1000);
