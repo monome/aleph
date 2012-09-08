@@ -21,5 +21,7 @@ void scene_clear(u32 idx);
 const char* scene_name(const s16 idx);
 // get module name
 const char* scene_module_name(const s16 idx);
+// get filename for idx
+const char* scene_filename(const s16 idx);
 
 #endif

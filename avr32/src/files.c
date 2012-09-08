@@ -77,7 +77,7 @@ void init_files(void) {
   files_check_scenes();
 }
 		    
-
+/*
 //// TEST:
 //// load the first LDR file found
 void load_bfin_sdcard_test(void) {
@@ -112,11 +112,7 @@ void load_bfin_sdcard_test(void) {
   print_dbg_ulong( size);
 
   //  print_dbg( "\r\n loading...");
-  if ( (size > 0) && (size < BFIN_LDR_MAX_BYTES) ) {
-    // allocate RAM buffer
-    //    load_buf = (char*)malloc( size );
-
-    // copy file to buf
+     // copy file to buf
     file_open(FOPEN_MODE_R);
     // While the end isn't reached
     while (!file_eof()) {
@@ -125,22 +121,11 @@ void load_bfin_sdcard_test(void) {
     }
     // Close the file.
     file_close();
-
-    /*
-    /// debug print first 1024 bytes
-    print_dbg("\r\n");
-    for(byte=0; byte < 1024; byte++) {
-      print_dbg_ulong((u32)load_buf[byte]);
-      print_dbg(" ");
-    }
-    */
-
     // load from the buf
     bfin_load(size, load_buf);
-    // de-allocate the buf
-    //free(load_buf);
   }
 }
+*/
 
 void files_list(void) {
   // Get the volume name
@@ -194,6 +179,54 @@ void files_check_scenes(void) {
     nav_dir_make("scenes"); 
     // create empty scene files
     
+  }
+}
+
+
+// look for dsp dir, create if it doesn't exist
+void files_check_dsp(void) {
+  nav_dir_root();
+  if (nav_filelist_findname("dsp", 0)) {
+    // ...
+    nav_file_name((FS_STRING)name_buf, MAX_FILE_PATH_LENGTH, FS_NAME_GET, true);
+    print_dbg("\r\n found dsp dir? now at: ");
+    print_dbg( name_buf);
+    print_dbg( CRLF);
+    //// print contents...
+  } else {
+    print_dbg("\r\n attempting to create dsp dir");
+    nav_dir_make("dsp"); 
+  }
+}
+
+// load a blackfin executable from the "dsp" directory
+void files_load_dsp(const char* name) {
+  u32 size;
+  u32 byte = 0;
+  nav_dir_root();
+  if (nav_filelist_findname("dsp", false)) {
+    if(nav_filelist_findname(name, false)) {
+      size = nav_file_lgt();
+      if ( (size > 0) && (size < BFIN_LDR_MAX_BYTES) ) {
+	file_open(FOPEN_MODE_R);
+
+	while (!file_eof()) {
+	  load_buf[byte] = file_getc();
+	  byte++;
+	}
+	file_close();
+	bfin_load(size, load_buf);
+      } else {
+	print_dbg("\r\ndsp load failed (too large): ");
+	print_dbg(name);
+      }
+    } else {
+      print_dbg("\r\ndsp load failed (no file): ");
+      print_dbg(name);
+    }   
+  } else {
+      print_dbg("\r\ndsp load failed (no dsp directory): ");
+      print_dbg(name);
   }
 }
 

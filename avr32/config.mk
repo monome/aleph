@@ -75,7 +75,8 @@ CSRCS = \
 	$(ALEPH_BEES)/redraw.c \
 	$(ALEPH_COMMON)/font.c \
 	$(ALEPH_COMMON)/fix.c \
-	$(ALEPH_COMMON)/libfixmath/fix16.c
+	$(ALEPH_COMMON)/libfixmath/fix16.c \
+	$(ALEPH_COMMON)/simple_string.c
 
 # List of assembler source files.
 ASSRCS = \
