@@ -21,7 +21,9 @@
 #include "memory.h"
 
 // grab an sdram buffer big enough for bf533s instruction SRAM
-#define BFIN_LDR_MAX_BYTES 10240
+#define BFIN_LDR_MAX_BYTES 64000
+// list of names
+//#define FILES_LIST_MAX_ENTRIES 128; 
 
 //------------------------------
 //----- -static vars
@@ -30,11 +32,13 @@
 static char name_buf[MAX_FILE_PATH_LENGTH];
 // memory for bfin load
 volatile u8*  load_buf;
-// TEST: malloc fail? yep
-//static char load_buf[1024];
 
-//-------------------------
-//----- function def
+//---------------------------------
+//------ function declaration
+
+
+//---------------------------------
+//----- function definition
 
 void init_files(void) {
   heap_t tmp;
@@ -46,12 +50,31 @@ void init_files(void) {
   nav_partition_mount();
   // allocate SDRAM for blackfin boot image
   tmp = alloc_mem(BFIN_LDR_MAX_BYTES);
-  if(tmp != ALLOC_FAIL) load_buf = tmp;
+  if(tmp != ALLOC_FAIL) {
+    load_buf = tmp;
+  } else {
+    print_dbg("\r\nallocation error in files init");
+  }
+  /*
+  // allocate SDRAM for file list
+  tmp = alloc_mem(FILES_LIST_MAX_ENTRIES);
+  if(tmp != ALLOC_FAIL) {
+    filelist = tmp;
+  } else {
+    print_dbg("\r\n\ allocation error in files init");
+  }
+  */
+
+
+  /*
   print_dbg("\r\nallocated bfin load buffer at ");
   print_dbg_ulong((u32)load_buf);
 
   print_dbg("\r\nSDRAM starts at at ");
   print_dbg_ulong((u32)SDRAM);
+  */
+
+  files_check_scenes();
 }
 		    
 
@@ -87,7 +110,6 @@ void load_bfin_sdcard_test(void) {
   print_dbg( name_buf);
   print_dbg( "\r\n size: ");
   print_dbg_ulong( size);
-
 
   //  print_dbg( "\r\n loading...");
   if ( (size > 0) && (size < BFIN_LDR_MAX_BYTES) ) {
@@ -156,3 +178,27 @@ void files_list(void) {
   print_dbg_ulong( nav_filelist_nb(FS_DIR));
   print_dbg( "  Dir\r\n");
 }
+
+// look for scenes dir, create if it doesn't exist
+void files_check_scenes(void) {
+  nav_dir_root();
+  if (nav_filelist_findname("scenes", 0)) {
+    // ...
+    nav_file_name((FS_STRING)name_buf, MAX_FILE_PATH_LENGTH, FS_NAME_GET, true);
+    print_dbg("\r\n found scenes dir? now at: ");
+    print_dbg( name_buf);
+    print_dbg( CRLF);
+    //// print contents...
+  } else {
+    print_dbg("\r\n attempting to create scenes dir");
+    nav_dir_make("scenes"); 
+    // create empty scene files
+    
+  }
+}
+
+/*
+volatile char* files_get_scene_file(u8 idx) {
+  
+}
+*/

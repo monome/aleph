@@ -8,6 +8,10 @@
 # moved this to the top level Makefile cause it needs to know too
 # PRJ_PATH = ../../avr/asf-3.3.0/
 
+ALEPH_AVR32 = ../../aleph/avr32
+ALEPH_COMMON = ../../aleph/common
+ALEPH_BEES = ../../aleph/bees
+
 # Target CPU architecture: ap, ucr1, ucr2 or ucr3
 ARCH = ucr2
 
@@ -48,30 +52,30 @@ CSRCS = \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.c \
         common/services/clock/uc3a0_a1/sysclk.c            \
 	common/services/storage/ctrl_access/ctrl_access.c \
-	./src/adc.c \
-	./src/app_timers.c \
-	./src/bfin.c \
-	./src/events.c \
-	./src/encoders.c \
-	./src/files.c \
-	./src/init.c	\
-	./src/interrupts.c \
-	./src/main.c \
-	./src/memory.c \
-	./src/screen.c \
-	./src/switches.c \
-	./src/timers.c \
-	../bees/key_handler.c \
-	../bees/menu.c \
-	../bees/net.c \
-	../bees/op.c \
-	../bees/param.c \
-	../bees/preset.c \
-	../bees/redraw.c \
-	../bees/scene.c \
-	../common/font.c \
-	../common/print_fix.c \
-	../common/libfixmath/fix16.c
+	$(ALEPH_AVR32)/src/adc.c \
+	$(ALEPH_AVR32)/src/app_timers.c \
+	$(ALEPH_AVR32)/src/bfin.c \
+	$(ALEPH_AVR32)/src/events.c \
+	$(ALEPH_AVR32)/src/encoders.c \
+	$(ALEPH_AVR32)/src/files.c \
+	$(ALEPH_AVR32)/src/init.c	\
+	$(ALEPH_AVR32)/src/interrupts.c \
+	$(ALEPH_AVR32)/src/main.c \
+	$(ALEPH_AVR32)/src/memory.c \
+	$(ALEPH_AVR32)/src/screen.c \
+	$(ALEPH_AVR32)/src/scene.c \
+	$(ALEPH_AVR32)/src/switches.c \
+	$(ALEPH_AVR32)/src/timers.c \
+	$(ALEPH_BEES)/key_handler.c \
+	$(ALEPH_BEES)/menu.c \
+	$(ALEPH_BEES)/net.c \
+	$(ALEPH_BEES)/op.c \
+	$(ALEPH_BEES)/param.c \
+	$(ALEPH_BEES)/preset.c \
+	$(ALEPH_BEES)/redraw.c \
+	$(ALEPH_COMMON)/font.c \
+	$(ALEPH_COMMON)/fix.c \
+	$(ALEPH_COMMON)/libfixmath/fix16.c
 
 # List of assembler source files.
 ASSRCS = \
@@ -104,12 +108,18 @@ INC_PATH = \
        common/services/storage/ctrl_access                \
        common/services/clock                              \
        common/utils         \
-	../../aleph.avr32/    \
-	../../aleph/avr32/src  \
-	../../aleph/avr32/conf \
-	../../aleph/common     \
-	../../aleph/bees       \
-	../../aleph/common/libfixmath
+	$(ALEPH_AVR32)	\
+	$(ALEPH_AVR32)/src	\
+	$(ALEPH_AVR32)/conf	\
+	$(ALEPH_BEES)	\
+	$(ALEPH_COMMON)	\
+	$(ALEPH_COMMON)/libfixmath
+#	../../aleph/avr32/     \
+#	../../aleph/avr32/src   \
+#	../../aleph/avr32/conf  \
+#	../../aleph/bees        \
+#	../../aleph/common      \
+#	../../aleph/common/libfixmath
 
 # Additional search paths for libraries.
 LIB_PATH = 

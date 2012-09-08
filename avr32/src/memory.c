@@ -37,12 +37,12 @@ void init_mem(void) {
 
 // allocate and return pointer
 heap_t alloc_mem(u32 bytes) {
-  u32 tmp = heapOffset;
+  u32 tmp = heapOffset + bytes;
   heap_t ret;
   // fixme: align to 4 bytes?
 
   if (tmp < heapSize) {
-    ret = pHeapStart + heapOffset;
+    ret = pHeapStart;
     heapOffset = tmp;
   } else {
     ret = (heap_t)ALLOC_FAIL;

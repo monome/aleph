@@ -20,13 +20,13 @@ void bfin_load(U32 size, volatile u8 * data);
 void bfin_set_param(U8 idx, F32 val);
 
 // get number of parameters 
-u8 bfin_get_num_params(void);
+void bfin_get_num_params(volatile u32* num);
 // get a parameter name
-void bfin_get_param_name(u16 paramIdx, char * name);
+// void bfin_get_param_name(u16 paramIdx, volatile char* name);
 // get parameter descriptor
-void bfin_get_param_desc(u16 paramIdx, ParamDesc* pDesc);
+void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc);
 // get current module name
-void bfin_get_module_name(const char* buf);
+void bfin_get_module_name(volatile char* buf);
 
 /// send some dummy bytes over SPI for no god damn fucking reason
 void bfin_hack(U8 num);

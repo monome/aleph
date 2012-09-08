@@ -252,14 +252,10 @@ void init_bfin_resources(void) {
     .baudrate     = 20000000,
     .bits         = 8,
     .spck_delay   = 0,
-    .trans_delay  = 0,
     //// FIXME:
-    //// trans_delay is to allow bfin calculation time between spi irqs
-    //// (and acommodating audio irqs!)
-    //// would be better to delay maunally
-    //// so bfin boot can stay fast
-    //// or possibly set up 2nd register with same chipselect?
-    //    .trans_delay  = 20,
+    //// trans_delay requirements are different for boot and runtime
+    //// can we have 2nd register with same chipselect?
+    .trans_delay  = 20,
     .stay_act     = 1,
     .spi_mode     = 1,
     .modfdis      = 1

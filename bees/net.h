@@ -105,7 +105,7 @@ u8 net_get_in_preset(u32 inIdx);
 // get preset inclusion for output
 u8 net_get_out_preset(u32 outIdx);
 // add a new parameter
-void net_add_param(u32 idx, ParamDesc* pdesc);
+void net_add_param(u32 idx, volatile ParamDesc* pdesc);
 //void net_add_param(u32 idx, const char* name, f32 min, f32 max, s32 val);
 // clear existing parameters
 void net_clear_params(void);

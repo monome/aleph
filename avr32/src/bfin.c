@@ -59,14 +59,15 @@ void bfin_load(U32 size, volatile u8 * data) {
     spi_write(BFIN_SPI, data[byte]);
 
     /////// test
-    
-    if(byte < 1024) {
+    /*
+    if(byte < 2048) {
       print_dbg_ulong((u32)data[byte]);
       print_dbg(" ");
     }
-    
+    */  
     //    delay = 10; while (--delay > 0) {;;}
     /////////
+    //    delay = 100; while (--delay > 0) {;;}
 
     byte++;
   }
@@ -104,7 +105,7 @@ void bfin_set_param(u8 idx, f32 x ) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 }
 
-u8 bfin_get_num_params(void) {
+void bfin_get_num_params(volatile u32* num) {
   u16 x;
   // command 
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
@@ -115,10 +116,10 @@ u8 bfin_get_num_params(void) {
   spi_write(BFIN_SPI, 0); //dont care
   spi_read(BFIN_SPI, &x);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  return (u8)(x & 0xff);
+  *num = (u8)(x & 0xff);
 }
 
-void bfin_get_param_desc(u16 paramIdx, ParamDesc* pDesc) {
+void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
   ParamValue pval;
   u16 x; // u16 for spi_read()
   u8 i;
@@ -173,7 +174,7 @@ void bfin_get_param_desc(u16 paramIdx, ParamDesc* pDesc) {
 }
 
 // get module name
-void bfin_get_module_name(const char* buf) {
+void bfin_get_module_name(volatile char* buf) {
   char name[MODULE_NAME_LEN];
   u16 x; // u16 for spi_read()
   u8 i;

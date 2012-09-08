@@ -412,7 +412,7 @@ u8 net_get_out_preset(u32 id) {
 
 // add a new parameter
 //void net_add_param(u32 idx, const char* name, f32 min, f32 max, s32 val) {
-void net_add_param(u32 idx, ParamDesc* pdesc) {
+void net_add_param(u32 idx, volatile ParamDesc* pdesc) {
   net.params[net.numParams].desc = *pdesc;
   net.params[net.numParams].idx = idx;
   net.params[net.numParams].preset = 1;

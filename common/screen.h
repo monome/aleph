@@ -63,9 +63,11 @@ U8 screen_string(U16 x, U16 y, char* str, U8 a);
 // draw a line to the end with default spacing
 U8 screen_line(U16 x, U16 y, char* str, U8 a);
 // print a formatted integer
-U8 screen_int(U16 x, U16 y, S32 i, U8 a);
+U8 screen_int(U16 x, U16 y, S16 i, U8 a);
 // print a formatted float
-U8 screen_float(U16 x, U16 y, F32 f, U8 a);
+//U8 screen_float(U16 x, U16 y, F32 f, U8 a);
+// print a formatted fix16
+U8 screen_fix(U16 x, U16 y, fix16_t v, U8 a);
 // write screen buffer to OLED graphics RAM
 void screen_refresh(void);
 // fill a line with blank space from x to end

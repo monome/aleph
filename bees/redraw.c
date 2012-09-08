@@ -9,8 +9,8 @@
 //#define SNPRINTF
 
 #include <string.h>
-#include "print_fix.h"
-
+//#include "print_fix.h"
+#include "fix.h"
 #include "param.h"
 #include "preset.h"
 #include "redraw.h"
@@ -36,7 +36,7 @@ static inline void appendln(const char* str);
 // write int to top of line buffer
 static inline void println_int(int x);
 // append int to line buffer
-static inline void appendln_int(int x);
+static inline void appendln_int(int x, int len);
 // append char to line buffer
 static inline void appendln_char(char c);
 
@@ -323,15 +323,13 @@ void redraw_play(void) {
 	     touchedParams[n].val );
 #else
     println("p");
-    // fixme: no bounds check here....
-    appendln_int(touchedParams[n].idx);
+    appendln_int(touchedParams[n].idx, 3);
 #endif
     screen_line(0, kScreenLines[y], lineBuf, 1);
     n--;
   }
 // draw the header
   screen_line(0, 0, "PLAY", 6);
-
 }
 
 
@@ -410,7 +408,7 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
 	       get_param_value(net_param_idx(n)) );
 #else
       println("p");
-      appendln_int( (int)net_param_idx(n) );
+      appendln_int( (int)net_param_idx(n), 4);
       appendln_char(pch);
       appendln( net_in_name(n) );
       print_fix16(pline, net_get_in_value(n) );
@@ -450,7 +448,7 @@ static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
     appendln_char('/');
     appendln( net_out_name(n) );
     appendln("->");
-    appendln_int( net_in_op_idx(target) );
+    appendln_int( net_in_op_idx(target), 4);
     appendln_char('.');
     appendln( net_op_name(net_in_op_idx(target)) );
     appendln_char('/');
@@ -525,13 +523,16 @@ static inline void appendln(const char* str) {
 // write int to top of line buffer
 static inline void println_int(int x) {
   pline = lineBuf;
-  appendln_int(x);
+  appendln_int(x, 6);
 }
 
-// append int to line buffer
-static inline void appendln_int(int x) {
-  // fixme: bounds check
-  pline += itoa_int(x, pline);
+// append int to line buffer (fill to end)
+static inline void appendln_int(int x, int len) {
+  // bounds check :
+  int rem = (u32)pLineEnd - (u32)pline;
+  if (len > rem) len = rem;
+  itoa_whole(x, pline, len); 
+  pline += len; 
 }
 
 // append char to line buffer

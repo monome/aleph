@@ -3,7 +3,9 @@
    aleph
 */
 
-// std
+
+// std 
+/// FIXME: eliminate!!
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -15,8 +17,9 @@
 #include "print_funcs.h"
 // aleph
 #include "conf_aleph.h"
-#include "screen.h"
+#include "fix.h"
 #include "font.h"
+#include "screen.h"
 
 //-----------------------------
 //---- variables
@@ -58,6 +61,7 @@ static void zero_col(U16 x, U16 y) {
 // external functions
 void init_oled(void) {
   U32 i;
+  volatile u64 delay;
   //  cpu_irq_disable();
   Disable_global_interrupt();
   // flip the reset pin
@@ -121,12 +125,12 @@ void init_oled(void) {
   write_command(0);
   write_command(63);
 		
-  // clear OLED RAM
+  // clear OLED RAM 
   for(i=0; i<GRAM_BYTES; i++) { write_data(0); }
   write_command(0xAF);	// on
 
-  delay_ms(10);
-
+  //  delay_ms(10) 
+  delay = FCPU_HZ >> 8; while(delay--) {;;}
   //  cpu_irq_enable();
   Enable_global_interrupt();
 
@@ -205,7 +209,7 @@ U8 screen_string_fixed(U16 x, U16 y, char *str, U8 a) {
   return x;
 }
 
-// draw a string with proportional spacing
+// draw a string with proportional spacinvg
 U8 screen_string_squeeze(U16 x, U16 y, char *str, U8 a) {
   while(*str != 0) {
     x += screen_char_squeeze(x, y, *str, a);
@@ -217,23 +221,35 @@ U8 screen_string_squeeze(U16 x, U16 y, char *str, U8 a) {
   return x;
 }
 
-// draw a string (default) 
+// draw a string (default) m
 inline U8 screen_string(U16 x, U16 y, char *str, U8 a) {
   return screen_string_squeeze(x, y, str, a);
 }
 
-// print a formatted integer
-U8 screen_int(U16 x, U16 y, S32 i, U8 a) {
-  static char buf[32];
-  snprintf(buf, 32, "%d", (int)i);
+// print a formatted integeromp
+U8 screen_int(U16 x, U16 y, S16 i, U8 a) {
+  //  static char buf[32];
+  //  snprintf(buf, 32, "%d", (int)i);
+    static char buf[FIX_DIG_TOTAL];
+  //snprintf(buf, 32, "%.1f", (float)f);
+  print_fix16(buf, (u32)i << 16 );
   //buf = ultoa(int);
   return screen_string_squeeze(x, y, buf, a);
 }
 
 // print a formatted float
+/*
 U8 screen_float(U16 x, U16 y, F32 f, U8 a) {
   static char buf[32];
   snprintf(buf, 32, "%.1f", (float)f);
+  return screen_string_squeeze(x, y, buf, a);
+}
+*/
+// print a formatted fix_t
+U8 screen_fix(U16 x, U16 y, fix16_t v, U8 a) {
+  static char buf[FIX_DIG_TOTAL];
+  //snprintf(buf, 32, "%.1f", (float)f);
+  print_fix16(buf, v);
   return screen_string_squeeze(x, y, buf, a);
 }
 

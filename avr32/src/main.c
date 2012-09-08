@@ -66,6 +66,8 @@ static void check_events(void);
 static U8 check_init(void);
 // get params from bfin
 static void report_params(void);
+// number of parameters
+volatile u32 numParams = 0;
 
 //------- define
 // app event loop
@@ -163,7 +165,25 @@ static void check_events(void) {
     if(key != eKeyDummy) { 
       // cycles = Get_system_register(AVR32_COUNT);
 
-      menu_handleKey(key); 
+      ////// menu_handleKey(key); 
+      // test:
+      /*
+      switch(key) {
+      case eKeyFnDownA:
+	
+	break;
+      case eKeyFnDownB:
+	break;
+      case eKeyFnDownC:
+	break;
+      case eKeyFnDownD:
+	break;
+      default:
+	
+      }
+*/
+      
+
       
       // cyclesNow = Get_system_register(AVR32_COUNT);
       // print_dbg(" event:"); print_dbg_ulong(e.eventType);
@@ -178,14 +198,6 @@ static void check_events(void) {
 int main (void) {
   U32 waitForCard = 0;
   volatile avr32_tc_t *tc = APP_TC;
-
-  /////////
-  /// SDRAM test
-  /*
-  unsigned long sdram_size, progress_inc, i, j, tmp, noErrors = 0;
-  volatile unsigned long *sdram = SDRAM;
-  */
-  /////////
   
   // switch to osc0 for main clock
   //  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP); 
@@ -243,9 +255,9 @@ int main (void) {
 
 #ifndef SKIPSD
   // Wait for a card to be inserted
-  print_dbg("\r\nwaiting for SD card... ");
+  //  print_dbg("\r\nwaiting for SD card... ");
 
-  screen_line(0, 0, "waiting for card...", 2); refresh=1;
+  screen_line(0, 0, "waiting for SD card...", 2); refresh=1;
   while (!sd_mmc_spi_mem_check()) {
     waitForCard++;
   }
@@ -267,17 +279,16 @@ int main (void) {
   screen_line(0, 0, "ALEPH hardware initialized.", 2); 
   screen_line(0, FONT_CHARH, "press FN1 key to begin BEES.", 2); refresh=1;
 
-
-
-// event loop
+  // event loop
     while(1) {
-      //      check_debug_events();
+      //check_debug_events();
       check_events();
     }
 }
 
-// wait for a button press to initialize 
+// wait for a button press to initialize BEES
 U8 check_init(void) {
+  volatile u64 delay;
   if(initFlag) {
     // initialize BEES components
     net_init();
@@ -288,7 +299,12 @@ U8 check_init(void) {
 #ifndef SKIPSD
     // load the default DSP
     load_bfin_sdcard_test();   
-    // get default parameters
+    // get parameters
+    print_dbg("\r\nwaiting to read params...");
+    //    delay_ms(1000);
+    delay = FCPU_HZ >> 8; while(delay--) {;;}
+    print_dbg("\r\nwaited.");
+    //
     report_params();
     // load scene 0
     //...
@@ -303,16 +319,16 @@ U8 check_init(void) {
 }
 
 static void report_params(void) {
-  ParamDesc pdesc;
-  u8 np, i;
-  np = bfin_get_num_params();
-  
-  print_dbg("\r\nnumparams: ");
-  print_dbg_ulong(np);
+  volatile ParamDesc pdesc;
+  u8 i;
 
-  if(np > 0) {
+  bfin_get_num_params(&numParams);
+  print_dbg("\r\nnumparams: ");
+  print_dbg_ulong(numParams);
+
+  if(numParams > 0) {
     net_clear_params();
-    for(i=0; i<np; i++) {
+    for(i=0; i<numParams; i++) {
       bfin_get_param_desc(i, &pdesc);
       net_add_param(i, &pdesc);
     }
@@ -328,8 +344,8 @@ void check_debug_events(void) {
   if(usart_test_hit(DBG_USART)) {
     usart_read_char(DBG_USART, &c);
     
-    //    print_dbg("\r\ndbg: ");
-    //    print_dbg_ulong(c);
+        print_dbg("\r\ndbg: ");
+        print_dbg_ulong(c);
 
     switch(c) {
     case '-':

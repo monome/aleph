@@ -41,5 +41,4 @@ typedef fix16_t io_t;
 ///// print formatted string
 #define OP_PRINT(buf, x) print_fix16( (buf), (x) )
 
-
 #endif

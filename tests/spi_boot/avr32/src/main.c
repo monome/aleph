@@ -20,10 +20,10 @@ static U8 hwait = 0;
 
 // blackfin .ldr data
 static const U64 ldrBytes = 
-#include "../../bfin/blink_533.ldr_size.inc"
+#include "../../bfin/aleph-osc2.ldr_size.inc"
   ;
 static U8 ldrData[] =  {
-#include "../../bfin/blink_533.ldr.inc"
+#include "../../bfin/aleph-osc2.ldr.inc"
 };
 
 //-----------------------------
