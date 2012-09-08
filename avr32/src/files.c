@@ -205,7 +205,7 @@ void files_load_dsp(const char* name) {
   u32 byte = 0;
   nav_dir_root();
   if (nav_filelist_findname("dsp", false)) {
-    if(nav_filelist_findname(name, false)) {
+    if(nav_filelist_findname((FS_STRING)name, false)) {
       size = nav_file_lgt();
       if ( (size > 0) && (size < BFIN_LDR_MAX_BYTES) ) {
 	file_open(FOPEN_MODE_R);

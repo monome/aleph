@@ -16,11 +16,12 @@
 
 // top-level state
 typedef enum ePage_t {
-  ePageOps,
   ePageIns,
   ePageOuts,
   ePagePresets,
+  ePageOps,
   ePageScenes,
+  ePageDsp,
   ePageGathered,
   ePagePlay,
   ePageMax

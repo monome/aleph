@@ -491,7 +491,6 @@ extern void key_handler_scenes(uiKey_t key) {
     if (selectedLabelChar > NUM_LABEL_CHARS) {
       selectedLabelChar = 0;
     } 
-
     break;
   case eKeyEncDownD:     // scroll name char at pos
     page->cursor--;
@@ -499,6 +498,45 @@ extern void key_handler_scenes(uiKey_t key) {
       page->cursor = NUM_LABEL_CHARS - 1;
     } 
     
+    break;
+  default:
+    ;; // nothing
+  }  
+  (*(page->redraw))();
+}
+
+/// DSP
+extern void key_handler_dsp(uiKey_t key) {
+  switch(key) {
+  case eKeyFnDownA:
+    break;
+  case eKeyFnDownB:
+    break;
+  case eKeyFnDownC:
+    break;
+  case eKeyFnDownD:
+    break;
+    //// encoder A: scroll pages
+  case eKeyEncUpA:
+    scrollPage(1);
+    break;
+  case eKeyEncDownA:
+    scrollPage(-1);
+    break;
+    //// encoder B: scroll selection
+  case eKeyEncUpB:
+    scrollSelect(1, SCENE_COUNT );
+    break;
+  case eKeyEncDownB:
+    scrollSelect(-1, SCENE_COUNT );
+    break;
+  case eKeyEncUpC:
+    break;
+  case eKeyEncDownC:
+    break;
+  case eKeyEncUpD:     
+    break;
+  case eKeyEncDownD:     
     break;
   default:
     ;; // nothing

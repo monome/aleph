@@ -20,5 +20,7 @@ extern void redraw_presets(void);
 extern void redraw_play(void);
 // scene
 extern void redraw_scenes(void);
+// dsp
+extern void redraw_dsp(void);
 
 #endif // header guard

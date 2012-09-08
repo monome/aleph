@@ -18,6 +18,8 @@ extern void key_handler_gathered(uiKey_t key);
 extern void key_handler_presets(uiKey_t key);
 // scenes
 extern void key_handler_scenes(uiKey_t key);
+// dsp
+extern void key_handler_dsp(uiKey_t key);
 // play
 extern void key_handler_play(uiKey_t key);
 

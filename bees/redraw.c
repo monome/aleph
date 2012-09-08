@@ -42,15 +42,17 @@ static inline void appendln_char(char c);
 
 //// line redraws
 // op
-static void draw_line_ops(s32 n, u16 num, u8 y, u8 statMod);
+static void draw_line_ops(s32 n, u16 num, u8 y, u8 hl);
 // in
-static void draw_line_ins(s32 n, u16 num, u8 y, u8 statMod);
+static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl);
 // out
-static void draw_line_outs(s32 n, u16 num, u8 y, u8 statMod);
+static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl);
 // presets
-static void draw_line_presets(s32 n, u16 num, u8 y, u8 statMod);
+static void draw_line_presets(s32 n, u16 num, u8 y, u8 hl);
 // scenes
-static void draw_line_scenes(s32 n, u16 num, u8 y, u8 statMod);
+static void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl);
+// dsp
+static void draw_line_dsp(s32 n, u16 num, u8 y, u8 hl);
 
 //==================================================
 //==== redraw ops page
@@ -311,6 +313,52 @@ void redraw_scenes(void) {
   screen_line(0, kScreenLines[CHAR_ROWS - 1], "CLEAR COPY STORE RECALL", 3);
 }
 
+
+
+//==================================================
+//==== redraw dsp page
+void redraw_dsp(void) {
+  u8 y = 0;                       // which line
+  s32 n, nCenter;         // which list entry
+  u16 num;
+  
+  //  num = files_get_num_dsp();
+  num = 16; // whatever just compile
+
+  nCenter = page->selected;
+  if (nCenter >= num) {
+    nCenter = num;
+  }
+  n = nCenter;
+  // print selection at center
+  y = SCREEN_ROW_CENTER;
+  
+  // print lower entries
+  while (y > 1) {
+    n--;
+    y--;
+    draw_line_dsp(n, num, y, 1);
+  }
+  
+  // re-center
+  n = nCenter;
+  y = SCREEN_ROW_CENTER;
+  
+  // print higher entries
+  while (y < SCREEN_H_2) {
+    n++;
+    y++;
+    draw_line_dsp(n, num, y, 1);
+  }
+
+  screen_line(0, 0, "DSP", 3);
+
+  // draw footer 
+  // (function labels)
+  screen_line(0, kScreenLines[CHAR_ROWS - 1], "LOAD DEFAULT", 3);
+}
+
+
 //==================================================
 //==== redraw play page
 void redraw_play(void) {
@@ -506,6 +554,11 @@ void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
   screen_line(0, kScreenLines[y], lineBuf, hl);
 }
 
+// draw line of dsp page
+void draw_line_dsp(s32 n, u16 num, u8 y, u8 hl) {
+}
+
+
 ///// snprintf replacement
 // write to top of line buffer
 static inline void println(const char* str) {
@@ -538,3 +591,4 @@ static inline void appendln_int(int x, int len) {
 // append char to line buffer
 static inline void appendln_char(char c) {
 }
+

@@ -28,11 +28,12 @@ const opId_t userOpTypes[NUM_USER_OP_TYPES] = {
 // page structures - synchronize with ePage enum
 page_t pages[ePageMax] = {
   // list:
-  { "OPS", (keyHandler_t)&key_handler_ops, (redraw_t)&redraw_ops, 0, eModeNone, -1 },
   { "INS", (keyHandler_t)&key_handler_ins, (redraw_t)&redraw_ins, 0, eModeNone, -1 },
   { "OUTS", (keyHandler_t)&key_handler_outs, (redraw_t)&redraw_outs, 0, eModeNone, -1 },
   { "PRESETS", (keyHandler_t)&key_handler_presets, (redraw_t)&redraw_presets, 0, eModeNone, -1 },
+  { "OPS", (keyHandler_t)&key_handler_ops, (redraw_t)&redraw_ops, 0, eModeNone, -1 },
   { "SCENES", (keyHandler_t)&key_handler_scenes, (redraw_t)&redraw_scenes, 0, eModeNone, -1 },
+  { "DSP", (keyHandler_t)&key_handler_dsp, (redraw_t)&redraw_dsp, 0, eModeNone, -1 },
   // modal:
   { "GATHERED" , (keyHandler_t)&key_handler_gathered, (redraw_t)&redraw_gathered, 0, eModeNone, -1 },
   { "PLAY" , (keyHandler_t)&key_handler_play, (redraw_t)&redraw_play, 0, eModeNone, -1}
@@ -101,13 +102,6 @@ void setPage(ePage n) {
 // scroll current page
 void scrollPage(s8 dir) {
   switch(pageIdx) {
-  case ePageOps:
-    if (dir > 0) {
-      pageIdx = ePageIns;
-    } else {
-      pageIdx = ePageScenes;
-    }
-    break;
   case ePageIns:
     if (dir > 0) {
       pageIdx = ePageOuts;
@@ -131,16 +125,31 @@ void scrollPage(s8 dir) {
     break;
   case ePagePresets:
     if (dir > 0) {
-      pageIdx = ePageScenes;
+      pageIdx = ePageOps;
     } else {
       pageIdx = ePageOuts;
     }
     break;
-  case ePageScenes:
+
+  case ePageOps:
     if (dir > 0) {
-      pageIdx = ePageOps;
+      pageIdx = ePageScenes;
     } else {
       pageIdx = ePagePresets;
+    }
+    break;
+  case ePageScenes:
+    if (dir > 0) {
+      pageIdx = ePageDsp;
+    } else {
+      pageIdx = ePageOps;
+    }
+    break;
+  case ePageDsp:
+    if (dir > 0) {
+      pageIdx = ePageIns;
+    } else {
+      pageIdx = ePageScenes;
     }
     break;
   }
