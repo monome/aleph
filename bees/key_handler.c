@@ -509,6 +509,7 @@ extern void key_handler_scenes(uiKey_t key) {
 extern void key_handler_dsp(uiKey_t key) {
   switch(key) {
   case eKeyFnDownA:
+    // load / set
     break;
   case eKeyFnDownB:
     break;

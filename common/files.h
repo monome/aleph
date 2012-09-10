@@ -29,5 +29,4 @@ extern void files_load_dsp(u8 idx);
 // load a blackfin executable by filename
 extern void files_load_dsp_name(const char* name);
 
-
 #endif // header guard 
