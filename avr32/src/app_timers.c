@@ -22,6 +22,9 @@ static swTimer_t encTimer;
 //static swTimer_t swTimer;
 // poll ADC
 static swTimer_t adcTimer;
+//// TEST
+// toggle a LED
+static swTimer_t heartbeatTimer;
 
 //--- static misc
 static u8 i;
@@ -75,11 +78,23 @@ static void adc_timer_callback(int tag) {
   adc_poll();
 }
 
+// test heartbeat callback
+static void heartbeat_callback(int tag) {
+  static char ledstatus;
+  if(ledstatus != 0) {
+    ledstatus = 0;
+    gpio_clr_gpio_pin(LED_EDIT_PIN);
+  } else {
+    ledstatus = 1;
+    gpio_set_gpio_pin(LED_EDIT_PIN);
+  }
+}
+
 //====== external
 void init_app_timers(void) {
   set_timer(&screenTimer, eScreenTimerTag, 15,   &screen_timer_callback, 1);
   set_timer(&encTimer,    eEncTimerTag,    5,   &enc_timer_callback,    1);
-  //  set_timer(&adcTimer,    eAdcTimerTag,    5,   &adc_timer_callback,    1);
+  set_timer(&adcTimer,    eAdcTimerTag,    5,   &adc_timer_callback,    1);
   // test:
-  set_timer(&adcTimer,    eAdcTimerTag,    5000,   &adc_timer_callback,    1);
+  set_timer(&heartbeatTimer, eHeartbeatTimerTag, 1000, &heartbeat_callback, 1);
 }

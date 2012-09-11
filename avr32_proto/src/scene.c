@@ -57,6 +57,8 @@ void scene_store(u32 idx) {
   nav_dir_root();
   nav_filelist_findname("scenes", false);
   nav_filelist_findname((FS_STRING)scene_filename(idx), true);  
+  // delete and rewrite
+  
 
   /*
   //  snprintf(sceneFilename, 32, "aleph_scene_%d", (int)idx);

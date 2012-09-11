@@ -281,7 +281,7 @@ int main (void) {
 
   // event loop
     while(1) {
-      //check_debug_events();
+      check_debug_events();
       check_events();
     }
 }

@@ -83,10 +83,17 @@ static void irq_tc(void) {
   process_timers();
 
   // 1/2 sec heartbeat LED
+  
+  /*
   if ((tcTicks % 500) == 0) {
-    gpio_tgl_gpio_pin(LED0_GPIO);
+    gpio_tgl_gpio_pin(AVR32_PIN_PB00);
+    gpio_tgl_gpio_pin(AVR32_PIN_PB02);
+    gpio_tgl_gpio_pin(AVR32_PIN_PA05);
+    gpio_tgl_gpio_pin(AVR32_PIN_PA23);
+    gpio_tgl_gpio_pin(AVR32_PIN_PA24);
   }
- 
+  */
+  
   // clear interrupt flag by reading timer SR
   tc_read_sr(APP_TC, APP_TC_CHANNEL);
 
@@ -176,6 +183,8 @@ static void irq_port1_line0(void) {
 // register interrupts
 void register_interrupts(void) {
   //  U8 i;
+
+  /*
   // generate an interrupt when bfin HWAIT changes
   gpio_enable_pin_interrupt( BFIN_HWAIT_PIN, GPIO_PIN_CHANGE);
 
@@ -193,10 +202,12 @@ void register_interrupts(void) {
   gpio_enable_pin_interrupt( SW1_PIN,	        GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( SW2_PIN,	        GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( SW3_PIN,	        GPIO_PIN_CHANGE);
-  
+  */
+
   // FIXME: 
   //gpio_enable_pin_interrupt( SW_EDIT_PIN,	GPIO_PIN_CHANGE);
   
+  /*
   // register IRQ for port A, 0-7
   INTC_register_interrupt( &irq_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), AVR32_INTC_INT2 );
   
@@ -208,6 +219,7 @@ void register_interrupts(void) {
   
   // register IRQ for PDCA transfer
   INTC_register_interrupt(&irq_pdca, AVR32_PDCA_IRQ_0, AVR32_INTC_INT1); 
+  */
 
   // register TC interrupt
   INTC_register_interrupt(&irq_tc, APP_TC_IRQ, APP_TC_IRQ_PRIORITY);
