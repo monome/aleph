@@ -66,13 +66,15 @@ void init_oled(void) {
   Disable_global_interrupt();
   // flip the reset pin
   gpio_set_gpio_pin(OLED_RESET_PIN);
-  delay_ms(1);
+  //  delay_ms(1);
+  delay = FCPU_HZ >> 10 ; while(delay > 0) { delay--; }
   gpio_clr_gpio_pin(OLED_RESET_PIN);
-  delay_ms(1);
+  // delay_ms(1);
+  delay=FCPU_HZ >> 10; while(delay > 0) { delay--; }
   gpio_set_gpio_pin(OLED_RESET_PIN);
-  delay_ms(10);
+  //delay_ms(10);
+  delay = FCPU_HZ >> 8; while(delay > 0) { delay--; }
   //// initialize OLED
-  /// todo: maybe toggle oled RESET to clear its shift register?
   write_command(0xAE);	// off
   write_command(0xB3);	// clock rate
   write_command(0x91);
@@ -130,7 +132,7 @@ void init_oled(void) {
   write_command(0xAF);	// on
 
   //  delay_ms(10) 
-  delay = FCPU_HZ >> 8; while(delay--) {;;}
+  delay = FCPU_HZ >> 8; while(delay > 0) { delay--; }
   //  cpu_irq_enable();
   Enable_global_interrupt();
 
@@ -260,6 +262,7 @@ void screen_refresh(void) {
   //  Disable_global_interrupt();
   for(i=0; i<GRAM_BYTES; i++) { 
     write_data(screen[i]);  
+    //write_data(i % 0xf);
   }
   //  cpu_irq_enable();
   //  Enable_global_interrupt();
@@ -301,4 +304,19 @@ U8 screen_line(U16 x, U16 y, char *str, U8 hl) {
   print_dbg(str);
 
   return NCOLS;
+}
+
+// fill graphics ram with a test pattern
+void screen_test_fill(void) {
+  u32 i;
+  u32 x=0;
+  u32 y=0;
+  for(i=0; i<font_nglyphs; i++) {
+    x = x + screen_char_squeeze(x, y, i + FONT_ASCII_OFFSET, 0xf);
+    x++;
+    if (x > NCOLS) {
+      x -= NCOLS;
+      y += FONT_CHARH;
+    }
+  }
 }

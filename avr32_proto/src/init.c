@@ -96,6 +96,7 @@ extern void init_oled_usart (void) {
   // SPI options for OLED
   static const usart_spi_options_t USART_SPI_OPTIONS = {
     .baudrate     = 3300000, // seems about maximum
+    .baudrate     = 3300000, // seems about maximum
     .charlength   = 8,
     .spimode      = 3, // clock starts high, sample on rising edge
     .channelmode  = USART_NORMAL_CHMODE

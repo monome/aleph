@@ -46,35 +46,37 @@ extern const u8 kScreenLines[];
 //----  functions
 
 // send startup commands
-void init_oled(void);
+extern void init_oled(void);
 // draw a pixel
-void screen_pixel(U16 x, U16 y, U8 a);
+extern void screen_pixel(U16 x, U16 y, U8 a);
 //// all the character-drawing routines now return last used column position
 // draw a single character glyph with fixed spacing
-U8 screen_char_fixed(U16 x, U16 y, char c, U8 a);
+extern U8 screen_char_fixed(U16 x, U16 y, char c, U8 a);
 // draw a single glyph with proportional spacing
-U8 screen_char_squeeze(U16 x, U16 y, char c, U8 a);
+extern U8 screen_char_squeeze(U16 x, U16 y, char c, U8 a);
 // draw a string with fixed spacing
-U8 screen_string_fixed(U16 x, U16 y, char* str, U8 a);
+extern U8 screen_string_fixed(U16 x, U16 y, char* str, U8 a);
 // draw a string with proportional spacing
-U8 screen_string_squeeze(U16 x, U16 y, char* str, U8 a);
+extern U8 screen_string_squeeze(U16 x, U16 y, char* str, U8 a);
 // draw a string (default)
-U8 screen_string(U16 x, U16 y, char* str, U8 a);
+extern U8 screen_string(U16 x, U16 y, char* str, U8 a);
 // draw a line to the end with default spacing
-U8 screen_line(U16 x, U16 y, char* str, U8 a);
+extern U8 screen_line(U16 x, U16 y, char* str, U8 a);
 // print a formatted integer
-U8 screen_int(U16 x, U16 y, S16 i, U8 a);
+extern U8 screen_int(U16 x, U16 y, S16 i, U8 a);
 // print a formatted float
 //U8 screen_float(U16 x, U16 y, F32 f, U8 a);
 // print a formatted fix16
-U8 screen_fix(U16 x, U16 y, fix16_t v, U8 a);
+extern U8 screen_fix(U16 x, U16 y, fix16_t v, U8 a);
 // write screen buffer to OLED graphics RAM
-void screen_refresh(void);
+extern void screen_refresh(void);
 // fill a line with blank space from x to end
-void screen_blank_line(U16 x, U16 y);
+extern void screen_blank_line(U16 x, U16 y);
 // highlight a region
-void screen_hl_line(U16 x, U16 y, U8 a, S8 len);
+extern void screen_hl_line(U16 x, U16 y, U8 a, S8 len);
 // get the value at a pixel
-U8 screen_get_pixel(U8 x, U8 y);
+extern U8 screen_get_pixel(U8 x, U8 y);
+// fill with a test apttern of characters
+extern void screen_test_fill(void);
 
 #endif // header guard

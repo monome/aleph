@@ -2,7 +2,7 @@
 ;; --------------------------------------------------------------------------
 ;; Desktop File for Emacs
 ;; --------------------------------------------------------------------------
-;; Created Fri Sep  7 17:51:52 2012
+;; Created Mon Sep 10 21:22:33 2012
 ;; Desktop file format version 206
 ;; Emacs version 23.3.1
 
@@ -10,284 +10,317 @@
 (setq desktop-missing-file-warning nil)
 (setq tags-file-name nil)
 (setq tags-table-list nil)
-(setq search-ring '("files_chec	" "snprintf" "snprit" "itoa" " " "ifdef" "itoa_whole" "snprintf"))
+(setq search-ring '("write_data" "delay_ms" "screen_loin" "init_local" "SDRAM_BANK_" "init_oled" "check" "check_debug" "build" "b" "SDRAM_BANK_BITS" "SDRAM_" "files_chec	" "snprintf" "snprit" "itoa"))
 (setq regexp-search-ring nil)
 (setq register-alist nil)
-(setq file-name-history '("~/aleph/tests/strings/Makefile" "~/aleph/avr32/config.mk" "~/aleph/common/simple_string.h" "~/aleph/common/simple_string.c" "~/aleph/common/simple_string.h" "~/aleph/avr32/src/scene.c" "~/aleph/avr32/src/files.c" "~/aleph/common/" "~/aleph/avr32/config.mk" "~/aleph/common/fix.h" "~/aleph/common/fix.c" "~/aleph/avr32/src/scene.c" "~/aleph/common/files.h" "~/aleph/avr32/" "~/aleph/common/screen.h" "~/aleph/avr32/src/screen.h" "~/aleph/common/fix.h" "~/aleph/avr32/common/" "~/aleph/common/fix.h" "~/aleph/common/fix.c" "~/aleph/common/" "~/aleph/bees/op_math.h" "~/aleph/bees/scene.h" "~/aleph/avr32/config.mk" "~/aleph/avr32/src/screen.c" "~/aleph/avr32/src/scene.c" "~/aleph/bees/scene.h" "~/aleph/bees/scene.c" "~/aleph/avr32/src/files.c" "~/aleph/avr32/conf/conf_aleph.h"))
+(setq file-name-history '("~/aleph/avr32_proto/src/interrupts.c" "~/aleph/avr32_proto/src/init.c" "~/aleph/avr32_proto/conf/conf_aleph.h" "~/aleph/avr32_proto/src/switches.c" "~/aleph/avr32_proto/src/event_types.h" "~/aleph/common/font.h" "~/aleph/common/screen.h" "~/aleph/avr32_proto/src/screen.h" "~/aleph/avr32_proto_test/" "~/aleph/common/font.c" "~/aleph/avr32_proto/src/screen.c" "~/aleph/avr32_proto/src/interrupts.c" "~/aleph/avr32_proto/src/init.c" "~/aleph/avr32/src/screen.c" "~/aleph/avr32_proto_test/src/main.c" "~/aleph/avr32_proto/src/app_timers.c" "~/aleph/avr32_proto_test/config.mk" "~/aleph/avr32_proto/src/interrupts.c" "~/aleph/avr32_proto_test/src/" "~/aleph/avr32_proto/src/app_timers.c" "~/aleph/avr32_proto/src/app_timers_ok.c" "~/aleph/avr32_proto/src/events.c" "~/aleph/avr32_proto/src/interrupts.c" "~/avr/asf-3.1.3/avr32/drivers/gpio/gpio.h" "~/aleph/avr32_proto/src/init.c" "~/aleph/avr32_proto_test/config.mk" "~/aleph/avr32_proto/conf/conf_aleph.h" "~/aleph/avr32/src/app_timers.c" "~/aleph/avr32_proto_test/src/main.c" "~/aleph/avr32/src/scene.c"))
 
 ;; Buffer section -- buffers listed in same order as in buffer list:
 (desktop-create-buffer 206
-  "/home/emb/aleph/avr32/src/screen.c"
-  "screen.c"
+  "/home/emb/aleph/avr32_proto/src/interrupts.c"
+  "interrupts.c"
   'c-mode
   '(abbrev-mode)
-  5431
-  '(5798 nil)
+  1044
+  '(964 nil)
   nil
   nil
   '((buffer-file-coding-system . undecided-unix)))
 
 (desktop-create-buffer 206
-  "/home/emb/aleph/avr32/config.mk"
-  "config.mk"
-  'makefile-gmake-mode
+  "/home/emb/aleph/avr32_proto/conf/conf_aleph.h"
+  "conf_aleph.h<2>"
+  'c-mode
+  '(abbrev-mode)
+  4781
+  '(2065 nil)
   nil
-  299
-  '(453 nil)
   nil
-  nil
-  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-unix)))
+  '((buffer-file-coding-system . undecided-unix)))
 
 (desktop-create-buffer 206
-  "/home/emb/aleph/tests/strings/Makefile"
-  "Makefile"
-  'makefile-gmake-mode
+  "/home/emb/aleph/avr32_proto/src/switches.c"
+  "switches.c"
+  'c-mode
+  '(abbrev-mode)
+  268
+  '(489 nil)
   nil
-  1
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32_proto/src/init.c"
+  "init.c"
+  'c-mode
+  '(abbrev-mode)
+  10940
+  '(2583 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32_proto/src/event_types.h"
+  "event_types.h"
+  'c-mode
+  '(abbrev-mode)
+  371
   '(nil nil)
   nil
   nil
-  '((indent-tabs-mode . t)))
-
-(desktop-create-buffer 206
-  "/home/emb/aleph/avr32/src/files.c"
-  "files.c"
-  'c-mode
-  '(abbrev-mode)
-  2481
-  '(375 nil)
-  nil
-  nil
   '((buffer-file-coding-system . undecided-unix)))
 
 (desktop-create-buffer 206
-  "/home/emb/aleph/common/files.h"
-  "files.h"
-  'c-mode
-  '(abbrev-mode)
-  80
-  '(302 nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/avr/asf-3.1.3/avr32/services/fs/fat/fat.c"
-  "fat.c"
-  'c-mode
-  '(abbrev-mode)
-  1992
-  '(nil nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-dos)))
-
-(desktop-create-buffer 206
-  "/home/emb/aleph/common/simple_string.c"
-  "simple_string.c"
-  'c-mode
-  '(abbrev-mode)
-  359
-  '(353 nil)
-  nil
-  nil
-  '((buffer-file-coding-system . utf-8-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/aleph/common/simple_string.h"
-  "simple_string.h"
-  'c-mode
-  '(abbrev-mode)
-  194
-  '(95 nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/aleph/common/fix.c"
-  "fix.c"
-  'c-mode
-  '(abbrev-mode)
-  1945
-  '(244 nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/aleph/avr32/src/scene.c"
-  "scene.c<2>"
-  'c-mode
-  '(abbrev-mode)
-  1492
-  '(736 nil)
-  nil
-  nil
-  '((buffer-file-coding-system . utf-8-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/aleph/avr32/src/main.c"
+  "/home/emb/aleph/avr32_proto_test/src/main.c"
   "main.c"
   'c-mode
   '(abbrev-mode)
-  5144
-  '(5144 nil)
+  1727
+  '(3150 nil)
   nil
   nil
   '((buffer-file-coding-system . undecided-unix)))
 
 (desktop-create-buffer 206
-  "/home/emb/aleph/bees/redraw.c"
-  "redraw.c"
+  "/home/emb/aleph/avr32_proto/src/screen.c"
+  "screen.c"
   'c-mode
   '(abbrev-mode)
-  113
-  '(1 nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix) (overwrite-mode)))
-
-(desktop-create-buffer 206
-  "/home/emb/aleph/common/print_fix.c"
-  "print_fix.c"
-  'c-mode
-  '(abbrev-mode)
-  796
-  '(466 nil)
+  7561
+  '(7471 nil)
   nil
   nil
   '((buffer-file-coding-system . undecided-unix)))
 
 (desktop-create-buffer 206
-  "/home/emb/aleph/common/fix.h"
-  "fix.h"
+  "/home/emb/aleph/common/font.h"
+  "font.h"
   'c-mode
   '(abbrev-mode)
-  530
-  '(470 nil)
+  605
+  '(662 nil)
   nil
   nil
   '((buffer-file-coding-system . undecided-unix)))
 
 (desktop-create-buffer 206
-  nil
-  "common"
-  'dired-mode
-  nil
-  1062
+  "/home/emb/aleph/common/font.c"
+  "font.c"
+  'c-mode
+  '(abbrev-mode)
+  2123
   '(nil nil)
-  t
-  '("/home/emb/aleph/common/")
-  nil)
-
-(desktop-create-buffer 206
   nil
-  "avr32"
-  'dired-mode
   nil
-  1168
-  '(nil nil)
-  t
-  '("/home/emb/aleph/avr32/")
-  nil)
+  '((buffer-file-coding-system . undecided-unix)))
 
 (desktop-create-buffer 206
   "/home/emb/aleph/common/screen.h"
   "screen.h"
   'c-mode
   '(abbrev-mode)
-  1793
-  '(1904 nil)
+  762
+  '(2376 nil)
   nil
   nil
   '((buffer-file-coding-system . undecided-unix)))
 
 (desktop-create-buffer 206
-  "/home/emb/aleph/bees/op_math.h"
-  "op_math.h"
+  nil
+  "avr32_proto_test"
+  'dired-mode
+  nil
+  464
+  '(1302 nil)
+  t
+  '("/home/emb/aleph/avr32_proto_test/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32_proto/src/app_timers.c"
+  "app_timers.c"
   'c-mode
   '(abbrev-mode)
-  778
-  '(635 nil)
+  2699
+  '(1678 nil)
   nil
   nil
   '((buffer-file-coding-system . undecided-unix)))
 
 (desktop-create-buffer 206
-  "/home/emb/aleph/bees/scene.h"
-  "scene.h"
+  "/home/emb/avr/avr32/include/avr32/uc3a0512.h"
+  "uc3a0512.h"
   'c-mode
   '(abbrev-mode)
-  469
-  '(nil nil)
+  49504
+  '(49595 nil)
   nil
   nil
-  '((buffer-file-coding-system . undecided-unix)))
+  '((buffer-file-coding-system . undecided-dos)))
 
 (desktop-create-buffer 206
-  "/home/emb/aleph/avr32/conf/conf_aleph.h"
-  "conf_aleph.h"
+  "/home/emb/avr/asf-3.1.3/avr32/boards/evk1100/evk1100.h"
+  "evk1100.h"
   'c-mode
   '(abbrev-mode)
-  200
-  '(nil nil)
+  4567
+  '(4261 nil)
   nil
   nil
-  '((buffer-file-coding-system . undecided-unix)))
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32_proto_test/config.mk"
+  "config.mk"
+  'makefile-gmake-mode
+  nil
+  2331
+  '(466 nil)
+  nil
+  nil
+  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-unix)))
 
 (desktop-create-buffer 206
   nil
   "src"
   'dired-mode
   nil
-  1937
+  457
   '(nil nil)
   t
-  '("/home/emb/aleph/avr32/src/")
+  '("/home/emb/aleph/avr32_proto_test/src/")
   nil)
 
 (desktop-create-buffer 206
-  "/home/emb/aleph/avr32/crt0.S"
-  "crt0.S"
-  'asm-mode
+  "/home/emb/aleph/avr32_proto/src/events.c"
+  "events.c"
+  'c-mode
+  '(abbrev-mode)
+  765
+  '(nil nil)
   nil
-  4348
-  '(3485 nil)
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/avr/asf-3.1.3/avr32/drivers/gpio/gpio.h"
+  "gpio.h"
+  'c-mode
+  '(abbrev-mode)
+  5400
+  '(4749 nil)
   nil
   nil
   '((buffer-file-coding-system . undecided-dos)))
 
 (desktop-create-buffer 206
-  "/home/emb/aleph/common/print_fix.h"
-  "print_fix.h"
+  "/home/emb/aleph/avr32/src/scene.c"
+  "scene.c"
   'c-mode
   '(abbrev-mode)
-  478
-  '(390 nil)
+  1194
+  '(nil nil)
   nil
   nil
   '((buffer-file-coding-system . undecided-unix)))
 
 (desktop-create-buffer 206
-  "/home/emb/aleph/bees/op.c"
-  "op.c"
+  "/home/emb/aleph/bees/key_handler.c"
+  "key_handler.c"
   'c-mode
   '(abbrev-mode)
-  1
+  9737
+  '(9582 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/avr/asf-3.1.3/avr32/components/memory/sdram/mt48lc16m16a2tg7e/mt48lc16m16a2tg7e.h"
+  "mt48lc16m16a2tg7e.h"
+  'c-mode
+  '(abbrev-mode)
+  2604
+  '(2464 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/avr/asf-3.1.3/avr32/drivers/ebi/sdramc/sdramc.c"
+  "sdramc.c"
+  'c-mode
+  '(abbrev-mode)
+  12807
+  '(2679 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32_test/src/main.c"
+  "main.c<4>"
+  'c-mode
+  '(abbrev-mode)
+  4369
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32_proto/src/main.c"
+  "main.c<3>"
+  'c-mode
+  '(abbrev-mode)
+  1115
   '(1 nil)
   nil
   nil
   '((buffer-file-coding-system . undecided-unix)))
 
 (desktop-create-buffer 206
-  "/home/emb/aleph/bees/net.c"
-  "net.c"
+  "/home/emb/aleph/avr32_proto/src/app_timers.h"
+  "app_timers.h"
   'c-mode
   '(abbrev-mode)
-  654
-  '(1 nil)
+  254
+  '(nil nil)
   nil
   nil
   '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/main.c"
+  "main.c<2>"
+  'c-mode
+  '(abbrev-mode)
+  7017
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/avr/asf-3.1.3/avr32/utils/debug/print_funcs.h"
+  "print_funcs.h"
+  'c-mode
+  '(abbrev-mode)
+  9027
+  '(9851 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/avr/asf-3.1.3/avr32/services/fs/fat/fat_example/fat_example.c"
+  "fat_example.c"
+  'c-mode
+  '(abbrev-mode)
+  17905
+  '(31995 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
 

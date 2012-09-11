@@ -82,36 +82,24 @@ static void adc_timer_callback(int tag) {
 // test heartbeat callback
 
 static void heartbeat_callback(int tag) {
-  static char ledstatus;
-  //  if(ledstatus != 0) {
-  //  ledstatus = 0;
-    gpio_tgl_gpio_pin(AVR32_PIN_PB00);
-    gpio_tgl_gpio_pin(AVR32_PIN_PB02);
-
-    gpio_tgl_gpio_pin(AVR32_PIN_PB19);
-    gpio_tgl_gpio_pin(AVR32_PIN_PB20);
-    gpio_tgl_gpio_pin(AVR32_PIN_PB21);
-    gpio_tgl_gpio_pin(AVR32_PIN_PB22);
-
-    gpio_tgl_gpio_pin(AVR32_PIN_PB27);
-    gpio_tgl_gpio_pin(AVR32_PIN_PB28);
-    gpio_tgl_gpio_pin(AVR32_PIN_PB29);
-    gpio_tgl_gpio_pin(AVR32_PIN_PB30);
-
-    gpio_tgl_gpio_pin(AVR32_PIN_PA05);
-
-    gpio_tgl_gpio_pin(AVR32_PIN_PA23);
-    gpio_tgl_gpio_pin(AVR32_PIN_PA24);
-
-    // } else {
-    //ledstatus = 1;
-    // gpio_set_gpio_pin(AVR32_PIN_PB00);
-    // gpio_set_gpio_pin(AVR32_PIN_PA23);
-    // gpio_set_gpio_pin(AVR32_PIN_PA24);
-    // gpio_set_gpio_pin(AVR32_PIN_PA05);
-    // gpio_set_gpio_pin(AVR32_PIN_PB02);
-    // gpio_set_gpio_pin(AVR32_PIN_PB27);
-    //}
+    gpio_tgl_gpio_pin(LED_EDIT_PIN);
+    //    gpio_tgl_gpio_pin(AVR32_PIN_PB00);
+    //    gpio_tgl_gpio_pin(AVR32_PIN_PB02);
+    //
+    //    gpio_tgl_gpio_pin(AVR32_PIN_PB19);
+    //    gpio_tgl_gpio_pin(AVR32_PIN_PB20);
+    //    gpio_tgl_gpio_pin(AVR32_PIN_PB21);
+    //    gpio_tgl_gpio_pin(AVR32_PIN_PB22);
+    //
+    //    gpio_tgl_gpio_pin(AVR32_PIN_PB27);
+    //    gpio_tgl_gpio_pin(AVR32_PIN_PB28);
+    //    gpio_tgl_gpio_pin(AVR32_PIN_PB29);
+    //    gpio_tgl_gpio_pin(AVR32_PIN_PB30);
+    //
+    //    gpio_tgl_gpio_pin(AVR32_PIN_PA05);
+    //
+    //    gpio_tgl_gpio_pin(AVR32_PIN_PA23);
+    //    gpio_tgl_gpio_pin(AVR32_PIN_PA24);
 }
 
 //====== external

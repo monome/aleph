@@ -107,6 +107,7 @@ static void check_events(void) {
 int main (void) {
   U32 waitForCard = 0;
   volatile avr32_tc_t *tc = APP_TC;
+  volatile u64 delay;
   
   // switch to osc0 for main clock
   //  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP); 
@@ -160,18 +161,24 @@ int main (void) {
   // Enable all interrupts.
   Enable_global_interrupt();
 
+  delay = 10000; while(delay-- > 0) { ;; } 
+
+  //  screen_line(0, 0, "AAAAAH HAAA", 0);
+  screen_test_fill();
+  screen_refresh();
+
   print_dbg("\r\nALEPH\r\n ");
   // send ADC config
   init_adc();
   init_app_timers();
 
   print_dbg("starting event loop.\n\r");
-
+  
   // event loop
-    while(1) {
-      check_debug_events();
-      check_events();
-    }
+  while(1) {
+    check_debug_events();
+    check_events();
+  }
 }
 
 /*
