@@ -82,7 +82,7 @@ static void adc_timer_callback(int tag) {
 // test heartbeat callback
 
 static void heartbeat_callback(int tag) {
-    gpio_tgl_gpio_pin(LED_EDIT_PIN);
+  gpio_tgl_gpio_pin(LED_EDIT_PIN);
     //    gpio_tgl_gpio_pin(AVR32_PIN_PB00);
     //    gpio_tgl_gpio_pin(AVR32_PIN_PB02);
     //
@@ -108,5 +108,5 @@ void init_app_timers(void) {
   set_timer(&encTimer,    eEncTimerTag,    5,   &enc_timer_callback,    1);
   set_timer(&adcTimer,    eAdcTimerTag,    5,   &adc_timer_callback,    1);
   // test:
-  set_timer(&heartbeatTimer, eHeartbeatTimerTag, 500, &heartbeat_callback, 1);
+  //    set_timer(&heartbeatTimer, eHeartbeatTimerTag, 100, &heartbeat_callback, 1);
 }

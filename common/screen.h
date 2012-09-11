@@ -73,7 +73,7 @@ extern void screen_refresh(void);
 // fill a line with blank space from x to end
 extern void screen_blank_line(U16 x, U16 y);
 // highlight a region
-extern void screen_hl_line(U16 x, U16 y, U8 a, S8 len);
+extern void screen_hl_line(U16 x, U16 y, U8 a);
 // get the value at a pixel
 extern U8 screen_get_pixel(U8 x, U8 y);
 // fill with a test apttern of characters

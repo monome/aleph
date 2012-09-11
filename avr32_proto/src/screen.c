@@ -19,6 +19,7 @@
 #include "conf_aleph.h"
 #include "fix.h"
 #include "font.h"
+#include "global.h"
 #include "screen.h"
 
 //-----------------------------
@@ -228,13 +229,14 @@ inline U8 screen_string(U16 x, U16 y, char *str, U8 a) {
   return screen_string_squeeze(x, y, str, a);
 }
 
-// print a formatted integeromp
+// print a formatted integer
 U8 screen_int(U16 x, U16 y, S16 i, U8 a) {
   //  static char buf[32];
   //  snprintf(buf, 32, "%d", (int)i);
     static char buf[FIX_DIG_TOTAL];
   //snprintf(buf, 32, "%.1f", (float)f);
-  print_fix16(buf, (u32)i << 16 );
+    //  print_fix16(buf, (u32)i << 16 );
+    itoa_whole(i, buf, 5);
   //buf = ultoa(int);
   return screen_string_squeeze(x, y, buf, a);
 }
@@ -279,7 +281,7 @@ void screen_blank_line(U16 x, U16 y) {
  }
 
 // highlight a line
-void screen_hl_line(U16 x, U16 y, U8 a, S8 len) {
+void screen_hl_line(U16 x, U16 y, U8 a) {
   U8 i, j;
   for(i=x; i<NCOLS; i++) {
     for(j=y; j<(y+FONT_CHARH); j++) {
@@ -293,15 +295,17 @@ void screen_hl_line(U16 x, U16 y, U8 a, S8 len) {
 // draw a line and blank to end
 U8 screen_line(U16 x, U16 y, char *str, U8 hl) {
   // FIXME
-  hl = ( (hl << 1) & 0xf);
+  //  hl = ( (hl << 1) & 0xf);
   //  if (hl ) { hl =0xf;a }
 
   x = screen_string(x, y, str, hl);
   screen_blank_line(x, y);
 
-  print_dbg("\r\n");
-  if(hl > 2) { print_dbg("__"); }
-  print_dbg(str);
+  //  print_dbg("\r\n");
+  //  if(hl > 2) { print_dbg("__"); }
+  //  print_dbg(str);
+
+  refresh = 1;
 
   return NCOLS;
 }
@@ -319,4 +323,5 @@ void screen_test_fill(void) {
       y += FONT_CHARH;
     }
   }
+  refresh = 1;
 }

@@ -140,7 +140,6 @@ DBGFLAGS =
 # OPTIMIZATION = -O2
 OPTIMIZATION = -O3
 
-
 # Extra flags to use when archiving.
 ARFLAGS = 
 

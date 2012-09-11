@@ -57,6 +57,7 @@ void init_gpio(void) {
   gpio_enable_pin_pull_up(SW1_PIN);
   gpio_enable_pin_pull_up(SW2_PIN);
   gpio_enable_pin_pull_up(SW3_PIN);
+  gpio_enable_pin_pull_up(SW_EDIT_PIN);
 }
 
 // initialize debug USART

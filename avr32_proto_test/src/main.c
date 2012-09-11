@@ -42,6 +42,8 @@
 #include "conf_aleph.h"
 #include "encoders.h"
 #include "events.h"
+#include "fix.h"
+#include "simple_string.h"
 #include "font.h"
 #include "global.h"
 #include "init.h"
@@ -69,6 +71,12 @@ static void report_params(void);
 // check for debug event commands
 static char check_debug_events(void);
 
+/// TEST: display scrolling history of events
+static void scroll_event(const char* str);
+static char eventScroll[CHAR_ROWS][CHAR_COLS];
+static u64 eventScrollTimes[CHAR_ROWS];
+static u8 scrollIdx = 0;
+
 // number of parameters
 volatile u32 numParams = 0;
 
@@ -86,19 +94,57 @@ static void check_events(void) {
   if( get_next_event(&e) ) {
 
     switch(e.eventType) {
-        
     case kEventSwitchDown0:
-      //      if (check_init()) { return; }
-      //      key = eKeyFnDownA;
-      print_dbg("\r\n switch down");
-      gpio_set_gpio_pin(AVR32_PIN_PB00);
+      screen_line(0, 0, "sw 0 down", 0xf);
       break;
     case kEventSwitchUp0:
-      print_dbg("\r\n switch up");
-      gpio_clr_gpio_pin(AVR32_PIN_PB00);
-      //      key = eKeyFnUpA;
+      screen_line(0, 0, "sw 0 up", 0xf);
+      break;
+    case kEventSwitchDown1:
+      screen_line(0, FONT_CHARH, "sw 1 down", 0xf);
+      break;
+    case kEventSwitchUp1:
+       screen_line(0, FONT_CHARH, "sw 1 up", 0xf);
+      break;
+    case kEventSwitchDown2:
+       screen_line(0, FONT_CHARH * 2, "sw 2 down", 0xf);
+      break;
+    case kEventSwitchUp2:
+       screen_line(0, FONT_CHARH * 2, "sw 2 up", 0xf);
+      break;
+    case kEventSwitchDown3:
+      gpio_clr_gpio_pin(LED_EDIT_PIN);
+      //      screen_line(0, FONT_CHARH * 3, "sw 3 down", 0xf);
+      scroll_event(" sw 3 down");
+      break;
+    case kEventSwitchUp3:
+      gpio_set_gpio_pin(LED_EDIT_PIN);
+      //      screen_line(0, FONT_CHARH * 3, "sw 3 up", 0xf);
+      scroll_event(" sw 3 up");
+      break;
+
+    case kEventSwitchDown4:
+      //      gpio_set_gpio_pin(LED_EDIT_PIN);
+      screen_line(0, FONT_CHARH * 4, "edit switch down", 0xf);
+      break;
+
+    case kEventSwitchUp4:
+      //      gpio_clr_gpio_pin(LED_EDIT_PIN);
+      screen_line(0, FONT_CHARH * 4, "edit switch up", 0xf);
+      break;
+
+    case kEventRefresh:
+      if(refresh == 1) {
+	screen_refresh();
+	refresh = 0;
+      }
       break;
     }
+
+    ///// TEST
+    //	screen_refresh();
+	///////
+
   } // if event
 }
 
@@ -127,10 +173,10 @@ int main (void) {
   init_oled_usart();
 
   // initialize SD/MMC driver resources: GPIO, SPI and SD/MMC.
-  init_sd_mmc_resources();
+  //  init_sd_mmc_resources();
 
   // initialize PDCA controller
-  init_local_pdca();
+  //  init_local_pdca();
 
   // initialize blackfin resources
   init_bfin_resources();
@@ -154,29 +200,29 @@ int main (void) {
   init_encoders();
 
   // initialize sdram
-  sdramc_init(FMCK_HZ);
+  //  sdramc_init(FMCK_HZ);
   //memory managaer
-  init_mem();
+  // init_mem();
 
   // Enable all interrupts.
   Enable_global_interrupt();
 
-  delay = 10000; while(delay-- > 0) { ;; } 
+  //  delay = 10000; while(delay-- > 0) { ;; } 
 
   //  screen_line(0, 0, "AAAAAH HAAA", 0);
   screen_test_fill();
-  screen_refresh();
+  //  screen_refresh();
 
   print_dbg("\r\nALEPH\r\n ");
   // send ADC config
-  init_adc();
+  //  init_adc();
   init_app_timers();
 
   print_dbg("starting event loop.\n\r");
   
   // event loop
   while(1) {
-    check_debug_events();
+    //    check_debug_events();
     check_events();
   }
 }
@@ -218,4 +264,28 @@ U8 check_init(void) {
 // check the debug command 
 char check_debug_events(void) {
   return 1;
+}
+
+
+/// TEST: add a string to the scroll output
+static void scroll_event(const char* str) {
+  u8 i;
+  s8 n;
+  u8 x=0;
+  // timestamp
+  //  itoa_whole((int)tcTicks, eventScroll[scrollIdx], 6);
+  // string
+  //  str_copy(str, eventScroll[scrollIdx], 10);
+  strcpy(eventScroll[scrollIdx], str);
+  eventScrollTimes[scrollIdx] = tcTicks;
+  // display
+  for(i=0; i<CHAR_ROWS; i++) {
+    n = scrollIdx - i;
+    if(n < 0) { n += CHAR_ROWS; }
+    x = screen_int(0, FONT_CHARH * i, (s16)eventScrollTimes[n], 0xf);
+    screen_line(x, FONT_CHARH * i, eventScroll[n], 0xf);
+    screen_hl_line(x, FONT_CHARH * i, n << 1);
+  }
+  // advance index
+  scrollIdx = (scrollIdx + 1) % CHAR_ROWS;
 }

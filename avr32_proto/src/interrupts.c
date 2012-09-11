@@ -278,6 +278,8 @@ void register_interrupts(void) {
   gpio_enable_pin_interrupt( SW1_PIN,	        GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( SW2_PIN,	        GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( SW3_PIN,	        GPIO_PIN_CHANGE);
+  // TEST:
+  //  gpio_enable_pin_interrupt( SW3_PIN,	        GPIO_FALLING_EDGE);
   gpio_enable_pin_interrupt( SW_EDIT_PIN,	GPIO_PIN_CHANGE);
   
 
