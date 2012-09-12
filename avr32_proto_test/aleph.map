@@ -226,28 +226,10 @@ Discarded input sections
  .text          0x0000000000000000        0x0 avr32/drivers/ebi/sdramc/sdramc.o
  .data          0x0000000000000000        0x0 avr32/drivers/ebi/sdramc/sdramc.o
  .bss           0x0000000000000000        0x0 avr32/drivers/ebi/sdramc/sdramc.o
- .debug_abbrev  0x0000000000000000      0x222 avr32/drivers/ebi/sdramc/sdramc.o
- .debug_info    0x0000000000000000      0xca8 avr32/drivers/ebi/sdramc/sdramc.o
- .debug_line    0x0000000000000000      0x7ec avr32/drivers/ebi/sdramc/sdramc.o
- .debug_macinfo
-                0x0000000000000000    0xe8ec9 avr32/drivers/ebi/sdramc/sdramc.o
  .text.sdram_enter_self_refresh
                 0x0000000000000000        0xa avr32/drivers/ebi/sdramc/sdramc.o
  .text.sdram_exit_self_refresh
                 0x0000000000000000        0xa avr32/drivers/ebi/sdramc/sdramc.o
- .text.sdramc_init
-                0x0000000000000000      0x214 avr32/drivers/ebi/sdramc/sdramc.o
- .rodata.SDRAMC_EBI_GPIO_MAP.10494
-                0x0000000000000000       0x4e avr32/drivers/ebi/sdramc/sdramc.o
- .debug_frame   0x0000000000000000       0x58 avr32/drivers/ebi/sdramc/sdramc.o
- .debug_loc     0x0000000000000000       0x89 avr32/drivers/ebi/sdramc/sdramc.o
- .debug_pubnames
-                0x0000000000000000       0x5b avr32/drivers/ebi/sdramc/sdramc.o
- .debug_aranges
-                0x0000000000000000       0x30 avr32/drivers/ebi/sdramc/sdramc.o
- .debug_ranges  0x0000000000000000       0x28 avr32/drivers/ebi/sdramc/sdramc.o
- .debug_str     0x0000000000000000      0x4ad avr32/drivers/ebi/sdramc/sdramc.o
- .comment       0x0000000000000000       0x31 avr32/drivers/ebi/sdramc/sdramc.o
  .text          0x0000000000000000        0x0 avr32/drivers/flashc/flashc.o
  .data          0x0000000000000000        0x0 avr32/drivers/flashc/flashc.o
  .bss           0x0000000000000000        0x0 avr32/drivers/flashc/flashc.o
@@ -422,8 +404,6 @@ Discarded input sections
                 0x0000000000000000       0x1a avr32/drivers/gpio/gpio.o
  .text.gpio_tgl_gpio_open_drain_pin
                 0x0000000000000000       0x1a avr32/drivers/gpio/gpio.o
- .text.gpio_enable_pin_glitch_filter
-                0x0000000000000000       0x14 avr32/drivers/gpio/gpio.o
  .text.gpio_disable_pin_glitch_filter
                 0x0000000000000000       0x14 avr32/drivers/gpio/gpio.o
  .text.gpio_disable_pin_interrupt
@@ -1402,30 +1382,8 @@ Discarded input sections
  .text          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/memory.o
  .data          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/memory.o
  .bss           0x0000000000000000        0x0 ../../aleph/avr32_proto/src/memory.o
- .debug_abbrev  0x0000000000000000       0xcb ../../aleph/avr32_proto/src/memory.o
- .debug_info    0x0000000000000000      0x16d ../../aleph/avr32_proto/src/memory.o
- .debug_line    0x0000000000000000      0x707 ../../aleph/avr32_proto/src/memory.o
- .debug_macinfo
-                0x0000000000000000    0xe9a62 ../../aleph/avr32_proto/src/memory.o
- .text.init_mem
-                0x0000000000000000       0x30 ../../aleph/avr32_proto/src/memory.o
  .text.alloc_mem
                 0x0000000000000000       0x34 ../../aleph/avr32_proto/src/memory.o
- .bss.pHeapStart
-                0x0000000000000000        0x4 ../../aleph/avr32_proto/src/memory.o
- .bss.heapOffset
-                0x0000000000000000        0x4 ../../aleph/avr32_proto/src/memory.o
- .bss.heapSize  0x0000000000000000        0x4 ../../aleph/avr32_proto/src/memory.o
- .bss.pHeapEnd  0x0000000000000000        0x4 ../../aleph/avr32_proto/src/memory.o
- .debug_frame   0x0000000000000000       0x30 ../../aleph/avr32_proto/src/memory.o
- .debug_loc     0x0000000000000000       0x6d ../../aleph/avr32_proto/src/memory.o
- .debug_pubnames
-                0x0000000000000000       0x2d ../../aleph/avr32_proto/src/memory.o
- .debug_aranges
-                0x0000000000000000       0x28 ../../aleph/avr32_proto/src/memory.o
- .debug_ranges  0x0000000000000000       0x20 ../../aleph/avr32_proto/src/memory.o
- .debug_str     0x0000000000000000      0x13b ../../aleph/avr32_proto/src/memory.o
- .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/memory.o
  .text          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/screen.o
  .data          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/screen.o
  .bss           0x0000000000000000        0x0 ../../aleph/avr32_proto/src/screen.o
@@ -2601,331 +2559,345 @@ Linker script and memory map
 .plt
  *(.plt)
 
-.text           0x0000000080002004     0x2912
+.text           0x0000000080002004     0x2b42
  *(.text .stub .text.* .gnu.linkonce.t.*)
+ .text.sdramc_init
+                0x0000000080002004      0x20c avr32/drivers/ebi/sdramc/sdramc.o
+                                        0x214 (size before relaxing)
+                0x0000000080002004                sdramc_init
  .text.flashc_set_wait_state
-                0x0000000080002004        0xe avr32/drivers/flashc/flashc.o
-                0x0000000080002004                flashc_set_wait_state
+                0x0000000080002210        0xe avr32/drivers/flashc/flashc.o
+                0x0000000080002210                flashc_set_wait_state
  .text.gpio_enable_pin_pull_up
-                0x0000000080002012       0x14 avr32/drivers/gpio/gpio.o
-                0x0000000080002012                gpio_enable_pin_pull_up
+                0x000000008000221e       0x14 avr32/drivers/gpio/gpio.o
+                0x000000008000221e                gpio_enable_pin_pull_up
  .text.gpio_get_pin_value
-                0x0000000080002026       0x16 avr32/drivers/gpio/gpio.o
-                0x0000000080002026                gpio_get_pin_value
+                0x0000000080002232       0x16 avr32/drivers/gpio/gpio.o
+                0x0000000080002232                gpio_get_pin_value
  .text.gpio_set_gpio_pin
-                0x000000008000203c       0x1a avr32/drivers/gpio/gpio.o
-                0x000000008000203c                gpio_set_gpio_pin
+                0x0000000080002248       0x1a avr32/drivers/gpio/gpio.o
+                0x0000000080002248                gpio_set_gpio_pin
  .text.gpio_clr_gpio_pin
-                0x0000000080002056       0x1a avr32/drivers/gpio/gpio.o
-                0x0000000080002056                gpio_clr_gpio_pin
+                0x0000000080002262       0x1a avr32/drivers/gpio/gpio.o
+                0x0000000080002262                gpio_clr_gpio_pin
+ .text.gpio_enable_pin_glitch_filter
+                0x000000008000227c       0x14 avr32/drivers/gpio/gpio.o
+                0x000000008000227c                gpio_enable_pin_glitch_filter
  .text.gpio_enable_pin_interrupt
-                0x0000000080002070       0x4a avr32/drivers/gpio/gpio.o
-                0x0000000080002070                gpio_enable_pin_interrupt
+                0x0000000080002290       0x4a avr32/drivers/gpio/gpio.o
+                0x0000000080002290                gpio_enable_pin_interrupt
  .text.gpio_get_pin_interrupt_flag
-                0x00000000800020ba       0x18 avr32/drivers/gpio/gpio.o
-                0x00000000800020ba                gpio_get_pin_interrupt_flag
+                0x00000000800022da       0x18 avr32/drivers/gpio/gpio.o
+                0x00000000800022da                gpio_get_pin_interrupt_flag
  .text.gpio_clear_pin_interrupt_flag
-                0x00000000800020d2       0x14 avr32/drivers/gpio/gpio.o
-                0x00000000800020d2                gpio_clear_pin_interrupt_flag
+                0x00000000800022f2       0x14 avr32/drivers/gpio/gpio.o
+                0x00000000800022f2                gpio_clear_pin_interrupt_flag
  .text.gpio_enable_module
-                0x00000000800020e6       0x84 avr32/drivers/gpio/gpio.o
-                0x00000000800020e6                gpio_enable_module
+                0x0000000080002306       0x84 avr32/drivers/gpio/gpio.o
+                0x0000000080002306                gpio_enable_module
  .text._unhandled_interrupt
-                0x000000008000216a        0x2 avr32/drivers/intc/intc.o
+                0x000000008000238a        0x2 avr32/drivers/intc/intc.o
  .text.INTC_register_interrupt
-                0x000000008000216c       0x80 avr32/drivers/intc/intc.o
+                0x000000008000238c       0x80 avr32/drivers/intc/intc.o
                                          0x88 (size before relaxing)
-                0x000000008000216c                INTC_register_interrupt
+                0x000000008000238c                INTC_register_interrupt
  .text.INTC_init_interrupts
-                0x00000000800021ec       0x44 avr32/drivers/intc/intc.o
+                0x000000008000240c       0x44 avr32/drivers/intc/intc.o
                                          0x4c (size before relaxing)
-                0x00000000800021ec                INTC_init_interrupts
+                0x000000008000240c                INTC_init_interrupts
  .text._get_interrupt_handler
-                0x0000000080002230       0x34 avr32/drivers/intc/intc.o
+                0x0000000080002450       0x34 avr32/drivers/intc/intc.o
                                          0x38 (size before relaxing)
-                0x0000000080002230                _get_interrupt_handler
+                0x0000000080002450                _get_interrupt_handler
  .text.pdca_disable
-                0x0000000080002264       0x1a avr32/drivers/pdca/pdca.o
-                0x0000000080002264                pdca_disable
+                0x0000000080002484       0x1a avr32/drivers/pdca/pdca.o
+                0x0000000080002484                pdca_disable
  .text.pdca_disable_interrupt_transfer_complete
-                0x000000008000227e       0x36 avr32/drivers/pdca/pdca.o
-                0x000000008000227e                pdca_disable_interrupt_transfer_complete
+                0x000000008000249e       0x36 avr32/drivers/pdca/pdca.o
+                0x000000008000249e                pdca_disable_interrupt_transfer_complete
  .text.pm_pll_setup
-                0x00000000800022b4       0x22 avr32/drivers/pm/pm.o
-                0x00000000800022b4                pm_pll_setup
+                0x00000000800024d4       0x22 avr32/drivers/pm/pm.o
+                0x00000000800024d4                pm_pll_setup
  .text.pm_pll_set_option
-                0x00000000800022d6       0x18 avr32/drivers/pm/pm.o
-                0x00000000800022d6                pm_pll_set_option
+                0x00000000800024f6       0x18 avr32/drivers/pm/pm.o
+                0x00000000800024f6                pm_pll_set_option
  .text.pm_pll_enable
-                0x00000000800022ee        0xe avr32/drivers/pm/pm.o
-                0x00000000800022ee                pm_pll_enable
+                0x000000008000250e        0xe avr32/drivers/pm/pm.o
+                0x000000008000250e                pm_pll_enable
  .text.pm_wait_for_pll0_locked
-                0x00000000800022fc        0xa avr32/drivers/pm/pm.o
-                0x00000000800022fc                pm_wait_for_pll0_locked
+                0x000000008000251c        0xa avr32/drivers/pm/pm.o
+                0x000000008000251c                pm_wait_for_pll0_locked
  .text.pm_switch_to_clock
-                0x0000000080002306        0xa avr32/drivers/pm/pm.o
-                0x0000000080002306                pm_switch_to_clock
+                0x0000000080002526        0xa avr32/drivers/pm/pm.o
+                0x0000000080002526                pm_switch_to_clock
  .text.pm_switch_to_osc0
-                0x0000000080002310       0x5a avr32/drivers/pm/pm.o
-                0x0000000080002310                pm_switch_to_osc0
+                0x0000000080002530       0x5a avr32/drivers/pm/pm.o
+                0x0000000080002530                pm_switch_to_osc0
  .text.getBaudDiv
-                0x000000008000236a       0x28 avr32/drivers/spi/spi.o
-                0x000000008000236a                getBaudDiv
+                0x000000008000258a       0x28 avr32/drivers/spi/spi.o
+                0x000000008000258a                getBaudDiv
  .text.spi_initMaster
-                0x0000000080002392       0x3a avr32/drivers/spi/spi.o
-                0x0000000080002392                spi_initMaster
+                0x00000000800025b2       0x3a avr32/drivers/spi/spi.o
+                0x00000000800025b2                spi_initMaster
  .text.spi_selectionMode
-                0x00000000800023cc       0x2a avr32/drivers/spi/spi.o
-                0x00000000800023cc                spi_selectionMode
+                0x00000000800025ec       0x2a avr32/drivers/spi/spi.o
+                0x00000000800025ec                spi_selectionMode
  .text.spi_selectChip
-                0x00000000800023f6       0x50 avr32/drivers/spi/spi.o
-                0x00000000800023f6                spi_selectChip
+                0x0000000080002616       0x50 avr32/drivers/spi/spi.o
+                0x0000000080002616                spi_selectChip
  .text.spi_unselectChip
-                0x0000000080002446       0x26 avr32/drivers/spi/spi.o
-                0x0000000080002446                spi_unselectChip
+                0x0000000080002666       0x26 avr32/drivers/spi/spi.o
+                0x0000000080002666                spi_unselectChip
  .text.spi_setupChipReg
-                0x000000008000246c       0xac avr32/drivers/spi/spi.o
+                0x000000008000268c       0xac avr32/drivers/spi/spi.o
                                          0xb0 (size before relaxing)
-                0x000000008000246c                spi_setupChipReg
+                0x000000008000268c                spi_setupChipReg
  .text.spi_enable
-                0x0000000080002518        0x6 avr32/drivers/spi/spi.o
-                0x0000000080002518                spi_enable
+                0x0000000080002738        0x6 avr32/drivers/spi/spi.o
+                0x0000000080002738                spi_enable
  .text.spi_write
-                0x000000008000251e       0x1c avr32/drivers/spi/spi.o
-                0x000000008000251e                spi_write
+                0x000000008000273e       0x1c avr32/drivers/spi/spi.o
+                0x000000008000273e                spi_write
  .text.spi_read
-                0x000000008000253a       0x22 avr32/drivers/spi/spi.o
-                0x000000008000253a                spi_read
+                0x000000008000275a       0x22 avr32/drivers/spi/spi.o
+                0x000000008000275a                spi_read
  .text.tc_init_waveform
-                0x000000008000255c       0x9e avr32/drivers/tc/tc.o
-                0x000000008000255c                tc_init_waveform
+                0x000000008000277c       0x9e avr32/drivers/tc/tc.o
+                0x000000008000277c                tc_init_waveform
  .text.tc_start
-                0x00000000800025fa       0x12 avr32/drivers/tc/tc.o
-                0x00000000800025fa                tc_start
+                0x000000008000281a       0x12 avr32/drivers/tc/tc.o
+                0x000000008000281a                tc_start
  .text.tc_read_sr
-                0x000000008000260c       0x12 avr32/drivers/tc/tc.o
-                0x000000008000260c                tc_read_sr
+                0x000000008000282c       0x12 avr32/drivers/tc/tc.o
+                0x000000008000282c                tc_read_sr
  .text.tc_write_rc
-                0x000000008000261e       0x38 avr32/drivers/tc/tc.o
-                0x000000008000261e                tc_write_rc
+                0x000000008000283e       0x38 avr32/drivers/tc/tc.o
+                0x000000008000283e                tc_write_rc
  .text.tc_configure_interrupts
-                0x0000000080002656      0x11e avr32/drivers/tc/tc.o
-                0x0000000080002656                tc_configure_interrupts
+                0x0000000080002876      0x11e avr32/drivers/tc/tc.o
+                0x0000000080002876                tc_configure_interrupts
  .text.usart_set_async_baudrate
-                0x0000000080002774       0x5e avr32/drivers/usart/usart.o
+                0x0000000080002994       0x5e avr32/drivers/usart/usart.o
  .text.usart_spi_selectChip
-                0x00000000800027d2        0x8 avr32/drivers/usart/usart.o
-                0x00000000800027d2                usart_spi_selectChip
+                0x00000000800029f2        0x8 avr32/drivers/usart/usart.o
+                0x00000000800029f2                usart_spi_selectChip
  .text.usart_spi_unselectChip
-                0x00000000800027da       0x1e avr32/drivers/usart/usart.o
-                0x00000000800027da                usart_spi_unselectChip
+                0x00000000800029fa       0x1e avr32/drivers/usart/usart.o
+                0x00000000800029fa                usart_spi_unselectChip
  .text.usart_putchar
-                0x00000000800027f8       0x1c avr32/drivers/usart/usart.o
-                0x00000000800027f8                usart_putchar
+                0x0000000080002a18       0x1c avr32/drivers/usart/usart.o
+                0x0000000080002a18                usart_putchar
  .text.usart_write_line
-                0x0000000080002814       0x2c avr32/drivers/usart/usart.o
-                0x0000000080002814                usart_write_line
+                0x0000000080002a34       0x2c avr32/drivers/usart/usart.o
+                0x0000000080002a34                usart_write_line
  .text.usart_init_spi_master
-                0x0000000080002840       0xce avr32/drivers/usart/usart.o
-                0x0000000080002840                usart_init_spi_master
- *fill*         0x000000008000290e        0x2 d703d703
+                0x0000000080002a60       0xce avr32/drivers/usart/usart.o
+                0x0000000080002a60                usart_init_spi_master
+ *fill*         0x0000000080002b2e        0x2 d703d703
  .text.usart_init_rs232
-                0x0000000080002910       0xe4 avr32/drivers/usart/usart.o
+                0x0000000080002b30       0xe4 avr32/drivers/usart/usart.o
                                          0xec (size before relaxing)
-                0x0000000080002910                usart_init_rs232
+                0x0000000080002b30                usart_init_rs232
  .text.print_dbg
-                0x00000000800029f4        0xc avr32/utils/debug/print_funcs.o
+                0x0000000080002c14        0xc avr32/utils/debug/print_funcs.o
                                          0x14 (size before relaxing)
-                0x00000000800029f4                print_dbg
+                0x0000000080002c14                print_dbg
  .text.sd_mmc_spi_read_close_PDCA
-                0x0000000080002a00       0x40 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                0x0000000080002c20       0x40 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
                                          0x48 (size before relaxing)
-                0x0000000080002a00                sd_mmc_spi_read_close_PDCA
+                0x0000000080002c20                sd_mmc_spi_read_close_PDCA
  .text.adc_poll
-                0x0000000080002a40      0x174 ../../aleph/avr32_proto/src/adc.o
+                0x0000000080002c60      0x174 ../../aleph/avr32_proto/src/adc.o
                                         0x18c (size before relaxing)
-                0x0000000080002a40                adc_poll
+                0x0000000080002c60                adc_poll
  .text.init_app_timers
-                0x0000000080002bb4       0x3c ../../aleph/avr32_proto/src/app_timers.o
+                0x0000000080002dd4       0x3c ../../aleph/avr32_proto/src/app_timers.o
                                          0x4c (size before relaxing)
-                0x0000000080002bb4                init_app_timers
+                0x0000000080002dd4                init_app_timers
  .text.adc_timer_callback
-                0x0000000080002bf0        0x8 ../../aleph/avr32_proto/src/app_timers.o
+                0x0000000080002e10        0x8 ../../aleph/avr32_proto/src/app_timers.o
                                           0xc (size before relaxing)
  .text.enc_timer_callback
-                0x0000000080002bf8       0x64 ../../aleph/avr32_proto/src/app_timers.o
+                0x0000000080002e18       0x64 ../../aleph/avr32_proto/src/app_timers.o
                                          0x70 (size before relaxing)
  .text.screen_timer_callback
-                0x0000000080002c5c       0x1c ../../aleph/avr32_proto/src/app_timers.o
+                0x0000000080002e7c       0x1c ../../aleph/avr32_proto/src/app_timers.o
                                          0x24 (size before relaxing)
  .text.init_events
-                0x0000000080002c78       0x24 ../../aleph/avr32_proto/src/events.o
+                0x0000000080002e98       0x24 ../../aleph/avr32_proto/src/events.o
                                          0x2c (size before relaxing)
-                0x0000000080002c78                init_events
+                0x0000000080002e98                init_events
  .text.post_event
-                0x0000000080002c9c       0x50 ../../aleph/avr32_proto/src/events.o
+                0x0000000080002ebc       0x50 ../../aleph/avr32_proto/src/events.o
                                          0x54 (size before relaxing)
-                0x0000000080002c9c                post_event
+                0x0000000080002ebc                post_event
  .text.get_next_event
-                0x0000000080002cec       0x58 ../../aleph/avr32_proto/src/events.o
+                0x0000000080002f0c       0x58 ../../aleph/avr32_proto/src/events.o
                                          0x60 (size before relaxing)
-                0x0000000080002cec                get_next_event
+                0x0000000080002f0c                get_next_event
  .text.process_enc
-                0x0000000080002d44       0x4c ../../aleph/avr32_proto/src/encoders.o
+                0x0000000080002f64       0x4c ../../aleph/avr32_proto/src/encoders.o
                                          0x54 (size before relaxing)
-                0x0000000080002d44                process_enc
+                0x0000000080002f64                process_enc
  .text.init_encoders
-                0x0000000080002d90       0xbc ../../aleph/avr32_proto/src/encoders.o
+                0x0000000080002fb0       0xbc ../../aleph/avr32_proto/src/encoders.o
                                          0xc4 (size before relaxing)
-                0x0000000080002d90                init_encoders
+                0x0000000080002fb0                init_encoders
  .text.init_clocks
-                0x0000000080002e4c       0x60 ../../aleph/avr32_proto/src/init.o
+                0x000000008000306c       0x60 ../../aleph/avr32_proto/src/init.o
                                          0x7c (size before relaxing)
-                0x0000000080002e4c                init_clocks
+                0x000000008000306c                init_clocks
  .text.init_bfin_resources
-                0x0000000080002eac       0xa8 ../../aleph/avr32_proto/src/init.o
+                0x00000000800030cc       0xa8 ../../aleph/avr32_proto/src/init.o
                                          0xc4 (size before relaxing)
-                0x0000000080002eac                init_bfin_resources
- .text.init_gpio
-                0x0000000080002f54       0x54 ../../aleph/avr32_proto/src/init.o
-                                         0x58 (size before relaxing)
-                0x0000000080002f54                init_gpio
- .text.init_tc  0x0000000080002fa8       0x34 ../../aleph/avr32_proto/src/init.o
+                0x00000000800030cc                init_bfin_resources
+ .text.init_tc  0x0000000080003174       0x34 ../../aleph/avr32_proto/src/init.o
                                          0x48 (size before relaxing)
-                0x0000000080002fa8                init_tc
+                0x0000000080003174                init_tc
  .text.init_oled_usart
-                0x0000000080002fdc       0x24 ../../aleph/avr32_proto/src/init.o
+                0x00000000800031a8       0x24 ../../aleph/avr32_proto/src/init.o
                                          0x30 (size before relaxing)
-                0x0000000080002fdc                init_oled_usart
+                0x00000000800031a8                init_oled_usart
  .text.init_dbg_usart
-                0x0000000080003000       0x24 ../../aleph/avr32_proto/src/init.o
+                0x00000000800031cc       0x24 ../../aleph/avr32_proto/src/init.o
                                          0x30 (size before relaxing)
-                0x0000000080003000                init_dbg_usart
+                0x00000000800031cc                init_dbg_usart
+ .text.init_gpio
+                0x00000000800031f0       0x58 ../../aleph/avr32_proto/src/init.o
+                                         0x60 (size before relaxing)
+                0x00000000800031f0                init_gpio
  .text.register_interrupts
-                0x0000000080003024       0xc0 ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000080003248       0xc0 ../../aleph/avr32_proto/src/interrupts.o
                                          0xd4 (size before relaxing)
-                0x0000000080003024                register_interrupts
- .text.irq_tc   0x00000000800030e4       0x64 ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000080003248                register_interrupts
+ .text.irq_tc   0x0000000080003308       0x64 ../../aleph/avr32_proto/src/interrupts.o
                                          0x6c (size before relaxing)
  .text.irq_pdca
-                0x0000000080003148       0x50 ../../aleph/avr32_proto/src/interrupts.o
+                0x000000008000336c       0x50 ../../aleph/avr32_proto/src/interrupts.o
                                          0x5c (size before relaxing)
  .text.irq_port1_line1
-                0x0000000080003198       0x30 ../../aleph/avr32_proto/src/interrupts.o
+                0x00000000800033bc       0x30 ../../aleph/avr32_proto/src/interrupts.o
                                          0x3c (size before relaxing)
  .text.irq_port1_line0
-                0x00000000800031c8       0x88 ../../aleph/avr32_proto/src/interrupts.o
+                0x00000000800033ec       0x88 ../../aleph/avr32_proto/src/interrupts.o
                                          0x94 (size before relaxing)
  .text.irq_port0_line3
-                0x0000000080003250       0x74 ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000080003474       0x74 ../../aleph/avr32_proto/src/interrupts.o
                                          0x80 (size before relaxing)
  .text.irq_port0_line0
-                0x00000000800032c4       0x20 ../../aleph/avr32_proto/src/interrupts.o
+                0x00000000800034e8       0x20 ../../aleph/avr32_proto/src/interrupts.o
                                          0x30 (size before relaxing)
  .text.scroll_event
-                0x00000000800032e4      0x280 ../../aleph/avr32_proto_test/src/main.o
-                                        0x2b0 (size before relaxing)
- .text.main     0x0000000080003564      0x110 ../../aleph/avr32_proto_test/src/main.o
-                                        0x194 (size before relaxing)
-                0x0000000080003564                main
+                0x0000000080003508      0x290 ../../aleph/avr32_proto_test/src/main.o
+                                        0x2c8 (size before relaxing)
+ .text.main     0x0000000080003798       0xe4 ../../aleph/avr32_proto_test/src/main.o
+                                        0x164 (size before relaxing)
+                0x0000000080003798                main
+ .text.init_mem
+                0x000000008000387c       0x28 ../../aleph/avr32_proto/src/memory.o
+                                         0x30 (size before relaxing)
+                0x000000008000387c                init_mem
  .text.write_command
-                0x0000000080003674       0x2c ../../aleph/avr32_proto/src/screen.o
+                0x00000000800038a4       0x2c ../../aleph/avr32_proto/src/screen.o
                                          0x3c (size before relaxing)
  .text.screen_hl_line
-                0x00000000800036a0      0x168 ../../aleph/avr32_proto/src/screen.o
-                0x00000000800036a0                screen_hl_line
+                0x00000000800038d0      0x168 ../../aleph/avr32_proto/src/screen.o
+                0x00000000800038d0                screen_hl_line
  .text.screen_refresh
-                0x0000000080003808       0x38 ../../aleph/avr32_proto/src/screen.o
+                0x0000000080003a38       0x38 ../../aleph/avr32_proto/src/screen.o
                                          0x48 (size before relaxing)
-                0x0000000080003808                screen_refresh
+                0x0000000080003a38                screen_refresh
  .text.screen_test_fill
-                0x0000000080003840      0x134 ../../aleph/avr32_proto/src/screen.o
+                0x0000000080003a70      0x134 ../../aleph/avr32_proto/src/screen.o
                                         0x144 (size before relaxing)
-                0x0000000080003840                screen_test_fill
+                0x0000000080003a70                screen_test_fill
  .text.screen_line
-                0x0000000080003974      0x354 ../../aleph/avr32_proto/src/screen.o
+                0x0000000080003ba4      0x354 ../../aleph/avr32_proto/src/screen.o
                                         0x368 (size before relaxing)
-                0x0000000080003974                screen_line
+                0x0000000080003ba4                screen_line
  .text.screen_int
-                0x0000000080003cc8      0x2bc ../../aleph/avr32_proto/src/screen.o
+                0x0000000080003ef8      0x2bc ../../aleph/avr32_proto/src/screen.o
                                         0x2d8 (size before relaxing)
-                0x0000000080003cc8                screen_int
+                0x0000000080003ef8                screen_int
  .text.init_oled
-                0x0000000080003f84      0x5d0 ../../aleph/avr32_proto/src/screen.o
+                0x00000000800041b4      0x5d0 ../../aleph/avr32_proto/src/screen.o
                                         0x5e8 (size before relaxing)
-                0x0000000080003f84                init_oled
+                0x00000000800041b4                init_oled
  .text.process_sw
-                0x0000000080004554       0x40 ../../aleph/avr32_proto/src/switches.o
+                0x0000000080004784       0x40 ../../aleph/avr32_proto/src/switches.o
                                          0x50 (size before relaxing)
-                0x0000000080004554                process_sw
+                0x0000000080004784                process_sw
  .text.process_timers
-                0x0000000080004594      0x18c ../../aleph/avr32_proto/src/timers.o
+                0x00000000800047c4      0x18c ../../aleph/avr32_proto/src/timers.o
                                         0x190 (size before relaxing)
-                0x0000000080004594                process_timers
+                0x00000000800047c4                process_timers
  .text.set_timer
-                0x0000000080004720      0x148 ../../aleph/avr32_proto/src/timers.o
-                0x0000000080004720                set_timer
+                0x0000000080004950      0x148 ../../aleph/avr32_proto/src/timers.o
+                0x0000000080004950                set_timer
  .text.itoa_whole
-                0x0000000080004868       0x60 ../../aleph/common/fix.o
-                0x0000000080004868                itoa_whole
- .text._stext   0x00000000800048c8       0x3c avr32/utils/startup/startup_uc3.o
+                0x0000000080004a98       0x60 ../../aleph/common/fix.o
+                0x0000000080004a98                itoa_whole
+ .text._stext   0x0000000080004af8       0x3c avr32/utils/startup/startup_uc3.o
                                          0x50 (size before relaxing)
-                0x00000000800048c8                _stext
- .text.strcpy   0x0000000080004904       0x12 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strcpy.o)
-                0x0000000080004904                strcpy
+                0x0000000080004af8                _stext
+ .text.strcpy   0x0000000080004b34       0x12 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strcpy.o)
+                0x0000000080004b34                strcpy
  *(.text.*personality*)
  *(.gnu.warning)
 
-.exception      0x0000000080004a00      0x200
- .exception     0x0000000080004a00      0x200 avr32/drivers/intc/exception.o
-                0x0000000080004a00                _evba
-                0x0000000080004b04                _int0
-                0x0000000080004b12                _int1
-                0x0000000080004b20                _int2
-                0x0000000080004b2e                _int3
+.exception      0x0000000080004c00      0x200
+ .exception     0x0000000080004c00      0x200 avr32/drivers/intc/exception.o
+                0x0000000080004c00                _evba
+                0x0000000080004d04                _int0
+                0x0000000080004d12                _int1
+                0x0000000080004d20                _int2
+                0x0000000080004d2e                _int3
 
 .fini
  *(.fini)
-                0x0000000080004c00                PROVIDE (__etext, .)
-                0x0000000080004c00                PROVIDE (_etext, .)
-                0x0000000080004c00                PROVIDE (etext, .)
+                0x0000000080004e00                PROVIDE (__etext, .)
+                0x0000000080004e00                PROVIDE (_etext, .)
+                0x0000000080004e00                PROVIDE (etext, .)
 
-.rodata         0x0000000080004c00      0x50c
+.rodata         0x0000000080004e00      0x578
  *(.rodata .rodata.* .gnu.linkonce.r.*)
+ .rodata.SDRAMC_EBI_GPIO_MAP.10494
+                0x0000000080004e00       0x4e avr32/drivers/ebi/sdramc/sdramc.o
+ *fill*         0x0000000080004e4e        0x2 00
  .rodata._int_handler_table
-                0x0000000080004c00       0xa0 avr32/drivers/intc/intc.o
+                0x0000000080004e50       0xa0 avr32/drivers/intc/intc.o
  .rodata.enc_map
-                0x0000000080004ca0       0x10 ../../aleph/avr32_proto/src/encoders.o
+                0x0000000080004ef0       0x10 ../../aleph/avr32_proto/src/encoders.o
  .rodata.USART_SPI_OPTIONS.12030
-                0x0000000080004cb0        0x8 ../../aleph/avr32_proto/src/init.o
+                0x0000000080004f00        0x8 ../../aleph/avr32_proto/src/init.o
  .rodata.C.67.12061
-                0x0000000080004cb8       0x10 ../../aleph/avr32_proto/src/init.o
+                0x0000000080004f08       0x10 ../../aleph/avr32_proto/src/init.o
  .rodata.tc_interrupt.12042
-                0x0000000080004cc8        0x4 ../../aleph/avr32_proto/src/init.o
+                0x0000000080004f18        0x4 ../../aleph/avr32_proto/src/init.o
  .rodata.waveform_opt.12041
-                0x0000000080004ccc        0x8 ../../aleph/avr32_proto/src/init.o
+                0x0000000080004f1c        0x8 ../../aleph/avr32_proto/src/init.o
  .rodata.USART_SPI_GPIO_MAP.12029
-                0x0000000080004cd4        0x8 ../../aleph/avr32_proto/src/init.o
+                0x0000000080004f24        0x8 ../../aleph/avr32_proto/src/init.o
  .rodata.DBG_USART_OPTIONS.12025
-                0x0000000080004cdc        0xc ../../aleph/avr32_proto/src/init.o
+                0x0000000080004f2c        0xc ../../aleph/avr32_proto/src/init.o
  .rodata.BFIN_SPI_GPIO_MAP.12059
-                0x0000000080004ce8        0xa ../../aleph/avr32_proto/src/init.o
+                0x0000000080004f38        0xa ../../aleph/avr32_proto/src/init.o
  .rodata.DBG_USART_GPIO_MAP.12024
-                0x0000000080004cf2        0x4 ../../aleph/avr32_proto/src/init.o
- *fill*         0x0000000080004cf6        0x2 00
- .rodata.main   0x0000000080004cf8       0x4c ../../aleph/avr32_proto_test/src/main.o
+                0x0000000080004f42        0x4 ../../aleph/avr32_proto/src/init.o
+ *fill*         0x0000000080004f46        0x2 00
+ .rodata.main   0x0000000080004f48       0x4c ../../aleph/avr32_proto_test/src/main.o
  .rodata.str1.4
-                0x0000000080004d44       0x9c ../../aleph/avr32_proto_test/src/main.o
+                0x0000000080004f94       0xb8 ../../aleph/avr32_proto_test/src/main.o
  .rodata.kSwitchEvents
-                0x0000000080004de0       0x28 ../../aleph/avr32_proto/src/switches.o
+                0x000000008000504c       0x28 ../../aleph/avr32_proto/src/switches.o
  .rodata.kSwitchPins
-                0x0000000080004e08        0x8 ../../aleph/avr32_proto/src/switches.o
+                0x0000000080005074        0x8 ../../aleph/avr32_proto/src/switches.o
  .rodata.font_data
-                0x0000000080004e10      0x2f8 ../../aleph/common/font.o
-                0x0000000080004e10                font_data
+                0x000000008000507c      0x2f8 ../../aleph/common/font.o
+                0x000000008000507c                font_data
  .rodata.font_nglyphs
-                0x0000000080005108        0x4 ../../aleph/common/font.o
-                0x0000000080005108                font_nglyphs
+                0x0000000080005374        0x4 ../../aleph/common/font.o
+                0x0000000080005374                font_nglyphs
 
 .rodata1
  *(.rodata1)
@@ -2940,10 +2912,9 @@ Linker script and memory map
  *(.gcc_except_table)
  *(.gcc_except_table.*)
 
-.lalign         0x000000008000510c        0x4
-                0x0000000080005110                . = ALIGN (0x8)
- *fill*         0x000000008000510c        0x4 00
-                0x0000000080005110                PROVIDE (_data_lma, .)
+.lalign         0x0000000080005378        0x0
+                0x0000000080005378                . = ALIGN (0x8)
+                0x0000000080005378                PROVIDE (_data_lma, .)
                 0x0000000000000004                . = ORIGIN (INTRAM)
 
 .dalign         0x0000000000000004        0x4
@@ -3009,7 +2980,7 @@ Linker script and memory map
 .ramtext
  *(.ramtext .ramtext.*)
 
-.ddalign        0x0000000000000008        0x0 load address 0x0000000080005110
+.ddalign        0x0000000000000008        0x0 load address 0x0000000080005378
                 0x0000000000000008                . = ALIGN (0x8)
 
 .data
@@ -3019,13 +2990,13 @@ Linker script and memory map
 .data1
  *(.data1)
 
-.balign         0x0000000000000008        0x0 load address 0x0000000080005110
+.balign         0x0000000000000008        0x0 load address 0x0000000080005378
                 0x0000000000000008                . = ALIGN (0x8)
                 0x0000000000000008                PROVIDE (_edata, .)
                 0x0000000000000008                PROVIDE (edata, .)
                 0x0000000000000008                __bss_start = .
 
-.bss            0x0000000000000008     0x14a8
+.bss            0x0000000000000008     0x14b8
  *(.dynbss)
  *(.bss .bss.* .gnu.linkonce.b.*)
  .bss._int_line_handler_table_6
@@ -3103,41 +3074,47 @@ Linker script and memory map
  *fill*         0x00000000000003c5        0x3 00
  .bss.eventScrollTimes
                 0x00000000000003c8       0x40 ../../aleph/avr32_proto_test/src/main.o
- .bss.i.12058   0x0000000000000408        0x1 ../../aleph/avr32_proto/src/screen.o
- .bss.y.12195   0x0000000000000409        0x1 ../../aleph/avr32_proto/src/screen.o
- *fill*         0x000000000000040a        0x2 00
+ .bss.pHeapStart
+                0x0000000000000408        0x4 ../../aleph/avr32_proto/src/memory.o
+ .bss.heapOffset
+                0x000000000000040c        0x4 ../../aleph/avr32_proto/src/memory.o
+ .bss.heapSize  0x0000000000000410        0x4 ../../aleph/avr32_proto/src/memory.o
+ .bss.pHeapEnd  0x0000000000000414        0x4 ../../aleph/avr32_proto/src/memory.o
+ .bss.i.12058   0x0000000000000418        0x1 ../../aleph/avr32_proto/src/screen.o
+ .bss.y.12195   0x0000000000000419        0x1 ../../aleph/avr32_proto/src/screen.o
+ *fill*         0x000000000000041a        0x2 00
  .bss.pos.12105
-                0x000000000000040c        0x4 ../../aleph/avr32_proto/src/screen.o
- .bss.g.12198   0x0000000000000410        0x4 ../../aleph/avr32_proto/src/screen.o
+                0x000000000000041c        0x4 ../../aleph/avr32_proto/src/screen.o
+ .bss.g.12198   0x0000000000000420        0x4 ../../aleph/avr32_proto/src/screen.o
  .bss.xnum.12197
-                0x0000000000000414        0x1 ../../aleph/avr32_proto/src/screen.o
- *fill*         0x0000000000000415        0x3 00
+                0x0000000000000424        0x1 ../../aleph/avr32_proto/src/screen.o
+ *fill*         0x0000000000000425        0x3 00
  .bss.buf.12292
-                0x0000000000000418        0xc ../../aleph/avr32_proto/src/screen.o
+                0x0000000000000428        0xc ../../aleph/avr32_proto/src/screen.o
  .bss.pos.12136
-                0x0000000000000424        0x4 ../../aleph/avr32_proto/src/screen.o
- .bss.screen    0x0000000000000428     0x1000 ../../aleph/avr32_proto/src/screen.o
- .bss.x.12196   0x0000000000001428        0x1 ../../aleph/avr32_proto/src/screen.o
- *fill*         0x0000000000001429        0x3 00
- .bss.swTicks   0x000000000000142c       0x28 ../../aleph/avr32_proto/src/switches.o
- .bss.e.10493   0x0000000000001454        0x8 ../../aleph/avr32_proto/src/switches.o
- .bss.timers    0x000000000000145c       0x20 ../../aleph/avr32_proto/src/timers.o
+                0x0000000000000434        0x4 ../../aleph/avr32_proto/src/screen.o
+ .bss.screen    0x0000000000000438     0x1000 ../../aleph/avr32_proto/src/screen.o
+ .bss.x.12196   0x0000000000001438        0x1 ../../aleph/avr32_proto/src/screen.o
+ *fill*         0x0000000000001439        0x3 00
+ .bss.swTicks   0x000000000000143c       0x28 ../../aleph/avr32_proto/src/switches.o
+ .bss.e.10493   0x0000000000001464        0x8 ../../aleph/avr32_proto/src/switches.o
+ .bss.timers    0x000000000000146c       0x20 ../../aleph/avr32_proto/src/timers.o
  *(COMMON)
- COMMON         0x000000000000147c       0x30 ../../aleph/avr32_proto/src/encoders.o
-                0x000000000000147c                enc
- COMMON         0x00000000000014ac        0x1 ../../aleph/avr32_proto/src/interrupts.o
-                0x00000000000014ac                end_of_transfer
-                0x00000000000014b0                . = ALIGN (0x8)
- *fill*         0x00000000000014ad        0x3 00
-                0x00000000000014b0                . = ALIGN (0x8)
-                0x00000000000014b0                _end = .
-                0x00000000000014b0                PROVIDE (end, .)
-                0x00000000000014b0                __heap_start__ = ALIGN (0x8)
+ COMMON         0x000000000000148c       0x30 ../../aleph/avr32_proto/src/encoders.o
+                0x000000000000148c                enc
+ COMMON         0x00000000000014bc        0x1 ../../aleph/avr32_proto/src/interrupts.o
+                0x00000000000014bc                end_of_transfer
+                0x00000000000014c0                . = ALIGN (0x8)
+ *fill*         0x00000000000014bd        0x3 00
+                0x00000000000014c0                . = ALIGN (0x8)
+                0x00000000000014c0                _end = .
+                0x00000000000014c0                PROVIDE (end, .)
+                0x00000000000014c0                __heap_start__ = ALIGN (0x8)
 
-.heap           0x00000000000014b0     0xdb50
+.heap           0x00000000000014c0     0xdb40
  *(.heap)
-                0x000000000000db50                . = (__heap_size__ == __max_heap_size__)?(((ORIGIN (INTRAM) + 0xfffc) - __stack_size__) - ABSOLUTE (.)):__heap_size__
- *fill*         0x00000000000014b0     0xdb50 00
+                0x000000000000db40                . = (__heap_size__ == __max_heap_size__)?(((ORIGIN (INTRAM) + 0xfffc) - __stack_size__) - ABSOLUTE (.)):__heap_size__
+ *fill*         0x00000000000014c0     0xdb40 00
                 0x000000000000f000                __heap_end__ = .
 
 .stab
@@ -3160,8 +3137,9 @@ Linker script and memory map
 
 .comment        0x0000000000000000       0x30
  *(.comment)
- .comment       0x0000000000000000       0x30 avr32/drivers/flashc/flashc.o
+ .comment       0x0000000000000000       0x30 avr32/drivers/ebi/sdramc/sdramc.o
                                          0x31 (size before relaxing)
+ .comment       0x0000000000000000       0x31 avr32/drivers/flashc/flashc.o
  .comment       0x0000000000000000       0x31 avr32/drivers/gpio/gpio.o
  .comment       0x0000000000000000       0x31 avr32/drivers/intc/intc.o
  .comment       0x0000000000000000       0x31 avr32/drivers/pdca/pdca.o
@@ -3179,6 +3157,7 @@ Linker script and memory map
  .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/init.o
  .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/interrupts.o
  .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto_test/src/main.o
+ .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/memory.o
  .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/screen.o
  .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/switches.o
  .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/timers.o
@@ -3198,328 +3177,354 @@ Linker script and memory map
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x0000000000000000      0xc00
+.debug_aranges  0x0000000000000000      0xc58
  *(.debug_aranges)
  .debug_aranges
-                0x0000000000000000      0x218 avr32/drivers/flashc/flashc.o
+                0x0000000000000000       0x30 avr32/drivers/ebi/sdramc/sdramc.o
  .debug_aranges
-                0x0000000000000218      0x100 avr32/drivers/gpio/gpio.o
+                0x0000000000000030      0x218 avr32/drivers/flashc/flashc.o
  .debug_aranges
-                0x0000000000000318       0x38 avr32/drivers/intc/intc.o
+                0x0000000000000248      0x100 avr32/drivers/gpio/gpio.o
  .debug_aranges
-                0x0000000000000350       0xa8 avr32/drivers/pdca/pdca.o
+                0x0000000000000348       0x38 avr32/drivers/intc/intc.o
  .debug_aranges
-                0x00000000000003f8      0x178 avr32/drivers/pm/pm.o
+                0x0000000000000380       0xa8 avr32/drivers/pdca/pdca.o
  .debug_aranges
-                0x0000000000000570       0xa8 avr32/drivers/spi/spi.o
+                0x0000000000000428      0x178 avr32/drivers/pm/pm.o
  .debug_aranges
-                0x0000000000000618       0xa8 avr32/drivers/tc/tc.o
+                0x00000000000005a0       0xa8 avr32/drivers/spi/spi.o
  .debug_aranges
-                0x00000000000006c0       0xd8 avr32/drivers/usart/usart.o
+                0x0000000000000648       0xa8 avr32/drivers/tc/tc.o
  .debug_aranges
-                0x0000000000000798       0x88 avr32/utils/debug/print_funcs.o
+                0x00000000000006f0       0xd8 avr32/drivers/usart/usart.o
  .debug_aranges
-                0x0000000000000820       0xf8 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                0x00000000000007c8       0x88 avr32/utils/debug/print_funcs.o
  .debug_aranges
-                0x0000000000000918       0x28 ../../aleph/avr32_proto/src/adc.o
+                0x0000000000000850       0xf8 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .debug_aranges
-                0x0000000000000940       0x38 ../../aleph/avr32_proto/src/app_timers.o
+                0x0000000000000948       0x28 ../../aleph/avr32_proto/src/adc.o
  .debug_aranges
-                0x0000000000000978       0x40 ../../aleph/avr32_proto/src/bfin.o
+                0x0000000000000970       0x38 ../../aleph/avr32_proto/src/app_timers.o
  .debug_aranges
-                0x00000000000009b8       0x30 ../../aleph/avr32_proto/src/events.o
+                0x00000000000009a8       0x40 ../../aleph/avr32_proto/src/bfin.o
  .debug_aranges
-                0x00000000000009e8       0x28 ../../aleph/avr32_proto/src/encoders.o
+                0x00000000000009e8       0x30 ../../aleph/avr32_proto/src/events.o
  .debug_aranges
-                0x0000000000000a10       0x58 ../../aleph/avr32_proto/src/init.o
+                0x0000000000000a18       0x28 ../../aleph/avr32_proto/src/encoders.o
  .debug_aranges
-                0x0000000000000a68       0x50 ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000000000a40       0x58 ../../aleph/avr32_proto/src/init.o
  .debug_aranges
-                0x0000000000000ab8       0x28 ../../aleph/avr32_proto_test/src/main.o
+                0x0000000000000a98       0x50 ../../aleph/avr32_proto/src/interrupts.o
  .debug_aranges
-                0x0000000000000ae0       0x98 ../../aleph/avr32_proto/src/screen.o
+                0x0000000000000ae8       0x28 ../../aleph/avr32_proto_test/src/main.o
  .debug_aranges
-                0x0000000000000b78       0x20 ../../aleph/avr32_proto/src/switches.o
+                0x0000000000000b10       0x28 ../../aleph/avr32_proto/src/memory.o
  .debug_aranges
-                0x0000000000000b98       0x38 ../../aleph/avr32_proto/src/timers.o
+                0x0000000000000b38       0x98 ../../aleph/avr32_proto/src/screen.o
  .debug_aranges
-                0x0000000000000bd0       0x30 ../../aleph/common/fix.o
+                0x0000000000000bd0       0x20 ../../aleph/avr32_proto/src/switches.o
+ .debug_aranges
+                0x0000000000000bf0       0x38 ../../aleph/avr32_proto/src/timers.o
+ .debug_aranges
+                0x0000000000000c28       0x30 ../../aleph/common/fix.o
 
 .debug_pubnames
-                0x0000000000000000     0x1feb
+                0x0000000000000000     0x2073
  *(.debug_pubnames)
  .debug_pubnames
-                0x0000000000000000      0x771 avr32/drivers/flashc/flashc.o
+                0x0000000000000000       0x5b avr32/drivers/ebi/sdramc/sdramc.o
  .debug_pubnames
-                0x0000000000000771      0x330 avr32/drivers/gpio/gpio.o
+                0x000000000000005b      0x771 avr32/drivers/flashc/flashc.o
  .debug_pubnames
-                0x0000000000000aa1       0x62 avr32/drivers/intc/intc.o
+                0x00000000000007cc      0x330 avr32/drivers/gpio/gpio.o
  .debug_pubnames
-                0x0000000000000b03      0x238 avr32/drivers/pdca/pdca.o
+                0x0000000000000afc       0x62 avr32/drivers/intc/intc.o
  .debug_pubnames
-                0x0000000000000d3b      0x3ee avr32/drivers/pm/pm.o
+                0x0000000000000b5e      0x238 avr32/drivers/pdca/pdca.o
  .debug_pubnames
-                0x0000000000001129      0x178 avr32/drivers/spi/spi.o
+                0x0000000000000d96      0x3ee avr32/drivers/pm/pm.o
  .debug_pubnames
-                0x00000000000012a1      0x164 avr32/drivers/tc/tc.o
+                0x0000000000001184      0x178 avr32/drivers/spi/spi.o
  .debug_pubnames
-                0x0000000000001405      0x227 avr32/drivers/usart/usart.o
+                0x00000000000012fc      0x164 avr32/drivers/tc/tc.o
  .debug_pubnames
-                0x000000000000162c      0x10f avr32/utils/debug/print_funcs.o
+                0x0000000000001460      0x227 avr32/drivers/usart/usart.o
  .debug_pubnames
-                0x000000000000173b      0x3b1 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                0x0000000000001687      0x10f avr32/utils/debug/print_funcs.o
  .debug_pubnames
-                0x0000000000001aec       0x2c ../../aleph/avr32_proto/src/adc.o
+                0x0000000000001796      0x3b1 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .debug_pubnames
-                0x0000000000001b18       0x26 ../../aleph/avr32_proto/src/app_timers.o
+                0x0000000000001b47       0x2c ../../aleph/avr32_proto/src/adc.o
  .debug_pubnames
-                0x0000000000001b3e       0x86 ../../aleph/avr32_proto/src/bfin.o
+                0x0000000000001b73       0x26 ../../aleph/avr32_proto/src/app_timers.o
  .debug_pubnames
-                0x0000000000001bc4       0x44 ../../aleph/avr32_proto/src/events.o
+                0x0000000000001b99       0x86 ../../aleph/avr32_proto/src/bfin.o
  .debug_pubnames
-                0x0000000000001c08       0x3c ../../aleph/avr32_proto/src/encoders.o
+                0x0000000000001c1f       0x44 ../../aleph/avr32_proto/src/events.o
  .debug_pubnames
-                0x0000000000001c44       0xed ../../aleph/avr32_proto/src/init.o
+                0x0000000000001c63       0x3c ../../aleph/avr32_proto/src/encoders.o
  .debug_pubnames
-                0x0000000000001d31       0x65 ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000000001c9f       0xed ../../aleph/avr32_proto/src/init.o
  .debug_pubnames
-                0x0000000000001d96       0x29 ../../aleph/avr32_proto_test/src/main.o
+                0x0000000000001d8c       0x65 ../../aleph/avr32_proto/src/interrupts.o
  .debug_pubnames
-                0x0000000000001dbf      0x148 ../../aleph/avr32_proto/src/screen.o
+                0x0000000000001df1       0x29 ../../aleph/avr32_proto_test/src/main.o
  .debug_pubnames
-                0x0000000000001f07       0x21 ../../aleph/avr32_proto/src/switches.o
+                0x0000000000001e1a       0x2d ../../aleph/avr32_proto/src/memory.o
  .debug_pubnames
-                0x0000000000001f28       0x52 ../../aleph/avr32_proto/src/timers.o
+                0x0000000000001e47      0x148 ../../aleph/avr32_proto/src/screen.o
  .debug_pubnames
-                0x0000000000001f7a       0x31 ../../aleph/common/font.o
+                0x0000000000001f8f       0x21 ../../aleph/avr32_proto/src/switches.o
  .debug_pubnames
-                0x0000000000001fab       0x40 ../../aleph/common/fix.o
+                0x0000000000001fb0       0x52 ../../aleph/avr32_proto/src/timers.o
+ .debug_pubnames
+                0x0000000000002002       0x31 ../../aleph/common/font.o
+ .debug_pubnames
+                0x0000000000002033       0x40 ../../aleph/common/fix.o
 
-.debug_info     0x0000000000000000    0x199f6
+.debug_info     0x0000000000000000    0x1a80b
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x0000000000000000     0x36eb avr32/drivers/flashc/flashc.o
- .debug_info    0x00000000000036eb      0xb8f avr32/drivers/gpio/gpio.o
- .debug_info    0x000000000000427a      0x5ae avr32/drivers/intc/intc.o
- .debug_info    0x0000000000004828      0xd5b avr32/drivers/pdca/pdca.o
- .debug_info    0x0000000000005583     0x1d71 avr32/drivers/pm/pm.o
- .debug_info    0x00000000000072f4     0x1081 avr32/drivers/spi/spi.o
- .debug_info    0x0000000000008375     0x117d avr32/drivers/tc/tc.o
- .debug_info    0x00000000000094f2     0x241b avr32/drivers/usart/usart.o
- .debug_info    0x000000000000b90d     0x197b avr32/utils/debug/print_funcs.o
- .debug_info    0x000000000000d288     0x18b7 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .debug_info    0x000000000000eb3f      0xcc5 ../../aleph/avr32_proto/src/adc.o
- .debug_info    0x000000000000f804      0x3f9 ../../aleph/avr32_proto/src/app_timers.o
- .debug_info    0x000000000000fbfd      0xe91 ../../aleph/avr32_proto/src/bfin.o
- .debug_info    0x0000000000010a8e      0x223 ../../aleph/avr32_proto/src/events.o
- .debug_info    0x0000000000010cb1      0x27b ../../aleph/avr32_proto/src/encoders.o
- .debug_info    0x0000000000010f2c     0x3da7 ../../aleph/avr32_proto/src/init.o
- .debug_info    0x0000000000014cd3      0xb66 ../../aleph/avr32_proto/src/interrupts.o
- .debug_info    0x0000000000015839      0xded ../../aleph/avr32_proto_test/src/main.o
- .debug_info    0x0000000000016626     0x27cc ../../aleph/avr32_proto/src/screen.o
- .debug_info    0x0000000000018df2      0x268 ../../aleph/avr32_proto/src/switches.o
- .debug_info    0x000000000001905a      0x35c ../../aleph/avr32_proto/src/timers.o
- .debug_info    0x00000000000193b6      0x14a ../../aleph/common/font.o
- .debug_info    0x0000000000019500      0x4f6 ../../aleph/common/fix.o
+ .debug_info    0x0000000000000000      0xca8 avr32/drivers/ebi/sdramc/sdramc.o
+ .debug_info    0x0000000000000ca8     0x36eb avr32/drivers/flashc/flashc.o
+ .debug_info    0x0000000000004393      0xb8f avr32/drivers/gpio/gpio.o
+ .debug_info    0x0000000000004f22      0x5ae avr32/drivers/intc/intc.o
+ .debug_info    0x00000000000054d0      0xd5b avr32/drivers/pdca/pdca.o
+ .debug_info    0x000000000000622b     0x1d71 avr32/drivers/pm/pm.o
+ .debug_info    0x0000000000007f9c     0x1081 avr32/drivers/spi/spi.o
+ .debug_info    0x000000000000901d     0x117d avr32/drivers/tc/tc.o
+ .debug_info    0x000000000000a19a     0x241b avr32/drivers/usart/usart.o
+ .debug_info    0x000000000000c5b5     0x197b avr32/utils/debug/print_funcs.o
+ .debug_info    0x000000000000df30     0x18b7 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .debug_info    0x000000000000f7e7      0xcc5 ../../aleph/avr32_proto/src/adc.o
+ .debug_info    0x00000000000104ac      0x3f9 ../../aleph/avr32_proto/src/app_timers.o
+ .debug_info    0x00000000000108a5      0xe91 ../../aleph/avr32_proto/src/bfin.o
+ .debug_info    0x0000000000011736      0x223 ../../aleph/avr32_proto/src/events.o
+ .debug_info    0x0000000000011959      0x27b ../../aleph/avr32_proto/src/encoders.o
+ .debug_info    0x0000000000011bd4     0x3da7 ../../aleph/avr32_proto/src/init.o
+ .debug_info    0x000000000001597b      0xb66 ../../aleph/avr32_proto/src/interrupts.o
+ .debug_info    0x00000000000164e1      0xded ../../aleph/avr32_proto_test/src/main.o
+ .debug_info    0x00000000000172ce      0x16d ../../aleph/avr32_proto/src/memory.o
+ .debug_info    0x000000000001743b     0x27cc ../../aleph/avr32_proto/src/screen.o
+ .debug_info    0x0000000000019c07      0x268 ../../aleph/avr32_proto/src/switches.o
+ .debug_info    0x0000000000019e6f      0x35c ../../aleph/avr32_proto/src/timers.o
+ .debug_info    0x000000000001a1cb      0x14a ../../aleph/common/font.o
+ .debug_info    0x000000000001a315      0x4f6 ../../aleph/common/fix.o
 
-.debug_abbrev   0x0000000000000000     0x3477
+.debug_abbrev   0x0000000000000000     0x3764
  *(.debug_abbrev)
- .debug_abbrev  0x0000000000000000      0x45b avr32/drivers/flashc/flashc.o
- .debug_abbrev  0x000000000000045b      0x2f0 avr32/drivers/gpio/gpio.o
- .debug_abbrev  0x000000000000074b      0x1f2 avr32/drivers/intc/intc.o
- .debug_abbrev  0x000000000000093d      0x37d avr32/drivers/pdca/pdca.o
- .debug_abbrev  0x0000000000000cba      0x389 avr32/drivers/pm/pm.o
- .debug_abbrev  0x0000000000001043      0x27d avr32/drivers/spi/spi.o
- .debug_abbrev  0x00000000000012c0      0x25c avr32/drivers/tc/tc.o
- .debug_abbrev  0x000000000000151c      0x2f4 avr32/drivers/usart/usart.o
- .debug_abbrev  0x0000000000001810      0x22c avr32/utils/debug/print_funcs.o
- .debug_abbrev  0x0000000000001a3c      0x388 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .debug_abbrev  0x0000000000001dc4      0x1d3 ../../aleph/avr32_proto/src/adc.o
- .debug_abbrev  0x0000000000001f97      0x168 ../../aleph/avr32_proto/src/app_timers.o
- .debug_abbrev  0x00000000000020ff      0x216 ../../aleph/avr32_proto/src/bfin.o
- .debug_abbrev  0x0000000000002315      0x138 ../../aleph/avr32_proto/src/events.o
- .debug_abbrev  0x000000000000244d      0x10f ../../aleph/avr32_proto/src/encoders.o
- .debug_abbrev  0x000000000000255c      0x215 ../../aleph/avr32_proto/src/init.o
- .debug_abbrev  0x0000000000002771      0x19e ../../aleph/avr32_proto/src/interrupts.o
- .debug_abbrev  0x000000000000290f      0x284 ../../aleph/avr32_proto_test/src/main.o
- .debug_abbrev  0x0000000000002b93      0x3ad ../../aleph/avr32_proto/src/screen.o
- .debug_abbrev  0x0000000000002f40       0xf8 ../../aleph/avr32_proto/src/switches.o
- .debug_abbrev  0x0000000000003038      0x1f3 ../../aleph/avr32_proto/src/timers.o
- .debug_abbrev  0x000000000000322b       0x97 ../../aleph/common/font.o
- .debug_abbrev  0x00000000000032c2      0x1b5 ../../aleph/common/fix.o
+ .debug_abbrev  0x0000000000000000      0x222 avr32/drivers/ebi/sdramc/sdramc.o
+ .debug_abbrev  0x0000000000000222      0x45b avr32/drivers/flashc/flashc.o
+ .debug_abbrev  0x000000000000067d      0x2f0 avr32/drivers/gpio/gpio.o
+ .debug_abbrev  0x000000000000096d      0x1f2 avr32/drivers/intc/intc.o
+ .debug_abbrev  0x0000000000000b5f      0x37d avr32/drivers/pdca/pdca.o
+ .debug_abbrev  0x0000000000000edc      0x389 avr32/drivers/pm/pm.o
+ .debug_abbrev  0x0000000000001265      0x27d avr32/drivers/spi/spi.o
+ .debug_abbrev  0x00000000000014e2      0x25c avr32/drivers/tc/tc.o
+ .debug_abbrev  0x000000000000173e      0x2f4 avr32/drivers/usart/usart.o
+ .debug_abbrev  0x0000000000001a32      0x22c avr32/utils/debug/print_funcs.o
+ .debug_abbrev  0x0000000000001c5e      0x388 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .debug_abbrev  0x0000000000001fe6      0x1d3 ../../aleph/avr32_proto/src/adc.o
+ .debug_abbrev  0x00000000000021b9      0x168 ../../aleph/avr32_proto/src/app_timers.o
+ .debug_abbrev  0x0000000000002321      0x216 ../../aleph/avr32_proto/src/bfin.o
+ .debug_abbrev  0x0000000000002537      0x138 ../../aleph/avr32_proto/src/events.o
+ .debug_abbrev  0x000000000000266f      0x10f ../../aleph/avr32_proto/src/encoders.o
+ .debug_abbrev  0x000000000000277e      0x215 ../../aleph/avr32_proto/src/init.o
+ .debug_abbrev  0x0000000000002993      0x19e ../../aleph/avr32_proto/src/interrupts.o
+ .debug_abbrev  0x0000000000002b31      0x284 ../../aleph/avr32_proto_test/src/main.o
+ .debug_abbrev  0x0000000000002db5       0xcb ../../aleph/avr32_proto/src/memory.o
+ .debug_abbrev  0x0000000000002e80      0x3ad ../../aleph/avr32_proto/src/screen.o
+ .debug_abbrev  0x000000000000322d       0xf8 ../../aleph/avr32_proto/src/switches.o
+ .debug_abbrev  0x0000000000003325      0x1f3 ../../aleph/avr32_proto/src/timers.o
+ .debug_abbrev  0x0000000000003518       0x97 ../../aleph/common/font.o
+ .debug_abbrev  0x00000000000035af      0x1b5 ../../aleph/common/fix.o
 
-.debug_line     0x0000000000000000    0x14632
+.debug_line     0x0000000000000000    0x1553e
  *(.debug_line)
- .debug_line    0x0000000000000000     0x43e7 avr32/drivers/flashc/flashc.o
- .debug_line    0x00000000000043e7      0xc05 avr32/drivers/gpio/gpio.o
- .debug_line    0x0000000000004fec      0x5f7 avr32/drivers/intc/intc.o
- .debug_line    0x00000000000055e3      0xae3 avr32/drivers/pdca/pdca.o
- .debug_line    0x00000000000060c6      0xcb0 avr32/drivers/pm/pm.o
- .debug_line    0x0000000000006d76      0x922 avr32/drivers/spi/spi.o
- .debug_line    0x0000000000007698      0x88d avr32/drivers/tc/tc.o
- .debug_line    0x0000000000007f25     0x12f3 avr32/drivers/usart/usart.o
- .debug_line    0x0000000000009218      0x8d5 avr32/utils/debug/print_funcs.o
- .debug_line    0x0000000000009aed     0x2663 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .debug_line    0x000000000000c150      0x89a ../../aleph/avr32_proto/src/adc.o
- .debug_line    0x000000000000c9ea      0x777 ../../aleph/avr32_proto/src/app_timers.o
- .debug_line    0x000000000000d161      0xf39 ../../aleph/avr32_proto/src/bfin.o
- .debug_line    0x000000000000e09a      0x742 ../../aleph/avr32_proto/src/events.o
- .debug_line    0x000000000000e7dc      0x697 ../../aleph/avr32_proto/src/encoders.o
- .debug_line    0x000000000000ee73      0xac1 ../../aleph/avr32_proto/src/init.o
- .debug_line    0x000000000000f934      0xa3c ../../aleph/avr32_proto/src/interrupts.o
- .debug_line    0x0000000000010370      0xe76 ../../aleph/avr32_proto_test/src/main.o
- .debug_line    0x00000000000111e6     0x1ca0 ../../aleph/avr32_proto/src/screen.o
- .debug_line    0x0000000000012e86      0x5fc ../../aleph/avr32_proto/src/switches.o
- .debug_line    0x0000000000013482      0x8bb ../../aleph/avr32_proto/src/timers.o
- .debug_line    0x0000000000013d3d      0x503 ../../aleph/common/font.o
- .debug_line    0x0000000000014240      0x3f2 ../../aleph/common/fix.o
+ .debug_line    0x0000000000000000      0x7ec avr32/drivers/ebi/sdramc/sdramc.o
+ .debug_line    0x00000000000007ec     0x43e7 avr32/drivers/flashc/flashc.o
+ .debug_line    0x0000000000004bd3      0xc05 avr32/drivers/gpio/gpio.o
+ .debug_line    0x00000000000057d8      0x5f7 avr32/drivers/intc/intc.o
+ .debug_line    0x0000000000005dcf      0xae3 avr32/drivers/pdca/pdca.o
+ .debug_line    0x00000000000068b2      0xcb0 avr32/drivers/pm/pm.o
+ .debug_line    0x0000000000007562      0x922 avr32/drivers/spi/spi.o
+ .debug_line    0x0000000000007e84      0x88d avr32/drivers/tc/tc.o
+ .debug_line    0x0000000000008711     0x12f3 avr32/drivers/usart/usart.o
+ .debug_line    0x0000000000009a04      0x8d5 avr32/utils/debug/print_funcs.o
+ .debug_line    0x000000000000a2d9     0x2663 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .debug_line    0x000000000000c93c      0x89a ../../aleph/avr32_proto/src/adc.o
+ .debug_line    0x000000000000d1d6      0x777 ../../aleph/avr32_proto/src/app_timers.o
+ .debug_line    0x000000000000d94d      0xf39 ../../aleph/avr32_proto/src/bfin.o
+ .debug_line    0x000000000000e886      0x742 ../../aleph/avr32_proto/src/events.o
+ .debug_line    0x000000000000efc8      0x697 ../../aleph/avr32_proto/src/encoders.o
+ .debug_line    0x000000000000f65f      0xac8 ../../aleph/avr32_proto/src/init.o
+ .debug_line    0x0000000000010127      0xa3c ../../aleph/avr32_proto/src/interrupts.o
+ .debug_line    0x0000000000010b63      0xe88 ../../aleph/avr32_proto_test/src/main.o
+ .debug_line    0x00000000000119eb      0x707 ../../aleph/avr32_proto/src/memory.o
+ .debug_line    0x00000000000120f2     0x1ca0 ../../aleph/avr32_proto/src/screen.o
+ .debug_line    0x0000000000013d92      0x5fc ../../aleph/avr32_proto/src/switches.o
+ .debug_line    0x000000000001438e      0x8bb ../../aleph/avr32_proto/src/timers.o
+ .debug_line    0x0000000000014c49      0x503 ../../aleph/common/font.o
+ .debug_line    0x000000000001514c      0x3f2 ../../aleph/common/fix.o
 
-.debug_frame    0x0000000000000000     0x207c
+.debug_frame    0x0000000000000000     0x2104
  *(.debug_frame)
- .debug_frame   0x0000000000000000      0x78c avr32/drivers/flashc/flashc.o
- .debug_frame   0x000000000000078c      0x200 avr32/drivers/gpio/gpio.o
- .debug_frame   0x000000000000098c       0x5c avr32/drivers/intc/intc.o
- .debug_frame   0x00000000000009e8      0x138 avr32/drivers/pdca/pdca.o
- .debug_frame   0x0000000000000b20      0x2f4 avr32/drivers/pm/pm.o
- .debug_frame   0x0000000000000e14      0x164 avr32/drivers/spi/spi.o
- .debug_frame   0x0000000000000f78      0x15c avr32/drivers/tc/tc.o
- .debug_frame   0x00000000000010d4      0x250 avr32/drivers/usart/usart.o
- .debug_frame   0x0000000000001324      0x194 avr32/utils/debug/print_funcs.o
- .debug_frame   0x00000000000014b8      0x3c0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .debug_frame   0x0000000000001878       0x48 ../../aleph/avr32_proto/src/adc.o
- .debug_frame   0x00000000000018c0       0x80 ../../aleph/avr32_proto/src/app_timers.o
- .debug_frame   0x0000000000001940       0xc0 ../../aleph/avr32_proto/src/bfin.o
- .debug_frame   0x0000000000001a00       0x48 ../../aleph/avr32_proto/src/events.o
- .debug_frame   0x0000000000001a48       0x58 ../../aleph/avr32_proto/src/encoders.o
- .debug_frame   0x0000000000001aa0       0xfc ../../aleph/avr32_proto/src/init.o
- .debug_frame   0x0000000000001b9c       0xc0 ../../aleph/avr32_proto/src/interrupts.o
- .debug_frame   0x0000000000001c5c       0x58 ../../aleph/avr32_proto_test/src/main.o
- .debug_frame   0x0000000000001cb4      0x2b8 ../../aleph/avr32_proto/src/screen.o
- .debug_frame   0x0000000000001f6c       0x2c ../../aleph/avr32_proto/src/switches.o
- .debug_frame   0x0000000000001f98       0x6c ../../aleph/avr32_proto/src/timers.o
- .debug_frame   0x0000000000002004       0x78 ../../aleph/common/fix.o
+ .debug_frame   0x0000000000000000       0x58 avr32/drivers/ebi/sdramc/sdramc.o
+ .debug_frame   0x0000000000000058      0x78c avr32/drivers/flashc/flashc.o
+ .debug_frame   0x00000000000007e4      0x200 avr32/drivers/gpio/gpio.o
+ .debug_frame   0x00000000000009e4       0x5c avr32/drivers/intc/intc.o
+ .debug_frame   0x0000000000000a40      0x138 avr32/drivers/pdca/pdca.o
+ .debug_frame   0x0000000000000b78      0x2f4 avr32/drivers/pm/pm.o
+ .debug_frame   0x0000000000000e6c      0x164 avr32/drivers/spi/spi.o
+ .debug_frame   0x0000000000000fd0      0x15c avr32/drivers/tc/tc.o
+ .debug_frame   0x000000000000112c      0x250 avr32/drivers/usart/usart.o
+ .debug_frame   0x000000000000137c      0x194 avr32/utils/debug/print_funcs.o
+ .debug_frame   0x0000000000001510      0x3c0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .debug_frame   0x00000000000018d0       0x48 ../../aleph/avr32_proto/src/adc.o
+ .debug_frame   0x0000000000001918       0x80 ../../aleph/avr32_proto/src/app_timers.o
+ .debug_frame   0x0000000000001998       0xc0 ../../aleph/avr32_proto/src/bfin.o
+ .debug_frame   0x0000000000001a58       0x48 ../../aleph/avr32_proto/src/events.o
+ .debug_frame   0x0000000000001aa0       0x58 ../../aleph/avr32_proto/src/encoders.o
+ .debug_frame   0x0000000000001af8       0xfc ../../aleph/avr32_proto/src/init.o
+ .debug_frame   0x0000000000001bf4       0xc0 ../../aleph/avr32_proto/src/interrupts.o
+ .debug_frame   0x0000000000001cb4       0x58 ../../aleph/avr32_proto_test/src/main.o
+ .debug_frame   0x0000000000001d0c       0x30 ../../aleph/avr32_proto/src/memory.o
+ .debug_frame   0x0000000000001d3c      0x2b8 ../../aleph/avr32_proto/src/screen.o
+ .debug_frame   0x0000000000001ff4       0x2c ../../aleph/avr32_proto/src/switches.o
+ .debug_frame   0x0000000000002020       0x6c ../../aleph/avr32_proto/src/timers.o
+ .debug_frame   0x000000000000208c       0x78 ../../aleph/common/fix.o
 
-.debug_str      0x0000000000000000     0x3da1
+.debug_str      0x0000000000000000     0x41af
  *(.debug_str)
- .debug_str     0x0000000000000000      0xb37 avr32/drivers/flashc/flashc.o
+ .debug_str     0x0000000000000000      0x462 avr32/drivers/ebi/sdramc/sdramc.o
+                                        0x4ad (size before relaxing)
+ .debug_str     0x0000000000000462      0xaa5 avr32/drivers/flashc/flashc.o
                                         0xc2a (size before relaxing)
- .debug_str     0x0000000000000b37      0x41a avr32/drivers/gpio/gpio.o
+ .debug_str     0x0000000000000f07      0x411 avr32/drivers/gpio/gpio.o
                                         0x518 (size before relaxing)
- .debug_str     0x0000000000000f51      0x386 avr32/drivers/intc/intc.o
+ .debug_str     0x0000000000001318      0x386 avr32/drivers/intc/intc.o
                                         0x46c (size before relaxing)
- .debug_str     0x00000000000012d7      0x370 avr32/drivers/pdca/pdca.o
+ .debug_str     0x000000000000169e      0x370 avr32/drivers/pdca/pdca.o
                                         0x46f (size before relaxing)
- .debug_str     0x0000000000001647      0x781 avr32/drivers/pm/pm.o
+ .debug_str     0x0000000000001a0e      0x781 avr32/drivers/pm/pm.o
                                         0x984 (size before relaxing)
- .debug_str     0x0000000000001dc8      0x408 avr32/drivers/spi/spi.o
+ .debug_str     0x000000000000218f      0x3e3 avr32/drivers/spi/spi.o
                                         0x551 (size before relaxing)
- .debug_str     0x00000000000021d0      0x354 avr32/drivers/tc/tc.o
+ .debug_str     0x0000000000002572      0x354 avr32/drivers/tc/tc.o
                                         0x4b9 (size before relaxing)
- .debug_str     0x0000000000002524      0x759 avr32/drivers/usart/usart.o
+ .debug_str     0x00000000000028c6      0x759 avr32/drivers/usart/usart.o
                                         0x8eb (size before relaxing)
- .debug_str     0x0000000000002c7d      0x129 avr32/utils/debug/print_funcs.o
+ .debug_str     0x000000000000301f      0x129 avr32/utils/debug/print_funcs.o
                                         0x621 (size before relaxing)
- .debug_str     0x0000000000002da6      0x41e avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .debug_str     0x0000000000003148      0x41e avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
                                         0x7c7 (size before relaxing)
- .debug_str     0x00000000000031c4      0x1af ../../aleph/avr32_proto/src/adc.o
+ .debug_str     0x0000000000003566      0x1af ../../aleph/avr32_proto/src/adc.o
                                         0x45c (size before relaxing)
- .debug_str     0x0000000000003373      0x13d ../../aleph/avr32_proto/src/app_timers.o
+ .debug_str     0x0000000000003715      0x13d ../../aleph/avr32_proto/src/app_timers.o
                                         0x39d (size before relaxing)
- .debug_str     0x00000000000034b0      0x1ac ../../aleph/avr32_proto/src/bfin.o
+ .debug_str     0x0000000000003852      0x1ac ../../aleph/avr32_proto/src/bfin.o
                                         0x480 (size before relaxing)
- .debug_str     0x000000000000365c       0xa0 ../../aleph/avr32_proto/src/events.o
+ .debug_str     0x00000000000039fe       0xa0 ../../aleph/avr32_proto/src/events.o
                                         0x1b4 (size before relaxing)
- .debug_str     0x00000000000036fc       0x49 ../../aleph/avr32_proto/src/encoders.o
+ .debug_str     0x0000000000003a9e       0x49 ../../aleph/avr32_proto/src/encoders.o
                                         0x277 (size before relaxing)
- .debug_str     0x0000000000003745      0x16d ../../aleph/avr32_proto/src/init.o
+ .debug_str     0x0000000000003ae7      0x16d ../../aleph/avr32_proto/src/init.o
                                         0xf17 (size before relaxing)
- .debug_str     0x00000000000038b2       0xbf ../../aleph/avr32_proto/src/interrupts.o
+ .debug_str     0x0000000000003c54       0xbf ../../aleph/avr32_proto/src/interrupts.o
                                         0x3cc (size before relaxing)
- .debug_str     0x0000000000003971      0x160 ../../aleph/avr32_proto_test/src/main.o
+ .debug_str     0x0000000000003d13      0x160 ../../aleph/avr32_proto_test/src/main.o
                                         0x653 (size before relaxing)
- .debug_str     0x0000000000003ad1      0x17a ../../aleph/avr32_proto/src/screen.o
+ .debug_str     0x0000000000003e73       0x6c ../../aleph/avr32_proto/src/memory.o
+                                        0x13b (size before relaxing)
+ .debug_str     0x0000000000003edf      0x17a ../../aleph/avr32_proto/src/screen.o
                                         0x6f1 (size before relaxing)
- .debug_str     0x0000000000003c4b       0x5a ../../aleph/avr32_proto/src/switches.o
+ .debug_str     0x0000000000004059       0x5a ../../aleph/avr32_proto/src/switches.o
                                         0x296 (size before relaxing)
- .debug_str     0x0000000000003ca5       0x83 ../../aleph/avr32_proto/src/timers.o
+ .debug_str     0x00000000000040b3       0x83 ../../aleph/avr32_proto/src/timers.o
                                         0x1f0 (size before relaxing)
- .debug_str     0x0000000000003d28       0x1a ../../aleph/common/font.o
+ .debug_str     0x0000000000004136       0x1a ../../aleph/common/font.o
                                         0x12a (size before relaxing)
- .debug_str     0x0000000000003d42       0x5f ../../aleph/common/fix.o
+ .debug_str     0x0000000000004150       0x5f ../../aleph/common/fix.o
                                         0x1b2 (size before relaxing)
 
-.debug_loc      0x0000000000000000     0x658e
+.debug_loc      0x0000000000000000     0x668f
  *(.debug_loc)
- .debug_loc     0x0000000000000000     0x1e5b avr32/drivers/flashc/flashc.o
- .debug_loc     0x0000000000001e5b      0x3e1 avr32/drivers/gpio/gpio.o
- .debug_loc     0x000000000000223c       0x89 avr32/drivers/intc/intc.o
- .debug_loc     0x00000000000022c5      0x4a1 avr32/drivers/pdca/pdca.o
- .debug_loc     0x0000000000002766      0x39d avr32/drivers/pm/pm.o
- .debug_loc     0x0000000000002b03      0x377 avr32/drivers/spi/spi.o
- .debug_loc     0x0000000000002e7a      0x472 avr32/drivers/tc/tc.o
- .debug_loc     0x00000000000032ec      0xa53 avr32/drivers/usart/usart.o
- .debug_loc     0x0000000000003d3f      0x46e avr32/utils/debug/print_funcs.o
- .debug_loc     0x00000000000041ad      0x93a avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .debug_loc     0x0000000000004ae7       0x82 ../../aleph/avr32_proto/src/adc.o
- .debug_loc     0x0000000000004b69       0xde ../../aleph/avr32_proto/src/app_timers.o
- .debug_loc     0x0000000000004c47      0x1cc ../../aleph/avr32_proto/src/bfin.o
- .debug_loc     0x0000000000004e13       0xaa ../../aleph/avr32_proto/src/events.o
- .debug_loc     0x0000000000004ebd       0x6f ../../aleph/avr32_proto/src/encoders.o
- .debug_loc     0x0000000000004f2c      0x16b ../../aleph/avr32_proto/src/init.o
- .debug_loc     0x0000000000005097      0x11b ../../aleph/avr32_proto/src/interrupts.o
- .debug_loc     0x00000000000051b2      0x1ae ../../aleph/avr32_proto_test/src/main.o
- .debug_loc     0x0000000000005360      0xc09 ../../aleph/avr32_proto/src/screen.o
- .debug_loc     0x0000000000005f69       0x3d ../../aleph/avr32_proto/src/switches.o
- .debug_loc     0x0000000000005fa6      0x220 ../../aleph/avr32_proto/src/timers.o
- .debug_loc     0x00000000000061c6      0x3c8 ../../aleph/common/fix.o
+ .debug_loc     0x0000000000000000       0x89 avr32/drivers/ebi/sdramc/sdramc.o
+ .debug_loc     0x0000000000000089     0x1e5b avr32/drivers/flashc/flashc.o
+ .debug_loc     0x0000000000001ee4      0x3e1 avr32/drivers/gpio/gpio.o
+ .debug_loc     0x00000000000022c5       0x89 avr32/drivers/intc/intc.o
+ .debug_loc     0x000000000000234e      0x4a1 avr32/drivers/pdca/pdca.o
+ .debug_loc     0x00000000000027ef      0x39d avr32/drivers/pm/pm.o
+ .debug_loc     0x0000000000002b8c      0x377 avr32/drivers/spi/spi.o
+ .debug_loc     0x0000000000002f03      0x472 avr32/drivers/tc/tc.o
+ .debug_loc     0x0000000000003375      0xa53 avr32/drivers/usart/usart.o
+ .debug_loc     0x0000000000003dc8      0x46e avr32/utils/debug/print_funcs.o
+ .debug_loc     0x0000000000004236      0x93a avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .debug_loc     0x0000000000004b70       0x82 ../../aleph/avr32_proto/src/adc.o
+ .debug_loc     0x0000000000004bf2       0xde ../../aleph/avr32_proto/src/app_timers.o
+ .debug_loc     0x0000000000004cd0      0x1cc ../../aleph/avr32_proto/src/bfin.o
+ .debug_loc     0x0000000000004e9c       0xaa ../../aleph/avr32_proto/src/events.o
+ .debug_loc     0x0000000000004f46       0x6f ../../aleph/avr32_proto/src/encoders.o
+ .debug_loc     0x0000000000004fb5      0x16b ../../aleph/avr32_proto/src/init.o
+ .debug_loc     0x0000000000005120      0x11b ../../aleph/avr32_proto/src/interrupts.o
+ .debug_loc     0x000000000000523b      0x1b9 ../../aleph/avr32_proto_test/src/main.o
+ .debug_loc     0x00000000000053f4       0x6d ../../aleph/avr32_proto/src/memory.o
+ .debug_loc     0x0000000000005461      0xc09 ../../aleph/avr32_proto/src/screen.o
+ .debug_loc     0x000000000000606a       0x3d ../../aleph/avr32_proto/src/switches.o
+ .debug_loc     0x00000000000060a7      0x220 ../../aleph/avr32_proto/src/timers.o
+ .debug_loc     0x00000000000062c7      0x3c8 ../../aleph/common/fix.o
 
-.debug_macinfo  0x0000000000000000  0x1402522
+.debug_macinfo  0x0000000000000000  0x15d4e4d
  *(.debug_macinfo)
  .debug_macinfo
-                0x0000000000000000    0xe6d58 avr32/drivers/flashc/flashc.o
+                0x0000000000000000    0xe8ec9 avr32/drivers/ebi/sdramc/sdramc.o
  .debug_macinfo
-                0x00000000000e6d58    0xe6eb5 avr32/drivers/gpio/gpio.o
+                0x00000000000e8ec9    0xe6d58 avr32/drivers/flashc/flashc.o
  .debug_macinfo
-                0x00000000001cdc0d    0xe6ee3 avr32/drivers/intc/intc.o
+                0x00000000001cfc21    0xe6eb5 avr32/drivers/gpio/gpio.o
  .debug_macinfo
-                0x00000000002b4af0    0xe6d79 avr32/drivers/pdca/pdca.o
+                0x00000000002b6ad6    0xe6ee3 avr32/drivers/intc/intc.o
  .debug_macinfo
-                0x000000000039b869    0xe6ca1 avr32/drivers/pm/pm.o
+                0x000000000039d9b9    0xe6d79 avr32/drivers/pdca/pdca.o
  .debug_macinfo
-                0x000000000048250a    0xe6c63 avr32/drivers/spi/spi.o
+                0x0000000000484732    0xe6ca1 avr32/drivers/pm/pm.o
  .debug_macinfo
-                0x000000000056916d    0xe7519 avr32/drivers/tc/tc.o
+                0x000000000056b3d3    0xe6c63 avr32/drivers/spi/spi.o
  .debug_macinfo
-                0x0000000000650686    0xe7048 avr32/drivers/usart/usart.o
+                0x0000000000652036    0xe7519 avr32/drivers/tc/tc.o
  .debug_macinfo
-                0x00000000007376ce    0xe9f01 avr32/utils/debug/print_funcs.o
+                0x000000000073954f    0xe7048 avr32/drivers/usart/usart.o
  .debug_macinfo
-                0x00000000008215cf    0xe9cc1 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                0x0000000000820597    0xe9f01 avr32/utils/debug/print_funcs.o
  .debug_macinfo
-                0x000000000090b290    0xe9bb6 ../../aleph/avr32_proto/src/adc.o
+                0x000000000090a498    0xe9cc1 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .debug_macinfo
-                0x00000000009f4e46    0xea7a5 ../../aleph/avr32_proto/src/app_timers.o
+                0x00000000009f4159    0xe9bb6 ../../aleph/avr32_proto/src/adc.o
  .debug_macinfo
-                0x0000000000adf5eb    0xea02d ../../aleph/avr32_proto/src/bfin.o
+                0x0000000000addd0f    0xea7a5 ../../aleph/avr32_proto/src/app_timers.o
  .debug_macinfo
-                0x0000000000bc9618    0xe9903 ../../aleph/avr32_proto/src/events.o
+                0x0000000000bc84b4    0xea02d ../../aleph/avr32_proto/src/bfin.o
  .debug_macinfo
-                0x0000000000cb2f1b    0xe7a6b ../../aleph/avr32_proto/src/encoders.o
+                0x0000000000cb24e1    0xe9903 ../../aleph/avr32_proto/src/events.o
  .debug_macinfo
-                0x0000000000d9a986    0xeca7e ../../aleph/avr32_proto/src/init.o
+                0x0000000000d9bde4    0xe7a6b ../../aleph/avr32_proto/src/encoders.o
  .debug_macinfo
-                0x0000000000e87404    0xeb61b ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000000e8384f    0xeca7e ../../aleph/avr32_proto/src/init.o
  .debug_macinfo
-                0x0000000000f72a1f    0xedb1c ../../aleph/avr32_proto_test/src/main.o
+                0x0000000000f702cd    0xeb61b ../../aleph/avr32_proto/src/interrupts.o
  .debug_macinfo
-                0x000000000106053b    0xeb811 ../../aleph/avr32_proto/src/screen.o
+                0x000000000105b8e8    0xedb1c ../../aleph/avr32_proto_test/src/main.o
  .debug_macinfo
-                0x000000000114bd4c    0xe7a93 ../../aleph/avr32_proto/src/switches.o
+                0x0000000001149404    0xe9a62 ../../aleph/avr32_proto/src/memory.o
  .debug_macinfo
-                0x00000000012337df    0xe6c59 ../../aleph/avr32_proto/src/timers.o
+                0x0000000001232e66    0xeb811 ../../aleph/avr32_proto/src/screen.o
  .debug_macinfo
-                0x000000000131a438    0xe6c7a ../../aleph/common/font.o
+                0x000000000131e677    0xe7a93 ../../aleph/avr32_proto/src/switches.o
  .debug_macinfo
-                0x00000000014010b2     0x1470 ../../aleph/common/fix.o
+                0x000000000140610a    0xe6c59 ../../aleph/avr32_proto/src/timers.o
+ .debug_macinfo
+                0x00000000014ecd63    0xe6c7a ../../aleph/common/font.o
+ .debug_macinfo
+                0x00000000015d39dd     0x1470 ../../aleph/common/fix.o
 
 .debug_weaknames
  *(.debug_weaknames)
@@ -3601,29 +3606,31 @@ LOAD /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a
 LOAD /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/ucr2/libgcc.a
 OUTPUT(aleph.elf elf32-avr32)
 
-.debug_ranges   0x0000000000000000     0x5920
- .debug_ranges  0x0000000000000000     0x2d00 avr32/drivers/flashc/flashc.o
- .debug_ranges  0x0000000000002d00      0x1d8 avr32/drivers/gpio/gpio.o
- .debug_ranges  0x0000000000002ed8       0x30 avr32/drivers/intc/intc.o
- .debug_ranges  0x0000000000002f08      0x450 avr32/drivers/pdca/pdca.o
- .debug_ranges  0x0000000000003358      0x248 avr32/drivers/pm/pm.o
- .debug_ranges  0x00000000000035a0       0xa0 avr32/drivers/spi/spi.o
- .debug_ranges  0x0000000000003640       0xa0 avr32/drivers/tc/tc.o
- .debug_ranges  0x00000000000036e0      0x5c0 avr32/drivers/usart/usart.o
- .debug_ranges  0x0000000000003ca0       0xb0 avr32/utils/debug/print_funcs.o
- .debug_ranges  0x0000000000003d50      0x9d0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .debug_ranges  0x0000000000004720       0x20 ../../aleph/avr32_proto/src/adc.o
- .debug_ranges  0x0000000000004740       0x30 ../../aleph/avr32_proto/src/app_timers.o
- .debug_ranges  0x0000000000004770       0x38 ../../aleph/avr32_proto/src/bfin.o
- .debug_ranges  0x00000000000047a8       0x28 ../../aleph/avr32_proto/src/events.o
- .debug_ranges  0x00000000000047d0       0x20 ../../aleph/avr32_proto/src/encoders.o
- .debug_ranges  0x00000000000047f0       0x50 ../../aleph/avr32_proto/src/init.o
- .debug_ranges  0x0000000000004840       0x48 ../../aleph/avr32_proto/src/interrupts.o
- .debug_ranges  0x0000000000004888       0x20 ../../aleph/avr32_proto_test/src/main.o
- .debug_ranges  0x00000000000048a8      0xf38 ../../aleph/avr32_proto/src/screen.o
- .debug_ranges  0x00000000000057e0       0x18 ../../aleph/avr32_proto/src/switches.o
- .debug_ranges  0x00000000000057f8       0xa0 ../../aleph/avr32_proto/src/timers.o
- .debug_ranges  0x0000000000005898       0x88 ../../aleph/common/fix.o
+.debug_ranges   0x0000000000000000     0x5968
+ .debug_ranges  0x0000000000000000       0x28 avr32/drivers/ebi/sdramc/sdramc.o
+ .debug_ranges  0x0000000000000028     0x2d00 avr32/drivers/flashc/flashc.o
+ .debug_ranges  0x0000000000002d28      0x1d8 avr32/drivers/gpio/gpio.o
+ .debug_ranges  0x0000000000002f00       0x30 avr32/drivers/intc/intc.o
+ .debug_ranges  0x0000000000002f30      0x450 avr32/drivers/pdca/pdca.o
+ .debug_ranges  0x0000000000003380      0x248 avr32/drivers/pm/pm.o
+ .debug_ranges  0x00000000000035c8       0xa0 avr32/drivers/spi/spi.o
+ .debug_ranges  0x0000000000003668       0xa0 avr32/drivers/tc/tc.o
+ .debug_ranges  0x0000000000003708      0x5c0 avr32/drivers/usart/usart.o
+ .debug_ranges  0x0000000000003cc8       0xb0 avr32/utils/debug/print_funcs.o
+ .debug_ranges  0x0000000000003d78      0x9d0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .debug_ranges  0x0000000000004748       0x20 ../../aleph/avr32_proto/src/adc.o
+ .debug_ranges  0x0000000000004768       0x30 ../../aleph/avr32_proto/src/app_timers.o
+ .debug_ranges  0x0000000000004798       0x38 ../../aleph/avr32_proto/src/bfin.o
+ .debug_ranges  0x00000000000047d0       0x28 ../../aleph/avr32_proto/src/events.o
+ .debug_ranges  0x00000000000047f8       0x20 ../../aleph/avr32_proto/src/encoders.o
+ .debug_ranges  0x0000000000004818       0x50 ../../aleph/avr32_proto/src/init.o
+ .debug_ranges  0x0000000000004868       0x48 ../../aleph/avr32_proto/src/interrupts.o
+ .debug_ranges  0x00000000000048b0       0x20 ../../aleph/avr32_proto_test/src/main.o
+ .debug_ranges  0x00000000000048d0       0x20 ../../aleph/avr32_proto/src/memory.o
+ .debug_ranges  0x00000000000048f0      0xf38 ../../aleph/avr32_proto/src/screen.o
+ .debug_ranges  0x0000000000005828       0x18 ../../aleph/avr32_proto/src/switches.o
+ .debug_ranges  0x0000000000005840       0xa0 ../../aleph/avr32_proto/src/timers.o
+ .debug_ranges  0x00000000000058e0       0x88 ../../aleph/common/fix.o
 
 Cross Reference Table
 
@@ -4361,7 +4368,6 @@ gpio_clear_pin_interrupt_flag                     avr32/drivers/gpio/gpio.o
 gpio_clr_gpio_open_drain_pin                      avr32/drivers/gpio/gpio.o
 gpio_clr_gpio_pin                                 avr32/drivers/gpio/gpio.o
                                                   ../../aleph/avr32_proto/src/screen.o
-                                                  ../../aleph/avr32_proto_test/src/main.o
                                                   ../../aleph/avr32_proto/src/bfin.o
 gpio_configure_group                              avr32/drivers/gpio/gpio.o
 gpio_configure_pin                                avr32/drivers/gpio/gpio.o
@@ -4376,6 +4382,7 @@ gpio_enable_module                                avr32/drivers/gpio/gpio.o
                                                   avr32/drivers/ebi/sdramc/sdramc.o
 gpio_enable_module_pin                            avr32/drivers/gpio/gpio.o
 gpio_enable_pin_glitch_filter                     avr32/drivers/gpio/gpio.o
+                                                  ../../aleph/avr32_proto/src/init.o
 gpio_enable_pin_interrupt                         avr32/drivers/gpio/gpio.o
                                                   ../../aleph/avr32_proto/src/interrupts.o
 gpio_enable_pin_pull_up                           avr32/drivers/gpio/gpio.o
@@ -4391,7 +4398,6 @@ gpio_get_pin_value                                avr32/drivers/gpio/gpio.o
 gpio_set_gpio_open_drain_pin                      avr32/drivers/gpio/gpio.o
 gpio_set_gpio_pin                                 avr32/drivers/gpio/gpio.o
                                                   ../../aleph/avr32_proto/src/screen.o
-                                                  ../../aleph/avr32_proto_test/src/main.o
                                                   ../../aleph/avr32_proto/src/bfin.o
 gpio_set_group_high                               avr32/drivers/gpio/gpio.o
 gpio_set_group_low                                avr32/drivers/gpio/gpio.o
@@ -4423,6 +4429,7 @@ init_gpio                                         ../../aleph/avr32_proto/src/in
                                                   ../../aleph/avr32_proto_test/src/main.o
 init_local_pdca                                   ../../aleph/avr32_proto/src/init.o
 init_mem                                          ../../aleph/avr32_proto/src/memory.o
+                                                  ../../aleph/avr32_proto_test/src/main.o
 init_oled                                         ../../aleph/avr32_proto/src/screen.o
                                                   ../../aleph/avr32_proto_test/src/main.o
 init_oled_usart                                   ../../aleph/avr32_proto/src/init.o
@@ -4961,6 +4968,7 @@ sd_mmc_spi_write_sector_from_ram                  avr32/components/memory/sd_mmc
 sdram_enter_self_refresh                          avr32/drivers/ebi/sdramc/sdramc.o
 sdram_exit_self_refresh                           avr32/drivers/ebi/sdramc/sdramc.o
 sdramc_init                                       avr32/drivers/ebi/sdramc/sdramc.o
+                                                  ../../aleph/avr32_proto_test/src/main.o
 setPage                                           ../../aleph/bees/menu.o
                                                   ../../aleph/bees/key_handler.o
 set_param_float_value                             ../../aleph/bees/param.o

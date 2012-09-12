@@ -40,7 +40,7 @@
 //==============================================
 //==== USART
 // debug usart
-#define DBG_USART               (&AVR32_USART1)
+#define DBG_USART               (&AVR32_USART0)
 #define DBG_USART_RX_PIN        AVR32_USART0_RXD_0_0_PIN
 #define DBG_USART_RX_FUNCTION   AVR32_USART0_RXD_0_0_FUNCTION
 #define DBG_USART_TX_PIN        AVR32_USART0_TXD_0_0_PIN

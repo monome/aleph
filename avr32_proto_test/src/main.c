@@ -95,42 +95,42 @@ static void check_events(void) {
 
     switch(e.eventType) {
     case kEventSwitchDown0:
-      screen_line(0, 0, "sw 0 down", 0xf);
+      //      screen_line(0, 0, "sw 0 down", 0xf);
+      scroll_event(" sw f0 down");
       break;
     case kEventSwitchUp0:
-      screen_line(0, 0, "sw 0 up", 0xf);
+      //      screen_line(0, 0, "sw 0 up", 0xf);
+      scroll_event(" sw f0 up");
       break;
     case kEventSwitchDown1:
-      screen_line(0, FONT_CHARH, "sw 1 down", 0xf);
+      //      screen_line(0, FONT_CHARH, "sw 1 down", 0xf);
+      scroll_event(" sw f1 down");
       break;
     case kEventSwitchUp1:
-       screen_line(0, FONT_CHARH, "sw 1 up", 0xf);
+      //       screen_line(0, FONT_CHARH, "sw 1 up", 0xf);
+      scroll_event(" sw f1 up");
       break;
     case kEventSwitchDown2:
-       screen_line(0, FONT_CHARH * 2, "sw 2 down", 0xf);
+      //       screen_line(0, FONT_CHARH * 2, "sw 2 down", 0xf);
+      scroll_event(" sw f2 down");
       break;
     case kEventSwitchUp2:
-       screen_line(0, FONT_CHARH * 2, "sw 2 up", 0xf);
+      //       screen_line(0, FONT_CHARH * 2, "sw 2 up", 0xf);
+      scroll_event(" sw f2 up");
       break;
     case kEventSwitchDown3:
-      gpio_clr_gpio_pin(LED_EDIT_PIN);
-      //      screen_line(0, FONT_CHARH * 3, "sw 3 down", 0xf);
-      scroll_event(" sw 3 down");
+      scroll_event(" sw f3 down");
       break;
     case kEventSwitchUp3:
-      gpio_set_gpio_pin(LED_EDIT_PIN);
-      //      screen_line(0, FONT_CHARH * 3, "sw 3 up", 0xf);
-      scroll_event(" sw 3 up");
+      scroll_event(" sw f3 up");
       break;
-
     case kEventSwitchDown4:
-      //      gpio_set_gpio_pin(LED_EDIT_PIN);
-      screen_line(0, FONT_CHARH * 4, "edit switch down", 0xf);
+      //      screen_line(0, FONT_CHARH * 4, "edit switch down", 0xf);
+      scroll_event(" sw edit down");
       break;
-
     case kEventSwitchUp4:
-      //      gpio_clr_gpio_pin(LED_EDIT_PIN);
-      screen_line(0, FONT_CHARH * 4, "edit switch up", 0xf);
+      //      screen_line(0, FONT_CHARH * 4, "edit switch up", 0xf);
+      scroll_event(" sw edit up");
       break;
 
     case kEventRefresh:
@@ -200,18 +200,16 @@ int main (void) {
   init_encoders();
 
   // initialize sdram
-  //  sdramc_init(FMCK_HZ);
+  sdramc_init(FMCK_HZ);
   //memory managaer
-  // init_mem();
+  init_mem();
 
   // Enable all interrupts.
   Enable_global_interrupt();
 
   //  delay = 10000; while(delay-- > 0) { ;; } 
 
-  //  screen_line(0, 0, "AAAAAH HAAA", 0);
   screen_test_fill();
-  //  screen_refresh();
 
   print_dbg("\r\nALEPH\r\n ");
   // send ADC config
@@ -276,6 +274,8 @@ static void scroll_event(const char* str) {
   //  itoa_whole((int)tcTicks, eventScroll[scrollIdx], 6);
   // string
   //  str_copy(str, eventScroll[scrollIdx], 10);
+  print_dbg("\r\n scrolling event: ");
+  print_dbg(str);
   strcpy(eventScroll[scrollIdx], str);
   eventScrollTimes[scrollIdx] = tcTicks;
   // display

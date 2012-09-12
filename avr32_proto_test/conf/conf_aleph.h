@@ -40,11 +40,11 @@
 //==============================================
 //==== USART
 // debug usart
-#define DBG_USART               (&AVR32_USART1)
-#define DBG_USART_RX_PIN        AVR32_USART1_RXD_0_0_PIN
-#define DBG_USART_RX_FUNCTION   AVR32_USART1_RXD_0_0_FUNCTION
-#define DBG_USART_TX_PIN        AVR32_USART1_TXD_0_0_PIN
-#define DBG_USART_TX_FUNCTION   AVR32_USART1_TXD_0_0_FUNCTION
+#define DBG_USART               (&AVR32_USART0)
+#define DBG_USART_RX_PIN        AVR32_USART0_RXD_0_0_PIN
+#define DBG_USART_RX_FUNCTION   AVR32_USART0_RXD_0_0_FUNCTION
+#define DBG_USART_TX_PIN        AVR32_USART0_TXD_0_0_PIN
+#define DBG_USART_TX_FUNCTION   AVR32_USART0_TXD_0_0_FUNCTION
 #define DBG_USART_BAUDRATE      57600
 
 // oled usart (in spi mode)
@@ -57,6 +57,7 @@
 #define OLED_USART_SPI_MOSI_FUNCTION   AVR32_USART2_TXD_0_0_FUNCTION
 #define OLED_USART_SPI_NSS_PIN         AVR32_USART2_RTS_0_0_PIN
 #define OLED_USART_SPI_NSS_FUNCTION    AVR32_USART2_RTS_0_0_FUNCTION
+
 //==============================================
 //==== SPI
 // blackfin SPI
