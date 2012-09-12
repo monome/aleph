@@ -141,12 +141,15 @@ void adc_poll(void) {
   adc_convert(&adcVal);
   
   for(i=0; i<4; i++) {
+
+    /*
     if (0) { //(i==0) {
       print_dbg("\r\n got adc conversion on channel: ");
       print_dbg_ulong(i);
       print_dbg(" , value: ");
       print_dbg_ulong(adcVal[i]);
     }
+    */
 
     // TODO:
     /// probably want more filtering before posting events

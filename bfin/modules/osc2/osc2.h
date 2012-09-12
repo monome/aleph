@@ -1,8 +1,8 @@
 
-/* echo_data.h
- * aleph-blackfin echo module
+/* osc2.h
+ * aleph-blackfin
  *
- * declares external data
+ * dual oscillator module
  */
 
 #ifndef _ALEPH_BFIN_OSC2_H_
@@ -12,9 +12,10 @@
 #include "param_common.h"
 #include "types.h"
 
-//#define OSC_SAMPLERATE 48000
 
+// number of parameters
 #define MODULE_NUM_PARAMS 2
+// size of wavetable
 #define WAVETABLE_NUM 1024
 #define WAVETABLE_NUM_1 1023
 

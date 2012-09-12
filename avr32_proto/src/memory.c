@@ -22,12 +22,13 @@ static u32 heapOffset;
 // bytes in sdram hardware
 static u32 heapSize;
 
-// test sdram
-static void sdram_test(void);
 
 // setup heap
 void init_mem(void) {
-  heapSize = SDRAM_SIZE;
+  //  heapSize = SDRAM_SIZE;
+  /// TEST: using a 4MB sdram by accident
+  heapSize = SDRAM_SIZE >> 3;
+
   pHeapStart = SDRAM;
   pHeapEnd = pHeapStart + heapSize;
   heapOffset = 0;
@@ -51,9 +52,8 @@ heap_t alloc_mem(u32 bytes) {
   return ret;
 }
 
-
-// test sdram 
-static void sdram_test(void) {
+// sdram test 
+void sdram_test(void) {
   // test:
   u32 i, j, progress_inc;
   u32 noErrors=0;
@@ -61,10 +61,9 @@ static void sdram_test(void) {
 
   char strbuf[16];
 
-  // test:
-  //  print_dbg ("\x0CSDRAM size: ");
-  //  print_dbg_ulong(SDRAM_SIZE >> 20);
-  //  print_dbg(" MB\r\n");
+  print_dbg ("\x0CSDRAM size: ");
+  print_dbg_ulong(SDRAM_SIZE >> 20);
+  print_dbg(" MB\r\n");
 
   // Initialize the external SDRAM chip.
 
@@ -99,6 +98,10 @@ static void sdram_test(void) {
   print_dbg("\rSDRAM tested: ");
   print_dbg_ulong(noErrors);
   print_dbg(" corrupted bytes(s)       \r\n");
+
+  print_dbg("\out of: ");
+  print_dbg_ulong(heapSize);
+  print_dbg(" total       \r\n");
 
 
 }

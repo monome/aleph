@@ -221,6 +221,7 @@ U8 screen_string_squeeze(U16 x, U16 y, char *str, U8 a) {
     x++;
     str++;
   }
+  refresh = 1;
   return x;
 }
 

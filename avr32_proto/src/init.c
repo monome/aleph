@@ -59,7 +59,7 @@ void init_gpio(void) {
   gpio_enable_pin_pull_up(SW3_PIN);
   gpio_enable_pin_pull_up(SW_EDIT_PIN);
 
-  gpio_enable_pin_glitch_filter(SW3_PIN);
+  //  gpio_enable_pin_glitch_filter(SW3_PIN);
 }
 
 // initialize debug USART

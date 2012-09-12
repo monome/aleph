@@ -404,6 +404,8 @@ Discarded input sections
                 0x0000000000000000       0x1a avr32/drivers/gpio/gpio.o
  .text.gpio_tgl_gpio_open_drain_pin
                 0x0000000000000000       0x1a avr32/drivers/gpio/gpio.o
+ .text.gpio_enable_pin_glitch_filter
+                0x0000000000000000       0x14 avr32/drivers/gpio/gpio.o
  .text.gpio_disable_pin_glitch_filter
                 0x0000000000000000       0x14 avr32/drivers/gpio/gpio.o
  .text.gpio_disable_pin_interrupt
@@ -444,8 +446,6 @@ Discarded input sections
                 0x0000000000000000       0x42 avr32/drivers/pdca/pdca.o
  .text.pdca_load_channel
                 0x0000000000000000       0x42 avr32/drivers/pdca/pdca.o
- .text.pdca_init_channel
-                0x0000000000000000       0x94 avr32/drivers/pdca/pdca.o
  .text          0x0000000000000000        0x0 avr32/drivers/pm/pm.o
  .data          0x0000000000000000        0x0 avr32/drivers/pm/pm.o
  .bss           0x0000000000000000        0x0 avr32/drivers/pm/pm.o
@@ -664,11 +664,6 @@ Discarded input sections
  .text          0x0000000000000000        0x0 avr32/services/fs/fat/fat.o
  .data          0x0000000000000000        0x0 avr32/services/fs/fat/fat.o
  .bss           0x0000000000000000        0x0 avr32/services/fs/fat/fat.o
- .debug_abbrev  0x0000000000000000      0x3b1 avr32/services/fs/fat/fat.o
- .debug_info    0x0000000000000000     0x171e avr32/services/fs/fat/fat.o
- .debug_line    0x0000000000000000     0x2aee avr32/services/fs/fat/fat.o
- .debug_macinfo
-                0x0000000000000000    0xeadff avr32/services/fs/fat/fat.o
  .text.fat_check_open
                 0x0000000000000000       0x20 avr32/services/fs/fat/fat.o
  .text.fat_check_select
@@ -677,99 +672,33 @@ Discarded input sections
                 0x0000000000000000       0x20 avr32/services/fs/fat/fat.o
  .text.fat_checkcluster
                 0x0000000000000000       0x60 avr32/services/fs/fat/fat.o
- .text.fat_cache_clusterlist_reset
-                0x0000000000000000       0x28 avr32/services/fs/fat/fat.o
  .text.fat_cache_clusterlist_update_start
                 0x0000000000000000       0x40 avr32/services/fs/fat/fat.o
- .text.fat_cache_clusterlist_update_finish
-                0x0000000000000000       0x94 avr32/services/fs/fat/fat.o
  .text.fat_cache_clusterlist_update_select
                 0x0000000000000000       0x64 avr32/services/fs/fat/fat.o
  .text.fat_cache_clusterlist_update_read
                 0x0000000000000000      0x13c avr32/services/fs/fat/fat.o
- .text.fat_entry_check
-                0x0000000000000000       0x5c avr32/services/fs/fat/fat.o
  .text.fat_entry_checkext
                 0x0000000000000000       0x98 avr32/services/fs/fat/fat.o
- .text.fat_get_entry_info
-                0x0000000000000000       0x60 avr32/services/fs/fat/fat.o
- .text.fat_entry_is_dir
-                0x0000000000000000       0x18 avr32/services/fs/fat/fat.o
- .text.fat_clear_entry_info_and_ptr
-                0x0000000000000000       0x30 avr32/services/fs/fat/fat.o
- .text.fat_write_entry_file
-                0x0000000000000000       0x60 avr32/services/fs/fat/fat.o
- .text.fat_entry_shortname
-                0x0000000000000000      0x16c avr32/services/fs/fat/fat.o
- .text.fat_entry_longname
-                0x0000000000000000      0x2b0 avr32/services/fs/fat/fat.o
- .text.fat_check_eof_name
-                0x0000000000000000       0x26 avr32/services/fs/fat/fat.o
- .text.fat_get_ptr_entry
-                0x0000000000000000       0x18 avr32/services/fs/fat/fat.o
- .text.fat_cache_reset
-                0x0000000000000000       0x18 avr32/services/fs/fat/fat.o
- .text.fat_cache_mark_sector_as_dirty
-                0x0000000000000000       0x10 avr32/services/fs/fat/fat.o
  .text.fat_check_nav_access_disk
                 0x0000000000000000       0x44 avr32/services/fs/fat/fat.o
  .text.fat_check_nav_access_file
                 0x0000000000000000       0x7c avr32/services/fs/fat/fat.o
  .text.fat_copy_nav
                 0x0000000000000000       0x64 avr32/services/fs/fat/fat.o
- .text.fat_invert_nav
-                0x0000000000000000       0xd4 avr32/services/fs/fat/fat.o
- .text.fat_cache_flush
-                0x0000000000000000       0x5c avr32/services/fs/fat/fat.o
- .text.fat_cache_clear
-                0x0000000000000000       0x18 avr32/services/fs/fat/fat.o
- .text.fat_check_device
-                0x0000000000000000       0xd4 avr32/services/fs/fat/fat.o
- .text.fat_cache_read_sector
-                0x0000000000000000       0xbc avr32/services/fs/fat/fat.o
- .text.T.79     0x0000000000000000       0xb8 avr32/services/fs/fat/fat.o
  .text.fat_check_mount
                 0x0000000000000000       0xf4 avr32/services/fs/fat/fat.o
- .text.fat_check_noopen
-                0x0000000000000000       0xf4 avr32/services/fs/fat/fat.o
- .text.fat_cluster_val
-                0x0000000000000000      0x308 avr32/services/fs/fat/fat.o
- .text.fat_check_mount_select
-                0x0000000000000000      0x108 avr32/services/fs/fat/fat.o
  .text.fat_check_mount_select_open
                 0x0000000000000000      0x11c avr32/services/fs/fat/fat.o
- .text.fat_check_mount_noopen
-                0x0000000000000000      0x1b0 avr32/services/fs/fat/fat.o
- .text.fat_cluster_list
-                0x0000000000000000      0x5ec avr32/services/fs/fat/fat.o
- .text.fat_read_dir
-                0x0000000000000000      0x104 avr32/services/fs/fat/fat.o
- .text.fat_read_file
-                0x0000000000000000       0xc0 avr32/services/fs/fat/fat.o
  .text.fat_check_mount_select_noopen
                 0x0000000000000000      0x1c0 avr32/services/fs/fat/fat.o
  .text.fat_write_file
                 0x0000000000000000      0x298 avr32/services/fs/fat/fat.o
  .text.fat_cluster_readnext
                 0x0000000000000000      0x140 avr32/services/fs/fat/fat.o
- .debug_frame   0x0000000000000000      0x570 avr32/services/fs/fat/fat.o
- .debug_loc     0x0000000000000000     0x135e avr32/services/fs/fat/fat.o
- .debug_pubnames
-                0x0000000000000000      0x5a8 avr32/services/fs/fat/fat.o
- .debug_aranges
-                0x0000000000000000      0x168 avr32/services/fs/fat/fat.o
- .debug_ranges  0x0000000000000000      0xc58 avr32/services/fs/fat/fat.o
- .debug_str     0x0000000000000000      0xaa4 avr32/services/fs/fat/fat.o
- .comment       0x0000000000000000       0x31 avr32/services/fs/fat/fat.o
- COMMON         0x0000000000000000      0x2f4 avr32/services/fs/fat/fat.o
  .text          0x0000000000000000        0x0 avr32/services/fs/fat/fat_unusual.o
  .data          0x0000000000000000        0x0 avr32/services/fs/fat/fat_unusual.o
  .bss           0x0000000000000000        0x0 avr32/services/fs/fat/fat_unusual.o
- .debug_abbrev  0x0000000000000000      0x314 avr32/services/fs/fat/fat_unusual.o
- .debug_info    0x0000000000000000     0x174b avr32/services/fs/fat/fat_unusual.o
- .debug_line    0x0000000000000000     0x2950 avr32/services/fs/fat/fat_unusual.o
- .debug_macinfo
-                0x0000000000000000    0xeae00 avr32/services/fs/fat/fat_unusual.o
  .text.fat_select_filesystem
                 0x0000000000000000      0x298 avr32/services/fs/fat/fat_unusual.o
  .text.fat_translatedate_number_to_ascii
@@ -780,11 +709,7 @@ Discarded input sections
                 0x0000000000000000       0xec avr32/services/fs/fat/fat_unusual.o
  .text.fat_translate_char_shortname
                 0x0000000000000000       0x5a avr32/services/fs/fat/fat_unusual.o
- .text.fat_clear_info_fat_mod
-                0x0000000000000000       0x18 avr32/services/fs/fat/fat_unusual.o
  .text.fat_clear_cluster
-                0x0000000000000000       0x74 avr32/services/fs/fat/fat_unusual.o
- .text.fat_update_fat2
                 0x0000000000000000       0x74 avr32/services/fs/fat/fat_unusual.o
  .text.fat_write_MBR
                 0x0000000000000000       0xcc avr32/services/fs/fat/fat_unusual.o
@@ -792,20 +717,12 @@ Discarded input sections
                 0x0000000000000000       0xd8 avr32/services/fs/fat/fat_unusual.o
  .text.fat_get_date
                 0x0000000000000000       0x38 avr32/services/fs/fat/fat_unusual.o
- .text.fat_delete_file
-                0x0000000000000000       0x78 avr32/services/fs/fat/fat_unusual.o
- .text.fat_garbage_collector_entry
-                0x0000000000000000       0xc0 avr32/services/fs/fat/fat_unusual.o
  .text.fat_initialize_fat
                 0x0000000000000000       0xa4 avr32/services/fs/fat/fat_unusual.o
- .text.fat_write_fat32_FSInfo
-                0x0000000000000000       0xa0 avr32/services/fs/fat/fat_unusual.o
  .text.fat_write_PBR
                 0x0000000000000000      0x1a0 avr32/services/fs/fat/fat_unusual.o
  .text.fat_check_name
                 0x0000000000000000       0x8c avr32/services/fs/fat/fat_unusual.o
- .text.fat_create_short_entry_name
-                0x0000000000000000      0x22c avr32/services/fs/fat/fat_unusual.o
  .text.fat_entry_shortname_compare
                 0x0000000000000000       0x5c avr32/services/fs/fat/fat_unusual.o
  .text.fat_read_fat32_FSInfo
@@ -816,30 +733,16 @@ Discarded input sections
                 0x0000000000000000       0x9c avr32/services/fs/fat/fat_unusual.o
  .text.fat_clean_zone
                 0x0000000000000000       0xa4 avr32/services/fs/fat/fat_unusual.o
- .text.fat_mount
-                0x0000000000000000      0x434 avr32/services/fs/fat/fat_unusual.o
- .text.fat_find_short_entry_name
-                0x0000000000000000       0x9c avr32/services/fs/fat/fat_unusual.o
  .text.fat_translatedate_ascii_to_number
                 0x0000000000000000      0x298 avr32/services/fs/fat/fat_unusual.o
  .text.fat_set_date
                 0x0000000000000000       0x40 avr32/services/fs/fat/fat_unusual.o
- .text.fat_initialize_dir
-                0x0000000000000000      0x1c4 avr32/services/fs/fat/fat_unusual.o
  .text.fat_format
                 0x0000000000000000      0x130 avr32/services/fs/fat/fat_unusual.o
  .text.fat_getfreespace
                 0x0000000000000000      0x14c avr32/services/fs/fat/fat_unusual.o
  .text.fat_getfreespace_percent
                 0x0000000000000000      0x154 avr32/services/fs/fat/fat_unusual.o
- .text.fat_allocfreespace
-                0x0000000000000000      0x1c0 avr32/services/fs/fat/fat_unusual.o
- .text.fat_alloc_entry_free
-                0x0000000000000000      0x110 avr32/services/fs/fat/fat_unusual.o
- .text.fat_create_entry_file_name
-                0x0000000000000000      0x1f8 avr32/services/fs/fat/fat_unusual.o
- .rodata.const_FSI_LeadSig
-                0x0000000000000000        0x4 avr32/services/fs/fat/fat_unusual.o
  .rodata.fs_s_tab_incorrect_char
                 0x0000000000000000        0x8 avr32/services/fs/fat/fat_unusual.o
  .rodata.TableFAT12
@@ -860,17 +763,6 @@ Discarded input sections
                 0x0000000000000000        0x8 avr32/services/fs/fat/fat_unusual.o
  .rodata.const_tail_pbr
                 0x0000000000000000       0x1c avr32/services/fs/fat/fat_unusual.o
- .rodata.const_FSI_StrucSig
-                0x0000000000000000        0x4 avr32/services/fs/fat/fat_unusual.o
- .debug_frame   0x0000000000000000      0x52c avr32/services/fs/fat/fat_unusual.o
- .debug_loc     0x0000000000000000     0x1e5f avr32/services/fs/fat/fat_unusual.o
- .debug_pubnames
-                0x0000000000000000      0x480 avr32/services/fs/fat/fat_unusual.o
- .debug_aranges
-                0x0000000000000000      0x128 avr32/services/fs/fat/fat_unusual.o
- .debug_ranges  0x0000000000000000      0x590 avr32/services/fs/fat/fat_unusual.o
- .debug_str     0x0000000000000000      0xad0 avr32/services/fs/fat/fat_unusual.o
- .comment       0x0000000000000000       0x31 avr32/services/fs/fat/fat_unusual.o
  COMMON         0x0000000000000000        0x4 avr32/services/fs/fat/fat_unusual.o
  .text          0x0000000000000000        0x0 avr32/services/fs/fat/file.o
  .data          0x0000000000000000        0x0 avr32/services/fs/fat/file.o
@@ -922,11 +814,6 @@ Discarded input sections
  .text          0x0000000000000000        0x0 avr32/services/fs/fat/navigation.o
  .data          0x0000000000000000        0x0 avr32/services/fs/fat/navigation.o
  .bss           0x0000000000000000        0x0 avr32/services/fs/fat/navigation.o
- .debug_abbrev  0x0000000000000000      0x328 avr32/services/fs/fat/navigation.o
- .debug_info    0x0000000000000000     0x161b avr32/services/fs/fat/navigation.o
- .debug_line    0x0000000000000000     0x1f7f avr32/services/fs/fat/navigation.o
- .debug_macinfo
-                0x0000000000000000    0xeb11e avr32/services/fs/fat/navigation.o
  .text.nav_string_length_enable
                 0x0000000000000000        0xc avr32/services/fs/fat/navigation.o
  .text.nav_string_length_disable
@@ -936,8 +823,6 @@ Discarded input sections
  .text.nav_checkdisk_enable
                 0x0000000000000000        0xc avr32/services/fs/fat/navigation.o
  .text.nav_get  0x0000000000000000        0xc avr32/services/fs/fat/navigation.o
- .text.nav_drive_get
-                0x0000000000000000        0xc avr32/services/fs/fat/navigation.o
  .text.nav_drive_getname
                 0x0000000000000000       0x1c avr32/services/fs/fat/navigation.o
  .text.nav_partition_cluster_size
@@ -946,8 +831,6 @@ Discarded input sections
                 0x0000000000000000        0xc avr32/services/fs/fat/navigation.o
  .text.nav_getindex
                 0x0000000000000000       0x20 avr32/services/fs/fat/navigation.o
- .text.nav_file_lgt
-                0x0000000000000000        0xc avr32/services/fs/fat/navigation.o
  .text.nav_file_lgtsector
                 0x0000000000000000       0x10 avr32/services/fs/fat/navigation.o
  .text.nav_file_attributget
@@ -962,32 +845,18 @@ Discarded input sections
                 0x0000000000000000       0x30 avr32/services/fs/fat/navigation.o
  .text.nav_file_checkext
                 0x0000000000000000       0x2c avr32/services/fs/fat/navigation.o
- .text.nav_file_isdir
-                0x0000000000000000        0xc avr32/services/fs/fat/navigation.o
  .text.nav_file_isreadonly
                 0x0000000000000000       0x30 avr32/services/fs/fat/navigation.o
- .text.nav_file_name
-                0x0000000000000000       0xe0 avr32/services/fs/fat/navigation.o
  .text.nav_file_getname
                 0x0000000000000000       0x10 avr32/services/fs/fat/navigation.o
  .text.nav_filelist_fileisnotopen
                 0x0000000000000000        0xc avr32/services/fs/fat/navigation.o
  .text.nav_dir_is_root
                 0x0000000000000000       0x1c avr32/services/fs/fat/navigation.o
- .text.nav_filelist_set
-                0x0000000000000000      0x16c avr32/services/fs/fat/navigation.o
  .text.nav_filelist_bol
                 0x0000000000000000       0x1c avr32/services/fs/fat/navigation.o
  .text.nav_filelist_eol
                 0x0000000000000000       0x44 avr32/services/fs/fat/navigation.o
- .text.nav_filelist_findname
-                0x0000000000000000       0x30 avr32/services/fs/fat/navigation.o
- .text.nav_filelist_reset
-                0x0000000000000000       0x18 avr32/services/fs/fat/navigation.o
- .text.nav_dir_gotoparent
-                0x0000000000000000       0x98 avr32/services/fs/fat/navigation.o
- .text.nav_dir_name
-                0x0000000000000000      0x110 avr32/services/fs/fat/navigation.o
  .text.nav_partition_space
                 0x0000000000000000       0x2c avr32/services/fs/fat/navigation.o
  .text.nav_partition_freespace_percent
@@ -996,50 +865,30 @@ Discarded input sections
                 0x0000000000000000       0x28 avr32/services/fs/fat/navigation.o
  .text.nav_partition_serialnumber
                 0x0000000000000000       0x24 avr32/services/fs/fat/navigation.o
- .text.nav_partition_mount
-                0x0000000000000000       0x3c avr32/services/fs/fat/navigation.o
  .text.nav_drive_format
                 0x0000000000000000       0x38 avr32/services/fs/fat/navigation.o
- .text.nav_drive_set
-                0x0000000000000000       0x58 avr32/services/fs/fat/navigation.o
- .text.nav_drive_nb
-                0x0000000000000000        0xc avr32/services/fs/fat/navigation.o
  .text.nav_copy
                 0x0000000000000000       0x28 avr32/services/fs/fat/navigation.o
  .text.nav_select
                 0x0000000000000000       0x48 avr32/services/fs/fat/navigation.o
  .text.nav_file_copy
                 0x0000000000000000       0x38 avr32/services/fs/fat/navigation.o
- .text.nav_dir_root
-                0x0000000000000000       0x3c avr32/services/fs/fat/navigation.o
  .text.nav_exit
                 0x0000000000000000       0x54 avr32/services/fs/fat/navigation.o
- .text.nav_reset
-                0x0000000000000000       0x80 avr32/services/fs/fat/navigation.o
  .text.nav_file_del
                 0x0000000000000000       0xcc avr32/services/fs/fat/navigation.o
- .text.nav_file_create
-                0x0000000000000000       0x88 avr32/services/fs/fat/navigation.o
  .text.nav_file_paste_start
                 0x0000000000000000       0x84 avr32/services/fs/fat/navigation.o
  .text.nav_filelist_single_disable
                 0x0000000000000000       0x24 avr32/services/fs/fat/navigation.o
  .text.nav_filelist_single_enable
                 0x0000000000000000       0x30 avr32/services/fs/fat/navigation.o
- .text.nav_filelist_first
-                0x0000000000000000       0x4c avr32/services/fs/fat/navigation.o
  .text.nav_filelist_exist
                 0x0000000000000000       0x70 avr32/services/fs/fat/navigation.o
- .text.nav_filelist_nb
-                0x0000000000000000       0x84 avr32/services/fs/fat/navigation.o
  .text.nav_partition_type
                 0x0000000000000000       0x54 avr32/services/fs/fat/navigation.o
- .text.nav_filelist_last
-                0x0000000000000000       0xd0 avr32/services/fs/fat/navigation.o
  .text.nav_file_rename
                 0x0000000000000000       0x8c avr32/services/fs/fat/navigation.o
- .text.nav_dir_make
-                0x0000000000000000       0x94 avr32/services/fs/fat/navigation.o
  .text.nav_filelist_goto
                 0x0000000000000000       0x90 avr32/services/fs/fat/navigation.o
  .text.nav_file_paste_state
@@ -1058,16 +907,6 @@ Discarded input sections
                 0x0000000000000000        0x1 avr32/services/fs/fat/navigation.o
  .rodata.CSWTCH.86
                 0x0000000000000000        0x4 avr32/services/fs/fat/navigation.o
- .debug_frame   0x0000000000000000      0x718 avr32/services/fs/fat/navigation.o
- .debug_loc     0x0000000000000000     0x131b avr32/services/fs/fat/navigation.o
- .debug_pubnames
-                0x0000000000000000      0x5d8 avr32/services/fs/fat/navigation.o
- .debug_aranges
-                0x0000000000000000      0x218 avr32/services/fs/fat/navigation.o
- .debug_ranges  0x0000000000000000      0x5e0 avr32/services/fs/fat/navigation.o
- .debug_str     0x0000000000000000      0xbaf avr32/services/fs/fat/navigation.o
- .comment       0x0000000000000000       0x31 avr32/services/fs/fat/navigation.o
- COMMON         0x0000000000000000       0x19 avr32/services/fs/fat/navigation.o
  .text          0x0000000000000000        0x0 avr32/utils/debug/print_funcs.o
  .data          0x0000000000000000        0x0 avr32/utils/debug/print_funcs.o
  .bss           0x0000000000000000        0x0 avr32/utils/debug/print_funcs.o
@@ -1076,14 +915,10 @@ Discarded input sections
  .text.print    0x0000000000000000        0xc avr32/utils/debug/print_funcs.o
  .text.init_dbg_rs232_ex
                 0x0000000000000000       0x40 avr32/utils/debug/print_funcs.o
- .text.print_dbg_char
-                0x0000000000000000       0x14 avr32/utils/debug/print_funcs.o
  .text.print_dbg_hex
                 0x0000000000000000       0x74 avr32/utils/debug/print_funcs.o
  .text.init_dbg_rs232
                 0x0000000000000000       0x44 avr32/utils/debug/print_funcs.o
- .text.print_dbg_ulong
-                0x0000000000000000       0x4c avr32/utils/debug/print_funcs.o
  .text.print_dbg_char_hex
                 0x0000000000000000       0x34 avr32/utils/debug/print_funcs.o
  .text.print_dbg_short_hex
@@ -1103,25 +938,9 @@ Discarded input sections
  .text          0x0000000000000000        0x0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .data          0x0000000000000000        0x0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .bss           0x0000000000000000        0x0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .text.sd_mmc_spi_get_capacity
-                0x0000000000000000      0x118 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .text.sd_mmc_spi_write_close
-                0x0000000000000000        0x2 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .text.sd_mmc_spi_send_and_read
                 0x0000000000000000       0x34 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .text.T.146    0x0000000000000000       0x38 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .text.sd_mmc_spi_wait_not_busy
-                0x0000000000000000       0x7c avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .text.sd_mmc_spi_write_open
-                0x0000000000000000       0x18 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .text.sd_mmc_spi_read_close
-                0x0000000000000000        0xc avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .text.sd_mmc_spi_read_open
-                0x0000000000000000       0x18 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .text.sd_mmc_spi_command
-                0x0000000000000000      0x2a4 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .text.sd_mmc_spi_read_sector_to_ram
-                0x0000000000000000      0x13c avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .text.sd_mmc_spi_read_open_PDCA
                 0x0000000000000000       0xd0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .text.sd_mmc_spi_erase_sector_group
@@ -1136,70 +955,23 @@ Discarded input sections
                 0x0000000000000000      0x444 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .text.sd_mmc_spi_get_cid
                 0x0000000000000000      0x478 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .text.sd_mmc_spi_check_hc
-                0x0000000000000000       0xfc avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .text.sd_mmc_spi_write_sector_from_ram
-                0x0000000000000000      0x170 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .text.sd_mmc_spi_get_if
-                0x0000000000000000      0x12c avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .text.sd_mmc_spi_internal_init
-                0x0000000000000000      0x7d0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .text.sd_mmc_spi_init
-                0x0000000000000000       0x34 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .text.sd_mmc_spi_check_presence
-                0x0000000000000000      0x2b4 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .text.sd_mmc_spi_mem_check
-                0x0000000000000000      0x2c8 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .text.sd_mmc_spi_get_status
                 0x0000000000000000      0x268 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .text.is_sd_mmc_spi_write_pwd_locked
                 0x0000000000000000       0x40 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .text.sd_mmc_spi_lock_operation
                 0x0000000000000000      0x1a8 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .bss.gl_ptr_mem
-                0x0000000000000000        0x4 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .bss.sector_buf
                 0x0000000000000000      0x200 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .bss.sd_mmc_opt
-                0x0000000000000000       0x10 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .bss.sd_mmc_pba_hz
-                0x0000000000000000        0x4 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .bss.sd_mmc_spi_init_done
-                0x0000000000000000        0x1 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- COMMON         0x0000000000000000      0x229 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .text          0x0000000000000000        0x0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
  .data          0x0000000000000000        0x0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
  .bss           0x0000000000000000        0x0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
- .debug_abbrev  0x0000000000000000      0x16c avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
- .debug_info    0x0000000000000000      0x259 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
- .debug_line    0x0000000000000000      0x886 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
- .debug_macinfo
-                0x0000000000000000    0xe9ae2 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
- .text.sd_mmc_spi_wr_protect
-                0x0000000000000000        0x2 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
  .text.sd_mmc_spi_removal
                 0x0000000000000000        0x2 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
- .text.sd_mmc_spi_test_unit_ready
-                0x0000000000000000       0x68 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
  .text.sd_mmc_spi_mem_init
                 0x0000000000000000        0xc avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
  .text.sd_mmc_spi_read_capacity
                 0x0000000000000000       0x40 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
- .text.sd_mmc_spi_ram_2_mem
-                0x0000000000000000       0x5c avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
- .text.sd_mmc_spi_mem_2_ram
-                0x0000000000000000       0x5c avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
- .data.sd_mmc_spi_presence_status
-                0x0000000000000000        0x1 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
- .debug_frame   0x0000000000000000       0xcc avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
- .debug_loc     0x0000000000000000      0x131 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
- .debug_pubnames
-                0x0000000000000000       0xe8 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
- .debug_aranges
-                0x0000000000000000       0x50 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
- .debug_ranges  0x0000000000000000       0x48 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
- .debug_str     0x0000000000000000      0x275 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
- .comment       0x0000000000000000       0x31 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
  .text          0x0000000000000000        0x0 common/services/clock/uc3a0_a1/sysclk.o
  .data          0x0000000000000000        0x0 common/services/clock/uc3a0_a1/sysclk.o
  .bss           0x0000000000000000        0x0 common/services/clock/uc3a0_a1/sysclk.o
@@ -1236,31 +1008,14 @@ Discarded input sections
  .text          0x0000000000000000        0x0 common/services/storage/ctrl_access/ctrl_access.o
  .data          0x0000000000000000        0x0 common/services/storage/ctrl_access/ctrl_access.o
  .bss           0x0000000000000000        0x0 common/services/storage/ctrl_access/ctrl_access.o
- .debug_abbrev  0x0000000000000000      0x1fb common/services/storage/ctrl_access/ctrl_access.o
- .debug_info    0x0000000000000000      0x601 common/services/storage/ctrl_access/ctrl_access.o
- .debug_line    0x0000000000000000      0x8da common/services/storage/ctrl_access/ctrl_access.o
- .debug_macinfo
-                0x0000000000000000    0xeae11 common/services/storage/ctrl_access/ctrl_access.o
- .text.get_nb_lun
-                0x0000000000000000        0x2 common/services/storage/ctrl_access/ctrl_access.o
  .text.get_cur_lun
                 0x0000000000000000        0x2 common/services/storage/ctrl_access/ctrl_access.o
- .text.mem_test_unit_ready
-                0x0000000000000000       0x14 common/services/storage/ctrl_access/ctrl_access.o
  .text.mem_read_capacity
-                0x0000000000000000       0x14 common/services/storage/ctrl_access/ctrl_access.o
- .text.mem_sector_size
-                0x0000000000000000        0x6 common/services/storage/ctrl_access/ctrl_access.o
- .text.mem_wr_protect
                 0x0000000000000000       0x14 common/services/storage/ctrl_access/ctrl_access.o
  .text.mem_removal
                 0x0000000000000000       0x14 common/services/storage/ctrl_access/ctrl_access.o
  .text.mem_name
                 0x0000000000000000       0x10 common/services/storage/ctrl_access/ctrl_access.o
- .text.memory_2_ram
-                0x0000000000000000       0x18 common/services/storage/ctrl_access/ctrl_access.o
- .text.ram_2_memory
-                0x0000000000000000       0x18 common/services/storage/ctrl_access/ctrl_access.o
  .text.stream_state
                 0x0000000000000000        0x2 common/services/storage/ctrl_access/ctrl_access.o
  .text.stream_stop
@@ -1273,20 +1028,9 @@ Discarded input sections
                 0x0000000000000000       0x1c common/services/storage/ctrl_access/ctrl_access.o
  .rodata.str1.4
                 0x0000000000000000       0x18 common/services/storage/ctrl_access/ctrl_access.o
- .debug_frame   0x0000000000000000      0x120 common/services/storage/ctrl_access/ctrl_access.o
- .debug_loc     0x0000000000000000      0x41a common/services/storage/ctrl_access/ctrl_access.o
- .debug_pubnames
-                0x0000000000000000       0xfc common/services/storage/ctrl_access/ctrl_access.o
- .debug_aranges
-                0x0000000000000000       0x80 common/services/storage/ctrl_access/ctrl_access.o
- .debug_ranges  0x0000000000000000       0xf8 common/services/storage/ctrl_access/ctrl_access.o
- .debug_str     0x0000000000000000      0x2cb common/services/storage/ctrl_access/ctrl_access.o
- .comment       0x0000000000000000       0x31 common/services/storage/ctrl_access/ctrl_access.o
  .text          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/adc.o
  .data          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/adc.o
  .bss           0x0000000000000000        0x0 ../../aleph/avr32_proto/src/adc.o
- .text.init_adc
-                0x0000000000000000       0x70 ../../aleph/avr32_proto/src/adc.o
  .text          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/app_timers.o
  .data          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/app_timers.o
  .bss           0x0000000000000000        0x0 ../../aleph/avr32_proto/src/app_timers.o
@@ -1316,11 +1060,6 @@ Discarded input sections
  .text          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/files.o
  .data          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/files.o
  .bss           0x0000000000000000        0x0 ../../aleph/avr32_proto/src/files.o
- .debug_abbrev  0x0000000000000000      0x153 ../../aleph/avr32_proto/src/files.o
- .debug_info    0x0000000000000000      0x27c ../../aleph/avr32_proto/src/files.o
- .debug_line    0x0000000000000000      0xa3d ../../aleph/avr32_proto/src/files.o
- .debug_macinfo
-                0x0000000000000000    0xeb472 ../../aleph/avr32_proto/src/files.o
  .text.files_get_dsp_filename
                 0x0000000000000000       0x18 ../../aleph/avr32_proto/src/files.o
  .text.files_get_dsp_count
@@ -1331,46 +1070,10 @@ Discarded input sections
                 0x0000000000000000       0x20 ../../aleph/avr32_proto/src/files.o
  .text.files_scan_dsp
                 0x0000000000000000       0x94 ../../aleph/avr32_proto/src/files.o
- .text.files_check_dsp
-                0x0000000000000000       0x68 ../../aleph/avr32_proto/src/files.o
- .text.files_check_scenes
-                0x0000000000000000       0x68 ../../aleph/avr32_proto/src/files.o
- .text.files_list
-                0x0000000000000000      0x110 ../../aleph/avr32_proto/src/files.o
- .text.init_files
-                0x0000000000000000       0x7c ../../aleph/avr32_proto/src/files.o
- .rodata.str1.4
-                0x0000000000000000      0x1c8 ../../aleph/avr32_proto/src/files.o
  .bss.numDsp    0x0000000000000000        0x1 ../../aleph/avr32_proto/src/files.o
- .bss.name_buf  0x0000000000000000       0x20 ../../aleph/avr32_proto/src/files.o
- .debug_frame   0x0000000000000000       0xf0 ../../aleph/avr32_proto/src/files.o
- .debug_loc     0x0000000000000000      0x1cc ../../aleph/avr32_proto/src/files.o
- .debug_pubnames
-                0x0000000000000000       0xea ../../aleph/avr32_proto/src/files.o
- .debug_aranges
-                0x0000000000000000       0x60 ../../aleph/avr32_proto/src/files.o
- .debug_ranges  0x0000000000000000       0x58 ../../aleph/avr32_proto/src/files.o
- .debug_str     0x0000000000000000      0x1bf ../../aleph/avr32_proto/src/files.o
- .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/files.o
- COMMON         0x0000000000000000        0x8 ../../aleph/avr32_proto/src/files.o
  .text          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/init.o
  .data          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/init.o
  .bss           0x0000000000000000        0x0 ../../aleph/avr32_proto/src/init.o
- .text.init_local_pdca
-                0x0000000000000000       0x60 ../../aleph/avr32_proto/src/init.o
- .text.init_sd_mmc_resources
-                0x0000000000000000       0x84 ../../aleph/avr32_proto/src/init.o
- .rodata.dummy_data
-                0x0000000000000000      0x404 ../../aleph/avr32_proto/src/init.o
- .rodata.C.64.12048
-                0x0000000000000000       0x10 ../../aleph/avr32_proto/src/init.o
- .rodata.C.65.12054
-                0x0000000000000000       0x18 ../../aleph/avr32_proto/src/init.o
- .rodata.C.66.12055
-                0x0000000000000000       0x18 ../../aleph/avr32_proto/src/init.o
- .rodata.SD_MMC_SPI_GPIO_MAP.12046
-                0x0000000000000000        0x8 ../../aleph/avr32_proto/src/init.o
- COMMON         0x0000000000000000      0x3f0 ../../aleph/avr32_proto/src/init.o
  .text          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/interrupts.o
  .data          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/interrupts.o
  .bss           0x0000000000000000        0x0 ../../aleph/avr32_proto/src/interrupts.o
@@ -1382,8 +1085,6 @@ Discarded input sections
  .text          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/memory.o
  .data          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/memory.o
  .bss           0x0000000000000000        0x0 ../../aleph/avr32_proto/src/memory.o
- .text.alloc_mem
-                0x0000000000000000       0x34 ../../aleph/avr32_proto/src/memory.o
  .text          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/screen.o
  .data          0x0000000000000000        0x0 ../../aleph/avr32_proto/src/screen.o
  .bss           0x0000000000000000        0x0 ../../aleph/avr32_proto/src/screen.o
@@ -1399,12 +1100,10 @@ Discarded input sections
                 0x0000000000000000       0xa8 ../../aleph/avr32_proto/src/screen.o
  .text.screen_string_fixed
                 0x0000000000000000      0x380 ../../aleph/avr32_proto/src/screen.o
- .text.screen_string_squeeze
-                0x0000000000000000      0x2b8 ../../aleph/avr32_proto/src/screen.o
  .text.screen_string
-                0x0000000000000000      0x2b8 ../../aleph/avr32_proto/src/screen.o
+                0x0000000000000000       0x10 ../../aleph/avr32_proto/src/screen.o
  .text.screen_fix
-                0x0000000000000000      0x2d4 ../../aleph/avr32_proto/src/screen.o
+                0x0000000000000000       0x38 ../../aleph/avr32_proto/src/screen.o
  .bss.buf.12305
                 0x0000000000000000        0xc ../../aleph/avr32_proto/src/screen.o
  .rodata.kScreenLines
@@ -1823,7 +1522,7 @@ Discarded input sections
  .debug_info    0x0000000000000000     0x1498 ../../aleph/bees/redraw.o
  .debug_line    0x0000000000000000     0x1469 ../../aleph/bees/redraw.o
  .debug_macinfo
-                0x0000000000000000    0xe7255 ../../aleph/bees/redraw.o
+                0x0000000000000000    0xe7265 ../../aleph/bees/redraw.o
  .text.redraw_gathered
                 0x0000000000000000        0x2 ../../aleph/bees/redraw.o
  .text.redraw_play
@@ -2083,16 +1782,11 @@ Discarded input sections
  .text          0x0000000000000000        0x0 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memcmp.o)
  .data          0x0000000000000000        0x0 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memcmp.o)
  .bss           0x0000000000000000        0x0 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memcmp.o)
- .text.memcmp   0x0000000000000000       0x26 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memcmp.o)
- .comment       0x0000000000000000       0x31 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memcmp.o)
- .text          0x0000000000000000      0x148 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memcpy.o)
  .data          0x0000000000000000        0x0 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memcpy.o)
  .bss           0x0000000000000000        0x0 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memcpy.o)
  .text          0x0000000000000000        0x0 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memset.o)
  .data          0x0000000000000000        0x0 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memset.o)
  .bss           0x0000000000000000        0x0 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memset.o)
- .text.memset   0x0000000000000000        0xe /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memset.o)
- .comment       0x0000000000000000       0x31 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memset.o)
  .text          0x0000000000000000        0x0 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mlock.o)
  .data          0x0000000000000000        0x0 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mlock.o)
  .bss           0x0000000000000000        0x0 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mlock.o)
@@ -2559,7 +2253,7 @@ Linker script and memory map
 .plt
  *(.plt)
 
-.text           0x0000000080002004     0x2b42
+.text           0x0000000080002004     0x74d6
  *(.text .stub .text.* .gnu.linkonce.t.*)
  .text.sdramc_init
                 0x0000000080002004      0x20c avr32/drivers/ebi/sdramc/sdramc.o
@@ -2580,324 +2274,729 @@ Linker script and memory map
  .text.gpio_clr_gpio_pin
                 0x0000000080002262       0x1a avr32/drivers/gpio/gpio.o
                 0x0000000080002262                gpio_clr_gpio_pin
- .text.gpio_enable_pin_glitch_filter
-                0x000000008000227c       0x14 avr32/drivers/gpio/gpio.o
-                0x000000008000227c                gpio_enable_pin_glitch_filter
  .text.gpio_enable_pin_interrupt
-                0x0000000080002290       0x4a avr32/drivers/gpio/gpio.o
-                0x0000000080002290                gpio_enable_pin_interrupt
+                0x000000008000227c       0x4a avr32/drivers/gpio/gpio.o
+                0x000000008000227c                gpio_enable_pin_interrupt
  .text.gpio_get_pin_interrupt_flag
-                0x00000000800022da       0x18 avr32/drivers/gpio/gpio.o
-                0x00000000800022da                gpio_get_pin_interrupt_flag
+                0x00000000800022c6       0x18 avr32/drivers/gpio/gpio.o
+                0x00000000800022c6                gpio_get_pin_interrupt_flag
  .text.gpio_clear_pin_interrupt_flag
-                0x00000000800022f2       0x14 avr32/drivers/gpio/gpio.o
-                0x00000000800022f2                gpio_clear_pin_interrupt_flag
+                0x00000000800022de       0x14 avr32/drivers/gpio/gpio.o
+                0x00000000800022de                gpio_clear_pin_interrupt_flag
  .text.gpio_enable_module
-                0x0000000080002306       0x84 avr32/drivers/gpio/gpio.o
-                0x0000000080002306                gpio_enable_module
+                0x00000000800022f2       0x84 avr32/drivers/gpio/gpio.o
+                0x00000000800022f2                gpio_enable_module
  .text._unhandled_interrupt
-                0x000000008000238a        0x2 avr32/drivers/intc/intc.o
+                0x0000000080002376        0x2 avr32/drivers/intc/intc.o
  .text.INTC_register_interrupt
-                0x000000008000238c       0x80 avr32/drivers/intc/intc.o
+                0x0000000080002378       0x80 avr32/drivers/intc/intc.o
                                          0x88 (size before relaxing)
-                0x000000008000238c                INTC_register_interrupt
+                0x0000000080002378                INTC_register_interrupt
  .text.INTC_init_interrupts
-                0x000000008000240c       0x44 avr32/drivers/intc/intc.o
+                0x00000000800023f8       0x44 avr32/drivers/intc/intc.o
                                          0x4c (size before relaxing)
-                0x000000008000240c                INTC_init_interrupts
+                0x00000000800023f8                INTC_init_interrupts
  .text._get_interrupt_handler
-                0x0000000080002450       0x34 avr32/drivers/intc/intc.o
+                0x000000008000243c       0x34 avr32/drivers/intc/intc.o
                                          0x38 (size before relaxing)
-                0x0000000080002450                _get_interrupt_handler
+                0x000000008000243c                _get_interrupt_handler
  .text.pdca_disable
-                0x0000000080002484       0x1a avr32/drivers/pdca/pdca.o
-                0x0000000080002484                pdca_disable
+                0x0000000080002470       0x1a avr32/drivers/pdca/pdca.o
+                0x0000000080002470                pdca_disable
  .text.pdca_disable_interrupt_transfer_complete
-                0x000000008000249e       0x36 avr32/drivers/pdca/pdca.o
-                0x000000008000249e                pdca_disable_interrupt_transfer_complete
+                0x000000008000248a       0x36 avr32/drivers/pdca/pdca.o
+                0x000000008000248a                pdca_disable_interrupt_transfer_complete
+ .text.pdca_init_channel
+                0x00000000800024c0       0x94 avr32/drivers/pdca/pdca.o
+                0x00000000800024c0                pdca_init_channel
  .text.pm_pll_setup
-                0x00000000800024d4       0x22 avr32/drivers/pm/pm.o
-                0x00000000800024d4                pm_pll_setup
+                0x0000000080002554       0x22 avr32/drivers/pm/pm.o
+                0x0000000080002554                pm_pll_setup
  .text.pm_pll_set_option
-                0x00000000800024f6       0x18 avr32/drivers/pm/pm.o
-                0x00000000800024f6                pm_pll_set_option
+                0x0000000080002576       0x18 avr32/drivers/pm/pm.o
+                0x0000000080002576                pm_pll_set_option
  .text.pm_pll_enable
-                0x000000008000250e        0xe avr32/drivers/pm/pm.o
-                0x000000008000250e                pm_pll_enable
+                0x000000008000258e        0xe avr32/drivers/pm/pm.o
+                0x000000008000258e                pm_pll_enable
  .text.pm_wait_for_pll0_locked
-                0x000000008000251c        0xa avr32/drivers/pm/pm.o
-                0x000000008000251c                pm_wait_for_pll0_locked
+                0x000000008000259c        0xa avr32/drivers/pm/pm.o
+                0x000000008000259c                pm_wait_for_pll0_locked
  .text.pm_switch_to_clock
-                0x0000000080002526        0xa avr32/drivers/pm/pm.o
-                0x0000000080002526                pm_switch_to_clock
+                0x00000000800025a6        0xa avr32/drivers/pm/pm.o
+                0x00000000800025a6                pm_switch_to_clock
  .text.pm_switch_to_osc0
-                0x0000000080002530       0x5a avr32/drivers/pm/pm.o
-                0x0000000080002530                pm_switch_to_osc0
+                0x00000000800025b0       0x5a avr32/drivers/pm/pm.o
+                0x00000000800025b0                pm_switch_to_osc0
  .text.getBaudDiv
-                0x000000008000258a       0x28 avr32/drivers/spi/spi.o
-                0x000000008000258a                getBaudDiv
+                0x000000008000260a       0x28 avr32/drivers/spi/spi.o
+                0x000000008000260a                getBaudDiv
  .text.spi_initMaster
-                0x00000000800025b2       0x3a avr32/drivers/spi/spi.o
-                0x00000000800025b2                spi_initMaster
+                0x0000000080002632       0x3a avr32/drivers/spi/spi.o
+                0x0000000080002632                spi_initMaster
  .text.spi_selectionMode
-                0x00000000800025ec       0x2a avr32/drivers/spi/spi.o
-                0x00000000800025ec                spi_selectionMode
+                0x000000008000266c       0x2a avr32/drivers/spi/spi.o
+                0x000000008000266c                spi_selectionMode
  .text.spi_selectChip
-                0x0000000080002616       0x50 avr32/drivers/spi/spi.o
-                0x0000000080002616                spi_selectChip
+                0x0000000080002696       0x50 avr32/drivers/spi/spi.o
+                0x0000000080002696                spi_selectChip
  .text.spi_unselectChip
-                0x0000000080002666       0x26 avr32/drivers/spi/spi.o
-                0x0000000080002666                spi_unselectChip
+                0x00000000800026e6       0x26 avr32/drivers/spi/spi.o
+                0x00000000800026e6                spi_unselectChip
  .text.spi_setupChipReg
-                0x000000008000268c       0xac avr32/drivers/spi/spi.o
+                0x000000008000270c       0xac avr32/drivers/spi/spi.o
                                          0xb0 (size before relaxing)
-                0x000000008000268c                spi_setupChipReg
+                0x000000008000270c                spi_setupChipReg
  .text.spi_enable
-                0x0000000080002738        0x6 avr32/drivers/spi/spi.o
-                0x0000000080002738                spi_enable
+                0x00000000800027b8        0x6 avr32/drivers/spi/spi.o
+                0x00000000800027b8                spi_enable
  .text.spi_write
-                0x000000008000273e       0x1c avr32/drivers/spi/spi.o
-                0x000000008000273e                spi_write
+                0x00000000800027be       0x1c avr32/drivers/spi/spi.o
+                0x00000000800027be                spi_write
  .text.spi_read
-                0x000000008000275a       0x22 avr32/drivers/spi/spi.o
-                0x000000008000275a                spi_read
+                0x00000000800027da       0x22 avr32/drivers/spi/spi.o
+                0x00000000800027da                spi_read
  .text.tc_init_waveform
-                0x000000008000277c       0x9e avr32/drivers/tc/tc.o
-                0x000000008000277c                tc_init_waveform
+                0x00000000800027fc       0x9e avr32/drivers/tc/tc.o
+                0x00000000800027fc                tc_init_waveform
  .text.tc_start
-                0x000000008000281a       0x12 avr32/drivers/tc/tc.o
-                0x000000008000281a                tc_start
+                0x000000008000289a       0x12 avr32/drivers/tc/tc.o
+                0x000000008000289a                tc_start
  .text.tc_read_sr
-                0x000000008000282c       0x12 avr32/drivers/tc/tc.o
-                0x000000008000282c                tc_read_sr
+                0x00000000800028ac       0x12 avr32/drivers/tc/tc.o
+                0x00000000800028ac                tc_read_sr
  .text.tc_write_rc
-                0x000000008000283e       0x38 avr32/drivers/tc/tc.o
-                0x000000008000283e                tc_write_rc
+                0x00000000800028be       0x38 avr32/drivers/tc/tc.o
+                0x00000000800028be                tc_write_rc
  .text.tc_configure_interrupts
-                0x0000000080002876      0x11e avr32/drivers/tc/tc.o
-                0x0000000080002876                tc_configure_interrupts
+                0x00000000800028f6      0x11e avr32/drivers/tc/tc.o
+                0x00000000800028f6                tc_configure_interrupts
  .text.usart_set_async_baudrate
-                0x0000000080002994       0x5e avr32/drivers/usart/usart.o
+                0x0000000080002a14       0x5e avr32/drivers/usart/usart.o
  .text.usart_spi_selectChip
-                0x00000000800029f2        0x8 avr32/drivers/usart/usart.o
-                0x00000000800029f2                usart_spi_selectChip
+                0x0000000080002a72        0x8 avr32/drivers/usart/usart.o
+                0x0000000080002a72                usart_spi_selectChip
  .text.usart_spi_unselectChip
-                0x00000000800029fa       0x1e avr32/drivers/usart/usart.o
-                0x00000000800029fa                usart_spi_unselectChip
+                0x0000000080002a7a       0x1e avr32/drivers/usart/usart.o
+                0x0000000080002a7a                usart_spi_unselectChip
  .text.usart_putchar
-                0x0000000080002a18       0x1c avr32/drivers/usart/usart.o
-                0x0000000080002a18                usart_putchar
+                0x0000000080002a98       0x1c avr32/drivers/usart/usart.o
+                0x0000000080002a98                usart_putchar
  .text.usart_write_line
-                0x0000000080002a34       0x2c avr32/drivers/usart/usart.o
-                0x0000000080002a34                usart_write_line
+                0x0000000080002ab4       0x2c avr32/drivers/usart/usart.o
+                0x0000000080002ab4                usart_write_line
  .text.usart_init_spi_master
-                0x0000000080002a60       0xce avr32/drivers/usart/usart.o
-                0x0000000080002a60                usart_init_spi_master
- *fill*         0x0000000080002b2e        0x2 d703d703
+                0x0000000080002ae0       0xce avr32/drivers/usart/usart.o
+                0x0000000080002ae0                usart_init_spi_master
+ *fill*         0x0000000080002bae        0x2 d703d703
  .text.usart_init_rs232
-                0x0000000080002b30       0xe4 avr32/drivers/usart/usart.o
+                0x0000000080002bb0       0xe4 avr32/drivers/usart/usart.o
                                          0xec (size before relaxing)
-                0x0000000080002b30                usart_init_rs232
- .text.print_dbg
-                0x0000000080002c14        0xc avr32/utils/debug/print_funcs.o
-                                         0x14 (size before relaxing)
-                0x0000000080002c14                print_dbg
- .text.sd_mmc_spi_read_close_PDCA
-                0x0000000080002c20       0x40 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
-                                         0x48 (size before relaxing)
-                0x0000000080002c20                sd_mmc_spi_read_close_PDCA
- .text.adc_poll
-                0x0000000080002c60      0x174 ../../aleph/avr32_proto/src/adc.o
-                                        0x18c (size before relaxing)
-                0x0000000080002c60                adc_poll
- .text.init_app_timers
-                0x0000000080002dd4       0x3c ../../aleph/avr32_proto/src/app_timers.o
+                0x0000000080002bb0                usart_init_rs232
+ .text.fat_cache_clusterlist_reset
+                0x0000000080002c94       0x24 avr32/services/fs/fat/fat.o
+                                         0x28 (size before relaxing)
+                0x0000000080002c94                fat_cache_clusterlist_reset
+ .text.fat_cache_clusterlist_update_finish
+                0x0000000080002cb8       0x90 avr32/services/fs/fat/fat.o
+                                         0x94 (size before relaxing)
+                0x0000000080002cb8                fat_cache_clusterlist_update_finish
+ .text.fat_entry_check
+                0x0000000080002d48       0x58 avr32/services/fs/fat/fat.o
+                                         0x5c (size before relaxing)
+                0x0000000080002d48                fat_entry_check
+ .text.fat_get_entry_info
+                0x0000000080002da0       0x58 avr32/services/fs/fat/fat.o
+                                         0x60 (size before relaxing)
+                0x0000000080002da0                fat_get_entry_info
+ .text.fat_entry_is_dir
+                0x0000000080002df8       0x14 avr32/services/fs/fat/fat.o
+                                         0x18 (size before relaxing)
+                0x0000000080002df8                fat_entry_is_dir
+ .text.fat_clear_entry_info_and_ptr
+                0x0000000080002e0c       0x2c avr32/services/fs/fat/fat.o
+                                         0x30 (size before relaxing)
+                0x0000000080002e0c                fat_clear_entry_info_and_ptr
+ .text.fat_write_entry_file
+                0x0000000080002e38       0x58 avr32/services/fs/fat/fat.o
+                                         0x60 (size before relaxing)
+                0x0000000080002e38                fat_write_entry_file
+ .text.fat_entry_shortname
+                0x0000000080002e90      0x168 avr32/services/fs/fat/fat.o
+                                        0x16c (size before relaxing)
+                0x0000000080002e90                fat_entry_shortname
+ .text.fat_entry_longname
+                0x0000000080002ff8      0x2a4 avr32/services/fs/fat/fat.o
+                                        0x2b0 (size before relaxing)
+                0x0000000080002ff8                fat_entry_longname
+ .text.fat_check_eof_name
+                0x000000008000329c       0x26 avr32/services/fs/fat/fat.o
+                0x000000008000329c                fat_check_eof_name
+ *fill*         0x00000000800032c2        0x2 d703d703
+ .text.fat_get_ptr_entry
+                0x00000000800032c4       0x14 avr32/services/fs/fat/fat.o
+                                         0x18 (size before relaxing)
+                0x00000000800032c4                fat_get_ptr_entry
+ .text.fat_cache_reset
+                0x00000000800032d8       0x14 avr32/services/fs/fat/fat.o
+                                         0x18 (size before relaxing)
+                0x00000000800032d8                fat_cache_reset
+ .text.fat_cache_mark_sector_as_dirty
+                0x00000000800032ec        0xc avr32/services/fs/fat/fat.o
+                                         0x10 (size before relaxing)
+                0x00000000800032ec                fat_cache_mark_sector_as_dirty
+ .text.fat_invert_nav
+                0x00000000800032f8       0xc8 avr32/services/fs/fat/fat.o
+                                         0xd4 (size before relaxing)
+                0x00000000800032f8                fat_invert_nav
+ .text.fat_cache_flush
+                0x00000000800033c0       0x50 avr32/services/fs/fat/fat.o
+                                         0x5c (size before relaxing)
+                0x00000000800033c0                fat_cache_flush
+ .text.fat_cache_clear
+                0x0000000080003410       0x14 avr32/services/fs/fat/fat.o
+                                         0x18 (size before relaxing)
+                0x0000000080003410                fat_cache_clear
+ .text.fat_check_device
+                0x0000000080003424       0xbc avr32/services/fs/fat/fat.o
+                                         0xd4 (size before relaxing)
+                0x0000000080003424                fat_check_device
+ .text.fat_cache_read_sector
+                0x00000000800034e0       0xb0 avr32/services/fs/fat/fat.o
+                                         0xbc (size before relaxing)
+                0x00000000800034e0                fat_cache_read_sector
+ .text.T.79     0x0000000080003590       0xb0 avr32/services/fs/fat/fat.o
+                                         0xb8 (size before relaxing)
+ .text.fat_check_noopen
+                0x0000000080003640       0xe0 avr32/services/fs/fat/fat.o
+                                         0xf4 (size before relaxing)
+                0x0000000080003640                fat_check_noopen
+ .text.fat_cluster_val
+                0x0000000080003720      0x2f0 avr32/services/fs/fat/fat.o
+                                        0x308 (size before relaxing)
+                0x0000000080003720                fat_cluster_val
+ .text.fat_check_mount_select
+                0x0000000080003a10       0xf0 avr32/services/fs/fat/fat.o
+                                        0x108 (size before relaxing)
+                0x0000000080003a10                fat_check_mount_select
+ .text.fat_check_mount_noopen
+                0x0000000080003b00      0x1b0 avr32/services/fs/fat/fat.o
+                0x0000000080003b00                fat_check_mount_noopen
+ .text.fat_cluster_list
+                0x0000000080003cb0      0x5c4 avr32/services/fs/fat/fat.o
+                                        0x5ec (size before relaxing)
+                0x0000000080003cb0                fat_cluster_list
+ .text.fat_read_dir
+                0x0000000080004274       0xf4 avr32/services/fs/fat/fat.o
+                                        0x104 (size before relaxing)
+                0x0000000080004274                fat_read_dir
+ .text.fat_read_file
+                0x0000000080004368       0xb0 avr32/services/fs/fat/fat.o
+                                         0xc0 (size before relaxing)
+                0x0000000080004368                fat_read_file
+ .text.fat_clear_info_fat_mod
+                0x0000000080004418       0x14 avr32/services/fs/fat/fat_unusual.o
+                                         0x18 (size before relaxing)
+                0x0000000080004418                fat_clear_info_fat_mod
+ .text.fat_update_fat2
+                0x000000008000442c       0x64 avr32/services/fs/fat/fat_unusual.o
+                                         0x74 (size before relaxing)
+                0x000000008000442c                fat_update_fat2
+ .text.fat_delete_file
+                0x0000000080004490       0x60 avr32/services/fs/fat/fat_unusual.o
+                                         0x78 (size before relaxing)
+                0x0000000080004490                fat_delete_file
+ .text.fat_garbage_collector_entry
+                0x00000000800044f0       0xa0 avr32/services/fs/fat/fat_unusual.o
+                                         0xc0 (size before relaxing)
+                0x00000000800044f0                fat_garbage_collector_entry
+ .text.fat_write_fat32_FSInfo
+                0x0000000080004590       0x80 avr32/services/fs/fat/fat_unusual.o
+                                         0xa0 (size before relaxing)
+                0x0000000080004590                fat_write_fat32_FSInfo
+ .text.fat_create_short_entry_name
+                0x0000000080004610      0x220 avr32/services/fs/fat/fat_unusual.o
+                                        0x22c (size before relaxing)
+                0x0000000080004610                fat_create_short_entry_name
+ .text.fat_mount
+                0x0000000080004830      0x42c avr32/services/fs/fat/fat_unusual.o
+                                        0x434 (size before relaxing)
+                0x0000000080004830                fat_mount
+ .text.fat_find_short_entry_name
+                0x0000000080004c5c       0x88 avr32/services/fs/fat/fat_unusual.o
+                                         0x9c (size before relaxing)
+                0x0000000080004c5c                fat_find_short_entry_name
+ .text.fat_initialize_dir
+                0x0000000080004ce4      0x1a8 avr32/services/fs/fat/fat_unusual.o
+                                        0x1c4 (size before relaxing)
+                0x0000000080004ce4                fat_initialize_dir
+ .text.fat_allocfreespace
+                0x0000000080004e8c      0x1b8 avr32/services/fs/fat/fat_unusual.o
+                                        0x1c0 (size before relaxing)
+                0x0000000080004e8c                fat_allocfreespace
+ .text.fat_alloc_entry_free
+                0x0000000080005044       0xe8 avr32/services/fs/fat/fat_unusual.o
+                                        0x110 (size before relaxing)
+                0x0000000080005044                fat_alloc_entry_free
+ .text.fat_create_entry_file_name
+                0x000000008000512c      0x1dc avr32/services/fs/fat/fat_unusual.o
+                                        0x1f8 (size before relaxing)
+                0x000000008000512c                fat_create_entry_file_name
+ .text.nav_drive_get
+                0x0000000080005308        0x8 avr32/services/fs/fat/navigation.o
+                                          0xc (size before relaxing)
+                0x0000000080005308                nav_drive_get
+ .text.nav_file_lgt
+                0x0000000080005310        0x8 avr32/services/fs/fat/navigation.o
+                                          0xc (size before relaxing)
+                0x0000000080005310                nav_file_lgt
+ .text.nav_file_isdir
+                0x0000000080005318        0x8 avr32/services/fs/fat/navigation.o
+                                          0xc (size before relaxing)
+                0x0000000080005318                nav_file_isdir
+ .text.nav_file_name
+                0x0000000080005320       0xcc avr32/services/fs/fat/navigation.o
+                                         0xe0 (size before relaxing)
+                0x0000000080005320                nav_file_name
+ .text.nav_filelist_set
+                0x00000000800053ec      0x16c avr32/services/fs/fat/navigation.o
+                0x00000000800053ec                nav_filelist_set
+ .text.nav_filelist_findname
+                0x0000000080005558       0x24 avr32/services/fs/fat/navigation.o
+                                         0x30 (size before relaxing)
+                0x0000000080005558                nav_filelist_findname
+ .text.nav_filelist_reset
+                0x000000008000557c       0x10 avr32/services/fs/fat/navigation.o
+                                         0x18 (size before relaxing)
+                0x000000008000557c                nav_filelist_reset
+ .text.nav_dir_gotoparent
+                0x000000008000558c       0x7c avr32/services/fs/fat/navigation.o
+                                         0x98 (size before relaxing)
+                0x000000008000558c                nav_dir_gotoparent
+ .text.nav_dir_name
+                0x0000000080005608       0xf8 avr32/services/fs/fat/navigation.o
+                                        0x110 (size before relaxing)
+                0x0000000080005608                nav_dir_name
+ .text.nav_partition_mount
+                0x0000000080005700       0x2c avr32/services/fs/fat/navigation.o
+                                         0x3c (size before relaxing)
+                0x0000000080005700                nav_partition_mount
+ .text.nav_drive_set
+                0x000000008000572c       0x4c avr32/services/fs/fat/navigation.o
+                                         0x58 (size before relaxing)
+                0x000000008000572c                nav_drive_set
+ .text.nav_drive_nb
+                0x0000000080005778        0x8 avr32/services/fs/fat/navigation.o
+                                          0xc (size before relaxing)
+                0x0000000080005778                nav_drive_nb
+ .text.nav_dir_root
+                0x0000000080005780       0x2c avr32/services/fs/fat/navigation.o
+                                         0x3c (size before relaxing)
+                0x0000000080005780                nav_dir_root
+ .text.nav_reset
+                0x00000000800057ac       0x68 avr32/services/fs/fat/navigation.o
+                                         0x80 (size before relaxing)
+                0x00000000800057ac                nav_reset
+ .text.nav_file_create
+                0x0000000080005814       0x6c avr32/services/fs/fat/navigation.o
+                                         0x88 (size before relaxing)
+                0x0000000080005814                nav_file_create
+ .text.nav_filelist_first
+                0x0000000080005880       0x3c avr32/services/fs/fat/navigation.o
                                          0x4c (size before relaxing)
-                0x0000000080002dd4                init_app_timers
+                0x0000000080005880                nav_filelist_first
+ .text.nav_filelist_nb
+                0x00000000800058bc       0x74 avr32/services/fs/fat/navigation.o
+                                         0x84 (size before relaxing)
+                0x00000000800058bc                nav_filelist_nb
+ .text.nav_filelist_last
+                0x0000000080005930       0xc0 avr32/services/fs/fat/navigation.o
+                                         0xd0 (size before relaxing)
+                0x0000000080005930                nav_filelist_last
+ .text.nav_dir_make
+                0x00000000800059f0       0x68 avr32/services/fs/fat/navigation.o
+                                         0x94 (size before relaxing)
+                0x00000000800059f0                nav_dir_make
+ .text.print_dbg_char
+                0x0000000080005a58       0x10 avr32/utils/debug/print_funcs.o
+                                         0x14 (size before relaxing)
+                0x0000000080005a58                print_dbg_char
+ .text.print_dbg_ulong
+                0x0000000080005a68       0x48 avr32/utils/debug/print_funcs.o
+                                         0x4c (size before relaxing)
+                0x0000000080005a68                print_dbg_ulong
+ .text.print_dbg
+                0x0000000080005ab0       0x10 avr32/utils/debug/print_funcs.o
+                                         0x14 (size before relaxing)
+                0x0000000080005ab0                print_dbg
+ .text.sd_mmc_spi_get_capacity
+                0x0000000080005ac0      0x114 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                                        0x118 (size before relaxing)
+                0x0000000080005ac0                sd_mmc_spi_get_capacity
+ .text.sd_mmc_spi_write_close
+                0x0000000080005bd4        0x2 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                0x0000000080005bd4                sd_mmc_spi_write_close
+ *fill*         0x0000000080005bd6        0x2 d703d703
+ .text.sd_mmc_spi_read_close_PDCA
+                0x0000000080005bd8       0x40 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                                         0x48 (size before relaxing)
+                0x0000000080005bd8                sd_mmc_spi_read_close_PDCA
+ .text.sd_mmc_spi_wait_not_busy
+                0x0000000080005c18       0x68 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                                         0x7c (size before relaxing)
+                0x0000000080005c18                sd_mmc_spi_wait_not_busy
+ .text.sd_mmc_spi_write_open
+                0x0000000080005c80       0x10 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                                         0x18 (size before relaxing)
+                0x0000000080005c80                sd_mmc_spi_write_open
+ .text.sd_mmc_spi_read_close
+                0x0000000080005c90        0x8 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                                          0xc (size before relaxing)
+                0x0000000080005c90                sd_mmc_spi_read_close
+ .text.sd_mmc_spi_read_open
+                0x0000000080005c98       0x10 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                                         0x18 (size before relaxing)
+                0x0000000080005c98                sd_mmc_spi_read_open
+ .text.sd_mmc_spi_command
+                0x0000000080005ca8      0x298 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                                        0x2a4 (size before relaxing)
+                0x0000000080005ca8                sd_mmc_spi_command
+ .text.sd_mmc_spi_read_sector_to_ram
+                0x0000000080005f40      0x11c avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                                        0x13c (size before relaxing)
+                0x0000000080005f40                sd_mmc_spi_read_sector_to_ram
+ .text.sd_mmc_spi_check_hc
+                0x000000008000605c       0xe0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                                         0xfc (size before relaxing)
+                0x000000008000605c                sd_mmc_spi_check_hc
+ .text.sd_mmc_spi_write_sector_from_ram
+                0x000000008000613c      0x154 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                                        0x170 (size before relaxing)
+                0x000000008000613c                sd_mmc_spi_write_sector_from_ram
+ .text.sd_mmc_spi_get_if
+                0x0000000080006290      0x114 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                                        0x12c (size before relaxing)
+                0x0000000080006290                sd_mmc_spi_get_if
+ .text.sd_mmc_spi_internal_init
+                0x00000000800063a4      0x794 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                                        0x7d0 (size before relaxing)
+                0x00000000800063a4                sd_mmc_spi_internal_init
+ .text.sd_mmc_spi_init
+                0x0000000080006b38       0x2c avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                                         0x34 (size before relaxing)
+                0x0000000080006b38                sd_mmc_spi_init
+ .text.sd_mmc_spi_check_presence
+                0x0000000080006b64      0x29c avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                                        0x2b4 (size before relaxing)
+                0x0000000080006b64                sd_mmc_spi_check_presence
+ .text.sd_mmc_spi_mem_check
+                0x0000000080006e00      0x2b0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                                        0x2c8 (size before relaxing)
+                0x0000000080006e00                sd_mmc_spi_mem_check
+ .text.sd_mmc_spi_wr_protect
+                0x00000000800070b0        0x2 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
+                0x00000000800070b0                sd_mmc_spi_wr_protect
+ *fill*         0x00000000800070b2        0x2 d703d703
+ .text.sd_mmc_spi_test_unit_ready
+                0x00000000800070b4       0x5c avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
+                                         0x68 (size before relaxing)
+                0x00000000800070b4                sd_mmc_spi_test_unit_ready
+ .text.sd_mmc_spi_ram_2_mem
+                0x0000000080007110       0x44 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
+                                         0x5c (size before relaxing)
+                0x0000000080007110                sd_mmc_spi_ram_2_mem
+ .text.sd_mmc_spi_mem_2_ram
+                0x0000000080007154       0x48 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
+                                         0x5c (size before relaxing)
+                0x0000000080007154                sd_mmc_spi_mem_2_ram
+ .text.get_nb_lun
+                0x000000008000719c        0x2 common/services/storage/ctrl_access/ctrl_access.o
+                0x000000008000719c                get_nb_lun
+ *fill*         0x000000008000719e        0x2 d703d703
+ .text.mem_test_unit_ready
+                0x00000000800071a0        0xc common/services/storage/ctrl_access/ctrl_access.o
+                                         0x14 (size before relaxing)
+                0x00000000800071a0                mem_test_unit_ready
+ .text.mem_sector_size
+                0x00000000800071ac        0x6 common/services/storage/ctrl_access/ctrl_access.o
+                0x00000000800071ac                mem_sector_size
+ *fill*         0x00000000800071b2        0x2 d703d703
+ .text.mem_wr_protect
+                0x00000000800071b4        0xc common/services/storage/ctrl_access/ctrl_access.o
+                                         0x14 (size before relaxing)
+                0x00000000800071b4                mem_wr_protect
+ .text.memory_2_ram
+                0x00000000800071c0       0x14 common/services/storage/ctrl_access/ctrl_access.o
+                                         0x18 (size before relaxing)
+                0x00000000800071c0                memory_2_ram
+ .text.ram_2_memory
+                0x00000000800071d4       0x14 common/services/storage/ctrl_access/ctrl_access.o
+                                         0x18 (size before relaxing)
+                0x00000000800071d4                ram_2_memory
+ .text.init_adc
+                0x00000000800071e8       0x64 ../../aleph/avr32_proto/src/adc.o
+                                         0x70 (size before relaxing)
+                0x00000000800071e8                init_adc
+ .text.adc_poll
+                0x000000008000724c      0x174 ../../aleph/avr32_proto/src/adc.o
+                                        0x18c (size before relaxing)
+                0x000000008000724c                adc_poll
+ .text.init_app_timers
+                0x00000000800073c0       0x3c ../../aleph/avr32_proto/src/app_timers.o
+                                         0x4c (size before relaxing)
+                0x00000000800073c0                init_app_timers
  .text.adc_timer_callback
-                0x0000000080002e10        0x8 ../../aleph/avr32_proto/src/app_timers.o
+                0x00000000800073fc        0x8 ../../aleph/avr32_proto/src/app_timers.o
                                           0xc (size before relaxing)
  .text.enc_timer_callback
-                0x0000000080002e18       0x64 ../../aleph/avr32_proto/src/app_timers.o
+                0x0000000080007404       0x64 ../../aleph/avr32_proto/src/app_timers.o
                                          0x70 (size before relaxing)
  .text.screen_timer_callback
-                0x0000000080002e7c       0x1c ../../aleph/avr32_proto/src/app_timers.o
+                0x0000000080007468       0x1c ../../aleph/avr32_proto/src/app_timers.o
                                          0x24 (size before relaxing)
  .text.init_events
-                0x0000000080002e98       0x24 ../../aleph/avr32_proto/src/events.o
+                0x0000000080007484       0x24 ../../aleph/avr32_proto/src/events.o
                                          0x2c (size before relaxing)
-                0x0000000080002e98                init_events
+                0x0000000080007484                init_events
  .text.post_event
-                0x0000000080002ebc       0x50 ../../aleph/avr32_proto/src/events.o
+                0x00000000800074a8       0x50 ../../aleph/avr32_proto/src/events.o
                                          0x54 (size before relaxing)
-                0x0000000080002ebc                post_event
+                0x00000000800074a8                post_event
  .text.get_next_event
-                0x0000000080002f0c       0x58 ../../aleph/avr32_proto/src/events.o
+                0x00000000800074f8       0x58 ../../aleph/avr32_proto/src/events.o
                                          0x60 (size before relaxing)
-                0x0000000080002f0c                get_next_event
+                0x00000000800074f8                get_next_event
  .text.process_enc
-                0x0000000080002f64       0x4c ../../aleph/avr32_proto/src/encoders.o
+                0x0000000080007550       0x4c ../../aleph/avr32_proto/src/encoders.o
                                          0x54 (size before relaxing)
-                0x0000000080002f64                process_enc
+                0x0000000080007550                process_enc
  .text.init_encoders
-                0x0000000080002fb0       0xbc ../../aleph/avr32_proto/src/encoders.o
+                0x000000008000759c       0xbc ../../aleph/avr32_proto/src/encoders.o
                                          0xc4 (size before relaxing)
-                0x0000000080002fb0                init_encoders
- .text.init_clocks
-                0x000000008000306c       0x60 ../../aleph/avr32_proto/src/init.o
+                0x000000008000759c                init_encoders
+ .text.files_check_dsp
+                0x0000000080007658       0x4c ../../aleph/avr32_proto/src/files.o
+                                         0x68 (size before relaxing)
+                0x0000000080007658                files_check_dsp
+ .text.files_check_scenes
+                0x00000000800076a4       0x4c ../../aleph/avr32_proto/src/files.o
+                                         0x68 (size before relaxing)
+                0x00000000800076a4                files_check_scenes
+ .text.files_list
+                0x00000000800076f0       0xd4 ../../aleph/avr32_proto/src/files.o
+                                        0x110 (size before relaxing)
+                0x00000000800076f0                files_list
+ .text.init_files
+                0x00000000800077c4       0x50 ../../aleph/avr32_proto/src/files.o
                                          0x7c (size before relaxing)
-                0x000000008000306c                init_clocks
+                0x00000000800077c4                init_files
+ .text.init_clocks
+                0x0000000080007814       0x60 ../../aleph/avr32_proto/src/init.o
+                                         0x7c (size before relaxing)
+                0x0000000080007814                init_clocks
  .text.init_bfin_resources
-                0x00000000800030cc       0xa8 ../../aleph/avr32_proto/src/init.o
+                0x0000000080007874       0xa8 ../../aleph/avr32_proto/src/init.o
                                          0xc4 (size before relaxing)
-                0x00000000800030cc                init_bfin_resources
- .text.init_tc  0x0000000080003174       0x34 ../../aleph/avr32_proto/src/init.o
-                                         0x48 (size before relaxing)
-                0x0000000080003174                init_tc
- .text.init_oled_usart
-                0x00000000800031a8       0x24 ../../aleph/avr32_proto/src/init.o
-                                         0x30 (size before relaxing)
-                0x00000000800031a8                init_oled_usart
- .text.init_dbg_usart
-                0x00000000800031cc       0x24 ../../aleph/avr32_proto/src/init.o
-                                         0x30 (size before relaxing)
-                0x00000000800031cc                init_dbg_usart
+                0x0000000080007874                init_bfin_resources
  .text.init_gpio
-                0x00000000800031f0       0x58 ../../aleph/avr32_proto/src/init.o
+                0x000000008000791c       0x54 ../../aleph/avr32_proto/src/init.o
+                                         0x58 (size before relaxing)
+                0x000000008000791c                init_gpio
+ .text.init_local_pdca
+                0x0000000080007970       0x58 ../../aleph/avr32_proto/src/init.o
                                          0x60 (size before relaxing)
-                0x00000000800031f0                init_gpio
+                0x0000000080007970                init_local_pdca
+ .text.init_sd_mmc_resources
+                0x00000000800079c8       0x6c ../../aleph/avr32_proto/src/init.o
+                                         0x84 (size before relaxing)
+                0x00000000800079c8                init_sd_mmc_resources
+ .text.init_tc  0x0000000080007a34       0x34 ../../aleph/avr32_proto/src/init.o
+                                         0x48 (size before relaxing)
+                0x0000000080007a34                init_tc
+ .text.init_oled_usart
+                0x0000000080007a68       0x24 ../../aleph/avr32_proto/src/init.o
+                                         0x30 (size before relaxing)
+                0x0000000080007a68                init_oled_usart
+ .text.init_dbg_usart
+                0x0000000080007a8c       0x24 ../../aleph/avr32_proto/src/init.o
+                                         0x30 (size before relaxing)
+                0x0000000080007a8c                init_dbg_usart
  .text.register_interrupts
-                0x0000000080003248       0xc0 ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000080007ab0       0xc0 ../../aleph/avr32_proto/src/interrupts.o
                                          0xd4 (size before relaxing)
-                0x0000000080003248                register_interrupts
- .text.irq_tc   0x0000000080003308       0x64 ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000080007ab0                register_interrupts
+ .text.irq_tc   0x0000000080007b70       0x64 ../../aleph/avr32_proto/src/interrupts.o
                                          0x6c (size before relaxing)
  .text.irq_pdca
-                0x000000008000336c       0x50 ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000080007bd4       0x50 ../../aleph/avr32_proto/src/interrupts.o
                                          0x5c (size before relaxing)
  .text.irq_port1_line1
-                0x00000000800033bc       0x30 ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000080007c24       0x30 ../../aleph/avr32_proto/src/interrupts.o
                                          0x3c (size before relaxing)
  .text.irq_port1_line0
-                0x00000000800033ec       0x88 ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000080007c54       0x88 ../../aleph/avr32_proto/src/interrupts.o
                                          0x94 (size before relaxing)
  .text.irq_port0_line3
-                0x0000000080003474       0x74 ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000080007cdc       0x74 ../../aleph/avr32_proto/src/interrupts.o
                                          0x80 (size before relaxing)
  .text.irq_port0_line0
-                0x00000000800034e8       0x20 ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000080007d50       0x20 ../../aleph/avr32_proto/src/interrupts.o
                                          0x30 (size before relaxing)
  .text.scroll_event
-                0x0000000080003508      0x290 ../../aleph/avr32_proto_test/src/main.o
-                                        0x2c8 (size before relaxing)
- .text.main     0x0000000080003798       0xe4 ../../aleph/avr32_proto_test/src/main.o
-                                        0x164 (size before relaxing)
-                0x0000000080003798                main
+                0x0000000080007d70      0x28c ../../aleph/avr32_proto_test/src/main.o
+                                        0x2b4 (size before relaxing)
+ .text.displayAdcVal
+                0x0000000080007ffc       0x24 ../../aleph/avr32_proto_test/src/main.o
+                                         0x2c (size before relaxing)
+ .text.main     0x0000000080008020      0x1d4 ../../aleph/avr32_proto_test/src/main.o
+                                        0x288 (size before relaxing)
+                0x0000000080008020                main
  .text.init_mem
-                0x000000008000387c       0x28 ../../aleph/avr32_proto/src/memory.o
+                0x00000000800081f4       0x28 ../../aleph/avr32_proto/src/memory.o
                                          0x30 (size before relaxing)
-                0x000000008000387c                init_mem
+                0x00000000800081f4                init_mem
+ .text.alloc_mem
+                0x000000008000821c       0x2c ../../aleph/avr32_proto/src/memory.o
+                                         0x34 (size before relaxing)
+                0x000000008000821c                alloc_mem
+ .text.sdram_test
+                0x0000000080008248      0x100 ../../aleph/avr32_proto/src/memory.o
+                                        0x120 (size before relaxing)
+                0x0000000080008248                sdram_test
  .text.write_command
-                0x00000000800038a4       0x2c ../../aleph/avr32_proto/src/screen.o
+                0x0000000080008348       0x2c ../../aleph/avr32_proto/src/screen.o
                                          0x3c (size before relaxing)
  .text.screen_hl_line
-                0x00000000800038d0      0x168 ../../aleph/avr32_proto/src/screen.o
-                0x00000000800038d0                screen_hl_line
+                0x0000000080008374      0x168 ../../aleph/avr32_proto/src/screen.o
+                0x0000000080008374                screen_hl_line
  .text.screen_refresh
-                0x0000000080003a38       0x38 ../../aleph/avr32_proto/src/screen.o
+                0x00000000800084dc       0x38 ../../aleph/avr32_proto/src/screen.o
                                          0x48 (size before relaxing)
-                0x0000000080003a38                screen_refresh
- .text.screen_test_fill
-                0x0000000080003a70      0x134 ../../aleph/avr32_proto/src/screen.o
-                                        0x144 (size before relaxing)
-                0x0000000080003a70                screen_test_fill
+                0x00000000800084dc                screen_refresh
+ .text.screen_string_squeeze
+                0x0000000080008514      0x2b4 ../../aleph/avr32_proto/src/screen.o
+                                        0x2c8 (size before relaxing)
+                0x0000000080008514                screen_string_squeeze
  .text.screen_line
-                0x0000000080003ba4      0x354 ../../aleph/avr32_proto/src/screen.o
-                                        0x368 (size before relaxing)
-                0x0000000080003ba4                screen_line
+                0x00000000800087c8       0xa0 ../../aleph/avr32_proto/src/screen.o
+                                         0xac (size before relaxing)
+                0x00000000800087c8                screen_line
  .text.screen_int
-                0x0000000080003ef8      0x2bc ../../aleph/avr32_proto/src/screen.o
-                                        0x2d8 (size before relaxing)
-                0x0000000080003ef8                screen_int
+                0x0000000080008868       0x30 ../../aleph/avr32_proto/src/screen.o
+                                         0x3c (size before relaxing)
+                0x0000000080008868                screen_int
+ .text.screen_test_fill
+                0x0000000080008898      0x134 ../../aleph/avr32_proto/src/screen.o
+                                        0x144 (size before relaxing)
+                0x0000000080008898                screen_test_fill
  .text.init_oled
-                0x00000000800041b4      0x5d0 ../../aleph/avr32_proto/src/screen.o
+                0x00000000800089cc      0x5d0 ../../aleph/avr32_proto/src/screen.o
                                         0x5e8 (size before relaxing)
-                0x00000000800041b4                init_oled
+                0x00000000800089cc                init_oled
  .text.process_sw
-                0x0000000080004784       0x40 ../../aleph/avr32_proto/src/switches.o
+                0x0000000080008f9c       0x40 ../../aleph/avr32_proto/src/switches.o
                                          0x50 (size before relaxing)
-                0x0000000080004784                process_sw
+                0x0000000080008f9c                process_sw
  .text.process_timers
-                0x00000000800047c4      0x18c ../../aleph/avr32_proto/src/timers.o
+                0x0000000080008fdc      0x18c ../../aleph/avr32_proto/src/timers.o
                                         0x190 (size before relaxing)
-                0x00000000800047c4                process_timers
+                0x0000000080008fdc                process_timers
  .text.set_timer
-                0x0000000080004950      0x148 ../../aleph/avr32_proto/src/timers.o
-                0x0000000080004950                set_timer
+                0x0000000080009168      0x148 ../../aleph/avr32_proto/src/timers.o
+                0x0000000080009168                set_timer
  .text.itoa_whole
-                0x0000000080004a98       0x60 ../../aleph/common/fix.o
-                0x0000000080004a98                itoa_whole
- .text._stext   0x0000000080004af8       0x3c avr32/utils/startup/startup_uc3.o
+                0x00000000800092b0       0x60 ../../aleph/common/fix.o
+                0x00000000800092b0                itoa_whole
+ .text._stext   0x0000000080009310       0x3c avr32/utils/startup/startup_uc3.o
                                          0x50 (size before relaxing)
-                0x0000000080004af8                _stext
- .text.strcpy   0x0000000080004b34       0x12 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strcpy.o)
-                0x0000000080004b34                strcpy
+                0x0000000080009310                _stext
+ .text.memcmp   0x000000008000934c       0x26 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memcmp.o)
+                0x000000008000934c                memcmp
+ .text          0x0000000080009372      0x148 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memcpy.o)
+                0x0000000080009372                memcpy
+ .text.memset   0x00000000800094ba        0xe /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memset.o)
+                0x00000000800094ba                memset
+ .text.strcpy   0x00000000800094c8       0x12 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strcpy.o)
+                0x00000000800094c8                strcpy
  *(.text.*personality*)
  *(.gnu.warning)
 
-.exception      0x0000000080004c00      0x200
- .exception     0x0000000080004c00      0x200 avr32/drivers/intc/exception.o
-                0x0000000080004c00                _evba
-                0x0000000080004d04                _int0
-                0x0000000080004d12                _int1
-                0x0000000080004d20                _int2
-                0x0000000080004d2e                _int3
+.exception      0x0000000080009600      0x200
+ .exception     0x0000000080009600      0x200 avr32/drivers/intc/exception.o
+                0x0000000080009600                _evba
+                0x0000000080009704                _int0
+                0x0000000080009712                _int1
+                0x0000000080009720                _int2
+                0x000000008000972e                _int3
 
 .fini
  *(.fini)
-                0x0000000080004e00                PROVIDE (__etext, .)
-                0x0000000080004e00                PROVIDE (_etext, .)
-                0x0000000080004e00                PROVIDE (etext, .)
+                0x0000000080009800                PROVIDE (__etext, .)
+                0x0000000080009800                PROVIDE (_etext, .)
+                0x0000000080009800                PROVIDE (etext, .)
 
-.rodata         0x0000000080004e00      0x578
+.rodata         0x0000000080009800      0xcdc
  *(.rodata .rodata.* .gnu.linkonce.r.*)
  .rodata.SDRAMC_EBI_GPIO_MAP.10494
-                0x0000000080004e00       0x4e avr32/drivers/ebi/sdramc/sdramc.o
- *fill*         0x0000000080004e4e        0x2 00
+                0x0000000080009800       0x4c avr32/drivers/ebi/sdramc/sdramc.o
  .rodata._int_handler_table
-                0x0000000080004e50       0xa0 avr32/drivers/intc/intc.o
+                0x000000008000984c       0xa0 avr32/drivers/intc/intc.o
+ .rodata.const_FSI_LeadSig
+                0x00000000800098ec        0x4 avr32/services/fs/fat/fat_unusual.o
+                0x00000000800098ec                const_FSI_LeadSig
+ .rodata.const_FSI_StrucSig
+                0x00000000800098f0        0x4 avr32/services/fs/fat/fat_unusual.o
+                0x00000000800098f0                const_FSI_StrucSig
  .rodata.enc_map
-                0x0000000080004ef0       0x10 ../../aleph/avr32_proto/src/encoders.o
- .rodata.USART_SPI_OPTIONS.12030
-                0x0000000080004f00        0x8 ../../aleph/avr32_proto/src/init.o
- .rodata.C.67.12061
-                0x0000000080004f08       0x10 ../../aleph/avr32_proto/src/init.o
- .rodata.tc_interrupt.12042
-                0x0000000080004f18        0x4 ../../aleph/avr32_proto/src/init.o
- .rodata.waveform_opt.12041
-                0x0000000080004f1c        0x8 ../../aleph/avr32_proto/src/init.o
- .rodata.USART_SPI_GPIO_MAP.12029
-                0x0000000080004f24        0x8 ../../aleph/avr32_proto/src/init.o
- .rodata.DBG_USART_OPTIONS.12025
-                0x0000000080004f2c        0xc ../../aleph/avr32_proto/src/init.o
- .rodata.BFIN_SPI_GPIO_MAP.12059
-                0x0000000080004f38        0xa ../../aleph/avr32_proto/src/init.o
- .rodata.DBG_USART_GPIO_MAP.12024
-                0x0000000080004f42        0x4 ../../aleph/avr32_proto/src/init.o
- *fill*         0x0000000080004f46        0x2 00
- .rodata.main   0x0000000080004f48       0x4c ../../aleph/avr32_proto_test/src/main.o
+                0x00000000800098f4       0x10 ../../aleph/avr32_proto/src/encoders.o
  .rodata.str1.4
-                0x0000000080004f94       0xb8 ../../aleph/avr32_proto_test/src/main.o
+                0x0000000080009904      0x1c6 ../../aleph/avr32_proto/src/files.o
+                                        0x1c8 (size before relaxing)
+ *fill*         0x0000000080009aca        0x2 00
+ .rodata.dummy_data
+                0x0000000080009acc      0x404 ../../aleph/avr32_proto/src/init.o
+                0x0000000080009acc                dummy_data
+ .rodata.C.64.12048
+                0x0000000080009ed0       0x10 ../../aleph/avr32_proto/src/init.o
+ .rodata.USART_SPI_OPTIONS.12030
+                0x0000000080009ee0        0x8 ../../aleph/avr32_proto/src/init.o
+ .rodata.C.67.12061
+                0x0000000080009ee8       0x10 ../../aleph/avr32_proto/src/init.o
+ .rodata.tc_interrupt.12042
+                0x0000000080009ef8        0x4 ../../aleph/avr32_proto/src/init.o
+ .rodata.waveform_opt.12041
+                0x0000000080009efc        0x8 ../../aleph/avr32_proto/src/init.o
+ .rodata.C.65.12054
+                0x0000000080009f04       0x18 ../../aleph/avr32_proto/src/init.o
+ .rodata.USART_SPI_GPIO_MAP.12029
+                0x0000000080009f1c        0x8 ../../aleph/avr32_proto/src/init.o
+ .rodata.DBG_USART_OPTIONS.12025
+                0x0000000080009f24        0xc ../../aleph/avr32_proto/src/init.o
+ .rodata.BFIN_SPI_GPIO_MAP.12059
+                0x0000000080009f30        0xa ../../aleph/avr32_proto/src/init.o
+ *fill*         0x0000000080009f3a        0x2 00
+ .rodata.C.66.12055
+                0x0000000080009f3c       0x18 ../../aleph/avr32_proto/src/init.o
+ .rodata.DBG_USART_GPIO_MAP.12024
+                0x0000000080009f54        0x4 ../../aleph/avr32_proto/src/init.o
+ .rodata.SD_MMC_SPI_GPIO_MAP.12046
+                0x0000000080009f58        0x8 ../../aleph/avr32_proto/src/init.o
+ .rodata.main   0x0000000080009f60       0x4c ../../aleph/avr32_proto_test/src/main.o
+ .rodata.str1.4
+                0x0000000080009fac      0x126 ../../aleph/avr32_proto_test/src/main.o
+                                        0x128 (size before relaxing)
+ *fill*         0x000000008000a0d2        0x2 00
+ .rodata.str1.4
+                0x000000008000a0d4       0xdc ../../aleph/avr32_proto/src/memory.o
  .rodata.kSwitchEvents
-                0x000000008000504c       0x28 ../../aleph/avr32_proto/src/switches.o
+                0x000000008000a1b0       0x28 ../../aleph/avr32_proto/src/switches.o
  .rodata.kSwitchPins
-                0x0000000080005074        0x8 ../../aleph/avr32_proto/src/switches.o
+                0x000000008000a1d8        0x8 ../../aleph/avr32_proto/src/switches.o
  .rodata.font_data
-                0x000000008000507c      0x2f8 ../../aleph/common/font.o
-                0x000000008000507c                font_data
+                0x000000008000a1e0      0x2f8 ../../aleph/common/font.o
+                0x000000008000a1e0                font_data
  .rodata.font_nglyphs
-                0x0000000080005374        0x4 ../../aleph/common/font.o
-                0x0000000080005374                font_nglyphs
+                0x000000008000a4d8        0x4 ../../aleph/common/font.o
+                0x000000008000a4d8                font_nglyphs
 
 .rodata1
  *(.rodata1)
@@ -2912,9 +3011,10 @@ Linker script and memory map
  *(.gcc_except_table)
  *(.gcc_except_table.*)
 
-.lalign         0x0000000080005378        0x0
-                0x0000000080005378                . = ALIGN (0x8)
-                0x0000000080005378                PROVIDE (_data_lma, .)
+.lalign         0x000000008000a4dc        0x4
+                0x000000008000a4e0                . = ALIGN (0x8)
+ *fill*         0x000000008000a4dc        0x4 00
+                0x000000008000a4e0                PROVIDE (_data_lma, .)
                 0x0000000000000004                . = ORIGIN (INTRAM)
 
 .dalign         0x0000000000000004        0x4
@@ -2980,141 +3080,203 @@ Linker script and memory map
 .ramtext
  *(.ramtext .ramtext.*)
 
-.ddalign        0x0000000000000008        0x0 load address 0x0000000080005378
+.ddalign        0x0000000000000008        0x0 load address 0x000000008000a4e0
                 0x0000000000000008                . = ALIGN (0x8)
 
-.data
+.data           0x0000000000000008        0x1 load address 0x000000008000a4e0
  *(.data .data.* .gnu.linkonce.d.*)
+ .data.sd_mmc_spi_presence_status
+                0x0000000000000008        0x1 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
+                0x0000000000000008                sd_mmc_spi_presence_status
  *(.gnu.linkonce.d.*personality*)
 
 .data1
  *(.data1)
 
-.balign         0x0000000000000008        0x0 load address 0x0000000080005378
-                0x0000000000000008                . = ALIGN (0x8)
-                0x0000000000000008                PROVIDE (_edata, .)
-                0x0000000000000008                PROVIDE (edata, .)
-                0x0000000000000008                __bss_start = .
+.balign         0x0000000000000009        0x7 load address 0x000000008000a4e1
+                0x0000000000000010                . = ALIGN (0x8)
+ *fill*         0x0000000000000009        0x7 00
+                0x0000000000000010                PROVIDE (_edata, .)
+                0x0000000000000010                PROVIDE (edata, .)
+                0x0000000000000010                __bss_start = .
 
-.bss            0x0000000000000008     0x14b8
+.bss            0x0000000000000010     0x1e30
  *(.dynbss)
  *(.bss .bss.* .gnu.linkonce.b.*)
  .bss._int_line_handler_table_6
-                0x0000000000000008        0x4 avr32/drivers/intc/intc.o
- .bss._int_line_handler_table_7
-                0x000000000000000c        0x4 avr32/drivers/intc/intc.o
- .bss._int_line_handler_table_8
                 0x0000000000000010        0x4 avr32/drivers/intc/intc.o
- .bss._int_line_handler_table_9
+ .bss._int_line_handler_table_7
                 0x0000000000000014        0x4 avr32/drivers/intc/intc.o
- .bss._int_line_handler_table_10
+ .bss._int_line_handler_table_8
                 0x0000000000000018        0x4 avr32/drivers/intc/intc.o
- .bss._int_line_handler_table_11
+ .bss._int_line_handler_table_9
                 0x000000000000001c        0x4 avr32/drivers/intc/intc.o
- .bss._int_line_handler_table_12
+ .bss._int_line_handler_table_10
                 0x0000000000000020        0x4 avr32/drivers/intc/intc.o
- .bss._int_line_handler_table_13
+ .bss._int_line_handler_table_11
                 0x0000000000000024        0x4 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_12
+                0x0000000000000028        0x4 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_13
+                0x000000000000002c        0x4 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_14
-                0x0000000000000028        0xc avr32/drivers/intc/intc.o
+                0x0000000000000030        0xc avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_15
-                0x0000000000000034        0x4 avr32/drivers/intc/intc.o
- .bss._int_line_handler_table_16
-                0x0000000000000038        0x4 avr32/drivers/intc/intc.o
- .bss._int_line_handler_table_17
                 0x000000000000003c        0x4 avr32/drivers/intc/intc.o
- .bss._int_line_handler_table_18
+ .bss._int_line_handler_table_16
                 0x0000000000000040        0x4 avr32/drivers/intc/intc.o
- .bss._int_line_handler_table_19
+ .bss._int_line_handler_table_17
                 0x0000000000000044        0x4 avr32/drivers/intc/intc.o
- .bss._int_line_handler_table_0
+ .bss._int_line_handler_table_18
                 0x0000000000000048        0x4 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_19
+                0x000000000000004c        0x4 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_0
+                0x0000000000000050        0x4 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_1
-                0x000000000000004c       0x2c avr32/drivers/intc/intc.o
+                0x0000000000000054       0x2c avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_2
-                0x0000000000000078       0x38 avr32/drivers/intc/intc.o
+                0x0000000000000080       0x38 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_3
-                0x00000000000000b0       0x3c avr32/drivers/intc/intc.o
+                0x00000000000000b8       0x3c avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_4
-                0x00000000000000ec        0x4 avr32/drivers/intc/intc.o
+                0x00000000000000f4        0x4 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_5
-                0x00000000000000f0        0x4 avr32/drivers/intc/intc.o
+                0x00000000000000f8        0x4 avr32/drivers/intc/intc.o
+ .bss.gl_ptr_mem
+                0x00000000000000fc        0x4 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .bss.sd_mmc_opt
+                0x0000000000000100       0x10 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .bss.sd_mmc_pba_hz
+                0x0000000000000110        0x4 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .bss.sd_mmc_spi_init_done
+                0x0000000000000114        0x1 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                0x0000000000000114                sd_mmc_spi_init_done
+ *fill*         0x0000000000000115        0x3 00
  .bss.adcOldVal.10766
-                0x00000000000000f4        0x8 ../../aleph/avr32_proto/src/adc.o
- .bss.e.10767   0x00000000000000fc        0x8 ../../aleph/avr32_proto/src/adc.o
+                0x0000000000000118        0x8 ../../aleph/avr32_proto/src/adc.o
+ .bss.e.10767   0x0000000000000120        0x8 ../../aleph/avr32_proto/src/adc.o
  .bss.adcVal.10765
-                0x0000000000000104        0x8 ../../aleph/avr32_proto/src/adc.o
- .bss.i         0x000000000000010c        0x1 ../../aleph/avr32_proto/src/app_timers.o
- *fill*         0x000000000000010d        0x3 00
- .bss.adcTimer  0x0000000000000110       0x14 ../../aleph/avr32_proto/src/app_timers.o
+                0x0000000000000128        0x8 ../../aleph/avr32_proto/src/adc.o
+ .bss.i         0x0000000000000130        0x1 ../../aleph/avr32_proto/src/app_timers.o
+ *fill*         0x0000000000000131        0x3 00
+ .bss.adcTimer  0x0000000000000134       0x14 ../../aleph/avr32_proto/src/app_timers.o
  .bss.screenTimer
-                0x0000000000000124       0x14 ../../aleph/avr32_proto/src/app_timers.o
- .bss.encTimer  0x0000000000000138       0x14 ../../aleph/avr32_proto/src/app_timers.o
- .bss.e         0x000000000000014c        0x8 ../../aleph/avr32_proto/src/app_timers.o
- .bss.hwait     0x0000000000000154        0x1 ../../aleph/avr32_proto/src/bfin.o
-                0x0000000000000154                hwait
- *fill*         0x0000000000000155        0x3 00
- .bss.putIdx    0x0000000000000158        0x4 ../../aleph/avr32_proto/src/events.o
- .bss.getIdx    0x000000000000015c        0x4 ../../aleph/avr32_proto/src/events.o
+                0x0000000000000148       0x14 ../../aleph/avr32_proto/src/app_timers.o
+ .bss.encTimer  0x000000000000015c       0x14 ../../aleph/avr32_proto/src/app_timers.o
+ .bss.e         0x0000000000000170        0x8 ../../aleph/avr32_proto/src/app_timers.o
+ .bss.hwait     0x0000000000000178        0x1 ../../aleph/avr32_proto/src/bfin.o
+                0x0000000000000178                hwait
+ *fill*         0x0000000000000179        0x3 00
+ .bss.putIdx    0x000000000000017c        0x4 ../../aleph/avr32_proto/src/events.o
+ .bss.getIdx    0x0000000000000180        0x4 ../../aleph/avr32_proto/src/events.o
  .bss.sysEvents
-                0x0000000000000160      0x100 ../../aleph/avr32_proto/src/events.o
- .bss.refresh   0x0000000000000260        0x1 ../../aleph/avr32_proto/src/interrupts.o
-                0x0000000000000260                refresh
+                0x0000000000000184      0x100 ../../aleph/avr32_proto/src/events.o
+ .bss.name_buf  0x0000000000000284       0x20 ../../aleph/avr32_proto/src/files.o
+ .bss.refresh   0x00000000000002a4        0x1 ../../aleph/avr32_proto/src/interrupts.o
+                0x00000000000002a4                refresh
  .bss.tcOverflow
-                0x0000000000000261        0x1 ../../aleph/avr32_proto/src/interrupts.o
-                0x0000000000000261                tcOverflow
- *fill*         0x0000000000000262        0x2 00
- .bss.tcTicks   0x0000000000000264        0x8 ../../aleph/avr32_proto/src/interrupts.o
-                0x0000000000000264                tcTicks
- .bss.e.13481   0x000000000000026c        0x8 ../../aleph/avr32_proto_test/src/main.o
+                0x00000000000002a5        0x1 ../../aleph/avr32_proto/src/interrupts.o
+                0x00000000000002a5                tcOverflow
+ *fill*         0x00000000000002a6        0x2 00
+ .bss.tcTicks   0x00000000000002a8        0x8 ../../aleph/avr32_proto/src/interrupts.o
+                0x00000000000002a8                tcTicks
+ .bss.ramTestFlag
+                0x00000000000002b0        0x1 ../../aleph/avr32_proto_test/src/main.o
+ *fill*         0x00000000000002b1        0x3 00
+ .bss.e.13487   0x00000000000002b4        0x8 ../../aleph/avr32_proto_test/src/main.o
  .bss.eventScroll
-                0x0000000000000274      0x150 ../../aleph/avr32_proto_test/src/main.o
+                0x00000000000002bc      0x150 ../../aleph/avr32_proto_test/src/main.o
  .bss.scrollIdx
-                0x00000000000003c4        0x1 ../../aleph/avr32_proto_test/src/main.o
- *fill*         0x00000000000003c5        0x3 00
+                0x000000000000040c        0x1 ../../aleph/avr32_proto_test/src/main.o
+ *fill*         0x000000000000040d        0x3 00
  .bss.eventScrollTimes
-                0x00000000000003c8       0x40 ../../aleph/avr32_proto_test/src/main.o
+                0x0000000000000410       0x40 ../../aleph/avr32_proto_test/src/main.o
  .bss.pHeapStart
-                0x0000000000000408        0x4 ../../aleph/avr32_proto/src/memory.o
+                0x0000000000000450        0x4 ../../aleph/avr32_proto/src/memory.o
  .bss.heapOffset
-                0x000000000000040c        0x4 ../../aleph/avr32_proto/src/memory.o
- .bss.heapSize  0x0000000000000410        0x4 ../../aleph/avr32_proto/src/memory.o
- .bss.pHeapEnd  0x0000000000000414        0x4 ../../aleph/avr32_proto/src/memory.o
- .bss.i.12058   0x0000000000000418        0x1 ../../aleph/avr32_proto/src/screen.o
- .bss.y.12195   0x0000000000000419        0x1 ../../aleph/avr32_proto/src/screen.o
- *fill*         0x000000000000041a        0x2 00
+                0x0000000000000454        0x4 ../../aleph/avr32_proto/src/memory.o
+ .bss.heapSize  0x0000000000000458        0x4 ../../aleph/avr32_proto/src/memory.o
+ .bss.pHeapEnd  0x000000000000045c        0x4 ../../aleph/avr32_proto/src/memory.o
+ .bss.i.12058   0x0000000000000460        0x1 ../../aleph/avr32_proto/src/screen.o
+ .bss.y.12195   0x0000000000000461        0x1 ../../aleph/avr32_proto/src/screen.o
+ *fill*         0x0000000000000462        0x2 00
  .bss.pos.12105
-                0x000000000000041c        0x4 ../../aleph/avr32_proto/src/screen.o
- .bss.g.12198   0x0000000000000420        0x4 ../../aleph/avr32_proto/src/screen.o
+                0x0000000000000464        0x4 ../../aleph/avr32_proto/src/screen.o
+ .bss.g.12198   0x0000000000000468        0x4 ../../aleph/avr32_proto/src/screen.o
  .bss.xnum.12197
-                0x0000000000000424        0x1 ../../aleph/avr32_proto/src/screen.o
- *fill*         0x0000000000000425        0x3 00
+                0x000000000000046c        0x1 ../../aleph/avr32_proto/src/screen.o
+ *fill*         0x000000000000046d        0x3 00
  .bss.buf.12292
-                0x0000000000000428        0xc ../../aleph/avr32_proto/src/screen.o
+                0x0000000000000470        0xc ../../aleph/avr32_proto/src/screen.o
  .bss.pos.12136
-                0x0000000000000434        0x4 ../../aleph/avr32_proto/src/screen.o
- .bss.screen    0x0000000000000438     0x1000 ../../aleph/avr32_proto/src/screen.o
- .bss.x.12196   0x0000000000001438        0x1 ../../aleph/avr32_proto/src/screen.o
- *fill*         0x0000000000001439        0x3 00
- .bss.swTicks   0x000000000000143c       0x28 ../../aleph/avr32_proto/src/switches.o
- .bss.e.10493   0x0000000000001464        0x8 ../../aleph/avr32_proto/src/switches.o
- .bss.timers    0x000000000000146c       0x20 ../../aleph/avr32_proto/src/timers.o
+                0x000000000000047c        0x4 ../../aleph/avr32_proto/src/screen.o
+ .bss.screen    0x0000000000000480     0x1000 ../../aleph/avr32_proto/src/screen.o
+ .bss.x.12196   0x0000000000001480        0x1 ../../aleph/avr32_proto/src/screen.o
+ *fill*         0x0000000000001481        0x3 00
+ .bss.swTicks   0x0000000000001484       0x28 ../../aleph/avr32_proto/src/switches.o
+ .bss.e.10493   0x00000000000014ac        0x8 ../../aleph/avr32_proto/src/switches.o
+ .bss.timers    0x00000000000014b4       0x20 ../../aleph/avr32_proto/src/timers.o
  *(COMMON)
- COMMON         0x000000000000148c       0x30 ../../aleph/avr32_proto/src/encoders.o
-                0x000000000000148c                enc
- COMMON         0x00000000000014bc        0x1 ../../aleph/avr32_proto/src/interrupts.o
-                0x00000000000014bc                end_of_transfer
-                0x00000000000014c0                . = ALIGN (0x8)
- *fill*         0x00000000000014bd        0x3 00
-                0x00000000000014c0                . = ALIGN (0x8)
-                0x00000000000014c0                _end = .
-                0x00000000000014c0                PROVIDE (end, .)
-                0x00000000000014c0                __heap_start__ = ALIGN (0x8)
+ COMMON         0x00000000000014d4      0x2f4 avr32/services/fs/fat/fat.o
+                0x00000000000014d4                fs_gu32_addrsector
+                0x00000000000014d8                fs_g_nav_entry
+                0x00000000000014e8                fs_g_u16_pos_fat
+                0x00000000000014ea                g_b_no_check_disk
+                0x00000000000014ec                fs_g_cache_clusterlist
+                0x0000000000001514                fs_g_u32_last_mod_fat
+                0x0000000000001518                fs_g_sector
+                0x0000000000001718                fs_g_nav
+                0x000000000000174c                fs_g_u32_first_mod_fat
+                0x0000000000001750                fs_g_navext_entry
+                0x0000000000001760                fs_g_navext_fast
+                0x0000000000001764                fs_g_nav_fast
+                0x0000000000001768                fs_g_status
+                0x0000000000001769                g_b_string_length
+                0x000000000000176a                fs_g_u8_current_cache
+                0x000000000000176c                fs_g_navext
+                0x00000000000017a0                fs_g_sectorcache
+                0x00000000000017b4                g_b_unicode
+                0x00000000000017b8                fs_g_cluster
+                0x00000000000017c0                fs_g_seg
+ COMMON         0x00000000000017c8       0x19 avr32/services/fs/fat/navigation.o
+                0x00000000000017c8                g_segment_dest
+                0x00000000000017d4                g_segment_src
+                0x00000000000017e0                fs_g_u8_nav_selected
+ *fill*         0x00000000000017e1        0x3 00
+ COMMON         0x00000000000017e4      0x229 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                0x00000000000017e4                data_mem
+                0x00000000000019e8                capacity
+                0x00000000000019f0                capacity_mult
+                0x00000000000019f2                erase_group_size
+                0x00000000000019f4                sd_mmc_spi_last_block_address
+                0x00000000000019f8                r2
+                0x00000000000019fa                card_type
+                0x00000000000019fc                csd
+                0x0000000000001a0c                r1
+ *fill*         0x0000000000001a0d        0x3 00
+ COMMON         0x0000000000001a10       0x30 ../../aleph/avr32_proto/src/encoders.o
+                0x0000000000001a10                enc
+ COMMON         0x0000000000001a40        0x8 ../../aleph/avr32_proto/src/files.o
+                0x0000000000001a40                dsp_name_buf
+                0x0000000000001a44                load_buf
+ COMMON         0x0000000000001a48      0x3f0 ../../aleph/avr32_proto/src/init.o
+                0x0000000000001a48                pdca_channeltx
+                0x0000000000001a4c                pdca_channelrx
+                0x0000000000001a50                ram_buffer
+ COMMON         0x0000000000001e38        0x1 ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000000001e38                end_of_transfer
+                0x0000000000001e40                . = ALIGN (0x8)
+ *fill*         0x0000000000001e39        0x7 00
+                0x0000000000001e40                . = ALIGN (0x8)
+                0x0000000000001e40                _end = .
+                0x0000000000001e40                PROVIDE (end, .)
+                0x0000000000001e40                __heap_start__ = ALIGN (0x8)
 
-.heap           0x00000000000014c0     0xdb40
+.heap           0x0000000000001e40     0xd1c0
  *(.heap)
-                0x000000000000db40                . = (__heap_size__ == __max_heap_size__)?(((ORIGIN (INTRAM) + 0xfffc) - __stack_size__) - ABSOLUTE (.)):__heap_size__
- *fill*         0x00000000000014c0     0xdb40 00
+                0x000000000000d1c0                . = (__heap_size__ == __max_heap_size__)?(((ORIGIN (INTRAM) + 0xfffc) - __stack_size__) - ABSOLUTE (.)):__heap_size__
+ *fill*         0x0000000000001e40     0xd1c0 00
                 0x000000000000f000                __heap_end__ = .
 
 .stab
@@ -3147,13 +3309,19 @@ Linker script and memory map
  .comment       0x0000000000000000       0x31 avr32/drivers/spi/spi.o
  .comment       0x0000000000000000       0x31 avr32/drivers/tc/tc.o
  .comment       0x0000000000000000       0x31 avr32/drivers/usart/usart.o
+ .comment       0x0000000000000000       0x31 avr32/services/fs/fat/fat.o
+ .comment       0x0000000000000000       0x31 avr32/services/fs/fat/fat_unusual.o
+ .comment       0x0000000000000000       0x31 avr32/services/fs/fat/navigation.o
  .comment       0x0000000000000000       0x31 avr32/utils/debug/print_funcs.o
  .comment       0x0000000000000000       0x31 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .comment       0x0000000000000000       0x31 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
+ .comment       0x0000000000000000       0x31 common/services/storage/ctrl_access/ctrl_access.o
  .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/adc.o
  .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/app_timers.o
  .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/bfin.o
  .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/events.o
  .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/encoders.o
+ .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/files.o
  .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/init.o
  .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/interrupts.o
  .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto_test/src/main.o
@@ -3163,6 +3331,8 @@ Linker script and memory map
  .comment       0x0000000000000000       0x31 ../../aleph/avr32_proto/src/timers.o
  .comment       0x0000000000000000       0x31 ../../aleph/common/font.o
  .comment       0x0000000000000000       0x31 ../../aleph/common/fix.o
+ .comment       0x0000000000000000       0x31 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memcmp.o)
+ .comment       0x0000000000000000       0x31 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memset.o)
  .comment       0x0000000000000000       0x31 /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strcpy.o)
 
 .debug
@@ -3177,7 +3347,7 @@ Linker script and memory map
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x0000000000000000      0xc58
+.debug_aranges  0x0000000000000000     0x1240
  *(.debug_aranges)
  .debug_aranges
                 0x0000000000000000       0x30 avr32/drivers/ebi/sdramc/sdramc.o
@@ -3198,38 +3368,50 @@ Linker script and memory map
  .debug_aranges
                 0x00000000000006f0       0xd8 avr32/drivers/usart/usart.o
  .debug_aranges
-                0x00000000000007c8       0x88 avr32/utils/debug/print_funcs.o
+                0x00000000000007c8      0x168 avr32/services/fs/fat/fat.o
  .debug_aranges
-                0x0000000000000850       0xf8 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                0x0000000000000930      0x128 avr32/services/fs/fat/fat_unusual.o
  .debug_aranges
-                0x0000000000000948       0x28 ../../aleph/avr32_proto/src/adc.o
+                0x0000000000000a58      0x218 avr32/services/fs/fat/navigation.o
  .debug_aranges
-                0x0000000000000970       0x38 ../../aleph/avr32_proto/src/app_timers.o
+                0x0000000000000c70       0x88 avr32/utils/debug/print_funcs.o
  .debug_aranges
-                0x00000000000009a8       0x40 ../../aleph/avr32_proto/src/bfin.o
+                0x0000000000000cf8       0xf8 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .debug_aranges
-                0x00000000000009e8       0x30 ../../aleph/avr32_proto/src/events.o
+                0x0000000000000df0       0x50 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
  .debug_aranges
-                0x0000000000000a18       0x28 ../../aleph/avr32_proto/src/encoders.o
+                0x0000000000000e40       0x80 common/services/storage/ctrl_access/ctrl_access.o
  .debug_aranges
-                0x0000000000000a40       0x58 ../../aleph/avr32_proto/src/init.o
+                0x0000000000000ec0       0x28 ../../aleph/avr32_proto/src/adc.o
  .debug_aranges
-                0x0000000000000a98       0x50 ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000000000ee8       0x38 ../../aleph/avr32_proto/src/app_timers.o
  .debug_aranges
-                0x0000000000000ae8       0x28 ../../aleph/avr32_proto_test/src/main.o
+                0x0000000000000f20       0x40 ../../aleph/avr32_proto/src/bfin.o
  .debug_aranges
-                0x0000000000000b10       0x28 ../../aleph/avr32_proto/src/memory.o
+                0x0000000000000f60       0x30 ../../aleph/avr32_proto/src/events.o
  .debug_aranges
-                0x0000000000000b38       0x98 ../../aleph/avr32_proto/src/screen.o
+                0x0000000000000f90       0x28 ../../aleph/avr32_proto/src/encoders.o
  .debug_aranges
-                0x0000000000000bd0       0x20 ../../aleph/avr32_proto/src/switches.o
+                0x0000000000000fb8       0x60 ../../aleph/avr32_proto/src/files.o
  .debug_aranges
-                0x0000000000000bf0       0x38 ../../aleph/avr32_proto/src/timers.o
+                0x0000000000001018       0x58 ../../aleph/avr32_proto/src/init.o
  .debug_aranges
-                0x0000000000000c28       0x30 ../../aleph/common/fix.o
+                0x0000000000001070       0x50 ../../aleph/avr32_proto/src/interrupts.o
+ .debug_aranges
+                0x00000000000010c0       0x30 ../../aleph/avr32_proto_test/src/main.o
+ .debug_aranges
+                0x00000000000010f0       0x30 ../../aleph/avr32_proto/src/memory.o
+ .debug_aranges
+                0x0000000000001120       0x98 ../../aleph/avr32_proto/src/screen.o
+ .debug_aranges
+                0x00000000000011b8       0x20 ../../aleph/avr32_proto/src/switches.o
+ .debug_aranges
+                0x00000000000011d8       0x38 ../../aleph/avr32_proto/src/timers.o
+ .debug_aranges
+                0x0000000000001210       0x30 ../../aleph/common/fix.o
 
 .debug_pubnames
-                0x0000000000000000     0x2073
+                0x0000000000000000     0x3350
  *(.debug_pubnames)
  .debug_pubnames
                 0x0000000000000000       0x5b avr32/drivers/ebi/sdramc/sdramc.o
@@ -3250,67 +3432,85 @@ Linker script and memory map
  .debug_pubnames
                 0x0000000000001460      0x227 avr32/drivers/usart/usart.o
  .debug_pubnames
-                0x0000000000001687      0x10f avr32/utils/debug/print_funcs.o
+                0x0000000000001687      0x5a8 avr32/services/fs/fat/fat.o
  .debug_pubnames
-                0x0000000000001796      0x3b1 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                0x0000000000001c2f      0x480 avr32/services/fs/fat/fat_unusual.o
  .debug_pubnames
-                0x0000000000001b47       0x2c ../../aleph/avr32_proto/src/adc.o
+                0x00000000000020af      0x5d8 avr32/services/fs/fat/navigation.o
  .debug_pubnames
-                0x0000000000001b73       0x26 ../../aleph/avr32_proto/src/app_timers.o
+                0x0000000000002687      0x10f avr32/utils/debug/print_funcs.o
  .debug_pubnames
-                0x0000000000001b99       0x86 ../../aleph/avr32_proto/src/bfin.o
+                0x0000000000002796      0x3b1 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .debug_pubnames
-                0x0000000000001c1f       0x44 ../../aleph/avr32_proto/src/events.o
+                0x0000000000002b47       0xe8 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
  .debug_pubnames
-                0x0000000000001c63       0x3c ../../aleph/avr32_proto/src/encoders.o
+                0x0000000000002c2f       0xfc common/services/storage/ctrl_access/ctrl_access.o
  .debug_pubnames
-                0x0000000000001c9f       0xed ../../aleph/avr32_proto/src/init.o
+                0x0000000000002d2b       0x2c ../../aleph/avr32_proto/src/adc.o
  .debug_pubnames
-                0x0000000000001d8c       0x65 ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000000002d57       0x26 ../../aleph/avr32_proto/src/app_timers.o
  .debug_pubnames
-                0x0000000000001df1       0x29 ../../aleph/avr32_proto_test/src/main.o
+                0x0000000000002d7d       0x86 ../../aleph/avr32_proto/src/bfin.o
  .debug_pubnames
-                0x0000000000001e1a       0x2d ../../aleph/avr32_proto/src/memory.o
+                0x0000000000002e03       0x44 ../../aleph/avr32_proto/src/events.o
  .debug_pubnames
-                0x0000000000001e47      0x148 ../../aleph/avr32_proto/src/screen.o
+                0x0000000000002e47       0x3c ../../aleph/avr32_proto/src/encoders.o
  .debug_pubnames
-                0x0000000000001f8f       0x21 ../../aleph/avr32_proto/src/switches.o
+                0x0000000000002e83       0xea ../../aleph/avr32_proto/src/files.o
  .debug_pubnames
-                0x0000000000001fb0       0x52 ../../aleph/avr32_proto/src/timers.o
+                0x0000000000002f6d       0xed ../../aleph/avr32_proto/src/init.o
  .debug_pubnames
-                0x0000000000002002       0x31 ../../aleph/common/font.o
+                0x000000000000305a       0x65 ../../aleph/avr32_proto/src/interrupts.o
  .debug_pubnames
-                0x0000000000002033       0x40 ../../aleph/common/fix.o
+                0x00000000000030bf       0x29 ../../aleph/avr32_proto_test/src/main.o
+ .debug_pubnames
+                0x00000000000030e8       0x3c ../../aleph/avr32_proto/src/memory.o
+ .debug_pubnames
+                0x0000000000003124      0x148 ../../aleph/avr32_proto/src/screen.o
+ .debug_pubnames
+                0x000000000000326c       0x21 ../../aleph/avr32_proto/src/switches.o
+ .debug_pubnames
+                0x000000000000328d       0x52 ../../aleph/avr32_proto/src/timers.o
+ .debug_pubnames
+                0x00000000000032df       0x31 ../../aleph/common/font.o
+ .debug_pubnames
+                0x0000000000003310       0x40 ../../aleph/common/fix.o
 
-.debug_info     0x0000000000000000    0x1a80b
+.debug_info     0x0000000000000000    0x1f2ff
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x0000000000000000      0xca8 avr32/drivers/ebi/sdramc/sdramc.o
- .debug_info    0x0000000000000ca8     0x36eb avr32/drivers/flashc/flashc.o
- .debug_info    0x0000000000004393      0xb8f avr32/drivers/gpio/gpio.o
- .debug_info    0x0000000000004f22      0x5ae avr32/drivers/intc/intc.o
- .debug_info    0x00000000000054d0      0xd5b avr32/drivers/pdca/pdca.o
- .debug_info    0x000000000000622b     0x1d71 avr32/drivers/pm/pm.o
- .debug_info    0x0000000000007f9c     0x1081 avr32/drivers/spi/spi.o
- .debug_info    0x000000000000901d     0x117d avr32/drivers/tc/tc.o
- .debug_info    0x000000000000a19a     0x241b avr32/drivers/usart/usart.o
- .debug_info    0x000000000000c5b5     0x197b avr32/utils/debug/print_funcs.o
- .debug_info    0x000000000000df30     0x18b7 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .debug_info    0x000000000000f7e7      0xcc5 ../../aleph/avr32_proto/src/adc.o
- .debug_info    0x00000000000104ac      0x3f9 ../../aleph/avr32_proto/src/app_timers.o
- .debug_info    0x00000000000108a5      0xe91 ../../aleph/avr32_proto/src/bfin.o
- .debug_info    0x0000000000011736      0x223 ../../aleph/avr32_proto/src/events.o
- .debug_info    0x0000000000011959      0x27b ../../aleph/avr32_proto/src/encoders.o
- .debug_info    0x0000000000011bd4     0x3da7 ../../aleph/avr32_proto/src/init.o
- .debug_info    0x000000000001597b      0xb66 ../../aleph/avr32_proto/src/interrupts.o
- .debug_info    0x00000000000164e1      0xded ../../aleph/avr32_proto_test/src/main.o
- .debug_info    0x00000000000172ce      0x16d ../../aleph/avr32_proto/src/memory.o
- .debug_info    0x000000000001743b     0x27cc ../../aleph/avr32_proto/src/screen.o
- .debug_info    0x0000000000019c07      0x268 ../../aleph/avr32_proto/src/switches.o
- .debug_info    0x0000000000019e6f      0x35c ../../aleph/avr32_proto/src/timers.o
- .debug_info    0x000000000001a1cb      0x14a ../../aleph/common/font.o
- .debug_info    0x000000000001a315      0x4f6 ../../aleph/common/fix.o
+ .debug_info    0x0000000000000000      0xca6 avr32/drivers/ebi/sdramc/sdramc.o
+ .debug_info    0x0000000000000ca6     0x36eb avr32/drivers/flashc/flashc.o
+ .debug_info    0x0000000000004391      0xb8f avr32/drivers/gpio/gpio.o
+ .debug_info    0x0000000000004f20      0x5ae avr32/drivers/intc/intc.o
+ .debug_info    0x00000000000054ce      0xd5b avr32/drivers/pdca/pdca.o
+ .debug_info    0x0000000000006229     0x1d71 avr32/drivers/pm/pm.o
+ .debug_info    0x0000000000007f9a     0x1081 avr32/drivers/spi/spi.o
+ .debug_info    0x000000000000901b     0x117d avr32/drivers/tc/tc.o
+ .debug_info    0x000000000000a198     0x241b avr32/drivers/usart/usart.o
+ .debug_info    0x000000000000c5b3     0x171e avr32/services/fs/fat/fat.o
+ .debug_info    0x000000000000dcd1     0x174b avr32/services/fs/fat/fat_unusual.o
+ .debug_info    0x000000000000f41c     0x161b avr32/services/fs/fat/navigation.o
+ .debug_info    0x0000000000010a37     0x197b avr32/utils/debug/print_funcs.o
+ .debug_info    0x00000000000123b2     0x18b7 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .debug_info    0x0000000000013c69      0x259 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
+ .debug_info    0x0000000000013ec2      0x601 common/services/storage/ctrl_access/ctrl_access.o
+ .debug_info    0x00000000000144c3      0xcc5 ../../aleph/avr32_proto/src/adc.o
+ .debug_info    0x0000000000015188      0x3ee ../../aleph/avr32_proto/src/app_timers.o
+ .debug_info    0x0000000000015576      0xe91 ../../aleph/avr32_proto/src/bfin.o
+ .debug_info    0x0000000000016407      0x223 ../../aleph/avr32_proto/src/events.o
+ .debug_info    0x000000000001662a      0x27b ../../aleph/avr32_proto/src/encoders.o
+ .debug_info    0x00000000000168a5      0x27c ../../aleph/avr32_proto/src/files.o
+ .debug_info    0x0000000000016b21     0x3da7 ../../aleph/avr32_proto/src/init.o
+ .debug_info    0x000000000001a8c8      0xb66 ../../aleph/avr32_proto/src/interrupts.o
+ .debug_info    0x000000000001b42e      0xe44 ../../aleph/avr32_proto_test/src/main.o
+ .debug_info    0x000000000001c272      0x1e7 ../../aleph/avr32_proto/src/memory.o
+ .debug_info    0x000000000001c459     0x22a2 ../../aleph/avr32_proto/src/screen.o
+ .debug_info    0x000000000001e6fb      0x268 ../../aleph/avr32_proto/src/switches.o
+ .debug_info    0x000000000001e963      0x35c ../../aleph/avr32_proto/src/timers.o
+ .debug_info    0x000000000001ecbf      0x14a ../../aleph/common/font.o
+ .debug_info    0x000000000001ee09      0x4f6 ../../aleph/common/fix.o
 
-.debug_abbrev   0x0000000000000000     0x3764
+.debug_abbrev   0x0000000000000000     0x4634
  *(.debug_abbrev)
  .debug_abbrev  0x0000000000000000      0x222 avr32/drivers/ebi/sdramc/sdramc.o
  .debug_abbrev  0x0000000000000222      0x45b avr32/drivers/flashc/flashc.o
@@ -3321,24 +3521,30 @@ Linker script and memory map
  .debug_abbrev  0x0000000000001265      0x27d avr32/drivers/spi/spi.o
  .debug_abbrev  0x00000000000014e2      0x25c avr32/drivers/tc/tc.o
  .debug_abbrev  0x000000000000173e      0x2f4 avr32/drivers/usart/usart.o
- .debug_abbrev  0x0000000000001a32      0x22c avr32/utils/debug/print_funcs.o
- .debug_abbrev  0x0000000000001c5e      0x388 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .debug_abbrev  0x0000000000001fe6      0x1d3 ../../aleph/avr32_proto/src/adc.o
- .debug_abbrev  0x00000000000021b9      0x168 ../../aleph/avr32_proto/src/app_timers.o
- .debug_abbrev  0x0000000000002321      0x216 ../../aleph/avr32_proto/src/bfin.o
- .debug_abbrev  0x0000000000002537      0x138 ../../aleph/avr32_proto/src/events.o
- .debug_abbrev  0x000000000000266f      0x10f ../../aleph/avr32_proto/src/encoders.o
- .debug_abbrev  0x000000000000277e      0x215 ../../aleph/avr32_proto/src/init.o
- .debug_abbrev  0x0000000000002993      0x19e ../../aleph/avr32_proto/src/interrupts.o
- .debug_abbrev  0x0000000000002b31      0x284 ../../aleph/avr32_proto_test/src/main.o
- .debug_abbrev  0x0000000000002db5       0xcb ../../aleph/avr32_proto/src/memory.o
- .debug_abbrev  0x0000000000002e80      0x3ad ../../aleph/avr32_proto/src/screen.o
- .debug_abbrev  0x000000000000322d       0xf8 ../../aleph/avr32_proto/src/switches.o
- .debug_abbrev  0x0000000000003325      0x1f3 ../../aleph/avr32_proto/src/timers.o
- .debug_abbrev  0x0000000000003518       0x97 ../../aleph/common/font.o
- .debug_abbrev  0x00000000000035af      0x1b5 ../../aleph/common/fix.o
+ .debug_abbrev  0x0000000000001a32      0x3b1 avr32/services/fs/fat/fat.o
+ .debug_abbrev  0x0000000000001de3      0x314 avr32/services/fs/fat/fat_unusual.o
+ .debug_abbrev  0x00000000000020f7      0x328 avr32/services/fs/fat/navigation.o
+ .debug_abbrev  0x000000000000241f      0x22c avr32/utils/debug/print_funcs.o
+ .debug_abbrev  0x000000000000264b      0x388 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .debug_abbrev  0x00000000000029d3      0x16c avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
+ .debug_abbrev  0x0000000000002b3f      0x1fb common/services/storage/ctrl_access/ctrl_access.o
+ .debug_abbrev  0x0000000000002d3a      0x1d3 ../../aleph/avr32_proto/src/adc.o
+ .debug_abbrev  0x0000000000002f0d      0x15b ../../aleph/avr32_proto/src/app_timers.o
+ .debug_abbrev  0x0000000000003068      0x216 ../../aleph/avr32_proto/src/bfin.o
+ .debug_abbrev  0x000000000000327e      0x138 ../../aleph/avr32_proto/src/events.o
+ .debug_abbrev  0x00000000000033b6      0x10f ../../aleph/avr32_proto/src/encoders.o
+ .debug_abbrev  0x00000000000034c5      0x153 ../../aleph/avr32_proto/src/files.o
+ .debug_abbrev  0x0000000000003618      0x215 ../../aleph/avr32_proto/src/init.o
+ .debug_abbrev  0x000000000000382d      0x19e ../../aleph/avr32_proto/src/interrupts.o
+ .debug_abbrev  0x00000000000039cb      0x284 ../../aleph/avr32_proto_test/src/main.o
+ .debug_abbrev  0x0000000000003c4f      0x101 ../../aleph/avr32_proto/src/memory.o
+ .debug_abbrev  0x0000000000003d50      0x3ad ../../aleph/avr32_proto/src/screen.o
+ .debug_abbrev  0x00000000000040fd       0xf8 ../../aleph/avr32_proto/src/switches.o
+ .debug_abbrev  0x00000000000041f5      0x1f3 ../../aleph/avr32_proto/src/timers.o
+ .debug_abbrev  0x00000000000043e8       0x97 ../../aleph/common/font.o
+ .debug_abbrev  0x000000000000447f      0x1b5 ../../aleph/common/fix.o
 
-.debug_line     0x0000000000000000    0x1553e
+.debug_line     0x0000000000000000    0x1dfcf
  *(.debug_line)
  .debug_line    0x0000000000000000      0x7ec avr32/drivers/ebi/sdramc/sdramc.o
  .debug_line    0x00000000000007ec     0x43e7 avr32/drivers/flashc/flashc.o
@@ -3349,24 +3555,30 @@ Linker script and memory map
  .debug_line    0x0000000000007562      0x922 avr32/drivers/spi/spi.o
  .debug_line    0x0000000000007e84      0x88d avr32/drivers/tc/tc.o
  .debug_line    0x0000000000008711     0x12f3 avr32/drivers/usart/usart.o
- .debug_line    0x0000000000009a04      0x8d5 avr32/utils/debug/print_funcs.o
- .debug_line    0x000000000000a2d9     0x2663 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .debug_line    0x000000000000c93c      0x89a ../../aleph/avr32_proto/src/adc.o
- .debug_line    0x000000000000d1d6      0x777 ../../aleph/avr32_proto/src/app_timers.o
- .debug_line    0x000000000000d94d      0xf39 ../../aleph/avr32_proto/src/bfin.o
- .debug_line    0x000000000000e886      0x742 ../../aleph/avr32_proto/src/events.o
- .debug_line    0x000000000000efc8      0x697 ../../aleph/avr32_proto/src/encoders.o
- .debug_line    0x000000000000f65f      0xac8 ../../aleph/avr32_proto/src/init.o
- .debug_line    0x0000000000010127      0xa3c ../../aleph/avr32_proto/src/interrupts.o
- .debug_line    0x0000000000010b63      0xe88 ../../aleph/avr32_proto_test/src/main.o
- .debug_line    0x00000000000119eb      0x707 ../../aleph/avr32_proto/src/memory.o
- .debug_line    0x00000000000120f2     0x1ca0 ../../aleph/avr32_proto/src/screen.o
- .debug_line    0x0000000000013d92      0x5fc ../../aleph/avr32_proto/src/switches.o
- .debug_line    0x000000000001438e      0x8bb ../../aleph/avr32_proto/src/timers.o
- .debug_line    0x0000000000014c49      0x503 ../../aleph/common/font.o
- .debug_line    0x000000000001514c      0x3f2 ../../aleph/common/fix.o
+ .debug_line    0x0000000000009a04     0x2aee avr32/services/fs/fat/fat.o
+ .debug_line    0x000000000000c4f2     0x2950 avr32/services/fs/fat/fat_unusual.o
+ .debug_line    0x000000000000ee42     0x1f7f avr32/services/fs/fat/navigation.o
+ .debug_line    0x0000000000010dc1      0x8d5 avr32/utils/debug/print_funcs.o
+ .debug_line    0x0000000000011696     0x2663 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .debug_line    0x0000000000013cf9      0x886 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
+ .debug_line    0x000000000001457f      0x8da common/services/storage/ctrl_access/ctrl_access.o
+ .debug_line    0x0000000000014e59      0x89a ../../aleph/avr32_proto/src/adc.o
+ .debug_line    0x00000000000156f3      0x777 ../../aleph/avr32_proto/src/app_timers.o
+ .debug_line    0x0000000000015e6a      0xf39 ../../aleph/avr32_proto/src/bfin.o
+ .debug_line    0x0000000000016da3      0x742 ../../aleph/avr32_proto/src/events.o
+ .debug_line    0x00000000000174e5      0x697 ../../aleph/avr32_proto/src/encoders.o
+ .debug_line    0x0000000000017b7c      0xa3d ../../aleph/avr32_proto/src/files.o
+ .debug_line    0x00000000000185b9      0xac2 ../../aleph/avr32_proto/src/init.o
+ .debug_line    0x000000000001907b      0xa3c ../../aleph/avr32_proto/src/interrupts.o
+ .debug_line    0x0000000000019ab7      0xf29 ../../aleph/avr32_proto_test/src/main.o
+ .debug_line    0x000000000001a9e0      0x7d7 ../../aleph/avr32_proto/src/memory.o
+ .debug_line    0x000000000001b1b7     0x166c ../../aleph/avr32_proto/src/screen.o
+ .debug_line    0x000000000001c823      0x5fc ../../aleph/avr32_proto/src/switches.o
+ .debug_line    0x000000000001ce1f      0x8bb ../../aleph/avr32_proto/src/timers.o
+ .debug_line    0x000000000001d6da      0x503 ../../aleph/common/font.o
+ .debug_line    0x000000000001dbdd      0x3f2 ../../aleph/common/fix.o
 
-.debug_frame    0x0000000000000000     0x2104
+.debug_frame    0x0000000000000000     0x3594
  *(.debug_frame)
  .debug_frame   0x0000000000000000       0x58 avr32/drivers/ebi/sdramc/sdramc.o
  .debug_frame   0x0000000000000058      0x78c avr32/drivers/flashc/flashc.o
@@ -3377,76 +3589,94 @@ Linker script and memory map
  .debug_frame   0x0000000000000e6c      0x164 avr32/drivers/spi/spi.o
  .debug_frame   0x0000000000000fd0      0x15c avr32/drivers/tc/tc.o
  .debug_frame   0x000000000000112c      0x250 avr32/drivers/usart/usart.o
- .debug_frame   0x000000000000137c      0x194 avr32/utils/debug/print_funcs.o
- .debug_frame   0x0000000000001510      0x3c0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .debug_frame   0x00000000000018d0       0x48 ../../aleph/avr32_proto/src/adc.o
- .debug_frame   0x0000000000001918       0x80 ../../aleph/avr32_proto/src/app_timers.o
- .debug_frame   0x0000000000001998       0xc0 ../../aleph/avr32_proto/src/bfin.o
- .debug_frame   0x0000000000001a58       0x48 ../../aleph/avr32_proto/src/events.o
- .debug_frame   0x0000000000001aa0       0x58 ../../aleph/avr32_proto/src/encoders.o
- .debug_frame   0x0000000000001af8       0xfc ../../aleph/avr32_proto/src/init.o
- .debug_frame   0x0000000000001bf4       0xc0 ../../aleph/avr32_proto/src/interrupts.o
- .debug_frame   0x0000000000001cb4       0x58 ../../aleph/avr32_proto_test/src/main.o
- .debug_frame   0x0000000000001d0c       0x30 ../../aleph/avr32_proto/src/memory.o
- .debug_frame   0x0000000000001d3c      0x2b8 ../../aleph/avr32_proto/src/screen.o
- .debug_frame   0x0000000000001ff4       0x2c ../../aleph/avr32_proto/src/switches.o
- .debug_frame   0x0000000000002020       0x6c ../../aleph/avr32_proto/src/timers.o
- .debug_frame   0x000000000000208c       0x78 ../../aleph/common/fix.o
+ .debug_frame   0x000000000000137c      0x570 avr32/services/fs/fat/fat.o
+ .debug_frame   0x00000000000018ec      0x52c avr32/services/fs/fat/fat_unusual.o
+ .debug_frame   0x0000000000001e18      0x718 avr32/services/fs/fat/navigation.o
+ .debug_frame   0x0000000000002530      0x194 avr32/utils/debug/print_funcs.o
+ .debug_frame   0x00000000000026c4      0x3c0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .debug_frame   0x0000000000002a84       0xcc avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
+ .debug_frame   0x0000000000002b50      0x120 common/services/storage/ctrl_access/ctrl_access.o
+ .debug_frame   0x0000000000002c70       0x48 ../../aleph/avr32_proto/src/adc.o
+ .debug_frame   0x0000000000002cb8       0x80 ../../aleph/avr32_proto/src/app_timers.o
+ .debug_frame   0x0000000000002d38       0xc0 ../../aleph/avr32_proto/src/bfin.o
+ .debug_frame   0x0000000000002df8       0x48 ../../aleph/avr32_proto/src/events.o
+ .debug_frame   0x0000000000002e40       0x58 ../../aleph/avr32_proto/src/encoders.o
+ .debug_frame   0x0000000000002e98       0xf0 ../../aleph/avr32_proto/src/files.o
+ .debug_frame   0x0000000000002f88       0xfc ../../aleph/avr32_proto/src/init.o
+ .debug_frame   0x0000000000003084       0xc0 ../../aleph/avr32_proto/src/interrupts.o
+ .debug_frame   0x0000000000003144       0x78 ../../aleph/avr32_proto_test/src/main.o
+ .debug_frame   0x00000000000031bc       0x5c ../../aleph/avr32_proto/src/memory.o
+ .debug_frame   0x0000000000003218      0x26c ../../aleph/avr32_proto/src/screen.o
+ .debug_frame   0x0000000000003484       0x2c ../../aleph/avr32_proto/src/switches.o
+ .debug_frame   0x00000000000034b0       0x6c ../../aleph/avr32_proto/src/timers.o
+ .debug_frame   0x000000000000351c       0x78 ../../aleph/common/fix.o
 
-.debug_str      0x0000000000000000     0x41af
+.debug_str      0x0000000000000000     0x5c84
  *(.debug_str)
  .debug_str     0x0000000000000000      0x462 avr32/drivers/ebi/sdramc/sdramc.o
                                         0x4ad (size before relaxing)
- .debug_str     0x0000000000000462      0xaa5 avr32/drivers/flashc/flashc.o
+ .debug_str     0x0000000000000462      0xaa0 avr32/drivers/flashc/flashc.o
                                         0xc2a (size before relaxing)
- .debug_str     0x0000000000000f07      0x411 avr32/drivers/gpio/gpio.o
+ .debug_str     0x0000000000000f02      0x411 avr32/drivers/gpio/gpio.o
                                         0x518 (size before relaxing)
- .debug_str     0x0000000000001318      0x386 avr32/drivers/intc/intc.o
+ .debug_str     0x0000000000001313      0x386 avr32/drivers/intc/intc.o
                                         0x46c (size before relaxing)
- .debug_str     0x000000000000169e      0x370 avr32/drivers/pdca/pdca.o
+ .debug_str     0x0000000000001699      0x370 avr32/drivers/pdca/pdca.o
                                         0x46f (size before relaxing)
- .debug_str     0x0000000000001a0e      0x781 avr32/drivers/pm/pm.o
+ .debug_str     0x0000000000001a09      0x781 avr32/drivers/pm/pm.o
                                         0x984 (size before relaxing)
- .debug_str     0x000000000000218f      0x3e3 avr32/drivers/spi/spi.o
+ .debug_str     0x000000000000218a      0x3e3 avr32/drivers/spi/spi.o
                                         0x551 (size before relaxing)
- .debug_str     0x0000000000002572      0x354 avr32/drivers/tc/tc.o
+ .debug_str     0x000000000000256d      0x354 avr32/drivers/tc/tc.o
                                         0x4b9 (size before relaxing)
- .debug_str     0x00000000000028c6      0x759 avr32/drivers/usart/usart.o
+ .debug_str     0x00000000000028c1      0x754 avr32/drivers/usart/usart.o
                                         0x8eb (size before relaxing)
- .debug_str     0x000000000000301f      0x129 avr32/utils/debug/print_funcs.o
+ .debug_str     0x0000000000003015      0x951 avr32/services/fs/fat/fat.o
+                                        0xaa4 (size before relaxing)
+ .debug_str     0x0000000000003966      0x6ab avr32/services/fs/fat/fat_unusual.o
+                                        0xad0 (size before relaxing)
+ .debug_str     0x0000000000004011      0x7a4 avr32/services/fs/fat/navigation.o
+                                        0xbaf (size before relaxing)
+ .debug_str     0x00000000000047b5      0x129 avr32/utils/debug/print_funcs.o
                                         0x621 (size before relaxing)
- .debug_str     0x0000000000003148      0x41e avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .debug_str     0x00000000000048de      0x40e avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
                                         0x7c7 (size before relaxing)
- .debug_str     0x0000000000003566      0x1af ../../aleph/avr32_proto/src/adc.o
+ .debug_str     0x0000000000004cec      0x11f avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
+                                        0x275 (size before relaxing)
+ .debug_str     0x0000000000004e0b      0x137 common/services/storage/ctrl_access/ctrl_access.o
+                                        0x2cb (size before relaxing)
+ .debug_str     0x0000000000004f42      0x1af ../../aleph/avr32_proto/src/adc.o
                                         0x45c (size before relaxing)
- .debug_str     0x0000000000003715      0x13d ../../aleph/avr32_proto/src/app_timers.o
-                                        0x39d (size before relaxing)
- .debug_str     0x0000000000003852      0x1ac ../../aleph/avr32_proto/src/bfin.o
+ .debug_str     0x00000000000050f1      0x12e ../../aleph/avr32_proto/src/app_timers.o
+                                        0x38e (size before relaxing)
+ .debug_str     0x000000000000521f      0x1a6 ../../aleph/avr32_proto/src/bfin.o
                                         0x480 (size before relaxing)
- .debug_str     0x00000000000039fe       0xa0 ../../aleph/avr32_proto/src/events.o
+ .debug_str     0x00000000000053c5       0xa0 ../../aleph/avr32_proto/src/events.o
                                         0x1b4 (size before relaxing)
- .debug_str     0x0000000000003a9e       0x49 ../../aleph/avr32_proto/src/encoders.o
+ .debug_str     0x0000000000005465       0x49 ../../aleph/avr32_proto/src/encoders.o
                                         0x277 (size before relaxing)
- .debug_str     0x0000000000003ae7      0x16d ../../aleph/avr32_proto/src/init.o
+ .debug_str     0x00000000000054ae       0xde ../../aleph/avr32_proto/src/files.o
+                                        0x1bf (size before relaxing)
+ .debug_str     0x000000000000558c      0x16d ../../aleph/avr32_proto/src/init.o
                                         0xf17 (size before relaxing)
- .debug_str     0x0000000000003c54       0xbf ../../aleph/avr32_proto/src/interrupts.o
+ .debug_str     0x00000000000056f9       0xbf ../../aleph/avr32_proto/src/interrupts.o
                                         0x3cc (size before relaxing)
- .debug_str     0x0000000000003d13      0x160 ../../aleph/avr32_proto_test/src/main.o
-                                        0x653 (size before relaxing)
- .debug_str     0x0000000000003e73       0x6c ../../aleph/avr32_proto/src/memory.o
-                                        0x13b (size before relaxing)
- .debug_str     0x0000000000003edf      0x17a ../../aleph/avr32_proto/src/screen.o
+ .debug_str     0x00000000000057b8      0x17a ../../aleph/avr32_proto_test/src/main.o
+                                        0x66d (size before relaxing)
+ .debug_str     0x0000000000005932       0x8d ../../aleph/avr32_proto/src/memory.o
+                                        0x163 (size before relaxing)
+ .debug_str     0x00000000000059bf      0x16f ../../aleph/avr32_proto/src/screen.o
                                         0x6f1 (size before relaxing)
- .debug_str     0x0000000000004059       0x5a ../../aleph/avr32_proto/src/switches.o
+ .debug_str     0x0000000000005b2e       0x5a ../../aleph/avr32_proto/src/switches.o
                                         0x296 (size before relaxing)
- .debug_str     0x00000000000040b3       0x83 ../../aleph/avr32_proto/src/timers.o
+ .debug_str     0x0000000000005b88       0x83 ../../aleph/avr32_proto/src/timers.o
                                         0x1f0 (size before relaxing)
- .debug_str     0x0000000000004136       0x1a ../../aleph/common/font.o
+ .debug_str     0x0000000000005c0b       0x1a ../../aleph/common/font.o
                                         0x12a (size before relaxing)
- .debug_str     0x0000000000004150       0x5f ../../aleph/common/fix.o
+ .debug_str     0x0000000000005c25       0x5f ../../aleph/common/fix.o
                                         0x1b2 (size before relaxing)
 
-.debug_loc      0x0000000000000000     0x668f
+.debug_loc      0x0000000000000000     0xb0ae
  *(.debug_loc)
  .debug_loc     0x0000000000000000       0x89 avr32/drivers/ebi/sdramc/sdramc.o
  .debug_loc     0x0000000000000089     0x1e5b avr32/drivers/flashc/flashc.o
@@ -3457,23 +3687,29 @@ Linker script and memory map
  .debug_loc     0x0000000000002b8c      0x377 avr32/drivers/spi/spi.o
  .debug_loc     0x0000000000002f03      0x472 avr32/drivers/tc/tc.o
  .debug_loc     0x0000000000003375      0xa53 avr32/drivers/usart/usart.o
- .debug_loc     0x0000000000003dc8      0x46e avr32/utils/debug/print_funcs.o
- .debug_loc     0x0000000000004236      0x93a avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .debug_loc     0x0000000000004b70       0x82 ../../aleph/avr32_proto/src/adc.o
- .debug_loc     0x0000000000004bf2       0xde ../../aleph/avr32_proto/src/app_timers.o
- .debug_loc     0x0000000000004cd0      0x1cc ../../aleph/avr32_proto/src/bfin.o
- .debug_loc     0x0000000000004e9c       0xaa ../../aleph/avr32_proto/src/events.o
- .debug_loc     0x0000000000004f46       0x6f ../../aleph/avr32_proto/src/encoders.o
- .debug_loc     0x0000000000004fb5      0x16b ../../aleph/avr32_proto/src/init.o
- .debug_loc     0x0000000000005120      0x11b ../../aleph/avr32_proto/src/interrupts.o
- .debug_loc     0x000000000000523b      0x1b9 ../../aleph/avr32_proto_test/src/main.o
- .debug_loc     0x00000000000053f4       0x6d ../../aleph/avr32_proto/src/memory.o
- .debug_loc     0x0000000000005461      0xc09 ../../aleph/avr32_proto/src/screen.o
- .debug_loc     0x000000000000606a       0x3d ../../aleph/avr32_proto/src/switches.o
- .debug_loc     0x00000000000060a7      0x220 ../../aleph/avr32_proto/src/timers.o
- .debug_loc     0x00000000000062c7      0x3c8 ../../aleph/common/fix.o
+ .debug_loc     0x0000000000003dc8     0x135e avr32/services/fs/fat/fat.o
+ .debug_loc     0x0000000000005126     0x1e5f avr32/services/fs/fat/fat_unusual.o
+ .debug_loc     0x0000000000006f85     0x131b avr32/services/fs/fat/navigation.o
+ .debug_loc     0x00000000000082a0      0x46e avr32/utils/debug/print_funcs.o
+ .debug_loc     0x000000000000870e      0x93a avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .debug_loc     0x0000000000009048      0x131 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
+ .debug_loc     0x0000000000009179      0x41a common/services/storage/ctrl_access/ctrl_access.o
+ .debug_loc     0x0000000000009593       0x82 ../../aleph/avr32_proto/src/adc.o
+ .debug_loc     0x0000000000009615       0xde ../../aleph/avr32_proto/src/app_timers.o
+ .debug_loc     0x00000000000096f3      0x1cc ../../aleph/avr32_proto/src/bfin.o
+ .debug_loc     0x00000000000098bf       0xaa ../../aleph/avr32_proto/src/events.o
+ .debug_loc     0x0000000000009969       0x6f ../../aleph/avr32_proto/src/encoders.o
+ .debug_loc     0x00000000000099d8      0x1cc ../../aleph/avr32_proto/src/files.o
+ .debug_loc     0x0000000000009ba4      0x16b ../../aleph/avr32_proto/src/init.o
+ .debug_loc     0x0000000000009d0f      0x11b ../../aleph/avr32_proto/src/interrupts.o
+ .debug_loc     0x0000000000009e2a      0x185 ../../aleph/avr32_proto_test/src/main.o
+ .debug_loc     0x0000000000009faf      0x151 ../../aleph/avr32_proto/src/memory.o
+ .debug_loc     0x000000000000a100      0x989 ../../aleph/avr32_proto/src/screen.o
+ .debug_loc     0x000000000000aa89       0x3d ../../aleph/avr32_proto/src/switches.o
+ .debug_loc     0x000000000000aac6      0x220 ../../aleph/avr32_proto/src/timers.o
+ .debug_loc     0x000000000000ace6      0x3c8 ../../aleph/common/fix.o
 
-.debug_macinfo  0x0000000000000000  0x15d4e4d
+.debug_macinfo  0x0000000000000000  0x1b55fd7
  *(.debug_macinfo)
  .debug_macinfo
                 0x0000000000000000    0xe8ec9 avr32/drivers/ebi/sdramc/sdramc.o
@@ -3494,37 +3730,49 @@ Linker script and memory map
  .debug_macinfo
                 0x000000000073954f    0xe7048 avr32/drivers/usart/usart.o
  .debug_macinfo
-                0x0000000000820597    0xe9f01 avr32/utils/debug/print_funcs.o
+                0x0000000000820597    0xeadff avr32/services/fs/fat/fat.o
  .debug_macinfo
-                0x000000000090a498    0xe9cc1 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                0x000000000090b396    0xeae00 avr32/services/fs/fat/fat_unusual.o
  .debug_macinfo
-                0x00000000009f4159    0xe9bb6 ../../aleph/avr32_proto/src/adc.o
+                0x00000000009f6196    0xeb11e avr32/services/fs/fat/navigation.o
  .debug_macinfo
-                0x0000000000addd0f    0xea7a5 ../../aleph/avr32_proto/src/app_timers.o
+                0x0000000000ae12b4    0xe9f89 avr32/utils/debug/print_funcs.o
  .debug_macinfo
-                0x0000000000bc84b4    0xea02d ../../aleph/avr32_proto/src/bfin.o
+                0x0000000000bcb23d    0xe9cc1 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
  .debug_macinfo
-                0x0000000000cb24e1    0xe9903 ../../aleph/avr32_proto/src/events.o
+                0x0000000000cb4efe    0xe9ae2 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
  .debug_macinfo
-                0x0000000000d9bde4    0xe7a6b ../../aleph/avr32_proto/src/encoders.o
+                0x0000000000d9e9e0    0xeae11 common/services/storage/ctrl_access/ctrl_access.o
  .debug_macinfo
-                0x0000000000e8384f    0xeca7e ../../aleph/avr32_proto/src/init.o
+                0x0000000000e897f1    0xe9c3e ../../aleph/avr32_proto/src/adc.o
  .debug_macinfo
-                0x0000000000f702cd    0xeb61b ../../aleph/avr32_proto/src/interrupts.o
+                0x0000000000f7342f    0xea82d ../../aleph/avr32_proto/src/app_timers.o
  .debug_macinfo
-                0x000000000105b8e8    0xedb1c ../../aleph/avr32_proto_test/src/main.o
+                0x000000000105dc5c    0xea0b5 ../../aleph/avr32_proto/src/bfin.o
  .debug_macinfo
-                0x0000000001149404    0xe9a62 ../../aleph/avr32_proto/src/memory.o
+                0x0000000001147d11    0xe998b ../../aleph/avr32_proto/src/events.o
  .debug_macinfo
-                0x0000000001232e66    0xeb811 ../../aleph/avr32_proto/src/screen.o
+                0x000000000123169c    0xe7af3 ../../aleph/avr32_proto/src/encoders.o
  .debug_macinfo
-                0x000000000131e677    0xe7a93 ../../aleph/avr32_proto/src/switches.o
+                0x000000000131918f    0xeb4fa ../../aleph/avr32_proto/src/files.o
  .debug_macinfo
-                0x000000000140610a    0xe6c59 ../../aleph/avr32_proto/src/timers.o
+                0x0000000001404689    0xecb06 ../../aleph/avr32_proto/src/init.o
  .debug_macinfo
-                0x00000000014ecd63    0xe6c7a ../../aleph/common/font.o
+                0x00000000014f118f    0xeb6a3 ../../aleph/avr32_proto/src/interrupts.o
  .debug_macinfo
-                0x00000000015d39dd     0x1470 ../../aleph/common/fix.o
+                0x00000000015dc832    0xedbb4 ../../aleph/avr32_proto_test/src/main.o
+ .debug_macinfo
+                0x00000000016ca3e6    0xe9aea ../../aleph/avr32_proto/src/memory.o
+ .debug_macinfo
+                0x00000000017b3ed0    0xeb8a9 ../../aleph/avr32_proto/src/screen.o
+ .debug_macinfo
+                0x000000000189f779    0xe7b1b ../../aleph/avr32_proto/src/switches.o
+ .debug_macinfo
+                0x0000000001987294    0xe6c59 ../../aleph/avr32_proto/src/timers.o
+ .debug_macinfo
+                0x0000000001a6deed    0xe6c7a ../../aleph/common/font.o
+ .debug_macinfo
+                0x0000000001b54b67     0x1470 ../../aleph/common/fix.o
 
 .debug_weaknames
  *(.debug_weaknames)
@@ -3606,7 +3854,7 @@ LOAD /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a
 LOAD /home/emb/avr/bin/../lib/gcc/avr32/4.4.3/ucr2/libgcc.a
 OUTPUT(aleph.elf elf32-avr32)
 
-.debug_ranges   0x0000000000000000     0x5968
+.debug_ranges   0x0000000000000000     0x6ce0
  .debug_ranges  0x0000000000000000       0x28 avr32/drivers/ebi/sdramc/sdramc.o
  .debug_ranges  0x0000000000000028     0x2d00 avr32/drivers/flashc/flashc.o
  .debug_ranges  0x0000000000002d28      0x1d8 avr32/drivers/gpio/gpio.o
@@ -3616,21 +3864,27 @@ OUTPUT(aleph.elf elf32-avr32)
  .debug_ranges  0x00000000000035c8       0xa0 avr32/drivers/spi/spi.o
  .debug_ranges  0x0000000000003668       0xa0 avr32/drivers/tc/tc.o
  .debug_ranges  0x0000000000003708      0x5c0 avr32/drivers/usart/usart.o
- .debug_ranges  0x0000000000003cc8       0xb0 avr32/utils/debug/print_funcs.o
- .debug_ranges  0x0000000000003d78      0x9d0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
- .debug_ranges  0x0000000000004748       0x20 ../../aleph/avr32_proto/src/adc.o
- .debug_ranges  0x0000000000004768       0x30 ../../aleph/avr32_proto/src/app_timers.o
- .debug_ranges  0x0000000000004798       0x38 ../../aleph/avr32_proto/src/bfin.o
- .debug_ranges  0x00000000000047d0       0x28 ../../aleph/avr32_proto/src/events.o
- .debug_ranges  0x00000000000047f8       0x20 ../../aleph/avr32_proto/src/encoders.o
- .debug_ranges  0x0000000000004818       0x50 ../../aleph/avr32_proto/src/init.o
- .debug_ranges  0x0000000000004868       0x48 ../../aleph/avr32_proto/src/interrupts.o
- .debug_ranges  0x00000000000048b0       0x20 ../../aleph/avr32_proto_test/src/main.o
- .debug_ranges  0x00000000000048d0       0x20 ../../aleph/avr32_proto/src/memory.o
- .debug_ranges  0x00000000000048f0      0xf38 ../../aleph/avr32_proto/src/screen.o
- .debug_ranges  0x0000000000005828       0x18 ../../aleph/avr32_proto/src/switches.o
- .debug_ranges  0x0000000000005840       0xa0 ../../aleph/avr32_proto/src/timers.o
- .debug_ranges  0x00000000000058e0       0x88 ../../aleph/common/fix.o
+ .debug_ranges  0x0000000000003cc8      0xc58 avr32/services/fs/fat/fat.o
+ .debug_ranges  0x0000000000004920      0x590 avr32/services/fs/fat/fat_unusual.o
+ .debug_ranges  0x0000000000004eb0      0x5e0 avr32/services/fs/fat/navigation.o
+ .debug_ranges  0x0000000000005490       0xb0 avr32/utils/debug/print_funcs.o
+ .debug_ranges  0x0000000000005540      0x9d0 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+ .debug_ranges  0x0000000000005f10       0x48 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
+ .debug_ranges  0x0000000000005f58       0xf8 common/services/storage/ctrl_access/ctrl_access.o
+ .debug_ranges  0x0000000000006050       0x20 ../../aleph/avr32_proto/src/adc.o
+ .debug_ranges  0x0000000000006070       0x30 ../../aleph/avr32_proto/src/app_timers.o
+ .debug_ranges  0x00000000000060a0       0x38 ../../aleph/avr32_proto/src/bfin.o
+ .debug_ranges  0x00000000000060d8       0x28 ../../aleph/avr32_proto/src/events.o
+ .debug_ranges  0x0000000000006100       0x20 ../../aleph/avr32_proto/src/encoders.o
+ .debug_ranges  0x0000000000006120       0x58 ../../aleph/avr32_proto/src/files.o
+ .debug_ranges  0x0000000000006178       0x50 ../../aleph/avr32_proto/src/init.o
+ .debug_ranges  0x00000000000061c8       0x48 ../../aleph/avr32_proto/src/interrupts.o
+ .debug_ranges  0x0000000000006210       0x28 ../../aleph/avr32_proto_test/src/main.o
+ .debug_ranges  0x0000000000006238       0x28 ../../aleph/avr32_proto/src/memory.o
+ .debug_ranges  0x0000000000006260      0x940 ../../aleph/avr32_proto/src/screen.o
+ .debug_ranges  0x0000000000006ba0       0x18 ../../aleph/avr32_proto/src/switches.o
+ .debug_ranges  0x0000000000006bb8       0xa0 ../../aleph/avr32_proto/src/timers.o
+ .debug_ranges  0x0000000000006c58       0x88 ../../aleph/common/fix.o
 
 Cross Reference Table
 
@@ -4204,6 +4458,7 @@ files_get_dsp_count                               ../../aleph/avr32_proto/src/fi
                                                   ../../aleph/bees/redraw.o
 files_get_dsp_filename                            ../../aleph/avr32_proto/src/files.o
 files_list                                        ../../aleph/avr32_proto/src/files.o
+                                                  ../../aleph/avr32_proto_test/src/main.o
 files_load_dsp                                    ../../aleph/avr32_proto/src/files.o
 files_load_dsp_name                               ../../aleph/avr32_proto/src/files.o
 files_scan_dsp                                    ../../aleph/avr32_proto/src/files.o
@@ -4368,6 +4623,7 @@ gpio_clear_pin_interrupt_flag                     avr32/drivers/gpio/gpio.o
 gpio_clr_gpio_open_drain_pin                      avr32/drivers/gpio/gpio.o
 gpio_clr_gpio_pin                                 avr32/drivers/gpio/gpio.o
                                                   ../../aleph/avr32_proto/src/screen.o
+                                                  ../../aleph/avr32_proto_test/src/main.o
                                                   ../../aleph/avr32_proto/src/bfin.o
 gpio_configure_group                              avr32/drivers/gpio/gpio.o
 gpio_configure_pin                                avr32/drivers/gpio/gpio.o
@@ -4382,7 +4638,6 @@ gpio_enable_module                                avr32/drivers/gpio/gpio.o
                                                   avr32/drivers/ebi/sdramc/sdramc.o
 gpio_enable_module_pin                            avr32/drivers/gpio/gpio.o
 gpio_enable_pin_glitch_filter                     avr32/drivers/gpio/gpio.o
-                                                  ../../aleph/avr32_proto/src/init.o
 gpio_enable_pin_interrupt                         avr32/drivers/gpio/gpio.o
                                                   ../../aleph/avr32_proto/src/interrupts.o
 gpio_enable_pin_pull_up                           avr32/drivers/gpio/gpio.o
@@ -4398,6 +4653,7 @@ gpio_get_pin_value                                avr32/drivers/gpio/gpio.o
 gpio_set_gpio_open_drain_pin                      avr32/drivers/gpio/gpio.o
 gpio_set_gpio_pin                                 avr32/drivers/gpio/gpio.o
                                                   ../../aleph/avr32_proto/src/screen.o
+                                                  ../../aleph/avr32_proto_test/src/main.o
                                                   ../../aleph/avr32_proto/src/bfin.o
 gpio_set_group_high                               avr32/drivers/gpio/gpio.o
 gpio_set_group_low                                avr32/drivers/gpio/gpio.o
@@ -4410,6 +4666,7 @@ gpio_toggle_pin                                   avr32/drivers/gpio/gpio.o
 hwait                                             ../../aleph/avr32_proto/src/bfin.o
                                                   ../../aleph/avr32_proto/src/interrupts.o
 init_adc                                          ../../aleph/avr32_proto/src/adc.o
+                                                  ../../aleph/avr32_proto_test/src/main.o
 init_app_timers                                   ../../aleph/avr32_proto/src/app_timers.o
                                                   ../../aleph/avr32_proto_test/src/main.o
 init_bfin_resources                               ../../aleph/avr32_proto/src/init.o
@@ -4425,9 +4682,11 @@ init_encoders                                     ../../aleph/avr32_proto/src/en
 init_events                                       ../../aleph/avr32_proto/src/events.o
                                                   ../../aleph/avr32_proto_test/src/main.o
 init_files                                        ../../aleph/avr32_proto/src/files.o
+                                                  ../../aleph/avr32_proto_test/src/main.o
 init_gpio                                         ../../aleph/avr32_proto/src/init.o
                                                   ../../aleph/avr32_proto_test/src/main.o
 init_local_pdca                                   ../../aleph/avr32_proto/src/init.o
+                                                  ../../aleph/avr32_proto_test/src/main.o
 init_mem                                          ../../aleph/avr32_proto/src/memory.o
                                                   ../../aleph/avr32_proto_test/src/main.o
 init_oled                                         ../../aleph/avr32_proto/src/screen.o
@@ -4435,6 +4694,7 @@ init_oled                                         ../../aleph/avr32_proto/src/sc
 init_oled_usart                                   ../../aleph/avr32_proto/src/init.o
                                                   ../../aleph/avr32_proto_test/src/main.o
 init_sd_mmc_resources                             ../../aleph/avr32_proto/src/init.o
+                                                  ../../aleph/avr32_proto_test/src/main.o
 init_tc                                           ../../aleph/avr32_proto/src/init.o
                                                   ../../aleph/avr32_proto_test/src/main.o
 init_timers                                       ../../aleph/avr32_proto/src/timers.o
@@ -4819,15 +5079,19 @@ print                                             avr32/utils/debug/print_funcs.
 print_char                                        avr32/utils/debug/print_funcs.o
 print_char_hex                                    avr32/utils/debug/print_funcs.o
 print_dbg                                         avr32/utils/debug/print_funcs.o
+                                                  ../../aleph/avr32_proto/src/memory.o
                                                   ../../aleph/avr32_proto_test/src/main.o
                                                   ../../aleph/avr32_proto/src/files.o
                                                   ../../aleph/avr32_proto/src/bfin.o
 print_dbg_char                                    avr32/utils/debug/print_funcs.o
+                                                  ../../aleph/avr32_proto/src/memory.o
                                                   ../../aleph/avr32_proto/src/files.o
 print_dbg_char_hex                                avr32/utils/debug/print_funcs.o
 print_dbg_hex                                     avr32/utils/debug/print_funcs.o
 print_dbg_short_hex                               avr32/utils/debug/print_funcs.o
 print_dbg_ulong                                   avr32/utils/debug/print_funcs.o
+                                                  ../../aleph/avr32_proto/src/memory.o
+                                                  ../../aleph/avr32_proto_test/src/main.o
                                                   ../../aleph/avr32_proto/src/files.o
                                                   ../../aleph/avr32_proto/src/bfin.o
 print_fix16                                       ../../aleph/common/fix.o
@@ -4930,6 +5194,7 @@ sd_mmc_spi_lock_operation                         avr32/components/memory/sd_mmc
 sd_mmc_spi_mem_2_ram                              avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
                                                   common/services/storage/ctrl_access/ctrl_access.o
 sd_mmc_spi_mem_check                              avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                                                  ../../aleph/avr32_proto_test/src/main.o
                                                   avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
 sd_mmc_spi_mem_init                               avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
 sd_mmc_spi_presence_status                        avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
@@ -4967,6 +5232,8 @@ sd_mmc_spi_write_sector_from_ram                  avr32/components/memory/sd_mmc
                                                   avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
 sdram_enter_self_refresh                          avr32/drivers/ebi/sdramc/sdramc.o
 sdram_exit_self_refresh                           avr32/drivers/ebi/sdramc/sdramc.o
+sdram_test                                        ../../aleph/avr32_proto/src/memory.o
+                                                  ../../aleph/avr32_proto_test/src/main.o
 sdramc_init                                       avr32/drivers/ebi/sdramc/sdramc.o
                                                   ../../aleph/avr32_proto_test/src/main.o
 setPage                                           ../../aleph/bees/menu.o

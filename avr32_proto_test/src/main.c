@@ -51,8 +51,6 @@
 #include "memory.h"
 #include "timers.h"
 
-// DEBUG: skip sdcard setuo
-// #define SKIPSD 1
 
 //=========================================
 //==== static variables
@@ -76,6 +74,13 @@ static void scroll_event(const char* str);
 static char eventScroll[CHAR_ROWS][CHAR_COLS];
 static u64 eventScrollTimes[CHAR_ROWS];
 static u8 scrollIdx = 0;
+// display ADC
+static void displayAdcVal(u8 idx, u16 val);
+
+/////// TEST
+static u8 ramTestFlag = 0;
+//static char adcDisplayBuf[CHAR_COLS] = "ADC: ";
+///////
 
 // number of parameters
 volatile u32 numParams = 0;
@@ -95,27 +100,21 @@ static void check_events(void) {
 
     switch(e.eventType) {
     case kEventSwitchDown0:
-      //      screen_line(0, 0, "sw 0 down", 0xf);
       scroll_event(" sw f0 down");
       break;
     case kEventSwitchUp0:
-      //      screen_line(0, 0, "sw 0 up", 0xf);
       scroll_event(" sw f0 up");
       break;
     case kEventSwitchDown1:
-      //      screen_line(0, FONT_CHARH, "sw 1 down", 0xf);
       scroll_event(" sw f1 down");
       break;
     case kEventSwitchUp1:
-      //       screen_line(0, FONT_CHARH, "sw 1 up", 0xf);
       scroll_event(" sw f1 up");
       break;
     case kEventSwitchDown2:
-      //       screen_line(0, FONT_CHARH * 2, "sw 2 down", 0xf);
       scroll_event(" sw f2 down");
       break;
     case kEventSwitchUp2:
-      //       screen_line(0, FONT_CHARH * 2, "sw 2 up", 0xf);
       scroll_event(" sw f2 up");
       break;
     case kEventSwitchDown3:
@@ -125,12 +124,38 @@ static void check_events(void) {
       scroll_event(" sw f3 up");
       break;
     case kEventSwitchDown4:
-      //      screen_line(0, FONT_CHARH * 4, "edit switch down", 0xf);
       scroll_event(" sw edit down");
+      ///// TEST SDCARD:
+      files_list();
+      //// TEST SDRAM:
+      if(ramTestFlag == 0) {
+	ramTestFlag = 1;
+	sdram_test();
+      } 
       break;
     case kEventSwitchUp4:
-      //      screen_line(0, FONT_CHARH * 4, "edit switch up", 0xf);
       scroll_event(" sw edit up");
+      break;
+
+    case kEventAdc0:
+      print_dbg("\r\nadc val 0: ");
+      print_dbg_ulong(e.eventData);
+      displayAdcVal(0, e.eventData);
+      break;
+    case kEventAdc1:
+      print_dbg("\r\nadc val 1: ");
+      print_dbg_ulong(e.eventData);
+      displayAdcVal(1, e.eventData);
+      break;
+    case kEventAdc2:
+      print_dbg("\r\nadc val 2: ");
+      print_dbg_ulong(e.eventData);
+      displayAdcVal(2, e.eventData);
+      break;
+    case kEventAdc3:
+      print_dbg("\r\nadc val 3: ");
+      print_dbg_ulong(e.eventData);
+      displayAdcVal(3, e.eventData);
       break;
 
     case kEventRefresh:
@@ -140,11 +165,6 @@ static void check_events(void) {
       }
       break;
     }
-
-    ///// TEST
-    //	screen_refresh();
-	///////
-
   } // if event
 }
 
@@ -173,10 +193,10 @@ int main (void) {
   init_oled_usart();
 
   // initialize SD/MMC driver resources: GPIO, SPI and SD/MMC.
-  //  init_sd_mmc_resources();
+  init_sd_mmc_resources();
 
   // initialize PDCA controller
-  //  init_local_pdca();
+  init_local_pdca();
 
   // initialize blackfin resources
   init_bfin_resources();
@@ -212,8 +232,38 @@ int main (void) {
   screen_test_fill();
 
   print_dbg("\r\nALEPH\r\n ");
+
+  ////////////////////
+ // Wait for a card to be inserted
+  //  print_dbg("\r\nwaiting for SD card... ");
+
+  screen_line(0, 0, "waiting for SD card...", 2); refresh=1;
+  while (!sd_mmc_spi_mem_check()) {
+    waitForCard++;
+  }
+  screen_line(0, 0, "card detected.", 2); refresh=1;
+
+  // set up file navigation using available drives
+  init_files();
+
+  // list files to USART
+  files_list();
+  ////////////////////////
+
+
   // send ADC config
-  //  init_adc();
+  init_adc();
+  /////// TEST:
+  screen_line(0, CHAR_ROWS_1 * FONT_CHARH, "ADC: ", 0x1);
+  // first 2 adc channels with pullup (switch mode),
+  gpio_set_gpio_pin(AUX_PULLUP0_PIN);
+  gpio_set_gpio_pin(AUX_PULLUP1_PIN);
+  // second 2 wihtout pullup (cv/expr mode)
+  gpio_clr_gpio_pin(AUX_PULLUP2_PIN);
+  gpio_clr_gpio_pin(AUX_PULLUP3_PIN);
+  ////////
+
+  // start application timers
   init_app_timers();
 
   print_dbg("starting event loop.\n\r");
@@ -279,13 +329,18 @@ static void scroll_event(const char* str) {
   strcpy(eventScroll[scrollIdx], str);
   eventScrollTimes[scrollIdx] = tcTicks;
   // display
-  for(i=0; i<CHAR_ROWS; i++) {
+  for(i=0; i<CHAR_ROWS_1; i++) {
     n = scrollIdx - i;
     if(n < 0) { n += CHAR_ROWS; }
     x = screen_int(0, FONT_CHARH * i, (s16)eventScrollTimes[n], 0xf);
     screen_line(x, FONT_CHARH * i, eventScroll[n], 0xf);
-    screen_hl_line(x, FONT_CHARH * i, n << 1);
+    screen_hl_line(x, FONT_CHARH * i, n % 2);
   }
   // advance index
   scrollIdx = (scrollIdx + 1) % CHAR_ROWS;
+}
+
+void displayAdcVal(u8 idx, u16 val) {
+  screen_int(FONT_CHARW * (5 * idx + 3), CHAR_ROWS_1 * FONT_CHARH, val, 1);
+  screen_hl_line(0, CHAR_ROWS_1 * FONT_CHARH, 0xf);
 }

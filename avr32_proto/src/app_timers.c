@@ -25,7 +25,7 @@ static swTimer_t encTimer;
 static swTimer_t adcTimer;
 //// TEST
 // toggle a LED
-static swTimer_t heartbeatTimer;
+//static swTimer_t heartbeatTimer;
 
 //--- static misc
 static u8 i;
@@ -80,7 +80,7 @@ static void adc_timer_callback(int tag) {
 }
 
 // test heartbeat callback
-
+/*
 static void heartbeat_callback(int tag) {
   gpio_tgl_gpio_pin(LED_EDIT_PIN);
     //    gpio_tgl_gpio_pin(AVR32_PIN_PB00);
@@ -101,6 +101,7 @@ static void heartbeat_callback(int tag) {
     //    gpio_tgl_gpio_pin(AVR32_PIN_PA23);
     //    gpio_tgl_gpio_pin(AVR32_PIN_PA24);
 }
+*/
 
 //====== external
 void init_app_timers(void) {

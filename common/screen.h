@@ -15,19 +15,20 @@
 //-----------------------------
 //---- defines
 // number of columns
-#define NCOLS 128
-#define NCOLS_2 64
+#define NCOLS       128
+#define NCOLS_2     64
 // number of rows
-#define NROWS 64
-#define NROWS_2 32
+#define NROWS       64
+#define NROWS_2     32
 // pixels in graphics ram 
-#define GRAM_PIX 8192 // ncols * nrows
+#define GRAM_PIX    8192 // ncols * nrows
 // bytes in graphics RAM
-#define GRAM_BYTES 4096 // 2 pixels per byte
+#define GRAM_BYTES  4096 // 2 pixels per byte
 // how many lines of text
-#define CHAR_ROWS 8  // NROWS / FONT_CHARH
-// arbitrary maximum for protportionally spaced line drawing
-#define CHAR_COLS 42
+#define CHAR_ROWS   8  // NROWS / FONT_CHARH
+#define CHAR_ROWS_1 7
+// arbitrary maximum for proportionally spaced line drawing
+#define CHAR_COLS   42
 // center row of text
 #define SCREEN_ROW_CENTER 3
 
