@@ -2,6 +2,7 @@ hardware
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 DC in 5x5 x 2.1 mm
 	CP-057AH-ND
+	PJ-102AH
 power switch (soft)
 	CKN10352-ND
 power switch cap
@@ -27,6 +28,12 @@ midi jack 180 degree 5pin din
 	SJ-3523-SMT
 
 
+
+diode, protection
+	MBRS340T3GOSCT-ND	
+	
+power coil
+	mss1278 not at dk
 
 
 avr32

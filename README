@@ -1,44 +1,33 @@
 aleph todo.
 
-avr32
+what happened at machineproject
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-BEES port / finish
-     UI glue
-     filesystem glue
-     DSP selection page
-     presets page
-     scenes page
-     numerical representation abstraction
-     op re-ordering and deletion
+circuit fixes
+	reset button has cap in the wrong place
+	ftdi rx/tx cts/rts all reversed
+	ftdi reset resistors etc
+	power control i/o line to be added
+	power switch reversed
+	OLED outline wrong
+	push key pinout rotated 90 degrees
+	3.5mm jack holes too small
+	ADC DOUT not connected!
+	SDCARD holder is wrong part
 
-new operators:
-    linear map
-    range select
-    split
-    metronome
-    sequence
-    CV input
-    HID input
-    (HID output ?)
-    (CV output ?)
+circuit improvements
+	power LED
+	voltage pads on top
+	highly visible GND hole somewhere
+	silk names can be smaller
+	
+require further design investigation
+	FTDI init requires re-plug. power-on with plugin doesn't init?
+	SDRAM tracking research
 
-UI refinement
-     right-alignment
-     setter fields (numbers and strings)
-     line inversion
-     timed select / scroll
-     encoder acceleration
+schematic/design issues
+	AUX analog conditioning needs rework
 
-operators as plugins
 
-operator timing layer
-
-<<<<<<< HEAD
-HID layer
-
-FTDI layer
-
-=======
 avr32
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 BEES port / finish
@@ -73,7 +62,6 @@ operators as plugins
 operator timing layer
 
 HID layer
-
 FTDI layer
 
 MMC bootloader
