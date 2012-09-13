@@ -1,0 +1,60 @@
+aleph cost analysis 120913
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+
+
+electronic components
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+passives					6
+OLED						21
+avr32						9
+bf533						25 / 15
+ad 1832 codec				12						
+SDRAM - avr					5
+SDRAM - bf					20
+ADC ad7923					4
+FTDI						3
+
+lm2678						4
+ad3339						2
+coil						1
+
+1/4 jacks (9)				15
+power jack					1
+usb (a and b)				3
+3.5mm						1
+power switch				1
+
+key switches (5)			5		
+key caps?
+AEDR (4)					20
+
+analog?						((25))
+
+pots						5
+
+
+
+other
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+main pcb					10
+	assembly				10
+interface pcb				6
+	assembly				6
+analog pcb					6
+	assembly				6
+	
+encoder shafts (4)			15
+encoder bushings (4)		10
+encoder codewheels (4)		20
+encoder knobs (4)			15?
+
+enclosure					((40))
+
+hardware					8
+
+
+~~~~~~ 340
