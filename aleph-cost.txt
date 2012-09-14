@@ -3,7 +3,6 @@ aleph cost analysis 120913
 
 
 
-
 electronic components
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -13,7 +12,7 @@ avr32						9
 bf533						25 / 15
 ad 1832 codec				12						
 SDRAM - avr					5
-SDRAM - bf					20
+SDRAM - bf					21
 ADC ad7923					4
 FTDI						3
 

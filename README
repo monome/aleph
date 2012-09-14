@@ -19,13 +19,35 @@ circuit improvements
 	voltage pads on top
 	highly visible GND hole somewhere
 	silk names can be smaller
+	REMOVE aux-pullups
+	free pin for cycle counting
+	move OLED to SPI1 with mmc
+	SDCARD MUST BE USER ACCESSIBLE EASILY
 	
 require further design investigation
 	FTDI init requires re-plug. power-on with plugin doesn't init?
+	or FTDI bus powered
 	SDRAM tracking research
+	BF LQFP-- 500mhz ok? CPU testing.
+	parallel vs spi for OLED
 
 schematic/design issues
 	AUX analog conditioning needs rework
+	usb host test
+	revise analog diagram. SUM not MIX. split stereo units into dual mono. add DACS etc.
+	power supply design. 9V and negative supplies
+	potentially use a cheaper encoder. check interrupts with hi res.
+	
+remaining assembly
+	AEDR and encoder module
+	correct SDRAM part
+	
+think about
+	dsp page (integrate with setups page?)
+	symbols when page changing
+	extended menu via last button (up triangle)
+	macros in routing mode, for example: insert trigger here (preserves routing to existing target)
+	operator page, each operator can have menu button which calls custom UI (ie, list editor)
 
 
 avr32
@@ -119,16 +141,8 @@ vca
 
 circuit
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-power jack
-
 layout and mechanical size constraints
-
 schematic breakdown, part lists
-
-
-hardware
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-assembly
 
 
 
