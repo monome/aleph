@@ -130,13 +130,6 @@ static void check_events(void) {
       break;
     case kEventSwitchDown4:
       scroll_event(" sw edit down");
-      ///// TEST SDCARD:
-      files_list();
-      //// TEST SDRAM:
-      if(ramTestFlag == 0) {
-	ramTestFlag = 1;
-	sdram_test();
-      } 
       break;
     case kEventSwitchUp4:
       scroll_event(" sw edit up");
@@ -258,8 +251,10 @@ int main (void) {
 
   // list files to USART
   files_list();
+  // test sdram
+  screen_line(0, (CHAR_ROWS-2) * FONT_CHARH, "testing sdram...", 0xf); screen_refresh();
+  sdram_test();
   ////////////////////////
-
 
   // send ADC config
   init_adc();

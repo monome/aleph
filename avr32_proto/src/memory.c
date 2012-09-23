@@ -12,6 +12,7 @@
 #include "sdramc.h"
 
 // aleph
+#include "screen.h"
 #include "types.h"
 #include "memory.h"
 
@@ -58,6 +59,7 @@ void sdram_test(void) {
   u32 i, j, progress_inc;
   u32 noErrors=0;
   u8 tmp;
+  u8 y;
 
   char strbuf[16];
 
@@ -78,7 +80,8 @@ void sdram_test(void) {
       print_dbg("\rFilling SDRAM with test pattern: ");
       print_dbg_ulong(j++);
       print_dbg_char('%');
-    }
+    }  tmp = 0;
+
     pHeapStart[i] = (u8)i;	
   }
   print_dbg("\rSDRAM filled with test pattern       \r\n");
@@ -103,5 +106,10 @@ void sdram_test(void) {
   print_dbg_ulong(heapSize);
   print_dbg(" total       \r\n");
 
-
+  y = (CHAR_ROWS-2) * FONT_CHARH;
+  tmp = screen_line(0, y, "corrupted: ", 0xf);
+  tmp = screen_int(tmp, y, noErrors, 0xf);
+  tmp = screen_line(tmp, y, " / ", 0xf);
+  tmp = screen_int(tmp, y, heapSize, 0xf);
 }
+
