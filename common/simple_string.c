@@ -6,15 +6,17 @@
 void str_copy(const char* src, char * dst, s8 len) {
   u8 i=0;
   if(len < 0) {
-    while(i++ < SMPSTR_MAX_LEN) {
+    while(i < SMPSTR_MAX_LEN) {
       if(src[i] == 0) {
 	break;
       }
       dst[i] = src[i];
+      i++;
     }
   } else {
-    while(i++ < len) {
+    while(i < len) {
       dst[i] = src[i];
+      i++;
     }
   }
 }
