@@ -48,7 +48,7 @@ h * aleph-avr32
 #include "timers.h"
 
 // DEBUG: skip sdcard setuo
-// #define SKIPSD 1
+#define SKIPSD 1
 
 //=========================================
 //==== static variables
@@ -149,7 +149,9 @@ static void check_events(void) {
       break;
 
     case kEventAdc0:
-      screen_int(0, FONT_CHARH * (NROWS - 2), e.eventData, 0xf);
+      //      screen_int(0, FONT_CHARH * (NROWS - 2), e.eventData, 0xf);
+      print_dbg("\r\n adc 0: ");
+      print_dbg_ulong(e.eventData);
       refresh = 1;
       break;
 
@@ -281,7 +283,7 @@ int main (void) {
 
   // event loop
     while(1) {
-      check_debug_events();
+      //      check_debug_events();
       check_events();
     }
 }

@@ -70,7 +70,7 @@ static void adc_convert(U16 (*dst)[4]) {
   spi_write(ADC_SPI, cmd);
   spi_read(ADC_SPI, &val);
   spi_unselectChip(ADC_SPI, ADC_SPI_NPCS);
-  // values need lshift because of extremely weird timing...
+  // values need rshift because of extremely weird timing...
   (*dst)[0] = (val >> 1) & 0xfff;
   
   //  print_dbg("\r\n got channel 0 data: ");
@@ -138,6 +138,7 @@ void adc_poll(void) {
   static u16 adcOldVal[4];
   static event_t e;
   u8 i;
+
   adc_convert(&adcVal);
   
   for(i=0; i<4; i++) {

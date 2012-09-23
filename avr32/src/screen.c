@@ -276,7 +276,7 @@ void screen_blank_line(U16 x, U16 y) {
  }
 
 // highlight a line
-void screen_hl_line(U16 x, U16 y, U8 a, S8 len) {
+void screen_hl_line(U16 x, U16 y, U8 a) {
   U8 i, j;
   for(i=x; i<NCOLS; i++) {
     for(j=y; j<(y+FONT_CHARH); j++) {

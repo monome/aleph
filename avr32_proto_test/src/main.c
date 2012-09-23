@@ -76,6 +76,9 @@ static u64 eventScrollTimes[CHAR_ROWS];
 static u8 scrollIdx = 0;
 // display ADC
 static void displayAdcVal(u8 idx, u16 val);
+// display processing time in event loop
+static void displayEventLoad(void);
+static u64 maxEventCycles = 0;
 
 /////// TEST
 static u8 ramTestFlag = 0;
@@ -91,11 +94,13 @@ static void check_events(void) {
   static event_t e;  
   uiKey_t key;
   
-  //static U64 cycles = 0;
-  //static U64 cyclesNow = 0;
+  static U64 cycles = 0;
+  static U64 cyclesNow = 0;
 
   key = eKeyDummy;
   
+  cycles = Get_system_register(AVR32_COUNT);
+
   if( get_next_event(&e) ) {
 
     switch(e.eventType) {
@@ -165,6 +170,11 @@ static void check_events(void) {
       }
       break;
     }
+    cyclesNow = Get_system_register(AVR32_COUNT);
+    if(cyclesNow > maxEventCycles) {
+      maxEventCycles = cyclesNow;
+      displayEventLoad();
+    }
   } // if event
 }
 
@@ -173,7 +183,7 @@ static void check_events(void) {
 int main (void) {
   U32 waitForCard = 0;
   volatile avr32_tc_t *tc = APP_TC;
-  volatile u64 delay;
+  //volatile u64 delay;
   
   // switch to osc0 for main clock
   //  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP); 
@@ -343,4 +353,10 @@ static void scroll_event(const char* str) {
 void displayAdcVal(u8 idx, u16 val) {
   screen_int(FONT_CHARW * (5 * idx + 3), CHAR_ROWS_1 * FONT_CHARH, val, 1);
   screen_hl_line(0, CHAR_ROWS_1 * FONT_CHARH, 0xf);
+}
+
+void displayEventLoad(void) {
+  u8 x = 0;
+  x = screen_line(0, 0, "max event ms: ", 0xf);
+  screen_int(x, 0, (int)( (float)maxEventCycles / (float)FMCK_HZ * 1000.f ), 0xf );
 }

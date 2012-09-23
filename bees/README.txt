@@ -88,7 +88,7 @@ OUTS - list / edit operator outputs and connections
 index _ name _ target input name
 ...
 
-fnA  : folloq
+fnA  : follow
 fnB  : disconnect
 fnC  : re-send value [overwriting preset?]
 fnD  : toggle preset inclusion (this connection)
@@ -138,8 +138,8 @@ index _ name _ current?
 ...
 
 fnA  : assign to current setup
-fnB  : rescan programs?
-fnC  : load defaults?
+fnB  : 
+fnC  : load default setup
 fnD  : ?
 
 encC : ?

@@ -1,5 +1,6 @@
 // ASF
 #include "compiler.h"
+#include "gpio.h"
 #include "math.h"
 #include "print_funcs.h"
 // aleph
@@ -24,7 +25,7 @@ static swTimer_t encTimer;
 static swTimer_t adcTimer;
 //// TEST
 // toggle a LED
-static swTimer_t heartbeatTimer;
+//static swTimer_t heartbeatTimer;
 
 //--- static misc
 static u8 i;
@@ -79,6 +80,7 @@ static void adc_timer_callback(int tag) {
 }
 
 // test heartbeat callback
+/*
 static void heartbeat_callback(int tag) {
   static char ledstatus;
   if(ledstatus != 0) {
@@ -89,6 +91,7 @@ static void heartbeat_callback(int tag) {
     gpio_set_gpio_pin(LED_EDIT_PIN);
   }
 }
+*/
 
 //====== external
 void init_app_timers(void) {
@@ -96,5 +99,5 @@ void init_app_timers(void) {
   set_timer(&encTimer,    eEncTimerTag,    5,   &enc_timer_callback,    1);
   set_timer(&adcTimer,    eAdcTimerTag,    5,   &adc_timer_callback,    1);
   // test:
-  set_timer(&heartbeatTimer, eHeartbeatTimerTag, 1000, &heartbeat_callback, 1);
+  //  set_timer(&heartbeatTimer, eHeartbeatTimerTag, 1000, &heartbeat_callback, 1);
 }

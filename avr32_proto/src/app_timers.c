@@ -105,9 +105,9 @@ static void heartbeat_callback(int tag) {
 
 //====== external
 void init_app_timers(void) {
-  set_timer(&screenTimer, eScreenTimerTag, 15,   &screen_timer_callback, 1);
-  set_timer(&encTimer,    eEncTimerTag,    5,   &enc_timer_callback,    1);
-  set_timer(&adcTimer,    eAdcTimerTag,    5,   &adc_timer_callback,    1);
+  set_timer(&screenTimer, eScreenTimerTag, 30,   &screen_timer_callback, 1);
+  set_timer(&encTimer,    eEncTimerTag,    5,    &enc_timer_callback,    1);
+  set_timer(&adcTimer,    eAdcTimerTag,    10,    &adc_timer_callback,    1);
   // test:
   //    set_timer(&heartbeatTimer, eHeartbeatTimerTag, 100, &heartbeat_callback, 1);
 }
