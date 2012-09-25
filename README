@@ -1,5 +1,55 @@
 aleph todo.
 
+what happened at machineproject
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+circuit fixes
+	reset button has cap in the wrong place
+	ftdi rx/tx cts/rts all reversed
+	ftdi reset resistors etc
+	power control i/o line to be added
+	power switch reversed
+	OLED outline wrong
+	push key pinout rotated 90 degrees
+	3.5mm jack holes too small
+	ADC DOUT not connected!
+	SDCARD holder is wrong part
+
+circuit improvements
+	power LED
+	voltage pads on top
+	highly visible GND hole somewhere
+	silk names can be smaller
+	REMOVE aux-pullups
+	free pin for cycle counting
+	move OLED to SPI1 with mmc
+	SDCARD MUST BE USER ACCESSIBLE EASILY
+	
+require further design investigation
+	FTDI init requires re-plug. power-on with plugin doesn't init?
+	or FTDI bus powered
+	SDRAM tracking research
+	BF LQFP-- 500mhz ok? CPU testing.
+	parallel vs spi for OLED
+
+schematic/design issues
+	AUX analog conditioning needs rework
+	usb host test
+	revise analog diagram. SUM not MIX. split stereo units into dual mono. add DACS etc.
+	power supply design. 9V and negative supplies
+	potentially use a cheaper encoder. check interrupts with hi res.
+	
+remaining assembly
+	AEDR and encoder module
+	correct SDRAM part
+	
+think about
+	dsp page (integrate with setups page?)
+	symbols when page changing
+	extended menu via last button (up triangle)
+	macros in routing mode, for example: insert trigger here (preserves routing to existing target)
+	operator page, each operator can have menu button which calls custom UI (ie, list editor)
+
+
 avr32
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 BEES port / finish
@@ -33,47 +83,7 @@ operators as plugins
 
 operator timing layer
 
-<<<<<<< HEAD
 HID layer
-
-FTDI layer
-
-=======
-avr32
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-BEES port / finish
-     UI glue
-     filesystem glue
-     DSP selection page
-     presets page
-     scenes page
-     numerical representation abstraction
-     op re-ordering and deletion
-
-new operators:
-    linear map
-    range select
-    split
-    metronome
-    sequence
-    CV input
-    HID input
-    (HID output ?)
-    (CV output ?)
-
-UI refinement
-     right-alignment
-     setter fields (numbers and strings)
-     line inversion
-     timed select / scroll
-     encoder acceleration
-
-operators as plugins
-
-operator timing layer
-
-HID layer
-
 FTDI layer
 
 MMC bootloader
@@ -131,16 +141,8 @@ vca
 
 circuit
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-power jack
-
 layout and mechanical size constraints
-
 schematic breakdown, part lists
-
-
-hardware
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-assembly
 
 
 

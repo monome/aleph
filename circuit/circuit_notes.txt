@@ -1,0 +1,56 @@
+12mhz XTAL is 18p not 22p
+
+
+avr32 breakout
+
+//// 120819 
+
++ avr32
++ jtag
++ reset
++ power
++ sdram
++ power switch
++ usb tps2020
++ spi header
++ sdcard
++ i2c
++ bf header
++ ftdi 232
+
++ aux input jacks
++ spi adc
++ aux pullups
++ oled
++ keys
++ edit key/led
++ encoders	
++ usb cons
+
+
+NEW PKGS
+
++ LM2678 - 5v DCDC --- TO-263-7
++ ADP3339 - 3.3v reg --- 
++ TPS2020 - usb power control soic8
++ AD7923 - spi adc
+
+
+
+
+ASSIGNMENTS
+
+PA21 usb-id
+PA22 usb-vbof
+
+mmc card stuff can be placed wherever.
+b-hwait and b-reset as well.
+
+PA25-PA28 KEY0-3
+PB00-PB07 ENC0-3a/b
+
+PB08 MODE-KEY
+PB09 MODE-LED
+
+PA29 SDA
+PA30 SCL
