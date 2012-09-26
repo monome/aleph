@@ -102,7 +102,7 @@ void sdram_test(void) {
   print_dbg_ulong(noErrors);
   print_dbg(" corrupted bytes(s)       \r\n");
 
-  print_dbg("\out of: ");
+  print_dbg("out of: ");
   print_dbg_ulong(heapSize);
   print_dbg(" total       \r\n");
 
