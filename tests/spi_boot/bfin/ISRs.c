@@ -1,6 +1,5 @@
 #include "BF533 Flags.h"
 
-//EX_INTERRUPT_HANDLER(Timer0_ISR)
 void Timer0_ISR() {
 // confirm interrupt handling
  *pTIMER_STATUS = 0x0001;
@@ -10,7 +9,6 @@ void Timer0_ISR() {
 }
 
 //--------------------------------------------------------------------------//
-//EX_INTERRUPT_HANDLER(FlagA_ISR)
 void FlagA_ISR() {
   // confirm interrupt handling
   //	FIO_ANOM_0311_FLAG_W(0x0100,pFIO_FLAG_C);//*pFIO_FLAG_C = 0x0100, workaround for anomaly 05000311.

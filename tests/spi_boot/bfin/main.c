@@ -11,7 +11,6 @@ int main(void)
   unsigned int ledState = 0;
   unsigned char butState = 0;
 
-  
   //	sysreg_write(reg_SYSCFG, 0x32);		//Initialize System Configuration Register
   Init_Flags();
   Init_Timers();
@@ -21,6 +20,7 @@ int main(void)
   
   while(1) {
     if ((ledState != gLedState) || (butState != gButState)) {
+      /*
       ledState = gLedState;
       
       butState = gButState;
@@ -32,8 +32,8 @@ int main(void)
 		*pFlashA_PortB_Data = ledState;
       }
       
-      
-      //*pFlashA_PortB_Data = gButState;
+      */
+      *pFlashA_PortB_Data = gButState;
     }
   }
 }

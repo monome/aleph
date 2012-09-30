@@ -52,6 +52,7 @@ void Init_Interrupts(void)
   
   *pEVT11 = Timer0_ISR;
   *pEVT12 = FlagA_ISR;
+  // synchronize
   asm volatile ("cli %0; bitset (%0, 11); bitset (%0, 12); sti %0; csync;": "+d"(i));
   
   
