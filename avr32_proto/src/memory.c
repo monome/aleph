@@ -60,8 +60,8 @@ void sdram_test(void) {
   u32 noErrors=0;
   u8 tmp;
   u8 y;
-
-  char strbuf[16];
+  //  int testint;
+  //  char strbuf[16];
 
   print_dbg ("\x0CSDRAM size: ");
   print_dbg_ulong(SDRAM_SIZE >> 20);
@@ -80,7 +80,7 @@ void sdram_test(void) {
       print_dbg("\rFilling SDRAM with test pattern: ");
       print_dbg_ulong(j++);
       print_dbg_char('%');
-    }  tmp = 0;
+    }
 
     pHeapStart[i] = (u8)i;	
   }
@@ -106,10 +106,12 @@ void sdram_test(void) {
   print_dbg_ulong(heapSize);
   print_dbg(" total       \r\n");
 
+  y = (CHAR_ROWS-3) * FONT_CHARH;
+  screen_line(0, y, "SDRAM tested.", 0xf);
   y = (CHAR_ROWS-2) * FONT_CHARH;
-  tmp = screen_line(0, y, "corrupted: ", 0xf);
-  tmp = screen_int(tmp, y, noErrors, 0xf);
-  tmp = screen_line(tmp, y, " / ", 0xf);
-  tmp = screen_int(tmp, y, heapSize, 0xf);
+  tmp = screen_string(0, y, "corrupted ", 0xf);
+  tmp = screen_int(tmp, y, (s16)noErrors, 0xf);
+  tmp = screen_string(tmp, y, " / ", 0xf);
+  tmp = screen_int(tmp, y, (s16)heapSize, 0xf);  
 }
 

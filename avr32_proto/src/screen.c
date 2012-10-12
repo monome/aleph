@@ -317,6 +317,7 @@ void screen_test_fill(void) {
   u32 x=0;
   u32 y=0;
   for(i=0; i<font_nglyphs; i++) {
+
     x = x + screen_char_squeeze(x, y, i + FONT_ASCII_OFFSET, 0xf);
     x++;
     if (x > NCOLS) {

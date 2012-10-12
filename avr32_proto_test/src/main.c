@@ -70,7 +70,7 @@ static void report_params(void);
 static char check_debug_events(void);
 
 /// TEST: display scrolling history of events
-static void scroll_event(const char* str);
+static void scroll_event(const char* str, s16 val);
 static char eventScroll[CHAR_ROWS][CHAR_COLS];
 static u64 eventScrollTimes[CHAR_ROWS];
 static u8 scrollIdx = 0;
@@ -105,34 +105,46 @@ static void check_events(void) {
 
     switch(e.eventType) {
     case kEventSwitchDown0:
-      scroll_event(" sw f0 down");
+      scroll_event(" sw f0 down", 0);
       break;
     case kEventSwitchUp0:
-      scroll_event(" sw f0 up");
+      scroll_event(" sw f0 up", 0);
       break;
     case kEventSwitchDown1:
-      scroll_event(" sw f1 down");
+      scroll_event(" sw f1 down", 0);
       break;
     case kEventSwitchUp1:
-      scroll_event(" sw f1 up");
+      scroll_event(" sw f1 up", 0);
       break;
     case kEventSwitchDown2:
-      scroll_event(" sw f2 down");
+      scroll_event(" sw f2 down", 0);
       break;
     case kEventSwitchUp2:
-      scroll_event(" sw f2 up");
+      scroll_event(" sw f2 up", 0);
       break;
     case kEventSwitchDown3:
-      scroll_event(" sw f3 down");
+      scroll_event(" sw f3 down", 0);
       break;
     case kEventSwitchUp3:
-      scroll_event(" sw f3 up");
+      scroll_event(" sw f3 up", 0);
       break;
     case kEventSwitchDown4:
-      scroll_event(" sw edit down");
+      scroll_event(" sw edit down", 0);
       break;
     case kEventSwitchUp4:
-      scroll_event(" sw edit up");
+      scroll_event(" sw edit up", 0);
+      break;
+    case kEventEncoder0:
+      scroll_event(" encoder 0", e.eventData);
+      break;
+    case kEventEncoder1:
+      scroll_event(" encoder 1", e.eventData);
+      break;
+    case kEventEncoder2:
+      scroll_event(" encoder 2", e.eventData);
+      break;
+    case kEventEncoder3:
+      scroll_event(" encoder 3", e.eventData);
       break;
 
     case kEventAdc0:
@@ -166,7 +178,7 @@ static void check_events(void) {
     cyclesNow = Get_system_register(AVR32_COUNT);
     if(cyclesNow > maxEventCycles) {
       maxEventCycles = cyclesNow;
-      displayEventLoad();
+      //      displayEventLoad();
     }
   } // if event
 }
@@ -232,7 +244,7 @@ int main (void) {
 
   //  delay = 10000; while(delay-- > 0) { ;; } 
 
-  screen_test_fill();
+  //  screen_test_fill();
 
   print_dbg("\r\nALEPH\r\n ");
 
@@ -240,7 +252,7 @@ int main (void) {
  // Wait for a card to be inserted
   //  print_dbg("\r\nwaiting for SD card... ");
 
-  screen_line(0, 0, "waiting for SD card...", 2); refresh=1;
+  screen_line(0, 0, "waiting for SD card...", 2); screen_refresh();
   while (!sd_mmc_spi_mem_check()) {
     waitForCard++;
   }
@@ -253,7 +265,11 @@ int main (void) {
   files_list();
   // test sdram
   screen_line(0, (CHAR_ROWS-2) * FONT_CHARH, "testing sdram...", 0xf); screen_refresh();
-  sdram_test();
+  sdram_test(); screen_refresh();
+
+
+  
+
   ////////////////////////
 
   // send ADC config
@@ -261,11 +277,11 @@ int main (void) {
   /////// TEST:
   screen_line(0, CHAR_ROWS_1 * FONT_CHARH, "ADC: ", 0x1);
   // first 2 adc channels with pullup (switch mode),
-  gpio_set_gpio_pin(AUX_PULLUP0_PIN);
-  gpio_set_gpio_pin(AUX_PULLUP1_PIN);
+  //  gpio_set_gpio_pin(AUX_PULLUP0_PIN);
+  //  gpio_set_gpio_pin(AUX_PULLUP1_PIN);
   // second 2 wihtout pullup (cv/expr mode)
-  gpio_clr_gpio_pin(AUX_PULLUP2_PIN);
-  gpio_clr_gpio_pin(AUX_PULLUP3_PIN);
+  //  gpio_clr_gpio_pin(AUX_PULLUP2_PIN);
+  //  gpio_clr_gpio_pin(AUX_PULLUP3_PIN);
   ////////
 
   // start application timers
@@ -321,7 +337,7 @@ char check_debug_events(void) {
 
 
 /// TEST: add a string to the scroll output
-static void scroll_event(const char* str) {
+static void scroll_event(const char* str, s16 val) {
   u8 i;
   s8 n;
   u8 x=0;
@@ -332,6 +348,7 @@ static void scroll_event(const char* str) {
   print_dbg("\r\n scrolling event: ");
   print_dbg(str);
   strcpy(eventScroll[scrollIdx], str);
+  itoa_whole(val, eventScroll[scrollIdx] + CHAR_COLS - 6, 5); 
   eventScrollTimes[scrollIdx] = tcTicks;
   // display
   for(i=0; i<CHAR_ROWS_1; i++) {

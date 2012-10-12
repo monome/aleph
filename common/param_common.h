@@ -49,7 +49,7 @@ typedef struct __attribute__((__packed__)) ParamDescStruct {
   // range
   f32 min;
   f32 max;
-  // other stuff: range? curve?
+  // other stuff? curve? scaling table?
 } ParamDesc;
 
 // parameter data
