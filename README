@@ -3,44 +3,44 @@ aleph todo.
 what happened at machineproject
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 circuit fixes
-	reset button has cap in the wrong place
-	ftdi rx/tx cts/rts all reversed
-	ftdi reset resistors etc
+	# reset button has cap in the wrong place
+	# ftdi rx/tx cts/rts all reversed
+	# ftdi reset resistors etc
 	power control i/o line to be added
-	power switch reversed
+	# power switch reversed
 	OLED outline wrong
-	push key pinout rotated 90 degrees
-	3.5mm jack holes too small
-	ADC DOUT not connected!
-	SDCARD holder is wrong part
+	# push key pinout rotated 90 degrees
+	# 3.5mm jack holes too small
+	ADC needs a real voltage ref chip
+	# ADC DOUT not connected!
+	# SDCARD holder is wrong part
+	# NOO: CLK and CLKE have reversed pull-down pull-up
+	# A14 SDRAM oops
+	# EM14 instead of encoders
 
 circuit improvements
-	power LED
-	voltage pads on top
+	# power LED
+	# voltage pads on top
 	highly visible GND hole somewhere
 	silk names can be smaller
-	REMOVE aux-pullups
-	free pin for cycle counting
-	move OLED to SPI1 with mmc
+	# REMOVE aux-pullups
+	free pin for cycle counting - DEBUG PIN
+	# move OLED to SPI1 with mmc
+	# OLED RES and DC moved!!!
 	SDCARD MUST BE USER ACCESSIBLE EASILY
 	
 require further design investigation
 	FTDI init requires re-plug. power-on with plugin doesn't init?
-	or FTDI bus powered
-	SDRAM tracking research
-	BF LQFP-- 500mhz ok? CPU testing.
-	parallel vs spi for OLED
+	SDRAM
+	# BF LQFP-- 500mhz ok? CPU testing.
+	# parallel vs spi for OLED
 
 schematic/design issues
 	AUX analog conditioning needs rework
 	usb host test
-	revise analog diagram. SUM not MIX. split stereo units into dual mono. add DACS etc.
+	# revise analog diagram. SUM not MIX. split stereo units into dual mono. add DACS etc.
 	power supply design. 9V and negative supplies
-	potentially use a cheaper encoder. check interrupts with hi res.
-	
-remaining assembly
-	AEDR and encoder module
-	correct SDRAM part
+	# potentially use a cheaper encoder. check interrupts with hi res.
 	
 think about
 	dsp page (integrate with setups page?)
