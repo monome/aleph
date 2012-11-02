@@ -1,4 +1,74 @@
-12mhz XTAL is 18p not 22p
+bf breakout
+
+//// 121015
+
+ADSP-BF533SKSTZ-5V - LQFP-176 533mhz
+FDS9431A - core power see p13 - close to processor
+XTAL to DSP_CLK -- speed of xtal??
+JTAG header
+reset switch
+boot mode pins BMODE0 = GND BMODE1 = VCC
+SPORT to CODEC
+SPI to CODEC shared with AVR32
+SPI CS is PF1 for AVR32
+CODEC PF14 is CLATCH
+CODEC AD1836_RESET to PF2
+RESET connected to AVR32
+F13 is HWAIT
+SPORT/SPI 595s
+	two 595s go to 4066 gates, one goes to analog header
+	framesync is RCLK
+PPI to DACS
+	framesyncs and PPI0-1-2
+
+
+
+codec AD1836A MQFP-52
+xtal 12.288mhz
+AD8606ARZ VREF
+
+AD8606ARZ - audio conditioning
+leave through-hole jumpers for gain/led circuit testing
+
+SDRAM MT48LC32M16A2TG-75
+
+HEADER for analog
+AD5724 x 3 daisy
+595 to 4066
+lm13700 VCA
+
+
++10V power?
+bipolar power?
+
+
+
+
+SEE AUDIO DAUGHTERBOARD FOR I/L SWITCH EXAMPLE
+IN PGA MODE
+
+
+BF SPORT:
+
+DTxPRI : Transmit Data Primary
+DTxSEC : Transmit Data Secondary
+TSCLKx : Transmit Clock
+TFSx   : Transmit Frame Sync
+DRxPRI : Receive Data Primary
+DRxSEC : Receive Data Secondary
+RSCLKx : Receive Clock
+RFSx   : Receive Frame Sync
+
+
+
+
+
+
+
+moved SPI
+	BF and MMC on SPI0
+	ADC and OLED on SPI1
+
 
 
 avr32 breakout
@@ -27,6 +97,8 @@ avr32 breakout
 + encoders	
 + usb cons
 
++++ 12mhz XTAL is 18p not 22p
+
 
 NEW PKGS
 
@@ -34,23 +106,3 @@ NEW PKGS
 + ADP3339 - 3.3v reg --- 
 + TPS2020 - usb power control soic8
 + AD7923 - spi adc
-
-
-
-
-ASSIGNMENTS
-
-PA21 usb-id
-PA22 usb-vbof
-
-mmc card stuff can be placed wherever.
-b-hwait and b-reset as well.
-
-PA25-PA28 KEY0-3
-PB00-PB07 ENC0-3a/b
-
-PB08 MODE-KEY
-PB09 MODE-LED
-
-PA29 SDA
-PA30 SCL

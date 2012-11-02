@@ -68,12 +68,12 @@ analog
 
 lm13700 - vca
 
-AD5318 - 8 ch 10 bit DAC
-AD5314 - 4 ch 10 bit DAC
+AD5724 - 4 ch 12 bit DAC w/ AVCC up to 15V
 
-12 bit DAC for filter cutoffs
+595 - shift regs
+4066 - gates
 
-AD8606 - op amps for i/o buffering
+AD8606 - op amps for audio buffering
 
 
 control 
