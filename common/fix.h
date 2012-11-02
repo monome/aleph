@@ -9,6 +9,9 @@
 
 #include "fix16.h"
 
+// use the same formatting convention as bfin fract32
+typedef fix16_t fix16;
+
 // constants for printing formatted 16.16
 #define FIX_DIG_LO    4 // digits after decimal
 #define FIX_DIG_HI    5 // digits before decimal

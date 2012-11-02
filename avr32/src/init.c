@@ -57,6 +57,9 @@ void init_gpio(void) {
   gpio_enable_pin_pull_up(SW1_PIN);
   gpio_enable_pin_pull_up(SW2_PIN);
   gpio_enable_pin_pull_up(SW3_PIN);
+  gpio_enable_pin_pull_up(SW_EDIT_PIN);
+
+  //  gpio_enable_pin_glitch_filter(SW3_PIN);
 }
 
 // initialize debug USART
@@ -95,7 +98,8 @@ extern void init_oled_usart (void) {
 
   // SPI options for OLED
   static const usart_spi_options_t USART_SPI_OPTIONS = {
-    .baudrate     = 3300000, // seems about maximum
+    //    .baudrate     = 3300000, // seems about maximum
+    .baudrate     = 3400000, // seems about maximum
     .charlength   = 8,
     .spimode      = 3, // clock starts high, sample on rising edge
     .channelmode  = USART_NORMAL_CHMODE
@@ -182,7 +186,8 @@ void init_sd_mmc_resources(void) {
     .trans_delay = 0, 
     .stay_act = 1, 
     .spi_mode = 0,
-    .modfdis = 1 };
+    .modfdis = 1
+  };
 
   // Assign I/Os to SPI.
   gpio_enable_module(SD_MMC_SPI_GPIO_MAP, sizeof(SD_MMC_SPI_GPIO_MAP)
@@ -283,11 +288,11 @@ void init_bfin_resources(void) {
   // add a second chip register for the serial ADC
   // chip select 1 is AD7923 12-bit ADC
   spiOptions.reg = ADC_SPI_NPCS;
-  spiOptions.baudrate = 10000000;	// range in datasheet is 10kHz - 20MHz
+  spiOptions.baudrate = 16000000;	// range in datasheet is 10kHz - 20MHz
   spiOptions.bits = 16;		// 1 bit leading zero, 3 channel address, 12 data 
   spiOptions.spi_mode = 2;	// sample on falling edge, idle high
-  spiOptions.spck_delay = 40;	// delay between CS and transfer
-  spiOptions.trans_delay = 10;	// delay between transfers
+  spiOptions.spck_delay = 20;	// delay between CS and transfer
+  spiOptions.trans_delay = 5;	// delay between transfers
   spiOptions.stay_act = 1;
   spiOptions.modfdis = 0;
   spi_setupChipReg( BFIN_SPI, &spiOptions, FPBA_HZ );
@@ -310,9 +315,13 @@ void init_clocks(void) {
   pm_pll_setup( &AVR32_PM,
 		0,  // pll.
 		10,  // mul.
-		1,   // div.
+		//////		1,   // div.
+		///// testing SDRAM with slower clock
+		8,   // div.
+		//////
 		0,   // osc.
 		16 ); // lockcount.
+
 
   // Set PLL operating range and divider (fpll = fvco/2)
   // -> PLL0 output = 66 MHz

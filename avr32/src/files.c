@@ -232,7 +232,7 @@ volatile char* files_get_dsp_filename(u8 idx) {
 
 // load a blacfkin executable by index
 void files_load_dsp(u8 idx) {
-  files_load_dsp_name(files_get_dsp_filename(idx));
+  files_load_dsp_name((const char*)files_get_dsp_filename(idx));
 }
 
 // load a blackfin executable by name

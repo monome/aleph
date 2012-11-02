@@ -1,0 +1,293 @@
+;; -*- mode: emacs-lisp; coding: emacs-mule; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Fri Nov  2 12:08:28 2012
+;; Desktop file format version 206
+;; Emacs version 23.3.1
+
+;; Global section:
+(setq desktop-missing-file-warning nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+(setq search-ring '("MASK_40" "out =" "out" "paramDes" "void)"))
+(setq regexp-search-ring nil)
+(setq register-alist nil)
+(setq file-name-history '("~/aleph/nullp/" "~/aleph/common/libfixmath/fix16.c" "~/aleph/common/libfixmath/fix16.h" "~/aleph/nullp/wire.c" "~/aleph/nullp/Makefile" "~/aleph/common/fract32_emu.h" "~/aleph/common/fract32_emu.c" "~/aleph/common/libfixmath/fract32.c" "~/aleph/nullp/Makefile" "~/src/fract/" "/usr/include/" "~/aleph/common/libfixmath/fract32.h" "~/aleph/common/libfixmath/fix16.h" "~/aleph/common/libfixmath/fract32.h" "~/aleph/common/fix.h" "~/aleph/bfin/modules/osc2/osc2.c" "~/aleph/common/libfixmath/fract32.h" "~/aleph/bfin/modules/osc2/" "~/aleph/bfin/" "~/aleph/common/" "~/aleph/nullp/" "~/aleph/common/" "~/aleph/bfin/" "~/aleph/common/" "~/aleph/null/"))
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 206
+  "/home/emb/aleph/nullp/sine.c"
+  "sine.c"
+  'c-mode
+  '(abbrev-mode)
+  2024
+  '(686 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/libfixmath/fix16.h"
+  "fix16.h"
+  'c-mode
+  '(abbrev-mode)
+  4741
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/libfixmath/fix16.c"
+  "fix16.c"
+  'c-mode
+  '(abbrev-mode)
+  1145
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bfin/modules/osc2/osc2.c"
+  "osc2.c"
+  'c-mode
+  '(abbrev-mode)
+  1914
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/fract32_emu.h"
+  "fract32_emu.h"
+  'c-mode
+  '(abbrev-mode)
+  835
+  '(323 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/fix.h"
+  "fix.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/nullp/wire.c"
+  "wire.c"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/nullp/Makefile"
+  "Makefile"
+  'makefile-gmake-mode
+  nil
+  535
+  '(525 nil)
+  nil
+  nil
+  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/types.h"
+  "types.h"
+  'c-mode
+  '(abbrev-mode)
+  1364
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/fract32_emu.c"
+  "fract32_emu.c"
+  'c-mode
+  '(abbrev-mode)
+  70
+  '(66 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/libfixmath/fract32.c"
+  "fract32.c<2>"
+  'c-mode
+  '(abbrev-mode)
+  679
+  '(688 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/libfixmath/fract32.h"
+  "fract32.h"
+  'c-mode
+  '(abbrev-mode)
+  156
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bfin/src/module.h"
+  "module.h"
+  'c-mode
+  '(abbrev-mode)
+  918
+  '(487 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bfin/modules/osc2/osc2.h"
+  "osc2.h"
+  'c-mode
+  '(abbrev-mode)
+  742
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  nil
+  "osc2"
+  'dired-mode
+  nil
+  1120
+  '(nil nil)
+  t
+  '("/home/emb/aleph/bfin/modules/osc2/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/nullp/module.h"
+  "module.h<2>"
+  'c-mode
+  '(abbrev-mode)
+  346
+  '(322 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  nil
+  "src"
+  'dired-mode
+  nil
+  812
+  '(nil nil)
+  t
+  '("/home/emb/aleph/bfin/src/")
+  nil)
+
+(desktop-create-buffer 206
+  nil
+  "bfin"
+  'dired-mode
+  nil
+  406
+  '(nil nil)
+  t
+  '("/home/emb/aleph/bfin/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/module_common.h"
+  "module_common.h"
+  'c-mode
+  '(abbrev-mode)
+  118
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  nil
+  "common"
+  'dired-mode
+  nil
+  1594
+  '(nil nil)
+  t
+  '("/home/emb/aleph/common/")
+  nil)
+
+(desktop-create-buffer 206
+  nil
+  "nullp"
+  'dired-mode
+  nil
+  1687
+  '(nil nil)
+  t
+  '("/home/emb/aleph/nullp/")
+  nil)
+
+(desktop-create-buffer 206
+  nil
+  "libfixmath"
+  'dired-mode
+  nil
+  221
+  '(nil nil)
+  t
+  '("/home/emb/aleph/common/libfixmath/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/null/lib/env.h"
+  "env.h"
+  'c-mode
+  '(abbrev-mode)
+  66
+  '(179 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/null/lib/env.c"
+  "env.c"
+  'c-mode
+  '(abbrev-mode)
+  152
+  '(18 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix)))
+
+(desktop-create-buffer 206
+  nil
+  "null"
+  'dired-mode
+  nil
+  511
+  '(nil nil)
+  t
+  '("/home/emb/aleph/null/")
+  nil)
+

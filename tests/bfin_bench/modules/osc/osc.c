@@ -16,6 +16,7 @@
 oscData_t * data = (oscData_t *)SDRAM_ADDRESS;
 // pointer to data superclass (for access by bfin core routines)
 moduleData_t* moduleData;
+static u8 butstate = 0;
 
 //---------------------------
 //---- static vars
@@ -126,7 +127,8 @@ void process_frame(void) {
   // check  if freq param changed
   if(moduleData->paramData[eParamFreq].changed) {
     moduleData->paramData[eParamFreq].changed = 0;
-    phaseInc = moduleData->paramData[eParamFreq].value.asFloat * rho;
+    //    phaseInc = moduleData->paramData[eParamFreq].value.asFloat * rho;
+    phaseInc =  fix16_mul(rho >> 16, fix16_from_float(moduleData->paramData[eParamFreq].value.asFloat));
   }    
 
   phase = fix16_add(phase, phaseInc);
@@ -150,20 +152,21 @@ void process_frame(void) {
   framecount++;
   if(framecount > SAMPLERATE) {
     framecount = 0;
-    numOscs++;
+    // numOscs++;
   }
 }
 
 //----- handle button
 void handle_button(void) {
-  /*
+  
   static f32 freq;
   freq = moduleData->paramData[eParamFreq].value.asFloat;
   if(butstate) { butstate = 0; } else { butstate = 1; }
   freq *= 1.25;
   while (freq > 2000) { freq *= 0.5; }
   moduleData->paramData[eParamFreq].value.asFloat = freq;
-  */
+  moduleData->paramData[eParamFreq].changed = 1;
+  
 }
 
 //----- update LEDs

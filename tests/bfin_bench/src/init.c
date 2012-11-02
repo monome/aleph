@@ -26,6 +26,22 @@ volatile s32 iTxBuf[4];
 volatile s32 iRxBuf[4];
 
 //----- function definitions
+// initialize clocks
+void init_clocks(void) {
+  //// check:
+  //  const u16 pll_ctl = *pPLL_CTL;
+  //  const u16 pll_div = *pPLL_DIV;
+  //  u8 dum = 0;
+  //  dum++;
+  //  dum++;
+
+  // set MSEL = 20 for core clock of 108Mhz
+  *pPLL_CTL = 0x2800;
+  ssync();
+  
+}
+
+// initialize EBI
 void init_EBIU(void) {
   //  straight from the self-test example project
   // Initalize EBIU control registers to enable all banks	
@@ -45,7 +61,9 @@ void init_EBIU(void) {
   }
   
   //SDRAM Refresh Rate Control Register
-  *pEBIU_SDRRC = 0x01A0; 
+  //  *pEBIU_SDRRC = 0x01A0; 
+  // for 108Mhz system clock:
+  *pEBIU_SDRRC = 835;
   
   //SDRAM Memory Bank Control Register
   *pEBIU_SDBCTL = 0x0025; //1.7	64 MB
@@ -238,7 +256,7 @@ void init_interrupts(void) {
   *pEVT10 = spi_rx_isr;
   *pEVT12 = pf_isr;
 
-  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
+  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); bitset (%0, 12); sti %0; csync;": "+d"(i));
   
   // enable interrupts on Sport0 RX, spi/dma5, PFA
   *pSIC_IMASK = 0x00082200;

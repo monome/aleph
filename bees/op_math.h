@@ -21,10 +21,10 @@ typedef fix16_t io_t;
 
 // arithmetic macros
 
-// #define OPADD(a, b) ((a) + (b))
-// #define OPSUB(a, b) ((a) - (b))
-// #define OPMUL(a, b) ((a) * (b))
-// #define OPDIV(a, b) ((a) / (b))
+// #define OP_ADD(a, b) ((a) + (b))
+// #define OP_SUB(a, b) ((a) - (b))
+// #define OP_MUL(a, b) ((a) * (b))
+// #define OP_DIV(a, b) ((a) / (b))
 
 // standard (overflow)
 #define OP_ADD(a, b) (fix16_add((a), (b)))

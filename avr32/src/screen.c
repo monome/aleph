@@ -19,6 +19,7 @@
 #include "conf_aleph.h"
 #include "fix.h"
 #include "font.h"
+#include "global.h"
 #include "screen.h"
 
 //-----------------------------
@@ -66,13 +67,15 @@ void init_oled(void) {
   Disable_global_interrupt();
   // flip the reset pin
   gpio_set_gpio_pin(OLED_RESET_PIN);
-  delay_ms(1);
+  //  delay_ms(1);
+  delay = FCPU_HZ >> 10 ; while(delay > 0) { delay--; }
   gpio_clr_gpio_pin(OLED_RESET_PIN);
-  delay_ms(1);
+  // delay_ms(1);
+  delay=FCPU_HZ >> 10; while(delay > 0) { delay--; }
   gpio_set_gpio_pin(OLED_RESET_PIN);
-  delay_ms(10);
+  //delay_ms(10);
+  delay = FCPU_HZ >> 8; while(delay > 0) { delay--; }
   //// initialize OLED
-  /// todo: maybe toggle oled RESET to clear its shift register?
   write_command(0xAE);	// off
   write_command(0xB3);	// clock rate
   write_command(0x91);
@@ -130,7 +133,7 @@ void init_oled(void) {
   write_command(0xAF);	// on
 
   //  delay_ms(10) 
-  delay = FCPU_HZ >> 8; while(delay--) {;;}
+  delay = FCPU_HZ >> 8; while(delay > 0) { delay--; }
   //  cpu_irq_enable();
   Enable_global_interrupt();
 
@@ -218,6 +221,7 @@ U8 screen_string_squeeze(U16 x, U16 y, char *str, U8 a) {
     x++;
     str++;
   }
+  refresh = 1;
   return x;
 }
 
@@ -226,13 +230,14 @@ inline U8 screen_string(U16 x, U16 y, char *str, U8 a) {
   return screen_string_squeeze(x, y, str, a);
 }
 
-// print a formatted integeromp
+// print a formatted integer
 U8 screen_int(U16 x, U16 y, S16 i, U8 a) {
   //  static char buf[32];
   //  snprintf(buf, 32, "%d", (int)i);
     static char buf[FIX_DIG_TOTAL];
   //snprintf(buf, 32, "%.1f", (float)f);
-  print_fix16(buf, (u32)i << 16 );
+    //  print_fix16(buf, (u32)i << 16 );
+    itoa_whole(i, buf, 5);
   //buf = ultoa(int);
   return screen_string_squeeze(x, y, buf, a);
 }
@@ -260,6 +265,7 @@ void screen_refresh(void) {
   //  Disable_global_interrupt();
   for(i=0; i<GRAM_BYTES; i++) { 
     write_data(screen[i]);  
+    //write_data(i % 0xf);
   }
   //  cpu_irq_enable();
   //  Enable_global_interrupt();
@@ -290,15 +296,34 @@ void screen_hl_line(U16 x, U16 y, U8 a) {
 // draw a line and blank to end
 U8 screen_line(U16 x, U16 y, char *str, U8 hl) {
   // FIXME
-  hl = ( (hl << 1) & 0xf);
+  //  hl = ( (hl << 1) & 0xf);
   //  if (hl ) { hl =0xf;a }
 
   x = screen_string(x, y, str, hl);
   screen_blank_line(x, y);
 
-  print_dbg("\r\n");
-  if(hl > 2) { print_dbg("__"); }
-  print_dbg(str);
+  //  print_dbg("\r\n");
+  //  if(hl > 2) { print_dbg("__"); }
+  //  print_dbg(str);
+
+  refresh = 1;
 
   return NCOLS;
+}
+
+// fill graphics ram with a test pattern
+void screen_test_fill(void) {
+  u32 i;
+  u32 x=0;
+  u32 y=0;
+  for(i=0; i<font_nglyphs; i++) {
+
+    x = x + screen_char_squeeze(x, y, i + FONT_ASCII_OFFSET, 0xf);
+    x++;
+    if (x > NCOLS) {
+      x -= NCOLS;
+      y += FONT_CHARH;
+    }
+  }
+  refresh = 1;
 }

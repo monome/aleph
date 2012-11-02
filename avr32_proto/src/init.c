@@ -315,7 +315,11 @@ void init_clocks(void) {
   pm_pll_setup( &AVR32_PM,
 		0,  // pll.
 		10,  // mul.
-		1,   // div.
+		///		1,   // div.
+		///// testing SDRAM with slower clock
+		//				8,   // div.
+				2,   // div.
+		//////
 		0,   // osc.
 		16 ); // lockcount.
 

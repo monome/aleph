@@ -61,8 +61,8 @@ void init_module(void) {
   moduleData = &(data->super);
 
   // initialize superclass internals
-  moduleData->paramDesc = data->paramDesc_p;  
-  moduleData->paramData = data->paramData_p;  
+  moduleData->paramDesc = data->paramDescPr;  
+  moduleData->paramData = data->paramDataPr;  
   moduleData->numParams = MODULE_NUM_PARAMS;
 
   /*
@@ -101,6 +101,8 @@ void init_module(void) {
 
 //------ process frame
 void process_frame(void) {
+
+  /*
   // check  if freq params changed
   if(moduleData->paramData[eParamFreq1].changed) {
     moduleData->paramData[eParamFreq1].changed = 0;
@@ -110,6 +112,7 @@ void process_frame(void) {
     moduleData->paramData[eParamFreq2].changed = 0;
     phaseInc2 = moduleData->paramData[eParamFreq2].value.asFloat * rho;
   }
+  */
 
   /*
   if(moduleData->paramData[eParamAmp].changed) {

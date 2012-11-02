@@ -49,7 +49,7 @@ void spi_rx_isr() {
 
 // programmable flag interrupt (buttons)
 void pf_isr() {
-  // confirm interrupt handling
+  // confirm interrupt handling (W1C)
   *pFIO_FLAG_C = 0x0100;
   // module-defined button handler
   handle_button();

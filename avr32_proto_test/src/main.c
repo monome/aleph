@@ -69,21 +69,23 @@ static void report_params(void);
 // check for debug event commands
 static char check_debug_events(void);
 
-/// TEST: display scrolling history of events
+// display scrolling history of events
 static void scroll_event(const char* str, s16 val);
 static char eventScroll[CHAR_ROWS][CHAR_COLS];
 static u64 eventScrollTimes[CHAR_ROWS];
+static s16 eventScrollData[CHAR_ROWS];
 static u8 scrollIdx = 0;
 // display ADC
 static void displayAdcVal(u8 idx, u16 val);
 // display processing time in event loop
 static void displayEventLoad(void);
 static u64 maxEventCycles = 0;
+// display hmatrix SFR contents
+//static void show_hmatrix_sfr(void);
+// display SDRAM config
+static void show_sdram_constants(void);
 
-/////// TEST
 static u8 ramTestFlag = 0;
-//static char adcDisplayBuf[CHAR_COLS] = "ADC: ";
-///////
 
 // number of parameters
 volatile u32 numParams = 0;
@@ -188,14 +190,14 @@ static void check_events(void) {
 int main (void) {
   U32 waitForCard = 0;
   volatile avr32_tc_t *tc = APP_TC;
-  //volatile u64 delay;
+  volatile u64 delay;
   
   // switch to osc0 for main clock
   //  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP); 
   // initialize clocks:
   init_clocks();
   
-  // initialize Interrupt Controllvoider
+  // initialize Interrupt Controller
   INTC_init_interrupts();
 
   // disable interrupts
@@ -208,13 +210,13 @@ int main (void) {
   init_oled_usart();
 
   // initialize SD/MMC driver resources: GPIO, SPI and SD/MMC.
-  init_sd_mmc_resources();
+  //  init_sd_mmc_resources();
 
   // initialize PDCA controller
-  init_local_pdca();
+  //  init_local_pdca();
 
   // initialize blackfin resources
-  init_bfin_resources();
+  //  init_bfin_resources();
 
   // initialize application timer
   init_tc(tc);
@@ -232,13 +234,14 @@ int main (void) {
   init_events();
   
   // intialize encoders
-  init_encoders();
+  //  init_encoders();
 
   // initialize sdram
   sdramc_init(FMCK_HZ);
-  //memory managaer
-  init_mem();
-
+  //sdramc_init(FOSC0);
+  //memory manager
+  //init_mem();
+  
   // Enable all interrupts.
   Enable_global_interrupt();
 
@@ -246,6 +249,7 @@ int main (void) {
 
   //  screen_test_fill();
 
+  /*
   print_dbg("\r\nALEPH\r\n ");
 
   ////////////////////
@@ -257,25 +261,26 @@ int main (void) {
     waitForCard++;
   }
   screen_line(0, 0, "card detected.", 2); refresh=1;
+  */
 
   // set up file navigation using available drives
-  init_files();
+  //  init_files();
 
   // list files to USART
-  files_list();
+  //  files_list();
   // test sdram
-  screen_line(0, (CHAR_ROWS-2) * FONT_CHARH, "testing sdram...", 0xf); screen_refresh();
-  sdram_test(); screen_refresh();
-
-
+  //  screen_line(0, (CHAR_ROWS-2) * FONT_CHARH, "testing sdram...", 0xf); screen_refresh();
   
-
+  //  show_hmatrix_sfr();
+  show_sdram_constants();
+  sdram_test(1);
+  screen_refresh();
   ////////////////////////
 
   // send ADC config
-  init_adc();
+  //  init_adc();
   /////// TEST:
-  screen_line(0, CHAR_ROWS_1 * FONT_CHARH, "ADC: ", 0x1);
+  //  screen_line(0, CHAR_ROWS_1 * FONT_CHARH, "ADC: ", 0x1);
   // first 2 adc channels with pullup (switch mode),
   //  gpio_set_gpio_pin(AUX_PULLUP0_PIN);
   //  gpio_set_gpio_pin(AUX_PULLUP1_PIN);
@@ -285,14 +290,17 @@ int main (void) {
   ////////
 
   // start application timers
-  init_app_timers();
+  //  init_app_timers();
 
   print_dbg("starting event loop.\n\r");
   
   // event loop
   while(1) {
     //    check_debug_events();
-    check_events();
+        check_events();
+    //  sdram_test(0);
+    //delay = 10000; while(delay > 0) { delay--; }
+    //screen_refresh();
   }
 }
 
@@ -348,7 +356,8 @@ static void scroll_event(const char* str, s16 val) {
   print_dbg("\r\n scrolling event: ");
   print_dbg(str);
   strcpy(eventScroll[scrollIdx], str);
-  itoa_whole(val, eventScroll[scrollIdx] + CHAR_COLS - 6, 5); 
+  //  itoa_whole(val, eventScroll[scrollIdx] + CHAR_COLS - 6, 5); 
+  eventScrollData[scrollIdx] = val;
   eventScrollTimes[scrollIdx] = tcTicks;
   // display
   for(i=0; i<CHAR_ROWS_1; i++) {
@@ -356,6 +365,7 @@ static void scroll_event(const char* str, s16 val) {
     if(n < 0) { n += CHAR_ROWS; }
     x = screen_int(0, FONT_CHARH * i, (s16)eventScrollTimes[n], 0xf);
     screen_line(x, FONT_CHARH * i, eventScroll[n], 0xf);
+    screen_int(CHAR_COLS - 5, FONT_CHARH * i, eventScrollData[n], 0xf);
     screen_hl_line(x, FONT_CHARH * i, n % 2);
   }
   // advance index
@@ -371,4 +381,201 @@ void displayEventLoad(void) {
   u8 x = 0;
   x = screen_line(0, 0, "max event ms: ", 0xf);
   screen_int(x, 0, (int)( (float)maxEventCycles / (float)FMCK_HZ * 1000.f ), 0xf );
+}
+
+/*
+// display hmatrix SFR contents
+static void show_hmatrix_sfr(void) {
+  u32* reg;
+
+  reg = AVR32_HMATRIX_SFR;
+  print_dbg("\r\n HMATRIX_SFR:   ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  reg = AVR32_HMATRIX_SFR0;
+  print_dbg("\r\n HMATRIX_SFR0:  ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  reg = AVR32_HMATRIX_SFR1;
+  print_dbg("\r\n HMATRIX_SFR1:  ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  reg = AVR32_HMATRIX_SFR2;
+  print_dbg("\r\n HMATRIX_SFR2:  ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  reg = AVR32_HMATRIX_SFR3;
+  print_dbg("\r\n HMATRIX_SFR3:  ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  reg = AVR32_HMATRIX_SFR4;
+  print_dbg("\r\n HMATRIX_SFR4:  ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  reg = AVR32_HMATRIX_SFR5;
+  print_dbg("\r\n HMATRIX_SFR5:  ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  reg = AVR32_HMATRIX_SFR6;
+  print_dbg("\r\n HMATRIX_SFR6:  ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  reg = AVR32_HMATRIX_SFR7;
+  print_dbg("\r\n HMATRIX_SFR7:  ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  reg = AVR32_HMATRIX_SFR8;
+  print_dbg("\r\n HMATRIX_SFR8:  ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  reg = AVR32_HMATRIX_SFR9;
+  print_dbg("\r\n HMATRIX_SFR9:  ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  reg = AVR32_HMATRIX_SFR10;
+  print_dbg("\r\n HMATRIX_SFR10: ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  reg = AVR32_HMATRIX_SFR11;
+  print_dbg("\r\n HMATRIX_SFR11: ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  reg = AVR32_HMATRIX_SFR12;
+  print_dbg("\r\n HMATRIX_SFR12: ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  reg = AVR32_HMATRIX_SFR13;
+  print_dbg("\r\n HMATRIX_SFR13: ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  reg = AVR32_HMATRIX_SFR14;
+  print_dbg("\r\n HMATRIX_SFR14: ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  reg = AVR32_HMATRIX_SFR15;
+  print_dbg("\r\n HMATRIX_SFR15: ");
+  print_dbg("address:");
+  print_dbg_hex(reg);
+  print_dbg(" ; value:");
+  print_dbg_hex(*reg);
+
+  print_dbg("\r\n\n");
+}
+*/
+
+// display SDRAM timing constants
+static void show_sdram_constants(void) {
+  print_dbg("\r\n\n SDRAM constants: \r\n");
+//! The number of bank bits for this SDRAM (1 or 2).
+  print_dbg("\n bank bits: "); print_dbg_ulong(  SDRAM_BANK_BITS                 );
+
+//! The number of row bits for this SDRAM (11 to 13).
+  print_dbg("\r\n row bits:"); print_dbg_ulong(  SDRAM_ROW_BITS                  );
+
+//! The number of column bits for this SDRAM (8 to 11).
+  print_dbg("\r\n col bits:"); print_dbg_ulong(  SDRAM_COL_BITS                 );
+
+//! The minimal column address select (READ) latency for this SDRAM (1 to 3 SDRAM cycles).
+//! Unit: tCK (SDRAM cycle period).
+  print_dbg("\r\n CAS latency: "); print_dbg_ulong(  SDRAM_CAS                       );
+
+//! The minimal write recovery time for this SDRAM (0 to 15 SDRAM cycles).
+//! Unit: ns.
+  print_dbg("\r\n T_WR: "); print_dbg_ulong(  SDRAM_TWR                       );
+
+//! The minimal row cycle time for this SDRAM (0 to 15 SDRAM cycles).
+//! ACTIVE-to-ACTIVE command delay.
+//! Unit: ns.
+  print_dbg("\r\n T_RC: "); print_dbg_ulong(  SDRAM_TRC                       );
+
+//! The minimal row precharge time for this SDRAM (0 to 15 SDRAM cycles).
+//! PRECHARGE command period.
+//! Unit: ns.
+  print_dbg("\r\n T_RP: "); print_dbg_ulong(  SDRAM_TRP                       );
+
+//! The minimal row to column delay time for this SDRAM (0 to 15 SDRAM cycles).
+//! ACTIVE-to-READ/WRITE command delay.
+//! Unit: ns.
+  print_dbg("\r\n T_RCD: "); print_dbg_ulong(  SDRAM_TRCD                      );
+
+//! The minimal row address select time for this SDRAM (0 to 15 SDRAM cycles).
+//! ACTIVE-to-PRECHARGE command delay.
+//! Unit: ns.
+  print_dbg("\r\n T_RAS: "); print_dbg_ulong(  SDRAM_TRAS                      );
+
+//! The minimal exit self refresh time for this SDRAM (0 to 15 SDRAM cycles).
+//! Exit SELF REFRESH to ACTIVE command delay.
+//! Unit: ns.
+  print_dbg("\r\n T_XSR: "); print_dbg_ulong(  SDRAM_TXSR                      );
+
+//! The maximal refresh time for this SDRAM (0 to 4095 SDRAM cycles).
+//! Refresh period.
+//! Unit: ns.
+  print_dbg("\r\n T_R: "); print_dbg_ulong(  SDRAM_TR                        );
+
+//! The minimal refresh cycle time for this SDRAM.
+//! AUTO REFRESH command period.
+//! Unit: ns.
+  print_dbg("\r\n T_RFC: "); print_dbg_ulong(  SDRAM_TRFC                      );
+
+//! The minimal mode register delay time for this SDRAM.
+//! LOAD MODE REGISTER command to ACTIVE or REFRESH command delay.
+//! Unit: tCK (SDRAM cycle period).
+  print_dbg("\r\n T_MRD: "); print_dbg_ulong(  SDRAM_TMRD                      );
+
+//! The minimal stable-clock initialization delay for this SDRAM.
+//! Unit: us.
+  print_dbg("\r\n STABLE_CLOCK_INIT_DELAY: "); print_dbg_ulong(  SDRAM_STABLE_CLOCK_INIT_DELAY   );
+
+//! The minimal number of AUTO REFRESH commands required during initialization for this SDRAM.
+  print_dbg("\r\n INIT_AUTO_REFRESH_COUNT: "); print_dbg_ulong(  SDRAM_INIT_AUTO_REFRESH_COUNT  );
+  print_dbg("\r\n\n");
 }

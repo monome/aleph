@@ -11,7 +11,9 @@ int main(void) {
   // default .crt does this for us
   //  __asm__ __volatile__("R0 = 0x32; SYSCFG = R0; CSYNC;":::"R0");
 
-  // configure programmble flags
+  // initialize clocks and power
+  init_clocks();
+  // configure programmable flags
   init_flags();  
   // intialize the sdram controller
   init_EBIU();
