@@ -16,8 +16,6 @@ int main(void) {
    init_audio();
    init_ui();
 
-   module_init();
-
    //   sleep(1000);
 
    while(run) {

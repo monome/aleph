@@ -86,6 +86,8 @@ void init_audio(void) {
 		      NULL );
   if( err != paNoError ) goto done;
 
+  module_init(SAMPLERATE);
+
   err = Pa_StartStream( stream );
   if( err != paNoError ) goto done;
 

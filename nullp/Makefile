@@ -1,5 +1,6 @@
 CC = gcc
-CFLAGS = -g -std=gnu99 #-v
+CFLAGS += -std=gnu99
+CFLAGS += -g3
 LDFLAGS = -lm
 LDFLAGS += -lportaudio
 LDFLAGS += -lncurses

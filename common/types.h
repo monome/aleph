@@ -1,20 +1,24 @@
 #ifndef _ALEPH_TYPES_H_
 #define _ALEPH_TYPES_H_
 
+#include <stdint.h>
 
 #ifdef ARCH_AVR32
 #include "compiler.h"
+#else
+
 #endif
 
 //---- basic numerical datatypes
-typedef signed char             s8 ;  //!< 8-bit signed integer.
-typedef unsigned char           u8 ;  //!< 8-bit unsigned integer.
-typedef signed short int        s16;  //!< 16-bit signed integer.
-typedef unsigned short int      u16;  //!< 16-bit unsigned integer.
-typedef signed long int         s32;  //!< 32-bit signed integer.
-typedef unsigned long int       u32;  //!< 32-bit unsigned integer.
-typedef signed long long int    s64;  //!< 64-bit signed integer.
-typedef unsigned long long int  u64;  //!< 64-bit unsigned integer.
+
+typedef int8_t            s8 ;  //!< 8-bit signed integer.
+typedef uint8_t           u8 ;  //!< 8-bit unsigned integer.
+typedef int16_t           s16;  //!< 16-bit signed integer.
+typedef uint16_t          u16;  //!< 16-bit unsigned integer.
+typedef int32_t           s32;  //!< 32-bit signed integer.
+typedef uint32_t          u32;  //!< 32-bit unsigned integer.
+typedef int64_t           s64;  //!< 64-bit signed integer.
+typedef uint64_t          u64;  //!< 64-bit unsigned integer.
 typedef float                   f32;  //!< 32-bit floating-point number.
 typedef double                  f64;  //!< 64-bit floating-point number.
 
@@ -33,7 +37,7 @@ typedef f64 F64;  //!< 64-bit floating-point number.
 #endif
 
 // fract
-typedef short fract16;
-typedef long  fract32;
+typedef int32_t fract16;
+typedef int32_t  fract32;
 
 #endif // header guard
