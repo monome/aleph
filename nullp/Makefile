@@ -12,10 +12,17 @@ LIBFIXMATH = $(COMMON)/libfixmath
 INC += -I$(COMMON) -I$(LIBFIXMATH)
 
 APP = nullp
-OBJ  = main.o audio.o ui.o $(LIBFIXMATH)/fix16.o  $(LIBFIXMATH)/fract32.o $(COMMON)/fract32_emu.o
+OBJ  = main.o \
+	audio.o \
+	ui.o \
+	$(LIBFIXMATH)/fix16.o  \
+	$(LIBFIXMATH)/fract32.o \
+	$(COMMON)/fract32_emu.o
 #OBJ += wire.o
 #OBJ += fsine.o
-OBJ += sine.o
+#OBJ += sine.o
+OBJ += mono.o
+OBJ += env.o
 
 $(APP) : $(OBJ)
 	$(CC) $(CFLAGS) $(INC) -o $@ $^ $(LDFLAGS)

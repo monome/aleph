@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "types.h"
+#include "module.h"
 #include "ui.h"
 
 /// variables
@@ -37,6 +38,10 @@ void handle_key(u16 ch) {
     paramIdx = atoi(input);
     printf("enter param value (float): \n"); 
     prompt();
-    paramVal = atof(input);break;
+    paramVal = atof(input);
+    
+    module_set_param(paramIdx, paramVal);
+
+    break;
   }
 }

@@ -8,6 +8,7 @@
 #define _ALEPH_FIX_H_
 
 #include "fix16.h"
+#include "fract32.h"
 
 // use the same formatting convention as bfin fract32
 typedef fix16_t fix16;

@@ -4,6 +4,4 @@
 
 // precalculate at module init and store shape bufs in slow memory
 
-env_
-
 // load a shape from slow to fast memory on param change (interpolate?)

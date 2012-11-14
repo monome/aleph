@@ -1,18 +1,34 @@
-/* sine.c
+/* mono.c
  * nullp
  * 
- * sine ( lookup ) oscillator
+ * monosynth
  */
 
 // std
 #include <math.h>
+// (testing)
+#include <stdlib.h>
+
 // aleph-common
 #include "fix.h"
 #include "fract32_emu.h"
 #include "module.h"
 // null
 #include "audio.h"
+#include "env.h"
 #include "types.h"
+
+
+//----  parameters
+#define PARAM_HZ  0
+#define PARAM_AMP 1
+#define PARAM_GATE 2
+#define PARAM_ATK 3
+#define PARAM_REL 4
+
+// hz is fix16
+#define HZ_MIN 1966080 // 30 << 16
+#define HZ_MAX 524288000 // 8000 << 16
 
 /*
   wavetable numerics:
@@ -22,23 +38,18 @@
     ( lose one bit from signed->unsigned) 
   - cast fractional part to fract32 (<<16 b/c unsigned->signed)
   - interpolate using fract32
-
  */
 
 //--- wavetable
 #define TAB_SIZE 512
 #define TAB_SIZE_1 511
 #define TAB_MAX16 0x1ff0000 // 511 * 0x10000
-//----  parameters
-#define PARAM_HZ  0
-#define PARAM_AMP 1
-// hz is fix16
-#define HZ_MIN 1966080 // 30 << 16
-#define HZ_MAX 524288000 // 8000 << 16
 
 
 //-----------------------
 //------ static variables
+env_asr* env; // envelope
+
 static fract32   tab[TAB_SIZE]; // wavetable
 
 static fix16     idx;        // current phase (fractional idx)
@@ -76,10 +87,6 @@ static void calc_frame(void) {
   // invert
   fx = sub_fr1x32(0x7fffffff, fxnext);
 
-  /////// TEST:
-  //  fxnext = 0x3fffffff;
-  //  fx = 0x80000000;
-  
   // interpolate
   frameval = mult_fr1x32x32(amp, 
 		   add_fr1x32(
@@ -87,6 +94,9 @@ static void calc_frame(void) {
 			      mult_fr1x32x32(tab[xnext], fxnext)
 			      )
 		   );  
+
+  // apply envelope
+  frameval = mult_fr1x32x32(frameval, env_asr_next(env));
   
   // increment idx
   idx = fix16_add(idx, inc);
@@ -106,9 +116,7 @@ void module_init(const u32 sr_arg) {
   inc_1hz = fix16_from_float( (f32)TAB_SIZE / (f32)sr );
 
   idx = 0;
-
   amp = INT32_MAX >> 1;
-
   set_hz( fix16_from_int(220) );
 
   // init wavetable
@@ -116,24 +124,48 @@ void module_init(const u32 sr_arg) {
     tab[i] = float_to_fr32( sinf(x) );
     x += tabInc;
   }
+
+  // allocate envelope
+  env = (env_asr*)malloc(sizeof(env_asr));
+  env_asr_init(env);
+  env_asr_set_atk_shape(env, float_to_fr32(0.5));
+  env_asr_set_rel_shape(env, float_to_fr32(0.5));
 }
 
+// de-init
+void module_deinit(void) {
+  free(env);
+}
+
+// set parameter by value
 void module_set_param(u32 idx, f32 v) {
-  if(idx == 0) {
+  switch(idx) {
+  case PARAM_HZ:
     set_hz(fix16_from_float(v));
+    break;
+  case PARAM_AMP:
+    amp = float_to_fr32(v);
+    break;
+  case PARAM_GATE:
+    env_asr_set_gate(env, v > 0.f);
+    break;
+  case PARAM_ATK:
+    env_asr_set_atk_dur(env, (u32)v);
+    break;
+  case PARAM_REL:
+    env_asr_set_rel_dur(env, (u32)v);
+    break;
   }
 }
 
+// frame callback
 void module_callback(const f32* in, f32* out) {
   u32 frame;
   u8 chan;
-  
   for(frame=0; frame<BLOCKSIZE; frame++) {
     calc_frame();
     for(chan=0; chan<NUMCHANNELS; chan++) { // stereo interleaved
       *out++ = fr32_to_float(frameval);
-      // wire:
-      //      *out++ = *in++;
     }
   }
 }
