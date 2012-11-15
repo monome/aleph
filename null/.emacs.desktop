@@ -2,7 +2,7 @@
 ;; --------------------------------------------------------------------------
 ;; Desktop File for Emacs
 ;; --------------------------------------------------------------------------
-;; Created Tue Oct  9 22:10:21 2012
+;; Created Wed Nov 14 00:14:58 2012
 ;; Desktop file format version 206
 ;; Emacs version 23.3.1
 
@@ -10,251 +10,405 @@
 (setq desktop-missing-file-warning nil)
 (setq tags-file-name nil)
 (setq tags-table-list nil)
-(setq search-ring nil)
+(setq search-ring '("reset" "	" "plot" "[pl" "plot" "path" "timetag" "MASK_40" "out =" "out" "paramDes" "void)"))
 (setq regexp-search-ring nil)
 (setq register-alist nil)
-(setq file-name-history '("~/aleph/null/" "~/aleph/common/param_common.h" "~/aleph/null/modules/osc2/osc2.h" "~/aleph/null/modules/osc2/" "~/aleph/null/" "~/sandbox/Param.c" "~/sandbox/Param.h" "~/sandbox/Module.h" "~/sandbox/" "~/sandbox/sbx-echo/sbx-echo.h"))
+(setq file-name-history '("~/src/fract/" "~/aleph/common/fract32_emu.c" "~/aleph/nullp/num.scd" "~/aleph/nullp/env.h" "~/aleph/nullp/Makefile" "~/aleph/nullp/env.h" "~/Documents/c/h/hhhh.txt" "~/aleph/nullp/env.h" "~/aleph/bees/" "~/aleph/nullp/env.h" "~/aleph/bees/menu.c" "~/aleph/nullp/env.c" "~/aleph/nullp/num.scd" "~/aleph/nullp/envscr.cpp" "~/celldiff/main.cpp" "~/aleph/nullp/" "~/aleph/common/libfixmath/fix16.c" "~/aleph/common/libfixmath/fix16.h" "~/aleph/nullp/wire.c" "~/aleph/nullp/Makefile" "~/aleph/common/fract32_emu.h" "~/aleph/common/fract32_emu.c" "~/aleph/common/libfixmath/fract32.c" "~/aleph/nullp/Makefile" "~/src/fract/" "/usr/include/" "~/aleph/common/libfixmath/fract32.h" "~/aleph/common/libfixmath/fix16.h" "~/aleph/common/libfixmath/fract32.h" "~/aleph/common/fix.h"))
 
 ;; Buffer section -- buffers listed in same order as in buffer list:
 (desktop-create-buffer 206
-  "/home/emb/aleph/common/param_common.h"
-  "param_common.h"
+  nil
+  "fract"
+  'dired-mode
+  nil
+  418
+  '(nil nil)
+  t
+  '("/home/emb/src/fract/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/src/fract/fract32_inline.h"
+  "fract32_inline.h"
   'c-mode
   '(abbrev-mode)
-  1202
+  1621
+  '(249 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/fract32_emu.c"
+  "fract32_emu.c"
+  'c-mode
+  '(abbrev-mode)
+  1292
+  '(1293 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/fract32_emu.h"
+  "fract32_emu.h"
+  'c-mode
+  '(abbrev-mode)
+  832
+  '(800 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/nullp/env.c"
+  "env.c"
+  'c-mode
+  '(abbrev-mode)
+  4633
+  '(4382 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/nullp/num.scd"
+  "num.scd"
+  'sclang-mode
+  nil
+  396
+  '(277 nil)
+  nil
+  nil
+  '((tab-width . 4) (indent-tabs-mode . t) (buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/nullp/sine.c"
+  "sine.c"
+  'c-mode
+  '(abbrev-mode)
+  1824
+  '(1977 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/nullp/env.h"
+  "env.h<2>"
+  'c-mode
+  '(abbrev-mode)
+  320
+  '(288 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/nullp/Makefile"
+  "Makefile"
+  'makefile-gmake-mode
+  nil
+  371
+  '(553 nil)
+  nil
+  nil
+  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  nil
+  "bees"
+  'dired-mode
+  nil
+  1876
+  '(1873 t)
+  t
+  '("/home/emb/aleph/bees/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bees/op.h"
+  "op.h"
+  'c-mode
+  '(abbrev-mode)
+  214
   '(nil nil)
   nil
   nil
   '((buffer-file-coding-system . undecided-unix)))
 
 (desktop-create-buffer 206
+  "/home/emb/aleph/bees/net.c"
+  "net.c"
+  'c-mode
+  '(abbrev-mode)
+  903
+  '(nil nil)
   nil
-  "modules"
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bees/net_protected.h"
+  "net_protected.h"
+  'c-mode
+  '(abbrev-mode)
+  1554
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bees/net.h"
+  "net.h"
+  'c-mode
+  '(abbrev-mode)
+  1416
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bees/menu.c"
+  "menu.c"
+  'c-mode
+  '(abbrev-mode)
+  1484
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/nullp/envscr.cpp"
+  "envscr.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  497
+  '(158 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/celldiff/main.cpp"
+  "main.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  3957
+  '(3367 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  nil
+  "nullp"
   'dired-mode
   nil
-  405
+  852
   '(nil nil)
   t
-  '("/home/emb/aleph/null/modules/")
+  '("/home/emb/aleph/nullp/")
   nil)
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/libfixmath/fix16.h"
+  "fix16.h"
+  'c-mode
+  '(abbrev-mode)
+  4741
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/libfixmath/fix16.c"
+  "fix16.c"
+  'c-mode
+  '(abbrev-mode)
+  1145
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bfin/modules/osc2/osc2.c"
+  "osc2.c"
+  'c-mode
+  '(abbrev-mode)
+  1914
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/fix.h"
+  "fix.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/nullp/wire.c"
+  "wire.c"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/types.h"
+  "types.h"
+  'c-mode
+  '(abbrev-mode)
+  1364
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/libfixmath/fract32.c"
+  "fract32.c<2>"
+  'c-mode
+  '(abbrev-mode)
+  679
+  '(688 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/libfixmath/fract32.h"
+  "fract32.h"
+  'c-mode
+  '(abbrev-mode)
+  156
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bfin/src/module.h"
+  "module.h"
+  'c-mode
+  '(abbrev-mode)
+  918
+  '(487 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bfin/modules/osc2/osc2.h"
+  "osc2.h"
+  'c-mode
+  '(abbrev-mode)
+  742
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
 
 (desktop-create-buffer 206
   nil
   "osc2"
   'dired-mode
   nil
-  175
+  1120
   '(nil nil)
   t
-  '("/home/emb/aleph/null/modules/osc2/")
+  '("/home/emb/aleph/bfin/modules/osc2/")
   nil)
 
 (desktop-create-buffer 206
-  "/home/emb/aleph/null/modules/osc2/osc2.h"
-  "osc2.h"
+  "/home/emb/aleph/nullp/module.h"
+  "module.h<2>"
   'c-mode
   '(abbrev-mode)
-  1
-  '(nil nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/aleph/null/modules/osc2/osc2.c"
-  "osc2.c"
-  'c-mode
-  '(abbrev-mode)
-  1362
-  '(nil nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/aleph/null/modules/echo/echo_data.c"
-  "echo_data.c"
-  'c-mode
-  '(abbrev-mode)
-  1373
-  '(nil nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/aleph/null/modules/echo/echo.c"
-  "echo.c"
-  'c-mode
-  '(abbrev-mode)
-  155
-  '(nil nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/aleph/null/modules/echo/echo_data.C"
-  "echo_data.C"
-  'c++-mode
-  '(abbrev-mode)
-  1
-  '(nil nil)
+  334
+  '(322 nil)
   nil
   nil
   '((buffer-file-coding-system . undecided-unix)))
 
 (desktop-create-buffer 206
   nil
-  "echo"
+  "src"
   'dired-mode
   nil
-  377
+  812
   '(nil nil)
   t
-  '("/home/emb/aleph/null/modules/echo/")
+  '("/home/emb/aleph/bfin/src/")
   nil)
 
 (desktop-create-buffer 206
-  "/home/emb/aleph/null/modules/echo/Makefile"
-  "Makefile<2>"
-  'makefile-gmake-mode
   nil
-  1
+  "bfin"
+  'dired-mode
+  nil
+  406
+  '(nil nil)
+  t
+  '("/home/emb/aleph/bfin/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/common/module_common.h"
+  "module_common.h"
+  'c-mode
+  '(abbrev-mode)
+  118
   '(nil nil)
   nil
   nil
-  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-unix)))
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  nil
+  "common"
+  'dired-mode
+  nil
+  1594
+  '(nil nil)
+  t
+  '("/home/emb/aleph/common/")
+  nil)
+
+(desktop-create-buffer 206
+  nil
+  "libfixmath"
+  'dired-mode
+  nil
+  221
+  '(nil nil)
+  t
+  '("/home/emb/aleph/common/libfixmath/")
+  nil)
 
 (desktop-create-buffer 206
   nil
   "null"
   'dired-mode
   nil
-  312
+  511
   '(nil nil)
   t
   '("/home/emb/aleph/null/")
   nil)
-
-(desktop-create-buffer 206
-  "/home/emb/aleph/null/core.mk"
-  "core.mk"
-  'makefile-gmake-mode
-  nil
-  1
-  '(nil nil)
-  nil
-  nil
-  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/sandbox/Param.h"
-  "Param.h"
-  'c-mode
-  '(abbrev-mode)
-  1076
-  '(nil nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/sandbox/Param.c"
-  "Param.c"
-  'c-mode
-  '(abbrev-mode)
-  1783
-  '(nil nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/sandbox/Module.h"
-  "Module.h"
-  'c-mode
-  '(abbrev-mode)
-  453
-  '(nil nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/sandbox/sbx-echo/sbx-echo.c"
-  "sbx-echo.c"
-  'c-mode
-  '(abbrev-mode)
-  1212
-  '(1714 nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/sandbox/sbx-echo/sbx-echo.h"
-  "sbx-echo.h"
-  'c-mode
-  '(abbrev-mode)
-  412
-  '(nil nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  nil
-  "sbx-echo"
-  'dired-mode
-  nil
-  552
-  '(nil nil)
-  t
-  '("/home/emb/sandbox/sbx-echo/")
-  nil)
-
-(desktop-create-buffer 206
-  nil
-  "sandbox"
-  'dired-mode
-  nil
-  1357
-  '(nil nil)
-  t
-  '("/home/emb/sandbox/")
-  nil)
-
-(desktop-create-buffer 206
-  "/home/emb/sandbox/AudioHost.h"
-  "AudioHost.h"
-  'c-mode
-  '(abbrev-mode)
-  1
-  '(nil nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/sandbox/sandbox.c"
-  "sandbox.c"
-  'c-mode
-  '(abbrev-mode)
-  1
-  '(nil nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/sandbox/sbx-echo/Makefile"
-  "Makefile"
-  'makefile-gmake-mode
-  nil
-  1430
-  '(nil nil)
-  nil
-  nil
-  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-unix)))
 

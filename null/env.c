@@ -14,22 +14,20 @@
 #include "env.h" 
 
 // max/min values of fract32
-#define FR32_MAX           0x7fffffff
-#define FR32_MIN           0x80000000
-
-#define ENV_MIN            (0x800) //  -120.41199826929 db as fract32
-#define ENV_MIN_DOUBLE     (9.53674316e-07)
-#define ENV_MAX            (FR32_MAX)
-#define ENV_MAX_DOUBLE     (1.0)
+#define FR32_MAX      0x7fffffff
+#define FR32_MIN      0x80000000
+// max/min of env in fract32 and double
+#define ENV_MIN       0x7ff //  -120.41624045437 db
+#define ENV_MIN_D     9.5320865556281e-07
+#define ENV_MAX       FR32_MAX
+#define ENV_MAX_D     1.0
 
 // envelope states
-#define ENV_STATE_ATK_POS  0
-#define ENV_STATE_ATK_NEG  1
-#define ENV_STATE_REL_POS  2
-#define ENV_STATE_REL_NEG  3
-#define ENV_STATE_SUS      4
-#define ENV_STATE_OFF      5
-#define ENV_NUM_STATES     6
+#define ENV_STATE_ATK      0
+#define ENV_STATE_REL      1
+#define ENV_STATE_SUS      2
+#define ENV_STATE_OFF      3
+#define ENV_NUM_STATES     4
 
 /*
     switch(env->state) {
@@ -87,35 +85,59 @@ void env_asr_init(env_asr* env) {
   env_asr_off(env);
 }
 
-
-// get the next value
-fract32 env_asr_next(env_asr* env) {
-  return (*(env->stateFP))(env);
-}
-
 // set attack duration in samples
 void env_asr_set_atk_dur(env_asr* env, u32 dur) { 
-  env->bUp = float_to_fr32( (float)( pow(ENV_MIN_DOUBLE, 1.0 / (double)dur) ) );
+  f32 fB = powf(ENV_MIN_D, 1.0 / (f32)dur);
+  env->bUp = float_to_fr32(fB);
+  env->aUp = float_to_fr32(1.f / fB);
   env->rUp = FR32_MAX / dur;
-  printf("\n env ramp increment : %d", env->rUp);
+  printf("\n env growth coefficient : %08x", env->aUp);
+  printf("\n env decay coefficient : %08x", env->bUp);
+  printf("\n env ramp increment : %08x", env->rUp);
   //  env->aUp = 1.0 / env->bUp;
 }
 
 // set release duration in samples
 void env_asr_set_rel_dur(env_asr* env, u32 dur) {
-  env->bDn = float_to_fr32( (float)( pow(ENV_MIN_DOUBLE, 1.0 / (double)dur) ) );
+  env->bDn = float_to_fr32( (float)( pow(ENV_MIN_D, 1.0 / (double)dur) ) );
   env->rDn = FR32_MAX / dur;
   //  env->aDn = 1.0 / env->bUp;
 }
 
 // set attack curve in [-1, 1]
 void env_asr_set_atk_shape(env_asr* env, fract32 c) {
+  fract32 cOld = env->cUp;
   env->cUp = c;
+  if((cOld < 0) != (c < 0)) {
+    if (c < 0) {
+      env->stateFP = *(env_next_atk_neg);
+    } else {
+      env->stateFP = *(env_next_atk_pos);
+    }
+    if(env->state == ENV_STATE_REL) {
+      // invert current phase
+      env->x = sub_fr1x32(FR32_MAX, env->x);
+      env->y = sub_fr1x32(FR32_MAX, env->y);
+    }
+  }
 }
 
 // set release curve in [-1, 1]
 void env_asr_set_rel_shape(env_asr* env, fract32 c) {
+  fract32 cOld = env->cDn;
   env->cDn = c;
+  if((cOld < 0) != (c < 0)) {
+    if (c < 0) {
+      env->stateFP = *(env_next_rel_neg);
+    } else {
+      env->stateFP = *(env_next_rel_pos);
+    }
+    if(env->state == ENV_STATE_REL) {
+    // invert current phase
+      env->x = sub_fr1x32(FR32_MAX, env->x);
+      env->y = sub_fr1x32(FR32_MAX, env->y);
+    }
+  }
 }
 
 // set gate
@@ -123,19 +145,27 @@ void env_asr_set_gate(env_asr* env, u8 g) {
   if(g > 0) {
     env_asr_attack(env);
   } else {
+    if( (env->state == ENV_STATE_ATK) || (env->state == ENV_STATE_SUS) ) {
+      env_asr_release(env);
+    }
+    /*    
     switch(env->state) {
-    case ENV_STATE_ATK_POS  :
-    case ENV_STATE_ATK_NEG  :           
-    case ENV_STATE_SUS      :
+    case ENV_STATE_ATK  :
+    case ENV_STATE_SUS      : 
       env_asr_release(env);
       break;
-    case ENV_STATE_REL_POS  :
-    case ENV_STATE_REL_NEG  :
+    case ENV_STATE_REL  :
     case ENV_STATE_OFF      :
-    default: // nothing
+    default:
       break;
     }
+    */
   }
+}
+
+// get the next value
+fract32 env_asr_next(env_asr* env) {
+  return (*(env->stateFP))(env);
 }
 
 
@@ -144,15 +174,14 @@ void env_asr_set_gate(env_asr* env, u8 g) {
 
 // perform attack section 
 void env_asr_attack(env_asr* env) {
+  env->state = ENV_STATE_ATK;
   if(env->cUp > 0) {
     // inverted decay
-    env->state = ENV_STATE_ATK_POS;
     env->stateFP = *(env_next_atk_pos);
     env->x = ENV_MAX;
     env->y = 0; // ramp
   } else {
     // uninverted growth
-    env->state = ENV_STATE_ATK_NEG;
     env->stateFP = *(env_next_atk_neg);
     env->x = ENV_MIN;
     env->y = 0; // ramp
@@ -167,15 +196,14 @@ static void env_asr_sustain(env_asr* env) {
 
 // perform release section
 static void env_asr_release(env_asr* env) {
+    env->state = ENV_STATE_REL;
  if(env->cDn >= 0) {
     // uninverted decay
-    env->state = ENV_STATE_REL_POS;
     env->stateFP = *(env_next_rel_pos);
     env->x = ENV_MAX;
     env->y = FR32_MAX;
   } else {
     // inverted growth
-    env->state = ENV_STATE_REL_NEG;
     env->stateFP = *(env_next_rel_neg);
     env->x = ENV_MIN;
     env->y = FR32_MAX;
@@ -205,7 +233,7 @@ static fract32 env_next_atk_pos(env_asr* env) {
     }
   }
   // interpolate for curve
-  return add_fr1x32(
+  return add_fr1x32( // invert x:
 		    mult_fr1x32x32( sub_fr1x32(FR32_MAX, env->x), env->cUp ),
 		    mult_fr1x32x32( env->y, sub_fr1x32( FR32_MAX, env->cUp) )
 		    );
@@ -248,22 +276,21 @@ static fract32 env_next_rel_pos(env_asr* env) {
   }
   // interpolate for curve
   return add_fr1x32(
-		    mult_fr1x32x32(env->x, env->cDn),
-		    mult_fr1x32x32(env->y, sub_fr1x32( FR32_MAX, env->cDn) )
+		    mult_fr1x32x32( env->x, env->cDn ),
+		    mult_fr1x32x32( env->y, sub_fr1x32(FR32_MAX, env->cDn) )
 		    );
 }
 
 // release stage, negative curve
 static fract32 env_next_rel_neg(env_asr* env) {
-  //////////////// FIXME
   // inverted growth
+  env->y = sub_fr1x32(env->y, (fract32)env->rDn);
   //  env->x = mult_fr1x32x32(env->x, env->aDn );
-  //  env->y = add_fr1x32(env->y, (fract32)env->rDn);
   env->x = (fract32)( fix16_mul( (fix16)(env->x >> 16), env->aDn) << 16);
   // interpolate for curve
-  return add_fr1x32(
-		    mult_fr1x32x32(env->x, env->cDn),
-		    mult_fr1x32x32(env->y, sub_fr1x32( FR32_MAX, env->cDn) )
+  return add_fr1x32( // invert x:
+		    mult_fr1x32x32( sub_fr1x32(FR32_MAX, env->x), env->cDn ),
+		    mult_fr1x32x32( env->y, sub_fr1x32(FR32_MAX, env->cDn) )
 		    );
 }
 

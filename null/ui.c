@@ -2,10 +2,14 @@
  * nullp
  */
 
+// std
 #include <stdio.h>
 #include <stdlib.h>
-#include "types.h"
+
+//aleph
+//#include "fix.h"
 #include "module.h"
+#include "types.h"
 #include "ui.h"
 
 /// variables
@@ -28,7 +32,7 @@ void deinit_ui(void) {
 }
 
 void handle_key(u16 ch) {
-  f32 paramVal;
+  f32 pval;
   switch(ch) {
   case CMD_KEY_PARAM:
     
@@ -38,9 +42,9 @@ void handle_key(u16 ch) {
     paramIdx = atoi(input);
     printf("enter param value (float): \n"); 
     prompt();
-    paramVal = atof(input);
+    pval = atof(input);
     
-    module_set_param(paramIdx, paramVal);
+    module_set_param(paramIdx, pval);
 
     break;
   }

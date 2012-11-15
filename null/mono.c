@@ -1,7 +1,7 @@
 /* mono.c
  * nullp
  * 
- * monosynth
+ * monosynth module
  */
 
 // std
@@ -12,10 +12,10 @@
 // aleph-common
 #include "fix.h"
 #include "fract32_emu.h"
-#include "module.h"
 // null
 #include "audio.h"
 #include "env.h"
+#include "module.h"
 #include "types.h"
 
 
@@ -23,8 +23,11 @@
 #define PARAM_HZ  0
 #define PARAM_AMP 1
 #define PARAM_GATE 2
-#define PARAM_ATK 3
-#define PARAM_REL 4
+#define PARAM_ATK_DUR 3
+#define PARAM_REL_DUR 4
+#define PARAM_ATK_CURVE 5
+#define PARAM_REL_CURVE 6
+#define NUM_PARAMS 7
 
 // hz is fix16
 #define HZ_MIN 1966080 // 30 << 16
@@ -45,11 +48,13 @@
 #define TAB_SIZE_1 511
 #define TAB_MAX16 0x1ff0000 // 511 * 0x10000
 
+//-------------------------
+//----- extern vars (initialized here)
+moduleData_t * moduleData; // module data
 
 //-----------------------
 //------ static variables
-env_asr* env; // envelope
-
+static env_asr* env; // envelope
 static fract32   tab[TAB_SIZE]; // wavetable
 
 static fix16     idx;        // current phase (fractional idx)
@@ -110,6 +115,13 @@ void module_init(const u32 sr_arg) {
   f32 x = 0.f;
   f32 tabInc;
   u16 i;
+
+  // init module/param descriptor
+  moduleData = (moduleData_t*)malloc(sizeof(moduleData_t));
+  moduleData->numParams = NUM_PARAMS;
+  moduleData->paramDesc = (ParamDesc*)malloc(NUM_PARAMS * sizeof(ParamDesc));
+  moduleData->paramData = (ParamData*)malloc(NUM_PARAMS * sizeof(ParamData));
+
   // init params
   sr = sr_arg;
   tabInc =  M_PI * 2.0 / (f32)TAB_SIZE;
@@ -149,12 +161,19 @@ void module_set_param(u32 idx, f32 v) {
   case PARAM_GATE:
     env_asr_set_gate(env, v > 0.f);
     break;
-  case PARAM_ATK:
+  case PARAM_ATK_DUR:
     env_asr_set_atk_dur(env, (u32)v);
     break;
-  case PARAM_REL:
+  case PARAM_REL_DUR:
     env_asr_set_rel_dur(env, (u32)v);
     break;
+  case PARAM_ATK_CURVE:
+    env_asr_set_atk_shape(env, float_to_fr32(v));
+    break;
+  case PARAM_REL_CURVE:
+    env_asr_set_atk_shape(env, float_to_fr32(v));
+    break;
+
   }
 }
 
@@ -165,6 +184,7 @@ void module_callback(const f32* in, f32* out) {
   for(frame=0; frame<BLOCKSIZE; frame++) {
     calc_frame();
     for(chan=0; chan<NUMCHANNELS; chan++) { // stereo interleaved
+      // FIXME: use fract for output directly (portaudio setting?)
       *out++ = fr32_to_float(frameval);
     }
   }

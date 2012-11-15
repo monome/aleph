@@ -29,11 +29,11 @@ extern moduleData_t* moduleData;
 
 //-------- function prototypes 
 // intialize
-extern void init_module(void);
+extern void module_init(void);
 // frame processing function
-extern void process_frame(void);
+extern void module_process_frame(void);
 // button handler
-extern void handle_button(void);
+extern void module_handle_button(void);
 // led update
 extern u8 update_leds(void);
 
