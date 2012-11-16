@@ -16,6 +16,7 @@
 #include "audio.h"
 #include "env.h"
 #include "module.h"
+#include "table.h"
 #include "types.h"
 
 
@@ -39,14 +40,19 @@
   - constrain table size to 2^N
   - then we can get table index with phase >> (32 - N) -1)
     ( lose one bit from signed->unsigned) 
-  - cast fractional part to fract32 (<<16 b/c unsigned->signed)
+  - cast fractional part to fract32 (<<15 b/c unsigned->signed)
   - interpolate using fract32
  */
 
 //--- wavetable
-#define TAB_SIZE 512
-#define TAB_SIZE_1 511
-#define TAB_MAX16 0x1ff0000 // 511 * 0x10000
+#define SINE_TAB_SIZE 512
+#define SINE_TAB_SIZE_1 511
+#define SINE_TAB_MAX16 0x1ff0000 // 511 * 0x10000
+
+//-----------------------
+//----- fwd declaration 
+// from table.h
+extern inline fract32 fixtable_lookup_idx(fract32* tab, u32 size, fix16 idx);
 
 //-------------------------
 //----- extern vars (initialized here)
@@ -55,7 +61,8 @@ moduleData_t * moduleData; // module data
 //-----------------------
 //------ static variables
 static env_asr* env; // envelope
-static fract32   tab[TAB_SIZE]; // wavetable
+
+static fract32   sinetab[SINE_TAB_SIZE]; // wavetable
 
 static fix16     idx;        // current phase (fractional idx)
 static fix16     inc_1hz;      // idx change at 1hz
@@ -80,32 +87,14 @@ static void set_hz(const fix16 hzArg) {
 }
 
 static void calc_frame(void) {
-  static s16 x;
-  static s16 xnext;
-  static fract32 fx;
-  static fract32 fxnext;
-  x = (idx >> 16) % TAB_SIZE;
-  xnext = (x + 1) % TAB_SIZE;
-
-  // (unsigned LJ) -> (signed RJ)
-  fxnext = (fract32)( (idx << 15) & 0x7fffffff );
-  // invert
-  fx = sub_fr1x32(0x7fffffff, fxnext);
-
-  // interpolate
-  frameval = mult_fr1x32x32(amp, 
-		   add_fr1x32(
-			      mult_fr1x32x32(tab[x], fx),
-			      mult_fr1x32x32(tab[xnext], fxnext)
-			      )
-		   );  
-
+  frameval = fixtable_lookup_idx(sinetab, SINE_TAB_SIZE, idx);
   // apply envelope
   frameval = mult_fr1x32x32(frameval, env_asr_next(env));
-  
-  // increment idx
+  // apply amplitude 
+  frameval = mult_fr1x32x32(frameval, amp);
+  // increment idx and wrap
   idx = fix16_add(idx, inc);
-  while(idx > TAB_MAX16) { idx = fix16_sub(idx, TAB_MAX16); }
+  while(idx > SINE_TAB_MAX16) { idx = fix16_sub(idx, SINE_TAB_MAX16); }
 }
 
 //----------------------
@@ -124,16 +113,16 @@ void module_init(const u32 sr_arg) {
 
   // init params
   sr = sr_arg;
-  tabInc =  M_PI * 2.0 / (f32)TAB_SIZE;
-  inc_1hz = fix16_from_float( (f32)TAB_SIZE / (f32)sr );
+  tabInc =  M_PI * 2.0 / (f32)SINE_TAB_SIZE;
+  inc_1hz = fix16_from_float( (f32)SINE_TAB_SIZE / (f32)sr );
 
   idx = 0;
   amp = INT32_MAX >> 1;
   set_hz( fix16_from_int(220) );
 
   // init wavetable
-  for(i=0; i<TAB_SIZE; i++) {
-    tab[i] = float_to_fr32( sinf(x) );
+  for(i=0; i<SINE_TAB_SIZE; i++) {
+    sinetab[i] = float_to_fr32( sinf(x) );
     x += tabInc;
   }
 

@@ -11,7 +11,7 @@ COMMON = ../common
 LIBFIXMATH = $(COMMON)/libfixmath
 INC += -I$(COMMON) -I$(LIBFIXMATH)
 
-APP = nullp
+APP = null
 OBJ  = main.o \
 	audio.o \
 	ui.o \
@@ -23,6 +23,7 @@ OBJ  = main.o \
 #OBJ += sine.o
 OBJ += mono.o
 OBJ += env.o
+OBJ += table.o
 
 $(APP) : $(OBJ)
 	$(CC) $(CFLAGS) $(INC) -o $@ $^ $(LDFLAGS)
