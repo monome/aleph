@@ -60,13 +60,13 @@ extern void fixtable_fill_harm(fract32* tab, u32 size, u8 order, f32 decay, u8 n
     if ( min > max ) {
       if ( min > 1.f ) {
 	for(samp=0; samp<size; samp++) {
-	  tab[samp] /= min;
+	  tab[samp] = (fract32)( (f32)(tab[samp]) / min );
 	}	
       }
     } else {
       if( max > 1.f) {
 	for(samp=0; samp<size; samp++) {
-	  tab[samp] /= max;
+	  tab[samp] = (fract32)( (f32)(tab[samp]) / max );
 	}
       }
     }

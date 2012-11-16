@@ -101,8 +101,8 @@ static void calc_frame(void) {
 //----- external functions
 
 void module_init(const u32 sr_arg) {
-  f32 x = 0.f;
-  f32 tabInc;
+  //  f32 x = 0.f;
+  //  f32 tabInc;
   u16 i;
 
   // init module/param descriptor
@@ -113,18 +113,20 @@ void module_init(const u32 sr_arg) {
 
   // init params
   sr = sr_arg;
-  tabInc =  M_PI * 2.0 / (f32)SINE_TAB_SIZE;
+  //  tabInc =  M_PI * 2.0 / (f32)SINE_TAB_SIZE;
   inc_1hz = fix16_from_float( (f32)SINE_TAB_SIZE / (f32)sr );
-
-  idx = 0;
   amp = INT32_MAX >> 1;
   set_hz( fix16_from_int(220) );
+  idx = 0;
 
+  /*
   // init wavetable
   for(i=0; i<SINE_TAB_SIZE; i++) {
     sinetab[i] = float_to_fr32( sinf(x) );
     x += tabInc;
   }
+  */
+  fixtable_fill_harm(sinetab, SINE_TAB_SIZE, 1, 1.f, 0);
 
   // allocate envelope
   env = (env_asr*)malloc(sizeof(env_asr));
