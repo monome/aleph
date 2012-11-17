@@ -20,6 +20,10 @@
 #include "types.h"
 
 
+/// DEBUG
+static u32 framecount = 0;
+
+
 //----  parameters
 #define PARAM_HZ  0
 #define PARAM_AMP 1
@@ -47,7 +51,8 @@
 //--- wavetable
 #define SINE_TAB_SIZE 512
 #define SINE_TAB_SIZE_1 511
-#define SINE_TAB_MAX16 0x1ff0000 // 511 * 0x10000
+//#define SINE_TAB_MAX16 0x1ff0000 // 511 * 0x10000
+#define SINE_TAB_MAX16 0x1ffffff // (512 * 0x10000) - 1
 
 //-----------------------
 //----- fwd declaration 
@@ -86,7 +91,10 @@ static void set_hz(const fix16 hzArg) {
   //  idx = 0;
 }
 
+/// 
+
 static void calc_frame(void) {
+  // lookup
   frameval = fixtable_lookup_idx(sinetab, SINE_TAB_SIZE, idx);
   // apply envelope
   frameval = mult_fr1x32x32(frameval, env_asr_next(env));
@@ -95,14 +103,24 @@ static void calc_frame(void) {
   // increment idx and wrap
   idx = fix16_add(idx, inc);
   while(idx > SINE_TAB_MAX16) { idx = fix16_sub(idx, SINE_TAB_MAX16); }
+  ///// DEBUG
+  // print index
+  /*
+  if( (framecount < 512) ) {
+       	printf("0x%08x , ", idx);
+	framecount++;
+      }
+  */
 }
 
 //----------------------
 //----- external functions
 
 void module_init(const u32 sr_arg) {
-  //  f32 x = 0.f;
-  //  f32 tabInc;
+
+  f32 x = 0.f;
+  f32 tabInc;
+
   u16 i;
 
   // init module/param descriptor
@@ -113,26 +131,35 @@ void module_init(const u32 sr_arg) {
 
   // init params
   sr = sr_arg;
-  //  tabInc =  M_PI * 2.0 / (f32)SINE_TAB_SIZE;
+  
   inc_1hz = fix16_from_float( (f32)SINE_TAB_SIZE / (f32)sr );
   amp = INT32_MAX >> 1;
   set_hz( fix16_from_int(220) );
   idx = 0;
 
-  /*
+  
   // init wavetable
-  for(i=0; i<SINE_TAB_SIZE; i++) {
+  
+  /*
+    tabInc =  M_PI * 2.0 / (f32)SINE_TAB_SIZE;
+    for(i=0; i<SINE_TAB_SIZE; i++) {
     sinetab[i] = float_to_fr32( sinf(x) );
     x += tabInc;
-  }
-  */
+    }
+ */
+  //      fixtable_fill_harm(sinetab, SINE_TAB_SIZE, 4, 0.5f, 1);
   fixtable_fill_harm(sinetab, SINE_TAB_SIZE, 1, 1.f, 0);
+
 
   // allocate envelope
   env = (env_asr*)malloc(sizeof(env_asr));
   env_asr_init(env);
   env_asr_set_atk_shape(env, float_to_fr32(0.5));
   env_asr_set_rel_shape(env, float_to_fr32(0.5));
+
+
+  /// DEBUG
+  printf("\n\n module init debug \n\n");
 }
 
 // de-init
@@ -168,8 +195,10 @@ void module_set_param(u32 idx, f32 v) {
   }
 }
 
+
+
 // frame callback
-void module_callback(const f32* in, f32* out) {
+void module_process_frame(const f32* in, f32* out) {
   u32 frame;
   u8 chan;
   for(frame=0; frame<BLOCKSIZE; frame++) {
@@ -177,6 +206,14 @@ void module_callback(const f32* in, f32* out) {
     for(chan=0; chan<NUMCHANNELS; chan++) { // stereo interleaved
       // FIXME: use fract for output directly (portaudio setting?)
       *out++ = fr32_to_float(frameval);
+
+	//// DEBUG      
+      
+      if( (framecount < 256) && (chan == 0) && (*out != 0.0) ) { 
+       	printf("\n%f,", *out);
+	framecount++;
+      }
+      
     }
   }
 }

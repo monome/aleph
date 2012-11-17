@@ -41,7 +41,7 @@ static int paCallback( const void *inputBuffer, void *outputBuffer,
     const float *in = (const float*)inputBuffer;
     float *out = (float*)outputBuffer;
     u32 samp;
-    module_callback(in, out);
+    module_process_frame(in, out);
     return 0;
 }
 
