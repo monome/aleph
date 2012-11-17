@@ -38,16 +38,6 @@ static u32 framecount = 0;
 #define HZ_MIN 1966080 // 30 << 16
 #define HZ_MAX 524288000 // 8000 << 16
 
-/*
-  wavetable numerics:
-  - use (signed) 16.16 for phase
-  - constrain table size to 2^N
-  - then we can get table index with phase >> (32 - N) -1)
-    ( lose one bit from signed->unsigned) 
-  - cast fractional part to fract32 (<<15 b/c unsigned->signed)
-  - interpolate using fract32
- */
-
 //--- wavetable
 #define SINE_TAB_SIZE 512
 #define SINE_TAB_SIZE_1 511
@@ -96,7 +86,7 @@ static void set_hz(const fix16 hzArg) {
 static void calc_frame(void) {
   // lookup
   frameval = fixtable_lookup_idx(sinetab, SINE_TAB_SIZE, idx);
-  // apply envelope
+  // apply (and increment) envelope
   frameval = mult_fr1x32x32(frameval, env_asr_next(env));
   // apply amplitude 
   frameval = mult_fr1x32x32(frameval, amp);
@@ -139,15 +129,7 @@ void module_init(const u32 sr_arg) {
 
   
   // init wavetable
-  
-  /*
-    tabInc =  M_PI * 2.0 / (f32)SINE_TAB_SIZE;
-    for(i=0; i<SINE_TAB_SIZE; i++) {
-    sinetab[i] = float_to_fr32( sinf(x) );
-    x += tabInc;
-    }
- */
-  //      fixtable_fill_harm(sinetab, SINE_TAB_SIZE, 4, 0.5f, 1);
+    //      fixtable_fill_harm(sinetab, SINE_TAB_SIZE, 4, 0.5f, 1);
   fixtable_fill_harm(sinetab, SINE_TAB_SIZE, 1, 1.f, 0);
 
 
