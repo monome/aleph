@@ -53,13 +53,13 @@ const U8 kScreenLines[CHAR_ROWS] = { 0, 8, 16, 24, 32, 40, 48, 56 };
 static U8 screen[GRAM_BYTES];
 static U8 text[CHAR_ROWS][CHAR_COLS];
 
-//static char linebuf[CHAR_COLS]; // line buffer
+static char linebuf[CHAR_COLS]; // line buffer
 
 //---- external function definitions
 
 // initialize low-level user interface (screen, keys)
 void ui_init(void) {
-  u8 i;
+  //u8 i;
 
   initscr();             // start curses mode
   raw();                 // no line buffering
@@ -251,6 +251,7 @@ U8 screen_string_fixed(U16 x, U16 y, char *str, U8 a) {
   return x;
 }
 
+/*
 // draw a string with proportional spacing
 U8 screen_string_squeeze(U16 x, U16 y, char *str, U8 a) {
   while(*str != 0) {
@@ -262,6 +263,7 @@ U8 screen_string_squeeze(U16 x, U16 y, char *str, U8 a) {
   }
   return x;
 }
+*/
 
 // draw a string (default) 
 inline U8 screen_string(U16 x, U16 y, char *str, U8 a) {
@@ -271,7 +273,7 @@ inline U8 screen_string(U16 x, U16 y, char *str, U8 a) {
 
 
 // print some characters of text
-u8 screen_string(u16 x, u16 y, char* str, u8 hl) {
+u8 screen_string_squeeze(u16 x, u16 y, char* str, u8 hl) {
   
 
   s8 l = 7 - hl;      // 8-point level of background

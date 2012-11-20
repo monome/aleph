@@ -600,7 +600,7 @@ static inline void println_int(int x) {
 // append int to line buffer (fill to end)
 static inline void appendln_int(int x, int len) {
   // bounds check :
-  int rem = (u32)pLineEnd - (u32)pline;
+  int rem = (int)pLineEnd - (int)pline;
   if (len > rem) len = rem;
   itoa_whole(x, pline, len); 
   pline += len; 

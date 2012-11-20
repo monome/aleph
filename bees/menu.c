@@ -159,11 +159,11 @@ void scrollPage(s8 dir) {
 // scroll current page selection
 void scrollSelect(s8 dir, s32 max) {
   page->selected += dir;
-  if (page->selected < 0) {
+  while (page->selected < 0) {
     page->selected += max;
       //    page->selected = 0;
   }
-  if (page->selected >= max) {
+  while (page->selected >= max) {
     // page->selected = max;
     page->selected -= max;
   }

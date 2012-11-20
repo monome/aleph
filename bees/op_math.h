@@ -10,7 +10,7 @@
 #define _OP_MATH_H_
 
 #include "types.h"
-#include "fix16.h"
+#include "fix.h"
 
 //#define OP_IO_FLOAT 1
 #define OP_IO_FIX16 1
