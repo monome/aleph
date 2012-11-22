@@ -88,10 +88,12 @@ static void calc_frame(void) {
   frameval = mult_fr1x32x32(frameval, env_asr_next(env));
   // apply amplitude 
   frameval = mult_fr1x32x32(frameval, amp);
+
   // increment hz filter
   if(!(hz_1p->sync)) {
     set_hz(filter_1p_next(hz_1p));
   } 
+
   // increment idx and wrap
   idx = fix16_add(idx, inc);
   while(idx > SINE_TAB_MAX16) { idx = fix16_sub(idx, SINE_TAB_MAX16); }
