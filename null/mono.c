@@ -15,10 +15,10 @@
 // null
 #include "audio.h"
 #include "env.h"
+#include "filters.h"
 #include "module.h"
 #include "table.h"
 #include "types.h"
-
 
 /// DEBUG
 static u32 framecount = 0;
@@ -32,7 +32,8 @@ static u32 framecount = 0;
 #define PARAM_REL_DUR 4
 #define PARAM_ATK_CURVE 5
 #define PARAM_REL_CURVE 6
-#define NUM_PARAMS 7
+#define PARAM_HZ_SMOOTH 7
+#define NUM_PARAMS 8
 
 // hz is fix16
 #define HZ_MIN 1966080 // 30 << 16
@@ -55,20 +56,17 @@ moduleData_t * moduleData; // module data
 
 //-----------------------
 //------ static variables
-static env_asr* env; // envelope
 
 static fract32   sinetab[SINE_TAB_SIZE]; // wavetable
-
 static fix16     idx;        // current phase (fractional idx)
 static fix16     inc_1hz;      // idx change at 1hz
-static fix16     inc;          // idx change at current frequency
-
+static fix16     inc;          // idx change at current frequey
 static fract32   frameval;     // output value
 static fract32   amp;          // amplitude
-
 static u32       sr;           // sample rate
 static fix16     hz;           // frequency
-
+static env_asr*  env;          // ASR envelope 
+static filter_1p* hz_1p;       // 1-pole lowpass for smoothing hz
 
 //----------------------
 //----- static functions
@@ -90,6 +88,10 @@ static void calc_frame(void) {
   frameval = mult_fr1x32x32(frameval, env_asr_next(env));
   // apply amplitude 
   frameval = mult_fr1x32x32(frameval, amp);
+  // increment hz filter
+  if(!(hz_1p->sync)) {
+    set_hz(filter_1p_next(hz_1p));
+  } 
   // increment idx and wrap
   idx = fix16_add(idx, inc);
   while(idx > SINE_TAB_MAX16) { idx = fix16_sub(idx, SINE_TAB_MAX16); }
@@ -132,13 +134,17 @@ void module_init(const u32 sr_arg) {
     //      fixtable_fill_harm(sinetab, SINE_TAB_SIZE, 4, 0.5f, 1);
   fixtable_fill_harm(sinetab, SINE_TAB_SIZE, 1, 1.f, 0);
 
-
   // allocate envelope
   env = (env_asr*)malloc(sizeof(env_asr));
   env_asr_init(env);
   env_asr_set_atk_shape(env, float_to_fr32(0.5));
   env_asr_set_rel_shape(env, float_to_fr32(0.5));
 
+  // allocate 1pole hz smoother
+  hz_1p = (filter_1p*)malloc(sizeof(filter_1p));
+  filter_1p_init(hz_1p);
+  filter_1p_set(hz_1p, 300.0);
+  filter_1p_set_hz(hz_1p, 1.0);
 
   /// DEBUG
   printf("\n\n module init debug \n\n");
@@ -147,13 +153,15 @@ void module_init(const u32 sr_arg) {
 // de-init
 void module_deinit(void) {
   free(env);
+  free(hz_1p);
 }
 
 // set parameter by value
 void module_set_param(u32 idx, f32 v) {
   switch(idx) {
   case PARAM_HZ:
-    set_hz(fix16_from_float(v));
+    //    set_hz(fix16_from_float(v));
+    filter_1p_set(hz_1p, fix16_from_float(v));
     break;
   case PARAM_AMP:
     amp = float_to_fr32(v);
@@ -173,7 +181,11 @@ void module_set_param(u32 idx, f32 v) {
   case PARAM_REL_CURVE:
     env_asr_set_atk_shape(env, float_to_fr32(v));
     break;
-
+  case PARAM_HZ_SMOOTH:
+    filter_1p_set_hz(hz_1p, fix16_from_float(v));
+    break;
+  default:
+    break;
   }
 }
 

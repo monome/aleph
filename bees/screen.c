@@ -23,8 +23,7 @@
 #include "types.h"
 #include "menu.h"
 
-// #include "ui.h"
-
+#if ARCH_LINUX
 //---- defines
 #define KEY_QUIT        'q'
 #define KEY_EDIT        '`'
@@ -44,6 +43,9 @@
 #define KEY_FN_C_DOWN   'c'
 #define KEY_FN_D_UP     'f'
 #define KEY_FN_D_DOWN   'v'
+#endif
+
+//-----------------------------
 
 //-----------------------------
 //---- variables
@@ -51,15 +53,34 @@ const U8 kScreenLines[CHAR_ROWS] = { 0, 8, 16, 24, 32, 40, 48, 56 };
 
 // pixel buffer
 static U8 screen[GRAM_BYTES];
-static U8 text[CHAR_ROWS][CHAR_COLS];
 
-static char linebuf[CHAR_COLS]; // line buffer
+//static U8 text[CHAR_ROWS][CHAR_COLS];
+//static char linebuf[CHAR_COLS]; // line bu
+#if ARCH_LINUX 
+// use characters to represent shades of grey
+#define NUM_SHADES 16
+static const char shades[NUM_SHADES] = {
+  ' ', '.', ':', ';', '!', '(', '[', '|', 'O', '0' , 'S', '@', 'H', 'W', '%', '#'
+};
+
+#endif
+
+//------ static funcs
+
+// fill one column in a line of text with blank pixels (for spacing)
+static void zero_col(U16 x, U16 y);
+static void zero_col(U16 x, U16 y) {
+  static U8 i;
+  for(i=0; i<FONT_CHARH; i++) {
+    screen_pixel(x, y+i, 0);
+  }
+}
 
 //---- external function definitions
 
 // initialize low-level user interface (screen, keys)
 void ui_init(void) {
-  //u8 i;
+  u8 i;
 
   initscr();             // start curses mode
   raw();                 // no line buffering
@@ -67,9 +88,9 @@ void ui_init(void) {
   noecho();
   curs_set(0); // invisible cursor
   
-  //  start_color();
+    start_color();
 
-  /*
+  
   // weird hacky color definitions to make an 8-point grayscale kinda
   if(0) { // (can_change_color()) {
     for(i=0; i<8; i++) {
@@ -80,20 +101,23 @@ void ui_init(void) {
       init_pair(i+1, i, (i + 4) % 7);
     }
   } else {
-
-    
-
-    init_pair(1, COLOR_WHITE, COLOR_BLACK);
-    init_pair(2, COLOR_BLUE, COLOR_BLACK);
-    init_pair(3, COLOR_BLACK, COLOR_CYAN);
-    init_pair(4, COLOR_WHITE, COLOR_BLUE);
-    init_pair(5, COLOR_RED, COLOR_BLACK);
-    init_pair(6, COLOR_WHITE, COLOR_RED);
-    //init_pair(7, COLOR_CYAN, COLOR_BLACK);
-    //init_pair(8, COLOR_CYAN, COLOR_MAGENTA);    
+    init_pair(1, COLOR_BLUE, COLOR_BLACK);
+    init_pair(2, COLOR_BLACK, COLOR_BLUE);
+    init_pair(3, COLOR_WHITE, COLOR_BLUE);
+    init_pair(4, COLOR_BLUE, COLOR_WHITE);
+    init_pair(5, COLOR_MAGENTA, COLOR_WHITE);
+    init_pair(6, COLOR_WHITE, COLOR_MAGENTA);
+    init_pair(7, COLOR_RED, COLOR_MAGENTA);
+    init_pair(8, COLOR_MAGENTA, COLOR_RED);
+    init_pair(9, COLOR_YELLOW, COLOR_RED);
+    init_pair(10, COLOR_RED, COLOR_YELLOW);
+    init_pair(11, COLOR_CYAN, COLOR_YELLOW);
+    init_pair(12, COLOR_YELLOW, COLOR_CYAN);
+    init_pair(13, COLOR_YELLOW, COLOR_CYAN);
+    init_pair(14, COLOR_CYAN, COLOR_WHITE);
+    init_pair(15, COLOR_WHITE, COLOR_RED);
+    init_pair(16, COLOR_CYAN, COLOR_WHITE);
   }
-  */
-
 }
 
 // cleanup UI
@@ -179,24 +203,22 @@ u8 ui_loop(void) {
   return run;
 }
 
-////////////////////
-// drawing routines
 
-// zero one column in one glyph
-static void zero_col(U16 x, U16 y);
-static void zero_col(U16 x, U16 y) {
-  static U8 i;
-  for(i=0; i<FONT_CHARH; i++) {
-    screen_pixel(x, y+i, 0);
-  }
-}
+///////////////////
+////////////////
+// from avr32
+
+
+//----- drawing routine
+// FIXME: abstract drawing from hardware,
+// move and rename (e.g. draw_*), 
 
 // draw a single pixel
 void screen_pixel(U16 x, U16 y, U8 a) {
   static U32 pos;
   // if (x >= NCOLS) return;
   // if (y >= NROWS) return;
-  pos = (y * NCOLS_2) + (x>>1);
+  pos = (y * NCOLS__2) + (x>>1);
   if (x%2) {
     screen[pos] &= 0x0f;
     screen[pos] |= (a << 4);
@@ -206,8 +228,21 @@ void screen_pixel(U16 x, U16 y, U8 a) {
   }
 }
 
+// get value of pixel
+U8 screen_get_pixel(U8 x, U8 y) {
+  static U32 pos;
+  // if (x >= NCOLS) return;
+  // if (y >= NROWS) return;
+  pos = (y * NCOLS__2) + (x>>1);
+  if (x%2) {
+    return (screen[pos] & 0xf0) >> 4; 
+   } else {
+    return screen[pos] & 0x0f;
+  }
+}
+
 // draw a single character glyph with fixed spacing
-U8 screen_char(U16 col, U16 row, char gl, U8 a) {
+U8 screen_char_fixed(U16 col, U16 row, char gl, U8 a) {
   static U8 x, y;
   for(y=0; y<FONT_CHARH; y++) {
     for(x=0; x<FONT_CHARW; x++) {
@@ -220,7 +255,6 @@ U8 screen_char(U16 col, U16 row, char gl, U8 a) {
   }
   return x+1;
 }
-
 
 // draw a single character glyph with proportional spacing
 U8 screen_char_squeeze(U16 col, U16 row, char gl, U8 a) {
@@ -242,16 +276,16 @@ U8 screen_char_squeeze(U16 col, U16 row, char gl, U8 a) {
   return xnum;
 }
 
+
 // draw a string with fixed spacing
 U8 screen_string_fixed(U16 x, U16 y, char *str, U8 a) {
   while(*str != 0) {
-    x += screen_char(x, y, *str, a) + 1;
+    x += screen_char_fixed(x, y, *str, a) + 1;
     str++;
   }
   return x;
 }
 
-/*
 // draw a string with proportional spacing
 U8 screen_string_squeeze(U16 x, U16 y, char *str, U8 a) {
   while(*str != 0) {
@@ -261,53 +295,133 @@ U8 screen_string_squeeze(U16 x, U16 y, char *str, U8 a) {
     x++;
     str++;
   }
+  
+  //  refresh = 1;
   return x;
 }
-*/
 
-// draw a string (default) 
+// draw a string (default) m
 inline U8 screen_string(U16 x, U16 y, char *str, U8 a) {
   return screen_string_squeeze(x, y, str, a);
 }
-////////////////////////
 
-
-// print some characters of text
-u8 screen_string_squeeze(u16 x, u16 y, char* str, u8 hl) {
-  
-
-  s8 l = 7 - hl;      // 8-point level of background
-  if (l < 0) {l = 0;} 
-  if (l > 7) {l = 7;}
-  attron(COLOR_PAIR(l));
-  mvprintw(y, x, str);
-  refresh();
-  return strlen(str);
+// print a formatted integer
+U8 screen_int(U16 x, U16 y, S16 i, U8 a) {
+  //  static char buf[32];
+  //  snprintf(buf, 32, "%d", (int)i);
+    static char buf[FIX_DIG_TOTAL];
+  //snprintf(buf, 32, "%.1f", (float)f);
+    //  print_fix16(buf, (u32)i << 16 );
+    itoa_whole(i, buf, 5);
+  //buf = ultoa(int);
+  return screen_string_squeeze(x, y, buf, a);
 }
 
-// print and blank line to end
-u8 screen_line(u16 x, u16 y, char* str, u8 hl) {
-  //  s8 l = 7 - hl;      // 8-point level of background
-  u8 i=0;
-  u8 len = strlen(str);
-  
-  //if (l < 0) {l = 0;} 
-  //if (l > 7) {l = 7;}
- 
-  for(i=0; i<CHAR_COLS; i++) {
-    if(i<len) { 
-      linebuf[i] = str[i];
-    } else {
-      linebuf[i] = ' ';
+// print a formatted float
+/*
+U8 screen_float(U16 x, U16 y, F32 f, U8 a) {
+  static char buf[32];
+  snprintf(buf, 32, "%.1f", (float)f);
+  return screen_string_squeeze(x, y, buf, a);
+}
+*/
+// print a formatted fix_t
+U8 screen_fix(U16 x, U16 y, fix16_t v, U8 a) {
+  static char buf[FIX_DIG_TOTAL];
+  //snprintf(buf, 32, "%.1f", (float)f);
+  print_fix16(buf, v);
+  return screen_string_squeeze(x, y, buf, a);
+}
+
+// send screen buffer contents to OLED
+void screen_refresh(void) {
+  U16 i;
+  u16 x, y;
+  u8 pix, j;
+  char buf[2];
+  u8 color;
+  buf[1] = 0;
+  x = 0;
+  y = 0;
+  for(i=0; i<(GRAM_BYTES); i++) { 
+    for(j=0; j<2; j++) {
+      if(j==0) {
+	pix = screen[i] & 0xf;
+      } else {
+	pix = screen[i] >> 4;
+      }
+      color = pix + 1;
+      attron(COLOR_PAIR(color));
+      buf[0] = shades[pix];
+      mvprintw(y, x, buf);
+      attroff(COLOR_PAIR(color));
+      x++;
+      if (x > NCOLS_1) {
+	x = 0;
+	y++;
+      }
+    }
+    //write_data(screen[i]);  
+    //write_data(i % 0xf);
+  }
+  refresh();
+  //  cpu_irq_enable();
+  //  Enable_global_interrupt();
+}
+
+// fill a line with blank space to end
+void screen_blank_line(U16 x, U16 y) {
+  U8 i, j;
+  for(i=x; i<NCOLS; i++) {
+    for(j=y; j<(FONT_CHARH + y); j++) {
+      screen_pixel(i, j, 0);
     }
   }
+ }
 
-  attron(COLOR_PAIR(hl));
-  mvprintw(y, x, linebuf);
-  refresh();
-  
-  return CHAR_COLS;
+// highlight a line
+void screen_hl_line(U16 x, U16 y, U8 a) {
+  U8 i, j;
+  for(i=x; i<NCOLS; i++) {
+    for(j=y; j<(y+FONT_CHARH); j++) {
+      if (screen_get_pixel(i, j) == 0) {
+	screen_pixel(i, j, a);
+      }
+    }
+  }
 }
 
-void screen_refresh(void) {
+// draw a line and blank to end
+U8 screen_line(U16 x, U16 y, char *str, U8 hl) {
+  // FIXME
+  //  hl = ( (hl << 1) & 0xf);
+  //  if (hl ) { hl =0xf;a }
+
+  x = screen_string(x, y, str, hl);
+  screen_blank_line(x, y);
+
+  //  print_dbg("\r\n");
+  //  if(hl > 2) { print_dbg("__"); }
+  //  print_dbg(str);
+
+  //  refresh = 1;
+
+  return NCOLS;
+}
+
+// fill graphics ram with a test pattern
+void screen_test_fill(void) {
+  u32 i;
+  u32 x=0;
+  u32 y=0;
+  for(i=0; i<font_nglyphs; i++) {
+
+    x = x + screen_char_squeeze(x, y, i + FONT_ASCII_OFFSET, 0xf);
+    x++;
+    if (x > NCOLS) {
+      x -= NCOLS;
+      y += FONT_CHARH;
+    }
+  }
+  //  refresh = 1;
 }

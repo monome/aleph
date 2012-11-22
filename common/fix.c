@@ -103,13 +103,13 @@ void itoa_fract(int val, char* buf)
   char* p;
   unsigned int a;        //every digit
   int i;
-  char* b;            //start of the digit char
+  //  char* b;            //start of the digit char
   //  char temp;
   unsigned int u;
   unsigned int mul;
 
   p = buf;
-  b = p;
+  //  b = p;
 
   u = (unsigned int)val;
   

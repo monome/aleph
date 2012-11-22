@@ -24,6 +24,7 @@ OBJ  = main.o \
 OBJ += mono.o
 OBJ += env.o
 OBJ += table.o
+OBJ += filters.o
 
 $(APP) : $(OBJ)
 	$(CC) $(CFLAGS) $(INC) -o $@ $^ $(LDFLAGS)

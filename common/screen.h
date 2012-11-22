@@ -18,10 +18,11 @@
 //---- defines
 // number of columns
 #define NCOLS       128
-#define NCOLS_2     64
+#define NCOLS_1     127
+#define NCOLS__2     64
 // number of rows
 #define NROWS       64
-#define NROWS_2     32
+#define NROWS__2     32
 // pixels in graphics ram 
 #define GRAM_PIX    8192 // ncols * nrows
 // bytes in graphics RAM

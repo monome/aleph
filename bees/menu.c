@@ -4,14 +4,15 @@
   aleph
 */
 
-#include "ui.h"
-#include "net.h"
-#include "op.h"
 #include "key_handler.h"
-#include "redraw.h"
-#include "param.h"
 #include "menu.h"
 #include "menu_protected.h"
+#include "net.h"
+#include "op.h"
+#include "param.h"
+#include "redraw.h"
+#include "screen.h"
+#include "ui.h"
 
 //--------------------------
 //--------- variables
@@ -81,13 +82,13 @@ void menu_handleKey(uiKey_t key) {
       setPage(ePagePlay);
     }
   } else {
-    // FIXME: TEST
-    switch(pageIdx) {
-      
-    }
     page->keyHandler(key);
   }
+#if ARCH_LINUX
+  screen_refresh();
+#endif
 }
+
 
 //-----------------------------------
 //----- static function definitions

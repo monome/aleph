@@ -20,7 +20,7 @@ extern void files_check_dsp(void);
 // populate the dsp filelist with names and return count
 extern void files_scan_dsp(void);
 // return filename for given index
-extern volatile char* files_get_dsp_filename(u8 idx);
+extern const volatile char* files_get_dsp_filename(u8 idx);
 // return count of dsp files
 extern u8 files_get_dsp_count(void);
 
