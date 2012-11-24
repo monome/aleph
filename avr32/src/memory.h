@@ -15,8 +15,10 @@
 typedef volatile u8 * heap_t;
 
 // setup heap
-void init_mem(void);
+extern void init_mem(void);
 // allocate and return pointer
-heap_t alloc_mem(u32 bytes);
+extern heap_t alloc_mem(u32 bytes);
+// test sdram
+extern void sdram_test(u8 print);
 
 #endif

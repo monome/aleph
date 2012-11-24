@@ -8,6 +8,10 @@
 #define _CONF_ALEPH_H_
 
 //==============================================
+//==== SDRAM
+//define SDRAM_PART_HDR  "mt48lc16m16a2tg7e/mt48lc16m16a2tg7e.h"
+
+//==============================================
 //==== clocks
 
 #define FOSC32          32768                                   //!< Osc32 frequency: Hz.
@@ -16,11 +20,16 @@
 #define FOSC0           12000000                                //!< Osc0 frequency: Hz.
 #define OSC0_STARTUP    AVR32_PM_OSCCTRL0_STARTUP_2048_RCOSC  //!< Osc0 startup time: RCOsc periods.
 
+
 // PLL output frequency
-#define PLL_OUTPUT_FREQ 132000000UL
+// ??? used ?? also, seems wrong???
+//#define PLL_OUTPUT_FREQ 132000000UL
 
 // System Clock Frequencies
-#define FMCK_HZ   		66000000L
+//#define FMCK_HZ   		66000000L
+///// slow for testind SDRAM!
+#define FMCK_HZ                 8250000L
+////////
 #define FCPU_HZ   		FMCK_HZ
 #define FHSB_HZ   		FCPU_HZ
 #define FPBA_HZ   		FMCK_HZ

@@ -24,7 +24,7 @@
 
 //-----------------------------
 //---- variables
-const U8 kScreenLines[CHAR_ROWS] = { 0, 8, 16, 24, 32, 40, 48, 56 };
+const U8 lines[CHAR_ROWS] = { 0, 8, 16, 24, 32, 40, 48, 56 };
 
 // screen buffer
 static U8 screen[GRAM_BYTES];
@@ -231,13 +231,15 @@ inline U8 screen_string(U16 x, U16 y, char *str, U8 a) {
 }
 
 // print a formatted integer
-U8 screen_int(U16 x, U16 y, S16 i, U8 a) {
+U8 screen_int(U16 x, U16 l, S16 i, U8 a) {
+  static u8 y;
+  y = lines[l];
   //  static char buf[32];
   //  snprintf(buf, 32, "%d", (int)i);
-    static char buf[FIX_DIG_TOTAL];
+  static char buf[FIX_DIG_TOTAL];
   //snprintf(buf, 32, "%.1f", (float)f);
-    //  print_fix16(buf, (u32)i << 16 );
-    itoa_whole(i, buf, 5);
+  //  print_fix16(buf, (u32)i << 16 );
+  itoa_whole(i, buf, 5);
   //buf = ultoa(int);
   return screen_string_squeeze(x, y, buf, a);
 }
@@ -294,7 +296,11 @@ void screen_hl_line(U16 x, U16 y, U8 a) {
 }
 
 // draw a line and blank to end
-U8 screen_line(U16 x, U16 y, char *str, U8 hl) {
+//U8 screen_line(U16 x, U16 y, char *str, U8 hl) {
+// argument is line number
+U8 screen_line(U16 x, U16 l, char *str, U8 hl) {
+  static u8 y;
+  y = lines[l];
   // FIXME
   //  hl = ( (hl << 1) & 0xf);
   //  if (hl ) { hl =0xf;a }
@@ -317,6 +323,7 @@ void screen_test_fill(void) {
   u32 x=0;
   u32 y=0;
   for(i=0; i<font_nglyphs; i++) {
+
     x = x + screen_char_squeeze(x, y, i + FONT_ASCII_OFFSET, 0xf);
     x++;
     if (x > NCOLS) {

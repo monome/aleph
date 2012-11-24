@@ -7,7 +7,11 @@
 #ifndef _ALEPH_FIX_H_
 #define _ALEPH_FIX_H_
 
-#include "fix16.h"
+#include "libfixmath/fix16.h"
+//#include "fract32_emu.h"
+
+// use the same formatting convention as bfin fract32
+typedef fix16_t fix16;
 
 // constants for printing formatted 16.16
 #define FIX_DIG_LO    4 // digits after decimal

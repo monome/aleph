@@ -19,6 +19,6 @@ extern void init_mem(void);
 // allocate and return pointer
 extern heap_t alloc_mem(u32 bytes);
 // test sdram
-extern void sdram_test(void);
+extern void sdram_test(u8 print);
 
 #endif

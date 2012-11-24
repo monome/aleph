@@ -31,7 +31,6 @@ TARGET = aleph.elf
 
 # List of C source files.
 CSRCS = \
-	avr32/boards/evk1100/led.c                         \
 	avr32/drivers/ebi/sdramc/sdramc.c                         \
 	avr32/drivers/flashc/flashc.c                      \
 	avr32/drivers/gpio/gpio.c                          \
@@ -87,7 +86,7 @@ ASSRCS = \
 # List of include paths.
 INC_PATH = \
        avr32/boards                                       \
-       avr32/boards/evk1100                               \
+       avr32/boards/user_board                               \
 	avr32/components/memory/sdram			 \
 	avr32/drivers/cpu/cycle_counter/                 \
 	avr32/drivers/ebi/sdramc/                            \
@@ -159,7 +158,7 @@ CFLAGS =
 #   BOARD      Target board in use, see boards/board.h for a list.
 #   EXT_BOARD  Optional extension board in use, see boards/board.h for a list.
 CPPFLAGS = \
-       -D BOARD=EVK1100 -D ARCH_AVR32=1
+       -D BOARD=USER_BOARD -D ARCH_AVR32=1
 
 # Extra flags to use when linking
 LDFLAGS = \

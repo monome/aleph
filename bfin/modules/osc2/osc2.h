@@ -33,9 +33,9 @@ typedef struct _oscData {
   moduleData_t super;
   //// private:
 // parameter descriptors
-  ParamDesc paramDesc_p[MODULE_NUM_PARAMS];
+  ParamDesc paramDescPr[MODULE_NUM_PARAMS];
   // parameter data
-  ParamData paramData_p[MODULE_NUM_PARAMS];
+  ParamData paramDataPr[MODULE_NUM_PARAMS];
   // sine wavetable
   f32 sineTable[WAVETABLE_NUM];
 } oscData_t;

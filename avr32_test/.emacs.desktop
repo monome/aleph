@@ -2,7 +2,7 @@
 ;; --------------------------------------------------------------------------
 ;; Desktop File for Emacs
 ;; --------------------------------------------------------------------------
-;; Created Mon Sep 10 21:22:33 2012
+;; Created Fri Oct 12 21:02:34 2012
 ;; Desktop file format version 206
 ;; Emacs version 23.3.1
 
@@ -13,9 +13,31 @@
 (setq search-ring '("write_data" "delay_ms" "screen_loin" "init_local" "SDRAM_BANK_" "init_oled" "check" "check_debug" "build" "b" "SDRAM_BANK_BITS" "SDRAM_" "files_chec	" "snprintf" "snprit" "itoa"))
 (setq regexp-search-ring nil)
 (setq register-alist nil)
-(setq file-name-history '("~/aleph/avr32_proto/src/interrupts.c" "~/aleph/avr32_proto/src/init.c" "~/aleph/avr32_proto/conf/conf_aleph.h" "~/aleph/avr32_proto/src/switches.c" "~/aleph/avr32_proto/src/event_types.h" "~/aleph/common/font.h" "~/aleph/common/screen.h" "~/aleph/avr32_proto/src/screen.h" "~/aleph/avr32_proto_test/" "~/aleph/common/font.c" "~/aleph/avr32_proto/src/screen.c" "~/aleph/avr32_proto/src/interrupts.c" "~/aleph/avr32_proto/src/init.c" "~/aleph/avr32/src/screen.c" "~/aleph/avr32_proto_test/src/main.c" "~/aleph/avr32_proto/src/app_timers.c" "~/aleph/avr32_proto_test/config.mk" "~/aleph/avr32_proto/src/interrupts.c" "~/aleph/avr32_proto_test/src/" "~/aleph/avr32_proto/src/app_timers.c" "~/aleph/avr32_proto/src/app_timers_ok.c" "~/aleph/avr32_proto/src/events.c" "~/aleph/avr32_proto/src/interrupts.c" "~/avr/asf-3.1.3/avr32/drivers/gpio/gpio.h" "~/aleph/avr32_proto/src/init.c" "~/aleph/avr32_proto_test/config.mk" "~/aleph/avr32_proto/conf/conf_aleph.h" "~/aleph/avr32/src/app_timers.c" "~/aleph/avr32_proto_test/src/main.c" "~/aleph/avr32/src/scene.c"))
+(setq file-name-history '("~/aleph/avr32/src/memory.c" "~/aleph/avr32_proto/src/interrupts.c" "~/aleph/avr32_proto/src/init.c" "~/aleph/avr32_proto/conf/conf_aleph.h" "~/aleph/avr32_proto/src/switches.c" "~/aleph/avr32_proto/src/event_types.h" "~/aleph/common/font.h" "~/aleph/common/screen.h" "~/aleph/avr32_proto/src/screen.h" "~/aleph/avr32_proto_test/" "~/aleph/common/font.c" "~/aleph/avr32_proto/src/screen.c" "~/aleph/avr32_proto/src/interrupts.c" "~/aleph/avr32_proto/src/init.c" "~/aleph/avr32/src/screen.c" "~/aleph/avr32_proto_test/src/main.c" "~/aleph/avr32_proto/src/app_timers.c" "~/aleph/avr32_proto_test/config.mk" "~/aleph/avr32_proto/src/interrupts.c" "~/aleph/avr32_proto_test/src/" "~/aleph/avr32_proto/src/app_timers.c" "~/aleph/avr32_proto/src/app_timers_ok.c" "~/aleph/avr32_proto/src/events.c" "~/aleph/avr32_proto/src/interrupts.c" "~/avr/asf-3.1.3/avr32/drivers/gpio/gpio.h" "~/aleph/avr32_proto/src/init.c" "~/aleph/avr32_proto_test/config.mk" "~/aleph/avr32_proto/conf/conf_aleph.h" "~/aleph/avr32/src/app_timers.c" "~/aleph/avr32_proto_test/src/main.c"))
 
 ;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/memory.c"
+  "memory.c"
+  'c-mode
+  '(abbrev-mode)
+  1660
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32_test/src/main.c"
+  "main.c<4>"
+  'c-mode
+  '(abbrev-mode)
+  6887
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
 (desktop-create-buffer 206
   "/home/emb/aleph/avr32_proto/src/interrupts.c"
   "interrupts.c"
@@ -132,7 +154,7 @@
   'dired-mode
   nil
   464
-  '(1302 nil)
+  '(1012 nil)
   t
   '("/home/emb/aleph/avr32_proto_test/")
   nil)
@@ -142,7 +164,7 @@
   "app_timers.c"
   'c-mode
   '(abbrev-mode)
-  2699
+  2688
   '(1678 nil)
   nil
   nil
@@ -257,17 +279,6 @@
   nil
   nil
   '((buffer-file-coding-system . undecided-dos)))
-
-(desktop-create-buffer 206
-  "/home/emb/aleph/avr32_test/src/main.c"
-  "main.c<4>"
-  'c-mode
-  '(abbrev-mode)
-  4369
-  '(nil nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
 
 (desktop-create-buffer 206
   "/home/emb/aleph/avr32_proto/src/main.c"

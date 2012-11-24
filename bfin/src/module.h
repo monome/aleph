@@ -16,6 +16,9 @@
 
 #define SAMPLERATE    48000
 
+//inline void* get_sdram_address(void) { return (void*)SDRAM_ADDRESS; }
+//inline const int get_sdram_size(void) { return SDRAM_SIZE; }
+
 //-----------------------
 //---- module data
 typedef struct _moduleData {
