@@ -1,3 +1,136 @@
+WM17461				14pin male header (bf jtag)
+LM4040D25IDBZR		vref diode
+SRR6038-100Y		bf power inductor (..?)
+
+
+c14, c17, c22 should be 1206
+c34, c39, c40 should be 1206
+c76-c78 are 1210, should be 1206
+c43 should be 1411
+c46 to be 1411
+
+
+____CAPS
+
+1206	- 100n
+		-. 22u
+		. 470n
+		- 10n
+		- 10u
+		
+1206/T	. 10u		T491A106K010AT
+		. 4.7u	T491A475K010AT
+		
+3528/T	. 100u	TAJB107M010RNJ
+
+3225	. 47u (C46) T491B476M010AT (1411)
+
+0603	- 100n
+		- 33n
+		- (4.7u)
+		- (2.2u)
+		- 2.7n
+		- 18p
+		- 10n
+		. 470n C0603C474K8PACTU
+		. 330p C0603C331J5GACTU
+		. 220p C0603C221J5GACTU
+		. 2200p	C0603C222K5RACTU
+		, 120p C0603C121J5GACTU
+
+0603 NPO
+		. 1n C0603C102J5GACTU
+		. 100p C0603C101J5GACTU
+		
+		
+____ RESISTORS
+
+0603
+		- 10k
+		- 4.7k
+		- 100k
+		- 39
+		- 0
+		- 47k
+		- 150
+		3.32k
+		- 470
+		- 910
+		. 22 RC0603JR-0722RL
+		330k RC0603JR-07330KL
+		1k RC0603JR-071KL
+		33 RC0603JR-0733RL
+		11k RC0603FR-0711KL
+		5.49k RC0603FR-075K49L
+		2.74k RC0603FR-072K74L
+		604 RC0603FR-07604RL
+		1.65k RC0603FR-071K65L
+		49.9k RC0603FR-0749K9L
+		237 RC0603FR-07237RL
+		5.76k RC0603FR-075K76L
+		750k RC0603JR-07750KL
+		
+
+use a different reset sw?
+
+____ IC/etc
+
+- ADSP-BF533SKSTZ-5V		bf533
+- AT32UC3A0512-ALUT			avr32
+- AD1836					codec
+
+- MT48LC16M16A2P-75:D		sdram 256mb for avr32
+- MT48LC32M16A2tg-75		sdram 512mb for bf533
+
+- AD8606ARMZ				audio conditioning
+
+3 TPS2020					usb host power control
+- FT232RL					usb serial
+
+3 AD7923BRUZ				adc for aux
+
+- FDS9431A					bf power mosfet
+2 LM2678					main power reg 5v
+2 ADP3339					3v3 power reg
+
+1 MSS1278					coilcraft inductor
+- SRR6038-100Y				bf power inductor
+
+6 MBRS360T3					diode for power
+
+- EM-14						encoders
+- PVA1 OA H1				push key
+- 401-1152-ND				push key rect cap
+
+1 2041021-3					sdcard (newark)
+
+- EVQ-PNF04M				reset switch
+
+- LM4040D25IDBZR			diode for aux vref
+- 1N4148W					diode
+- zhcs1000					diode bf power
+
+- ASFL1-27.000MHZ			osc for bf533
+- ASFL1-12.288MHZ			osc for codec
+3 ecs-120-18-5px-tr			xtal 12mhz avr
+
+- SJ1-3533					3.5mm jack
+6 PJ-102AH					power jack 2.1mm x 5.5mm
+NRJ6HM						1/4" audio jack
+3 usb vert A
+1 usb B
+
+10 MU3261-601Y					audio in filter
+
+3 PHA2UEE						power switch
+3 g003a						power sw cap black
+
+
+10 4066						quad gate
+
+
+
+
 hardware
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 DC in 5x5 x 2.1 mm
