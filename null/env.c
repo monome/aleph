@@ -3,12 +3,14 @@
  *
  * envelopes:
  * - ASR
+ * - AHDSR ?
  * - trapezoid ?
  *
  */
 
-// test
+///// test
 #include <stdio.h>
+/////
 
 #include <math.h>
 #include "env.h" 

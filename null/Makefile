@@ -17,7 +17,8 @@ OBJ  = main.o \
 	ui.o \
 	$(LIBFIXMATH)/fix16.o  \
 	$(LIBFIXMATH)/fract32.o \
-	$(COMMON)/fract32_emu.o
+	$(COMMON)/fract32_emu.o \
+	$(COMMON)/simple_string.o
 #OBJ += wire.o
 #OBJ += fsine.o
 #OBJ += sine.o

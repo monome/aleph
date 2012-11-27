@@ -33,9 +33,7 @@ extern void module_deinit(void);
 extern void module_process_frame(const f32* in, f32* out);
 // set parameter
 extern void module_set_param(u32 idx, f32 val);
-// get parameter description given indexx
-extern void module_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc);
 // get number of parameters
-
+extern u32 module_get_num_params(void);
 
 #endif // header guard

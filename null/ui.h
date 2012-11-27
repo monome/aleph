@@ -13,6 +13,7 @@
 #define CMD_KEY_LEFT     KEY_LEFT
 #define CMD_KEY_RIGHT    KEY_RIGHT
 #define CMD_KEY_PARAM      'p'
+#define CMD_KEY_PARAMLIST 'P'
 #define CMD_KEY_VALUE      'v'
 #define CMD_KEY_SWITCH1    '-'
 #define CMD_KEY_SWITCH2    '='

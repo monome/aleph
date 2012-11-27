@@ -21,6 +21,7 @@ q = 1 / (n-1);
 
 //// curves
 ~expc = Array.series(9, -1.0, 0.25);
+
 ~exps = ~expc.collect({ arg c, i;
 	var arr;
 	("curve: "++c).postln;

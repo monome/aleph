@@ -8,10 +8,12 @@
 #include <math.h>
 // (testing)
 #include <stdlib.h>
+#include <string.h>
 
 // aleph-common
 #include "fix.h"
 #include "fract32_emu.h"
+#include "simple_string.h"
 // null
 #include "audio.h"
 #include "env.h"
@@ -23,9 +25,29 @@
 /// DEBUG
 static u32 framecount = 0;
 
+enum params {
+  eParamHz1,
+  eParamHz2,
+  eParamFm,
+  eParamWave1,
+  eParamWave2,
+  eParamAmp1,
+  eParamAmp2,
+  eParamGate,
+  eParamAtkDur,
+  eParamRelDur,
+  eParamAtkCurve,
+  eParamRelCurve,
+  eParamHz1Smooth,
+  eParamHz2Smooth,
+  eParamNumParams
+};
 
 //----  parameters
-#define PARAM_HZ  0
+/*
+#define PARAM_HZ1  0
+#define PARAM_HZ2  0
+#define P
 #define PARAM_AMP 1
 #define PARAM_GATE 2
 #define PARAM_ATK_DUR 3
@@ -34,6 +56,7 @@ static u32 framecount = 0;
 #define PARAM_REL_CURVE 6
 #define PARAM_HZ_SMOOTH 7
 #define NUM_PARAMS 8
+*/
 
 // hz is fix16
 #define HZ_MIN 1966080 // 30 << 16
@@ -81,6 +104,42 @@ static void set_hz(const fix16 hzArg) {
 
 /// 
 
+
+
+//// OLD  (clean!) :
+static void calc_frame(void) {
+  static s16 x;
+  static s16 xnext;
+  static fract32 fx;
+  static fract32 fxnext;
+  x = (idx >> 16) % SINE_TAB_SIZE;
+  xnext = (x + 1) % SINE_TAB_SIZE;
+
+  // (unsigned LJ) -> (signed RJ)
+  fxnext = (fract32)( (idx << 15) & 0x7fffffff );
+  // invert
+  fx = sub_fr1x32(0x7fffffff, fxnext);
+
+  // interpolate
+  frameval = mult_fr1x32x32(amp, 
+                   add_fr1x32(
+                              mult_fr1x32x32(sinetab[x], fx),
+                              mult_fr1x32x32(sinetab[xnext], fxnext)
+                              )
+                   );  
+
+  // apply envelope
+  frameval = mult_fr1x32x32(frameval, env_asr_next(env));
+  
+  // increment idx
+  idx = fix16_add(idx, inc);
+  while(idx > SINE_TAB_MAX16) { idx = fix16_sub(idx, SINE_TAB_MAX16); }
+}
+
+
+
+//// ABSTRACTED:
+/*
 static void calc_frame(void) {
   // lookup
   frameval = fixtable_lookup_idx(sinetab, SINE_TAB_SIZE, idx);
@@ -89,23 +148,19 @@ static void calc_frame(void) {
   // apply amplitude 
   frameval = mult_fr1x32x32(frameval, amp);
 
+  //TEST
+  #if 0
   // increment and apply hz smoother
   if(!(hz_1p->sync)) {
     set_hz(filter_1p_fix16_next(hz_1p));
   } 
+  #endif
 
   // increment idx and wrap
   idx = fix16_add(idx, inc);
   while(idx > SINE_TAB_MAX16) { idx = fix16_sub(idx, SINE_TAB_MAX16); }
-  ///// DEBUG
-  // print index
-  /*
-  if( (framecount < 512) ) {
-       	printf("0x%08x , ", idx);
-	framecount++;
-      }
-  */
 }
+*/
 
 //----------------------
 //----- external functions
@@ -119,10 +174,13 @@ void module_init(const u32 sr_arg) {
 
   // init module/param descriptor
   moduleData = (moduleData_t*)malloc(sizeof(moduleData_t));
-  moduleData->numParams = NUM_PARAMS;
-  moduleData->paramDesc = (ParamDesc*)malloc(NUM_PARAMS * sizeof(ParamDesc));
-  moduleData->paramData = (ParamData*)malloc(NUM_PARAMS * sizeof(ParamData));
+  moduleData->numParams = eParamNumParams;
+  moduleData->paramDesc = (ParamDesc*)malloc(eParamNumParams * sizeof(ParamDesc));
+  moduleData->paramData = (ParamData*)malloc(eParamNumParams * sizeof(ParamData));
 
+  //  moduleData->paramDesc[0].label = "osc 1 hz";
+  //  moduleData->paramDesc[0].label = "osc 2 hz";
+  strcpy(moduleData->paramDesc[0].label, "osc 1 hz");
   // init params
   sr = sr_arg;
   
@@ -131,7 +189,6 @@ void module_init(const u32 sr_arg) {
   set_hz( fix16_from_int(220) );
   idx = 0;
 
-  
   // init wavetable
     //      fixtable_fill_harm(sinetab, SINE_TAB_SIZE, 4, 0.5f, 1);
   fixtable_fill_harm(sinetab, SINE_TAB_SIZE, 1, 1.f, 0);
@@ -161,29 +218,35 @@ void module_deinit(void) {
 // set parameter by value
 void module_set_param(u32 idx, f32 v) {
   switch(idx) {
-  case PARAM_HZ:
-    //    set_hz(fix16_from_float(v));
-    filter_1p_fix16_in(hz_1p, fix16_from_float(v));
+  case eParamHz1:
+        set_hz(fix16_from_float(v));
+    //    filter_1p_fix16_in(hz_1p, fix16_from_float(v));
     break;
-  case PARAM_AMP:
+  case eParamWave1:
+    break;
+  case eParamWave2:
+    break;
+  case eParamFm:
+    break;
+  case eParamAmp1:
     amp = float_to_fr32(v);
     break;
-  case PARAM_GATE:
+  case eParamGate:
     env_asr_set_gate(env, v > 0.f);
     break;
-  case PARAM_ATK_DUR:
+  case eParamAtkDur:
     env_asr_set_atk_dur(env, (u32)v);
     break;
-  case PARAM_REL_DUR:
+  case eParamRelDur:
     env_asr_set_rel_dur(env, (u32)v);
     break;
-  case PARAM_ATK_CURVE:
+  case eParamAtkCurve:
     env_asr_set_atk_shape(env, float_to_fr32(v));
     break;
-  case PARAM_REL_CURVE:
+  case eParamRelCurve:
     env_asr_set_atk_shape(env, float_to_fr32(v));
     break;
-  case PARAM_HZ_SMOOTH:
+  case eParamHz1Smooth:
     filter_1p_fix16_set_hz(hz_1p, fix16_from_float(v));
     break;
   default:
@@ -191,7 +254,10 @@ void module_set_param(u32 idx, f32 v) {
   }
 }
 
-
+// get number of parameters
+extern u32 module_get_num_params(void) {
+  return eParamNumParams;
+}
 
 // frame callback
 void module_process_frame(const f32* in, f32* out) {

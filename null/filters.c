@@ -53,7 +53,7 @@ void filter_1p_fix16_set_hz(filter_1p_fix16* f, fix16 hz) {
   //  f32 fc =  (float) exp(-2.0 * M_PI * (double)(fix16_to_float(hz)) / (float)(f->sr) );
   //printf("\r1p coefficient: %f\n", fc);
   /// /FIXME: could optimize
-  f->c = fix16_from_float( (float) exp(-2.0 * M_PI * (double)(fix16_to_float(hz)) / (float)(f->sr) ); ); 
+  f->c = fix16_from_float( (float) exp(-2.0 * M_PI * (double)(fix16_to_float(hz)) / (float)(f->sr) ) ); 
   // clamp to < 1.0
   if (f->c > 0xffff) {  f->c = 0xffff; }
   //  printf("\rfix16: %08x\n",  f->c );
@@ -68,6 +68,7 @@ void filter_1p_fix16_in(filter_1p_fix16* f, fix16 val) {
 // get next filtered value
 
 fix16 filter_1p_fix16_next(filter_1p_fix16* f) {
+  
   f->y = fix16_add( f->x,
 		     fix16_mul(f->c,
 				    fix16_sub(f->y, f->x)
@@ -77,6 +78,7 @@ fix16 filter_1p_fix16_next(filter_1p_fix16* f) {
     f->sync = 1;
   }
   return f->y;
+
 }
 
 
@@ -110,6 +112,7 @@ void filter_1p_fr32_set(filter_1p_fr32* f, fract32 val) {
 
 // get next filtered value
 fract32 filter_1p_fr32_next(filter_1p_fr32* f) {
+  
   if(f->sync) {
     ;;
   } else {
@@ -123,5 +126,6 @@ fract32 filter_1p_fr32_next(filter_1p_fr32* f) {
     }
   }
   return f->y;
+  
 }
 
