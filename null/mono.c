@@ -107,6 +107,7 @@ static void set_hz(const fix16 hzArg) {
 
 
 //// OLD  (clean!) :
+/*
 static void calc_frame(void) {
   static s16 x;
   static s16 xnext;
@@ -135,11 +136,10 @@ static void calc_frame(void) {
   idx = fix16_add(idx, inc);
   while(idx > SINE_TAB_MAX16) { idx = fix16_sub(idx, SINE_TAB_MAX16); }
 }
-
+*/
 
 
 //// ABSTRACTED:
-/*
 static void calc_frame(void) {
   // lookup
   frameval = fixtable_lookup_idx(sinetab, SINE_TAB_SIZE, idx);
@@ -160,7 +160,6 @@ static void calc_frame(void) {
   idx = fix16_add(idx, inc);
   while(idx > SINE_TAB_MAX16) { idx = fix16_sub(idx, SINE_TAB_MAX16); }
 }
-*/
 
 //----------------------
 //----- external functions
