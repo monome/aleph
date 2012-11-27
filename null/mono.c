@@ -66,7 +66,7 @@ static fract32   amp;          // amplitude
 static u32       sr;           // sample rate
 static fix16     hz;           // frequency
 static env_asr*  env;          // ASR envelope 
-static filter_1p* hz_1p;       // 1-pole lowpass for smoothing hz
+static filter_1p_fix16* hz_1p;       // 1-pole lowpass for smoothing hz
 
 //----------------------
 //----- static functions
@@ -84,14 +84,14 @@ static void set_hz(const fix16 hzArg) {
 static void calc_frame(void) {
   // lookup
   frameval = fixtable_lookup_idx(sinetab, SINE_TAB_SIZE, idx);
-  // apply (and increment) envelope
+  // increment and apply envelope
   frameval = mult_fr1x32x32(frameval, env_asr_next(env));
   // apply amplitude 
   frameval = mult_fr1x32x32(frameval, amp);
 
-  // increment hz filter
+  // increment and apply hz smoother
   if(!(hz_1p->sync)) {
-    set_hz(filter_1p_next(hz_1p));
+    set_hz(filter_1p_fix16_next(hz_1p));
   } 
 
   // increment idx and wrap
@@ -143,10 +143,10 @@ void module_init(const u32 sr_arg) {
   env_asr_set_rel_shape(env, float_to_fr32(0.5));
 
   // allocate 1pole hz smoother
-  hz_1p = (filter_1p*)malloc(sizeof(filter_1p));
-  filter_1p_init(hz_1p);
-  filter_1p_set(hz_1p, 300.0);
-  filter_1p_set_hz(hz_1p, 1.0);
+  hz_1p = (filter_1p_fix16*)malloc(sizeof(filter_1p_fix16));
+  filter_1p_fix16_init(hz_1p, SAMPLERATE);
+  filter_1p_fix16_in(hz_1p, 300.0);
+  filter_1p_fix16_set_hz(hz_1p, 1.0);
 
   /// DEBUG
   printf("\n\n module init debug \n\n");
@@ -163,7 +163,7 @@ void module_set_param(u32 idx, f32 v) {
   switch(idx) {
   case PARAM_HZ:
     //    set_hz(fix16_from_float(v));
-    filter_1p_set(hz_1p, fix16_from_float(v));
+    filter_1p_fix16_in(hz_1p, fix16_from_float(v));
     break;
   case PARAM_AMP:
     amp = float_to_fr32(v);
@@ -184,7 +184,7 @@ void module_set_param(u32 idx, f32 v) {
     env_asr_set_atk_shape(env, float_to_fr32(v));
     break;
   case PARAM_HZ_SMOOTH:
-    filter_1p_set_hz(hz_1p, fix16_from_float(v));
+    filter_1p_fix16_set_hz(hz_1p, fix16_from_float(v));
     break;
   default:
     break;
@@ -204,11 +204,12 @@ void module_process_frame(const f32* in, f32* out) {
       *out++ = fr32_to_float(frameval);
 
 	//// DEBUG      
-      
+      /*
       if( (framecount < 256) && (chan == 0) && (*out != 0.0) ) { 
        	printf("\n%f,", *out);
 	framecount++;
       }
+      */
       
     }
   }
