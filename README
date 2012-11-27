@@ -1,17 +1,32 @@
 aleph todo.
 
+november todo
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# check cap sizes
+# b-sdram decoupling
+# bf-avr io connect
+
+DACS
+595
+VCA
+4066
+analog header
+
+
+
+
 what happened at machineproject
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 circuit fixes
 	# reset button has cap in the wrong place
 	# ftdi rx/tx cts/rts all reversed
 	# ftdi reset resistors etc
-	power control i/o line to be added
+	# power control i/o line to be added
 	# power switch reversed
-	OLED outline wrong
+	# OLED outline wrong
 	# push key pinout rotated 90 degrees
 	# 3.5mm jack holes too small
-	ADC needs a real voltage ref chip
+	# ADC needs a real voltage ref chip
 	# ADC DOUT not connected!
 	# SDCARD holder is wrong part
 	# NOO: CLK and CLKE have reversed pull-down pull-up
@@ -21,13 +36,13 @@ circuit fixes
 circuit improvements
 	# power LED
 	# voltage pads on top
-	highly visible GND hole somewhere
-	silk names can be smaller
+	# highly visible GND hole somewhere
+	# silk names can be smaller
 	# REMOVE aux-pullups
-	free pin for cycle counting - DEBUG PIN
+	# free pin for cycle counting - DEBUG PIN
 	# move OLED to SPI1 with mmc
 	# OLED RES and DC moved!!!
-	SDCARD MUST BE USER ACCESSIBLE EASILY
+	# SDCARD MUST BE USER ACCESSIBLE EASILY
 	
 require further design investigation
 	FTDI init requires re-plug. power-on with plugin doesn't init?
@@ -53,31 +68,31 @@ think about
 avr32
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 BEES port / finish
-     UI glue
-     filesystem glue
-     DSP selection page
-     presets page
-     scenes page
-     numerical representation abstraction
-     op re-ordering and deletion
+	UI glue
+	filesystem glue
+	DSP selection page
+	presets page
+	scenes page
+	numerical representation abstraction
+	op re-ordering and deletion
 
 new operators:
-    linear map
-    range select
-    split
-    metronome
-    sequence
-    CV input
-    HID input
-    (HID output ?)
-    (CV output ?)
+	linear map
+	range select
+	split
+	metronome
+	sequence
+	CV input
+	HID input
+	(HID output ?)
+	(CV output ?)
 
 UI refinement
-     right-alignment
-     setter fields (numbers and strings)
-     line inversion
-     timed select / scroll
-     encoder acceleration
+	right-alignment
+	setter fields (numbers and strings)
+	line inversion
+	timed select / scroll
+	encoder acceleration
 
 operators as plugins
 
