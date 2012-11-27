@@ -94,6 +94,7 @@ static filter_1p_fix16* hz_1p;       // 1-pole lowpass for smoothing hz
 //----------------------
 //----- static functions
 
+// set hz
 static void set_hz(const fix16 hzArg) {  
   hz = hzArg;
   if( hz < HZ_MIN ) hz = HZ_MIN;
@@ -102,44 +103,7 @@ static void set_hz(const fix16 hzArg) {
   //  idx = 0;
 }
 
-/// 
-
-
-
-//// OLD  (clean!) :
-/*
-static void calc_frame(void) {
-  static s16 x;
-  static s16 xnext;
-  static fract32 fx;
-  static fract32 fxnext;
-  x = (idx >> 16) % SINE_TAB_SIZE;
-  xnext = (x + 1) % SINE_TAB_SIZE;
-
-  // (unsigned LJ) -> (signed RJ)
-  fxnext = (fract32)( (idx << 15) & 0x7fffffff );
-  // invert
-  fx = sub_fr1x32(0x7fffffff, fxnext);
-
-  // interpolate
-  frameval = mult_fr1x32x32(amp, 
-                   add_fr1x32(
-                              mult_fr1x32x32(sinetab[x], fx),
-                              mult_fr1x32x32(sinetab[xnext], fxnext)
-                              )
-                   );  
-
-  // apply envelope
-  frameval = mult_fr1x32x32(frameval, env_asr_next(env));
-  
-  // increment idx
-  idx = fix16_add(idx, inc);
-  while(idx > SINE_TAB_MAX16) { idx = fix16_sub(idx, SINE_TAB_MAX16); }
-}
-*/
-
-
-//// ABSTRACTED:
+// frame calculation
 static void calc_frame(void) {
   // lookup
   frameval = fixtable_lookup_idx(sinetab, SINE_TAB_SIZE, idx);
@@ -148,13 +112,10 @@ static void calc_frame(void) {
   // apply amplitude 
   frameval = mult_fr1x32x32(frameval, amp);
 
-  //TEST
-  #if 0
   // increment and apply hz smoother
   if(!(hz_1p->sync)) {
     set_hz(filter_1p_fix16_next(hz_1p));
   } 
-  #endif
 
   // increment idx and wrap
   idx = fix16_add(idx, inc);
@@ -218,8 +179,8 @@ void module_deinit(void) {
 void module_set_param(u32 idx, f32 v) {
   switch(idx) {
   case eParamHz1:
-        set_hz(fix16_from_float(v));
-    //    filter_1p_fix16_in(hz_1p, fix16_from_float(v));
+    //    set_hz(fix16_from_float(v));
+    filter_1p_fix16_in(hz_1p, fix16_from_float(v));
     break;
   case eParamWave1:
     break;

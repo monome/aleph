@@ -33,8 +33,6 @@
 //extern void fixtable_deinit(fract32* tab);
 
 // lookup given real index in [0, size-1]
-#if 1
-//// FIXME: this (faster) refactored form glitches verrry slightly at table endpoint (?)
 inline fract32 fixtable_lookup_idx(fract32* tab, u32 size, fix16 idx) {
   fract32 a, b, f;
   u32 ia, ib;
@@ -47,30 +45,6 @@ inline fract32 fixtable_lookup_idx(fract32* tab, u32 size, fix16 idx) {
   f = (fract32)( (idx << 15) & 0x7fffffff );
   return add_fr1x32(a, mult_fr1x32x32(f, sub_fr1x32(b, a)));
 }
-#else 
-inline fract32 fixtable_lookup_idx(fract32* tab, u32 size, fix16 idx) {
-  s16 ia, ib;
-  // fract32 fa;
-  fract32 fb;
-  fract32 a, b;
-  
-  ia = (idx >> 16) % size;
-  ib = (ia + 1) % size;
-
-  // (unsigned LJ) -> (signed RJ)
-  fb = (fract32)( (idx << 15) & 0x7fffffff );
-  // invert
-  //  fa = sub_fr1x32(0x7fffffff, fb);
-  //  return add_fr1x32(
-  //		    mult_fr1x32x32(tab[ia], fa),
-  //		    mult_fr1x32x32(tab[ib], fb)
-  //		    );
-  a = tab[ia];
-  b = tab[ib];
-  return add_fr1x32(a, mult_fr1x32x32(fb, sub_fr1x32(b, a)));
-}
-#endif
-			  					   
 
 // lookup given normalized index in [-1, 1]
 inline fract32 fixtable_lookup_fract(fract32* tab, u32 size, fract32 phase) {
