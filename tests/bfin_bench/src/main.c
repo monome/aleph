@@ -1,6 +1,8 @@
-#include "bfin_core.h"
+// bfin toolchain
 #include "ccblkfn.h"
 #include "sysreg.h"
+// aleph
+#include "bfin_core.h"
 #include "init.h"
 #include "module.h"
 

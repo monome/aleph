@@ -1,5 +1,13 @@
+/* fix.c
+ * common
+ * aleph
+ *
+ * additional routines for converting fixed-point datatypes
+ */
+
 #include "fix.h"
 
+/*
 static inline char bsign (const int x) {
   return ( (x & 0x80000000) > 0 ) ;
 }
@@ -11,6 +19,7 @@ static inline int binv (const int x) {
 static inline int babs (const int x) {
   return bsign(x) ? binv(x) - 1 : x;
 }
+*/
 
 void print_fix16(char* buf , fix16_t x) {
   // fixme: shouldn't really need these
@@ -20,7 +29,7 @@ void print_fix16(char* buf , fix16_t x) {
   char sign;
   int y, i;
 
-  sign = bsign(x);
+  sign = BSIGN(x);
   //  bufHi = p + 1;
   //bufLo  = bufHi + FIX_DIG_HI + 1;
 
@@ -67,13 +76,13 @@ void itoa_whole(int val, char* buf, int len)
   char * p;       // pointer
   unsigned int a; // digit (remainder)
   unsigned int u; // unsigned value 
-  char neg = bsign(val);
+  char neg = BSIGN(val);
 
   p = buf + len - 1; // right justify; start at end
 
   if ( neg ) {
     len--;
-    val = binv(val) + 1; // FIXME: this will wrap at 0xffffffff
+    val = BINV(val) + 1; // FIXME: this will wrap at 0xffffffff
   }
 
 
@@ -96,7 +105,7 @@ void itoa_whole(int val, char* buf, int len)
 
 void itoa_fract(int val, char* buf)
 {
-  const unsigned int places[FIX_DIG_LO] = {
+  static const unsigned int places[FIX_DIG_LO] = {
     6553, 655, 65, 7
   };
   

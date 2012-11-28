@@ -40,21 +40,20 @@ void handle_key(u16 ch) {
   switch(ch) {
   case CMD_KEY_PARAM:
 
+    pnum = module_get_num_params();
+    for(i=0; i<pnum; i++) {
+      printf("\rparam %d: %s\n", i, moduleData->paramDesc[i].label);
+    }
     printf("enter param index:\n");
     prompt();
     paramIdx = atoi(input);
+    printf("\rsetting parameter %d, %s\n", paramIdx, moduleData->paramDesc[paramIdx].label);
     printf("enter param value (float): \n"); 
     prompt();
     pval = atof(input);
 
     module_set_param(paramIdx, pval);
 
-    break;
-  case CMD_KEY_PARAMLIST:
-    pnum = module_get_num_params();
-    for(i=0; i<pnum; i++) {
-      printf("\rparam %d: %s\n", i, moduleData->paramDesc[i].label);
-    }
     break;
   default:
     break;

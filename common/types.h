@@ -37,7 +37,7 @@ typedef f64 F64;  //!< 64-bit floating-point number.
 #endif
 
 // fract
-typedef int32_t fract16;
+//typedef int32_t fract16;
 typedef int32_t  fract32;
 
 #endif // header guard
