@@ -39,10 +39,10 @@ static inline u8 fix16_compare(fix16 a, fix16 b) {
 //===== fix16
 
 // intialize at pre-allocated memory
-void filter_1p_fix16_init(filter_1p_fix16* f, u32 sr) {
+void filter_1p_fix16_init(filter_1p_fix16* f, u32 sr, fix16 hz, fix16 in) {
   f->c = 0;
-  f->y = 0;
-  f->x = 0;
+  f->y = in;
+  f->x = in;
   f->sync = 1;
   f->sr = sr;
 }
@@ -87,11 +87,13 @@ fix16 filter_1p_fix16_next(filter_1p_fix16* f) {
 //===== fr32
 
 // intialize at pre-allocated memory
-void filter_1p_fr32_init(filter_1p_fr32* f) {
+void filter_1p_fr32_init(filter_1p_fr32* f, u32 sr, fix16 hz, fract32 in) {
   f->c = 0;
-  f->y = 0;
-  f->x = 0;
+  f->y = in;
+  f->x = in;
   f->sync = 1;
+  f->sr = sr;
+
 }
 
 // set cutoff frequency in hz
@@ -100,7 +102,7 @@ void filter_1p_fr32_set_hz(filter_1p_fr32* f, fix16 hz) {
 }
 
 // set target value 
-void filter_1p_fr32_set(filter_1p_fr32* f, fract32 val) {
+void filter_1p_fr32_in(filter_1p_fr32* f, fract32 val) {
   f->x = val;
   if (val == f->y) { 
     f->sync = 1;
