@@ -70,7 +70,7 @@ moduleData_t * moduleData; // module data
 //-----------------------
 //------ static variables
 static fract32   tab1[WAVE_TAB_SIZE]; // wavetable1
-static fract32   tab1[WAVE_TAB_SIZE]; // wavetable2
+static fract32   tab2[WAVE_TAB_SIZE]; // wavetable2
 static u32       sr;            // sample rate
 static fix16     ips;        // index change per sample
 
@@ -99,9 +99,9 @@ static env_asr*  env;           // ASR amplitude envelope
  
 static filter_1p_fix16* hz1Lp;  // 1plp smoother for hz1
 static filter_1p_fix16* hz2Lp;  // 1plp smoother for hz2
-static filter_1p_fr32* pmLp;  // 1plp smoother for pm
-static filter_1p_fr32* wave1Lp;  // 1plp smoother for wave1
-static filter_1p_fr32* wave2Lp;  // 1plp smoother for wave2
+static filter_1p_fr32* pmLp;    // 1plp smoother for pm
+static filter_1p_fr32* wave1Lp; // 1plp smoother for wave1
+static filter_1p_fr32* wave2Lp; // 1plp smoother for wave2
 static filter_1p_fr32* amp1Lp;  // 1plp smoother for amp1
 static filter_1p_fr32* amp2Lp;  // 1plp smoother for amp2
 
@@ -143,26 +143,47 @@ static inline void set_hz2(fix16 hz) {
   track = 0;
 }
 
+// double-lookup and interpolate
+static inline fract32 lookup_wave(const fix16 idx, const fract32 wave) {
+  ///// FIXME: this is far from optimized.
+  //// add refactored double-lookup method to table.h
+  const fract32 waveInv = sub_fr1x32(INT32_MAX, wave);
+  return add_fr1x32( 
+		    mult_fr1x32x32(fixtable_lookup_idx(tab1, WAVE_TAB_SIZE, idx), waveInv),
+		    mult_fr1x32x32(fixtable_lookup_idx(tab2, WAVE_TAB_SIZE, idx), wave)
+		     );
+}
+
 // frame calculation
 static void calc_frame(void) {
   //  static u8 dum=0;
 
   // ----- smoothers:
   // pm
-  if(!(pmLp->sync)) {
+  //  if(!(pmLp->sync)) {
     pm = filter_1p_fr32_next(pmLp);
-  } 
+    //  } 
   // amp1
-  if(!(amp1Lp->sync)) {
+  //  if(!(amp1Lp->sync)) {
     amp1 = filter_1p_fr32_next(amp1Lp);
-  } 
+    //  } 
   // amp2
-  if(!(amp2Lp->sync)) {
+  //  if(!(amp2Lp->sync)) {
     amp2 = filter_1p_fr32_next(amp2Lp);
-  } 
+    //  } 
+  // wave1
+  //  if(!(wave1Lp->sync)) {
+    wave1 = filter_1p_fr32_next(wave1Lp);
+    //  } 
+  // wave2
+  //  if(!(wave2Lp->sync)) {
+    wave2 = filter_1p_fr32_next(wave2Lp);
+    //  } 
+
 
   // lookup osc2
-  osc2 = fixtable_lookup_idx(sinetab, WAVE_TAB_SIZE, idx2);
+  //  osc2 = fixtable_lookup_idx(tab1, WAVE_TAB_SIZE, idx2);
+  osc2 = lookup_wave(idx2, wave2);
   
   /// use osc2 output as phase modulation, scaled to tablesize
   idx1Mod = fix16_add(
@@ -182,7 +203,8 @@ static void calc_frame(void) {
   }
 
   // lookup osc1
-  osc1 = fixtable_lookup_idx(sinetab, WAVE_TAB_SIZE, idx1Mod);
+  //  osc1 = fixtable_lookup_idx(tab1, WAVE_TAB_SIZE, idx1Mod);
+  osc1 = lookup_wave(idx1Mod, wave1);
 
   // apply amplitudes and sum 
   frameVal = add_fr1x32(
@@ -259,9 +281,9 @@ void module_init(const u32 sr_arg) {
   hz1 = fix16_from_int(220);
   idx1 = idx2 = 0;
 
-  // init wavetable
-    //      fixtable_fill_harm(sinetab, WAVE_TAB_SIZE, 4, 0.5f, 1);
-  fixtable_fill_harm(sinetab, WAVE_TAB_SIZE, 1, 1.f, 0);
+  // init wavetables
+  fixtable_fill_harm(tab1, WAVE_TAB_SIZE, 1, 1.f, 0);
+  fixtable_fill_harm(tab2, WAVE_TAB_SIZE, 5, 0.5, 1);
 
   // allocate envelope
   env = (env_asr*)malloc(sizeof(env_asr));
@@ -308,8 +330,10 @@ void module_set_param(u32 idx, f32 v) {
     set_hz2(fix16_from_float(v));
     break;
   case eParamWave1:
+    filter_1p_fr32_in(wave1Lp, float_to_fr32(v));
     break;
   case eParamWave2:
+    filter_1p_fr32_in(wave2Lp, float_to_fr32(v));
     break;
   case eParamPm:
     // scale to [0, 0.5]
