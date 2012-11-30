@@ -1,0 +1,172 @@
+;; -*- mode: emacs-lisp; coding: emacs-mule; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Sun Oct 14 18:22:39 2012
+;; Desktop file format version 206
+;; Emacs version 23.3.1
+
+;; Global section:
+(setq desktop-missing-file-warning nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+(setq search-ring '("\"\\r\\j" "ulong" "AVR32_EBI_CS1_AS" "CAS_PI" "pll_setup"))
+(setq regexp-search-ring nil)
+(setq register-alist nil)
+(setq file-name-history '("~/aleph/avr32_proto_test/" "~/aleph/avr32_proto/conf/conf_aleph.h" "~/scratch/bitcompare.c" "~/scratch/" "~/scratch/bitcompare.c" "~/aleph/avr32_test/src/main.c" "~/avr/asf-3.1.3/" "~/aleph/avr32_test/src/main.c" "~/src/" "~/aleph/nullp" "~/avr/asf-3.1.3/avr32/drivers/ebi/sdramc/sdramc.h" "~/aleph/avr32_test/config.mk" "~/aleph/avr32_proto_test/config.mk" "~/aleph/avr32_proto/src/memory.h" "~/aleph/avr32_test/src/main.c" "~/aleph/avr32_proto/conf/conf_aleph.h" "~/aleph/avr32/conf/conf_aleph.h" "~/avr/asf-3.1.3/avr32/drivers/pm/pm.h" "~/avr/asf-3.1.3/avr32/drivers/pm/" "~/avr/asf-3.1.3/avr32/" "~/aleph/avr32_proto/src/init.c" "~/aleph/avr32/src/init.c" "~/avr/asf-3.1.3/avr32/components/memory/sdram/mt48lc16m16a2tg7e/example/sdramc_example.c" "~/aleph/avr32/conf/conf_aleph.h" "~/avr/" "~/avr/asf-3.1.3/avr32/" "~/aleph/avr32_test/src/main.c" "~/aleph/avr32_proto_test/src/main.c" "~/aleph/avr32_test/src/main.c" "~/aleph/avr32_proto_test/src/main.c"))
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32_proto/conf/conf_aleph.h"
+  "conf_aleph.h"
+  'c-mode
+  '(abbrev-mode)
+  2190
+  '(1770 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/scratch/bitcompare.c"
+  "bitcompare.c"
+  'c-mode
+  '(abbrev-mode)
+  589
+  '(697 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/avr/asf-3.1.3/avr32/utils/debug/print_funcs.h"
+  "print_funcs.h"
+  'c-mode
+  '(abbrev-mode)
+  13545
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/avr/asf-3.1.3/avr32/drivers/ebi/sdramc/sdramc.c"
+  "sdramc.c"
+  'c-mode
+  '(abbrev-mode)
+  8105
+  '(2470 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32_test/src/main.c"
+  "main.c"
+  'c-mode
+  '(abbrev-mode)
+  10409
+  '(10658 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  nil
+  "utils"
+  'dired-mode
+  nil
+  277
+  '(nil nil)
+  t
+  '("/home/emb/avr/asf-3.1.3/avr32/utils/")
+  nil)
+
+(desktop-create-buffer 206
+  nil
+  "avr32"
+  'dired-mode
+  nil
+  474
+  '(nil nil)
+  t
+  '("/home/emb/avr/asf-3.1.3/avr32/")
+  nil)
+
+(desktop-create-buffer 206
+  nil
+  "asf-3.1.3"
+  'dired-mode
+  nil
+  289
+  '(nil nil)
+  t
+  '("/home/emb/avr/asf-3.1.3/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/avr/avr32/include/avr32/uc3a0512.h"
+  "uc3a0512.h"
+  'c-mode
+  '(abbrev-mode)
+  2856
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/avr/asf-3.1.3/avr32/components/memory/sdram/mt48lc16m16a2tg7e/mt48lc16m16a2tg7e.h"
+  "mt48lc16m16a2tg7e.h"
+  'c-mode
+  '(abbrev-mode)
+  1938
+  '(2160 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/avr/asf-3.1.3/avr32/drivers/pm/pm.h"
+  "pm.h"
+  'c-mode
+  '(abbrev-mode)
+  11272
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/avr/asf-3.1.3/avr32/drivers/pm/power_clocks_lib.h"
+  "power_clocks_lib.h"
+  'c-mode
+  '(abbrev-mode)
+  13349
+  '(1257 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  nil
+  "drivers"
+  'dired-mode
+  nil
+  1508
+  '(nil nil)
+  t
+  '("/home/emb/avr/asf-3.1.3/avr32/drivers/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/avr/asf-3.1.3/avr32/components/memory/sdram/mt48lc16m16a2tg7e/example/sdramc_example.c"
+  "sdramc_example.c"
+  'c-mode
+  '(abbrev-mode)
+  4900
+  '(4771 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+

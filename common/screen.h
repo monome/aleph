@@ -6,7 +6,7 @@
 #ifndef _SCREEN_H_
 #define _SCREEN_H_
 
-//#include "compiler.h"
+#include "compiler.h"
 #include "fix.h"
 #include "types.h"
 
