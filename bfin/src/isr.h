@@ -11,5 +11,7 @@
 void sport0_rx_isr() __attribute((interrupt_handler));
 // spi data receive interrupt (avr32)
 void spi_rx_isr() __attribute__((interrupt_handler));
+// programmable flag interrupt (buttons)
+void pf_isr() __attribute__((interrupt_handler));
 
 #endif // header guard

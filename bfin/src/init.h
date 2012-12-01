@@ -40,8 +40,12 @@
 
 // DMA flow mode
 #define FLOW_1	0x1000
+
+// SDRAM settings
+//#define SDRAM_ROWS
  
 //--------- function prototypes
+void init_clocks(void);
 void init_EBIU(void);
 void init_flash(void);
 void init_1836(void);
@@ -50,5 +54,6 @@ void init_sport0(void);
 void init_DMA(void);
 void init_interrupts(void);
 void enable_DMA_sport0(void);
+void init_flags(void);
 
 #endif // header guard

@@ -1,6 +1,8 @@
-#include "bfin_core.h"
+// bfin toolchain
 #include "ccblkfn.h"
 #include "sysreg.h"
+// aleph
+#include "bfin_core.h"
 #include "init.h"
 #include "module.h"
 
@@ -10,7 +12,11 @@ int main(void) {
   // turn on execution counter
   // default .crt does this for us
   //  __asm__ __volatile__("R0 = 0x32; SYSCFG = R0; CSYNC;":::"R0");
-  
+
+  // initialize clocks and power
+  init_clocks();
+  // configure programmable flags
+  init_flags();  
   // intialize the sdram controller
   init_EBIU();
   // intialize the flash controller (which, weirdly, handles gpio)
@@ -24,18 +30,15 @@ int main(void) {
   // put the spi back in slave mode to receive param changes from avr32
   init_spi_slave();
   // intialize the audio processing unit (assign memory)
-  init_module();
+  module_init();
   // assign interrupts
   init_interrupts();
-  // start the audio engine
+  // begin audio transfers
   enable_DMA_sport0();  
 
-  // TEST
-  *pFlashA_PortB_Data = 0x05;
-
   while(1) {
+    // fixme: everything happens in ISRs!
     ;;
-
   }
 }
 

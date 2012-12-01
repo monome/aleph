@@ -26,9 +26,25 @@ volatile s32 iTxBuf[4];
 volatile s32 iRxBuf[4];
 
 //----- function definitions
+// initialize clocks
+void init_clocks(void) {
+  //// check:
+  //  const u16 pll_ctl = *pPLL_CTL;
+  //  const u16 pll_div = *pPLL_DIV;
+  //  u8 dum = 0;
+  //  dum++;
+  //  dum++;
+
+  // set MSEL = 20 for core clock of 108Mhz
+  *pPLL_CTL = 0x2800;
+  ssync();
+  
+}
+
+// initialize EBI
 void init_EBIU(void) {
   //  straight from the self-test example project
-// Initalize EBIU control registers to enable all banks	
+  // Initalize EBIU control registers to enable all banks	
   *pEBIU_AMBCTL1 = 0xFFFFFF02;
   ssync();
   
@@ -38,14 +54,16 @@ void init_EBIU(void) {
   
   *pEBIU_AMGCTL = 0x00FF;
   ssync();
-    
+  
   // Check if already enabled
   if( SDRS != ((*pEBIU_SDSTAT) & SDRS) ) {
-      return;
+    return;
   }
-    
+  
   //SDRAM Refresh Rate Control Register
-  *pEBIU_SDRRC = 0x01A0; 
+  //  *pEBIU_SDRRC = 0x01A0; 
+  // for 108Mhz system clock:
+  *pEBIU_SDRRC = 835;
   
   //SDRAM Memory Bank Control Register
   *pEBIU_SDBCTL = 0x0025; //1.7	64 MB
@@ -67,8 +85,7 @@ void init_flash(void) {
 void init_1836(void) {
   int i;
   int j;
-   
-  // write to Port A to reset AD1836
+    // write to Port A to reset AD1836
   *pFlashA_PortA_Data = 0x00;  
   // write to Port A to enable AD1836
   *pFlashA_PortA_Data = 0x01;
@@ -113,12 +130,12 @@ void init_1836(void) {
 
 //--------------------------------------------------------------------//
 // init_spi_slave()
-// (re-)onfigure spi in slave mode to receive control data from avr32 
+// (re-)configure spi in slave mode to receive control data from avr32 
 void init_spi_slave(void) {
   int j;
   int spi_stat_debug;
  
-  //don't try to produce a clock, you dumbass 
+  // don't attempt to drive the clock
   *pSPI_BAUD = 0;
   // reset the flags register? to defaults?
   *pSPI_FLG = 0xff00;
@@ -137,7 +154,6 @@ void init_spi_slave(void) {
   // TEST: send zeros after TDBR is emptied
   *pSPI_CTL = CPHA | GM | SZ;
 
-
   // enable transmit on MISO
   *pSPI_CTL |= EMISO;
   
@@ -154,13 +170,7 @@ void init_spi_slave(void) {
   *pSPI_STAT |= 0x10;
 }
 
-//--------------------------------------------------------------------------//
-// Function:	Init_sport0						
-//									
-// Description:	Configure Sport0 for I2S mode, to transmit/receive data 
-//		to/from the AD1836. Configure Sport for external clocks and
-//	        frame syncs.						
-//--------------------------------------------------------------------------//
+// configure sport0 for i2s mode with external clock
 void init_sport0(void)
 {
   // Sport0 receive configuration
@@ -176,14 +186,8 @@ void init_sport0(void)
   *pSPORT0_TCR2 = SLEN_24 | TXSE | TSFSE;
 }
 
-//--------------------------------------------------------------------------//
-// Function:	init_DMA						
-//							
-// Description:	Initialize DMA1 in autobuffer mode to receive and DMA2 in
-//	        autobuffer mode to transmit		
-//--------------------------------------------------------------------------//
-void init_DMA(void)
-{
+// initialize DMA in autobuffer mode
+void init_DMA(void) {
   // Set up DMA1 to receive
   // Map DMA1 to Sport0 RX
   *pDMA1_PERIPHERAL_MAP = 0x1000;
@@ -213,28 +217,8 @@ void init_DMA(void)
   *pDMA2_X_MODIFY = 4;
 }
 
-void init_interrupts(void)
-{
-  int i=0;
-  // set sport0 rx (dma1) interrupt priority to 2 = IVG9 
-  // set spi rx interrupt priority to 3 = IVG10
-  *pSIC_IAR0 = 0xffffffff;
-  *pSIC_IAR1 = 0xff3fff2f;
-  *pSIC_IAR2 = 0xffffffff;
-  
-  // assign ISRs to interrupt vectors
-  // sport0 rx isr -> ivg 9
-  // spi rx isr -> ivg 10 
-  *pEVT9 = sport0_rx_isr;
-  *pEVT10 = spi_rx_isr;
-  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
-  
-  // enable Sport0 RX interrupt, spi/dma5 interrupt
-  *pSIC_IMASK = 0x2200;
-}
-
-void enable_DMA_sport0(void)
-{
+// enable sport0 DMA
+void enable_DMA_sport0(void) {
   // enable DMAs
   *pDMA2_CONFIG	= (*pDMA2_CONFIG | DMAEN);
   *pDMA1_CONFIG	= (*pDMA1_CONFIG | DMAEN);
@@ -242,4 +226,38 @@ void enable_DMA_sport0(void)
   // enable Sport0 TX and RX
   *pSPORT0_TCR1 	= (*pSPORT0_TCR1 | TSPEN);
   *pSPORT0_RCR1 	= (*pSPORT0_RCR1 | RSPEN);
+}
+
+// initialize programmable flags for button input
+void init_flags(void) {
+  // configure PF08 for input
+  *pFIO_INEN = 0x0100;
+  *pFIO_DIR = 0x0000;
+  // edge-sensitive, rise only
+  *pFIO_EDGE = 0x0100;
+  // set interrupt mask
+  *pFIO_MASKA_D = 0x0100;
+}
+
+// assign interrupts
+void init_interrupts(void) {
+  int i=0;
+
+  // assign core IDs to peripheral interrupts:
+  *pSIC_IAR0 = 0xffffffff;
+  // sport0 rx (dma1) -> ID2 = IVG9 
+  // spi rx           -> ID3 = IVG10
+  *pSIC_IAR1 = 0xff3fff2f;
+  // PFA              -> ID5 = IVG12
+  *pSIC_IAR2 = 0xffff5fff;
+  
+  // assign ISRs to interrupt vectors:
+  *pEVT9 = sport0_rx_isr;
+  *pEVT10 = spi_rx_isr;
+  *pEVT12 = pf_isr;
+
+  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); bitset (%0, 12); sti %0; csync;": "+d"(i));
+  
+  // enable interrupts on Sport0 RX, spi/dma5, PFA
+  *pSIC_IMASK = 0x00082200;
 }
