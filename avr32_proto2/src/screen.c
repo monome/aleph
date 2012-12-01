@@ -11,7 +11,6 @@
 #include <math.h>
 // ASF
 #include "gpio.h"
-//#include "usart.h"
 #include "util.h"
 #include "intc.h"
 #include "print_funcs.h"
@@ -66,6 +65,7 @@ void init_oled(void) {
   volatile u64 delay;
   //  cpu_irq_disable();
   Disable_global_interrupt();
+  delay = FCPU_HZ >> 10 ; while(delay > 0) { delay--; }
   // flip the reset pin
   gpio_set_gpio_pin(OLED_RESET_PIN);
   //  delay_ms(1);
@@ -137,8 +137,31 @@ void init_oled(void) {
   delay = FCPU_HZ >> 8; while(delay > 0) { delay--; }
   //  cpu_irq_enable();
   Enable_global_interrupt();
-
 }
+
+
+// send screen buffer contents to OLED
+void screen_refresh(void) {
+  U16 i;
+
+  cpu_irq_disable();
+  // Disable_global_interrupt();
+
+  // pull register select high to write data
+  gpio_set_gpio_pin(OLED_REGISTER_PIN);
+  spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
+
+  for(i=0; i<GRAM_BYTES; i++) { 
+    //    write_data(screen[i]);
+    spi_write(OLED_SPI, screen[i]);  
+    //write_data(i % 0xf);
+  }
+  spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
+  cpu_irq_enable();
+  //  Enable_global_interrupt();
+}
+
+
 
 // draw a single pixel
 void screen_pixel(U16 x, U16 y, U8 a) {
@@ -213,7 +236,7 @@ U8 screen_string_fixed(U16 x, U16 y, char *str, U8 a) {
   return x;
 }
 
-// draw a string with proportional spacinvg
+// draw a string with proportional spacing
 U8 screen_string_squeeze(U16 x, U16 y, char *str, U8 a) {
   while(*str != 0) {
     x += screen_char_squeeze(x, y, *str, a);
@@ -226,7 +249,7 @@ U8 screen_string_squeeze(U16 x, U16 y, char *str, U8 a) {
   return x;
 }
 
-// draw a string (default) m
+// draw a string (default) 
 inline U8 screen_string(U16 x, U16 y, char *str, U8 a) {
   return screen_string_squeeze(x, y, str, a);
 }
@@ -259,19 +282,6 @@ U8 screen_fix(U16 x, U16 y, fix16_t v, U8 a) {
   //snprintf(buf, 32, "%.1f", (float)f);
   print_fix16(buf, v);
   return screen_string_squeeze(x, y, buf, a);
-}
-
-// send screen buffer contents to OLED
-void screen_refresh(void) {
-  U16 i;
-  //  cpu_irq_disable();
-  //  Disable_global_interrupt();
-  for(i=0; i<GRAM_BYTES; i++) { 
-    write_data(screen[i]);  
-    //write_data(i % 0xf);
-  }
-  //  cpu_irq_enable();
-  //  Enable_global_interrupt();
 }
 
 // fill a line with blank space to end
@@ -320,6 +330,17 @@ U8 screen_line(U16 x, U16 l, char *str, U8 hl) {
 
 // fill graphics ram with a test pattern
 void screen_test_fill(void) {
+
+  screen_line(0, 0, "LINE 1", 0xf);
+  screen_line(0, 1, "LINE 2", 0xf);
+  screen_line(0, 2, "LINE 3", 0xf);
+  screen_line(0, 3, "LINE 4", 0xf);
+  screen_line(0, 4, "LINE 5", 0xf);
+  screen_line(0, 5, "LINE 6", 0xf);
+  screen_line(0, 6, "LINE 7", 0xf);
+  
+
+  /*
   u32 i;
   u32 x=0;
   u32 y=0;
@@ -332,5 +353,7 @@ void screen_test_fill(void) {
       y += FONT_CHARH;
     }
   }
+  */
+
   refresh = 1;
 }

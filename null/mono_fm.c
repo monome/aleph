@@ -156,6 +156,18 @@ static inline fract32 lookup_wave(const fix16 idx, const fract32 wave) {
 // frame calculation
 static void calc_frame(void) {
 
+  // ----- smoothers:
+  // pm
+  pm = filter_1p_fr32_next(pmLp);
+  // amp1
+  amp1 = filter_1p_fr32_next(amp1Lp);
+  // amp2
+  amp2 = filter_1p_fr32_next(amp2Lp);
+  // wave1
+  wave1 = filter_1p_fr32_next(wave1Lp);
+  // wave2
+  wave2 = filter_1p_fr32_next(wave2Lp);
+
   // lookup osc2
   osc2 = lookup_wave(idx2, wave2);
   

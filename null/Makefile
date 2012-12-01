@@ -20,10 +20,8 @@ OBJ  = main.o \
 	$(COMMON)/fract32_emu.o \
 	$(COMMON)/simple_string.o \
 	$(COMMON)/fix.o
-#OBJ += wire.o
-#OBJ += fsine.o
-#OBJ += sine.o
-OBJ += mono_pd.o
+#OBJ += mono_pd.o
+OBJ += mono_fm.o
 OBJ += env.o
 OBJ += table.o
 OBJ += filters.o

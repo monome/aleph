@@ -156,8 +156,8 @@ static void calc_frame(void) {
   phaseMul = sub_fr1x32(INT32_MAX, oscIdx << IDX_PHASE_LS);
 
   /// ... multiply osc output by inverted phase
-    frameVal = mult_fr1x32x32( osc1, phaseMul );
-
+  //frameVal = mult_fr1x32x32( osc1, phaseMul );
+  frameVal = osc1;
   // increment and apply envelope
   frameVal = mult_fr1x32x32(frameVal, env_asr_next(env));
 
@@ -165,6 +165,7 @@ static void calc_frame(void) {
   if(!(hz1Lp->sync)) {
     oscInc = fix16_mul(filter_1p_fix16_next(hz1Lp), ips16);
   } 
+
   if(!(hz2Lp->sync)) {
     //// = fix16_mul(filter_1p_fix16_next(hz2Lp), ips);
     //// ...
@@ -177,6 +178,7 @@ static void calc_frame(void) {
     oscIdx = fix16_sub(oscIdx, WAVE_TAB_MAX16);
   }
 
+  /*
   // increment reset phase
   rPhase = add_fr1x32(rPhase, rInc);
   // check for overflow
@@ -185,7 +187,7 @@ static void calc_frame(void) {
     oscIdx = 0;
     rPhase += INT32_MAX;
   }
-
+  */
 }
 
 //----------------------

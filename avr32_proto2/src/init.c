@@ -154,8 +154,8 @@ extern void init_oled_spi (void) {
   // SPI options for OLED
   spi_options_t spiOptions = {
     .reg = OLED_SPI_NPCS,
-    //    .baudrate     = 3300000, // seems about maximum
-    .baudrate     = 3400000, // seems about maximum
+    //    .baudrate     = 3400000, // seems about maximum
+    .baudrate     = 20000000,
     .bits = 8,
     .trans_delay = 0,
     .spck_delay = 0,
