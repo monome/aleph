@@ -230,13 +230,15 @@ void enable_DMA_sport0(void) {
 
 // initialize programmable flags for button input
 void init_flags(void) {
-  // configure PF08 for input
-  *pFIO_INEN = 0x0100;
+  // configure pf08-pf11 for input
+  *pFIO_INEN = 0x0f00;
   *pFIO_DIR = 0x0000;
-  // edge-sensitive, rise only
-  *pFIO_EDGE = 0x0100;
+  // edge-sensitive
+  *pFIO_EDGE = 0x0f00;
+  // both rise and fall
+  *pFIO_BOTH = 0x0f00;
   // set interrupt mask
-  *pFIO_MASKA_D = 0x0100;
+  *pFIO_MASKA_D = 0x0f00;
 }
 
 // assign interrupts

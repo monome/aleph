@@ -15,8 +15,8 @@ fract32 out0, out1, out2, out3;
 
 // sport0 receive interrupt (audio input from codec)
 void sport0_rx_isr() {
-  //fract32 outLevel;
-  //u8 leds = 0;
+  /// debug:
+  static u8 leds = 0;
   // confirm interrupt handling
   *pDMA1_IRQ_STATUS = 0x0001;
   
@@ -38,8 +38,8 @@ void sport0_rx_isr() {
   // module-defined frame processing function
   module_process_frame();  
   // module-defined LED update function
-  *pFlashA_PortB_Data = module_update_leds();
-  
+  leds = module_update_leds();
+  *pFlashA_PortB_Data = leds;
 }
 
 // spi receive interrupt (from avr32)
@@ -49,8 +49,14 @@ void spi_rx_isr() {
 
 // programmable flag interrupt (buttons)
 void pf_isr() {
-  // confirm interrupt handling (W1C)
-  *pFIO_FLAG_C = 0x0100;
+  /// debug:
+  static u16 butstate = 0;
+  /// flag data bits are 1 regardless of edge direction,
+  //// so we need to toggle... 
+  butstate ^= *pFIO_FLAG_D;
   // module-defined button handler
-  module_handle_button();
+  //  module_handle_button(*pFIO_FLAG_D);
+  module_handle_button(butstate);
+  // confirm interrupt handling (W1C)
+  *pFIO_FLAG_C = 0x0f00;
 }

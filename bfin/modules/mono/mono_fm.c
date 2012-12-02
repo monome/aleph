@@ -33,6 +33,8 @@
 /// DEBUG
 //static u32 framecount = 0;
 
+typedef union { u32 u; s32 s; fix16 fix; fract32 fr; } pval;
+
 ///// inputs
 enum params {
   eParamHz1,
@@ -206,7 +208,7 @@ static void calc_frame(void) {
 			);
 
   // increment and apply envelope
-  frameVal = mult_fr1x32x32(frameVal, env_asr_next(env));
+  //  frameVal = mult_fr1x32x32(frameVal, env_asr_next(env));
 
   // increment and apply hz smoothers
   if(!(hz1Lp->sync)) {
@@ -234,7 +236,11 @@ static void calc_frame(void) {
 void module_init(void) {
 
   // init module/param descriptor
+#ifdef ARCH_BFIN 
+  moduleData = (moduleData_t*)SDRAM_ADDRESS;
+#else
   moduleData = (moduleData_t*)malloc(sizeof(moduleData_t));
+#endif
   moduleData->numParams = eParamNumParams;
   moduleData->paramDesc = (ParamDesc*)malloc(eParamNumParams * sizeof(ParamDesc));
   moduleData->paramData = (ParamData*)malloc(eParamNumParams * sizeof(ParamData));
@@ -265,8 +271,9 @@ void module_init(void) {
   track = 1;
   ips = fix16_from_float( (f32)WAVE_TAB_SIZE / (f32)sr );
   amp1 = amp2 = INT32_MAX >> 1;
-  ratio2 = fix16_from_int(2);
   hz1 = fix16_from_int(220);
+  hz2 = fix16_from_int(330);
+  ratio2 = fix16_from_float(1.5);
   idx1 = idx2 = 0;
 
   // init wavetables
@@ -276,98 +283,130 @@ void module_init(void) {
   // allocate envelope
   env = (env_asr*)malloc(sizeof(env_asr));
   env_asr_init(env);
+
   env_asr_set_atk_shape(env, float_to_fr32(0.5));
   env_asr_set_rel_shape(env, float_to_fr32(0.5));
+  env_asr_set_atk_dur(env, 1000);
+  env_asr_set_rel_dur(env, 10000);
 
   // allocate smoothers
   hz1Lp = (filter_1p_fix16*)malloc(sizeof(filter_1p_fix16));
-  filter_1p_fix16_init( hz1Lp, SAMPLERATE, 10.0, hz1 );
+  filter_1p_fix16_init( hz1Lp, SAMPLERATE, 16 << 16, hz1 );
+
   hz2Lp = (filter_1p_fix16*)malloc(sizeof(filter_1p_fix16));
-  filter_1p_fix16_init( hz2Lp, SAMPLERATE, 10.0, hz2 );
+  filter_1p_fix16_init( hz2Lp, SAMPLERATE, 32 << 16, hz2 );
+
   pmLp = (filter_1p_fr32*)malloc(sizeof(filter_1p_fr32));
-  filter_1p_fr32_init( pmLp, SAMPLERATE, 10.0, pm );
+  filter_1p_fr32_init( pmLp, SAMPLERATE, 0x4000, pm );
+
   wave1Lp = (filter_1p_fr32*)malloc(sizeof(filter_1p_fr32));
-  filter_1p_fr32_init( wave1Lp, SAMPLERATE, 10.0, wave1 );
+  filter_1p_fr32_init( wave1Lp, SAMPLERATE, 0xa0000, wave1 );
+
   wave2Lp = (filter_1p_fr32*)malloc(sizeof(filter_1p_fr32));
-  filter_1p_fr32_init( wave2Lp,  SAMPLERATE, 10.0, wave2 );
+  filter_1p_fr32_init( wave2Lp,  SAMPLERATE, 0xa0000, wave2 );
+
   amp1Lp = (filter_1p_fr32*)malloc(sizeof(filter_1p_fr32));
-  filter_1p_fr32_init( amp1Lp, SAMPLERATE, 10.0, amp1 );
+  filter_1p_fr32_init( amp1Lp, SAMPLERATE, 0xa0000, amp1 );
+
   amp2Lp = (filter_1p_fr32*)malloc(sizeof(filter_1p_fr32));
-  filter_1p_fr32_init( amp2Lp, SAMPLERATE, 10.0, amp2 );
+  filter_1p_fr32_init( amp2Lp, SAMPLERATE, 0xa0000, amp2 );
+
+  inc1 = fix16_mul(hz1, ips);
+  inc2 = fix16_mul(hz2, ips);
 
   /// DEBUG
   //printf("\n\n module init debug \n\n");
+
+
+  ////// TEST
+  env_asr_set_gate(env, 1);
 }
 
 // de-init
 void module_deinit(void) {
   free(env);
   free(hz1Lp);
+  free(hz2Lp);
+  free(pmLp);
+  free(wave1Lp);
+  free(wave2Lp);
+  free(amp1Lp);
+  free(amp2Lp);
 }
 
 // set parameter by value
-void module_set_param(u32 idx, f32 v) {
+////// FIXME: the represeentation of this value is totally arbitrary!
+static void module_set_param(u32 idx, pval v) {
   switch(idx) {
   case eParamHz1:
-    set_hz1(fix16_from_float(v));
+    // set_hz1(fix16_from_float(v));
+    set_hz1(v.fix);
     break;
   case eParamRatio2:
-    set_ratio2(fix16_from_float(v));
+    //    set_ratio2(fix16_from_float(v));
+    set_ratio2(v.fix);
     break;
   case eParamHz2:
-    set_hz2(fix16_from_float(v));
+    //    set_hz2(fix16_from_float(v));
+    set_hz2(v.fix);
     break;
   case eParamWave1:
-    filter_1p_fr32_in(wave1Lp, float_to_fr32(v));
+    //    filter_1p_fr32_in(wave1Lp, float_to_fr32(v));
+    filter_1p_fr32_in(wave1Lp, v.fr);
     break;
   case eParamWave2:
-    filter_1p_fr32_in(wave2Lp, float_to_fr32(v));
+    //    filter_1p_fr32_in(wave2Lp, float_to_fr32(v));
+    filter_1p_fr32_in(wave2Lp, v.fr);
     break;
   case eParamPm:
     // scale to [0, 0.5]
-    filter_1p_fr32_in(pmLp, float_to_fr32(v) >> 1);
+    //    filter_1p_fr32_in(pmLp, float_to_fr32(v) >> 1);
+    filter_1p_fr32_in(pmLp, v.fr >> 1);
     break;
   case eParamAmp1:
-    filter_1p_fr32_in(amp1Lp, float_to_fr32(v));
+    //    filter_1p_fr32_in(amp1Lp, float_to_fr32(v));
+    filter_1p_fr32_in(amp1Lp, v.fr);
     break;
   case eParamAmp2:
-    filter_1p_fr32_in(amp2Lp, float_to_fr32(v));
+    //    filter_1p_fr32_in(amp2Lp, float_to_fr32(v));
+    filter_1p_fr32_in(amp2Lp, v.fr);
     break;
   case eParamGate:
-    env_asr_set_gate(env, v > 0.f);
+    env_asr_set_gate(env, v.s > 0);
     break;
   case eParamAtkDur:
-    env_asr_set_atk_dur(env, (u32)v);
+    env_asr_set_atk_dur(env, v.u);
     break;
   case eParamRelDur:
-    env_asr_set_rel_dur(env, (u32)v);
+    env_asr_set_rel_dur(env, v.u);
     break;
   case eParamAtkCurve:
-    env_asr_set_atk_shape(env, float_to_fr32(v));
+    //    env_asr_set_atk_shape(env, float_to_fr32(v));
+    env_asr_set_atk_shape(env, v.fr);
     break;
   case eParamRelCurve:
-    env_asr_set_atk_shape(env, float_to_fr32(v));
+    env_asr_set_atk_shape(env, v.fr);
     break;
   case eParamHz1Smooth:
-    filter_1p_fix16_set_hz(hz1Lp, fix16_from_float(v));
+    filter_1p_fix16_set_hz(hz1Lp, v.fix);
     break;
   case eParamHz2Smooth:
-    filter_1p_fix16_set_hz(hz2Lp, fix16_from_float(v));
+    filter_1p_fix16_set_hz(hz2Lp, v.fix);
     break;
   case eParamPmSmooth:
-    filter_1p_fr32_set_hz(pmLp, fix16_from_float(v));
+    filter_1p_fr32_set_hz(pmLp, v.fix);
     break;
   case eParamWave1Smooth:
-    filter_1p_fr32_set_hz(wave1Lp, fix16_from_float(v));
+    filter_1p_fr32_set_hz(wave1Lp, v.fix);
     break;
   case eParamWave2Smooth:
-    filter_1p_fr32_set_hz(wave2Lp, fix16_from_float(v));
+    filter_1p_fr32_set_hz(wave2Lp, v.fix);
     break;
   case eParamAmp1Smooth:
-    filter_1p_fr32_set_hz(amp1Lp, fix16_from_float(v));
+    filter_1p_fr32_set_hz(amp1Lp, v.fix);
     break;
   case eParamAmp2Smooth:
-    filter_1p_fr32_set_hz(amp2Lp, fix16_from_float(v));
+    filter_1p_fr32_set_hz(amp2Lp, v.fix);
     break;
   default:
     break;
@@ -389,11 +428,50 @@ void module_process_frame(void) {
   out3 = frameVal; 
 }
 
+static u8 ledstate = 0;
 u8 module_update_leds(void) {
-  return 0xf;
+  return ledstate;
 }
 
-void module_handle_button(void) {
+static u8 buts[4] = {0, 0, 0, 0};
+
+void module_handle_button(const u16 state) {
+  static pval v;
+  static u8 b;
+  
+  // gate button
+  b = (state & 0x100) > 0;
+  if (buts[0] != b) {
+    buts[0] = b;
+    v.s = b;
+    module_set_param(eParamGate, v);    
+  }
+
+  // hz1 button
+  b = (state & 0x200) > 0;
+  if (buts[1] != b) {
+    buts[1] = b;
+    v.fix = (b ? 330 : 220) << 16;
+    set_hz1(v.fix);
+  }
+
+  // ratio2 button
+  b = (state & 0x400) > 0;
+  if (buts[2] != b) {
+    buts[2] = b;
+    v.fix = (b ? 0x28000 : 0x18000);
+    set_ratio2(v.fix);
+  }
+
+  // pm button
+  b = (state & 0x800) > 0;
+  if (buts[3] != b) {
+    buts[3] = b;
+    v.fr = (b ? 0x7fffffff : 0);
+    module_set_param(eParamPm, v);
+  }
+
+  ledstate = (u8)( (state>>8) & 0x3f);  
 }
 
 

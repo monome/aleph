@@ -55,6 +55,7 @@ void filter_1p_fix16_init(filter_1p_fix16* f, u32 sr, fix16 hz, fix16 in) {
   f->x = in;
   f->sync = 1;
   f->sr = sr;
+  filter_1p_fix16_set_hz(f, hz);
 }
 
 // set cutoff frequency in hz
@@ -105,7 +106,7 @@ void filter_1p_fr32_init(filter_1p_fr32* f, u32 sr, fix16 hz, fract32 in) {
   f->x = in;
   f->sync = 1;
   f->sr = sr;
-
+  filter_1p_fr32_set_hz(f, hz);
 }
 
 // set cutoff frequency in hz

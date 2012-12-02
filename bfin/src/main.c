@@ -6,6 +6,8 @@
 #include "init.h"
 #include "module.h"
 
+long long int dumcount = 0;
+
 //-------------------------------
 // main function
 int main(void) {
@@ -22,7 +24,24 @@ int main(void) {
   // intialize the flash controller (which, weirdly, handles gpio)
   init_flash();
   // initialize the codec (spi in master, blast config regs, disable spi)
-  init_1836();
+
+
+  ////////////////////
+  /////////////// TEST : do this a lot
+  
+  /*
+  *pFlashA_PortB_Data = 0x3f;
+  while(dumcount < 1000000) {
+    init_1836();
+    dumcount++;
+  }
+  *pFlashA_PortB_Data = 0;
+  */
+
+  /////////////////////
+  ////////////////////////
+  //init_1836();
+
   // intialize the sport0 for audio rx/tx
   init_sport0();
   // intialize the DMA to shove audio data around

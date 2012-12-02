@@ -33,7 +33,7 @@ extern void module_init(void);
 // frame processing function
 extern void module_process_frame(void);
 // button handler
-extern void module_handle_button(void);
+extern void module_handle_button(const u16 state);
 // led update
 extern u8 module_update_leds(void);
 

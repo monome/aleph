@@ -9,7 +9,8 @@ LDFLAGS += -lm
 # LIBS += -ltinfo
 COMMON = ../common
 LIBFIXMATH = $(COMMON)/libfixmath
-INC += -I$(COMMON) -I$(LIBFIXMATH)
+AUDIOLIB = ../audio
+INC += -I$(COMMON) -I$(LIBFIXMATH) -I$(AUDIOLIB)
 
 APP = null
 OBJ  = main.o \
@@ -20,11 +21,12 @@ OBJ  = main.o \
 	$(COMMON)/fract32_emu.o \
 	$(COMMON)/simple_string.o \
 	$(COMMON)/fix.o
-#OBJ += mono_pd.o
+
+OBJ +=	$(AUDIOLIB)/env.o \
+	$(AUDIOLIB)/filters.o \
+	$(AUDIOLIB)/table.o
+
 OBJ += mono_fm.o
-OBJ += env.o
-OBJ += table.o
-OBJ += filters.o
 
 $(APP) : $(OBJ)
 	$(CC) $(CFLAGS) $(INC) -o $@ $^ $(LDFLAGS)
