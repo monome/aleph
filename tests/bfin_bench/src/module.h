@@ -35,6 +35,6 @@ extern void module_process_frame(void);
 // button handler
 extern void module_handle_button(void);
 // led update
-extern u8 update_leds(void);
+extern u8 module_update_leds(void);
 
 #endif // header guard

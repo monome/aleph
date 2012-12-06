@@ -11,7 +11,8 @@
 /* (0,0) = top left
  * pixel(x,y) = (bool)(font_data[x].data & (1 << y)) */
 
-#include "compiler.h"
+//#include "compiler.h"
+#include "types.h"
 #include "font.h"
 
 // static glyph_attr_t const fontliqminus_attr[]= {

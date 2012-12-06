@@ -58,6 +58,8 @@ static void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl);
 // dsp
 static void draw_line_dsp(s32 n, u16 num, u8 y, u8 hl);
 
+///// fake DSP
+
 //==================================================
 //==== redraw ops page
 void redraw_ops(void) {
@@ -600,7 +602,7 @@ static inline void println_int(int x) {
 // append int to line buffer (fill to end)
 static inline void appendln_int(int x, int len) {
   // bounds check :
-  int rem = (int)pLineEnd - (int)pline;
+  int rem = (int)pLineEnd -  (int)pline;
   if (len > rem) len = rem;
   itoa_whole(x, pline, len); 
   pline += len; 

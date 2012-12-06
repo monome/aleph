@@ -13,8 +13,8 @@
 //#define OSC_SAMPLERATE 48000
 
 #define MODULE_NUM_PARAMS 2
-#define WAVETABLE_NUM 1024
-#define WAVETABLE_NUM_1 1023
+#define WAVETABLE_NUM 4096
+#define WAVETABLE_NUM_1 4095
 
 // parameter indices
 enum {
@@ -33,7 +33,7 @@ typedef struct _oscData {
   // parameter data
   ParamData paramData_p[MODULE_NUM_PARAMS];
   // sine wavetable
-  f32 sineTable[WAVETABLE_NUM];
+  fract32 sineTable[WAVETABLE_NUM];
 } oscData_t;
 
 #endif // header guard

@@ -55,8 +55,6 @@ extern void fixtable_fill_harm(fract32* tab, u32 size, u8 order, f32 decay, u8 n
  
   // fill with zeros
   for(s=0; s<size; s++) {
-    // tab[s] = (fract32)0.f;
-    //    ( (fu*)(tab + s) )->f = 0.f;
     TAB_AS_FLOAT(tab, s) = 0.f;
   }
   
@@ -78,14 +76,12 @@ extern void fixtable_fill_harm(fract32* tab, u32 size, u8 order, f32 decay, u8 n
     if ( min > max ) {
       if ( min > 1.f ) {
 	for(s=0; s<size; s++) {
-	  //	  tab[s] = (fract32)( (f32)(tab[s]) / min );
 	  TAB_AS_FLOAT(tab, s) = TAB_AS_FLOAT(tab, s) / min;
 	}	
       }
     } else {
       if( max > 1.f) {
 	for(s=0; s<size; s++) {
-	  //	  tab[s] = (fract32)( (f32)(tab[s]) / max );
 	  TAB_AS_FLOAT(tab, s) = TAB_AS_FLOAT(tab, s) / max;
 	}
       }
@@ -93,7 +89,6 @@ extern void fixtable_fill_harm(fract32* tab, u32 size, u8 order, f32 decay, u8 n
   }
   // convert to fract32
   for(s=0; s<size; s++) {
-    //    tab[s] = float_to_fr32( (f32)(tab[s]) );
     TAB_AS_FR32(tab, s) = float_to_fr32( TAB_AS_FLOAT(tab, s) );
   }
 
@@ -111,4 +106,5 @@ extern void fixtable_fill_harm(fract32* tab, u32 size, u8 order, f32 decay, u8 n
 
 // fill a table of given size with cheby polynomial of given order
 extern void fixtable_fill_cheby(fract32* tab, u32 size, u8 order) {
+  
 }

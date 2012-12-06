@@ -8,6 +8,7 @@
 
 //aleph
 //#include "fix.h"
+#include "param_common.h"
 #include "module.h"
 #include "types.h"
 #include "ui.h"
@@ -33,19 +34,28 @@ void deinit_ui(void) {
 
 void handle_key(u16 ch) {
   f32 pval;
+  u32 pnum;
+  u32 i;
+  ParamDesc desc;
   switch(ch) {
   case CMD_KEY_PARAM:
-    
+
+    pnum = module_get_num_params();
+    for(i=0; i<pnum; i++) {
+      printf("\rparam %d: %s\n", i, moduleData->paramDesc[i].label);
+    }
     printf("enter param index:\n");
     prompt();
-    
     paramIdx = atoi(input);
+    printf("\rsetting parameter %d, %s\n", paramIdx, moduleData->paramDesc[paramIdx].label);
     printf("enter param value (float): \n"); 
     prompt();
     pval = atof(input);
-    
+
     module_set_param(paramIdx, pval);
 
+    break;
+  default:
     break;
   }
 }

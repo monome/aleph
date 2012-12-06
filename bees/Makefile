@@ -1,9 +1,19 @@
 COMMON = ../common
 LIBFIX = $(COMMON)/libfixmath
 
-OBJ = op.o net.o main.o screen.o menu.o preset.o param.o key_handler.o redraw.o scene.o
+OBJ = op.o net.o \
+	main.o \
+	screen.o \
+	menu.o \
+	preset.o \
+	param.o \
+	key_handler.o \
+	redraw.o \
+	scene.o \
+	files.o
 OBJ += $(LIBFIX)/fix16.o
-OBJ += $(COMMON)/fix.c
+OBJ += $(COMMON)/fix.o
+OBJ += $(COMMON)/font.o
 
 CC = gcc
 CFLAGS = -g -c
@@ -22,7 +32,7 @@ $(WHAT) : $(OBJ)
 	$(CC) $(CFLAGS) $(INC) -o$@ $<
 
 clean :
-	rm *.o
+	rm $(OBJ)
 	rm $(WHAT)
 
 .PHONY : clean all

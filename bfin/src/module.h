@@ -16,9 +16,6 @@
 
 #define SAMPLERATE    48000
 
-//inline void* get_sdram_address(void) { return (void*)SDRAM_ADDRESS; }
-//inline const int get_sdram_size(void) { return SDRAM_SIZE; }
-
 //-----------------------
 //---- module data
 typedef struct _moduleData {
@@ -32,13 +29,12 @@ extern moduleData_t* moduleData;
 
 //-------- function prototypes 
 // intialize
-void init_module(void);
+extern void module_init(void);
 // frame processing function
-void process_frame(void);
-// set parameter value
-// get parameter value
-// get parameter type
-// get parameter 
-
+extern void module_process_frame(void);
+// button handler
+extern void module_handle_button(const u16 state);
+// led update
+extern u8 module_update_leds(void);
 
 #endif // header guard

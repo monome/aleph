@@ -17,7 +17,7 @@ all: aleph-$(module_name).ldr
 
 include ../../core.mk
 
-aleph-$(module_name): core_target $(module_name).c $(module_name)_data.c
+aleph-$(module_name): core_target $(module_name).c
 	$(CC) $(CFLAGS) -c $(module_name).c -o $(module_name).o
 	$(CC) $(LDFLAGS) -T aleph-$(module_name).lds \
 	$(patsubst %.o, $(core_objdir)%.o, $(core_obj)) \

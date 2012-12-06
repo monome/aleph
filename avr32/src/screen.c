@@ -139,6 +139,11 @@ void init_oled(void) {
 
 }
 
+
+//----- drawing routine
+// FIXME: abstract drawing from hardware,
+// move and rename (e.g. draw_*), 
+
 // draw a single pixel
 void screen_pixel(U16 x, U16 y, U8 a) {
   static U32 pos;

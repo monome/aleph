@@ -3,12 +3,14 @@
  *
  * envelopes:
  * - ASR
+ * - AHDSR ?
  * - trapezoid ?
  *
  */
 
-// test
+///// test
 #include <stdio.h>
+/////
 
 #include <math.h>
 #include "env.h" 
@@ -142,6 +144,7 @@ void env_asr_set_rel_shape(env_asr* env, fract32 c) {
 
 // set gate
 void env_asr_set_gate(env_asr* env, u8 g) {
+  printf("\rsetting asr gate: %d\n", g);
   if(g > 0) {
     env_asr_attack(env);
   } else {

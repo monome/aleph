@@ -204,10 +204,10 @@ int main (void) {
   Disable_global_interrupt();
 
   // initialize RS232 debug uart
-  init_dbg_usart();
+  init_ftdi_usart();
 
   // initialize oled uart in SPI mode
-  init_oled_usart();
+  init_oled_spi();
 
   // initialize SD/MMC driver resources: GPIO, SPI and SD/MMC.
   //  init_sd_mmc_resources();
