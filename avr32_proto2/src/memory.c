@@ -162,7 +162,8 @@ static u32 sdram_test_read(unsigned long addr, unsigned long i) {
 
 void sdram_test(u8 print) {
   const u32 numWords = SDRAM_SIZE >> 2;
-  unsigned long i, tmp;
+  unsigned long i;
+  //  unsigned long tmp;
   u32 errors = 0;
   
   if(print) {

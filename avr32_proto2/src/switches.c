@@ -13,14 +13,15 @@
 #include "switches.h"
 #include "types.h"
 
-static u64 swTicks[NUM_SW] = { 0, 0, 0, 0, 0 };
+static u64 swTicks[NUM_SW] = { 0, 0, 0, 0, 0, 0 };
 
 static const U8 kSwitchPins[NUM_SW] = {
   SW0_PIN,
   SW1_PIN,
   SW2_PIN,
   SW3_PIN,
-  SW_EDIT_PIN
+  SW_MODE_PIN,
+  SW_POWER_PIN
 };
 
 static const eEventType kSwitchEvents[NUM_SW][2] = {
@@ -29,6 +30,7 @@ static const eEventType kSwitchEvents[NUM_SW][2] = {
   { kEventSwitchDown2, kEventSwitchUp2 },
   { kEventSwitchDown3, kEventSwitchUp3 },
   { kEventSwitchDown4, kEventSwitchUp4 },
+  { kEventSwitchDown5, kEventSwitchUp5 },
 };
 
 // generate events from switch interrupts

@@ -471,7 +471,8 @@ void module_handle_button(const u16 state) {
     module_set_param(eParamPm, v);
   }
 
-  ledstate = (u8)( (state>>8) & 0x3f);  
+  ledstate = (u8)( (state>>8) & 0x3f);
+  ledstate ^=0x3f;
 }
 
 

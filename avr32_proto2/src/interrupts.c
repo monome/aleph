@@ -45,8 +45,8 @@ __attribute__((__interrupt__))
 static void irq_tc(void);
 
 // irq for PA00-PA07
-__attribute__((__interrupt__))
-static void irq_port0_line0(void);
+// __attribute__((__interrupt__))
+// static void irq_port0_line0(void);
 
 /*
 // irq for PA08-PA15
@@ -83,6 +83,11 @@ static void irq_port1_line2(void);
 __attribute__((__interrupt__))
 static void irq_port1_line3(void);
 */
+
+// irq for PX08-PX15
+__attribute__((__interrupt__))
+static void irq_port2_line1(void);
+
 
 //---------------------------------
 //----- static function definitions
@@ -129,6 +134,7 @@ static void irq_tc(void) {
 }
 
 // interrupt handler for PA00-PA07
+/*
 __attribute__((__interrupt__))
 static void irq_port0_line0(void) {
   // BFIN_HWAIT
@@ -137,6 +143,7 @@ static void irq_port0_line0(void) {
     gpio_clear_pin_interrupt_flag(BFIN_HWAIT_PIN);
   }
 }
+*/
 
 /*
 // interrupt handler for PA08-PA15
@@ -178,9 +185,9 @@ static void irq_port0_line3(void) {
     gpio_clear_pin_interrupt_flag(SW3_PIN);
   }
   // SW_EDIT
-  if(gpio_get_pin_interrupt_flag(SW_EDIT_PIN)) {
+  if(gpio_get_pin_interrupt_flag(SW_MODE_PIN)) {
     process_sw(4);
-    gpio_clear_pin_interrupt_flag(SW_EDIT_PIN);
+    gpio_clear_pin_interrupt_flag(SW_MODE_PIN);
   }
 }
 
@@ -235,6 +242,17 @@ static void irq_port1_line1(void) {
 
 }
 
+
+// interrupt handler for px08-px15
+__attribute__((__interrupt__))
+static void irq_port2_line1(void) {
+  //SW_POWER
+  if(gpio_get_pin_interrupt_flag(SW_POWER_PIN)) {
+    process_sw(5);
+    gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
+  }
+}
+
 /*
 // interrupt handler for PB16-PB23
 __attribute__((__interrupt__))
@@ -261,7 +279,8 @@ void register_interrupts(void) {
   // enable interrupts on GPIO inputs
 
   // BFIN_HWAIT
-  gpio_enable_pin_interrupt( BFIN_HWAIT_PIN, GPIO_PIN_CHANGE);
+  //  gpio_enable_pin_interrupt( BFIN_HWAIT_PIN, GPIO_PIN_CHANGE);
+  //  gpio_enable_pin_interrupt( BFIN_HWAIT_PIN, GPIO_RISING_EDGE);
 
   // encoders
   gpio_enable_pin_interrupt( ENC0_S0_PIN,	GPIO_PIN_CHANGE);
@@ -278,13 +297,13 @@ void register_interrupts(void) {
   gpio_enable_pin_interrupt( SW1_PIN,	        GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( SW2_PIN,	        GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( SW3_PIN,	        GPIO_PIN_CHANGE);
-  // TEST:
-  //  gpio_enable_pin_interrupt( SW3_PIN,	        GPIO_FALLING_EDGE);
-  gpio_enable_pin_interrupt( SW_EDIT_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW_MODE_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW_POWER_PIN,	GPIO_PIN_CHANGE);
+  
   
 
   // PA00 - PA07
-  INTC_register_interrupt( &irq_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), UI_IRQ_LEVEL );
+  //  INTC_register_interrupt( &irq_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), UI_IRQ_LEVEL );
 
   // PA08 - PA15
   // INTC_register_interrupt( &irq_port0_line1, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA08 / 8), UI_IRQ_LEVEL);
@@ -306,6 +325,9 @@ void register_interrupts(void) {
 
   // PB24 - PB31
   //  INTC_register_interrupt( &irq_port1_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB24 / 8), UI_IRQ_LEVEL);
+
+  // px08 - px15
+  INTC_register_interrupt( &irq_port2_line1, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PX08 / 8), UI_IRQ_LEVEL);
 
   // register IRQ for PDCA transfer
   INTC_register_interrupt(&irq_pdca, AVR32_PDCA_IRQ_0, AVR32_INTC_INT1);

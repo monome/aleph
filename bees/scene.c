@@ -11,6 +11,7 @@
 #include <string.h>
 
 #include "files.h"
+#include "memory.h"
 #include "net_protected.h"
 #include "preset.h"
 #include "types.h"
@@ -21,28 +22,36 @@ typedef struct _scene {
   char moduleName[MODULE_NAME_LEN];
 } scene_t;
 
+#if ARCH_AVR32
+#else
 static FILE* pSceneFile;
 static char sceneFilename[32];
+#endif 
+
 // scene storage memory
 static scene_t* sceneData;
 
 void scene_init(void) {
+#if ARCH_AVR32
+#else
   u8 i;
-  sceneData = (scene_t*)malloc(SCENE_COUNT * sizeof(scene_t));
-  
+  sceneData = (scene_t*)alloc_mem(SCENE_COUNT * sizeof(scene_t));
+    
   for(i=0; i<SCENE_COUNT; i++) {
     snprintf(sceneData[i].sceneName, SCENE_NAME_LEN, "scene_%d", i);
     snprintf(sceneData[i].moduleName, MODULE_NAME_LEN, "none");
   }
-  
+#endif
 }
 
 void scene_deinit(void) {
-  free(sceneData);
+  //  free(sceneData);
 }
 
 // store 
 void scene_store(u32 idx) {
+#if ARCH_AVR32
+#else
   // open file  
   snprintf(sceneFilename, 32, "aleph_scene_%d", (int)idx);
   pSceneFile = fopen(sceneFilename, "wb");
@@ -58,10 +67,13 @@ void scene_store(u32 idx) {
   fclose(pSceneFile);
   //
   //  memcpy(&(sceneData[idx].net), &net, sizeof(net));
+#endif
 }
 
 // recall
 void scene_recall(u32 idx) {
+#if ARCH_AVR32
+#else
   // open file  
   snprintf(sceneFilename, 32, "aleph_scene_%d", (int)idx);
   pSceneFile = fopen(sceneFilename, "rb"); 
@@ -77,19 +89,26 @@ void scene_recall(u32 idx) {
   fclose(pSceneFile);
   //
   //  memcpy(&net, &(sceneData[idx].net), sizeof(net));
+#endif
 }
 
 // get scene name
 const char* scene_name(const s16 idx) {
+#if ARCH_AVR32
+#else
   if (idx >=0 && idx < SCENE_COUNT) {
     return sceneData[idx].sceneName;
   } else { return 0; }
+#endif
 }
 
 
 // get module name
 const char* scene_module_name(const s16 idx) {
+#if ARCH_AVR32
+#else
   if (idx >=0 && idx < SCENE_COUNT) {
     return sceneData[idx].moduleName;
   } else { return 0; }
+#endif
 }

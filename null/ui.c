@@ -33,7 +33,7 @@ void deinit_ui(void) {
 }
 
 void handle_key(u16 ch) {
-  f32 pval;
+  pval pv;
   u32 pnum;
   u32 i;
   ParamDesc desc;
@@ -50,9 +50,9 @@ void handle_key(u16 ch) {
     printf("\rsetting parameter %d, %s\n", paramIdx, moduleData->paramDesc[paramIdx].label);
     printf("enter param value (float): \n"); 
     prompt();
-    pval = atof(input);
-
-    module_set_param(paramIdx, pval);
+    //    pv.fix = atof(input);
+    
+    //    module_set_param(paramIdx, pv);
 
     break;
   default:

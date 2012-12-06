@@ -20,12 +20,12 @@
 // get value for param at given idx
 io_t get_param_value(u32 idx) {
   // NOTE: io_t is float, change this if it becomes otherwise
-  return (io_t)(net.params[idx].data.value.asFloat);
+  return (io_t)(net->params[idx].data.value.asFloat);
 }
 
 // get preset-enabled for param at given idx
 u8 get_param_preset(u32 idx) {
-  return net.params[idx].preset;
+  return net->params[idx].preset;
 }
 
 // set value for param at given idx
@@ -41,20 +41,20 @@ void set_param_value(u32 idx, io_t val) {
 void set_param_step_value(u32 idx, s32 val) {
 
   //f32 fval;
-  net.params[idx].data.value.asFract = val;
+  net->params[idx].data.value.asFract = val;
   // FIXME:
   // not really using this function right now... 
   /*
-  //  net.params[idx].ival = val;
+  //  net->params[idx].ival = val;
   //////
   // DEBUG
   fval = (f32)val * PARAM_MAX_RF;
   fval += 1.f;
   fval *= 0.5f;
-  fval *= (net.params[idx].max - net.params[idx].min);
-  fval += net.params[idx].min;
+  fval *= (net->params[idx].max - net->params[idx].min);
+  fval += net->params[idx].min;
   //////t.p
-  net.params[idx].fval = fval;
+  net->params[idx].fval = fval;
   param_feedback(idx);
   */
 }
@@ -65,19 +65,19 @@ void set_param_float_value(u32 idx, f32 val) {
   /*
   s32 ival;
   f32 fmin, fmax;
-  fmin = net.params[idx].min;
-  fmax = net.params[idx].max;
+  fmin = net->params[idx].min;
+  fmax = net->params[idx].max;
   if (val < fmin) { val = fmin; }
   if (val > fmax) { val = fmax; }
   ival = (s32)( (val - fmin) / (fmax - fmin) * PARAM_MAX_F );
-  net.params[idx].fval = val;
-  net.params[idx].ival = ival;
+  net->params[idx].fval = val;
+  net->params[idx].ival = ival;
   param_feedback(idx);
   */
-  net.params[idx].data.value.asFloat = val;
+  net->params[idx].data.value.asFloat = val;
   param_feedback(idx);
 #ifdef ARCH_AVR32
-  bfin_set_param(idx, net.params[idx].data.value.asFloat);
+  bfin_set_param(idx, net->params[idx].data.value.asFloat);
 #endif
 
 }

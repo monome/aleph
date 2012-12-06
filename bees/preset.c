@@ -12,6 +12,7 @@
 #include <stdio.h>
 
 #include "types.h"
+#include "memory.h"
 #include "net_protected.h"
 #include "param.h"
 #include "preset.h"
@@ -20,14 +21,18 @@
 //====== variables
 
 /// aarray of presets
-preset_t presets[NET_PRESETS_MAX];
- 
+//preset_t presets[NET_PRESETS_MAX];
+preset_t* presets;
+
 //=================================
 //====== function definitions
 
 // initialize
 void preset_init(void) {
   u8 i;
+
+  presets = (preset_t*)alloc_mem(NET_PRESETS_MAX * sizeof(preset_t));
+
   for(i=0; i<NET_PRESETS_MAX; i++) {
     snprintf(presets[i].name, PRESET_NAME_LEN, "preset_%d", i);
   }

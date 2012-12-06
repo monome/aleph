@@ -49,7 +49,7 @@
 
 //-----------------------------
 //---- variables
-const U8 kScreenLines[CHAR_ROWS] = { 0, 8, 16, 24, 32, 40, 48, 56 };
+const U8 lines[CHAR_ROWS] = { 0, 8, 16, 24, 32, 40, 48, 56 };
 
 // pixel buffer
 static U8 screen[GRAM_BYTES];
@@ -370,8 +370,9 @@ void screen_refresh(void) {
 }
 
 // fill a line with blank space to end
-void screen_blank_line(U16 x, U16 y) {
-  U8 i, j;
+void screen_blank_line(U16 x, U16 l) {
+  U8 i, j, y;
+  y = lines[l];
   for(i=x; i<NCOLS; i++) {
     for(j=y; j<(FONT_CHARH + y); j++) {
       screen_pixel(i, j, 0);
@@ -392,13 +393,16 @@ void screen_hl_line(U16 x, U16 y, U8 a) {
 }
 
 // draw a line and blank to end
-U8 screen_line(U16 x, U16 y, char *str, U8 hl) {
+U8 screen_line(U16 x, U16 l, char *str, U8 hl) {
+  u8 y;
   // FIXME
   //  hl = ( (hl << 1) & 0xf);
   //  if (hl ) { hl =0xf;a }
 
+  y = lines[l];
+
   x = screen_string(x, y, str, hl);
-  screen_blank_line(x, y);
+  screen_blank_line(x, l);
 
   //  print_dbg("\r\n");
   //  if(hl > 2) { print_dbg("__"); }

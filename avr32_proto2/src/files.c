@@ -77,7 +77,6 @@ void init_files(void) {
     print_dbg("\r\n allocation error in files init");
   }
 
-
   files_check_scenes();
   files_check_dsp();
 }
@@ -175,15 +174,15 @@ void files_check_scenes(void) {
   if (nav_filelist_findname("scenes", 0)) {
     // ...
     nav_file_name((FS_STRING)name_buf, MAX_FILE_PATH_LENGTH, FS_NAME_GET, true);
-    print_dbg("\r\n found scenes dir? now at: ");
-    print_dbg( name_buf);
-    print_dbg( CRLF);
+    //    print_dbg("\r\n found scenes dir, now at: ");
+    //    print_dbg( name_buf);
+    //    print_dbg( CRLF);
     //// print contents...
   } else {
-    print_dbg("\r\n attempting to create scenes dir");
+    //    print_dbg("\r\n attempting to create scenes dir\n\r");
     nav_dir_make("scenes"); 
-    // create empty scene files
-    
+    // create empty scene fileS
+    /// TODO
   }
 }
 
@@ -193,12 +192,12 @@ void files_check_dsp(void) {
   if (nav_filelist_findname("dsp", 0)) {
     // ...
     nav_file_name((FS_STRING)name_buf, MAX_FILE_PATH_LENGTH, FS_NAME_GET, true);
-    print_dbg("\r\n found dsp dir? now at: ");
-    print_dbg( name_buf);
-    print_dbg( CRLF);
+    //    print_dbg("\r\n found dsp dir, now at: ");
+    //    print_dbg( name_buf);
+    //    print_dbg( CRLF);
     //// print contents...
   } else {
-    print_dbg("\r\n attempting to create dsp dir");
+    //    print_dbg("\r\n attempting to create dsp dir");
     nav_dir_make("dsp"); 
   }
 }
@@ -219,7 +218,7 @@ void files_scan_dsp(void) {
     }
     numDsp = nav_filelist_nb(FS_FILE);
   } else {
-    print_dbg("\r\ndsp scan failed (no dsp directory)");
+    print_dbg("\r\ndsp scan failed (no dsp directory)\n\r");
     numDsp = 0;
   }
 
@@ -253,16 +252,19 @@ void files_load_dsp_name(const char* name) {
 	file_close();
 	bfin_load(size, load_buf);
       } else {
-	print_dbg("\r\ndsp load failed (too large): ");
+	print_dbg("\r\ndsp load failed (too large): \n\r");
 	print_dbg(name);
+	print_dbg( CRLF);
       }
     } else {
-      print_dbg("\r\ndsp load failed (no file): ");
+      print_dbg("\r\ndsp load failed (no file): \n\r");
       print_dbg(name);
+      print_dbg( CRLF);
     }   
   } else {
-      print_dbg("\r\ndsp load failed (no dsp directory): ");
+      print_dbg("\r\ndsp load failed (no dsp directory): \n\r");
       print_dbg(name);
+      print_dbg( CRLF);
   }
 }
 

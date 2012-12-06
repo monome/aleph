@@ -157,9 +157,13 @@
 #define SW2_PIN		AVR32_PIN_PA27
 #define SW3_PIN		AVR32_PIN_PA28
 
-// edit mode
-#define LED_EDIT_PIN    AVR32_PIN_PA23
-#define SW_EDIT_PIN     AVR32_PIN_PA24
+// edit/play mode
+#define LED_MODE_PIN    AVR32_PIN_PA23
+#define SW_MODE_PIN     AVR32_PIN_PA24
+
+// power-down control
+#define SW_POWER_PIN    AVR32_PIN_PX12
+#define POWER_CTL_PIN   AVR32_PIN_PX13
 
 // aux pullup gates
 #define AUX_PULLUP0_PIN AVR32_PIN_PB20

@@ -258,8 +258,9 @@ void init_interrupts(void) {
   *pEVT10 = spi_rx_isr;
   *pEVT12 = pf_isr;
 
+	// unmask in the core event processor
   asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); bitset (%0, 12); sti %0; csync;": "+d"(i));
   
-  // enable interrupts on Sport0 RX, spi/dma5, PFA
+  // unmask in the peripheral interrupt controller
   *pSIC_IMASK = 0x00082200;
 }

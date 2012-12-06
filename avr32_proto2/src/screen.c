@@ -276,6 +276,7 @@ U8 screen_float(U16 x, U16 y, F32 f, U8 a) {
   return screen_string_squeeze(x, y, buf, a);
 }
 */
+
 // print a formatted fix_t
 U8 screen_fix(U16 x, U16 y, fix16_t v, U8 a) {
   static char buf[FIX_DIG_TOTAL];
@@ -285,8 +286,9 @@ U8 screen_fix(U16 x, U16 y, fix16_t v, U8 a) {
 }
 
 // fill a line with blank space to end
-void screen_blank_line(U16 x, U16 y) {
+void screen_blank_line(U16 x, U16 l) {
   U8 i, j;
+  const u8 y = lines[l];
   for(i=x; i<NCOLS; i++) {
     for(j=y; j<(FONT_CHARH + y); j++) {
       screen_pixel(i, j, 0);
@@ -295,8 +297,9 @@ void screen_blank_line(U16 x, U16 y) {
  }
 
 // highlight a line
-void screen_hl_line(U16 x, U16 y, U8 a) {
+void screen_hl_line(U16 x, U16 l, U8 a) {
   U8 i, j;
+  const u8 y = lines[l];
   for(i=x; i<NCOLS; i++) {
     for(j=y; j<(y+FONT_CHARH); j++) {
       if (screen_get_pixel(i, j) == 0) {
@@ -307,24 +310,15 @@ void screen_hl_line(U16 x, U16 y, U8 a) {
 }
 
 // draw a line and blank to end
-//U8 screen_line(U16 x, U16 y, char *str, U8 hl) {
 // argument is line number
 U8 screen_line(U16 x, U16 l, char *str, U8 hl) {
-  static u8 y;
-  y = lines[l];
-  // FIXME
-  //  hl = ( (hl << 1) & 0xf);
-  //  if (hl ) { hl =0xf;a }
-
-  x = screen_string(x, y, str, hl);
-  screen_blank_line(x, y);
-
+  x = screen_string(x, lines[l], str, hl);
+  screen_blank_line(x, l);
+  //// test
   //  print_dbg("\r\n");
-  //  if(hl > 2) { print_dbg("__"); }
   //  print_dbg(str);
 
   refresh = 1;
-
   return NCOLS;
 }
 

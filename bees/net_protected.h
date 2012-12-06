@@ -86,6 +86,6 @@ typedef struct _ctlnet {
 } ctlnet_t;
 
 //// external variables
-extern ctlnet_t net;
+extern ctlnet_t* net;
 
 #endif // header guard

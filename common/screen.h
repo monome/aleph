@@ -6,7 +6,9 @@
 #ifndef _SCREEN_H_
 #define _SCREEN_H_
 
+#if ARCH_AVR32
 #include "compiler.h"
+#endif
 #include "fix.h"
 #include "types.h"
 

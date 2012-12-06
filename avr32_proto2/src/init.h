@@ -14,7 +14,7 @@ extern void init_bfin_resources(void);
 // initialize debug USART
 extern void init_ftdi_usart (void);
 // initialize OLED USART in SPI mode
-extern void init_oled_spi (void);
+extern void init_spi1 (void);
 // initialize application timer
 extern void init_tc (volatile avr32_tc_t *tc);
 // initialize PDCA for sdcard

@@ -45,10 +45,12 @@ static void screen_timer_callback(int tag) {
   cycles = cyclesNow;
   */
 
+  //  print_dbg("\r\n apptimer is checking refresh flag: ");
+  //  print_dbg_ulong(refresh);
   if(refresh) {
     e.eventType = kEventRefresh;
     post_event(&e);
-    //  refresh = 0;
+    refresh = 0;
   }
 }
 

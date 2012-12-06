@@ -40,7 +40,7 @@ int main(void) {
 
   /////////////////////
   ////////////////////////
-  //init_1836();
+  init_1836();
 
   // intialize the sport0 for audio rx/tx
   init_sport0();

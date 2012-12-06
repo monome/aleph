@@ -22,17 +22,19 @@ typedef struct _moduleDesc {
   u16 numParams;
 } moduleData_t;
 
+typedef union { u32 u; s32 s; fix16 fix; fract32 fr; float f; } pval;
+
 extern moduleData_t* moduleData;
 
 //-------- function prototypes 
 // init
-extern void module_init(const u32 samplerate);
+extern void module_init();
 // de-init
 extern void module_deinit(void);
 // callback
 extern void module_process_frame(const f32* in, f32* out);
 // set parameter
-extern void module_set_param(u32 idx, f32 val);
+extern void module_set_param(u32 idx, pval val);
 // get number of parameters
 extern u32 module_get_num_params(void);
 

@@ -79,7 +79,7 @@ static fract32 wavetable_interp(fix16_t phase) {
 
 
 //----- init
-void init_module(void) {
+void module_init(void) {
   //  fract32 dum;
   // set the superclass pointer
   moduleData = &(data->super);
@@ -121,7 +121,7 @@ void init_module(void) {
 }
 
 //------ process frame
-void process_frame(void) {
+void module_process_frame(void) {
   u32 i;
 
   // check  if freq param changed
@@ -157,7 +157,7 @@ void process_frame(void) {
 }
 
 //----- handle button
-void handle_button(void) {
+void module_handle_button(const u16 state) {
   
   static f32 freq;
   freq = moduleData->paramData[eParamFreq].value.asFloat;
@@ -170,7 +170,7 @@ void handle_button(void) {
 }
 
 //----- update LEDs
-u8 update_leds(void) {
+u8 module_update_leds(void) {
   /*
   static u8 leds;
   static fract32 outLevel;
@@ -194,5 +194,6 @@ u8 update_leds(void) {
   
   return leds;
   */
-  return numOscs & 0x3f;
+  //  return numOscs & 0x3f;
+  return 0x3f;
 }

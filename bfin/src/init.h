@@ -39,7 +39,7 @@
 #define SLEN_24	0x0017
 
 // DMA flow mode
-#define FLOW_1	0x1000
+#define FLOW_1 	0x1000
 
 // SDRAM settings
 //#define SDRAM_ROWS

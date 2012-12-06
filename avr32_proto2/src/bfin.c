@@ -20,7 +20,8 @@
 #include "bfin.h"
 
 // HWAIT status from blackfin
-volatile U8 hwait = 0;
+// volatile U8 hwait = 0;
+
 // message data structures for param handling
 //static msg_t rxMsg;
 //static msg_t txMsg;
@@ -34,27 +35,30 @@ void bfin_load(U32 size, volatile u8 * data) {
   print_dbg_ulong(size);
   print_dbg(" bytes...");
 
-  Disable_global_interrupt();
+  //  Disable_global_interrupt();
 
-  
+  /////// testing
+  gpio_set_gpio_pin(BFIN_RESET_PIN);  
+  // wait a little 
+  delay = 20000; while (--delay > 0) {;;}
+  //////////
+
+
   // reset the blackfin
   gpio_clr_gpio_pin(BFIN_RESET_PIN);
-  // wait a little
-  delay = 100; while (--delay > 0) {;;}
+  //  delay = 100; while (--delay > 0) {;;}
+  delay = 10000; while (--delay > 0) {;;}
   gpio_set_gpio_pin(BFIN_RESET_PIN);  
-  // wait a little more
   delay = 20000; while (--delay > 0) {;;}
   
   // loop over .ldr data
   byte = 0;
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-
-
-   print_dbg("\r\n");
-
+   
   while(byte < size) {
     // pause if hwait is held high by the blackfin
-    while(hwait > 0) { ;; }
+    //    while(hwait > 0) { ;; }
+    while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { ;; }
 
     spi_write(BFIN_SPI, data[byte]);
 
@@ -73,7 +77,10 @@ void bfin_load(U32 size, volatile u8 * data) {
   }
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 
-  Enable_global_interrupt();
+  //  Enable_global_interrupt();
+
+  print_dbg("\r\ndone loading bfin. \r\n");
+
 }
 
 void bfin_set_param(u8 idx, f32 x ) {

@@ -57,7 +57,10 @@ void init_gpio(void) {
   gpio_enable_pin_pull_up(SW1_PIN);
   gpio_enable_pin_pull_up(SW2_PIN);
   gpio_enable_pin_pull_up(SW3_PIN);
-  gpio_enable_pin_pull_up(SW_EDIT_PIN);
+  gpio_enable_pin_pull_up(SW_MODE_PIN);
+  gpio_enable_pin_pull_up(SW_POWER_PIN);
+
+  /// test...
   //  gpio_enable_pin_glitch_filter(SW3_PIN);
 }
 
@@ -138,9 +141,8 @@ void init_ftdi_usart (void) {
   usart_init_rs232(FTDI_USART, &FTDI_USART_OPTIONS, FPBA_HZ);
 }
 
-// initialize OLED USART in SPI mode
-//// FIXME: this inits ADC spi also - confusing
-extern void init_oled_spi (void) {
+// initialize spi1: OLED, ADC, SD/MMC
+extern void init_spi1 (void) {
   
   static const gpio_map_t OLED_SPI_GPIO_MAP = {
     {OLED_SPI_SCK_PIN,  OLED_SPI_SCK_FUNCTION },
@@ -155,7 +157,7 @@ extern void init_oled_spi (void) {
   spi_options_t spiOptions = {
     .reg = OLED_SPI_NPCS,
     //    .baudrate     = 3400000, // seems about maximum
-    .baudrate     = 20000000,
+    .baudrate     = 40000000,
     .bits = 8,
     .trans_delay = 0,
     .spck_delay = 0,
@@ -189,21 +191,33 @@ extern void init_oled_spi (void) {
 
   spi_setupChipReg( ADC_SPI, &spiOptions, FPBA_HZ );
 
+  // add SD/MMC chip register
+  spiOptions.reg         = SD_MMC_SPI_NPCS;
+  spiOptions.baudrate    = SD_MMC_SPI_MASTER_SPEED; // Defined in conf_sd_mmc_spi.h;
+  spiOptions.bits        = SD_MMC_SPI_BITS; // Defined in conf_sd_mmc_spi.h;
+  spiOptions.spck_delay  = 0;
+  spiOptions.trans_delay = 0;
+  spiOptions.stay_act    = 1;
+  spiOptions.spi_mode    = 0;
+  spiOptions.modfdis     = 1;
+
+  // Initialize SD/MMC driver with SPI clock (PBA).
+  sd_mmc_spi_init(spiOptions, FPBA_HZ);
 }
 
-//
 
+/*
 // initialize sd/mms resources: SPI. GPIO, SD_MMC
 void init_sd_mmc_resources(void) {
   // GPIO pins used for SD/MMC interface
-  /*
+  
   static const gpio_map_t SD_MMC_SPI_GPIO_MAP = {
     { SD_MMC_SPI_SCK_PIN, SD_MMC_SPI_SCK_FUNCTION }, 
     { SD_MMC_SPI_MISO_PIN, SD_MMC_SPI_MISO_FUNCTION }, 
     { SD_MMC_SPI_MOSI_PIN, SD_MMC_SPI_MOSI_FUNCTION }, 
     { SD_MMC_SPI_NPCS_PIN, SD_MMC_SPI_NPCS_FUNCTION }
   };
-  */
+  
 
   // SPI options.
   spi_options_t spiOptions = {
@@ -217,24 +231,25 @@ void init_sd_mmc_resources(void) {
     .modfdis = 1
   };
 
-  /*
+  
   // Assign I/Os to SPI.
   gpio_enable_module(SD_MMC_SPI_GPIO_MAP, sizeof(SD_MMC_SPI_GPIO_MAP)
 		     / sizeof(SD_MMC_SPI_GPIO_MAP[0]));
-  */
+  
 
   // Initialize as master.
   //  spi_initMaster(SD_MMC_SPI, &spiOptions);
 
   // Set SPI selection mode: variable_ps, pcs_decode, delay.
-    spi_selectionMode(SD_MMC_SPI, 0, 0, 0);
+  spi_selectionMode(SD_MMC_SPI, 0, 0, 0);
 
   // Enable SPI module.
-  spi_enable(SD_MMC_SPI);
+  //  spi_enable(SD_MMC_SPI);
 
   // Initialize SD/MMC driver with SPI clock (PBA).
   sd_mmc_spi_init(spiOptions, FPBA_HZ);
 }
+*/
 
 // init PDCA (Peripheral DMA Controller A) resources for the SPI transfer and start a dummy transfer
 void init_local_pdca(void)

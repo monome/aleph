@@ -10,7 +10,8 @@ OBJ = op.o net.o \
 	key_handler.o \
 	redraw.o \
 	scene.o \
-	files.o
+	files.o \
+	memory.o 
 OBJ += $(LIBFIX)/fix16.o
 OBJ += $(COMMON)/fix.o
 OBJ += $(COMMON)/font.o

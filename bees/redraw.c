@@ -104,13 +104,13 @@ void redraw_ops(void) {
   println(" + ");
   appendln(op_registry[userOpTypes[newOpType]].name);
 #endif
-  screen_line(0, kScreenLines[CHAR_ROWS - 2], lineBuf, 5);
+  screen_line(0, CHAR_ROWS - 2, lineBuf, 5);
   // (function labels)
   // don't allow deletion of system operators
   if (net_op_status(net_num_ops() - 1) == eUserOp) {
-    screen_line(0, kScreenLines[CHAR_ROWS-1], "PARAM ROUTE CREATE DELETE", 3);
+    screen_line(0, CHAR_ROWS-1, "PARAM ROUTE CREATE DELETE", 3);
   } else  { 
-    screen_line(0, kScreenLines[CHAR_ROWS-1], "PARAM ROUTE CREATE", 3);
+    screen_line(0, CHAR_ROWS-1, "PARAM ROUTE CREATE", 3);
   }
 }
 
@@ -154,7 +154,7 @@ void redraw_ins(void) {
 
   // draw footer 
   // (function labels)
-  screen_line(0, kScreenLines[CHAR_ROWS - 1], "GATHER DISCONNECT STORE  PRESET ", 3);
+  screen_line(0, CHAR_ROWS - 1, "GATHER DISCONNECT STORE  PRESET ", 3);
 }
 
 //==================================================
@@ -194,7 +194,7 @@ void redraw_outs(void) {
   // header
   screen_line(0, 0, "ROUTING", 3);
   // (footer)
-  screen_line(0, kScreenLines[CHAR_ROWS - 1], "FOLLOW DISCONNECT STORE PRESET", 3);
+  screen_line(0, CHAR_ROWS - 1, "FOLLOW DISCONNECT STORE PRESET", 3);
 }
 
 /// redraw gathered outputs
@@ -255,7 +255,7 @@ void redraw_presets(void) {
 
   // draw footer 
   // (function labels)
-  screen_line(0, kScreenLines[CHAR_ROWS - 1], "CLEAR COPY STORE RECALL", 3);
+  screen_line(0, CHAR_ROWS - 1, "CLEAR COPY STORE RECALL", 3);
   
   // draw the header
   screen_line(0, 0, "PRESETS", 3);
@@ -316,7 +316,7 @@ void redraw_scenes(void) {
 
   // draw footer 
   // (function labels)
-  screen_line(0, kScreenLines[CHAR_ROWS - 1], "CLEAR COPY STORE RECALL", 3);
+  screen_line(0, CHAR_ROWS - 1, "CLEAR COPY STORE RECALL", 3);
 }
 
 
@@ -360,7 +360,7 @@ void redraw_dsp(void) {
 
   // draw footer 
   // (function labels)
-  screen_line(0, kScreenLines[CHAR_ROWS - 1], "LOAD DEFAULT", 3);
+  screen_line(0, CHAR_ROWS - 1, "LOAD DEFAULT", 3);
 }
 
 
@@ -378,7 +378,7 @@ void redraw_play(void) {
     println("p");
     appendln_int(touchedParams[n].idx, 3);
 #endif
-    screen_line(0, kScreenLines[y], lineBuf, 1);
+    screen_line(0, y, lineBuf, 1);
     n--;
   }
 // draw the header
@@ -408,7 +408,7 @@ static void draw_line_ops(s32 n, u16 num, u8 y, u8 hl) {
   appendln(".");
   appendln(net_op_name(n));
 #endif
-  screen_line(0, kScreenLines[y], lineBuf, hl);
+  screen_line(0, y, lineBuf, hl);
     /*  } else {
     // no selection
 #ifdef SNPRINTF
@@ -467,7 +467,7 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
       print_fix16(pline, net_get_in_value(n) );
 #endif
     }
-    screen_line(0, kScreenLines[y], lineBuf, hl);
+    screen_line(0, y, lineBuf, hl);
 }
 
 // draw line of outputs page
@@ -522,7 +522,7 @@ static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
     appendln( net_out_name(n) );
 #endif
   }
-  screen_line(0, kScreenLines[y], lineBuf, hl);// + status);
+  screen_line(0, y, lineBuf, hl);// + status);
   
 }
 
@@ -542,7 +542,7 @@ void draw_line_presets(s32 n, u16 num, u8 y, u8 hl) {
   appendln_char('.');
   appendln(preset_name(n));
 #endif
-  screen_line(0, kScreenLines[y], lineBuf, hl);
+  screen_line(0, y, lineBuf, hl);
 }
 
 // draw line of scenes page
@@ -560,7 +560,7 @@ void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
   appendln_char('.');
   appendln(scene_name(n));
 #endif
-  screen_line(0, kScreenLines[y], lineBuf, hl);
+  screen_line(0, y, lineBuf, hl);
 }
 
 // draw line of dsp page
@@ -574,7 +574,7 @@ void draw_line_dsp(s32 n, u16 num, u8 y, u8 hl) {
   println_int(n);
   appendln_char('.');
   appendln(scene_name(n));
-  screen_line(0, kScreenLines[y], lineBuf, hl);
+  screen_line(0, y, lineBuf, hl);
 
 }
 
