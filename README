@@ -1,10 +1,79 @@
-aleph todo.
+aleph.
 
-november todo
+
+pre-travel
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-# check cap sizes
-# b-sdram decoupling
-# bf-avr io connect
+
+pack parts / tools
+order parts for machine delivery
+start a master part list
+
+
+ezra-in-delhi notes
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# 3.5mm jack holes too small
+# DSP soldermask pad issue
+# increase plane gaps to 50-100mil
+encoders upside-down
+something up with v-div for encoder output, probably need bigger values
+
+# is c185 correct size?
+# 186 76 77 78 should they be polarized? size?
+
+# TIP-SLEEVE REVERSED
+
+# AGND TO GND jumper on primary board
+
+# RFS0 connect to TFS0
+# RSCLK0 connect to TSCLK0
+
+# move USB_OC and connect USB_ID to gnd
+
+# c105 should be 680p etcx
+
+# NMI and RXTI must be grounded
+# VDDRTC to VDDEXT
+
+# c96 c97 wrong position
+
+# MMC CS WRONG
+
+# HWAIT NEEDS PULLDOWN
+
+# FUCKING BF LED OR SOMETHING
+
+# BMODE0 = GND
+# BMODE1 = pulled to 3.3v
+
+# big cap on 5v near header to interface board?
+
+potential SDRAM issues:
+stackup, planes not close enough to outside of board. make them close.
+	probably ok: http://www.4pcb.com/pcb-stack-ups-0.062.html
+parallel traces, too many vias
+board material
+
+http://www.mammothelectronics.com/
+http://www.coolaudio.com/products.html
+http://www.timstinchcombe.co.uk/synth/MS20_study.pdf
+
+
+VCA 	coolaudio v2164m - http://www.4siteelectronics.com/Coolaudio_V2164M_p/400-1134-1.htm
+DAC		12bit: AD5685R //// 10bit: AD5317R
+595
+4066
+SUM		AD8606 / TL074 / LM833
+
+CODEC	AD1939
+
+PREAMP
+LED
+
+
+
+
+NEXT
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 DACS
 595
@@ -45,7 +114,7 @@ circuit improvements
 	# SDCARD MUST BE USER ACCESSIBLE EASILY
 	
 require further design investigation
-	FTDI init requires re-plug. power-on with plugin doesn't init?
+	# FTDI init requires re-plug. power-on with plugin doesn't init?
 	SDRAM
 	# BF LQFP-- 500mhz ok? CPU testing.
 	# parallel vs spi for OLED
@@ -106,8 +175,6 @@ MMC bootloader
 
 fin
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-SPORT-SPI for analog section
-
 patches
 	FM synth
 		envelopes
