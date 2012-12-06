@@ -36,7 +36,11 @@ void init_clocks(void) {
   //  dum++;
 
   // set MSEL = 20 for core clock of 108Mhz
-  *pPLL_CTL = 0x2800;
+//  *pPLL_CTL = 0x2800;
+/////// changing to 533Mhz part
+/// MSEL = 19
+	//// VCO = 19 * CLKIN = 513
+	*pLL_CTL = 0x2600;
   ssync();
   
 }
