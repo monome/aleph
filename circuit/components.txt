@@ -5,9 +5,57 @@ SRR6038-100Y		bf power inductor (..?)
 
 c14, c17, c22 should be 1206
 c34, c39, c40 should be 1206
-c76-c78 are 1210, should be 1206
+# c76-c78 are 1210, should be 1206
 c43 should be 1411
 c46 to be 1411
+
+
+128
+OP-1
+headphones
+soundcard
+cables
+
+
+hot air rework
+soldering iron
+solder, flux, braid, tip cleaner
+hand tools (cutter, hex driver, tweezers, magnifying glass)
+hardware (rubber feet, standoffs)
+programmer
+power supply
+PRINTOUTS
+
+bring 595s and 4066s and 13700
+
+SDCARD
+AD1939
+AD5317R
+AD5686R
+
+0603 c
+
+5600p
+390p
+270p
+560p
+68p
+100p
+27p
+47p
+
+1206t cap
+
+47u
+
+
+0603 r
+
+3k01
+1k5
+5k62
+237
+100
 
 
 ____CAPS
@@ -199,7 +247,7 @@ power
 analog
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-lm13700 - vca
+lm13700
 
 AD5724 - 4 ch 12 bit DAC w/ AVCC up to 15V
 

@@ -1,10 +1,21 @@
 aleph.
 
+machine december 2012
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+SRAM http://www.issi.com/pdf/62WV51216ALL.pdf
+
+LED follower
+output gain stage
+input gain stage
+
+
+
+
 
 pre-travel
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-pack parts / tools
 order parts for machine delivery
 start a master part list
 
@@ -66,20 +77,6 @@ SUM		AD8606 / TL074 / LM833
 
 CODEC	AD1939
 
-PREAMP
-LED
-
-
-
-
-NEXT
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-DACS
-595
-VCA
-4066
-analog header
 
 
 
