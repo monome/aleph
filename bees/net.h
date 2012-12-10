@@ -35,7 +35,7 @@
 //---- public functions
 
 // initialize the network 
-void net_init(void);
+void net_init(void*);
 // de-initialize the network 
 void net_deinit(void);
 // create a new operator given class ID, return index (-1 == fail)

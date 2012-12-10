@@ -9,8 +9,9 @@
 //#define SNPRINTF
 
 // std
-//#include <string.h>
-//#include "print_fix.h"
+#include <string.h>
+//#include <stdio.h>
+#include "print_funcs.h"
 
 // aleph
 #include "files.h"
@@ -26,9 +27,9 @@
 //----- static variables
 
 // line buffer
-static char lineBuf[SCREEN_W];
+static char lineBuf[CHAR_COLS];
 static char *pline = lineBuf;
-static char * const pLineEnd = lineBuf + SCREEN_W;
+static char * const pLineEnd = lineBuf + CHAR_COLS_1;
 
 //---------------------------------
 //---- static functions
@@ -43,6 +44,10 @@ static inline void println_int(int x);
 static inline void appendln_int(int x, int len);
 // append char to line buffer
 static inline void appendln_char(char c);
+// clear line buffer
+static inline void clearln(void);
+// move to given position in line buffer
+static inline void mvln(u8 pos);
 
 //// line redraws
 // op
@@ -71,7 +76,7 @@ void redraw_ops(void) {
   // draw the header
   screen_line(0, 0, "OPERATORS", 3);
 
-  nCenter = page->selected;
+  nCenter = curPage->selected;
   if (nCenter >= num) {
     nCenter = num;
   }
@@ -91,26 +96,26 @@ void redraw_ops(void) {
   y = SCREEN_ROW_CENTER;
   
   // print higher entries
-  while (y < SCREEN_H_2) {
+  while (y < CHAR_ROWS_2) {
     draw_line_ops(++n, num, ++y, 1);
   }
       
   // draw footer 
   // (new op type)
 #ifdef SNPRINTF
-  snprintf(lineBuf, SCREEN_W, " + %s",
+  snprintf(lineBuf, CHAR_COLS, " + %s",
 	   op_registry[userOpTypes[newOpType]].name);
 #else
   println(" + ");
   appendln(op_registry[userOpTypes[newOpType]].name);
 #endif
-  screen_line(0, CHAR_ROWS - 2, lineBuf, 5);
+  screen_line(0, CHAR_ROWS_2, lineBuf, 5);
   // (function labels)
   // don't allow deletion of system operators
   if (net_op_status(net_num_ops() - 1) == eUserOp) {
-    screen_line(0, CHAR_ROWS-1, "PARAM ROUTE CREATE DELETE", 3);
+    screen_line(0, CHAR_ROWS_1, "PARAM ROUTE CREATE DELETE", 3);
   } else  { 
-    screen_line(0, CHAR_ROWS-1, "PARAM ROUTE CREATE", 3);
+    screen_line(0, CHAR_ROWS_1, "PARAM ROUTE CREATE", 3);
   }
 }
 
@@ -122,7 +127,7 @@ void redraw_ins(void) {
   //  s16 opIdx; // index of operator
   const u16 num = net_num_ins(); // how many 
     
-  nCenter = page->selected;
+  nCenter = curPage->selected;
   if (nCenter >= num) {
     nCenter = num;
   }
@@ -143,7 +148,7 @@ void redraw_ins(void) {
   y = SCREEN_ROW_CENTER;
   
   // print higher entries
-  while (y < SCREEN_H_1) {
+  while (y < CHAR_ROWS_1) {
     n++;
     y++;
     draw_line_ins(n, num, y, 1);
@@ -154,7 +159,7 @@ void redraw_ins(void) {
 
   // draw footer 
   // (function labels)
-  screen_line(0, CHAR_ROWS - 1, "GATHER DISCONNECT STORE  PRESET ", 3);
+  screen_line(0, CHAR_ROWS_1, "GATHER DISCONNECT STORE  PRESET ", 3);
 }
 
 //==================================================
@@ -165,7 +170,7 @@ void redraw_outs(void) {
   //s16 target;
   const u16 num = net_num_outs(); // how many ops
   
-  nCenter = page->selected;
+  nCenter = curPage->selected;
   if (nCenter >= num) {
     nCenter = num;
   }
@@ -185,7 +190,7 @@ void redraw_outs(void) {
   y = SCREEN_ROW_CENTER;
   
   // print higher entries
-  while (y < SCREEN_H_2) {
+  while (y < CHAR_ROWS_2) {
     n++;
     y++;
     draw_line_outs(n, num, y, 1);
@@ -194,7 +199,7 @@ void redraw_outs(void) {
   // header
   screen_line(0, 0, "ROUTING", 3);
   // (footer)
-  screen_line(0, CHAR_ROWS - 1, "FOLLOW DISCONNECT STORE PRESET", 3);
+  screen_line(0, CHAR_ROWS_1, "FOLLOW DISCONNECT STORE PRESET", 3);
 }
 
 /// redraw gathered outputs
@@ -208,7 +213,7 @@ void redraw_presets(void) {
   s32 n, nCenter;         // which list entry
   const u16 num = NET_PRESETS_MAX; // how many 
 
-  nCenter = page->selected;
+  nCenter = curPage->selected;
   if (nCenter >= num) {
     nCenter = num;
   }
@@ -217,7 +222,7 @@ void redraw_presets(void) {
  // print selection at center
   y = SCREEN_ROW_CENTER;
 
-  switch(page->mode) { 
+  switch(curPage->mode) { 
   case eModeClear:
     screen_line(0, y, "CLEAR?", 6);
     break;
@@ -247,7 +252,7 @@ void redraw_presets(void) {
   y = SCREEN_ROW_CENTER;
   
   // print higher entries
-  while (y < SCREEN_H_2) {
+  while (y < CHAR_ROWS_2) {
     n++;
     y++;
     draw_line_presets(n, num, y, 1);
@@ -255,7 +260,7 @@ void redraw_presets(void) {
 
   // draw footer 
   // (function labels)
-  screen_line(0, CHAR_ROWS - 1, "CLEAR COPY STORE RECALL", 3);
+  screen_line(0, CHAR_ROWS_1, "CLEAR COPY STORE RECALL", 3);
   
   // draw the header
   screen_line(0, 0, "PRESETS", 3);
@@ -269,14 +274,14 @@ void redraw_scenes(void) {
   s32 n, nCenter;         // which list entry
   const u16 num = SCENE_COUNT; // how many 
 
-  nCenter = page->selected;
+  nCenter = curPage->selected;
   if (nCenter >= num) {
     nCenter = num;
   }
   n = nCenter;
   // print selection at center
   y = SCREEN_ROW_CENTER;
-  switch(page->mode) { 
+  switch(curPage->mode) { 
   case eModeClear:
     screen_line(0, y, "CLEAR?", 6);
     break;
@@ -306,7 +311,7 @@ void redraw_scenes(void) {
   y = SCREEN_ROW_CENTER;
   
   // print higher entries
-  while (y < SCREEN_H_2) {
+  while (y < CHAR_ROWS_2) {
     n++;
     y++;
     draw_line_scenes(n, num, y, 1);
@@ -316,7 +321,7 @@ void redraw_scenes(void) {
 
   // draw footer 
   // (function labels)
-  screen_line(0, CHAR_ROWS - 1, "CLEAR COPY STORE RECALL", 3);
+  screen_line(0, CHAR_ROWS_1, "CLEAR COPY STORE RECALL", 3);
 }
 
 
@@ -330,7 +335,7 @@ void redraw_dsp(void) {
   
   num = files_get_dsp_count();
 
-  nCenter = page->selected;
+  nCenter = curPage->selected;
   if (nCenter >= num) {
     nCenter = num;
   }
@@ -350,7 +355,7 @@ void redraw_dsp(void) {
   y = SCREEN_ROW_CENTER;
   
   // print higher entries
-  while (y < SCREEN_H_2) {
+  while (y < CHAR_ROWS_2) {
     n++;
     y++;
     draw_line_dsp(n, num, y, 1);
@@ -360,7 +365,7 @@ void redraw_dsp(void) {
 
   // draw footer 
   // (function labels)
-  screen_line(0, CHAR_ROWS - 1, "LOAD DEFAULT", 3);
+  screen_line(0, CHAR_ROWS_1, "LOAD DEFAULT", 3);
 }
 
 
@@ -368,10 +373,10 @@ void redraw_dsp(void) {
 //==== redraw play page
 void redraw_play(void) {
   u8 y, n;
-  n = SCREEN_H_1;
-  for(y = 1; y < SCREEN_H; y++ ) {
+  n = CHAR_ROWS_1;
+  for(y = 1; y < CHAR_ROWS; y++ ) {
 #ifdef SNPRINTF
-    snprintf(lineBuf, SCREEN_W, "p%d : %f",
+    snprintf(lineBuf, CHAR_COLS, "p%d : %f",
 	     touchedParams[n].idx,
 	     touchedParams[n].val );
 #else
@@ -401,7 +406,7 @@ static void draw_line_ops(s32 n, u16 num, u8 y, u8 hl) {
 
   //  if ( (n < num) && (n >= 0) ) { 
 #ifdef SNPRINTF
-  snprintf(lineBuf, SCREEN_W, "%d.%s",
+  snprintf(lineBuf, CHAR_COLS, "%d.%s",
              (int)n, net_op_name(n));
 #else
   println_int(n);
@@ -412,7 +417,7 @@ static void draw_line_ops(s32 n, u16 num, u8 y, u8 hl) {
     /*  } else {
     // no selection
 #ifdef SNPRINTF
-snprintf(lineBuf, SCREEN_W, "   .");
+snprintf(lineBuf, CHAR_COLS, "   .");
     screen_line(0, kScreenLines[y], lineBuf, 0);
   }
     */
@@ -423,6 +428,15 @@ snprintf(lineBuf, SCREEN_W, "   .");
 static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
   s16 opIdx;
   char pch;
+
+
+  //    print_dbg("\r\n ins line, n: ");
+  //    print_dbg_ulong(n);
+  //    print_dbg(" , num: ");
+  //    print_dbg_ulong(num);
+  //    print_dbg(" , y: ");
+  //    print_dbg_ulong(y);
+
   // wrap
   if (n < 0) {
     n += num;
@@ -434,7 +448,7 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
     if (net_get_in_preset(n)) { pch = '*'; } else { pch = '.'; }
     if (opIdx >=0 ) {
 #ifdef SNPRINTF
-      snprintf(lineBuf, SCREEN_W, "%d%c%s/%s_%f",
+      snprintf(lineBuf, CHAR_COLS, "%d%c%s/%s_%f",
 	       //	       (int)n,
 	       opIdx, 
 	       pch,
@@ -453,7 +467,7 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
     } else {
       /// parameter
 #ifdef SNPRINTF
-      snprintf(lineBuf, SCREEN_W, "p%d%c%s_%f",
+      snprintf(lineBuf, CHAR_COLS, "p%d%c%s_%f",
 	       //	       (int)n,
 	       (int)net_param_idx(n),
 	       pch,
@@ -486,7 +500,7 @@ static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
   if (net_get_out_preset(n)) { pch = '*'; } else { pch = '.'; }
   if (target >= 0) {
 #ifdef SNPRINTF
-    snprintf(lineBuf, SCREEN_W, "%d%c%s/%s->%d.%s/%s",
+    snprintf(lineBuf, CHAR_COLS, "%d%c%s/%s->%d.%s/%s",
 	     net_out_op_idx(n),
 	     pch,
 	     net_op_name(net_out_op_idx(n)),
@@ -509,7 +523,7 @@ static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
 #endif
   } else {
 #ifdef SNPRINTF
-    snprintf(lineBuf, SCREEN_W, "%d%c%s/%s",
+    snprintf(lineBuf, CHAR_COLS, "%d%c%s/%s",
 	     net_out_op_idx(n),
 	     pch,
 	     net_op_name(net_out_op_idx(n)),
@@ -536,7 +550,7 @@ void draw_line_presets(s32 n, u16 num, u8 y, u8 hl) {
   } 
   
 #ifdef SNPRINTF
-  snprintf(lineBuf, SCREEN_W, "%d.%s ", (int)n, preset_name(n));
+  snprintf(lineBuf, CHAR_COLS, "%d.%s ", (int)n, preset_name(n));
 #else
   println_int((int)n);
   appendln_char('.');
@@ -554,7 +568,7 @@ void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
     n -= num;
   } 
 #ifdef SNPRINTF
-  snprintf(lineBuf, SCREEN_W, "%d.%s ", (int)n, scene_name(n));
+  snprintf(lineBuf, CHAR_COLS, "%d.%s ", (int)n, scene_name(n));
 #else
   println_int(n);
   appendln_char('.');
@@ -588,9 +602,13 @@ static inline void println(const char* str) {
 
 // append to line buffer
 static inline void appendln(const char* str) {
+  //  print_dbg("\n\r line buffer start: ");
+  //  print_dbg_hex(pline);
   while(*str != 0) {
     *pline++ = *str++;
   }
+  //  print_dbg(" , end: ");
+  //  print_dbg_hex(pline);
 }
 
 // write int to top of line buffer
@@ -606,10 +624,19 @@ static inline void appendln_int(int x, int len) {
   if (len > rem) len = rem;
   itoa_whole(x, pline, len); 
   pline += len; 
+  
 }
 
 // append char to line buffer
-static inline void appendln_char(char c) {
+static inline void appendln_char(char c) {  
   *pline++ = c;
 }
 
+// clear line buffer
+static inline void clearln(void) {
+  memset(pline, ' ', CHAR_COLS);
+}
+
+// move to given position in line buffer
+static inline void mvln(u8 pos) {
+}

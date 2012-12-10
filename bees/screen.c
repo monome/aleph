@@ -408,7 +408,7 @@ U8 screen_line(U16 x, U16 l, char *str, U8 hl) {
   //  if(hl > 2) { print_dbg("__"); }
   //  print_dbg(str);
 
-  //  refresh = 1;
+  refresh = 1;
 
   return NCOLS;
 }

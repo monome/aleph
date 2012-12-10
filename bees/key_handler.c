@@ -34,13 +34,13 @@ void key_handler_ops(uiKey_t key) {
   switch(key) {
   case eKeyFnDownA: 
     // fnA go to selected operator's inputs on INS page
-    pages[ePageIns].selected = net_op_in_idx(page->selected, 0);
-    setPage(ePageIns);
+    pages[ePageIns].selected = net_op_in_idx(curPage->selected, 0);
+    set_page(ePageIns);
     break;
   case eKeyFnDownB:
     // fnB : go to this operator's outputs on OUTS page
-    pages[ePageOuts].selected = net_op_out_idx(page->selected, 0);
-    setPage(ePageOuts);
+    pages[ePageOuts].selected = net_op_out_idx(curPage->selected, 0);
+    set_page(ePageOuts);
     break;
   case eKeyFnDownC:
     // fnC : create new operator of specified type
@@ -56,24 +56,24 @@ void key_handler_ops(uiKey_t key) {
     }
     net_pop_op();
     n = net_num_ops() - 1;
-    if (page->selected > n) {
-      page->selected = n;
+    if (curPage->selected > n) {
+      curPage->selected = n;
     }
     redraw_ops();
     break;
     //// encoder A: scroll pages
   case eKeyEncUpA:
-    scrollPage(1);
+    scroll_page(1);
     break;
   case eKeyEncDownA:
-    scrollPage(-1);
+    scroll_page(0);
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scrollSelect(1, net_num_ops() );
+    scroll_select(1, net_num_ops() );
     break;
   case eKeyEncDownB:
-    scrollSelect(-1, net_num_ops() ); 
+    scroll_select(-1, net_num_ops() ); 
     break;
     //// encoder C: move up/down in order of execution
   case eKeyEncUpC:
@@ -110,11 +110,11 @@ void key_handler_ins(uiKey_t key) {
   switch(key) {
   case eKeyFnDownA:
     // fnA : gather
-    numGathered = net_gather(page->selected, gathered);
+    numGathered = net_gather(curPage->selected, gathered);
     break;
   case eKeyFnDownB:
     // fnB : disconnect
-    numGathered = net_gather(page->selected, gathered);
+    numGathered = net_gather(curPage->selected, gathered);
     for(i=0; i<numGathered; i++) {
       net_disconnect(*(gathered[i]));
     }
@@ -125,40 +125,40 @@ void key_handler_ins(uiKey_t key) {
     break;
   case eKeyFnDownD:
     // toggle preset inclusion
-    net_toggle_in_preset(page->selected);
+    net_toggle_in_preset(curPage->selected);
     break;
     //// encoder A: scroll pages
   case eKeyEncUpA:
-    scrollPage(1);
+    scroll_page(1);
     break;
   case eKeyEncDownA:
-    scrollPage(-1);
+    scroll_page(0);
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scrollSelect(1, net_num_ins() );
+    scroll_select(1, net_num_ins() );
     break;
   case eKeyEncDownB:
-    scrollSelect(-1, net_num_ins() );      
+    scroll_select(-1, net_num_ins() );      
     break;
   case eKeyEncUpC:
     // encoder C : value slow
-    net_inc_in_value(page->selected, kParamValStepSmall);
+    net_inc_in_value(curPage->selected, kParamValStepSmall);
     break;
   case eKeyEncDownC:
-    net_inc_in_value(page->selected, kParamValStepSmall * -1);
+    net_inc_in_value(curPage->selected, kParamValStepSmall * -1);
     break;
   case eKeyEncUpD:
     // encoder D : value fast
-    net_inc_in_value(page->selected, kParamValStepLarge);
+    net_inc_in_value(curPage->selected, kParamValStepLarge);
     break;
   case eKeyEncDownD:
-    net_inc_in_value(page->selected, kParamValStepLarge * -1);
+    net_inc_in_value(curPage->selected, kParamValStepLarge * -1);
     break;
   default:
     ;; // nothing
   }  
-  (*(page->redraw))();
+  (*(curPage->redraw))();
 }
 
 // OUTS
@@ -168,10 +168,10 @@ void key_handler_outs(uiKey_t key) {
   switch(key) {
   case eKeyFnDownA: 
     // follow
-    i = net_get_target(page->selected);
+    i = net_get_target(curPage->selected);
     if (i == -1) { return; } 
     pages[ePageIns].selected = i;
-    setPage(ePageIns);
+    set_page(ePageIns);
     break;
   case eKeyFnDownB:
     // disconnect
@@ -181,22 +181,22 @@ void key_handler_outs(uiKey_t key) {
     break;
   case eKeyFnDownD:
     // toggle preset (target)
-    i = net_get_target(page->selected);
+    i = net_get_target(curPage->selected);
     if(i>=0) { net_toggle_in_preset(i); }
     break;
     //// encoder A: scroll pages
   case eKeyEncUpA:
-    scrollPage(1);
+    scroll_page(1);
     break;
   case eKeyEncDownA:
-    scrollPage(-1);
+    scroll_page(0);
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scrollSelect(1, net_num_outs() );
+    scroll_select(1, net_num_outs() );
     break;
   case eKeyEncDownB:
-    scrollSelect(-1, net_num_outs() );      
+    scroll_select(-1, net_num_outs() );      
     break;
     //// encoder C: scroll target
   case eKeyEncUpC:
@@ -204,14 +204,14 @@ void key_handler_outs(uiKey_t key) {
     if (target == net_num_ins()) {
       target = -1;
     }
-    net_connect(page->selected, target);
+    net_connect(curPage->selected, target);
     break;
   case eKeyEncDownC:
     target--;
     if (target == -2) {
       target = net_num_ins() - 1;
     }
-    net_connect(page->selected, target);
+    net_connect(curPage->selected, target);
     break;
   case eKeyEncUpD:
     // nothing
@@ -222,7 +222,7 @@ void key_handler_outs(uiKey_t key) {
     default:
     ;; // nothing
   }  
-  (*(page->redraw))();
+  (*(curPage->redraw))();
 }
 
 //// GATHERED
@@ -323,70 +323,70 @@ extern void key_handler_presets(uiKey_t key) {
   //  s16 i;
   switch(key) {
   case eKeyFnDownA: // clear
-    switch(page->mode) {
+    switch(curPage->mode) {
     case eModeNone:
-      page->mode = eModeClear;
+      curPage->mode = eModeClear;
       break;
     case eModeClear:
-      //preset_clear(page->selected);
-      page->mode = eModeNone;
+      //preset_clear(curPage->selected);
+      curPage->mode = eModeNone;
       break;
     default:
-      page->mode = eModeNone;
+      curPage->mode = eModeNone;
     }
     break;
   case eKeyFnDownB: // copy
-    switch(page->mode) {
+    switch(curPage->mode) {
     case eModeNone:
-      page->mode = eModeCopy;
+      curPage->mode = eModeCopy;
       break;
     case eModeCopy:
-      //preset_copy(page->selected);
-      page->mode = eModeNone;
+      //preset_copy(curPage->selected);
+      curPage->mode = eModeNone;
       break;
     default:
-      page->mode = eModeNone;
+      curPage->mode = eModeNone;
     }
     break;
   case eKeyFnDownC: // store
-    switch(page->mode) {
+    switch(curPage->mode) {
     case eModeNone:
-      page->mode = eModeStore;
+      curPage->mode = eModeStore;
       break;
     case eModeStore:
-      preset_store(page->selected);
-      page->mode = eModeNone;
+      preset_store(curPage->selected);
+      curPage->mode = eModeNone;
       break;
     default:
-      page->mode = eModeNone;
+      curPage->mode = eModeNone;
     }
     break;
   case eKeyFnDownD: // recall
-    switch(page->mode) {
+    switch(curPage->mode) {
     case eModeNone:
-      page->mode = eModeRecall;
+      curPage->mode = eModeRecall;
       break;
     case eModeRecall:
-      preset_recall(page->selected);
-      page->mode = eModeNone;
+      preset_recall(curPage->selected);
+      curPage->mode = eModeNone;
       break;
     default:
-      page->mode = eModeNone;
+      curPage->mode = eModeNone;
     }
     break;
     //// encoder A: scroll pages
   case eKeyEncUpA:
-    scrollPage(1);
+    scroll_page(1);
     break;
   case eKeyEncDownA:
-    scrollPage(-1);
+    scroll_page(0);
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scrollSelect(1, NET_PRESETS_MAX );
+    scroll_select(1, NET_PRESETS_MAX );
     break;
   case eKeyEncDownB:
-    scrollSelect(-1, NET_PRESETS_MAX ); 
+    scroll_select(-1, NET_PRESETS_MAX ); 
     break;
     //// encoder C: scroll name pos
   case eKeyEncUpC:
@@ -402,88 +402,88 @@ extern void key_handler_presets(uiKey_t key) {
     default:
     ;; // nothing
   }  
-  (*(page->redraw))();
+  (*(curPage->redraw))();
 }
 
 /// SCENES
 extern void key_handler_scenes(uiKey_t key) {
   switch(key) {
   case eKeyFnDownA: // clear
-    switch(page->mode) {
+    switch(curPage->mode) {
     case eModeNone:
-      page->mode = eModeClear;
+      curPage->mode = eModeClear;
       break;
     case eModeClear:
-      //scene_clear(page->selected);
-      page->mode = eModeNone;
+      //scene_clear(curPage->selected);
+      curPage->mode = eModeNone;
       break;
     default:
-      page->mode = eModeNone;
+      curPage->mode = eModeNone;
     }
     break;
   case eKeyFnDownB: // copy
-    switch(page->mode) {
+    switch(curPage->mode) {
     case eModeNone:
-      page->mode = eModeCopy;
+      curPage->mode = eModeCopy;
       break;
     case eModeCopy:
-      //scene_copy(page->selected);
-      page->mode = eModeNone;
+      //scene_copy(curPage->selected);
+      curPage->mode = eModeNone;
       break;
     default:
-      page->mode = eModeNone;
+      curPage->mode = eModeNone;
     }
     break;
   case eKeyFnDownC: // store
-    switch(page->mode) {
+    switch(curPage->mode) {
     case eModeNone:
-      page->mode = eModeStore;
+      curPage->mode = eModeStore;
       break;
     case eModeStore:
-      scene_store(page->selected);
-      page->mode = eModeNone;
+      scene_store(curPage->selected);
+      curPage->mode = eModeNone;
       break;
     default:
-      page->mode = eModeNone;
+      curPage->mode = eModeNone;
     }
     break;
   case eKeyFnDownD: // recall
-    switch(page->mode) {
+    switch(curPage->mode) {
     case eModeNone:
-      page->mode = eModeRecall;
+      curPage->mode = eModeRecall;
       break;
     case eModeRecall:
-      scene_recall(page->selected);
-      page->mode = eModeNone;
+      scene_recall(curPage->selected);
+      curPage->mode = eModeNone;
       break;
     default:
-      page->mode = eModeNone;
+      curPage->mode = eModeNone;
     }
     break;
     //// encoder A: scroll pages
   case eKeyEncUpA:
-    scrollPage(1);
+    scroll_page(1);
     break;
   case eKeyEncDownA:
-    scrollPage(-1);
+    scroll_page(0);
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scrollSelect(1, SCENE_COUNT );
+    scroll_select(1, SCENE_COUNT );
     break;
   case eKeyEncDownB:
-    scrollSelect(-1, SCENE_COUNT );
+    scroll_select(-1, SCENE_COUNT );
     break;
   case eKeyEncUpC: // cursor: position in name
-    page->cursor++;
-    if (page->cursor > NUM_LABEL_CHARS) {
-      page->cursor = 0;
+    curPage->cursor++;
+    if (curPage->cursor > NUM_LABEL_CHARS) {
+      curPage->cursor = 0;
     } 
     break;
   case eKeyEncDownC:  // cursor: position in name
-    page->cursor--;
-    if (page->cursor < 0) {
-      page->cursor = NUM_LABEL_CHARS - 1;
+    curPage->cursor--;
+    if (curPage->cursor < 0) {
+      curPage->cursor = NUM_LABEL_CHARS - 1;
     } 
     break;
   case eKeyEncUpD:     // scroll name char at pos
@@ -493,16 +493,16 @@ extern void key_handler_scenes(uiKey_t key) {
     } 
     break;
   case eKeyEncDownD:     // scroll name char at pos
-    page->cursor--;
-    if (page->cursor < 0) {
-      page->cursor = NUM_LABEL_CHARS - 1;
+    curPage->cursor--;
+    if (curPage->cursor < 0) {
+      curPage->cursor = NUM_LABEL_CHARS - 1;
     } 
     
     break;
   default:
     ;; // nothing
   }  
-  (*(page->redraw))();
+  (*(curPage->redraw))();
 }
 
 /// DSP
@@ -519,17 +519,17 @@ extern void key_handler_dsp(uiKey_t key) {
     break;
     //// encoder A: scroll pages
   case eKeyEncUpA:
-    scrollPage(1);
+    scroll_page(1);
     break;
   case eKeyEncDownA:
-    scrollPage(-1);
+    scroll_page (-1);
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scrollSelect(1, SCENE_COUNT );
+    scroll_select(1, SCENE_COUNT );
     break;
   case eKeyEncDownB:
-    scrollSelect(-1, SCENE_COUNT );
+    scroll_select(-1, SCENE_COUNT );
     break;
   case eKeyEncUpC:
     break;
@@ -542,5 +542,5 @@ extern void key_handler_dsp(uiKey_t key) {
   default:
     ;; // nothing
   }  
-  (*(page->redraw))();
+  (*(curPage->redraw))();
 }

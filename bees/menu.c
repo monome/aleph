@@ -4,6 +4,8 @@
   aleph
 */
 
+#include "print_funcs.h"
+
 #include "key_handler.h"
 #include "menu.h"
 #include "menu_protected.h"
@@ -23,11 +25,11 @@ const opId_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpGate,
   // eOpAccum,
   // eOpSelect,
-  // eOpMapLin
+
 };
 
 // page structures - synchronize with ePage enum
-page_t pages[ePageMax] = {
+page_t pages[NUM_PAGES] = {
   // list:
   { "INS", (keyHandler_t)&key_handler_ins, (redraw_t)&redraw_ins, 0, eModeNone, -1 },
   { "OUTS", (keyHandler_t)&key_handler_outs, (redraw_t)&redraw_outs, 0, eModeNone, -1 },
@@ -41,7 +43,7 @@ page_t pages[ePageMax] = {
 };
 
 // pointer to current page
-page_t* page;
+page_t* curPage;
 // idx of current page
 s8 pageIdx = 0;
 // new operator type
@@ -63,7 +65,7 @@ static s8 savedPageIdx = 0;
 
 // init
 extern void menu_init(void) {
-  setPage(pageIdx);
+  set_page(pageIdx);
 }
 
 // de-init
@@ -72,17 +74,17 @@ extern void menu_deinit(void) {
 
 // top level key handler
 void menu_handleKey(uiKey_t key) {
-  if (key == eKeyEdit) {
+  if (key == eKeyMode) {
     if (pageIdx == ePagePlay) {
       // restore saved page
-      setPage(savedPageIdx);
+      set_page(savedPageIdx);
     } else {
       // save the page and switch to Play mode
       savedPageIdx = pageIdx;
-      setPage(ePagePlay);
+      set_page(ePagePlay);
     }
   } else {
-    page->keyHandler(key);
+    curPage->keyHandler(key);
   }
 #if ARCH_LINUX
   screen_refresh();
@@ -94,14 +96,16 @@ void menu_handleKey(uiKey_t key) {
 //----- static function definitions
 
 // set current page
-void setPage(ePage n) {
+void set_page(ePage n) {
   pageIdx = n;
-  page = &(pages[pageIdx]);
-  page->redraw();
+  curPage = &(pages[pageIdx]);
+  curPage->redraw();
+  print_dbg("\r\n SET PAGE");
 }
 
 // scroll current page
-void scrollPage(s8 dir) {
+void scroll_page(s8 dir) {
+  print_dbg("\r\nSCROLL PAGE");
   switch(pageIdx) {
   case ePageIns:
     if (dir > 0) {
@@ -154,22 +158,23 @@ void scrollPage(s8 dir) {
     }
     break;
   }
-  setPage(pageIdx);
+  set_page(pageIdx);
 }
 
 // scroll current page selection
-void scrollSelect(s8 dir, s32 max) {
-  page->selected += dir;
-  while (page->selected < 0) {
-    page->selected += max;
+void scroll_select(s8 dir, s32 max) {
+  print_dbg("\r\nSCROLL SELECT");
+  curPage->selected += dir;
+  while (curPage->selected < 0) {
+    curPage->selected += max;
       //    page->selected = 0;
   }
-  while (page->selected >= max) {
+  while (curPage->selected >= max) {
     // page->selected = max;
-    page->selected -= max;
+    curPage->selected -= max;
   }
   // redraw with the new selection
-  page->redraw();
+  curPage->redraw();
 }
 
 // parameter feedback

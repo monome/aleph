@@ -7,19 +7,13 @@
 
 #include "fix.h"
 
-/*
-static inline char bsign (const int x) {
-  return ( (x & 0x80000000) > 0 ) ;
-}
-
-static inline int binv (const int x) {
-  return x ^ 0xffffffff;
-}
-
-static inline int babs (const int x) {
-  return bsign(x) ? binv(x) - 1 : x;
-}
-*/
+//// comon variables
+static char* p;
+static unsigned int a, u;
+static char neg;
+static const unsigned int places[FIX_DIG_LO] = {
+  6553, 655, 65, 7
+};
 
 void print_fix16(char* buf , fix16_t x) {
   // fixme: shouldn't really need these
@@ -65,33 +59,28 @@ void print_fix16(char* buf , fix16_t x) {
     *p = bufLo[i] ? bufLo[i] : ' '; 
     i++; p++;
   }
-  
 }
 
-// format whole part
-void itoa_whole(int val, char* buf, int len)
-{
-  const unsigned int radix = 10;
-
-  char * p;       // pointer
-  unsigned int a; // digit (remainder)
-  unsigned int u; // unsigned value 
-  char neg = BSIGN(val);
-
+// format whole part, right justified
+void itoa_whole(int val, char* buf, int len) {
   p = buf + len - 1; // right justify; start at end
+  if(val == 0) {
+    *p = '0';
+    return;
+  }
+  neg = BSIGN(val);
 
   if ( neg ) {
     len--;
     val = BINV(val) + 1; // FIXME: this will wrap at 0xffffffff
   }
 
-
   u = (unsigned int)val;
 
   while(p >= buf) {
     if (u > 0) {
-      a = u % radix;
-      u /= radix;
+      a = u % 10;
+      u /= 10;
       *p = '0' + a;
     } else {
       *p = ' '; 
@@ -103,23 +92,41 @@ void itoa_whole(int val, char* buf, int len)
 }
 
 
-void itoa_fract(int val, char* buf)
-{
-  static const unsigned int places[FIX_DIG_LO] = {
-    6553, 655, 65, 7
-  };
-  
-  char* p;
-  unsigned int a;        //every digit
+// format whole part, left justified, no length argument (!)
+void itoa_whole_lj(int val, char* buf) {
+  if(val == 0) {
+    *buf = '0';
+    return;
+  }
+
+  neg = BSIGN(val);
+  p = buf;
+
+  if ( neg ) {
+    *p = '-'; p++;
+    val = BINV(val) + 1; // FIXME: this will wrap at 0xffffffff
+  }
+
+  u = (unsigned int)val;
+
+  while(p >= buf) {
+    if (u > 0) {
+      a = u % 10;
+      u /= 10;
+      *p = '0' + a;
+    } else {
+      *p = ' '; 
+    }
+    p++;
+
+  }
+}
+
+void itoa_fract(int val, char* buf) {  
   int i;
-  //  char* b;            //start of the digit char
-  //  char temp;
-  unsigned int u;
   unsigned int mul;
 
   p = buf;
-  //  b = p;
-
   u = (unsigned int)val;
   
   for(i=0; i<FIX_DIG_LO; i++) {
@@ -127,9 +134,6 @@ void itoa_fract(int val, char* buf)
     a = (u / mul);
     if (a > 9) { a = 9; }
     u -= (mul * a);
-    //    u = u % mul;
-    //     printf("\n     mul:%d , a: %d , u: %d ", mul, a, u);    
     *p++ = a + '0';
   } 
-   //  *p = 0;
 }

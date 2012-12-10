@@ -16,10 +16,10 @@
 
 
 // size of operator pool in bytes
-#define NET_OP_POOL_SIZE 8192
-//#define NET_OP_POOL_SIZE 12288
-//#define NET_OP_POOL_SIZE 16384
-//#define NET_OP_POOL_SIZE 65536
+/// (total internal SRAM: 0x10000
+//#define NET_OP_POOL_SIZE 0xa000
+///// TEST
+#define NET_OP_POOL_SIZE 0x1000
 
 // input node type (function pointer)
 typedef struct _inode {

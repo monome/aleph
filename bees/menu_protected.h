@@ -31,7 +31,6 @@ typedef enum  {
    eModeRecall,
 } ePageMode;
 
-
 // class representing a page in a menu
 // includes a title and a key input handler (function pointer)
 typedef struct page_struct {
@@ -47,7 +46,7 @@ typedef struct page_struct {
 ///// variables
 
 // pointer to current page
-extern page_t* page;
+extern page_t* curPage;
 // idx of current page
 extern s8 pageIdx;
 
@@ -56,7 +55,7 @@ extern u32(*gathered)[NET_OUTS_MAX];
 // how many gathered
 extern u32 numGathered;
 // page structures
-extern page_t pages[ePageMax];
+extern page_t pages[NUM_PAGES];
 
 // const array of user-creatable operator type id's
 #define NUM_USER_OP_TYPES 6
@@ -76,10 +75,10 @@ extern touched_t touchedParams[SCREEN_H];
 ///// functions
 
 // set current page
-extern void setPage(ePage n);
+extern void set_page(ePage n);
 // scroll current page
-extern void scrollPage(s8 dir);
+extern void scroll_page(s8 dir);
 // scroll selection in current page
-extern void scrollSelect(s8 dir, s32 max);
+extern void scroll_select(s8 dir, s32 max);
 
 #endif // header guard

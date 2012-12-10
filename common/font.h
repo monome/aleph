@@ -11,12 +11,9 @@
 #define FONT_ASCII_OFFSET 0x20
 
 typedef struct _glyph {
-  // U32   code  : 20; /* Unicode */
-  // U8    split :  1; /* split marker */
-  // U8    attr  :  2; /* glyph attributes */
-  U8    first     ; /* first column to be displayed in proportional mode */
-  U8    last      ; /* last  column to be displayed in proportional mode */
-  U8    data[FONT_CHARW]; /* column data */
+  U8    first     ;       // column inset from left side in proportional mode
+  U8    last      ;       // column inset from left side in proportional mode
+  U8    data[FONT_CHARW]; // column data 
 } glyph_t;
 
 extern const glyph_t font_data[];

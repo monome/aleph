@@ -21,7 +21,7 @@
 //----- external
 ctlnet_t* net;
 
-//==================================================
+//===============================================
 //========= static functions
 
 // create all system operators
@@ -47,10 +47,11 @@ static void add_sys_ops(void) {
 //==================================================
 //========= public functions
 
-// "singleton" intializer
-void net_init(void) {
+// initialize network at pre-allocated memory
+void net_init(void* mem) {
   u32 i;
-  net = (ctlnet_t*)alloc_mem(sizeof(ctlnet_t));
+  //  net = (ctlnet_t*)alloc_mem(sizeof(ctlnet_t));
+  net = (ctlnet_t*)mem;
   for(i=0; i<NET_OP_POOL_SIZE; i++) {
     net->opPoolMem[i] = (u8)0;
   }

@@ -13,7 +13,7 @@
 
 //-----------------------------------
 //----- data types
-
+#define NUM_PAGES 8
 // top-level state
 typedef enum ePage_t {
   ePageIns,
@@ -24,12 +24,11 @@ typedef enum ePage_t {
   ePageDsp,
   ePageGathered,
   ePagePlay,
-  ePageMax
 } ePage;
 
 // keys
 typedef enum eKey {
-  eKeyEdit = 0,
+  eKeyMode = 0,
   eKeyFnDownA = 1,
   eKeyFnUpA = 2,
   eKeyFnDownB = 3,

@@ -22,9 +22,9 @@
 //     { /*lang*/0, glyph_flag(mono,MONO), /*spc_cp*/0, /*spc_x*/1 }
 // };
 
-//static U32 const fontliqminus_attr_nentries= sizeof(fontliqminus_attr)/sizeof(glyph_attr_t);
+//static U32 const fontliqminus_attr_nentries= sizeof(fontliqminus_attr)/sizeof(glyph_attr_
 
-// FIXME: store last column as (FONTW-[this])
+// glyph.last is the inset from right hand edge of glyph box...
 const glyph_t font_data[]= {
   { /* 0x00020UL, 0, 2UL, */ 2, 1, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
   { /* 0x00021UL, 0, 0UL, */ 3, 2, { 0x00, 0x00, 0x00, 0x5e, 0x00, 0x00 } },
