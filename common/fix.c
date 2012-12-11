@@ -8,19 +8,18 @@
 #include "fix.h"
 
 //// comon variables
-static char* p;
 static unsigned int a, u;
-static char neg;
+static char sign;
+// fixme: shouldn't really need these
+static char bufHi[FIX_DIG_HI] = "     ";
+static char bufLo[FIX_DIG_LO] = "    ";
 static const unsigned int places[FIX_DIG_LO] = {
   6553, 655, 65, 7
 };
 
 void print_fix16(char* buf , fix16_t x) {
-  // fixme: shouldn't really need these
-  char bufHi[FIX_DIG_HI];
-  char bufLo[FIX_DIG_LO];
-  char * p;
-  char sign;
+  static char * p;
+  //  char sign;
   int y, i;
 
   sign = BSIGN(x);
@@ -50,7 +49,7 @@ void print_fix16(char* buf , fix16_t x) {
   // fixme: shouldn't need to copy if pointers are set up correctly
   i = 0;
   while (i < FIX_DIG_HI) {
-    *p = bufHi[i] ? bufHi[i] : '0';
+    *p = bufHi[i] ? bufHi[i] : ' ';
     i++; p++;
   } 
   *p = '.'; p++;
@@ -63,14 +62,19 @@ void print_fix16(char* buf , fix16_t x) {
 
 // format whole part, right justified
 void itoa_whole(int val, char* buf, int len) {
+  static char* p;
   p = buf + len - 1; // right justify; start at end
   if(val == 0) {
-    *p = '0';
+    *p = '0'; p--;
+    while(p >= buf) {
+      *p = ' ';
+      p--;
+    }
     return;
   }
-  neg = BSIGN(val);
+  sign = BSIGN(val);
 
-  if ( neg ) {
+  if ( sign ) {
     len--;
     val = BINV(val) + 1; // FIXME: this will wrap at 0xffffffff
   }
@@ -88,41 +92,57 @@ void itoa_whole(int val, char* buf, int len) {
     p--;
 
   }
-  if(neg) { *buf = '-'; }
+  if(sign) { *buf = '-'; }
 }
 
 
 // format whole part, left justified, no length argument (!)
-void itoa_whole_lj(int val, char* buf) {
+int itoa_whole_lj(int val, char* buf) {
+  static char* p;
+  char tmp, i;
+  int len = 0;
   if(val == 0) {
     *buf = '0';
-    return;
+    return 1;
   }
 
-  neg = BSIGN(val);
+  sign = BSIGN(val);
   p = buf;
 
-  if ( neg ) {
-    *p = '-'; p++;
+  if ( sign ) {
+    *p = '-';
+    p++;
+    len++;
     val = BINV(val) + 1; // FIXME: this will wrap at 0xffffffff
   }
 
   u = (unsigned int)val;
 
-  while(p >= buf) {
-    if (u > 0) {
-      a = u % 10;
-      u /= 10;
-      *p = '0' + a;
-    } else {
-      *p = ' '; 
-    }
+  while (u > 0) {
+    a = u % 10;
+    u /= 10;
+    *p = '0' + a;
     p++;
-
+    len++;
   }
+
+  /// ugh, swap bytes
+  if(sign) {
+    for (i=0; i<len; i++) {
+      tmp = buf[i];
+      
+    }
+  } else {
+      for (i=0; i<len; i++) {
+	tmp = buf[i];
+	
+      }
+  }
+  return len;
 }
 
 void itoa_fract(int val, char* buf) {  
+  static char* p;
   int i;
   unsigned int mul;
 

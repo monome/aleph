@@ -100,62 +100,35 @@ void set_page(ePage n) {
   pageIdx = n;
   curPage = &(pages[pageIdx]);
   curPage->redraw();
-  print_dbg("\r\n SET PAGE");
+  //  print_dbg("\r\n SET PAGE ");
+  //  print_dbg_hex(pageIdx);
 }
 
+//// ins -> outs -> (gathered) -> presets -> scenes -> dsp
 // scroll current page
 void scroll_page(s8 dir) {
-  print_dbg("\r\nSCROLL PAGE");
+  //  print_dbg("\r\nSCROLL PAGE");
   switch(pageIdx) {
   case ePageIns:
-    if (dir > 0) {
-      pageIdx = ePageOuts;
-    } else {
-      pageIdx = ePageOps;
-    }
+    pageIdx = dir>0 ? ePageOuts : ePageDsp ;
     break;
   case ePageOuts:
-    if (dir > 0) {
-      pageIdx = ePagePresets;
-    } else {
-      pageIdx = ePageIns;
-    }
+    pageIdx = dir>0 ? ePagePresets : ePageIns ;
     break;
   case ePageGathered:
-    if (dir > 0) {
-      pageIdx = ePageIns;
-    } else {
-      pageIdx = ePageOuts;
-    }
+    pageIdx = dir>0 ? ePagePresets : ePageIns ;
     break;
   case ePagePresets:
-    if (dir > 0) {
-      pageIdx = ePageOps;
-    } else {
-      pageIdx = ePageOuts;
-    }
+    pageIdx = dir>0 ? ePageOps : ePageOuts ;
     break;
-
   case ePageOps:
-    if (dir > 0) {
-      pageIdx = ePageScenes;
-    } else {
-      pageIdx = ePagePresets;
-    }
+    pageIdx = dir>0 ? ePageScenes : ePagePresets ;
     break;
   case ePageScenes:
-    if (dir > 0) {
-      pageIdx = ePageDsp;
-    } else {
-      pageIdx = ePageOps;
-    }
+    pageIdx = dir>0 ? ePageDsp : ePageOps ;
     break;
   case ePageDsp:
-    if (dir > 0) {
-      pageIdx = ePageIns;
-    } else {
-      pageIdx = ePageScenes;
-    }
+    pageIdx = dir>0 ? ePageIns : ePageScenes ;
     break;
   }
   set_page(pageIdx);
@@ -163,7 +136,7 @@ void scroll_page(s8 dir) {
 
 // scroll current page selection
 void scroll_select(s8 dir, s32 max) {
-  print_dbg("\r\nSCROLL SELECT");
+  //  print_dbg("\r\nSCROLL SELECT");
   curPage->selected += dir;
   while (curPage->selected < 0) {
     curPage->selected += max;

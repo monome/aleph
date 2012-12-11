@@ -95,6 +95,7 @@ void scene_recall(u32 idx) {
 // get scene name
 const char* scene_name(const s16 idx) {
 #if ARCH_AVR32
+  return " dummmmmmmmm ";
 #else
   if (idx >=0 && idx < SCENE_COUNT) {
     return sceneData[idx].sceneName;

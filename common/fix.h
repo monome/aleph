@@ -33,6 +33,9 @@ typedef fix16_t fix16;
 void print_fix16(char* buf , fix16_t x);
 // whole-part integer to ascii, right-justified, fixed-length
 void itoa_whole(int val, char* buf, int len);
+// whole-part integer to ascii, lef_justfied, return length
+int itoa_whole_lj(int val, char* buf);
+
 // fractional part to ascii, fixed length
 void itoa_fract(int val, char* buf);
 

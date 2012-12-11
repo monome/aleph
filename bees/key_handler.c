@@ -18,9 +18,12 @@
 //----- static variables
 
 // param step constants
-static const io_t kParamValStepSmall = 0.015625;
-static const io_t kParamValStepLarge = 1.f;
-// character selection tablei
+//static const io_t kParamValStepSmall = 0.015625;
+//static const io_t kParamValStepLarge = 1.f;
+static const io_t kParamValStepSmall = 0xf;
+static const io_t kParamValStepLarge = 0x10000; // 1.0 in fix16
+
+// character selection table
 static const char kLabelChars[] = "abcdefghijklmnopqrstuvwxyz_012345789";
 #define NUM_LABEL_CHARS 47
 // index in the selection table 
