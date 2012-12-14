@@ -36,7 +36,13 @@ typedef fix16_t io_t;
 #define OP_SSUB(a, b) (fix16_ssub((a), (b)))
 #define OP_SMUL(a, b) (fix16_smul((a), (b)))
 #define OP_SDIV(a, b) (fix16_sdiv((a), (b)))
-
+// constants
+// unity 
+#define OP_ONE fix16_one
+// smallest incremnet
+#define OP_MIN_INC 0x1
+#define OP_MIN_VAL fix16_min
+#define OP_MAX_VAL fix16_max
 
 ///// print formatted string
 #define OP_PRINT(buf, x) print_fix16( (buf), (x) )

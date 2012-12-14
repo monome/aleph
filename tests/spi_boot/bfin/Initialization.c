@@ -10,7 +10,10 @@ void Init_Flags(void)
 	FIO_ANOM_0311_MASKA_W(0x0100,pFIO_MASKA_D);
   */
   *pFIO_INEN = 0x0100;
-  *pFIO_DIR = 0x0000;
+  //  *pFIO_DIR = 0x0000;
+  /// LEDS out on pf14, pf15
+  *pFIO_DIR = 0xc000;
+
   *pFIO_EDGE = 0x0100;
   *pFIO_MASKA_D = 0x0100;
 }
@@ -35,7 +38,7 @@ void Init_EBIU(void)
 
 void Init_Flash(void)
 {
-	*pFlashA_PortB_Dir = 0x3f;
+  //	*pFlashA_PortB_Dir = 0x3f;
 }
 
 void Init_Interrupts(void)

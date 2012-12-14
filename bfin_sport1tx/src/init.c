@@ -18,8 +18,8 @@ void init_clocks(void) {
 //  *pPLL_CTL = 0x2800;
 /////// changing to 533Mhz part
 /// MSEL = 19
-	//// VCO = 19 * CLKIN = 513
-	*pLL_CTL = 0x2600;
+  //// VCO = 19 * CLKIN = 513
+  *pLL_CTL = 0x2600;
   ssync();
   
 }

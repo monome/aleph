@@ -33,7 +33,9 @@ int main(void)
       }
       
       */
-      *pFlashA_PortB_Data = gButState;
+      //      *pFlashA_PortB_Data = gButState;
+      *(pFIO_FLAG_D) &= 0x3fff;
+      *(pFIO_FLAG_D) |= (gLedState << 14) ;
     }
   }
 }

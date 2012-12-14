@@ -9,6 +9,7 @@
 #ifndef _MENU_H_
 #define _MENU_H_
 
+#include "fix.h"
 #include "types.h"
 
 //-----------------------------------
@@ -56,6 +57,6 @@ extern void menu_deinit(void);
 // handle key
 extern void menu_handleKey(uiKey_t key);
 // parameter feedback
-extern void param_feedback(u16 paramIdx);
+extern void param_feedback(u16 paramIdx, fix16 val);
 
 #endif // header guard

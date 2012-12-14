@@ -4,9 +4,17 @@
  * operator implmentation (base and derived classes)
  */
 
+// std
 #include <stdio.h>
 
+// asf
+#ifdef ARCH_AVR32
+#include "print_funcs.h"
+#endif
+
+// aleph
 #include "types.h"
+#include "menu_protected.h"
 #include "net.h"
 //#include "ui.h"
 #include "param.h"
@@ -60,6 +68,16 @@ const char* op_out_name(op_t* op, const u8 idx) {
 
 // get input value
 io_t op_get_in_val(op_t* op, s16 idx) {
+
+  /*  
+    print_dbg("\r\n returning op input at address: ");
+    print_dbg_hex((u32)op);
+    print_dbg(" , index: ");
+    print_dbg_hex(idx);
+    print_dbg(" , val: ");
+    print_dbg_hex( *(op->in_val[idx]) );
+  */
+
   return *(op->in_val[idx]);
 }
 
@@ -68,6 +86,13 @@ void op_set_in_val(op_t* op, s16 idx, io_t val) {
   io_t * const pIn = (op->in_val[idx]);
   *pIn = val;
   (*(op->in_func[idx]))(op, pIn);
+  
+  //  print_dbg("\r\n op in: ");
+  //  print_dbg_hex(idx);
+  //  print_dbg(", val: ");
+  //  print_dbg_hex(val);
+
+  //  param_feedback(idx, val);
 }
 
 //============================================
@@ -107,6 +132,10 @@ static void op_sw_in_tog(op_sw_t* sw, const io_t* v) {
  }
 
 static void op_sw_in_mul(op_sw_t* sw, const io_t* v) {
+  //  print_dbg("\r\n setting sw mul, sw addr:");
+  //  print_dbg_hex((u32)sw);
+  //  print_dbg(" , val: ");
+  //  print_dbg_hex(*v);
   sw->mul = *v;
   sw->state = (((*v) > 0) ? sw->mul : 0);
   net_activate(sw->outs[0], sw->state);
@@ -133,6 +162,12 @@ void op_sw_init(op_sw_t* sw) {
   sw->super.outString = op_sw_outstring;
   sw->super.type = eOpSwitch;
   sw->super.status = eSysCtlOp;
+  sw->state = 0;
+  sw->mul = OP_ONE;
+  sw->tog = 0;
+
+  
+
 }
 
 //-------------------------------------------------
@@ -192,11 +227,11 @@ static void op_enc_perform(op_enc_t* enc) {
   } else { // saturating...
     if (enc->val > enc->max) {
       enc->val = enc->max;
-      dif = 1; // force wrap output with value 0
+      dif = 1; // force wrap output
     }
     if (enc->val < enc->min) {
       enc->val = enc->min;
-      dif = -1; // force wrap output with value 0
+      dif = -1; // force wrap output
     }
   }
   // output the value
@@ -208,7 +243,7 @@ static void op_enc_perform(op_enc_t* enc) {
   }
 }
 
-// input functionsm
+// input functions
 static op_in_func_t op_enc_in_func[5] = {
   (op_in_func_t)&op_enc_in_move,
   (op_in_func_t)&op_enc_in_min,
@@ -217,8 +252,7 @@ static op_in_func_t op_enc_in_func[5] = {
   (op_in_func_t)&op_enc_in_wrap,
 };
 
-// default value
-
+// initialize
 void op_enc_init(op_enc_t* enc) {
   enc->super.numInputs = 5;
   enc->super.numOutputs = 2;
@@ -238,6 +272,11 @@ void op_enc_init(op_enc_t* enc) {
   enc->in_val[2] = &(enc->max);
   enc->in_val[3] = &(enc->step);
   enc->in_val[4] = &(enc->wrap);
+  
+  enc->min = 0;
+  enc->max = OP_ONE;
+  enc->step = OP_MIN_INC;
+  enc->wrap = 0;
 }
 
 //-------------------------------------------------

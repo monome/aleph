@@ -6,11 +6,19 @@
  * and points of IO connection between them
  */
 
+// std
 #include <stdio.h>
 
+// asf
+#ifdef ARCH_AVR32
+#include "print_funcs.h"
+#endif
+
+// aleph
 #include "util.h"
-#include "op.h"
+#include "op.h" 
 #include "memory.h"
+#include "menu_protected.h"
 #include "net.h"
 #include "net_protected.h"
 #include "param.h"
@@ -73,6 +81,21 @@ void net_deinit(void) {
 
 // activate an input node with a value
 void net_activate(s16 inIdx, const io_t val) {
+
+  /*
+    print_dbg("\r\n net activate: ");
+    print_dbg_hex(inIdx);
+    print_dbg(", val: ");
+    print_dbg_hex(val);
+    print_dbg(" , op idx: ");
+    print_dbg_hex(net->ins[inIdx].opIdx);
+    print_dbg(" , op in idx: ");
+    print_dbg_hex(net->ins[inIdx].opInIdx);
+  */
+
+    //    param_feedback(inIdx, val);
+    
+  
   if(inIdx >= 0) {
     if(inIdx < net->numIns) {
       //(*(net->ins[inIdx].in))(net->ops[net->ins[inIdx].opIdx], val);
@@ -361,20 +384,38 @@ void net_set_in_value(s32 inIdx, io_t val) {
 }
 
 io_t net_inc_in_value(s32 inIdx, io_t inc) {
+  io_t val;
+  s32 opIdx, opInIdx;
+  //  u32 in;
+  
   if (inIdx >= net->numIns) {
     inIdx -= net->numIns;
     set_param_value(inIdx, OP_ADD(get_param_value(inIdx), inc));
     return get_param_value(inIdx);
   } else {
+
+    opIdx = net->ins[inIdx].opIdx;
+    opInIdx = net->ins[inIdx].opInIdx;
+    val = op_get_in_val( net->ops[opIdx], opInIdx );
+
+    /*
+    print_dbg("\r\n net node increment: ");
+    print_dbg_hex(inIdx);
+    print_dbg(", val: ");
+    print_dbg_hex(val);
+    print_dbg(" , op idx: ");
+    print_dbg_hex(opIdx);
+    print_dbg(" , op in idx: ");
+    print_dbg_hex(opInIdx);    
+    */
+
     //net->ins[inIdx].val += inc;
     //net_activate(inIdx, (const s32*)(&(net->ins[inIdx].val)));
-    //return net->ins[inIdx].
-    net_activate( inIdx, 
-		  OP_ADD(
-			op_get_in_val( net->ops[net->ins[inIdx].opIdx],
-				       net->ins[inIdx].opInIdx ), inc));
-    return op_get_in_val( net->ops[net->ins[inIdx].opIdx],
-			    net->ins[inIdx].opInIdx ); 
+    //return net->ins[inIdx]
+    net_activate( inIdx, OP_ADD(val, inc) );
+    return net_get_in_value(inIdx);
+    //    return op_get_in_val( net->ops[net->ins[inIdx].opIdx],
+    //			    net->ins[inIdx].opInIdx ); 
   }
 }
 

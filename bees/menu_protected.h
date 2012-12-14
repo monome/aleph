@@ -13,6 +13,7 @@
 #include "net.h"
 #include "ui.h"
 #include "menu.h"
+#include "screen.h"
 
 ///////////////////
 //////// types
@@ -67,9 +68,10 @@ extern opId_t newOpType;
 // list of recently touched parameter idxs
 typedef struct _touched {
   u16 idx;
-  f32 val;
+  //  f32 val;
+  fix16 val;
 } touched_t;
-extern touched_t touchedParams[SCREEN_H];
+extern touched_t touchedParams[CHAR_ROWS];
  
 ////////////////////////////
 ///// functions

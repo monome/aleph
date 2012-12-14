@@ -22,6 +22,7 @@
 #define NCOLS       128
 #define NCOLS_1     127
 #define NCOLS__2     64
+#define COLS_LSHIFT  6
 // number of rows
 #define NROWS       64
 #define NROWS__2     32

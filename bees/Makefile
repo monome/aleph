@@ -17,7 +17,7 @@ OBJ += $(COMMON)/fix.o
 OBJ += $(COMMON)/font.o
 
 CC = gcc
-CFLAGS = -g -c
+CFLAGS = -g3 -c
 CFLAGS += -Wall -Wextra -D ARCH_LINUX=1
 CFLAGS += -I$(COMMON) -I$(LIBFIX)
 LDFLAGS = -lm -lncurses #-lportaudio #-lasound

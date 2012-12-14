@@ -11,7 +11,10 @@
 // std
 #include <string.h>
 //#include <stdio.h>
+
+#ifdef ARCH_AVR32
 #include "print_funcs.h"
+#endif
 
 // aleph
 #include "files.h"
@@ -88,24 +91,25 @@ void redraw_ops(void) {
   }
   n = nCenter;
   y = SCREEN_ROW_CENTER;
-  draw_line_ops(n, num, y, 4);
+  draw_line_ops(n, num, y, 15);
+  screen_hl_line(0, y, 1);
   // print lower entries
   while (y > 1) {
-    draw_line_ops(--n, num, --y, 1);
+    draw_line_ops(--n, num, --y, 4);
   }
   // re-center
   n = nCenter;
   y = SCREEN_ROW_CENTER;
   // print higher entries
   while (y < CHAR_ROWS_2) {
-    draw_line_ops(++n, num, ++y, 1);
+    draw_line_ops(++n, num, ++y, 4);
   }
   // draw footer 
   // (new op type)
   screen_blank_line(0, CHAR_ROWS_2);
   println(" + ", 0);
   appendln(op_registry[userOpTypes[newOpType]].name);
-  endln(); screen_line(0, CHAR_ROWS_2, lineBuf, 5);
+  endln(); screen_line(0, CHAR_ROWS_2, lineBuf, 8);
   // (function labels)
   // don't allow deletion of system operators
   if (net_op_status(net_num_ops() - 1) == eUserOp) {
@@ -117,7 +121,7 @@ void redraw_ops(void) {
 
 //==================================================
 //==== redraw inputs page
-void redraw_ins(void) {
+void redraw_ins(void) { 
   u8 y = 0;                       // which line
   s32 n, nCenter;         // which list entry
   const u16 num = net_num_ins(); // how many 
@@ -128,7 +132,8 @@ void redraw_ins(void) {
   }
   n = nCenter;
   y = SCREEN_ROW_CENTER;
-  draw_line_ins(n, num, y, 10);
+  draw_line_ins(n, num, y, 15);
+  screen_hl_line(0, y, 1);
   // print lower entries
   while (y > 1) {
     n--;
@@ -139,7 +144,7 @@ void redraw_ins(void) {
   n = nCenter;
   y = SCREEN_ROW_CENTER;
   // print higher entries
-  while (y < CHAR_ROWS_1) {
+  while (y < CHAR_ROWS_2) {
     n++;
     y++;
     draw_line_ins(n, num, y, 4);
@@ -164,7 +169,8 @@ void redraw_outs(void) {
   }
   n = nCenter;
   y = SCREEN_ROW_CENTER;
-  draw_line_outs(n, num, y, 10);  
+  draw_line_outs(n, num, y, 15);  
+  screen_hl_line(0, y, 1);
   // print lower entries
   while (y > 1) {
     n--;
@@ -221,9 +227,10 @@ void redraw_presets(void) {
     break;
   case eModeNone:
   default:
-    draw_line_presets(n, num, y, 10);  
+    draw_line_presets(n, num, y, 15);  
     break;
   }
+  screen_hl_line(0, y, 1);
   // print lower entries
   while (y > 1) {
     n--;
@@ -252,8 +259,8 @@ void redraw_scenes(void) {
   s32 n, nCenter;         // which list entry
   const u16 num = SCENE_COUNT; // how many 
 
-  print_dbg("\r\n NUM SCENES: ");
-  print_dbg_hex(num);
+  // print_dbg("\r\n NUM SCENES: ");
+  // print_dbg_hex(num);
 
   // print selection at center
   nCenter = curPage->selected;
@@ -278,9 +285,10 @@ void redraw_scenes(void) {
     break;
   case eModeNone:
   default:
-    draw_line_scenes(n, num, y, 10);  
+    draw_line_scenes(n, num, y, 15);  
     break;
   }
+  screen_hl_line(0, y, 1);
   // print lower entries
   while (y > 1) {
     n--;
@@ -315,7 +323,8 @@ void redraw_dsp(void) {
   }
   n = nCenter;
   y = SCREEN_ROW_CENTER;
-  draw_line_dsp(n, num, y, 10);
+  draw_line_dsp(n, num, y, 15);
+  screen_hl_line(0, y, 1);
   // print lower entries
   while (y > 1) {
     n--;
@@ -341,10 +350,29 @@ void redraw_dsp(void) {
 void redraw_play(void) {
   u8 y;
   u8 n = CHAR_ROWS_1;
+  u8 idx;
+
+  ///// TEST
+  //  return;
+  ////
+
   for(y = 1; y < CHAR_ROWS; y++ ) {
-    println("p_", 0);
-    appendln_int_lj(touchedParams[n].idx);
-    screen_line(0, y, lineBuf, 1);
+    //    println("", 0);
+    idx = touchedParams[n].idx;
+
+    /*
+    screen_blank_line(0, y);
+    println_int(idx, 0);
+    endln(); screen_line(0, y, lineBuf, 1);
+    
+    println( net_op_name(net_in_op_idx(idx)), 0 );
+    appendln_char('/');
+    appendln( net_in_name(idx) );
+    endln(); screen_string(16, y, lineBuf, 12);
+
+    print_fix16(numBuf, touchedParams[n].val);
+    screen_line(0, 80, numBuf, 10);
+    */
     n--;
   }
   // draw the header
@@ -391,6 +419,10 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
   } else if (n >= num) {
     n -= num;
   } 
+  /*
+  print_dbg("\r\n drawing input line at idx: ");
+  print_dbg_hex(n);
+  */
   opIdx = net_in_op_idx(n);
   //  if (net_get_in_preset(n)) { pch = '*'; } else { pch = '.'; }
   screen_blank_line(0, y);
@@ -399,13 +431,13 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
     println_int(opIdx, 0);
     endln(); screen_string(0, y, lineBuf, hl);
     //    clearln();
-    println( net_op_name(net_in_op_idx(n)), 0 );
+    println( net_op_name(opIdx), 0 );
     appendln_char('/');
     appendln( net_in_name(n) );
     endln(); screen_string(16, y, lineBuf, hl);
-    clearln();
+    //    clearln();
     print_fix16(numBuf, net_get_in_value(n) );
-    endln(); screen_line(80, y, numBuf, hl);
+    screen_line(80, y, numBuf, hl);
   } else { // this is a parameter input
     println("P_", 0);
     appendln_int_lj( (int)net_param_idx(n));
@@ -415,7 +447,7 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
     endln(); screen_string(16, y, lineBuf, hl);
     // clearln();
     print_fix16(numBuf, net_get_in_value(n) );
-    endln(); screen_line(80, y, numBuf, hl);
+    screen_line(80, y, numBuf, hl);
   }
 }
 
@@ -481,12 +513,12 @@ void draw_line_presets(s32 n, u16 num, u8 y, u8 hl) {
 void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
 
   
-  print_dbg("\r\n SCENES ; n: ");
-  print_dbg_hex(n);
-  print_dbg(" , num: ");
-  print_dbg_hex(num);
-  print_dbg(" , y: ");
-  print_dbg_hex(y);
+  // print_dbg("\r\n SCENES ; n: ");
+  // print_dbg_hex(n);
+  // print_dbg(" , num: ");
+  // print_dbg_hex(num);
+  // print_dbg(" , y: ");
+  // print_dbg_hex(y);
   
   // wrap
   if (n < 0) {
@@ -550,7 +582,7 @@ static inline void appendln(const char* str) {
 // write int to top of line buffer
 static inline void println_int(int val, int pos) {
   pline = lineBuf + pos;
-  appendln_int_lj(val);I
+  appendln_int_lj(val);
 }
 
 // append int to line buffer

@@ -145,7 +145,7 @@ u8 ui_loop(void) {
     }
     break;
   case KEY_EDIT:
-    menu_handleKey(eKeyEdit);
+    menu_handleKey(eKeyMode);
     break;
     /// "encoders"
   case KEY_ENC_A_UP:
@@ -297,6 +297,13 @@ U8 screen_string_squeeze(U16 x, U16 y, char *str, U8 a) {
   }
   
   //  refresh = 1;
+
+#ifdef ARCH_AVR32
+  refresh = 1;
+#else 
+  screen_refresh();
+#endif
+
   return x;
 }
 
@@ -390,6 +397,11 @@ void screen_hl_line(U16 x, U16 y, U8 a) {
       }
     }
   }
+#ifdef ARCH_AVR32
+  refresh = 1;
+#else 
+  screen_refresh();
+#endif
 }
 
 // draw a line and blank to end
@@ -407,9 +419,11 @@ U8 screen_line(U16 x, U16 l, char *str, U8 hl) {
   //  print_dbg("\r\n");
   //  if(hl > 2) { print_dbg("__"); }
   //  print_dbg(str);
-
+#ifdef ARCH_AVR32
   refresh = 1;
-
+#else 
+  screen_refresh();
+#endif
   return NCOLS;
 }
 

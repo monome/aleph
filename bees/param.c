@@ -75,7 +75,7 @@ void set_param_float_value(u32 idx, f32 val) {
   param_feedback(idx);
   */
   net->params[idx].data.value.asFloat = val;
-  param_feedback(idx);
+  param_feedback(idx, val);
 #ifdef ARCH_AVR32
   bfin_set_param(idx, net->params[idx].data.value.asFloat);
 #endif

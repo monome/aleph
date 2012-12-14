@@ -1,16 +1,19 @@
 #include <stdio.h>
 #include "menu.h"
 #include "net.h"
+#include "net_protected.h"
 #include "preset.h"
 #include "scene.h"
 #include "types.h"
 #include "ui.h"
 
+ctlnet_t ctlnet;
+
 // main function
 int main(void) { //const int argc, const char** argv) {
   u8 run = 1; 
   
-  net_init();
+  net_init(&ctlnet);
   ui_init();
   menu_init();
   preset_init();
