@@ -9,10 +9,6 @@ workflow tools (uploading, management, etc)
 operator framework, documentation
 operator extension workflow
 operator shared library management
-	aleph_base.so
-	drugs.so
-	ez_crap.so
-	mlr.so
 
 dsp framework, api
 api documentation, workflow
@@ -24,6 +20,7 @@ dsp patch library
 	- phase vocoder 
 	- polysynth
 	- loop / SOS
+	
 monome apps - mlr, sequencers, looping bank
 low-level base modules - svf, noise, butterworths, shapers, compressor, etc
 	- base dsp patches can add processing modules at matrix i/o points

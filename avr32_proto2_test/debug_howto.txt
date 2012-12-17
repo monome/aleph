@@ -1,8 +1,0 @@
-anywhere:
-avr32gdbproxy -finternal@0x80000000,512Kb -a :4242
-
-new terminal:
-cd to directory/containing/executable
-avr32-gdb
-(gdb) target extended-remote:4242
-(gdb) sym myprogram.elf

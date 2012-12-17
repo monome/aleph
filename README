@@ -3,12 +3,46 @@ aleph.
 this
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-LED follower
+b todo
+
+new rev fixes
 output gain stage
 input gain stage
-SRAM http://www.issi.com/pdf/62WV51216ALL.pdf http://www.digikey.com/product-detail/en/IS62WV51216BLL-55TLI/706-1048-ND/1555421
+LED follower
+filter
+shaper
+vca
+enclosure
 
 
+e todo
+
+housekeeping
+op network
+new ops
+FAT
+usb host
+i2c
+
+
+team todo
+
+text
+	concise description
+	technical/functional/abstract // whitepaper
+	documentation // framework/toolchain and specs
+	manual // instructional
+
+SRAM
+new codec
+new DACs
+595s
+soft power
+
+
+future
+
+ui
 
 
 
