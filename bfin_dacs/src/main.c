@@ -24,7 +24,7 @@ int main(void) {
   init_dma();
 
   // timers
-  //  init_timers();
+  init_timers();
 
   // assign interrupts
   init_interrupts();

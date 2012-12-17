@@ -86,27 +86,27 @@ void timer0_isr() {
     *pFIO_FLAG_D |= 0x4000;
     ledFlag = 1;
   }
-  // dac
-  
-  update_channel(0);
-  update_channel(1);
-  update_channel(2);
-  update_channel(3);
-  update_dummy();
-  
-    //updateFlag = 1;
-}
 
-void sport1_tx_isr() {
-  u32 stat;
-  //  u8 dum = 0;
-  *pDMA4_IRQ_STATUS = 0x0001;
-  stat = *pSPORT1_STAT ;
   update_channel(upCh);
   upCh++;
   if(upCh == 4) {
     upCh = 0;
   }
+
+  // dac
+  //  update_channel(0);
+  //  update_channel(1);
+  //  update_channel(2);
+  //  update_channel(3);
+  //  update_dummy();
+  
+    //updateFlag = 1;
+}
+
+void sport1_tx_isr() {
+  //  u32 stat;
+  *pDMA4_IRQ_STATUS = 0x0001;
+  //  stat = *pSPORT1_STAT ;
 }
 
 

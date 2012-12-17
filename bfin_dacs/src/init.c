@@ -25,9 +25,8 @@ void init_flags(void) {
 void init_sport1(void) {
   u32 config;
 
-  //----- note: we really want data/sync on falling edge,
-  //----- the bfin clock definition is weird, see datasheet p.548
-  //// TFS and clock on rising edge : TCKFE  = 0
+  //----- note: edge selection is for *driving* the pins, sampled opposite
+  //// TFS/clk driven w/ rising edge : TCKFE  = 0
   //// early frame sync              : LATFS  = 0
   //// TFS active high               : LTFS   = 0
   //// data-dependent TFS            : DITFS  = 0
@@ -39,9 +38,8 @@ void init_sport1(void) {
     *pSPORT1_TCR1 = ITCLK | ITFS | TFSR;
   
 
-  //----- note: we really want data/sync on falling edge,
-  //----- the bfin clock definition is weird, see datasheet p.548
-  //// TFS and clock on rising edge : TCKFE  = 0
+  //----- note: edge selection is for *driving* the pins, sampled opposite
+  //// TFS/clk driven w/ rising edge : TCKFE  = 0
   //// late frame sync              : LATFS  = 1
   //// TFS active low               : LTFS   = 1
   //// data-dependent TFS            : DITFS  = 0
@@ -60,9 +58,9 @@ void init_sport1(void) {
   //// normal mode             : TSFSE = 0
   //// secondary side enabled : TXSE  = 1
   ///// 24-bit word length
-     *pSPORT1_TCR2 = 23 | TXSE ;
+    //     *pSPORT1_TCR2 = 23 | TXSE ;
   //// test: 25-bit cause DACs need an extra cycle to recover, ugggh
-  //  *pSPORT1_TCR2 = 24 | TXSE ;
+    *pSPORT1_TCR2 = 24 | TXSE ;
 
   /// TEST: 32-bit word length
   //  *pSPORT1_TCR2 = slen_32;
@@ -130,8 +128,8 @@ void init_dma(void) {
   /// map dma4 to sport1 tx
   *pDMA4_PERIPHERAL_MAP = 0x4000;
   // configure DMA4
-  //  *pDMA4_CONFIG = WDSIZE_32 | FLOW_1;
-  *pDMA4_CONFIG = WDSIZE_32 | FLOW_1 | DI_EN;
+    *pDMA4_CONFIG = WDSIZE_32 | FLOW_1;
+    //*pDMA4_CONFIG = WDSIZE_32 | FLOW_1 | DI_EN;
   // Start address of data buffer
   *pDMA4_START_ADDR = (void *)(&txBuf);
   // DMA inner loop count
