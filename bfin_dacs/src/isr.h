@@ -12,5 +12,7 @@ void timer0_isr() __attribute__((interrupt_handler));
 void sport1_tx_isr() __attribute__((interrupt_handler));
 // error handler
 void error_isr() __attribute__((interrupt_handler));
+// channel update
+void update_channel(int ch);
 
 #endif // header guard

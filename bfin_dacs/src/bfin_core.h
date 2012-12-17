@@ -17,11 +17,13 @@
 /// data buffer for sport1 tx
 /// we want 3x24 words, so need 9 single bytes
 /// make this a union so that we can properly access the data words
-typedef union { u8 bytes[9]; struct { u8 com; u16 dat; } dacs[3]; } txbuf_t;
+//typedef union { u8 bytes[9]; struct { u8 com; u16 dat; } dacs[3]; } txbuf_t;
 //extern volatile txbuf_t sport1TxBuf;
-extern volatile u8 sport1TxBuf[9];
-
+extern volatile u32 txBuf;
 //// test
-extern volatile u8 testTxBuf[4];
+//extern volatile u8 testTxBuf[4];
+
+// which channel to update on next TX interrupt
+extern u8 upCh;
 
 #endif // header guard
