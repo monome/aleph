@@ -21,6 +21,9 @@ int main(void) {
   init_interrupts();
 
   // bring the DAC out of reset
+  *pFIO_FLAG_D &= (0xffff ^ (1 << DAC_RESET_PIN));
+  delay = 100000;
+  while(delay > 0) { delay--; }
   *pFIO_FLAG_D |= (1 << DAC_RESET_PIN);
   
 
