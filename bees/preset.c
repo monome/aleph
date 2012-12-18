@@ -9,32 +9,46 @@
 
  */
 
-#include <stdio.h>
-
-#include "types.h"
-#include "memory.h"
+//#include <stdio.h>
+// asf
+#include "print_funcs.h"
+// bees
 #include "net_protected.h"
 #include "param.h"
 #include "preset.h"
+// aleph
+#include "memory.h"
+#include "simple_string.h"
+#include "types.h"
+
 
 //=================================
 //====== variables
 
 /// aarray of presets
-//preset_t presets[NET_PRESETS_MAX];
-preset_t* presets;
+//preset_t* presets;
+///// FIXME:
+//// 121218: testing with static presets since SDRAM broken
+preset_t presets[NET_PRESETS_MAX];
 
 //=================================
 //====== function definitions
 
 // initialize
 void preset_init(void) {
-  u8 i;
+  u8 i, j;
 
-  presets = (preset_t*)alloc_mem(NET_PRESETS_MAX * sizeof(preset_t));
+///// FIXME:
+//// 121218: testing with static presets since SDRAM broken
+//  presets = (preset_t*)alloc_mem(NET_PRESETS_MAX * sizeof(preset_t));
 
   for(i=0; i<NET_PRESETS_MAX; i++) {
-    snprintf(presets[i].name, PRESET_NAME_LEN, "preset_%d", i);
+    //    snprintf(presets[i].name, PRESET_NAME_LEN, "preset_%d", i);
+    // presets[i].name = "[empty]";
+    for(j=0; j<PRESET_NAME_LEN; j++) {
+      presets[i].name[j] = 0;
+    }
+    str_copy("[empty]", presets[i].name, PRESET_NAME_LEN);
   }
 }
 
@@ -106,6 +120,8 @@ void preset_recall(u32 preIdx) {
 
 // preset name
 char* preset_name(u32 id) {
+  //  print_dbg("\r\n request for preset name at address: ");
+  //  print_dbg_hex((u32)&(presets[id]));
   return presets[id].name;
 }
 

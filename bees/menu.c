@@ -100,16 +100,19 @@ void menu_handleKey(uiKey_t key) {
 // set current page
 void set_page(ePage n) {
   pageIdx = n;
-  curPage = &(pages[pageIdx]);
-  curPage->redraw();
-  //  print_dbg("\r\n SET PAGE ");
+  //  print_dbg("\r\n set page :");
   //  print_dbg_hex(pageIdx);
+  curPage = &(pages[pageIdx]);
+  //  print_dbg("\r\n new page address:");
+  //  print_dbg_hex((u32)curPage);
+  curPage->redraw();
 }
 
 //// ins -> outs -> (gathered) -> presets -> scenes -> dsp
 // scroll current page
 void scroll_page(s8 dir) {
-  //  print_dbg("\r\nSCROLL PAGE");
+  //  print_dbg("\r\nscroll page: ");
+  //  print_dbg_hex(pageIdx);
   switch(pageIdx) {
   case ePageIns:
     pageIdx = dir>0 ? ePageOuts : ePageDsp ;
@@ -133,6 +136,8 @@ void scroll_page(s8 dir) {
     pageIdx = dir>0 ? ePageIns : ePageScenes ;
     break;
   }
+  //  print_dbg("\r\n new page idx: ");
+  //  print_dbg_hex(pageIdx);
   set_page(pageIdx);
 }
 
@@ -157,11 +162,11 @@ void param_feedback(u16 paramIdx, fix16 val) {
   int i;
   // print_dbg("\r\n param fb: ");
   // print_dbg_hex(paramIdx);
-  for (i = 1; i < SCREEN_H; i++) {
+  for (i = 1; i < CHAR_ROWS; i++) {
     touchedParams[i-1].idx = touchedParams[i].idx;
     touchedParams[i-1].val = touchedParams[i].val;
   }
-  touchedParams[SCREEN_H_1].idx = paramIdx;
-  touchedParams[SCREEN_H_1].val = val; //get_param_value(paramIdx );
+  touchedParams[CHAR_ROWS_1].idx = paramIdx;
+  touchedParams[CHAR_ROWS_1].val = val; //get_param_value(paramIdx );
 }
 

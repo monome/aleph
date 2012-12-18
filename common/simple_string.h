@@ -8,6 +8,4 @@
 // copy with length arg (-1 == until null terminator)
 extern void str_copy(const char* src, char * dst, s8 len);
 
-
-
 #endif

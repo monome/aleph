@@ -71,8 +71,6 @@ static void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl);
 // dsp
 static void draw_line_dsp(s32 n, u16 num, u8 y, u8 hl);
 
-///// fake DSP
-
 //==================================================
 //==== redraw ops page
 void redraw_ops(void) {
@@ -496,13 +494,33 @@ static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
 
 // draw line of presets page
 void draw_line_presets(s32 n, u16 num, u8 y, u8 hl) {
+
   // wrap
   if (n < 0) {
     n += num;
   } else if (n >= num) {
     n -= num;
   } 
+  /*
+  print_dbg("\r\n preset line ; n: ");
+  print_dbg_hex(n);
+  print_dbg(" , num: ");
+  print_dbg_hex(num);
+  print_dbg(" , y: ");
+  print_dbg_hex(y);
+  */
+  //  print_dbg("\r\n preset address: ");
+  //  print_dbg_hex((u32)&(*(preset_get_presets())[n]));
+  //  print_dbg("\r\n name: ");
+  //  print_dbg(preset_name(n));
+  
   screen_blank_line(0, y);
+
+  //////////
+  // LATER
+  //  return;
+  ///////////
+
   println_int((int)n, 0);
   endln(); screen_string(0, y, lineBuf, hl);
   println(preset_name(n), 0);
@@ -572,7 +590,7 @@ static inline void println(const char* str, int pos) {
 static inline void appendln(const char* str) {
   //  print_dbg("\n\r line buffer start: ");
   //  print_dbg_hex(pline);
-  while(*str != 0) {
+  while((*str != 0) && (pline <= pLineEnd)) {
     *pline++ = *str++;
   }
   //  print_dbg(" , end: ");

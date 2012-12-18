@@ -20,7 +20,7 @@
 // max DSP parameter inputs
 #define NET_PARAMS_MAX 64
 // max presets
-#define NET_PRESETS_MAX 16
+#define NET_PRESETS_MAX 8
 
 
 #include "param_common.h"
