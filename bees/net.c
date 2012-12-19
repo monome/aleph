@@ -17,6 +17,7 @@
 // aleph
 #include "util.h"
 #include "op.h" 
+#include "op_derived.h"
 #include "memory.h"
 #include "menu_protected.h"
 #include "net.h"
@@ -360,8 +361,13 @@ u32 net_gather(s32 iIdx, u32(*outs)[NET_OUTS_MAX]) {
   }
   return iOut;
 }
+
 //--- get / set / increment input value
 io_t net_get_in_value(s32 inIdx) {
+  //  print_dbg("\r\n retreiving input val at idx: ");
+  //  print_dbg_hex(inIdx);
+  //  print_dbg(" , address: ");
+  //  print_dbg_hex( &(net->ins[inIdx]) );
   if (inIdx >= net->numIns) {
     inIdx -= net->numIns;
     return get_param_value(inIdx);
@@ -384,38 +390,22 @@ void net_set_in_value(s32 inIdx, io_t val) {
 }
 
 io_t net_inc_in_value(s32 inIdx, io_t inc) {
-  io_t val;
-  s32 opIdx, opInIdx;
+  //  io_t val;
+  //  s32 opIdx, opInIdx;
   //  u32 in;
-  
+  op_t* op;
   if (inIdx >= net->numIns) {
     inIdx -= net->numIns;
     set_param_value(inIdx, OP_ADD(get_param_value(inIdx), inc));
     return get_param_value(inIdx);
   } else {
-
-    opIdx = net->ins[inIdx].opIdx;
-    opInIdx = net->ins[inIdx].opInIdx;
-    val = op_get_in_val( net->ops[opIdx], opInIdx );
-
-    /*
-    print_dbg("\r\n net node increment: ");
-    print_dbg_hex(inIdx);
-    print_dbg(", val: ");
-    print_dbg_hex(val);
-    print_dbg(" , op idx: ");
-    print_dbg_hex(opIdx);
-    print_dbg(" , op in idx: ");
-    print_dbg_hex(opInIdx);    
-    */
-
-    //net->ins[inIdx].val += inc;
-    //net_activate(inIdx, (const s32*)(&(net->ins[inIdx].val)));
-    //return net->ins[inIdx]
-    net_activate( inIdx, OP_ADD(val, inc) );
+    op = net->ops[net->ins[inIdx].opIdx];
+    (*(op->inc_func))(op, net->ins[inIdx].opInIdx, inc);
+    //    opIdx = net->ins[inIdx].opIdx;
+    //    opInIdx = net->ins[inIdx].opInIdx;
+    //    val = op_get_in_val( net->ops[opIdx], opInIdx );
+    //    net_activate( inIdx, OP_ADD(val, inc) );
     return net_get_in_value(inIdx);
-    //    return op_get_in_val( net->ops[net->ins[inIdx].opIdx],
-    //			    net->ins[inIdx].opInIdx ); 
   }
 }
 

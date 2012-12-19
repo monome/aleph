@@ -4,7 +4,7 @@
  * base classes implementing arbitrary control flow networks
  * 
  * derived classes need this,
- * other modules should hopefully only need ctlnet_interface.h
+ * other modules should hopefully only need the interface header (net.h)
  */
 
 #ifndef _BEES_OP_H_
@@ -46,8 +46,8 @@ typedef struct op_desc_struct {
 // a function pointer to represent an operator's input
 // each function is passed a void* to its receiver
 // and a pointer to const s32 for input value
-typedef void(*op_in_func_t)(void* rec, const io_t* input );
-
+typedef void(*op_in_func_t)(void* op, const io_t* input );
+typedef void(*op_inc_func)(void* op, const s16 idx, const io_t inc);
 // ---- output type
 // an index into the global output table
 // a negative index is not evaluated
@@ -60,6 +60,8 @@ typedef struct op_struct {
   // u16 size;
   u8 numInputs;
   u8 numOutputs;
+  // input increment function (for UI)
+  op_inc_func inc_func;
   // array of input function pointers
   op_in_func_t* in_func;
   // dynamic array of pointers to input values
@@ -93,57 +95,9 @@ void op_set_in_val(op_t* op, s16 idx, const io_t val);
 // each of these structures holds the superclass and private state vairables
 // inputs and outputs are described in the _init function defs
 
-//--- op_sw_t : switch
-typedef struct op_sw_struct {
-  op_t super;
-  io_t state, mul, tog;
-  io_t* in_val[3];
-  op_out_t outs[1];
-} op_sw_t;
-void op_sw_init(op_sw_t* sw);
 
-//--- op_enc_t : encoder
-typedef struct op_enc_struct {
-  op_t super;
-  io_t val;
-  io_t move, step, min, max, wrap;
-  io_t * in_val[5];
-  op_out_t outs[2];
-} op_enc_t;
-void op_enc_init(op_enc_t* sw);
-
-//--- op_add_t : addition
-typedef struct op_add_struct {
-  op_t super;
-  io_t val; 
-  io_t a, b, btrig;
-  io_t * in_val[2];
-  op_out_t outs[1];
-} op_add_t;
-void op_add_init(op_add_t* add);
-
-//--- op_mul_t : multiplication 
-typedef struct op_mul_struct {
-  op_t super;
-  io_t val; 
-  io_t a, b, btrig;
-  io_t * in_val[2];
-  op_out_t outs[1];
-} op_mul_t;
-void op_mul_init(op_mul_t* mul);
-
-//--- op_gate_t : gate
-typedef struct op_gate_struct {
-  op_t super;
-  io_t val, gate, store;
-  io_t * in_val[3];
-  op_out_t outs[1];
-} op_gate_t;
-void op_gate_init(op_gate_t* gate);
 
 //// TODO: need work
-
-
 /*
 //--- op_accum_t : accumulator
 typedef struct op_accum_struct {
@@ -190,13 +144,6 @@ typedef struct op_param_struct {
 } op_param_t;
 void op_param_init(op_param_t* param);
 */
-
-//--- op_preset_t : preset store / recall
-typedef struct op_preset_struct {
-  op_t super;
-  io_t idx;
-} op_preset_t;
-void op_preset_init(op_preset_t* preset);
 
 //-----------------------------------
 //---- public data

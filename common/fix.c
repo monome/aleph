@@ -5,11 +5,13 @@
  * additional routines for converting fixed-point datatypes
  */
 
+#include "print_funcs.h"
 #include "fix.h"
 
 //// comon variables
 static unsigned int a, u;
-static char sign;
+static unsigned long int sign;
+
 // fixme: shouldn't really need these
 static char bufHi[FIX_DIG_HI] = "     ";
 static char bufLo[FIX_DIG_LO] = "    ";
@@ -22,21 +24,21 @@ void print_fix16(char* buf , fix16_t x) {
   //  char sign;
   int y, i;
 
+  //  print_dbg("\r\n printing a fix16: ");
+  //  print_dbg_hex(x);
+
   sign = BSIGN(x);
+  //  print_dbg("\r\n sign: ");
+  //  print_dbg_hex(sign);
+  //  print_dbg("\r\n hm?: ");
+  //  print_dbg_hex(x & 0x80000000);
+
   //  bufHi = p + 1;
   //bufLo  = bufHi + FIX_DIG_HI + 1;
 
   p = buf;
 
-  if(sign) {
-    // whole
-    y = ( (x >> 16) ^ 0xffff ) & 0xffff ;
-    itoa_whole(y, bufHi, FIX_DIG_HI);
-    // fract
-    y = (x ^ 0xffff) & 0xffff;
-    itoa_fract(y, bufLo);
-    *p = '-'; p++;
-  } else {
+  if(sign == 0)  {
     // whole
     y = x >> 16;
     itoa_whole(y, bufHi, FIX_DIG_HI);
@@ -44,8 +46,16 @@ void print_fix16(char* buf , fix16_t x) {
     y = x & 0xffff;
     itoa_fract(y, bufLo);
     *p = ' '; p++;
-  }
-  
+  } else {
+    //    print_dbg("\r\n ..... print negative.... ");
+    // whole
+    y = ( (x >> 16) ^ 0xffff ) & 0xffff ;
+    itoa_whole(y, bufHi, FIX_DIG_HI);
+    // fract
+    y = (x ^ 0xffff) & 0xffff;
+    itoa_fract(y, bufLo);
+    *p = '-'; p++;
+  } 
   // fixme: shouldn't need to copy if pointers are set up correctly
   i = 0;
   while (i < FIX_DIG_HI) {

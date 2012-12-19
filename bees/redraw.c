@@ -123,6 +123,9 @@ void redraw_ins(void) {
   u8 y = 0;                       // which line
   s32 n, nCenter;         // which list entry
   const u16 num = net_num_ins(); // how many 
+
+  //  print_dbg("\r\n redraw INS");
+
   // print selection at center
   nCenter = curPage->selected;
   if (nCenter >= num) {
