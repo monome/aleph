@@ -93,7 +93,6 @@ void menu_handleKey(uiKey_t key) {
 #endif
 }
 
-
 //-----------------------------------
 //----- static function definitions
 

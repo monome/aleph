@@ -47,9 +47,10 @@ void print_fix16(char* buf , fix16_t x) {
     itoa_fract(y, bufLo);
     *p = ' '; p++;
   } else {
-    //    print_dbg("\r\n ..... print negative.... ");
+    //    print_dbg("\r\n <0 : ");
+    //    print_dbg_hex(x);
     // whole
-    y = ( (x >> 16) ^ 0xffff ) & 0xffff ;
+    y = ( (x >> 16) ^ 0xffff ) & 0xffff;
     itoa_whole(y, bufHi, FIX_DIG_HI);
     // fract
     y = (x ^ 0xffff) & 0xffff;
