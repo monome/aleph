@@ -5,13 +5,18 @@ this
 
 b todo
 
+# debouncing: http://www.ganssle.com/debouncing.htm
 new rev fixes
 output gain stage
 input gain stage
-LED follower
+LED follower: http://www.openmusiclabs.com/projects/microdec/
+
+schem cleanup
+
 filter
 shaper
 vca
+
 enclosure
 
 
@@ -136,13 +141,6 @@ bypass
 LED driving
 output gain stages
 vca
-
-
-
-circuit
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-layout and mechanical size constraints
-schematic breakdown, part lists
 
 
 
