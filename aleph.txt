@@ -1,1 +1,45 @@
-aleph
+aleph.
+
+
+
+a music computer. open source noise device.
+
+
++ dynamic program. 
+	echo, synth, filter, drum machine, etc.
+	open source = user designed, community driven
+	sdcard
+
++ flexible interface
+	four encoders, four keys, two footswitch, four CV input
+	screen
+	usb device = computer communication
+	usb host
+		hid midi = keyboard, knob box, drum pad, MIDI ports
+		monomes
+	inter-device communication = i2c
+
++ adaptable interaction.
+	complex or simple program interface
+	assignable parameter mapping
+	parameter transformation, automation, sequencing
+	preset
+	
++ audio
+	high fidelity audio i/o
+	gain stages with LED meters
+	
++ analog sub-processing
+	parametric multimode filter
+	parametric shaper
+	removable analog daughterboard
+		artist edition analog boards
+		experimentation and learning platform
+		
+		
+issues
+
+inputs. instrument vs line. 1/4" vs 1/8"
+cv in only vs in/out
+analog internal vs. SR i.e. 4 ins 4 outs
+
