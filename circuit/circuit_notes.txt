@@ -1,19 +1,23 @@
 machine december 2012
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-REMOVE something up with v-div for encoder output, probably need bigger values
-encoders upside-down
+# debouncing. use 74ahct14 for keys
+# SN74LVC2G14DCKR for front jacks
+
+
+# REMOVE something up with v-div for encoder output, probably need bigger values
+# encoders upside-down
 
 # fix screen dimension
-move ports back
+# move ports back
 
 AD5628 instead of two 10 bit DACs
 3 lines to 595 from bf, off daisy chain.
 
 # mode LED should be below mode key
-power-monitoring pins moved due to SRAM
-need pull-down resistor between outermost pins on power switch
-3.5mm jacks offset away from insertion point
+# power-monitoring pins moved due to SRAM
+# need pull-down resistor between outermost pins on power switch
+# 3.5mm jacks offset away from insertion point
 # codec wrong package
 # NOPE usb-oc needs vdiv to 3.3
 
@@ -22,7 +26,7 @@ need pull-down resistor between outermost pins on power switch
 # MOSI-MISO reversal on bf
 # no need for bf reset sw, remove cap. pullup?
 
-new AUX-in scheme. new part, BAS70-04
+# new AUX-in scheme. new part, BAS70-04
 
 # add SW0 and SW1
 
@@ -34,12 +38,12 @@ breakout to analog board properly
 VCA
 bypass, input/output amps, i/l switch
 
-ltc2620 is 12 bit DAC used in 200e
+# ltc2620 is 12 bit DAC used in 200e
 
 SRAM http://www.issi.com/pdf/62WV51216ALL.pdf http://www.digikey.com/product-detail/en/IS62WV51216BLL-55TLI/706-1048-ND/1555421
 
 # NO cheap ass encoders EVE-KC2F2024B 24ppr mechanical $0.45@500
-vertical 3.5mm jack STX-3680-5NB mouser $1.42@500
+# vertical 3.5mm jack STX-3680-5NB mouser $1.42@500
 # NO microsd DM3AT-SF-PEJM5 mouser, DM3D-SF simpler
 
 
