@@ -1,10 +1,12 @@
+//// FAT LIB TEST
+
 #include <stdio.h>
 
 #include "fat_access.h"
 #include "fat_filelib.h"
 
 
-//==================
+//=================
 // local vars
 
 //static char imgFileName[64];
@@ -143,6 +145,10 @@ int main(int argc, char** argv) {
    printf("\r\n uhhh.. size of uint32?? :  %d\r\n", sizeof(uint32));
    printf("\r\n uhhh.. size of uint16?? :  %d\r\n", sizeof(uint16));
    printf("\r\n uhhh.. size of uint8?? :  %d\r\n", sizeof(uint8));
+
+   ok, this ended up being a mis-definition of uint32 on x86_64
+   resulting in a 64bit var and bad packing behavior. so beware!
+
    */
 
   // Initialise media
@@ -205,22 +211,20 @@ static int test_files(void) {
   
   if( fl_opendir("/one", &dirstat) ) {
     while (fl_readdir(&dirstat, &dirent) == 0) {
-      // FIXME
-      //      fp = fl_fopen(dirent.filename, "r");
       strcpy(path, "/one/");
       strncat(path, dirent.filename, 58);
       fp = fl_fopen(path, "r");
-      
-      printf( "file path: %s ; ", path );
-      printf( "file pointer: %08x ; ", (long unsigned int)fp );
-      printf( "name: %s ; cluster: 0x%08x \r\n", dirent.filename, (long unsigned int)dirent.cluster );
-      printf("\r\n");
-      for(i=0; i < dirent.size; i++) {
-	//	fl_fgetc(fp);
-	fl_fread(&data, 1, 1, fp);
-	printf("%04x (%c) \r\n", data, (char)data);	
+      if( fp != NULL) {
+	printf( "file path: %s ; ", path );
+	printf( "file pointer: %08x ; ", (long unsigned int)fp );
+	printf( "name: %s ; cluster: 0x%08x \r\n", dirent.filename, (long unsigned int)dirent.cluster );
+	printf("\r\n");
+	for(i=0; i < dirent.size; i++) {
+	  data =	fl_fgetc(fp);  /// or:	  //	fl_fread(&data, 1, 1, fp);
+	  printf("%04x (%c) \r\n", data, (char)data);	
+	}
+	printf("\r\n");
       }
-      printf("\r\n");
 
     }
     return 0;

@@ -9,7 +9,7 @@
 #include "compiler.h"
 #include "preprocessor.h"
 #include "board.h"
-#include "print_funcs.h"
+
 #include "ctrl_access.h"
 #include "power_clocks_lib.h"
 #include "gpio.h"
@@ -20,9 +20,17 @@
 //#include "conf_at45dbx.h"
 #include "conf_sd_mmc_spi.h"
 #include "sd_mmc_spi.h"
+
+
+#if 1
+#include "fat.h"
+#else 
+
 #include "fat.h"
 #include "file.h"
 #include "navigation.h"
+
+#endif
 
 //---------------------------
 //---- pin config
@@ -34,6 +42,8 @@
 #  define DBG_USART_TX_PIN        AVR32_USART1_TXD_0_0_PIN
 #  define DBG_USART_TX_FUNCTION   AVR32_USART1_TXD_0_0_FUNCTION
 #  define DBG_USART_BAUDRATE      57600
+
+#include "print_funcs.h"
 
 #define AVR32_PDCA_CHANNEL_USED_RX AVR32_PDCA_PID_SPI1_RX
 #define AVR32_PDCA_CHANNEL_USED_TX AVR32_PDCA_PID_SPI1_TX
@@ -252,6 +262,18 @@ int main (void) {
   // Initialize PDCA controller before starting a transfer
   local_pdca_init();
 
+
+#if 1 
+  
+  fl_init();
+
+  
+  
+}
+
+
+#else
+
   ////////////////
   //////////////
   ///// LS  
@@ -312,3 +334,5 @@ int main (void) {
   print(DBG_USART, "  Dir\r\n");
 
 }
+
+#endif
