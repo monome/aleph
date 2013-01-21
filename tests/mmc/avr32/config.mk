@@ -5,7 +5,7 @@
 #
 
 # Path to top level ASF directory relative to this project directory.
-PRJ_PATH = ../../../avr32/asf-3.1.3/
+PRJ_PATH = ../../../../avr/asf-3.1.3/
 
 # Target CPU architecture: ap, ucr1, ucr2 or ucr3
 ARCH = ucr2
@@ -36,15 +36,10 @@ CSRCS = \
 	avr32/drivers/pm/power_clocks_lib.c                \
 	avr32/drivers/spi/spi.c                            \
 	avr32/drivers/usart/usart.c                        \
-	avr32/services/fs/fat/fat.c                        \
-	avr32/services/fs/fat/fat_unusual.c                \
-	avr32/services/fs/fat/file.c                       \
-	avr32/services/fs/fat/navigation.c                 \
-	avr32/utils/debug/print_funcs.c                    \
-	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.c \
-	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.c \
-	common/services/storage/ctrl_access/ctrl_access.c \
-	./src/main.c
+	src/main.c
+#	avr32/services/fs/fat/fat.c                        \
+#	avr32/services/fs/fat/fat_unusual.c                \
+#	avr32/services/fs/fat/file.c                       \
 
 
 # List of assembler source files.
@@ -64,7 +59,6 @@ INC_PATH = \
        avr32/drivers/pm                                   \
        avr32/drivers/spi                                  \
        avr32/drivers/usart                                \
-       avr32/services/fs/fat                              \
        avr32/utils                                        \
        avr32/utils/debug                                  \
        avr32/utils/preprocessor                           \
@@ -73,8 +67,11 @@ INC_PATH = \
        common/services/storage/ctrl_access                \
        common/utils \
 	. \
+	../conf \
 	../../tests/mmc/avr32 \
-	../../tests/mmc/avr32/conf
+	../../tests/mmc/avr32/conf \
+	../../../fat
+#       avr32/services/fs/fat                              \
 
 # Additional search paths for libraries.
 LIB_PATH = 

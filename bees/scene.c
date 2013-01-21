@@ -51,6 +51,7 @@ void scene_deinit(void) {
 // store 
 void scene_store(u32 idx) {
 #if ARCH_AVR32
+
 #else
   // open file  
   snprintf(sceneFilename, 32, "aleph_scene_%d", (int)idx);
@@ -73,6 +74,10 @@ void scene_store(u32 idx) {
 // recall
 void scene_recall(u32 idx) {
 #if ARCH_AVR32
+  
+  
+
+
 #else
   // open file  
   snprintf(sceneFilename, 32, "aleph_scene_%d", (int)idx);
@@ -83,7 +88,7 @@ void scene_recall(u32 idx) {
   fread(sceneData[idx].moduleName, 1, MODULE_NAME_LEN, pSceneFile);
   // load network
   fread((u8*)(&net), 1, sizeof(ctlnet_t), pSceneFile);
-  // loda  presets 
+  // load  presets 
   fread((u8*)(&presets), 1, sizeof(preset_t) * NET_PRESETS_MAX, pSceneFile);
   // close file
   fclose(pSceneFile);

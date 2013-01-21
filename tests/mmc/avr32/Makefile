@@ -60,4 +60,4 @@
 
 # Include the common Makefile, which will also include the project specific
 # config.mk file.
-include ../../../avr32/asf-3.1.3/avr32/utils/make/Makefile.in
+include ../../../../avr/asf-3.1.3/avr32/utils/make/Makefile.in
