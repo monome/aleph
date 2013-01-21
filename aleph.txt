@@ -11,13 +11,14 @@ a music computer. open source noise device.
 	sdcard
 
 + flexible interface
-	four encoders, four keys, two footswitch, four CV input
+	four encoders, four keys, two footswitch
+	CV input and output, 10V
 	screen
 	usb device = computer communication
 	usb host
 		hid midi = keyboard, knob box, drum pad, MIDI ports
 		monomes
-	inter-device communication = i2c
+	inter-device communication = i2c (needs a name?)
 
 + adaptable interaction.
 	complex or simple program interface
@@ -28,18 +29,28 @@ a music computer. open source noise device.
 + audio
 	high fidelity audio i/o
 	gain stages with LED meters
-	
-+ analog sub-processing
-	parametric multimode filter
-	parametric shaper
-	removable analog daughterboard
-		artist edition analog boards
-		experimentation and learning platform
-		
-		
-issues
+	quad outputs and inputs
+		individual outs for drum/synth/loop voices
+		analog inserts
 
-inputs. instrument vs line. 1/4" vs 1/8"
-cv in only vs in/out
-analog internal vs. SR i.e. 4 ins 4 outs
 
+
+images:
+
+processor
+	viola and mic input, echo patch, foot pedals	
+advanced processor
+	viola and mic input, echo patch, foot pedals, analog insert path, CV light controller/etc	
+drum machine
+drum machine w/ usb controller
+drum machine w/ two alephs via i2c
+synth
+synth w/ usb controller
+synth controlled by computer
+synth w/ analog insert path
+synth w/ analog insert path w/ sync CV output params
+synth w/ CV input
+sequencer w/ CV output
+sequencer plus synth/drum/processor
+control operations
+remote i2c control (arduino/etc for sensor expansion), i2c daisy chain
