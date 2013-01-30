@@ -9,85 +9,87 @@
 #include "compiler.h"
 #include "pdca.h"
 #include "print_funcs.h"
+#include "sd_mmc_spi.h"
 #include "spi.h"
 #include "types.h"
 // aleph
-#include "fat_filelib.h"
 #include "filesystem.h"
 
 
-// PDCA Channel pointer
-static volatile avr32_pdca_channel_t* pdca_channelrx ;
-static volatile avr32_pdca_channel_t* pdca_channeltx ;
+//----- extern 
+// Local RAM buffer to store data  to/from the SD/MMC card
+volatile U8 pdcaRxBuf[FS_BUF_SIZE];
+volatile U8 pdcaTxBuf[FS_BUF_SIZE];
 
 // Used to indicate the end of PDCA transfer
 volatile u8 fsEndTransfer;
 
-// sector data buffer
-static volatile char ram_buffer[512];
 
+//---- static
+// PDCA Channel pointer
+volatile avr32_pdca_channel_t* pdcaRxChan ;
+volatile avr32_pdca_channel_t* pdcaTxChan ;
 
 ///========================
-//====  static low-level I/O
+//====  functions
 
-//static int media_init(const char* imgFileName) {
-  /*
-  imgFile = fopen(imgFileName, "r");  
-  if (imgFile == 0) {
-    printf("\r\n error opening image file.");
-  }
-  //  printf("\r\n image file pointer: %16x\r\n", (unsigned long int)imgFile);
-  return 1;
-  */
-//  return 0;
-//}
-
-static int media_read(unsigned long sector, unsigned char *buffer, unsigned long sector_count) {
+//---- low level i/o
+int media_read(unsigned long sector, unsigned char *buffer, unsigned long sector_count);
+int media_read(unsigned long sector, unsigned char *buffer, unsigned long sector_count) {
   unsigned long i;
 
   for (i=0;i<sector_count;i++) {
-      // ...
-      // Add platform specific sector (512 bytes) read code here
-      //..
-
+    pdca_load_channel( AVR32_PDCA_CHANNEL_SPI_RX,
+		       &pdcaRxBuf,
+		       FS_BUF_SIZE);
+    
+    pdca_load_channel( AVR32_PDCA_CHANNEL_SPI_TX,
+		       (void *)&pdcaTxBuf,
+		       FS_BUF_SIZE); //send dummy to activate the clock
+    
     fsEndTransfer = false;
+    
 
-    spi_write(SD_MMC_SPI,0xFF); // Write a first dummy data to synchronise transfer
-    pdca_enable_interrupt_transfer_complete(AVR32_PDCA_CHANNEL_SPI_RX);
-    pdca_channelrx =(volatile avr32_pdca_channel_t*) pdca_get_handler(AVR32_PDCA_CHANNEL_SPI_RX); // get the correct PDCA channel pointer
-    pdca_channeltx =(volatile avr32_pdca_channel_t*) pdca_get_handler(AVR32_PDCA_CHANNEL_SPI_TX); // get the correct PDCA channel pointer
-    pdca_channelrx->cr = AVR32_PDCA_TEN_MASK; // Enable RX PDCA transfer first
-    pdca_channeltx->cr = AVR32_PDCA_TEN_MASK; // and TX PDCA transfer
-    // wait for signal from ISR
-    while(!fsEndTransfer);
-    // copy (FIXME ? )
-    for(i=0; i<FS_BUF_SIZE; i++) {
-      buffer[i] = pdcaRxBuf[i];
+    if(sd_mmc_spi_read_open_PDCA (sector)) {
+
+      //////// why???      
+      spi_write(SD_MMC_SPI,0xFF); // dummy byte synchronizes transfer
+
+      pdca_enable_interrupt_transfer_complete(AVR32_PDCA_CHANNEL_SPI_RX);
+      pdcaRxChan =(volatile avr32_pdca_channel_t*) pdca_get_handler(AVR32_PDCA_CHANNEL_SPI_RX);
+      pdcaTxChan =(volatile avr32_pdca_channel_t*) pdca_get_handler(AVR32_PDCA_CHANNEL_SPI_TX);
+      pdcaRxChan->cr = AVR32_PDCA_TEN_MASK; // Enable RX PDCA transfer first
+      pdcaTxChan->cr = AVR32_PDCA_TEN_MASK; // and TX PDCA transfer
+      // wait for signal from ISR
+      while(!fsEndTransfer);
+      // copy (FIXME ? )
+      for(i=0; i<FS_BUF_SIZE; i++) {
+	buffer[i] = pdcaRxBuf[i];
+      }
+    } else {
+      print_dbg("\r\n error opening PDCA at sector "); 
+      print_dbg_ulong(sector);
     }
-
     sector ++;
     buffer += FS_BUF_SIZE;
   }
-
   return 1;
 }
 
 
-static int media_write(unsigned long sector, unsigned char *buffer, unsigned long sector_count)
-{
-    unsigned long i;
+int media_write(unsigned long sector, unsigned char *buffer, unsigned long sector_count);
+int media_write(unsigned long sector, unsigned char *buffer, unsigned long sector_count) {
+  unsigned long i;
 
-    for (i=0;i<sector_count;i++)
-    {
-        // ...
-        // Add platform specific sector (512 bytes) write code here
-        //..
+  for (i=0;i<sector_count;i++) {
+    // ...
+    // Add platform specific sector (512 bytes) write code here
+    //..
+    sector ++;
+    buffer += 512;
+  }
 
-        sector ++;
-        buffer += 512;
-    }
-
-    return 1;
+  return 1;
 }
 
 
@@ -95,13 +97,23 @@ static int media_write(unsigned long sector, unsigned char *buffer, unsigned lon
 // extern
 
 int fat_init(void) {
-  int err;
+  //int err;
+  //  print_dbg("\r\n hey fat init \r\n ");
+
   // Initialise File IO Library
   fl_init();
   
-  // Attach media access functions to library
-  err = ( fl_attach_media((fn_diskio_read)media_read, (fn_diskio_write)media_write) != FAT_INIT_OK             );
+  //  print_dbg("\r\n attaching  media functions ... \r\n ");
 
-return err;
+      //////// why???      
+  //      spi_write(SD_MMC_SPI,0xFF); // dummy byte synchronizes transfer
+
+  // Attach media access functions to library
+  if ( fl_attach_media((fn_diskio_read)media_read, (fn_diskio_write)media_write) != FAT_INIT_OK ) {
+    print_dbg("\r\n failed to attach media access functions to fat_io_lib \r\n");
+    return 1;
+  } else {
+    return 0;
+  }
 }
 

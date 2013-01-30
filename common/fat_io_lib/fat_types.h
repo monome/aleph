@@ -7,7 +7,7 @@
 #ifndef FATFS_NO_DEF_TYPES
 typedef unsigned char uint8;
 typedef unsigned short uint16;
-typedef unsigned int uint32;
+typedef unsigned long int uint32;
 #endif
 
 #ifndef NULL

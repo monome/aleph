@@ -36,6 +36,9 @@
 #include "fat_write.h"
 #include "fat_string.h"
 #include "fat_misc.h"
+///// TEST
+#include "print_funcs.h"
+///////
 
 //-----------------------------------------------------------------------------
 // fatfs_init: Load FAT Parameters
@@ -50,6 +53,9 @@ int fatfs_init(struct fatfs *fs)
     uint32 data_sectors;
     uint32 count_of_clusters;
     uint8 valid_partition = 0;
+    ///// TEST
+    uint32 i;
+    /////
 
     fs->currentsector.address = FAT32_INVALID_CLUSTER;
     fs->currentsector.dirty = 0;
@@ -69,6 +75,19 @@ int fatfs_init(struct fatfs *fs)
     if (!fs->disk_io.read_media(0, fs->currentsector.sector, 1))
         return FAT_INIT_MEDIA_ACCESS_ERROR;
     
+    /////////////////////
+    //// test: print boot sector
+    /*
+    print_dbg("\r\n FAT boot sector contents : \r\n");
+    for(i=0; i<512; i++) {      
+	if((i % 16) == 0) { print_dbg("\r\n"); }
+	if((i % 2) == 0) { print_dbg(" "); }
+        print_dbg_char_hex( fs->currentsector.sector[i] );
+    }
+    */
+    ///////////////////
+
+
     // Make Sure 0x55 and 0xAA are at end of sector
     // (this should be the case regardless of the MBR or boot sector)
     if (fs->currentsector.sector[SIGNATURE_POSITION] != 0x55 || fs->currentsector.sector[SIGNATURE_POSITION+1] != 0xAA)
@@ -79,8 +98,12 @@ int fatfs_init(struct fatfs *fs)
         return FAT_INIT_ENDIAN_ERROR;
 
     // Verify packed structures
-    printf("\r\nsize of dir entry: %d , expected: %d\r\n",
-	   sizeof(struct fat_dir_entry), FAT_DIR_ENTRY_SIZE );
+    //    print_dbg("\r\nsize of dir entry: ");
+    //    print_dbg_ulong(sizeof(struct fat_dir_entry));
+    //    print_dbg(" , expected : ");
+    //    print_dbg_ulong( FAT_DIR_ENTRY_SIZE );
+    //    print_dbg("\r\n");
+    	   
     if (sizeof(struct fat_dir_entry) != FAT_DIR_ENTRY_SIZE)
         return FAT_INIT_STRUCT_PACKING;
 

@@ -43,6 +43,8 @@
 #include "fat_filelib.h"
 #include "fat_cache.h"
 
+#include "print_funcs.h"
+
 //-----------------------------------------------------------------------------
 // Locals
 //-----------------------------------------------------------------------------
@@ -668,7 +670,11 @@ int fl_attach_media(fn_diskio_read rd, fn_diskio_write wr)
     // Initialise FAT parameters
     if ((res = fatfs_init(&_fs)) != FAT_INIT_OK)
     {
-        FAT_PRINTF(("FAT_FS: Error could not load FAT details (%d)!\r\n", res));
+      //        FAT_PRINTF(("FAT_FS: Error could not load FAT details (%d)!\r\n", res));
+            print_dbg("FAT_FS: Error could not load FAT details!\r\n");
+	    print_dbg("error number: ");
+	    print_dbg_hex(res);
+	    print_dbg("\r\n");
         return res;
     }
 
@@ -1470,7 +1476,7 @@ void fl_listdirectory(const char *path)
 
     FL_LOCK(&_fs);
 
-    FAT_PRINTF(("\r\nNo.             Filename\r\n"));
+    //    FAT_PRINTF(("\r\nNo.             Filename\r\n"));
 
     if (fl_opendir(path, &dirstat))
     {
@@ -1480,11 +1486,11 @@ void fl_listdirectory(const char *path)
         {
             if (dirent.is_dir)
             {
-                FAT_PRINTF(("%d - %s <DIR> (0x%08lx)\r\n",++filenumber, dirent.filename, dirent.cluster));
+	      //FAT_PRINTF(("%d - %s <DIR> (0x%08lx)\r\n",++filenumber, dirent.filename, dirent.cluster));
             }
             else
             {
-                FAT_PRINTF(("%d - %s [%d bytes] (0x%08lx)\r\n",++filenumber, dirent.filename, dirent.size, dirent.cluster));
+	      //FAT_PRINTF(("%d - %s [%d bytes] (0x%08lx)\r\n",++filenumber, dirent.filename, dirent.size, dirent.cluster));
             }
         }
 
