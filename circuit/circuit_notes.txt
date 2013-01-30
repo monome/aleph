@@ -1,6 +1,14 @@
 machine december 2012
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+NSJ12HF-1 double stacked 1/4"
+100SP1T2B4M7RE toggle sw
+
+lt1054 voltage inverter
+tle2426 rail splitter
+TPS6734I 12v boost supply
+
+
 # debouncing. use 74ahct14 for keys
 # SN74LVC2G14DCKR for front jacks
 
@@ -11,8 +19,8 @@ machine december 2012
 # fix screen dimension
 # move ports back
 
-AD5628 instead of two 10 bit DACs
-3 lines to 595 from bf, off daisy chain.
+# AD5628 instead of two 10 bit DACs
+# 3 lines to 595 from bf, off daisy chain.
 
 # mode LED should be below mode key
 # power-monitoring pins moved due to SRAM
