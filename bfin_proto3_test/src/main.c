@@ -49,6 +49,8 @@ int main(void) {
   // assign interrupts
   init_interrupts();
 
+
+  /// leds are pf 14 and 15
   *pFIO_FLAG_D &= 0xbfff;
 
   // init spi in slave mode
@@ -91,6 +93,7 @@ int main(void) {
   //    *pFIO_FLAG_D = 0x3fff;
   //  *pFIO_FLAG_D = 0xc000;
 
+
   while(1) {
     dum++;
     if(dum == 0x100000) {
@@ -101,5 +104,7 @@ int main(void) {
 	dum = 0;
     }
   }
+
+
 }
 

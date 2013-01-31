@@ -80,9 +80,9 @@ void init_EBIU(void) {
 
 void init_flash(void) {
   // flash A, port A0 -> AD1836_reset
-  *pFlashA_PortA_Dir = 0x1;
+  //  *pFlashA_PortA_Dir = 0x1;
   // flash A, ports [B0, B5] -> [led1, led6]
-  *pFlashA_PortB_Dir = 0x3f;
+  //  *pFlashA_PortB_Dir = 0x3f;
 }
 
 // setup SPI0 -> AD1836 config
@@ -90,9 +90,11 @@ void init_1836(void) {
   int i;
   int j;
     // write to Port A to reset AD1836
-  *pFlashA_PortA_Data = 0x00;  
+  //  *pFlashA_PortA_Data = 0x00;  
+  *pFIO_FLAG_D &= CODEC_RESET_MASK;
   // write to Port A to enable AD1836
-  *pFlashA_PortA_Data = 0x01;
+  *pFIO_FLAG_D |= (0xffff ^ CODEC_RESET_MASK);
+  //  *pFlashA_PortA_Data = 0x01;
   
   // wait to recover from reset
   for (i=0; i<0xf0000; i++) asm("nop;");
@@ -154,8 +156,6 @@ void init_spi_slave(void) {
 
   // actually need 8 bits to be compatible with SPI-boot
   //----->>>>>  *pSPI_CTL = CPHA | GM;
-
-  // TEST: send zeros after TDBR is emptied
   *pSPI_CTL = CPHA | GM | SZ;
 
   // enable transmit on MISO
@@ -234,9 +234,11 @@ void enable_DMA_sport0(void) {
 
 // initialize programmable flags for button input
 void init_flags(void) {
-  // configure pf08-pf11 for input
-  *pFIO_INEN = 0x0f00;
-  *pFIO_DIR = 0x0000;
+  
+  *pFIO_INEN = PF_IN;
+  // outputs
+  *pFIO_DIR = PF_DIR;
+
   // edge-sensitive
   *pFIO_EDGE = 0x0f00;
   // both rise and fall
@@ -255,16 +257,20 @@ void init_interrupts(void) {
   // spi rx           -> ID3 = IVG10
   *pSIC_IAR1 = 0xff3fff2f;
   // PFA              -> ID5 = IVG12
-  *pSIC_IAR2 = 0xffff5fff;
-  
+  //  *pSIC_IAR2 = 0xffff5fff;
+  // no buttons
+   *pSIC_IAR2 = 0xffffffff;
+
   // assign ISRs to interrupt vectors:
   *pEVT9 = sport0_rx_isr;
   *pEVT10 = spi_rx_isr;
-  *pEVT12 = pf_isr;
+  //  *pEVT12 = pf_isr;
 
 	// unmask in the core event processor
-  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); bitset (%0, 12); sti %0; csync;": "+d"(i));
+  //  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); bitset (%0, 12); sti %0; csync;": "+d"(i));
+  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
   
   // unmask in the peripheral interrupt controller
-  *pSIC_IMASK = 0x00082200;
+  //  *pSIC_IMASK = 0x00082200;
+  *pSIC_IMASK = 0x00002200;
 }

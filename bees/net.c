@@ -121,8 +121,8 @@ s16 net_add_op(opId_t opId) {
   u8 i;
   op_t* op;
 
-  print_dbg("\r\nadd op, id: ");
-  print_dbg_hex(opId);
+  //  print_dbg("\r\nadd op, id: ");
+  //  print_dbg_hex(opId);
 
   if (net->numOps >= NET_OPS_MAX) {
     return -1;

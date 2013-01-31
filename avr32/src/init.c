@@ -245,14 +245,15 @@ void init_bfin_resources(void) {
   
   spi_options_t spiOptions = {
     .reg          = BFIN_SPI_NPCS,
-    .baudrate     = 20000000,
-    //    .baudrate     = 10000000,
+    //// FIXME: 
+    //// would prefer fast baudrate / lower trans delay during boot,
+    //// but need multiple registers for boot (fast) and run (slow)
+    //   .baudrate     = 20000000,
+     .baudrate     = 10000000,
     .bits         = 8,
     .spck_delay   = 0,
-    //// trans_delay requirements are different for boot and runtime (?)
-    //// boot should be very fast
-    //// during runtime, bfin needs to handle data, still comparitively fast
-    .trans_delay  = 0,
+    //    .trans_delay  = 0,
+    .trans_delay = 20,
     .stay_act     = 1,
     .spi_mode     = 1,
     .modfdis      = 1

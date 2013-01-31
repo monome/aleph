@@ -31,23 +31,17 @@ void bfin_load(U32 size, volatile u8 * data) {
   print_dbg_ulong(size);
   print_dbg(" bytes...");
 
+  // fixme:
   Disable_global_interrupt();
 
-  /////// testing
-      gpio_set_gpio_pin(BFIN_RESET_PIN);  
-  // wait a little 
-      delay = 1000; while (--delay > 0) {;;}
-  //////////
+  gpio_set_gpio_pin(BFIN_RESET_PIN);  
+  delay = 1000; while (--delay > 0) {;;}
 
-  // reset the blackfin
-      gpio_clr_gpio_pin(BFIN_RESET_PIN);
-      //    delay = 100; while (--delay > 0) {;;}
-      delay = 30; while (--delay > 0) {;;}
-      //    delay = 10000; while (--delay > 0) {;;}
-      //  delay = 200000; while (--delay > 0) {;;}
-      gpio_set_gpio_pin(BFIN_RESET_PIN);  
-      delay = 3000; while (--delay > 0) {;;}
-      //      delay = 20000; while (--delay > 0) {;;}
+  gpio_clr_gpio_pin(BFIN_RESET_PIN);
+  delay = 30; while (--delay > 0) {;;}
+
+  gpio_set_gpio_pin(BFIN_RESET_PIN);  
+  delay = 3000; while (--delay > 0) {;;}
   
   // loop over .ldr data
   byte = 0;
@@ -59,20 +53,6 @@ void bfin_load(U32 size, volatile u8 * data) {
     while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { ;; }
 
     spi_write(BFIN_SPI, data[byte]);
-
-    /////// test
-    
-    if(byte < 1024) {
-      print_dbg(" ");
-      print_dbg_hex(data[byte]);
-      //      print_dbg(" ");
-    }
-    
-    
-    
-    //    delay = 10; while (--delay > 0) {;;}
-    /////////
-    //    delay = 100; while (--delay > 0) {;;}
 
     byte++;
   }

@@ -4,6 +4,7 @@
 // aleph
 #include "bfin_core.h"
 #include "init.h"
+#include "leds.h"
 #include "module.h"
 
 long long int dumcount = 0;
@@ -55,9 +56,16 @@ int main(void) {
   // begin audio transfers
   enable_DMA_sport0();  
 
+
+  //// test: leds on
+  SET_LED3;
+  //      SET_LED4;
+  // off 
+  //  UNSET_LED3;
+  UNSET_LED4;
+  
   while(1) {
     // fixme: everything happens in ISRs!
     ;;
   }
 }
-

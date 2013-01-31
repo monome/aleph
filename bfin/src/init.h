@@ -4,12 +4,40 @@
 //----------- defines
 // addresses for Port A in Flash A
 // PA0 -> reset pin for ad1836
-#define pFlashA_PortA_Dir	(volatile unsigned char *)0x20270006
-#define pFlashA_PortA_Data	(volatile unsigned char *)0x20270004
+//#define pFlashA_PortA_Dir	(volatile unsigned char *)0x20270006
+//#define pFlashA_PortA_Data	(volatile unsigned char *)0x20270004
 // addresses for Port B in Flash A
 // [PB0, PB05] -> [LED1, LED6]
-#define pFlashA_PortB_Dir	(volatile unsigned char *)0x20270007
-#define pFlashA_PortB_Data	(volatile unsigned char *)0x20270005
+//#define pFlashA_PortB_Dir	(volatile unsigned char *)0x20270007
+//#define pFlashA_PortB_Data	(volatile unsigned char *)0x20270005
+
+//// inputs:
+/*
+// buttons : pf08-11
+#define PF_IN 0x0f00
+// edge-sensitive
+#define PF_EDGE 0x0f00
+// both rise and fall
+#define PF_BOTH 0x0f00
+// set interrupt mask
+#define_PF_IMASK  0x0f00
+*/
+// nothing:
+#define PF_IN 0
+#define PF_EDGE 0
+// both rise and fall
+#define PF_BOTH 0
+// set interrupt mask
+#define PF_IMASK  0
+
+
+//// OUTPUTS:
+// led3, led4 : pf14,15 
+// codec reset : pf1
+#define PF_DIR           0xc002 
+#define CODEC_RESET_MASK 0xfffd 
+// ( led masks are in leds.h so these must synchronize )
+
 
 // names for codec registers, used for sCodec1836TxRegs[]
 #define DAC_CONTROL_1		0x0000

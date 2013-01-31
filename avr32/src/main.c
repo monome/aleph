@@ -66,6 +66,8 @@ ctlnet_t ctlnet;
 static u8 startup = 1;
 // mode switch
 static u8 mode = 0;
+// count of parameters
+static u32 numParams = 0;
 
 /*
   static u8 ldrData[] = {
@@ -77,7 +79,6 @@ static u8 mode = 0;
   ;
 */
 
-
 //=========================================== 
 //==== static functions
 
@@ -85,7 +86,7 @@ static u8 mode = 0;
 //  app event loop
 static void check_events(void);
 // startup routine (perform this once after an initial button press)
-static void perform_startup(void);
+//static void perform_startup(void);
 
 // start master mode on TWI
 //static void init_master(u8 addr);
@@ -93,7 +94,7 @@ static void perform_startup(void);
 //static u8 send_master(u8 chip, u32 addr, u8 addr_len, u32 len, void* data);
 
 // get params from bfin
-// static void report_params(void);
+ static void report_params(void);
 
 //----------------------------------------------
 //---- testing stuff
@@ -131,7 +132,7 @@ static void check_events(void) {
       /// a hack!
       /// this should select only switch events...
       if(e.eventType > kEventEncoder3) { 
-	perform_startup();
+	//perform_startup();
 	///// TEST I2C as master
 	//	i2c_tx(44, 0, 0, 5, &(e.eventType) - 1);
 	return;
@@ -310,7 +311,7 @@ int main (void) {
 
   U32 waitForCard = 0;
   volatile avr32_tc_t *tc = APP_TC;
-  //  volatile u64 delay;
+  volatile u64 delay;
 
   //  gpio_set_gpio_pin(POWER_CTL_PIN);
   //  gpio_clr_gpio_pin(POWER_CTL_PIN);
@@ -400,22 +401,15 @@ int main (void) {
   
   //  test_pdca();
 
+  // scan drives, list files
+  //  files_list();  
+
+  // files_scan_dsp();
+
+
   // set up file navigation
   init_files();
 
-
-  // scan drives, list files
-  //  files_list();  
-  /// print all files to UART
-
-  //  files_scan_dsp();
-
-  //  files_load_dsp_name("bfin_test.ldr");
-  //////////////////////
-  //////////////// TEST
-  //  bfin_load(ldrSize, ldrData);
-    ///////////////
-    /////////////////
 
   // send ADC config
   init_adc();
@@ -447,23 +441,76 @@ int main (void) {
 
   menu_init();
   //  print_dbg("\r\nMENU INIT");
+
+
+  /// boot default ds
+  files_load_dsp_name("default.ldr");
+  /// wait for bfin to finish boot
+  delay = 800000; while(delay--) {;;}
+  report_params();
 }
 
-/*
 
-// load the default DSP
-//load_bfin_sdcard_test();   
-files_load_dsp("aleph-osc2.ldr");
-// get parameters
-print_dbg("\r\nwaiting to read params...");
-//    delay_ms(1000);
-delay = FCPU_HZ >> 8; while(delay--) {;;}
-print_dbg("\r\nwaited.");
-//
-report_params();
-// load scene 0
-//...
-*/
+// clear and add params to ctl network
+static void report_params(void) {
+  volatile ParamDesc pdesc;
+  u8 i;
+
+  bfin_get_num_params(&numParams);
+  print_dbg("\r\nnumparams: ");
+  print_dbg_ulong(numParams);
+
+  if(numParams > 0) {
+    net_clear_params();
+    for(i=0; i<numParams; i++) {
+      bfin_get_param_desc(i, &pdesc);
+      net_add_param(i, &pdesc);
+      print_dbg("\r\n got pdesc : ");
+      print_dbg(pdesc.label);
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////
+//////////////////////////
+///////////////////////
 
 /// TEST: add a string to the scroll output
 

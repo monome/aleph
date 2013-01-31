@@ -60,7 +60,7 @@ void init_EBIU(void) {
 
 void init_flags(void) {
   // LED outputs on pf14, pf15
-  *pFIO_DIR = 0xc000;
+  *pFIO_DIR = PF_DIR;
   /*
   // configure pf08-pf11 for input
   *pFIO_INEN = 0x0f00;

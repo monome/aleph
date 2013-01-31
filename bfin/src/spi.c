@@ -1,3 +1,5 @@
+#include "bfin_core.h"
+#include "leds.h"
 #include "module.h"
 //#include "protocol.h"
 #include "param_common.h"
@@ -36,6 +38,16 @@ static u8 idx;
 // return byte to load for next MISO
 u8 spi_process(u8 rx) {
   static ParamValue pval;
+
+
+    ////
+    ////
+    //// TEST: show 2bit value on leds 3,4
+  //      if(rx & 0x1) { SET_LED3; } else { UNSET_LED3; } 
+  //      if(rx & 0x2) { SET_LED4; } else { UNSET_LED4; } 
+    ////
+    ////
+
   switch(byte) {
   /// caveman style
   case eCom :
@@ -48,6 +60,7 @@ u8 spi_process(u8 rx) {
       byte = eGetParamIdx;
       break;
     case MSG_GET_NUM_PARAMS_COM:
+      //      SET_LED4;
       byte = eNumParamsVal;
       return moduleData->numParams; // load num params
       break;

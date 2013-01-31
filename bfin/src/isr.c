@@ -39,7 +39,8 @@ void sport0_rx_isr() {
   module_process_frame();  
   // module-defined LED update function
   leds = module_update_leds();
-  *pFlashA_PortB_Data = leds;
+  ///// FIXME
+  //  *pFlashA_PortB_Data = leds;
 }
 
 // spi receive interrupt (from avr32)
@@ -48,6 +49,7 @@ void spi_rx_isr() {
 }
 
 // programmable flag interrupt (buttons)
+/*
 void pf_isr() {
   /// debug:
   static u16 butstate = 0;
@@ -60,3 +62,4 @@ void pf_isr() {
   // confirm interrupt handling (W1C)
   *pFIO_FLAG_C = 0x0f00;
 }
+*/
