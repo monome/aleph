@@ -1,3 +1,18 @@
+feb build 2013
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+c46 v rating, size, make polar
+c43 polar, 25v
+c18 should be 1206
+r64 to 47k
+r36 to 10k
+c185, c175 make same 1210
+U20 wrong package?
+fucked up the CV jacks
+
+
+
+
 machine december 2012
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -7,7 +22,18 @@ NSJ12HF-1 double stacked 1/4"
 lt1054 voltage inverter
 tle2426 rail splitter
 TPS6734I 12v boost supply
+LM2674 12V buck supply 500ma
 
+AD8567 14tssop 4 x op amp single supply rail rail 16V ~ $2.70
+AD8664 14tssop 4 x op amp single supply rail rail 16V precision ~5.80
+
+12v stuff
+MBRS130LFSCT-ND	diode
+478-4151-1-ND cap output
+478-3107-1-ND cap input
+LPS4018 coil
+
+SRAM http://www.issi.com/pdf/62WV51216ALL.pdf http://www.digikey.com/product-detail/en/IS62WV51216BLL-55TLI/706-1048-ND/1555421
 
 # debouncing. use 74ahct14 for keys
 # SN74LVC2G14DCKR for front jacks
@@ -40,15 +66,13 @@ TPS6734I 12v boost supply
 
 DACs need to be pulled to +5A
 
-header near audio jacks, general form factor
-multiply differential converters
-breakout to analog board properly
-VCA
-bypass, input/output amps, i/l switch
+# header near audio jacks, general form factor
+# multiply differential converters
+# breakout to analog board properly
+# VCA
+# bypass, input/output amps, i/l switch
 
 # ltc2620 is 12 bit DAC used in 200e
-
-SRAM http://www.issi.com/pdf/62WV51216ALL.pdf http://www.digikey.com/product-detail/en/IS62WV51216BLL-55TLI/706-1048-ND/1555421
 
 # NO cheap ass encoders EVE-KC2F2024B 24ppr mechanical $0.45@500
 # vertical 3.5mm jack STX-3680-5NB mouser $1.42@500
