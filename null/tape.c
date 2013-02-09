@@ -94,13 +94,15 @@ static fract32 incFr;
 static u32 sampsInt;
 // current delay time (fractional samples)
 static fract32 sampsFr;
+/// temp vairable
+static fix16 sampsFrTmp;
 
 // final output value
 static fract32   frameVal;      
 // echo output
 static fract32   echoVal;
 //  feedback output
-static fract32   fbVal;
+//static fract32   fbVal;
  
 static filter_1p_fr32* ampLp;  // 1plp smoother for amplitude
 static filter_1p_fix16* timeLp;  // 1plp smoother for delay time
@@ -133,9 +135,16 @@ static inline void set_time(fix16 t) {
 
 // accepted a change in delay time, recalculate read idx
 static inline void calc_time(void) {
+  //// FIXME: must abstract these operations on 32.32 data... ugh
   if(time < 0 ) time = 0;
-  sampsInt = (s32) time;
-  sampsFr = time - sampsInt;
+  // multiply with double-precision whole part...
+  sampsInt = (u32)(FIX16_TO_U16(time)) * (u32)sr;
+  // 1) multiply the fractional part as a fix16
+  sampsFrTmp = fix16_mul(time & 0xffff, sr << 16);
+  // 2) carry 
+  sampsInt += FIX16_TO_U16(sampsFrTmp);
+  // 3) truncate
+  sampsFr = FIX16_FRACT_TRUNC(sampsFrTmp);
   idxRdInt = idxWrInt - sampsInt;
   idxRdFr = idxWrFr - sampsFr;
   if (idxRdFr < 0 ) {
@@ -214,9 +223,12 @@ static void calc_frame(void) {
   // get interpolated echo value
   echoVal = read_buf();
   // store interpolated input+fb value
-  //  write_buf(in0);
-  // lookup osc2
-  //  osc2 = lookup_wave(idx2, wave2);
+  write_buf(add_fr1x32(in0, mult_fr1x32x32(echoVal, fb ) ) );
+  // output
+    frameVal = add_fr1x32( mult_fr1x32x32(echoVal, amp),
+  			 mult_fr1x32x32(in0, dry) );
+  /// test
+  //  frameVal = in0;
 
   // increment read head
   idxRdInt += incInt;
@@ -271,16 +283,23 @@ void module_init(void) {
   // init params
   sr = SAMPLERATE;
   ips = fix16_from_float( 1.f / (f32)sr );
-
-  amp = FR32_ONE >> 2;
+  amp = FR32_ONE >> 1;
   time = FIX16_ONE << 1;
-    
-  // allocate smoothers
+  rate = FIX16_ONE;
+
+  // init smoothers
   ampLp = (filter_1p_fr32*)malloc(sizeof(filter_1p_fr32));
   filter_1p_fr32_init( ampLp, SAMPLERATE, 16 << 16, amp );
   
   timeLp = (filter_1p_fix16*)malloc(sizeof(filter_1p_fix16));
   filter_1p_fix16_init( timeLp, SAMPLERATE, 32 << 16, time );
+  
+  rateLp = (filter_1p_fix16*)malloc(sizeof(filter_1p_fix16));
+  filter_1p_fix16_init( rateLp, SAMPLERATE, 32 << 16, time );
+
+  // calculate current values
+  calc_time();
+  calc_rate();
   
   /// DEBUG
   //printf("\n\n module init debug \n\n");
@@ -367,12 +386,11 @@ void module_process_frame(const f32* in, f32* out) {
   // so need to introduce 1-sample delay for x-channel processing
   //  static int _in0, _in1, _in2, _in3;
 
-
   for(frame=0; frame<BLOCKSIZE; frame++) {
     calc_frame();
     for(chan=0; chan<NUMCHANNELS; chan++) { // stereo interleaved
       *out++ = fr32_to_float(frameVal);
-      *(pIn[chan]) = *in++;
+      *(pIn[chan]) = float_to_fr32(*in++);
     }
   }
 }

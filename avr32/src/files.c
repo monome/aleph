@@ -25,12 +25,13 @@
 //// FIXME: using static allocation
 #define FILES_STATIC_MEM 1
 
+
 #if FILES_STATIC_MEM
 // make as big as we can handle in static mem
 #define MAX_BFIN_LDR_BYTES 6000
 //#define MAX_BFIN_LDR_BYTES 22000
 #else
-// grab an sdram buffer big enough for bf533s instruction SRAM
+// grab a RAM buffer big enough for bf533s instruction SRAM
 #define MAX_BFIN_LDR_BYTES 64000
 #endif 
 

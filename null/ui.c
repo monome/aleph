@@ -50,7 +50,6 @@ void handle_key(u16 ch) {
     printf("\rsetting parameter %d, %s\n", paramIdx, moduleData->paramDesc[paramIdx].label);
     printf("enter param value (float): \n"); 
     prompt();
-    //    pv.fix = atof(input);
     pv.fix = fix16_from_float(atof(input));
     module_set_param(paramIdx, pv);
 

@@ -12,6 +12,7 @@
 
 #define ALLOC_FAIL 0
 
+// heap memory type
 typedef volatile u8 * heap_t;
 
 // setup heap

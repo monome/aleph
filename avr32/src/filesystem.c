@@ -52,7 +52,6 @@ int media_read(unsigned long sector, unsigned char *buffer, unsigned long sector
 
     if(sd_mmc_spi_read_open_PDCA (sector)) {
 
-      //////// why???      
       spi_write(SD_MMC_SPI,0xFF); // dummy byte synchronizes transfer
 
       pdca_enable_interrupt_transfer_complete(AVR32_PDCA_CHANNEL_SPI_RX);
@@ -62,7 +61,7 @@ int media_read(unsigned long sector, unsigned char *buffer, unsigned long sector
       pdcaTxChan->cr = AVR32_PDCA_TEN_MASK; // and TX PDCA transfer
       // wait for signal from ISR
       while(!fsEndTransfer);
-      // copy (FIXME ? )
+      // copy (FIXME ?)
       for(i=0; i<FS_BUF_SIZE; i++) {
 	buffer[i] = pdcaRxBuf[i];
       }
