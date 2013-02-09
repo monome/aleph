@@ -127,11 +127,15 @@ static void check_events(void) {
   //static U64 cyclesNow = 0;
   //  cycles = Get_system_register(AVR32_COUNT)  
 
+  print_dbg("\r\n event handler got: ");
+  print_dbg_ulong(e.eventType);
+
   if( get_next_event(&e) ) {
     if(startup) {
       /// a hack!
       /// this should select only switch events...
       if(e.eventType > kEventEncoder3) { 
+	startup = 0;
 	//perform_startup();
 	///// TEST I2C as master
 	//	i2c_tx(44, 0, 0, 5, &(e.eventType) - 1);
@@ -444,10 +448,10 @@ int main (void) {
 
 
   /// boot default ds
-  files_load_dsp_name("default.ldr");
+  //  files_load_dsp_name("default.ldr");
   /// wait for bfin to finish boot
-  delay = 800000; while(delay--) {;;}
-  report_params();
+  //  delay = 800000; while(delay--) {;;}
+  //  report_params();
 }
 
 

@@ -1,4 +1,4 @@
-/* module.h
+1/* module.h
  * bfin-alpeh core audio system
  * 
  * declares variables and functions to be defined by custom modules

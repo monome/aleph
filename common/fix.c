@@ -5,7 +5,7 @@
  * additional routines for converting fixed-point datatypes
  */
 
-#include "print_funcs.h"
+//#include "print_funcs.h"
 #include "fix.h"
 
 //// comon variables
