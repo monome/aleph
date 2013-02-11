@@ -64,12 +64,12 @@ static void enc_timer_callback(int tag) {
       e.eventType = enc[i].event;
       e.eventData = val;
       enc[i].val = 0;
-      /*
+      
       print_dbg("\r\n enc timer event, n: ");
       print_dbg_ulong(i);
       print_dbg(" , val: ");
       print_dbg_ulong(val);
-      */
+      
       post_event(&e);
     }
   }
@@ -89,7 +89,7 @@ static void sw_timer_callback(int tag) {
 
 // adc polling callback
 static void adc_timer_callback(int tag) {
-  // print_dbg("\r\n polling adc from timer callback...");
+  //  print_dbg("\r\n polling adc from timer callback...");
   adc_poll();
 }
 

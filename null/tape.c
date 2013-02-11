@@ -70,14 +70,19 @@ moduleData_t * moduleData; // superclass introspection stuff
 
 //-----------------------
 //------ static variables
-static u32       sr;          // sample rate
-static fix16     ips;        // index change per sample (at 1hz)
-static fix16     time;   // delay time between heads, in seconds
-static fix16     rate;   // tape speed ratio
 
-//static fix16     idxRd;          // current phase (fractional idx) (write head)
-//static fix16     idxWr;          // current phase (fractional idx) (read head)
-//static fix16     incWr;          // idx change at current frequency (read head)
+//-- setup
+static u32     sr;          // sample rate
+static fix16   ips;        // index change per sample (at 1hz)
+
+//-- current param values
+static fix16   amp;
+static fix16   dry;
+static fix16   fb;
+static fix16   time;   // delay time between heads, in seconds
+static fix16   rate;   // tape speed ratio
+
+//--- realtime variables
 // cant maintain real phases to buffer in 16.16 (too many indices)
 // so whole part is s32 and fractional part is fract32
 // idx (for each "head")
@@ -86,40 +91,30 @@ static fract32 idxRdFr;
 static s32     idxWrInt;
 static fract32 idxWrFr;
 // increment (for both "heads")
-static fix16 inc; // this will be small enough to represent
-static s32       incInt;
+static fix16   inc; // this will be small enough to represent
+static s32     incInt;
 static fract32 incFr;
-
 // current delay time (whole samples)
-static u32 sampsInt;
+static u32     sampsInt;
 // current delay time (fractional samples)
 static fract32 sampsFr;
 /// temp vairable
-static fix16 sampsFrTmp;
-
+static fix16   sampsFrTmp;
 // final output value
 static fract32   frameVal;      
 // echo output
 static fract32   echoVal;
-//  feedback output
-//static fract32   fbVal;
- 
-static filter_1p_fr32* ampLp;  // 1plp smoother for amplitude
+
+//-- param smoothers 
+static filter_1p_fix16* ampLp;  // 1plp smoother for amplitude
 static filter_1p_fix16* timeLp;  // 1plp smoother for delay time
 static filter_1p_fix16* rateLp;  // 1plp smoother for delay time
-/// current parameters
-static fract32 amp;
-static fract32 dry;
-static fract32 fb;
-static fix16 rate;
-static fix16 time;
 
-/// echo buffer
+//-- audio buffers
 static fract32 echoBuf[ECHO_BUF_SIZE];
 
-
 #ifdef ARCH_BFIN // bfin
-#else // linux
+#else // linux : emulate bfin audio core
 fract32 in0, in1, in2, in3;
 #endif
 
@@ -204,7 +199,7 @@ static void calc_frame(void) {
 
   // ----- smoothers:
   // amp
-  amp = filter_1p_fr32_next(ampLp);
+  amp = filter_1p_fix16_next(ampLp);
   // time
   if(timeLp->sync) {
     ;;
@@ -223,10 +218,12 @@ static void calc_frame(void) {
   // get interpolated echo value
   echoVal = read_buf();
   // store interpolated input+fb value
-  write_buf(add_fr1x32(in0, mult_fr1x32x32(echoVal, fb ) ) );
+  write_buf(add_fr1x32(in0, mult_fr1x32x32(echoVal,  FIX16_FRACT_TRUNC(fb) ) ) );
   // output
-    frameVal = add_fr1x32( mult_fr1x32x32(echoVal, amp),
-  			 mult_fr1x32x32(in0, dry) );
+  frameVal = add_fr1x32( 
+			mult_fr1x32x32( echoVal, FIX16_FRACT_TRUNC(amp) ),
+			mult_fr1x32x32( in0,  FIX16_FRACT_TRUNC(dry) )
+			 );
   /// test
   //  frameVal = in0;
 
@@ -283,13 +280,13 @@ void module_init(void) {
   // init params
   sr = SAMPLERATE;
   ips = fix16_from_float( 1.f / (f32)sr );
-  amp = FR32_ONE >> 1;
+  amp = FIX16_ONE >> 1;
   time = FIX16_ONE << 1;
   rate = FIX16_ONE;
 
   // init smoothers
-  ampLp = (filter_1p_fr32*)malloc(sizeof(filter_1p_fr32));
-  filter_1p_fr32_init( ampLp, SAMPLERATE, 16 << 16, amp );
+  ampLp = (filter_1p_fix16*)malloc(sizeof(filter_1p_fix16));
+  filter_1p_fix16_init( ampLp, SAMPLERATE, 32 << 16, amp );
   
   timeLp = (filter_1p_fix16*)malloc(sizeof(filter_1p_fix16));
   filter_1p_fix16_init( timeLp, SAMPLERATE, 32 << 16, time );
@@ -314,13 +311,11 @@ void module_deinit(void) {
   free(rateLp);
 }
 
-// set parameter by value
-/// WARNING: numerical representation of v is arbitrary.
-/// this handler should behave in accordance with moduleData.paramDesc
+// set parameter by value (fix16)
 void module_set_param(u32 idx, pval v) {
   switch(idx) {
   case eParamAmp:
-    filter_1p_fr32_in(ampLp, v.fr);
+    filter_1p_fix16_in(ampLp, v.fix);
     break;
   case eParamDry:
     dry = v.fix;
@@ -335,7 +330,7 @@ void module_set_param(u32 idx, pval v) {
     fb = v.fix;
     break;
   case eParamAmpSmooth:
-    filter_1p_fr32_set_hz(ampLp, v.fr);
+    filter_1p_fix16_set_hz(ampLp, v.fix);
     break;
   case eParamTimeSmooth:
     filter_1p_fix16_set_hz(timeLp, v.fix);
@@ -376,7 +371,6 @@ void module_handle_button(const u16 state) {
 
 #else //  non-bfin
 void module_process_frame(const f32* in, f32* out) {
-
 
   static fract32* const pIn[4] = { &in0, &in1, &in2, &in3 };
   u32 frame;

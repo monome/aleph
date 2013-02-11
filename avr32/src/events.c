@@ -63,7 +63,6 @@ bool get_next_event( event_t *e ) {
   if (fReenableInterrupts) {
     Enable_interrupt_level( TIMER_INT_LEVEL );
   }
-
   return status;
 }
 
@@ -72,6 +71,14 @@ bool get_next_event( event_t *e ) {
 bool post_event( event_t *e ) {
   bool status = false;
   int saveIndex;
+  // debug hook
+  /*
+  if (e->eventType < kEventAdc0) {
+    print_dbg(" ... posted knob/switch event, type ");
+    print_dbg_ulong(e->eventType); print_dbg(".");
+  } 
+  */
+
   bool fReenableInterrupts = Is_interrupt_level_enabled( TIMER_INT_LEVEL );
 
   Disable_interrupt_level( TIMER_INT_LEVEL );
@@ -94,8 +101,7 @@ bool post_event( event_t *e ) {
   } else {
     // idx wrapped, so queue is full, restore idx
     putIdx = saveIndex;
-  }
-  
+  } 
   if (fReenableInterrupts) {
     Enable_interrupt_level( TIMER_INT_LEVEL );
   }

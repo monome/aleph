@@ -30,15 +30,16 @@
 #define PARAM_TYPE_UINT  2
 
 // 4-byte union of value representations
-/*
 typedef union __attribute__((__packed__)) {
   f32 asFloat;
   fract32 asFract;
+  s32 asInt;
   u32 asUint;
   u8 asByte[4];
   u16 asShort[2];
 } ParamValue;
-*/
+
+// simpler for internals
 typedef union { u32 u; s32 s; fix16 fix; fract32 fr; float f; } pval;
 
 // parameter descriptor
@@ -57,8 +58,7 @@ typedef struct __attribute__((__packed__)) ParamDescStruct {
 
 // parameter data
 typedef struct __attribute__((__packed__)) ParamDataStruct {
-  //  volatile ParamValue value;
-  volatile pval value;
+  volatile ParamValue value;
   volatile u8 changed;
 } ParamData;
 

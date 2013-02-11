@@ -19,22 +19,19 @@
 
 // get value for param at given idx
 io_t get_param_value(u32 idx) {
-  // NOTE: io_t is float, change this if it becomes otherwise
-  return (io_t)(net->params[idx].data.value.asFloat);
+  return (io_t)(net->params[idx].data.value.asInt); 
 }
 
-// get preset-enabled for param at given idx
+// get preset-enabled flag for param at given idx
 u8 get_param_preset(u32 idx) {
-  return net->params[idx].preset;
+  //return net->params[idx].preset;
 }
 
 // set value for param at given idx
 void set_param_value(u32 idx, io_t val) {
-  // NOTE: io_t is float, change this if it becomes otherwise
-  // don't cast, hopefully we get a warning
-  set_param_float_value(idx, val);
+  net->params[idx].data.value.asInt = val;
+  net->params[idx].data.changed = 1;
 }
-
 
 // set a parameter value using a 32bit integer
 // mapped to the parameter's float range

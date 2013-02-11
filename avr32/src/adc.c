@@ -25,25 +25,12 @@
 #define AD7927_CMD_BASE ( AD7923_CTL_WRITE | AD7923_CTL_PM0 | AD7923_CTL_PM1 | AD7923_CTL_CODING)
 
 // adc events
-static const eEventType getAdcEvent(const u8 i) {
-  switch(i) {
-  case 0:
-    return kEventAdc0;
-    break;
-  case 1:
-    return kEventAdc1;
-    break;
-  case 2:
-    return kEventAdc2;
-    break;
-  case 3:
-    return kEventAdc3;
-    break;
-  default:
-    return 0;
-    break;
-  }
-}
+static const eEventType adcEventTypes[4] = { 
+  kEventAdc0 ,
+  kEventAdc1 ,
+  kEventAdc2 ,
+  kEventAdc3 ,
+};
 
 // perform a conversion on all 4 channels
 static void adc_convert(U16 (*dst)[4]) {
@@ -160,7 +147,7 @@ void adc_poll(void) {
     /// probably want more filtering before posting events
     if(adcVal[i] != adcOldVal[i]) {
       adcOldVal[i] = adcVal[i];
-      e.eventType = getAdcEvent(i); //kAdcEvents[i];
+      e.eventType = adcEventTypes[i]; // getAdcEvent(i); //kAdcEvents[i];
       e.eventData = (S16)(adcVal[i]);
       post_event(&e);
     }
