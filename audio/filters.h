@@ -30,13 +30,13 @@ typedef struct _filter_1p_fr32 {
 //==== fix16
 
 // intialize at pre-allocated memory
-extern void filter_1p_fix16_init(filter_1p_fix16* f, u32 sr, fix16 hz, fix16 in);
+extern void filter_1p_fix16_init(   filter_1p_fix16* f, u32 sr, fix16 hz, fix16 in);
 // set cutoff frequency in hz
-extern void filter_1p_fix16_set_hz(filter_1p_fix16* f, fix16 hz);
+extern void filter_1p_fix16_set_hz( filter_1p_fix16* f, fix16 hz);
 // set input value
-extern void filter_1p_fix16_in(filter_1p_fix16* f, fix16 val);
+extern void filter_1p_fix16_in(     filter_1p_fix16* f, fix16 val);
 // get next filtered value
-extern fix16 filter_1p_fix16_next(filter_1p_fix16* f);
+extern fix16 filter_1p_fix16_next(  filter_1p_fix16* f);
 
 
 //==========

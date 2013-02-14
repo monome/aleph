@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 //aleph
-//#include "fix.h"
+#include "fix.h"
 #include "param_common.h"
 #include "module.h"
 #include "types.h"
@@ -50,9 +50,8 @@ void handle_key(u16 ch) {
     printf("\rsetting parameter %d, %s\n", paramIdx, moduleData->paramDesc[paramIdx].label);
     printf("enter param value (float): \n"); 
     prompt();
-    //    pv.fix = atof(input);
-    
-    //    module_set_param(paramIdx, pv);
+    pv.fix = fix16_from_float(atof(input));
+    module_set_param(paramIdx, pv);
 
     break;
   default:

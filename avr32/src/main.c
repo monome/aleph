@@ -1,5 +1,5 @@
 /* main.c
- * avr32_test
+ * avr32
  * aleph
  *
  * 
@@ -128,10 +128,17 @@ static void check_events(void) {
   //  cycles = Get_system_register(AVR32_COUNT)  
 
   if( get_next_event(&e) ) {
+
+
+    print_dbg("\r\n event handler got: ");
+    print_dbg_ulong(e.eventType);
+
+
     if(startup) {
       /// a hack!
       /// this should select only switch events...
       if(e.eventType > kEventEncoder3) { 
+	startup = 0;
 	//perform_startup();
 	///// TEST I2C as master
 	//	i2c_tx(44, 0, 0, 5, &(e.eventType) - 1);
@@ -151,20 +158,20 @@ static void check_events(void) {
 	menu_handleKey(eKeyFnUpA);
 	break;
       case kEventSwitchDown1:
-	print_dbg("\r\n switch f1 down");
+	//      print_dbg("\r\n switch f1 down");
 	menu_handleKey(eKeyFnDownB);
 	break;
       case kEventSwitchUp1:
-	print_dbg("\r\n switch f1 up");
+	//	print_dbg("\r\n switch f1 up");
 	menu_handleKey(eKeyFnUpB);
 	break;
       case kEventSwitchDown2:
-	print_dbg("\r\n switch f2 down");
-	//	menu_handleKey(eKeyFnDownC);
+	//	print_dbg("\r\n switch f2 down");
+	menu_handleKey(eKeyFnDownC);
 	break;
       case kEventSwitchUp2:
-	print_dbg("\r\n switch f2 up");
-	//	menu_handleKey(eKeyFnUpC);
+	//	print_dbg("\r\n switch f2 up");
+	menu_handleKey(eKeyFnUpC);
 	break;
       case kEventSwitchDown3:
 	menu_handleKey(eKeyFnDownD);
@@ -391,24 +398,8 @@ int main (void) {
   screen_line(0, 1, "press any key to continue...", 0x3f);
   screen_refresh();
   
-  ///////////////
-  ////////////
-  //// I2C test
-  //    i2c_init(44);
-  //       i2c_init(66);
-  //  screen_line(0, 0, "testing I2C as master.", 0x3f);
-  //  screen_refresh();
-  
-  //  test_pdca();
-
-  // scan drives, list files
-  //  files_list();  
-
-  // files_scan_dsp();
-
-
   // set up file navigation
-  init_files();
+  //  init_files();
 
 
   // send ADC config
@@ -416,13 +407,15 @@ int main (void) {
 
   // start application timers
   init_app_timers();
+
   print_dbg("starting event loop.\n\r");
 
   // keep the blackfin out of reset
   gpio_set_gpio_pin(BFIN_RESET_PIN);  
   dum = 0;
 
-  // event loop  screen_blank_line(0, 1);
+  // event loop 
+  screen_blank_line(0, 1);
   screen_blank_line(0, 2);
   screen_blank_line(0, 3);
   screen_blank_line(0, 4);
@@ -444,10 +437,15 @@ int main (void) {
 
 
   /// boot default ds
-  files_load_dsp_name("default.ldr");
+  //  files_load_dsp_name("default.ldr");
   /// wait for bfin to finish boot
-  delay = 800000; while(delay--) {;;}
-  report_params();
+  //  delay = 800000; while(delay--) {;;}
+  //  report_params();
+
+
+  while(1) { 
+    check_events();
+  }
 }
 
 

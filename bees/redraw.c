@@ -78,8 +78,6 @@ void redraw_ops(void) {
   s32 n, nCenter;         // which list entry
   // total count of ops, including system-controlled
   const u16 num = net_num_ops();
-  //  print_dbg("\r\n NUM OPS: ");
-  //  print_dbg_hex(num);
   // draw the header
   screen_line(0, 0, "OPERATORS", 15);
   // print selection at center
@@ -123,8 +121,6 @@ void redraw_ins(void) {
   u8 y = 0;                       // which line
   s32 n, nCenter;         // which list entry
   const u16 num = net_num_ins(); // how many 
-
-  //  print_dbg("\r\n redraw INS");
 
   // print selection at center
   nCenter = curPage->selected;
@@ -259,10 +255,6 @@ void redraw_scenes(void) {
   u8 y = 0;                       // which line
   s32 n, nCenter;         // which list entry
   const u16 num = SCENE_COUNT; // how many 
-
-  // print_dbg("\r\n NUM SCENES: ");
-  // print_dbg_hex(num);
-
   // print selection at center
   nCenter = curPage->selected;
   if (nCenter >= num) {
@@ -353,10 +345,6 @@ void redraw_play(void) {
   u8 n = CHAR_ROWS_1;
   u8 idx;
 
-  ///// TEST
-  //  return;
-  ////
-
   for(y = 1; y < CHAR_ROWS; y++ ) {
     //    println("", 0);
     idx = touchedParams[n].idx;
@@ -392,15 +380,6 @@ static void draw_line_ops(s32 n, u16 num, u8 y, u8 hl) {
     n -= num;
   } 
 
-  /*
-  print_dbg("\r\n OPS ; n: ");
-  print_dbg_hex(n);
-  print_dbg(" , num: ");
-  print_dbg_hex(num);
-  print_dbg(" , y: ");
-  print_dbg_hex(y);
-  */
-
   // clearln();
   screen_blank_line(0, y);
   println_int(n, 0); endln();
@@ -420,33 +399,24 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
   } else if (n >= num) {
     n -= num;
   } 
-  /*
-  print_dbg("\r\n drawing input line at idx: ");
-  print_dbg_hex(n);
-  */
   opIdx = net_in_op_idx(n);
   //  if (net_get_in_preset(n)) { pch = '*'; } else { pch = '.'; }
   screen_blank_line(0, y);
   if (opIdx >=0 ) { // this is an operator input
-    //    clearln();
     println_int(opIdx, 0);
     endln(); screen_string(0, y, lineBuf, hl);
-    //    clearln();
     println( net_op_name(opIdx), 0 );
     appendln_char('/');
     appendln( net_in_name(n) );
     endln(); screen_string(16, y, lineBuf, hl);
-    //    clearln();
     print_fix16(numBuf, net_get_in_value(n) );
     screen_line(80, y, numBuf, hl);
   } else { // this is a parameter input
     println("P_", 0);
     appendln_int_lj( (int)net_param_idx(n));
     endln(); screen_string(0, y, lineBuf, hl);
-    // clearln();
     println( net_in_name(n) , 0);
     endln(); screen_string(16, y, lineBuf, hl);
-    // clearln();
     print_fix16(numBuf, net_get_in_value(n) );
     screen_line(80, y, numBuf, hl);
   }
@@ -466,15 +436,12 @@ static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
   //  if (net_get_out_preset(n)) { pch = '*'; } else { pch = '.'; }
   screen_blank_line(0, y);
   if (target >= 0) {
-    // clearln();
     println_int(net_out_op_idx(n), 0);
     endln(); screen_string(0, y, lineBuf, hl);
-    // clearln();
     println( net_op_name(net_out_op_idx(n)) , 0);
     appendln_char('/');
     appendln( net_out_name(n) );
     endln(); screen_string(16, y, lineBuf, hl);
-    // clearln();
     println("-> ", 0);
     appendln_int_lj( net_in_op_idx(target) );
     appendln_char('.');
@@ -483,46 +450,24 @@ static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
     appendln( net_in_name(target) );
     endln(); screen_string(60, y, lineBuf, hl);
   } else {
-    // clearln();
     println_int(net_out_op_idx(n), 0);
     endln(); screen_string(0, y, lineBuf, hl);
-    // clearln();
     println( net_op_name(net_out_op_idx(n)) , 0);
     appendln_char('/');
     appendln( net_out_name(n) );
     endln(); screen_string(16, y, lineBuf, hl);
   }
-  //  screen_line(0, y, lineBuf, hl); 
 }
 
 // draw line of presets page
 void draw_line_presets(s32 n, u16 num, u8 y, u8 hl) {
-
-  // wrap
   if (n < 0) {
     n += num;
   } else if (n >= num) {
     n -= num;
   } 
-  /*
-  print_dbg("\r\n preset line ; n: ");
-  print_dbg_hex(n);
-  print_dbg(" , num: ");
-  print_dbg_hex(num);
-  print_dbg(" , y: ");
-  print_dbg_hex(y);
-  */
-  //  print_dbg("\r\n preset address: ");
-  //  print_dbg_hex((u32)&(*(preset_get_presets())[n]));
-  //  print_dbg("\r\n name: ");
-  //  print_dbg(preset_name(n));
   
   screen_blank_line(0, y);
-
-  //////////
-  // LATER
-  //  return;
-  ///////////
 
   println_int((int)n, 0);
   endln(); screen_string(0, y, lineBuf, hl);
@@ -532,15 +477,6 @@ void draw_line_presets(s32 n, u16 num, u8 y, u8 hl) {
 
 // draw line of scenes page
 void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
-
-  
-  // print_dbg("\r\n SCENES ; n: ");
-  // print_dbg_hex(n);
-  // print_dbg(" , num: ");
-  // print_dbg_hex(num);
-  // print_dbg(" , y: ");
-  // print_dbg_hex(y);
-  
   // wrap
   if (n < 0) {
     n += num;
@@ -550,7 +486,7 @@ void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
 
   screen_blank_line(0, y);
 
-  ////// LATER
+  ////// TODO
   return;
   //////
 
@@ -568,17 +504,9 @@ void draw_line_dsp(s32 n, u16 num, u8 y, u8 hl) {
   } else if (n >= num) {
     n -= num;
   } 
-
   screen_blank_line(0, y);
-
-  ////// LATER
-  return;
-  //////
-
-  println_int((int)n, 0);
-  endln(); screen_string(0, y, lineBuf, hl);
-  println(scene_name(n), 0);
-  endln(); screen_string(16, y, lineBuf, hl);
+  println( files_get_dsp_name(n), 0);
+  endln(); screen_string(0, y, lineBuf, hl); 
 }
 
 
@@ -596,8 +524,6 @@ static inline void appendln(const char* str) {
   while((*str != 0) && (pline <= pLineEnd)) {
     *pline++ = *str++;
   }
-  //  print_dbg(" , end: ");
-  //  print_dbg_hex(pline);
 }
 
 // write int to top of line buffer

@@ -1,7 +1,7 @@
-/* mono.c
+/* mono_fm.c
  * nullp
  * 
- * a monosynth module using FM chain synthesis (dx-7 style)
+ * a simple FM monosynth.
  */
 
 // std
@@ -13,22 +13,25 @@
 // aleph-common
 #include "fix.h"
 #include "simple_string.h"
+#include "types.h"
 
 #ifdef ARCH_BFIN
+// bfin
 #include "bfin_core.h"
 #include "fract_math.h"
 #include <fract2float_conv.h>
 #else
+// linux
 #include "fract32_emu.h"
 #include "audio.h"
 #endif
 
-// null
-#include "env.h"
+// audio
 #include "filters.h"
 #include "module.h"
 #include "table.h"
-#include "types.h"
+#include "env.h"
+
 
 /// DEBUG
 //static u32 framecount = 0;

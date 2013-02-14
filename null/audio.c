@@ -1,6 +1,7 @@
 /*
  * audio.c
- * null[
+ * null
+ * aleph
  *
  * portaudio-based test audio host for bfin module development
  * (linux only)

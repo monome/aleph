@@ -13,13 +13,13 @@
 #include "fract32_emu.h"
 
 //// test
-#include "env.h"
+//#include "env.h"
 
 
 u8 run = 1;
 
 ///// test env
-env_asr* env;
+//env_asr* env;
 
 
 int main(void) { 

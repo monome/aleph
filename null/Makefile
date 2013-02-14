@@ -10,9 +10,9 @@ LDFLAGS += -lm
 COMMON = ../common
 LIBFIXMATH = $(COMMON)/libfixmath
 AUDIOLIB = ../audio
-INC += -I$(COMMON) -I$(LIBFIXMATH) -I$(AUDIOLIB)
+INC := -I$(COMMON) -I$(LIBFIXMATH) -I$(AUDIOLIB)
 
-APP = null
+# # APP := null
 OBJ  = main.o \
 	audio.o \
 	ui.o \
@@ -22,19 +22,24 @@ OBJ  = main.o \
 	$(COMMON)/simple_string.o \
 	$(COMMON)/fix.o
 
-OBJ +=	$(AUDIOLIB)/env.o \
+MONO_FM_OBJ :=  mono_fm.o \
+	$(AUDIOLIB)/env.o \
 	$(AUDIOLIB)/filters.o \
 	$(AUDIOLIB)/table.o
 
-OBJ += mono_fm.o
-
-$(APP) : $(OBJ)
+mono_fm : $(OBJ) $(MONO_FM_OBJ)
+	echo $(INC)
 	$(CC) $(CFLAGS) $(INC) -o $@ $^ $(LDFLAGS)
-#	chmod +x $(APP)
 
-$(OBJ) : %.o : %.c
+TAPE_OBJ :=  tape.o \
+	$(AUDIOLIB)/filters.o \
+
+tape : $(OBJ) $(TAPE_OBJ)
+	$(CC) $(CFLAGS) $(INC) -o $@ $^ $(LDFLAGS)
+
+%.o : %.c
 	$(CC) $(CFLAGS) -c $(INC) -o $@ $<
 
 clean :
 	rm $(OBJ)
-	rm $(APP)
+	rm *.o

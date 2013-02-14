@@ -16,36 +16,14 @@ typedef union { f32 fl; fract32 fr; } fu;
 #define TAB_AS_FLOAT(x, i) ( (fu*)((x) + (i)) )->fl
 #define TAB_AS_FR32(x, i) ( (fu*)((x) + (i)) )->fr
 
-/* chebyshev polynomials:
-   T[0](x) = 1
-   T[1](x) = x
-   T[n+1](x) = 2*x*T[n](x) - T[n-1](x)
-*/
 
 //--------------------------------
 //---- external function declarations
 
-// intialize given number of bits
-/*
-extern void fixtable_init(fract32* tab, u32 bits) { 
-  u32 i;
-  
-  tab->data = (fract32*)malloc(sizeof(fract32) * tab->size);
-  for(i = 0; i<tab->size; i++) {
-    tab->data[i] = 0;
-  }
-}
-*/
-
-// de-intialize
-/*
-extern void fixtable_deinit(fract32* tab) {
-}
-*/
 
 ////////////////////
 /// FIXME: i want to inline these interpolated lookups in several modules,
-/// but cna't figure out how to do it without multiple definition errors...
+/// but can't figure out how to do it without multiple definition errors...
 // lookup given real index in 16.16
 fract32 fixtable_lookup_idx(fract32* tab, u32 size, fix16 idx) {
   fract32 a, b, f;
@@ -79,7 +57,6 @@ extern void fixtable_fill_harm(fract32* tab, u32 size, u8 order, f32 decay, u8 n
   f32 min, max;
   f32 inc, x, amp;
   u32 s, h; // sample, harmonic
-
 
   amp = 1.f;
  
@@ -136,5 +113,10 @@ extern void fixtable_fill_harm(fract32* tab, u32 size, u8 order, f32 decay, u8 n
 
 // fill a table of given size with cheby polynomial of given order
 extern void fixtable_fill_cheby(fract32* tab, u32 size, u8 order) {
-  
+
+/* chebyshev polynomials:
+   T[0](x) = 1
+   T[1](x) = x
+   T[n+1](x) = 2*x*T[n](x) - T[n-1](x)
+*/  
 }
