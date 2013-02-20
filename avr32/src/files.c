@@ -26,35 +26,33 @@
 #define FILES_STATIC_MEM 1
 
 
-#if FILES_STATIC_MEM
-// make as big as we can handle in static mem
-#define MAX_BFIN_LDR_BYTES 6000
-//#define MAX_BFIN_LDR_BYTES 22000
-#else
-// grab a RAM buffer big enough for bf533s instruction SRAM
-#define MAX_BFIN_LDR_BYTES 64000
-#endif 
+/* #if FILES_STATIC_MEM */
+/* // make as big as we can handle in static mem */
+/* //#define MAX_BFIN_LDR_BYTES 6000 */
+/* #define MAX_BFIN_LDR_BYTES 21000 */
+/* #else */
+/* // grab a RAM buffer big enough for bf533s instruction SRAM */
+/* #define MAX_BFIN_LDR_BYTES 64000 */
+/* #endif  */
 
 // list of names
 //#define FILES_LIST_MAX_ENTRIES 128; 
-#define MAX_NUM_DSP 64
+#define MAX_NUM_DSP 32
 #define DSP_NAME_LEN 32
-#define DSP_LIST_BUF_SIZE 2048 // len * num
+#define DSP_LIST_BUF_SIZE 1024 // len * num
 
 //------------------------------
 //----- -static vars
 
-
 #if FILES_STATIC_MEM
 // bfin ldr file buffer
-volatile u8 load_buf[MAX_BFIN_LDR_BYTES];
+//volatile u8 load_buf[MAX_BFIN_LDR_BYTES];
 // dsp name list  - global for speed
 volatile char dsp_name_buf[DSP_LIST_BUF_SIZE];
 #else
-volatile u8* load_buf;
+//volatile u8* load_buf;
 volatile char * dsp_name_buf;
 #endif
-
 
 // current path buffer
 // current directory status
@@ -67,7 +65,6 @@ static u8 numDsp = 0;
 //---------------------------------
 //------ function declaration
 //static int test_files(void);
-
 
 //---------------------------------
 //----- function definition
@@ -94,6 +91,9 @@ void init_files(void) {
     print_dbg("\r\n allocation error in files init \r\n");
   }
 #endif
+
+  files_scan_dsp();
+
 }
 
 // populate the dsp filelist with names
@@ -105,8 +105,10 @@ void files_scan_dsp(void) {
   if( fl_opendir("/dsp", &dirstat) ) {      
     while (fl_readdir(&dirstat, &dirent) == 0) {
       if( !(dirent.is_dir) ) {
-	numDsp++;
+	print_dbg("\r\n adding dsp file : ");
+	print_dbg(dirent.filename);
 	strcpy((char *)dsp_name_buf + (numDsp * DSP_NAME_LEN), dirent.filename);
+	numDsp++;
       }
     }
   }
@@ -128,7 +130,7 @@ void files_load_dsp_name(const char* name) {
   struct fs_dir_ent dirent;
   char path[64];
   void* fp;
-  unsigned long int i;
+  // unsigned long int i;
 
   if( fl_opendir("/dsp", &dirstat) ) {      
     while (fl_readdir(&dirstat, &dirent) == 0) {
@@ -140,17 +142,22 @@ void files_load_dsp_name(const char* name) {
 	fp = fl_fopen(path, "r");
 	if( fp != NULL) {	  
 	  print_dbg("\r\n found file, loading dsp... \r\n");
-	  if(dirent.size > MAX_BFIN_LDR_BYTES) {
-	    print_dbg("\r\n .ldr file too big for bfin memory! \r\n");
-	  } else {
-	    // FIXME: wish this worked:
-	    //	    fl_fread(load_buf, 1, dirent.size, fp);
-	    for(i=0; i<dirent.size; i++) {
-	      load_buf[i] = fl_fgetc(fp);
-	    }
-	    fl_fclose(fp);
-	    bfin_load(dirent.size, load_buf);
-	  }
+
+	  //// we need to buffer the LDR file to save memory.
+	  //// this sort of breaks modularity, oh well.
+
+	  /* if(dirent.size > MAX_BFIN_LDR_BYTES) { */
+	  /*   print_dbg("\r\n .ldr file too big for bfin memory! \r\n"); */
+	  /* } else { */
+	  /*   // FIXME: wish this worked: */
+	  /*   //	    fl_fread(load_buf, 1, dirent.size, fp); */
+	  /*   for(i=0; i<dirent.size; i++) { */
+	  /*     load_buf[i] = fl_fgetc(fp); */
+	  /*   } */
+	  /*   fl_fclose(fp); */
+	  /*   bfin_load(dirent.size, load_buf); */
+	  /* } */
+
 	} else {
 	  print_dbg("\r\n error: fp was null in load_dsp_name \r\n");
 	}

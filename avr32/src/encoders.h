@@ -7,6 +7,7 @@
 
 #include "compiler.h"
 #include "event_types.h"
+#include "types.h"
 
 #define NUM_ENC    4
 
@@ -18,16 +19,18 @@ typedef struct _enc {
   // current value of accumulator
   S16 val;
   // threshold to set sensitivity
-  S16 thresh;
+    S16 thresh;
   // event number to post on change
   eEventType event;
 } enc_t;
 
 // encoder pin array (see interrupt handler for usage)
 extern enc_t enc[NUM_ENC];
-// generate events from encoder interrupts
-extern void process_enc( const U8 encIdx );
+// process inputs and determine direction of given encoder
+extern void process_enc( const U8 enc );
 // intialize encoder positions
 extern void init_encoders(void);
+// set threshold of encoder at given idx
+extern void set_enc_thresh( const u8 idx, const u8 v );
 
 #endif // header guard

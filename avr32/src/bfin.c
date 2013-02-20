@@ -13,16 +13,43 @@
 /////
 // aleph
 #include "conf_aleph.h"
+#include "filesystem.h"
 #include "global.h"
 #include "param.h"
 #include "protocol.h"
 #include "types.h"
 #include "bfin.h"
 
-// HWAIT status from blackfin
-// volatile U8 hwait = 0;
-
 // load a blackfin executable
+//// need to buffer the LDR file to save memory.
+//// so, alas, we must use file I/O from here
+void bfin_load(U32 size, void* fp) {
+  u64 i; /// byte index in .ldr
+  u8 data;
+  volatile U64 delay;
+  // FIXME: (?)
+  Disable_global_interrupt();
+  // reset bfin
+  gpio_set_gpio_pin(BFIN_RESET_PIN);  
+  delay = 30; while (--delay > 0) {;;}
+  gpio_clr_gpio_pin(BFIN_RESET_PIN);
+  delay = 30; while (--delay > 0) {;;}
+  gpio_set_gpio_pin(BFIN_RESET_PIN);  
+  delay = 3000; while (--delay > 0) {;;}
+  // send the .ldr data
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  i = 0;
+  while(i<size) {
+    data = fl_fgetc(fp);
+    while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { ;; }
+    spi_write(BFIN_SPI, data);
+    i++;
+  }
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  // FIXME: (?)
+  Enable_global_interrupt();
+}
+  /*
 void bfin_load(U32 size, volatile u8 * data) {
   volatile U64 delay;
   U64 byte;
@@ -63,6 +90,7 @@ void bfin_load(U32 size, volatile u8 * data) {
   print_dbg("\r\ndone loading bfin. \r\n");
 
 }
+*/
 
 void bfin_set_param(u8 idx, f32 x ) {
   static ParamValue pval;

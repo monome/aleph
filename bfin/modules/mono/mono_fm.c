@@ -33,7 +33,7 @@
 /// DEBUG
 //static u32 framecount = 0;
 
-typedef union { u32 u; s32 s; fix16 fix; fract32 fr; } pval;
+//typedef union { u32 u; s32 s; fix16 fix; fract32 fr; } pval;
 
 ///// inputs
 enum params {

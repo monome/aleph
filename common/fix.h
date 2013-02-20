@@ -21,7 +21,9 @@
 
 #define BSIGN(x) ((x) & 0x80000000)
 #define BINV(x) ((x) ^ 0xffffffff)
-#define BABS(x) (BSIGN(x) ? BINV(x) - 1 : (x))
+//#define BABS(x) (BSIGN(x) ? BINV(x) - 1 : (x))
+// hm?
+#define BABS(x) (BSIGN(x) ? BINV(x) + 1 : (x))
 
 // macros for fract32/fix16 conversion
 #define FIX16_TO_U16(x) (u16)((x) >> 16)

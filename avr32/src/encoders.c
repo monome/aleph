@@ -13,6 +13,8 @@
 #include "event_types.h"
 #include "encoders.h"
 
+#define ENC_THRESH_DEFAULT 0
+
 //--------------------------
 //---- external variables
 
@@ -46,7 +48,7 @@ void init_encoders(void) {
   // realtime initial pin values
   for(i=0; i<NUM_ENC; i++) {
     enc[i].pos = gpio_get_pin_value(enc[i].pin[0]) + (gpio_get_pin_value(enc[i].pin[1]) << 1);
-    enc[i].thresh = 15;
+    enc[i].thresh = ENC_THRESH_DEFAULT;
   }
 
   ////// TEST:
@@ -55,7 +57,7 @@ void init_encoders(void) {
 
 }
 
-// post events based on encoder movements
+// apply pin mapping to deteremine movement
 void process_enc( const U8 idx) {
   //event_t e;  
   // S8 val = 0;
@@ -78,3 +80,6 @@ void process_enc( const U8 idx) {
 }
   
 
+void set_enc_thresh( const u8 idx, const u8 v ) {
+  enc[idx].thresh = v;
+}
