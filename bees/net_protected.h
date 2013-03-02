@@ -34,21 +34,21 @@
 // input node type (function pointer)
 typedef struct _inode {
   // parent op index in net list
-  u16 opIdx;
+  s32 opIdx;
   // input index in parent op list
-  u16 opInIdx;
+  u8 opInIdx;
   // preset inclusion flag
   u8 preset;
 } inode_t;
 
 // output node type (index into inode list)
 typedef struct _onode {
-  // output idx in parent op's output list
-  u16 outIdx;
+  // output idx in parent op's output list2
+  u8 opOutIdx;
   // target input idx in net list
   s16 target;
   // parent op's index in net list
-  u16 opIdx;
+  s32 opIdx;
   // preset inclusion flag
   u8 preset;
 } onode_t;
@@ -66,10 +66,8 @@ typedef struct _pnode {
 typedef struct _ctlnet {
   op_t * ops[NET_OPS_MAX];
 #if NET_USE_MALLOC
-  // bitfields for allocating ops, ins, and outs
+  // bitfields for operator allocation
   u8 opsUsed[BITNSLOTS(NET_OPS_MAX)];
-  u8 insUsed[BITNSLOTS(NET_INS_MAX)];
-  u8 outsUsed[BITNSLOTS(NET_OUTS_MAX)];
 #else
   // operator memory, statically allocated as char array
   u8 opPoolMem[NET_OP_POOL_SIZE];

@@ -104,6 +104,14 @@ void net_add_param(u32 idx, volatile ParamDesc* pdesc);
 // clear existing parameters
 void net_clear_params(void);
 
+// forward/backward search for input/output nodes
+s32 net_next_in(void);
+s32 net_prev_in(void);
+s32 net_next_out(void);
+s32 net_prev_out(void);
+void net_reset_in_search(void);
+void net_reset_out_search(void);
+
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections
 u32 net_gather(s32 iIdx, u32(*outs)[NET_OUTS_MAX]);

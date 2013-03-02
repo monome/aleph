@@ -36,6 +36,9 @@ void bfin_load(U32 size, void* fp) {
   
 
   // FIXME: (?)
+ 
+  //// disabling gloabl interrupts will break SDcard acces.
+  //// seems like th eboot process is pretty robust regarding inter-byte delays. 
   //  Disable_global_interrupt();
   // reset bfin
   gpio_set_gpio_pin(BFIN_RESET_PIN);  

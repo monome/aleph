@@ -474,7 +474,6 @@ int main (void) {
   delay = 800000; while(delay--) {;;}
   report_params();
 
-
   while(1) { 
     check_events();
   }
