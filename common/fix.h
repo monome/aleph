@@ -32,6 +32,10 @@
 #define FIX16_FRACT_TRUNC(x) (fract32)(((x) & 0xffff) << 16)
 #define FRACT_FIX16(x) ( BSIGN(x) ? ((x)>>15) | 0xffff8000 : (x)>>15 )
 
+#define LIMIT_RANGE(x, max, min) ( ((x) > (max) ? (max) :  \
+			     (x) < (min) ? (min) : (x) ) ) 
+#define FIX16_FRACT_SAT(x) LIMIT_RANGE((x), 0xffff, 
+
 // print to a buffer
 void print_fix16(char* buf , fix16_t x);
 // whole-part integer to ascii, right-justified, fixed-length

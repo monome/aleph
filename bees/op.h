@@ -13,6 +13,11 @@
 #include "types.h"
 #include "op_math.h"
 
+// max inputs in a single operator
+#define OP_INS_MAX 32
+// max outputs in a single operator
+#define OP_OUTS_MAX 32
+
 //---- operator list enum
 typedef enum {
   eOpSwitch,
@@ -82,71 +87,22 @@ typedef struct op_struct {
   //  u32 memOffset;
 } op_t;
 
-/// get input name
-const char* op_in_name(op_t* op, const u8 idx);
-// get output name
-const char* op_out_name(op_t* op, const u8 idx);
-// get input value
-io_t op_get_in_val(op_t* op, s16 idx);
-// set input valueo
-void op_set_in_val(op_t* op, s16 idx, const io_t val);
-
-/// ===== operator subclasses
-// each of these structures holds the superclass and private state vairables
-// inputs and outputs are described in the _init function defs
-
-
-
-//// TODO: need work
-/*
-//--- op_accum_t : accumulator
-typedef struct op_accum_struct {
-  op_t super;
-  io_t val, min, max, wrap;
-  op_out_t outs[2];
-} op_accum_t;
-void op_accum_init(op_accum_t* accum);
-*/
-
-/*
-//--- op_sel_t : range selection 
-typedef struct op_sel_struct {
-  op_t super;
-  io_t min, max;
-} op_sel_t;
-void op_sel_init(op_sel_t* sel);
-*/
-
-/*
-//--- op_lin_t : linear map
-typedef struct op_lin_struct {
-  op_t super;
-  io_t inMin, inMax, outMin, outMax, x;
-} op_lin_t;
-void op_lin_init(op_lin_t* lin);
-*/
-
-/*
-//--- op_exp_t : exponential map
-typedef struct op_exp_struct {
-  op_t super;
-  io_t inMin, inMax, outMin, outMax, x;
-} op_exp_t;
-void op_exp_init(op_exp_t* exp);
-*/
-
-/*
-//--- op_param_t : receive parameter change
-typedef struct op_param_struct {
-  op_t super;
-  u32 idx;
-  io_t val;
-} op_param_t;
-void op_param_init(op_param_t* param);
-*/
 
 //-----------------------------------
 //---- public data
 extern const op_desc_t op_registry[numOpClasses];
+
+//-----------------------------------
+//---- public functions
+// initialize operator at memory
+extern s16 op_init(op_t* op, opId_t opId);
+// get input name
+extern const char* op_in_name(op_t* op, const u8 idx);
+// get output name
+extern const char* op_out_name(op_t* op, const u8 idx);
+// get input value
+extern io_t op_get_in_val(op_t* op, s16 idx);
+// set input valueo
+extern void op_set_in_val(op_t* op, s16 idx, const io_t val);
 
 #endif // header guard

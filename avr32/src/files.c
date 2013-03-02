@@ -142,10 +142,10 @@ void files_load_dsp_name(const char* name) {
 	fp = fl_fopen(path, "r");
 	if( fp != NULL) {	  
 	  print_dbg("\r\n found file, loading dsp... \r\n");
-
 	  //// we need to buffer the LDR file to save memory.
 	  //// this sort of breaks modularity, oh well.
-
+	  bfin_load(dirent.size, fp);
+	  fl_fclose(fp);
 	  /* if(dirent.size > MAX_BFIN_LDR_BYTES) { */
 	  /*   print_dbg("\r\n .ldr file too big for bfin memory! \r\n"); */
 	  /* } else { */

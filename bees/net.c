@@ -24,6 +24,7 @@
 #include "net_protected.h"
 #include "param.h"
 #include "types.h"
+#include "util.h"
 
 //=========================================
 //===== variables
@@ -46,9 +47,6 @@ static void add_sys_ops(void) {
   net_add_op(eOpSwitch);
   net_add_op(eOpSwitch);
   net_add_op(eOpSwitch);
-  // 1 param receiver
-  //// no, params are specialized input nodes
-  //net_add_op(eOpParam);
   // 1 preset receiver
   //  net_add_op(eOpPreset);
 }
@@ -61,18 +59,34 @@ void net_init(void* mem) {
   u32 i;
   //  net = (ctlnet_t*)alloc_mem(sizeof(ctlnet_t));
   net = (ctlnet_t*)mem;
+#if NET_USE_MALLOC
+  // zero out op pointer array....
+  for(i=0; i<NET_OPS_MAX; i++) {
+    net->ops[i] = NULL;
+  }
+  // ... and allocation flags
+  for(i=0; i<BITNSLOTS(NET_OPS_MAX); i++) {
+    net->opsUsed[i] = 0;
+  }
+  for(i=0; i<BITNSLOTS(NET_INS_MAX); i++) {
+    net->insUsed[i] = 0;
+  }
+  for(i=0; i<BITNSLOTS(NET_OUTS_MAX); i++) {
+    net->outsUsed[i] = 0;
+  }
+#else
   for(i=0; i<NET_OP_POOL_SIZE; i++) {
     net->opPoolMem[i] = (u8)0;
   }
   net->opPool = (void*)&(net->opPoolMem);
+  net->opPoolOffset = 0;
+#endif
   net->numOps = 0;
   net->numIns = 0;
   net->numOuts = 0;
   net->numParams = 0;
-  net->opPoolOffset = 0;
   printf("initialized network, using %d bytes\n", (int)sizeof(ctlnet_t));
   add_sys_ops();
-  
 }
 
 // de-initialize network
@@ -82,21 +96,16 @@ void net_deinit(void) {
 
 // activate an input node with a value
 void net_activate(s16 inIdx, const io_t val) {
-
-  /*
-    print_dbg("\r\n net activate: ");
-    print_dbg_hex(inIdx);
-    print_dbg(", val: ");
-    print_dbg_hex(val);
-    print_dbg(" , op idx: ");
-    print_dbg_hex(net->ins[inIdx].opIdx);
-    print_dbg(" , op in idx: ");
-    print_dbg_hex(net->ins[inIdx].opInIdx);
-  */
+    /* print_dbg("\r\n net activate: "); */
+    /* print_dbg_hex(inIdx); */
+    /* print_dbg(", val: "); */
+    /* print_dbg_hex(val); */
+    /* print_dbg(" , op idx: "); */
+    /* print_dbg_hex(net->ins[inIdx].opIdx); */
+    /* print_dbg(" , op in idx: "); */
+    /* print_dbg_hex(net->ins[inIdx].opInIdx); */
 
     //    param_feedback(inIdx, val);
-    
-  
   if(inIdx >= 0) {
     if(inIdx < net->numIns) {
       //(*(net->ins[inIdx].in))(net->ops[net->ins[inIdx].opIdx], val);
@@ -115,113 +124,195 @@ void net_activate(s16 inIdx, const io_t val) {
   }  
 }
 
-// attempt to allocate a new operator from the pool, return index
-s16 net_add_op(opId_t opId) {
-  u16 ins, outs;
-  u8 i;
-  op_t* op;
 
-  //  print_dbg("\r\nadd op, id: ");
-  //  print_dbg_hex(opId);
+#if NET_USE_MALLOC
+
+// allocate a new operator dynamically.
+// return index in op pointer array
+s16 net_add_op(opId_t opId) {
+  s32 opIdx = -1;
+  s32 inIdx = -1;
+  s16 outIdx = -1;
+  s32 ins[OP_INS_MAX];
+  s32 outs[OP_OUTS_MAX];
+  op_t* op;
+  s32 i, j;
 
   if (net->numOps >= NET_OPS_MAX) {
+    // too many ops already; bail
     return -1;
   }
 
-  if (op_registry[opId].size > NET_OP_POOL_SIZE - net->opPoolOffset) {
-    return -1;
-  }
-
-  op = (op_t*)((u8*)net->opPool + net->opPoolOffset);
-  // use the class ID to initialize a new object in scratch
-  switch(opId) {
-  case eOpSwitch:
-    op_sw_init((void*) op);
-    break;
-  case eOpEnc:
-    op_enc_init((void*)op);
-    break;
-    /*
-  case eOpParam:
-    op_param_init((void*)op);
-    break;
-    */
-#if 0
-  case eOpPreset:
-    //    return -1;
-    break;
-#endif
-  case eOpAdd:
-    op_add_init((void*)op);
-    break;
-  case eOpMul:
-    op_mul_init((void*)op);
-    break;
-  case eOpGate:
-    op_gate_init((void*)op);
-    break;
-#if 0
-  case eOpAccum:
-    op_accum_init((void*)op);
-    break;
-  case eOpSelect:
-    return -1;
-    break;
-  case eOpMapLin:
-    return -1;
-    break;
-#endif
-  default:
-    return -1;
-  }
-
-  ins = op->numInputs;
-  outs = op->numOutputs;
-  op->type = opId;
- 
-  if (ins > (NET_INS_MAX - net->numIns)) {
-    return -1;
-  }
-
-  if (outs > (NET_OUTS_MAX - net->numOuts)) {
-    return -1;
-  }
-
-  // add op pointer to list
-  net->ops[net->numOps] = op;
-  net->opPoolOffset += op_registry[opId].size;
-
-  //---- add inputs and outputs to node list
-  //no // don't add inputs for system control ops
-  // yes actually do
-  //if (op->status != eSysCtlOp) {
-    for(i=0; i<ins; i++) {
-      //      net->ins[net->numIns].in = op->in[i];
-      net->ins[net->numIns].opIdx = net->numOps;
-      net->ins[net->numIns].opInIdx = i;
-      //      net->ins[net->numIns].netInIdx = net->numIns;
-      net->numIns++;
+  // search for an unused operator index
+  for(i=0; i<NET_OPS_MAX; i++) {
+    if( !(BITTEST(net->opsUsed, i)) ) {
+      opIdx = i;
+      break;
     }
-    //}
-  for(i=0; i<outs; i++) {
-    net->outs[net->numOuts].opIdx = net->numOps;
-    net->outs[net->numOuts].outIdx = i;
-    net->outs[net->numOuts].target = -1;
-    net->numOuts++;
   }
-  net->numOps++;
-  return net->numOps - 1;
+
+  if(opIdx == -1) {
+    //  out of operator slots; bail
+    return -1;
+  }
+
+  op = malloc(op_registry[opId].size);
+  if( op == NULL ) { 
+    // out of memory; bail
+    return -1;
+  }
+
+  // initialize allocated memory with requested operator subclass
+  op_init(op, opId);
+
+  //  allocate input nodes
+  for(i=0; i<op->numInputs; i++) {
+    // search for unused input idx
+    inIdx = -1;
+    for(j=0; j<NET_INS_MAX; j++) {
+      if( !(BITTEST(net->insUsed, j)) ) {
+	ins[i] = j;
+	break;
+      }
+    }
+    if(inIdx == -1) {
+      // no free input slots; bail
+      return -1;
+    }
+    // save the index
+    ins[i] = inIdx;
+  }
+
+  //  assign output nodes
+  for(i=0; i<op->numOutputs; i++) {
+    // search for unused output idx
+    inIdx = -1;
+    for(j=0; j<NET_OUTS_MAX; j++) {
+      if( !(BITTEST(net->outsUsed, j)) ) {
+	outs[i] = j;
+	break;
+      }
+    }
+    if(outIdx == -1) {
+      // no free output slots; bail
+      return -1;
+    }
+    // save the index
+    outs[i] = outIdx;
+  }
+
+  net->ops[opIdx] = op;
+  // update allocation flags
+  BITSET(net->opsUsed, opIdx);
+  for(i=0; i<op->numInputs; i++) {
+    BITSET(net->insUsed, ins[i]);
+  }
+  for(i=0; i<op->numOutputs; i++) {
+    BITSET(net->outsUsed, outs[i]);
+  }
 }
+#else
+
+
+/* // attempt to allocate a new operator from the static memory pool, return index */
+/* s16 net_add_op(opId_t opId) { */
+/*   u16 ins, outs; */
+/*   u8 i; */
+/*   op_t* op; */
+
+/*   if (net->numOps >= NET_OPS_MAX) { */
+/*     return -1; */
+/*   } */
+
+/*   if (op_registry[opId].size > NET_OP_POOL_SIZE - net->opPoolOffset) { */
+/*     return -1; */
+/*   } */
+/*   op = (op_t*)((u8*)net->opPool + net->opPoolOffset); */
+/*   // use the class ID to initialize a new object in scratch */
+/*   switch(opId) { */
+/*   case eOpSwitch: */
+/*     op_sw_init((void*) op); */
+/*     break; */
+/*   case eOpEnc: */
+/*     op_enc_init((void*)op); */
+/*     break; */
+/*   case eOpAdd: */
+/*     op_add_init((void*)op); */
+/*     break; */
+/*   case eOpMul: */
+/*     op_mul_init((void*)op); */
+/*     break; */
+/*   case eOpGate: */
+/*     op_gate_init((void*)op); */
+/*     break; */
+/* #if 0 */
+/*   case eOpAccum: */
+/*     op_accum_init((void*)op); */
+/*     break; */
+/*   case eOpSelect: */
+/*     return -1; */
+/*     break; */
+/*   case eOpMapLin: */
+/*     return -1; */
+/*     break; */
+/* #endif */
+/*   default: */
+/*     return -1; */
+/*   } */
+
+/*   ins = op->numInputs; */
+/*   outs = op->numOutputs; */
+/*   op->type = opId; */
+ 
+/*   if (ins > (NET_INS_MAX - net->numIns)) { */
+/*     return -1; */
+/*   } */
+
+/*   if (outs > (NET_OUTS_MAX - net->numOuts)) { */
+/*     return -1; */
+/*   } */
+
+/*   // add op pointer to list */
+/*   net->ops[net->numOps] = op; */
+/*   net->opPoolOffset += op_registry[opId].size; */
+
+/*   //---- add inputs and outputs to node list */
+/*   //no // don't add inputs for system control ops */
+/*   // yes actually do */
+/*   //if (op->status != eSysCtlOp) { */
+/*     for(i=0; i<ins; i++) { */
+/*       //      net->ins[net->numIns].in = op->in[i]; */
+/*       net->ins[net->numIns].opIdx = net->numOps; */
+/*       net->ins[net->numIns].opInIdx = i; */
+/*       //      net->ins[net->numIns].netInIdx = net->numIns; */
+/*       net->numIns++; */
+/*     } */
+/*     //} */
+/*   for(i=0; i<outs; i++) { */
+/*     net->outs[net->numOuts].opIdx = net->numOps; */
+/*     net->outs[net->numOuts].outIdx = i; */
+/*     net->outs[net->numOuts].target = -1; */
+/*     net->numOuts++; */
+/*   } */
+/*   net->numOps++; */
+/*   return net->numOps - 1; */
+/* } */
+#endif
 
 // destroy last operator created
+
 s16 net_pop_op(void) {
+#if NET_USE_MALLOC
+#else
   op_t* op = net->ops[net->numOps - 1];
   net->numIns -= op->numInputs;
   net->numOuts -= op->numOutputs;
   net->opPoolOffset += op_registry[op->type].size;
   net->numOps -= 1;
   return 0;
+#endif
 }
+
 
 // create a connection between given idx pair
 void net_connect(u32 oIdx, u32 iIdx) {
@@ -236,7 +327,6 @@ void net_disconnect(u32 outIdx) {
 }
 
 //---- queries
-
 // get current count of operators
 u16 net_num_ops(void) {
   return net->numOps;
@@ -305,7 +395,6 @@ s16 net_out_op_idx(const u16 idx) {
   return net->outs[idx].opIdx;
 }
 
-
 // get global index for a given input of given op
 u16 net_op_in_idx(const u16 opIdx, const u16 inIdx) {
   u16 which;
@@ -371,6 +460,9 @@ io_t net_get_in_value(s32 inIdx) {
   //  print_dbg_hex(inIdx);
   //  print_dbg(" , address: ");
   //  print_dbg_hex( &(net->ins[inIdx]) );
+  if(inIdx < 0) {
+    return 0;
+  }
   if (inIdx >= net->numIns) {
     inIdx -= net->numIns;
     return get_param_value(inIdx);
@@ -393,9 +485,6 @@ void net_set_in_value(s32 inIdx, io_t val) {
 }
 
 io_t net_inc_in_value(s32 inIdx, io_t inc) {
-  //  io_t val;
-  //  s32 opIdx, opInIdx;
-  //  u32 in;
   op_t* op;
   if (inIdx >= net->numIns) {
     inIdx -= net->numIns;
@@ -404,10 +493,6 @@ io_t net_inc_in_value(s32 inIdx, io_t inc) {
   } else {
     op = net->ops[net->ins[inIdx].opIdx];
     (*(op->inc_func))(op, net->ins[inIdx].opInIdx, inc);
-    //    opIdx = net->ins[inIdx].opIdx;
-    //    opInIdx = net->ins[inIdx].opInIdx;
-    //    val = op_get_in_val( net->ops[opIdx], opInIdx );
-    //    net_activate( inIdx, OP_ADD(val, inc) );
     return net_get_in_value(inIdx);
   }
 }
@@ -448,7 +533,6 @@ u8 net_get_out_preset(u32 id) {
 //------ params
 
 // add a new parameter
-//void net_add_param(u32 idx, const char* name, f32 min, f32 max, s32 val) {
 void net_add_param(u32 idx, volatile ParamDesc* pdesc) {
   net->params[net->numParams].desc = *pdesc;
   net->params[net->numParams].idx = idx;
@@ -458,9 +542,5 @@ void net_add_param(u32 idx, volatile ParamDesc* pdesc) {
 
 // clear existing parameters
 void net_clear_params(void) {
-  // u32 i;
-  // for(i=0; i<net->numParams; i++) {
-   
-  //  }
   net->numParams = 0;
 }

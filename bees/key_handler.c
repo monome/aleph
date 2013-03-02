@@ -6,7 +6,9 @@
  */
 
 // asf
+#ifdef ARCH_AVR32
 #include "print_funcs.h"
+#endif
 // bees
 #include "op.h"
 #include "op_math.h"
@@ -33,19 +35,19 @@ static fix16 scale_knob_value(const s32 v);
 //--- static func def
 // return param increment given encoder ticks
 static fix16 scale_knob_value(const s32 v) {
-  u32 vabs = BABS(v);
-  print_dbg("\r\n scaling knob input: ");
-  print_dbg_hex(v);
-  print_dbg("\r\n abs: ");
-  print_dbg_hex(vabs);
+  s32 vabs = BABS(v);
+  //  print_dbg("\r\n scaling knob input: ");
+  //  print_dbg_hex(v);
+  //  print_dbg("\r\n abs: ");
+  //  print_dbg_hex(vabs);
   if(vabs < 6) {
-    print_dbg("\r\n slow");
+    //    print_dbg("\r\n slow");
     return v;
   } else if (vabs < 12) {
-    print_dbg("\r\n fast");
+    //    print_dbg("\r\n fast");
     return v * 8;
   } else {
-    print_dbg("\r\n fastest");
+    //x    print_dbg("\r\n fastest");
     return v * 32;
   }
 }

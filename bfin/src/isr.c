@@ -22,7 +22,6 @@ void sport0_rx_isr() {
   
   // copy input data from dma input buffer 
   // shift left from 24-bit
-  // FIXME: data from codec is supposed to be left-justified in i2s mode...?
   in0 = iRxBuf[INTERNAL_ADC_L0] << 8;
   in1 = iRxBuf[INTERNAL_ADC_R0] << 8;
   in2 = iRxBuf[INTERNAL_ADC_L1] << 8;

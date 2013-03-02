@@ -24,11 +24,19 @@
 //// need to buffer the LDR file to save memory.
 //// so, alas, we must use file I/O from here
 void bfin_load(U32 size, void* fp) {
-  u64 i; /// byte index in .ldr
-  u8 data;
+  u32 i; /// byte index in .ldr
+  volatile u8 data;
   volatile U64 delay;
+
+
+  /* print_dbg("\r\n bfin loader using file pointer :  "); */
+  /* print_dbg_hex(fp); */
+  /* print_dbg("\r\n size :  "); */
+  /* print_dbg_ulong(size); */
+  
+
   // FIXME: (?)
-  Disable_global_interrupt();
+  //  Disable_global_interrupt();
   // reset bfin
   gpio_set_gpio_pin(BFIN_RESET_PIN);  
   delay = 30; while (--delay > 0) {;;}
@@ -38,16 +46,20 @@ void bfin_load(U32 size, void* fp) {
   delay = 3000; while (--delay > 0) {;;}
   // send the .ldr data
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  i = 0;
-  while(i<size) {
+  
+  print_dbg("\r\n bfin loader: chip selected asserted");
+
+  for(i=0; i<size; i++) {
+    //    print_dbg("\r\n bfin loader sending byte: ");
     data = fl_fgetc(fp);
+    //    print_dbg_hex(data);
     while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { ;; }
     spi_write(BFIN_SPI, data);
-    i++;
   }
+  
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   // FIXME: (?)
-  Enable_global_interrupt();
+  //  Enable_global_interrupt();
 }
   /*
 void bfin_load(U32 size, volatile u8 * data) {

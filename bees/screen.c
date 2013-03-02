@@ -145,57 +145,57 @@ u8 ui_loop(void) {
     }
     break;
   case KEY_EDIT:
-    menu_handleKey(eKeyMode);
+    menu_handleKey(eKeyMode, 1);
     break;
     /// "encoders"
   case KEY_ENC_A_UP:
-    menu_handleKey(eKeyEncUpA);
+    menu_handleKey(eKeyEncUpA, 1);
     break;
   case KEY_ENC_A_DOWN:
-    menu_handleKey(eKeyEncDownA);
+    menu_handleKey(eKeyEncDownA, 1);
     break;
   case KEY_ENC_B_UP:
-    menu_handleKey(eKeyEncUpB);
+    menu_handleKey(eKeyEncUpB, 1);
     break;
   case KEY_ENC_B_DOWN:
-    menu_handleKey(eKeyEncDownB);
+    menu_handleKey(eKeyEncDownB, 1);
     break;
   case KEY_ENC_C_UP:
-    menu_handleKey(eKeyEncUpC);
+    menu_handleKey(eKeyEncUpC, 1);
     break;
   case KEY_ENC_C_DOWN:
-    menu_handleKey(eKeyEncDownC);
+    menu_handleKey(eKeyEncDownC, 1);
     break;
   case KEY_ENC_D_UP:
-    menu_handleKey(eKeyEncUpD);
+    menu_handleKey(eKeyEncUpD, 1);
     break;
   case KEY_ENC_D_DOWN:
-    menu_handleKey(eKeyEncDownD);
+    menu_handleKey(eKeyEncDownD, 1);
     break;
     // function keys
   case KEY_FN_A_DOWN:
-    menu_handleKey(eKeyFnDownA);
+    menu_handleKey(eKeyFnDownA, 1);
     break;
   case KEY_FN_A_UP:
-    menu_handleKey(eKeyFnUpA);
+    menu_handleKey(eKeyFnUpA, 1);
     break;
   case KEY_FN_B_DOWN:
-    menu_handleKey(eKeyFnDownB);
+    menu_handleKey(eKeyFnDownB, 1);
     break;
   case KEY_FN_B_UP:
-    menu_handleKey(eKeyFnUpB);
+    menu_handleKey(eKeyFnUpB, 1);
     break;
   case KEY_FN_C_DOWN:
-    menu_handleKey(eKeyFnDownC);
+    menu_handleKey(eKeyFnDownC, 1);
     break;
   case KEY_FN_C_UP:
-    menu_handleKey(eKeyFnUpC);
+    menu_handleKey(eKeyFnUpC, 1);
     break;
   case KEY_FN_D_DOWN:
-    menu_handleKey(eKeyFnDownD);
+    menu_handleKey(eKeyFnDownD, 1);
     break;
   case KEY_FN_D_UP:
-    menu_handleKey(eKeyFnUpD);
+    menu_handleKey(eKeyFnUpD, 1);
     break;
   default:
     break;

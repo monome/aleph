@@ -8,8 +8,6 @@
 #ifndef _CTL_INTERFACE_H_
 #define _CTL_INTERFACE_H_
 
-
-/// blech
 // maximum allocated parameters, connections, and operators
 // max operator inputs
 #define NET_INS_MAX 128
@@ -22,15 +20,12 @@
 // max presets
 #define NET_PRESETS_MAX 8
 
-
 #include "param_common.h"
 #include "param.h"
 // parameter data
 #include "types.h"
 #include "op.h"
 #include "op_math.h"
-
-
 
 //---- public functions
 
@@ -43,8 +38,7 @@ s16 net_add_op(opId_t opId);
 // remove the last created operator
 s16 net_pop_op(void);
 // remove an arbitrary operator
-// TODO
-// void remove_op(const u8 idx);
+void remove_op(const u8 idx);
 
 // activate an input node with some input data
 void net_activate(s16 inIdx, const io_t val);

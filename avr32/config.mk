@@ -101,34 +101,35 @@ ASSRCS = \
 
 # List of include paths.
 INC_PATH = \
-       avr32/boards                                       \
-       avr32/boards/user_board                               \
+	avr32/boards                                       \
+	avr32/boards/user_board                               \
 	avr32/components/memory/sdram			 \
 	avr32/drivers/cpu/cycle_counter/                 \
 	avr32/drivers/ebi/sdramc/                            \
-       avr32/drivers/flashc                               \
-       avr32/drivers/gpio                                 \
-       avr32/drivers/intc                                 \
-       avr32/drivers/pdca                                   \
-       avr32/drivers/pm                                   \
-       avr32/drivers/spi                                  \
-       avr32/drivers/tc                                 \
-       avr32/drivers/twi                                 \
-       avr32/drivers/usart                                \
-       avr32/services/delay                               \
-       avr32/services/fs/fat                              \
-       avr32/utils                                        \
-       avr32/utils/debug                                  \
-       avr32/utils/preprocessor                           \
-       common/boards                                      \
+	avr32/drivers/flashc                               \
+	avr32/drivers/gpio                                 \
+	avr32/drivers/intc                                 \
+	avr32/drivers/pdca                                   \
+	avr32/drivers/pm                                   \
+	avr32/drivers/spi                                  \
+	avr32/drivers/tc                                 \
+	avr32/drivers/twi                                 \
+	avr32/drivers/usart                                \
+	avr32/services/delay                               \
+	avr32/services/fs/fat                              \
+	avr32/utils                                        \
+	avr32/utils/debug                                  \
+	avr32/utils/preprocessor                           \
+	common/boards                                      \
 	avr32/components/memory/sd_mmc/sd_mmc_spi \
-       common/services/storage/ctrl_access                \
-       common/services/clock                              \
-       common/utils         \
+	common/services/storage/ctrl_access                \
+	common/services/clock                              \
+	common/utils         \
 	$(ALEPH_AVR32)	\
 	$(ALEPH_AVR32)/src	\
 	$(ALEPH_AVR32)/conf	\
 	$(ALEPH_BEES)	\
+	$(ALEPH_BEES)/ops	\
 	$(ALEPH_COMMON)	\
 	$(ALEPH_COMMON)/libfixmath \
 	$(ALEPH_COMMON)/fat_io_lib

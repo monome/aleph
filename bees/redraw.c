@@ -309,8 +309,8 @@ void redraw_dsp(void) {
   u8 y = 0;                       // which line
   s32 n, nCenter;         // which list entry
   u16 num = files_get_dsp_count();
-  print_dbg("\r\n count of DSP files: ");
-  print_dbg_ulong(num);
+  /* print_dbg("\r\n count of DSP files: "); */
+  /* print_dbg_ulong(num); */
   // print selection at center
   nCenter = curPage->selected;
   if (nCenter >= num) {
@@ -507,11 +507,13 @@ void draw_line_dsp(s32 n, u16 num, u8 y, u8 hl) {
     n -= num;
   } 
   screen_blank_line(0, y);
+  /*
   print_dbg( " \r\n drawing dsp line : ");
   print_dbg_ulong(n);
   print_dbg(" , name: ");
   print_dbg(files_get_dsp_name(n));
-  println( files_get_dsp_name(n), 0);
+  */
+  println( (const char*)files_get_dsp_name(n), 0);
   endln(); screen_string(0, y, lineBuf, hl); 
 }
 

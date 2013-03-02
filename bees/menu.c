@@ -107,7 +107,7 @@ void set_page(ePage n) {
   //  print_dbg("\r\n new page address:");
   //  print_dbg_hex((u32)curPage);
   curPage->redraw();
-#ifdef ARCH_AVR32
+#if ARCH_AVR32
   // set encoder sensitivity
   for(i=0; i<4; i++) {
     set_enc_thresh(i, curPage->encSens[i]);

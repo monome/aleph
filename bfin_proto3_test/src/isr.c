@@ -22,7 +22,7 @@ static inline void fillDacBuf(u8 dacIdx) {
 }
 */
 
-#if 0
+//#if 0
 void sport1_tx_isr() {
   u8 i;
   // confirm interrupt handling
@@ -66,7 +66,7 @@ void error_isr() {
   dummy++;
   dummy++;
 }
-#endif
+//#endif
 
 
 // spi receive interrupt (from avr32)

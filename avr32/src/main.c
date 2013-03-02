@@ -99,6 +99,10 @@ static void check_events(void);
 //----------------------------------------------
 //---- testing stuff
 //static void twi_test(void);
+
+
+/// test malloc
+static u8* heaped;
   
 // display scrolling history of events
 static void scroll_event(const char* str, s16 val);
@@ -351,6 +355,11 @@ int main (void) {
   //  gpio_set_gpio_pin(POWER_CTL_PIN);
   //  gpio_clr_gpio_pin(POWER_CTL_PIN);
   
+
+  //// test malloc
+
+  heaped = malloc(8);
+
   // initialize clocks:
   init_clocks();
   
@@ -459,7 +468,6 @@ int main (void) {
   menu_init();
   //  print_dbg("\r\nMENU INIT");
 
-
   /// boot default ds
   files_load_dsp_name("default.ldr");
   /// wait for bfin to finish boot
@@ -488,7 +496,7 @@ static void report_params(void) {
       bfin_get_param_desc(i, &pdesc);
       net_add_param(i, &pdesc);
       print_dbg("\r\n got pdesc : ");
-      print_dbg(pdesc.label);
+      print_dbg((const char*)pdesc.label);
     }
   }
 }
