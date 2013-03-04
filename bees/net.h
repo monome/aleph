@@ -33,12 +33,16 @@
 void net_init(void*);
 // de-initialize the network 
 void net_deinit(void);
+// intialize (clear) an input node
+void net_init_inode(u16 idx);
+// intialize (clear) an output node
+void net_init_onode(u16 idx);
 // create a new operator given class ID, return index (-1 == fail)
 s16 net_add_op(opId_t opId);
 // remove the last created operator
 s16 net_pop_op(void);
 // remove an arbitrary operator
-void remove_op(const u8 idx);
+void net_remove_op(const u32 idx);
 
 // activate an input node with some input data
 void net_activate(s16 inIdx, const io_t val);
@@ -103,6 +107,7 @@ void net_add_param(u32 idx, volatile ParamDesc* pdesc);
 //void net_add_param(u32 idx, const char* name, f32 min, f32 max, s32 val);
 // clear existing parameters
 void net_clear_params(void);
+
 
 // forward/backward search for input/output nodes
 s32 net_next_in(void);

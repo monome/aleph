@@ -9,7 +9,7 @@
 #define _NET_PROTECTED_H_
 
 // use dynamically allocated memory and vectors 
-#define NET_USE_MALLOC 1
+#define NET_USE_MALLOC 0
 
 #if NET_USE_MALLOC
 #include <stdlib.h>
@@ -27,7 +27,7 @@
 // size of operator pool in bytes
 /// (total internal SRAM: 0x10000
 //#define NET_OP_POOL_SIZE 0xa000
-///// TEST
+///// TEST : very small
 #define NET_OP_POOL_SIZE 0x1000
 #endif
 
@@ -64,6 +64,7 @@ typedef struct _pnode {
 
 // network type
 typedef struct _ctlnet {
+  //  op pointers
   op_t * ops[NET_OPS_MAX];
 #if NET_USE_MALLOC
   // bitfields for operator allocation
@@ -75,7 +76,6 @@ typedef struct _ctlnet {
   u8 * opPool;
   // current offset into op memory
   u32 opPoolOffset;
-  //  op pointers
 #endif
   // number of instantiated operators
   u16 numOps;

@@ -355,10 +355,12 @@ int main (void) {
   //  gpio_set_gpio_pin(POWER_CTL_PIN);
   //  gpio_clr_gpio_pin(POWER_CTL_PIN);
   
-
-  //// test malloc
-
-  heaped = malloc(8);
+  /////////////////////////////////////
+  ///////////////////////  ////// TEST: do nothing forever
+  while(1) { ;; }
+  //////////////////////////////
+  //////////////////////////////////
+  ///////////////////////////////////
 
   // initialize clocks:
   init_clocks();

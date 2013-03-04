@@ -20,7 +20,6 @@
 /* /\*   ADC_CONTROL_3	| 0x000 *\/ */
 /* /\* }; *\/ */
 
-
 // control registers and associated values for AD1939
 static volatile short codec1939TxRegs[CODEC_1939_NUM_REGS][2] = {
   {  PLL_CLOCK_0        , 0x80 } , // enable, xtal->master->PLL
@@ -39,7 +38,9 @@ static volatile short codec1939TxRegs[CODEC_1939_NUM_REGS][2] = {
   {  DAC_R4_VOLUME      , 0x00 } ,
   {  ADC_CONTROL_0      , 0x00 } ,
   {  ADC_CONTROL_1      , 0x00 } ,
-  {  ADC_CONTROL_2      , 0x00 }
+  /// ADC master, abclk
+  {  ADC_CONTROL_2      , 0b01000000 }
+  //  {  ADC_CONTROL_2      , 0x00 }
 };
 
 // SPORT0 DMA transmit buffer
@@ -213,11 +214,32 @@ void init_1939(void) {
   u8 i; 
   u32 del;
 
+
+  //////////////////////////////
+  /// TESTING: only wait->reset
+  //  del = 1000000; while(del > 0) { del--; }
+  ////////////////
+  ////////////////////////
+
   //// reset codec
   *pFIO_FLAG_D &= CODEC_RESET_MASK;
+  /////////////
+  //////////////
+  del = 10000; while(del--) { ;; } 
+  //////////////////
+  ////////////////////
   // write to Port A to enable codec
   *pFIO_FLAG_D |= (0xffff ^ CODEC_RESET_MASK);
   
+
+  ////////////
+  //////////////////////////////
+  /// TESTING: only wait->reset
+  return;
+  //////////////
+  ////////////////
+
+
   //// TESTING:
   /// wait for the codec to reset
   /// from the datasheet, this could take an absolute maximum of (4096 / 6.9Mhz)s (?)

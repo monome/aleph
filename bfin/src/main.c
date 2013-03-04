@@ -44,13 +44,16 @@ int main(void) {
   init_1939();
 
 
+  ///// TEST: hold SPI pins in codec standalone configuration
+
   //////////
   ///// TEST:do this forever
-  
+  /*
   while(1) {
     init_1939();
     del = 100000; while(del > 0) { del--; }
   }
+  */
   
   ////////
   ///////
@@ -59,8 +62,10 @@ int main(void) {
   init_sport0();
   // intialize DMA for audio
   init_DMA();
-  // put the spi back in slave mode to receive param changes from avr32
-  init_spi_slave();
+  //  // put the spi back in slave mode to receive param changes from avr32
+   init_spi_slave();
+
+
   // intialize the audio processing unit (assign memory)
   module_init();
   // assign interrupts

@@ -19,6 +19,7 @@
 #include "fract_math.h"
 #include <fract2float_conv.h>
 #else
+/// linux:
 #include "fract32_emu.h"
 #include "audio.h"
 #endif
@@ -271,8 +272,13 @@ void module_init(void) {
   track = 1;
   ips = fix16_from_float( (f32)WAVE_TAB_SIZE / (f32)sr );
   amp1 = amp2 = INT32_MAX >> 1;
+  amp2 = 0;
   hz1 = fix16_from_int(220);
   hz2 = fix16_from_int(330);
+  ////// real slow test
+  //  hz1 = fix16_from_float(0.25);
+  //  hz2 = fix16_from_float(0.5);
+
   ratio2 = fix16_from_float(1.5);
   idx1 = idx2 = 0;
 
