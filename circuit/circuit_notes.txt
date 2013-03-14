@@ -1,3 +1,28 @@
+march in sf 2013
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+SRAM BYTE must be HIGH
+SRMA A19 not hooked up 
+
+# codec audio in
+# codec audio out
+USB
+# SRAM
+# debounce key check
+# sw inputs
+DAC 10v
+ADC test
+rotate screen
+
+codec needs to be in standalone mode.
+	MOSI, SCLK, SEL to GND
+	MISO to +3v3
+	
+tune key filters
+
+
+
+
 feb build 2013
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 

@@ -383,7 +383,7 @@ UsedLibrary="/Applications/EAGLE/lbr/analog-devices.lbr"
 
 [Win_1]
 Type="Control Panel"
-Loc="11 26 621 727"
+Loc="13 22 621 721"
 State=2
 Number=0
 
