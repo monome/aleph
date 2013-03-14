@@ -14,8 +14,10 @@
 #include "types.h"
 #include "app_timers.h"
 
-#define ENC_THRESH 15
-#define ENC_NEG_THRESH -15
+// #define ENC_THRESH 15
+// #define ENC_NEG_THRESH -15
+//#define ENC_THRESH 3
+//#define ENC_NEG_THRESH -3
 
 //----- timers
 // refresh the screen periodically
@@ -59,8 +61,8 @@ static void enc_timer_callback(int tag) {
   static s16 val;
   for(i=0; i<NUM_ENC; i++) {
     val = enc[i].val;
-    //    if ( (val > enc[i].thresh) || (val < (enc[i].thresh * -1)) ) {
-    if( (val > ENC_THRESH) || (val < ENC_NEG_THRESH) ) {
+    if ( (val > enc[i].thresh) || (val < (enc[i].thresh * -1)) ) {
+    //  if( (val > ENC_THRESH) || (val < ENC_NEG_THRESH) ) {
       e.eventType = enc[i].event;
       e.eventData = val;
       enc[i].val = 0;
@@ -96,7 +98,7 @@ static void adc_timer_callback(int tag) {
 //====== external
 void init_app_timers(void) {
   set_timer(&screenTimer, eScreenTimerTag, 30,   &screen_timer_callback, 1);
-  set_timer(&encTimer,    eEncTimerTag,    5,    &enc_timer_callback,    1);
+  set_timer(&encTimer,    eEncTimerTag,    20,    &enc_timer_callback,    1);
   set_timer(&adcTimer,    eAdcTimerTag,    125,    &adc_timer_callback,    1);
   set_timer(&swTimer,    eSwTimerTag,    SW_POLL_MS,    &sw_timer_callback,    1);
 }

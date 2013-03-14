@@ -21,7 +21,9 @@
 
 #define BSIGN(x) ((x) & 0x80000000)
 #define BINV(x) ((x) ^ 0xffffffff)
-#define BABS(x) (BSIGN(x) ? BINV(x) - 1 : (x))
+//#define BABS(x) (BSIGN(x) ? BINV(x) - 1 : (x))
+// hm?
+#define BABS(x) (BSIGN(x) ? BINV(x) + 1 : (x))
 
 // macros for fract32/fix16 conversion
 #define FIX16_TO_U16(x) (u16)((x) >> 16)
@@ -29,6 +31,10 @@
 #define S16_TO_FIX16(x) ( (fix16_t)(x) ) << 16
 #define FIX16_FRACT_TRUNC(x) (fract32)(((x) & 0xffff) << 16)
 #define FRACT_FIX16(x) ( BSIGN(x) ? ((x)>>15) | 0xffff8000 : (x)>>15 )
+
+#define LIMIT_RANGE(x, max, min) ( ((x) > (max) ? (max) :  \
+			     (x) < (min) ? (min) : (x) ) ) 
+#define FIX16_FRACT_SAT(x) LIMIT_RANGE((x), 0xffff, 
 
 // print to a buffer
 void print_fix16(char* buf , fix16_t x);

@@ -99,6 +99,10 @@ static void check_events(void);
 //----------------------------------------------
 //---- testing stuff
 //static void twi_test(void);
+
+
+/// test malloc
+static u8* heaped;
   
 // display scrolling history of events
 static void scroll_event(const char* str, s16 val);
@@ -128,20 +132,15 @@ static void check_events(void) {
   //  cycles = Get_system_register(AVR32_COUNT)  
 
   if( get_next_event(&e) ) {
-
-
-    print_dbg("\r\n event handler got: ");
-    print_dbg_ulong(e.eventType);
-
+    //    print_dbg("\r\n event handler got: ");
+    //    print_dbg_ulong(e.eventType);
 
     if(startup) {
       /// a hack!
       /// this should select only switch events...
       if(e.eventType > kEventEncoder3) { 
 	startup = 0;
-	//perform_startup();
-	///// TEST I2C as master
-	//	i2c_tx(44, 0, 0, 5, &(e.eventType) - 1);
+	// perform_startup();
 	return;
       }
     } else {
@@ -152,38 +151,38 @@ static void check_events(void) {
 	screen_refresh();
 	break;
       case kEventSwitchDown0:
-	menu_handleKey(eKeyFnDownA);
+	menu_handleKey(eKeyFnDownA, e.eventData);
 	break;
       case kEventSwitchUp0:
-	menu_handleKey(eKeyFnUpA);
+	menu_handleKey(eKeyFnUpA, e.eventData);
 	break;
       case kEventSwitchDown1:
 	//      print_dbg("\r\n switch f1 down");
-	menu_handleKey(eKeyFnDownB);
+	menu_handleKey(eKeyFnDownB, e.eventData);
 	break;
       case kEventSwitchUp1:
 	//	print_dbg("\r\n switch f1 up");
-	menu_handleKey(eKeyFnUpB);
+	menu_handleKey(eKeyFnUpB, e.eventData);
 	break;
       case kEventSwitchDown2:
 	//	print_dbg("\r\n switch f2 down");
-	menu_handleKey(eKeyFnDownC);
+	menu_handleKey(eKeyFnDownC, e.eventData);
 	break;
       case kEventSwitchUp2:
 	//	print_dbg("\r\n switch f2 up");
-	menu_handleKey(eKeyFnUpC);
+	menu_handleKey(eKeyFnUpC, e.eventData);
 	break;
       case kEventSwitchDown3:
-	menu_handleKey(eKeyFnDownD);
+	menu_handleKey(eKeyFnDownD, e.eventData);
 	break;
       case kEventSwitchUp3:
-	menu_handleKey(eKeyFnUpD);
+	menu_handleKey(eKeyFnUpD, e.eventData);
 	break;
       case kEventSwitchDown4:
 	mode ^= 1;
 	if(mode) { gpio_set_gpio_pin(LED_MODE_PIN); }
 	else { gpio_clr_gpio_pin(LED_MODE_PIN); }
-	menu_handleKey(eKeyMode);
+	menu_handleKey(eKeyMode, e.eventData);
 	break;
       case kEventSwitchUp4:
 	break;
@@ -196,34 +195,67 @@ static void check_events(void) {
 	break;
       case kEventSwitchUp5:
 	break;
-      case kEventEncoder0:
-	if(e.eventData > 0) {
-	  menu_handleKey(eKeyEncUpA);
-	} else {
-	  menu_handleKey(eKeyEncDownA);
-	}
-	break;
+	/// TEST: my encoder A is broken so i'm moving these around for the moment
+      /* case kEventEncoder0: */
+      /* 	if(e.eventData > 0) { */
+      /* 	  menu_handleKey(eKeyEncUpA); */
+      /* 	} else { */
+      /* 	  menu_handleKey(eKeyEncDownA); */
+      /* 	} */
+      /* 	break; */
+      /* case kEventEncoder1: */
+      /* 	if(e.eventData > 0) { */
+      /* 	  menu_handleKey(eKeyEncUpD); */
+      /* 	} else { */
+      /* 	  menu_handleKey(eKeyEncDownD); */
+      /* 	} */
+      /* 	break; */
+      /* case kEventEncoder2: */
+      /* 	if(e.eventData > 0) { */
+      /* 	  menu_handleKey(eKeyEncUpC); */
+      /* 	} else { */
+      /* 	  menu_handleKey(eKeyEncDownC); */
+      /* 	} */
+      /* 	break; */
+      /* case kEventEncoder3: */
+      /* 	if(e.eventData > 0) { */
+      /* 	  menu_handleKey(eKeyEncUpB); */
+      /* 	} else { */
+      /* 	  menu_handleKey(eKeyEncDownB); */
+      /* 	} */
+      /* 	break; */
+	/// moved:
+
+      /* 	//////-- broken: */
+      /* case kEventEncoder0: */
+      /* 	if(e.eventData > 0) { */
+      /* 	  menu_handleKey(eKeyEncUpA); */
+      /* 	} else { */
+      /* 	  menu_handleKey(eKeyEncDownA); */
+      /* 	} */
+      /* 	break; */
       case kEventEncoder1:
 	if(e.eventData > 0) {
-	  menu_handleKey(eKeyEncUpD);
+	  menu_handleKey(eKeyEncUpA, e.eventData);
 	} else {
-	  menu_handleKey(eKeyEncDownD);
+	  menu_handleKey(eKeyEncDownA, e.eventData);
 	}
 	break;
       case kEventEncoder2:
 	if(e.eventData > 0) {
-	  menu_handleKey(eKeyEncUpC);
+	  menu_handleKey(eKeyEncUpB, e.eventData);
 	} else {
-	  menu_handleKey(eKeyEncDownC);
+	  menu_handleKey(eKeyEncDownB, e.eventData);
 	}
 	break;
-      case kEventEncoder3:
+      case kEventEncoder0:
 	if(e.eventData > 0) {
-	  menu_handleKey(eKeyEncUpB);
+	  menu_handleKey(eKeyEncUpC, e.eventData);
 	} else {
-	  menu_handleKey(eKeyEncDownB);
+	  menu_handleKey(eKeyEncDownC, e.eventData);
 	}
 	break;
+
       case kEventAdc0:
 	//print_dbg("\r\nadc val 0: ");
 	//	print_dbg_hex(e.eventData);
@@ -323,6 +355,13 @@ int main (void) {
   //  gpio_set_gpio_pin(POWER_CTL_PIN);
   //  gpio_clr_gpio_pin(POWER_CTL_PIN);
   
+  /////////////////////////////////////
+  ///////////////////////  ////// TEST: do nothing forever
+  while(1) { ;; }
+  //////////////////////////////
+  //////////////////////////////////
+  ///////////////////////////////////
+
   // initialize clocks:
   init_clocks();
   
@@ -378,8 +417,7 @@ int main (void) {
   // Enable all interrupts.
   Enable_global_interrupt();
 
-  // Wait for a card to be inserted
-  
+  // Wait for a card to be inserted  
   screen_line(0, 0, "ALEPH", 0x3f);
   screen_line(0, 1, "waiting for SD card...", 0x3f);
   screen_refresh();
@@ -387,8 +425,6 @@ int main (void) {
   print_dbg("\r\n SD check... ");
   while (!sd_mmc_spi_mem_check()) {
     waitForCard++;
-    //    print_dbg("\r\n not found: ");
-    //    print_dbg_ulong(waitForCard);
   }
   print_dbg("\r\nfound SD card. ");
 
@@ -399,8 +435,7 @@ int main (void) {
   screen_refresh();
   
   // set up file navigation
-  //  init_files();
-
+  init_files();
 
   // send ADC config
   init_adc();
@@ -435,13 +470,11 @@ int main (void) {
   menu_init();
   //  print_dbg("\r\nMENU INIT");
 
-
   /// boot default ds
-  //  files_load_dsp_name("default.ldr");
+  files_load_dsp_name("default.ldr");
   /// wait for bfin to finish boot
-  //  delay = 800000; while(delay--) {;;}
-  //  report_params();
-
+  delay = 800000; while(delay--) {;;}
+  report_params();
 
   while(1) { 
     check_events();
@@ -464,7 +497,7 @@ static void report_params(void) {
       bfin_get_param_desc(i, &pdesc);
       net_add_param(i, &pdesc);
       print_dbg("\r\n got pdesc : ");
-      print_dbg(pdesc.label);
+      print_dbg((const char*)pdesc.label);
     }
   }
 }

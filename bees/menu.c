@@ -6,6 +6,7 @@
 
 #ifdef ARCH_AVR32
 #include "print_funcs.h"
+#include "encoders.h"
 #endif
 
 #include "key_handler.h"
@@ -33,15 +34,15 @@ const opId_t userOpTypes[NUM_USER_OP_TYPES] = {
 // page structures - synchronize with ePage enum
 page_t pages[NUM_PAGES] = {
   // list:
-  { "INS", (keyHandler_t)&key_handler_ins, (redraw_t)&redraw_ins, 0, eModeNone, -1 },
-  { "OUTS", (keyHandler_t)&key_handler_outs, (redraw_t)&redraw_outs, 0, eModeNone, -1 },
-  { "PRESETS", (keyHandler_t)&key_handler_presets, (redraw_t)&redraw_presets, 0, eModeNone, -1 },
-  { "OPS", (keyHandler_t)&key_handler_ops, (redraw_t)&redraw_ops, 0, eModeNone, -1 },
-  { "SCENES", (keyHandler_t)&key_handler_scenes, (redraw_t)&redraw_scenes, 0, eModeNone, -1 },
-  { "DSP", (keyHandler_t)&key_handler_dsp, (redraw_t)&redraw_dsp, 0, eModeNone, -1 },
+  { "INS", (keyHandler_t)&key_handler_ins, (redraw_t)&redraw_ins, 0, eModeNone, -1, { 0, 0, 0, 0 } },
+  { "OUTS", (keyHandler_t)&key_handler_outs, (redraw_t)&redraw_outs, 0, eModeNone, -1,  { 0, 0, 0, 0 }  },
+  {  "PRESETS", (keyHandler_t)&key_handler_presets, (redraw_t)&redraw_presets, 0, eModeNone, -1, { 0, 0, 0, 0 } },
+  { "OPS", (keyHandler_t)&key_handler_ops, (redraw_t)&redraw_ops, 0, eModeNone, -1, { 0, 0, 0, 0 } },
+  { "SCENES", (keyHandler_t)&key_handler_scenes, (redraw_t)&redraw_scenes, 0, eModeNone, -1, { 0, 0, 0, 0 } },
+  { "DSP", (keyHandler_t)&key_handler_dsp, (redraw_t)&redraw_dsp, 0, eModeNone, -1, { 0, 0, 0, 0 } },
   // modal:
-  { "GATHERED" , (keyHandler_t)&key_handler_gathered, (redraw_t)&redraw_gathered, 0, eModeNone, -1 },
-  { "PLAY" , (keyHandler_t)&key_handler_play, (redraw_t)&redraw_play, 0, eModeNone, -1}
+  { "GATHERED" , (keyHandler_t)&key_handler_gathered, (redraw_t)&redraw_gathered, 0, eModeNone, -1, { 0, 0, 0, 0 } },
+  { "PLAY" , (keyHandler_t)&key_handler_play, (redraw_t)&redraw_play, 0, eModeNone, -1, { 0, 0, 0, 0 } }
 };
 
 // pointer to current page
@@ -75,7 +76,7 @@ extern void menu_deinit(void) {
 }
 
 // top level key handler
-void menu_handleKey(uiKey_t key) {
+void menu_handleKey(uiKey_t key, s16 val) {
   if (key == eKeyMode) {
     if (pageIdx == ePagePlay) {
       // restore saved page
@@ -98,6 +99,7 @@ void menu_handleKey(uiKey_t key) {
 
 // set current page
 void set_page(ePage n) {
+  u8 i;
   pageIdx = n;
   //  print_dbg("\r\n set page :");
   //  print_dbg_hex(pageIdx);
@@ -105,6 +107,12 @@ void set_page(ePage n) {
   //  print_dbg("\r\n new page address:");
   //  print_dbg_hex((u32)curPage);
   curPage->redraw();
+#if ARCH_AVR32
+  // set encoder sensitivity
+  for(i=0; i<4; i++) {
+    set_enc_thresh(i, curPage->encSens[i]);
+  }
+#endif
 }
 
 //// ins -> outs -> (gathered) -> presets -> scenes -> dsp

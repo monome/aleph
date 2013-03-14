@@ -5,7 +5,11 @@
  * page-specific key handling routines
  */
 
-//#include "compiler.h"
+// asf
+#ifdef ARCH_AVR32
+#include "print_funcs.h"
+#endif
+// bees
 #include "op.h"
 #include "op_math.h"
 #include "menu_protected.h"
@@ -17,22 +21,41 @@
 //--------------------
 //----- static variables
 
-// param step constants
-//static const io_t kParamValStepSmall = 0.015625;
-//static const io_t kParamValStepLarge = 1.f;
-static const io_t kParamValStepSmall = 0xf;
-static const io_t kParamValStepLarge = 0x10000; // 1.0 in fix16
-
 // character selection table
 static const char kLabelChars[] = "abcdefghijklmnopqrstuvwxyz_012345789";
 #define NUM_LABEL_CHARS 47
 // index in the selection table 
 static s8 selectedLabelChar = 0;
 
+// return param increment given encoder ticks
+static fix16 scale_knob_value(const s32 v);
+
+
+//--------------------------
+//--- static func def
+// return param increment given encoder ticks
+static fix16 scale_knob_value(const s32 v) {
+  s32 vabs = BABS(v);
+  //  print_dbg("\r\n scaling knob input: ");
+  //  print_dbg_hex(v);
+  //  print_dbg("\r\n abs: ");
+  //  print_dbg_hex(vabs);
+  if(vabs < 6) {
+    //    print_dbg("\r\n slow");
+    return v;
+  } else if (vabs < 12) {
+    //    print_dbg("\r\n fast");
+    return v * 8;
+  } else {
+    //x    print_dbg("\r\n fastest");
+    return v * 32;
+  }
+}
+
 //========================================
 //====== key handlers
 // OPS
-void key_handler_ops(uiKey_t key) {
+void key_handler_ops(uiKey_t key, s16 val) {
   u16 n;
   switch(key) {
   case eKeyFnDownA: 
@@ -108,7 +131,7 @@ void key_handler_ops(uiKey_t key) {
 }
 
 // INS
-void key_handler_ins(uiKey_t key) {
+void key_handler_ins(uiKey_t key, s16 val) {
   u32 i;
   switch(key) {
   case eKeyFnDownA:
@@ -146,17 +169,19 @@ void key_handler_ins(uiKey_t key) {
     break;
   case eKeyEncUpC:
     // encoder C : value slow
-    net_inc_in_value(curPage->selected, kParamValStepSmall);
+    //    net_inc_in_value(curPage->selected, kParamValStepSmall * val);
+    net_inc_in_value(curPage->selected, scale_knob_value(val));
     break;
   case eKeyEncDownC:
-    net_inc_in_value(curPage->selected, kParamValStepSmall * -1);
+    net_inc_in_value(curPage->selected, scale_knob_value(val));
+    //    net_inc_in_value(curPage->selected, kParamValStepSmall * val);
     break;
   case eKeyEncUpD:
     // encoder D : value fast
-    net_inc_in_value(curPage->selected, kParamValStepLarge);
+    //    net_inc_in_value(curPage->selected, kParamValStepLarge * val);
     break;
   case eKeyEncDownD:
-    net_inc_in_value(curPage->selected, kParamValStepLarge * -1);
+    //    net_inc_in_value(curPage->selected, kParamValStepLarge * val);
     break;
   default:
     ;; // nothing
@@ -165,7 +190,7 @@ void key_handler_ins(uiKey_t key) {
 }
 
 // OUTS
-void key_handler_outs(uiKey_t key) {
+void key_handler_outs(uiKey_t key, s16 val) {
   s16 i;
   static s32 target;
   switch(key) {
@@ -229,12 +254,12 @@ void key_handler_outs(uiKey_t key) {
 }
 
 //// GATHERED
-void key_handler_gathered(uiKey_t key) {
-  key_handler_outs(key);
+void key_handler_gathered(uiKey_t key, s16 val) {
+  key_handler_outs(key, val);
 }
 
 ///// PLAy
-void key_handler_play(uiKey_t key) {
+void key_handler_play(uiKey_t key, s16 v) {
   s32 val;
   s16 inIdx = -1;
   ///// FIXME; bad bad bad hacking
@@ -322,7 +347,7 @@ void key_handler_play(uiKey_t key) {
 }
 
 // presets
-extern void key_handler_presets(uiKey_t key) {
+extern void key_handler_presets(uiKey_t key, s16 val) {
   //  s16 i;
   switch(key) {
   case eKeyFnDownA: // clear
@@ -409,7 +434,7 @@ extern void key_handler_presets(uiKey_t key) {
 }
 
 /// SCENES
-extern void key_handler_scenes(uiKey_t key) {
+extern void key_handler_scenes(uiKey_t key, s16 val) {
   switch(key) {
   case eKeyFnDownA: // clear
     switch(curPage->mode) {
@@ -509,7 +534,7 @@ extern void key_handler_scenes(uiKey_t key) {
 }
 
 /// DSP
-extern void key_handler_dsp(uiKey_t key) {
+extern void key_handler_dsp(uiKey_t key, s16 val) {
   switch(key) {
   case eKeyFnDownA:
     // load / set

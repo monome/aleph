@@ -286,13 +286,13 @@ void module_init(void) {
 
   // init smoothers
   ampLp = (filter_1p_fix16*)malloc(sizeof(filter_1p_fix16));
-  filter_1p_fix16_init( ampLp, SAMPLERATE, 32 << 16, amp );
+  filter_1p_fix16_init( ampLp, SAMPLERATE, fix16_from_int(32), amp );
   
   timeLp = (filter_1p_fix16*)malloc(sizeof(filter_1p_fix16));
-  filter_1p_fix16_init( timeLp, SAMPLERATE, 32 << 16, time );
+  filter_1p_fix16_init( timeLp, SAMPLERATE, fix16_from_int(32), time );
   
   rateLp = (filter_1p_fix16*)malloc(sizeof(filter_1p_fix16));
-  filter_1p_fix16_init( rateLp, SAMPLERATE, 32 << 16, time );
+  filter_1p_fix16_init( rateLp, SAMPLERATE, fix16_from_int(32), time );
 
   // calculate current values
   calc_time();

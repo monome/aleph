@@ -8,43 +8,47 @@
 #ifndef _NET_PROTECTED_H_
 #define _NET_PROTECTED_H_
 
+// use dynamically allocated memory and vectors 
+#define NET_USE_MALLOC 0
+
+#if NET_USE_MALLOC
+#include <stdlib.h>
+#endif
+
 #include "module_common.h"
 #include "net.h"
 #include "op.h"
 #include "param.h"
 #include "types.h"
+#include "util.h"
 
-
+#if NET_USE_MALLOC
+#else
 // size of operator pool in bytes
 /// (total internal SRAM: 0x10000
 //#define NET_OP_POOL_SIZE 0xa000
-///// TEST
+///// TEST : very small
 #define NET_OP_POOL_SIZE 0x1000
+#endif
 
 // input node type (function pointer)
 typedef struct _inode {
-  // last value
-  //  s32 val;
-  // function pointer
-  //op_in_t in;
-  // input idx in net list
-  //  u16 netInIdx;
   // parent op index in net list
-  u16 opIdx;
+  s32 opIdx;
   // input index in parent op list
-  u16 opInIdx;
+  u8 opInIdx;
   // preset inclusion flag
   u8 preset;
 } inode_t;
 
 // output node type (index into inode list)
 typedef struct _onode {
-  // output idx in parent op's output list
-  u16 outIdx;
+  // output idx in parent op's output list2
+  u8 opOutIdx;
   // target input idx in net list
   s16 target;
   // parent op's index in net list
-  u16 opIdx;
+  s32 opIdx;
   // preset inclusion flag
   u8 preset;
 } onode_t;
@@ -57,14 +61,22 @@ typedef struct _pnode {
   u8 preset;
 } pnode_t;
 
+
 // network type
 typedef struct _ctlnet {
+  //  op pointers
+  op_t * ops[NET_OPS_MAX];
+#if NET_USE_MALLOC
+  // bitfields for operator allocation
+  u8 opsUsed[BITNSLOTS(NET_OPS_MAX)];
+#else
   // operator memory, statically allocated as char array
   u8 opPoolMem[NET_OP_POOL_SIZE];
   // pointer to managed op memory
   u8 * opPool;
   // current offset into op memory
   u32 opPoolOffset;
+#endif
   // number of instantiated operators
   u16 numOps;
   // number of instantiated inputs
@@ -73,8 +85,7 @@ typedef struct _ctlnet {
   u16 numOuts;
   // number of instantiated params
   u16 numParams;
-  //  op pointers
-  op_t * ops[NET_OPS_MAX];
+
   // inputs
   inode_t ins[NET_INS_MAX];
   // outputs

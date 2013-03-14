@@ -11,7 +11,9 @@
 
 //#include <stdio.h>
 // asf
+#ifdef ARCH_AVR32
 #include "print_funcs.h"
+#endif
 // bees
 #include "net_protected.h"
 #include "param.h"

@@ -41,6 +41,8 @@ typedef struct page_struct {
   s16 selected;
   ePageMode mode;
   s8 cursor;
+  // knob sensitivities for this page
+  s8 encSens[4];
 } page_t;
 
 ///////////////////////

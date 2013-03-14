@@ -40,7 +40,7 @@ typedef union __attribute__((__packed__)) {
 } ParamValue;
 
 // simpler for internals
-typedef union { u32 u; s32 s; fix16 fix; fract32 fr; float f; } pval;
+typedef union { u32 u; s32 s; fix16 fix; fract32 fr; } pval;
 
 // parameter descriptor
 typedef struct __attribute__((__packed__)) ParamDescStruct {

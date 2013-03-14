@@ -8,8 +8,6 @@
 #ifndef _CTL_INTERFACE_H_
 #define _CTL_INTERFACE_H_
 
-
-/// blech
 // maximum allocated parameters, connections, and operators
 // max operator inputs
 #define NET_INS_MAX 128
@@ -22,7 +20,6 @@
 // max presets
 #define NET_PRESETS_MAX 8
 
-
 #include "param_common.h"
 #include "param.h"
 // parameter data
@@ -30,21 +27,22 @@
 #include "op.h"
 #include "op_math.h"
 
-
-
 //---- public functions
 
 // initialize the network 
 void net_init(void*);
 // de-initialize the network 
 void net_deinit(void);
+// intialize (clear) an input node
+void net_init_inode(u16 idx);
+// intialize (clear) an output node
+void net_init_onode(u16 idx);
 // create a new operator given class ID, return index (-1 == fail)
 s16 net_add_op(opId_t opId);
 // remove the last created operator
 s16 net_pop_op(void);
 // remove an arbitrary operator
-// TODO
-// void remove_op(const u8 idx);
+void net_remove_op(const u32 idx);
 
 // activate an input node with some input data
 void net_activate(s16 inIdx, const io_t val);
@@ -109,6 +107,15 @@ void net_add_param(u32 idx, volatile ParamDesc* pdesc);
 //void net_add_param(u32 idx, const char* name, f32 min, f32 max, s32 val);
 // clear existing parameters
 void net_clear_params(void);
+
+
+// forward/backward search for input/output nodes
+s32 net_next_in(void);
+s32 net_prev_in(void);
+s32 net_next_out(void);
+s32 net_prev_out(void);
+void net_reset_in_search(void);
+void net_reset_out_search(void);
 
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections

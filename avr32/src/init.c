@@ -284,7 +284,6 @@ void init_bfin_resources(void) {
 
 // initialize clocks
 void init_clocks(void) {
-  /// from 251e...
   // Switch to OSC0 to speed up  booting
   // Configure Osc0 in crystal mode (i.e. use of an external crystal source, with
   // frequency FOSC0) with an appropriate startup time then switch the main clock
