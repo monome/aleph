@@ -31,7 +31,6 @@ TARGET = aleph.elf
 
 # List of C source files.
 CSRCS = \
-	avr32/drivers/ebi/sdramc/sdramc.c                         \
 	avr32/drivers/flashc/flashc.c                      \
 	avr32/drivers/gpio/gpio.c                          \
 	avr32/drivers/intc/intc.c                          \
@@ -41,7 +40,6 @@ CSRCS = \
 	avr32/drivers/pm/power_clocks_lib.c                \
 	avr32/drivers/spi/spi.c                            \
         avr32/drivers/tc/tc.c                          \
-        avr32/drivers/twi/twi.c                          \
 	avr32/drivers/usart/usart.c                        \
 	avr32/utils/debug/print_funcs.c                    \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.c \
@@ -55,7 +53,6 @@ CSRCS = \
 	$(ALEPH_AVR32)/src/encoders.c \
 	$(ALEPH_AVR32)/src/files.c \
 	$(ALEPH_AVR32)/src/filesystem.c \
-	$(ALEPH_AVR32)/src/i2c.c	\
 	$(ALEPH_AVR32)/src/init.c	\
 	$(ALEPH_AVR32)/src/interrupts.c \
 	$(ALEPH_AVR32)/src/memory.c \
@@ -101,35 +98,34 @@ ASSRCS = \
 
 # List of include paths.
 INC_PATH = \
-	avr32/boards                                       \
-	avr32/boards/user_board                               \
+       avr32/boards                                       \
+       avr32/boards/user_board                               \
 	avr32/components/memory/sdram			 \
 	avr32/drivers/cpu/cycle_counter/                 \
 	avr32/drivers/ebi/sdramc/                            \
-	avr32/drivers/flashc                               \
-	avr32/drivers/gpio                                 \
-	avr32/drivers/intc                                 \
-	avr32/drivers/pdca                                   \
-	avr32/drivers/pm                                   \
-	avr32/drivers/spi                                  \
-	avr32/drivers/tc                                 \
-	avr32/drivers/twi                                 \
-	avr32/drivers/usart                                \
-	avr32/services/delay                               \
-	avr32/services/fs/fat                              \
-	avr32/utils                                        \
-	avr32/utils/debug                                  \
-	avr32/utils/preprocessor                           \
-	common/boards                                      \
+       avr32/drivers/flashc                               \
+       avr32/drivers/gpio                                 \
+       avr32/drivers/intc                                 \
+       avr32/drivers/pdca                                   \
+       avr32/drivers/pm                                   \
+       avr32/drivers/spi                                  \
+       avr32/drivers/tc                                 \
+       avr32/drivers/twi                                 \
+       avr32/drivers/usart                                \
+       avr32/services/delay                               \
+       avr32/services/fs/fat                              \
+       avr32/utils                                        \
+       avr32/utils/debug                                  \
+       avr32/utils/preprocessor                           \
+       common/boards                                      \
 	avr32/components/memory/sd_mmc/sd_mmc_spi \
-	common/services/storage/ctrl_access                \
-	common/services/clock                              \
-	common/utils         \
+       common/services/storage/ctrl_access                \
+       common/services/clock                              \
+       common/utils         \
 	$(ALEPH_AVR32)	\
 	$(ALEPH_AVR32)/src	\
 	$(ALEPH_AVR32)/conf	\
 	$(ALEPH_BEES)	\
-	$(ALEPH_BEES)/ops	\
 	$(ALEPH_COMMON)	\
 	$(ALEPH_COMMON)/libfixmath \
 	$(ALEPH_COMMON)/fat_io_lib

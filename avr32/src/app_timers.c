@@ -67,10 +67,10 @@ static void enc_timer_callback(int tag) {
       e.eventData = val;
       enc[i].val = 0;
       
-      print_dbg("\r\n enc timer event, n: ");
-      print_dbg_ulong(i);
-      print_dbg(" , val: ");
-      print_dbg_ulong(val);
+      /* print_dbg("\r\n enc timer event, n: "); */
+      /* print_dbg_ulong(i); */
+      /* print_dbg(" , val: "); */
+      /* print_dbg_ulong(val); */
       
       post_event(&e);
     }

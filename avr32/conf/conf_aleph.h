@@ -7,18 +7,18 @@
 #ifndef _CONF_ALEPH_H_
 #define _CONF_ALEPH_H_
 
-//==============================================
-//==== SDRAM
-//define SDRAM_PART_HDR  "mt48lc16m16a2tg7e/mt48lc16m16a2tg7e.h"
+/* //============================================== */
+/* //==== SDRAM */
+/* //define SDRAM_PART_HDR  "mt48lc16m16a2tg7e/mt48lc16m16a2tg7e.h" */
 
-//! Part header file of used SDRAM(s).
-/// this is the actual part number, i attempted to customize, doesn't seem to matter
-#define SDRAM_PART_HDR  "mt48lc16m16a2tg75.h"
-///// this is the defualt header for that part family from the EVK
-//#define SDRAM_PART_HDR  "mt48lc16m16a2tg7e.h"
+/* //! Part header file of used SDRAM(s). */
+/* /// this is the actual part number, i attempted to customize, doesn't seem to matter */
+/* #define SDRAM_PART_HDR  "mt48lc16m16a2tg75.h" */
+/* ///// this is the defualt header for that part family from the EVK */
+/* //#define SDRAM_PART_HDR  "mt48lc16m16a2tg7e.h" */
 
-//! Data bus width to use the SDRAM(s) with (16 or 32 bits; always 16 bits on UC3).
-#define SDRAM_DBW 16
+/* //! Data bus width to use the SDRAM(s) with (16 or 32 bits; always 16 bits on UC3). */
+/* #define SDRAM_DBW 16 */
 
 //==============================================
 //==== clocks
@@ -27,15 +27,19 @@
 #define OSC32_STARTUP   AVR32_PM_OSCCTRL32_STARTUP_8192_RCOSC //!< Osc32 startup time: RCOsc periods.
 #define FOSC0           12000000                                //!< Osc0 frequency: Hz.
 #define OSC0_STARTUP    AVR32_PM_OSCCTRL0_STARTUP_2048_RCOSC  //!< Osc0 startup time: RCOsc periods.
-// PLL output frequency
 #define PLL_OUTPUT_FREQ 132000000UL
-// System Clock Frequencies
-#define FMCK_HZ   		66000000
-#define FCPU_HZ   		FMCK_HZ
-#define FHSB_HZ   		FCPU_HZ
-#define FPBA_HZ   		FMCK_HZ
-#define FPBB_HZ   		FMCK_HZ
+#define FMCK_HZ   		66000000   // master
+#define FCPU_HZ   		FMCK_HZ    // cpu
+#define FHSB_HZ   		FCPU_HZ    // highspeed bus
+#define FPBA_HZ   		FMCK_HZ    // peripheral bus A
+#define FPBB_HZ   		FMCK_HZ    // peripheral bus B
 
+
+//============================================
+//====== IRQ priorities
+#define SYS_IRQ_PRIORITY       AVR32_INTC_INT1
+#define APP_TC_IRQ_PRIORITY    AVR32_INTC_INT1
+#define UI_IRQ_PRIORITY        AVR32_INTC_INT2
 
 //==============================================
 //==== timers
@@ -45,7 +49,6 @@
 #define APP_TC_CHANNEL         0
 #define APP_TC_IRQ             AVR32_TC_IRQ0
 #define APP_TC_IRQ_GROUP       AVR32_TC_IRQ_GROUP
-#define APP_TC_IRQ_PRIORITY    AVR32_INTC_INT0
 
 //==============================================
 //==== USART
@@ -137,16 +140,15 @@
 #define ENC3_S0_PIN		AVR32_PIN_PB08
 #define ENC3_S1_PIN		AVR32_PIN_PB09
 
+// switches
 // fn switches
 #define SW0_PIN		AVR32_PIN_PA25
 #define SW1_PIN		AVR32_PIN_PA26
 #define SW2_PIN		AVR32_PIN_PA27
 #define SW3_PIN		AVR32_PIN_PA28
-
 // edit/play mode
 #define LED_MODE_PIN    AVR32_PIN_PA23
 #define SW_MODE_PIN     AVR32_PIN_PA24
-
 // power-down control
 #define SW_POWER_PIN    AVR32_PIN_PX12
 #define POWER_CTL_PIN   AVR32_PIN_PX13

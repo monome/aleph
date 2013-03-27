@@ -37,6 +37,10 @@ static scene_t* sceneData;
 
 void scene_init(void) {
   u8 i;
+
+#if FIXMEM 
+  return;
+#else
   //sceneData = (scene_t*)malloc(SCENE_COUNT * sizeof(scene_t));
   sceneData = (scene_t*)alloc_mem(SCENE_COUNT * sizeof(scene_t));
   for(i=0; i<SCENE_COUNT; i++) {
@@ -44,6 +48,8 @@ void scene_init(void) {
     itoa_whole(i, sceneData[i].sceneName + 6, 4);
     str_copy("no module               ", sceneData[i].moduleName, MODULE_NAME_LEN);
   }
+#endif
+
 }
 
 void scene_deinit(void) {

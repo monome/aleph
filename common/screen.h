@@ -30,6 +30,7 @@
 #define GRAM_PIX    8192 // ncols * nrows
 // bytes in graphics RAM
 #define GRAM_BYTES  4096 // 2 pixels per byte
+#define GRAM_BYTES_1  4095
 // how many lines of text
 #define CHAR_ROWS   8  // NROWS / FONT_CHARH
 #define CHAR_ROWS_1 7

@@ -25,6 +25,11 @@ static u32 heapOffset;
 // bytes in sdram hardware
 static u32 heapSize;
 
+////
+////// FIX: get SRAM working and migrate
+#if FIXMEM
+
+#else
 
 // setup heap
 void init_mem(void) {
@@ -92,3 +97,6 @@ void sdram_test(u32 numBytes, u32 offset) {
   print_dbg_ulong(noErrors);
   print_dbg(" corrupted word(s)       \r\n");
 }
+
+#endif
+///////////

@@ -11,12 +11,18 @@
 #include "param_common.h"
 #include "types.h"
 
+#define USE_LDR_RAM_BUFFER 1
+
 // blackfin HWAIT status
 extern volatile U8 hwait;
 
 // load a blackfin executable
+#ifdef USE_LDR_RAM_BUFFER
+void bfin_load(U32 size, volatile u8 * data);
+#else 
 void bfin_load(U32 size, void* fp);
-  //void bfin_load(U32 size, volatile u8 * data);
+#endif
+
 // set a parameter
 void bfin_set_param(U8 idx, F32 val);
 

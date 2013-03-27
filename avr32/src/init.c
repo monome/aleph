@@ -249,7 +249,8 @@ void init_bfin_resources(void) {
     //// would prefer fast baudrate / lower trans delay during boot,
     //// but need multiple registers for boot (fast) and run (slow)
     //   .baudrate     = 20000000,
-     .baudrate     = 10000000,
+    //     .baudrate     = 10000000,
+     .baudrate     = 5000000,
     .bits         = 8,
     .spck_delay   = 0,
     //    .trans_delay  = 0,

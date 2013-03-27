@@ -9,8 +9,8 @@
 
 #endif
 
-#ifdef ARCH_AVR32
 //---- basic numerical datatypes
+
 typedef int8_t       s8 ;  //!< 8-bit signed integer.
 typedef uint8_t      u8 ;  //!< 8-bit unsigned integer.
 typedef int16_t      s16;  //!< 16-bit signed integer.
@@ -21,18 +21,7 @@ typedef int64_t      s64;  //!< 64-bit signed integer.
 typedef uint64_t     u64;  //!< 64-bit unsigned integer.
 typedef float        f32;  //!< 32-bit floating-point number.
 typedef double       f64;  //!< 64-bit floating-point number.
-#else
-typedef signed char       s8 ;  //!< 8-bit signed integer.
-typedef unsigned char      u8 ;  //!< 8-bit unsigned integer.
-typedef signed short      s16;  //!< 16-bit signed integer.
-typedef unsigned short     u16;  //!< 16-bit unsigned integer.
-typedef signed int      s32;  //!< 32-bit signed integer.
-typedef unsigned int     u32;  //!< 32-bit unsigned integer.
-typedef signed long int      s64;  //!< 64-bit signed integer.
-typedef unsigned long int     u64;  //!< 64-bit unsigned integer.
-typedef float        f32;  //!< 32-bit floating-point number.
-typedef double       f64;  //!< 64-bit floating-point number.
-#endif
+
 
 #ifdef ARCH_LINUX
 typedef s8  S8;  //!< 8-bit signed integer.

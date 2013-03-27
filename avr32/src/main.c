@@ -22,7 +22,7 @@
 #include "power_clocks_lib.h"
 #include "print_funcs.h"
 #include "sd_mmc_spi.h"
-#include "sdramc.h"
+//#include "sdramc.h"
 #include "spi.h"
 #include "sysclk.h"
 #include "usart.h"
@@ -69,16 +69,6 @@ static u8 mode = 0;
 // count of parameters
 static u32 numParams = 0;
 
-/*
-  static u8 ldrData[] = {
-  #include "bfin_test.ldr.inc"
-  };
-
-  static u32 ldrSize = 
-  #include "bfin_test.ldr_size.inc"
-  ;
-*/
-
 //=========================================== 
 //==== static functions
 
@@ -99,10 +89,6 @@ static void check_events(void);
 //----------------------------------------------
 //---- testing stuff
 //static void twi_test(void);
-
-
-/// test malloc
-static u8* heaped;
   
 // display scrolling history of events
 static void scroll_event(const char* str, s16 val);
@@ -257,24 +243,24 @@ static void check_events(void) {
 	break;
 
       case kEventAdc0:
-	//print_dbg("\r\nadc val 0: ");
-	//	print_dbg_hex(e.eventData);
-	//	displayAdcVal(0, e.eventData);
+	print_dbg("\r\nadc val 0: ");
+	print_dbg_hex(e.eventData);
+	displayAdcVal(0, e.eventData);
 	break;
       case kEventAdc1:
-	// print_dbg("\r\nadc val 1: ");
-	// print_dbg_hex(e.eventData);
-	//	displayAdcVal(1, e.eventData);
+	 print_dbg("\r\nadc val 1: ");
+	 print_dbg_hex(e.eventData);
+	 displayAdcVal(1, e.eventData);
 	break;
       case kEventAdc2:
-	// print_dbg("\r\nadc val 2: ");
-	// print_dbg_hex(e.eventData);
-	//	displayAdcVal(2, e.eventData);
+	 print_dbg("\r\nadc val 2: ");
+	 print_dbg_hex(e.eventData);
+		displayAdcVal(2, e.eventData);
 	break;
       case kEventAdc3:
-	//	print_dbg("\r\nadc val 3: ");
-	//	print_dbg_hex(e.eventData);
-	//	displayAdcVal(3, e.eventData);
+		print_dbg("\r\nadc val 3: ");
+		print_dbg_hex(e.eventData);
+		displayAdcVal(3, e.eventData);
 	break;
       }
       /*
@@ -347,21 +333,20 @@ static void test_pdca(void) {
 ////main function
 int main (void) {
   u32 dum;
+  int i;
 
   U32 waitForCard = 0;
   volatile avr32_tc_t *tc = APP_TC;
   volatile u64 delay;
 
+  //////
+  //  while(1) { ;; }
+  ////
+
+
   //  gpio_set_gpio_pin(POWER_CTL_PIN);
   //  gpio_clr_gpio_pin(POWER_CTL_PIN);
   
-  /////////////////////////////////////
-  ///////////////////////  ////// TEST: do nothing forever
-  while(1) { ;; }
-  //////////////////////////////
-  //////////////////////////////////
-  ///////////////////////////////////
-
   // initialize clocks:
   init_clocks();
   
@@ -405,19 +390,39 @@ int main (void) {
   init_switches();
 
   // initialize sdram
-  sdramc_init(FHSB_HZ);
+  //  sdramc_init(FHSB_HZ);
 
   //memory manager
+#if FIXMEM
+#else
   init_mem();
+#endif
   //  sdram_test(SDRAM_SIZE >> 3, (SDRAM_SIZE >> 3) * 6);
 
   // initialize twi
-  init_twi();
+  //  init_twi();
   
   // Enable all interrupts.
   Enable_global_interrupt();
 
-  // Wait for a card to be inserted  
+  //// test post-decrement! heyy
+  /* for( i=15; i >= 0; i--) { */
+  /*   print_dbg("\r\n"); */
+  /*   print_dbg_ulong(dum); */
+  /* } */
+
+  /* i = 16; */
+  /* while(i>0) { */
+  /*   print_dbg("\r\n i: "); */
+  /*   print_dbg_hex(i); */
+  /*   i--; */
+  /* } */
+  /* return; */
+
+  ////
+
+
+  // Wait for a card to be inserted
   screen_line(0, 0, "ALEPH", 0x3f);
   screen_line(0, 1, "waiting for SD card...", 0x3f);
   screen_refresh();
@@ -443,7 +448,7 @@ int main (void) {
   // start application timers
   init_app_timers();
 
-  print_dbg("starting event loop.\n\r");
+  print_dbg("\r\n starting event loop...");
 
   // keep the blackfin out of reset
   gpio_set_gpio_pin(BFIN_RESET_PIN);  
@@ -470,11 +475,29 @@ int main (void) {
   menu_init();
   //  print_dbg("\r\nMENU INIT");
 
+
+
+
+  delay = 800000; while(delay--) {;;}
+
+
+#if 1
+  //#if 1 while(1) {
+  //#endif
   /// boot default ds
   files_load_dsp_name("default.ldr");
   /// wait for bfin to finish boot
+
   delay = 800000; while(delay--) {;;}
+  /// again...
+  //  delay = 800000; while(delay--) {;;}
+
   report_params();
+#endif
+
+
+
+
 
   while(1) { 
     check_events();
@@ -497,7 +520,7 @@ static void report_params(void) {
       bfin_get_param_desc(i, &pdesc);
       net_add_param(i, &pdesc);
       print_dbg("\r\n got pdesc : ");
-      print_dbg((const char*)pdesc.label);
+      print_dbg(pdesc.label);
     }
   }
 }
@@ -572,9 +595,9 @@ static void scroll_event(const char* str, s16 val) {
 }
 
 void displayAdcVal(u8 idx, u16 val) {
-  //  screen_blank_line(0, CHAR_ROWS_1);
-  //  screen_int(FONT_CHARW * (5 * idx + 3), CHAR_ROWS_1, val, 1);
-  //  screen_hl_line(0, CHAR_ROWS_1, 0xf);
+  screen_blank_line(0, CHAR_ROWS_1);
+  screen_int(FONT_CHARW * (5 * idx + 3), CHAR_ROWS_1, val, 1);
+  screen_hl_line(0, CHAR_ROWS_1, 0xf);
 }
 
 /*

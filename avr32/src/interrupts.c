@@ -19,7 +19,7 @@
 #include "timers.h"
 #include "types.h"
 
-#define UI_IRQ_LEVEL AVR32_INTC_INT2
+#define UI_IRQ_PRIORITY AVR32_INTC_INT2
 
 //------------------------
 //----- variables
@@ -158,6 +158,7 @@ static void irq_port0_line3(void) {
 */
 
 // interrupt handler for PA23-PA30
+/*
 __attribute__((__interrupt__))
 static void irq_port0_line3(void) {
   //SW_F0
@@ -186,6 +187,7 @@ static void irq_port0_line3(void) {
     gpio_clear_pin_interrupt_flag(SW_MODE_PIN);
   }
 }
+*/
 
 // interrupt handler for PB00-PB07
 __attribute__((__interrupt__))
@@ -242,15 +244,19 @@ static void irq_port1_line1(void) {
 
 
 // interrupt handler for px08-px15
+/*
 __attribute__((__interrupt__))
 static void irq_port2_line1(void) {
-  //  print_dbg("\r\n interrupt on px08-px15 : ");
+
+  print_dbg("\r\n interrupt on px08-px15 : ");
+
   //SW_POWER
   if(gpio_get_pin_interrupt_flag(SW_POWER_PIN)) {
     process_sw(5);
     gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
   }
 }
+*/
 
 /*
 // interrupt handler for PB16-PB23
@@ -292,6 +298,7 @@ void register_interrupts(void) {
   gpio_enable_pin_interrupt( ENC3_S1_PIN,	GPIO_PIN_CHANGE);
 
   // switches
+  //--- polled at the moment
   // gpio_enable_pin_interrupt( SW0_PIN,	        GPIO_PIN_CHANGE);
   //  gpio_enable_pin_interrupt( SW1_PIN,	        GPIO_PIN_CHANGE);
   //  gpio_enable_pin_interrupt( SW2_PIN,	        GPIO_PIN_CHANGE);
@@ -300,34 +307,34 @@ void register_interrupts(void) {
   //  gpio_enable_pin_interrupt( SW_POWER_PIN,	GPIO_PIN_CHANGE);
  
   // PA00 - PA07
-  //  INTC_register_interrupt( &irq_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), UI_IRQ_LEVEL );
+  //  INTC_register_interrupt( &irq_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), UI_IRQ_PRIORITY );
 
   // PA08 - PA15
-  // INTC_register_interrupt( &irq_port0_line1, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA08 / 8), UI_IRQ_LEVEL);
+  // INTC_register_interrupt( &irq_port0_line1, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA08 / 8), UI_IRQ_PRIORITY);
 
   // PA16 - PA23
-  // INTC_register_interrupt( &irq_port0_line2, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA16 / 8), UI_IRQ_LEVEL);
+  // INTC_register_interrupt( &irq_port0_line2, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA16 / 8), UI_IRQ_PRIORITY);
 
   // PA24 - PA31
-  //  INTC_register_interrupt( &irq_port0_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA24 / 8), UI_IRQ_LEVEL);
+  //  INTC_register_interrupt( &irq_port0_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA24 / 8), UI_IRQ_PRIORITY);
 
   // PB00 - PB07
-  INTC_register_interrupt( &irq_port1_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB00 / 8), UI_IRQ_LEVEL );
+  INTC_register_interrupt( &irq_port1_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB00 / 8), UI_IRQ_PRIORITY );
 
   // PB08 - PB15
-  INTC_register_interrupt( &irq_port1_line1, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB08 / 8), UI_IRQ_LEVEL);
+  INTC_register_interrupt( &irq_port1_line1, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB08 / 8), UI_IRQ_PRIORITY);
 
   // PB16 - PB23
-  // INTC_register_interrupt( &irq_port1_line2, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB16 / 8), UI_IRQ_LEVEL);
+  // INTC_register_interrupt( &irq_port1_line2, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB16 / 8), UI_IRQ_PRIORITY);
 
   // PB24 - PB31
-  //  INTC_register_interrupt( &irq_port1_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB24 / 8), UI_IRQ_LEVEL);
+  //  INTC_register_interrupt( &irq_port1_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB24 / 8), UI_IRQ_PRIORITY);
 
   // px08 - px15
-  //  INTC_register_interrupt( &irq_port2_line1, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PX08 / 8), UI_IRQ_LEVEL);
+  //  INTC_register_interrupt( &irq_port2_line1, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PX08 / 8), UI_IRQ_PRIORITY);
 
   // register IRQ for PDCA transfer
-  INTC_register_interrupt(&irq_pdca, AVR32_PDCA_IRQ_0, AVR32_INTC_INT1);
+  INTC_register_interrupt(&irq_pdca, AVR32_PDCA_IRQ_0, SYS_IRQ_PRIORITY);
 
   // register TC interrupt
   INTC_register_interrupt(&irq_tc, APP_TC_IRQ, APP_TC_IRQ_PRIORITY);

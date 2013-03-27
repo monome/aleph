@@ -14,6 +14,7 @@
 // fr32 to float
 f32 fr32_to_float(fract32 x) {
   if(x > 0) {
+    //    printf("\n? %f", (f64)x);
     return  (f32) ( (f64)x / (f64)INT_MAX);
   } else {
     return (f32) ( (f64)x / (f64)INT_MIN * -1.0 );

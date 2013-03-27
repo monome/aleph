@@ -10,6 +10,8 @@
 
 #include "types.h"
 
+#define FIXMEM 1
+
 #define ALLOC_FAIL 0
 
 // heap memory type

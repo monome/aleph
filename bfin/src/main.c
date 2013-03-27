@@ -12,7 +12,6 @@ long long int dumcount = 0;
 //-------------------------------
 // main function
 int main(void) {
-  u32 del;
   // turn on execution counter
   // default .crt does this for us
   //  __asm__ __volatile__("R0 = 0x32; SYSCFG = R0; CSYNC;":::"R0");
@@ -30,6 +29,7 @@ int main(void) {
 
   ////////////////////
   /////////////// TEST : do this a lot
+  
   /*
   *pFlashA_PortB_Data = 0x3f;
   while(dumcount < 1000000) {
@@ -38,34 +38,17 @@ int main(void) {
   }
   *pFlashA_PortB_Data = 0;
   */
+
   /////////////////////
   ////////////////////////
-  //  init_1836();
-  init_1939();
-
-
-  ///// TEST: hold SPI pins in codec standalone configuration
-
-  //////////
-  ///// TEST:do this forever
-  /*
-  while(1) {
-    init_1939();
-    del = 100000; while(del > 0) { del--; }
-  }
-  */
-  
-  ////////
-  ///////
+  init_1836();
 
   // intialize the sport0 for audio rx/tx
   init_sport0();
-  // intialize DMA for audio
+  // intialize the DMA to shove audio data around
   init_DMA();
-  //  // put the spi back in slave mode to receive param changes from avr32
-   init_spi_slave();
-
-
+  // put the spi back in slave mode to receive param changes from avr32
+  init_spi_slave();
   // intialize the audio processing unit (assign memory)
   module_init();
   // assign interrupts

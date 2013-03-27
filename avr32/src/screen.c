@@ -134,7 +134,8 @@ void init_oled(void) {
   write_command(63);
 		
   // clear OLED RAM 
-  for(i=0; i<GRAM_BYTES; i++) { write_data(0); }
+    for(i=0; i<GRAM_BYTES; i++) { write_data(0); }
+  //  screen_refresh();
   write_command(0xAF);	// on
 
   //  delay_ms(10) 
@@ -147,6 +148,7 @@ void init_oled(void) {
 // send screen buffer contents to OLED
 void screen_refresh(void) {
   U16 i;
+  u8* pScreen;
   cpu_irq_disable();
   // Disable_global_interrupt();
 
@@ -154,10 +156,23 @@ void screen_refresh(void) {
   gpio_set_gpio_pin(OLED_REGISTER_PIN);
   spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
 
-  for(i=0; i<GRAM_BYTES; i++) { 
-    //    write_data(screen[i]);
-    spi_write(OLED_SPI, screen[i]);  
-    //write_data(i % 0xf);
+  /// this assignment doesn't work.... WTF??
+//  for(i=GRAM_BYTES_1; i>=0; i--) {
+  
+  pScreen=&(screen[GRAM_BYTES_1]);
+  for(i=0; i<GRAM_BYTES; i++) {  
+    //////////////////////
+    ///// debug
+    /* print_dbg("\r\n gfx buffer, byte : ");  */
+    /* print_dbg_ulong(i); */
+    /* print_dbg(" ; addr : "); */
+    /* print_dbg_hex(&(screen[i])); */
+    /* print_dbg(" ; data : "); */
+    /* print_dbg_hex(screen[i]); */
+    ///////////////////
+    //    spi_write(OLED_SPI, screen[i]);      
+    spi_write(OLED_SPI, *pScreen);
+    pScreen--;
   }
   spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
   cpu_irq_enable();
@@ -166,30 +181,25 @@ void screen_refresh(void) {
 
 // draw a single pixel
 void screen_pixel(U16 x, U16 y, U8 a) {
-  //  static U32 pos;
-  // if (x >= NCOLS) return;
-  // if (y >= NROWS) return;
-  //  pos = (y * NCOLS__2) + (x>>1);
   pos = (y << COLS_LSHIFT) + (x >> 1);
+
+ // rotate: swap (and read backwards in refresh)
   if (x&1) {
-    screen[pos] &= 0x0f;
-    screen[pos] |= (a << 4);
-  } else {
     screen[pos] &= 0xf0;
     screen[pos] |= (a & 0x0f);
+  } else {
+    screen[pos] &= 0x0f;
+    screen[pos] |= (a << 4);
   }
 }
 
 // get value of pixel
 U8 screen_get_pixel(U8 x, U8 y) {
-  //  static U32 pos;
-  // if (x >= NCOLS) return;
-  // if (y >= NROWS) return;
   pos = (y << COLS_LSHIFT) + (x>>1);
-  if (x%2) {
-    return (screen[pos] & 0xf0) >> 4; 
+  if (x&1) {
+    return screen[pos] & 0x0f; 
    } else {
-    return screen[pos] & 0x0f;
+    return (screen[pos] & 0xf0) >> 4;
   }
 }
 

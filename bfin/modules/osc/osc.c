@@ -21,7 +21,7 @@ static u8 butstate = 0;
 //---------------------------
 //---- static vars
 // current phase
-static fix16_t phase = 0;
+static fix16_t phase = 0.f;
 // constant representing phase change for 1hz
 static fract32 rho;
 // phase increment

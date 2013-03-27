@@ -5,12 +5,12 @@
 */
 //ASF
 #include "compiler.h"
-#include "util.h"
 #include "gpio.h"
 #include "spi.h"
 ///// DEBUG
 #include "print_funcs.h"
 /////
+
 // aleph
 #include "conf_aleph.h"
 #include "filesystem.h"
@@ -18,53 +18,14 @@
 #include "param.h"
 #include "protocol.h"
 #include "types.h"
+#include "util.h"
 #include "bfin.h"
 
 // load a blackfin executable
 //// need to buffer the LDR file to save memory.
 //// so, alas, we must use file I/O from here
-void bfin_load(U32 size, void* fp) {
-  u32 i; /// byte index in .ldr
-  volatile u8 data;
-  volatile U64 delay;
+#ifdef USE_LDR_RAM_BUFFER
 
-
-  /* print_dbg("\r\n bfin loader using file pointer :  "); */
-  /* print_dbg_hex(fp); */
-  /* print_dbg("\r\n size :  "); */
-  /* print_dbg_ulong(size); */
-  
-
-  // FIXME: (?)
- 
-  //// disabling gloabl interrupts will break SDcard acces.
-  //// seems like th eboot process is pretty robust regarding inter-byte delays. 
-  //  Disable_global_interrupt();
-  // reset bfin
-  gpio_set_gpio_pin(BFIN_RESET_PIN);  
-  delay = 30; while (--delay > 0) {;;}
-  gpio_clr_gpio_pin(BFIN_RESET_PIN);
-  delay = 30; while (--delay > 0) {;;}
-  gpio_set_gpio_pin(BFIN_RESET_PIN);  
-  delay = 3000; while (--delay > 0) {;;}
-  // send the .ldr data
-  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  
-  print_dbg("\r\n bfin loader: chip selected asserted");
-
-  for(i=0; i<size; i++) {
-    //    print_dbg("\r\n bfin loader sending byte: ");
-    data = fl_fgetc(fp);
-    //    print_dbg_hex(data);
-    while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { ;; }
-    spi_write(BFIN_SPI, data);
-  }
-  
-  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  // FIXME: (?)
-  //  Enable_global_interrupt();
-}
-  /*
 void bfin_load(U32 size, volatile u8 * data) {
   volatile U64 delay;
   U64 byte;
@@ -74,7 +35,8 @@ void bfin_load(U32 size, volatile u8 * data) {
   print_dbg(" bytes...");
 
   // fixme:
-  Disable_global_interrupt();
+  //// need to use interrupt priorities
+  // Disable_global_interrupt();
 
   gpio_set_gpio_pin(BFIN_RESET_PIN);  
   delay = 1000; while (--delay > 0) {;;}
@@ -100,12 +62,57 @@ void bfin_load(U32 size, volatile u8 * data) {
   }
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 
-  Enable_global_interrupt();
+  /// enable app, ui, 
+  // Enable_global_interrupt();
 
   print_dbg("\r\ndone loading bfin. \r\n");
 
 }
-*/
+
+#else
+
+void bfin_load(U32 size, void* fp) {
+  u64 i; /// byte index in .ldr
+  u8 data;
+  volatile U64 delay;
+  // FIXME: (?)
+  //  Disable_global_interrupt();
+  // reset bfin
+  gpio_set_gpio_pin(BFIN_RESET_PIN);  
+  delay = 30; while (--delay > 0) {;;}
+  gpio_clr_gpio_pin(BFIN_RESET_PIN);
+  delay = 30; while (--delay > 0) {;;}
+  gpio_set_gpio_pin(BFIN_RESET_PIN);  
+  delay = 3000; while (--delay > 0) {;;}
+  // send the .ldr data
+  i = 0;
+  print_dbg("\r\n loading bfin, ");
+  print_dbg_ulong(size);
+  print_dbg(" bytes, FP: ");
+  print_dbg_hex(fp);
+  print_dbg("\r\n");
+
+
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  while(i<size) {
+    data = fl_fgetc(fp);
+
+    /* print_dbg_hex(data); */
+    /* print_dbg(" "); */
+    /* if((i % 16) == 15) { print_dbg("\r\n"); } */
+
+    while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { 
+      print_dbg("\r\n HWAIT asserted..."); 
+    }
+    spi_write(BFIN_SPI, data);
+    i++;
+  }
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  // FIXME: (?)
+  //  Enable_global_interrupt();
+}
+
+#endif // LDR RAM buffer
 
 void bfin_set_param(u8 idx, f32 x ) {
   static ParamValue pval;
