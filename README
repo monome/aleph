@@ -5,20 +5,9 @@ this
 
 b todo
 
-# silk name layers
-# audio conditioning stages
-# place LEDs
-# headphone on DAC5-6
-# ADC hookup
-# DAC hookup
-# CV out 10V gain stage
-# mezz audio routing 
-inst/line sw part -- NOT FITTING
-# route sw0/1
-# double stacked jack part
+12V system rethink
 
 input gain stage
-	inst/line switch (+20db)
 	LED follower, LED clip
 output gain stage
 	LED follower
@@ -28,9 +17,7 @@ headphone amp
 LED followers: comparator only, on-off http://www.openmusiclabs.com/projects/microdec/
 
 # debouncing: http://www.ganssle.com/debouncing.htm
-# new rev fixes
 
-move values silks
 schem cleanup
 
 enclosure
@@ -38,10 +25,10 @@ enclosure
 
 e todo
 
+asf migration
 housekeeping
 op network
 new ops
-FAT
 usb host
 i2c
 
@@ -54,10 +41,7 @@ text
 	documentation // framework/toolchain and specs
 	manual // instructional
 
-SRAM
-new codec
-new DAC
-soft power
+
 
 
 future

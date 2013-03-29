@@ -1,22 +1,37 @@
+april 2013 build
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+orders:
+	wrong part sram
+	10u tants
+	0 ohm res
+
+fine-tune usb mount positions
+new usb part: ae10400
+
+
+
+
+
 march in sf 2013
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-SRAM BYTE must be HIGH
-SRMA A19 not hooked up 
+# SRAM BYTE must be HIGH
+# NO ### SRMA A19 not hooked up 
 
 # codec audio in
 # codec audio out
-USB
+# USB
 # SRAM
 # debounce key check
 # sw inputs
-DAC 10v
+# DAC 10v
 ADC test
-rotate screen
+# rotate screen
 
-codec needs to be in standalone mode.
-	MOSI, SCLK, SEL to GND
-	MISO to +3v3
+# codec needs to be in standalone mode.
+	# MOSI, SCLK, SEL to GND
+	# MISO to +3v3
 	
 tune key filters
 
@@ -26,13 +41,14 @@ tune key filters
 feb build 2013
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-c46 v rating, size, make polar
-c43 polar, 25v
-c18 should be 1206
-r64 to 47k
-r36 to 10k
-c185, c175 make same 1210
-U20 wrong package?
+# c46 v rating, size, make polar
+# c43 polar, 25v
+# c18 should be 1206
+# r64 to 47k
+# r36 to 10k
+# c185, c175 make same 1210
+
+# U20 wrong package? WRONG PART
 fucked up the CV jacks
 
 
