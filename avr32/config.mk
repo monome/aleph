@@ -8,9 +8,13 @@
 # moved this to the top level Makefile cause it needs to know too
 # PRJ_PATH = ../../avr/asf-3.3.0/
 
-ALEPH_AVR32 = ../../aleph/avr32
-ALEPH_COMMON = ../../aleph/common
-ALEPH_BEES = ../../aleph/bees
+#ALEPH_AVR32 = ../../aleph/avr32
+#ALEPH_COMMON = ../../aleph/common
+#ALEPH_BEES = ../../aleph/bees
+
+ALEPH_AVR32 = ../../avr32
+ALEPH_COMMON = ../../common
+ALEPH_BEES = ../../bees
 
 # Target CPU architecture: ap, ucr1, ucr2 or ucr3
 ARCH = ucr2
