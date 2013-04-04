@@ -17142,9 +17142,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="R63" library="rc-master-smd" deviceset="R_" device="0603" value="330k"/>
 <part name="R64" library="rc-master-smd" deviceset="R_" device="0603" value="100k"/>
 <part name="GND46" library="supply" deviceset="GND" device=""/>
-<part name="AGND1" library="supply" deviceset="AGND" device=""/>
 <part name="GND1" library="supply" deviceset="GND" device=""/>
-<part name="R69" library="rc-master-smd" deviceset="R_" device="0603" value="0"/>
 <part name="U$6" library="monome-inc" deviceset="SDMMC" device="06132"/>
 <part name="V3" library="supply" deviceset="+3V3" device=""/>
 <part name="R15" library="rc-master-smd" deviceset="R_" device="0603" value="4.7k"/>
@@ -17161,7 +17159,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="V56" library="supply" deviceset="+5V" device=""/>
 <part name="V57" library="supply" deviceset="+5VA" device=""/>
 <part name="GND66" library="supply" deviceset="GND" device=""/>
-<part name="R68" library="rc-master-smd" deviceset="R_" device="0603" value="0"/>
 <part name="R162" library="rc-master-smd" deviceset="R_" device="0603" value="100k"/>
 <part name="GND5" library="supply" deviceset="GND" device=""/>
 <part name="U3" library="memory-cypress" deviceset="CY62167EV30-Z" device=""/>
@@ -17731,6 +17728,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="AGND65" library="supply" deviceset="AGND" device=""/>
 <part name="V54" library="supply" deviceset="+12V" device=""/>
 <part name="GND75" library="supply" deviceset="GND" device=""/>
+<part name="L10" library="rc-master-smd" deviceset="L_" device="1206" value="600"/>
 </parts>
 <sheets>
 <sheet>
@@ -19026,9 +19024,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="R63" gate="G$1" x="224.79" y="252.73" rot="R180"/>
 <instance part="R64" gate="G$1" x="241.3" y="240.03"/>
 <instance part="GND46" gate="1" x="252.73" y="233.68"/>
-<instance part="AGND1" gate="VR1" x="218.44" y="143.51"/>
 <instance part="GND1" gate="1" x="200.66" y="143.51"/>
-<instance part="R69" gate="G$1" x="210.82" y="154.94" rot="R180"/>
 <instance part="U$6" gate="G$1" x="261.62" y="53.34"/>
 <instance part="V3" gate="G$1" x="243.84" y="50.8"/>
 <instance part="R15" gate="G$1" x="55.88" y="81.28" rot="R90"/>
@@ -19045,7 +19041,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="V56" gate="1" x="242.57" y="160.02"/>
 <instance part="V57" gate="G$1" x="260.35" y="160.02"/>
 <instance part="GND66" gate="1" x="234.95" y="226.06"/>
-<instance part="R68" gate="G$1" x="251.46" y="146.05" rot="R180"/>
 <instance part="R162" gate="G$1" x="215.9" y="219.71"/>
 <instance part="GND5" gate="1" x="81.28" y="160.02"/>
 <instance part="U3" gate="G$1" x="60.96" y="208.28"/>
@@ -19062,6 +19057,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="GND63" gate="1" x="359.41" y="229.87"/>
 <instance part="GND64" gate="1" x="295.91" y="229.87"/>
 <instance part="V46" gate="1" x="364.49" y="257.81"/>
+<instance part="L10" gate="G$1" x="251.46" y="146.05"/>
 </instances>
 <busses>
 </busses>
@@ -19208,13 +19204,10 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="C35" gate="G$1" pin="2"/>
 </segment>
 <segment>
-<wire x1="205.74" y1="154.94" x2="203.2" y2="154.94" width="0.1524" layer="91"/>
 <wire x1="203.2" y1="154.94" x2="200.66" y2="154.94" width="0.1524" layer="91"/>
 <wire x1="200.66" y1="154.94" x2="200.66" y2="146.05" width="0.1524" layer="91"/>
 <wire x1="195.58" y1="154.94" x2="200.66" y2="154.94" width="0.1524" layer="91"/>
 <junction x="200.66" y="154.94"/>
-<junction x="203.2" y="154.94"/>
-<pinref part="R69" gate="G$1" pin="2"/>
 <pinref part="GND1" gate="1" pin="GND"/>
 <pinref part="GND" gate="G$1" pin="TP"/>
 <pinref part="GND0" gate="G$1" pin="1"/>
@@ -19483,9 +19476,9 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 </segment>
 <segment>
 <wire x1="242.57" y1="157.48" x2="242.57" y2="146.05" width="0.1524" layer="91"/>
-<wire x1="242.57" y1="146.05" x2="246.38" y2="146.05" width="0.1524" layer="91"/>
 <pinref part="V56" gate="1" pin="+5V"/>
-<pinref part="R68" gate="G$1" pin="2"/>
+<pinref part="L10" gate="G$1" pin="2"/>
+<wire x1="242.57" y1="146.05" x2="246.38" y2="146.05" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$12" class="0">
@@ -19763,14 +19756,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <label x="293.37" y="247.65" size="1.778" layer="95" rot="R180"/>
 </segment>
 </net>
-<net name="AGND" class="0">
-<segment>
-<wire x1="215.9" y1="154.94" x2="218.44" y2="154.94" width="0.1524" layer="91"/>
-<wire x1="218.44" y1="154.94" x2="218.44" y2="146.05" width="0.1524" layer="91"/>
-<pinref part="R69" gate="G$1" pin="1"/>
-<pinref part="AGND1" gate="VR1" pin="AGND"/>
-</segment>
-</net>
 <net name="N$32" class="0">
 <segment>
 <wire x1="330.2" y1="205.74" x2="332.74" y2="205.74" width="0.1524" layer="91"/>
@@ -19825,10 +19810,10 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 </net>
 <net name="+5VA" class="0">
 <segment>
-<wire x1="256.54" y1="146.05" x2="260.35" y2="146.05" width="0.1524" layer="91"/>
 <wire x1="260.35" y1="146.05" x2="260.35" y2="157.48" width="0.1524" layer="91"/>
 <pinref part="V57" gate="G$1" pin="+5VA"/>
-<pinref part="R68" gate="G$1" pin="1"/>
+<pinref part="L10" gate="G$1" pin="1"/>
+<wire x1="256.54" y1="146.05" x2="260.35" y2="146.05" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="POWER_SW" class="0">

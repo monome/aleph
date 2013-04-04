@@ -8,34 +8,34 @@
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
-<layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
-<layer number="3" name="Route3" color="4" fill="3" visible="no" active="no"/>
-<layer number="4" name="Route4" color="1" fill="4" visible="no" active="no"/>
-<layer number="5" name="Route5" color="4" fill="4" visible="no" active="no"/>
-<layer number="6" name="Route6" color="1" fill="8" visible="no" active="no"/>
-<layer number="7" name="Route7" color="4" fill="8" visible="no" active="no"/>
-<layer number="8" name="Route8" color="1" fill="2" visible="no" active="no"/>
-<layer number="9" name="Route9" color="4" fill="2" visible="no" active="no"/>
-<layer number="10" name="Route10" color="1" fill="7" visible="no" active="no"/>
-<layer number="11" name="Route11" color="4" fill="7" visible="no" active="no"/>
-<layer number="12" name="Route12" color="1" fill="5" visible="no" active="no"/>
-<layer number="13" name="Route13" color="4" fill="5" visible="no" active="no"/>
-<layer number="14" name="Route14" color="1" fill="6" visible="no" active="no"/>
-<layer number="15" name="Route15" color="4" fill="6" visible="no" active="no"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
-<layer number="17" name="Pads" color="2" fill="1" visible="no" active="no"/>
-<layer number="18" name="Vias" color="2" fill="1" visible="no" active="no"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="no"/>
-<layer number="20" name="Dimension" color="15" fill="1" visible="no" active="no"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="no" active="no"/>
-<layer number="28" name="bValues" color="7" fill="1" visible="no" active="no"/>
+<layer number="1" name="Top" color="4" fill="1" visible="yes" active="no"/>
+<layer number="2" name="Route2" color="1" fill="3" visible="yes" active="no"/>
+<layer number="3" name="Route3" color="4" fill="3" visible="yes" active="no"/>
+<layer number="4" name="Route4" color="1" fill="4" visible="yes" active="no"/>
+<layer number="5" name="Route5" color="4" fill="4" visible="yes" active="no"/>
+<layer number="6" name="Route6" color="1" fill="8" visible="yes" active="no"/>
+<layer number="7" name="Route7" color="4" fill="8" visible="yes" active="no"/>
+<layer number="8" name="Route8" color="1" fill="2" visible="yes" active="no"/>
+<layer number="9" name="Route9" color="4" fill="2" visible="yes" active="no"/>
+<layer number="10" name="Route10" color="1" fill="7" visible="yes" active="no"/>
+<layer number="11" name="Route11" color="4" fill="7" visible="yes" active="no"/>
+<layer number="12" name="Route12" color="1" fill="5" visible="yes" active="no"/>
+<layer number="13" name="Route13" color="4" fill="5" visible="yes" active="no"/>
+<layer number="14" name="Route14" color="1" fill="6" visible="yes" active="no"/>
+<layer number="15" name="Route15" color="4" fill="6" visible="yes" active="no"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="no"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="no"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="no"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="no"/>
+<layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="no"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="no"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="no"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="no"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="no"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="no"/>
@@ -44,8 +44,8 @@
 <layer number="34" name="bFinish" color="6" fill="6" visible="no" active="no"/>
 <layer number="35" name="tGlue" color="7" fill="4" visible="no" active="no"/>
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="no"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="no" active="no"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="no" active="no"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="no"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="no"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="no" active="no"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="no" active="no"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="no" active="no"/>
@@ -53,16 +53,16 @@
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="no"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="no"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="no"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="no"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="no"/>
-<layer number="48" name="Document" color="7" fill="1" visible="no" active="no"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="no" active="no"/>
-<layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="no"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="no"/>
-<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
-<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
-<layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="no"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="no"/>
+<layer number="48" name="Document" color="7" fill="1" visible="yes" active="no"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="no"/>
+<layer number="50" name="dxf" color="7" fill="1" visible="yes" active="no"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="no"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="no"/>
+<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="yes" active="no"/>
+<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="yes" active="no"/>
+<layer number="56" name="wert" color="7" fill="1" visible="yes" active="no"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="93" name="Pins" color="2" fill="1" visible="no" active="yes"/>
@@ -17048,7 +17048,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="C15" library="rc-master-smd" deviceset="C_" device="0603" value="33n"/>
 <part name="C16" library="rc-master-smd" deviceset="C_" device="0603" value="100n"/>
 <part name="C17" library="rc-master-smd" deviceset="C_" device="1206" value="4.7u"/>
-<part name="C18" library="rc-master-smd" deviceset="C_" device="0603" value="2.2u"/>
+<part name="C18" library="rc-master-smd" deviceset="C_" device="1206" value="2.2u"/>
 <part name="C19" library="rc-master-smd" deviceset="C_" device="0603" value="470p"/>
 <part name="C20" library="rc-master-smd" deviceset="C_" device="0603" value="2.7n"/>
 <part name="C21" library="rc-master-smd" deviceset="C_" device="0603" value="33n"/>
@@ -17121,10 +17121,10 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="D1" library="diode" deviceset="MBRS360T3" device=""/>
 <part name="D2" library="diode" deviceset="MBRS360T3" device=""/>
 <part name="L1" library="inductor-coilcraft" deviceset="MSS1278" device=""/>
-<part name="C43" library="rc-master-smd" deviceset="C_" device="1206" value="22u"/>
+<part name="C43" library="rc-master-smd" deviceset="CP_" device="1206/T" value="22u"/>
 <part name="C44" library="rc-master-smd" deviceset="C_" device="1206" value="470n"/>
 <part name="C45" library="rc-master-smd" deviceset="C_" device="1206" value="10n"/>
-<part name="C46" library="rc-master-smd" deviceset="C_" device="3225" value="47u"/>
+<part name="C46" library="rc-master-smd" deviceset="CP_" device="3528" value="47u"/>
 <part name="GND22" library="supply" deviceset="GND" device=""/>
 <part name="GND23" library="supply" deviceset="GND" device=""/>
 <part name="V12" library="supply" deviceset="+5V" device=""/>
@@ -17140,7 +17140,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="R18" library="rc-master-smd" deviceset="R_" device="0603" value="0"/>
 <part name="J10" library="monome-inc" deviceset="PHA2U" device=""/>
 <part name="R63" library="rc-master-smd" deviceset="R_" device="0603" value="330k"/>
-<part name="R64" library="rc-master-smd" deviceset="R_" device="0603" value="100k"/>
+<part name="R64" library="rc-master-smd" deviceset="R_" device="0603" value="47k"/>
 <part name="GND46" library="supply" deviceset="GND" device=""/>
 <part name="GND1" library="supply" deviceset="GND" device=""/>
 <part name="U$6" library="monome-inc" deviceset="SDMMC" device="06132"/>
@@ -17163,8 +17163,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="GND5" library="supply" deviceset="GND" device=""/>
 <part name="U3" library="memory-cypress" deviceset="CY62167EV30-Z" device=""/>
 <part name="V6" library="supply" deviceset="+3V3" device=""/>
-<part name="GND4" library="supply" deviceset="GND" device=""/>
-<part name="R36" library="rc-master-smd" deviceset="R_" device="0603" value="100k"/>
+<part name="R36" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
 <part name="FRAME3" library="frames" deviceset="TABL_L" device=""/>
 <part name="AGND6" library="supply" deviceset="AGND" device=""/>
 <part name="R51" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
@@ -17333,7 +17332,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="R26" library="rc-master-smd" deviceset="R_" device="0603" value="0"/>
 <part name="C74" library="rc-master-smd" deviceset="C_" device="1206" value="100n"/>
 <part name="GND45" library="supply" deviceset="GND" device=""/>
-<part name="C75" library="rc-master-smd" deviceset="CP_" device="3528" value="100u"/>
+<part name="C75" library="rc-master-smd" deviceset="CP_" device="1210/T" value="100u"/>
 <part name="D7" library="diode" deviceset="ZENER-DIODE" device="SOT23" value="zhcs1000"/>
 <part name="GND49" library="supply" deviceset="GND" device=""/>
 <part name="L2" library="inductor-bourns" deviceset="SRR6038" device="" value="SRR6038-100Y"/>
@@ -17451,7 +17450,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="C188" library="rc-master-smd" deviceset="C_" device="0603" value="390p"/>
 <part name="R164" library="rc-master-smd" deviceset="R_" device="0603" value="562"/>
 <part name="R165" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
-<part name="R166" library="rc-master-smd" deviceset="R_" device="0603" value="100k"/>
 <part name="V67" library="supply" deviceset="+3V3C" device=""/>
 <part name="GND74" library="supply" deviceset="GND" device=""/>
 <part name="R167" library="rc-master-smd" deviceset="R_" device="0603" value="0"/>
@@ -17729,6 +17727,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="V54" library="supply" deviceset="+12V" device=""/>
 <part name="GND75" library="supply" deviceset="GND" device=""/>
 <part name="L10" library="rc-master-smd" deviceset="L_" device="1206" value="600"/>
+<part name="GND4" library="supply" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -19045,7 +19044,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="GND5" gate="1" x="81.28" y="160.02"/>
 <instance part="U3" gate="G$1" x="60.96" y="208.28"/>
 <instance part="V6" gate="G$1" x="15.24" y="172.72" rot="R90"/>
-<instance part="GND4" gate="1" x="20.32" y="175.26" rot="R270"/>
 <instance part="R36" gate="G$1" x="246.38" y="245.11"/>
 <instance part="U21" gate="G$1" x="312.42" y="245.11"/>
 <instance part="D8" gate="G$1" x="337.82" y="236.22" rot="R90"/>
@@ -19154,7 +19152,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="GND22" gate="1" pin="GND"/>
 <pinref part="J2" gate="G$1" pin="S"/>
 <pinref part="U6" gate="G$1" pin="GND"/>
-<pinref part="C43" gate="G$1" pin="1"/>
+<pinref part="C43" gate="G$1" pin="-"/>
 <pinref part="C44" gate="G$1" pin="1"/>
 <pinref part="U6" gate="G$1" pin="GNDP"/>
 </segment>
@@ -19166,7 +19164,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <junction x="241.3" y="185.42"/>
 <pinref part="D2" gate="G$1" pin="A"/>
 <pinref part="GND23" gate="1" pin="GND"/>
-<pinref part="C46" gate="G$1" pin="2"/>
+<pinref part="C46" gate="G$1" pin="+"/>
 </segment>
 <segment>
 <wire x1="289.56" y1="198.12" x2="289.56" y2="190.5" width="0.1524" layer="91"/>
@@ -19253,11 +19251,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="U3" gate="G$1" pin="VSS@27"/>
 </segment>
 <segment>
-<wire x1="43.18" y1="175.26" x2="22.86" y2="175.26" width="0.1524" layer="91"/>
-<pinref part="U3" gate="G$1" pin="!BYTE!"/>
-<pinref part="GND4" gate="1" pin="GND"/>
-</segment>
-<segment>
 <pinref part="U21" gate="G$1" pin="GND"/>
 <pinref part="GND64" gate="1" pin="GND"/>
 <wire x1="297.18" y1="237.49" x2="295.91" y2="237.49" width="0.1524" layer="91"/>
@@ -19339,9 +19332,14 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="V5" gate="G$1" pin="+3V3"/>
 </segment>
 <segment>
-<wire x1="17.78" y1="172.72" x2="43.18" y2="172.72" width="0.1524" layer="91"/>
+<wire x1="17.78" y1="172.72" x2="22.86" y2="172.72" width="0.1524" layer="91"/>
 <pinref part="V6" gate="G$1" pin="+3V3"/>
 <pinref part="U3" gate="G$1" pin="CE"/>
+<wire x1="22.86" y1="172.72" x2="43.18" y2="172.72" width="0.1524" layer="91"/>
+<wire x1="43.18" y1="175.26" x2="22.86" y2="175.26" width="0.1524" layer="91"/>
+<pinref part="U3" gate="G$1" pin="!BYTE!"/>
+<wire x1="22.86" y1="172.72" x2="22.86" y2="175.26" width="0.1524" layer="91"/>
+<junction x="22.86" y="172.72"/>
 </segment>
 </net>
 <net name="VBUS" class="0">
@@ -19457,7 +19455,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <junction x="261.62" y="208.28"/>
 <pinref part="U6" gate="G$1" pin="FB"/>
 <pinref part="L1" gate="G$1" pin="2"/>
-<pinref part="C46" gate="G$1" pin="1"/>
+<pinref part="C46" gate="G$1" pin="-"/>
 <pinref part="V12" gate="1" pin="+5V"/>
 <pinref part="5V" gate="G$1" pin="TP"/>
 </segment>
@@ -19663,7 +19661,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <junction x="193.04" y="208.28"/>
 <pinref part="D1" gate="G$1" pin="C"/>
 <pinref part="U6" gate="G$1" pin="INPUT"/>
-<pinref part="C43" gate="G$1" pin="2"/>
+<pinref part="C43" gate="G$1" pin="+"/>
 <pinref part="C44" gate="G$1" pin="2"/>
 <pinref part="R63" gate="G$1" pin="2"/>
 <wire x1="187.96" y1="208.28" x2="187.96" y2="226.06" width="0.1524" layer="91"/>
@@ -23613,8 +23611,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="C188" gate="G$1" x="297.18" y="163.83" rot="R90"/>
 <instance part="R164" gate="G$1" x="287.02" y="154.94" rot="MR270"/>
 <instance part="R165" gate="G$1" x="193.04" y="160.02" rot="MR270"/>
-<instance part="R166" gate="G$1" x="171.45" y="171.45" rot="MR180"/>
-<instance part="V67" gate="G$1" x="162.56" y="171.45" rot="R90"/>
+<instance part="V67" gate="G$1" x="198.12" y="175.26" rot="R90"/>
 <instance part="GND74" gate="1" x="193.04" y="152.4" rot="MR0"/>
 <instance part="R167" gate="G$1" x="246.38" y="127" rot="MR180"/>
 <instance part="R168" gate="G$1" x="246.38" y="118.11" rot="MR180"/>
@@ -23645,6 +23642,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="C174" gate="G$1" x="365.76" y="113.03" rot="R90"/>
 <instance part="AGND55" gate="VR1" x="372.11" y="100.33"/>
 <instance part="V47" gate="G$1" x="372.11" y="124.46"/>
+<instance part="GND4" gate="1" x="203.2" y="166.37" rot="MR0"/>
 </instances>
 <busses>
 </busses>
@@ -23676,9 +23674,9 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="L7" gate="G$1" pin="2"/>
 </segment>
 <segment>
-<wire x1="166.37" y1="171.45" x2="165.1" y2="171.45" width="0.1524" layer="91"/>
-<pinref part="R166" gate="G$1" pin="1"/>
 <pinref part="V67" gate="G$1" pin="+3V3C"/>
+<pinref part="U14" gate="U$" pin="COUT"/>
+<wire x1="207.01" y1="175.26" x2="200.66" y2="175.26" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <wire x1="232.41" y1="255.27" x2="232.41" y2="252.73" width="0.1524" layer="91"/>
@@ -23742,6 +23740,20 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="U14" gate="U$" pin="VSENSE"/>
 <pinref part="U14" gate="U$" pin="VDRIVE"/>
 </segment>
+<segment>
+<pinref part="U14" gate="U$" pin="CIN"/>
+<pinref part="GND4" gate="1" pin="GND"/>
+<wire x1="207.01" y1="177.8" x2="203.2" y2="177.8" width="0.1524" layer="91"/>
+<wire x1="203.2" y1="177.8" x2="203.2" y2="172.72" width="0.1524" layer="91"/>
+<pinref part="U14" gate="U$" pin="_CLATCH"/>
+<wire x1="203.2" y1="172.72" x2="203.2" y2="170.18" width="0.1524" layer="91"/>
+<wire x1="203.2" y1="170.18" x2="203.2" y2="168.91" width="0.1524" layer="91"/>
+<wire x1="207.01" y1="170.18" x2="203.2" y2="170.18" width="0.1524" layer="91"/>
+<junction x="203.2" y="170.18"/>
+<pinref part="U14" gate="U$" pin="CCLK"/>
+<wire x1="207.01" y1="172.72" x2="203.2" y2="172.72" width="0.1524" layer="91"/>
+<junction x="203.2" y="172.72"/>
+</segment>
 </net>
 <net name="N$36" class="0">
 <segment>
@@ -23801,32 +23813,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <wire x1="238.76" y1="127" x2="241.3" y2="127" width="0.1524" layer="91"/>
 <label x="237.49" y="128.27" size="1.778" layer="95" rot="R180"/>
 <pinref part="R167" gate="G$1" pin="1"/>
-</segment>
-</net>
-<net name="B-MISO" class="0">
-<segment>
-<wire x1="190.5" y1="175.26" x2="207.01" y2="175.26" width="0.1524" layer="91"/>
-<label x="189.23" y="176.53" size="1.778" layer="95" rot="R180"/>
-<pinref part="U14" gate="U$" pin="COUT"/>
-</segment>
-</net>
-<net name="B-MOSI" class="0">
-<segment>
-<wire x1="190.5" y1="177.8" x2="207.01" y2="177.8" width="0.1524" layer="91"/>
-<label x="189.23" y="179.07" size="1.778" layer="95" rot="R180"/>
-<pinref part="U14" gate="U$" pin="CIN"/>
-</segment>
-</net>
-<net name="B-SPISEL4" class="0">
-<segment>
-<wire x1="190.5" y1="170.18" x2="193.04" y2="170.18" width="0.1524" layer="91"/>
-<wire x1="193.04" y1="170.18" x2="207.01" y2="170.18" width="0.1524" layer="91"/>
-<wire x1="176.53" y1="171.45" x2="193.04" y2="171.45" width="0.1524" layer="91"/>
-<wire x1="193.04" y1="171.45" x2="193.04" y2="170.18" width="0.1524" layer="91"/>
-<junction x="193.04" y="170.18"/>
-<label x="189.23" y="171.45" size="1.778" layer="95" rot="R180"/>
-<pinref part="U14" gate="U$" pin="_CLATCH"/>
-<pinref part="R166" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="AGND" class="0">
@@ -24320,13 +24306,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="V47" gate="G$1" pin="+3V3A"/>
 <wire x1="372.11" y1="120.65" x2="372.11" y2="121.92" width="0.1524" layer="91"/>
 <junction x="372.11" y="120.65"/>
-</segment>
-</net>
-<net name="B-SCK" class="0">
-<segment>
-<wire x1="190.5" y1="172.72" x2="207.01" y2="172.72" width="0.1524" layer="91"/>
-<label x="189.23" y="173.99" size="1.778" layer="95" rot="R180"/>
-<pinref part="U14" gate="U$" pin="CCLK"/>
 </segment>
 </net>
 <net name="AD1939_RESET" class="0">

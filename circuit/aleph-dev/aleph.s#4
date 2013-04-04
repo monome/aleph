@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.05" unitdist="inch" unit="inch" style="dots" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -1263,7 +1263,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <smd name="6" x="-5.6" y="0.9" dx="4" dy="1.2" layer="1" rot="R90"/>
 <smd name="7" x="-8.1" y="0.9" dx="4" dy="1.2" layer="1" rot="R90"/>
 <smd name="8" x="-9.7" y="0.9" dx="4" dy="0.7" layer="1" rot="R90"/>
-<smd name="9" x="9.4" y="0.9" dx="4" dy="1.2" layer="1" rot="R90"/>
+<smd name="9" x="9.4" y="0.9" dx="3.81" dy="1.2" layer="1" rot="R90"/>
 <smd name="CD" x="-11" y="0.9" dx="4" dy="0.7" layer="1" rot="R90"/>
 <smd name="GP" x="-13.8" y="-21.8" dx="2.8" dy="2" layer="1" rot="R90"/>
 <smd name="GP2" x="14.1" y="-21.8" dx="2.8" dy="2" layer="1" rot="R90"/>
@@ -17272,10 +17272,10 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="J16" library="monome-inc" deviceset="STX-3680" device=""/>
 <part name="J17" library="monome-inc" deviceset="STX-3680" device=""/>
 <part name="J18" library="monome-inc" deviceset="STX-3680" device=""/>
-<part name="U$7" library="diode" deviceset="BAS70-04" device=""/>
-<part name="U$11" library="diode" deviceset="BAS70-04" device=""/>
-<part name="U$12" library="diode" deviceset="BAS70-04" device=""/>
-<part name="U$13" library="diode" deviceset="BAS70-04" device=""/>
+<part name="U22" library="diode" deviceset="BAS70-04" device=""/>
+<part name="U23" library="diode" deviceset="BAS70-04" device=""/>
+<part name="U24" library="diode" deviceset="BAS70-04" device=""/>
+<part name="U25" library="diode" deviceset="BAS70-04" device=""/>
 <part name="V74" library="supply" deviceset="+5VA" device=""/>
 <part name="AGND45" library="supply" deviceset="AGND" device=""/>
 <part name="AGND46" library="supply" deviceset="AGND" device=""/>
@@ -20245,10 +20245,10 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="J16" gate="G$1" x="27.94" y="111.76"/>
 <instance part="J17" gate="G$1" x="27.94" y="66.04"/>
 <instance part="J18" gate="G$1" x="26.67" y="20.32"/>
-<instance part="U$7" gate="G$1" x="104.14" y="187.96" rot="R180"/>
-<instance part="U$11" gate="G$1" x="105.41" y="140.97" rot="R180"/>
-<instance part="U$12" gate="G$1" x="104.14" y="95.25" rot="R180"/>
-<instance part="U$13" gate="G$1" x="105.41" y="46.99" rot="R180"/>
+<instance part="U22" gate="G$1" x="104.14" y="187.96" rot="R180"/>
+<instance part="U23" gate="G$1" x="105.41" y="140.97" rot="R180"/>
+<instance part="U24" gate="G$1" x="104.14" y="95.25" rot="R180"/>
+<instance part="U25" gate="G$1" x="105.41" y="46.99" rot="R180"/>
 <instance part="V74" gate="G$1" x="111.76" y="193.04"/>
 <instance part="AGND45" gate="VR1" x="96.52" y="182.88"/>
 <instance part="AGND46" gate="VR1" x="100.33" y="138.43"/>
@@ -20858,19 +20858,19 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <segment>
 <wire x1="96.52" y1="185.42" x2="96.52" y2="187.96" width="0.1524" layer="91"/>
 <wire x1="96.52" y1="187.96" x2="99.06" y2="187.96" width="0.1524" layer="91"/>
-<pinref part="U$7" gate="G$1" pin="A"/>
+<pinref part="U22" gate="G$1" pin="A"/>
 <pinref part="AGND45" gate="VR1" pin="AGND"/>
 </segment>
 <segment>
-<pinref part="U$11" gate="G$1" pin="A"/>
+<pinref part="U23" gate="G$1" pin="A"/>
 <pinref part="AGND46" gate="VR1" pin="AGND"/>
 </segment>
 <segment>
-<pinref part="U$12" gate="G$1" pin="A"/>
+<pinref part="U24" gate="G$1" pin="A"/>
 <pinref part="AGND47" gate="VR1" pin="AGND"/>
 </segment>
 <segment>
-<pinref part="U$13" gate="G$1" pin="A"/>
+<pinref part="U25" gate="G$1" pin="A"/>
 <pinref part="AGND48" gate="VR1" pin="AGND"/>
 </segment>
 </net>
@@ -21005,19 +21005,19 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <segment>
 <wire x1="111.76" y1="190.5" x2="111.76" y2="187.96" width="0.1524" layer="91"/>
 <wire x1="111.76" y1="187.96" x2="109.22" y2="187.96" width="0.1524" layer="91"/>
-<pinref part="U$7" gate="G$1" pin="C"/>
+<pinref part="U22" gate="G$1" pin="C"/>
 <pinref part="V74" gate="G$1" pin="+5VA"/>
 </segment>
 <segment>
-<pinref part="U$11" gate="G$1" pin="C"/>
+<pinref part="U23" gate="G$1" pin="C"/>
 <pinref part="V75" gate="G$1" pin="+5VA"/>
 </segment>
 <segment>
-<pinref part="U$12" gate="G$1" pin="C"/>
+<pinref part="U24" gate="G$1" pin="C"/>
 <pinref part="V76" gate="G$1" pin="+5VA"/>
 </segment>
 <segment>
-<pinref part="U$13" gate="G$1" pin="C"/>
+<pinref part="U25" gate="G$1" pin="C"/>
 <pinref part="V77" gate="G$1" pin="+5VA"/>
 </segment>
 </net>
@@ -21483,7 +21483,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="R55" gate="G$1" pin="1"/>
 <pinref part="C65" gate="G$1" pin="1"/>
 <pinref part="U5" gate="G$1" pin="VIN1"/>
-<pinref part="U$11" gate="G$1" pin="AC"/>
+<pinref part="U23" gate="G$1" pin="AC"/>
 </segment>
 </net>
 <net name="N$117" class="0">
@@ -21504,7 +21504,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="R58" gate="G$1" pin="1"/>
 <pinref part="U5" gate="G$1" pin="VIN2"/>
 <pinref part="C66" gate="G$1" pin="1"/>
-<pinref part="U$12" gate="G$1" pin="AC"/>
+<pinref part="U24" gate="G$1" pin="AC"/>
 </segment>
 </net>
 <net name="N$118" class="0">
@@ -21524,7 +21524,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="R62" gate="G$1" pin="1"/>
 <pinref part="R61" gate="G$1" pin="1"/>
 <pinref part="C67" gate="G$1" pin="1"/>
-<pinref part="U$13" gate="G$1" pin="AC"/>
+<pinref part="U25" gate="G$1" pin="AC"/>
 <pinref part="U5" gate="G$1" pin="VIN3"/>
 </segment>
 </net>
@@ -21553,7 +21553,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="R52" gate="G$1" pin="1"/>
 <pinref part="R53" gate="G$1" pin="1"/>
 <pinref part="U5" gate="G$1" pin="VIN0"/>
-<pinref part="U$7" gate="G$1" pin="AC"/>
+<pinref part="U22" gate="G$1" pin="AC"/>
 </segment>
 </net>
 <net name="N$37" class="0">
