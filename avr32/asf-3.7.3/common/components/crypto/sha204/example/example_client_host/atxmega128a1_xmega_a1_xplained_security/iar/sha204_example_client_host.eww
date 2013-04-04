@@ -1,6 +1,0 @@
-<workspace>
-	<batchBuild></batchBuild>
-	<project>
-		<path>$WS_DIR$\sha204_example_client_host.ewp</path>
-	</project>
-</workspace>

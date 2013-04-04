@@ -1,6 +1,0 @@
-<workspace>
-	<batchBuild></batchBuild>
-	<project>
-		<path>$WS_DIR$\example_dsp16_vectors.ewp</path>
-	</project>
-</workspace>
