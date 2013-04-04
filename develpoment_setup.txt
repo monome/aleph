@@ -1,0 +1,66 @@
+-----------------------------
+aleph
+development setup
+----------------
+
+
+clone git repository: 
+git clone https://github.com/tehn/aleph.git
+
+
+------------------
+AVR32
+-----
+
+get the toolchain and header files from atmel.com.
+
+currently the page is here, (but it could move)
+http://www.atmel.com/tools/ATMELAVRTOOLCHAINFORLINUX.aspx
+you will need to sign up / login.
+
+get the appopriate toolchain release for your architecture, and the latest headers,
+now you have 2 files similar to:
+avr32-gnu-toolchain-3.4.1.348-linux.any.x86-64.tar.gz
+avr-headers-3.2.3.970.tar.gz
+
+extracting the toolchain archive gives you something like 
+avr32-gnu-toolchain-linux_x86_64/
+
+move/rename this directory however you like and make sure the binaries are in your $PATH
+
+extracting the headers gives you
+avr-headers-3.2.3.970/
+
+move or copy the headers subdirectories avr/ and avr32/ to the avr32/include/ subdirectory of the toolchain location.
+no, i have no idea why atmel chose to do it this way!
+
+here is an example of the whole process:
+
+
+cd ~/Downloads
+
+tar -xzf avr32-gnu-toolchain-3.4.1.348-linux.any.x86_64.tar.gz
+tar -xzf avr-headers-3.2.3.970.tar.gz
+s
+mv avr32-gnu-toolchain-linux_x86_64 ~/avr32-gnu-toolchain
+echo "PATH="\$PATH:~/avr32-gnu-toolchain/bin" >> ~/.bashrc
+PATH=$PATH:~/avr32-gnu-toolchain/bin
+
+cd avr-headers-3.2.3.970
+cp avr/ ~/avr32-gnu-toolchain/ -R
+cp avr32/ ~/avr32-gnu-toolchain/ -R
+
+you should now be able to run 'make' from aleph/avr32 and produce aleph.elf. yeah!
+let me know if there are problems: emb@catfact.net
+
+BTW: i'm now including a stripped copy of the ASF in our git because it is sometimes most expedient to hack it. 
+so you don't need to worry about installing that.
+you may want to get a fresh copy of the ASF for development though;
+if you want to use any additional resources from it, copy and add them to our git.
+
+
+--------------
+BFIN
+-----
+
+todo !
