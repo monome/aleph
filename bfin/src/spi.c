@@ -100,6 +100,7 @@ u8 spi_process(u8 rx) {
     // byte-swap from BE on avr32
     moduleData->paramData[idx].value.asByte[0] = rx;
     moduleData->paramData[idx].changed = 1; // done -> mark changed
+    module_set_param(idx, moduleData->paramData[idx].asInt);
     byte = eCom; //reset
     return 0; // don't care
     break;

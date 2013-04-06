@@ -75,8 +75,6 @@ static u32 numParams = 0;
 //------  declare
 //  app event loop
 static void check_events(void);
-// startup routine (perform this once after an initial button press)
-//static void perform_startup(void);
 
 // start master mode on TWI
 //static void init_master(u8 addr);
@@ -122,11 +120,13 @@ static void check_events(void) {
     //    print_dbg_ulong(e.eventType);
 
     if(startup) {
-      /// a hack!
-      /// this should select only switch events...
-      if(e.eventType > kEventEncoder3) { 
+      if( e.eventType == kEventSwitchDown0
+	  || e.eventType == kEventSwitchDown1
+	  || e.eventType == kEventSwitchDown2
+	  || e.eventType == kEventSwitchDown3
+	  || e.eventType == kEventSwitchDown4
+	  ) {  
 	startup = 0;
-	// perform_startup();
 	return;
       }
     } else {
@@ -181,64 +181,33 @@ static void check_events(void) {
 	break;
       case kEventSwitchUp5:
 	break;
-	/// TEST: my encoder A is broken so i'm moving these around for the moment
-      /* case kEventEncoder0: */
-      /* 	if(e.eventData > 0) { */
-      /* 	  menu_handleKey(eKeyEncUpA); */
-      /* 	} else { */
-      /* 	  menu_handleKey(eKeyEncDownA); */
-      /* 	} */
-      /* 	break; */
-      /* case kEventEncoder1: */
-      /* 	if(e.eventData > 0) { */
-      /* 	  menu_handleKey(eKeyEncUpD); */
-      /* 	} else { */
-      /* 	  menu_handleKey(eKeyEncDownD); */
-      /* 	} */
-      /* 	break; */
-      /* case kEventEncoder2: */
-      /* 	if(e.eventData > 0) { */
-      /* 	  menu_handleKey(eKeyEncUpC); */
-      /* 	} else { */
-      /* 	  menu_handleKey(eKeyEncDownC); */
-      /* 	} */
-      /* 	break; */
-      /* case kEventEncoder3: */
-      /* 	if(e.eventData > 0) { */
-      /* 	  menu_handleKey(eKeyEncUpB); */
-      /* 	} else { */
-      /* 	  menu_handleKey(eKeyEncDownB); */
-      /* 	} */
-      /* 	break; */
-	/// moved:
 
-      /* 	//////-- broken: */
-      /* case kEventEncoder0: */
-      /* 	if(e.eventData > 0) { */
-      /* 	  menu_handleKey(eKeyEncUpA); */
-      /* 	} else { */
-      /* 	  menu_handleKey(eKeyEncDownA); */
-      /* 	} */
-      /* 	break; */
+      case kEventEncoder0:
+      	if(e.eventData > 0) {
+      	  menu_handleKey(eKeyEncUpA, e.eventData);
+      	} else {
+      	  menu_handleKey(eKeyEncDownA, e.eventData);
+      	}
+      	break;
       case kEventEncoder1:
-	if(e.eventData > 0) {
-	  menu_handleKey(eKeyEncUpA, e.eventData);
-	} else {
-	  menu_handleKey(eKeyEncDownA, e.eventData);
-	}
-	break;
-      case kEventEncoder2:
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpB, e.eventData);
 	} else {
 	  menu_handleKey(eKeyEncDownB, e.eventData);
 	}
 	break;
-      case kEventEncoder0:
+      case kEventEncoder2:
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpC, e.eventData);
 	} else {
 	  menu_handleKey(eKeyEncDownC, e.eventData);
+	}
+	break;
+      case kEventEncoder3:
+	if(e.eventData > 0) {
+	  menu_handleKey(eKeyEncUpD, e.eventData);
+	} else {
+	  menu_handleKey(eKeyEncDownD, e.eventData);
 	}
 	break;
 
@@ -404,22 +373,6 @@ int main (void) {
   
   // Enable all interrupts.
   Enable_global_interrupt();
-
-  //// test post-decrement! heyy
-  /* for( i=15; i >= 0; i--) { */
-  /*   print_dbg("\r\n"); */
-  /*   print_dbg_ulong(dum); */
-  /* } */
-
-  /* i = 16; */
-  /* while(i>0) { */
-  /*   print_dbg("\r\n i: "); */
-  /*   print_dbg_hex(i); */
-  /*   i--; */
-  /* } */
-  /* return; */
-
-  ////
 
 
   // Wait for a card to be inserted

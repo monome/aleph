@@ -317,7 +317,6 @@ void module_init(void) {
   /// DEBUG
   //printf("\n\n module init debug \n\n");
 
-
   ////// TEST
   env_asr_set_gate(env, 1);
 }

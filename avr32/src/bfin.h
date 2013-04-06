@@ -8,6 +8,7 @@
 #define _BFIN_H_
 
 #include "compiler.h"
+#include "fix.h"
 #include "param_common.h"
 #include "types.h"
 
@@ -24,7 +25,8 @@ void bfin_load(U32 size, void* fp);
 #endif
 
 // set a parameter
-void bfin_set_param(U8 idx, F32 val);
+//void bfin_set_param(U8 idx, F32 val);
+void bfin_set_param(U8 idx, fix16_t val);
 
 // get number of parameters 
 void bfin_get_num_params(volatile u32* num);

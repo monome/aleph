@@ -167,7 +167,7 @@ ASFLAGS =
 
 # Extra flags to use when compiling.
 CFLAGS += -g3
-CFLAGS += --verbose
+#CFLAGS += --verbose
 
 # Extra flags to use when preprocessing.
 #
