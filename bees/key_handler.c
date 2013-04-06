@@ -18,6 +18,9 @@
 #include "redraw.h"
 #include "scene.h"
 #include "key_handler.h"
+
+#define FAST_KNOB_LSHIFT 4
+
 //--------------------
 //----- static variables
 
@@ -169,19 +172,16 @@ void key_handler_ins(uiKey_t key, s16 val) {
     break;
   case eKeyEncUpC:
     // encoder C : value slow
-    //    net_inc_in_value(curPage->selected, kParamValStepSmall * val);
     net_inc_in_value(curPage->selected, scale_knob_value(val));
     break;
   case eKeyEncDownC:
     net_inc_in_value(curPage->selected, scale_knob_value(val));
-    //    net_inc_in_value(curPage->selected, kParamValStepSmall * val);
     break;
   case eKeyEncUpD:
-    // encoder D : value fast
-    //    net_inc_in_value(curPage->selected, kParamValStepLarge * val);
+    net_inc_in_value(curPage->selected, scale_knob_value(val << FAST_KNOB_LSHIFT));
     break;
   case eKeyEncDownD:
-    //    net_inc_in_value(curPage->selected, kParamValStepLarge * val);
+    net_inc_in_value(curPage->selected, scale_knob_value(val << FAST_KNOB_LSHIFT));
     break;
   default:
     ;; // nothing
@@ -537,7 +537,8 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
 extern void key_handler_dsp(uiKey_t key, s16 val) {
   switch(key) {
   case eKeyFnDownA:
-    // load / set
+    // load
+    files_load_dsp(curPage->selected);
     break;
   case eKeyFnDownB:
     break;

@@ -19,6 +19,9 @@
 #include "screen.h"
 #include "ui.h"
 
+#define ENC_THRESH_PAGESCROLL 8
+#define ENC_THRESH_LISTSCROLL 2
+
 //--------------------------
 //--------- variables
 // const array of user-creatable operator type id's
@@ -34,15 +37,30 @@ const opId_t userOpTypes[NUM_USER_OP_TYPES] = {
 // page structures - synchronize with ePage enum
 page_t pages[NUM_PAGES] = {
   // list:
-  { "INS", (keyHandler_t)&key_handler_ins, (redraw_t)&redraw_ins, 0, eModeNone, -1, { 0, 0, 0, 0 } },
-  { "OUTS", (keyHandler_t)&key_handler_outs, (redraw_t)&redraw_outs, 0, eModeNone, -1,  { 0, 0, 0, 0 }  },
-  {  "PRESETS", (keyHandler_t)&key_handler_presets, (redraw_t)&redraw_presets, 0, eModeNone, -1, { 0, 0, 0, 0 } },
-  { "OPS", (keyHandler_t)&key_handler_ops, (redraw_t)&redraw_ops, 0, eModeNone, -1, { 0, 0, 0, 0 } },
-  { "SCENES", (keyHandler_t)&key_handler_scenes, (redraw_t)&redraw_scenes, 0, eModeNone, -1, { 0, 0, 0, 0 } },
-  { "DSP", (keyHandler_t)&key_handler_dsp, (redraw_t)&redraw_dsp, 0, eModeNone, -1, { 0, 0, 0, 0 } },
+  { "INS", (keyHandler_t)&key_handler_ins, (redraw_t)&redraw_ins, 0, eModeNone, -1, 
+    { ENC_THRESH_PAGESCROLL,  ENC_THRESH_LISTSCROLL, 0, 0 } },
+  
+  { "OUTS", (keyHandler_t)&key_handler_outs, (redraw_t)&redraw_outs, 0, eModeNone, -1, 
+    { ENC_THRESH_PAGESCROLL,  ENC_THRESH_LISTSCROLL, 4, 0 }  },
+  
+  {  "PRESETS", (keyHandler_t)&key_handler_presets, (redraw_t)&redraw_presets, 0, eModeNone, -1,
+    { ENC_THRESH_PAGESCROLL,  ENC_THRESH_LISTSCROLL, 4, 4 } },
+  
+  { "OPS", (keyHandler_t)&key_handler_ops, (redraw_t)&redraw_ops, 0, eModeNone, -1, 
+    { ENC_THRESH_PAGESCROLL,  ENC_THRESH_LISTSCROLL, 4, 4 } },
+
+  { "SCENES", (keyHandler_t)&key_handler_scenes, (redraw_t)&redraw_scenes, 0, eModeNone, -1, 
+    { ENC_THRESH_PAGESCROLL,  ENC_THRESH_LISTSCROLL, 4, 4 } },
+
+  { "DSP", (keyHandler_t)&key_handler_dsp, (redraw_t)&redraw_dsp, 0, eModeNone, -1, 
+    { ENC_THRESH_PAGESCROLL,  ENC_THRESH_LISTSCROLL, 4, 4 } },
+
   // modal:
-  { "GATHERED" , (keyHandler_t)&key_handler_gathered, (redraw_t)&redraw_gathered, 0, eModeNone, -1, { 0, 0, 0, 0 } },
-  { "PLAY" , (keyHandler_t)&key_handler_play, (redraw_t)&redraw_play, 0, eModeNone, -1, { 0, 0, 0, 0 } }
+  { "GATHERED" , (keyHandler_t)&key_handler_gathered, (redraw_t)&redraw_gathered, 0, eModeNone, -1, 
+    { ENC_THRESH_PAGESCROLL,  ENC_THRESH_LISTSCROLL, 4, 0 } },
+
+  { "PLAY" , (keyHandler_t)&key_handler_play, (redraw_t)&redraw_play, 0, eModeNone, -1, 
+    { 0, 0, 0, 0 } }
 };
 
 // pointer to current page

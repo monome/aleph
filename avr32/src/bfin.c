@@ -7,15 +7,15 @@
 #include "compiler.h"
 #include "gpio.h"
 #include "spi.h"
-///// DEBUG
 #include "print_funcs.h"
-/////
 
-// aleph
+// aleph/common
+#include "param_common.h"
+
+// aleph/avr32
 #include "conf_aleph.h"
 #include "filesystem.h"
 #include "global.h"
-#include "param.h"
 #include "protocol.h"
 #include "types.h"
 #include "util.h"
@@ -70,7 +70,7 @@ void bfin_load(U32 size, volatile u8 * data) {
 }
 
 #else
-
+// load bfin executable byte-by-byte
 void bfin_load(U32 size, void* fp) {
   u64 i; /// byte index in .ldr
   u8 data;
@@ -96,11 +96,6 @@ void bfin_load(U32 size, void* fp) {
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   while(i<size) {
     data = fl_fgetc(fp);
-
-    /* print_dbg_hex(data); */
-    /* print_dbg(" "); */
-    /* if((i % 16) == 15) { print_dbg("\r\n"); } */
-
     while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { 
       print_dbg("\r\n HWAIT asserted..."); 
     }
@@ -111,12 +106,13 @@ void bfin_load(U32 size, void* fp) {
   // FIXME: (?)
   //  Enable_global_interrupt();
 }
-
 #endif // LDR RAM buffer
 
-void bfin_set_param(u8 idx, f32 x ) {
+//void bfin_set_param(u8 idx, f32 x ) {
+void bfin_set_param(u8 idx, fix16_t x ) {
   static ParamValue pval;
-  pval.asFloat = x;
+  pval.asInt = (s32)x;
+
   // command
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, MSG_SET_PARAM_COM);

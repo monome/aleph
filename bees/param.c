@@ -31,8 +31,14 @@ u8 get_param_preset(u32 idx) {
 void set_param_value(u32 idx, io_t val) {
   net->params[idx].data.value.asInt = val;
   net->params[idx].data.changed = 1;
+#ifdef ARCH_AVR32
+  bfin_set_param(idx, val);
+#endif
 }
 
+
+
+#if 0
 // set a parameter value using a 32bit integer
 // mapped to the parameter's float range
 void set_param_step_value(u32 idx, s32 val) {
@@ -58,7 +64,6 @@ void set_param_step_value(u32 idx, s32 val) {
 
 // set a parameter value using float
 void set_param_float_value(u32 idx, f32 val) {
-
   /*
   s32 ival;
   f32 fmin, fmax;
@@ -79,3 +84,4 @@ void set_param_float_value(u32 idx, f32 val) {
 
 }
 
+#endif // exclude

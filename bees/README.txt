@@ -116,8 +116,8 @@ encC : select position in name
 encD : change character in selected position
  
 ---------------------------------------------
-SETUPS - list / edit setups 
-[a SETUP stores a list of operators, a dsp program, and a bank of presets
+SCENES - list / edit setups 
+[a SCENE stores a list of operators, a dsp program, and a bank of presets
 
 index _ name _ values dirty? _ op list dirty?
 ...
