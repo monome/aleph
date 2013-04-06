@@ -371,7 +371,7 @@ void module_set_param(u32 idx, pval v) {
     filter_1p_fr32_in(amp2Lp, v.fr);
     break;
   case eParamGate:
-    env_asr_set_gate(env, v.s > 0);
+     env_asr_set_gate(env, v.s > 0);
     break;
   case eParamAtkDur:
     env_asr_set_atk_dur(env, v.u);

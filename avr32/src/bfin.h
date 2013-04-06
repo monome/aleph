@@ -12,7 +12,7 @@
 #include "param_common.h"
 #include "types.h"
 
-#define USE_LDR_RAM_BUFFER 1
+//#define USE_LDR_RAM_BUFFER 1
 
 // blackfin HWAIT status
 extern volatile U8 hwait;

@@ -53,6 +53,12 @@ cp avr32/ ~/avr32-gnu-toolchain/ -R
 you should now be able to run 'make' from aleph/avr32 and produce aleph.elf. yeah!
 let me know if there are problems: emb@catfact.net
 
+in order to actually program the avr32 though, we unforunately need to install "AVR32 Studio" from atmel, which is an eclipse plugin. some binary tools only included in this package are required.
+e.g. my .bashrc also has the line:
+PATH=$PATH:~/as4e-ide/plugins/com.atmel.avr.utilities.linux.x86_64_3.0.0.201009140848/os/linux/x86_64/bin
+
+
+
 BTW: i'm now including a stripped copy of the ASF in our git because it is sometimes most expedient to hack it. 
 so you don't need to worry about installing that.
 you may want to get a fresh copy of the ASF for development though;

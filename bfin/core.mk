@@ -18,8 +18,8 @@ CC = $(CROSS_COMPILE)gcc
 LDR = $(CROSS_COMPILE)ldr
 CPU = bf533
 CFLAGS += -Wall -g -mcpu=$(CPU) $(INC)
-CFLAGS += -00 # debug
-# CFLAGS += -02
+# CFLAGS += -00 # debug
+CFLAGS += -02
 
 
 LDFLAGS += -mcpu=$(CPU)

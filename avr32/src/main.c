@@ -183,31 +183,35 @@ static void check_events(void) {
 	break;
 
       case kEventEncoder0:
+	//	print_dbg("\r\n encoder 0");
       	if(e.eventData > 0) {
-      	  menu_handleKey(eKeyEncUpA, e.eventData);
+      	  menu_handleKey(eKeyEncUpD, e.eventData);
       	} else {
-      	  menu_handleKey(eKeyEncDownA, e.eventData);
+      	  menu_handleKey(eKeyEncDownD, e.eventData);
       	}
       	break;
       case kEventEncoder1:
-	if(e.eventData > 0) {
-	  menu_handleKey(eKeyEncUpB, e.eventData);
-	} else {
-	  menu_handleKey(eKeyEncDownB, e.eventData);
-	}
-	break;
-      case kEventEncoder2:
+	//	print_dbg("\r\n encoder 1");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpC, e.eventData);
 	} else {
 	  menu_handleKey(eKeyEncDownC, e.eventData);
 	}
 	break;
-      case kEventEncoder3:
+      case kEventEncoder2:
+	//	print_dbg("\r\n encoder 2");
 	if(e.eventData > 0) {
-	  menu_handleKey(eKeyEncUpD, e.eventData);
+	  menu_handleKey(eKeyEncUpB, e.eventData);
 	} else {
-	  menu_handleKey(eKeyEncDownD, e.eventData);
+	  menu_handleKey(eKeyEncDownB, e.eventData);
+	}
+	break;
+      case kEventEncoder3:
+	//	print_dbg("\r\n encoder 3");
+	if(e.eventData > 0) {
+	  menu_handleKey(eKeyEncUpA, e.eventData);
+	} else {
+	  menu_handleKey(eKeyEncDownA, e.eventData);
 	}
 	break;
 
