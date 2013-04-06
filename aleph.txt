@@ -1,5 +1,10 @@
 aleph.
 
+1. processor/synth
+2. expansive i/o
+3. modular operating system
+4. open source
+
 
 
 a music computer. open source noise device.
