@@ -581,7 +581,7 @@ bool uhc_dev_is_high_speed_support(uhc_device_t* dev);
  * void my_callback_mode_change(bool b_host_mode)
  * {
  *   my_host_mode = b_host_mode;
- * }
+ * } 
  * 
  * void my_usb_task(void)
  * {

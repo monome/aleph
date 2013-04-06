@@ -25,7 +25,7 @@ typedef union { f32 fl; fract32 fr; } fu;
 /// FIXME: i want to inline these interpolated lookups in several modules,
 /// but can't figure out how to do it without multiple definition errors...
 // lookup given real index in 16.16
-fract32 fixtable_lookup_idx(fract32* tab, u32 size, fix16 idx) {
+fract32 table_lookup_idx(fract32* tab, u32 size, fix16 idx) {
   fract32 a, b, f;
   u32 ia, ib;
   ia = idx >> 16;
@@ -39,21 +39,21 @@ fract32 fixtable_lookup_idx(fract32* tab, u32 size, fix16 idx) {
 }
 
 // lookup given normalized index in [-1, 1]
-fract32 fixtable_lookup_fract(fract32* tab, u32 size, fract32 phase) {
+fract32 table_lookup_fract(fract32* tab, u32 size, fract32 phase) {
   fix16 idx;
   if (idx < 0) {
     idx = (phase + 0x40000000) >> 1;
   } else {
     idx  = (phase >> 1) + 0x3fffffff;
   } 
-  return fixtable_lookup_idx(tab, size,idx);
+  return table_lookup_idx(tab, size,idx);
 }
 /////////////////////
 
 
 // fill a table of given size with harmonics up to given order
 // also given: decay coefficient, normalization flag
-extern void fixtable_fill_harm(fract32* tab, u32 size, u8 order, f32 decay, u8 norm) {
+extern void table_fill_harm(fract32* tab, u32 size, u8 order, f32 decay, u8 norm) {
   f32 min, max;
   f32 inc, x, amp;
   u32 s, h; // sample, harmonic
@@ -112,7 +112,7 @@ extern void fixtable_fill_harm(fract32* tab, u32 size, u8 order, f32 decay, u8 n
 }
 
 // fill a table of given size with cheby polynomial of given order
-extern void fixtable_fill_cheby(fract32* tab, u32 size, u8 order) {
+extern void table_fill_cheby(fract32* tab, u32 size, u8 order) {
 
 /* chebyshev polynomials:
    T[0](x) = 1

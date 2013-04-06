@@ -25,12 +25,15 @@ enclosure
 
 e todo
 
-asf migration
-housekeeping
-op network
 new ops
 usb host
 i2c
+avr32 bootloader
+
+USB roadmap: 
+see aleph/avr32/asf-3.7.3/common/services/usb/uhc/uhc.h 
+for hihg-lecel description and code examples (in comments)
+we need to implmement mode-switching callback, task callbacks, etc
 
 
 team todo

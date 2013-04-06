@@ -70,7 +70,7 @@ void bfin_load(U32 size, volatile u8 * data) {
 }
 
 #else
-
+// load bfin executable byte-by-byte
 void bfin_load(U32 size, void* fp) {
   u64 i; /// byte index in .ldr
   u8 data;
@@ -110,7 +110,6 @@ void bfin_load(U32 size, void* fp) {
 
 //void bfin_set_param(u8 idx, f32 x ) {
 void bfin_set_param(u8 idx, fix16_t x ) {
-
   static ParamValue pval;
   pval.asInt = (s32)x;
 

@@ -30,11 +30,14 @@ extern moduleData_t* moduleData;
 //-------- function prototypes 
 // intialize
 extern void module_init(void);
+// de-initialize
+extern void module_deinit(void);
 // frame processing function
 extern void module_process_frame(void);
 // button handler
 extern void module_handle_button(const u16 state);
 // led update
 extern u8 module_update_leds(void);
-
+// set param
+extern void module_set_param(u32 idx, pval v);
 #endif // header guard

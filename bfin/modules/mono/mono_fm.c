@@ -23,7 +23,7 @@
 #include "audio.h"
 #endif
 
-// null
+// audio lib
 #include "env.h"
 #include "filters.h"
 #include "module.h"
@@ -119,7 +119,7 @@ static filter_1p_fr32* amp2Lp;  // 1plp smoother for amp2
 //-----------------------
 //----- fwd declaration 
 // from table.h
-extern inline fract32 fixtable_lookup_idx(fract32* tab, u32 size, fix16 idx);
+extern inline fract32 table_lookup_idx(fract32* tab, u32 size, fix16 idx);
 
 //----------------------
 //----- static functions
@@ -158,8 +158,8 @@ static inline fract32 lookup_wave(const fix16 idx, const fract32 wave) {
   //// add refactored double-lookup method to table.h
   const fract32 waveInv = sub_fr1x32(INT32_MAX, wave);
   return add_fr1x32( 
-		    mult_fr1x32x32(fixtable_lookup_idx(tab1, WAVE_TAB_SIZE, idx), waveInv),
-		    mult_fr1x32x32(fixtable_lookup_idx(tab2, WAVE_TAB_SIZE, idx), wave)
+		    mult_fr1x32x32(table_lookup_idx(tab1, WAVE_TAB_SIZE, idx), waveInv),
+		    mult_fr1x32x32(table_lookup_idx(tab2, WAVE_TAB_SIZE, idx), wave)
 		     );
 }
 
@@ -277,8 +277,8 @@ void module_init(void) {
   idx1 = idx2 = 0;
 
   // init wavetables
-  fixtable_fill_harm(tab1, WAVE_TAB_SIZE, 1, 1.f, 0);
-  fixtable_fill_harm(tab2, WAVE_TAB_SIZE, 5, 0.5, 1);
+  table_fill_harm(tab1, WAVE_TAB_SIZE, 1, 1.f, 0);
+  table_fill_harm(tab2, WAVE_TAB_SIZE, 5, 0.5, 1);
 
   // allocate envelope
   env = (env_asr*)malloc(sizeof(env_asr));
@@ -334,8 +334,8 @@ void module_deinit(void) {
 }
 
 // set parameter by value
-////// FIXME: the represeentation of this value is totally arbitrary!
-static void module_set_param(u32 idx, pval v) {
+///// FIXME: the represeentation of this value is totally arbitrary!
+void module_set_param(u32 idx, pval v) {
   switch(idx) {
   case eParamHz1:
     // set_hz1(fix16_from_float(v));
