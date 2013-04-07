@@ -1,6 +1,7 @@
 april 2013 build
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+switch for inst/line: EG2480-ND	
 
 fine-tune usb mount positions
 new usb part: ae10400
