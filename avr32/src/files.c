@@ -48,7 +48,6 @@ static u8 numDsp = 0;
 void init_files(void) {
   // init FAT lib
   fat_init();
-
 #ifdef FILES_STATIC_MEM
 #else
   // allocate ram for dsp list
@@ -59,7 +58,7 @@ void init_files(void) {
     print_dbg("\r\n allocation error in files init \r\n");
   }
 #endif
-  //  files_scan_dsp();
+  files_scan_dsp();
 
 }
 
