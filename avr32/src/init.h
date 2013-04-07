@@ -26,5 +26,7 @@ extern void init_tc (volatile avr32_tc_t *tc);
 extern void init_twi(void);
 // initialize SPI and GPIO for sdcard
 extern void init_sd_mmc_resources(void);
+// initialize USB host stack
+void init_usb_host (void);
 
 #endif

@@ -423,7 +423,7 @@ bool otg_dual_enable(void)
 	irq_register_handler(otg_interrupt, AVR32_USBB_IRQ, UHD_USB_INT_LEVEL);
 
 	// Always authorize asynchronous USB interrupts to exit of sleep mode
-	pm_asyn_wake_up_enable(AVR32_PM_AWEN_USB_WAKEN_MASK);
+	//pm_asyn_wake_up_enable(AVR32_PM_AWEN_USB_WAKEN_MASK);
 
 # ifdef USB_ID
 	// By default USBB is already configured with ID pin enable

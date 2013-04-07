@@ -34,12 +34,23 @@
 #define FPBA_HZ   		FMCK_HZ    // peripheral bus A
 #define FPBB_HZ   		FMCK_HZ    // peripheral bus B
 
+// clock manager needs these defined as well
+#define BOARD_OSC0_HZ           12000000
+#define BOARD_OSC0_STARTUP_US   17000
+#define BOARD_OSC0_IS_XTAL      true
+#define BOARD_OSC32_HZ          32768
+#define BOARD_OSC32_STARTUP_US  71000
+#define BOARD_OSC32_IS_XTAL     true
+
 
 //============================================
 //====== IRQ priorities
-#define SYS_IRQ_PRIORITY       AVR32_INTC_INT1
-#define APP_TC_IRQ_PRIORITY    AVR32_INTC_INT1
-#define UI_IRQ_PRIORITY        AVR32_INTC_INT2
+/* #define SYS_IRQ_PRIORITY       AVR32_INTC_INT1 */
+/* #define APP_TC_IRQ_PRIORITY    AVR32_INTC_INT2 */
+/* #define UI_IRQ_PRIORITY        AVR32_INTC_INT3 */
+#define SYS_IRQ_PRIORITY       0
+#define APP_TC_IRQ_PRIORITY    1
+#define UI_IRQ_PRIORITY        2
 
 //==============================================
 //==== timers
@@ -152,12 +163,6 @@
 // power-down control
 #define SW_POWER_PIN    AVR32_PIN_PX12
 #define POWER_CTL_PIN   AVR32_PIN_PX13
-
-// aux pullup gates
-#define AUX_PULLUP0_PIN AVR32_PIN_PB20
-#define AUX_PULLUP1_PIN AVR32_PIN_PB21
-#define AUX_PULLUP2_PIN AVR32_PIN_PB22
-#define AUX_PULLUP3_PIN AVR32_PIN_PB23
 
 //TWI
 #define TWI_DATA_PIN            AVR32_TWI_SDA_0_0_PIN

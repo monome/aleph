@@ -8,12 +8,21 @@
 #include <flashc.h>
 #include <pll.h>
 #include <sysclk.h>
+
+// From module: USB HID Device protocol
+#include <usb_protocol_hid.h>
+// From module: USB Host HID Mouse (Single Class support)
+#include <uhi_hid_mouse.h>
+#include <uhc.h>
+#include <uhd.h>
+
 #include "compiler.h"
 #include "conf_sd_mmc_spi.h"
 #include "util.h"
 #include "gpio.h"
 #include "pdca.h"
 #include "power_clocks_lib.h"
+#include "print_funcs.h"
 #include "sd_mmc_spi.h"
 #include "spi.h"
 #include "tc.h"
@@ -22,8 +31,6 @@
 #include "conf_aleph.h"
 #include "filesystem.h"
 #include "init.h"
-
-#define FASTCLOCK 1
 
 //===========================
 //==== static variables
@@ -285,39 +292,44 @@ void init_bfin_resources(void) {
 
 // initialize clocks
 void init_clocks(void) {
+
+  // Set one waitstate for the flash.  Necessary for > 33MHz CPU freq.
+  //flashc_set_wait_state( 1 );
+  //sysclk_init();
+  
   // Switch to OSC0 to speed up  booting
   // Configure Osc0 in crystal mode (i.e. use of an external crystal source, with
   // frequency FOSC0) with an appropriate startup time then switch the main clock
   // source to Osc0.
   pm_switch_to_osc0( &AVR32_PM, FOSC0, OSC0_STARTUP );
 
-  // Set PLL0 (fed from OSC0 = 12 MHz) to 132 MHz
+  // set PLL0 for master clock
+  // OSC0 = 12 MHz
   pm_pll_setup( &AVR32_PM,
-		0,  // pll.
-		10,  // mul. // actual freq = fOsc * (mul + 1) = 132Mhz
-		1,   // div. // no division
-		0,   // osc.
-		16 ); // lockcount.
+  		0,  // pll.
+  		10,  // mul. // actual freq = fOsc * (mul + 1) = 132Mhz
+  		1,   // div. // no division
+  		0,   // osc.
+  		16 ); // lockcount.
 
   // Set PLL operating range and divider (fpll = fvco/2)
   // -> PLL0 output = 66 MHz
   pm_pll_set_option( &AVR32_PM,
-		     0, // pll.
-		     1,  // pll_freq.
-		     1,  // pll_div2. /// output frequency is divided by 2.
-		     0 ); // pll_wbwdisable.
+  		     0, // pll.
+  		     1,  // pll_freq.
+  		     1,  // pll_div2. /// output frequency is divided by 2.
+  		     0 ); // pll_wbwdisable.
 
   // start PLL0 and wait for the lock
   pm_pll_enable( &AVR32_PM, 0 );
   pm_wait_for_pll0_locked( &AVR32_PM );
 
-  // By default, all peripheral clocks to run at master clock rate
-
   // Set one waitstate for the flash.  Necessary for > 33MHz CPU freq.
   flashc_set_wait_state( 1 );
 
   // Switch to PLL0 as the master clock
-  pm_switch_to_clock( &AVR32_PM, AVR32_PM_MCCTRL_MCSEL_PLL0) ;  
+  pm_switch_to_clock( &AVR32_PM, AVR32_PM_MCCTRL_MCSEL_PLL0) ;
+
 }
 
 
@@ -329,5 +341,11 @@ void init_twi(void) {
     { TWI_CLOCK_PIN, TWI_CLOCK_FUNCTION }
   };
   gpio_enable_module(TWI_GPIO_MAP, sizeof(TWI_GPIO_MAP) / sizeof(TWI_GPIO_MAP[0]));
+}
 
+
+// initialize USB host stack
+void init_usb_host (void) {
+  pm_configure_usb_clock();
+  uhc_start();
 }

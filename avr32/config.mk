@@ -48,8 +48,11 @@ CSRCS = \
 	avr32/utils/debug/print_funcs.c                    \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.c \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.c \
+	avr32/drivers/usbb/usbb_host.c                     \
         common/services/clock/uc3a0_a1/sysclk.c            \
 	common/services/storage/ctrl_access/ctrl_access.c \
+       common/services/usb/class/hid/host/mouse/uhi_hid_mouse.c \
+       common/services/usb/uhc/uhc.c \
 	$(ALEPH_AVR32)/src/adc.c \
 	$(ALEPH_AVR32)/src/app_timers.c \
 	$(ALEPH_AVR32)/src/bfin.c \
@@ -65,6 +68,7 @@ CSRCS = \
 	$(ALEPH_AVR32)/src/switches.c \
 	$(ALEPH_AVR32)/src/timers.c \
 	$(ALEPH_AVR32)/src/main.c \
+	$(ALEPH_AVR32)/src/usb.c \
 	$(ALEPH_BEES)/key_handler.c \
 	$(ALEPH_BEES)/menu.c \
 	$(ALEPH_BEES)/net.c \
@@ -107,6 +111,7 @@ INC_PATH = \
 	avr32/components/memory/sdram			 \
 	avr32/drivers/cpu/cycle_counter/                 \
 	avr32/drivers/ebi/sdramc/                            \
+	avr32/drivers/eic/                            \
        avr32/drivers/flashc                               \
        avr32/drivers/gpio                                 \
        avr32/drivers/intc                                 \
@@ -116,6 +121,7 @@ INC_PATH = \
        avr32/drivers/tc                                 \
        avr32/drivers/twi                                 \
        avr32/drivers/usart                                \
+       avr32/drivers/usbb                                 \
        avr32/services/delay                               \
        avr32/services/fs/fat                              \
        avr32/utils                                        \
@@ -125,6 +131,10 @@ INC_PATH = \
 	avr32/components/memory/sd_mmc/sd_mmc_spi \
        common/services/storage/ctrl_access                \
        common/services/clock                              \
+       common/services/usb                                \
+       common/services/usb/class/hid                      \
+       common/services/usb/class/hid/host/mouse           \
+       common/services/usb/uhc                            \
        common/utils         \
 	$(ALEPH_AVR32)	\
 	$(ALEPH_AVR32)/src	\

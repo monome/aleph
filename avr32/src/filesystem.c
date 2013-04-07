@@ -24,7 +24,6 @@ volatile U8 pdcaTxBuf[FS_BUF_SIZE];
 // Used to indicate the end of PDCA transfer
 volatile u8 fsEndTransfer;
 
-
 //---- static
 // PDCA Channel pointer
 volatile avr32_pdca_channel_t* pdcaRxChan ;
@@ -96,17 +95,8 @@ int media_write(unsigned long sector, unsigned char *buffer, unsigned long secto
 // extern
 
 int fat_init(void) {
-  //int err;
-  //  print_dbg("\r\n hey fat init \r\n ");
-
   // Initialise File IO Library
   fl_init();
-  
-  //  print_dbg("\r\n attaching  media functions ... \r\n ");
-
-      //////// why???      
-  //      spi_write(SD_MMC_SPI,0xFF); // dummy byte synchronizes transfer
-
   // Attach media access functions to library
   if ( fl_attach_media((fn_diskio_read)media_read, (fn_diskio_write)media_write) != FAT_INIT_OK ) {
     print_dbg("\r\n failed to attach media access functions to fat_io_lib \r\n");
