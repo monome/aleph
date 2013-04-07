@@ -89,15 +89,33 @@
 #include <sysclk.h>
 #include <board.h>
 #include <gpio.h>
-#include <delay.h>
+//#include <delay.h>
+
+#if 1
+// aleph
+#define SW_PIN    AVR32_PIN_PA25
+#define LED_PIN   AVR32_PIN_PA23
+
+#else
+// evk
+#define SW_PIN    AVR32_PIN_PA25
+#define LED_PIN   AVR32_PIN_PB30
+
+#endif
 
 int main(void)
 {
-	sysclk_init();
-	board_init();
+  int state, i;
+  sysclk_init();
+  //	board_init();
 
-	while (1) {
-		gpio_toggle_pin(LED0_GPIO);
-		delay_ms(500);
-	}
+  gpio_enable_pin_pull_up(SW_PIN);
+
+  while (1) {
+    if( gpio_get_pin_value(SW_PIN) ) {
+      gpio_set_gpio_pin(LED_PIN);
+    } else {
+      gpio_clr_gpio_pin(LED_PIN);
+    }
+  }
 }

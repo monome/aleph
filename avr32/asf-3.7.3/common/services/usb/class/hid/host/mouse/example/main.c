@@ -46,6 +46,32 @@
 #include "ui.h"
 
 
+void init_ftdi_usart (void);
+void init_ftdi_usart (void) {
+  // GPIO map for USART.
+  static const gpio_map_t FTDI_USART_GPIO_MAP = {
+    { FTDI_USART_RX_PIN, FTDI_USART_RX_FUNCTION },
+    { FTDI_USART_TX_PIN, FTDI_USART_TX_FUNCTION }
+  };
+  
+  // Options for USART.
+  static const usart_options_t FTDI_USART_OPTIONS = {
+    .baudrate = FTDI_USART_BAUDRATE,
+    .charlength = 8,
+    .paritytype = USART_NO_PARITY,
+    .stopbits = USART_1_STOPBIT,
+    .channelmode = USART_NORMAL_CHMODE
+  };
+
+  // Set up GPIO for FTDI_USART
+  gpio_enable_module(FTDI_USART_GPIO_MAP,
+                     sizeof(FTDI_USART_GPIO_MAP) / sizeof(FTDI_USART_GPIO_MAP[0]));
+
+  // Initialize in RS232 mode.
+  usart_init_rs232(FTDI_USART, &FTDI_USART_OPTIONS, FPBA_HZ);
+}
+
+
 /*! \brief Main function. Execution starts here.
  */
 int main(void)
@@ -57,16 +83,20 @@ int main(void)
   // Initialize the sleep manager
   sleepmgr_init();
 
-  board_init();
+  //  board_init();
   ui_init();
+
+  init_ftdi_usart();
 
   // Start USB host stack
   uhc_start();
 
+  print_dbg("\r\n started USB host stack. ");
+
   // The USB management is entirely managed by interrupts.
   // As a consequence, the user application does only have to play with the power modes.
   while (true) {
-    sleepmgr_enter_sleep();
+    //    sleepmgr_enter_sleep();
   }
 }
 
