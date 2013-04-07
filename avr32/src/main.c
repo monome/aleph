@@ -139,6 +139,10 @@ static void init_avr32(void) {
   // enable interrupts
   cpu_irq_enable();
 
+
+  /// initialize filesystem
+  init_files();
+
   // usb host controller
   init_usb_host();
 
@@ -164,10 +168,6 @@ static void init_ctl(void) {
 #endif
   
   // set up file navigation
-  
-
-  /////// WTF ????????????????????????????????????????????????????????????????????
-  init_files();
   
   // send ADC config
   init_adc();
@@ -345,15 +345,15 @@ int main (void) {
   // setup control logic
   init_ctl();
 
-  /* /// boot default dsp */
-  /* files_load_dsp_name("default.ldr"); */
-  /* /// wait for bfin to finish boot */
-  /* delay = 500000; while(delay--) {;;} */
-  /* /// again... */
-  /* delay = 500000; while(delay--) {;;} */
+  /// boot default dsp
+  files_load_dsp_name("default.ldr");
+  /// wait for bfin to finish boot
+  delay = 500000; while(delay--) {;;}
+  /// again...
+  delay = 500000; while(delay--) {;;}
   
-  /* // populate control network with poarameters as reported by bfin */
-  /* report_params(); */
+  // populate control network with poarameters as reported by bfin
+  report_params();
 
   while(1) {
     check_events(); 

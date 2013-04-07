@@ -96,12 +96,15 @@ int media_write(unsigned long sector, unsigned char *buffer, unsigned long secto
 
 int fat_init(void) {
   // Initialise File IO Library
+  print_dbg("\r\n beginning FAT library init.");
   fl_init();
+  print_dbg("\r\n finished FAT library init.");
   // Attach media access functions to library
   if ( fl_attach_media((fn_diskio_read)media_read, (fn_diskio_write)media_write) != FAT_INIT_OK ) {
     print_dbg("\r\n failed to attach media access functions to fat_io_lib \r\n");
     return 1;
   } else {
+    print_dbg("\r\n attached media access functions to fat_io_lib");
     return 0;
   }
 }

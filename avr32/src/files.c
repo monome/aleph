@@ -59,7 +59,7 @@ void init_files(void) {
     print_dbg("\r\n allocation error in files init \r\n");
   }
 #endif
-  files_scan_dsp();
+  //  files_scan_dsp();
 
 }
 
@@ -72,7 +72,7 @@ void files_scan_dsp(void) {
   if( fl_opendir("/dsp", &dirstat) ) {      
     while (fl_readdir(&dirstat, &dirent) == 0) {
       if( !(dirent.is_dir) ) {
-	//	print_dbg("\r\n adding dsp file : ");
+	print_dbg("\r\n adding dsp file : ");
 	print_dbg(dirent.filename);
 	strcpy((char *)dsp_name_buf + (numDsp * DSP_NAME_LEN), dirent.filename);
 	numDsp++;
@@ -123,14 +123,11 @@ void files_load_dsp_name(const char* name) {
 	    bfin_load(dirent.size, load_buf);
 	  }
 #else
-
 	  //// we need to buffer the LDR file to save memory.
 	  //// this sort of breaks modularity, oh well.
 	  bfin_load(dirent.size, fp);
 	  fl_fclose(fp);
 #endif
-
-
 	} else {
 	  print_dbg("\r\n error: fp was null in load_dsp_name \r\n");
 	}
