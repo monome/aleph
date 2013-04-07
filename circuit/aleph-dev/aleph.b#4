@@ -8,7 +8,7 @@
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.0125" altunitdist="inch" altunit="inch"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
+<layer number="1" name="Top" color="4" fill="1" visible="no" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="yes"/>
 <layer number="3" name="Route3" color="4" fill="3" visible="no" active="yes"/>
 <layer number="4" name="Route4" color="1" fill="4" visible="no" active="no"/>
@@ -33,11 +33,11 @@
 <layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="yes"/>
 <layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
 <layer number="25" name="tNames" color="7" fill="1" visible="no" active="yes"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="no" active="yes"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
-<layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
+<layer number="30" name="bStop" color="7" fill="6" visible="yes" active="yes"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="yes"/>
 <layer number="32" name="bCream" color="7" fill="5" visible="no" active="yes"/>
 <layer number="33" name="tFinish" color="6" fill="3" visible="no" active="yes"/>
@@ -1882,21 +1882,22 @@ AVX TACmicrochip,  Case-A</description>
 <rectangle x1="0.4318" y1="-0.4" x2="0.8382" y2="0.4" layer="51"/>
 <rectangle x1="-0.8382" y1="-0.4" x2="-0.4318" y2="0.4" layer="51"/>
 </package>
-<package name="C3225">
-<description>&lt;b&gt;CAP&lt;/b&gt; - 3225</description>
-<wire x1="-0.9652" y1="1.2446" x2="0.9652" y2="1.2446" width="0.1016" layer="51"/>
-<wire x1="-0.9652" y1="-1.2446" x2="0.9652" y2="-1.2446" width="0.1016" layer="51"/>
-<wire x1="-2.54" y1="1.651" x2="2.54" y2="1.651" width="0.2032" layer="21"/>
-<wire x1="2.54" y1="1.651" x2="2.54" y2="-1.651" width="0.2032" layer="21"/>
-<wire x1="2.54" y1="-1.651" x2="-2.54" y2="-1.651" width="0.2032" layer="21"/>
-<wire x1="-2.54" y1="-1.651" x2="-2.54" y2="1.651" width="0.2032" layer="21"/>
-<smd name="1" x="-1.397" y="0" dx="1.6" dy="2.7" layer="1"/>
-<smd name="2" x="1.397" y="0" dx="1.6" dy="2.7" layer="1"/>
-<text x="-2.2225" y="1.905" size="1.016" layer="25" ratio="18">&gt;NAME</text>
-<text x="-2.2225" y="-2.6988" size="0.8128" layer="27" ratio="10">&gt;VALUE</text>
-<rectangle x1="-1.7013" y1="-1.2954" x2="-0.9512" y2="1.3045" layer="51"/>
-<rectangle x1="0.9517" y1="-1.304" x2="1.7018" y2="1.2959" layer="51"/>
-<rectangle x1="-0.1999" y1="-0.5001" x2="0.1999" y2="0.5001" layer="35"/>
+<package name="C3528/T">
+<description>&lt;b&gt;TANT CAP&lt;/b&gt;&lt;p&gt;
+chip tantalum</description>
+<wire x1="3.429" y1="1.524" x2="0.381" y2="1.524" width="0.2032" layer="21"/>
+<wire x1="0.381" y1="1.524" x2="-2.921" y2="1.524" width="0.2032" layer="21"/>
+<wire x1="-2.921" y1="1.524" x2="-2.921" y2="-1.524" width="0.2032" layer="21"/>
+<wire x1="-2.921" y1="-1.524" x2="0.381" y2="-1.524" width="0.2032" layer="21"/>
+<wire x1="0.381" y1="-1.524" x2="3.429" y2="-1.524" width="0.2032" layer="21"/>
+<wire x1="3.429" y1="-1.524" x2="3.429" y2="1.524" width="0.2032" layer="21"/>
+<wire x1="0.381" y1="-1.524" x2="0.381" y2="1.524" width="0.2032" layer="21"/>
+<smd name="+" x="1.651" y="0" dx="2" dy="2.2" layer="1"/>
+<smd name="-" x="-1.651" y="0" dx="2" dy="2.2" layer="1"/>
+<text x="-2.6988" y="1.9051" size="1.016" layer="25" ratio="18">&gt;NAME</text>
+<text x="-2.6987" y="-2.6987" size="0.8128" layer="27" ratio="10">&gt;VALUE</text>
+<rectangle x1="-0.3" y1="-1" x2="0.3" y2="1" layer="35"/>
+<rectangle x1="2.8575" y1="-1.5875" x2="3.3338" y2="1.5875" layer="21"/>
 </package>
 <package name="L1206">
 <description>&lt;B&gt;INDUCTOR&lt;/B&gt; - 1206</description>
@@ -2778,7 +2779,7 @@ design rules under a new name.</description>
 <attribute name="VALUE" x="120.015" y="53.975" size="1.016" layer="28" font="vector" ratio="12" rot="MR0"/>
 </element>
 <element name="C9" library="rc-master-smd" package="C0603" value="100n" x="140.97" y="67.31" smashed="yes" rot="MR90">
-<attribute name="NAME" x="144.145" y="66.04" size="1.016" layer="26" font="vector" ratio="12" rot="MR90"/>
+<attribute name="NAME" x="143.8275" y="66.04" size="1.016" layer="26" font="vector" ratio="12" rot="MR90"/>
 <attribute name="VALUE" x="144.145" y="66.04" size="1.016" layer="28" font="vector" ratio="12" rot="MR90"/>
 </element>
 <element name="C10" library="rc-master-smd" package="C0603" value="33n" x="140.335" y="48.895" smashed="yes" rot="MR0">
@@ -2810,12 +2811,12 @@ design rules under a new name.</description>
 <attribute name="VALUE" x="140.335" y="14.605" size="1.016" layer="28" font="vector" ratio="12" rot="MR270"/>
 </element>
 <element name="C17" library="rc-master-smd" package="C1206" value="4.7u" x="132.715" y="66.675" smashed="yes" rot="MR0">
-<attribute name="NAME" x="134.9375" y="68.2625" size="1.016" layer="26" font="vector" ratio="12" rot="MR0"/>
+<attribute name="NAME" x="130.175" y="68.2625" size="1.016" layer="26" font="vector" ratio="12" rot="MR90"/>
 <attribute name="VALUE" x="134.9375" y="68.2625" size="1.016" layer="28" font="vector" ratio="12" rot="MR0"/>
 </element>
 <element name="C18" library="rc-master-smd" package="C1206" value="2.2u" x="136.68375" y="68.10375" smashed="yes" rot="MR90">
-<attribute name="NAME" x="123.34875" y="111.28375" size="1.016" layer="26" font="vector" ratio="12" rot="MR90"/>
-<attribute name="VALUE" x="128.42875" y="116.36375" size="1.016" layer="28" font="vector" ratio="12" rot="MR90"/>
+<attribute name="NAME" x="137.79505" y="70.64375" size="1.016" layer="26" font="vector" ratio="12" rot="MR0"/>
+<attribute name="VALUE" x="134.46125" y="66.03995" size="0.8128" layer="28" ratio="10" rot="MR90"/>
 </element>
 <element name="C19" library="rc-master-smd" package="C0603" value="470p" x="135.89" y="62.865" smashed="yes" rot="MR270">
 <attribute name="NAME" x="149.225" y="19.685" size="1.016" layer="26" font="vector" ratio="12" rot="MR270"/>
@@ -3003,7 +3004,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="154.305" y="73.025" size="1.016" layer="25" font="vector" ratio="12"/>
 <attribute name="VALUE" x="156.21" y="80.645" size="1.016" layer="27" font="vector" ratio="12"/>
 </element>
-<element name="C43" library="rc-master-smd" package="C1206" value="22u" x="141.605" y="78.105" smashed="yes" rot="MR0">
+<element name="C43" library="rc-master-smd" package="C1206/T" value="22u" x="141.605" y="78.105" smashed="yes" rot="MR0">
 <attribute name="NAME" x="143.51" y="74.93" size="1.016" layer="26" font="vector" ratio="12" rot="MR0"/>
 <attribute name="VALUE" x="143.51" y="74.93" size="1.016" layer="28" font="vector" ratio="12" rot="MR0"/>
 </element>
@@ -3015,7 +3016,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="141.605" y="74.295" size="1.016" layer="25" font="vector" ratio="12"/>
 <attribute name="VALUE" x="141.605" y="74.295" size="1.016" layer="27" font="vector" ratio="12"/>
 </element>
-<element name="C46" library="rc-master-smd" package="C3225" value="47u" x="149.225" y="77.47" smashed="yes">
+<element name="C46" library="rc-master-smd" package="C3528/T" value="47u" x="149.225" y="77.47" smashed="yes">
 <attribute name="NAME" x="147.32" y="74.295" size="1.016" layer="25" font="vector" ratio="12"/>
 <attribute name="VALUE" x="147.32" y="74.295" size="1.016" layer="27" font="vector" ratio="12"/>
 </element>
@@ -4978,11 +4979,11 @@ design rules under a new name.</description>
 <contactref element="U2" pad="7"/>
 <contactref element="J2" pad="2"/>
 <contactref element="U6" pad="4"/>
-<contactref element="C43" pad="1"/>
+<contactref element="C43" pad="-"/>
 <contactref element="C44" pad="1"/>
 <contactref element="U6" pad="8"/>
 <contactref element="D2" pad="A"/>
-<contactref element="C46" pad="2"/>
+<contactref element="C46" pad="+"/>
 <contactref element="C48" pad="-"/>
 <contactref element="U7" pad="1"/>
 <contactref element="C47" pad="1"/>
@@ -5235,7 +5236,7 @@ design rules under a new name.</description>
 <wire x1="132.715" y1="64.77" x2="133.6" y2="65.655" width="0.2032" layer="1"/>
 <wire x1="138.6" y1="65.2575" x2="138.6" y2="66.48" width="0.2032" layer="1"/>
 <wire x1="138.1125" y1="64.77" x2="138.6" y2="65.2575" width="0.2032" layer="1"/>
-<wire x1="150.622" y1="77.47" x2="152.4" y2="77.47" width="0.6096" layer="1"/>
+<wire x1="150.876" y1="77.47" x2="152.4" y2="77.47" width="0.6096" layer="1"/>
 <wire x1="146.05" y1="80.01" x2="146.05" y2="81.915" width="0.6096" layer="1"/>
 <wire x1="146.05" y1="81.915" x2="146.05" y2="90.17" width="0.6096" layer="1"/>
 <wire x1="142.875" y1="78.105" x2="142.875" y2="81.28" width="0.6096" layer="16"/>
@@ -7452,7 +7453,7 @@ design rules under a new name.</description>
 <contactref element="C54" pad="+"/>
 <contactref element="U6" pad="6"/>
 <contactref element="L1" pad="2"/>
-<contactref element="C46" pad="1"/>
+<contactref element="C46" pad="-"/>
 <contactref element="C48" pad="+"/>
 <contactref element="U7" pad="3"/>
 <contactref element="C47" pad="2"/>
@@ -7491,7 +7492,7 @@ design rules under a new name.</description>
 <wire x1="152.4" y1="80.01" x2="148.59" y2="80.01" width="0.6096" layer="1"/>
 <wire x1="148.59" y1="80.01" x2="147.955" y2="79.375" width="0.6096" layer="1"/>
 <wire x1="147.955" y1="79.375" x2="147.955" y2="77.597" width="0.6096" layer="1"/>
-<wire x1="147.955" y1="77.597" x2="147.828" y2="77.47" width="0.6096" layer="1"/>
+<wire x1="147.955" y1="77.597" x2="147.574" y2="77.47" width="0.6096" layer="1"/>
 <wire x1="119.04" y1="86.7" x2="117.025" y2="86.7" width="0.254" layer="1"/>
 <wire x1="119.38" y1="86.36" x2="119.04" y2="86.7" width="0.254" layer="1"/>
 <wire x1="119.888" y1="85.09" x2="119.888" y2="85.852" width="0.254" layer="16"/>
@@ -7733,7 +7734,7 @@ design rules under a new name.</description>
 <signal name="UNREG_IN">
 <contactref element="D1" pad="C"/>
 <contactref element="U6" pad="2"/>
-<contactref element="C43" pad="2"/>
+<contactref element="C43" pad="+"/>
 <contactref element="C44" pad="2"/>
 <contactref element="R63" pad="2"/>
 <wire x1="145.0975" y1="93.6625" x2="145.0975" y2="92.71" width="0.6096" layer="16"/>

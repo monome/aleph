@@ -2058,6 +2058,33 @@ shrink quad flat pack, square</description>
 <text x="-24" y="-9" size="1.27" layer="25">&gt;NAME</text>
 <text x="-24" y="-11" size="1.27" layer="27">&gt;VALUE</text>
 </package>
+<package name="100-M7-SPDT-VERT">
+<pad name="M1" x="0" y="2.54" drill="1.8542" shape="octagon"/>
+<pad name="M2" x="0" y="-2.54" drill="1.8542" shape="octagon"/>
+<pad name="1" x="13.208" y="0" drill="1.8542" shape="octagon"/>
+<pad name="2" x="17.018" y="0" drill="1.8542" shape="octagon"/>
+<pad name="3" x="20.828" y="0" drill="1.8542" shape="octagon"/>
+<wire x1="0" y1="3.81" x2="0" y2="3.175" width="0.127" layer="21"/>
+<wire x1="0" y1="3.175" x2="0" y2="-3.175" width="0.127" layer="21"/>
+<wire x1="0" y1="-3.175" x2="0" y2="-3.81" width="0.127" layer="21"/>
+<wire x1="0" y1="-3.81" x2="12.065" y2="-3.81" width="0.127" layer="21"/>
+<wire x1="12.065" y1="-3.81" x2="12.065" y2="-1.905" width="0.127" layer="21"/>
+<wire x1="12.065" y1="-1.905" x2="12.065" y2="1.905" width="0.127" layer="21"/>
+<wire x1="12.065" y1="1.905" x2="12.065" y2="3.81" width="0.127" layer="21"/>
+<wire x1="12.065" y1="3.81" x2="0" y2="3.81" width="0.127" layer="21"/>
+<wire x1="0" y1="3.175" x2="-6.35" y2="3.175" width="0.127" layer="21"/>
+<wire x1="-6.35" y1="3.175" x2="-6.35" y2="1.27" width="0.127" layer="21"/>
+<wire x1="-6.35" y1="1.27" x2="-6.35" y2="-1.27" width="0.127" layer="21"/>
+<wire x1="-6.35" y1="-1.27" x2="-6.35" y2="-3.175" width="0.127" layer="21"/>
+<wire x1="-6.35" y1="-3.175" x2="0" y2="-3.175" width="0.127" layer="21"/>
+<wire x1="-6.35" y1="1.27" x2="-13.335" y2="1.27" width="0.127" layer="21"/>
+<wire x1="-13.335" y1="1.27" x2="-13.335" y2="-1.27" width="0.127" layer="21"/>
+<wire x1="-13.335" y1="-1.27" x2="-6.35" y2="-1.27" width="0.127" layer="21"/>
+<wire x1="12.065" y1="-1.905" x2="22.86" y2="-1.905" width="0.127" layer="21"/>
+<wire x1="22.86" y1="-1.905" x2="22.86" y2="1.905" width="0.127" layer="21"/>
+<wire x1="22.86" y1="1.905" x2="12.065" y2="1.905" width="0.127" layer="21"/>
+<text x="12.7" y="-3.81" size="1.27" layer="25">&gt;NAME</text>
+</package>
 </packages>
 <symbols>
 <symbol name="PANASONIC-EVQ">
@@ -2818,6 +2845,25 @@ shrink quad flat pack, square</description>
 <pin name="GND" x="-15.24" y="-7.62" length="middle" direction="pwr"/>
 <pin name="FB" x="15.24" y="2.54" length="middle" rot="R180"/>
 <pin name="ON/_OFF" x="-15.24" y="2.54" length="middle"/>
+</symbol>
+<symbol name="100-M7-SPDT-VERT">
+<pin name="1" x="10.16" y="-5.08" length="middle" rot="R180"/>
+<pin name="2" x="10.16" y="0" length="middle" rot="R180"/>
+<pin name="3" x="10.16" y="5.08" length="middle" rot="R180"/>
+<wire x1="5.08" y1="7.62" x2="5.08" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="5.08" y1="-7.62" x2="-2.54" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="-7.62" x2="-2.54" y2="-2.54" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="-2.54" x2="-2.54" y2="2.54" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="2.54" x2="-2.54" y2="7.62" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="7.62" x2="5.08" y2="7.62" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="2.54" x2="-5.08" y2="2.54" width="0.254" layer="94"/>
+<wire x1="-5.08" y1="2.54" x2="-5.08" y2="0.635" width="0.254" layer="94"/>
+<wire x1="-5.08" y1="0.635" x2="-5.08" y2="-0.635" width="0.254" layer="94"/>
+<wire x1="-5.08" y1="-0.635" x2="-5.08" y2="-2.54" width="0.254" layer="94"/>
+<wire x1="-5.08" y1="-2.54" x2="-2.54" y2="-2.54" width="0.254" layer="94"/>
+<wire x1="-5.08" y1="0.635" x2="-12.7" y2="0" width="0.254" layer="94"/>
+<wire x1="-12.7" y1="0" x2="-12.7" y2="-1.27" width="0.254" layer="94"/>
+<wire x1="-12.7" y1="-1.27" x2="-5.08" y2="-0.635" width="0.254" layer="94"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -3703,6 +3749,23 @@ shrink quad flat pack, square</description>
 <connect gate="G$1" pin="INPUT" pad="7"/>
 <connect gate="G$1" pin="ON/_OFF" pad="5"/>
 <connect gate="G$1" pin="SWITCH" pad="8"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="100-M7-SPDT-VERT">
+<gates>
+<gate name="G$1" symbol="100-M7-SPDT-VERT" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="100-M7-SPDT-VERT">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+<connect gate="G$1" pin="3" pad="3"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -17159,7 +17222,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="V56" library="supply" deviceset="+5V" device=""/>
 <part name="V57" library="supply" deviceset="+5VA" device=""/>
 <part name="GND66" library="supply" deviceset="GND" device=""/>
-<part name="R68" library="rc-master-smd" deviceset="R_" device="0603" value="0"/>
 <part name="R162" library="rc-master-smd" deviceset="R_" device="0603" value="100k"/>
 <part name="GND5" library="supply" deviceset="GND" device=""/>
 <part name="U3" library="memory-cypress" deviceset="CY62167EV30-Z" device=""/>
@@ -17729,6 +17791,9 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="AGND65" library="supply" deviceset="AGND" device=""/>
 <part name="V54" library="supply" deviceset="+12V" device=""/>
 <part name="GND75" library="supply" deviceset="GND" device=""/>
+<part name="L10" library="rc-master-smd" deviceset="L_" device="1206" value="600"/>
+<part name="U$8" library="monome-inc" deviceset="100-M7-SPDT-VERT" device=""/>
+<part name="U$9" library="monome-inc" deviceset="100-M7-SPDT-VERT" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -19041,7 +19106,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="V56" gate="1" x="242.57" y="160.02"/>
 <instance part="V57" gate="G$1" x="260.35" y="160.02"/>
 <instance part="GND66" gate="1" x="234.95" y="226.06"/>
-<instance part="R68" gate="G$1" x="251.46" y="146.05" rot="R180"/>
 <instance part="R162" gate="G$1" x="215.9" y="219.71"/>
 <instance part="GND5" gate="1" x="81.28" y="160.02"/>
 <instance part="U3" gate="G$1" x="60.96" y="208.28"/>
@@ -19058,6 +19122,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="GND63" gate="1" x="359.41" y="229.87"/>
 <instance part="GND64" gate="1" x="295.91" y="229.87"/>
 <instance part="V46" gate="1" x="364.49" y="257.81"/>
+<instance part="L10" gate="G$1" x="251.46" y="146.05"/>
 </instances>
 <busses>
 </busses>
@@ -19476,9 +19541,9 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 </segment>
 <segment>
 <wire x1="242.57" y1="157.48" x2="242.57" y2="146.05" width="0.1524" layer="91"/>
-<wire x1="242.57" y1="146.05" x2="246.38" y2="146.05" width="0.1524" layer="91"/>
 <pinref part="V56" gate="1" pin="+5V"/>
-<pinref part="R68" gate="G$1" pin="2"/>
+<pinref part="L10" gate="G$1" pin="2"/>
+<wire x1="242.57" y1="146.05" x2="246.38" y2="146.05" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$12" class="0">
@@ -19810,10 +19875,10 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 </net>
 <net name="+5VA" class="0">
 <segment>
-<wire x1="256.54" y1="146.05" x2="260.35" y2="146.05" width="0.1524" layer="91"/>
 <wire x1="260.35" y1="146.05" x2="260.35" y2="157.48" width="0.1524" layer="91"/>
 <pinref part="V57" gate="G$1" pin="+5VA"/>
-<pinref part="R68" gate="G$1" pin="1"/>
+<pinref part="L10" gate="G$1" pin="1"/>
+<wire x1="256.54" y1="146.05" x2="260.35" y2="146.05" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="POWER_SW" class="0">
@@ -23645,6 +23710,8 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="C174" gate="G$1" x="365.76" y="113.03" rot="R90"/>
 <instance part="AGND55" gate="VR1" x="372.11" y="100.33"/>
 <instance part="V47" gate="G$1" x="372.11" y="124.46"/>
+<instance part="U$8" gate="G$1" x="99.06" y="106.68"/>
+<instance part="U$9" gate="G$1" x="128.27" y="106.68"/>
 </instances>
 <busses>
 </busses>

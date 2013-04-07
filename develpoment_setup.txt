@@ -20,11 +20,14 @@ you will need to sign up / login.
 
 get the appopriate toolchain release for your architecture, and the latest headers,
 now you have 2 files similar to:
-avr32-gnu-toolchain-3.4.1.348-linux.any.x86-64.tar.gz
+
+avr32-gnu-toolchain-3.4.1.348-linux.any.x86.tar.gz
 avr-headers-3.2.3.970.tar.gz
 
+GET 32 BIT
+
 extracting the toolchain archive gives you something like 
-avr32-gnu-toolchain-linux_x86_64/
+avr32-gnu-toolchain-linux_x86/
 
 move/rename this directory however you like and make sure the binaries are in your $PATH
 
@@ -40,21 +43,24 @@ here is an example of the whole process:
 cd ~/Downloads
 
 tar -xzf avr32-gnu-toolchain-3.4.1.348-linux.any.x86_64.tar.gz
-tar -xzf avr-headers-3.2.3.970.tar.gz
+unzip -xzf avr-headers-3.2.3.970.zip
 
 mv avr32-gnu-toolchain-linux_x86_64 ~/avr32-gnu-toolchain
 echo "PATH="\$PATH:~/avr32-gnu-toolchain/bin" >> ~/.bashrc
 PATH=$PATH:~/avr32-gnu-toolchain/bin
 
 cd avr-headers-3.2.3.970
-cp avr/ ~/avr32-gnu-toolchain/ -R
-cp avr32/ ~/avr32-gnu-toolchain/ -R
+cp avr/ ~/avr32-gnu-toolchain/include/ -R
+cp avr32/ ~/avr32-gnu-toolchain/include/ -R
 
 
 you should now be able to run 'make' from aleph/avr32 and produce aleph.elf. yeah!
 let me know if there are problems: emb@catfact.net
 
 in order to actually program the avr32 though, we unforunately need to install "AVR32 Studio" from atmel, which is an eclipse plugin. some binary tools only included in this package are required.
+
+http://www.atmel.com/tools/avr32studio2_6.aspx
+
 e.g. my .bashrc contains the line
 PATH=$PATH:~/as4e-ide/plugins/com.atmel.avr.utilities.linux.x86_64_3.0.0.201009140848/os/linux/x86_64/bin
 
