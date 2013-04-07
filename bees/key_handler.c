@@ -9,6 +9,8 @@
 #ifdef ARCH_AVR32
 #include "print_funcs.h"
 #endif
+// common
+#include "files.h"
 // bees
 #include "op.h"
 #include "op_math.h"
@@ -537,7 +539,7 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
 extern void key_handler_dsp(uiKey_t key, s16 val) {
   switch(key) {
   case eKeyFnDownA:
-    // load
+    // load DSP (and update the parameter list)
     files_load_dsp(curPage->selected);
     break;
   case eKeyFnDownB:

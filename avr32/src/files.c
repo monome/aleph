@@ -25,20 +25,6 @@
 //// FIXME: using static allocation
 #define FILES_STATIC_MEM 1
 
-
-/* #if FILES_STATIC_MEM */
-/* // make as big as we can handle in static mem */
-/* //#define MAX_BFIN_LDR_BYTES 6000 */
-/* #define MAX_BFIN_LDR_BYTES 21000 */
-/* #else */
-/* // grab a RAM buffer big enough for bf533s instruction SRAM */
-/* #define MAX_BFIN_LDR_BYTES 64000 */
-/* #endif  */
-
-#if USE_LDR_RAM_BUFFER
-#define MAX_BFIN_LDR_BYTES 21000
-#endif
-
 // list of names
 //#define FILES_LIST_MAX_ENTRIES 128; 
 #define MAX_NUM_DSP 32
@@ -49,46 +35,22 @@
 //----- -static vars
 
 #ifdef FILES_STATIC_MEM
-// bfin ldr file buffer
-#ifdef USE_LDR_RAM_BUFFER
-volatile u8 load_buf[MAX_BFIN_LDR_BYTES];
-#endif // LDR ram buf
-// dsp name list  - global for speed
 volatile char dsp_name_buf[DSP_LIST_BUF_SIZE];
 #else
-//volatile u8* load_buf;
 volatile char * dsp_name_buf;
 #endif // static memory
 
-// current path buffer
-// current directory status
-//static FL_DIR dirstat;
-// current directory entry
-//static struct fs_dir_ent dirent;
-// count of dsp files
 static u8 numDsp = 0;
-
-//---------------------------------
-//------ function declaration
-//static int test_files(void);
 
 //---------------------------------
 //----- function definition
 
 void init_files(void) {
-  //heap_t tmp;
   // init FAT lib
   fat_init();
 
 #ifdef FILES_STATIC_MEM
 #else
-  // allocate RAM for blackfin boot image
-  tmp = alloc_mem(MAX_BFIN_LDR_BYTES);
-  if(tmp != ALLOC_FAIL) {
-    load_buf = tmp;
-  } else {
-    print_dbg("\r\nallocation error in files init \r\n");
-  }
   // allocate ram for dsp list
   tmp = (heap_t)alloc_mem(MAX_NUM_DSP * MAX_FILE_PATH_LENGTH);
   if(tmp != ALLOC_FAIL) {
@@ -97,7 +59,6 @@ void init_files(void) {
     print_dbg("\r\n allocation error in files init \r\n");
   }
 #endif
-
   files_scan_dsp();
 
 }

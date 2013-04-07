@@ -37,7 +37,8 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc);
 // get current module name
 void bfin_get_module_name(volatile char* buf);
 
-/// send some dummy bytes over SPI for no god damn fucking reason
-void bfin_hack(U8 num);
+// clear and add params to ctl network
+void report_params(void);
+
 
 #endif // header guard

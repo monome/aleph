@@ -50,6 +50,7 @@ cd avr-headers-3.2.3.970
 cp avr/ ~/avr32-gnu-toolchain/ -R
 cp avr32/ ~/avr32-gnu-toolchain/ -R
 
+
 you should now be able to run 'make' from aleph/avr32 and produce aleph.elf. yeah!
 let me know if there are problems: emb@catfact.net
 
