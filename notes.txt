@@ -21,3 +21,14 @@ jstest /dev/input/js0
 ftdi info
 
 http://lxr.linux.no/linux+v2.6.28.7/drivers/usb/serial/ftdi_sio.h#L1334
+
+
+
+
+random notes
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+http://docs.blackfin.uclinux.org/doku.php?id=hw:checklist
+
+audio pots http://tangentsoft.net/audio/atten.html
+general http://tangentsoft.net/audio/

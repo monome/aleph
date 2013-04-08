@@ -1,6 +1,9 @@
 april 2013 build
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+tune debounce. use 18k rather than 82k.
+
+
 switch for inst/line: EG2480-ND	
 
 fine-tune usb mount positions
