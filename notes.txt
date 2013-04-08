@@ -1,0 +1,18 @@
+usb sniffing
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+usbmon
+
+http://lxr.linux.no/linux+v2.6.28.8/Documentation/usb/usbmon.txt
+
+modprobe usbmon
+
+cat /sys/kernel/debug/usb/usbmon/2u
+
+
+usb joystick
+
+apt-get install joystick
+
+jstest /dev/input/js0
+
