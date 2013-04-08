@@ -158,6 +158,14 @@
 <wire x1="203.04125" y1="96.36125" x2="202.40625" y2="96.99625" width="0.2032" layer="21"/>
 <wire x1="200.81875" y1="97.94875" x2="203.35875" y2="95.40875" width="0.2032" layer="21"/>
 <rectangle x1="199.39" y1="93.98" x2="218.44" y2="99.06" layer="1"/>
+<circle x="110.8075" y="57.785" radius="0.635" width="0.254" layer="21"/>
+<circle x="112.0775" y="57.15" radius="0.635" width="0.254" layer="21"/>
+<circle x="108.585" y="57.785" radius="0.635" width="0.254" layer="21"/>
+<circle x="108.585" y="56.515" radius="0.635" width="0.254" layer="21"/>
+<text x="113.03" y="56.8325" size="1.016" layer="21" font="vector" ratio="12">MOSI</text>
+<text x="110.49" y="58.7375" size="1.016" layer="21" font="vector" ratio="12">MISO</text>
+<text x="107.6325" y="54.61" size="1.016" layer="21" font="vector" ratio="12">SCK</text>
+<text x="107.6325" y="58.7375" size="1.016" layer="21" font="vector" ratio="12">SS</text>
 </plain>
 <libraries>
 <library name="atmel-avr32">
@@ -9183,12 +9191,13 @@ design rules under a new name.</description>
 <wire x1="81.915" y1="53.0225" x2="100.0125" y2="53.0225" width="0.1524" layer="1"/>
 <wire x1="100.0125" y1="53.0225" x2="100.965" y2="53.0225" width="0.1524" layer="16"/>
 <wire x1="100.965" y1="53.0225" x2="105.0925" y2="57.15" width="0.1524" layer="16"/>
-<wire x1="105.0925" y1="57.15" x2="107.6325" y2="57.15" width="0.1524" layer="16"/>
-<wire x1="107.6325" y1="57.15" x2="108.9025" y2="58.42" width="0.1524" layer="1"/>
-<wire x1="108.9025" y1="58.42" x2="120.3325" y2="58.42" width="0.1524" layer="1"/>
+<wire x1="105.0925" y1="57.15" x2="107.95" y2="57.15" width="0.1524" layer="16"/>
+<wire x1="107.95" y1="57.15" x2="108.585" y2="57.785" width="0.1524" layer="16"/>
+<wire x1="108.585" y1="57.785" x2="109.22" y2="58.42" width="0.1524" layer="1"/>
+<wire x1="109.22" y1="58.42" x2="120.3325" y2="58.42" width="0.1524" layer="1"/>
 <via x="81.915" y="53.0225" extent="1-16" drill="0.381"/>
 <via x="100.0125" y="53.0225" extent="1-16" drill="0.381"/>
-<via x="107.6325" y="57.15" extent="1-16" drill="0.381"/>
+<via x="108.585" y="57.785" extent="1-16" drill="0.381"/>
 </signal>
 <signal name="B-MISO">
 <contactref element="DSP1" pad="P$54"/>
@@ -9201,13 +9210,12 @@ design rules under a new name.</description>
 <wire x1="104.14" y1="52.07" x2="104.14" y2="54.9275" width="0.1524" layer="16"/>
 <wire x1="104.14" y1="54.9275" x2="105.0925" y2="55.88" width="0.1524" layer="16"/>
 <wire x1="105.0925" y1="55.88" x2="108.9025" y2="55.88" width="0.1524" layer="16"/>
-<wire x1="108.9025" y1="55.88" x2="109.5375" y2="56.515" width="0.1524" layer="16"/>
-<wire x1="109.5375" y1="56.515" x2="109.5375" y2="57.785" width="0.1524" layer="16"/>
+<wire x1="108.9025" y1="55.88" x2="110.8075" y2="57.785" width="0.1524" layer="16"/>
 <wire x1="121.63" y1="58.13" x2="122.75" y2="58.13" width="0.1524" layer="1"/>
 <wire x1="121.285" y1="57.785" x2="121.63" y2="58.13" width="0.1524" layer="1"/>
-<wire x1="109.5375" y1="57.785" x2="121.285" y2="57.785" width="0.1524" layer="1"/>
+<wire x1="110.8075" y1="57.785" x2="121.285" y2="57.785" width="0.1524" layer="1"/>
 <via x="101.9175" y="51.7525" extent="1-16" drill="0.381"/>
-<via x="109.5375" y="57.785" extent="1-16" drill="0.381"/>
+<via x="110.8075" y="57.785" extent="1-16" drill="0.381"/>
 </signal>
 <signal name="B-MOSI">
 <contactref element="DSP1" pad="P$55"/>
@@ -9219,14 +9227,13 @@ design rules under a new name.</description>
 <wire x1="103.8225" y1="51.1175" x2="104.775" y2="52.07" width="0.1524" layer="16"/>
 <wire x1="104.775" y1="52.07" x2="104.775" y2="54.61" width="0.1524" layer="16"/>
 <wire x1="104.775" y1="54.61" x2="105.41" y2="55.245" width="0.1524" layer="16"/>
-<wire x1="110.49" y1="56.515" x2="110.49" y2="57.15" width="0.1524" layer="16"/>
-<wire x1="109.22" y1="55.245" x2="110.49" y2="56.515" width="0.1524" layer="16"/>
-<wire x1="105.41" y1="55.245" x2="109.22" y2="55.245" width="0.1524" layer="16"/>
+<wire x1="110.1725" y1="55.245" x2="112.0775" y2="57.15" width="0.1524" layer="16"/>
+<wire x1="105.41" y1="55.245" x2="110.1725" y2="55.245" width="0.1524" layer="16"/>
 <wire x1="121.805" y1="56.63" x2="122.75" y2="56.63" width="0.1524" layer="1"/>
 <wire x1="121.285" y1="57.15" x2="121.805" y2="56.63" width="0.1524" layer="1"/>
-<wire x1="110.49" y1="57.15" x2="121.285" y2="57.15" width="0.1524" layer="1"/>
+<wire x1="112.0775" y1="57.15" x2="121.285" y2="57.15" width="0.1524" layer="1"/>
 <via x="102.87" y="51.1175" extent="1-16" drill="0.381"/>
-<via x="110.49" y="57.15" extent="1-16" drill="0.381"/>
+<via x="112.0775" y="57.15" extent="1-16" drill="0.381"/>
 </signal>
 <signal name="B-SPISEL4">
 <contactref element="DSP1" pad="P$47"/>

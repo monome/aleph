@@ -1,5 +1,5 @@
 usb sniffing
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 usbmon
 
@@ -16,3 +16,8 @@ apt-get install joystick
 
 jstest /dev/input/js0
 
+
+
+ftdi info
+
+http://lxr.linux.no/linux+v2.6.28.7/drivers/usb/serial/ftdi_sio.h#L1334

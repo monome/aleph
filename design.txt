@@ -1,0 +1,59 @@
+bootloading
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+if MODE is held while device is started, avr32 runs app-select
+
+app-select
+	detects MMC card
+		display error is not found
+	display list of firmwares
+		scroll list with encoders
+		key to select
+	firmware copied to flash. bf program copied to flash for auto-load.
+	
+normal load (no MODE held) simply loads whatever is in flash.
+
+
+idea: should each app have a tiny text description?
+
+
+
+
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+serial protocol
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+for usb device mode (via ftdi vcp)
+
+1. bees remote control
+
+modify bees parameters remotely
+	ie. everything you can do via the screen (spawn operators, make connections, change params, etc)
+	enables remote editor, etc
+
+
+2. arbitrary parameter data exchange
+
+indexed end points on each side (host and device) which can be mapped in bees
+	ie. operator osc-receive and operator osc-send
+
+
+
+
+
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+i2c protocol
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+issues:
+	1. addressing
+	2. master vs. slave etc
+	3. auto-discovery
+	4. message size/length
+	5. standardized protocol for parameter exchange
