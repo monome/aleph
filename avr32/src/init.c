@@ -291,6 +291,7 @@ void init_bfin_resources(void) {
   gpio_enable_pin_pull_up(BFIN_RESET_PIN);
 }
 
+//// clock init is now done in _init_startup
 
 /* // initialize clocks */
 /* void init_clocks(void) { */

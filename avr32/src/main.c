@@ -56,12 +56,6 @@
 //==================================================
 //====  variables
 
-#define BIG_COUNT 0x10000
-
-/// a huge buffer located in SRAM
-__attribute__((__section__(".bss_extram")))
-static int bigData[BIG_COUNT];
-
 //  flag to wait for startup button press
 static u8 startup = 1;
 // mode switch
@@ -165,11 +159,9 @@ static void init_ctl(void) {
 // app event loop
 static void check_events(void) {
   static event_t e;  
-  static u64 delay;
 
   if( get_next_event(&e) ) {
 
-    
   /* print_dbg("\r\n handling event, type: "); */
   /* print_dbg_hex(e.eventType); */
   /* print_dbg("\r\n , data: "); */
@@ -329,56 +321,12 @@ int _init_startup(void) {
 }
 
 //int main(void) {
-static int test_bigData(void) {
-  long int i;
-  long int errors = 0;
-
-  print_dbg("\r\n large buffer address: ");
-  print_dbg_hex((unsigned long int)(&bigData));
-
-  print_dbg("\r\n checking large buffer initialization... ");
-  for(i=0; i<BIG_COUNT; i++) {
-    if(bigData[i] != 0) {
-      errors++;
-    }
-  }
-  print_dbg("done. errors found: ");
-  print_dbg_ulong(errors);
- 
-  print_dbg("\r\n checking large buffer r/w... writing... ");
-  for(i=0; i<BIG_COUNT; i++) {
-    bigData[i] = i;
-  }
-  print_dbg("reading... ");
-  errors = 0;
-  for(i=0; i<BIG_COUNT; i++) {
-    if(bigData[i] != i) {
-      errors++;
-    }
-  }
-  print_dbg("done. errors found: ");
-  print_dbg_ulong(errors);
-
-  if(errors > 0) {
-    gpio_clr_gpio_pin(LED_MODE_PIN);
-  }
- 
-  return 0;
-}
-
 ////main function
 int main (void) {
   u32 waitForCard = 0;
-  volatile u64 delay;
-
-  //  test_bigData();
-
-  //  return 0;
 
   // set up avr32 hardware and peripherals
   init_avr32();
-
-  //  return 0;
 
   // wait for sd card
   screen_line(0, 0, "ALEPH", 0x3f);
@@ -402,10 +350,6 @@ int main (void) {
 
   /// boot default dsp
   files_load_dsp_name("default.ldr");
-
-  /* delay_ms(100);   */
-  /* // populate control network with poarameters as reported by bfin */
-  /* report_params(); */
   
   print_dbg("\r\n starting event loop.\r\n");
   while(1) {
