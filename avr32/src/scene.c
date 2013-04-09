@@ -17,7 +17,7 @@
 // aleph
 #include "files.h"
 #include "fix.h"
-#include "memory.h"
+//#include "memory.h"
 #include "simple_string.h"
 // bees
 #include "net_protected.h"
@@ -36,19 +36,19 @@ static char sceneFilename[16];
 static scene_t* sceneData;
 
 void scene_init(void) {
-  u8 i;
+  //  u8 i;
 
-#if FIXMEM 
+  //#if FIXMEM 
   return;
-#else
-  //sceneData = (scene_t*)malloc(SCENE_COUNT * sizeof(scene_t));
-  sceneData = (scene_t*)alloc_mem(SCENE_COUNT * sizeof(scene_t));
-  for(i=0; i<SCENE_COUNT; i++) {
-    str_copy("scene                   ", sceneData[i].sceneName, SCENE_NAME_LEN);
-    itoa_whole(i, sceneData[i].sceneName + 6, 4);
-    str_copy("no module               ", sceneData[i].moduleName, MODULE_NAME_LEN);
-  }
-#endif
+  //#else
+/*   //sceneData = (scene_t*)malloc(SCENE_COUNT * sizeof(scene_t)); */
+/*   sceneData = (scene_t*)alloc_mem(SCENE_COUNT * sizeof(scene_t)); */
+/*   for(i=0; i<SCENE_COUNT; i++) { */
+/*     str_copy("scene                   ", sceneData[i].sceneName, SCENE_NAME_LEN); */
+/*     itoa_whole(i, sceneData[i].sceneName + 6, 4); */
+/*     str_copy("no module               ", sceneData[i].moduleName, MODULE_NAME_LEN); */
+/*   } */
+/* #endif */
 
 }
 

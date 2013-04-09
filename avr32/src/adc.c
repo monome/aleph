@@ -4,7 +4,8 @@
 #include "print_funcs.h"
 #include "spi.h"
 // aleph
-#include "conf_aleph.h"
+//#include "conf_aleph.h"
+#include "aleph_board.h"
 #include "events.h"
 #include "event_types.h"
 #include "types.h"
@@ -149,7 +150,9 @@ void adc_poll(void) {
       adcOldVal[i] = adcVal[i];
       e.eventType = adcEventTypes[i]; // getAdcEvent(i); //kAdcEvents[i];
       e.eventData = (S16)(adcVal[i]);
-      post_event(&e);
+      //      post_event(&e);
+      print_dbg("\r\n posting ADC event, type: ");
+      print_dbg_hex(e.eventType);
     }
   }
 }

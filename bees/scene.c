@@ -52,6 +52,8 @@ void scene_deinit(void) {
 void scene_store(u32 idx) {
 #if ARCH_AVR32
 
+
+
 #else
   // open file  
   snprintf(sceneFilename, 32, "aleph_scene_%d", (int)idx);
@@ -73,10 +75,7 @@ void scene_store(u32 idx) {
 
 // recall
 void scene_recall(u32 idx) {
-#if ARCH_AVR32
-  
-  
-
+#if ARCH_AVR32xs
 
 #else
   // open file  

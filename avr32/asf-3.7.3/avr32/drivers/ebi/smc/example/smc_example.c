@@ -84,9 +84,9 @@
 
 #include "compiler.h"
 #include "board.h"
-#include "print_funcs.h"
-#include "pm.h"
 #include "gpio.h"
+#include "print_funcs.h"
+#include "sysclk.h"
 #include "smc.h"
 
 //!  SRAM base address
@@ -104,22 +104,29 @@ int main(void)
 	volatile uint32_t *sram = SRAM;
 
 	// Switch to external oscillator 0.
-	pm_switch_to_osc0(&AVR32_PM, FOSC0, OSC0_STARTUP);
+	//	pm_switch_to_osc0(&AVR32_PM, FOSC0, OSC0_STARTUP);
+	sysclk_init();
+	sysclk_enable_pbb_module(SYSCLK_SMC_REGS);
 
 	// Initialize debug serial line
-	init_dbg_rs232(FOSC0);
+	//	init_dbg_rs232(FOSC0);
+	init_dbg_rs232(FPBA_HZ);
 
 	// Display a header to user
 	print_dbg("\x1B[2J\x1B[H\r\nSMC Example\r\n");
 
 	print_dbg("Board running at ");
-	print_dbg_ulong(FOSC0 / 1000000);
+	//	print_dbg_ulong(FOSC0 / 1000000);
+	print_dbg_ulong(FCPU_HZ / 1000000);
 	print_dbg(" MHz\r\n");
 
-	print_dbg("Initializing SRAM...");
+	print_dbg("Initializing SRAM at address: ");
+	print_dbg_hex((unsigned long int)SRAM);
+	print_dbg(" ...");
 
 	// Initialize the external SRAM chip.
-	smc_init(FOSC0);
+	//	smc_init(FOSC0);
+	smc_init(FHSB_HZ);
 	print_dbg("done\r\n\r\n");
 
 	print_dbg("Testing SRAM...\r\n");

@@ -20,7 +20,7 @@
 /* //! Data bus width to use the SDRAM(s) with (16 or 32 bits; always 16 bits on UC3). */
 /* #define SDRAM_DBW 16 */
 
-#warning "using aleph_board.h in asf/common/boards"
+// #warning "using aleph_board.h in asf/common/boards"
 
 //==============================================
 //==== clocks
@@ -57,9 +57,12 @@
 
 //============================================
 //====== IRQ priorities
-#define SYS_IRQ_PRIORITY       AVR32_INTC_INT1
-#define APP_TC_IRQ_PRIORITY    AVR32_INTC_INT1
-#define UI_IRQ_PRIORITY        AVR32_INTC_INT2
+//#define SYS_IRQ_PRIORITY       AVR32_INTC_INT1
+//#define APP_TC_IRQ_PRIORITY    AVR32_INTC_INT2
+//#define UI_IRQ_PRIORITY        AVR32_INTC_INT3
+#define SYS_IRQ_PRIORITY       1
+#define APP_TC_IRQ_PRIORITY    2
+#define UI_IRQ_PRIORITY        2
 
 //==============================================
 //==== timers

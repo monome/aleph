@@ -30,7 +30,7 @@
 //---- public functions
 
 // initialize the network 
-void net_init(void*);
+void net_init(void);
 // de-initialize the network 
 void net_deinit(void);
 // intialize (clear) an input node

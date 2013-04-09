@@ -13,7 +13,7 @@
 // maximum number of timers
 #define MAX_TIMERS (8)
 // timer interrupt priority level
-#define TIMER_INT_LEVEL 1
+//#define TIMER_INT_LEVEL 1
 
 //----- types
 

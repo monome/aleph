@@ -5,19 +5,27 @@
 
 //------ global variables initialized here
 
-// AD1836 config registers
-static volatile short codec1836TxRegs[CODEC_1836_REGS_LENGTH] = {
-  DAC_CONTROL_1	| 0x000,
-  DAC_CONTROL_2	| 0x000,
-  DAC_VOLUME_0	| 0x3ff,
-  DAC_VOLUME_1	| 0x3ff,
-  DAC_VOLUME_2	| 0x3ff,
-  DAC_VOLUME_3	| 0x3ff,
-  DAC_VOLUME_4	| 0x000,
-  DAC_VOLUME_5	| 0x000,
-  ADC_CONTROL_1	| 0x000,
-  ADC_CONTROL_2	| 0x000,
-  ADC_CONTROL_3	| 0x000
+// control registers and associated values for AD1939
+static volatile short codec1939TxRegs[CODEC_1939_NUM_REGS][2] = {
+  {  PLL_CLOCK_0        , 0x80 } , // enable, xtal->master->PLL
+  {  PLL_CLOCK_1        , 0x00 } ,
+  {  DAC_CONTROL_0      , 0x00 } ,
+  {  DAC_CONTROL_1      , 0x00 } ,
+  {  DAC_CONTROL_2      , 0x00 } ,
+  {  DAC_MUTE           , 0x00 } ,
+  {  DAC_L1_VOLUME      , 0x00 } ,
+  {  DAC_R1_VOLUME      , 0x00 } ,
+  {  DAC_L2_VOLUME      , 0x00 } ,
+  {  DAC_R2_VOLUME      , 0x00 } ,
+  {  DAC_L3_VOLUME      , 0x00 } ,
+  {  DAC_R3_VOLUME      , 0x00 } ,
+  {  DAC_L4_VOLUME      , 0x00 } ,
+  {  DAC_R4_VOLUME      , 0x00 } ,
+  {  ADC_CONTROL_0      , 0x00 } ,
+  {  ADC_CONTROL_1      , 0x00 } ,
+  /// ADC master, abclk
+  {  ADC_CONTROL_2      , 0b01000000 }
+  //  {  ADC_CONTROL_2      , 0x00 }
 };
 
 // SPORT0 DMA transmit buffer
@@ -48,7 +56,7 @@ void init_clocks(void) {
 // initialize EBI
 void init_EBIU(void) {
   //  straight from the self-test example project
-  // Initalize EBIU control registers to enable all banks	
+  // Initalize EBIU control registers to enable all banks
   *pEBIU_AMBCTL1 = 0xFFFFFF02;
   ssync();
   
@@ -65,7 +73,7 @@ void init_EBIU(void) {
   }
   
   //SDRAM Refresh Rate Control Register
-  //  *pEBIU_SDRRC = 0x01A0; 
+  //  *pEBIU_SDRRC = 0x01A0;
   // for 108Mhz system clock:
   *pEBIU_SDRRC = 835;
   
@@ -73,7 +81,7 @@ void init_EBIU(void) {
   *pEBIU_SDBCTL = 0x0025; //1.7	64 MB
   //	*pEBIU_SDBCTL = 0x0013;	//1.6 and below 32 MB
   
-  //SDRAM Memory Global Control Register	
+  //SDRAM Memory Global Control Register
   *pEBIU_SDGCTL = 0x0091998d;//0x998D0491;
   ssync();
 }
@@ -85,62 +93,153 @@ void init_flash(void) {
   //  *pFlashA_PortB_Dir = 0x3f;
 }
 
-// setup SPI0 -> AD1836 config
-void init_1836(void) {
-  int i;
-  int j;
-    // write to Port A to reset AD1836
-  //  *pFlashA_PortA_Data = 0x00;  
-  *pFIO_FLAG_D &= CODEC_RESET_MASK;
-  // write to Port A to enable AD1836
-  *pFIO_FLAG_D |= (0xffff ^ CODEC_RESET_MASK);
-  //  *pFlashA_PortA_Data = 0x01;
-  
-  // wait to recover from reset
-  for (i=0; i<0xf0000; i++) asm("nop;");
-  
-  // Enable PF4 peripheral function
-  *pSPI_FLG = FLS4;
-  // Set baud rate SCK = HCLK/(2*SPIBAUD) SCK = 2MHz	
-  *pSPI_BAUD = 16;
-  // configure spi port
-  // SPI DMA write, 16-bit data, MSB first, SPI Master
-  *pSPI_CTL = TIMOD_DMA_TX | SIZE | MSTR;
-  
-  // Set up DMA5 to transmit
-  // Map DMA5 to SPI
-  *pDMA5_PERIPHERAL_MAP	= 0x5000;
-  
-  // Configure DMA5
-  // 16-bit transfers
-  *pDMA5_CONFIG = WDSIZE_16;
-  // point DMA at the configuration data
-  *pDMA5_START_ADDR = (void *)codec1836TxRegs;
-  // DMA inner loop count
-  *pDMA5_X_COUNT = CODEC_1836_REGS_LENGTH;
-  // Inner loop address increment
-  *pDMA5_X_MODIFY = 2;
-  // enable DMAs
-  *pDMA5_CONFIG = (*pDMA5_CONFIG | DMAEN);
-  // enable spi
-  *pSPI_CTL = (*pSPI_CTL | SPE);
+static void spi_send_byte(u8 ch) {
+  //  unsigned short dummyread;
 
-  // wait until DMA transfers for spi are finished 
-  for (j=0; j<0xaff0; j++) asm("nop;");
-  // disable spi
-  *pSPI_CTL = 0x0000;
-  // disable dma5
-  *pDMA5_CONFIG = (*pDMA5_CONFIG & ~DMAEN);
+  ////////
+  //// dbg
+  /* unsigned long int stat; */
+  /* unsigned long int txs = TXS; */
+  /* unsigned long int spif = SPIF; */
+  /* unsigned long int rxs = RXS; */
+  /* unsigned long int tdbr; */
+  /* unsigned long int rdbr; */
+  /* unsigned long int ctl; */
+  /////////
+
+  *pSPI_TDBR = ch;
+  ssync();
+
+  /////// dbg
+  /* stat = *pSPI_STAT; */
+  /* tdbr = *pSPI_TDBR; */
+  /* rdbr = *pSPI_RDBR; */
+  /* ctl = *pSPI_CTL; */
+  ///////
+
+  while( (*pSPI_STAT & TXS)  != 0 ) {
+    /////// dbg
+    /* stat = *pSPI_STAT; */
+    /* tdbr = *pSPI_TDBR; */
+    /* rdbr = *pSPI_RDBR; */
+    /* ctl = *pSPI_CTL; */
+    ///////
+  }
+  while( (*pSPI_STAT & SPIF) == 0 ) { 
+    ;;
+    /////// dbg
+    /* stat = *pSPI_STAT; */
+    /* tdbr = *pSPI_TDBR; */
+    /* rdbr = *pSPI_RDBR; */
+    /* ctl = *pSPI_CTL; */
+    ///////
+  }
+  /* while( (*pSPI_STAT & RXS)  == 0 )  {  */
+  /*   /////// dbg */
+  /*   stat = *pSPI_STAT; */
+  /*   tdbr = *pSPI_TDBR; */
+  /*   rdbr = *pSPI_RDBR; */
+  /*   ctl = *pSPI_CTL; */
+  /*   /////// */
+  /* } */
+  /// dummy read to clear RX register
+  //  dummyread = *pSPI_RDBR;
+
+  /////// dbg
+  /* stat = *pSPI_STAT; */
+  /* tdbr = *pSPI_TDBR; */
+  /* rdbr = *pSPI_RDBR; */
+  /* ctl = *pSPI_CTL; */
+  ///////
 
 }
+
+ // setup SPI0 -> AD1939 config */
+void init_1939(void) { 
+  u8 i; 
+  u32 del;
+
+
+  //////////////////////////////
+  /// TESTING: only wait->reset
+  //  del = 1000000; while(del > 0) { del--; }
+  ////////////////
+  ////////////////////////
+
+  //// reset codec
+  *pFIO_FLAG_D &= CODEC_RESET_MASK;
+  /////////////
+  //////////////
+  del = 10000; while(del--) { ;; } 
+  //////////////////
+  ////////////////////
+  // write to Port A to enable codec
+  *pFIO_FLAG_D |= (0xffff ^ CODEC_RESET_MASK);
+  
+
+  ////////////
+  //////////////////////////////
+  /// TESTING: only wait->reset
+  return;
+  //////////////
+  ////////////////
+
+
+  //// TESTING:
+  /// wait for the codec to reset
+  /// from the datasheet, this could take an absolute maximum of (4096 / 6.9Mhz)s (?)
+  /// we are using BF clock = 513 MHz, so:
+  del = 308000; while(del--) { ;; } 
+
+  //  set PF4 as slave select
+  *pSPI_FLG = 0xFF10;
+
+  // Set baud rate SCK = HCLK/(2*SPIBAUD) SCK = 2MHz
+  *pSPI_BAUD = 16;
+
+  // setup SPI:
+  /// master, non-DMA mode, 8b transfers, MSB first,
+  /// TX on buffer write, clock rising edge:
+
+  //// this would give us the waveform we want but puts CS under hardware control
+  //  *pSPI_CTL = MSTR | TIMOD_BUF_TX;
+
+  /// SPI controller can't do 24-bits transfers--
+  /// workaround: 8-bit transfers and manual slave select
+  // ( see http://ez.analog.com/thread/1248
+  //  SS from software :
+  *pSPI_CTL = MSTR | CPHA | CPOL | TIMOD_BUF_TX;
+
+  // enable SPI
+  *pSPI_CTL = (*pSPI_CTL | SPE);
+
+  ssync();
+  // loop over registers
+  for(i=0; i<CODEC_1939_NUM_REGS; i++) {
+    // select slave
+    //    *pFIO_FLAG_D &= CODEC_SS_MASK;
+
+    // bring SS low (PF4)
+    *pSPI_FLG = 0xef10;
+
+    // send command byte
+    spi_send_byte(CODEC_CMD_BYTE);
+    // send register byte
+    spi_send_byte(codec1939TxRegs[i][0]);
+    /// send dta byte
+    spi_send_byte(codec1939TxRegs[i][1]);
+    
+    // bring SS high (PF4)
+    *pSPI_FLG = 0xff10;
+  }
+} // init_1939
+
 
 //--------------------------------------------------------------------//
 // init_spi_slave()
 // (re-)configure spi in slave mode to receive control data from avr32 
 void init_spi_slave(void) {
   int j;
-  int spi_stat_debug;
- 
   // don't attempt to drive the clock
   *pSPI_BAUD = 0;
   // reset the flags register? to defaults?
@@ -149,23 +248,16 @@ void init_spi_slave(void) {
   // try clearing the rx error bit? (sticky - W1C)
   *pSPI_STAT |= 0x10;  
   *pSPI_STAT |= 0x10;  
-
   // slave mode, 16 bit transfers, MSB first, non-dma rx mode, overwrite (interrupt when SPI_RDBR is full) 
-  // bfin and avr32 have opposite definitions of clock phase (drive vs. sample); check datasheets!
-  //----->>>>>  *pSPI_CTL = CPHA | GM;
+  // phase: seems crazy but i think bfin and avr32 have opposite definitions of clock phase! oh lordy
+  //  *pSPI_CTL = CPHA | SIZE | GM;
   // actually need 8 bits to be compatible with SPI-boot
+  //----->>>>>  *pSPI_CTL = CPHA | GM;
   *pSPI_CTL = CPHA | GM | SZ;
-
   // enable transmit on MISO
   *pSPI_CTL |= EMISO;
-  
-  spi_stat_debug = *pSPI_STAT;
-
   // enable spi (now in slave mode)
   *pSPI_CTL = (*pSPI_CTL | SPE);
-
-  spi_stat_debug = *pSPI_STAT;
-
   // clear the spi rx register by reading from it
   j = *pSPI_RDBR;
   // clear the rx error bit (sticky - W1C)
@@ -232,11 +324,10 @@ void enable_DMA_sport0(void) {
 
 // initialize programmable flags for button input
 void init_flags(void) {
-  
+  // inputs 
   *pFIO_INEN = PF_IN;
   // outputs
   *pFIO_DIR = PF_DIR;
-
   // edge-sensitive
   *pFIO_EDGE = 0x0f00;
   // both rise and fall

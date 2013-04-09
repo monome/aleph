@@ -22,7 +22,6 @@ typedef enum {
   kEventRefresh,
   ///------ discrete UI events
   /// encoders
-
   kEventEncoder0,
   kEventEncoder1,
   kEventEncoder2 ,

@@ -24,7 +24,7 @@ io_t get_param_value(u32 idx) {
 
 // get preset-enabled flag for param at given idx
 u8 get_param_preset(u32 idx) {
-  //return net->params[idx].preset;
+  return net->params[idx].preset;
 }
 
 // set value for param at given idx

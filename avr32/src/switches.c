@@ -7,7 +7,8 @@
 #include "gpio.h"
 #include "print_funcs.h"
 // aleph
-#include "conf_aleph.h"
+#include "aleph_board.h"
+//#include "conf_aleph.h"
 #include "events.h"
 #include "event_types.h"
 #include "global.h"
@@ -103,5 +104,9 @@ void poll_sw(const U8 idx) {
     //    print_dbg(" , state: ");
     //    print_dbg_hex(state);
     post_event(&e);
+
+    print_dbg("\r\n posting SWITCH event, type: ");
+    print_dbg_hex(e.eventType);
+
   }
 }

@@ -28,7 +28,8 @@
 #include "tc.h"
 #include "usart.h"
 // aleph
-#include "conf_aleph.h"
+//#include "conf_aleph.h"
+#include "aleph_board.h"
 #include "filesystem.h"
 #include "init.h"
 
@@ -290,47 +291,48 @@ void init_bfin_resources(void) {
   gpio_enable_pin_pull_up(BFIN_RESET_PIN);
 }
 
-// initialize clocks
-void init_clocks(void) {
 
-  // Set one waitstate for the flash.  Necessary for > 33MHz CPU freq.
-  //flashc_set_wait_state( 1 );
-  //sysclk_init();
+/* // initialize clocks */
+/* void init_clocks(void) { */
+
+/*   // Set one waitstate for the flash.  Necessary for > 33MHz CPU freq. */
+/*   //flashc_set_wait_state( 1 ); */
+/*   //sysclk_init(); */
   
-  // Switch to OSC0 to speed up  booting
-  // Configure Osc0 in crystal mode (i.e. use of an external crystal source, with
-  // frequency FOSC0) with an appropriate startup time then switch the main clock
-  // source to Osc0.
-  pm_switch_to_osc0( &AVR32_PM, FOSC0, OSC0_STARTUP );
+/*   // Switch to OSC0 to speed up  booting */
+/*   // Configure Osc0 in crystal mode (i.e. use of an external crystal source, with */
+/*   // frequency FOSC0) with an appropriate startup time then switch the main clock */
+/*   // source to Osc0. */
+/*   pm_switch_to_osc0( &AVR32_PM, FOSC0, OSC0_STARTUP ); */
 
-  // set PLL0 for master clock
-  // OSC0 = 12 MHz
-  pm_pll_setup( &AVR32_PM,
-  		0,  // pll.
-  		10,  // mul. // actual freq = fOsc * (mul + 1) = 132Mhz
-  		1,   // div. // no division
-  		0,   // osc.
-  		16 ); // lockcount.
+/*   // set PLL0 for master clock */
+/*   // OSC0 = 12 MHz */
+/*   pm_pll_setup( &AVR32_PM, */
+/*   		0,  // pll. */
+/*   		10,  // mul. // actual freq = fOsc * (mul + 1) = 132Mhz */
+/*   		1,   // div. // no division */
+/*   		0,   // osc. */
+/*   		16 ); // lockcount. */
 
-  // Set PLL operating range and divider (fpll = fvco/2)
-  // -> PLL0 output = 66 MHz
-  pm_pll_set_option( &AVR32_PM,
-  		     0, // pll.
-  		     1,  // pll_freq.
-  		     1,  // pll_div2. /// output frequency is divided by 2.
-  		     0 ); // pll_wbwdisable.
+/*   // Set PLL operating range and divider (fpll = fvco/2) */
+/*   // -> PLL0 output = 66 MHz */
+/*   pm_pll_set_option( &AVR32_PM, */
+/*   		     0, // pll. */
+/*   		     1,  // pll_freq. */
+/*   		     1,  // pll_div2. /// output frequency is divided by 2. */
+/*   		     0 ); // pll_wbwdisable. */
 
-  // start PLL0 and wait for the lock
-  pm_pll_enable( &AVR32_PM, 0 );
-  pm_wait_for_pll0_locked( &AVR32_PM );
+/*   // start PLL0 and wait for the lock */
+/*   pm_pll_enable( &AVR32_PM, 0 ); */
+/*   pm_wait_for_pll0_locked( &AVR32_PM ); */
 
-  // Set one waitstate for the flash.  Necessary for > 33MHz CPU freq.
-  flashc_set_wait_state( 1 );
+/*   // Set one waitstate for the flash.  Necessary for > 33MHz CPU freq. */
+/*   flashc_set_wait_state( 1 ); */
 
-  // Switch to PLL0 as the master clock
-  pm_switch_to_clock( &AVR32_PM, AVR32_PM_MCCTRL_MCSEL_PLL0) ;
+/*   // Switch to PLL0 as the master clock */
+/*   pm_switch_to_clock( &AVR32_PM, AVR32_PM_MCCTRL_MCSEL_PLL0) ; */
 
-}
+/* } */
 
 
 // intialize two-wire interface
@@ -346,6 +348,6 @@ void init_twi(void) {
 
 // initialize USB host stack
 void init_usb_host (void) {
-  pm_configure_usb_clock();
+  //  pm_configure_usb_clock();
   uhc_start();
 }

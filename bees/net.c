@@ -18,7 +18,7 @@
 #include "util.h"
 #include "op.h" 
 #include "op_derived.h"
-#include "memory.h"
+//#include "memory.h"
 #include "menu_protected.h"
 #include "net.h"
 #include "net_protected.h"
@@ -28,11 +28,15 @@
 
 //=========================================
 //===== variables
-//----- external
-ctlnet_t* net;
 //----- static
+__attribute__((__section__(".bss_extram")))
+static ctlnet_t netPrivate;
+
 static s32 inSearchIdx = 0;
 static s32 outSearchIdx = 0;
+
+//---- external
+ctlnet_t* net;
 
 //===============================================
 //========= static functions
@@ -59,26 +63,29 @@ static void add_sys_ops(void) {
 //========= public functions
 
 // initialize network at pre-allocated memory
-void net_init(void* mem) {
+void net_init(void) {
   u32 i;
-  //  net = (ctlnet_t*)alloc_mem(sizeof(ctlnet_t));
-  net = (ctlnet_t*)mem;
-#if NET_USE_MALLOC
-  // zero out op pointer array....
-  for(i=0; i<NET_OPS_MAX; i++) {
-    net->ops[i] = NULL;
-  }
-  // ... and allocation flags
-  for(i=0; i<BITNSLOTS(NET_OPS_MAX); i++) {
-    net->opsUsed[i] = 0;
-  }
-#else
+  //  u32 res;
+  
+  net = &netPrivate;
+
+  /* print_dbg("\r\n cltnet address: "); */
+  /* print_dbg_hex((unsigned long int)net); */
+
+  /* print_dbg("\r\n test-write to cltnet, test value:  "); */
+  /* print_dbg_hex(0xDEADBEEF); */
+  /* *((u32*)net) = 0xDEADBEEF; */
+  /* print_dbg("\r\n ; reading... result: "); */
+  /* res = *((u32*)net); */
+  /* print_dbg_hex(res); */
+ 
   for(i=0; i<NET_OP_POOL_SIZE; i++) {
     net->opPoolMem[i] = (u8)0;
   }
+
   net->opPool = (void*)&(net->opPoolMem);
   net->opPoolOffset = 0;
-#endif
+
   net->numOps = 0;
   net->numIns = 0;
   net->numOuts = 0;
@@ -144,107 +151,107 @@ void net_activate(s16 inIdx, const io_t val) {
 
 
 #if NET_USE_MALLOC
-// allocate a new operator dynamically.
-// return index in op pointer array
-s16 net_add_op(opId_t opId) {
-  s32 opIdx = -1;
-  s32 inIdx = -1;
-  s16 outIdx = -1;
-  s32 inAssign[OP_INS_MAX];
-  s32 outAssign[OP_OUTS_MAX];
-  op_t* op;
-  s32 i, j;
+/* // allocate a new operator dynamically. */
+/* // return index in op pointer array */
+/* s16 net_add_op(opId_t opId) { */
+/*   s32 opIdx = -1; */
+/*   s32 inIdx = -1; */
+/*   s16 outIdx = -1; */
+/*   s32 inAssign[OP_INS_MAX]; */
+/*   s32 outAssign[OP_OUTS_MAX]; */
+/*   op_t* op; */
+/*   s32 i, j; */
 
-  // print_dbg("\r\n adding operator; type: ");
-  // print_dbg_ulong(opId);
+/*   // print_dbg("\r\n adding operator; type: "); */
+/*   // print_dbg_ulong(opId); */
 
-  if (net->numOps >= NET_OPS_MAX) {
-    // print_dbg("\r\n too many ops already; bail ");
-    return -1;
-  }
+/*   if (net->numOps >= NET_OPS_MAX) { */
+/*     // print_dbg("\r\n too many ops already; bail "); */
+/*     return -1; */
+/*   } */
 
-  // search for an unused operator index
-  for(i=0; i<NET_OPS_MAX; i++) {
-    if( !(BITTEST(net->opsUsed, i)) ) {
-      opIdx = i;
-      break;
-    }
-  }
+/*   // search for an unused operator index */
+/*   for(i=0; i<NET_OPS_MAX; i++) { */
+/*     if( !(BITTEST(net->opsUsed, i)) ) { */
+/*       opIdx = i; */
+/*       break; */
+/*     } */
+/*   } */
 
-  if(opIdx == -1) {
-    // print_dbg("\r\n out of operator slots; bail ");
-    return -1;
-  }
+/*   if(opIdx == -1) { */
+/*     // print_dbg("\r\n out of operator slots; bail "); */
+/*     return -1; */
+/*   } */
 
-  op = malloc(op_registry[opId].size);
-  if( op == NULL ) { 
-    // print_dbg("\r\n out of memory; bail ");
-    return -1;
-  }
+/*   op = malloc(op_registry[opId].size); */
+/*   if( op == NULL ) {  */
+/*     // print_dbg("\r\n out of memory; bail "); */
+/*     return -1; */
+/*   } */
 
-  // initialize allocated memory with requested operator subclass
-  op_init(op, opId);
+/*   // initialize allocated memory with requested operator subclass */
+/*   op_init(op, opId); */
 
-  //  search for available input nodes
-  for(i=0; i<op->numInputs; i++) {
-    // search for unused input idx
-    inIdx = -1;
-    for(j=0; j<NET_INS_MAX; j++) {
-      //if( !(BITTEST(net->insUsed, j)) ) {
-      if(net->ins[j].opIdx == -1) {
-	inIdx = j;
-	break;
-      }
-    }
-    if(inIdx == -1) {
-      // print_dbg("\r\n no free input slots; bail ");
-      return -1;
-    }
-    // save the index
-    inAssign[i] = inIdx;
-  }
+/*   //  search for available input nodes */
+/*   for(i=0; i<op->numInputs; i++) { */
+/*     // search for unused input idx */
+/*     inIdx = -1; */
+/*     for(j=0; j<NET_INS_MAX; j++) { */
+/*       //if( !(BITTEST(net->insUsed, j)) ) { */
+/*       if(net->ins[j].opIdx == -1) { */
+/* 	inIdx = j; */
+/* 	break; */
+/*       } */
+/*     } */
+/*     if(inIdx == -1) { */
+/*       // print_dbg("\r\n no free input slots; bail "); */
+/*       return -1; */
+/*     } */
+/*     // save the index */
+/*     inAssign[i] = inIdx; */
+/*   } */
 
-  //  search for available output nodes
-  for(i=0; i<op->numOutputs; i++) {
-    // search for unused output idx
-    outIdx = -1;
-    for(j=0; j<NET_OUTS_MAX; j++) {
-      if(net->outs[j].opIdx == -1) {
-	outIdx = j;
-	break;
-      }
-    }
+/*   //  search for available output nodes */
+/*   for(i=0; i<op->numOutputs; i++) { */
+/*     // search for unused output idx */
+/*     outIdx = -1; */
+/*     for(j=0; j<NET_OUTS_MAX; j++) { */
+/*       if(net->outs[j].opIdx == -1) { */
+/* 	outIdx = j; */
+/* 	break; */
+/*       } */
+/*     } */
     
-    if(outIdx == -1) {
-      // print_dbg("\r\n no free output slots; bail ");
-      return -1;
-    }
-    // save the index
-    outAssign[i] = outIdx;
-  }
+/*     if(outIdx == -1) { */
+/*       // print_dbg("\r\n no free output slots; bail "); */
+/*       return -1; */
+/*     } */
+/*     // save the index */
+/*     outAssign[i] = outIdx; */
+/*   } */
 
-  net->ops[opIdx] = op;
+/*   net->ops[opIdx] = op; */
 
-  // print_dbg("\r\n assigned operator at slot: ");
-  // print_dbg_ulong(opIdx); 
-  // print_dbg(" to memory at: ");
-  // print_dbg_hex(op);
+/*   // print_dbg("\r\n assigned operator at slot: "); */
+/*   // print_dbg_ulong(opIdx);  */
+/*   // print_dbg(" to memory at: "); */
+/*   // print_dbg_hex(op); */
 
-  // update op allocation flag
-  BITSET(net->opsUsed, opIdx);
-  // assign i/o nodes at free indices
-  for(i=0; i<op->numInputs; i++) {
-    net->ins[inAssign[i]].opIdx = opIdx;
-    net->ins[inAssign[i]].opInIdx = i;
-  }
-  for(i=0; i<op->numOutputs; i++) {
-    net->outs[outAssign[i]].opIdx = opIdx;
-    net->outs[outAssign[i]].opOutIdx = i;
-    net->outs[outAssign[i]].target = -1;
-  }
-  net->numIns  += op->numInputs;
-  net->numOuts += op->numOutputs;
-}
+/*   // update op allocation flag */
+/*   BITSET(net->opsUsed, opIdx); */
+/*   // assign i/o nodes at free indices */
+/*   for(i=0; i<op->numInputs; i++) { */
+/*     net->ins[inAssign[i]].opIdx = opIdx; */
+/*     net->ins[inAssign[i]].opInIdx = i; */
+/*   } */
+/*   for(i=0; i<op->numOutputs; i++) { */
+/*     net->outs[outAssign[i]].opIdx = opIdx; */
+/*     net->outs[outAssign[i]].opOutIdx = i; */
+/*     net->outs[outAssign[i]].target = -1; */
+/*   } */
+/*   net->numIns  += op->numInputs; */
+/*   net->numOuts += op->numOutputs; */
+/* } */
 #else
 // attempt to allocate a new operator from the static memory pool, return index
 s16 net_add_op(opId_t opId) {
@@ -279,15 +286,15 @@ s16 net_add_op(opId_t opId) {
     op_gate_init((void*)op);
     break;
 #if 0
-  case eOpAccum:
-    op_accum_init((void*)op);
-    break;
-  case eOpSelect:
-    return -1;
-    break;
-  case eOpMapLin:
-    return -1;
-    break;
+  /* case eOpAccum: */
+  /*   op_accum_init((void*)op); */
+  /*   break; */
+  /* case eOpSelect: */
+  /*   return -1; */
+  /*   break; */
+  /* case eOpMapLin: */
+  /*   return -1; */
+  /*   break; */
 #endif
   default:
     return -1;
@@ -655,6 +662,8 @@ void net_add_param(u32 idx, volatile ParamDesc* pdesc) {
   net->params[net->numParams].idx = idx;
   net->params[net->numParams].preset = 1;
   net->numParams++;
+  print_dbg("\r\n ctlnet: added parameter at index ");
+  print_dbg_ulong(idx);
 }
 
 // clear existing parameters
