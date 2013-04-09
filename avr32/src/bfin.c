@@ -5,6 +5,7 @@
 */
 //ASF
 #include "compiler.h"
+#include "delay.h"
 #include "gpio.h"
 #include "spi.h"
 #include "print_funcs.h"
@@ -68,6 +69,10 @@ void bfin_load(U32 size, volatile u8 * data) {
 
   print_dbg("\r\ndone loading bfin. \r\n");
 
+  delay_ms(100);
+
+  report_params();
+
 }
 
 #else
@@ -104,6 +109,11 @@ void bfin_load(U32 size, void* fp) {
     i++;
   }
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+  
+  delay_ms(200);
+
+  report_params();
   // FIXME: (?)
   //  Enable_global_interrupt();
 }
@@ -243,7 +253,7 @@ void report_params(void) {
       bfin_get_param_desc(i, &pdesc);
       net_add_param(i, &pdesc);
       print_dbg("\r\n got pdesc : ");
-      print_dbg(pdesc.label);
+      print_dbg((const char* )pdesc.label);
     }
   }
 }

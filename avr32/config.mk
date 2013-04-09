@@ -131,6 +131,7 @@ INC_PATH = \
 	avr32/components/memory/sd_mmc/sd_mmc_spi \
        common/services/storage/ctrl_access                \
        common/services/clock                              \
+	common/services/delay \
        common/services/usb                                \
        common/services/usb/class/hid                      \
        common/services/usb/class/hid/host/mouse           \

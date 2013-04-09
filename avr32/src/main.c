@@ -1,4 +1,3 @@
-
 /* main.c
  * avr32
  * aleph
@@ -10,6 +9,7 @@
 #include "board.h"
 #include "conf_sd_mmc_spi.h"
 #include "ctrl_access.h"
+#include "delay.h"
 #include "flashc.h"
 #include "intc.h"
 #include "pdca.h"
@@ -322,7 +322,7 @@ int _init_startup(void) {
 }
 
 //int main(void) {
-static void test_bigData(void) {
+static int test_bigData(void) {
   long int i;
   long int errors = 0;
 
@@ -364,7 +364,7 @@ int main (void) {
   u32 waitForCard = 0;
   volatile u64 delay;
 
-  test_bigData();
+  //  test_bigData();
 
   //  return 0;
 
@@ -393,18 +393,20 @@ int main (void) {
   // setup control logic
   init_ctl();
 
-  /// boot default dsp
-  files_load_dsp_name("default.ldr");
-  /// wait for bfin to finish boot
-  delay = 500000; while(delay--) {;;}
-  /// again...
-  delay = 500000; while(delay--) {;;}
-  /// again...
-  delay = 500000; while(delay--) {;;}
-  /// again...
-  delay = 500000; while(delay--) {;;}
-  /// again...
-  delay = 500000; while(delay--) {;;}
+  /* /// boot default dsp */
+  /* files_load_dsp_name("default.ldr"); */
+  /* /// wait for bfin to finish boot */
+  /* delay = 500000; while(delay--) {;;} */
+  /* /// again... */
+  /* delay = 500000; while(delay--) {;;} */
+  /* /// again... */
+  /* delay = 500000; while(delay--) {;;} */
+  /* /// again... */
+  /* delay = 500000; while(delay--) {;;} */
+  /* /// again... */
+  //  delay = 500000; while(delay--) {;;}
+
+  delay_ms(100);
   
   // populate control network with poarameters as reported by bfin
   report_params();
