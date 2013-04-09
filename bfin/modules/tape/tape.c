@@ -192,10 +192,6 @@ static void write_buf(fract32 v) {
 
 // frame calculation
 static void calc_frame(void) {
-
-  frameVal = in0;
-    return;
-
   // ----- smoothers:
   // amp
   amp = filter_1p_fix16_next(ampLp);
@@ -230,9 +226,6 @@ static void calc_frame(void) {
 
   
   frameVal = echoVal;
-
-  /// test
-  //  frameVal = in0;
 
   // increment read head
   idxRdInt += incInt;
@@ -281,6 +274,7 @@ void module_init(void) {
   strcpy(moduleData->paramDesc[eParamFb].label, "feedback");
   strcpy(moduleData->paramDesc[eParamAmpSmooth].label, "amp smoothing");
   strcpy(moduleData->paramDesc[eParamTimeSmooth].label, "time smoothing");
+  strcpy(moduleData->paramDesc[eParamRateSmooth].label, "rate smoothing");
   
   // init params
   sr = SAMPLERATE;
@@ -356,11 +350,16 @@ extern u32 module_get_num_params(void) {
 
 // frame callback
 void module_process_frame(void) {
-  calc_frame();
-  out0 = frameVal;
-  out1 = frameVal;
-  out2 = frameVal;
-  out3 = frameVal; 
+  /* calc_frame(); */
+  /* out0 = frameVal; */
+  /* out1 = frameVal; */
+  /* out2 = frameVal; */
+  /* out3 = frameVal;  */
+
+  out0 = in0;
+  out1 = in1;
+  out2 = in2;
+  out3 = in3; 
 }
 
 static u8 ledstate = 0;

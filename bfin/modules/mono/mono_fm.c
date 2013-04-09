@@ -265,7 +265,7 @@ void module_init(void) {
   strcpy(moduleData->paramDesc[eParamWave2Smooth].label, "wave 2 smoothing");
   strcpy(moduleData->paramDesc[eParamAmp1Smooth].label, "amp 1 smoothing");
   strcpy(moduleData->paramDesc[eParamAmp2Smooth].label, "amp 2 smoothing");
-red
+
   // init params
   sr = SAMPLERATE;
   track = 1;

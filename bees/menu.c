@@ -19,8 +19,8 @@
 #include "screen.h"
 #include "ui.h"
 
-#define ENC_THRESH_PAGESCROLL 8
-#define ENC_THRESH_LISTSCROLL 2
+#define ENC_THRESH_PAGESCROLL 64
+#define ENC_THRESH_LISTSCROLL 4
 
 //--------------------------
 //--------- variables

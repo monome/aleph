@@ -110,7 +110,7 @@ static void init_avr32(void) {
    init_files();
 
   // usb host controller
-  //  init_usb_host();
+   //   init_usb_host();
 
   print_dbg("\r\n avr32 init done ");
 }
@@ -232,7 +232,6 @@ static void check_events(void) {
 	screen_line(0, 0, "powering down!", 0x3f);
 	print_dbg("\r\n AVR32 received power down switch event");
 	screen_refresh();
-	delay = 50000; while(--delay) {;;}
 	gpio_clr_gpio_pin(POWER_CTL_PIN);
 	break;
       case kEventSwitchUp5:

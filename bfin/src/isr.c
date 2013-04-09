@@ -22,11 +22,15 @@ void sport0_rx_isr() {
   
   // copy input data from dma input buffer 
   // shift left from 24-bit
-  // FIXME: data from codec is supposed to be left-justified in i2s mode...?
-  in0 = iRxBuf[INTERNAL_ADC_L0] << 8;
-  in1 = iRxBuf[INTERNAL_ADC_R0] << 8;
-  in2 = iRxBuf[INTERNAL_ADC_L1] << 8;
-  in3 = iRxBuf[INTERNAL_ADC_R1] << 8;
+  in0 = ( iRxBuf[INTERNAL_ADC_L0] << 8 ) & 0xffffff00;
+  in1 = ( iRxBuf[INTERNAL_ADC_R0] << 8 ) & 0xffffff00;
+  in2 = ( iRxBuf[INTERNAL_ADC_L1] << 8 ) & 0xffffff00;
+  in3 = ( iRxBuf[INTERNAL_ADC_R1] << 8 ) & 0xffffff00;
+
+  /* in0 = iRxBuf[INTERNAL_ADC_L0] ; */
+  /* in1 = iRxBuf[INTERNAL_ADC_R0] ; */
+  /* in2 = iRxBuf[INTERNAL_ADC_L1] ; */
+  /* in3 = iRxBuf[INTERNAL_ADC_R1] ; */
   
   // copy last frame's processing result to DMA output buffer
   // shift right to 24-bit
@@ -36,8 +40,17 @@ void sport0_rx_isr() {
   iTxBuf[INTERNAL_DAC_R1] = out3 >> 8;
 
   // module-defined frame processing function
+  
   module_process_frame();  
-  // module-defined LED update function
+
+  /* //// TEST: wire */
+  /* iTxBuf[0] = iRxBuf[0]; */
+  /* iTxBuf[1] = iRxBuf[1]; */
+  /* iTxBuf[2] = iRxBuf[2]; */
+  /* iTxBuf[3] = iRxBuf[3]; */
+
+
+// module-defined LED update function
   leds = module_update_leds();
   ///// FIXME
   //  *pFlashA_PortB_Data = leds;

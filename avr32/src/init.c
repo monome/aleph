@@ -348,6 +348,6 @@ void init_twi(void) {
 
 // initialize USB host stack
 void init_usb_host (void) {
-  pm_configure_usb_clock();
+  //  pm_configure_usb_clock();
   uhc_start();
 }
