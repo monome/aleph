@@ -68,7 +68,7 @@ static struct fat_list    _free_file_list;
 //-----------------------------------------------------------------------------
 // Local Functions
 //-----------------------------------------------------------------------------
-static void                _fl_init();
+//static void                _fl_init();
 
 //-----------------------------------------------------------------------------
 // _allocate_file: Find a slot in the open files buffer for a new file
@@ -1469,7 +1469,7 @@ int fl_createdirectory(const char *path)
 void fl_listdirectory(const char *path)
 {
     FL_DIR dirstat;
-    int filenumber = 0;
+    //int filenumber = 0;
 
     // If first call to library, initialise
     CHECK_FL_INIT();

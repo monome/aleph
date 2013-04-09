@@ -19,7 +19,7 @@
 //#include "conf_aleph.h"
 #include "files.h"
 #include "filesystem.h"
-#include "memory.h"
+//#include "memory.h"
 
 
 //// FIXME: using static allocation
@@ -96,7 +96,7 @@ void files_load_dsp_name(const char* name) {
   struct fs_dir_ent dirent;
   char path[64];
   void* fp;
-  unsigned long int i;
+  //  unsigned long int i;
 
   if( fl_opendir("/dsp", &dirstat) ) {      
     while (fl_readdir(&dirstat, &dirent) == 0) {

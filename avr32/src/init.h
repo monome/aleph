@@ -9,7 +9,8 @@
 
 
 // initialize clocks
-extern void init_clocks(void);
+//extern void init_clocks(void);
+
 // initialize blackfin SPI and GPIPO
 extern void init_bfin_resources(void);
 // initialize USART

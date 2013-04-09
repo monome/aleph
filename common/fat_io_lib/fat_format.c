@@ -90,6 +90,7 @@ static int fatfs_erase_sectors(struct fatfs *fs, uint32 lba, int count)
 //-----------------------------------------------------------------------------
 // fatfs_create_boot_sector: Create the boot sector
 //-----------------------------------------------------------------------------
+int fatfs_create_boot_sector(struct fatfs *fs, uint32 boot_sector_lba, uint32 vol_sectors, const char *name);
 int fatfs_create_boot_sector(struct fatfs *fs, uint32 boot_sector_lba, uint32 vol_sectors, const char *name)
 {
     uint32 total_clusters;
@@ -218,6 +219,7 @@ int fatfs_create_boot_sector(struct fatfs *fs, uint32 boot_sector_lba, uint32 vo
 //-----------------------------------------------------------------------------
 // fatfs_erase_fat: Erase FAT table using fs details in fs struct
 //-----------------------------------------------------------------------------
+int fatfs_erase_fat(struct fatfs *fs);
 int fatfs_erase_fat(struct fatfs *fs)
 {
     uint32 i;

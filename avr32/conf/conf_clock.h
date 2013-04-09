@@ -41,7 +41,7 @@
 #ifndef CONF_CLOCK_H_INCLUDED
 #define CONF_CLOCK_H_INCLUDED
 
-#warning "aleph conf_clock"
+//#warning "aleph conf_clock"
 
 // ===== System Clock Source Options
 //#define CONFIG_SYSCLK_SOURCE        SYSCLK_SRC_RCSYS

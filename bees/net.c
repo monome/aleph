@@ -18,7 +18,7 @@
 #include "util.h"
 #include "op.h" 
 #include "op_derived.h"
-#include "memory.h"
+//#include "memory.h"
 #include "menu_protected.h"
 #include "net.h"
 #include "net_protected.h"
@@ -28,11 +28,15 @@
 
 //=========================================
 //===== variables
-//----- external
-ctlnet_t* net;
 //----- static
+__attribute__((__section__(".bss_extram")))
+static ctlnet_t netPrivate;
+
 static s32 inSearchIdx = 0;
 static s32 outSearchIdx = 0;
+
+//---- external
+ctlnet_t* net;
 
 //===============================================
 //========= static functions
@@ -59,26 +63,28 @@ static void add_sys_ops(void) {
 //========= public functions
 
 // initialize network at pre-allocated memory
-void net_init(void* mem) {
+void net_init(void) {
   u32 i;
-  //  net = (ctlnet_t*)alloc_mem(sizeof(ctlnet_t));
-  net = (ctlnet_t*)mem;
-#if NET_USE_MALLOC
-  // zero out op pointer array....
-  for(i=0; i<NET_OPS_MAX; i++) {
-    net->ops[i] = NULL;
-  }
-  // ... and allocation flags
-  for(i=0; i<BITNSLOTS(NET_OPS_MAX); i++) {
-    net->opsUsed[i] = 0;
-  }
-#else
+  u32 res;
+  
+  net = &netPrivate;
+
+  print_dbg("\r\n cltnet address: ");
+  print_dbg_hex((unsigned long int)net);
+
+  print_dbg("\r\n test-write to cltnet, test value:  ");
+  print_dbg_hex(0xDEADBEEF);
+  *((u32*)net) = 0xDEADBEEF;
+  print_dbg("\r\n ; reading... result: ");
+  res = *((u32*)net);
+  print_dbg_hex(res);
+ 
   for(i=0; i<NET_OP_POOL_SIZE; i++) {
     net->opPoolMem[i] = (u8)0;
   }
   net->opPool = (void*)&(net->opPoolMem);
   net->opPoolOffset = 0;
-#endif
+
   net->numOps = 0;
   net->numIns = 0;
   net->numOuts = 0;

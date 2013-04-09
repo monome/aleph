@@ -13,7 +13,8 @@
 #include "param_common.h"
 
 // aleph/avr32
-#include "conf_aleph.h"
+//#include "conf_aleph.h"
+#include "aleph_board.h"
 #include "filesystem.h"
 #include "global.h"
 #include "protocol.h"
@@ -89,7 +90,7 @@ void bfin_load(U32 size, void* fp) {
   print_dbg("\r\n loading bfin, ");
   print_dbg_ulong(size);
   print_dbg(" bytes, FP: ");
-  print_dbg_hex(fp);
+  print_dbg_hex((long unsigned int)fp);
   print_dbg("\r\n");
 
 

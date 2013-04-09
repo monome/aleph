@@ -19,7 +19,7 @@
 #include "param.h"
 #include "preset.h"
 // aleph
-#include "memory.h"
+//#include "memory.h"
 #include "simple_string.h"
 #include "types.h"
 

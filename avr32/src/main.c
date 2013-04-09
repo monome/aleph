@@ -1,32 +1,25 @@
+
 /* main.c
  * avr32
  * aleph
  *
- * 
  */
 
-//// ASF
-#include <string.h>
-#include <stdio.h>
-//#include <sysclk.h>
+// ASF
+#include "compiler.h"
 #include "board.h"
 #include "conf_sd_mmc_spi.h"
-#include "compiler.h"
-#include "cycle_counter.h"
 #include "ctrl_access.h"
-#include "gpio.h"
-//#include "intc.h"
-#include "eic.h"
-#include "interrupt.h"
+#include "flashc.h"
+#include "intc.h"
 #include "pdca.h"
-#include "power_clocks_lib.h"
 #include "print_funcs.h"
+#include "pm.h"
+#include "gpio.h"
 #include "sd_mmc_spi.h"
-//#include "sdramc.h"
-#include "spi.h"
+#include "smc.h"
 #include "sysclk.h"
-#include "uhc.h"
-#include "usart.h"
+
 //// aleph
 // bees
 #include "menu.h"
@@ -42,10 +35,11 @@
 #include "types.h"
 #include "util.h"
 // avr32
+#include "aleph_board.h"
 #include "adc.h"
 #include "app_timers.h"
 #include "bfin.h"
-#include "conf_aleph.h"
+//#include "conf_aleph.h"
 #include "encoders.h"
 #include "events.h"
 #include "filesystem.h"
@@ -55,47 +49,19 @@
 #include "i2c.h"
 #include "init.h"
 #include "interrupts.h"
-#include "memory.h"
 #include "switches.h"
 #include "timers.h"
 
 
-//// aleph
-// bees
-#include "menu.h"
-#include "net.h"
-#include "net_protected.h"
-#include "preset.h"
-#include "scene.h"
-// common
-#include "files.h"
-#include "param_common.h"
-#include "screen.h"
-#include "simple_string.h"
-#include "types.h"
-#include "util.h"
-// avr32
-#include "adc.h"
-#include "app_timers.h"
-#include "bfin.h"
-#include "conf_aleph.h"
-#include "encoders.h"
-#include "events.h"
-#include "filesystem.h"
-#include "fix.h"
-#include "font.h"
-#include "global.h"
-#include "i2c.h"
-#include "init.h"
-#include "interrupts.h"
-#include "memory.h"
-#include "switches.h"
-
 //==================================================
 //====  variables
 
-// control network, statically allocated
-ctlnet_t ctlnet;
+#define BIG_COUNT 0x10000
+
+/// a huge buffer located in SRAM
+__attribute__((__section__(".bss_extram")))
+static int bigData[BIG_COUNT];
+
 //  flag to wait for startup button press
 static u8 startup = 1;
 // mode switch
@@ -115,13 +81,14 @@ static void check_events(void);
 static void init_avr32(void) {
   volatile avr32_tc_t *tc = APP_TC;
   // clocks
-  init_clocks();
+  //init_clocks();
   // interrupt vectors
-  irq_initialize_vectors();
+
   // disable all interrupts for now
   cpu_irq_disable();
   // serial usb
-  init_ftdi_usart();
+  //  init_ftdi_usart();
+
   // initialize spi1: OLED, ADC, SD/MMC
   init_spi1();
   // initialize PDCA controller
@@ -139,12 +106,11 @@ static void init_avr32(void) {
   // enable interrupts
   cpu_irq_enable();
 
-
   /// initialize filesystem
-  init_files();
+   init_files();
 
   // usb host controller
-  init_usb_host();
+  //  init_usb_host();
 
   print_dbg("\r\n avr32 init done ");
 }
@@ -156,37 +122,43 @@ static void init_ctl(void) {
   cpu_irq_disable();
   // intialize the event queue
   init_events();
+  print_dbg("\r\n init_events");
   // intialize encoders
   init_encoders();
+  print_dbg("\r\n init_encoders");
   // intialize switches (debouncing)
   init_switches();
+  print_dbg("\r\n init_switches");
   
-#if FIXMEM
-  //memory manager
-#else
-  init_mem();
-#endif
+/* #if FIXMEM */
+/*   //memory manager */
+/* #else */
+/*   //  init_mem(); */
+/* #endif */
   
   // set up file navigation
   
   // send ADC config
   init_adc();
+  print_dbg("\r\n init_adc");
   // start application timers
   init_app_timers();
-
-  preset_init();
-  scene_init();
-  menu_init();
-  // enable interrupts
-
+  print_dbg("\r\n init_timers");
   
   //// BEES:
-  net_init(&ctlnet);
+  net_init();
+  print_dbg("\r\n net_init");
+
   preset_init();
+  print_dbg("\r\n preset_init");
+
   scene_init();
+  print_dbg("\r\n scene_init");
+
   menu_init();
+  print_dbg("\r\n menu_init");
+
   // enable interrupts
-  
   cpu_irq_enable();
 }
 
@@ -316,14 +288,90 @@ static void check_events(void) {
   } // if !startup
 }
 
+// startup routine runs before main()
+int _init_startup(void);
+int _init_startup(void) {
+
+  // Import the Exception Vector Base Address.
+  extern void _evba;
+
+  // setup clocks
+  flashc_set_wait_state( 1 );
+  sysclk_init();
+  sysclk_enable_pbb_module(SYSCLK_SMC_REGS);
+
+  // Switch to external oscillator 0.
+  //pm_switch_to_osc0(&AVR32_PM, FOSC0, OSC0_STARTUP);
+  
+  // Load the Exception Vector Base Address in the corresponding system register
+  Set_system_register(AVR32_EVBA, (int)&_evba);
+
+  // Enable exceptions.
+  Enable_global_exception();
+
+  // Initialize interrupt handling.
+  INTC_init_interrupts();
+  init_dbg_rs232(FPBA_HZ);
+  //  init_dbg_rs232(FOSC0);
+
+  // setup static memory controller 
+  smc_init(FHSB_HZ);
+    //  smc_init(FOSC0);
+  // return dont-care
+  return 1;
+}
+
+//int main(void) {
+static void test_bigData(void) {
+  long int i;
+  long int errors = 0;
+
+  print_dbg("\r\n large buffer address: ");
+  print_dbg_hex((unsigned long int)(&bigData));
+
+  print_dbg("\r\n checking large buffer initialization... ");
+  for(i=0; i<BIG_COUNT; i++) {
+    if(bigData[i] != 0) {
+      errors++;
+    }
+  }
+  print_dbg("done. errors found: ");
+  print_dbg_ulong(errors);
+ 
+  print_dbg("\r\n checking large buffer r/w... writing... ");
+  for(i=0; i<BIG_COUNT; i++) {
+    bigData[i] = i;
+  }
+  print_dbg("reading... ");
+  errors = 0;
+  for(i=0; i<BIG_COUNT; i++) {
+    if(bigData[i] != i) {
+      errors++;
+    }
+  }
+  print_dbg("done. errors found: ");
+  print_dbg_ulong(errors);
+
+  if(errors > 0) {
+    gpio_clr_gpio_pin(LED_MODE_PIN);
+  }
+ 
+  return 0;
+}
 
 ////main function
 int main (void) {
   u32 waitForCard = 0;
   volatile u64 delay;
 
+  test_bigData();
+
+  //  return 0;
+
   // set up avr32 hardware and peripherals
-  init_avr32();  
+  init_avr32();
+
+  //  return 0;
 
   // wait for sd card
   screen_line(0, 0, "ALEPH", 0x3f);
@@ -351,11 +399,17 @@ int main (void) {
   delay = 500000; while(delay--) {;;}
   /// again...
   delay = 500000; while(delay--) {;;}
+  /// again...
+  delay = 500000; while(delay--) {;;}
+  /// again...
+  delay = 500000; while(delay--) {;;}
+  /// again...
+  delay = 500000; while(delay--) {;;}
   
   // populate control network with poarameters as reported by bfin
   report_params();
 
   while(1) {
-    check_events(); 
+    check_events();
   }
 }

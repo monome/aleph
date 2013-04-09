@@ -4,7 +4,8 @@
 #include "print_funcs.h"
 #include "spi.h"
 // aleph
-#include "conf_aleph.h"
+//#include "conf_aleph.h"
+#include "aleph_board.h"
 #include "events.h"
 #include "event_types.h"
 #include "types.h"

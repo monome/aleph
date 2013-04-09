@@ -88,7 +88,7 @@
   #define EBI_ADDR_21                 AVR32_EBI_ADDR_21_0
   #define EBI_ADDR_22                 AVR32_EBI_ADDR_22_0
 #else
-  #error No known AVR32 board defined
+//  #error No known AVR32 board defined
 #endif
   #define EBI_ADDR_23                 AVR32_EBI_ADDR_23
 
