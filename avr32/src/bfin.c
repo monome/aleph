@@ -23,59 +23,6 @@
 #include "util.h"
 #include "bfin.h"
 
-// load a blackfin executable
-//// need to buffer the LDR file to save memory.
-//// so, alas, we must use file I/O from here
-#ifdef USE_LDR_RAM_BUFFER
-
-void bfin_load(U32 size, volatile u8 * data) {
-  volatile U64 delay;
-  U64 byte;
-  
-  print_dbg("\r\n loading bfin: ");
-  print_dbg_ulong(size);
-  print_dbg(" bytes...");
-
-  // fixme:
-  //// need to use interrupt priorities
-  // Disable_global_interrupt();
-
-  gpio_set_gpio_pin(BFIN_RESET_PIN);  
-  delay = 1000; while (--delay > 0) {;;}
-
-  gpio_clr_gpio_pin(BFIN_RESET_PIN);
-  delay = 30; while (--delay > 0) {;;}
-
-  gpio_set_gpio_pin(BFIN_RESET_PIN);  
-  delay = 3000; while (--delay > 0) {;;}
-  
-  // loop over .ldr data
-  byte = 0;
-  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-   
-  while(byte < size) {
-    // pause if hwait is held high by the blackfin
-    //    while(hwait > 0) { ;; }
-    while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { ;; }
-
-    spi_write(BFIN_SPI, data[byte]);
-
-    byte++;
-  }
-  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-
-  /// enable app, ui, 
-  // Enable_global_interrupt();
-
-  print_dbg("\r\ndone loading bfin. \r\n");
-
-  delay_ms(100);
-
-  report_params();
-
-}
-
-#else
 // load bfin executable byte-by-byte
 void bfin_load(U32 size, void* fp) {
   u64 i; /// byte index in .ldr
@@ -110,17 +57,18 @@ void bfin_load(U32 size, void* fp) {
   }
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 
-  
+  print_dbg("\r\n done loading; waiting... ");
   delay_ms(200);
+  print_dbg("\r\n done waiting; reporting... ");
 
   report_params();
   // FIXME: (?)
   //  Enable_global_interrupt();
 }
-#endif // LDR RAM buffer
 
 //void bfin_set_param(u8 idx, f32 x ) {
 void bfin_set_param(u8 idx, fix16_t x ) {
+
   static ParamValue pval;
   pval.asInt = (s32)x;
 
@@ -251,7 +199,9 @@ void report_params(void) {
     net_clear_params();
     for(i=0; i<numParams; i++) {
       bfin_get_param_desc(i, &pdesc);
+
       net_add_param(i, &pdesc);
+
       print_dbg("\r\n got pdesc : ");
       print_dbg((const char* )pdesc.label);
     }

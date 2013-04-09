@@ -166,7 +166,15 @@ static void init_ctl(void) {
 static void check_events(void) {
   static event_t e;  
   static u64 delay;
+
   if( get_next_event(&e) ) {
+
+    
+  /* print_dbg("\r\n handling event, type: "); */
+  /* print_dbg_hex(e.eventType); */
+  /* print_dbg("\r\n , data: "); */
+  /* print_dbg_hex(e.eventData); */
+
     if(startup) {
       if( e.eventType == kEventSwitchDown0
 	  || e.eventType == kEventSwitchDown1
@@ -191,19 +199,19 @@ static void check_events(void) {
 	menu_handleKey(eKeyFnUpA, e.eventData);
 	break;
       case kEventSwitchDown1:
-	//      print_dbg("\r\n switch f1 down");
+	///	      print_dbg("\r\n switch f1 down");
 	menu_handleKey(eKeyFnDownB, e.eventData);
 	break;
       case kEventSwitchUp1:
-	//	print_dbg("\r\n switch f1 up");
+	//		print_dbg("\r\n switch f1 up");
 	menu_handleKey(eKeyFnUpB, e.eventData);
 	break;
       case kEventSwitchDown2:
-	//	print_dbg("\r\n switch f2 down");
+	//		print_dbg("\r\n switch f2 down");
 	menu_handleKey(eKeyFnDownC, e.eventData);
 	break;
       case kEventSwitchUp2:
-	//	print_dbg("\r\n switch f2 up");
+	//		print_dbg("\r\n switch f2 up");
 	menu_handleKey(eKeyFnUpC, e.eventData);
 	break;
       case kEventSwitchDown3:
@@ -231,7 +239,7 @@ static void check_events(void) {
 	break;
 
       case kEventEncoder0:
-	//	print_dbg("\r\n encoder 0");
+	//		print_dbg("\r\n encoder 0");
       	if(e.eventData > 0) {
       	  menu_handleKey(eKeyEncUpD, e.eventData);
       	} else {
@@ -239,7 +247,7 @@ static void check_events(void) {
       	}
       	break;
       case kEventEncoder1:
-	//	print_dbg("\r\n encoder 1");
+	//		print_dbg("\r\n encoder 1");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpC, e.eventData);
 	} else {
@@ -247,7 +255,7 @@ static void check_events(void) {
 	}
 	break;
       case kEventEncoder2:
-	//	print_dbg("\r\n encoder 2");
+	//		print_dbg("\r\n encoder 2");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpB, e.eventData);
 	} else {
@@ -255,7 +263,7 @@ static void check_events(void) {
 	}
 	break;
       case kEventEncoder3:
-	//	print_dbg("\r\n encoder 3");
+	//		print_dbg("\r\n encoder 3");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpA, e.eventData);
 	} else {
@@ -393,24 +401,14 @@ int main (void) {
   // setup control logic
   init_ctl();
 
-  /* /// boot default dsp */
-  /* files_load_dsp_name("default.ldr"); */
-  /* /// wait for bfin to finish boot */
-  /* delay = 500000; while(delay--) {;;} */
-  /* /// again... */
-  /* delay = 500000; while(delay--) {;;} */
-  /* /// again... */
-  /* delay = 500000; while(delay--) {;;} */
-  /* /// again... */
-  /* delay = 500000; while(delay--) {;;} */
-  /* /// again... */
-  //  delay = 500000; while(delay--) {;;}
+  /// boot default dsp
+  files_load_dsp_name("default.ldr");
 
-  delay_ms(100);
+  /* delay_ms(100);   */
+  /* // populate control network with poarameters as reported by bfin */
+  /* report_params(); */
   
-  // populate control network with poarameters as reported by bfin
-  report_params();
-
+  print_dbg("\r\n starting event loop.\r\n");
   while(1) {
     check_events();
   }

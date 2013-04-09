@@ -8,7 +8,8 @@
 #include "compiler.h"
 #include "print_funcs.h"
 
-#include "timers.h" // for timer interrupt priority level
+#include "aleph_board.h"
+//#include "timers.h" // for timer interrupt priority level
 #include "events.h"
 #include "event_types.h"
 
@@ -44,9 +45,9 @@ void init_events( void ) {
 // Returns non-zero if an event was available
 bool get_next_event( event_t *e ) {
   bool status;
-  bool fReenableInterrupts = Is_interrupt_level_enabled( TIMER_INT_LEVEL );
-
-  Disable_interrupt_level( TIMER_INT_LEVEL );
+  //  bool fReenableInterrupts = Is_interrupt_level_enabled( TIMER_INT_LEVEL );
+  //  Disable_interrupt_level( TIMER_INT_LEVEL );
+  cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
   
   // if pointers are equal, the queue is empty... don't allow idx's to wrap!
   if ( getIdx != putIdx ) {
@@ -60,9 +61,10 @@ bool get_next_event( event_t *e ) {
     status = false;
   }
 
-  if (fReenableInterrupts) {
-    Enable_interrupt_level( TIMER_INT_LEVEL );
-  }
+  cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
+  //  if (fReenableInterrupts) {
+    //    Enable_interrupt_level( TIMER_INT_LEVEL );
+  //  }
   return status;
 }
 
@@ -71,26 +73,16 @@ bool get_next_event( event_t *e ) {
 bool post_event( event_t *e ) {
   bool status = false;
   int saveIndex;
-  // debug hook
-  /*
-  if (e->eventType < kEventAdc0) {
-    print_dbg(" ... posted knob/switch event, type ");
-    print_dbg_ulong(e->eventType); print_dbg(".");
-  } 
-  */
 
-  bool fReenableInterrupts = Is_interrupt_level_enabled( TIMER_INT_LEVEL );
+  /* print_dbg(" ... call to post_events, type: "); */
+  /* print_dbg_hex(e->eventType); */
+  /* print_dbg(" , data: "); */
+  /* print_dbg_hex(e->eventData); */
 
-  Disable_interrupt_level( TIMER_INT_LEVEL );
-
-  // debug hook
-  /*
-  if (e->eventType < kEventAdc0) {
-    print_dbg(" ... posted knob/switch event, type ");
-    print_dbg_ulong(e->eventType); print_dbg(".");
-  } 
-  */
-
+  //  bool fReenableInterrupts = Is_interrupt_level_enabled( TIMER_INT_LEVEL );
+  //  Disable_interrupt_level( TIMER_INT_LEVEL );
+  cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
+  
   // increment write idx, posbily wrapping
   saveIndex = putIdx;
   INCR_EVENT_INDEX( putIdx );
@@ -101,10 +93,13 @@ bool post_event( event_t *e ) {
   } else {
     // idx wrapped, so queue is full, restore idx
     putIdx = saveIndex;
+    print_dbg("\r\b event queue full!");
   } 
-  if (fReenableInterrupts) {
-    Enable_interrupt_level( TIMER_INT_LEVEL );
-  }
+
+  cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
+  //  if (fReenableInterrupts) {
+  //    Enable_interrupt_level( TIMER_INT_LEVEL );
+  //  }
 
   return status;
 }

@@ -22,9 +22,6 @@
 //#include "memory.h"
 
 
-//// FIXME: using static allocation
-#define FILES_STATIC_MEM 1
-
 // list of names
 //#define FILES_LIST_MAX_ENTRIES 128; 
 #define MAX_NUM_DSP 32
@@ -34,12 +31,7 @@
 //------------------------------
 //----- -static vars
 
-#ifdef FILES_STATIC_MEM
 volatile char dsp_name_buf[DSP_LIST_BUF_SIZE];
-#else
-volatile char * dsp_name_buf;
-#endif // static memory
-
 static u8 numDsp = 0;
 
 //---------------------------------
@@ -48,16 +40,6 @@ static u8 numDsp = 0;
 void init_files(void) {
   // init FAT lib
   fat_init();
-#ifdef FILES_STATIC_MEM
-#else
-  // allocate ram for dsp list
-  tmp = (heap_t)alloc_mem(MAX_NUM_DSP * MAX_FILE_PATH_LENGTH);
-  if(tmp != ALLOC_FAIL) {
-    dsp_name_buf = (char*)tmp;
-  } else {
-    print_dbg("\r\n allocation error in files init \r\n");
-  }
-#endif
   files_scan_dsp();
 
 }
@@ -98,6 +80,9 @@ void files_load_dsp_name(const char* name) {
   void* fp;
   //  unsigned long int i;
 
+  cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
+  cpu_irq_disable_level(UI_IRQ_PRIORITY);
+
   if( fl_opendir("/dsp", &dirstat) ) {      
     while (fl_readdir(&dirstat, &dirent) == 0) {
       if (strcmp(dirent.filename, name) == 0) {
@@ -109,24 +94,11 @@ void files_load_dsp_name(const char* name) {
 	if( fp != NULL) {	  
 	  print_dbg("\r\n found file, loading dsp... \r\n");
 
-#ifdef USE_LDR_RAM_BUFFER
-	  if(dirent.size > MAX_BFIN_LDR_BYTES) {
-	    print_dbg("\r\n .ldr file too big for bfin memory! \r\n");
-	  } else {
-	    // FIXME: wish this worked:
-	    //	    fl_fread(load_buf, 1, dirent.size, fp);
-	    for(i=0; i<dirent.size; i++) {
-	      load_buf[i] = fl_fgetc(fp);
-	    }
-	    fl_fclose(fp);
-	    bfin_load(dirent.size, load_buf);
-	  }
-#else
 	  //// we need to buffer the LDR file to save memory.
 	  //// this sort of breaks modularity, oh well.
 	  bfin_load(dirent.size, fp);
 	  fl_fclose(fp);
-#endif
+
 	} else {
 	  print_dbg("\r\n error: fp was null in load_dsp_name \r\n");
 	}
@@ -142,6 +114,9 @@ void files_load_dsp_name(const char* name) {
   } else {
     print_dbg("\r\n error opening dsp dir in load_dsp_name \r\n");
   }
+
+  cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
+  cpu_irq_enable_level(UI_IRQ_PRIORITY);
 }
 
 // return count of dsp files

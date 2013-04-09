@@ -20,6 +20,8 @@
 /* //! Data bus width to use the SDRAM(s) with (16 or 32 bits; always 16 bits on UC3). */
 /* #define SDRAM_DBW 16 */
 
+// #warning "using aleph_board.h in asf/common/boards"
+
 //==============================================
 //==== clocks
 
@@ -27,14 +29,25 @@
 #define OSC32_STARTUP   AVR32_PM_OSCCTRL32_STARTUP_8192_RCOSC //!< Osc32 startup time: RCOsc periods.
 #define FOSC0           12000000                                //!< Osc0 frequency: Hz.
 #define OSC0_STARTUP    AVR32_PM_OSCCTRL0_STARTUP_2048_RCOSC  //!< Osc0 startup time: RCOsc periods.
-#define PLL_OUTPUT_FREQ 132000000UL
-#define FMCK_HZ   		66000000   // master
-#define FCPU_HZ   		FMCK_HZ    // cpu
-#define FHSB_HZ   		FCPU_HZ    // highspeed bus
-#define FPBA_HZ   		FMCK_HZ    // peripheral bus A
-#define FPBB_HZ   		FMCK_HZ    // peripheral bus B
+//#define PLL_OUTPUT_FREQ 132000000UL
 
-// clock manager needs these defined as well
+#if 1
+#define FMCK_HZ   		66000000   // master */
+#define FCPU_HZ   		FMCK_HZ    // cpu */
+#define FHSB_HZ   		FCPU_HZ    // highspeed bus */
+#define FPBA_HZ   		FMCK_HZ    // peripheral bus A */
+#define FPBB_HZ   		FMCK_HZ    // peripheral bus B */
+#else
+// testing USB
+///// using osc0
+#define FMCK_HZ   		12000000   // master */
+#define FCPU_HZ   		FMCK_HZ    // cpu */
+#define FHSB_HZ   		FCPU_HZ    // highspeed bus */
+#define FPBA_HZ   		FMCK_HZ    // peripheral bus A */
+#define FPBB_HZ   		FMCK_HZ    // peripheral bus B */
+#endif
+
+// clock manager needs these
 #define BOARD_OSC0_HZ           12000000
 #define BOARD_OSC0_STARTUP_US   17000
 #define BOARD_OSC0_IS_XTAL      true
@@ -42,14 +55,13 @@
 #define BOARD_OSC32_STARTUP_US  71000
 #define BOARD_OSC32_IS_XTAL     true
 
-
 //============================================
 //====== IRQ priorities
-/* #define SYS_IRQ_PRIORITY       AVR32_INTC_INT1 */
-/* #define APP_TC_IRQ_PRIORITY    AVR32_INTC_INT2 */
-/* #define UI_IRQ_PRIORITY        AVR32_INTC_INT3 */
-#define SYS_IRQ_PRIORITY       0
-#define APP_TC_IRQ_PRIORITY    1
+//#define SYS_IRQ_PRIORITY       AVR32_INTC_INT1
+//#define APP_TC_IRQ_PRIORITY    AVR32_INTC_INT2
+//#define UI_IRQ_PRIORITY        AVR32_INTC_INT3
+#define SYS_IRQ_PRIORITY       1
+#define APP_TC_IRQ_PRIORITY    2
 #define UI_IRQ_PRIORITY        2
 
 //==============================================
@@ -164,6 +176,12 @@
 #define SW_POWER_PIN    AVR32_PIN_PX12
 #define POWER_CTL_PIN   AVR32_PIN_PX13
 
+// aux pullup gates
+#define AUX_PULLUP0_PIN AVR32_PIN_PB20
+#define AUX_PULLUP1_PIN AVR32_PIN_PB21
+#define AUX_PULLUP2_PIN AVR32_PIN_PB22
+#define AUX_PULLUP3_PIN AVR32_PIN_PB23
+
 //TWI
 #define TWI_DATA_PIN            AVR32_TWI_SDA_0_0_PIN
 #define TWI_DATA_FUNCTION   AVR32_TWI_SDA_0_0_FUNCTION
@@ -171,5 +189,21 @@
 #define TWI_CLOCK_FUNCTION  AVR32_TWI_SCL_0_0_FUNCTION
 //#define TWI_SPEED 50000;
 #define TWI_SPEED 132000;
+
+// USB pins
+
+// vbof: pa22, pin 74
+// oc:   pa20, pin 66
+// id:   unused.... but lets put it on pa21 and keep that reserved
+
+#define USB_ID                      AVR32_USBB_USB_ID_0_2 // PA21
+//! Multiplexed pin used for USB_VBOF: AVR32_USBB_USB_VBOF_x_x.
+//! To be selected according to the AVR32_USBB_USB_VBOF_x_x_PIN and
+//! AVR32_USBB_USB_VBOF_x_x_FUNCTION definitions from <avr32/uc3axxxx.h>.
+#define USB_VBOF                    AVR32_USBB_USB_VBOF_0_2
+//! Active level of the USB_VBOF output pin.
+#define USB_VBOF_ACTIVE_LEVEL       LOW
+//! USB overcurrent detection pin.
+#define USB_OVERCURRENT_DETECT_PIN  AVR32_PIN_PX33
 
 #endif // header guard

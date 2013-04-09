@@ -52,6 +52,10 @@ static void screen_timer_callback(int tag) {
   if(refresh) {
     e.eventType = kEventRefresh;
     post_event(&e);
+    
+    //    print_dbg("\r\n posting REFRESH event, type: ");
+    //    print_dbg_hex(e.eventType);
+
     refresh = 0;
   }
 }
@@ -59,8 +63,18 @@ static void screen_timer_callback(int tag) {
 // encoder accumulator polling callback
 static void enc_timer_callback(int tag) {
   static s16 val;
+
+  //  print_dbg(" encs ");
+  
   for(i=0; i<NUM_ENC; i++) {
+    //    process_enc(i);
     val = enc[i].val;
+
+    /* print_dbg(" ... enc "); */
+    /* print_dbg_ulong(i); */
+    /* print_dbg(" , val: "); */
+    /* print_dbg_hex(val); */
+    
     if ( (val > enc[i].thresh) || (val < (enc[i].thresh * -1)) ) {
     //  if( (val > ENC_THRESH) || (val < ENC_NEG_THRESH) ) {
       e.eventType = enc[i].event;
@@ -73,6 +87,9 @@ static void enc_timer_callback(int tag) {
       /* print_dbg_ulong(val); */
       
       post_event(&e);
+
+      //      print_dbg("\r\n posting ENCODER event, type: ");
+      //      print_dbg_hex(e.eventType);
     }
   }
 }

@@ -104,5 +104,9 @@ void poll_sw(const U8 idx) {
     //    print_dbg(" , state: ");
     //    print_dbg_hex(state);
     post_event(&e);
+
+    print_dbg("\r\n posting SWITCH event, type: ");
+    print_dbg_hex(e.eventType);
+
   }
 }

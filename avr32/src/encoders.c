@@ -66,21 +66,23 @@ void process_enc( const U8 idx) {
   
   pos = gpio_get_pin_value(enc[idx].pin[0]) + (gpio_get_pin_value(enc[idx].pin[1]) << 1);
   
-  /*
-  print_dbg("\r\nprocessing encoder, idx: ");
-  print_dbg_ulong(idx);
-  print_dbg(" , pos: ");
-  print_dbg_hex(pos);
-  */
+  /* print_dbg("\r\n processing encoder, idx: "); */
+  /* print_dbg_ulong(idx); */
+  /* print_dbg(" , pos: "); */
+  /* print_dbg_hex(pos); */
+  
 
   if (pos != enc[idx].pos) {
+      /* print_dbg("\r\n processing encoder movement, idx: "); */
+    /* print_dbg_ulong(idx); */
+    /* print_dbg(" , pos: "); */
+    /* print_dbg_hex(pos); */
+  
     enc[idx].val -= enc_map[enc[idx].pos][pos];
     enc[idx].pos = pos;
   }
-  
 }
   
-
 void set_enc_thresh( const u8 idx, const u8 v ) {
   enc[idx].thresh = v;
 }

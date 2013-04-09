@@ -193,8 +193,8 @@ static void write_buf(fract32 v) {
 // frame calculation
 static void calc_frame(void) {
 
-  //  frameVal = in0;
-  //  return;
+  frameVal = in0;
+    return;
 
   // ----- smoothers:
   // amp
