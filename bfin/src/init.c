@@ -94,64 +94,11 @@ void init_flash(void) {
 }
 
 static void spi_send_byte(u8 ch) {
-  //  unsigned short dummyread;
-
-  ////////
-  //// dbg
-  /* unsigned long int stat; */
-  /* unsigned long int txs = TXS; */
-  /* unsigned long int spif = SPIF; */
-  /* unsigned long int rxs = RXS; */
-  /* unsigned long int tdbr; */
-  /* unsigned long int rdbr; */
-  /* unsigned long int ctl; */
-  /////////
-
   *pSPI_TDBR = ch;
   ssync();
 
-  /////// dbg
-  /* stat = *pSPI_STAT; */
-  /* tdbr = *pSPI_TDBR; */
-  /* rdbr = *pSPI_RDBR; */
-  /* ctl = *pSPI_CTL; */
-  ///////
-
-  while( (*pSPI_STAT & TXS)  != 0 ) {
-    /////// dbg
-    /* stat = *pSPI_STAT; */
-    /* tdbr = *pSPI_TDBR; */
-    /* rdbr = *pSPI_RDBR; */
-    /* ctl = *pSPI_CTL; */
-    ///////
-  }
-  while( (*pSPI_STAT & SPIF) == 0 ) { 
-    ;;
-    /////// dbg
-    /* stat = *pSPI_STAT; */
-    /* tdbr = *pSPI_TDBR; */
-    /* rdbr = *pSPI_RDBR; */
-    /* ctl = *pSPI_CTL; */
-    ///////
-  }
-  /* while( (*pSPI_STAT & RXS)  == 0 )  {  */
-  /*   /////// dbg */
-  /*   stat = *pSPI_STAT; */
-  /*   tdbr = *pSPI_TDBR; */
-  /*   rdbr = *pSPI_RDBR; */
-  /*   ctl = *pSPI_CTL; */
-  /*   /////// */
-  /* } */
-  /// dummy read to clear RX register
-  //  dummyread = *pSPI_RDBR;
-
-  /////// dbg
-  /* stat = *pSPI_STAT; */
-  /* tdbr = *pSPI_TDBR; */
-  /* rdbr = *pSPI_RDBR; */
-  /* ctl = *pSPI_CTL; */
-  ///////
-
+  while( (*pSPI_STAT & TXS)  != 0 ) { ;; }
+  while( (*pSPI_STAT & SPIF) == 0 ) { ;; }
 }
 
  // setup SPI0 -> AD1939 config */
@@ -160,77 +107,61 @@ void init_1939(void) {
   u32 del;
 
 
-  //////////////////////////////
-  /// TESTING: only wait->reset
-  //  del = 1000000; while(del > 0) { del--; }
-  ////////////////
-  ////////////////////////
-
   //// reset codec
   *pFIO_FLAG_D &= CODEC_RESET_MASK;
-  /////////////
-  //////////////
-  del = 10000; while(del--) { ;; } 
-  //////////////////
-  ////////////////////
-  // write to Port A to enable codec
+  del = 100; while(del--) { ;; } 
   *pFIO_FLAG_D |= (0xffff ^ CODEC_RESET_MASK);
   
-
-  ////////////
-  //////////////////////////////
-  /// TESTING: only wait->reset
   return;
-  //////////////
-  ////////////////
 
+  /// using the codec in standalone now, dont need SPI config
 
-  //// TESTING:
-  /// wait for the codec to reset
-  /// from the datasheet, this could take an absolute maximum of (4096 / 6.9Mhz)s (?)
-  /// we are using BF clock = 513 MHz, so:
-  del = 308000; while(del--) { ;; } 
+  /* //// TESTING: */
+  /* /// wait for the codec to reset */
+  /* /// from the datasheet, this could take an absolute maximum of (4096 / 6.9Mhz)s (?) */
+  /* /// we are using BF clock = 513 MHz, so: */
+  /* del = 308000; while(del--) { ;; }  */
 
-  //  set PF4 as slave select
-  *pSPI_FLG = 0xFF10;
+  /* //  set PF4 as slave select */
+  /* *pSPI_FLG = 0xFF10; */
 
-  // Set baud rate SCK = HCLK/(2*SPIBAUD) SCK = 2MHz
-  *pSPI_BAUD = 16;
+  /* // Set baud rate SCK = HCLK/(2*SPIBAUD) SCK = 2MHz */
+  /* *pSPI_BAUD = 16; */
 
-  // setup SPI:
-  /// master, non-DMA mode, 8b transfers, MSB first,
-  /// TX on buffer write, clock rising edge:
+  /* // setup SPI: */
+  /* /// master, non-DMA mode, 8b transfers, MSB first, */
+  /* /// TX on buffer write, clock rising edge: */
 
-  //// this would give us the waveform we want but puts CS under hardware control
-  //  *pSPI_CTL = MSTR | TIMOD_BUF_TX;
+  /* //// this would give us the waveform we want but puts CS under hardware control */
+  /* //  *pSPI_CTL = MSTR | TIMOD_BUF_TX; */
 
-  /// SPI controller can't do 24-bits transfers--
-  /// workaround: 8-bit transfers and manual slave select
-  // ( see http://ez.analog.com/thread/1248
-  //  SS from software :
-  *pSPI_CTL = MSTR | CPHA | CPOL | TIMOD_BUF_TX;
+  /* /// SPI controller can't do 24-bits transfers-- */
+  /* /// workaround: 8-bit transfers and manual slave select */
+  /* // ( see http://ez.analog.com/thread/1248 */
+  /* //  SS from software : */
+  /* *pSPI_CTL = MSTR | CPHA | CPOL | TIMOD_BUF_TX; */
 
-  // enable SPI
-  *pSPI_CTL = (*pSPI_CTL | SPE);
+  /* // enable SPI */
+  /* *pSPI_CTL = (*pSPI_CTL | SPE); */
 
-  ssync();
-  // loop over registers
-  for(i=0; i<CODEC_1939_NUM_REGS; i++) {
-    // select slave
-    //    *pFIO_FLAG_D &= CODEC_SS_MASK;
+  /* ssync(); */
+  /* // loop over registers */
+  /* for(i=0; i<CODEC_1939_NUM_REGS; i++) { */
+  /*   // select slave */
+  /*   //    *pFIO_FLAG_D &= CODEC_SS_MASK; */
 
-    // bring SS low (PF4)
-    *pSPI_FLG = 0xef10;
+  /*   // bring SS low (PF4) */
+  /*   *pSPI_FLG = 0xef10; */
 
-    // send command byte
-    spi_send_byte(CODEC_CMD_BYTE);
-    // send register byte
-    spi_send_byte(codec1939TxRegs[i][0]);
-    /// send dta byte
-    spi_send_byte(codec1939TxRegs[i][1]);
+  /*   // send command byte */
+  /*   spi_send_byte(CODEC_CMD_BYTE); */
+  /*   // send register byte */
+  /*   spi_send_byte(codec1939TxRegs[i][0]); */
+  /*   /// send dta byte */
+  /*   spi_send_byte(codec1939TxRegs[i][1]); */
     
-    // bring SS high (PF4)
-    *pSPI_FLG = 0xff10;
+  /*   // bring SS high (PF4) */
+  /*   *pSPI_FLG = 0xff10; */
   }
 } // init_1939
 
@@ -339,27 +270,21 @@ void init_flags(void) {
 // assign interrupts
 void init_interrupts(void) {
   int i=0;
-
+  
   // assign core IDs to peripheral interrupts:
   *pSIC_IAR0 = 0xffffffff;
   // sport0 rx (dma1) -> ID2 = IVG9 
   // spi rx           -> ID3 = IVG10
   *pSIC_IAR1 = 0xff3fff2f;
-  // PFA              -> ID5 = IVG12
-  //  *pSIC_IAR2 = 0xffff5fff;
-  // no buttons
-   *pSIC_IAR2 = 0xffffffff;
+  *pSIC_IAR2 = 0xffffffff;
 
   // assign ISRs to interrupt vectors:
   *pEVT9 = sport0_rx_isr;
   *pEVT10 = spi_rx_isr;
-  //  *pEVT12 = pf_isr;
-
-	// unmask in the core event processor
-  //  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); bitset (%0, 12); sti %0; csync;": "+d"(i));
+  
+  // unmask in the core event processor
   asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
   
   // unmask in the peripheral interrupt controller
-  //  *pSIC_IMASK = 0x00082200;
   *pSIC_IMASK = 0x00002200;
 }

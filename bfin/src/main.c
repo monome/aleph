@@ -24,39 +24,10 @@ int main(void) {
   // intialize the sdram controller
   init_EBIU();
   // intialize the flash controller (which, weirdly, handles gpio)
-  init_flash();
+  //  init_flash();
   // initialize the codec (spi in master, blast config regs, disable spi)
 
-
-  ////////////////////
-  /////////////// TEST : do this a lot
-  /*
-  *pFlashA_PortB_Data = 0x3f;
-  while(dumcount < 1000000) {
-    init_1836();
-    dumcount++;
-  }
-  *pFlashA_PortB_Data = 0;
-  */
-  /////////////////////
-  ////////////////////////
-  //  init_1836();
   init_1939();
-
-
-  ///// TEST: hold SPI pins in codec standalone configuration
-
-  //////////
-  ///// TEST:do this forever
-  /*
-  while(1) {
-    init_1939();
-    del = 100000; while(del > 0) { del--; }
-  }
-  */
-  
-  ////////
-  ///////
 
   // intialize the sport0 for audio rx/tx
   init_sport0();
@@ -76,10 +47,7 @@ int main(void) {
 
   //// test: leds on
   SET_LED3;
-  //      SET_LED4;
-  // off 
-  //  UNSET_LED3;
-  UNSET_LED4;
+  SET_LED4;
   
   while(1) {
     // fixme: everything happens in ISRs!
