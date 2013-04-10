@@ -150,9 +150,8 @@ void adc_poll(void) {
       adcOldVal[i] = adcVal[i];
       e.eventType = adcEventTypes[i]; // getAdcEvent(i); //kAdcEvents[i];
       e.eventData = (S16)(adcVal[i]);
-      //      post_event(&e);
-      print_dbg("\r\n posting ADC event, type: ");
-      print_dbg_hex(e.eventType);
+      //      print_dbg("\r\n posting ADC event, type: ");
+      //      print_dbg_hex(e.eventType);
     }
   }
 }

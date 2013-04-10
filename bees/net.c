@@ -662,8 +662,8 @@ void net_add_param(u32 idx, volatile ParamDesc* pdesc) {
   net->params[net->numParams].idx = idx;
   net->params[net->numParams].preset = 1;
   net->numParams++;
-  print_dbg("\r\n ctlnet: added parameter at index ");
-  print_dbg_ulong(idx);
+  /* print_dbg("\r\n ctlnet: added parameter at index "); */
+  /* print_dbg_ulong(idx); */
 }
 
 // clear existing parameters

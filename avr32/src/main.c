@@ -311,7 +311,6 @@ int _init_startup(void) {
   // Initialize interrupt handling.
   INTC_init_interrupts();
   init_dbg_rs232(FPBA_HZ);
-  //  init_dbg_rs232(FOSC0);
 
   // setup static memory controller 
   smc_init(FHSB_HZ);

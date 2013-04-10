@@ -86,12 +86,12 @@ void init_EBIU(void) {
   ssync();
 }
 
-void init_flash(void) {
-  // flash A, port A0 -> AD1836_reset
-  //  *pFlashA_PortA_Dir = 0x1;
-  // flash A, ports [B0, B5] -> [led1, led6]
-  //  *pFlashA_PortB_Dir = 0x3f;
-}
+/* void init_flash(void) { */
+/*   // flash A, port A0 -> AD1836_reset */
+/*   //  *pFlashA_PortA_Dir = 0x1; */
+/*   // flash A, ports [B0, B5] -> [led1, led6] */
+/*   //  *pFlashA_PortB_Dir = 0x3f; */
+/* } */
 
 static void spi_send_byte(u8 ch) {
   *pSPI_TDBR = ch;
@@ -162,7 +162,7 @@ void init_1939(void) {
     
   /*   // bring SS high (PF4) */
   /*   *pSPI_FLG = 0xff10; */
-  }
+  /*   } */
 } // init_1939
 
 
