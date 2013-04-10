@@ -134,8 +134,11 @@ void init_oled(void) {
   write_command(0);
   write_command(63);
 		
-  // clear OLED RAM 
-    for(i=0; i<GRAM_BYTES; i++) { write_data(0); }
+  // clear OLED RAM and local screenbuffer
+  for(i=0; i<GRAM_BYTES; i++) { 
+    screen[i] = 0;
+    write_data(0);
+  }
   //  screen_refresh();
   write_command(0xAF);	// on
 
@@ -150,34 +153,21 @@ void init_oled(void) {
 void screen_refresh(void) {
   U16 i;
   u8* pScreen;
+
+  /// FIXME: use specific IRQ levels
   cpu_irq_disable();
-  // Disable_global_interrupt();
 
   // pull register select high to write data
   gpio_set_gpio_pin(OLED_REGISTER_PIN);
   spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
 
-  /// this assignment doesn't work.... WTF??
-//  for(i=GRAM_BYTES_1; i>=0; i--) {
-  
   pScreen=&(screen[GRAM_BYTES_1]);
-  for(i=0; i<GRAM_BYTES; i++) {  
-    //////////////////////
-    ///// debug
-    /* print_dbg("\r\n gfx buffer, byte : ");  */
-    /* print_dbg_ulong(i); */
-    /* print_dbg(" ; addr : "); */
-    /* print_dbg_hex(&(screen[i])); */
-    /* print_dbg(" ; data : "); */
-    /* print_dbg_hex(screen[i]); */
-    ///////////////////
-    //    spi_write(OLED_SPI, screen[i]);      
+  for(i=0; i<GRAM_BYTES; i++) {     
     spi_write(OLED_SPI, *pScreen);
     pScreen--;
   }
   spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
   cpu_irq_enable();
-  //  Enable_global_interrupt();
 }
 
 // draw a single pixel

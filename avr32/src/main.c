@@ -88,7 +88,7 @@ static void init_avr32(void) {
   // serial usb
   init_ftdi_usart();
   // external sram
-  //  smc_init(FHSB_HZ);
+  smc_init(FHSB_HZ);
   // initialize spi1: OLED, ADC, SD/MMC
   init_spi1();
   // initialize PDCA controller
@@ -145,16 +145,16 @@ static void init_ctl(void) {
   print_dbg("\r\n init_timers");
   
   //// BEES:
-  //  net_init();
+  net_init();
   print_dbg("\r\n net_init");
 
-  //  preset_init();
+  preset_init();
   print_dbg("\r\n preset_init");
 
-  //  scene_init();
+  scene_init();
   print_dbg("\r\n scene_init");
 
-  //  menu_init();
+  menu_init();
   print_dbg("\r\n menu_init");
 
   // enable interrupts
@@ -269,23 +269,23 @@ static void check_events(void) {
 	break;
 
       case kEventAdc0:
-	//	print_dbg("\r\nadc val 0: ");
-	//	print_dbg_hex(e.eventData);
+		print_dbg("\r\nadc val 0: ");
+		print_dbg_hex(e.eventData);
 	//	displayAdcVal(0, e.eventData);
 	break;
       case kEventAdc1:
-	//	 print_dbg("\r\nadc val 1: ");
-	//	 print_dbg_hex(e.eventData);
+		 print_dbg("\r\nadc val 1: ");
+		 print_dbg_hex(e.eventData);
 	 //	 displayAdcVal(1, e.eventData);
 	break;
       case kEventAdc2:
-	//	 print_dbg("\r\nadc val 2: ");
-	//	 print_dbg_hex(e.eventData);
+		 print_dbg("\r\nadc val 2: ");
+		 print_dbg_hex(e.eventData);
 	//	 displayAdcVal(2, e.eventData);
 	break;
       case kEventAdc3:
-	//     	print_dbg("\r\nadc val 3: ");
-	//     	print_dbg_hex(e.eventData);
+	     	print_dbg("\r\nadc val 3: ");
+	     	print_dbg_hex(e.eventData);
 	//     	displayAdcVal(3, e.eventData);
 	break;
       }
@@ -302,6 +302,16 @@ int main (void) {
   init_avr32();
 
   // wait for sd card
+
+  screen_blank_line(0, 0);
+  screen_blank_line(0, 1);
+  screen_blank_line(0, 2);
+  screen_blank_line(0, 3);
+  screen_blank_line(0, 4);
+  screen_blank_line(0, 5);
+  screen_blank_line(0, 6);
+  screen_blank_line(0, 7);
+
   screen_line(0, 0, "ALEPH", 0x3f);
   screen_line(0, 1, "waiting for SD card...", 0x3f);
   screen_refresh();
@@ -312,8 +322,6 @@ int main (void) {
   }
   print_dbg("\r\nfound SD card. ");
 
-  screen_blank_line(0, 0);
-  screen_blank_line(0, 1);
   screen_line(0, 0, "SD card detected.", 0x3f);
 
   // setup control logic
@@ -322,9 +330,12 @@ int main (void) {
   /// boot default dsp
   screen_line(0, 1, "loading default DSP...", 0x3f);
   screen_refresh();
+
   files_load_dsp_name("default.ldr");
 
-  screen_line(0, 1, "finished. press any key to continue...", 0x3f);
+  screen_line(0, 2, "finished. ", 0x3f);
+  screen_line(0, 3, "press a key to continue...", 0x3f);
+
   screen_refresh();
   
   print_dbg("\r\n starting event loop.\r\n");

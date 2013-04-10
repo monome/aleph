@@ -63,6 +63,7 @@ CSRCS = \
 	$(ALEPH_AVR32)/src/filesystem.c \
 	$(ALEPH_AVR32)/src/init.c	\
 	$(ALEPH_AVR32)/src/interrupts.c \
+	$(ALEPH_AVR32)/src/memory.c \
 	$(ALEPH_AVR32)/src/screen.c \
 	$(ALEPH_AVR32)/src/scene.c \
 	$(ALEPH_AVR32)/src/switches.c \
@@ -101,8 +102,10 @@ CSRCS = \
 # List of assembler source files.
 ASSRCS = \
        avr32/drivers/intc/exception.S                     \
-	$(ALEPH_AVR32)/startup/startup.S \
-	$(ALEPH_AVR32)/startup/trampoline.S
+       avr32/utils/startup/startup_uc3.S                     \
+       avr32/utils/startup/trampoline_uc3.S                     
+#	$(ALEPH_AVR32)/startup/startup.S \
+#	$(ALEPH_AVR32)/startup/trampoline.S
 
 # List of include paths.
 INC_PATH = \
@@ -140,17 +143,10 @@ INC_PATH = \
 	$(ALEPH_AVR32)	\
 	$(ALEPH_AVR32)/src	\
 	$(ALEPH_AVR32)/conf	\
-	$(ALEPH_AVR32)/startup	\
 	$(ALEPH_BEES)	\
 	$(ALEPH_COMMON)	\
 	$(ALEPH_COMMON)/libfixmath \
 	$(ALEPH_COMMON)/fat_io_lib
-#	../../aleph/avr32/     \
-#	../../aleph/avr32/src   \
-#	../../aleph/avr32/conf  \
-#	../../aleph/bees        \
-#	../../aleph/common      \
-#	../../aleph/common/libfixmath
 
 # Additional search paths for libraries.
 LIB_PATH = 
@@ -159,8 +155,8 @@ LIB_PATH =
 LIBS = 
 
 # Path relative to top level directory pointing to a linker script.
-# LINKER_SCRIPT = avr32/utils/linker_scripts/at32uc3a/0512/gcc/link_uc3a0512.lds
-LINKER_SCRIPT = $(ALEPH_AVR32)/aleph.lds
+LINKER_SCRIPT = avr32/utils/linker_scripts/at32uc3a/0512/gcc/link_uc3a0512.lds
+#LINKER_SCRIPT = $(ALEPH_AVR32)/aleph.lds
 
 # Additional options for debugging. By default the common Makefile.in will
 # add -g3.
@@ -193,8 +189,9 @@ CFLAGS += -g3
 #   BOARD      Target board in use, see boards/board.h for a list.
 #   EXT_BOARD  Optional extension board in use, see boards/board.h for a list.
 CPPFLAGS = \
-       -D BOARD=USER_BOARD -D ARCH_AVR32=1
+       -D BOARD=USER_BOARD -D ARCH_AVR32=1 -D UHD_ENABLE
 
 # Extra flags to use when linking
-# LDFLAGS = -Wl,--gc-sections,-e,_trampoline -Wl,--defsym,__heap_size__=0x00080000 -nostartfiles	
-LDFLAGS = -Wl,--gc-sections,-e,_trampoline -Wl,--defsym,__heap_size__=0x00001000 -nostartfiles	
+# LDFLAGS = -Wl,--gc-sections,-e,_trampoline -Wl,--defsym,__heap_size__=0x00080000 -nostartfile	
+#LDFLAGS = -Wl,--gc-sections,-e,_trampoline -Wl,--defsym,__heap_size__=0x00001000 -nostartfiles	
+LDFLAGS = -nostartfiles -Wl,-e,_trampoline

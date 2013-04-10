@@ -187,12 +187,12 @@ extern void init_spi1 (void) {
 
   // add ADC chip register
   spiOptions.reg          = ADC_SPI_NPCS;
-  spiOptions.baudrate     = 16000000;
+  spiOptions.baudrate     = 20000000;
   spiOptions.bits         = 16;
   spiOptions.spi_mode     = 2;
-  spiOptions.spck_delay   = 20;
+  spiOptions.spck_delay   = 0;
   spiOptions.trans_delay  = 5;
-  spiOptions.stay_act     = 1;
+  spiOptions.stay_act     = 0;
   spiOptions.modfdis      = 0;
 
   spi_setupChipReg( ADC_SPI, &spiOptions, FPBA_HZ );

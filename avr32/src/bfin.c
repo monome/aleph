@@ -28,8 +28,7 @@ void bfin_load(U32 size, void* fp) {
   u64 i; /// byte index in .ldr
   u8 data;
   volatile U64 delay;
-  // FIXME: (?)
-  //  Disable_global_interrupt();
+
   // reset bfin
   gpio_set_gpio_pin(BFIN_RESET_PIN);  
   delay = 30; while (--delay > 0) {;;}
@@ -44,7 +43,6 @@ void bfin_load(U32 size, void* fp) {
   print_dbg(" bytes, FP: ");
   print_dbg_hex((long unsigned int)fp);
   print_dbg("\r\n");
-
 
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   while(i<size) {
@@ -61,9 +59,9 @@ void bfin_load(U32 size, void* fp) {
   delay_ms(200);
   print_dbg("\r\n done waiting; reporting... ");
 
-  report_params();
-  // FIXME: (?)
-  //  Enable_global_interrupt();
+  //// TEST: dont
+  //  report_params();
+  
 }
 
 //void bfin_set_param(u8 idx, f32 x ) {

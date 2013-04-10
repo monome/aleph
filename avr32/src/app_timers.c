@@ -116,6 +116,6 @@ static void adc_timer_callback(int tag) {
 void init_app_timers(void) {
   set_timer(&screenTimer, eScreenTimerTag, 30,   &screen_timer_callback, 1);
   set_timer(&encTimer,    eEncTimerTag,    20,    &enc_timer_callback,    1);
-  set_timer(&adcTimer,    eAdcTimerTag,    125,    &adc_timer_callback,    1);
+  set_timer(&adcTimer,    eAdcTimerTag,    1,    &adc_timer_callback,    1);
   set_timer(&swTimer,    eSwTimerTag,    SW_POLL_MS,    &sw_timer_callback,    1);
 }

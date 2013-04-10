@@ -119,12 +119,13 @@ void menu_handleKey(uiKey_t key, s16 val) {
 void set_page(ePage n) {
   u8 i;
   pageIdx = n;
-  //  print_dbg("\r\n set page :");
-  //  print_dbg_hex(pageIdx);
+    print_dbg("\r\n set page :");
+    print_dbg_hex(pageIdx);
   curPage = &(pages[pageIdx]);
   //  print_dbg("\r\n new page address:");
   //  print_dbg_hex((u32)curPage);
   curPage->redraw();
+
 #if ARCH_AVR32
   // set encoder sensitivity
   for(i=0; i<4; i++) {
