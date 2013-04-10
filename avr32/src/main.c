@@ -350,6 +350,10 @@ int main (void) {
 
   /// boot default dsp
   files_load_dsp_name("default.ldr");
+
+
+  // keep power alive (cleared by int)
+  gpio_set_gpio_pin(POWER_CTL_PIN);
   
   print_dbg("\r\n starting event loop.\r\n");
   while(1) {
