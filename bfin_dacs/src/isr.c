@@ -5,15 +5,7 @@
 #include "types.h"
 #include "util.h"
 
-/// external data, initialized here:
-//volatile u8 testTxBuf[4] = { 0, 1, 2, 3 };
-
-// some arbitrary data for the 12 DAC channels
-//static u16 data[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-// channel counter (0-3)
-//static u8 chan = 0;
-
-#define DAC_COM_WRITE 0x3
+#define DAC_COM_WRITE 3
 #define DAC_COM_LSHIFT 20
 #define DAC_ADDR_LSHIFT 16
 
@@ -28,7 +20,6 @@ u8 upCh = 0;
 static u32 chanIncMul = 4;
 static u32 chanIncOff = 1;
 
-//static u16 dacData[4] = { 0, 0, 0, 0 };
 static u16 dacData[4] = { 0xcccc, 0xdddd, 0xeeee, 0xffff };
 //static u32 txBuf = 0;
 

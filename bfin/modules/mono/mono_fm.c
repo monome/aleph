@@ -77,10 +77,21 @@ enum params {
 //----- extern vars (initialized here)
 moduleData_t * moduleData; // module data
 
+/// datastructure for stuff that will live in SDRAM
+/* typedef struct _mono_data { */
+/*   fract32   tab1[WAVE_TAB_SIZE]; // wavetable1 */
+/*   fract32   tab2[WAVE_TAB_SIZE]; // wavetable2 */
+/* } mono_data; */
+
 //-----------------------
 //------ static variables
-static fract32   tab1[WAVE_TAB_SIZE]; // wavetable1
-static fract32   tab2[WAVE_TAB_SIZE]; // wavetable2
+/* static mono_data * monoData = (mono_data*)SDRAM_ADDRESS; */
+/* static fract32* tab1; */
+/* static fract32* tab2; */
+
+static   fract32   tab1[WAVE_TAB_SIZE]; // wavetable1
+static   fract32   tab2[WAVE_TAB_SIZE]; // wavetable1
+
 static u32       sr;            // sample rate
 static fix16     ips;        // index change per sample
 
@@ -241,6 +252,7 @@ void module_init(void) {
 #else
   moduleData = (moduleData_t*)malloc(sizeof(moduleData_t));
 #endif
+
   moduleData->numParams = eParamNumParams;
   moduleData->paramDesc = (ParamDesc*)malloc(eParamNumParams * sizeof(ParamDesc));
   moduleData->paramData = (ParamData*)malloc(eParamNumParams * sizeof(ParamData));
@@ -277,6 +289,8 @@ void module_init(void) {
   idx1 = idx2 = 0;
 
   // init wavetables
+  /* tab1 = monoData->tab1; */
+  /* tab2 = monoData->tab2; */
   table_fill_harm(tab1, WAVE_TAB_SIZE, 1, 1.f, 0);
   table_fill_harm(tab2, WAVE_TAB_SIZE, 5, 0.5, 1);
 
@@ -360,7 +374,8 @@ void module_set_param(u32 idx, pval v) {
   case eParamPm:
     // scale to [0, 0.5]
     //    filter_1p_fr32_in(pmLp, float_to_fr32(v) >> 1);
-    filter_1p_fr32_in(pmLp, v.fr >> 1);
+    //    filter_1p_fr32_in(pmLp, v.fr >> 1);
+    filter_1p_fr32_in(pmLp, v.fix);
     break;
   case eParamAmp1:
     //    filter_1p_fr32_in(amp1Lp, float_to_fr32(v));

@@ -99,14 +99,10 @@ void poll_sw(const U8 idx) {
   if(changed) {
     // spawn event
     e.eventType = kSwitchEvents[idx][state];
-    //    print_dbg("\r\n posting switch event, num: ");
-    //    print_dbg_hex(idx);
-    //    print_dbg(" , state: ");
-    //    print_dbg_hex(state);
     post_event(&e);
 
-    print_dbg("\r\n posting SWITCH event, type: ");
-    print_dbg_hex(e.eventType);
+    /* print_dbg("\r\n posting SWITCH event, type: "); */
+    /* print_dbg_hex(e.eventType); */
 
   }
 }
