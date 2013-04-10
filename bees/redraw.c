@@ -507,12 +507,6 @@ void draw_line_dsp(s32 n, u16 num, u8 y, u8 hl) {
     n -= num;
   } 
   screen_blank_line(0, y);
-  /*
-  print_dbg( " \r\n drawing dsp line : ");
-  print_dbg_ulong(n);
-  print_dbg(" , name: ");
-  print_dbg(files_get_dsp_name(n));
-  */
   println( (const char*)files_get_dsp_name(n), 0);
   endln(); screen_string(0, y, lineBuf, hl); 
 }

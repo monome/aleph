@@ -19,8 +19,11 @@
 #include "screen.h"
 #include "ui.h"
 
-#define ENC_THRESH_PAGESCROLL 64
+// encoder sensitivities
+#define ENC_THRESH_PAGESCROLL 32
 #define ENC_THRESH_LISTSCROLL 4
+#define ENC_THRESH_FINE 0
+#define ENC_THRESH_COARSE 4
 
 //--------------------------
 //--------- variables
@@ -31,7 +34,6 @@ const opId_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpGate,
   // eOpAccum,
   // eOpSelect,
-
 };
 
 // page structures - synchronize with ePage enum
@@ -81,6 +83,9 @@ touched_t touchedParams[CHAR_ROWS];
 // saved idx for toggling in play mode
 static s8 savedPageIdx = 0;
 
+// const array to re-map hardware encoders (sorry...)
+static const u8 encMap[] = { 3, 2, 1, 0 };
+
 //-----------------------------------
 //----- external function definitions
 
@@ -119,17 +124,13 @@ void menu_handleKey(uiKey_t key, s16 val) {
 void set_page(ePage n) {
   u8 i;
   pageIdx = n;
-    print_dbg("\r\n set page :");
-    print_dbg_hex(pageIdx);
   curPage = &(pages[pageIdx]);
-  //  print_dbg("\r\n new page address:");
-  //  print_dbg_hex((u32)curPage);
   curPage->redraw();
 
 #if ARCH_AVR32
   // set encoder sensitivity
   for(i=0; i<4; i++) {
-    set_enc_thresh(i, curPage->encSens[i]);
+    set_enc_thresh(encMap[i], curPage->encSens[i]);
   }
 #endif
 }

@@ -326,25 +326,26 @@ U8 screen_line(U16 x, U16 l, char *str, U8 hl) {
   return NCOLS;
 }
 
-// fill graphics ram with a test pattern
-void screen_test_fill(void) {
-  u32 i;
-  u32 x=0;
-  u32 l=5;
 
-  screen_line(0, 0, "_ LINE 1 ! ! ! ! ", 0xf);
-  screen_line(0, 1, "_ LINE 2 @ @ @ @ ", 0xf);
-  screen_line(0, 2, "_ LINE 3 # # # # ", 0xf);
-  screen_line(0, 3, "_ LINE 4 $ $ $ $ ", 0xf);
-  screen_line(0, 4, "_ LINE 5 % % % % ", 0xf);
+/* // fill graphics ram with a test pattern */
+/* void screen_test_fill(void) { */
+/*   u32 i; */
+/*   u32 x=0; */
+/*   u32 l=5; */
 
-  for(i=0; i<font_nglyphs; i++) {
-    x = x + screen_char_squeeze(x, l, i + FONT_ASCII_OFFSET, 0xf);
-    x++;
-    if (x > NCOLS) {
-      x -= NCOLS;
-      l++;
-    }
-  }
-  refresh = 1;
-}
+/*   screen_line(0, 0, "_ LINE 1 ! ! ! ! ", 0xf); */
+/*   screen_line(0, 1, "_ LINE 2 @ @ @ @ ", 0xf); */
+/*   screen_line(0, 2, "_ LINE 3 # # # # ", 0xf); */
+/*   screen_line(0, 3, "_ LINE 4 $ $ $ $ ", 0xf); */
+/*   screen_line(0, 4, "_ LINE 5 % % % % ", 0xf); */
+
+/*   for(i=0; i<font_nglyphs; i++) { */
+/*     x = x + screen_char_squeeze(x, l, i + FONT_ASCII_OFFSET, 0xf); */
+/*     x++; */
+/*     if (x > NCOLS) { */
+/*       x -= NCOLS; */
+/*       l++; */
+/*     } */
+/*   } */
+/*   refresh = 1; */
+/* } */

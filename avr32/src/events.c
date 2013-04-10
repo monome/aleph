@@ -13,7 +13,8 @@
 #include "events.h"
 #include "event_types.h"
 
-#define MAX_EVENTS   32
+//#define MAX_EVENTS   32
+#define MAX_EVENTS   128
 
 // macro for incrementing an index into a circular buffer.
 #define INCR_EVENT_INDEX( x )  { if ( ++x == MAX_EVENTS ) x = 0; }

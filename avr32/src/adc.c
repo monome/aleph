@@ -126,10 +126,13 @@ void adc_poll(void) {
   for(i=0; i<4; i++) {        
     // TODO:
     /// probably want more filtering before posting events
-    if(adcVal[i] != adcOldVal[i]) {
+    //    if(adcVal[i] != adcOldVal[i]) {
+    /// dirty! but the two lower bits seem like noise ATM
+    if( (adcVal[i] & 0xffc) != ( adcOldVal[i] & 0xffc) ) {
       adcOldVal[i] = adcVal[i];
       e.eventType = adcEventTypes[i];
       e.eventData = (S16)(adcVal[i]);
+      post_event(&e);
     }
   }
 }

@@ -236,7 +236,7 @@ static void check_events(void) {
 	break;
 
       case kEventEncoder0:
-			print_dbg("\r\n encoder 0");
+	//			print_dbg("\r\n encoder 0");
       	if(e.eventData > 0) {
       	  menu_handleKey(eKeyEncUpD, e.eventData);
       	} else {
@@ -244,7 +244,7 @@ static void check_events(void) {
       	}
       	break;
       case kEventEncoder1:
-	print_dbg("\r\n encoder 1");
+	//	print_dbg("\r\n encoder 1");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpC, e.eventData);
 	} else {
@@ -252,7 +252,7 @@ static void check_events(void) {
 	}
 	break;
       case kEventEncoder2:
-	print_dbg("\r\n encoder 2");
+	//	print_dbg("\r\n encoder 2");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpB, e.eventData);
 	} else {
@@ -260,7 +260,7 @@ static void check_events(void) {
 	}
 	break;
       case kEventEncoder3:
-	print_dbg("\r\n encoder 3");
+	//	print_dbg("\r\n encoder 3");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpA, e.eventData);
 	} else {
@@ -269,23 +269,23 @@ static void check_events(void) {
 	break;
 
       case kEventAdc0:
-		print_dbg("\r\nadc val 0: ");
-		print_dbg_hex(e.eventData);
+	//		print_dbg("\r\nadc val 0: ");
+	//		print_dbg_hex(e.eventData);
 	//	displayAdcVal(0, e.eventData);
 	break;
       case kEventAdc1:
-		 print_dbg("\r\nadc val 1: ");
-		 print_dbg_hex(e.eventData);
+	//		 print_dbg("\r\nadc val 1: ");
+	//		 print_dbg_hex(e.eventData);
 	 //	 displayAdcVal(1, e.eventData);
 	break;
       case kEventAdc2:
-		 print_dbg("\r\nadc val 2: ");
-		 print_dbg_hex(e.eventData);
+	//		 print_dbg("\r\nadc val 2: ");
+	//		 print_dbg_hex(e.eventData);
 	//	 displayAdcVal(2, e.eventData);
 	break;
       case kEventAdc3:
-	     	print_dbg("\r\nadc val 3: ");
-	     	print_dbg_hex(e.eventData);
+	//	     	print_dbg("\r\nadc val 3: ");
+	//	     	print_dbg_hex(e.eventData);
 	//     	displayAdcVal(3, e.eventData);
 	break;
       }
@@ -303,15 +303,6 @@ int main (void) {
 
   // wait for sd card
 
-  screen_blank_line(0, 0);
-  screen_blank_line(0, 1);
-  screen_blank_line(0, 2);
-  screen_blank_line(0, 3);
-  screen_blank_line(0, 4);
-  screen_blank_line(0, 5);
-  screen_blank_line(0, 6);
-  screen_blank_line(0, 7);
-
   screen_line(0, 0, "ALEPH", 0x3f);
   screen_line(0, 1, "waiting for SD card...", 0x3f);
   screen_refresh();
@@ -327,14 +318,23 @@ int main (void) {
   // setup control logic
   init_ctl();
 
+  screen_blank_line(0, 0);
+  screen_blank_line(0, 1);
+  screen_blank_line(0, 2);
+  screen_blank_line(0, 3);
+  screen_blank_line(0, 4);
+  screen_blank_line(0, 5);
+  screen_blank_line(0, 6);
+  screen_blank_line(0, 7);
+
   /// boot default dsp
-  screen_line(0, 1, "loading default DSP...", 0x3f);
+  screen_line(0, 0, "loading default DSP...", 0x3f);
   screen_refresh();
 
   files_load_dsp_name("default.ldr");
 
-  screen_line(0, 2, "finished. ", 0x3f);
-  screen_line(0, 3, "press a key to continue...", 0x3f);
+  screen_line(0, 1, "finished. ", 0x3f);
+  screen_line(0, 2, "press a key to continue...", 0x3f);
 
   screen_refresh();
   

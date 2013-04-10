@@ -110,9 +110,10 @@ void itoa_whole(int val, char* buf, int len) {
 // format whole part, left justified, no length argument (!)
 int itoa_whole_lj(int val, char* buf) {
   static char* p;
-  //  char tmp;
-  //int i;
+  char tmp;
+  int i;
   int len = 0;
+  
   if(val == 0) {
     *buf = '0';
     return 1;
@@ -138,22 +139,21 @@ int itoa_whole_lj(int val, char* buf) {
     len++;
   }
 
-  /*
-  /// ugh, swap digits
-  if(sign) {
-    for (i=1; i<len; i++) {
-      tmp = buf[i];
-      buf[i] = buf[len - i + 1];
-      buf[len - i + 1] = tmp;
-    }
-  } else {
-      for (i=0; i<len; i++) {
-	tmp = buf[i];
-	buf[i] = buf[len - i + 1];
-	buf[len - i + 1] = tmp;
-      }
-  }
-  */
+  //// FIXME
+  /* /// ugh, swap digits */
+  /* if(sign) { */
+  /*   for (i=1; i<len; i++) { */
+  /*     tmp = buf[i]; */
+  /*     buf[i] = buf[len - i + 1]; */
+  /*     buf[len - i + 1] = tmp; */
+  /*   } */
+  /* } else { */
+  /*     for (i=0; i<len; i++) { */
+  /* 	tmp = buf[i]; */
+  /* 	buf[i] = buf[len - i + 1]; */
+  /* 	buf[len - i + 1] = tmp; */
+  /*     } */
+  /* } */
 
   return len;
 }

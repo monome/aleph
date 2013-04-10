@@ -59,8 +59,7 @@ void bfin_load(U32 size, void* fp) {
   delay_ms(200);
   print_dbg("\r\n done waiting; reporting... ");
 
-  //// TEST: dont
-  //  report_params();
+  report_params();
   
 }
 
