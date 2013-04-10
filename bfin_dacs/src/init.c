@@ -35,7 +35,7 @@ void init_sport1(void) {
   //// frame sync required           : TFSR  = 1
   //// no companding                 : TDTYPE = 00
   //// MSB first                     : TLSBIT = 0  
-    *pSPORT1_TCR1 = ITCLK | ITFS | TFSR;
+  *pSPORT1_TCR1 = ITCLK | ITFS | TFSR;
   
 
   //----- note: edge selection is for *driving* the pins, sampled opposite
@@ -48,7 +48,7 @@ void init_sport1(void) {
   //// frame sync required           : TFSR  = 1
   //// no companding                 : TDTYPE = 00
   //// MSB first                     : TLSBIT = 0  
-  //  *pSPORT1_TCR1 = ITCLK | ITFS | TFSR | LTFS | LATFS;
+  // *pSPORT1_TCR1 = ITCLK | ITFS | TFSR | LTFS | LATFS;
   
 
 

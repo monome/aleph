@@ -39,7 +39,6 @@
 #include "adc.h"
 #include "app_timers.h"
 #include "bfin.h"
-//#include "conf_aleph.h"
 #include "encoders.h"
 #include "events.h"
 #include "filesystem.h"
@@ -49,6 +48,7 @@
 #include "i2c.h"
 #include "init.h"
 #include "interrupts.h"
+#include "memory.h"
 #include "switches.h"
 #include "timers.h"
 
@@ -75,14 +75,20 @@ static void check_events(void);
 static void init_avr32(void) {
   volatile avr32_tc_t *tc = APP_TC;
   // clocks
-  //init_clocks();
-  // interrupt vectors
+  // setup clocks
+  flashc_set_wait_state( 1 );
+  sysclk_init();
+  sysclk_enable_pbb_module(SYSCLK_SMC_REGS);
+
+  /// interrupts
+  irq_initialize_vectors();
 
   // disable all interrupts for now
   cpu_irq_disable();
   // serial usb
-  //  init_ftdi_usart();
-
+  init_ftdi_usart();
+  // external sram
+  //  smc_init(FHSB_HZ);
   // initialize spi1: OLED, ADC, SD/MMC
   init_spi1();
   // initialize PDCA controller
@@ -101,55 +107,54 @@ static void init_avr32(void) {
   cpu_irq_enable();
 
   /// initialize filesystem
-   init_files();
+  init_files();
 
   // usb host controller
-   //   init_usb_host();
-
+  init_usb_host();
+  
   print_dbg("\r\n avr32 init done ");
 }
 
 // control / network / logic init
 static void init_ctl(void) {
   // disable interrupts
-  
-  cpu_irq_disable();
+    cpu_irq_disable();
+
   // intialize the event queue
   init_events();
   print_dbg("\r\n init_events");
+
   // intialize encoders
   init_encoders();
   print_dbg("\r\n init_encoders");
+
   // intialize switches (debouncing)
   init_switches();
   print_dbg("\r\n init_switches");
   
-/* #if FIXMEM */
-/*   //memory manager */
-/* #else */
-/*   //  init_mem(); */
-/* #endif */
-  
-  // set up file navigation
-  
+  //memory manager
+  init_mem();  
+  print_dbg("\r\n init_mem");
+
   // send ADC config
   init_adc();
   print_dbg("\r\n init_adc");
+
   // start application timers
   init_app_timers();
   print_dbg("\r\n init_timers");
   
   //// BEES:
-  net_init();
+  //  net_init();
   print_dbg("\r\n net_init");
 
-  preset_init();
+  //  preset_init();
   print_dbg("\r\n preset_init");
 
-  scene_init();
+  //  scene_init();
   print_dbg("\r\n scene_init");
 
-  menu_init();
+  //  menu_init();
   print_dbg("\r\n menu_init");
 
   // enable interrupts
@@ -162,11 +167,11 @@ static void check_events(void) {
 
   if( get_next_event(&e) ) {
 
- //  print_dbg("\r\n handling event, type: "); 
- //  print_dbg_hex(e.eventType); 
- //  print_dbg(" , data: "); 
- //  print_dbg_hex(e.eventData);
-   
+  /* print_dbg("\r\n handling event, type: "); */
+  /* print_dbg_hex(e.eventType); */
+  /* print_dbg("\r\n , data: "); */
+  /* print_dbg_hex(e.eventData); */
+
     if(startup) {
       if( e.eventType == kEventSwitchDown0
 	  || e.eventType == kEventSwitchDown1
@@ -175,6 +180,7 @@ static void check_events(void) {
 	  || e.eventType == kEventSwitchDown4
 	  ) {  
 	startup = 0;
+	/// FIXME: should go to some default UI state here
 	return;
       }
     } else {
@@ -224,15 +230,13 @@ static void check_events(void) {
 	screen_line(0, 0, "powering down!", 0x3f);
 	print_dbg("\r\n AVR32 received power down switch event");
 	screen_refresh();
-	delay_ms(1000);
-	// ENABLE LINE BELOW FOR TIMED SHUTDOWN
 	gpio_clr_gpio_pin(POWER_CTL_PIN);
 	break;
       case kEventSwitchUp5:
 	break;
 
       case kEventEncoder0:
-	//		print_dbg("\r\n encoder 0");
+			print_dbg("\r\n encoder 0");
       	if(e.eventData > 0) {
       	  menu_handleKey(eKeyEncUpD, e.eventData);
       	} else {
@@ -240,7 +244,7 @@ static void check_events(void) {
       	}
       	break;
       case kEventEncoder1:
-	//		print_dbg("\r\n encoder 1");
+	print_dbg("\r\n encoder 1");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpC, e.eventData);
 	} else {
@@ -248,7 +252,7 @@ static void check_events(void) {
 	}
 	break;
       case kEventEncoder2:
-	//		print_dbg("\r\n encoder 2");
+	print_dbg("\r\n encoder 2");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpB, e.eventData);
 	} else {
@@ -256,7 +260,7 @@ static void check_events(void) {
 	}
 	break;
       case kEventEncoder3:
-	//		print_dbg("\r\n encoder 3");
+	print_dbg("\r\n encoder 3");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpA, e.eventData);
 	} else {
@@ -289,38 +293,6 @@ static void check_events(void) {
   } // if !startup
 }
 
-// startup routine runs before main()
-int _init_startup(void);
-int _init_startup(void) {
-
-  // Import the Exception Vector Base Address.
-  extern void _evba;
-
-  // setup clocks
-  flashc_set_wait_state( 1 );
-  sysclk_init();
-  sysclk_enable_pbb_module(SYSCLK_SMC_REGS);
-
-  // Switch to external oscillator 0.
-  //pm_switch_to_osc0(&AVR32_PM, FOSC0, OSC0_STARTUP);
-  
-  // Load the Exception Vector Base Address in the corresponding system register
-  Set_system_register(AVR32_EVBA, (int)&_evba);
-
-  // Enable exceptions.
-  Enable_global_exception();
-
-  // Initialize interrupt handling.
-  INTC_init_interrupts();
-  init_dbg_rs232(FPBA_HZ);
-
-  // setup static memory controller 
-  smc_init(FHSB_HZ);
-    //  smc_init(FOSC0);
-  // return dont-care
-  return 1;
-}
-
 //int main(void) {
 ////main function
 int main (void) {
@@ -343,20 +315,17 @@ int main (void) {
   screen_blank_line(0, 0);
   screen_blank_line(0, 1);
   screen_line(0, 0, "SD card detected.", 0x3f);
-  screen_line(0, 1, "press any key to continue...", 0x3f);
-  screen_refresh();
 
   // setup control logic
   init_ctl();
 
   /// boot default dsp
+  screen_line(0, 1, "loading default DSP...", 0x3f);
+  screen_refresh();
   files_load_dsp_name("default.ldr");
 
-
-  // soft shutdown. keep power on until switch event
-  gpio_set_gpio_pin(POWER_CTL_PIN);
-
-
+  screen_line(0, 1, "finished. press any key to continue...", 0x3f);
+  screen_refresh();
   
   print_dbg("\r\n starting event loop.\r\n");
   while(1) {
