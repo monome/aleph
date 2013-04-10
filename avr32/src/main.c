@@ -162,11 +162,11 @@ static void check_events(void) {
 
   if( get_next_event(&e) ) {
 
-  /* print_dbg("\r\n handling event, type: "); */
-  /* print_dbg_hex(e.eventType); */
-  /* print_dbg("\r\n , data: "); */
-  /* print_dbg_hex(e.eventData); */
-
+ //  print_dbg("\r\n handling event, type: "); 
+ //  print_dbg_hex(e.eventType); 
+ //  print_dbg(" , data: "); 
+ //  print_dbg_hex(e.eventData);
+   
     if(startup) {
       if( e.eventType == kEventSwitchDown0
 	  || e.eventType == kEventSwitchDown1
@@ -224,6 +224,8 @@ static void check_events(void) {
 	screen_line(0, 0, "powering down!", 0x3f);
 	print_dbg("\r\n AVR32 received power down switch event");
 	screen_refresh();
+	delay_ms(1000);
+	// ENABLE LINE BELOW FOR TIMED SHUTDOWN
 	gpio_clr_gpio_pin(POWER_CTL_PIN);
 	break;
       case kEventSwitchUp5:
@@ -351,8 +353,10 @@ int main (void) {
   files_load_dsp_name("default.ldr");
 
 
-  // keep power alive (cleared by int)
+  // soft shutdown. keep power on until switch event
   gpio_set_gpio_pin(POWER_CTL_PIN);
+
+
   
   print_dbg("\r\n starting event loop.\r\n");
   while(1) {
