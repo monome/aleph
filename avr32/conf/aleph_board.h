@@ -173,8 +173,8 @@
 #define LED_MODE_PIN    AVR32_PIN_PA23
 #define SW_MODE_PIN     AVR32_PIN_PA24
 // power-down control
-#define SW_POWER_PIN    AVR32_PIN_PX12
-#define POWER_CTL_PIN   AVR32_PIN_PX13
+#define SW_POWER_PIN    AVR32_PIN_PB16
+#define POWER_CTL_PIN   AVR32_PIN_PB15
 
 // aux pullup gates
 #define AUX_PULLUP0_PIN AVR32_PIN_PB20

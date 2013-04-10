@@ -253,21 +253,22 @@ static void irq_port1_line1(void) {
 __attribute__((__interrupt__))
 static void irq_port2_line1(void) {
 
-  print_dbg("\r\n interrupt on px08-px15 : ");
+
+}
+*/
+
+
+/*
+// interrupt handler for PB16-PB23
+__attribute__((__interrupt__))
+static void irq_port1_line2(void) {
+    print_dbg("\r\n interrupt on pb16-pb23 : ");
 
   //SW_POWER
   if(gpio_get_pin_interrupt_flag(SW_POWER_PIN)) {
     process_sw(5);
     gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
   }
-}
-*/
-
-/*
-// interrupt handler for PB16-PB23
-__attribute__((__interrupt__))
-static void irq_port1_line2(void) {
-  //...
 }
 */
 
@@ -309,7 +310,7 @@ void register_interrupts(void) {
   //  gpio_enable_pin_interrupt( SW2_PIN,	        GPIO_PIN_CHANGE);
   //  gpio_enable_pin_interrupt( SW3_PIN,	        GPIO_PIN_CHANGE);
   //  gpio_enable_pin_interrupt( SW_MODE_PIN,	GPIO_PIN_CHANGE);
-  //  gpio_enable_pin_interrupt( SW_POWER_PIN,	GPIO_PIN_CHANGE);
+  //gpio_enable_pin_interrupt( SW_POWER_PIN,	GPIO_PIN_CHANGE);
  
   // PA00 - PA07
   //  INTC_register_interrupt( &irq_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), UI_IRQ_PRIORITY );
@@ -330,7 +331,7 @@ void register_interrupts(void) {
   INTC_register_interrupt( &irq_port1_line1, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB08 / 8), UI_IRQ_PRIORITY);
 
   // PB16 - PB23
-  // INTC_register_interrupt( &irq_port1_line2, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB16 / 8), UI_IRQ_PRIORITY);
+//  INTC_register_interrupt( &irq_port1_line2, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB16 / 8), UI_IRQ_PRIORITY);
 
   // PB24 - PB31
   //  INTC_register_interrupt( &irq_port1_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB24 / 8), UI_IRQ_PRIORITY);
