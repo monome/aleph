@@ -254,8 +254,8 @@ void module_init(void) {
 #endif
 
   moduleData->numParams = eParamNumParams;
-  moduleData->paramDesc = (ParamDesc*)malloc(eParamNumParams * sizeof(ParamDesc));
-  moduleData->paramData = (ParamData*)malloc(eParamNumParams * sizeof(ParamData));
+  //  moduleData->paramDesc = (ParamDesc*)malloc(eParamNumParams * sizeof(ParamDesc));
+  //  moduleData->paramData = (ParamData*)malloc(eParamNumParams * sizeof(ParamData));
 
   strcpy(moduleData->paramDesc[eParamHz1].label, "osc 1 hz");
   strcpy(moduleData->paramDesc[eParamHz2].label, "osc 2 hz");
