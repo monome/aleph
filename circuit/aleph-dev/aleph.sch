@@ -1951,11 +1951,11 @@ shrink quad flat pack, square</description>
 <wire x1="5" y1="7" x2="5" y2="-7.5" width="0.127" layer="21"/>
 <wire x1="5" y1="-7.5" x2="-5" y2="-7.5" width="0.127" layer="21"/>
 <wire x1="-5" y1="-7.5" x2="-5" y2="7" width="0.127" layer="21"/>
-<pad name="1" x="-2.2" y="-4.1" drill="0.8"/>
-<pad name="2" x="2.2" y="-2.5" drill="0.8"/>
-<pad name="3" x="-1.7" y="2.5" drill="0.8"/>
-<pad name="4" x="1.7" y="5" drill="0.8"/>
-<pad name="5" x="0" y="0" drill="0.8"/>
+<pad name="1" x="2.2" y="-4.1" drill="1.5"/>
+<pad name="2" x="-2.2" y="-2.5" drill="1.5"/>
+<pad name="3" x="1.7" y="2.5" drill="1.5"/>
+<pad name="4" x="-1.7" y="5" drill="1.5"/>
+<pad name="5" x="0" y="0" drill="1.5"/>
 <text x="-5" y="-9" size="1.27" layer="25">&gt;NAME</text>
 <text x="-5" y="7.5" size="1.27" layer="27">&gt;VALUE</text>
 </package>

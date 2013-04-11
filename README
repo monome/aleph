@@ -16,8 +16,6 @@ output gain stage
 headphone amp
 	LED follower
 
-LED followers: comparator only, on-off http://www.openmusiclabs.com/projects/microdec/
-
 # debouncing: http://www.ganssle.com/debouncing.htm
 
 schem cleanup

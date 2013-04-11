@@ -18969,7 +18969,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="C43" gate="G$1" x="187.96" y="195.58" rot="R90"/>
 <instance part="C44" gate="G$1" x="193.04" y="195.58" rot="R90"/>
 <instance part="C45" gate="G$1" x="236.22" y="195.58" rot="R180"/>
-<instance part="C46" gate="G$1" x="259.08" y="190.5" rot="R270"/>
+<instance part="C46" gate="G$1" x="259.08" y="190.5" rot="R90"/>
 <instance part="GND22" gate="1" x="175.26" y="185.42"/>
 <instance part="GND23" gate="1" x="241.3" y="180.34"/>
 <instance part="V12" gate="1" x="266.7" y="210.82"/>
@@ -19124,11 +19124,11 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <wire x1="241.3" y1="187.96" x2="241.3" y2="185.42" width="0.1524" layer="91"/>
 <wire x1="241.3" y1="185.42" x2="241.3" y2="182.88" width="0.1524" layer="91"/>
 <wire x1="241.3" y1="185.42" x2="259.08" y2="185.42" width="0.1524" layer="91"/>
-<wire x1="259.08" y1="185.42" x2="259.08" y2="187.96" width="0.1524" layer="91"/>
 <junction x="241.3" y="185.42"/>
 <pinref part="D2" gate="G$1" pin="A"/>
 <pinref part="GND23" gate="1" pin="GND"/>
-<pinref part="C46" gate="G$1" pin="+"/>
+<pinref part="C46" gate="G$1" pin="-"/>
+<wire x1="259.08" y1="185.42" x2="259.08" y2="187.96" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <wire x1="289.56" y1="198.12" x2="289.56" y2="190.5" width="0.1524" layer="91"/>
@@ -19411,17 +19411,17 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <wire x1="231.14" y1="200.66" x2="259.08" y2="200.66" width="0.1524" layer="91"/>
 <wire x1="259.08" y1="200.66" x2="259.08" y2="208.28" width="0.1524" layer="91"/>
 <wire x1="259.08" y1="208.28" x2="254" y2="208.28" width="0.1524" layer="91"/>
-<wire x1="259.08" y1="193.04" x2="259.08" y2="200.66" width="0.1524" layer="91"/>
 <wire x1="259.08" y1="208.28" x2="261.62" y2="208.28" width="0.1524" layer="91"/>
 <wire x1="261.62" y1="208.28" x2="266.7" y2="208.28" width="0.1524" layer="91"/>
-<junction x="259.08" y="200.66"/>
 <junction x="259.08" y="208.28"/>
 <junction x="261.62" y="208.28"/>
 <pinref part="U6" gate="G$1" pin="FB"/>
 <pinref part="L1" gate="G$1" pin="2"/>
-<pinref part="C46" gate="G$1" pin="-"/>
 <pinref part="V12" gate="1" pin="+5V"/>
 <pinref part="5V" gate="G$1" pin="TP"/>
+<pinref part="C46" gate="G$1" pin="+"/>
+<wire x1="259.08" y1="193.04" x2="259.08" y2="200.66" width="0.1524" layer="91"/>
+<junction x="259.08" y="200.66"/>
 </segment>
 <segment>
 <wire x1="289.56" y1="210.82" x2="289.56" y2="205.74" width="0.1524" layer="91"/>
