@@ -267,6 +267,11 @@ void key_handler_play(uiKey_t key, s16 v) {
      for now, we activate the 8 operators from
      net.c : add_sys_ops()
   */
+  print_dbg("\r\n PLAY key handler, key: ");
+  print_dbg_ulong(key);
+  print_dbg("\r\n PLAY key handler, val: ");
+  print_dbg_hex(v);
+  
   switch(key) {
     ///// keys
   case eKeyFnUpA:
@@ -338,6 +343,8 @@ void key_handler_play(uiKey_t key, s16 v) {
     ;;
     break;
   }
+  print_dbg("\r\n inIdx: ");
+  print_dbg_hex(inIdx);
   if(inIdx >= 0) {
     net_activate(inIdx, val);
     redraw_play();

@@ -351,7 +351,7 @@ void redraw_play(void) {
     //    println("", 0);
     idx = touchedParams[n].idx;
 
-    /*
+    
     screen_blank_line(0, y);
     println_int(idx, 0);
     endln(); screen_line(0, y, lineBuf, 1);
@@ -363,7 +363,7 @@ void redraw_play(void) {
 
     print_fix16(numBuf, touchedParams[n].val);
     screen_line(0, 80, numBuf, 10);
-    */
+    
     n--;
   }
   // draw the header
@@ -501,12 +501,17 @@ void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
 // draw line of dsp page
 void draw_line_dsp(s32 n, u16 num, u8 y, u8 hl) {
     // wrap
-  if (n < 0) {
-    n += num;
-  } else if (n >= num) {
-    n -= num;
-  } 
+  /* if (n < 0) { */
+  /*   n += num; */
+  /* } else if (n >= num) { */
+  /*   n -= num; */
+  /* }  */
   screen_blank_line(0, y);
+
+  if (n < 0  || n >= num ) {
+    return;
+  } 
+
   println( (const char*)files_get_dsp_name(n), 0);
   endln(); screen_string(0, y, lineBuf, hl); 
 }

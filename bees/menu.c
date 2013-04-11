@@ -187,8 +187,8 @@ void scroll_select(s8 dir, s32 max) {
 // parameter feedback
 void param_feedback(u16 paramIdx, fix16 val) {
   int i;
-  // print_dbg("\r\n param fb: ");
-  // print_dbg_hex(paramIdx);
+  print_dbg("\r\n param fb: ");
+  print_dbg_hex(paramIdx);
   for (i = 1; i < CHAR_ROWS; i++) {
     touchedParams[i-1].idx = touchedParams[i].idx;
     touchedParams[i-1].val = touchedParams[i].val;

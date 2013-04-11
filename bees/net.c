@@ -18,7 +18,7 @@
 #include "util.h"
 #include "op.h" 
 #include "op_derived.h"
-//#include "memory.h"
+#include "memory.h"
 #include "menu_protected.h"
 #include "net.h"
 #include "net_protected.h"
@@ -29,7 +29,7 @@
 //=========================================
 //===== variables
 //----- static
-__attribute__((__section__(".bss_extram")))
+//__attribute__((__section__(".bss_extram")))
 static ctlnet_t netPrivate;
 
 static s32 inSearchIdx = 0;
@@ -67,7 +67,8 @@ void net_init(void) {
   u32 i;
   //  u32 res;
   
-  net = &netPrivate;
+  // net = &netPrivate;
+  net = alloc_mem(sizeof(ctlnet_t));
 
   /* print_dbg("\r\n cltnet address: "); */
   /* print_dbg_hex((unsigned long int)net); */

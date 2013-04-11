@@ -122,6 +122,7 @@ static void irq_port0_line3(void) {
   if(gpio_get_pin_interrupt_flag(SW2_PIN)) {
     gpio_clear_pin_interrupt_flag(SW2_PIN);
     process_sw(2);
+  }
  
   // SW_F3
   if(gpio_get_pin_interrupt_flag(SW3_PIN)) {
@@ -140,7 +141,7 @@ __attribute__((__interrupt__))
 static void irq_port1_line0(void) {
   // print_dbg("\r\b\interrupt on PB00-PB07.");
   // ENC0_0
- if(gpio_get_pin_interrupt_flag(ENC0_S0_PIN)) {
+  if(gpio_get_pin_interrupt_flag(ENC0_S0_PIN)) {
     process_enc(0);
     gpio_clear_pin_interrupt_flag(ENC0_S0_PIN);
   }  
@@ -176,7 +177,7 @@ __attribute__((__interrupt__))
 static void irq_port1_line1(void) {
   //    print_dbg("\r\b\interrupt on PB08-PB15.");
   // ENC3_0
- if(gpio_get_pin_interrupt_flag(ENC3_S0_PIN)) {
+  if(gpio_get_pin_interrupt_flag(ENC3_S0_PIN)) {
     process_enc(3);
     gpio_clear_pin_interrupt_flag(ENC3_S0_PIN);
   }  
@@ -191,7 +192,7 @@ static void irq_port1_line1(void) {
 // interrupt handler for PB16-PB23
 __attribute__((__interrupt__))
 static void irq_port1_line2(void) {
-    print_dbg("\r\n interrupt on pb16-pb23 : ");
+  print_dbg("\r\n interrupt on pb16-pb23 : ");
 
   //SW_POWER
   if(gpio_get_pin_interrupt_flag(SW_POWER_PIN)) {

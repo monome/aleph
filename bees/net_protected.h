@@ -28,7 +28,7 @@
 /// (total internal SRAM: 0x10000
 //#define NET_OP_POOL_SIZE 0xa000
 ///// TEST : very small
-#define NET_OP_POOL_SIZE 0x100
+#define NET_OP_POOL_SIZE 0x10000
 #endif
 
 // input node type (function pointer)
