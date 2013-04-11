@@ -17159,7 +17159,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="V56" library="supply" deviceset="+5V" device=""/>
 <part name="V57" library="supply" deviceset="+5VA" device=""/>
 <part name="GND66" library="supply" deviceset="GND" device=""/>
-<part name="R162" library="rc-master-smd" deviceset="R_" device="0603" value="100k"/>
+<part name="R162" library="rc-master-smd" deviceset="R_" device="0603" value="1k"/>
 <part name="GND5" library="supply" deviceset="GND" device=""/>
 <part name="U3" library="memory-cypress" deviceset="CY62167EV30-Z" device=""/>
 <part name="V6" library="supply" deviceset="+3V3" device=""/>

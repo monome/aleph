@@ -1,11 +1,15 @@
 aleph.
-
-this
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+
 b todo
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 UPDATE spreadsheet
+
+top plate fixes
+enclosure
 
 12V system rethink
 
@@ -14,17 +18,18 @@ input gain stage
 output gain stage
 	LED follower
 headphone amp
-	LED follower
 
-# debouncing: http://www.ganssle.com/debouncing.htm
-
+new hat pcb proto
+	
 schem cleanup
 
-enclosure
+debounce values, try 18k for both
+soft power control, redo resistor values
 
------------------------
+
 
 e todo
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 blackfin fixes
 -- add DAC support in core framework.
@@ -66,23 +71,18 @@ standalones.
 
 think about graphics libraries.
 
-----------------------------
+
 
 team todo
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 text
+	benchmarking
 	concise description
 	technical/functional/abstract // whitepaper
 	documentation // framework/toolchain and specs
 	manual // instructional
-
-
-
-
-future
-
-ui
-
+	bees ui
 
 
 	
@@ -92,6 +92,8 @@ think about
 	extended menu via last button (up triangle)
 	macros in routing mode, for example: insert trigger here (preserves routing to existing target)
 	operator page, each operator can have menu button which calls custom UI (ie, list editor)
+
+
 
 
 avr32
@@ -155,26 +157,6 @@ patches
 	      fft (high res)
 	      ifft (phase preserving)
 
-shared avr/fin
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-benchmarking
-	have access to uptime counter in CPU cycles on both cores.
-	attempt to calculate % load based on event loop period?
-	can also watch for event handling jitter on scope
-
-
-analog
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-input switching inst/line
-matrix
-filter
-shaper
-preamps
-bypass
-LED driving
-output gain stages
-vca
 
 
 
@@ -188,7 +170,6 @@ nomenclature
 	network
 	controller, dsp
 use cases
-spec apps: mlr, etc
 
 cost analysis
 

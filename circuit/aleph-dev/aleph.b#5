@@ -23,7 +23,7 @@
 <layer number="13" name="Route13" color="4" fill="5" visible="no" active="no"/>
 <layer number="14" name="Route14" color="1" fill="6" visible="no" active="no"/>
 <layer number="15" name="Route15" color="4" fill="6" visible="no" active="no"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="yes"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="17" name="Pads" color="2" fill="1" visible="no" active="yes"/>
 <layer number="18" name="Vias" color="2" fill="1" visible="no" active="yes"/>
 <layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="yes"/>
@@ -31,7 +31,7 @@
 <layer number="21" name="tPlace" color="7" fill="1" visible="no" active="yes"/>
 <layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="yes"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="yes"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
 <layer number="25" name="tNames" color="7" fill="1" visible="no" active="yes"/>
 <layer number="26" name="bNames" color="7" fill="1" visible="no" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
@@ -3574,7 +3574,7 @@ design rules under a new name.</description>
 </element>
 <element name="C96" library="rc-master-smd" package="C0603" value="10n" x="79.375" y="60.325" smashed="yes" rot="MR270">
 <attribute name="NAME" x="78.74" y="62.23" size="1.016" layer="26" font="vector" ratio="12" rot="MR90"/>
-<attribute name="VALUE" x="81.1213" y="61.595" size="0.8128" layer="28" ratio="10" rot="MR270"/>
+<attribute name="VALUE" x="78.8987" y="62.865" size="0.8128" layer="28" ratio="10" rot="MR90"/>
 </element>
 <element name="C97" library="rc-master-smd" package="C0603" value="10n" x="70.8025" y="36.83" smashed="yes" rot="MR0">
 <attribute name="NAME" x="71.755" y="34.925" size="1.016" layer="26" font="vector" ratio="12" rot="MR0"/>
