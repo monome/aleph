@@ -94,16 +94,13 @@ CSRCS = \
 	$(ALEPH_COMMON)/fat_io_lib/fat_string.c \
 	$(ALEPH_COMMON)/fat_io_lib/fat_table.c \
 	$(ALEPH_COMMON)/fat_io_lib/fat_write.c 
-#	avr32/services/fs/fat/fat.c                        \
-#	avr32/services/fs/fat/fat_unusual.c                \
-#	avr32/services/fs/fat/file.c                       \
-#	avr32/services/fs/fat/navigation.c                 \
 
 # List of assembler source files.
+
 ASSRCS = \
        avr32/drivers/intc/exception.S                     \
        avr32/utils/startup/startup_uc3.S                     \
-       avr32/utils/startup/trampoline_uc3.S                     
+       avr32/utils/startup/trampoline_uc3.S
 #	$(ALEPH_AVR32)/startup/startup.S \
 #	$(ALEPH_AVR32)/startup/trampoline.S
 
@@ -130,6 +127,7 @@ INC_PATH = \
        avr32/utils                                        \
        avr32/utils/debug                                  \
        avr32/utils/preprocessor                           \
+       avr32/utils/startup                           \
        common/boards                                      \
 	avr32/components/memory/sd_mmc/sd_mmc_spi \
        common/services/storage/ctrl_access                \
@@ -156,7 +154,7 @@ LIBS =
 
 # Path relative to top level directory pointing to a linker script.
 LINKER_SCRIPT = avr32/utils/linker_scripts/at32uc3a/0512/gcc/link_uc3a0512.lds
-#LINKER_SCRIPT = $(ALEPH_AVR32)/aleph.lds
+# LINKER_SCRIPT = $(ALEPH_AVR32)/aleph.lds
 
 # Additional options for debugging. By default the common Makefile.in will
 # add -g3.
@@ -165,8 +163,7 @@ DBGFLAGS =
 # Application optimization used during compilation and linking:
 # -O0, -O1, -O2, -O3 or -Os
 OPTIMIZATION = -O2
-# OPTIMIZATION = -Os
-# OPTIMIZATION = -O3
+# for debugging, try:
 # OPTIMIZATION = -O0 -fno-inline
 
 # Extra flags to use when archiving.
@@ -192,6 +189,6 @@ CPPFLAGS = \
        -D BOARD=USER_BOARD -D ARCH_AVR32=1 -D UHD_ENABLE
 
 # Extra flags to use when linking
-# LDFLAGS = -Wl,--gc-sections,-e,_trampoline -Wl,--defsym,__heap_size__=0x00080000 -nostartfile	
-#LDFLAGS = -Wl,--gc-sections,-e,_trampoline -Wl,--defsym,__heap_size__=0x00001000 -nostartfiles	
+# LDFLAGS = -Wl,--gc-sections,-e,_trampoline -Wl,--defsym,__heap_size__=0x00080000 -nostartfiles
+# LDFLAGS = -Wl,--gc-sections,-e,_trampoline -Wl,--defsym,__heap_size__=0x00001000 -nostartfiles
 LDFLAGS = -nostartfiles -Wl,-e,_trampoline

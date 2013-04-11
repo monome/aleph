@@ -35,9 +35,14 @@
 
 //===========================
 //==== static variables
-// ...
 
-//===================================
+// Dummy char table
+//const char dummy_data[] =
+//#include "dummy.h"
+//  ;
+
+
+// PDCA Channel pointer//===================================
 //==== external functions
 
 // initialize non-peripheral GPIO
@@ -60,10 +65,10 @@ void init_gpio(void) {
   gpio_enable_pin_pull_up(SW_POWER_PIN);
 
   /// trying this...
-  /* gpio_enable_pin_glitch_filter(SW0_PIN); */
-  /* gpio_enable_pin_glitch_filter(SW1_PIN); */
-  /* gpio_enable_pin_glitch_filter(SW2_PIN); */
-  /* gpio_enable_pin_glitch_filter(SW3_PIN); */
+  gpio_enable_pin_glitch_filter(SW0_PIN);
+  gpio_enable_pin_glitch_filter(SW1_PIN);
+  gpio_enable_pin_glitch_filter(SW2_PIN);
+  gpio_enable_pin_glitch_filter(SW3_PIN);
 }
 
 // initialize application timer
@@ -182,12 +187,12 @@ extern void init_spi1 (void) {
 
   // add ADC chip register
   spiOptions.reg          = ADC_SPI_NPCS;
-  spiOptions.baudrate     = 20000000;
+  spiOptions.baudrate     = 16000000;
   spiOptions.bits         = 16;
   spiOptions.spi_mode     = 2;
-  spiOptions.spck_delay   = 0;
+  spiOptions.spck_delay   = 20;
   spiOptions.trans_delay  = 5;
-  spiOptions.stay_act     = 0;
+  spiOptions.stay_act     = 1;
   spiOptions.modfdis      = 0;
 
   spi_setupChipReg( ADC_SPI, &spiOptions, FPBA_HZ );
@@ -251,7 +256,6 @@ void init_bfin_resources(void) {
     //// FIXME: 
     //// would prefer fast baudrate / lower trans delay during boot,
     //// but need multiple registers for boot (fast) and run (slow)
-    //// investigate if this is possible...
     //   .baudrate     = 20000000,
     //     .baudrate     = 10000000,
      .baudrate     = 5000000,
