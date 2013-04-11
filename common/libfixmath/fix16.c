@@ -13,7 +13,7 @@ fix16_t fix16_add(fix16_t a, fix16_t b)
   uint32_t _a = a, _b = b;
   uint32_t sum = _a + _b;
 
-  // Overflow can only happen if sign of a == sign of b, and then
+  // Overflow can only happen if sign of a == sibfin/commgn of b, and then
   // it causes sign of sum != sign of a.
   if (!((_a ^ _b) & 0x80000000) && ((_a ^ sum) & 0x80000000))
     return fix16_overflow;

@@ -8,18 +8,7 @@
 #include "util.h"
 #include "spi.h"
 
-//------ global variables (initialized here)
-// receive message data 
-//msg_t rxMsg;
-// transmit message data
-//msg_t txMsg;
-// spi byte counter
-//u8 spiByte = 0;
-
-//u8 spiLastByte = 0;
-
-// last byte of index field
-//static const u8 kIdxByte = 1;
+//----- static variables
 
 // byte to process
 static eSpiByte byte = eCom;
@@ -30,26 +19,12 @@ static u8 idx;
 // param value;
 static pval pv;
 
-/// DEBUG
-// static u16 dbgDscIdx[32][2];
-// static u8 n = 0;
-
-
 //------- function definitions
 // deal with new data in the spi rx ringbuffer
 // return byte to load for next MISO
+//// FIXME: probly slightly faster to use a big pile of functions and a fn pointer.
 u8 spi_process(u8 rx) {
   static ParamValue pval;
-
-
-    ////
-    ////
-    //// TEST: show 2bit value on leds 3,4
-  //      if(rx & 0x1) { SET_LED3; } else { UNSET_LED3; } 
-  //      if(rx & 0x2) { SET_LED4; } else { UNSET_LED4; } 
-    ////
-    ////
-
   switch(byte) {
   /// caveman style
   case eCom :

@@ -6,14 +6,16 @@
 
 // std
 #include <math.h>
-// (testing)
 #include <stdlib.h>
 #include <string.h>
-
 // aleph-common
 #include "fix.h"
 #include "simple_string.h"
-
+// audio lib
+#include "env.h"
+#include "filters.h"
+#include "table.h"
+// bfin
 #ifdef ARCH_BFIN
 #include "bfin_core.h"
 #include "fract_math.h"
@@ -22,19 +24,19 @@
 #include "fract32_emu.h"
 #include "audio.h"
 #endif
-
-// audio lib
-#include "env.h"
-#include "filters.h"
 #include "module.h"
-#include "table.h"
 #include "types.h"
 
-/// DEBUG
-//static u32 framecount = 0;
+//---------- defines
 
-//typedef union { u32 u; s32 s; fix16 fix; fract32 fr; } pval;
 
+// hz is fix16
+#define HZ_MIN 0x200000   // 32
+#define HZ_MAX 0x20000000 // 8192
+#define RATIO_MIN 0x2000 // 1/8
+#define RATIO_MAX 0x80000 // 8
+
+//-------- data types
 ///// inputs
 enum params {
   eParamHz1,
@@ -57,15 +59,18 @@ enum params {
   eParamWave2Smooth,
   eParamAmp1Smooth,
   eParamAmp2Smooth,
-  
   eParamNumParams
 };
 
-// hz is fix16
-#define HZ_MIN 0x200000   // 32
-#define HZ_MAX 0x20000000 // 8192
-#define RATIO_MIN 0x2000 // 1/8
-#define RATIO_MAX 0x80000 // 8
+// define a local data structure that subclasses moduleData_t.
+// use this for all data that is large and/or not speed-critical.
+// this structure should statically allocate all necessary memory 
+// so it can simply be loaded at the start of SDRAM.
+typedef struct _monoFmData {
+  moduleData_t super;
+  ParamDesc mParamDesc[eParamNumParams];
+  ParamData mParamData[eParamNumParams];
+} monoFmData_t;
 
 //--- wavetable
 #define WAVE_TAB_SIZE 512
@@ -77,17 +82,13 @@ enum params {
 //----- extern vars (initialized here)
 moduleData_t * moduleData; // module data
 
-/// datastructure for stuff that will live in SDRAM
-/* typedef struct _mono_data { */
-/*   fract32   tab1[WAVE_TAB_SIZE]; // wavetable1 */
-/*   fract32   tab2[WAVE_TAB_SIZE]; // wavetable2 */
-/* } mono_data; */
-
 //-----------------------
 //------ static variables
-/* static mono_data * monoData = (mono_data*)SDRAM_ADDRESS; */
-/* static fract32* tab1; */
-/* static fract32* tab2; */
+
+// pointer to local module data, initialize at top of SDRAM
+static monoFmData_t * monoFmData;
+
+//-- static allocation (SRAM) for variables that are small and/or frequently accessed:
 
 static   fract32   tab1[WAVE_TAB_SIZE]; // wavetable1
 static   fract32   tab2[WAVE_TAB_SIZE]; // wavetable1
@@ -126,7 +127,6 @@ static filter_1p_fr32* wave2Lp; // 1plp smoother for wave2
 static filter_1p_fr32* amp1Lp;  // 1plp smoother for amp1
 static filter_1p_fr32* amp2Lp;  // 1plp smoother for amp2
 
-
 //-----------------------
 //----- fwd declaration 
 // from table.h
@@ -135,7 +135,7 @@ extern inline fract32 table_lookup_idx(fract32* tab, u32 size, fix16 idx);
 //----------------------
 //----- static functions
 
-// set hz
+// set primary hz
 static inline void set_hz1(fix16 hz) {  
   if( hz < HZ_MIN ) hz = HZ_MIN;
   if( hz > HZ_MAX ) hz = HZ_MAX;
@@ -176,7 +176,6 @@ static inline fract32 lookup_wave(const fix16 idx, const fract32 wave) {
 
 // frame calculation
 static void calc_frame(void) {
-
   // ----- smoothers:
   // pm
   pm = filter_1p_fr32_next(pmLp);
@@ -248,15 +247,16 @@ void module_init(void) {
 
   // init module/param descriptor
 #ifdef ARCH_BFIN 
-  moduleData = (moduleData_t*)SDRAM_ADDRESS;
-#else
-  moduleData = (moduleData_t*)malloc(sizeof(moduleData_t));
-#endif
-
+  // intialize local data at start of SDRAM
+  monoFmData = (monoFmData_t * )SDRAM_ADDRESS;
+  // initialize moduleData superclass for core routines
+  moduleData = &(monoFmData->super);
+  moduleData->paramDesc = monoFmData->mParamDesc;
+  moduleData->paramData = monoFmData->mParamData;
   moduleData->numParams = eParamNumParams;
-  //  moduleData->paramDesc = (ParamDesc*)malloc(eParamNumParams * sizeof(ParamDesc));
-  //  moduleData->paramData = (ParamData*)malloc(eParamNumParams * sizeof(ParamData));
-
+#else
+  //  moduleData = (moduleData_t*)malloc(sizeof(moduleData_t));
+#endif
   strcpy(moduleData->paramDesc[eParamHz1].label, "osc 1 hz");
   strcpy(moduleData->paramDesc[eParamHz2].label, "osc 2 hz");
   strcpy(moduleData->paramDesc[eParamRatio2].label, "osc 2 ratio");
@@ -435,8 +435,6 @@ u8 module_update_leds(void) {
   return ledstate;
 }
 
-static u8 buts[4] = {0, 0, 0, 0};
-
 #else //  non-bfin
 void module_process_frame(const f32* in, f32* out) {
   u32 frame;
@@ -444,7 +442,7 @@ void module_process_frame(const f32* in, f32* out) {
   for(frame=0; frame<BLOCKSIZE; frame++) {
     calc_frame();
     for(chan=0; chan<NUMCHANNELS; chan++) { // stereo interleaved
-      // FIXME: use fract for output directly (portaudio setting?)
+      // FIXME: could use fract for output directly (portaudio setting?)
       *out++ = fr32_to_float(frameVal);
     }
   }
