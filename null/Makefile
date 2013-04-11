@@ -43,3 +43,4 @@ tape : $(OBJ) $(TAPE_OBJ)
 clean :
 	rm $(OBJ)
 	rm *.o
+	rm ../audio/*.o

@@ -16,7 +16,8 @@
 #include "print_funcs.h"
 #include "spi.h"
 // aleph
-#include "conf_aleph.h"
+#include "aleph_board.h"
+//#include "conf_aleph.h"
 #include "fix.h"
 #include "font.h"
 #include "global.h"
@@ -132,10 +133,12 @@ void init_oled(void) {
   write_command(0x75);
   write_command(0);
   write_command(63);
-		
-  // clear OLED RAM 
-    for(i=0; i<GRAM_BYTES; i++) { write_data(0); }
-  //  screen_refresh();
+
+  // clear OLED RAM and local screenbuffer
+  for(i=0; i<GRAM_BYTES; i++) { 
+    screen[i] = 0;
+    write_data(0);
+  }
   write_command(0xAF);	// on
 
   //  delay_ms(10) 
@@ -149,34 +152,29 @@ void init_oled(void) {
 void screen_refresh(void) {
   U16 i;
   u8* pScreen;
+
+  /// FIXME: use specific IRQ levels
   cpu_irq_disable();
-  // Disable_global_interrupt();
+
+  // set update box (to full screen)
+  write_command(0x15);
+  write_command(0);
+  write_command(63);
+  write_command(0x75);
+  write_command(0);
+  write_command(63);
 
   // pull register select high to write data
   gpio_set_gpio_pin(OLED_REGISTER_PIN);
   spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
 
-  /// this assignment doesn't work.... WTF??
-//  for(i=GRAM_BYTES_1; i>=0; i--) {
-  
   pScreen=&(screen[GRAM_BYTES_1]);
-  for(i=0; i<GRAM_BYTES; i++) {  
-    //////////////////////
-    ///// debug
-    /* print_dbg("\r\n gfx buffer, byte : ");  */
-    /* print_dbg_ulong(i); */
-    /* print_dbg(" ; addr : "); */
-    /* print_dbg_hex(&(screen[i])); */
-    /* print_dbg(" ; data : "); */
-    /* print_dbg_hex(screen[i]); */
-    ///////////////////
-    //    spi_write(OLED_SPI, screen[i]);      
+  for(i=0; i<GRAM_BYTES; i++) {     
     spi_write(OLED_SPI, *pScreen);
     pScreen--;
   }
   spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
   cpu_irq_enable();
-  //  Enable_global_interrupt();
 }
 
 // draw a single pixel
@@ -335,25 +333,26 @@ U8 screen_line(U16 x, U16 l, char *str, U8 hl) {
   return NCOLS;
 }
 
-// fill graphics ram with a test pattern
-void screen_test_fill(void) {
-  u32 i;
-  u32 x=0;
-  u32 l=5;
 
-  screen_line(0, 0, "_ LINE 1 ! ! ! ! ", 0xf);
-  screen_line(0, 1, "_ LINE 2 @ @ @ @ ", 0xf);
-  screen_line(0, 2, "_ LINE 3 # # # # ", 0xf);
-  screen_line(0, 3, "_ LINE 4 $ $ $ $ ", 0xf);
-  screen_line(0, 4, "_ LINE 5 % % % % ", 0xf);
+/* // fill graphics ram with a test pattern */
+/* void screen_test_fill(void) { */
+/*   u32 i; */
+/*   u32 x=0; */
+/*   u32 l=5; */
 
-  for(i=0; i<font_nglyphs; i++) {
-    x = x + screen_char_squeeze(x, l, i + FONT_ASCII_OFFSET, 0xf);
-    x++;
-    if (x > NCOLS) {
-      x -= NCOLS;
-      l++;
-    }
-  }
-  refresh = 1;
-}
+/*   screen_line(0, 0, "_ LINE 1 ! ! ! ! ", 0xf); */
+/*   screen_line(0, 1, "_ LINE 2 @ @ @ @ ", 0xf); */
+/*   screen_line(0, 2, "_ LINE 3 # # # # ", 0xf); */
+/*   screen_line(0, 3, "_ LINE 4 $ $ $ $ ", 0xf); */
+/*   screen_line(0, 4, "_ LINE 5 % % % % ", 0xf); */
+
+/*   for(i=0; i<font_nglyphs; i++) { */
+/*     x = x + screen_char_squeeze(x, l, i + FONT_ASCII_OFFSET, 0xf); */
+/*     x++; */
+/*     if (x > NCOLS) { */
+/*       x -= NCOLS; */
+/*       l++; */
+/*     } */
+/*   } */
+/*   refresh = 1; */
+/* } */

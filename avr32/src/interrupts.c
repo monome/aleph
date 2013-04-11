@@ -7,8 +7,9 @@
 #include "sd_mmc_spi.h"
 #include "tc.h"
 // aleph
+#include "aleph_board.h"
 #include "bfin.h"
-#include "conf_aleph.h"
+//#include "conf_aleph.h"
 #include "encoders.h"
 #include "events.h"
 #include "event_types.h"
@@ -19,7 +20,7 @@
 #include "timers.h"
 #include "types.h"
 
-#define UI_IRQ_PRIORITY AVR32_INTC_INT2
+//#define UI_IRQ_PRIORITY AVR32_INTC_INT2
 
 //------------------------
 //----- variables
@@ -45,22 +46,6 @@ static void irq_pdca(void);
 __attribute__((__interrupt__))
 static void irq_tc(void);
 
-// irq for PA00-PA07
-// __attribute__((__interrupt__))
-// static void irq_port0_line0(void);
-
-/*
-// irq for PA08-PA15
-__attribute__((__interrupt__))
-static void irq_port0_line1(void);
-*/
-
-/*
-// irq for PA016-PA23
-__attribute__((__interrupt__))
-static void irq_port0_line2(void);
-*/
-
 // irq for PA24-PA31
 __attribute__((__interrupt__))
 static void irq_port0_line3(void);
@@ -73,36 +58,22 @@ static void irq_port1_line0(void);
 __attribute__((__interrupt__))
 static void irq_port1_line1(void);
 
-/*
 // irq for PB16-PB23
 __attribute__((__interrupt__))
 static void irq_port1_line2(void);
-*/
-
-/*
-// irq for PB24-PB31
-__attribute__((__interrupt__))
-static void irq_port1_line3(void);
-*/
-
-// irq for PX08-PX15
-__attribute__((__interrupt__))
-static void irq_port2_line1(void);
-
 
 //---------------------------------
 //----- static function definitions
 __attribute__((__interrupt__))
 static void irq_pdca(void) {
-  volatile U16 delay;
   // Disable all interrupts.
   Disable_global_interrupt();
   // Disable interrupt channel.
   pdca_disable_interrupt_transfer_complete(AVR32_PDCA_CHANNEL_SPI_RX);
   //unselects the SD/MMC memory.
   sd_mmc_spi_read_close_PDCA();
-  // wait (FIXME??)
-  delay=0; while(delay < 5000) { delay++; }
+  //.... example has a 5000 clock gimpy delay here.
+  // doesn't seem to need it , but if that changes use delay_us instead
   // Disable unnecessary channel
   pdca_disable(AVR32_PDCA_CHANNEL_SPI_TX);
   pdca_disable(AVR32_PDCA_CHANNEL_SPI_RX);
@@ -126,73 +97,48 @@ static void irq_tc(void) {
   process_timers();
   // clear interrupt flag by reading timer SR
   tc_read_sr(APP_TC, APP_TC_CHANNEL);
-
 }
-
-// interrupt handler for PA00-PA07
-/*
-__attribute__((__interrupt__))
-static void irq_port0_line0(void) {
-  // BFIN_HWAIT
-  if(gpio_get_pin_interrupt_flag(BFIN_HWAIT_PIN)) {
-    hwait = gpio_get_pin_value(BFIN_HWAIT_PIN);
-    gpio_clear_pin_interrupt_flag(BFIN_HWAIT_PIN);
-  }
-}
-*/
-
-/*
-// interrupt handler for PA08-PA15
-__attribute__((__interrupt__))
-static void irq_port0_line1(void) {
-  //...
-}
-*/
-
-/*
-// interrupt handler for PA16-PA23
-__attribute__((__interrupt__))
-static void irq_port0_line3(void) {
-  //...
-}
-*/
 
 // interrupt handler for PA23-PA30
-/*
 __attribute__((__interrupt__))
 static void irq_port0_line3(void) {
+  //  print_dbg("\r\n interrupt on port0_line3");
   //SW_F0
   if(gpio_get_pin_interrupt_flag(SW0_PIN)) {
-    process_sw(0);
     gpio_clear_pin_interrupt_flag(SW0_PIN);
+    /// process_sw() will post an event, which calls cpu_irq_disable().
+    /// apparently, this also clears the GPIO interrupt flags (!?)
+    /// so clear the flag first to avoid triggering an infinite series of interrupts.
+    /// this might be problematic if we were expecting faster interrupts from switches,
+    /// but hardware pre-filtering should preclude this.
+    process_sw(0);
   }
   // SW_F1
   if(gpio_get_pin_interrupt_flag(SW1_PIN)) {
-    process_sw(1);
     gpio_clear_pin_interrupt_flag(SW1_PIN);
+    process_sw(1);
   }
   // SW_F2
   if(gpio_get_pin_interrupt_flag(SW2_PIN)) {
-    process_sw(2);
     gpio_clear_pin_interrupt_flag(SW2_PIN);
-  }
+    process_sw(2);
+ 
   // SW_F3
   if(gpio_get_pin_interrupt_flag(SW3_PIN)) {
-    process_sw(3);
     gpio_clear_pin_interrupt_flag(SW3_PIN);
+    process_sw(3);
   }
   // SW_MODE
   if(gpio_get_pin_interrupt_flag(SW_MODE_PIN)) {
-    process_sw(4);
     gpio_clear_pin_interrupt_flag(SW_MODE_PIN);
+    process_sw(4);
   }
 }
-*/
 
 // interrupt handler for PB00-PB07
 __attribute__((__interrupt__))
 static void irq_port1_line0(void) {
-  //  print_dbg("\r\b\interrupt on PB00-PB07.");
+  // print_dbg("\r\b\interrupt on PB00-PB07.");
   // ENC0_0
  if(gpio_get_pin_interrupt_flag(ENC0_S0_PIN)) {
     process_enc(0);
@@ -228,7 +174,7 @@ static void irq_port1_line0(void) {
 // interrupt handler for PB08-PB15
 __attribute__((__interrupt__))
 static void irq_port1_line1(void) {
-  //  print_dbg("\r\b\interrupt on PB08-PB15.");
+  //    print_dbg("\r\b\interrupt on PB08-PB15.");
   // ENC3_0
  if(gpio_get_pin_interrupt_flag(ENC3_S0_PIN)) {
     process_enc(3);
@@ -242,45 +188,23 @@ static void irq_port1_line1(void) {
 
 }
 
-
-// interrupt handler for px08-px15
-/*
-__attribute__((__interrupt__))
-static void irq_port2_line1(void) {
-
-  print_dbg("\r\n interrupt on px08-px15 : ");
-
-  //SW_POWER
-  if(gpio_get_pin_interrupt_flag(SW_POWER_PIN)) {
-    process_sw(5);
-    gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
-  }
-}
-*/
-
-/*
 // interrupt handler for PB16-PB23
 __attribute__((__interrupt__))
 static void irq_port1_line2(void) {
-  //...
-}
-*/
+    print_dbg("\r\n interrupt on pb16-pb23 : ");
 
-/*
-// interrupt handler for PB24-PB31
-__attribute__((__interrupt__))
-static void irq_port1_line3(void) {
-  //...
+  //SW_POWER
+  if(gpio_get_pin_interrupt_flag(SW_POWER_PIN)) {
+    gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
+    process_sw(5);
+  }
 }
-*/
 
 //-----------------------------
 //---- external function definitions
 
 // register interrupts
 void register_interrupts(void) {
-  //  U8 i;
-
   // enable interrupts on GPIO inputs
 
   // BFIN_HWAIT
@@ -298,25 +222,15 @@ void register_interrupts(void) {
   gpio_enable_pin_interrupt( ENC3_S1_PIN,	GPIO_PIN_CHANGE);
 
   // switches
-  //--- polled at the moment
-  // gpio_enable_pin_interrupt( SW0_PIN,	        GPIO_PIN_CHANGE);
-  //  gpio_enable_pin_interrupt( SW1_PIN,	        GPIO_PIN_CHANGE);
-  //  gpio_enable_pin_interrupt( SW2_PIN,	        GPIO_PIN_CHANGE);
-  //  gpio_enable_pin_interrupt( SW3_PIN,	        GPIO_PIN_CHANGE);
-  //  gpio_enable_pin_interrupt( SW_MODE_PIN,	GPIO_PIN_CHANGE);
-  //  gpio_enable_pin_interrupt( SW_POWER_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW0_PIN,	        GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW1_PIN,	        GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW2_PIN,	        GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW3_PIN,	        GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW_MODE_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW_POWER_PIN,	GPIO_PIN_CHANGE);
  
-  // PA00 - PA07
-  //  INTC_register_interrupt( &irq_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), UI_IRQ_PRIORITY );
-
-  // PA08 - PA15
-  // INTC_register_interrupt( &irq_port0_line1, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA08 / 8), UI_IRQ_PRIORITY);
-
-  // PA16 - PA23
-  // INTC_register_interrupt( &irq_port0_line2, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA16 / 8), UI_IRQ_PRIORITY);
-
   // PA24 - PA31
-  //  INTC_register_interrupt( &irq_port0_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA24 / 8), UI_IRQ_PRIORITY);
+  INTC_register_interrupt( &irq_port0_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA24 / 8), UI_IRQ_PRIORITY);
 
   // PB00 - PB07
   INTC_register_interrupt( &irq_port1_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB00 / 8), UI_IRQ_PRIORITY );
@@ -325,13 +239,7 @@ void register_interrupts(void) {
   INTC_register_interrupt( &irq_port1_line1, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB08 / 8), UI_IRQ_PRIORITY);
 
   // PB16 - PB23
-  // INTC_register_interrupt( &irq_port1_line2, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB16 / 8), UI_IRQ_PRIORITY);
-
-  // PB24 - PB31
-  //  INTC_register_interrupt( &irq_port1_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB24 / 8), UI_IRQ_PRIORITY);
-
-  // px08 - px15
-  //  INTC_register_interrupt( &irq_port2_line1, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PX08 / 8), UI_IRQ_PRIORITY);
+  INTC_register_interrupt( &irq_port1_line2, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB16 / 8), UI_IRQ_PRIORITY);
 
   // register IRQ for PDCA transfer
   INTC_register_interrupt(&irq_pdca, AVR32_PDCA_IRQ_0, SYS_IRQ_PRIORITY);

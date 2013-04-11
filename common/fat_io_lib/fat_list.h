@@ -43,7 +43,8 @@ struct fat_list
 //-----------------------------------------------------------------
 // fat_list_init: 
 //-----------------------------------------------------------------
-static FAT_INLINE void fat_list_init(struct fat_list *list)
+inline void fat_list_init(struct fat_list *list);
+inline void fat_list_init(struct fat_list *list)
 {
     FAT_ASSERT(list);
 
@@ -52,7 +53,8 @@ static FAT_INLINE void fat_list_init(struct fat_list *list)
 //-----------------------------------------------------------------
 // fat_list_remove: 
 //-----------------------------------------------------------------
-static FAT_INLINE void fat_list_remove(struct fat_list *list, struct fat_node *node) 
+inline void fat_list_remove(struct fat_list *list, struct fat_node *node);
+inline void fat_list_remove(struct fat_list *list, struct fat_node *node) 
 {
     FAT_ASSERT(list);
     FAT_ASSERT(node);
@@ -70,7 +72,8 @@ static FAT_INLINE void fat_list_remove(struct fat_list *list, struct fat_node *n
 //-----------------------------------------------------------------
 // fat_list_insert_after: 
 //-----------------------------------------------------------------
-static FAT_INLINE void fat_list_insert_after(struct fat_list *list, struct fat_node *node, struct fat_node *new_node) 
+inline void fat_list_insert_after(struct fat_list *list, struct fat_node *node, struct fat_node *new_node) ;
+inline void fat_list_insert_after(struct fat_list *list, struct fat_node *node, struct fat_node *new_node) 
 {
     FAT_ASSERT(list);
     FAT_ASSERT(node);
@@ -87,7 +90,8 @@ static FAT_INLINE void fat_list_insert_after(struct fat_list *list, struct fat_n
 //-----------------------------------------------------------------
 // fat_list_insert_before: 
 //-----------------------------------------------------------------
-static FAT_INLINE void fat_list_insert_before(struct fat_list *list, struct fat_node *node, struct fat_node *new_node) 
+inline void fat_list_insert_before(struct fat_list *list, struct fat_node *node, struct fat_node *new_node) ;
+inline void fat_list_insert_before(struct fat_list *list, struct fat_node *node, struct fat_node *new_node) 
 {
     FAT_ASSERT(list);
     FAT_ASSERT(node);
@@ -104,7 +108,8 @@ static FAT_INLINE void fat_list_insert_before(struct fat_list *list, struct fat_
 //-----------------------------------------------------------------
 // fat_list_insert_first: 
 //-----------------------------------------------------------------
-static FAT_INLINE void fat_list_insert_first(struct fat_list *list, struct fat_node *node) 
+inline void fat_list_insert_first(struct fat_list *list, struct fat_node *node) ;
+inline void fat_list_insert_first(struct fat_list *list, struct fat_node *node) 
 {
     FAT_ASSERT(list);
     FAT_ASSERT(node);
@@ -122,7 +127,8 @@ static FAT_INLINE void fat_list_insert_first(struct fat_list *list, struct fat_n
 //-----------------------------------------------------------------
 // fat_list_insert_last: 
 //-----------------------------------------------------------------
-static FAT_INLINE void fat_list_insert_last(struct fat_list *list, struct fat_node *node) 
+inline void fat_list_insert_last(struct fat_list *list, struct fat_node *node) ;
+inline void fat_list_insert_last(struct fat_list *list, struct fat_node *node) 
 {
     FAT_ASSERT(list);
     FAT_ASSERT(node);
@@ -135,7 +141,8 @@ static FAT_INLINE void fat_list_insert_last(struct fat_list *list, struct fat_no
 //-----------------------------------------------------------------
 // fat_list_is_empty: 
 //-----------------------------------------------------------------
-static FAT_INLINE int fat_list_is_empty(struct fat_list *list)
+inline int fat_list_is_empty(struct fat_list *list);
+inline int fat_list_is_empty(struct fat_list *list)
 {
     FAT_ASSERT(list);
     
@@ -144,7 +151,8 @@ static FAT_INLINE int fat_list_is_empty(struct fat_list *list)
 //-----------------------------------------------------------------
 // fat_list_pop_head: 
 //-----------------------------------------------------------------
-static FAT_INLINE struct fat_node * fat_list_pop_head(struct fat_list *list)
+inline struct fat_node * fat_list_pop_head(struct fat_list *list);
+inline struct fat_node * fat_list_pop_head(struct fat_list *list)
 {
     struct fat_node * node;
 

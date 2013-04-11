@@ -77,6 +77,7 @@ s16 op_init(op_t* op, opId_t opId) {
     return -1;
   }
   op->type = opId;
+  return 0;
 }
 
 const char* op_in_name(op_t* op, const u8 idx) {

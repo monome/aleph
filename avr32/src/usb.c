@@ -3,9 +3,9 @@
 
    usb host implementation
  */
-
+#include "aleph_board.h"
 #include "compiler.h"
-#include "conf_aleph.h"
+//#include "conf_aleph.h"
 #include "gpio.h"
 #include "print_funcs.h"
 #include "usb.h"

@@ -35,6 +35,7 @@ TARGET = aleph.elf
 
 # List of C source files.
 CSRCS = \
+	avr32/drivers/ebi/smc/smc.c \
 	avr32/drivers/flashc/flashc.c                      \
 	avr32/drivers/gpio/gpio.c                          \
 	avr32/drivers/intc/intc.c                          \
@@ -101,8 +102,10 @@ CSRCS = \
 # List of assembler source files.
 ASSRCS = \
        avr32/drivers/intc/exception.S                     \
-       avr32/utils/startup/startup_uc3.S                  \
-       avr32/utils/startup/trampoline_uc3.S
+       avr32/utils/startup/startup_uc3.S                     \
+       avr32/utils/startup/trampoline_uc3.S                     
+#	$(ALEPH_AVR32)/startup/startup.S \
+#	$(ALEPH_AVR32)/startup/trampoline.S
 
 # List of include paths.
 INC_PATH = \
@@ -110,7 +113,7 @@ INC_PATH = \
        avr32/boards/user_board                               \
 	avr32/components/memory/sdram			 \
 	avr32/drivers/cpu/cycle_counter/                 \
-	avr32/drivers/ebi/sdramc/                            \
+	avr32/drivers/ebi/smc/                            \
 	avr32/drivers/eic/                            \
        avr32/drivers/flashc                               \
        avr32/drivers/gpio                                 \
@@ -131,6 +134,7 @@ INC_PATH = \
 	avr32/components/memory/sd_mmc/sd_mmc_spi \
        common/services/storage/ctrl_access                \
        common/services/clock                              \
+	common/services/delay \
        common/services/usb                                \
        common/services/usb/class/hid                      \
        common/services/usb/class/hid/host/mouse           \
@@ -143,12 +147,6 @@ INC_PATH = \
 	$(ALEPH_COMMON)	\
 	$(ALEPH_COMMON)/libfixmath \
 	$(ALEPH_COMMON)/fat_io_lib
-#	../../aleph/avr32/     \
-#	../../aleph/avr32/src   \
-#	../../aleph/avr32/conf  \
-#	../../aleph/bees        \
-#	../../aleph/common      \
-#	../../aleph/common/libfixmath
 
 # Additional search paths for libraries.
 LIB_PATH = 
@@ -158,6 +156,7 @@ LIBS =
 
 # Path relative to top level directory pointing to a linker script.
 LINKER_SCRIPT = avr32/utils/linker_scripts/at32uc3a/0512/gcc/link_uc3a0512.lds
+#LINKER_SCRIPT = $(ALEPH_AVR32)/aleph.lds
 
 # Additional options for debugging. By default the common Makefile.in will
 # add -g3.
@@ -165,7 +164,8 @@ DBGFLAGS =
 
 # Application optimization used during compilation and linking:
 # -O0, -O1, -O2, -O3 or -Os
- OPTIMIZATION = -O2
+OPTIMIZATION = -O2
+# OPTIMIZATION = -Os
 # OPTIMIZATION = -O3
 # OPTIMIZATION = -O0 -fno-inline
 
@@ -189,8 +189,9 @@ CFLAGS += -g3
 #   BOARD      Target board in use, see boards/board.h for a list.
 #   EXT_BOARD  Optional extension board in use, see boards/board.h for a list.
 CPPFLAGS = \
-       -D BOARD=USER_BOARD -D ARCH_AVR32=1
+       -D BOARD=USER_BOARD -D ARCH_AVR32=1 -D UHD_ENABLE
 
 # Extra flags to use when linking
-LDFLAGS = \
-       -nostartfiles -Wl,-e,_trampoline
+# LDFLAGS = -Wl,--gc-sections,-e,_trampoline -Wl,--defsym,__heap_size__=0x00080000 -nostartfile	
+#LDFLAGS = -Wl,--gc-sections,-e,_trampoline -Wl,--defsym,__heap_size__=0x00001000 -nostartfiles	
+LDFLAGS = -nostartfiles -Wl,-e,_trampoline

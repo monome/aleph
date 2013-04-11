@@ -149,7 +149,7 @@ void redraw_ins(void) {
   // draw the header
   screen_line(0, 0, "PARAMS", 12);
   // draw footer (function labels)
-  screen_line(0, CHAR_ROWS_1, "GATHER DISCONNECT STORE  PRESET ", 10);
+  screen_line(0, CHAR_ROWS_1, "GATHER DISCON. STORE PRESET", 10);
 }
 
 //==================================================
@@ -507,12 +507,6 @@ void draw_line_dsp(s32 n, u16 num, u8 y, u8 hl) {
     n -= num;
   } 
   screen_blank_line(0, y);
-  /*
-  print_dbg( " \r\n drawing dsp line : ");
-  print_dbg_ulong(n);
-  print_dbg(" , name: ");
-  print_dbg(files_get_dsp_name(n));
-  */
   println( (const char*)files_get_dsp_name(n), 0);
   endln(); screen_string(0, y, lineBuf, hl); 
 }

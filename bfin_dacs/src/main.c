@@ -1,5 +1,7 @@
 #include "bfin_core.h"
 #include "init.h"
+#include "isr.h"
+#include "leds.h"
 
 //-------------------------------
 // main function
@@ -34,6 +36,9 @@ int main(void) {
 
   /// update 1st channel to kick off dac sequence
   update_channel(upCh);
+
+  SET_LED3;
+  UNSET_LED4;
 
 
   while(1) {

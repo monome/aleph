@@ -12,6 +12,7 @@ long long int dumcount = 0;
 //-------------------------------
 // main function
 int main(void) {
+  u32 del;
   // turn on execution counter
   // default .crt does this for us
   //  __asm__ __volatile__("R0 = 0x32; SYSCFG = R0; CSYNC;":::"R0");
@@ -23,32 +24,19 @@ int main(void) {
   // intialize the sdram controller
   init_EBIU();
   // intialize the flash controller (which, weirdly, handles gpio)
-  init_flash();
+  //  init_flash();
   // initialize the codec (spi in master, blast config regs, disable spi)
 
-
-  ////////////////////
-  /////////////// TEST : do this a lot
-  
-  /*
-  *pFlashA_PortB_Data = 0x3f;
-  while(dumcount < 1000000) {
-    init_1836();
-    dumcount++;
-  }
-  *pFlashA_PortB_Data = 0;
-  */
-
-  /////////////////////
-  ////////////////////////
-  init_1836();
+  init_1939();
 
   // intialize the sport0 for audio rx/tx
   init_sport0();
-  // intialize the DMA to shove audio data around
+  // intialize DMA for audio
   init_DMA();
-  // put the spi back in slave mode to receive param changes from avr32
-  init_spi_slave();
+  //  // put the spi back in slave mode to receive param changes from avr32
+   init_spi_slave();
+
+
   // intialize the audio processing unit (assign memory)
   module_init();
   // assign interrupts
@@ -59,10 +47,7 @@ int main(void) {
 
   //// test: leds on
   SET_LED3;
-  //      SET_LED4;
-  // off 
-  //  UNSET_LED3;
-  UNSET_LED4;
+  SET_LED4;
   
   while(1) {
     // fixme: everything happens in ISRs!
