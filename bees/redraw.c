@@ -149,7 +149,7 @@ void redraw_ins(void) {
   // draw the header
   screen_line(0, 0, "PARAMS", 12);
   // draw footer (function labels)
-  screen_line(0, CHAR_ROWS_1, "GATHER DISCONNECT STORE  PRESET ", 10);
+  screen_line(0, CHAR_ROWS_1, "GATHER DISCON. STORE PRESET", 10);
 }
 
 //==================================================

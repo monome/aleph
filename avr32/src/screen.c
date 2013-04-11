@@ -133,13 +133,12 @@ void init_oled(void) {
   write_command(0x75);
   write_command(0);
   write_command(63);
-		
+
   // clear OLED RAM and local screenbuffer
   for(i=0; i<GRAM_BYTES; i++) { 
     screen[i] = 0;
     write_data(0);
   }
-  //  screen_refresh();
   write_command(0xAF);	// on
 
   //  delay_ms(10) 
@@ -156,6 +155,14 @@ void screen_refresh(void) {
 
   /// FIXME: use specific IRQ levels
   cpu_irq_disable();
+
+  // set update box (to full screen)
+  write_command(0x15);
+  write_command(0);
+  write_command(63);
+  write_command(0x75);
+  write_command(0);
+  write_command(63);
 
   // pull register select high to write data
   gpio_set_gpio_pin(OLED_REGISTER_PIN);

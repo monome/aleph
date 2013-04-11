@@ -18,7 +18,6 @@
 
 //--------------------------
 //---- external variables
-
 enc_t enc[NUM_ENC];
 
 //---------------------------
@@ -26,6 +25,7 @@ enc_t enc[NUM_ENC];
 
 // encoder movement map
 static const S8 enc_map[4][4] = { {0,1,-1,0}, {-1,0,0,1}, {1,0,0,-1}, {0,-1,1,0} };
+
 //------------------------------
 //----- external functions
 
@@ -51,33 +51,15 @@ void init_encoders(void) {
     enc[i].pos = gpio_get_pin_value(enc[i].pin[0]) + (gpio_get_pin_value(enc[i].pin[1]) << 1);
     enc[i].thresh = ENC_THRESH_DEFAULT;
   }
-
-  ////// TEST:
-  /// make enc3 slow
-  //  enc[3].thresh = 40;
-
 }
 
 // apply pin mapping to deteremine movement
 void process_enc( const U8 idx) {
-  //event_t e;  
-  // S8 val = 0;
   U8 pos;
   
   pos = gpio_get_pin_value(enc[idx].pin[0]) + (gpio_get_pin_value(enc[idx].pin[1]) << 1);
   
-  /* print_dbg("\r\n processing encoder, idx: "); */
-  /* print_dbg_ulong(idx); */
-  /* print_dbg(" , pos: "); */
-  /* print_dbg_hex(pos); */
-  
-
   if (pos != enc[idx].pos) {
-      /* print_dbg("\r\n processing encoder movement, idx: "); */
-    /* print_dbg_ulong(idx); */
-    /* print_dbg(" , pos: "); */
-    /* print_dbg_hex(pos); */
-  
     enc[idx].val -= enc_map[enc[idx].pos][pos];
     enc[idx].pos = pos;
   }

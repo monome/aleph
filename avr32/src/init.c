@@ -35,14 +35,9 @@
 
 //===========================
 //==== static variables
+// ...
 
-// Dummy char table
-//const char dummy_data[] =
-//#include "dummy.h"
-//  ;
-
-
-// PDCA Channel pointer//===================================
+//===================================
 //==== external functions
 
 // initialize non-peripheral GPIO
@@ -65,10 +60,10 @@ void init_gpio(void) {
   gpio_enable_pin_pull_up(SW_POWER_PIN);
 
   /// trying this...
-  gpio_enable_pin_glitch_filter(SW0_PIN);
-  gpio_enable_pin_glitch_filter(SW1_PIN);
-  gpio_enable_pin_glitch_filter(SW2_PIN);
-  gpio_enable_pin_glitch_filter(SW3_PIN);
+  /* gpio_enable_pin_glitch_filter(SW0_PIN); */
+  /* gpio_enable_pin_glitch_filter(SW1_PIN); */
+  /* gpio_enable_pin_glitch_filter(SW2_PIN); */
+  /* gpio_enable_pin_glitch_filter(SW3_PIN); */
 }
 
 // initialize application timer
@@ -256,6 +251,7 @@ void init_bfin_resources(void) {
     //// FIXME: 
     //// would prefer fast baudrate / lower trans delay during boot,
     //// but need multiple registers for boot (fast) and run (slow)
+    //// investigate if this is possible...
     //   .baudrate     = 20000000,
     //     .baudrate     = 10000000,
      .baudrate     = 5000000,

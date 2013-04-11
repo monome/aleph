@@ -82,6 +82,7 @@ int media_write(unsigned long sector, unsigned char *buffer, unsigned long secto
   for (i=0;i<sector_count;i++) {
     // ...
     // Add platform specific sector (512 bytes) write code here
+    /// FIXME: seriously, do this!
     //..
     sector ++;
     buffer += 512;

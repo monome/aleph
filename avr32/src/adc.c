@@ -85,7 +85,7 @@ static void adc_convert(U16 (*dst)[4]) {
 void init_adc(void) {
   u16 cmd;
 
-  cpu_irq_disable();
+  //  cpu_irq_disable();
 
   // at powerup, the part wants a dummy conversion with DIN high
   spi_selectChip(ADC_SPI, ADC_SPI_NPCS);
@@ -101,7 +101,7 @@ void init_adc(void) {
   spi_write( ADC_SPI, cmd );
   spi_unselectChip( ADC_SPI, ADC_SPI_NPCS );
 
-  cpu_irq_enable();
+  //  cpu_irq_enable();
 }
 
 // perform conversion, check for changes, and post events
@@ -113,21 +113,11 @@ void adc_poll(void) {
 
   adc_convert(&adcVal);
 
-  /* print_dbg("\r\n adc value 0: "); */
-  /* print_dbg_ulong(adcVal[0]); */
-  /* print_dbg("\r\n adc value 1: "); */
-  /* print_dbg_ulong(adcVal[1]); */
-  /* print_dbg("\r\n adc value 2: "); */
-  /* print_dbg_ulong(adcVal[2]); */
-
-  /* print_dbg("\r\n , "); */
-  /* print_dbg_ulong(adcVal[3]); */
-
   for(i=0; i<4; i++) {        
     // TODO:
     /// probably want more filtering before posting events
     //    if(adcVal[i] != adcOldVal[i]) {
-    /// dirty! but the two lower bits seem like noise ATM
+    /// this is a dirty way! but the two lower bits are pretty noisy.
     if( (adcVal[i] & 0xffc) != ( adcOldVal[i] & 0xffc) ) {
       adcOldVal[i] = adcVal[i];
       e.eventType = adcEventTypes[i];

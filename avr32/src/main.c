@@ -128,10 +128,6 @@ static void init_ctl(void) {
   init_encoders();
   print_dbg("\r\n init_encoders");
 
-  // intialize switches (debouncing)
-  init_switches();
-  print_dbg("\r\n init_switches");
-  
   //memory manager
   init_mem();  
   print_dbg("\r\n init_mem");

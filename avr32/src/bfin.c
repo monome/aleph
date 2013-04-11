@@ -1,8 +1,10 @@
 /* bfin.c
    aleph-avr32
 
-   routines to communicate with the bf533 DSP
+   routines to communicate with bf533 DSP over SPI
+   follow protocol at aleph/common/protocol.h
 */
+
 //ASF
 #include "compiler.h"
 #include "delay.h"
@@ -12,13 +14,12 @@
 
 // aleph/common
 #include "param_common.h"
+#include "protocol.h"
 
 // aleph/avr32
-//#include "conf_aleph.h"
 #include "aleph_board.h"
 #include "filesystem.h"
 #include "global.h"
-#include "protocol.h"
 #include "types.h"
 #include "util.h"
 #include "bfin.h"

@@ -5,16 +5,19 @@
  * disables interrupts around queue manipulation
  */
 
+// ASF
 #include "compiler.h"
 #include "print_funcs.h"
 
+// aleph-avr32
 #include "aleph_board.h"
-//#include "timers.h" // for timer interrupt priority level
 #include "events.h"
 #include "event_types.h"
 
-//#define MAX_EVENTS   32
-#define MAX_EVENTS   128
+
+/// NOTE: if we are ever over-filling the event queue, we have problems.
+/// making the event queue bigger will not solve the problems.
+#define MAX_EVENTS   32
 
 // macro for incrementing an index into a circular buffer.
 #define INCR_EVENT_INDEX( x )  { if ( ++x == MAX_EVENTS ) x = 0; }
@@ -31,7 +34,6 @@ void init_events( void ) {
   int k;
   
   // set queue (circular list) to empty
-
   putIdx = 0;
   getIdx = 0;
 
@@ -74,11 +76,6 @@ bool get_next_event( event_t *e ) {
 bool post_event( event_t *e ) {
   bool status = false;
   int saveIndex;
-
-  /* print_dbg(" ... call to post_events, type: "); */
-  /* print_dbg_hex(e->eventType); */
-  /* print_dbg(" , data: "); */
-  /* print_dbg_hex(e->eventData); */
 
   //  bool fReenableInterrupts = Is_interrupt_level_enabled( TIMER_INT_LEVEL );
   //  Disable_interrupt_level( TIMER_INT_LEVEL );

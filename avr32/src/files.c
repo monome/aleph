@@ -9,17 +9,12 @@
 #include <string.h>
 // asf
 #include "compiler.h"
-//#include "navigation.h"
-//#include "fat.h"
-//#include "file.h"
 #include "print_funcs.h"
-//#include "sdramc.h"
-// aleph
+
+// aleph-avr32
 #include "bfin.h"
-//#include "conf_aleph.h"
 #include "files.h"
 #include "filesystem.h"
-//#include "memory.h"
 
 
 // list of names
