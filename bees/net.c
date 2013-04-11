@@ -28,7 +28,7 @@
 
 //=========================================
 //===== variables
-//----- static
+//----- staticltn
 //__attribute__((__section__(".bss_extram")))
 //static ctlnet_t netPrivate;
 

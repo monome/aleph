@@ -228,7 +228,7 @@ void register_interrupts(void) {
   gpio_enable_pin_interrupt( SW2_PIN,	        GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( SW3_PIN,	        GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( SW_MODE_PIN,	GPIO_PIN_CHANGE);
-  gpio_enable_pin_interrupt( SW_POWER_PIN,	GPIO_PIN_CHANGE);
+  //  gpio_enable_pin_interrupt( SW_POWER_PIN,	GPIO_PIN_CHANGE);
  
   // PA24 - PA31
   INTC_register_interrupt( &irq_port0_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA24 / 8), UI_IRQ_PRIORITY);
@@ -240,7 +240,7 @@ void register_interrupts(void) {
   INTC_register_interrupt( &irq_port1_line1, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB08 / 8), UI_IRQ_PRIORITY);
 
   // PB16 - PB23
-  INTC_register_interrupt( &irq_port1_line2, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB16 / 8), UI_IRQ_PRIORITY);
+  //  INTC_register_interrupt( &irq_port1_line2, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB16 / 8), UI_IRQ_PRIORITY);
 
   // register IRQ for PDCA transfer
   INTC_register_interrupt(&irq_pdca, AVR32_PDCA_IRQ_0, SYS_IRQ_PRIORITY);

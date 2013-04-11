@@ -218,7 +218,7 @@ static void check_events(void) {
 	mode ^= 1;
 	if(mode) { gpio_set_gpio_pin(LED_MODE_PIN); }
 	else { gpio_clr_gpio_pin(LED_MODE_PIN); }
-	menu_handleKey(eKeyMode, e.eventData);
+	//	menu_handleKey(eKeyMode, e.eventData);
 	break;
       case kEventSwitchUp4:
 	break;

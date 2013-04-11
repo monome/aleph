@@ -14,6 +14,12 @@
 #include "switches.h"
 #include "types.h"
 
+//////
+//// debug crazy oscillation on sw4
+//u8 sw4State = 0;
+////
+
+
 static const U8 kSwitchPins[NUM_SW] = {
   SW0_PIN,
   SW1_PIN,
@@ -37,6 +43,8 @@ static const eEventType kSwitchEvents[NUM_SW][2] = {
 void process_sw( const U8 swIdx )  {
   static event_t e;   
     e.eventType = kSwitchEvents[swIdx][gpio_get_pin_value(kSwitchPins[swIdx])];
+    print_dbg("\r\n post switch event, idx: ");
+    print_dbg_ulong(swIdx);
     post_event(&e);
 }
 
@@ -46,31 +54,7 @@ void process_sw( const U8 swIdx )  {
 /* // debounce counters */
 /* static u32 swCount[NUM_SW]; */
 /* // debounced results */
-/* static u8 swDebounce[NUM_SW] = { 0, 0, 0, 0, 0, 0 }; */
-
-/* // initialize debouncing */
-/* void init_switches(void) { */
-/*   u8 i; */
-/*   for(i=0; i<NUM_SW; i++) { */
-/*     swCount[i] = SW_RELEASE_TICKS; */
-/*   } */
-/* } */
-
-/* // poll func */
-/* void poll_sw(const U8 idx) { */
-/*   static event_t e; */
-/*   u8 state = gpio_get_pin_value(kSwitchPins[idx]); */
-/*   u8 changed = 0; */
-/*   if(state == swDebounce[idx]) {  */
-/*     //    print_dbg("\r\n pollsw"); */
-/*     // start counting no-change states */
-/*     if(swDebounce[idx]) { */
-/*       swCount[idx] = SW_RELEASE_TICKS; */
-/*     } else { */
-/*       swCount[idx] = SW_PRESS_TICKS; */
-/*     } */
-/*   } else { */
-/*     //    print_dbg("\r\n sw changed, count: "); */
+/* static u8 swDebounce[NUM_SW] = { 0, 0, 0, 0,/*     //    print_dbg("\r\n sw changed, count: "); */
 /*     //    print_dbg_hex(swCount[idx]); */
 /*     if(swCount[idx]-- == 0) { */
 /*       // timer expired, accept change */

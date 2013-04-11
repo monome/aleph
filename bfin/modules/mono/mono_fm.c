@@ -347,59 +347,47 @@ void module_deinit(void) {
   free(amp2Lp);
 }
 
-// set parameter by value
-///// FIXME: the represeentation of this value is totally arbitrary!
+// set parameter by value (fix16)
 void module_set_param(u32 idx, pval v) {
   switch(idx) {
   case eParamHz1:
-    // set_hz1(fix16_from_float(v));
     set_hz1(v.fix);
     break;
   case eParamRatio2:
-    //    set_ratio2(fix16_from_float(v));
     set_ratio2(v.fix);
     break;
   case eParamHz2:
-    //    set_hz2(fix16_from_float(v));
     set_hz2(v.fix);
     break;
   case eParamWave1:
-    //    filter_1p_fr32_in(wave1Lp, float_to_fr32(v));
-    filter_1p_fr32_in(wave1Lp, v.fr);
+    filter_1p_fr32_in(wave1Lp, FIX16_FRACT_TRUNC(BABS(v.fix)));
     break;
   case eParamWave2:
-    //    filter_1p_fr32_in(wave2Lp, float_to_fr32(v));
-    filter_1p_fr32_in(wave2Lp, v.fr);
+    filter_1p_fr32_in(wave2Lp, FIX16_FRACT_TRUNC(BABS(v.fix)));
     break;
   case eParamPm:
-    // scale to [0, 0.5]
-    //    filter_1p_fr32_in(pmLp, float_to_fr32(v) >> 1);
-    //    filter_1p_fr32_in(pmLp, v.fr >> 1);
-    filter_1p_fr32_in(pmLp, v.fix);
+    filter_1p_fr32_in(pmLp, FIX16_FRACT_TRUNC(BABS(v.fix)));
     break;
   case eParamAmp1:
-    //    filter_1p_fr32_in(amp1Lp, float_to_fr32(v));
-    filter_1p_fr32_in(amp1Lp, v.fr);
+    filter_1p_fr32_in(amp1Lp, FIX16_FRACT_TRUNC(BABS(v.fix)));
     break;
   case eParamAmp2:
-    //    filter_1p_fr32_in(amp2Lp, float_to_fr32(v));
-    filter_1p_fr32_in(amp2Lp, v.fr);
+    filter_1p_fr32_in(amp2Lp, FIX16_FRACT_TRUNC(BABS(v.fix)));
     break;
   case eParamGate:
      env_asr_set_gate(env, v.s > 0);
     break;
   case eParamAtkDur:
-    env_asr_set_atk_dur(env, v.u);
+    env_asr_set_atk_dur(env, FIX16_TO_U16(BABS(v.fix)));
     break;
   case eParamRelDur:
-    env_asr_set_rel_dur(env, v.u);
+    env_asr_set_rel_dur(env, FIX16_TO_U16(BABS(v.fix)));
     break;
   case eParamAtkCurve:
-    //    env_asr_set_atk_shape(env, float_to_fr32(v));
-    env_asr_set_atk_shape(env, v.fr);
+    env_asr_set_atk_shape(env, FIX16_FRACT_TRUNC(BABS(v.fix)));
     break;
   case eParamRelCurve:
-    env_asr_set_atk_shape(env, v.fr);
+    env_asr_set_atk_shape(env, FIX16_FRACT_TRUNC(BABS(v.fix)));
     break;
   case eParamHz1Smooth:
     filter_1p_fix16_set_hz(hz1Lp, v.fix);
@@ -448,47 +436,6 @@ u8 module_update_leds(void) {
 }
 
 static u8 buts[4] = {0, 0, 0, 0};
-
-void module_handle_button(const u16 state) {
-  static pval v;
-  static u8 b;
-  
-  // gate button
-  b = (state & 0x100) > 0;
-  if (buts[0] != b) {
-    buts[0] = b;
-    v.s = b;
-    module_set_param(eParamGate, v);    
-  }
-
-  // hz1 button
-  b = (state & 0x200) > 0;
-  if (buts[1] != b) {
-    buts[1] = b;
-    v.fix = (b ? 330 : 220) << 16;
-    set_hz1(v.fix);
-  }
-
-  // ratio2 button
-  b = (state & 0x400) > 0;
-  if (buts[2] != b) {
-    buts[2] = b;
-    v.fix = (b ? 0x28000 : 0x18000);
-    set_ratio2(v.fix);
-  }
-
-  // pm button
-  b = (state & 0x800) > 0;
-  if (buts[3] != b) {
-    buts[3] = b;
-    v.fr = (b ? 0x7fffffff : 0);
-    module_set_param(eParamPm, v);
-  }
-
-  ledstate = (u8)( (state>>8) & 0x3f);
-  ledstate ^=0x3f;
-}
-
 
 #else //  non-bfin
 void module_process_frame(const f32* in, f32* out) {
