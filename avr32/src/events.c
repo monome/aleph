@@ -91,7 +91,7 @@ bool post_event( event_t *e ) {
   } else {
     // idx wrapped, so queue is full, restore idx
     putIdx = saveIndex;
-    print_dbg("\r\b event queue full!");
+    print_dbg("\r\n event queue full!");
   } 
 
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);

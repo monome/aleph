@@ -62,7 +62,6 @@ u8 spi_process(u8 rx) {
       byte = eGetParamIdx;
       break;
     case MSG_GET_NUM_PARAMS_COM:
-      //      SET_LED4;
       byte = eNumParamsVal;
       return moduleData->numParams; // load num params
       break;
@@ -219,7 +218,8 @@ u8 spi_process(u8 rx) {
   // type
   case eParamDescType :
     byte = eParamDescMin0;
-    pval.asFloat = moduleData->paramDesc[idx].min;
+    //// FIXME
+    //    pval.asFloat = moduleData->paramDesc[idx].min;
     return pval.asByte[3]; // min, high byte
       break;
   // min  // === byteswap for BE on avr32

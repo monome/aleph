@@ -169,6 +169,9 @@
 #define SW1_PIN		AVR32_PIN_PA26
 #define SW2_PIN		AVR32_PIN_PA27
 #define SW3_PIN		AVR32_PIN_PA28
+// footswitches
+#define FS0_PIN         AVR32_PIN_PB30 
+#define FS1_PIN         AVR32_PIN_PB31
 // edit/play mode
 #define LED_MODE_PIN    AVR32_PIN_PA23
 #define SW_MODE_PIN     AVR32_PIN_PA24
