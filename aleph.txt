@@ -1,9 +1,9 @@
 aleph.
 
-1. processor/synth
-2. expansive i/o
-3. modular operating system
-4. open source
+1. processor/synth. sound/audio computer.
+2. expansive i/o. connected.
+3. modular operating system. dynamic control patching.
+4. open source.
 
 
 

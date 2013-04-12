@@ -3,16 +3,15 @@ april 2013 build
 
 tune debounce. use 18k rather than 82k.
 
+switch for inst/line: EG2364-ND	
 
-switch for inst/line: EG2480-ND	
-
-fine-tune usb mount positions
+# fine-tune usb mount positions
 new usb part: ae10400
 
 no r164 (order 562 ohms)
 
 breakout front jacks
-extra out 5-6 remove
+# extra out 5-6 remove
 optimize jack spacing to rear enclosure?
 
 

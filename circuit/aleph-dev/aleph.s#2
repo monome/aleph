@@ -1085,10 +1085,10 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <pad name="2" x="0" y="-4" drill="0.92" shape="octagon"/>
 <pad name="3" x="0" y="-2" drill="0.92" shape="octagon"/>
 <pad name="4" x="0" y="0" drill="0.92" shape="octagon"/>
-<pad name="G1" x="-2.72" y="0" drill="1.35" shape="octagon"/>
-<pad name="G2" x="-2.72" y="-7" drill="1.35" shape="octagon"/>
-<pad name="G3" x="2.72" y="-7" drill="1.35" shape="octagon"/>
-<pad name="G4" x="2.72" y="0" drill="1.35" shape="octagon"/>
+<pad name="G1" x="-2.9" y="0.5" drill="1.6" shape="octagon"/>
+<pad name="G2" x="-2.9" y="-6.5" drill="1.6" shape="octagon"/>
+<pad name="G3" x="2.9" y="-6.5" drill="1.6" shape="octagon"/>
+<pad name="G4" x="2.9" y="0.5" drill="1.6" shape="octagon"/>
 <text x="-3" y="3" size="1.27" layer="25" font="vector">&gt;NAME</text>
 </package>
 <package name="PN61729">
@@ -1951,11 +1951,11 @@ shrink quad flat pack, square</description>
 <wire x1="5" y1="7" x2="5" y2="-7.5" width="0.127" layer="21"/>
 <wire x1="5" y1="-7.5" x2="-5" y2="-7.5" width="0.127" layer="21"/>
 <wire x1="-5" y1="-7.5" x2="-5" y2="7" width="0.127" layer="21"/>
-<pad name="1" x="-2.2" y="-4.1" drill="0.8"/>
-<pad name="2" x="2.2" y="-2.5" drill="0.8"/>
-<pad name="3" x="-1.7" y="2.5" drill="0.8"/>
-<pad name="4" x="1.7" y="5" drill="0.8"/>
-<pad name="5" x="0" y="0" drill="0.8"/>
+<pad name="1" x="2.2" y="-4.1" drill="1.5"/>
+<pad name="2" x="-2.2" y="-2.5" drill="1.5"/>
+<pad name="3" x="1.7" y="2.5" drill="1.5"/>
+<pad name="4" x="-1.7" y="5" drill="1.5"/>
+<pad name="5" x="0" y="0" drill="1.5"/>
 <text x="-5" y="-9" size="1.27" layer="25">&gt;NAME</text>
 <text x="-5" y="7.5" size="1.27" layer="27">&gt;VALUE</text>
 </package>
@@ -17159,7 +17159,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="V56" library="supply" deviceset="+5V" device=""/>
 <part name="V57" library="supply" deviceset="+5VA" device=""/>
 <part name="GND66" library="supply" deviceset="GND" device=""/>
-<part name="R162" library="rc-master-smd" deviceset="R_" device="0603" value="100k"/>
+<part name="R162" library="rc-master-smd" deviceset="R_" device="0603" value="1k"/>
 <part name="GND5" library="supply" deviceset="GND" device=""/>
 <part name="U3" library="memory-cypress" deviceset="CY62167EV30-Z" device=""/>
 <part name="V6" library="supply" deviceset="+3V3" device=""/>
@@ -20091,7 +20091,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <wire x1="142.24" y1="152.4" x2="142.24" y2="0" width="0.1524" layer="97"/>
 <wire x1="299.72" y1="35.56" x2="299.72" y2="266.7" width="0.1524" layer="97"/>
 <wire x1="142.24" y1="152.4" x2="401.32" y2="152.4" width="0.1524" layer="97"/>
-<text x="38.1" y="246.38" size="1.778" layer="97">note: r67 and r68 matched. 1%</text>
 <text x="396.24" y="83.82" size="5.08" layer="97" rot="R180">I2C</text>
 <text x="398.78" y="264.16" size="5.08" layer="97" rot="R180">OLED</text>
 <text x="297.18" y="264.16" size="5.08" layer="97" rot="R180">KEY-LED</text>
