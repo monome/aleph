@@ -1,4 +1,4 @@
-/**
+ /**
  * \file
  *
  * \brief Interface of the USB Host Controller (UHC)

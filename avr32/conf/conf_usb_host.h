@@ -12,7 +12,7 @@
 #define UHD_NO_SLEEP_MGR
 
 //! Array of UHI APIs Define the list of UHI supported by USB host.
-#define USB_HOST_UHI        UHI_HID_MOUSE
+#define USB_HOST_UHI        UHI_HID_MOUSE , UHI_HID_GAMEPAD
 
 //! Maximum current allowed on Vbus (mA)
 #define USB_HOST_POWER_MAX  500
@@ -54,29 +54,23 @@
 #define UHC_ENUM_EVENT(dev,b_status)        usb_enum(dev,b_status)
 
 
-//@}
-
-
-
-/**
- * USB Interface Configuration
- * @{
- */
-/**
- * Configuration of HID Mouse interface
- * @{
- */
+// mouse config
 #define UHI_HID_MOUSE_CHANGE(dev,b_plug)
 #define UHI_HID_MOUSE_EVENT_BTN_LEFT(b_state)    hid_mouse_btn_left(b_state)
 #define UHI_HID_MOUSE_EVENT_BTN_RIGHT(b_state)   hid_mouse_btn_right(b_state)
 #define UHI_HID_MOUSE_EVENT_BTN_MIDDLE(b_state)  hid_mouse_btn_middle(b_state)
 #define UHI_HID_MOUSE_EVENT_MOUVE(x,y,scroll)    hid_mouse_move(x,y,scroll)
-//@}
-//@}
 
-//@}
+// gamepad config
+#define UHI_HID_GAMEPAD_CHANGE(dev,b_plug)
+/* #define UHI_HID_GAMEPAD_EVENT_BTN_LEFT(b_state)    hid_mouse_btn_left(b_state) */
+/* #define UHI_HID_GAMEPAD_EVENT_BTN_RIGHT(b_state)   hid_mouse_btn_right(b_state) */
+/* #define UHI_HID_GAMEPAD_EVENT_BTN_MIDDLE(b_state)  hid_mouse_btn_middle(b_state) */
+/* #define UHI_HID_GAMEPAD_EVENT_MOUVE(x,y,scroll)    hid_mouse_move(x,y,scroll) */
+
 
 #include "uhi_hid_mouse.h"
+#include "uhi_hid_gamepad.h"
 //#include "ui.h"
 #include "usb.h"
 
