@@ -42,6 +42,10 @@
  */
 
 #include "conf_usb_host.h"
+////// TESTING
+#include "print_funcs.h"
+//////////////
+
 #include "usb_protocol.h"
 #include "uhd.h"
 #include "uhi.h"
@@ -670,6 +674,69 @@ static void uhc_enumeration_step14(
 	usb_setup_req_t req;
 	bool b_conf_supported = false;
 	UNUSED(add);
+
+	/////////////////////////////////
+	///// TESTING
+	print_dbg("\r\n received device descriptor. ");
+
+	print_dbg("\r\n address: ");
+	print_dbg_hex(uhc_dev_enum -> address);
+
+	print_dbg("\r\n speed: ");
+	print_dbg_hex(uhc_dev_enum -> speed);
+	
+	print_dbg("\r\n\r\n");
+
+	print_dbg("\r\n dev desc -> bLength : ");
+	print_dbg_hex(uhc_dev_enum->dev_desc.bLength);
+	print_dbg("\r\n dev desc -> bDescriptorType : ");
+	print_dbg_hex(uhc_dev_enum->dev_desc.bDescriptorType);
+	print_dbg("\r\n dev desc -> bcdUSB : ");
+	print_dbg_hex(uhc_dev_enum->dev_desc.bcdUSB);
+	print_dbg("\r\n dev desc -> bDeviceClass : ");
+	print_dbg_hex(uhc_dev_enum->dev_desc.bDeviceClass);
+	print_dbg("\r\n dev desc -> bDeviceSubClass : ");
+	print_dbg_hex(uhc_dev_enum->dev_desc.bDeviceSubClass);
+	print_dbg("\r\n dev desc -> bDeviceProtocol : ");
+	print_dbg_hex(uhc_dev_enum->dev_desc.bDeviceProtocol);
+	print_dbg("\r\n dev desc -> bMaxPacketSize0 : ");
+	print_dbg_hex(uhc_dev_enum->dev_desc.bMaxPacketSize0);
+	print_dbg("\r\n dev desc -> idVendor : ");
+	print_dbg_hex(uhc_dev_enum->dev_desc.idVendor);
+	print_dbg("\r\n dev desc -> idProduct : ");
+	print_dbg_hex(uhc_dev_enum->dev_desc.idProduct);
+	print_dbg("\r\n dev desc -> bcdDevice : ");
+	print_dbg_hex(uhc_dev_enum->dev_desc.bcdDevice);
+	print_dbg("\r\n dev desc -> iManufacturer : ");
+	print_dbg_hex(uhc_dev_enum->dev_desc.iManufacturer);
+	print_dbg("\r\n dev desc -> iProduct : ");
+	print_dbg_hex(uhc_dev_enum->dev_desc.iProduct);
+	print_dbg("\r\n dev desc -> iSerialNumber : ");
+	print_dbg_hex(uhc_dev_enum->dev_desc.iSerialNumber);
+	print_dbg("\r\n dev desc -> bNumConfigurations : ");
+	print_dbg_hex(uhc_dev_enum->dev_desc.bNumConfigurations);
+
+	print_dbg("\r\n\r\n");
+	
+	print_dbg("\r\n conf desc -> bLength : ");
+	print_dbg_hex(uhc_dev_enum->conf_desc->bLength);
+	print_dbg("\r\n conf desc -> bDescriptorType : ");
+	print_dbg_hex(uhc_dev_enum->conf_desc->bDescriptorType);
+	print_dbg("\r\n conf desc -> wTotalLength : ");
+	print_dbg_hex(uhc_dev_enum->conf_desc->wTotalLength);
+	print_dbg("\r\n conf desc -> bNumInterfaces : ");
+	print_dbg_hex(uhc_dev_enum->conf_desc->bNumInterfaces);
+	print_dbg("\r\n conf desc -> bConfigurationValue : ");
+	print_dbg_hex(uhc_dev_enum->conf_desc->bConfigurationValue);
+	print_dbg("\r\n conf desc -> iConfiguration : ");
+	print_dbg_hex(uhc_dev_enum->conf_desc->iConfiguration);
+	print_dbg("\r\n conf desc -> bmAttributes : ");
+	print_dbg_hex(uhc_dev_enum->conf_desc->bmAttributes);
+	print_dbg("\r\n conf desc -> bMaxPower : ");
+	print_dbg_hex(uhc_dev_enum->conf_desc->bMaxPower);
+
+	/////////////////////////////////
+	/////////////////////////////////
 
 	if ((status != UHD_TRANS_NOERROR)
 			|| (payload_trans < sizeof(usb_conf_desc_t))

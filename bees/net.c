@@ -18,7 +18,7 @@
 #include "util.h"
 #include "op.h" 
 #include "op_derived.h"
-//#include "memory.h"
+#include "memory.h"
 #include "menu_protected.h"
 #include "net.h"
 #include "net_protected.h"
@@ -28,9 +28,9 @@
 
 //=========================================
 //===== variables
-//----- static
-__attribute__((__section__(".bss_extram")))
-static ctlnet_t netPrivate;
+//----- staticltn
+//__attribute__((__section__(".bss_extram")))
+//static ctlnet_t netPrivate;
 
 static s32 inSearchIdx = 0;
 static s32 outSearchIdx = 0;
@@ -67,7 +67,8 @@ void net_init(void) {
   u32 i;
   //  u32 res;
   
-  net = &netPrivate;
+  //  net = &netPrivate;
+  net = (ctlnet_t*)alloc_mem(sizeof(ctlnet_t));
 
   /* print_dbg("\r\n cltnet address: "); */
   /* print_dbg_hex((unsigned long int)net); */
@@ -661,6 +662,7 @@ void net_add_param(u32 idx, volatile ParamDesc* pdesc) {
   net->params[net->numParams].desc = *pdesc;
   net->params[net->numParams].idx = idx;
   net->params[net->numParams].preset = 1;
+  net->params[net->numParams].data.value.asInt = 0;
   net->numParams++;
   /* print_dbg("\r\n ctlnet: added parameter at index "); */
   /* print_dbg_ulong(idx); */

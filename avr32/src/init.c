@@ -52,11 +52,14 @@ void init_gpio(void) {
   gpio_enable_pin_pull_up(ENC3_S0_PIN);
   gpio_enable_pin_pull_up(ENC3_S1_PIN);
 
+#if 0
   gpio_enable_pin_pull_up(SW0_PIN);
   gpio_enable_pin_pull_up(SW1_PIN);
   gpio_enable_pin_pull_up(SW2_PIN);
   gpio_enable_pin_pull_up(SW3_PIN);
   gpio_enable_pin_pull_up(SW_MODE_PIN);
+#endif
+
   gpio_enable_pin_pull_up(SW_POWER_PIN);
 
   /// trying this...
@@ -64,6 +67,7 @@ void init_gpio(void) {
   /* gpio_enable_pin_glitch_filter(SW1_PIN); */
   /* gpio_enable_pin_glitch_filter(SW2_PIN); */
   /* gpio_enable_pin_glitch_filter(SW3_PIN); */
+  gpio_enable_pin_glitch_filter(SW_MODE_PIN); 
 }
 
 // initialize application timer
@@ -254,7 +258,8 @@ void init_bfin_resources(void) {
     //// investigate if this is possible...
     //   .baudrate     = 20000000,
     //     .baudrate     = 10000000,
-     .baudrate     = 5000000,
+    //     .baudrate     = 5000000,
+     .baudrate     = 20000000,
     .bits         = 8,
     .spck_delay   = 0,
     //    .trans_delay  = 0,

@@ -39,6 +39,10 @@ typedef enum {
   kEventSwitchUp4,
   kEventSwitchDown5, // power
   kEventSwitchUp5,
+  kEventSwitchDown6, // foot0
+  kEventSwitchUp6,
+  kEventSwitchDown7, // foot1
+  kEventSwitchUp7,
   kNumEvents,
 } eEventType;
 

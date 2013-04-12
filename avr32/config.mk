@@ -29,7 +29,7 @@ FLASH = internal@0x80000000
 # Clock source to use when programming; xtal, extclk or int
 PROG_CLOCK = int
 
-# Applicat	ion target name. Given with suffix .a for library and .elf for a
+# Application target name. Given with suffix .a for library and .elf for a
 # standalone application.
 TARGET = aleph.elf
 
@@ -52,8 +52,7 @@ CSRCS = \
 	avr32/drivers/usbb/usbb_host.c                     \
         common/services/clock/uc3a0_a1/sysclk.c            \
 	common/services/storage/ctrl_access/ctrl_access.c \
-       common/services/usb/class/hid/host/mouse/uhi_hid_mouse.c \
-       common/services/usb/uhc/uhc.c \
+        common/services/usb/uhc/uhc.c \
 	$(ALEPH_AVR32)/src/adc.c \
 	$(ALEPH_AVR32)/src/app_timers.c \
 	$(ALEPH_AVR32)/src/bfin.c \
@@ -70,6 +69,10 @@ CSRCS = \
 	$(ALEPH_AVR32)/src/timers.c \
 	$(ALEPH_AVR32)/src/main.c \
 	$(ALEPH_AVR32)/src/usb.c \
+	$(ALEPH_AVR32)/src/usb/mouse/hid_mouse.c \
+	$(ALEPH_AVR32)/src/usb/mouse/uhi_hid_mouse.c \
+	$(ALEPH_AVR32)/src/usb/gamepad/hid_gamepad.c \
+	$(ALEPH_AVR32)/src/usb/gamepad/uhi_hid_gamepad.c \
 	$(ALEPH_BEES)/key_handler.c \
 	$(ALEPH_BEES)/menu.c \
 	$(ALEPH_BEES)/net.c \
@@ -94,10 +97,6 @@ CSRCS = \
 	$(ALEPH_COMMON)/fat_io_lib/fat_string.c \
 	$(ALEPH_COMMON)/fat_io_lib/fat_table.c \
 	$(ALEPH_COMMON)/fat_io_lib/fat_write.c 
-#	avr32/services/fs/fat/fat.c                        \
-#	avr32/services/fs/fat/fat_unusual.c                \
-#	avr32/services/fs/fat/file.c                       \
-#	avr32/services/fs/fat/navigation.c                 \
 
 # List of assembler source files.
 ASSRCS = \
@@ -131,20 +130,22 @@ INC_PATH = \
        avr32/utils/debug                                  \
        avr32/utils/preprocessor                           \
        common/boards                                      \
-	avr32/components/memory/sd_mmc/sd_mmc_spi \
+	avr32/components/memory/sd_mmc/sd_mmc_spi         \
        common/services/storage/ctrl_access                \
        common/services/clock                              \
-	common/services/delay \
+	common/services/delay                             \
        common/services/usb                                \
        common/services/usb/class/hid                      \
-       common/services/usb/class/hid/host/mouse           \
        common/services/usb/uhc                            \
-       common/utils         \
-	$(ALEPH_AVR32)	\
-	$(ALEPH_AVR32)/src	\
-	$(ALEPH_AVR32)/conf	\
-	$(ALEPH_BEES)	\
-	$(ALEPH_COMMON)	\
+       common/utils                \
+	$(ALEPH_AVR32)	           \
+	$(ALEPH_AVR32)/src	   \
+	$(ALEPH_AVR32)/conf	   \
+	$(ALEPH_AVR32)/src/usb     \
+	$(ALEPH_AVR32)/src/usb/mouse   \
+	$(ALEPH_AVR32)/src/usb/gamepad \
+	$(ALEPH_BEES)	           \
+	$(ALEPH_COMMON)	           \
 	$(ALEPH_COMMON)/libfixmath \
 	$(ALEPH_COMMON)/fat_io_lib
 
@@ -164,9 +165,9 @@ DBGFLAGS =
 
 # Application optimization used during compilation and linking:
 # -O0, -O1, -O2, -O3 or -Os
-OPTIMIZATION = -O2
+# OPTIMIZATION = -O2
 # OPTIMIZATION = -Os
-# OPTIMIZATION = -O3
+OPTIMIZATION = -O3
 # OPTIMIZATION = -O0 -fno-inline
 
 # Extra flags to use when archiving.
@@ -193,5 +194,4 @@ CPPFLAGS = \
 
 # Extra flags to use when linking
 # LDFLAGS = -Wl,--gc-sections,-e,_trampoline -Wl,--defsym,__heap_size__=0x00080000 -nostartfile	
-#LDFLAGS = -Wl,--gc-sections,-e,_trampoline -Wl,--defsym,__heap_size__=0x00001000 -nostartfiles	
 LDFLAGS = -nostartfiles -Wl,-e,_trampoline

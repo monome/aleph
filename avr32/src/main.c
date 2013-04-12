@@ -186,26 +186,23 @@ static void check_events(void) {
       case kEventRefresh:
 	screen_refresh();
 	break;
-      case kEventSwitchDown0:
+	//----- function switches
+      case kEventSwitchDown0: 
 	menu_handleKey(eKeyFnDownA, e.eventData);
 	break;
       case kEventSwitchUp0:
 	menu_handleKey(eKeyFnUpA, e.eventData);
 	break;
       case kEventSwitchDown1:
-	///	      print_dbg("\r\n switch f1 down");
 	menu_handleKey(eKeyFnDownB, e.eventData);
 	break;
       case kEventSwitchUp1:
-	//		print_dbg("\r\n switch f1 up");
 	menu_handleKey(eKeyFnUpB, e.eventData);
 	break;
       case kEventSwitchDown2:
-	//		print_dbg("\r\n switch f2 down");
 	menu_handleKey(eKeyFnDownC, e.eventData);
 	break;
       case kEventSwitchUp2:
-	//		print_dbg("\r\n switch f2 up");
 	menu_handleKey(eKeyFnUpC, e.eventData);
 	break;
       case kEventSwitchDown3:
@@ -214,6 +211,20 @@ static void check_events(void) {
       case kEventSwitchUp3:
 	menu_handleKey(eKeyFnUpD, e.eventData);
 	break;
+	/// footswitches
+      case kEventSwitchDown6:
+	print_dbg("\r\n footswitch1 down");
+	break;
+      case kEventSwitchUp6:
+	print_dbg("\r\n footswitch1 up");
+	break;
+      case kEventSwitchDown7:
+	print_dbg("\r\n footswitch2 down");
+	break;
+      case kEventSwitchUp7:
+	print_dbg("\r\n footswitch2 up");
+	break;
+	// mode switch
       case kEventSwitchDown4:
 	mode ^= 1;
 	if(mode) { gpio_set_gpio_pin(LED_MODE_PIN); }
@@ -222,6 +233,7 @@ static void check_events(void) {
 	break;
       case kEventSwitchUp4:
 	break;
+	// power switch
       case kEventSwitchDown5:
 	screen_line(0, 0, "powering down!", 0x3f);
 	print_dbg("\r\n AVR32 received power down switch event");
@@ -230,9 +242,8 @@ static void check_events(void) {
 	break;
       case kEventSwitchUp5:
 	break;
-
       case kEventEncoder0:
-	//			print_dbg("\r\n encoder 0");
+			print_dbg("\r\n encoder 0");
       	if(e.eventData > 0) {
       	  menu_handleKey(eKeyEncUpD, e.eventData);
       	} else {
@@ -240,7 +251,7 @@ static void check_events(void) {
       	}
       	break;
       case kEventEncoder1:
-	//	print_dbg("\r\n encoder 1");
+	print_dbg("\r\n encoder 1");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpC, e.eventData);
 	} else {
@@ -248,7 +259,7 @@ static void check_events(void) {
 	}
 	break;
       case kEventEncoder2:
-	//	print_dbg("\r\n encoder 2");
+	print_dbg("\r\n encoder 2");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpB, e.eventData);
 	} else {
@@ -256,7 +267,7 @@ static void check_events(void) {
 	}
 	break;
       case kEventEncoder3:
-	//	print_dbg("\r\n encoder 3");
+	print_dbg("\r\n encoder 3");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpA, e.eventData);
 	} else {
@@ -265,23 +276,23 @@ static void check_events(void) {
 	break;
 
       case kEventAdc0:
-	//		print_dbg("\r\nadc val 0: ");
-	//		print_dbg_hex(e.eventData);
+	//	print_dbg("\r\nadc val 0: ");
+	//	print_dbg_hex(e.eventData);
 	//	displayAdcVal(0, e.eventData);
 	break;
       case kEventAdc1:
-	//		 print_dbg("\r\nadc val 1: ");
-	//		 print_dbg_hex(e.eventData);
+	//	 print_dbg("\r\nadc val 1: ");
+	//	 print_dbg_hex(e.eventData);
 	 //	 displayAdcVal(1, e.eventData);
 	break;
       case kEventAdc2:
-	//		 print_dbg("\r\nadc val 2: ");
-	//		 print_dbg_hex(e.eventData);
+	//	 print_dbg("\r\nadc val 2: ");
+	//	 print_dbg_hex(e.eventData);
 	//	 displayAdcVal(2, e.eventData);
 	break;
       case kEventAdc3:
-	//	     	print_dbg("\r\nadc val 3: ");
-	//	     	print_dbg_hex(e.eventData);
+	//     	print_dbg("\r\nadc val 3: ");
+	//     	print_dbg_hex(e.eventData);
 	//     	displayAdcVal(3, e.eventData);
 	break;
       }
@@ -298,7 +309,6 @@ int main (void) {
   init_avr32();
 
   // wait for sd card
-
   screen_line(0, 0, "ALEPH", 0x3f);
   screen_line(0, 1, "waiting for SD card...", 0x3f);
   screen_refresh();
@@ -309,29 +319,19 @@ int main (void) {
   }
   print_dbg("\r\nfound SD card. ");
 
+  screen_blank_line(0, 0);
+  screen_blank_line(0, 1);
   screen_line(0, 0, "SD card detected.", 0x3f);
 
   // setup control logic
   init_ctl();
 
-  screen_blank_line(0, 0);
-  screen_blank_line(0, 1);
-  screen_blank_line(0, 2);
-  screen_blank_line(0, 3);
-  screen_blank_line(0, 4);
-  screen_blank_line(0, 5);
-  screen_blank_line(0, 6);
-  screen_blank_line(0, 7);
-
   /// boot default dsp
-  screen_line(0, 0, "loading default DSP...", 0x3f);
+  screen_line(0, 1, "loading default DSP...", 0x3f);
   screen_refresh();
-
   files_load_dsp_name("default.ldr");
 
-  screen_line(0, 1, "finished. ", 0x3f);
-  screen_line(0, 2, "press a key to continue...", 0x3f);
-
+  screen_line(0, 1, "finished. press any key to continue...", 0x3f);
   screen_refresh();
   
   print_dbg("\r\n starting event loop.\r\n");

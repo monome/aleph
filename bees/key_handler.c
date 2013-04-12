@@ -42,13 +42,13 @@ static fix16 scale_knob_value(const s32 v);
 static fix16 scale_knob_value(const s32 v) {
   s32 vabs = BABS(v);
   if(vabs < 6) {
-    print_dbg("\r\n slow");
+    //    print_dbg("\r\n slow");
     return v;
   } else if (vabs < 12) {
-    print_dbg("\r\n fast");
+    //    print_dbg("\r\n fast");
     return v * 8;
   } else {
-    print_dbg("\r\n fastest");
+    //    print_dbg("\r\n fastest");
     return v * 32;
   }
 }
@@ -278,27 +278,27 @@ void key_handler_play(uiKey_t key, s16 v) {
     val = 1;
     break;
   case eKeyFnUpB:
-    inIdx = net_op_in_idx(4, 0); // op 5: switch, in 0: val
+    inIdx = net_op_in_idx(5, 0); // op 5: switch, in 0: val
     val = 0;
     break;
   case eKeyFnDownB:
-    inIdx = net_op_in_idx(4, 0); // op 5: switch, in 0: val
+    inIdx = net_op_in_idx(5, 0); // op 5: switch, in 0: val
     val = 1;
     break;
   case eKeyFnUpC:
-    inIdx = net_op_in_idx(4, 0); // op 6: switch, in 0: val
+    inIdx = net_op_in_idx(6, 0); // op 6: switch, in 0: val
     val = 0;
     break;
   case eKeyFnDownC:
-    inIdx = net_op_in_idx(4, 0); // op 6: switch, in 0: val
+    inIdx = net_op_in_idx(6, 0); // op 6: switch, in 0: val
     val = 1;
     break;
   case eKeyFnUpD:
-    inIdx = net_op_in_idx(4, 0); // op 7: switch, in 0: val
+    inIdx = net_op_in_idx(7, 0); // op 7: switch, in 0: val
     val = 0;
     break;
   case eKeyFnDownD:
-    inIdx = net_op_in_idx(4, 0); // op 7: switch, in 0: val
+    inIdx = net_op_in_idx(7, 0); // op 7: switch, in 0: val
     val = 1;
     break;
     ///// encoders
@@ -338,6 +338,8 @@ void key_handler_play(uiKey_t key, s16 v) {
     ;;
     break;
   }
+  //  print_dbg("\r\n activating index from play mode: ");
+  //  print_dbg_ulong(inIdx);
   if(inIdx >= 0) {
     net_activate(inIdx, val);
     redraw_play();
