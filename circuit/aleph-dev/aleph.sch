@@ -1951,11 +1951,11 @@ shrink quad flat pack, square</description>
 <wire x1="5" y1="7" x2="5" y2="-7.5" width="0.127" layer="21"/>
 <wire x1="5" y1="-7.5" x2="-5" y2="-7.5" width="0.127" layer="21"/>
 <wire x1="-5" y1="-7.5" x2="-5" y2="7" width="0.127" layer="21"/>
-<pad name="1" x="-2.2" y="-4.1" drill="0.8"/>
-<pad name="2" x="2.2" y="-2.5" drill="0.8"/>
-<pad name="3" x="-1.7" y="2.5" drill="0.8"/>
-<pad name="4" x="1.7" y="5" drill="0.8"/>
-<pad name="5" x="0" y="0" drill="0.8"/>
+<pad name="1" x="2.2" y="-4.1" drill="1.5"/>
+<pad name="2" x="-2.2" y="-2.5" drill="1.5"/>
+<pad name="3" x="1.7" y="2.5" drill="1.5"/>
+<pad name="4" x="-1.7" y="5" drill="1.5"/>
+<pad name="5" x="0" y="0" drill="1.5"/>
 <text x="-5" y="-9" size="1.27" layer="25">&gt;NAME</text>
 <text x="-5" y="7.5" size="1.27" layer="27">&gt;VALUE</text>
 </package>
@@ -17159,7 +17159,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="V56" library="supply" deviceset="+5V" device=""/>
 <part name="V57" library="supply" deviceset="+5VA" device=""/>
 <part name="GND66" library="supply" deviceset="GND" device=""/>
-<part name="R162" library="rc-master-smd" deviceset="R_" device="0603" value="100k"/>
+<part name="R162" library="rc-master-smd" deviceset="R_" device="0603" value="1k"/>
 <part name="GND5" library="supply" deviceset="GND" device=""/>
 <part name="U3" library="memory-cypress" deviceset="CY62167EV30-Z" device=""/>
 <part name="V6" library="supply" deviceset="+3V3" device=""/>

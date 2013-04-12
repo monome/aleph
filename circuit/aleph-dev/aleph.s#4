@@ -17048,7 +17048,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="C15" library="rc-master-smd" deviceset="C_" device="0603" value="33n"/>
 <part name="C16" library="rc-master-smd" deviceset="C_" device="0603" value="100n"/>
 <part name="C17" library="rc-master-smd" deviceset="C_" device="1206" value="4.7u"/>
-<part name="C18" library="rc-master-smd" deviceset="C_" device="0603" value="2.2u"/>
+<part name="C18" library="rc-master-smd" deviceset="C_" device="1206" value="2.2u"/>
 <part name="C19" library="rc-master-smd" deviceset="C_" device="0603" value="470p"/>
 <part name="C20" library="rc-master-smd" deviceset="C_" device="0603" value="2.7n"/>
 <part name="C21" library="rc-master-smd" deviceset="C_" device="0603" value="33n"/>
@@ -17121,10 +17121,10 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="D1" library="diode" deviceset="MBRS360T3" device=""/>
 <part name="D2" library="diode" deviceset="MBRS360T3" device=""/>
 <part name="L1" library="inductor-coilcraft" deviceset="MSS1278" device=""/>
-<part name="C43" library="rc-master-smd" deviceset="C_" device="1206" value="22u"/>
+<part name="C43" library="rc-master-smd" deviceset="CP_" device="1206/T" value="22u"/>
 <part name="C44" library="rc-master-smd" deviceset="C_" device="1206" value="470n"/>
 <part name="C45" library="rc-master-smd" deviceset="C_" device="1206" value="10n"/>
-<part name="C46" library="rc-master-smd" deviceset="C_" device="3225" value="47u"/>
+<part name="C46" library="rc-master-smd" deviceset="CP_" device="3528" value="47u"/>
 <part name="GND22" library="supply" deviceset="GND" device=""/>
 <part name="GND23" library="supply" deviceset="GND" device=""/>
 <part name="V12" library="supply" deviceset="+5V" device=""/>
@@ -17140,7 +17140,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="R18" library="rc-master-smd" deviceset="R_" device="0603" value="0"/>
 <part name="J10" library="monome-inc" deviceset="PHA2U" device=""/>
 <part name="R63" library="rc-master-smd" deviceset="R_" device="0603" value="330k"/>
-<part name="R64" library="rc-master-smd" deviceset="R_" device="0603" value="100k"/>
+<part name="R64" library="rc-master-smd" deviceset="R_" device="0603" value="47k"/>
 <part name="GND46" library="supply" deviceset="GND" device=""/>
 <part name="GND1" library="supply" deviceset="GND" device=""/>
 <part name="U$6" library="monome-inc" deviceset="SDMMC" device="06132"/>
@@ -17163,7 +17163,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="GND5" library="supply" deviceset="GND" device=""/>
 <part name="U3" library="memory-cypress" deviceset="CY62167EV30-Z" device=""/>
 <part name="V6" library="supply" deviceset="+3V3" device=""/>
-<part name="R36" library="rc-master-smd" deviceset="R_" device="0603" value="100k"/>
+<part name="R36" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
 <part name="FRAME3" library="frames" deviceset="TABL_L" device=""/>
 <part name="AGND6" library="supply" deviceset="AGND" device=""/>
 <part name="R51" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
@@ -17332,7 +17332,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="R26" library="rc-master-smd" deviceset="R_" device="0603" value="0"/>
 <part name="C74" library="rc-master-smd" deviceset="C_" device="1206" value="100n"/>
 <part name="GND45" library="supply" deviceset="GND" device=""/>
-<part name="C75" library="rc-master-smd" deviceset="CP_" device="3528" value="100u"/>
+<part name="C75" library="rc-master-smd" deviceset="CP_" device="1210/T" value="100u"/>
 <part name="D7" library="diode" deviceset="ZENER-DIODE" device="SOT23" value="zhcs1000"/>
 <part name="GND49" library="supply" deviceset="GND" device=""/>
 <part name="L2" library="inductor-bourns" deviceset="SRR6038" device="" value="SRR6038-100Y"/>
@@ -19152,7 +19152,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="GND22" gate="1" pin="GND"/>
 <pinref part="J2" gate="G$1" pin="S"/>
 <pinref part="U6" gate="G$1" pin="GND"/>
-<pinref part="C43" gate="G$1" pin="1"/>
+<pinref part="C43" gate="G$1" pin="-"/>
 <pinref part="C44" gate="G$1" pin="1"/>
 <pinref part="U6" gate="G$1" pin="GNDP"/>
 </segment>
@@ -19164,7 +19164,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <junction x="241.3" y="185.42"/>
 <pinref part="D2" gate="G$1" pin="A"/>
 <pinref part="GND23" gate="1" pin="GND"/>
-<pinref part="C46" gate="G$1" pin="2"/>
+<pinref part="C46" gate="G$1" pin="+"/>
 </segment>
 <segment>
 <wire x1="289.56" y1="198.12" x2="289.56" y2="190.5" width="0.1524" layer="91"/>
@@ -19455,7 +19455,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <junction x="261.62" y="208.28"/>
 <pinref part="U6" gate="G$1" pin="FB"/>
 <pinref part="L1" gate="G$1" pin="2"/>
-<pinref part="C46" gate="G$1" pin="1"/>
+<pinref part="C46" gate="G$1" pin="-"/>
 <pinref part="V12" gate="1" pin="+5V"/>
 <pinref part="5V" gate="G$1" pin="TP"/>
 </segment>
@@ -19661,7 +19661,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <junction x="193.04" y="208.28"/>
 <pinref part="D1" gate="G$1" pin="C"/>
 <pinref part="U6" gate="G$1" pin="INPUT"/>
-<pinref part="C43" gate="G$1" pin="2"/>
+<pinref part="C43" gate="G$1" pin="+"/>
 <pinref part="C44" gate="G$1" pin="2"/>
 <pinref part="R63" gate="G$1" pin="2"/>
 <wire x1="187.96" y1="208.28" x2="187.96" y2="226.06" width="0.1524" layer="91"/>
