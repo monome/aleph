@@ -26,6 +26,9 @@ typedef struct _moduleDesc {
 
 extern moduleData_t* moduleData;
 
+// debug output flag
+extern u8 dbgFlag;
+
 //-------- function prototypes 
 // init
 extern void module_init();

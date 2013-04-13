@@ -130,7 +130,7 @@ static filter_1p_fr32* amp2Lp;  // 1plp smoother for amp2
 //-----------------------
 //----- fwd declaration 
 // from table.h
-extern inline fract32 table_lookup_idx(fract32* tab, u32 size, fix16 idx);
+//extern  fract32 table_lookup_idx(fract32* tab, u32 size, fix16 idx);
 
 //----------------------
 //----- static functions
@@ -250,13 +250,15 @@ void module_init(void) {
   // intialize local data at start of SDRAM
   monoFmData = (monoFmData_t * )SDRAM_ADDRESS;
   // initialize moduleData superclass for core routines
+#else
+  //  moduleData = (moduleData_t*)malloc(sizeof(moduleData_t));
+  monoFmData = (monoFmData_t*)malloc(sizeof(monoFmData_t));
+#endif
   moduleData = &(monoFmData->super);
   moduleData->paramDesc = monoFmData->mParamDesc;
   moduleData->paramData = monoFmData->mParamData;
   moduleData->numParams = eParamNumParams;
-#else
-  //  moduleData = (moduleData_t*)malloc(sizeof(moduleData_t));
-#endif
+
   strcpy(moduleData->paramDesc[eParamHz1].label, "osc 1 hz");
   strcpy(moduleData->paramDesc[eParamHz2].label, "osc 2 hz");
   strcpy(moduleData->paramDesc[eParamRatio2].label, "osc 2 ratio");
