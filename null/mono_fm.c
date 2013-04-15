@@ -211,24 +211,6 @@ static void calc_frame(void) {
   // lookup osc2
   osc2 = lookup_wave(idx2, wave2);
   
-
-  /////////////////
-  /* if(osc2 < 0) { */
-  /*   if (pm > 0xffff) { */
-  /*     printf("\r\n %0x8", FRACT_FIX16(mult_fr1x32x32(osc2, pm)) ); */
-  /*   } */
-  /* } */
-
-  /* modIdxOffset = fix16_mul( */
-  /* 			   FRACT_FIX16(mult_fr1x32x32(osc2, pm)), */
-  /* 			   WAVE_TAB_MAX16 ); */
-
-  ///// this is producing some overflow/offset. bug in fix->fract conversion
-  /* modIdxOffset =  */
-  /* 			   FRACT_FIX16(mult_fr1x32x32(osc2, pm)), */
-    
-  modIdxOffset = mult_fr1x32x32(osc2, pm);
-
   /// use osc2 output as phase modulation, scaled to tablesize
   idx1Mod = fix16_add(
 		      idx1,
@@ -240,16 +222,10 @@ static void calc_frame(void) {
   // wrap negative
   while (BSIGN(idx1Mod)) {
     idx1Mod = fix16_add(idx1Mod, WAVE_TAB_MAX16);
-    /////
-    //    printf("\r\n wrap neg");
-      //// 
-
   }
+
   // wrap positive
   while(idx1Mod > WAVE_TAB_MAX16) { 
-    /////
-    //    printf("\r\n wrap pos");
-      //// 
     idx1Mod = fix16_sub(idx1Mod, WAVE_TAB_MAX16); 
   }
 
@@ -495,7 +471,7 @@ void module_process_frame(const f32* in, f32* out) {
   u32 frame;
   u8 chan;
   for(frame=0; frame<BLOCKSIZE; frame++) {
-    calc_frame();
+    calc_frame();x)>>15) | 0xffff8000 : (x)>>15 )
     for(chan=0; chan<NUMCHANNELS; chan++) { // stereo interleaved
       // FIXME: could use fract for output directly (portaudio setting?)
       *out = fr32_to_float(frameVal);
