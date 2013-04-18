@@ -33,6 +33,8 @@ void deinit_ui(void) {
 }
 
 void handle_key(u16 ch) {
+  float fin;
+  fix16 fixin;
   pval pv;
   u32 pnum;
   u32 i;
@@ -50,10 +52,21 @@ void handle_key(u16 ch) {
     printf("\rsetting parameter %d, %s\n", paramIdx, moduleData->paramDesc[paramIdx].label);
     printf("enter param value (float): \n"); 
     prompt();
-    pv.fix = fix16_from_float(atof(input));
+    fin = atof(input);
+    pv.fix = fix16_from_float(fin);
     module_set_param(paramIdx, pv);
-
     break;
+
+  case CMD_KEY_DEBUG :
+    if(dbgFlag == 0) {
+      printf("\r\n start debug output"); 
+      dbgFlag = 1;
+    } else {
+      printf("\r\n stop debug output"); 
+      dbgFlag = 0;
+    }
+    break;
+
   default:
     break;
   }

@@ -34,7 +34,8 @@ PaStreamParameters outputParameters;
 //========================
 //== functions
 
-static int paCallback( const void *inputBuffer, void *outputBuffer,
+static int paCallback( const void *inputBuffer,
+		       void *outputBuffer,
 		       unsigned long framesPerBuffer,
 		       const PaStreamCallbackTimeInfo* timeInfo,
 		       PaStreamCallbackFlags statusFlags,
@@ -49,6 +50,9 @@ static int paCallback( const void *inputBuffer, void *outputBuffer,
 
 void init_audio(void) {
   
+  /// try doing this first
+  module_init(SAMPLERATE);
+
   err = Pa_Initialize();
   if(err != paNoError) goto done;
 
@@ -86,8 +90,6 @@ void init_audio(void) {
 		      paCallback,
 		      NULL );
   if( err != paNoError ) goto done;
-
-  module_init(SAMPLERATE);
 
   err = Pa_StartStream( stream );
   if( err != paNoError ) goto done;

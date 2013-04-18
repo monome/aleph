@@ -30,7 +30,9 @@
 #define FIX16_TO_S16(x) (s16)((x) >> 16)
 #define S16_TO_FIX16(x) ( (fix16_t)(x) ) << 16
 #define FIX16_FRACT_TRUNC(x) (fract32)(((x) & 0xffff) << 16)
-#define FRACT_FIX16(x) ( BSIGN(x) ? ((x)>>15) | 0xffff8000 : (x)>>15 )
+//#define FRACT_FIX16(x) ( BSIGN(x) ? ((x)>>15) | 0xffff8000 : (x)>>15 )
+#define FRACT_FIX16(x) ( BSIGN(x) ? ((x)>>15) | 0xffff0000 : (x)>>15 )
+
 
 // print to a buffer
 void print_fix16(char* buf , fix16_t x);
@@ -43,3 +45,12 @@ int itoa_whole_lj(int val, char* buf);
 void itoa_fract(int val, char* buf);
 
 #endif
+
+
+
+/*
+
+
+00001111222233334444555566667777
+
+ */
