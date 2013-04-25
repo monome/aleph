@@ -10,17 +10,17 @@
 long long int dumcount = 0;
 
 //// testing
-static fract32 add_fr(fract32 x, fract32 y) {
-  fract32 res;
-  res = add_fr1x32(x, y);
-  return res;
-}
+/* static fract32 add_fr(fract32 x, fract32 y) { */
+/*   fract32 res; */
+/*   res = add_fr1x32(x, y); */
+/*   return res; */
+/* } */
 ////
 
 //-------------------------------
 // main function
 int main(void) {
-  u32 del;
+  //u32 del;
   // turn on execution counter
   // default .crt does this for us
   //  __asm__ __volatile__("R0 = 0x32; SYSCFG = R0; CSYNC;":::"R0");

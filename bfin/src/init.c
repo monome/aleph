@@ -93,17 +93,17 @@ void init_EBIU(void) {
 /*   //  *pFlashA_PortB_Dir = 0x3f; */
 /* } */
 
-static void spi_send_byte(u8 ch) {
-  *pSPI_TDBR = ch;
-  ssync();
+/* static void spi_send_byte(u8 ch) { */
+/*   *pSPI_TDBR = ch; */
+/*   ssync(); */
 
-  while( (*pSPI_STAT & TXS)  != 0 ) { ;; }
-  while( (*pSPI_STAT & SPIF) == 0 ) { ;; }
-}
+/*   while( (*pSPI_STAT & TXS)  != 0 ) { ;; } */
+/*   while( (*pSPI_STAT & SPIF) == 0 ) { ;; } */
+/* } */
 
  // setup SPI0 -> AD1939 config */
 void init_1939(void) { 
-  u8 i; 
+  //  u8 i; 
   u32 del;
 
 

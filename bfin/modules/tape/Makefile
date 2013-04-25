@@ -1,16 +1,20 @@
 audio = ../../../audio
+common = ../../../common
 
 module_name = tape
 
 module_obj = tape.o \
 	$(audio)/filters.o \
+	$(audio)/buffer.o \
+	$(common)/libfixmath/fix32.o \
+	$(common)/libfixmath/fix16.o \
 
 all: aleph-$(module_name).ldr
 
 include ../../core.mk
 
 CFLAGS += -D ARCH_BFIN=1
-CFLAGS += --verbose
+#CFLAGS += --verbose
 
 $(module_obj): %.o : %.c	
 	$(CC) $(CFLAGS) -I $(audio) -c -o $@ $< $(LDFLAGS)

@@ -3,6 +3,7 @@
 
 
 #ifdef ARCH_BFIN // bfin
+#include "fract.h"
 #include "fract_math.h"
 #include <fract2float_conv.h>
 #else // linux
