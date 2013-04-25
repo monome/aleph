@@ -125,19 +125,19 @@ void buffer_tap_sync(bufferTap* tap, bufferTap* target, fix16 offset) {
 
   time_to_samps(&offset, &sampsOff, tap->buf->sr);
   
-  printf("\r\n\r\n");
-  printf("\r\n samps: int %d, fract %0x", sampsOff.i, sampsOff.fr);
+  //  printf("\r\n\r\n");
+  //  printf("\r\n samps: int %d, fract %0x", sampsOff.i, sampsOff.fr);
   tap->idx = target->idx;
   sub_fix32(&(tap->idx), &sampsOff);
 
-  printf("\r\n ----- before wrapping: -----");
-  printf("\r\n tap: int %d, fract 0x%0x", tap->idx.i, tap->idx.fr);
-  printf("\r\n target: int %d, fract 0x%0x", target->idx.i, target->idx.fr);
-  printf("\r\n -----  -----");
+  //  printf("\r\n ----- before wrapping: -----");
+  //  printf("\r\n tap: int %d, fract 0x%0x", tap->idx.i, tap->idx.fr);
+  //  printf("\r\n target: int %d, fract 0x%0x", target->idx.i, target->idx.fr);
+  //  printf("\r\n -----  -----");
   fix32_wrap_range(&(tap->idx), tap->buf->frames);
-  printf("\r\n ----- after wrapping: -----");
-  printf("\r\n tap: int %d, fract 0x%0x", tap->idx.i, tap->idx.fr);
-  printf("\r\n target: int %d, fract 0x%0x", target->idx.i, target->idx.fr);
-  printf("\r\n diff: %d", target->idx.i - tap->idx.i);
-  printf("\r\n\r\n");
+  //  printf("\r\n ----- after wrapping: -----");
+  //  printf("\r\n tap: int %d, fract 0x%0x", tap->idx.i, tap->idx.fr);
+  //  printf("\r\n target: int %d, fract 0x%0x", target->idx.i, target->idx.fr);
+  //  printf("\r\n diff: %d", target->idx.i - tap->idx.i);
+  //  printf("\r\n\r\n");
 }

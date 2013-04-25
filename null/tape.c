@@ -94,10 +94,9 @@ static bufferTap tapWr;
 //-- current param values
 static fix16   amp;
 static fix16   dry;
-static fix16   fb;
 static fix16   time;   // delay time between heads, in seconds
 static fix16   rate;   // tape speed ratio
-
+static fract32   fb;
 
 // final output value
 static fract32   frameVal;      
@@ -121,9 +120,9 @@ fract32 in0, in1, in2, in3;
 static inline void set_time(fix16 t) {  
   if( t < TIME_MIN ) { t = TIME_MIN; }
   if( t > TIME_MAX ) { t = TIME_MAX; }
-  //  filter_1p_fix16_in(timeLp, t);
+  filter_1p_fix16_in(timeLp, t);
   //// test: bypass smoother
-      buffer_tap_sync(&tapRd, &tapWr, t);
+  //      buffer_tap_sync(&tapRd, &tapWr, t);
 }
 
 // frame calculation
@@ -155,13 +154,18 @@ static void calc_frame(void) {
   echoVal = buffer_tap_read(&tapRd);
 
   /* // store interpolated input+fb value */
-  buffer_tap_write(&tapWr, add_fr1x32(in0, mult_fr1x32x32(echoVal,  FIX16_FRACT_TRUNC(fb) ) ) );
+  buffer_tap_write(&tapWr, add_fr1x32(in0, mult_fr1x32x32(echoVal, fb ) ) );
+  /// test: no fb
+  //buffer_tap_write(&tapWr, in0);
 
   /* // output */
   frameVal = add_fr1x32(
   			mult_fr1x32x32( echoVal, FIX16_FRACT_TRUNC(amp) ),
   			mult_fr1x32x32( in0,  FIX16_FRACT_TRUNC(dry) )
-			 );
+  			 );
+  //// test: no dry
+  //  frameVal = echoVal;
+  
 
   buffer_tap_next(&tapRd);
   buffer_tap_next(&tapWr);
@@ -244,7 +248,7 @@ void module_set_param(u32 idx, pval v) {
     filter_1p_fix16_in(rateLp, v.fix);
     break;
   case eParamFb:
-    fb = v.fix;
+    fb =  FIX16_FRACT_TRUNC(v.fix);
     break;
   case eParamAmpSmooth:
     filter_1p_fix16_set_hz(ampLp, v.fix);
