@@ -40,23 +40,22 @@ u32 dbgCount = 0;
 /// DEBUG
 //static u32 framecount = 0;
 #endif
-
-#define RATE_MIN 0x2000 // 1/8
-#define RATE_MAX 0x80000 // 8
-
 // buffer size: 
 // 2** 19  ~= 11sec at 44.1k
 #define ECHO_BUF_SIZE 0x80000
 #define ECHO_BUF_SIZE_1 0x7ffff
 
+//---- param ranges
 
-/* #define TIME_MIN 0 */
-/* //!!! FIXME: */
-/* //!!! want this calculation: */
-/* //!!! ECHO_BUF_SIZE / SAMPLERATE */
-/* //!!! could fix by defining a "buffer" class in audio lib */
-/* // assuming 44.1k, 11 seconds ( fix16 ) */
-/* #define TIME_MAX 0xb0000 */
+// rate
+#define RATE_MIN 0x2000 // 1/8
+#define RATE_MAX 0x80000 // 8
+
+// time
+/// FIXME: use buffer class to calculate this based on size/sr
+#define TIME_MIN 0
+// 11 secs in 16.16
+#define TIME_MAX 0xb0000
 
 ///// inputs
 enum params {
@@ -92,10 +91,6 @@ static audioBuffer echoBuf;
 static bufferTap tapRd;
 static bufferTap tapWr;
 
-//-- setup
-//static u32     sr;          // sample rate
-//static fix16   ips;        // index change per sample (at 1hz)
-
 //-- current param values
 static fix16   amp;
 static fix16   dry;
@@ -103,13 +98,6 @@ static fix16   fb;
 static fix16   time;   // delay time between heads, in seconds
 static fix16   rate;   // tape speed ratio
 
-
-/* // current delay time (whole samples) */
-/* static u32     sampsInt; */
-/* x// current delay time (fractional samples) */
-/* static fract32 sampsFr; */
-/// temp 
-//static fix16   sampsFrTmp;
 
 // final output value
 static fract32   frameVal;      
@@ -129,57 +117,17 @@ fract32 in0, in1, in2, in3;
 //----------------------
 //----- static functions
 
-// set hz
+// set time
 static inline void set_time(fix16 t) {  
-  //  if( t < TIME_MIN ) { t = TIME_MIN; }
-  //  if( t > TIME_MAX ) { t = TIME_MAX; }
-  filter_1p_fix16_in(timeLp, time);
+  if( t < TIME_MIN ) { t = TIME_MIN; }
+  if( t > TIME_MAX ) { t = TIME_MAX; }
+  //  filter_1p_fix16_in(timeLp, t);
+  //// test: bypass smoother
+      buffer_tap_sync(&tapRd, &tapWr, t);
 }
-
-// accepted a change in delay time, recalculate read idx
-static inline void calc_time(void) {
-  
-#if 0
-  //// FIXME: must abstract these operations on 32.32 data... ugh
-  if(time < 0 ) time = 0;
-  // multiply with double-precision whole part...
-  sampsInt = (u32)(FIX16_TO_U16(time)) * (u32)sr;
-  // 1) multiply the fractional part as a fix16
-  // sampsFrTmp = fix16_mul(time & 0xffff, sr << 16);
-  // 2) carry
-  //   sampsInt += FIX16_TO_U16(sampsFrTmp);
-
-  // 3) truncate
-  //  sampsFr = FIX16_FRACT_TRUNC(sampsFrTmp);
-  idxRdInt = idxWrInt - sampsInt;
-  /* idxRdFr = idxWrFr - sampsFr; */
-  /* if (idxRdFr < 0 ) { */
-  /*   // wrap fractional part */
-  /*   idxRdFr = add_fr1x32(idxRdFr, FR32_ONE); */
-  /*   // carry */
-  /*   idxRdInt--; */
-  /* } */
-  if(idxRdInt < 0) {
-    // wrap integer part
-    idxRdInt += ECHO_BUF_SIZE;
-  }
-#endif
-
-}
-
-// accepted a change in tape speed, recalculate idx increment
-static inline void calc_rate(void) {
-  /* if (rate < RATE_MIN) { rate = RATE_MIN; } */
-  /* if (rate > RATE_MAX) { rate = RATE_MAX; }   */
-  /* inc = fix16_mul(rate, ips); */
-  /* incInt = inc >> 16; */
-  /* incFr = inc & 0xffff << 16; */
-}
-
 
 // frame calculation
 static void calc_frame(void) {
-
   // ----- smoothers:
   // amp
   amp = filter_1p_fix16_next(ampLp);
@@ -188,14 +136,18 @@ static void calc_frame(void) {
     ;;
   } else {
     time = filter_1p_fix16_next(timeLp);
-    calc_time();
+    buffer_tap_sync(&tapRd, &tapWr, time);
   }
+
   // rate
+  //// NOTE: setting a different rate is pretty much pointless in this simple application.
+  /// leaving it in just to test fractional interpolation methods.
   if(rateLp->sync) {
     ;;
   } else {
     rate = filter_1p_fix16_next(rateLp);
-    calc_rate();
+    buffer_tap_set_rate(&tapRd, rate);
+    buffer_tap_set_rate(&tapWr, rate);
   }
   
   // get interpolated echo value
@@ -285,7 +237,8 @@ void module_set_param(u32 idx, pval v) {
     dry = v.fix;
     break;
   case eParamTime:
-    filter_1p_fix16_in(timeLp, v.fix);
+    printf("\r\n setting time: %0x", v.fix);
+    set_time(v.fix);
     break;
   case eParamRate:
     filter_1p_fix16_in(rateLp, v.fix);

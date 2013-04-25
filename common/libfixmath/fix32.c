@@ -58,15 +58,20 @@ void fix16_to_fix32(fix16* in, fix32* out) {
 
 // wrap a 32.32 value to a positive integer range
 extern void fix32_wrap_range(fix32* a, u32 upperBound) {
-  u8 wrapCount = 0;
+  static fix32 upFix;
+  upFix.i = upperBound;
+  upFix.fr = 0;
+  //  u8 wrapCount = 0;
   while (a->i < 0) {
-    a->i += upperBound;
-    wrapCount++;
+    //a->i += upperBound;
+    add_fix32(a, &upFix);
+      //    wrapCount++;
   }
-  if(wrapCount) {
-    a->fr = sub_fr1x32(FR32_ONE, a->fr);
-  }
+  //  if(wrapCount) {
+    //    a->fr = sub_fr1x32(FR32_ONE, a->fr);
+  //  }
   while(a->i > (upperBound-1)) {
-    a->i -= upperBound;
+    // a->i -= upperBound;
+    sub_fix32(a, &upFix);
   }
 }
