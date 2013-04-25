@@ -27,7 +27,7 @@ void print_fix16(char* buf , fix16_t x) {
   //  print_dbg("\r\n printing a fix16: ");
   //  print_dbg_hex(x);
 
-  sign = BSIGN(x);
+  sign = BIT_SIGN(x);
   //  print_dbg("\r\n sign: ");
   //  print_dbg_hex(sign);
   //  print_dbg("\r\n hm?: ");
@@ -83,11 +83,11 @@ void itoa_whole(int val, char* buf, int len) {
     }
     return;
   }
-  sign = BSIGN(val);
+  sign = BIT_SIGN(val);
 
   if ( sign ) {
     len--;
-    val = BINV(val) + 1; // FIXME: this will wrap at 0xffffffff
+    val = BIT_INVERT(val) + 1; // FIXME: this will wrap at 0xffffffff
   }
 
   u = (unsigned int)val;
@@ -119,14 +119,14 @@ int itoa_whole_lj(int val, char* buf) {
     return 1;
   }
 
-  sign = BSIGN(val);
+  sign = BIT_SIGN(val);
   p = buf;
 
   if ( sign ) {
     *p = '-';
     p++;
     len++;
-    val = BINV(val) + 1; // FIXME: this will wrap at 0xffffffff
+    val = BIT_INVERT(val) + 1; // FIXME: this will wrap at 0xffffffff
   }
 
   u = (unsigned int)val;

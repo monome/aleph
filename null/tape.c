@@ -1,7 +1,8 @@
 /* tape.c
- * nullp
- * 
- * tape-like buffer manipulation
+   aleph-audio
+
+   tape-like buffer manipulation module.
+
  */
 
 // std
@@ -25,11 +26,37 @@
 #endif
 
 // audio
+#include "buffer.h"
 #include "filters.h"
 #include "module.h"
 
+//-----------------------
+//------ static variables
+#if ARCH_LINUX
+static FILE* dbgFile;
+u8 dbgFlag = 0;
+u32 dbgCount = 0;
+//////////////
 /// DEBUG
 //static u32 framecount = 0;
+#endif
+
+#define RATE_MIN 0x2000 // 1/8
+#define RATE_MAX 0x80000 // 8
+
+// buffer size: 
+// 2** 19  ~= 11sec at 44.1k
+#define ECHO_BUF_SIZE 0x80000
+#define ECHO_BUF_SIZE_1 0x7ffff
+
+
+/* #define TIME_MIN 0 */
+/* //!!! FIXME: */
+/* //!!! want this calculation: */
+/* //!!! ECHO_BUF_SIZE / SAMPLERATE */
+/* //!!! could fix by defining a "buffer" class in audio lib */
+/* // assuming 44.1k, 11 seconds ( fix16 ) */
+/* #define TIME_MAX 0xb0000 */
 
 ///// inputs
 enum params {
@@ -44,36 +71,30 @@ enum params {
   eParamNumParams
 };
 
-#define RATE_MIN 0x2000 // 1/8
-#define RATE_MAX 0x80000 // 8
-
-// buffer size: 
-// 2** 19  ~= 11sec at 44.1k
-#define ECHO_BUF_SIZE 0x80000
-#define ECHO_BUF_SIZE_1 0x7ffff
-
-#define TIME_MIN 0
-//!!! FIXME:
-//!!! want this calculation:
-//!!! ECHO_BUF_SIZE / SAMPLERATE
-//!!! could fix by defining a "buffer" class in audio lib
-// assuming 44.1k, 11 seconds ( fix16 )
-#define TIME_MAX 0xb0000
-
-// help
-#define FR32_ONE  0x7fffffff
-#define FIX16_ONE 0x00010000
+typedef struct _tapeData {
+  moduleData super;
+  fract32 echoBufData[ECHO_BUF_SIZE];
+} tapeData;
 
 //-------------------------
 //----- extern vars (initialized here)
-moduleData_t * moduleData; // superclass introspection stuff
+moduleData* gModuleData; 
 
 //-----------------------
 //------ static variables
 
+// pointer to all external memory
+static tapeData* pTapeData;
+
+//-- audio buffer class
+static audioBuffer echoBuf;
+//-- read and write taps
+static bufferTap tapRd;
+static bufferTap tapWr;
+
 //-- setup
-static u32     sr;          // sample rate
-static fix16   ips;        // index change per sample (at 1hz)
+//static u32     sr;          // sample rate
+//static fix16   ips;        // index change per sample (at 1hz)
 
 //-- current param values
 static fix16   amp;
@@ -82,24 +103,14 @@ static fix16   fb;
 static fix16   time;   // delay time between heads, in seconds
 static fix16   rate;   // tape speed ratio
 
-//--- realtime variables
-// cant maintain real phases to buffer in 16.16 (too many indices)
-// so whole part is s32 and fractional part is fract32
-// idx (for each "head")
-static s32     idxRdInt;
-static fract32 idxRdFr;
-static s32     idxWrInt;
-static fract32 idxWrFr;
-// increment (for both "heads")
-static fix16   inc; // this will be small enough to represent
-static s32     incInt;
-static fract32 incFr;
-// current delay time (whole samples)
-static u32     sampsInt;
-// current delay time (fractional samples)
-static fract32 sampsFr;
-/// temp vairable
-static fix16   sampsFrTmp;
+
+/* // current delay time (whole samples) */
+/* static u32     sampsInt; */
+/* x// current delay time (fractional samples) */
+/* static fract32 sampsFr; */
+/// temp 
+//static fix16   sampsFrTmp;
+
 // final output value
 static fract32   frameVal;      
 // echo output
@@ -108,10 +119,7 @@ static fract32   echoVal;
 //-- param smoothers 
 static filter_1p_fix16* ampLp;  // 1plp smoother for amplitude
 static filter_1p_fix16* timeLp;  // 1plp smoother for delay time
-static filter_1p_fix16* rateLp;  // 1plp smoother for delay time
-
-//-- audio buffers
-static fract32 echoBuf[ECHO_BUF_SIZE];
+static filter_1p_fix16* rateLp;  // 1plp smoother for "tape speed"
 
 #ifdef ARCH_BFIN // bfin
 #else // linux : emulate bfin audio core
@@ -123,76 +131,51 @@ fract32 in0, in1, in2, in3;
 
 // set hz
 static inline void set_time(fix16 t) {  
-  if( t < TIME_MIN ) { t = TIME_MIN; }
-  if( t > TIME_MAX ) { t = TIME_MAX; }
+  //  if( t < TIME_MIN ) { t = TIME_MIN; }
+  //  if( t > TIME_MAX ) { t = TIME_MAX; }
   filter_1p_fix16_in(timeLp, time);
 }
 
 // accepted a change in delay time, recalculate read idx
 static inline void calc_time(void) {
+  
+#if 0
   //// FIXME: must abstract these operations on 32.32 data... ugh
   if(time < 0 ) time = 0;
   // multiply with double-precision whole part...
   sampsInt = (u32)(FIX16_TO_U16(time)) * (u32)sr;
   // 1) multiply the fractional part as a fix16
-  sampsFrTmp = fix16_mul(time & 0xffff, sr << 16);
-  // 2) carry 
-  sampsInt += FIX16_TO_U16(sampsFrTmp);
+  // sampsFrTmp = fix16_mul(time & 0xffff, sr << 16);
+  // 2) carry
+  //   sampsInt += FIX16_TO_U16(sampsFrTmp);
+
   // 3) truncate
-  sampsFr = FIX16_FRACT_TRUNC(sampsFrTmp);
+  //  sampsFr = FIX16_FRACT_TRUNC(sampsFrTmp);
   idxRdInt = idxWrInt - sampsInt;
-  idxRdFr = idxWrFr - sampsFr;
-  if (idxRdFr < 0 ) {
-    // wrap fractional part
-    idxRdFr = add_fr1x32(idxRdFr, FR32_ONE);
-    // carry
-    idxRdInt--;
-  }
-  if(idxRdInt < 0) { 
+  /* idxRdFr = idxWrFr - sampsFr; */
+  /* if (idxRdFr < 0 ) { */
+  /*   // wrap fractional part */
+  /*   idxRdFr = add_fr1x32(idxRdFr, FR32_ONE); */
+  /*   // carry */
+  /*   idxRdInt--; */
+  /* } */
+  if(idxRdInt < 0) {
     // wrap integer part
-    idxRdInt += ECHO_BUF_SIZE; 
+    idxRdInt += ECHO_BUF_SIZE;
   }
+#endif
+
 }
 
 // accepted a change in tape speed, recalculate idx increment
 static inline void calc_rate(void) {
-  if (rate < RATE_MIN) { rate = RATE_MIN; }
-  if (rate > RATE_MAX) { rate = RATE_MAX; }  
-  inc = fix16_mul(rate, ips);
-  incInt = inc >> 16;
-  incFr = inc & 0xffff << 16;
+  /* if (rate < RATE_MIN) { rate = RATE_MIN; } */
+  /* if (rate > RATE_MAX) { rate = RATE_MAX; }   */
+  /* inc = fix16_mul(rate, ips); */
+  /* incInt = inc >> 16; */
+  /* incFr = inc & 0xffff << 16; */
 }
 
-static fract32 read_buf(void) {
-  // audio interpolation indices are double-precision (for large buffers.)
-  // this should be abstracted in buffer.c
-  fract32 a, b;
-  u32 idxB;
-  idxB = idxRdInt + 1;
-  // wrap
-  while(idxB > ECHO_BUF_SIZE_1) {
-    idxB -= ECHO_BUF_SIZE;
-  }
-  a = echoBuf[idxRdInt];
-  b = echoBuf[idxB];
-  return add_fr1x32(a, mult_fr1x32x32(idxRdFr, sub_fr1x32(b, a)));
-}
-
-static void write_buf(fract32 v) {
-  fract32 valA, valB;
-  u32 idxB;
-  idxB = idxWrInt + 1 ;
-  // wrap
-  while(idxB > ECHO_BUF_SIZE_1) {
-    idxB -= ECHO_BUF_SIZE;
-  }
-  //  valB = v * idxWrFr;
-  //  valA = v * (1 - idxWrFr);
-  valB = mult_fr1x32x32(v, idxWrFr);
-  valA = mult_fr1x32x32(v, sub_fr1x32(FR32_ONE, idxWrFr));
-  echoBuf[idxWrInt] = valA;
-  echoBuf[idxB] = valB;
-}
 
 // frame calculation
 static void calc_frame(void) {
@@ -216,42 +199,20 @@ static void calc_frame(void) {
   }
   
   // get interpolated echo value
-  echoVal = read_buf();
-  // store interpolated input+fb value
-  write_buf(add_fr1x32(in0, mult_fr1x32x32(echoVal,  FIX16_FRACT_TRUNC(fb) ) ) );
-  // output
-  frameVal = add_fr1x32( 
-			mult_fr1x32x32( echoVal, FIX16_FRACT_TRUNC(amp) ),
-			mult_fr1x32x32( in0,  FIX16_FRACT_TRUNC(dry) )
+
+  echoVal = buffer_tap_read(&tapRd);
+
+  /* // store interpolated input+fb value */
+  buffer_tap_write(&tapWr, add_fr1x32(in0, mult_fr1x32x32(echoVal,  FIX16_FRACT_TRUNC(fb) ) ) );
+
+  /* // output */
+  frameVal = add_fr1x32(
+  			mult_fr1x32x32( echoVal, FIX16_FRACT_TRUNC(amp) ),
+  			mult_fr1x32x32( in0,  FIX16_FRACT_TRUNC(dry) )
 			 );
-  /// test
-  //  frameVal = in0;
 
-  // increment read head
-  idxRdInt += incInt;
-  idxRdFr  += incFr;
-  // carry
-  if(idxRdFr < 0) { // overflow check
-    idxRdInt++;
-    idxRdFr = add_fr1x32(idxRdFr, FR32_ONE);
-  }
-  // wrap
-  if(idxRdInt > ECHO_BUF_SIZE_1) {
-    idxRdInt -= ECHO_BUF_SIZE;
-  }
-
-  // increment write head
-  idxWrInt += incInt;
-  idxWrFr  += incFr;
-  // carry
-  if(idxWrFr < 0) { // overflow check
-    idxWrInt++;
-    idxWrFr = add_fr1x32(idxWrFr, FR32_ONE);
-  }
-  // wrap
-  if(idxWrInt > ECHO_BUF_SIZE_1) {
-    idxWrInt -= ECHO_BUF_SIZE;
-  }
+  buffer_tap_next(&tapRd);
+  buffer_tap_next(&tapWr);
 }
 
 //----------------------
@@ -261,25 +222,27 @@ void module_init(void) {
 
   // init module/param descriptor
 #ifdef ARCH_BFIN 
-  moduleData = (moduleData_t*)SDRAM_ADDRESS;
+  pTapeData = (tapeData*)SDRAM_ADDRESS;
 #else
-  moduleData = (moduleData_t*)malloc(sizeof(moduleData_t));
-#endif
-  moduleData->numParams = eParamNumParams;
-  moduleData->paramDesc = (ParamDesc*)malloc(eParamNumParams * sizeof(ParamDesc));
-  moduleData->paramData = (ParamData*)malloc(eParamNumParams * sizeof(ParamData));
+  pTapeData = (tapeData*)malloc(sizeof(tapeData));
   
-  strcpy(moduleData->paramDesc[eParamAmp].label, "amp");
-  strcpy(moduleData->paramDesc[eParamDry].label, "dry");
-  strcpy(moduleData->paramDesc[eParamTime].label, "time");
-  strcpy(moduleData->paramDesc[eParamRate].label, "rate");
-  strcpy(moduleData->paramDesc[eParamFb].label, "feedback");
-  strcpy(moduleData->paramDesc[eParamAmpSmooth].label, "amp smoothing");
-  strcpy(moduleData->paramDesc[eParamTimeSmooth].label, "time smoothing");
+#endif
+  
+  gModuleData = &(pTapeData->super);
+
+  gModuleData->numParams = eParamNumParams;
+  gModuleData->paramDesc = (ParamDesc*)malloc(eParamNumParams * sizeof(ParamDesc));
+
+  
+  strcpy(gModuleData->paramDesc[eParamAmp].label, "amp");
+  strcpy(gModuleData->paramDesc[eParamDry].label, "dry");
+  strcpy(gModuleData->paramDesc[eParamTime].label, "time");
+  strcpy(gModuleData->paramDesc[eParamRate].label, "rate");
+  strcpy(gModuleData->paramDesc[eParamFb].label, "feedback");
+  strcpy(gModuleData->paramDesc[eParamAmpSmooth].label, "amp smoothing");
+  strcpy(gModuleData->paramDesc[eParamTimeSmooth].label, "time smoothing");
   
   // init params
-  sr = SAMPLERATE;
-  ips = fix16_from_float( 1.f / (f32)sr );
   amp = FIX16_ONE >> 1;
   time = FIX16_ONE << 1;
   rate = FIX16_ONE;
@@ -294,14 +257,15 @@ void module_init(void) {
   rateLp = (filter_1p_fix16*)malloc(sizeof(filter_1p_fix16));
   filter_1p_fix16_init( rateLp, SAMPLERATE, fix16_from_int(32), time );
 
-  // calculate current values
-  calc_time();
-  calc_rate();
-  
-  /// DEBUG
-  //printf("\n\n module init debug \n\n");
-  
-  ////// TEST
+  // init buffer and taps
+  buffer_init(&echoBuf, pTapeData->echoBufData, ECHO_BUF_SIZE, SAMPLERATE);
+  buffer_tap_init(&tapRd, &echoBuf);
+  buffer_tap_init(&tapWr, &echoBuf);
+
+  // set rate and offset
+  buffer_tap_set_rate(&tapRd, rate);
+  buffer_tap_set_rate(&tapWr, rate);
+  buffer_tap_sync(&tapRd, &tapWr, time);
 }
 
 // de-init
@@ -363,12 +327,6 @@ u8 module_update_leds(void) {
   return ledstate;
 }
 
-//static u8 buts[4] = {0, 0, 0, 0};
-void module_handle_button(const u16 state) {
-  ///... 
-}
-
-
 #else //  non-bfin
 void module_process_frame(const f32* in, f32* out) {
 
@@ -376,7 +334,7 @@ void module_process_frame(const f32* in, f32* out) {
   u32 frame;
   u8 chan;
 
-  // i/o buffers are interleaved in portaudio,
+  // i/o buffers are (sometimes) interleaved in portaudio,
   // so need to introduce 1-sample delay for x-channel processing
   //  static int _in0, _in1, _in2, _in3;
 

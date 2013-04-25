@@ -1,19 +1,19 @@
-audiolib = ../../../audio
-
+audio = ../../../audio
 
 module_name = tape
+
 module_obj = tape.o \
-	$(audiolib)/filters.o \
+	$(audio)/filters.o \
 
 all: aleph-$(module_name).ldr
 
 include ../../core.mk
 
 CFLAGS += -D ARCH_BFIN=1
-#CFLAGS += --verbose
+CFLAGS += --verbose
 
 $(module_obj): %.o : %.c	
-	$(CC) $(CFLAGS) -I $(audiolib) -c -o $@ $< $(LDFLAGS)
+	$(CC) $(CFLAGS) -I $(audio) -c -o $@ $< $(LDFLAGS)
 
 aleph-$(module_name): core_target $(module_obj)
 	$(CC) $(LDFLAGS) -T aleph-$(module_name).lds \

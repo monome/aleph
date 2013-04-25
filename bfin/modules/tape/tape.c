@@ -16,10 +16,14 @@
 #include "types.h"
 
 #ifdef ARCH_BFIN // bfin
+
 #include "bfin_core.h"
 #include "fract_math.h"
 #include <fract2float_conv.h>
 #else // linux
+
+#warning "no bfin"
+
 #include "fract32_emu.h"
 #include "audio.h"
 #endif
@@ -63,8 +67,8 @@ enum params {
 
 //-------------------------
 //----- extern vars (initialized here)
-moduleData_t moduleDataPrivate;
-moduleData_t * moduleData; // superclass introspection stuff
+moduleData moduleDataPrivate;
+moduleData * gModuleData; // superclass introspection stuff
 
 //-----------------------
 //------ static variables
@@ -262,19 +266,19 @@ void module_init(void) {
   // init module/param descriptor
 
   //  moduleData = (moduleData_t*)SDRAM_ADDRESS;
-  moduleData = &moduleDataPrivate;
-  moduleData->numParams = eParamNumParams;
-  moduleData->paramDesc = (ParamDesc*)malloc(eParamNumParams * sizeof(ParamDesc));
-  moduleData->paramData = (ParamData*)malloc(eParamNumParams * sizeof(ParamData));
+  gModuleData = &moduleDataPrivate;
+  gModuleData->numParams = eParamNumParams;
+  gModuleData->paramDesc = (ParamDesc*)malloc(eParamNumParams * sizeof(ParamDesc));
+  gModuleData->paramData = (ParamData*)malloc(eParamNumParams * sizeof(ParamData));
   
-  strcpy(moduleData->paramDesc[eParamAmp].label, "amp");
-  strcpy(moduleData->paramDesc[eParamDry].label, "dry");
-  strcpy(moduleData->paramDesc[eParamTime].label, "time");
-  strcpy(moduleData->paramDesc[eParamRate].label, "rate");
-  strcpy(moduleData->paramDesc[eParamFb].label, "feedback");
-  strcpy(moduleData->paramDesc[eParamAmpSmooth].label, "amp smoothing");
-  strcpy(moduleData->paramDesc[eParamTimeSmooth].label, "time smoothing");
-  strcpy(moduleData->paramDesc[eParamRateSmooth].label, "rate smoothing");
+  strcpy(gModuleData->paramDesc[eParamAmp].label, "amp");
+  strcpy(gModuleData->paramDesc[eParamDry].label, "dry");
+  strcpy(gModuleData->paramDesc[eParamTime].label, "time");
+  strcpy(gModuleData->paramDesc[eParamRate].label, "rate");
+  strcpy(gModuleData->paramDesc[eParamFb].label, "feedback");
+  strcpy(gModuleData->paramDesc[eParamAmpSmooth].label, "amp smoothing");
+  strcpy(gModuleData->paramDesc[eParamTimeSmooth].label, "time smoothing");
+  strcpy(gModuleData->paramDesc[eParamRateSmooth].label, "rate smoothing");
   
   // init params
   sr = SAMPLERATE;

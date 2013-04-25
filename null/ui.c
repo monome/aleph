@@ -44,12 +44,12 @@ void handle_key(u16 ch) {
 
     pnum = module_get_num_params();
     for(i=0; i<pnum; i++) {
-      printf("\rparam %d: %s\n", i, moduleData->paramDesc[i].label);
+      printf("\rparam %d: %s\n", i, gModuleData->paramDesc[i].label);
     }
     printf("enter param index:\n");
     prompt();
     paramIdx = atoi(input);
-    printf("\rsetting parameter %d, %s\n", paramIdx, moduleData->paramDesc[paramIdx].label);
+    printf("\rsetting parameter %d, %s\n", paramIdx, gModuleData->paramDesc[paramIdx].label);
     printf("enter param value (float): \n"); 
     prompt();
     fin = atof(input);

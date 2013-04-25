@@ -70,7 +70,7 @@ typedef struct _monoFmData {
   moduleData_t super;
   ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
-} monoFmData_t;
+} monoFmData;
 
 //--- wavetable
 #define WAVE_TAB_SIZE 512
@@ -80,13 +80,13 @@ typedef struct _monoFmData {
 
 //-------------------------
 //----- extern vars (initialized here)
-moduleData_t * moduleData; // module data
+moduleData_t * gModuleData; // module data
 
 //-----------------------
 //------ static variables
 
 // pointer to local module data, initialize at top of SDRAM
-static monoFmData_t * monoFmData;
+static monoFmData * monoFmData;
 
 //-- static allocation (SRAM) for variables that are small and/or frequently accessed:
 
@@ -248,37 +248,37 @@ void module_init(void) {
   // init module/param descriptor
 #ifdef ARCH_BFIN 
   // intialize local data at start of SDRAM
-  monoFmData = (monoFmData_t * )SDRAM_ADDRESS;
+  monoFmData = (monoFmData * )SDRAM_ADDRESS;
   // initialize moduleData superclass for core routines
 #else
   //  moduleData = (moduleData_t*)malloc(sizeof(moduleData_t));
-  monoFmData = (monoFmData_t*)malloc(sizeof(monoFmData_t));
+  monoFmData = (monoFmData*)malloc(sizeof(monoFmData));
 #endif
-  moduleData = &(monoFmData->super);
-  moduleData->paramDesc = monoFmData->mParamDesc;
-  moduleData->paramData = monoFmData->mParamData;
-  moduleData->numParams = eParamNumParams;
+  gModuleData = &(monoFmData->super);
+  gModuleData->paramDesc = monoFmData->mParamDesc;
+  gModuleData->paramData = monoFmData->mParamData;
+  gModuleData->numParams = eParamNumParams;
 
-  strcpy(moduleData->paramDesc[eParamHz1].label, "osc 1 hz");
-  strcpy(moduleData->paramDesc[eParamHz2].label, "osc 2 hz");
-  strcpy(moduleData->paramDesc[eParamRatio2].label, "osc 2 ratio");
-  strcpy(moduleData->paramDesc[eParamPm].label, "phase mod depth");
-  strcpy(moduleData->paramDesc[eParamWave1].label, "waveshape 1");
-  strcpy(moduleData->paramDesc[eParamWave2].label, "waveshape 2");
-  strcpy(moduleData->paramDesc[eParamAmp1].label, "amplitude 1");
-  strcpy(moduleData->paramDesc[eParamAmp2].label, "amplitude 2");
-  strcpy(moduleData->paramDesc[eParamGate].label, "gate");
-  strcpy(moduleData->paramDesc[eParamAtkDur].label, "amp env attack");
-  strcpy(moduleData->paramDesc[eParamRelDur].label, "amp env release");
-  strcpy(moduleData->paramDesc[eParamAtkCurve].label, "amp env atk curve");
-  strcpy(moduleData->paramDesc[eParamRelCurve].label, "amp env rel curve");
-  strcpy(moduleData->paramDesc[eParamHz1Smooth].label, "hz 1 smoothing");
-  strcpy(moduleData->paramDesc[eParamHz2Smooth].label, "hz 2 smoothing");
-  strcpy(moduleData->paramDesc[eParamPmSmooth].label, "phase mod smoothing");
-  strcpy(moduleData->paramDesc[eParamWave1Smooth].label, "wave 1 smoothing");
-  strcpy(moduleData->paramDesc[eParamWave2Smooth].label, "wave 2 smoothing");
-  strcpy(moduleData->paramDesc[eParamAmp1Smooth].label, "amp 1 smoothing");
-  strcpy(moduleData->paramDesc[eParamAmp2Smooth].label, "amp 2 smoothing");
+  strcpy(gModuleData->paramDesc[eParamHz1].label, "osc 1 hz");
+  strcpy(gModuleData->paramDesc[eParamHz2].label, "osc 2 hz");
+  strcpy(gModuleData->paramDesc[eParamRatio2].label, "osc 2 ratio");
+  strcpy(gModuleData->paramDesc[eParamPm].label, "phase mod depth");
+  strcpy(gModuleData->paramDesc[eParamWave1].label, "waveshape 1");
+  strcpy(gModuleData->paramDesc[eParamWave2].label, "waveshape 2");
+  strcpy(gModuleData->paramDesc[eParamAmp1].label, "amplitude 1");
+  strcpy(gModuleData->paramDesc[eParamAmp2].label, "amplitude 2");
+  strcpy(gModuleData->paramDesc[eParamGate].label, "gate");
+  strcpy(gModuleData->paramDesc[eParamAtkDur].label, "amp env attack");
+  strcpy(gModuleData->paramDesc[eParamRelDur].label, "amp env release");
+  strcpy(gModuleData->paramDesc[eParamAtkCurve].label, "amp env atk curve");
+  strcpy(gModuleData->paramDesc[eParamRelCurve].label, "amp env rel curve");
+  strcpy(gModuleData->paramDesc[eParamHz1Smooth].label, "hz 1 smoothing");
+  strcpy(gModuleData->paramDesc[eParamHz2Smooth].label, "hz 2 smoothing");
+  strcpy(gModuleData->paramDesc[eParamPmSmooth].label, "phase mod smoothing");
+  strcpy(gModuleData->paramDesc[eParamWave1Smooth].label, "wave 1 smoothing");
+  strcpy(gModuleData->paramDesc[eParamWave2Smooth].label, "wave 2 smoothing");
+  strcpy(gModuleData->paramDesc[eParamAmp1Smooth].label, "amp 1 smoothing");
+  strcpy(gModuleData->paramDesc[eParamAmp2Smooth].label, "amp 2 smoothing");
 
   // init params
   sr = SAMPLERATE;
