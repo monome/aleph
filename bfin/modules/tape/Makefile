@@ -1,9 +1,13 @@
-audiolib = ../../../audio
-
+audio = ../../../audio
+common = ../../../common
 
 module_name = tape
+
 module_obj = tape.o \
-	$(audiolib)/filters.o \
+	$(audio)/filters.o \
+	$(audio)/buffer.o \
+	$(common)/libfixmath/fix32.o \
+	$(common)/libfixmath/fix16.o \
 
 all: aleph-$(module_name).ldr
 
@@ -13,7 +17,7 @@ CFLAGS += -D ARCH_BFIN=1
 #CFLAGS += --verbose
 
 $(module_obj): %.o : %.c	
-	$(CC) $(CFLAGS) -I $(audiolib) -c -o $@ $< $(LDFLAGS)
+	$(CC) $(CFLAGS) -I $(audio) -c -o $@ $< $(LDFLAGS)
 
 aleph-$(module_name): core_target $(module_obj)
 	$(CC) $(LDFLAGS) -T aleph-$(module_name).lds \

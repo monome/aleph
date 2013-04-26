@@ -21,6 +21,7 @@ APP_OBJ  = main.o \
 	audio.o \
 	ui.o \
 	$(LIBFIXMATH)/fix16.o  \
+	$(LIBFIXMATH)/fix32.o \
 	$(LIBFIXMATH)/fract32.o \
 	$(COMMON)/fract32_emu.o \
 	$(COMMON)/simple_string.o \
@@ -37,6 +38,7 @@ mono_fm : $(APP_OBJ) $(MONO_FM_OBJ)
 
 TAPE_OBJ :=  tape.o \
 	$(AUDIOLIB)/filters.o \
+	$(AUDIOLIB)/buffer.o \
 
 tape : $(APP_OBJ) $(TAPE_OBJ)
 	$(CC) $(CFLAGS) $(INC) -o $@ $^ $(LDFLAGS)

@@ -43,7 +43,16 @@ static int paCallback( const void *inputBuffer,
     const float *in = (const float*)inputBuffer;
     float *out = (float*)outputBuffer;
     u32 samp;
+
     module_process_frame(in, out);
+    //// TEST: wire
+    //////////
+    /* for(samp=0;  samp<(BLOCKSIZE * NUMCHANNELS); samp++) { */
+    /*   out[samp] = in[samp]; */
+    /* } */
+    ///////////
+    //////////////
+
     return 0;
 }
 
@@ -51,7 +60,7 @@ static int paCallback( const void *inputBuffer,
 void init_audio(void) {
   
   /// try doing this first
-  module_init(SAMPLERATE);
+  module_init();
 
   err = Pa_Initialize();
   if(err != paNoError) goto done;

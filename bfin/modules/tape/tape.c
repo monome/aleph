@@ -1,7 +1,8 @@
 /* tape.c
- * nullp
- * 
- * tape-like buffer manipulation
+   aleph-audio
+
+   tape-like buffer manipulation module.
+
  */
 
 // std
@@ -25,8 +26,34 @@
 #endif
 
 // audio
+#include "buffer.h"
 #include "filters.h"
 #include "module.h"
+
+//-----------------------
+//------ static variables
+#if ARCH_LINUX
+static FILE* dbgFile;
+u8 dbgFlag = 0;
+u32 dbgCount = 0;
+#endif
+
+// buffer size: 
+// 2** 19  ~= 11sec at 44.1k
+#define ECHO_BUF_SIZE 0x80000
+#define ECHO_BUF_SIZE_1 0x7ffff
+
+//---- param ranges
+
+// rate
+#define RATE_MIN 0x2000 // 1/8
+#define RATE_MAX 0x80000 // 8
+
+// time
+/// FIXME: use buffer class to calculate this based on size/sr
+#define TIME_MIN 0
+// 11 secs in 16.16
+#define TIME_MAX 0xb0000
 
 ///// inputs
 enum params {
@@ -41,63 +68,34 @@ enum params {
   eParamNumParams
 };
 
-#define RATE_MIN 0x2000 // 1/8
-#define RATE_MAX 0x80000 // 8
-
-// buffer size: 
-// 2** 19  ~= 11sec at 44.1k
-#define ECHO_BUF_SIZE 0x80000
-#define ECHO_BUF_SIZE_1 0x7ffff
-
-#define TIME_MIN 0
-//!!! FIXME:
-//!!! want this calculation:
-//!!! ECHO_BUF_SIZE / SAMPLERATE
-//!!! could fix by defining a "buffer" class in audio lib
-// assuming 44.1k, 11 seconds ( fix16 )
-#define TIME_MAX 0xb0000
-
-// help
-#define FR32_ONE  0x7fffffff
-#define FIX16_ONE 0x00010000
+typedef struct _tapeData {
+  moduleData super;
+  fract32 echoBufData[ECHO_BUF_SIZE];
+} tapeData;
 
 //-------------------------
 //----- extern vars (initialized here)
-moduleData_t moduleDataPrivate;
-moduleData_t * moduleData; // superclass introspection stuff
+moduleData* gModuleData; 
 
 //-----------------------
 //------ static variables
 
-//-- setup
-static u32     sr;          // sample rate
-static fix16   ips;        // index change per sample (at 1hz)
+// pointer to all external memory
+static tapeData* pTapeData;
+
+//-- audio buffer class
+static audioBuffer echoBuf;
+//-- read and write taps
+static bufferTap tapRd;
+static bufferTap tapWr;
 
 //-- current param values
 static fix16   amp;
 static fix16   dry;
-static fix16   fb;
 static fix16   time;   // delay time between heads, in seconds
 static fix16   rate;   // tape speed ratio
+static fract32   fb;
 
-//--- realtime variables
-// cant maintain real phases to buffer in 16.16 (too many indices)
-// so whole part is s32 and fractional part is fract32
-// idx (for each "head")
-static s32     idxRdInt;
-static fract32 idxRdFr;
-static s32     idxWrInt;
-static fract32 idxWrFr;
-// increment (for both "heads")
-static fix16   inc; // this will be small enough to represent
-static s32     incInt;
-static fract32 incFr;
-// current delay time (whole samples)
-static u32     sampsInt;
-// current delay time (fractional samples)
-static fract32 sampsFr;
-/// temp vairable
-static fix16   sampsFrTmp;
 // final output value
 static fract32   frameVal;      
 // echo output
@@ -106,88 +104,21 @@ static fract32   echoVal;
 //-- param smoothers 
 static filter_1p_fix16* ampLp;  // 1plp smoother for amplitude
 static filter_1p_fix16* timeLp;  // 1plp smoother for delay time
-static filter_1p_fix16* rateLp;  // 1plp smoother for delay time
+static filter_1p_fix16* rateLp;  // 1plp smoother for "tape speed"
 
-//-- audio buffer
-/// FIXME: use linker script to locate SDRAM data/bss sections and assign normally
-volatile fract32* echoBuf = (volatile fract32*)SDRAM_ADDRESS;
+#ifdef ARCH_BFIN // bfin
+#else // linux : emulate bfin audio core
+fract32 in0, in1, in2, in3;
+#endif
 
 //----------------------
 //----- static functions
 
-// set hz
+// set time
 static inline void set_time(fix16 t) {  
   if( t < TIME_MIN ) { t = TIME_MIN; }
   if( t > TIME_MAX ) { t = TIME_MAX; }
-  filter_1p_fix16_in(timeLp, time);
-}
-
-// accepted a change in delay time, recalculate read idx
-static inline void calc_time(void) {
-  //// FIXME: must abstract these operations on 32.32 data... ugh
-  if(time < 0 ) time = 0;
-  // multiply with double-precision whole part...
-  sampsInt = (u32)(FIX16_TO_U16(time)) * (u32)sr;
-  // 1) multiply the fractional part as a fix16
-  sampsFrTmp = fix16_mul(time & 0xffff, sr << 16);
-  // 2) carry 
-  sampsInt += FIX16_TO_U16(sampsFrTmp);
-  // 3) truncate
-  sampsFr = FIX16_FRACT_TRUNC(sampsFrTmp);
-  idxRdInt = idxWrInt - sampsInt;
-  idxRdFr = idxWrFr - sampsFr;
-  if (idxRdFr < 0 ) {
-    // wrap fractional part
-    idxRdFr = add_fr1x32(idxRdFr, FR32_ONE);
-    // carry
-    idxRdInt--;
-  }
-  if(idxRdInt < 0) { 
-    // wrap integer part
-    idxRdInt += ECHO_BUF_SIZE; 
-  }
-}
-
-// accepted a change in tape speed, recalculate idx increment
-static inline void calc_rate(void) {
-  if (rate < RATE_MIN) { rate = RATE_MIN; }
-  if (rate > RATE_MAX) { rate = RATE_MAX; }  
-  inc = fix16_mul(rate, ips);
-  incInt = inc >> 16;
-  incFr = inc & 0xffff << 16;
-}
-
-static fract32 read_buf(void) {
-  return echoBuf[idxRdInt];
-  /* // audio interpolation indices are double-precision (for large buffers.) */
-  /* // this should be abstracted in buffer.c */
-  /* fract32 a, b; */
-  /* u32 idxB; */
-  /* idxB = idxRdInt + 1; */
-  /* // wrap */
-  /* while(idxB > ECHO_BUF_SIZE_1) { */
-  /*   idxB -= ECHO_BUF_SIZE; */
-  /* } */
-  /* a = echoBuf[idxRdInt]; */
-  /* b = echoBuf[idxB]; */
-  /* return add_fr1x32(a, mult_fr1x32x32(idxRdFr, sub_fr1x32(b, a))); */
-}
-
-static void write_buf(fract32 v) {
-  echoBuf[idxWrInt] = v;
-  /* fract32 valA, valB; */
-  /* u32 idxB; */
-  /* idxB = idxWrInt + 1 ; */
-  /* // wrap */
-  /* while(idxB > ECHO_BUF_SIZE_1) { */
-  /*   idxB -= ECHO_BUF_SIZE; */
-  /* } */
-  /* //  valB = v * idxWrFr; */
-  /* //  valA = v * (1 - idxWrFr); */
-  /* valB = mult_fr1x32x32(v, idxWrFr); */
-  /* valA = mult_fr1x32x32(v, sub_fr1x32(FR32_ONE, idxWrFr)); */
-  /* echoBuf[idxWrInt] = valA; */
-  /* echoBuf[idxB] = valB; */
+  filter_1p_fix16_in(timeLp, t);
 }
 
 // frame calculation
@@ -200,58 +131,53 @@ static void calc_frame(void) {
     ;;
   } else {
     time = filter_1p_fix16_next(timeLp);
-    calc_time();
+    buffer_tap_sync(&tapRd, &tapWr, time);
+
+#if ARCH_LINUX
+      if(dbgFlag) {  
+	fprintf(dbgFile, "%d \t %f \r\n", 
+		dbgCount, 
+		fix16_to_float(time)
+		);
+	dbgCount++;
+      }
+
+#endif
+
+
   }
+
   // rate
+  //// NOTE: setting a different rate is pretty much pointless in this simple application.
+  /// leaving it in just to test fractional interpolation methods.
   if(rateLp->sync) {
     ;;
   } else {
     rate = filter_1p_fix16_next(rateLp);
-    calc_rate();
+    buffer_tap_set_rate(&tapRd, rate);
+    buffer_tap_set_rate(&tapWr, rate);
   }
   
   // get interpolated echo value
-  echoVal = read_buf();
-  // store interpolated input+fb value
 
-  //  write_buf(add_fr1x32(in0, mult_fr1x32x32(echoVal,  FIX16_FRACT_TRUNC(fb) ) ) );
-  write_buf(in0);
+  echoVal = buffer_tap_read(&tapRd);
 
- // output
+  /* // store interpolated input+fb value */
+  buffer_tap_write(&tapWr, add_fr1x32(in0, mult_fr1x32x32(echoVal, fb ) ) );
+  /// test: no fb
+  //buffer_tap_write(&tapWr, in0);
 
-  /* frameVal = add_fr1x32(  */
-  /* 			mult_fr1x32x32( echoVal, FIX16_FRACT_TRUNC(amp) ), */
-  /* 			mult_fr1x32x32( in0,  FIX16_FRACT_TRUNC(dry) ) */
-  /* 			 ); */
-
+  /* // output */
+  frameVal = add_fr1x32(
+  			mult_fr1x32x32( echoVal, FIX16_FRACT_TRUNC(amp) ),
+  			mult_fr1x32x32( in0,  FIX16_FRACT_TRUNC(dry) )
+  			 );
+  //// test: no dry
+  //  frameVal = echoVal;
   
-  frameVal = echoVal;
 
-  // increment read head
-  idxRdInt += incInt;
-  idxRdFr  += incFr;
-  // carry
-  if(idxRdFr < 0) { // overflow check
-    idxRdInt++;
-    idxRdFr = add_fr1x32(idxRdFr, FR32_ONE);
-  }
-  // wrap
-  if(idxRdInt > ECHO_BUF_SIZE_1) {
-    idxRdInt -= ECHO_BUF_SIZE;
-  }
-
-  // increment write head
-  idxWrInt += incInt;
-  idxWrFr  += incFr;
-  // carry
-  if(idxWrFr < 0) { // overflow check
-    idxWrInt++;
-    idxWrFr = add_fr1x32(idxWrFr, FR32_ONE);
-  }
-  // wrap
-  if(idxWrInt > ECHO_BUF_SIZE_1) {
-    idxWrInt -= ECHO_BUF_SIZE;
-  }
+  buffer_tap_next(&tapRd);
+  buffer_tap_next(&tapWr);
 }
 
 //----------------------
@@ -260,26 +186,29 @@ static void calc_frame(void) {
 void module_init(void) {
 
   // init module/param descriptor
-
-  //  moduleData = (moduleData_t*)SDRAM_ADDRESS;
-  moduleData = &moduleDataPrivate;
-  moduleData->numParams = eParamNumParams;
-  moduleData->paramDesc = (ParamDesc*)malloc(eParamNumParams * sizeof(ParamDesc));
-  moduleData->paramData = (ParamData*)malloc(eParamNumParams * sizeof(ParamData));
+#ifdef ARCH_BFIN 
+  pTapeData = (tapeData*)SDRAM_ADDRESS;
+#else
+  pTapeData = (tapeData*)malloc(sizeof(tapeData));
+  // debug file
+  dbgFile = fopen( "tape_dbg.txt", "w");
+#endif
   
-  strcpy(moduleData->paramDesc[eParamAmp].label, "amp");
-  strcpy(moduleData->paramDesc[eParamDry].label, "dry");
-  strcpy(moduleData->paramDesc[eParamTime].label, "time");
-  strcpy(moduleData->paramDesc[eParamRate].label, "rate");
-  strcpy(moduleData->paramDesc[eParamFb].label, "feedback");
-  strcpy(moduleData->paramDesc[eParamAmpSmooth].label, "amp smoothing");
-  strcpy(moduleData->paramDesc[eParamTimeSmooth].label, "time smoothing");
-  strcpy(moduleData->paramDesc[eParamRateSmooth].label, "rate smoothing");
+  gModuleData = &(pTapeData->super);
+
+  gModuleData->numParams = eParamNumParams;
+  gModuleData->paramDesc = (ParamDesc*)malloc(eParamNumParams * sizeof(ParamDesc));
+
+  
+  strcpy(gModuleData->paramDesc[eParamAmp].label, "amp");
+  strcpy(gModuleData->paramDesc[eParamDry].label, "dry");
+  strcpy(gModuleData->paramDesc[eParamTime].label, "time");
+  strcpy(gModuleData->paramDesc[eParamRate].label, "rate");
+  strcpy(gModuleData->paramDesc[eParamFb].label, "feedback");
+  strcpy(gModuleData->paramDesc[eParamAmpSmooth].label, "amp smoothing");
+  strcpy(gModuleData->paramDesc[eParamTimeSmooth].label, "time smoothing");
   
   // init params
-  sr = SAMPLERATE;
-  ips = fix16_from_float( 1.f / (f32)sr );
-  // 
   amp = FIX16_ONE >> 1;
   time = FIX16_ONE << 1;
   rate = FIX16_ONE;
@@ -294,14 +223,15 @@ void module_init(void) {
   rateLp = (filter_1p_fix16*)malloc(sizeof(filter_1p_fix16));
   filter_1p_fix16_init( rateLp, SAMPLERATE, fix16_from_int(32), time );
 
-  // calculate current values
-  calc_time();
-  calc_rate();
-  
-  /// DEBUG
-  //printf("\n\n module init debug \n\n");
-  
-  ////// TEST
+  // init buffer and taps
+  buffer_init(&echoBuf, pTapeData->echoBufData, ECHO_BUF_SIZE, SAMPLERATE);
+  buffer_tap_init(&tapRd, &echoBuf);
+  buffer_tap_init(&tapWr, &echoBuf);
+
+  // set rate and offset
+  buffer_tap_set_rate(&tapRd, rate);
+  buffer_tap_set_rate(&tapWr, rate);
+  buffer_tap_sync(&tapRd, &tapWr, time);
 }
 
 // de-init
@@ -321,13 +251,13 @@ void module_set_param(u32 idx, pval v) {
     dry = v.fix;
     break;
   case eParamTime:
-    filter_1p_fix16_in(timeLp, v.fix);
+    set_time(v.fix);
     break;
   case eParamRate:
     filter_1p_fix16_in(rateLp, v.fix);
     break;
   case eParamFb:
-    fb = v.fix;
+    fb =  FIX16_FRACT_TRUNC(v.fix);
     break;
   case eParamAmpSmooth:
     filter_1p_fix16_set_hz(ampLp, v.fix);
@@ -349,17 +279,13 @@ extern u32 module_get_num_params(void) {
 }
 
 // frame callback
+#ifdef ARCH_BFIN 
 void module_process_frame(void) {
-  /* calc_frame(); */
-  /* out0 = frameVal; */
-  /* out1 = frameVal; */
-  /* out2 = frameVal; */
-  /* out3 = frameVal;  */
-
-  out0 = in0;
-  out1 = in1;
-  out2 = in2;
-  out3 = in3; 
+  calc_frame();
+  out0 = frameVal;
+  out1 = frameVal;
+  out2 = frameVal;
+  out3 = frameVal; 
 }
 
 static u8 ledstate = 0;
@@ -367,7 +293,23 @@ u8 module_update_leds(void) {
   return ledstate;
 }
 
-//static u8 buts[4] = {0, 0, 0, 0};
-void module_handle_button(const u16 state) {
-  ///... 
+#else //  non-bfin
+void module_process_frame(const f32* in, f32* out) {
+
+  static fract32* const pIn[4] = { &in0, &in1, &in2, &in3 };
+  u32 frame;
+  u8 chan;
+  // i/o buffers are (sometimes) interleaved in portaudio,
+  // so need to introduce 1-sample delay for x-channel processing
+  //  static int _in0, _in1, _in2, _in3;
+  for(frame=0; frame<BLOCKSIZE; frame++) {
+    calc_frame();
+    for(chan=0; chan<NUMCHANNELS; chan++) { // stereo interleaved
+      *out++ = fr32_to_float(frameVal);
+      *(pIn[chan]) = float_to_fr32(*in++);
+    }
+  }
 }
+#endif
+
+

@@ -16,7 +16,7 @@ fract32 out0, out1, out2, out3;
 // sport0 receive interrupt (audio input from codec)
 void sport0_rx_isr() {
   /// debug:
-  static u8 leds = 0;
+  //  static u8 leds = 0;
   // confirm interrupt handling
   *pDMA1_IRQ_STATUS = 0x0001;
   
@@ -51,7 +51,7 @@ void sport0_rx_isr() {
 
 
 // module-defined LED update function
-  leds = module_update_leds();
+  // leds = module_update_leds();
   ///// FIXME
   //  *pFlashA_PortB_Data = leds;
 }
