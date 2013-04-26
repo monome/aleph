@@ -67,7 +67,7 @@ void filter_1p_fix16_set_hz(filter_1p_fix16* f, fix16 hz) {
   f->c = fix16_from_float( (float) exp(-2.0 * M_PI * (double)(fix16_to_float(hz)) / (float)(f->sr) ) ); 
   // clamp to < 1.0
   if (f->c > 0xffff) {  f->c = 0xffff; }
-  //  printf("\rfix16: %08x\n",  f->c );
+  //  printf("\r\n fix16 smoother coefficient: %08x\n",  f->c );
 }
 
 // set target value 

@@ -21,15 +21,19 @@
 #include "fract_math.h"
 #include <fract2float_conv.h>
 #else
+// linux
 #include "fract32_emu.h"
 #include "audio.h"
+
+/////// dbg
+#include <stdio.h>
+
 #endif
+
 #include "module.h"
 #include "types.h"
 
 //---------- defines
-
-
 // hz is fix16
 #define HZ_MIN 0x200000   // 32
 #define HZ_MAX 0x20000000 // 8192
@@ -62,12 +66,12 @@ enum params {
   eParamNumParams
 };
 
-// define a local data structure that subclasses moduleData_t.
+// define a local data structure that subclasses moduleData.
 // use this for all data that is large and/or not speed-critical.
 // this structure should statically allocate all necessary memory 
 // so it can simply be loaded at the start of SDRAM.
 typedef struct _monoFmData {
-  moduleData_t super;
+  moduleData super;
   ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
 } monoFmData;
@@ -80,13 +84,29 @@ typedef struct _monoFmData {
 
 //-------------------------
 //----- extern vars (initialized here)
-moduleData_t * gModuleData; // module data
+moduleData * gModuleData; // module data
 
 //-----------------------
 //------ static variables
+#if ARCH_LINUX
+static FILE* dbgFile;
+u8 dbgFlag = 0;
+u32 dbgCount = 0;
 
-// pointer to local module data, initialize at top of SDRAM
-static monoFmData * monoFmData;
+//////////////
+/////////////
+// debug: osc2 * pm  * tablesize, in fix16
+//fix16 modIdxOffset;
+fract32 modIdxOffset;
+///////////
+/////////////
+
+
+#endif
+
+
+// pointer to local module data, initialize/v at top of SDRAM
+static monoFmData * monoData;
 
 //-- static allocation (SRAM) for variables that are small and/or frequently accessed:
 
@@ -200,9 +220,10 @@ static void calc_frame(void) {
 		      );
 
   // wrap negative
-  while (BSIGN(idx1Mod)) {
+  while (BIT_SIGN(idx1Mod)) {
     idx1Mod = fix16_add(idx1Mod, WAVE_TAB_MAX16);
   }
+
   // wrap positive
   while(idx1Mod > WAVE_TAB_MAX16) { 
     idx1Mod = fix16_sub(idx1Mod, WAVE_TAB_MAX16); 
@@ -248,15 +269,18 @@ void module_init(void) {
   // init module/param descriptor
 #ifdef ARCH_BFIN 
   // intialize local data at start of SDRAM
-  monoFmData = (monoFmData * )SDRAM_ADDRESS;
+  monoData = (monoFmData * )SDRAM_ADDRESS;
   // initialize moduleData superclass for core routines
 #else
-  //  moduleData = (moduleData_t*)malloc(sizeof(moduleData_t));
-  monoFmData = (monoFmData*)malloc(sizeof(monoFmData));
+  monoData = (monoFmData*)malloc(sizeof(monoFmData));
+
+  /// debugging output file
+  dbgFile = fopen( "mono_dbg.txt", "w");
+  
 #endif
-  gModuleData = &(monoFmData->super);
-  gModuleData->paramDesc = monoFmData->mParamDesc;
-  gModuleData->paramData = monoFmData->mParamData;
+  gModuleData = &(monoData->super);
+  gModuleData->paramDesc = monoData->mParamDesc;
+  gModuleData->paramData = monoData->mParamData;
   gModuleData->numParams = eParamNumParams;
 
   strcpy(gModuleData->paramDesc[eParamHz1].label, "osc 1 hz");
@@ -347,6 +371,10 @@ void module_deinit(void) {
   free(wave2Lp);
   free(amp1Lp);
   free(amp2Lp);
+
+#if ARCH_LINUX 
+  fclose(dbgFile);
+#endif
 }
 
 // set parameter by value (fix16)
@@ -362,34 +390,34 @@ void module_set_param(u32 idx, pval v) {
     set_hz2(v.fix);
     break;
   case eParamWave1:
-    filter_1p_fr32_in(wave1Lp, FIX16_FRACT_TRUNC(BABS(v.fix)));
+    filter_1p_fr32_in(wave1Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamWave2:
-    filter_1p_fr32_in(wave2Lp, FIX16_FRACT_TRUNC(BABS(v.fix)));
+    filter_1p_fr32_in(wave2Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamPm:
-    filter_1p_fr32_in(pmLp, FIX16_FRACT_TRUNC(BABS(v.fix)));
+    filter_1p_fr32_in(pmLp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamAmp1:
-    filter_1p_fr32_in(amp1Lp, FIX16_FRACT_TRUNC(BABS(v.fix)));
+    filter_1p_fr32_in(amp1Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamAmp2:
-    filter_1p_fr32_in(amp2Lp, FIX16_FRACT_TRUNC(BABS(v.fix)));
+    filter_1p_fr32_in(amp2Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamGate:
      env_asr_set_gate(env, v.s > 0);
     break;
   case eParamAtkDur:
-    env_asr_set_atk_dur(env, FIX16_TO_U16(BABS(v.fix)));
+    env_asr_set_atk_dur(env, FIX16_TO_U16(BIT_ABS(v.fix)));
     break;
   case eParamRelDur:
-    env_asr_set_rel_dur(env, FIX16_TO_U16(BABS(v.fix)));
+    env_asr_set_rel_dur(env, FIX16_TO_U16(BIT_ABS(v.fix)));
     break;
   case eParamAtkCurve:
-    env_asr_set_atk_shape(env, FIX16_FRACT_TRUNC(BABS(v.fix)));
+    env_asr_set_atk_shape(env, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamRelCurve:
-    env_asr_set_atk_shape(env, FIX16_FRACT_TRUNC(BABS(v.fix)));
+    env_asr_set_atk_shape(env, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamHz1Smooth:
     filter_1p_fix16_set_hz(hz1Lp, v.fix);
@@ -442,10 +470,23 @@ void module_process_frame(const f32* in, f32* out) {
   u32 frame;
   u8 chan;
   for(frame=0; frame<BLOCKSIZE; frame++) {
-    calc_frame();
+    calc_frame(); 
     for(chan=0; chan<NUMCHANNELS; chan++) { // stereo interleaved
       // FIXME: could use fract for output directly (portaudio setting?)
-      *out++ = fr32_to_float(frameVal);
+      *out = fr32_to_float(frameVal);
+      if(dbgFlag) {  
+	fprintf(dbgFile, "%d \t %f \t %f \t %f \r\n", 
+		dbgCount, 
+		*out, 
+		fr32_to_float(osc2),
+		//		fr32_to_float((fract32)modIdxOffset << 3)
+		//		fr32_to_float((fract32)modIdxOffset << 16)
+		fr32_to_float((fract32)modIdxOffset)
+		);
+	dbgCount++;
+      }
+     out++;
+	 
     }
   }
 }

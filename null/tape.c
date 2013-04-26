@@ -36,10 +36,8 @@
 static FILE* dbgFile;
 u8 dbgFlag = 0;
 u32 dbgCount = 0;
-//////////////
-/// DEBUG
-//static u32 framecount = 0;
 #endif
+
 // buffer size: 
 // 2** 19  ~= 11sec at 44.1k
 #define ECHO_BUF_SIZE 0x80000
@@ -121,8 +119,6 @@ static inline void set_time(fix16 t) {
   if( t < TIME_MIN ) { t = TIME_MIN; }
   if( t > TIME_MAX ) { t = TIME_MAX; }
   filter_1p_fix16_in(timeLp, t);
-  //// test: bypass smoother
-  //      buffer_tap_sync(&tapRd, &tapWr, t);
 }
 
 // frame calculation
@@ -136,6 +132,19 @@ static void calc_frame(void) {
   } else {
     time = filter_1p_fix16_next(timeLp);
     buffer_tap_sync(&tapRd, &tapWr, time);
+
+#if ARCH_LINUX
+      if(dbgFlag) {  
+	fprintf(dbgFile, "%d \t %f \r\n", 
+		dbgCount, 
+		fix16_to_float(time)
+		);
+	dbgCount++;
+      }
+
+#endif
+
+
   }
 
   // rate
@@ -181,7 +190,8 @@ void module_init(void) {
   pTapeData = (tapeData*)SDRAM_ADDRESS;
 #else
   pTapeData = (tapeData*)malloc(sizeof(tapeData));
-  
+  // debug file
+  dbgFile = fopen( "tape_dbg.txt", "w");
 #endif
   
   gModuleData = &(pTapeData->super);
@@ -241,7 +251,6 @@ void module_set_param(u32 idx, pval v) {
     dry = v.fix;
     break;
   case eParamTime:
-    printf("\r\n setting time: %0x", v.fix);
     set_time(v.fix);
     break;
   case eParamRate:
@@ -290,11 +299,9 @@ void module_process_frame(const f32* in, f32* out) {
   static fract32* const pIn[4] = { &in0, &in1, &in2, &in3 };
   u32 frame;
   u8 chan;
-
   // i/o buffers are (sometimes) interleaved in portaudio,
   // so need to introduce 1-sample delay for x-channel processing
   //  static int _in0, _in1, _in2, _in3;
-
   for(frame=0; frame<BLOCKSIZE; frame++) {
     calc_frame();
     for(chan=0; chan<NUMCHANNELS; chan++) { // stereo interleaved
@@ -304,3 +311,5 @@ void module_process_frame(const f32* in, f32* out) {
   }
 }
 #endif
+
+

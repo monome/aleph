@@ -33,8 +33,8 @@
 
 #define BIT_SIGN(x) ((x) & 0x80000000)
 #define BIT_INVERT(x) ( (s32)( ((x) ^ 0xffffffff) + 1) )
-#define BIT_ABS(x) (BSIGN(x) ? BINV(x) : (x))
-#define BIT_NEG_ABS(x) (BSIGN(x) ? (x) : BINV(x))
+#define BIT_ABS(x) (BIT_SIGN(x) ? BIT_INVERT(x) : (x))
+#define BIT_NEG_ABS(x) (BIT_SIGN(x) ? (x) : BIT_INVERT(x))
 
 // macros for fract32/fix16 conversion
 #define FIX16_TO_U16(x) (u16)((x) >> 16)
@@ -42,7 +42,7 @@
 #define S16_TO_FIX16(x) ( (fix16_t)(x) ) << 16
 //#define FIX16_FRACT_TRUNC(x) (fract32)(((x) & 0xffff) << 16)
 #define FIX16_FRACT_TRUNC(x) (fract32)( (( (x) & 0xffff) << 15) -1)
-#define FRACT_FIX16(x) ( BSIGN(x) ? ((x)>>15) | 0xffff0000 : (x)>>15 )
+#define FRACT_FIX16(x) ( BIT_SIGN(x) ? ((x)>>15) | 0xffff0000 : (x)>>15 )
 
 
 // print to a buffer

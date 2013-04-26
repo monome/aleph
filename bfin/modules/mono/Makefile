@@ -1,10 +1,13 @@
 audiolib = ../../../audio
+common = ../../../common
 
 module_name = mono
 module_obj = mono_fm.o \
 	$(audiolib)/env.o \
 	$(audiolib)/filters.o \
-	$(audiolib)/table.o
+	$(audiolib)/table.o \
+	$(common)/libfixmath/fix32.o \
+	$(common)/libfixmath/fix16.o \
 
 all: aleph-$(module_name).ldr
 

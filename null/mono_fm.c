@@ -84,7 +84,7 @@ typedef struct _monoFmData {
 
 //-------------------------
 //----- extern vars (initialized here)
-moduleData * modData; // module data
+moduleData * gModuleData; // module data
 
 //-----------------------
 //------ static variables
@@ -220,7 +220,7 @@ static void calc_frame(void) {
 		      );
 
   // wrap negative
-  while (BSIGN(idx1Mod)) {
+  while (BIT_SIGN(idx1Mod)) {
     idx1Mod = fix16_add(idx1Mod, WAVE_TAB_MAX16);
   }
 
@@ -278,31 +278,31 @@ void module_init(void) {
   dbgFile = fopen( "mono_dbg.txt", "w");
   
 #endif
-  modData = &(monoData->super);
-  modData->paramDesc = monoData->mParamDesc;
-  modData->paramData = monoData->mParamData;
-  modData->numParams = eParamNumParams;
+  gModuleData = &(monoData->super);
+  gModuleData->paramDesc = monoData->mParamDesc;
+  gModuleData->paramData = monoData->mParamData;
+  gModuleData->numParams = eParamNumParams;
 
-  strcpy(modData->paramDesc[eParamHz1].label, "osc 1 hz");
-  strcpy(modData->paramDesc[eParamHz2].label, "osc 2 hz");
-  strcpy(modData->paramDesc[eParamRatio2].label, "osc 2 ratio");
-  strcpy(modData->paramDesc[eParamPm].label, "phase mod depth");
-  strcpy(modData->paramDesc[eParamWave1].label, "waveshape 1");
-  strcpy(modData->paramDesc[eParamWave2].label, "waveshape 2");
-  strcpy(modData->paramDesc[eParamAmp1].label, "amplitude 1");
-  strcpy(modData->paramDesc[eParamAmp2].label, "amplitude 2");
-  strcpy(modData->paramDesc[eParamGate].label, "gate");
-  strcpy(modData->paramDesc[eParamAtkDur].label, "amp env attack");
-  strcpy(modData->paramDesc[eParamRelDur].label, "amp env release");
-  strcpy(modData->paramDesc[eParamAtkCurve].label, "amp env atk curve");
-  strcpy(modData->paramDesc[eParamRelCurve].label, "amp env rel curve");
-  strcpy(modData->paramDesc[eParamHz1Smooth].label, "hz 1 smoothing");
-  strcpy(modData->paramDesc[eParamHz2Smooth].label, "hz 2 smoothing");
-  strcpy(modData->paramDesc[eParamPmSmooth].label, "phase mod smoothing");
-  strcpy(modData->paramDesc[eParamWave1Smooth].label, "wave 1 smoothing");
-  strcpy(modData->paramDesc[eParamWave2Smooth].label, "wave 2 smoothing");
-  strcpy(modData->paramDesc[eParamAmp1Smooth].label, "amp 1 smoothing");
-  strcpy(modData->paramDesc[eParamAmp2Smooth].label, "amp 2 smoothing");
+  strcpy(gModuleData->paramDesc[eParamHz1].label, "osc 1 hz");
+  strcpy(gModuleData->paramDesc[eParamHz2].label, "osc 2 hz");
+  strcpy(gModuleData->paramDesc[eParamRatio2].label, "osc 2 ratio");
+  strcpy(gModuleData->paramDesc[eParamPm].label, "phase mod depth");
+  strcpy(gModuleData->paramDesc[eParamWave1].label, "waveshape 1");
+  strcpy(gModuleData->paramDesc[eParamWave2].label, "waveshape 2");
+  strcpy(gModuleData->paramDesc[eParamAmp1].label, "amplitude 1");
+  strcpy(gModuleData->paramDesc[eParamAmp2].label, "amplitude 2");
+  strcpy(gModuleData->paramDesc[eParamGate].label, "gate");
+  strcpy(gModuleData->paramDesc[eParamAtkDur].label, "amp env attack");
+  strcpy(gModuleData->paramDesc[eParamRelDur].label, "amp env release");
+  strcpy(gModuleData->paramDesc[eParamAtkCurve].label, "amp env atk curve");
+  strcpy(gModuleData->paramDesc[eParamRelCurve].label, "amp env rel curve");
+  strcpy(gModuleData->paramDesc[eParamHz1Smooth].label, "hz 1 smoothing");
+  strcpy(gModuleData->paramDesc[eParamHz2Smooth].label, "hz 2 smoothing");
+  strcpy(gModuleData->paramDesc[eParamPmSmooth].label, "phase mod smoothing");
+  strcpy(gModuleData->paramDesc[eParamWave1Smooth].label, "wave 1 smoothing");
+  strcpy(gModuleData->paramDesc[eParamWave2Smooth].label, "wave 2 smoothing");
+  strcpy(gModuleData->paramDesc[eParamAmp1Smooth].label, "amp 1 smoothing");
+  strcpy(gModuleData->paramDesc[eParamAmp2Smooth].label, "amp 2 smoothing");
 
   // init params
   sr = SAMPLERATE;
@@ -390,34 +390,34 @@ void module_set_param(u32 idx, pval v) {
     set_hz2(v.fix);
     break;
   case eParamWave1:
-    filter_1p_fr32_in(wave1Lp, FIX16_FRACT_TRUNC(BABS(v.fix)));
+    filter_1p_fr32_in(wave1Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamWave2:
-    filter_1p_fr32_in(wave2Lp, FIX16_FRACT_TRUNC(BABS(v.fix)));
+    filter_1p_fr32_in(wave2Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamPm:
-    filter_1p_fr32_in(pmLp, FIX16_FRACT_TRUNC(BABS(v.fix)));
+    filter_1p_fr32_in(pmLp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamAmp1:
-    filter_1p_fr32_in(amp1Lp, FIX16_FRACT_TRUNC(BABS(v.fix)));
+    filter_1p_fr32_in(amp1Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamAmp2:
-    filter_1p_fr32_in(amp2Lp, FIX16_FRACT_TRUNC(BABS(v.fix)));
+    filter_1p_fr32_in(amp2Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamGate:
      env_asr_set_gate(env, v.s > 0);
     break;
   case eParamAtkDur:
-    env_asr_set_atk_dur(env, FIX16_TO_U16(BABS(v.fix)));
+    env_asr_set_atk_dur(env, FIX16_TO_U16(BIT_ABS(v.fix)));
     break;
   case eParamRelDur:
-    env_asr_set_rel_dur(env, FIX16_TO_U16(BABS(v.fix)));
+    env_asr_set_rel_dur(env, FIX16_TO_U16(BIT_ABS(v.fix)));
     break;
   case eParamAtkCurve:
-    env_asr_set_atk_shape(env, FIX16_FRACT_TRUNC(BABS(v.fix)));
+    env_asr_set_atk_shape(env, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamRelCurve:
-    env_asr_set_atk_shape(env, FIX16_FRACT_TRUNC(BABS(v.fix)));
+    env_asr_set_atk_shape(env, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamHz1Smooth:
     filter_1p_fix16_set_hz(hz1Lp, v.fix);
@@ -485,7 +485,7 @@ void module_process_frame(const f32* in, f32* out) {
 		);
 	dbgCount++;
       }
-      out++;
+     out++;
 	 
     }
   }
