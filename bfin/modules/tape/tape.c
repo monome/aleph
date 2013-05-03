@@ -232,7 +232,7 @@ static void calc_frame(void) {
   			mult_fr1x32x32( in0,  FIX16_FRACT_TRUNC(dry) )
   			 );
   //// test: no dry
-  //  frameVal = echoVal;
+  //  frameVal = echoVa;l
   /// FIXME: clip here
 
   buffer_tap_next(&tapRd);

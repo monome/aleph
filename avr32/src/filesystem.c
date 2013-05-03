@@ -58,8 +58,8 @@ int media_read(unsigned long sector, unsigned char *buffer, unsigned long sector
       pdcaRxChan->cr = AVR32_PDCA_TEN_MASK; // Enable RX PDCA transfer first
       pdcaTxChan->cr = AVR32_PDCA_TEN_MASK; // and TX PDCA transfer
       // wait for signal from ISR
-      while(!fsEndTransfer);
-      // copy (FIXME !!!)
+      while(!fsEndTransfer) { ;; }
+      // copy FIXME: could optimize
       for(i=0; i<FS_BUF_SIZE; i++) {
 	buffer[i] = pdcaRxBuf[i];
       }
@@ -77,16 +77,31 @@ int media_read(unsigned long sector, unsigned char *buffer, unsigned long sector
 int media_write(unsigned long sector, unsigned char *buffer, unsigned long sector_count);
 int media_write(unsigned long sector, unsigned char *buffer, unsigned long sector_count) {
   unsigned long i;
+  bool status;
 
-  for (i=0;i<sector_count;i++) {
-    // ...
-    // Add platform specific sector (512 bytes) write code here
-    /// FIXME: seriously, do this!
-    //..
-    sector ++;
-    buffer += 512;
+  // PDCA write isn't implemented in ASF... 
+  // for the moment use slower blocking write.
+
+  status = sd_mmc_spi_write_open(sector);
+
+  if(status == false) {
+    print_dbg("\r\n error opening sd_mmc_spi, sector: ");
+    print_dbg_hex(sector);
+    return 0;
   }
 
+  for (i=0;i<sector_count;i++) {
+    status = sd_mmc_spi_write_sector_from_ram(buffer);
+    /////////// dbg
+    if(status == false) {
+      print_dbg("\r\n error writing sd_mmc_spi, sector: ");
+      print_dbg_hex(sector);
+    }
+    //////////////
+    sector++;
+    buffer += 512;
+  }
+  sd_mmc_spi_write_close();
   return 1;
 }
 

@@ -479,8 +479,6 @@ void module_process_frame(const f32* in, f32* out) {
 		dbgCount, 
 		*out, 
 		fr32_to_float(osc2),
-		//		fr32_to_float((fract32)modIdxOffset << 3)
-		//		fr32_to_float((fract32)modIdxOffset << 16)
 		fr32_to_float((fract32)modIdxOffset)
 		);
 	dbgCount++;

@@ -8,6 +8,8 @@
 #ifndef _ALEPH_COMMON_PARAM_H_
 #define _ALEPH_COMMON_PARAM_H_
 
+
+#include "fix.h"
 #include "types.h"
 
 //======@@@@@@@++++++########!!!!!!!
@@ -22,10 +24,9 @@
 #define PARAM_LABEL_LEN 16
 // max charactes in param unit
 #define PARAM_UNIT_LEN 8
-// TODO: define units?
 
 //-------- param types
-#define PARAM_TYPE_FLOAT 0
+#define PARAM_TYPE_FIX 0
 #define PARAM_TYPE_FRACT 1
 #define PARAM_TYPE_UINT  2
 
@@ -51,8 +52,8 @@ typedef struct __attribute__((__packed__)) ParamDescStruct {
   // type: fract, int, or float
   u8 type;
   // range
-  f32 min;
-  f32 max;
+  fix16 min;
+  fix16 max;
   // other stuff? curve? scaling table?
 } ParamDesc;
 

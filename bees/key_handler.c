@@ -40,7 +40,7 @@ static fix16 scale_knob_value(const s32 v);
 //--- static func def
 // return param increment given encoder ticks
 static fix16 scale_knob_value(const s32 v) {
-  s32 vabs = BABS(v);
+  s32 vabs = BIT_ABS(v);
   if(vabs < 6) {
     //    print_dbg("\r\n slow");
     return v;

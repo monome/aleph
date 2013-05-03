@@ -38,7 +38,7 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc);
 void bfin_get_module_name(volatile char* buf);
 
 // clear and add params to ctl network
-void report_params(void);
+void bfin_report_params(void);
 
 
 #endif // header guard

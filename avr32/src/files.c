@@ -33,10 +33,21 @@ static u8 numDsp = 0;
 //----- function definition
 
 void init_files(void) {
+  void * fp;
+  FL_DIR dirstat;
+
+
   // init FAT lib
   fat_init();
   files_scan_dsp();
 
+  /* //// /test: write dummy file */
+  /* fp = fl_fopen("/tetblsts.txt", "w"); */
+  /* print_dbg("\r\n dummy write test, fp: "); */
+  /* print_dbg_hex(fp); */
+  /* fl_fputs("hihhihi", fp); */
+  /* fl_fclose(fp); */
+      
 }
 
 // populate the dsp filelist with names

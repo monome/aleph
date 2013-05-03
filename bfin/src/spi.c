@@ -193,8 +193,7 @@ u8 spi_process(u8 rx) {
   // type
   case eParamDescType :
     byte = eParamDescMin0;
-    //// FIXME
-    //    pval.asFloat = gModuleData->paramDesc[idx].min;
+    pval.asFloat = gModuleData->paramDesc[idx].min;
     return pval.asByte[3]; // min, high byte
       break;
   // min  // === byteswap for BE on avr32

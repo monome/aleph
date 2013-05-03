@@ -44,7 +44,9 @@ void set_param_value(u32 idx, io_t val) {
 void set_param_step_value(u32 idx, s32 val) {
 
   //f32 fval;
+
   net->params[idx].data.value.asFract = val;
+
   // FIXME:
   // not really using this function right now... 
   /*

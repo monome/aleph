@@ -60,7 +60,7 @@ void bfin_load(U32 size, void* fp) {
   delay_ms(200);
   print_dbg("\r\n done waiting; reporting... ");
 
-  report_params();
+  bfin_report_params();
   
 }
 
@@ -184,7 +184,7 @@ void bfin_get_module_name(volatile char* buf) {
 
 
 // clear and add params to ctl network
-void report_params(void) {
+void bfin_report_params(void) {
   volatile ParamDesc pdesc;
   u32 numParams;
   u8 i;
