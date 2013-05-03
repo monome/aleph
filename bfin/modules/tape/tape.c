@@ -50,7 +50,6 @@ u32 dbgCount = 0;
 #define RATE_MAX 0x80000 // 8
 
 // time
-/// FIXME: use buffer class to calculate this based on size/sr
 #define TIME_MIN 0
 // 11 secs in 16.16
 #define TIME_MAX 0xb0000
@@ -70,6 +69,8 @@ enum params {
 
 typedef struct _tapeData {
   moduleData super;
+  ParamDesc mParamDesc[eParamNumParams];
+  ParamData mParamData[eParamNumParams];
   fract32 echoBufData[ECHO_BUF_SIZE];
 } tapeData;
 
@@ -113,6 +114,59 @@ fract32 in0, in1, in2, in3;
 
 //----------------------
 //----- static functions
+
+// set all parameter data
+static void fill_param_desc(void) {
+  strcpy(gModuleData->paramDesc[eParamAmp].label, "amp");
+  strcpy(gModuleData->paramDesc[eParamAmp].unit, "v");
+  gModuleData->paramDesc[eParamAmp].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamAmp].min = 0.f;
+  gModuleData->paramDesc[eParamAmp].max = 1.f;
+  
+  strcpy(gModuleData->paramDesc[eParamDry].label, "dry");
+  strcpy(gModuleData->paramDesc[eParamDry].unit, "v");
+  gModuleData->paramDesc[eParamDry].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamDry].min = 0.f;
+  gModuleData->paramDesc[eParamDry].max = 1.f;
+
+  strcpy(gModuleData->paramDesc[eParamTime].label, "time");
+  strcpy(gModuleData->paramDesc[eParamTime].unit, "v");
+  gModuleData->paramDesc[eParamTime].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamTime].min = fix16_to_float(TIME_MIN);
+  gModuleData->paramDesc[eParamTime].max = fix16_to_float(TIME_MAX);
+
+  strcpy(gModuleData->paramDesc[eParamRate].label, "rate");
+  strcpy(gModuleData->paramDesc[eParamRate].unit, "r");
+  gModuleData->paramDesc[eParamRate].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamRate].min = fix16_to_float(RATE_MIN);
+  gModuleData->paramDesc[eParamRate].max = fix16_to_float(RATE_MAX);
+
+  strcpy(gModuleData->paramDesc[eParamFb].label, "feedback");
+  strcpy(gModuleData->paramDesc[eParamFb].unit, "v");
+  gModuleData->paramDesc[eParamFb].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamFb].min = 0.f;
+  gModuleData->paramDesc[eParamFb].max = 1.f;
+
+  strcpy(gModuleData->paramDesc[eParamAmpSmooth].label, "amp smoothing");
+  strcpy(gModuleData->paramDesc[eParamAmpSmooth].unit, "hz");
+  gModuleData->paramDesc[eParamAmpSmooth].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamAmpSmooth].min = 0.5f;
+  gModuleData->paramDesc[eParamAmpSmooth].max = 256.f;
+
+  strcpy(gModuleData->paramDesc[eParamTimeSmooth].label, "time smoothing");
+  strcpy(gModuleData->paramDesc[eParamTimeSmooth].unit, "hz");
+  gModuleData->paramDesc[eParamTimeSmooth].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamTimeSmooth].min = 0.5;
+  gModuleData->paramDesc[eParamTimeSmooth].max = 256.f;
+
+  strcpy(gModuleData->paramDesc[eParamRateSmooth].label, "rate smoothing");
+  strcpy(gModuleData->paramDesc[eParamRateSmooth].unit, "hz");
+  gModuleData->paramDesc[eParamRateSmooth].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamRateSmooth].min = 0.5;
+  gModuleData->paramDesc[eParamRateSmooth].max = 256.f;
+
+}
+
 
 // set time
 static inline void set_time(fix16 t) {  
@@ -200,18 +254,11 @@ void module_init(void) {
 #endif
   
   gModuleData = &(pTapeData->super);
-
+  gModuleData->paramDesc = pTapeData->mParamDesc;
+  gModuleData->paramData = pTapeData->mParamData;
   gModuleData->numParams = eParamNumParams;
-  gModuleData->paramDesc = (ParamDesc*)malloc(eParamNumParams * sizeof(ParamDesc));
 
-  
-  strcpy(gModuleData->paramDesc[eParamAmp].label, "amp");
-  strcpy(gModuleData->paramDesc[eParamDry].label, "dry");
-  strcpy(gModuleData->paramDesc[eParamTime].label, "time");
-  strcpy(gModuleData->paramDesc[eParamRate].label, "rate");
-  strcpy(gModuleData->paramDesc[eParamFb].label, "feedback");
-  strcpy(gModuleData->paramDesc[eParamAmpSmooth].label, "amp smoothing");
-  strcpy(gModuleData->paramDesc[eParamTimeSmooth].label, "time smoothing");
+  fill_param_desc();
   
   // init params
   amp = FIX16_ONE >> 1;

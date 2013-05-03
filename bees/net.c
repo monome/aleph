@@ -8,6 +8,7 @@
 
 // std
 #include <stdio.h>
+//#include <string.h>
 
 // asf
 #ifdef ARCH_AVR32
@@ -472,7 +473,7 @@ u16 net_num_params(void) {
   return net->numParams;
 }
 
-// get param index given input index
+// get param index given idx in (input + params)
 s16 net_param_idx(u16 inIdx) {
   return inIdx - net->numIns;
 }
@@ -658,12 +659,24 @@ u8 net_get_out_preset(u32 id) {
 //------ params
 
 // add a new parameter
-void net_add_param(u32 idx, volatile ParamDesc* pdesc) {
-  net->params[net->numParams].desc = *pdesc;
-  net->params[net->numParams].idx = idx;
-  net->params[net->numParams].preset = 1;
-  net->params[net->numParams].data.value.asInt = 0;
+void net_add_param(u32 idx, volatile ParamDesc * pdesc) {
+  net->params[net->numParams].desc = *pdesc;  
+  //  memcpy( &(net->params[net->numParams].desc), (const void*)pdesc, sizeof(ParamDesc) );
+  /* print_dbg("\r\n added param: "); */
+  /* print_dbg_ulong(idx); */
+  /* print_dbg(" , addr: "); */
+  /* print_dbg_hex(  &(net->params[net->numParams]) ); */
+
+  /* print_dbg("\r\n src label: "); */
+  /* print_dbg( pdesc->label ); */
+  /* print_dbg("\r\n dst label: "); */
+  /* print_dbg( &(net->params[net->numParams].desc.label) ); */
+
+  net->params[net->numParams].idx = idx; */
+  net->params[net->numParams].preset = 1; */
+  net->params[net->numParams].data.value.asInt = fix16_from_float(pdesc->min); */
   net->numParams++;
+
   /* print_dbg("\r\n ctlnet: added parameter at index "); */
   /* print_dbg_ulong(idx); */
 }
