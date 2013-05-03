@@ -17048,7 +17048,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="C15" library="rc-master-smd" deviceset="C_" device="0603" value="33n"/>
 <part name="C16" library="rc-master-smd" deviceset="C_" device="0603" value="100n"/>
 <part name="C17" library="rc-master-smd" deviceset="C_" device="1206" value="4.7u"/>
-<part name="C18" library="rc-master-smd" deviceset="C_" device="0603" value="2.2u"/>
+<part name="C18" library="rc-master-smd" deviceset="C_" device="1206" value="2.2u"/>
 <part name="C19" library="rc-master-smd" deviceset="C_" device="0603" value="470p"/>
 <part name="C20" library="rc-master-smd" deviceset="C_" device="0603" value="2.7n"/>
 <part name="C21" library="rc-master-smd" deviceset="C_" device="0603" value="33n"/>
@@ -17121,10 +17121,10 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="D1" library="diode" deviceset="MBRS360T3" device=""/>
 <part name="D2" library="diode" deviceset="MBRS360T3" device=""/>
 <part name="L1" library="inductor-coilcraft" deviceset="MSS1278" device=""/>
-<part name="C43" library="rc-master-smd" deviceset="C_" device="1206" value="22u"/>
+<part name="C43" library="rc-master-smd" deviceset="CP_" device="1206/T" value="22u"/>
 <part name="C44" library="rc-master-smd" deviceset="C_" device="1206" value="470n"/>
 <part name="C45" library="rc-master-smd" deviceset="C_" device="1206" value="10n"/>
-<part name="C46" library="rc-master-smd" deviceset="C_" device="3225" value="47u"/>
+<part name="C46" library="rc-master-smd" deviceset="CP_" device="3528" value="47u"/>
 <part name="GND22" library="supply" deviceset="GND" device=""/>
 <part name="GND23" library="supply" deviceset="GND" device=""/>
 <part name="V12" library="supply" deviceset="+5V" device=""/>
@@ -17140,7 +17140,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="R18" library="rc-master-smd" deviceset="R_" device="0603" value="0"/>
 <part name="J10" library="monome-inc" deviceset="PHA2U" device=""/>
 <part name="R63" library="rc-master-smd" deviceset="R_" device="0603" value="330k"/>
-<part name="R64" library="rc-master-smd" deviceset="R_" device="0603" value="100k"/>
+<part name="R64" library="rc-master-smd" deviceset="R_" device="0603" value="47k"/>
 <part name="GND46" library="supply" deviceset="GND" device=""/>
 <part name="GND1" library="supply" deviceset="GND" device=""/>
 <part name="U$6" library="monome-inc" deviceset="SDMMC" device="06132"/>
@@ -17163,7 +17163,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="GND5" library="supply" deviceset="GND" device=""/>
 <part name="U3" library="memory-cypress" deviceset="CY62167EV30-Z" device=""/>
 <part name="V6" library="supply" deviceset="+3V3" device=""/>
-<part name="R36" library="rc-master-smd" deviceset="R_" device="0603" value="100k"/>
+<part name="R36" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
 <part name="FRAME3" library="frames" deviceset="TABL_L" device=""/>
 <part name="AGND6" library="supply" deviceset="AGND" device=""/>
 <part name="R51" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
@@ -17332,7 +17332,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="R26" library="rc-master-smd" deviceset="R_" device="0603" value="0"/>
 <part name="C74" library="rc-master-smd" deviceset="C_" device="1206" value="100n"/>
 <part name="GND45" library="supply" deviceset="GND" device=""/>
-<part name="C75" library="rc-master-smd" deviceset="CP_" device="3528" value="100u"/>
+<part name="C75" library="rc-master-smd" deviceset="CP_" device="1210/T" value="100u"/>
 <part name="D7" library="diode" deviceset="ZENER-DIODE" device="SOT23" value="zhcs1000"/>
 <part name="GND49" library="supply" deviceset="GND" device=""/>
 <part name="L2" library="inductor-bourns" deviceset="SRR6038" device="" value="SRR6038-100Y"/>
@@ -17612,42 +17612,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="V34" library="supply" deviceset="+3V3A" device=""/>
 <part name="R116" library="rc-master-smd" deviceset="R_" device="0603" value="750k"/>
 <part name="AGND35" library="supply" deviceset="AGND" device=""/>
-<part name="IC4" library="analog-devices" deviceset="AD8607" device="R" value="AD8606"/>
-<part name="AGND36" library="supply" deviceset="AGND" device=""/>
-<part name="C140" library="rc-master-smd" deviceset="C_" device="0603" value="100n"/>
-<part name="R117" library="rc-master-smd" deviceset="R_" device="0603" value="11k"/>
-<part name="R118" library="rc-master-smd" deviceset="R_" device="0603" value="5k49"/>
-<part name="C141" library="rc-master-smd" deviceset="C_" device="0603" value="330p"/>
-<part name="C155" library="rc-master-smd" deviceset="C_" device="0603" value="680p"/>
-<part name="R119" library="rc-master-smd" deviceset="R_" device="0603" value="3k32"/>
-<part name="R120" library="rc-master-smd" deviceset="R_" device="0603" value="5k49"/>
-<part name="C156" library="rc-master-smd" deviceset="C_" device="0603" value="100p"/>
-<part name="R121" library="rc-master-smd" deviceset="R_" device="0603" value="604"/>
-<part name="R122" library="rc-master-smd" deviceset="R_" device="0603" value="1k65"/>
-<part name="C157" library="rc-master-smd" deviceset="C_" device="0603" value="220p"/>
-<part name="C158" library="rc-master-smd" deviceset="C_" device="0603" value="2200p"/>
-<part name="AGND41" library="supply" deviceset="AGND" device=""/>
-<part name="C159" library="rc-master-smd" deviceset="CP_" device="1206/T" value="10u"/>
-<part name="R123" library="rc-master-smd" deviceset="R_" device="0603" value="49k9"/>
-<part name="R124" library="rc-master-smd" deviceset="R_" device="0603" value="11k"/>
-<part name="R125" library="rc-master-smd" deviceset="R_" device="0603" value="5k49"/>
-<part name="C160" library="rc-master-smd" deviceset="C_" device="0603" value="330p"/>
-<part name="C161" library="rc-master-smd" deviceset="C_" device="0603" value="680p"/>
-<part name="R126" library="rc-master-smd" deviceset="R_" device="0603" value="3k32"/>
-<part name="R127" library="rc-master-smd" deviceset="R_" device="0603" value="5k49"/>
-<part name="C162" library="rc-master-smd" deviceset="C_" device="0603" value="100p"/>
-<part name="R128" library="rc-master-smd" deviceset="R_" device="0603" value="604"/>
-<part name="R129" library="rc-master-smd" deviceset="R_" device="0603" value="1k65"/>
-<part name="C163" library="rc-master-smd" deviceset="C_" device="0603" value="220p"/>
-<part name="C164" library="rc-master-smd" deviceset="C_" device="0603" value="2200p"/>
-<part name="AGND42" library="supply" deviceset="AGND" device=""/>
-<part name="C165" library="rc-master-smd" deviceset="CP_" device="1206/T" value="10u"/>
-<part name="R130" library="rc-master-smd" deviceset="R_" device="0603" value="49k9"/>
-<part name="V35" library="supply" deviceset="+3V3A" device=""/>
-<part name="R131" library="rc-master-smd" deviceset="R_" device="0603" value="2k74"/>
-<part name="AGND49" library="supply" deviceset="AGND" device=""/>
-<part name="R132" library="rc-master-smd" deviceset="R_" device="0603" value="2k74"/>
-<part name="AGND50" library="supply" deviceset="AGND" device=""/>
 <part name="R138" library="rc-master-smd" deviceset="R_" device="0603" value="5k76"/>
 <part name="C166" library="rc-master-smd" deviceset="CP_" device="1206/T" value="4.7u"/>
 <part name="C167" library="rc-master-smd" deviceset="C_" device="0603" value="100p"/>
@@ -19005,7 +18969,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="C43" gate="G$1" x="187.96" y="195.58" rot="R90"/>
 <instance part="C44" gate="G$1" x="193.04" y="195.58" rot="R90"/>
 <instance part="C45" gate="G$1" x="236.22" y="195.58" rot="R180"/>
-<instance part="C46" gate="G$1" x="259.08" y="190.5" rot="R270"/>
+<instance part="C46" gate="G$1" x="259.08" y="190.5" rot="R90"/>
 <instance part="GND22" gate="1" x="175.26" y="185.42"/>
 <instance part="GND23" gate="1" x="241.3" y="180.34"/>
 <instance part="V12" gate="1" x="266.7" y="210.82"/>
@@ -19152,7 +19116,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="GND22" gate="1" pin="GND"/>
 <pinref part="J2" gate="G$1" pin="S"/>
 <pinref part="U6" gate="G$1" pin="GND"/>
-<pinref part="C43" gate="G$1" pin="1"/>
+<pinref part="C43" gate="G$1" pin="-"/>
 <pinref part="C44" gate="G$1" pin="1"/>
 <pinref part="U6" gate="G$1" pin="GNDP"/>
 </segment>
@@ -19160,11 +19124,11 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <wire x1="241.3" y1="187.96" x2="241.3" y2="185.42" width="0.1524" layer="91"/>
 <wire x1="241.3" y1="185.42" x2="241.3" y2="182.88" width="0.1524" layer="91"/>
 <wire x1="241.3" y1="185.42" x2="259.08" y2="185.42" width="0.1524" layer="91"/>
-<wire x1="259.08" y1="185.42" x2="259.08" y2="187.96" width="0.1524" layer="91"/>
 <junction x="241.3" y="185.42"/>
 <pinref part="D2" gate="G$1" pin="A"/>
 <pinref part="GND23" gate="1" pin="GND"/>
-<pinref part="C46" gate="G$1" pin="2"/>
+<pinref part="C46" gate="G$1" pin="-"/>
+<wire x1="259.08" y1="185.42" x2="259.08" y2="187.96" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <wire x1="289.56" y1="198.12" x2="289.56" y2="190.5" width="0.1524" layer="91"/>
@@ -19447,17 +19411,17 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <wire x1="231.14" y1="200.66" x2="259.08" y2="200.66" width="0.1524" layer="91"/>
 <wire x1="259.08" y1="200.66" x2="259.08" y2="208.28" width="0.1524" layer="91"/>
 <wire x1="259.08" y1="208.28" x2="254" y2="208.28" width="0.1524" layer="91"/>
-<wire x1="259.08" y1="193.04" x2="259.08" y2="200.66" width="0.1524" layer="91"/>
 <wire x1="259.08" y1="208.28" x2="261.62" y2="208.28" width="0.1524" layer="91"/>
 <wire x1="261.62" y1="208.28" x2="266.7" y2="208.28" width="0.1524" layer="91"/>
-<junction x="259.08" y="200.66"/>
 <junction x="259.08" y="208.28"/>
 <junction x="261.62" y="208.28"/>
 <pinref part="U6" gate="G$1" pin="FB"/>
 <pinref part="L1" gate="G$1" pin="2"/>
-<pinref part="C46" gate="G$1" pin="1"/>
 <pinref part="V12" gate="1" pin="+5V"/>
 <pinref part="5V" gate="G$1" pin="TP"/>
+<pinref part="C46" gate="G$1" pin="+"/>
+<wire x1="259.08" y1="193.04" x2="259.08" y2="200.66" width="0.1524" layer="91"/>
+<junction x="259.08" y="200.66"/>
 </segment>
 <segment>
 <wire x1="289.56" y1="210.82" x2="289.56" y2="205.74" width="0.1524" layer="91"/>
@@ -19661,7 +19625,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <junction x="193.04" y="208.28"/>
 <pinref part="D1" gate="G$1" pin="C"/>
 <pinref part="U6" gate="G$1" pin="INPUT"/>
-<pinref part="C43" gate="G$1" pin="2"/>
+<pinref part="C43" gate="G$1" pin="+"/>
 <pinref part="C44" gate="G$1" pin="2"/>
 <pinref part="R63" gate="G$1" pin="2"/>
 <wire x1="187.96" y1="208.28" x2="187.96" y2="226.06" width="0.1524" layer="91"/>
@@ -25103,44 +25067,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="AGND29" gate="VR1" x="34.29" y="100.33" rot="R270"/>
 <instance part="R109" gate="G$1" x="35.56" y="25.4" rot="R180"/>
 <instance part="AGND31" gate="VR1" x="31.75" y="43.18" rot="R270"/>
-<instance part="IC4" gate="A" x="274.32" y="224.79" rot="MR180"/>
-<instance part="IC4" gate="B" x="274.32" y="167.64" rot="MR180"/>
-<instance part="IC4" gate="P" x="327.66" y="194.31"/>
-<instance part="AGND36" gate="VR1" x="327.66" y="184.15"/>
-<instance part="C140" gate="G$1" x="322.58" y="194.31" rot="R90"/>
-<instance part="R117" gate="G$1" x="243.84" y="233.68" rot="R180"/>
-<instance part="R118" gate="G$1" x="241.3" y="215.9" rot="R180"/>
-<instance part="C141" gate="G$1" x="251.46" y="228.6" rot="R90"/>
-<instance part="C155" gate="G$1" x="251.46" y="220.98" rot="R90"/>
-<instance part="R119" gate="G$1" x="259.08" y="233.68" rot="R180"/>
-<instance part="R120" gate="G$1" x="251.46" y="241.3" rot="R270"/>
-<instance part="C156" gate="G$1" x="266.7" y="238.76" rot="R90"/>
-<instance part="R121" gate="G$1" x="292.1" y="224.79"/>
-<instance part="R122" gate="G$1" x="259.08" y="215.9"/>
-<instance part="C157" gate="G$1" x="266.7" y="210.82" rot="R90"/>
-<instance part="C158" gate="G$1" x="298.45" y="210.82" rot="R90"/>
-<instance part="AGND41" gate="VR1" x="251.46" y="196.85"/>
-<instance part="C159" gate="G$1" x="306.07" y="224.79" rot="R180"/>
-<instance part="R123" gate="G$1" x="312.42" y="213.36" rot="R270"/>
-<instance part="R124" gate="G$1" x="243.84" y="176.53" rot="R180"/>
-<instance part="R125" gate="G$1" x="241.3" y="158.75" rot="R180"/>
-<instance part="C160" gate="G$1" x="251.46" y="171.45" rot="R90"/>
-<instance part="C161" gate="G$1" x="251.46" y="163.83" rot="R90"/>
-<instance part="R126" gate="G$1" x="259.08" y="176.53" rot="R180"/>
-<instance part="R127" gate="G$1" x="251.46" y="184.15" rot="R270"/>
-<instance part="C162" gate="G$1" x="266.7" y="181.61" rot="R90"/>
-<instance part="R128" gate="G$1" x="292.1" y="167.64"/>
-<instance part="R129" gate="G$1" x="259.08" y="158.75"/>
-<instance part="C163" gate="G$1" x="266.7" y="153.67" rot="R90"/>
-<instance part="C164" gate="G$1" x="298.45" y="153.67" rot="R90"/>
-<instance part="AGND42" gate="VR1" x="251.46" y="140.97"/>
-<instance part="C165" gate="G$1" x="306.07" y="167.64" rot="R180"/>
-<instance part="R130" gate="G$1" x="312.42" y="156.21" rot="R270"/>
-<instance part="V35" gate="G$1" x="327.66" y="204.47"/>
-<instance part="R131" gate="G$1" x="241.3" y="205.74" rot="R180"/>
-<instance part="AGND49" gate="VR1" x="240.03" y="224.79" rot="R270"/>
-<instance part="R132" gate="G$1" x="241.3" y="149.86" rot="R180"/>
-<instance part="AGND50" gate="VR1" x="237.49" y="167.64" rot="R270"/>
 </instances>
 <busses>
 </busses>
@@ -25257,62 +25183,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="C122" gate="G$1" pin="1"/>
 <pinref part="C123" gate="G$1" pin="2"/>
 <pinref part="AGND31" gate="VR1" pin="AGND"/>
-</segment>
-<segment>
-<wire x1="327.66" y1="186.69" x2="322.58" y2="186.69" width="0.1524" layer="91"/>
-<wire x1="322.58" y1="186.69" x2="322.58" y2="191.77" width="0.1524" layer="91"/>
-<junction x="327.66" y="186.69"/>
-<pinref part="IC4" gate="P" pin="V-"/>
-<pinref part="AGND36" gate="VR1" pin="AGND"/>
-<pinref part="C140" gate="G$1" pin="1"/>
-</segment>
-<segment>
-<wire x1="312.42" y1="201.93" x2="312.42" y2="208.28" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="201.93" x2="251.46" y2="199.39" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="201.93" x2="266.7" y2="201.93" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="201.93" x2="266.7" y2="208.28" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="201.93" x2="298.45" y2="201.93" width="0.1524" layer="91"/>
-<wire x1="298.45" y1="201.93" x2="312.42" y2="201.93" width="0.1524" layer="91"/>
-<wire x1="298.45" y1="201.93" x2="298.45" y2="208.28" width="0.1524" layer="91"/>
-<junction x="266.7" y="201.93"/>
-<junction x="298.45" y="201.93"/>
-<pinref part="R123" gate="G$1" pin="2"/>
-<pinref part="C157" gate="G$1" pin="1"/>
-<pinref part="AGND41" gate="VR1" pin="AGND"/>
-<pinref part="C158" gate="G$1" pin="1"/>
-</segment>
-<segment>
-<wire x1="251.46" y1="223.52" x2="251.46" y2="224.79" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="224.79" x2="251.46" y2="226.06" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="224.79" x2="242.57" y2="224.79" width="0.1524" layer="91"/>
-<junction x="251.46" y="224.79"/>
-<pinref part="C141" gate="G$1" pin="1"/>
-<pinref part="C155" gate="G$1" pin="2"/>
-<pinref part="AGND49" gate="VR1" pin="AGND"/>
-</segment>
-<segment>
-<wire x1="312.42" y1="144.78" x2="312.42" y2="151.13" width="0.1524" layer="91"/>
-<wire x1="298.45" y1="144.78" x2="298.45" y2="151.13" width="0.1524" layer="91"/>
-<wire x1="298.45" y1="144.78" x2="312.42" y2="144.78" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="144.78" x2="266.7" y2="151.13" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="144.78" x2="298.45" y2="144.78" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="144.78" x2="266.7" y2="144.78" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="144.78" x2="251.46" y2="143.51" width="0.1524" layer="91"/>
-<junction x="298.45" y="144.78"/>
-<junction x="266.7" y="144.78"/>
-<pinref part="R130" gate="G$1" pin="2"/>
-<pinref part="C164" gate="G$1" pin="1"/>
-<pinref part="C163" gate="G$1" pin="1"/>
-<pinref part="AGND42" gate="VR1" pin="AGND"/>
-</segment>
-<segment>
-<wire x1="251.46" y1="166.37" x2="251.46" y2="167.64" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="167.64" x2="251.46" y2="168.91" width="0.1524" layer="91"/>
-<wire x1="240.03" y1="167.64" x2="251.46" y2="167.64" width="0.1524" layer="91"/>
-<junction x="251.46" y="167.64"/>
-<pinref part="C160" gate="G$1" pin="1"/>
-<pinref part="C161" gate="G$1" pin="2"/>
-<pinref part="AGND50" gate="VR1" pin="AGND"/>
 </segment>
 </net>
 <net name="OUT1L-" class="0">
@@ -25540,14 +25410,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="C39" gate="G$1" pin="2"/>
 <pinref part="V33" gate="G$1" pin="+3V3A"/>
 </segment>
-<segment>
-<wire x1="327.66" y1="201.93" x2="322.58" y2="201.93" width="0.1524" layer="91"/>
-<wire x1="322.58" y1="201.93" x2="322.58" y2="196.85" width="0.1524" layer="91"/>
-<junction x="327.66" y="201.93"/>
-<pinref part="IC4" gate="P" pin="V+"/>
-<pinref part="C140" gate="G$1" pin="2"/>
-<pinref part="V35" gate="G$1" pin="+3V3A"/>
-</segment>
 </net>
 <net name="VREF" class="0">
 <segment>
@@ -25569,16 +25431,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="R109" gate="G$1" pin="2"/>
 <wire x1="27.94" y1="25.4" x2="30.48" y2="25.4" width="0.1524" layer="91"/>
 <label x="20.32" y="25.4" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="R131" gate="G$1" pin="2"/>
-<wire x1="236.22" y1="205.74" x2="233.68" y2="205.74" width="0.1524" layer="91"/>
-<label x="226.06" y="205.74" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="R132" gate="G$1" pin="2"/>
-<wire x1="233.68" y1="149.86" x2="236.22" y2="149.86" width="0.1524" layer="91"/>
-<label x="226.06" y="149.86" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$80" class="0">
@@ -25739,164 +25591,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="IC1" gate="B" pin="IN-"/>
 </segment>
 </net>
-<net name="N$102" class="0">
-<segment>
-<wire x1="248.92" y1="233.68" x2="251.46" y2="233.68" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="233.68" x2="251.46" y2="236.22" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="233.68" x2="254" y2="233.68" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="231.14" x2="251.46" y2="233.68" width="0.1524" layer="91"/>
-<junction x="251.46" y="233.68"/>
-<pinref part="R117" gate="G$1" pin="1"/>
-<pinref part="R120" gate="G$1" pin="2"/>
-<pinref part="R119" gate="G$1" pin="2"/>
-<pinref part="C141" gate="G$1" pin="2"/>
-</segment>
-</net>
-<net name="N$103" class="0">
-<segment>
-<wire x1="246.38" y1="215.9" x2="251.46" y2="215.9" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="215.9" x2="254" y2="215.9" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="215.9" x2="251.46" y2="218.44" width="0.1524" layer="91"/>
-<wire x1="246.38" y1="205.74" x2="251.46" y2="205.74" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="205.74" x2="251.46" y2="215.9" width="0.1524" layer="91"/>
-<junction x="251.46" y="215.9"/>
-<pinref part="R118" gate="G$1" pin="1"/>
-<pinref part="R122" gate="G$1" pin="1"/>
-<pinref part="C155" gate="G$1" pin="1"/>
-<pinref part="R131" gate="G$1" pin="1"/>
-</segment>
-</net>
-<net name="N$107" class="0">
-<segment>
-<wire x1="264.16" y1="215.9" x2="266.7" y2="215.9" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="215.9" x2="266.7" y2="222.25" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="213.36" x2="266.7" y2="215.9" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="222.25" x2="269.24" y2="222.25" width="0.1524" layer="91"/>
-<junction x="266.7" y="215.9"/>
-<pinref part="R122" gate="G$1" pin="2"/>
-<pinref part="C157" gate="G$1" pin="2"/>
-<pinref part="IC4" gate="A" pin="IN+"/>
-</segment>
-</net>
-<net name="N$109" class="0">
-<segment>
-<wire x1="285.75" y1="224.79" x2="287.02" y2="224.79" width="0.1524" layer="91"/>
-<wire x1="285.75" y1="224.79" x2="285.75" y2="247.65" width="0.1524" layer="91"/>
-<wire x1="285.75" y1="247.65" x2="266.7" y2="247.65" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="247.65" x2="251.46" y2="247.65" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="247.65" x2="251.46" y2="246.38" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="241.3" x2="266.7" y2="247.65" width="0.1524" layer="91"/>
-<wire x1="284.48" y1="224.79" x2="285.75" y2="224.79" width="0.1524" layer="91"/>
-<junction x="266.7" y="247.65"/>
-<junction x="285.75" y="224.79"/>
-<pinref part="R121" gate="G$1" pin="1"/>
-<pinref part="R120" gate="G$1" pin="1"/>
-<pinref part="C156" gate="G$1" pin="2"/>
-<pinref part="IC4" gate="A" pin="OUT"/>
-</segment>
-</net>
-<net name="N$111" class="0">
-<segment>
-<wire x1="297.18" y1="224.79" x2="298.45" y2="224.79" width="0.1524" layer="91"/>
-<wire x1="298.45" y1="224.79" x2="298.45" y2="213.36" width="0.1524" layer="91"/>
-<wire x1="303.53" y1="224.79" x2="298.45" y2="224.79" width="0.1524" layer="91"/>
-<junction x="298.45" y="224.79"/>
-<pinref part="R121" gate="G$1" pin="2"/>
-<pinref part="C158" gate="G$1" pin="2"/>
-<pinref part="C159" gate="G$1" pin="+"/>
-</segment>
-</net>
-<net name="N$112" class="0">
-<segment>
-<wire x1="266.7" y1="227.33" x2="266.7" y2="233.68" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="233.68" x2="266.7" y2="236.22" width="0.1524" layer="91"/>
-<wire x1="264.16" y1="233.68" x2="266.7" y2="233.68" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="227.33" x2="269.24" y2="227.33" width="0.1524" layer="91"/>
-<junction x="266.7" y="233.68"/>
-<pinref part="C156" gate="G$1" pin="1"/>
-<pinref part="R119" gate="G$1" pin="1"/>
-<pinref part="IC4" gate="A" pin="IN-"/>
-</segment>
-</net>
-<net name="N$113" class="0">
-<segment>
-<wire x1="248.92" y1="176.53" x2="251.46" y2="176.53" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="176.53" x2="251.46" y2="179.07" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="176.53" x2="254" y2="176.53" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="173.99" x2="251.46" y2="176.53" width="0.1524" layer="91"/>
-<junction x="251.46" y="176.53"/>
-<pinref part="R124" gate="G$1" pin="1"/>
-<pinref part="R127" gate="G$1" pin="2"/>
-<pinref part="R126" gate="G$1" pin="2"/>
-<pinref part="C160" gate="G$1" pin="2"/>
-</segment>
-</net>
-<net name="N$114" class="0">
-<segment>
-<wire x1="246.38" y1="158.75" x2="251.46" y2="158.75" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="158.75" x2="254" y2="158.75" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="158.75" x2="251.46" y2="161.29" width="0.1524" layer="91"/>
-<wire x1="246.38" y1="149.86" x2="251.46" y2="149.86" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="149.86" x2="251.46" y2="158.75" width="0.1524" layer="91"/>
-<junction x="251.46" y="158.75"/>
-<pinref part="R125" gate="G$1" pin="1"/>
-<pinref part="R129" gate="G$1" pin="1"/>
-<pinref part="C161" gate="G$1" pin="1"/>
-<pinref part="R132" gate="G$1" pin="1"/>
-</segment>
-</net>
-<net name="N$115" class="0">
-<segment>
-<wire x1="264.16" y1="158.75" x2="266.7" y2="158.75" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="158.75" x2="266.7" y2="165.1" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="156.21" x2="266.7" y2="158.75" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="165.1" x2="269.24" y2="165.1" width="0.1524" layer="91"/>
-<junction x="266.7" y="158.75"/>
-<pinref part="R129" gate="G$1" pin="2"/>
-<pinref part="C163" gate="G$1" pin="2"/>
-<pinref part="IC4" gate="B" pin="IN+"/>
-</segment>
-</net>
-<net name="N$120" class="0">
-<segment>
-<wire x1="285.75" y1="167.64" x2="287.02" y2="167.64" width="0.1524" layer="91"/>
-<wire x1="285.75" y1="167.64" x2="285.75" y2="190.5" width="0.1524" layer="91"/>
-<wire x1="285.75" y1="190.5" x2="266.7" y2="190.5" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="190.5" x2="251.46" y2="190.5" width="0.1524" layer="91"/>
-<wire x1="251.46" y1="190.5" x2="251.46" y2="189.23" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="184.15" x2="266.7" y2="190.5" width="0.1524" layer="91"/>
-<wire x1="284.48" y1="167.64" x2="285.75" y2="167.64" width="0.1524" layer="91"/>
-<junction x="266.7" y="190.5"/>
-<junction x="285.75" y="167.64"/>
-<pinref part="R128" gate="G$1" pin="1"/>
-<pinref part="R127" gate="G$1" pin="1"/>
-<pinref part="C162" gate="G$1" pin="2"/>
-<pinref part="IC4" gate="B" pin="OUT"/>
-</segment>
-</net>
-<net name="N$121" class="0">
-<segment>
-<wire x1="297.18" y1="167.64" x2="298.45" y2="167.64" width="0.1524" layer="91"/>
-<wire x1="298.45" y1="167.64" x2="298.45" y2="156.21" width="0.1524" layer="91"/>
-<wire x1="303.53" y1="167.64" x2="298.45" y2="167.64" width="0.1524" layer="91"/>
-<junction x="298.45" y="167.64"/>
-<pinref part="R128" gate="G$1" pin="2"/>
-<pinref part="C164" gate="G$1" pin="2"/>
-<pinref part="C165" gate="G$1" pin="+"/>
-</segment>
-</net>
-<net name="N$122" class="0">
-<segment>
-<wire x1="266.7" y1="170.18" x2="266.7" y2="176.53" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="176.53" x2="266.7" y2="179.07" width="0.1524" layer="91"/>
-<wire x1="264.16" y1="176.53" x2="266.7" y2="176.53" width="0.1524" layer="91"/>
-<wire x1="266.7" y1="170.18" x2="269.24" y2="170.18" width="0.1524" layer="91"/>
-<junction x="266.7" y="176.53"/>
-<pinref part="C162" gate="G$1" pin="1"/>
-<pinref part="R126" gate="G$1" pin="1"/>
-<pinref part="IC4" gate="B" pin="IN-"/>
-</segment>
-</net>
 <net name="OUT2-R" class="0">
 <segment>
 <wire x1="102.87" y1="100.33" x2="106.68" y2="100.33" width="0.1524" layer="91"/>
@@ -25945,56 +25639,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <wire x1="30.48" y1="34.29" x2="27.94" y2="34.29" width="0.1524" layer="91"/>
 <label x="19.05" y="34.29" size="1.778" layer="95"/>
 <pinref part="R102" gate="G$1" pin="2"/>
-</segment>
-</net>
-<net name="HP-RP" class="0">
-<segment>
-<wire x1="308.61" y1="224.79" x2="312.42" y2="224.79" width="0.1524" layer="91"/>
-<wire x1="312.42" y1="224.79" x2="312.42" y2="218.44" width="0.1524" layer="91"/>
-<wire x1="312.42" y1="224.79" x2="331.47" y2="224.79" width="0.1524" layer="91"/>
-<junction x="312.42" y="224.79"/>
-<label x="318.77" y="224.79" size="1.778" layer="95"/>
-<pinref part="C159" gate="G$1" pin="-"/>
-<pinref part="R123" gate="G$1" pin="1"/>
-</segment>
-</net>
-<net name="HP-LP" class="0">
-<segment>
-<wire x1="308.61" y1="167.64" x2="312.42" y2="167.64" width="0.1524" layer="91"/>
-<wire x1="312.42" y1="167.64" x2="312.42" y2="161.29" width="0.1524" layer="91"/>
-<wire x1="312.42" y1="167.64" x2="331.47" y2="167.64" width="0.1524" layer="91"/>
-<junction x="312.42" y="167.64"/>
-<label x="318.77" y="167.64" size="1.778" layer="95"/>
-<pinref part="C165" gate="G$1" pin="-"/>
-<pinref part="R130" gate="G$1" pin="1"/>
-</segment>
-</net>
-<net name="HPR-" class="0">
-<segment>
-<wire x1="238.76" y1="233.68" x2="232.41" y2="233.68" width="0.1524" layer="91"/>
-<label x="224.79" y="233.68" size="1.778" layer="95"/>
-<pinref part="R117" gate="G$1" pin="2"/>
-</segment>
-</net>
-<net name="HPR+" class="0">
-<segment>
-<wire x1="236.22" y1="215.9" x2="233.68" y2="215.9" width="0.1524" layer="91"/>
-<label x="224.79" y="215.9" size="1.778" layer="95"/>
-<pinref part="R118" gate="G$1" pin="2"/>
-</segment>
-</net>
-<net name="HPL-" class="0">
-<segment>
-<wire x1="238.76" y1="176.53" x2="232.41" y2="176.53" width="0.1524" layer="91"/>
-<label x="224.79" y="176.53" size="1.778" layer="95"/>
-<pinref part="R124" gate="G$1" pin="2"/>
-</segment>
-</net>
-<net name="HPL+" class="0">
-<segment>
-<wire x1="236.22" y1="158.75" x2="233.68" y2="158.75" width="0.1524" layer="91"/>
-<label x="224.79" y="158.75" size="1.778" layer="95"/>
-<pinref part="R125" gate="G$1" pin="2"/>
 </segment>
 </net>
 </nets>

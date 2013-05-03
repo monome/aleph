@@ -1085,10 +1085,10 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <pad name="2" x="0" y="-4" drill="0.92" shape="octagon"/>
 <pad name="3" x="0" y="-2" drill="0.92" shape="octagon"/>
 <pad name="4" x="0" y="0" drill="0.92" shape="octagon"/>
-<pad name="G1" x="-2.72" y="0" drill="1.35" shape="octagon"/>
-<pad name="G2" x="-2.72" y="-7" drill="1.35" shape="octagon"/>
-<pad name="G3" x="2.72" y="-7" drill="1.35" shape="octagon"/>
-<pad name="G4" x="2.72" y="0" drill="1.35" shape="octagon"/>
+<pad name="G1" x="-2.9" y="0.5" drill="1.6" shape="octagon"/>
+<pad name="G2" x="-2.9" y="-6.5" drill="1.6" shape="octagon"/>
+<pad name="G3" x="2.9" y="-6.5" drill="1.6" shape="octagon"/>
+<pad name="G4" x="2.9" y="0.5" drill="1.6" shape="octagon"/>
 <text x="-3" y="3" size="1.27" layer="25" font="vector">&gt;NAME</text>
 </package>
 <package name="PN61729">
@@ -2058,6 +2058,22 @@ shrink quad flat pack, square</description>
 <text x="-24" y="-9" size="1.27" layer="25">&gt;NAME</text>
 <text x="-24" y="-11" size="1.27" layer="27">&gt;VALUE</text>
 </package>
+<package name="100SP1T2B4M7RE">
+<pad name="1" x="0" y="-12.7" drill="1.85"/>
+<pad name="2" x="0" y="-16.51" drill="1.85"/>
+<pad name="3" x="0" y="-20.32" drill="1.85"/>
+<pad name="M1" x="-2.54" y="0" drill="1.85"/>
+<pad name="M2" x="2.54" y="0" drill="1.85"/>
+<wire x1="3.81" y1="0" x2="3.81" y2="-8.89" width="0.127" layer="21"/>
+<wire x1="3.81" y1="-8.89" x2="-3.81" y2="-8.89" width="0.127" layer="21"/>
+<wire x1="-3.81" y1="-8.89" x2="-3.81" y2="0" width="0.127" layer="21"/>
+<wire x1="-3.81" y1="0" x2="-3.175" y2="0" width="0.127" layer="21"/>
+<wire x1="-3.175" y1="0" x2="3.175" y2="0" width="0.127" layer="21"/>
+<wire x1="3.175" y1="0" x2="3.81" y2="0" width="0.127" layer="21"/>
+<wire x1="-3.175" y1="0" x2="-3.175" y2="6.985" width="0.127" layer="21"/>
+<wire x1="-3.175" y1="6.985" x2="3.175" y2="6.985" width="0.127" layer="21"/>
+<wire x1="3.175" y1="6.985" x2="3.175" y2="0" width="0.127" layer="21"/>
+</package>
 </packages>
 <symbols>
 <symbol name="PANASONIC-EVQ">
@@ -2818,6 +2834,17 @@ shrink quad flat pack, square</description>
 <pin name="GND" x="-15.24" y="-7.62" length="middle" direction="pwr"/>
 <pin name="FB" x="15.24" y="2.54" length="middle" rot="R180"/>
 <pin name="ON/_OFF" x="-15.24" y="2.54" length="middle"/>
+</symbol>
+<symbol name="TOGGLE">
+<pin name="1" x="10.16" y="-2.54" length="middle" rot="R180"/>
+<pin name="2" x="-12.7" y="2.54" length="middle"/>
+<pin name="3" x="10.16" y="7.62" length="middle" rot="R180"/>
+<wire x1="-7.62" y1="10.16" x2="-7.62" y2="2.54" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="2.54" x2="-7.62" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="-5.08" x2="5.08" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="5.08" y1="-5.08" x2="5.08" y2="10.16" width="0.254" layer="94"/>
+<wire x1="5.08" y1="10.16" x2="-7.62" y2="10.16" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="2.54" x2="0" y2="5.08" width="0.254" layer="94"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -3703,6 +3730,23 @@ shrink quad flat pack, square</description>
 <connect gate="G$1" pin="INPUT" pad="7"/>
 <connect gate="G$1" pin="ON/_OFF" pad="5"/>
 <connect gate="G$1" pin="SWITCH" pad="8"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="TOGGLE">
+<gates>
+<gate name="G$1" symbol="TOGGLE" x="0" y="-2.54"/>
+</gates>
+<devices>
+<device name="" package="100SP1T2B4M7RE">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+<connect gate="G$1" pin="3" pad="3"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -17692,6 +17736,8 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="GND75" library="supply" deviceset="GND" device=""/>
 <part name="L10" library="rc-master-smd" deviceset="L_" device="1206" value="600"/>
 <part name="GND4" library="supply" deviceset="GND" device=""/>
+<part name="U$7" library="monome-inc" deviceset="TOGGLE" device=""/>
+<part name="U$8" library="monome-inc" deviceset="TOGGLE" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -20091,7 +20137,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <wire x1="142.24" y1="152.4" x2="142.24" y2="0" width="0.1524" layer="97"/>
 <wire x1="299.72" y1="35.56" x2="299.72" y2="266.7" width="0.1524" layer="97"/>
 <wire x1="142.24" y1="152.4" x2="401.32" y2="152.4" width="0.1524" layer="97"/>
-<text x="38.1" y="246.38" size="1.778" layer="97">note: r67 and r68 matched. 1%</text>
 <text x="396.24" y="83.82" size="5.08" layer="97" rot="R180">I2C</text>
 <text x="398.78" y="264.16" size="5.08" layer="97" rot="R180">OLED</text>
 <text x="297.18" y="264.16" size="5.08" layer="97" rot="R180">KEY-LED</text>
@@ -25745,6 +25790,8 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="V50" gate="G$1" x="311.15" y="163.83"/>
 <instance part="R174" gate="G$1" x="248.92" y="109.22" rot="R180"/>
 <instance part="AGND63" gate="VR1" x="242.57" y="102.87"/>
+<instance part="U$7" gate="G$1" x="149.86" y="53.34"/>
+<instance part="U$8" gate="G$1" x="147.32" y="25.4"/>
 </instances>
 <busses>
 </busses>

@@ -10,9 +10,15 @@ UPDATE spreadsheet
 
 top plate fixes
 enclosure
+	http://www.evsmetal.com/history.php
+	http://www.mcalpin-ind.com/history.html
 
-12V system rethink
-
+12V system redesign
+	http://www.ti.com/lit/ds/symlink/lmr62014.pdf
+	http://www.coilcraft.com/xal50xx.cfm
+	MBR0520L
+	
+input gain switch
 input gain stage
 	LED follower, LED clip
 output gain stage
@@ -20,11 +26,15 @@ output gain stage
 headphone amp
 
 new hat pcb proto
-	
+
+YES should the 5v on cv in be 10v?
+
 schem cleanup
 
 debounce values, try 18k for both
 soft power control, redo resistor values
+
+aleph infographic diagram
 
 
 
