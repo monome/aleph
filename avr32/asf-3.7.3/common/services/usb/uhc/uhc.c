@@ -681,10 +681,8 @@ static void uhc_enumeration_step14(
 
 	print_dbg("\r\n address: ");
 	print_dbg_hex(uhc_dev_enum -> address);
-
 	print_dbg("\r\n speed: ");
 	print_dbg_hex(uhc_dev_enum -> speed);
-	
 	print_dbg("\r\n\r\n");
 
 	print_dbg("\r\n dev desc -> bLength : ");
@@ -715,7 +713,6 @@ static void uhc_enumeration_step14(
 	print_dbg_hex(uhc_dev_enum->dev_desc.iSerialNumber);
 	print_dbg("\r\n dev desc -> bNumConfigurations : ");
 	print_dbg_hex(uhc_dev_enum->dev_desc.bNumConfigurations);
-
 	print_dbg("\r\n\r\n");
 	
 	print_dbg("\r\n conf desc -> bLength : ");

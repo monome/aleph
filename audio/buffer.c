@@ -27,30 +27,12 @@ static inline void time_to_samps(fix16* time, fix32* samps, u32 sr) {
   static float fSamps;
   /// FIXME: sr is generally too big for 16.16. 
   /// for now i am going with a float multiply here.
-  /// the alternatives are very ugly indeed...
+  /// the alternatives are ugly and maybe almost as slow.
 
   fSamps = (float)sr * fix16_to_float(*time);
   samps->i = (int)fSamps;
   samps->fr = float_to_fr32(fSamps - samps->i);
 
-  /* fix16 fixSr; */
-  /* // integer part */
-  /* samps->i = (s32) ( (u32)(FIX16_TO_U16(*time)) * (u32)sr ); */
-  
-  /* // printf("\r\n samplerate: %d", sr); */
-  /* // printf("\r\n time as u16: %d", FIX16_TO_U16(*time)); */
-  /* // printf("\r\n converted samps: int %d", samps->i); */
-
-  /* // multply fractional part by (sr >> 2) */
-  /* fixSr = fix16_from_int((s32)(sr >> 2)); */
-  /* fixTmp = fix16_mul(*time & 0xffff, fixSr); */
-  
-  /* // carry */
-  /* samps->i += FIX16_TO_U16(fixTmp); */
-  /* // printf("\r\n carried: %d", samps->i); */
-  /* // remainder */
-  /* samps->fr = FIX16_FRACT_TRUNC(fixTmp); */
-  /* // printf("\r\n fract: 0x%0x", samps->fr); */
 }
 
 //-----------------------

@@ -163,8 +163,13 @@ static void calc_frame(void) {
   echoVal = buffer_tap_read(&tapRd);
 
   /* // store interpolated input+fb value */
-  buffer_tap_write(&tapWr, add_fr1x32(in0, mult_fr1x32x32(echoVal, fb ) ) );
-  /// test: no fb
+  //  buffer_tap_write(&tapWr, add_fr1x32(in0, mult_fr1x32x32(echoVal, fb ) ) );
+  buffer_tap_write(&tapWr, add_fr1x32(in0 >> 1, mult_fr1x32x32(echoVal, fb ) ) );
+
+  //FIXME: clip / saturate input buf here
+  //// potentially, scale input by inverse feedback
+
+ /// test: no fb
   //buffer_tap_write(&tapWr, in0);
 
   /* // output */
@@ -174,7 +179,7 @@ static void calc_frame(void) {
   			 );
   //// test: no dry
   //  frameVal = echoVal;
-  
+  /// FIXME: clip here
 
   buffer_tap_next(&tapRd);
   buffer_tap_next(&tapWr);
@@ -212,6 +217,7 @@ void module_init(void) {
   amp = FIX16_ONE >> 1;
   time = FIX16_ONE << 1;
   rate = FIX16_ONE;
+  fb = 0;
 
   // init smoothers
   ampLp = (filter_1p_fix16*)malloc(sizeof(filter_1p_fix16));

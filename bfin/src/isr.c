@@ -15,13 +15,32 @@ fract32 out0, out1, out2, out3;
 
 // sport0 receive interrupt (audio input from codec)
 void sport0_rx_isr() {
-  /// debug:
-  //  static u8 leds = 0;
+
+  // dbg
+  static s32 max = 0;
+  static s32 min = 0;
+  static u8 dum = 0;
+
+  if(in0 > max) {
+    max = in0;
+    dum++;
+  }
+  if(in0 < min) {
+    min = in0;
+    dum++;
+  }
+
+  if(iRxBuf[0] < 0) {
+     dum++;
+  }
+
+
   // confirm interrupt handling
   *pDMA1_IRQ_STATUS = 0x0001;
   
   // copy input data from dma input buffer 
   // shift left from 24-bit
+
   in0 = ( iRxBuf[INTERNAL_ADC_L0] << 8 ) & 0xffffff00;
   in1 = ( iRxBuf[INTERNAL_ADC_R0] << 8 ) & 0xffffff00;
   in2 = ( iRxBuf[INTERNAL_ADC_L1] << 8 ) & 0xffffff00;
@@ -42,6 +61,12 @@ void sport0_rx_isr() {
   // module-defined frame processing function
   
   module_process_frame();  
+
+  /* //// TEST: wire */
+  /* out0 = in0; */
+  /* out1 = in1; */
+  /* out2 = in2; */
+  /* out3 = in3; */
 
   /* //// TEST: wire */
   /* iTxBuf[0] = iRxBuf[0]; */

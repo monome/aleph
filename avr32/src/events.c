@@ -22,7 +22,7 @@
 // macro for incrementing an index into a circular buffer.
 #define INCR_EVENT_INDEX( x )  { if ( ++x == MAX_EVENTS ) x = 0; }
 
-// et/Put indexes into sysEvents[] array
+// et/Put indexes inxto sysEvents[] array
 static int putIdx = 0;
 static int getIdx = 0;
 
