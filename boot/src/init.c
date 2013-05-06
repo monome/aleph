@@ -9,12 +9,13 @@
 #include <pll.h>
 #include <sysclk.h>
 
-// From module: USB HID Device protocol
-#include <usb_protocol_hid.h>
-// From module: USB Host HID Mouse (Single Class support)
-#include <uhi_hid_mouse.h>
-#include <uhc.h>
-#include <uhd.h>
+
+/* // From module: USB HID Device protocol */
+/* /#include <usb_protocol_hid.h> */
+/* // From module: USB Host HID Mouse (Single Class support) */
+/* #include <uhi_hid_mouse.h> */
+/* #include <uhc.h> */
+/* #include <uhd.h> */
 
 #include "compiler.h"
 #include "conf_sd_mmc_spi.h"
@@ -303,8 +304,8 @@ void init_twi(void) {
 }
 
 
-// initialize USB host stack
-void init_usb_host (void) {
-  //  pm_configure_usb_clock();
-  uhc_start();
-}
+/* // initialize USB host stack */
+/* void init_usb_host (void) { */
+/*   //  pm_configure_usb_clock(); */
+/*   uhc_start(); */
+/* } */

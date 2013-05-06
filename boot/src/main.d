@@ -89,10 +89,9 @@
  ../asf-3.7.3/../common/files.h ../asf-3.7.3/../common/param_common.h \
  ../asf-3.7.3/../common/fix.h ../asf-3.7.3/../common/screen.h \
  ../asf-3.7.3/../common/font.h ../asf-3.7.3/../common/simple_string.h \
- ../boot/src/util.h ../boot/src/adc.h ../boot/src/app_timers.h \
- ../boot/src/bfin.h ../boot/src/encoders.h ../boot/src/event_types.h \
- ../boot/src/events.h ../boot/src/filesystem.h \
- ../asf-3.7.3/../common/fat_io_lib/fat_filelib.h \
+ ../boot/src/util.h ../boot/src/app_timers.h ../boot/src/bfin.h \
+ ../boot/src/encoders.h ../boot/src/event_types.h ../boot/src/events.h \
+ ../boot/src/filesystem.h ../asf-3.7.3/../common/fat_io_lib/fat_filelib.h \
  ../asf-3.7.3/../common/fat_io_lib/fat_opts.h \
  /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/include/stdio.h \
  /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/include/stdarg.h \
@@ -306,8 +305,6 @@
 ../asf-3.7.3/../common/simple_string.h:
 
 ../boot/src/util.h:
-
-../boot/src/adc.h:
 
 ../boot/src/app_timers.h:
 

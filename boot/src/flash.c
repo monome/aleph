@@ -51,6 +51,14 @@ void flash_write_ldr_byte(u8* byte, u32 idx) {
 }
 
 
+
+
+
+
+
+
+
+
 // user page
 /* __attribute__((__section__(".userpage"))) */
 /* static nvram_data_t user_nvram_data; */

@@ -34,7 +34,6 @@
 #include "util.h"
 // avr32
 #include "aleph_board.h"
-#include "adc.h"
 #include "app_timers.h"
 #include "bfin.h"
 #include "encoders.h"
@@ -126,9 +125,9 @@ static void init_ctl(void) {
   init_mem();  
   print_dbg("\r\n init_mem");
 
-  // send ADC config
-  init_adc();
-  print_dbg("\r\n init_adc");
+  /* // send ADC config */
+  /* init_adc(); */
+  /* print_dbg("\r\n init_adc"); */
 
   // start application timers
   init_app_timers();

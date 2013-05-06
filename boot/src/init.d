@@ -67,18 +67,6 @@
  ../asf-3.7.3/common/services/clock/uc3a0_a1/sysclk.h \
  ../asf-3.7.3/common/services/clock/genclk.h \
  ../asf-3.7.3/common/services/clock/uc3a0_a1/genclk.h \
- ../asf-3.7.3/common/services/usb/class/hid/usb_protocol_hid.h \
- ../asf-3.7.3/../boot/src/usb/mouse/uhi_hid_mouse.h \
- ../asf-3.7.3/../boot/conf/conf_usb_host.h \
- ../asf-3.7.3/../boot/src/usb/gamepad/uhi_hid_gamepad.h \
- ../asf-3.7.3/common/services/usb/usb_protocol.h \
- ../asf-3.7.3/common/services/usb/usb_atmel.h \
- ../asf-3.7.3/common/services/usb/uhc/uhi.h \
- ../asf-3.7.3/common/services/usb/uhc/uhc.h \
- ../asf-3.7.3/common/services/usb/uhc/uhd.h \
- ../asf-3.7.3/../boot/src/usb.h \
- ../asf-3.7.3/common/services/usb/uhc/uhc.h \
- ../asf-3.7.3/common/services/usb/uhc/uhd.h \
  ../asf-3.7.3/../boot/conf/conf_sd_mmc_spi.h \
  ../asf-3.7.3/../boot/conf/conf_access.h \
  ../asf-3.7.3/avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.h \
@@ -240,30 +228,6 @@
 ../asf-3.7.3/common/services/clock/genclk.h:
 
 ../asf-3.7.3/common/services/clock/uc3a0_a1/genclk.h:
-
-../asf-3.7.3/common/services/usb/class/hid/usb_protocol_hid.h:
-
-../asf-3.7.3/../boot/src/usb/mouse/uhi_hid_mouse.h:
-
-../asf-3.7.3/../boot/conf/conf_usb_host.h:
-
-../asf-3.7.3/../boot/src/usb/gamepad/uhi_hid_gamepad.h:
-
-../asf-3.7.3/common/services/usb/usb_protocol.h:
-
-../asf-3.7.3/common/services/usb/usb_atmel.h:
-
-../asf-3.7.3/common/services/usb/uhc/uhi.h:
-
-../asf-3.7.3/common/services/usb/uhc/uhc.h:
-
-../asf-3.7.3/common/services/usb/uhc/uhd.h:
-
-../asf-3.7.3/../boot/src/usb.h:
-
-../asf-3.7.3/common/services/usb/uhc/uhc.h:
-
-../asf-3.7.3/common/services/usb/uhc/uhd.h:
 
 ../asf-3.7.3/../boot/conf/conf_sd_mmc_spi.h:
 
