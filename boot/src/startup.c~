@@ -1,0 +1,37 @@
+#include "compiler.h"
+#include "board.h"
+#include "flashc.h"
+#include "intc.h"
+#include "pm.h"
+#include "smc.h"
+#include "sysclk.h"
+
+// startup routine runs before main()
+int _init_startup(void);
+int _init_startup(void) {
+  // Exception Vector Base Address
+  extern void _evba;
+
+  //--- setup clocks
+  // wait-state for >33Mhz 
+  flashc_set_wait_state( 1 );
+  // lock PLL and assign sys/peripheral clocks
+  sysclk_init();
+  // enable the SMC module on PBB
+  sysclk_enable_pbb_module(SYSCLK_SMC_REGS);
+
+  // Load the Exception Vector Base Address in the corresponding system register
+  Set_system_register(AVR32_EVBA, (int)&_evba);
+
+  // Enable exceptions.
+  Enable_global_exception();
+
+  // Initialize interrupt handling.
+  INTC_init_interrupts();
+
+  // setup static memory controller 
+  smc_init(FHSB_HZ);
+ 
+ // return (dont-care)
+  return 1;
+}

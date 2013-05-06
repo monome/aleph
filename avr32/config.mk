@@ -8,13 +8,9 @@
 # moved this to the top level Makefile cause it needs to know too
 # PRJ_PATH = ../../avr/asf-3.3.0/
 
-#ALEPH_AVR32 = ../../aleph/avr32
-#ALEPH_COMMON = ../../aleph/common
-#ALEPH_BEES = ../../aleph/bees
-
-ALEPH_AVR32 = ../../avr32
-ALEPH_COMMON = ../../common
-ALEPH_BEES = ../../bees
+ALEPH_AVR32 = ../avr32
+ALEPH_COMMON = ../common
+ALEPH_BEES = ../bees
 
 # Target CPU architecture: ap, ucr1, ucr2 or ucr3
 ARCH = ucr2
@@ -60,11 +56,11 @@ CSRCS = \
 	$(ALEPH_AVR32)/src/encoders.c \
 	$(ALEPH_AVR32)/src/files.c \
 	$(ALEPH_AVR32)/src/filesystem.c \
+	$(ALEPH_AVR32)/src/flash.c \
 	$(ALEPH_AVR32)/src/init.c	\
 	$(ALEPH_AVR32)/src/interrupts.c \
 	$(ALEPH_AVR32)/src/memory.c \
 	$(ALEPH_AVR32)/src/screen.c \
-	$(ALEPH_AVR32)/src/scene.c \
 	$(ALEPH_AVR32)/src/switches.c \
 	$(ALEPH_AVR32)/src/timers.c \
 	$(ALEPH_AVR32)/src/main.c \
@@ -80,6 +76,7 @@ CSRCS = \
 	$(ALEPH_BEES)/param.c \
 	$(ALEPH_BEES)/preset.c \
 	$(ALEPH_BEES)/redraw.c \
+	$(ALEPH_BEES)/scene.c \
 	$(ALEPH_BEES)/ops/op_add.c \
 	$(ALEPH_BEES)/ops/op_enc.c \
 	$(ALEPH_BEES)/ops/op_gate.c \
@@ -156,8 +153,8 @@ LIB_PATH =
 LIBS = 
 
 # Path relative to top level directory pointing to a linker script.
-LINKER_SCRIPT = avr32/utils/linker_scripts/at32uc3a/0512/gcc/link_uc3a0512.lds
-#LINKER_SCRIPT = $(ALEPH_AVR32)/aleph.lds
+# LINKER_SCRIPT = avr32/utils/linker_scripts/at32uc3a/0512/gcc/link_uc3a0512.lds
+LINKER_SCRIPT = $(ALEPH_AVR32)/aleph.lds
 
 # Additional options for debugging. By default the common Makefile.in will
 # add -g3.
@@ -177,7 +174,7 @@ ARFLAGS =
 ASFLAGS = 
 
 # Extra flags to use when compiling.
-CFLAGS += -g3
+#CFLAGS += -g3
 #CFLAGS += --verbose
 
 # Extra flags to use when preprocessing.

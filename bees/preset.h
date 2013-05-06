@@ -6,7 +6,10 @@
 #ifndef _PRESET_H_
 #define _PRESET_H_
 
+#include "net.h"
+
 #define PRESET_NAME_LEN 16
+
 
 //=================================
 //===== types

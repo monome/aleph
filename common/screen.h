@@ -82,11 +82,16 @@ extern U8 screen_fix(U16 x, U16 y, fix16_t v, U8 a);
 extern void screen_refresh(void);
 // fill a line with blank space from x to end
 extern void screen_blank_line(U16 x, U16 y);
-// highlight a region
+// highlight part or all of a line
 extern void screen_hl_line(U16 x, U16 y, U8 a);
 // get the value at a pixel
 extern U8 screen_get_pixel(U8 x, U8 y);
-// fill with a test apttern of characters
+// fill with a test pattern of characters
 extern void screen_test_fill(void);
+// blank the whole screen
+extern void screen_blank(void);
+// draw a rectangular frame
+extern void screen_frame(u16 x, u16 y, u16 width, u16 height, u8 framesize, u8 a);
+
 
 #endif // header guard

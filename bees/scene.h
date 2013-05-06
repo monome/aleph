@@ -2,10 +2,24 @@
 #define _ALEPH_BEES_SCENE_H_
 
 #include "module_common.h"
+#include "net_protected.h"
+#include "preset.h"
 #include "types.h"
 
 #define SCENE_COUNT 8
 #define SCENE_NAME_LEN 24
+
+// scene descriptor type
+typedef struct _sceneDesc {
+  char sceneName[SCENE_NAME_LEN];
+  char moduleName[MODULE_NAME_LEN];
+} sceneDesc_t;
+
+// scene storage layout type
+typedef struct _sceneData {
+  ctlnet_t net;
+  preset_t presets[NET_PRESETS_MAX];
+} sceneData_t;
 
 // initialize memory
 void scene_init(void);
@@ -13,8 +27,12 @@ void scene_init(void);
 void scene_deinit(void);
 // store 
 void scene_store(u32 idx);
+void scene_store_file(u32 idx);
+void scene_store_flash(u32 idx);
 // recall
 void scene_recall(u32 idx);
+void scene_recall_file(u32 idx);
+void scene_recall_flash(u32 idx);
 // clear
 void scene_clear(u32 idx);
 // get scene name

@@ -1,7 +1,7 @@
 /* module.h
    aleph-audio
    
-   module header 
+   class header for audio-processing module.
  */
 
 
@@ -30,7 +30,7 @@ typedef struct _moduleData {
 } moduleData;
 
 //---------
-// global pointer to module descriptorb
+// global pointer to module descriptor
 extern moduleData* gModuleData;
 
 // debug output flag

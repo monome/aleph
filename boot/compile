@@ -1,0 +1,51 @@
+-*- mode: compilation; default-directory: "/home/emb/aleph/avr32/" -*-
+Compilation started at Fri May  3 12:46:25
+
+make -k program
+CC      ../../bees/net.o
+./asf-3.7.3/../../bees/net.c: In function 'net_add_param':
+./asf-3.7.3/../../bees/net.c:670: warning: passing argument 1 of 'print_dbg_hex' makes integer from pointer without a cast
+./asf-3.7.3/avr32/utils/debug/print_funcs.h:341: note: expected 'long unsigned int' but argument is of type 'struct pnode_t *'
+./asf-3.7.3/../../bees/net.c:673: warning: passing argument 1 of 'print_dbg' discards qualifiers from pointer target type
+./asf-3.7.3/avr32/utils/debug/print_funcs.h:311: note: expected 'const char *' but argument is of type 'volatile char *'
+./asf-3.7.3/../../bees/net.c:675: warning: passing argument 1 of 'print_dbg' from incompatible pointer type
+./asf-3.7.3/avr32/utils/debug/print_funcs.h:311: note: expected 'const char *' but argument is of type 'char (*)[16]'
+LN      aleph.elf
+SIZE    aleph.elf
+aleph.elf  :
+section                size         addr
+.reset               0x2010   0x80000000
+.rela.got               0x0   0x80002010
+.text               0x14082   0x80002010
+.exception            0x200   0x80016200
+.rodata              0x1c0c   0x80016400
+.lalign                 0x4   0x8001800c
+.dalign                 0x4          0x4
+.data                 0x648          0x8
+.bss                 0x74c8        0x650
+.heap                0x74e8       0x7b18
+.comment               0x30          0x0
+.debug_aranges       0x1770          0x0
+.debug_pubnames      0x336b          0x0
+.debug_info         0x36c52          0x0
+.debug_abbrev        0x783b          0x0
+.debug_line         0x2b45b          0x0
+.debug_frame         0x4148          0x0
+.debug_str           0xa929          0x0
+.debug_loc           0xef79          0x0
+.debug_macinfo    0x2d30262          0x0
+.stack               0x1000       0xf000
+.debug_ranges        0x7c00          0x0
+Total             0x2debadd
+
+
+   text	   data	    bss	    dec	    hex	filename
+0x17e9e	  0x648	 0xf9b8	 163486	  27e9e	aleph.elf
+JTAG    program aleph.elf
+Connected to JTAGICE mkII version 6.6, 6.6 at USB.
+     Unlocking flash: ================================================== 100.0%
+       Erasing flash: done
+Programming 99928 bytes in 3 segments.
+     Verifying flash: ================================================== 100.0%
+
+Compilation finished at Fri May  3 12:46:47
