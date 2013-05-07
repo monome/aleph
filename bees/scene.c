@@ -25,7 +25,7 @@ static char sceneFilename[32];
 #endif 
 
 //---------------------------
-// static vatrs
+// static vars
 // descriptors for all scenes
 static sceneDesc_t* scenes;
 

@@ -1,4 +1,5 @@
-
+//std
+#include <string.h>
 // ASF
 #include "flashc.h"
 #include "power_clocks_lib.h"
@@ -7,15 +8,20 @@
 #include "scene.h"
 #include "preset.h"
 // aleph-avr32
+#include "bfin.h"
 #include "flash.h"
 #include "types.h"
 
 /// 64K of blackfin executable storage
 #define LDR_FLASH_BYTES 0x10000
+// value to write during first run
+#define FIRSTRUN_INIT 0x76543210
 
 // storage layout of default data in nonvolatile memory
 typedef const struct {
-  u8 ldr[LDR_FLASH_BYTES];
+  u32 firstRun;  // check for initialization
+  u32 ldrSize;   // size of default blackfin loader
+  u8 ldrData[LDR_FLASH_BYTES];
   sceneData_t sceneData;
   sceneDesc_t sceneDesc;
 } nvram_data_t;
@@ -24,32 +30,58 @@ typedef const struct {
 __attribute__((__section__(".flash_nvram")))
 static nvram_data_t flash_nvram_data;
 
-/* void flash_init() { */
-/*   //... nothing to do */
-/* } */
+// intiailize (check/set firstrun bytes)
+u8 flash_init() {
+  print_dbg("\r\n flash_init; ");
+  print_dbg("\r\n firstrun: ");
+  print_dbg_hex(flash_nvram_data.firstRun);
+  if(flash_nvram_data.firstRun != FIRSTRUN_INIT) {
+    print_dbg("\r\n writing firstrun, no bfin");
+    bfinLdrSize = 0;
+    flashc_memset32((void*)&flash_nvram_data.firstRun, FIRSTRUN_INIT, 4, true);
+    return 1;
+  } return 0;
+}
 
 // read default scene data to pointer
 void flash_read_scene(sceneData_t* sceneData, sceneDesc_t* sceneDesc) {
-  //  flashc_memcpy( (void*)(&(flash_nvram_data.sceneData)), sceneData, sizeof(sceneData_t), true));
-  *sceneData = flash_nvram_data.sceneData;
-  *sceneDesc = flash_nvram_data.sceneDesc;
+  
+    *sceneData = flash_nvram_data.sceneData;
+      *sceneDesc = flash_nvram_data.sceneDesc;
 }
 
 // write default scene data from pointer
 void flash_write_scene(sceneData_t* sceneData, sceneDesc_t* sceneDesc) {
-  flashc_memcpy( (void*)(&(flash_nvram_data.sceneData)), sceneData, sizeof(sceneData_t), true);
-  flashc_memcpy( (void*)(&(flash_nvram_data.sceneDesc)), sceneDesc, sizeof(sceneDesc_t), true);
+      flashc_memcpy( (void*)(&(flash_nvram_data.sceneData)), sceneData, sizeof(sceneData_t), true);
+      flashc_memcpy( (void*)(&(flash_nvram_data.sceneDesc)), sceneDesc, sizeof(sceneDesc_t), true);
 }
 
 
-void flash_read_ldr_byte(u8* byte, u32 idx) {
-  *byte = flash_nvram_data.ldr[idx];
+void flash_read_ldr_data(void) {
+  //  *byte = flash_nvram_data.ldrData[idx];
+  bfinLdrSize = flash_nvram_data.ldrSize;
+  //memcpy((void*)bfinLdrData, (void*)flash_nvram_data.ldrData, bfinLdrSize); 
 }
 
-void flash_write_ldr_byte(u8* byte, u32 idx) {
-  flashc_memset((void*)&(flash_nvram_data.ldr[idx]), *byte, 8, 1, true);
+void flash_write_ldr_data(void) {
+  flashc_memset32((void*)&(flash_nvram_data.ldrSize), bfinLdrSize, 4, true);
+  flashc_memcpy((void*)&(flash_nvram_data.ldrData), (const void*)bfinLdrData, bfinLdrSize, true);
 }
 
+/* void flash_write_ldr_byte(u8* byte, u32 idx) { */
+/*   // flashc_memset((void*)&(flash_nvram_data.ldrData[idx]), *byte, 8, 1, true); */
+/*   flashc_memcpy((void*)&(flash_nvram_data.ldrData[idx]), byte, 1, true); */
+/* } */
+
+
+/* u32 flash_read_ldr_size(void) { */
+/*   return flash_nvram_data.ldrSize; */
+/* } */
+
+/* void flash_write_ldr_size(u32 size) { */
+/*   u32 sz = size; */
+/*   flashc_memcpy((void*)&flash_nvram_data.ldrSize, &sz, 4, true); */
+/* } */
 
 
 

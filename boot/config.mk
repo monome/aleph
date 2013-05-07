@@ -135,7 +135,7 @@ LIBS =
 
 # Path relative to top level directory pointing to a linker script.
 # LINKER_SCRIPT = avr32/utils/linker_scripts/at32uc3a/0512/gcc/link_uc3a0512.lds
-LINKER_SCRIPT = $(ALEPH_AVR32)/aleph.lds
+LINKER_SCRIPT = $(ALEPH_AVR32)/aleph-boot.lds
 
 # Additional options for debugging. By default the common Makefile.in will
 # add -g3.

@@ -308,20 +308,25 @@ int main (void) {
   screen_blank_line(0, 0);
   screen_blank_line(0, 1);
   screen_line(0, 0, "SD card detected.", 0x3f);
+  screen_refresh();
 
-  /// initialize filesystem
-  init_files();
-
-  // initialize high-level program stuff
+  // initialize higher-level program stuff
   init_ctl();
 
-  /// boot default dsp
-  screen_line(0, 1, "loading default DSP...", 0x3f);
-  screen_refresh();
-  files_load_dsp_name("default.ldr");
+  /// initialize system file functions
+  init_files();
 
-  screen_line(0, 1, "finished. press any key to continue...", 0x3f);
-  screen_refresh();
+  /// read and boot DSP from flash
+  if( flash_init() ) {
+    ;;
+  } else { 
+    print_dbg("\r\n reading default .ldr...");
+    flash_read_ldr_data();
+    print_dbg("\r\n finished reading.");
+    print_dbg("\r\n booting blackfin from default....");
+    bfin_load_buf(); 
+    print_dbg("\r\n finished booting");
+  }
 
   print_dbg("\r\n starting event loop.\r\n");
 

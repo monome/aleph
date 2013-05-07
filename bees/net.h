@@ -11,14 +11,14 @@
 // maximum allocated parameters, connections, and operators
 // max operator inputs
 #define NET_INS_MAX 128
-// max opertor outputs
+// max operator outputs
 #define NET_OUTS_MAX 128
 // max  operators
-#define NET_OPS_MAX 48
+#define NET_OPS_MAX 64
 // max DSP parameter inputs
 #define NET_PARAMS_MAX 64
-// max presetsbbf
-#define NET_PRESETS_MAX 8
+// max presets
+#define NET_PRESETS_MAX 16
 
 #include "param_common.h"
 #include "param.h"

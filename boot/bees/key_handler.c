@@ -63,8 +63,8 @@ extern void key_handler_dsp(uiKey_t key, s16 val) {
     files_load_dsp(curPage->selected);
     break;
   case eKeyFnDownB:
-    //// set as default!
-    
+    //// set as default
+    files_store_default_dsp(curPage->selected);
     break;
   case eKeyFnDownC:
     break;
