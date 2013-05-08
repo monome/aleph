@@ -1,0 +1,119 @@
+-*- mode: compilation; default-directory: "/home/emb/aleph/avr32/" -*-
+Compilation started at Fri May  3 12:40:40
+
+make clean && make -k program
+RM      *.o *.d
+RMDIR   common/services/usb/uhc/ common/services/storage/ctrl_access/ common/services/clock/uc3a0_a1/ avr32/utils/startup/ avr32/utils/debug/ avr32/drivers/usbb/ avr32/drivers/usart/ avr32/drivers/tc/ avr32/drivers/spi/ avr32/drivers/pm/ avr32/drivers/pdca/ avr32/drivers/intc/ avr32/drivers/gpio/ avr32/drivers/flashc/ avr32/drivers/ebi/smc/ avr32/components/memory/sd_mmc/sd_mmc_spi/ ../../common/libfixmath/ ../../common/fat_io_lib/ ../../common/ ../../bees/ops/ ../../bees/ ../../avr32/src/usb/mouse/ ../../avr32/src/usb/gamepad/ ../../avr32/src/
+MKDIR   avr32/drivers/ebi/smc/
+CC      avr32/drivers/ebi/smc/smc.o
+MKDIR   avr32/drivers/flashc/
+CC      avr32/drivers/flashc/flashc.o
+MKDIR   avr32/drivers/gpio/
+CC      avr32/drivers/gpio/gpio.o
+MKDIR   avr32/drivers/intc/
+CC      avr32/drivers/intc/intc.o
+MKDIR   avr32/drivers/pdca/
+CC      avr32/drivers/pdca/pdca.o
+MKDIR   avr32/drivers/pm/
+CC      avr32/drivers/pm/pm.o
+CC      avr32/drivers/pm/pm_conf_clocks.o
+CC      avr32/drivers/pm/power_clocks_lib.o
+MKDIR   avr32/drivers/spi/
+CC      avr32/drivers/spi/spi.o
+MKDIR   avr32/drivers/tc/
+CC      avr32/drivers/tc/tc.o
+MKDIR   avr32/drivers/usart/
+CC      avr32/drivers/usart/usart.o
+MKDIR   avr32/utils/debug/
+CC      avr32/utils/debug/print_funcs.o
+MKDIR   avr32/components/memory/sd_mmc/sd_mmc_spi/
+CC      avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+CC      avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.o
+MKDIR   avr32/drivers/usbb/
+CC      avr32/drivers/usbb/usbb_host.o
+MKDIR   common/services/clock/uc3a0_a1/
+CC      common/services/clock/uc3a0_a1/sysclk.o
+MKDIR   common/services/storage/ctrl_access/
+CC      common/services/storage/ctrl_access/ctrl_access.o
+MKDIR   common/services/usb/uhc/
+CC      common/services/usb/uhc/uhc.o
+CC      ../../avr32/src/adc.o
+CC      ../../avr32/src/app_timers.o
+CC      ../../avr32/src/bfin.o
+CC      ../../avr32/src/events.o
+CC      ../../avr32/src/encoders.o
+CC      ../../avr32/src/files.o
+CC      ../../avr32/src/filesystem.o
+CC      ../../avr32/src/init.o
+CC      ../../avr32/src/interrupts.o
+./asf-3.7.3/../../avr32/src/interrupts.c:198: warning: 'irq_port1_line2' defined but not used
+CC      ../../avr32/src/memory.o
+CC      ../../avr32/src/screen.o
+CC      ../../avr32/src/scene.o
+CC      ../../avr32/src/switches.o
+CC      ../../avr32/src/timers.o
+CC      ../../avr32/src/main.o
+CC      ../../avr32/src/usb.o
+MKDIR   ../../avr32/src/usb/mouse/
+CC      ../../avr32/src/usb/mouse/hid_mouse.o
+./asf-3.7.3/../../avr32/src/usb/mouse/hid_mouse.c:14: warning: no previous prototype for 'hid_mouse_btn_left'
+./asf-3.7.3/../../avr32/src/usb/mouse/hid_mouse.c:21: warning: no previous prototype for 'hid_mouse_btn_right'
+./asf-3.7.3/../../avr32/src/usb/mouse/hid_mouse.c:26: warning: no previous prototype for 'hid_mouse_btn_middle'
+./asf-3.7.3/../../avr32/src/usb/mouse/hid_mouse.c:31: warning: no previous prototype for 'hid_mouse_move'
+CC      ../../avr32/src/usb/mouse/uhi_hid_mouse.o
+MKDIR   ../../avr32/src/usb/gamepad/
+CC      ../../avr32/src/usb/gamepad/hid_gamepad.o
+CC      ../../avr32/src/usb/gamepad/uhi_hid_gamepad.o
+./asf-3.7.3/../../avr32/src/usb/gamepad/uhi_hid_gamepad.c: In function 'uhi_hid_gamepad_report_reception':
+./asf-3.7.3/../../avr32/src/usb/gamepad/uhi_hid_gamepad.c:228: warning: unused variable 'state_new'
+./asf-3.7.3/../../avr32/src/usb/gamepad/uhi_hid_gamepad.c:227: warning: unused variable 'state_prev'
+MKDIR   ../../bees/
+CC      ../../bees/key_handler.o
+CC      ../../bees/menu.o
+CC      ../../bees/net.o
+./asf-3.7.3/../../bees/net.c: In function 'net_op_status':
+./asf-3.7.3/../../bees/net.c:566: error: 'sff' undeclared (first use in this function)
+./asf-3.7.3/../../bees/net.c:566: error: (Each undeclared identifier is reported only once
+./asf-3.7.3/../../bees/net.c:566: error: for each function it appears in.)
+./asf-3.7.3/../../bees/net.c:566: error: expected ';' before 'return'
+./asf-3.7.3/../../bees/net.c: In function 'net_add_param':
+./asf-3.7.3/../../bees/net.c:669: error: expected ')' before ';' token
+./asf-3.7.3/../../bees/net.c:669: warning: passing argument 1 of 'print_dbg_hex' makes integer from pointer without a cast
+./asf-3.7.3/avr32/utils/debug/print_funcs.h:341: note: expected 'long unsigned int' but argument is of type 'struct pnode_t *'
+./asf-3.7.3/../../bees/net.c:671: error: expected ')' before ';' token
+./asf-3.7.3/../../bees/net.c:679: warning: passing argument 1 of 'print_dbg' from incompatible pointer type
+./asf-3.7.3/avr32/utils/debug/print_funcs.h:311: note: expected 'const char *' but argument is of type 'char (*)[16]'
+./asf-3.7.3/../../bees/net.c:679: error: expected ';' before '}' token
+make: *** [../../bees/net.o] Error 1
+CC      ../../bees/op.o
+CC      ../../bees/param.o
+CC      ../../bees/preset.o
+CC      ../../bees/redraw.o
+MKDIR   ../../bees/ops/
+CC      ../../bees/ops/op_add.o
+CC      ../../bees/ops/op_enc.o
+CC      ../../bees/ops/op_gate.o
+CC      ../../bees/ops/op_mul.o
+CC      ../../bees/ops/op_sw.o
+MKDIR   ../../common/
+CC      ../../common/font.o
+CC      ../../common/fix.o
+MKDIR   ../../common/libfixmath/
+CC      ../../common/libfixmath/fix16.o
+CC      ../../common/simple_string.o
+MKDIR   ../../common/fat_io_lib/
+CC      ../../common/fat_io_lib/fat_access.o
+CC      ../../common/fat_io_lib/fat_cache.o
+CC      ../../common/fat_io_lib/fat_filelib.o
+CC      ../../common/fat_io_lib/fat_format.o
+CC      ../../common/fat_io_lib/fat_misc.o
+CC      ../../common/fat_io_lib/fat_string.o
+CC      ../../common/fat_io_lib/fat_table.o
+CC      ../../common/fat_io_lib/fat_write.o
+AS      avr32/drivers/intc/exception.o
+MKDIR   avr32/utils/startup/
+AS      avr32/utils/startup/startup_uc3.o
+AS      avr32/utils/startup/trampoline_uc3.o
+make: Target `program' not remade because of errors.
+
+Compilation exited abnormally with code 2 at Fri May  3 12:40:49

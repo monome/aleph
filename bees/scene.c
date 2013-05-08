@@ -11,16 +11,12 @@
 #include <string.h>
 
 #include "files.h"
+#include "global.h"
 #include "memory.h"
 #include "net_protected.h"
 #include "preset.h"
 #include "types.h"
 #include "scene.h"
-
-typedef struct _scene {
-  char sceneName[SCENE_NAME_LEN];
-  char moduleName[MODULE_NAME_LEN];
-} scene_t;
 
 #if ARCH_AVR32
 #else
@@ -28,14 +24,24 @@ static FILE* pSceneFile;
 static char sceneFilename[32];
 #endif 
 
-// scene storage memory
-static scene_t* sceneData;
+//---------------------------
+// static vars
+// descriptors for all scenes
+static sceneDesc_t* scenes;
+
+//-----------------------------
+// extern vars
+// global pointer to scene data
+sceneData_t* gScene;
 
 void scene_init(void) {
 #if ARCH_AVR32
+
+
+
 #else
   u8 i;
-  sceneData = (scene_t*)alloc_mem(SCENE_COUNT * sizeof(scene_t));
+  sceneData = (sceneData_t*)alloc_mem(SCENE_COUNT * sizeof(scene_t));
     
   for(i=0; i<SCENE_COUNT; i++) {
     snprintf(sceneData[i].sceneName, SCENE_NAME_LEN, "scene_%d", i);
@@ -48,8 +54,12 @@ void scene_deinit(void) {
   //  free(sceneData);
 }
 
+scene_store_flash(u32 idx) {
+  
+}
+
 // store 
-void scene_store(u32 idx) {
+void scene_store_file(u32 idx) {
 #if ARCH_AVR32
 
 
@@ -68,14 +78,12 @@ void scene_store(u32 idx) {
   fwrite((u8*)(&presets), 1, sizeof(preset_t) * NET_PRESETS_MAX, pSceneFile);
   // close file
   fclose(pSceneFile);
-  //
-  //  memcpy(&(sceneData[idx].net), &net, sizeof(net));
 #endif
 }
 
 // recall
-void scene_recall(u32 idx) {
-#if ARCH_AVR32xs
+void scene_recall_file(u32 idx) {
+#if ARCH_AVR32
 
 #else
   // open file  
@@ -111,6 +119,8 @@ const char* scene_name(const s16 idx) {
 // get module name
 const char* scene_module_name(const s16 idx) {
 #if ARCH_AVR32
+
+
 #else
   if (idx >=0 && idx < SCENE_COUNT) {
     return sceneData[idx].moduleName;

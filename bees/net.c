@@ -436,6 +436,7 @@ void net_remove_op(const u32 idx) {
   net->numIns -= nIns;
   net->numOuts -= nOuts;
   net->numOps -= 1;
+  //... and don't crash
 #endif
 }
 

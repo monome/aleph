@@ -47,15 +47,17 @@ static fix16 scale_knob_value(const s32 v) {
   } else if (vabs < 12) {
     //    print_dbg("\r\n fast");
     return v * 8;
-  } else {
+  } else if (vabs < 22) {
     //    print_dbg("\r\n fastest");
     return v * 32;
+  } else {
+    return v * 64;
   }
 }
 
 //========================================
 //====== key handlers
-// OPS
+//--- OPS
 void key_handler_ops(uiKey_t key, s16 val) {
   u16 n;
   switch(key) {
@@ -77,7 +79,9 @@ void key_handler_ops(uiKey_t key, s16 val) {
   case eKeyFnDownD:
     // fnD : delete
     // FIXME: need to add arbitrary op deletion.
+    //// 
     // right now this will destroy the last created op
+    /////// + added the function, need to try it out
     if (net_op_status(net_num_ops() - 1) != eUserOp) {
       return;
     }
@@ -131,7 +135,7 @@ void key_handler_ops(uiKey_t key, s16 val) {
   }  
 }
 
-// INS
+//--- INS
 void key_handler_ins(uiKey_t key, s16 val) {
   u32 i;
   switch(key) {
@@ -187,7 +191,7 @@ void key_handler_ins(uiKey_t key, s16 val) {
   (*(curPage->redraw))();
 }
 
-// OUTS
+//--- OUTS
 void key_handler_outs(uiKey_t key, s16 val) {
   s16 i;
   static s32 target;
@@ -251,12 +255,12 @@ void key_handler_outs(uiKey_t key, s16 val) {
   (*(curPage->redraw))();
 }
 
-//// GATHERED
+//--- GATHERED
 void key_handler_gathered(uiKey_t key, s16 val) {
   key_handler_outs(key, val);
 }
 
-///// PLAy
+//--- PLAY
 void key_handler_play(uiKey_t key, s16 v) {
   s32 val;
   s16 inIdx = -1;
@@ -346,7 +350,7 @@ void key_handler_play(uiKey_t key, s16 v) {
   }
 }
 
-// presets
+//--- PRESETS
 extern void key_handler_presets(uiKey_t key, s16 val) {
   //  s16 i;
   switch(key) {
@@ -433,7 +437,7 @@ extern void key_handler_presets(uiKey_t key, s16 val) {
   (*(curPage->redraw))();
 }
 
-/// SCENES
+//--- SCENES
 extern void key_handler_scenes(uiKey_t key, s16 val) {
   switch(key) {
   case eKeyFnDownA: // clear
@@ -468,7 +472,7 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
       curPage->mode = eModeStore;
       break;
     case eModeStore:
-      scene_store(curPage->selected);
+      scene_store_file(curPage->selected);
       curPage->mode = eModeNone;
       break;
     default:
@@ -481,7 +485,7 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
       curPage->mode = eModeRecall;
       break;
     case eModeRecall:
-      scene_recall(curPage->selected);
+      scene_recall_file(curPage->selected);
       curPage->mode = eModeNone;
       break;
     default:
@@ -533,7 +537,7 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
   (*(curPage->redraw))();
 }
 
-/// DSP
+//--- DSP
 extern void key_handler_dsp(uiKey_t key, s16 val) {
   switch(key) {
   case eKeyFnDownA:
@@ -555,10 +559,11 @@ extern void key_handler_dsp(uiKey_t key, s16 val) {
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    scroll_select(1, SCENE_COUNT );
+    scroll_select_clip(1,  files_get_dsp_count() );
     break;
   case eKeyEncDownB:
-    scroll_select(-1, SCENE_COUNT );
+    scroll_select_clip(-1, files_get_dsp_count() );
+    break;
     break;
   case eKeyEncUpC:
     break;

@@ -25,7 +25,9 @@
 #if NET_USE_MALLOC
 #else
 // size of operator pool in bytes
-#define NET_OP_POOL_SIZE 0x10000
+//#define NET_OP_POOL_SIZE 0x10000 // 64K
+#define NET_OP_POOL_SIZE 0x4000 // 16K
+//#define NET_OP_POOL_SIZE 0x0100 // fake
 #endif
 
 // input node type (function pointer)

@@ -33,7 +33,7 @@ typedef struct _scene {
 static FILE* pSceneFile;
 static char sceneFilename[16];
 // scene storage memory
-static scene_t* sceneData;
+static scene_t* scen;
 
 void scene_init(void) {
   //  u8 i;

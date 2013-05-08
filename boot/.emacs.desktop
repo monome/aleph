@@ -1,0 +1,491 @@
+;; -*- mode: emacs-lisp; coding: emacs-mule; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Mon May  6 11:00:38 2013
+;; Desktop file format version 206
+;; Emacs version 23.3.1
+
+;; Global section:
+(setq desktop-missing-file-warning nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+(setq search-ring '("full" "init_smx" "uhc_" "init" "clock" "uhc" "gpio"))
+(setq regexp-search-ring nil)
+(setq register-alist nil)
+(setq file-name-history '("~/aleph/avr32/src/events.c" "~/aleph/avr32/config.mk" "~/aleph/bees/key_handler.c" "~/aleph/bees/menu.c" "~/aleph/bees/net_protected.h" "~/aleph/bees/net.c" "~/aleph/avr32/src/main.c" "~/aleph/avr32/src/interrupts.c" "~/avr/asf-3.7.3/common/services/usb/class/hid/host/mouse/example/" "~/avr/asf-3.7.3/common/services/usb/class/hid/host/mouse/" "~/avr/asf-3.7.3/common/services/usb/class/hid/host/" "~/avr/asf-3.7.3/common/services/usb/class/hid/host/mouse/example/" "~/avr/asf-3.7.3/common/services/usb/class/hid/host/mouse/example/main.c" "~/aleph/avr32/src/init.c" "~/aleph/avr32/" "~/aleph/avr32/conf/conf_clock.h" "~/aleph/avr32/conf" "~/aleph/avr32/" "~/avr/asf-3.7.3/common/services/usb/" "~/avr/asf-3.7.3/" "~/aleph/avr32/config.mk" "~/aleph/avr32/Makefile" "~/aleph/avr32/" "~/aleph/avr32/Makefile" "~/aleph/avr32/config.mk" "~/avr/asf-3.7.3/common/services/usb/" "~/avr/asf-3.7.3/common/services/usb/class/hid/host/mouse/example/" "~/aleph/avr32/src/init.c" "~/aleph/avr32/src/interrupts.c" "~/avr/asf-3.7.3/common/services/usb/class/hid/host/mouse/example/"))
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 206
+  nil
+  "~"
+  'dired-mode
+  nil
+  1502
+  '(nil nil)
+  t
+  '("/home/emb/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/boot/config.mk"
+  "config.mk<2>"
+  'makefile-gmake-mode
+  nil
+  1
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/events.c"
+  "events.c"
+  'c-mode
+  '(abbrev-mode)
+  2352
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/config.mk"
+  "config.mk"
+  'makefile-gmake-mode
+  nil
+  6033
+  '(6031 nil)
+  nil
+  nil
+  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bees/key_handler.c"
+  "key_handler.c"
+  'c-mode
+  '(abbrev-mode)
+  1006
+  '(344 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bees/menu.c"
+  "menu.c"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bees/net_protected.h"
+  "net_protected.h"
+  'c-mode
+  '(abbrev-mode)
+  465
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bees/net.c"
+  "net.c"
+  'c-mode
+  '(abbrev-mode)
+  508
+  '(1427 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/main.c"
+  "main.c"
+  'c-mode
+  '(abbrev-mode)
+  1780
+  '(1176 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/interrupts.c"
+  "interrupts.c"
+  'c-mode
+  '(abbrev-mode)
+  7139
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/util.h"
+  "util.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  nil
+  "src"
+  'dired-mode
+  nil
+  2362
+  '(nil nil)
+  t
+  '("/home/emb/aleph/avr32/src/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/usb.h"
+  "usb.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/usb.c"
+  "usb.c"
+  'c-mode
+  '(abbrev-mode)
+  940
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/timers.h"
+  "timers.h"
+  'c-mode
+  '(abbrev-mode)
+  695
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/timers.c"
+  "timers.c"
+  'c-mode
+  '(abbrev-mode)
+  4265
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/switches.h"
+  "switches.h"
+  'c-mode
+  '(abbrev-mode)
+  50
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/switches.c"
+  "switches.c"
+  'c-mode
+  '(abbrev-mode)
+  1837
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/startup.c"
+  "startup.c"
+  'c-mode
+  '(abbrev-mode)
+  1722
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/screen.c"
+  "screen.c"
+  'c-mode
+  '(abbrev-mode)
+  6510
+  '(6694 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/scene.c"
+  "scene.c"
+  'c-mode
+  '(abbrev-mode)
+  2865
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/memory.h"
+  "memory.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/memory.c"
+  "memory.c"
+  'c-mode
+  '(abbrev-mode)
+  203
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/ls_fragment.c"
+  "ls_fragment.c"
+  'c-mode
+  '(abbrev-mode)
+  1731
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/interrupts.h"
+  "interrupts.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/init.h"
+  "init.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/init.c"
+  "init.c"
+  'c-mode
+  '(abbrev-mode)
+  9569
+  '(8347 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/i2c.h"
+  "i2c.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/i2c.c"
+  "i2c.c"
+  'c-mode
+  '(abbrev-mode)
+  2849
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/global.h"
+  "global.h"
+  'c-mode
+  '(abbrev-mode)
+  281
+  '(253 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/filesystem.h"
+  "filesystem.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/filesystem.c"
+  "filesystem.c"
+  'c-mode
+  '(abbrev-mode)
+  2453
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/files.c"
+  "files.c"
+  'c-mode
+  '(abbrev-mode)
+  2382
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/event_types.h"
+  "event_types.h"
+  'c-mode
+  '(abbrev-mode)
+  688
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/events.h"
+  "events.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/encoders.h"
+  "encoders.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/encoders.c"
+  "encoders.c"
+  'c-mode
+  '(abbrev-mode)
+  314
+  '(1230 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/dummy.h"
+  "dummy.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/bfin.c"
+  "bfin.c"
+  'c-mode
+  '(abbrev-mode)
+  5419
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  nil
+  "avr32"
+  'dired-mode
+  nil
+  1129
+  '(nil nil)
+  t
+  '("/home/emb/aleph/avr32/")
+  nil)
+
+(desktop-create-buffer 206
+  nil
+  "aleph"
+  'dired-mode
+  nil
+  369
+  '(nil nil)
+  t
+  '("/home/emb/aleph/")
+  nil)
+
+(desktop-create-buffer 206
+  nil
+  "conf"
+  'dired-mode
+  nil
+  206
+  '(nil nil)
+  t
+  '("/home/emb/aleph/avr32/conf/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/Makefile"
+  "Makefile"
+  'makefile-gmake-mode
+  nil
+  1
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-dos)))
+

@@ -1,0 +1,23 @@
+14c14
+<  * Copyright (c) 2009-2012 Atmel Corporation. All rights reserved.
+---
+>  * Copyright (c) 2009 Atmel Corporation. All rights reserved.
+86c86
+< 
+---
+>   
+277,279c277
+< 
+<   /* put nvram at top of flash  */
+<   .flash_nvram  ORIGIN(FLASH) + LENGTH(FLASH) - __flash_nvram_size__ (NOLOAD):
+---
+>   .flash_nvram   ORIGIN(FLASH) + LENGTH(FLASH) - __flash_nvram_size__ (NOLOAD):
+282,284c280
+<   } >FLASH :FLASH_NVRAM
+<   . = ALIGN(0x200);
+< 
+---
+>   } >FLASH AT>FLASH :FLASH_NVRAM
+288,289d283
+< 
+< 

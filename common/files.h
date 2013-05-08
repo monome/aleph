@@ -4,6 +4,7 @@
 //#include "compiler.h"
 #include "types.h"
 
+
 // initialize filesystem navigation
 extern void init_files(void);
 // list all files (LS)
@@ -28,5 +29,7 @@ extern u8 files_get_dsp_count(void);
 extern void files_load_dsp(u8 idx);
 // load a blackfin executable by filename
 extern void files_load_dsp_name(const char* name);
+// store dsp in flash, by index
+extern void files_store_default_dsp(u8 idx);
 
 #endif // header guard 

@@ -43,8 +43,6 @@ e todo
 
 blackfin fixes
 -- add DAC support in core framework.
--- fix parameter representations in mono_fm
--- fix echo
 -- implement more modules 
 ----- poly synth
 ----- add/test audio filters
@@ -58,12 +56,6 @@ better interrupt management.
 -- if a routine needs to disable interrupts, it should check if they are enabled first.
 -- might be a better use of priority levels
 -- might be necessary to choose specific IRQ lines to enable/disable. macro or inline.
-
-SD card write (!)
-
-AVR32 flash access.
-
-AVR32 bootloader.
 
 I2C.
 

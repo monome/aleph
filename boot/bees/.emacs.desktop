@@ -1,0 +1,117 @@
+;; -*- mode: emacs-lisp; coding: emacs-mule; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Thu Apr 11 12:06:00 2013
+;; Desktop file format version 206
+;; Emacs version 23.3.1
+
+;; Global section:
+(setq desktop-missing-file-warning nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+(setq search-ring '("init_sw" "first" "ll" "free" "size" "perform_startup"))
+(setq regexp-search-ring nil)
+(setq register-alist nil)
+(setq file-name-history '("~/aleph/avr32/src/interrupts.c" "~/aleph/avr32/" "~/aleph/bees/net_protected.h" "~/aleph/bees/net.c" "~/aleph/avr32/src/main.c" "~/aleph/bees/" "~/aleph/bees/menu_protected.h" "~/aleph/bees/menu.c" "~/aleph/bees/" "~/scratch/ll.c" "~/aleph/avr32/src/event_types.h" "~/aleph/avr32/src/main.c" "~/aleph/avr32/src/bfin.c" "~/aleph/"))
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/interrupts.c"
+  "interrupts.c"
+  'c-mode
+  '(abbrev-mode)
+  8709
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  nil
+  "avr32"
+  'dired-mode
+  nil
+  219
+  '(nil nil)
+  t
+  '("/home/emb/aleph/avr32/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bees/net_protected.h"
+  "net_protected.h"
+  'c-mode
+  '(abbrev-mode)
+  510
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bees/net.c"
+  "net.c"
+  'c-mode
+  '(abbrev-mode)
+  581
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/main.c"
+  "main.c"
+  'c-mode
+  '(abbrev-mode)
+  2543
+  '(2543 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/bees/menu_protected.h"
+  "menu_protected.h"
+  'c-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  nil
+  "bees"
+  'dired-mode
+  nil
+  207
+  '(nil nil)
+  t
+  '("/home/emb/aleph/bees/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/event_types.h"
+  "event_types.h"
+  'c-mode
+  '(abbrev-mode)
+  828
+  '(925 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/avr32/src/bfin.c"
+  "bfin.c"
+  'c-mode
+  '(abbrev-mode)
+  355
+  '(2366 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+

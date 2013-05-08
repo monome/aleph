@@ -168,21 +168,41 @@ void scroll_page(s8 dir) {
   set_page(pageIdx);
 }
 
+
+
 // scroll current page selection
-void scroll_select(s8 dir, s32 max) {
-  //  print_dbg("\r\nSCROLL SELECT");
+//--  clipping variant
+void scroll_select_clip(s8 dir, s32 max) {
   curPage->selected += dir;
-  while (curPage->selected < 0) {
-    curPage->selected += max;
-      //    page->selected = 0;
+  print_dbg("\r\n curPage->selected: ");
+  print_dbg_hex(curPage->selected);
+
+  if(curPage->selected >= max) {
+    curPage->selected = max - 1;
   }
-  while (curPage->selected >= max) {
-    // page->selected = max;
-    curPage->selected -= max;
+  if(curPage->selected < 0) {
+    curPage->selected = 0;
   }
-  // redraw with the new selection
   curPage->redraw();
 }
+
+//--  wrapping variant
+void scroll_select_wrap(s8 dir, s32 max) {
+  curPage->selected += dir;
+    while (curPage->selected < 0) {
+      curPage->selected += max;
+    }
+    while (curPage->selected >= max) {
+      curPage->selected -= max; 
+    }
+  curPage->redraw();
+}
+
+//-- default: wrap
+void scroll_select(s8 dir, s32 max) {
+  scroll_select_wrap(dir, max);
+}
+
 
 // parameter feedback
 void param_feedback(u16 paramIdx, fix16 val) {
