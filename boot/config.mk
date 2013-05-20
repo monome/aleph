@@ -47,6 +47,7 @@ CSRCS = \
 	avr32/drivers/spi/spi.c                            \
         avr32/drivers/tc/tc.c                          \
 	avr32/drivers/usart/usart.c                        \
+	avr32/drivers/wdt/wdt.c                        \
 	avr32/utils/debug/print_funcs.c                    \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.c \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.c \
@@ -62,6 +63,7 @@ CSRCS = \
 	$(ALEPH_AVR32)/src/init.c	\
 	$(ALEPH_AVR32)/src/interrupts.c \
 	$(ALEPH_AVR32)/src/memory.c \
+	$(ALEPH_AVR32)/src/parse_hex.c \
 	$(ALEPH_AVR32)/src/screen.c \
 	$(ALEPH_AVR32)/src/switches.c \
 	$(ALEPH_AVR32)/src/timers.c \
@@ -107,6 +109,7 @@ INC_PATH = \
        avr32/drivers/tc                                 \
        avr32/drivers/twi                                 \
        avr32/drivers/usart                                \
+       avr32/drivers/wdt                                \
        avr32/services/delay                               \
        avr32/services/fs/fat                              \
        avr32/utils                                        \
@@ -172,4 +175,7 @@ CPPFLAGS = \
 
 # Extra flags to use when linking
 # LDFLAGS = -Wl,--gc-sections,-e,_trampoline -Wl,--defsym,__heap_size__=0x00080000 -nostartfile	
+# programmer doesn't work without trampoline
+# (can't unlock?)
+#	LDFLAGS = -nostartfiles -Wl,-e
 LDFLAGS = -nostartfiles -Wl,-e,_trampoline

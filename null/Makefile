@@ -15,7 +15,7 @@ AUDIOLIB = ../audio
 # FIXME: use this... stupid to maintain 2 copies of each src
 MODULES = ../bfin/modules
 #include paths
-INC := -I$(COMMON) -I$(LIBFIXMATH) -I$(AUDIOLIB)
+INC := -I$(COMMON) -I$(LIBFIXMATH) -I$(AUDIOLIB) -I ./
 
 APP_OBJ  = main.o \
 	audio.o \
@@ -30,7 +30,8 @@ APP_OBJ  = main.o \
 MONO_FM_OBJ :=  mono_fm.o \
 	$(AUDIOLIB)/env.o \
 	$(AUDIOLIB)/filters.o \
-	$(AUDIOLIB)/table.o
+	$(AUDIOLIB)/table.o \
+	$(AUDIOLIB)/conversion.o
 
 mono_fm : $(APP_OBJ) $(MONO_FM_OBJ)
 	echo $(INC)

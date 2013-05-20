@@ -64,6 +64,8 @@ static u8 mode = 0;
 static void init_avr32(void);
 static void init_ctl(void);
 static void check_events(void);
+///// test
+static void print_flash(void);
 
 //=================================================
 //==== definitons
@@ -185,17 +187,33 @@ static void check_events(void) {
 	menu_handleKey(eKeyFnUpB, e.eventData);
 	break;
       case kEventSwitchDown2:
-	menu_handleKey(eKeyFnDownC, e.eventData);
+	//	menu_handleKey(eKeyFnDownC, e.eventData);
+	/////////
+	print_flash();
+	//////////////
 	break;
       case kEventSwitchUp2:
 	menu_handleKey(eKeyFnUpC, e.eventData);
 	break;
+
       case kEventSwitchDown3:
-	menu_handleKey(eKeyFnDownD, e.eventData);
+	//	menu_handleKey(eKeyFnDownD, e.eventData);
+	/////////////
+	/* print_dbg("\r\n jumping to runtime location "); */
+	/* asm volatile ( */
+	/* 	  " mov   r0,LO(0x80010000)\n\t" */
+	/* 	  " orh   r0,HI(0x80010000)\n\t" */
+	/* 	  " mov   pc,r0" */
+	/* 	  ); */
+
+	/* ///////////// */
 	break;
+
       case kEventSwitchUp3:
-	menu_handleKey(eKeyFnUpD, e.eventData);
+	//	menu_handleKey(eKeyFnUpD, e.eventData);
 	break;
+
+
 	/// footswitches
       /* case kEventSwitchDown6: */
       /* 	print_dbg("\r\n footswitch1 down"); */
@@ -290,52 +308,108 @@ static void check_events(void) {
 ////main function
 int main (void) {
   u32 waitForCard = 0;
+  u8 isFirstRun = 0;
+  u8 isSwDown = 0;
 
-  // set up avr32 hardware and peripherals
-  init_avr32();
 
-  // wait for sd card
-  screen_line(0, 0, "ALEPH", 0x3f);
-  screen_line(0, 1, "waiting for SD card...", 0x3f);
-  screen_refresh();
   
-  print_dbg("\r\n SD check... ");
-  while (!sd_mmc_spi_mem_check()) {
-    waitForCard++;
+  /// check hardware and jump out
+  gpio_enable_pin_pull_up(SW3_PIN);
+
+  isSwDown = gpio_get_pin_value(SW3_PIN);
+  //  print_dbg("\r\n sw value: ");
+  //  print_dbg_hex(isSwUp);
+
+  if(!isSwDown) {
+    //    print_dbg("\r\n switch up, jumping to main");
+    /// hardcoded jump to firmware location 0x80008000
+  
+    asm volatile (
+    		  " mov   r0,LO(0x80010000)\n\t"
+    		  " orh   r0,HI(0x80010000)\n\t"
+    		  " mov   pc,r0"
+    		  );
+
+    //    init_avr32();
+
+    //    print_dbg("\r\n sw3 was open, should now continue to runtime executable location");
+  } else {
+  
+
+
+    // set up avr32 hardware and peripherals
+    init_avr32();
+
+    // wait for sd card
+    screen_line(0, 0, "ALEPH", 0x3f);
+    screen_line(0, 1, "waiting for SD card...", 0x3f);
+    screen_refresh();
+  
+    print_dbg("\r\n SD check... ");
+    while (!sd_mmc_spi_mem_check()) {
+      waitForCard++;
+    }
+    print_dbg("\r\nfound SD card. ");
+
+    screen_blank_line(0, 0);
+    screen_blank_line(0, 1);
+    screen_line(0, 0, "SD card detected.", 0x3f);
+    screen_refresh();
+
+    // initialize higher-level program stuff
+    init_ctl();
+
+    // initialize system file functions
+    init_files();
+
+    // flash init, check firstrun
+    isFirstRun = init_flash();
+
+    // don't bother loading bfin during bootloader
+    // but do put this in the runtime code
+ 
+    /* if(isFirstRun) { */
+    /*   ;; */
+    /* } else {  */
+    /*   print_dbg("\r\n reading default .ldr..."); */
+    /*   flash_read_ldr(); */
+    /*   print_dbg("\r\n finished reading."); */
+    /*   print_dbg("\r\n booting blackfin from default...."); */
+    /*   bfin_load_buf();  */
+    /*   print_dbg("\r\n finished booting"); */
+    /* } */
+
+    print_dbg("\r\n starting event loop.\r\n");
   }
-  print_dbg("\r\nfound SD card. ");
-
-  screen_blank_line(0, 0);
-  screen_blank_line(0, 1);
-  screen_line(0, 0, "SD card detected.", 0x3f);
-  screen_refresh();
-
-  // initialize higher-level program stuff
-  init_ctl();
-
-  /// initialize system file functions
-  init_files();
-
-  /// read and boot DSP from flash
-  if( flash_init() ) {
-    ;;
-  } else { 
-    print_dbg("\r\n reading default .ldr...");
-    flash_read_ldr_data();
-    print_dbg("\r\n finished reading.");
-    print_dbg("\r\n booting blackfin from default....");
-    bfin_load_buf(); 
-    print_dbg("\r\n finished booting");
-  }
-
-  print_dbg("\r\n starting event loop.\r\n");
-
-
-  //////
-  //  test_flash();
-  ////
 
   while(1) {
     check_events();
   }
 }
+
+
+// testing flash
+
+static u32 flashoff =0x8000ff00;
+static void print_flash(void) {
+  u32 i, j;
+  u32 b, boff;
+  print_dbg("\r\n");
+  print_dbg_hex(flashoff);
+  print_dbg(" : ");
+  for(j=0; j<8; j++) {
+    b = 0;
+    boff = 24;
+    for(i=0; i<4; i++) {
+      b |= ( *(u8*)flashoff ) << boff;
+      flashoff++;
+      boff -= 8;
+    }
+    print_dbg_hex(b);
+    print_dbg(" ");
+  }
+
+    //  print_dbg_hex(flash);
+  //  flashOff += 4;
+}
+

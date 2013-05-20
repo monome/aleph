@@ -48,10 +48,16 @@
 #ifndef _SMC_PERIPHERAL_H_
 #define _SMC_PERIPHERAL_H_
 
+//=======================================
+/* 
+   part number: CY62167EV30-Z
+   1M x 16 or 2M x 8
+   = 2^21 bytes
+*/
+//=======================================
 
 //! SMC Peripheral Memory Size in log2(Bytes)
-//#define EXT_SM_SIZE            17        // (65536 * 2) = 2^17 bytes
-#define EXT_SM_SIZE            18        // (65536 * 2) = 2^17 bytes
+#define EXT_SM_SIZE            21
 
 //! SMC Data Bus Width
 #define SMC_DBW                16

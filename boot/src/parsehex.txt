@@ -1,0 +1,31 @@
+hex files
+
+entry:
+
+1. start code, ":"
+2. byte count    : 2 hex digits	= no. of bytes in data field
+3. address       : 4 digits    ( big endian )
+4. record type	 : 2 digits    
+5. DATA:  	 : 2*N digits 
+6. checksum	 : 2 digits	= 0x100 - ( sum(data) & 0xff )
+
+
+record type:
+
+00 : data
+01 : EOF  ( usually: ':00000001FF' )
+02 : extended segment address record	: add (data<<4) to subsequent 00 addresses
+03 : start segment address record : initial state of CS:IP registers (80x86), addr==0
+04 : extended linear address record : upper word of 32-bit addr
+05 : start linear address record : data (4 bytes) loaded to EIP register (80386+), addr==0
+
+
+NOTE:
+there are 3 types of Intel HEX based on data size: 8b, 16b, 32b.
+data may be byte-swapped in 16b or 32b.
+
+NOTE:
+correct checksum means that (sum of all bytes in record) | 0xff == 0
+
+
+

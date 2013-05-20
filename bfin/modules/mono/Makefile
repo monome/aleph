@@ -6,8 +6,9 @@ module_obj = mono_fm.o \
 	$(audiolib)/env.o \
 	$(audiolib)/filters.o \
 	$(audiolib)/table.o \
+	$(audiolib)/conversion.o \
 	$(common)/libfixmath/fix32.o \
-	$(common)/libfixmath/fix16.o \
+	$(common)/libfixmath/fix16.o
 
 all: aleph-$(module_name).ldr
 

@@ -15,6 +15,7 @@
 #include "env.h"
 #include "filters.h"
 #include "table.h"
+#include "conversion.h"
 // bfin
 #ifdef ARCH_BFIN
 #include "bfin_core.h"
@@ -34,11 +35,15 @@
 #include "types.h"
 
 //---------- defines
-// hz is fix16
-#define HZ_MIN 0x200000   // 32
-#define HZ_MAX 0x20000000 // 8192
-#define RATIO_MIN 0x2000 // 1/8
-#define RATIO_MAX 0x80000 // 8
+// ranges, all fix16
+#define OSC_HZ_MIN 0x200000      // 32
+#define OSC_HZ_MAX 0x40000000    // 16384
+#define RATIO_MIN 0x2000     // 1/8
+#define RATIO_MAX 0x80000    // 8
+#define ENV_DUR_MIN 0x0040   // 1/1024
+#define ENV_DUR_MAX 0x100000 // 32
+#define SMOOTH_HZ_MIN 0x2000 // 1/8
+#define SMOOTH_HZ_MAX 0x400000 // 128
 
 //-------- data types
 ///// inputs
@@ -79,7 +84,6 @@ typedef struct _monoFmData {
 //--- wavetable
 #define WAVE_TAB_SIZE 512
 #define WAVE_TAB_SIZE_1 511
-//#define WAVE_TAB_MAX16 0x1ff0000 // 511 * 0x10000
 #define WAVE_TAB_MAX16 0x1ffffff // (512 * 0x10000) - 1
 
 //-------------------------
@@ -92,16 +96,6 @@ moduleData * gModuleData; // module data
 static FILE* dbgFile;
 u8 dbgFlag = 0;
 u32 dbgCount = 0;
-
-//////////////
-/////////////
-// debug: osc2 * pm  * tablesize, in fix16
-//fix16 modIdxOffset;
-fract32 modIdxOffset;
-///////////
-/////////////
-
-
 #endif
 
 
@@ -147,18 +141,28 @@ static filter_1p_fr32* wave2Lp; // 1plp smoother for wave2
 static filter_1p_fr32* amp1Lp;  // 1plp smoother for amp1
 static filter_1p_fr32* amp2Lp;  // 1plp smoother for amp2
 
-//-----------------------
-//----- fwd declaration 
-// from table.h
-//extern  fract32 table_lookup_idx(fract32* tab, u32 size, fix16 idx);
+//----------------------
+//----- static function declaration
+// set primary hz
+static inline void set_hz1(fix16 hz);
+// set secondary pitch ratio - enters pitch tracking mode
+static inline void set_ratio2(const fix16 ratio);
+// set secondary frequency - leaves pitch tracking mode
+static inline void set_hz2(fix16 hz);
+// double-lookup and interpolate
+static inline fract32 lookup_wave(const fix16 idx, const fract32 wave);
+// frame calculation
+static void calc_frame(void);
+// set all parameter descriptors
+static void fill_param_desc(void);
+
 
 //----------------------
-//----- static functions
-
+//--- static func definition
 // set primary hz
 static inline void set_hz1(fix16 hz) {  
-  if( hz < HZ_MIN ) hz = HZ_MIN;
-  if( hz > HZ_MAX ) hz = HZ_MAX;
+  if( hz < OSC_HZ_MIN ) hz = OSC_HZ_MIN;
+  if( hz > OSC_HZ_MAX ) hz = OSC_HZ_MAX;
   filter_1p_fix16_in(hz1Lp, hz);
   hz1 = hz;
   if(track) {
@@ -177,8 +181,8 @@ static inline void set_ratio2(const fix16 ratio) {
 
 // set secondary frequency - leaves pitch tracking mode
 static inline void set_hz2(fix16 hz) {
-  if( hz < HZ_MIN ) hz = HZ_MIN;
-  if( hz > HZ_MAX ) hz = HZ_MAX;
+  if( hz < OSC_HZ_MIN ) hz = OSC_HZ_MIN;
+  if( hz > OSC_HZ_MAX ) hz = OSC_HZ_MAX;
   filter_1p_fix16_in(hz2Lp, hz);
   track = 0;
 }
@@ -239,7 +243,7 @@ static void calc_frame(void) {
 			);
 
   // increment and apply envelope
-  //  frameVal = mult_fr1x32x32(frameVal, env_asr_next(env));
+  frameVal = mult_fr1x32x32(frameVal, env_asr_next(env));
 
   // increment and apply hz smoothers
   if(!(hz1Lp->sync)) {
@@ -283,26 +287,7 @@ void module_init(void) {
   gModuleData->paramData = monoData->mParamData;
   gModuleData->numParams = eParamNumParams;
 
-  strcpy(gModuleData->paramDesc[eParamHz1].label, "osc 1 hz");
-  strcpy(gModuleData->paramDesc[eParamHz2].label, "osc 2 hz");
-  strcpy(gModuleData->paramDesc[eParamRatio2].label, "osc 2 ratio");
-  strcpy(gModuleData->paramDesc[eParamPm].label, "phase mod depth");
-  strcpy(gModuleData->paramDesc[eParamWave1].label, "waveshape 1");
-  strcpy(gModuleData->paramDesc[eParamWave2].label, "waveshape 2");
-  strcpy(gModuleData->paramDesc[eParamAmp1].label, "amplitude 1");
-  strcpy(gModuleData->paramDesc[eParamAmp2].label, "amplitude 2");
-  strcpy(gModuleData->paramDesc[eParamGate].label, "gate");
-  strcpy(gModuleData->paramDesc[eParamAtkDur].label, "amp env attack");
-  strcpy(gModuleData->paramDesc[eParamRelDur].label, "amp env release");
-  strcpy(gModuleData->paramDesc[eParamAtkCurve].label, "amp env atk curve");
-  strcpy(gModuleData->paramDesc[eParamRelCurve].label, "amp env rel curve");
-  strcpy(gModuleData->paramDesc[eParamHz1Smooth].label, "hz 1 smoothing");
-  strcpy(gModuleData->paramDesc[eParamHz2Smooth].label, "hz 2 smoothing");
-  strcpy(gModuleData->paramDesc[eParamPmSmooth].label, "phase mod smoothing");
-  strcpy(gModuleData->paramDesc[eParamWave1Smooth].label, "wave 1 smoothing");
-  strcpy(gModuleData->paramDesc[eParamWave2Smooth].label, "wave 2 smoothing");
-  strcpy(gModuleData->paramDesc[eParamAmp1Smooth].label, "amp 1 smoothing");
-  strcpy(gModuleData->paramDesc[eParamAmp2Smooth].label, "amp 2 smoothing");
+  fill_param_desc();
 
   // init params
   sr = SAMPLERATE;
@@ -405,13 +390,14 @@ void module_set_param(u32 idx, pval v) {
     filter_1p_fr32_in(amp2Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamGate:
-     env_asr_set_gate(env, v.s > 0);
+    env_asr_set_gate(env, v.s > 0 ? 1 : 0 );
     break;
   case eParamAtkDur:
-    env_asr_set_atk_dur(env, FIX16_TO_U16(BIT_ABS(v.fix)));
+    /// convert fix16 seconds to u32 frames, truncating
+    env_asr_set_atk_dur(env, seconds_to_frames(v.fix));
     break;
   case eParamRelDur:
-    env_asr_set_rel_dur(env, FIX16_TO_U16(BIT_ABS(v.fix)));
+    env_asr_set_rel_dur(env, seconds_to_frames(v.fix));
     break;
   case eParamAtkCurve:
     env_asr_set_atk_shape(env, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
@@ -479,6 +465,8 @@ void module_process_frame(const f32* in, f32* out) {
 		dbgCount, 
 		*out, 
 		fr32_to_float(osc2),
+		//		fr32_to_float((fract32)modIdxOffset << 3)
+		//		fr32_to_float((fract32)modIdxOffset << 16)
 		fr32_to_float((fract32)modIdxOffset)
 		);
 	dbgCount++;
@@ -489,3 +477,127 @@ void module_process_frame(const f32* in, f32* out) {
   }
 }
 #endif
+
+
+static void fill_param_desc(void) {
+  strcpy(gModuleData->paramDesc[eParamHz1].label, "osc 1 freq");
+  strcpy(gModuleData->paramDesc[eParamHz1].unit, "hz");
+  gModuleData->paramDesc[eParamHz1].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamHz1].min = OSC_HZ_MIN;
+  gModuleData->paramDesc[eParamHz1].max = OSC_HZ_MAX;
+  
+  strcpy(gModuleData->paramDesc[eParamHz2].label, "osc 2 freq");
+  strcpy(gModuleData->paramDesc[eParamHz2].unit, "hz");
+  gModuleData->paramDesc[eParamHz2].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamHz2].min = OSC_HZ_MIN;
+  gModuleData->paramDesc[eParamHz2].max = OSC_HZ_MAX;
+  
+  strcpy(gModuleData->paramDesc[eParamRatio2].label, "osc 2 ratio");
+  strcpy(gModuleData->paramDesc[eParamRatio2].unit, "");
+  gModuleData->paramDesc[eParamRatio2].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamRatio2].min = RATIO_MIN;
+  gModuleData->paramDesc[eParamRatio2].max = RATIO_MAX;
+  
+  strcpy(gModuleData->paramDesc[eParamAmp1].label, "amplitude 1");
+  strcpy(gModuleData->paramDesc[eParamAmp1].unit, "");
+  gModuleData->paramDesc[eParamAmp1].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamAmp1].min = 0;
+  gModuleData->paramDesc[eParamAmp1].max = FIX16_ONE;
+  
+  strcpy(gModuleData->paramDesc[eParamAmp2].label, "amplitude 2");
+  strcpy(gModuleData->paramDesc[eParamAmp2].unit, "");
+  gModuleData->paramDesc[eParamAmp2].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamAmp2].min = 0;
+  gModuleData->paramDesc[eParamAmp2].max = FIX16_ONE;
+
+  strcpy(gModuleData->paramDesc[eParamPm].label, "phase mod depth");
+  strcpy(gModuleData->paramDesc[eParamPm].unit, "");
+  gModuleData->paramDesc[eParamPm].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamPm].min = 0;
+  gModuleData->paramDesc[eParamPm].max = FIX16_ONE;
+  
+  strcpy(gModuleData->paramDesc[eParamWave1].label, "waveshape 1");
+  strcpy(gModuleData->paramDesc[eParamWave1].unit, "");
+  gModuleData->paramDesc[eParamWave1].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamWave1].min = 0;
+  gModuleData->paramDesc[eParamWave1].max = FIX16_ONE;
+  
+  strcpy(gModuleData->paramDesc[eParamWave2].label, "waveshape 2");
+  strcpy(gModuleData->paramDesc[eParamWave2].unit, "");
+  gModuleData->paramDesc[eParamWave2].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamWave2].min = 0;
+  gModuleData->paramDesc[eParamWave2].max = FIX16_ONE;
+  
+  strcpy(gModuleData->paramDesc[eParamGate].label, "gate");
+  strcpy(gModuleData->paramDesc[eParamGate].unit, "");
+  gModuleData->paramDesc[eParamGate].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamGate].min = 0;
+  gModuleData->paramDesc[eParamGate].max = FIX16_ONE;
+  
+  strcpy(gModuleData->paramDesc[eParamAtkDur].label, "amp env attack");
+  strcpy(gModuleData->paramDesc[eParamAtkDur].unit, "sec");
+  gModuleData->paramDesc[eParamAtkDur].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamAtkDur].min = 0;
+  gModuleData->paramDesc[eParamAtkDur].max = FIX16_ONE;
+  
+  strcpy(gModuleData->paramDesc[eParamRelDur].label, "amp env release");
+  strcpy(gModuleData->paramDesc[eParamRelDur].unit, "hz");
+  gModuleData->paramDesc[eParamRelDur].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamRelDur].min = 0;
+  gModuleData->paramDesc[eParamRelDur].max = FIX16_ONE;
+  
+  strcpy(gModuleData->paramDesc[eParamAtkCurve].label, "amp env atk curve");
+  strcpy(gModuleData->paramDesc[eParamAtkCurve].unit, "hz");
+  gModuleData->paramDesc[eParamAtkCurve].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamAtkCurve].min = 0;
+  gModuleData->paramDesc[eParamAtkCurve].max = FIX16_ONE;
+  
+  strcpy(gModuleData->paramDesc[eParamRelCurve].label, "amp env rel curve");
+  strcpy(gModuleData->paramDesc[eParamRelCurve].unit, "hz");
+  gModuleData->paramDesc[eParamRelCurve].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamRelCurve].min = 0;
+  gModuleData->paramDesc[eParamRelCurve].max = FIX16_ONE;
+  
+  strcpy(gModuleData->paramDesc[eParamHz1Smooth].label, "hz 1 smoothing");
+  strcpy(gModuleData->paramDesc[eParamHz1Smooth].unit, "hz");
+  gModuleData->paramDesc[eParamHz1Smooth].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamHz1Smooth].min = SMOOTH_HZ_MIN;
+  gModuleData->paramDesc[eParamHz1Smooth].max = SMOOTH_HZ_MAX;
+  
+  strcpy(gModuleData->paramDesc[eParamHz2Smooth].label, "hz 2 smoothing");
+  strcpy(gModuleData->paramDesc[eParamHz2Smooth].unit, "");
+  gModuleData->paramDesc[eParamHz2Smooth].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamHz2Smooth].min = SMOOTH_HZ_MIN;
+  gModuleData->paramDesc[eParamHz2Smooth].max = SMOOTH_HZ_MAX;
+  
+  strcpy(gModuleData->paramDesc[eParamPmSmooth].label, "phase mod smoothing");
+  strcpy(gModuleData->paramDesc[eParamPmSmooth].unit, "");
+  gModuleData->paramDesc[eParamPmSmooth].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamPmSmooth].min = SMOOTH_HZ_MIN;
+  gModuleData->paramDesc[eParamPmSmooth].max = SMOOTH_HZ_MAX;
+  
+  strcpy(gModuleData->paramDesc[eParamWave1Smooth].label, "wave 1 smoothing");
+  strcpy(gModuleData->paramDesc[eParamWave1Smooth].unit, "");
+  gModuleData->paramDesc[eParamWave1Smooth].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamWave1Smooth].min = SMOOTH_HZ_MIN;
+  gModuleData->paramDesc[eParamWave1Smooth].max = SMOOTH_HZ_MAX;
+  
+  strcpy(gModuleData->paramDesc[eParamWave2Smooth].label, "wave 2 smoothing");
+  strcpy(gModuleData->paramDesc[eParamWave2Smooth].unit, "");
+  gModuleData->paramDesc[eParamWave2Smooth].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamWave2Smooth].min = SMOOTH_HZ_MIN;
+  gModuleData->paramDesc[eParamWave2Smooth].max = SMOOTH_HZ_MAX;
+  
+  strcpy(gModuleData->paramDesc[eParamAmp1Smooth].label, "amp 1 smoothing");
+  strcpy(gModuleData->paramDesc[eParamAmp1Smooth].unit, "hz");
+  gModuleData->paramDesc[eParamAmp1Smooth].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamAmp1Smooth].min = SMOOTH_HZ_MIN;
+  gModuleData->paramDesc[eParamAmp1Smooth].max = SMOOTH_HZ_MAX;
+  
+  strcpy(gModuleData->paramDesc[eParamAmp2Smooth].label, "amp 2 smoothing");
+  strcpy(gModuleData->paramDesc[eParamAmp2Smooth].unit, "hz");
+  gModuleData->paramDesc[eParamAmp2Smooth].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamAmp2Smooth].min = SMOOTH_HZ_MIN;
+  gModuleData->paramDesc[eParamAmp2Smooth].max = SMOOTH_HZ_MAX;
+}
+

@@ -14,10 +14,12 @@
 
 //-----------------------------------
 //----- data types
-#define NUM_PAGES 1
+#define NUM_PAGES 2
+
 // top-level state
 typedef enum ePage_t {
   ePageDsp,
+  ePageFw
 } ePage;
 
 // keys

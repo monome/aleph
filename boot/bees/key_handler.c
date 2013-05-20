@@ -97,3 +97,47 @@ extern void key_handler_dsp(uiKey_t key, s16 val) {
   }  
   (*(curPage->redraw))();
 }
+
+
+
+
+/// FIRMWARE
+extern void key_handler_fw(uiKey_t key, s16 val) {
+  switch(key) {
+  case eKeyFnDownA:
+    // write firmware to internal flash
+    files_write_firmware(curPage->selected);
+    break;
+  case eKeyFnDownB:
+    break;
+  case eKeyFnDownC:
+    break;
+  case eKeyFnDownD:
+    break;
+    //// encoder A: scroll pages
+  case eKeyEncUpA:
+    scroll_page(1);
+    break;
+  case eKeyEncDownA:
+    scroll_page (-1);
+    break;
+    //// encoder B: scroll selection
+  case eKeyEncUpB:
+    scroll_select_clip(1,  files_get_dsp_count() );
+    break;
+  case eKeyEncDownB:
+    scroll_select_clip(-1, files_get_dsp_count() );
+    break;
+  case eKeyEncUpC:
+    break;
+  case eKeyEncDownC:
+    break;
+  case eKeyEncUpD:     
+    break;
+  case eKeyEncDownD:     
+    break;
+  default:
+    ;; // nothing
+  }  
+  (*(curPage->redraw))();
+}

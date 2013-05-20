@@ -15,6 +15,7 @@
 #include "env.h"
 #include "filters.h"
 #include "table.h"
+#include "conversion.h"
 // bfin
 #ifdef ARCH_BFIN
 #include "bfin_core.h"
@@ -239,7 +240,7 @@ static void calc_frame(void) {
 			);
 
   // increment and apply envelope
-  //  frameVal = mult_fr1x32x32(frameVal, env_asr_next(env));
+  frameVal = mult_fr1x32x32(frameVal, env_asr_next(env));
 
   // increment and apply hz smoothers
   if(!(hz1Lp->sync)) {
@@ -408,10 +409,14 @@ void module_set_param(u32 idx, pval v) {
      env_asr_set_gate(env, v.s > 0);
     break;
   case eParamAtkDur:
-    env_asr_set_atk_dur(env, FIX16_TO_U16(BIT_ABS(v.fix)));
+    /// convert fix16 seconds to u32 frames, truncating
+    //    env_asr_set_atk_dur(env, FIX16_TO_U16(BIT_ABS(v.fix)));
+    env_asr_set_atk_dur(env, seconds_to_frames(v.fix));
     break;
   case eParamRelDur:
-    env_asr_set_rel_dur(env, FIX16_TO_U16(BIT_ABS(v.fix)));
+    //    env_asr_set_rel_dur(env, FIX16_TO_U16(BIT_ABS(v.fix)));
+    //    printf("\r\n frames: %d", seconds_to_frames(v.fix));
+    env_asr_set_rel_dur(env, seconds_to_frames(v.fix));
     break;
   case eParamAtkCurve:
     env_asr_set_atk_shape(env, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
@@ -491,3 +496,4 @@ void module_process_frame(const f32* in, f32* out) {
   }
 }
 #endif
+

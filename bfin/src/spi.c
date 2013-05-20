@@ -77,6 +77,8 @@ u8 spi_process(u8 rx) {
     gModuleData->paramData[idx].value.asByte[0] = rx;
     gModuleData->paramData[idx].changed = 1; // done -> mark changed
     pv.s = gModuleData->paramData[idx].value.asInt;
+    /// fixme: i guess this is dumb,
+    /// should be more elegant use of param desc/data/changeflag
     module_set_param(idx, pv);
     byte = eCom; //reset
     return 0; // don't care

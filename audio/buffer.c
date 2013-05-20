@@ -28,11 +28,9 @@ static inline void time_to_samps(fix16* time, fix32* samps, u32 sr) {
   /// FIXME: sr is generally too big for 16.16. 
   /// for now i am going with a float multiply here.
   /// the alternatives are ugly and maybe almost as slow.
-
   fSamps = (float)sr * fix16_to_float(*time);
   samps->i = (int)fSamps;
   samps->fr = float_to_fr32(fSamps - samps->i);
-
 }
 
 //-----------------------
@@ -102,24 +100,8 @@ void buffer_tap_init(bufferTap * tap, audioBuffer* buf) {
 // very useful for delays
 void buffer_tap_sync(bufferTap* tap, bufferTap* target, fix16 offset) {
   static fix32 sampsOff;
-
-  // printf("\r\n syncing taps, time: %0x", offset);
-
   time_to_samps(&offset, &sampsOff, tap->buf->sr);
-  
-  //  printf("\r\n\r\n");
-  //  printf("\r\n samps: int %d, fract %0x", sampsOff.i, sampsOff.fr);
   tap->idx = target->idx;
   sub_fix32(&(tap->idx), &sampsOff);
-
-  //  printf("\r\n ----- before wrapping: -----");
-  //  printf("\r\n tap: int %d, fract 0x%0x", tap->idx.i, tap->idx.fr);
-  //  printf("\r\n target: int %d, fract 0x%0x", target->idx.i, target->idx.fr);
-  //  printf("\r\n -----  -----");
   fix32_wrap_range(&(tap->idx), tap->buf->frames);
-  //  printf("\r\n ----- after wrapping: -----");
-  //  printf("\r\n tap: int %d, fract 0x%0x", tap->idx.i, tap->idx.fr);
-  //  printf("\r\n target: int %d, fract 0x%0x", target->idx.i, target->idx.fr);
-  //  printf("\r\n diff: %d", target->idx.i - tap->idx.i);
-  //  printf("\r\n\r\n");
 }

@@ -191,4 +191,5 @@ CPPFLAGS = \
 
 # Extra flags to use when linking
 # LDFLAGS = -Wl,--gc-sections,-e,_trampoline -Wl,--defsym,__heap_size__=0x00080000 -nostartfile	
-LDFLAGS = -nostartfiles -Wl,-e,_trampoline
+# LDFLAGS = -nostartfiles -Wl,-e,_trampoline
+LDFLAGS = -nostartfiles

@@ -59,6 +59,7 @@ static inline void endln(void);
 
 //// line redraws
 static void draw_line_dsp(s32 n, u16 num, u8 y, u8 hl);
+static void draw_line_fw(s32 n, u16 num, u8 y, u8 hl);
 
 
 //==================================================
@@ -98,6 +99,46 @@ void redraw_dsp(void) {
   screen_line(0, CHAR_ROWS_1, "LOAD DEFAULT", 10);
 }
 
+//==================================================
+//==== redraw firmware page
+void redraw_fw(void) {
+  u8 y = 0;                       // which line
+  s32 n, nCenter;         // which list entry
+  u16 num = files_get_firmware_count();
+  /* print_dbg("\r\n count of DSP files: "); */
+  /* print_dbg_ulong(num); */
+  // print selection at center
+  nCenter = curPage->selected;
+  if (nCenter >= num) {
+    nCenter = num;
+  }
+  n = nCenter;
+  y = SCREEN_ROW_CENTER;
+  draw_line_fw(n, num, y, 15);
+  screen_hl_line(0, y, 1);
+  // print lower entries
+  while (y > 1) {
+    n--;
+    y--;
+    draw_line_fw(n, num, y, 4);
+  }
+  // re-center
+  n = nCenter;
+  y = SCREEN_ROW_CENTER;
+  // print higher entries
+  while (y < CHAR_ROWS_2) {
+    n++;
+    y++;
+    draw_line_fw(n, num, y, 4);
+  }
+  screen_line(0, 0, "FIRMWARE", 12);
+  // draw footer (function labels)
+  screen_line(0, CHAR_ROWS_1, "WRITE", 10);
+}
+
+//------ line redraws
+
+
 // draw line of dsp page
 void draw_line_dsp(s32 n, u16 num, u8 y, u8 hl) {
   screen_blank_line(0, y);
@@ -110,6 +151,19 @@ void draw_line_dsp(s32 n, u16 num, u8 y, u8 hl) {
   endln(); screen_string(0, y, lineBuf, hl); 
 }
 
+// draw line of firmware page
+void draw_line_fw(s32 n, u16 num, u8 y, u8 hl) {
+  screen_blank_line(0, y);
+
+  if (n < 0  || n >= num ) {
+    return;
+  } 
+
+  println( (const char*)files_get_firmware_name(n), 0);
+  endln(); screen_string(0, y, lineBuf, hl); 
+}
+
+//--------- utils
 
 ///// snprintf replacement
 // write to top of line buffer

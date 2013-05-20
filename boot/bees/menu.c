@@ -33,6 +33,9 @@ page_t pages[NUM_PAGES] = {
   // list:
   { "DSP", (keyHandler_t)&key_handler_dsp, (redraw_t)&redraw_dsp, 0, eModeNone, -1, 
     { ENC_THRESH_PAGESCROLL,  ENC_THRESH_LISTSCROLL, 4, 4 } },
+
+  { "FIRMWARE", (keyHandler_t)&key_handler_fw, (redraw_t)&redraw_fw, 0, eModeNone, -1, 
+    { ENC_THRESH_PAGESCROLL,  ENC_THRESH_LISTSCROLL, 4, 4 } },
 };
 
 // pointer to current page
@@ -62,6 +65,7 @@ extern void menu_deinit(void) {
 
 // top level key handler
 void menu_handleKey(uiKey_t key, s16 val) {
+
   if (key == eKeyMode) {
   /*   if (pageIdx == ePagePlay) { */
   /*     // restore saved page */
@@ -71,9 +75,9 @@ void menu_handleKey(uiKey_t key, s16 val) {
   /*     savedPageIdx = pageIdx; */
   /*     set_page(ePagePlay); */
   /*   } */
-  } else { 
-    curPage->keyHandler(key);
   }
+  curPage->keyHandler(key);
+  
 #if ARCH_LINUX
   screen_refresh();
 #endif
@@ -100,10 +104,17 @@ void set_page(ePage n) {
 //// ins -> outs -> (gathered) -> presets -> scenes -> dsp
 // scroll current page
 void scroll_page(s8 dir) {
-  /* case ePageDsp: */
-  /*   pageIdx = dir>0 ? ePageIns : ePageScenes ; */
-  /*   break; */
-  /* } */
+  switch(pageIdx) {
+  case ePageDsp:
+    pageIdx = ePageFw;
+    break;
+  case ePageFw:
+    pageIdx = ePageDsp;
+    break;
+  default:
+    pageIdx = ePageDsp;
+    break;
+  }
   set_page(pageIdx);
 }
 

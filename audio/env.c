@@ -177,24 +177,60 @@ void env_asr_set_gate(env_asr* env, u8 g) {
 fract32 env_asr_next(env_asr* env) {
   return (*(env->stateFP))(env);
 }
-
+ 
 
 //----------------------------------------
 // ---- static function defs
 
 // perform attack section 
 void env_asr_attack(env_asr* env) {
-  env->state = ENV_STATE_ATK;
-  if(env->cUp > 0) {
-    // inverted decay
-    env->stateFP = *(env_next_atk_pos);
-    env->x = ENV_MAX;
-    env->y = 0; // ramp
-  } else {
-    // uninverted growth
-    env->stateFP = *(env_next_atk_neg);
-    env->x = ENV_MIN;
-    env->y = 0; // ramp
+  if(env->cUp > 0) { // positive attack curve
+    switch(env->state) {
+    case ENV_STATE_ATK:
+    case ENV_STATE_SUS:
+      // nothing to do
+      break;
+    case ENV_STATE_OFF:
+      env->x = ENV_MAX;
+      env->y = 0;
+      env->stateFP = *(env_next_atk_pos);
+      env->state = ENV_STATE_ATK;
+      break;
+    case ENV_STATE_REL:
+      if(env->cDn >= 0) {
+	// release is uninverted decay, want inverted decay
+	env->x = sub_fr1x32(FR32_MAX, env->x);
+      }
+      env->stateFP = *(env_next_atk_pos);
+      env->state = ENV_STATE_ATK;
+      break;
+    default:
+      break;
+    }
+  } else { // negative attack curve
+    switch(env->state) {
+    case ENV_STATE_ATK:
+    case ENV_STATE_SUS:
+      // nothing to do
+      break;
+    case ENV_STATE_OFF:
+      env->x = ENV_MAX;
+      env->y = 0;
+      env->stateFP = *(env_next_atk_neg);
+      env->state = ENV_STATE_ATK;
+      break;
+    case ENV_STATE_REL:
+      if(env->cDn < 0) {
+	// release is inverted growth, want uninverted growth
+	env->x = sub_fr1x32(FR32_MAX, env->x);
+      }
+      env->stateFP = *(env_next_atk_neg);
+      env->state = ENV_STATE_ATK;
+      break;
+      
+    default:
+      break;
+    }
   }
 }
 
@@ -205,6 +241,7 @@ static void env_asr_sustain(env_asr* env) {
 }
 
 // perform release section
+/// FIXME: release during attack
 static void env_asr_release(env_asr* env) {
     env->state = ENV_STATE_REL;
  if(env->cDn >= 0) {
@@ -220,7 +257,7 @@ static void env_asr_release(env_asr* env) {
  }
 }
 
-// turn off
+// turn off (immediately)
 static void env_asr_off(env_asr* env) {
     env->state = ENV_STATE_OFF;
     env->stateFP = *(env_next_off);
