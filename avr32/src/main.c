@@ -346,18 +346,20 @@ int main (void) {
   init_ctl();
 
   /// boot default dsp
+  screen_clear();
+
   screen_line(0, 1, "loading default DSP...", 0x3f);
   screen_refresh();
   files_load_dsp_name("default.ldr");
 
-  screen_line(0, 1, "finished. press any key to continue...", 0x3f);
+  screen_line(0, 1, "press any key to continue...", 0x3f);
   screen_refresh();
 
   print_dbg("\r\n starting event loop.\r\n");
 
 
   //////
-  test_flash();
+  //  test_flash();
   ////
 
   while(1) {

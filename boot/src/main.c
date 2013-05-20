@@ -322,7 +322,7 @@ int main (void) {
 
   if(!isSwDown) {
     //    print_dbg("\r\n switch up, jumping to main");
-    /// hardcoded jump to firmware location 0x80008000
+    /// hardcoded jump to firmware location
   
     asm volatile (
     		  " mov   r0,LO(0x80010000)\n\t"

@@ -14,6 +14,7 @@
 #include "memory.h"
 #include "types.h"
 // boot
+#include "parse_hex.h"
 
 //-----------------------------------
 //----  define, typedef
@@ -105,33 +106,29 @@ void flash_write_ldr(void) {
   flashc_memcpy((void*)&(flash_nvram_data.ldrData), (const void*)bfinLdrData, bfinLdrSize, true);
 }
 
-void flash_write_firmware() {
-   u32 i, j;
-  u32 b, boff;
+/* void flash_write_firmware() { */
+/*    u32 i, j; */
+/*   u32 b, boff; */
   
-  print_dbg("\r\n\r\n fwBinData; \r\n size: ");
-  print_dbg_hex(fwBinSize);
-  print_dbg("\r\n data: \r\n");
+/*   print_dbg("\r\n\r\n fwBinData; \r\n size: "); */
+/*   print_dbg_hex(fwBinSize); */
+/*   print_dbg("\r\n data: \r\n"); */
 
-  for(j=0; j<8; j++) {
-    b = 0;
-    boff = 24;
-    for(i=0; i<4; i++) {
-      b |= ( fwBinData[i + (j  *4)] << boff );
-      boff -= 8;
-    }
-    print_dbg_hex(b);
-    print_dbg("\r\n ");
-  }
-
-
-
-  
-  flashc_memcpy( (void*)FIRMWARE_FLASH_ADDRESS, (const void*)fwBinData, fwBinSize, true);
-  // use watchdog timer for hard reset
-  // we'll jump out of the top of main() if button is lifted
-  //  wdt_reset_mcu();
-}
+/*   for(j=0; j<8; j++) { */
+/*     b = 0; */
+/*     boff = 24; */
+/*     for(i=0; i<4; i++) { */
+/*       b |= ( fwBinData[i + (j  *4)] << boff ); */
+/*       boff -= 8; */
+/*     } */
+/*     print_dbg_hex(b); */
+/*     print_dbg("\r\n "); */
+/*   } */ 
+/*   flashc_memcpy( (void*)FIRMWARE_FLASH_ADDRESS, (const void*)fwBinData, fwBinSize, true); */
+/*   // use watchdog timer for hard reset */
+/*   // we'll jump out of the top of main() if button is lifted */
+/*   //  wdt_reset_mcu(); */
+/* } */
 
 static u32 flashoff =0x80000000;
 static void print_flash(void) {
@@ -153,3 +150,29 @@ static void print_flash(void) {
   }
 }
 
+// parse a hex record and write the contents to flash if appropriate
+// return 1 if EOF, 0 otherwise
+extern u8 flash_write_hex_record(u8* data) {
+  static hexRecord_t rec;
+  static u32 addrOff = 0;
+  int err;
+  err = parse_raw_hex_record(data, &rec);
+  if(err) {
+    print_dbg("\r\n failure parsing hex record: \r\n");
+    print_dbg((const char*)data);
+  } else {
+    switch(rec.type) {
+    case HEX_EXT_LINEAR_ADDRESS:
+      addrOff = rec.address;
+      break;
+    case HEX_DATA:
+      /* print_dbg("\r\n writing firmware to flash at address: "); */
+      /* print_dbg_hex(addrOff + rec.address); */
+      flashc_memcpy( (void*)(addrOff + rec.address), rec.data, rec.count, 1);
+      break;
+    default:
+      print_dbg("\r\n unhandled hex record type: \r\n");
+      print_dbg((const char*)data);
+    }
+  }
+}

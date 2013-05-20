@@ -31,6 +31,7 @@ correct checksum means that (sum of all bytes in record) | 0xff == 0
 
 
 #include <compiler.h>
+#include "print_funcs.h"
 #include "parse_hex.h"
 
 /*
@@ -271,6 +272,16 @@ int parse_raw_hex_record( U8 *rawHexData, hexRecord_t *hexRecord )
   // Scan through the raw hex record and convert it into binary format.
   parse_record( rawHexData, hexRecord );
 
+  /* print_dbg("\r\n parsed record:"); */
+  /* print_dbg("\r\n count: "); */
+  /* print_dbg_ulong(hexRecord->count); */
+  /* print_dbg("\r\n type: "); */
+  /* print_dbg_ulong(hexRecord->type); */
+  /* print_dbg("\r\n address: "); */
+  /* print_dbg_hex(hexRecord->address); */
+  /* print_dbg("\r\n data: "); */
+  /* print_dbg_hex( *((unsigned long int *)hexRecord->data) ); */
+
   // Check the binary record and make sure it looks sane.
   retVal = validate_record( hexRecord );
   switch( retVal )
@@ -286,13 +297,21 @@ int parse_raw_hex_record( U8 *rawHexData, hexRecord_t *hexRecord )
       goto error;
     }
 
-  if (hexRecord->type != 0)
+  /* if (hexRecord->type != 0) { */
+  /*   print_dbg("\r\n parsed non-data record: \r\n"); */
+  /*   print_dbg((const char*)rawHexData); */
+  /* } */
     // DBG(( gDebugStrBufPtr, "\n**** Hex record type: %d.\n", hexRecord->type ));
 
   // No problems
+  //  print_dbg("\r\n");
+
   return 0;
 
  error:
+  print_dbg("\r\n error in validate_record, returned: ");
+  print_dbg_hex(retVal);
+  print_dbg("\r\n");
   // oops.
   // DBG(( gDebugStrBufPtr, "error: parse_raw_hex_record() failed. ValidateRecord returned: %d.\n", retVal ));
   return -1;

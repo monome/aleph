@@ -57,6 +57,8 @@ extern const u8 kScreenLines[];
 
 // send startup commands
 extern void init_oled(void);
+// clear the screen
+extern void screen_clear(void);
 // draw a pixel
 extern void screen_pixel(U16 x, U16 y, U8 a);
 //// all the character-drawing routines now return last used column position

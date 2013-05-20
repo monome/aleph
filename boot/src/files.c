@@ -217,16 +217,16 @@ void files_write_firmware_name(const char* name) {
 	// beginning of a record;
 	// send the last record if there was one
 	if(hIdx > 0) {
-	  //	  flash_write_hex_record(hexRecordData);
+	  flash_write_hex_record(hexRecordData);
 	  /// test:
-	  print_dbg((const char*)hexRecordData);
-	  print_dbg(" - ");
+	  //	  print_dbg((const char*)hexRecordData);
+	  //	  print_dbg(" - ");
 	}
 	// reset hex byte index for next record
 	hIdx =0;
-      } else {
-	hexRecordData[hIdx++] = (u8)ch;
-      }
+      }// else {
+      hexRecordData[hIdx++] = (u8)ch;
+      //      }
     }
 
     /* while( */

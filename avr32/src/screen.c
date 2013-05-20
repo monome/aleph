@@ -134,11 +134,14 @@ void init_oled(void) {
   write_command(0);
   write_command(63);
 
-  // clear OLED RAM and local screenbuffer
+  //  screen_clear();
+
+ // clear OLED RAM and local screenbuffer
   for(i=0; i<GRAM_BYTES; i++) { 
     screen[i] = 0;
     write_data(0);
   }
+  
   write_command(0xAF);	// on
 
   //  delay_ms(10) 
@@ -331,6 +334,15 @@ U8 screen_line(U16 x, U16 l, char *str, U8 hl) {
   //  print_dbg(str);
   refresh = 1;
   return NCOLS;
+}
+
+void screen_clear(void) {
+  u16 i;
+ // clear OLED RAM and local screenbuffer
+  for(i=0; i<GRAM_BYTES; i++) { 
+    screen[i] = 0;
+    //    write_data(0);
+  }
 }
 
 
