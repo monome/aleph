@@ -6,9 +6,18 @@ aleph.
 b todo
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-UPDATE spreadsheet
+new hat pcb proto
+	YES should the 5v on cv in be 10v?
+	# input gain switch
+	input gain stage
+		LED follower, LED clip
+	output gain stage
+		LED follower
+	headphone amp
+	debounce values, try 18k for both
 
 top plate fixes
+
 enclosure
 	http://www.evsmetal.com/history.php
 	http://www.mcalpin-ind.com/history.html
@@ -17,22 +26,13 @@ enclosure
 	http://www.ti.com/lit/ds/symlink/lmr62014.pdf
 	http://www.coilcraft.com/xal50xx.cfm
 	MBR0520L
-	
-input gain switch
-input gain stage
-	LED follower, LED clip
-output gain stage
-	LED follower
-headphone amp
 
-new hat pcb proto
+soft power control, redo resistor values
 
-YES should the 5v on cv in be 10v?
+UPDATE spreadsheet
 
 schem cleanup
 
-debounce values, try 18k for both
-soft power control, redo resistor values
 
 aleph infographic diagram
 
