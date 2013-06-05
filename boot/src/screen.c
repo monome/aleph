@@ -333,6 +333,15 @@ U8 screen_line(U16 x, U16 l, char *str, U8 hl) {
   return NCOLS;
 }
 
+void screen_clear(void) {
+  u16 i;
+ // clear OLED RAM and local screenbuffer
+  for(i=0; i<GRAM_BYTES; i++) { 
+    screen[i] = 0;
+    //    write_data(0);
+  }
+}
+
 
 /* // fill graphics ram with a test pattern */
 /* void screen_test_fill(void) { */

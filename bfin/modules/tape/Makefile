@@ -4,7 +4,7 @@ common = ../../../common
 module_name = tape
 
 module_obj = tape.o \
-	$(audio)/filters.o \
+	$(audio)/filter_1p.o \
 	$(audio)/buffer.o \
 	$(common)/libfixmath/fix32.o \
 	$(common)/libfixmath/fix16.o \

@@ -14,7 +14,8 @@
 #include "simple_string.h"
 // audio lib
 #include "env.h"
-#include "filters.h"
+//#include "filters.h"
+#include "filter_1p.h"
 #include "table.h"
 #include "conversion.h"
 // bfin

@@ -74,8 +74,6 @@ better parameter scaling / setting (lookups or smarter dynamic scaling ).
 
 standalones.
 
-think about graphics libraries.
-
 
 
 team todo
@@ -97,88 +95,5 @@ think about
 	extended menu via last button (up triangle)
 	macros in routing mode, for example: insert trigger here (preserves routing to existing target)
 	operator page, each operator can have menu button which calls custom UI (ie, list editor)
-
-
-
-
-avr32
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-BEES port / finish
-	UI glue
-	filesystem glue
-	DSP selection page
-	presets page
-	scenes page
-	numerical representation abstraction
-	op re-ordering and deletion
-
-new operators:
-	linear map
-	range select
-	split
-	metronome
-	sequence
-	CV input
-	HID input
-	(HID output ?)
-	(CV output ?)
-
-UI refinement
-	right-alignment
-	setter fields (numbers and strings)
-	line inversion
-	timed select / scroll
-	encoder acceleration
-
-operator timing layer
-
-HID layer
-FTDI layer
-
-MMC bootloader
-
-
-fin
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-patches
-	FM synth
-		envelopes
-	   	waveshaping tables
-
-	granular engine
-		envelopes
-		scheduler 
-
-	echo
-		parameter scaling
-		looping-mode controls
-
-	analysis / resynth  / dynamics
-		 fft centroid / flatness
-		 fundamental (autocorrelation)
-		 amplitude
-
-	phase vocoder
-	      fft (high res)
-	      ifft (phase preserving)
-
-
-
-
-general
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-nomenclature
-	preset, param-set
-	series
-	op
-	output/input
-	network
-	controller, dsp
-use cases
-
-cost analysis
-
-description, abstract, functional uses
-branding
 
 

@@ -19,6 +19,16 @@
 /// make it static to main.c when done
  extern ctlnet_t ctlnet;
 
+//---- global buffers
+
+// RAM buffer for blackfin firmware
+extern volatile u8* bfinLdrData;
+// size of bfin firmware
+extern volatile u32 bfinLdrSize;
+// RAM buffer for Scene data
+extern volatile u8* sceneData;
+
+
 // app timer tick counter
 extern volatile U64 tcTicks;
 // screen refresh flag

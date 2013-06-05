@@ -24,14 +24,18 @@ static FILE* pSceneFile;
 static char sceneFilename[32];
 #endif 
 
+
+/// 
+
+
 //---------------------------
 // static vars
-// descriptors for all scenes
+// descriptors for all scenes on file
 static sceneDesc_t* scenes;
 
 //-----------------------------
 // extern vars
-// global pointer to scene data
+// global pointer to current scene data
 sceneData_t* gScene;
 
 void scene_init(void) {
@@ -61,7 +65,6 @@ scene_store_flash(u32 idx) {
 // store 
 void scene_store_file(u32 idx) {
 #if ARCH_AVR32
-
 
 
 #else

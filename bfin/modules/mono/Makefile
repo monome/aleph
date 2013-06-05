@@ -4,7 +4,7 @@ common = ../../../common
 module_name = mono
 module_obj = mono_fm.o \
 	$(audiolib)/env.o \
-	$(audiolib)/filters.o \
+	$(audiolib)/filter_1p.o \
 	$(audiolib)/table.o \
 	$(audiolib)/conversion.o \
 	$(common)/libfixmath/fix32.o \

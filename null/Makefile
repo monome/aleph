@@ -29,7 +29,7 @@ APP_OBJ  = main.o \
 
 MONO_FM_OBJ :=  mono_fm.o \
 	$(AUDIOLIB)/env.o \
-	$(AUDIOLIB)/filters.o \
+	$(AUDIOLIB)/filter_1p.o \
 	$(AUDIOLIB)/table.o \
 	$(AUDIOLIB)/conversion.o
 
@@ -38,7 +38,7 @@ mono_fm : $(APP_OBJ) $(MONO_FM_OBJ)
 	$(CC) $(CFLAGS) $(INC) -o $@ $^ $(LDFLAGS)
 
 TAPE_OBJ :=  tape.o \
-	$(AUDIOLIB)/filters.o \
+	$(AUDIOLIB)/filter_1pole.o \
 	$(AUDIOLIB)/buffer.o \
 
 tape : $(APP_OBJ) $(TAPE_OBJ)

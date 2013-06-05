@@ -152,7 +152,7 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     pval.asByte[i] = (u8)(x & 0xff);
   }
-  pDesc->min = pval.asFloat;
+  pDesc->min = pval.asInt;
   // read max
   for(i=0; i<4; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
@@ -161,7 +161,7 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     pval.asByte[i] = (u8)(x & 0xff);
   }
-  pDesc->max = pval.asFloat;
+  pDesc->max = pval.asInt;
 }
 
 // get module name
@@ -175,7 +175,7 @@ void bfin_get_module_name(volatile char* buf) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   for(i=0; i<MODULE_NAME_LEN; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, 0); //dont care
+    spi_write(BFIN_SPI, 0); // dont care
     spi_read(BFIN_SPI, &x);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     name[i] = (char)(x & 0xff);
@@ -202,6 +202,16 @@ void bfin_report_params(void) {
 
       print_dbg("\r\n got pdesc : ");
       print_dbg((const char* )pdesc.label);
+
+
+      //  print_dbg("\r\n added param: ");
+      //  print_dbg(pdesc->label);
+      print_dbg("\r\n min: 0x");
+      print_dbg_hex(pdesc.min);
+      print_dbg("\r\n max: 0x");
+      print_dbg_hex(pdesc.max);
+      print_dbg("\r\n");
+
     }
   }
 }

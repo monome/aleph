@@ -7,7 +7,7 @@
 #include <math.h>
 //#include <cmath>
 // aleph
-#include "filters.h"
+#include "filter_1p.h"
 
 
 #ifdef ARCH_BFIN

@@ -83,6 +83,12 @@ void menu_handleKey(uiKey_t key, s16 val) {
 #endif
 }
 
+// refresh gfx
+extern void menu_refresh(void) {
+  curPage->redraw();
+}
+
+
 //-----------------------------------
 //----- static function definitions
 
@@ -150,3 +156,4 @@ void scroll_select_wrap(s8 dir, s32 max) {
 void scroll_select(s8 dir, s32 max) {
   scroll_select_wrap(dir, max);
 }
+

@@ -20,10 +20,6 @@
 //------------------------
 // extern variables
 
-// RAM buffer for firmware (.bin)
-extern volatile u8* fwBinData;
-// size of firmware
-extern volatile u32 fwBinSize;
 // RAM buffer for blackfin firmware (.ldr)
 extern volatile u8 *bfinLdrData;
 // size of bfin firmware

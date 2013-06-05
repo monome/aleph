@@ -17,8 +17,9 @@
 #include "filesystem.h"
 #include "flash.h"
 #include "memory.h"
-// boot
-// #include "parse_hex.h"
+#include "screen.h"
+#include "menu.h"
+
 
 // ---- directory list class
 // params
@@ -128,7 +129,7 @@ void files_load_dsp_name(const char* name) {
     print_dbg(name);
     /// FIXME:
     /// arrg, why is fl_fread intermittently broken?
-    /// check our media access functions against fat_filelib.c
+    /// check our media access functions against fat_filelib.c, i guess
     //    bytesRead = fl_fread((void*)bfinLdrData, 1, size, fp);
     fake_fread(bfinLdrData, size, fp);
 
@@ -203,10 +204,17 @@ void files_write_firmware_name(const char* name) {
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
   cpu_irq_disable_level(UI_IRQ_PRIORITY);
 
+  screen_clear();
+  screen_line(0, 0, "writing firmware,", 0xf);
+  screen_line(0, 1, "please wait...", 0xf);
+  screen_refresh();
+
   fp = list_open_file_name(&binList, name, "r", &size);
 
   print_dbg("\r\n writing firmware to flash... ");
   if( fp != NULL) {
+
+    
 
     /////
     /// now using intel-hex format
@@ -229,6 +237,7 @@ void files_write_firmware_name(const char* name) {
       //      }
     }
 
+    /// raw binary (not good)
     /* while( */
     /* ch = fl_getc(fp); */
     /* if(ch == EOF) { */
@@ -271,7 +280,7 @@ void list_scan(dirList_t* list, const char* path) {
   }
 }
 
-// search for a given filename in a listed directory. return size in pointer arg
+// search for a given filename in a listed directory. set size by pointer
 void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u32* size) {
 
   FL_DIR dirstat;

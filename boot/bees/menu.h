@@ -54,4 +54,8 @@ extern void menu_handleKey(uiKey_t key, s16 value);
 // parameter feedback
 extern void param_feedback(u16 paramIdx, fix16 val);
 
+// refresh the current page
+extern void menu_refresh(void);
+
+			      
 #endif // header guard

@@ -48,8 +48,6 @@ typedef struct _preset {
 //==============================
 //=== vars
 //extern preset_t* presets;
-///// FIXME:
-//// 121218: testing with static presets since SDRAM broken
 extern preset_t presets[NET_PRESETS_MAX];
 
 //========================

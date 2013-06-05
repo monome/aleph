@@ -8,7 +8,7 @@
 
 // std
 #include <stdio.h>
-//#include <string.h>
+#include <string.h>
 
 // asf
 #ifdef ARCH_AVR32
@@ -661,8 +661,8 @@ u8 net_get_out_preset(u32 id) {
 
 // add a new parameter
 void net_add_param(u32 idx, volatile ParamDesc * pdesc) {
-  net->params[net->numParams].desc = *pdesc;  
-  //  memcpy( &(net->params[net->numParams].desc), (const void*)pdesc, sizeof(ParamDesc) );make
+  //net->params[net->numParams].desc = *pdesc;  
+  memcpy( &(net->params[net->numParams].desc), (const void*)pdesc, sizeof(ParamDesc) );
   /* print_dbg("\r\n added param: "); */
   /* print_dbg_ulong(idx); */
   /* print_dbg(" , addr: "); */
@@ -675,7 +675,8 @@ void net_add_param(u32 idx, volatile ParamDesc * pdesc) {
 
   net->params[net->numParams].idx = idx; 
   net->params[net->numParams].preset = 1; 
-  net->params[net->numParams].data.value.asInt = fix16_from_float(pdesc->min);
+  net->params[net->numParams].data.value.asInt = pdesc->min; //fix16_from_float(pdesc->min);
+  //  net->params[net->numParams].data.value.asInt = 0;
   net->numParams++;
 
   /* print_dbg("\r\n ctlnet: added parameter at index "); */
