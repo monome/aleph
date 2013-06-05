@@ -97,3 +97,42 @@ think about
 	operator page, each operator can have menu button which calls custom UI (ie, list editor)
 
 
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+CODE DIRECTORIES:
+
+things are a bit messy (sorry) but here are the most important areas:
+
+----- control 
+
+aleph/avr32 : 
+	avr32-specific stuff. this should really be restructured so that low-level stuff can be separate and re-usable by different applications. 
+	run 'make' here to build the main avr32 firmware (aleph/avr32/aleph.hex)
+ 
+aleph/asf-x.x.x : a copy of the Atmel Software Framework (peripheral drivers and such), partly stripped down and very lightly modified for our purposes. there's still a lot of useless example projects and so on.
+
+aleph/bees  : 
+	BEES is the random provisional name for our main control routing/management application. this is all the platform-agnostic stuff in that program. in here there is also a linux program to emulate the aleph's interface, that has not seen much use or attention since we got the hardware working.
+	run 'make' here to build the interface tester for linux, such as it is (aleph/bees/bees)
+
+aleph/common : 
+	should be just stuff that is used by both the bfin and the avr, like SPI protocol headers and 16.16 fixed-point math routines. in practice a bunch of crap has snuck in here like the FAT library and headers that are used by both the test and delployment versions of BEES. should clean this up.
+
+aleph/boot  : 
+	avr32 bootloader. confusingly, this has its own stripped-down copy of bees/ since it uses much of the UI element stuff with different menus.
+	run 'make' here to build the avr32 bootloader (aleph/boot/aleph-boot.elf), 'make program' to load it over JTAG.
+
+
+----- audio
+
+aleph/bfin  : 
+	blackfin stuff. unlike the avr32 code, i made these makefiles from scratch, so they are more basic but perhaps allow for a more sensible organization of sources. aleph/bfin/src is base stuff that is common to all DSP code. aleph/bfin/modules contains individual DSP projects, usually just one sourcefile each with an audio callback and so forth. 
+	run 'make' in aleph/bfin/modules/foo to build the 'foo' modlue (foo.ldr).
+
+aleph/audio : common audio functions implemented in fixed-point for speed on the blackfin. still very modest as yet, could use lots more things. whatever filters/oscillators/analysis you can think of. could be more sensibly organized in an OOP fashion, on the other hand i'm ok with keeping it pretty basic.
+
+aleph/null : a silly little portaudio-based program to test blackfin module code. so far i've been writing modules in here and then copying them over to aleph/bfin/modules, which is very dumb but i haven't the time to make them synchronous. 
+	run 'make' here to build the audio testing program for linux (aleph/null/null)
+
+
+[EMB, jun 4]
