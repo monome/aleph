@@ -1,0 +1,172 @@
+;; -*- mode: emacs-lisp; coding: emacs-mule; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Sun Jan  6 23:08:46 2013
+;; Desktop file format version 206
+;; Emacs version 23.3.1
+
+;; Global section:
+(setq desktop-missing-file-warning nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+(setq search-ring '("fl_opendir"))
+(setq regexp-search-ring nil)
+(setq register-alist nil)
+(setq file-name-history '("~/scratch/fatlib/fat_io_lib/" "~/scratch/fatlib/" "~/scratch/fatlib/fat_io_lib/example.c" "~/scratch/fatlib/fat_io_lib/" "~/scratch/fatlib/" "~/scratch/fatlib/main.c" "~/scratch/fatlib/"))
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 206
+  "/home/emb/scratch/fatlib/fat_io_lib/fat_filelib.c"
+  "fat_filelib.c"
+  'c-mode
+  '(abbrev-mode)
+  47424
+  '(5392 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/scratch/fatlib/main.c"
+  "main.c"
+  'c-mode
+  '(abbrev-mode)
+  754
+  '(134 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/scratch/fatlib/fat_io_lib/fat_filelib.h"
+  "fat_filelib.h"
+  'c-mode
+  '(abbrev-mode)
+  3345
+  '(3314 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  nil
+  "fat_io_lib"
+  'dired-mode
+  nil
+  935
+  '(937 nil)
+  t
+  '("/home/emb/scratch/fatlib/fat_io_lib/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/scratch/fatlib/fat_io_lib/Media Access API.txt"
+  "Media Access API.txt"
+  'text-mode
+  nil
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/scratch/fatlib/fat_io_lib/COPYRIGHT.txt"
+  "COPYRIGHT.txt"
+  'text-mode
+  nil
+  16724
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/scratch/fatlib/fat_io_lib/Configuration.txt"
+  "Configuration.txt"
+  'text-mode
+  nil
+  1459
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/scratch/fatlib/fat_io_lib/version.txt"
+  "version.txt"
+  'text-mode
+  nil
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/scratch/fatlib/fat_io_lib/License.txt"
+  "License.txt"
+  'text-mode
+  nil
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/scratch/fatlib/fat_io_lib/History.txt"
+  "History.txt"
+  'text-mode
+  nil
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . iso-latin-1-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/scratch/fatlib/fat_io_lib/API.txt"
+  "API.txt"
+  'text-mode
+  nil
+  830
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . iso-latin-1-dos)))
+
+(desktop-create-buffer 206
+  nil
+  "fatlib"
+  'dired-mode
+  nil
+  260
+  '(nil nil)
+  t
+  '("/home/emb/scratch/fatlib/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/scratch/fatlib/fat_io_lib/example.c"
+  "example.c"
+  'c-mode
+  '(abbrev-mode)
+  1427
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+
+(desktop-create-buffer 206
+  "/home/emb/scratch/fatlib/fat_io_lib/fat_cache.c"
+  "fat_cache.c"
+  'c-mode
+  '(abbrev-mode)
+  2052
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-dos)))
+

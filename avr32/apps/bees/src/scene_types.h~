@@ -1,0 +1,20 @@
+/* scene_types.h
+ */
+#define SCENE_COUNT 8
+#define SCENE_NAME_LEN 24
+
+//----------------------------------------
+//----- types
+
+// scene descriptor type
+typedef struct _sceneDesc {
+  char sceneName[SCENE_NAME_LEN];
+  char moduleName[MODULE_NAME_LEN];
+} sceneDesc_t;
+
+// scene storage layout type
+typedef struct _sceneData {
+  sceneDesc_t desc;
+  ctlnet_t net;
+  preset_t presets[NET_PRESETS_MAX];
+} sceneData_t;

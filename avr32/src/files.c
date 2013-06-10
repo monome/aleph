@@ -100,7 +100,7 @@ const volatile char* files_get_dsp_name(u8 idx) {
 // return filename for scene given index in list
 const volatile char* files_get_scene_name(u8 idx) {
   return list_get_name(&sceneList, idx);
-s}
+}
 
 
 // load a blacfkin executable by index */
@@ -126,15 +126,23 @@ void files_load_dsp_name(const char* name) {
     /// arrg, why is fl_fread intermittently broken?
     /// check our media access functions against fat_filelib.c, i guess
     //    bytesRead = fl_fread((void*)bfinLdrData, 1, size, fp);
+
+    print_dbg("\r\n bfinLdrData : @0x");
+    print_dbg_hex( (u32)bfinLdrData );
+
+
     fake_fread(bfinLdrData, size, fp);
+    // print_dbg("\r\n finished fakefread");
     fl_fclose(fp);
     bfinLdrSize = size;
+    print_dbg("\r\n loading bfin from buf");
     bfin_load_buf();
-
+    print_dbg("\r\n finished load");
   } else {
     print_dbg("\r\n error: fp was null in files_load_dsp_name \r\n");
   }
- 
+
+
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
   cpu_irq_enable_level(UI_IRQ_PRIORITY);
 }
@@ -174,24 +182,15 @@ u8 files_get_dsp_count(void) {
 }
 
 //----- scenes management
-// return filename for DSP given index in list
-const volatile char* files_get_dsp_name(u8 idx) {
-  return list_get_name(&dspList, idx);
-}
-
 // return filename for scene given index in list
-const volatile char* files_get_scene_name(u8 idx) {
-  return list_get_name(&sceneList, idx);
-s}
 
-
-// load a blacfkin executable by index */
-void files_load_dsp(u8 idx) {  
-  files_load_dsp_name((const char*)files_get_dsp_name(idx));
+// load scene by index */
+void files_load_scene(u8 idx) {  
+  files_load_scene_name((const char*)files_get_scene_name(idx));
 }
 
 // search for specified dsp file and load it
-void files_load_dsp_name(const char* name) {
+void files_load_scene_name(const char* name) {
   void* fp;
   //  u32 bytesRead;
   u32 size = 0;
@@ -202,19 +201,26 @@ void files_load_dsp_name(const char* name) {
   fp = list_open_file_name(&dspList, name, "r", &size);
 
   if( fp != NULL) {	  
-    print_dbg("\r\n found file, loading dsp ");
-    print_dbg(name);
-    /// FIXME:
-    /// arrg, why is fl_fread intermittently broken?
-    /// check our media access functions against fat_filelib.c, i guess
-    //    bytesRead = fl_fread((void*)bfinLdrData, 1, size, fp);
-    fake_fread(bfinLdrData, size, fp);
-    fl_fclose(fp);
-    bfinLdrSize = size;
-    bfin_load_buf();
+    /////////
+    /////////
+    /// put this in
+    /////////
+    /////////////
+
+
+    /* print_dbg("\r\n found file, loading dsp "); */
+    /* print_dbg(name); */
+    /* /// FIXME: */
+    /* /// arrg, why is fl_fread intermittently broken? */
+    /* /// check our media access functions against fat_filelib.c, i guess */
+    /* //    bytesRead = fl_fread((void*)bfinLdrData, 1, size, fp); */
+    /* fake_fread(bfinLdrData, size, fp); */
+    /* fl_fclose(fp); */
+    /* bfinLdrSize = size; */
+    /* bfin_load_buf(); */
 
   } else {
-    print_dbg("\r\n error: fp was null in files_load_dsp_name \r\n");
+    print_dbg("\r\n error: fp was null in files_load_scene_name \r\n");
   }
  
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
@@ -222,8 +228,22 @@ void files_load_dsp_name(const char* name) {
 }
 
 
-// store .ldr as default in internal flash
-void files_store_default_dsp(u8 idx) {
+  // store scene to sdcard
+void files_store_scene(u8 idx) {
+  // fill the scene RAM buffer from current state of system
+  //  scene__buf();
+  // write it to sdcard
+
+}
+  // store scene to sdcard
+void files_store_scene_name(const char* name) {
+  //  scene_write_buf();
+}
+
+
+
+// store scene as default in internal flash
+void files_store_default_scene(u8 idx) {
   const char* name;
   void* fp;	  
   u32 size;
@@ -231,18 +251,19 @@ void files_store_default_dsp(u8 idx) {
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
   cpu_irq_disable_level(UI_IRQ_PRIORITY);
 
-  name = (const char*)files_get_dsp_name(idx)\  fp = list_open_file_name(&dspList, name, "r", &size);
+  name = (const char*)files_get_scene_name(idx);
+  fp = list_open_file_name(&dspList, name, "r", &size);
 
   if( fp != NULL) {
     print_dbg("\r\n writing (this may take a while)...");
-    bfinLdrSize = size;
-    fl_fread((void*)bfinLdrData, 1, size, fp);
-    flash_write_ldr();
+    //    bfinLdrSize = size;
+    //    fl_fread((void*)bfinLdrData, 1, size, fp);
+    //    flash_write_ldr();
     fl_fclose(fp);
-    print_dbg("finished writing LDR to flash");
+    print_dbg("finished storing default scene");
     
   } else {
-    print_dbg("\r\n error: fp was null in files_store_default_dsp \r\n");
+    print_dbg("\r\n error: fp was null in files_store_default_scene \r\n");
   }
 
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
@@ -250,7 +271,7 @@ void files_store_default_dsp(u8 idx) {
 }
 
 // return count of dsp files
-u8 files_get_dsp_count(void) {
+u8 files_get_scene_count(void) {
   return dspList.num;
 }
 

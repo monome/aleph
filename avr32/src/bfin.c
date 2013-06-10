@@ -1,4 +1,4 @@
-/* bfin.c
+ /* bfin.c
    aleph-avr32
 
    routines to communicate with bf533 DSP over SPI
@@ -19,50 +19,106 @@
 // aleph/avr32
 #include "aleph_board.h"
 #include "filesystem.h"
+#include "flash.h"
 #include "global.h"
 #include "types.h"
 #include "util.h"
 #include "bfin.h"
 
-// load bfin executable byte-by-byte
-void bfin_load(U32 size, void* fp) {
-  u64 i; /// byte index in .ldr
-  u8 data;
-  volatile U64 delay;
+//--------------------------------------
+//--- static
 
-  // reset bfin
+static void bfin_start_transfer(void);
+static void bfin_end_transfer(void); 
+static void bfin_transfer_byte(u8 data);
+
+static void bfin_transfer_byte(u8 data) {
+    while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { 
+      print_dbg("\r\n HWAIT asserted..."); 
+    }
+    spi_write(BFIN_SPI, data);
+}
+
+void bfin_start_transfer(void) {
+  // FIXME
+  volatile u64 delay;
   gpio_set_gpio_pin(BFIN_RESET_PIN);  
   delay = 30; while (--delay > 0) {;;}
   gpio_clr_gpio_pin(BFIN_RESET_PIN);
   delay = 30; while (--delay > 0) {;;}
   gpio_set_gpio_pin(BFIN_RESET_PIN);  
   delay = 3000; while (--delay > 0) {;;}
-  // send the .ldr data
-  i = 0;
-  print_dbg("\r\n loading bfin, ");
-  print_dbg_ulong(size);
-  print_dbg(" bytes, FP: ");
-  print_dbg_hex((long unsigned int)fp);
-  print_dbg("\r\n");
 
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  while(i<size) {
-    data = fl_fgetc(fp);
-    while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { 
-      print_dbg("\r\n HWAIT asserted..."); 
-    }
-    spi_write(BFIN_SPI, data);
-    i++;
-  }
-  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-
-  print_dbg("\r\n done loading; waiting... ");
-  delay_ms(200);
-  print_dbg("\r\n done waiting; reporting... ");
-
-  bfin_report_params();
-  
 }
+
+void bfin_end_transfer(void) {
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  //  print_dbg("\r\n done loading; waiting... ");
+  delay_ms(200);
+  //  print_dbg("\r\n done waiting; reporting... ");
+  bfin_report_params();
+}
+
+//---------------------------------------
+//--- extern
+
+// load bfin executable from the RAM buffer
+void bfin_load_buf(void) {
+  u64 i; /// byte index in .ldr
+  //  u8 data;
+  //  volatile u64 delay;
+
+  if(bfinLdrSize > BFIN_LDR_MAX_BYTES) {
+    print_dbg("\r\n bfin load error: size : "); print_dbg_hex(bfinLdrSize);
+    return;
+  }
+
+  print_dbg("\r\n\r\n bfin_load_buf; \r\n size: ");
+  print_dbg_hex(bfinLdrSize);
+  print_dbg("\r\n data: ");
+  
+  print_dbg_hex( (bfinLdrData[0] << 3) | (bfinLdrData[1] << 2) | (bfinLdrData[2]<<1) | bfinLdrData[3]); 
+  print_dbg("\r\n");
+  print_dbg_hex( (bfinLdrData[4] << 7) | (bfinLdrData[5] << 6) | (bfinLdrData[6]<<5) | bfinLdrData[7]); 
+  print_dbg("\r\n");
+  print_dbg_hex( (bfinLdrData[8] << 11) | (bfinLdrData[9] << 2) | (bfinLdrData[10]<<1) | bfinLdrData[11]); 
+  print_dbg("\r\n");
+  print_dbg_hex( (bfinLdrData[12] << 15) | (bfinLdrData[13] << 14) | (bfinLdrData[14]<<13) | bfinLdrData[15]); 
+  print_dbg("\r\n");
+
+
+
+  bfin_start_transfer();
+
+  for(i=0; i<bfinLdrSize; i++) {
+    //    data = fl_fgetc(fp);
+    bfin_transfer_byte(bfinLdrData[i]);
+    //    delay = 0; while(delay < 0x80) { delay++; }
+  }
+
+  bfin_end_transfer();
+}
+
+/* // load an .ldr from internal flash */
+/* void bfin_load_flash(void) { */
+/*  u64 i; /// byte index in .ldr */
+/*  u32 size; */
+/*   u8 data; */
+
+/*   flash_read_ldr_data(); */
+
+/*   bfin_start_transfer(); */
+/*   for(i=0; i<bfinLdrSize; i++) { */
+/*     bfin_transfer_byte(bfinLdrData[i]); */
+/*     /\* for(i=0; i<size; i++) { *\/ */
+/*   /\*   flash_read_ldr_byte(&data, i); *\/ */
+/*   /\*   bfin_transfer_byte(data); *\/ */
+/*   /\* } *\/ */
+ 
+/*   bfin_end_transfer(); */
+/* } */
+
 
 //void bfin_set_param(u8 idx, f32 x ) {
 void bfin_set_param(u8 idx, fix16_t x ) {
@@ -152,7 +208,7 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     pval.asByte[i] = (u8)(x & 0xff);
   }
-  pDesc->min = pval.asInt;
+  pDesc->min = pval.asFloat;
   // read max
   for(i=0; i<4; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
@@ -161,7 +217,7 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     pval.asByte[i] = (u8)(x & 0xff);
   }
-  pDesc->max = pval.asInt;
+  pDesc->max = pval.asFloat;
 }
 
 // get module name
@@ -175,7 +231,7 @@ void bfin_get_module_name(volatile char* buf) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   for(i=0; i<MODULE_NAME_LEN; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, 0); // dont care
+    spi_write(BFIN_SPI, 0); //dont care
     spi_read(BFIN_SPI, &x);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     name[i] = (char)(x & 0xff);
@@ -202,16 +258,6 @@ void bfin_report_params(void) {
 
       print_dbg("\r\n got pdesc : ");
       print_dbg((const char* )pdesc.label);
-
-
-      //  print_dbg("\r\n added param: ");
-      //  print_dbg(pdesc->label);
-      print_dbg("\r\n min: 0x");
-      print_dbg_hex(pdesc.min);
-      print_dbg("\r\n max: 0x");
-      print_dbg_hex(pdesc.max);
-      print_dbg("\r\n");
-
     }
   }
 }

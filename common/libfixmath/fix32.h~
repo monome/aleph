@@ -1,0 +1,29 @@
+#ifndef _ALEPH_FIX32_H_
+#define _ALEPH_FIX32_H_
+
+
+#ifdef ARCH_BFIN // bfin
+#include "fract_math.h"
+#include <fract2float_conv.h>
+#else // linux
+#include "fract32_emu.h"
+#endif
+
+#include "fix.h"
+
+typedef struct _fix32 {
+  s32 i;
+  fract32 fr;
+} fix32;
+
+// add b to a with wrapping
+// common use case: incrementing index to audiobuffer
+extern void add_fix32_wrap(fix32* a, fix32* b);
+
+// subtract
+extern void sub_fix32_wrap(fix32* a, fix32* b);
+
+// convert fix16 to fix32
+extern void fix16_to_fix32(fix16* in, fix32* out);
+
+#endif // h guard

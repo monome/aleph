@@ -43,6 +43,12 @@ void init_mem(void) {
 
 // allocate and return pointer
 heap_t alloc_mem(u32 bytes) {
+  print_dbg("\r\n allocating memory, bytes: 0x");
+  print_dbg_hex(bytes);
+
+  print_dbg("\r\n location: 0x");
+  print_dbg_hex(heapOffset);
+
   u32 tmp = heapOffset + bytes;
   u8 mtmp = tmp % 4;
   heap_t ret;
@@ -51,8 +57,8 @@ heap_t alloc_mem(u32 bytes) {
     tmp += ( 4 - mtmp );
   }
   if (tmp < heapSize) {
-    ret = pHeapStart;
     heapOffset = tmp;
+    ret = pHeapStart + heapOffset;
   } else {
     ret = (heap_t)ALLOC_FAIL;
   }

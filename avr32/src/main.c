@@ -39,6 +39,7 @@
 // avr32
 #include "aleph_board.h"
 #include "adc.h"
+#include "app.h"
 #include "app_timers.h"
 #include "bfin.h"
 #include "encoders.h"
@@ -57,11 +58,12 @@
 
 //==================================================
 //====  variables
-
+// flag for firstrun
+static u8 firstrun = 0;
 //  flag to wait for startup button press
 static u8 startup = 1;
 // mode switch
-static u8 mode = 0;
+// static u8 mode = 0;
 
 //=================================================
 //==== declarations
@@ -119,7 +121,7 @@ static void init_avr32(void) {
 // control / network / logic init
 static void init_ctl(void) {
   // disable interrupts
-    cpu_irq_disable();
+  cpu_irq_disable();
 
   // intialize the event queue
   init_events();
@@ -129,9 +131,6 @@ static void init_ctl(void) {
   init_encoders();
   print_dbg("\r\n init_encoders");
 
-  //memory manager
-  init_mem();  
-  print_dbg("\r\n init_mem");
 
   // send ADC config
   init_adc();
@@ -140,19 +139,9 @@ static void init_ctl(void) {
   // start application timers
   init_app_timers();
   print_dbg("\r\n init_timers");
-  
-  //// BEES:
-  net_init();
-  print_dbg("\r\n net_init");
 
-  preset_init();
-  print_dbg("\r\n preset_init");
-
-  scene_init();
-  print_dbg("\r\n scene_init");
-
-  menu_init();
-  print_dbg("\r\n menu_init");
+  // initialize the application
+  app_init();
 
   // enable interrupts
   cpu_irq_enable();
@@ -160,7 +149,7 @@ static void init_ctl(void) {
 
 // app event loop
 static void check_events(void) {
-  static event_t e;  
+  static event_t e;
 
   if( get_next_event(&e) ) {
 
@@ -175,130 +164,22 @@ static void check_events(void) {
 	  || e.eventType == kEventSwitchDown2
 	  || e.eventType == kEventSwitchDown3
 	  || e.eventType == kEventSwitchDown4
-	  ) {  
+	  ) {
 	startup = 0;
-	/// FIXME: should go to some default UI state here
+	app_launch(firstrun);
 	return;
       }
     } else {
-    
-      switch(e.eventType) {
-
-      case kEventRefresh:
-	screen_refresh();
-	break;
-	//----- function switches
-      case kEventSwitchDown0: 
-	menu_handleKey(eKeyFnDownA, e.eventData);
-	break;
-      case kEventSwitchUp0:
-	menu_handleKey(eKeyFnUpA, e.eventData);
-	break;
-      case kEventSwitchDown1:
-	menu_handleKey(eKeyFnDownB, e.eventData);
-	break;
-      case kEventSwitchUp1:
-	menu_handleKey(eKeyFnUpB, e.eventData);
-	break;
-      case kEventSwitchDown2:
-	menu_handleKey(eKeyFnDownC, e.eventData);
-	break;
-      case kEventSwitchUp2:
-	menu_handleKey(eKeyFnUpC, e.eventData);
-	break;
-      case kEventSwitchDown3:
-	menu_handleKey(eKeyFnDownD, e.eventData);
-	break;
-      case kEventSwitchUp3:
-	menu_handleKey(eKeyFnUpD, e.eventData);
-	break;
-	/// footswitches
-      case kEventSwitchDown6:
-	print_dbg("\r\n footswitch1 down");
-	break;
-      case kEventSwitchUp6:
-	print_dbg("\r\n footswitch1 up");
-	break;
-      case kEventSwitchDown7:
-	print_dbg("\r\n footswitch2 down");
-	break;
-      case kEventSwitchUp7:
-	print_dbg("\r\n footswitch2 up");
-	break;
-	// mode switch
-      case kEventSwitchDown4:
-	mode ^= 1;
-	if(mode) { gpio_set_gpio_pin(LED_MODE_PIN); }
-	else { gpio_clr_gpio_pin(LED_MODE_PIN); }
-	menu_handleKey(eKeyMode, e.eventData);
-	break;
-      case kEventSwitchUp4:
-	break;
-	// power switch
-      case kEventSwitchDown5:
+      if(e.eventType == kEventSwitchDown5) {
 	screen_line(0, 0, "powering down!", 0x3f);
 	print_dbg("\r\n AVR32 received power down switch event");
 	screen_refresh();
 	gpio_clr_gpio_pin(POWER_CTL_PIN);
-	break;
-      case kEventSwitchUp5:
-	break;
-      case kEventEncoder0:
-			print_dbg("\r\n encoder 0");
-      	if(e.eventData > 0) {
-      	  menu_handleKey(eKeyEncUpD, e.eventData);
-      	} else {
-      	  menu_handleKey(eKeyEncDownD, e.eventData);
-      	}
-      	break;
-      case kEventEncoder1:
-	print_dbg("\r\n encoder 1");
-	if(e.eventData > 0) {
-	  menu_handleKey(eKeyEncUpC, e.eventData);
-	} else {
-	  menu_handleKey(eKeyEncDownC, e.eventData);
-	}
-	break;
-      case kEventEncoder2:
-	print_dbg("\r\n encoder 2");
-	if(e.eventData > 0) {
-	  menu_handleKey(eKeyEncUpB, e.eventData);
-	} else {
-	  menu_handleKey(eKeyEncDownB, e.eventData);
-	}
-	break;
-      case kEventEncoder3:
-	print_dbg("\r\n encoder 3");
-	if(e.eventData > 0) {
-	  menu_handleKey(eKeyEncUpA, e.eventData);
-	} else {
-	  menu_handleKey(eKeyEncDownA, e.eventData);
-	}
-	break;
-
-      case kEventAdc0:
-	//	print_dbg("\r\nadc val 0: ");
-	//	print_dbg_hex(e.eventData);
-	//	displayAdcVal(0, e.eventData);
-	break;
-      case kEventAdc1:
-	//	 print_dbg("\r\nadc val 1: ");
-	//	 print_dbg_hex(e.eventData);
-	 //	 displayAdcVal(1, e.eventData);
-	break;
-      case kEventAdc2:
-	//	 print_dbg("\r\nadc val 2: ");
-	//	 print_dbg_hex(e.eventData);
-	//	 displayAdcVal(2, e.eventData);
-	break;
-      case kEventAdc3:
-	//     	print_dbg("\r\nadc val 3: ");
-	//     	print_dbg_hex(e.eventData);
-	//     	displayAdcVal(3, e.eventData);
-	break;
-      }
-    } // if event
-  } // if !startup
+      } else {
+	app_handle_event(&e);
+      } // power switch
+    } // startup
+  } // got event
 }
 
 //int main(void) {
@@ -318,9 +199,6 @@ int main (void) {
   //////////////
   ///////////
 
-
-
-
   // set up avr32 hardware and peripherals
   init_avr32();
 
@@ -339,24 +217,30 @@ int main (void) {
   screen_blank_line(0, 1);
   screen_line(0, 0, "SD card detected.", 0x3f);
 
+  //memory manager
+  init_mem();  
+  print_dbg("\r\n init_mem");
+
   /// initialize filesystem
   init_files();
 
   // setup control logic
   init_ctl();
 
-  /// boot default dsp
-  screen_clear();
+  // initialize flash
+  firstrun = init_flash();
 
-  screen_line(0, 1, "loading default DSP...", 0x3f);
-  screen_refresh();
-  files_load_dsp_name("default.ldr");
+  /// boot default dsp
+  //  screen_clear();
+
+  //  screen_line(0, 1, "loading default DSP...", 0x3f);
+  //  screen_refresh();
+  //  files_load_dsp_name("default.ldr");
 
   screen_line(0, 1, "press any key to continue...", 0x3f);
   screen_refresh();
 
   print_dbg("\r\n starting event loop.\r\n");
-
 
   //////
   //  test_flash();
@@ -366,3 +250,5 @@ int main (void) {
     check_events();
   }
 }
+
+

@@ -1,0 +1,42 @@
+#include "fix32.h"
+
+void add_fix32_wrap(fix32* a, fix32* b) {
+  a->i += b->i;
+  /// FIXME: could be arch-specific inline ASM here for better speed
+  /// (e.g. add fract32, check overflow flag ?)
+    if(a->fr >= 0) {
+    if( sub_fr1x32(FRACT32_MAX,a->fr) < b->fr) {
+      // wrap by subtraction
+      a->fr = sub_fr1x32(
+			      add_fr1x32(
+					 sub_fr1x32(a->fr, FR32_ONE),
+					 b->fr),
+			      FR32_ONE);
+      a->i += 1; // carry
+    }
+  } else {
+    if(b->fr < sub_fr1x32(FRACT32_MAX,a->fr)) {
+      // wrap by addition
+      a->fr = add_fr1x32(
+			      add_fr1x32(
+					 add_fr1x32(a->fr, FR32_ONE),
+					 b->fr),
+			      FR32_ONE);
+      a->i -= 1; // carry (negative)
+    }
+  }
+}
+
+
+void sub_fix32_wrap(fix32* a, fix32* b) {
+  fix32 bTmp;
+  bTmp.i = BIT_INVERT(b->i);
+  bTmp.fr = b->fr;
+  add_fix32_wrap(a, &bTmp);
+}
+
+
+void fix16_to_fix32(fix16* in, fix32* out) {
+  out->fr = FIX16_FRACT_TRUNC(*in);
+  out->i = (s32)(FIX16_TO_S16(*in));
+}

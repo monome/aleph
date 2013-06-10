@@ -10,7 +10,7 @@
 
 #include "types.h"
 
-#define ALLOC_FAIL 0
+#define ALLOC_FAIL 0xffffffff
 
 // heap memory type
 typedef volatile u8 * heap_t;

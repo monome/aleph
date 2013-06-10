@@ -12,20 +12,16 @@
 #include "param_common.h"
 #include "types.h"
 
-//#define USE_LDR_RAM_BUFFER 1
-
 // blackfin HWAIT status
-extern volatile U8 hwait;
+// extern volatile U8 hwait;
 
-// load a blackfin executable
-#ifdef USE_LDR_RAM_BUFFER
-void bfin_load(U32 size, volatile u8 * data);
-#else 
-void bfin_load(U32 size, void* fp);
-#endif
+// 64k is max size of blackfin ldr file
+#define BFIN_LDR_MAX_BYTES 0x10000 
+
+// load bfin from RAM buffer
+void bfin_load_buf(void);
 
 // set a parameter
-//void bfin_set_param(U8 idx, F32 val);
 void bfin_set_param(U8 idx, fix16_t val);
 
 // get number of parameters 

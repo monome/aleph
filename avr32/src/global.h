@@ -9,15 +9,9 @@
 #ifndef _GLOBAL_H_
 #define _GLOBAL_H_
 
-
-//#include "scene.h"
-
-///// FIXME: the protected header should obviously not be a global inclusion. see below.
- #include "net_protected.h"
- 
-// FIXME: trying to find a sweet spot for op memory pool by declaring the ctlnet external and looking for it in the memory map.
-/// make it static to main.c when done
- extern ctlnet_t ctlnet;
+#include "types.h"
+//#include "net_protected.h"
+// extern extlnet_t* ctlnet;
 
 //---- global buffers
 
@@ -25,9 +19,6 @@
 extern volatile u8* bfinLdrData;
 // size of bfin firmware
 extern volatile u32 bfinLdrSize;
-// RAM buffer for Scene data
-extern volatile u8* sceneData;
-
 
 // app timer tick counter
 extern volatile U64 tcTicks;

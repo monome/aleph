@@ -1,0 +1,29 @@
+/* flash.h
+   aleph-avr32
+
+   internal flash read/write
+
+*/
+
+
+#ifndef __ALEPH_FLASH_H__
+#define __ALEPH_FLASH_H__
+
+//--=============== test
+
+
+
+//! Structure type containing variables to store in NVRAM using a specific
+//! memory map.
+typedef const struct {
+  uint8_t  var8;
+  uint16_t var16;
+  uint8_t  var8_3[3];
+  uint32_t var32;
+} nvram_data_t;
+
+//void test_flash(void);
+//void test_flash(void* data);
+void test_flash(void);
+
+#endif // h guard

@@ -1,0 +1,14 @@
+
+// parameter feedback
+void param_feedback(u16 paramIdx, fix16 val) {
+  int i;
+  print_dbg("\r\n param fb: ");
+  print_dbg_hex(paramIdx);
+  for (i = 1; i < CHAR_ROWS; i++) {
+    touchedParams[i-1].idx = touchedParams[i].idx;
+    touchedParams[i-1].val = touchedParams[i].val;
+  }
+  touchedParams[CHAR_ROWS_1].idx = paramIdx;
+  touchedParams[CHAR_ROWS_1].val = val; //get_param_value(paramIdx );
+}
+
