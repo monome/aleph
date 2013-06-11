@@ -84,5 +84,9 @@ extern void set_page(ePage n);
 extern void scroll_page(s8 dir);
 // scroll selection in current page
 extern void scroll_select(s8 dir, s32 max);
+// scroll selection in current page
+extern void scroll_select_clip(s8 dir, s32 max);
+// scroll selection in current page
+extern void scroll_select_wrap(s8 dir, s32 max);
 
 #endif // header guard

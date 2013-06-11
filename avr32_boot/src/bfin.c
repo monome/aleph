@@ -1,4 +1,4 @@
-/* bfin.c
+ /* bfin.c
    aleph-avr32
 
    routines to communicate with bf533 DSP over SPI

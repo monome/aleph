@@ -85,7 +85,7 @@ SECTIONS
   __stack_size__ = DEFINED(__stack_size__) ? __stack_size__ : 4K;
 
   /* Use a default flash NVRAM size if flash NVRAM size was not defined. */
-  __flash_nvram_size__ = DEFINED(__flash_nvram_size__) ? __flash_nvram_size__ : 128K;
+  __flash_nvram_size__ = DEFINED(__flash_nvram_size__) ? __flash_nvram_size__ : 256K;
 
   /* Read-only sections, merged into text segment: */
   PROVIDE (__executable_start = 0x80000000); . = 0x80000000;

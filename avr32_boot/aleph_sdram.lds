@@ -1,6 +1,5 @@
 /******************************************************************************
- * AVR32 AT32UC3A0512 GNU LD script file (special for heap and allocation in
- * external EXTRAM).
+ * AVR32 AT32UC3A0512 GNU LD script file.
  *
  * - Compiler:           GNU GCC for AVR32
  * - Supported devices:  AVR32 AT32UC3A0512
@@ -10,36 +9,52 @@
  *
  ******************************************************************************/
 
-/* Copyright (c) 2009 Atmel Corporation. All rights reserved.
+/**
+ *
+ * Copyright (c) 2009-2012 Atmel Corporation. All rights reserved.
+ *
+ * \asf_license_start
+ *
+ * \page License
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
  *
  * 3. The name of Atmel may not be used to endorse or promote products derived
- * from this software without specific prior written permission.
+ *    from this software without specific prior written permission.
  *
- * 4. This software may only be redistributed and used in connection with an Atmel
- * AVR product.
+ * 4. This software may only be redistributed and used in connection with an
+ *    Atmel microcontroller product.
  *
- * THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR IMPLIE
+ * THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
  * EXPRESSLY AND SPECIFICALLY DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  *
- */OUTPUT_FORMAT("elf32-avr32", "elf32-avr32", "elf32-avr32")
+ * \asf_license_stop
+ *
+
+ aleph, runtime code: 
+
+ move program location to 0x80010000 
+
+ */
+
+OUTPUT_FORMAT("elf32-avr32", "elf32-avr32", "elf32-avr32")
 
 OUTPUT_ARCH(avr32:uc)
 
@@ -47,9 +62,8 @@ ENTRY(_start)
 
 MEMORY
 {
-  FLASH  (rxai!w) : ORIGIN = 0x80000000, LENGTH = 0x00080000
+  FLASH (rxai!w) : ORIGIN = 0x80010000, LENGTH = 0x00070000
   INTRAM (wxa!ri) : ORIGIN = 0x00000004, LENGTH = 0x0000FFFC
-  EXTRAM (wxa!ri) : ORIGIN = 0xD0000000, LENGTH = 0x0007FFFC
   USERPAGE : ORIGIN = 0x80800000, LENGTH = 0x00000200
 }
 
@@ -59,18 +73,24 @@ PHDRS
   INTRAM_ALIGN PT_NULL;
   INTRAM_AT_FLASH PT_LOAD;
   INTRAM PT_NULL;
-  EXTRAM_AT_FLASH PT_LOAD;
-  EXTRAM PT_NULL;
+  FLASH_NVRAM PT_LOAD;
   USERPAGE PT_LOAD;
 }
 
 SECTIONS
 {
+  /* If this heap size is selected, all the INTRAM space from the end of the
+     data area to the beginning of the stack will be allocated for the heap. */
+  __max_heap_size__ = -1;
+
   /* Use a default heap size if heap size was not defined. */
-  __heap_size__ = DEFINED(__heap_size__) ? __heap_size__ : LENGTH(EXTRAM);
+  __heap_size__ = DEFINED(__heap_size__) ? __heap_size__ : __max_heap_size__;
 
   /* Use a default stack size if stack size was not defined. */
   __stack_size__ = DEFINED(__stack_size__) ? __stack_size__ : 4K;
+
+  /* Use a default flash NVRAM size if flash NVRAM size was not defined. */
+  __flash_nvram_size__ = DEFINED(__flash_nvram_size__) ? __flash_nvram_size__ : 4K;
 
   /* Read-only sections, merged into text segment: */
   PROVIDE (__executable_start = 0x80000000); . = 0x80000000;
@@ -210,6 +230,15 @@ SECTIONS
   . = ALIGN(8);
   _end = .;
   PROVIDE (end = .);
+  __heap_start__ = ALIGN(8);
+  .heap           :
+  {
+    *(.heap)
+    . = (__heap_size__ == __max_heap_size__) ?
+        ORIGIN(INTRAM) + LENGTH(INTRAM) - __stack_size__ - ABSOLUTE(.) :
+        __heap_size__;
+  } >INTRAM AT>INTRAM :INTRAM
+  __heap_end__ = .;
   /* Stabs debugging sections.  */
   .stab          0 : { *(.stab) }
   .stabstr       0 : { *(.stabstr) }
@@ -251,33 +280,15 @@ SECTIONS
     _estack = .;
   } >INTRAM AT>INTRAM :INTRAM
 
-  . = ORIGIN(EXTRAM);
-  .data_extram     ORIGIN(EXTRAM) : AT ( LOADADDR(.balign) + SIZEOF (.balign) )
+  /* put nvram at top of flash  */
+  .flash_nvram  ORIGIN(FLASH) + LENGTH(FLASH) - __flash_nvram_size__ (NOLOAD):
   {
-    PROVIDE(_data_extram = .);
-    *(.data_extram)
-    . = ALIGN(8);
-    PROVIDE(_edata_extram = .);
-  } >EXTRAM :EXTRAM_AT_FLASH
-
-  PROVIDE(_data_extram_lma = ABSOLUTE(LOADADDR(.data_extram)));
-
-  . = ALIGN(8);
-  .bss_extram :
-  {
-    PROVIDE(__bss_extram_start = .);
-    *(.bss_extram)
-    PROVIDE(_bss_extram_end = .);
-  } >EXTRAM AT>EXTRAM :EXTRAM
-
-  .heap :
-  {
-    __heap_start__ = .;
-    *(.heap)
-    . = __heap_size__;
-    __heap_end__ = .;
-  } >EXTRAM AT>EXTRAM :EXTRAM
+    *(.flash_nvram)
+  } >FLASH AT>FLASH :FLASH_NVRAM
+  . = ALIGN(0x200);
 
   .userpage       : { *(.userpage .userpage.*) } >USERPAGE AT>USERPAGE :USERPAGE
   /DISCARD/ : { *(.note.GNU-stack) }
 }
+
+

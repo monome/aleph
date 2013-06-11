@@ -13,10 +13,10 @@
 # standalone application.
 TARGET = aleph-boot.elf
 
-ALEPH_AVR32 = ../boot
+ALEPH_AVR32 = ../avr32_boot
 ALEPH_COMMON = ../common
-ALEPH_BEES = ../bees
-ALEPH_BOOT_BEES = ../boot/bees
+#ALEPH_BEES = ../bees
+ALEPH_BOOT_BEES = ../avr32_boot/bees
 
 # Target CPU architecture: ap, ucr1, ucr2 or ucr3
 ARCH = ucr2
@@ -60,29 +60,29 @@ CSRCS = \
 	$(ALEPH_AVR32)/src/files.c \
 	$(ALEPH_AVR32)/src/filesystem.c \
 	$(ALEPH_AVR32)/src/flash.c \
+	$(ALEPH_AVR32)/src/font.c \
 	$(ALEPH_AVR32)/src/init.c	\
 	$(ALEPH_AVR32)/src/interrupts.c \
 	$(ALEPH_AVR32)/src/memory.c \
 	$(ALEPH_AVR32)/src/parse_hex.c \
 	$(ALEPH_AVR32)/src/screen.c \
+	$(ALEPH_AVR32)/src/simple_string.c \
 	$(ALEPH_AVR32)/src/switches.c \
 	$(ALEPH_AVR32)/src/timers.c \
 	$(ALEPH_AVR32)/src/main.c \
+	$(ALEPH_AVR32)/src/fat_io_lib/fat_access.c \
+	$(ALEPH_AVR32)/src/fat_io_lib/fat_cache.c \
+	$(ALEPH_AVR32)/src/fat_io_lib/fat_filelib.c \
+	$(ALEPH_AVR32)/src/fat_io_lib/fat_format.c \
+	$(ALEPH_AVR32)/src/fat_io_lib/fat_misc.c \
+	$(ALEPH_AVR32)/src/fat_io_lib/fat_string.c \
+	$(ALEPH_AVR32)/src/fat_io_lib/fat_table.c \
+	$(ALEPH_AVR32)/src/fat_io_lib/fat_write.c \
 	$(ALEPH_BOOT_BEES)/key_handler.c \
 	$(ALEPH_BOOT_BEES)/menu.c \
 	$(ALEPH_BOOT_BEES)/redraw.c \
-	$(ALEPH_COMMON)/font.c \
 	$(ALEPH_COMMON)/fix.c \
-	$(ALEPH_COMMON)/libfixmath/fix16.c \
-	$(ALEPH_COMMON)/simple_string.c \
-	$(ALEPH_COMMON)/fat_io_lib/fat_access.c \
-	$(ALEPH_COMMON)/fat_io_lib/fat_cache.c \
-	$(ALEPH_COMMON)/fat_io_lib/fat_filelib.c \
-	$(ALEPH_COMMON)/fat_io_lib/fat_format.c \
-	$(ALEPH_COMMON)/fat_io_lib/fat_misc.c \
-	$(ALEPH_COMMON)/fat_io_lib/fat_string.c \
-	$(ALEPH_COMMON)/fat_io_lib/fat_table.c \
-	$(ALEPH_COMMON)/fat_io_lib/fat_write.c 
+	$(ALEPH_COMMON)/libfixmath/fix16.c
 
 # List of assembler source files.
 ASSRCS = \
@@ -123,12 +123,12 @@ INC_PATH = \
        common/utils                \
 	$(ALEPH_AVR32)	           \
 	$(ALEPH_AVR32)/src	   \
+	$(ALEPH_AVR32)/src/fat_io_lib \
 	$(ALEPH_AVR32)/conf	   \
 	$(ALEPH_BEES)	           \
 	$(ALEPH_BOOT_BEES)          \
 	$(ALEPH_COMMON)	           \
 	$(ALEPH_COMMON)/libfixmath \
-	$(ALEPH_COMMON)/fat_io_lib
 
 # Additional search paths for libraries.
 LIB_PATH = 
