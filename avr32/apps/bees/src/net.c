@@ -15,7 +15,7 @@
 #include "print_funcs.h"
 #endif
 
-// aleph
+// bees
 #include "util.h"
 #include "op.h" 
 #include "op_derived.h"
@@ -24,16 +24,18 @@
 #include "net.h"
 #include "net_protected.h"
 #include "param.h"
+#include "play.h"
 #include "types.h"
 #include "util.h"
+
 
 //=========================================
 //===== variables
 
 //----- static
 
-static s32 inSearchIdx = 0;
-static s32 outSearchIdx = 0;
+/* static s32 inSearchIdx = 0; */
+/* static s32 outSearchIdx = 0; */
 
 //---- external
 ctlnet_t* net;
@@ -43,12 +45,12 @@ ctlnet_t* net;
 
 
 // forward/backward search for input/output nodes
-static s32 net_next_in(void);
-static s32 net_prev_in(void);
-static s32 net_next_out(void);
-static s32 net_prev_out(void);
-static void net_reset_in_search(void);
-static void net_reset_out_search(void);
+/* static s32 net_next_in(void); */
+/* static s32 net_prev_in(void); */
+/* static s32 net_next_out(void); */
+/* static s32 net_prev_out(void); */
+/* static void net_reset_in_search(void); */
+/* static void net_reset_out_search(void); */
 
 // create all system operators
 static void add_sys_ops(void);
@@ -143,7 +145,9 @@ void net_activate(s16 inIdx, const io_t val) {
   /* print_dbg(" , op in idx: "); */
   /* print_dbg_hex(net->ins[inIdx].opInIdx); */
 
-  //    param_feedback(inIdx, val);
+  
+  play_input(inIdx);
+  
   if(inIdx >= 0) {
     if(inIdx < net->numIns) {
       //(*(net->ins[inIdx].in))(net->ops[net->ins[inIdx].opIdx], val);
@@ -402,7 +406,7 @@ const char* net_in_name(u16 idx) {
     // not an operator input
     idx -= net->numIns;
     if (idx >= net->numParams) {
-      // not a param input either
+      // not a param input either, whoops
       return "";
     } else {
       // param input
@@ -609,50 +613,50 @@ void net_send_params(void) {
 //---------------------------------------------------
 //----- static
 // forward/backward search for input/output nodes
-s32 net_next_in(void) {
-  while( inSearchIdx < NET_INS_MAX ) {
-    if(net->ins[inSearchIdx].opIdx >= 0) {
-      return inSearchIdx;
-    }
-    inSearchIdx++;
- } 
-  return -1; // no inputs
-}
+/* s32 net_next_in(void) { */
+/*   while( inSearchIdx < NET_INS_MAX ) { */
+/*     if(net->ins[inSearchIdx].opIdx >= 0) { */
+/*       return inSearchIdx; */
+/*     } */
+/*     inSearchIdx++; */
+/*  }  */
+/*   return -1; // no inputs */
+/* } */
 
-s32 net_prev_in(void) {
-  while( inSearchIdx >=0 ) {
-    if(net->ins[inSearchIdx].opIdx >= 0) {
-      return inSearchIdx;
-    }
-    inSearchIdx--;
-  }
-  return -1; // no inputs
-}
+/* s32 net_prev_in(void) { */
+/*   while( inSearchIdx >=0 ) { */
+/*     if(net->ins[inSearchIdx].opIdx >= 0) { */
+/*       return inSearchIdx; */
+/*     } */
+/*     inSearchIdx--; */
+/*   } */
+/*   return -1; // no inputs */
+/* } */
 
-s32 net_next_out(void) {
-  while( outSearchIdx < NET_OUTS_MAX ) {
-    if(net->outs[outSearchIdx].opIdx >= 0) {
-      return outSearchIdx;
-    }
-    outSearchIdx++;
-  }
-  return -1; // no outputs
-}
+/* s32 net_next_out(void) { */
+/*   while( outSearchIdx < NET_OUTS_MAX ) { */
+/*     if(net->outs[outSearchIdx].opIdx >= 0) { */
+/*       return outSearchIdx; */
+/*     } */
+/*     outSearchIdx++; */
+/*   } */
+/*   return -1; // no outputs */
+/* } */
 
-s32 net_prev_out(void) {
-  while( outSearchIdx >=0 ) {
-    if(net->outs[outSearchIdx].opIdx >= 0) {
-      return outSearchIdx;
-    }
-    outSearchIdx--;
-  }
-  return -1; // no outputs
-}
+/* s32 net_prev_out(void) { */
+/*   while( outSearchIdx >=0 ) { */
+/*     if(net->outs[outSearchIdx].opIdx >= 0) { */
+/*       return outSearchIdx; */
+/*     } */
+/*     outSearchIdx--; */
+/*   } */
+/*   return -1; // no outputs */
+/* } */
 
-void net_reset_in_search(void) {
-  inSearchIdx = 0;
-}
+/* void net_reset_in_search(void) { */
+/*   inSearchIdx = 0; */
+/* } */
 
-void net_reset_out_search(void) {
-  outSearchIdx = 0;
-}
+/* void net_reset_out_search(void) { */
+/*   outSearchIdx = 0; */
+/* } */

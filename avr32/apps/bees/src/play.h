@@ -30,7 +30,9 @@
 // init
 void play_init(void); 
 // add parameter data to scroll
-void play_param(u16 paramIdx);
+void play_param(u16 idx);
+// add input node data to scroll
+void play_input(u16 idx);
 
 // get text buffer for given entry
 const char * play_get_entry(u16 idx);

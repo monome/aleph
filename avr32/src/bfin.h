@@ -9,6 +9,7 @@
 
 #include "compiler.h"
 #include "fix.h"
+#include "module_common.h"
 #include "param_common.h"
 #include "types.h"
 
@@ -30,9 +31,10 @@ void bfin_get_num_params(volatile u32* num);
 // void bfin_get_param_name(u16 paramIdx, volatile char* name);
 // get parameter descriptor
 void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc);
-// get current module name
+// get load module namefa
 void bfin_get_module_name(volatile char* buf);
-
+// get loaded module version
+void bfin_get_module_version(moduleVersion_t* vers);
 // clear and add params to ctl network
 void bfin_report_params(void);
 

@@ -19,7 +19,7 @@
 #include "param.h"
 #include "preset.h"
 // aleph
-//#include "memory.h"
+#include "memory.h"
 #include "simple_string.h"
 #include "types.h"
 
@@ -27,11 +27,8 @@
 //=================================
 //====== variables
 
-/// aarray of presets
-//preset_t* presets;
-///// FIXME:
-//// 121218: testing with static presets since SDRAM broken
-preset_t presets[NET_PRESETS_MAX];
+/// array of presets
+preset_t* presets;
 
 //=================================
 //====== function definitions
@@ -40,17 +37,14 @@ preset_t presets[NET_PRESETS_MAX];
 void preset_init(void) {
   u8 i, j;
 
-///// FIXME:
-//// 121218: testing with static presets since SDRAM broken
-//  presets = (preset_t*)alloc_mem(NET_PRESETS_MAX * sizeof(preset_t));
+
+  presets = (preset_t*)alloc_mem(NET_PRESETS_MAX * sizeof(preset_t));
 
   for(i=0; i<NET_PRESETS_MAX; i++) {
-    //    snprintf(presets[i].name, PRESET_NAME_LEN, "preset_%d", i);
-    // presets[i].name = "[empty]";
     for(j=0; j<PRESET_NAME_LEN; j++) {
       presets[i].name[j] = 0;
     }
-    str_copy("[empty]", presets[i].name, PRESET_NAME_LEN);
+    str_copy(presets[i].name, "[empty]", PRESET_NAME_LEN);
   }
 }
 

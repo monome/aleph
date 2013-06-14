@@ -113,7 +113,7 @@ void op_set_in_val(op_t* op, s16 idx, io_t val) {
   *pIn = val;
   (*(op->in_func[idx]))(op, pIn);  
   //  param_feedback(idx, val);
-  play_param(idx);
+  //  play_input(idx);
   // TODO: check for play flag
 }
 

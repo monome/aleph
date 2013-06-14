@@ -10,6 +10,9 @@
 #include "string.h"
 // common
 #include "fix.h"
+// avr32
+#include "print_funcs.h"
+#include "simple_string.h"
 // bees
 #include "menu_protected.h"
 #include "play.h"
@@ -40,15 +43,37 @@ void play_init(void) {
   }
 }
 
-// add parameter data to the end of the scroll  
-void play_param(u16 paramIdx) {
-  itoa_whole( paramIdx, scrollBuf[scrollIdx] + kIdxOff, 3 ); 
-  memcpy( scrollBuf[scrollIdx] + kNameOff, get_param_name(paramIdx), PARAM_LABEL_LEN );
-  print_fix16( scrollBuf[scrollIdx] + kNameOff, get_param_value(paramIdx) );
+// add input node data to scroll
+void play_input(u16 idx) {
+  itoa_whole( idx, scrollBuf[scrollIdx] + kIdxOff, 3 );
+  str_copy( scrollBuf[scrollIdx] + kNameOff, net_in_name(idx), PARAM_LABEL_LEN );
+  print_dbg("\r\n play_input at input name: ");
+  print_dbg(net_in_name(idx));
+  print_fix16( scrollBuf[scrollIdx] + kValOff, net_get_in_value(idx) );
   scrollIdx++;
   if(scrollIdx > PLAY_SCROLL_NUM) {
     scrollIdx = 0;
   }
+}
+
+// add parameter data to the end of the scroll  
+void play_param(u16 paramIdx) {
+
+  /* /// this part works... */
+
+  /* itoa_whole( paramIdx, scrollBuf[scrollIdx] + kIdxOff, 3 ); */
+
+  /* // this doesn't work?? */
+  /* str_copy( scrollBuf[scrollIdx] + kNameOff, get_param_name(paramIdx), PARAM_LABEL_LEN ); */
+  /* print_dbg("\r\n playparam: "); */
+  /* print_dbg(get_param_name(paramIdx)); */
+
+  /* // this doesn't work??? */
+  /* print_fix16( scrollBuf[scrollIdx] + kValOff, get_param_value(paramIdx) ); */
+  /* scrollIdx++; */
+  /* if(scrollIdx > PLAY_SCROLL_NUM) { */
+  /*   scrollIdx = 0; */
+  /* } */
 }
 
 // return text buffer for given entry

@@ -48,7 +48,7 @@ typedef struct _preset {
 //==============================
 //=== vars
 //extern preset_t* presets;
-extern preset_t presets[NET_PRESETS_MAX];
+extern preset_t* presets;
 
 //========================
 //==== functions

@@ -42,21 +42,32 @@ void scene_deinit(void) {
 void scene_write_buf(void) {
   memcpy( &(sceneData->net),     (void*)net,  sizeof(ctlnet_t));
   memcpy( &(sceneData->presets), &presets, sizeof(preset_t) * NET_PRESETS_MAX);
-}
+}\
 
 // set current state of system from global RAM buffer
 void scene_read_buf(void) {
-  /////
-  ////
-  // FIX
-  //  return;
-  ////
-  ///
+  s8 modName[MODULE_NAME_LEN];
+  s8 neq = 0;
 
+  // store current mod name in scene desc
+  memcpy(modName, sceneData->desc.moduleName, MODULE_NAME_LEN);
+
+    // store network/presets
   memcpy( (void*)net, &(sceneData->net),  sizeof(ctlnet_t) );
   memcpy( &presets, &(sceneData->presets), sizeof(preset_t) * NET_PRESETS_MAX );
+  print_dbg("\r\n copied stored network and presets to RAM ");
 
-  print_dbg("\r\n copied network and presets! sending params...");
+  // compare module name
+  neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
+
+  if(neq) {
+    // load bfin module if it changed names
+    files_load_dsp_name(sceneData->desc.moduleName);
+  }
+
+  //// TODO: module version check
+ 
+  // "aaaabbbbccccddddeeeeffff"
 
   // update bfin parameters
   net_send_params();

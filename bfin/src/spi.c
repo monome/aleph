@@ -19,14 +19,24 @@ static u8 idx;
 // param value;
 static pval pv;
 
+
+//// TODO: 
+///    instead of the case statement, use function pointers:
+//typedef u8(*spiFunc_t)(u8 rx);
+
+/// this is a big list of them:
+//#include "spi_com_funcs_inc.h"
+
+// current fn ( == state in the protocol state-machine)
+// spiFunc_t* spiFunc = &spiFuncs[eCom];
+
 //------- function definitions
 // deal with new data in the spi rx ringbuffer
 // return byte to load for next MISO
-//// FIXME: probly slightly faster to use a big pile of functions and a fn pointer.
 u8 spi_process(u8 rx) {
   static ParamValue pval;
   switch(byte) {
-  /// caveman style
+  /// caveman style case statement
   case eCom :
     com = rx;
     switch(com) {

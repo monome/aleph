@@ -8,11 +8,12 @@
 // super caveman version of SPI protocol
 
 //---- com byte defines
-#define MSG_SET_PARAM_COM 0
-#define MSG_GET_PARAM_COM 1
-#define MSG_GET_NUM_PARAMS_COM 2
-#define MSG_GET_PARAM_DESC_COM 3
-#define MSG_GET_MODULE_NAME_COM 4
+#define MSG_SET_PARAM_COM           0 
+#define MSG_GET_PARAM_COM           1
+#define MSG_GET_NUM_PARAMS_COM      2
+#define MSG_GET_PARAM_DESC_COM      3
+#define MSG_GET_MODULE_NAME_COM     4
+#define MSG_GET_MODULE_VERSION_COM  5
 
 // nodes in a state machine
 typedef enum {
@@ -99,6 +100,7 @@ typedef enum {
   eModuleName21,
   eModuleName22,
   eModuleName23,
+  eNumSpiBytes
 } eSpiByte;
 
 #endif

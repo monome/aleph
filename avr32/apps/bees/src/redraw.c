@@ -358,9 +358,12 @@ void redraw_play(void) {
     //    println_int(idx, 0);
 
     // first column
-    str_copy(play_get_entry(y),    lineBuf, PLAY_SCROLL_BUF_LEN);
+    str_copy( lineBuf, play_get_entry(y), PLAY_SCROLL_BUF_LEN);
     // 2nd column
-    str_copy(play_get_entry(y + PLAY_SCROLL_NUM__2), lineBuf + PLAY_SCROLL_BUF_LEN, PLAY_SCROLL_BUF_LEN);
+    str_copy( lineBuf + PLAY_SCROLL_BUF_LEN, play_get_entry(y + PLAY_SCROLL_NUM__2), PLAY_SCROLL_BUF_LEN);
+
+    //    print_dbg("\r\n play_line: ");
+    //    print_dbg(lineBuf);
 
     //endln(); 
     screen_line(0, y, lineBuf, 1);

@@ -66,59 +66,19 @@ void bfin_end_transfer(void) {
 // load bfin executable from the RAM buffer
 void bfin_load_buf(void) {
   u64 i; /// byte index in .ldr
-  //  u8 data;
-  //  volatile u64 delay;
-
   if(bfinLdrSize > BFIN_LDR_MAX_BYTES) {
     print_dbg("\r\n bfin load error: size : "); print_dbg_hex(bfinLdrSize);
     return;
   }
 
-  print_dbg("\r\n\r\n bfin_load_buf; \r\n size: ");
-  print_dbg_hex(bfinLdrSize);
-  print_dbg("\r\n data: ");
-  
-  print_dbg_hex( (bfinLdrData[0] << 3) | (bfinLdrData[1] << 2) | (bfinLdrData[2]<<1) | bfinLdrData[3]); 
-  print_dbg("\r\n");
-  print_dbg_hex( (bfinLdrData[4] << 7) | (bfinLdrData[5] << 6) | (bfinLdrData[6]<<5) | bfinLdrData[7]); 
-  print_dbg("\r\n");
-  print_dbg_hex( (bfinLdrData[8] << 11) | (bfinLdrData[9] << 2) | (bfinLdrData[10]<<1) | bfinLdrData[11]); 
-  print_dbg("\r\n");
-  print_dbg_hex( (bfinLdrData[12] << 15) | (bfinLdrData[13] << 14) | (bfinLdrData[14]<<13) | bfinLdrData[15]); 
-  print_dbg("\r\n");
-
-
-
   bfin_start_transfer();
 
   for(i=0; i<bfinLdrSize; i++) {
-    //    data = fl_fgetc(fp);
     bfin_transfer_byte(bfinLdrData[i]);
-    //    delay = 0; while(delay < 0x80) { delay++; }
   }
 
   bfin_end_transfer();
 }
-
-/* // load an .ldr from internal flash */
-/* void bfin_load_flash(void) { */
-/*  u64 i; /// byte index in .ldr */
-/*  u32 size; */
-/*   u8 data; */
-
-/*   flash_read_ldr_data(); */
-
-/*   bfin_start_transfer(); */
-/*   for(i=0; i<bfinLdrSize; i++) { */
-/*     bfin_transfer_byte(bfinLdrData[i]); */
-/*     /\* for(i=0; i<size; i++) { *\/ */
-/*   /\*   flash_read_ldr_byte(&data, i); *\/ */
-/*   /\*   bfin_transfer_byte(data); *\/ */
-/*   /\* } *\/ */
- 
-/*   bfin_end_transfer(); */
-/* } */
-
 
 //void bfin_set_param(u8 idx, f32 x ) {
 void bfin_set_param(u8 idx, fix16_t x ) {
@@ -236,6 +196,36 @@ void bfin_get_module_name(volatile char* buf) {
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     name[i] = (char)(x & 0xff);
   }
+}
+
+// get module version
+void bfin_get_module_version(moduleVersion_t* vers) {
+  //  u16 x;
+  
+  /* // command  */
+  /* spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS); */
+  /* spi_write(BFIN_SPI, MSG_GET_MODULE_VERSION_COM); */
+  /* spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS); */
+  /* // major */
+  /* spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS); */
+  /* spi_read(BFIN_SPI, &x); */
+  /* spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS); */
+  /* vers->maj = x; */
+  /* // minor */
+  /* spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS); */
+  /* spi_read(BFIN_SPI, &x); */
+  /* spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS); */
+  /* vers->min = x; */
+  /*   // rev high */
+  /* spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS); */
+  /* spi_read(BFIN_SPI, &x); */
+  /* spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS); */
+  /* vers->rev |= (x << 8) & 0xff; */
+  /*   // rev low */
+  /* spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS); */
+  /* spi_read(BFIN_SPI, &x); */
+  /* spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS); */
+  /* vers->rev |= x & 0xff; */
 }
 
 
