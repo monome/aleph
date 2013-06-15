@@ -2,6 +2,8 @@
    aleph-avr32
   
    filesystem routines
+
+   TODO: should move this to BEES and abstract the things that should be hidden (e.g. interrupt control)
 */
 
 // std
@@ -42,7 +44,9 @@ typedef struct _dirList {
 //------------------------------
 //----- -static vars
 
-// directory liests
+
+/// TODO: get these out of the core avr32 source somehow.
+// directory lists;
 static dirList_t dspList;
 static dirList_t sceneList;
 
@@ -189,7 +193,7 @@ void files_load_scene(u8 idx) {
   files_load_scene_name((const char*)files_get_scene_name(idx));
 }
 
-// search for specified dsp file and load it
+// search for specified scene file and load it
 void files_load_scene_name(const char* name) {
   void* fp;
   //  u32 bytesRead;
@@ -228,17 +232,17 @@ void files_load_scene_name(const char* name) {
 }
 
 
-  // store scene to sdcard
+  // store scene to sdcard at idx
 void files_store_scene(u8 idx) {
   // fill the scene RAM buffer from current state of system
-  //  scene__buf();
+  //  scene_write_buf();
   // write it to sdcard
 
 }
-  // store scene to sdcard
-void files_store_scene_name(const char* name) {
+  // store scene to sdcard at name
+// void files_store_scene_name(const char* name) {
   //  scene_write_buf();
-}
+// }
 
 
 

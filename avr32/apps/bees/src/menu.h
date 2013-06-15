@@ -58,6 +58,8 @@ extern void menu_deinit(void);
 extern void menu_handleKey(uiKey_t key, s16 value);
 // refresh
 extern void menu_refresh(void);
+// get selection on given page
+extern s16 menu_getSelect(ePage page);
 
 // go to notify state
 // end notify (and wait?)

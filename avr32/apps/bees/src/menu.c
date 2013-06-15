@@ -28,15 +28,17 @@
 //--------------------------
 //--------- variables
 // const array of user-creatable operator type id's
+/// FIXME: this is dumb
 const opId_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAdd,
   eOpMul,
   eOpGate,
+  /// more...
   // eOpAccum,
   // eOpSelect,
 };
 
-// page structures - synchronize with ePage enum
+// page structures - synchronize with ePage enum in menu.h
 page_t pages[NUM_PAGES] = {
   // list:
   { "INS", (keyHandler_t)&key_handler_ins, (redraw_t)&redraw_ins, 0, eModeNone, -1, 
@@ -75,8 +77,6 @@ opId_t newOpType;
 u32(*gathered)[NET_OUTS_MAX];
 // how many gathered
 u32 numGathered;
-// last touchede parameter indices
-//touched_t touchedParams[CHAR_ROWS];
 
 //-----------------------
 //------ static vars
@@ -119,19 +119,10 @@ void menu_handleKey(uiKey_t key, s16 val) {
 #endif
 }
 
-// refresh 
 // refresh
 extern void menu_refresh(void) {
   curPage->redraw();
 }
-
-/// notify
-
-//// end notify
-
-
-//-----------------------------------
-//----- static function definitions
 
 // set current page
 void set_page(ePage n) {
@@ -219,3 +210,8 @@ void scroll_select(s8 dir, s32 max) {
   scroll_select_wrap(dir, max);
 }
 
+
+// get selection on given page
+extern s16 menu_getSelect(ePage page) {
+  return pages[page]->select;
+}
