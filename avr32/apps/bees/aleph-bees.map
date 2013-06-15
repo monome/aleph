@@ -1055,8 +1055,6 @@ Discarded input sections
  .text          0x00000000        0x0 ../avr32/apps/bees/src/play.o
  .data          0x00000000        0x0 ../avr32/apps/bees/src/play.o
  .bss           0x00000000        0x0 ../avr32/apps/bees/src/play.o
- .text.play_init
-                0x00000000       0xa0 ../avr32/apps/bees/src/play.o
  .text.play_param
                 0x00000000        0x2 ../avr32/apps/bees/src/play.o
  .text          0x00000000        0x0 ../avr32/apps/bees/src/preset.o
@@ -1411,7 +1409,7 @@ Linker script and memory map
 .plt
  *(.plt)
 
-.text           0x80012008     0xf23c
+.text           0x80012008     0xf218
  *(.text .stub .text.* .gnu.linkonce.t.*)
  .text.smc_get_cs_size
                 0x80012008        0xc avr32/drivers/ebi/smc/smc.o
@@ -2292,431 +2290,434 @@ Linker script and memory map
                                  0x1c (size before relaxing)
                 0x8001d938                app_launch
  .text.app_init
-                0x8001d94c       0x34 ../avr32/apps/bees/src/app.o
-                                 0x50 (size before relaxing)
+                0x8001d94c       0x40 ../avr32/apps/bees/src/app.o
+                                 0x64 (size before relaxing)
                 0x8001d94c                app_init
  .text.app_handle_event
-                0x8001d980      0x158 ../avr32/apps/bees/src/app.o
+                0x8001d98c      0x158 ../avr32/apps/bees/src/app.o
                                 0x178 (size before relaxing)
-                0x8001d980                app_handle_event
+                0x8001d98c                app_handle_event
  .text.key_handler_dsp
-                0x8001dad8       0x9c ../avr32/apps/bees/src/key_handler.o
+                0x8001dae4       0x9c ../avr32/apps/bees/src/key_handler.o
                                  0xac (size before relaxing)
-                0x8001dad8                key_handler_dsp
+                0x8001dae4                key_handler_dsp
  .text.key_handler_scenes
-                0x8001db74      0x16c ../avr32/apps/bees/src/key_handler.o
+                0x8001db80      0x16c ../avr32/apps/bees/src/key_handler.o
                                 0x174 (size before relaxing)
-                0x8001db74                key_handler_scenes
+                0x8001db80                key_handler_scenes
  .text.key_handler_presets
-                0x8001dce0       0xe4 ../avr32/apps/bees/src/key_handler.o
+                0x8001dcec       0xe4 ../avr32/apps/bees/src/key_handler.o
                                  0xe8 (size before relaxing)
-                0x8001dce0                key_handler_presets
+                0x8001dcec                key_handler_presets
  .text.key_handler_play
-                0x8001ddc4      0x104 ../avr32/apps/bees/src/key_handler.o
+                0x8001ddd0      0x104 ../avr32/apps/bees/src/key_handler.o
                                 0x110 (size before relaxing)
-                0x8001ddc4                key_handler_play
+                0x8001ddd0                key_handler_play
  .text.key_handler_outs
-                0x8001dec8       0xd8 ../avr32/apps/bees/src/key_handler.o
+                0x8001ded4       0xd4 ../avr32/apps/bees/src/key_handler.o
                                  0xf8 (size before relaxing)
-                0x8001dec8                key_handler_outs
+                0x8001ded4                key_handler_outs
  .text.key_handler_gathered
-                0x8001dfa0        0x8 ../avr32/apps/bees/src/key_handler.o
+                0x8001dfa8        0x8 ../avr32/apps/bees/src/key_handler.o
                                   0xc (size before relaxing)
-                0x8001dfa0                key_handler_gathered
+                0x8001dfa8                key_handler_gathered
  .text.scale_knob_value
-                0x8001dfa8       0x8c ../avr32/apps/bees/src/key_handler.o
+                0x8001dfb0       0x8c ../avr32/apps/bees/src/key_handler.o
                                  0xa0 (size before relaxing)
  .text.key_handler_ins
-                0x8001e034       0xec ../avr32/apps/bees/src/key_handler.o
+                0x8001e03c       0xf0 ../avr32/apps/bees/src/key_handler.o
                                 0x110 (size before relaxing)
-                0x8001e034                key_handler_ins
+                0x8001e03c                key_handler_ins
  .text.key_handler_ops
-                0x8001e120       0xe0 ../avr32/apps/bees/src/key_handler.o
+                0x8001e12c       0xe4 ../avr32/apps/bees/src/key_handler.o
                                 0x124 (size before relaxing)
-                0x8001e120                key_handler_ops
+                0x8001e12c                key_handler_ops
  .text.scroll_select_clip
-                0x8001e200       0x54 ../avr32/apps/bees/src/menu.o
-                                 0x60 (size before relaxing)
-                0x8001e200                scroll_select_clip
+                0x8001e210       0x3c ../avr32/apps/bees/src/menu.o
+                                 0x40 (size before relaxing)
+                0x8001e210                scroll_select_clip
  .text.set_page
-                0x8001e254       0x74 ../avr32/apps/bees/src/menu.o
-                                 0x8c (size before relaxing)
-                0x8001e254                set_page
- .text.scroll_page
-                0x8001e2c8       0xb0 ../avr32/apps/bees/src/menu.o
-                                 0xc8 (size before relaxing)
-                0x8001e2c8                scroll_page
- .text.menu_handleKey
-                0x8001e378       0x58 ../avr32/apps/bees/src/menu.o
-                                 0x6c (size before relaxing)
-                0x8001e378                menu_handleKey
- .text.menu_init
-                0x8001e3d0       0x10 ../avr32/apps/bees/src/menu.o
-                                 0x18 (size before relaxing)
-                0x8001e3d0                menu_init
+                0x8001e24c       0x5c ../avr32/apps/bees/src/menu.o
+                                 0x68 (size before relaxing)
+                0x8001e24c                set_page
  .text.scroll_select
-                0x8001e3e0       0x4c ../avr32/apps/bees/src/menu.o
-                0x8001e3e0                scroll_select
+                0x8001e2a8       0x4c ../avr32/apps/bees/src/menu.o
+                0x8001e2a8                scroll_select
+ .text.scroll_page
+                0x8001e2f4      0x114 ../avr32/apps/bees/src/menu.o
+                                0x124 (size before relaxing)
+                0x8001e2f4                scroll_page
+ .text.menu_init
+                0x8001e408       0x5c ../avr32/apps/bees/src/menu.o
+                                 0x68 (size before relaxing)
+                0x8001e408                menu_init
+ .text.menu_handleKey
+                0x8001e464       0x98 ../avr32/apps/bees/src/menu.o
+                                 0xa0 (size before relaxing)
+                0x8001e464                menu_handleKey
  .text.net_pop_op
-                0x8001e42c       0x6c ../avr32/apps/bees/src/net.o
+                0x8001e4fc       0x6c ../avr32/apps/bees/src/net.o
                                  0x70 (size before relaxing)
-                0x8001e42c                net_pop_op
+                0x8001e4fc                net_pop_op
  .text.net_connect
-                0x8001e498       0x3c ../avr32/apps/bees/src/net.o
+                0x8001e568       0x3c ../avr32/apps/bees/src/net.o
                                  0x40 (size before relaxing)
-                0x8001e498                net_connect
+                0x8001e568                net_connect
  .text.net_disconnect
-                0x8001e4d4       0x40 ../avr32/apps/bees/src/net.o
-                0x8001e4d4                net_disconnect
+                0x8001e5a4       0x40 ../avr32/apps/bees/src/net.o
+                0x8001e5a4                net_disconnect
  .text.net_num_ops
-                0x8001e514       0x10 ../avr32/apps/bees/src/net.o
+                0x8001e5e4       0x10 ../avr32/apps/bees/src/net.o
                                  0x14 (size before relaxing)
-                0x8001e514                net_num_ops
+                0x8001e5e4                net_num_ops
  .text.net_num_ins
-                0x8001e524       0x1c ../avr32/apps/bees/src/net.o
+                0x8001e5f4       0x1c ../avr32/apps/bees/src/net.o
                                  0x20 (size before relaxing)
-                0x8001e524                net_num_ins
+                0x8001e5f4                net_num_ins
  .text.net_num_outs
-                0x8001e540       0x10 ../avr32/apps/bees/src/net.o
+                0x8001e610       0x10 ../avr32/apps/bees/src/net.o
                                  0x14 (size before relaxing)
-                0x8001e540                net_num_outs
+                0x8001e610                net_num_outs
  .text.net_param_idx
-                0x8001e550       0x14 ../avr32/apps/bees/src/net.o
+                0x8001e620       0x14 ../avr32/apps/bees/src/net.o
                                  0x18 (size before relaxing)
-                0x8001e550                net_param_idx
+                0x8001e620                net_param_idx
  .text.net_op_name
-                0x8001e564       0x1c ../avr32/apps/bees/src/net.o
+                0x8001e634       0x1c ../avr32/apps/bees/src/net.o
                                  0x20 (size before relaxing)
-                0x8001e564                net_op_name
+                0x8001e634                net_op_name
  .text.net_in_op_idx
-                0x8001e580       0x28 ../avr32/apps/bees/src/net.o
-                0x8001e580                net_in_op_idx
+                0x8001e650       0x28 ../avr32/apps/bees/src/net.o
+                0x8001e650                net_in_op_idx
  .text.net_out_op_idx
-                0x8001e5a8       0x28 ../avr32/apps/bees/src/net.o
+                0x8001e678       0x28 ../avr32/apps/bees/src/net.o
                                  0x2c (size before relaxing)
-                0x8001e5a8                net_out_op_idx
+                0x8001e678                net_out_op_idx
  .text.net_op_in_idx
-                0x8001e5d0       0x48 ../avr32/apps/bees/src/net.o
+                0x8001e6a0       0x48 ../avr32/apps/bees/src/net.o
                                  0x4c (size before relaxing)
-                0x8001e5d0                net_op_in_idx
+                0x8001e6a0                net_op_in_idx
  .text.net_op_out_idx
-                0x8001e618       0x48 ../avr32/apps/bees/src/net.o
+                0x8001e6e8       0x48 ../avr32/apps/bees/src/net.o
                                  0x4c (size before relaxing)
-                0x8001e618                net_op_out_idx
+                0x8001e6e8                net_op_out_idx
  .text.net_get_target
-                0x8001e660       0x18 ../avr32/apps/bees/src/net.o
+                0x8001e730       0x18 ../avr32/apps/bees/src/net.o
                                  0x1c (size before relaxing)
-                0x8001e660                net_get_target
+                0x8001e730                net_get_target
  .text.net_op_status
-                0x8001e678       0x10 ../avr32/apps/bees/src/net.o
+                0x8001e748       0x10 ../avr32/apps/bees/src/net.o
                                  0x14 (size before relaxing)
-                0x8001e678                net_op_status
+                0x8001e748                net_op_status
  .text.net_gather
-                0x8001e688       0x40 ../avr32/apps/bees/src/net.o
-                0x8001e688                net_gather
+                0x8001e758       0x40 ../avr32/apps/bees/src/net.o
+                0x8001e758                net_gather
  .text.net_toggle_in_preset
-                0x8001e6c8       0x24 ../avr32/apps/bees/src/net.o
+                0x8001e798       0x24 ../avr32/apps/bees/src/net.o
                                  0x28 (size before relaxing)
-                0x8001e6c8                net_toggle_in_preset
+                0x8001e798                net_toggle_in_preset
  .text.net_get_in_preset
-                0x8001e6ec       0x14 ../avr32/apps/bees/src/net.o
-                0x8001e6ec                net_get_in_preset
+                0x8001e7bc       0x14 ../avr32/apps/bees/src/net.o
+                0x8001e7bc                net_get_in_preset
  .text.net_get_out_preset
-                0x8001e700       0x18 ../avr32/apps/bees/src/net.o
-                0x8001e700                net_get_out_preset
+                0x8001e7d0       0x18 ../avr32/apps/bees/src/net.o
+                0x8001e7d0                net_get_out_preset
  .text.net_clear_params
-                0x8001e718       0x14 ../avr32/apps/bees/src/net.o
-                0x8001e718                net_clear_params
+                0x8001e7e8       0x14 ../avr32/apps/bees/src/net.o
+                0x8001e7e8                net_clear_params
  .text.net_send_params
-                0x8001e72c       0x4c ../avr32/apps/bees/src/net.o
+                0x8001e7fc       0x4c ../avr32/apps/bees/src/net.o
                                  0x50 (size before relaxing)
-                0x8001e72c                net_send_params
+                0x8001e7fc                net_send_params
  .text.net_add_param
-                0x8001e778       0xa8 ../avr32/apps/bees/src/net.o
+                0x8001e848       0xa8 ../avr32/apps/bees/src/net.o
                                  0xac (size before relaxing)
-                0x8001e778                net_add_param
+                0x8001e848                net_add_param
  .text.net_set_in_value
-                0x8001e820       0x44 ../avr32/apps/bees/src/net.o
+                0x8001e8f0       0x44 ../avr32/apps/bees/src/net.o
                                  0x4c (size before relaxing)
-                0x8001e820                net_set_in_value
+                0x8001e8f0                net_set_in_value
  .text.net_get_in_value
-                0x8001e864       0x44 ../avr32/apps/bees/src/net.o
+                0x8001e934       0x44 ../avr32/apps/bees/src/net.o
                                  0x4c (size before relaxing)
-                0x8001e864                net_get_in_value
+                0x8001e934                net_get_in_value
  .text.net_out_name
-                0x8001e8a8       0x2c ../avr32/apps/bees/src/net.o
+                0x8001e978       0x2c ../avr32/apps/bees/src/net.o
                                  0x34 (size before relaxing)
-                0x8001e8a8                net_out_name
+                0x8001e978                net_out_name
  .text.net_in_name
-                0x8001e8d4       0x68 ../avr32/apps/bees/src/net.o
+                0x8001e9a4       0x68 ../avr32/apps/bees/src/net.o
                                  0x70 (size before relaxing)
-                0x8001e8d4                net_in_name
+                0x8001e9a4                net_in_name
  .text.net_add_op
-                0x8001e93c      0x1b8 ../avr32/apps/bees/src/net.o
+                0x8001ea0c      0x1b8 ../avr32/apps/bees/src/net.o
                                 0x1d0 (size before relaxing)
-                0x8001e93c                net_add_op
+                0x8001ea0c                net_add_op
  .text.net_activate
-                0x8001eaf4       0x68 ../avr32/apps/bees/src/net.o
-                                 0x7c (size before relaxing)
-                0x8001eaf4                net_activate
+                0x8001ebc4       0x70 ../avr32/apps/bees/src/net.o
+                                 0x84 (size before relaxing)
+                0x8001ebc4                net_activate
  .text.net_init
-                0x8001eb5c      0x104 ../avr32/apps/bees/src/net.o
+                0x8001ec34      0x104 ../avr32/apps/bees/src/net.o
                                 0x128 (size before relaxing)
-                0x8001eb5c                net_init
+                0x8001ec34                net_init
  .text.net_inc_in_value
-                0x8001ec60       0x98 ../avr32/apps/bees/src/net.o
+                0x8001ed38       0x98 ../avr32/apps/bees/src/net.o
                                  0xb4 (size before relaxing)
-                0x8001ec60                net_inc_in_value
+                0x8001ed38                net_inc_in_value
  .text.op_in_name
-                0x8001ecf8       0x54 ../avr32/apps/bees/src/op.o
+                0x8001edd0       0x54 ../avr32/apps/bees/src/op.o
                                  0x58 (size before relaxing)
-                0x8001ecf8                op_in_name
+                0x8001edd0                op_in_name
  .text.op_out_name
-                0x8001ed4c       0x54 ../avr32/apps/bees/src/op.o
+                0x8001ee24       0x54 ../avr32/apps/bees/src/op.o
                                  0x58 (size before relaxing)
-                0x8001ed4c                op_out_name
+                0x8001ee24                op_out_name
  .text.op_get_in_val
-                0x8001eda0        0xa ../avr32/apps/bees/src/op.o
-                0x8001eda0                op_get_in_val
+                0x8001ee78        0xa ../avr32/apps/bees/src/op.o
+                0x8001ee78                op_get_in_val
  .text.op_set_in_val
-                0x8001edaa       0x18 ../avr32/apps/bees/src/op.o
-                0x8001edaa                op_set_in_val
- *fill*         0x8001edc2        0x2 d703d703
+                0x8001ee82       0x18 ../avr32/apps/bees/src/op.o
+                0x8001ee82                op_set_in_val
+ *fill*         0x8001ee9a        0x2 d703d703
  .text.get_param_value
-                0x8001edc4       0x20 ../avr32/apps/bees/src/param.o
-                0x8001edc4                get_param_value
+                0x8001ee9c       0x20 ../avr32/apps/bees/src/param.o
+                0x8001ee9c                get_param_value
  .text.get_param_preset
-                0x8001ede4       0x18 ../avr32/apps/bees/src/param.o
-                0x8001ede4                get_param_preset
+                0x8001eebc       0x18 ../avr32/apps/bees/src/param.o
+                0x8001eebc                get_param_preset
  .text.set_param_value
-                0x8001edfc       0x48 ../avr32/apps/bees/src/param.o
+                0x8001eed4       0x48 ../avr32/apps/bees/src/param.o
                                  0x4c (size before relaxing)
-                0x8001edfc                set_param_value
+                0x8001eed4                set_param_value
+ .text.play_init
+                0x8001ef1c       0x38 ../avr32/apps/bees/src/play.o
+                0x8001ef1c                play_init
  .text.play_get_entry
-                0x8001ee44       0x3c ../avr32/apps/bees/src/play.o
-                                 0x40 (size before relaxing)
-                0x8001ee44                play_get_entry
+                0x8001ef54       0x38 ../avr32/apps/bees/src/play.o
+                                 0x3c (size before relaxing)
+                0x8001ef54                play_get_entry
  .text.play_input
-                0x8001ee80       0x90 ../avr32/apps/bees/src/play.o
-                                 0xac (size before relaxing)
-                0x8001ee80                play_input
+                0x8001ef8c       0x74 ../avr32/apps/bees/src/play.o
+                                 0x94 (size before relaxing)
+                0x8001ef8c                play_input
  .text.preset_name
-                0x8001ef10       0x14 ../avr32/apps/bees/src/preset.o
+                0x8001f000       0x14 ../avr32/apps/bees/src/preset.o
                                  0x18 (size before relaxing)
-                0x8001ef10                preset_name
+                0x8001f000                preset_name
  .text.preset_recall
-                0x8001ef24       0xc4 ../avr32/apps/bees/src/preset.o
+                0x8001f014       0xc4 ../avr32/apps/bees/src/preset.o
                                  0xd8 (size before relaxing)
-                0x8001ef24                preset_recall
+                0x8001f014                preset_recall
  .text.preset_store
-                0x8001efe8       0xd8 ../avr32/apps/bees/src/preset.o
+                0x8001f0d8       0xd8 ../avr32/apps/bees/src/preset.o
                                  0xf8 (size before relaxing)
-                0x8001efe8                preset_store
+                0x8001f0d8                preset_store
  .text.preset_init
-                0x8001f0c0       0xb8 ../avr32/apps/bees/src/preset.o
+                0x8001f1b0       0xb8 ../avr32/apps/bees/src/preset.o
                                  0xc4 (size before relaxing)
-                0x8001f0c0                preset_init
+                0x8001f1b0                preset_init
  .text.redraw_gathered
-                0x8001f178        0x2 ../avr32/apps/bees/src/redraw.o
-                0x8001f178                redraw_gathered
- *fill*         0x8001f17a        0x2 d703d703
+                0x8001f268        0x2 ../avr32/apps/bees/src/redraw.o
+                0x8001f268                redraw_gathered
+ *fill*         0x8001f26a        0x2 d703d703
  .text.redraw_play
-                0x8001f17c      0x17c ../avr32/apps/bees/src/redraw.o
-                                0x1a0 (size before relaxing)
-                0x8001f17c                redraw_play
+                0x8001f26c       0x6c ../avr32/apps/bees/src/redraw.o
+                                 0x80 (size before relaxing)
+                0x8001f26c                redraw_play
  .text.redraw_scenes
-                0x8001f2f8       0xb8 ../avr32/apps/bees/src/redraw.o
+                0x8001f2d8       0xb8 ../avr32/apps/bees/src/redraw.o
                                  0xd8 (size before relaxing)
-                0x8001f2f8                redraw_scenes
- .text.T.66     0x8001f3b0       0x88 ../avr32/apps/bees/src/redraw.o
+                0x8001f2d8                redraw_scenes
+ .text.T.66     0x8001f390       0x84 ../avr32/apps/bees/src/redraw.o
                                  0x98 (size before relaxing)
  .text.redraw_presets
-                0x8001f438       0xdc ../avr32/apps/bees/src/redraw.o
+                0x8001f414       0xdc ../avr32/apps/bees/src/redraw.o
                                 0x104 (size before relaxing)
-                0x8001f438                redraw_presets
+                0x8001f414                redraw_presets
  .text.draw_line_ops
-                0x8001f514       0x88 ../avr32/apps/bees/src/redraw.o
+                0x8001f4f0       0x88 ../avr32/apps/bees/src/redraw.o
                                  0xa0 (size before relaxing)
  .text.redraw_ops
-                0x8001f59c      0x124 ../avr32/apps/bees/src/redraw.o
+                0x8001f578      0x124 ../avr32/apps/bees/src/redraw.o
                                 0x15c (size before relaxing)
-                0x8001f59c                redraw_ops
+                0x8001f578                redraw_ops
  .text.draw_line_outs
-                0x8001f6c0      0x264 ../avr32/apps/bees/src/redraw.o
+                0x8001f69c      0x264 ../avr32/apps/bees/src/redraw.o
                                 0x280 (size before relaxing)
  .text.redraw_outs
-                0x8001f924       0x8c ../avr32/apps/bees/src/redraw.o
+                0x8001f900       0x8c ../avr32/apps/bees/src/redraw.o
                                  0xac (size before relaxing)
-                0x8001f924                redraw_outs
+                0x8001f900                redraw_outs
  .text.draw_line_ins
-                0x8001f9b0      0x17c ../avr32/apps/bees/src/redraw.o
+                0x8001f98c      0x17c ../avr32/apps/bees/src/redraw.o
                                 0x19c (size before relaxing)
  .text.redraw_ins
-                0x8001fb2c       0x8c ../avr32/apps/bees/src/redraw.o
+                0x8001fb08       0x8c ../avr32/apps/bees/src/redraw.o
                                  0xac (size before relaxing)
-                0x8001fb2c                redraw_ins
+                0x8001fb08                redraw_ins
  .text.redraw_dsp
-                0x8001fbb8      0x1a0 ../avr32/apps/bees/src/redraw.o
+                0x8001fb94      0x1a0 ../avr32/apps/bees/src/redraw.o
                                 0x1b4 (size before relaxing)
-                0x8001fbb8                redraw_dsp
+                0x8001fb94                redraw_dsp
  .text.scene_read_buf
-                0x8001fd58       0x7c ../avr32/apps/bees/src/scene.o
+                0x8001fd34       0x7c ../avr32/apps/bees/src/scene.o
                                  0x9c (size before relaxing)
-                0x8001fd58                scene_read_buf
+                0x8001fd34                scene_read_buf
  .text.scene_read_default
-                0x8001fdd4       0x20 ../avr32/apps/bees/src/scene.o
+                0x8001fdb0       0x20 ../avr32/apps/bees/src/scene.o
                                  0x34 (size before relaxing)
-                0x8001fdd4                scene_read_default
+                0x8001fdb0                scene_read_default
  .text.scene_init
-                0x8001fdf4       0x14 ../avr32/apps/bees/src/scene.o
+                0x8001fdd0       0x14 ../avr32/apps/bees/src/scene.o
                                  0x18 (size before relaxing)
-                0x8001fdf4                scene_init
+                0x8001fdd0                scene_init
  .text.scene_write_default
-                0x8001fe08       0x48 ../avr32/apps/bees/src/scene.o
+                0x8001fde4       0x48 ../avr32/apps/bees/src/scene.o
                                  0x5c (size before relaxing)
-                0x8001fe08                scene_write_default
+                0x8001fde4                scene_write_default
  .text.op_add_init
-                0x8001fe50       0x58 ../avr32/apps/bees/src/ops/op_add.o
+                0x8001fe2c       0x58 ../avr32/apps/bees/src/ops/op_add.o
                                  0x64 (size before relaxing)
-                0x8001fe50                op_add_init
+                0x8001fe2c                op_add_init
  .text.op_add_in_btrig
-                0x8001fea8        0x8 ../avr32/apps/bees/src/ops/op_add.o
+                0x8001fe84        0x8 ../avr32/apps/bees/src/ops/op_add.o
  .text.op_add_in_b
-                0x8001feb0       0x28 ../avr32/apps/bees/src/ops/op_add.o
+                0x8001fe8c       0x28 ../avr32/apps/bees/src/ops/op_add.o
                                  0x30 (size before relaxing)
  .text.op_add_in_a
-                0x8001fed8       0x20 ../avr32/apps/bees/src/ops/op_add.o
+                0x8001feb4       0x20 ../avr32/apps/bees/src/ops/op_add.o
                                  0x28 (size before relaxing)
  .text.op_add_inc_input
-                0x8001fef8       0x7c ../avr32/apps/bees/src/ops/op_add.o
+                0x8001fed4       0x7c ../avr32/apps/bees/src/ops/op_add.o
                                  0x84 (size before relaxing)
  .text.op_enc_init
-                0x8001ff74       0x84 ../avr32/apps/bees/src/ops/op_enc.o
+                0x8001ff50       0x84 ../avr32/apps/bees/src/ops/op_enc.o
                                  0x90 (size before relaxing)
-                0x8001ff74                op_enc_init
+                0x8001ff50                op_enc_init
  .text.op_enc_in_step
-                0x8001fff8        0x6 ../avr32/apps/bees/src/ops/op_enc.o
+                0x8001ffd4        0x6 ../avr32/apps/bees/src/ops/op_enc.o
  .text.op_enc_in_wrap
-                0x8001fffe       0x16 ../avr32/apps/bees/src/ops/op_enc.o
+                0x8001ffda       0x16 ../avr32/apps/bees/src/ops/op_enc.o
  .text.op_enc_perform
-                0x80020014       0xbc ../avr32/apps/bees/src/ops/op_enc.o
+                0x8001fff0       0xbc ../avr32/apps/bees/src/ops/op_enc.o
                                  0xc8 (size before relaxing)
  .text.op_enc_in_max
-                0x800200d0        0xc ../avr32/apps/bees/src/ops/op_enc.o
+                0x800200ac        0xc ../avr32/apps/bees/src/ops/op_enc.o
                                  0x10 (size before relaxing)
  .text.op_enc_in_min
-                0x800200dc        0xc ../avr32/apps/bees/src/ops/op_enc.o
+                0x800200b8        0xc ../avr32/apps/bees/src/ops/op_enc.o
                                  0x10 (size before relaxing)
  .text.op_enc_in_move
-                0x800200e8       0x20 ../avr32/apps/bees/src/ops/op_enc.o
+                0x800200c4       0x20 ../avr32/apps/bees/src/ops/op_enc.o
                                  0x30 (size before relaxing)
  .text.op_enc_inc_input
-                0x80020108       0x98 ../avr32/apps/bees/src/ops/op_enc.o
+                0x800200e4       0x98 ../avr32/apps/bees/src/ops/op_enc.o
                                  0xac (size before relaxing)
  .text.op_gate_init
-                0x800201a0       0x5c ../avr32/apps/bees/src/ops/op_gate.o
+                0x8002017c       0x5c ../avr32/apps/bees/src/ops/op_gate.o
                                  0x68 (size before relaxing)
-                0x800201a0                op_gate_init
+                0x8002017c                op_gate_init
  .text.op_gate_in_store
-                0x800201fc       0x14 ../avr32/apps/bees/src/ops/op_gate.o
+                0x800201d8       0x14 ../avr32/apps/bees/src/ops/op_gate.o
  .text.op_gate_in_gate
-                0x80020210       0x28 ../avr32/apps/bees/src/ops/op_gate.o
+                0x800201ec       0x28 ../avr32/apps/bees/src/ops/op_gate.o
                                  0x2c (size before relaxing)
  .text.op_gate_in_value
-                0x80020238       0x18 ../avr32/apps/bees/src/ops/op_gate.o
+                0x80020214       0x18 ../avr32/apps/bees/src/ops/op_gate.o
                                  0x1c (size before relaxing)
  .text.op_gate_inc_input
-                0x80020250       0x7c ../avr32/apps/bees/src/ops/op_gate.o
+                0x8002022c       0x7c ../avr32/apps/bees/src/ops/op_gate.o
                                  0x84 (size before relaxing)
  .text.op_mul_init
-                0x800202cc       0x58 ../avr32/apps/bees/src/ops/op_mul.o
+                0x800202a8       0x58 ../avr32/apps/bees/src/ops/op_mul.o
                                  0x60 (size before relaxing)
-                0x800202cc                op_mul_init
+                0x800202a8                op_mul_init
  .text.op_mul_in_btrig
-                0x80020324       0x14 ../avr32/apps/bees/src/ops/op_mul.o
+                0x80020300       0x14 ../avr32/apps/bees/src/ops/op_mul.o
  .text.op_mul_in_b
-                0x80020338       0x28 ../avr32/apps/bees/src/ops/op_mul.o
+                0x80020314       0x28 ../avr32/apps/bees/src/ops/op_mul.o
                                  0x30 (size before relaxing)
  .text.op_mul_in_a
-                0x80020360       0x20 ../avr32/apps/bees/src/ops/op_mul.o
+                0x8002033c       0x20 ../avr32/apps/bees/src/ops/op_mul.o
                                  0x28 (size before relaxing)
  .text.op_mul_inc_input
-                0x80020380       0x80 ../avr32/apps/bees/src/ops/op_mul.o
+                0x8002035c       0x80 ../avr32/apps/bees/src/ops/op_mul.o
                                  0x8c (size before relaxing)
  .text.op_sw_init
-                0x80020400       0x68 ../avr32/apps/bees/src/ops/op_sw.o
+                0x800203dc       0x68 ../avr32/apps/bees/src/ops/op_sw.o
                                  0x74 (size before relaxing)
-                0x80020400                op_sw_init
+                0x800203dc                op_sw_init
  .text.op_sw_in_tog
-                0x80020468       0x16 ../avr32/apps/bees/src/ops/op_sw.o
- *fill*         0x8002047e        0x2 d703d703
+                0x80020444       0x16 ../avr32/apps/bees/src/ops/op_sw.o
+ *fill*         0x8002045a        0x2 d703d703
  .text.op_sw_in_mul
-                0x80020480       0x20 ../avr32/apps/bees/src/ops/op_sw.o
+                0x8002045c       0x20 ../avr32/apps/bees/src/ops/op_sw.o
                                  0x24 (size before relaxing)
  .text.op_sw_in_state
-                0x800204a0       0x4c ../avr32/apps/bees/src/ops/op_sw.o
+                0x8002047c       0x4c ../avr32/apps/bees/src/ops/op_sw.o
                                  0x50 (size before relaxing)
  .text.op_sw_inc_func
-                0x800204ec       0x90 ../avr32/apps/bees/src/ops/op_sw.o
+                0x800204c8       0x90 ../avr32/apps/bees/src/ops/op_sw.o
                                  0x98 (size before relaxing)
- .text._stext   0x8002057c       0x40 avr32/utils/startup/startup_uc3.o
+ .text._stext   0x80020558       0x40 avr32/utils/startup/startup_uc3.o
                                  0x50 (size before relaxing)
-                0x8002057c                _stext
- .text          0x800205bc       0x74 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/ucr2/libgcc.a(_avr32_s32_to_f32.o)
-                0x800205bc                __avr32_s32_to_f32
- .text          0x80020630       0x1e /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/ucr2/libgcc.a(_avr32_f32_to_s32.o)
-                0x80020630                __avr32_f32_to_s32
- .text          0x8002064e      0x292 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/ucr2/libgcc.a(_udivdi3.o)
-                0x8002064e                __udivdi3
-                0x8002064e                __avr32_udiv64
- .text.free     0x800208e0       0x10 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-malloc.o)
+                0x80020558                _stext
+ .text          0x80020598       0x74 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/ucr2/libgcc.a(_avr32_s32_to_f32.o)
+                0x80020598                __avr32_s32_to_f32
+ .text          0x8002060c       0x1e /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/ucr2/libgcc.a(_avr32_f32_to_s32.o)
+                0x8002060c                __avr32_f32_to_s32
+ .text          0x8002062a      0x292 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/ucr2/libgcc.a(_udivdi3.o)
+                0x8002062a                __udivdi3
+                0x8002062a                __avr32_udiv64
+ .text.free     0x800208bc       0x10 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-malloc.o)
                                  0x18 (size before relaxing)
-                0x800208e0                free
- .text.malloc   0x800208f0       0x10 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-malloc.o)
+                0x800208bc                free
+ .text.malloc   0x800208cc       0x10 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-malloc.o)
                                  0x18 (size before relaxing)
-                0x800208f0                malloc
+                0x800208cc                malloc
  .text._malloc_r
-                0x80020900      0x430 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mallocr.o)
+                0x800208dc      0x430 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mallocr.o)
                                 0x454 (size before relaxing)
-                0x80020900                _malloc_r
- .text          0x80020d30      0x148 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memcpy.o)
-                0x80020d30                memcpy
- .text.memset   0x80020e78        0xe /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memset.o)
-                0x80020e78                memset
+                0x800208dc                _malloc_r
+ .text          0x80020d0c      0x148 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memcpy.o)
+                0x80020d0c                memcpy
+ .text.memset   0x80020e54        0xe /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memset.o)
+                0x80020e54                memset
  .text.__malloc_lock
-                0x80020e86        0x2 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mlock.o)
-                0x80020e86                __malloc_lock
+                0x80020e62        0x2 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mlock.o)
+                0x80020e62                __malloc_lock
  .text.__malloc_unlock
-                0x80020e88        0x2 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mlock.o)
-                0x80020e88                __malloc_unlock
- *fill*         0x80020e8a        0x2 d703d703
- .text._sbrk_r  0x80020e8c       0x20 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-sbrkr.o)
+                0x80020e64        0x2 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mlock.o)
+                0x80020e64                __malloc_unlock
+ *fill*         0x80020e66        0x2 d703d703
+ .text._sbrk_r  0x80020e68       0x20 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-sbrkr.o)
                                  0x28 (size before relaxing)
-                0x80020e8c                _sbrk_r
- .text          0x80020eac       0xa8 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strcmp.o)
-                0x80020eac                strcmp
- .text.strcpy   0x80020f54       0x12 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strcpy.o)
-                0x80020f54                strcpy
- .text.strlen   0x80020f66       0x16 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strlen.o)
-                0x80020f66                strlen
- .text.strncat  0x80020f7c       0x2e /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strncat.o)
-                0x80020f7c                strncat
- .text.strncmp  0x80020faa       0x26 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strncmp.o)
-                0x80020faa                strncmp
- .text          0x80020fd0       0x20 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strncpy.o)
-                0x80020fd0                strncpy
- .text._sbrk    0x80020ff0       0x38 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-syscalls.o)
+                0x80020e68                _sbrk_r
+ .text          0x80020e88       0xa8 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strcmp.o)
+                0x80020e88                strcmp
+ .text.strcpy   0x80020f30       0x12 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strcpy.o)
+                0x80020f30                strcpy
+ .text.strlen   0x80020f42       0x16 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strlen.o)
+                0x80020f42                strlen
+ .text.strncat  0x80020f58       0x2e /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strncat.o)
+                0x80020f58                strncat
+ .text.strncmp  0x80020f86       0x26 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strncmp.o)
+                0x80020f86                strncmp
+ .text          0x80020fac       0x20 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strncpy.o)
+                0x80020fac                strncpy
+ .text._sbrk    0x80020fcc       0x38 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-syscalls.o)
                                  0x40 (size before relaxing)
-                0x80020ff0                _sbrk
- .text.__errno  0x80021028        0xc /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-errno.o)
-                0x80021028                __errno
+                0x80020fcc                _sbrk
+ .text.__errno  0x80021004        0xc /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-errno.o)
+                0x80021004                __errno
  .text._malloc_trim_r
-                0x80021034       0x8c /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-freer.o)
+                0x80021010       0x8c /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-freer.o)
                                  0xa8 (size before relaxing)
-                0x80021034                _malloc_trim_r
- .text._free_r  0x800210c0      0x184 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-freer.o)
+                0x80021010                _malloc_trim_r
+ .text._free_r  0x8002109c      0x184 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-freer.o)
                                 0x1a4 (size before relaxing)
-                0x800210c0                _free_r
+                0x8002109c                _free_r
  *(.text.*personality*)
  *(.gnu.warning)
 
@@ -2734,7 +2735,7 @@ Linker script and memory map
                 0x80021600                PROVIDE (_etext, .)
                 0x80021600                PROVIDE (etext, .)
 
-.rodata         0x80021600     0x19b8
+.rodata         0x80021600     0x193c
  *(.rodata .rodata.* .gnu.linkonce.r.*)
  .rodata.SMC_EBI_GPIO_MAP.10588
                 0x80021600      0x148 avr32/drivers/ebi/smc/smc.o
@@ -2840,117 +2841,117 @@ Linker script and memory map
  .rodata.app_handle_event
                 0x80022860       0x54 ../avr32/apps/bees/src/app.o
  .rodata.str1.4
-                0x800228b4       0x8a ../avr32/apps/bees/src/app.o
-                                 0x8c (size before relaxing)
- *fill*         0x8002293e        0x2 00
+                0x800228b4       0x9a ../avr32/apps/bees/src/app.o
+                                 0x9c (size before relaxing)
+ *fill*         0x8002294e        0x2 00
  .rodata.key_handler_scenes
-                0x80022940       0x40 ../avr32/apps/bees/src/key_handler.o
+                0x80022950       0x40 ../avr32/apps/bees/src/key_handler.o
  .rodata.key_handler_presets
-                0x80022980       0x30 ../avr32/apps/bees/src/key_handler.o
+                0x80022990       0x30 ../avr32/apps/bees/src/key_handler.o
  .rodata.key_handler_play
-                0x800229b0       0x40 ../avr32/apps/bees/src/key_handler.o
+                0x800229c0       0x40 ../avr32/apps/bees/src/key_handler.o
  .rodata.key_handler_outs
-                0x800229f0       0x38 ../avr32/apps/bees/src/key_handler.o
+                0x80022a00       0x38 ../avr32/apps/bees/src/key_handler.o
  .rodata.key_handler_ins
-                0x80022a28       0x40 ../avr32/apps/bees/src/key_handler.o
+                0x80022a38       0x40 ../avr32/apps/bees/src/key_handler.o
  .rodata.key_handler_ops
-                0x80022a68       0x40 ../avr32/apps/bees/src/key_handler.o
+                0x80022a78       0x40 ../avr32/apps/bees/src/key_handler.o
  .rodata.str1.4
-                0x80022aa8       0x78 ../avr32/apps/bees/src/key_handler.o
+                0x80022ab8       0x78 ../avr32/apps/bees/src/key_handler.o
  .rodata.scroll_page
-                0x80022b20       0x1c ../avr32/apps/bees/src/menu.o
+                0x80022b30       0x1c ../avr32/apps/bees/src/menu.o
  .rodata.userOpTypes
-                0x80022b3c       0x18 ../avr32/apps/bees/src/menu.o
-                0x80022b3c                userOpTypes
+                0x80022b4c       0x18 ../avr32/apps/bees/src/menu.o
+                0x80022b4c                userOpTypes
  .rodata.str1.4
-                0x80022b54       0xc1 ../avr32/apps/bees/src/menu.o
-                                 0xc4 (size before relaxing)
- *fill*         0x80022c15        0x3 00
+                0x80022b64       0x35 ../avr32/apps/bees/src/menu.o
+                                 0x38 (size before relaxing)
+ *fill*         0x80022b99        0x3 00
  .rodata.str1.4
-                0x80022c18       0x3c ../avr32/apps/bees/src/net.o
+                0x80022b9c       0x3c ../avr32/apps/bees/src/net.o
                                  0x40 (size before relaxing)
  .rodata.op_registry
-                0x80022c54       0x28 ../avr32/apps/bees/src/op.o
-                0x80022c54                op_registry
+                0x80022bd8       0x28 ../avr32/apps/bees/src/op.o
+                0x80022bd8                op_registry
  .rodata.str1.4
-                0x80022c7c       0x15 ../avr32/apps/bees/src/op.o
+                0x80022c00       0x15 ../avr32/apps/bees/src/op.o
                                  0x18 (size before relaxing)
- *fill*         0x80022c91        0x3 00
+ *fill*         0x80022c15        0x3 00
  .rodata.str1.4
-                0x80022c94       0x1e ../avr32/apps/bees/src/play.o
+                0x80022c18       0x1e ../avr32/apps/bees/src/play.o
                                  0x20 (size before relaxing)
- *fill*         0x80022cb2        0x2 00
+ *fill*         0x80022c36        0x2 00
  .rodata.str1.4
-                0x80022cb4        0x8 ../avr32/apps/bees/src/preset.o
+                0x80022c38        0x8 ../avr32/apps/bees/src/preset.o
  .rodata.str1.4
-                0x80022cbc       0xd9 ../avr32/apps/bees/src/redraw.o
+                0x80022c40       0xd9 ../avr32/apps/bees/src/redraw.o
                                  0xf8 (size before relaxing)
- *fill*         0x80022d95        0x3 00
+ *fill*         0x80022d19        0x3 00
  .rodata.str1.4
-                0x80022d98       0xbd ../avr32/apps/bees/src/scene.o
+                0x80022d1c       0xbd ../avr32/apps/bees/src/scene.o
                                  0xc0 (size before relaxing)
- *fill*         0x80022e55        0x3 00
+ *fill*         0x80022dd9        0x3 00
  .rodata.op_add_instring
-                0x80022e58        0x4 ../avr32/apps/bees/src/ops/op_add.o
+                0x80022ddc        0x4 ../avr32/apps/bees/src/ops/op_add.o
  .rodata.str1.4
-                0x80022e5c       0x2d ../avr32/apps/bees/src/ops/op_add.o
+                0x80022de0       0x2d ../avr32/apps/bees/src/ops/op_add.o
+                                 0x30 (size before relaxing)
+ *fill*         0x80022e0d        0x3 00
+ .rodata.op_add_opstring
+                0x80022e10        0x4 ../avr32/apps/bees/src/ops/op_add.o
+ .rodata.op_add_outstring
+                0x80022e14        0x4 ../avr32/apps/bees/src/ops/op_add.o
+ .rodata.op_enc_instring
+                0x80022e18        0x4 ../avr32/apps/bees/src/ops/op_enc.o
+ .rodata.op_enc_opstring
+                0x80022e1c        0x4 ../avr32/apps/bees/src/ops/op_enc.o
+ .rodata.op_enc_outstring
+                0x80022e20        0x4 ../avr32/apps/bees/src/ops/op_enc.o
+ .rodata.str1.4
+                0x80022e24       0x3d ../avr32/apps/bees/src/ops/op_enc.o
+                                 0x44 (size before relaxing)
+ *fill*         0x80022e61        0x3 00
+ .rodata.str1.4
+                0x80022e64       0x25 ../avr32/apps/bees/src/ops/op_gate.o
                                  0x30 (size before relaxing)
  *fill*         0x80022e89        0x3 00
- .rodata.op_add_opstring
-                0x80022e8c        0x4 ../avr32/apps/bees/src/ops/op_add.o
- .rodata.op_add_outstring
-                0x80022e90        0x4 ../avr32/apps/bees/src/ops/op_add.o
- .rodata.op_enc_instring
-                0x80022e94        0x4 ../avr32/apps/bees/src/ops/op_enc.o
- .rodata.op_enc_opstring
-                0x80022e98        0x4 ../avr32/apps/bees/src/ops/op_enc.o
- .rodata.op_enc_outstring
-                0x80022e9c        0x4 ../avr32/apps/bees/src/ops/op_enc.o
- .rodata.str1.4
-                0x80022ea0       0x3d ../avr32/apps/bees/src/ops/op_enc.o
-                                 0x44 (size before relaxing)
- *fill*         0x80022edd        0x3 00
- .rodata.str1.4
-                0x80022ee0       0x25 ../avr32/apps/bees/src/ops/op_gate.o
-                                 0x30 (size before relaxing)
- *fill*         0x80022f05        0x3 00
  .rodata.op_gate_outstring
-                0x80022f08        0x4 ../avr32/apps/bees/src/ops/op_gate.o
+                0x80022e8c        0x4 ../avr32/apps/bees/src/ops/op_gate.o
  .rodata.op_gate_instring
-                0x80022f0c        0x4 ../avr32/apps/bees/src/ops/op_gate.o
+                0x80022e90        0x4 ../avr32/apps/bees/src/ops/op_gate.o
  .rodata.op_gate_opstring
-                0x80022f10        0x4 ../avr32/apps/bees/src/ops/op_gate.o
+                0x80022e94        0x4 ../avr32/apps/bees/src/ops/op_gate.o
  .rodata.str1.4
-                0x80022f14        0x9 ../avr32/apps/bees/src/ops/op_mul.o
+                0x80022e98        0x9 ../avr32/apps/bees/src/ops/op_mul.o
                                  0x2c (size before relaxing)
- *fill*         0x80022f1d        0x3 00
+ *fill*         0x80022ea1        0x3 00
  .rodata.op_mul_outstring
-                0x80022f20        0x4 ../avr32/apps/bees/src/ops/op_mul.o
+                0x80022ea4        0x4 ../avr32/apps/bees/src/ops/op_mul.o
  .rodata.op_mul_instring
-                0x80022f24        0x4 ../avr32/apps/bees/src/ops/op_mul.o
+                0x80022ea8        0x4 ../avr32/apps/bees/src/ops/op_mul.o
  .rodata.op_mul_opstring
-                0x80022f28        0x4 ../avr32/apps/bees/src/ops/op_mul.o
+                0x80022eac        0x4 ../avr32/apps/bees/src/ops/op_mul.o
  .rodata.op_sw_instring
-                0x80022f2c        0x4 ../avr32/apps/bees/src/ops/op_sw.o
+                0x80022eb0        0x4 ../avr32/apps/bees/src/ops/op_sw.o
  .rodata.op_sw_opstring
-                0x80022f30        0x4 ../avr32/apps/bees/src/ops/op_sw.o
+                0x80022eb4        0x4 ../avr32/apps/bees/src/ops/op_sw.o
  .rodata.op_sw_outstring
-                0x80022f34        0x4 ../avr32/apps/bees/src/ops/op_sw.o
+                0x80022eb8        0x4 ../avr32/apps/bees/src/ops/op_sw.o
  .rodata.str1.4
-                0x80022f38       0x19 ../avr32/apps/bees/src/ops/op_sw.o
+                0x80022ebc       0x19 ../avr32/apps/bees/src/ops/op_sw.o
                                  0x2c (size before relaxing)
- *fill*         0x80022f51        0x3 00
+ *fill*         0x80022ed5        0x3 00
  .rodata.str1.4
-                0x80022f54        0x4 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-impure.o)
+                0x80022ed8        0x4 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-impure.o)
  .rodata.__sf_fake_stdin
-                0x80022f58       0x20 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-findfp.o)
-                0x80022f58                __sf_fake_stdin
+                0x80022edc       0x20 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-findfp.o)
+                0x80022edc                __sf_fake_stdin
  .rodata.__sf_fake_stdout
-                0x80022f78       0x20 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-findfp.o)
-                0x80022f78                __sf_fake_stdout
+                0x80022efc       0x20 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-findfp.o)
+                0x80022efc                __sf_fake_stdout
  .rodata.__sf_fake_stderr
-                0x80022f98       0x20 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-findfp.o)
-                0x80022f98                __sf_fake_stderr
+                0x80022f1c       0x20 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-findfp.o)
+                0x80022f1c                __sf_fake_stderr
 
 .rodata1
  *(.rodata1)
@@ -2965,9 +2966,10 @@ Linker script and memory map
  *(.gcc_except_table)
  *(.gcc_except_table.*)
 
-.lalign         0x80022fb8        0x0
-                0x80022fb8                . = ALIGN (0x8)
-                0x80022fb8                PROVIDE (_data_lma, .)
+.lalign         0x80022f3c        0x4
+                0x80022f40                . = ALIGN (0x8)
+ *fill*         0x80022f3c        0x4 00
+                0x80022f40                PROVIDE (_data_lma, .)
                 0x00000004                . = ORIGIN (INTRAM)
 
 .dalign         0x00000004        0x4
@@ -3033,10 +3035,10 @@ Linker script and memory map
 .ramtext
  *(.ramtext .ramtext.*)
 
-.ddalign        0x00000008        0x0 load address 0x80022fb8
+.ddalign        0x00000008        0x0 load address 0x80022f40
                 0x00000008                . = ALIGN (0x8)
 
-.data           0x00000008      0x64c load address 0x80022fb8
+.data           0x00000008      0x64c load address 0x80022f40
  *(.data .data.* .gnu.linkonce.d.*)
  .data.flashc_wait_until_ready
                 0x00000008        0x4 avr32/drivers/flashc/flashc.o
@@ -3078,14 +3080,14 @@ Linker script and memory map
 .data1
  *(.data1)
 
-.balign         0x00000654        0x4 load address 0x80023604
+.balign         0x00000654        0x4 load address 0x8002358c
                 0x00000658                . = ALIGN (0x8)
  *fill*         0x00000654        0x4 00
                 0x00000658                PROVIDE (_edata, .)
                 0x00000658                PROVIDE (edata, .)
                 0x00000658                __bss_start = .
 
-.bss            0x00000658     0x3988
+.bss            0x00000658     0x38d8
  *(.dynbss)
  *(.bss .bss.* .gnu.linkonce.b.*)
  .bss.smc_tab_cs_size
@@ -3260,81 +3262,80 @@ Linker script and memory map
                 0x0000375c       0x10 ../avr32/apps/bees/src/op.o
  .bss.scrollIdx
                 0x0000376c        0x2 ../avr32/apps/bees/src/play.o
- .bss.getIdx.11111
-                0x0000376e        0x2 ../avr32/apps/bees/src/play.o
+ *fill*         0x0000376e        0x2 00
  .bss.scrollBuf
-                0x00003770      0x15e ../avr32/apps/bees/src/play.o
- *fill*         0x000038ce        0x2 00
- .bss.lineBuf   0x000038d0       0x34 ../avr32/apps/bees/src/redraw.o
+                0x00003770       0xc4 ../avr32/apps/bees/src/play.o
+ .bss.lineBuf   0x00003834       0x1c ../avr32/apps/bees/src/redraw.o
  .bss.__malloc_max_total_mem
-                0x00003904        0x4 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mallocr.o)
-                0x00003904                __malloc_max_total_mem
+                0x00003850        0x4 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mallocr.o)
+                0x00003850                __malloc_max_total_mem
  .bss.__malloc_max_sbrked_mem
-                0x00003908        0x4 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mallocr.o)
-                0x00003908                __malloc_max_sbrked_mem
+                0x00003854        0x4 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mallocr.o)
+                0x00003854                __malloc_max_sbrked_mem
  .bss.__malloc_top_pad
-                0x0000390c        0x4 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mallocr.o)
-                0x0000390c                __malloc_top_pad
+                0x00003858        0x4 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mallocr.o)
+                0x00003858                __malloc_top_pad
  .bss.__malloc_current_mallinfo
-                0x00003910       0x28 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mallocr.o)
-                0x00003910                __malloc_current_mallinfo
+                0x0000385c       0x28 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-mallocr.o)
+                0x0000385c                __malloc_current_mallinfo
  .bss.cur_heap_pos.1869
-                0x00003938        0x4 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-syscalls.o)
+                0x00003884        0x4 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-syscalls.o)
  *(COMMON)
- COMMON         0x0000393c      0x229 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
-                0x0000393c                data_mem
-                0x00003b40                capacity
-                0x00003b48                capacity_mult
-                0x00003b4a                erase_group_size
-                0x00003b4c                sd_mmc_spi_last_block_address
-                0x00003b50                r2
-                0x00003b52                card_type
-                0x00003b54                csd
-                0x00003b64                r1
- *fill*         0x00003b65        0x3 00
- COMMON         0x00003b68       0x12 avr32/drivers/usbb/usbb_host.o
-                0x00003b68                uhd_ctrl_request_phase
-                0x00003b6c                uhd_ctrl_request_first
-                0x00003b70                uhd_ctrl_nb_trans
-                0x00003b74                uhd_ctrl_request_last
-                0x00003b78                uhd_ctrl_request_timeout
- COMMON         0x00003b7a        0x1 common/services/usb/uhc/uhc.o
-                0x00003b7a                uhc_sof_timeout
- *fill*         0x00003b7b        0x1 00
- COMMON         0x00003b7c       0x30 ../avr32/src/encoders.o
-                0x00003b7c                enc
- COMMON         0x00003bac      0x40c ../avr32/src/filesystem.o
-                0x00003bac                pdcaRxChan
-                0x00003bb0                fsEndTransfer
-                0x00003bb4                pdcaTxChan
-                0x00003bb8                pdcaTxBuf
-                0x00003db8                pdcaRxBuf
- COMMON         0x00003fb8        0x8 ../avr32/src/flash.o
-                0x00003fb8                bfinLdrData
-                0x00003fbc                fwBinData
- COMMON         0x00003fc0       0x10 ../avr32/apps/bees/src/menu.o
-                0x00003fc0                curPage
-                0x00003fc4                gathered
-                0x00003fc8                newOpType
-                0x00003fcc                numGathered
- COMMON         0x00003fd0        0x4 ../avr32/apps/bees/src/net.o
-                0x00003fd0                net
- COMMON         0x00003fd4        0x4 ../avr32/apps/bees/src/preset.o
-                0x00003fd4                presets
- COMMON         0x00003fd8        0x4 ../avr32/apps/bees/src/scene.o
-                0x00003fd8                sceneData
- COMMON         0x00003fdc        0x4 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-reent.o)
-                0x00003fdc                errno
-                0x00003fe0                . = ALIGN (0x8)
-                0x00003fe0                . = ALIGN (0x8)
-                0x00003fe0                _end = .
-                0x00003fe0                PROVIDE (end, .)
-                0x00003fe0                __heap_start__ = ALIGN (0x8)
+ COMMON         0x00003888      0x229 avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.o
+                0x00003888                data_mem
+                0x00003a8c                capacity
+                0x00003a94                capacity_mult
+                0x00003a96                erase_group_size
+                0x00003a98                sd_mmc_spi_last_block_address
+                0x00003a9c                r2
+                0x00003a9e                card_type
+                0x00003aa0                csd
+                0x00003ab0                r1
+ *fill*         0x00003ab1        0x3 00
+ COMMON         0x00003ab4       0x12 avr32/drivers/usbb/usbb_host.o
+                0x00003ab4                uhd_ctrl_request_phase
+                0x00003ab8                uhd_ctrl_request_first
+                0x00003abc                uhd_ctrl_nb_trans
+                0x00003ac0                uhd_ctrl_request_last
+                0x00003ac4                uhd_ctrl_request_timeout
+ COMMON         0x00003ac6        0x1 common/services/usb/uhc/uhc.o
+                0x00003ac6                uhc_sof_timeout
+ *fill*         0x00003ac7        0x1 00
+ COMMON         0x00003ac8       0x30 ../avr32/src/encoders.o
+                0x00003ac8                enc
+ COMMON         0x00003af8      0x40c ../avr32/src/filesystem.o
+                0x00003af8                pdcaRxChan
+                0x00003afc                fsEndTransfer
+                0x00003b00                pdcaTxChan
+                0x00003b04                pdcaTxBuf
+                0x00003d04                pdcaRxBuf
+ COMMON         0x00003f04        0x8 ../avr32/src/flash.o
+                0x00003f04                bfinLdrData
+                0x00003f08                fwBinData
+ COMMON         0x00003f0c       0x10 ../avr32/apps/bees/src/menu.o
+                0x00003f0c                curPage
+                0x00003f10                gathered
+                0x00003f14                newOpType
+                0x00003f18                numGathered
+ COMMON         0x00003f1c        0x4 ../avr32/apps/bees/src/net.o
+                0x00003f1c                net
+ COMMON         0x00003f20        0x4 ../avr32/apps/bees/src/preset.o
+                0x00003f20                presets
+ COMMON         0x00003f24        0x4 ../avr32/apps/bees/src/scene.o
+                0x00003f24                sceneData
+ COMMON         0x00003f28        0x4 /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-reent.o)
+                0x00003f28                errno
+                0x00003f30                . = ALIGN (0x8)
+ *fill*         0x00003f2c        0x4 00
+                0x00003f30                . = ALIGN (0x8)
+                0x00003f30                _end = .
+                0x00003f30                PROVIDE (end, .)
+                0x00003f30                __heap_start__ = ALIGN (0x8)
 
-.heap           0x00003fe0     0xb020
+.heap           0x00003f30     0xb0d0
  *(.heap)
-                0x0000b020                . = (__heap_size__ == __max_heap_size__)?(((ORIGIN (INTRAM) + 0xfffc) - __stack_size__) - ABSOLUTE (.)):__heap_size__
- *fill*         0x00003fe0     0xb020 00
+                0x0000b0d0                . = (__heap_size__ == __max_heap_size__)?(((ORIGIN (INTRAM) + 0xfffc) - __stack_size__) - ABSOLUTE (.)):__heap_size__
+ *fill*         0x00003f30     0xb0d0 00
                 0x0000f000                __heap_end__ = .
 
 .stab
@@ -3682,7 +3683,7 @@ Linker script and memory map
  .debug_pubnames
                 0x0000353b       0x21 ../avr32/apps/bees/src/ops/op_sw.o
 
-.debug_info     0x00000000    0x3747b
+.debug_info     0x00000000    0x37589
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0xb89 avr32/drivers/ebi/smc/smc.o
  .debug_info    0x00000b89     0x36ee avr32/drivers/flashc/flashc.o
@@ -3729,21 +3730,21 @@ Linker script and memory map
  .debug_info    0x00030087      0x785 ../common/libfixmath/fix16.o
  .debug_info    0x0003080c      0x37d ../avr32/apps/bees/src/app.o
  .debug_info    0x00030b89      0x6f4 ../avr32/apps/bees/src/key_handler.o
- .debug_info    0x0003127d      0x64b ../avr32/apps/bees/src/menu.o
- .debug_info    0x000318c8      0xff5 ../avr32/apps/bees/src/net.o
- .debug_info    0x000328bd      0x540 ../avr32/apps/bees/src/op.o
- .debug_info    0x00032dfd      0x748 ../avr32/apps/bees/src/param.o
- .debug_info    0x00033545      0x2ce ../avr32/apps/bees/src/play.o
- .debug_info    0x00033813      0x494 ../avr32/apps/bees/src/preset.o
- .debug_info    0x00033ca7     0x1057 ../avr32/apps/bees/src/redraw.o
- .debug_info    0x00034cfe      0x9a5 ../avr32/apps/bees/src/scene.o
- .debug_info    0x000356a3      0x5c1 ../avr32/apps/bees/src/ops/op_add.o
- .debug_info    0x00035c64      0x6ed ../avr32/apps/bees/src/ops/op_enc.o
- .debug_info    0x00036351      0x5b7 ../avr32/apps/bees/src/ops/op_gate.o
- .debug_info    0x00036908      0x5c1 ../avr32/apps/bees/src/ops/op_mul.o
- .debug_info    0x00036ec9      0x5b2 ../avr32/apps/bees/src/ops/op_sw.o
+ .debug_info    0x0003127d      0x6f5 ../avr32/apps/bees/src/menu.o
+ .debug_info    0x00031972      0xff5 ../avr32/apps/bees/src/net.o
+ .debug_info    0x00032967      0x540 ../avr32/apps/bees/src/op.o
+ .debug_info    0x00032ea7      0x748 ../avr32/apps/bees/src/param.o
+ .debug_info    0x000335ef      0x2d9 ../avr32/apps/bees/src/play.o
+ .debug_info    0x000338c8      0x494 ../avr32/apps/bees/src/preset.o
+ .debug_info    0x00033d5c     0x10b0 ../avr32/apps/bees/src/redraw.o
+ .debug_info    0x00034e0c      0x9a5 ../avr32/apps/bees/src/scene.o
+ .debug_info    0x000357b1      0x5c1 ../avr32/apps/bees/src/ops/op_add.o
+ .debug_info    0x00035d72      0x6ed ../avr32/apps/bees/src/ops/op_enc.o
+ .debug_info    0x0003645f      0x5b7 ../avr32/apps/bees/src/ops/op_gate.o
+ .debug_info    0x00036a16      0x5c1 ../avr32/apps/bees/src/ops/op_mul.o
+ .debug_info    0x00036fd7      0x5b2 ../avr32/apps/bees/src/ops/op_sw.o
 
-.debug_abbrev   0x00000000     0x7cd2
+.debug_abbrev   0x00000000     0x7d18
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x1dd avr32/drivers/ebi/smc/smc.o
  .debug_abbrev  0x000001dd      0x45b avr32/drivers/flashc/flashc.o
@@ -3790,21 +3791,21 @@ Linker script and memory map
  .debug_abbrev  0x00005db9      0x22d ../common/libfixmath/fix16.o
  .debug_abbrev  0x00005fe6      0x128 ../avr32/apps/bees/src/app.o
  .debug_abbrev  0x0000610e      0x1c6 ../avr32/apps/bees/src/key_handler.o
- .debug_abbrev  0x000062d4      0x1d4 ../avr32/apps/bees/src/menu.o
- .debug_abbrev  0x000064a8      0x3b9 ../avr32/apps/bees/src/net.o
- .debug_abbrev  0x00006861      0x1bb ../avr32/apps/bees/src/op.o
- .debug_abbrev  0x00006a1c      0x183 ../avr32/apps/bees/src/param.o
- .debug_abbrev  0x00006b9f      0x155 ../avr32/apps/bees/src/play.o
- .debug_abbrev  0x00006cf4      0x173 ../avr32/apps/bees/src/preset.o
- .debug_abbrev  0x00006e67      0x2ce ../avr32/apps/bees/src/redraw.o
- .debug_abbrev  0x00007135      0x1ff ../avr32/apps/bees/src/scene.o
- .debug_abbrev  0x00007334      0x1d7 ../avr32/apps/bees/src/ops/op_add.o
- .debug_abbrev  0x0000750b      0x204 ../avr32/apps/bees/src/ops/op_enc.o
- .debug_abbrev  0x0000770f      0x204 ../avr32/apps/bees/src/ops/op_gate.o
- .debug_abbrev  0x00007913      0x1d7 ../avr32/apps/bees/src/ops/op_mul.o
- .debug_abbrev  0x00007aea      0x1e8 ../avr32/apps/bees/src/ops/op_sw.o
+ .debug_abbrev  0x000062d4      0x1fc ../avr32/apps/bees/src/menu.o
+ .debug_abbrev  0x000064d0      0x3b9 ../avr32/apps/bees/src/net.o
+ .debug_abbrev  0x00006889      0x1bb ../avr32/apps/bees/src/op.o
+ .debug_abbrev  0x00006a44      0x183 ../avr32/apps/bees/src/param.o
+ .debug_abbrev  0x00006bc7      0x173 ../avr32/apps/bees/src/play.o
+ .debug_abbrev  0x00006d3a      0x173 ../avr32/apps/bees/src/preset.o
+ .debug_abbrev  0x00006ead      0x2ce ../avr32/apps/bees/src/redraw.o
+ .debug_abbrev  0x0000717b      0x1ff ../avr32/apps/bees/src/scene.o
+ .debug_abbrev  0x0000737a      0x1d7 ../avr32/apps/bees/src/ops/op_add.o
+ .debug_abbrev  0x00007551      0x204 ../avr32/apps/bees/src/ops/op_enc.o
+ .debug_abbrev  0x00007755      0x204 ../avr32/apps/bees/src/ops/op_gate.o
+ .debug_abbrev  0x00007959      0x1d7 ../avr32/apps/bees/src/ops/op_mul.o
+ .debug_abbrev  0x00007b30      0x1e8 ../avr32/apps/bees/src/ops/op_sw.o
 
-.debug_line     0x00000000    0x2e0f0
+.debug_line     0x00000000    0x2e0e6
  *(.debug_line)
  .debug_line    0x00000000      0x6e8 avr32/drivers/ebi/smc/smc.o
  .debug_line    0x000006e8     0x4448 avr32/drivers/flashc/flashc.o
@@ -3849,23 +3850,23 @@ Linker script and memory map
  .debug_line    0x00022b96      0x952 ../avr32/src/fat_io_lib/fat_write.o
  .debug_line    0x000234e8      0xaba ../common/fix.o
  .debug_line    0x00023fa2      0x43a ../common/libfixmath/fix16.o
- .debug_line    0x000243dc      0x968 ../avr32/apps/bees/src/app.o
- .debug_line    0x00024d44      0xe32 ../avr32/apps/bees/src/key_handler.o
- .debug_line    0x00025b76      0xa25 ../avr32/apps/bees/src/menu.o
- .debug_line    0x0002659b     0x1239 ../avr32/apps/bees/src/net.o
- .debug_line    0x000277d4      0x94e ../avr32/apps/bees/src/op.o
- .debug_line    0x00028122      0x757 ../avr32/apps/bees/src/param.o
- .debug_line    0x00028879      0x88e ../avr32/apps/bees/src/play.o
- .debug_line    0x00029107      0x96c ../avr32/apps/bees/src/preset.o
- .debug_line    0x00029a73     0x1360 ../avr32/apps/bees/src/redraw.o
- .debug_line    0x0002add3      0x8e2 ../avr32/apps/bees/src/scene.o
- .debug_line    0x0002b6b5      0x845 ../avr32/apps/bees/src/ops/op_add.o
- .debug_line    0x0002befa      0x954 ../avr32/apps/bees/src/ops/op_enc.o
- .debug_line    0x0002c84e      0x7ff ../avr32/apps/bees/src/ops/op_gate.o
- .debug_line    0x0002d04d      0x840 ../avr32/apps/bees/src/ops/op_mul.o
- .debug_line    0x0002d88d      0x863 ../avr32/apps/bees/src/ops/op_sw.o
+ .debug_line    0x000243dc      0x97e ../avr32/apps/bees/src/app.o
+ .debug_line    0x00024d5a      0xe32 ../avr32/apps/bees/src/key_handler.o
+ .debug_line    0x00025b8c      0xa1f ../avr32/apps/bees/src/menu.o
+ .debug_line    0x000265ab     0x1251 ../avr32/apps/bees/src/net.o
+ .debug_line    0x000277fc      0x94e ../avr32/apps/bees/src/op.o
+ .debug_line    0x0002814a      0x757 ../avr32/apps/bees/src/param.o
+ .debug_line    0x000288a1      0x8a1 ../avr32/apps/bees/src/play.o
+ .debug_line    0x00029142      0x96c ../avr32/apps/bees/src/preset.o
+ .debug_line    0x00029aae     0x131b ../avr32/apps/bees/src/redraw.o
+ .debug_line    0x0002adc9      0x8e2 ../avr32/apps/bees/src/scene.o
+ .debug_line    0x0002b6ab      0x845 ../avr32/apps/bees/src/ops/op_add.o
+ .debug_line    0x0002bef0      0x954 ../avr32/apps/bees/src/ops/op_enc.o
+ .debug_line    0x0002c844      0x7ff ../avr32/apps/bees/src/ops/op_gate.o
+ .debug_line    0x0002d043      0x840 ../avr32/apps/bees/src/ops/op_mul.o
+ .debug_line    0x0002d883      0x863 ../avr32/apps/bees/src/ops/op_sw.o
 
-.debug_frame    0x00000000     0x43e8
+.debug_frame    0x00000000     0x43e4
  *(.debug_frame)
  .debug_frame   0x00000000       0x3c avr32/drivers/ebi/smc/smc.o
  .debug_frame   0x0000003c      0x78c avr32/drivers/flashc/flashc.o
@@ -3915,17 +3916,17 @@ Linker script and memory map
  .debug_frame   0x0000391c      0x360 ../avr32/apps/bees/src/net.o
  .debug_frame   0x00003c7c       0x74 ../avr32/apps/bees/src/op.o
  .debug_frame   0x00003cf0       0x5c ../avr32/apps/bees/src/param.o
- .debug_frame   0x00003d4c       0x7c ../avr32/apps/bees/src/play.o
- .debug_frame   0x00003dc8       0xec ../avr32/apps/bees/src/preset.o
- .debug_frame   0x00003eb4      0x1b4 ../avr32/apps/bees/src/redraw.o
- .debug_frame   0x00004068       0xb0 ../avr32/apps/bees/src/scene.o
- .debug_frame   0x00004118       0x84 ../avr32/apps/bees/src/ops/op_add.o
- .debug_frame   0x0000419c       0xd0 ../avr32/apps/bees/src/ops/op_enc.o
- .debug_frame   0x0000426c       0x7c ../avr32/apps/bees/src/ops/op_gate.o
- .debug_frame   0x000042e8       0x84 ../avr32/apps/bees/src/ops/op_mul.o
- .debug_frame   0x0000436c       0x7c ../avr32/apps/bees/src/ops/op_sw.o
+ .debug_frame   0x00003d4c       0x6c ../avr32/apps/bees/src/play.o
+ .debug_frame   0x00003db8       0xec ../avr32/apps/bees/src/preset.o
+ .debug_frame   0x00003ea4      0x1c0 ../avr32/apps/bees/src/redraw.o
+ .debug_frame   0x00004064       0xb0 ../avr32/apps/bees/src/scene.o
+ .debug_frame   0x00004114       0x84 ../avr32/apps/bees/src/ops/op_add.o
+ .debug_frame   0x00004198       0xd0 ../avr32/apps/bees/src/ops/op_enc.o
+ .debug_frame   0x00004268       0x7c ../avr32/apps/bees/src/ops/op_gate.o
+ .debug_frame   0x000042e4       0x84 ../avr32/apps/bees/src/ops/op_mul.o
+ .debug_frame   0x00004368       0x7c ../avr32/apps/bees/src/ops/op_sw.o
 
-.debug_str      0x00000000     0xaa98
+.debug_str      0x00000000     0xaaa0
  *(.debug_str)
  .debug_str     0x00000000      0x420 avr32/drivers/ebi/smc/smc.o
                                 0x48a (size before relaxing)
@@ -4029,22 +4030,22 @@ Linker script and memory map
                                 0x242 (size before relaxing)
  .debug_str     0x0000a3af       0x9c ../avr32/apps/bees/src/preset.o
                                 0x2e5 (size before relaxing)
- .debug_str     0x0000a44b      0x156 ../avr32/apps/bees/src/redraw.o
+ .debug_str     0x0000a44b      0x15e ../avr32/apps/bees/src/redraw.o
+                                0x527 (size before relaxing)
+ .debug_str     0x0000a5a9       0x98 ../avr32/apps/bees/src/scene.o
                                 0x51f (size before relaxing)
- .debug_str     0x0000a5a1       0x98 ../avr32/apps/bees/src/scene.o
-                                0x51f (size before relaxing)
- .debug_str     0x0000a639       0xd9 ../avr32/apps/bees/src/ops/op_add.o
+ .debug_str     0x0000a641       0xd9 ../avr32/apps/bees/src/ops/op_add.o
                                 0x348 (size before relaxing)
- .debug_str     0x0000a712      0x103 ../avr32/apps/bees/src/ops/op_enc.o
+ .debug_str     0x0000a71a      0x103 ../avr32/apps/bees/src/ops/op_enc.o
                                 0x381 (size before relaxing)
- .debug_str     0x0000a815       0xe6 ../avr32/apps/bees/src/ops/op_gate.o
+ .debug_str     0x0000a81d       0xe6 ../avr32/apps/bees/src/ops/op_gate.o
                                 0x360 (size before relaxing)
- .debug_str     0x0000a8fb       0xd3 ../avr32/apps/bees/src/ops/op_mul.o
+ .debug_str     0x0000a903       0xd3 ../avr32/apps/bees/src/ops/op_mul.o
                                 0x348 (size before relaxing)
- .debug_str     0x0000a9ce       0xca ../avr32/apps/bees/src/ops/op_sw.o
+ .debug_str     0x0000a9d6       0xca ../avr32/apps/bees/src/ops/op_sw.o
                                 0x33f (size before relaxing)
 
-.debug_loc      0x00000000     0xf572
+.debug_loc      0x00000000     0xf540
  *(.debug_loc)
  .debug_loc     0x00000000       0x7e avr32/drivers/ebi/smc/smc.o
  .debug_loc     0x0000007e     0x1e5b avr32/drivers/flashc/flashc.o
@@ -4089,21 +4090,21 @@ Linker script and memory map
  .debug_loc     0x0000c814      0x520 ../common/libfixmath/fix16.o
  .debug_loc     0x0000cd34      0x149 ../avr32/apps/bees/src/app.o
  .debug_loc     0x0000ce7d      0x6f2 ../avr32/apps/bees/src/key_handler.o
- .debug_loc     0x0000d56f      0x2a9 ../avr32/apps/bees/src/menu.o
- .debug_loc     0x0000d818      0x91e ../avr32/apps/bees/src/net.o
- .debug_loc     0x0000e136      0x17d ../avr32/apps/bees/src/op.o
- .debug_loc     0x0000e2b3       0x89 ../avr32/apps/bees/src/param.o
- .debug_loc     0x0000e33c       0xa3 ../avr32/apps/bees/src/play.o
- .debug_loc     0x0000e3df      0x162 ../avr32/apps/bees/src/preset.o
- .debug_loc     0x0000e541      0x780 ../avr32/apps/bees/src/redraw.o
- .debug_loc     0x0000ecc1       0xa7 ../avr32/apps/bees/src/scene.o
- .debug_loc     0x0000ed68      0x139 ../avr32/apps/bees/src/ops/op_add.o
- .debug_loc     0x0000eea1      0x250 ../avr32/apps/bees/src/ops/op_enc.o
- .debug_loc     0x0000f0f1      0x18f ../avr32/apps/bees/src/ops/op_gate.o
- .debug_loc     0x0000f280      0x12c ../avr32/apps/bees/src/ops/op_mul.o
- .debug_loc     0x0000f3ac      0x1c6 ../avr32/apps/bees/src/ops/op_sw.o
+ .debug_loc     0x0000d56f      0x250 ../avr32/apps/bees/src/menu.o
+ .debug_loc     0x0000d7bf      0x92a ../avr32/apps/bees/src/net.o
+ .debug_loc     0x0000e0e9      0x17d ../avr32/apps/bees/src/op.o
+ .debug_loc     0x0000e266       0x89 ../avr32/apps/bees/src/param.o
+ .debug_loc     0x0000e2ef       0xa0 ../avr32/apps/bees/src/play.o
+ .debug_loc     0x0000e38f      0x162 ../avr32/apps/bees/src/preset.o
+ .debug_loc     0x0000e4f1      0x79e ../avr32/apps/bees/src/redraw.o
+ .debug_loc     0x0000ec8f       0xa7 ../avr32/apps/bees/src/scene.o
+ .debug_loc     0x0000ed36      0x139 ../avr32/apps/bees/src/ops/op_add.o
+ .debug_loc     0x0000ee6f      0x250 ../avr32/apps/bees/src/ops/op_enc.o
+ .debug_loc     0x0000f0bf      0x18f ../avr32/apps/bees/src/ops/op_gate.o
+ .debug_loc     0x0000f24e      0x12c ../avr32/apps/bees/src/ops/op_mul.o
+ .debug_loc     0x0000f37a      0x1c6 ../avr32/apps/bees/src/ops/op_sw.o
 
-.debug_macinfo  0x00000000  0x2ff1230
+.debug_macinfo  0x00000000  0x2ff1277
  *(.debug_macinfo)
  .debug_macinfo
                 0x00000000    0xebf8d avr32/drivers/ebi/smc/smc.o
@@ -4192,35 +4193,35 @@ Linker script and memory map
  .debug_macinfo
                 0x0222c8ed     0x1476 ../common/libfixmath/fix16.o
  .debug_macinfo
-                0x0222dd63    0xeb94f ../avr32/apps/bees/src/app.o
+                0x0222dd63    0xeb9aa ../avr32/apps/bees/src/app.o
  .debug_macinfo
-                0x023196b2    0xeb7ec ../avr32/apps/bees/src/key_handler.o
+                0x0231970d    0xeb7ec ../avr32/apps/bees/src/key_handler.o
  .debug_macinfo
-                0x02404e9e    0xeb7da ../avr32/apps/bees/src/menu.o
+                0x02404ef9    0xeb7da ../avr32/apps/bees/src/menu.o
  .debug_macinfo
-                0x024f0678    0xec445 ../avr32/apps/bees/src/net.o
+                0x024f06d3    0xec440 ../avr32/apps/bees/src/net.o
  .debug_macinfo
-                0x025dcabd    0xeb7f3 ../avr32/apps/bees/src/op.o
+                0x025dcb13    0xeb7ee ../avr32/apps/bees/src/op.o
  .debug_macinfo
-                0x026c82b0    0xe9e60 ../avr32/apps/bees/src/param.o
+                0x026c8301    0xe9e60 ../avr32/apps/bees/src/param.o
  .debug_macinfo
-                0x027b2110    0xeb7b2 ../avr32/apps/bees/src/play.o
+                0x027b2161    0xeb7ad ../avr32/apps/bees/src/play.o
  .debug_macinfo
-                0x0289d8c2    0xeb57f ../avr32/apps/bees/src/preset.o
+                0x0289d90e    0xeb57f ../avr32/apps/bees/src/preset.o
  .debug_macinfo
-                0x02988e41    0xeb83e ../avr32/apps/bees/src/redraw.o
+                0x02988e8d    0xeb839 ../avr32/apps/bees/src/redraw.o
  .debug_macinfo
-                0x02a7467f    0xeb64c ../avr32/apps/bees/src/scene.o
+                0x02a746c6    0xeb64c ../avr32/apps/bees/src/scene.o
  .debug_macinfo
-                0x02b5fccb    0xe9de1 ../avr32/apps/bees/src/ops/op_add.o
+                0x02b5fd12    0xe9de1 ../avr32/apps/bees/src/ops/op_add.o
  .debug_macinfo
-                0x02c49aac    0xe9de1 ../avr32/apps/bees/src/ops/op_enc.o
+                0x02c49af3    0xe9de1 ../avr32/apps/bees/src/ops/op_enc.o
  .debug_macinfo
-                0x02d3388d    0xe9de2 ../avr32/apps/bees/src/ops/op_gate.o
+                0x02d338d4    0xe9de2 ../avr32/apps/bees/src/ops/op_gate.o
  .debug_macinfo
-                0x02e1d66f    0xe9de1 ../avr32/apps/bees/src/ops/op_mul.o
+                0x02e1d6b6    0xe9de1 ../avr32/apps/bees/src/ops/op_mul.o
  .debug_macinfo
-                0x02f07450    0xe9de0 ../avr32/apps/bees/src/ops/op_sw.o
+                0x02f07497    0xe9de0 ../avr32/apps/bees/src/ops/op_sw.o
 
 .debug_weaknames
  *(.debug_weaknames)
@@ -4241,7 +4242,7 @@ Linker script and memory map
  *fill*         0x0000f000     0x1000 00
                 0x00010000                _estack = .
 
-.flash_nvram    0x80040000    0x22648 load address 0x80023604
+.flash_nvram    0x80040000    0x22648 load address 0x8002358c
  *(.flash_nvram)
  .flash_nvram   0x80040000    0x22648 ../avr32/src/flash.o
                 0x80062800                . = ALIGN (0x200)
@@ -4327,7 +4328,7 @@ LOAD /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/
 LOAD /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/ucr2/libgcc.a
 OUTPUT(aleph-bees.elf elf32-avr32)
 
-.debug_ranges   0x00000000     0x7b88
+.debug_ranges   0x00000000     0x7c10
  .debug_ranges  0x00000000       0x80 avr32/drivers/ebi/smc/smc.o
  .debug_ranges  0x00000080     0x2cd0 avr32/drivers/flashc/flashc.o
  .debug_ranges  0x00002d50      0x1d8 avr32/drivers/gpio/gpio.o
@@ -4372,19 +4373,19 @@ OUTPUT(aleph-bees.elf elf32-avr32)
  .debug_ranges  0x00006e50      0x190 ../common/libfixmath/fix16.o
  .debug_ranges  0x00006fe0       0x28 ../avr32/apps/bees/src/app.o
  .debug_ranges  0x00007008       0x58 ../avr32/apps/bees/src/key_handler.o
- .debug_ranges  0x00007060       0x58 ../avr32/apps/bees/src/menu.o
- .debug_ranges  0x000070b8      0x1c0 ../avr32/apps/bees/src/net.o
- .debug_ranges  0x00007278       0x38 ../avr32/apps/bees/src/op.o
- .debug_ranges  0x000072b0       0x30 ../avr32/apps/bees/src/param.o
- .debug_ranges  0x000072e0       0x30 ../avr32/apps/bees/src/play.o
- .debug_ranges  0x00007310       0x48 ../avr32/apps/bees/src/preset.o
- .debug_ranges  0x00007358      0x658 ../avr32/apps/bees/src/redraw.o
- .debug_ranges  0x000079b0       0x40 ../avr32/apps/bees/src/scene.o
- .debug_ranges  0x000079f0       0x38 ../avr32/apps/bees/src/ops/op_add.o
- .debug_ranges  0x00007a28       0x68 ../avr32/apps/bees/src/ops/op_enc.o
- .debug_ranges  0x00007a90       0x50 ../avr32/apps/bees/src/ops/op_gate.o
- .debug_ranges  0x00007ae0       0x38 ../avr32/apps/bees/src/ops/op_mul.o
- .debug_ranges  0x00007b18       0x70 ../avr32/apps/bees/src/ops/op_sw.o
+ .debug_ranges  0x00007060       0x88 ../avr32/apps/bees/src/menu.o
+ .debug_ranges  0x000070e8      0x1c0 ../avr32/apps/bees/src/net.o
+ .debug_ranges  0x000072a8       0x38 ../avr32/apps/bees/src/op.o
+ .debug_ranges  0x000072e0       0x30 ../avr32/apps/bees/src/param.o
+ .debug_ranges  0x00007310       0x30 ../avr32/apps/bees/src/play.o
+ .debug_ranges  0x00007340       0x48 ../avr32/apps/bees/src/preset.o
+ .debug_ranges  0x00007388      0x6b0 ../avr32/apps/bees/src/redraw.o
+ .debug_ranges  0x00007a38       0x40 ../avr32/apps/bees/src/scene.o
+ .debug_ranges  0x00007a78       0x38 ../avr32/apps/bees/src/ops/op_add.o
+ .debug_ranges  0x00007ab0       0x68 ../avr32/apps/bees/src/ops/op_enc.o
+ .debug_ranges  0x00007b18       0x50 ../avr32/apps/bees/src/ops/op_gate.o
+ .debug_ranges  0x00007b68       0x38 ../avr32/apps/bees/src/ops/op_mul.o
+ .debug_ranges  0x00007ba0       0x70 ../avr32/apps/bees/src/ops/op_sw.o
 
 Cross Reference Table
 
@@ -5038,6 +5039,7 @@ memcpy                                            /home/emb/avr32-gnu-toolchain/
 memory_2_ram                                      common/services/storage/ctrl_access/ctrl_access.o
 memset                                            /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-memset.o)
                                                   /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-findfp.o)
+                                                  ../avr32/apps/bees/src/redraw.o
                                                   ../avr32/src/fat_io_lib/fat_write.o
                                                   ../avr32/src/fat_io_lib/fat_table.o
                                                   ../avr32/src/fat_io_lib/fat_misc.o
@@ -5209,6 +5211,7 @@ pdca_set_transfer_size                            avr32/drivers/pdca/pdca.o
 play_get_entry                                    ../avr32/apps/bees/src/play.o
                                                   ../avr32/apps/bees/src/redraw.o
 play_init                                         ../avr32/apps/bees/src/play.o
+                                                  ../avr32/apps/bees/src/app.o
 play_input                                        ../avr32/apps/bees/src/play.o
                                                   ../avr32/apps/bees/src/net.o
 play_param                                        ../avr32/apps/bees/src/play.o
@@ -5297,7 +5300,6 @@ print_dbg                                         avr32/utils/debug/print_funcs.
                                                   ../avr32/apps/bees/src/scene.o
                                                   ../avr32/apps/bees/src/play.o
                                                   ../avr32/apps/bees/src/net.o
-                                                  ../avr32/apps/bees/src/menu.o
                                                   ../avr32/apps/bees/src/key_handler.o
                                                   ../avr32/apps/bees/src/app.o
                                                   ../avr32/src/fat_io_lib/fat_filelib.o
@@ -5316,8 +5318,8 @@ print_dbg                                         avr32/utils/debug/print_funcs.
 print_dbg_char                                    avr32/utils/debug/print_funcs.o
 print_dbg_char_hex                                avr32/utils/debug/print_funcs.o
 print_dbg_hex                                     avr32/utils/debug/print_funcs.o
+                                                  ../avr32/apps/bees/src/play.o
                                                   ../avr32/apps/bees/src/net.o
-                                                  ../avr32/apps/bees/src/menu.o
                                                   ../avr32/apps/bees/src/key_handler.o
                                                   ../avr32/src/fat_io_lib/fat_filelib.o
                                                   ../avr32/src/usb/gamepad/uhi_hid_gamepad.o
@@ -5531,7 +5533,6 @@ spi_writeEndCheck                                 avr32/drivers/spi/spi.o
 spi_writeRegisterEmptyCheck                       avr32/drivers/spi/spi.o
 sram_test                                         ../avr32/src/memory.o
 str_copy                                          ../avr32/src/simple_string.o
-                                                  ../avr32/apps/bees/src/redraw.o
                                                   ../avr32/apps/bees/src/preset.o
                                                   ../avr32/apps/bees/src/play.o
 strcmp                                            /home/emb/avr32-gnu-toolchain/bin/../lib/gcc/avr32/4.4.3/../../../../avr32/lib/ucr2/libc.a(lib_a-strcmp.o)

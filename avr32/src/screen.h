@@ -36,8 +36,8 @@
 #define CHAR_ROWS_1 7
 #define CHAR_ROWS_2 6
 // arbitrary maximum for proportionally spaced line drawing
-#define CHAR_COLS   50
-#define CHAR_COLS_1 49
+#define CHAR_COLS   28
+#define CHAR_COLS_1 27
 // center row of text
 #define SCREEN_ROW_CENTER 3
 

@@ -7,6 +7,7 @@
 #include "events.h"
 #include "event_types.h"
 #include "menu.h"
+#include "play.h"
 #include "scene.h"
 #include "screen.h"
 
@@ -138,6 +139,9 @@ void app_init(void) {
 
   menu_init();
   print_dbg("\r\n menu_init");
+
+  play_init();
+  print_dbg("\r\n play_init");
 }
 
 void app_launch(u8 firstrun) {

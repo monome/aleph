@@ -110,7 +110,7 @@ void menu_handleKey(uiKey_t key, s16 val) {
       set_page(ePagePlay);
     }
   } else {
-    print_dbg("\r\n menu_handleKey");
+    //    print_dbg("\r\n menu_handleKey");
     curPage->keyHandler(key, val);
     
   }
@@ -137,13 +137,13 @@ extern void menu_refresh(void) {
 void set_page(ePage n) {
   u8 i;
   pageIdx = n;
-  print_dbg("\r\n page set");
+  //  print_dbg("\r\n page set");
   curPage = &(pages[pageIdx]);
-  print_dbg("\r\n redraw after page set:");
+  //  print_dbg("\r\n redraw after page set:");
   curPage->redraw();
 
 #if ARCH_AVR32
-  print_dbg("\r\n set enc sense");
+  //  print_dbg("\r\n set enc sense");
   // set encoder sensitivity
   for(i=0; i<4; i++) {
     set_enc_thresh(encMap[i], curPage->encSens[i]);
@@ -154,8 +154,8 @@ void set_page(ePage n) {
 //// ins -> outs -> (gathered) -> presets -> scenes -> dsp
 // scroll current page
 void scroll_page(s8 dir) {
-  print_dbg("\r\nscroll page: ");
-  print_dbg_hex(pageIdx);
+  //  print_dbg("\r\nscroll page: ");
+  //  print_dbg_hex(pageIdx);
   switch(pageIdx) {
   case ePageIns:
     pageIdx = dir>0 ? ePageOuts : ePageDsp ;
@@ -179,8 +179,8 @@ void scroll_page(s8 dir) {
     pageIdx = dir>0 ? ePageIns : ePageScenes ;
     break;
   }
-  print_dbg("\r\n new page idx: ");
-  print_dbg_hex(pageIdx);
+  //  print_dbg("\r\n new page idx: ");
+  //  print_dbg_hex(pageIdx);
   set_page(pageIdx);
 }
 
@@ -190,8 +190,8 @@ void scroll_page(s8 dir) {
 //--  clipping variant
 void scroll_select_clip(s8 dir, s32 max) {
   curPage->selected += dir;
-  print_dbg("\r\n curPage->selected: ");
-  print_dbg_hex(curPage->selected);
+  //  print_dbg("\r\n curPage->selected: ");
+  //  print_dbg_hex(curPage->selected);
 
   if(curPage->selected >= max) {
     curPage->selected = max - 1;

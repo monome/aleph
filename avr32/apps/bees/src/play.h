@@ -13,12 +13,12 @@
 
 
 // number of entries in the scroll
-#define  PLAY_SCROLL_NUM 14 // CHAR_ROWS_1 * 2
-#define  PLAY_SCROLL_NUM__2 7 // CHAR_ROWS_1
-
-// size of text buffer at each entry
-#define PLAY_SCROLL_BUF_LEN 25
-
+#define  PLAY_SCROLL_NUM 7 // CHAR_ROWS_1
+//#define  PLAY_SCROLL_NUM__2 7 // CHAR_ROWS_1
+// length of each entry
+#define PLAY_STR_LEN 28
+// size of buffer (product)
+#define PLAY_SCROLL_BUF_LEN 196
 
 // list of recently touched parameter idxs
 /* typedef struct _touched { */

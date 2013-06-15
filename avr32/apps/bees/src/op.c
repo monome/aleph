@@ -31,7 +31,7 @@ const op_desc_t op_registry[numOpClasses] = {
 // { "ACCUMULATE", sizeof(op_accum_t) },
 // { "SELECT", sizeof(op_sel_t) },
 // { "LINEAR MAP", sizeof(op_lin_t) },
-// { "PARAMETER", sizeof(op_param_t) },
+// { "PARAMETER", sizeof(op_param_t) }, q
 // { "PRESET", sizeof(op_preset_t) }
 };
 

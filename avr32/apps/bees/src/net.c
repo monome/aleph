@@ -136,7 +136,7 @@ void net_init_onode(u16 idx) {
 
 // activate an input node with a value
 void net_activate(s16 inIdx, const io_t val) {
-  /* print_dbg("\r\n net activate: "); */
+  //  print_dbg("\r\n net activate: ");
   /* print_dbg_hex(inIdx); */
   /* print_dbg(", val: "); */
   /* print_dbg_hex(val); */
@@ -145,10 +145,10 @@ void net_activate(s16 inIdx, const io_t val) {
   /* print_dbg(" , op in idx: "); */
   /* print_dbg_hex(net->ins[inIdx].opInIdx); */
 
-  
-  play_input(inIdx);
-  
   if(inIdx >= 0) {
+
+    play_input(inIdx);
+
     if(inIdx < net->numIns) {
       //(*(net->ins[inIdx].in))(net->ops[net->ins[inIdx].opIdx], val);
       op_set_in_val(net->ops[net->ins[inIdx].opIdx],

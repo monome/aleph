@@ -348,25 +348,35 @@ void redraw_dsp(void) {
 //==== redraw play page
 void redraw_play(void) {
   u8 y;
-  u8 n = CHAR_ROWS_1;
+  //  u8 n = CHAR_ROWS_1;
   //u8 idx;
 
-  for(y = 1; y < CHAR_ROWS; y++ ) {
+  for(y = 0; y < CHAR_ROWS_1; y++ ) {
     //    println("", 0);
     //idx = touchedParams[n].idx;    
-    screen_blank_line(0, y);
-    //    println_int(idx, 0);
+    //    screen_blank_line(0, y);
+    clearln();
+    //println_int(idx, 0);
 
     // first column
-    str_copy( lineBuf, play_get_entry(y), PLAY_SCROLL_BUF_LEN);
     // 2nd column
-    str_copy( lineBuf + PLAY_SCROLL_BUF_LEN, play_get_entry(y + PLAY_SCROLL_NUM__2), PLAY_SCROLL_BUF_LEN);
+    /* print_dbg("\r\n y: "); */
+    /* print_dbg_hex(y); */
+    /* print_dbg(" : "); */
+    /* print_dbg(play_get_entry(y)); */
+    //    str_copy( lineBuf, play_get_entry(y), PLAY_STR_LEN);
+    println( play_get_entry(y), 0);
+    
+    // 2nd column
+    /* print_dbg("\r\n y + PLAY_SCROLL_NUM__2: "); */
+    /* print_dbg_hex(y + PLAY_SCROLL_NUM__2); */
+    /* print_dbg(" : "); */
+    /* print_dbg(play_get_entry(y + PLAY_SCROLL_NUM__2)); */
+    //    str_copy( lineBuf + PLAY_STR_LEN, play_get_entry(y + PLAY_SCROLL_NUM__2), PLAY_STR_LEN);
+    //    println(play_get_entry(y + PLAY_SCROLL_NUM__2), PLAY_STR_LEN);
 
-    //    print_dbg("\r\n play_line: ");
-    //    print_dbg(lineBuf);
-
-    //endln(); 
-    screen_line(0, y, lineBuf, 1);
+    endln(); 
+    screen_line(0, y + 1, lineBuf, 0x8);
     
     //    println( net_op_name(net_in_op_idx(idx)), 0 );
     //    appendln_char('/');
@@ -376,7 +386,7 @@ void redraw_play(void) {
     //    print_fix16(numBuf, touchedParams[n].val);
     //    screen_line(0, 80, numBuf, 10);
     
-    n--;
+    //    n--;
   }
   // draw the header
   screen_line(0, 0, "PLAY", 12);
