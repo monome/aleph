@@ -41,31 +41,28 @@ static fix16 scale_knob_value(const s32 v);
 // return param increment given encoder ticks
 static fix16 scale_knob_value(const s32 v) {
   s32 vabs = BIT_ABS(v);
-  print_dbg("\r\n knob acc, val: ");
-  print_dbg_hex((u32)v);
+  //  print_dbg("\r\n knob acc, val: ");
+  //  print_dbg_hex((u32)v);
   if(vabs == 1) {
     //    print_dbg("\r\n ");
     return v;
   } else if (vabs < 4) {
-    print_dbg("\r\n knob acc 1");
+    //    print_dbg("\r\n knob acc 1");
     return v << 2;
-    //  } else if (vabs < 8) {
-    //    print_dbg("\r\n knob acc 2");
-    //    return v << 2;
   } else if (vabs < 12) {
-    print_dbg("\r\n knob acc 2");
+    //    print_dbg("\r\n knob acc 2");
     return v << 4;
   } else if (vabs < 19) {
-    print_dbg("\r\n knob acc 3");
+    //    print_dbg("\r\n knob acc 3");
     return v << 5;
   } else if (vabs < 25) {
-    print_dbg("\r\n knob acc 4");
+    //    print_dbg("\r\n knob acc 4");
     return v << 6;  } 
   else if (vabs < 32) {
-    print_dbg("\r\n knob acc 4");
+    //    print_dbg("\r\n knob acc 4");
     return v << 6;
   } else {
-    print_dbg("\r\n knob acc max");
+    //    print_dbg("\r\n knob acc max");
     return v << 12;
   }
 }
@@ -170,7 +167,7 @@ void key_handler_ins(uiKey_t key, s16 val) {
 
     ///////
     //////////
-
+    /// testing
     // store default scene
     scene_write_default();
 

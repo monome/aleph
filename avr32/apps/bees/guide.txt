@@ -8,7 +8,7 @@ and allows for some live manipulation of the current network.
 
 //-----------------------------------
 //--- terms
-there are several layers of data storage organization involved,
+there are several layers of data organization used in bees,
 so we must establish a consistent terminology, however silly:
 
 CONTROL:	a "control voltage" value, in 16.16 bits.
@@ -41,7 +41,7 @@ SCENE:	  scene data stores the actual composition of the control network,
 //-------------------------------
 //----- menu layout
 
-there are a fair number of pages in the BEES menu system.
+there are a fair number of pages in the bees menu system.
 most are arranged in a circular list (the 'main menu'), scrolled through by the page knob (ENC0).
 
 in the main menu list, each page maps knobs and function buttons to different functions, except:
@@ -72,39 +72,41 @@ ROUTING:
 	SW3:	ALT
 	ALT0:	FOLLOW:		select this output's target on inputs page, and go there
 	ALT1:	SPLIT:		create a SPLIT operator and connect to its first input.
-				if operator was already connected, connect the split's output to its former target.
-				select the other split output.
+				       if operator was already connected, 
+				       connect the split's output to its former target.
+				       select the other split output.
 	ENC2:	---	 	---
 	ENC3:	---		scroll target input
 	 
 PRESETS: 
 	SW0:	STORE:		store all nodes at this preset.
 	SW1: 	RECALL:		overwrite all preset-included nodes with preset,
-				update inclusion for next recall.
-	SW2:	COPY/OK:	begin copy / confirm and finish copy
+					  update inclusion for next recall.
+	SW2:	COPY/OK:	begin copy / confirm and finish copy.
 	SW3:	---		---
-	ENC2:	---		scroll position in name
-	ENC3:	---		scroll character at position
+	ENC2:	---		scroll position in name.
+	ENC3:	---		scroll character at position.
 
 SCENES:
-	SW0:	STORE:		store all presets at this scene
-	SW1:	RECALL:         load scene (halts network processing and may make noise)
-	SW2:	COPY/OK:	begin copy / confirm and finish copy
+	SW0:	STORE:		store current state of network to scene name.
+				      if the name has been edited, a new file will be created.
+	SW1:	RECALL:         load scene (halts network processing and may make noise).
+	SW2:	COPY/OK:	begin copy / confirm and finish copy.
 	SW3:	---		---
-	ENC2:   ---		scroll position in name
-	ENC3:	---		scroll character at position
+	ENC2:   ---		scroll position in name.
+	ENC3:	---		scroll character at position.
 
 OPERATORS:
-	SW0:	INPUTS		select this op's inputs on ins page, and go there
-	SW1: 	OUTPUTS		select this op's outputs on outs page, and go there
-	SW2:	CREATE		add a new operator of selected type
+	SW0:	INPUTS		select this op's inputs on ins page, and go there.
+	SW1: 	OUTPUTS		select this op's outputs on outs page, and go there.
+	SW2:	CREATE		add a new operator of selected type.
 	SW3:	[[[[	op-specific subpage, maybe ???  ]]]]]]]
 	ENC2:	---		---
-	ENC3:	---		select operator type for creation
+	ENC3:	---		select operator type for creation.
 
 MODULES:
-	SW0:	LOAD:		load from sdcard
-	SW1: 	DEFAULT:	write to internal memory for startup
+	SW0:	LOAD:		load audio module from sdcard.
+	SW1: 	DEFAULT:	write audio module to internal memory for startup.
 	SW2:	---		---
 	SW3:	---		---	
 	ENC2:	---		---	
@@ -123,17 +125,22 @@ these sub-pages are accessed from within the main menu. ENC0 will scroll out of 
 
 GATHER: like ROUTING, except only outputs that are connected to the selected input are shown. 
 
+... ?
+
+
+
 //-------------------------
 //--- notes
 
---- flash storage
+--- storage
 
-
-
-there are always a fixed number of presets, located in RAM, but scenes are stored on the sdcard and are limited only by the filesystem.
-
+there are always a fixed number of presets, located in RAM.
+scenes are stored on the sdcard and are limited only by the filesystem.
 one scene is stored on internal flash instead, and is loaded at startup.
 
 
+---- recall
 
+recalling a scene triggers the loading of the module named in that scene. this includes a check between the version number stored in the scene and that reported by the module; bees will issue a warning if version numbers are mismatched.
 
+after loading the hopefully-appropriate module, all parameter values are re-sent to the audio processor.

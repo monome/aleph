@@ -168,7 +168,7 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     pval.asByte[i] = (u8)(x & 0xff);
   }
-  pDesc->min = pval.asFloat;
+  pDesc->min = pval.asInt;
   // read max
   for(i=0; i<4; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
@@ -177,7 +177,7 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     pval.asByte[i] = (u8)(x & 0xff);
   }
-  pDesc->max = pval.asFloat;
+  pDesc->max = pval.asInt;
 }
 
 // get module name

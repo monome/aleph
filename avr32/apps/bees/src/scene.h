@@ -28,8 +28,6 @@ typedef struct _sceneData {
 //----------------------------------------
 //----- external variables
 
-// RAM buffer for scene data
-extern sceneData_t* sceneData;
 
 //----------------------------------------
 //----- external functions

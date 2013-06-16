@@ -212,6 +212,6 @@ void scroll_select(s8 dir, s32 max) {
 
 
 // get selection on given page
-extern s16 menu_getSelect(ePage page) {
-  return pages[page]->select;
+extern s16 menu_selection(ePage page) {
+  return pages[page].selected;
 }

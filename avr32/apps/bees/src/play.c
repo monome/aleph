@@ -35,7 +35,7 @@ static u16 scrollIdx = 0;
 
 // intiailize
 void play_init(void) {
-  u8 i, j;h
+  u8 i, j;
   for(i=0; i<PLAY_SCROLL_NUM; i++) {
     for(j=0; j<PLAY_STR_LEN; j++) {
       //      print_dbg("\r\n buf fill index: ");

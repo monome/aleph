@@ -23,9 +23,9 @@
 #include "types.h"
 #include "scene.h"
 
-//----------------------------------------------
-//----- extern variables
-sceneData_t* sceneData;
+
+// RAM buffer for scene data
+static sceneData_t* sceneData;
 
 //----------------------------------------------
 //----- extern functions

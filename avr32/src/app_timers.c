@@ -61,10 +61,10 @@ static void enc_timer_callback(int tag) {
       e.eventData = val;
       enc[i].val = 0;
       post_event(&e);
-      print_dbg("\r\n posting encoder event, num: ");
-      print_dbg_ulong(i);
-      print_dbg(" , val: ");
-      print_dbg_ulong(val);
+      //      print_dbg("\r\n posting encoder event, num: ");
+      //      print_dbg_ulong(i);
+      //      print_dbg(" , val: ");
+      //      print_dbg_ulong(val);
     }
   }
 }
