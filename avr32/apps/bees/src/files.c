@@ -1,9 +1,8 @@
 /* files.c
+   bees
    aleph-avr32
   
    filesystem routines
-
-   TODO: should move this to BEES and abstract the things that should be hidden (e.g. interrupt control)
 */
 
 // std
@@ -14,13 +13,13 @@
 #include "print_funcs.h"
 
 // aleph-avr32
+#include "app.h"
 #include "bfin.h"
 #include "files.h"
 #include "filesystem.h"
 #include "flash.h"
 #include "memory.h"
-// boot
-// #include "parse_hex.h"
+#include "scene.h"
 
 // ---- directory list class
 // params
@@ -44,8 +43,6 @@ typedef struct _dirList {
 //------------------------------
 //----- -static vars
 
-
-/// TODO: get these out of the core avr32 source somehow.
 // directory lists;
 static dirList_t dspList;
 static dirList_t sceneList;
@@ -56,10 +53,9 @@ static dirList_t sceneList;
 // populate list with filenames and count
 static void list_scan(dirList_t* list, const char* path);
 // get name at idx
-const char* list_get_name(dirList_t* list, u8 idx);
+static const char* list_get_name(dirList_t* list, u8 idx);
 // get file pointer if found (caller must close)
-//static void* list_open_file_name(dirList_t * list, const char* name, const char* mode);
-// ugly, set size by pointer
+// set size by pointer
 static void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u32* size);
 
 //// FIXME: dumb and slow seek/read functions because the real ones are broken
@@ -85,7 +81,7 @@ static void fake_fread(volatile u8* dst, u32 size, void* fp) {
 //---------------------------
 //------------- extern defs
 
-void init_files(void) {
+void files_init(void) {
   // init FAT lib
   fat_init();
   // scan directories
@@ -101,10 +97,6 @@ const volatile char* files_get_dsp_name(u8 idx) {
   return list_get_name(&dspList, idx);
 }
 
-// return filename for scene given index in list
-const volatile char* files_get_scene_name(u8 idx) {
-  return list_get_name(&sceneList, idx);
-}
 
 
 // load a blacfkin executable by index */
@@ -118,8 +110,7 @@ void files_load_dsp_name(const char* name) {
   //  u32 bytesRead;
   u32 size = 0;
 
-  cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
-  cpu_irq_disable_level(UI_IRQ_PRIORITY);
+  app_pause();
 
   fp = list_open_file_name(&dspList, name, "r", &size);
 
@@ -133,22 +124,27 @@ void files_load_dsp_name(const char* name) {
 
     print_dbg("\r\n bfinLdrData : @0x");
     print_dbg_hex( (u32)bfinLdrData );
-
-
     fake_fread(bfinLdrData, size, fp);
+
     // print_dbg("\r\n finished fakefread");
     fl_fclose(fp);
     bfinLdrSize = size;
-    print_dbg("\r\n loading bfin from buf");
-    bfin_load_buf();
-    print_dbg("\r\n finished load");
+
+    if(bfinLdrSize > 0) {
+      print_dbg("\r\n loading bfin from buf");
+      bfin_load_buf();
+      print_dbg("\r\n finished load");
+      // write module name in global scene data
+      scene_set_module_name(name);
+    } else {
+      print_dbg("\r\n bfin ldr size was <=0, aborting");
+    }
   } else {
     print_dbg("\r\n error: fp was null in files_load_dsp_name \r\n");
   }
 
 
-  cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
-  cpu_irq_enable_level(UI_IRQ_PRIORITY);
+  app_resume();
 }
 
 
@@ -187,6 +183,9 @@ u8 files_get_dsp_count(void) {
 
 //----- scenes management
 // return filename for scene given index in list
+const volatile char* files_get_scene_name(u8 idx) {
+  return list_get_name(&sceneList, idx);
+}
 
 // load scene by index */
 void files_load_scene(u8 idx) {  
@@ -199,50 +198,35 @@ void files_load_scene_name(const char* name) {
   //  u32 bytesRead;
   u32 size = 0;
 
-  cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
-  cpu_irq_disable_level(UI_IRQ_PRIORITY);
+  app_pause();
 
   fp = list_open_file_name(&dspList, name, "r", &size);
 
   if( fp != NULL) {	  
-    /////////
-    /////////
-    /// put this in
-    /////////
-    /////////////
 
-
-    /* print_dbg("\r\n found file, loading dsp "); */
-    /* print_dbg(name); */
-    /* /// FIXME: */
-    /* /// arrg, why is fl_fread intermittently broken? */
-    /* /// check our media access functions against fat_filelib.c, i guess */
-    /* //    bytesRead = fl_fread((void*)bfinLdrData, 1, size, fp); */
-    /* fake_fread(bfinLdrData, size, fp); */
-    /* fl_fclose(fp); */
-    /* bfinLdrSize = size; */
-    /* bfin_load_buf(); */
-
+    fake_fread((volatile u8*)sceneData, sizeof(sceneData_t), fp);
+    fl_fclose(fp);
+    scene_read_buf();
   } else {
     print_dbg("\r\n error: fp was null in files_load_scene_name \r\n");
   }
  
-  cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
-  cpu_irq_enable_level(UI_IRQ_PRIORITY);
+  app_resume();
 }
 
 
   // store scene to sdcard at idx
 void files_store_scene(u8 idx) {
-  // fill the scene RAM buffer from current state of system
-  //  scene_write_buf();
-  // write it to sdcard
-
+  files_store_scene_name(files_get_scene_name(idx));
 }
-  // store scene to sdcard at name
-// void files_store_scene_name(const char* name) {
-  //  scene_write_buf();
-// }
+
+// store scene to sdcard at name
+void files_store_scene_name(const char* name) {
+  // fill the scene RAM buffer from current state of system
+  scene_write_buf();
+  // write it to sdcard
+  
+}
 
 
 
@@ -252,8 +236,7 @@ void files_store_default_scene(u8 idx) {
   void* fp;	  
   u32 size;
 
-  cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
-  cpu_irq_disable_level(UI_IRQ_PRIORITY);
+  app_pause();
 
   name = (const char*)files_get_scene_name(idx);
   fp = list_open_file_name(&dspList, name, "r", &size);
@@ -270,8 +253,7 @@ void files_store_default_scene(u8 idx) {
     print_dbg("\r\n error: fp was null in files_store_default_scene \r\n");
   }
 
-  cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
-  cpu_irq_enable_level(UI_IRQ_PRIORITY);
+  app_resume();
 }
 
 // return count of dsp files

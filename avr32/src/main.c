@@ -131,7 +131,6 @@ static void init_ctl(void) {
   init_encoders();
   print_dbg("\r\n init_encoders");
 
-
   // send ADC config
   init_adc();
   print_dbg("\r\n init_adc");
@@ -140,11 +139,12 @@ static void init_ctl(void) {
   init_app_timers();
   print_dbg("\r\n init_timers");
 
+  // enable interrupts
+  cpu_irq_enable();
+
   // initialize the application
   app_init();
 
-  // enable interrupts
-  cpu_irq_enable();
 }
 
 // app event loop
@@ -187,18 +187,6 @@ static void check_events(void) {
 int main (void) {
   u32 waitForCard = 0;
 
-
-  ////////////////
-  /////////////
-  /// TEST: flash
-  //  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP);
-  //  init_dbg_rs232(FOSC0);
-  //  test_flash();
-  //  return 1;
-  ////////
-  //////////////
-  ///////////
-
   // set up avr32 hardware and peripherals
   init_avr32();
 
@@ -222,7 +210,8 @@ int main (void) {
   print_dbg("\r\n init_mem");
 
   /// initialize filesystem
-  init_files();
+  ////// FIXME: move to app
+  files_init();
 
   // setup control logic
   init_ctl();
@@ -230,21 +219,13 @@ int main (void) {
   // initialize flash
   firstrun = init_flash();
 
-  /// boot default dsp
-  //  screen_clear();
-
-  //  screen_line(0, 1, "loading default DSP...", 0x3f);
-  //  screen_refresh();
-  //  files_load_dsp_name("default.ldr");
-
+  // notify 
+  screen_clear();
   screen_line(0, 1, "press any key to continue...", 0x3f);
   screen_refresh();
 
   print_dbg("\r\n starting event loop.\r\n");
 
-  //////
-  //  test_flash();
-  ////
 
   while(1) {
     check_events();

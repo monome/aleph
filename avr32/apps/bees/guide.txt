@@ -69,7 +69,7 @@ ROUTING:
 	SW0:	STORE:		store current routing in current preset
 	SW1:	INC/EXC:	toggle inclusion of this routing in current preset
 	SW2:	CLEAR:		disconnect
-	SW3:	ALT
+	SW3:	ALT		
 	ALT0:	FOLLOW:		select this output's target on inputs page, and go there
 	ALT1:	SPLIT:		create a SPLIT operator and connect to its first input.
 				       if operator was already connected, 

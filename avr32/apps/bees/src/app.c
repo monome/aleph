@@ -4,12 +4,17 @@
 
 // aleph-avr32
 #include "app.h"
+#include "bfin.h"
 #include "events.h"
 #include "event_types.h"
+#include "flash.h"
+#include "screen.h"
+// bees
+#include "files.h"
 #include "menu.h"
 #include "play.h"
 #include "scene.h"
-#include "screen.h"
+
 
 static u8 keyMode = 0;
 
@@ -126,8 +131,12 @@ void app_handle_event(event_t* e) {
   }
 }
 
-
+// this is called during hardware initialization.
+// use for memory allocation.
 void app_init(void) {
+
+  
+
   net_init();
   print_dbg("\r\n net_init");
   
@@ -137,6 +146,10 @@ void app_init(void) {
   scene_init();
   print_dbg("\r\n scene_init");
 
+  /// FIXME: this is arbitrarily but sensitively located in main.c right now...
+  //  files_init();
+  //  print_dbg("\r\n files_init");
+
   menu_init();
   print_dbg("\r\n menu_init");
 
@@ -144,10 +157,19 @@ void app_init(void) {
   print_dbg("\r\n play_init");
 }
 
+// this is called from the event queue 
 void app_launch(u8 firstrun) {
+  print_dbg("\r\n launching app with firstrun: ");
+  print_dbg_ulong(firstrun);
   if(firstrun) {
     scene_write_default();
   } else {
+    print_dbg("\r\n booting default ldr from flash... ");
+
+    flash_read_ldr();
+    bfin_load_buf();
+
     scene_read_default();
   }
+  menu_refresh();
 }

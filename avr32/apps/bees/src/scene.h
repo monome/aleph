@@ -27,7 +27,7 @@ typedef struct _sceneData {
 
 //----------------------------------------
 //----- external variables
-
+extern sceneData_t* sceneData;
 
 //----------------------------------------
 //----- external functions
@@ -43,9 +43,15 @@ extern void scene_write_buf(void);
 extern void scene_read_buf(void);
 
 // write current state as default
-void scene_write_default(void);
-
+extern void scene_write_default(void);
 // load from default
-void scene_read_default(void);
+extern void scene_read_default(void);
 
+// set scene name
+extern void scene_set_name(const char* name);
+// set scene name, single character
+extern void scene_set_name_char(u8 idx, char ch);
+// set module name
+extern void scene_set_module_name(const char* name);
+ 
 #endif

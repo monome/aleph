@@ -4,7 +4,9 @@
 #include "flashc.h"
 #include "power_clocks_lib.h"
 #include "print_funcs.h"
-//// aleph-bees
+// aleph-common
+#include "module_common.h"
+// aleph-bees
 #include "scene.h"
 #include "preset.h"
 // aleph-avr32
@@ -12,11 +14,6 @@
 #include "flash.h"
 #include "memory.h"
 #include "types.h"
-
-
-//## dbg
-//#define SCENE_OFF
-//##
 
 //-----------------------------------
 //----  define, typedef
@@ -31,6 +28,7 @@
 typedef const struct {
   u32 firstRun;                // check for initialization
   u32 ldrSize;                 // size of stored LDR
+  //  u8 ldrName[MODULE_NAME_LEN]; // module name of stored LDR
   u8 ldrData[LDR_FLASH_BYTES]; // LDR data
   sceneData_t sceneData;       // scene data
 } nvram_data_t;
@@ -70,7 +68,6 @@ u8 init_flash() {
   print_dbg("\r\n bfinLdrData : @0x");
   print_dbg_hex( (u32)bfinLdrData );
 
-  // why?
   for(i=0; i<BFIN_LDR_MAX_BYTES; i++) {
     bfinLdrData[i] = 0;
   }
@@ -79,19 +76,21 @@ u8 init_flash() {
     print_dbg("\r\n writing firstrun, no bfin load");
     bfinLdrSize = 0;
     flashc_memset32((void*)&(flash_nvram_data.firstRun), FIRSTRUN_INIT, 4, true);
+    // set size=0 so we won't attempt unitialized bfin load on next start
+    flashc_memset32((void*)&(flash_nvram_data.ldrSize), 0x00000000, 4, true);
     return 1;
   } return 0;
   return 0;
 }
 
-// read default scene data to pointer
-void flash_read_scene(sceneData_t* sceneData) {
+// read default scene data to global buffer
+void flash_read_scene(void) { 
   memcpy((void*)sceneData, (void*)&(flash_nvram_data.sceneData), sizeof(sceneData_t)); 
   //  scene_read_buf();
 }
 
-// write default scene data from pointer
-void flash_write_scene(sceneData_t* sceneData) {
+// write default scene data from global buffer
+void flash_write_scene(void) { 
   //  scene_write_buf();
   flashc_memcpy( (void*)(&(flash_nvram_data.sceneData)), (void*)sceneData, sizeof(sceneData_t), true);
 }
@@ -99,12 +98,15 @@ void flash_write_scene(sceneData_t* sceneData) {
 // read default blackfin
 void flash_read_ldr(void) {
   bfinLdrSize = flash_nvram_data.ldrSize;
+  print_dbg("\r\n read ldrSize from flash: ");
+  print_dbg_ulong(bfinLdrSize);
   memcpy((void*)bfinLdrData, (void*)flash_nvram_data.ldrData, bfinLdrSize); 
 }
 
 // write default blackfin
 void flash_write_ldr(void) {
   flashc_memset32((void*)&(flash_nvram_data.ldrSize), bfinLdrSize, 4, true);
+  //  flashc_memset32((void*)&(flash_nvram_data.ldrName), bfinLdrSize, 4, true);
   flashc_memcpy((void*)&(flash_nvram_data.ldrData), (const void*)bfinLdrData, bfinLdrSize, true);
 }
 

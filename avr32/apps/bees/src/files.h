@@ -1,11 +1,10 @@
 #ifndef _FILES_H_
 #define _FILES_H_
 
-//#include "compiler.h"
 #include "types.h"
 
 // initialize filesystem navigation
-extern void init_files(void);
+extern void files_init(void);
 // list all files (LS)
 extern void files_list(void);
 
