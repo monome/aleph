@@ -285,13 +285,7 @@ void key_handler_gathered(uiKey_t key, s16 val) {
 void key_handler_play(uiKey_t key, s16 v) {
   s32 val;
   s16 inIdx = -1;
-  ///// FIXME; bad bad bad hacking
-  /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     really should set up specialied apparatus in net.c
-     to identify and use system output nodes.
-     for now, we activate the 8 operators from
-     net.c : add_sys_ops()
-  */
+  //activate the 8 system operators from net.c : add_sys_ops()
   switch(key) {
     ///// keys
   case eKeyFnUpA:
@@ -563,7 +557,7 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
 
 //--- DSP
 extern void key_handler_dsp(uiKey_t key, s16 val) {
-  print_dbg("\r\n key_handler_dsp");
+  // print_dbg("\r\n key_handler_dsp");
   switch(key) {
   case eKeyFnDownA:
     // load DSP (and update the parameter list)
