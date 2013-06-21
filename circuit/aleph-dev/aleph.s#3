@@ -26094,6 +26094,23 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <junction x="190.5" y="50.8"/>
 <label x="198.12" y="50.8" size="1.778" layer="95"/>
 </segment>
+<segment>
+<pinref part="P6" gate="G$1" pin="2"/>
+<wire x1="264.16" y1="63.5" x2="264.16" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="264.16" y1="60.96" x2="259.08" y2="60.96" width="0.1524" layer="91"/>
+<pinref part="P6" gate="G$1" pin="3"/>
+<wire x1="259.08" y1="60.96" x2="254" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="259.08" y1="63.5" x2="259.08" y2="60.96" width="0.1524" layer="91"/>
+<junction x="259.08" y="60.96"/>
+<label x="254" y="62.23" size="1.778" layer="95" rot="R180"/>
+</segment>
+<segment>
+<pinref part="U$7" gate="U" pin="INB+"/>
+<wire x1="335.28" y1="76.2" x2="336.55" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="336.55" y1="76.2" x2="336.55" y2="64.77" width="0.1524" layer="91"/>
+<wire x1="336.55" y1="64.77" x2="328.93" y2="64.77" width="0.1524" layer="91"/>
+<label x="328.93" y="66.04" size="1.778" layer="95" rot="R180"/>
+</segment>
 </net>
 <net name="N$91" class="0">
 <segment>
@@ -26255,35 +26272,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <wire x1="307.34" y1="78.74" x2="300.99" y2="78.74" width="0.1524" layer="91"/>
 <label x="300.99" y="78.74" size="1.778" layer="95" rot="R180"/>
 </segment>
-<segment>
-<pinref part="U$7" gate="U" pin="INB+"/>
-<wire x1="335.28" y1="76.2" x2="336.55" y2="76.2" width="0.1524" layer="91"/>
-<wire x1="336.55" y1="76.2" x2="336.55" y2="64.77" width="0.1524" layer="91"/>
-<wire x1="336.55" y1="64.77" x2="328.93" y2="64.77" width="0.1524" layer="91"/>
-<label x="328.93" y="66.04" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
-<pinref part="P6" gate="G$1" pin="2"/>
-<wire x1="264.16" y1="63.5" x2="264.16" y2="60.96" width="0.1524" layer="91"/>
-<wire x1="264.16" y1="60.96" x2="259.08" y2="60.96" width="0.1524" layer="91"/>
-<pinref part="P6" gate="G$1" pin="3"/>
-<wire x1="259.08" y1="60.96" x2="254" y2="60.96" width="0.1524" layer="91"/>
-<wire x1="259.08" y1="63.5" x2="259.08" y2="60.96" width="0.1524" layer="91"/>
-<junction x="259.08" y="60.96"/>
-<label x="254" y="62.23" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
-<pinref part="IC12" gate="B" pin="IN-"/>
-<wire x1="173.99" y1="29.21" x2="172.72" y2="29.21" width="0.1524" layer="91"/>
-<wire x1="172.72" y1="29.21" x2="172.72" y2="24.13" width="0.1524" layer="91"/>
-<wire x1="172.72" y1="24.13" x2="190.5" y2="24.13" width="0.1524" layer="91"/>
-<wire x1="190.5" y1="24.13" x2="190.5" y2="31.75" width="0.1524" layer="91"/>
-<pinref part="IC12" gate="B" pin="OUT"/>
-<wire x1="190.5" y1="31.75" x2="189.23" y2="31.75" width="0.1524" layer="91"/>
-<wire x1="190.5" y1="31.75" x2="196.85" y2="31.75" width="0.1524" layer="91"/>
-<junction x="190.5" y="31.75"/>
-<label x="198.12" y="31.75" size="1.778" layer="95"/>
-</segment>
 </net>
 <net name="HP-R^" class="0">
 <segment>
@@ -26433,6 +26421,20 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <wire x1="161.29" y1="53.34" x2="173.99" y2="53.34" width="0.1524" layer="91"/>
 <junction x="161.29" y="53.34"/>
 <pinref part="IC12" gate="A" pin="IN+"/>
+</segment>
+</net>
+<net name="IN-VREF" class="0">
+<segment>
+<pinref part="IC12" gate="B" pin="IN-"/>
+<wire x1="173.99" y1="29.21" x2="172.72" y2="29.21" width="0.1524" layer="91"/>
+<wire x1="172.72" y1="29.21" x2="172.72" y2="24.13" width="0.1524" layer="91"/>
+<wire x1="172.72" y1="24.13" x2="190.5" y2="24.13" width="0.1524" layer="91"/>
+<wire x1="190.5" y1="24.13" x2="190.5" y2="31.75" width="0.1524" layer="91"/>
+<pinref part="IC12" gate="B" pin="OUT"/>
+<wire x1="190.5" y1="31.75" x2="189.23" y2="31.75" width="0.1524" layer="91"/>
+<wire x1="190.5" y1="31.75" x2="196.85" y2="31.75" width="0.1524" layer="91"/>
+<junction x="190.5" y="31.75"/>
+<label x="198.12" y="31.75" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>

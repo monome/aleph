@@ -6,17 +6,19 @@ aleph.
 b todo
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-new hat pcb proto
-	YES should the 5v on cv in be 10v?
-	# input gain switch
+mechanical fixes, circuit revision
+	
+TEST POINTS
+SIMPLIFY
+USB -> AVR?
+
+hat
+	remove 5v supply on CV in
 	input gain stage
 		LED follower, LED clip
 	output gain stage
 		LED follower
 	headphone amp
-	debounce values, try 18k for both
-
-top plate fixes
 
 enclosure
 	http://www.evsmetal.com/history.php
@@ -30,10 +32,7 @@ enclosure
 soft power control, redo resistor values
 
 UPDATE spreadsheet
-
 schem cleanup
-
-
 aleph infographic diagram
 
 

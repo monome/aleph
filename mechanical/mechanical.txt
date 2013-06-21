@@ -1,3 +1,34 @@
+revise mechanicals
+	# pcb size
+	# pcb mount hole positions
+	move components around
+		programmer headers
+	# standoff clearance/diameters-- 0.21" for 3/16
+	# standoff distance to allow angle bracket screw mount for rear plate?
+	# 20g steel is 0.036"
+	change to undercut keypads
+	# rubber foot diameter 0.5"
+	# SKIP rubber foot impression diameter??? too much $?
+	# rear plate layout
+	# diameter clearance for audio jack nuts - 0.565"
+	oled screen mount to plate, #2-56 0.086"
+	oled cutout must be tighter
+	# heights between mezzanines
+	# distance between bottom circuit and enclosure 0.125
+		captive spacer mm 92985A610, 0.22" dia clearance
+		through hole leads to power sw will need to be cut
+	# 4-40 button head cap screw, .213" head diameter, 1/16 hex drive
+	# standoffs: 3/16" 4-40, lengths 3/4" 93505A119 1/2" 93505A117
+		spots on 3/4" where no angle-bracket will need a spacer
+	>> usb ports for backplate cut need fine tuning
+		print one out, hand-match
+		
+		
+
+
+
+
+
 rear unit elements
 
 notes: dc/power on right. audio on left.

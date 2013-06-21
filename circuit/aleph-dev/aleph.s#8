@@ -25806,10 +25806,20 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <wire x1="186.69" y1="213.36" x2="184.15" y2="213.36" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$112" class="0">
+<net name="OUT1-RP^" class="0">
 <segment>
 <pinref part="C140" gate="G$1" pin="-"/>
 <wire x1="179.07" y1="213.36" x2="168.91" y2="213.36" width="0.1524" layer="91"/>
+<label x="167.64" y="214.63" size="1.778" layer="95" rot="R180"/>
+</segment>
+</net>
+<net name="N$112" class="0">
+<segment>
+<pinref part="R68" gate="G$1" pin="1"/>
+<wire x1="201.93" y1="238.76" x2="200.66" y2="238.76" width="0.1524" layer="91"/>
+<wire x1="200.66" y1="238.76" x2="200.66" y2="187.96" width="0.1524" layer="91"/>
+<pinref part="P5" gate="G$1" pin="1"/>
+<wire x1="200.66" y1="187.96" x2="199.39" y2="187.96" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>

@@ -25071,7 +25071,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="AGND29" gate="VR1" x="34.29" y="100.33" rot="R270"/>
 <instance part="R109" gate="G$1" x="35.56" y="25.4" rot="R180"/>
 <instance part="AGND31" gate="VR1" x="31.75" y="43.18" rot="R270"/>
-<instance part="P5" gate="G$1" x="189.23" y="181.61"/>
+<instance part="P5" gate="G$1" x="181.61" y="182.88" rot="MR0"/>
 <instance part="P6" gate="G$1" x="289.56" y="158.75"/>
 <instance part="LED5" gate="G$1" x="252.73" y="130.81"/>
 <instance part="LED6" gate="G$1" x="260.35" y="130.81"/>
@@ -25080,7 +25080,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="IC4" gate="A" x="219.71" y="236.22" rot="MR180"/>
 <instance part="IC4" gate="B" x="261.62" y="233.68" rot="MR180"/>
 <instance part="IC4" gate="P" x="336.55" y="236.22"/>
-<instance part="C140" gate="G$1" x="168.91" y="247.65"/>
+<instance part="C140" gate="G$1" x="181.61" y="213.36"/>
 <instance part="R68" gate="G$1" x="207.01" y="238.76"/>
 <instance part="R69" gate="G$1" x="222.25" y="247.65"/>
 <instance part="R117" gate="G$1" x="264.16" y="245.11"/>
@@ -25785,6 +25785,31 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="R119" gate="G$1" pin="1"/>
 <wire x1="255.27" y1="217.17" x2="255.27" y2="219.71" width="0.1524" layer="91"/>
 <label x="254" y="214.63" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="P5" gate="G$1" pin="3"/>
+<wire x1="181.61" y1="166.37" x2="181.61" y2="170.18" width="0.1524" layer="91"/>
+<label x="181.61" y="160.02" size="1.778" layer="95"/>
+<pinref part="P5" gate="G$1" pin="2"/>
+<wire x1="186.69" y1="166.37" x2="186.69" y2="170.18" width="0.1524" layer="91"/>
+<wire x1="181.61" y1="166.37" x2="184.15" y2="166.37" width="0.1524" layer="91"/>
+<wire x1="184.15" y1="166.37" x2="186.69" y2="166.37" width="0.1524" layer="91"/>
+<wire x1="184.15" y1="163.83" x2="184.15" y2="166.37" width="0.1524" layer="91"/>
+<junction x="184.15" y="166.37"/>
+</segment>
+</net>
+<net name="N$91" class="0">
+<segment>
+<pinref part="P5" gate="G$1" pin="6"/>
+<wire x1="186.69" y1="200.66" x2="186.69" y2="213.36" width="0.1524" layer="91"/>
+<pinref part="C140" gate="G$1" pin="+"/>
+<wire x1="186.69" y1="213.36" x2="184.15" y2="213.36" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$112" class="0">
+<segment>
+<pinref part="C140" gate="G$1" pin="-"/>
+<wire x1="179.07" y1="213.36" x2="168.91" y2="213.36" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>

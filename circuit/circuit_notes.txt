@@ -8,13 +8,13 @@ tune debounce. use 18k rather than 82k.
 
 
 # fine-tune usb mount positions
-new usb part: ae10400
+# new usb part: ae10400
 
 no r164 (order 562 ohms)
 
 // NO breakout front jacks
 # extra out 5-6 remove
-optimize jack spacing to rear enclosure?
+# optimize jack spacing to rear enclosure?
 
 
 

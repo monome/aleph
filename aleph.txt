@@ -39,8 +39,15 @@ a music computer. open source noise device.
 		analog inserts
 
 
+video:
 
-images:
+1. viola and mic input, echo patch, foot pedals, analog insert path (filter?)
+2. eurorack and gamepad, bees sequencer or something
+3. aleph with usb midi keyboard playing polyphonic synth
+4. monome grid with aleph drum machine
+
+
+sketches/images of suggested use:
 
 processor
 	viola and mic input, echo patch, foot pedals	
