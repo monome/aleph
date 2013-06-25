@@ -13,7 +13,7 @@
 #include "simple_string.h"
 // audio lib
 #include "env.h"
-#include "filters.h"
+#include "filter_1p.h"
 #include "table.h"
 #include "conversion.h"
 // bfin
@@ -467,7 +467,7 @@ void module_process_frame(const f32* in, f32* out) {
 		fr32_to_float(osc2),
 		//		fr32_to_float((fract32)modIdxOffset << 3)
 		//		fr32_to_float((fract32)modIdxOffset << 16)
-		fr32_to_float((fract32)modIdxOffset)
+		//		fr32_to_float((fract32)modIdxOffset)
 		);
 	dbgCount++;
       }
@@ -478,7 +478,7 @@ void module_process_frame(const f32* in, f32* out) {
 }
 #endif
 
-
+// populate parameter descriptor fields
 static void fill_param_desc(void) {
   strcpy(gModuleData->paramDesc[eParamHz1].label, "osc 1 freq");
   strcpy(gModuleData->paramDesc[eParamHz1].unit, "hz");
