@@ -29,4 +29,5 @@ extern void lcprng_set_x(lcprng* o, s32 v) {
 extern s32 lcprng_next(lcprng* o) {
   // allow overflow 
   o->x = o->x * o->c + o->a;
+  return o->x;
 }

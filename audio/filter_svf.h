@@ -30,17 +30,29 @@ typedef struct _filter_svf {
   fract32 reson; 
   // damping coefficient
   //  fix16 damp; 
+#if 0
   fract32 damp; 
+#else
+  float damp;
+#endif
   // to avoid reducing audio resolution to 16.16 (or whatever),
   /// i'm going to keep damping coeff in 0.32 
   /// and lshift by when the desired value is in [1, 2]
   /// this flag indicates that state:
-  u8 bigDampFlag;
+  //  u8 bigDampFlag;
+
   // outputs
+#if 0
   fract32 low;
   fract32 high;
   fract32 band;
   fract32 notch;
+#else // TEST: floating point
+  float low;
+  float high;
+  float band;
+  float notch;
+#endif
   //  fract32 peak;
   // 1-sample delay for input averaging
   fract32 del;
@@ -66,6 +78,7 @@ extern void filter_svf_set_low   ( filter_svf* f, fract32 mix );
 extern void filter_svf_set_high  ( filter_svf* f, fract32 mix );
 extern void filter_svf_set_band  ( filter_svf* f, fract32 mix );
 extern void filter_svf_set_notch ( filter_svf* f, fract32 mix );
+extern void filter_svf_set_peak ( filter_svf* f, fract32 mix );
 // get next value (with input)
 extern fract32 filter_svf_next( filter_svf* f, fract32 in );
 
