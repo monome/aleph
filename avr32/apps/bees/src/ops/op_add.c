@@ -34,8 +34,6 @@ void op_add_init(op_add_t* add) {
   add->super.inString = op_add_instring;
   add->super.outString = op_add_outstring;
   add->super.type = eOpAdd;  
-  add->super.status = eUserOp;  
-
   add->in_val[0] = &(add->a);
   add->in_val[1] = &(add->b);
   add->in_val[2] = &(add->btrig);

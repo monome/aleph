@@ -94,7 +94,8 @@ void key_handler_ops(uiKey_t key, s16 val) {
     //// 
     // right now this will destroy the last created op
     /////// + added the function, need to try it out
-    if (net_op_status(net_num_ops() - 1) != eUserOp) {
+    /// dont delete if this is a sysem-owned operator
+    if(net_op_flag(net_num_ops()- 1, eOpFlagSys)) {
       return;
     }
     net_pop_op();

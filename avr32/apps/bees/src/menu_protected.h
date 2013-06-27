@@ -63,9 +63,9 @@ extern page_t pages[NUM_PAGES];
 // const array of user-creatable operator type id's
 #define NUM_USER_OP_TYPES 6
 #define NUM_USER_OP_TYPES_1 5
-extern const opId_t userOpTypes[NUM_USER_OP_TYPES];
+extern const op_id_t userOpTypes[NUM_USER_OP_TYPES];
 // selected new operator type
-extern opId_t newOpType;
+extern op_id_t newOpType;
 
 ////////////////////////////
 ///// functions

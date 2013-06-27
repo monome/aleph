@@ -34,7 +34,7 @@ void op_mul_init(op_mul_t* mul) {
   mul->super.inString = op_mul_instring;
   mul->super.outString = op_mul_outstring;
   mul->super.type = eOpMul;  
-  mul->super.status = eUserOp;  
+  //mul->super.status = eUserOp;  
  
   mul->in_val[0] = &(mul->a);
   mul->in_val[1] = &(mul->b);

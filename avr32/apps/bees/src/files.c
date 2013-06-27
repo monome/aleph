@@ -56,8 +56,8 @@ static void list_scan(dirList_t* list, const char* path);
 static const char* list_get_name(dirList_t* list, u8 idx);
 // get read file pointer if found (caller must close)
 // set size by pointer
-static void* list_read_file_name(dirList_t* list, const char* name, const char* mode, u32* size);
-static void* list_read_file_name(dirList_t* list, const char* name, const char* mode, u32 size);
+static void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u32* size);
+//static void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u32* size);
 
 //// FIXME: dumb and slow seek/read functions because the real ones are broken
 //// fseek: no offset arg, assume its the first seek since file was opened 
@@ -159,7 +159,7 @@ void files_store_default_dsp(u8 idx) {
   cpu_irq_disable_level(UI_IRQ_PRIORITY);
 
   name = (const char*)files_get_dsp_name(idx);
-  fp = list_read_file_name(&dspList, name, &size);
+  fp = list_open_file_name(&dspList, name, "r", &size);
 
   if( fp != NULL) {
     print_dbg("\r\n writing (this may take a while)...");
@@ -201,7 +201,7 @@ void files_load_scene_name(const char* name) {
 
   app_pause();
 
-  fp = list_read_file_name(&dspList, name, &size);
+  fp = list_open_file_name(&dspList, name, "r", &size);
 
   if( fp != NULL) {	  
     fake_fread((volatile u8*)sceneData, sizeof(sceneData_t), fp);
@@ -217,20 +217,20 @@ void files_load_scene_name(const char* name) {
 
 // store scene to sdcard at idx
 void files_store_scene(u8 idx) {
-  files_store_scene_name(files_get_scene_name(idx));
+  files_store_scene_name((const char*)files_get_scene_name(idx));
 }
+
 
 // store scene to sdcard at name
 void files_store_scene_name(const char* name) {
+  u32 i;
+  void* fp;
   // fill the scene RAM buffer from current state of system
-  scene_write_buf();
-  // write it to sdcard
-  fl_opendir("/scenes");
-  fp = fl_open(name, "w");
-/* print_dbg("\r\n dummy write test, fp: "); */
-/* print_dbg_hex(fp); */
-/* fl_fputs("hihhihi", fp); */
-/* fl_fclose(fp); */
+  scene_write_buf(); 
+  fp = list_open_file_name(&sceneList, name, "w", &i); // size is dummy here
+  for(i=0; i<sizeof(sceneData_t); i++) {
+    fl_fputc( ((u8*)sceneData)[i], fp);
+  }
 
 }
 
@@ -248,12 +248,12 @@ void files_store_default_scene(u8 idx) {
   fp = list_open_file_name(&dspList, name, "r", &size);
 
   if( fp != NULL) {
-    print_dbg("\r\n writing (this may take a while)...");
-    //    bfinLdrSize = size;
-    //    fl_fread((void*)bfinLdrData, 1, size, fp);
-    //    flash_write_ldr();
+    print_dbg("\r\n warning: files_store_default_scene is unimplemented");
+
+    //// TODO
+
     fl_fclose(fp);
-    print_dbg("finished storing default scene");
+    //    print_dbg("finished storing default scene");
     
   } else {
     print_dbg("\r\n error: fp was null in files_store_default_scene \r\n");
@@ -292,7 +292,7 @@ void list_scan(dirList_t* list, const char* path) {
 }
 
 // search for a given filename in a listed directory. set size by pointer
-void* list_read_file_name(dirList_t* list, const char* name, u32* size) {
+void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u32* size) {
   FL_DIR dirstat;
   struct fs_dir_ent dirent;
   char path[64];
@@ -315,7 +315,7 @@ void* list_read_file_name(dirList_t* list, const char* name, u32* size) {
 	print_dbg("\r\n name: \r\n");
 	print_dbg(path);
 
-	fp = fl_fopen(path, "r");
+	fp = fl_fopen(path, mode);
 	*size = dirent.size;
 	break;
       } else { // no match
@@ -336,6 +336,3 @@ void* list_read_file_name(dirList_t* list, const char* name, u32* size) {
 /* print_dbg_hex(fp); */
 /* fl_fputs("hihhihi", fp); */
 /* fl_fclose(fp); */
-
-
-
