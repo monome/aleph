@@ -54,9 +54,9 @@ void bfin_start_transfer(void) {
 
 void bfin_end_transfer(void) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  //  print_dbg("\r\n done loading; waiting... ");
-  delay_ms(200);
-  //  print_dbg("\r\n done waiting; reporting... ");
+  print_dbg("\r\n done loading; waiting... ");
+  delay_ms(40);
+  print_dbg("\r\n done waiting; reporting... ");
   bfin_report_params();
 }
 
@@ -66,6 +66,7 @@ void bfin_end_transfer(void) {
 // load bfin executable from the RAM buffer
 void bfin_load_buf(void) {
   u64 i; /// byte index in .ldr
+
   if(bfinLdrSize > BFIN_LDR_MAX_BYTES) {
     print_dbg("\r\n bfin load error: size : "); print_dbg_hex(bfinLdrSize);
     return;

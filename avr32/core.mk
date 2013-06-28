@@ -25,7 +25,6 @@ CSRCS += \
 	$(ALEPH_AVR32)/src/bfin.c \
 	$(ALEPH_AVR32)/src/events.c \
 	$(ALEPH_AVR32)/src/encoders.c \
-	$(ALEPH_AVR32)/src/files.c \
 	$(ALEPH_AVR32)/src/filesystem.c \
 	$(ALEPH_AVR32)/src/flash.c \
 	$(ALEPH_AVR32)/src/font.c \

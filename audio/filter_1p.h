@@ -17,7 +17,6 @@ typedef struct _filter_1p {
 } filter_1p_fix16;
 
 
-
 typedef struct _filter_1p_fr32 {
   u32 sr;    // sample rate
   fract32 c; // decay coefficient

@@ -23,6 +23,12 @@
 #include "types.h"
 #include "audio.h"
 
+// hm, undefined
+fract32 in0;
+fract32 in1;
+fract32 in2;
+fract32 in3;
+
 //=========================
 //===== variables
 PaStream *stream;

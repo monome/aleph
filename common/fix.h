@@ -42,6 +42,7 @@
 #define S16_TO_FIX16(x) ( (fix16_t)(x) ) << 16
 //#define FIX16_FRACT_TRUNC(x) (fract32)(((x) & 0xffff) << 16)
 #define FIX16_FRACT_TRUNC(x) (fract32)( (( (x) & 0xffff) << 15) - ( BIT_SIGN(x) ? 1 : 0) )
+#define FIX16_FRACT(x) FIX16_FRACT_TRUNC(x)
 //#define FIX16_FRACT_TRUNC(x) (fract32)( (( (x) & 0xffff) << 15) - 1)
 #define FRACT_FIX16(x) ( BIT_SIGN(x) ? ((x)>>15) | 0xffff0000 : (x)>>15 )
 

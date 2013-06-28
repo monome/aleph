@@ -38,7 +38,7 @@ void net_init_inode(u16 idx);
 // intialize (clear) an output node
 void net_init_onode(u16 idx);
 // create a new operator given class ID, return index (-1 == fail)
-s16 net_add_op(opId_t opId);
+s16 net_add_op(op_id_t opId);
 // remove the last created operator
 s16 net_pop_op(void);
 // remove an arbitrary operator
@@ -78,7 +78,9 @@ s16 net_get_target(u16 outIdx);
 // is this input connected to anything?
 u8 net_in_connected(s32 iIdx);
 // get status (user/system) of op at given idx
-opStatus_t net_op_status(u16 opIdx);
+//opStatus_t net_op_status(u16 opIdx);
+// get true/false for given op behavior flag
+u8 net_op_flag(const u16 opIdx, op_flag_t flag);
 
 // get / set / increment input value
 io_t net_get_in_value(s32 inIdx);

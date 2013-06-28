@@ -29,7 +29,7 @@
 //--------- variables
 // const array of user-creatable operator type id's
 /// FIXME: this is dumb
-const opId_t userOpTypes[NUM_USER_OP_TYPES] = {
+const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAdd,
   eOpMul,
   eOpGate,
@@ -72,7 +72,7 @@ page_t* curPage;
 // idx of current page
 s8 pageIdx = 0;
 // new operator type
-opId_t newOpType;
+op_id_t newOpType;
 // array of onode pointers for gathering
 u32(*gathered)[NET_OUTS_MAX];
 // how many gathered

@@ -1,5 +1,5 @@
 /* table.c
- * null
+ * audio
  * aleph
  *
  * fixed-point wavetable functions
@@ -113,7 +113,7 @@ extern void table_fill_harm(fract32* tab, u32 size, u8 order, f32 decay, u8 norm
 
 // fill a table of given size with cheby polynomial of given order
 extern void table_fill_cheby(fract32* tab, u32 size, u8 order) {
-
+  // TODO (i guess)
 /* chebyshev polynomials:
    T[0](x) = 1
    T[1](x) = x

@@ -45,7 +45,7 @@ static const u8 outStringChars = 8;
 //===  base class definittions
 
 // initialize operator at memory
-s16 op_init(op_t* op, opId_t opId) {
+s16 op_init(op_t* op, op_id_t opId) {
   // initialize given operator class at memory 
   switch(opId) {
   case eOpSwitch:

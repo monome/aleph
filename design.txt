@@ -11,14 +11,11 @@ app-select
 		key to select
 	firmware copied to flash. bf program copied to flash for auto-load.
 	
-normal load (no MODE held) simply loads whatever is in flash.
-
-
+normal load (no MODE held) simply loads whatever is in 
 idea: should each app have a tiny text description?
-
-
-
-
+- sure, here are two options:
+	a) keep app.txt always together with app.hex, store them in separate fields of flash memory
+	b) append set number of descriptor lines to app.hex, perhaps from the makefile (i like this better)
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

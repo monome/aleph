@@ -41,7 +41,7 @@ void op_sw_init(op_sw_t* sw) {
   sw->super.inString = op_sw_instring;
   sw->super.outString = op_sw_outstring;
   sw->super.type = eOpSwitch;
-  sw->super.status = eSysCtlOp;
+  sw->super.flags |= (1 << eOpFlagSys);
   sw->state = 0;
   sw->mul = OP_ONE;
   sw->tog = 0;

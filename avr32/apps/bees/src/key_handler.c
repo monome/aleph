@@ -94,7 +94,8 @@ void key_handler_ops(uiKey_t key, s16 val) {
     //// 
     // right now this will destroy the last created op
     /////// + added the function, need to try it out
-    if (net_op_status(net_num_ops() - 1) != eUserOp) {
+    /// dont delete if this is a sysem-owned operator
+    if(net_op_flag(net_num_ops()- 1, eOpFlagSys)) {
       return;
     }
     net_pop_op();
@@ -285,13 +286,7 @@ void key_handler_gathered(uiKey_t key, s16 val) {
 void key_handler_play(uiKey_t key, s16 v) {
   s32 val;
   s16 inIdx = -1;
-  ///// FIXME; bad bad bad hacking
-  /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     really should set up specialied apparatus in net.c
-     to identify and use system output nodes.
-     for now, we activate the 8 operators from
-     net.c : add_sys_ops()
-  */
+  //activate the 8 system operators from net.c : add_sys_ops()
   switch(key) {
     ///// keys
   case eKeyFnUpA:
@@ -563,13 +558,15 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
 
 //--- DSP
 extern void key_handler_dsp(uiKey_t key, s16 val) {
-  print_dbg("\r\n key_handler_dsp");
+  // print_dbg("\r\n key_handler_dsp");
   switch(key) {
   case eKeyFnDownA:
     // load DSP (and update the parameter list)
     files_load_dsp(curPage->selected);
     break;
   case eKeyFnDownB:
+    // write default
+    files_store_default_dsp(curPage->selected);
     break;
   case eKeyFnDownC:
     break;

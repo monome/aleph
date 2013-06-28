@@ -16,7 +16,9 @@
 
 #define SDRAM_ADDRESS 0x00000000
 #define SDRAM_SIZE    0x07ffffff
-#define SAMPLERATE    48000
+#ifndef SAMPLERATE
+  #define SAMPLERATE    48000
+#endif
 
 //#endif
 

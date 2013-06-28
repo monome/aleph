@@ -111,10 +111,11 @@ void redraw_ops(void) {
   endln(); screen_line(0, CHAR_ROWS_2, lineBuf, 8);
   // (function labels)
   // don't allow deletion of system operators
-  if (net_op_status(net_num_ops() - 1) == eUserOp) {
-    screen_line(0, CHAR_ROWS_1, "PARAM ROUTE CREATE DELETE", 3);
-  } else  { 
+  //  if (net_op_status(net_num_ops() - 1) == eUserOp) {
+  if ( net_op_flag(net_num_ops() - 1, eOpFlagSys) ) {
     screen_line(0, CHAR_ROWS_1, "PARAM ROUTE CREATE", 3);
+  } else  { 
+    screen_line(0, CHAR_ROWS_1, "PARAM ROUTE CREATE DELETE", 3);
   }
 }
 

@@ -17,6 +17,11 @@
 /// DO NOT CHANGE
 #define FIRMWARE_FLASH_ADDRESS 0x80010000
 
+//--- types
+/* typedef struct _bfinData { */
+/*   u8* bfinLdrData */
+/* } bfinData_t; */
+
 //------------------------
 // extern variables
 
@@ -30,11 +35,11 @@ extern volatile u32 bfinLdrSize;
 
 // intialize (check/write firstrun bytes)
 // return 1 if this is the first run, 0 otherwise
-extern u8 init_flash(void);
+extern u8 init_flash(void); 
 
 // read/write default scene values in flash
-extern void flash_read_scene(sceneData_t* sceneData );
-extern void flash_write_scene(sceneData_t* sceneData);
+extern void flash_read_scene(void); //sceneData_t* sceneData );
+extern void flash_write_scene(void); //sceneData_t* sceneData);
 
 // read/write default blackfin loader file to/from global ram buffer 
 extern void flash_read_ldr(void);
