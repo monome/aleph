@@ -23,21 +23,21 @@ typedef struct _filter_svf {
   fract32 reson; // resonance in [0, 100+]
   // runtime coeffs
 
-  /* fract32 freq;     // normalized frequency */
-  /* fract32 rq;    // reciprocal of q (resonance / bandwidth) */
-  /* fract32 scale; // scale input by resonance */
-  /* fract32 low;   // lowpass */
-  /* fract32 band;  // bandpass */
-  /* fract32 high; */
-  /* fract32 notch; */
+  fract32 freq;     // normalized frequency
+  fract32 rq;    // reciprocal of q (resonance / bandwidth)
+  fract32 scale; // scale input by resonance
+  fract32 low;   // lowpass
+  fract32 band;  // bandpass
+  fract32 high;
+  fract32 notch;
   
-  float freq;     // normalized frequency
-  float rq;    // reciprocal of q (resonance / bandwidth)
-  float scale; // scale input by resonance
-  float low;   // lowpass
-  float band;  // bandpass
-  float high;
-  float notch;
+  /* float freq;     // normalized frequency */
+  /* float rq;    // reciprocal of q (resonance / bandwidth) */
+  /* float scale; // scale input by resonance */
+  /* float low;   // lowpass */
+  /* float band;  // bandpass */
+  /* float high; */
+  /* float notch; */
   
   // output mix
   fract32 lowMix;
@@ -54,8 +54,8 @@ typedef struct _filter_svf {
 extern void filter_svf_init      ( filter_svf* f );
 // set cutoff in hzb
 extern void filter_svf_set_hz    ( filter_svf* f, fix16 hz );
-// set resonanc
-extern void filter_svf_set_reson ( filter_svf* f, fract32 reson );
+// set RQ (reciprocal of q: resonance/bandwidth)
+extern void filter_svf_set_rq ( filter_svf* f, fract32 rq );
 // set output mixes
 extern void filter_svf_set_low   ( filter_svf* f, fract32 mix );
 extern void filter_svf_set_high  ( filter_svf* f, fract32 mix );

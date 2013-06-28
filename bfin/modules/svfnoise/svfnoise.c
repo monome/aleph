@@ -34,7 +34,7 @@
 
 enum params {
   eParamSvfHz,
-  eParamSvfResonance,
+  eParamSvfRq,
   eParamSvfLow,
   eParamSvfHigh,
   eParamSvfBand,
@@ -151,6 +151,12 @@ void module_init(void) {
 
   rngL = (lcprng*)malloc(sizeof(lcprng));
   lcprng_reset(rngL);
+  
+  // initial param state
+  filter_svf_set_hz(svf, fix16_from_int(220));
+  filter_svf_set_rq(svf, 0x4000);
+  filter_svf_set_low(svf, 0x4000);
+
 }
 
 void module_deinit(void) {
@@ -172,8 +178,8 @@ void module_set_param(u32 idx, pval v) {
   case eParamSvfHz :
     filter_svf_set_hz(svf, v.fix);
     break;
-  case eParamSvfResonance :
-    filter_svf_set_reson(svf, FIX16_FRACT_TRUNC(v.fix));
+  case eParamSvfRq :
+    filter_svf_set_rq(svf, FIX16_FRACT_TRUNC(v.fix));
     break;
   case eParamSvfLow :
     filter_svf_set_low(svf, FIX16_FRACT_TRUNC(v.fix));
@@ -259,11 +265,11 @@ static void fill_param_desc(void) {
   gModuleData->paramDesc[eParamSvfHz].min = SVF_HZ_MIN;
   gModuleData->paramDesc[eParamSvfHz].max = SVF_HZ_MAX;
 
-  strcpy(gModuleData->paramDesc[eParamSvfResonance].label, "resonance");
-  strcpy(gModuleData->paramDesc[eParamSvfResonance].unit, "");
-  gModuleData->paramDesc[eParamSvfResonance].type = PARAM_TYPE_FIX;
-  gModuleData->paramDesc[eParamSvfResonance].min = 0;
-  gModuleData->paramDesc[eParamSvfResonance].max = fix16_one;
+  strcpy(gModuleData->paramDesc[eParamSvfRq].label, "rq");
+  strcpy(gModuleData->paramDesc[eParamSvfRq].unit, "");
+  gModuleData->paramDesc[eParamSvfRq].type = PARAM_TYPE_FIX;
+  gModuleData->paramDesc[eParamSvfRq].min = 0;
+  gModuleData->paramDesc[eParamSvfRq].max = fix16_one;
 
   strcpy(gModuleData->paramDesc[eParamSvfLow].label, "low");
   strcpy(  gModuleData->paramDesc[eParamSvfLow].unit, "");

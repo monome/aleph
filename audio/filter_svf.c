@@ -38,7 +38,9 @@ static void filter_svf_calc_freq(filter_svf* f) {
   /* float tmp = fix16_to_float(f->hz) / (float)SAMPLERATE * 2.f; */
   /* f->freq = tmp; */
   /* printf("\r\n set normalized frequency: %f", f->freq); */
-  f->freq = shl_fr1x32(float_to_fr32(fix16_to_float(f->hz) / (float)SAMPLERATE), 1);
+
+  // coarse approximation, no sine:
+  f->freq = shl_fr1x32(float_to_fr32(fix16_to_float(f->hz) / (float)SAMPLERATE), 2);
 }
 
 
@@ -71,7 +73,7 @@ extern void filter_svf_set_hz    ( filter_svf* f, fix16 hz ) {
 				       				       
 
 // set resonance
-extern void filter_svf_set_reson ( filter_svf* f, fract32 res) {
+extern void filter_svf_set_rq( filter_svf* f, fract32 res) {
   if(f->reson != res) {
     f->reson = res;
     // recalculate
@@ -127,6 +129,8 @@ extern fract32 filter_svf_next( filter_svf* f, fract32 in) {
   /* 			 + (f->low - f->high) *  fr32_to_float(f->peakMix) */
   /* 			 ); */
 
+  // TODO: could oversample if higher frequencies are desired.
+  // without oversampling, max corner hz is SR/4 == 12k, seems enough
   f->low = add_fr1x32(f->low, 
 		      mult_fr1x32x32(f->freq, f->band));
 
@@ -135,7 +139,8 @@ extern fract32 filter_svf_next( filter_svf* f, fract32 in) {
 				  mult_fr1x32x32(in, f->scale),
 				  mult_fr1x32x32(f->rq, f->band)
 				  ),
-		       f->low );
+		       f->low
+		       );
 
   f->band = add_fr1x32(f->band, 
 		       mult_fr1x32x32(f->freq, f->high) );
