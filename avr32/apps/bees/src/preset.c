@@ -37,7 +37,6 @@ preset_t* presets;
 void preset_init(void) {
   u8 i, j;
 
-
   presets = (preset_t*)alloc_mem(NET_PRESETS_MAX * sizeof(preset_t));
 
   for(i=0; i<NET_PRESETS_MAX; i++) {
@@ -95,7 +94,6 @@ void preset_recall(u32 preIdx) {
   u16 i;
   // ins
   for(i=0; i<NET_INS_MAX; i++) {
-    
     if(presets[preIdx].ins[i].enabled) {
       net_set_in_value( i, presets[preIdx].ins[i].value );
     }

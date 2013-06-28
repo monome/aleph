@@ -40,22 +40,23 @@ static void bfin_transfer_byte(u8 data) {
 }
 
 void bfin_start_transfer(void) {
-  // FIXME
-  volatile u64 delay;
+  //  volatile u64 delay;
   gpio_set_gpio_pin(BFIN_RESET_PIN);  
-  delay = 30; while (--delay > 0) {;;}
+  //  delay = 30; while (--delay > 0) {;;}
+  delay_ms(1);
   gpio_clr_gpio_pin(BFIN_RESET_PIN);
-  delay = 30; while (--delay > 0) {;;}
+  //  delay = 30; while (--delay > 0) {;;}
+  delay_ms(1);
   gpio_set_gpio_pin(BFIN_RESET_PIN);  
-  delay = 3000; while (--delay > 0) {;;}
-
+  //  delay = 3000; while (--delay > 0) {;;}
+  delay_ms(1);
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
 }
 
 void bfin_end_transfer(void) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   print_dbg("\r\n done loading; waiting... ");
-  delay_ms(40);
+  delay_ms(100);
   print_dbg("\r\n done waiting; reporting... ");
   bfin_report_params();
 }
