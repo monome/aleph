@@ -27,6 +27,9 @@
 #define DIR_LIST_NAME_LEN 64
 #define DIR_LIST_NAME_BUF_SIZE 2048 // len * num
 
+#define DSP_PATH     "/dsp/"
+#define SCENES_PATH  "/scenes/"
+
 //  stupid datatype with fixed number of fixed-length filenames
 // storing this for speed when UI asks us for a lot of strings
 typedef struct _dirList {
@@ -86,8 +89,8 @@ void files_init(void) {
   // init FAT lib
   fat_init();
   // scan directories
-  list_scan(&dspList, "/dsp/");
-  list_scan(&sceneList, "/scenes/");
+  list_scan(&dspList, DSP_PATH);
+  list_scan(&sceneList, SCENES_PATH);
 }
 
 
@@ -162,7 +165,7 @@ void files_store_default_dsp(u8 idx) {
   fp = list_open_file_name(&dspList, name, "r", &size);
 
   if( fp != NULL) {
-    print_dbg("\r\n writing (this may take a while)...");
+    print_dbg("\r\n writing...");
     bfinLdrSize = size;
     fl_fread((void*)bfinLdrData, 1, size, fp);
     flash_write_ldr();
@@ -227,16 +230,19 @@ void files_store_scene_name(const char* name) {
   void* fp;
   // fill the scene RAM buffer from current state of system
   scene_write_buf(); 
+  // open FP for writing
   fp = list_open_file_name(&sceneList, name, "w", &i); // size is dummy here
   for(i=0; i<sizeof(sceneData_t); i++) {
     fl_fputc( ((u8*)sceneData)[i], fp);
   }
-
+  fl_fclose(fp);
+  // rescan in case we added something
+  list_scan(&sceneList, SCENES_PATH);
 }
 
 
-
-// store scene as default in internal flash
+// store scene in filesystem  as default in internal flash
+//// NOTE: unimplemented and i dont think we actually want to do this.
 void files_store_default_scene(u8 idx) {
   const char* name;
   void* fp;	  
@@ -249,9 +255,7 @@ void files_store_default_scene(u8 idx) {
 
   if( fp != NULL) {
     print_dbg("\r\n warning: files_store_default_scene is unimplemented");
-
     //// TODO
-
     fl_fclose(fp);
     //    print_dbg("finished storing default scene");
     

@@ -60,12 +60,8 @@ extern void menu_handleKey(uiKey_t key, s16 value);
 extern void menu_refresh(void);
 // get selection on given page
 extern s16 menu_selection(ePage page);
-
-// go to notify state
-// end notify (and wait?)
-
-// parameter feedback
-//extern void param_feedback(u16 paramIdx, fix16 val);
+// system notification
+extern void menu_notify(const char* str);
 
 
 #endif // header guard

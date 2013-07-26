@@ -106,10 +106,10 @@ static fract32 noise_next(void) {
 static void calc_frame(void) {
   frameVal = 0;
   frameVal = mult_fr1x32x32(noise_next(), noiseAmp);
-  frameVal = add_fr1x32(frameVal, mult_fr1x32x32(in0, inAmp0));
-  frameVal = add_fr1x32(frameVal, mult_fr1x32x32(in1, inAmp1));
-  frameVal = add_fr1x32(frameVal, mult_fr1x32x32(in2, inAmp2));
-  frameVal = add_fr1x32(frameVal, mult_fr1x32x32(in3, inAmp3));
+  frameVal = add_fr1x32(frameVal, mult_fr1x32x32(in[0], inAmp0));
+  frameVal = add_fr1x32(frameVal, mult_fr1x32x32(in[1], inAmp1));
+  frameVal = add_fr1x32(frameVal, mult_fr1x32x32(in[2], inAmp2));
+  frameVal = add_fr1x32(frameVal, mult_fr1x32x32(in[3], inAmp3));
   frameVal = filter_svf_next(svf, frameVal);
 }
 
@@ -225,10 +225,10 @@ extern u32 module_get_num_params(void) {
 #ifdef ARCH_BFIN 
 void module_process_frame(void) {
   calc_frame();
-  out0 = (frameVal);
-  out1 = (frameVal);
-  out2 = (frameVal);
-  out3 = (frameVal);
+  out[0] = (frameVal);
+  out[1] = (frameVal);
+  out[2] = (frameVal);
+  out[3] = (frameVal);
 }
 
 #else //  non-bfin

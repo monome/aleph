@@ -53,5 +53,10 @@ extern void scene_set_name(const char* name);
 extern void scene_set_name_char(u8 idx, char ch);
 // set module name
 extern void scene_set_module_name(const char* name);
+
+/// convenience setters
+// scroll character at given position in name
+extern u8 scene_inc_char(u8 idx, u8 pos);
+extern u8 scene_dec_char(u8 idx, u8 pos);
  
 #endif

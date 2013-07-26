@@ -5,7 +5,7 @@
  * additional routines for converting fixed-point datatypes
  */
 
-//#include "print_funcs.h"
+#include "print_funcs.h"
 #include "fix.h"
 
 //// comon variables
@@ -139,6 +139,13 @@ int itoa_whole_lj(int val, char* buf) {
     len++;
   }
 
+  /* print_dbg("\r\n printing int: "); */
+  /* print_dbg_ulong(val); */
+  /* print_dbg(" ; len: "); */
+  /* print_dbg_ulong(len); */
+  /* print_dbg(" ; buf: "); */
+  /* print_dbg(buf); */
+  
   //// FIXME
   /// ugh, swap digits
   if(sign) {
@@ -148,12 +155,22 @@ int itoa_whole_lj(int val, char* buf) {
       buf[len - i + 1] = tmp;
     }
   } else {
-    for (i=0; i<len; i++) {
-      tmp = buf[i];
-      buf[i] = buf[len - i - 1];
-      buf[len - i + 1] = tmp;
+    for (i=0; i<(len >>1); i++) {
+      //      print_dbg("\r\n digit: ");
+      //      print_dbg_ulong(i);
+      tmp = *(buf + i);
+
+      //      print_dbg(" ; tmp: ");
+      //      print_dbg_char(tmp);
+      //      print_dbg(" , swap with : ");
+      //      print_dbg_char( *(buf + len - i - 1) );
+
+      *(buf + i) = *(buf + len - i - 1);
+      *(buf + len - i - 1) = tmp;
     }
   }
+  //  print_dbg(" ; buf (swap): ");
+  //  print_dbg(buf);
 
   return len;
 }

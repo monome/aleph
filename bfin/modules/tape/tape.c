@@ -27,7 +27,7 @@
 
 // audio
 #include "buffer.h"
-#include "filters.h"
+#include "filter_1p.h"
 #include "module.h"
 
 //-----------------------
@@ -39,9 +39,9 @@ u32 dbgCount = 0;
 #endif
 
 // buffer size: 
-// 2** 19  ~= 11sec at 44.1k
+// 2** 19  ~= 11sec at 48k
 #define ECHO_BUF_SIZE 0x80000
-#define ECHO_BUF_SIZE_1 0x7ffff
+//#define ECHO_BUF_SIZE_1 0x7ffff
 
 //---- param ranges
 
@@ -87,8 +87,8 @@ static tapeData* pTapeData;
 //-- audio buffer class
 static audioBuffer echoBuf;
 //-- read and write taps
-static bufferTap tapRd;
-static bufferTap tapWr;
+static bufferTapN tapRd;
+static bufferTapN tapWr;
 
 //-- current param values
 static fix16   amp;
@@ -109,7 +109,7 @@ static filter_1p_fix16* rateLp;  // 1plp smoother for "tape speed"
 
 #ifdef ARCH_BFIN // bfin
 #else // linux : emulate bfin audio core
-fract32 in0, in1, in2, in3;
+fract32 in[0], in[1], in[2], in[3];
 #endif
 
 //----------------------
@@ -120,50 +120,50 @@ static void fill_param_desc(void) {
   strcpy(gModuleData->paramDesc[eParamAmp].label, "amp");
   strcpy(gModuleData->paramDesc[eParamAmp].unit, "v");
   gModuleData->paramDesc[eParamAmp].type = PARAM_TYPE_FIX;
-  gModuleData->paramDesc[eParamAmp].min = 0.f;
-  gModuleData->paramDesc[eParamAmp].max = 1.f;
+  gModuleData->paramDesc[eParamAmp].min = 0;
+  gModuleData->paramDesc[eParamAmp].max = 0x10000;
   
   strcpy(gModuleData->paramDesc[eParamDry].label, "dry");
   strcpy(gModuleData->paramDesc[eParamDry].unit, "v");
   gModuleData->paramDesc[eParamDry].type = PARAM_TYPE_FIX;
-  gModuleData->paramDesc[eParamDry].min = 0.f;
-  gModuleData->paramDesc[eParamDry].max = 1.f;
+  gModuleData->paramDesc[eParamDry].min = 0;
+  gModuleData->paramDesc[eParamDry].max = 0x10000;
 
   strcpy(gModuleData->paramDesc[eParamTime].label, "time");
   strcpy(gModuleData->paramDesc[eParamTime].unit, "v");
   gModuleData->paramDesc[eParamTime].type = PARAM_TYPE_FIX;
-  gModuleData->paramDesc[eParamTime].min = fix16_to_float(TIME_MIN);
-  gModuleData->paramDesc[eParamTime].max = fix16_to_float(TIME_MAX);
+  gModuleData->paramDesc[eParamTime].min = TIME_MIN;
+  gModuleData->paramDesc[eParamTime].max = TIME_MAX;
 
   strcpy(gModuleData->paramDesc[eParamRate].label, "rate");
   strcpy(gModuleData->paramDesc[eParamRate].unit, "r");
   gModuleData->paramDesc[eParamRate].type = PARAM_TYPE_FIX;
-  gModuleData->paramDesc[eParamRate].min = fix16_to_float(RATE_MIN);
-  gModuleData->paramDesc[eParamRate].max = fix16_to_float(RATE_MAX);
+  gModuleData->paramDesc[eParamRate].min = RATE_MIN;
+  gModuleData->paramDesc[eParamRate].max = RATE_MAX;
 
   strcpy(gModuleData->paramDesc[eParamFb].label, "feedback");
   strcpy(gModuleData->paramDesc[eParamFb].unit, "v");
   gModuleData->paramDesc[eParamFb].type = PARAM_TYPE_FIX;
-  gModuleData->paramDesc[eParamFb].min = 0.f;
-  gModuleData->paramDesc[eParamFb].max = 1.f;
+  gModuleData->paramDesc[eParamFb].min = 0;
+  gModuleData->paramDesc[eParamFb].max = 0x10000;
 
   strcpy(gModuleData->paramDesc[eParamAmpSmooth].label, "amp smoothing");
   strcpy(gModuleData->paramDesc[eParamAmpSmooth].unit, "hz");
   gModuleData->paramDesc[eParamAmpSmooth].type = PARAM_TYPE_FIX;
-  gModuleData->paramDesc[eParamAmpSmooth].min = 0.5f;
-  gModuleData->paramDesc[eParamAmpSmooth].max = 256.f;
+  gModuleData->paramDesc[eParamAmpSmooth].min = 0x8000;
+  gModuleData->paramDesc[eParamAmpSmooth].max = 0x1000000;
 
   strcpy(gModuleData->paramDesc[eParamTimeSmooth].label, "time smoothing");
   strcpy(gModuleData->paramDesc[eParamTimeSmooth].unit, "hz");
   gModuleData->paramDesc[eParamTimeSmooth].type = PARAM_TYPE_FIX;
-  gModuleData->paramDesc[eParamTimeSmooth].min = 0.5;
-  gModuleData->paramDesc[eParamTimeSmooth].max = 256.f;
+  gModuleData->paramDesc[eParamTimeSmooth].min = 0x8000;
+  gModuleData->paramDesc[eParamTimeSmooth].max = 0x1000000;
 
   strcpy(gModuleData->paramDesc[eParamRateSmooth].label, "rate smoothing");
   strcpy(gModuleData->paramDesc[eParamRateSmooth].unit, "hz");
   gModuleData->paramDesc[eParamRateSmooth].type = PARAM_TYPE_FIX;
-  gModuleData->paramDesc[eParamRateSmooth].min = 0.5;
-  gModuleData->paramDesc[eParamRateSmooth].max = 256.f;
+  gModuleData->paramDesc[eParamRateSmooth].min = 0x8000;
+  gModuleData->paramDesc[eParamRateSmooth].max = 0x1000000;
 
 }
 
@@ -173,6 +173,8 @@ static inline void set_time(fix16 t) {
   if( t < TIME_MIN ) { t = TIME_MIN; }
   if( t > TIME_MAX ) { t = TIME_MAX; }
   filter_1p_fix16_in(timeLp, t);
+  //  time = t;
+  //  buffer_tapN_sync(&tapRd, &tapWr, time);
 }
 
 // frame calculation
@@ -185,7 +187,7 @@ static void calc_frame(void) {
     ;;
   } else {
     time = filter_1p_fix16_next(timeLp);
-    buffer_tap_sync(&tapRd, &tapWr, time);
+    buffer_tapN_sync(&tapRd, &tapWr, time);
 
 #if ARCH_LINUX
       if(dbgFlag) {  
@@ -207,36 +209,35 @@ static void calc_frame(void) {
   if(rateLp->sync) {
     ;;
   } else {
-    rate = filter_1p_fix16_next(rateLp);
-    buffer_tap_set_rate(&tapRd, rate);
-    buffer_tap_set_rate(&tapWr, rate);
+    //    rate = filter_1p_fix16_next(rateLp);
+    //    buffer_tapN_set_rate(&tapRd, rate);
+    //    buffer_tapN_set_rate(&tapWr, rate);
   }
   
   // get interpolated echo value
-
-  echoVal = buffer_tap_read(&tapRd);
+  echoVal = buffer_tapN_read(&tapRd);
 
   /* // store interpolated input+fb value */
-  //  buffer_tap_write(&tapWr, add_fr1x32(in0, mult_fr1x32x32(echoVal, fb ) ) );
-  buffer_tap_write(&tapWr, add_fr1x32(in0 >> 1, mult_fr1x32x32(echoVal, fb ) ) );
+  //  buffer_tap_write(&tapWr, add_fr1x32(in[0], mult_fr1x32x32(echoVal, fb ) ) );
+  buffer_tapN_write(&tapWr, add_fr1x32(in[0], mult_fr1x32x32(echoVal, fb ) ) );
 
   //FIXME: clip / saturate input buf here
   //// potentially, scale input by inverse feedback
 
  /// test: no fb
-  //buffer_tap_write(&tapWr, in0);
+  //buffer_tap_write(&tapWr, in[0]);
 
   /* // output */
   frameVal = add_fr1x32(
   			mult_fr1x32x32( echoVal, FIX16_FRACT_TRUNC(amp) ),
-  			mult_fr1x32x32( in0,  FIX16_FRACT_TRUNC(dry) )
+  			mult_fr1x32x32( in[0],  FIX16_FRACT_TRUNC(dry) )
   			 );
   //// test: no dry
-  //  frameVal = echoVa;l
+  //  frameVal = echoVal
   /// FIXME: clip here
 
-  buffer_tap_next(&tapRd);
-  buffer_tap_next(&tapWr);
+  buffer_tapN_next(&tapRd);
+  buffer_tapN_next(&tapWr);
 }
 
 //----------------------
@@ -277,14 +278,14 @@ void module_init(void) {
   filter_1p_fix16_init( rateLp, SAMPLERATE, fix16_from_int(32), time );
 
   // init buffer and taps
-  buffer_init(&echoBuf, pTapeData->echoBufData, ECHO_BUF_SIZE, SAMPLERATE);
-  buffer_tap_init(&tapRd, &echoBuf);
-  buffer_tap_init(&tapWr, &echoBuf);
+  buffer_init(&echoBuf, pTapeData->echoBufData, ECHO_BUF_SIZE);
+  buffer_tapN_init(&tapRd, &echoBuf);
+  buffer_tapN_init(&tapWr, &echoBuf);
 
   // set rate and offset
-  buffer_tap_set_rate(&tapRd, rate);
-  buffer_tap_set_rate(&tapWr, rate);
-  buffer_tap_sync(&tapRd, &tapWr, time);
+  //  buffer_tapN_set_inc(&tapRd, rate);
+  //  buffer_tapN_set_inc(&tapWr, rate);
+  buffer_tapN_sync(&tapRd, &tapWr, time);
 }
 
 // de-init
@@ -338,16 +339,16 @@ void module_process_frame(void) {
 
 
   //// test: mix all 
-  in0 = add_fr1x32(in0,
-		   add_fr1x32(in1,
-			      add_fr1x32(in2, in3) ) );
+  /* in[0] = add_fr1x32(in[0], */
+  /* 		   add_fr1x32(in1, */
+  /* 			      add_fr1x32(in2, in3) ) ); */
   
   calc_frame();
 
-  out0 = frameVal;
-  out1 = frameVal;
-  out2 = frameVal;
-  out3 = frameVal; 
+  out[0] = frameVal;
+  out[1] = frameVal;
+  out[2] = frameVal;
+  out[3] = frameVal; 
 
   /* /// test: wire, after processing */
   /* out0 = in0; */

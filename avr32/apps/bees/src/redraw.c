@@ -433,8 +433,6 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
   //  print_dbg("\r\n draw line ins, op idx: ");
   //  print_dbg_ulong(opIdx);
 
-
-  //  if (net_get_in_preset(n)) { pch = '*'; } else { pch = '.'; }
   screen_blank_line(0, y);
   if (opIdx >=0 ) { // this is an operator input
     println_int(opIdx, 0);
@@ -460,7 +458,7 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
     appendln_int_lj( (int)net_param_idx(n));
     endln(); screen_string(0, y, lineBuf, hl);
     println( net_in_name(n) , 0);
-    endln(); screen_string(16, y, lineBuf, hl);
+    endln(); screen_string(24, y, lineBuf, hl);
     print_fix16(numBuf, net_get_in_value(n) );
     screen_line(80, y, numBuf, hl);
   }
@@ -534,7 +532,7 @@ void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
   screen_blank_line(0, y);
 
   ////// TODO
-  return;
+  //  return;
   //////
 
   println_int((int)n, 0);

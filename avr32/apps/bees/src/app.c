@@ -109,23 +109,23 @@ void app_handle_event(event_t* e) {
     break;
 
   case kEventAdc0:
-    print_dbg("\r\nadc val 0: ");
-    print_dbg_hex(e->eventData);
+    //    print_dbg("\r\nadc val 0: ");
+    //    print_dbg_hex(e->eventData);
     //    displayAdcVal(0, e->eventData);
     break;
   case kEventAdc1:
-    print_dbg("\r\nadc val 1: ");
-    print_dbg_hex(e->eventData);
+    //    print_dbg("\r\nadc val 1: ");
+    //    print_dbg_hex(e->eventData);
     //    displayAdcVal(1, e->eventData);
     break;
   case kEventAdc2:
-    print_dbg("\r\nadc val 2: ");
-    print_dbg_hex(e->eventData);
+    //    print_dbg("\r\nadc val 2: ");
+    //    print_dbg_hex(e->eventData);
     //    displayAdcVal(2, e->eventData);
     break;
   case kEventAdc3:
-    print_dbg("\r\nadc val 3: ");
-    print_dbg_hex(e->eventData);
+    //    print_dbg("\r\nadc val 3: ");
+    //    print_dbg_hex(e->eventData);
     //    displayAdcVal(3, e->eventData);
     break;
   }

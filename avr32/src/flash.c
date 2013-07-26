@@ -1,6 +1,7 @@
 //std
 #include <string.h>
 // ASF
+#include "delay.h"
 #include "flashc.h"
 #include "power_clocks_lib.h"
 #include "print_funcs.h"
@@ -28,7 +29,6 @@
 typedef const struct {
   u32 firstRun;                // check for initialization
   u32 ldrSize;                 // size of stored LDR
-  //  u8 ldrName[MODULE_NAME_LEN]; // module name of stored LDR
   u8 ldrData[LDR_FLASH_BYTES]; // LDR data
   sceneData_t sceneData;       // scene data
 } nvram_data_t;
@@ -43,7 +43,7 @@ static nvram_data_t flash_nvram_data;
 //--------------------------------
 // ---- extern vars
 
-// RAM buffer for avr32 firmware (.bin)
+// RAM buffer for avr32 firmware (.hex, actually)
 volatile u8* fwBinData;
 // size of avr32 firmware
 volatile u32 fwBinSize = 0;
@@ -55,6 +55,8 @@ volatile u32 bfinLdrSize = 0;
 
 //-------------------------------------------------------
 // ---- function def
+
+static void print_flash(u32 start, u32 num);
 
 // intiailize (alloc mem, check/set firstrun bytes)
 u8 init_flash() {
@@ -101,31 +103,56 @@ void flash_read_ldr(void) {
   print_dbg("\r\n read ldrSize from flash: ");
   print_dbg_ulong(bfinLdrSize);
   memcpy((void*)bfinLdrData, (void*)flash_nvram_data.ldrData, bfinLdrSize); 
+  print_flash((u32)flash_nvram_data.ldrData, bfinLdrSize);
 }
 
 // write default blackfin
 void flash_write_ldr(void) {
+  //  flashc_memset32((void*)&(flash_nvram_data.ldrSize), bfinLdrSize, 4, true);
+  //  flashc_memcpy((void*)&(flash_nvram_data.ldrData), (const void*)bfinLdrData, bfinLdrSize, true);
+  // seeing some missing pages, so try writing one page at a time
+  u32 i;
+  u32 nPages = bfinLdrSize / 0x200;
+  u32 rem;
+  const u8* pSrc;
+  u8* pDst;
+  // write size
   flashc_memset32((void*)&(flash_nvram_data.ldrSize), bfinLdrSize, 4, true);
-  //  flashc_memset32((void*)&(flash_nvram_data.ldrName), bfinLdrSize, 4, true);
-  flashc_memcpy((void*)&(flash_nvram_data.ldrData), (const void*)bfinLdrData, bfinLdrSize, true);
+  // write data 
+  pSrc = (const void*)bfinLdrData;
+  pDst = (void*)&(flash_nvram_data.ldrData);
+  for(i=0; i<nPages; i++) {
+    flashc_memcpy((void*)pDst, (const void*)pSrc, 0x200, true);
+    pDst += 0x200;
+    pSrc += 0x200;
+    delay_ms(1);
+  }
+  // remaining bytes
+  rem = bfinLdrSize - (nPages * 0x200);
+  flashc_memcpy((void*)pDst, (const void*)pSrc, rem, true);
 }
 
-/* static u32 flashoff =0x80000000; */
-/* static void print_flash(void) { */
-/*   u32 i, j; */
-/*   u32 b, boff; */
-/*   print_dbg("\r\n"); */
-/*   print_dbg_hex(flashoff); */
-/*   print_dbg(" : "); */
-/*   for(j=0; j<8; j++) { */
-/*     b = 0; */
-/*     boff = 24; */
-/*     for(i=0; i<4; i++) { */
-/*       b |= ( *(u8*)flashoff ) << boff; */
-/*       flashoff++; */
-/*       boff -= 8; */
-/*     } */
-/*     print_dbg_hex(b); */
-/*     print_dbg(" "); */
-/*   } */
-/* } */
+static u32 flashoff = 0x80000000;
+static void print_flash( u32 start, u32 num ) {
+  u32 i, j;
+  u32 b, boff;
+  flashoff = start;
+  print_dbg("\r\n");
+  print_dbg_hex(flashoff);
+  print_dbg(" : \r\n");
+  j = 0;
+  while(j<num) {
+    b = 0;
+    boff = 24;
+    for(i=0; i<4; i++) {
+      //      if(i == 2) { print_dbg(" "); }
+      b |= ( *(u8*)flashoff ) << boff;
+      flashoff++;
+      boff -= 8;
+    }
+    print_dbg_hex(b);
+    print_dbg(" ");
+    j += 4;
+    if( (j%16) == 0) { print_dbg("\r\n"); }
+  }
+}

@@ -67,7 +67,6 @@ void scene_read_buf(void) {
   neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
 
   if(neq) {
-    //if(1) {
     // load bfin module if it changed names
     print_dbg("\r\n loading module name: ");
     print_dbg(sceneData->desc.moduleName);
@@ -75,7 +74,6 @@ void scene_read_buf(void) {
   }
 
   //// TODO: module version check
- 
   // "aaaabbbbccccddddeeeeffff"
 
   // update bfin parameters
@@ -83,25 +81,28 @@ void scene_read_buf(void) {
   print_dbg("\r\n sent new params");
 
   app_resume();
-
 }
 
 // write current state as default
 void scene_write_default(void) {
+  app_pause();
   print_dbg("\r\n writing default scene to flash... ");
   print_dbg("module name: ");
   print_dbg(sceneData->desc.moduleName);
   scene_write_buf();
   flash_write_scene();
   print_dbg("\r\n finished writing ");
+  app_resume();
 }
 
 // load from default
 void scene_read_default(void) {
+  app_pause();
   print_dbg("\r\n reading default scene from flash... ");
   flash_read_scene();
   scene_read_buf();
   print_dbg("\r\n finsihed reading ");  
+  app_resume();
 }
 
 
@@ -121,4 +122,24 @@ void scene_set_name_char(u8 idx, char ch) {
 // set module name
 void scene_set_module_name(const char* name) {
   str_copy(sceneData->desc.moduleName, name, MODULE_NAME_LEN);
+}
+
+// scroll character at given position in name
+// scroll up
+u8 scene_inc_char(u8 idx, u8 pos) {
+  u8 tmp = sceneData->desc.sceneName[pos]; 
+  if ( tmp < 0xff ) {
+    tmp++;
+    sceneData->desc.sceneName[pos] = tmp;
+  }
+  return tmp;
+}
+// scroll down
+u8 scene_dec_char(u8 idx, u8 pos) {
+  u8 tmp = sceneData->desc.sceneName[pos]; 
+  if (tmp > 0) {
+    tmp--;
+    sceneData->desc.sceneName[pos] = tmp;
+  }
+  return tmp;
 }

@@ -1,14 +1,17 @@
 audio = ../../../audio
 common = ../../../common
 
-module_name = tape
+module_name = lines
 
-module_obj = tape.o \
+module_obj = lines.o \
+	params.o \
 	$(audio)/buffer.o \
 	$(audio)/conversion.o \
-	$(audio)/filter_1p.o \
+	$(audio)/delay.o \
+	$(audio)/filter_svf.o \
 	$(common)/libfixmath/fix32.o \
 	$(common)/libfixmath/fix16.o \
+	$(common)/libfixmath/fix16_sqrt.o
 
 all: aleph-$(module_name).ldr
 

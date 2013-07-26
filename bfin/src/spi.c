@@ -53,6 +53,14 @@ u8 spi_process(u8 rx) {
     case MSG_GET_PARAM_DESC_COM:
       byte = eParamDescIdx;
       break;
+    case MSG_ENABLE_AUDIO:
+      processAudio = 1;
+      return processAudio;
+      break;
+    case MSG_DISABLE_AUDIO:
+      processAudio = 0;
+      return processAudio;
+      break;
     default:
       break;
     }
@@ -90,6 +98,7 @@ u8 spi_process(u8 rx) {
     /// fixme: i guess this is dumb,
     /// should be more elegant use of param desc/data/changeflag
     module_set_param(idx, pv);
+    TOGGLE_LED4;
     byte = eCom; //reset
     return 0; // don't care
     break;

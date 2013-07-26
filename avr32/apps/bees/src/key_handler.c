@@ -27,10 +27,10 @@
 //----- static variables
 
 // character selection table
-static const char kLabelChars[] = "abcdefghijklmnopqrstuvwxyz_012345789";
-#define NUM_LABEL_CHARS 47
+//static const char kLabelChars[] = "abcdefghijklmnopqrstuvwxyz_012345789";
+//#define NUM_LABEL_CHARS 47
 // index in the selection table 
-static s8 selectedLabelChar = 0;
+//static s8 selectedLabelChar = 0;
 
 // return param increment given encoder ticks
 static fix16 scale_knob_value(const s32 v);
@@ -38,6 +38,7 @@ static fix16 scale_knob_value(const s32 v);
 
 //--------------------------
 //--- static func def
+
 // return param increment given encoder ticks
 static fix16 scale_knob_value(const s32 v) {
   s32 vabs = BIT_ABS(v);
@@ -170,7 +171,7 @@ void key_handler_ins(uiKey_t key, s16 val) {
     //////////
     /// testing
     // store default scene
-    scene_write_default();
+    //    scene_write_default();
 
     /////////
     ////////
@@ -518,7 +519,6 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    /// fixme: shld be count-dependent like DSP
     scroll_select(1, files_get_scene_count() );
     break;
   case eKeyEncDownB:
@@ -527,28 +527,21 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
     break;
   case eKeyEncUpC: // cursor: position in name
     curPage->cursor++;
-    if (curPage->cursor > NUM_LABEL_CHARS) {
+    if (curPage->cursor > SCENE_NAME_LEN) {
       curPage->cursor = 0;
     } 
     break;
   case eKeyEncDownC:  // cursor: position in name
     curPage->cursor--;
     if (curPage->cursor < 0) {
-      curPage->cursor = NUM_LABEL_CHARS - 1;
+      curPage->cursor = SCENE_NAME_LEN - 1;
     } 
     break;
   case eKeyEncUpD:     // scroll name char at pos
-    selectedLabelChar++;
-    if (selectedLabelChar > NUM_LABEL_CHARS) {
-      selectedLabelChar = 0;
-    } 
+    scene_inc_char(curPage->selected, curPage->cursor);
     break;
   case eKeyEncDownD:     // scroll name char at pos
-    curPage->cursor--;
-    if (curPage->cursor < 0) {
-      curPage->cursor = NUM_LABEL_CHARS - 1;
-    } 
-    
+    scene_dec_char(curPage->selected, curPage->cursor);
     break;
   default:
     ;; // nothing

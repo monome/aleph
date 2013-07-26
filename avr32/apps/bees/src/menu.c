@@ -215,3 +215,9 @@ void scroll_select(s8 dir, s32 max) {
 extern s16 menu_selection(ePage page) {
   return pages[page].selected;
 }
+
+// display system notification
+extern void menu_notify(const char* str) {
+  screen_blank();
+  screen_line(0, 0, str, 0xf);
+}

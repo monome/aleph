@@ -14,6 +14,8 @@
 #define MSG_GET_PARAM_DESC_COM      3
 #define MSG_GET_MODULE_NAME_COM     4
 #define MSG_GET_MODULE_VERSION_COM  5
+#define MSG_ENABLE_AUDIO            6
+#define MSG_DISABLE_AUDIO           7
 
 // nodes in a state machine
 typedef enum {

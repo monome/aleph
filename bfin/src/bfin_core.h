@@ -26,17 +26,14 @@
 
 //------- global variables
 // per-channel audio i/o
-extern fract32 in0;
-extern fract32 in1;
-extern fract32 in2;
-extern fract32 in3;
-extern fract32 out0;
-extern fract32 out1;
-extern fract32 out2;
-extern fract32 out3;
+extern fract32 in[4];
+extern fract32 out[4];
 
 // audio DMA registers
 extern volatile s32 iRxBuf[];
 extern volatile s32 iTxBuf[];
+
+// audio processing flag
+extern volatile u8 processAudio;
 
 #endif // header guard

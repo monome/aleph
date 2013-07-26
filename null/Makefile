@@ -53,12 +53,12 @@ iotest : $(APP_OBJ) $(IOTEST_OBJ)
 	echo $(INC)
 	$(CC) $(CFLAGS) $(INC) -o $@ $^ $(LDFLAGS)
 
-# tape module
-TAPE_OBJ :=  $(MODULES)/tape/tape.o \
+# lines module
+LINES_OBJ :=  $(MODULES)/lines/lines.o \
 	$(AUDIOLIB)/filter_1pole.o \
 	$(AUDIOLIB)/buffer.o \
 
-tape : $(APP_OBJ) $(TAPE_OBJ)
+lines : $(APP_OBJ) $(LINES_OBJ)
 	$(CC) $(CFLAGS) $(INC) -o $@ $^ $(LDFLAGS)
 
 # svfnoise module

@@ -9,7 +9,10 @@
 
 #define SET_LED3    *pFIO_FLAG_D &= LED3_MASK
 #define UNSET_LED3  *pFIO_FLAG_D |= LED3_UNMASK
+#define TOGGLE_LED3  *pFIO_FLAG_D ^= LED3_UNMASK
+
 #define SET_LED4    *pFIO_FLAG_D &= LED4_MASK
 #define UNSET_LED4  *pFIO_FLAG_D |= LED4_UNMASK
+#define TOGGLE_LED4  *pFIO_FLAG_D ^= LED4_UNMASK
 
 #endif // h guard
