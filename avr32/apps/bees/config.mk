@@ -49,7 +49,7 @@ CSRCS += \
 # List of assembler source files.
 ASSRCS +=
 
-# List of include paths.
+# List of include paths.	
 INC_PATH += \
 	$(ALEPH_BEES)	           \
 	$(ALEPH_BEES)/src
@@ -66,13 +66,14 @@ LINKER_SCRIPT = $(ALEPH_BEES)/aleph-bees.lds
 
 # AVR32 options for debugging. By default the common Makefile.in will
 # add -g3.
-DBGFLAGS = 
+DBGFLAGS =
 
 # Application optimization used during compilation and linking:
 # -O0, -O1, -O2, -O3 or -Os
 # OPTIMIZATION = -O2
 # OPTIMIZATION = -Os
 OPTIMIZATION = -O3
+# OPTIMIZATION = -O0
 
 # debug:
 # OPTIMIZATION = -O0 -fno-inline

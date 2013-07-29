@@ -107,7 +107,6 @@ void app_handle_event(event_t* e) {
       menu_handleKey(eKeyEncDownA, e->eventData);
     }
     break;
-
   case kEventAdc0:
     //    print_dbg("\r\nadc val 0: ");
     //    print_dbg_hex(e->eventData);
@@ -134,9 +133,6 @@ void app_handle_event(event_t* e) {
 // this is called during hardware initialization.
 // use for memory allocation.
 void app_init(void) {
-
-  
-
   net_init();
   print_dbg("\r\n net_init");
   
@@ -159,6 +155,7 @@ void app_init(void) {
 
 // this is called from the event queue 
 void app_launch(u8 firstrun) {
+  app_notify("launching BEES");
   print_dbg("\r\n launching app with firstrun: ");
   print_dbg_ulong(firstrun);
   if(firstrun) {

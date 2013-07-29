@@ -217,7 +217,7 @@ extern s16 menu_selection(ePage page) {
 }
 
 // display system notification
-extern void menu_notify(const char* str) {
-  screen_blank();
-  screen_line(0, 0, str, 0xf);
-}
+/* extern void menu_notify(const char* str) { */
+/*   screen_blank(); */
+/*   screen_line(0, 0, str, 0xf); */
+/* } */

@@ -10,6 +10,7 @@
 #include <string.h>
 // asf
 #include "compiler.h"
+#include "delay.h"
 #include "print_funcs.h"
 
 // aleph-avr32
@@ -24,8 +25,8 @@
 // ---- directory list class
 // params
 #define DIR_LIST_MAX_NUM 64
-#define DIR_LIST_NAME_LEN 64
-#define DIR_LIST_NAME_BUF_SIZE 2048 // len * num
+#define DIR_LIST_NAME_LEN 32
+#define DIR_LIST_NAME_BUF_SIZE 1024 // len * num
 
 #define DSP_PATH     "/dsp/"
 #define SCENES_PATH  "/scenes/"
@@ -33,7 +34,7 @@
 //  stupid datatype with fixed number of fixed-length filenames
 // storing this for speed when UI asks us for a lot of strings
 typedef struct _dirList {
-  char path[8];
+  char path[64];
   volatile char nameBuf[DIR_LIST_NAME_BUF_SIZE];
   //  u32 size[DIR_LIST_MAX_NUM];
   u32 num;
@@ -82,6 +83,28 @@ static void fake_fread(volatile u8* dst, u32 size, void* fp) {
   }
 }
 
+// strip space from the end of a string
+static void strip_space(char* str, u8 len) {
+  u8 i;
+  i = len - 1;
+  while(i > 0) {
+    if(str[i] == 0) { continue; }
+    if(str[i] == ' ') { str[i] = 0; }
+    else { break; }
+    i--;
+  }
+}
+
+//// /test: write dummy file
+static void file_write_test(void) {
+  void* fp;
+  fp = fl_fopen("/test.txt", "w");
+  print_dbg("\r\n dummy write test, fp: ");
+  print_dbg_hex((u32)fp);
+  fl_fputs("hi hi hello", fp);
+  fl_fclose(fp);
+}
+
 //---------------------------
 //------------- extern defs
 
@@ -91,6 +114,7 @@ void files_init(void) {
   // scan directories
   list_scan(&dspList, DSP_PATH);
   list_scan(&sceneList, SCENES_PATH);
+  file_write_test();
 }
 
 
@@ -147,7 +171,6 @@ void files_load_dsp_name(const char* name) {
     print_dbg("\r\n error: fp was null in files_load_dsp_name \r\n");
   }
 
-
   app_resume();
 }
 
@@ -188,7 +211,13 @@ u8 files_get_dsp_count(void) {
 //----- scenes management
 // return filename for scene given index in list
 const volatile char* files_get_scene_name(u8 idx) {
+  //char* name;
   return list_get_name(&sceneList, idx);
+  //  print_dbg("\r\n retreiving scene name at idx: ");
+  //  print_dbg_ulong(idx);
+  //  print_dbg(" : ");
+  //  print_dbg(name);
+  //  return name;
 }
 
 // load scene by index */
@@ -204,7 +233,7 @@ void files_load_scene_name(const char* name) {
 
   app_pause();
 
-  fp = list_open_file_name(&dspList, name, "r", &size);
+  fp = list_open_file_name(&sceneList, name, "r", &size);
 
   if( fp != NULL) {	  
     fake_fread((volatile u8*)sceneData, sizeof(sceneData_t), fp);
@@ -226,49 +255,115 @@ void files_store_scene(u8 idx) {
 
 // store scene to sdcard at name
 void files_store_scene_name(const char* name) {
-  u32 i;
+  //u32 i;
   void* fp;
+  char namebuf[25] = "";
+  u8* pScene;
+  //u32 dum = 0;
+  strcat(namebuf, SCENES_PATH);
+  strcat(namebuf, name);
+  strip_space(namebuf, 25);
+  strcat(namebuf, ".scn");
+
+  print_dbg("\r\n write scene at: ");
+  print_dbg(namebuf);
+  
+  app_pause();
+
   // fill the scene RAM buffer from current state of system
   scene_write_buf(); 
+
   // open FP for writing
-  fp = list_open_file_name(&sceneList, name, "w", &i); // size is dummy here
-  for(i=0; i<sizeof(sceneData_t); i++) {
-    fl_fputc( ((u8*)sceneData)[i], fp);
-  }
+  fp = fl_fopen(namebuf, "wb");
+
+  pScene = (u8*)sceneData;
+  print_dbg("\r\n size of scene data: ");
+  print_dbg_ulong(sizeof(sceneData_t));
+  print_dbg("\r\n");
+
+  fl_fwrite((const void*)pScene, sizeof(sceneData_t), 1, fp);
+  //  for(i=0; i<sizeof(sceneData_t); i++) {
+    //    fl_fputc( ((u8*)sceneData)[i], fp);
+  //    fl_fputc( *pScene, fp);
+  //    pScene++;  
+  //  }  
+
+  //  delay_ms(100);
   fl_fclose(fp);
-  // rescan in case we added something
+  //  delay_ms(100);
+
+  /* print_dbg_hex((u32)(pScene - 1)); */
+  /* print_dbg(" : "); */
+  /* print_dbg_hex((u32)(*(pScene - 1))); */
+  /* print_dbg(" \r\n"); */
+
+  //delay_ms(100);
+
+  print_dbg("\r\n wrote scene, re-scanning directory... ");
+  // rescan to see the new file
   list_scan(&sceneList, SCENES_PATH);
+  print_dbg("\r\n scanned.");
+
+  //  delay_ms(100);
+  app_resume();
+  print_dbg("\r\n resumed UI and app timer interrupts.");
+  delay_ms(100);
+  print_dbg("\r\n (100ms later.) ");
+  delay_ms(1000);
+  print_dbg("\r\n (1000ms later.) ");
+  delay_ms(1000);
+  print_dbg("\r\n (1000ms later.) ");
+  delay_ms(1000);
+  print_dbg("\r\n (1000ms later.) ");
+  delay_ms(1000);
+  print_dbg("\r\n (1000ms later.) ");
+  delay_ms(1000);
+  print_dbg("\r\n (1000ms later.) ");
+  delay_ms(1000);
+  print_dbg("\r\n (1000ms later.) ");
+  delay_ms(1000);
+  print_dbg("\r\n (1000ms later.) ");
+  delay_ms(1000);
+  print_dbg("\r\n (1000ms later.) ");
+  delay_ms(1000);
+  print_dbg("\r\n (1000ms later.) ");
+  delay_ms(1000);
+  print_dbg("\r\n (1000ms later.) ");
+  delay_ms(1000);
+  print_dbg("\r\n (1000ms later.) ");
+  delay_ms(1000);
+  print_dbg("\r\n (1000ms later.) ");
 }
 
 
-// store scene in filesystem  as default in internal flash
+// store scene from filesystem  as default in internal flash
 //// NOTE: unimplemented and i dont think we actually want to do this.
 void files_store_default_scene(u8 idx) {
-  const char* name;
-  void* fp;	  
-  u32 size;
+  /* const char* name; */
+  /* void* fp;	   */
+  /* u32 size; */
 
-  app_pause();
+  /* app_pause(); */
 
-  name = (const char*)files_get_scene_name(idx);
-  fp = list_open_file_name(&dspList, name, "r", &size);
+  /* name = (const char*)files_get_scene_name(idx); */
+  /* fp = list_open_file_name(&dspList, name, "r", &size); */
 
-  if( fp != NULL) {
-    print_dbg("\r\n warning: files_store_default_scene is unimplemented");
-    //// TODO
-    fl_fclose(fp);
-    //    print_dbg("finished storing default scene");
+  /* if( fp != NULL) { */
+  /*   print_dbg("\r\n warning: files_store_default_scene is unimplemented"); */
+  /*   //// TODO */
+  /*   fl_fclose(fp); */
+  /*   //    print_dbg("finished storing default scene"); */
     
-  } else {
-    print_dbg("\r\n error: fp was null in files_store_default_scene \r\n");
-  }
+  /* } else { */
+  /*   print_dbg("\r\n error: fp was null in files_store_default_scene \r\n"); */
+  /* } */
 
-  app_resume();
+  /* app_resume(); */
 }
 
 // return count of dsp files
 u8 files_get_scene_count(void) {
-  return dspList.num;
+  return sceneList.num;
 }
 
 
@@ -283,16 +378,27 @@ const char* list_get_name(dirList_t* list, u8 idx) {
 void list_scan(dirList_t* list, const char* path) {
   FL_DIR dirstat;
   struct fs_dir_ent dirent;
+  //u32 i;
   list->num = 0;
+  //  for(i=0; i<DIR_LIST_NAME_BUF_SIZE; i++) {
+  //    list->nameBuf[i] = ' ';
+  //  }
   strcpy(list->path, path);
   if( fl_opendir(path, &dirstat) ) {      
     while (fl_readdir(&dirstat, &dirent) == 0) {
       if( !(dirent.is_dir) ) {
-	strcpy((char*)list->nameBuf + (list->num * DIR_LIST_NAME_LEN), dirent.filename);
+	print_dbg("\r\n scanned filename: ");
+	print_dbg(dirent.filename);
+	strcpy((char*)(list->nameBuf + (list->num * DIR_LIST_NAME_LEN)), dirent.filename);
 	list->num++;
       }
     }
   }
+  print_dbg("\r\n scanned. list path: ");
+  print_dbg(list->path);
+  print_dbg(" , name buffer: \r\n");
+  print_dbg((const char*)list->nameBuf);
+  print_dbg("\r\n");
 }
 
 // search for a given filename in a listed directory. set size by pointer
@@ -333,10 +439,3 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   }
   return fp;
 }
-
-/* //// /test: write dummy file */
-/* fp = fl_fopen("/tetblsts.txt", "w"); */
-/* print_dbg("\r\n dummy write test, fp: "); */
-/* print_dbg_hex(fp); */
-/* fl_fputs("hihhihi", fp); */
-/* fl_fclose(fp); */

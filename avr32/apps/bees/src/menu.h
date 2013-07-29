@@ -61,7 +61,7 @@ extern void menu_refresh(void);
 // get selection on given page
 extern s16 menu_selection(ePage page);
 // system notification
-extern void menu_notify(const char* str);
+//extern void menu_notify(const char* str);
 
 
 #endif // header guard

@@ -113,7 +113,7 @@ static void init_avr32(void) {
   cpu_irq_enable();
 
   // usb host controller
-  init_usb_host();
+  //  init_usb_host();
   
   print_dbg("\r\n avr32 init done ");
 }
@@ -150,7 +150,7 @@ static void init_ctl(void) {
 // app event loop
 static void check_events(void) {
   static event_t e;
-
+  //  print_dbg("\r\n checking events...");
   if( get_next_event(&e) ) {
 
   /* print_dbg("\r\n handling event, type: "); */
@@ -176,6 +176,7 @@ static void check_events(void) {
 	screen_refresh();
 	gpio_clr_gpio_pin(POWER_CTL_PIN);
       } else {
+	//	print_dbg("\r\n handling events...");
 	app_handle_event(&e);
       } // power switch
     } // startup

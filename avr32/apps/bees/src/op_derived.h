@@ -14,7 +14,8 @@
 #include "ops/op_enc.h"
 #include "ops/op_gate.h"
 #include "ops/op_mul.h"
-#include "ops/op_preset.h"
+//#include "ops/op_preset.h"
+//#include "ops/op_timer.h"
 #include "ops/op_sw.h"
 
 #endif

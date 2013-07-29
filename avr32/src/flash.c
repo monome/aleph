@@ -103,7 +103,7 @@ void flash_read_ldr(void) {
   print_dbg("\r\n read ldrSize from flash: ");
   print_dbg_ulong(bfinLdrSize);
   memcpy((void*)bfinLdrData, (void*)flash_nvram_data.ldrData, bfinLdrSize); 
-  print_flash((u32)flash_nvram_data.ldrData, bfinLdrSize);
+  //  print_flash((u32)flash_nvram_data.ldrData, bfinLdrSize);
 }
 
 // write default blackfin

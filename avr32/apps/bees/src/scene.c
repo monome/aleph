@@ -11,6 +11,7 @@
 
 //avr32
 #include "app.h"
+#include "font.h"
 #include "print_funcs.h"
 #include "simple_string.h"
 
@@ -35,7 +36,14 @@ sceneData_t* sceneData;
 //----- extern functions
 
 void scene_init(void) {
+  u32 i;
   sceneData = (sceneData_t*)alloc_mem( sizeof(sceneData_t) );
+  for(i=0; i<SCENE_NAME_LEN; i++) {
+    (sceneData->desc.sceneName)[i] = ' ';
+  }
+  for(i=0; i<MODULE_NAME_LEN; i++) {
+    (sceneData->desc.moduleName)[i] = ' ';
+  }
 }
 
 void scene_deinit(void) {
@@ -45,7 +53,9 @@ void scene_deinit(void) {
 // fill global RAM buffer with current state of system
 void scene_write_buf(void) {
   memcpy( &(sceneData->net),     (void*)net,  sizeof(ctlnet_t));
+  print_dbg("\r\n copied network data to scene buffer.");
   memcpy( &(sceneData->presets), &presets, sizeof(preset_t) * NET_PRESETS_MAX); 
+  print_dbg("\r\n copied preset data to scene buffer.");
 }
 
 // set current state of system from global RAM buffer
@@ -58,7 +68,7 @@ void scene_read_buf(void) {
   // store current mod name in scene desc
   memcpy(modName, sceneData->desc.moduleName, MODULE_NAME_LEN);
 
-    // copy network/presets
+  // copy network/presets
   memcpy( (void*)net, &(sceneData->net),  sizeof(ctlnet_t) );
   memcpy( &presets, &(sceneData->presets), sizeof(preset_t) * NET_PRESETS_MAX );
   print_dbg("\r\n copied stored network and presets to RAM ");
@@ -105,41 +115,19 @@ void scene_read_default(void) {
   app_resume();
 }
 
-
-
 // set scene name
 void scene_set_name(const char* name) {
-  str_copy(sceneData->desc.sceneName, name, SCENE_NAME_LEN);
+  strncpy(sceneData->desc.sceneName, name, SCENE_NAME_LEN);
 }
 
-// set scene name char
-void scene_set_name_char(u8 idx, char ch) {
-  if(idx < SCENE_NAME_LEN) {
-    sceneData->desc.moduleName[idx] = ch;
-  }
-}
+/* // set scene name char */
+/* void scene_set_name_char(u8 idx, char ch) { */
+/*   if(idx < SCENE_NAME_LEN) { */
+/*     sceneData->desc.moduleName[idx] = ch; */
+/*   } */
+/* } */
 
 // set module name
 void scene_set_module_name(const char* name) {
-  str_copy(sceneData->desc.moduleName, name, MODULE_NAME_LEN);
-}
-
-// scroll character at given position in name
-// scroll up
-u8 scene_inc_char(u8 idx, u8 pos) {
-  u8 tmp = sceneData->desc.sceneName[pos]; 
-  if ( tmp < 0xff ) {
-    tmp++;
-    sceneData->desc.sceneName[pos] = tmp;
-  }
-  return tmp;
-}
-// scroll down
-u8 scene_dec_char(u8 idx, u8 pos) {
-  u8 tmp = sceneData->desc.sceneName[pos]; 
-  if (tmp > 0) {
-    tmp--;
-    sceneData->desc.sceneName[pos] = tmp;
-  }
-  return tmp;
+  strncpy(sceneData->desc.moduleName, name, MODULE_NAME_LEN);
 }

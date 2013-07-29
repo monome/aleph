@@ -15,7 +15,7 @@ typedef struct op_preset_struct {
   // - set and store index
   // - re-load current index
   // - re-store current index
-  // - gwt current index
+  // - get current index
   io_t* in_val[5];
   // outputs: 
   // - current index

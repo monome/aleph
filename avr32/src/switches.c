@@ -45,18 +45,11 @@ static const eEventType kSwitchEvents[NUM_SW][2] = {
 // generate events from switch interrupts
 void process_sw( const U8 swIdx )  {
   static event_t e;   
-    e.eventType = kSwitchEvents[swIdx][gpio_get_pin_value(kSwitchPins[swIdx])];
-    print_dbg("\r\n post switch event, idx: ");
-    print_dbg_ulong(swIdx);
-    post_event(&e);
+  e.eventType = kSwitchEvents[swIdx][gpio_get_pin_value(kSwitchPins[swIdx])];
+  //  print_dbg("\r\n post switch event, idx: ");
+  //  print_dbg_ulong(swIdx);
+  post_event(&e);
 }
-
-
-
-
-
-
-
 
 ////////
 ///////////////////
