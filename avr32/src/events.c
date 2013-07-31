@@ -77,6 +77,10 @@ bool post_event( event_t *e ) {
   bool status = false;
   int saveIndex;
 
+  //  print_dbg("\r\n posting event, type: ");
+  //  print_dbg_ulong(e->eventType);
+
+
   //  bool fReenableInterrupts = Is_interrupt_level_enabled( TIMER_INT_LEVEL );
   //  Disable_interrupt_level( TIMER_INT_LEVEL );
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);

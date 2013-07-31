@@ -8,15 +8,13 @@
 #define FTDI_IN_BUF_SIZE 64
 #define FTDI_OUT_BUF_SIZE 64
 
-extern void ftdi_send(void);
-extern void ftdi_receive(void);
+// read from FTDI device on usb
+extern void ftdi_read(void);
+// write to FTDI device
+extern void ftdi_write(u32 data);
+// FTDI device was plugged or unplugged
 extern void ftdi_change(uhc_device_t* dev, u8 plug);
-/* // mouse event callbacks */
-/* void hid_mouse_btn_left(bool b_state); */
-/* void hid_mouse_btn_right(bool b_state); */
-/* void hid_mouse_btn_middle(bool b_state); */
-/* void hid_mouse_move(int8_t x, int8_t y, int8_t scroll); */
-
-
+// main-loop setup routine for new device connection
+extern void ftdi_setup(void);
 
 #endif // h guard

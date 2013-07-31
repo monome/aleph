@@ -47,6 +47,7 @@
 #include "filesystem.h"
 #include "flash.h"
 #include "font.h"
+#include "ftdi.h"
 #include "global.h"
 #include "i2c.h"
 #include "init.h"
@@ -113,7 +114,7 @@ static void init_avr32(void) {
   cpu_irq_enable();
 
   // usb host controller
-  //  init_usb_host();
+  init_usb_host();
   
   print_dbg("\r\n avr32 init done ");
 }
@@ -152,11 +153,17 @@ static void check_events(void) {
   static event_t e;
   //  print_dbg("\r\n checking events...");
   if( get_next_event(&e) ) {
-
   /* print_dbg("\r\n handling event, type: "); */
   /* print_dbg_hex(e.eventType); */
   /* print_dbg("\r\n , data: "); */
   /* print_dbg_hex(e.eventData); */
+
+    if(e.eventType == kEventFtdiConnect) {
+	// perform setup tasks for new ftdi device connection. 
+	// won't work if called from an interrupt.
+	ftdi_setup();
+    }
+
 
     if(startup) {
       if( e.eventType == kEventSwitchDown0
@@ -170,15 +177,40 @@ static void check_events(void) {
 	return;
       }
     } else {
-      if(e.eventType == kEventSwitchDown5) {
+      switch(e.eventType) {
+      case kEventFtdiRead :
+	// check the FTDI buffer and spawn related events.
+	// this won't work if called from the timer interrupt.
+	ftdi_read();
+	break;
+      /* case kEventFtdiWrite : */
+      /* 	ftdi_write((u32)e.eventData); */
+      /* 	break; */
+      case kEventSwitchDown5 :
 	screen_line(0, 0, "powering down!", 0x3f);
 	print_dbg("\r\n AVR32 received power down switch event");
 	screen_refresh();
 	gpio_clr_gpio_pin(POWER_CTL_PIN);
-      } else {
-	//	print_dbg("\r\n handling events...");
+	break;
+	//// test: switches -> monome
+      case kEventSwitchDown0:
+	ftdi_write(1);
+	break;
+      case kEventSwitchUp0:
+	ftdi_write(0);
+	break;
+      case kEventSwitchDown2:
+	ftdi_write(0x2003);
+	break;
+      case kEventSwitchDown3:
+	ftdi_write(0x2004);
+	break;
+	////
+      default:
+	// all other events are sent to application layer
 	app_handle_event(&e);
-      } // power switch
+	break;
+      } // event switch
     } // startup
   } // got event
 }

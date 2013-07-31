@@ -43,6 +43,12 @@ typedef enum {
   kEventSwitchUp6,
   kEventSwitchDown7, // foot1
   kEventSwitchUp7,
+  // FTDI read
+  kEventFtdiRead,
+  // FTDI write
+  //  kEventFtdiWrite,
+  kEventFtdiConnect,
+  kEventFtdiDisconnect,
   kNumEvents,
 } eEventType;
 

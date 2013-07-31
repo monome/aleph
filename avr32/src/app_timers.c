@@ -1,5 +1,6 @@
 // ASF
 #include "compiler.h"
+#include "delay.h"
 #include "gpio.h"
 #include "math.h"
 #include "print_funcs.h"
@@ -75,8 +76,9 @@ static void adc_timer_callback(int tag) {
 // ftdi polling callback
 static void ftdi_timer_callback(int tag) {
   if (ftdiPlug) {
-    print_dbg("\r\n whats up FTDI");
-    ftdi_receive();
+    //    print_dbg("\r\n post ftdi read event. ");
+    e.eventType = kEventFtdiRead;
+    post_event(&e);
   }
 }
 
@@ -86,5 +88,5 @@ void init_app_timers(void) {
   set_timer(&screenTimer, eScreenTimerTag, 30,   &screen_timer_callback,  1);
   set_timer(&encTimer,    eEncTimerTag,    20,    &enc_timer_callback,    1);
   set_timer(&adcTimer,    eAdcTimerTag,    5,    &adc_timer_callback,     1);
-  //  set_timer(&ftdiTimer,   eFtdiTimerTag,   5,    &ftdi_timer_callback,    1);
+  set_timer(&ftdiTimer,   eFtdiTimerTag,   20,    &ftdi_timer_callback,    1);
 }

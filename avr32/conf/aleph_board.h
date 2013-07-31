@@ -61,7 +61,7 @@
 //#define APP_TC_IRQ_PRIORITY    AVR32_INTC_INT2
 //#define UI_IRQ_PRIORITY        AVR32_INTC_INT3
 #define SYS_IRQ_PRIORITY       1
-#define APP_TC_IRQ_PRIORITY    2
+#define APP_TC_IRQ_PRIORITY    3
 #define UI_IRQ_PRIORITY        2
 
 //==============================================
@@ -81,7 +81,7 @@
 #define FTDI_USART_RX_FUNCTION   AVR32_USART0_RXD_0_0_FUNCTION
 #define FTDI_USART_TX_PIN        AVR32_USART0_TXD_0_0_PIN
 #define FTDI_USART_TX_FUNCTION   AVR32_USART0_TXD_0_0_FUNCTION
-#define FTDI_USART_BAUDRATE      57600
+#define FTDI_USART_BAUDRATE      230400
 /// compatibility with ASF print funcs
 #define DBG_USART              FTDI_USART
 #define DBG_USART_RX_PIN       FTDI_USART_RX_PIN

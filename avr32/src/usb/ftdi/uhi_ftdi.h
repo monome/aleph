@@ -15,6 +15,8 @@
 	.sof_notify = NULL, \
 }
 
+#define FTDI_STRING_MAX_LEN 16
+
 // install
 extern uhc_enum_status_t uhi_ftdi_install(uhc_device_t* dev);
 // uninstall
@@ -27,5 +29,10 @@ extern bool uhi_ftdi_in_run(uint8_t * buf, iram_size_t buf_size,
 // output transfer
 extern bool uhi_ftdi_out_run(uint8_t * buf, iram_size_t buf_size,
 		uhd_callback_trans_t callback);
+// read eeprom and return pointer to gathered data
+//extern ftdi_eeprom_t* ftdi_read_eeprom(void);
 
-#endif // _UHI_HID_GAMEPAD_H_
+// get string descriptions
+extern void ftdi_get_strings(char** pManufacturer, char** pProduct, char** pSerial);
+
+#endif // _UHI_FTDI_H_

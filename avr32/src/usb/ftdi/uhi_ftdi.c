@@ -1,48 +1,6 @@
-/**
- * \file
- *
- * \brief USB host Human Interface Device (HID) gamepad driver.
- *
- * Copyright (C) 2011 - 2012 Atmel Corporation. All rights reserved.
- *
- * \asf_license_start
- *
- * \page License
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * 3. The name of Atmel may not be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * 4. This software may only be redistributed and used in connection with an
- *    Atmel microcontroller product.
- *
- * THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
- * EXPRESSLY AND SPECIFICALLY DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
- * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- * \asf_license_stop
- *
- */
-
 // asf
 #include <string.h>
+#include "delay.h"
 #include "print_funcs.h"
 #include "usb_protocol.h"
 #include "uhd.h"
@@ -50,6 +8,7 @@
 // aleph
 #include "conf_usb_host.h"
 #include "global.h"
+#include "ftdi.h"
 #include "usb_protocol_ftdi.h"
 #include "uhi_ftdi.h"
 //#include "udi_ftdi.h"
@@ -58,14 +17,20 @@
 # error USB HUB support is not implemented
 #endif
 
+//------ DEFINES
 #define UHI_FTDI_TIMEOUT 20000
+#define FTDI_STRING_DESC_REQ_TYPE ( (USB_REQ_DIR_IN) | (USB_REQ_TYPE_STANDARD) | (USB_REQ_RECIP_DEVICE) )
+#define FTDI_STRING_DESC_LANGID 9
+// control request types
+#define FTDI_DEVICE_OUT_REQTYPE 0b01000000
+#define FTDI_DEVICE_IN_REQTYPE  0b11000000
+// control requests
+#define FTDI_REQ_BAUDRATE         0x03
+#define FTDI_REQ_LINE_PROPERTIES  0x04
+#define FTDI_REQ_BITMODE          0x0b
+#define FTDI_REQ_READ_EEPROM      0x90
 
-// events
-//#define UHI_HID_MOUSE_BTN        0
-//#define UHI_HID_MOUSE_MOV_X      1
-//#define UHI_HID_MOUSE_MOV_Y      2
-//#define UHI_HID_MOUSE_MOV_SCROLL 3
-
+//----- data types
 // device data structure
 typedef struct {
   uhc_device_t *dev;
@@ -73,20 +38,39 @@ typedef struct {
   usb_ep_t ep_out;
 } uhi_ftdi_dev_t;
 
+//----- static variables
 
-
+// device data
 static uhi_ftdi_dev_t uhi_ftdi_dev = {
   .dev = NULL,
 };
 
+// manufacturer string descriptor
+//usb_str_desc_t manufacturer_desc;
+char manufacturer_string[FTDI_STRING_MAX_LEN];
+// product string descriptor
+//usb_str_desc_t product_desc;
+char product_string[FTDI_STRING_MAX_LEN];
+// serial number string descriptor
+//usb_str_desc_t serial_desc;
+char serial_string[FTDI_STRING_MAX_LEN];
+
+// control read-busy flag
+static volatile u8 ctlReadBusy = 0;
+
 //------- static funcs
-//static void uhi_ftdi_start_trans_report(usb_add_t add);
-/* static void uhi_ftdi_report_reception( */
-/* 					   usb_add_t add, */
-/* 					   usb_ep_t ep, */
-/* 					   uhd_trans_status_t status, */
-/* 					   iram_size_t nb_transfered); */
-//@}
+// print eeprom contents
+//static void print_eeprom(void);
+// send control request
+static u8 send_ctl_request(u8 reqtype, u8 reqnum, 
+			   u8* data, u16 size,
+			     u16 index, u16 val, 
+			     uhd_callback_setup_end_t callbackEnd);
+// control request end
+static void ctl_req_end(
+		usb_add_t add,
+		uhd_trans_status_t status,
+		uint16_t payload_trans);
 
 //----- external (UHC) functions
 uhc_enum_status_t uhi_ftdi_install(uhc_device_t* dev) {
@@ -112,67 +96,36 @@ uhc_enum_status_t uhi_ftdi_install(uhc_device_t* dev) {
   ptr_iface = (usb_iface_desc_t*)dev->conf_desc;
   b_iface_supported = false;
 
-
-  print_dbg("\r\n\r\n");
-  print_dbg("\r\n iface_desc -> bLength : ");
-  print_dbg_hex(ptr_iface->bLength);
-  print_dbg("\r\n iface_desc -> bDescriptorType : ");
-  print_dbg_hex(ptr_iface->bDescriptorType);
-  print_dbg("\r\n iface_desc -> bInterfaceNumber : ");
-  print_dbg_hex(ptr_iface->bInterfaceNumber);
-  print_dbg("\r\n iface_desc -> bAlternateSetting : ");
-  print_dbg_hex(ptr_iface->bAlternateSetting);
-  print_dbg("\r\n iface_desc -> bNumEndpoints : ");
-  print_dbg_hex(ptr_iface->bNumEndpoints);
-  print_dbg("\r\n iface_desc -> bInterfaceClass : ");
-  print_dbg_hex(ptr_iface->bInterfaceClass);
-  print_dbg("\r\n iface_desc -> bInterfaceSubClass : ");
-  print_dbg_hex(ptr_iface->bInterfaceSubClass);
-  print_dbg("\r\n iface_desc -> bInterfaceProtocol : ");
-  print_dbg_hex(ptr_iface->bInterfaceProtocol);
-  print_dbg("\r\n iface_desc -> iInterface : ");
-  print_dbg_hex(ptr_iface->iInterface);
-  print_dbg("\r\n\r\n");
-
-
-  //  return UHC_ENUM_UNSUPPORTED; // No interface supported
-
   while(conf_desc_lgt) {
     switch (ptr_iface->bDescriptorType) {
 
     case USB_DT_INTERFACE:
       if ((ptr_iface->bInterfaceClass == FTDI_CLASS)
 	  && (ptr_iface->bInterfaceProtocol == FTDI_PROTOCOL) ) {
-	// Start allocation endpoint(s) 
 	print_dbg("\r\n class/protocol matches FTDI. ");
 	b_iface_supported = true;
 	uhi_ftdi_dev.ep_in = 0;
 	uhi_ftdi_dev.ep_out = 0;
       } else {
-	// Stop allocation endpoint(s)
 	b_iface_supported = false;
       }
       break;
 
     case USB_DT_ENDPOINT:
-      //  Allocation of the endpoint
       if (!b_iface_supported) {
 	break;
       }
       if (!uhd_ep_alloc(dev->address, (usb_ep_desc_t*)ptr_iface)) {
 	print_dbg("\r\n endpoint allocation failed");
-	return UHC_ENUM_HARDWARE_LIMIT; // Endpoint allocation fail
+	return UHC_ENUM_HARDWARE_LIMIT;
       }
 
       switch(((usb_ep_desc_t*)ptr_iface)->bmAttributes & USB_EP_TYPE_MASK) {
-
       case USB_EP_TYPE_BULK:
-	print_dbg("\r\n allocating bulk endpoint: ");
+	//	print_dbg("\r\n allocating bulk endpoint: ");
 	if (((usb_ep_desc_t*)ptr_iface)->bEndpointAddress & USB_EP_DIR_IN) {
-	  print_dbg(" input");
 	  uhi_ftdi_dev.ep_in = ((usb_ep_desc_t*)ptr_iface)->bEndpointAddress;
 	} else {
-	  print_dbg(" output");
 	  uhi_ftdi_dev.ep_out = ((usb_ep_desc_t*)ptr_iface)->bEndpointAddress;
 	}
 	break;
@@ -181,35 +134,8 @@ uhc_enum_status_t uhi_ftdi_install(uhc_device_t* dev) {
 	break;
       }
       break;
-
-    case	USB_DT_DEVICE :
-      print_dbg("\r\n unhandled device descriptor");
-      break;
-    case	USB_DT_CONFIGURATION :
-      print_dbg("\r\n unhandled config descriptor");
-      break;
-    case	USB_DT_STRING :
-      print_dbg("\r\n unhandled string descriptor");
-      break;
-    case	USB_DT_DEVICE_QUALIFIER :
-      print_dbg("\r\n unhandled device qualifier descriptor");
-      break;
-    case	USB_DT_OTHER_SPEED_CONFIGURATION :
-      print_dbg("\r\n unhandled speed config descriptor");
-      break;
-    case	USB_DT_INTERFACE_POWER :
-      print_dbg("\r\n unhandled interface power descriptor");
-      break;
-    case	USB_DT_OTG :
-      print_dbg("\r\n unhandled OTG descriptor");
-      break;
-    case	USB_DT_IAD :
-      print_dbg("\r\n unhandled IAD descriptor");
-      break;
-      
     default:
-      //      ;; // ignore descriptor (shouldn't get here??)
-      
+      ;; // ignore descriptor
       break;
     }
     Assert(conf_desc_lgt>=ptr_iface->bLength);
@@ -226,44 +152,62 @@ uhc_enum_status_t uhi_ftdi_install(uhc_device_t* dev) {
 }
 
 void uhi_ftdi_enable(uhc_device_t* dev) {
-  usb_setup_req_t req;
+  //  usb_setup_req_t req;
+
+  print_dbg("\r\n ftdi enable routine ");
 
   if (uhi_ftdi_dev.dev != dev) {
     return;  // No interface to enable
   }
 
-  ftdiPlug = 1;
-
-  /* print_dbg("\r\n manufacturer string: "); */
-  /* print_dbg(uhc_dev_get_string_manufacturer(uhi_ftdi_dev.dev)); */
-  /* print_dbg("\r\n product string: "); */
-  /* print_dbg(uhc_dev_get_string_product(uhi_ftdi_dev.dev)); */
-  /* print_dbg("\r\n serial string: "); */
-  /* print_dbg(uhc_dev_get_string_serial(uhi_ftdi_dev.dev)); */
+  /// bit mode (not bitbang? )
+  /// todo: what do these mean???
+  // val : ff
+  // indx : 1
+  send_ctl_request(FTDI_DEVICE_OUT_REQTYPE, 
+		   FTDI_REQ_BITMODE,
+		   NULL, 0,
+		   1, 0xff, 
+		   NULL);
   
-  ////// testing
-  ////////
-    return;
-  ///////////
-  /////////////
+  /// line property
+    /// todo: what do these mean???
+  // index 1
+  // val : 8
+  send_ctl_request(FTDI_DEVICE_OUT_REQTYPE, 
+		   FTDI_REQ_LINE_PROPERTIES,
+		   NULL, 0,
+		   1, 8,
+		   NULL);
 
-  print_dbg("\r\n installed FTDI device, sending setup ");
+  /// baud rate
+  // rq : 3
+  // value: 26 (baudrate: 115200)
+  // value: 49206 (baudrate : 57600)
+  // index: 0
+  send_ctl_request(FTDI_DEVICE_OUT_REQTYPE, 
+		   FTDI_REQ_BAUDRATE,
+		   NULL, 0,
+		   0, 49206,
+		   NULL);
+
+  delay_ms(200);
 
 
-  // Choose the alternate setting 1 which contains all endpoints
-  req.bmRequestType = USB_REQ_RECIP_INTERFACE;
-  req.bRequest = USB_REQ_SET_INTERFACE;
-  req.wValue = 1; // Alternate setting 1
-  req.wIndex = 0;
-  req.wLength = 0;
-  uhd_setup_request(uhi_ftdi_dev.dev->address,
-		    &req,
-		    NULL,
-		    0,
-		    NULL,
-		    NULL);		    
+  /* if(ftdi_read_eeprom()) { */
   
+  /* } else { */
+  /*   print_dbg("\r\n error reading FTDI eeprom."); */
+  /* } */
+
   //  UHI_FTDI_CHANGE(dev, true);
+  // what the hell????
+
+  print_dbg("\r\n enabling FTDI device... ??? ");
+  
+  ftdi_change(dev, true);
+  // ftdiPlug = 1;
+  
 }
 
 void uhi_ftdi_uninstall(uhc_device_t* dev) {
@@ -278,7 +222,6 @@ void uhi_ftdi_uninstall(uhc_device_t* dev) {
   //UHI_FTDI_CHANGE(dev, false);
 }
 
-
 bool uhi_ftdi_in_run(uint8_t * buf, iram_size_t buf_size,
 		     uhd_callback_trans_t callback) {
   return uhd_ep_run(uhi_ftdi_dev.dev->address,
@@ -289,6 +232,156 @@ bool uhi_ftdi_in_run(uint8_t * buf, iram_size_t buf_size,
 bool uhi_ftdi_out_run(uint8_t * buf, iram_size_t buf_size,
 		      uhd_callback_trans_t callback) {
   return uhd_ep_run(uhi_ftdi_dev.dev->address,
-		    uhi_ftdi_dev.ep_out, false, buf, buf_size,
+		    uhi_ftdi_dev.ep_out, true, buf, buf_size,
 		    UHI_FTDI_TIMEOUT, callback);
 }
+
+//----------------
+//---- static functions definitions
+
+// send control request
+static u8 send_ctl_request(u8 reqtype, u8 reqnum, 
+			   u8* data, u16 size,
+			     u16 index, u16 val, 
+			     uhd_callback_setup_end_t callbackEnd) {
+  usb_setup_req_t req;
+ 
+  /* if (uhi_ftdi_dev.dev != dev) { */
+  /*   return;  // No interface to enable */
+  /* } */
+
+  req.bmRequestType = reqtype;
+  req.bRequest = reqnum;
+  req.wValue = cpu_to_le16(val);
+  req.wIndex = cpu_to_le16(index);
+  req.wLength = cpu_to_le16(size);
+  return uhd_setup_request(uhi_ftdi_dev.dev->address,
+		    &req,
+		    data,
+		    size,
+		    NULL, //&ctl_req_run,
+		    callbackEnd); //&ctl_req_end);		    
+}
+
+// to be called when control read is complete
+static void ctl_req_end(
+		usb_add_t add,
+		uhd_trans_status_t status,
+		uint16_t payload_trans) {
+  // last transfer ok?
+  print_dbg("\r\n ctl request end, status: ");
+  print_dbg_hex((u32)status);
+  ctlReadBusy = 0;
+}
+
+// read eeprom
+void ftdi_get_strings(char** pManufacturer, char** pProduct, char** pSerial) {
+
+  // get manufacturer string
+  ctlReadBusy = 1;
+  print_dbg("\r\n sending ctl request for manufacturer string, index : ");
+  print_dbg_hex(uhi_ftdi_dev.dev->dev_desc.iManufacturer);
+  if(!(send_ctl_request(
+			/* req type*/
+			FTDI_STRING_DESC_REQ_TYPE,
+			/* req num */
+			USB_REQ_GET_DESCRIPTOR, 
+			/* data */
+			(u8*)manufacturer_string,
+			/* size */
+			FTDI_STRING_MAX_LEN,
+			//			0x2000,
+			/*idx*/
+			FTDI_STRING_DESC_LANGID,
+			/*val*/
+			// high byte is 3 for string descriptor (yay, magic!)
+			( uhi_ftdi_dev.dev->dev_desc.iManufacturer & 0xf ) | 0x30,
+			// end-transfer callback
+			&ctl_req_end )
+       
+       )) {
+    print_dbg("\r\n control request for string descriptor failed");
+    return;
+  }
+  // wait for transfer end
+  while(ctlReadBusy) { ;; } 
+
+  // get product string
+  ctlReadBusy = 1;
+  print_dbg("\r\n sending ctl request for product string, index : ");
+  print_dbg_ulong( uhi_ftdi_dev.dev->dev_desc.iProduct);
+  if(!(send_ctl_request(
+			/* req type*/
+			FTDI_STRING_DESC_REQ_TYPE,
+			/* req num */
+			USB_REQ_GET_DESCRIPTOR, 
+			/* data */
+			(u8*)product_string,
+			/* size */
+			FTDI_STRING_MAX_LEN,
+			/*idx*/
+			FTDI_STRING_DESC_LANGID,
+			/*val*/
+			// high byte is 3 for string descriptor (yay, magic!)
+			uhi_ftdi_dev.dev->dev_desc.iProduct | 0x30,
+			// end-transfer callback
+			&ctl_req_end )
+       
+       )) {
+    print_dbg("\r\n control request for string descriptor failed");
+    return;
+  }
+  // wait for transfer end
+  while(ctlReadBusy) { ;; } 
+
+  // get serial string
+  ctlReadBusy = 1;
+  print_dbg("\r\n sending ctl request for serial string : ");
+  if(!(send_ctl_request(
+			/* req type*/
+			FTDI_STRING_DESC_REQ_TYPE,
+			/* req num */
+			USB_REQ_GET_DESCRIPTOR, 
+			/* data */
+			(u8*)serial_string,
+			/* size */
+			FTDI_STRING_MAX_LEN,
+			/*idx*/
+			FTDI_STRING_DESC_LANGID,
+			/*val*/
+			// high byte is 3 for string descriptor (yay, magic!)
+			uhi_ftdi_dev.dev->dev_desc.iSerialNumber | 0x30,
+			// end-transfer callback
+			&ctl_req_end )
+       
+       )) {
+    print_dbg("\r\n control request for string descriptor failed");
+    return;
+  }
+  // wait for transfer end
+  while(ctlReadBusy) { ;; }
+  *pManufacturer = manufacturer_string;
+  *pProduct = product_string;
+  *pSerial = serial_string;
+  
+}
+  
+    /* for (i = 0; i < FTDI_EEPROM_SIZE__2; i++) { */
+    /*     if (usb_control_msg(ftdi->usb_dev, FTDI_DEVICE_IN_REQTYPE, SIO_READ_EEPROM_REQUEST, 0, i, eeprom+(i*2), 2, ftdi->usb_read_timeout) != 2) */
+    /*         ftdi_error_return(-1, "reading eeprom failed"); */
+    /* } */
+
+/*
+// libusb syntax (from libftdi) :
+        usb_control_msg(
+	ftdi->usb_dev,           // device handle
+	FTDI_DEVICE_IN_REQTYPE,  // request type
+	SIO_READ_EEPROM_REQUEST, // request ID
+	0,                       // value
+	i,                       // index (in halfwords)
+	eeprom+(i*2),            // data pointer
+	2,                       // number of bytes
+	ftdi->usb_read_timeout   // timeout
+
+
+ */

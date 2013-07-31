@@ -42,6 +42,10 @@
  *
  */
 
+//// test
+#include "print_funcs.h"
+///
+
 #include "conf_usb_host.h"
 #include "sysclk.h"
 #include "uhd.h"
@@ -894,6 +898,7 @@ bool uhd_ep_run(
 
 	pipe = uhd_get_pipe(add,endp);
 	if (pipe == AVR32_USBB_EPT_NUM) {
+	  print_dbg("\r\n uhd error: pipe not found");
 		return false; // pipe not found
 	}
 
@@ -902,6 +907,7 @@ bool uhd_ep_run(
 	flags = cpu_irq_save();
 	if (ptr_job->busy == true) {
 		cpu_irq_restore(flags);
+		print_dbg("\r\n uhd error: job is already underway");
 		return false; // Job already on going
 	}
 	ptr_job->busy = true;
@@ -1294,6 +1300,8 @@ static void uhd_ctrl_phase_setup(void)
 	} setup;
 	volatile uint64_t *ptr_ep_data;
 
+	//	print_dbg("\r\n control request setup phase ");
+
 	uhd_ctrl_request_phase = UHD_CTRL_REQ_PHASE_SETUP;
 	memcpy( &setup.req, &uhd_ctrl_request_first->req, sizeof(usb_setup_req_t));
 
@@ -1503,6 +1511,8 @@ static void uhd_ctrl_request_end(uhd_trans_status_t status)
 	bool b_new_request;
 
 	uhd_ctrl_request_timeout = 0;
+
+	//	print_dbg("\r\n ctrl request end.");
 
 	// Remove request from the control request list
 	callback_end = uhd_ctrl_request_first->callback_end;

@@ -229,7 +229,7 @@ void uhd_resume(void);
  * \param callback_run  Callback to call if buffer is empty or full
  * \param callback_end  Callback to call when request is finish
  *
- * \return \c true if the request has been accepted, otherwise \c false.
+ * \return \c true if the request has been accepted, otherwise \cfalse.
  * Note: The swap of "req.wValues" from uin16_t to le16_t is done by UHD.
  */
 bool uhd_setup_request(
