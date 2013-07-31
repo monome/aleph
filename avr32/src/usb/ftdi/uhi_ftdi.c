@@ -21,6 +21,9 @@
 #define UHI_FTDI_TIMEOUT 20000
 #define FTDI_STRING_DESC_REQ_TYPE ( (USB_REQ_DIR_IN) | (USB_REQ_TYPE_STANDARD) | (USB_REQ_RECIP_DEVICE) )
 #define FTDI_STRING_DESC_LANGID USB_LANGID_EN_US
+// offset into the string descriptor to get an actual (unicode) string
+#define FTDI_STRING_DESC_OFFSET 2
+
 // control request types
 #define FTDI_DEVICE_OUT_REQTYPE 0b01000000
 #define FTDI_DEVICE_IN_REQTYPE  0b11000000
@@ -361,9 +364,9 @@ void ftdi_get_strings(char** pManufacturer, char** pProduct, char** pSerial) {
   
   print_dbg("\r\n requested all string descriptors.");
 
-  *pManufacturer = manufacturer_string;
-  *pProduct = product_string;
-  *pSerial = serial_string;
+  *pManufacturer = manufacturer_string + FTDI_STRING_DESC_OFFSET;
+  *pProduct = product_string + FTDI_STRING_DESC_OFFSET;
+  *pSerial = serial_string + FTDI_STRING_DESC_OFFSET;
   
 }
   

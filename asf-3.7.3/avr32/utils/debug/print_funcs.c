@@ -212,3 +212,40 @@ void print_hex(volatile avr32_usart_t *usart, unsigned long n)
   // Transmit the resulting string with the given USART.
   print(usart, tmp);
 }
+
+
+void print_byte_array (u8* data, u32 size, u32 linebreak) {
+  u32 i, j;
+  u32 b, boff;
+  u32 addr = (u32)data;
+  print_dbg("\r\n");
+  print_dbg_hex(addr);
+  if(linebreak > 0) {
+    print_dbg(": \r\n" ); 
+  } else {
+    print_dbg(" : " ); 
+  }
+  j = 0;
+  while(j<size) {
+    b = 0;
+    boff = 24;
+    for(i=0; i<4; i++) {
+      //      if(i == 2) { print_dbg(" "); }
+      b |= ( *(u8*)addr ) << boff;
+      addr++;
+      boff -= 8;
+    }
+    print_dbg_hex(b);
+    print_dbg(" ");
+    j += 4;
+    if( (linebreak > 0) && ((j % linebreak) == 0) ) { print_dbg("\r\n"); }
+  }
+}
+
+void print_unicode_string(char* str, u32 len) {
+  u32 i; // byte index
+  print_dbg("\r\n");
+  for(i=0; i<len; i++) {
+    print_dbg_char(str[i]);
+  }
+}

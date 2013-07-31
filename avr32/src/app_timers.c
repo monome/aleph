@@ -9,7 +9,8 @@
 #include "encoders.h"
 #include "events.h"
 #include "event_types.h"
-#include "ftdi.h"
+//#include "ftdi.h"
+#include "monome.h"
 #include "global.h"
 #include "switches.h"
 #include "timers.h"
@@ -30,12 +31,11 @@ static swTimer_t encTimer;
 // poll ADC
 static swTimer_t adcTimer;
 // poll FTDI device 
-static swTimer_t ftdiTimer;
+static swTimer_t monomeTimer;
 
 //--- static misc
 static u8 i;
 static event_t e;
-
 			       
 //----- callbacks
 // screen refresh callback
@@ -72,12 +72,11 @@ static void adc_timer_callback(int tag) {
   adc_poll();
 }
 
-
-// ftdi polling callback
-static void ftdi_timer_callback(int tag) {
-  if (ftdiPlug) {
-    //    print_dbg("\r\n post ftdi read event. ");
-    e.eventType = kEventFtdiRead;
+// monome polling callback
+static void monome_timer_callback(int tag) {
+  if (monomeConnect) {
+    //    print_dbg("\r\n posting monome read event");
+    e.eventType = kEventMonomeRead;
     post_event(&e);
   }
 }
@@ -88,5 +87,5 @@ void init_app_timers(void) {
   set_timer(&screenTimer, eScreenTimerTag, 30,   &screen_timer_callback,  1);
   set_timer(&encTimer,    eEncTimerTag,    20,    &enc_timer_callback,    1);
   set_timer(&adcTimer,    eAdcTimerTag,    5,    &adc_timer_callback,     1);
-  set_timer(&ftdiTimer,   eFtdiTimerTag,   20,    &ftdi_timer_callback,    1);
+  set_timer(&monomeTimer,   eMonomeTimerTag,   20,    &monome_timer_callback,    1);
 }

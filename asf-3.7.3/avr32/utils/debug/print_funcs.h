@@ -57,7 +57,7 @@
 
 #include <avr32/io.h>
 #include "board.h"
-
+#include "types.h"
 
 /*! \name USART Settings for the Debug Module
  */
@@ -382,6 +382,12 @@ extern void print_short_hex(volatile avr32_usart_t *usart, unsigned short n);
  * \param n The integer to print.
  */
 extern void print_hex(volatile avr32_usart_t *usart, unsigned long n);
+
+// print an array of bytes
+extern void print_byte_array (u8* data, u32 size, u32 linebreak);
+
+// print a unicode string (stripping to ascii)
+void print_unicode_string(char* str, u32 len);
 
 /**
  * \}

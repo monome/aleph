@@ -56,8 +56,6 @@ volatile u32 bfinLdrSize = 0;
 //-------------------------------------------------------
 // ---- function def
 
-static void print_flash(u32 start, u32 num);
-
 // intiailize (alloc mem, check/set firstrun bytes)
 u8 init_flash() {
   u32 i;
@@ -130,29 +128,4 @@ void flash_write_ldr(void) {
   // remaining bytes
   rem = bfinLdrSize - (nPages * 0x200);
   flashc_memcpy((void*)pDst, (const void*)pSrc, rem, true);
-}
-
-static u32 flashoff = 0x80000000;
-static void print_flash( u32 start, u32 num ) {
-  u32 i, j;
-  u32 b, boff;
-  flashoff = start;
-  print_dbg("\r\n");
-  print_dbg_hex(flashoff);
-  print_dbg(" : \r\n");
-  j = 0;
-  while(j<num) {
-    b = 0;
-    boff = 24;
-    for(i=0; i<4; i++) {
-      //      if(i == 2) { print_dbg(" "); }
-      b |= ( *(u8*)flashoff ) << boff;
-      flashoff++;
-      boff -= 8;
-    }
-    print_dbg_hex(b);
-    print_dbg(" ");
-    j += 4;
-    if( (j%16) == 0) { print_dbg("\r\n"); }
-  }
 }

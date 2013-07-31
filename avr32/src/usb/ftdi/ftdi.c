@@ -14,97 +14,106 @@
 #include "event_types.h"
 #include "ftdi.h"
 #include "global.h"
+#include "monome.h"
 #include "uhi_ftdi.h"
 
 //---- defines
 
 
-//---- gloabl vars (initialized here) 
+//---- global vars (initialized here) 
 u8 ftdiPlug = 0;
 
+//---- extern vars
+u8 ftdiRxBuf[FTDI_IN_BUF_SIZE];
+
 //----- static vars
-static u8 ftdi_in_buf[FTDI_IN_BUF_SIZE]; //= { 0, 0 };
-static u8 ftdi_out_buf[FTDI_OUT_BUF_SIZE];// = { 0, 0 };
-static volatile u8 ftdi_out_busy = 0;
-static volatile u8 ftdi_in_busy = 0;
-static volatile  uhd_trans_status_t ftdi_transfer_status = 0;
+//static u8 ftdi_rx_buf[FTDI_IN_BUF_SIZE];
+//static u8 ftdi_tx_buf[FTDI_OUT_BUF_SIZE];
+static volatile  uhd_trans_status_t status = 0;
+static volatile u32 rxBytes = 0;
+static volatile u8 rxBusy = 0;
+static volatile u8 txBusy = 0;
 
 //------- static functions
 
 // debug print
-static void print_arr(u32 addr, u32 size);
-static void print_unicode_string(char* str, u32 len);
+//static void print_arr(u32 addr, u32 size);
+//static void print_unicode_string(char* str, u32 len);
 
 // usb bulk transfer callback
 static void ftdi_transfer_done(
 			       usb_add_t add,
 			       usb_ep_t ep,
-			       uhd_trans_status_t status,
+			       uhd_trans_status_t stat,
 			       iram_size_t nb_transfered) {
   //  print_dbg("\r\n ftdi transfer done; status: ");
   //  print_dbg_hex((u32)status);
   //  print_dbg(" ; bytes transferred : ");
   //  print_dbg_ulong((u32)nb_transfered);
 
-  ftdi_transfer_status = status;
+  status = stat;
   if (ep & USB_EP_DIR_IN) { 
-    ftdi_in_busy = 0;
+    rxBusy = 0;
+    rxBytes = nb_transfered;
   } else {
-    ftdi_out_busy = 0;
+    txBusy = 0;
   }
 }
 
 //-------- extern functions
-void ftdi_write(u32 data) {
+void ftdi_write(u8* data, u32 bytes) {
   //  int i;
-  u8 val;
-  ftdi_out_busy = 1;
+  //  u8 val;
+  txBusy = 1;
 
-  //// testing
-  if(data > 0) {
-    val = 145;
-  } else {
-    val = 144;
-  }
+  /* //// testing */
+  /* if(data > 0) { */
+  /*   val = 145; */
+  /* } else { */
+  /*   val = 144; */
+  /* } */
+
+
   //  for(i=0; i<FTDI_OUT_BUF_SIZE; i++) {
   //    ftdi_out_buf[i] = val;
   //  }
   ///////
   /*
-  if(!uhi_ftdi_out_run(ftdi_out_buf,
-		       FTDI_OUT_BUF_SIZE,
-		       &ftdi_transfer_done)) {
+    if(!uhi_ftdi_out_run(ftdi_out_buf,
+    FTDI_OUT_BUF_SIZE,
+    &ftdi_transfer_done)) {
   */
-  if(!uhi_ftdi_out_run(&val,
-		       1,
+  if(!uhi_ftdi_out_run(data,
+		       bytes,
 		       &ftdi_transfer_done)) {
 
-    print_dbg("\r\n ftdi bulk output error");
+    print_dbg("\r\n error requesting ftdi output pipe");
     return;
   }
-  while (ftdi_out_busy) { ;; }
+  while (txBusy) { ;; }
   print_dbg("\r\n finished ftdi bulk output transfer");
   
-  if (ftdi_transfer_status != UHD_TRANS_NOERROR) {
+  if (status != UHD_TRANS_NOERROR) {
+    print_dbg("\r\n ftdi tx error");
     return;
   }
 }
     
-void ftdi_read(void) {
-    // poll FTDI input
-    ftdi_in_busy = true;
-    if (!uhi_ftdi_in_run(ftdi_in_buf,
-			 FTDI_IN_BUF_SIZE, &ftdi_transfer_done)) {
-      print_dbg("\r\n uhi_ftdi_in_run returned false; aborting input transfer");
-      return;
-    }
-    while (ftdi_in_busy) { ;; }
-    if (ftdi_transfer_status != UHD_TRANS_NOERROR) {
-      print_dbg("\r\n ftdi input transfer error, exiting poll function");
-      return;
-    }
-    print_arr((u32)ftdi_in_buf, FTDI_IN_BUF_SIZE);
-    //// ... todo : parse events
+u32 ftdi_read(void) {
+  rxBytes = 0;
+  rxBusy = true;
+  if (!uhi_ftdi_in_run(ftdiRxBuf,
+		       FTDI_IN_BUF_SIZE, &ftdi_transfer_done)) {
+    print_dbg("\r\n uhi_ftdi_in_run returned false; aborting input transfer");
+    return 0;
+  }
+  while (rxBusy) { ;; }
+  if (status != UHD_TRANS_NOERROR) {
+    print_dbg("\r\n ftdi input transfer error, exiting poll function");
+    return 0;
+  }
+  //    print_arr((u32)ftdi_in_buf, FTDI_IN_BUF_SIZE);
+  return rxBytes;
 }
 
 
@@ -119,57 +128,26 @@ void ftdi_change(uhc_device_t* dev, u8 plug) {
     e.eventType = kEventFtdiDisconnect;
   }
   // posting an event so the main loop can respond
-  post_event(&e);
-  
+  post_event(&e); 
 }
 
 // setup new device connection
 void ftdi_setup(void) {
-  char * pManufacturerString = 0;
-  char * pProductString = 0; 
-  char * pSerialString = 0;
+  char * manstr;
+  char * prodstr;
+  char * serstr;
   print_dbg("\r\n FTDI setup routine");
 
   // get string data...
-  ftdi_get_strings(&pManufacturerString, &pProductString, &pSerialString);
+  ftdi_get_strings(&manstr, &prodstr, &serstr);
   
   // print the strings
-  print_unicode_string(pManufacturerString, FTDI_STRING_MAX_LEN);
-  print_unicode_string(pProductString, FTDI_STRING_MAX_LEN);
-  print_unicode_string(pSerialString, FTDI_STRING_MAX_LEN);
+  // print_unicode_string(manstr, FTDI_STRING_MAX_LEN);
+  //  print_unicode_string(prodstr, FTDI_STRING_MAX_LEN);
+  //  print_unicode_string(serstr, FTDI_STRING_MAX_LEN);
+
+  check_monome_device(manstr, prodstr, serstr);
 
   // set connection flag
   ftdiPlug = 1;
-}
-
-static void print_arr (u32 start, u32 size ) {
-  u32 i, j;
-  u32 b, boff;
-  u32 addr = start;
-  print_dbg("\r\n");
-  print_dbg_hex(addr);
-  print_dbg(" : " ); //\r\n");
-  j = 0;
-  while(j<size) {
-    b = 0;
-    boff = 24;
-    for(i=0; i<4; i++) {
-      //      if(i == 2) { print_dbg(" "); }
-      b |= ( *(u8*)addr ) << boff;
-      addr++;
-      boff -= 8;
-    }
-    print_dbg_hex(b);
-    print_dbg(" ");
-    j += 4;
-    //    if( (j%16) == 0) { print_dbg("\r\n"); }
-  }
-}
-
-static void print_unicode_string(char* str, u32 len) {
-  u32 i; // byte index
-  print_dbg("\r\n");
-  for(i=0; i<len; i++) {
-    print_dbg_char(str[i]);
-  }
 }

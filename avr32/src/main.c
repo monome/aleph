@@ -53,6 +53,7 @@
 #include "init.h"
 #include "interrupts.h"
 #include "memory.h"
+#include "monome.h"
 #include "switches.h"
 #include "timers.h"
 
@@ -178,10 +179,9 @@ static void check_events(void) {
       }
     } else {
       switch(e.eventType) {
-      case kEventFtdiRead :
-	// check the FTDI buffer and spawn related events.
-	// this won't work if called from the timer interrupt.
-	ftdi_read();
+      case kEventMonomeRead :
+	// poll monome serial input and spawn relevant events
+	monome_read_serial();
 	break;
       /* case kEventFtdiWrite : */
       /* 	ftdi_write((u32)e.eventData); */
@@ -194,16 +194,16 @@ static void check_events(void) {
 	break;
 	//// test: switches -> monome
       case kEventSwitchDown0:
-	ftdi_write(1);
+	//ftdi_write(1);
 	break;
       case kEventSwitchUp0:
-	ftdi_write(0);
+	//	ftdi_write(0);
 	break;
       case kEventSwitchDown2:
-	ftdi_write(0x2003);
+	//	ftdi_write(0x2003);
 	break;
       case kEventSwitchDown3:
-	ftdi_write(0x2004);
+	//	ftdi_write(0x2004);
 	break;
 	////
       default:
