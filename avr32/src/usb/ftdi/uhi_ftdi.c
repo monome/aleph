@@ -20,7 +20,7 @@
 //------ DEFINES
 #define UHI_FTDI_TIMEOUT 20000
 #define FTDI_STRING_DESC_REQ_TYPE ( (USB_REQ_DIR_IN) | (USB_REQ_TYPE_STANDARD) | (USB_REQ_RECIP_DEVICE) )
-#define FTDI_STRING_DESC_LANGID 9
+#define FTDI_STRING_DESC_LANGID USB_LANGID_EN_US
 // control request types
 #define FTDI_DEVICE_OUT_REQTYPE 0b01000000
 #define FTDI_DEVICE_IN_REQTYPE  0b11000000
@@ -295,7 +295,7 @@ void ftdi_get_strings(char** pManufacturer, char** pProduct, char** pSerial) {
 			FTDI_STRING_DESC_LANGID,
 			/*val*/
 			// high byte is 3 for string descriptor (yay, magic!)
-			( uhi_ftdi_dev.dev->dev_desc.iManufacturer & 0xf ) | 0x30,
+			(USB_DT_STRING << 8) | uhi_ftdi_dev.dev->dev_desc.iManufacturer,
 			// end-transfer callback
 			&ctl_req_end )
        
@@ -322,8 +322,7 @@ void ftdi_get_strings(char** pManufacturer, char** pProduct, char** pSerial) {
 			/*idx*/
 			FTDI_STRING_DESC_LANGID,
 			/*val*/
-			// high byte is 3 for string descriptor (yay, magic!)
-			uhi_ftdi_dev.dev->dev_desc.iProduct | 0x30,
+			(USB_DT_STRING << 8) | uhi_ftdi_dev.dev->dev_desc.iProduct,
 			// end-transfer callback
 			&ctl_req_end )
        
@@ -349,8 +348,7 @@ void ftdi_get_strings(char** pManufacturer, char** pProduct, char** pSerial) {
 			/*idx*/
 			FTDI_STRING_DESC_LANGID,
 			/*val*/
-			// high byte is 3 for string descriptor (yay, magic!)
-			uhi_ftdi_dev.dev->dev_desc.iSerialNumber | 0x30,
+			(USB_DT_STRING << 8) | uhi_ftdi_dev.dev->dev_desc.iSerialNumber,
 			// end-transfer callback
 			&ctl_req_end )
        
@@ -360,6 +358,9 @@ void ftdi_get_strings(char** pManufacturer, char** pProduct, char** pSerial) {
   }
   // wait for transfer end
   while(ctlReadBusy) { ;; }
+  
+  print_dbg("\r\n requested all string descriptors.");
+
   *pManufacturer = manufacturer_string;
   *pProduct = product_string;
   *pSerial = serial_string;

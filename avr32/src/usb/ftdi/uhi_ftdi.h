@@ -15,7 +15,7 @@
 	.sof_notify = NULL, \
 }
 
-#define FTDI_STRING_MAX_LEN 16
+#define FTDI_STRING_MAX_LEN 64
 
 // install
 extern uhc_enum_status_t uhi_ftdi_install(uhc_device_t* dev);

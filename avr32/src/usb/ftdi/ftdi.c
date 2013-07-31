@@ -125,18 +125,18 @@ void ftdi_change(uhc_device_t* dev, u8 plug) {
 
 // setup new device connection
 void ftdi_setup(void) {
-  char ** pManufacturerString = 0;
-  char ** pProductString = 0; 
-  char ** pSerialString = 0;
+  char * pManufacturerString = 0;
+  char * pProductString = 0; 
+  char * pSerialString = 0;
   print_dbg("\r\n FTDI setup routine");
 
   // get string data...
-  ftdi_get_strings(pManufacturerString, pProductString, pSerialString);
+  ftdi_get_strings(&pManufacturerString, &pProductString, &pSerialString);
   
   // print the strings
-  print_unicode_string(*pManufacturerString, FTDI_STRING_MAX_LEN);
-  print_unicode_string(*pProductString, FTDI_STRING_MAX_LEN);
-  print_unicode_string(*pSerialString, FTDI_STRING_MAX_LEN);
+  print_unicode_string(pManufacturerString, FTDI_STRING_MAX_LEN);
+  print_unicode_string(pProductString, FTDI_STRING_MAX_LEN);
+  print_unicode_string(pSerialString, FTDI_STRING_MAX_LEN);
 
   // set connection flag
   ftdiPlug = 1;
