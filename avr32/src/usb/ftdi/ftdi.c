@@ -24,7 +24,7 @@
 u8 ftdiPlug = 0;
 
 //---- extern vars
-u8 ftdiRxBuf[FTDI_IN_BUF_SIZE];
+volatile u8 ftdiRxBuf[FTDI_IN_BUF_SIZE];
 
 //----- static vars
 //static u8 ftdi_rx_buf[FTDI_IN_BUF_SIZE];
@@ -91,7 +91,7 @@ void ftdi_write(u8* data, u32 bytes) {
     return;
   }
   while (txBusy) { ;; }
-  print_dbg("\r\n finished ftdi bulk output transfer");
+  //  print_dbg("\r\n finished ftdi bulk output transfer");
   
   if (status != UHD_TRANS_NOERROR) {
     print_dbg("\r\n ftdi tx error");
@@ -102,7 +102,7 @@ void ftdi_write(u8* data, u32 bytes) {
 u32 ftdi_read(void) {
   rxBytes = 0;
   rxBusy = true;
-  if (!uhi_ftdi_in_run(ftdiRxBuf,
+  if (!uhi_ftdi_in_run((u8*)ftdiRxBuf,
 		       FTDI_IN_BUF_SIZE, &ftdi_transfer_done)) {
     print_dbg("\r\n uhi_ftdi_in_run returned false; aborting input transfer");
     return 0;

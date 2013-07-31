@@ -49,6 +49,11 @@ typedef enum {
   kEventSwitchUp6,
   kEventSwitchDown7, // foot1
   kEventSwitchUp7,
+  ///// monome input
+  kEventMonomeGrid,
+  kEventMonomeArc,
+  kEventMonomeTilt,
+  /// dummy/count
   kNumEvents,
 } eEventType;
 

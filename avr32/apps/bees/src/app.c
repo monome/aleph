@@ -12,11 +12,27 @@
 // bees
 #include "files.h"
 #include "menu.h"
+#include "monome.h"
 #include "play.h"
 #include "scene.h"
 
 
 static u8 keyMode = 0;
+
+
+//// test monome grid handling
+static void test_handle_monome_grid(event_t* ev) {
+  u8 x, y, z;
+  monome_grid_read_event(ev, &x, &y, &z);
+  /* print_dbg("\r\n app handling monome grid event; x: "); */
+  /* print_dbg_ulong(x); */
+  /* print_dbg(" ; y: "); */
+  /* print_dbg_ulong(y); */
+  /* print_dbg(" ; z: "); */
+  /* print_dbg_ulong(z); */
+  monome_grid_led(x, y, z);
+}
+
 
 void app_handle_event(event_t* e) {
   //// APP 
@@ -107,6 +123,11 @@ void app_handle_event(event_t* e) {
       menu_handleKey(eKeyEncDownA, e->eventData);
     }
     break;
+
+  case kEventMonomeGrid:
+    test_handle_monome_grid(e);
+    break;
+
   case kEventAdc0:
     //    print_dbg("\r\nadc val 0: ");
     //    print_dbg_hex(e->eventData);

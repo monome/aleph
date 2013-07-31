@@ -9,7 +9,7 @@
 #define FTDI_OUT_BUF_SIZE 64
 
 // pointer to rx data
-extern u8 ftdiRxBuf[];
+extern volatile u8 ftdiRxBuf[];
 
 // read from FTDI device on usb.
 // returns bytes read.
