@@ -24,12 +24,7 @@ static u8 keyMode = 0;
 static void test_handle_monome_grid(event_t* ev) {
   u8 x, y, z;
   monome_grid_read_event(ev, &x, &y, &z);
-  /* print_dbg("\r\n app handling monome grid event; x: "); */
-  /* print_dbg_ulong(x); */
-  /* print_dbg(" ; y: "); */
-  /* print_dbg_ulong(y); */
-  /* print_dbg(" ; z: "); */
-  /* print_dbg_ulong(z); */
+  //bees_grid_operator_activate(.... );
   monome_grid_led(x, y, z);
 }
 
@@ -125,8 +120,16 @@ void app_handle_event(event_t* e) {
     break;
 
   case kEventMonomeGrid:
-    test_handle_monome_grid(e);
+    //    test_handle_monome_grid(e);
     break;
+  case kEventMonomeArc:
+    //    test_handle_monome_grid(e);
+    break;
+  case kEventMonomeTilt:
+    //    test_handle_monome_grid(e);
+    break;
+
+
 
   case kEventAdc0:
     //    print_dbg("\r\nadc val 0: ");
