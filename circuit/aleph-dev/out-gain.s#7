@@ -17773,12 +17773,12 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="C164" library="rc-master-smd" deviceset="CP_" device="1206/T" value="100u"/>
 <part name="AGND50" library="supply" deviceset="AGND" device=""/>
 <part name="C165" library="rc-master-smd" deviceset="CP_" device="1206/T" value="100u"/>
-<part name="R131" library="rc-master-smd" deviceset="R_" device="0603" value="3k9"/>
+<part name="R131" library="rc-master-smd" deviceset="R_" device="0603" value="5k"/>
 <part name="AGND66" library="supply" deviceset="AGND" device=""/>
 <part name="R132" library="rc-master-smd" deviceset="R_" device="0603" value="3k9"/>
 <part name="R154" library="rc-master-smd" deviceset="R_" device="0603" value="3k9"/>
 <part name="C191" library="rc-master-smd" deviceset="C_" device="0603" value="1u"/>
-<part name="R155" library="rc-master-smd" deviceset="R_" device="0603" value="3k9"/>
+<part name="R155" library="rc-master-smd" deviceset="R_" device="0603" value="5k"/>
 <part name="AGND67" library="supply" deviceset="AGND" device=""/>
 </parts>
 <sheets>
