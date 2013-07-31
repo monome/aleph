@@ -252,9 +252,9 @@ static u8 send_ctl_request(u8 reqtype, u8 reqnum,
 
   req.bmRequestType = reqtype;
   req.bRequest = reqnum;
-  req.wValue = cpu_to_le16(val);
-  req.wIndex = cpu_to_le16(index);
-  req.wLength = cpu_to_le16(size);
+  req.wValue = (val);
+  req.wIndex = (index);
+  req.wLength = (size);
   return uhd_setup_request(uhi_ftdi_dev.dev->address,
 		    &req,
 		    data,
