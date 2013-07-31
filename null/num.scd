@@ -1,6 +1,6 @@
 ////////
 
-linFreq = powf(10.0f, (dspParameter[kFreq] * 3.0f) + 1.30103f)/getSampleRate();
+//linFreq = powf(10.0f, (dspParameter[kFreq] * 3.0f) + 1.30103f)/getSampleRate();
 
 a = Array.series(101, 0, 0.01);
 b = a.collect({ arg x; 10.0 ** ((x*3.0) + 1.30103) });

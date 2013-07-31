@@ -2,7 +2,7 @@
 #if NET_USE_MALLOC
 /* // allocate a new operator dynamically. */
 /* // return index in op pointer array */
-/* s16 net_add_op(opId_t opId) { */
+/* s16 net_add_op(op_id_t opId) { */
 /*   s32 opIdx = -1; */
 /*   s32 inIdx = -1; */
 /*   s16 outIdx = -1; */

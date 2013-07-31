@@ -40,23 +40,25 @@ static void bfin_transfer_byte(u8 data) {
 }
 
 void bfin_start_transfer(void) {
-  // FIXME
-  volatile u64 delay;
+  //  volatile u64 delay;
   gpio_set_gpio_pin(BFIN_RESET_PIN);  
-  delay = 30; while (--delay > 0) {;;}
+  //  delay = 30; while (--delay > 0) {;;}
+  delay_ms(1);
   gpio_clr_gpio_pin(BFIN_RESET_PIN);
-  delay = 30; while (--delay > 0) {;;}
+  //  delay = 30; while (--delay > 0) {;;}
+  delay_ms(1);
   gpio_set_gpio_pin(BFIN_RESET_PIN);  
-  delay = 3000; while (--delay > 0) {;;}
-
+  //  delay = 3000; while (--delay > 0) {;;}
+  delay_ms(1);
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
 }
 
 void bfin_end_transfer(void) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  //  print_dbg("\r\n done loading; waiting... ");
-  delay_ms(200);
-  //  print_dbg("\r\n done waiting; reporting... ");
+  print_dbg("\r\n done loading; waiting... ");
+  delay_ms(100);
+  //  delay_ms(2000);
+  print_dbg("\r\n done waiting; reporting... ");
   bfin_report_params();
 }
 
@@ -66,6 +68,7 @@ void bfin_end_transfer(void) {
 // load bfin executable from the RAM buffer
 void bfin_load_buf(void) {
   u64 i; /// byte index in .ldr
+
   if(bfinLdrSize > BFIN_LDR_MAX_BYTES) {
     print_dbg("\r\n bfin load error: size : "); print_dbg_hex(bfinLdrSize);
     return;
@@ -122,7 +125,7 @@ void bfin_get_num_params(volatile u32* num) {
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, 0); //dont care
   spi_read(BFIN_SPI, &x);
-  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);  
   *num = (u8)(x & 0xff);
 }
 
@@ -239,6 +242,11 @@ void bfin_report_params(void) {
   print_dbg("\r\nnumparams: ");
   print_dbg_ulong(numParams);
 
+  if(numParams == 255) {
+    print_dbg("\r\n bfin reported too many parameters; sonmething went wrong.");
+    return;
+  }
+
   if(numParams > 0) {
     net_clear_params();
     for(i=0; i<numParams; i++) {
@@ -250,4 +258,9 @@ void bfin_report_params(void) {
       print_dbg((const char* )pdesc.label);
     }
   }
+
+  // enable audio processing
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, MSG_ENABLE_AUDIO);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 }

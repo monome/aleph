@@ -8,6 +8,10 @@
 *.so
 *.d
 *.bin
+*.elf
+*.hex
+*.map
+*.sym
 
 # Packages #
 ############

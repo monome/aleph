@@ -47,11 +47,13 @@
 #include "filesystem.h"
 #include "flash.h"
 #include "font.h"
+#include "ftdi.h"
 #include "global.h"
 #include "i2c.h"
 #include "init.h"
 #include "interrupts.h"
 #include "memory.h"
+#include "monome.h"
 #include "switches.h"
 #include "timers.h"
 
@@ -131,7 +133,6 @@ static void init_ctl(void) {
   init_encoders();
   print_dbg("\r\n init_encoders");
 
-
   // send ADC config
   init_adc();
   print_dbg("\r\n init_adc");
@@ -140,23 +141,30 @@ static void init_ctl(void) {
   init_app_timers();
   print_dbg("\r\n init_timers");
 
+  // enable interrupts
+  cpu_irq_enable();
+
   // initialize the application
   app_init();
 
-  // enable interrupts
-  cpu_irq_enable();
 }
 
 // app event loop
 static void check_events(void) {
   static event_t e;
-
+  //  print_dbg("\r\n checking events...");
   if( get_next_event(&e) ) {
-
   /* print_dbg("\r\n handling event, type: "); */
   /* print_dbg_hex(e.eventType); */
   /* print_dbg("\r\n , data: "); */
   /* print_dbg_hex(e.eventData); */
+
+    if(e.eventType == kEventFtdiConnect) {
+	// perform setup tasks for new ftdi device connection. 
+	// won't work if called from an interrupt.
+	ftdi_setup();
+    }
+
 
     if(startup) {
       if( e.eventType == kEventSwitchDown0
@@ -170,14 +178,39 @@ static void check_events(void) {
 	return;
       }
     } else {
-      if(e.eventType == kEventSwitchDown5) {
+      switch(e.eventType) {
+      case kEventMonomeRead :
+	// poll monome serial input and spawn relevant events
+	monome_read_serial();
+	break;
+      /* case kEventFtdiWrite : */
+      /* 	ftdi_write((u32)e.eventData); */
+      /* 	break; */
+      case kEventSwitchDown5 :
 	screen_line(0, 0, "powering down!", 0x3f);
 	print_dbg("\r\n AVR32 received power down switch event");
 	screen_refresh();
 	gpio_clr_gpio_pin(POWER_CTL_PIN);
-      } else {
+	break;
+	//// test: switches -> monome
+      case kEventSwitchDown0:
+	//ftdi_write(1);
+	break;
+      case kEventSwitchUp0:
+	//	ftdi_write(0);
+	break;
+      case kEventSwitchDown2:
+	//	ftdi_write(0x2003);
+	break;
+      case kEventSwitchDown3:
+	//	ftdi_write(0x2004);
+	break;
+	////
+      default:
+	// all other events are sent to application layer
 	app_handle_event(&e);
-      } // power switch
+	break;
+      } // event switch
     } // startup
   } // got event
 }
@@ -186,18 +219,6 @@ static void check_events(void) {
 ////main function
 int main (void) {
   u32 waitForCard = 0;
-
-
-  ////////////////
-  /////////////
-  /// TEST: flash
-  //  pcl_switch_to_osc(PCL_OSC0, FOSC0, OSC0_STARTUP);
-  //  init_dbg_rs232(FOSC0);
-  //  test_flash();
-  //  return 1;
-  ////////
-  //////////////
-  ///////////
 
   // set up avr32 hardware and peripherals
   init_avr32();
@@ -222,7 +243,8 @@ int main (void) {
   print_dbg("\r\n init_mem");
 
   /// initialize filesystem
-  init_files();
+  ////// FIXME: move to app
+  files_init();
 
   // setup control logic
   init_ctl();
@@ -230,21 +252,13 @@ int main (void) {
   // initialize flash
   firstrun = init_flash();
 
-  /// boot default dsp
-  //  screen_clear();
-
-  //  screen_line(0, 1, "loading default DSP...", 0x3f);
-  //  screen_refresh();
-  //  files_load_dsp_name("default.ldr");
-
+  // notify 
+  screen_clear();
   screen_line(0, 1, "press any key to continue...", 0x3f);
   screen_refresh();
 
   print_dbg("\r\n starting event loop.\r\n");
 
-  //////
-  //  test_flash();
-  ////
 
   while(1) {
     check_events();

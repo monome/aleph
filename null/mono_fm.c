@@ -93,16 +93,8 @@ moduleData * gModuleData; // module data
 static FILE* dbgFile;
 u8 dbgFlag = 0;
 u32 dbgCount = 0;
-
-//////////////
-/////////////
 // debug: osc2 * pm  * tablesize, in fix16
-//fix16 modIdxOffset;
 fract32 modIdxOffset;
-///////////
-/////////////
-
-
 #endif
 
 

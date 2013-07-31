@@ -904,6 +904,7 @@ static void uhc_setup_request_callback(
 	UNUSED(payload_trans);
 	uhc_setup_request_finish_status = (status == UHD_TRANS_NOERROR);
 	uhc_setup_request_finish = true;
+	//	print_dbg("\r\n setup request callback finished");
 }
 
 
@@ -1041,6 +1042,8 @@ char *uhc_dev_get_string_manufacturer(uhc_device_t * dev)
 	if (!dev->dev_desc.iManufacturer) {
 		return NULL; // No manufacturer string available
 	}
+	//	print_dbg("\r\n manufacturer string: ");
+	//	print_dbg(uhc_dev_get_string(dev, dev->dev_desc.iManufacturer));
 	return uhc_dev_get_string(dev, dev->dev_desc.iManufacturer);
 }
 
@@ -1049,6 +1052,9 @@ char *uhc_dev_get_string_product(uhc_device_t * dev)
 	if (!dev->dev_desc.iProduct) {
 		return NULL; // No product string available
 	}
+	//	print_dbg("\r\n product string: ");
+	//	print_dbg(uhc_dev_get_string(dev, dev->dev_desc.iProduct));
+
 	return uhc_dev_get_string(dev, dev->dev_desc.iProduct);
 }
 
@@ -1057,6 +1063,9 @@ char *uhc_dev_get_string_serial(uhc_device_t * dev)
 	if (!dev->dev_desc.iSerialNumber) {
 		return NULL; // No serial string available
 	}
+	//	print_dbg("\r\n product string: ");
+	//	print_dbg(uhc_dev_get_string(dev, dev->dev_desc.iSerialNumber));
+	
 	return uhc_dev_get_string(dev, dev->dev_desc.iSerialNumber);
 }
 
@@ -1087,6 +1096,7 @@ char *uhc_dev_get_string(uhc_device_t * dev, uint8_t str_id)
 	}
 	while (!uhc_setup_request_finish);
 	if (!uhc_setup_request_finish_status) {
+	  print_dbg("\r\n NULL result from setup request.");
 		return NULL;
 	}
 	// Get the size of string

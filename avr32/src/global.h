@@ -27,4 +27,7 @@ extern volatile U8 refresh;
 // current encoder values
 extern S32 encVal[4];
 
+// FTDI connection flag
+extern u8 ftdiPlug;
+
 #endif

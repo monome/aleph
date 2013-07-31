@@ -1,5 +1,5 @@
 /* iotest.c
- * nullp
+ * aleph-bfin
  * 
  * testing hardware: PM chain synthesizer on all outputs,
  * plus i/o loop on each i/o pair
@@ -110,11 +110,10 @@ u32 dbgCount = 0;
 /////////////
 // debug: osc2 * pm  * tablesize, in fix16
 //fix16 modIdxOffset;
-//fract32 modIdxOffset;
+fract32 modIdxOffset;
 ///////////
 /////////////
 #endif
-
 
 // pointer to local module data, initialize/v at top of SDRAM
 static monoFmData * monoData;
@@ -299,10 +298,8 @@ void module_init(void) {
   // initialize moduleData superclass for core routines
 #else
   monoData = (monoFmData*)malloc(sizeof(monoFmData));
-
   /// debugging output file
-  dbgFile = fopen( "mono_dbg.txt", "w");
-  
+  dbgFile = fopen( "iotest_dbg.txt", "w");
 #endif
   gModuleData = &(monoData->super);
   gModuleData->paramDesc = monoData->mParamDesc;

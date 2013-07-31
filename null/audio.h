@@ -5,7 +5,9 @@
 #include "fract32_emu.h"
 
 #define BLOCKSIZE (512)
-#define SAMPLERATE (44100)
+#ifndef SAMPLERATE
+  #define SAMPLERATE (44100)
+#endif
 #define NUMCHANNELS (2)
 
 #define FORMAT (paFloat32)

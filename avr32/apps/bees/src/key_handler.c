@@ -26,15 +26,36 @@
 //--------------------
 //----- static variables
 
-// character selection table
-static const char kLabelChars[] = "abcdefghijklmnopqrstuvwxyz_012345789";
-#define NUM_LABEL_CHARS 47
-// index in the selection table 
-static s8 selectedLabelChar = 0;
-
 // return param increment given encoder ticks
 static fix16 scale_knob_value(const s32 v);
 
+// scroll a single character in a string
+#define MAX_EDIT_CHAR 120
+#define MIN_EDIT_CHAR 32
+// scroll up
+static void edit_string_inc_char(char* str, u8 pos) {
+  u8 tmp = str[pos]; 
+  if(tmp == 0) { tmp = MIN_EDIT_CHAR; }
+  if ( tmp < MAX_EDIT_CHAR ) {
+    tmp++;
+  } else {
+    tmp = MIN_EDIT_CHAR;
+  }
+  str[pos] = tmp;
+  //return tmp;
+}
+
+// scroll down
+static void edit_string_dec_char(char* str, u8 pos) {
+  u8 tmp = str[pos]; 
+  if (tmp > MIN_EDIT_CHAR) {
+    tmp--;
+  } else {
+    tmp = MAX_EDIT_CHAR;
+  }
+  str[pos] = tmp;
+  //  return tmp;
+}
 
 //--------------------------
 //--- static func def
@@ -67,6 +88,8 @@ static fix16 scale_knob_value(const s32 v) {
   }
 }
 
+
+
 //========================================
 //====== key handlers
 //--- OPS
@@ -94,7 +117,8 @@ void key_handler_ops(uiKey_t key, s16 val) {
     //// 
     // right now this will destroy the last created op
     /////// + added the function, need to try it out
-    if (net_op_status(net_num_ops() - 1) != eUserOp) {
+    /// dont delete if this is a sysem-owned operator
+    if(net_op_flag(net_num_ops()- 1, eOpFlagSys)) {
       return;
     }
     net_pop_op();
@@ -169,7 +193,7 @@ void key_handler_ins(uiKey_t key, s16 val) {
     //////////
     /// testing
     // store default scene
-    scene_write_default();
+    //    scene_write_default();
 
     /////////
     ////////
@@ -285,13 +309,7 @@ void key_handler_gathered(uiKey_t key, s16 val) {
 void key_handler_play(uiKey_t key, s16 v) {
   s32 val;
   s16 inIdx = -1;
-  ///// FIXME; bad bad bad hacking
-  /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     really should set up specialied apparatus in net.c
-     to identify and use system output nodes.
-     for now, we activate the 8 operators from
-     net.c : add_sys_ops()
-  */
+  //activate the 8 system operators from net.c : add_sys_ops()
   switch(key) {
     ///// keys
   case eKeyFnUpA:
@@ -444,14 +462,24 @@ extern void key_handler_presets(uiKey_t key, s16 val) {
     break;
     //// encoder C: scroll name pos
   case eKeyEncUpC:
+    curPage->cursor++;
+    if (curPage->cursor >= PRESET_NAME_LEN) {
+      curPage->cursor = 0;
+    } 
     break;
   case eKeyEncDownC:
+      curPage->cursor--;
+    if (curPage->cursor < 0) {
+      curPage->cursor = PRESET_NAME_LEN - 1;
+    } 
     break;
   case eKeyEncUpD:
     // scroll name char
+    edit_string_inc_char(sceneData->desc.sceneName, curPage->cursor);
     break;
   case eKeyEncDownD:
     // scroll name char
+    edit_string_dec_char(sceneData->desc.sceneName, curPage->cursor);
     break;
     default:
     ;; // nothing
@@ -494,7 +522,8 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
       curPage->mode = eModeStore;
       break;
     case eModeStore:
-      files_store_scene(curPage->selected);
+      files_store_scene_name(sceneData->desc.sceneName);
+      print_dbg("\r\n stored current scene.");
       curPage->mode = eModeNone;
       break;
     default:
@@ -523,7 +552,6 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
     break;
     //// encoder B: scroll selection
   case eKeyEncUpB:
-    /// fixme: shld be count-dependent like DSP
     scroll_select(1, files_get_scene_count() );
     break;
   case eKeyEncDownB:
@@ -532,28 +560,21 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
     break;
   case eKeyEncUpC: // cursor: position in name
     curPage->cursor++;
-    if (curPage->cursor > NUM_LABEL_CHARS) {
+    if (curPage->cursor >= SCENE_NAME_LEN) {
       curPage->cursor = 0;
     } 
     break;
   case eKeyEncDownC:  // cursor: position in name
     curPage->cursor--;
     if (curPage->cursor < 0) {
-      curPage->cursor = NUM_LABEL_CHARS - 1;
+      curPage->cursor = SCENE_NAME_LEN - 1;
     } 
     break;
   case eKeyEncUpD:     // scroll name char at pos
-    selectedLabelChar++;
-    if (selectedLabelChar > NUM_LABEL_CHARS) {
-      selectedLabelChar = 0;
-    } 
+    edit_string_inc_char(sceneData->desc.sceneName, curPage->cursor);
     break;
   case eKeyEncDownD:     // scroll name char at pos
-    curPage->cursor--;
-    if (curPage->cursor < 0) {
-      curPage->cursor = NUM_LABEL_CHARS - 1;
-    } 
-    
+    edit_string_dec_char(sceneData->desc.sceneName, curPage->cursor);
     break;
   default:
     ;; // nothing
@@ -563,13 +584,15 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
 
 //--- DSP
 extern void key_handler_dsp(uiKey_t key, s16 val) {
-  print_dbg("\r\n key_handler_dsp");
+  // print_dbg("\r\n key_handler_dsp");
   switch(key) {
   case eKeyFnDownA:
     // load DSP (and update the parameter list)
     files_load_dsp(curPage->selected);
     break;
   case eKeyFnDownB:
+    // write default
+    files_store_default_dsp(curPage->selected);
     break;
   case eKeyFnDownC:
     break;

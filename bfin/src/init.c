@@ -78,7 +78,7 @@ void init_EBIU(void) {
   *pEBIU_SDRRC = 835;
   
   //SDRAM Memory Bank Control Register
-  *pEBIU_SDBCTL = 0x0025; //1.7	64 MB
+  *pEBIU_SDBCTL = 0x0025; //1.7	64 MB bank size
   //	*pEBIU_SDBCTL = 0x0013;	//1.6 and below 32 MB
   
   //SDRAM Memory Global Control Register

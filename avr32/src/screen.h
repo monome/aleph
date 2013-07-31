@@ -35,6 +35,7 @@
 #define CHAR_ROWS   8  // NROWS / FONT_CHARH
 #define CHAR_ROWS_1 7
 #define CHAR_ROWS_2 6
+#define CHAR_ROWS_3 5
 // arbitrary maximum for proportionally spaced line drawing
 #define CHAR_COLS   28
 #define CHAR_COLS_1 27
@@ -64,8 +65,12 @@ extern void screen_pixel(U16 x, U16 y, U8 a);
 //// all the character-drawing routines now return last used column position
 // draw a single character glyph with fixed spacing
 extern U8 screen_char_fixed(U16 x, U16 y, char c, U8 a);
+// draw a single character glyph with fixed spacing and background
+extern U8 screen_char_fixed_back(U16 x, U16 y, char c, U8 a, u8 b);
 // draw a single glyph with proportional spacing
 extern U8 screen_char_squeeze(U16 x, U16 y, char c, U8 a);
+// draw a single glyph with proportional spacing and background
+extern U8 screen_char_squeeze_back(U16 x, U16 y, char c, U8 a, u8 b);
 // draw a string with fixed spacing
 extern U8 screen_string_fixed(U16 x, U16 y, char* str, U8 a);
 // draw a string with proportional spacing

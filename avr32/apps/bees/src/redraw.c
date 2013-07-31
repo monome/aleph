@@ -59,6 +59,8 @@ static inline void clearln(void);
 //static inline void mvln(u8 pos);
 // end line buffer (write a zero to next position)
 static inline void endln(void);
+// draw editing string at given position, with cursor highlight
+static void draw_edit_string(u8 x, u8 y, char* str, u8 len);
 
 //// line redraws
 // op
@@ -100,7 +102,7 @@ void redraw_ops(void) {
   n = nCenter;
   y = SCREEN_ROW_CENTER;
   // print higher entries
-  while (y < CHAR_ROWS_2) {
+  while (y < CHAR_ROWS_3) {
     draw_line_ops(++n, num, ++y, 4);
   }
   // draw footer 
@@ -111,10 +113,11 @@ void redraw_ops(void) {
   endln(); screen_line(0, CHAR_ROWS_2, lineBuf, 8);
   // (function labels)
   // don't allow deletion of system operators
-  if (net_op_status(net_num_ops() - 1) == eUserOp) {
-    screen_line(0, CHAR_ROWS_1, "PARAM ROUTE CREATE DELETE", 3);
-  } else  { 
+  //  if (net_op_status(net_num_ops() - 1) == eUserOp) {
+  if ( net_op_flag(net_num_ops() - 1, eOpFlagSys) ) {
     screen_line(0, CHAR_ROWS_1, "PARAM ROUTE CREATE", 3);
+  } else  { 
+    screen_line(0, CHAR_ROWS_1, "PARAM ROUTE CREATE DELETE", 3);
   }
 }
 
@@ -258,7 +261,6 @@ void redraw_scenes(void) {
   u8 y = 0;                       // which line
   s32 n, nCenter;         // which list entry
   u16 num = files_get_scene_count();
-
   // print selection at center
   nCenter = curPage->selected;
   if (nCenter >= num) {
@@ -288,19 +290,18 @@ void redraw_scenes(void) {
   screen_hl_line(0, y, 1);
   // print lower entries
   while (y > 1) {
-    n--;
-    y--;
-    draw_line_scenes(n, num, y, 4);
+    draw_line_scenes(--n, num, --y, 4);
   }
   // re-center
   n = nCenter;
   y = SCREEN_ROW_CENTER;
   // print higher entries
-  while (y < CHAR_ROWS_2) {
-    n++;
-    y++;
-    draw_line_scenes(n, num, y, 4);
+  while (y < CHAR_ROWS_3) {
+    draw_line_scenes(++n, num, ++y, 4);
   }
+  // current scene 
+  screen_blank_line(0, CHAR_ROWS_2);
+  draw_edit_string(0, CHAR_ROWS_2, sceneData->desc.sceneName, SCENE_NAME_LEN);
   // draw header
   screen_line(0, 0, "SCENES", 12);
   // draw footer (function labels)
@@ -352,41 +353,10 @@ void redraw_play(void) {
   //u8 idx;
 
   for(y = 0; y < CHAR_ROWS_1; y++ ) {
-    //    println("", 0);
-    //idx = touchedParams[n].idx;    
-    //    screen_blank_line(0, y);
     clearln();
-    //println_int(idx, 0);
-
-    // first column
-    // 2nd column
-    /* print_dbg("\r\n y: "); */
-    /* print_dbg_hex(y); */
-    /* print_dbg(" : "); */
-    /* print_dbg(play_get_entry(y)); */
-    //    str_copy( lineBuf, play_get_entry(y), PLAY_STR_LEN);
     println( play_get_entry(y), 0);
-    
-    // 2nd column
-    /* print_dbg("\r\n y + PLAY_SCROLL_NUM__2: "); */
-    /* print_dbg_hex(y + PLAY_SCROLL_NUM__2); */
-    /* print_dbg(" : "); */
-    /* print_dbg(play_get_entry(y + PLAY_SCROLL_NUM__2)); */
-    //    str_copy( lineBuf + PLAY_STR_LEN, play_get_entry(y + PLAY_SCROLL_NUM__2), PLAY_STR_LEN);
-    //    println(play_get_entry(y + PLAY_SCROLL_NUM__2), PLAY_STR_LEN);
-
     endln(); 
     screen_line(0, y + 1, lineBuf, 0x8);
-    
-    //    println( net_op_name(net_in_op_idx(idx)), 0 );
-    //    appendln_char('/');
-    //    appendln( net_in_name(idx) );
-    //    endln(); screen_string(16, y, lineBuf, 12);
-
-    //    print_fix16(numBuf, touchedParams[n].val);
-    //    screen_line(0, 80, numBuf, 10);
-    
-    //    n--;
   }
   // draw the header
   screen_line(0, 0, "PLAY", 12);
@@ -423,30 +393,14 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
   } else if (n >= num) {
     n -= num;
   } 
-
-  //  print_dbg("\r\n draw line ins, selection: ");
-  //  print_dbg_ulong(n);
-
   opIdx = net_in_op_idx(n);
-
-  //  print_dbg("\r\n draw line ins, op idx: ");
-  //  print_dbg_ulong(opIdx);
-
-
-  //  if (net_get_in_preset(n)) { pch = '*'; } else { pch = '.'; }
   screen_blank_line(0, y);
+
   if (opIdx >=0 ) { // this is an operator input
     println_int(opIdx, 0);
     endln(); screen_string(0, y, lineBuf, hl);
-    
-    //    print_dbg("\r\n draw line ins, op name: ");
-    //    print_dbg(net_op_name(opIdx));
-    
+
     println( net_op_name(opIdx), 0 );
-    
-    //    print_dbg("\r\n draw line ins, in  name: ");
-    //    print_dbg(net_in_name(n));
-    
     appendln_char('/');
     appendln( net_in_name(n) );
     
@@ -459,19 +413,15 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
     appendln_int_lj( (int)net_param_idx(n));
     endln(); screen_string(0, y, lineBuf, hl);
     println( net_in_name(n) , 0);
-    endln(); screen_string(16, y, lineBuf, hl);
+    endln(); screen_string(24, y, lineBuf, hl);
     print_fix16(numBuf, net_get_in_value(n) );
     screen_line(80, y, numBuf, hl);
   }
-
-  //  print_dbg("\r\n");
-
 }
 
 // draw line of outputs page
 static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
   s16 target;
-  //  char pch;
   // wrap
   if (n < 0) {
     n += num;
@@ -479,7 +429,6 @@ static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
     n -= num;
   } 
   target = net_get_target(n);
-  //  if (net_get_out_preset(n)) { pch = '*'; } else { pch = '.'; }
   screen_blank_line(0, y);
   if (target >= 0) {
     println_int(net_out_op_idx(n), 0);
@@ -511,10 +460,8 @@ void draw_line_presets(s32 n, u16 num, u8 y, u8 hl) {
     n += num;
   } else if (n >= num) {
     n -= num;
-  } 
-  
+  }   
   screen_blank_line(0, y);
-
   println_int((int)n, 0);
   endln(); screen_string(0, y, lineBuf, hl);
   println(preset_name(n), 0);
@@ -523,33 +470,18 @@ void draw_line_presets(s32 n, u16 num, u8 y, u8 hl) {
 
 // draw line of scenes page
 void draw_line_scenes(s32 n, u16 num, u8 y, u8 hl) {
-  // wrap
-  if (n < 0) {
-    n += num;
-  } else if (n >= num) {
-    n -= num;
-  } 
-
   screen_blank_line(0, y);
-
-  ////// TODO
-  return;
-  //////
-
-  println_int((int)n, 0);
-  endln(); screen_string(0, y, lineBuf, hl);
+  if (n < 0  || n >= num ) {
+    return;
+  } 
+  //  println_int((int)n, 0);
+  //  endln(); screen_string(0, y, lineBuf, hl);
   println( (const char *)files_get_scene_name(n), 0 );
   endln(); screen_string(16, y, lineBuf, hl);
 }
 
 // draw line of dsp page
 void draw_line_dsp(s32 n, u16 num, u8 y, u8 hl) {
-    // wrap
-  /* if (n < 0) { */
-  /*   n += num; */
-  /* } else if (n >= num) { */
-  /*   n -= num; */
-  /* }  */
   screen_blank_line(0, y);
 
   if (n < 0  || n >= num ) {
@@ -609,4 +541,21 @@ static inline void clearln(void) {
 
 static inline void endln(void) {
   *(pline) = 0;
+}
+
+// draw editing string at given position, with cursor highlight
+static void draw_edit_string(u8 x, u8 y, char* str, u8 len) {
+  //  static char editBuf[64];
+  u8 i;
+  y *= FONT_CHARH;
+  for(i=0; i<len; i++) {
+    if(str[i] == 0) { return; }
+    if(i == curPage->cursor) {
+      x += screen_char_squeeze_back(x, y, str[i], 0x0, 0xa);
+      x++;
+    } else {
+      x += screen_char_squeeze_back(x, y, str[i], 0x7, 0x0);
+      x++;
+    }
+  }
 }

@@ -1,2 +1,2 @@
 #! /bin/sh
-kermit -l /dev/ttyUSB0 -b 57600
+kermit -l /dev/ttyUSB0 -b 230400

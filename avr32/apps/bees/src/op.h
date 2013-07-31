@@ -10,13 +10,24 @@
 #ifndef _BEES_OP_H_
 #define _BEES_OP_H_
 
-#include "types.h"
 #include "op_math.h"
+#include "types.h"
+#include "util.h"
 
 // max inputs in a single operator
 #define OP_INS_MAX 32
 // max outputs in a single operator
 #define OP_OUTS_MAX 32
+
+//---- flags enum; 
+typedef enum {
+  eOpFlagSys,  // op is system-owned
+  eOpFlagCtl,  // op is control generator
+  eOpFlagRec,  // op is control receiver
+  eOpFlagTick, // op is time-sensitive and requires a tick
+  eOpFlagMenu, // op has a submenu function
+} op_flag_t;
+
 
 //---- operator list enum
 typedef enum {
@@ -25,21 +36,17 @@ typedef enum {
   eOpAdd,
   eOpMul,
   eOpGate,
-  //  eOpAccum,
-  //  eOpSelect,
-  //  eOpMapLin,
-  //  eOpParam,
-  //  eOpPreset,
-  numOpClasses // dummy/count 
-} opId_t;
+  // eOpAccum,
+  // eOpSelect,
+  // eOpMapLin,
+  // eOpParam,
+  // eOpPreset,
+  // eOpList,
+  // eOpTimer
 
-//---- operator status enum
-typedef enum {
-  eUserOp = 0,    // user-created
-  eSysCtlOp,  // system controller (e.g. encoder)
-  eSysRecOp,  // system receiver (e.g. parameter)
-  numOpStatuses // dummy/count
-} opStatus_t;
+  numOpClasses // dummy/count 
+} op_id_t;
+
 
 //---- op descriptor type
 typedef struct op_desc_struct {
@@ -80,11 +87,9 @@ typedef struct op_struct {
   // output names concatenated into a single string
   const char* outString;
   // operator type index in registry
-  u8 type;
-  // user/system status
-  opStatus_t status;
-  // offset in statically allocated op memory pool
-  //  u32 memOffset;
+  u32 type;
+  // behavior flags
+  u32 flags;
 } op_t;
 
 
@@ -95,7 +100,7 @@ extern const op_desc_t op_registry[numOpClasses];
 //-----------------------------------
 //---- public functions
 // initialize operator at memory
-extern s16 op_init(op_t* op, opId_t opId);
+extern s16 op_init(op_t* op, op_id_t opId);
 // get input name
 extern const char* op_in_name(op_t* op, const u8 idx);
 // get output name

@@ -29,7 +29,7 @@
 //--------- variables
 // const array of user-creatable operator type id's
 /// FIXME: this is dumb
-const opId_t userOpTypes[NUM_USER_OP_TYPES] = {
+const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAdd,
   eOpMul,
   eOpGate,
@@ -72,7 +72,7 @@ page_t* curPage;
 // idx of current page
 s8 pageIdx = 0;
 // new operator type
-opId_t newOpType;
+op_id_t newOpType;
 // array of onode pointers for gathering
 u32(*gathered)[NET_OUTS_MAX];
 // how many gathered
@@ -215,3 +215,9 @@ void scroll_select(s8 dir, s32 max) {
 extern s16 menu_selection(ePage page) {
   return pages[page].selected;
 }
+
+// display system notification
+/* extern void menu_notify(const char* str) { */
+/*   screen_blank(); */
+/*   screen_line(0, 0, str, 0xf); */
+/* } */

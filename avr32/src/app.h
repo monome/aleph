@@ -29,7 +29,7 @@ extern void app_handle_event(event_t* e);
 // stop performing UI events
 extern void app_pause(void);
 // stop and display start/stop messages
-extern void app_notify(const char* startMsg, const char* stopMsg);
+extern void app_notify(const char* msg);
 // resume UI
 extern void app_resume(void);
 

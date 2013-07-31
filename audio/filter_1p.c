@@ -5,7 +5,6 @@
 
 // std
 #include <math.h>
-//#include <cmath>
 // aleph
 #include "filter_1p.h"
 
@@ -30,12 +29,10 @@
 static inline u8 fr32_compare(fract32 a, fract32 b) {
   fract32 dif = sub_fr1x32(a, b);
   return ( ( dif < FR32_COMP_THRESH ) && ( dif > FR32_COMP_THRESH_NEG ) );
-  //  return ( abs_fr1x32(sub_fr1x32(a, b)) > FR32_COMP_THRESH );
 }
 
 
 static inline u8 fix16_compare(fix16 a, fix16 b) {
-  //  return ( abs_fr1x32(sub_fr1x32(a, b)) > FIX16_COMP_THRESH );
   fix16 dif = fix16_sub(a, b);
   return ( ( dif < FIX16_COMP_THRESH ) && ( dif > FIX16_COMP_THRESH_NEG ) );
 }

@@ -168,7 +168,7 @@ void net_activate(s16 inIdx, const io_t val) {
 
 
 // attempt to allocate a new operator from the static memory pool, return index
-s16 net_add_op(opId_t opId) {
+s16 net_add_op(op_id_t opId) {
   u16 ins, outs;
   u8 i;
   op_t* op;
@@ -476,8 +476,12 @@ u8 net_in_connected(s32 iIdx) {
 }
 
 // get status (user/system) of op at given idx
-opStatus_t net_op_status(u16 opIdx) {
-  return net->ops[opIdx]->status;
+/* opStatus_t net_op_status(u16 opIdx) { */
+/*   return net->ops[opIdx]->status; */
+/* } */
+
+u8 net_op_flag(const u16 opIdx, op_flag_t flag) {
+  return net->ops[opIdx]->flags & (1 << flag);
 }
 
 // populate an array with indices of all connected outputs for a given index

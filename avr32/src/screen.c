@@ -219,7 +219,23 @@ U8 screen_char_fixed(U16 col, U16 row, char gl, U8 a) {
   return x+1;
 }
 
-// draw a single character glyph with proportional spacing
+
+// draw a single character glyph with fixed spacing and background
+U8 screen_char_fixed_back(U16 col, U16 row, char gl, U8 a, u8 b) {
+  //  static U8 x;
+  for(j=0; j<FONT_CHARH; j++) {
+    for(i=0; i<FONT_CHARW; i++) {
+      if( (font_data[gl - FONT_ASCII_OFFSET].data[i] & (1 << j))) {
+	screen_pixel(i+col, j+row, a);
+      } else {
+	screen_pixel(i+col, j+row, b);
+      }
+    }
+  }
+  return FONT_CHARW;
+}
+
+// draw a single character glyph with proportional spacing and background
 U8 screen_char_squeeze(U16 col, U16 row, char gl, U8 a) {
   //  static U8 x;
   static U8 xnum;
@@ -234,6 +250,27 @@ U8 screen_char_squeeze(U16 col, U16 row, char gl, U8 a) {
 	screen_pixel(i + col, j + row, a);
       } else {
 	screen_pixel(i + col, j + row, 0);
+      }
+    }
+  }
+  return xnum;
+}
+
+// draw a single character glyph with proportional spacing
+U8 screen_char_squeeze_back(U16 col, U16 row, char gl, U8 a, u8 b) {
+  //  static U8 x;
+  static U8 xnum;
+  static const glyph_t * g;
+  g = &(font_data[gl - FONT_ASCII_OFFSET]);
+  xnum = FONT_CHARW - g->first - g->last;
+  //  print_dbg("\r\n char at row: ");
+  //  print_dbg_ulong(row);
+  for(j=0; j<FONT_CHARH; j++) {
+    for(i=0; i<xnum; i++) {
+      if( (g->data[i + g->first] & (1 << j))) {
+	screen_pixel(i + col, j + row, a);
+      } else {
+	screen_pixel(i + col, j + row, b);
       }
     }
   }
