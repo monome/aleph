@@ -120,7 +120,7 @@ void app_handle_event(event_t* e) {
     break;
 
   case kEventMonomeGrid:
-    //    test_handle_monome_grid(e);
+    test_handle_monome_grid(e);
     break;
   case kEventMonomeArc:
     //    test_handle_monome_grid(e);

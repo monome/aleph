@@ -113,7 +113,7 @@ u32 ftdi_read(void) {
     return 0;
   }
   //    print_arr((u32)ftdi_in_buf, FTDI_IN_BUF_SIZE);
-  return rxBytes;
+  return rxBytes + 2;
 }
 
 

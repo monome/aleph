@@ -1,6 +1,11 @@
 #include "net_protected.h"
 //#include "print_funcs.h"
-#include "op_sw.h"
+#include "op_preset.h"
+
+// inputs:
+
+// 0 
+
 
 //-------------------------------------------------
 //----- descriptor
@@ -11,7 +16,8 @@ static const char* op_preset_opstring = "SW";
 //-------------------------------------------------
 //----- static function declaration
 static void op_preset_inc_func(op_preset_t* preset, const s16 idx, const io_t inc);
-static void op_preset_in_state(op_preset_t* preset, const io_t* v);
+static void op_preset_in_recall(op_preset_t* preset, const io_t* v);
+static void op_preset_in_store(op_preset_t* preset, const io_t* v);
 static void op_preset_in_tog(op_preset_t* preset, const io_t* v);
 static void op_preset_in_mul(op_preset_t* preset, const io_t* v);
 
@@ -20,7 +26,6 @@ static op_in_func_t op_preset_in_func[3] = {
   (op_in_func_t)&op_preset_in_tog,
   (op_in_func_t)&op_preset_in_mul
 };
-
 
 //---------------------------------------------
 //----- external function definition
@@ -97,10 +102,6 @@ static void op_preset_in_mul(op_preset_t* preset, const io_t* v) {
 // increment
 static void op_preset_inc_func(op_preset_t* preset, const s16 idx, const io_t inc) {
   io_t val;
-  /* print_dbg("\r\n sw increment; idx: "); */
-  /* print_dbg_hex(idx); */
-  /* print_dbg(" , val: "); */
-  /* print_dbg_hex(inc); */
   switch(idx) {
   case 0: // current value
     op_preset_in_state(sw, &inc);

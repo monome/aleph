@@ -42,6 +42,7 @@
 #include "app.h"
 #include "app_timers.h"
 #include "bfin.h"
+#include "conf_tc_irq.h"
 #include "encoders.h"
 #include "events.h"
 #include "filesystem.h"
@@ -179,33 +180,10 @@ static void check_events(void) {
       }
     } else {
       switch(e.eventType) {
-      case kEventMonomeRead :
+	//      case kEventMonomeRead :
 	// poll monome serial input and spawn relevant events
-	monome_read_serial();
+	//	monome_read_serial();
 	break;
-      /* case kEventFtdiWrite : */
-      /* 	ftdi_write((u32)e.eventData); */
-      /* 	break; */
-      case kEventSwitchDown5 :
-	screen_line(0, 0, "powering down!", 0x3f);
-	print_dbg("\r\n AVR32 received power down switch event");
-	screen_refresh();
-	gpio_clr_gpio_pin(POWER_CTL_PIN);
-	break;
-	//// test: switches -> monome
-      case kEventSwitchDown0:
-	//ftdi_write(1);
-	break;
-      case kEventSwitchUp0:
-	//	ftdi_write(0);
-	break;
-      case kEventSwitchDown2:
-	//	ftdi_write(0x2003);
-	break;
-      case kEventSwitchDown3:
-	//	ftdi_write(0x2004);
-	break;
-	////
       default:
 	// all other events are sent to application layer
 	app_handle_event(&e);

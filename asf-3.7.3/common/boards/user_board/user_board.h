@@ -16,6 +16,8 @@
 
 #include <conf_board.h>
 
+#error "dumb default user_board.h"
+
 // External oscillator settings.
 // Uncomment and set correct values if external oscillator is used.
 
