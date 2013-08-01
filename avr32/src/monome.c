@@ -327,30 +327,55 @@ static void read_serial_series(void) {
       b1 = (u8)ftdiRxBuf[i+1];
       //      print_dbg_hex(b0); print_dbg(" ");
       //      print_dbg_hex(b1); print_dbg(" ");
-
-      if(((b0 & 0xf0) >> 4) == 1) { // lift
-	//	print_dbg("\r\n series lift");
+ 
 	x = (b1 & 0xf0) >> 4;
 	y = b1 & 0xf;
-	z = 0;
+	z = !((b0 & 0xf0) >> 4);
 	monome_grid_write_event(&ev, x, y, z);
 	post_event(&ev);
-      }
-
-      else if( (b0 & 0xf0) == 0 ) { // press
-	//	print_dbg("\r\n series press");
-	x = (b1 & 0xf0) >> 4;
-	y = b1 & 0xf;
-	z = 1;
-	monome_grid_write_event(&ev, x, y, z);
-	post_event(&ev);
-      }
+    
     }
     //    print_dbg("\r\n");
   }
 }
 
 static void read_serial_mext(void) {
+	u8 i;
+	u8 b0, b1, b2;
+	u8 x=0;
+	u8 y=0;
+	u8 z=0;
+	// read from ftdi and get number of bytes.
+	// the data is in external buffer ftdiRxBuf
+	u8 nb = ftdi_read();
+
+	// first 2 bytes are always the same (0x31 0x60)
+	// ... standard terminal thing?
+
+	if(nb > 2) {
+	//    print_dbg("\r\n monome in: ");
+		for(i=2; i<nb; i+= 3) {
+			b0 = (u8)ftdiRxBuf[i];
+			b1 = (u8)ftdiRxBuf[i+1];
+			b2 = (u8)ftdiRxBuf[i+1];
+	//      print_dbg_hex(b0); print_dbg(" ");
+	//      print_dbg_hex(b1); print_dbg(" ");
+	
+			if(b0 == 0x20) {
+				x = b1;
+				y = b2;
+				z = 0;
+			} else if(b0 == 0x21) {
+				x = b1;
+				y = b2;
+				z = 1;
+			}
+			
+			monome_grid_write_event(&ev, x, y, z);
+			post_event(&ev);	
+		}
+	//    print_dbg("\r\n");
+	}	
 }
 
 //--- tx
@@ -374,6 +399,13 @@ static void grid_led_series(u8 x, u8 y, u8 val) {
 }
 
 static void grid_led_mext(u8 x, u8 y, u8 val) {
+	u8 b[3];
+  
+	b[0] = 0x10 | val;
+	b[1] = x;
+	b[2] = y;
+	
+	ftdi_write(b, 3);
 }
 
 static void grid_col_40h(u8 x, u8 val) {
