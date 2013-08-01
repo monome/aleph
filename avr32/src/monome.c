@@ -300,37 +300,34 @@ static u8 setup_mext(void) {
   b2 = (u8)ftdiRxBuf[4];
   
   if(b1 == 1) {
-	  mdesc.device = eDeviceGrid;
+    mdesc.device = eDeviceGrid;
 	 
-	  if(b2 == 1) {
-		mdesc.rows = 8;
-		mdesc.cols = 8;
-	  }
-	  else if(b2 == 2) {
-		mdesc.rows = 8;
-		mdesc.cols = 16;
-	  }
-	  else if(b2 == 4) {
-		mdesc.rows = 16;
-		mdesc.cols = 16;
-	  }
-		
-	  mdesc.tilt = 1;
+    if(b2 == 1) {
+      mdesc.rows = 8;
+      mdesc.cols = 8;
+    }
+    else if(b2 == 2) {
+      mdesc.rows = 8;
+      mdesc.cols = 16;
+    }
+    else if(b2 == 4) {
+      mdesc.rows = 16;
+      mdesc.cols = 16;
+    }
+    else {
+      return 0;
+    }		
+    mdesc.tilt = 1;
   }
   else if(b1 == 5) {
-	  mdesc.device = eDeviceArc;
-	  mdesc.encs = b2;
-  }
-  
-
-  set_funcs();
-
-  if(/*success*/ 0 ) {
-    monomeConnect = 1;
-    return 1;
+    mdesc.device = eDeviceArc;
+    mdesc.encs = b2;
   } else {
     return 0;
   }
+  set_funcs();
+  monomeConnect = 1;
+  return 1;
 }
 
 //----- protocol-specific functions
