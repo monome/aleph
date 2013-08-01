@@ -117,6 +117,8 @@ static void init_avr32(void) {
 
   // usb host controller
   init_usb_host();
+  // initialize usb classes
+  init_monome();
   
   print_dbg("\r\n avr32 init done ");
 }
@@ -180,9 +182,12 @@ static void check_events(void) {
       }
     } else {
       switch(e.eventType) {
-	//      case kEventMonomeRead :
+	////// FIXME: this event can and should be eliminated. 
+	////// ftdi_read callback can strip leading bytes
+	//// and check for rx data before invoking main loop or monome.c
+      case kEventMonomeRead :
 	// poll monome serial input and spawn relevant events
-	//	monome_read_serial();
+	monome_read_serial();
 	break;
       default:
 	// all other events are sent to application layer

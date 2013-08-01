@@ -29,7 +29,7 @@ include ../../core.mk
 
 # List of C source files.
 CSRCS += \
-	$(ALEPH_BEES)/src/app.c \
+	$(ALEPH_BEES)/src/app_bees.c \
 	$(ALEPH_BEES)/src/files.c \
 	$(ALEPH_BEES)/src/key_handler.c \
 	$(ALEPH_BEES)/src/menu.c \

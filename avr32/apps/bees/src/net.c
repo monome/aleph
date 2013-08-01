@@ -83,16 +83,6 @@ void net_init(void) {
   print_dbg("\r\n network address: 0x");
   print_dbg_hex((u32)net);
 
-  /* print_dbg("\r\n cltnet address: "); */
-  /* print_dbg_hex((unsigned long int)net); */
-
-  /* print_dbg("\r\n test-write to cltnet, test value:  "); */
-  /* print_dbg_hex(0xDEADBEEF); */
-  /* *((u32*)net) = 0xDEADBEEF; */
-  /* print_dbg("\r\n ; reading... result: "); */
-  /* res = *((u32*)net); */
-  /* print_dbg_hex(res); */
- 
   for(i=0; i<NET_OP_POOL_SIZE; i++) {
     net->opPoolMem[i] = (u8)0;
   }
@@ -183,6 +173,7 @@ s16 net_add_op(op_id_t opId) {
   }
   op = (op_t*)((u8*)net->opPool + net->opPoolOffset);
   // use the class ID to initialize a new object in scratch
+  //// FIXME: this is dumb, use a superclass function
   switch(opId) {
   case eOpSwitch:
     op_sw_init((void*) op);

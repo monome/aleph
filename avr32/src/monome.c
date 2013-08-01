@@ -3,9 +3,10 @@
   aleph-avr32
 
   monome device interface definitions
- */
+*/
 
 // asf
+#include "delay.h"
 #include "print_funcs.h"
 #include <string.h>
 // aleph
@@ -75,6 +76,8 @@ static monomeDesc mdesc = {
   .tilt = 0,
 };
 
+// rx buffer
+static  volatile u8* rxBuf;
 // event data
 static event_t ev;
 
@@ -148,6 +151,14 @@ static arc_led_t arcLedFuncs[eProtocolNumProtocols] = {
 //================================================
 //----- extern function definitions
 
+// init
+extern void init_monome(void) {
+  // ftdi precedes each packet with 0x31 0x60. 
+  // this is to avoid actually stripping these 2 bytes after each read
+  rxBuf = ftdiRxBuf + FTDI_RX_BUF_OFFSET;
+  print_dbg("\r\n finished monome class init");
+}
+
 // determine if FTDI string descriptors match monome device pattern
 extern u8 check_monome_device(char* mstr, char* pstr, char* sstr) {
   char buf[16];
@@ -195,6 +206,7 @@ extern u8 check_monome_device(char* mstr, char* pstr, char* sstr) {
       return 1;
     }
     if( strncmp(buf, "m64-", 4) == 0 ) {
+      // series 64
       setup_series(8, 8);
       return 1;
     }
@@ -211,7 +223,6 @@ extern u8 check_monome_device(char* mstr, char* pstr, char* sstr) {
     // if we got here, serial number didn't match series or 40h patterns.
     // so this is probably an extended-protocol device.
     // we need to query for device type, size, and other properties.
-    mdesc.protocol = eProtocolSeries;
     return setup_mext();
   }
 }
@@ -290,15 +301,45 @@ static void setup_series(u8 cols, u8 rows) {
 // setup extended device, return success /failure of query
 static u8 setup_mext(void) {
   u8 b0, b1, b2;
+  u8 nb;
+  u8 w = 0;
   mdesc.protocol = eProtocolMext;
 
-  ftdi_write(0, 1);	// query
 
-  u8 nb = ftdi_read();
-  b0 = (u8)ftdiRxBuf[2];
-  b1 = (u8)ftdiRxBuf[3];
-  b2 = (u8)ftdiRxBuf[4];
-  
+  print_dbg("\r\n mext setup routine");
+
+  delay_ms(1);
+
+  ftdi_write(&w, 1);	// query
+
+  delay_ms(1);
+
+  nb = ftdi_read();
+  print_dbg("\r\n mext setup read , nb: ");
+  print_dbg_ulong(nb);
+
+  if(nb != 6 ){
+    return 0;
+  }
+
+  print_dbg("\r\n local rx pointer: 0x");
+  print_dbg_hex((u32)rxBuf);
+  print_dbg("\r\n global ftdi rx pointer: 0x");
+  print_dbg_hex((u32)ftdiRxBuf);
+
+  b0 = (u8)rxBuf[0];
+  b1 = (u8)rxBuf[1];
+  b2 = (u8)rxBuf[2];
+
+  print_dbg("\r\n data: 0x");
+  print_dbg_hex(b0);
+  print_dbg(" ,  0x");
+  print_dbg_hex(b1);
+  print_dbg(" ,  0x");
+  print_dbg_hex(b2);
+
+  //  if(b0 != 0) { return 0; }
+
   if(b1 == 1) {
     mdesc.device = eDeviceGrid;
 	 
@@ -311,7 +352,7 @@ static u8 setup_mext(void) {
       mdesc.cols = 16;
     }
     else if(b2 == 4) {
-      mdesc.rows = 16;
+      mdesc.rows = 16; 
       mdesc.cols = 16;
     }
     else {
@@ -327,6 +368,7 @@ static u8 setup_mext(void) {
   }
   set_funcs();
   monomeConnect = 1;
+  print_dbg("\r\n connected monome device, mext protocol");
   return 1;
 }
 
@@ -344,25 +386,22 @@ static void read_serial_series(void) {
   u8 y=0;
   u8 z=0;
   // read from ftdi and get number of bytes.
-  // the data is in external buffer ftdiRxBuf
+  // data is at beginning of rxBuf
   u8 nb = ftdi_read();
   
-  // first 2 bytes are always the same (0x31 0x60)
-  // ... standard terminal thing?
-
-  if(nb > 2) {
+  if(nb) {
     //    print_dbg("\r\n monome in: ");
-    for(i=2; i<nb; i+= 2) {
-      b0 = (u8)ftdiRxBuf[i];
-      b1 = (u8)ftdiRxBuf[i+1];
+    for(i=0; i<nb; i+= 2) {
+      b0 = (u8)rxBuf[i];
+      b1 = (u8)rxBuf[i+1];
       //      print_dbg_hex(b0); print_dbg(" ");
       //      print_dbg_hex(b1); print_dbg(" ");
  
-	x = (b1 & 0xf0) >> 4;
-	y = b1 & 0xf;
-	z = !((b0 & 0xf0) >> 4);
-	monome_grid_write_event(&ev, x, y, z);
-	post_event(&ev);
+      x = (b1 & 0xf0) >> 4;
+      y = b1 & 0xf;
+      z = !((b0 & 0xf0) >> 4);
+      monome_grid_write_event(&ev, x, y, z);
+      post_event(&ev);
     
     }
     //    print_dbg("\r\n");
@@ -370,42 +409,45 @@ static void read_serial_series(void) {
 }
 
 static void read_serial_mext(void) {
-	u8 i;
-	u8 b0, b1, b2;
-	u8 x=0;
-	u8 y=0;
-	u8 z=0;
-	// read from ftdi and get number of bytes.
-	// the data is in external buffer ftdiRxBuf
-	u8 nb = ftdi_read();
+  u8 i;
+  u8 b0, b1, b2;
+  u8 x=0;
+  u8 y=0;
+  u8 z=0;
+  // read from ftdi and get number of bytes.
+  // the data is at beginning of rxBuf
+  u8 nb = ftdi_read();
 
-	// first 2 bytes are always the same (0x31 0x60)
-	// ... standard terminal thing?
+  if(nb) {
+    //    print_dbg("\r\n monome in: ");
+    for(i=0; i<nb; i+= 3) {
+      b0 = (u8)rxBuf[i];
+      b1 = (u8)rxBuf[i+1];
+      b2 = (u8)rxBuf[i+2];
 
-	if(nb > 2) {
-	//    print_dbg("\r\n monome in: ");
-		for(i=2; i<nb; i+= 3) {
-			b0 = (u8)ftdiRxBuf[i];
-			b1 = (u8)ftdiRxBuf[i+1];
-			b2 = (u8)ftdiRxBuf[i+1];
-	//      print_dbg_hex(b0); print_dbg(" ");
-	//      print_dbg_hex(b1); print_dbg(" ");
-	
-			if(b0 == 0x20) {
-				x = b1;
-				y = b2;
-				z = 0;
-			} else if(b0 == 0x21) {
-				x = b1;
-				y = b2;
-				z = 1;
-			}
-			
-			monome_grid_write_event(&ev, x, y, z);
-			post_event(&ev);	
-		}
-	//    print_dbg("\r\n");
-	}	
+
+      print_dbg("\r\n read_serial_mext data: 0x");
+      print_dbg_hex(b0);
+      print_dbg(" ,  0x");
+      print_dbg_hex(b1);
+      print_dbg(" ,  0x");
+      print_dbg_hex(b2);
+
+      if(b0 == 0x20) {
+	x = b1;
+	y = b2;
+	z = 0;
+      } else if(b0 == 0x21) {
+	x = b1;
+	y = b2;
+	z = 1;
+      }
+      //			print_dbg("\r\n matched pattern from read_serial_mext");
+      monome_grid_write_event(&ev, x, y, z);
+      post_event(&ev);	
+    }
+    //    print_dbg("\r\n");
+  }	
 }
 
 //--- tx
@@ -429,13 +471,13 @@ static void grid_led_series(u8 x, u8 y, u8 val) {
 }
 
 static void grid_led_mext(u8 x, u8 y, u8 val) {
-	u8 b[3];
+  u8 b[3];
   
-	b[0] = 0x10 | val;
-	b[1] = x;
-	b[2] = y;
+  b[0] = 0x10 | val;
+  b[1] = x;
+  b[2] = y;
 	
-	ftdi_write(b, 3);
+  ftdi_write(b, 3);
 }
 
 static void grid_col_40h(u8 x, u8 val) {

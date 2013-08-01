@@ -24,12 +24,14 @@ typedef void(*keyHandler_t)(uiKey_t key, s32 val);
 typedef void(*redraw_t)(void);
 
 // messy page mode enum
+/// FIXME this is so stupid
 typedef enum  { 
    eModeNone,
    eModeClear,
    eModeCopy,
-   eModeStore,
+   eModeWrite,
    eModeRecall,
+   eModeDefault,
 } ePageMode;
 
 // class representing a page in a menu

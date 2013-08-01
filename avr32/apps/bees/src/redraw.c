@@ -215,20 +215,21 @@ void redraw_presets(void) {
   n = nCenter;
   y = SCREEN_ROW_CENTER;
   // modes
-  switch(curPage->mode) { 
-  case eModeClear:
-    screen_line(0, y, "CLEAR?", 14);
-    break;
-  case eModeCopy:
-    screen_line(0, y, "COPY?", 14);
-    break;
-  case eModeStore:
-    screen_line(0, y, "STORE?", 14);
-    break;
-  case eModeRecall:
-    screen_line(0, y, "RECALL?", 14);
-    break;
-  case eModeNone:
+   switch(curPage->mode) {  
+     //// FIXME
+  /* case eModeClear: */
+  /*   screen_line(0, y, "CLEAR?", 14); */
+  /*   break; */
+  /* case eModeCopy: */
+  /*   screen_line(0, y, "COPY?", 14); */
+  /*   break; */
+  /* case eModeStore: */
+  /*   screen_line(0, y, "STORE?", 14); */
+  /*   break; */
+  /* case eModeRecall: */
+  /*   screen_line(0, y, "RECALL?", 14); */
+  /*   break; */
+  /* case eModeNone: */
   default:
     draw_line_presets(n, num, y, 15);  
     break;
@@ -270,17 +271,20 @@ void redraw_scenes(void) {
   y = SCREEN_ROW_CENTER;
   // modes
   switch(curPage->mode) { 
-  case eModeClear:
-    screen_line(0, y, "CLEAR?", 14);
-    break;
+  /* case eModeClear: */
+  /*   screen_line(0, y, "CLEAR?", 14); */
+  /*   break; */
   case eModeCopy:
     screen_line(0, y, "COPY?", 14);
     break;
-  case eModeStore:
-    screen_line(0, y, "STORE?", 14);
+  case eModeWrite:
+    screen_line(0, y, "WRITE?", 14);
     break;
   case eModeRecall:
     screen_line(0, y, "RECALL?", 14);
+    break;
+  case eModeDefault:
+    screen_line(0, y, "DEFAULT?", 14);
     break;
   case eModeNone:
   default:
@@ -305,7 +309,7 @@ void redraw_scenes(void) {
   // draw header
   screen_line(0, 0, "SCENES", 12);
   // draw footer (function labels)
-  screen_line(0, CHAR_ROWS_1, "CLEAR COPY STORE RECALL", 10);
+  screen_line(0, CHAR_ROWS_1, "WRITE READ COPY DEFAULT", 10);
 }
 
 //==================================================

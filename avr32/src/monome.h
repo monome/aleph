@@ -11,7 +11,6 @@
 
 #include "events.h"
 #include "types.h"
-
 //----- types
 //eh...
 /* typedef struct _monomeGridEvent { */
@@ -21,6 +20,9 @@
 extern u8 monomeConnect;
 
 //------ functions
+
+// init
+extern void init_monome(void);
 
 // check monome device  from FTDI string descriptors
 extern u8 check_monome_device(char* mstr, char* pstr, char* sstr);

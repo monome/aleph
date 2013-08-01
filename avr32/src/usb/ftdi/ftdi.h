@@ -8,6 +8,10 @@
 #define FTDI_IN_BUF_SIZE 64
 #define FTDI_OUT_BUF_SIZE 64
 
+// ftdi sends 0x31 0x60 at the top of each packet.
+// apparently this is normal behavior.
+#define FTDI_RX_BUF_OFFSET 2
+
 // pointer to rx data
 extern volatile u8 ftdiRxBuf[];
 

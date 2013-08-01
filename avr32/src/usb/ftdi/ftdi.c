@@ -62,27 +62,7 @@ static void ftdi_transfer_done(
 
 //-------- extern functions
 void ftdi_write(u8* data, u32 bytes) {
-  //  int i;
-  //  u8 val;
   txBusy = 1;
-
-  /* //// testing */
-  /* if(data > 0) { */
-  /*   val = 145; */
-  /* } else { */
-  /*   val = 144; */
-  /* } */
-
-
-  //  for(i=0; i<FTDI_OUT_BUF_SIZE; i++) {
-  //    ftdi_out_buf[i] = val;
-  //  }
-  ///////
-  /*
-    if(!uhi_ftdi_out_run(ftdi_out_buf,
-    FTDI_OUT_BUF_SIZE,
-    &ftdi_transfer_done)) {
-  */
   if(!uhi_ftdi_out_run(data,
 		       bytes,
 		       &ftdi_transfer_done)) {
@@ -92,7 +72,6 @@ void ftdi_write(u8* data, u32 bytes) {
   }
   while (txBusy) { ;; }
   //  print_dbg("\r\n finished ftdi bulk output transfer");
-  
   if (status != UHD_TRANS_NOERROR) {
     print_dbg("\r\n ftdi tx error");
     return;
@@ -113,7 +92,7 @@ u32 ftdi_read(void) {
     return 0;
   }
   //    print_arr((u32)ftdi_in_buf, FTDI_IN_BUF_SIZE);
-  return rxBytes + 2;
+  return rxBytes - FTDI_RX_BUF_OFFSET;
 }
 
 

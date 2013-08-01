@@ -1,3 +1,11 @@
+/*
+  app_bees.c
+  aleph-avr32
+  bees
+
+  required app-specific implementation of avr32/src/app.h
+ */
+
 // asf
 #include "gpio.h"
 #include "print_funcs.h"
@@ -120,13 +128,12 @@ void app_handle_event(event_t* e) {
     break;
 
   case kEventMonomeGrid:
+    //   print_dbg("\r\n app_bees handling monome grid event");
     test_handle_monome_grid(e);
     break;
   case kEventMonomeArc:
-    //    test_handle_monome_grid(e);
     break;
   case kEventMonomeTilt:
-    //    test_handle_monome_grid(e);
     break;
 
 
