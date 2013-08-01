@@ -6,19 +6,42 @@ aleph.
 b todo
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+accounting // investment
+estimate // production expenses
+	BOM, spreadsheet update
+	rlc estimates
+production workflow
+
+avr uart
+i2c
+
 mechanical fixes, circuit revision
+	plate drawing for jay
 	
 TEST POINTS
 SIMPLIFY
 USB -> AVR?
+	http://www.makestuff.eu/wordpress/electronics/nanduino/usb-messaging/
+	http://pyusb.sourceforge.net/docs/1.0/tutorial.html
+	http://tuxgraphics.org/electronics/200901/tuxgraphics-isp-header.shtml
+	
+1u ceramic caps
+larger caps, some electrolytic?
 
 hat
-	remove 5v supply on CV in
 	input gain stage
-		LED follower, LED clip
+		???? FET switched input
+	# remove 5v supply on CV in		
 	output gain stage
-		LED follower
+		reschem, layout
 	headphone amp
+		# TPA6111A2
+		
+
+balanced
+	AD8476 balanced line driver
+	http://www.uneeda-audio.com/zbal.htm
+	http://www.harmonycentral.com/t5/Lessons-Theory/Balanced-Vs-Unbalanced-I-O-How-It-Works/ba-p/34639794
 
 enclosure
 	http://www.evsmetal.com/history.php
@@ -28,11 +51,17 @@ enclosure
 	http://www.ti.com/lit/ds/symlink/lmr62014.pdf
 	http://www.coilcraft.com/xal50xx.cfm
 	MBR0520L
+	
+i2c protection?
+	USE A BAS70 like the cv in
+	22 ohm inline?
+
+test ADC protection.
 
 soft power control, redo resistor values
 
-UPDATE spreadsheet
 schem cleanup
+
 aleph infographic diagram
 
 
@@ -94,7 +123,7 @@ think about
 	extended menu via last button (up triangle)
 	macros in routing mode, for example: insert trigger here (preserves routing to existing target)
 	operator page, each operator can have menu button which calls custom UI (ie, list editor)
-
+	remote control system-- all bees functions (ie create operator, etc) callable via USB/serial
 
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

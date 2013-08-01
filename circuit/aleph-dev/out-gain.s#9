@@ -3728,19 +3728,19 @@ shrink quad flat pack, square</description>
 </deviceset>
 <deviceset name="TDA1308" uservalue="yes">
 <gates>
-<gate name="U1" symbol="TDA1308" x="-2.54" y="-2.54"/>
+<gate name="U" symbol="TDA1308" x="-2.54" y="-2.54"/>
 </gates>
 <devices>
 <device name="" package="SO08">
 <connects>
-<connect gate="U1" pin="INA+" pad="1"/>
-<connect gate="U1" pin="INA-" pad="2"/>
-<connect gate="U1" pin="INB+" pad="3"/>
-<connect gate="U1" pin="INB-" pad="4"/>
-<connect gate="U1" pin="OUTA" pad="5"/>
-<connect gate="U1" pin="OUTB" pad="6"/>
-<connect gate="U1" pin="VDD" pad="7"/>
-<connect gate="U1" pin="VSS" pad="8"/>
+<connect gate="U" pin="INA+" pad="1"/>
+<connect gate="U" pin="INA-" pad="2"/>
+<connect gate="U" pin="INB+" pad="3"/>
+<connect gate="U" pin="INB-" pad="4"/>
+<connect gate="U" pin="OUTA" pad="5"/>
+<connect gate="U" pin="OUTB" pad="6"/>
+<connect gate="U" pin="VDD" pad="7"/>
+<connect gate="U" pin="VSS" pad="8"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -25166,7 +25166,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="AGND42" gate="VR1" x="284.48" y="180.34"/>
 <instance part="V68" gate="G$1" x="336.55" y="210.82"/>
 <instance part="C160" gate="G$1" x="166.37" y="205.74"/>
-<instance part="U$7" gate="U1" x="234.95" y="91.44"/>
+<instance part="U$7" gate="U" x="234.95" y="91.44"/>
 </instances>
 <busses>
 </busses>

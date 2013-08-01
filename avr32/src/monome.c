@@ -49,7 +49,7 @@ typedef struct e_monomeDesc {
   eMonomeDevice device;
   u8 cols;  // number of columns
   u8 rows;  // number of rows
-  u8 knobs; // number of encoders
+  u8 encs; // number of encoders
   u8 tilt;  // has tilt (??)  
 } monomeDesc;
 
@@ -71,7 +71,7 @@ static monomeDesc mdesc = {
   .device = eDeviceNumDevices, // dummy
   .cols = 0,
   .rows = 0,
-  .knobs = 0,
+  .encs = 0,
   .tilt = 0,
 };
 
@@ -289,7 +289,40 @@ static void setup_series(u8 cols, u8 rows) {
 
 // setup extended device, return success /failure of query
 static u8 setup_mext(void) {
-  ///// TODO.. 
+  u8 b0, b1, b2;
+  mdesc.protocol = eProtocolMext;
+
+  ftdi_write(0, 1);	// query
+
+  u8 nb = ftdi_read();
+  b0 = (u8)ftdiRxBuf[2];
+  b1 = (u8)ftdiRxBuf[3];
+  b2 = (u8)ftdiRxBuf[4];
+  
+  if(b1 == 1) {
+	  mdesc.device = eDeviceGrid;
+	 
+	  if(b2 == 1) {
+		mdesc.rows = 8;
+		mdesc.cols = 8;
+	  }
+	  else if(b2 == 2) {
+		mdesc.rows = 8;
+		mdesc.cols = 16;
+	  }
+	  else if(b2 == 4) {
+		mdesc.rows = 16;
+		mdesc.cols = 16;
+	  }
+		
+	  mdesc.tilt = 1;
+  }
+  else if(b1 == 5) {
+	  mdesc.device = eDeviceArc;
+	  mdesc.encs = b2;
+  }
+  
+
   set_funcs();
 
   if(/*success*/ 0 ) {
@@ -327,30 +360,55 @@ static void read_serial_series(void) {
       b1 = (u8)ftdiRxBuf[i+1];
       //      print_dbg_hex(b0); print_dbg(" ");
       //      print_dbg_hex(b1); print_dbg(" ");
-
-      if(((b0 & 0xf0) >> 4) == 1) { // lift
-	//	print_dbg("\r\n series lift");
+ 
 	x = (b1 & 0xf0) >> 4;
 	y = b1 & 0xf;
-	z = 0;
+	z = !((b0 & 0xf0) >> 4);
 	monome_grid_write_event(&ev, x, y, z);
 	post_event(&ev);
-      }
-
-      else if( (b0 & 0xf0) == 0 ) { // press
-	//	print_dbg("\r\n series press");
-	x = (b1 & 0xf0) >> 4;
-	y = b1 & 0xf;
-	z = 1;
-	monome_grid_write_event(&ev, x, y, z);
-	post_event(&ev);
-      }
+    
     }
     //    print_dbg("\r\n");
   }
 }
 
 static void read_serial_mext(void) {
+	u8 i;
+	u8 b0, b1, b2;
+	u8 x=0;
+	u8 y=0;
+	u8 z=0;
+	// read from ftdi and get number of bytes.
+	// the data is in external buffer ftdiRxBuf
+	u8 nb = ftdi_read();
+
+	// first 2 bytes are always the same (0x31 0x60)
+	// ... standard terminal thing?
+
+	if(nb > 2) {
+	//    print_dbg("\r\n monome in: ");
+		for(i=2; i<nb; i+= 3) {
+			b0 = (u8)ftdiRxBuf[i];
+			b1 = (u8)ftdiRxBuf[i+1];
+			b2 = (u8)ftdiRxBuf[i+1];
+	//      print_dbg_hex(b0); print_dbg(" ");
+	//      print_dbg_hex(b1); print_dbg(" ");
+	
+			if(b0 == 0x20) {
+				x = b1;
+				y = b2;
+				z = 0;
+			} else if(b0 == 0x21) {
+				x = b1;
+				y = b2;
+				z = 1;
+			}
+			
+			monome_grid_write_event(&ev, x, y, z);
+			post_event(&ev);	
+		}
+	//    print_dbg("\r\n");
+	}	
 }
 
 //--- tx
@@ -374,6 +432,13 @@ static void grid_led_series(u8 x, u8 y, u8 val) {
 }
 
 static void grid_led_mext(u8 x, u8 y, u8 val) {
+	u8 b[3];
+  
+	b[0] = 0x10 | val;
+	b[1] = x;
+	b[2] = y;
+	
+	ftdi_write(b, 3);
 }
 
 static void grid_col_40h(u8 x, u8 val) {
