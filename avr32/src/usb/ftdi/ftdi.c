@@ -125,7 +125,7 @@ void ftdi_setup(void) {
   //  print_unicode_string(prodstr, FTDI_STRING_MAX_LEN);
   //  print_unicode_string(serstr, FTDI_STRING_MAX_LEN);
 
-  check_monome_device(manstr, prodstr, serstr);
+  check_monome_device_desc(manstr, prodstr, serstr);
 
   // set connection flag
   ftdiPlug = 1;

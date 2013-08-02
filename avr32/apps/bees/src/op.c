@@ -28,6 +28,7 @@ const op_desc_t op_registry[numOpClasses] = {
   { "ADD",  sizeof(op_add_t) , &op_add_init },
   { "MUL",  sizeof(op_mul_t) , &op_mul_init },
   { "GATE", sizeof(op_gate_t), &op_gate_init },
+  { "RAWGRID", sizeof(op_mgrid_raw_t), &op_mgrid_raw_init },
   // { "ACCUMULATE", sizeof(op_accum_t) },
   // { "SELECT", sizeof(op_sel_t) },
   // { "LINEAR MAP", sizeof(op_lin_t) },

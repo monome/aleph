@@ -1,3 +1,10 @@
+/* app_timers.c
+   
+   setup up application software timers.
+   TODO: should really split some of these off from avr32 core to app
+ */
+
+
 // ASF
 #include "compiler.h"
 #include "delay.h"
@@ -19,6 +26,8 @@
 
 #include "app_timers.h"
 
+
+
 //----- static variables
 
 //--- timers
@@ -30,8 +39,10 @@ static swTimer_t encTimer;
 //static swTimer_t swTimer;
 // poll ADC
 static swTimer_t adcTimer;
-// poll FTDI device 
-static swTimer_t monomeTimer;
+// poll monome device 
+static swTimer_t monomePollTimer;
+// refresh monome device 
+static swTimer_t monomeRefreshTimer;
 
 //--- static misc
 static u8 i;
@@ -73,19 +84,32 @@ static void adc_timer_callback(int tag) {
 }
 
 // monome polling callback
-static void monome_timer_callback(int tag) {
-  if (monomeConnect) {
+static void monome_poll_timer_callback(int tag) {
+  if (monomeConnect > 0) {
     //    print_dbg("\r\n posting monome read event");
-    e.eventType = kEventMonomeRead;
+    e.eventType = kEventMonomePoll;
     post_event(&e);
   }
+  
 }
 
 
+// monome refresh callback
+static void monome_refresh_timer_callback(int tag) {
+  if (monomeConnect) {
+    //    print_dbg("\r\n posting monome refresh event");
+    if(monomeFrameDirty > 0) {
+      e.eventType = kEventMonomeRefresh;
+      post_event(&e);
+    }
+  }
+}
+
 //====== external
 void init_app_timers(void) {
-  set_timer(&screenTimer, eScreenTimerTag, 30,   &screen_timer_callback,  1);
-  set_timer(&encTimer,    eEncTimerTag,    20,    &enc_timer_callback,    1);
-  set_timer(&adcTimer,    eAdcTimerTag,    5,    &adc_timer_callback,     1);
-  set_timer(&monomeTimer,   eMonomeTimerTag,   20,    &monome_timer_callback,    1);
+  set_timer(&screenTimer,        eScreenTimerTag,        30,  &screen_timer_callback,  1);
+  set_timer(&encTimer,           eEncTimerTag,           20,  &enc_timer_callback,    1);
+  set_timer(&adcTimer,           eAdcTimerTag,           5,   &adc_timer_callback,     1);
+  set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);
+  set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 20,  &monome_refresh_timer_callback, 1);
 }

@@ -10,7 +10,7 @@
 #include "gpio.h"
 #include "print_funcs.h"
 
-// aleph-avr32
+// aleph-avr32nothing seems 
 #include "app.h"
 #include "bfin.h"
 #include "events.h"
@@ -27,14 +27,6 @@
 
 
 static u8 keyMode = 0;
-
-
-//// test monome grid handling
-static void test_handle_monome_grid(event_t* ev) {
-  u8 x, y, z;
-  monome_grid_key_read_event(ev, &x, &y, &z);
-  (*monome_grid_led)(x, y, z);
-}
 
 
 void app_handle_event(event_t* e) {
@@ -131,7 +123,7 @@ void app_handle_event(event_t* e) {
     //    print_dbg("\r\n app_bees handling monome grid event");
     //    print_dbg("\r\n monome_grid_key_handler: 0x");
     //    print_dbg_hex((u32)monome_grid_key_handler);
-    (*monome_grid_key_handler)((u32)e->eventData);
+    (*monome_grid_key_handler)((void*)monomeOpFocus, (u32)e->eventData);
     //    test_handle_monome_grid(e);
     break;
   case kEventMonomeGridTilt:

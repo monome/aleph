@@ -16,8 +16,10 @@ typedef enum {
   kEventAdc3 ,
   /// screen refresh
   kEventRefresh,
-  /// monome polling
-  kEventMonomeRead,
+  /// poll monome
+  kEventMonomePoll,
+  // refresh monome
+  kEventMonomeRefresh,
   /// midi polling
   //...
   /// HID polling

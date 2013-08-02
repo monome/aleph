@@ -57,9 +57,13 @@ typedef void(*ring_map_t)(u8 n, u8* data);
 
 //--------------------------------
 //------- variables
+// connected flag ( TODO: device id? )
 extern u8 monomeConnect;
-//extern void gridFrameData[MONOME_GRID_MAX_FRAMES][MONOME_GRID_FRAME_SIZE];
-extern u8 gridFrameDirty[MONOME_GRID_MAX_FRAMES];
+// dirt flags for each frame, as bitfield
+extern u8 monomeFrameDirty;
+// a buffer big enough to hold all l data for 256 or arc4
+// each led gets a full byte
+extern u8 monomeLedBuffer[MONOME_MAX_LED_BYTES];
 
 // global pointers to function types defined above.
 // assigned according to detected device protocol.
@@ -74,19 +78,22 @@ extern ring_map_t monome_ring_map;
 // initialize
 extern void init_monome(void);
 // check monome device  from FTDI string descriptors
-extern u8 check_monome_device(char* mstr, char* pstr, char* sstr);
-// read serial data from ftdi
-//extern void monome_read_serial(void);
+extern u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr);
+// check dirty flags and refresh leds
+extern void monome_grid_refresh(void);
 
 // convert event data
 
 // grid presses
-extern void monome_grid_key_read_event(event_t* ev, u8* x, u8* y, u8* val);
+extern void monome_grid_key_parse_event_data(u32 data, u8* x, u8* y, u8* val);
 // grid tilt / adc
-extern void monome_grid_adc_read_event(event_t* ev, u8* n, u16* val);
+extern void monome_grid_adc_parse_event_data(u32 data, u8* n, u16* val);
 // ring encoder
-extern void monome_ring_enc_read_event(event_t* ev, u8* n, s8* delta);
+extern void monome_ring_enc_parse_event_data(u32 data, u8* n, s8* delta);
 // ring press/lift
-extern void monome_ring_key_read_event(event_t* ev, u8* n, u8* val);
+extern void monome_ring_key_parse_event_data(u32 data, u8* n, u8* val);
+
+// set quadrant dirty flag
+extern void monome_calc_quadrant_flag(u8 x, u8 y);
 
 #endif // h guard

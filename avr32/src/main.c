@@ -167,8 +167,6 @@ static void check_events(void) {
 	// won't work if called from an interrupt.
 	ftdi_setup();
     }
-
-
     if(startup) {
       if( e.eventType == kEventSwitchDown0
 	  || e.eventType == kEventSwitchDown1
@@ -185,10 +183,25 @@ static void check_events(void) {
 	////// FIXME: this event can and should be eliminated. 
 	////// ftdi_read callback can strip leading bytes
 	//// and check for rx data before invoking main loop or monome.c
-      case kEventMonomeRead :
+      case kEventMonomePoll :
 	// poll monome serial input and spawn relevant events
 	monome_read_serial();
 	break;
+      case kEventMonomeRefresh :
+	// refresh monome device from led state buffer
+	//	print_dbg("\r\n handle monome refresh event");
+	monome_grid_refresh();
+	// TODO: deal with ring devices
+	break;
+
+
+	//////test: print monome led state buffer and dirty flags
+      /* case kEventSwitchDown0: */
+      /* 	print_dbg("\r\n monome led buf: "); */
+      /* 	print_byte_array(monomeLedBuffer, 256, 16); */
+      /* 	break; */
+
+	//////
       default:
 	// all other events are sent to application layer
 	app_handle_event(&e);

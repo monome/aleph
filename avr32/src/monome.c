@@ -61,6 +61,12 @@ typedef struct e_monomeDesc {
 
 // connected flag
 u8 monomeConnect = 0;
+// dirty flags for each quadrant or knob (bitwise)
+u8 monomeFrameDirty = 0;
+// a buffer big enough to hold all l data for 256 or arc4
+// each led gets a full byte
+u8 monomeLedBuffer[MONOME_MAX_LED_BYTES];
+
 // global pointers to send functions.
 read_serial_t monome_read_serial;
 grid_led_t monome_grid_led;
@@ -117,10 +123,10 @@ static void grid_map_level_mext(u8 x, u8 y, u8* data);
 static void ring_map_mext(u8 n, u8* data);
 
 // event write
-static inline void monome_grid_key_write_event(event_t* ev, u8 x, u8 y, u8 val);
-static inline void monome_grid_adc_write_event(event_t* ev, u8 n, u16 val);
-static inline void monome_ring_enc_write_event(event_t* ev, u8 n, u8 val);
-static inline void monome_ring_key_write_event(event_t* ev, u8 n, u8 val);
+static inline void monome_grid_key_write_event( u8 x, u8 y, u8 val);
+static inline void monome_grid_adc_write_event( u8 n, u16 val);
+static inline void monome_ring_enc_write_event( u8 n, u8 val);
+static inline void monome_ring_key_write_event( u8 n, u8 val);
 
 //---------------------------------
 //----- static variables
@@ -165,11 +171,15 @@ extern void init_monome(void) {
   // ftdi precedes each packet with 0x31 0x60. 
   // this is to avoid actually stripping these 2 bytes after each read
   rxBuf = ftdiRxBuf + FTDI_RX_BUF_OFFSET;
+  u32 i;
+  for(i=0; i<MONOME_MAX_LED_BYTES; i++) {
+    monomeLedBuffer[i] = 0;
+  }
   print_dbg("\r\n finished monome class init");
 }
 
 // determine if FTDI string descriptors match monome device pattern
-extern u8 check_monome_device(char* mstr, char* pstr, char* sstr) {
+extern u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr) {
   char buf[16];
   u8 matchMan = 0;
   u8 i;
@@ -236,68 +246,96 @@ extern u8 check_monome_device(char* mstr, char* pstr, char* sstr) {
   }
 }
 
-/* extern void monome_read_serial(void) { */
-/*   (*readSerialFunc)(); */
-/* } */
+// check dirty flags and refresh leds
+// FIXME: don't like all these tests and hacks but ok for now
+extern void monome_grid_refresh(void) {
+  //  print_dbg("\r\n monome grid refresh; framedirty flag: 0x");
+  //  print_dbg_hex(monomeFrameDirty);
+  if( monomeFrameDirty & 0b0001 ) {
+    grid_map_mext(0, 0, monomeLedBuffer);
+      monomeFrameDirty &= 0b1110;
+  }
 
-/* extern void monome_grid_led(u8 x, u8 y, u8 val) { */
-/*   (*gridLedFunc)(x, y, val); */
-/* } */
+  if( monomeFrameDirty & 0xb0010 ) {
+      if ( mdesc.cols > 8 ) {
+	grid_map_mext(8, 0, monomeLedBuffer + 8);
+	monomeFrameDirty &= 0b1101;
+      }
+  }
 
-/* extern void monome_grid_map(u8 x, u8 val) { */
-/*   (*gridMapFunc)(x, val); */
-/* } */
+  if( monomeFrameDirty &  0b0100 ) { 
+    if( mdesc.rows > 8 ) {
+      grid_map_mext(0, 8, monomeLedBuffer +  128);
+      monomeFrameDirty &= 0b1011;
+    }
+  }
 
-/* extern void monome_grid_map_level(u8 y, u8 val) { */
-/*   (*gridLevelMapFunc)(y, val); */
-/* } */
-
-/* extern void monome_arc_led(u8 n, u8 idx, u8 val) { */
-/*   (*arcLedFunc)(n, idx, val); */
-/* } */
+  if( monomeFrameDirty & 0b1000 ) {
+    if( (mdesc.rows > 8) && (mdesc.cols > 8) )  {
+      grid_map_mext(8, 8, monomeLedBuffer + 136);
+      monomeFrameDirty &= 0b0111;
+    }
+  }
+}
 
 //---- convert to/from event data
 
 // grid key
-static inline void monome_grid_key_write_event(event_t* ev, u8 x, u8 y, u8 val) {
-  u8* data = (u8*)(&(ev->eventData));
+static inline void monome_grid_key_write_event(u8 x, u8 y, u8 val) {
+  u8* data = (u8*)(&(ev.eventData));
   data[0] = x;
   data[1] = y;
   data[2] = val;
-  ev->eventType = kEventMonomeGridKey;
+  /* print_dbg("\r\n !!!! post monome grid key event: "); */
+  /* print_dbg("x: "); */
+  /* print_dbg_ulong(x); */
+  /* print_dbg("; y: "); */
+  /* print_dbg_ulong(y); */
+  /* print_dbg("; z: "); */
+  /* print_dbg_ulong(val); */
+  /* print_dbg("   !!!!!!!!!"); */
+
+  ev.eventType = kEventMonomeGridKey;
+  post_event(&ev);
+
 }
-extern void monome_grid_key_read_event(event_t* ev, u8* x, u8* y, u8* val) {
-  u8* data = (u8*)(&(ev->eventData));
-  *x = data[0];
-  *y = data[1];
-  *val = data[2];
-  ev->eventType = kEventMonomeGridKey;
+extern void monome_grid_key_parse_event_data(u32 data, u8* x, u8* y, u8* val) {
+  u8* bdata = (u8*)(&data);
+  *x = bdata[0];
+  *y = bdata[1];
+  *val = bdata[2];
 }
 
 // grid tilt / adc
-static inline void monome_grid_adc_write_event(event_t* ev, u8 n, u16 val) {
+static inline void monome_grid_adc_write_event( u8 n, u16 val) {
   // TODO
 }
-extern void monome_grid_adc_read_event(event_t* ev, u8* n, u16* val) {
+extern void monome_grid_adc_parse_event_data(u32 data, u8* n, u16* val) {
   // TODO
 }
 
 // ring encoder
-static inline void monome_ring_enc_write_event(event_t* ev, u8 n, u8 val) {
+static inline void monome_ring_enc_write_event( u8 n, u8 val) {
   // TODO
 }
-extern void monome_ring_enc_read_event(event_t* ev, u8* n, s8* val) {
+extern void monome_ring_enc_parse_event_data(u32 data, u8* n, s8* val) {
   /// TODO
 }
 
 // ring press/lift
-static inline void monome_ring_key_write_event(event_t* ev, u8 n, u8 val) {
+static inline void monome_ring_key_write_event( u8 n, u8 val) {
   // TODO
 }
-extern void monome_ring_key_read_event(event_t* ev, u8* n, u8* val) {
+extern void monome_ring_key_parse_event_data(u32 data, u8* n, u8* val) {
   // TODO
 }
 
+// set quadrant refresh flag from pos
+extern void monome_calc_quadrant_flag(u8 x, u8 y) {
+  static u8 q;
+  q = (x > 7) | ((y > 7) << 1);  
+  monomeFrameDirty |= (1 << q);  
+}
 
 //=============================================
 //------ static function definitions
@@ -419,51 +457,59 @@ static void read_serial_series(void) {
       x = (b1 & 0xf0) >> 4;
       y = b1 & 0xf;
       z = !((b0 & 0xf0) >> 4);
-      monome_grid_key_write_event(&ev, x, y, z);
-      post_event(&ev);
-    
+      monome_grid_key_write_event(x, y, z);
     }
   }
 }
 
 static void read_serial_mext(void) {
-  static u8 nb;
+  static u8 nbr; // number of bytes read
+  static u8 nbp; // number of bytes processed
+  static u8* prx; // pointer to rx buf
   static u8 com;
 
   // read from ftdi and get number of bytes.
   // the data is at beginning of rxBuf  
-  nb = ftdi_read();
+  nbr = ftdi_read();
   
-  if(nb) {
-    com = (u8)(*rxBuf);    
-    /* print_dbg("\r\n read serial, mext protocol, data: 0x"); */
-    /* print_dbg_hex(rxBuf[0]); */
-    /* print_dbg(" ,  0x"); */
-    /* print_dbg_hex(rxBuf[1]); */
-    /* print_dbg(" ,  0x"); */
-    /* print_dbg_hex(rxBuf[2]); */
-    if(com == 0x20) { // grid key up
-      monome_grid_key_write_event(&ev, rxBuf[1], rxBuf[2], 0);
-      post_event(&ev);
-    }
-    else if (com == 0x21) { // grid key down
-      monome_grid_key_write_event(&ev, rxBuf[1], rxBuf[2], 1);
-      post_event(&ev);
-    }
-    else if (com == 0x50) { // ring delta
-      monome_ring_enc_write_event(&ev, rxBuf[1], rxBuf[2]);
-      post_event(&ev);
-    }
-    else if (com == 0x51) { // ring key up
-      monome_ring_key_write_event(&ev, rxBuf[1], 0);
-      post_event(&ev);
-    }
-    else if (com == 0x52) { // ring key down
-      monome_ring_key_write_event(&ev, rxBuf[1], 1);
-      post_event(&ev);
-    }
-    // ... other commands?
-  }	
+  if(nbr) {
+    nbp = 0;
+    prx = (u8*)rxBuf;
+    while(nbp < nbr) {
+      com = (u8)(*(prx++));    
+      nbp++;
+      /* print_dbg("\r\n read serial, mext protocol, data: 0x"); */
+      /* print_dbg_hex(rxBuf[0]); */
+      /* print_dbg(" ,  0x"); */
+      /* print_dbg_hex(rxBuf[1]); */
+      /* print_dbg(" ,  0x"); */
+      /* print_dbg_hex(rxBuf[2]); */
+      if(com == 0x20) { // grid key up
+	monome_grid_key_write_event( *prx, *(prx+1), 0);
+	nbp += 2;
+	prx += 2;
+      }
+      else if (com == 0x21) { // grid key down
+	monome_grid_key_write_event( *prx, *(prx+1), 1);
+	nbp += 2;
+	prx += 2;
+      }
+      else if (com == 0x50) { // ring delta
+	monome_ring_enc_write_event( *prx, *(prx+1));
+	nbp += 2;
+	prx += 2;
+      }
+      else if (com == 0x51) { // ring key up
+	monome_ring_key_write_event( *prx++, 0);
+	prx++;
+      }
+      else if (com == 0x52) { // ring key down
+	monome_ring_key_write_event( *prx++, 1);
+	nbp++;
+      }
+      // ... other commands?
+    }	
+  }
 }
 
 //--- tx
@@ -487,9 +533,10 @@ static void grid_led_mext(u8 x, u8 y, u8 val) {
 }
 
 // update a whole frame
-// note that our input data is one byte per led!!
+// . note that our input data is one byte per led!!
 // this will hopefully help optimize operator routines,
 // which cannot be called less often than refresh/tx, and are therefore prioritized.
+// assume data is row-first 16x16.
 static void grid_map_mext( u8 x, u8 y, u8* data ) {
   static u8 tx[11] = { 0x14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   u8* pdata;
@@ -501,13 +548,15 @@ static void grid_map_mext( u8 x, u8 y, u8* data ) {
   pdata = data;
   ptx = tx + 3;
   
+  /// FIXME: name these constants somewhere. i guess.
   // copy and convert
   for(i=0; i<8; i++) {
     *ptx = 0;
     for(j=0; j<8; j++) {
-      *ptx |= ((*pdata > 0) << i);
+      *ptx |= ((*pdata > 0) << j);
       pdata++;
     }
+    pdata += 8; // skip the rest of the row to get back in target quad
     ptx++;
   }
   ptx++;
@@ -545,381 +594,3 @@ static void ring_map_mext(u8 n, u8* data) {
 
 
 
-
-
-
-/* 
-
-EXTENDED (current): 
-updated 110626 (corrected some typos)
-
-
-
-monome protocol / OSC spec
---------------------------
-
-//// input (to serialosc/device)
-
-// sys
-note:		no need to re-query the device. serialosc can query on connect then store results?
-
-/sys/prefix
-/sys/port
-/sys/host
-
-pattern:	/sys/query
-desc:		request device information
-serial:		[0x00]
-
-pattern:	/sys/id
-desc:		request device ID string
-serial:		[0x01]
-
-pattern:	/sys/size	
-desc:		request grid size
-serial:		[0x05]
-
-// led-grid
-
-pattern:	/prefix/led/set x y s	
-desc:		set led state
-args:		x = x value (0-255)
-			y = y value (0-255)
-			s = on/off (0-1)
-serial:		if s = 0, [0x10, x, y]
-			if s = 1, [0x11, x, y]
-			
-pattern:	/prefix/led/all s	
-desc:		set all leds
-args:		s = on/off (0-1)
-serial:		if s = 0, [0x12]
-			if s = 1, [0x13]
-
-pattern:	/prefix/led/map x y d[8]
-desc:		set 8x8 block of leds, with offset
-args:		x = x offset, will be floored to multiple of 8 by firmware
-			y = y offset, will be floored to multiple of 8 by firmware
-			d[8] = bitwise display data
-serial:		[0x14, x, y, d[8]]
-
-pattern:	/prefix/led/row x y d
-desc:		set 8x1 block of leds, with offset
-args:		x = x offset, will be floored to multiple of 8 by firmware
-			y = y offset
-			d = bitwise display data
-serial:		[0x15, x, y, d]
-note:		d can be an array. for each additional element, another serial packet is sent, with x offset incremented by 8.
-
-pattern:	/prefix/led/col x y d
-desc:		set 1x8 block of leds, with offset
-args:		x = x offset
-			y = y offset, will be floored to multiple of 8 by firmware
-			d = bitwise display data
-serial:		[0x16 x, y, d]
-note:		d can be an array. for each additional element, another serial packet is sent, with y offset incremented by 8.
-
-pattern:	/prefix/led/intensity i
-desc:		set intensity for entire grid
-args:		i = intensity (0-15)
-serial:		[0x17, i]
-
-pattern:	/prefix/led/level/set x y i	
-desc:		set led intensity
-args:		x = x value (0-255)
-			y = y value (0-255)
-			i = intensity (0-15)
-serial:		[0x18, x, y, i]
-
-pattern:	/prefix/led/level/all s	
-desc:		set all leds to level
-args:		i = intensity (0-15)
-serial:		[0x19, i]
-
-pattern:	/prefix/led/level/map x y d[64]
-desc:		set 8x8 block of leds levels, with offset
-args:		x = x offset, will be floored to multiple of 8 by firmware
-		y = y offset, will be floored to multiple of 8 by firmware
-		d[64] = intensities
-serial:		[0x1A, x, y, d[32]]
-
-pattern:	/prefix/led/level/row x y d[8]
-desc:		set 8x1 block of led levels, with offset
-args:		x = x offset, will be floored to multiple of 8 by firmware
-		y = y offset
-		d[8] = intensities
-serial:		[0x1B, x, y, d[4]]
-note:		if d[4] has more than 8 elements (multiple of 8) send multiple serial packets with proper offset
-
-pattern:	/prefix/led/level/col x y d[8]
-desc:		set 1x8 block of led levels, with offset
-args:		x = x offset
-		y = y offset, will be floored to multiple of 8 by firmware
-		d[8] = intensities
-serial:		[0x1C x, y, d[4]]
-note:		if d[4] has more than 8 elements (multiple of 8) send multiple serial packets with proper offset
-
-
-// led-ring
-
-pattern:	/prefix/ring/set n x a
-desc:		set led x of ring n to value a
-args:		n = ring number
-			x = led number
-			a = value (0-15)
-serial:		[0x90, n, x, a]
-
-pattern:	/prefix/ring/all n a
-desc:		set all leds of ring n to a
-args:		n = ring number
-			a = value
-serial:		[0x91, n, a]
-
-pattern:	/prefix/ring/map n d[32]
-desc:		set leds of ring n to array d
-args:		n = ring number
-			d[32] = 64 states, 4 bit values, in 32 consecutive bytes
-			d[0] (0:3) value 0
-			d[0] (4:7) value 1
-			d[1] (0:3) value 2
-			....
-			d[31] (0:3) value 62
-			d[31] (4:7) value 63
-serial:		[0x92, n d[32]]
-
-pattern:	/prefix/ring/range n x1 x2 a
-desc:		set leds inclusive from x1 and x2 of ring n to a
-args:		n = ring number
-			x1 = starting position
-			x2 = ending position
-			a = value
-serial:		[0x93, n, x1, x2, a]
-note:		set range x1-x2 (inclusive) to a. wrapping supported, ie. set range 60,4 would set values 60,61,62,63,0,1,2,3,4. always positive direction sweep. ie. 4,10 = 4,5,6,7,8,9,10 whereas 10,4 = 10,11,12,13...63,0,1,2,3,4 
-
-
-
-//// output (from serialosc/device)
-
-// sys
-
-pattern:	/sys/query s n
-desc:		device information
-serial:		[0x00, s, n]
-args:		s = subsection, enumerated as strings [null, "led-grid", "key-grid", "digital-out", "digital-in", "encoder", "analog-in", "analog-out", "tilt", "led-ring"]
-			n = number
-
-pattern:	/sys/id s[64]
-desc:		device ID string
-serial:		[0x01, s[64]]
-args:		s = id string, 64 chars
-
-pattern:	/sys/size x y	
-desc:		grid size
-serial:		[0x05, x, y]
-args:		x = x size
-			y = y size
-			
-// key
-
-pattern:	/prefix/key x y s
-desc:		key state change
-serial:		if s = 0 [0x00, x, y] key up
-			if s = 1 [0x01, x, y] key down
-args:		x = x position
-			y = y position
-			
-// encoder
-
-pattern:	/prefix/enc/delta n d
-desc:		encoder position change
-serial:		[0x50, n, d]
-args:		n = encoder number
-			d = delta (signed char)
-
-pattern:	/prefix/enc/key n d
-desc:		encoder position change
-serial:		if d = 0 [0x51 n] key up
-			if d = 1 [0x52 n] key down
-args:		n = encoder number
-
-
-
-*/
-
-
-/*
-
-SERIES:
-monome serial protocol series 256/128/64
-brian crabtree - tehn@monome.org
-
-revision: 070903
-
-
-from device:
-
-message id:	(0) keydown
-bytes:		2
-format:		iiii.... xxxxyyyy
-			i (message id) = 0
-			x (x value) = 0-15 (four bits)
-			y (y value) = 0-15 (four bits)
-decode:		id match: byte 0 >> 4 == 0
-			x: byte 1 >> 4
-			y: byte 1 & 0x0f
-
-
-message id:	(1) keyup
-bytes:		2
-format:		iiii.... xxxxyyyy
-			i (message id) = 1
-			x (x value) = 0-15 (four bits)
-			y (y value) = 0-15 (four bits)
-decode:		id match: byte 0 >> 4 == 1
-			x: byte 1 >> 4
-			y: byte 1 & 0x0f
-			
-			
-			
-to device:
-
-message id:	(2) led_on
-bytes:		2
-format:		iiii.... xxxxyyyy
-			i (message id) = 2
-			x (x value) = 0-15 (four bits)
-			y (y value) = 0-15 (four bits)
-encode:		byte 0 = (id) << 4 = 32
-			byte 1 = (x << 4) | y
-			
-
-message id:	(3) led_off
-bytes:		2
-format:		iiii.... xxxxyyyy
-			i (message id) = 3
-			x (x value) = 0-15 (four bits)
-			y (y value) = 0-15 (four bits)
-encode:		byte 0 = (id) << 4 = 48
-			byte 1 = (x << 4) | y
-
-
-message id:	(4) led_row1
-bytes:		2
-format:		iiiiyyyy aaaaaaaa
-			i (message id) = 4
-			y (row to update) = 0-15 (4 bits)
-			a (row data 0-7) = 0-255 (8 bits)
-encode:		byte 0 = ((id) << 4) | y = 64 + y
-			byte 1 = a
-
-
-message id:	(5) led_col1
-bytes:		2
-format:		iiiixxxx aaaaaaaa
-			i (message id) = 5
-			x (col to update) = 0-15 (4 bits)
-			a (col data 0-7) = 0-255 (8 bits)
-encode:		byte 0 = ((id) << 4) | x = 80 + x
-			byte 1 = a
-	
-			
-message id:	(6) led_row2
-bytes:		3
-format:		iiiiyyyy aaaaaaaa bbbbbbbb
-			i (message id) = 6
-			y (row to update) = 0-15 (4 bits)
-			a (row data 0-7) = 0-255 (8 bits)
-			b (row data 8-15) = 0-255 (8 bits)
-encode:		byte 0 = ((id) << 4) | y = 96 + y
-			byte 1 = a
-			byte 2 = b
-
-
-message id:	(7) led_col2
-bytes:		3
-format:		iiiixxxx aaaaaaaa bbbbbbbb
-			i (message id) = 7
-			x (col to update) = 0-15 (4 bits)
-			a (col data 0-7) = 0-255 (8 bits)
-			b (col data 8-15) = 0-255 (8 bits)
-encode:		byte 0 = ((id) << 4) | x = 112 + x
-			byte 1 = a
-			byte 2 = b
-
-
-message id:	(8) led_frame
-bytes:		9
-format:		iiii..qq aaaaaaaa bbbbbbbb cccccccc dddddddd eeeeeeee ffffffff gggggggg hhhhhhhh
-			i (message id) = 8
-			q (quadrant) = 0-3 (2 bits)
-			a-h (row data 0-7, per row) = 0-255 (8 bits)
-encode:		byte 0 = ((id) << 4) | q = 128 + q
-			byte 1,2,3,4,5,6,7,8 = a,b,c,d,e,f,g,h
-note:		quadrants are from top left to bottom right, as shown:
-			0 1
-			2 3
-
-message id:	(9) clear
-bytes:		1
-format:		iiii---c
-			i (message id) = 9
-			c (clear state) = 0-1 (1 bit)
-encode:		byte 0 = ((id) << 4) | c = 144 + c
-note:		clear state of 0 turns off all leds.
-			clear state of 1 turns on all leds.
-						
-
-message id:	(10) intensity
-bytes:		1
-format:		iiiibbbb
-			i (message id) = 10
-			b (brightness) = 0-15 (4 bits)
-encode:		byte 0 = ((id) << 4) | b = 160 + b
-
-
-message id:	(11) mode
-bytes:		1
-format:		iiii..mm
-			i (message id) = 11
-			m (mode) = 0-3 (2 bits)
-encode:		byte 0 = ((id) << 4) | m = 176 + m
-note:		mode = 0 : normal
-			mode = 1 : test (all leds on)
-			mode = 2 : shutdown (all leds off)
-			
-
-
-			
-			
-auxiliary ports
-
-to device:
-
-message id:	(12) activate port
-bytes:		1
-format:		iiiiaaaa
-			i (message id) = 12
-			a (which port) = 0-15 (four bits)
-encode:		byte 0 = (id) << 4 = 192 + a
-			
-			
-message id:	(13) deactivate port
-bytes:		1
-format:		iiiiaaaa
-			i (message id) = 13
-			a (which port) = 0-15 (four bits)
-encode:		byte 0 = (id) << 4 = 208 + a
-			
-			
-from device:
-
-message id:	(14) auxiliary input
-bytes:		2
-format:		iiiiaaaa dddddddd
-			i (message id) = 14
-			a (port number) = 0-15 (four bits)
-			d (data) = 0-255 (eight bits)
-decode:		id match: byte 0 >> 4 == 1
-			a: byte 0 & 0x0f
-			d: byte 1
-
- */

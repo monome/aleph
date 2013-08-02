@@ -126,17 +126,16 @@ void net_init_onode(u16 idx) {
 
 // activate an input node with a value
 void net_activate(s16 inIdx, const io_t val) {
-  //  print_dbg("\r\n net activate: ");
-  /* print_dbg_hex(inIdx); */
-  /* print_dbg(", val: "); */
-  /* print_dbg_hex(val); */
-  /* print_dbg(" , op idx: "); */
-  /* print_dbg_hex(net->ins[inIdx].opIdx); */
-  /* print_dbg(" , op in idx: "); */
-  /* print_dbg_hex(net->ins[inIdx].opInIdx); */
+  print_dbg("\r\n net_activate, input idx: 0x");
+  print_dbg_hex(inIdx);
+  print_dbg(", val: 0x");
+  print_dbg_hex(val);
+  print_dbg(" , op idx: 0x");
+  print_dbg_hex(net->ins[inIdx].opIdx);
+  print_dbg(" , op in idx: 0x");
+  print_dbg_hex(net->ins[inIdx].opInIdx);
 
   if(inIdx >= 0) {
-
     play_input(inIdx);
 
     if(inIdx < net->numIns) {
@@ -147,6 +146,8 @@ void net_activate(s16 inIdx, const io_t val) {
     } else { 
       // index in dsp param list
       inIdx -= net->numIns;
+      print_dbg("\r\n param idx: 0x");
+      print_dbg_hex(inIdx);
       if (inIdx >= net->numParams) {
 	return ;
       } else {
@@ -306,9 +307,19 @@ void net_remove_op(const u32 idx) {
 }
 
 
-// create a connection between given idx pairxs
+// create a connection between given idx pairs
 void net_connect(u32 oIdx, u32 iIdx) {
   net->ops[net->outs[oIdx].opIdx]->out[net->outs[oIdx].opOutIdx] = iIdx;
+
+  print_dbg("\r\n net_connect, output idx: 0x");
+  print_dbg_hex(oIdx);
+  print_dbg(", in idx: 0x");
+  print_dbg_hex(iIdx);
+  print_dbg(" , op idx: 0x");
+  print_dbg_hex(net->outs[oIdx].opIdx);
+  print_dbg(" , op out idx: 0x");
+  print_dbg_hex(net->outs[oIdx].opOutIdx);
+
   net->outs[oIdx].target = iIdx;
 }
 

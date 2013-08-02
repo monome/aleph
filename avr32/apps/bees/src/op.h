@@ -27,7 +27,7 @@ typedef enum {
   eOpFlagTick, // op is time-sensitive and requires a tick
   eOpFlagMenu, // op has a submenu function
   eOpFlagMonomeGrid, // op is a monome grid controller
-  eOpFlagMonomeArc, // op is a monome arc controller
+  eOpFlagMonomeRing, // op is a monome arc controller
 } op_flag_t;
 
 
@@ -38,6 +38,7 @@ typedef enum {
   eOpAdd,
   eOpMul,
   eOpGate,
+  eOpMonomeGridRaw,
   // eOpAccum,
   // eOpSelect,
   // eOpMapLin,

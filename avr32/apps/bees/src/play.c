@@ -52,8 +52,8 @@ void play_input(u16 idx) {
   itoa_whole(idx, scr + kIdxOff, 3 );
   str_copy(scr + kNameOff, net_in_name(idx), PARAM_LABEL_LEN );
   print_fix16( scr + kValOff, net_get_in_value(idx) );
-  print_dbg("\r\n play entry:");
-  print_dbg(scr);
+  //  print_dbg("\r\n play entry:");
+  //  print_dbg(scr);
   scrollIdx++;
   if(scrollIdx > PLAY_SCROLL_NUM) {
     scrollIdx = 0;

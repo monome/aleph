@@ -45,6 +45,7 @@ CSRCS += \
 	$(ALEPH_BEES)/src/ops/op_enc.c \
 	$(ALEPH_BEES)/src/ops/op_gate.c \
 	$(ALEPH_BEES)/src/ops/op_mul.c \
+	$(ALEPH_BEES)/src/ops/op_monome_grid_raw.c \
 	$(ALEPH_BEES)/src/ops/op_sw.c
 
 # List of assembler source files.

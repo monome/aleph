@@ -150,7 +150,8 @@ bool kill_timer( int tag ) {
 
 
 // process the list of timers.
-// called by client at desired tick interval.
+// called from tc interrupt
+/// FIXME: this is overly generalized for our purpose, i think.
 void process_timers( void ) {
   int k;
   swTimer_t* t;

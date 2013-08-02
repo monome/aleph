@@ -14,18 +14,30 @@
 // avr32
 #include "monome.h"
 // bees
-#include "ops/op_monome.h"
+// #include "ops/op_monome.h"
+
+
+// handler function type
+typedef void(*monome_handler_t)(void* op, u32 event);
+
+// generic monome operatortype
+// has event handler and focus flag
+typedef struct _op_monome {
+  // handler function, will connect to app event handler
+  monome_handler_t handler;
+  // focus flag
+  u8 focus;
+} op_monome_t;
+
 
 
 //---------------------
 //----- variables
 
 extern monome_handler_t monome_grid_key_handler;
+extern monome_handler_t monome_grid_key_handler;
 //extern monome_handler_t monome_ring_enc_handler;
-
-// a buffer big enough to hold all l data for 256 or arc4
-// each led gets a full byte
-extern u8 monomeLedBuffer[MONOME_MAX_LED_BYTES];
+op_monome_t* monomeOpFocus;
 
 //------------------------
 //----- functions
@@ -33,8 +45,8 @@ extern u8 monomeLedBuffer[MONOME_MAX_LED_BYTES];
 // initialize
 void net_monome_init(void);
 
-// set focus
-extern void net_monome_set_focus(op_monome_t* grid);
+// set/release focus
+extern void net_monome_set_focus(op_monome_t* grid, u8 focus);
 
 // set operator attributes from connected grid device
 extern void net_monome_set_attributes( /* ...???... */void);

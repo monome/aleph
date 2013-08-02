@@ -8,7 +8,9 @@ enum {
   eSwTimerTag = 2,
   eAdcTimerTag = 3,
   eHeartbeatTimerTag = 4,
-  eMonomeTimerTag = 5
+  eMonomePollTimerTag = 5,
+  eMonomeRefreshTimerTag = 6,
+
 };
 
 // create application timers

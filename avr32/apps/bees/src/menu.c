@@ -33,6 +33,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAdd,
   eOpMul,
   eOpGate,
+  eOpMonomeGridRaw
   /// more...
   // eOpAccum,
   // eOpSelect,
