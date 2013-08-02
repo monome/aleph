@@ -50,37 +50,6 @@ s16 op_init(op_t* op, op_id_t opId) {
   op->flags = 0x00000000;
   // run class init function
   (*(op_registry[opId].initFunc))(op);
-  // initialize given operator class at memory 
-/*   switch(opId) { */
-/*   case eOpSwitch: */
-/*     op_sw_init((void*) op); */
-/*     break; */
-/*   case eOpEnc: */
-/*     op_enc_init((void*)op); */
-/*     break; */
-/*   case eOpAdd: */
-/*     op_add_init((void*)op); */
-/*     break; */
-/*   case eOpMul: */
-/*     op_mul_init((void*)op); */
-/*     break; */
-/*   case eOpGate: */
-/*     op_gate_init((void*)op); */
-/*     break; */
-/* #if 0 */
-/*   case eOpAccum: */
-/*     op_accum_init((void*)op); */
-/*     break; */
-/*   case eOpSelect: */
-/*     return -1; */
-/*     break; */
-/*   case eOpMapLin: */
-/*     return -1; */
-/*     break; */
-/* #endif */
-/*   default: */
-/*     return -1; */
-/*   } */
   return 0;
 }
 

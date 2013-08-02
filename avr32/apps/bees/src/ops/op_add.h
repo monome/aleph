@@ -13,6 +13,6 @@ typedef struct op_add_struct {
   io_t * in_val[2];
   op_out_t outs[1];
 } op_add_t;
-void op_add_init(op_add_t* add);
+void op_add_init(void* mem);
 
 #endif // header guard

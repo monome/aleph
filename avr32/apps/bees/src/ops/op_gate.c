@@ -22,7 +22,8 @@ static op_in_func_t op_gate_in_func[3] = {
 
 //-------------------------------------------------
 //----- external function definitions
-void op_gate_init(op_gate_t* gate) {
+void op_gate_init(void* mem) {
+  op_gate_t* gate = (op_gate_t*)mem;
   gate->super.numInputs = 3;
   gate->super.numOutputs = 1;
   gate->outs[0] = -1;

@@ -128,9 +128,11 @@ void app_handle_event(event_t* e) {
     break;
 
   case kEventMonomeGridKey:
-    //   print_dbg("\r\n app_bees handling monome grid event");
+    //    print_dbg("\r\n app_bees handling monome grid event");
+    //    print_dbg("\r\n monome_grid_key_handler: 0x");
+    //    print_dbg_hex((u32)monome_grid_key_handler);
     (*monome_grid_key_handler)((u32)e->eventData);
-    test_handle_monome_grid(e);
+    //    test_handle_monome_grid(e);
     break;
   case kEventMonomeGridTilt:
     break;

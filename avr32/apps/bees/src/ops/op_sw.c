@@ -1,5 +1,5 @@
 #include "net_protected.h"
-//#include "print_funcs.h"
+#include "print_funcs.h"
 #include "op_sw.h"
 
 //-------------------------------------------------
@@ -67,7 +67,6 @@ static void op_sw_in_state(op_sw_t* sw, const io_t* v) {
     } 
   } else {
     // momentary mode, sw value takes input
-    //    sw->state = (((*v) > 0) ? sw->mul : 0);
     if((*v) > 0) { sw->state = sw->mul; } else { sw->state = 0; }
     net_activate(sw->outs[0], sw->state);
   }
@@ -75,13 +74,7 @@ static void op_sw_in_state(op_sw_t* sw, const io_t* v) {
 
 // input toggle mode
 static void op_sw_in_tog(op_sw_t* sw, const io_t* v) {
-  //  sw->tog = (io_t)(*v > 0);
   if (*v > 0) { sw->tog = OP_ONE; } else  { sw->tog = 0; } 
-  /*
-  if (sw-> val > 0) { sw->state = 0; }
-  else { sw->state = sw->mul; }
-  net_activate(sw->outs[0], sw->state);
-  */
 }
 
 // input multiplier
@@ -98,10 +91,6 @@ static void op_sw_in_mul(op_sw_t* sw, const io_t* v) {
 // increment
 static void op_sw_inc_func(op_sw_t* sw, const s16 idx, const io_t inc) {
   io_t val;
-  /* print_dbg("\r\n sw increment; idx: "); */
-  /* print_dbg_hex(idx); */
-  /* print_dbg(" , val: "); */
-  /* print_dbg_hex(inc); */
   switch(idx) {
   case 0: // current value
     op_sw_in_state(sw, &inc);
@@ -111,8 +100,6 @@ static void op_sw_inc_func(op_sw_t* sw, const s16 idx, const io_t inc) {
     break;
   case 2: // multiplier
     val = OP_ADD(sw->mul, inc);
-    /* print_dbg("\r\n sw/mul increment; val: "); */
-    /* print_dbg_hex(val); */
     op_sw_in_mul(sw, &val);
     break;
   }

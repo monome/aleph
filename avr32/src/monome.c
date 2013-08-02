@@ -358,13 +358,6 @@ static u8 setup_mext(void) {
   b1 = (u8)rxBuf[1];
   b2 = (u8)rxBuf[2];
 
-  print_dbg("\r\n data: 0x");
-  print_dbg_hex(b0);
-  print_dbg(" ,  0x");
-  print_dbg_hex(b1);
-  print_dbg(" ,  0x");
-  print_dbg_hex(b2);
-
     if(b1 == 1) {
     mdesc.device = eDeviceGrid;
 	 
@@ -442,8 +435,13 @@ static void read_serial_mext(void) {
   nb = ftdi_read();
   
   if(nb) {
-    com = (u8)(*rxBuf);
-
+    com = (u8)(*rxBuf);    
+    /* print_dbg("\r\n read serial, mext protocol, data: 0x"); */
+    /* print_dbg_hex(rxBuf[0]); */
+    /* print_dbg(" ,  0x"); */
+    /* print_dbg_hex(rxBuf[1]); */
+    /* print_dbg(" ,  0x"); */
+    /* print_dbg_hex(rxBuf[2]); */
     if(com == 0x20) { // grid key up
       monome_grid_key_write_event(&ev, rxBuf[1], rxBuf[2], 0);
       post_event(&ev);

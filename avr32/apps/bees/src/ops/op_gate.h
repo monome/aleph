@@ -12,6 +12,6 @@ typedef struct op_gate_struct {
   io_t * in_val[3];
   op_out_t outs[1];
 } op_gate_t;
-void op_gate_init(op_gate_t* gate);
+void op_gate_init(void* gate);
 
 #endif // header guard
