@@ -173,42 +173,11 @@ s16 net_add_op(op_id_t opId) {
   }
   op = (op_t*)((u8*)net->opPool + net->opPoolOffset);
   // use the class ID to initialize a new object in scratch
-  //// FIXME: this is dumb, use a superclass function
-  switch(opId) {
-  case eOpSwitch:
-    op_sw_init((void*) op);
-    break;
-  case eOpEnc:
-    op_enc_init((void*)op);
-    break;
-  case eOpAdd:
-    op_add_init((void*)op);
-    break;
-  case eOpMul:
-    op_mul_init((void*)op);
-    break;
-  case eOpGate:
-    op_gate_init((void*)op);
-    break;
-#if 0
-  /* case eOpAccum: */
-  /*   op_accum_init((void*)op); */
-  /*   break; */
-  /* case eOpSelect: */
-  /*   return -1; */
-  /*   break; */
-  /* case eOpMapLin: */
-  /*   return -1; */
-  /*   break; */
-#endif
-  default:
-    return -1;
-  }
+  op_init(op, opId);
 
   ins = op->numInputs;
   outs = op->numOutputs;
-  op->type = opId;
- 
+
   if (ins > (NET_INS_MAX - net->numIns)) {
     return -1;
   }
@@ -249,7 +218,7 @@ s16 net_pop_op(void) {
 
 /// delete an arbitrary operator, and do horrible ugly management stuff
 void net_remove_op(const u32 idx) {
-  /// FIXME: network processing MUST be halted during this procedure!
+  /// FIXME: network processing must be halted during this procedure!
   op_t* op = net->ops[idx];
   u8 nIns = op->numInputs;
   u8 nOuts = op->numOutputs;
@@ -272,7 +241,7 @@ void net_remove_op(const u32 idx) {
     }
     if(firstIn == -1 ) {
       // supposed to be a first inlet but we couldn't find it; we are fucked
-      // print_dbg("\r\n oops! couldn't find inlet for deleted operator! \r\n");
+      print_dbg("\r\n oh dang! couldn't find first inlet for deleted operator! \r\n");
     }
     lastIn = firstIn + nIns - 1;
     // check if anything connects here
@@ -377,13 +346,10 @@ s16 net_param_idx(u16 inIdx) {
 
 // get string for operator at given idx
 const char* net_op_name(const s16 idx) {
-  
   //  print_dbg("\r\n get op string, idx: ");
   //  print_dbg_ulong(idx);
-
   //  print_dbg("\r\n op addr: @0x: ");
   //  print_dbg_hex( &(net->ops[idx] ) );
-
   if (idx < 0) {
     return "";
   }

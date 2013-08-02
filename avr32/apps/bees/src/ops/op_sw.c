@@ -26,7 +26,8 @@ static op_in_func_t op_sw_in_func[3] = {
 //----- external function definition
 
 /// initialize
-void op_sw_init(op_sw_t* sw) {
+void op_sw_init(void* op) {
+  op_sw_t* sw = (op_sw_t*)op;
   sw->super.numInputs = 3;
   sw->super.numOutputs = 1;
   sw->outs[0] = -1;

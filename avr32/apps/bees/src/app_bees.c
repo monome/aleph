@@ -16,11 +16,12 @@
 #include "events.h"
 #include "event_types.h"
 #include "flash.h"
+#include "monome.h"
 #include "screen.h"
 // bees
 #include "files.h"
 #include "menu.h"
-#include "monome.h"
+#include "net_monome.h"
 #include "play.h"
 #include "scene.h"
 
@@ -31,9 +32,8 @@ static u8 keyMode = 0;
 //// test monome grid handling
 static void test_handle_monome_grid(event_t* ev) {
   u8 x, y, z;
-  monome_grid_read_event(ev, &x, &y, &z);
-  //bees_grid_operator_activate(.... );
-  monome_grid_led(x, y, z);
+  monome_grid_key_read_event(ev, &x, &y, &z);
+  (*monome_grid_led)(x, y, z);
 }
 
 
@@ -127,13 +127,16 @@ void app_handle_event(event_t* e) {
     }
     break;
 
-  case kEventMonomeGrid:
+  case kEventMonomeGridKey:
     //   print_dbg("\r\n app_bees handling monome grid event");
+    (*monome_grid_key_handler)((u32)e->eventData);
     test_handle_monome_grid(e);
     break;
-  case kEventMonomeArc:
+  case kEventMonomeGridTilt:
     break;
-  case kEventMonomeTilt:
+  case kEventMonomeRingEnc:
+    break;
+  case kEventMonomeRingKey:
     break;
 
 

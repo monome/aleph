@@ -9,22 +9,25 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_preset_instring = "VAL     TOG     MUL     ";
-static const char* op_preset_outstring = "VAL     ";
-static const char* op_preset_opstring = "SW";
+static const char* op_preset_instring = "READ    WRITE   REREAD  REWRITE  GETIDX  "
+static const char* op_preset_outstring = "IDX     ";
+static const char* op_preset_opstring = "PRESET";
 
 //-------------------------------------------------
 //----- static function declaration
 static void op_preset_inc_func(op_preset_t* preset, const s16 idx, const io_t inc);
-static void op_preset_in_recall(op_preset_t* preset, const io_t* v);
-static void op_preset_in_store(op_preset_t* preset, const io_t* v);
-static void op_preset_in_tog(op_preset_t* preset, const io_t* v);
-static void op_preset_in_mul(op_preset_t* preset, const io_t* v);
+static void op_preset_in_read(op_preset_t* preset, const io_t* v);
+static void op_preset_in_write(op_preset_t* preset, const io_t* v);
+static void op_preset_in_reread(op_preset_t* preset, const io_t* v);
+static void op_preset_in_rewrite(op_preset_t* preset, const io_t* v);
+static void op_preset_in_getidx(op_preset_t* preset, const io_t* v);
 
 static op_in_func_t op_preset_in_func[3] = {
-  (op_in_func_t)&op_preset_in_state,
-  (op_in_func_t)&op_preset_in_tog,
-  (op_in_func_t)&op_preset_in_mul
+  (op_in_func_t) &op_preset_in_read, 
+  (op_in_func_t) &op_preset_in_write, 
+  (op_in_func_t) &op_preset_in_reread, 
+  (op_in_func_t) &op_preset_in_rewrite, 
+  (op_in_func_t) &op_preset_in_getidx, 
 };
 
 //---------------------------------------------
@@ -32,7 +35,7 @@ static op_in_func_t op_preset_in_func[3] = {
 
 /// initialize
 void op_preset_init(op_preset_t* preset) {
-  preset->super.numInputs = 3;
+  preset->super.numInputs = 5;
   preset->super.numOutputs = 1;
   preset->outs[0] = -1;
   preset->super.inc_func = (op_inc_func)op_preset_inc_func;

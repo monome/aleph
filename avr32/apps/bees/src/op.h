@@ -26,6 +26,8 @@ typedef enum {
   eOpFlagRec,  // op is control receiver
   eOpFlagTick, // op is time-sensitive and requires a tick
   eOpFlagMenu, // op has a submenu function
+  eOpFlagMonomeGrid, // op is a monome grid controller
+  eOpFlagMonomeArc, // op is a monome arc controller
 } op_flag_t;
 
 
@@ -48,11 +50,6 @@ typedef enum {
 } op_id_t;
 
 
-//---- op descriptor type
-typedef struct op_desc_struct {
-  const char* name;
-  const u32 size;
-} op_desc_t;
 
 //---- input type
 // a function pointer to represent an operator's input
@@ -91,6 +88,17 @@ typedef struct op_struct {
   // behavior flags
   u32 flags;
 } op_t;
+
+
+// init function type
+typedef void(*op_class_init_t)(void* op);
+
+//---- op descriptor type
+typedef struct op_desc_struct {
+  const char* name;
+  const u32 size;
+  op_class_init_t initFunc;
+} op_desc_t;
 
 
 //-----------------------------------

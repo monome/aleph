@@ -8,14 +8,13 @@
 //--- op_sw_t : switch
 typedef struct op_preset_struct {
   op_t super;
-  //  io_t state, mul, tog;
-
-  // inputs:
+// inputs:
   // - set and load index
   // - set and store index
   // - re-load current index
   // - re-store current index
   // - get current index
+  io_t read, write, reread, rewrite, cur;
   io_t* in_val[5];
   // outputs: 
   // - current index
