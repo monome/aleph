@@ -10,7 +10,7 @@
 //---- descriptor strings
 static const char* op_mgrid_raw_instring = "FOCUS   TOG     MONO    ";
 static const char* op_mgrid_raw_outstring = "COL     ROW     VAL     ";
-static const char* op_mgrid_raw_opstring = "MGRID_RAW";
+static const char* op_mgrid_raw_opstring = "RAWGRID";
 
 //-------------------------------------------------
 //----- static function declaration
@@ -26,6 +26,7 @@ static void op_mgrid_raw_in_mono(op_mgrid_raw_t* grid, const io_t* val);
 /// monome event handler
 static void op_mgrid_raw_handler(op_mgrid_raw_t* op, u32 edata);
 
+// input func pointer array
 static op_in_func_t op_mgrid_raw_in_func[3] = {
   (op_in_func_t)&op_mgrid_raw_in_focus,
   (op_in_func_t)&op_mgrid_raw_in_tog,
@@ -70,15 +71,16 @@ void op_mgrid_raw_init(void* mem) {
 
 //--- network input functions
 static void op_mgrid_raw_in_focus(op_mgrid_raw_t* op, const io_t* v) {
-  net_monome_set_focus( &(op->monome), (*v) > 0 );
+  op->focus =  ((*v) > 0) * OP_ONE ;
+  net_monome_set_focus( &(op->monome), op->focus);
 }
 
 static void op_mgrid_raw_in_tog(op_mgrid_raw_t* op, const io_t* v) {
-  op->tog  = (*v > 0);
+  op->tog  = (*v > 0) * OP_ONE;
 }
 
 static void op_mgrid_raw_in_mono(op_mgrid_raw_t* op, const io_t* v) {
-  op->mono  = (*v > 0);
+  op->mono  = (*v > 0) * OP_ONE;
 }
 
 static void op_mgrid_raw_handler(op_mgrid_raw_t* op, u32 edata) {
@@ -137,7 +139,7 @@ static void op_mgrid_raw_handler(op_mgrid_raw_t* op, u32 edata) {
   }
   monome_calc_quadrant_flag(x, y);
   // FIXME: update old pos quadrant too,
-  /// need a different calc function since it is flattened array idx
+  /// need a different calc function since it is flattened array idx, not (x,y)
   op->lastPos = pos;
 }
 

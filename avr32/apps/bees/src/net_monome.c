@@ -61,7 +61,7 @@ extern void net_monome_set_focus(op_monome_t* op, u8 focus) {
     //// FIXME: focus input wont work quite right i dont think
     op->focus = 1;
   } else {
-    monome_grid_key_handler = &dummyHandler;
+    monome_grid_key_handler = (monome_handler_t)&dummyHandler;
     monomeOpFocus = NULL;
     op->focus = 0;
   }

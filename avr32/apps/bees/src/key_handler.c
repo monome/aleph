@@ -252,6 +252,7 @@ void key_handler_outs(uiKey_t key, s16 val) {
     break;
   case eKeyFnDownB:
     // disconnect
+    net_disconnect(curPage->selected);
     break;
   case eKeyFnDownC:
     // re-send? store?

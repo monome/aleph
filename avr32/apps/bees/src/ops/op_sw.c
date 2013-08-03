@@ -21,7 +21,6 @@ static op_in_func_t op_sw_in_func[3] = {
   (op_in_func_t)&op_sw_in_mul
 };
 
-
 //---------------------------------------------
 //----- external function definition
 

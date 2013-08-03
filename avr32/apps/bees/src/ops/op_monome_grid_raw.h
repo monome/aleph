@@ -13,7 +13,7 @@ typedef struct op_mgrid_raw_struct {
   // inputs: toggle mode, focus
   io_t focus, tog, mono;
   io_t* in_val[3];
-  // outputs: switch x , y, z
+  // outputs: x , y, z
   op_out_t outs[3];
   // internal:
   u32 lastPos;

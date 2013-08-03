@@ -87,6 +87,13 @@ void net_init(void) {
     net->opPoolMem[i] = (u8)0;
   }
 
+  /* print_dbg("\r\n op registry: "); */
+  /* for(i=0; i<numOpClasses; i++) { */
+  /*   print_dbg("\r\n name: "); */
+  /*   print_dbg(op_registry[i].name); */
+  /*   print_ */
+  /* } */
+
   net->opPool = (void*)&(net->opPoolMem);
   net->opPoolOffset = 0;
 
@@ -164,14 +171,24 @@ s16 net_add_op(op_id_t opId) {
   u8 i;
   op_t* op;
 
+  print_dbg("\r\n createing new oprator, type: ");
+  print_dbg_ulong(opId);
+
   if (net->numOps >= NET_OPS_MAX) {
     return -1;
   }
 
   if (op_registry[opId].size > NET_OP_POOL_SIZE - net->opPoolOffset) {
-    // not enough memory in op pool
+    print_dbg("\r\n op creation failed; out of memory.");
     return -1;
   }
+  
+  print_dbg("\r\n allocating memory location: 0x");
+  print_dbg_hex((u32)(net->opPool + net->opPoolOffset));
+
+  print_dbg("\r\n size of requested op size: 0x");
+  print_dbg_hex(op_registry[opId].size);
+
   op = (op_t*)((u8*)net->opPool + net->opPoolOffset);
   // use the class ID to initialize a new object in scratch
   op_init(op, opId);
@@ -180,10 +197,12 @@ s16 net_add_op(op_id_t opId) {
   outs = op->numOutputs;
 
   if (ins > (NET_INS_MAX - net->numIns)) {
+    print_dbg("\r\n op creation failed; too many inputs in network.");
     return -1;
   }
 
   if (outs > (NET_OUTS_MAX - net->numOuts)) {
+    print_dbg("\r\n op creation failed; too many outputs in network.");
     return -1;
   }
 
@@ -319,6 +338,17 @@ void net_connect(u32 oIdx, u32 iIdx) {
   print_dbg_hex(net->outs[oIdx].opIdx);
   print_dbg(" , op out idx: 0x");
   print_dbg_hex(net->outs[oIdx].opOutIdx);
+
+
+  //  print_dbg
+
+  print_dbg("\r\n output operator name: ");
+  print_dbg(net_op_name( net->outs[oIdx].opIdx) );
+  print_dbg("\r\n output name: ");
+  print_dbg(net_out_name(oIdx));
+
+  print_dbg("\r\n input name: ");
+  print_dbg(net_in_name(iIdx));
 
   net->outs[oIdx].target = iIdx;
 }
