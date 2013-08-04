@@ -25,7 +25,7 @@
 u8 ftdiPlug = 0;
 
 //----- static vars
-static volatile u8 rxBuf[FTDI_IN_BUF_SIZE];
+static u8 rxBuf[FTDI_IN_BUF_SIZE];
 static u32 rxBytes = 0;
 static u8 rxBusy = 0;
 static u8 txBusy = 0;
@@ -42,9 +42,21 @@ static void ftdi_rx_done(
   status = stat;
   rxBusy = 0;
   rxBytes = nb - FTDI_STATUS_BYTES;
+
+  /* print_dbg("\r\n ftdi rx transfer callback. status: 0x"); */
+  /* print_dbg_hex((u32)status); */
+  /* print_dbg(" ; bytes transferred: "); */
+  /* print_dbg_ulong(nb); */
+  /* print_dbg(" ; status bytes: 0x"); */
+  /* print_dbg_hex(rxBuf[0]); */
+  /* print_dbg(" 0x"); */
+  /* print_dbg_hex(rxBuf[1]); */			    
+
   if(rxBytes) {
     // check for monome events
-    (*monome_read_serial)();
+    //    if(monome_read_serial != NULL) { 
+      (*monome_read_serial)(); 
+      //}
     ///... TODO: other protocols
   } 
 }
@@ -56,6 +68,16 @@ static void ftdi_tx_done(
 			       iram_size_t nb) {
   status = stat;
   txBusy = 0;
+
+  /* print_dbg("\r\n ftdi tx transfer callback. status: 0x"); */
+  /* print_dbg_hex((u32)status); */
+  /* print_dbg(" ; bytes transferred: "); */
+  /* print_dbg_ulong(nb); */
+  /* print_dbg(" ; status bytes: 0x"); */
+  /* print_dbg_hex(rxBuf[0]); */
+  /* print_dbg(" 0x"); */
+  /* print_dbg_hex(rxBuf[1]); */
+
   if (status != UHD_TRANS_NOERROR) {
     print_dbg("\r\n ftdi tx error");
     return;
@@ -82,6 +104,7 @@ void ftdi_read(void) {
     print_dbg("\r\n ftdi rx transfer error");
     //    return 0;
   }
+  return;
   //  while (ftdiRxBusy) { ;; }
   /* if (status != UHD_TRANS_NOERROR) { */
   /*   print_dbg("\r\n ftdi input transfer error, exiting poll function"); */
@@ -133,16 +156,16 @@ extern u8* ftdi_rx_buf() {
 }
 
 // number of bytes from last rx trasnfer
-extern u8 ftdi_rx_bytes() {
+extern volatile u8 ftdi_rx_bytes() {
   return rxBytes;
 }
 
 // busy flags
-extern u8 ftdi_rx_busy() {
+extern volatile u8 ftdi_rx_busy() {
   return rxBusy;
 }
 
-extern u8 ftdi_tx_busy() {
+extern volatile u8 ftdi_tx_busy() {
   return txBusy;
 }
 

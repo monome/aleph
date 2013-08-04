@@ -58,6 +58,9 @@ typedef struct e_monomeDesc {
 } monomeDesc;
 
 
+//// dummy functions
+static void read_serial_dummy(void) { return; }
+
 //-------------------------------------
 //------ extern variables
 
@@ -70,7 +73,7 @@ u8 monomeFrameDirty = 0;
 u8 monomeLedBuffer[MONOME_MAX_LED_BYTES];
 
 // global pointers to send functions.
-read_serial_t monome_read_serial;
+read_serial_t monome_read_serial = &read_serial_dummy;
 grid_led_t monome_grid_led;
 grid_map_t monome_grid_map;
 grid_level_map_t monome_grid_level_map;
@@ -248,36 +251,48 @@ u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr) {
 
 // check dirty flags and refresh leds
 void monome_grid_refresh(void) {
-  print_dbg("\r\n monome grid refresh; framedirty flag: 0x");
-  print_dbg_hex(monomeFrameDirty);
+  // may need to wait after each quad until tx transfer is complete
+  u8 busy = ftdi_tx_busy();
 
   if( monomeFrameDirty & 0b0001 ) {
-    print_dbg("\r\n refreshing monome quadrant 0");
+    while( busy ) {
+      busy = ftdi_tx_busy();
+    }
     grid_map_mext(0, 0, monomeLedBuffer);
     monomeFrameDirty &= 0b1110;
+    busy = 1;
   }
 
-  if( monomeFrameDirty & 0xb0010 ) {
-    print_dbg("\r\n refreshing monome quadrant 1");
+  if( monomeFrameDirty & 0b0010 ) {
     if ( mdesc.cols > 8 ) {
+      while( busy ) {
+	busy = ftdi_tx_busy();
+      }
       grid_map_mext(8, 0, monomeLedBuffer + 8);
       monomeFrameDirty &= 0b1101;
+      busy = 1;
     }
   }
 
   if( monomeFrameDirty &  0b0100 ) { 
-    print_dbg("\r\n refreshing monome quadrant 2");
     if( mdesc.rows > 8 ) {
+      while( busy ) {
+	busy = ftdi_tx_busy();
+      }
       grid_map_mext(0, 8, monomeLedBuffer +  128);
       monomeFrameDirty &= 0b1011;
+      busy = 1;
     }
   }
 
   if( monomeFrameDirty & 0b1000 ) {
-    print_dbg("\r\n refreshing monome quadrant 3");
     if( (mdesc.rows > 8) && (mdesc.cols > 8) )  {
+      while( busy ) {
+	busy = ftdi_tx_busy();
+      }
       grid_map_mext(8, 8, monomeLedBuffer + 136);
       monomeFrameDirty &= 0b0111;
+      busy = 1;
     }
   }
 }
@@ -343,9 +358,8 @@ void monome_calc_quadrant_flag(u8 x, u8 y) {
       monomeFrameDirty |= 0b0001;
     }
   } 
-
-  print_dbg("\r\n monome_calc_quadrant_flag: 0x");
-  print_dbg_hex(monomeFrameDirty);
+  /* print_dbg("\r\n monome_calc_quadrant_flag: 0x"); */
+  /* print_dbg_hex(monomeFrameDirty); */
 }
 
 // convert flat framebuffer idx to x,y
@@ -398,18 +412,38 @@ static void setup_series(u8 cols, u8 rows) {
 static u8 setup_mext(void) {
   u8* prx;
   u8 w = 0;
+  u8 busy;
+
+  print_dbg("\r\n setup mext device");
+
   mdesc.protocol = eProtocolMext;
 
-  delay_ms(1);
+  delay_ms(10);
   ftdi_write(&w, 1);	// query
+  
+  delay_ms(10);
 
-  delay_ms(1);
   ftdi_read();
 
-  while(ftdi_rx_busy()) {;;}
+  delay_ms(10);
+  busy = 1;
+
+  print_dbg("\r\n setup request ftdi read; waiting...");
+
+  //  while(ftdi_rx_busy()) {;;}
+  while(busy) {
+    busy = ftdi_rx_busy();
+    print_dbg("\r\n waiting for transfer complete; busy flag: ");
+    print_dbg_ulong(busy);
+    
+  }
   rxBytes = ftdi_rx_bytes();
 
+  print_dbg(" done waiting. bytes read: ");
+  print_dbg_ulong(rxBytes);
+
   if(rxBytes != 6 ){
+    print_dbg("\r\n got unexpected byte count in response to mext setup request; aborting");
     return 0;
   }
   

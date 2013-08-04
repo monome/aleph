@@ -32,6 +32,18 @@ typedef enum {
   kEventFtdiDisconnect,
   ///------ discrete UI events
   /// encoders
+  /* kEventEncoder0Start, */
+  /* kEventEncoder0Move, */
+  /* kEventEncoder0End, */
+  /* kEventEncoder1Start, */
+  /* kEventEncoder1Move, */
+  /* kEventEncoder1End, */
+  /* kEventEncoder2Start, */
+  /* kEventEncoder2Move, */
+  /* kEventEncoder2End, */
+  /* kEventEncoder3Start, */
+  /* kEventEncoder3Move, */
+  /* kEventEncoder3End, */
   kEventEncoder0,
   kEventEncoder1,
   kEventEncoder2 ,
