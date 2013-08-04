@@ -327,9 +327,22 @@ void monome_ring_key_parse_event_data(u32 data, u8* n, u8* val) {
 
 // set quadrant refresh flag from pos
 void monome_calc_quadrant_flag(u8 x, u8 y) {
-  u8 q;
-  q = (x > 7) | ((y > 7) << 1);  
-  monomeFrameDirty |= (1 << q);  
+  if(x > 7) {
+    if (y > 7) {      
+      monomeFrameDirty |= 0b1000;
+    }
+    else {
+      monomeFrameDirty |= 0b0010;
+    }
+  } else {
+    if (y > 7) {
+      monomeFrameDirty |= 0b0100;
+    }
+    else {
+      monomeFrameDirty |= 0b0001;
+    }
+  } 
+
   print_dbg("\r\n monome_calc_quadrant_flag: 0x");
   print_dbg_hex(monomeFrameDirty);
 }
