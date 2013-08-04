@@ -11,12 +11,13 @@
 #include "gpio.h"
 #include "math.h"
 #include "print_funcs.h"
+#include "uhc.h"
 // aleph
 #include "adc.h"
 #include "encoders.h"
 #include "events.h"
 #include "event_types.h"
-//#include "ftdi.h"
+#include "ftdi.h"
 #include "monome.h"
 #include "global.h"
 #include "switches.h"
@@ -87,8 +88,10 @@ static void adc_timer_callback(int tag) {
 static void monome_poll_timer_callback(int tag) {
   if (monomeConnect > 0) {
     //    print_dbg("\r\n posting monome read event");
-    e.eventType = kEventMonomePoll;
-    post_event(&e);
+    //    e.eventType = kEventMonomePoll;
+    //    post_event(&e);
+    // start an ftdi transfer, callback handles event posting
+    ftdi_read();
   }
   
 }
@@ -96,6 +99,7 @@ static void monome_poll_timer_callback(int tag) {
 
 // monome refresh callback
 static void monome_refresh_timer_callback(int tag) {
+  /// FIXME: just have whatever connection mechanism turn timer on/off
   if (monomeConnect) {
     //    print_dbg("\r\n posting monome refresh event");
     if(monomeFrameDirty > 0) {
@@ -107,7 +111,7 @@ static void monome_refresh_timer_callback(int tag) {
 
 //====== external
 void init_app_timers(void) {
-  set_timer(&screenTimer,        eScreenTimerTag,        30,  &screen_timer_callback,  1);
+  set_timer(&screenTimer,        eScreenTimerTag,        50,  &screen_timer_callback,  1);
   set_timer(&encTimer,           eEncTimerTag,           20,  &enc_timer_callback,    1);
   set_timer(&adcTimer,           eAdcTimerTag,           5,   &adc_timer_callback,     1);
   set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);

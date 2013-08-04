@@ -29,7 +29,7 @@
 // map stores binary data for each led in 8x8
 #define MONOME_GRID_MAP_BYTES 8
 // level map stores 8b level data for each led in 8x8
-/// TODO, i suppose
+/// TODO:
 //#define MONOME_GRID_LEVEL_MAP_SIZE 64
 
 // a frame is one knob, max is arc4
@@ -63,7 +63,7 @@ typedef void(*ring_map_t)(u8 n, u8* data);
 extern u8 monomeConnect;
 // dirt flags for each frame, as bitfield
 extern u8 monomeFrameDirty;
-// a buffer big enough to hold all l data for 256 or arc4
+// a buffer big enough to hold all data for 256 or arc4
 // each led gets a full byte
 extern u8 monomeLedBuffer[MONOME_MAX_LED_BYTES];
 

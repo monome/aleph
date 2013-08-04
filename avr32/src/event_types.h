@@ -20,6 +20,8 @@ typedef enum {
   kEventMonomePoll,
   // refresh monome
   kEventMonomeRefresh,
+  // handle rx data
+
   /// midi polling
   //...
   /// HID polling

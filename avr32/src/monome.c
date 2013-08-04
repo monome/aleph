@@ -25,6 +25,8 @@
 #define MONOME_PRODSTR_LEN 8
 // serial string length
 #define MONOME_SERSTR_LEN 9
+// tx buffer length
+#define MONOME_TX_BUF_LEN 68
 
 //------- typedefs
 
@@ -87,10 +89,12 @@ static monomeDesc mdesc = {
   .tilt = 0,
 };
 
-// rx buffer
-static  volatile u8* rxBuf;
+// local rx byte count
+static u8 rxBytes;
 // event data
 static event_t ev;
+// local tx buffer
+static u8 txBuf[MONOME_TX_BUF_LEN];
 
 //---------------------------------------------
 //------ static function declarations
@@ -167,9 +171,6 @@ static ring_map_t ringMapFuncs[eProtocolNumProtocols] = {
 
 // init
 void init_monome(void) {
-  // ftdi precedes each packet with 0x31 0x60. 
-  // this is to avoid actually stripping these 2 bytes after each read
-  rxBuf = ftdiRxBuf + FTDI_RX_BUF_OFFSET;
   u32 i;
   for(i=0; i<MONOME_MAX_LED_BYTES; i++) {
     monomeLedBuffer[i] = 0;
@@ -395,8 +396,7 @@ static void setup_series(u8 cols, u8 rows) {
 
 // setup extended device, return success /failure of query
 static u8 setup_mext(void) {
-  u8 b0, b1, b2;
-  u8 nb;
+  u8* prx;
   u8 w = 0;
   mdesc.protocol = eProtocolMext;
 
@@ -404,35 +404,31 @@ static u8 setup_mext(void) {
   ftdi_write(&w, 1);	// query
 
   delay_ms(1);
-  nb = ftdi_read();
+  ftdi_read();
 
-  if(nb != 6 ){
+  while(ftdi_rx_busy()) {;;}
+  rxBytes = ftdi_rx_bytes();
+
+  if(rxBytes != 6 ){
     return 0;
   }
-
-  print_dbg("\r\n local rx pointer: 0x");
-  print_dbg_hex((u32)rxBuf);
-  print_dbg("\r\n global ftdi rx pointer: 0x");
-  print_dbg_hex((u32)ftdiRxBuf);
-
-  b0 = (u8)rxBuf[0];
-  b1 = (u8)rxBuf[1];
-  b2 = (u8)rxBuf[2];
-
-  if(b1 == 1) {
+  
+  prx = ftdi_rx_buf();
+  prx++; // 1st returned byte is 0
+  if(*prx == 1) {
     mdesc.device = eDeviceGrid;
-	 
-    if(b2 == 1) {
+    prx++;
+    if(*prx == 1) {
       print_dbg("\r\n monome 64");
       mdesc.rows = 8;
       mdesc.cols = 8;
     }
-    else if(b2 == 2) {
+    else if(*prx == 2) {
       print_dbg("\r\n monome 128");
       mdesc.rows = 8;
       mdesc.cols = 16;
     }
-    else if(b2 == 4) {
+    else if(*prx == 4) {
       print_dbg("\r\n monome 256");
       mdesc.rows = 16; 
       mdesc.cols = 16;
@@ -442,9 +438,9 @@ static u8 setup_mext(void) {
     }		
     mdesc.tilt = 1;
   }
-  else if(b1 == 5) {
+  else if(*prx == 5) {
     mdesc.device = eDeviceArc;
-    mdesc.encs = b2;
+    mdesc.encs = *(++prx);
   } else {
     return 0;
   }
@@ -458,82 +454,74 @@ static u8 setup_mext(void) {
 
 //--- rx
 // rx for each protocol
+/// parse serial input from device
+/// should be called when read is complete
+/// (e.g. from usb transfer callback )
+
 static void read_serial_40h(void) {
 }
 
 static void read_serial_series(void) {
+  u8* prx;
   u8 i;
-  u8 b0, b1;
   u8 x=0;
   u8 y=0;
   u8 z=0;
-
   u8 com;
-  u8 nb;
-  // read from ftdi and get number of bytes.
-  // data is at beginning of rxBuf
-  nb = ftdi_read();
-  if(nb) {
-    com = *rxBuf;
-    switch(com) {
-    }
-    for(i=0; i<nb; i+= 2) {
-      b0 = (u8)rxBuf[i];
-      b1 = (u8)rxBuf[i+1];
-      x = (b1 & 0xf0) >> 4;
-      y = b1 & 0xf;
-      z = !((b0 & 0xf0) >> 4);
+  prx = ftdi_rx_buf();
+  com = *prx++;
+  // FIXME: er what happens with the com byte?
+  rxBytes = ftdi_rx_bytes();
+  for(i=0; i<rxBytes; i+= 2) {
+    z = !((*prx++ & 0xf0) >> 4);
+      x = (*prx & 0xf0) >> 4;
+      y = *prx & 0xf;
       monome_grid_key_write_event(x, y, z);
     }
-  }
+
 }
 
 static void read_serial_mext(void) {
-  static u8 nbr; // number of bytes read
+  //  static u8 nbr; // number of bytes read
   static u8 nbp; // number of bytes processed
   static u8* prx; // pointer to rx buf
   static u8 com;
-
-  // read from ftdi and get number of bytes.
-  // the data is at beginning of rxBuf  
-  nbr = ftdi_read();
   
-  if(nbr) {
+  rxBytes = ftdi_rx_bytes();
+  if( rxBytes ) {
     nbp = 0;
-    prx = (u8*)rxBuf;
-    while(nbp < nbr) {
+    prx = ftdi_rx_buf();
+    while(nbp < rxBytes) {
       com = (u8)(*(prx++));    
       nbp++;
-      /* print_dbg("\r\n read serial, mext protocol, data: 0x"); */
-      /* print_dbg_hex(rxBuf[0]); */
-      /* print_dbg(" ,  0x"); */
-      /* print_dbg_hex(rxBuf[1]); */
-      /* print_dbg(" ,  0x"); */
-      /* print_dbg_hex(rxBuf[2]); */
-      if(com == 0x20) { // grid key up
+      switch(com) {
+      case 0x20: // grid key up
 	monome_grid_key_write_event( *prx, *(prx+1), 0);
 	nbp += 2;
 	prx += 2;
-      }
-      else if (com == 0x21) { // grid key down
+	break;
+      case 0x21: // grid key down
 	monome_grid_key_write_event( *prx, *(prx+1), 1);
 	nbp += 2;
 	prx += 2;
-      }
-      else if (com == 0x50) { // ring delta
+	break;
+	case 0x50:  // ring delta
 	monome_ring_enc_write_event( *prx, *(prx+1));
 	nbp += 2;
 	prx += 2;
-      }
-      else if (com == 0x51) { // ring key up
+	break;
+      case 0x51 : // ring key up
 	monome_ring_key_write_event( *prx++, 0);
 	prx++;
-      }
-      else if (com == 0x52) { // ring key down
+	break;
+      case 0x52 : // ring key down
 	monome_ring_key_write_event( *prx++, 1);
 	nbp++;
+	break;
+	/// TODO: more commands... 
+      default:
+	return;
       }
-      // ... other commands?
     }	
   }
 }
@@ -544,18 +532,18 @@ static void grid_led_40h(u8 x, u8 y, u8 val) {
 }
 
 static void grid_led_series(u8 x, u8 y, u8 val) {
-  static u8 tx[2];
-  tx[0] = 0x20 & ((val > 0) << 4);
-  tx[1] = (x << 4) | y;
-  ftdi_write(tx, 2);
+  //  static u8 tx[2];
+  txBuf[0] = 0x20 & ((val > 0) << 4);
+  txBuf[1] = (x << 4) | y;
+  ftdi_write(txBuf, 2);
 }
 
 static void grid_led_mext(u8 x, u8 y, u8 val) {
-  static u8 tx[3];
-  tx[0] = 0x10 | (val > 0);
-  tx[1] = x;
-  tx[2] = y;
-  ftdi_write(tx, 3);
+  //  static u8 tx[3];
+  txBuf[0] = 0x10 | (val > 0);
+  txBuf[1] = x;
+  txBuf[2] = y;
+  ftdi_write(txBuf, 3);
 }
 
 // update a whole frame
@@ -563,15 +551,15 @@ static void grid_led_mext(u8 x, u8 y, u8 val) {
 // this will hopefully help optimize operator routines,
 // which cannot be called less often than refresh/tx, and are therefore prioritized.
 static void grid_map_mext( u8 x, u8 y, const u8* data ) {
-  static u8 tx[11] = { 0x14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-  //  static u8* pdata;
+  //  static u8 tx[11] = { 0x14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   static u8* ptx;
   static u8 i, j;
-  tx[1] = x;
-  tx[2] = y;
+
+  txBuf[0] = 0x14;
+  txBuf[1] = x;
+  txBuf[2] = y;
   
-  //  pdata = data;
-  ptx = tx + 3;
+  ptx = txBuf + 3;
   
   // copy and convert
   for(i=0; i<MONOME_QUAD_LEDS; i++) {
@@ -584,7 +572,7 @@ static void grid_map_mext( u8 x, u8 y, const u8* data ) {
     data += MONOME_QUAD_LEDS; // skip the rest of the row to get back in target quad
     ptx++;
   }
-  ftdi_write(tx, 11);
+  ftdi_write(txBuf, MONOME_QUAD_LEDS + 3);
 }
 
 
