@@ -8,7 +8,8 @@
 
 // std
 #include <string.h>
-
+// asf
+#include "delay.h"
 //avr32
 #include "app.h"
 #include "font.h"
@@ -85,6 +86,10 @@ void scene_read_buf(void) {
 
   //// TODO: module version check
   // "aaaabbbbccccddddeeeeffff"
+
+  delay_ms(100);
+  // re-trigger inputs
+  net_retrigger_inputs();
 
   // update bfin parameters
   net_send_params();

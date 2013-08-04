@@ -13,7 +13,7 @@
 
 
 // dummy handler
-static void dummyHandler(u32 edata) { return; }
+static void dummyHandler(void* op, u32 edata) { return; }
 
 // loopback handler for test or default
 /* static void monome_grid_key_loopback(u32 ev) { */
@@ -23,7 +23,7 @@ static void dummyHandler(u32 edata) { return; }
 /* } */
 
 // use led state buffer and dirty flags
-static void monome_grid_key_loopback(u32 edata) {
+static void monome_grid_key_loopback(void* op, u32 edata) {
   u8 x, y, z;
   monome_grid_key_parse_event_data(edata, &x, &y, &z);
   monomeLedBuffer[x | (y << 4)] = z;
@@ -54,16 +54,24 @@ extern void net_monome_init(void) {
 }
 
 // set focus
-extern void net_monome_set_focus(op_monome_t* op, u8 focus) {
+extern void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
+  print_dbg("\r\n setting monome device focu, op pointer: 0x");
+  print_dbg_hex((u32)op_monome);
+  print_dbg(" , value: ");
+  print_dbg_ulong(focus);
+
   if(focus > 0) {
-    monome_grid_key_handler = op->handler;
-    monomeOpFocus = op;
+    if(monomeOpFocus != NULL ){
+      /// FIXME: de-focus previous operator, need to fix monome_t superclass
+    }
+    monome_grid_key_handler = op_monome->handler;
+    monomeOpFocus = op_monome;
     //// FIXME: focus input wont work quite right i dont think
-    op->focus = 1;
+    //    op->focus = 1;
   } else {
     monome_grid_key_handler = (monome_handler_t)&dummyHandler;
     monomeOpFocus = NULL;
-    op->focus = 0;
+    //    op->focus = 0;
   }
 }
 

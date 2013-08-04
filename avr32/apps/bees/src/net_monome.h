@@ -27,6 +27,8 @@ typedef struct _op_monome {
   monome_handler_t handler;
   // focus flag
   u8 focus;
+  // pointer to operator subclass
+  void* op;
 } op_monome_t;
 
 

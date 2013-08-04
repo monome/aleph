@@ -436,12 +436,12 @@ extern void key_handler_presets(uiKey_t key, s16 val) {
       curPage->mode = eModeNone;
     }
     break;
-  case eKeyFnDownD: // recall
+  case eKeyFnDownD: // read
     switch(curPage->mode) {
     case eModeNone:
-      curPage->mode = eModeRecall;
+      curPage->mode = eModeRead;
       break;
-    case eModeRecall:
+    case eModeRead:
       preset_recall(curPage->selected);
       curPage->mode = eModeNone;
       break;
@@ -478,11 +478,11 @@ extern void key_handler_presets(uiKey_t key, s16 val) {
     break;
   case eKeyEncUpD:
     // scroll name char
-    edit_string_inc_char(sceneData->desc.sceneName, curPage->cursor);
+    //    edit_string_inc_char(sceneData->desc.sceneName, curPage->cursor);
     break;
   case eKeyEncDownD:
     // scroll name char
-    edit_string_dec_char(sceneData->desc.sceneName, curPage->cursor);
+    //    edit_string_dec_char(sceneData->desc.sceneName, curPage->cursor);
     break;
     default:
     ;; // nothing
@@ -524,12 +524,13 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
   /*   } */
   /*   break; */
 
-  case eKeyFnDownB: // recall
+  case eKeyFnDownB: // read
     switch(curPage->mode) {
     case eModeNone:
-      curPage->mode = eModeRecall;
+      curPage->mode = eModeRead;
       break;
-    case eModeRecall:
+    case eModeRead:
+      app_notify("\r\n reading scene... ");
       files_load_scene(curPage->selected);
       curPage->mode = eModeNone;
       break;
@@ -552,7 +553,8 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
     }
     break;
 
-  case eKeyFnDownD: // default
+ 
+ case eKeyFnDownD: // default
     switch(curPage->mode) {
     case eModeNone:
       curPage->mode = eModeDefault;

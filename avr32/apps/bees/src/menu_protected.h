@@ -30,7 +30,7 @@ typedef enum  {
    eModeClear,
    eModeCopy,
    eModeWrite,
-   eModeRecall,
+   eModeRead,
    eModeDefault,
 } ePageMode;
 

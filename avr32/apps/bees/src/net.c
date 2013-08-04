@@ -133,14 +133,14 @@ void net_init_onode(u16 idx) {
 
 // activate an input node with a value
 void net_activate(s16 inIdx, const io_t val) {
-  print_dbg("\r\n net_activate, input idx: 0x");
-  print_dbg_hex(inIdx);
-  print_dbg(", val: 0x");
-  print_dbg_hex(val);
-  print_dbg(" , op idx: 0x");
-  print_dbg_hex(net->ins[inIdx].opIdx);
-  print_dbg(" , op in idx: 0x");
-  print_dbg_hex(net->ins[inIdx].opInIdx);
+  /* print_dbg("\r\n net_activate, input idx: 0x"); */
+  /* print_dbg_hex(inIdx); */
+  /* print_dbg(", val: 0x"); */
+  /* print_dbg_hex(val); */
+  /* print_dbg(" , op idx: 0x"); */
+  /* print_dbg_hex(net->ins[inIdx].opIdx); */
+  /* print_dbg(" , op in idx: 0x"); */
+  /* print_dbg_hex(net->ins[inIdx].opInIdx); */
 
   if(inIdx >= 0) {
     play_input(inIdx);
@@ -153,8 +153,8 @@ void net_activate(s16 inIdx, const io_t val) {
     } else { 
       // index in dsp param list
       inIdx -= net->numIns;
-      print_dbg("\r\n param idx: 0x");
-      print_dbg_hex(inIdx);
+      //      print_dbg("\r\n param idx: 0x");
+      //      print_dbg_hex(inIdx);
       if (inIdx >= net->numParams) {
 	return ;
       } else {
@@ -171,7 +171,7 @@ s16 net_add_op(op_id_t opId) {
   u8 i;
   op_t* op;
 
-  print_dbg("\r\n createing new oprator, type: ");
+  print_dbg("\r\n createing new operator, type: ");
   print_dbg_ulong(opId);
 
   if (net->numOps >= NET_OPS_MAX) {
@@ -330,25 +330,22 @@ void net_remove_op(const u32 idx) {
 void net_connect(u32 oIdx, u32 iIdx) {
   net->ops[net->outs[oIdx].opIdx]->out[net->outs[oIdx].opOutIdx] = iIdx;
 
-  print_dbg("\r\n net_connect, output idx: 0x");
-  print_dbg_hex(oIdx);
-  print_dbg(", in idx: 0x");
-  print_dbg_hex(iIdx);
-  print_dbg(" , op idx: 0x");
-  print_dbg_hex(net->outs[oIdx].opIdx);
-  print_dbg(" , op out idx: 0x");
-  print_dbg_hex(net->outs[oIdx].opOutIdx);
+  /* print_dbg("\r\n net_connect, output idx: 0x"); */
+  /* print_dbg_hex(oIdx); */
+  /* print_dbg(", in idx: 0x"); */
+  /* print_dbg_hex(iIdx); */
+  /* print_dbg(" , op idx: 0x"); */
+  /* print_dbg_hex(net->outs[oIdx].opIdx); */
+  /* print_dbg(" , op out idx: 0x"); */
+  /* print_dbg_hex(net->outs[oIdx].opOutIdx); */
 
+  /* print_dbg("\r\n output operator name: "); */
+  /* print_dbg(net_op_name( net->outs[oIdx].opIdx) ); */
+  /* print_dbg("\r\n output name: "); */
+  /* print_dbg(net_out_name(oIdx)); */
 
-  //  print_dbg
-
-  print_dbg("\r\n output operator name: ");
-  print_dbg(net_op_name( net->outs[oIdx].opIdx) );
-  print_dbg("\r\n output name: ");
-  print_dbg(net_out_name(oIdx));
-
-  print_dbg("\r\n input name: ");
-  print_dbg(net_in_name(iIdx));
+  /* print_dbg("\r\n input name: "); */
+  /* print_dbg(net_in_name(iIdx)); */
 
   net->outs[oIdx].target = iIdx;
 }
@@ -610,6 +607,15 @@ void net_send_params(void) {
     set_param_value(i, net->params[i].data.value.asInt);
   }
 }
+
+// retrigger all inputs
+void net_retrigger_inputs(void) {
+  u32 i;
+  for(i=0; i<net->numIns; i++) {
+    net_activate(i, net_get_in_value(i));
+  }
+}
+
 
 
 //---------------------------------------------------

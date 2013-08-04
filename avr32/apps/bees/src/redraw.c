@@ -223,11 +223,11 @@ void redraw_presets(void) {
   /* case eModeCopy: */
   /*   screen_line(0, y, "COPY?", 14); */
   /*   break; */
-  /* case eModeStore: */
-  /*   screen_line(0, y, "STORE?", 14); */
+  /* case eModeWrite: */
+  /*   screen_line(0, y, "WRITE?", 14); */
   /*   break; */
-  /* case eModeRecall: */
-  /*   screen_line(0, y, "RECALL?", 14); */
+  /* case eModeRead: */
+  /*   screen_line(0, y, "READ??", 14); */
   /*   break; */
   /* case eModeNone: */
   default:
@@ -280,8 +280,8 @@ void redraw_scenes(void) {
   case eModeWrite:
     screen_line(0, y, "WRITE?", 14);
     break;
-  case eModeRecall:
-    screen_line(0, y, "RECALL?", 14);
+  case eModeRead:
+    screen_line(0, y, "READ?", 14);
     break;
   case eModeDefault:
     screen_line(0, y, "DEFAULT?", 14);

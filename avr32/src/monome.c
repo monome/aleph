@@ -167,7 +167,7 @@ static ring_map_t ringMapFuncs[eProtocolNumProtocols] = {
 //----- extern function definitions
 
 // init
-extern void init_monome(void) {
+void init_monome(void) {
   // ftdi precedes each packet with 0x31 0x60. 
   // this is to avoid actually stripping these 2 bytes after each read
   rxBuf = ftdiRxBuf + FTDI_RX_BUF_OFFSET;
@@ -179,7 +179,7 @@ extern void init_monome(void) {
 }
 
 // determine if FTDI string descriptors match monome device pattern
-extern u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr) {
+u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr) {
   char buf[16];
   u8 matchMan = 0;
   u8 i;
@@ -248,15 +248,17 @@ extern u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr) {
 
 // check dirty flags and refresh leds
 // FIXME: don't like all these tests and hacks but ok for now
-extern void monome_grid_refresh(void) {
+void monome_grid_refresh(void) {
   //  print_dbg("\r\n monome grid refresh; framedirty flag: 0x");
   //  print_dbg_hex(monomeFrameDirty);
   if( monomeFrameDirty & 0b0001 ) {
+    print_dbg("\r\n refreshing monome quadrant 0");
     grid_map_mext(0, 0, monomeLedBuffer);
       monomeFrameDirty &= 0b1110;
   }
 
   if( monomeFrameDirty & 0xb0010 ) {
+    print_dbg("\r\n refreshing monome quadrant 1");
       if ( mdesc.cols > 8 ) {
 	grid_map_mext(8, 0, monomeLedBuffer + 8);
 	monomeFrameDirty &= 0b1101;
@@ -264,6 +266,7 @@ extern void monome_grid_refresh(void) {
   }
 
   if( monomeFrameDirty &  0b0100 ) { 
+    print_dbg("\r\n refreshing monome quadrant 2");
     if( mdesc.rows > 8 ) {
       grid_map_mext(0, 8, monomeLedBuffer +  128);
       monomeFrameDirty &= 0b1011;
@@ -271,6 +274,7 @@ extern void monome_grid_refresh(void) {
   }
 
   if( monomeFrameDirty & 0b1000 ) {
+    print_dbg("\r\n refreshing monome quadrant 3");
     if( (mdesc.rows > 8) && (mdesc.cols > 8) )  {
       grid_map_mext(8, 8, monomeLedBuffer + 136);
       monomeFrameDirty &= 0b0111;
@@ -299,7 +303,7 @@ static inline void monome_grid_key_write_event(u8 x, u8 y, u8 val) {
   post_event(&ev);
 
 }
-extern void monome_grid_key_parse_event_data(u32 data, u8* x, u8* y, u8* val) {
+void monome_grid_key_parse_event_data(u32 data, u8* x, u8* y, u8* val) {
   u8* bdata = (u8*)(&data);
   *x = bdata[0];
   *y = bdata[1];
@@ -310,7 +314,7 @@ extern void monome_grid_key_parse_event_data(u32 data, u8* x, u8* y, u8* val) {
 static inline void monome_grid_adc_write_event( u8 n, u16 val) {
   // TODO
 }
-extern void monome_grid_adc_parse_event_data(u32 data, u8* n, u16* val) {
+void monome_grid_adc_parse_event_data(u32 data, u8* n, u16* val) {
   // TODO
 }
 
@@ -318,7 +322,7 @@ extern void monome_grid_adc_parse_event_data(u32 data, u8* n, u16* val) {
 static inline void monome_ring_enc_write_event( u8 n, u8 val) {
   // TODO
 }
-extern void monome_ring_enc_parse_event_data(u32 data, u8* n, s8* val) {
+void monome_ring_enc_parse_event_data(u32 data, u8* n, s8* val) {
   /// TODO
 }
 
@@ -326,16 +330,31 @@ extern void monome_ring_enc_parse_event_data(u32 data, u8* n, s8* val) {
 static inline void monome_ring_key_write_event( u8 n, u8 val) {
   // TODO
 }
-extern void monome_ring_key_parse_event_data(u32 data, u8* n, u8* val) {
+void monome_ring_key_parse_event_data(u32 data, u8* n, u8* val) {
   // TODO
 }
 
 // set quadrant refresh flag from pos
-extern void monome_calc_quadrant_flag(u8 x, u8 y) {
+void monome_calc_quadrant_flag(u8 x, u8 y) {
   static u8 q;
   q = (x > 7) | ((y > 7) << 1);  
   monomeFrameDirty |= (1 << q);  
+  print_dbg("\r\n monomeFrameDirty: 0x");
+  print_dbg_hex(monomeFrameDirty);
 }
+
+// convert flat framebuffer idx to x,y
+void monome_idx_xy(u32 idx, u8* x, u8* y) {
+  *x = idx & 0xf;
+  *y = (idx >> 4);
+}
+
+// convert x,y to framebuffer idx
+u32 monome_xy_idx(u8 x, u8 y) {
+    return x | (y << 4);
+}
+
+
 
 //=============================================
 //------ static function definitions
@@ -400,14 +419,17 @@ static u8 setup_mext(void) {
     mdesc.device = eDeviceGrid;
 	 
     if(b2 == 1) {
+      print_dbg("\r\n monome 64");
       mdesc.rows = 8;
       mdesc.cols = 8;
     }
     else if(b2 == 2) {
+      print_dbg("\r\n monome 128");
       mdesc.rows = 8;
       mdesc.cols = 16;
     }
     else if(b2 == 4) {
+      print_dbg("\r\n monome 256");
       mdesc.rows = 16; 
       mdesc.cols = 16;
     }

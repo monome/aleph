@@ -95,5 +95,9 @@ extern void monome_ring_key_parse_event_data(u32 data, u8* n, u8* val);
 
 // set quadrant dirty flag
 extern void monome_calc_quadrant_flag(u8 x, u8 y);
+// convert flat framebuffer idx to x,y
+extern void monome_idx_xy(u32 idx, u8* x, u8* y);
+// convert x,y to framebuffer idx
+extern u32 monome_xy_idx(u8 x, u8 y);
 
 #endif // h guard
