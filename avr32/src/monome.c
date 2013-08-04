@@ -74,7 +74,6 @@ grid_map_t monome_grid_map;
 grid_level_map_t monome_grid_level_map;
 ring_map_t monome_ring_map;
 
-
 //-----------------------------------------
 //----- static variables
 
@@ -111,13 +110,13 @@ static void grid_led_40h(u8 x, u8 y, u8 val);
 static void grid_led_series(u8 x, u8 y, u8 val);
 static void grid_led_mext(u8 x, u8 y, u8 val);
 
-static void grid_map_40h(u8 x, u8 y, u8* data);
-static void grid_map_series(u8 x, u8 y, u8* data);
-static void grid_map_mext(u8 x, u8 y, u8* data);
+static void grid_map_40h(u8 x, u8 y, const u8* data);
+static void grid_map_series(u8 x, u8 y, const u8* data);
+static void grid_map_mext(u8 x, u8 y, const u8* data);
 
 //static void grid_map_level_40h(u8 x, u8 val);
 //static void grid_map_level_series(u8 x, u8 y, u8* data);
-static void grid_map_level_mext(u8 x, u8 y, u8* data);
+static void grid_map_level_mext(u8 x, u8 y, const u8* data);
 
 //static void ring_set_mext(u8 n, u8 rho, u8 val);
 static void ring_map_mext(u8 n, u8* data);
@@ -175,7 +174,7 @@ void init_monome(void) {
   for(i=0; i<MONOME_MAX_LED_BYTES; i++) {
     monomeLedBuffer[i] = 0;
   }
-  print_dbg("\r\n finished monome class init");
+  //  print_dbg("\r\n finished monome class init");
 }
 
 // determine if FTDI string descriptors match monome device pattern
@@ -190,16 +189,16 @@ u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr) {
   }
   buf[i] = 0;
   matchMan = ( strncmp(buf, "monome", MONOME_MANSTR_LEN) == 0 );
-  print_dbg("\r\n manstring: ");
-  print_dbg(buf);
+  /* print_dbg("\r\n manstring: "); */
+  /* print_dbg(buf); */
  
   // serial number string
   for(i=0; i<MONOME_SERSTR_LEN; i++) {
     buf[i] = sstr[i*2];
   }
   buf[i] = 0;
-  print_dbg("\r\n serial string: ");
-  print_dbg(buf);
+  /* print_dbg("\r\n serial string: "); */
+  /* print_dbg(buf); */
   if(matchMan == 0) {
     // didn't match the manufacturer string, but check the serial for DIYs
     if( strncmp(buf, "a40h", 4) == 0) {
@@ -247,22 +246,22 @@ u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr) {
 }
 
 // check dirty flags and refresh leds
-// FIXME: don't like all these tests and hacks but ok for now
 void monome_grid_refresh(void) {
-  //  print_dbg("\r\n monome grid refresh; framedirty flag: 0x");
-  //  print_dbg_hex(monomeFrameDirty);
+  print_dbg("\r\n monome grid refresh; framedirty flag: 0x");
+  print_dbg_hex(monomeFrameDirty);
+
   if( monomeFrameDirty & 0b0001 ) {
     print_dbg("\r\n refreshing monome quadrant 0");
     grid_map_mext(0, 0, monomeLedBuffer);
-      monomeFrameDirty &= 0b1110;
+    monomeFrameDirty &= 0b1110;
   }
 
   if( monomeFrameDirty & 0xb0010 ) {
     print_dbg("\r\n refreshing monome quadrant 1");
-      if ( mdesc.cols > 8 ) {
-	grid_map_mext(8, 0, monomeLedBuffer + 8);
-	monomeFrameDirty &= 0b1101;
-      }
+    if ( mdesc.cols > 8 ) {
+      grid_map_mext(8, 0, monomeLedBuffer + 8);
+      monomeFrameDirty &= 0b1101;
+    }
   }
 
   if( monomeFrameDirty &  0b0100 ) { 
@@ -290,14 +289,6 @@ static inline void monome_grid_key_write_event(u8 x, u8 y, u8 val) {
   data[0] = x;
   data[1] = y;
   data[2] = val;
-  /* print_dbg("\r\n !!!! post monome grid key event: "); */
-  /* print_dbg("x: "); */
-  /* print_dbg_ulong(x); */
-  /* print_dbg("; y: "); */
-  /* print_dbg_ulong(y); */
-  /* print_dbg("; z: "); */
-  /* print_dbg_ulong(val); */
-  /* print_dbg("   !!!!!!!!!"); */
 
   ev.eventType = kEventMonomeGridKey;
   post_event(&ev);
@@ -336,10 +327,10 @@ void monome_ring_key_parse_event_data(u32 data, u8* n, u8* val) {
 
 // set quadrant refresh flag from pos
 void monome_calc_quadrant_flag(u8 x, u8 y) {
-  static u8 q;
+  u8 q;
   q = (x > 7) | ((y > 7) << 1);  
   monomeFrameDirty |= (1 << q);  
-  print_dbg("\r\n monomeFrameDirty: 0x");
+  print_dbg("\r\n monome_calc_quadrant_flag: 0x");
   print_dbg_hex(monomeFrameDirty);
 }
 
@@ -351,7 +342,7 @@ void monome_idx_xy(u32 idx, u8* x, u8* y) {
 
 // convert x,y to framebuffer idx
 u32 monome_xy_idx(u8 x, u8 y) {
-    return x | (y << 4);
+  return x | (y << 4);
 }
 
 
@@ -415,7 +406,7 @@ static u8 setup_mext(void) {
   b1 = (u8)rxBuf[1];
   b2 = (u8)rxBuf[2];
 
-    if(b1 == 1) {
+  if(b1 == 1) {
     mdesc.device = eDeviceGrid;
 	 
     if(b2 == 1) {
@@ -558,44 +549,41 @@ static void grid_led_mext(u8 x, u8 y, u8 val) {
 // . note that our input data is one byte per led!!
 // this will hopefully help optimize operator routines,
 // which cannot be called less often than refresh/tx, and are therefore prioritized.
-// assume data is row-first 16x16.
-static void grid_map_mext( u8 x, u8 y, u8* data ) {
+static void grid_map_mext( u8 x, u8 y, const u8* data ) {
   static u8 tx[11] = { 0x14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-  u8* pdata;
-  u8* ptx;
-  u8 i, j;
+  //  static u8* pdata;
+  static u8* ptx;
+  static u8 i, j;
   tx[1] = x;
   tx[2] = y;
   
-  pdata = data;
+  //  pdata = data;
   ptx = tx + 3;
   
-  /// FIXME: name these constants somewhere. i guess.
   // copy and convert
-  for(i=0; i<8; i++) {
+  for(i=0; i<MONOME_QUAD_LEDS; i++) {
     *ptx = 0;
-    for(j=0; j<8; j++) {
-      *ptx |= ((*pdata > 0) << j);
-      pdata++;
+    for(j=0; j<MONOME_QUAD_LEDS; j++) {
+      // binary value of data byte to bitfield of tx byte
+      *ptx |= ((*data > 0) << j);
+      data++;
     }
-    pdata += 8; // skip the rest of the row to get back in target quad
+    data += MONOME_QUAD_LEDS; // skip the rest of the row to get back in target quad
     ptx++;
   }
-  ptx++;
-
   ftdi_write(tx, 11);
 }
 
 
-static void grid_map_40h(u8 x, u8 y, u8* data) {
+static void grid_map_40h(u8 x, u8 y, const u8* data) {
   // TODO : (use 8 row commands and ignore x/y)
 }
 
-static void grid_map_series(u8 x, u8 y, u8* data) {
+static void grid_map_series(u8 x, u8 y, const u8* data) {
   // TODO
 }
 
-static void grid_map_level_mext(u8 x, u8 y, u8* data) {
+static void grid_map_level_mext(u8 x, u8 y, const u8* data) {
   // TODO
 }
 

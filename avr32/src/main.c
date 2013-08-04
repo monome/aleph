@@ -117,7 +117,8 @@ static void init_avr32(void) {
 
   // usb host controller
   init_usb_host();
-  // initialize usb classes
+  
+// initialize usb classes
   init_monome();
   
   print_dbg("\r\n avr32 init done ");

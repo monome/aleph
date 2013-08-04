@@ -21,6 +21,8 @@
 /// all frames/elements, 1 byte per led.
 // arc4 and 256 are tied.
 #define MONOME_MAX_LED_BYTES 256
+// how many leds on each side of a quad
+#define MONOME_QUAD_LEDS 8
 //-- sizes for the actual data to be send over usb
 // one frame is an 8x8 quadrant; 256 has 4.
 #define MONOME_GRID_MAX_FRAMES 4
@@ -46,9 +48,9 @@ typedef void(*read_serial_t)(void);
 // single led
 typedef void(*grid_led_t)(u8 x, u8 y, u8 val);
 // binary 8x8 frame
-typedef void(*grid_map_t)(u8 x, u8 y, u8* data);
+typedef void(*grid_map_t)(u8 x, u8 y, const u8* data);
 // 8x8x8b varibright frame
-typedef void(*grid_level_map_t)(u8 x, u8 y, u8* data);
+typedef void(*grid_level_map_t)(u8 x, u8 y, const u8* data);
 ///// write (ring)
 // set single led in ring with 4b value
 typedef void(*ring_set_t)(u8 n, u8 rho, u8 val);

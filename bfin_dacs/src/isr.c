@@ -18,8 +18,8 @@ u8 upCh = 0;
 
 //===============================
 //==== static variables
-static u32 chanIncMul = 8;
-static u32 incOff = 4;
+static const u32 chanIncMul = 8;
+static const u32 incOff = 4;
 
 static u16 dacData[4] = { 0, 0, 0, 0 };
 //static u16 dacData[4] = { 0xcccc, 0xdddd, 0xeeee, 0xffff };
