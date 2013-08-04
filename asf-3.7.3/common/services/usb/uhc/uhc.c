@@ -145,8 +145,8 @@ static volatile bool uhc_setup_request_finish_status;
 //! \name Internal functions to manage the USB device enumeration
 //! @{
 static void uhc_enable_timeout_callback(
-		uint8_t timeout,
-		uhc_sof_timeout_callback_t callback);
+					uint8_t timeout,
+					uhc_sof_timeout_callback_t callback);
 static void uhc_enumeration_suspend(void);
 static void uhc_enumeration_reset(uhd_callback_reset_t callback);
 static void uhc_connection_tree(bool b_plug, uhc_device_t* dev);
@@ -156,41 +156,41 @@ static void uhc_enumeration_step3(void);
 static void uhc_enumeration_step4(void);
 static void uhc_enumeration_step5(void);
 static void uhc_enumeration_step6(
-		usb_add_t add,
-		uhd_trans_status_t status,
-		uint16_t payload_trans);
+				  usb_add_t add,
+				  uhd_trans_status_t status,
+				  uint16_t payload_trans);
 static void uhc_enumeration_step7(void);
 static void uhc_enumeration_step8(void);
 static void uhc_enumeration_step9(void);
 static void uhc_enumeration_step10(
-		usb_add_t add,
-		uhd_trans_status_t status,
-		uint16_t payload_trans);
+				   usb_add_t add,
+				   uhd_trans_status_t status,
+				   uint16_t payload_trans);
 static void uhc_enumeration_step11(void);
 static void uhc_enumeration_step12(
-		usb_add_t add,
-		uhd_trans_status_t status,
-		uint16_t payload_trans);
+				   usb_add_t add,
+				   uhd_trans_status_t status,
+				   uint16_t payload_trans);
 static void uhc_enumeration_step13(
-		usb_add_t add,
-		uhd_trans_status_t status,
-		uint16_t payload_trans);
+				   usb_add_t add,
+				   uhd_trans_status_t status,
+				   uint16_t payload_trans);
 static void uhc_enumeration_step14(
-		usb_add_t add,
-		uhd_trans_status_t status,
-		uint16_t payload_trans);
+				   usb_add_t add,
+				   uhd_trans_status_t status,
+				   uint16_t payload_trans);
 static void uhc_enumeration_step15(
-		usb_add_t add,
-		uhd_trans_status_t status,
-		uint16_t payload_trans);
+				   usb_add_t add,
+				   uhd_trans_status_t status,
+				   uint16_t payload_trans);
 static void uhc_enumeration_error(uhc_enum_status_t status);
 //! @}
 
 static void uhc_remotewakeup(bool b_enable);
 static void uhc_setup_request_callback(
-		usb_add_t add,
-		uhd_trans_status_t status,
-		uint16_t payload_trans);
+				       usb_add_t add,
+				       uhd_trans_status_t status,
+				       uint16_t payload_trans);
 
 
 
@@ -201,10 +201,10 @@ static void uhc_setup_request_callback(
  * \param callback Callback to call at the end of timeout
  */
 static void uhc_enable_timeout_callback(uint8_t timeout,
-		uhc_sof_timeout_callback_t callback)
+					uhc_sof_timeout_callback_t callback)
 {
-	uhc_sof_timeout_callback = callback;
-	uhc_sof_timeout = timeout;
+  uhc_sof_timeout_callback = callback;
+  uhc_sof_timeout = timeout;
 }
 
 /**
@@ -214,15 +214,15 @@ static void uhc_enable_timeout_callback(uint8_t timeout,
 static void uhc_enumeration_suspend(void)
 {
 #ifdef USB_HOST_HUB_SUPPORT
-	if (&g_uhc_device_root != uhc_dev_enum) {
-		// Device connected on USB hub
-		uhi_hub_suspend(uhc_dev_enum);
-	} else
+  if (&g_uhc_device_root != uhc_dev_enum) {
+    // Device connected on USB hub
+    uhi_hub_suspend(uhc_dev_enum);
+  } else
 #endif
-	{
-		// Suspend USB line
-		uhd_suspend();
-	}
+    {
+      // Suspend USB line
+      uhd_suspend();
+    }
 }
 
 /**
@@ -232,16 +232,16 @@ static void uhc_enumeration_suspend(void)
  */
 static void uhc_enumeration_reset(uhd_callback_reset_t callback)
 {
-	// Reset USB line
+  // Reset USB line
 #ifdef USB_HOST_HUB_SUPPORT
-	if (&g_uhc_device_root != uhc_dev_enum) {
-		// Device connected on USB hub
-		uhi_hub_send_reset(uhc_dev_enum, callback);
-	} else
+  if (&g_uhc_device_root != uhc_dev_enum) {
+    // Device connected on USB hub
+    uhi_hub_send_reset(uhc_dev_enum, callback);
+  } else
 #endif
-	{
-		uhd_send_reset(callback);
-	}
+    {
+      uhd_send_reset(callback);
+    }
 }
 
 /**
@@ -252,44 +252,44 @@ static void uhc_enumeration_reset(uhd_callback_reset_t callback)
  */
 static void uhc_connection_tree(bool b_plug, uhc_device_t* dev)
 {
-	if (b_plug) {
-		uhc_enum_try = 1;
+  if (b_plug) {
+    uhc_enum_try = 1;
 #ifdef USB_HOST_HUB_SUPPORT
-		uhc_dev_enum = dev;
+    uhc_dev_enum = dev;
 #endif
-		uhc_dev_enum->conf_desc = NULL;
-		uhc_dev_enum->address = 0;
-		UHC_CONNECTION_EVENT(uhc_dev_enum, true);
-		uhc_enumeration_step1();
-	} else {
-		if (uhc_dev_enum == dev) {
-			// Eventually stop enumeration timeout on-going on this device
-			uhc_sof_timeout = 0;
-		}
-		// Abort all transfers (endpoint control and other) and free pipe(s)
-		uhd_ep_free(dev->address, 0xFF);
+    uhc_dev_enum->conf_desc = NULL;
+    uhc_dev_enum->address = 0;
+    UHC_CONNECTION_EVENT(uhc_dev_enum, true);
+    uhc_enumeration_step1();
+  } else {
+    if (uhc_dev_enum == dev) {
+      // Eventually stop enumeration timeout on-going on this device
+      uhc_sof_timeout = 0;
+    }
+    // Abort all transfers (endpoint control and other) and free pipe(s)
+    uhd_ep_free(dev->address, 0xFF);
 
-		// Disable all USB interfaces (this includes HUB interface)
-		for (uint8_t i = 0; i < UHC_NB_UHI; i++) {
-			uhc_uhis[i].uninstall(dev);
-		}
+    // Disable all USB interfaces (this includes HUB interface)
+    for (uint8_t i = 0; i < UHC_NB_UHI; i++) {
+      uhc_uhis[i].uninstall(dev);
+    }
 
-		UHC_CONNECTION_EVENT(dev, false);
-		dev->address = UHC_USB_ADD_NOT_VALID;
-		// Free USB configuration descriptor buffer
-		if (dev->conf_desc != NULL) {
-			free(dev->conf_desc);
-		}
+    UHC_CONNECTION_EVENT(dev, false);
+    dev->address = UHC_USB_ADD_NOT_VALID;
+    // Free USB configuration descriptor buffer
+    if (dev->conf_desc != NULL) {
+      free(dev->conf_desc);
+    }
 #ifdef USB_HOST_HUB_SUPPORT
-		uhc_power_running -= dev->power;
-		if (&g_uhc_device_root != dev) {
-			// It is on a USB hub
-			dev->prev->next = dev->next;
-			dev->next->prev = dev->prev;
-			free(dev);
-		}
+    uhc_power_running -= dev->power;
+    if (&g_uhc_device_root != dev) {
+      // It is on a USB hub
+      dev->prev->next = dev->next;
+      dev->next->prev = dev->prev;
+      free(dev);
+    }
 #endif
-	}
+  }
 }
 
 /**
@@ -298,7 +298,7 @@ static void uhc_connection_tree(bool b_plug, uhc_device_t* dev)
  */
 static void uhc_enumeration_step1(void)
 {
-	uhc_enumeration_reset(uhc_enumeration_step2);
+  uhc_enumeration_reset(uhc_enumeration_step2);
 }
 
 /**
@@ -307,7 +307,7 @@ static void uhc_enumeration_step1(void)
  */
 static void uhc_enumeration_step2(void)
 {
-	uhc_enable_timeout_callback(20, uhc_enumeration_step3);
+  uhc_enable_timeout_callback(20, uhc_enumeration_step3);
 }
 
 /**
@@ -316,7 +316,7 @@ static void uhc_enumeration_step2(void)
  */
 static void uhc_enumeration_step3(void)
 {
-	uhc_enumeration_reset(uhc_enumeration_step4);
+  uhc_enumeration_reset(uhc_enumeration_step4);
 }
 
 /**
@@ -325,8 +325,8 @@ static void uhc_enumeration_step3(void)
  */
 static void uhc_enumeration_step4(void)
 {
-	uhc_dev_enum->speed = uhd_get_speed();
-	uhc_enable_timeout_callback(100, uhc_enumeration_step5);
+  uhc_dev_enum->speed = uhd_get_speed();
+  uhc_enable_timeout_callback(100, uhc_enumeration_step5);
 }
 
 /**
@@ -337,28 +337,28 @@ static void uhc_enumeration_step4(void)
  */
 static void uhc_enumeration_step5(void)
 {
-	usb_setup_req_t req;
+  usb_setup_req_t req;
 
-	req.bmRequestType = USB_REQ_RECIP_DEVICE|USB_REQ_TYPE_STANDARD|USB_REQ_DIR_IN;
-	req.bRequest = USB_REQ_GET_DESCRIPTOR;
-	req.wValue = (USB_DT_DEVICE << 8);
-	req.wIndex = 0;
-	req.wLength = offsetof(uhc_device_t, dev_desc.bMaxPacketSize0)
-			+ sizeof(uhc_dev_enum->dev_desc.bMaxPacketSize0);
+  req.bmRequestType = USB_REQ_RECIP_DEVICE|USB_REQ_TYPE_STANDARD|USB_REQ_DIR_IN;
+  req.bRequest = USB_REQ_GET_DESCRIPTOR;
+  req.wValue = (USB_DT_DEVICE << 8);
+  req.wIndex = 0;
+  req.wLength = offsetof(uhc_device_t, dev_desc.bMaxPacketSize0)
+    + sizeof(uhc_dev_enum->dev_desc.bMaxPacketSize0);
 
-	if (!uhd_ep0_alloc(0, 64)) {
-		uhc_enumeration_error(UHC_ENUM_HARDWARE_LIMIT);
-		return;
-	}
-	if (!uhd_setup_request(0,
-			&req,
-			(uint8_t*)&uhc_dev_enum->dev_desc,
-			sizeof(usb_dev_desc_t),
-			NULL,
-			uhc_enumeration_step6)) {
-		uhc_enumeration_error(UHC_ENUM_MEMORY_LIMIT);
-		return;
-	}
+  if (!uhd_ep0_alloc(0, 64)) {
+    uhc_enumeration_error(UHC_ENUM_HARDWARE_LIMIT);
+    return;
+  }
+  if (!uhd_setup_request(0,
+			 &req,
+			 (uint8_t*)&uhc_dev_enum->dev_desc,
+			 sizeof(usb_dev_desc_t),
+			 NULL,
+			 uhc_enumeration_step6)) {
+    uhc_enumeration_error(UHC_ENUM_MEMORY_LIMIT);
+    return;
+  }
 }
 
 /**
@@ -371,19 +371,19 @@ static void uhc_enumeration_step5(void)
  * \param payload_trans Number of data transfered during DATA phase
  */
 static void uhc_enumeration_step6(
-		usb_add_t add,
-		uhd_trans_status_t status,
-		uint16_t payload_trans)
+				  usb_add_t add,
+				  uhd_trans_status_t status,
+				  uint16_t payload_trans)
 {
-	UNUSED(add);
-	if ((status != UHD_TRANS_NOERROR) || (payload_trans < 8)
-			|| (uhc_dev_enum->dev_desc.bDescriptorType != USB_DT_DEVICE)) {
-		uhc_enumeration_error((status == UHD_TRANS_DISCONNECT)?
-				UHC_ENUM_DISCONNECT:UHC_ENUM_FAIL);
-		return;
-	}
-	// Wait 20ms
-	uhc_enable_timeout_callback(20, uhc_enumeration_step7);
+  UNUSED(add);
+  if ((status != UHD_TRANS_NOERROR) || (payload_trans < 8)
+      || (uhc_dev_enum->dev_desc.bDescriptorType != USB_DT_DEVICE)) {
+    uhc_enumeration_error((status == UHD_TRANS_DISCONNECT)?
+			  UHC_ENUM_DISCONNECT:UHC_ENUM_FAIL);
+    return;
+  }
+  // Wait 20ms
+  uhc_enable_timeout_callback(20, uhc_enumeration_step7);
 }
 
 /**
@@ -392,7 +392,7 @@ static void uhc_enumeration_step6(
  */
 static void uhc_enumeration_step7(void)
 {
-	uhc_enumeration_reset(uhc_enumeration_step8);
+  uhc_enumeration_reset(uhc_enumeration_step8);
 }
 
 /**
@@ -401,8 +401,8 @@ static void uhc_enumeration_step7(void)
  */
 static void uhc_enumeration_step8(void)
 {
-	// Wait 100ms
-	uhc_enable_timeout_callback(100, uhc_enumeration_step9);
+  // Wait 100ms
+  uhc_enable_timeout_callback(100, uhc_enumeration_step9);
 }
 
 /**
@@ -411,52 +411,52 @@ static void uhc_enumeration_step8(void)
  */
 static void uhc_enumeration_step9(void)
 {
-	usb_setup_req_t req;
+  usb_setup_req_t req;
 
-	req.bmRequestType = USB_REQ_RECIP_DEVICE
-			| USB_REQ_TYPE_STANDARD | USB_REQ_DIR_OUT;
-	req.bRequest = USB_REQ_SET_ADDRESS;
+  req.bmRequestType = USB_REQ_RECIP_DEVICE
+    | USB_REQ_TYPE_STANDARD | USB_REQ_DIR_OUT;
+  req.bRequest = USB_REQ_SET_ADDRESS;
 #ifdef USB_HOST_HUB_SUPPORT
-	uint8_t usb_addr_free = 0;
-	uhc_device_t *dev;
+  uint8_t usb_addr_free = 0;
+  uhc_device_t *dev;
 
-	// Search free address
-	dev = &g_uhc_device_root;
-	while (usb_addr_free++) {
-		if (dev->address == usb_addr_free) {
-			continue;
-		}
-		if (dev->next != NULL) {
-			dev = dev->next;
-			continue;
-		}
-		break;
-	}
-	req.wValue = usb_addr_free;
-	uhc_dev_enum->address = usb_addr_free;
+  // Search free address
+  dev = &g_uhc_device_root;
+  while (usb_addr_free++) {
+    if (dev->address == usb_addr_free) {
+      continue;
+    }
+    if (dev->next != NULL) {
+      dev = dev->next;
+      continue;
+    }
+    break;
+  }
+  req.wValue = usb_addr_free;
+  uhc_dev_enum->address = usb_addr_free;
 #else
-	req.wValue = UHC_DEVICE_ENUM_ADD;
-	uhc_dev_enum->address = UHC_DEVICE_ENUM_ADD;
+  req.wValue = UHC_DEVICE_ENUM_ADD;
+  uhc_dev_enum->address = UHC_DEVICE_ENUM_ADD;
 #endif
-	req.wIndex = 0;
-	req.wLength = 0;
+  req.wIndex = 0;
+  req.wLength = 0;
 
-	// After a USB reset, the reallocation is required
-	uhd_ep_free(0, 0);
-	if (!uhd_ep0_alloc(0, uhc_dev_enum->dev_desc.bMaxPacketSize0)) {
-		uhc_enumeration_error(UHC_ENUM_HARDWARE_LIMIT);
-		return;
-	}
+  // After a USB reset, the reallocation is required
+  uhd_ep_free(0, 0);
+  if (!uhd_ep0_alloc(0, uhc_dev_enum->dev_desc.bMaxPacketSize0)) {
+    uhc_enumeration_error(UHC_ENUM_HARDWARE_LIMIT);
+    return;
+  }
 
-	if (!uhd_setup_request(0,
-			&req,
-			(uint8_t*)&uhc_dev_enum->dev_desc,
-			sizeof(usb_dev_desc_t),
-			NULL,
-			uhc_enumeration_step10)) {
-		uhc_enumeration_error(UHC_ENUM_MEMORY_LIMIT);
-		return;
-	}
+  if (!uhd_setup_request(0,
+			 &req,
+			 (uint8_t*)&uhc_dev_enum->dev_desc,
+			 sizeof(usb_dev_desc_t),
+			 NULL,
+			 uhc_enumeration_step10)) {
+    uhc_enumeration_error(UHC_ENUM_MEMORY_LIMIT);
+    return;
+  }
 }
 
 /**
@@ -469,19 +469,19 @@ static void uhc_enumeration_step9(void)
  * \param payload_trans Number of data transfered during DATA phase
  */
 static void uhc_enumeration_step10(
-		usb_add_t add,
-		uhd_trans_status_t status,
-		uint16_t payload_trans)
+				   usb_add_t add,
+				   uhd_trans_status_t status,
+				   uint16_t payload_trans)
 {
-	UNUSED(add);
-	UNUSED(payload_trans);
-	if (status != UHD_TRANS_NOERROR) {
-		uhc_enumeration_error((status == UHD_TRANS_DISCONNECT) ?
-				UHC_ENUM_DISCONNECT : UHC_ENUM_FAIL);
-		return;
-	}
-	// Wait 20ms
-	uhc_enable_timeout_callback(20, uhc_enumeration_step11);
+  UNUSED(add);
+  UNUSED(payload_trans);
+  if (status != UHD_TRANS_NOERROR) {
+    uhc_enumeration_error((status == UHD_TRANS_DISCONNECT) ?
+			  UHC_ENUM_DISCONNECT : UHC_ENUM_FAIL);
+    return;
+  }
+  // Wait 20ms
+  uhc_enable_timeout_callback(20, uhc_enumeration_step11);
 }
 
 /**
@@ -491,31 +491,31 @@ static void uhc_enumeration_step10(
  */
 static void uhc_enumeration_step11(void)
 {
-	usb_setup_req_t req;
+  usb_setup_req_t req;
 
-	// Free address 0 used to start enumeration
-	uhd_ep_free(0, 0);
+  // Free address 0 used to start enumeration
+  uhd_ep_free(0, 0);
 
-	// Alloc control endpoint with the new USB address
-	if (!uhd_ep0_alloc(UHC_DEVICE_ENUM_ADD,
-			uhc_dev_enum->dev_desc.bMaxPacketSize0)) {
-		uhc_enumeration_error(UHC_ENUM_HARDWARE_LIMIT);
-		return;
-	}
-	// Send USB device descriptor request
-	req.bmRequestType = USB_REQ_RECIP_DEVICE|USB_REQ_TYPE_STANDARD|USB_REQ_DIR_IN;
-	req.bRequest = USB_REQ_GET_DESCRIPTOR;
-	req.wValue = (USB_DT_DEVICE << 8);
-	req.wIndex = 0;
-	req.wLength = sizeof(usb_dev_desc_t);
-	if (!uhd_setup_request(UHC_DEVICE_ENUM_ADD,
-			&req,
-			(uint8_t *) & uhc_dev_enum->dev_desc,
-			sizeof(usb_dev_desc_t),
-			NULL, uhc_enumeration_step12)) {
-		uhc_enumeration_error(UHC_ENUM_MEMORY_LIMIT);
-		return;
-	}
+  // Alloc control endpoint with the new USB address
+  if (!uhd_ep0_alloc(UHC_DEVICE_ENUM_ADD,
+		     uhc_dev_enum->dev_desc.bMaxPacketSize0)) {
+    uhc_enumeration_error(UHC_ENUM_HARDWARE_LIMIT);
+    return;
+  }
+  // Send USB device descriptor request
+  req.bmRequestType = USB_REQ_RECIP_DEVICE|USB_REQ_TYPE_STANDARD|USB_REQ_DIR_IN;
+  req.bRequest = USB_REQ_GET_DESCRIPTOR;
+  req.wValue = (USB_DT_DEVICE << 8);
+  req.wIndex = 0;
+  req.wLength = sizeof(usb_dev_desc_t);
+  if (!uhd_setup_request(UHC_DEVICE_ENUM_ADD,
+			 &req,
+			 (uint8_t *) & uhc_dev_enum->dev_desc,
+			 sizeof(usb_dev_desc_t),
+			 NULL, uhc_enumeration_step12)) {
+    uhc_enumeration_error(UHC_ENUM_MEMORY_LIMIT);
+    return;
+  }
 }
 
 /**
@@ -527,47 +527,47 @@ static void uhc_enumeration_step11(void)
  * \param payload_trans Number of data transfered during DATA phase
  */
 static void uhc_enumeration_step12(
-		usb_add_t add,
-		uhd_trans_status_t status,
-		uint16_t payload_trans)
+				   usb_add_t add,
+				   uhd_trans_status_t status,
+				   uint16_t payload_trans)
 {
-	usb_setup_req_t req;
-	uint8_t conf_num;
-	UNUSED(add);
+  usb_setup_req_t req;
+  uint8_t conf_num;
+  UNUSED(add);
 
-	if ((status != UHD_TRANS_NOERROR) || (payload_trans != sizeof(usb_dev_desc_t))
-			|| (uhc_dev_enum->dev_desc.bDescriptorType != USB_DT_DEVICE)) {
-		uhc_enumeration_error((status==UHD_TRANS_DISCONNECT)?
-				UHC_ENUM_DISCONNECT:UHC_ENUM_FAIL);
-		return;
-	}
-	// Choose USB device configuration
-	if (uhc_dev_enum->dev_desc.bNumConfigurations > 1) {
-		conf_num = UHC_DEVICE_CONF(uhc_dev_enum);
-	} else {
-		conf_num = 1;
-	}
+  if ((status != UHD_TRANS_NOERROR) || (payload_trans != sizeof(usb_dev_desc_t))
+      || (uhc_dev_enum->dev_desc.bDescriptorType != USB_DT_DEVICE)) {
+    uhc_enumeration_error((status==UHD_TRANS_DISCONNECT)?
+			  UHC_ENUM_DISCONNECT:UHC_ENUM_FAIL);
+    return;
+  }
+  // Choose USB device configuration
+  if (uhc_dev_enum->dev_desc.bNumConfigurations > 1) {
+    conf_num = UHC_DEVICE_CONF(uhc_dev_enum);
+  } else {
+    conf_num = 1;
+  }
 
-	uhc_dev_enum->conf_desc = malloc(sizeof(usb_conf_desc_t));
-	if (uhc_dev_enum->conf_desc == NULL) {
-		Assert(false);
-		uhc_enumeration_error(UHC_ENUM_MEMORY_LIMIT);
-		return;
-	}
-	// Send USB device descriptor request
-	req.bmRequestType = USB_REQ_RECIP_DEVICE|USB_REQ_TYPE_STANDARD|USB_REQ_DIR_IN;
-	req.bRequest = USB_REQ_GET_DESCRIPTOR;
-	req.wValue = (USB_DT_CONFIGURATION << 8) | (conf_num - 1);
-	req.wIndex = 0;
-	req.wLength = sizeof(usb_conf_desc_t);
-	if (!uhd_setup_request(UHC_DEVICE_ENUM_ADD,
-			&req,
-			(uint8_t *) uhc_dev_enum->conf_desc,
-			sizeof(usb_conf_desc_t),
-			NULL, uhc_enumeration_step13)) {
-		uhc_enumeration_error(UHC_ENUM_MEMORY_LIMIT);
-		return;
-	}
+  uhc_dev_enum->conf_desc = malloc(sizeof(usb_conf_desc_t));
+  if (uhc_dev_enum->conf_desc == NULL) {
+    Assert(false);
+    uhc_enumeration_error(UHC_ENUM_MEMORY_LIMIT);
+    return;
+  }
+  // Send USB device descriptor request
+  req.bmRequestType = USB_REQ_RECIP_DEVICE|USB_REQ_TYPE_STANDARD|USB_REQ_DIR_IN;
+  req.bRequest = USB_REQ_GET_DESCRIPTOR;
+  req.wValue = (USB_DT_CONFIGURATION << 8) | (conf_num - 1);
+  req.wIndex = 0;
+  req.wLength = sizeof(usb_conf_desc_t);
+  if (!uhd_setup_request(UHC_DEVICE_ENUM_ADD,
+			 &req,
+			 (uint8_t *) uhc_dev_enum->conf_desc,
+			 sizeof(usb_conf_desc_t),
+			 NULL, uhc_enumeration_step13)) {
+    uhc_enumeration_error(UHC_ENUM_MEMORY_LIMIT);
+    return;
+  }
 }
 
 /**
@@ -579,83 +579,83 @@ static void uhc_enumeration_step12(
  * \param payload_trans Number of data transfered during DATA phase
  */
 static void uhc_enumeration_step13(
-		usb_add_t add,
-		uhd_trans_status_t status,
-		uint16_t payload_trans)
+				   usb_add_t add,
+				   uhd_trans_status_t status,
+				   uint16_t payload_trans)
 {
-	uint8_t conf_num, conf_size;
-	uint16_t bus_power = 0;
-	usb_setup_req_t req;
-	UNUSED(add);
+  uint8_t conf_num, conf_size;
+  uint16_t bus_power = 0;
+  usb_setup_req_t req;
+  UNUSED(add);
 
-	if ((status != UHD_TRANS_NOERROR) || (payload_trans != sizeof(usb_conf_desc_t))
-			|| (uhc_dev_enum->conf_desc->bDescriptorType != USB_DT_CONFIGURATION)) {
-		uhc_enumeration_error((status == UHD_TRANS_DISCONNECT)?
-				UHC_ENUM_DISCONNECT:UHC_ENUM_FAIL);
-		return;
-	}
+  if ((status != UHD_TRANS_NOERROR) || (payload_trans != sizeof(usb_conf_desc_t))
+      || (uhc_dev_enum->conf_desc->bDescriptorType != USB_DT_CONFIGURATION)) {
+    uhc_enumeration_error((status == UHD_TRANS_DISCONNECT)?
+			  UHC_ENUM_DISCONNECT:UHC_ENUM_FAIL);
+    return;
+  }
 #ifdef USB_HOST_HUB_SUPPORT
-	uhc_device_t *dev;
-	dev = uhc_dev_enum;
-	while (1) {
-		if (dev->conf_desc->bmAttributes & USB_CONFIG_ATTR_SELF_POWERED) {
-			// The device or a parent HUB is SELF power, then no power on root
-			break;
-		}
-		if (dev == (&g_uhc_device_root)) {
-			bus_power = uhc_dev_enum->conf_desc->bMaxPower * 2;
-			break; // End of USB tree
-		}
-		// Go to USB HUB parent
-		dev = dev->hub;
-	}
+  uhc_device_t *dev;
+  dev = uhc_dev_enum;
+  while (1) {
+    if (dev->conf_desc->bmAttributes & USB_CONFIG_ATTR_SELF_POWERED) {
+      // The device or a parent HUB is SELF power, then no power on root
+      break;
+    }
+    if (dev == (&g_uhc_device_root)) {
+      bus_power = uhc_dev_enum->conf_desc->bMaxPower * 2;
+      break; // End of USB tree
+    }
+    // Go to USB HUB parent
+    dev = dev->hub;
+  }
 #else
-	if (!(uhc_dev_enum->conf_desc->bmAttributes
-			&USB_CONFIG_ATTR_SELF_POWERED)) {
-		bus_power = uhc_dev_enum->conf_desc->bMaxPower * 2;
-	}
+  if (!(uhc_dev_enum->conf_desc->bmAttributes
+	&USB_CONFIG_ATTR_SELF_POWERED)) {
+    bus_power = uhc_dev_enum->conf_desc->bMaxPower * 2;
+  }
 #endif
-	if ((bus_power + uhc_power_running) > USB_HOST_POWER_MAX) {
-		// USB interfaces consumption too high
-		UHC_ENUM_EVENT(uhc_dev_enum, UHC_ENUM_OVERCURRENT);
+  if ((bus_power + uhc_power_running) > USB_HOST_POWER_MAX) {
+    // USB interfaces consumption too high
+    UHC_ENUM_EVENT(uhc_dev_enum, UHC_ENUM_OVERCURRENT);
 
-		// Abort enumeration, set line in suspend mode
-		uhc_enumeration_suspend();
-		return;
-	}
+    // Abort enumeration, set line in suspend mode
+    uhc_enumeration_suspend();
+    return;
+  }
 #ifdef USB_HOST_HUB_SUPPORT
-	uhc_dev_enum->power = bus_power;
-	uhc_power_running += bus_power;
+  uhc_dev_enum->power = bus_power;
+  uhc_power_running += bus_power;
 #endif
 
-	// Save information about USB configuration descriptor size
-	conf_size = le16_to_cpu(uhc_dev_enum->conf_desc->wTotalLength);
-	conf_num = uhc_dev_enum->conf_desc->bConfigurationValue;
-	Assert(conf_num);
-	// Re alloc USB configuration descriptor
-	free(uhc_dev_enum->conf_desc);
-	uhc_dev_enum->conf_desc = malloc(conf_size);
-	if (uhc_dev_enum->conf_desc == NULL) {
-		Assert(false);
-		uhc_enumeration_error(UHC_ENUM_MEMORY_LIMIT);
-		return;
-	}
-	// Send USB device descriptor request
-	req.bmRequestType =
-			USB_REQ_RECIP_DEVICE | USB_REQ_TYPE_STANDARD |
-			USB_REQ_DIR_IN;
-	req.bRequest = USB_REQ_GET_DESCRIPTOR;
-	req.wValue = (USB_DT_CONFIGURATION << 8) | (conf_num - 1);
-	req.wIndex = 0;
-	req.wLength = conf_size;
-	if (!uhd_setup_request(UHC_DEVICE_ENUM_ADD,
-			&req,
-			(uint8_t *) uhc_dev_enum->conf_desc,
-			conf_size,
-			NULL, uhc_enumeration_step14)) {
-		uhc_enumeration_error(UHC_ENUM_MEMORY_LIMIT);
-		return;
-	}
+  // Save information about USB configuration descriptor size
+  conf_size = le16_to_cpu(uhc_dev_enum->conf_desc->wTotalLength);
+  conf_num = uhc_dev_enum->conf_desc->bConfigurationValue;
+  Assert(conf_num);
+  // Re alloc USB configuration descriptor
+  free(uhc_dev_enum->conf_desc);
+  uhc_dev_enum->conf_desc = malloc(conf_size);
+  if (uhc_dev_enum->conf_desc == NULL) {
+    Assert(false);
+    uhc_enumeration_error(UHC_ENUM_MEMORY_LIMIT);
+    return;
+  }
+  // Send USB device descriptor request
+  req.bmRequestType =
+    USB_REQ_RECIP_DEVICE | USB_REQ_TYPE_STANDARD |
+    USB_REQ_DIR_IN;
+  req.bRequest = USB_REQ_GET_DESCRIPTOR;
+  req.wValue = (USB_DT_CONFIGURATION << 8) | (conf_num - 1);
+  req.wIndex = 0;
+  req.wLength = conf_size;
+  if (!uhd_setup_request(UHC_DEVICE_ENUM_ADD,
+			 &req,
+			 (uint8_t *) uhc_dev_enum->conf_desc,
+			 conf_size,
+			 NULL, uhc_enumeration_step14)) {
+    uhc_enumeration_error(UHC_ENUM_MEMORY_LIMIT);
+    return;
+  }
 }
 
 /**
@@ -667,126 +667,124 @@ static void uhc_enumeration_step13(
  * \param payload_trans Number of data transfered during DATA phase
  */
 static void uhc_enumeration_step14(
-		usb_add_t add,
-		uhd_trans_status_t status,
-		uint16_t payload_trans)
+				   usb_add_t add,
+				   uhd_trans_status_t status,
+				   uint16_t payload_trans)
 {
-	usb_setup_req_t req;
-	bool b_conf_supported = false;
-	UNUSED(add);
+  usb_setup_req_t req;
+  bool b_conf_supported = false;
+  UNUSED(add);
 
-	/////////////////////////////////
-	///// TESTING
-	print_dbg("\r\n received device descriptor. ");
+  /////////////////////////////////
+  ///// TESTING
+  print_dbg("\r\n received device descriptor. ");
 
-	print_dbg("\r\n address: ");
-	print_dbg_hex(uhc_dev_enum -> address);
-	print_dbg("\r\n speed: ");
-	print_dbg_hex(uhc_dev_enum -> speed);
-	print_dbg("\r\n\r\n");
+  print_dbg("\r\n address: ");
+  print_dbg_hex(uhc_dev_enum -> address);
+  print_dbg("\r\n speed: ");
+  print_dbg_hex(uhc_dev_enum -> speed);
+  print_dbg("\r\n\r\n");
 
-	print_dbg("\r\n dev desc -> bLength : ");
-	print_dbg_hex(uhc_dev_enum->dev_desc.bLength);
-	print_dbg("\r\n dev desc -> bDescriptorType : ");
-	print_dbg_hex(uhc_dev_enum->dev_desc.bDescriptorType);
-	print_dbg("\r\n dev desc -> bcdUSB : ");
-	print_dbg_hex(uhc_dev_enum->dev_desc.bcdUSB);
-	print_dbg("\r\n dev desc -> bDeviceClass : ");
-	print_dbg_hex(uhc_dev_enum->dev_desc.bDeviceClass);
-	print_dbg("\r\n dev desc -> bDeviceSubClass : ");
-	print_dbg_hex(uhc_dev_enum->dev_desc.bDeviceSubClass);
-	print_dbg("\r\n dev desc -> bDeviceProtocol : ");
-	print_dbg_hex(uhc_dev_enum->dev_desc.bDeviceProtocol);
-	print_dbg("\r\n dev desc -> bMaxPacketSize0 : ");
-	print_dbg_hex(uhc_dev_enum->dev_desc.bMaxPacketSize0);
-	print_dbg("\r\n dev desc -> idVendor : ");
-	print_dbg_hex(uhc_dev_enum->dev_desc.idVendor);
-	print_dbg("\r\n dev desc -> idProduct : ");
-	print_dbg_hex(uhc_dev_enum->dev_desc.idProduct);
-	print_dbg("\r\n dev desc -> bcdDevice : ");
-	print_dbg_hex(uhc_dev_enum->dev_desc.bcdDevice);
-	print_dbg("\r\n dev desc -> iManufacturer : ");
-	print_dbg_hex(uhc_dev_enum->dev_desc.iManufacturer);
-	print_dbg("\r\n dev desc -> iProduct : ");
-	print_dbg_hex(uhc_dev_enum->dev_desc.iProduct);
-	print_dbg("\r\n dev desc -> iSerialNumber : ");
-	print_dbg_hex(uhc_dev_enum->dev_desc.iSerialNumber);
-	print_dbg("\r\n dev desc -> bNumConfigurations : ");
-	print_dbg_hex(uhc_dev_enum->dev_desc.bNumConfigurations);
-	print_dbg("\r\n\r\n");
+  print_dbg("\r\n dev desc -> bLength : ");
+  print_dbg_hex(uhc_dev_enum->dev_desc.bLength);
+  print_dbg("\r\n dev desc -> bDescriptorType : ");
+  print_dbg_hex(uhc_dev_enum->dev_desc.bDescriptorType);
+  print_dbg("\r\n dev desc -> bcdUSB : ");
+  print_dbg_hex(uhc_dev_enum->dev_desc.bcdUSB);
+  print_dbg("\r\n dev desc -> bDeviceClass : ");
+  print_dbg_hex(uhc_dev_enum->dev_desc.bDeviceClass);
+  print_dbg("\r\n dev desc -> bDeviceSubClass : ");
+  print_dbg_hex(uhc_dev_enum->dev_desc.bDeviceSubClass);
+  print_dbg("\r\n dev desc -> bDeviceProtocol : ");
+  print_dbg_hex(uhc_dev_enum->dev_desc.bDeviceProtocol);
+  print_dbg("\r\n dev desc -> bMaxPacketSize0 : ");
+  print_dbg_hex(uhc_dev_enum->dev_desc.bMaxPacketSize0);
+  print_dbg("\r\n dev desc -> idVendor : ");
+  print_dbg_hex(uhc_dev_enum->dev_desc.idVendor);
+  print_dbg("\r\n dev desc -> idProduct : ");
+  print_dbg_hex(uhc_dev_enum->dev_desc.idProduct);
+  print_dbg("\r\n dev desc -> bcdDevice : ");
+  print_dbg_hex(uhc_dev_enum->dev_desc.bcdDevice);
+  print_dbg("\r\n dev desc -> iManufacturer : ");
+  print_dbg_hex(uhc_dev_enum->dev_desc.iManufacturer);
+  print_dbg("\r\n dev desc -> iProduct : ");
+  print_dbg_hex(uhc_dev_enum->dev_desc.iProduct);
+  print_dbg("\r\n dev desc -> iSerialNumber : ");
+  print_dbg_hex(uhc_dev_enum->dev_desc.iSerialNumber);
+  print_dbg("\r\n dev desc -> bNumConfigurations : ");
+  print_dbg_hex(uhc_dev_enum->dev_desc.bNumConfigurations);
+  print_dbg("\r\n\r\n");
 	
-	print_dbg("\r\n conf desc -> bLength : ");
-	print_dbg_hex(uhc_dev_enum->conf_desc->bLength);
-	print_dbg("\r\n conf desc -> bDescriptorType : ");
-	print_dbg_hex(uhc_dev_enum->conf_desc->bDescriptorType);
-	print_dbg("\r\n conf desc -> wTotalLength : ");
-	print_dbg_hex(uhc_dev_enum->conf_desc->wTotalLength);
-	print_dbg("\r\n conf desc -> bNumInterfaces : ");
-	print_dbg_hex(uhc_dev_enum->conf_desc->bNumInterfaces);
-	print_dbg("\r\n conf desc -> bConfigurationValue : ");
-	print_dbg_hex(uhc_dev_enum->conf_desc->bConfigurationValue);
-	print_dbg("\r\n conf desc -> iConfiguration : ");
-	print_dbg_hex(uhc_dev_enum->conf_desc->iConfiguration);
-	print_dbg("\r\n conf desc -> bmAttributes : ");
-	print_dbg_hex(uhc_dev_enum->conf_desc->bmAttributes);
-	print_dbg("\r\n conf desc -> bMaxPower : ");
-	print_dbg_hex(uhc_dev_enum->conf_desc->bMaxPower);
+  print_dbg("\r\n conf desc -> bLength : ");
+  print_dbg_hex(uhc_dev_enum->conf_desc->bLength);
+  print_dbg("\r\n conf desc -> bDescriptorType : ");
+  print_dbg_hex(uhc_dev_enum->conf_desc->bDescriptorType);
+  print_dbg("\r\n conf desc -> wTotalLength : ");
+  print_dbg_hex(uhc_dev_enum->conf_desc->wTotalLength);
+  print_dbg("\r\n conf desc -> bNumInterfaces : ");
+  print_dbg_hex(uhc_dev_enum->conf_desc->bNumInterfaces);
+  print_dbg("\r\n conf desc -> bConfigurationValue : ");
+  print_dbg_hex(uhc_dev_enum->conf_desc->bConfigurationValue);
+  print_dbg("\r\n conf desc -> iConfiguration : ");
+  print_dbg_hex(uhc_dev_enum->conf_desc->iConfiguration);
+  print_dbg("\r\n conf desc -> bmAttributes : ");
+  print_dbg_hex(uhc_dev_enum->conf_desc->bmAttributes);
+  print_dbg("\r\n conf desc -> bMaxPower : ");
+  print_dbg_hex(uhc_dev_enum->conf_desc->bMaxPower);
 
-	/////////////////////////////////
-	/////////////////////////////////
+  /////////////////////////////////
+  /////////////////////////////////
 
-	if ((status != UHD_TRANS_NOERROR)
-			|| (payload_trans < sizeof(usb_conf_desc_t))
-			|| (uhc_dev_enum->conf_desc->bDescriptorType != USB_DT_CONFIGURATION)
-			|| (payload_trans != le16_to_cpu(uhc_dev_enum->conf_desc->wTotalLength))) {
-		uhc_enumeration_error((status==UHD_TRANS_DISCONNECT)?
-				UHC_ENUM_DISCONNECT:UHC_ENUM_FAIL);
-		return;
-	}
-	// Check if unless one USB interface is supported by UHIs
-	for (uint8_t i = 0; i < UHC_NB_UHI; i++) {
-		switch (uhc_uhis[i].install(uhc_dev_enum)) {
-		case UHC_ENUM_SUCCESS:
-			b_conf_supported = true;
-			break;
+  if ((status != UHD_TRANS_NOERROR)
+      || (payload_trans < sizeof(usb_conf_desc_t))
+      || (uhc_dev_enum->conf_desc->bDescriptorType != USB_DT_CONFIGURATION)
+      || (payload_trans != le16_to_cpu(uhc_dev_enum->conf_desc->wTotalLength))) {
+    uhc_enumeration_error((status==UHD_TRANS_DISCONNECT)?
+			  UHC_ENUM_DISCONNECT:UHC_ENUM_FAIL);
+    return;
+  }
+  // Check if unless one USB interface is supported by UHIs
+  for (uint8_t i = 0; i < UHC_NB_UHI; i++) {
+    switch (uhc_uhis[i].install(uhc_dev_enum)) {
+    case UHC_ENUM_SUCCESS:
+      b_conf_supported = true;
+      break;
+    case UHC_ENUM_UNSUPPORTED:
+      break;
+    default:
+      // USB host hardware limitation
+      // Free all endpoints
+      uhd_ep_free(UHC_DEVICE_ENUM_ADD,0xFF);
+      UHC_ENUM_EVENT(uhc_dev_enum,UHC_ENUM_HARDWARE_LIMIT);
 
-		case UHC_ENUM_UNSUPPORTED:
-			break;
+      // Abort enumeration, set line in suspend mode
+      uhc_enumeration_suspend();
+      return;
+    }
+  }
+  if (!b_conf_supported) {
+    // No USB interface supported
+    UHC_ENUM_EVENT(uhc_dev_enum, UHC_ENUM_UNSUPPORTED);
 
-		default:
-			// USB host hardware limitation
-			// Free all endpoints
-			uhd_ep_free(UHC_DEVICE_ENUM_ADD,0xFF);
-			UHC_ENUM_EVENT(uhc_dev_enum,UHC_ENUM_HARDWARE_LIMIT);
-
-			// Abort enumeration, set line in suspend mode
-			uhc_enumeration_suspend();
-			return;
-		}
-	}
-	if (!b_conf_supported) {
-		// No USB interface supported
-		UHC_ENUM_EVENT(uhc_dev_enum, UHC_ENUM_UNSUPPORTED);
-
-		// Abort enumeration, set line in suspend mode
-		uhc_enumeration_suspend();
-		return;
-	}
-	// Enable device configuration
-	req.bmRequestType = USB_REQ_RECIP_DEVICE
-			| USB_REQ_TYPE_STANDARD | USB_REQ_DIR_OUT;
-	req.bRequest = USB_REQ_SET_CONFIGURATION;
-	req.wValue = uhc_dev_enum->conf_desc->bConfigurationValue;
-	req.wIndex = 0;
-	req.wLength = 0;
-	if (!uhd_setup_request(UHC_DEVICE_ENUM_ADD,
-			&req,
-			NULL,
-			0,
-			NULL, uhc_enumeration_step15)) {
-		uhc_enumeration_error(UHC_ENUM_MEMORY_LIMIT);
-		return;
-	}
+    // Abort enumeration, set line in suspend mode
+    uhc_enumeration_suspend();
+    return;
+  }
+  // Enable device configuration
+  req.bmRequestType = USB_REQ_RECIP_DEVICE
+    | USB_REQ_TYPE_STANDARD | USB_REQ_DIR_OUT;
+  req.bRequest = USB_REQ_SET_CONFIGURATION;
+  req.wValue = uhc_dev_enum->conf_desc->bConfigurationValue;
+  req.wIndex = 0;
+  req.wLength = 0;
+  if (!uhd_setup_request(UHC_DEVICE_ENUM_ADD,
+			 &req,
+			 NULL,
+			 0,
+			 NULL, uhc_enumeration_step15)) {
+    uhc_enumeration_error(UHC_ENUM_MEMORY_LIMIT);
+    return;
+  }
 }
 
 /**
@@ -798,27 +796,27 @@ static void uhc_enumeration_step14(
  * \param payload_trans Number of data transfered during DATA phase
  */
 static void uhc_enumeration_step15(
-		usb_add_t add,
-		uhd_trans_status_t status,
-		uint16_t payload_trans)
+				   usb_add_t add,
+				   uhd_trans_status_t status,
+				   uint16_t payload_trans)
 {
-	UNUSED(add);
-	if ((status!=UHD_TRANS_NOERROR) || (payload_trans!=0)) {
-		for(uint8_t i = 0; i < UHC_NB_UHI; i++) {
-			uhc_uhis[i].uninstall(uhc_dev_enum);
-		}
-		uhc_enumeration_error((status == UHD_TRANS_DISCONNECT)?
-				UHC_ENUM_DISCONNECT : UHC_ENUM_FAIL);
-		return;
-	}
+  UNUSED(add);
+  if ((status!=UHD_TRANS_NOERROR) || (payload_trans!=0)) {
+    for(uint8_t i = 0; i < UHC_NB_UHI; i++) {
+      uhc_uhis[i].uninstall(uhc_dev_enum);
+    }
+    uhc_enumeration_error((status == UHD_TRANS_DISCONNECT)?
+			  UHC_ENUM_DISCONNECT : UHC_ENUM_FAIL);
+    return;
+  }
 
-	// Enable all UHIs supported
-	for (uint8_t i = 0; i < UHC_NB_UHI; i++) {
-		uhc_uhis[i].enable(uhc_dev_enum);
-	}
-	uhc_enum_try = 0;
+  // Enable all UHIs supported
+  for (uint8_t i = 0; i < UHC_NB_UHI; i++) {
+    uhc_uhis[i].enable(uhc_dev_enum);
+  }
+  uhc_enum_try = 0;
 	
-	UHC_ENUM_EVENT(uhc_dev_enum, UHC_ENUM_SUCCESS);
+  UHC_ENUM_EVENT(uhc_dev_enum, UHC_ENUM_SUCCESS);
 }
 
 /**
@@ -828,27 +826,27 @@ static void uhc_enumeration_step15(
  */
 static void uhc_enumeration_error(uhc_enum_status_t status)
 {
-	if (status == UHC_ENUM_DISCONNECT) {
-		uhc_enum_try = 0;
-		return; // Abort enumeration process
-	}
-	uhd_ep_free(uhc_dev_enum->address, 0xFF);
+  if (status == UHC_ENUM_DISCONNECT) {
+    uhc_enum_try = 0;
+    return; // Abort enumeration process
+  }
+  uhd_ep_free(uhc_dev_enum->address, 0xFF);
 
-	// Free USB configuration descriptor buffer
-	if (uhc_dev_enum->conf_desc != NULL) {
-		free(uhc_dev_enum->conf_desc);
-		uhc_dev_enum->conf_desc = NULL;
-	}
-	uhc_dev_enum->address = 0;
-	if (uhc_enum_try++ < UHC_ENUM_NB_TRY) {
-		// Restart enumeration at beginning
-		uhc_enumeration_step1();
-		return;
-	}
-	// Abort enumeration, set line in suspend mode
-	uhc_enumeration_suspend();
-	UHC_ENUM_EVENT(uhc_dev_enum, status);
-	uhc_enum_try = 0;
+  // Free USB configuration descriptor buffer
+  if (uhc_dev_enum->conf_desc != NULL) {
+    free(uhc_dev_enum->conf_desc);
+    uhc_dev_enum->conf_desc = NULL;
+  }
+  uhc_dev_enum->address = 0;
+  if (uhc_enum_try++ < UHC_ENUM_NB_TRY) {
+    // Restart enumeration at beginning
+    uhc_enumeration_step1();
+    return;
+  }
+  // Abort enumeration, set line in suspend mode
+  uhc_enumeration_suspend();
+  UHC_ENUM_EVENT(uhc_dev_enum, status);
+  uhc_enum_try = 0;
 }
 
 /**
@@ -859,33 +857,33 @@ static void uhc_enumeration_error(uhc_enum_status_t status)
  */
 static void uhc_remotewakeup(bool b_enable)
 {
-	usb_setup_req_t req;
-	uhc_device_t *dev;
+  usb_setup_req_t req;
+  uhc_device_t *dev;
 
-	dev = &g_uhc_device_root;
-	while(1) {
-		if (dev->conf_desc->bmAttributes & USB_CONFIG_ATTR_REMOTE_WAKEUP) {
-			if (b_enable) {
-				req.bRequest = USB_REQ_SET_FEATURE;
-			} else {
-				req.bRequest = USB_REQ_CLEAR_FEATURE;
-			}
-			req.bmRequestType = USB_REQ_RECIP_DEVICE
-					|USB_REQ_TYPE_STANDARD|USB_REQ_DIR_OUT;
-			req.wValue = USB_DEV_FEATURE_REMOTE_WAKEUP;
-			req.wIndex = 0;
-			req.wLength = 0;
-			uhd_setup_request(dev->address,&req,NULL,0,NULL,NULL);
-		}
+  dev = &g_uhc_device_root;
+  while(1) {
+    if (dev->conf_desc->bmAttributes & USB_CONFIG_ATTR_REMOTE_WAKEUP) {
+      if (b_enable) {
+	req.bRequest = USB_REQ_SET_FEATURE;
+      } else {
+	req.bRequest = USB_REQ_CLEAR_FEATURE;
+      }
+      req.bmRequestType = USB_REQ_RECIP_DEVICE
+	|USB_REQ_TYPE_STANDARD|USB_REQ_DIR_OUT;
+      req.wValue = USB_DEV_FEATURE_REMOTE_WAKEUP;
+      req.wIndex = 0;
+      req.wLength = 0;
+      uhd_setup_request(dev->address,&req,NULL,0,NULL,NULL);
+    }
 #ifdef USB_HOST_HUB_SUPPORT
-		if (dev->next == NULL) {
-			break;
-		}
-		dev = dev->next;
+    if (dev->next == NULL) {
+      break;
+    }
+    dev = dev->next;
 #else
-		break;
+    break;
 #endif
-	}
+  }
 }
 
 /**
@@ -896,15 +894,15 @@ static void uhc_remotewakeup(bool b_enable)
  * \param payload_trans Number of data transfered during DATA phase
  */
 static void uhc_setup_request_callback(
-		usb_add_t add,
-		uhd_trans_status_t status,
-		uint16_t payload_trans)
+				       usb_add_t add,
+				       uhd_trans_status_t status,
+				       uint16_t payload_trans)
 {
-	UNUSED(add);
-	UNUSED(payload_trans);
-	uhc_setup_request_finish_status = (status == UHD_TRANS_NOERROR);
-	uhc_setup_request_finish = true;
-	//	print_dbg("\r\n setup request callback finished");
+  UNUSED(add);
+  UNUSED(payload_trans);
+  uhc_setup_request_finish_status = (status == UHD_TRANS_NOERROR);
+  uhc_setup_request_finish = true;
+  //	print_dbg("\r\n setup request callback finished");
 }
 
 
@@ -914,46 +912,46 @@ static void uhc_setup_request_callback(
  */
 void uhc_notify_connection(bool b_plug)
 {
-	if (b_plug) {
-		Assert(g_uhc_device_root.address == UHC_USB_ADD_NOT_VALID);
+  if (b_plug) {
+    Assert(g_uhc_device_root.address == UHC_USB_ADD_NOT_VALID);
 
 #ifdef USB_HOST_HUB_SUPPORT
-		uhc_power_running = 0;
+    uhc_power_running = 0;
 #endif
-	} else {
-		if (g_uhc_device_root.address == UHC_USB_ADD_NOT_VALID) {
-			// Already disconnected
-			// Ignore the noise from host stop process
-			return;
-		}
-	}
-	// Device connection on root
-	uhc_connection_tree(b_plug, &g_uhc_device_root);
+  } else {
+    if (g_uhc_device_root.address == UHC_USB_ADD_NOT_VALID) {
+      // Already disconnected
+      // Ignore the noise from host stop process
+      return;
+    }
+  }
+  // Device connection on root
+  uhc_connection_tree(b_plug, &g_uhc_device_root);
 }
 
 void uhc_notify_sof(bool b_micro)
 {
-	// Call all UHIs
-	for (uint8_t i = 0; i < UHC_NB_UHI; i++) {
-		if (uhc_uhis[i].sof_notify != NULL) {
-			uhc_uhis[i].sof_notify(b_micro);
-		}
-	}
+  // Call all UHIs
+  for (uint8_t i = 0; i < UHC_NB_UHI; i++) {
+    if (uhc_uhis[i].sof_notify != NULL) {
+      uhc_uhis[i].sof_notify(b_micro);
+    }
+  }
 
-	if (!b_micro) {
-		// Manage SOF timeout
-		if (uhc_sof_timeout) {
-			if (--uhc_sof_timeout == 0) {
-				uhc_sof_timeout_callback();
-			}
-		}
-	}
+  if (!b_micro) {
+    // Manage SOF timeout
+    if (uhc_sof_timeout) {
+      if (--uhc_sof_timeout == 0) {
+	uhc_sof_timeout_callback();
+      }
+    }
+  }
 }
 
 void uhc_notify_resume(void)
 {
-	uhc_remotewakeup(false);
-	UHC_WAKEUP_EVENT();
+  uhc_remotewakeup(false);
+  UHC_WAKEUP_EVENT();
 }
 
 //! @}
@@ -966,46 +964,46 @@ void uhc_notify_resume(void)
  */
 void uhc_start(void)
 {
-	g_uhc_device_root.address = UHC_USB_ADD_NOT_VALID;
-	uhc_sof_timeout = 0; // No callback registered on a SOF timeout
-	uhd_enable();
+  g_uhc_device_root.address = UHC_USB_ADD_NOT_VALID;
+  uhc_sof_timeout = 0; // No callback registered on a SOF timeout
+  uhd_enable();
 }
 
 void uhc_stop(bool b_id_stop)
 {
-	// Stop UHD
-	uhd_disable(b_id_stop);
+  // Stop UHD
+  uhd_disable(b_id_stop);
 }
 
 void uhc_suspend(bool b_remotewakeup)
 {
-	if (uhc_enum_try) {
-		// enumeration on-going, the USB suspend can't be done
-		return;
-	}
+  if (uhc_enum_try) {
+    // enumeration on-going, the USB suspend can't be done
+    return;
+  }
 
-	if (b_remotewakeup) {
-		uhc_remotewakeup(true);
-	}
-	// Suspend all USB devices
-	uhd_suspend();
+  if (b_remotewakeup) {
+    uhc_remotewakeup(true);
+  }
+  // Suspend all USB devices
+  uhd_suspend();
 }
 
 bool uhc_is_suspend(void)
 {
-	if (g_uhc_device_root.address == UHC_USB_ADD_NOT_VALID) {
-		return true;
-	}
-	return uhd_is_suspend();
+  if (g_uhc_device_root.address == UHC_USB_ADD_NOT_VALID) {
+    return true;
+  }
+  return uhd_is_suspend();
 }
 
 void uhc_resume(void)
 {
-	if (!uhc_is_suspend()) {
-		return;
-	}
-	// Resume all USB devices
-	uhd_resume();
+  if (!uhc_is_suspend()) {
+    return;
+  }
+  // Resume all USB devices
+  uhd_resume();
 }
 
 //! @}
@@ -1019,162 +1017,162 @@ void uhc_resume(void)
 uint8_t uhc_get_device_number(void)
 {
 #ifdef USB_HOST_HUB_SUPPORT
-	uint8_t nb_dev = 0;
-	uhc_device_t *dev;
+  uint8_t nb_dev = 0;
+  uhc_device_t *dev;
 
-	if (g_uhc_device_root.address != UHC_USB_ADD_NOT_VALID) {
-		dev = &g_uhc_device_root;
-		while (nb_dev++) {
-			if (dev->next == NULL) {
-				break;
-			}
-			dev = dev->next;
-		}
-	}
-	return nb_dev;
+  if (g_uhc_device_root.address != UHC_USB_ADD_NOT_VALID) {
+    dev = &g_uhc_device_root;
+    while (nb_dev++) {
+      if (dev->next == NULL) {
+	break;
+      }
+      dev = dev->next;
+    }
+  }
+  return nb_dev;
 #else
-	return (g_uhc_device_root.address != UHC_USB_ADD_NOT_VALID) ? 1 : 0;
+  return (g_uhc_device_root.address != UHC_USB_ADD_NOT_VALID) ? 1 : 0;
 #endif
 }
 
 char *uhc_dev_get_string_manufacturer(uhc_device_t * dev)
 {
-	if (!dev->dev_desc.iManufacturer) {
-		return NULL; // No manufacturer string available
-	}
-	//	print_dbg("\r\n manufacturer string: ");
-	//	print_dbg(uhc_dev_get_string(dev, dev->dev_desc.iManufacturer));
-	return uhc_dev_get_string(dev, dev->dev_desc.iManufacturer);
+  if (!dev->dev_desc.iManufacturer) {
+    return NULL; // No manufacturer string available
+  }
+  //	print_dbg("\r\n manufacturer string: ");
+  //	print_dbg(uhc_dev_get_string(dev, dev->dev_desc.iManufacturer));
+  return uhc_dev_get_string(dev, dev->dev_desc.iManufacturer);
 }
 
 char *uhc_dev_get_string_product(uhc_device_t * dev)
 {
-	if (!dev->dev_desc.iProduct) {
-		return NULL; // No product string available
-	}
-	//	print_dbg("\r\n product string: ");
-	//	print_dbg(uhc_dev_get_string(dev, dev->dev_desc.iProduct));
+  if (!dev->dev_desc.iProduct) {
+    return NULL; // No product string available
+  }
+  //	print_dbg("\r\n product string: ");
+  //	print_dbg(uhc_dev_get_string(dev, dev->dev_desc.iProduct));
 
-	return uhc_dev_get_string(dev, dev->dev_desc.iProduct);
+  return uhc_dev_get_string(dev, dev->dev_desc.iProduct);
 }
 
 char *uhc_dev_get_string_serial(uhc_device_t * dev)
 {
-	if (!dev->dev_desc.iSerialNumber) {
-		return NULL; // No serial string available
-	}
-	//	print_dbg("\r\n product string: ");
-	//	print_dbg(uhc_dev_get_string(dev, dev->dev_desc.iSerialNumber));
+  if (!dev->dev_desc.iSerialNumber) {
+    return NULL; // No serial string available
+  }
+  //	print_dbg("\r\n product string: ");
+  //	print_dbg(uhc_dev_get_string(dev, dev->dev_desc.iSerialNumber));
 	
-	return uhc_dev_get_string(dev, dev->dev_desc.iSerialNumber);
+  return uhc_dev_get_string(dev, dev->dev_desc.iSerialNumber);
 }
 
 char *uhc_dev_get_string(uhc_device_t * dev, uint8_t str_id)
 {
-	usb_setup_req_t req;
-	usb_str_desc_t str_header;
-	usb_str_lgid_desc_t *str_desc;
-	char *string;
-	uint8_t i;
-	UNUSED(dev);
+  usb_setup_req_t req;
+  usb_str_desc_t str_header;
+  usb_str_lgid_desc_t *str_desc;
+  char *string;
+  uint8_t i;
+  UNUSED(dev);
 
-	req.bmRequestType = USB_REQ_RECIP_DEVICE|USB_REQ_TYPE_STANDARD|USB_REQ_DIR_IN;
-	req.bRequest = USB_REQ_GET_DESCRIPTOR;
-	req.wValue = (USB_DT_STRING << 8) | str_id;
-	req.wIndex = 0;
-	req.wLength = sizeof(usb_str_desc_t);
+  req.bmRequestType = USB_REQ_RECIP_DEVICE|USB_REQ_TYPE_STANDARD|USB_REQ_DIR_IN;
+  req.bRequest = USB_REQ_GET_DESCRIPTOR;
+  req.wValue = (USB_DT_STRING << 8) | str_id;
+  req.wIndex = 0;
+  req.wLength = sizeof(usb_str_desc_t);
 
-	// Get the size of string
-	uhc_setup_request_finish = false;
-	if (!uhd_setup_request(0,
-			&req,
-			(uint8_t*)&str_header,
-			sizeof(usb_str_desc_t),
-			NULL,
-			uhc_setup_request_callback)) {
-		return NULL;
-	}
-	while (!uhc_setup_request_finish);
-	if (!uhc_setup_request_finish_status) {
-	  print_dbg("\r\n NULL result from setup request.");
-		return NULL;
-	}
-	// Get the size of string
-	str_desc = malloc(str_header.bLength);
-	if (str_desc == NULL) {
-		return NULL;
-	}
-	req.wLength = str_header.bLength;
-	uhc_setup_request_finish = false;
-	if (!uhd_setup_request(0,
-			&req,
-			(uint8_t*)str_desc,
-			str_header.bLength,
-			NULL,
-			uhc_setup_request_callback)) {
-		return NULL;
-	}
-	while (!uhc_setup_request_finish);
-	if (!uhc_setup_request_finish_status) {
-		free(str_desc);
-		return NULL;
-	}
-	// The USB strings are "always" in ASCII format, then translate it.
-	str_header.bLength = (str_header.bLength - 2) / 2; // Number of character
-	string = malloc(str_header.bLength + 1); // +1 for NULL terminal
-	if (string == NULL) {
-		free(str_desc);
-		return NULL;
-	}
-	for (i = 0; i < str_header.bLength; i++) {
-		string[i] = le16_to_cpu(str_desc->string[i]) & 0xFF;
-	}
-	string[i] = 0;
-	free(str_desc);
+  // Get the size of string
+  uhc_setup_request_finish = false;
+  if (!uhd_setup_request(0,
+			 &req,
+			 (uint8_t*)&str_header,
+			 sizeof(usb_str_desc_t),
+			 NULL,
+			 uhc_setup_request_callback)) {
+    return NULL;
+  }
+  while (!uhc_setup_request_finish);
+  if (!uhc_setup_request_finish_status) {
+    print_dbg("\r\n NULL result from setup request.");
+    return NULL;
+  }
+  // Get the size of string
+  str_desc = malloc(str_header.bLength);
+  if (str_desc == NULL) {
+    return NULL;
+  }
+  req.wLength = str_header.bLength;
+  uhc_setup_request_finish = false;
+  if (!uhd_setup_request(0,
+			 &req,
+			 (uint8_t*)str_desc,
+			 str_header.bLength,
+			 NULL,
+			 uhc_setup_request_callback)) {
+    return NULL;
+  }
+  while (!uhc_setup_request_finish);
+  if (!uhc_setup_request_finish_status) {
+    free(str_desc);
+    return NULL;
+  }
+  // The USB strings are "always" in ASCII format, then translate it.
+  str_header.bLength = (str_header.bLength - 2) / 2; // Number of character
+  string = malloc(str_header.bLength + 1); // +1 for NULL terminal
+  if (string == NULL) {
+    free(str_desc);
+    return NULL;
+  }
+  for (i = 0; i < str_header.bLength; i++) {
+    string[i] = le16_to_cpu(str_desc->string[i]) & 0xFF;
+  }
+  string[i] = 0;
+  free(str_desc);
 
-	return string;
+  return string;
 }
 
 uint16_t uhc_dev_get_power(uhc_device_t* dev)
 {
-	return dev->conf_desc->bMaxPower * 2;
+  return dev->conf_desc->bMaxPower * 2;
 }
 
 uhd_speed_t uhc_dev_get_speed(uhc_device_t * dev)
 {
-	return dev->speed;
+  return dev->speed;
 }
 
 bool uhc_dev_is_high_speed_support(uhc_device_t* dev)
 {
-	usb_setup_req_t req;
-	usb_dev_qual_desc_t qualifier;
+  usb_setup_req_t req;
+  usb_dev_qual_desc_t qualifier;
 
-	if (dev->speed == UHD_SPEED_HIGH) {
-		return true;
-	}
-	if (dev->speed == UHD_SPEED_FULL) {
-		req.bmRequestType = USB_REQ_RECIP_DEVICE
-				| USB_REQ_TYPE_STANDARD | USB_REQ_DIR_IN;
-		req.bRequest = USB_REQ_GET_DESCRIPTOR;
-		req.wValue = (USB_DT_DEVICE_QUALIFIER << 8);
-		req.wIndex = 0;
-		req.wLength = sizeof(qualifier);
+  if (dev->speed == UHD_SPEED_HIGH) {
+    return true;
+  }
+  if (dev->speed == UHD_SPEED_FULL) {
+    req.bmRequestType = USB_REQ_RECIP_DEVICE
+      | USB_REQ_TYPE_STANDARD | USB_REQ_DIR_IN;
+    req.bRequest = USB_REQ_GET_DESCRIPTOR;
+    req.wValue = (USB_DT_DEVICE_QUALIFIER << 8);
+    req.wIndex = 0;
+    req.wLength = sizeof(qualifier);
 
-		// Get the size of string
-		uhc_setup_request_finish = false;
-		if (!uhd_setup_request(0,
-				&req,
-				(uint8_t*)&qualifier,
-				sizeof(qualifier),
-				NULL,
-				uhc_setup_request_callback)) {
-			return NULL;
-		}
-		while (!uhc_setup_request_finish);
-		return uhc_setup_request_finish_status;
-	}
-	return false; // Low speed device
+    // Get the size of string
+    uhc_setup_request_finish = false;
+    if (!uhd_setup_request(0,
+			   &req,
+			   (uint8_t*)&qualifier,
+			   sizeof(qualifier),
+			   NULL,
+			   uhc_setup_request_callback)) {
+      return NULL;
+    }
+    while (!uhc_setup_request_finish);
+    return uhc_setup_request_finish_status;
+  }
+  return false; // Low speed device
 }
 
 //! @}

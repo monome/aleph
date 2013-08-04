@@ -1,3 +1,11 @@
+/*
+  uhi_ftdi.h
+  aleph-avr32
+
+  usb host interface for FTDI driver
+
+ */
+
 #ifndef _UHI_FTDI_H_
 #define _UHI_FTDI_H_
 
@@ -29,8 +37,6 @@ extern bool uhi_ftdi_in_run(uint8_t * buf, iram_size_t buf_size,
 // output transfer
 extern bool uhi_ftdi_out_run(uint8_t * buf, iram_size_t buf_size,
 		uhd_callback_trans_t callback);
-// read eeprom and return pointer to gathered data
-//extern ftdi_eeprom_t* ftdi_read_eeprom(void);
 
 // get string descriptions
 extern void ftdi_get_strings(char** pManufacturer, char** pProduct, char** pSerial);
