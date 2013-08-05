@@ -1,6 +1,6 @@
 /* files.c
    bees
-   aleph-avr32
+   aleph
   
    filesystem routines
 */
@@ -16,10 +16,16 @@
 // aleph-avr32
 #include "app.h"
 #include "bfin.h"
-#include "files.h"
+///////////////////////////////////
+//// test
+#include "events.h"
+/////////////////////////////////
 #include "filesystem.h"
 #include "flash.h"
 #include "memory.h"
+
+/// bees
+#include "files.h"
 #include "scene.h"
 
 // ---- directory list class
@@ -86,12 +92,10 @@ static void fake_fread(volatile u8* dst, u32 size, void* fp) {
 // strip space from the end of a string
 static void strip_space(char* str, u8 len) {
   u8 i;
-  i = len - 1;
-  while(i > 0) {
+  for( i=(len-1); i>0; i-- ) {
     if(str[i] == 0) { continue; }
-    if(str[i] == ' ') { str[i] = 0; }
+    else if(str[i] == ' ') { str[i] = 0; }
     else { break; }
-    i--;
   }
 }
 
@@ -275,28 +279,33 @@ void files_store_scene(u8 idx) {
 void files_store_scene_name(const char* name) {
   //u32 i;
   void* fp;
-  char namebuf[25] = "";
+  char namebuf[64] = SCENES_PATH;
   u8* pScene;
 
   /////////////
   //////// test
   //  file_write_test();
-  //  return;
+  //    return;
   /////////////
   /////////
 
+  print_dbg("\r\n FILES_STORE_SCENE_NAME");
+  delay_ms(100);
+  app_pause();
+  delay_ms(100);
 
-  //u32 dum = 0;
-  strcat(namebuf, SCENES_PATH);
   strcat(namebuf, name);
-  strip_space(namebuf, 25);
+  strip_space(namebuf, 32);
   strcat(namebuf, ".scn");
+
+  //  strcat(namebuf, name);
+  //  strcat(namebuf, ".scn");
+
+  
 
   print_dbg("\r\n write scene at: ");
   print_dbg(namebuf);
   
-  app_pause();
-  delay_ms(100);
 
   // fill the scene RAM buffer from current state of system
   scene_write_buf(); 
@@ -335,32 +344,8 @@ void files_store_scene_name(const char* name) {
   delay_ms(100);
   app_resume();
   print_dbg("\r\n resumed UI and app timer interrupts.");
+  print_pending_events();
   /* delay_ms(100); */
-  /* print_dbg("\r\n (100ms later.) "); */
-  /* delay_ms(1000); */
-  /* print_dbg("\r\n (1000ms later.) "); */
-  /* delay_ms(1000); */
-  /* print_dbg("\r\n (1000ms later.) "); */
-  /* delay_ms(1000); */
-  /* print_dbg("\r\n (1000ms later.) "); */
-  /* delay_ms(1000); */
-  /* print_dbg("\r\n (1000ms later.) "); */
-  /* delay_ms(1000); */
-  /* print_dbg("\r\n (1000ms later.) "); */
-  /* delay_ms(1000); */
-  /* print_dbg("\r\n (1000ms later.) "); */
-  /* delay_ms(1000); */
-  /* print_dbg("\r\n (1000ms later.) "); */
-  /* delay_ms(1000); */
-  /* print_dbg("\r\n (1000ms later.) "); */
-  /* delay_ms(1000); */
-  /* print_dbg("\r\n (1000ms later.) "); */
-  /* delay_ms(1000); */
-  /* print_dbg("\r\n (1000ms later.) "); */
-  /* delay_ms(1000); */
-  /* print_dbg("\r\n (1000ms later.) "); */
-  /* delay_ms(1000); */
-  /* print_dbg("\r\n (1000ms later.) "); */
 }
 
 
