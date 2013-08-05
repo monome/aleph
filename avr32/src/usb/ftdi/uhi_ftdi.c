@@ -160,7 +160,6 @@ uhc_enum_status_t uhi_ftdi_install(uhc_device_t* dev) {
 }
 
 void uhi_ftdi_enable(uhc_device_t* dev) {
-  print_dbg("\r\n ftdi enable routine ");
 
   if (uhi_ftdi_dev.dev != dev) {
     return;  // No interface to enable

@@ -41,9 +41,13 @@
  *
  */
 
+#define UHC_PRINT_DBG 1
+
 #include "conf_usb_host.h"
 ////// TESTING
+#if UHC_PRINT_DBG
 #include "print_funcs.h"
+#endif
 //////////////
 
 #include "usb_protocol.h"
@@ -677,6 +681,7 @@ static void uhc_enumeration_step14(
 
   /////////////////////////////////
   ///// TESTING
+#if UHC_PRINT_DBG
   print_dbg("\r\n received device descriptor. ");
 
   print_dbg("\r\n address: ");
@@ -731,7 +736,7 @@ static void uhc_enumeration_step14(
   print_dbg_hex(uhc_dev_enum->conf_desc->bmAttributes);
   print_dbg("\r\n conf desc -> bMaxPower : ");
   print_dbg_hex(uhc_dev_enum->conf_desc->bMaxPower);
-
+#endif
   /////////////////////////////////
   /////////////////////////////////
 
@@ -777,6 +782,7 @@ static void uhc_enumeration_step14(
   req.wValue = uhc_dev_enum->conf_desc->bConfigurationValue;
   req.wIndex = 0;
   req.wLength = 0;
+  //  print_dbg("\r\n device enumeration successful; calling uhd_setup_request in uhc.c");
   if (!uhd_setup_request(UHC_DEVICE_ENUM_ADD,
 			 &req,
 			 NULL,
@@ -812,6 +818,9 @@ static void uhc_enumeration_step15(
 
   // Enable all UHIs supported
   for (uint8_t i = 0; i < UHC_NB_UHI; i++) {
+#if UHC_PRINT_DBG
+    print_dbg("\r\n enabling UHI, idx: "); print_dbg_ulong(i); 
+#endif
     uhc_uhis[i].enable(uhc_dev_enum);
   }
   uhc_enum_try = 0;
@@ -1094,7 +1103,9 @@ char *uhc_dev_get_string(uhc_device_t * dev, uint8_t str_id)
   }
   while (!uhc_setup_request_finish);
   if (!uhc_setup_request_finish_status) {
-    print_dbg("\r\n NULL result from setup request.");
+#if UHC_PRINT_DBG
+    print_dbg("\r\n NULL result from setup request.");  
+ #endif
     return NULL;
   }
   // Get the size of string

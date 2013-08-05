@@ -11,7 +11,6 @@
 
 #include "conf_usb_host.h"
 #include "usb_protocol.h"
-#include "usb_protocol_hid.h"
 #include "uhi.h"
 
 //! Global define which contains standard UHI API for UHC

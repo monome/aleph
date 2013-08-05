@@ -43,6 +43,7 @@ CSRCS += \
 	$(ALEPH_AVR32)/src/usb/ftdi/uhi_ftdi.c \
 	$(ALEPH_AVR32)/src/usb/ftdi/ftdi.c \
 	$(ALEPH_AVR32)/src/usb/midi/uhi_midi.c \
+	$(ALEPH_AVR32)/src/usb/midi/midi.c \
 	$(ALEPH_AVR32)/src/usb/mouse/hid_mouse.c \
 	$(ALEPH_AVR32)/src/usb/mouse/uhi_hid_mouse.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_access.c \

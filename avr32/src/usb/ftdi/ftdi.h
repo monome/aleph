@@ -9,8 +9,8 @@
 #include "types.h"
 #include "uhc.h"
 
-#define FTDI_IN_BUF_SIZE 64
-#define FTDI_OUT_BUF_SIZE 64
+#define FTDI_RX_BUF_SIZE 64
+//#define FTDI_TX_BUF_SIZE 64
 
 // ftdi sends 2 status bytes at top of each packet.
 // seems to usually be 0x31 0x60
@@ -45,7 +45,7 @@ extern volatile u8 ftdi_rx_bytes(void);
 // busy flags
 extern volatile u8 ftdi_rx_busy(void);
 extern volatile u8 ftdi_tx_busy(void);
-// device plugged flag
-extern u8 ftdi_plug(void);
+// device connected flag
+extern u8 ftdi_connected(void);
 
 #endif // h guard
