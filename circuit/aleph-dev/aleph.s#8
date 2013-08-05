@@ -2367,6 +2367,11 @@ shrink quad flat pack, square</description>
 <text x="-3.81" y="4.445" size="1.27" layer="25">&gt;NAME</text>
 <text x="-3.81" y="-5.715" size="1.27" layer="27">&gt;VALUE</text>
 </package>
+<package name="120-PAD-NS">
+<description>&lt;b&gt;MOUNTING PAD&lt;/b&gt; 0.120", round, no silk outline</description>
+<circle x="0" y="0" radius="3.8232" width="0.0508" layer="51"/>
+<pad name="B120" x="0" y="0" drill="3.048" diameter="5.08" thermals="no"/>
+</package>
 </packages>
 <symbols>
 <symbol name="PANASONIC-EVQ">
@@ -3240,6 +3245,9 @@ shrink quad flat pack, square</description>
 <text x="-3.81" y="-2.54" size="1.778" layer="96">&gt;VALUE</text>
 <pin name="2" x="5.08" y="0" visible="off" length="point" direction="pas" swaplevel="1" rot="R180"/>
 <pin name="1" x="-5.08" y="0" visible="off" length="point" direction="pas" swaplevel="1"/>
+</symbol>
+<symbol name="MOUNT440">
+<circle x="0" y="0" radius="2.54" width="1.27" layer="94"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -4297,6 +4305,20 @@ shrink quad flat pack, square</description>
 </connects>
 <technologies>
 <technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="MOUNT440" prefix="H">
+<gates>
+<gate name="G$1" symbol="MOUNT440" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="120-PAD-NS">
+<technologies>
+<technology name="">
+<attribute name="BOM" value="EXCLUDE"/>
+</technology>
 </technologies>
 </device>
 </devices>
@@ -18857,30 +18879,42 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="GND29" library="supply" deviceset="GND" device=""/>
 <part name="V68" library="supply" deviceset="+5VA" device=""/>
 <part name="V72" library="supply" deviceset="+5VA" device=""/>
+<part name="H1" library="monome-inc" deviceset="MOUNT440" device=""/>
+<part name="H2" library="monome-inc" deviceset="MOUNT440" device=""/>
+<part name="H3" library="monome-inc" deviceset="MOUNT440" device=""/>
+<part name="H4" library="monome-inc" deviceset="MOUNT440" device=""/>
+<part name="H5" library="monome-inc" deviceset="MOUNT440" device=""/>
+<part name="H6" library="monome-inc" deviceset="MOUNT440" device=""/>
+<part name="H7" library="monome-inc" deviceset="MOUNT440" device=""/>
+<part name="H8" library="monome-inc" deviceset="MOUNT440" device=""/>
+<part name="H9" library="monome-inc" deviceset="MOUNT440" device=""/>
+<part name="H10" library="monome-inc" deviceset="MOUNT440" device=""/>
+<part name="H11" library="monome-inc" deviceset="MOUNT440" device=""/>
+<part name="H12" library="monome-inc" deviceset="MOUNT440" device=""/>
 </parts>
 <sheets>
 <sheet>
 <plain>
-<wire x1="0" y1="147.32" x2="88.9" y2="147.32" width="0.1524" layer="97"/>
-<wire x1="88.9" y1="147.32" x2="165.1" y2="147.32" width="0.1524" layer="97"/>
+<wire x1="0" y1="147.32" x2="165.1" y2="147.32" width="0.1524" layer="97"/>
 <wire x1="165.1" y1="147.32" x2="165.1" y2="266.7" width="0.1524" layer="97"/>
-<wire x1="165.1" y1="147.32" x2="165.1" y2="68.58" width="0.1524" layer="97"/>
-<wire x1="165.1" y1="68.58" x2="165.1" y2="0" width="0.1524" layer="97"/>
-<wire x1="165.1" y1="68.58" x2="299.72" y2="68.58" width="0.1524" layer="97"/>
-<wire x1="299.72" y1="68.58" x2="299.72" y2="35.56" width="0.1524" layer="97"/>
+<wire x1="165.1" y1="147.32" x2="165.1" y2="60.96" width="0.1524" layer="97"/>
+<wire x1="165.1" y1="60.96" x2="165.1" y2="0" width="0.1524" layer="97"/>
+<wire x1="165.1" y1="60.96" x2="299.72" y2="60.96" width="0.1524" layer="97"/>
+<wire x1="299.72" y1="60.96" x2="299.72" y2="35.56" width="0.1524" layer="97"/>
 <text x="193.04" y="10.16" size="1.778" layer="97">note: pin7 used to supply power to JTAG ICE (n/a here)</text>
 <text x="193.04" y="7.62" size="1.778" layer="97">doc2475.pdf page 2-2</text>
-<text x="200.66" y="99.06" size="1.778" layer="97">ground unused clocks?</text>
+<text x="193.04" y="99.06" size="1.778" layer="97">ground unused clocks?</text>
 <text x="213.36" y="119.38" size="1.778" layer="97">close to pins</text>
 <text x="17.78" y="243.84" size="1.778" layer="97">see doc32090 section 2.1</text>
 <text x="381" y="223.52" size="1.778" layer="97">bf</text>
 <text x="381" y="200.66" size="1.778" layer="97">mmc</text>
 <text x="381" y="203.2" size="1.778" layer="97">adc</text>
-<text x="297.18" y="66.04" size="5.08" layer="97" rot="R180">JTAG</text>
-<text x="86.36" y="144.78" size="5.08" layer="97" rot="R180">AVR32-POWER</text>
-<text x="162.56" y="264.16" size="5.08" layer="97" rot="R180">AVR32-BYPASS</text>
-<text x="396.24" y="264.16" size="5.08" layer="97" rot="R180">AVR32-PINOUT</text>
+<text x="167.64" y="52.07" size="5.08" layer="97">JTAG</text>
+<text x="2.54" y="139.7" size="5.08" layer="97">AVR32-POWER</text>
+<text x="2.54" y="259.08" size="5.08" layer="97">AVR32-BYPASS</text>
+<text x="168.91" y="259.08" size="5.08" layer="97">AVR32-PINOUT</text>
 <text x="381" y="213.36" size="1.778" layer="97">oled</text>
+<text x="302.26" y="26.67" size="5.08" layer="97">AVR32</text>
 </plain>
 <instances>
 <instance part="FRAME2" gate="G$1" x="0" y="0"/>
@@ -18898,17 +18932,17 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="C1" gate="G$1" x="193.04" y="132.08" rot="R270"/>
 <instance part="V4" gate="G$1" x="187.96" y="160.02"/>
 <instance part="GND3" gate="1" x="187.96" y="119.38"/>
-<instance part="C4" gate="G$1" x="43.18" y="228.6" rot="R270"/>
-<instance part="C5" gate="G$1" x="50.8" y="228.6" rot="R270"/>
-<instance part="C6" gate="G$1" x="60.96" y="228.6" rot="R270"/>
-<instance part="C7" gate="G$1" x="68.58" y="228.6" rot="R270"/>
-<instance part="C8" gate="G$1" x="76.2" y="228.6" rot="R270"/>
-<instance part="C9" gate="G$1" x="83.82" y="228.6" rot="R270"/>
-<instance part="C10" gate="G$1" x="93.98" y="228.6" rot="R270"/>
-<instance part="C11" gate="G$1" x="101.6" y="228.6" rot="R270"/>
-<instance part="C12" gate="G$1" x="109.22" y="228.6" rot="R270"/>
-<instance part="C13" gate="G$1" x="116.84" y="228.6" rot="R270"/>
-<instance part="C14" gate="G$1" x="127" y="228.6" rot="R270"/>
+<instance part="C4" gate="G$1" x="17.78" y="228.6" rot="R270"/>
+<instance part="C5" gate="G$1" x="25.4" y="228.6" rot="R270"/>
+<instance part="C6" gate="G$1" x="35.56" y="228.6" rot="R270"/>
+<instance part="C7" gate="G$1" x="43.18" y="228.6" rot="R270"/>
+<instance part="C8" gate="G$1" x="50.8" y="228.6" rot="R270"/>
+<instance part="C9" gate="G$1" x="58.42" y="228.6" rot="R270"/>
+<instance part="C10" gate="G$1" x="68.58" y="228.6" rot="R270"/>
+<instance part="C11" gate="G$1" x="76.2" y="228.6" rot="R270"/>
+<instance part="C12" gate="G$1" x="83.82" y="228.6" rot="R270"/>
+<instance part="C13" gate="G$1" x="91.44" y="228.6" rot="R270"/>
+<instance part="C14" gate="G$1" x="101.6" y="228.6" rot="R270"/>
 <instance part="C15" gate="G$1" x="17.78" y="200.66" rot="R270"/>
 <instance part="C16" gate="G$1" x="25.4" y="200.66" rot="R270"/>
 <instance part="C17" gate="G$1" x="33.02" y="200.66" rot="R270"/>
@@ -18940,7 +18974,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="GND6" gate="1" x="203.2" y="76.2"/>
 <instance part="GND7" gate="1" x="228.6" y="83.82"/>
 <instance part="GND9" gate="1" x="30.48" y="63.5"/>
-<instance part="GND10" gate="1" x="43.18" y="220.98"/>
+<instance part="GND10" gate="1" x="17.78" y="220.98"/>
 <instance part="GND11" gate="1" x="17.78" y="193.04"/>
 <instance part="GND12" gate="1" x="48.26" y="193.04"/>
 <instance part="GND13" gate="1" x="73.66" y="193.04"/>
@@ -19133,27 +19167,27 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="U1" gate="P" pin="GNDANA"/>
 </segment>
 <segment>
-<wire x1="127" y1="226.06" x2="116.84" y2="226.06" width="0.1524" layer="91"/>
-<wire x1="116.84" y1="226.06" x2="109.22" y2="226.06" width="0.1524" layer="91"/>
-<wire x1="109.22" y1="226.06" x2="101.6" y2="226.06" width="0.1524" layer="91"/>
-<wire x1="101.6" y1="226.06" x2="93.98" y2="226.06" width="0.1524" layer="91"/>
-<wire x1="93.98" y1="226.06" x2="83.82" y2="226.06" width="0.1524" layer="91"/>
+<wire x1="101.6" y1="226.06" x2="91.44" y2="226.06" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="226.06" x2="83.82" y2="226.06" width="0.1524" layer="91"/>
 <wire x1="83.82" y1="226.06" x2="76.2" y2="226.06" width="0.1524" layer="91"/>
 <wire x1="76.2" y1="226.06" x2="68.58" y2="226.06" width="0.1524" layer="91"/>
-<wire x1="68.58" y1="226.06" x2="60.96" y2="226.06" width="0.1524" layer="91"/>
-<wire x1="60.96" y1="226.06" x2="50.8" y2="226.06" width="0.1524" layer="91"/>
+<wire x1="68.58" y1="226.06" x2="58.42" y2="226.06" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="226.06" x2="50.8" y2="226.06" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="226.06" x2="43.18" y2="226.06" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="226.06" x2="43.18" y2="223.52" width="0.1524" layer="91"/>
-<junction x="116.84" y="226.06"/>
-<junction x="109.22" y="226.06"/>
-<junction x="101.6" y="226.06"/>
-<junction x="93.98" y="226.06"/>
+<wire x1="43.18" y1="226.06" x2="35.56" y2="226.06" width="0.1524" layer="91"/>
+<wire x1="35.56" y1="226.06" x2="25.4" y2="226.06" width="0.1524" layer="91"/>
+<wire x1="25.4" y1="226.06" x2="17.78" y2="226.06" width="0.1524" layer="91"/>
+<wire x1="17.78" y1="226.06" x2="17.78" y2="223.52" width="0.1524" layer="91"/>
+<junction x="91.44" y="226.06"/>
 <junction x="83.82" y="226.06"/>
 <junction x="76.2" y="226.06"/>
 <junction x="68.58" y="226.06"/>
-<junction x="60.96" y="226.06"/>
+<junction x="58.42" y="226.06"/>
 <junction x="50.8" y="226.06"/>
 <junction x="43.18" y="226.06"/>
+<junction x="35.56" y="226.06"/>
+<junction x="25.4" y="226.06"/>
+<junction x="17.78" y="226.06"/>
 <pinref part="C14" gate="G$1" pin="2"/>
 <pinref part="C13" gate="G$1" pin="2"/>
 <pinref part="C12" gate="G$1" pin="2"/>
@@ -19541,28 +19575,28 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="U1" gate="P" pin="VDDANA"/>
 </segment>
 <segment>
-<wire x1="43.18" y1="231.14" x2="43.18" y2="236.22" width="0.1524" layer="91"/>
+<wire x1="17.78" y1="231.14" x2="17.78" y2="236.22" width="0.1524" layer="91"/>
+<wire x1="17.78" y1="231.14" x2="25.4" y2="231.14" width="0.1524" layer="91"/>
+<wire x1="25.4" y1="231.14" x2="35.56" y2="231.14" width="0.1524" layer="91"/>
+<wire x1="35.56" y1="231.14" x2="43.18" y2="231.14" width="0.1524" layer="91"/>
 <wire x1="43.18" y1="231.14" x2="50.8" y2="231.14" width="0.1524" layer="91"/>
-<wire x1="50.8" y1="231.14" x2="60.96" y2="231.14" width="0.1524" layer="91"/>
-<wire x1="60.96" y1="231.14" x2="68.58" y2="231.14" width="0.1524" layer="91"/>
+<wire x1="50.8" y1="231.14" x2="58.42" y2="231.14" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="231.14" x2="68.58" y2="231.14" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="231.14" x2="76.2" y2="231.14" width="0.1524" layer="91"/>
 <wire x1="76.2" y1="231.14" x2="83.82" y2="231.14" width="0.1524" layer="91"/>
-<wire x1="83.82" y1="231.14" x2="93.98" y2="231.14" width="0.1524" layer="91"/>
-<wire x1="93.98" y1="231.14" x2="101.6" y2="231.14" width="0.1524" layer="91"/>
-<wire x1="101.6" y1="231.14" x2="109.22" y2="231.14" width="0.1524" layer="91"/>
-<wire x1="109.22" y1="231.14" x2="116.84" y2="231.14" width="0.1524" layer="91"/>
-<wire x1="116.84" y1="231.14" x2="127" y2="231.14" width="0.1524" layer="91"/>
+<wire x1="83.82" y1="231.14" x2="91.44" y2="231.14" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="231.14" x2="101.6" y2="231.14" width="0.1524" layer="91"/>
+<junction x="17.78" y="231.14"/>
+<junction x="25.4" y="231.14"/>
+<junction x="35.56" y="231.14"/>
 <junction x="43.18" y="231.14"/>
 <junction x="50.8" y="231.14"/>
-<junction x="60.96" y="231.14"/>
+<junction x="58.42" y="231.14"/>
 <junction x="68.58" y="231.14"/>
 <junction x="76.2" y="231.14"/>
 <junction x="83.82" y="231.14"/>
-<junction x="93.98" y="231.14"/>
-<junction x="101.6" y="231.14"/>
-<junction x="109.22" y="231.14"/>
-<junction x="116.84" y="231.14"/>
-<label x="43.18" y="238.76" size="1.778" layer="95"/>
+<junction x="91.44" y="231.14"/>
+<label x="17.78" y="238.76" size="1.778" layer="95"/>
 <pinref part="C4" gate="G$1" pin="1"/>
 <pinref part="C5" gate="G$1" pin="1"/>
 <pinref part="C6" gate="G$1" pin="1"/>
@@ -24852,6 +24886,18 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="AGND55" gate="VR1" x="372.11" y="100.33"/>
 <instance part="V47" gate="G$1" x="372.11" y="124.46"/>
 <instance part="GND4" gate="1" x="203.2" y="166.37" rot="MR0"/>
+<instance part="H1" gate="G$1" x="88.9" y="63.5"/>
+<instance part="H2" gate="G$1" x="101.6" y="63.5"/>
+<instance part="H3" gate="G$1" x="114.3" y="63.5"/>
+<instance part="H4" gate="G$1" x="88.9" y="50.8"/>
+<instance part="H5" gate="G$1" x="101.6" y="50.8"/>
+<instance part="H6" gate="G$1" x="114.3" y="50.8"/>
+<instance part="H7" gate="G$1" x="88.9" y="38.1"/>
+<instance part="H8" gate="G$1" x="101.6" y="38.1"/>
+<instance part="H9" gate="G$1" x="114.3" y="38.1"/>
+<instance part="H10" gate="G$1" x="88.9" y="25.4"/>
+<instance part="H11" gate="G$1" x="101.6" y="25.4"/>
+<instance part="H12" gate="G$1" x="114.3" y="25.4"/>
 </instances>
 <busses>
 </busses>
