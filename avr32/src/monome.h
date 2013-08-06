@@ -38,6 +38,6 @@ extern void monome_arc_led(u8 n, u8 idx, u8 val);
 extern void monome_grid_write_event(event_t* ev, u8 x, u8 y, u8 val);
 extern void monome_grid_read_event(event_t* ev, u8* x, u8* y, u8* val);
 extern void monome_tilt_write_event(event_t* ev, u8 axis, u16 val);
-extern void monome_tilt_read_event(event_t* ev, u8* axis, u16* val););
+extern void monome_tilt_read_event(event_t* ev, u8* axis, u16* val);
 
 #endif // h guard
