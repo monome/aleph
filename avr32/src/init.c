@@ -30,6 +30,7 @@
 // aleph
 //#include "conf_aleph.h"
 #include "aleph_board.h"
+#include "conf_tc_irq.h"
 #include "filesystem.h"
 #include "init.h"
 

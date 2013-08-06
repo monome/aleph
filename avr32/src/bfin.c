@@ -18,6 +18,7 @@
 
 // aleph/avr32
 #include "aleph_board.h"
+#include "app.h"
 #include "filesystem.h"
 #include "flash.h"
 #include "global.h"
@@ -74,6 +75,8 @@ void bfin_load_buf(void) {
     return;
   }
 
+  app_pause();
+
   bfin_start_transfer();
 
   for(i=0; i<bfinLdrSize; i++) {
@@ -81,6 +84,8 @@ void bfin_load_buf(void) {
   }
 
   bfin_end_transfer();
+  
+  app_resume();
 }
 
 //void bfin_set_param(u8 idx, f32 x ) {
@@ -88,6 +93,8 @@ void bfin_set_param(u8 idx, fix16_t x ) {
 
   static ParamValue pval;
   pval.asInt = (s32)x;
+
+  app_pause();
 
   // command
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
@@ -113,10 +120,15 @@ void bfin_set_param(u8 idx, fix16_t x ) {
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, pval.asByte[3]);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+  app_resume();
 }
 
 void bfin_get_num_params(volatile u32* num) {
   u16 x;
+
+  app_pause();
+
   // command 
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, MSG_GET_NUM_PARAMS_COM);
@@ -127,12 +139,17 @@ void bfin_get_num_params(volatile u32* num) {
   spi_read(BFIN_SPI, &x);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);  
   *num = (u8)(x & 0xff);
+
+  app_resume();
+
 }
 
 void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
   ParamValue pval;
   u16 x; // u16 for spi_read()
   u8 i;
+
+  app_pause();
   // command 
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, MSG_GET_PARAM_DESC_COM);
@@ -181,6 +198,8 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
     pval.asByte[i] = (u8)(x & 0xff);
   }
   pDesc->max = pval.asInt;
+
+  app_resume();
 }
 
 // get module name
@@ -188,6 +207,9 @@ void bfin_get_module_name(volatile char* buf) {
   char name[MODULE_NAME_LEN];
   u16 x; // u16 for spi_read()
   u8 i;
+
+  app_pause();
+
   // command 
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, MSG_GET_MODULE_NAME_COM);
@@ -199,6 +221,8 @@ void bfin_get_module_name(volatile char* buf) {
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     name[i] = (char)(x & 0xff);
   }
+
+  app_resume();
 }
 
 // get module version

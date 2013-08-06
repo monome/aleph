@@ -83,19 +83,16 @@ void net_init(void) {
   print_dbg("\r\n network address: 0x");
   print_dbg_hex((u32)net);
 
-  /* print_dbg("\r\n cltnet address: "); */
-  /* print_dbg_hex((unsigned long int)net); */
-
-  /* print_dbg("\r\n test-write to cltnet, test value:  "); */
-  /* print_dbg_hex(0xDEADBEEF); */
-  /* *((u32*)net) = 0xDEADBEEF; */
-  /* print_dbg("\r\n ; reading... result: "); */
-  /* res = *((u32*)net); */
-  /* print_dbg_hex(res); */
- 
   for(i=0; i<NET_OP_POOL_SIZE; i++) {
     net->opPoolMem[i] = (u8)0;
   }
+
+  /* print_dbg("\r\n op registry: "); */
+  /* for(i=0; i<numOpClasses; i++) { */
+  /*   print_dbg("\r\n name: "); */
+  /*   print_dbg(op_registry[i].name); */
+  /*   print_ */
+  /* } */
 
   net->opPool = (void*)&(net->opPoolMem);
   net->opPoolOffset = 0;
@@ -136,17 +133,16 @@ void net_init_onode(u16 idx) {
 
 // activate an input node with a value
 void net_activate(s16 inIdx, const io_t val) {
-  //  print_dbg("\r\n net activate: ");
+  /* print_dbg("\r\n net_activate, input idx: 0x"); */
   /* print_dbg_hex(inIdx); */
-  /* print_dbg(", val: "); */
+  /* print_dbg(", val: 0x"); */
   /* print_dbg_hex(val); */
-  /* print_dbg(" , op idx: "); */
+  /* print_dbg(" , op idx: 0x"); */
   /* print_dbg_hex(net->ins[inIdx].opIdx); */
-  /* print_dbg(" , op in idx: "); */
+  /* print_dbg(" , op in idx: 0x"); */
   /* print_dbg_hex(net->ins[inIdx].opInIdx); */
 
   if(inIdx >= 0) {
-
     play_input(inIdx);
 
     if(inIdx < net->numIns) {
@@ -157,6 +153,8 @@ void net_activate(s16 inIdx, const io_t val) {
     } else { 
       // index in dsp param list
       inIdx -= net->numIns;
+      //      print_dbg("\r\n param idx: 0x");
+      //      print_dbg_hex(inIdx);
       if (inIdx >= net->numParams) {
 	return ;
       } else {
@@ -173,56 +171,38 @@ s16 net_add_op(op_id_t opId) {
   u8 i;
   op_t* op;
 
+  print_dbg("\r\n createing new operator, type: ");
+  print_dbg_ulong(opId);
+
   if (net->numOps >= NET_OPS_MAX) {
     return -1;
   }
 
   if (op_registry[opId].size > NET_OP_POOL_SIZE - net->opPoolOffset) {
-    // not enough memory in op pool
+    print_dbg("\r\n op creation failed; out of memory.");
     return -1;
   }
+  
+  print_dbg("\r\n allocating memory location: 0x");
+  print_dbg_hex((u32)(net->opPool + net->opPoolOffset));
+
+  print_dbg("\r\n size of requested op size: 0x");
+  print_dbg_hex(op_registry[opId].size);
+
   op = (op_t*)((u8*)net->opPool + net->opPoolOffset);
   // use the class ID to initialize a new object in scratch
-  switch(opId) {
-  case eOpSwitch:
-    op_sw_init((void*) op);
-    break;
-  case eOpEnc:
-    op_enc_init((void*)op);
-    break;
-  case eOpAdd:
-    op_add_init((void*)op);
-    break;
-  case eOpMul:
-    op_mul_init((void*)op);
-    break;
-  case eOpGate:
-    op_gate_init((void*)op);
-    break;
-#if 0
-  /* case eOpAccum: */
-  /*   op_accum_init((void*)op); */
-  /*   break; */
-  /* case eOpSelect: */
-  /*   return -1; */
-  /*   break; */
-  /* case eOpMapLin: */
-  /*   return -1; */
-  /*   break; */
-#endif
-  default:
-    return -1;
-  }
+  op_init(op, opId);
 
   ins = op->numInputs;
   outs = op->numOutputs;
-  op->type = opId;
- 
+
   if (ins > (NET_INS_MAX - net->numIns)) {
+    print_dbg("\r\n op creation failed; too many inputs in network.");
     return -1;
   }
 
   if (outs > (NET_OUTS_MAX - net->numOuts)) {
+    print_dbg("\r\n op creation failed; too many outputs in network.");
     return -1;
   }
 
@@ -258,7 +238,7 @@ s16 net_pop_op(void) {
 
 /// delete an arbitrary operator, and do horrible ugly management stuff
 void net_remove_op(const u32 idx) {
-  /// FIXME: network processing MUST be halted during this procedure!
+  /// FIXME: network processing must be halted during this procedure!
   op_t* op = net->ops[idx];
   u8 nIns = op->numInputs;
   u8 nOuts = op->numOutputs;
@@ -281,7 +261,7 @@ void net_remove_op(const u32 idx) {
     }
     if(firstIn == -1 ) {
       // supposed to be a first inlet but we couldn't find it; we are fucked
-      // print_dbg("\r\n oops! couldn't find inlet for deleted operator! \r\n");
+      print_dbg("\r\n oh dang! couldn't find first inlet for deleted operator! \r\n");
     }
     lastIn = firstIn + nIns - 1;
     // check if anything connects here
@@ -346,9 +326,27 @@ void net_remove_op(const u32 idx) {
 }
 
 
-// create a connection between given idx pairxs
+// create a connection between given idx pairs
 void net_connect(u32 oIdx, u32 iIdx) {
   net->ops[net->outs[oIdx].opIdx]->out[net->outs[oIdx].opOutIdx] = iIdx;
+
+  /* print_dbg("\r\n net_connect, output idx: 0x"); */
+  /* print_dbg_hex(oIdx); */
+  /* print_dbg(", in idx: 0x"); */
+  /* print_dbg_hex(iIdx); */
+  /* print_dbg(" , op idx: 0x"); */
+  /* print_dbg_hex(net->outs[oIdx].opIdx); */
+  /* print_dbg(" , op out idx: 0x"); */
+  /* print_dbg_hex(net->outs[oIdx].opOutIdx); */
+
+  /* print_dbg("\r\n output operator name: "); */
+  /* print_dbg(net_op_name( net->outs[oIdx].opIdx) ); */
+  /* print_dbg("\r\n output name: "); */
+  /* print_dbg(net_out_name(oIdx)); */
+
+  /* print_dbg("\r\n input name: "); */
+  /* print_dbg(net_in_name(iIdx)); */
+
   net->outs[oIdx].target = iIdx;
 }
 
@@ -386,13 +384,10 @@ s16 net_param_idx(u16 inIdx) {
 
 // get string for operator at given idx
 const char* net_op_name(const s16 idx) {
-  
   //  print_dbg("\r\n get op string, idx: ");
   //  print_dbg_ulong(idx);
-
   //  print_dbg("\r\n op addr: @0x: ");
   //  print_dbg_hex( &(net->ops[idx] ) );
-
   if (idx < 0) {
     return "";
   }
@@ -612,6 +607,15 @@ void net_send_params(void) {
     set_param_value(i, net->params[i].data.value.asInt);
   }
 }
+
+// retrigger all inputs
+void net_retrigger_inputs(void) {
+  u32 i;
+  for(i=0; i<net->numIns; i++) {
+    net_activate(i, net_get_in_value(i));
+  }
+}
+
 
 
 //---------------------------------------------------

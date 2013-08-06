@@ -22,7 +22,8 @@ static op_in_func_t op_add_in_func[3] = {
 
 //-------------------------------------------------
 //---- external func define
-void op_add_init(op_add_t* add) {
+void op_add_init(void* mem) {
+  op_add_t* add = (op_add_t*)mem;
   add->super.numInputs = 3;
   add->super.numOutputs = 1;
   add->outs[0] = -1;

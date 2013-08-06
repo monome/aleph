@@ -1,6 +1,6 @@
 /* files.c
    bees
-   aleph-avr32
+   aleph
   
    filesystem routines
 */
@@ -16,10 +16,16 @@
 // aleph-avr32
 #include "app.h"
 #include "bfin.h"
-#include "files.h"
+///////////////////////////////////
+//// test
+#include "events.h"
+/////////////////////////////////
 #include "filesystem.h"
 #include "flash.h"
 #include "memory.h"
+
+/// bees
+#include "files.h"
 #include "scene.h"
 
 // ---- directory list class
@@ -86,23 +92,41 @@ static void fake_fread(volatile u8* dst, u32 size, void* fp) {
 // strip space from the end of a string
 static void strip_space(char* str, u8 len) {
   u8 i;
-  i = len - 1;
-  while(i > 0) {
+  for( i=(len-1); i>0; i-- ) {
     if(str[i] == 0) { continue; }
-    if(str[i] == ' ') { str[i] = 0; }
+    else if(str[i] == ' ') { str[i] = 0; }
     else { break; }
-    i--;
   }
 }
 
 //// /test: write dummy file
+/// FIXME: this is working fine but writing scene file crashes program.
 static void file_write_test(void) {
   void* fp;
+
+  app_pause();
+
+  delay_ms(10);
+
   fp = fl_fopen("/test.txt", "w");
   print_dbg("\r\n dummy write test, fp: ");
   print_dbg_hex((u32)fp);
   fl_fputs("hi hi hello", fp);
   fl_fclose(fp);
+
+  delay_ms(10);
+
+  fp = fl_fopen("/test.txt", "w");
+  print_dbg("\r\n dummy write test, fp: ");
+  print_dbg_hex((u32)fp);
+  fl_fputs("hi hi hello", fp);
+  fl_fclose(fp);
+
+
+
+  app_resume();
+
+  print_dbg("\r\n finished dummy write test.");
 }
 
 //---------------------------
@@ -114,7 +138,7 @@ void files_init(void) {
   // scan directories
   list_scan(&dspList, DSP_PATH);
   list_scan(&sceneList, SCENES_PATH);
-  file_write_test();
+  //  file_write_test();
 }
 
 
@@ -181,8 +205,7 @@ void files_store_default_dsp(u8 idx) {
   void* fp;	  
   u32 size;
 
-  cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
-  cpu_irq_disable_level(UI_IRQ_PRIORITY);
+  app_pause();
 
   name = (const char*)files_get_dsp_name(idx);
   fp = list_open_file_name(&dspList, name, "r", &size);
@@ -199,8 +222,7 @@ void files_store_default_dsp(u8 idx) {
     print_dbg("\r\n error: fp was null in files_store_default_dsp \r\n");
   }
 
-  cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
-  cpu_irq_enable_level(UI_IRQ_PRIORITY);
+  app_resume();
 }
 
 // return count of dsp files
@@ -257,18 +279,33 @@ void files_store_scene(u8 idx) {
 void files_store_scene_name(const char* name) {
   //u32 i;
   void* fp;
-  char namebuf[25] = "";
+  char namebuf[64] = SCENES_PATH;
   u8* pScene;
-  //u32 dum = 0;
-  strcat(namebuf, SCENES_PATH);
+
+  /////////////
+  //////// test
+  //  file_write_test();
+  //    return;
+  /////////////
+  /////////
+
+  print_dbg("\r\n FILES_STORE_SCENE_NAME");
+  delay_ms(100);
+  app_pause();
+  delay_ms(100);
+
   strcat(namebuf, name);
-  strip_space(namebuf, 25);
+  strip_space(namebuf, 32);
   strcat(namebuf, ".scn");
+
+  //  strcat(namebuf, name);
+  //  strcat(namebuf, ".scn");
+
+  
 
   print_dbg("\r\n write scene at: ");
   print_dbg(namebuf);
   
-  app_pause();
 
   // fill the scene RAM buffer from current state of system
   scene_write_buf(); 
@@ -304,35 +341,11 @@ void files_store_scene_name(const char* name) {
   list_scan(&sceneList, SCENES_PATH);
   print_dbg("\r\n scanned.");
 
-  //  delay_ms(100);
+  delay_ms(100);
   app_resume();
   print_dbg("\r\n resumed UI and app timer interrupts.");
-  delay_ms(100);
-  print_dbg("\r\n (100ms later.) ");
-  delay_ms(1000);
-  print_dbg("\r\n (1000ms later.) ");
-  delay_ms(1000);
-  print_dbg("\r\n (1000ms later.) ");
-  delay_ms(1000);
-  print_dbg("\r\n (1000ms later.) ");
-  delay_ms(1000);
-  print_dbg("\r\n (1000ms later.) ");
-  delay_ms(1000);
-  print_dbg("\r\n (1000ms later.) ");
-  delay_ms(1000);
-  print_dbg("\r\n (1000ms later.) ");
-  delay_ms(1000);
-  print_dbg("\r\n (1000ms later.) ");
-  delay_ms(1000);
-  print_dbg("\r\n (1000ms later.) ");
-  delay_ms(1000);
-  print_dbg("\r\n (1000ms later.) ");
-  delay_ms(1000);
-  print_dbg("\r\n (1000ms later.) ");
-  delay_ms(1000);
-  print_dbg("\r\n (1000ms later.) ");
-  delay_ms(1000);
-  print_dbg("\r\n (1000ms later.) ");
+  print_pending_events();
+  /* delay_ms(100); */
 }
 
 

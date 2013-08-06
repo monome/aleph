@@ -30,7 +30,8 @@ static op_in_func_t op_enc_in_func[5] = {
 //-------------------------------------------------
 //----- external functions
 // initialize
-void op_enc_init(op_enc_t* enc) {
+void op_enc_init(void* mem) {
+  op_enc_t* enc = (op_enc_t*)mem;
   enc->super.numInputs = 5;
   enc->super.numOutputs = 2;
   enc->outs[0] = -1;

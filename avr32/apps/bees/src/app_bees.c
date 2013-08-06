@@ -1,32 +1,32 @@
+/*
+  app_bees.c
+  aleph-avr32
+  bees
+
+  required app-specific implementation of avr32/src/app.h
+ */
+
 // asf
 #include "gpio.h"
 #include "print_funcs.h"
 
-// aleph-avr32
+// aleph-avr32nothing seems 
 #include "app.h"
 #include "bfin.h"
 #include "events.h"
 #include "event_types.h"
 #include "flash.h"
+#include "monome.h"
 #include "screen.h"
 // bees
 #include "files.h"
 #include "menu.h"
-#include "monome.h"
+#include "net_monome.h"
 #include "play.h"
 #include "scene.h"
 
 
 static u8 keyMode = 0;
-
-
-//// test monome grid handling
-static void test_handle_monome_grid(event_t* ev) {
-  u8 x, y, z;
-  monome_grid_read_event(ev, &x, &y, &z);
-  //bees_grid_operator_activate(.... );
-  monome_grid_led(x, y, z);
-}
 
 
 void app_handle_event(event_t* e) {
@@ -119,14 +119,18 @@ void app_handle_event(event_t* e) {
     }
     break;
 
-  case kEventMonomeGrid:
+  case kEventMonomeGridKey:
+    //    print_dbg("\r\n app_bees handling monome grid event");
+    //    print_dbg("\r\n monome_grid_key_handler: 0x");
+    //    print_dbg_hex((u32)monome_grid_key_handler);
+    (*monome_grid_key_handler)((void*)monomeOpFocus, (u32)e->eventData);
     //    test_handle_monome_grid(e);
     break;
-  case kEventMonomeArc:
-    //    test_handle_monome_grid(e);
+  case kEventMonomeGridTilt:
     break;
-  case kEventMonomeTilt:
-    //    test_handle_monome_grid(e);
+  case kEventMonomeRingEnc:
+    break;
+  case kEventMonomeRingKey:
     break;
 
 

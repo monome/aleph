@@ -4,7 +4,7 @@
 #if 0 // needs work
 static const char* op_accum_instring = "VALUE   COUNT   MIN     MAX     WRAP    ";
 static const char* op_accum_outstring = "VALUE   WRAP    ";
-static const char* op_accum_opstring = "ACCUMULATOR";
+static const char* op_accum_opstring = "ACCUM";
 
 static void op_accum_boundscheck(op_accum_t* accum) {
   if(accum->val > accum->max) {

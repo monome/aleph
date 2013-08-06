@@ -23,16 +23,17 @@
 // operator class registry
 // must be laid out identically to eOpId enum!
 const op_desc_t op_registry[numOpClasses] = {
-{ "SW", sizeof(op_sw_t) },
-{ "ENC", sizeof(op_enc_t) },
-{ "ADD", sizeof(op_add_t) },
-{ "MUL", sizeof(op_mul_t) },
-{ "GATE", sizeof(op_gate_t) },
-// { "ACCUMULATE", sizeof(op_accum_t) },
-// { "SELECT", sizeof(op_sel_t) },
-// { "LINEAR MAP", sizeof(op_lin_t) },
-// { "PARAMETER", sizeof(op_param_t) }, q
-// { "PRESET", sizeof(op_preset_t) }
+  { "SW",   sizeof(op_sw_t)  , &op_sw_init },
+  { "ENC",  sizeof(op_enc_t) , &op_enc_init },
+  { "ADD",  sizeof(op_add_t) , &op_add_init },
+  { "MUL",  sizeof(op_mul_t) , &op_mul_init },
+  { "GATE", sizeof(op_gate_t), &op_gate_init },
+  { "RAWGRID", sizeof(op_mgrid_raw_t), &op_mgrid_raw_init },
+  // { "ACCUMULATE", sizeof(op_accum_t) },
+  // { "SELECT", sizeof(op_sel_t) },
+  // { "LINEAR MAP", sizeof(op_lin_t) },
+  // { "PARAMETER", sizeof(op_param_t) }, q
+  // { "PRESET", sizeof(op_preset_t) }
 };
 
 
@@ -46,38 +47,10 @@ static const u8 outStringChars = 8;
 
 // initialize operator at memory
 s16 op_init(op_t* op, op_id_t opId) {
-  // initialize given operator class at memory 
-  switch(opId) {
-  case eOpSwitch:
-    op_sw_init((void*) op);
-    break;
-  case eOpEnc:
-    op_enc_init((void*)op);
-    break;
-  case eOpAdd:
-    op_add_init((void*)op);
-    break;
-  case eOpMul:
-    op_mul_init((void*)op);
-    break;
-  case eOpGate:
-    op_gate_init((void*)op);
-    break;
-#if 0
-  case eOpAccum:
-    op_accum_init((void*)op);
-    break;
-  case eOpSelect:
-    return -1;
-    break;
-  case eOpMapLin:
-    return -1;
-    break;
-#endif
-  default:
-    return -1;
-  }
-  op->type = opId;
+  // no flags by default
+  op->flags = 0x00000000;
+  // run class init function
+  (*(op_registry[opId].initFunc))(op);
   return 0;
 }
 

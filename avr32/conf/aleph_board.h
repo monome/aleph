@@ -20,8 +20,6 @@
 /* //! Data bus width to use the SDRAM(s) with (16 or 32 bits; always 16 bits on UC3). */
 /* #define SDRAM_DBW 16 */
 
-// #warning "using aleph_board.h in asf/common/boards"
-
 //==============================================
 //==== clocks
 
@@ -54,24 +52,6 @@
 #define BOARD_OSC32_HZ          32768
 #define BOARD_OSC32_STARTUP_US  71000
 #define BOARD_OSC32_IS_XTAL     true
-
-//============================================
-//====== IRQ priorities
-//#define SYS_IRQ_PRIORITY       AVR32_INTC_INT1
-//#define APP_TC_IRQ_PRIORITY    AVR32_INTC_INT2
-//#define UI_IRQ_PRIORITY        AVR32_INTC_INT3
-#define SYS_IRQ_PRIORITY       1
-#define APP_TC_IRQ_PRIORITY    3
-#define UI_IRQ_PRIORITY        2
-
-//==============================================
-//==== timers
-
-// application timer
-#define APP_TC                 (&AVR32_TC)
-#define APP_TC_CHANNEL         0
-#define APP_TC_IRQ             AVR32_TC_IRQ0
-#define APP_TC_IRQ_GROUP       AVR32_TC_IRQ_GROUP
 
 //==============================================
 //==== USART
@@ -203,7 +183,8 @@
 //! Multiplexed pin used for USB_VBOF: AVR32_USBB_USB_VBOF_x_x.
 //! To be selected according to the AVR32_USBB_USB_VBOF_x_x_PIN and
 //! AVR32_USBB_USB_VBOF_x_x_FUNCTION definitions from <avr32/uc3axxxx.h>.
-#define USB_VBOF                    AVR32_USBB_USB_VBOF_0_2
+/// FIXME: what is this multiplexed with?
+#define USB_VBOF                    AVR32_USBB_USB_VBOF_0_2 // 
 //! Active level of the USB_VBOF output pin.
 #define USB_VBOF_ACTIVE_LEVEL       LOW
 //! USB overcurrent detection pin.

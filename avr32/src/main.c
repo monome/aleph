@@ -42,6 +42,7 @@
 #include "app.h"
 #include "app_timers.h"
 #include "bfin.h"
+#include "conf_tc_irq.h"
 #include "encoders.h"
 #include "events.h"
 #include "filesystem.h"
@@ -117,6 +118,9 @@ static void init_avr32(void) {
   // usb host controller
   init_usb_host();
   
+// initialize usb classes
+  init_monome();
+  
   print_dbg("\r\n avr32 init done ");
 }
 
@@ -164,8 +168,6 @@ static void check_events(void) {
 	// won't work if called from an interrupt.
 	ftdi_setup();
     }
-
-
     if(startup) {
       if( e.eventType == kEventSwitchDown0
 	  || e.eventType == kEventSwitchDown1
@@ -179,33 +181,28 @@ static void check_events(void) {
       }
     } else {
       switch(e.eventType) {
-      case kEventMonomeRead :
+	////// FIXME: this event can and should be eliminated. 
+	////// ftdi_read callback can strip leading bytes
+	//// and check for rx data before invoking main loop or monome.c
+      case kEventMonomePoll :
 	// poll monome serial input and spawn relevant events
 	monome_read_serial();
 	break;
-      /* case kEventFtdiWrite : */
-      /* 	ftdi_write((u32)e.eventData); */
+      case kEventMonomeRefresh :
+	// refresh monome device from led state buffer
+	//	print_dbg("\r\n handle monome refresh event");
+	monome_grid_refresh();
+	// TODO: deal with ring devices
+	break;
+
+
+	//////test: print monome led state buffer and dirty flags
+      /* case kEventSwitchDown0: */
+      /* 	print_dbg("\r\n monome led buf: "); */
+      /* 	print_byte_array(monomeLedBuffer, 256, 16); */
       /* 	break; */
-      case kEventSwitchDown5 :
-	screen_line(0, 0, "powering down!", 0x3f);
-	print_dbg("\r\n AVR32 received power down switch event");
-	screen_refresh();
-	gpio_clr_gpio_pin(POWER_CTL_PIN);
-	break;
-	//// test: switches -> monome
-      case kEventSwitchDown0:
-	//ftdi_write(1);
-	break;
-      case kEventSwitchUp0:
-	//	ftdi_write(0);
-	break;
-      case kEventSwitchDown2:
-	//	ftdi_write(0x2003);
-	break;
-      case kEventSwitchDown3:
-	//	ftdi_write(0x2004);
-	break;
-	////
+
+	//////
       default:
 	// all other events are sent to application layer
 	app_handle_event(&e);

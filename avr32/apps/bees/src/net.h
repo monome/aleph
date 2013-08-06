@@ -111,6 +111,8 @@ void net_add_param(u32 idx, volatile ParamDesc* pdesc);
 void net_clear_params(void);
 // resend all parameter values
 void net_send_params(void);
+// retrigger all inputs
+void net_retrigger_inputs(void);
 
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections

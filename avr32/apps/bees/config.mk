@@ -29,10 +29,11 @@ include ../../core.mk
 
 # List of C source files.
 CSRCS += \
-	$(ALEPH_BEES)/src/app.c \
+	$(ALEPH_BEES)/src/app_bees.c \
 	$(ALEPH_BEES)/src/files.c \
 	$(ALEPH_BEES)/src/key_handler.c \
 	$(ALEPH_BEES)/src/menu.c \
+	$(ALEPH_BEES)/src/net_monome.c \
 	$(ALEPH_BEES)/src/net.c \
 	$(ALEPH_BEES)/src/op.c \
 	$(ALEPH_BEES)/src/param.c \
@@ -44,6 +45,7 @@ CSRCS += \
 	$(ALEPH_BEES)/src/ops/op_enc.c \
 	$(ALEPH_BEES)/src/ops/op_gate.c \
 	$(ALEPH_BEES)/src/ops/op_mul.c \
+	$(ALEPH_BEES)/src/ops/op_monome_grid_raw.c \
 	$(ALEPH_BEES)/src/ops/op_sw.c
 
 # List of assembler source files.

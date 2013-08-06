@@ -1,8 +1,6 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
-// TODO: fract/float conversion
-
 // some bitfield and bit-array utilities
 #define BITS_PER_BYTE	8
 #define BIT(x) (1 << (x))

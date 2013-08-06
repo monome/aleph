@@ -1,5 +1,6 @@
 // ASF
 #include "compiler.h"
+#include "delay.h"
 #include "gpio.h"
 #include "intc.h"
 #include "pdca.h"
@@ -9,7 +10,7 @@
 // aleph
 #include "aleph_board.h"
 #include "bfin.h"
-//#include "conf_aleph.h"
+#include "conf_tc_irq.h"
 #include "encoders.h"
 #include "events.h"
 #include "event_types.h"
@@ -71,18 +72,22 @@ static void irq_port1_line3(void);
 __attribute__((__interrupt__))
 static void irq_pdca(void) {
   // Disable all interrupts.
-  Disable_global_interrupt();
+  //  Disable_global_interrupt();
+  cpu_irq_disable();
   // Disable interrupt channel.
   pdca_disable_interrupt_transfer_complete(AVR32_PDCA_CHANNEL_SPI_RX);
   //unselects the SD/MMC memory.
   sd_mmc_spi_read_close_PDCA();
   //.... example has a 5000 clock gimpy delay here.
-  // doesn't seem to need it , but if that changes use delay_us instead
+  // using delay_us instead
+  delay_ms(10);
+  //  delay_ms(2);
   // Disable unnecessary channel
   pdca_disable(AVR32_PDCA_CHANNEL_SPI_TX);
   pdca_disable(AVR32_PDCA_CHANNEL_SPI_RX);
   // Enable all interrupts.
-  Enable_global_interrupt();
+  cpu_irq_enable();
+  //  Enable_global_interrupt();
   //  print_dbg("\r\n handled PDCA interrupt. \r\n");
   fsEndTransfer = true;
 }

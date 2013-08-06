@@ -11,13 +11,14 @@
 
 // aleph-avr32
 #include "aleph_board.h"
+#include "conf_tc_irq.h"
 #include "events.h"
 #include "event_types.h"
 
 
 /// NOTE: if we are ever over-filling the event queue, we have problems.
-/// making the event queue bigger will not solve the problems.
-#define MAX_EVENTS   32
+/// making the event queue bigger not likely to solve the problems.
+#define MAX_EVENTS   64
 
 // macro for incrementing an index into a circular buffer.
 #define INCR_EVENT_INDEX( x )  { if ( ++x == MAX_EVENTS ) x = 0; }
@@ -105,3 +106,30 @@ bool post_event( event_t *e ) {
 
   return status;
 }
+
+
+
+//////////////////////////////////////////////////////////
+/// testing
+//u32 get_max_events(void) { return MAX_EVENTS; }
+//extern event_t* get_sys_events(void) { return (event_t*)sysEvents; }
+
+void print_pending_events(void) {
+  u32 i;
+  i = getIdx;
+
+  while(i != putIdx) {
+    print_dbg("\r\n  pending system events:");
+    
+    print_dbg("\r\v event at idx ");
+    print_dbg_ulong(i);
+    print_dbg(" type: ");
+    print_dbg_ulong( sysEvents[i].eventType);
+    print_dbg(" data: 0x");
+    print_dbg_hex(sysEvents[i].eventType);
+
+    INCR_EVENT_INDEX(i);
+  }
+}
+
+//////////////////////////////

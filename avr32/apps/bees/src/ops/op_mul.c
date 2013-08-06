@@ -22,7 +22,8 @@ static const char* op_mul_opstring  = "MUL";
 
 //-------------------------------------------------
 //----- external function definitions
-void op_mul_init(op_mul_t* mul) {
+void op_mul_init(void* mem) {
+  op_mul_t* mul = (op_mul_t*)mem;
   mul->super.numInputs = 3;
   mul->super.numOutputs = 1;
   mul->outs[0] = -1;
@@ -34,8 +35,6 @@ void op_mul_init(op_mul_t* mul) {
   mul->super.inString = op_mul_instring;
   mul->super.outString = op_mul_outstring;
   mul->super.type = eOpMul;  
-  //mul->super.status = eUserOp;  
- 
   mul->in_val[0] = &(mul->a);
   mul->in_val[1] = &(mul->b);
   mul->in_val[2] = &(mul->btrig);

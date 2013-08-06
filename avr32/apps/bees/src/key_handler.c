@@ -11,6 +11,8 @@
 #endif
 // common
 #include "files.h"
+// avr32
+#include "app.h"
 // bees
 #include "op.h"
 #include "op_math.h"
@@ -250,6 +252,7 @@ void key_handler_outs(uiKey_t key, s16 val) {
     break;
   case eKeyFnDownB:
     // disconnect
+    net_disconnect(curPage->selected);
     break;
   case eKeyFnDownC:
     // re-send? store?
@@ -420,12 +423,12 @@ extern void key_handler_presets(uiKey_t key, s16 val) {
       curPage->mode = eModeNone;
     }
     break;
-  case eKeyFnDownC: // store
+  case eKeyFnDownC: // write
     switch(curPage->mode) {
     case eModeNone:
-      curPage->mode = eModeStore;
+      curPage->mode = eModeWrite;
       break;
-    case eModeStore:
+    case eModeWrite:
       preset_store(curPage->selected);
       curPage->mode = eModeNone;
       break;
@@ -433,12 +436,12 @@ extern void key_handler_presets(uiKey_t key, s16 val) {
       curPage->mode = eModeNone;
     }
     break;
-  case eKeyFnDownD: // recall
+  case eKeyFnDownD: // read
     switch(curPage->mode) {
     case eModeNone:
-      curPage->mode = eModeRecall;
+      curPage->mode = eModeRead;
       break;
-    case eModeRecall:
+    case eModeRead:
       preset_recall(curPage->selected);
       curPage->mode = eModeNone;
       break;
@@ -475,11 +478,11 @@ extern void key_handler_presets(uiKey_t key, s16 val) {
     break;
   case eKeyEncUpD:
     // scroll name char
-    edit_string_inc_char(sceneData->desc.sceneName, curPage->cursor);
+    //    edit_string_inc_char(sceneData->desc.sceneName, curPage->cursor);
     break;
   case eKeyEncDownD:
     // scroll name char
-    edit_string_dec_char(sceneData->desc.sceneName, curPage->cursor);
+    //    edit_string_dec_char(sceneData->desc.sceneName, curPage->cursor);
     break;
     default:
     ;; // nothing
@@ -490,20 +493,53 @@ extern void key_handler_presets(uiKey_t key, s16 val) {
 //--- SCENES
 extern void key_handler_scenes(uiKey_t key, s16 val) {
   switch(key) {
-  case eKeyFnDownA: // clear
+
+
+  case eKeyFnDownA: // write
     switch(curPage->mode) {
     case eModeNone:
-      curPage->mode = eModeClear;
+      curPage->mode = eModeWrite;
       break;
-    case eModeClear:
-      //scene_clear(curPage->selected);
+    case eModeWrite:
+      files_store_scene_name(sceneData->desc.sceneName);
+      print_dbg("\r\n wrote current scene to sdcard.");
       curPage->mode = eModeNone;
       break;
     default:
       curPage->mode = eModeNone;
     }
     break;
-  case eKeyFnDownB: // copy
+
+  /* case eKeyFnDownA: // clear */
+  /*   switch(curPage->mode) { */
+  /*   case eModeNone: */
+  /*     curPage->mode = eModeClear; */
+  /*     break; */
+  /*   case eModeClear: */
+  /*     //scene_clear(curPage->selected); */
+  /*     curPage->mode = eModeNone; */
+  /*     break; */
+  /*   default: */
+  /*     curPage->mode = eModeNone; */
+  /*   } */
+  /*   break; */
+
+  case eKeyFnDownB: // read
+    switch(curPage->mode) {
+    case eModeNone:
+      curPage->mode = eModeRead;
+      break;
+    case eModeRead:
+      app_notify("\r\n reading scene... ");
+      files_load_scene(curPage->selected);
+      curPage->mode = eModeNone;
+      break;
+    default:
+      curPage->mode = eModeNone;
+    }
+    break;
+
+  case eKeyFnDownC: // copy
     switch(curPage->mode) {
     case eModeNone:
       curPage->mode = eModeCopy;
@@ -516,33 +552,23 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
       curPage->mode = eModeNone;
     }
     break;
-  case eKeyFnDownC: // store
+
+ 
+ case eKeyFnDownD: // default
     switch(curPage->mode) {
     case eModeNone:
-      curPage->mode = eModeStore;
+      curPage->mode = eModeDefault;
       break;
-    case eModeStore:
-      files_store_scene_name(sceneData->desc.sceneName);
-      print_dbg("\r\n stored current scene.");
+    case eModeDefault:
+      app_notify("writing default scene...");
+      scene_write_default();
       curPage->mode = eModeNone;
       break;
     default:
       curPage->mode = eModeNone;
     }
     break;
-  case eKeyFnDownD: // recall
-    switch(curPage->mode) {
-    case eModeNone:
-      curPage->mode = eModeRecall;
-      break;
-    case eModeRecall:
-      files_load_scene(curPage->selected);
-      curPage->mode = eModeNone;
-      break;
-    default:
-      curPage->mode = eModeNone;
-    }
-    break;
+
     //// encoder A: scroll pages
   case eKeyEncUpA:
     scroll_page(1);
@@ -587,11 +613,13 @@ extern void key_handler_dsp(uiKey_t key, s16 val) {
   // print_dbg("\r\n key_handler_dsp");
   switch(key) {
   case eKeyFnDownA:
+    app_notify("loading DSP...");
     // load DSP (and update the parameter list)
     files_load_dsp(curPage->selected);
     break;
   case eKeyFnDownB:
     // write default
+    app_notify("writing default DSP...");
     files_store_default_dsp(curPage->selected);
     break;
   case eKeyFnDownC:

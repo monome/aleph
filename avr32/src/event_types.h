@@ -16,8 +16,12 @@ typedef enum {
   kEventAdc3 ,
   /// screen refresh
   kEventRefresh,
-  /// monome polling
-  kEventMonomeRead,
+  /// poll monome
+  kEventMonomePoll,
+  // refresh monome
+  kEventMonomeRefresh,
+  // handle rx data
+
   /// midi polling
   //...
   /// HID polling
@@ -28,6 +32,18 @@ typedef enum {
   kEventFtdiDisconnect,
   ///------ discrete UI events
   /// encoders
+  /* kEventEncoder0Start, */
+  /* kEventEncoder0Move, */
+  /* kEventEncoder0End, */
+  /* kEventEncoder1Start, */
+  /* kEventEncoder1Move, */
+  /* kEventEncoder1End, */
+  /* kEventEncoder2Start, */
+  /* kEventEncoder2Move, */
+  /* kEventEncoder2End, */
+  /* kEventEncoder3Start, */
+  /* kEventEncoder3Move, */
+  /* kEventEncoder3End, */
   kEventEncoder0,
   kEventEncoder1,
   kEventEncoder2 ,
@@ -50,9 +66,10 @@ typedef enum {
   kEventSwitchDown7, // foot1
   kEventSwitchUp7,
   ///// monome input
-  kEventMonomeGrid,
-  kEventMonomeArc,
-  kEventMonomeTilt,
+  kEventMonomeGridKey,
+  kEventMonomeGridTilt,
+  kEventMonomeRingEnc,
+  kEventMonomeRingKey,
   /// dummy/count
   kNumEvents,
 } eEventType;
