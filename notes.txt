@@ -32,3 +32,17 @@ http://docs.blackfin.uclinux.org/doku.php?id=hw:checklist
 
 audio pots http://tangentsoft.net/audio/atten.html
 general http://tangentsoft.net/audio/
+
+
+http://stompville.co.uk/?p=470
+
+balanced
+	AD8476 balanced line driver
+	http://www.uneeda-audio.com/zbal.htm
+	http://www.harmonycentral.com/t5/Lessons-Theory/Balanced-Vs-Unbalanced-I-O-How-It-Works/ba-p/34639794
+
+
+	USB -> AVR?
+		http://www.makestuff.eu/wordpress/electronics/nanduino/usb-messaging/
+		http://pyusb.sourceforge.net/docs/1.0/tutorial.html
+		http://tuxgraphics.org/electronics/200901/tuxgraphics-isp-header.shtml

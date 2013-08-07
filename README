@@ -15,48 +15,15 @@ production workflow
 avr uart
 i2c
 
+LED indication circuit
+
 mechanical fixes, circuit revision
-	plate drawing for jay
 	
 TEST POINTS
 SIMPLIFY
-USB -> AVR?
-	http://www.makestuff.eu/wordpress/electronics/nanduino/usb-messaging/
-	http://pyusb.sourceforge.net/docs/1.0/tutorial.html
-	http://tuxgraphics.org/electronics/200901/tuxgraphics-isp-header.shtml
 	
 1u ceramic caps
 larger caps, some electrolytic?
-
-hat
-	input gain stage
-		???? FET switched input
-	# remove 5v supply on CV in		
-	output gain stage
-		reschem, layout
-	headphone amp
-		# TPA6111A2
-		
-http://stompville.co.uk/?p=470
-		
-
-balanced
-	AD8476 balanced line driver
-	http://www.uneeda-audio.com/zbal.htm
-	http://www.harmonycentral.com/t5/Lessons-Theory/Balanced-Vs-Unbalanced-I-O-How-It-Works/ba-p/34639794
-
-enclosure
-	http://www.evsmetal.com/history.php
-	http://www.mcalpin-ind.com/history.html
-
-12V system redesign
-	http://www.ti.com/lit/ds/symlink/lmr62014.pdf
-	http://www.coilcraft.com/xal50xx.cfm
-	MBR0520L
-	
-i2c protection?
-	USE A BAS70 like the cv in
-	22 ohm inline?
 
 test ADC protection.
 

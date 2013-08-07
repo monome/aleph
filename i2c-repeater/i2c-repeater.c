@@ -12,7 +12,7 @@
 
 // i2c addr, can be overwritten by makefile
 #ifndef ADDR
-#define ADDR 40
+#define ADDR 80
 #endif
 
 

@@ -6,11 +6,11 @@ plate revision 130730
 	threads moved, additions
 	keypad redesign, with flange on bottom
 	screen redesign
-		screw into platem #2-56 0.086"
+		perimeter screws
 		tighter cutout for better fit
 		revise position for centering
 		revise clear sheet masking to fully cover screen frame
-	legend?
+	legend
 		
 
 revise mechanicals
