@@ -5,7 +5,7 @@
 #ifndef _EVENTS_H_
 #define _EVENTS_H_
 
-#include <compiler.h>
+#include "types.h"
 
 typedef struct {
   U32   eventType;
@@ -31,5 +31,11 @@ bool get_next_event( event_t *e );
  */
 bool post_event( event_t *e );
 
+
+/// testing only
+//extern u32 get_max_events(void);
+//extern event_t* get_sys_events(void);
+//// TESTING
+extern void print_pending_events(void);
 
 #endif // header guard

@@ -3,14 +3,15 @@
 
 // ---- timer tags
 enum { 
-  eScreenTimerTag = 0,
-  eEncTimerTag = 1,
-  eSwTimerTag = 2,
-  eAdcTimerTag = 3,
-  eHeartbeatTimerTag = 4,
-  eMonomePollTimerTag = 5,
-  eMonomeRefreshTimerTag = 6,
-
+  eScreenTimerTag,
+  eEncTimerTag,
+  eSwTimerTag,
+  eAdcTimerTag,
+  eHeartbeatTimerTag,
+  eMonomePollTimerTag,
+  eMonomeRefreshTimerTag,
+  eMidiPollTimerTag,
+  eMidiRefreshTimerTag,
 };
 
 // create application timers

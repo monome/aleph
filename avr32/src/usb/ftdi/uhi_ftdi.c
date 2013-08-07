@@ -1,3 +1,10 @@
+/*
+  uhi_ftdi.c
+  aleph-avr32
+  
+  usb host routines for ftdi driver
+ */
+
 // asf
 #include <string.h>
 #include "delay.h"
@@ -11,7 +18,6 @@
 #include "ftdi.h"
 #include "usb_protocol_ftdi.h"
 #include "uhi_ftdi.h"
-//#include "udi_ftdi.h"
 
 #ifdef USB_HOST_HUB_SUPPORT
 # error USB HUB support is not implemented
@@ -62,8 +68,7 @@ char serial_string[FTDI_STRING_MAX_LEN];
 static volatile u8 ctlReadBusy = 0;
 
 //------- static funcs
-// print eeprom contents
-//static void print_eeprom(void);
+
 // send control request
 static u8 send_ctl_request(u8 reqtype, u8 reqnum, 
 			   u8* data, u16 size,
@@ -133,12 +138,12 @@ uhc_enum_status_t uhi_ftdi_install(uhc_device_t* dev) {
 	}
 	break;
       default:
-	;; // ignore endpoint (shouldn't get here)
+	print_dbg("\r\n unhandled endpoint in ftdi device enumeration");
 	break;
       }
       break;
     default:
-      ;; // ignore descriptor
+      print_dbg("\r\n ignoring descriptor in ftdi device enumeration");
       break;
     }
     Assert(conf_desc_lgt>=ptr_iface->bLength);
@@ -155,14 +160,10 @@ uhc_enum_status_t uhi_ftdi_install(uhc_device_t* dev) {
 }
 
 void uhi_ftdi_enable(uhc_device_t* dev) {
-  //  usb_setup_req_t req;
-
-  print_dbg("\r\n ftdi enable routine ");
 
   if (uhi_ftdi_dev.dev != dev) {
     return;  // No interface to enable
   }
-
   /// bit mode (not bitbang? )
   /// todo: what do these mean???
   // val : ff
@@ -172,9 +173,8 @@ void uhi_ftdi_enable(uhc_device_t* dev) {
 		   NULL, 0,
 		   1, 0xff, 
 		   NULL);
-  
   /// line property
-    /// todo: what do these mean???
+  /// todo: what do these mean???
   // index 1
   // val : 8
   send_ctl_request(FTDI_DEVICE_OUT_REQTYPE, 
@@ -182,7 +182,6 @@ void uhi_ftdi_enable(uhc_device_t* dev) {
 		   NULL, 0,
 		   1, 8,
 		   NULL);
-
   /// baud rate
   // rq : 3
   // value: 26 (baudrate: 115200)
@@ -196,21 +195,7 @@ void uhi_ftdi_enable(uhc_device_t* dev) {
 
   delay_ms(200);
 
-
-  /* if(ftdi_read_eeprom()) { */
-  
-  /* } else { */
-  /*   print_dbg("\r\n error reading FTDI eeprom."); */
-  /* } */
-
-  //  UHI_FTDI_CHANGE(dev, true);
-  // what the hell????
-
-  print_dbg("\r\n enabling FTDI device... ??? ");
-  
-  ftdi_change(dev, true);
-  // ftdiPlug = 1;
-  
+  ftdi_change(dev, true);  
 }
 
 void uhi_ftdi_uninstall(uhc_device_t* dev) {
@@ -219,12 +204,10 @@ void uhi_ftdi_uninstall(uhc_device_t* dev) {
   }
   uhi_ftdi_dev.dev = NULL;
   Assert(uhi_ftdi_dev.report!=NULL);
-  ftdiPlug = 0;
-
-  //  free(uhi_ftdi_dev.report);
-  //UHI_FTDI_CHANGE(dev, false);
+  ftdi_change(dev, false);  
 }
 
+// run the input endpoint (bulk)
 bool uhi_ftdi_in_run(uint8_t * buf, iram_size_t buf_size,
 		     uhd_callback_trans_t callback) {
   return uhd_ep_run(uhi_ftdi_dev.dev->address,
@@ -232,6 +215,7 @@ bool uhi_ftdi_in_run(uint8_t * buf, iram_size_t buf_size,
 		    UHI_FTDI_TIMEOUT, callback);
 }
 
+// run the output endpoint (bulk)
 bool uhi_ftdi_out_run(uint8_t * buf, iram_size_t buf_size,
 		      uhd_callback_trans_t callback) {
   return uhd_ep_run(uhi_ftdi_dev.dev->address,
@@ -272,8 +256,8 @@ static void ctl_req_end(
 		uhd_trans_status_t status,
 		uint16_t payload_trans) {
   // last transfer ok?
-  print_dbg("\r\n ctl request end, status: ");
-  print_dbg_hex((u32)status);
+  //  print_dbg("\r\n ctl request end, status: ");
+  //  print_dbg_hex((u32)status);
   ctlReadBusy = 0;
 }
 
@@ -282,8 +266,8 @@ void ftdi_get_strings(char** pManufacturer, char** pProduct, char** pSerial) {
 
   // get manufacturer string
   ctlReadBusy = 1;
-  print_dbg("\r\n sending ctl request for manufacturer string, index : ");
-  print_dbg_hex(uhi_ftdi_dev.dev->dev_desc.iManufacturer);
+  //  print_dbg("\r\n sending ctl request for manufacturer string, index : ");
+  //  print_dbg_hex(uhi_ftdi_dev.dev->dev_desc.iManufacturer);
   if(!(send_ctl_request(
 			/* req type*/
 			FTDI_STRING_DESC_REQ_TYPE,
@@ -311,8 +295,8 @@ void ftdi_get_strings(char** pManufacturer, char** pProduct, char** pSerial) {
 
   // get product string
   ctlReadBusy = 1;
-  print_dbg("\r\n sending ctl request for product string, index : ");
-  print_dbg_ulong( uhi_ftdi_dev.dev->dev_desc.iProduct);
+  //  print_dbg("\r\n sending ctl request for product string, index : ");
+  //  print_dbg_ulong( uhi_ftdi_dev.dev->dev_desc.iProduct);
   if(!(send_ctl_request(
 			/* req type*/
 			FTDI_STRING_DESC_REQ_TYPE,
@@ -338,7 +322,7 @@ void ftdi_get_strings(char** pManufacturer, char** pProduct, char** pSerial) {
 
   // get serial string
   ctlReadBusy = 1;
-  print_dbg("\r\n sending ctl request for serial string : ");
+  // print_dbg("\r\n sending ctl request for serial string : ");
   if(!(send_ctl_request(
 			/* req type*/
 			FTDI_STRING_DESC_REQ_TYPE,
@@ -361,9 +345,7 @@ void ftdi_get_strings(char** pManufacturer, char** pProduct, char** pSerial) {
   }
   // wait for transfer end
   while(ctlReadBusy) { ;; }
-  
-  print_dbg("\r\n requested all string descriptors.");
-
+  //  print_dbg("\r\n requested all string descriptors.");
   *pManufacturer = manufacturer_string + FTDI_STRING_DESC_OFFSET;
   *pProduct = product_string + FTDI_STRING_DESC_OFFSET;
   *pSerial = serial_string + FTDI_STRING_DESC_OFFSET;

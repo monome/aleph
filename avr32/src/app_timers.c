@@ -18,6 +18,7 @@
 #include "events.h"
 #include "event_types.h"
 #include "ftdi.h"
+#include "midi.h"
 #include "monome.h"
 #include "global.h"
 #include "switches.h"
@@ -44,6 +45,12 @@ static swTimer_t adcTimer;
 static swTimer_t monomePollTimer;
 // refresh monome device 
 static swTimer_t monomeRefreshTimer;
+// poll monome device 
+static swTimer_t monomePollTimer;
+// poll midi device
+static swTimer_t midiPollTimer;
+// refresh midi device
+static swTimer_t midiRefreshTimer;
 
 //--- static misc
 static u8 i;
@@ -96,16 +103,21 @@ static void monome_poll_timer_callback(int tag) {
   
 }
 
-
 // monome refresh callback
 static void monome_refresh_timer_callback(int tag) {
-  /// FIXME: just have whatever connection mechanism turn timer on/off
   if (monomeConnect) {
     //    print_dbg("\r\n posting monome refresh event");
     if(monomeFrameDirty > 0) {
       e.eventType = kEventMonomeRefresh;
       post_event(&e);
     }
+  }
+}
+
+// midi polling callback
+static void midi_poll_timer_callback(int tag) {
+  if(midiConnect) {
+    midi_read();
   }
 }
 
@@ -116,4 +128,5 @@ void init_app_timers(void) {
   set_timer(&adcTimer,           eAdcTimerTag,           5,   &adc_timer_callback,     1);
   set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);
   set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 20,  &monome_refresh_timer_callback, 1);
+  set_timer(&midiPollTimer,      eMidiPollTimerTag,      5,  &midi_poll_timer_callback, 1);
 }
