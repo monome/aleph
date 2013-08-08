@@ -25,7 +25,7 @@ void app_pause(void) {
   //  event_t* sysevents;
   //  if (inNotify == 1) { return; }
 
-  print_pending_events();
+  //  print_pending_events();
 
   //  delay_ns(100);
   delay_ms(10);

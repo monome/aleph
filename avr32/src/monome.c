@@ -11,6 +11,7 @@
 #include "print_funcs.h"
 #include <string.h>
 // aleph
+#include "app.h"
 #include "events.h"
 #include "event_types.h"
 #include "ftdi.h"
@@ -26,7 +27,7 @@
 // serial string length
 #define MONOME_SERSTR_LEN 9
 // tx buffer length
-#define MONOME_TX_BUF_LEN 68
+#define MONOME_TX_BUF_LEN 72
 
 //------- typedefs
 
@@ -106,6 +107,8 @@ static u8 txBuf[MONOME_TX_BUF_LEN];
 static void setup_40h(u8 cols, u8 rows);
 static void setup_series(u8 cols, u8 rows);
 static u8 setup_mext(void);
+
+static void test_draw(void);
 
 // rx for each protocol
 static void read_serial_40h(void);
@@ -313,14 +316,12 @@ static inline void monome_grid_key_write_event(u8 x, u8 y, u8 val) {
   data[1] = y;
   data[2] = val;
 
-
-  print_dbg("\r\n monome.c wrote event; x: 0x");
-  print_dbg_hex(x);
-  print_dbg("; y: 0x");
-  print_dbg_hex(y);
-  print_dbg("; z: 0x");
-  print_dbg_hex(val);
-
+  /* print_dbg("\r\n monome.c wrote event; x: 0x"); */
+  /* print_dbg_hex(x); */
+  /* print_dbg("; y: 0x"); */
+  /* print_dbg_hex(y); */
+  /* print_dbg("; z: 0x"); */
+  /* print_dbg_hex(val); */
 
   ev.eventType = kEventMonomeGridKey;
   post_event(&ev);
@@ -412,6 +413,7 @@ static void setup_40h(u8 cols, u8 rows) {
   mdesc.rows = 8;
   set_funcs();
   monomeConnect = 1;
+  test_draw();
 }
 
 // setup series device
@@ -424,6 +426,7 @@ static void setup_series(u8 cols, u8 rows) {
   mdesc.tilt = 1;
   set_funcs();
   monomeConnect = 1;
+  test_draw();
 }
 
 // setup extended device, return success /failure of query
@@ -499,6 +502,8 @@ static u8 setup_mext(void) {
   set_funcs();
   monomeConnect = 1;
   print_dbg("\r\n connected monome device, mext protocol");
+
+  test_draw();
   return 1;
 }
 
@@ -678,4 +683,37 @@ static void ring_map_mext(u8 n, u8* data) {
 }
 
 
-
+static void test_draw(void) { 
+  // pretty, but too slow
+  /// guess we should implement and use set/led functions after all
+  return;
+  /* u8 glyph[8][8] = { { 1, 1, 0, 0, 1, 1, 1, 0, }, */
+  /* 		   {  1, 1, 1, 0, 0, 1, 1, 1, }, */
+  /* 		   {  0, 1, 1, 1, 0, 0, 1, 1, }, */
+  /* 		   {  0, 0, 1, 1, 1, 0, 1, 0, }, */
+  /* 		   {  0, 1, 0, 1, 1, 1, 0, 0, }, */
+  /* 		   {  1, 1, 0, 0, 1, 1, 1, 0, }, */
+  /* 		   {  1, 1, 1, 0, 0, 1, 1, 1, }, */
+  /* 		   {  0, 1, 1, 1, 0, 0, 1, 1 } }; */
+  /* u8 i, j; */
+  /* app_pause(); */
+  /* for(i=0; i<8; i++) { */
+  /*   for(j=0; j<8; j++) { */
+  /*     monomeLedBuffer[monome_xy_idx(i, j)] = glyph[j][i] * 0xff; */
+  /*     monomeFrameDirty = 1; */
+  /*     (*monome_grid_refresh)(); */
+  /*     while(ftdi_tx_busy()) {;;} */
+  /*     delay_ms(5); */
+  /*   } */
+  /* } */
+  /* for(i=0; i<8; i++) { */
+  /*   for(j=0; j<8; j++) { */
+  /*     monomeLedBuffer[monome_xy_idx(i, j)] = 0; */
+  /*     monomeFrameDirty = 1; */
+  /*     (*monome_grid_refresh)(); */
+  /*     while(ftdi_tx_busy()) {;;} */
+  /*     delay_ms(5); */
+  /*   } */
+  /* } */
+  /* app_resume(); */
+}
