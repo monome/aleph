@@ -97,7 +97,16 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
 
   op_mgrid_raw_t* op = (op_mgrid_raw_t*)(op_monome->op);
 
+
   monome_grid_key_parse_event_data(edata, &x, &y, &z);
+
+  /* print_dbg("\r\n op_mgrid_raw_handler received event; x: 0x"); */
+  /* print_dbg_hex(x); */
+  /* print_dbg("; y: 0x"); */
+  /* print_dbg_hex(y); */
+  /* print_dbg("; z: 0x"); */
+  /* print_dbg_hex(z); */
+
   // flat position into led buffer
   pos = monome_xy_idx(x, y);
 

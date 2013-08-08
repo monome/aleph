@@ -74,7 +74,7 @@ u8 monomeLedBuffer[MONOME_MAX_LED_BYTES];
 
 // global pointers to send functions.
 read_serial_t monome_read_serial = &read_serial_dummy;
-grid_led_t monome_grid_led;
+//grid_led_t monome_grid_led;
 grid_map_t monome_grid_map;
 grid_level_map_t monome_grid_level_map;
 ring_map_t monome_ring_map;
@@ -113,9 +113,9 @@ static void read_serial_series(void);
 static void read_serial_mext(void);
 
 // tx for each protocol
-static void grid_led_40h(u8 x, u8 y, u8 val);
-static void grid_led_series(u8 x, u8 y, u8 val);
-static void grid_led_mext(u8 x, u8 y, u8 val);
+/* static void grid_led_40h(u8 x, u8 y, u8 val); */
+/* static void grid_led_series(u8 x, u8 y, u8 val); */
+/* static void grid_led_mext(u8 x, u8 y, u8 val); */
 
 static void grid_map_40h(u8 x, u8 y, const u8* data);
 static void grid_map_series(u8 x, u8 y, const u8* data);
@@ -144,24 +144,27 @@ static read_serial_t readSerialFuncs[eProtocolNumProtocols] = {
   &read_serial_mext,
 };
 
-static grid_led_t gridLedFuncs[eProtocolNumProtocols] = {
-  &grid_led_40h,
-  &grid_led_series,
-  &grid_led_mext,
-};
+// grid/led
+/* static grid_led_t gridLedFuncs[eProtocolNumProtocols] = { */
+/*   &grid_led_40h, */
+/*   &grid_led_series, */
+/*   &grid_led_mext, */
+/* }; */
 
+// grid/map
 static grid_map_t gridMapFuncs[eProtocolNumProtocols] = {
   &grid_map_40h,
   &grid_map_series,
   &grid_map_mext,
 };
 
-/// TODO
-/* static grid_level_map_t gridMapLevelFuncs[eProtocolNumProtocols] = { */
-/*   NULL, // unsupported */
-/*   NULL, // unsupported */
-/*   &grid_map_level_mext, */
-/* }; */
+
+// grid/level/map
+static grid_level_map_t gridMapLevelFuncs[eProtocolNumProtocols] = {
+  NULL, // unsupported
+  NULL, // unsupported
+  &grid_map_level_mext,
+};
 
 static ring_map_t ringMapFuncs[eProtocolNumProtocols] = {
   NULL, // unsupported
@@ -258,7 +261,8 @@ void monome_grid_refresh(void) {
     while( busy ) {
       busy = ftdi_tx_busy();
     }
-    grid_map_mext(0, 0, monomeLedBuffer);
+    //    grid_map_mext(0, 0, monomeLedBuffer);
+    (*monome_grid_map)(0, 0, monomeLedBuffer);
     monomeFrameDirty &= 0b1110;
     busy = 1;
   }
@@ -268,7 +272,8 @@ void monome_grid_refresh(void) {
       while( busy ) {
 	busy = ftdi_tx_busy();
       }
-      grid_map_mext(8, 0, monomeLedBuffer + 8);
+      //      grid_map_mext(8, 0, monomeLedBuffer + 8);
+      (*monome_grid_map)(8, 0, monomeLedBuffer + 8);
       monomeFrameDirty &= 0b1101;
       busy = 1;
     }
@@ -279,7 +284,8 @@ void monome_grid_refresh(void) {
       while( busy ) {
 	busy = ftdi_tx_busy();
       }
-      grid_map_mext(0, 8, monomeLedBuffer +  128);
+      //      grid_map_mext(0, 8, monomeLedBuffer +  128);
+      (*monome_grid_map)(0, 8, monomeLedBuffer + 128);
       monomeFrameDirty &= 0b1011;
       busy = 1;
     }
@@ -290,7 +296,8 @@ void monome_grid_refresh(void) {
       while( busy ) {
 	busy = ftdi_tx_busy();
       }
-      grid_map_mext(8, 8, monomeLedBuffer + 136);
+      //      grid_map_mext(8, 8, monomeLedBuffer + 136);
+      (*monome_grid_map)(8, 8, monomeLedBuffer + 136);
       monomeFrameDirty &= 0b0111;
       busy = 1;
     }
@@ -305,6 +312,15 @@ static inline void monome_grid_key_write_event(u8 x, u8 y, u8 val) {
   data[0] = x;
   data[1] = y;
   data[2] = val;
+
+
+  print_dbg("\r\n monome.c wrote event; x: 0x");
+  print_dbg_hex(x);
+  print_dbg("; y: 0x");
+  print_dbg_hex(y);
+  print_dbg("; z: 0x");
+  print_dbg_hex(val);
+
 
   ev.eventType = kEventMonomeGridKey;
   post_event(&ev);
@@ -380,8 +396,10 @@ u32 monome_xy_idx(u8 x, u8 y) {
 
 // set function pointers
 static inline void set_funcs(void) {
+  print_dbg("\r\n setting monome functions, protocol idx: ");
+  print_dbg_ulong(mdesc.protocol);
   monome_read_serial = readSerialFuncs[mdesc.protocol];
-  monome_grid_led = gridLedFuncs[mdesc.protocol];
+  monome_grid_map = gridMapFuncs[mdesc.protocol];
   monome_grid_level_map = gridMapFuncs[mdesc.protocol];
   monome_ring_map = ringMapFuncs[mdesc.protocol];
 }
@@ -496,22 +514,32 @@ static void read_serial_40h(void) {
 }
 
 static void read_serial_series(void) {
-  u8* prx;
+  u8* prx = ftdi_rx_buf();
   u8 i;
-  u8 x=0;
-  u8 y=0;
-  u8 z=0;
-  u8 com;
-  prx = ftdi_rx_buf();
-  com = *prx++;
-  // FIXME: er what happens with the com byte?
   rxBytes = ftdi_rx_bytes();
-  for(i=0; i<rxBytes; i+= 2) {
-    z = !((*prx++ & 0xf0) >> 4);
-      x = (*prx & 0xf0) >> 4;
-      y = *prx & 0xf;
-      monome_grid_key_write_event(x, y, z);
-    }
+  /* print_dbg("\r\n read_serial_series, byte count: "); */
+  /* print_dbg_ulong(rxBytes); */
+  /* print_dbg(" ; data : [ 0x"); */
+  /* print_dbg_hex(prx[0]); */
+  /* print_dbg(" , 0x"); */
+  /* print_dbg_hex(prx[1]); */
+  /* print_dbg(" ]");   */
+  i = 0;
+  while(i < rxBytes) {
+    // FIXME: can we expect other event types? (besides press/lift)
+    /* print_dbg(" ; x : 0x"); */
+    /* print_dbg_hex((prx[1] & 0xf0) >> 4); */
+    /* print_dbg("; y : 0x"); */
+    /* print_dbg_hex(prx[1] & 0xf); */
+    /* print_dbg(" ; z : 0x"); */
+    /* print_dbg_hex(	 ((prx[0] & 0xf0) == 0) ); */
+    monome_grid_key_write_event( ((prx[1] & 0xf0) >> 4) ,
+				 prx[1] & 0xf,
+				 ((prx[0] & 0xf0) == 0)
+				 );
+    i += 2;
+    prx += 2;
+  }
 
 }
 
@@ -539,7 +567,7 @@ static void read_serial_mext(void) {
 	nbp += 2;
 	prx += 2;
 	break;
-	case 0x50:  // ring delta
+	case 0x50: // ring delta
 	monome_ring_enc_write_event( *prx, *(prx+1));
 	nbp += 2;
 	prx += 2;
@@ -561,24 +589,26 @@ static void read_serial_mext(void) {
 }
 
 //--- tx
-static void grid_led_40h(u8 x, u8 y, u8 val) {
-  // TODO
-}
 
-static void grid_led_series(u8 x, u8 y, u8 val) {
-  //  static u8 tx[2];
-  txBuf[0] = 0x20 & ((val > 0) << 4);
-  txBuf[1] = (x << 4) | y;
-  ftdi_write(txBuf, 2);
-}
+///// not using per-led updates.  
+/* static void grid_led_40h(u8 x, u8 y, u8 val) { */
+/*   // TODO */
+/* } */
 
-static void grid_led_mext(u8 x, u8 y, u8 val) {
-  //  static u8 tx[3];
-  txBuf[0] = 0x10 | (val > 0);
-  txBuf[1] = x;
-  txBuf[2] = y;
-  ftdi_write(txBuf, 3);
-}
+/* static void grid_led_series(u8 x, u8 y, u8 val) { */
+/*   //  static u8 tx[2]; */
+/*   txBuf[0] = 0x20 & ((val > 0) << 4); */
+/*   txBuf[1] = (x << 4) | y; */
+/*   ftdi_write(txBuf, 2); */
+/* } */
+
+/* static void grid_led_mext(u8 x, u8 y, u8 val) { */
+/*   //  static u8 tx[3]; */
+/*   txBuf[0] = 0x10 | (val > 0); */
+/*   txBuf[1] = x; */
+/*   txBuf[2] = y; */
+/*   ftdi_write(txBuf, 3); */
+/* } */
 
 // update a whole frame
 // . note that our input data is one byte per led!!
@@ -615,7 +645,28 @@ static void grid_map_40h(u8 x, u8 y, const u8* data) {
 }
 
 static void grid_map_series(u8 x, u8 y, const u8* data) {
-  // TODO
+  static u8 * ptx;
+  static u8 i, j;
+  // command (upper nibble)
+  txBuf[0] = 0x80;
+  // quadrant index (lower nibble, 0-3)
+  txBuf[0] |= ( (x > 8) | ((y > 8) << 1) );
+
+  // pointer to tx data
+  ptx = txBuf + 1;
+  
+  // copy and convert
+  for(i=0; i<MONOME_QUAD_LEDS; i++) {
+    *ptx = 0;
+    for(j=0; j<MONOME_QUAD_LEDS; j++) {
+      // binary value of data byte to bitfield of tx byte
+      *ptx |= ((*data > 0) << j);
+      data++;
+    }
+    data += MONOME_QUAD_LEDS; // skip the rest of the row to get back in target quad
+    ptx++;
+  }
+  ftdi_write(txBuf, MONOME_QUAD_LEDS + 1);  
 }
 
 static void grid_map_level_mext(u8 x, u8 y, const u8* data) {
@@ -625,17 +676,6 @@ static void grid_map_level_mext(u8 x, u8 y, const u8* data) {
 static void ring_map_mext(u8 n, u8* data) {
   // TODO
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

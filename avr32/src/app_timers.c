@@ -113,7 +113,7 @@ static void monome_refresh_timer_callback(int tag) {
     }
   }
 }
-
+mono
 // midi polling callback
 static void midi_poll_timer_callback(int tag) {
   if(midiConnect) {
