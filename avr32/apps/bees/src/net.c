@@ -228,8 +228,30 @@ s16 net_add_op(op_id_t opId) {
 // destroy last operator created
 s16 net_pop_op(void) {
   op_t* op = net->ops[net->numOps - 1];
+  int i=0;
+  int x=0;
+  print_dbg("\r\n deleting op, addr : 0x");
+  print_dbg_hex((u32)op);
+  print_dbg("; ins : ");
+  print_dbg_ulong(op->numInputs);
+  print_dbg("; outs : ");
+  print_dbg_ulong(op->numOutputs);
+
+  // store the global index of the first input
+  x = net_op_in_idx(net->numOps - 1, 0); 
+  // erase input nodes
+  for(i=0; i<op->numInputs; i++) {
+    net_init_inode(x++);
+  }
+  // store the global index of the first output
+  x = net_op_out_idx(net->numOps - 1, 0);
+  // erase output nodes
+  for(i=0; i<op->numOutputs; i++) {
+    net_init_onode(x++);
+  }
   net->numIns -= op->numInputs;
   net->numOuts -= op->numOutputs;
+
   net->opPoolOffset += op_registry[op->type].size;
   net->numOps -= 1;
   return 0;
@@ -433,7 +455,7 @@ s16 net_out_op_idx(const u16 idx) {
 // get global index for a given input of given op
 u16 net_op_in_idx(const u16 opIdx, const u16 inIdx) {
   u16 which;
-  for(which=0; which<net->numIns; which++) {
+  for(which=0; which < (net->numIns); which++) {
     if(net->ins[which].opIdx == opIdx) {
       return (which + inIdx);
     }

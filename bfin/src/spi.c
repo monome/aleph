@@ -20,6 +20,12 @@ static u8 idx;
 static pval pv;
 
 
+//------ static functions
+static void spi_set_param(u32 idx, pval pv) {
+  
+  //  module_set_param(idx, pv);
+}
+
 //// TODO: 
 ///    instead of the case statement, use function pointers:
 //typedef u8(*spiFunc_t)(u8 rx);
@@ -97,7 +103,7 @@ u8 spi_process(u8 rx) {
     pv.s = gModuleData->paramData[idx].value.asInt;
     /// fixme: i guess this is dumb,
     /// should be more elegant use of param desc/data/changeflag
-    module_set_param(idx, pv);
+    spi_set_param(idx, pv);
     TOGGLE_LED4;
     byte = eCom; //reset
     return 0; // don't care
@@ -430,3 +436,4 @@ u8 spi_process(u8 rx) {
   }
 }
 */
+

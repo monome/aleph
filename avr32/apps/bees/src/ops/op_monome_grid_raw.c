@@ -49,6 +49,7 @@ void op_mgrid_raw_init(void* mem) {
   op->super.out = op->outs;
   op->super.inc_func = (op_inc_func)op_mgrid_raw_inc_func;
   op->super.in_func = op_mgrid_raw_in_func;
+  op->super.deinit = op_mgrid_raw_deinit;
 
   op->super.opString = op_mgrid_raw_opstring;
   op->super.inString = op_mgrid_raw_instring;
