@@ -6,7 +6,7 @@
 #include "protocol.h"
 #include "types.h"
 #include "util.h"
-#include "spi.h"
+   #include "spi.h"
 
 //----- static variables
 
@@ -25,6 +25,8 @@ static void spi_set_param(u32 idx, pval pv) {
   
   //  module_set_param(idx, pv);
 }
+
+
 
 //// TODO: 
 ///    instead of the case statement, use function pointers:
