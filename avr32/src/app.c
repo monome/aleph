@@ -11,7 +11,7 @@
 
 //static u8 inNotify = 0;
 //static u8 notifyMsg = 0;
-static irqflags_t flags;
+//static irqflags_t flags;
 
 void app_notify(const char* msg) {
   screen_clear();
@@ -21,11 +21,11 @@ void app_notify(const char* msg) {
 
 void app_pause(void) {
   /// test:
-  u32 i;
+  //u32 i;
   //  event_t* sysevents;
   //  if (inNotify == 1) { return; }
 
-  print_pending_events();
+  //  print_pending_events();
 
   //  delay_ns(100);
   delay_ms(10);

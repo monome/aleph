@@ -33,8 +33,9 @@ CSRCS += \
 	$(ALEPH_BEES)/src/files.c \
 	$(ALEPH_BEES)/src/key_handler.c \
 	$(ALEPH_BEES)/src/menu.c \
-	$(ALEPH_BEES)/src/net_monome.c \
 	$(ALEPH_BEES)/src/net.c \
+	$(ALEPH_BEES)/src/net_monome.c \
+	$(ALEPH_BEES)/src/net_poll.c \
 	$(ALEPH_BEES)/src/op.c \
 	$(ALEPH_BEES)/src/param.c \
 	$(ALEPH_BEES)/src/play.c \

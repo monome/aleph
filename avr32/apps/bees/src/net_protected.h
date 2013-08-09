@@ -19,7 +19,7 @@
 #include "net.h"
 #include "op.h"
 #include "param.h"
-#include "scene_types.h"
+//#include "scene_types.h"
 #include "types.h"
 #include "util.h"
 
