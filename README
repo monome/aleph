@@ -10,14 +10,8 @@ accounting // investment
 estimate // production expenses
 	BOM, spreadsheet update
 	rlc estimates
-production workflow
-
-avr uart
-i2c
 
 LED indication circuit
-
-mechanical fixes, circuit revision
 	
 TEST POINTS
 SIMPLIFY
@@ -29,9 +23,6 @@ test ADC protection.
 
 soft power control, redo resistor values
 
-schem cleanup
-
-aleph infographic diagram
 
 
 
