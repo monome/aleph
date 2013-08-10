@@ -36,16 +36,17 @@ const char* get_param_name(u32 idx) {
 // set value for param at given idx
 //-- see also net_set_in_value()
 void set_param_value(u32 idx, io_t val) {
-  print_dbg("\r\n setting param : idx 0x");
-  print_dbg_hex(idx);  
-  print_dbg(" , label: ");
-  print_dbg(net->params[idx].desc.label);
-  print_dbg(" , val: 0x");
-  print_dbg_hex((u32)val);
-  print_dbg(" , min: 0x");
-  print_dbg_hex((u32)net->params[idx].desc.min);
-  print_dbg(" , max: 0x");
-  print_dbg_hex((u32)net->params[idx].desc.max);
+  /* print_dbg("\r\n setting param : idx 0x"); */
+  /* print_dbg_hex(idx);   */
+  /* print_dbg(" , label: "); */
+  /* print_dbg(net->params[idx].desc.label); */
+  /* print_dbg(" , val: 0x"); */
+  /* print_dbg_hex((u32)val); */
+  /* print_dbg(" , min: 0x"); */
+  /* print_dbg_hex((u32)net->params[idx].desc.min); */
+  /* print_dbg(" , max: 0x"); */
+  /* print_dbg_hex((u32)net->params[idx].desc.max); */
+
   if(val > net->params[idx].desc.max) {
     val = net->params[idx].desc.max;
   }

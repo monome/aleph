@@ -64,6 +64,12 @@ void bfin_set_param(u8 idx, fix16_t x ) {
   static ParamValue pval;
   pval.asInt = (s32)x;
 
+  print_dbg("\r\n bfin_set_param, idx: ");
+  print_dbg_ulong(idx);
+
+  print_dbg(", val: 0x");
+  print_dbg_hex((u32)x);
+
   app_pause();
 
   // command
@@ -296,40 +302,40 @@ void bfin_end_transfer(void) {
 
 void bfin_spi_slave(void) {
   
- 
+  //...// 
 }
 
 void bfin_spi_master(void) {
-  spi_options_t spiOptions = {
-    .reg          = BFIN_SPI_NPCS,
-    // fast baudrate / low trans delay suitable for boot process 
-    .baudrate     = 5000000,
-    //     .baudrate     = 20000000,
-    .bits         = 8,
-    .spck_delay   = 0,
-    .trans_delay  = 0,
-    //    .trans_delay = 20,
-    .stay_act     = 1,
-    .spi_mode     = 1,
-    .modfdis      = 1
-  };
+  /* spi_options_t spiOptions = { */
+  /*   .reg          = BFIN_SPI_NPCS, */
+  /*   // fast baudrate / low trans delay suitable for boot process  */
+  /*   .baudrate     = 5000000, */
+  /*   //     .baudrate     = 20000000, */
+  /*   .bits         = 8, */
+  /*   .spck_delay   = 0, */
+  /*   .trans_delay  = 0, */
+  /*   //    .trans_delay = 20, */
+  /*   .stay_act     = 1, */
+  /*   .spi_mode     = 1, */
+  /*   .modfdis      = 1 */
+  /* }; */
   
-  // stop
-  spi_disable();
+  /* // stop */
+  /* spi_disable(); */
 
-  // intialize as master
-  spi_initMaster(BFIN_SPI, &spiOptions);
+  /* // intialize as master */
+  /* spi_initMaster(BFIN_SPI, &spiOptions); */
 
-  // set selection mode: variable_ps, pcs_decode, delay.
-  spi_selectionMode(BFIN_SPI, 0, 0, 0);
+  /* // set selection mode: variable_ps, pcs_decode, delay. */
+  /* spi_selectionMode(BFIN_SPI, 0, 0, 0); */
 
-  // enable SPI.
-  spi_enable(BFIN_SPI);
+  /* // enable SPI. */
+  /* spi_enable(BFIN_SPI); */
 
-  // intialize the chip register
-  spi_setupChipReg(BFIN_SPI, &spiOptions, FPBA_HZ);
-  // enable pulldown on bfin HWAIT line
-  //// shit! not implemented... 
-  // gpio_enable_pin_pull_down(BFIN_HWAIT_PIN);
+  /* // intialize the chip register */
+  /* spi_setupChipReg(BFIN_SPI, &spiOptions, FPBA_HZ); */
+  /* // enable pulldown on bfin HWAIT line */
+  /* //// shit! not implemented...  */
+  /* // gpio_enable_pin_pull_down(BFIN_HWAIT_PIN); */
 
 }
