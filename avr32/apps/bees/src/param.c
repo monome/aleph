@@ -7,6 +7,7 @@
 // common
 #include "param_common.h"
 // avr32
+#include "control.h"
 #include "print_funcs.h"
 // bees
 #include "ui.h"
@@ -55,5 +56,6 @@ void set_param_value(u32 idx, io_t val) {
   }
   net->params[idx].data.value.asInt = val;
   net->params[idx].data.changed = 1;
-  bfin_set_param(idx, val);
+  //  bfin_set_param(idx, val);
+  ctl_param_change(idx, (u32)val);
 }

@@ -23,6 +23,7 @@ CSRCS += \
 	$(ALEPH_AVR32)/src/app.c \
 	$(ALEPH_AVR32)/src/app_timers.c \
 	$(ALEPH_AVR32)/src/bfin.c \
+	$(ALEPH_AVR32)/src/control.c \
 	$(ALEPH_AVR32)/src/events.c \
 	$(ALEPH_AVR32)/src/encoders.c \
 	$(ALEPH_AVR32)/src/filesystem.c \

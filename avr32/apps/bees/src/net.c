@@ -629,7 +629,7 @@ void net_send_params(void) {
   for(i=0; i<net->numParams; i++) {
     set_param_value(i, net->params[i].data.value.asInt);
     /// TEST
-    delay_ms(1);
+    //    delay_ms(1);
   }
 }
 

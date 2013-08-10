@@ -70,7 +70,7 @@ void bfin_set_param(u8 idx, fix16_t x ) {
   print_dbg(", val: 0x");
   print_dbg_hex((u32)x);
 
-  app_pause();
+  //  app_pause();
 
   // command
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
@@ -97,7 +97,7 @@ void bfin_set_param(u8 idx, fix16_t x ) {
   spi_write(BFIN_SPI, pval.asByte[3]);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 
-  app_resume();
+  //  app_resume();
 }
 
 void bfin_get_num_params(volatile u32* num) {
@@ -252,8 +252,10 @@ void bfin_report_params(void) {
     for(i=0; i<numParams; i++) {
       bfin_get_param_desc(i, &pdesc);
 
+      /// FIXME: arg, this belongs only in BEES
       net_add_param(i, &pdesc);
-
+      
+      
       print_dbg("\r\n got pdesc : ");
       print_dbg((const char* )pdesc.label);
     }
