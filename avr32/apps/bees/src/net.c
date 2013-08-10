@@ -13,6 +13,7 @@
 // asf
 #ifdef ARCH_AVR32
 #include "print_funcs.h"
+#include "delay.h"
 #endif
 
 // bees
@@ -627,6 +628,8 @@ void net_send_params(void) {
   u32 i;
   for(i=0; i<net->numParams; i++) {
     set_param_value(i, net->params[i].data.value.asInt);
+    /// TEST
+    delay_ms(1);
   }
 }
 
