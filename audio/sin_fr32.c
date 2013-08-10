@@ -6,7 +6,8 @@
    
  */
 
-#include <fract_math.h>
+#include "sin_fr32.h"
+//#include <fract_math.h>
 //#include <fract.h>
 
 #define SIN_ENTRY 7

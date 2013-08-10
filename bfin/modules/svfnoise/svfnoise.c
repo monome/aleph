@@ -27,26 +27,11 @@
 #endif
 
 #include "module.h"
+#include "module_custom.h"
 #include "types.h"
 
 #define SVF_HZ_MIN 0x200000      // 32
 #define SVF_HZ_MAX 0x40000000    // 16384
-
-enum params {
-  eParamSvfHz,
-  eParamSvfRq,
-  eParamSvfLow,
-  eParamSvfHigh,
-  eParamSvfBand,
-  eParamSvfNotch,
-  eParamSvfPeak,
-  eParamNoiseAmp,
-  eParamInAmp0,
-  eParamInAmp1,
-  eParamInAmp2,
-  eParamInAmp3,
-  eParamNumParams
-};
 
 
 // define a local data structure that subclasses moduleData.
@@ -259,11 +244,17 @@ void module_process_frame(const f32* in, f32* out) {
 
 static void fill_param_desc(void) {
 
+  /* strcpy(gModuleData->paramDesc[eParamSvfHz].label, "cutoff"); */
+  /* strcpy(gModuleData->paramDesc[eParamSvfHz].unit, "hz"); */
+  /* gModuleData->paramDesc[eParamSvfHz].type = PARAM_TYPE_FIX; */
+  /* gModuleData->paramDesc[eParamSvfHz].min = SVF_HZ_MIN; */
+  /* gModuleData->paramDesc[eParamSvfHz].max = SVF_HZ_MAX; */
+  /// FIXME: svf corner coeff is dumb right now
   strcpy(gModuleData->paramDesc[eParamSvfHz].label, "cutoff");
-  strcpy(gModuleData->paramDesc[eParamSvfHz].unit, "hz");
+  strcpy(gModuleData->paramDesc[eParamSvfHz].unit, "");
   gModuleData->paramDesc[eParamSvfHz].type = PARAM_TYPE_FIX;
-  gModuleData->paramDesc[eParamSvfHz].min = SVF_HZ_MIN;
-  gModuleData->paramDesc[eParamSvfHz].max = SVF_HZ_MAX;
+  gModuleData->paramDesc[eParamSvfHz].min = 0;
+  gModuleData->paramDesc[eParamSvfHz].max = 0x8000;
 
   strcpy(gModuleData->paramDesc[eParamSvfRq].label, "rq");
   strcpy(gModuleData->paramDesc[eParamSvfRq].unit, "");
