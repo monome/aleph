@@ -21,6 +21,7 @@ static pval pv;
 //------ static functions
 static void spi_set_param(u32 idx, pval pv) {
   //  module_set_param(idx, pv);
+  TOGGLE_LED4;
   ctl_param_change(idx, pv.u);
 }
 
@@ -93,12 +94,10 @@ u8 spi_process(u8 rx) {
   case eSetParamData3 :
     // byte-swap from BE on avr32
     gModuleData->paramData[idx].value.asByte[0] = rx;
-    gModuleData->paramData[idx].changed = 1; // done -> mark changed
+    // FIXME: not really using this flag. should just remove it 
+    //    gModuleData->paramData[idx].changed = 1; // done -> mark changed
     pv.s = gModuleData->paramData[idx].value.asInt;
-    /// fixme: i guess this is dumb,
-    /// should be more elegant use of param desc/data/changeflag
     spi_set_param(idx, pv);
-    TOGGLE_LED4;
     byte = eCom; //reset
     return 0; // don't care
     break;
