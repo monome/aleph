@@ -40,6 +40,7 @@ void sport0_rx_isr() {
   /* if(iRxBuf[0] < 0) { */
   /*    dum++; */
   /* } */
+  if(!processAudio) { return; }
 
   // tick the control rate
   ctl_next_frame();
@@ -65,9 +66,9 @@ void sport0_rx_isr() {
   iTxBuf[INTERNAL_DAC_R1] = out[3] >> 8;
 
   // module-defined frame processing function
-  if(processAudio) {
+
     module_process_frame();  
-  }
+
 
   /* //// TEST: wire */
   /* out0 = in0; */
