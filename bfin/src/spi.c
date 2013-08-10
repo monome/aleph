@@ -1,12 +1,11 @@
 #include "bfin_core.h"
+#include "control.h"
 #include "leds.h"
 #include "module.h"
-//#include "protocol.h"
-#include "param_common.h"
 #include "protocol.h"
 #include "types.h"
 #include "util.h"
-   #include "spi.h"
+#include "spi.h"
 
 //----- static variables
 
@@ -22,21 +21,15 @@ static pval pv;
 
 //------ static functions
 static void spi_set_param(u32 idx, pval pv) {
-  
   //  module_set_param(idx, pv);
+  ctl_param_change(idx, pv.u);
 }
 
 
-
 //// TODO: 
-///    instead of the case statement, use function pointers:
-//typedef u8(*spiFunc_t)(u8 rx);
-
-/// this is a big list of them:
-//#include "spi_com_funcs_inc.h"
-
-// current fn ( == state in the protocol state-machine)
-// spiFunc_t* spiFunc = &spiFuncs[eCom];
+/// check that the compiler is implementing this as a jump table.
+//// if it isn't, use a fp table instead.
+//// make the terminal cases in to inline funcs for readability.
 
 //------- function definitions
 // deal with new data in the spi rx ringbuffer

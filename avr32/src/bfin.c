@@ -27,44 +27,14 @@
 #include "bfin.h"
 
 //--------------------------------------
-//--- static
+//--- static fuction declaration
 
 static void bfin_start_transfer(void);
 static void bfin_end_transfer(void); 
 static void bfin_transfer_byte(u8 data);
 
-static void bfin_transfer_byte(u8 data) {
-    while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { 
-      print_dbg("\r\n HWAIT asserted..."); 
-    }
-    spi_write(BFIN_SPI, data);
-}
-
-void bfin_start_transfer(void) {
-  //  volatile u64 delay;
-  gpio_set_gpio_pin(BFIN_RESET_PIN);  
-  //  delay = 30; while (--delay > 0) {;;}
-  delay_ms(1);
-  gpio_clr_gpio_pin(BFIN_RESET_PIN);
-  //  delay = 30; while (--delay > 0) {;;}
-  delay_ms(1);
-  gpio_set_gpio_pin(BFIN_RESET_PIN);  
-  //  delay = 3000; while (--delay > 0) {;;}
-  delay_ms(1);
-  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-}
-
-void bfin_end_transfer(void) {
-  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  print_dbg("\r\n done loading; waiting... ");
-  delay_ms(100);
-  //  delay_ms(2000);
-  print_dbg("\r\n done waiting; reporting... ");
-  bfin_report_params();
-}
-
 //---------------------------------------
-//--- extern
+//--- external function definition
 
 // load bfin executable from the RAM buffer
 void bfin_load_buf(void) {
@@ -287,4 +257,79 @@ void bfin_report_params(void) {
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, MSG_ENABLE_AUDIO);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+}
+
+
+//---------------------------------------------
+//------ static function definition
+
+static void bfin_transfer_byte(u8 data) {
+    while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { 
+      print_dbg("\r\n HWAIT asserted..."); 
+    }
+    spi_write(BFIN_SPI, data);
+}
+
+void bfin_start_transfer(void) {
+  //  volatile u64 delay;
+  gpio_set_gpio_pin(BFIN_RESET_PIN);  
+  //  delay = 30; while (--delay > 0) {;;}
+  delay_ms(1);
+  gpio_clr_gpio_pin(BFIN_RESET_PIN);
+  //  delay = 30; while (--delay > 0) {;;}
+  delay_ms(1);
+  gpio_set_gpio_pin(BFIN_RESET_PIN);  
+  //  delay = 3000; while (--delay > 0) {;;}
+  delay_ms(1);
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+}
+
+void bfin_end_transfer(void) {
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  print_dbg("\r\n done loading; waiting... ");
+  delay_ms(100);
+  //  delay_ms(2000);
+  print_dbg("\r\n done waiting; reporting... ");
+  bfin_report_params();
+}
+
+
+void bfin_spi_slave(void) {
+  
+ 
+}
+
+void bfin_spi_master(void) {
+  spi_options_t spiOptions = {
+    .reg          = BFIN_SPI_NPCS,
+    // fast baudrate / low trans delay suitable for boot process 
+    .baudrate     = 5000000,
+    //     .baudrate     = 20000000,
+    .bits         = 8,
+    .spck_delay   = 0,
+    .trans_delay  = 0,
+    //    .trans_delay = 20,
+    .stay_act     = 1,
+    .spi_mode     = 1,
+    .modfdis      = 1
+  };
+  
+  // stop
+  spi_disable();
+
+  // intialize as master
+  spi_initMaster(BFIN_SPI, &spiOptions);
+
+  // set selection mode: variable_ps, pcs_decode, delay.
+  spi_selectionMode(BFIN_SPI, 0, 0, 0);
+
+  // enable SPI.
+  spi_enable(BFIN_SPI);
+
+  // intialize the chip register
+  spi_setupChipReg(BFIN_SPI, &spiOptions, FPBA_HZ);
+  // enable pulldown on bfin HWAIT line
+  //// shit! not implemented... 
+  // gpio_enable_pin_pull_down(BFIN_HWAIT_PIN);
+
 }

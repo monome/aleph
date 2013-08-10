@@ -169,7 +169,7 @@ extern void init_spi1 (void) {
     .spck_delay = 0,
     .stay_act = 1,
     .spi_mode = 3,
-    .modfdis = 1
+    .modfdis 
   };
 
   // Assign GPIO to SPI.
@@ -251,43 +251,14 @@ void init_bfin_resources(void) {
     { BFIN_SPI_NPCS0_PIN, BFIN_SPI_NPCS0_FUNCTION },
   };
   
-  spi_options_t spiOptions = {
-    .reg          = BFIN_SPI_NPCS,
-    //// FIXME: 
-    //// would prefer fast baudrate / lower trans delay during boot,
-    //// but need multiple registers for boot (fast) and run (slow)
-    //// investigate if this is possible...
-    //   .baudrate     = 20000000,
-    //     .baudrate     = 10000000,
-    //     .baudrate     = 5000000,
-     .baudrate     = 20000000,
-    .bits         = 8,
-    .spck_delay   = 0,
-    //    .trans_delay  = 0,
-    .trans_delay = 20,
-    .stay_act     = 1,
-    .spi_mode     = 1,
-    .modfdis      = 1
-  };
-
   // assign pins to SPI.
   gpio_enable_module(BFIN_SPI_GPIO_MAP,
 		     sizeof(BFIN_SPI_GPIO_MAP) / sizeof(BFIN_SPI_GPIO_MAP[0]));
+  
 
-  // intialize as master
-  spi_initMaster(BFIN_SPI, &spiOptions);
+  // initialize as master
+  bfin_spi_master();
 
-  // set selection mode: variable_ps, pcs_decode, delay.
-  spi_selectionMode(BFIN_SPI, 0, 0, 0);
-
-  // enable SPI.
-  spi_enable(BFIN_SPI);
-
-  // intialize the chip register
-  spi_setupChipReg(BFIN_SPI, &spiOptions, FPBA_HZ);
-  // enable pulldown on bfin HWAIT line
-  //// shit! not implemented... 
-  // gpio_enable_pin_pull_down(BFIN_HWAIT_PIN);
   
   // enable pullup on bfin RESET line
   gpio_enable_pin_pull_up(BFIN_RESET_PIN);

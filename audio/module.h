@@ -28,7 +28,7 @@ typedef struct _moduleData {
   char name[MODULE_NAME_LEN];
   ParamDesc* paramDesc;
   ParamData* paramData;
-  u16 numParams;
+  //  u16 numParams;
 } moduleData;
 
 //---------
@@ -51,10 +51,15 @@ extern void module_process_frame(void);
 extern void module_process_frame(const f32* in, f32* out);
 #endif
 
-// set parameter
+// set parameter  
 extern void module_set_param(u32 idx, pval val);
 // get number of parameters
 extern u32 module_get_num_params(void);
 
 
 #endif // header guard
+
+
+
+
+ 

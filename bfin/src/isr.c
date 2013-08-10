@@ -40,6 +40,10 @@ void sport0_rx_isr() {
   /*    dum++; */
   /* } */
 
+  // tick the control rate
+  ctl_tick();
+
+
   UNSET_LED3;
 
   // confirm interrupt handling

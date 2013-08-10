@@ -34,6 +34,7 @@
 #endif
 
 #include "module.h"
+#include "module_custom.h"
 #include "types.h"
 
 //---------- defines
@@ -48,36 +49,7 @@
 #define SMOOTH_HZ_MAX 0x400000 // 128
 
 //-------- data types
-///// inputs
-enum params {
-  eParamHz1,
-  eParamHz2,
-  eParamRatio2,
-  eParamAmp1,
-  eParamAmp2,
 
-  eParamIoAmp0,
-  eParamIoAmp1,
-  eParamIoAmp2,
-  eParamIoAmp3,
-
-  eParamPm,
-  eParamWave1,
-  eParamWave2,
-  eParamGate,
-  eParamAtkDur,
-  eParamRelDur,
-  eParamAtkCurve,
-  eParamRelCurve,
-  eParamHz1Smooth,
-  eParamHz2Smooth,
-  eParamPmSmooth,
-  eParamWave1Smooth,
-  eParamWave2Smooth,
-  eParamAmp1Smooth,
-  eParamAmp2Smooth,
-  eParamNumParams
-};
 
 // define a local data structure that subclasses moduleData.
 // use this for all data that is large and/or not speed-critical.
