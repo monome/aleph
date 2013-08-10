@@ -1,4 +1,5 @@
 #include "bfin_core.h"
+#include "control.h"
 #include "init.h"
 #include "leds.h"
 #include "module.h"
@@ -41,7 +42,7 @@ void sport0_rx_isr() {
   /* } */
 
   // tick the control rate
-  ctl_tick();
+  ctl_next_frame();
 
 
   UNSET_LED3;

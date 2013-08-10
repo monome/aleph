@@ -28,7 +28,7 @@ typedef struct _moduleData {
   char name[MODULE_NAME_LEN];
   ParamDesc* paramDesc;
   ParamData* paramData;
-  //  u16 numParams;
+  u16 numParams;
 } moduleData;
 
 //---------
