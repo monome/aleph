@@ -18,7 +18,6 @@ static u8 idx;
 // param value;
 static pval pv;
 
-
 //------ static functions
 static void spi_set_param(u32 idx, pval pv) {
   //  module_set_param(idx, pv);
