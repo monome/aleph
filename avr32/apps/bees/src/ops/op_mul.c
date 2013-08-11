@@ -47,7 +47,7 @@ static void op_mul_in_a(op_mul_t* mul, const io_t* v) {
   // printf("mul at %d received A %d\n", (int)mul, (int)*v);
   mul->a = *v;
   mul->val = OP_MUL(mul->a, mul->b);
-  net_activate(mul->outs[0], mul->val);
+  net_activate(mul->outs[0], mul->val, mul);
 }
 
 // set operand B
@@ -56,7 +56,7 @@ static void op_mul_in_b(op_mul_t* mul, const io_t* v) {
   mul->b = *v;
   mul->val = OP_MUL(mul->a, mul->b);
   if(mul->btrig) {
-    net_activate(mul->outs[0], mul->val);
+    net_activate(mul->outs[0], mul->val, mul);
   }
 }
 

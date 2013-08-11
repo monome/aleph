@@ -62,12 +62,15 @@ void scene_write_buf(void) {
 // set current state of system from global RAM buffer
 void scene_read_buf(void) {
   s8 modName[MODULE_NAME_LEN];
-  s8 neq = 0;
+  //  s8 neq = 0;
 
   app_pause();
 
   // store current mod name in scene desc
   memcpy(modName, sceneData->desc.moduleName, MODULE_NAME_LEN);
+
+  // de-initialize network and operators
+  net_deinit();
 
   // copy network/presets
   memcpy( (void*)net, &(sceneData->net),  sizeof(ctlnet_t) );
@@ -75,21 +78,23 @@ void scene_read_buf(void) {
   print_dbg("\r\n copied stored network and presets to RAM ");
 
   // compare module name
-  neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
+  //  neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
 
-  if(neq) {
+  //  if(neq) {
     // load bfin module if it changed names
     print_dbg("\r\n loading module name: ");
     print_dbg(sceneData->desc.moduleName);
     files_load_dsp_name(sceneData->desc.moduleName);
-  }
+    app_pause();
+    //  }
 
   //// TODO: module version check
   // "aaaabbbbccccddddeeeeffff"
 
-  delay_ms(100);
+    delay_ms(10);
+    
   // re-trigger inputs
-  net_retrigger_inputs();
+    net_retrigger_inputs();
 
   // update bfin parameters
   net_send_params();

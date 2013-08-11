@@ -34,9 +34,8 @@
 //===== variables
 
 //----- static
-
-/* static s32 inSearchIdx = 0; */
-/* static s32 outSearchIdx = 0; */
+// when unset, node activation will not propagate 
+static u8 netActive = 0;
 
 //---- external
 ctlnet_t* net;
@@ -112,6 +111,7 @@ void net_init(void) {
   print_dbg("\r\n initialized ctlnet, byte count: ");
   print_dbg_hex(sizeof(ctlnet_t));
   add_sys_ops();
+  netActive = 1;
 }
 
 // de-initialize network
@@ -136,7 +136,7 @@ void net_init_onode(u16 idx) {
 }
 
 // activate an input node with a value
-void net_activate(s16 inIdx, const io_t val) {
+void net_activate(s16 inIdx, const io_t val, void* op) {
   /* print_dbg("\r\n net_activate, input idx: 0x"); */
   /* print_dbg_hex(inIdx); */
   /* print_dbg(", val: 0x"); */
@@ -145,6 +145,13 @@ void net_activate(s16 inIdx, const io_t val) {
   /* print_dbg_hex(net->ins[inIdx].opIdx); */
   /* print_dbg(" , op in idx: 0x"); */
   /* print_dbg_hex(net->ins[inIdx].opInIdx); */
+
+  if(!netActive) {
+    if(op != NULL) {
+      // if the net isn't active, dont respond to requests from operators
+      return;
+    }
+  }
 
   if(inIdx >= 0) {
     play_input(inIdx);
@@ -641,7 +648,7 @@ void net_send_params(void) {
 void net_retrigger_inputs(void) {
   u32 i;
   for(i=0; i<net->numIns; i++) {
-    net_activate(i, net_get_in_value(i));
+    net_activate(i, net_get_in_value(i), NULL);
   }
 }
 

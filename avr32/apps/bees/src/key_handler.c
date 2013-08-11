@@ -388,7 +388,7 @@ void key_handler_play(uiKey_t key, s16 v) {
   //  print_dbg_ulong(inIdx);
   if(inIdx >= 0) {
     //    print_dbg("\r\n key_handler_play");
-    net_activate(inIdx, val);
+    net_activate(inIdx, val, NULL);
     redraw_play();
   }
 }

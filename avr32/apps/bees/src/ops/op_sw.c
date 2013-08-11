@@ -62,12 +62,12 @@ static void op_sw_in_state(op_sw_t* sw, const io_t* v) {
       } else {
 	sw->state = sw->mul;
       }
-      net_activate(sw->outs[0], sw->state);
+      net_activate(sw->outs[0], sw->state, sw);
     } 
   } else {
     // momentary mode, sw value takes input
     if((*v) > 0) { sw->state = sw->mul; } else { sw->state = 0; }
-    net_activate(sw->outs[0], sw->state);
+    net_activate(sw->outs[0], sw->state, sw);
   }
 }
 
@@ -81,7 +81,7 @@ static void op_sw_in_mul(op_sw_t* sw, const io_t* v) {
   sw->mul = *v;
   if (sw->state > 0) {
     sw->state = *v;
-    net_activate(sw->outs[0], sw->state);
+    net_activate(sw->outs[0], sw->state, sw);
   }
 }
 
