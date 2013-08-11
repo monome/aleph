@@ -116,7 +116,10 @@ void net_init(void) {
 
 // de-initialize network
 void net_deinit(void) {
-  ;;
+  u32 i;
+  for(i=0; i<net->numOps; i++) {
+    op_deinit(net->ops[i]);
+  }
 }
 
 // initialize an input node
@@ -226,6 +229,7 @@ s16 net_add_op(op_id_t opId) {
   net->numOps++;
   return net->numOps - 1;
 }
+
 // destroy last operator created
 s16 net_pop_op(void) {
   op_t* op = net->ops[net->numOps - 1];
@@ -640,8 +644,6 @@ void net_retrigger_inputs(void) {
     net_activate(i, net_get_in_value(i));
   }
 }
-
-
 
 //---------------------------------------------------
 //----- static

@@ -62,16 +62,19 @@ extern void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
 
   if(focus > 0) {
     if(monomeOpFocus != NULL ){
-      /// FIXME: de-focus previous operator, need to fix monome_t superclass
+      /// stealing focus, inform the previous holder
+      monomeOpFocus->focus = 0;
     }
     monome_grid_key_handler = op_monome->handler;
     monomeOpFocus = op_monome;
-    //// FIXME: focus input wont work quite right i dont think
-    //    op->focus = 1;
+    op_monome->focus = 1;
   } else {
-    monome_grid_key_handler = (monome_handler_t)&dummyHandler;
-    monomeOpFocus = NULL;
-    //    op->focus = 0;
+    // release focus if we had it, otherwise do nothing
+    if( monomeOpFocus == op_monome) {
+      monome_grid_key_handler = (monome_handler_t)&dummyHandler;
+      monomeOpFocus = NULL;
+      op_monome->focus = 0;
+    }
   }
 }
 

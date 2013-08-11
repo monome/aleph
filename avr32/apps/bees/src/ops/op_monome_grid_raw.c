@@ -56,7 +56,7 @@ void op_mgrid_raw_init(void* mem) {
   op->super.outString = op_mgrid_raw_outstring;
 
   op->in_val[0] = &(op->focus);
-  op->in_val[1] = &(op->tog);
+  op->in_val[1] = &(op->tog);  
   op->in_val[2] = &(op->mono);
   op->outs[0] = -1;
   op->outs[1] = -1;
@@ -68,6 +68,12 @@ void op_mgrid_raw_init(void* mem) {
 
   op->lastPos = 0;
   op->focus = OP_ONE;
+}
+
+// de-init
+void op_mgrid_raw_deinit(void* op) {
+  // release focus
+  net_monome_set_focus(&(((op_mgrid_raw_t*)op)->monome), 0);
 }
 
 //-------------------------------------------------
@@ -181,3 +187,4 @@ static void op_mgrid_raw_inc_func(op_mgrid_raw_t* op, const s16 idx, const io_t 
     break;
   }
 }
+

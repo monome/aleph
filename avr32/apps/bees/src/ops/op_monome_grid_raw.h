@@ -21,5 +21,7 @@ typedef struct op_mgrid_raw_struct {
 
 // init
 void op_mgrid_raw_init(void* op);
+// de-init
+void op_mgrid_raw_deinit(void* op);
 
 #endif // header guard

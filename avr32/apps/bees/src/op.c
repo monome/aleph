@@ -23,12 +23,37 @@
 // operator class registry
 // must be laid out identically to eOpId enum!
 const op_desc_t op_registry[numOpClasses] = {
-  { "SW",   sizeof(op_sw_t)  , &op_sw_init },
-  { "ENC",  sizeof(op_enc_t) , &op_enc_init },
-  { "ADD",  sizeof(op_add_t) , &op_add_init },
-  { "MUL",  sizeof(op_mul_t) , &op_mul_init },
-  { "GATE", sizeof(op_gate_t), &op_gate_init },
-  { "RAWGRID", sizeof(op_mgrid_raw_t), &op_mgrid_raw_init },
+  {
+    .name = "SW",
+    .size = sizeof(op_sw_t), 
+    .init = &op_sw_init, 
+    .deinit = NULL
+  }, {
+    .name = "ENC", 
+    .size = sizeof(op_enc_t),
+    .init = &op_enc_init,
+    .deinit = NULL
+  }, {
+    .name = "ADD",
+    .size = sizeof(op_add_t) ,
+    .init = &op_add_init,
+    .deinit = NULL
+  } , {
+    .name = "MUL",
+    .size = sizeof(op_mul_t) ,
+    .init = &op_mul_init,
+    .deinit = NULL
+  } , {
+    .name = "GATE",
+    .size = sizeof(op_gate_t), 
+    .init = &op_gate_init,
+    .deinit = NULL
+  } , {
+    .name = "RAWGRID",
+    .size = sizeof(op_mgrid_raw_t),
+    .init = &op_mgrid_raw_init,
+    .deinit = &op_mgrid_raw_deinit
+  }
   // { "ACCUMULATE", sizeof(op_accum_t) },
   // { "SELECT", sizeof(op_sel_t) },
   // { "LINEAR MAP", sizeof(op_lin_t) },
@@ -50,9 +75,20 @@ s16 op_init(op_t* op, op_id_t opId) {
   // no flags by default
   op->flags = 0x00000000;
   // run class init function
-  (*(op_registry[opId].initFunc))(op);
+  (*(op_registry[opId].init))(op);
   return 0;
 }
+
+// de-initialize operator
+s16 op_deinit(op_t* op) {
+  op_class_deinit_t f = op_registry[op->type].deinit;
+  if(f != NULL) {
+    (*f)(op);
+  }
+  return 0;
+}
+
+
 
 const char* op_in_name(op_t* op, const u8 idx) {
   static char str[16];
