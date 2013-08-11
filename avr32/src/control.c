@@ -61,7 +61,7 @@ extern u8 ctl_param_change(u32 idx, u32 val) {
 
 // execute the last param change
 //// warning: no lower bounds check on evCount
-extern void ctl_do_last_change(void) {
+extern void ctl_perform_last_change(void) {
   static u32 idx;
   idx = ctlBuf[--evCount].idx;
   bfin_set_param(idx, ctlBuf[evCount].val.fix);
@@ -71,6 +71,6 @@ extern void ctl_do_last_change(void) {
 // attempt to execute all pending param changes
 extern void ctl_perform_all_changes(void) {
   while(evCount > 0) {
-    ctl_do_last_change();
+    ctl_perform_last_change();
   }
 }

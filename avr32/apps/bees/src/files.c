@@ -101,33 +101,33 @@ static void strip_space(char* str, u8 len) {
 
 //// /test: write dummy file
 /// FIXME: this is working fine but writing scene file crashes program.
-static void file_write_test(void) {
-  void* fp;
+/* static void file_write_test(void) { */
+/*   void* fp; */
 
-  app_pause();
+/*   app_pause(); */
 
-  delay_ms(10);
+/*   delay_ms(10); */
 
-  fp = fl_fopen("/test.txt", "w");
-  print_dbg("\r\n dummy write test, fp: ");
-  print_dbg_hex((u32)fp);
-  fl_fputs("hi hi hello", fp);
-  fl_fclose(fp);
+/*   fp = fl_fopen("/test.txt", "w"); */
+/*   print_dbg("\r\n dummy write test, fp: "); */
+/*   print_dbg_hex((u32)fp); */
+/*   fl_fputs("hi hi hello", fp); */
+/*   fl_fclose(fp); */
 
-  delay_ms(10);
+/*   delay_ms(10); */
 
-  fp = fl_fopen("/test.txt", "w");
-  print_dbg("\r\n dummy write test, fp: ");
-  print_dbg_hex((u32)fp);
-  fl_fputs("hi hi hello", fp);
-  fl_fclose(fp);
+/*   fp = fl_fopen("/test.txt", "w"); */
+/*   print_dbg("\r\n dummy write test, fp: "); */
+/*   print_dbg_hex((u32)fp); */
+/*   fl_fputs("hi hi hello", fp); */
+/*   fl_fclose(fp); */
 
 
 
-  app_resume();
+/*   app_resume(); */
 
-  print_dbg("\r\n finished dummy write test.");
-}
+/*   print_dbg("\r\n finished dummy write test."); */
+/* } */
 
 //---------------------------
 //------------- extern defs

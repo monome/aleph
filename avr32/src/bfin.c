@@ -304,10 +304,11 @@ void bfin_end_transfer(void) {
 }
 
 
-void bfin_spi_slave(void) {
+/* void bfin_spi_slave(void) { */
   
-  //...// 
-}
+/*   //...//  */
+/* } */
+
 
 void bfin_spi_master(void) {
   /* spi_options_t spiOptions = { */

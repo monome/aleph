@@ -258,6 +258,8 @@ s16 net_pop_op(void) {
   print_dbg("; outs : ");
   print_dbg_ulong(op->numOutputs);
 
+  // de-init
+  op_deinit(net->ops[net->numOps - 1]); 
   // store the global index of the first input
   x = net_op_in_idx(net->numOps - 1, 0); 
   // erase input nodes
