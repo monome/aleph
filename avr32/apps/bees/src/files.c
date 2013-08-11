@@ -153,6 +153,7 @@ const volatile char* files_get_dsp_name(u8 idx) {
 
 // load a blacfkin executable by index */
 void files_load_dsp(u8 idx) {  
+  app_notify("loading dsp...");
   files_load_dsp_name((const char*)files_get_dsp_name(idx));
 }
 
@@ -161,6 +162,8 @@ void files_load_dsp_name(const char* name) {
   void* fp;
   //  u32 bytesRead;
   u32 size = 0;
+
+  delay_ms(10);
 
   app_pause();
 
@@ -424,19 +427,19 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   //  name = list_get_name(lista, idx);
   strcpy(path, list->path);
 
-  print_dbg("\r\n attempting to open file at path: \r\n");
-  print_dbg(path);
+  /* print_dbg("\r\n attempting to open file at path: \r\n"); */
+  /* print_dbg(path); */
 
   if(fl_opendir(path, &dirstat)) {
     while (fl_readdir(&dirstat, &dirent) == 0) {
       if (strcmp(dirent.filename, name) == 0) {
 	strncat(path, dirent.filename, 58);
 	
-	print_dbg("\r\n attempting to open file at path: \r\n");
-	print_dbg(path);
+	/* print_dbg("\r\n attempting to open file at path: \r\n"); */
+	/* print_dbg(path); */
 	
-	print_dbg("\r\n name: \r\n");
-	print_dbg(path);
+	/* print_dbg("\r\n name: \r\n"); */
+	/* print_dbg(path); */
 
 	fp = fl_fopen(path, mode);
 	*size = dirent.size;

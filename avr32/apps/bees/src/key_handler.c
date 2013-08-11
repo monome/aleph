@@ -13,6 +13,7 @@
 #include "files.h"
 // avr32
 #include "app.h"
+#include "bfin.h"
 // bees
 #include "op.h"
 #include "op_math.h"
@@ -614,8 +615,10 @@ extern void key_handler_dsp(uiKey_t key, s16 val) {
   switch(key) {
   case eKeyFnDownA:
     app_notify("loading DSP...");
-    // load DSP (and update the parameter list)
+    // load DSP
     files_load_dsp(curPage->selected);
+    // update param list
+    bfin_report_params();
     break;
   case eKeyFnDownB:
     // write default

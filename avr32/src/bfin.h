@@ -41,6 +41,7 @@ void bfin_report_params(void);
 //extern void bfin_spi_slave(void);
 // become master on spi bus
 extern void bfin_spi_master(void);
-
+// enable audio processing
+extern void bfin_enable(void);
 
 #endif // header guard

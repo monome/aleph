@@ -82,7 +82,10 @@ s16 op_init(op_t* op, op_id_t opId) {
 // de-initialize operator
 s16 op_deinit(op_t* op) {
   op_class_deinit_t f = op_registry[op->type].deinit;
+  
   if(f != NULL) {
+    print_dbg("\r\n de-initializing operator at address 0x");
+    print_dbg_hex((u32)op);
     (*f)(op);
   }
   return 0;

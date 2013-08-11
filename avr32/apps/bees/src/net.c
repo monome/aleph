@@ -16,6 +16,9 @@
 #include "delay.h"
 #endif
 
+// aleph-avr32
+#include "control.h"
+
 // bees
 #include "util.h"
 #include "op.h" 
@@ -117,6 +120,7 @@ void net_init(void) {
 // de-initialize network
 void net_deinit(void) {
   u32 i;
+  print_dbg("\r\n deinitializing network");
   for(i=0; i<net->numOps; i++) {
     op_deinit(net->ops[i]);
   }
@@ -137,18 +141,23 @@ void net_init_onode(u16 idx) {
 
 // activate an input node with a value
 void net_activate(s16 inIdx, const io_t val, void* op) {
-  /* print_dbg("\r\n net_activate, input idx: 0x"); */
-  /* print_dbg_hex(inIdx); */
-  /* print_dbg(", val: 0x"); */
-  /* print_dbg_hex(val); */
-  /* print_dbg(" , op idx: 0x"); */
-  /* print_dbg_hex(net->ins[inIdx].opIdx); */
-  /* print_dbg(" , op in idx: 0x"); */
-  /* print_dbg_hex(net->ins[inIdx].opInIdx); */
-
+  print_dbg("\r\n net_activate, input idx: 0x");
+  print_dbg_hex(inIdx);
+  print_dbg(", val: 0x");
+  print_dbg_hex(val);
+  print_dbg(" , op idx: 0x");
+  print_dbg_hex(net->ins[inIdx].opIdx);
+  print_dbg(" , op in idx: 0x");
+  print_dbg_hex(net->ins[inIdx].opInIdx);
+  print_dbg(" , caller: 0x");
+  print_dbg_hex((u32)op);
+  
+  
+  
   if(!netActive) {
     if(op != NULL) {
       // if the net isn't active, dont respond to requests from operators
+      print_dbg(" ... ignoring node activation from op.");
       return;
     }
   }
@@ -638,7 +647,8 @@ void net_clear_params(void) {
 void net_send_params(void) {
   u32 i;
   for(i=0; i<net->numParams; i++) {
-    set_param_value(i, net->params[i].data.value.asInt);
+    ctl_param_change(i, net->params[i].data.value.asInt);
+    
     /// TEST
     //    delay_ms(1);
   }
@@ -647,9 +657,11 @@ void net_send_params(void) {
 // retrigger all inputs
 void net_retrigger_inputs(void) {
   u32 i;
+  netActive = 0;
   for(i=0; i<net->numIns; i++) {
     net_activate(i, net_get_in_value(i), NULL);
   }
+  netActive = 1;
 }
 
 //---------------------------------------------------
