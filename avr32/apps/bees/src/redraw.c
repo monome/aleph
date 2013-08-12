@@ -215,8 +215,8 @@ void redraw_presets(void) {
   n = nCenter;
   y = SCREEN_ROW_CENTER;
   // modes
-   switch(curPage->mode) {  
-     //// FIXME
+  //  switch(curPage->mode) {  
+    //// FIXME
   /* case eModeClear: */
   /*   screen_line(0, y, "CLEAR?", 14); */
   /*   break; */
@@ -230,10 +230,11 @@ void redraw_presets(void) {
   /*   screen_line(0, y, "READ??", 14); */
   /*   break; */
   /* case eModeNone: */
-  default:
-    draw_line_presets(n, num, y, 15);  
-    break;
-  }
+  //  default:
+  //    draw_line_presets(n, num, y, 15);  
+  draw_edit_string(0, y, preset_name(n), PRESET_NAME_LEN);
+    //    break;
+    //  }
   screen_hl_line(0, y, 1);
   // print lower entries
   while (y > 1) {
@@ -555,7 +556,7 @@ static void draw_edit_string(u8 x, u8 y, char* str, u8 len) {
   for(i=0; i<len; i++) {
     if(str[i] == 0) { return; }
     if(i == curPage->cursor) {
-      x += screen_char_squeeze_back(x, y, str[i], 0x0, 0xa);
+      x += screen_char_fixed_back(x, y, str[i], 0x0, 0xa);
       x++;
     } else {
       x += screen_char_squeeze_back(x, y, str[i], 0x7, 0x0);

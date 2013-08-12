@@ -35,7 +35,8 @@ static fix16 scale_knob_value(const s32 v);
 // scroll a single character in a string
 #define MAX_EDIT_CHAR 120
 #define MIN_EDIT_CHAR 32
-// scroll up
+
+// scroll character up
 static void edit_string_inc_char(char* str, u8 pos) {
   u8 tmp = str[pos]; 
   if(tmp == 0) { tmp = MIN_EDIT_CHAR; }
@@ -48,7 +49,7 @@ static void edit_string_inc_char(char* str, u8 pos) {
   //return tmp;
 }
 
-// scroll down
+// scroll character down
 static void edit_string_dec_char(char* str, u8 pos) {
   u8 tmp = str[pos]; 
   if (tmp > MIN_EDIT_CHAR) {
@@ -191,7 +192,6 @@ void key_handler_ins(uiKey_t key, s16 val) {
     break;
   case eKeyFnDownC:
     // fnC : overwrite preset value (and include)
-
     ///////
     //////////
     /// testing
@@ -200,7 +200,6 @@ void key_handler_ins(uiKey_t key, s16 val) {
 
     /////////
     ////////
-
     break;
   case eKeyFnDownD:
     // toggle preset inclusion
@@ -479,11 +478,11 @@ extern void key_handler_presets(uiKey_t key, s16 val) {
     break;
   case eKeyEncUpD:
     // scroll name char
-    //    edit_string_inc_char(sceneData->desc.sceneName, curPage->cursor);
+    edit_string_inc_char(preset_name(curPage->selected), curPage->cursor);
     break;
   case eKeyEncDownD:
     // scroll name char
-    //    edit_string_dec_char(sceneData->desc.sceneName, curPage->cursor);
+    edit_string_dec_char(preset_name(curPage->selected), curPage->cursor);
     break;
     default:
     ;; // nothing
