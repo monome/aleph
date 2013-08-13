@@ -12,6 +12,7 @@ enum {
   eMonomeRefreshTimerTag,
   eMidiPollTimerTag,
   eMidiRefreshTimerTag,
+  eParamChangeTimerTag,
 };
 
 // create application timers

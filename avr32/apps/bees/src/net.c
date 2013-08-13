@@ -13,7 +13,11 @@
 // asf
 #ifdef ARCH_AVR32
 #include "print_funcs.h"
+#include "delay.h"
 #endif
+
+// aleph-avr32
+#include "control.h"
 
 // bees
 #include "util.h"
@@ -33,9 +37,8 @@
 //===== variables
 
 //----- static
-
-/* static s32 inSearchIdx = 0; */
-/* static s32 outSearchIdx = 0; */
+// when unset, node activation will not propagate 
+static u8 netActive = 0;
 
 //---- external
 ctlnet_t* net;
@@ -111,11 +114,16 @@ void net_init(void) {
   print_dbg("\r\n initialized ctlnet, byte count: ");
   print_dbg_hex(sizeof(ctlnet_t));
   add_sys_ops();
+  netActive = 1;
 }
 
 // de-initialize network
 void net_deinit(void) {
-  ;;
+  u32 i;
+  print_dbg("\r\n deinitializing network");
+  for(i=0; i<net->numOps; i++) {
+    op_deinit(net->ops[i]);
+  }
 }
 
 // initialize an input node
@@ -132,15 +140,27 @@ void net_init_onode(u16 idx) {
 }
 
 // activate an input node with a value
-void net_activate(s16 inIdx, const io_t val) {
-  /* print_dbg("\r\n net_activate, input idx: 0x"); */
-  /* print_dbg_hex(inIdx); */
-  /* print_dbg(", val: 0x"); */
-  /* print_dbg_hex(val); */
-  /* print_dbg(" , op idx: 0x"); */
-  /* print_dbg_hex(net->ins[inIdx].opIdx); */
-  /* print_dbg(" , op in idx: 0x"); */
-  /* print_dbg_hex(net->ins[inIdx].opInIdx); */
+void net_activate(s16 inIdx, const io_t val, void* op) {
+  print_dbg("\r\n net_activate, input idx: 0x");
+  print_dbg_hex(inIdx);
+  print_dbg(", val: 0x");
+  print_dbg_hex(val);
+  print_dbg(" , op idx: 0x");
+  print_dbg_hex(net->ins[inIdx].opIdx);
+  print_dbg(" , op in idx: 0x");
+  print_dbg_hex(net->ins[inIdx].opInIdx);
+  print_dbg(" , caller: 0x");
+  print_dbg_hex((u32)op);
+  
+  
+  
+  if(!netActive) {
+    if(op != NULL) {
+      // if the net isn't active, dont respond to requests from operators
+      print_dbg(" ... ignoring node activation from op.");
+      return;
+    }
+  }
 
   if(inIdx >= 0) {
     play_input(inIdx);
@@ -225,11 +245,36 @@ s16 net_add_op(op_id_t opId) {
   net->numOps++;
   return net->numOps - 1;
 }
+
 // destroy last operator created
 s16 net_pop_op(void) {
   op_t* op = net->ops[net->numOps - 1];
+  int i=0;
+  int x=0;
+  print_dbg("\r\n deleting op, addr : 0x");
+  print_dbg_hex((u32)op);
+  print_dbg("; ins : ");
+  print_dbg_ulong(op->numInputs);
+  print_dbg("; outs : ");
+  print_dbg_ulong(op->numOutputs);
+
+  // de-init
+  op_deinit(net->ops[net->numOps - 1]); 
+  // store the global index of the first input
+  x = net_op_in_idx(net->numOps - 1, 0); 
+  // erase input nodes
+  for(i=0; i<op->numInputs; i++) {
+    net_init_inode(x++);
+  }
+  // store the global index of the first output
+  x = net_op_out_idx(net->numOps - 1, 0);
+  // erase output nodes
+  for(i=0; i<op->numOutputs; i++) {
+    net_init_onode(x++);
+  }
   net->numIns -= op->numInputs;
   net->numOuts -= op->numOutputs;
+
   net->opPoolOffset += op_registry[op->type].size;
   net->numOps -= 1;
   return 0;
@@ -433,7 +478,7 @@ s16 net_out_op_idx(const u16 idx) {
 // get global index for a given input of given op
 u16 net_op_in_idx(const u16 opIdx, const u16 inIdx) {
   u16 which;
-  for(which=0; which<net->numIns; which++) {
+  for(which=0; which < (net->numIns); which++) {
     if(net->ins[which].opIdx == opIdx) {
       return (which + inIdx);
     }
@@ -604,19 +649,22 @@ void net_clear_params(void) {
 void net_send_params(void) {
   u32 i;
   for(i=0; i<net->numParams; i++) {
-    set_param_value(i, net->params[i].data.value.asInt);
+    ctl_param_change(i, net->params[i].data.value.asInt);
+    
+    /// TEST
+    //    delay_ms(1);
   }
 }
 
 // retrigger all inputs
 void net_retrigger_inputs(void) {
   u32 i;
+  netActive = 0;
   for(i=0; i<net->numIns; i++) {
-    net_activate(i, net_get_in_value(i));
+    net_activate(i, net_get_in_value(i), NULL);
   }
+  netActive = 1;
 }
-
-
 
 //---------------------------------------------------
 //----- static

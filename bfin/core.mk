@@ -7,8 +7,10 @@ core_srcdir = $(core_dir)src/
 core_objdir = $(core_dir)obj/
 common_dir = $(core_dir)/../common
 audio_dir = $(core_dir)/../audio
+module_dir = $(core_dir)/modules/$(module_name)
 
-core_src = main.c \
+core_src = control.c \
+	main.c \
 	init.c \
 	isr.c \
 	spi.c \
@@ -16,7 +18,7 @@ core_src = main.c \
 
 core_obj = $(patsubst %.c, %.o, $(core_src))
 
-INC += -I$(core_srcdir) -I$(common_dir) -I$(common_dir)/libfixmath -I$(audio_dir)
+INC += -I$(core_srcdir) -I$(common_dir) -I$(common_dir)/libfixmath -I$(audio_dir) -I$(module_dir)
 
 CROSS_COMPILE = bfin-elf-
 CC = $(CROSS_COMPILE)gcc

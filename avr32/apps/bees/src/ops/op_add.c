@@ -46,14 +46,14 @@ void op_add_init(void* mem) {
 static void op_add_in_a(op_add_t* add, const io_t* v) {
   add->a = *v;
   add->val = OP_ADD(add->a, add->b);
-  net_activate(add->outs[0], add->val);
+  net_activate(add->outs[0], add->val, add);
 }
 
 static void op_add_in_b(op_add_t* add, const io_t* v) {
   add->b = *v;
   add->val = OP_ADD(add->a, add->b);
   if(add->btrig) {
-    net_activate(add->outs[0], add->val);
+    net_activate(add->outs[0], add->val, add);
   }
 }
 

@@ -101,33 +101,33 @@ static void strip_space(char* str, u8 len) {
 
 //// /test: write dummy file
 /// FIXME: this is working fine but writing scene file crashes program.
-static void file_write_test(void) {
-  void* fp;
+/* static void file_write_test(void) { */
+/*   void* fp; */
 
-  app_pause();
+/*   app_pause(); */
 
-  delay_ms(10);
+/*   delay_ms(10); */
 
-  fp = fl_fopen("/test.txt", "w");
-  print_dbg("\r\n dummy write test, fp: ");
-  print_dbg_hex((u32)fp);
-  fl_fputs("hi hi hello", fp);
-  fl_fclose(fp);
+/*   fp = fl_fopen("/test.txt", "w"); */
+/*   print_dbg("\r\n dummy write test, fp: "); */
+/*   print_dbg_hex((u32)fp); */
+/*   fl_fputs("hi hi hello", fp); */
+/*   fl_fclose(fp); */
 
-  delay_ms(10);
+/*   delay_ms(10); */
 
-  fp = fl_fopen("/test.txt", "w");
-  print_dbg("\r\n dummy write test, fp: ");
-  print_dbg_hex((u32)fp);
-  fl_fputs("hi hi hello", fp);
-  fl_fclose(fp);
+/*   fp = fl_fopen("/test.txt", "w"); */
+/*   print_dbg("\r\n dummy write test, fp: "); */
+/*   print_dbg_hex((u32)fp); */
+/*   fl_fputs("hi hi hello", fp); */
+/*   fl_fclose(fp); */
 
 
 
-  app_resume();
+/*   app_resume(); */
 
-  print_dbg("\r\n finished dummy write test.");
-}
+/*   print_dbg("\r\n finished dummy write test."); */
+/* } */
 
 //---------------------------
 //------------- extern defs
@@ -153,6 +153,7 @@ const volatile char* files_get_dsp_name(u8 idx) {
 
 // load a blacfkin executable by index */
 void files_load_dsp(u8 idx) {  
+  app_notify("loading dsp...");
   files_load_dsp_name((const char*)files_get_dsp_name(idx));
 }
 
@@ -161,6 +162,8 @@ void files_load_dsp_name(const char* name) {
   void* fp;
   //  u32 bytesRead;
   u32 size = 0;
+
+  delay_ms(10);
 
   app_pause();
 
@@ -424,19 +427,19 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   //  name = list_get_name(lista, idx);
   strcpy(path, list->path);
 
-  print_dbg("\r\n attempting to open file at path: \r\n");
-  print_dbg(path);
+  /* print_dbg("\r\n attempting to open file at path: \r\n"); */
+  /* print_dbg(path); */
 
   if(fl_opendir(path, &dirstat)) {
     while (fl_readdir(&dirstat, &dirent) == 0) {
       if (strcmp(dirent.filename, name) == 0) {
 	strncat(path, dirent.filename, 58);
 	
-	print_dbg("\r\n attempting to open file at path: \r\n");
-	print_dbg(path);
+	/* print_dbg("\r\n attempting to open file at path: \r\n"); */
+	/* print_dbg(path); */
 	
-	print_dbg("\r\n name: \r\n");
-	print_dbg(path);
+	/* print_dbg("\r\n name: \r\n"); */
+	/* print_dbg(path); */
 
 	fp = fl_fopen(path, mode);
 	*size = dirent.size;

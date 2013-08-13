@@ -1,4 +1,5 @@
 #include "bfin_core.h"
+#include "control.h"
 #include "init.h"
 #include "leds.h"
 #include "module.h"
@@ -39,6 +40,11 @@ void sport0_rx_isr() {
   /* if(iRxBuf[0] < 0) { */
   /*    dum++; */
   /* } */
+  if(!processAudio) { return; }
+
+  // tick the control rate
+  ctl_next_frame();
+
 
   UNSET_LED3;
 
@@ -60,9 +66,9 @@ void sport0_rx_isr() {
   iTxBuf[INTERNAL_DAC_R1] = out[3] >> 8;
 
   // module-defined frame processing function
-  if(processAudio) {
+
     module_process_frame();  
-  }
+
 
   /* //// TEST: wire */
   /* out0 = in0; */

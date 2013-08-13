@@ -49,13 +49,14 @@ void op_mgrid_raw_init(void* mem) {
   op->super.out = op->outs;
   op->super.inc_func = (op_inc_func)op_mgrid_raw_inc_func;
   op->super.in_func = op_mgrid_raw_in_func;
+  //  op->super.deinit = op_mgrid_raw_deinit;
 
   op->super.opString = op_mgrid_raw_opstring;
   op->super.inString = op_mgrid_raw_instring;
   op->super.outString = op_mgrid_raw_outstring;
 
   op->in_val[0] = &(op->focus);
-  op->in_val[1] = &(op->tog);
+  op->in_val[1] = &(op->tog);  
   op->in_val[2] = &(op->mono);
   op->outs[0] = -1;
   op->outs[1] = -1;
@@ -67,6 +68,12 @@ void op_mgrid_raw_init(void* mem) {
 
   op->lastPos = 0;
   op->focus = OP_ONE;
+}
+
+// de-init
+void op_mgrid_raw_deinit(void* op) {
+  // release focus
+  net_monome_set_focus(&(((op_mgrid_raw_t*)op)->monome), 0);
 }
 
 //-------------------------------------------------
@@ -119,9 +126,9 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
 	  monomeLedBuffer[op->lastPos] = 0;
 	}
 	// FIXME: should add macros in op_math.h for io_t conversion
-	net_activate(op->outs[0], (io_t)(x<<16));
-	net_activate(op->outs[1], (io_t)(y<<16));
-	net_activate(op->outs[2], (io_t)(val<<16));
+	net_activate(op->outs[0], (io_t)(x<<16), op);
+	net_activate(op->outs[1], (io_t)(y<<16), op);
+	net_activate(op->outs[2], (io_t)(val<<16), op);
 	// refresh flag for current quadrant
 	monome_calc_quadrant_flag(x, y);
 	// refresh flag for previous quadrant
@@ -132,9 +139,9 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
       val = z;
       monomeLedBuffer[pos] =  val;
       monomeLedBuffer[op->lastPos] = 0;
-      net_activate(op->outs[0], (io_t)(x<<16));
-      net_activate(op->outs[1], (io_t)(y<<16));
-      net_activate(op->outs[2], (io_t)(val<<16));
+      net_activate(op->outs[0], (io_t)(x<<16), op);
+      net_activate(op->outs[1], (io_t)(y<<16), op);
+      net_activate(op->outs[2], (io_t)(val<<16), op);
       // refresh flag for current quadrant
       monome_calc_quadrant_flag(x, y);
       // refresh flag for previous quadrant
@@ -146,18 +153,18 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
       if(z > 0) {      /// ignore lift
 	val = ( monomeLedBuffer[pos] == 0 );
 	monomeLedBuffer[pos] = val;
-	net_activate(op->outs[0], (io_t)(x<<16));
-	net_activate(op->outs[1], (io_t)(y<<16));
-	net_activate(op->outs[2], (io_t)(val<<16));
+	net_activate(op->outs[0], (io_t)(x<<16), op);
+	net_activate(op->outs[1], (io_t)(y<<16), op);
+	net_activate(op->outs[2], (io_t)(val<<16), op);
 	// refresh flag for current quadrant
 	monome_calc_quadrant_flag(x, y);
       }
     } else {   // poly, momentary
       val = z;
       monomeLedBuffer[pos] = val;
-      net_activate(op->outs[0], (io_t)(x<<16));
-      net_activate(op->outs[1], (io_t)(y<<16));
-      net_activate(op->outs[2], (io_t)(val<<16));
+      net_activate(op->outs[0], (io_t)(x<<16), op);
+      net_activate(op->outs[1], (io_t)(y<<16), op);
+      net_activate(op->outs[2], (io_t)(val<<16), op);
       // refresh flag for current quadrant
       monome_calc_quadrant_flag(x, y);
     }
@@ -180,3 +187,4 @@ static void op_mgrid_raw_inc_func(op_mgrid_raw_t* op, const s16 idx, const io_t 
     break;
   }
 }
+

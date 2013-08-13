@@ -11,7 +11,7 @@
 #include <compiler.h>
 
 // maximum number of timers
-#define MAX_TIMERS (8)
+#define MAX_TIMERS (12)
 // timer interrupt priority level
 //#define TIMER_INT_LEVEL 1
 

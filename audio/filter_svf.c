@@ -40,7 +40,9 @@ static void filter_svf_calc_freq(filter_svf* f) {
   /* printf("\r\n set normalized frequency: %f", f->freq); */
 
   // coarse approximation, no sine:
-  f->freq = shl_fr1x32(float_to_fr32(fix16_to_float(f->hz) / (float)SAMPLERATE), 2);
+  //  f->freq = shl_fr1x32(float_to_fr32(fix16_to_float(f->hz) / (float)SAMPLERATE), 2);
+  //  f->freq = float_to_fr32(fix16_to_float(f->hz) / (float)SAMPLERATE);
+  f->freq = (f->hz & 0xffff) << 16; //fix16_fract_trunc(f->hz);
 }
 
 

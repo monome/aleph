@@ -12,6 +12,7 @@
 #include "delay.h"
 //avr32
 #include "app.h"
+#include "bfin.h"
 #include "font.h"
 #include "print_funcs.h"
 #include "simple_string.h"
@@ -53,6 +54,20 @@ void scene_deinit(void) {
 
 // fill global RAM buffer with current state of system
 void scene_write_buf(void) {
+
+  ///// print parmameters
+  u32 i;
+  print_dbg("\r\n writing scene data... ");
+  for(i=0; i<net->numParams; i++) {
+    print_dbg("\r\n param ");
+    print_dbg_ulong(i);
+    print_dbg(" : ");
+    print_dbg(net->params[i].desc.label);
+    print_dbg(" ; val ");
+    print_dbg_hex((u32)net->params[i].data.value.asInt);
+  }
+  //////////////////////
+
   memcpy( &(sceneData->net),     (void*)net,  sizeof(ctlnet_t));
   print_dbg("\r\n copied network data to scene buffer.");
   memcpy( &(sceneData->presets), &presets, sizeof(preset_t) * NET_PRESETS_MAX); 
@@ -62,39 +77,59 @@ void scene_write_buf(void) {
 // set current state of system from global RAM buffer
 void scene_read_buf(void) {
   s8 modName[MODULE_NAME_LEN];
-  s8 neq = 0;
+  u32 i;
+  //  s8 neq = 0;
 
   app_pause();
 
   // store current mod name in scene desc
   memcpy(modName, sceneData->desc.moduleName, MODULE_NAME_LEN);
 
+  // de-initialize network and operators
+  net_deinit();
+
   // copy network/presets
   memcpy( (void*)net, &(sceneData->net),  sizeof(ctlnet_t) );
   memcpy( &presets, &(sceneData->presets), sizeof(preset_t) * NET_PRESETS_MAX );
   print_dbg("\r\n copied stored network and presets to RAM ");
 
-  // compare module name
-  neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
-
-  if(neq) {
-    // load bfin module if it changed names
-    print_dbg("\r\n loading module name: ");
-    print_dbg(sceneData->desc.moduleName);
-    files_load_dsp_name(sceneData->desc.moduleName);
+  for(i=0; i<net->numParams; i++) {
+    print_dbg("\r\n param ");
+    print_dbg_ulong(i);
+    print_dbg(" : ");
+    print_dbg(net->params[i].desc.label);
+    print_dbg(" ; val ");
+    print_dbg_hex((u32)net->params[i].data.value.asInt);
   }
+
+  // compare module name
+  //  neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
+
+  //  if(neq) {
+  // load bfin module if it changed names
+
+  print_dbg("\r\n loading module name: ");
+  print_dbg(sceneData->desc.moduleName);
+  files_load_dsp_name(sceneData->desc.moduleName);
+  //app_pause();
+
+  //  }
 
   //// TODO: module version check
   // "aaaabbbbccccddddeeeeffff"
 
-  delay_ms(100);
+  //  delay_ms(2000);
+    
   // re-trigger inputs
+  app_notify("re-initializing network/parameters");
   net_retrigger_inputs();
-
+  
   // update bfin parameters
   net_send_params();
   print_dbg("\r\n sent new params");
+  
 
+  bfin_enable();
   app_resume();
 }
 

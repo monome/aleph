@@ -31,8 +31,6 @@ typedef struct _op_monome {
   void* op;
 } op_monome_t;
 
-
-
 //---------------------
 //----- variables
 

@@ -56,7 +56,13 @@ typedef enum {
 // each function is passed a void* to its receiver
 // and a pointer to const s32 for input value
 typedef void(*op_in_func_t)(void* op, const io_t* input );
+// function type to increment a value from UI
 typedef void(*op_inc_func)(void* op, const s16 idx, const io_t inc);
+// init function type
+typedef void(*op_class_init_t)(void* op);
+// de-init function type
+typedef void(*op_class_deinit_t)(void* op);
+
 // ---- output type
 // an index into the global output table
 // a negative index is not evaluated
@@ -90,14 +96,12 @@ typedef struct op_struct {
 } op_t;
 
 
-// init function type
-typedef void(*op_class_init_t)(void* op);
-
 //---- op descriptor type
 typedef struct op_desc_struct {
   const char* name;
   const u32 size;
-  op_class_init_t initFunc;
+  op_class_init_t init;
+  op_class_deinit_t deinit;
 } op_desc_t;
 
 
@@ -109,6 +113,9 @@ extern const op_desc_t op_registry[numOpClasses];
 //---- public functions
 // initialize operator at memory
 extern s16 op_init(op_t* op, op_id_t opId);
+// de-initialize operator
+extern s16 op_deinit(op_t* op);
+
 // get input name
 extern const char* op_in_name(op_t* op, const u8 idx);
 // get output name

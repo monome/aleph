@@ -121,11 +121,11 @@ static void op_enc_perform(op_enc_t* enc){
     }
   }
   // output the value
-  net_activate(enc->outs[0], enc->val);
+  net_activate(enc->outs[0], enc->val, enc);
 
   // output the wrap amount
   if (dif != 0) {
-    net_activate(enc->outs[1], wrap);  
+    net_activate(enc->outs[1], wrap, enc);  
   }
 }
 

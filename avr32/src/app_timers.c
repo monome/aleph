@@ -12,8 +12,9 @@
 #include "math.h"
 #include "print_funcs.h"
 #include "uhc.h"
-// aleph
+// aleph-avr32
 #include "adc.h"
+#include "control.h"
 #include "encoders.h"
 #include "events.h"
 #include "event_types.h"
@@ -51,6 +52,10 @@ static swTimer_t monomePollTimer;
 static swTimer_t midiPollTimer;
 // refresh midi device
 static swTimer_t midiRefreshTimer;
+//// FIXME: this is bees-specific so should go in app code.
+//// will make a general overhall of this timers module.
+// send param changes
+static swTimer_t paramChangeTimer;
 
 //--- static misc
 static u8 i;
@@ -121,6 +126,12 @@ static void midi_poll_timer_callback(int tag) {
   }
 }
 
+// midi polling callback
+static void param_change_timer_callback(int tag) {
+  ctl_perform_all_changes();
+}
+
+
 //====== external
 void init_app_timers(void) {
   set_timer(&screenTimer,        eScreenTimerTag,        50,  &screen_timer_callback,  1);
@@ -129,4 +140,5 @@ void init_app_timers(void) {
   set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);
   set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 20,  &monome_refresh_timer_callback, 1);
   set_timer(&midiPollTimer,      eMidiPollTimerTag,      5,  &midi_poll_timer_callback, 1);
+  set_timer(&paramChangeTimer,      eParamChangeTimerTag,      5,  &param_change_timer_callback, 1);
 }

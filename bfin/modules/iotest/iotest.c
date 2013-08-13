@@ -34,6 +34,7 @@
 #endif
 
 #include "module.h"
+#include "module_custom.h"
 #include "types.h"
 
 //---------- defines
@@ -48,36 +49,7 @@
 #define SMOOTH_HZ_MAX 0x400000 // 128
 
 //-------- data types
-///// inputs
-enum params {
-  eParamHz1,
-  eParamHz2,
-  eParamRatio2,
-  eParamAmp1,
-  eParamAmp2,
 
-  eParamIoAmp0,
-  eParamIoAmp1,
-  eParamIoAmp2,
-  eParamIoAmp3,
-
-  eParamPm,
-  eParamWave1,
-  eParamWave2,
-  eParamGate,
-  eParamAtkDur,
-  eParamRelDur,
-  eParamAtkCurve,
-  eParamRelCurve,
-  eParamHz1Smooth,
-  eParamHz2Smooth,
-  eParamPmSmooth,
-  eParamWave1Smooth,
-  eParamWave2Smooth,
-  eParamAmp1Smooth,
-  eParamAmp2Smooth,
-  eParamNumParams
-};
 
 // define a local data structure that subclasses moduleData.
 // use this for all data that is large and/or not speed-critical.
@@ -415,10 +387,10 @@ void module_set_param(u32 idx, pval v) {
      env_asr_set_gate(env, v.s > 0);
     break;
   case eParamAtkDur:
-    env_asr_set_atk_dur(env, seconds_to_frames(v.fix));
+    env_asr_set_atk_dur(env, sec_to_frames_trunc(v.fix));
     break;
   case eParamRelDur:
-    env_asr_set_rel_dur(env, seconds_to_frames(v.fix));
+    env_asr_set_rel_dur(env, sec_to_frames_trunc(v.fix));
     break;
   case eParamAtkCurve:
     env_asr_set_atk_shape(env, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
@@ -473,10 +445,10 @@ extern u32 module_get_num_params(void) {
 #ifdef ARCH_BFIN 
 void module_process_frame(void) {
   calc_frame();
-  out0 = add_fr1x32(frameVal, mult_fr1x32x32(in0, ioAmp0));
-  out1 = add_fr1x32(frameVal, mult_fr1x32x32(in1, ioAmp1));
-  out2 = add_fr1x32(frameVal, mult_fr1x32x32(in2, ioAmp2));
-  out3 = add_fr1x32(frameVal, mult_fr1x32x32(in3, ioAmp3));
+  out[0] = add_fr1x32(frameVal, mult_fr1x32x32(in[0], ioAmp0));
+  out[1] = add_fr1x32(frameVal, mult_fr1x32x32(in[1], ioAmp1));
+  out[2] = add_fr1x32(frameVal, mult_fr1x32x32(in[2], ioAmp2));
+  out[3] = add_fr1x32(frameVal, mult_fr1x32x32(in[3], ioAmp3));
 }
 
 static u8 ledstate = 0;

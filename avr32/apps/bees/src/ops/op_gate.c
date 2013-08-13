@@ -47,7 +47,7 @@ void op_gate_init(void* mem) {
 static void op_gate_in_value(op_gate_t* gate, const io_t* v) {
   gate->val = *v;
   if(gate->gate != 0) {
-    net_activate(gate->outs[0], gate->val);
+    net_activate(gate->outs[0], gate->val, gate);
   }
 }
 
@@ -55,7 +55,7 @@ static void op_gate_in_gate(op_gate_t* gate, const io_t* v) {
   //  gate->gate = (io_t)(*v != 0);
   if(*v > 0) { gate->gate = 1; } else { gate->gate = 0; }
   if (gate->store) {
-    net_activate(gate->outs[0], gate->val);
+    net_activate(gate->outs[0], gate->val, gate);
   }
 }
 
