@@ -12,13 +12,13 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamGate].min = 0;
   gModuleData->paramDesc[eParamGate].max = FIX16_ONE;
   
-  strcpy(gModuleData->paramDesc[eParamAtkDur].label, "amp env attack");
+  strcpy(gModuleData->paramDesc[eParamAtkDur].label, "amp env atk");
   strcpy(gModuleData->paramDesc[eParamAtkDur].unit, "sec");
   gModuleData->paramDesc[eParamAtkDur].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamAtkDur].min = 0;
   gModuleData->paramDesc[eParamAtkDur].max = FIX16_ONE;
   
-  strcpy(gModuleData->paramDesc[eParamRelDur].label, "amp env release");
+  strcpy(gModuleData->paramDesc[eParamRelDur].label, "amp env rel");
   strcpy(gModuleData->paramDesc[eParamRelDur].unit, "hz");
   gModuleData->paramDesc[eParamRelDur].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamRelDur].min = 0;

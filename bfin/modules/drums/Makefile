@@ -3,6 +3,8 @@ common = ../../../common
 
 module_name = drums
 module_obj = drums.o \
+	params.o \
+	$(audiolib)/conversion.o \
 	$(audiolib)/env.o \
 	$(audiolib)/filter_svf.o \
 	$(audiolib)/noise.o \

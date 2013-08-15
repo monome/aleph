@@ -11,6 +11,8 @@
 // aleph-common
 #include "fix.h"
 // aleph-audio
+#include "conversion.h"
+#include "env.h"
 #include "filter_svf.h"
 #include "noise.h"
 // bfin
@@ -30,19 +32,19 @@
 #include "module_custom.h"
 #include "types.h"
 
-#define SVF_HZ_MIN 0x200000      // 32
-#define SVF_HZ_MAX 0x40000000    // 16384
+#define HZ_MIN 0x200000      // 32
+#define HZ_MAX 0x40000000    // 16384
 
 
 // define a local data structure that subclasses moduleData.
 // use this for all data that is large and/or not speed-critical.
 // this structure should statically allocate all necessary memory 
 // so it can simply be loaded at the start of SDRAM.
-typedef struct _svfNoiseData {
+typedef struct _drumsData {
   moduleData super;
   ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
-} svfNoiseData;
+} drumsData;
 
 
 //-------------------------
@@ -59,7 +61,7 @@ u32 dbgCount = 0;
 
 
 // pointer to local module data, initialize at top of SDRAM
-static svfNoiseData * data;
+static drumsData * data;
 
 //-- static allocation (SRAM) for variables that are small and/or frequently accessed:
 // two random number generators for low/high words of very white noise:
@@ -67,6 +69,8 @@ static lcprng* rngH;
 static lcprng* rngL;
 // filter
 static filter_svf* svf;
+// amp envelope
+static env_asr*  ampEnv;
 // parameters
 static fract32 inAmp0;
 static fract32 inAmp1;
@@ -96,10 +100,8 @@ static void calc_frame(void) {
   frameVal = add_fr1x32(frameVal, mult_fr1x32x32(in[2], inAmp2));
   frameVal = add_fr1x32(frameVal, mult_fr1x32x32(in[3], inAmp3));
   frameVal = filter_svf_next(svf, frameVal);
+  frameVal = mult_fr1x32x32(frameVal, env_asr_next(ampEnv));
 }
-
-// set all parameter descriptors
-static void fill_param_desc(void);
 
 //----------------------
 //----- external functions
@@ -108,10 +110,10 @@ void module_init(void) {
   // init module/param descriptor
 #ifdef ARCH_BFIN 
   // intialize local data at start of SDRAM
-  data = (svfNoiseData * )SDRAM_ADDRESS;
+  data = (drumsData * )SDRAM_ADDRESS;
   // initialize moduleData superclass for core routines
 #else
-  data = (svfNoiseData*)malloc(sizeof(svfNoiseData));
+  data = (drumsData*)malloc(sizeof(drumsData));
   /// debugging output file
   dbgFile = fopen( "iotest_dbg.txt", "w");
 #endif
@@ -196,6 +198,19 @@ void module_set_param(u32 idx, pval v) {
   case eParamInAmp3 :
     inAmp0 = FIX16_FRACT_TRUNC(v.fix);
     break;
+  case eParamAtkDur:
+    env_asr_set_atk_dur(ampEnv, sec_to_frames_trunc(v.fix));
+    break;
+  case eParamRelDur:
+    env_asr_set_rel_dur(ampEnv, sec_to_frames_trunc(v.fix));
+    break;
+  case eParamAtkCurve:
+    env_asr_set_atk_shape(ampEnv, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
+    break;
+  case eParamRelCurve:
+    env_asr_set_atk_shape(ampEnv, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
+    break;
+
   default:
     break;
   }
