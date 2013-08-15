@@ -59,3 +59,37 @@ void set_param_value(u32 idx, io_t val) {
   //  bfin_set_param(idx, val);
   ctl_param_change(idx, (u32)val);
 }
+
+
+// get param descriptors and initial values from DSP
+void report_params(void) {
+  volatile ParamDesc pdesc;
+  u32 numParams;
+  u8 i;
+
+  bfin_get_num_params(&numParams);
+  print_dbg("\r\nnumparams: ");
+  print_dbg_ulong(numParams);
+
+  if(numParams == 255) {
+    print_dbg("\r\n bfin reported too many parameters; something went wrong.");
+    return;
+  }
+
+  if(numParams > 0) {
+    net_clear_params();
+    for(i=0; i<numParams; i++) {
+      bfin_get_param_desc(i, &pdesc);
+
+      /// FIXME: arg, this belongs only in BEES
+      net_add_param(i, &pdesc);     
+      
+      print_dbg("\r\n got pdesc : ");
+      print_dbg((const char* )pdesc.label);
+    }
+  }
+
+  /// TODO: get values...
+
+  //  bfin_enable();
+}

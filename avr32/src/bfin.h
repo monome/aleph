@@ -35,10 +35,13 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc);
 void bfin_get_module_name(volatile char* buf);
 // get loaded module version
 void bfin_get_module_version(moduleVersion_t* vers);
+
 // clear and add params to ctl network
-void bfin_report_params(void);
+//void bfin_report_params(void);
+
 // become slave on spi bus
 //extern void bfin_spi_slave(void);
+
 // become master on spi bus
 extern void bfin_spi_master(void);
 // enable audio processing

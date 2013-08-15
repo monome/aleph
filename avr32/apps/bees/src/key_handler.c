@@ -617,7 +617,9 @@ extern void key_handler_dsp(uiKey_t key, s16 val) {
     // load DSP
     files_load_dsp(curPage->selected);
     // update param list
-    bfin_report_params();
+    report_params();
+    // start audio
+    bfin_enable();
     break;
   case eKeyFnDownB:
     // write default

@@ -39,4 +39,8 @@ void set_param_value(u32 idx, io_t val);
 // get pointer to descriptor
 //const ParamDesc* getParamDesc(); 
 
+// get param descriptors and initial values from DSP
+void report_params(void);
+
+
 #endif // header guard
