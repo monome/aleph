@@ -139,10 +139,20 @@ void module_init(void) {
   rngL = (lcprng*)malloc(sizeof(lcprng));
   lcprng_reset(rngL);
   
+  // allocate envelope
+  ampEnv = (env_asr*)malloc(sizeof(env_asr));
+  env_asr_init(ampEnv);
+
   // initial param state
   filter_svf_set_hz(svf, fix16_from_int(220));
   filter_svf_set_rq(svf, 0x4000);
   filter_svf_set_low(svf, 0x4000);
+
+  env_asr_set_atk_shape(ampEnv, float_to_fr32(0.5));
+  env_asr_set_rel_shape(ampEnv, float_to_fr32(0.5));
+  env_asr_set_atk_dur(ampEnv, 1000);
+  env_asr_set_rel_dur(ampEnv, 10000);
+
 
 }
 
