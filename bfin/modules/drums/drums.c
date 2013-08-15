@@ -169,9 +169,9 @@ void module_deinit(void) {
 // set parameter by value (fix16)
 void module_set_param(u32 idx, pval v) {
   switch(idx) {
-  /* case eParamHz1: */
-  /*   set_hz1(v.fix); */
-  /*   break; */
+  case eParamGate:
+     env_asr_set_gate(ampEnv, v.s > 0);
+    break;
   case eParamSvfHz :
     filter_svf_set_hz(svf, v.fix);
     break;

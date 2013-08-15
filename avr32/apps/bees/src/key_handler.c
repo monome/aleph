@@ -6,6 +6,7 @@
  */
 
 // asf
+#include "delay.h"
 #ifdef ARCH_AVR32
 #include "print_funcs.h"
 #endif
@@ -616,8 +617,10 @@ extern void key_handler_dsp(uiKey_t key, s16 val) {
     app_notify("loading DSP...");
     // load DSP
     files_load_dsp(curPage->selected);
+    delay_ms(100);
     // update param list
     report_params();
+    delay_ms(100);
     // start audio
     bfin_enable();
     break;

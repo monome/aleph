@@ -45,7 +45,6 @@ void sport0_rx_isr() {
   // tick the control rate
   ctl_next_frame();
 
-
   UNSET_LED3;
 
   // confirm interrupt handling

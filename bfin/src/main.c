@@ -42,16 +42,14 @@ int main(void) {
   // intialize DMA for audio
   init_DMA();
   //  // put the spi back in slave mode to receive param changes from avr32
-   init_spi_slave();
-
-
+  init_spi_slave();
+   
   // intialize the audio processing unit (assign memory)
   module_init();
   // assign interrupts
   init_interrupts();
   // begin audio transfers
   enable_DMA_sport0();  
-
 
   //// test: leds on
   SET_LED3;

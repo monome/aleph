@@ -29,7 +29,7 @@
 #define ENV_MIN       0x7ff //  -120.41624045437 db
 #define ENV_MIN_D     9.5320865556281e-07
 #define ENV_MAX       FR32_MAX
-#define ENV_MAX_D     1.0
+#define ENV_MAX_D     0.9999999995343386
 
 // envelope states
 #define ENV_STATE_ATK      0
@@ -125,8 +125,8 @@ void env_asr_set_atk_shape(env_asr* env, fract32 c) {
     }
     if(env->state == ENV_STATE_REL) {
       // invert current phase
-      env->x = sub_fr1x32(FR32_MAX, env->x);
       env->y = sub_fr1x32(FR32_MAX, env->y);
+      env->x = sub_fr1x32(FR32_MAX, env->x);
     }
   }
 }
@@ -143,8 +143,8 @@ void env_asr_set_rel_shape(env_asr* env, fract32 c) {
     }
     if(env->state == ENV_STATE_REL) {
     // invert current phase
-      env->x = sub_fr1x32(FR32_MAX, env->x);
       env->y = sub_fr1x32(FR32_MAX, env->y);
+      env->x = sub_fr1x32(FR32_MAX, env->x);
     }
   }
 }
@@ -191,15 +191,15 @@ void env_asr_attack(env_asr* env) {
       // nothing to do
       break;
     case ENV_STATE_OFF:
-      env->x = ENV_MAX;
-      env->y = 0;
+      env->y = ENV_MAX;
+      env->x = 0;
       env->stateFP = *(env_next_atk_pos);
       env->state = ENV_STATE_ATK;
       break;
     case ENV_STATE_REL:
       if(env->cDn >= 0) {
 	// release is uninverted decay, want inverted decay
-	env->x = sub_fr1x32(FR32_MAX, env->x);
+	env->y = sub_fr1x32(FR32_MAX, env->y);
       }
       env->stateFP = *(env_next_atk_pos);
       env->state = ENV_STATE_ATK;
@@ -214,15 +214,15 @@ void env_asr_attack(env_asr* env) {
       // nothing to do
       break;
     case ENV_STATE_OFF:
-      env->x = ENV_MAX;
-      env->y = 0;
+      env->y = ENV_MAX;
+      env->x = 0;
       env->stateFP = *(env_next_atk_neg);
       env->state = ENV_STATE_ATK;
       break;
     case ENV_STATE_REL:
       if(env->cDn < 0) {
 	// release is inverted growth, want uninverted growth
-	env->x = sub_fr1x32(FR32_MAX, env->x);
+	env->y = sub_fr1x32(FR32_MAX, env->y);
       }
       env->stateFP = *(env_next_atk_neg);
       env->state = ENV_STATE_ATK;
@@ -247,13 +247,13 @@ static void env_asr_release(env_asr* env) {
  if(env->cDn >= 0) {
     // uninverted decay
     env->stateFP = *(env_next_rel_pos);
-    env->x = ENV_MAX;
-    env->y = FR32_MAX;
+    env->y = ENV_MAX;
+    env->x = FR32_MAX;
   } else {
     // inverted growth
     env->stateFP = *(env_next_rel_neg);
-    env->x = ENV_MIN;
-    env->y = FR32_MAX;
+    env->y = ENV_MIN;
+    env->x = FR32_MAX;
  }
 }
 
@@ -261,7 +261,7 @@ static void env_asr_release(env_asr* env) {
 static void env_asr_off(env_asr* env) {
     env->state = ENV_STATE_OFF;
     env->stateFP = *(env_next_off);
-    env->x = ENV_MIN;
+    env->y = ENV_MIN;
 }
 
 ////////////////////////
@@ -270,19 +270,19 @@ static void env_asr_off(env_asr* env) {
 // attack stage, positive curve
 static fract32 env_next_atk_pos(env_asr* env) {
   // inverted decay
-  if ( env->y == FR32_MAX ) {    
+  if ( env->x == FR32_MAX ) {    
     env_asr_sustain(env);
   } else {
-    env->x = mult_fr1x32x32(env->x, env->bUp);
-    env->y = add_fr1x32(env->y, (fract32)env->rUp);
-    if ( env->y < 0 ) {
-      env->y = FR32_MAX;
+    env->y = mult_fr1x32x32(env->y, env->bUp);
+    env->x = add_fr1x32(env->x, (fract32)env->rUp);
+    if ( env->x < 0 ) {
+      env->x = FR32_MAX;
     }
   }
   // interpolate for curve
   return add_fr1x32( // invert x:
-		    mult_fr1x32x32( sub_fr1x32(FR32_MAX, env->x), env->cUp ),
-		    mult_fr1x32x32( env->y, sub_fr1x32( FR32_MAX, env->cUp) )
+		    mult_fr1x32x32( sub_fr1x32(FR32_MAX, env->y), env->cUp ),
+		    mult_fr1x32x32( env->x, sub_fr1x32( FR32_MAX, env->cUp) )
 		    );
   
 }
@@ -291,20 +291,20 @@ static fract32 env_next_atk_pos(env_asr* env) {
 static fract32 env_next_atk_neg(env_asr* env) {
   fract32 cabs = abs_fr1x32(env->cUp);
   // uninverted growth
-  if ( env->y == FR32_MAX ) {    
+  if ( env->x == FR32_MAX ) {    
     env_asr_sustain(env);
   } else {
-  //  env->x = mult_fr1x32x32(env->x, env->aUp);
-    env->x = (fract32)( fix16_mul( (fix16)(env->x >> 16), env->aUp) << 16);
-    env->y = add_fr1x32(env->y, (fract32)env->rUp);
-    if ( env->y < 0 ) {
-      env->y = FR32_MAX;
+  //  env->y = mult_fr1x32x32(env->y, env->aUp);
+    env->y = (fract32)( fix16_mul( (fix16)(env->y >> 16), env->aUp) << 16);
+    env->x = add_fr1x32(env->x, (fract32)env->rUp);
+    if ( env->x < 0 ) {
+      env->x = FR32_MAX;
     }
   }
   // interpolate for curve
   return add_fr1x32(
-		    mult_fr1x32x32(env->x, cabs),
-		    mult_fr1x32x32(env->y, sub_fr1x32( FR32_MAX, cabs ))
+		    mult_fr1x32x32(env->y, cabs),
+		    mult_fr1x32x32(env->x, sub_fr1x32( FR32_MAX, cabs ))
 		    );
 }
 
@@ -312,32 +312,32 @@ static fract32 env_next_atk_neg(env_asr* env) {
 
 // release stage, positive curve
 static fract32 env_next_rel_pos(env_asr* env) {
-  if(env->y == 0) {
+  if(env->x == 0) {
     env_asr_off(env);
   }
   // uninverted decay
-  env->x = mult_fr1x32x32(env->x, env->bDn);
-  env->y = sub_fr1x32(env->y, (fract32)env->rDn);
-  if ( env->y < 0 ) {
-    env->y = 0;
+  env->y = mult_fr1x32x32(env->y, env->bDn);
+  env->x = sub_fr1x32(env->x, (fract32)env->rDn);
+  if ( env->x < 0 ) {
+    env->x = 0;
   }
   // interpolate for curve
   return add_fr1x32(
-		    mult_fr1x32x32( env->x, env->cDn ),
-		    mult_fr1x32x32( env->y, sub_fr1x32(FR32_MAX, env->cDn) )
+		    mult_fr1x32x32( env->y, env->cDn ),
+		    mult_fr1x32x32( env->x, sub_fr1x32(FR32_MAX, env->cDn) )
 		    );
 }
 
 // release stage, negative curve
 static fract32 env_next_rel_neg(env_asr* env) {
   // inverted growth
-  env->y = sub_fr1x32(env->y, (fract32)env->rDn);
-  //  env->x = mult_fr1x32x32(env->x, env->aDn );
-  env->x = (fract32)( fix16_mul( (fix16)(env->x >> 16), env->aDn) << 16);
+  env->x = sub_fr1x32(env->x, (fract32)env->rDn);
+  //  env->y = mult_fr1x32x32(env->y, env->aDn );
+  env->y = (fract32)( fix16_mul( (fix16)(env->y >> 16), env->aDn) << 16);
   // interpolate for curve
   return add_fr1x32( // invert x:
-		    mult_fr1x32x32( sub_fr1x32(FR32_MAX, env->x), env->cDn ),
-		    mult_fr1x32x32( env->y, sub_fr1x32(FR32_MAX, env->cDn) )
+		    mult_fr1x32x32( sub_fr1x32(FR32_MAX, env->y), env->cDn ),
+		    mult_fr1x32x32( env->x, sub_fr1x32(FR32_MAX, env->cDn) )
 		    );
 }
 

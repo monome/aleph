@@ -26,8 +26,8 @@ typedef struct _env_asr {
   fract32 rDn; // ramp increment
   fract32 cDn; // curve
   //// current
-  fract32 x; // current integrator value
-  fract32 y; // current ramp value
+  fract32 x; // current ramp value
+  fract32 y; // current integrator value
   u8 state;      // current state
   fract32(*stateFP)(); // pointer to state-processing function
 } env_asr;
