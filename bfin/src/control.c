@@ -82,7 +82,7 @@ extern void ctl_perform_last_change(void) {
 // attempt to execute all pending param changes
 extern void ctl_perform_all_changes(void) {
   while(evCount > 0) {
-    actl_perform_last_change();
+    ctl_perform_last_change();
   }
 }
 
