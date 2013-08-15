@@ -13,23 +13,7 @@
 #ifndef _ALEPH_MODULE_CUSTOM_H_
 #define _ALEPH_MODULE_CUSTOM_H_
 
-///// inputs
-
-enum params {
-  eParamSvfHz,
-  eParamSvfRq,
-  eParamSvfLow,
-  eParamSvfHigh,
-  eParamSvfBand,
-  eParamSvfNotch,
-  eParamSvfPeak,
-  eParamNoiseAmp,
-  eParamInAmp0,
-  eParamInAmp1,
-  eParamInAmp2,
-  eParamInAmp3,
-  eParamNumParams
-};
+#include "params.h"
 
 #define NUM_PARAMS eParamNumParams
 

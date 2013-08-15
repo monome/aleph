@@ -2,8 +2,8 @@ audiolib = ../../../audio
 common = ../../../common
 
 module_name = drums
-module_obj = drums.o  
-	$(audiolib)/env_asr.o 
+module_obj = drums.o \
+	$(audiolib)/env.o \
 	$(audiolib)/filter_svf.o \
 	$(audiolib)/noise.o \
 	$(common)/libfixmath/fix32.o \
@@ -21,7 +21,7 @@ CFLAGS += -O0
 
 $(module_obj): %.o : %.c	
 	$(CC) $(CFLAGS) -I $(audiolib) -c -o $@ $< $(LDFLAGS)
-b
+
 aleph-$(module_name): core_target $(module_obj)
 	$(CC) $(LDFLAGS) -T aleph-$(module_name).lds \
 	$(patsubst %.o, $(core_objdir)%.o, $(core_obj)) \
