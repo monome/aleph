@@ -28,6 +28,7 @@ typedef struct _env_asr {
   //// current
   fract32 x; // current ramp value
   fract32 y; // current integrator value
+  fract32 out; // current output value
   u8 state;      // current state
   fract32(*stateFP)(); // pointer to state-processing function
 } env_asr;
