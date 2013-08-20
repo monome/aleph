@@ -29,7 +29,7 @@ static void spi_set_param(u32 idx, pval pv) {
 //// TODO: 
 /// check that the compiler is implementing this as a jump table.
 //// if it isn't, use a fp table instead.
-//// make the terminal cases in to inline funcs for readability.
+//// make the terminal cases into inline funcs for readability.
 
 //------- function definitions
 // deal with new data in the spi rx ringbuffer
@@ -353,6 +353,7 @@ u8 spi_process(u8 rx) {
     return 0;    // don't care
     break;
   default:
+    byte = eCom; // reset
     return 0;
     break;
   }

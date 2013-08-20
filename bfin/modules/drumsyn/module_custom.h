@@ -15,6 +15,30 @@
 
 #include "params.h"
 
+enum {
+  eParam_ampAtk,
+  eParam_ampSus,
+  eParam_ampRel,  
+
+  eParam_hzStart,
+  eParam_hzEnd,
+  eParam_hzAtk,
+  eParam_hzSus,
+  eParam_hzRel,  
+
+  eParam_resStart,
+  eParam_resEnd,
+  eParam_resAtk,
+  eParam_resSus,
+  eParam_resRel,  
+
+  eParam_svfLow,
+  eParam_svfHigh,
+  eParam_svfBand,
+
+}
+
+
 #define NUM_PARAMS eParamNumParams
 
 #endif // h guard

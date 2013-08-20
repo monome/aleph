@@ -15,6 +15,7 @@ all: aleph-$(module_name).ldr
 include ../../core.mk
 
 CFLAGS += -D ARCH_BFIN=1
+CFLAGS += -g
 #CFLAGS += --verbose
 
 $(module_obj): %.o : %.c	

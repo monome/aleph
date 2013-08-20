@@ -28,7 +28,6 @@ APP_OBJ  = main.o \
 	$(LIBFIXMATH)/fix32.o \
 	$(LIBFIXMATH)/fract32.o \
 	$(COMMON)/fract32_emu.o \
-	$(COMMON)/simple_string.o \
 	$(COMMON)/fix.o
 
 # mono_fm module
@@ -55,7 +54,7 @@ iotest : $(APP_OBJ) $(IOTEST_OBJ)
 
 # lines module
 LINES_OBJ :=  $(MODULES)/lines/lines.o \
-	$(AUDIOLIB)/filter_1pole.o \
+	$(AUDIOLIB)/filter_1p.o \
 	$(AUDIOLIB)/buffer.o \
 
 lines : $(APP_OBJ) $(LINES_OBJ)

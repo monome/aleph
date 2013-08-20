@@ -13,7 +13,7 @@
 
 // aleph-common
 #include "fix.h"
-#include "simple_string.h"
+//#include "simple_string.h"
 #include "types.h"
 
 #ifdef ARCH_BFIN // bfin

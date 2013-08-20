@@ -46,7 +46,6 @@ typedef struct _drumsData {
   ParamData mParamData[eParamNumParams];
 } drumsData;
 
-
 typedef struct _drum_voice {
   filter_svf* svf;
   env_asr* envAmp;
@@ -68,59 +67,58 @@ u8 dbgFlag = 0;
 u32 dbgCount = 0;
 #endif
 
+/// TEST: one voice
+drumsyn_voice* voice[1];
+
 
 // pointer to local module data, initialize at top of SDRAM
-static drumsData * data;
+static drumsynData * data;
 //-- static allocation (SRAM) for variables that are small and/or frequently accessed:
-drum_voice_t voice;
-
-
+drumsyn_voice_t voice;
 
 //-----------------------------
 //----- static functions
 
 // initialize voice
-void drum_voice_init(void* mem) {
-  drum_voice_t* voice = (drum_voice_t*)mem;
+void drumsyn_voice_init(void* mem) {
+  drum_voice_t* voice = (drumsyn_voice_t*)mem;
 
+  // envelopes
   voice->envAmp = (env_asr*)malloc(sizeof(env_asr));
   env_asr_init(voice->envAmp);
   voice->envHz = (env_asr*)malloc(sizeof(env_asr));
   env_asr_init(voice->envHz);
   voice->envRes = (env_asr*)malloc(sizeof(env_asr));
   env_asr_init(voice->envRes);
+  // SVF
   voice->svf = (filter_svf*)malloc(sizeof(filter_svf));
   filter_svf_init(voice->svf);
+  // RNG
   voice->rngH = (lcprng*)malloc(sizeof(lcprng));
   lcprng_reset(voice->rngH);
   voice->rngL = (lcprng*)malloc(sizeof(lcprng));
   lcprng_reset(voice->rngL);
 }
 
+void drumsyn_voice_deinit(drumsyn_voice* voice) {
+  free(voice->envAmp);
+  free(voice->envHz);
+  free(voice->envRes);
+  free(voice->rngL);
+  free(voice->rngH);
+  free(voice->svf);
+}
+
 // next value of voice
-fract32 drum_voice_next(drum_voice_t* voice) {
-  
+fract32 drumsyn_voice_next(drumsyn_voice_t* voice) {
+  return filter_svf_next(voice->svf, 
+			 lcprng_next(voice->rngL) | ( lcprng_next(voice->rngH) << 16) );
 }
 
-
-// get the next value of white noise
-static fract32 noise_next(void) {
-  fract32 x = 0;
-  x |= lcprng_next(rngH);
-  x |= ((lcprng_next(rngL) >> 16) & 0x0000ffff);
-  return x;
-}
 
 // frame calculation
 static void calc_frame(void) {
-  frameVal = 0;
-  frameVal = mult_fr1x32x32(noise_next(), noiseAmp);
-  frameVal = add_fr1x32(frameVal, mult_fr1x32x32(in[0], inAmp0));
-  frameVal = add_fr1x32(frameVal, mult_fr1x32x32(in[1], inAmp1));
-  frameVal = add_fr1x32(frameVal, mult_fr1x32x32(in[2], inAmp2));
-  frameVal = add_fr1x32(frameVal, mult_fr1x32x32(in[3], inAmp3));
-  frameVal = filter_svf_next(svf, frameVal);
-  frameVal = mult_fr1x32x32(frameVal, env_asr_next(ampEnv));
+  frameVal = drumsym_voice_next(voice[0]);
 }
 
 //----------------------
@@ -135,51 +133,17 @@ void module_init(void) {
 #else
   data = (drumsData*)malloc(sizeof(drumsData));
   /// debugging output file
-  dbgFile = fopen( "iotest_dbg.txt", "w");
+  dbgFile = fopen( "drums_dbg.txt", "w");
 #endif
   gModuleData = &(data->super);
   gModuleData->paramDesc = data->mParamDesc;
   gModuleData->paramData = data->mParamData;
   gModuleData->numParams = eParamNumParams;
 
-  fill_param_desc();
-
-  inAmp0 = 0;
-  inAmp1 = 0;
-  inAmp2 = 0;
-  inAmp3 = 0;
-  noiseAmp = fix16_one >> 2;
-
-  svf = (filter_svf*)malloc(sizeof(filter_svf));
-  filter_svf_init(svf);
-
-  rngH = (lcprng*)malloc(sizeof(lcprng));
-  lcprng_reset(rngH);
-
-  rngL = (lcprng*)malloc(sizeof(lcprng));
-  lcprng_reset(rngL);
-  
-  // allocate envelope
-  ampEnv = (env_asr*)malloc(sizeof(env_asr));
-  env_asr_init(ampEnv);
-
-  // initial param state
-  filter_svf_set_hz(svf, fix16_from_int(220));
-  filter_svf_set_rq(svf, 0x4000);
-  filter_svf_set_low(svf, 0x4000);
-
-  env_asr_set_atk_shape(ampEnv, float_to_fr32(0.5));
-  env_asr_set_rel_shape(ampEnv, float_to_fr32(0.5));
-  env_asr_set_atk_dur(ampEnv, 1000);
-  env_asr_set_rel_dur(ampEnv, 10000);
-
-
 }
 
 void module_deinit(void) {
-  free(svf);
-  free(rngH);
-  free(rngL);
+  drumsyn_voice_deinit(voice[0]);
 #if ARCH_LINUX 
   fclose(dbgFile);
 #endif
