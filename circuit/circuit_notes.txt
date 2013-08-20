@@ -1,10 +1,16 @@
 SPEC LEDs
 
-JP3 ? header or jumpers?
-J20 pn?
-P6 pn?
-
-
+final build notes
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+CHECK MAIN 5V CAPS ETC
+	on output 100u x 4 ?? 399-5193-2-ND 
+		or one of these: 493-4489-3-ND  WONT FIT
+	C218 needs to be high voltage rated-- 16V up
+	small input cap could be 100n
+J8 hole size, slightly too big, power jack
+led8 package
+int - pots need mounting legs further apart (slightly)
+	# move via under pot3
 
 
 

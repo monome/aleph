@@ -18336,8 +18336,8 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="R41" library="rc-master-smd" deviceset="R_" device="0603" value="0"/>
 <part name="R40" library="rc-master-smd" deviceset="R_" device="0603" value="0"/>
 <part name="J9" library="monome-inc" deviceset="PHA2U" device=""/>
-<part name="R188" library="rc-master-smd" deviceset="R_" device="0603" value="330k"/>
-<part name="R187" library="rc-master-smd" deviceset="R_" device="0603" value="47k"/>
+<part name="R188" library="rc-master-smd" deviceset="R_" device="0603" value="47k"/>
+<part name="R187" library="rc-master-smd" deviceset="R_" device="0603" value="18k"/>
 <part name="GND46" library="supply" deviceset="GND" device=""/>
 <part name="GND1" library="supply" deviceset="GND" device=""/>
 <part name="S1" library="monome-inc" deviceset="SDMMC" device="06132"/>
@@ -18525,7 +18525,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="GND49" library="supply" deviceset="GND" device=""/>
 <part name="L8" library="inductor-bourns" deviceset="SRR6038" device="" value="SRR6038-100Y"/>
 <part name="R72" library="rc-master-smd" deviceset="R_" device="0603" value="0"/>
-<part name="R45" library="rc-master-smd" deviceset="R_" device="0603" value="3.32k"/>
+<part name="R45" library="rc-master-smd" deviceset="R_" device="0603" value="3k32"/>
 <part name="GND50" library="supply" deviceset="GND" device=""/>
 <part name="GND51" library="supply" deviceset="GND" device=""/>
 <part name="C187" library="rc-master-smd" deviceset="C_" device="0603" value="100n"/>
@@ -18947,7 +18947,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="D1" library="diode" deviceset="MBR0540" device="" value="MBR0520L"/>
 <part name="L1" library="monome-inc" deviceset="XAL7030-103" device=""/>
 <part name="C10" library="rc-master-smd" deviceset="CP_" device="1206/T" value="4.7u"/>
-<part name="R192" library="rc-master-smd" deviceset="R_" device="0603" value="117k"/>
+<part name="R192" library="rc-master-smd" deviceset="R_" device="0603" value="118k"/>
 <part name="R194" library="rc-master-smd" deviceset="R_" device="0603" value="13k3"/>
 <part name="C1" library="rc-master-smd" deviceset="C_" device="1206" value="2.2u"/>
 <part name="GND29" library="supply" deviceset="GND" device=""/>

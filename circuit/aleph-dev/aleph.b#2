@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.025" unitdist="inch" unit="inch" style="dots" multiple="1" display="yes" altdistance="0.0125" altunitdist="inch" altunit="inch"/>
+<grid distance="0.05" unitdist="inch" unit="inch" style="dots" multiple="1" display="no" altdistance="0.0125" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="power" color="1" fill="3" visible="no" active="yes"/>
@@ -26,13 +26,13 @@
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
-<layer number="20" name="Dimension" color="13" fill="1" visible="yes" active="yes"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="yes"/>
+<layer number="20" name="Dimension" color="13" fill="1" visible="no" active="yes"/>
 <layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="22" name="bPlace" color="7" fill="1" visible="no" active="yes"/>
 <layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="no" active="yes"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="yes"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="26" name="bNames" color="7" fill="1" visible="no" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="no" active="yes"/>
@@ -103,12 +103,12 @@
 <layer number="153" name="FabDoc1" color="6" fill="1" visible="no" active="no"/>
 <layer number="154" name="FabDoc2" color="2" fill="1" visible="no" active="no"/>
 <layer number="155" name="FabDoc3" color="7" fill="15" visible="no" active="no"/>
-<layer number="180" name="cad-plate" color="16" fill="1" visible="yes" active="yes"/>
-<layer number="181" name="cad-clearance" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="182" name="cad-feet" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="183" name="cad-back-heights" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="180" name="cad-plate" color="16" fill="1" visible="no" active="yes"/>
+<layer number="181" name="cad-clearance" color="7" fill="1" visible="no" active="yes"/>
+<layer number="182" name="cad-feet" color="7" fill="1" visible="no" active="yes"/>
+<layer number="183" name="cad-back-heights" color="7" fill="1" visible="no" active="yes"/>
 <layer number="184" name="cad-backplate" color="11" fill="1" visible="yes" active="yes"/>
-<layer number="185" name="cad-frontside" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="185" name="cad-frontside" color="7" fill="1" visible="no" active="yes"/>
 <layer number="199" name="Contour" color="7" fill="1" visible="no" active="yes"/>
 <layer number="200" name="200bmp" color="7" fill="1" visible="no" active="yes"/>
 <layer number="201" name="201bmp" color="7" fill="1" visible="no" active="yes"/>
@@ -387,6 +387,43 @@ lip 0.0375</text>
 <circle x="274.955" y="76.835" radius="3.175" width="0.0254" layer="180"/>
 <rectangle x1="339.4075" y1="105.7275" x2="342.5825" y2="108.9025" layer="21"/>
 <rectangle x1="0.9525" y1="27.6225" x2="4.1275" y2="30.7975" layer="21"/>
+<circle x="158.115" y="222.5675" radius="5.715" width="0.0254" layer="184"/>
+<circle x="140.335" y="222.5675" radius="5.715" width="0.0254" layer="184"/>
+<circle x="140.335" y="241.6175" radius="5.715" width="0.0254" layer="184"/>
+<circle x="122.555" y="222.5675" radius="5.715" width="0.0254" layer="184"/>
+<circle x="104.775" y="222.5675" radius="5.715" width="0.0254" layer="184"/>
+<circle x="104.775" y="241.6175" radius="5.715" width="0.0254" layer="184"/>
+<circle x="122.555" y="241.6175" radius="5.715" width="0.0254" layer="184"/>
+<circle x="86.995" y="222.5675" radius="5.715" width="0.0254" layer="184"/>
+<circle x="86.995" y="241.6175" radius="5.715" width="0.0254" layer="184"/>
+<circle x="158.115" y="243.5225" radius="3.175" width="0.0254" layer="184"/>
+<circle x="13.97" y="221.2975" radius="3.175" width="0.0254" layer="184"/>
+<circle x="63.5" y="223.2025" radius="3.175" width="0.0254" layer="184"/>
+<wire x1="49.53" y1="218.1225" x2="49.53" y2="230.1875" width="0.0254" layer="184"/>
+<wire x1="49.53" y1="230.1875" x2="49.8475" y2="230.505" width="0.0254" layer="184" curve="-90"/>
+<wire x1="49.8475" y1="230.505" x2="54.2925" y2="230.505" width="0.0254" layer="184"/>
+<wire x1="54.2925" y1="230.505" x2="54.61" y2="230.1875" width="0.0254" layer="184" curve="-90"/>
+<wire x1="54.61" y1="230.1875" x2="54.61" y2="218.1225" width="0.0254" layer="184"/>
+<wire x1="54.61" y1="218.1225" x2="54.2925" y2="217.805" width="0.0254" layer="184" curve="-90"/>
+<wire x1="54.2925" y1="217.805" x2="49.8475" y2="217.805" width="0.0254" layer="184"/>
+<wire x1="49.8475" y1="217.805" x2="49.53" y2="218.1225" width="0.0254" layer="184" curve="-90"/>
+<wire x1="43.4975" y1="217.805" x2="35.2425" y2="217.805" width="0.0254" layer="184"/>
+<wire x1="35.2425" y1="217.805" x2="34.925" y2="218.1225" width="0.0254" layer="184" curve="-90"/>
+<wire x1="34.925" y1="218.1225" x2="34.925" y2="225.1075" width="0.0254" layer="184"/>
+<wire x1="34.925" y1="225.1075" x2="35.2425" y2="225.425" width="0.0254" layer="184" curve="-90"/>
+<wire x1="35.2425" y1="225.425" x2="43.4975" y2="225.425" width="0.0254" layer="184"/>
+<wire x1="43.4975" y1="225.425" x2="43.815" y2="225.1075" width="0.0254" layer="184" curve="-90"/>
+<wire x1="43.815" y1="225.1075" x2="43.815" y2="218.1225" width="0.0254" layer="184"/>
+<wire x1="43.815" y1="218.1225" x2="43.4975" y2="217.805" width="0.0254" layer="184" curve="-90"/>
+<circle x="24.13" y="222.5675" radius="3.175" width="0.0254" layer="184"/>
+<circle x="2.54" y="230.505" radius="1.27" width="0.0254" layer="184"/>
+<wire x1="173.863" y1="211.582" x2="173.863" y2="252.095" width="0.0254" layer="184"/>
+<wire x1="173.863" y1="252.095" x2="-1.143" y2="252.095" width="0.0254" layer="184"/>
+<wire x1="-1.143" y1="252.095" x2="-1.143" y2="211.582" width="0.0254" layer="184"/>
+<wire x1="-1.143" y1="211.582" x2="173.863" y2="211.582" width="0.0254" layer="184"/>
+<circle x="122.555" y="241.6175" radius="5.715" width="0.0254" layer="184"/>
+<circle x="140.335" y="222.5675" radius="5.715" width="0.0254" layer="184"/>
+<circle x="170.18" y="230.505" radius="1.27" width="0.0254" layer="184"/>
 </plain>
 <libraries>
 <library name="atmel-avr32">
@@ -3326,11 +3363,11 @@ design rules under a new name.</description>
 <element name="J9" library="monome-inc" package="PHA2U" value="PHA2U" x="159.385" y="94.615" smashed="yes" rot="R180">
 <attribute name="NAME" x="154.94" y="88.9" size="1.016" layer="25" font="vector" ratio="18" rot="R90"/>
 </element>
-<element name="R188" library="rc-master-smd" package="R0603" value="330k" x="155.575" y="86.995" smashed="yes" rot="MR0">
+<element name="R188" library="rc-master-smd" package="R0603" value="47k" x="155.575" y="86.995" smashed="yes" rot="MR0">
 <attribute name="NAME" x="156.845" y="85.09" size="1.016" layer="26" font="vector" ratio="18" rot="MR0"/>
 <attribute name="VALUE" x="156.845" y="88.265" size="1.016" layer="28" font="vector" ratio="12" rot="MR0"/>
 </element>
-<element name="R187" library="rc-master-smd" package="R0603" value="47k" x="159.385" y="86.995" smashed="yes" rot="MR180">
+<element name="R187" library="rc-master-smd" package="R0603" value="18k" x="159.385" y="86.995" smashed="yes" rot="MR180">
 <attribute name="NAME" x="161.29" y="85.09" size="1.016" layer="26" font="vector" ratio="18" rot="MR0"/>
 <attribute name="VALUE" x="160.655" y="88.265" size="1.016" layer="28" font="vector" ratio="12" rot="MR0"/>
 </element>
@@ -3594,7 +3631,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="83.82" y="59.69" size="1.016" layer="25" font="vector" ratio="18"/>
 <attribute name="VALUE" x="85.725" y="59.69" size="1.016" layer="27" font="vector" ratio="12"/>
 </element>
-<element name="R45" library="rc-master-smd" package="R0603" value="3.32k" x="108.2675" y="71.12" smashed="yes">
+<element name="R45" library="rc-master-smd" package="R0603" value="3k32" x="108.2675" y="71.12" smashed="yes">
 <attribute name="NAME" x="110.1725" y="69.85" size="1.016" layer="25" font="vector" ratio="18"/>
 <attribute name="VALUE" x="111.125" y="72.39" size="1.016" layer="27" font="vector" ratio="12" rot="R90"/>
 </element>
@@ -4647,7 +4684,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="81.28" y="82.8675" size="1.016" layer="25" font="vector" ratio="18" rot="R270"/>
 <attribute name="VALUE" x="81.28" y="83.185" size="1.016" layer="27" font="vector" ratio="12" rot="R270"/>
 </element>
-<element name="IC8" library="analog-devices" package="SO8" value="AD8607R" x="53.34" y="52.705" smashed="yes">
+<element name="IC8" library="analog-devices" package="SO8" value="AD8606" x="53.34" y="52.705" smashed="yes">
 <attribute name="OC_NEWARK" value="19M8927" x="53.34" y="52.705" size="1.016" layer="27" font="vector" ratio="12" display="off"/>
 <attribute name="MPN" value="AD8607ARMZ-R2" x="53.34" y="52.705" size="1.016" layer="27" font="vector" ratio="12" display="off"/>
 <attribute name="MF" value="" x="53.34" y="52.705" size="1.016" layer="27" font="vector" ratio="12" display="off"/>
@@ -4754,7 +4791,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="208.915" y="65.7225" size="1.016" layer="25" font="vector" ratio="18" rot="R270"/>
 <attribute name="VALUE" x="207.8037" y="68.58" size="0.8128" layer="27" ratio="10" rot="R270"/>
 </element>
-<element name="IC13" library="analog-devices" package="SO8" value="AD8607R" x="211.455" y="26.67" smashed="yes" rot="R90">
+<element name="IC13" library="analog-devices" package="SO8" value="AD8606" x="211.455" y="26.67" smashed="yes" rot="R90">
 <attribute name="OC_NEWARK" value="19M8927" x="211.455" y="26.67" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="AD8607ARMZ-R2" x="211.455" y="26.67" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MF" value="" x="211.455" y="26.67" size="1.778" layer="27" rot="R90" display="off"/>
@@ -4834,7 +4871,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="222.885" y="66.04" size="1.016" layer="25" ratio="18" rot="R90"/>
 <attribute name="VALUE" x="222.5675" y="63.8175" size="0.8128" layer="27" ratio="10" rot="R90"/>
 </element>
-<element name="IC11" library="analog-devices" package="SO8" value="AD8607R" x="208.915" y="42.545" smashed="yes" rot="R270">
+<element name="IC11" library="analog-devices" package="SO8" value="AD8606" x="208.915" y="42.545" smashed="yes" rot="R270">
 <attribute name="OC_NEWARK" value="19M8927" x="209.55" y="42.545" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="AD8607ARMZ-R2" x="209.55" y="42.545" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MF" value="" x="209.55" y="42.545" size="1.778" layer="27" rot="R270" display="off"/>
@@ -4866,7 +4903,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="0.635" y="76.2" size="1.016" layer="25" ratio="18"/>
 <attribute name="VALUE" x="4.1275" y="75.0887" size="0.8128" layer="27" ratio="10"/>
 </element>
-<element name="IC5" library="analog-devices" package="SO8" value="AD8607R" x="11.43" y="70.1675" smashed="yes" rot="R270">
+<element name="IC5" library="analog-devices" package="SO8" value="AD8606" x="11.43" y="70.1675" smashed="yes" rot="R270">
 <attribute name="OC_NEWARK" value="19M8927" x="12.7" y="70.1675" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="AD8607ARMZ-R2" x="12.7" y="70.1675" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MF" value="" x="12.7" y="70.1675" size="1.778" layer="27" rot="R270" display="off"/>
@@ -4938,7 +4975,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="167.64" y="81.5975" size="1.016" layer="25" ratio="18"/>
 <attribute name="VALUE" x="172.4025" y="86.6775" size="0.8128" layer="27" ratio="10" rot="R180"/>
 </element>
-<element name="R192" library="rc-master-smd" package="R0603" value="117k" x="170.18" y="96.52" smashed="yes" rot="MR0">
+<element name="R192" library="rc-master-smd" package="R0603" value="118k" x="170.18" y="96.52" smashed="yes" rot="MR0">
 <attribute name="NAME" x="168.275" y="96.2025" size="1.016" layer="26" ratio="18" rot="MR0"/>
 <attribute name="VALUE" x="171.45" y="94.7737" size="0.8128" layer="28" ratio="10" rot="MR0"/>
 </element>
@@ -5071,7 +5108,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="255.5875" y="64.77" size="1.016" layer="25" ratio="18" rot="R270"/>
 <attribute name="VALUE" x="253.0475" y="67.945" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="IC6" library="analog-devices" package="SO8" value="AD8607R" x="243.84" y="58.42" smashed="yes" rot="R270">
+<element name="IC6" library="analog-devices" package="SO8" value="AD8606" x="243.84" y="58.42" smashed="yes" rot="R270">
 <attribute name="OC_NEWARK" value="19M8927" x="243.84" y="58.42" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="AD8607ARMZ-R2" x="243.84" y="58.42" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MF" value="" x="243.84" y="58.42" size="1.778" layer="27" rot="R270" display="off"/>
@@ -5179,7 +5216,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="275.59" y="64.77" size="1.016" layer="25" ratio="18" rot="R270"/>
 <attribute name="VALUE" x="273.3675" y="67.945" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="IC7" library="analog-devices" package="SO8" value="AD8607R" x="264.16" y="58.42" smashed="yes" rot="R270">
+<element name="IC7" library="analog-devices" package="SO8" value="AD8606" x="264.16" y="58.42" smashed="yes" rot="R270">
 <attribute name="OC_NEWARK" value="19M8927" x="264.16" y="58.42" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="AD8607ARMZ-R2" x="264.16" y="58.42" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MF" value="" x="264.16" y="58.42" size="1.778" layer="27" rot="R270" display="off"/>

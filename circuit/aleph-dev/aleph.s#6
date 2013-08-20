@@ -18642,9 +18642,9 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="GND74" library="supply" deviceset="GND" device=""/>
 <part name="V49" library="supply" deviceset="+3V3A" device=""/>
 <part name="C148" library="rc-master-smd" deviceset="C_" device="0603" value="100n"/>
-<part name="L2" library="rc-master-smd" deviceset="L_" device="1206" value="600"/>
+<part name="L2" library="rc-master-smd" deviceset="L_" device="0603" value="600"/>
 <part name="C14" library="rc-master-smd" deviceset="CP_" device="1206/T" value="10u"/>
-<part name="L3" library="rc-master-smd" deviceset="L_" device="1206" value="600"/>
+<part name="L3" library="rc-master-smd" deviceset="L_" device="0603" value="600"/>
 <part name="P2" library="monome-inc" deviceset="EVJ-POT" device=""/>
 <part name="FRAME8" library="frames" deviceset="TABL_L" device=""/>
 <part name="U24" library="monome-inc" deviceset="AD5686R" device=""/>
@@ -18931,8 +18931,8 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="U3" library="diode" deviceset="BAS70-04" device=""/>
 <part name="GND80" library="supply" deviceset="GND" device=""/>
 <part name="V40" library="supply" deviceset="+3V3" device=""/>
-<part name="C29" library="rc-master-smd" deviceset="C_" device="0603" value="12p"/>
-<part name="C30" library="rc-master-smd" deviceset="C_" device="0603" value="12p"/>
+<part name="C29" library="rc-master-smd" deviceset="C_" device="0603" value="8p"/>
+<part name="C30" library="rc-master-smd" deviceset="C_" device="0603" value="8p"/>
 <part name="GND81" library="supply" deviceset="GND" device=""/>
 <part name="GND82" library="supply" deviceset="GND" device=""/>
 <part name="P1" library="con-headers-jp" deviceset="M-1X05-" device="SIP-100-32"/>
@@ -20373,7 +20373,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <instance part="J9" gate="G$1" x="210.82" y="241.3"/>
 <instance part="R188" gate="G$1" x="210.82" y="251.46" rot="R180"/>
 <instance part="R187" gate="G$1" x="227.33" y="238.76"/>
-<instance part="GND46" gate="1" x="238.76" y="232.41"/>
+<instance part="GND46" gate="1" x="241.3" y="232.41"/>
 <instance part="GND1" gate="1" x="157.48" y="147.32"/>
 <instance part="S1" gate="G$1" x="261.62" y="53.34"/>
 <instance part="V3" gate="G$1" x="243.84" y="50.8"/>
@@ -20394,7 +20394,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <instance part="GND5" gate="1" x="81.28" y="160.02"/>
 <instance part="U16" gate="G$1" x="60.96" y="208.28"/>
 <instance part="V6" gate="G$1" x="15.24" y="172.72" rot="R90"/>
-<instance part="R193" gate="G$1" x="232.41" y="243.84"/>
+<instance part="R193" gate="G$1" x="234.95" y="243.84"/>
 <instance part="C228" gate="G$1" x="339.09" y="218.44"/>
 <instance part="GND62" gate="1" x="331.47" y="204.47"/>
 <instance part="GND63" gate="1" x="351.79" y="204.47"/>
@@ -20529,11 +20529,11 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <pinref part="C5" gate="G$1" pin="-"/>
 </segment>
 <segment>
-<wire x1="238.76" y1="238.76" x2="238.76" y2="234.95" width="0.1524" layer="91"/>
-<wire x1="232.41" y1="238.76" x2="238.76" y2="238.76" width="0.1524" layer="91"/>
-<wire x1="237.49" y1="243.84" x2="238.76" y2="243.84" width="0.1524" layer="91"/>
-<wire x1="238.76" y1="243.84" x2="238.76" y2="238.76" width="0.1524" layer="91"/>
-<junction x="238.76" y="238.76"/>
+<wire x1="241.3" y1="238.76" x2="241.3" y2="234.95" width="0.1524" layer="91"/>
+<wire x1="232.41" y1="238.76" x2="241.3" y2="238.76" width="0.1524" layer="91"/>
+<wire x1="240.03" y1="243.84" x2="241.3" y2="243.84" width="0.1524" layer="91"/>
+<wire x1="241.3" y1="243.84" x2="241.3" y2="238.76" width="0.1524" layer="91"/>
+<junction x="241.3" y="238.76"/>
 <pinref part="GND46" gate="1" pin="GND"/>
 <pinref part="R187" gate="G$1" pin="2"/>
 <pinref part="R193" gate="G$1" pin="2"/>
@@ -21362,7 +21362,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 </net>
 <net name="N$50" class="0">
 <segment>
-<wire x1="218.44" y1="243.84" x2="227.33" y2="243.84" width="0.1524" layer="91"/>
+<wire x1="218.44" y1="243.84" x2="229.87" y2="243.84" width="0.1524" layer="91"/>
 <pinref part="J9" gate="G$1" pin="1"/>
 <pinref part="R193" gate="G$1" pin="1"/>
 </segment>

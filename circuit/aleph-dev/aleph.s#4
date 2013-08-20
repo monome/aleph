@@ -18642,9 +18642,9 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="GND74" library="supply" deviceset="GND" device=""/>
 <part name="V49" library="supply" deviceset="+3V3A" device=""/>
 <part name="C148" library="rc-master-smd" deviceset="C_" device="0603" value="100n"/>
-<part name="L2" library="rc-master-smd" deviceset="L_" device="1206" value="600"/>
+<part name="L2" library="rc-master-smd" deviceset="L_" device="0603" value="600"/>
 <part name="C14" library="rc-master-smd" deviceset="CP_" device="1206/T" value="10u"/>
-<part name="L3" library="rc-master-smd" deviceset="L_" device="1206" value="600"/>
+<part name="L3" library="rc-master-smd" deviceset="L_" device="0603" value="600"/>
 <part name="P2" library="monome-inc" deviceset="EVJ-POT" device=""/>
 <part name="FRAME8" library="frames" deviceset="TABL_L" device=""/>
 <part name="U24" library="monome-inc" deviceset="AD5686R" device=""/>
@@ -18705,7 +18705,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="C190" library="rc-master-smd" deviceset="CP_" device="1206/T" value="4.7u"/>
 <part name="C61" library="rc-master-smd" deviceset="C_" device="0603" value="100p"/>
 <part name="AGND27" library="supply" deviceset="AGND" device=""/>
-<part name="L9" library="rc-master-smd" deviceset="L_" device="1206" value="600"/>
+<part name="L9" library="rc-master-smd" deviceset="L_" device="0603" value="600"/>
 <part name="R76" library="rc-master-smd" deviceset="R_" device="0603" value="5k76"/>
 <part name="IC9" library="analog-devices" deviceset="AD8607" device="R" value="AD8606"/>
 <part name="AGND28" library="supply" deviceset="AGND" device=""/>
@@ -18764,7 +18764,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="C149" library="rc-master-smd" deviceset="CP_" device="1206/T" value="4.7u"/>
 <part name="C96" library="rc-master-smd" deviceset="C_" device="0603" value="100p"/>
 <part name="AGND32" library="supply" deviceset="AGND" device=""/>
-<part name="L10" library="rc-master-smd" deviceset="L_" device="1206" value="600"/>
+<part name="L10" library="rc-master-smd" deviceset="L_" device="0603" value="600"/>
 <part name="R117" library="rc-master-smd" deviceset="R_" device="0603" value="5k76"/>
 <part name="IC12" library="analog-devices" deviceset="AD8607" device="R" value="AD8606"/>
 <part name="AGND33" library="supply" deviceset="AGND" device=""/>
@@ -18786,7 +18786,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="C211" library="rc-master-smd" deviceset="CP_" device="1206/T" value="4.7u"/>
 <part name="C38" library="rc-master-smd" deviceset="C_" device="0603" value="100p"/>
 <part name="AGND51" library="supply" deviceset="AGND" device=""/>
-<part name="L6" library="rc-master-smd" deviceset="L_" device="1206" value="600"/>
+<part name="L6" library="rc-master-smd" deviceset="L_" device="0603" value="600"/>
 <part name="R47" library="rc-master-smd" deviceset="R_" device="0603" value="5k76"/>
 <part name="IC2" library="analog-devices" deviceset="AD8607" device="R" value="AD8606"/>
 <part name="AGND52" library="supply" deviceset="AGND" device=""/>
@@ -18808,7 +18808,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="C210" library="rc-master-smd" deviceset="CP_" device="1206/T" value="4.7u"/>
 <part name="C40" library="rc-master-smd" deviceset="C_" device="0603" value="100p"/>
 <part name="AGND60" library="supply" deviceset="AGND" device=""/>
-<part name="L7" library="rc-master-smd" deviceset="L_" device="1206" value="600"/>
+<part name="L7" library="rc-master-smd" deviceset="L_" device="0603" value="600"/>
 <part name="R49" library="rc-master-smd" deviceset="R_" device="0603" value="5k76"/>
 <part name="IC3" library="analog-devices" deviceset="AD8607" device="R" value="AD8606"/>
 <part name="AGND61" library="supply" deviceset="AGND" device=""/>
@@ -18855,7 +18855,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="AGND65" library="supply" deviceset="AGND" device=""/>
 <part name="V54" library="supply" deviceset="+12V" device=""/>
 <part name="GND75" library="supply" deviceset="GND" device=""/>
-<part name="L5" library="rc-master-smd" deviceset="L_" device="1206" value="600"/>
+<part name="L5" library="rc-master-smd" deviceset="L_" device="0603" value="600"/>
 <part name="GND4" library="supply" deviceset="GND" device=""/>
 <part name="J10" library="monome-inc" deviceset="PHA2U" device=""/>
 <part name="AGND49" library="supply" deviceset="AGND" device=""/>
@@ -18871,7 +18871,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="R34" library="rc-master-smd" deviceset="R_" device="0603" value="20k"/>
 <part name="R35" library="rc-master-smd" deviceset="R_" device="0603" value="20k"/>
 <part name="C44" library="rc-master-smd" deviceset="C_" device="0603" value="1u"/>
-<part name="IC13" library="analog-devices" deviceset="AD8607" device="R"/>
+<part name="IC13" library="analog-devices" deviceset="AD8607" device="R" value="AD8606"/>
 <part name="V71" library="supply" deviceset="+5VA" device=""/>
 <part name="AGND69" library="supply" deviceset="AGND" device=""/>
 <part name="AGND70" library="supply" deviceset="AGND" device=""/>
@@ -18919,7 +18919,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="AGND41" library="supply" deviceset="AGND" device=""/>
 <part name="C26" library="rc-master-smd" deviceset="C_" device="0603" value="100n"/>
 <part name="AGND42" library="supply" deviceset="AGND" device=""/>
-<part name="IC5" library="analog-devices" deviceset="AD8607" device="R"/>
+<part name="IC5" library="analog-devices" deviceset="AD8607" device="R" value="AD8606"/>
 <part name="V38" library="supply" deviceset="+5VA" device=""/>
 <part name="AGND66" library="supply" deviceset="AGND" device=""/>
 <part name="C32" library="rc-master-smd" deviceset="C_" device="0603" value="100n"/>
