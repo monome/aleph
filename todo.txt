@@ -1,0 +1,75 @@
+
+
+b todo
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+accounting // investment
+estimate // production expenses
+
+test ADC protection.
+
+soft power control, redo resistor values
+
+http://www.myfonts.com/fonts/fonts-by-alex/core-humanist-sans/
+
+
+
+e todo
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+blackfin fixes
+-- add DAC support in core framework.
+-- implement more modules 
+----- poly synth
+----- add/test audio filters
+
+USB host support for more devices.
+-- MIDI
+-- gamepad
+-- FTDI
+
+better interrupt management.
+-- if a routine needs to disable interrupts, it should check if they are enabled first.
+-- might be a better use of priority levels
+-- might be necessary to choose specific IRQ lines to enable/disable. macro or inline.
+
+I2C.
+
+optimizations.
+
+more operators.
+-- ADC
+-- timer
+-- basic sequencer
+-- etc
+
+BEES
+-- ui stuff
+
+better parameter scaling / setting (lookups or smarter dynamic scaling ).
+
+standalones.
+
+
+
+team todo
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+text
+	benchmarking
+	concise description
+	technical/functional/abstract // whitepaper
+	documentation // framework/toolchain and specs
+	manual // instructional
+	bees ui
+
+
+	
+think about
+	dsp page (integrate with setups page?)
+	symbols when page changing
+	extended menu via last button (up triangle)
+	macros in routing mode, for example: insert trigger here (preserves routing to existing target)
+	operator page, each operator can have menu button which calls custom UI (ie, list editor)
+	remote control system-- all bees functions (ie create operator, etc) callable via USB/serial
+
