@@ -47,6 +47,15 @@ typedef struct _drumsData {
 } drumsData;
 
 
+typedef struct _drum_voice {
+  filter_svf* svf;
+  env_asr* envAmp;
+  env_asr* envHz;
+  env_asr* envRes;
+  lcprng* rngH;
+  lcprng* rngL;
+} drum_voice_t;
+
 //-------------------------
 //----- extern vars (initialized here)
 moduleData * gModuleData; // module data
@@ -62,26 +71,37 @@ u32 dbgCount = 0;
 
 // pointer to local module data, initialize at top of SDRAM
 static drumsData * data;
-
 //-- static allocation (SRAM) for variables that are small and/or frequently accessed:
-// two random number generators for low/high words of very white noise:
-static lcprng* rngH;
-static lcprng* rngL;
-// filter
-static filter_svf* svf;
-// amp envelope
-static env_asr*  ampEnv;
-// parameters
-static fract32 inAmp0;
-static fract32 inAmp1;
-static fract32 inAmp2;
-static fract32 inAmp3;
-static fract32 noiseAmp;
-// output
-static fract32 frameVal;
+drum_voice_t voice;
+
+
 
 //-----------------------------
 //----- static functions
+
+// initialize voice
+void drum_voice_init(void* mem) {
+  drum_voice_t* voice = (drum_voice_t*)mem;
+
+  voice->envAmp = (env_asr*)malloc(sizeof(env_asr));
+  env_asr_init(voice->envAmp);
+  voice->envHz = (env_asr*)malloc(sizeof(env_asr));
+  env_asr_init(voice->envHz);
+  voice->envRes = (env_asr*)malloc(sizeof(env_asr));
+  env_asr_init(voice->envRes);
+  voice->svf = (filter_svf*)malloc(sizeof(filter_svf));
+  filter_svf_init(voice->svf);
+  voice->rngH = (lcprng*)malloc(sizeof(lcprng));
+  lcprng_reset(voice->rngH);
+  voice->rngL = (lcprng*)malloc(sizeof(lcprng));
+  lcprng_reset(voice->rngL);
+}
+
+// next value of voice
+fract32 drum_voice_next(drum_voice_t* voice) {
+  
+}
+
 
 // get the next value of white noise
 static fract32 noise_next(void) {

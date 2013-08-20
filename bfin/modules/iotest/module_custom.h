@@ -22,11 +22,7 @@ enum params {
   eParamAmp2,
 
   eParamIoAmp0,
-  eParamIoAmp1,  eParamGate,
-  eParamAtkDur,
-  eParamRelDur,
-  eParamAtkCurve,
-  eParamRelCurve,
+  eParamIoAmp1, 
 
   eParamIoAmp2,
   eParamIoAmp3,

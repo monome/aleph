@@ -11,7 +11,7 @@
 #include <string.h>
 // aleph-common
 #include "fix.h"
-#include "simple_string.h"
+//#include "simple_string.h"
 // audio lib
 #include "env.h"
 //#include "filters.h"
