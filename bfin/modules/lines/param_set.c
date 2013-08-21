@@ -63,10 +63,10 @@ void module_set_param(u32 idx, pval v) {
     /*   //    delay_set_rate(&lines[3], v.fix); */
     /*   break; */
   case eParam_write0 :
-    delay_set_write(&(lines[0]), FIX16_FRACT_TRUNC(v.fix));
+    delay_set_write(&(lines[0]), v > 0);
     break;
   case eParam_write1 :
-    delay_set_write(&(lines[1]), FIX16_FRACT_TRUNC(v.fix));
+    delay_set_write(&(lines[1]), v > 0);
     break;
     /* case eParam_write2 : */
     /*   delay_set_write(&lines[2], FIX16_FRACT_TRUNC(v.fix)); */
@@ -75,10 +75,20 @@ void module_set_param(u32 idx, pval v) {
     /*   delay_set_write(&lines[3] , FIX16_FRACT_TRUNC(v.fix)); */
     /*   break; */
   case eParam_pre0 :
-    delay_set_pre(&(lines[0]), FIX16_FRACT_TRUNC(v.fix));
+    if(v.fix == FIX16_ONE) {
+      // negative == full
+      delay_set_pre(&(lines[0]), -1);
+    } else {
+      delay_set_pre(&(lines[0]), FIX16_FRACT_TRUNC(v.fix));
+    }
     break;
   case eParam_pre1 :
-    delay_set_pre(&(lines[1]), FIX16_FRACT_TRUNC(v.fix));
+    if(v.fix == FIX16_ONE) {
+      // negative == full
+      delay_set_pre(&(lines[1]), -1);
+    } else {
+      delay_set_pre(&(lines[1]), FIX16_FRACT_TRUNC(v.fix));
+    }
     break;
     /* case eParam_erase2 : */
     /*   delay_set_pre(&lines[2], FIX16_FRACT_TRUNC(v.fix)); */

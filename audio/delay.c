@@ -31,23 +31,21 @@ extern fract32 delay_next(delayLine* dl, fract32 in) {
       // clear
       buffer_tapN_write(&(dl->tapWr), 0);
     }
-  } else {
-    if(dl->preLevel < 0) {
-      if(dl->write) {
-	// overdub
-	buffer_tapN_add(&dl->tapWr, in);
-      } else {
-	// no change
-	;;
-      }
+  } else if(dl->preLevel < 0) { // consider <0 to be ==1
+    if(dl->write) {
+      // overdub
+      buffer_tapN_add(&dl->tapWr, in);
     } else {
-      if(dl->write) {
-	// no write, attenuuate
-	buffer_tapN_mix(&(dl->tapWr), 0, dl->preLevel);
-      } else {
-	// mix
+      // no change
+      ;;
+    }
+  } else {
+    if(dl->write) {
+      // no write, attenuate only 
+      buffer_tapN_mix(&(dl->tapWr), 0, dl->preLevel);
+    } else {
+      // mix
 	buffer_tapN_mix(&(dl->tapWr), in, dl->preLevel);
-      }
     }
   }
   readVal = buffer_tapN_read( &(dl->tapRd) );
