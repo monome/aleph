@@ -2,7 +2,7 @@ audiolib = ../../../audio
 common = ../../../common
 
 module_name = mono
-module_obj = mono_fm.o \
+module_obj = mono.o  \
 	$(audiolib)/env.o \
 	$(audiolib)/filter_1p.o \
 	$(audiolib)/table.o \
@@ -15,6 +15,7 @@ all: aleph-$(module_name).ldr
 include ../../core.mk
 
 CFLAGS += -D ARCH_BFIN=1
+CFLAGS += -g
 #CFLAGS += --verbose
 
 $(module_obj): %.o : %.c	

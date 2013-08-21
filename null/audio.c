@@ -23,11 +23,7 @@
 #include "types.h"
 #include "audio.h"
 
-// hm, undefined
-fract32 in0;
-fract32 in1;
-fract32 in2;
-fract32 in3;
+fract32 in[4];
 
 //=========================
 //===== variables
@@ -50,7 +46,10 @@ static int paCallback( const void *inputBuffer,
     float *out = (float*)outputBuffer;
     u32 samp;
 
-    module_process_frame(in, out);
+    module_process_frame( in, out);
+
+    
+
     //// TEST: wire
     //////////
     /* for(samp=0;  samp<(BLOCKSIZE * NUMCHANNELS); samp++) { */

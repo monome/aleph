@@ -42,6 +42,7 @@ void handle_key(u16 ch) {
   switch(ch) {
   case CMD_KEY_PARAM:
 
+    //pnum = module_get_num_params();
     pnum = module_get_num_params();
     for(i=0; i<pnum; i++) {
       printf("\rparam %d: %s\n", i, gModuleData->paramDesc[i].label);
