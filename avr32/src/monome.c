@@ -126,7 +126,7 @@ static void grid_map_mext(u8 x, u8 y, const u8* data);
 
 //static void grid_map_level_40h(u8 x, u8 val);
 //static void grid_map_level_series(u8 x, u8 y, u8* data);
-static void grid_map_level_mext(u8 x, u8 y, const u8* data);
+//static void grid_map_level_mext(u8 x, u8 y, const u8* data);
 
 //static void ring_set_mext(u8 n, u8 rho, u8 val);
 static void ring_map_mext(u8 n, u8* data);
@@ -163,11 +163,11 @@ static grid_map_t gridMapFuncs[eProtocolNumProtocols] = {
 
 
 // grid/level/map
-static grid_level_map_t gridMapLevelFuncs[eProtocolNumProtocols] = {
-  NULL, // unsupported
-  NULL, // unsupported
-  &grid_map_level_mext,
-};
+/* static grid_level_map_t gridMapLevelFuncs[eProtocolNumProtocols] = { */
+/*   NULL, // unsupported */
+/*   NULL, // unsupported */
+/*   &grid_map_level_mext, */
+/* }; */
 
 static ring_map_t ringMapFuncs[eProtocolNumProtocols] = {
   NULL, // unsupported
@@ -674,9 +674,9 @@ static void grid_map_series(u8 x, u8 y, const u8* data) {
   ftdi_write(txBuf, MONOME_QUAD_LEDS + 1);  
 }
 
-static void grid_map_level_mext(u8 x, u8 y, const u8* data) {
-  // TODO
-}
+/* static void grid_map_level_mext(u8 x, u8 y, const u8* data) { */
+/*   // TODO */
+/* } */
 
 static void ring_map_mext(u8 n, u8* data) {
   // TODO

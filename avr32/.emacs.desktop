@@ -2,7 +2,7 @@
 ;; --------------------------------------------------------------------------
 ;; Desktop File for Emacs
 ;; --------------------------------------------------------------------------
-;; Created Wed Jul 24 10:12:07 2013
+;; Created Wed Aug 21 12:29:06 2013
 ;; Desktop file format version 206
 ;; Emacs version 23.3.1
 
@@ -28,6 +28,17 @@
   nil)
 
 (desktop-create-buffer 206
+  "/home/emb/aleph/todo.txt"
+  "todo.txt"
+  'text-mode
+  nil
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
   "/home/emb/aleph/avr32/src/flash.h"
   "flash.h"
   'c-mode
@@ -43,7 +54,7 @@
   "avr32"
   'dired-mode
   nil
-  852
+  774
   '(nil nil)
   t
   '("/home/emb/aleph/avr32/")
@@ -109,8 +120,8 @@
   "common"
   'dired-mode
   nil
-  1184
-  '(1184 nil)
+  1083
+  '(1083 nil)
   t
   '("/home/emb/aleph/common/")
   nil)
@@ -253,28 +264,6 @@
   'c-mode
   '(abbrev-mode)
   998
-  '(nil nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/aleph/common/simple_string.h"
-  "simple_string.h"
-  'c-mode
-  '(abbrev-mode)
-  269
-  '(nil nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
-  "/home/emb/aleph/common/simple_string.c"
-  "simple_string.c"
-  'c-mode
-  '(abbrev-mode)
-  1
   '(nil nil)
   nil
   nil

@@ -51,7 +51,7 @@ static swTimer_t monomePollTimer;
 // poll midi device
 static swTimer_t midiPollTimer;
 // refresh midi device
-static swTimer_t midiRefreshTimer;
+//static swTimer_t midiRefreshTimer;
 //// FIXME: this is bees-specific so should go in app code.
 //// will make a general overhall of this timers module.
 // send param changes

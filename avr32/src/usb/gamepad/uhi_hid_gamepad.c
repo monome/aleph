@@ -224,8 +224,8 @@ static void uhi_hid_gamepad_report_reception(
 					   uhd_trans_status_t status,
 					   iram_size_t nb_transfered)
 {
-  uint8_t state_prev;
-  uint8_t state_new;
+  //  uint8_t state_prev;
+  //uint8_t state_new;
 
   int i;
 
