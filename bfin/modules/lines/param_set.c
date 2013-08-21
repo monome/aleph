@@ -74,17 +74,17 @@ void module_set_param(u32 idx, pval v) {
     /* case eParam_write3 : */
     /*   delay_set_write(&lines[3] , FIX16_FRACT_TRUNC(v.fix)); */
     /*   break; */
-  case eParam_erase0 :
-    delay_set_erase(&(lines[0]), FIX16_FRACT_TRUNC(v.fix));
+  case eParam_pre0 :
+    delay_set_pre(&(lines[0]), FIX16_FRACT_TRUNC(v.fix));
     break;
-  case eParam_erase1 :
-    delay_set_erase(&(lines[1]), FIX16_FRACT_TRUNC(v.fix));
+  case eParam_pre1 :
+    delay_set_pre(&(lines[1]), FIX16_FRACT_TRUNC(v.fix));
     break;
     /* case eParam_erase2 : */
-    /*   delay_set_erase(&lines[2], FIX16_FRACT_TRUNC(v.fix)); */
+    /*   delay_set_pre(&lines[2], FIX16_FRACT_TRUNC(v.fix)); */
     /*   break; */
     /* case eParam_erase3 : */
-    /*   delay_set_erase(&lines[3], FIX16_FRACT_TRUNC(v.fix)); */
+    /*   delay_set_prex(&lines[3], FIX16_FRACT_TRUNC(v.fix)); */
     /*   break; */
   case eParam_hz0 :
     filter_svf_set_hz(&(svf[0]), v.fix);

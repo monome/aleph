@@ -24,9 +24,9 @@ CROSS_COMPILE = bfin-elf-
 CC = $(CROSS_COMPILE)gcc
 LDR = $(CROSS_COMPILE)ldr
 CPU = bf533
-CFLAGS += -Wall -g -mcpu=$(CPU) $(INC)
-# CFLAGS += -00 # debug
-CFLAGS += -02
+CFLAGS += -Wall -mcpu=$(CPU) $(INC)
+CFLAGS += -00 -g # debug
+# CFLAGS += -02
 
 
 LDFLAGS += -mcpu=$(CPU)

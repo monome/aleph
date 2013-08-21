@@ -6,6 +6,10 @@ aleph.
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 HOW IT WORKS:
 
+
+----------------------------
+------ hardware:
+
 aleph contains two processors:
 
 1.	atmel AVR32 A0512.
@@ -22,13 +26,24 @@ to run a given audio program, the controller resets the dsp and sends a bootable
 with the dsp running, the same SPI bus carries parameter changes.
 
 audio programs share a common format and protocol, much like an Audio Unit or VST plugin in software. 
-each has a number of parameters and a protocol to describe them.	
+each has a number of settable parameters, and metadata/descriptors for each.
 
 the controller has a custom bootloader, which runs when a certain key combination is detected at powerup.
 this bootloader is capable of flashing the internal memory with a new executable binary (.elf)
 
+
+----------------------------------
+---- software:
+
+aleph will ship with a controller application called BEES. this is a relatively large and complex program designed to be as general-purpose as possible. it can arbitrarily and dynamically route and process control rate input, mangage multiple audio modules, store and recall configurations from sdcard.
+
+but for some users and applications, it may make more sense to use or develop a single-purpose application (e.g. a loop pedal, monosynth, or some exotic experiment.) to encourage this kind of work, we will try to provide a relatively high-level API over the layers of software that communicate with the various hardware peripherals attached to the controller. the app developer will presented with a simple event callback for handling UI or controller input, and an array of functions for sending data to the dsp, to the screen, or to attached digital devices such as monomes, laptops, midi devices, and other alephs.
+
+the dsp side of the aleph presents another area of extendability. the different audio modules are similarly simple, building on both a hardware-specific firmware layer and a library of abstract fixed-point audio processors.
+
+
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-CODE STRUCTURE
+CODE ORGANIZATION:
 
 -----------------------
 ----- controller :
@@ -41,7 +56,7 @@ aleph/asf-x.x.x :
 	a copy of the Atmel Software Framework.	
 	this contains low-level drivers and utilies provided by Atmel, lightly modified by us.
 
-aleph/apps/ : 
+aleph/apps : 
 	contains a number of project directories which define actual functionality for the controller.
 	each directory should contain app-specific sources and Makefile.
 
@@ -65,11 +80,11 @@ aleph/bfin/src:
 	and should be changed only with great care to avoid damaging the proces
 
 aleph/bfin/modules :
-	contains a number of project directories for specific audio modules.	
+	contains a number of project directories for specific audio modules.
 	
 aleph/audio : 
 	common audio functions implemented in fixed-point for speed on the blackfin,
-	(envelopes, filters, buffers, oscillators, etc)
+	(envelopes, filters, buffers, oscillators, etc);
 	these should be freely added to as needed by new modules.	
 	currently there is no rigid class structure to these things, but we could impose one.
 

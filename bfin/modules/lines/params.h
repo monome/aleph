@@ -8,7 +8,7 @@ enum params {
   eParam_loop0,
   eParam_rate0,
   eParam_write0,
-  eParam_erase0,
+  eParam_pre0,
   eParam_pos_write0,
   eParam_pos_read0,
 
@@ -16,7 +16,7 @@ enum params {
   eParam_loop1,
   eParam_rate1,
   eParam_write1,
-  eParam_erase1,
+  eParam_pre1,
   eParam_pos_write1,
   eParam_pos_read1,
 

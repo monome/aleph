@@ -30,11 +30,11 @@ gModuleData->paramDesc[eParam_write0].type = PARAM_TYPE_FIX;
 gModuleData->paramDesc[eParam_write0].min = 0x00000000; 
 gModuleData->paramDesc[eParam_write0].max = 0x00010000; 
 
-strcpy(gModuleData->paramDesc[eParam_erase0].label, "erase0");
-strcpy(gModuleData->paramDesc[eParam_erase0].unit, "u");
-gModuleData->paramDesc[eParam_erase0].type = PARAM_TYPE_FIX; 
-gModuleData->paramDesc[eParam_erase0].min = 0x00000000; 
-gModuleData->paramDesc[eParam_erase0].max = 0x00010000; 
+strcpy(gModuleData->paramDesc[eParam_pre0].label, "pre0");
+strcpy(gModuleData->paramDesc[eParam_pre0].unit, "u");
+gModuleData->paramDesc[eParam_pre0].type = PARAM_TYPE_FIX; 
+gModuleData->paramDesc[eParam_pre0].min = 0x00000000; 
+gModuleData->paramDesc[eParam_pre0].max = 0x00010000; 
 
 strcpy(gModuleData->paramDesc[eParam_pos_write0].label, "pos_write0");
 strcpy(gModuleData->paramDesc[eParam_pos_write0].unit, "s");
@@ -72,11 +72,11 @@ gModuleData->paramDesc[eParam_write1].type = PARAM_TYPE_FIX;
 gModuleData->paramDesc[eParam_write1].min = 0x00000000; 
 gModuleData->paramDesc[eParam_write1].max = 0x00010000; 
 
-strcpy(gModuleData->paramDesc[eParam_erase1].label, "erase1");
-strcpy(gModuleData->paramDesc[eParam_erase1].unit, "u");
-gModuleData->paramDesc[eParam_erase1].type = PARAM_TYPE_FIX; 
-gModuleData->paramDesc[eParam_erase1].min = 0x00000000; 
-gModuleData->paramDesc[eParam_erase1].max = 0x00010000; 
+strcpy(gModuleData->paramDesc[eParam_pre1].label, "pre1");
+strcpy(gModuleData->paramDesc[eParam_pre1].unit, "u");
+gModuleData->paramDesc[eParam_pre1].type = PARAM_TYPE_FIX; 
+gModuleData->paramDesc[eParam_pre1].min = 0x00000000; 
+gModuleData->paramDesc[eParam_pre1].max = 0x00010000; 
 
 strcpy(gModuleData->paramDesc[eParam_pos_write1].label, "pos_write1");
 strcpy(gModuleData->paramDesc[eParam_pos_write1].unit, "s");
