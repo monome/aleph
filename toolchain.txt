@@ -84,13 +84,15 @@ get the most recent release for your architecture (2012-RC2 as of this writing),
 example: 
 visit: http://sourceforge.net/projects/adi-toolchain/files/2012R2/2012R2-RC2/i386/blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2/download
 
-:> cd ~/Downloads
+:> cd ~/Downloads [or wherever]
 :> su [probably]
 :> mv blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2 /
 :> cd /
 :> tar -xjvf blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2
 :> export PATH=$PATH:/opt/uClinux/bfin-elf/bin
 
-of course you can use a different location if you like. you probably also want to add the path to your .bashrc or whatever.
+the toolchain will be extracted to ./opt/uClinux by default.
+of course you can use a different location if you like.
+you probably also want to add the path to your .bashrc or whatever.
 
 you should now be able to run 'make' from aleph/bfin/modules/lines or any other module.
