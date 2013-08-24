@@ -22,8 +22,6 @@ typedef union { f32 fl; fract32 fr; } fu;
 
 
 ////////////////////
-/// FIXME: i want to inline these interpolated lookups in several modules,
-/// but can't figure out how to do it without multiple definition errors...
 // lookup given real index in 16.16
 fract32 table_lookup_idx(fract32* tab, u32 size, fix16 idx) {
   fract32 a, b, f;
@@ -46,7 +44,7 @@ fract32 table_lookup_fract(fract32* tab, u32 size, fract32 phase) {
   } else {
     idx  = (phase >> 1) + 0x3fffffff;
   } 
-  return table_lookup_idx(tab, size,idx);
+  return table_lookup_idx(tab, size, idx);
 }
 /////////////////////
 

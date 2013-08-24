@@ -18,37 +18,46 @@
 #include "fix.h"
 #include "fract_math.h"
 #include "sin_fr32.h"
-
+#include "table.h"
 #include "filter_svf.h"
 
 //=======================================================
 //===== variables
 
-// a 
-#define NUM_
-static fract32 * SVF_RQ_TABSIZE;
+// res->q table size
+#define SVF_Q_TAB_SIZE 512
+#define SVF_Q_TAB_SIZE_1 511
+// shift from [0,1] in fr32 to [0, tabsize) in fix16
+#define SVF_Q_TAB_RSHIFT 6
+
+// tables for q and scale from res
+static fract32 svfQTab [SVF_Q_TAB_SIZE];
+static fract32 svfScaleTab [SVF_Q_TAB_SIZE];
+// init flag so we can share one read-only copy
+static u8 svfQscaleTabInit = 0;
 
 //=====================================================
 //===== static functions
 
+static void svf_q_table_init(void);
 //static void filter_svf_calc_freq(filter_svf* f);
 static void filter_svf_calc_reson(filter_svf* f);
 
 
-/* static void filter_svf_calc_freq(filter_svf* f) { */
-/*   //// way too slow if it happens a lot */
-/*     float tmp = fix16_to_float(f->hz) / (float)SAMPLERATE; */
-/*     tmp = sinf(M_PI * tmp) * 2.f; */
-/*   // coarse approximation, no sine */
-/*   /\* float tmp = fix16_to_float(f->hz) / (float)SAMPLERATE * 2.f; *\/ */
-/*     f->freq = float_to_fract32(tmp); */
-/*   /\* printf("\r\n set normalized frequency: %f", f->freq); *\/ */
+static void filter_svf_calc_freq(filter_svf* f) {
+  //// way too slow if it happens a lot
+  /*   float tmp = fix16_to_float(f->hz) / (float)SAMPLERATE; */
+  /*   tmp = sinf(M_PI * tmp) * 2.f; */
+  /* // coarse approximation, no sine */
+  /* /\* float tmp = fix16_to_float(f->hz) / (float)SAMPLERATE * 2.f; *\/ */
+  /*   f->freq = float_to_fract32(tmp); */
+  /* printf("\r\n set normalized frequency: %f", f->freq); */
 
-/*   // coarse approximation, no sine: */
-/*   //  f->freq = shl_fr1x32(float_to_fr32(fix16_to_float(f->hz) / (float)SAMPLERATE), 2); */
-/*   //  f->freq = float_to_fr32(fix16_to_float(f->hz) / (float)SAMPLERATE); */
-/*   //  f->freq = (f->hz & 0xffff) << 16; //fix16_fract_trunc(f->hz); */
-/* } */
+  // coarse approximation, no sine:
+  //    f->freq = shl_fr1x32(float_to_fr32(fix16_to_float(f->hz) / (float)SAMPLERATE), 2);
+  //    f->freq = float_to_fr32(fix16_to_float(f->hz) / (float)SAMPLERATE);
+  //    f->freq = (f->hz & 0xffff) << 16; //fix16_fract_trunc(f->hz);
+}
 
 
 static void filter_svf_calc_reson(filter_svf* f) {
@@ -58,9 +67,17 @@ static void filter_svf_calc_reson(filter_svf* f) {
    /* f->scale = sqrt(f->rq);  */
 
     /// directly?
-  //  f->rq = FRACT_FIX16(f->reson))
-  //  f->rq = f->reson;
-  //  f->scale = FIX16_FRACT( fix16_sqrt(f->reson) );
+  //  f->rq = FRACT_FIX16(f->reson));
+  f->rq = f->reson;
+  f->scale = FIX16_FRACT( fix16_sqrt(FRACT_FIX16(f->reson) ) );
+  //// TEST
+  //  f->scale = FIX16_FRACT( fix16_sqrt(FRACT_FIX16(f->scale) ) );
+  //  f->scale = FIX16_FRACT( fix16_sqrt(FRACT_FIX16(f->scale) ) );
+
+/// from table:
+  //f->rq = table_lookup_idx(svfQTab, SVF_Q_TAB_SIZE, f->reson >> SVF_Q_TAB_RSHIFT);
+  //  f->scale = table_lookup_idx(svfScaleTab, SVF_Q_TAB_SIZE,  f->reson >> SVF_Q_TAB_RSHIFT);
+  
 }
 
 //=============================================
@@ -71,6 +88,10 @@ extern void filter_svf_init      ( filter_svf* f ) {
   f->reson = 0;
   f->low = f->high = f->band = f->notch = 0;
   f->lowMix = f->highMix = f->bandMix = f->notchMix = f->peakMix = 0;
+  if(!svfQscaleTabInit) {
+    svf_q_table_init();
+    svfQscaleTabInit = 1;
+  }
 }
 
 /* // set cutoff in hz */
@@ -148,7 +169,7 @@ extern fract32 filter_svf_next( filter_svf* f, fract32 in) {
   /* 			 ); */
 
   // TODO: could oversample if higher frequencies are desired.
-  // without oversampling, max corner hz is SR/4 == 12k, seems enough
+  // without oversampling, max corner hz is SR/4 == 12k
   f->low = add_fr1x32(f->low, 
 		      mult_fr1x32x32(f->freq, f->band));
 
@@ -172,4 +193,26 @@ extern fract32 filter_svf_next( filter_svf* f, fract32 in) {
   out = add_fr1x32(out, mult_fr1x32x32(f->notch, f->notchMix));
 
   return out;
+}
+
+
+
+/*
+// res: 0 - 100;
+q = sqrt(1 - atan(sqrt(res)) * 2 / pi);
+scale = sqrt(q);
+*/
+void svf_q_table_init(void) {
+  u32 i;
+  for(i=0; i<SVF_Q_TAB_SIZE; i++) {
+    float tmp;
+    // linear resonance in [0, 100]
+    tmp = (float)i / (float)SVF_Q_TAB_SIZE_1 * 100.f;
+    // rq
+    tmp = sqrt(1.f - atan(sqrt(tmp)) * 2.f / M_PI);
+    svfQTab[i] = tmp;
+    // scale
+    tmp = sqrt(tmp);
+    svfScaleTab[i] = tmp;
+  }
 }
