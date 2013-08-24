@@ -67,6 +67,7 @@ u8 spi_process(u8 rx) {
     }
     return 0;
     break;
+
   //---- set param
   case eSetParamIdx :
     idx = rx; // set index
@@ -101,11 +102,42 @@ u8 spi_process(u8 rx) {
     byte = eCom; //reset
     return 0; // don't care
     break;
+
+
+  //---- get param
+  case eGetParamIdx :
+    idx = rx; // set index
+    byte = eGetParamData0;
+    // byte-swap from BE on avr32
+    return gMOduleData->paramData[idx].value.asByte[3];
+    break;
+  case eGetParamData0 :
+    byte = eGetParamData1;
+    // byte-swap from BE on avr32
+    return gMOduleData->paramData[idx].value.asByte[2];
+    break;
+  case eGetParamData1 :
+    byte = eGetParamData2;
+    // byte-swap from BE on avr32
+    return gMOduleData->paramData[idx].value.asByte[1];
+    break;
+  case eGetParamData2 :
+    byte = eGetParamData3;
+    // byte-swap from BE on avr32
+    return gMOduleData->paramData[idx].value.asByte[0];
+    break;
+  case eGetParamData3 :
+    // byte-swap from BE on avr32
+    byte = eCom; //reset
+    return 0; // don't care
+    break;
+
   //---- get num params
   case eNumParamsVal :
     byte = eCom; //reset
     return 0; // don't care 
     break;
+
   //---- get param descriptor
   case eParamDescIdx :
     byte = eParamDescLabel0;
@@ -251,6 +283,7 @@ u8 spi_process(u8 rx) {
     byte = eCom; // reset
     return 0; // dont care
     break;
+
     //----- get module name
   case eGetModuleName :
     byte = eModuleName0;

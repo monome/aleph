@@ -1,3 +1,13 @@
+/* 
+   protocol.h
+   
+   common
+   aleph
+
+   SPI procotol definitions.
+
+ */
+
 #ifndef _ALEPH_COMMON_PROTOCOL_H_
 #define _ALEPH_COMMON_PROTOCOL_H_
 
@@ -5,9 +15,7 @@
 #include "param_common.h"
 #include "types.h"
 
-// super caveman version of SPI protocol
-
-//---- com byte defines
+//// command bytes
 #define MSG_SET_PARAM_COM           0 
 #define MSG_GET_PARAM_COM           1
 #define MSG_GET_NUM_PARAMS_COM      2
@@ -17,7 +25,12 @@
 #define MSG_ENABLE_AUDIO            6
 #define MSG_DISABLE_AUDIO           7
 
-// nodes in a state machine
+// enumerate state-machine nodes for sending and receiving SPI.
+
+/// WARNING!
+/// the order of this enum is assumed by state machines
+// in avr32 and aleph.
+/// do not change order without updating the logic as well!
 typedef enum {
   //---- command
   eCom,
