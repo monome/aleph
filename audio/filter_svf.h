@@ -19,7 +19,9 @@
 //===== types
 
 typedef struct _filter_svf {
-  fix16 hz;      // cutoff in hz
+  //  fix16 hz;      // cutoff in hz
+  // coefficiet
+  fract32 coeff;
   fract32 reson; // resonance in [0, 100+]
   // runtime coeffs
 
@@ -52,8 +54,11 @@ typedef struct _filter_svf {
 //===== functions
 // init
 extern void filter_svf_init      ( filter_svf* f );
-// set cutoff in hzb
-extern void filter_svf_set_hz    ( filter_svf* f, fix16 hz );
+// set cutoff in hz
+//extern void filter_svf_set_hz    ( filter_svf* f, fix16 hz );
+// set cutoff coefficient
+extern void filter_svf_set_coeff    ( filter_svf* f, fract32 coeff );
+
 // set RQ (reciprocal of q: resonance/bandwidth)
 extern void filter_svf_set_rq ( filter_svf* f, fract32 rq );
 // set output mixes

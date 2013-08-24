@@ -15,8 +15,9 @@ extern void delay_init(delayLine* dl, fract32* data, u32 frames) {
   buffer_init(&(dl->buffer), data, frames);
   buffer_tapN_init(&(dl->tapRd), &(dl->buffer));
   buffer_tapN_init(&(dl->tapWr), &(dl->buffer));
+  // ???
   dl->tapWr.idx = 10000;
-  dl->tapWr.idx = 0;
+  dl->tapRd.idx = 0;
   dl->preLevel = 0;
   dl->write = 1;
 }
@@ -24,6 +25,7 @@ extern void delay_init(delayLine* dl, fract32* data, u32 frames) {
 extern fract32 delay_next(delayLine* dl, fract32 in) {
   fract32 readVal;
   if(dl->preLevel == 0) {
+  dl->write = 1;
     if(dl->write) {
       // write and replace
       buffer_tapN_write(&(dl->tapWr), in);

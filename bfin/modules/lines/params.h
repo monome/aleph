@@ -20,14 +20,14 @@ enum params {
   eParam_pos_write1,
   eParam_pos_read1,
 
-  eParam_hz0,
+  eParam_coeff0,
   eParam_rq0,
   eParam_low0,
   eParam_high0,
   eParam_band0,
   eParam_notch0,
 
-  eParam_hz1,
+  eParam_coeff1,
   eParam_rq1,
   eParam_low1,
   eParam_high1,

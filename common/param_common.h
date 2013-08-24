@@ -49,7 +49,7 @@ typedef struct __attribute__((__packed__)) ParamDescStruct {
   char label[PARAM_LABEL_LEN];
   // parameter unit name
   char unit[PARAM_UNIT_LEN];
-  // type: fract, int, or float
+  // type (FIXME: unused for now?)
   u8 type;
   // range
   fix16 min;

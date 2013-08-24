@@ -28,22 +28,24 @@
 //=====================================================
 //===== static functions
 
-static void filter_svf_calc_freq(filter_svf* f);
+//static void filter_svf_calc_freq(filter_svf* f);
 static void filter_svf_calc_reson(filter_svf* f);
 
-static void filter_svf_calc_freq(filter_svf* f) {
-  //  float tmp = fix16_to_float(f->hz) / (float)SAMPLERATE;
-  //  tmp = sinf(M_PI * tmp) * 2.f;
-  // coarse approximation, no sine
-  /* float tmp = fix16_to_float(f->hz) / (float)SAMPLERATE * 2.f; */
-  /* f->freq = tmp; */
-  /* printf("\r\n set normalized frequency: %f", f->freq); */
 
-  // coarse approximation, no sine:
-  //  f->freq = shl_fr1x32(float_to_fr32(fix16_to_float(f->hz) / (float)SAMPLERATE), 2);
-  //  f->freq = float_to_fr32(fix16_to_float(f->hz) / (float)SAMPLERATE);
-  f->freq = (f->hz & 0xffff) << 16; //fix16_fract_trunc(f->hz);
-}
+/* static void filter_svf_calc_freq(filter_svf* f) { */
+/*   //// way too slow if it happens a lot */
+/*     float tmp = fix16_to_float(f->hz) / (float)SAMPLERATE; */
+/*     tmp = sinf(M_PI * tmp) * 2.f; */
+/*   // coarse approximation, no sine */
+/*   /\* float tmp = fix16_to_float(f->hz) / (float)SAMPLERATE * 2.f; *\/ */
+/*     f->freq = float_to_fract32(tmp); */
+/*   /\* printf("\r\n set normalized frequency: %f", f->freq); *\/ */
+
+/*   // coarse approximation, no sine: */
+/*   //  f->freq = shl_fr1x32(float_to_fr32(fix16_to_float(f->hz) / (float)SAMPLERATE), 2); */
+/*   //  f->freq = float_to_fr32(fix16_to_float(f->hz) / (float)SAMPLERATE); */
+/*   //  f->freq = (f->hz & 0xffff) << 16; //fix16_fract_trunc(f->hz); */
+/* } */
 
 
 static void filter_svf_calc_reson(filter_svf* f) {
@@ -65,16 +67,24 @@ extern void filter_svf_init      ( filter_svf* f ) {
   f->lowMix = f->highMix = f->bandMix = f->notchMix = f->peakMix = 0;
 }
 
-// set cutoff in hz
-extern void filter_svf_set_hz    ( filter_svf* f, fix16 hz ) {
-  if(f->hz != hz) {
-    f->hz = hz;
-    filter_svf_calc_freq(f);
+/* // set cutoff in hz */
+/* extern void filter_svf_set_hz    ( filter_svf* f, fix16 hz ) { */
+/*   if(f->hz != hz) { */
+/*     f->hz = hz; */
+/*     filter_svf_calc_freq(f); */
+/*   } */
+/* } */
+
+// set cutoff coefficient directly
+extern void filter_svf_set_coeff( filter_svf* f, fract32 coeff ) {
+  if(f->coeff != coeff) {
+    f->coeff = coeff;
+    //    filter_svf_calc_freq(f);
   }
 }
 				       				       
 
-// set resonance
+// set reciprocal of Q
 extern void filter_svf_set_rq( filter_svf* f, fract32 res) {
   if(f->reson != res) {
     f->reson = res;

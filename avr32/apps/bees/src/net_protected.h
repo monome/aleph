@@ -64,6 +64,7 @@ typedef struct _pnode {
 // big old class for the network
 typedef struct _ctlnet {
   //  op pointers
+  ////// FIXME: THIS HAS GOT TO BE A PROBLEM
   op_t * ops[NET_OPS_MAX];
 #if NET_USE_MALLOC
   // bitfields for operator allocation

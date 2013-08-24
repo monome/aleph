@@ -90,11 +90,11 @@ gModuleData->paramDesc[eParam_pos_read1].type = PARAM_TYPE_FIX;
 gModuleData->paramDesc[eParam_pos_read1].min = 0x00000000; 
 gModuleData->paramDesc[eParam_pos_read1].max = 0x001E0000; 
 
-strcpy(gModuleData->paramDesc[eParam_hz0].label, "hz0");
-strcpy(gModuleData->paramDesc[eParam_hz0].unit, "hz");
-gModuleData->paramDesc[eParam_hz0].type = PARAM_TYPE_FIX; 
-gModuleData->paramDesc[eParam_hz0].min = 0x00000000; 
-gModuleData->paramDesc[eParam_hz0].max = 0x1F400000; 
+strcpy(gModuleData->paramDesc[eParam_coeff0].label, "coeff0");
+strcpy(gModuleData->paramDesc[eParam_coeff0].unit, "coeff");
+gModuleData->paramDesc[eParam_coeff0].type = PARAM_TYPE_FIX; 
+gModuleData->paramDesc[eParam_coeff0].min = 0x00000000; 
+gModuleData->paramDesc[eParam_coeff0].max = 0x1F400000; 
 
 strcpy(gModuleData->paramDesc[eParam_rq0].label, "rq0");
 strcpy(gModuleData->paramDesc[eParam_rq0].unit, "u");
@@ -126,11 +126,11 @@ gModuleData->paramDesc[eParam_notch0].type = PARAM_TYPE_FIX;
 gModuleData->paramDesc[eParam_notch0].min = 0x00000000; 
 gModuleData->paramDesc[eParam_notch0].max = 0x00010000; 
 
-strcpy(gModuleData->paramDesc[eParam_hz1].label, "hz1");
-strcpy(gModuleData->paramDesc[eParam_hz1].unit, "hz");
-gModuleData->paramDesc[eParam_hz1].type = PARAM_TYPE_FIX; 
-gModuleData->paramDesc[eParam_hz1].min = 0x00000000; 
-gModuleData->paramDesc[eParam_hz1].max = 0x1F400000; 
+strcpy(gModuleData->paramDesc[eParam_coeff1].label, "coeff1");
+strcpy(gModuleData->paramDesc[eParam_coeff1].unit, "coeff");
+gModuleData->paramDesc[eParam_coeff1].type = PARAM_TYPE_FIX; 
+gModuleData->paramDesc[eParam_coeff1].min = 0x00000000; 
+gModuleData->paramDesc[eParam_coeff1].max = 0x1F400000; 
 
 strcpy(gModuleData->paramDesc[eParam_rq1].label, "rq1");
 strcpy(gModuleData->paramDesc[eParam_rq1].unit, "u");
