@@ -60,8 +60,8 @@ __attribute__((__interrupt__))
 static void irq_port1_line1(void);
 
 // irq for PB16-PB23
-__attribute__((__interrupt__))
-static void irq_port1_line2(void);
+/* __attribute__((__interrupt__)) */
+/* static void irq_port1_line2(void); */
 
 // irq for PB24-PB31
 __attribute__((__interrupt__))
@@ -199,15 +199,16 @@ static void irq_port1_line1(void) {
 }
 
 // interrupt handler for PB16-PB23
-__attribute__((__interrupt__))
-static void irq_port1_line2(void) {
-  //  print_dbg("\r\n interrupt on pb16-pb23 : ");
-  //SW_POWER
-  if(gpio_get_pin_interrupt_flag(SW_POWER_PIN)) {
-    gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
-    process_sw(5);
-  }
-}
+/// FIXME:
+/* __attribute__((__interrupt__)) */
+/* static void irq_port1_line2(void) { */
+/*   //  print_dbg("\r\n interrupt on pb16-pb23 : "); */
+/*   //SW_POWER */
+/*   if(gpio_get_pin_interrupt_flag(SW_POWER_PIN)) { */
+/*     gpio_clear_pin_interrupt_flag(SW_POWER_PIN); */
+/*     process_sw(5); */
+/*   } */
+/* } */
 
 // interrupt handler for PB24-PB31
 __attribute__((__interrupt__))

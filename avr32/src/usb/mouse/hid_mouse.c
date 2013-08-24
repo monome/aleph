@@ -9,6 +9,7 @@
 #include "print_funcs.h"
 #include "uhc.h"
 
+#include "hid_mouse.h"
 
 // mouse event callbacks
 void hid_mouse_btn_left(bool b_state) {
