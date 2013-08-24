@@ -27,6 +27,7 @@ typedef struct _filter_svf {
 
   fract32 freq;     // normalized frequency
   fract32 rq;    // reciprocal of q (resonance / bandwidth)
+  // fix16 rq;    // reciprocal of q (resonance / bandwidth)
   fract32 scale; // scale input by resonance
   fract32 low;   // lowpass
   fract32 band;  // bandpass

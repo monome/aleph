@@ -23,7 +23,10 @@
 
 //=======================================================
 //===== variables
-//...
+
+// a 
+#define NUM_
+static fract32 * SVF_RQ_TABSIZE;
 
 //=====================================================
 //===== static functions
@@ -49,12 +52,15 @@ static void filter_svf_calc_reson(filter_svf* f);
 
 
 static void filter_svf_calc_reson(filter_svf* f) {
-  //  f->rq = sqrt(1.f - atan(sqrt(fr32_to_float(f->reson) * 100.f)) * 2.f / M_PI);
-  // what the fuck, just set this directly...
+  //f->rq = sqrt(1.f - atan( sqrt(fix16_to_float(f->reson))) * 2.f / M_PI );
+
    /* f->rq = fr32_to_float(f->reson);  */
    /* f->scale = sqrt(f->rq);  */
-  f->rq = f->reson;
-  f->scale = FIX16_FRACT(fix16_sqrt(FRACT_FIX16(f->reson)));
+
+    /// directly?
+  //  f->rq = FRACT_FIX16(f->reson))
+  //  f->rq = f->reson;
+  //  f->scale = FIX16_FRACT( fix16_sqrt(f->reson) );
 }
 
 //=============================================
@@ -77,8 +83,8 @@ extern void filter_svf_init      ( filter_svf* f ) {
 
 // set cutoff coefficient directly
 extern void filter_svf_set_coeff( filter_svf* f, fract32 coeff ) {
-  if(f->coeff != coeff) {
-    f->coeff = coeff;
+  if(f->freq != coeff) {
+    f->freq = coeff;
     //    filter_svf_calc_freq(f);
   }
 }

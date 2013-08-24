@@ -100,7 +100,7 @@ void module_set_param(u32 idx, pval v) {
     filter_svf_set_coeff( &(svf[0]), FIX16_FRACT_TRUNC(v.fix) );
     break;
   case eParam_coeff1 :
-        filter_svf_set_coeff(&(svf[1]), v.fix);
+    filter_svf_set_coeff(&(svf[1]), FIX16_FRACT_TRUNC(v.fix) );
     break;
     /* case eParam_hz2 : */
     /*   filter_svf_set_hz(&svf[2], v.fix); */
