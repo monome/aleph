@@ -22,14 +22,7 @@
 #include "sysclk.h"
 
 //// aleph
-// bees
-#include "menu.h"
-#include "net.h"
-#include "net_protected.h"
-#include "preset.h"
-#include "scene.h"
 // common
-#include "files.h"
 #include "fix.h"
 #include "param_common.h"
 #include "screen.h"
@@ -241,7 +234,7 @@ int main (void) {
 
   /// initialize filesystem
   ////// FIXME: move to app
-  files_init();
+  //files_init();
 
   // setup control logic
   init_ctl();

@@ -7,9 +7,6 @@
 #include "print_funcs.h"
 // aleph-common
 #include "module_common.h"
-// aleph-bees
-#include "scene.h"
-#include "preset.h"
 // aleph-avr32
 #include "bfin.h"
 #include "flash.h"
@@ -30,7 +27,7 @@ typedef const struct {
   u32 firstRun;                // check for initialization
   u32 ldrSize;                 // size of stored LDR
   u8 ldrData[LDR_FLASH_BYTES]; // LDR data
-  sceneData_t sceneData;       // scene data
+  //sceneData_t sceneData;       // scene data
 } nvram_data_t;
 
 
@@ -81,18 +78,6 @@ u8 init_flash() {
     return 1;
   } return 0;
   return 0;
-}
-
-// read default scene data to global buffer
-void flash_read_scene(void) { 
-  memcpy((void*)sceneData, (void*)&(flash_nvram_data.sceneData), sizeof(sceneData_t)); 
-  //  scene_read_buf();
-}
-
-// write default scene data from global buffer
-void flash_write_scene(void) { 
-  //  scene_write_buf();
-  flashc_memcpy( (void*)(&(flash_nvram_data.sceneData)), (void*)sceneData, sizeof(sceneData_t), true);
 }
 
 // read default blackfin

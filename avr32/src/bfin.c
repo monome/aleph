@@ -20,7 +20,7 @@
 #include "aleph_board.h"
 #include "app.h"
 #include "filesystem.h"
-#include "flash.h"
+//#include "flash.h"
 #include "global.h"
 #include "types.h"
 #include "util.h"

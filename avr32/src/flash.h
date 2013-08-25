@@ -10,7 +10,6 @@
 #define __ALEPH_FLASH_H__
 
 //#include "filesystem.h"
-#include "scene.h"
 
 /// target address of firmware in internal flash
 /// NOTE: this is hardcoded ASM in main() !
@@ -37,9 +36,6 @@ extern volatile u32 bfinLdrSize;
 // return 1 if this is the first run, 0 otherwise
 extern u8 init_flash(void); 
 
-// read/write default scene values in flash
-extern void flash_read_scene(void); //sceneData_t* sceneData );
-extern void flash_write_scene(void); //sceneData_t* sceneData);
 
 // read/write default blackfin loader file to/from global ram buffer 
 extern void flash_read_ldr(void);

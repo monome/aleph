@@ -123,7 +123,7 @@ extern void init_tc (volatile avr32_tc_t *tc) {
 }
 
 
-// initialize usb USART
+// initialize usb USARTy
 void init_ftdi_usart (void) {
   // GPIO map for USART.
   static const gpio_map_t FTDI_USART_GPIO_MAP = {
