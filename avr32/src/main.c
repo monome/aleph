@@ -55,23 +55,25 @@
 //====  defines
 
 // run an event handler with NULL check
-#define APP_HANDLE_EVENT(handler, args) if( handler != NULL) (*handler)(args)
+// #define APP_HANDLE_EVENT(handler, args) if( handler != NULL) (*handler)(args)
 
 //==================================================
 //====  extern variables
 
-// handlers for function switches
-sw_handler fnSwHandler[4] = { NULL, NULL, NULL, NULL };
-// handler for mode switch
-sw_handler modeSwHandler = NULL;
-// handlers for footswitches
-sw_handler footSwHandler[2] = { NULL, NULL };
-// handlers for the 4 encoders
-enc_handler encHandler[4] = { NULL, NULL, NULL, NULL };
-// handlers for adcs
-adc_handler adcHandler[4] = { NULL, NULL, NULL, NULL };
-// monome grid key handler
-monome_key_handler gridHandler = NULL;
+/* // handlers for function switches */
+/* sw_handler fnSwHandler[4] = { NULL, NULL, NULL, NULL }; */
+/* // handler for mode switch */
+/* sw_handler modeSwHandler = NULL; */
+/* // handlers for footswitches */
+/* sw_handler footSwHandler[2] = { NULL, NULL }; */
+/* // handlers for the 4 encoders */
+/* enc_handler encHandler[4] = { NULL, NULL, NULL, NULL }; */
+/* // handlers for adcs */
+/* adc_handler adcHandler[4] = { NULL, NULL, NULL, NULL }; */
+/* // monome grid key handler */
+/* monome_key_handler gridHandler = NULL; */
+
+event_handler appEventHandler;
 
 //==================================================
 //====  static variables
@@ -205,23 +207,23 @@ static void check_events(void) {
 	monome_grid_refresh();
 	break;
 	//----------------------------------
-	//---- app-defined handlers
-      case kEventSwitch0:
-      	APP_HANDLE_EVENT(fnSwHandler[0], e.eventData > 0);
-      	break;
-      case kEventSwitch1:
-      	APP_HANDLE_EVENT(fnSwHandler[1], e.eventData > 0);
-      	break;
-      case kEventSwitch2:
-      	APP_HANDLE_EVENT(fnSwHandler[2], e.eventData > 0);
-      	break;
-      case kEventSwitch3:
-      	APP_HANDLE_EVENT(fnSwHandler[3], e.eventData > 0);
-      	break;
-	/// TODO: arc
-	/// TODO: MIDgI
-	/// TODO: HID
-	//-----
+      /* 	//---- app-defined handlers */
+      /* case kEventSwitch0: */
+      /* 	APP_HANDLE_EVENT(fnSwHandler[0], e.eventData > 0); */
+      /* 	break; */
+      /* case kEventSwitch1: */
+      /* 	APP_HANDLE_EVENT(fnSwHandler[1], e.eventData > 0); */
+      /* 	break; */
+      /* case kEventSwitch2: */
+      /* 	APP_HANDLE_EVENT(fnSwHandler[2], e.eventData > 0); */
+      /* 	break; */
+      /* case kEventSwitch3: */
+      /* 	APP_HANDLE_EVENT(fnSwHandler[3], e.eventData > 0); */
+      /* 	break; */
+      /* 	/// TODO: arc */
+      /* 	/// TODO: MIDgI */
+      /* 	/// TODO: HID */
+      /* 	//----- */
 	//--------------------------------------
       case kEventFtdiConnect:
 	// perform setup tasks for new ftdi device connection. 
@@ -229,6 +231,7 @@ static void check_events(void) {
 	ftdi_setup();
 	break;
       default:
+	(*appEventHandler)(&e);
 	break;
       } // event switch
     } // startup

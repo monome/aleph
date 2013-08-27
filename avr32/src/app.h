@@ -15,15 +15,20 @@
 //---- event handler function types
 //--- handler functions specialized for each type of event.
 
-// switch, eits state
-typedef void (*sw_handler)(u8 state);
-// encoder emits signed value at the time it was polled.
-// note that the range of this value is a function of the pollling period.
-typedef void (*enc_handler)(s32 val);
-// adc emits unsigned 12-bit value.
-typedef void (*adc_handler)(u16 val);
-// monome key press
-typedef void (*monome_key_handler)(u16 x, u16 y, u8 val);
+// event handler function pointer type
+typedef void (*event_handler)(event_t* ev);
+// application's current event handler
+extern event_handler appEventHandler;
+
+// switch, emits state
+/* typedef void (*sw_handler)(u8 state); */
+/* // encoder emits signed value at the time it was polled. */
+/* // note that the range of this value is a function of the pollling period. */
+/* typedef void (*enc_handler)(s32 val); */
+/* // adc emits unsigned 12-bit value. */
+/* typedef void (*adc_handler)(u16 val); */
+/* // monome key press */
+/* typedef void (*monome_key_handler)(u16 x, u16 y, u8 val); */
 // monome ring turn
 //typedef void (*monome_ring_handler)(void/* TODO */);
 
@@ -39,17 +44,18 @@ typedef void (*monome_key_handler)(u16 x, u16 y, u8 val);
 //-- core should obviously never attempt to use a null-valued handler.
 
 // handlers for function switches
-sw_handler fnSwHandler[4]; // = { NULL, NULL, NULL, NULL };
-// handler for mode switch
-sw_handler modeSwHandler;
-// handlers for footswitches
-sw_handler footSwHandler[2];
-// handlers for the 4 encoders
-enc_handler encHandler[4];
-// handlers for adcs
-adc_handler adcHandler[4];
-// monome grid press handler
-monome_key_handler gridHandle;
+
+/* sw_handler fnSwHandler[4]; // = { NULL, NULL, NULL, NULL }; */
+/* // handler for mode switch */
+/* sw_handler modeSwHandler; */
+/* // handlers for footswitches */
+/* sw_handler footSwHandler[2]; */
+/* // handlers for the 4 encoders */
+/* enc_handler encHandler[4]; */
+/* // handlers for adcs */
+/* adc_handler adcHandler[4]; */
+/* // monome grid press handler */
+/* monome_key_handler gridHandle; */
 // mouse handler
 // keyboard handler
 // generic HID handler
