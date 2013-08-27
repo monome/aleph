@@ -138,5 +138,5 @@ void init_app_timers(void) {
   set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);
   set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 20,  &monome_refresh_timer_callback, 1);
   set_timer(&midiPollTimer,      eMidiPollTimerTag,      5,  &midi_poll_timer_callback, 1);
-  set_timer(&paramChangeTimer,      eParamChangeTimerTag,      5,  &param_change_timer_callback, 1);
+  set_timer(&paramChangeTimer,   eParamChangeTimerTag,      5,  &param_change_timer_callback, 1);
 }

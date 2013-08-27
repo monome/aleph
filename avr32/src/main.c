@@ -165,9 +165,6 @@ static void init_ctl(void) {
   // enable interrupts
   cpu_irq_enable();
 
-  // initialize the application
-  app_init();
-
 }
 
 // app event loop
@@ -188,8 +185,11 @@ static void check_events(void) {
 	  || e.eventType == kEventSwitch4
 	  ) {
 	startup = 0;
-	app_launch(firstrun);
-	return;
+	// successfully launched on firstrun, so write to flash
+	if( firstrun && (app_launch(firstrun)) ) {
+	  flash_write_firstrun();
+	  return;
+	}
       }
     } else {
       switch(e.eventType) {
@@ -241,25 +241,15 @@ static void check_events(void) {
 //int main(void) {
 ////main function
 int main (void) {
-  u32 waitForCard = 0;
+  //  u32 waitForCard = 0;
 
   // set up avr32 hardware and peripherals
   init_avr32();
 
   // wait for sd card
   screen_line(0, 0, "ALEPH", 0x3f);
-  screen_line(0, 1, "waiting for SD card...", 0x3f);
+  screen_line(0, 1, "initializing...", 0x3f);
   screen_refresh();
-  
-  print_dbg("\r\n SD check... ");
-  while (!sd_mmc_spi_mem_check()) {
-    waitForCard++;
-  }
-  print_dbg("\r\nfound SD card. ");
-
-  screen_blank_line(0, 0);
-  screen_blank_line(0, 1);
-  screen_line(0, 0, "SD card detected.", 0x3f);
 
   //memory manager
   init_mem();  
@@ -268,8 +258,11 @@ int main (void) {
   // setup control logic
   init_ctl();
 
+  // initialize the application
+  app_init();
+
   // initialize flash
-  firstrun = init_flash();
+    firstrun = init_flash();
 
   // notify 
   screen_clear();

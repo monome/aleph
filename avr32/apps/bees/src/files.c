@@ -71,14 +71,14 @@ static void* list_open_file_name(dirList_t* list, const char* name, const char* 
 
 //// FIXME: dumb and slow seek/read functions because the real ones are broken
 //// fseek: no offset arg, assume its the first seek since file was opened 
-/* static void fake_fseek(void* fp, u32 loc) { */
-/*   u32 n = 0; */
-/*   u8 dum; */
-/*   while(n < loc) { */
-/*     dum = fl_fgetc(fp); */
-/*     n++; */
-/*   }  */
-/* } */
+static void fake_fseek(void* fp, u32 loc) {
+  u32 n = 0;
+  u8 dum;
+  while(n < loc) {
+    dum = fl_fgetc(fp);
+    n++;
+  }
+}
 // fread: no size arg
 static void fake_fread(volatile u8* dst, u32 size, void* fp) {
   u32 n = 0;
@@ -100,7 +100,6 @@ static void strip_space(char* str, u8 len) {
 }
 
 //// /test: write dummy file
-/// FIXME: this is working fine but writing scene file crashes program.
 /* static void file_write_test(void) { */
 /*   void* fp; */
 
@@ -121,8 +120,6 @@ static void strip_space(char* str, u8 len) {
 /*   print_dbg_hex((u32)fp); */
 /*   fl_fputs("hi hi hello", fp); */
 /*   fl_fclose(fp); */
-
-
 
 /*   app_resume(); */
 
@@ -187,6 +184,7 @@ void files_load_dsp_name(const char* name) {
 
     if(bfinLdrSize > 0) {
       print_dbg("\r\n loading bfin from buf");
+      // reboot the dsp with new firmware in RAM
       bfin_load_buf();
       print_dbg("\r\n finished load");
       // write module name in global scene data
@@ -304,11 +302,8 @@ void files_store_scene_name(const char* name) {
   //  strcat(namebuf, name);
   //  strcat(namebuf, ".scn");
 
-  
-
   print_dbg("\r\n write scene at: ");
-  print_dbg(namebuf);
-  
+  print_dbg(namebuf);  
 
   // fill the scene RAM buffer from current state of system
   scene_write_buf(); 
@@ -322,30 +317,17 @@ void files_store_scene_name(const char* name) {
   print_dbg("\r\n");
 
   fl_fwrite((const void*)pScene, sizeof(sceneData_t), 1, fp);
-  //  for(i=0; i<sizeof(sceneData_t); i++) {
-    //    fl_fputc( ((u8*)sceneData)[i], fp);
-  //    fl_fputc( *pScene, fp);
-  //    pScene++;  
-  //  }  
 
-  //  delay_ms(100);
   fl_fclose(fp);
-  //  delay_ms(100);
-
-  /* print_dbg_hex((u32)(pScene - 1)); */
-  /* print_dbg(" : "); */
-  /* print_dbg_hex((u32)(*(pScene - 1))); */
-  /* print_dbg(" \r\n"); */
-
-  //delay_ms(100);
 
   print_dbg("\r\n wrote scene, re-scanning directory... ");
   // rescan to see the new file
   list_scan(&sceneList, SCENES_PATH);
   print_dbg("\r\n scanned.");
 
-  delay_ms(100);
+  delay_ms(10);
   app_resume();
+
   print_dbg("\r\n resumed UI and app timer interrupts.");
   print_pending_events();
   /* delay_ms(100); */

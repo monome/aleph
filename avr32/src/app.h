@@ -70,7 +70,8 @@ extern void app_init(void);
 // called from avr32 event loop when startup is finished and UI is running.
 // argument is a flag if this is the device's first run since chiperase.
 // should assign event handlers here
-extern void app_launch(u8 firstrun);
+// returns success/failure
+extern u8 app_launch(u8 firstrun);
 
 //-------------------------------------- -
 //--- these are implmeneted by avr32 core 

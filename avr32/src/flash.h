@@ -10,16 +10,12 @@
 #define __ALEPH_FLASH_H__
 
 //#include "filesystem.h"
+#include "types.h"
 
 /// target address of firmware in internal flash
-/// NOTE: this is hardcoded ASM in main() !
+/// NOTE: this is hardcoded ASM in bootloader main() !
 /// DO NOT CHANGE
 #define FIRMWARE_FLASH_ADDRESS 0x80010000
-
-//--- types
-/* typedef struct _bfinData { */
-/*   u8* bfinLdrData */
-/* } bfinData_t; */
 
 //------------------------
 // extern variables
@@ -41,8 +37,10 @@ extern u8 init_flash(void);
 extern void flash_read_ldr(void);
 extern void flash_write_ldr(void);
 
-// write avr32 firmware
-// extern void flash_write_firmware(void);
+// read/write firstrun value
+extern u8 flash_read_firstrun(void);
+extern void flash_write_firstrun(void);
+
 
 // switch to intel-hex format...
 // parse a hex record and write the contents to flash if appropriate

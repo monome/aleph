@@ -18,14 +18,17 @@
 
 /// 64K of blackfin executable storage in flash
 #define LDR_FLASH_BYTES 0x10000
+// length of .ldr string identifier in flash
+#define LDR_FLASH_STRING_LEN 64
 
 // value to write during first run
-#define FIRSTRUN_INIT 0x76543210
+#define FIRSTRUN_MAGIC 0x76543210
 
 // storage layout of default data in nonvolatile memory
 typedef const struct {
   u32 firstRun;                // check for initialization
   u32 ldrSize;                 // size of stored LDR
+  char ldrString[LDR_FLASH_STRING_LEN];
   u8 ldrData[LDR_FLASH_BYTES]; // LDR data
   //sceneData_t sceneData;       // scene data
 } nvram_data_t;
@@ -69,10 +72,11 @@ u8 init_flash() {
     bfinLdrData[i] = 0;
   }
 
-  if(flash_nvram_data.firstRun != FIRSTRUN_INIT) {
-    print_dbg("\r\n writing firstrun, no bfin load");
+  if(flash_nvram_data.firstRun != FIRSTRUN_MAGIC) {
+    //    print_dbg("\r\n writing firstrun, no bfin load");
     bfinLdrSize = 0;
-    flashc_memset32((void*)&(flash_nvram_data.firstRun), FIRSTRUN_INIT, 4, true);
+    
+    //    flashc_memset32((void*)&(flash_nvram_data.firstRun), FIRSTRUN_MAGIC, 4, true);
     // set size=0 so we won't attempt unitialized bfin load on next start
     flashc_memset32((void*)&(flash_nvram_data.ldrSize), 0x00000000, 4, true);
     return 1;
@@ -113,4 +117,14 @@ void flash_write_ldr(void) {
   // remaining bytes
   rem = bfinLdrSize - (nPages * 0x200);
   flashc_memcpy((void*)pDst, (const void*)pSrc, rem, true);
+}
+
+
+// read/write firstrun value
+extern u8 flash_read_firstrun(void) {
+  return flash_nvram_data.firstRun == FIRSTRUN_MAGIC;
+}
+
+extern void flash_write_firstrun(void) {
+  flashc_memset32((void*)&(flash_nvram_data.firstRun), FIRSTRUN_MAGIC, 4, true);
 }
