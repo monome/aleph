@@ -63,7 +63,7 @@ typedef void(*ring_map_t)(u8 n, u8* data);
 extern u8 monomeConnect;
 // dirt flags for each frame, as bitfield
 extern u8 monomeFrameDirty;
-// a buffer big enough to hold all data for 256 or arc4
+// a buffer big enough to hold all led data for 256 or arc4
 // each led gets a full byte
 extern u8 monomeLedBuffer[MONOME_MAX_LED_BYTES];
 

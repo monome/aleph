@@ -51,18 +51,37 @@
 #include "switches.h"
 #include "timers.h"
 
+//==================================================
+//====  defines
+
+// run an event handler with NULL check
+#define APP_HANDLE_EVENT(handler, args) if( handler != NULL) (*handler)(args)
 
 //==================================================
-//====  variables
+//====  extern variables
+
+// handlers for function switches
+sw_handler fnSwHandler[4] = { NULL, NULL, NULL, NULL };
+// handler for mode switch
+sw_handler modeSwHandler = NULL;
+// handlers for footswitches
+sw_handler footSwHandler[2] = { NULL, NULL };
+// handlers for the 4 encoders
+enc_handler encHandler[4] = { NULL, NULL, NULL, NULL };
+// handlers for adcs
+adc_handler adcHandler[4] = { NULL, NULL, NULL, NULL };
+// monome grid key handler
+monome_key_handler gridHandler = NULL;
+
+//==================================================
+//====  static variables
 // flag for firstrun
 static u8 firstrun = 0;
 //  flag to wait for startup button press
 static u8 startup = 1;
-// mode switch
-// static u8 mode = 0;
 
 //=================================================
-//==== declarations
+//==== static declarations
 
 static void init_avr32(void);
 static void init_ctl(void);
@@ -77,16 +96,17 @@ static void init_avr32(void) {
   // clocks
   // setup clocks
   sysclk_init();
-  // why need here?
+
+  // not sure why but when need to explictly enable clock for static mem ctlr
   sysclk_enable_pbb_module(SYSCLK_SMC_REGS);
   flashc_set_bus_freq(FCPU_HZ);
   flashc_set_wait_state(1);
 
   /// interrupts
   irq_initialize_vectors();
-
   // disable all interrupts for now
   cpu_irq_disable();
+
   // serial usb
   init_ftdi_usart();
   // external sram
@@ -105,15 +125,17 @@ static void init_avr32(void) {
   register_interrupts();
   // initialize the OLED screen
   init_oled();
+
   // enable interrupts
   cpu_irq_enable();
 
   // usb host controller
   init_usb_host();
-  
-// initialize usb classes
+  // initialize usb classes
   init_monome();
-  
+  //  init_midi();
+  //  init_hid();
+
   print_dbg("\r\n avr32 init done ");
 }
 
@@ -156,17 +178,12 @@ static void check_events(void) {
   /* print_dbg("\r\n , data: "); */
   /* print_dbg_hex(e.eventData); */
 
-    if(e.eventType == kEventFtdiConnect) {
-	// perform setup tasks for new ftdi device connection. 
-	// won't work if called from an interrupt.
-	ftdi_setup();
-    }
     if(startup) {
-      if( e.eventType == kEventSwitchDown0
-	  || e.eventType == kEventSwitchDown1
-	  || e.eventType == kEventSwitchDown2
-	  || e.eventType == kEventSwitchDown3
-	  || e.eventType == kEventSwitchDown4
+      if( e.eventType == kEventSwitch0
+	  || e.eventType == kEventSwitch1
+	  || e.eventType == kEventSwitch2
+	  || e.eventType == kEventSwitch3
+	  || e.eventType == kEventSwitch4
 	  ) {
 	startup = 0;
 	app_launch(firstrun);
@@ -174,31 +191,44 @@ static void check_events(void) {
       }
     } else {
       switch(e.eventType) {
-	////// FIXME: this event can and should be eliminated. 
-	////// ftdi_read callback can strip leading bytes
-	//// and check for rx data before invoking main loop or monome.c
+	
+      case kEventRefresh:
+	// refresh the screen hardware
+	screen_refresh();
+	break;
       case kEventMonomePoll :
 	// poll monome serial input and spawn relevant events
 	monome_read_serial();
 	break;
       case kEventMonomeRefresh :
 	// refresh monome device from led state buffer
-	//	print_dbg("\r\n handle monome refresh event");
 	monome_grid_refresh();
-	// TODO: deal with ring devices
 	break;
-
-
-	//////test: print monome led state buffer and dirty flags
-      /* case kEventSwitchDown0: */
-      /* 	print_dbg("\r\n monome led buf: "); */
-      /* 	print_byte_array(monomeLedBuffer, 256, 16); */
-      /* 	break; */
-
-	//////
+	//----------------------------------
+	//---- app-defined handlers
+      case kEventSwitch0:
+      	APP_HANDLE_EVENT(fnSwHandler[0], e.eventData > 0);
+      	break;
+      case kEventSwitch1:
+      	APP_HANDLE_EVENT(fnSwHandler[1], e.eventData > 0);
+      	break;
+      case kEventSwitch2:
+      	APP_HANDLE_EVENT(fnSwHandler[2], e.eventData > 0);
+      	break;
+      case kEventSwitch3:
+      	APP_HANDLE_EVENT(fnSwHandler[3], e.eventData > 0);
+      	break;
+	/// TODO: arc
+	/// TODO: MIDgI
+	/// TODO: HID
+	//-----
+	//--------------------------------------
+      case kEventFtdiConnect:
+	// perform setup tasks for new ftdi device connection. 
+	// won't work if called from an interrupt.
+	ftdi_setup();
+	break;
       default:
-	// all other events are sent to application layer
-	app_handle_event(&e);
 	break;
       } // event switch
     } // startup
@@ -232,10 +262,6 @@ int main (void) {
   init_mem();  
   print_dbg("\r\n init_mem");
 
-  /// initialize filesystem
-  ////// FIXME: move to app
-  //files_init();
-
   // setup control logic
   init_ctl();
 
@@ -248,7 +274,6 @@ int main (void) {
   screen_refresh();
 
   print_dbg("\r\n starting event loop.\r\n");
-
 
   while(1) {
     check_events();

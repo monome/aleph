@@ -2,7 +2,7 @@
   monome.c
   aleph-avr32
 
-  monome device interface definitions
+  monome device driver
 
 */
 
@@ -116,6 +116,7 @@ static void read_serial_series(void);
 static void read_serial_mext(void);
 
 // tx for each protocol
+///// no real reason not to use only grid/map at the moment
 /* static void grid_led_40h(u8 x, u8 y, u8 val); */
 /* static void grid_led_series(u8 x, u8 y, u8 val); */
 /* static void grid_led_mext(u8 x, u8 y, u8 val); */
@@ -124,6 +125,7 @@ static void grid_map_40h(u8 x, u8 y, const u8* data);
 static void grid_map_series(u8 x, u8 y, const u8* data);
 static void grid_map_mext(u8 x, u8 y, const u8* data);
 
+/// TODO: varibright
 //static void grid_map_level_40h(u8 x, u8 val);
 //static void grid_map_level_series(u8 x, u8 y, u8* data);
 //static void grid_map_level_mext(u8 x, u8 y, const u8* data);
@@ -260,51 +262,41 @@ void monome_grid_refresh(void) {
   // may need to wait after each quad until tx transfer is complete
   u8 busy = ftdi_tx_busy();
 
+  // check quad 0
   if( monomeFrameDirty & 0b0001 ) {
-    while( busy ) {
-      busy = ftdi_tx_busy();
-    }
-    //    grid_map_mext(0, 0, monomeLedBuffer);
+    while( busy ) { busy = ftdi_tx_busy(); }
     (*monome_grid_map)(0, 0, monomeLedBuffer);
     monomeFrameDirty &= 0b1110;
     busy = 1;
   }
-
+  // check quad 1
   if( monomeFrameDirty & 0b0010 ) {
     if ( mdesc.cols > 8 ) {
-      while( busy ) {
-	busy = ftdi_tx_busy();
-      }
-      //      grid_map_mext(8, 0, monomeLedBuffer + 8);
+      while( busy ) { busy = ftdi_tx_busy(); }
       (*monome_grid_map)(8, 0, monomeLedBuffer + 8);
       monomeFrameDirty &= 0b1101;
       busy = 1;
     }
   }
-
+  // check quad 2
   if( monomeFrameDirty &  0b0100 ) { 
     if( mdesc.rows > 8 ) {
-      while( busy ) {
-	busy = ftdi_tx_busy();
-      }
-      //      grid_map_mext(0, 8, monomeLedBuffer +  128);
+      while( busy ) { busy = ftdi_tx_busy(); }
       (*monome_grid_map)(0, 8, monomeLedBuffer + 128);
       monomeFrameDirty &= 0b1011;
       busy = 1;
     }
   }
-
+  // check quad 3
   if( monomeFrameDirty & 0b1000 ) {
     if( (mdesc.rows > 8) && (mdesc.cols > 8) )  {
-      while( busy ) {
-	busy = ftdi_tx_busy();
-      }
-      //      grid_map_mext(8, 8, monomeLedBuffer + 136);
+      while( busy ) { busy = ftdi_tx_busy(); }
       (*monome_grid_map)(8, 8, monomeLedBuffer + 136);
       monomeFrameDirty &= 0b0111;
       busy = 1;
     }
   }
+  while( busy ) { busy = ftdi_tx_busy(); }
 }
 
 //---- convert to/from event data
@@ -325,8 +317,8 @@ static inline void monome_grid_key_write_event(u8 x, u8 y, u8 val) {
 
   ev.eventType = kEventMonomeGridKey;
   post_event(&ev);
-
 }
+
 void monome_grid_key_parse_event_data(u32 data, u8* x, u8* y, u8* val) {
   u8* bdata = (u8*)(&data);
   *x = bdata[0];
