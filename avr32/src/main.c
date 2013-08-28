@@ -257,6 +257,11 @@ int main (void) {
   init_mem();  
   print_dbg("\r\n init_mem");
 
+  // intialize the FAT filesystem
+  fat_init();
+  print_dbg("\r\n init fat");
+
+
   // setup control logic
   init_ctl();
   print_dbg("\r\n init ctl");

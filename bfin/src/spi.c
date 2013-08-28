@@ -109,22 +109,22 @@ u8 spi_process(u8 rx) {
     idx = rx; // set index
     byte = eGetParamData0;
     // byte-swap from BE on avr32
-    return gMOduleData->paramData[idx].value.asByte[3];
+    return gModuleData->paramData[idx].value.asByte[3];
     break;
   case eGetParamData0 :
     byte = eGetParamData1;
     // byte-swap from BE on avr32
-    return gMOduleData->paramData[idx].value.asByte[2];
+    return gModuleData->paramData[idx].value.asByte[2];
     break;
   case eGetParamData1 :
     byte = eGetParamData2;
     // byte-swap from BE on avr32
-    return gMOduleData->paramData[idx].value.asByte[1];
+    return gModuleData->paramData[idx].value.asByte[1];
     break;
   case eGetParamData2 :
     byte = eGetParamData3;
     // byte-swap from BE on avr32
-    return gMOduleData->paramData[idx].value.asByte[0];
+    return gModuleData->paramData[idx].value.asByte[0];
     break;
   case eGetParamData3 :
     // byte-swap from BE on avr32
