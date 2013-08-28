@@ -186,7 +186,9 @@ static void check_events(void) {
 	  ) {
 	startup = 0;
 	// successfully launched on firstrun, so write to flash
-	if( firstrun && (app_launch(firstrun)) ) {
+	print_dbg("\r\n key pressed, launching ");
+	firstrun = firstrun && app_launch(firstrun);
+	if(firstrun) {
 	  flash_write_firstrun();
 	  return;
 	}
@@ -257,12 +259,16 @@ int main (void) {
 
   // setup control logic
   init_ctl();
+  print_dbg("\r\n init ctl");
 
   // initialize the application
   app_init();
+  print_dbg("\r\n init app");
 
   // initialize flash
-    firstrun = init_flash();
+  firstrun = init_flash();
+  print_dbg("r\n init flash, firstrun: ");
+  print_dbg_ulong(firstrun);
 
   // notify 
   screen_clear();

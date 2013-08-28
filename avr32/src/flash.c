@@ -33,7 +33,6 @@ typedef const struct {
   //sceneData_t sceneData;       // scene data
 } nvram_data_t;
 
-
 //----------------------------------------
 // ---- static vars
 // NVRAM data structure located in the flash array.
@@ -64,21 +63,13 @@ u8 init_flash() {
 
   // allocate bfin loader buf
   bfinLdrData = alloc_mem(BFIN_LDR_MAX_BYTES);
-  
-  print_dbg("\r\n bfinLdrData : @0x");
-  print_dbg_hex( (u32)bfinLdrData );
-
-  for(i=0; i<BFIN_LDR_MAX_BYTES; i++) {
-    bfinLdrData[i] = 0;
-  }
+  for(i=0; i<BFIN_LDR_MAX_BYTES; i++) { bfinLdrData[i] = 0; }
 
   if(flash_nvram_data.firstRun != FIRSTRUN_MAGIC) {
-    //    print_dbg("\r\n writing firstrun, no bfin load");
-    bfinLdrSize = 0;
-    
-    //    flashc_memset32((void*)&(flash_nvram_data.firstRun), FIRSTRUN_MAGIC, 4, true);
     // set size=0 so we won't attempt unitialized bfin load on next start
+    bfinLdrSize = 0;
     flashc_memset32((void*)&(flash_nvram_data.ldrSize), 0x00000000, 4, true);
+    //    flashc_memset32((void*)&(flash_nvram_data.firstRun), FIRSTRUN_MAGIC, 4, true);
     return 1;
   } return 0;
   return 0;
@@ -119,10 +110,9 @@ void flash_write_ldr(void) {
   flashc_memcpy((void*)pDst, (const void*)pSrc, rem, true);
 }
 
-
 // read/write firstrun value
 extern u8 flash_read_firstrun(void) {
-  return flash_nvram_data.firstRun == FIRSTRUN_MAGIC;
+  return (flash_nvram_data.firstRun == FIRSTRUN_MAGIC);
 }
 
 extern void flash_write_firstrun(void) {
