@@ -80,7 +80,7 @@ static void irq_pdca(void) {
   sd_mmc_spi_read_close_PDCA();
   //.... example has a 5000 clock gimpy delay here.
   // using delay_us instead
-  //  delay_us(10);
+  delay_ms(10);
   //  delay_ms(2);
   // Disable unnecessary channel
   pdca_disable(AVR32_PDCA_CHANNEL_SPI_TX);
