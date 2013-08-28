@@ -268,17 +268,17 @@ int main (void) {
   //////////////
   ////////
   //memory manager
-  init_mem();  
-  print_dbg("\r\n init_mem");
+  /* init_mem();   */
+  /* print_dbg("\r\n init_mem"); */
 
-  /// initialize filesystem
-  ////// FIXME: move to app
-  files_init();
+  /* /// initialize filesystem */
+  /* ////// FIXME: move to app */
+  /* files_init(); */
 
-  // setup control logic
-  init_ctl();
-  // initialize flash
-  firstrun = init_flash();
+  /* // setup control logic */
+  /* init_ctl(); */
+  /* // initialize flash */
+  /* firstrun = init_flash(); */
   //////
   /////////
   /////////////
