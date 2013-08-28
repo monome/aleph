@@ -170,6 +170,7 @@ static void init_ctl(void) {
 // app event loop
 static void check_events(void) {
   static event_t e;
+  u8 tmp;
   //  print_dbg("\r\n checking events...");
   if( get_next_event(&e) ) {
   /* print_dbg("\r\n handling event, type: "); */
@@ -187,7 +188,9 @@ static void check_events(void) {
 	startup = 0;
 	// successfully launched on firstrun, so write to flash
 	print_dbg("\r\n key pressed, launching ");
-	firstrun = firstrun && app_launch(firstrun);
+	tmp = app_launch(firstrun);
+	delay_ms(10);
+	firstrun &= tmp;
 	if(firstrun) {
 	  flash_write_firstrun();
 	  return;
