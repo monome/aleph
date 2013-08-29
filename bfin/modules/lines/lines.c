@@ -340,8 +340,9 @@ void module_process_frame(void) {
   for(i=0; i<NLINES; i++) {
     // process delay line
     out_del[i] = delay_next( &(lines[i]), in_del[i]);	    
+
     // process filter
-    filter_svf_next( &(svf[i]), out_del[i]);  
+    out_svf[i] = filter_svf_next( &(svf[i]), out_del[i]);  
       
     if(mix_svf[i] == 0 ) {
       ;;

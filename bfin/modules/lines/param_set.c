@@ -106,6 +106,8 @@ void module_set_param(u32 idx, pval v) {
   case eParam_mix0 :
     break;
     mix_svf[0] = FIX16_FRACT_TRUNC(v.fix);
+    break;
+
   case eParam_mix1 :
     mix_svf[1] = FIX16_FRACT_TRUNC(v.fix);
     break;
