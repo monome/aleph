@@ -22,14 +22,7 @@
 #include "sysclk.h"
 
 //// aleph
-// bees
-#include "menu.h"
-#include "net.h"
-#include "net_protected.h"
-#include "preset.h"
-#include "scene.h"
 // common
-#include "files.h"
 #include "fix.h"
 #include "param_common.h"
 #include "screen.h"
@@ -58,18 +51,39 @@
 #include "switches.h"
 #include "timers.h"
 
+//==================================================
+//====  defines
+
+// run an event handler with NULL check
+// #define APP_HANDLE_EVENT(handler, args) if( handler != NULL) (*handler)(args)
 
 //==================================================
-//====  variables
+//====  extern variables
+
+/* // handlers for function switches */
+/* sw_handler fnSwHandler[4] = { NULL, NULL, NULL, NULL }; */
+/* // handler for mode switch */
+/* sw_handler modeSwHandler = NULL; */
+/* // handlers for footswitches */
+/* sw_handler footSwHandler[2] = { NULL, NULL }; */
+/* // handlers for the 4 encoders */
+/* enc_handler encHandler[4] = { NULL, NULL, NULL, NULL }; */
+/* // handlers for adcs */
+/* adc_handler adcHandler[4] = { NULL, NULL, NULL, NULL }; */
+/* // monome grid key handler */
+/* monome_key_handler gridHandler = NULL; */
+
+event_handler appEventHandler;
+
+//==================================================
+//====  static variables
 // flag for firstrun
 static u8 firstrun = 0;
 //  flag to wait for startup button press
 static u8 startup = 1;
-// mode switch
-// static u8 mode = 0;
 
 //=================================================
-//==== declarations
+//==== static declarations
 
 static void init_avr32(void);
 static void init_ctl(void);
@@ -84,16 +98,17 @@ static void init_avr32(void) {
   // clocks
   // setup clocks
   sysclk_init();
-  // why need here?
+
+  // not sure why but when need to explictly enable clock for static mem ctlr
   sysclk_enable_pbb_module(SYSCLK_SMC_REGS);
   flashc_set_bus_freq(FCPU_HZ);
   flashc_set_wait_state(1);
 
   /// interrupts
   irq_initialize_vectors();
-
   // disable all interrupts for now
   cpu_irq_disable();
+
   // serial usb
   init_ftdi_usart();
   // external sram
@@ -112,15 +127,17 @@ static void init_avr32(void) {
   register_interrupts();
   // initialize the OLED screen
   init_oled();
+
   // enable interrupts
   cpu_irq_enable();
 
   // usb host controller
   init_usb_host();
-  
-// initialize usb classes
+  // initialize usb classes
   init_monome();
-  
+  //  init_midi();
+  //  init_hid();
+
   print_dbg("\r\n avr32 init done ");
 }
 
@@ -148,14 +165,12 @@ static void init_ctl(void) {
   // enable interrupts
   cpu_irq_enable();
 
-  // initialize the application
-  app_init();
-
 }
 
 // app event loop
 static void check_events(void) {
   static event_t e;
+  u8 tmp;
   //  print_dbg("\r\n checking events...");
   if( get_next_event(&e) ) {
   /* print_dbg("\r\n handling event, type: "); */
@@ -163,49 +178,67 @@ static void check_events(void) {
   /* print_dbg("\r\n , data: "); */
   /* print_dbg_hex(e.eventData); */
 
-    if(e.eventType == kEventFtdiConnect) {
-	// perform setup tasks for new ftdi device connection. 
-	// won't work if called from an interrupt.
-	ftdi_setup();
-    }
     if(startup) {
-      if( e.eventType == kEventSwitchDown0
-	  || e.eventType == kEventSwitchDown1
-	  || e.eventType == kEventSwitchDown2
-	  || e.eventType == kEventSwitchDown3
-	  || e.eventType == kEventSwitchDown4
+      if( e.eventType == kEventSwitch0
+	  || e.eventType == kEventSwitch1
+	  || e.eventType == kEventSwitch2
+	  || e.eventType == kEventSwitch3
+	  || e.eventType == kEventSwitch4
 	  ) {
 	startup = 0;
-	app_launch(firstrun);
-	return;
+	// successfully launched on firstrun, so write to flash
+	print_dbg("\r\n key pressed, launching ");
+	tmp = app_launch(firstrun);
+	delay_ms(10);
+	firstrun &= tmp;
+	if(firstrun) {
+	  flash_write_firstrun();
+	  return;
+	} else {
+	  flash_clear_firstrun();
+	}
       }
     } else {
       switch(e.eventType) {
-	////// FIXME: this event can and should be eliminated. 
-	////// ftdi_read callback can strip leading bytes
-	//// and check for rx data before invoking main loop or monome.c
+	
+      case kEventRefresh:
+	// refresh the screen hardware
+	screen_refresh();
+	break;
       case kEventMonomePoll :
 	// poll monome serial input and spawn relevant events
 	monome_read_serial();
 	break;
       case kEventMonomeRefresh :
 	// refresh monome device from led state buffer
-	//	print_dbg("\r\n handle monome refresh event");
 	monome_grid_refresh();
-	// TODO: deal with ring devices
 	break;
-
-
-	//////test: print monome led state buffer and dirty flags
-      /* case kEventSwitchDown0: */
-      /* 	print_dbg("\r\n monome led buf: "); */
-      /* 	print_byte_array(monomeLedBuffer, 256, 16); */
+	//----------------------------------
+      /* 	//---- app-defined handlers */
+      /* case kEventSwitch0: */
+      /* 	APP_HANDLE_EVENT(fnSwHandler[0], e.eventData > 0); */
       /* 	break; */
-
-	//////
+      /* case kEventSwitch1: */
+      /* 	APP_HANDLE_EVENT(fnSwHandler[1], e.eventData > 0); */
+      /* 	break; */
+      /* case kEventSwitch2: */
+      /* 	APP_HANDLE_EVENT(fnSwHandler[2], e.eventData > 0); */
+      /* 	break; */
+      /* case kEventSwitch3: */
+      /* 	APP_HANDLE_EVENT(fnSwHandler[3], e.eventData > 0); */
+      /* 	break; */
+      /* 	/// TODO: arc */
+      /* 	/// TODO: MIDgI */
+      /* 	/// TODO: HID */
+      /* 	//----- */
+	//--------------------------------------
+      case kEventFtdiConnect:
+	// perform setup tasks for new ftdi device connection. 
+	// won't work if called from an interrupt.
+	ftdi_setup();
+	break;
       default:
-	// all other events are sent to application layer
-	app_handle_event(&e);
+	(*appEventHandler)(&e);
 	break;
       } // event switch
     } // startup
@@ -215,39 +248,56 @@ static void check_events(void) {
 //int main(void) {
 ////main function
 int main (void) {
-  u32 waitForCard = 0;
+  //  u32 waitForCard = 0;
 
   // set up avr32 hardware and peripherals
   init_avr32();
 
   // wait for sd card
   screen_line(0, 0, "ALEPH", 0x3f);
-  screen_line(0, 1, "waiting for SD card...", 0x3f);
+  screen_line(0, 1, "initializing...", 0x3f);
   screen_refresh();
-  
-  print_dbg("\r\n SD check... ");
-  while (!sd_mmc_spi_mem_check()) {
-    waitForCard++;
-  }
-  print_dbg("\r\nfound SD card. ");
-
-  screen_blank_line(0, 0);
-  screen_blank_line(0, 1);
-  screen_line(0, 0, "SD card detected.", 0x3f);
 
   //memory manager
   init_mem();  
   print_dbg("\r\n init_mem");
 
-  /// initialize filesystem
-  ////// FIXME: move to app
-  files_init();
+  // intialize the FAT filesystem
+  fat_init();
+  print_dbg("\r\n init fat");
+
+  /////////////////////////
+  //////////////
+  ////////
+  //memory manager
+  /* init_mem();   */
+  /* print_dbg("\r\n init_mem"); */
+
+  /* /// initialize filesystem */
+  /* ////// FIXME: move to app */
+  /* files_init(); */
+
+  /* // setup control logic */
+  /* init_ctl(); */
+  /* // initialize flash */
+  /* firstrun = init_flash(); */
+  //////
+  /////////
+  /////////////
+  /////////////////////
 
   // setup control logic
   init_ctl();
+  print_dbg("\r\n init ctl");
+
+  // initialize the application
+  app_init();
+  print_dbg("\r\n init app");
 
   // initialize flash
   firstrun = init_flash();
+  print_dbg("r\n init flash, firstrun: ");
+  print_dbg_ulong(firstrun);
 
   // notify 
   screen_clear();
@@ -255,7 +305,6 @@ int main (void) {
   screen_refresh();
 
   print_dbg("\r\n starting event loop.\r\n");
-
 
   while(1) {
     check_events();

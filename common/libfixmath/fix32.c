@@ -14,9 +14,9 @@ void add_fix32(fix32* a, fix32* b) {
       // wrap by subtraction
       tfr = sub_fr1x32(
 			 add_fr1x32(
-				    sub_fr1x32(tfr, FR32_ONE),
+				    sub_fr1x32(tfr, FR32_MAX),
 				    b->fr),
-			 FR32_ONE);
+			 FR32_MAX);
       ti += 1; // carry
     }
   } else {
@@ -24,16 +24,16 @@ void add_fix32(fix32* a, fix32* b) {
       // wrap by addition
       tfr = add_fr1x32(
 			 add_fr1x32(
-				    add_fr1x32(tfr, FR32_ONE),
+				    add_fr1x32(tfr, FR32_MAX),
 				    b->fr),
-			 FR32_ONE);
+			 FR32_MAX);
       ti -= 1; // carry (negative)
       
     }
   }
   // yet another comparison and carry for negative fr
   if(tfr < 0) {
-    a->fr = add_fr1x32(FR32_ONE, tfr);
+    a->fr = add_fr1x32(FR32_MAX, tfr);
     a->i = ti -1;
   } else {
     a->fr = tfr;
@@ -68,7 +68,7 @@ extern void fix32_wrap_range(fix32* a, u32 upperBound) {
       //    wrapCount++;
   }
   //  if(wrapCount) {
-    //    a->fr = sub_fr1x32(FR32_ONE, a->fr);
+    //    a->fr = sub_fr1x32(FR32_MAX, a->fr);
   //  }
   while(a->i > (upperBound-1)) {
     // a->i -= upperBound;

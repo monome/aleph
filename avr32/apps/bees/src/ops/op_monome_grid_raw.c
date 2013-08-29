@@ -90,11 +90,11 @@ static void op_mgrid_raw_in_focus(op_mgrid_raw_t* op, const io_t* v) {
 }
 
 static void op_mgrid_raw_in_tog(op_mgrid_raw_t* op, const io_t* v) {
-  op->tog  = (*v > 0) * OP_ONE;
+  op->tog  = (*v > 0) ? OP_ONE : 0;
 }
 
 static void op_mgrid_raw_in_mono(op_mgrid_raw_t* op, const io_t* v) {
-  op->mono  = (*v > 0) * OP_ONE;
+  op->mono  = (*v > 0) ? OP_ONE : 0;
 }
 
 static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {

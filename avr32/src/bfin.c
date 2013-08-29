@@ -13,6 +13,7 @@
 #include "print_funcs.h"
 
 // aleph/common
+#include "module_common.h"
 #include "param_common.h"
 #include "protocol.h"
 
@@ -20,7 +21,7 @@
 #include "aleph_board.h"
 #include "app.h"
 #include "filesystem.h"
-#include "flash.h"
+//#include "flash.h"
 #include "global.h"
 #include "types.h"
 #include "util.h"
@@ -180,7 +181,6 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
 
 // get module name
 void bfin_get_module_name(volatile char* buf) {
-  char name[MODULE_NAME_LEN];
   u16 x; // u16 for spi_read()
   u8 i;
 
@@ -195,7 +195,7 @@ void bfin_get_module_name(volatile char* buf) {
     spi_write(BFIN_SPI, 0); //dont care
     spi_read(BFIN_SPI, &x);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    name[i] = (char)(x & 0xff);
+    buf[i] = (char)(x & 0xff);
   }
 
   app_resume();
@@ -312,7 +312,7 @@ void bfin_end_transfer(void) {
 /* } */
 
 
-void bfin_spi_master(void) {
+// void bfin_spi_master(void) {
   /* spi_options_t spiOptions = { */
   /*   .reg          = BFIN_SPI_NPCS, */
   /*   // fast baudrate / low trans delay suitable for boot process  */
@@ -345,4 +345,4 @@ void bfin_spi_master(void) {
   /* //// shit! not implemented...  */
   /* // gpio_enable_pin_pull_down(BFIN_HWAIT_PIN); */
 
-}
+//}

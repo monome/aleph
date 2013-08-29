@@ -15,26 +15,57 @@ extern void delay_init(delayLine* dl, fract32* data, u32 frames) {
   buffer_init(&(dl->buffer), data, frames);
   buffer_tapN_init(&(dl->tapRd), &(dl->buffer));
   buffer_tapN_init(&(dl->tapWr), &(dl->buffer));
-  dl->tapWr.idx = 10000;
-  dl->tapWr.idx = 0;
-  dl->writeLevel = FR32_ONE;
-  dl->eraseLevel = FR32_ONE;
+  dl->tapWr.idx = 10000; // ???
+  dl->tapRd.idx = 0;
+  dl->preLevel = 0;
+  dl->write = 1;
 }
 
 extern fract32 delay_next(delayLine* dl, fract32 in) {
   fract32 readVal;
-  if(1) { //if(dl->eraseLevel == FR32_ONE) {
-    buffer_tapN_write(&(dl->tapWr), in);
-  } else {
-    if(dl->eraseLevel == 0) {
+
+  // get read value first.
+  // so, setting loop == delaytime gives sensible results.
+  readVal = buffer_tapN_read( &(dl->tapRd) );
+
+  // figure out what to write
+  if(dl->preLevel == 0) {
+    if(dl->write) {
+      // write and replace
+      buffer_tapN_write(&(dl->tapWr), in);
+    } else {
+      // clear
+      buffer_tapN_write(&(dl->tapWr), 0);
+    }
+  } else if(dl->preLevel < 0) { // consider <0 to be == 1
+    if(dl->write) {
+      // overdub
       buffer_tapN_add(&dl->tapWr, in);
     } else {
-      buffer_tapN_mix(&(dl->tapWr), in, dl->eraseLevel);
+      // no change
+      ;;
+    }
+  } else { // prelevel is non-zero, non-full
+    if(dl->write) {
+      // write mix
+      buffer_tapN_mix(&(dl->tapWr), in, dl->preLevel);
+    } else {
+      // attenuate only
+      buffer_tapN_mix(&(dl->tapWr), 0, dl->preLevel);
+
     }
   }
-  readVal = buffer_tapN_read( &(dl->tapRd) );
-  buffer_tapN_next( &(dl->tapRd) );
-  buffer_tapN_next( &(dl->tapWr) );
+
+  // advance the read phasor 
+  if(dl->runRd) {
+    buffer_tapN_next( &(dl->tapRd) );
+  }
+
+  // advance the write phasor
+  if(dl->runWr) {
+    buffer_tapN_next( &(dl->tapWr) );
+  }
+  
   return readVal;
 }
 
@@ -51,20 +82,14 @@ extern void delay_set_delay(delayLine* dl, fix16 sec) {
     //  }
 }
 
-// set synchronization flag
-/* extern void delay_set_sync(delayLine* dl, u8 sync) { */
-/*   dl->sync = 1; */
-/* } */
-
 // set erase level
-extern void delay_set_erase(delayLine* dl, fract32 erase) {
-  dl->eraseLevel = erase;
+extern void delay_set_pre(delayLine* dl, fract32 pre) {
+  dl->preLevel = pre;
 }
 
 // set write level
-extern void delay_set_write(delayLine* dl, fract32 write) {
-  dl->writeLevel = write;
-  
+extern void delay_set_write(delayLine* dl, u8 write) {
+  dl->write = write;
 }
 
 // set read head rate

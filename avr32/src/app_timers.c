@@ -38,6 +38,7 @@
 static swTimer_t screenTimer;
 // poll encoder accumulators periodically
 static swTimer_t encTimer;
+
 // poll switches
 //static swTimer_t swTimer;
 // poll ADC
@@ -99,9 +100,6 @@ static void adc_timer_callback(int tag) {
 // monome polling callback
 static void monome_poll_timer_callback(int tag) {
   if (monomeConnect > 0) {
-    //    print_dbg("\r\n posting monome read event");
-    //    e.eventType = kEventMonomePoll;
-    //    post_event(&e);
     // start an ftdi transfer, callback handles event posting
     ftdi_read();
   }
@@ -140,5 +138,5 @@ void init_app_timers(void) {
   set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);
   set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 20,  &monome_refresh_timer_callback, 1);
   set_timer(&midiPollTimer,      eMidiPollTimerTag,      5,  &midi_poll_timer_callback, 1);
-  set_timer(&paramChangeTimer,      eParamChangeTimerTag,      5,  &param_change_timer_callback, 1);
+  set_timer(&paramChangeTimer,   eParamChangeTimerTag,      5,  &param_change_timer_callback, 1);
 }

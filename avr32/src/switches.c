@@ -30,32 +30,25 @@ static const U8 kSwitchPins[NUM_SW] = {
   FS1_PIN,
 };
 
-static const eEventType kSwitchEvents[NUM_SW][2] = {
-  { kEventSwitchDown0, kEventSwitchUp0 },
-  { kEventSwitchDown1, kEventSwitchUp1 },
-  { kEventSwitchDown2, kEventSwitchUp2 },
-  { kEventSwitchDown3, kEventSwitchUp3 },
-  { kEventSwitchDown4, kEventSwitchUp4 },
-  { kEventSwitchDown5, kEventSwitchUp5 },
-  { kEventSwitchDown6, kEventSwitchUp6 },
-  { kEventSwitchDown7, kEventSwitchUp7 },
+static const eEventType kSwitchEvents[NUM_SW] = {
+  kEventSwitch0, 
+  kEventSwitch1,
+  kEventSwitch2,
+  kEventSwitch3,
+  kEventSwitch4,
+  kEventSwitch5,
+  kEventSwitch6,
+  kEventSwitch7,
 };
 
 
 // generate events from switch interrupts
 void process_sw( const U8 swIdx )  {
   static event_t e;   
-  e.eventType = kSwitchEvents[swIdx][gpio_get_pin_value(kSwitchPins[swIdx])];
-  //  print_dbg("\r\n post switch event, idx: ");
-  //  print_dbg_ulong(swIdx);
+  e.eventType = kSwitchEvents[swIdx];
+  e.eventData = gpio_get_pin_value(kSwitchPins[swIdx]);
   post_event(&e);
 }
-
-////////
-///////////////////
-//////////////////////
-/////////////////
-
 
 #if 0
 //-----------------

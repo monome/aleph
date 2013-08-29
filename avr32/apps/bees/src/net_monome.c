@@ -15,21 +15,13 @@
 // dummy handler
 static void dummyHandler(void* op, u32 edata) { return; }
 
-// loopback handler for test or default
-/* static void monome_grid_key_loopback(u32 ev) { */
-/*   u8 x, y, z; */
-/*   monome_grid_key_parse_event_data(ev, &x, &y, &z); */
-/*   (*monome_grid_led)(x, y, z); */
-/* } */
-
 // use led state buffer and dirty flags
 static void monome_grid_key_loopback(void* op, u32 edata) {
   u8 x, y, z;
+  /// FIXME: this stuff should really be abstracted
   monome_grid_key_parse_event_data(edata, &x, &y, &z);
   monomeLedBuffer[x | (y << 4)] = z;
   monome_calc_quadrant_flag(x, y);
-  /// test: all frames
-  //  monomeFrameDirty = 0xf;
 }
 
 

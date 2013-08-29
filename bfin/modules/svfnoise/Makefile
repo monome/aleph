@@ -1,15 +1,11 @@
-audio = ../../../audio
+audiolib = ../../../audio
 common = ../../../common
 
-module_name = lines
-
-module_obj = lines.o \
-	params.o \
-	$(audio)/buffer.o \
-	$(audio)/conversion.o \
-	$(audio)/delay.o \
-	$(audio)/filter_svf.o \
-	$(audio)/table.o \
+module_name = svfnoise
+module_obj = svfnoise.o  \
+	$(audiolib)/filter_svf.o \
+	$(audiolib)/table.o \
+	$(audiolib)/noise.o \
 	$(common)/libfixmath/fix32.o \
 	$(common)/libfixmath/fix16.o \
 	$(common)/libfixmath/fix16_sqrt.o
@@ -19,9 +15,10 @@ all: aleph-$(module_name).ldr
 include ../../core.mk
 
 CFLAGS += -D ARCH_BFIN=1
+#CFLAGS += --verbose
 
 $(module_obj): %.o : %.c	
-	$(CC) $(CFLAGS) -I $(audio) -c -o $@ $< $(LDFLAGS)
+	$(CC) $(CFLAGS) -I $(audiolib) -c -o $@ $< $(LDFLAGS)
 
 aleph-$(module_name): core_target $(module_obj)
 	$(CC) $(LDFLAGS) -T aleph-$(module_name).lds \

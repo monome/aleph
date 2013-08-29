@@ -59,7 +59,7 @@ int media_read(unsigned long sector, unsigned char *buffer, unsigned long sector
       pdcaTxChan->cr = AVR32_PDCA_TEN_MASK; // and TX PDCA transfer
       // wait for signal from ISR
       while(!fsEndTransfer) { ;; }
-      // copy FIXME: could optimize
+      // copy FIXME: could optimize away
       for(i=0; i<FS_BUF_SIZE; i++) {
 	buffer[i] = pdcaRxBuf[i];
       }

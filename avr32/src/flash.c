@@ -7,9 +7,6 @@
 #include "print_funcs.h"
 // aleph-common
 #include "module_common.h"
-// aleph-bees
-#include "scene.h"
-#include "preset.h"
 // aleph-avr32
 #include "bfin.h"
 #include "flash.h"
@@ -21,18 +18,20 @@
 
 /// 64K of blackfin executable storage in flash
 #define LDR_FLASH_BYTES 0x10000
+// length of .ldr string identifier in flash
+#define LDR_FLASH_STRING_LEN 64
 
-// value to write during first run
-#define FIRSTRUN_INIT 0x76543210
+// arbitrary magic number to write during first run
+#define FIRSTRUN_MAGIC 0x76543210
 
 // storage layout of default data in nonvolatile memory
 typedef const struct {
   u32 firstRun;                // check for initialization
   u32 ldrSize;                 // size of stored LDR
+  char ldrString[LDR_FLASH_STRING_LEN];
   u8 ldrData[LDR_FLASH_BYTES]; // LDR data
-  sceneData_t sceneData;       // scene data
+  //sceneData_t sceneData;       // scene data
 } nvram_data_t;
-
 
 //----------------------------------------
 // ---- static vars
@@ -64,35 +63,16 @@ u8 init_flash() {
 
   // allocate bfin loader buf
   bfinLdrData = alloc_mem(BFIN_LDR_MAX_BYTES);
-  
-  print_dbg("\r\n bfinLdrData : @0x");
-  print_dbg_hex( (u32)bfinLdrData );
+  for(i=0; i<BFIN_LDR_MAX_BYTES; i++) { bfinLdrData[i] = 0; }
 
-  for(i=0; i<BFIN_LDR_MAX_BYTES; i++) {
-    bfinLdrData[i] = 0;
-  }
-
-  if(flash_nvram_data.firstRun != FIRSTRUN_INIT) {
-    print_dbg("\r\n writing firstrun, no bfin load");
-    bfinLdrSize = 0;
-    flashc_memset32((void*)&(flash_nvram_data.firstRun), FIRSTRUN_INIT, 4, true);
+  if(flash_nvram_data.firstRun != FIRSTRUN_MAGIC) {
     // set size=0 so we won't attempt unitialized bfin load on next start
+    bfinLdrSize = 0;
     flashc_memset32((void*)&(flash_nvram_data.ldrSize), 0x00000000, 4, true);
+    //    flashc_memset32((void*)&(flash_nvram_data.firstRun), FIRSTRUN_MAGIC, 4, true);
     return 1;
   } return 0;
   return 0;
-}
-
-// read default scene data to global buffer
-void flash_read_scene(void) { 
-  memcpy((void*)sceneData, (void*)&(flash_nvram_data.sceneData), sizeof(sceneData_t)); 
-  //  scene_read_buf();
-}
-
-// write default scene data from global buffer
-void flash_write_scene(void) { 
-  //  scene_write_buf();
-  flashc_memcpy( (void*)(&(flash_nvram_data.sceneData)), (void*)sceneData, sizeof(sceneData_t), true);
 }
 
 // read default blackfin
@@ -128,4 +108,19 @@ void flash_write_ldr(void) {
   // remaining bytes
   rem = bfinLdrSize - (nPages * 0x200);
   flashc_memcpy((void*)pDst, (const void*)pSrc, rem, true);
+}
+
+// read firstrun status
+extern u8 flash_read_firstrun(void) {
+  return (flash_nvram_data.firstRun == FIRSTRUN_MAGIC);
+}
+
+// write firstrun status
+extern void flash_write_firstrun(void) {
+  flashc_memset32((void*)&(flash_nvram_data.firstRun), FIRSTRUN_MAGIC, 4, true);
+}
+
+// clear firstrun status
+extern void flash_clear_firstrun(void) {
+  flashc_memset32((void*)&(flash_nvram_data.firstRun), 0x00000000, 4, true);
 }

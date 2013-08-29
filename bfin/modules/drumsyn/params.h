@@ -23,7 +23,8 @@ enum params {
   eParamNumParams
 };
 
-extern void fill_param_desc(void);
+// populate parameter descriptor fields.
+void fill_param_desc(void);
 
 #endif // header guard 
 // EOF

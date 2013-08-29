@@ -20,10 +20,14 @@ typedef struct _delayLine {
   bufferTapN tapWr;
   // flag to synchronize read tap with write tap
   u8 sync;
-  // write level
-  fract32 writeLevel;
-  // erase level
-  fract32 eraseLevel;
+  // flag to toggle writing of new data
+  u8 write;
+  // level of existing data to mix with new data
+  // negative == 1
+  fract32 preLevel;
+  // flags to run or pause each tap (phasor)
+  u8 runRd;
+  u8 runWr;
 } delayLine;
 
 // initialize with pointer to audio buffer data
@@ -37,9 +41,9 @@ extern void delay_set_delay(delayLine* dl, fix16 sec);
 // set synchronization flag
 // extern void delay_set_sync(delayLine* dl, u8 sync);
 // set erase level
-extern void delay_set_erase(delayLine* dl, fract32 erase);
+extern void delay_set_pre(delayLine* dl, fract32 pre);
 // set write level
-extern void delay_set_write(delayLine* dl, fract32 write);
+extern void delay_set_write(delayLine* dl, u8 write);
 // set read head rate
 extern void delay_set_rate(delayLine* dl, fix16 rate);
 

@@ -25,7 +25,7 @@
 //------------------------
 //----- variables
 // timer tick counter
-volatile u64 tcTicks = 0;
+volatile u64 tcTicksUp = 0;
 volatile u8 tcOverflow = 0;
 static const u64 tcMax = (U64)0x7fffffff;
 static const u64 tcMaxInv = (u64)0x10000000;
@@ -70,30 +70,30 @@ static void irq_port1_line3(void);
 //----- static function definitions
 __attribute__((__interrupt__))
 static void irq_pdca(void) {
-  // Disable all interrupts.
+  // FIXME: try newer irq driver
   Disable_global_interrupt();
-  // Disable interrupt channel.
+
   pdca_disable_interrupt_transfer_complete(AVR32_PDCA_CHANNEL_SPI_RX);
   //unselects the SD/MMC memory.
   sd_mmc_spi_read_close_PDCA();
   //.... example has a 5000 clock gimpy delay here.
   // doesn't seem to need it , but if that changes use delay_us instead
-  // Disable unnecessary channel
+  // disable interrupts
   pdca_disable(AVR32_PDCA_CHANNEL_SPI_TX);
   pdca_disable(AVR32_PDCA_CHANNEL_SPI_RX);
-  // Enable all interrupts.
+
   Enable_global_interrupt();
-  //  print_dbg("\r\n handled PDCA interrupt. \r\n");
+
   fsEndTransfer = true;
 }
 
 // timer irq
 __attribute__((__interrupt__))
 static void irq_tc(void) {
-  tcTicks++;
-  // overflow control
+  tcTicksUp++;
+  // report overflow status
   if(tcTicks > tcMax) { 
-    tcTicks = 0;
+    tcTicksUp = 0;
     tcOverflow = 1;
   } else {
     tcOverflow = 0;

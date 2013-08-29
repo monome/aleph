@@ -49,22 +49,14 @@ typedef enum {
   kEventEncoder2 ,
   kEventEncoder3 ,
   //// switches
-  kEventSwitchDown0, // edit
-  kEventSwitchUp0,
-  kEventSwitchDown1, 
-  kEventSwitchUp1,
-  kEventSwitchDown2,
-  kEventSwitchUp2,
-  kEventSwitchDown3,
-  kEventSwitchUp3,
-  kEventSwitchDown4, // mode
-  kEventSwitchUp4,
-  kEventSwitchDown5, // power
-  kEventSwitchUp5,
-  kEventSwitchDown6, // foot0
-  kEventSwitchUp6,
-  kEventSwitchDown7, // foot1
-  kEventSwitchUp7,
+  kEventSwitch0, // edit
+  kEventSwitch1, 
+  kEventSwitch2,
+  kEventSwitch3,
+  kEventSwitch4, // mode
+  kEventSwitch5, // power
+  kEventSwitch6, // foot0
+  kEventSwitch7, // foot1
   ///// monome input
   kEventMonomeGridKey,
   kEventMonomeGridTilt,

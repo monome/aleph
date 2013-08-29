@@ -127,23 +127,17 @@ bool set_timer(  swTimer_t* t, int tag, int ticks, timerCallback callback,
 bool kill_timer( int tag ) {
   int k;
   
-  //  bool fReenableInterrupts = Is_interrupt_level_enabled( TIMER_INT_LEVEL );  
-  //  Disable_interrupt_level( TIMER_INT_LEVEL );
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
 
   for ( k = 0; k < MAX_TIMERS; k++ ) {
     if ( timers[k]->tag == tag ) {
       timers[k] = NULL;
-      //      Enable_interrupt_level( TIMER_INT_LEVEL );
       cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
       return true;
     }
   }
 
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
-  //  if (fReenableInterrupts) {
-  //    Enable_interrupt_level( TIMER_INT_LEVEL );
-  //  }
 
   return false;
 }
