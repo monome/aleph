@@ -59,7 +59,7 @@ extern u8 ctl_param_change(u32 idx, u32 val) {
   }
 }
 
-// execute the last param change
+// execute the most recent change
 //// warning: no lower bounds check on evCount
 extern void ctl_perform_last_change(void) {
   static u32 idx;
@@ -68,9 +68,15 @@ extern void ctl_perform_last_change(void) {
   clear_param_dirty(idx);
 }
 
+
 // attempt to execute all pending param changes
 extern void ctl_perform_all_changes(void) {
-  while(evCount > 0) {
-    ctl_perform_last_change();
+  u32 idx, i;
+  // execute in FIFO order
+  for(i=0; i<evCount; i++) {
+    idx = ctlBuf[i].idx;
+    bfin_set_param(idx, ctlBuf[i].val.fix);
+    clear_param_dirty(idx);
   }
+  evCount = 0;
 }
