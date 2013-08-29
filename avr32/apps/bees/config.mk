@@ -6,7 +6,6 @@ ALEPH_COMMON = ../common
 
 ALEPH_BEES = ../avr32/apps/bees
 
-
 # Target CPU architecture: ap, ucr1, ucr2 or ucr3
 ARCH = ucr2
 
@@ -88,9 +87,6 @@ ASSRCS += \
        avr32/drivers/intc/exception.S                     \
        avr32/utils/startup/startup_uc3.S                     \
        avr32/utils/startup/trampoline_uc3.S                     
-#	$(ALEPH_AVR32)/startup/startup.S \
-#	$(ALEPH_AVR32)/startup/trampoline.S
-
 
 # List of include paths.
 INC_PATH += \
@@ -215,7 +211,7 @@ CPPFLAGS = \
        -D BOARD=USER_BOARD -D ARCH_AVR32=1 -D UHD_ENABLE
 
 # Extra flags to use when linking
-LDFLAGS = -nostartfiles -Wl,-e,_trampoline
+LDFLAGS = -nostartfiles -Wl #,-e,_trampoline
 
 # for external heap:
 # LDFLAGS += --gc-sections,--defsym,__heap_size__=0x00080000	

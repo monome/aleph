@@ -6,7 +6,7 @@
 
    most likely, this is just a count of parameters.
    
-   a copy of this header should exist in your custom modiule directory 
+   a copy of this header should exist in your custom module directory 
    (e.g. aleph/bfin/modules/mymodule/
  */
 

@@ -1,7 +1,7 @@
-/* iotest.c
+/* mono.c
  * aleph-bfin
  * 
- * testing hardware: PM chain synthesizer on all outputs,
+ * PM chain synthesizer, 2 oscs, on all outputs,
  * plus i/o loop on each i/o pair
  */
 
@@ -64,7 +64,6 @@ typedef struct _monoFmData {
 //--- wavetable
 #define WAVE_TAB_SIZE 512
 #define WAVE_TAB_SIZE_1 511
-//#define WAVE_TAB_MAX16 0x1ff0000 // 511 * 0x10000
 #define WAVE_TAB_MAX16 0x1ffffff // (512 * 0x10000) - 1
 
 //-------------------------
@@ -129,6 +128,7 @@ static filter_1p_fr32* wave2Lp; // 1plp smoother for wave2
 static filter_1p_fr32* amp1Lp;  // 1plp smoother for amp1
 static filter_1p_fr32* amp2Lp;  // 1plp smoother for amp2
 
+// dry I->O amplitudes
 static fract32 ioAmp0;
 static fract32 ioAmp1;
 static fract32 ioAmp2;
@@ -246,7 +246,7 @@ static void calc_frame(void) {
     inc2 = fix16_mul(filter_1p_fix16_next(hz2Lp), ips);
   } 
 
-  // increment idx and wrap
+  // increment phasor idx and wrap
   idx1 = fix16_add(idx1, inc1);
   while(idx1 > WAVE_TAB_MAX16) { 
     idx1 = fix16_sub(idx1, WAVE_TAB_MAX16);
@@ -330,13 +330,14 @@ void module_init(void) {
   amp2Lp = (filter_1p_fr32*)malloc(sizeof(filter_1p_fr32));
   filter_1p_fr32_init( amp2Lp, SAMPLERATE, 0xa0000, amp2 );
 
+  // initialize osc phasor increment
   inc1 = fix16_mul(hz1, ips);
   inc2 = fix16_mul(hz2, ips);
 
   /// DEBUG
-  //printf("\n\n module init debug \n\n");
+  //printf("\n\n module init debug \n
 
-  ////// TEST
+  /// TEST (gate on by default)
   env_asr_set_gate(env, 1);
 }
 
