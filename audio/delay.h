@@ -34,10 +34,12 @@ typedef struct _delayLine {
 extern void delay_init(delayLine* dl, fract32* bufData, u32 frames);
 // get next value given input
 extern fract32 delay_next(delayLine* dl, fract32 in);
-// set loop endpoint in seconds
-extern void delay_set_loop(delayLine* dl, fix16 sec);
-// set delay time in seconds
-extern void delay_set_delay(delayLine* dl, fix16 sec); 
+// set loop endpoint in seconds / samples
+extern void delay_set_loop_sec(delayLine* dl, fix16 sec);
+extern void delay_set_loop_samp(delayLine* dl, u32 samp);
+// set delay time in seconds / samples
+extern void delay_set_delay_sec(delayLine* dl, fix16 sec); 
+extern void delay_set_delay_samp(delayLine* dl, u32 samp); 
 // set read head rate
 extern void delay_set_rate(delayLine* dl, fix16 rate);
 // set erase level
@@ -46,14 +48,16 @@ extern void delay_set_pre(delayLine* dl, fract32 pre);
 extern void delay_set_write(delayLine* dl, u8 write);
 
 
-// set read pos in seconds
-extern void delay_set_pos_read(delayLine* dl, fix16 sec);
-// set write pos in seconds
-extern void delay_set_pos_write(delayLine* dl, fix16 sec);
+// set read pos in seconds / samples
+extern void delay_set_pos_read_sec(delayLine* dl, fix16 sec);
+extern void delay_set_pos_read_samp(delayLine* dl, u32 samp);
+// set write pos in seconds / samples
+extern void delay_set_pos_write_sec(delayLine* dl, fix16 sec);
+extern void delay_set_pos_write_samp(delayLine* dl, u32 samp);
 
-// set read run flag in seconds
+// set read run flag
 extern void delay_set_run_read(delayLine* dl, u8 val);
-// set write run flag in seconds
+// set write run flag
 extern void delay_set_run_write(delayLine* dl, u8 val);
 
 

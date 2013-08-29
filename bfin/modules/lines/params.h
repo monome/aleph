@@ -4,6 +4,11 @@
 #define PARAM_RQ_MIN 0x00000000
 #define PARAM_RQ_MAX 0x00400000
 
+#define PARAM_BUFFER_MAX 0x002bf1ff // LINES_BUF_FRAMES - 1
+
+#define PARAM_COEFF_MAX 0x1F400000;  // fixme
+
+// enumerate parameters
 enum params {
 
   // delay 0

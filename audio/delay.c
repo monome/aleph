@@ -70,14 +70,27 @@ extern fract32 delay_next(delayLine* dl, fract32 in) {
 }
 
 // set loop endpoint in seconds
-extern void delay_set_loop(delayLine* dl, fix16 sec) {
+extern void delay_set_loop_sec(delayLine* dl, fix16 sec) {
   u32 samps = sec_to_frames_trunc(sec);
   dl->tapRd.loop = samps - 1;
   dl->tapWr.loop = samps - 1;
 }
 
-extern void delay_set_delay(delayLine* dl, fix16 sec) {
-  buffer_tapN_sync(&(dl->tapRd), &(dl->tapWr), sec);
+// set loop endpoint in samples
+extern void delay_set_loop_samp(delayLine* dl, u32 samps) {
+  dl->tapRd.loop = samps - 1;
+  dl->tapWr.loop = samps - 1;
+}
+
+// set delay in seconds
+extern void delay_set_delay_sec(delayLine* dl, fix16 sec) {
+  u32 samp = sec_to_frames_trunc(sec);
+  buffer_tapN_sync(&(dl->tapRd), &(dl->tapWr), samp);
+}
+
+// set delay in samples
+extern void delay_set_delay_samp(delayLine* dl, u32 samp) {
+  buffer_tapN_sync(&(dl->tapRd), &(dl->tapWr), samp);
 }
 
 // set erase level
@@ -95,24 +108,32 @@ extern void delay_set_rate(delayLine* dl, fix16 rate) {
   ///...
 }
 
-
 // set read pos in seconds
-extern void delay_set_pos_read(delayLine* dl, fix16 sec) {
-  buffer_tapN_set_pos(&(dl->tapRd), sec);
+extern void delay_set_pos_read_sec(delayLine* dl, fix16 sec) {
+  u32 samp = sec_to_frames_trunc(sec);
+  buffer_tapN_set_pos(&(dl->tapRd), samp);
 }
+extern void delay_set_pos_read_samp(delayLine* dl, u32 samp) {
+  buffer_tapN_set_pos(&(dl->tapRd), samp);
+}
+
 
 // set write pos in seconds
-extern void delay_set_pos_write(delayLine* dl, fix16 sec) {
-  buffer_tapN_set_pos(&(dl->tapWr), sec);
+extern void delay_set_pos_write_sec(delayLine* dl, fix16 sec) {
+  u32 samp = sec_to_frames_trunc(sec);
+  buffer_tapN_set_pos(&(dl->tapWr), samp);
+}
+extern void delay_set_pos_write_samp(delayLine* dl, u32 samp) {
+  buffer_tapN_set_pos(&(dl->tapWr), samp);
 }
 
-// set read run flag in seconds
+
+// set read run flag 
 extern void delay_set_run_read(delayLine* dl, u8 val) {
   dl->runRd = val;
 }
 
-// set write run flag in seconds
+// set write run flag
 extern void delay_set_run_write(delayLine* dl, u8 val) {
   dl->runWr = val;
 }
-

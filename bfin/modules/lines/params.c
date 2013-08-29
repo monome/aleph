@@ -8,15 +8,15 @@
 void fill_param_desc(void) {
   strcpy(gModuleData->paramDesc[eParam_delay0].label, "delay0");
   strcpy(gModuleData->paramDesc[eParam_delay0].unit, "s");
-  gModuleData->paramDesc[eParam_delay0].type = PARAM_TYPE_FIX; 
+  gModuleData->paramDesc[eParam_delay0].type = PARAM_TYPE_UINT; 
   gModuleData->paramDesc[eParam_delay0].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_delay0].max = 0x001E0000; 
+  gModuleData->paramDesc[eParam_delay0].max = PARAM_BUFFER_MAX; 
 
   strcpy(gModuleData->paramDesc[eParam_loop0].label, "loop0");
   strcpy(gModuleData->paramDesc[eParam_loop0].unit, "s");
-  gModuleData->paramDesc[eParam_loop0].type = PARAM_TYPE_FIX; 
+  gModuleData->paramDesc[eParam_loop0].type = PARAM_TYPE_UINT; 
   gModuleData->paramDesc[eParam_loop0].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_loop0].max = 0x001E0000; 
+  gModuleData->paramDesc[eParam_loop0].max = PARAM_BUFFER_MAX; 
 
   strcpy(gModuleData->paramDesc[eParam_rate0].label, "rate0");
   strcpy(gModuleData->paramDesc[eParam_rate0].unit, "u");
@@ -38,39 +38,39 @@ void fill_param_desc(void) {
 
   strcpy(gModuleData->paramDesc[eParam_pos_write0].label, "pos_write0");
   strcpy(gModuleData->paramDesc[eParam_pos_write0].unit, "s");
-  gModuleData->paramDesc[eParam_pos_write0].type = PARAM_TYPE_FIX; 
+  gModuleData->paramDesc[eParam_pos_write0].type = PARAM_TYPE_UINT; 
   gModuleData->paramDesc[eParam_pos_write0].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_pos_write0].max = 0x001E0000; 
+  //  gModuleData->paramDesc[eParam_pos_write0].max = PARAM_BUFFER_MAX; 
 
   strcpy(gModuleData->paramDesc[eParam_pos_read0].label, "pos_read0");
   strcpy(gModuleData->paramDesc[eParam_pos_read0].unit, "s");
-  gModuleData->paramDesc[eParam_pos_read0].type = PARAM_TYPE_FIX; 
+  gModuleData->paramDesc[eParam_pos_read0].type = PARAM_TYPE_UINT; 
   gModuleData->paramDesc[eParam_pos_read0].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_pos_read0].max = 0x001E0000; 
+  //  gModuleData->paramDesc[eParam_pos_read0].max = PARAM_BUFFER_MAX; 
 
   strcpy(gModuleData->paramDesc[eParam_run_write0].label, "run_write0");
   strcpy(gModuleData->paramDesc[eParam_run_write0].unit, "s");
   gModuleData->paramDesc[eParam_run_write0].type = PARAM_TYPE_FIX; 
   gModuleData->paramDesc[eParam_run_write0].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_run_write0].max = 0x001E0000; 
+  gModuleData->paramDesc[eParam_run_write0].max = fix16_one; 
 
   strcpy(gModuleData->paramDesc[eParam_run_read0].label, "run_read0");
   strcpy(gModuleData->paramDesc[eParam_run_read0].unit, "s");
   gModuleData->paramDesc[eParam_run_read0].type = PARAM_TYPE_FIX; 
   gModuleData->paramDesc[eParam_run_read0].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_run_read0].max = 0x001E0000; 
+  gModuleData->paramDesc[eParam_run_read0].max = fix16_one; 
 
   strcpy(gModuleData->paramDesc[eParam_delay1].label, "delay1");
   strcpy(gModuleData->paramDesc[eParam_delay1].unit, "s");
-  gModuleData->paramDesc[eParam_delay1].type = PARAM_TYPE_FIX; 
+  gModuleData->paramDesc[eParam_delay1].type = PARAM_TYPE_UINT; 
   gModuleData->paramDesc[eParam_delay1].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_delay1].max = 0x001E0000; 
+  gModuleData->paramDesc[eParam_delay1].max = PARAM_BUFFER_MAX; 
 
   strcpy(gModuleData->paramDesc[eParam_loop1].label, "loop1");
   strcpy(gModuleData->paramDesc[eParam_loop1].unit, "s");
-  gModuleData->paramDesc[eParam_loop1].type = PARAM_TYPE_FIX; 
+  gModuleData->paramDesc[eParam_loop1].type = PARAM_TYPE_UINT; 
   gModuleData->paramDesc[eParam_loop1].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_loop1].max = 0x001E0000; 
+  gModuleData->paramDesc[eParam_loop1].max = PARAM_BUFFER_MAX; 
 
   strcpy(gModuleData->paramDesc[eParam_rate1].label, "rate1");
   strcpy(gModuleData->paramDesc[eParam_rate1].unit, "u");
@@ -94,33 +94,33 @@ void fill_param_desc(void) {
   strcpy(gModuleData->paramDesc[eParam_pos_write1].unit, "s");
   gModuleData->paramDesc[eParam_pos_write1].type = PARAM_TYPE_FIX; 
   gModuleData->paramDesc[eParam_pos_write1].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_pos_write1].max = 0x001E0000; 
+  gModuleData->paramDesc[eParam_pos_write1].max = PARAM_BUFFER_MAX; 
 
   strcpy(gModuleData->paramDesc[eParam_pos_read1].label, "pos_read1");
   strcpy(gModuleData->paramDesc[eParam_pos_read1].unit, "s");
   gModuleData->paramDesc[eParam_pos_read1].type = PARAM_TYPE_FIX; 
   gModuleData->paramDesc[eParam_pos_read1].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_pos_read1].max = 0x001E0000; 
+  gModuleData->paramDesc[eParam_pos_read1].max = PARAM_BUFFER_MAX; 
 
 
   strcpy(gModuleData->paramDesc[eParam_run_write1].label, "run_write1");
   strcpy(gModuleData->paramDesc[eParam_run_write1].unit, "s");
   gModuleData->paramDesc[eParam_run_write1].type = PARAM_TYPE_FIX; 
   gModuleData->paramDesc[eParam_run_write1].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_run_write1].max = 0x001E0000; 
+  gModuleData->paramDesc[eParam_run_write1].max = fix16_one; 
 
   strcpy(gModuleData->paramDesc[eParam_run_read1].label, "run_read1");
   strcpy(gModuleData->paramDesc[eParam_run_read1].unit, "s");
   gModuleData->paramDesc[eParam_run_read1].type = PARAM_TYPE_FIX; 
   gModuleData->paramDesc[eParam_run_read1].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_run_read1].max = 0x001E0000; 
+  gModuleData->paramDesc[eParam_run_read1].max = fix16_one; 
 
 
   strcpy(gModuleData->paramDesc[eParam_coeff0].label, "coeff0");
   strcpy(gModuleData->paramDesc[eParam_coeff0].unit, "coeff");
   gModuleData->paramDesc[eParam_coeff0].type = PARAM_TYPE_FIX; 
   gModuleData->paramDesc[eParam_coeff0].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_coeff0].max = 0x1F400000; 
+  gModuleData->paramDesc[eParam_coeff0].max = PARAM_COEFF_MAX  // FIXME 
 
   strcpy(gModuleData->paramDesc[eParam_rq0].label, "rq0");
   strcpy(gModuleData->paramDesc[eParam_rq0].unit, "u");

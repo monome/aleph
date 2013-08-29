@@ -139,10 +139,11 @@ void buffer_tapN_set_loop(bufferTapN* tap, fix16 sec);
 
 // synchronize one tap with another at a given offset in seconds.
 // useful for delays
-void buffer_tapN_sync(bufferTapN* tap, bufferTapN* target, fix16 offset);
+void buffer_tapN_sync(bufferTapN* tap, bufferTapN* target, u32 samps);
+
 
 // set tap position directly
- void buffer_tapN_set_pos(bufferTapN* tap, fix16 secs);
+void buffer_tapN_set_pos(bufferTapN* tap, u32 samp);
 
 
 #endif // h guard

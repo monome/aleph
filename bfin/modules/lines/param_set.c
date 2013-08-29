@@ -3,28 +3,28 @@
 void module_set_param(u32 idx, pval v) {
   switch(idx) {
   case eParam_delay0 :
-    delay_set_delay(&(lines[0]), v.fix);
+    delay_set_delay_samp(&(lines[0]), v.u);
     break;
   case eParam_delay1 :
-    delay_set_delay(&(lines[1]), v.fix);
+    delay_set_delay_samp(&(lines[1]), v.u);
     break;
   case eParam_loop0 :
-    delay_set_loop(&(lines[0]), v.fix);
+    delay_set_loop_samp(&(lines[0]), v.u);
     break;
   case eParam_loop1 :
-    delay_set_loop(&(lines[1]), v.fix);
+    delay_set_loop_samp(&(lines[1]), v.u);
     break;
   case eParam_pos_write0 :
-    delay_set_pos_write(&(lines[0]), v.fix);
+    delay_set_pos_write_samp(&(lines[0]), v.u);
     break;
   case eParam_pos_write1 :
-    delay_set_pos_write(&(lines[1]), v.fix);
+    delay_set_pos_write_samp(&(lines[1]), v.u);
     break;
   case eParam_pos_read0 :
-    delay_set_pos_read(&(lines[0]), v.fix);
+    delay_set_pos_read_samp(&(lines[0]), v.u);
     break;
   case eParam_pos_read1 :
-    delay_set_pos_read(&(lines[1]), v.fix);
+    delay_set_pos_read_samp(&(lines[1]), v.u);
     break;
   case eParam_run_write0 :
     delay_set_run_write(&(lines[0]), v.fix);
@@ -107,11 +107,9 @@ void module_set_param(u32 idx, pval v) {
     break;
     mix_svf[0] = FIX16_FRACT_TRUNC(v.fix);
     break;
-
   case eParam_mix1 :
     mix_svf[1] = FIX16_FRACT_TRUNC(v.fix);
     break;
-    
     /// mix points
   case eParam_adc0_del0 :
     mix_adc_del[0][0] = FIX16_FRACT_TRUNC(v.fix);

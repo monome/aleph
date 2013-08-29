@@ -213,8 +213,7 @@ void buffer_tapN_init(bufferTapN * tap, audioBuffer* buf) {
 
 // synchronize one tap with another at a given offset in seconds.
 // useful for delays
-void buffer_tapN_sync(bufferTapN* tap, bufferTapN* target, fix16 sec) {
-  u32 samps = sec_to_frames_trunc(sec);
+void buffer_tapN_sync(bufferTapN* tap, bufferTapN* target, u32 samps) {
   if(target->idx >= samps) {
     tap->idx = target->idx - samps;
   } else {
@@ -223,8 +222,7 @@ void buffer_tapN_sync(bufferTapN* tap, bufferTapN* target, fix16 sec) {
 }
 
 // set tap position directly (wraps to loop)
-void buffer_tapN_set_pos(bufferTapN* tap, fix16 sec) {
-  u32 samps = sec_to_frames_trunc(sec);
+void buffer_tapN_set_pos(bufferTapN* tap, u32 samps) {
   while(samps > tap->loop) {
     samps -= tap->loop;
   }
