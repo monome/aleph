@@ -57,7 +57,7 @@ fract32 buffer_tap_read(bufferTap *tap) {
 void buffer_tap_write(bufferTap *tap, fract32 val) { 
   static s32 idxB;
   static fract32 a, b;  
-  a = mult_fr1x32x32(val, sub_fr1x32(FR32_ONE, tap->idx.fr));
+  a = mult_fr1x32x32(val, sub_fr1x32(FR32_MAX, tap->idx.fr));
   b = mult_fr1x32x32(val, tap->idx.fr);
   idxB = tap->idx.i + 1;
   while(idxB >= tap->loop) { idxB -= tap->buf->frames; }
@@ -70,7 +70,7 @@ void buffer_tap_write(bufferTap *tap, fract32 val) {
 void buffer_tap_mix(bufferTap *tap, fract32 val, fract32 preLevel) { 
   static s32 idxB;
   static fract32 a, b;  
-  a = mult_fr1x32x32(val, sub_fr1x32(FR32_ONE, tap->idx.fr));
+  a = mult_fr1x32x32(val, sub_fr1x32(FR32_MAX, tap->idx.fr));
   b = mult_fr1x32x32(val, tap->idx.fr);
   idxB = tap->idx.i + 1;
   while(idxB > tap->loop) { idxB -= tap->buf->frames; }
@@ -85,7 +85,7 @@ void buffer_tap_mix(bufferTap *tap, fract32 val, fract32 preLevel) {
 void buffer_tap_add(bufferTap *tap, fract32 val) { 
   /* static s32 idxB; */
   /* static fract32 a, b;   */
-  /* a = mult_fr1x32x32(val, sub_fr1x32(FR32_ONE, tap->idx.fr)); */
+  /* a = mult_fr1x32x32(val, sub_fr1x32(FR32_MAX, tap->idx.fr)); */
   /* b = mult_fr1x32x32(val, tap->idx.fr); */
   /* idxB = tap->idx.i + 1; */
   /* while(idxB >= tap->loop) { idxB -= tap->loop; } */

@@ -99,6 +99,9 @@ fract32 mix_adc_dac[4][4] = { { 0, 0, 0, 0 },
 // each delay -> each dac
 fract32 mix_del_dac[2][4] = { { 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
 
+// svf balance
+fract32 mix_svf[NLINES] = { 0, 0 };
+
 // -- mixed inputs
 // delay 
 fract32 in_del[NLINES] = { 0, 0 };
@@ -106,6 +109,7 @@ fract32 in_del[NLINES] = { 0, 0 };
 //-- outputs
 // delay
 fract32 out_del[NLINES] = { 0, 0 };
+fract32 out_svf[NLINES] = { 0, 0 };
 
 #ifdef ARCH_BFIN // bfin
 #else // linux : emulate bfin audio core
@@ -328,13 +332,29 @@ u32 module_get_num_params(void) {
 
 
 void module_process_frame(void) { 
-  //  u8 i;
+    u8 i;
+
+  // mix inputs to delay lines
   mix_del_inputs();
 
-  out_del[0] = filter_svf_next( &(svf[0]), delay_next( &(lines[0]), in_del[0]) );
-  out_del[1] = filter_svf_next( &(svf[1]), delay_next( &(lines[1]), in_del[1]) );
-  
-  mix_outputs();
+  for(i=0; i<NLINES; i++) {
+    // process delay line
+    out_del[i] = delay_next( &(lines[i]), in_del[i]);	    
+    // process filter
+    filter_svf_next( &(svf[i]), out_del[i]);  
+      
+    if(mix_svf[i] == 0 ) {
+      ;;
+    } else {
+      out_del[i] = add_fr1x32(
+			      mult_fr1x32x32( out_del[i],
+					      sub_fr1x32(FR32_MAX, mix_svf[i]) ),
+
+			      mult_fr1x32x32( out_svf[i], mix_svf[i] )
+			      );		      		      
+    }
+  } // end lines loop 
+    mix_outputs();
 }
 
 

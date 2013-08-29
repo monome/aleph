@@ -25,6 +25,9 @@ typedef struct _delayLine {
   // level of existing data to mix with new data
   // negative == 1
   fract32 preLevel;
+  // flags to run or pause each tap (phasor)
+  u8 runRd;
+  u8 runWr;
 } delayLine;
 
 // initialize with pointer to audio buffer data

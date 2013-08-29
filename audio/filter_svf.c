@@ -83,7 +83,7 @@ static void filter_svf_calc_reson(filter_svf* f) {
 //=============================================
 //===== extern functions
 // init
-extern void filter_svf_init      ( filter_svf* f ) {
+extern void filter_svf_init ( filter_svf* f ) {
   f->freq = 0;
   f->reson = 0;
   f->low = f->high = f->band = f->notch = 0;

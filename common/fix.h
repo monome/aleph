@@ -21,7 +21,7 @@
 #define FIX_DIG_TOTAL 11 // lo + hi + '.' + '-'
 
 // constants
-#define FR32_ONE  0x7fffffff
+#define FR32_MAX  0x7fffffff
 #define FIX16_ONE 0x00010000
 
 #if ARCH_BFIN

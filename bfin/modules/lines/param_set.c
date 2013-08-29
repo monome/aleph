@@ -44,6 +44,12 @@ void module_set_param(u32 idx, pval v) {
   case eParam_pos_read1 :
     //    delay_set_pos(&(lines[1]), v.fix);
     break;
+  case eParam_run_read0 :
+    //    delay_set_pos(&(lines[0]), v.fix);
+    break;
+  case eParam_run_read1 :
+    //    delay_set_pos(&(lines[1]), v.fix);
+    break;
     /* case eParam_pos_read2 : */
     /*   //    delay_set_pos(&lines[2], v.fix); */
     /*   break; */
