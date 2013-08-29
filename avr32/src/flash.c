@@ -21,7 +21,7 @@
 // length of .ldr string identifier in flash
 #define LDR_FLASH_STRING_LEN 64
 
-// value to write during first run
+// arbitrary magic number to write during first run
 #define FIRSTRUN_MAGIC 0x76543210
 
 // storage layout of default data in nonvolatile memory
@@ -110,11 +110,17 @@ void flash_write_ldr(void) {
   flashc_memcpy((void*)pDst, (const void*)pSrc, rem, true);
 }
 
-// read/write firstrun value
+// read firstrun status
 extern u8 flash_read_firstrun(void) {
   return (flash_nvram_data.firstRun == FIRSTRUN_MAGIC);
 }
 
+// write firstrun status
 extern void flash_write_firstrun(void) {
   flashc_memset32((void*)&(flash_nvram_data.firstRun), FIRSTRUN_MAGIC, 4, true);
+}
+
+// clear firstrun status
+extern void flash_clear_firstrun(void) {
+  flashc_memset32((void*)&(flash_nvram_data.firstRun), 0x00000000, 4, true);
 }

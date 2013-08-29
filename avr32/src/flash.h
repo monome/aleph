@@ -32,14 +32,16 @@ extern volatile u32 bfinLdrSize;
 // return 1 if this is the first run, 0 otherwise
 extern u8 init_flash(void); 
 
-
 // read/write default blackfin loader file to/from global ram buffer 
 extern void flash_read_ldr(void);
 extern void flash_write_ldr(void);
 
-// read/write firstrun value
+// read firstrun status (returns 1 if firstrun is set)
 extern u8 flash_read_firstrun(void);
+// write firstrun status (TRUE)
 extern void flash_write_firstrun(void);
+// clear firstrun status (FALSE)
+extern void flash_clear_firstrun(void);
 
 
 // switch to intel-hex format...

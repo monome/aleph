@@ -4,9 +4,9 @@
 #define PARAM_RQ_MIN 0x00000000
 #define PARAM_RQ_MAX 0x00400000
 
-
 enum params {
 
+  // delay 0
   eParam_delay0,
   eParam_loop0,
   eParam_rate0,
@@ -14,7 +14,10 @@ enum params {
   eParam_pre0,
   eParam_pos_write0,
   eParam_pos_read0,
+  eParam_run_read0,
+  eParam_run_write0,
 
+  // delay 1
   eParam_delay1,
   eParam_loop1,
   eParam_rate1,
@@ -22,21 +25,28 @@ enum params {
   eParam_pre1,
   eParam_pos_write1,
   eParam_pos_read1,
+  eParam_run_read1,
+  eParam_run_write1,
 
+  // filter 0
   eParam_coeff0,
   eParam_rq0,
   eParam_low0,
   eParam_high0,
   eParam_band0,
   eParam_notch0,
+  eParam_mix0,
 
+  // filter 1
   eParam_coeff1,
   eParam_rq1,
   eParam_low1,
   eParam_high1,
   eParam_band1,
   eParam_notch1,
+  eParam_mix1,
 
+  // delay input mix
   eParam_adc0_del0,
   eParam_adc0_del1,
   eParam_adc1_del0,
@@ -46,11 +56,13 @@ enum params {
   eParam_adc3_del0,
   eParam_adc3_del1,
 
+  // feedback mix
   eParam_del0_del0,
   eParam_del0_del1,
   eParam_del1_del0,
   eParam_del1_del1,
 
+  // delay output mix
   eParam_del0_dac0,
   eParam_del0_dac1,
   eParam_del0_dac2,
@@ -60,6 +72,7 @@ enum params {
   eParam_del1_dac2,
   eParam_del1_dac3,
 
+  // dry mix
   eParam_adc0_dac0,
   eParam_adc0_dac1,
   eParam_adc0_dac2,

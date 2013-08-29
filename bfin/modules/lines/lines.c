@@ -300,10 +300,11 @@ void module_init(void) {
 #endif
   
   gModuleData = &(pLinesData->super);
+  strcpy(gModuleData->name, "aleph-lines");
+
   gModuleData->paramDesc = (ParamDesc*)pLinesData->mParamDesc;
   gModuleData->paramData = (ParamData*)pLinesData->mParamData;
   gModuleData->numParams = eParamNumParams;
-
   fill_param_desc();
   
   /// test
@@ -314,7 +315,6 @@ void module_init(void) {
     delay_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);
     filter_svf_init(&(svf[i]));
   }
-  
 }
 
 // de-init

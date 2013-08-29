@@ -54,6 +54,10 @@ u8 spi_process(u8 rx) {
     case MSG_GET_PARAM_DESC_COM:
       byte = eParamDescIdx;
       break;
+    case MSG_GET_MODULE_NAME_COM:
+      byte = eModuleName0;
+      return gModuleData->name[0];
+      break;
     case MSG_ENABLE_AUDIO:
       processAudio = 1;
       return processAudio;
@@ -285,10 +289,6 @@ u8 spi_process(u8 rx) {
     break;
 
     //----- get module name
-  case eGetModuleName :
-    byte = eModuleName0;
-    return gModuleData->name[0];
-    break;
   case eModuleName0 :
     byte = eModuleName1;
     return gModuleData->name[1];

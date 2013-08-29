@@ -194,6 +194,8 @@ static void check_events(void) {
 	if(firstrun) {
 	  flash_write_firstrun();
 	  return;
+	} else {
+	  flash_clear_firstrun();
 	}
       }
     } else {
