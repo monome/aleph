@@ -38,13 +38,24 @@ extern fract32 delay_next(delayLine* dl, fract32 in);
 extern void delay_set_loop(delayLine* dl, fix16 sec);
 // set delay time in seconds
 extern void delay_set_delay(delayLine* dl, fix16 sec); 
-// set synchronization flag
-// extern void delay_set_sync(delayLine* dl, u8 sync);
-// set erase level
-extern void delay_set_pre(delayLine* dl, fract32 pre);
-// set write level
-extern void delay_set_write(delayLine* dl, u8 write);
 // set read head rate
 extern void delay_set_rate(delayLine* dl, fix16 rate);
+// set erase level
+extern void delay_set_pre(delayLine* dl, fract32 pre);
+// set write flag
+extern void delay_set_write(delayLine* dl, u8 write);
+
+
+// set read pos in seconds
+extern void delay_set_pos_read(delayLine* dl, fix16 sec);
+// set write pos in seconds
+extern void delay_set_pos_write(delayLine* dl, fix16 sec);
+
+// set read run flag in seconds
+extern void delay_set_run_read(delayLine* dl, u8 val);
+// set write run flag in seconds
+extern void delay_set_run_write(delayLine* dl, u8 val);
+
+
 
 #endif // h guard

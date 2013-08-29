@@ -96,7 +96,13 @@ void buffer_tap_set_loop(bufferTap* tap, fix16 sec);
 // useful for delays
 void buffer_tap_sync(bufferTap* tap, bufferTap* target, fix16 offset);
  
-//---- non-interpolated
+// set tap position directly
+void buffer_tap_set_pos(bufferTap* tap, fix16 secs);
+
+//--------------------------------------------------------
+//---------------------------------------------------------
+//---- non-interpolated version!
+
 // intialize
 void buffer_tapN_init(bufferTapN* tap, audioBuffer* buf);
 
@@ -134,6 +140,9 @@ void buffer_tapN_set_loop(bufferTapN* tap, fix16 sec);
 // synchronize one tap with another at a given offset in seconds.
 // useful for delays
 void buffer_tapN_sync(bufferTapN* tap, bufferTapN* target, fix16 offset);
+
+// set tap position directly
+ void buffer_tapN_set_pos(bufferTapN* tap, fix16 secs);
 
 
 #endif // h guard

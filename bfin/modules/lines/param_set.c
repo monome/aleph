@@ -8,78 +8,48 @@ void module_set_param(u32 idx, pval v) {
   case eParam_delay1 :
     delay_set_delay(&(lines[1]), v.fix);
     break;
-    /* case eParam_delay2 : */
-    /*   delay_set_delay(&lines[2], v.fix); */
-    /*   break; */
-    /* case eParam_delay3 : */
-    /*   delay_set_delay(&lines[3 ], v.fix); */
-    /*   break; */
   case eParam_loop0 :
     delay_set_loop(&(lines[0]), v.fix);
     break;
   case eParam_loop1 :
     delay_set_loop(&(lines[1]), v.fix);
     break;
-    /* case eParam_loop2 : */
-    /*   delay_set_loop(&lines[2], v.fix); */
-    /*   break; */
-    /* case eParam_loop3 : */
-    /*   delay_set_loop(&lines[3], v.fix); */
-    /*   break; */
   case eParam_pos_write0 :
-    //    delay_set_pos(&(lines[0]), v.fix);
+    delay_set_pos_write(&(lines[0]), v.fix);
     break;
   case eParam_pos_write1 :
-    //    delay_set_pos(&(lines[1]), v.fix);
+    delay_set_pos_write(&(lines[1]), v.fix);
     break;
-    /* case eParam_pos_write2 : */
-    /*   //    delay_set_pos(&lines[2], v.fix); */
-    /*   break; */
-    /* case eParam_pos_write3 : */
-    /*   //    delay_set_pos(&lines[3], v.fix); */
-    /*   break; */
   case eParam_pos_read0 :
-    //    delay_set_pos(&(lines[0]), v.fix);
+    delay_set_pos_read(&(lines[0]), v.fix);
     break;
   case eParam_pos_read1 :
-    //    delay_set_pos(&(lines[1]), v.fix);
+    delay_set_pos_read(&(lines[1]), v.fix);
+    break;
+  case eParam_run_write0 :
+    delay_set_run_write(&(lines[0]), v.fix);
+    break;
+  case eParam_run_write1 :
+    delay_set_run_write(&(lines[1]), v.fix);
     break;
   case eParam_run_read0 :
-    //    delay_set_pos(&(lines[0]), v.fix);
+    delay_set_run_read(&(lines[0]), v.fix);
     break;
   case eParam_run_read1 :
-    //    delay_set_pos(&(lines[1]), v.fix);
+    delay_set_run_read(&(lines[1]), v.fix);
     break;
-    /* case eParam_pos_read2 : */
-    /*   //    delay_set_pos(&lines[2], v.fix); */
-    /*   break; */
-    /* case eParam_pos_read3 : */
-    /*   //    delay_set_pos(&lines[3], v.fix); */
-    /*   break; */
   case eParam_rate0 :
     //    delay_set_rate(&(lines[0]), v.fix);
     break;
   case eParam_rate1 :
     //    delay_set_rate(&(lines[1]), v.fix);
     break;
-    /* case eParam_rate2 : */
-    /*   //    delay_set_rate(&lines[2], v.fix); */
-    /*   break; */
-    /* case eParam_rate3 : */
-    /*   //    delay_set_rate(&lines[3], v.fix); */
-    /*   break; */
   case eParam_write0 :
     delay_set_write(&(lines[0]), v.s > 0);
     break;
   case eParam_write1 :
     delay_set_write(&(lines[1]), v.fix > 0);
     break;
-    /* case eParam_write2 : */
-    /*   delay_set_write(&lines[2], FIX16_FRACT_TRUNC(v.fix)); */
-    /*   break; */
-    /* case eParam_write3 : */
-    /*   delay_set_write(&lines[3] , FIX16_FRACT_TRUNC(v.fix)); */
-    /*   break; */
   case eParam_pre0 :
     if(v.fix == FIX16_ONE) {
       // negative == full
@@ -96,85 +66,51 @@ void module_set_param(u32 idx, pval v) {
       delay_set_pre(&(lines[1]), FIX16_FRACT_TRUNC(v.fix));
     }
     break;
-    /* case eParam_erase2 : */
-    /*   delay_set_pre(&lines[2], FIX16_FRACT_TRUNC(v.fix)); */
-    /*   break; */
-    /* case eParam_erase3 : */
-    /*   delay_set_prex(&lines[3], FIX16_FRACT_TRUNC(v.fix)); */
-    /*   break; */
   case eParam_coeff0 :
     filter_svf_set_coeff( &(svf[0]), FIX16_FRACT_TRUNC(v.fix) );
     break;
   case eParam_coeff1 :
     filter_svf_set_coeff(&(svf[1]), FIX16_FRACT_TRUNC(v.fix) );
     break;
-    /* case eParam_hz2 : */
-    /*   filter_svf_set_hz(&svf[2], v.fix); */
-    /*   break; */
-    /* case eParam_hz3 : */
-    /*   filter_svf_set_hz(&svf[3], v.fix); */
-    /*   break; */
   case eParam_rq0 :
     filter_svf_set_rq(&(svf[0]), FIX16_FRACT_TRUNC(v.fix));
     break;
   case eParam_rq1 :
     filter_svf_set_rq(&(svf[1]), FIX16_FRACT_TRUNC(v.fix));
     break;
-    /* case eParam_rq2 : */
-    /*   filter_svf_set_rq(&svf[2], FIX16_FRACT_TRUNC(v.fix)); */
-    /*   break; */
-    /* case eParam_rq3 : */
-    /*   filter_svf_set_rq(&svf[3], FIX16_FRACT_TRUNC(v.fix)); */
-    /*   break; */
   case eParam_low0 :
     filter_svf_set_low(&(svf[0]), FIX16_FRACT_TRUNC(v.fix));
     break;
   case eParam_low1 :
     filter_svf_set_low(&(svf[1]), FIX16_FRACT_TRUNC(v.fix));
     break;
-    /* case eParam_low2 : */
-    /*   filter_svf_set_low(&svf[2], FIX16_FRACT_TRUNC(v.fix)); */
-    /*   break; */
-    /* case eParam_low3 : */
-    /*   filter_svf_set_low(&svf[3], FIX16_FRACT_TRUNC(v.fix)); */
-    /*   break; */
   case eParam_high0 :
     filter_svf_set_high(&(svf[0]), FIX16_FRACT_TRUNC(v.fix));
     break;
   case eParam_high1 :
     filter_svf_set_high(&(svf[1]), FIX16_FRACT_TRUNC(v.fix));
     break;
-    /* case eParam_high2 : */
-    /*   filter_svf_set_high(&svf[2], FIX16_FRACT_TRUNC(v.fix)); */
-    /*   break; */
-    /* case eParam_high3 : */
-    /*   filter_svf_set_high(&svf[3], FIX16_FRACT_TRUNC(v.fix)); */
-    /*   break; */
   case eParam_band0 :
     filter_svf_set_band(&(svf[0]), FIX16_FRACT_TRUNC(v.fix));
     break;
   case eParam_band1 :
     filter_svf_set_band(&(svf[1]), FIX16_FRACT_TRUNC(v.fix));
     break;
-    /* case eParam_band2 : */
-    /*   filter_svf_set_band(&svf[2], FIX16_FRACT_TRUNC(v.fix)); */
-    /*   break; */
-    /* case eParam_band3 : */
-    /*   filter_svf_set_band(&svf[3], FIX16_FRACT_TRUNC(v.fix)); */
-    /*   break; */
   case eParam_notch0 :
     filter_svf_set_notch(&(svf[0]), FIX16_FRACT_TRUNC(v.fix));
     break;
   case eParam_notch1 :
     filter_svf_set_notch(&(svf[1]), FIX16_FRACT_TRUNC(v.fix));
     break;
-    /* case eParam_notch2 : */
-    /*   filter_svf_set_notch(&svf[2], FIX16_FRACT_TRUNC(v.fix)); */
-    /*   break; */
-    /* case eParam_notch3 : */
-    /*   filter_svf_set_notch(&svf[3], FIX16_FRACT_TRUNC(v.fix)); */
-    /*   break; */
 
+  case eParam_mix0 :
+    break;
+    mix_svf[0] = FIX16_FRACT_TRUNC(v.fix);
+  case eParam_mix1 :
+    mix_svf[1] = FIX16_FRACT_TRUNC(v.fix);
+    break;
+    
+    /// mix points
   case eParam_adc0_del0 :
     mix_adc_del[0][0] = FIX16_FRACT_TRUNC(v.fix);
     break;

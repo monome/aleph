@@ -354,7 +354,9 @@ void module_process_frame(void) {
 			      );		      		      
     }
   } // end lines loop 
-    mix_outputs();
+  
+  // mix outputs to DACs
+  mix_outputs();
 }
 
 

@@ -77,9 +77,7 @@ extern void delay_set_loop(delayLine* dl, fix16 sec) {
 }
 
 extern void delay_set_delay(delayLine* dl, fix16 sec) {
-  // if(dl->sync) {
-    buffer_tapN_sync(&(dl->tapRd), &(dl->tapWr), sec);
-    //  }
+  buffer_tapN_sync(&(dl->tapRd), &(dl->tapWr), sec);
 }
 
 // set erase level
@@ -96,3 +94,25 @@ extern void delay_set_write(delayLine* dl, u8 write) {
 extern void delay_set_rate(delayLine* dl, fix16 rate) {
   ///...
 }
+
+
+// set read pos in seconds
+extern void delay_set_pos_read(delayLine* dl, fix16 sec) {
+  buffer_tapN_set_pos(&(dl->tapRd), sec);
+}
+
+// set write pos in seconds
+extern void delay_set_pos_write(delayLine* dl, fix16 sec) {
+  buffer_tapN_set_pos(&(dl->tapWr), sec);
+}
+
+// set read run flag in seconds
+extern void delay_set_run_read(delayLine* dl, u8 val) {
+  dl->runRd = val;
+}
+
+// set write run flag in seconds
+extern void delay_set_run_write(delayLine* dl, u8 val) {
+  dl->runWr = val;
+}
+
