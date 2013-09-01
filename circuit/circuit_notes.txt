@@ -1,16 +1,40 @@
-SPEC LEDs
+SPEC LEDs how about 160-1738-1-ND
+TUNE THE DEBOUNCERS!!
 
 final build notes
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-CHECK MAIN 5V CAPS ETC
-	on output 100u x 4 ?? 399-5193-2-ND 
-		or one of these: 493-4489-3-ND  WONT FIT
-	C218 needs to be high voltage rated-- 16V up
-	small input cap could be 100n
-J8 hole size, slightly too big, power jack
-led8 package
-int - pots need mounting legs further apart (slightly)
+
+make sure LED thing doesn't blend the L/R outputs together at the jacks
+
+# CHECK MAIN 5V CAPS ETC
+	# on output 100u x 4 ?? 399-5193-2-ND 
+	# C218 needs to be high voltage rated-- 16V up
+	# small input cap could be 100n
+# J8 hole size, slightly too big, power jack
+# led8 package
+# int - pots need mounting legs further apart (slightly)
 	# move via under pot3
+# int - cv jacks need slightly smaller holes
+# single stereo 1/4" have mount pegs
+
+# need 1/16" screws for backplate mount
+# need 3/16" (?) screws for rubber feet
+method to adhere plastic spacer between enclosure and pcb
+# double radius of interface cutout areas
+
+# RIBBON METHOD
+	order ribbon parts
+	
+# c8 backwards
+# perhaps switch hp driver from 5v to 3v3
+# c8 label fucked
+
+in op amps -/+ reversed
+
+led drivers
+
+# B-INT is B20
+# A-INT is B21
 
 
 

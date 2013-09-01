@@ -9,8 +9,8 @@
 <grid distance="0.025" unitdist="inch" unit="inch" style="dots" multiple="1" display="yes" altdistance="0.0125" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
-<layer number="2" name="power" color="1" fill="3" visible="no" active="yes"/>
-<layer number="3" name="gnd" color="4" fill="3" visible="no" active="yes"/>
+<layer number="2" name="power" color="1" fill="3" visible="yes" active="yes"/>
+<layer number="3" name="gnd" color="4" fill="3" visible="yes" active="yes"/>
 <layer number="4" name="Route4" color="1" fill="4" visible="no" active="no"/>
 <layer number="5" name="Route5" color="4" fill="4" visible="no" active="no"/>
 <layer number="6" name="Route6" color="1" fill="8" visible="no" active="no"/>
@@ -4403,7 +4403,7 @@ design rules under a new name.</description>
 <vertex x="113.665" y="76.835"/>
 <vertex x="112.395" y="75.565"/>
 <vertex x="114.935" y="73.025"/>
-<vertex x="114.935" y="-0.635"/>
+<vertex x="114.935" y="0"/>
 <vertex x="173.99" y="0"/>
 <vertex x="173.99" y="110.49"/>
 <vertex x="156.845" y="110.49"/>
@@ -10206,9 +10206,6 @@ design rules under a new name.</description>
 <contactref element="U8" pad="7"/>
 <wire x1="14.03" y1="78.74" x2="16.383" y2="78.74" width="0.254" layer="1"/>
 <wire x1="16.383" y1="78.74" x2="16.51" y2="78.867" width="0.254" layer="1"/>
-</signal>
-<signal name="S$35">
-<wire x1="243.635" y1="77.835" x2="243.635" y2="77.835" width="0" layer="19" extent="1-16"/>
 </signal>
 <signal name="N$107">
 <contactref element="U8" pad="3"/>

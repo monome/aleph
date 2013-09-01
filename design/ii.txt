@@ -1,0 +1,48 @@
+ii: i2c based minimal parameter exchange protocol
+
+physical
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+3.5mm audio jack
+	tip: TDA
+	ring: TCK
+	sleeve: GND
+no power provided over cable
+3.3v
+400khz
+127 IDs, physical selector preferred
+multimaster
+
+
+protocol
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+auto-discovery mechanism
+device name/description can be read
+broadcast request for device info
+	ID, name
+request number of params
+request param detail
+parameters addressed by index
+parameters have optional text name
+	32 characters
+parameters are 32 bit (4 byte)
+parameters have several possible datatypes
+	uint
+	int
+	fract16
+	float
+parameters can report ranges
+	low and high, 32 bit each
+parameters can be set
+parameters can be staged to be set, waiting for a sync
+	sync set several parameters at once
+	broadcast sync for set across several devices
+parameters can be read
+broadcast report broken link
+ping ID
+	ping response
+broadcast announce plugin
+request parameter subscription
+	renewal system (after each change? or fixed count?)
+broadcast clock sync
+	16 clocks
+	includes count, interval (ms)

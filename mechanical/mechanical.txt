@@ -1,3 +1,9 @@
+RAL 7045 Telegray 1, for knobs, keycaps, backplate ink legend.
+Nortek E0SW233 Winter White Hybrid, Gloss 5 +/- 1 unit, everything else metal.
+
+
+
+
 plate revision 130730
 	edge route, 0.05 for sheet metal, .0375 up from bottom
 	cv undercut reduce to 0.75" from bottom
