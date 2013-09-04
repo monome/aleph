@@ -10,7 +10,7 @@ project         := $(basename $(target))
 target_type     := elf
 
 # aleph always linux
-os_type     := Linux
+os_type         := Linux
 os              := Linux
 
 CROSS           ?= avr32-
@@ -35,24 +35,6 @@ MAKEFLAGS       += -rR --no-print-directory
 
 # Function for reversing the order of a list
 reverse = $(if $(1),$(call reverse,$(wordlist 2,$(words $(1)),$(1)))) $(firstword $(1))
-
-# Hide command output by default, but allow the user to override this
-# by adding V=1 on the command line.
-# This is inspired by the Kbuild system used by the Linux kernel.
-ifdef V
-  ifeq ("$(origin V)", "command line")
-    VERBOSE = $(V)
-  endif
-endif
-ifndef VERBOSE
-  VERBOSE = 0
-endif
-
-ifeq ($(VERBOSE), 1)
-  Q =
-else
-  Q = @
-endif
 
 arflags-gnu-y           := $(ARFLAGS)
 asflags-gnu-y           := $(ASFLAGS)
@@ -121,7 +103,6 @@ cflags-gnu-y    += -funsigned-char
 
 # Don't use strict aliasing (very common in embedded applications).
 cflags-gnu-y    += -fno-strict-aliasing
-cxxflags-gnu-y  += -fno-strict-aliasing
 
 # Separate each function and data into its own separate section to allow
 # garbage collection of unused sections.
@@ -146,7 +127,7 @@ c_flags  = $(cpuflags-gnu-y) $(dbgflags-gnu-y) $(depflags) $(optflags-gnu-y) $(c
 l_flags  = $(cpuflags-gnu-y) $(optflags-gnu-y) $(ldflags-gnu-y)
 ar_flags = $(arflags-gnu-y)
 
-# Source files list and part informations must already be included before
+# Source files list and part information must already be included before
 # running this makefile
 
 # If a custom build directory is specified, use it -- force trailing / in directory name.
@@ -172,11 +153,11 @@ all: $(target) $(project).lss $(project).sym $(project).hex $(project).bin
 .PHONY: clean
 clean:
 	@$(if $(strip $(clean-files)),echo "RM      *.o *.d")
-	$(if $(strip $(clean-files)),$(Q)rm $(clean-files),)
+	$(if $(strip $(clean-files)),rm $(clean-files),)
 	@$(if $(strip $(clean-dirs)),echo "RMDIR   $(strip $(clean-dirs))")
 # Remove created directories, and make sure we only remove existing
 # directories, since recursive rmdir might help us a bit on the way.
-	$(Q)$(if $(strip $(clean-dirs)),                        \
+	$(if $(strip $(clean-dirs)),                        \
 		for directory in $(strip $(clean-dirs)); do     \
 			if [ -d "$$directory" ]; then           \
 				rmdir -p --ignore-fail-on-non-empty $$directory;           \
@@ -193,24 +174,21 @@ objfiles: $(obj-y)
 
 # Create object files from C source files.
 $(build-dir)%.o: %.c $(MAKEFILE_PATH) config.mk
-	$(Q)test -d $(dir $@) || echo "MKDIR   $(dir $@)"
-	$(Q)test -d $(dir $@) || mkdir -p $(dir $@)
-	@echo "CC      $@"
-	$(Q)$(CC) $(c_flags) -c $< -o $@
+	test -d $(dir $@) || echo "MKDIR   $(dir $@)"
+	test -d $(dir $@) || mkdir -p $(dir $@)
+	$(CC) $(c_flags) -c $< -o $@
 
 # Preprocess and assemble: create object files from assembler source files.
 $(build-dir)%.o: %.s $(MAKEFILE_PATH) config.mk
-	$(Q)test -d $(dir $@) || echo "MKDIR   $(dir $@)"
-	$(Q)test -d $(dir $@) || mkdir -p $(dir $@)
-	@echo "AS      $@"
-	$(Q)$(CC) $(a_flags) -c $< -o $@
+	test -d $(dir $@) || echo "MKDIR   $(dir $@)"
+	test -d $(dir $@) || mkdir -p $(dir $@)
+	$(CC) $(a_flags) -c $< -o $@
 
 # Preprocess and assemble: create object files from assembler source files.
 $(build-dir)%.o: %.S $(MAKEFILE_PATH) config.mk
-	$(Q)test -d $(dir $@) || echo "MKDIR   $(dir $@)"
-	$(Q)test -d $(dir $@) || mkdir -p $(dir $@)
-	@echo "AS      $@"
-	$(Q)$(CC) $(a_flags) -c $< -o $@
+	test -d $(dir $@) || echo "MKDIR   $(dir $@)"
+	test -d $(dir $@) || mkdir -p $(dir $@)
+	$(CC) $(a_flags) -c $< -o $@
 
 # Include all dependency files to add depedency to all header files in use.
 include $(dep-files)
@@ -219,27 +197,22 @@ include $(dep-files)
 # if the common Makefile.in or project config.mk is changed.
 $(target): $(PRJ_PATH)/$(LINKER_SCRIPT) $(MAKEFILE_PATH) config.mk $(obj-y)
 	@echo "LN      $@"
-	$(Q)$(LD) $(l_flags) $(obj-y) -Wl,--start-group $(libflags-gnu-y) -Wl,--end-group -o $@
-	@echo "SIZE    $@"
-	$(Q)$(SIZE) -Ax $@
-	$(Q)$(SIZE) -Bx $@
+	$(LD) $(l_flags) $(obj-y) -Wl,--start-group $(libflags-gnu-y) -Wl,--end-group -o $@
+	$(SIZE) -Ax $@
+	$(SIZE) -Bx $@
 
 # Create extended function listing from target output file.
 %.lss: $(target)
-	@echo "OBJDUMP $@"
-	$(Q)$(OBJDUMP) -h -S $< > $@
+	$(OBJDUMP) -h -S $< > $@
 
 # Create symbol table from target output file.
 %.sym: $(target)
-	@echo "NM      $@"
-	$(Q)$(NM) -n $< > $@
+	$(NM) -n $< > $@
 
 # Create Intel HEX image from ELF output file.
 %.hex: $(target)
-	@echo "OBJCOPY $@"
-	$(Q)$(OBJCOPY) -O ihex $< $@
+	$(OBJCOPY) -O ihex $< $@
 
 # Create binary image from ELF output file.
 %.bin: $(target)
-	@echo "OBJCOPY $@"
-	$(Q)$(OBJCOPY) -O binary $< $@
+	$(OBJCOPY) -O binary $< $@
