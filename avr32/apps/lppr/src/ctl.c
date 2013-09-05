@@ -4,15 +4,18 @@
 #include "delay.h"
 #include "print_funcs.h"
 // aleph-avr32
-
 #include "app.h"
 #include "bfin.h"
 #include "control.h"
+#include "interrupts.h"
 #include "param_common.h"
 
 // lppr
 #include "params.h"
 #include "util.h"
+
+//static u32 ms_loop0 = 0;
+static u32 ms_loop1 = 0;
 
 u8 report_params(void) {
   volatile char buf[64];
@@ -104,7 +107,7 @@ void set_initial_params(void) {
 
 
 // set delay time in ms
-void  param_set_delay_ms(u8 idx, u32 ms)  {
+void  ctl_set_delay_ms(u8 idx, u32 ms)  {
   u32 samps =  MS_TO_SAMPS(ms);
   while(samps > PARAM_BUFFER_MAX) {
     samps -= PARAM_BUFFER_MAX;
@@ -119,5 +122,58 @@ void  param_set_delay_ms(u8 idx, u32 ms)  {
     break;
   default:
     break;
+  }
+}
+
+
+// start recording loop on given delayline
+void ctl_loop_record(u8 idx) {
+  switch(idx) {
+  case 0:
+    ms_loop0 = tcTicks;
+    ctl_param_change(eParam_run_read0, 0);
+    ctl_param_change(eParam_pos_write0, 0);
+    ctl_param_change(eParam_run_write0, 1);
+    break;
+  case 1:
+    ms_loop1 = tcTicks;
+    ctl_param_change(eParam_run_read1, 0);
+    ctl_param_change(eParam_pos_write1, 0);
+    ctl_param_change(eParam_run_write1, 1);
+    break;
+  }
+
+}
+
+// stop recording loop / start playback on given delayline
+void ctl_loop_playback(u8 idx) {
+  u32 samps;
+  u32 ms;
+  
+  switch(idx) {
+  case 0:
+    if (ms_loop0 > tcTicks) { // overflow
+      ms = tcTicks + (0xffffffff - ms_loop0);
+    } else {
+      ms = tcTicks - ms_loop0;
+    }
+    samps = MS_TO_SAMPS(ms);
+    ctl_param_change(eParam_run_write0, 0);
+    ctl_param_change(eParam_pos_read0, 0);
+    ctl_param_change(eParam_loop0, samps);
+    ctl_param_change(eParam_run_read0, 1);
+  break;
+
+  case 1:
+    if (ms_loop1 > tcTicks) { // overflow
+      ms = tcTicks + (0xffffffff - ms_loop1);
+    } else {
+      ms = tcTicks - ms_loop1;
+    }
+    samps = MS_TO_SAMPS(ms) - 1;
+    ctl_param_change(eParam_run_write1, 0);
+    ctl_param_change(eParam_pos_read1, 0);
+    ctl_param_change(eParam_loop1, samps);
+    ctl_param_change(eParam_run_read1, 1);
   }
 }

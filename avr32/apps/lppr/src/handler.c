@@ -118,13 +118,13 @@ extern void lppr_handler(event_t* ev) {
 
   case kEventSwitch6:
     if(ev->eventData > 0) {
-      loop_record();
+      param_loop_record(1);
     } 
     break;
 
   case kEventSwitch7:
     if(ev->eventData > 0) {
-      loop_playback();
+      param_loop_playback(1);
     }
     break;
 

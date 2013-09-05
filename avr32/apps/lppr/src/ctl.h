@@ -1,5 +1,5 @@
-#ifndef _ALEPH_APP_LPPR_PARAMS_H_
-#define _ALEPH_APP_LPPR_PARAMS_H_
+#ifndef _ALEPH_APP_LPPR_CTL_H_
+#define _ALEPH_APP_LPPR_CTL_H_
 
 // query the DSP for parameter descriptors. 
 // return 0 if something seems wrong, 1 otherwise
@@ -10,7 +10,8 @@ void set_initial_params(void);
 void  param_set_delay_ms(u8 idx, u32 ms);
 // start recording loop on given delayline
 void param_loop_record(u8 idx);
-// stop recording loop on given delayline
+// stop recording loop / start playback on given delayline
+void param_loop_playback(u8 idx);
 
 #define PARAM_RQ_MIN 0x00000000
 #define PARAM_RQ_MAX 0x00400000

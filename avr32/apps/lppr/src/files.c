@@ -1,9 +1,14 @@
+// asf
 #include "print_funcs.h"
 
+// aleph-avr32
 #include "app.h"
 #include "bfin.h"
 #include "flash.h"
 #include "filesystem.h"
+#include "screen.h"
+
+// lppr
 #include "files.h"
 
 #define LPPR_LDR_PATH "/dsp/aleph-lines.ldr"
@@ -48,6 +53,9 @@ u8 files_search_dsp(void) {
     print_dbg(" ; pointer: ");
     print_dbg_hex((u32)fp);
 
+    screen_line(0, 1, "loading sdcard-> RAM...     ", 0x3f);
+    screen_refresh();
+
     // read .ldr data to RAM buffer
     //    fl_fread((void*)bfinLdrData, 1, size, fp);
     fake_fread((void*)bfinLdrData, size, fp);
@@ -57,14 +65,23 @@ u8 files_search_dsp(void) {
     print_dbg("\r\n finished reading .ldr file to RAM");
     bfinLdrSize = size;
 
+
+    screen_line(0, 1, "writing RAM->flash...     ", 0x3f);
+    screen_refresh();
+
     // write buf to flash
     flash_write_ldr();
     print_dbg("\r\n finished writing .ldr file to flash");
     // reboot the DSP from RAM
     print_dbg("\r\n booting DSP from RAM");
-    bfin_load_buf();
 
+
+    screen_line(0, 1, "booting DSP from RAM...     ", 0x3f);
+    screen_refresh();
+
+    bfin_load_buf();
     app_resume();
+
     return 1; // ok
   } else {
     print_dbg("\r\n encountered an error opening .ldr file.");
