@@ -5,7 +5,20 @@
 // return 0 if something seems wrong, 1 otherwise
 u8 report_params(void);
 // set parameters to initial values
-void set_params(void);
+void set_initial_params(void);
+// set delay time in ms
+void  param_set_delay_ms(u8 idx, u32 ms);
+// start recording loop on given delayline
+void param_loop_record(u8 idx);
+// stop recording loop on given delayline
+
+#define PARAM_RQ_MIN 0x00000000
+#define PARAM_RQ_MAX 0x00400000
+
+#define PARAM_BUFFER_MAX 0x002bf1ff // LINES_BUF_FRAMES - 1
+
+#define PARAM_COEFF_MAX 0x1F400000  // fixme
+
 
 // FIXME: this is blithely copied from aleph/bfin/modules/lines/param.h
 // i suppose there should be some build mechanism to share sources directly.
@@ -94,9 +107,10 @@ typedef enum params {
   eParam_adc3_dac1,
   eParam_adc3_dac2,
   eParam_adc3_dac3,
-
   eParamNumParams
-} eParam;  
+} eParam; 
 
+//---------------------------
+//---- -external functions
 
 #endif // h guard

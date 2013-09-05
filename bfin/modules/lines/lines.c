@@ -294,6 +294,7 @@ static void mix_outputs(void) {
 
 void module_init(void) {
   u8 i;
+  u32 j;
   // init module/param descriptor
 #ifdef ARCH_BFIN 
   pLinesData = (linesData*)SDRAM_ADDRESS;
@@ -318,6 +319,9 @@ void module_init(void) {
   for(i=0; i<NLINES; i++) {
     delay_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);
     filter_svf_init(&(svf[i]));
+    for(j=0; j<LINES_BUF_FRAMES; j++) {
+      pLinesData->audioBuffer[i][j] = 0;
+    }
   }
 }
 

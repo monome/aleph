@@ -217,7 +217,7 @@ void buffer_tapN_sync(bufferTapN* tap, bufferTapN* target, u32 samps) {
   if(target->idx >= samps) {
     tap->idx = target->idx - samps;
   } else {
-    tap->idx = target->idx + tap->loop - samps;
+    tap->idx = (target->idx + tap->loop) - samps;
   }
 }
 

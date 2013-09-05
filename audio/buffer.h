@@ -106,7 +106,7 @@ void buffer_tap_set_pos(bufferTap* tap, fix16 secs);
 // intialize
 void buffer_tapN_init(bufferTapN* tap, audioBuffer* buf);
 
-// increment the index in a tap
+// increment the index in a tap 
 void buffer_tapN_next(bufferTapN* tap);
 
 

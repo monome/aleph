@@ -35,7 +35,7 @@
 #define CHAR_ROWS   8  // NROWS / FONT_CHARH
 #define CHAR_ROWS_1 7
 #define CHAR_ROWS_2 6
-#define CHAR_ROWS_3 5
+#define CHAR_ROWS_3 5 // hilarious
 // arbitrary maximum for proportionally spaced line drawing
 #define CHAR_COLS   28
 #define CHAR_COLS_1 27
@@ -58,19 +58,25 @@ extern const u8 kScreenLines[];
 
 // send startup commands
 extern void init_oled(void);
+
+// draw data at given rectangle
+extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data);
+
+// write screen buffer to OLED graphics RAM
+extern void screen_refresh(void);
 // clear the screen
 extern void screen_clear(void);
 // draw a pixel
 extern void screen_pixel(U16 x, U16 y, U8 a);
 //// all the character-drawing routines now return last used column position
 // draw a single character glyph with fixed spacing
-extern U8 screen_char_fixed(U16 x, U16 y, char c, U8 a);
+//extern U8 screen_char_fixed(U16 x, U16 y, char c, U8 a);
 // draw a single character glyph with fixed spacing and background
-extern U8 screen_char_fixed_back(U16 x, U16 y, char c, U8 a, u8 b);
+extern U8 screen_char_fixed(U16 x, U16 y, char c, U8 a, u8 b);
 // draw a single glyph with proportional spacing
-extern U8 screen_char_squeeze(U16 x, U16 y, char c, U8 a);
+//extern U8 screen_char_squeeze(U16 x, U16 y, char c, U8 a);
 // draw a single glyph with proportional spacing and background
-extern U8 screen_char_squeeze_back(U16 x, U16 y, char c, U8 a, u8 b);
+extern U8 screen_char_squeeze(U16 x, U16 y, char c, U8 a, u8 b);
 // draw a string with fixed spacing
 extern U8 screen_string_fixed(U16 x, U16 y, char* str, U8 a);
 // draw a string with proportional spacing
@@ -85,8 +91,6 @@ extern U8 screen_int(U16 x, U16 y, S16 i, U8 a);
 //U8 screen_float(U16 x, U16 y, F32 f, U8 a);
 // print a formatted fix16
 extern U8 screen_fix(U16 x, U16 y, fix16_t v, U8 a);
-// write screen buffer to OLED graphics RAM
-extern void screen_refresh(void);
 // fill a line with blank space from x to end
 extern void screen_blank_line(U16 x, U16 y);
 // highlight part or all of a line
@@ -97,8 +101,9 @@ extern U8 screen_get_pixel(U8 x, U8 y);
 extern void screen_test_fill(void);
 // blank the whole screen
 extern void screen_blank(void);
+
 // draw a rectangular frame
-extern void screen_frame(u16 x, u16 y, u16 width, u16 height, u8 framesize, u8 a);
+//extern void screen_frame(u16 x, u16 y, u16 width, u16 height, u8 framesize, u8 a);
 
 
 #endif // header guard

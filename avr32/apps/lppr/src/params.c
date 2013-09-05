@@ -12,6 +12,7 @@
 
 // lppr
 #include "params.h"
+#include "util.h"
 
 u8 report_params(void) {
   volatile char buf[64];
@@ -59,7 +60,7 @@ u8 report_params(void) {
 }
 
 // set initial parameters
-void set_params(void) {
+void set_initial_params(void) {
   
   // no filters
   ctl_param_change(eParam_mix0, 0);
@@ -67,32 +68,56 @@ void set_params(void) {
   
   // half dry
   ctl_param_change(eParam_adc0_dac0, fix16_from_float(0.5) );
-  ctl_param_change(eParam_adc1_dac1, fix16_from_float(0.5) );
+  //  ctl_param_change(eParam_adc1_dac1, fix16_from_float(0.5) );
   
   // half wet
   ctl_param_change(eParam_del0_dac0, fix16_from_float(0.5) );
-  ctl_param_change(eParam_del1_dac1, fix16_from_float(0.5) );
+  ctl_param_change(eParam_del1_dac0, fix16_from_float(0.5) );
+  //  ctl_param_change(eParam_del1_dac1, fix16_from_float(0.5) );
 				    
-  // full input->del 
+  // adc0 -> del0
   ctl_param_change(eParam_adc0_del0, fix16_from_float(0.99));
-  ctl_param_change(eParam_adc1_del1, fix16_from_float(0.99));
+  // adc0 -> del1
+  ctl_param_change(eParam_adc0_del1, fix16_from_float(0.99));
+  // del0 -> del1
+  ctl_param_change(eParam_del0_del1, fix16_from_float(0.99));
 				    
-  // slight feedback 
+  // slight feedback on del0 
   ctl_param_change(eParam_del0_del0, fix16_one >> 2);
-  ctl_param_change(eParam_del1_del0, fix16_one >> 2);
+  //  ctl_param_change(eParam_del1_del1, fix16_one >> 3);
 
   // set write flags
   ctl_param_change(eParam_write0, fix16_from_float(0.99));
   ctl_param_change(eParam_write1, fix16_from_float(0.99));		   
 
   // set run flags
-  ctl_param_change(eParam_run_write0, fix16_from_float(0.99));
-  ctl_param_change(eParam_run_write1, fix16_from_float(0.99));		   
-  ctl_param_change(eParam_run_read0, fix16_from_float(0.99));
-  ctl_param_change(eParam_run_read1, fix16_from_float(0.99));		   
+  ctl_param_change(eParam_run_write0, 1);
+  ctl_param_change(eParam_run_write1, 1);		   
+  ctl_param_change(eParam_run_read0, 1);
+  ctl_param_change(eParam_run_read1, 1);		   
 
   // set delay time
-  ctl_param_change(eParam_delay0, fix16_from_float(1.0));
-  ctl_param_change(eParam_delay1, fix16_from_float(1.5));
+  ctl_param_change(eParam_delay0, 250 * 48 );
+  ctl_param_change(eParam_delay1, 500 * 48 );
 
+}
+
+
+// set delay time in ms
+void  param_set_delay_ms(u8 idx, u32 ms)  {
+  u32 samps =  MS_TO_SAMPS(ms);
+  while(samps > PARAM_BUFFER_MAX) {
+    samps -= PARAM_BUFFER_MAX;
+  }
+  // bleh
+  switch(idx) {
+  case 0:
+    ctl_param_change(eParam_delay0, samps);
+    break;
+  case 1:
+    ctl_param_change(eParam_delay1, samps);
+    break;
+  default:
+    break;
+  }
 }

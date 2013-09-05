@@ -203,7 +203,7 @@ static void check_events(void) {
 	
       case kEventRefresh:
 	// refresh the screen hardware
-	screen_refresh();
+	//	screen_refresh();
 	break;
       case kEventMonomePoll :
 	// poll monome serial input and spawn relevant events

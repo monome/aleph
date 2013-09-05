@@ -16,9 +16,7 @@
 // lppr
 #include "handler.h"
 #include "params.h"
-
-// milliseconds to samples
-#define MS_TO_SAMPS(x) ((x) * 48)
+#include "renderer.h"
 
 // names of switches
 //static char * swName[] = { "key1", "key2","key3","key4", "mode", "power", "foot1", "foot2" };
@@ -48,28 +46,23 @@ static u32 sw_time(u8 num, u8 val) {
 
 // set delay time from switch tap
 static void sw_tap_delay(u8 idx, u8 val) {
-  static u32 interval;
+  //  static u32 interval;
   //    if(val > 0) {
-      interval = sw_time(idx, val);
+  //  interval =;
+      param_set_delay_ms(idx,  sw_time(idx, val) );
       //      print_dbg("\r\n press interval 0: ");
       //      print_dbg_ulong(interval);
-      interval = MS_TO_SAMPS(interval);
-      // bleh
-      switch(idx) {
-      case 0:
-	ctl_param_change(eParam_delay0, MS_TO_SAMPS(interval));
-	/// FIXME: weird wrapping behavior with these params, setting order, etc
-	//	ctl_param_change(eParam_loop0,  MS_TO_SAMPS(interval) + 1);
-	break;
-      case 1:
-	ctl_param_change(eParam_delay1, MS_TO_SAMPS(interval));
-	//	ctl_param_change(eParam_loop1, MS_TO_SAMPS(interval) + 1);
-	break;
-      default:
-	break;
-      }
-      //    }
 }
+
+// start recording loop in delayline 1
+/* static void loop_record(void) { */
+/*   param_set_loop_record(); */
+/* } */
+
+
+/* // stop recording and begin loop playback */
+/* static void loop_playback(void) { */
+/* } */
 
 
 /* static void sw_post(u8 num, u8 val) { */
@@ -87,37 +80,64 @@ static void sw_tap_delay(u8 idx, u8 val) {
 //---------------------------------------
 //---- external funcs
 
+// handle key presses
 extern void lppr_handler(event_t* ev) {
   switch (ev->eventType) {
   case kEventSwitch0:
-    //    sw_post(0, ev->eventData);
+    /// tap delaytime 1
     if(ev->eventData > 0) {
       sw_tap_delay(0, ev->eventData);
     }
+
+    render_sw_on(0, ev->eventData > 0);
     break;
 
   case kEventSwitch1:
-    //sw_post(1, ev->eventData);    
+    // tap delaytime 2
     if(ev->eventData > 0) {
       sw_tap_delay(1, ev->eventData);
     }
+    render_sw_on(1, ev->eventData > 0);
     break;
 
   case kEventSwitch2:
-    //    sw_post(2, ev->eventData);    
+    if(ev->eventData > 0) {
+      // record loop on line 1
+      param_loop_record(1);
+    } 
+    render_sw_on(2, ev->eventData > 0);
     break;
 
   case kEventSwitch3:
-    //    sw_post(3, ev->eventData);    
+    if(ev->eventData > 0) {
+      // record loop on line 2
+      param_loop_playback(1);
+    }
+    render_sw_on(3, ev->eventData > 0);
     break;
 
   case kEventSwitch6:
-    //   sw_post(6, ev->eventData);    
+    if(ev->eventData > 0) {
+      loop_record();
+    } 
     break;
 
   case kEventSwitch7:
-    //    sw_post(7, ev->eventData);    
+    if(ev->eventData > 0) {
+      loop_playback();
+    }
     break;
+
+
+  case kEventEncoder0:
+    break;
+  case kEventEncoder1:
+    break;
+  case kEventEncoder2:
+    break;
+  case kEventEncoder3:
+    break;
+
 
   default:
     break;

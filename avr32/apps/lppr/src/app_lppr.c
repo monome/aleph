@@ -7,6 +7,7 @@
  */
 
 // asf
+#include "delay.h"
 #include "gpio.h"
 #include "print_funcs.h"
 #include "sd_mmc_spi.h"
@@ -24,12 +25,14 @@
 #include "files.h"
 #include "handler.h"
 #include "params.h"
+#include "renderer.h"
 
 // this is called during hardware initialization.
 // use for memory allocation.
 void app_init(void) {
   // set handler
   appEventHandler = &lppr_handler;
+  render_init();
 }
 
 // this is called from the event queue to start the app 
@@ -97,11 +100,15 @@ u8 app_launch(u8 firstrun) {
   }
 
   // set parameters
-  set_params();
+  set_initial_params();
+
+
+  delay_ms(20);
 
   // enable audio
   bfin_enable();
 
   screen_clear();  
+  screen_refresh();
   return 1;
 }

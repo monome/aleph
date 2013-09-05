@@ -143,7 +143,9 @@ CSRCS += \
 	$(ALEPH_APP)/src/app_lppr.c \
 	$(ALEPH_APP)/src/files.c \
 	$(ALEPH_APP)/src/handler.c \
-	$(ALEPH_APP)/src/params.c 
+	$(ALEPH_APP)/src/params.c \
+	$(ALEPH_APP)/src/renderer.c
+
 
 # List of assembler source files.
 ASSRCS +=
