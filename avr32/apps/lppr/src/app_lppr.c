@@ -24,7 +24,7 @@
 // lppr
 #include "files.h"
 #include "handler.h"
-#include "params.h"
+#include "ctl.h"
 #include "renderer.h"
 
 // this is called during hardware initialization.
@@ -91,24 +91,39 @@ u8 app_launch(u8 firstrun) {
     bfin_load_buf();
   }
 
+  screen_line(0, 1, "waiting for bfin init...      ", 0x3f);
+  screen_refresh();
+
   // this is retarded, we need the GPIO for bfin to signal when init done
   delay_ms(1000);
 
     // report parameters
-  if( report_params() ) {
+
+  screen_line(0, 1, "reporting bfin params...       ", 0x3f);
+  screen_refresh();
+
+  if( ctl_report_params() ) {
     ;;
   } else {
-    screen_clear();
+    //    screen_clear();
+    
+    screen_line(0, 1, "param report failed!           ", 0x3f);
+    screen_refresh();
     return 0;
   }
 
-  // set parameters
-  set_initial_params();
 
+    screen_line(0, 1, "setting initial parameters...  ", 0x3f);
+    screen_refresh();
+
+  ctl_init_params();
 
   delay_ms(20);
 
   // enable audio
+  screen_line(0, 1, "run                                ", 0x3f);
+  screen_refresh();
+
   bfin_enable();
 
   screen_clear();  

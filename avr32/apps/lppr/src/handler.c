@@ -15,7 +15,7 @@
 #include "screen.h"
 // lppr
 #include "handler.h"
-#include "params.h"
+#include "ctl.h"
 #include "renderer.h"
 
 // names of switches
@@ -49,14 +49,14 @@ static void sw_tap_delay(u8 idx, u8 val) {
   //  static u32 interval;
   //    if(val > 0) {
   //  interval =;
-      param_set_delay_ms(idx,  sw_time(idx, val) );
+      ctl_set_delay_ms(idx,  sw_time(idx, val) );
       //      print_dbg("\r\n press interval 0: ");
       //      print_dbg_ulong(interval);
 }
 
 // start recording loop in delayline 1
 /* static void loop_record(void) { */
-/*   param_set_loop_record(); */
+/*   ctl_set_loop_record(); */
 /* } */
 
 
@@ -103,7 +103,7 @@ extern void lppr_handler(event_t* ev) {
   case kEventSwitch2:
     if(ev->eventData > 0) {
       // record loop on line 1
-      param_loop_record(1);
+      ctl_loop_record(1);
     } 
     render_sw_on(2, ev->eventData > 0);
     break;
@@ -111,20 +111,20 @@ extern void lppr_handler(event_t* ev) {
   case kEventSwitch3:
     if(ev->eventData > 0) {
       // record loop on line 2
-      param_loop_playback(1);
+      ctl_loop_playback(1);
     }
     render_sw_on(3, ev->eventData > 0);
     break;
 
   case kEventSwitch6:
     if(ev->eventData > 0) {
-      param_loop_record(1);
+      ctl_loop_record(1);
     } 
     break;
 
   case kEventSwitch7:
     if(ev->eventData > 0) {
-      param_loop_playback(1);
+      ctl_loop_playback(1);
     }
     break;
 

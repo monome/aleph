@@ -28,7 +28,7 @@ extern fract32 delay_next(delayLine* dl, fract32 in) {
   fract32 readVal;
 
   // get read value first.
-  // so, setting loop == delaytime gives sensible results.
+  // so, setting loop == delaytime gives sensible results (???)
   readVal = buffer_tapN_read( &(dl->tapRd) );
 
   // figure out what to write
@@ -36,27 +36,28 @@ extern fract32 delay_next(delayLine* dl, fract32 in) {
     if(dl->write) {
       // write and replace
       buffer_tapN_write(&(dl->tapWr), in);
-    } else {
-      // clear
-      buffer_tapN_write(&(dl->tapWr), 0);
-    }
+    } // else {
+    // clear
+    //      buffer_tapN_write(&(dl->tapWr), 0);
+      //      ;; // no change
+      //    }
   } else if(dl->preLevel < 0) { // consider <0 to be == 1
     if(dl->write) {
       // overdub
-      buffer_tapN_add(&dl->tapWr, in);
-    } else {
+      buffer_tapN_add(&(dl->tapWr), in);
+    } //else {
       // no change
-      ;;
-    }
+    //      ;;
+    //    }
   } else { // prelevel is non-zero, non-full
     if(dl->write) {
       // write mix
       buffer_tapN_mix(&(dl->tapWr), in, dl->preLevel);
-    } else {
+    } //else {
       // attenuate only
-      buffer_tapN_mix(&(dl->tapWr), 0, dl->preLevel);
-
-    }
+      //      buffer_tapN_mix(&(dl->tapWr), 0, dl->preLevel);
+    //      ;;
+    //    }
   }
 
   // advance the read phasor 

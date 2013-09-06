@@ -3,15 +3,15 @@
 
 // query the DSP for parameter descriptors. 
 // return 0 if something seems wrong, 1 otherwise
-u8 report_params(void);
+u8 ctl_report_params(void);
 // set parameters to initial values
-void set_initial_params(void);
+void ctl_init_params(void);
 // set delay time in ms
-void  param_set_delay_ms(u8 idx, u32 ms);
+void  ctl_set_delay_ms(u8 idx, u32 ms);
 // start recording loop on given delayline
-void param_loop_record(u8 idx);
+void ctl_loop_record(u8 idx);
 // stop recording loop / start playback on given delayline
-void param_loop_playback(u8 idx);
+void ctl_loop_playback(u8 idx);
 
 #define PARAM_RQ_MIN 0x00000000
 #define PARAM_RQ_MAX 0x00400000
