@@ -21,8 +21,7 @@
 typedef void (*timerCallback)( int tag );
 
 // timer descriptor struct
-typedef struct _swTimer
-{
+typedef struct _swTimer {
   int        fperiodic;   	// !0 for periodic timer, else one-shot 
   int        tag;        	// unique ID value 
   int        timeout;           // timer expiration period in ticks

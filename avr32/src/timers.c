@@ -109,7 +109,7 @@ bool set_timer(  swTimer_t* t, int tag, int ticks, timerCallback callback,
   if ( callback == NULL ) {
     return false;
   }
-   
+  // dont add if callback appears in the list
   if ( find_timer( callback, tag ) != NULL ) {
     return false;
   }

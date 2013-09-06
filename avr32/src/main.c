@@ -158,7 +158,8 @@ static void init_ctl(void) {
   init_adc();
   print_dbg("\r\n init_adc");
 
-  // start application timers
+  // start timers
+  init_sys_timers();
   init_app_timers();
   print_dbg("\r\n init_timers");
 

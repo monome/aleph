@@ -15,12 +15,27 @@
 #include "ctl.h"
 #include "util.h"
 
+//----------------------------------------
+//---- static variables
 
+// milliseconds uptime of last event
 static u32 ms_loop1 = 0;
-
 // is a loop playing
-static u8 loopPlaying1 = 0;
+static u8 loopPlay1 = 0;
+// is a loop recording
+static u8 loopRec1 = 0;
 
+//-- parameter values
+// these are fract32 but will be treated as unsigned here.
+// use only in accumulators or table lookup
+static u32 fb0;
+static u32 fb1;
+
+
+//-------------------------------------
+//------ extern functions
+
+// get parameter report from DSP
 u8 ctl_report_params(void) {
   volatile char buf[64];
   volatile ParamDesc pdesc;
@@ -68,20 +83,14 @@ u8 ctl_report_params(void) {
 
 // set initial parameters
 void ctl_init_params(void) {
-  
   // no filters
   ctl_param_change(eParam_mix0, 0);
   ctl_param_change(eParam_mix1, 0);
-  
   // half dry
   ctl_param_change(eParam_adc0_dac0, fix16_from_float(0.5) );
-  //  ctl_param_change(eParam_adc1_dac1, fix16_from_float(0.5) );
-  
   // half wet
   ctl_param_change(eParam_del0_dac0, fix16_from_float(0.5) );
   ctl_param_change(eParam_del1_dac0, fix16_from_float(0.5) );
-  //  ctl_param_change(eParam_del1_dac1, fix16_from_float(0.5) );
-				    
   // adc0 -> del0
   ctl_param_change(eParam_adc0_del0, fix16_from_float(0.99));
   // adc0 -> del1
@@ -122,17 +131,22 @@ void  ctl_set_delay_ms(u8 idx, u32 ms)  {
   case 0:
     ctl_param_change(eParam_delay0, samps);
     break;
-  case 1:
-    if(loopPlaying1) {
+  case 1:    
+    if(loopPlay1) {
       print_dbg("\r\n (switching from loop to delay mode");
-      print_dbg("\r\n set loop time");
+      print_dbg("\r\n set loop time to max");
       ctl_param_change(eParam_loop1, PARAM_BUFFER_MAX);
-      print_dbg("\r\n start write head");
+      print_dbg("\r\n write enable");
+      ctl_param_change(eParam_write1, 1);
+      print_dbg("\r\n start write head movement");
       ctl_param_change(eParam_run_write1, 1);
       print_dbg("\r\n no overdub");
       ctl_param_change(eParam_pre1, 0);
-      loopPlaying1 = 0;
+      loopPlay1 = 0;
     }
+    // stop loop-recording???
+    //      loopRec1 = 0;
+
     print_dbg("\r\n sync write/read heads");
     ctl_param_change(eParam_delay1, samps);
     break;
@@ -144,26 +158,30 @@ void  ctl_set_delay_ms(u8 idx, u32 ms)  {
 
 // start recording loop on given delayline
 void ctl_loop_record(u8 idx) {
-
   print_dbg("\r\n\r\n ctl_loop_record:");
-  if(loopPlaying1) {
-    print_dbg("\r\n (existing loop)");
-    print_dbg("\r\n start writing ");
-    ctl_param_change(eParam_write1, 1);
-    print_dbg("\r\n full overdub");
-    ctl_param_change(eParam_pre1, fix16_one);
-  } else {
-    print_dbg("\r\n (new loop)");
-    ms_loop1 = tcTicks;
-    print_dbg("\r\n stop read head");
-    ctl_param_change(eParam_run_read1, 0);
-    print_dbg("\r\n reset write head");
-    ctl_param_change(eParam_pos_write1, 0);
-    print_dbg("\r\n start write head");
-    ctl_param_change(eParam_run_write1, 1);
-    print_dbg("\r\n start writing ");
-    ctl_param_change(eParam_write1, 1);
-   
+  if(!loopRec1) {
+    if(loopPlay1) {
+      print_dbg("\r\n (existing loop)");
+      print_dbg("\r\n start writing ");
+      ctl_param_change(eParam_write1, 1);
+      print_dbg("\r\n full overdub");
+      ctl_param_change(eParam_pre1, fix16_one);
+      // can reset loop length
+      // by recording, cancelling loop, playing
+      ms_loop1 = tcTicks; 
+    } else {
+      print_dbg("\r\n (new loop)");
+      ms_loop1 = tcTicks;
+      print_dbg("\r\n stop read head movement");
+      ctl_param_change(eParam_run_read1, 0);
+      print_dbg("\r\n reset write head");
+      ctl_param_change(eParam_pos_write1, 0);
+      print_dbg("\r\n write enable");
+      ctl_param_change(eParam_write1, 1);
+      print_dbg("\r\n start write head movement");
+      ctl_param_change(eParam_run_write1, 1);
+    }
+    loopRec1 = 1;
   }
 }
 
@@ -172,30 +190,47 @@ void ctl_loop_playback(u8 idx) {
   u32 samps;
   u32 ms;
   print_dbg("\r\n\r\n ctl_loop_playback:");
-    
-  if(loopPlaying1) {
-    print_dbg("\r\n (existing loop)");
-    print_dbg("\r\n stop writing, keep moving");
-    ctl_param_change(eParam_write1, 0);
-  } else {
-    print_dbg("\r\n (new loop)");
-    if (ms_loop1 > tcTicks) { // overflow
-      ms = tcTicks + (0xffffffff - ms_loop1);
+
+  if(loopRec1) {
+    // recording
+    if(loopPlay1) {
+      // already playing
+      print_dbg("\r\n (existing loop)");
+      print_dbg("\r\n write disable");
+      ctl_param_change(eParam_write1, 0);
     } else {
-      ms = tcTicks - ms_loop1;
+      // not playing
+      print_dbg("\r\n (new loop)");
+      if (ms_loop1 > tcTicks) { // overflow
+	ms = tcTicks + (0xffffffff - ms_loop1);
+      } else {
+	ms = tcTicks - ms_loop1;
+      }
+      samps = MS_TO_SAMPS(ms) - 1;
+      print_dbg("\r\n write disable");
+      ctl_param_change(eParam_write1, 0);
+      print_dbg("\r\n reset write head");
+      ctl_param_change(eParam_pos_write1, 1);
+      print_dbg("\r\n reset read head");
+      ctl_param_change(eParam_pos_read1, 0);
+      print_dbg("\r\n set loop time");
+      ctl_param_change(eParam_loop1, samps);
+      print_dbg("\r\n start read head");
+      ctl_param_change(eParam_run_read1, 1);
+      // set loop-playing flag
+      loopPlay1 = 1;
     }
-    samps = MS_TO_SAMPS(ms) - 1;
-    print_dbg("\r\n stop writing, keep moving");
-    ctl_param_change(eParam_write1, 0);
-    print_dbg("\r\n reset write head");
-    ctl_param_change(eParam_pos_write1, 1);
-    print_dbg("\r\n reset read head");
-    ctl_param_change(eParam_pos_read1, 0);
-    print_dbg("\r\n set loop time");
-    ctl_param_change(eParam_loop1, samps);
-    print_dbg("\r\n start read head");
-    ctl_param_change(eParam_run_read1, 1);
-    // set loop-playing flag
-    loopPlaying1 = 1;
+    // unset loop-recording
+    loopRec1 = 0;  
+  } else {
+    // not recording
+    if (loopPlay1) {
+      // but a loop is playing
+      // reset the loop 
+	print_dbg("\r\n reset read head");
+	ctl_param_change(eParam_pos_read1, 0);
+    } else {
+      ;; // no action
+    }
   }
 }
