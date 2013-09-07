@@ -403,7 +403,7 @@ include $(dep-files)
 # if the common Makefile.in or project config.mk is changed.
 $(target): $(ASF_PATH)/$(LINKER_SCRIPT) $(obj-y)
 	@echo "LN      $@"
-	$(LD) $(l_flags) $(obj-y) -Wl,--start-group $(libflags-gnu-y) -Wl,--end-group -o $@
+	@$(LD) $(l_flags) $(obj-y) -Wl,--start-group $(libflags-gnu-y) -Wl,--end-group -o $@
 	$(SIZE) -Ax $@
 	$(SIZE) -Bx $@
 	@echo "\r\n"
@@ -423,3 +423,83 @@ $(target): $(ASF_PATH)/$(LINKER_SCRIPT) $(obj-y)
 # Create binary image from ELF output file.
 %.bin: $(target)
 	$(OBJCOPY) -O binary $< $@
+
+# Perform a JTAG chip erase command
+.PHONY: chiperase
+chiperase:
+	@echo $(MSG_ERASING_CHIP)
+	$(Q)$(PROGRAM) chiperase
+
+# Get CPU information
+.PHONY: cpuinfo
+cpuinfo:
+	@echo $(MSG_GETTING_CPU_INFO)
+	$(Q)$(PROGRAM) cpuinfo
+
+# Open a debug connection with the MCU
+.PHONY: debug
+debug: $(filter program,$(MAKECMDGOALS))
+	@echo $(MSG_DEBUGGING)
+	$(Q)$(GDBPROXY) $(FLASH:%=-f%)
+
+# Perform a flash erase
+.PHONY: erase
+erase:
+# The erase target should only be executed when program target is NOT given.
+ifeq ($(filter program,$(MAKECMDGOALS)),)
+	@echo $(MSG_ERASING)
+	$(Q)$(PROGRAM) erase $(FLASH:%=-f%)
+else
+	@:
+endif
+
+# Stop CPU execution
+.PHONY: halt
+halt:
+	@echo $(MSG_HALTING)
+	$(Q)$(PROGRAM) halt
+
+# Program MCU memory from ELF output file
+.PHONY: program
+program: $(target)
+	@echo $(MSG_PROGRAMMING)
+	$(Q)$(PROGRAM) program $(FLASH:%=-f%) $(PROG_CLOCK:%=-c%) -e -v $(if $(findstring reset,$(MAKECMDGOALS)),-R) $(if $(findstring run,$(MAKECMDGOALS)),-r) $(target)
+
+# Reset MCU.
+.PHONY: reset
+reset:
+# The reset target should only be executed when run and program targets are NOT
+# given.
+ifeq ($(filter run program,$(MAKECMDGOALS)),)
+	@echo $(MSG_RESETTING)
+	$(Q)$(PROGRAM) reset
+else
+	@:
+endif
+
+# Read CPU registers
+.PHONY: readregs
+readregs:
+	@echo $(MSG_READING_CPU_REGS)
+	$(Q)$(PROGRAM) readregs
+
+# Start CPU execution
+.PHONY: run
+run:
+# The run target should only be executed when the program target is NOT given.
+ifeq ($(filter program,$(MAKECMDGOALS)),)
+	@echo $(MSG_RUNNING)
+	$(Q)$(PROGRAM) run $(if $(findstring reset,$(MAKECMDGOALS)),-R)
+else
+	@:
+endif
+
+# Protect chip by setting security bit
+.PHONY: secureflash
+# TODO: the secureflash target is not thread safe and should depend upon erase
+# and program if these goals are given to make. By adding these dependencies to
+# secureflash will cause make to print unnecessary "Nothing to be done for..."
+# messages.
+secureflash:
+	@echo $(MSG_SECURING_FLASH)
+	$(Q)$(PROGRAM) secureflash

@@ -25,7 +25,7 @@
 #include "files.h"
 #include "handler.h"
 #include "ctl.h"
-#include "renderer.h"
+#include "render.h"
 
 // this is called during hardware initialization.
 // use for memory allocation.
@@ -128,5 +128,8 @@ u8 app_launch(u8 firstrun) {
 
   screen_clear();  
   screen_refresh();
+
+  render_refresh();
+  
   return 1;
 }

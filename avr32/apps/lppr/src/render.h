@@ -6,6 +6,9 @@
 extern void render_init(void);
 // update
 extern void render_update(void);
+// force refresh
+extern void render_refresh(void);
+
 // draw a buffer in a quadrant
 extern void render_quad(u8 quad, u8* data);
 // draw switch-on

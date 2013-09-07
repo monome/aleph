@@ -6,7 +6,7 @@
 #include "screen.h"
 
 // lppr
-#include "renderer.h"
+#include "render.h"
 
 /*
   screen is `128x64 px
@@ -34,46 +34,93 @@ static u8 footRegion[4][FOOT_SIZE];
 #define QUAD_SIZE 	1792
 static u8 quadRegion[4][QUAD_SIZE];
 
+// coordinates
+static const u32 xQuad0 = 0;
+static const u32 yQuad0 = 0;
+static const u32 xQuad1 = 64;
+static const u32 yQuad1 = 0;
+static const u32 xQuad2 = 0;
+static const u32 yQuad2 = 28;
+static const u32 xQuad3 = 64;
+static const u32 yQuad3 = 28;
+
+static const u32 xFoot0 = 0;
+static const u32 yFoot0 = 56;
+static const u32 xFoot1 = 32;
+static const u32 yFoot1 = 56;
+static const u32 xFoot2 = 64;
+static const u32 yFoot2 = 56;
+static const u32 xFoot3 = 96;
+static const u32 yFoot3 = 56;
+
+
+// region-dirty flags
+static u8 dirtyQuad0 = 0;
+static u8 dirtyQuad1 = 0;
+static u8 dirtyQuad2 = 0;
+static u8 dirtyQuad3 = 0;
+
+static u8 dirtyFoot0 = 0;
+static u8 dirtyFoot1 = 0;
+static u8 dirtyFoot2 = 0;
+static u8 dirtyFoot3 = 0;
+
 // fill glyph buffers
 void render_init(void) {
-  //  u32 i;
-
+  u32 i;
   // render
-  font_string("Q0", quadRegion[0], QUAD_SIZE, QUAD_W, 0xf, 0);
-  
+  font_string("Q1", quadRegion[0], QUAD_SIZE, QUAD_W, 0xf, 0);
+  font_string("Q2", quadRegion[1], QUAD_SIZE, QUAD_W, 0xf, 0);
+  font_string("Q3", quadRegion[2], QUAD_SIZE, QUAD_W, 0xf, 0);
+  font_string("Q4", quadRegion[3], QUAD_SIZE, QUAD_W, 0xf, 0);
 
-  /* u32 j; */
-  /* u32 a, b; */
+  dirtyQuad0 = 1;
+  dirtyQuad1 = 1;
+  dirtyQuad2 = 1;
+  dirtyQuad3 = 1;
 
-  /* for(i=0; i<QUAD_BUF_LEN; i++) { */
-  /*   quadSwGlyph[1][i] = 0xff; */
-  /*   quadSwGlyph[0][i] = 0x22; */
-  /* } */
+  /// debug: print buffer contents
+  print_dbg("\r\n quad 0: ");
+  for(i=0; i<QUAD_SIZE; i++) {
+    if( (i % QUAD_W) == 0) {
+      print_dbg("\r\n");
+    }
+    if(quadRegion[0][i] > 0x5) {
+      print_dbg("#"); 
+    } else {
+      print_dbg("_");
+    }
+  }
 
-  /* for(i=0; i<QUAD_BUF_W; i++) { */
-  /*   for(j=0; j<QUAD_BUF_W; j++) { */
-  /*     if(i<QUAD_BUF_W__2) {  */
-  /* 	a = i * 0xf / QUAD_BUF_W__2; */
-  /*     } else { */
-  /* 	a = (QUAD_BUF_W - i) * 0xf / QUAD_BUF_W__2; */
-  /*     } */
-  /*     if(i<QUAD_BUF_W__2) {  */
-  /* 	b = j * 0xf / QUAD_BUF_H__2; */
-  /*     } else { */
-  /* 	b = (QUAD_BUF_H - j) * 0xf / QUAD_BUF_H__2; */
-  /*     } */
-  /*     //      testData1[j*QUAD_BUF_H + i] = a | b; */
-  /*     //      testData2[j*QUAD_BUF_H + i] = a & b; */
-  /*     //      testData1[j*QUAD_BUF_H + i] = i % 0xe + 1; */
-  /*     //      testData2[j*QUAD_BUF_H + i] = j % 0xe + 1; */
-  /*     //      testData1[j*QUAD_BUF_H + i] = 0xff; */
-  /*     //      testData2[j*QUAD_BUF_H + i] = 0x22; */
-  /*   } */
-  /* } */
 }
 
 // update dirty regions
 void render_update(void) {
+  if(dirtyQuad0) {
+    screen_draw_region(xQuad0, yQuad0, QUAD_W, QUAD_H, quadRegion[0]);
+    dirtyQuad0 = 0;
+  }
+  if(dirtyQuad1) {
+    screen_draw_region(xQuad1, yQuad1, QUAD_W, QUAD_H, quadRegion[1]);
+    dirtyQuad1 = 0;
+  }
+  if(dirtyQuad2) {
+    screen_draw_region(xQuad2, yQuad2, QUAD_W, QUAD_H, quadRegion[2]);
+    dirtyQuad2 = 0;
+  }
+  if(dirtyQuad3) {
+    screen_draw_region(xQuad3, yQuad3, QUAD_W, QUAD_H, quadRegion[3]);
+    dirtyQuad3 = 0;
+  }
+}
+
+// force refresh
+void render_refresh(void) {
+  dirtyQuad0 = 1;
+  dirtyQuad1 = 1;
+  dirtyQuad2 = 1;
+  dirtyQuad3 = 1;
+  render_update();
 }
 
 void render_sw_on(u8 sw, u8 on) {

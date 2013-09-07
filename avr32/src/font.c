@@ -1,5 +1,6 @@
+#include "print_funcs.h"
 
-/* liquid.c
+/* font.c
  *
  * bitmap font data 
  * designed by Henrik Theiling for Liquid Rendering, 2009
@@ -126,12 +127,12 @@ const U32 font_nglyphs = sizeof(font_data)/sizeof(glyph_t) - 1;
 //------------
 //--- static temp vars for speed
 // columns to draw
-static u8 cols;
+//static u8 cols;
 // bytes per column
-static u8 colbytes;
+//static u8 colbytes;
 // pointer to glyph
-static const glyph_t* gl;
-static u8 i, j;
+//static const glyph_t* gl;
+//static u8 i, j;
 
 
 //------------------------------------------
@@ -142,21 +143,26 @@ static u8 i, j;
 // foreground and background colors
 // return columns used
 extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
-  gl = &(font_data[ch - FONT_ASCII_OFFSET]);
+  u8 i=0;
+  u8 j;
+  const glyph_t* gl = &(font_data[ch - FONT_ASCII_OFFSET]);
   // columns to draw
-  cols = FONT_CHARW - gl->first - gl->last;
+  u8 cols = FONT_CHARW - gl->first - gl->last;
   // bytes per column
-  colbytes = FONT_CHARH * w;
+  u32 colOffset = FONT_CHARH * w - 1;
   // offset pointer
   //  buf = buf + (y*w + x);
+  print_dbg("\r\n");
   while(i < cols) {
     for(j=0; j<FONT_CHARH; j++) {
       *buf = gl->data[i + gl->first] & (1 << j) ? a : b;
+      if(*buf) { print_dbg("#"); } else { print_dbg("_"); }
       // point at next row
       buf += w;
     }
+    print_dbg("\r\n");
     // move pointer back the size of one column
-    buf -= colbytes;
+    buf -= colOffset;
     // increment for next row
     buf++;
     // increment column count
@@ -168,12 +174,12 @@ extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
 // same as font_glyph, double size
 
 extern u8* font_glyph_big(char ch, u8* buf, u8 w, u8 a, u8 b) {
-  u8 val;
-  gl = &(font_data[ch - FONT_ASCII_OFFSET]);
+  u8 i=0, j, val;
+  const glyph_t* gl = &(font_data[ch - FONT_ASCII_OFFSET]);
   // columns to draw
-  cols = (FONT_CHARW - gl->first - gl->last) * 2;
-  // bytes per column
-  colbytes = FONT_CHARH * w;
+  u8 cols = (FONT_CHARW - gl->first - gl->last) * 2;
+  // byte offset produced by 1 full column
+  u32 colOffset = FONT_CHARH * w - 1;
   // offset pointer
   //  pbuf = buf + (y*w + x);
   //  pbyf
@@ -191,7 +197,7 @@ extern u8* font_glyph_big(char ch, u8* buf, u8 w, u8 a, u8 b) {
       buf += w;
     }
     // move pointer back the size of one column
-    buf -= colbytes;
+    buf -= colOffset;
     // increment for next row
     buf += 2;
     // increment column count

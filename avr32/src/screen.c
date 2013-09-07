@@ -381,10 +381,13 @@ extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
   /* } */
   /// arg, the screen is upside down!
   pScr = (u8*)screenBuf + nb - 1;
+  //  print_dbg("\r\n copy/pack region:");
   for(j=0; j<h; j++) {
     for(i=0; i<w; i+=2) {
       *pScr |= (0xf0 & (*data++ << 4) );
-      *pScr-- = *data++;
+      *pScr-- |= (*data++ & 0xf);
+      //      print_dbg("\r\n 0x");
+      //      print_dbg_hex(*pScr);
     }
   }
 
