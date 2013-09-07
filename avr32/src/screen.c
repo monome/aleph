@@ -10,8 +10,9 @@
 #include <stdlib.h>
 #include <math.h>
 // ASF
+#include "delay.h"
 #include "gpio.h"
-#include "util.h"
+//#include "util.h"
 #include "intc.h"
 #include "print_funcs.h"
 #include "spi.h"
@@ -28,24 +29,23 @@
 const U8 lines[CHAR_ROWS] = { 0, 8, 16, 24, 32, 40, 48, 56 };
 
 // screen buffer
-static U8 screen[GRAM_BYTES];
+static U8 screenBuf[GRAM_BYTES];
 // common static vars
-//static u8 x;
-static u8  y, i, j;
+static u32  y, i, j;
 static u32 pos;
 // fixed-point text buffer
 static char buf[FIX_DIG_TOTAL];
 
 //-----------------------------
 //---- static functions
-static void write_data(U8 c);
-static void write_data(U8 c) {
-  spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
-  // pull register select high to write data
-  gpio_set_gpio_pin(OLED_REGISTER_PIN);
-  spi_write(OLED_SPI, c);
-  spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
-}
+/* static void write_data(U8 c); */
+/* static void write_data(U8 c) { */
+/*   spi_selectChip(OLED_SPI, OLED_SPI_NPCS); */
+/*   // pull register select high to write data */
+/*   gpio_set_gpio_pin(OLED_REGISTER_PIN); */
+/*   spi_write(OLED_SPI, c); */
+/*   spi_unselectChip(OLED_SPI, OLED_SPI_NPCS); */
+/* } */
 
 static void write_command(U8 c);
 static void write_command(U8 c) {
@@ -68,16 +68,7 @@ static void zero_col(U16 x, U16 y) {
 // set the current drawing area of the physical screen (hopefully)
 static void screen_set_rect(u8 x, u8 y, u8 w, u8 h);
 void screen_set_rect(u8 x, u8 y, u8 w, u8 h) {
-  /* print_dbg("\r\n setting col address, start: 0x"); */
-  /* print_dbg_hex(x); */
-  /* print_dbg(", end: 0x"); */
-  /* print_dbg_hex(x + w - 1); */
-  /* print_dbg("\r\n setting row address, start: 0x"); */
-  /* print_dbg_hex(y); */
-  /* print_dbg(", end: 0x"); */
-  /* print_dbg_hex(y + h - 1); */
-
-  // set column address
+ // set column address
   write_command(0x15);		// command
   write_command(x);	// column start
   write_command((x+w-1));	// column end
@@ -93,20 +84,18 @@ void screen_set_rect(u8 x, u8 y, u8 w, u8 h) {
 // external functions
 void init_oled(void) {
   U32 i;
-  volatile u64 delay;
+  // volatile u64 delay;
   //  cpu_irq_disable();
   Disable_global_interrupt();
-  delay = FCPU_HZ >> 10 ; while(delay > 0) { delay--; }
+  delay_ms(1);
   // flip the reset pin
   gpio_set_gpio_pin(OLED_RESET_PIN);
-  //  delay_ms(1);
-  delay = FCPU_HZ >> 10 ; while(delay > 0) { delay--; }
+  delay_ms(1);
   gpio_clr_gpio_pin(OLED_RESET_PIN);
-  // delay_ms(1);
-  delay=FCPU_HZ >> 10; while(delay > 0) { delay--; }
+  delay_ms(1);
   gpio_set_gpio_pin(OLED_RESET_PIN);
-  //delay_ms(10);
-  delay = FCPU_HZ >> 8; while(delay > 0) { delay--; }
+  delay_ms(10);
+
   //// initialize OLED
   write_command(0xAE);	// off
   write_command(0xB3);	// clock rate
@@ -164,15 +153,18 @@ void init_oled(void) {
   //  screen_clear();
 
  // clear OLED RAM and local screenbuffer
+  spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
+  // pull register select high to write data
+  gpio_set_gpio_pin(OLED_REGISTER_PIN);
   for(i=0; i<GRAM_BYTES; i++) { 
-    screen[i] = 0;
-    write_data(0);
+    screenBuf[i] = 0;
+    //    write_data(0);
+    spi_write(OLED_SPI, 0);
   }
+  spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
   
   write_command(0xAF);	// on
-
-  //  delay_ms(10) 
-  delay = FCPU_HZ >> 8; while(delay > 0) { delay--; }
+  delay_ms(10) ;
   //  cpu_irq_enable();
   Enable_global_interrupt();
 }
@@ -198,8 +190,8 @@ void screen_refresh(void) {
   gpio_set_gpio_pin(OLED_REGISTER_PIN);
   spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
 
-  pScreen=&(screen[GRAM_BYTES_1]);
-  for(i=0; i<GRAM_BYTES; i++) {     
+  pScreen=&(screenBuf[GRAM_BYTES_1]);
+  for(i=0; i<GRAM_BYTES; i++) {
     spi_write(OLED_SPI, *pScreen);
     pScreen--;
   }
@@ -213,11 +205,11 @@ void screen_pixel(U16 x, U16 y, U8 a) {
 
  // rotate: swap (and read backwards in refresh)
   if (x&1) {
-    screen[pos] &= 0xf0;
-    screen[pos] |= (a & 0x0f);
+    screenBuf[pos] &= 0xf0;
+    screenBuf[pos] |= (a & 0x0f);
   } else {
-    screen[pos] &= 0x0f;
-    screen[pos] |= (a << 4);
+    screenBuf[pos] &= 0x0f;
+    screenBuf[pos] |= (a << 4);
   }
 }
 
@@ -225,26 +217,12 @@ void screen_pixel(U16 x, U16 y, U8 a) {
 U8 screen_get_pixel(U8 x, U8 y) {
   pos = (y << COLS_LSHIFT) + (x>>1);
   if (x&1) {
-    return screen[pos] & 0x0f; 
+    return screenBuf[pos] & 0x0f;
    } else {
-    return (screen[pos] & 0xf0) >> 4;
+    return (screenBuf[pos] & 0xf0) >> 4;
   }
 }
 
-// draw a single character glyph with fixed spacing
-/* U8 screen_char_fixed(U16 col, U16 row, char gl, U8 a) { */
-/*   //  static U8 x; */
-/*   for(j=0; j<FONT_CHARH; j++) { */
-/*     for(i=0; i<FONT_CHARW; i++) { */
-/*       if( (font_data[gl - FONT_ASCII_OFFSET].data[i] & (1 << j))) { */
-/* 	screen_pixel(i+col, j+row, a); */
-/*       } else { */
-/* 	screen_pixel(i+col, j+row, 0); */
-/*       } */
-/*     } */
-/*   } */
-/*   return x+1; */
-/* } */
 
 
 // draw a single character glyph with fixed spacing and background
@@ -262,26 +240,6 @@ U8 screen_char_fixed(U16 col, U16 row, char gl, U8 a, u8 b) {
   return FONT_CHARW;
 }
 
-/* // draw a single character glyph with proportional spacing and background */
-/* U8 screen_char_squeeze(U16 col, U16 row, char gl, U8 a) { */
-/*   //  static U8 x; */
-/*   static U8 xnum; */
-/*   static const glyph_t * g; */
-/*   g = &(font_data[gl - FONT_ASCII_OFFSET]); */
-/*   xnum = FONT_CHARW - g->first - g->last; */
-/*   //  print_dbg("\r\n char at row: "); */
-/*   //  print_dbg_ulong(row); */
-/*   for(j=0; j<FONT_CHARH; j++) { */
-/*     for(i=0; i<xnum; i++) { */
-/*       if( (g->data[i + g->first] & (1 << j))) { */
-/* 	screen_pixel(i + col, j + row, a); */
-/*       } else { */
-/* 	screen_pixel(i + col, j + row, 0); */
-/*       } */
-/*     } */
-/*   } */
-/*   return xnum; */
-/* } */
 
 // draw a single character glyph with proportional spacing
 U8 screen_char_squeeze(U16 col, U16 row, char gl, U8 a, u8 b) {
@@ -330,7 +288,7 @@ U8 screen_string_squeeze(U16 x, U16 l, char *str, U8 a) {
   return x;
 }
 
-// draw a string (default) 
+// draw a string (default)
 inline U8 screen_string(U16 x, U16 l, char *str, U8 a) {
   return screen_string_squeeze(x, l, str, a);
 }
@@ -347,22 +305,20 @@ U8 screen_int(U16 x, U16 l, S16 i, U8 a) {
   return screen_string_squeeze(x, l, buf, a);
 }
 
-// print a formatted float
-/*
-U8 screen_float(U16 x, U16 y, F32 f, U8 a) {
-  static char buf[32];
-  snprintf(buf, 32, "%.1f", (float)f);
-  return screen_string_squeeze(x, y, buf, a);
-}
-*/
-
-/* // print a formatted fix_t */
-/* U8 screen_fix(U16 x, U16 l, fix16_t v, U8 a) { */
-/*   static char buf[FIX_DIG_TOTAL]; */
-/*   //snprintf(buf, 32, "%.1f", (float)f); */
-/*   print_fix16(buf, v); */
-/*   return screen_string_squeeze(x, l, buf, a); */
+//print a formatted float
+/* U8 screen_float(U16 x, U16 y, F32 f, U8 a) { */
+/*   static char buf[32]; */
+/*   snprintf(buf, 32, "%.1f", (float)f); */
+/*   return screen_string_squeeze(x, y, buf, a); */
 /* } */
+
+// print a formatted fix_t
+U8 screen_fix(U16 x, U16 l, fix16_t v, U8 a) {
+  static char buf[FIX_DIG_TOTAL];
+  //snprintf(buf, 32, "%.1f", (float)f);
+  print_fix16(buf, v);
+  return screen_string_squeeze(x, l, buf, a);
+}
 
 // fill a line with blank space to end
 void screen_blank_line(U16 x, U16 l) {
@@ -402,41 +358,47 @@ U8 screen_line(U16 x, U16 l, char *str, U8 hl) {
 
 // cldaer the OLED ram buffer
 void screen_clear(void) {
-  u16 i;
  // clear OLED RAM and local screenbuffer
   for(i=0; i<GRAM_BYTES; i++) { 
-    screen[i] = 0;
+    screenBuf[i] = 0;
     //    write_data(0);
   }
 }
 
 
 // draw data given target rect
+// assume x-offset and width are both even!
 extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
-  u32 i;
+  u8* pScr;
+  u32 nb = w * h >> 1; // byte count: pix / 2
+  /// copy to global buffer and pack bytes
+  /* pScr  = (u8*)screenBuf; */
+  /* for(j=0; j<h; j++) { */
+  /*   for(i=0; i<w; i+=2) { */
+  /*     *pScr = *data++; */
+  /*     *pScr++ |= (0xf0 & (*data++ << 4) ); */
+  /*   } */
+  /* } */
+  /// arg, the screen is upside down!
+  pScr = (u8*)screenBuf + nb - 1;
+  for(j=0; j<h; j++) {
+    for(i=0; i<w; i+=2) {
+      *pScr |= (0xf0 & (*data++ << 4) );
+      *pScr-- = *data++;
+    }
+  }
+
   // set drawing region
   screen_set_rect(x, y, w, h);
-  /* // select chip */
-  /* spi_selectChip(OLED_SPI, OLED_SPI_NPCS); */
-  /* // pull register select high for data */
-  /* gpio_set_gpio_pin(OLED_REGISTER_PIN); */
-  /* for(i=0; i<(w*h); i++) { */
-  /*   spi_write(OLED_SPI, data[i]); */
-  /* } */
-  /* spi_unselectChip(OLED_SPI, OLED_SPI_NPCS); */
-
-    spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
-    // pull register select high for data
-    gpio_set_gpio_pin(OLED_REGISTER_PIN);
-
-  for(i=0; i<(w*h); i++) {
-    // select chip
-    spi_write(OLED_SPI, data[i]);
-    //    print_dbg("\r\n writing screen data: ");
-    //    print_dbg_hex((u32)data[i]);
-
+  // select chip for data
+  spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
+  // register select high for data
+  gpio_set_gpio_pin(OLED_REGISTER_PIN);
+  // send data
+  for(i=0; i<(nb); i++) {
+    spi_write(OLED_SPI, screenBuf[i]);
   }
-    spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
+  spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
 }
 
 /* // fill graphics ram with a test pattern */

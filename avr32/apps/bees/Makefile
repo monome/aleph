@@ -7,7 +7,7 @@
 
 # Path to top level ASF directory relative to this project directory.
 # our version-controlled dir
-PRJ_PATH = ../../../asf-3.7.3
+ASF_PATH = ../../../asf-3.7.3
 
 MAKEFILE_PATH = ./ # current directory
 
@@ -204,7 +204,7 @@ LDFLAGS = -nostartfiles -Wl,-e,_trampoline
 
 # beginning of organizing target files
 # Look for source files relative to the top-level source directory
-VPATH           := $(PRJ_PATH)
+VPATH           := $(ASF_PATH)
 
 # Output project name (target name minus suffix) and target type
 target          := $(TARGET)
@@ -267,8 +267,8 @@ cflags-gnu-y    += -Werror-implicit-function-declaration
 cflags-gnu-y    += -Wpointer-arith
 
 # Preprocessor flags.
-cppflags-gnu-y  += $(foreach INC,$(addprefix $(PRJ_PATH)/,$(INC_PATH)),-I$(INC))
-asflags-gnu-y   += $(foreach INC,$(addprefix $(PRJ_PATH)/,$(INC_PATH)),'-Wa,-I$(INC)')
+cppflags-gnu-y  += $(foreach INC,$(addprefix $(ASF_PATH)/,$(INC_PATH)),-I$(INC))
+asflags-gnu-y   += $(foreach INC,$(addprefix $(ASF_PATH)/,$(INC_PATH)),'-Wa,-I$(INC)')
 cpuflags-gnu-y  += -march=$(ARCH) -mpart=$(PART) # CPU specific flags.
 
 depflags        = -MD -MP -MQ $@ # Dependency file flags.
@@ -327,14 +327,14 @@ ldflags-gnu-y   += -Wl,--gc-sections
 
 # Use the linker script if provided by the project.
 ifneq ($(strip $(LINKER_SCRIPT)),)
-ldflags-gnu-y   += -Wl,-T $(PRJ_PATH)/$(LINKER_SCRIPT)
+ldflags-gnu-y   += -Wl,-T $(ASF_PATH)/$(LINKER_SCRIPT)
 endif
 
 # Output a link map file and a cross reference table
 ldflags-gnu-y   += -Wl,-Map=$(project).map,--cref
 
 # Add library search paths relative to the top level directory.
-ldflags-gnu-y   += $(foreach _LIB_PATH,$(addprefix $(PRJ_PATH)/,$(LIB_PATH)),-L$(_LIB_PATH))
+ldflags-gnu-y   += $(foreach _LIB_PATH,$(addprefix $(ASF_PATH)/,$(LIB_PATH)),-L$(_LIB_PATH))
 
 a_flags  = $(cpuflags-gnu-y) $(depflags) $(cppflags-gnu-y) $(asflags-gnu-y) -D__ASSEMBLY__
 c_flags  = $(cpuflags-gnu-y) $(dbgflags-gnu-y) $(depflags) $(optflags-gnu-y) $(cppflags-gnu-y) $(cflags-gnu-y)
@@ -409,7 +409,7 @@ include $(dep-files)
 
 # Link the object files into an ELF file. Also make sure the target is rebuilt
 # if the common Makefile.in or project config.mk is changed.
-$(target): $(PRJ_PATH)/$(LINKER_SCRIPT) $(obj-y)
+$(target): $(ASF_PATH)/$(LINKER_SCRIPT) $(obj-y)
 	@echo "LN      $@"
 	$(LD) $(l_flags) $(obj-y) -Wl,--start-group $(libflags-gnu-y) -Wl,--end-group -o $@
 	$(SIZE) -Ax $@

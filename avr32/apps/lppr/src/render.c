@@ -7,11 +7,6 @@
 // lppr
 #include "renderer.h"
 
-
-//static const u32 lineBufLen = 128;
-//#define LINE_BUF_LEN 128
-//static char lineBuf[LINE_BUF_LEN];
-
 /*
   screen is `128x64 px
   horizontal byte count is pix/2 = 64
@@ -21,6 +16,10 @@
 #define QUAD_BUF_H 	32
 #define QUAD_BUF_H__2	16
 #define QUAD_BUF_LEN 	1024
+
+// region buffers
+// bottom chunks : 8px * (64 / 4)
+
 
 static u8 quadSwGlyph[2][QUAD_BUF_LEN];
 
@@ -56,6 +55,10 @@ void render_init(void) {
   /*     //      testData2[j*QUAD_BUF_H + i] = 0x22; */
   /*   } */
   /* } */
+}
+
+// update dirty regions
+void render_update(void) {
 }
 
 void render_sw_on(u8 sw, u8 on) {

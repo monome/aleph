@@ -10,6 +10,9 @@
 // glyph table doesn't include the initial non-ascii chars
 #define FONT_ASCII_OFFSET 0x20
 
+//---------------------------
+//---- variables
+
 typedef struct _glyph {
   U8    first     ;       // column inset from left side in proportional mode
   U8    last      ;       // column inset from left side in proportional mode
@@ -19,5 +22,15 @@ typedef struct _glyph {
 extern const glyph_t font_data[];
 
 extern const U32 font_nglyphs;
+
+//-------------------------------
+//--- functions
+
+// render a single glyph to a buffer,
+// given pointer to data, pixel offset, and row length
+// return columns used
+extern u8 font_glyph(char ch, u8* buf, u8 x, u8 y, u8 w, u8 a, u8 b);
+// same as font_glyph, double size
+extern u8 font_glyph_big(char ch, u8* buf, u8 x, u8 y, u8 w, u8 a, u8 b);
 
 #endif // header guard

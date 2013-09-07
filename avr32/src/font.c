@@ -15,13 +15,6 @@
 #include "types.h"
 #include "font.h"
 
-// static glyph_attr_t const fontliqminus_attr[]= {
-//     { /*lang*/0, 0, /*spc_cp*/0, /*spc_x*/1 },
-//     { /*lang*/0, glyph_flag(fix_w,FIX_W), /*spc_cp*/0, /*spc_x*/0 },
-//     { /*lang*/0, glyph_flag(fix_w,FIX_W), /*spc_cp*/0, /*spc_x*/1 },
-//     { /*lang*/0, glyph_flag(mono,MONO), /*spc_cp*/0, /*spc_x*/1 }
-// };
-
 //static U32 const fontliqminus_attr_nentries= sizeof(fontliqminus_attr)/sizeof(glyph_attr_
 
 // glyph.last is the inset from right hand edge of glyph box...
@@ -127,6 +120,82 @@ const glyph_t font_data[]= {
 
 const U32 font_nglyphs = sizeof(font_data)/sizeof(glyph_t) - 1;
 
-///// functions
-//const U32 getNumGlyphs(void) { return font_nglyphs; }
 
+//------------
+//--- static temp vars for speed
+// columns to draw
+static u8 cols;
+// bytes per column
+static u8 colbytes;
+// pointer to glyph
+static const glyph_t* gl;
+// pointer to target buffer with offset
+static u8* pbuf;  	
+static u8 i, j;
+
+
+//------------------------------------------
+//-----  functions
+
+// render single glyph to a flat buffer (1byte = 1px)
+// given pointer to buffer, pixel offset, row length,
+// foreground and background colors
+// return columns used
+extern u8 font_glyph(char ch, u8* buf, u8 x, u8 y, u8 w, u8 a, u8 b) {
+  gl = &(font_data[ch - FONT_ASCII_OFFSET]);
+  // columns to draw
+  cols = FONT_CHARW - gl->first - gl->last;
+  // bytes per column
+  colbytes = FONT_CHARH * w;
+  // offset pointer
+  pbuf = buf + (y*w + x);
+  while(i < cols) {
+    for(j=0; j<FONT_CHARH; j++) {
+      *pbuf = gl->data[i + gl->first] & (1 << j) ? a : b;
+      // point at next row
+      pbuf += w;
+    }
+    // move pointer back the size of one column
+    pbuf -= colbytes;
+    // increment for next row
+    pbuf++;
+    // increment column count
+    i++;
+  }
+  return cols;
+}
+
+// same as font_glyph, double size
+extern u8 font_glyph_big(char ch, u8* buf, u8 x, u8 y, u8 w, u8 a, u8 b) {
+  u8 val;
+  gl = &(font_data[ch - FONT_ASCII_OFFSET]);
+  // columns to draw
+  cols = (FONT_CHARW - gl->first - gl->last) * 2;
+  // bytes per column
+  colbytes = FONT_CHARH * w;
+  // offset pointer
+  pbuf = buf + (y*w + x);
+  while(i < cols) {
+    for(j=0; j<FONT_CHARH; j++) {
+      val = gl->data[i + gl->first] & (1 << j) ? a : b;
+      *pbuf = val;
+      *(pbuf +1) = val;
+      // point at next row
+      pbuf += w;
+      // fill the next row as well
+      *pbuf = val;
+      *(pbuf +1) = val;
+      // point at next row
+      pbuf += w;
+    }
+    // move pointer back the size of one column
+    pbuf -= colbytes;
+    // increment for next row
+    pbuf += 2;
+    // increment column count
+    i += 2;
+  }
+  return cols;  
+}
+
+//const U32 getNumGlyphs(void) { return font_nglyphs; }

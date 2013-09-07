@@ -58,14 +58,17 @@ extern const u8 kScreenLines[];
 
 // send startup commands
 extern void init_oled(void);
-
 // draw data at given rectangle
 extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data);
+// draw the whoel screen
+extern void screen_draw_full(u8 x, u8 y, u8 w, u8 h, u8* data);
+// clear the whole screen
+extern void screen_clear(void);
+
 
 // write screen buffer to OLED graphics RAM
 extern void screen_refresh(void);
-// clear the screen
-extern void screen_clear(void);
+
 // draw a pixel
 extern void screen_pixel(U16 x, U16 y, U8 a);
 //// all the character-drawing routines now return last used column position

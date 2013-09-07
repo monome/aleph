@@ -26,11 +26,9 @@ static u8 loopPlay1 = 0;
 static u8 loopRec1 = 0;
 
 //-- parameter values
-// these are fract32 but will be treated as unsigned here.
-// use only in accumulators or table lookup
-static u32 fb0;
-static u32 fb1;
-
+// signed values, but used unsigned in a limited range for. e.g. accumulators
+static s32 in_fb0;
+static s32 in_fb1;
 
 //-------------------------------------
 //------ extern functions

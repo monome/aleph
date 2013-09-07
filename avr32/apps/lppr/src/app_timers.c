@@ -2,6 +2,7 @@
 #include "timers.h"
 //#include "midi.h"
 #include "app_timers.h"
+#include "render.h"
 
 //------ timers
 // refresh the screen periodically
@@ -15,24 +16,27 @@ static swTimer_t screenTimer;
 // poll midi device
 //static swTimer_t midiPollTimer;
 
-
-
 //----- callbacks
 
 // screen refresh callback
 static void screen_timer_callback(int tag) {  
-  if(refresh) {
-    e.eventType = kEventRefresh;
-    post_event(&e);
-    refresh = 0;
-  }
+  render_update();
+  /* if(refresh) { */
+  /*   e.eventType = kEventRefresh; */
+  /*   post_event(&e); */
+  /*   refresh = 0; */
+  /* } */
 }
+
+/////////////////////////////
+//////////////
+//////  not using these:
 
 
 // adc polling callback
-static void adc_timer_callback(int tag) {
-  adc_poll();
-}
+/* static void adc_timer_callback(int tag) { */
+/*   adc_poll(); */
+/* } */
 
 /* // monome polling callback */
 /* static void monome_poll_timer_callback(int tag) { */
