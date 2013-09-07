@@ -18,6 +18,18 @@
 
 //-----------------------------
 //---- defines
+
+// bytes in one row (pix width / 2)
+#define SCREEN_ROW_BYTES 	64
+#define SCREEN_ROW_BYTES_1 	63
+// bytes in one column
+#define SCREEN_COL_BYTES 	64
+#define SCREEN_COL_BYTES_1	63
+
+
+////////////////
+//// FIXME: kill all of these
+
 // number of columns
 #define NCOLS       128
 #define NCOLS_1     127

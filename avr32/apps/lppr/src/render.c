@@ -2,6 +2,7 @@
 #include "print_funcs.h"
 
 // avr32
+#include "app.h"
 #include "font.h"
 #include "screen.h"
 
@@ -80,7 +81,7 @@ void render_init(void) {
   dirtyQuad3 = 1;
 
   /// debug: print buffer contents
-  print_dbg("\r\n quad 0: ");
+  print_dbg("\r\n printing quad 0 buffer contents: ");
   for(i=0; i<QUAD_SIZE; i++) {
     if( (i % QUAD_W) == 0) {
       print_dbg("\r\n");
@@ -96,6 +97,8 @@ void render_init(void) {
 
 // update dirty regions
 void render_update(void) {
+  app_pause();
+
   if(dirtyQuad0) {
     screen_draw_region(xQuad0, yQuad0, QUAD_W, QUAD_H, quadRegion[0]);
     dirtyQuad0 = 0;
@@ -112,6 +115,8 @@ void render_update(void) {
     screen_draw_region(xQuad3, yQuad3, QUAD_W, QUAD_H, quadRegion[3]);
     dirtyQuad3 = 0;
   }
+
+  app_resume();
 }
 
 // force refresh

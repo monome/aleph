@@ -164,7 +164,7 @@ extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
     // move pointer back the size of one column
     buf -= colOffset;
     // increment for next row
-    buf++;
+    //    buf++;
     // increment column count
     i++;
   }
@@ -226,7 +226,8 @@ u8* font_string(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
     /*   } */
     /* } */
     buf = font_glyph(*str, buf, w, a, b);
-    //    px += (x * w);
+    // 1-column space between chars
+    buf++;
     str++;
   }
   return buf;

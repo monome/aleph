@@ -369,14 +369,25 @@ void screen_clear(void) {
 // draw data given target rect
 // assume x-offset and width are both even!
 extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
-  u8* pScr;
-  u32 nb = w * h >> 1; // byte count: pix / 2
+  u8* pScr; // movable pointer to screen buf
+  u32 nb; // count of destination bytes
+  // 1 row address = 2 horizontal pixels
+  w >>= 1;
+  x >>= 1;
+  nb = w * h;
   /// copy to global buffer and pack bytes
-  /* pScr  = (u8*)screenBuf; */
+  pScr  = (u8*)screenBuf;
+  //  print_dbg("\r\n printing screen copy: ");
   /* for(j=0; j<h; j++) { */
-  /*   for(i=0; i<w; i+=2) { */
-  /*     *pScr = *data++; */
-  /*     *pScr++ |= (0xf0 & (*data++ << 4) ); */
+  /*   print_dbg("\r\n"); */
+  /*   for(i=0; i<w; i++) { */
+  /*     if(*data > 0x5) { print_dbg("#"); } else { print_dbg("_"); } */
+  /*     *pScr = *data & 0xf; */
+  /*     data++; */
+  /*     if(*data > 0x5) { print_dbg("#"); } else { print_dbg("_"); } */
+  /*     *pScr |= (0xf0 & ((*data) << 4) ); */
+  /*     data++; */
+  /*     pScr++; */
   /*   } */
   /* } */
   /// arg, the screen is upside down!
@@ -384,13 +395,20 @@ extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
   //  print_dbg("\r\n copy/pack region:");
   for(j=0; j<h; j++) {
     for(i=0; i<w; i+=2) {
-      *pScr |= (0xf0 & (*data++ << 4) );
-      *pScr-- |= (*data++ & 0xf);
+      *pScr = (0xf0 & (*data << 4) );
+      data++;
+      *pScr |= (*data & 0xf);
+      data++;
+      pScr--;
       //      print_dbg("\r\n 0x");
       //      print_dbg_hex(*pScr);
     }
   }
-
+  
+  // flip the screen coordinates 
+  x = SCREEN_ROW_BYTES - x - w;
+  y = SCREEN_COL_BYTES - y - h;
+  
   // set drawing region
   screen_set_rect(x, y, w, h);
   // select chip for data

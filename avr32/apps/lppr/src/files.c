@@ -53,7 +53,7 @@ u8 files_search_dsp(void) {
     print_dbg(" ; pointer: ");
     print_dbg_hex((u32)fp);
 
-    screen_line(0, 1, "loading sdcard-> RAM...     ", 0x3f);
+    screen_line(0, 1, "loading sdcard -> RAM...     ", 0x3f);
     screen_refresh();
 
     // read .ldr data to RAM buffer
@@ -66,7 +66,7 @@ u8 files_search_dsp(void) {
     bfinLdrSize = size;
 
 
-    screen_line(0, 1, "writing RAM->flash...     ", 0x3f);
+    screen_line(0, 1, "writing RAM -> flash...     ", 0x3f);
     screen_refresh();
 
     // write buf to flash
