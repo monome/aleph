@@ -3,6 +3,7 @@
  *
  * bitmap font data 
  * designed by Henrik Theiling for Liquid Rendering, 2009
+ * 
  *
  * adapted for aleph project by monome 2012
 */
@@ -15,7 +16,8 @@
 #include "types.h"
 #include "font.h"
 
-//static U32 const fontliqminus_attr_nentries= sizeof(fontliqminus_attr)/sizeof(glyph_attr_
+// maxiumum string size to attempt rendering
+#define MAX_RENDER_STRING 32
 
 // glyph.last is the inset from right hand edge of glyph box...
 const glyph_t font_data[]= {
@@ -129,8 +131,6 @@ static u8 cols;
 static u8 colbytes;
 // pointer to glyph
 static const glyph_t* gl;
-// pointer to target buffer with offset
-static u8* pbuf;  	
 static u8 i, j;
 
 
@@ -141,32 +141,33 @@ static u8 i, j;
 // given pointer to buffer, pixel offset, row length,
 // foreground and background colors
 // return columns used
-extern u8 font_glyph(char ch, u8* buf, u8 x, u8 y, u8 w, u8 a, u8 b) {
+extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
   gl = &(font_data[ch - FONT_ASCII_OFFSET]);
   // columns to draw
   cols = FONT_CHARW - gl->first - gl->last;
   // bytes per column
   colbytes = FONT_CHARH * w;
   // offset pointer
-  pbuf = buf + (y*w + x);
+  //  buf = buf + (y*w + x);
   while(i < cols) {
     for(j=0; j<FONT_CHARH; j++) {
-      *pbuf = gl->data[i + gl->first] & (1 << j) ? a : b;
+      *buf = gl->data[i + gl->first] & (1 << j) ? a : b;
       // point at next row
-      pbuf += w;
+      buf += w;
     }
     // move pointer back the size of one column
-    pbuf -= colbytes;
+    buf -= colbytes;
     // increment for next row
-    pbuf++;
+    buf++;
     // increment column count
     i++;
   }
-  return cols;
+  return buf;
 }
 
 // same as font_glyph, double size
-extern u8 font_glyph_big(char ch, u8* buf, u8 x, u8 y, u8 w, u8 a, u8 b) {
+
+extern u8* font_glyph_big(char ch, u8* buf, u8 w, u8 a, u8 b) {
   u8 val;
   gl = &(font_data[ch - FONT_ASCII_OFFSET]);
   // columns to draw
@@ -174,28 +175,58 @@ extern u8 font_glyph_big(char ch, u8* buf, u8 x, u8 y, u8 w, u8 a, u8 b) {
   // bytes per column
   colbytes = FONT_CHARH * w;
   // offset pointer
-  pbuf = buf + (y*w + x);
+  //  pbuf = buf + (y*w + x);
+  //  pbyf
   while(i < cols) {
     for(j=0; j<FONT_CHARH; j++) {
       val = gl->data[i + gl->first] & (1 << j) ? a : b;
-      *pbuf = val;
-      *(pbuf +1) = val;
+      *buf = val;
+      *(buf +1) = val;
       // point at next row
-      pbuf += w;
+      buf += w;
       // fill the next row as well
-      *pbuf = val;
-      *(pbuf +1) = val;
+      *buf = val;
+      *(buf +1) = val;
       // point at next row
-      pbuf += w;
+      buf += w;
     }
     // move pointer back the size of one column
-    pbuf -= colbytes;
+    buf -= colbytes;
     // increment for next row
-    pbuf += 2;
+    buf += 2;
     // increment column count
     i += 2;
   }
-  return cols;  
+  return buf;
 }
 
-//const U32 getNumGlyphs(void) { return font_nglyphs; }
+// render a string of packed glyphs to a buffer
+u8* font_string(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
+  // u32 x = 0;  // columns processed
+  // u32 off = 0; // offset
+  u8* max = buf + size;
+  while (buf < max) {
+    if (*str == 0) {
+      // end of string
+      break;
+    }
+    /* if (*str == '\n') { */
+    /*   // newline... ??? */
+    /* } */
+    /* if (*str == '\r') { */
+    /*   // carriage return ... ??? */
+    /*   if(pix > 0) { */
+    /* 	//  ... ??? */
+    /*   } */
+    /* } */
+    buf = font_glyph(*str, buf, w, a, b);
+    //    px += (x * w);
+    str++;
+  }
+  return buf;
+}
+
+// same as font_string, double size
+u8* font_string_big(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
+  return buf;
+}

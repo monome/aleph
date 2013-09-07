@@ -35,22 +35,22 @@
 
 //--- timers
 // refresh the screen periodically
-static swTimer_t screenTimer;
+// static swTimer_t screenTimer;
 // poll encoder accumulators periodically
 static swTimer_t encTimer;
 
 // poll switches
 //static swTimer_t swTimer;
 // poll ADC
-static swTimer_t adcTimer;
-// poll monome device 
-static swTimer_t monomePollTimer;
-// refresh monome device 
-static swTimer_t monomeRefreshTimer;
-// poll monome device 
-static swTimer_t monomePollTimer;
-// poll midi device
-static swTimer_t midiPollTimer;
+/* static swTimer_t adcTimer; */
+/* // poll monome device  */
+/* static swTimer_t monomePollTimer; */
+/* // refresh monome device  */
+/* static swTimer_t monomeRefreshTimer; */
+/* // poll monome device  */
+/* static swTimer_t monomePollTimer; */
+/* // poll midi device */
+/* static swTimer_t midiPollTimer; */
 // refresh midi device
 //static swTimer_t midiRefreshTimer;
 //// FIXME: this is bees-specific so should go in app code.
