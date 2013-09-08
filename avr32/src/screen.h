@@ -41,7 +41,7 @@ extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data);
 // clear the whole screen
 extern void screen_clear(void);
 
-// grey the whole screen
-void screen_grey(void);
+// show startup screen
+void screen_startup(void);
 
 #endif // header guard

@@ -7,13 +7,13 @@ extern void render_init(void);
 // update
 extern void render_update(void);
 // force refresh
-extern void render_refresh(void);
+extern void render_force_refresh(void);
 
 // render text to statusbar
 void render_status(const char* str);
 
-// test: draw identifying strings in all regions
-void render_test_regions(void);
+// fill with initial graphics (id strings)
+void render_startup(void);
 
 // draw text in a region
 // extern void 
@@ -32,7 +32,5 @@ void render_test_regions(void);
 
 /* // render fixed-point number */
 /* extern void render_fix(u8 x, u8 y, fix16 val); */
-
-
-
+  
 #endif // h guard

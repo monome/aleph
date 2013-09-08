@@ -199,7 +199,7 @@ static void check_events(void) {
 	  } else {
 	    // firstrun, but app launch failed, so clear magic number to try again
 	    flash_clear_firstrun();
-	  }
+	  } 
 	}
       }
     } else {
@@ -217,24 +217,6 @@ static void check_events(void) {
 	// refresh monome device from led state buffer
 	monome_grid_refresh();
 	break;
-	//----------------------------------
-      /* 	//---- app-defined handlers */
-      /* case kEventSwitch0: */
-      /* 	APP_HANDLE_EVENT(fnSwHandler[0], e.eventData > 0); */
-      /* 	break; */
-      /* case kEventSwitch1: */
-      /* 	APP_HANDLE_EVENT(fnSwHandler[1], e.eventData > 0); */
-      /* 	break; */
-      /* case kEventSwitch2: */
-      /* 	APP_HANDLE_EVENT(fnSwHandler[2], e.eventData > 0); */
-      /* 	break; */
-      /* case kEventSwitch3: */
-      /* 	APP_HANDLE_EVENT(fnSwHandler[3], e.eventData > 0); */
-      /* 	break; */
-      /* 	/// TODO: arc */
-      /* 	/// TODO: MIDgI */
-      /* 	/// TODO: HID */
-      /* 	//----- */
 	//--------------------------------------
       case kEventFtdiConnect:
 	// perform setup tasks for new ftdi device connection. 
@@ -256,11 +238,6 @@ int main (void) {
 
   // set up avr32 hardware and peripherals
   init_avr32();
-
-  // wait for sd card
-  //screen_line(0, 0, "ALEPH", 0x3f);
-  //  screen_line(0, 1, "initializing...", 0x3f);
-  //  screen_refresh();
 
   //memory manager
   init_mem();  
@@ -284,11 +261,7 @@ int main (void) {
   print_dbg_ulong(firstrun);
 
   // notify 
-  //// FIXME
-  ///  screen_clear();
-  // screen_line(0, 1, "press any key to continue...", 0x3f);
-  //  screen_refresh();
-  screen_grey();
+  screen_startup();
 
   print_dbg("\r\n starting event loop.\r\n");
 

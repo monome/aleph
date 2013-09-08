@@ -42,14 +42,13 @@ static region quad[4] = {
 };
 
 // 4 small squares along the bottom text row of the scree
-// FIXME: don't know why these need to be so large,
-// but overflow occurs with h = 8 ... ? 
+// FIXME: size/pos is weird
 static region foot[4] = {
   //  { .w = 64, .h = 28, .len =1792, .x =  0, .y =  0, .dirty = 0 } ,
-  { .w = 32, .h = 16, .len = 1024, .x = 0, .y = 48 },
-  { .w = 32, .h = 16, .len = 1024, .x = 32, .y = 48 },
-  { .w = 32, .h = 16, .len = 1024, .x = 64, .y = 48 },
-  { .w = 32, .h = 16, .len = 1024, .x = 96, .y = 48 },
+  { .w = 32, .h = 16, .len = 512, .x = 0, .y = 48 },
+  { .w = 32, .h = 16, .len = 512, .x = 32, .y = 48 },
+  { .w = 32, .h = 16, .len = 512, .x = 64, .y = 48 },
+  { .w = 32, .h = 16, .len = 512, .x = 96, .y = 48 },
 };
 
 // long system status bar at top of screen
@@ -59,7 +58,9 @@ static region status = {
 };
 
 // array of pointers to all regoins.
-// FIXME (?) : this also determines drawing priority at the moment.
+// NOTE: regions can overlap,
+// but the ordering of this list also determines drawing order.
+// later entries will overwrite earlier entries in the esame redraw cycle.
 static region * const allRegions[] = {
   &status,
   &(quad[0]),
@@ -88,13 +89,13 @@ static void region_alloc(region* reg) {
   }
 }
 
-static void region_free(region* reg) {
-  //... haha
-}
+/* static void region_free(region* reg) { */
+/*   //... haha */
+/* } */
 
 
 
-static inline void region_string(region* reg, char* str, u32 off, u8 a, u8 b) {
+static inline void region_string(region* reg, const char* str, u32 off, u8 a, u8 b) {
   font_string(str, reg->data + off, reg->len, reg->w, a, b);
   reg->dirty = 1;
 }
@@ -111,8 +112,12 @@ void render_init(void) {
   for(i = 0; i<numRegions; i++) {
     region_alloc((region*)allRegions[i]);
   }
+
+  screen_clear();
+
 }
 
+// render text to statusbar
 void render_status(const char* str) {
   static u32 i;
   for(i=0; i<(status.len); i++) {
@@ -122,17 +127,17 @@ void render_status(const char* str) {
   region_string(&status, str, 0, 0xf, 0);
 }
 
-void render_test_regions(void) {
-  // test
-  region_string(&(quad[0]), "Q1", 0, 0xf, 0x0);
-  region_string(&(quad[1]), "Q2", 0, 0xf, 0x0);
-  region_string(&(quad[2]), "Q3", 0, 0xf, 0x0);
-  region_string(&(quad[3]), "Q4", 0, 0xf, 0x0);
+// fill with initial graphics (id strings)
+void render_startup(void) {
+  //  region_string(&(quad[0]), "Q1", 0, 0xf, 0x0);
+  //  region_string(&(quad[1]), "Q2", 0, 0xf, 0x0);
+  //  region_string(&(quad[2]), "Q3", 0, 0xf, 0x0);
+  //  region_string(&(quad[3]), "Q4", 0, 0xf, 0x0);
 
-  region_string(&(foot[0]), "F1", 0, 0xf, 0x0);
-  region_string(&(foot[1]), "F2", 0, 0xf, 0x0);
-  region_string(&(foot[2]), "F3", 0, 0xf, 0x0);
-  region_string(&(foot[3]), "F4", 0, 0xf, 0x0);
+  region_string(&(foot[0]), "TAP1", 0, 0xf, 0x0);
+  region_string(&(foot[1]), "TAP2", 0, 0xf, 0x0);
+  region_string(&(foot[2]), "REC", 0, 0xf, 0x0);
+  region_string(&(foot[3]), "PLAY", 0, 0xf, 0x0);
 
   /* /// debug: print buffer contents */
   /* print_dbg("\r\n printing quad 0 buffer contents: "); */
@@ -164,19 +169,17 @@ void render_update(void) {
 }
 
 // force a refresh of all regions
-void render_refresh(void) {
+void render_force_refresh(void) {
   u8 i;
-
   for(i = 0; i<numRegions; i++) {
     (allRegions[i])->dirty = 1;
   }
-
   render_update();
 }
 
 
 void render_sw_on(u8 sw, u8 on) {
-  // ...
+  
 }
 
 #undef LINE_BUF_LEN

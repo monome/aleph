@@ -15,6 +15,7 @@
 // aleph-avr32
 #include "app.h"
 #include "bfin.h"
+#include "screen.h"
 #include "events.h"
 #include "event_types.h"
 #include "flash.h"
@@ -63,18 +64,16 @@ u8 app_launch(u8 firstrun) {
     if( files_search_dsp() ) {
       ;;
     } else {
-      //      screen_clear();
+      screen_clear();
       return 0;
     }
 
   } else {
-    //screen_blank_line(0, 0);
-    //    screen_blank_line(0, 1);
 
     // firstrun pattern was set, so there should be a blackfin executable in flash.
+    // read from flash to RAM
     render_status("loading flash to RAM...");
     render_update();
-    // read from flash to RAM
     flash_read_ldr();
     
     render_status( "booting DSP from flash...");
@@ -89,15 +88,12 @@ u8 app_launch(u8 firstrun) {
   // this is retarded, we need the GPIO for bfin to signal when init done
   delay_ms(1000);
 
-    // report parameters
-
+  // report parameters
   render_status("reporting bfin params...       ");
   render_update();
-
   if( ctl_report_params() ) {
     ;;
   } else {
-    //    screen_clear();
     render_status("param report failed!           ");
     render_update();
     return 0;
@@ -116,7 +112,7 @@ u8 app_launch(u8 firstrun) {
 
   bfin_enable();
 
-  render_test_regions();
+  render_startup();
   render_update();
   
   return 1;

@@ -88,7 +88,7 @@ extern void lppr_handler(event_t* ev) {
     if(ev->eventData > 0) {
       sw_tap_delay(0, ev->eventData);
     }
-    render_sw_on(0, ev->eventData > 0);
+       render_sw_on(0, ev->eventData > 0);
     break;
 
   case kEventSwitch1:
@@ -96,7 +96,7 @@ extern void lppr_handler(event_t* ev) {
     if(ev->eventData > 0) {
       sw_tap_delay(1, ev->eventData);
     }
-    render_sw_on(1, ev->eventData > 0);
+        render_sw_on(1, ev->eventData > 0);
     break;
 
   case kEventSwitch2:
@@ -104,7 +104,7 @@ extern void lppr_handler(event_t* ev) {
       // record loop on line 1
       ctl_loop_record(1);
     } 
-    render_sw_on(2, ev->eventData > 0);
+     render_sw_on(2, ev->eventData > 0);
     break;
 
   case kEventSwitch3:
@@ -112,7 +112,7 @@ extern void lppr_handler(event_t* ev) {
       // record loop on line 2
       ctl_loop_playback(1);
     }
-    render_sw_on(3, ev->eventData > 0);
+     render_sw_on(3, ev->eventData > 0);
     break;
 
   case kEventSwitch6:

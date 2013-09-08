@@ -62,11 +62,11 @@ void screen_set_rect(u8 x, u8 y, u8 w, u8 h) {
 //------------------
 // external functions
 void init_oled(void) {
-  U32 i;
+  //U32 i;
   // volatile u64 delay;
   //  cpu_irq_disable();
   Disable_global_interrupt();
-  delay_ms(1);
+  //  delay_ms(1);
   // flip the reset pin
   gpio_set_gpio_pin(OLED_RESET_PIN);
   delay_ms(1);
@@ -129,18 +129,7 @@ void init_oled(void) {
   write_command(0);
   write_command(63); // ???
 
-  //  screen_clear();
-
- // clear OLED RAM and local screenbuffer
-  spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
-  // pull register select high to write data
-  gpio_set_gpio_pin(OLED_REGISTER_PIN);
-  for(i=0; i<GRAM_BYTES; i++) { 
-    screenBuf[i] = 0;
-    //    write_data(0);
-    spi_write(OLED_SPI, 0);
-  }
-  spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
+  screen_clear();
   
   write_command(0xAF);	// on
   delay_ms(10) ;
@@ -189,14 +178,46 @@ extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
   spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
 }
 
-void screen_grey(void) {
+// startup screen (FIXME: just grey at the moment)
+void screen_startup(void) {
   u32 i;
+
+  // fill screenbuffer with grey background
+  for(i=0; i<GRAM_BYTES; i++) {
+    screenBuf[i] = 0x22;
+  }
+
+
+  // net art: draw glyphs to screen buf directly,
+  // should be stretched out and upside down
+  font_glyph('A', screenBuf + 80,      64, 0x22, 0x55);
+  font_glyph('L', screenBuf + 80 + 8,  64, 0x22, 0x55);
+  font_glyph('E', screenBuf + 80 + 16, 64, 0x22, 0x55);
+  font_glyph('P', screenBuf + 80 + 24, 64, 0x22, 0x55);
+  font_glyph('H', screenBuf + 80 + 32, 64, 0x22, 0x55);
+
+    // send screenbuffer
   spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
   // register select high for data
   gpio_set_gpio_pin(OLED_REGISTER_PIN);
   // send data
   for(i=0; i<GRAM_BYTES; i++) {
-    spi_write(OLED_SPI, 0x52);
+    spi_write(OLED_SPI, screenBuf[i]);
   }
   spi_unselectChip(OLED_SPI, OLED_SPI_NPCS); 
+}
+
+
+
+ // clear OLED RAM and local screenbuffer
+void screen_clear(void) {
+  spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
+  // pull register select high to write data
+  gpio_set_gpio_pin(OLED_REGISTER_PIN);
+  for(i=0; i<GRAM_BYTES; i++) { 
+    screenBuf[i] = 0;
+    //    write_data(0);
+    spi_write(OLED_SPI, 0);
+  }
+  spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
 }
