@@ -1,5 +1,20 @@
 SPEC LEDs how about 160-1738-1-ND
 TUNE THE DEBOUNCERS!!
+input gain switch needs to be tuned? more gain when engaged?
+led clip resistors need to be tuned-- test for distortion?
+led for mix out maybe 607 ohm, 270 too bright? test with new leds.
+led opamps need to be 8606
+
+22u, use 100u paackage is possible, lower profile?
+
+motherfucking avr-isp needs 5v
+holes too small on isp header
+
+
+
+
+
+
 
 final build notes
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
