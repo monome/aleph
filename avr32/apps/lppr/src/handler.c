@@ -88,7 +88,6 @@ extern void lppr_handler(event_t* ev) {
     if(ev->eventData > 0) {
       sw_tap_delay(0, ev->eventData);
     }
-
     render_sw_on(0, ev->eventData > 0);
     break;
 

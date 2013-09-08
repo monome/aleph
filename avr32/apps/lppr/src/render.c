@@ -86,7 +86,6 @@ static void region_alloc(region* reg) {
   for(i=0; i<reg->len; i++) {
     reg->data[i] = 0; 
   }
-  
 }
 
 static void region_free(region* reg) {
@@ -154,7 +153,6 @@ void render_update(void) {
   region* r;  
   u8 i;
   app_pause();
-
   for(i = 0; i<numRegions; i++) {
     r = allRegions[i]; 
     if(r->dirty) {
@@ -162,7 +160,6 @@ void render_update(void) {
       r->dirty = 0;
     }
   }
-
   app_resume();
 }
 

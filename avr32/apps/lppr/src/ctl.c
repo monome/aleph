@@ -94,26 +94,20 @@ void ctl_init_params(void) {
   // adc0 -> del1
   ctl_param_change(eParam_adc0_del1, fix16_from_float(0.99));
   // del0 -> del1
-  ctl_param_change(eParam_del0_del1, fix16_from_float(0.99));
-				    
+  ctl_param_change(eParam_del0_del1, fix16_from_float(0.99));				    
   // slight feedback on del0 
   ctl_param_change(eParam_del0_del0, fix16_one >> 2);
-  //  ctl_param_change(eParam_del1_del1, fix16_one >> 3);
-
   // set write flags
   ctl_param_change(eParam_write0, 1);
   ctl_param_change(eParam_write1, 1);		   
-
   // set run flags
   ctl_param_change(eParam_run_write0, 1);
   ctl_param_change(eParam_run_write1, 1);		   
   ctl_param_change(eParam_run_read0, 1);
   ctl_param_change(eParam_run_read1, 1);		   
-
   // set delay time
   ctl_param_change(eParam_delay0, 250 * 48 );
   ctl_param_change(eParam_delay1, 500 * 48 );
-
 }
 
 
@@ -142,9 +136,6 @@ void  ctl_set_delay_ms(u8 idx, u32 ms)  {
       ctl_param_change(eParam_pre1, 0);
       loopPlay1 = 0;
     }
-    // stop loop-recording???
-    //      loopRec1 = 0;
-
     print_dbg("\r\n sync write/read heads");
     ctl_param_change(eParam_delay1, samps);
     break;

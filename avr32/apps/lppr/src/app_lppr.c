@@ -4,7 +4,7 @@
   bees
 
   required app-specific implementation of avr32/src/app.h
- */
+[ */
 
 // asf
 #include "delay.h"
@@ -98,7 +98,6 @@ u8 app_launch(u8 firstrun) {
     ;;
   } else {
     //    screen_clear();
-    
     render_status("param report failed!           ");
     render_update();
     return 0;

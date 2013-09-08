@@ -171,7 +171,7 @@ static void init_ctl(void) {
 // app event loop
 static void check_events(void) {
   static event_t e;
-  u8 tmp;
+  u8 launch = 0;
   //  print_dbg("\r\n checking events...");
   if( get_next_event(&e) ) {
   /* print_dbg("\r\n handling event, type: "); */
@@ -187,16 +187,19 @@ static void check_events(void) {
 	  || e.eventType == kEventSwitch4
 	  ) {
 	startup = 0;
-	// successfully launched on firstrun, so write to flash
 	print_dbg("\r\n key pressed, launching ");
-	tmp = app_launch(firstrun);
+	// return 1 if app completed firstrun tasks
+	launch = app_launch(firstrun);
 	delay_ms(10);
-	firstrun &= tmp;
-	if(firstrun) {
-	  flash_write_firstrun();
-	  return;
-	} else {
-	  flash_clear_firstrun();
+	if( firstrun) {
+	  if(launch) {
+	    // successfully launched on firstrun, so write magic number to flash
+	    flash_write_firstrun();
+	    return;
+	  } else {
+	    // firstrun, but app launch failed, so clear magic number to try again
+	    flash_clear_firstrun();
+	  }
 	}
       }
     } else {
@@ -266,26 +269,6 @@ int main (void) {
   // intialize the FAT filesystem
   fat_init();
   print_dbg("\r\n init fat");
-
-  /////////////////////////
-  //////////////
-  ////////
-  //memory manager
-  /* init_mem();   */
-  /* print_dbg("\r\n init_mem"); */
-
-  /* /// initialize filesystem */
-  /* ////// FIXME: move to app */
-  /* files_init(); */
-
-  /* // setup control logic */
-  /* init_ctl(); */
-  /* // initialize flash */
-  /* firstrun = init_flash(); */
-  //////
-  /////////
-  /////////////
-  /////////////////////
 
   // setup control logic
   init_ctl();

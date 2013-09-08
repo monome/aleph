@@ -69,10 +69,13 @@ u8 init_flash() {
     // set size=0 so we won't attempt unitialized bfin load on next start
     bfinLdrSize = 0;
     flashc_memset32((void*)&(flash_nvram_data.ldrSize), 0x00000000, 4, true);
+    // do this only after succesful app launch
     //    flashc_memset32((void*)&(flash_nvram_data.firstRun), FIRSTRUN_MAGIC, 4, true);
     return 1;
-  } return 0;
-  return 0;
+  } else { 
+    // firstrun already happened
+    return 0;
+  }
 }
 
 // read default blackfin
