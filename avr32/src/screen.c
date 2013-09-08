@@ -26,26 +26,16 @@
 
 //-----------------------------
 //---- variables
-const U8 lines[CHAR_ROWS] = { 0, 8, 16, 24, 32, 40, 48, 56 };
+// const U8 lines[CHAR_ROWS] = { 0, 8, 16, 24, 32, 40, 48, 56 };
 
 // screen buffer
 static U8 screenBuf[GRAM_BYTES];
-// common static vars
-static u32  y, i, j;
-static u32 pos;
-// fixed-point text buffer
-static char buf[FIX_DIG_TOTAL];
 
-//-----------------------------
-//---- static functions
-/* static void write_data(U8 c); */
-/* static void write_data(U8 c) { */
-/*   spi_selectChip(OLED_SPI, OLED_SPI_NPCS); */
-/*   // pull register select high to write data */
-/*   gpio_set_gpio_pin(OLED_REGISTER_PIN); */
-/*   spi_write(OLED_SPI, c); */
-/*   spi_unselectChip(OLED_SPI, OLED_SPI_NPCS); */
-/* } */
+// common static vars
+static u32 i, j;
+//static u32 pos;
+// fixed-point text buffer
+//static char buf[FIX_DIG_TOTAL];
 
 static void write_command(U8 c);
 static void write_command(U8 c) {
@@ -54,15 +44,6 @@ static void write_command(U8 c) {
   gpio_clr_gpio_pin(OLED_REGISTER_PIN);
   spi_write(OLED_SPI, c);
   spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
-}
-
-// fill one column in a line of text with blank pixels (for spacing)
-static void zero_col(U16 x, U16 y);
-static void zero_col(U16 x, U16 y) {
-  static U8 i;
-  for(i=0; i<FONT_CHARH; i++) {
-    screen_pixel(x, y+i, 0);
-  }
 }
 
 // set the current drawing area of the physical screen (hopefully)
@@ -77,8 +58,6 @@ void screen_set_rect(u8 x, u8 y, u8 w, u8 h) {
   write_command(y);	// column start
   write_command(y+h-1);	// column end
 }
-
-
 
 //------------------
 // external functions
@@ -170,202 +149,6 @@ void init_oled(void) {
 }
 
 
-// send screen buffer contents to OLED
-void screen_refresh(void) {
-  U16 i;
-  u8* pScreen;
-
-  /// FIXME: use specific IRQ levels
-  cpu_irq_disable();
-
-  // set update box (to full screen)
-  write_command(0x15);
-  write_command(0);
-  write_command(63);
-  write_command(0x75);
-  write_command(0);
-  write_command(63);
-
-  // pull register select high to write data
-  gpio_set_gpio_pin(OLED_REGISTER_PIN);
-  spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
-
-  pScreen=&(screenBuf[GRAM_BYTES_1]);
-  for(i=0; i<GRAM_BYTES; i++) {
-    spi_write(OLED_SPI, *pScreen);
-    pScreen--;
-  }
-  spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
-  cpu_irq_enable();
-}
-
-// draw a single pixel
-void screen_pixel(U16 x, U16 y, U8 a) {
-  pos = (y << COLS_LSHIFT) + (x >> 1);
-
- // rotate: swap (and read backwards in refresh)
-  if (x&1) {
-    screenBuf[pos] &= 0xf0;
-    screenBuf[pos] |= (a & 0x0f);
-  } else {
-    screenBuf[pos] &= 0x0f;
-    screenBuf[pos] |= (a << 4);
-  }
-}
-
-// get value of pixel
-U8 screen_get_pixel(U8 x, U8 y) {
-  pos = (y << COLS_LSHIFT) + (x>>1);
-  if (x&1) {
-    return screenBuf[pos] & 0x0f;
-   } else {
-    return (screenBuf[pos] & 0xf0) >> 4;
-  }
-}
-
-
-
-// draw a single character glyph with fixed spacing and background
-U8 screen_char_fixed(U16 col, U16 row, char gl, U8 a, u8 b) {
-  //  static U8 x;
-  for(j=0; j<FONT_CHARH; j++) {
-    for(i=0; i<FONT_CHARW; i++) {
-      if( (font_data[gl - FONT_ASCII_OFFSET].data[i] & (1 << j))) {
-	screen_pixel(i+col, j+row, a);
-      } else {
-	screen_pixel(i+col, j+row, b);
-      }
-    }
-  }
-  return FONT_CHARW;
-}
-
-
-// draw a single character glyph with proportional spacing
-U8 screen_char_squeeze(U16 col, U16 row, char gl, U8 a, u8 b) {
-  //  static U8 x;
-  static U8 xnum;
-  static const glyph_t * g;
-  g = &(font_data[gl - FONT_ASCII_OFFSET]);
-  xnum = FONT_CHARW - g->first - g->last;
-  //  print_dbg("\r\n char at row: ");
-  //  print_dbg_ulong(row);
-  for(j=0; j<FONT_CHARH; j++) {
-    for(i=0; i<xnum; i++) {
-      if( (g->data[i + g->first] & (1 << j))) {
-	screen_pixel(i + col, j + row, a);
-      } else {
-	screen_pixel(i + col, j + row, b);
-      }
-    }
-  }
-  return xnum;
-}
-
-// draw a string with fixed spacing
-U8 screen_string_fixed(U16 x, U16 l, char *str, U8 a) {
-  //  static u8 y;
-  y = lines[l];
-  while(*str != 0) {
-    x += screen_char_fixed(x, y, *str, a, 0) + 1;
-    str++;
-  }
-  return x;
-}
-
-// draw a string with proportional spacing
-U8 screen_string_squeeze(U16 x, U16 l, char *str, U8 a) {
-  //  static u8 y;
-  y = lines[l];
-  while(*str != 0) {
-    x += screen_char_squeeze(x, y, *str, a, 0);
-    zero_col(x, y);
-    // extra pixel... TODO: maybe variable spacing here
-    x++;
-    str++;
-  }
-  refresh = 1;
-  return x;
-}
-
-// draw a string (default)
-inline U8 screen_string(U16 x, U16 l, char *str, U8 a) {
-  return screen_string_squeeze(x, l, str, a);
-}
-
-// print a formatted integer
-U8 screen_int(U16 x, U16 l, S16 i, U8 a) {
-  //  static char buf[32];
-  //  snprintf(buf, 32, "%d", (int)i);
-  //  static char buf[FIX_DIG_TOTAL];
-  //snprintf(buf, 32, "%.1f", (float)f);
-  //  print_fix16(buf, (u32)i << 16 );
-  itoa_whole(i, buf, 5);
-  //buf = ultoa(int);
-  return screen_string_squeeze(x, l, buf, a);
-}
-
-//print a formatted float
-/* U8 screen_float(U16 x, U16 y, F32 f, U8 a) { */
-/*   static char buf[32]; */
-/*   snprintf(buf, 32, "%.1f", (float)f); */
-/*   return screen_string_squeeze(x, y, buf, a); */
-/* } */
-
-// print a formatted fix_t
-U8 screen_fix(U16 x, U16 l, fix16_t v, U8 a) {
-  static char buf[FIX_DIG_TOTAL];
-  //snprintf(buf, 32, "%.1f", (float)f);
-  print_fix16(buf, v);
-  return screen_string_squeeze(x, l, buf, a);
-}
-
-// fill a line with blank space to end
-void screen_blank_line(U16 x, U16 l) {
-  U8 i, j;
-  const u8 y = lines[l];
-  for(i=x; i<NCOLS; i++) {
-    for(j=y; j<(FONT_CHARH + y); j++) {
-      screen_pixel(i, j, 0);
-    }
-  }
- }
-
-// highlight a line
-void screen_hl_line(U16 x, U16 l, U8 a) {
-  U8 i, j;
-  const u8 y = lines[l];
-  for(i=x; i<NCOLS; i++) {
-    for(j=y; j<(y+FONT_CHARH); j++) {
-      if (screen_get_pixel(i, j) == 0) {
-	screen_pixel(i, j, a);
-      }
-    }
-  }
-}
-
-// draw a line and blank to end
-// argument is line number
-U8 screen_line(U16 x, U16 l, char *str, U8 hl) {
-  x = screen_string(x, l, str, hl);
-  screen_blank_line(x, l);
-  //// test
-  //  print_dbg("\r\n");
-  //  print_dbg(str);
-  refresh = 1;
-  return NCOLS;
-}
-
-// cldaer the OLED ram buffer
-void screen_clear(void) {
- // clear OLED RAM and local screenbuffer
-  for(i=0; i<GRAM_BYTES; i++) { 
-    screenBuf[i] = 0;
-    //    write_data(0);
-  }
-}
-
-
 // draw data given target rect
 // assume x-offset and width are both even!
 extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
@@ -376,23 +159,9 @@ extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
   x >>= 1;
   nb = w * h;
   /// copy to global buffer and pack bytes
-  pScr  = (u8*)screenBuf;
-  //  print_dbg("\r\n printing screen copy: ");
-  /* for(j=0; j<h; j++) { */
-  /*   print_dbg("\r\n"); */
-  /*   for(i=0; i<w; i++) { */
-  /*     if(*data > 0x5) { print_dbg("#"); } else { print_dbg("_"); } */
-  /*     *pScr = *data & 0xf; */
-  /*     data++; */
-  /*     if(*data > 0x5) { print_dbg("#"); } else { print_dbg("_"); } */
-  /*     *pScr |= (0xf0 & ((*data) << 4) ); */
-  /*     data++; */
-  /*     pScr++; */
-  /*   } */
-  /* } */
-  /// arg, the screen is upside down!
+  //  pScr  = (u8*)screenBuf;
+  /// the screen is mounter upside down!
   pScr = (u8*)screenBuf + nb - 1;
-  //  print_dbg("\r\n copy/pack region:");
   for(j=0; j<h; j++) {
     for(i=0; i<w; i+=2) {
       *pScr = (0xf0 & (*data << 4) );
@@ -400,8 +169,6 @@ extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
       *pScr |= (*data & 0xf);
       data++;
       pScr--;
-      //      print_dbg("\r\n 0x");
-      //      print_dbg_hex(*pScr);
     }
   }
   
@@ -422,25 +189,14 @@ extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
   spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
 }
 
-/* // fill graphics ram with a test pattern */
-/* void screen_test_fill(void) { */
-/*   u32 i; */
-/*   u32 x=0; */
-/*   u32 l=5; */
-
-/*   screen_line(0, 0, "_ LINE 1 ! ! ! ! ", 0xf); */
-/*   screen_line(0, 1, "_ LINE 2 @ @ @ @ ", 0xf); */
-/*   screen_line(0, 2, "_ LINE 3 # # # # ", 0xf); */
-/*   screen_line(0, 3, "_ LINE 4 $ $ $ $ ", 0xf); */
-/*   screen_line(0, 4, "_ LINE 5 % % % % ", 0xf); */
-
-/*   for(i=0; i<font_nglyphs; i++) { */
-/*     x = x + screen_char_squeeze(x, l, i + FONT_ASCII_OFFSET, 0xf); */
-/*     x++; */
-/*     if (x > NCOLS) { */
-/*       x -= NCOLS; */
-/*       l++; */
-/*     } */
-/*   } */
-/*   refresh = 1; */
-/* } */
+void screen_grey(void) {
+  u32 i;
+  spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
+  // register select high for data
+  gpio_set_gpio_pin(OLED_REGISTER_PIN);
+  // send data
+  for(i=0; i<GRAM_BYTES; i++) {
+    spi_write(OLED_SPI, 0x52);
+  }
+  spi_unselectChip(OLED_SPI, OLED_SPI_NPCS); 
+}

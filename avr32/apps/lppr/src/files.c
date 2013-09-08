@@ -6,7 +6,8 @@
 #include "bfin.h"
 #include "flash.h"
 #include "filesystem.h"
-#include "screen.h"
+//#include "screen.h"
+#include "render.h"
 
 // lppr
 #include "files.h"
@@ -53,8 +54,8 @@ u8 files_search_dsp(void) {
     print_dbg(" ; pointer: ");
     print_dbg_hex((u32)fp);
 
-    screen_line(0, 1, "loading sdcard -> RAM...     ", 0x3f);
-    screen_refresh();
+    render_status("loading sdcard -> RAM...     ");
+    render_update();
 
     // read .ldr data to RAM buffer
     //    fl_fread((void*)bfinLdrData, 1, size, fp);
@@ -66,8 +67,8 @@ u8 files_search_dsp(void) {
     bfinLdrSize = size;
 
 
-    screen_line(0, 1, "writing RAM -> flash...     ", 0x3f);
-    screen_refresh();
+    render_status("writing RAM -> flash...     ");
+    render_update();
 
     // write buf to flash
     flash_write_ldr();
@@ -76,8 +77,8 @@ u8 files_search_dsp(void) {
     print_dbg("\r\n booting DSP from RAM");
 
 
-    screen_line(0, 1, "booting DSP from RAM...     ", 0x3f);
-    screen_refresh();
+    render_status("booting DSP from RAM...     ");
+    render_update();
 
     bfin_load_buf();
     app_resume();

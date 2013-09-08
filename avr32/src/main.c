@@ -255,9 +255,9 @@ int main (void) {
   init_avr32();
 
   // wait for sd card
-  screen_line(0, 0, "ALEPH", 0x3f);
-  screen_line(0, 1, "initializing...", 0x3f);
-  screen_refresh();
+  //screen_line(0, 0, "ALEPH", 0x3f);
+  //  screen_line(0, 1, "initializing...", 0x3f);
+  //  screen_refresh();
 
   //memory manager
   init_mem();  
@@ -301,9 +301,11 @@ int main (void) {
   print_dbg_ulong(firstrun);
 
   // notify 
-  screen_clear();
-  screen_line(0, 1, "press any key to continue...", 0x3f);
-  screen_refresh();
+  //// FIXME
+  ///  screen_clear();
+  // screen_line(0, 1, "press any key to continue...", 0x3f);
+  //  screen_refresh();
+  screen_grey();
 
   print_dbg("\r\n starting event loop.\r\n");
 

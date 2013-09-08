@@ -13,11 +13,11 @@
 //static u8 notifyMsg = 0;
 //static irqflags_t flags;
 
-void app_notify(const char* msg) {
-  screen_clear();
-  screen_line(0, 0, (char*)msg, 0xf);
-  screen_refresh();
-}
+/* void app_notify(const char* msg) { */
+/*   screen_clear(); */
+/*   //  screen_line(0, 0, (char*)msg, 0xf); */
+/*   screen_refresh(); */
+/* } */
 
 void app_pause(void) {
   /// test:

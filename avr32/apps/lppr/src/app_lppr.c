@@ -19,7 +19,6 @@
 #include "event_types.h"
 #include "flash.h"
 #include "monome.h"
-#include "screen.h"
 
 // lppr
 #include "files.h"
@@ -44,15 +43,11 @@ u8 app_launch(u8 firstrun) {
   print_dbg("\r\n firstrun: ");
   print_dbg_ulong(firstrun);
 
-  app_notify("launching LPPR");
-
   if(firstrun) {
     // it is the first run.
     // need to copy audio module binary from sdcard to internal flash.
-    screen_line(0, 0, "firstrun.        ", 0x3f);
-    screen_blank_line(0, 1);
-    screen_line(0, 1, "waiting for SD card...", 0x3f);
-    screen_refresh();
+    render_status("first run. waiting for SDcard...");
+    render_update();
   
     print_dbg("\r\n SD check... ");
     while (!sd_mmc_spi_mem_check()) {
@@ -60,76 +55,70 @@ u8 app_launch(u8 firstrun) {
     }
     print_dbg("\r\nfound SD card. ");
 
-    screen_blank_line(0, 0);
-    screen_blank_line(0, 1);
-    screen_line(0, 0, "SD card detected.", 0x3f);
-    screen_line(0, 1, "reading DSP binary...", 0x3f);
-    screen_refresh();
+    render_status("found sdcard.. reading DSP...");
+    render_update();
 
     // search for our dsp and load it
     // return success (0 == fail)
     if( files_search_dsp() ) {
       ;;
     } else {
-      screen_clear();
+      //      screen_clear();
       return 0;
     }
 
   } else {
-    screen_blank_line(0, 0);
-    screen_blank_line(0, 1);
+    //screen_blank_line(0, 0);
+    //    screen_blank_line(0, 1);
 
     // firstrun pattern was set, so there should be a blackfin executable in flash.
-    screen_line(0, 1, "loading flash to RAM...", 0x3f);
-    screen_refresh();
+    render_status("loading flash to RAM...");
+    render_update();
     // read from flash to RAM
     flash_read_ldr();
     
-    screen_line(0, 1, "booting DSP from flash...", 0x3f);
-    screen_refresh();
+    render_status( "booting DSP from flash...");
+    render_update();
     // reboot DSP from RAM
     bfin_load_buf();
   }
 
-  screen_line(0, 1, "waiting for bfin init...      ", 0x3f);
-  screen_refresh();
+  render_status("waiting for bfin init...      ");
+  render_update();
 
   // this is retarded, we need the GPIO for bfin to signal when init done
   delay_ms(1000);
 
     // report parameters
 
-  screen_line(0, 1, "reporting bfin params...       ", 0x3f);
-  screen_refresh();
+  render_status("reporting bfin params...       ");
+  render_update();
 
   if( ctl_report_params() ) {
     ;;
   } else {
     //    screen_clear();
     
-    screen_line(0, 1, "param report failed!           ", 0x3f);
-    screen_refresh();
+    render_status("param report failed!           ");
+    render_update();
     return 0;
   }
 
-
-    screen_line(0, 1, "setting initial parameters...  ", 0x3f);
-    screen_refresh();
+  render_status("setting initial parameters...  ");
+  render_update();
 
   ctl_init_params();
 
   delay_ms(20);
 
   // enable audio
-  screen_line(0, 1, "run                                ", 0x3f);
-  screen_refresh();
+  render_status("run                                ");
+  render_update();
 
   bfin_enable();
 
-  screen_clear();  
-  screen_refresh();
-
-  render_refresh();
+  render_test_regions();
+  render_update();
   
   return 1;
 }
