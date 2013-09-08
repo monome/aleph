@@ -16,7 +16,7 @@
 // lppr
 #include "handler.h"
 #include "ctl.h"
-#include "renderer.h"
+#include "render.h"
 
 // names of switches
 //static char * swName[] = { "key1", "key2","key3","key4", "mode", "power", "foot1", "foot2" };
