@@ -1,9 +1,23 @@
 # Makefile for Aleph.  List of available make goals:
-# ==========================================================
+# =============================================================================
 # all                     Default target, builds the project
 # clean                   Clean up the project
 # rebuild                 Rebuild the project
-# ==========================================================
+# isp                     Use BatchISP instead of avr32program when interfacing
+#                         the target device.
+#
+# chiperase               Perform a JTAG chip erase command
+# cpuinfo                 Get CPU information
+# debug                   Open a debug connection with the MCU
+# erase                   Perform a flash erase
+# halt                    Stop CPU execution
+# program                 Program MCU memory from ELF output file
+# reset                   Reset MCU
+# readregs                Read CPU registers
+# run                     Start CPU execution
+# secureflash             Protect chip by setting security bit
+#
+# =============================================================================
 
 # Path to top level ASF directory relative to this project directory.
 # our version-controlled dir
@@ -231,6 +245,18 @@ PROGRAM         := avr32program
 GDBPROXY        := avr32gdbproxy
 BATCHISP        := batchisp
 ispflags-y      := -device at32$(PART) -hardware usb -operation
+
+# hardware related target JTAG messeges
+MSG_GETTING_CPU_INFO    = "JTAG    cpuinfo"
+MSG_HALTING             = "JTAG    halt"
+MSG_ERASING_CHIP        = "JTAG    chiperase"
+MSG_ERASING             = "JTAG    erase"
+MSG_PROGRAMMING         = "JTAG    program $(target)"
+MSG_SECURING_FLASH      = "JTAG    secure flash"
+MSG_RESETTING           = "JTAG    reset"
+MSG_DEBUGGING           = "JTAG    debug"
+MSG_RUNNING             = "JTAG    run"
+MSG_READING_CPU_REGS    = "JTAG    readregs"
 
 # Don't use make's built-in rules and variables, entering dir etc.
 MAKEFLAGS       += -rR --no-print-directory
