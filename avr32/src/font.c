@@ -189,30 +189,27 @@ u8* font_string_big(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
 extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
   u8 i=0;
   u8 j;
+  u8 * p = buf;
   const glyph_t* gl = &(font_data[ch - FONT_ASCII_OFFSET]);
   // columns to draw
   u8 cols = FONT_CHARW - gl->first - gl->last;
-  // bytes per column
-  u32 colOffset = FONT_CHARH * w - 1;
-  // offset pointer
-  //  buf = buf + (y*w + x);
-  print_dbg("\r\n");
+  // hm...
+  //  w >>= 1;
+  //  print_dbg("\r\n");
   while(i < cols) {
     for(j=0; j<FONT_CHARH; j++) {
-      *buf = gl->data[i + gl->first] & (1 << j) ? a : b;
-      if(*buf) { print_dbg("#"); } else { print_dbg("_"); }
+      *p = gl->data[i + gl->first] & (1 << j) ? a : b;
+      //      if(*buf) { print_dbg("#"); } else { print_dbg("_"); }
       // point at next row
-      buf += w;
+      p += w;
     }
-    print_dbg("\r\n");
-    // move pointer back the size of one column
-    buf -= colOffset;
-    // increment for next row
-    //    buf++;
+    // print_dbg("\r\n");
     // increment column count
     i++;
+    // reset pointer to row
+    p = buf + i;
   }
-  return buf;
+  return p;
 }
 
 // same as font_glyph, double size

@@ -145,19 +145,33 @@ extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
   static u32 nb; // count of destination bytes
   //  static u32 off; // offset from end of screenbuffer
   // 1 row address = 2 horizontal pixels
+  //  u32 wb = w >> 1;
   w >>= 1;
   x >>= 1;
   nb = w * h;
-  /// copy to global buffer and pack bytes
-  //  pScr  = (u8*)screenBuf;
-  /// the screen is mounted upside down!'
 
-  pScr = (u8*)screenBuf + nb - 1;
+  print_dbg("\r\n bytes in row: ");
+  print_dbg_ulong(w);
+
+  print_dbg("\r\n x offset: ");
+  print_dbg_ulong(x);
+
+
+  print_dbg("\r\n bytes in col: ");
+  print_dbg_ulong(h);
+
+  print_dbg("\r\n y offset: ");
+  print_dbg_ulong(y);
+
+  /// the screen is mounted upside down!'
+  // copy, pack, and reverse into the tof of the screen buffer
+  // 2 bytes input -> 1 byte output
+    pScr = (u8*)screenBuf + nb - 1;
   for(j=0; j<h; j++) {
-    for(i=0; i<w; i+=2) {
-      *pScr = (0xf0 & (*data << 4) );
+    for(i=0; i<w; i++) {
+      *pScr = (0xf0 & ((*data) << 4) );
       data++;
-      *pScr |= (*data & 0xf);
+      *pScr |= ((*data) & 0xf);
       data++;
       pScr--;
     }
