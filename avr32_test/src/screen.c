@@ -141,9 +141,8 @@ void init_oled(void) {
 // draw data given target rect
 // assume x-offset and width are both even!
 extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
-  static u8* pScr; // movable pointer to screen buf
-  static u32 nb; // count of destination bytes
-  //  static u32 off; // offset from end of screenbuffer
+  u8* pScr; // movable pointer to screen buf
+  u32 nb; // count of destination bytes
   // 1 row address = 2 horizontal pixels
   w >>= 1;
   x >>= 1;
@@ -152,6 +151,7 @@ extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
   //  pScr  = (u8*)screenBuf;
   /// the screen is mounted upside down!'
 
+  /// ah this is wrong
   pScr = (u8*)screenBuf + nb - 1;
   for(j=0; j<h; j++) {
     for(i=0; i<w; i+=2) {
@@ -164,7 +164,7 @@ extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
   }
   
   // flip the screen coordinates 
-  x = SCREEN_ROW_BYTES - x -  w;
+  x = SCREEN_ROW_BYTES - x - w;
   y = SCREEN_COL_BYTES - y - h;
   
   // set drawing region
@@ -192,11 +192,11 @@ void screen_startup(void) {
 
   // net art: draw glyphs to screen buf directly,
   // should be stretched out and upside down
-  font_glyph('A', screenBuf + 80,      64, 0x55, 0x22);
-  font_glyph('L', screenBuf + 80 + 8,  64, 0x55, 0x22);
-  font_glyph('E', screenBuf + 80 + 16, 64, 0x55, 0x22);
-  font_glyph('P', screenBuf + 80 + 24, 64, 0x55, 0x22);
-  font_glyph('H', screenBuf + 80 + 32, 64, 0x55, 0x22);
+  font_glyph('A', screenBuf + 80,      64, 0x22, 0x55);
+  font_glyph('L', screenBuf + 80 + 8,  64, 0x22, 0x55);
+  font_glyph('E', screenBuf + 80 + 16, 64, 0x22, 0x55);
+  font_glyph('P', screenBuf + 80 + 24, 64, 0x22, 0x55);
+  font_glyph('H', screenBuf + 80 + 32, 64, 0x22, 0x55);
 
     // send screenbuffer
   spi_selectChip(OLED_SPI, OLED_SPI_NPCS);

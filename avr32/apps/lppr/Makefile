@@ -34,7 +34,7 @@ PROG_CLOCK = int
 
 # Application target name. Given with suffix .a for library and .elf for a
 # standalone application.
-TARGET = aleph-lpps.elf
+TARGET = aleph-lppr.elf
 
 # Core translation units: drivers, I/O, Aleph source etc.
 CSRCS += \

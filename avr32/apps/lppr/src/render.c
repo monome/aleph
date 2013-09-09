@@ -45,16 +45,16 @@ static region quad[4] = {
 // FIXME: size/pos is weird
 static region foot[4] = {
   //  { .w = 64, .h = 28, .len =1792, .x =  0, .y =  0, .dirty = 0 } ,
-  { .w = 32, .h = 16, .len = 512, .x = 0, .y = 48 },
-  { .w = 32, .h = 16, .len = 512, .x = 32, .y = 48 },
-  { .w = 32, .h = 16, .len = 512, .x = 64, .y = 48 },
-  { .w = 32, .h = 16, .len = 512, .x = 96, .y = 48 },
+  { .w = 32, .h = 14, .len = 512, .x = 0, .y = 48 },
+  { .w = 32, .h = 14, .len = 512, .x = 32, .y = 48 },
+  { .w = 32, .h = 14, .len = 512, .x = 64, .y = 48 },
+  { .w = 32, .h = 14, .len = 512, .x = 96, .y = 48 },
 };
 
 // long system status bar at top of screen
 static region status = {
   //  .w = 128, .h = 8, .len = 1024, .x = 0, .y = 0
-  .w = 128, .h = 16, .len = 2048, .x = 0, .y = 0
+  .w = 128, .h = 14, .len = 2048, .x = 0, .y = 0
 };
 
 // array of pointers to all regoins.

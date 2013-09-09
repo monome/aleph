@@ -39,18 +39,16 @@ void init_mem(void) {
   pHeapStart = (heap_t)SRAM;
   pHeapEnd = (heap_t)((u32)pHeapStart + heapSize);
   heapOffset = 0;
-
-  print_dbg("\r\n \r\n memory init!!" );
-    print_dbg("\r\n pHeapStart: ");
-    print_dbg_hex((unsigned long int)pHeapStart);
-    print_dbg("\r\n pHeapEnd: ");
-    print_dbg_hex((unsigned long int)pHeapEnd);
-    print_dbg("\r\n heapOffset: ");
-    print_dbg_hex((unsigned long int)heapOffset);
 }
 
 // allocate and return pointer
 heap_t alloc_mem(u32 bytes) {
+  print_dbg("\r\n allocating memory, bytes: 0x");
+  print_dbg_hex(bytes);
+
+  print_dbg("\r\n location: 0x");
+  print_dbg_hex(heapOffset);
+
   u32 tmp = heapOffset + bytes;
   u8 mtmp = tmp % 4;
   heap_t ret;
@@ -59,33 +57,22 @@ heap_t alloc_mem(u32 bytes) {
     tmp += ( 4 - mtmp );
   }
   if (tmp < heapSize) {
-    ret = pHeapStart;
     heapOffset = tmp;
+    ret = pHeapStart + heapOffset;
   } else {
     ret = (heap_t)ALLOC_FAIL;
-    print_dbg("\r\n memory allocation failed.");
-
-    print_dbg("\r\n pHeapStart: ");
-    print_dbg_hex((unsigned long int)pHeapStart);
-    print_dbg("\r\n pHeapEnd: ");
-    print_dbg_hex((unsigned long int)pHeapEnd);
-    print_dbg("\r\n heapOffset: ");
-    print_dbg_hex((unsigned long int)heapOffset);
-    print_dbg("\r\n requested bytes: ");
-    print_dbg_hex((unsigned long int)bytes);
-
   }
   return ret;
 }
 
 // memory test routine
-void sram_test(u32 numBytes, u32 offset) {
+void sram_test(void) {
 
   unsigned long sram_size, progress_inc, i, j, tmp, noErrors = 0;
-  volatile unsigned long *sram = SRAM + offset;
+  volatile unsigned long *sram = SRAM;
   
-  //sram_size = SRAM_SIZE >> 2;
-  sram_size = numBytes >> 2; // count of 32-bit words
+  sram_size = SRAM_SIZE >> 2;
+  //  sram_size = numBytes >> 2; // count of 32-bit words
   print_dbg("\x0CSRAM size: ");
   print_dbg_ulong(sram_size >> 18);
   print_dbg(" MB\r\n");

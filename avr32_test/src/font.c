@@ -20,11 +20,6 @@
 // maxiumum string size to attempt rendering
 #define MAX_RENDER_STRING 32
 
-/// FIXME: implement this, it would be a little faster
-// column-first buffer indexing
-// #define COL_FIRST
-
-
 // glyph.last is the inset from right hand edge of glyph box...
 const glyph_t font_data[]= {
   { /* 0x00020UL, 0, 2UL, */ 2, 1, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
@@ -143,45 +138,6 @@ const U32 font_nglyphs = sizeof(font_data)/sizeof(glyph_t) - 1;
 //------------------------------------------
 //-----  functions
 
-
-///// COLUMN FIRST BUFFER INDEXING
-#ifdef COL_FIRST
-
-//// TODO
-
-// render single glyph to a flat buffer (1byte = 1px)
-// given pointer to buffer, pixel offset, row length,
-// foreground and background colors
-// return columns used
-extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
-  //...
-  return buf;
-}
-
-// same as font_glyph, double size
-
-extern u8* font_glyph_big(char ch, u8* buf, u8 w, u8 a, u8 b) {
-  //...
-  return buf;
-}
-
-// render a string of packed glyphs to a buffer
-u8* font_string(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
-  //...
-  return buf;
-}
-
-// same as font_string, double size
-u8* font_string_big(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
-  return buf;
-  //...
-}
-
-
-
-#else
-////// ROW FIRST BUFFER INDEXING
-
 // render single glyph to a flat buffer (1byte = 1px)
 // given pointer to buffer, pixel offset, row length,
 // foreground and background colors
@@ -260,6 +216,15 @@ u8* font_string(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
       // end of string
       break;
     }
+    /* if (*str == '\n') { */
+    /*   // newline... ??? */
+    /* } */
+    /* if (*str == '\r') { */
+    /*   // carriage return ... ??? */
+    /*   if(pix > 0) { */
+    /* 	//  ... ??? */
+    /*   } */
+    /* } */
     buf = font_glyph(*str, buf, w, a, b);
     // 1-column space between chars
     buf++;
@@ -272,5 +237,3 @@ u8* font_string(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
 u8* font_string_big(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
   return buf;
 }
-
-#endif
