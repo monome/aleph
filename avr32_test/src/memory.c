@@ -10,6 +10,7 @@
 #include <stdio.h>
 
 // asf
+#include "delay.h"
 #include "print_funcs.h"
 #include "smc.h"
 
@@ -17,7 +18,6 @@
 #include "screen.h"
 #include "types.h"
 #include "memory.h"
-
 
 //  SRAM base address
 #define SRAM              ((void *)AVR32_EBI_CS1_ADDRESS)
@@ -73,9 +73,11 @@ void sram_test(void) {
   
   sram_size = SRAM_SIZE >> 2;
   //  sram_size = numBytes >> 2; // count of 32-bit words
-  print_dbg("\x0CSRAM size: ");
-  print_dbg_ulong(sram_size >> 18);
-  print_dbg(" MB\r\n");
+  print_dbg("\r\n SRAM size (words): ");
+  print_dbg_ulong(sram_size);
+  print_dbg("\r\n");
+  
+  delay_ms(1);
   
   progress_inc = (sram_size + 50) / 100; // words per progress report
 

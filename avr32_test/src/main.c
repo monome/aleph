@@ -114,14 +114,19 @@ static void init_avr32(void) {
   init_ftdi_usart();
   // external sram
   smc_init(FHSB_HZ);
+
   // initialize spi1: OLED, ADC, SD/MMC
   init_spi1();
   // initialize PDCA controller
+
   init_local_pdca();
+
   // initialize blackfin resources
   init_bfin_resources();
+
   // initialize application timer
   init_tc(tc);
+
   // initialize other GPIO
   init_gpio();
 
@@ -243,8 +248,15 @@ int main (void) {
   init_avr32();
 
 
+  print_dbg("\r\n SRAM size: 0x");
+  print_dbg_hex(smc_get_cs_size(1));
+
+
+  cpu_irq_disable();
   /// test the SRAM
   sram_test();
+
+  cpu_irq_enable();
 
   /* //memory manager */
   /* init_mem();   */

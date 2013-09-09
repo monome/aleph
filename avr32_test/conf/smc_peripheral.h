@@ -51,7 +51,8 @@
 
 //! SMC Peripheral Memory Size in log2(Bytes)
 //#define EXT_SM_SIZE            17        // (65536 * 2) = 2^17 bytes
-#define EXT_SM_SIZE            18        // (65536 * 2) = 2^17 bytes
+//#define EXT_SM_SIZE            18        // (65536 * 4) = 2^18 bytesg
+#define EXT_SM_SIZE            20        // (65536 * 4) = 2^18 bytesg
 
 //! SMC Data Bus Width
 #define SMC_DBW                16

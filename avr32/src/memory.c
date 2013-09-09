@@ -39,6 +39,10 @@ void init_mem(void) {
   pHeapStart = (heap_t)SRAM;
   pHeapEnd = (heap_t)((u32)pHeapStart + heapSize);
   heapOffset = 0;
+
+  print_dbg("\r\n SRAM size: 0x");
+  print_dbg_hex(heapSize);
+
 }
 
 // allocate and return pointer
