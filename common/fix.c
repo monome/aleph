@@ -8,7 +8,7 @@
 //#include "print_funcs.h"
 #include "fix.h"
 
-//// comon variables
+//// comon temp variables
 static unsigned int a, u;
 static unsigned long int sign;
 
@@ -21,7 +21,7 @@ static const unsigned int places[FIX_DIG_LO] = {
 
 void print_fix16(char* buf , fix16_t x) {
   static char * p;
-  //  char sign;
+  // char sign;
   int y, i;
 
   //  print_dbg("\r\n printing a fix16: ");
@@ -55,11 +55,23 @@ void print_fix16(char* buf , fix16_t x) {
     // fract
     y = (x ^ 0xffff) & 0xffff;
     itoa_fract(y, bufLo);
-    *p = '-'; p++;
+    //    *p = '-'; p++;
   } 
   // fixme: shouldn't need to copy if pointers are set up correctly
   i = 0;
   while (i < FIX_DIG_HI) {
+    // since we are copying though, might as well put '-' here and look pretty
+    if(bufHi[i]) {
+      if(sign) { // negative
+	if(i>0 && (*(p-1) == ' ') ) {
+	  *(p-1) = '-';
+	    sign = 0;
+	}
+      }
+      *p = bufHi[i];
+      } else {
+      *p = ' ';
+    }
     *p = bufHi[i] ? bufHi[i] : ' ';
     i++; p++;
   } 
@@ -70,7 +82,6 @@ void print_fix16(char* buf , fix16_t x) {
     i++; p++;
   }
 }
-
 // format whole part, right justified
 void itoa_whole(int val, char* buf, int len) {
   static char* p;
