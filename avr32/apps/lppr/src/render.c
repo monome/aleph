@@ -130,9 +130,20 @@ void render_status(const char* str) {
 // fill with initial graphics (id strings)
 void render_startup(void) {
   //  region_string(&(quad[0]), "Q1", 0, 0xf, 0x0);
-  //  region_string(&(quad[1]), "Q2", 0, 0xf, 0x0);
+  //    region_string(&(quad[1]), "Q2", 0, 0xf, 0x0);
   //  region_string(&(quad[2]), "Q3", 0, 0xf, 0x0);
   //  region_string(&(quad[3]), "Q4", 0, 0xf, 0x0);
+
+  font_string("QU1", (&(quad[0]))->data,  (&(quad[0]))->len,  (&(quad[0]))->w, 0xf, 0x0);
+  quad[0].dirty = 1;
+
+  font_string_big("QU2", (&(quad[1]))->data,  (&(quad[1]))->len,  (&(quad[1]))->w, 0xf, 0x0);
+  quad[1].dirty = 1;
+
+  font_string_bigbig("QU3", (&(quad[2]))->data,  (&(quad[2]))->len,  (&(quad[2]))->w, 0xf, 0x0);
+  quad[2].dirty = 1;
+
+
 
   region_string(&(foot[0]), "TAP1", 0, 0xf, 0x0);
   region_string(&(foot[1]), "TAP2", 0, 0xf, 0x0);

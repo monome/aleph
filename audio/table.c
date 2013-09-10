@@ -16,7 +16,6 @@ typedef union { f32 fl; fract32 fr; } fu;
 #define TAB_AS_FLOAT(x, i) ( (fu*)((x) + (i)) )->fl
 #define TAB_AS_FR32(x, i) ( (fu*)((x) + (i)) )->fr
 
-
 //--------------------------------
 //---- external function declarations
 

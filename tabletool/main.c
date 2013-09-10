@@ -7,8 +7,8 @@
 
 
 // input range
-// 16 bits? ok sure
-#define IN_MAX 0xffff
+// 24 bits
+#define IN_MAX 0xfffff
 // max [1)
 #define FR32_MAX 0x7fffffff
 // min [-1]

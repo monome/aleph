@@ -32,9 +32,13 @@ extern const U32 font_nglyphs;
 extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b);
 // same as font_glyph, double size
 extern u8* font_glyph_big(char ch, u8* buf, u8 w, u8 a, u8 b);
+// same as font_glyph, 4x size
+extern u8* font_glyph_bigbig(char ch, u8* buf, u8 w, u8 a, u8 b);
 // render a string of packed glyphs to a buffer
 extern u8* font_string(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b);
 // same as font_string, double size
 extern u8* font_string_big(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b);
+// same as font_string, 4x size
+extern u8* font_string_bigbig(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b);
 
 #endif // header guard

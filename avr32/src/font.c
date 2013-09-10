@@ -213,39 +213,97 @@ extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
 }
 
 // same as font_glyph, double size
-
 extern u8* font_glyph_big(char ch, u8* buf, u8 w, u8 a, u8 b) {
   u8 i=0, j, val;
+  u8* p = buf;
   const glyph_t* gl = &(font_data[ch - FONT_ASCII_OFFSET]);
   // columns to draw
-  u8 cols = (FONT_CHARW - gl->first - gl->last) * 2;
+  u8 cols = (FONT_CHARW - gl->first - gl->last);
   // byte offset produced by 1 full column
-  u32 colOffset = FONT_CHARH * w - 1;
+  //  u32 colOffset = FONT_CHARH * w - 1;
   // offset pointer
   //  pbuf = buf + (y*w + x);
   //  pbyf
   while(i < cols) {
     for(j=0; j<FONT_CHARH; j++) {
       val = gl->data[i + gl->first] & (1 << j) ? a : b;
-      *buf = val;
-      *(buf +1) = val;
+      *p = val;
+      *(p +1) = val;
       // point at next row
-      buf += w;
+      p += w;
       // fill the next row as well
-      *buf = val;
-      *(buf +1) = val;
+      *p = val;
+      *(p +1) = val;
       // point at next row
-      buf += w;
+      p += w;
     }
     // move pointer back the size of one column
-    buf -= colOffset;
+    //    buf -= colOffset;
     // increment for next row
-    buf += 2;
+    //    buf += 2;
     // increment column count
-    i += 2;
+    i++;
+    // set pointer to next (pixel*2) in first row
+    p = buf + (i*2);
   }
-  return buf;
+  return p;
 }
+
+// same as font_glyph,m 4x size
+extern u8* font_glyph_bigbig(char ch, u8* buf, u8 w, u8 a, u8 b) {
+  u8 i=0, j, val;
+  u8* p = buf;
+  const glyph_t* gl = &(font_data[ch - FONT_ASCII_OFFSET]);
+  // columns to draw
+  u8 cols = (FONT_CHARW - gl->first - gl->last);
+  // byte offset produced by 1 full column
+  //  u32 colOffset = FONT_CHARH * w - 1;
+  // offset pointer
+  //  pbuf = buf + (y*w + x);
+  //  pbyf
+  while(i < cols) {
+    for(j=0; j<FONT_CHARH; j++) {
+      val = gl->data[i + gl->first] & (1 << j) ? a : b;
+      *p = val;
+      *(p +1) = val;
+      *(p +2) = val;
+      *(p +3) = val;
+      // point at next row
+      p += w;
+      // fill the next row as well
+      *p = val;
+      *(p +1) = val;
+      *(p +2) = val;
+      *(p +3) = val;
+      // point at next row
+      p += w;
+      // fill the next row as well
+      *p = val;
+      *(p +1) = val;
+      *(p +2) = val;
+      *(p +3) = val;
+      // point at next row
+      p += w;
+      // fill the next row as well
+      *p = val;
+      *(p +1) = val;
+      *(p +2) = val;
+      *(p +3) = val;
+      // point at next row
+      p += w;
+    }
+    // move pointer back the size of one column
+    //    buf -= colOffset;
+    // increment for next row
+    //    buf += 2;
+    // increment column count
+    i++;
+    // set pointer to next (pixel*2) in first row
+    p = buf + (i*4);
+  }
+  return p;
+}
+
 
 // render a string of packed glyphs to a buffer
 u8* font_string(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
@@ -267,6 +325,33 @@ u8* font_string(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
 
 // same as font_string, double size
 u8* font_string_big(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
+  u8* max = buf + size;
+  while (buf < max) {
+    if (*str == 0) {
+      // end of string
+      break;
+    }
+    buf = font_glyph_big(*str, buf, w, a, b);
+    // 1-column space between chars
+    buf++;
+    str++;
+  }
+  return buf;
+}
+
+// same as font_string, 4x size
+u8* font_string_bigbig(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
+  u8* max = buf + size;
+  while (buf < max) {
+    if (*str == 0) {
+      // end of string
+      break;
+    }
+    buf = font_glyph_bigbig(*str, buf, w, a, b);
+    // 1-column space between chars
+    buf++;
+    str++;
+  }
   return buf;
 }
 
