@@ -370,6 +370,9 @@ int main (void) {
 
   print_dbg("\r\n starting event loop.\r\n");
 
+  // dont do startup
+  startup = 0;
+
   while(1) {
     check_events();
   }
