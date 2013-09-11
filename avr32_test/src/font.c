@@ -152,15 +152,15 @@ extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
   u32 colOffset = FONT_CHARH * w - 1;
   // offset pointer
   //  buf = buf + (y*w + x);
-  print_dbg("\r\n");
+  //  print_dbg("\r\n");
   while(i < cols) {
     for(j=0; j<FONT_CHARH; j++) {
       *buf = gl->data[i + gl->first] & (1 << j) ? a : b;
-      if(*buf) { print_dbg("#"); } else { print_dbg("_"); }
+      //      if(*buf) { print_dbg("#"); } else { print_dbg("_"); }
       // point at next row
       buf += w;
     }
-    print_dbg("\r\n");
+    //    print_dbg("\r\n");
     // move pointer back the size of one column
     buf -= colOffset;
     // increment for next row

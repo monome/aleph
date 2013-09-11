@@ -30,6 +30,11 @@ typedef enum {
   /// connect/disconnect usb devices
   kEventFtdiConnect,
   kEventFtdiDisconnect,
+  kEventHidConnect,
+  kEventHidDisconnect,
+  kEventMidiConnect,
+  kEventMidiDisconnect,
+
   ///------ discrete UI events
   /// encoders
   /* kEventEncoder0Start, */

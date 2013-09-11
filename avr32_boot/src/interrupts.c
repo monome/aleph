@@ -92,7 +92,7 @@ __attribute__((__interrupt__))
 static void irq_tc(void) {
   tcTicksUp++;
   // report overflow status
-  if(tcTicks > tcMax) { 
+  if(tcTicksUp > tcMax) { 
     tcTicksUp = 0;
     tcOverflow = 1;
   } else {

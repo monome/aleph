@@ -37,6 +37,7 @@ table* tabAmp;
 table* tabDb;
 table* tabHz;
 table* tabCoeff;
+
 table* tabPan;
 
 //--------------------------------------
@@ -50,6 +51,17 @@ static s32 table_look(table* tab, u32 in) {
   return (s32)val;
 }
 
+// fill deltas (values already filled)
+static void table_calc_deltas(table* tab) {
+  u32 i;
+  double f;
+  for(i=0; i < (TABLE_SIZE - 1); i++) {
+    f = (double)(tab->data[i+1] - tab->data[i]) / (double)TABLE_MASK;
+    tab->delta[i] = (s32)f;
+    print_dbg("\r\n delta: 0x");
+    print_dbg_hex( tab->delta[i] );
+  }
+}
 
 //----------------------------------------
 //---- extern functions
@@ -153,6 +165,10 @@ extern void inputs_init(void) {
      // svf coefficient
      // HACK : assume samplerate == 48000 ...
      fx = fz / 48000.0;
+
+     //     print_dbg("\r\n normalized freq: 0x");
+     //     print_dbg_hex((s32)(fx * FR32_MAX));
+
      // stability limit:
      if(fx < 0.25) { fx = 0.25; } 
      fy = sinf(M_PI * fx) * 2.f;
@@ -181,6 +197,7 @@ extern void inputs_init(void) {
   // fill pan table
 
   /// calculate deltas for all tables
+   table_calc_deltas(tabCoeff);
 }
 
 // get amplitude

@@ -106,47 +106,58 @@ static void init_avr32(void) {
   flashc_set_wait_state(1);
 
   /// interrupts
+  //  print_dbg("\r\n  irq_initialize_vectors() ");
   irq_initialize_vectors();
   // disable all interrupts for now
+  //  print_dbg("\r\n  cpu_irq_disable() ");
   cpu_irq_disable();
 
   // serial usb
+  print_dbg("\r\n  init_ftdi_usart() ");
   init_ftdi_usart();
   // external sram
+  print_dbg("\r\n  smc_init(FHSB_HZ) ");
   smc_init(FHSB_HZ);
 
   // initialize spi1: OLED, ADC, SD/MMC
+  print_dbg("\r\n  init_spi1() ");
   init_spi1();
   // initialize PDCA controller
 
+  print_dbg("\r\n  init_local_pdca() ");
   init_local_pdca();
 
   // initialize blackfin resources
+  print_dbg("\r\n  init_bfin_resources() ");
   init_bfin_resources();
 
   // initialize application timer
+  print_dbg("\r\n  init_tc(tc) ");
   init_tc(tc);
 
   // initialize other GPIO
+  print_dbg("\r\n  init_gpio() ");
   init_gpio();
 
   // register interrupts
+  print_dbg("\r\n  register_interrupts() ");
   register_interrupts();
 
   // initialize the OLED screen
+  print_dbg("\r\n  init_oled() ");
   init_oled();
 
   // enable interrupts
+  print_dbg("\r\n  cpu_irq_enable() ");
   cpu_irq_enable();
 
   // usb host controller
   init_usb_host();
   // initialize usb classes
+  print_dbg("\r\n init_monome ");
   init_monome();
   //  init_midi();
   //  init_hid();
-
-  print_dbg("\r\n avr32 init done ");
 }
 
 // control / network / logic init
@@ -159,17 +170,17 @@ static void init_ctl(void) {
   print_dbg("\r\n init_events");
 
   // intialize encoders
-  init_encoders();
   print_dbg("\r\n init_encoders");
+  init_encoders();
 
   // send ADC config
-  init_adc();
   print_dbg("\r\n init_adc");
+  init_adc();
 
   // start timers
+  print_dbg("\r\n init_sys_timers");
   init_sys_timers();
   //  init_app_timers();
-  print_dbg("\r\n init_timers");
 
   // enable interrupts
   cpu_irq_enable();
@@ -178,71 +189,85 @@ static void init_ctl(void) {
 
 // app event loop
 static void check_events(void) {
-  /* static event_t e; */
-  /* u8 launch = 0; */
-  /* //  print_dbg("\r\n checking events..."); */
-  /* if( get_next_event(&e) ) { */
-  /* /\* print_dbg("\r\n handling event, type: "); *\/ */
-  /* /\* print_dbg_hex(e.eventType); *\/ */
-  /* /\* print_dbg("\r\n , data: "); *\/ */
-  /* /\* print_dbg_hex(e.eventData); *\/ */
+  static event_t e;
+  u8 launch = 0;
+  //  print_dbg("\r\n checking events...");
+  if( get_next_event(&e) ) {
+  /* print_dbg("\r\n handling event, type: "); */
+  /* print_dbg_hex(e.eventType); */
+  /* print_dbg("\r\n , data: "); */
+  /* print_dbg_hex(e.eventData); */
 
-  /*   if(startup) { */
-  /*     if( e.eventType == kEventSwitch0 */
-  /* 	  || e.eventType == kEventSwitch1 */
-  /* 	  || e.eventType == kEventSwitch2 */
-  /* 	  || e.eventType == kEventSwitch3 */
-  /* 	  || e.eventType == kEventSwitch4 */
-  /* 	  ) { */
-  /* 	startup = 0; */
-  /* 	print_dbg("\r\n key pressed, launching "); */
-  /* 	// return 1 if app completed firstrun tasks */
-  /* 	launch = app_launch(firstrun); */
-  /* 	delay_ms(10); */
-  /* 	if( firstrun) { */
-  /* 	  //	  if(launch) { */
-  /* 	    // successfully launched on firstrun, so write magic number to flash */
-  /* 	    flash_write_firstrun(); */
-  /* 	    //	    return; */
-  /* 	    //	  } else { */
-  /* 	    // firstrun, but app launch failed, so clear magic number to try again */
-  /* 	    flash_clear_firstrun(); */
-  /* 	    //	  }  */
-  /* 	} */
-  /*     } */
-  /*   } else { */
-  /*     switch(e.eventType) { */
+    if(startup) {
+      if( e.eventType == kEventSwitch0
+  	  || e.eventType == kEventSwitch1
+  	  || e.eventType == kEventSwitch2
+  	  || e.eventType == kEventSwitch3
+  	  || e.eventType == kEventSwitch4
+  	  ) {
+  	startup = 0;
+  	print_dbg("\r\n key pressed, launching ");
+  	// return 1 if app completed firstrun tasks
+	//  	launch = app_launch(firstrun);
+  	delay_ms(10);
+  	if( firstrun) {
+  	  //	  if(launch) {
+  	    // successfully launched on firstrun, so write magic number to flash
+  	    flash_write_firstrun();
+  	    //	    return;
+  	    //	  } else {
+  	    // firstrun, but app launch failed, so clear magic number to try again
+	    //   flash_clear_firstrun();
+  	    //	  }
+  	}
+      }
+    } else {
+      switch(e.eventType) {
 	
-  /*     case kEventRefresh: */
-  /* 	// refresh the screen hardware */
-  /* 	//	screen_refresh(); */
-  /* 	break; */
-  /*     case kEventMonomePoll : */
-  /* 	// poll monome serial input and spawn relevant events */
-  /* 	monome_read_serial(); */
-  /* 	break; */
-  /*     case kEventMonomeRefresh : */
-  /* 	// refresh monome device from led state buffer */
-  /* 	monome_grid_refresh(); */
-  /* 	break; */
-  /* 	//-------------------------------------- */
-  /*     case kEventFtdiConnect: */
-  /* 	// perform setup tasks for new ftdi device connection.  */
-  /* 	// won't work if called from an interrupt. */
-  /* 	ftdi_setup(); */
-  /* 	break; */
-  /*     default: */
-  /* 	(*appEventHandler)(&e); */
-  /* 	break; */
-  /*     } // event switch */
-  /*   } // startup */
-  /* } // got event */
+      case kEventRefresh:
+  	// refresh the screen hardware
+  	//	screen_refresh();
+
+	/// draw ADC values
+	
+	
+  	break;
+      case kEventMonomePoll :
+  	// poll monome serial input and spawn relevant events
+  	monome_read_serial();
+  	break;
+      case kEventMonomeRefresh :
+  	// refresh monome device from led state buffer
+  	monome_grid_refresh();
+  	break;
+  	//--------------------------------------
+      case kEventFtdiConnect:
+  	// perform setup tasks for new ftdi device connection.
+  	// won't work if called from an interrupt.
+  	ftdi_setup();
+  	break;
+      case kEventFtdiDisconnect:
+	break;
+      case kEventHidConnect :
+	break;
+      case kEventHidDisconnect :
+	break;
+      case kEventMidiConnect :
+	break;
+      case kEventMidiDisconnect :
+	break;
+      default:
+	//  	(*appEventHandler)(&e);
+  	break;
+      } // event switch
+    } // startup
+  } // got event
 }
 
 //int main(void) {
 ////main function
 int main (void) {
-  //  u32 waitForCard = 0;
+  u32 waitForCard = 0;
 
   // set up avr32 hardware and peripherals
   init_avr32();
@@ -262,14 +287,22 @@ int main (void) {
   /* init_mem();   */
   /* print_dbg("\r\n init_mem"); */
 
-  /* // intialize the FAT filesystem */
-  /* fat_init(); */
-  /* print_dbg("\r\n init fat"); */
+  // wait for sdcard
+  
+    print_dbg("\r\n SD check... ");
+    while (!sd_mmc_spi_mem_check()) {
+      waitForCard++;
+    }
+    print_dbg("\r\nfound SD card. ");
 
-  /* // setup control logic */
-  /* init_ctl(); */
-  /* print_dbg("\r\n init ctl"); */
 
+  // intialize the FAT filesystem
+    print_dbg("\r\n init fat");
+    fat_init();
+    // setup control logic
+    print_dbg("\r\n init ctl");
+    init_ctl();
+  
   /* // initialize the application */
   /* app_init(); */
   /* print_dbg("\r\n init app"); */
@@ -280,11 +313,11 @@ int main (void) {
   /* print_dbg_ulong(firstrun); */
 
   /* // notify  */
-  /* screen_startup(); */
+    screen_startup();
 
-  /* print_dbg("\r\n starting event loop.\r\n"); */
+  print_dbg("\r\n starting event loop.\r\n");
 
-  /* while(1) { */
-  /*   check_events(); */
-  /* } */
+  while(1) {
+    check_events();
+  }
 }

@@ -186,17 +186,16 @@ void screen_startup(void) {
 
   // fill screenbuffer with grey background
   for(i=0; i<GRAM_BYTES; i++) {
-    screenBuf[i] = 0x22;
+    screenBuf[i] = 0x77;
   }
-
 
   // net art: draw glyphs to screen buf directly,
   // should be stretched out and upside down
-  font_glyph('A', screenBuf + 80,      64, 0x22, 0x55);
-  font_glyph('L', screenBuf + 80 + 8,  64, 0x22, 0x55);
-  font_glyph('E', screenBuf + 80 + 16, 64, 0x22, 0x55);
-  font_glyph('P', screenBuf + 80 + 24, 64, 0x22, 0x55);
-  font_glyph('H', screenBuf + 80 + 32, 64, 0x22, 0x55);
+  font_glyph('A', screenBuf + 80,      64, 0xff, 0x44);
+  font_glyph('L', screenBuf + 80 + 8,  64, 0xff, 0x44);
+  font_glyph('E', screenBuf + 80 + 16, 64, 0xff, 0x44);
+  font_glyph('P', screenBuf + 80 + 24, 64, 0xff, 0x44);
+  font_glyph('H', screenBuf + 80 + 32, 64, 0xff, 0x44);
 
     // send screenbuffer
   spi_selectChip(OLED_SPI, OLED_SPI_NPCS);

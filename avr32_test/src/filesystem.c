@@ -5,14 +5,19 @@
    lower level glue between filesystem (FAT) and hardware (PDCA)
 */
 
+
+// stdlib
+#include <string.h>
 // asf
 #include "compiler.h"
+#include "delay.h"
 #include "pdca.h"
 #include "print_funcs.h"
 #include "sd_mmc_spi.h"
 #include "spi.h"
 #include "types.h"
 // aleph
+#include "app.h"
 #include "filesystem.h"
 
 
@@ -31,6 +36,13 @@ volatile avr32_pdca_channel_t* pdcaTxChan ;
 
 ///========================
 //====  functions
+
+//----------------------------------
+//----- static
+static u8 file_read_write_test(void);
+
+//---------------------------
+//--- extern
 
 //---- low level i/o
 int media_read(unsigned long sector, unsigned char *buffer, unsigned long sector_count);
@@ -110,17 +122,75 @@ int media_write(unsigned long sector, unsigned char *buffer, unsigned long secto
 // extern
 
 int fat_init(void) {
+  u8 ret = 0;
   // Initialise File IO Library
   print_dbg("\r\n beginning FAT library init.");
   fl_init();
   print_dbg("\r\n finished FAT library init.");
+
   // Attach media access functions to library
   if ( fl_attach_media((fn_diskio_read)media_read, (fn_diskio_write)media_write) != FAT_INIT_OK ) {
     print_dbg("\r\n failed to attach media access functions to fat_io_lib \r\n");
-    return 1;
+    //    return 1;
+    ret = 1;
   } else {
     print_dbg("\r\n attached media access functions to fat_io_lib");
-    return 0;
+    //    return 0;
+    ret = 0;
   }
+
+  ret |= file_read_write_test();
+  return ret;
+
 }
 
+
+
+/// sdcard test
+static const char test_string_write[] = "ALEPH_TEST";
+#define TESTN 10
+static char test_string_read[TESTN];
+
+static u8 file_read_write_test(void) {
+  void* fp;
+  u8 ret;
+  u8 i;
+
+  app_pause();
+
+  //  delay_ms(10);
+
+  fp = fl_fopen("/aleph_test.txt", "w");
+  print_dbg("\r\n test sdcard write, fp: ");
+  print_dbg_hex((u32)fp);
+  fl_fputs(test_string_write, fp);
+  fl_fclose(fp);
+
+  print_dbg("\r\n waiting after write...");
+  delay_ms(500);
+
+  fp = fl_fopen("/aleph_test.txt", "r");
+  print_dbg("\r\n test sdcard read, fp: ");
+  print_dbg_hex((u32)fp);
+  for(i=0; i<TESTN; i++) {
+    test_string_read[i] = fl_fgetc(fp);
+  }
+  //  fl_fread(test_string_read, 1, 11, fp);
+  print_dbg(" , read: ");
+  print_dbg(test_string_read);
+
+  if(strncmp(test_string_write, test_string_read, TESTN)) {
+    ret = 1;
+    print_dbg("\r\n ERROR: sdcard write / read mismatch");
+  } else {
+    ret = 0;
+    print_dbg("\r\n OK: sdcard write / read match");
+  }
+
+  fl_fclose(fp);
+
+  app_resume();
+
+  print_dbg("\r\n finished sdcard write/read test.");
+  return ret;
+}
