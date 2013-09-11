@@ -35,8 +35,8 @@ CSRCS += \
 	$(APP_DIR)/src/files.c \
 	$(APP_DIR)/src/handler.c \
 	$(APP_DIR)/src/ctl.c \
-	$(APP_DIR)/src/render.c \
-	$(APP_DIR)/src/tables.c
+	$(APP_DIR)/src/inputs.c	\
+	$(APP_DIR)/src/render.c
 
 # List of assembler source files.
 ASSRCS +=

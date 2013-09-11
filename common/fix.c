@@ -45,7 +45,8 @@ void print_fix16(char* buf , fix16_t x) {
     // fract
     y = x & 0xffff;
     itoa_fract(y, bufLo);
-    *p = ' '; p++;
+    *p = ' ';
+    p++;
   } else {
     //    print_dbg("\r\n <0 : ");
     //    print_dbg_hex(x);
@@ -56,23 +57,46 @@ void print_fix16(char* buf , fix16_t x) {
     y = (x ^ 0xffff) & 0xffff;
     itoa_fract(y, bufLo);
     //    *p = '-'; p++;
+    //    *p = ' '; p++;
+    // search for the negative sign
+    *p = ' ';
+    i = FIX_DIG_HI;
+    while(--i>0) {
+      if(bufHi[i] == ' ') {
+	bufHi[i] = '-';
+	break;
+      }
+      if(i == 1) {
+	*p = '-';
+      }
+    }
+    p++;
   } 
   // fixme: shouldn't need to copy if pointers are set up correctly
   i = 0;
+
   while (i < FIX_DIG_HI) {
     // since we are copying though, might as well put '-' here and look pretty
     if(bufHi[i]) {
-      if(sign) { // negative
-	if(i>0 && (*(p-1) == ' ') ) {
-	  *(p-1) = '-';
-	    sign = 0;
-	}
-      }
       *p = bufHi[i];
-      } else {
+      //      if(sign && (i==0)) { *p = '-'; }
+    } else {
+      /* if(sign) { // negative */
+      /* 	if(i > 0) { */
+      /* 	  if (bufHi[i-1] == 0) { */
+      /* 	    *p = '-'; */
+      /* 	    sign = 0; */
+      /* 	  } else { */
+      /* 	    *p = ' '; */
+      /* 	  } */
+      /* 	} else { */
+      /* 	  *p = ' '; */
+      /* 	} */
+      /* } else { */
       *p = ' ';
+	//    }
     }
-    *p = bufHi[i] ? bufHi[i] : ' ';
+    //    *p = bufHi[i] ? bufHi[i] : ' ';
     i++; p++;
   } 
   *p = '.'; p++;

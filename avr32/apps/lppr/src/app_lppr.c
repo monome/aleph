@@ -25,8 +25,8 @@
 #include "files.h"
 #include "handler.h"
 #include "ctl.h"
+#include "inputs.h"
 #include "render.h"
-#include "tables.h"
 
 // this is called during hardware initialization.
 // use for memory allocation.
@@ -105,10 +105,10 @@ u8 app_launch(u8 firstrun) {
 
   ctl_init_params();
 
-  render_status("initializing control tables...");
+  render_status("initializing input scalers...");
   render_update();
   
-  tables_init();
+  inputs_init();
 
   delay_ms(20);
 
