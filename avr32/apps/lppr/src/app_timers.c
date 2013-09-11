@@ -7,6 +7,9 @@
 //------ timers
 // refresh the screen periodically
 static swTimer_t screenTimer;
+// poll adcs 
+//static swTimer_t adcPollTimer;
+
 // poll monome device 
 //static swTimer_t monomePollTimer;
 // refresh monome device 

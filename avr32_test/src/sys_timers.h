@@ -6,6 +6,7 @@
 //-------- dumb, but just keep adding tags here for now
 enum { 
   eEncTimerTag,
+  eAdcTimerTag,
   eParamChangeTimerTag,
   eNumSysTimers
 };

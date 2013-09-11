@@ -42,7 +42,7 @@ static swTimer_t encTimer;
 // poll switches
 //static swTimer_t swTimer;
 // poll ADC
-/* static swTimer_t adcTimer; */
+static swTimer_t adcTimer;
 /* // poll monome device  */
 /* static swTimer_t monomePollTimer; */
 /* // refresh monome device  */
@@ -84,6 +84,11 @@ static void enc_timer_callback(int tag) {
   }
 }
 
+// adc polling callback
+static void adc_timer_callback(int tag) {
+  adc_poll();
+}
+
 // midi polling callback
 static void param_change_timer_callback(int tag) {
   ctl_perform_all_changes();
@@ -93,5 +98,6 @@ static void param_change_timer_callback(int tag) {
 //====== external
 void init_sys_timers(void) {
   set_timer(&encTimer,           eEncTimerTag,           20,  &enc_timer_callback,    1);
+  set_timer(&adcTimer,           eAdcTimerTag,           20,  &adc_timer_callback,    1);
   set_timer(&paramChangeTimer,   eParamChangeTimerTag,      1,  &param_change_timer_callback, 1);
 }

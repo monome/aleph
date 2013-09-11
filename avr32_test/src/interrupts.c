@@ -106,9 +106,7 @@ static void irq_tc(void) {
   } else {
     tcOverflow = 0;
   }
-
-
-  //  process_timers();
+  process_timers();
   if(tog) {
     tog = 0;
     gpio_clr_gpio_pin(LED_MODE_PIN);
@@ -116,9 +114,6 @@ static void irq_tc(void) {
     tog = 1;
     gpio_set_gpio_pin(LED_MODE_PIN);
   }
-
-  
-
 
   // clear interrupt flag by reading timer SR
   tc_read_sr(APP_TC, APP_TC_CHANNEL);

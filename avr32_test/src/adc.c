@@ -5,6 +5,7 @@
 #include "print_funcs.h"
 #include "spi.h"
 // aleph
+#include "app.h"
 #include "aleph_board.h"
 #include "events.h"
 #include "event_types.h"
@@ -111,6 +112,8 @@ void adc_poll(void) {
   static event_t e;
   u8 i;
 
+  app_pause();
+
   adc_convert(&adcVal);
 
   for(i=0; i<4; i++) {        
@@ -125,4 +128,6 @@ void adc_poll(void) {
       post_event(&e);
     }
   }
+  app_resume();
+
 }

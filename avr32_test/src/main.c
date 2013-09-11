@@ -55,33 +55,22 @@
 //==================================================
 //====  defines
 
-// run an event handler with NULL check
-// #define APP_HANDLE_EVENT(handler, args) if( handler != NULL) (*handler)(args)
-
 //==================================================
 //====  extern variables
 
-/* // handlers for function switches */
-/* sw_handler fnSwHandler[4] = { NULL, NULL, NULL, NULL }; */
-/* // handler for mode switch */
-/* sw_handler modeSwHandler = NULL; */
-/* // handlers for footswitches */
-/* sw_handler footSwHandler[2] = { NULL, NULL }; */
-/* // handlers for the 4 encoders */
-/* enc_handler encHandler[4] = { NULL, NULL, NULL, NULL }; */
-/* // handlers for adcs */
-/* adc_handler adcHandler[4] = { NULL, NULL, NULL, NULL }; */
-/* // monome grid key handler */
-/* monome_key_handler gridHandler = NULL; */
-
-event_handler appEventHandler;
-
 //==================================================
 //====  static variables
+
 // flag for firstrun
 static u8 firstrun = 0;
 //  flag to wait for startup button press
 static u8 startup = 1;
+
+
+static u32 adcVal;
+
+// screen buffer
+//static u8 
 
 //=================================================
 //==== static declarations
@@ -230,7 +219,6 @@ static void check_events(void) {
 
 	/// draw ADC values
 	
-	
   	break;
       case kEventMonomePoll :
   	// poll monome serial input and spawn relevant events
@@ -256,6 +244,71 @@ static void check_events(void) {
 	break;
       case kEventMidiDisconnect :
 	break;
+      case  kEventEncoder0 :
+	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventEncoder0");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	break;
+      case  kEventEncoder1 :
+	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventEncoder1");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	break;
+      case  kEventEncoder2  :
+	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventEncoder2");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	break;
+      case  kEventEncoder3  :
+	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventEncoder3");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	break;
+      case  kEventSwitch0 : // fn
+	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch0");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	break;
+      case  kEventSwitch1 :
+	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch1");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	break;
+      case  kEventSwitch2 :
+	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch2");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	break;
+      case  kEventSwitch3 :
+	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch3");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	break;
+      case  kEventSwitch4 : // mode
+	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch4");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	break;
+      case  kEventSwitch5 : // power
+	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch5");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	break;
+      case  kEventSwitch6 :  // foot
+	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch6");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	break;
+      case  kEventSwitch7 : 
+	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch7");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	break;
+      case  kEventAdc0 : 
+	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventAdc0");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	break;
+      case  kEventAdc1 : 
+	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventAdc1");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	break;
+      case  kEventAdc2 : 
+	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventAdc2");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	break;
+      case  kEventAdc3 : 
+	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventAdc3");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	break;
+
       default:
 	//  	(*appEventHandler)(&e);
   	break;
