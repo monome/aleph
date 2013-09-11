@@ -2,7 +2,7 @@
 ;; --------------------------------------------------------------------------
 ;; Desktop File for Emacs
 ;; --------------------------------------------------------------------------
-;; Created Wed Aug 21 12:29:06 2013
+;; Created Wed Sep 11 15:36:53 2013
 ;; Desktop file format version 206
 ;; Emacs version 23.3.1
 
@@ -28,6 +28,17 @@
   nil)
 
 (desktop-create-buffer 206
+  "/home/emb/aleph/avr32_test/src/main.c"
+  "main.c"
+  'c-mode
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
   "/home/emb/aleph/todo.txt"
   "todo.txt"
   'text-mode
@@ -42,7 +53,7 @@
   "/home/emb/aleph/avr32/src/flash.h"
   "flash.h"
   'c-mode
-  '(abbrev-mode)
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
   314
   '(773 nil)
   nil
@@ -64,7 +75,7 @@
   "/home/emb/aleph/avr32/src/flash.c"
   "flash.c<2>"
   'c-mode
-  '(abbrev-mode)
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
   1453
   '(2101 nil)
   nil
@@ -97,7 +108,7 @@
   "/home/emb/aleph/avr32/src/main.c"
   "main.c"
   'c-mode
-  '(abbrev-mode)
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
   3755
   '(3382 nil)
   nil
@@ -108,7 +119,7 @@
   "/home/emb/aleph/common/module_common.h"
   "module_common.h"
   'c-mode
-  '(abbrev-mode)
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
   71
   '(376 nil)
   nil
@@ -141,7 +152,7 @@
   "/home/emb/aleph/avr32/src/memory.h"
   "memory.h"
   'c-mode
-  '(abbrev-mode)
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
   444
   '(nil nil)
   nil
@@ -160,21 +171,10 @@
   nil)
 
 (desktop-create-buffer 206
-  "/home/emb/aleph/avr32/src/app_timers.c"
-  "app_timers.c"
-  'c-mode
-  '(abbrev-mode)
-  1893
-  '(1 nil)
-  nil
-  nil
-  '((buffer-file-coding-system . undecided-unix)))
-
-(desktop-create-buffer 206
   "/home/emb/aleph/common/fix.h"
   "fix.h"
   'c-mode
-  '(abbrev-mode)
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
   1537
   '(1 nil)
   nil
@@ -185,7 +185,7 @@
   "/home/emb/aleph/common/libfixmath/fix16.h"
   "fix16.h"
   'c-mode
-  '(abbrev-mode)
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
   505
   '(nil nil)
   nil
@@ -196,7 +196,7 @@
   "/home/emb/aleph/avr32/src/encoders.c"
   "encoders.c"
   'c-mode
-  '(abbrev-mode)
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
   1062
   '(1 nil)
   nil
@@ -218,7 +218,7 @@
   "/home/emb/aleph/avr32/src/global.h"
   "global.h"
   'c-mode
-  '(abbrev-mode)
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
   179
   '(546 nil)
   nil
@@ -229,7 +229,7 @@
   "/home/emb/aleph/avr32/src/usb/gamepad/uhi_hid_gamepad.c"
   "uhi_hid_gamepad.c"
   'c-mode
-  '(abbrev-mode)
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
   7340
   '(nil nil)
   nil
@@ -240,7 +240,7 @@
   "/home/emb/aleph/avr32/src/bfin.h"
   "bfin.h"
   'c-mode
-  '(abbrev-mode)
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
   357
   '(874 nil)
   nil
@@ -251,7 +251,7 @@
   "/home/emb/aleph/common/fract32_emu.c"
   "fract32_emu.c"
   'c-mode
-  '(abbrev-mode)
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
   1792
   '(nil nil)
   nil
@@ -262,7 +262,7 @@
   "/home/emb/aleph/common/fract32_emu.h"
   "fract32_emu.h"
   'c-mode
-  '(abbrev-mode)
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
   998
   '(nil nil)
   nil
@@ -284,7 +284,7 @@
   "/home/emb/aleph/avr32/src/bfin.c"
   "bfin.c"
   'c-mode
-  '(abbrev-mode)
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
   1486
   '(6828 nil)
   nil

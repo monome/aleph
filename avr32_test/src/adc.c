@@ -38,8 +38,6 @@ static const eEventType adcEventTypes[4] = {
 static void adc_convert(U16 (*dst)[4]) {
   U16 cmd, val;
 
-  //  cpu_irq_disable();
-
   // data into AD7923 is a left-justified 12-bit value in a 16-bit word
   // so, always lshift the command before sending
   cmd = ( AD7923_CMD_BASE ) << 4;
@@ -78,8 +76,6 @@ static void adc_convert(U16 (*dst)[4]) {
   spi_read(ADC_SPI, &val);
   spi_unselectChip(ADC_SPI, ADC_SPI_NPCS);
   (*dst)[3] = val & 0xfff;
-
-  //  cpu_irq_enable();
 }
 
 // setup ad7923

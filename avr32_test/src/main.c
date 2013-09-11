@@ -38,6 +38,7 @@
 #include "conf_tc_irq.h"
 #include "encoders.h"
 #include "events.h"
+#include "files.h"
 #include "filesystem.h"
 #include "flash.h"
 #include "font.h"
@@ -336,9 +337,9 @@ int main (void) {
 
   cpu_irq_enable();
 
-  /* //memory manager */
-  /* init_mem();   */
-  /* print_dbg("\r\n init_mem"); */
+  //memory manager
+  init_mem();
+  print_dbg("\r\n init_mem");
 
   // wait for sdcard
   
@@ -360,13 +361,16 @@ int main (void) {
   /* app_init(); */
   /* print_dbg("\r\n init app"); */
 
-  /* // initialize flash */
-  /* firstrun = init_flash(); */
-  /* print_dbg("r\n init flash, firstrun: "); */
-  /* print_dbg_ulong(firstrun); */
+   // initialize flash:
+  firstrun = init_flash();
+  print_dbg("r\n init flash, firstrun: ");
+  print_dbg_ulong(firstrun);
 
-  /* // notify  */
     screen_startup();
+
+    // find and load dsp from sdcard
+    files_search_dsp();
+
 
   print_dbg("\r\n starting event loop.\r\n");
 
