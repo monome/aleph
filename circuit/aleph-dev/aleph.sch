@@ -18095,127 +18095,6 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 </deviceset>
 </devicesets>
 </library>
-<library name="linear">
-<description>&lt;b&gt;Linear Devices&lt;/b&gt;&lt;p&gt;
-Operational amplifiers,  comparators, voltage regulators, ADCs, DACs, etc.&lt;p&gt;
-&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
-<packages>
-<package name="DIL08">
-<description>&lt;b&gt;Dual In Line Package&lt;/b&gt;</description>
-<wire x1="5.08" y1="1.905" x2="-5.08" y2="1.905" width="0.2032" layer="21"/>
-<wire x1="-5.08" y1="-1.905" x2="5.08" y2="-1.905" width="0.2032" layer="21"/>
-<wire x1="5.08" y1="1.905" x2="5.08" y2="-1.905" width="0.2032" layer="21"/>
-<wire x1="-5.08" y1="1.905" x2="-5.08" y2="0.6985" width="0.2032" layer="21"/>
-<wire x1="-5.08" y1="-1.905" x2="-5.08" y2="-0.6985" width="0.2032" layer="21"/>
-<wire x1="-5.08" y1="0.6985" x2="-5.08" y2="-0.6985" width="0.2032" layer="21" curve="-180"/>
-<pad name="1" x="-3.81" y="-3.81" drill="0.8128" shape="long" rot="R90" first="yes"/>
-<pad name="2" x="-1.27" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="7" x="-1.27" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="8" x="-3.81" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="3" x="1.27" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="4" x="3.81" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="6" x="1.27" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="5" x="3.81" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<text x="-5.715" y="-2.54" size="1.016" layer="25" ratio="18" rot="R90">&gt;NAME</text>
-<text x="-3.4925" y="-0.635" size="0.8128" layer="27" ratio="10">&gt;VALUE</text>
-</package>
-<package name="SO08">
-<description>&lt;b&gt;SMALL OUTLINE INTEGRATED CIRCUIT&lt;/b&gt;&lt;p&gt;
-body 3.9 mm/JEDEC MS-012AA</description>
-<wire x1="2.667" y1="1.905" x2="2.667" y2="-1.905" width="0.2032" layer="51"/>
-<wire x1="2.667" y1="-1.905" x2="-2.667" y2="-1.905" width="0.2032" layer="51"/>
-<wire x1="-2.667" y1="-1.905" x2="-2.667" y2="1.905" width="0.2032" layer="51"/>
-<wire x1="-2.667" y1="1.905" x2="2.667" y2="1.905" width="0.2032" layer="51"/>
-<wire x1="-2.667" y1="1.27" x2="2.667" y2="1.27" width="0.2032" layer="21"/>
-<wire x1="2.667" y1="1.27" x2="2.667" y2="-1.27" width="0.2032" layer="21"/>
-<wire x1="2.667" y1="-1.27" x2="-2.667" y2="-1.27" width="0.2032" layer="21"/>
-<wire x1="-2.667" y1="-1.27" x2="-2.667" y2="1.27" width="0.2032" layer="21"/>
-<circle x="-1.905" y="-0.635" radius="0.3175" width="0" layer="21"/>
-<smd name="2" x="-0.635" y="-2.6" dx="0.6" dy="2.2" layer="1"/>
-<smd name="7" x="-0.635" y="2.6" dx="0.6" dy="2.2" layer="1"/>
-<smd name="1" x="-1.905" y="-2.6" dx="0.6" dy="2.2" layer="1"/>
-<smd name="3" x="0.635" y="-2.6" dx="0.6" dy="2.2" layer="1"/>
-<smd name="4" x="1.905" y="-2.6" dx="0.6" dy="2.2" layer="1"/>
-<smd name="8" x="-1.905" y="2.6" dx="0.6" dy="2.2" layer="1"/>
-<smd name="6" x="0.635" y="2.6" dx="0.6" dy="2.2" layer="1"/>
-<smd name="5" x="1.905" y="2.6" dx="0.6" dy="2.2" layer="1"/>
-<text x="-3.175" y="-1.905" size="1.016" layer="25" ratio="18" rot="R90">&gt;NAME</text>
-<text x="-2.2225" y="-0.3175" size="0.8128" layer="27" ratio="10">&gt;VALUE</text>
-<rectangle x1="-2.1501" y1="-3.1001" x2="-1.6599" y2="-2" layer="51"/>
-<rectangle x1="-0.8801" y1="-3.1001" x2="-0.3899" y2="-2" layer="51"/>
-<rectangle x1="0.3899" y1="-3.1001" x2="0.8801" y2="-2" layer="51"/>
-<rectangle x1="1.6599" y1="-3.1001" x2="2.1501" y2="-2" layer="51"/>
-<rectangle x1="1.6599" y1="2" x2="2.1501" y2="3.1001" layer="51"/>
-<rectangle x1="0.3899" y1="2" x2="0.8801" y2="3.1001" layer="51"/>
-<rectangle x1="-0.8801" y1="2" x2="-0.3899" y2="3.1001" layer="51"/>
-<rectangle x1="-2.1501" y1="2" x2="-1.6599" y2="3.1001" layer="51"/>
-</package>
-</packages>
-<symbols>
-<symbol name="OPAMP">
-<wire x1="-5.08" y1="5.08" x2="-5.08" y2="-5.08" width="0.4064" layer="94"/>
-<wire x1="-5.08" y1="-5.08" x2="5.08" y2="0" width="0.4064" layer="94"/>
-<wire x1="5.08" y1="0" x2="-5.08" y2="5.08" width="0.4064" layer="94"/>
-<wire x1="-3.81" y1="3.175" x2="-3.81" y2="1.905" width="0.1524" layer="94"/>
-<wire x1="-4.445" y1="2.54" x2="-3.175" y2="2.54" width="0.1524" layer="94"/>
-<wire x1="-4.445" y1="-2.54" x2="-3.175" y2="-2.54" width="0.1524" layer="94"/>
-<text x="2.54" y="3.175" size="1.778" layer="95">&gt;NAME</text>
-<text x="2.54" y="-5.08" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="-IN" x="-7.62" y="-2.54" visible="pad" length="short" direction="in"/>
-<pin name="+IN" x="-7.62" y="2.54" visible="pad" length="short" direction="in"/>
-<pin name="OUT" x="7.62" y="0" visible="pad" length="short" direction="out" rot="R180"/>
-</symbol>
-<symbol name="PWR+-">
-<text x="1.5875" y="3.175" size="1.016" layer="95" rot="R90">V+</text>
-<text x="1.5875" y="-4.445" size="1.016" layer="95" rot="R90">V-</text>
-<text x="-1.905" y="-0.762" size="1.778" layer="95">&gt;NAME</text>
-<pin name="V+" x="0" y="7.62" visible="pad" length="middle" direction="pwr" rot="R270"/>
-<pin name="V-" x="0" y="-7.62" visible="pad" length="middle" direction="pwr" rot="R90"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="TL072" prefix="U">
-<description>&lt;b&gt;OP AMP&lt;/b&gt;</description>
-<gates>
-<gate name="A" symbol="OPAMP" x="15.24" y="10.16" swaplevel="1"/>
-<gate name="B" symbol="OPAMP" x="15.24" y="-12.7" swaplevel="1"/>
-<gate name="P" symbol="PWR+-" x="15.24" y="10.16" addlevel="request"/>
-</gates>
-<devices>
-<device name="P" package="DIL08">
-<connects>
-<connect gate="A" pin="+IN" pad="3"/>
-<connect gate="A" pin="-IN" pad="2"/>
-<connect gate="A" pin="OUT" pad="1"/>
-<connect gate="B" pin="+IN" pad="5"/>
-<connect gate="B" pin="-IN" pad="6"/>
-<connect gate="B" pin="OUT" pad="7"/>
-<connect gate="P" pin="V+" pad="8"/>
-<connect gate="P" pin="V-" pad="4"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-<device name="D" package="SO08">
-<connects>
-<connect gate="A" pin="+IN" pad="3"/>
-<connect gate="A" pin="-IN" pad="2"/>
-<connect gate="A" pin="OUT" pad="1"/>
-<connect gate="B" pin="+IN" pad="5"/>
-<connect gate="B" pin="-IN" pad="6"/>
-<connect gate="B" pin="OUT" pad="7"/>
-<connect gate="P" pin="V+" pad="8"/>
-<connect gate="P" pin="V-" pad="4"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 </libraries>
 <attributes>
 </attributes>
@@ -18999,19 +18878,15 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="AGND73" library="supply" deviceset="AGND" device=""/>
 <part name="V87" library="supply" deviceset="+5VA" device=""/>
 <part name="C59" library="rc-master-smd" deviceset="C_" device="0603" value="100p"/>
-<part name="U19" library="linear" deviceset="TL072" device="D"/>
 <part name="D8" library="diode" deviceset="1N4148" device="W-7"/>
 <part name="D11" library="diode" deviceset="1N4148" device="W-7"/>
 <part name="R120" library="rc-master-smd" deviceset="R_" device="0603" value="47k"/>
 <part name="R106" library="rc-master-smd" deviceset="R_" device="0603" value="270"/>
 <part name="R94" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
-<part name="R109" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
-<part name="LED10" library="led" deviceset="LED" device="CHIPLED_0805"/>
 <part name="R123" library="rc-master-smd" deviceset="R_" device="0603" value="100k"/>
 <part name="R122" library="rc-master-smd" deviceset="R_" device="0603" value="56k"/>
 <part name="C83" library="rc-master-smd" deviceset="CP_" device="1206/T" value="10u"/>
 <part name="V36" library="supply" deviceset="+5VA" device=""/>
-<part name="V88" library="supply" deviceset="+5VA" device=""/>
 <part name="AGND36" library="supply" deviceset="AGND" device=""/>
 <part name="AGND68" library="supply" deviceset="AGND" device=""/>
 <part name="AGND74" library="supply" deviceset="AGND" device=""/>
@@ -19019,7 +18894,6 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="R57" library="rc-master-smd" deviceset="R_" device="0603" value="270"/>
 <part name="R58" library="rc-master-smd" deviceset="R_" device="0603" value="270"/>
 <part name="AGND75" library="supply" deviceset="AGND" device=""/>
-<part name="AGND80" library="supply" deviceset="AGND" device=""/>
 <part name="AGND81" library="supply" deviceset="AGND" device=""/>
 <part name="V89" library="supply" deviceset="+5VA" device=""/>
 <part name="P5" library="monome-inc" deviceset="EVJ-POT" device=""/>
@@ -19037,19 +18911,15 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="AGND82" library="supply" deviceset="AGND" device=""/>
 <part name="V90" library="supply" deviceset="+5VA" device=""/>
 <part name="C60" library="rc-master-smd" deviceset="C_" device="0603" value="100p"/>
-<part name="U20" library="linear" deviceset="TL072" device="D"/>
 <part name="D9" library="diode" deviceset="1N4148" device="W-7"/>
 <part name="D12" library="diode" deviceset="1N4148" device="W-7"/>
 <part name="R121" library="rc-master-smd" deviceset="R_" device="0603" value="47k"/>
 <part name="R107" library="rc-master-smd" deviceset="R_" device="0603" value="270"/>
 <part name="R95" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
-<part name="R110" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
-<part name="LED11" library="led" deviceset="LED" device="CHIPLED_0805"/>
 <part name="R125" library="rc-master-smd" deviceset="R_" device="0603" value="100k"/>
 <part name="R124" library="rc-master-smd" deviceset="R_" device="0603" value="56k"/>
 <part name="C84" library="rc-master-smd" deviceset="CP_" device="1206/T" value="10u"/>
 <part name="V91" library="supply" deviceset="+5VA" device=""/>
-<part name="V92" library="supply" deviceset="+5VA" device=""/>
 <part name="AGND83" library="supply" deviceset="AGND" device=""/>
 <part name="AGND84" library="supply" deviceset="AGND" device=""/>
 <part name="AGND85" library="supply" deviceset="AGND" device=""/>
@@ -19057,11 +18927,9 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="R59" library="rc-master-smd" deviceset="R_" device="0603" value="270"/>
 <part name="R60" library="rc-master-smd" deviceset="R_" device="0603" value="270"/>
 <part name="AGND86" library="supply" deviceset="AGND" device=""/>
-<part name="AGND87" library="supply" deviceset="AGND" device=""/>
 <part name="AGND88" library="supply" deviceset="AGND" device=""/>
 <part name="V93" library="supply" deviceset="+5VA" device=""/>
 <part name="LED3" library="led" deviceset="LED" device="CHIPLED_0805"/>
-<part name="U18" library="linear" deviceset="TL072" device="D"/>
 <part name="D7" library="diode" deviceset="1N4148" device="W-7"/>
 <part name="D10" library="diode" deviceset="1N4148" device="W-7"/>
 <part name="R119" library="rc-master-smd" deviceset="R_" device="0603" value="47k"/>
@@ -19081,6 +18949,11 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="P12" library="con-headers-jp" deviceset="M-1X03-" device="SIP-100-40"/>
 <part name="GND83" library="supply" deviceset="GND" device=""/>
 <part name="C229" library="rc-master-smd" deviceset="CP_" device="7343-43" value="100u"/>
+<part name="IC14" library="analog-devices" deviceset="AD8607" device="R" value="AD8606"/>
+<part name="IC15" library="analog-devices" deviceset="AD8607" device="R" value="AD8606"/>
+<part name="V88" library="supply" deviceset="+5VA" device=""/>
+<part name="V92" library="supply" deviceset="+5VA" device=""/>
+<part name="IC16" library="analog-devices" deviceset="AD8607" device="R"/>
 </parts>
 <sheets>
 <sheet>
@@ -26734,8 +26607,6 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <instance part="C87" gate="G$1" x="330.2" y="231.14"/>
 <instance part="C88" gate="G$1" x="334.01" y="190.5"/>
 <instance part="LED3" gate="G$1" x="274.32" y="289.56"/>
-<instance part="U18" gate="A" x="219.71" y="306.07" rot="MR180"/>
-<instance part="U18" gate="P" x="322.58" y="308.61"/>
 <instance part="D7" gate="G$1" x="234.95" y="306.07"/>
 <instance part="D10" gate="G$1" x="218.44" y="322.58"/>
 <instance part="R119" gate="G$1" x="218.44" y="316.23" rot="R180"/>
@@ -26751,8 +26622,10 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <instance part="AGND94" gate="VR1" x="274.32" y="280.67"/>
 <instance part="R88" gate="G$1" x="190.5" y="337.82" rot="R90"/>
 <instance part="R87" gate="G$1" x="198.12" y="337.82" rot="R90"/>
-<instance part="U18" gate="B" x="284.48" y="330.2"/>
 <instance part="AGND89" gate="VR1" x="274.32" y="321.31"/>
+<instance part="IC16" gate="A" x="217.17" y="306.07" rot="MR180"/>
+<instance part="IC16" gate="B" x="281.94" y="330.2" rot="MR180"/>
+<instance part="IC16" gate="P" x="322.58" y="308.61" rot="MR180"/>
 </instances>
 <busses>
 </busses>
@@ -26966,9 +26839,9 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="316.23" y1="299.72" x2="316.23" y2="306.07" width="0.1524" layer="91"/>
 <pinref part="AGND91" gate="VR1" pin="AGND"/>
 <wire x1="322.58" y1="298.45" x2="322.58" y2="299.72" width="0.1524" layer="91"/>
-<pinref part="U18" gate="P" pin="V-"/>
 <wire x1="322.58" y1="299.72" x2="322.58" y2="300.99" width="0.1524" layer="91"/>
 <junction x="322.58" y="299.72"/>
+<pinref part="IC16" gate="P" pin="V+"/>
 </segment>
 <segment>
 <pinref part="AGND94" gate="VR1" pin="AGND"/>
@@ -26978,18 +26851,18 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <segment>
 <pinref part="AGND89" gate="VR1" pin="AGND"/>
 <wire x1="274.32" y1="323.85" x2="274.32" y2="327.66" width="0.1524" layer="91"/>
-<pinref part="U18" gate="B" pin="-IN"/>
 <wire x1="274.32" y1="327.66" x2="276.86" y2="327.66" width="0.1524" layer="91"/>
-<pinref part="U18" gate="B" pin="+IN"/>
 <wire x1="276.86" y1="332.74" x2="274.32" y2="332.74" width="0.1524" layer="91"/>
 <wire x1="274.32" y1="332.74" x2="274.32" y2="327.66" width="0.1524" layer="91"/>
 <junction x="274.32" y="327.66"/>
+<pinref part="IC16" gate="B" pin="IN+"/>
+<pinref part="IC16" gate="B" pin="IN-"/>
 </segment>
 <segment>
 <pinref part="AGND92" gate="VR1" pin="AGND"/>
 <wire x1="210.82" y1="303.53" x2="210.82" y2="300.99" width="0.1524" layer="91"/>
-<pinref part="U18" gate="A" pin="+IN"/>
 <wire x1="210.82" y1="303.53" x2="212.09" y2="303.53" width="0.1524" layer="91"/>
+<pinref part="IC16" gate="A" pin="IN+"/>
 </segment>
 </net>
 <net name="OUT1L-" class="0">
@@ -27482,11 +27355,11 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <pinref part="C90" gate="G$1" pin="2"/>
 <wire x1="322.58" y1="317.5" x2="316.23" y2="317.5" width="0.1524" layer="91"/>
 <wire x1="316.23" y1="317.5" x2="316.23" y2="311.15" width="0.1524" layer="91"/>
-<pinref part="U18" gate="P" pin="V+"/>
 <wire x1="322.58" y1="316.23" x2="322.58" y2="317.5" width="0.1524" layer="91"/>
 <pinref part="V95" gate="G$1" pin="+5VA"/>
 <wire x1="322.58" y1="317.5" x2="322.58" y2="318.77" width="0.1524" layer="91"/>
 <junction x="322.58" y="317.5"/>
+<pinref part="IC16" gate="P" pin="V-"/>
 </segment>
 </net>
 <net name="OUT-VREF" class="0">
@@ -27941,9 +27814,9 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <pinref part="R87" gate="G$1" pin="1"/>
 <wire x1="198.12" y1="332.74" x2="198.12" y2="330.2" width="0.1524" layer="91"/>
 <junction x="198.12" y="330.2"/>
-<pinref part="U18" gate="A" pin="-IN"/>
 <wire x1="210.82" y1="308.61" x2="212.09" y2="308.61" width="0.1524" layer="91"/>
 <junction x="210.82" y="308.61"/>
+<pinref part="IC16" gate="A" pin="IN-"/>
 </segment>
 </net>
 <net name="N$196" class="0">
@@ -27951,7 +27824,6 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <pinref part="D10" gate="G$1" pin="C"/>
 <wire x1="220.98" y1="322.58" x2="229.87" y2="322.58" width="0.1524" layer="91"/>
 <wire x1="229.87" y1="322.58" x2="229.87" y2="316.23" width="0.1524" layer="91"/>
-<pinref part="U18" gate="A" pin="OUT"/>
 <wire x1="229.87" y1="316.23" x2="229.87" y2="306.07" width="0.1524" layer="91"/>
 <wire x1="229.87" y1="306.07" x2="227.33" y2="306.07" width="0.1524" layer="91"/>
 <pinref part="R119" gate="G$1" pin="1"/>
@@ -27960,6 +27832,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <pinref part="D7" gate="G$1" pin="A"/>
 <wire x1="229.87" y1="306.07" x2="232.41" y2="306.07" width="0.1524" layer="91"/>
 <junction x="229.87" y="306.07"/>
+<pinref part="IC16" gate="A" pin="OUT"/>
 </segment>
 </net>
 <net name="N$197" class="0">
@@ -28818,7 +28691,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <instance part="IC6" gate="A" x="52.07" y="116.84" rot="MR180"/>
 <instance part="IC6" gate="B" x="118.11" y="113.03"/>
 <instance part="IC6" gate="P" x="204.47" y="101.6"/>
-<instance part="C57" gate="G$1" x="29.21" y="119.38"/>
+<instance part="C57" gate="G$1" x="29.21" y="114.3"/>
 <instance part="R79" gate="G$1" x="111.76" y="81.28" rot="R90"/>
 <instance part="R77" gate="G$1" x="45.72" y="107.95" rot="R90"/>
 <instance part="R73" gate="G$1" x="146.05" y="106.68" rot="R90"/>
@@ -28830,37 +28703,30 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <instance part="V87" gate="G$1" x="204.47" y="114.3"/>
 <instance part="P4" gate="G$1" x="72.39" y="96.52" rot="MR0"/>
 <instance part="LED4" gate="G$1" x="111.76" y="22.86"/>
-<instance part="LED5" gate="G$1" x="138.43" y="22.86"/>
+<instance part="LED5" gate="G$1" x="138.43" y="59.69"/>
 <instance part="C59" gate="G$1" x="123.19" y="102.87" rot="R180"/>
-<instance part="U19" gate="A" x="57.15" y="39.37"/>
-<instance part="U19" gate="B" x="124.46" y="41.91"/>
-<instance part="U19" gate="P" x="160.02" y="41.91"/>
 <instance part="D8" gate="G$1" x="72.39" y="39.37"/>
 <instance part="D11" gate="G$1" x="55.88" y="55.88"/>
 <instance part="R120" gate="G$1" x="55.88" y="49.53" rot="R180"/>
 <instance part="R106" gate="G$1" x="85.09" y="39.37" rot="R180"/>
 <instance part="R94" gate="G$1" x="101.6" y="33.02" rot="R270"/>
-<instance part="R109" gate="G$1" x="27.94" y="43.18" rot="R90"/>
-<instance part="LED10" gate="G$1" x="27.94" y="33.02"/>
 <instance part="R123" gate="G$1" x="119.38" y="54.61"/>
 <instance part="R122" gate="G$1" x="106.68" y="54.61"/>
 <instance part="C83" gate="G$1" x="92.71" y="34.29" rot="R90"/>
 <instance part="V36" gate="G$1" x="160.02" y="54.61"/>
-<instance part="V88" gate="G$1" x="27.94" y="52.07"/>
 <instance part="AGND36" gate="VR1" x="160.02" y="29.21"/>
-<instance part="AGND68" gate="VR1" x="27.94" y="24.13"/>
+<instance part="AGND68" gate="VR1" x="48.26" y="33.02"/>
 <instance part="AGND74" gate="VR1" x="92.71" y="22.86"/>
 <instance part="C91" gate="G$1" x="153.67" y="41.91" rot="R90"/>
 <instance part="R57" gate="G$1" x="111.76" y="33.02" rot="R270"/>
-<instance part="R58" gate="G$1" x="138.43" y="33.02" rot="R270"/>
+<instance part="R58" gate="G$1" x="138.43" y="48.26" rot="R90"/>
 <instance part="AGND75" gate="VR1" x="111.76" y="13.97"/>
-<instance part="AGND80" gate="VR1" x="138.43" y="13.97"/>
 <instance part="AGND81" gate="VR1" x="125.73" y="50.8"/>
 <instance part="V89" gate="G$1" x="100.33" y="58.42"/>
 <instance part="IC7" gate="A" x="52.07" y="251.46" rot="MR180"/>
 <instance part="IC7" gate="B" x="118.11" y="247.65"/>
 <instance part="IC7" gate="P" x="204.47" y="236.22"/>
-<instance part="C58" gate="G$1" x="29.21" y="254"/>
+<instance part="C58" gate="G$1" x="29.21" y="248.92"/>
 <instance part="R80" gate="G$1" x="111.76" y="215.9" rot="R90"/>
 <instance part="R78" gate="G$1" x="45.72" y="242.57" rot="R90"/>
 <instance part="R74" gate="G$1" x="146.05" y="241.3" rot="R90"/>
@@ -28872,33 +28738,34 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <instance part="V90" gate="G$1" x="204.47" y="248.92"/>
 <instance part="P5" gate="G$1" x="72.39" y="231.14" rot="MR0"/>
 <instance part="LED6" gate="G$1" x="111.76" y="157.48"/>
-<instance part="LED7" gate="G$1" x="138.43" y="157.48"/>
+<instance part="LED7" gate="G$1" x="138.43" y="194.31"/>
 <instance part="C60" gate="G$1" x="123.19" y="237.49" rot="R180"/>
-<instance part="U20" gate="A" x="57.15" y="173.99"/>
-<instance part="U20" gate="B" x="124.46" y="176.53"/>
-<instance part="U20" gate="P" x="160.02" y="176.53"/>
 <instance part="D9" gate="G$1" x="72.39" y="173.99"/>
 <instance part="D12" gate="G$1" x="55.88" y="190.5"/>
 <instance part="R121" gate="G$1" x="55.88" y="184.15" rot="R180"/>
 <instance part="R107" gate="G$1" x="85.09" y="173.99" rot="R180"/>
 <instance part="R95" gate="G$1" x="101.6" y="167.64" rot="R270"/>
-<instance part="R110" gate="G$1" x="27.94" y="177.8" rot="R90"/>
-<instance part="LED11" gate="G$1" x="27.94" y="167.64"/>
 <instance part="R125" gate="G$1" x="119.38" y="189.23"/>
 <instance part="R124" gate="G$1" x="106.68" y="189.23"/>
 <instance part="C84" gate="G$1" x="92.71" y="168.91" rot="R90"/>
 <instance part="V91" gate="G$1" x="160.02" y="189.23"/>
-<instance part="V92" gate="G$1" x="27.94" y="186.69"/>
 <instance part="AGND83" gate="VR1" x="160.02" y="163.83"/>
-<instance part="AGND84" gate="VR1" x="27.94" y="158.75"/>
+<instance part="AGND84" gate="VR1" x="48.26" y="167.64"/>
 <instance part="AGND85" gate="VR1" x="92.71" y="157.48"/>
 <instance part="C92" gate="G$1" x="153.67" y="176.53" rot="R90"/>
 <instance part="R59" gate="G$1" x="111.76" y="167.64" rot="R270"/>
-<instance part="R60" gate="G$1" x="138.43" y="167.64" rot="R270"/>
+<instance part="R60" gate="G$1" x="138.43" y="182.88" rot="R90"/>
 <instance part="AGND86" gate="VR1" x="111.76" y="148.59"/>
-<instance part="AGND87" gate="VR1" x="138.43" y="148.59"/>
 <instance part="AGND88" gate="VR1" x="125.73" y="185.42"/>
 <instance part="V93" gate="G$1" x="100.33" y="193.04"/>
+<instance part="IC14" gate="A" x="54.61" y="173.99" rot="MR180"/>
+<instance part="IC14" gate="B" x="121.92" y="176.53"/>
+<instance part="IC14" gate="P" x="160.02" y="176.53"/>
+<instance part="IC15" gate="A" x="54.61" y="39.37" rot="MR180"/>
+<instance part="IC15" gate="B" x="121.92" y="41.91"/>
+<instance part="IC15" gate="P" x="160.02" y="41.91"/>
+<instance part="V88" gate="G$1" x="138.43" y="200.66"/>
+<instance part="V92" gate="G$1" x="138.43" y="66.04"/>
 </instances>
 <busses>
 </busses>
@@ -29056,9 +28923,9 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="153.67" y1="33.02" x2="153.67" y2="39.37" width="0.1524" layer="91"/>
 <pinref part="AGND36" gate="VR1" pin="AGND"/>
 <wire x1="160.02" y1="31.75" x2="160.02" y2="33.02" width="0.1524" layer="91"/>
-<pinref part="U19" gate="P" pin="V-"/>
 <wire x1="160.02" y1="33.02" x2="160.02" y2="34.29" width="0.1524" layer="91"/>
 <junction x="160.02" y="33.02"/>
+<pinref part="IC15" gate="P" pin="V-"/>
 </segment>
 <segment>
 <pinref part="AGND75" gate="VR1" pin="AGND"/>
@@ -29066,20 +28933,10 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="111.76" y1="16.51" x2="111.76" y2="17.78" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="AGND80" gate="VR1" pin="AGND"/>
-<pinref part="LED5" gate="G$1" pin="C"/>
-<wire x1="138.43" y1="16.51" x2="138.43" y2="17.78" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="R123" gate="G$1" pin="2"/>
 <pinref part="AGND81" gate="VR1" pin="AGND"/>
 <wire x1="124.46" y1="54.61" x2="125.73" y2="54.61" width="0.1524" layer="91"/>
 <wire x1="125.73" y1="54.61" x2="125.73" y2="53.34" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="AGND68" gate="VR1" pin="AGND"/>
-<pinref part="LED10" gate="G$1" pin="C"/>
-<wire x1="27.94" y1="26.67" x2="27.94" y2="27.94" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="AGND82" gate="VR1" pin="AGND"/>
@@ -29111,19 +28968,14 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="153.67" y1="167.64" x2="153.67" y2="173.99" width="0.1524" layer="91"/>
 <pinref part="AGND83" gate="VR1" pin="AGND"/>
 <wire x1="160.02" y1="166.37" x2="160.02" y2="167.64" width="0.1524" layer="91"/>
-<pinref part="U20" gate="P" pin="V-"/>
 <wire x1="160.02" y1="167.64" x2="160.02" y2="168.91" width="0.1524" layer="91"/>
 <junction x="160.02" y="167.64"/>
+<pinref part="IC14" gate="P" pin="V-"/>
 </segment>
 <segment>
 <pinref part="AGND86" gate="VR1" pin="AGND"/>
 <pinref part="LED6" gate="G$1" pin="C"/>
 <wire x1="111.76" y1="151.13" x2="111.76" y2="152.4" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="AGND87" gate="VR1" pin="AGND"/>
-<pinref part="LED7" gate="G$1" pin="C"/>
-<wire x1="138.43" y1="151.13" x2="138.43" y2="152.4" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="R125" gate="G$1" pin="2"/>
@@ -29133,8 +28985,15 @@ body 3.9 mm/JEDEC MS-012AA</description>
 </segment>
 <segment>
 <pinref part="AGND84" gate="VR1" pin="AGND"/>
-<pinref part="LED11" gate="G$1" pin="C"/>
-<wire x1="27.94" y1="161.29" x2="27.94" y2="162.56" width="0.1524" layer="91"/>
+<wire x1="48.26" y1="171.45" x2="48.26" y2="170.18" width="0.1524" layer="91"/>
+<wire x1="49.53" y1="171.45" x2="48.26" y2="171.45" width="0.1524" layer="91"/>
+<pinref part="IC14" gate="A" pin="IN+"/>
+</segment>
+<segment>
+<pinref part="IC15" gate="A" pin="IN+"/>
+<pinref part="AGND68" gate="VR1" pin="AGND"/>
+<wire x1="49.53" y1="36.83" x2="48.26" y2="36.83" width="0.1524" layer="91"/>
+<wire x1="48.26" y1="36.83" x2="48.26" y2="35.56" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$153" class="0">
@@ -29143,14 +29002,24 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="46.99" y1="114.3" x2="45.72" y2="114.3" width="0.1524" layer="91"/>
 <pinref part="R77" gate="G$1" pin="2"/>
 <wire x1="45.72" y1="114.3" x2="45.72" y2="113.03" width="0.1524" layer="91"/>
+<pinref part="C57" gate="G$1" pin="+"/>
+<wire x1="45.72" y1="114.3" x2="31.75" y2="114.3" width="0.1524" layer="91"/>
+<junction x="45.72" y="114.3"/>
 </segment>
 </net>
 <net name="N$158" class="0">
 <segment>
 <pinref part="IC6" gate="A" pin="OUT"/>
 <pinref part="P4" gate="G$1" pin="6"/>
-<wire x1="62.23" y1="116.84" x2="77.47" y2="116.84" width="0.1524" layer="91"/>
+<wire x1="62.23" y1="116.84" x2="67.31" y2="116.84" width="0.1524" layer="91"/>
+<wire x1="67.31" y1="116.84" x2="77.47" y2="116.84" width="0.1524" layer="91"/>
 <wire x1="77.47" y1="116.84" x2="77.47" y2="114.3" width="0.1524" layer="91"/>
+<pinref part="IC6" gate="A" pin="IN-"/>
+<wire x1="46.99" y1="119.38" x2="45.72" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="119.38" x2="45.72" y2="125.73" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="125.73" x2="67.31" y2="125.73" width="0.1524" layer="91"/>
+<wire x1="67.31" y1="125.73" x2="67.31" y2="116.84" width="0.1524" layer="91"/>
+<junction x="67.31" y="116.84"/>
 </segment>
 </net>
 <net name="N$159" class="0">
@@ -29172,19 +29041,14 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <junction x="204.47" y="110.49"/>
 </segment>
 <segment>
-<pinref part="R109" gate="G$1" pin="2"/>
-<pinref part="V88" gate="G$1" pin="+5VA"/>
-<wire x1="27.94" y1="48.26" x2="27.94" y2="49.53" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="C91" gate="G$1" pin="2"/>
 <wire x1="160.02" y1="50.8" x2="153.67" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="153.67" y1="50.8" x2="153.67" y2="44.45" width="0.1524" layer="91"/>
-<pinref part="U19" gate="P" pin="V+"/>
 <wire x1="160.02" y1="49.53" x2="160.02" y2="50.8" width="0.1524" layer="91"/>
 <pinref part="V36" gate="G$1" pin="+5VA"/>
 <wire x1="160.02" y1="50.8" x2="160.02" y2="52.07" width="0.1524" layer="91"/>
 <junction x="160.02" y="50.8"/>
+<pinref part="IC15" gate="P" pin="V+"/>
 </segment>
 <segment>
 <pinref part="R122" gate="G$1" pin="1"/>
@@ -29203,19 +29067,14 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <junction x="204.47" y="245.11"/>
 </segment>
 <segment>
-<pinref part="R110" gate="G$1" pin="2"/>
-<pinref part="V92" gate="G$1" pin="+5VA"/>
-<wire x1="27.94" y1="182.88" x2="27.94" y2="184.15" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="C92" gate="G$1" pin="2"/>
 <wire x1="160.02" y1="185.42" x2="153.67" y2="185.42" width="0.1524" layer="91"/>
 <wire x1="153.67" y1="185.42" x2="153.67" y2="179.07" width="0.1524" layer="91"/>
-<pinref part="U20" gate="P" pin="V+"/>
 <wire x1="160.02" y1="184.15" x2="160.02" y2="185.42" width="0.1524" layer="91"/>
 <pinref part="V91" gate="G$1" pin="+5VA"/>
 <wire x1="160.02" y1="185.42" x2="160.02" y2="186.69" width="0.1524" layer="91"/>
 <junction x="160.02" y="185.42"/>
+<pinref part="IC14" gate="P" pin="V+"/>
 </segment>
 <segment>
 <pinref part="R124" gate="G$1" pin="1"/>
@@ -29223,12 +29082,10 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="101.6" y1="189.23" x2="100.33" y2="189.23" width="0.1524" layer="91"/>
 <wire x1="100.33" y1="189.23" x2="100.33" y2="190.5" width="0.1524" layer="91"/>
 </segment>
-</net>
-<net name="N$164" class="0">
 <segment>
-<pinref part="C57" gate="G$1" pin="+"/>
-<wire x1="46.99" y1="119.38" x2="31.75" y2="119.38" width="0.1524" layer="91"/>
-<pinref part="IC6" gate="A" pin="IN-"/>
+<pinref part="LED7" gate="G$1" pin="A"/>
+<pinref part="V88" gate="G$1" pin="+5VA"/>
+<wire x1="138.43" y1="196.85" x2="138.43" y2="198.12" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$165" class="0">
@@ -29251,8 +29108,6 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <label x="152.4" y="247.65" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="U20" gate="A" pin="+IN"/>
-<wire x1="49.53" y1="176.53" x2="48.26" y2="176.53" width="0.1524" layer="91"/>
 <wire x1="48.26" y1="176.53" x2="48.26" y2="184.15" width="0.1524" layer="91"/>
 <pinref part="R121" gate="G$1" pin="2"/>
 <wire x1="48.26" y1="184.15" x2="50.8" y2="184.15" width="0.1524" layer="91"/>
@@ -29262,16 +29117,18 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="48.26" y1="190.5" x2="53.34" y2="190.5" width="0.1524" layer="91"/>
 <wire x1="48.26" y1="176.53" x2="39.37" y2="176.53" width="0.1524" layer="91"/>
 <wire x1="39.37" y1="176.53" x2="39.37" y2="198.12" width="0.1524" layer="91"/>
-<junction x="48.26" y="176.53"/>
 <wire x1="39.37" y1="198.12" x2="27.94" y2="198.12" width="0.1524" layer="91"/>
 <label x="27.94" y="200.66" size="1.778" layer="95"/>
+<wire x1="48.26" y1="176.53" x2="49.53" y2="176.53" width="0.1524" layer="91"/>
+<junction x="48.26" y="176.53"/>
+<pinref part="IC14" gate="A" pin="IN-"/>
 </segment>
 </net>
 <net name="IN1R-J^" class="0">
 <segment>
 <pinref part="C58" gate="G$1" pin="-"/>
-<wire x1="26.67" y1="254" x2="24.13" y2="254" width="0.1524" layer="91"/>
-<label x="22.86" y="255.27" size="1.778" layer="95" rot="R180"/>
+<wire x1="26.67" y1="248.92" x2="24.13" y2="248.92" width="0.1524" layer="91"/>
+<label x="22.86" y="248.92" size="1.778" layer="95" rot="R180"/>
 </segment>
 </net>
 <net name="IN-VREF" class="0">
@@ -29321,7 +29178,6 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <pinref part="D11" gate="G$1" pin="C"/>
 <wire x1="58.42" y1="55.88" x2="67.31" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="67.31" y1="55.88" x2="67.31" y2="49.53" width="0.1524" layer="91"/>
-<pinref part="U19" gate="A" pin="OUT"/>
 <wire x1="67.31" y1="49.53" x2="67.31" y2="39.37" width="0.1524" layer="91"/>
 <wire x1="67.31" y1="39.37" x2="64.77" y2="39.37" width="0.1524" layer="91"/>
 <pinref part="R120" gate="G$1" pin="1"/>
@@ -29330,6 +29186,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <pinref part="D8" gate="G$1" pin="A"/>
 <wire x1="67.31" y1="39.37" x2="69.85" y2="39.37" width="0.1524" layer="91"/>
 <junction x="67.31" y="39.37"/>
+<pinref part="IC15" gate="A" pin="OUT"/>
 </segment>
 </net>
 <net name="N$166" class="0">
@@ -29349,24 +29206,13 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="92.71" y1="39.37" x2="101.6" y2="39.37" width="0.1524" layer="91"/>
 <wire x1="101.6" y1="39.37" x2="101.6" y2="38.1" width="0.1524" layer="91"/>
 <junction x="92.71" y="39.37"/>
-<pinref part="U19" gate="B" pin="-IN"/>
 <wire x1="101.6" y1="39.37" x2="111.76" y2="39.37" width="0.1524" layer="91"/>
 <junction x="101.6" y="39.37"/>
 <pinref part="R57" gate="G$1" pin="1"/>
 <wire x1="111.76" y1="39.37" x2="116.84" y2="39.37" width="0.1524" layer="91"/>
 <wire x1="111.76" y1="38.1" x2="111.76" y2="39.37" width="0.1524" layer="91"/>
 <junction x="111.76" y="39.37"/>
-</segment>
-</net>
-<net name="N$168" class="0">
-<segment>
-<pinref part="U19" gate="A" pin="-IN"/>
-<pinref part="R109" gate="G$1" pin="1"/>
-<wire x1="49.53" y1="36.83" x2="27.94" y2="36.83" width="0.1524" layer="91"/>
-<wire x1="27.94" y1="36.83" x2="27.94" y2="38.1" width="0.1524" layer="91"/>
-<pinref part="LED10" gate="G$1" pin="A"/>
-<wire x1="27.94" y1="35.56" x2="27.94" y2="36.83" width="0.1524" layer="91"/>
-<junction x="27.94" y="36.83"/>
+<pinref part="IC15" gate="B" pin="IN-"/>
 </segment>
 </net>
 <net name="N$173" class="0">
@@ -29376,24 +29222,16 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="111.76" y1="25.4" x2="111.76" y2="27.94" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$174" class="0">
-<segment>
-<pinref part="LED5" gate="G$1" pin="A"/>
-<pinref part="R58" gate="G$1" pin="2"/>
-<wire x1="138.43" y1="25.4" x2="138.43" y2="27.94" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="N$178" class="0">
 <segment>
-<pinref part="U19" gate="B" pin="OUT"/>
 <pinref part="R58" gate="G$1" pin="1"/>
 <wire x1="132.08" y1="41.91" x2="138.43" y2="41.91" width="0.1524" layer="91"/>
-<wire x1="138.43" y1="41.91" x2="138.43" y2="38.1" width="0.1524" layer="91"/>
+<wire x1="138.43" y1="41.91" x2="138.43" y2="43.18" width="0.1524" layer="91"/>
+<pinref part="IC15" gate="B" pin="OUT"/>
 </segment>
 </net>
 <net name="N$179" class="0">
 <segment>
-<pinref part="U19" gate="B" pin="+IN"/>
 <wire x1="116.84" y1="44.45" x2="113.03" y2="44.45" width="0.1524" layer="91"/>
 <wire x1="113.03" y1="44.45" x2="113.03" y2="54.61" width="0.1524" layer="91"/>
 <pinref part="R122" gate="G$1" pin="2"/>
@@ -29401,22 +29239,33 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <pinref part="R123" gate="G$1" pin="1"/>
 <wire x1="114.3" y1="54.61" x2="113.03" y2="54.61" width="0.1524" layer="91"/>
 <junction x="113.03" y="54.61"/>
+<pinref part="IC15" gate="B" pin="IN+"/>
 </segment>
 </net>
 <net name="N$169" class="0">
 <segment>
-<pinref part="IC7" gate="A" pin="IN+"/>
-<wire x1="46.99" y1="248.92" x2="45.72" y2="248.92" width="0.1524" layer="91"/>
 <pinref part="R78" gate="G$1" pin="2"/>
 <wire x1="45.72" y1="248.92" x2="45.72" y2="247.65" width="0.1524" layer="91"/>
+<pinref part="IC7" gate="A" pin="IN+"/>
+<wire x1="46.99" y1="248.92" x2="45.72" y2="248.92" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="248.92" x2="31.75" y2="248.92" width="0.1524" layer="91"/>
+<junction x="45.72" y="248.92"/>
+<pinref part="C58" gate="G$1" pin="+"/>
 </segment>
 </net>
 <net name="N$172" class="0">
 <segment>
 <pinref part="IC7" gate="A" pin="OUT"/>
 <pinref part="P5" gate="G$1" pin="6"/>
-<wire x1="62.23" y1="251.46" x2="77.47" y2="251.46" width="0.1524" layer="91"/>
+<wire x1="62.23" y1="251.46" x2="67.31" y2="251.46" width="0.1524" layer="91"/>
+<wire x1="67.31" y1="251.46" x2="77.47" y2="251.46" width="0.1524" layer="91"/>
 <wire x1="77.47" y1="251.46" x2="77.47" y2="248.92" width="0.1524" layer="91"/>
+<pinref part="IC7" gate="A" pin="IN-"/>
+<wire x1="46.99" y1="254" x2="45.72" y2="254" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="254" x2="45.72" y2="260.35" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="260.35" x2="67.31" y2="260.35" width="0.1524" layer="91"/>
+<wire x1="67.31" y1="260.35" x2="67.31" y2="251.46" width="0.1524" layer="91"/>
+<junction x="67.31" y="251.46"/>
 </segment>
 </net>
 <net name="N$180" class="0">
@@ -29424,13 +29273,6 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <pinref part="C64" gate="G$1" pin="-"/>
 <wire x1="109.22" y1="250.19" x2="113.03" y2="250.19" width="0.1524" layer="91"/>
 <pinref part="IC7" gate="B" pin="IN+"/>
-</segment>
-</net>
-<net name="N$181" class="0">
-<segment>
-<pinref part="C58" gate="G$1" pin="+"/>
-<wire x1="46.99" y1="254" x2="31.75" y2="254" width="0.1524" layer="91"/>
-<pinref part="IC7" gate="A" pin="IN-"/>
 </segment>
 </net>
 <net name="N$182" class="0">
@@ -29447,15 +29289,15 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <pinref part="D12" gate="G$1" pin="C"/>
 <wire x1="58.42" y1="190.5" x2="67.31" y2="190.5" width="0.1524" layer="91"/>
 <wire x1="67.31" y1="190.5" x2="67.31" y2="184.15" width="0.1524" layer="91"/>
-<pinref part="U20" gate="A" pin="OUT"/>
 <wire x1="67.31" y1="184.15" x2="67.31" y2="173.99" width="0.1524" layer="91"/>
-<wire x1="67.31" y1="173.99" x2="64.77" y2="173.99" width="0.1524" layer="91"/>
 <pinref part="R121" gate="G$1" pin="1"/>
 <wire x1="60.96" y1="184.15" x2="67.31" y2="184.15" width="0.1524" layer="91"/>
 <junction x="67.31" y="184.15"/>
 <pinref part="D9" gate="G$1" pin="A"/>
 <wire x1="67.31" y1="173.99" x2="69.85" y2="173.99" width="0.1524" layer="91"/>
+<wire x1="64.77" y1="173.99" x2="67.31" y2="173.99" width="0.1524" layer="91"/>
 <junction x="67.31" y="173.99"/>
+<pinref part="IC14" gate="A" pin="OUT"/>
 </segment>
 </net>
 <net name="N$185" class="0">
@@ -29475,24 +29317,13 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="92.71" y1="173.99" x2="101.6" y2="173.99" width="0.1524" layer="91"/>
 <wire x1="101.6" y1="173.99" x2="101.6" y2="172.72" width="0.1524" layer="91"/>
 <junction x="92.71" y="173.99"/>
-<pinref part="U20" gate="B" pin="-IN"/>
 <wire x1="101.6" y1="173.99" x2="111.76" y2="173.99" width="0.1524" layer="91"/>
 <junction x="101.6" y="173.99"/>
 <pinref part="R59" gate="G$1" pin="1"/>
 <wire x1="111.76" y1="173.99" x2="116.84" y2="173.99" width="0.1524" layer="91"/>
 <wire x1="111.76" y1="172.72" x2="111.76" y2="173.99" width="0.1524" layer="91"/>
 <junction x="111.76" y="173.99"/>
-</segment>
-</net>
-<net name="N$187" class="0">
-<segment>
-<pinref part="U20" gate="A" pin="-IN"/>
-<pinref part="R110" gate="G$1" pin="1"/>
-<wire x1="49.53" y1="171.45" x2="27.94" y2="171.45" width="0.1524" layer="91"/>
-<wire x1="27.94" y1="171.45" x2="27.94" y2="172.72" width="0.1524" layer="91"/>
-<pinref part="LED11" gate="G$1" pin="A"/>
-<wire x1="27.94" y1="170.18" x2="27.94" y2="171.45" width="0.1524" layer="91"/>
-<junction x="27.94" y="171.45"/>
+<pinref part="IC14" gate="B" pin="IN-"/>
 </segment>
 </net>
 <net name="N$188" class="0">
@@ -29502,24 +29333,16 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="111.76" y1="160.02" x2="111.76" y2="162.56" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$189" class="0">
-<segment>
-<pinref part="LED7" gate="G$1" pin="A"/>
-<pinref part="R60" gate="G$1" pin="2"/>
-<wire x1="138.43" y1="160.02" x2="138.43" y2="162.56" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="N$190" class="0">
 <segment>
-<pinref part="U20" gate="B" pin="OUT"/>
 <pinref part="R60" gate="G$1" pin="1"/>
 <wire x1="132.08" y1="176.53" x2="138.43" y2="176.53" width="0.1524" layer="91"/>
-<wire x1="138.43" y1="176.53" x2="138.43" y2="172.72" width="0.1524" layer="91"/>
+<wire x1="138.43" y1="176.53" x2="138.43" y2="177.8" width="0.1524" layer="91"/>
+<pinref part="IC14" gate="B" pin="OUT"/>
 </segment>
 </net>
 <net name="N$191" class="0">
 <segment>
-<pinref part="U20" gate="B" pin="+IN"/>
 <wire x1="116.84" y1="179.07" x2="113.03" y2="179.07" width="0.1524" layer="91"/>
 <wire x1="113.03" y1="179.07" x2="113.03" y2="189.23" width="0.1524" layer="91"/>
 <pinref part="R124" gate="G$1" pin="2"/>
@@ -29527,18 +29350,18 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <pinref part="R125" gate="G$1" pin="1"/>
 <wire x1="114.3" y1="189.23" x2="113.03" y2="189.23" width="0.1524" layer="91"/>
 <junction x="113.03" y="189.23"/>
+<pinref part="IC14" gate="B" pin="IN+"/>
 </segment>
 </net>
 <net name="IN1L-J^" class="0">
 <segment>
 <pinref part="C57" gate="G$1" pin="-"/>
-<wire x1="26.67" y1="119.38" x2="24.13" y2="119.38" width="0.1524" layer="91"/>
-<label x="22.86" y="120.65" size="1.778" layer="95" rot="R180"/>
+<wire x1="26.67" y1="114.3" x2="24.13" y2="114.3" width="0.1524" layer="91"/>
+<label x="22.86" y="114.3" size="1.778" layer="95" rot="R180"/>
 </segment>
 </net>
 <net name="IN1L^" class="0">
 <segment>
-<pinref part="U19" gate="A" pin="+IN"/>
 <wire x1="49.53" y1="41.91" x2="48.26" y2="41.91" width="0.1524" layer="91"/>
 <wire x1="48.26" y1="41.91" x2="48.26" y2="49.53" width="0.1524" layer="91"/>
 <pinref part="R120" gate="G$1" pin="2"/>
@@ -29552,6 +29375,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <junction x="48.26" y="41.91"/>
 <wire x1="39.37" y1="63.5" x2="27.94" y2="63.5" width="0.1524" layer="91"/>
 <label x="27.94" y="66.04" size="1.778" layer="95"/>
+<pinref part="IC15" gate="A" pin="IN-"/>
 </segment>
 <segment>
 <pinref part="C54" gate="G$1" pin="-"/>
@@ -29561,6 +29385,13 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="146.05" y1="113.03" x2="151.13" y2="113.03" width="0.1524" layer="91"/>
 <junction x="146.05" y="113.03"/>
 <label x="152.4" y="113.03" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="N$164" class="0">
+<segment>
+<pinref part="R60" gate="G$1" pin="2"/>
+<pinref part="LED7" gate="G$1" pin="C"/>
+<wire x1="138.43" y1="187.96" x2="138.43" y2="189.23" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>

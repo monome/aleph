@@ -18319,7 +18319,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="D13" library="diode" deviceset="MBRS360T3" device=""/>
 <part name="L4" library="inductor-coilcraft" deviceset="MSS1278" device=""/>
 <part name="C218" library="rc-master-smd" deviceset="CP_" device="6032-28" value="22u"/>
-<part name="C222" library="rc-master-smd" deviceset="C_" device="1206" value="470n"/>
+<part name="C222" library="rc-master-smd" deviceset="C_" device="1206" value="100n"/>
 <part name="C27" library="rc-master-smd" deviceset="C_" device="0603" value="10n"/>
 <part name="C28" library="rc-master-smd" deviceset="CP_" device="7343-43" value="100u"/>
 <part name="GND22" library="supply" deviceset="GND" device=""/>
@@ -18347,7 +18347,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="3V3" library="testpoint" deviceset="TPS" device="-SMD-15R"/>
 <part name="5V" library="testpoint" deviceset="TPS" device="-SMD-15R"/>
 <part name="GND" library="testpoint" deviceset="TPS" device="-SMD-20R"/>
-<part name="LED12" library="led" deviceset="LED" device="CHIPLED_1206"/>
+<part name="LED12" library="led" deviceset="LED" device="CHIPLED_0805"/>
 <part name="R158" library="rc-master-smd" deviceset="R_" device="0603" value="150"/>
 <part name="V9" library="supply" deviceset="+3V3" device=""/>
 <part name="GND26" library="supply" deviceset="GND" device=""/>
@@ -18414,7 +18414,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="+3V1" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND21" library="supply1" deviceset="GND" device=""/>
 <part name="K1" library="monome-inc" deviceset="PVA1" device=""/>
-<part name="LED8" library="led" deviceset="LED" device="CHIPLED_1206"/>
+<part name="LED8" library="led" deviceset="LED" device="CHIPLED_0805"/>
 <part name="R61" library="rc-master-smd" deviceset="R_" device="0603" value="150"/>
 <part name="C116" library="rc-master-smd" deviceset="C_" device="0603" value="1u"/>
 <part name="GND31" library="supply" deviceset="GND" device=""/>

@@ -2300,6 +2300,30 @@ shrink quad flat pack, square</description>
 <circle x="0" y="0" radius="3.8232" width="0.0508" layer="51"/>
 <pad name="B120" x="0" y="0" drill="3.048" diameter="5.08" thermals="no"/>
 </package>
+<package name="PJ-102XH">
+<description>2.1/2.5 X 5.5 MM - Power Connector&lt;p&gt;
+PJ-102AH &amp; PJ-102BH</description>
+<wire x1="4.7625" y1="-13.6525" x2="-4.7625" y2="-13.6525" width="0.2032" layer="51"/>
+<wire x1="-4.7625" y1="-13.6525" x2="-4.7625" y2="-10.16" width="0.2032" layer="51"/>
+<wire x1="-4.7625" y1="-10.16" x2="-4.7625" y2="0" width="0.2032" layer="21"/>
+<wire x1="-4.7625" y1="0" x2="-1.5875" y2="0" width="0.2032" layer="21"/>
+<wire x1="1.5875" y1="0" x2="4.7625" y2="0" width="0.2032" layer="21"/>
+<wire x1="4.7625" y1="0" x2="4.7625" y2="-1.27" width="0.2032" layer="21"/>
+<wire x1="4.7625" y1="-4.445" x2="4.7625" y2="-10.16" width="0.2032" layer="21"/>
+<wire x1="4.7625" y1="-10.16" x2="4.7625" y2="-13.6525" width="0.2032" layer="51"/>
+<wire x1="-4.7625" y1="-10.16" x2="4.7625" y2="-10.16" width="0.2032" layer="51"/>
+<wire x1="4.7625" y1="-12.3825" x2="3.4925" y2="-12.3825" width="0.2032" layer="51"/>
+<wire x1="3.4925" y1="-12.3825" x2="3.4925" y2="-11.1125" width="0.2032" layer="51"/>
+<wire x1="3.4925" y1="-11.1125" x2="4.7625" y2="-11.1125" width="0.2032" layer="51"/>
+<wire x1="-4.7625" y1="-12.3825" x2="-3.4925" y2="-12.3825" width="0.2032" layer="51"/>
+<wire x1="-3.4925" y1="-12.3825" x2="-3.4925" y2="-11.1125" width="0.2032" layer="51"/>
+<wire x1="-3.4925" y1="-11.1125" x2="-4.7625" y2="-11.1125" width="0.2032" layer="51"/>
+<pad name="1" x="0" y="0" drill="1.2446" diameter="2.54" shape="square" rot="R90"/>
+<pad name="2" x="0" y="-6.0325" drill="1.2446" diameter="2.54" shape="octagon" rot="R90"/>
+<pad name="3" x="5.08" y="-2.8575" drill="1.2446" diameter="2.54" shape="octagon" rot="R90"/>
+<text x="-5.3975" y="-10.16" size="1.016" layer="25" ratio="18" rot="R90">&gt;NAME</text>
+<text x="6.6675" y="-10.16" size="0.8128" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
+</package>
 </packages>
 <symbols>
 <symbol name="PANASONIC-EVQ">
@@ -3158,6 +3182,35 @@ shrink quad flat pack, square</description>
 </symbol>
 <symbol name="MOUNT440">
 <circle x="0" y="0" radius="2.54" width="1.27" layer="94"/>
+</symbol>
+<symbol name="PJ3-1S">
+<wire x1="0" y1="2.54" x2="-3.81" y2="2.54" width="0.1524" layer="94"/>
+<wire x1="-3.81" y1="2.54" x2="-4.445" y2="1.27" width="0.1524" layer="94"/>
+<wire x1="-4.445" y1="1.27" x2="-5.08" y2="2.54" width="0.1524" layer="94"/>
+<wire x1="0" y1="0" x2="-0.635" y2="0" width="0.1524" layer="94"/>
+<wire x1="0" y1="-3.81" x2="-0.635" y2="-3.81" width="0.254" layer="94"/>
+<wire x1="-0.635" y1="-3.81" x2="-0.635" y2="-3.175" width="0.254" layer="94"/>
+<wire x1="-0.635" y1="-3.175" x2="-0.635" y2="-1.905" width="0.254" layer="94"/>
+<wire x1="-0.635" y1="-1.905" x2="-0.635" y2="-1.27" width="0.254" layer="94"/>
+<wire x1="-0.635" y1="-1.27" x2="0" y2="-1.27" width="0.254" layer="94"/>
+<wire x1="0" y1="-1.27" x2="0" y2="-3.81" width="0.254" layer="94"/>
+<wire x1="-0.635" y1="-3.175" x2="-6.35" y2="-3.175" width="0.254" layer="94"/>
+<wire x1="-0.635" y1="-1.905" x2="-6.35" y2="-1.905" width="0.254" layer="94"/>
+<wire x1="-6.35" y1="-1.905" x2="-6.35" y2="-3.175" width="0.254" layer="94" curve="180"/>
+<wire x1="-0.635" y1="0" x2="-0.635" y2="2.3813" width="0.1524" layer="94"/>
+<wire x1="-0.635" y1="2.3813" x2="-0.9525" y2="1.4288" width="0.1524" layer="94"/>
+<wire x1="-0.9525" y1="1.4288" x2="-0.3175" y2="1.4288" width="0.1524" layer="94"/>
+<wire x1="-0.3175" y1="1.4288" x2="-0.635" y2="2.3813" width="0.1524" layer="94"/>
+<text x="0" y="7.62" size="1.778" layer="95">&gt;NAME</text>
+<text x="0" y="5.08" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="T" x="5.08" y="-2.54" visible="pad" length="middle" direction="pas" rot="R180"/>
+<pin name="SS" x="5.08" y="0" visible="pad" length="middle" direction="pas" rot="R180"/>
+<pin name="S" x="5.08" y="2.54" visible="pad" length="middle" direction="pas" rot="R180"/>
+<polygon width="0.1524" layer="94">
+<vertex x="-0.635" y="2.3813"/>
+<vertex x="-0.9525" y="1.4288"/>
+<vertex x="-0.3175" y="1.4288"/>
+</polygon>
 </symbol>
 </symbols>
 <devicesets>
@@ -4192,6 +4245,26 @@ shrink quad flat pack, square</description>
 <technology name="">
 <attribute name="BOM" value="EXCLUDE"/>
 </technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="PJ-102AH/BH" prefix="J">
+<description>DC Power Jack&lt;p&gt;
+PJ-102AH (2.1 x 5.5 MM)&lt;br&gt;
+PJ-102BH (2.5 x 5.5 MM)</description>
+<gates>
+<gate name="G$1" symbol="PJ3-1S" x="0" y="2.54"/>
+</gates>
+<devices>
+<device name="" package="PJ-102XH">
+<connects>
+<connect gate="G$1" pin="S" pad="2"/>
+<connect gate="G$1" pin="SS" pad="3"/>
+<connect gate="G$1" pin="T" pad="1"/>
+</connects>
+<technologies>
+<technology name=""/>
 </technologies>
 </device>
 </devices>
@@ -7569,87 +7642,6 @@ Keystone #5016</description>
 <device name="" package="1X01">
 <connects>
 <connect gate="G$1" pin="1" pad="1"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
-<library name="con-cuistack">
-<packages>
-<package name="PJ-102XH">
-<description>2.1/2.5 X 5.5 MM - Power Connector&lt;p&gt;
-PJ-102AH &amp; PJ-102BH</description>
-<wire x1="4.7625" y1="-13.6525" x2="-4.7625" y2="-13.6525" width="0.2032" layer="51"/>
-<wire x1="-4.7625" y1="-13.6525" x2="-4.7625" y2="-10.16" width="0.2032" layer="51"/>
-<wire x1="-4.7625" y1="-10.16" x2="-4.7625" y2="0" width="0.2032" layer="21"/>
-<wire x1="-4.7625" y1="0" x2="-1.5875" y2="0" width="0.2032" layer="21"/>
-<wire x1="1.5875" y1="0" x2="4.7625" y2="0" width="0.2032" layer="21"/>
-<wire x1="4.7625" y1="0" x2="4.7625" y2="-1.27" width="0.2032" layer="21"/>
-<wire x1="4.7625" y1="-4.445" x2="4.7625" y2="-10.16" width="0.2032" layer="21"/>
-<wire x1="4.7625" y1="-10.16" x2="4.7625" y2="-13.6525" width="0.2032" layer="51"/>
-<wire x1="-4.7625" y1="-10.16" x2="4.7625" y2="-10.16" width="0.2032" layer="51"/>
-<wire x1="4.7625" y1="-12.3825" x2="3.4925" y2="-12.3825" width="0.2032" layer="51"/>
-<wire x1="3.4925" y1="-12.3825" x2="3.4925" y2="-11.1125" width="0.2032" layer="51"/>
-<wire x1="3.4925" y1="-11.1125" x2="4.7625" y2="-11.1125" width="0.2032" layer="51"/>
-<wire x1="-4.7625" y1="-12.3825" x2="-3.4925" y2="-12.3825" width="0.2032" layer="51"/>
-<wire x1="-3.4925" y1="-12.3825" x2="-3.4925" y2="-11.1125" width="0.2032" layer="51"/>
-<wire x1="-3.4925" y1="-11.1125" x2="-4.7625" y2="-11.1125" width="0.2032" layer="51"/>
-<pad name="1" x="0" y="0" drill="1.4224" diameter="2.54" shape="square" rot="R90"/>
-<pad name="2" x="0" y="-6.0325" drill="1.4224" diameter="2.54" shape="octagon" rot="R90"/>
-<pad name="3" x="5.08" y="-2.8575" drill="1.4224" diameter="2.54" shape="octagon" rot="R90"/>
-<text x="-5.3975" y="-10.16" size="1.016" layer="25" ratio="18" rot="R90">&gt;NAME</text>
-<text x="6.6675" y="-10.16" size="0.8128" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
-</package>
-</packages>
-<symbols>
-<symbol name="PJ3-1S">
-<wire x1="0" y1="2.54" x2="-3.81" y2="2.54" width="0.1524" layer="94"/>
-<wire x1="-3.81" y1="2.54" x2="-4.445" y2="1.27" width="0.1524" layer="94"/>
-<wire x1="-4.445" y1="1.27" x2="-5.08" y2="2.54" width="0.1524" layer="94"/>
-<wire x1="0" y1="0" x2="-0.635" y2="0" width="0.1524" layer="94"/>
-<wire x1="0" y1="-3.81" x2="-0.635" y2="-3.81" width="0.254" layer="94"/>
-<wire x1="-0.635" y1="-3.81" x2="-0.635" y2="-3.175" width="0.254" layer="94"/>
-<wire x1="-0.635" y1="-3.175" x2="-0.635" y2="-1.905" width="0.254" layer="94"/>
-<wire x1="-0.635" y1="-1.905" x2="-0.635" y2="-1.27" width="0.254" layer="94"/>
-<wire x1="-0.635" y1="-1.27" x2="0" y2="-1.27" width="0.254" layer="94"/>
-<wire x1="0" y1="-1.27" x2="0" y2="-3.81" width="0.254" layer="94"/>
-<wire x1="-0.635" y1="-3.175" x2="-6.35" y2="-3.175" width="0.254" layer="94"/>
-<wire x1="-0.635" y1="-1.905" x2="-6.35" y2="-1.905" width="0.254" layer="94"/>
-<wire x1="-6.35" y1="-1.905" x2="-6.35" y2="-3.175" width="0.254" layer="94" curve="180"/>
-<wire x1="-0.635" y1="0" x2="-0.635" y2="2.3813" width="0.1524" layer="94"/>
-<wire x1="-0.635" y1="2.3813" x2="-0.9525" y2="1.4288" width="0.1524" layer="94"/>
-<wire x1="-0.9525" y1="1.4288" x2="-0.3175" y2="1.4288" width="0.1524" layer="94"/>
-<wire x1="-0.3175" y1="1.4288" x2="-0.635" y2="2.3813" width="0.1524" layer="94"/>
-<text x="0" y="7.62" size="1.778" layer="95">&gt;NAME</text>
-<text x="0" y="5.08" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="T" x="5.08" y="-2.54" visible="pad" length="middle" direction="pas" rot="R180"/>
-<pin name="SS" x="5.08" y="0" visible="pad" length="middle" direction="pas" rot="R180"/>
-<pin name="S" x="5.08" y="2.54" visible="pad" length="middle" direction="pas" rot="R180"/>
-<polygon width="0.1524" layer="94">
-<vertex x="-0.635" y="2.3813"/>
-<vertex x="-0.9525" y="1.4288"/>
-<vertex x="-0.3175" y="1.4288"/>
-</polygon>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="PJ-102AH/BH" prefix="J">
-<description>DC Power Jack&lt;p&gt;
-PJ-102AH (2.1 x 5.5 MM)&lt;br&gt;
-PJ-102BH (2.5 x 5.5 MM)</description>
-<gates>
-<gate name="G$1" symbol="PJ3-1S" x="0" y="2.54"/>
-</gates>
-<devices>
-<device name="" package="PJ-102XH">
-<connects>
-<connect gate="G$1" pin="S" pad="2"/>
-<connect gate="G$1" pin="SS" pad="3"/>
-<connect gate="G$1" pin="T" pad="1"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -18314,7 +18306,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="V2" library="supply" deviceset="+3V3" device=""/>
 <part name="GND15" library="supply" deviceset="GND" device=""/>
 <part name="U5" library="monome-inc" deviceset="LM2678" device=""/>
-<part name="J8" library="con-cuistack" deviceset="PJ-102AH/BH" device=""/>
+<part name="J8" library="monome-inc" deviceset="PJ-102AH/BH" device=""/>
 <part name="D14" library="diode" deviceset="MBRS360T3" device=""/>
 <part name="D13" library="diode" deviceset="MBRS360T3" device=""/>
 <part name="L4" library="inductor-coilcraft" deviceset="MSS1278" device=""/>
@@ -18347,7 +18339,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="3V3" library="testpoint" deviceset="TPS" device="-SMD-15R"/>
 <part name="5V" library="testpoint" deviceset="TPS" device="-SMD-15R"/>
 <part name="GND" library="testpoint" deviceset="TPS" device="-SMD-20R"/>
-<part name="LED12" library="led" deviceset="LED" device="CHIPLED_1206"/>
+<part name="LED12" library="led" deviceset="LED" device="CHIPLED_0805"/>
 <part name="R158" library="rc-master-smd" deviceset="R_" device="0603" value="150"/>
 <part name="V9" library="supply" deviceset="+3V3" device=""/>
 <part name="GND26" library="supply" deviceset="GND" device=""/>
@@ -18414,7 +18406,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="+3V1" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND21" library="supply1" deviceset="GND" device=""/>
 <part name="K1" library="monome-inc" deviceset="PVA1" device=""/>
-<part name="LED8" library="led" deviceset="LED" device="CHIPLED_1206"/>
+<part name="LED8" library="led" deviceset="LED" device="CHIPLED_0805"/>
 <part name="R61" library="rc-master-smd" deviceset="R_" device="0603" value="150"/>
 <part name="C116" library="rc-master-smd" deviceset="C_" device="0603" value="1u"/>
 <part name="GND31" library="supply" deviceset="GND" device=""/>
