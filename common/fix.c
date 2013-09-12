@@ -23,19 +23,7 @@ void print_fix16(char* buf , fix16_t x) {
   static char * p;
   // char sign;
   int y, i;
-
-  //  print_dbg("\r\n printing a fix16: ");
-  //  print_dbg_hex(x);
-
   sign = BIT_SIGN(x);
-  //  print_dbg("\r\n sign: ");
-  //  print_dbg_hex(sign);
-  //  print_dbg("\r\n hm?: ");
-  //  print_dbg_hex(x & 0x80000000);
-
-  //  bufHi = p + 1;
-  //bufLo  = bufHi + FIX_DIG_HI + 1;
-
   p = buf;
 
   if(sign == 0)  {
@@ -48,16 +36,12 @@ void print_fix16(char* buf , fix16_t x) {
     *p = ' ';
     p++;
   } else {
-    //    print_dbg("\r\n <0 : ");
-    //    print_dbg_hex(x);
     // whole
     y = ( (x >> 16) ^ 0xffff ) & 0xffff;
     itoa_whole(y, bufHi, FIX_DIG_HI);
     // fract
     y = (x ^ 0xffff) & 0xffff;
     itoa_fract(y, bufLo);
-    //    *p = '-'; p++;
-    //    *p = ' '; p++;
     // search for the negative sign
     *p = ' ';
     i = FIX_DIG_HI;
@@ -76,27 +60,11 @@ void print_fix16(char* buf , fix16_t x) {
   i = 0;
 
   while (i < FIX_DIG_HI) {
-    // since we are copying though, might as well put '-' here and look pretty
     if(bufHi[i]) {
       *p = bufHi[i];
-      //      if(sign && (i==0)) { *p = '-'; }
     } else {
-      /* if(sign) { // negative */
-      /* 	if(i > 0) { */
-      /* 	  if (bufHi[i-1] == 0) { */
-      /* 	    *p = '-'; */
-      /* 	    sign = 0; */
-      /* 	  } else { */
-      /* 	    *p = ' '; */
-      /* 	  } */
-      /* 	} else { */
-      /* 	  *p = ' '; */
-      /* 	} */
-      /* } else { */
       *p = ' ';
-	//    }
     }
-    //    *p = bufHi[i] ? bufHi[i] : ' ';
     i++; p++;
   } 
   *p = '.'; p++;

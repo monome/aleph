@@ -150,22 +150,18 @@ extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
   x >>= 1;
   nb = w * h;
 
-  print_dbg("\r\n screen_draw_region: ");
-  print_dbg("\r\n bytes in row: ");
-  print_dbg_ulong(w);
-
-  print_dbg("\r\n x offset: ");
-  print_dbg_ulong(x);
-
-
-  print_dbg("\r\n bytes in col: ");
+  print_dbg("\r\n screen_draw_region: w:");
+  // print_dbg("\r\n bytes in row: "); */
+  print_dbg_ulong(w); 
+  print_dbg(" , x:"); 
+  print_dbg_ulong(x); 
+  print_dbg(" , h:");
   print_dbg_ulong(h);
-
-  print_dbg("\r\n y offset: ");
+  print_dbg(" , y:");
   print_dbg_ulong(y);
 
   /// the screen is mounted upside down!'
-  // copy, pack, and reverse into the tof of the screen buffer
+  // copy, pack, and reverse into the top of the screen buffer
   // 2 bytes input -> 1 byte output
     pScr = (u8*)screenBuf + nb - 1;
   for(j=0; j<h; j++) {
@@ -234,7 +230,6 @@ void screen_clear(void) {
   gpio_set_gpio_pin(OLED_REGISTER_PIN);
   for(i=0; i<GRAM_BYTES; i++) { 
     screenBuf[i] = 0;
-    //    write_data(0);
     spi_write(OLED_SPI, 0);
   }
   spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);

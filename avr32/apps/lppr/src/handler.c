@@ -46,12 +46,7 @@ static u32 sw_time(u8 num, u8 val) {
 
 // set delay time from switch tap
 static void sw_tap_delay(u8 idx, u8 val) {
-  //  static u32 interval;
-  //    if(val > 0) {
-  //  interval =;
-      ctl_set_delay_ms(idx,  sw_time(idx, val) );
-      //      print_dbg("\r\n press interval 0: ");
-      //      print_dbg_ulong(interval);
+  ctl_set_delay_ms(idx,  sw_time(idx, val) );
 }
 
 // start recording loop in delayline 1
