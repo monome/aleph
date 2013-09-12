@@ -22,6 +22,7 @@
 #include <fract2float_conv.h>
 #else
 // linux
+#warning "LINUX"
 #include <stdio.h>
 #include "fract32_emu.h"
 #warning "linux"
@@ -30,30 +31,38 @@
 
 #include "module.h"
 #include "module_custom.h"
+#include "params.h"
 #include "types.h"
 
 #define HZ_MIN 0x200000      // 32
 #define HZ_MAX 0x40000000    // 16384
 
-
 // define a local data structure that subclasses moduleData.
 // use this for all data that is large and/or not speed-critical.
 // this structure should statically allocate all necessary memory 
 // so it can simply be loaded at the start of SDRAM.
+//#if 0
 typedef struct _drumsData {
   moduleData super;
   ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
-} drumsData;
+} drumsynData;
+//#endif
 
-typedef struct _drum_voice {
+typedef struct _drumsynVoice {
   filter_svf* svf;
   env_asr* envAmp;
-  env_asr* envHz;
+  env_asr* envFreq;
   env_asr* envRes;
+  //  fract32 envOffAmp; // offset 
+  //  fract32 envMulAmp; // multiplier
+  fract32 envOffFreq; // offset 
+  fract32 envMulFreq; // multiplier
+  fract32 envOffRes; // offset 
+  fract32 envMulRes; // multiplier
   lcprng* rngH;
   lcprng* rngL;
-} drum_voice_t;
+} drumsynVoice;
 
 //-------------------------
 //----- extern vars (initialized here)
@@ -68,26 +77,27 @@ u32 dbgCount = 0;
 #endif
 
 /// TEST: one voice
-drumsyn_voice* voice[1];
-
+drumsynVoice* voices[1];
 
 // pointer to local module data, initialize at top of SDRAM
 static drumsynData * data;
 //-- static allocation (SRAM) for variables that are small and/or frequently accessed:
-drumsyn_voice_t voice;
+//drumsynVoice voice;
+static fract32 frameVal;
+
 
 //-----------------------------
 //----- static functions
 
 // initialize voice
 void drumsyn_voice_init(void* mem) {
-  drum_voice_t* voice = (drumsyn_voice_t*)mem;
+  drumsynVoice* voice = (drumsynVoice*)mem;
 
   // envelopes
   voice->envAmp = (env_asr*)malloc(sizeof(env_asr));
   env_asr_init(voice->envAmp);
-  voice->envHz = (env_asr*)malloc(sizeof(env_asr));
-  env_asr_init(voice->envHz);
+  voice->envFreq = (env_asr*)malloc(sizeof(env_asr));
+  env_asr_init(voice->envFreq);
   voice->envRes = (env_asr*)malloc(sizeof(env_asr));
   env_asr_init(voice->envRes);
   // SVF
@@ -100,17 +110,17 @@ void drumsyn_voice_init(void* mem) {
   lcprng_reset(voice->rngL);
 }
 
-void drumsyn_voice_deinit(drumsyn_voice* voice) {
+void drumsyn_voice_deinit(drumsynVoice* voice) {
   free(voice->envAmp);
-  free(voice->envHz);
+  free(voice->envFreq);
   free(voice->envRes);
   free(voice->rngL);
   free(voice->rngH);
   free(voice->svf);
 }
-
 // next value of voice
-fract32 drumsyn_voice_next(drumsyn_voice_t* voice) {
+static fract32 drumsyn_voice_next(drumsynVoice* voice);
+fract32 drumsyn_voice_next(drumsynVoice* voice) {
   return filter_svf_next(voice->svf, 
 			 lcprng_next(voice->rngL) | ( lcprng_next(voice->rngH) << 16) );
 }
@@ -118,7 +128,7 @@ fract32 drumsyn_voice_next(drumsyn_voice_t* voice) {
 
 // frame calculation
 static void calc_frame(void) {
-  frameVal = drumsym_voice_next(voice[0]);
+  frameVal = drumsyn_voice_next(voices[0]);
 }
 
 //----------------------
@@ -128,10 +138,10 @@ void module_init(void) {
   // init module/param descriptor
 #ifdef ARCH_BFIN 
   // intialize local data at start of SDRAM
-  data = (drumsData * )SDRAM_ADDRESS;
+  data = (drumsynData * )SDRAM_ADDRESS;
   // initialize moduleData superclass for core routines
 #else
-  data = (drumsData*)malloc(sizeof(drumsData));
+  data = (drumsynData*)malloc(sizeof(drumsData));
   /// debugging output file
   dbgFile = fopen( "drums_dbg.txt", "w");
 #endif
@@ -143,72 +153,13 @@ void module_init(void) {
 }
 
 void module_deinit(void) {
-  drumsyn_voice_deinit(voice[0]);
+  drumsyn_voice_deinit(voices[0]);
 #if ARCH_LINUX 
   fclose(dbgFile);
 #endif
 }
 
 
-// set parameter by value (fix16)
-void module_set_param(u32 idx, pval v) {
-  switch(idx) {
-  case eParamGate:
-     env_asr_set_gate(ampEnv, v.s > 0);
-    break;
-  case eParamSvfHz :
-    filter_svf_set_hz(svf, v.fix);
-    break;
-  case eParamSvfRq :
-    filter_svf_set_rq(svf, FIX16_FRACT_TRUNC(v.fix));
-    break;
-  case eParamSvfLow :
-    filter_svf_set_low(svf, FIX16_FRACT_TRUNC(v.fix));
-    break;
-  case eParamSvfHigh :
-    filter_svf_set_high(svf, FIX16_FRACT_TRUNC(v.fix));
-    break;
-  case eParamSvfBand :
-    filter_svf_set_band(svf, FIX16_FRACT_TRUNC(v.fix));
-    break;
-  case eParamSvfNotch :
-    filter_svf_set_notch(svf, FIX16_FRACT_TRUNC(v.fix));
-    break;
-  case eParamSvfPeak :
-    filter_svf_set_peak(svf, FIX16_FRACT_TRUNC(v.fix));
-    break;
-  case eParamNoiseAmp :
-    noiseAmp = FIX16_FRACT_TRUNC(v.fix);
-    break;
-  case eParamInAmp0 :
-    inAmp0 = FIX16_FRACT_TRUNC(v.fix);
-    break;
-  case eParamInAmp1 :
-    inAmp0 = FIX16_FRACT_TRUNC(v.fix);
-    break;
-  case eParamInAmp2 :
-    inAmp0 = FIX16_FRACT_TRUNC(v.fix);
-    break;
-  case eParamInAmp3 :
-    inAmp0 = FIX16_FRACT_TRUNC(v.fix);
-    break;
-  case eParamAtkDur:
-    env_asr_set_atk_dur(ampEnv, sec_to_frames_trunc(v.fix));
-    break;
-  case eParamRelDur:
-    env_asr_set_rel_dur(ampEnv, sec_to_frames_trunc(v.fix));
-    break;
-  case eParamAtkCurve:
-    env_asr_set_atk_shape(ampEnv, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
-    break;
-  case eParamRelCurve:
-    env_asr_set_atk_shape(ampEnv, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
-    break;
-
-  default:
-    break;
-  }
-}
 
 // get number of parameters
 extern u32 module_get_num_params(void) {
