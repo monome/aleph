@@ -14,8 +14,6 @@ static swTimer_t screenTimer;
 //static swTimer_t monomePollTimer;
 // refresh monome device 
 //static swTimer_t monomeRefreshTimer;
-// poll monome device 
-//static swTimer_t monomePollTimer;
 // poll midi device
 //static swTimer_t midiPollTimer;
 

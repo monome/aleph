@@ -118,7 +118,7 @@ void render_init(void) {
     region_alloc((region*)allRegions[i]);
   }
 
-  screen_clear();
+  //  screen_clear();
 
 }
 

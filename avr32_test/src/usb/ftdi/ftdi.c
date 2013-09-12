@@ -50,6 +50,8 @@ static void ftdi_rx_done(  usb_add_t add,
   /* print_dbg(" 0x"); */
   /* print_dbg_hex(rxBuf[1]); */			    
   if(rxBytes) {
+    //    print_dbg("\r\n ftdi read bytes: ");
+    //    print_dbg_ulong(rxBytes);
     // check for monome events
     //    if(monome_read_serial != NULL) { 
       (*monome_read_serial)(); 

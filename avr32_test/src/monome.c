@@ -60,7 +60,10 @@ typedef struct e_monomeDesc {
 
 
 //// dummy functions
-static void read_serial_dummy(void) { return; }
+static void read_serial_dummy(void) {
+  print_dbg("\r\n monome dummy handler");
+  //  return; 
+}
 
 //-------------------------------------
 //------ extern variables
@@ -513,14 +516,24 @@ static void read_serial_40h(void) {
 static void read_serial_series(void) {
   u8* prx = ftdi_rx_buf();
   u8 i;
+
+  //// FIXME:
+  // if i comment these print statements out, at 20ms ftdi throsws rx errors.
+  // sort of ridiculous and i can't quite figure it out..
+  /// the chip needs some time to elapse before events from here are handled?
+  /// (triggering LED refresh?)
+  // but in that case why is it an rx error and not tx?
+  /// arg
+
+  print_dbg(  "\r\n read_serial_series ... ");
   rxBytes = ftdi_rx_bytes();
-  /* print_dbg("\r\n read_serial_series, byte count: "); */
-  /* print_dbg_ulong(rxBytes); */
-  /* print_dbg(" ; data : [ 0x"); */
-  /* print_dbg_hex(prx[0]); */
-  /* print_dbg(" , 0x"); */
-  /* print_dbg_hex(prx[1]); */
-  /* print_dbg(" ]");   */
+  print_dbg(" ... byte count: ");
+  print_dbg_ulong(rxBytes);
+  print_dbg(" ; data : [ 0x");
+  print_dbg_hex(prx[0]);
+  print_dbg(" , 0x");
+  print_dbg_hex(prx[1]);
+  print_dbg(" ]");
   i = 0;
   while(i < rxBytes) {
     // FIXME: can we expect other event types? (besides press/lift)

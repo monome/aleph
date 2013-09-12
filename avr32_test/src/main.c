@@ -80,6 +80,14 @@ static void init_avr32(void);
 static void init_ctl(void);
 static void check_events(void);
 
+static void handle_monome_grid_key(u32 data) {
+  u8 x, y, z;
+  /// FIXME: this stuff should really be abstracted
+  monome_grid_key_parse_event_data(data, &x, &y, &z);
+  monomeLedBuffer[x | (y << 4)] = z;
+  monome_calc_quadrant_flag(x, y);
+
+}
 //=================================================
 //==== definitons
 
@@ -246,69 +254,75 @@ static void check_events(void) {
       case kEventMidiDisconnect :
 	break;
       case  kEventEncoder0 :
-	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventEncoder0");
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventEncoder0");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
 	break;
       case  kEventEncoder1 :
-	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventEncoder1");
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventEncoder1");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
 	break;
       case  kEventEncoder2  :
-	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventEncoder2");
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventEncoder2");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
 	break;
       case  kEventEncoder3  :
-	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventEncoder3");
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventEncoder3");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
 	break;
       case  kEventSwitch0 : // fn
-	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch0");
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch0");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
 	break;
       case  kEventSwitch1 :
-	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch1");
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch1");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
 	break;
       case  kEventSwitch2 :
-	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch2");
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch2");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
 	break;
       case  kEventSwitch3 :
-	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch3");
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch3");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
 	break;
       case  kEventSwitch4 : // mode
-	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch4");
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch4");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
 	break;
       case  kEventSwitch5 : // power
-	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch5");
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch5");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
 	break;
       case  kEventSwitch6 :  // foot
-	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch6");
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch6");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
 	break;
       case  kEventSwitch7 : 
-	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch7");
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch7");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
 	break;
       case  kEventAdc0 : 
-	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventAdc0");
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventAdc0");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
 	break;
       case  kEventAdc1 : 
-	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventAdc1");
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventAdc1");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
 	break;
       case  kEventAdc2 : 
-	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventAdc2");
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventAdc2");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
 	break;
       case  kEventAdc3 : 
-	print_dbg("\r\n (0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventAdc3");
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventAdc3");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
 	break;
+      case kEventMonomeGridKey:
+	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventMonomeGridKey");
+	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	handle_monome_grid_key((u32)e.eventData);
+	break;
+
 
       default:
 	//  	(*appEventHandler)(&e);
@@ -350,21 +364,21 @@ int main (void) {
     print_dbg("\r\nfound SD card. ");
 
 
-  // intialize the FAT filesystem
+    // intialize the FAT filesystem
     print_dbg("\r\n init fat");
     fat_init();
     // setup control logic
     print_dbg("\r\n init ctl");
     init_ctl();
   
-  /* // initialize the application */
-  /* app_init(); */
-  /* print_dbg("\r\n init app"); */
+    /* // initialize the application */
+    /* app_init(); */
+    /* print_dbg("\r\n init app"); */
 
-   // initialize flash:
-  firstrun = init_flash();
-  print_dbg("r\n init flash, firstrun: ");
-  print_dbg_ulong(firstrun);
+    // initialize flash:
+    firstrun = init_flash();
+    print_dbg("r\n init flash, firstrun: ");
+    print_dbg_ulong(firstrun);
 
     screen_startup();
 
@@ -372,12 +386,12 @@ int main (void) {
     files_search_dsp();
 
 
-  print_dbg("\r\n starting event loop.\r\n");
+    print_dbg("\r\n starting event loop.\r\n");
 
-  // dont do startup
-  startup = 0;
+    // dont do startup
+    startup = 0;
 
-  while(1) {
-    check_events();
-  }
+    while(1) {
+      check_events();
+    }
 }

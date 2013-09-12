@@ -30,7 +30,6 @@
 #include "sys_timers.h"
 
 
-
 //----- static variables
 
 //--- timers
@@ -43,12 +42,10 @@ static swTimer_t encTimer;
 //static swTimer_t swTimer;
 // poll ADC
 static swTimer_t adcTimer;
-/* // poll monome device  */
-/* static swTimer_t monomePollTimer; */
-/* // refresh monome device  */
-/* static swTimer_t monomeRefreshTimer; */
-/* // poll monome device  */
-/* static swTimer_t monomePollTimer; */
+// poll monome device
+static swTimer_t monomePollTimer;
+// refresh monome device
+static swTimer_t monomeRefreshTimer;
 /* // poll midi device */
 /* static swTimer_t midiPollTimer; */
 // refresh midi device
@@ -95,9 +92,33 @@ static void param_change_timer_callback(int tag) {
 }
 
 
+
+// monome polling callback
+static void monome_poll_timer_callback(int tag) {
+  if (monomeConnect > 0) {
+    // start an ftdi transfer, callback handles event posting
+    ftdi_read();
+  }
+}
+
+//monome refresh callback
+static void monome_refresh_timer_callback(int tag) {
+  if (monomeConnect) {
+    //    print_dbg("\r\n posting monome refresh event");
+    if(monomeFrameDirty > 0) {
+      e.eventType = kEventMonomeRefresh;
+      post_event(&e);
+    }
+  }
+}
+
+
 //====== external
 void init_sys_timers(void) {
   set_timer(&encTimer,           eEncTimerTag,           20,  &enc_timer_callback,    1);
   set_timer(&adcTimer,           eAdcTimerTag,           20,  &adc_timer_callback,    1);
+  set_timer(&monomePollTimer,    eMonomePollTimerTag,      20,  &monome_poll_timer_callback, 1);
+  //  set_timer(&monomePollTimer,    eMonomePollTimerTag,      5,  &monome_poll_timer_callback, 1);
+  set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 20,  &monome_refresh_timer_callback, 1);
   set_timer(&paramChangeTimer,   eParamChangeTimerTag,      1,  &param_change_timer_callback, 1);
 }

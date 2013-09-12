@@ -54,13 +54,24 @@ static s32 table_look(table* tab, u32 in) {
 // fill deltas (values already filled)
 static void table_calc_deltas(table* tab) {
   u32 i;
+  s32 sdif;
+  double fdif;
   double f;
-  for(i=0; i < (TABLE_SIZE - 1); i++) {
+  for(i=0; i < (TABLE_SIZE_1); i++) {
+    sdif = tab->data[i+1] - tab->data[i];
+    print_dbg("\r\n 0x");
+    print_dbg_hex((u32)tab->data[i+1]);
+    print_dbg(" - 0x");
+    print_dbg_hex((u32)tab->data[i]);
+    print_dbg(" = 0x");
+    print_dbg_hex((u32)sdif);
     f = (double)(tab->data[i+1] - tab->data[i]) / (double)TABLE_MASK;
+
     tab->delta[i] = (s32)f;
     print_dbg("\r\n delta: 0x");
     print_dbg_hex( tab->delta[i] );
   }
+  tab->delta[TABLE_SIZE_1] = tab->delta[TABLE_SIZE_1 - 1];
 }
 
 //----------------------------------------

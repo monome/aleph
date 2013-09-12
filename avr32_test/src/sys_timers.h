@@ -7,6 +7,8 @@
 enum { 
   eEncTimerTag,
   eAdcTimerTag,
+  eMonomePollTimerTag,
+  eMonomeRefreshTimerTag,
   eParamChangeTimerTag,
   eNumSysTimers
 };
