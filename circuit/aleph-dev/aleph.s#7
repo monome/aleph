@@ -2066,8 +2066,8 @@ shrink quad flat pack, square</description>
 <pad name="4" x="1" y="-11" drill="0.8" shape="octagon"/>
 <pad name="5" x="3" y="-11" drill="0.8" shape="octagon"/>
 <pad name="6" x="5" y="-11" drill="0.8" shape="octagon"/>
-<pad name="M1" x="-5.5" y="0" drill="2.2" shape="octagon"/>
-<pad name="M2" x="5.5" y="0" drill="2.2" shape="octagon"/>
+<pad name="M1" x="-5.842" y="0" drill="2.2" shape="octagon"/>
+<pad name="M2" x="5.842" y="0" drill="2.2" shape="octagon"/>
 <text x="-7" y="8" size="1.27" layer="25">&gt;NAME</text>
 <text x="-7" y="-14" size="1.27" layer="27">&gt;VALUE</text>
 </package>

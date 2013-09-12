@@ -19015,7 +19015,6 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="R57" library="rc-master-smd" deviceset="R_" device="0603" value="270"/>
 <part name="R58" library="rc-master-smd" deviceset="R_" device="0603" value="270"/>
 <part name="AGND75" library="supply" deviceset="AGND" device=""/>
-<part name="AGND80" library="supply" deviceset="AGND" device=""/>
 <part name="AGND81" library="supply" deviceset="AGND" device=""/>
 <part name="V89" library="supply" deviceset="+5VA" device=""/>
 <part name="P5" library="monome-inc" deviceset="EVJ-POT" device=""/>
@@ -19049,7 +19048,6 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="R59" library="rc-master-smd" deviceset="R_" device="0603" value="270"/>
 <part name="R60" library="rc-master-smd" deviceset="R_" device="0603" value="270"/>
 <part name="AGND86" library="supply" deviceset="AGND" device=""/>
-<part name="AGND87" library="supply" deviceset="AGND" device=""/>
 <part name="AGND88" library="supply" deviceset="AGND" device=""/>
 <part name="V93" library="supply" deviceset="+5VA" device=""/>
 <part name="LED3" library="led" deviceset="LED" device="CHIPLED_0805"/>
@@ -19075,6 +19073,8 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <part name="C229" library="rc-master-smd" deviceset="CP_" device="7343-43" value="100u"/>
 <part name="IC14" library="analog-devices" deviceset="AD8607" device="R" value="AD8606"/>
 <part name="IC15" library="analog-devices" deviceset="AD8607" device="R" value="AD8606"/>
+<part name="V88" library="supply" deviceset="+5VA" device=""/>
+<part name="V92" library="supply" deviceset="+5VA" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -28824,7 +28824,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <instance part="V87" gate="G$1" x="204.47" y="114.3"/>
 <instance part="P4" gate="G$1" x="72.39" y="96.52" rot="MR0"/>
 <instance part="LED4" gate="G$1" x="111.76" y="22.86"/>
-<instance part="LED5" gate="G$1" x="138.43" y="22.86"/>
+<instance part="LED5" gate="G$1" x="138.43" y="59.69"/>
 <instance part="C59" gate="G$1" x="123.19" y="102.87" rot="R180"/>
 <instance part="D8" gate="G$1" x="72.39" y="39.37"/>
 <instance part="D11" gate="G$1" x="55.88" y="55.88"/>
@@ -28840,9 +28840,8 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <instance part="AGND74" gate="VR1" x="92.71" y="22.86"/>
 <instance part="C91" gate="G$1" x="153.67" y="41.91" rot="R90"/>
 <instance part="R57" gate="G$1" x="111.76" y="33.02" rot="R270"/>
-<instance part="R58" gate="G$1" x="138.43" y="33.02" rot="R270"/>
+<instance part="R58" gate="G$1" x="138.43" y="48.26" rot="R90"/>
 <instance part="AGND75" gate="VR1" x="111.76" y="13.97"/>
-<instance part="AGND80" gate="VR1" x="138.43" y="13.97"/>
 <instance part="AGND81" gate="VR1" x="125.73" y="50.8"/>
 <instance part="V89" gate="G$1" x="100.33" y="58.42"/>
 <instance part="IC7" gate="A" x="52.07" y="251.46" rot="MR180"/>
@@ -28860,7 +28859,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <instance part="V90" gate="G$1" x="204.47" y="248.92"/>
 <instance part="P5" gate="G$1" x="72.39" y="231.14" rot="MR0"/>
 <instance part="LED6" gate="G$1" x="111.76" y="157.48"/>
-<instance part="LED7" gate="G$1" x="138.43" y="157.48"/>
+<instance part="LED7" gate="G$1" x="138.43" y="194.31"/>
 <instance part="C60" gate="G$1" x="123.19" y="237.49" rot="R180"/>
 <instance part="D9" gate="G$1" x="72.39" y="173.99"/>
 <instance part="D12" gate="G$1" x="55.88" y="190.5"/>
@@ -28876,9 +28875,8 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <instance part="AGND85" gate="VR1" x="92.71" y="157.48"/>
 <instance part="C92" gate="G$1" x="153.67" y="176.53" rot="R90"/>
 <instance part="R59" gate="G$1" x="111.76" y="167.64" rot="R270"/>
-<instance part="R60" gate="G$1" x="138.43" y="167.64" rot="R270"/>
+<instance part="R60" gate="G$1" x="138.43" y="182.88" rot="R90"/>
 <instance part="AGND86" gate="VR1" x="111.76" y="148.59"/>
-<instance part="AGND87" gate="VR1" x="138.43" y="148.59"/>
 <instance part="AGND88" gate="VR1" x="125.73" y="185.42"/>
 <instance part="V93" gate="G$1" x="100.33" y="193.04"/>
 <instance part="IC14" gate="A" x="54.61" y="173.99" rot="MR180"/>
@@ -28887,6 +28885,8 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <instance part="IC15" gate="A" x="54.61" y="39.37" rot="MR180"/>
 <instance part="IC15" gate="B" x="121.92" y="41.91"/>
 <instance part="IC15" gate="P" x="160.02" y="41.91"/>
+<instance part="V88" gate="G$1" x="138.43" y="200.66"/>
+<instance part="V92" gate="G$1" x="138.43" y="66.04"/>
 </instances>
 <busses>
 </busses>
@@ -29054,11 +29054,6 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="111.76" y1="16.51" x2="111.76" y2="17.78" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="AGND80" gate="VR1" pin="AGND"/>
-<pinref part="LED5" gate="G$1" pin="C"/>
-<wire x1="138.43" y1="16.51" x2="138.43" y2="17.78" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="R123" gate="G$1" pin="2"/>
 <pinref part="AGND81" gate="VR1" pin="AGND"/>
 <wire x1="124.46" y1="54.61" x2="125.73" y2="54.61" width="0.1524" layer="91"/>
@@ -29102,11 +29097,6 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <pinref part="AGND86" gate="VR1" pin="AGND"/>
 <pinref part="LED6" gate="G$1" pin="C"/>
 <wire x1="111.76" y1="151.13" x2="111.76" y2="152.4" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="AGND87" gate="VR1" pin="AGND"/>
-<pinref part="LED7" gate="G$1" pin="C"/>
-<wire x1="138.43" y1="151.13" x2="138.43" y2="152.4" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="R125" gate="G$1" pin="2"/>
@@ -29212,6 +29202,11 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <pinref part="V93" gate="G$1" pin="+5VA"/>
 <wire x1="101.6" y1="189.23" x2="100.33" y2="189.23" width="0.1524" layer="91"/>
 <wire x1="100.33" y1="189.23" x2="100.33" y2="190.5" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="LED7" gate="G$1" pin="A"/>
+<pinref part="V88" gate="G$1" pin="+5VA"/>
+<wire x1="138.43" y1="196.85" x2="138.43" y2="198.12" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$165" class="0">
@@ -29348,18 +29343,11 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="111.76" y1="25.4" x2="111.76" y2="27.94" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$174" class="0">
-<segment>
-<pinref part="LED5" gate="G$1" pin="A"/>
-<pinref part="R58" gate="G$1" pin="2"/>
-<wire x1="138.43" y1="25.4" x2="138.43" y2="27.94" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="N$178" class="0">
 <segment>
 <pinref part="R58" gate="G$1" pin="1"/>
 <wire x1="132.08" y1="41.91" x2="138.43" y2="41.91" width="0.1524" layer="91"/>
-<wire x1="138.43" y1="41.91" x2="138.43" y2="38.1" width="0.1524" layer="91"/>
+<wire x1="138.43" y1="41.91" x2="138.43" y2="43.18" width="0.1524" layer="91"/>
 <pinref part="IC15" gate="B" pin="OUT"/>
 </segment>
 </net>
@@ -29466,18 +29454,11 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="111.76" y1="160.02" x2="111.76" y2="162.56" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$189" class="0">
-<segment>
-<pinref part="LED7" gate="G$1" pin="A"/>
-<pinref part="R60" gate="G$1" pin="2"/>
-<wire x1="138.43" y1="160.02" x2="138.43" y2="162.56" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="N$190" class="0">
 <segment>
 <pinref part="R60" gate="G$1" pin="1"/>
 <wire x1="132.08" y1="176.53" x2="138.43" y2="176.53" width="0.1524" layer="91"/>
-<wire x1="138.43" y1="176.53" x2="138.43" y2="172.72" width="0.1524" layer="91"/>
+<wire x1="138.43" y1="176.53" x2="138.43" y2="177.8" width="0.1524" layer="91"/>
 <pinref part="IC14" gate="B" pin="OUT"/>
 </segment>
 </net>
@@ -29525,6 +29506,13 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="146.05" y1="113.03" x2="151.13" y2="113.03" width="0.1524" layer="91"/>
 <junction x="146.05" y="113.03"/>
 <label x="152.4" y="113.03" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="N$164" class="0">
+<segment>
+<pinref part="R60" gate="G$1" pin="2"/>
+<pinref part="LED7" gate="G$1" pin="C"/>
+<wire x1="138.43" y1="187.96" x2="138.43" y2="189.23" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>

@@ -23,7 +23,7 @@
 <layer number="13" name="Route13" color="4" fill="5" visible="no" active="no"/>
 <layer number="14" name="Route14" color="1" fill="6" visible="no" active="no"/>
 <layer number="15" name="Route15" color="4" fill="6" visible="no" active="no"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="yes"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="yes"/>
@@ -13453,7 +13453,7 @@ design rules under a new name.</description>
 <via x="127" y="75.2475" extent="1-16" drill="0.381"/>
 <wire x1="127" y1="75.2475" x2="127" y2="74.295" width="0.2032" layer="16"/>
 </signal>
-<signal name="N$14">
+<signal name="U-MISO">
 <contactref element="P1" pad="2"/>
 <contactref element="U6" pad="11"/>
 <wire x1="106.68" y1="81.915" x2="106.68" y2="83.185" width="0.2032" layer="1"/>
@@ -13462,7 +13462,7 @@ design rules under a new name.</description>
 <wire x1="116.12" y1="78.55" x2="110.045" y2="78.55" width="0.2032" layer="1"/>
 <wire x1="110.045" y1="78.55" x2="106.68" y2="81.915" width="0.2032" layer="1"/>
 </signal>
-<signal name="N$120">
+<signal name="U-MOSI">
 <contactref element="P1" pad="3"/>
 <contactref element="U6" pad="10"/>
 <wire x1="97.79" y1="93.98" x2="99.06" y2="92.71" width="0.2032" layer="1"/>
@@ -13472,7 +13472,7 @@ design rules under a new name.</description>
 <wire x1="116.12" y1="79.35" x2="109.88" y2="79.35" width="0.2032" layer="1"/>
 <wire x1="109.88" y1="79.35" x2="107.315" y2="81.915" width="0.2032" layer="1"/>
 </signal>
-<signal name="N$121">
+<signal name="U-SCK">
 <contactref element="P1" pad="4"/>
 <contactref element="U6" pad="9"/>
 <wire x1="116.12" y1="80.15" x2="109.715" y2="80.15" width="0.2032" layer="1"/>

@@ -21357,21 +21357,21 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="U6" gate="G$1" pin="PD5(XCK/CTS)"/>
 </segment>
 </net>
-<net name="N$14" class="0">
+<net name="U-MISO" class="0">
 <segment>
 <pinref part="P1" gate="G$1" pin="2"/>
 <wire x1="111.76" y1="66.04" x2="121.92" y2="66.04" width="0.1524" layer="91"/>
 <pinref part="U6" gate="G$1" pin="PB3(PDO/MISO)"/>
 </segment>
 </net>
-<net name="N$120" class="0">
+<net name="U-MOSI" class="0">
 <segment>
 <pinref part="P1" gate="G$1" pin="3"/>
 <wire x1="121.92" y1="63.5" x2="111.76" y2="63.5" width="0.1524" layer="91"/>
 <pinref part="U6" gate="G$1" pin="PB2(PDI/MOSI)"/>
 </segment>
 </net>
-<net name="N$121" class="0">
+<net name="U-SCK" class="0">
 <segment>
 <pinref part="P1" gate="G$1" pin="4"/>
 <wire x1="111.76" y1="60.96" x2="121.92" y2="60.96" width="0.1524" layer="91"/>
