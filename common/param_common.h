@@ -8,7 +8,6 @@
 #ifndef _ALEPH_COMMON_PARAM_H_
 #define _ALEPH_COMMON_PARAM_H_
 
-
 #include "fix.h"
 #include "types.h"
 
@@ -40,7 +39,7 @@ typedef union __attribute__((__packed__)) {
   u16 asShort[2];
 } ParamValue;
 
-// simpler for internals
+// a simpler form for internal use
 typedef union { u32 u; s32 s; fix16 fix; fract32 fr; } pval;
 
 // parameter descriptor
@@ -49,12 +48,12 @@ typedef struct __attribute__((__packed__)) ParamDescStruct {
   char label[PARAM_LABEL_LEN];
   // parameter unit name
   char unit[PARAM_UNIT_LEN];
-  // type (FIXME: unused for now?)
+  // type
   u8 type;
   // range
   fix16 min;
   fix16 max;
-  // other stuff? curve? scaling table?
+  // other stuff? id for mapping? (hz, pole, db, rate, etc?)
 } ParamDesc;
 
 // parameter data

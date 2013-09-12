@@ -51,6 +51,7 @@ typedef struct _ctlEvent {
 
 
 // add param change to buffer
+/// FIXME: uh will this work for params < 0 ?
 extern u8 ctl_param_change(u32 param, u32 value);
 // execute the last param change
 extern void ctl_perform_last_change(void);

@@ -52,13 +52,13 @@
 #define TABLE_MASK 	63
 
 // freq range (in note numbers)
-const double noteMin = 19;  	// ~ 23.5 hz
-const double noteMax = 116; 	// ~ 6.64 khz
-// fix representation
-fix16 noteMin_fix;
-fix16 noteMax_fix;
-fix16 noteSpan_fix;
+static const double noteMin = 19;  	// ~ 23.5 hz
+static const double noteMax = 116; 	// ~ 6.64 khz
 
+//static // fix representation
+static fix16 noteMin_fix;
+static fix16 noteMax_fix;
+static fix16 noteSpan_fix;
 
 //------------------------------
 //---- types and variables
@@ -185,6 +185,7 @@ static void table_test_fix(table* tab) {
   s32 last = 0x80000000;
   char strbuf[11] = "           ";
   strbuf[10] = 0;
+  print_dbg("\r\n testing table lookup... ");
   for(i=0; i<=IN_MAX; i++) {
     v = table_look(tab, i);
     if (v == last) {
@@ -196,11 +197,11 @@ static void table_test_fix(table* tab) {
       dec++;
       last = v;
     }
-    print_dbg("\r\n ( 0x");
-    print_dbg_hex(i);
-    print_dbg(" ) : ");
-    print_fix16(strbuf, (fix16)v);
-    print_dbg(strbuf);
+    /* print_dbg("\r\n ( 0x"); */
+    /* print_dbg_hex(i); */
+    /* print_dbg(" ) : "); */
+    /* print_fix16(strbuf, (fix16)v); */
+    /* print_dbg(strbuf); */
   }
   print_dbg("\r\n tested ");
   print_dbg_ulong(i - 1);

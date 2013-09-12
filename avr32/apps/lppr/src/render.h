@@ -24,6 +24,9 @@ void render_startup(void);
 // draw switch-on
  extern void render_sw_on(u8 sw, u8 on);
 
+// draw delay time
+extern void render_delay_time(u8 id, u32 ms, u32 samps);
+
 /* // render milliseconds */
 /* extern void render_ms(u8 x, u8 y, u32 ms); */
 

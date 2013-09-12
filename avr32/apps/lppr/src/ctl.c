@@ -13,6 +13,7 @@
 #include "param_common.h"
 // lppr
 #include "ctl.h"
+#include "render.h"
 #include "util.h"
 
 //----------------------------------------
@@ -27,8 +28,21 @@ static u8 loopRec1 = 0;
 
 //-- parameter values
 // inputs. use s32 type but unsigned range (accumulators)
-static s32 in_fb0;
-static s32 in_fb1;
+s32 in_fb0 = 0;
+s32 in_fb1 = 0;
+s32 in_cutoff0 = 0;
+s32 in_cutoff1 = 0;
+s32 in_res0 = 0;
+s32 in_res1 = 0;
+
+/// help!
+static inline s32 fr32_from_float(float x) {
+  if(x > 0.f) {
+    return (s32)((double)x * (double)0x7fffffff);
+  } else {
+    return (s32)((double)(x * -1.f) * (double)0x80000000);
+  }
+}
 
 
 //-------------------------------------
@@ -86,16 +100,16 @@ void ctl_init_params(void) {
   ctl_param_change(eParam_mix0, 0);
   ctl_param_change(eParam_mix1, 0);
   // half dry
-  ctl_param_change(eParam_adc0_dac0, fix16_from_float(0.5) );
+  ctl_param_change(eParam_adc0_dac0, fr32_from_float(0.5) );
   // half wet
-  ctl_param_change(eParam_del0_dac0, fix16_from_float(0.5) );
-  ctl_param_change(eParam_del1_dac0, fix16_from_float(0.5) );
+  ctl_param_change(eParam_del0_dac0, fr32_from_float(0.5) );
+  ctl_param_change(eParam_del1_dac0, fr32_from_float(0.5) );
   // adc0 -> del0
-  ctl_param_change(eParam_adc0_del0, fix16_from_float(0.99));
+  ctl_param_change(eParam_adc0_del0, fr32_from_float(0.99));
   // adc0 -> del1
-  ctl_param_change(eParam_adc0_del1, fix16_from_float(0.99));
+  ctl_param_change(eParam_adc0_del1, fr32_from_float(0.99));
   // del0 -> del1
-  ctl_param_change(eParam_del0_del1, fix16_from_float(0.99));				    
+  ctl_param_change(eParam_del0_del1, fr32_from_float(0.99));				    
   // slight feedback on del0 
   ctl_param_change(eParam_del0_del0, fix16_one >> 2);
   // set write flags
@@ -123,7 +137,7 @@ void  ctl_set_delay_ms(u8 idx, u32 ms)  {
   switch(idx) {
   case 0:
     ctl_param_change(eParam_delay0, samps);
-    render_time(0, ms, samps);
+    render_delay_time(0, ms, samps);
     break;
   case 1:    
     if(loopPlay1) {
@@ -140,7 +154,7 @@ void  ctl_set_delay_ms(u8 idx, u32 ms)  {
     }
     print_dbg("\r\n sync write/read heads");
     ctl_param_change(eParam_delay1, samps);    
-    render_time(1, ms, samps);
+    render_delay_time(1, ms, samps);
 
     break;
   default:
@@ -187,11 +201,13 @@ void ctl_loop_playback(u8 idx) {
   if(loopRec1) {
     // recording
     if(loopPlay1) {
+
       // already playing
       print_dbg("\r\n (existing loop)");
       print_dbg("\r\n write disable");
       ctl_param_change(eParam_write1, 0);
     } else {
+
       // not playing
       print_dbg("\r\n (new loop)"); 
       if (ms_loop1 > tcTicks) { // overflow
@@ -200,6 +216,7 @@ void ctl_loop_playback(u8 idx) {
 	ms = tcTicks - ms_loop1;
       }
       samps = MS_TO_SAMPS(ms) - 1;
+
       print_dbg("\r\n write disable");
       ctl_param_change(eParam_write1, 0);
       print_dbg("\r\n reset write head");
@@ -210,6 +227,7 @@ void ctl_loop_playback(u8 idx) {
       ctl_param_change(eParam_loop1, samps);
       print_dbg("\r\n start read head");
       ctl_param_change(eParam_run_read1, 1);
+
       // set loop-playing flag
       loopPlay1 = 1;
     }

@@ -1,5 +1,15 @@
+
 #ifndef _ALEPH_APP_LPPR_CTL_H_
 #define _ALEPH_APP_LPPR_CTL_H_
+
+//-- knob/cv -settable parameter values
+// inputs. use s32 type but unsigned range (accumulators)
+s32 in_fb0;
+s32 in_fb1;
+s32 in_cutoff0;
+s32 in_cutoff1;
+s32 in_res0;
+s32 in_res1;
 
 // query the DSP for parameter descriptors. 
 // return 0 if something seems wrong, 1 otherwise

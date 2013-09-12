@@ -28,6 +28,6 @@ extern fix16 input_note(u32 in);
 // get hz
 extern fix16 input_hz(u32 in);
 // get svf coefficient
-extern fract32 input_svf_coeff(u32 in);
+extern fract32 input_freq(u32 in);
 
 #endif

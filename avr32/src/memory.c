@@ -53,16 +53,18 @@ heap_t alloc_mem(u32 bytes) {
   print_dbg("\r\n location: 0x");
   print_dbg_hex(heapOffset);
 
+  heap_t ret = pHeapStart + heapOffset;
+
   u32 tmp = heapOffset + bytes;
   u8 mtmp = tmp % 4;
-  heap_t ret;
+
   // align to 4 bytes
   if ( mtmp != 0) {
     tmp += ( 4 - mtmp );
   }
   if (tmp < heapSize) {
     heapOffset = tmp;
-    ret = pHeapStart + heapOffset;
+    //    ret = pHeapStart + heapOffset;
   } else {
     ret = (heap_t)ALLOC_FAIL;
   }
