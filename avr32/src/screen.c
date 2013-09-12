@@ -150,6 +150,7 @@ extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
   x >>= 1;
   nb = w * h;
 
+  print_dbg("\r\n screen_draw_region: ");
   print_dbg("\r\n bytes in row: ");
   print_dbg_ulong(w);
 
@@ -203,6 +204,7 @@ void screen_startup(void) {
     screenBuf[i] = 0x22;
   }
 
+  print_dbg("\r\n screen_startup");
 
   // net art: draw glyphs to screen buf directly,
   // should be stretched out and upside down

@@ -260,8 +260,11 @@ int main (void) {
   print_dbg("r\n init flash, firstrun: ");
   print_dbg_ulong(firstrun);
 
+  delay_ms(100);
   // notify 
   screen_startup();
+
+  delay_ms(100);
 
   print_dbg("\r\n starting event loop.\r\n");
 

@@ -326,7 +326,7 @@ int main (void) {
   // set up avr32 hardware and peripherals
   init_avr32();
 
-
+ 
   print_dbg("\r\n SRAM size: 0x");
   print_dbg_hex(smc_get_cs_size(1));
 
