@@ -69,10 +69,10 @@ static fix16 scale_knob_value(const s32 v) {
   s32 vabs = BIT_ABS(v);
   //  print_dbg("\r\n knob acc, val: ");
   //  print_dbg_hex((u32)v);
-  if(vabs == 1) {
+  if(vabs < 4) {
     //    print_dbg("\r\n ");
     return v;
-  } else if (vabs < 4) {
+  } else if (vabs < 8) {
     //    print_dbg("\r\n knob acc 1");
     return v << 2;
   } else if (vabs < 12) {

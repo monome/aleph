@@ -47,6 +47,38 @@ static u32 sw_time(u8 num, u8 val) {
 static void sw_tap_delay(u8 idx, u8 val) {
   ctl_set_delay_ms(idx,  sw_time(idx, val) );
 }
+//--------------------------
+//--- static func def
+
+// return param increment given encoder ticks (knob acceleration)
+static fix16 scale_knob_value(const s32 v) {
+  s32 vabs = BIT_ABS(v);
+  //  print_dbg("\r\n knob acc, val: ");
+  //  print_dbg_hex((u32)v);
+  if(vabs < 4) {
+    //    print_dbg("\r\n ");
+    return v;
+  } else if (vabs < 8) {
+    //    print_dbg("\r\n knob acc 1");
+    return v << 2;
+  } else if (vabs < 12) {
+    //    print_dbg("\r\n knob acc 2");
+    return v << 4;
+  } else if (vabs < 19) {
+    //    print_dbg("\r\n knob acc 3");
+    return v << 5;
+  } else if (vabs < 25) {
+    //    print_dbg("\r\n knob acc 4");
+    return v << 6;  } 
+  else if (vabs < 32) {
+    //    print_dbg("\r\n knob acc 4");
+    return v << 6;
+  } else {
+    //    print_dbg("\r\n knob acc max");
+    return v << 12;
+  }
+}
+
 
 //---------------------------------------
 //---- external funcs
@@ -123,28 +155,28 @@ extern void lppr_handler(event_t* ev) {
     if(touchedThis) {
       render_touched_fb(0);
     }
-    ctl_inc_fb(0, ev->eventData);
+    ctl_inc_fb(0, scale_knob_value(ev->eventData));
     break;
 
   case kEventEncoder1:
     if(touchedThis) {
       render_touched_mix(0);
     }
-    ctl_inc_mix(0, ev->eventData);
+    ctl_inc_mix(0, scale_knob_value(ev->eventData));
     break;
 
   case kEventEncoder2:
     if(touchedThis) {
       render_touched_freq(0);
     }
-    ctl_inc_freq(0, ev->eventData);
+    ctl_inc_freq(0, scale_knob_value(ev->eventData));
     break;
 
   case kEventEncoder3:
     if(touchedThis) {
       render_touched_res(0);
     }
-    ctl_inc_res(0, ev->eventData);
+    ctl_inc_res(0, scale_knob_value(ev->eventData));
     break;
 
   default:
