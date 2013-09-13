@@ -15,7 +15,6 @@
 
 #include "params.h"
 
-// enumerate parameters
 enum {
   eParam_ampAtk,
   eParam_ampSus,
@@ -37,7 +36,8 @@ enum {
   eParam_svfHigh,
   eParam_svfBand,
 
-}
+};
+
 
 #define NUM_PARAMS eParamNumParams
 

@@ -2,9 +2,77 @@
 #include "module.h"
 #include "params.h" 
 
+// set parameter by value (fix16)
+void module_set_param(u32 idx, pval v) {
+
+#if 0
+
+  switch(idx) {
+  case eParamGate:
+    env_asr_set_gate(&(voice[0].ampEnv), v.s > 0);
+    break;
+  case eParamSvfHz :
+    filter_svf_set_hz(&(voice[0].svf), v.fix);
+    break;
+  case eParamSvfRq :
+    filter_svf_set_rq(&(voice[0].svf), FIX16_FRACT_TRUNC(v.fix));
+    break;
+  case eParamSvfLow :
+    filter_svf_set_low(&(voice[0].svf), FIX16_FRACT_TRUNC(v.fix));
+    break;
+  case eParamSvfHigh :
+    filter_svf_set_high(&(voice[0].svf), FIX16_FRACT_TRUNC(v.fix));
+    break;
+  case eParamSvfBand :
+    filter_svf_set_band(&(voice[0].svf), FIX16_FRACT_TRUNC(v.fix));
+    break;
+  case eParamSvfNotch :
+    filter_svf_set_notch(&(voice[0].svf), FIX16_FRACT_TRUNC(v.fix));
+    break;
+  case eParamSvfPeak :
+    filter_svf_set_peak(&(voice[0].svf), FIX16_FRACT_TRUNC(v.fix));
+    break;
+  case eParamNoiseAmp :
+    noiseAmp = FIX16_FRACT_TRUNC(v.fix);
+    break;
+  case eParamInAmp0 :
+    inAmp0 = FIX16_FRACT_TRUNC(v.fix);
+    break;
+  case eParamInAmp1 :
+    inAmp0 = FIX16_FRACT_TRUNC(v.fix);
+    break;
+  case eParamInAmp2 :
+    inAmp0 = FIX16_FRACT_TRUNC(v.fix);
+    break;
+  case eParamInAmp3 :
+    inAmp0 = FIX16_FRACT_TRUNC(v.fix);
+    break;
+  case eParamAtkDur:
+    env_asr_set_atk_dur(ampEnv, sec_to_frames_trunc(v.fix));
+    break;
+  case eParamRelDur:
+    env_asr_set_rel_dur(ampEnv, sec_to_frames_trunc(v.fix));
+    break;
+  case eParamAtkCurve:
+    env_asr_set_atk_shape(ampEnv, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
+    break;
+  case eParamRelCurve:
+    env_asr_set_atk_shape(ampEnv, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
+    break;
+
+  default:
+    break;
+  }
+
+#endif
+
+}
+
+
 void fill_param_desc(void) {
 
 
+#if 0
 
   strcpy(gModuleData->paramDesc[eParamGate].label, "gate");
   strcpy(gModuleData->paramDesc[eParamGate].unit, "");
@@ -114,6 +182,9 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamInAmp3].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamInAmp3].min = 0;
   gModuleData->paramDesc[eParamInAmp3].max = fix16_one;
+
+#endif
+
 }
 
 // EOF

@@ -1,8 +1,8 @@
 audiolib = ../../../audio
 common = ../../../common
 
-module_name = drums
-module_obj = drums.o \
+module_name = drumsyn
+module_obj = drumsyn.o \
 	params.o \
 	$(audiolib)/conversion.o \
 	$(audiolib)/env.o \

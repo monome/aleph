@@ -9,12 +9,15 @@
 #include <stdio.h>
 #include <stdint.h>
 
+
+#if 0
 typedef int32_t fract32;
 typedef int32_t fract16;
 typedef float f32;
 typedef double f64;
 typedef int32_t s32; 
 typedef int64_t s64; 
+#endif
 
 //----------------------------
 //----- float <-> fract conversions
