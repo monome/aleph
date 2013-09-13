@@ -29,6 +29,8 @@
 #include "filter_svf.h"
 #include "delay.h"
 #include "module.h"
+////test
+#include "noise.h"
 /// lines
 #include "params.h"
 
@@ -111,6 +113,16 @@ fract32 in_del[NLINES] = { 0, 0 };
 fract32 out_del[NLINES] = { 0, 0 };
 fract32 out_svf[NLINES] = { 0, 0 };
 
+
+/////////////
+///////////
+// TEST: noise gen
+static lcprng rngH;
+static lcprng rngL;
+/////////////
+//////
+
+
 #ifdef ARCH_BFIN // bfin
 #else // linux : emulate bfin audio core
 //fract32 in0, in1, in2, in3;
@@ -119,6 +131,20 @@ fract32 in[4];
 
 //----------------------
 //----- static functions
+
+
+//////////////////
+/////////
+// TES
+static fract32 noise_next(void) {
+  fract32 x = 0;
+  x |= lcprng_next(&rngH);
+  x |= ((lcprng_next(&rngL) >> 16) & 0x0000ffff);
+  return x;
+}
+
+///////////////
+/////////////////
 
 // mix delay inputs
 static void mix_del_inputs(void) {
@@ -319,10 +345,23 @@ void module_init(void) {
   for(i=0; i<NLINES; i++) {
     delay_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);
     filter_svf_init(&(svf[i]));
+    
+    filter_svf_set_rq(&(svf[i]), 0x1000);
+    filter_svf_set_low(&(svf[i]), 0x4000);
+    
     for(j=0; j<LINES_BUF_FRAMES; j++) {
       pLinesData->audioBuffer[i][j] = 0;
     }
   }
+
+  ///////////////////
+  ////////////
+  /// tEST
+  lcprng_reset(&rngL);
+  lcprng_reset(&rngH);
+  ///////
+  ////////////////////
+
 }
 
 // de-init
@@ -347,7 +386,8 @@ void module_process_frame(void) {
 
     // process filter
     out_svf[i] = filter_svf_next( &(svf[i]), out_del[i]);  
-      
+
+    #if 0
     if(mix_svf[i] == 0 ) {
       ;;
     } else {
@@ -358,8 +398,18 @@ void module_process_frame(void) {
 			      mult_fr1x32x32( out_svf[i], mix_svf[i] )
 			      );		      		      
     }
+    #else
+    if(i==0) {
+      out_del[i] = out_svf[i];
+    }
+#endif 
+
   } // end lines loop 
   
+  /* out_svf[0] = filter_svf_next(&(svf[0]), noise_next()); */
+  /* out_del[0] = out_svf[0]; */
+  /* out_del[1] = 0; */
+
   // mix outputs to DACs
   mix_outputs();
 }

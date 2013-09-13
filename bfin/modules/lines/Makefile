@@ -9,6 +9,7 @@ module_obj = lines.o \
 	$(audio)/conversion.o \
 	$(audio)/delay.o \
 	$(audio)/filter_svf.o \
+	$(audio)/noise.o \
 	$(audio)/table.o \
 	$(common)/libfixmath/fix32.o \
 	$(common)/libfixmath/fix16.o \

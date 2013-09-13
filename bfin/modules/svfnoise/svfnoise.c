@@ -138,8 +138,7 @@ void module_init(void) {
   lcprng_reset(rngL);
   
   // initial param state
-  //  filter_svf_set_hz(svf, fix16_from_int(220));
-  //  filter_svf_set_coeff(svf, fix16_from_int(220));
+  filter_svf_set_hz(svf, fix16_from_int(220));
   filter_svf_set_rq(svf, 0x4000);
   filter_svf_set_low(svf, 0x4000);
 
@@ -162,8 +161,7 @@ void module_set_param(u32 idx, pval v) {
   /*   set_hz1(v.fix); */
   /*   break; */
   case eParamSvfHz :
-    //filter_svf_set_hz(svf, v.fix);
-    filter_svf_set_coeff(svf, FIX16_FRACT_TRUNC(v.fix));
+    filter_svf_set_hz(svf, v.fix);
     break;
   case eParamSvfRq :
     filter_svf_set_rq(svf, FIX16_FRACT_TRUNC(v.fix));
@@ -262,67 +260,67 @@ static void fill_param_desc(void) {
   strcpy(gModuleData->paramDesc[eParamSvfRq].unit, "");
   gModuleData->paramDesc[eParamSvfRq].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamSvfRq].min = 0;
-  gModuleData->paramDesc[eParamSvfRq].max = fix16_one - 1;
+  gModuleData->paramDesc[eParamSvfRq].max = fix16_one;
 
   strcpy(gModuleData->paramDesc[eParamSvfLow].label, "low");
   strcpy(  gModuleData->paramDesc[eParamSvfLow].unit, "");
   gModuleData->paramDesc[eParamSvfLow].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamSvfLow].min = 0;
-  gModuleData->paramDesc[eParamSvfLow].max = fix16_one - 1;
+  gModuleData->paramDesc[eParamSvfLow].max = fix16_one;
 
   strcpy(gModuleData->paramDesc[eParamSvfHigh].label, "high");
   strcpy(  gModuleData->paramDesc[eParamSvfHigh].unit, "");
   gModuleData->paramDesc[eParamSvfHigh].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamSvfHigh].min = 0;
-  gModuleData->paramDesc[eParamSvfHigh].max = fix16_one - 1;
+  gModuleData->paramDesc[eParamSvfHigh].max = fix16_one;
 
   strcpy(gModuleData->paramDesc[eParamSvfBand].label, "band");
   strcpy(  gModuleData->paramDesc[eParamSvfBand].unit, "");
   gModuleData->paramDesc[eParamSvfBand].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamSvfBand].min = 0;
-  gModuleData->paramDesc[eParamSvfBand].max = fix16_one - 1;
+  gModuleData->paramDesc[eParamSvfBand].max = fix16_one;
 
   strcpy(gModuleData->paramDesc[eParamSvfNotch].label, "notch");
   strcpy(  gModuleData->paramDesc[eParamSvfNotch].unit, "");
   gModuleData->paramDesc[eParamSvfNotch].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamSvfNotch].min = 0;
-  gModuleData->paramDesc[eParamSvfNotch].max = fix16_one - 1;
+  gModuleData->paramDesc[eParamSvfNotch].max = fix16_one;
 
   strcpy(gModuleData->paramDesc[eParamSvfPeak].label, "peak");
   strcpy(  gModuleData->paramDesc[eParamSvfPeak].unit, "");
   gModuleData->paramDesc[eParamSvfPeak].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamSvfPeak].min = 0;
-  gModuleData->paramDesc[eParamSvfPeak].max = fix16_one - 1;
+  gModuleData->paramDesc[eParamSvfPeak].max = fix16_one;
 
   strcpy(gModuleData->paramDesc[eParamNoiseAmp].label, "noise");
   strcpy(  gModuleData->paramDesc[eParamNoiseAmp].unit, "");
   gModuleData->paramDesc[eParamNoiseAmp].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamNoiseAmp].min = 0;
-  gModuleData->paramDesc[eParamNoiseAmp].max = fix16_one - 1;
+  gModuleData->paramDesc[eParamNoiseAmp].max = fix16_one;
 
   strcpy(gModuleData->paramDesc[eParamInAmp0].label, "in0");
   strcpy(  gModuleData->paramDesc[eParamInAmp0].unit, "");
   gModuleData->paramDesc[eParamInAmp0].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamInAmp0].min = 0;
-  gModuleData->paramDesc[eParamInAmp0].max = fix16_one - 1;
+  gModuleData->paramDesc[eParamInAmp0].max = fix16_one;
 
   strcpy( gModuleData->paramDesc[eParamInAmp1].label, "in1");
   strcpy(  gModuleData->paramDesc[eParamInAmp1].unit, "");
   gModuleData->paramDesc[eParamInAmp1].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamInAmp1].min = 0;
-  gModuleData->paramDesc[eParamInAmp1].max = fix16_one - 1;
+  gModuleData->paramDesc[eParamInAmp1].max = fix16_one;
 
   strcpy(gModuleData->paramDesc[eParamInAmp2].label, "in2");
   strcpy(  gModuleData->paramDesc[eParamInAmp2].unit, "");
   gModuleData->paramDesc[eParamInAmp2].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamInAmp2].min = 0;
-  gModuleData->paramDesc[eParamInAmp2].max = fix16_one - 1;
+  gModuleData->paramDesc[eParamInAmp2].max = fix16_one;
 
   strcpy(gModuleData->paramDesc[eParamInAmp3].label, "in3");
   strcpy(  gModuleData->paramDesc[eParamInAmp3].unit, "");
   gModuleData->paramDesc[eParamInAmp3].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamInAmp3].min = 0;
-  gModuleData->paramDesc[eParamInAmp3].max = fix16_one - 1;
+  gModuleData->paramDesc[eParamInAmp3].max = fix16_one;
 }
 
 
