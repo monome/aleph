@@ -333,5 +333,21 @@ extern void render_touched_res(u8 id) {
   region_string(&bigtop, "(0-1) : ", 	0, 18, 0xd, 0x0, 0 );
 }
 
+extern void render_record(void) {
+  region_fill(&bigtop, 0x0);
+  region_string(&bigtop, "RECORD", 10, 10, 0xf, 0x0, 2);
+}
+
+
+extern void render_overdub(void) {
+  region_fill(&bigtop, 0x0);
+  region_string(&bigtop, "OVERDUB", 10, 10, 0xf, 0x0, 2);
+}
+
+extern void render_play(void) {
+  region_fill(&bigtop, 0x0);
+  region_string(&bigtop, "PLAY", 10, 10, 0xf, 0x0, 2);
+}
+
 
 #undef LINE_BUF_LEN

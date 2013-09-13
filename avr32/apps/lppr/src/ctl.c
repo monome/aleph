@@ -224,6 +224,7 @@ void ctl_loop_record(u8 idx) {
       // can reset loop length
       // by recording, cancelling loop, playing
       ms_loop1 = tcTicks; 
+      render_overdub();
     } else {
       print_dbg("\r\n (new loop)");
       ms_loop1 = tcTicks;
@@ -235,6 +236,7 @@ void ctl_loop_record(u8 idx) {
       ctl_param_change(eParam_write1, 1);
       print_dbg("\r\n start write head movement");
       ctl_param_change(eParam_run_write1, 1);
+      render_record();
     }
     loopRec1 = 1;
   }
@@ -254,6 +256,7 @@ void ctl_loop_playback(u8 idx) {
       print_dbg("\r\n (existing loop)");
       print_dbg("\r\n write disable");
       ctl_param_change(eParam_write1, 0);
+      render_play();
     } else {
 
       // not playing
@@ -275,7 +278,7 @@ void ctl_loop_playback(u8 idx) {
       ctl_param_change(eParam_loop1, samps);
       print_dbg("\r\n start read head");
       ctl_param_change(eParam_run_read1, 1);
-
+      render_play();
       // set loop-playing flag
       loopPlay1 = 1;
     }
@@ -288,6 +291,7 @@ void ctl_loop_playback(u8 idx) {
       // reset the loop 
 	print_dbg("\r\n reset read head");
 	ctl_param_change(eParam_pos_read1, 0);
+	render_play();
     } else {
       ;; // no action
     }
@@ -297,9 +301,18 @@ void ctl_loop_playback(u8 idx) {
 
 void ctl_inc_fb(u8 id, s32 delta) {
   eParam p = id ? eParam_del1_del1 : eParam_del0_del0;
-  s32 amp = input_amp(in_fb[id]);
+  s32 amp;
   // accumulate
   CTL_INC_IN(in_fb[id], delta);
+  // calculate
+  amp = input_amp(in_fb[id]);
+  if(amp < 0) {
+    if (delta < 0) {
+      amp = 0;
+    } else {
+      amp = FR32_MAX;
+    }
+  }
   // send
   ctl_param_change(p, amp);
   // draw
