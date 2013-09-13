@@ -32,14 +32,6 @@
 #include "memory.h"
 #include "inputs.h"
 
-/// make all control tables the same size...
-// maximum input value:  16 bits
-/// fixme: i know, this is dumb,  but lets try it and see
-#define IN_MAX		0xffff
-// convert to fractional part of fix16
-#define IN_FR16(x)     ( (x) & 0x0000ffff )
-// convert to fract32
-#define IN_FR32(x)      ( (x) << 16 )
 // table size ( 10 bits )
 #define TABLE_SIZE	0x400
 #define TABLE_MAX	0x3ff

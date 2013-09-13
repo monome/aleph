@@ -2,7 +2,7 @@
  * common
  * aleph
  *
- * additional routines for converting fixed-point datatypes
+ * additional routines for converting/printing fixed-point datatypes
  */
 
 //#include "print_funcs.h"

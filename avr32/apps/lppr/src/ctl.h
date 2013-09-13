@@ -2,14 +2,21 @@
 #ifndef _ALEPH_APP_LPPR_CTL_H_
 #define _ALEPH_APP_LPPR_CTL_H_
 
+
+#define PARAM_RQ_MIN 0x00000000
+#define PARAM_RQ_MAX 0x00400000
+#define PARAM_BUFFER_MAX 0x002bf1ff // LINES_BUF_FRAMES - 1
+
 //-- knob/cv -settable parameter values
 // inputs. use s32 type but unsigned range (accumulators)
-s32 in_fb0;
-s32 in_fb1;
-s32 in_cutoff0;
-s32 in_cutoff1;
-s32 in_res0;
-s32 in_res1;
+extern s32 in_fb[2];
+extern s32 in_freq[2];
+extern s32 in_res[2];
+extern s32 in_mix[2];
+extern s32 in_panInLR[2];
+extern s32 in_panInFB[2];
+extern s32 in_panOutLR[2];
+extern s32 in_panOutFB[2];
 
 // query the DSP for parameter descriptors. 
 // return 0 if something seems wrong, 1 otherwise
@@ -23,16 +30,24 @@ void ctl_loop_record(u8 idx);
 // stop recording loop / start playback on given delayline
 void ctl_loop_playback(u8 idx);
 
-#define PARAM_RQ_MIN 0x00000000
-#define PARAM_RQ_MAX 0x00400000
+// set params from ui
+extern void ctl_inc_fb(u8 id, s32 delta);
+extern void ctl_inc_mix(u8 id, s32 delta);
+extern void ctl_inc_freq(u8 id, s32 delta);
+extern void ctl_inc_res(u8 id, s32 delta);
 
-#define PARAM_BUFFER_MAX 0x002bf1ff // LINES_BUF_FRAMES - 1
+/// FIXME: uh, maybe just use the in / out params directly
+/// instead of some weird quad-panning framework
+extern void ctl_inc_panInLR(u8 id, s32 delta);
+extern void ctl_inc_panInFB(u8 id, s32 delta);
+extern void ctl_inc_panOutLR(u8 id, s32 delta);
+extern void ctl_inc_panOutFB(u8 id, s32 delta);
 
-#define PARAM_COEFF_MAX 0x1F400000  // fixme
 
-
+// hugle table of actual DSP parameters.
 // FIXME: this is blithely copied from aleph/bfin/modules/lines/param.h
 // i suppose there should be some build mechanism to share sources directly.
+
 typedef enum params {
 
   // delay 0

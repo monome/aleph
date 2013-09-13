@@ -11,6 +11,7 @@
 #include "screen.h"
 
 // lppr
+#include "inputs.h"
 #include "render.h"
 
 // data type for screen regions
@@ -72,6 +73,9 @@ static region * allRegions[] = {
 };
 
 static const u8 numRegions = 6;
+// string buffer for numerics
+#define NUMSTRBUF_LEN 12
+static char numstrbuf[NUMSTRBUF_LEN];
 
 //-------------------------------------------------
 //----- -static functions
@@ -91,7 +95,6 @@ static void region_alloc(region* reg) {
 /*   //... haha */
 /* } */
 
-
 // render a string to a region with offset
 static inline void region_string(
 				 region* reg,	 // region
@@ -110,14 +113,7 @@ static inline void region_string(
   reg->dirty = 1;
 }
 
-static void region_clear(region* reg) {
-  u32 i;
-  for(i=0; i<reg->len; i++) {
-    reg->data[i] = 0; 
-  }
-  reg->dirty = 1;
-}
-
+// fill a region with given color
 static void region_fill(region* reg, u8 c) {
   u32 i;
   for(i=0; i<reg->len; i++) {
@@ -125,9 +121,17 @@ static void region_fill(region* reg, u8 c) {
   }
   reg->dirty = 1;
 }
+
+
+// hilight a region with given color and threshold
+static void region_hl(region* reg, u8 c, u8 thresh) {
+  u32 i;
+  for(i=0; i<reg->len; i++) {
+    if ( reg->data[i] < thresh) { reg->data[i] = c; }
+  }
+  reg->dirty = 1;
+}
 				     
-
-
 //-------------------------------------------------
 //----- external functions
 
@@ -173,7 +177,7 @@ void render_status(const char* str) {
 // fill with initial graphics (id strings)
 void render_startup(void) {
   //  region_string(&status, "             ", 32, 16, 0xf, 0x0, 1);
-  //  region_clear(&status);
+//  region_clear(&status);
   region_fill(&bigtop, 0x5);
   region_string(&bigtop, "LPPR", 40, 12, 0xf, 0x0, 2);
   region_string(&(foot[0]), "TAP1", 0, 0, 0xf, 0x0, 0);
@@ -209,38 +213,124 @@ void render_force_refresh(void) {
 
 
 void render_sw_on(u8 sw, u8 on) {
-  // highlight the footer
+// highlight footer according to SW press
+  region* reg;
+  switch(sw) {
+    // fn switches
+  case 0:
+    reg = &(foot[0]);
+    break;
+  case 1:
+    reg = &(foot[1]);
+    break;
+  case 2:
+    reg = &(foot[2]);
+    break;
+  case 3:
+    reg = &(foot[3]);
+    break;
+    // footswitches, same mapping as fn 3,4
+  case 6:
+    reg = &(foot[2]);
+    break;
+  case 7:
+    reg = &(foot[3]);
+    break;
+  default:
+    return;
+    break;
+  }
+  region_hl(reg, on << 2, 0x8);
 }
 
 // draw delay time
 void render_delay_time(u8 id, u32 ms, u32 samps) {
-  static char strbuf[12];
-  memset(strbuf, ' ', 12);
-  //  itoa_whole(ms, strbuf, 12);
-  itoa_whole_lj(ms, strbuf);
-  region_string(&bigtop, strbuf, 30, 20, 0xf, 0x0, 1);
-  memset(strbuf, ' ', 12);
-  //  itoa_whole(samps, strbuf, 12);
-  itoa_whole_lj(samps, strbuf);
-  region_string(&bigtop, strbuf, 30, 40, 0xf, 0x0, 1);
+  memset(numstrbuf, ' ', NUMSTRBUF_LEN);
+  //  itoa_whole(ms, numstrbuf, 12);
+  itoa_whole_lj(ms, numstrbuf);
+  region_string(&bigtop, numstrbuf, 30, 18, 0xf, 0x0, 1);
+  memset(numstrbuf, ' ', NUMSTRBUF_LEN);
+  //  itoa_whole(samps, numstrbuf, 12);
+  itoa_whole_lj(samps, numstrbuf);
+  region_string(&bigtop, numstrbuf, 30, 36, 0xf, 0x0, 1);
 }
     
-// clear the main region when a new knob is touched
-/* void render_new_param_touch(void) { */
-/*   region_fill(&bigtop, 0x5); */
-/* } */
-
 // draw labels for delay time
-extern void render_touched_delaytime(u8 id) {
-  region_clear(&bigtop);
+void render_touched_delaytime(u8 id) {
+  region_fill(&bigtop, 0);
   region_string(&bigtop, "delay time", 0, 0, 0xa, 0x3, 0 );
-  if(id) { region_string(&bigtop, "2", 40, 0, 0xa, 0x3, 1 ); }
-  else { region_string(&bigtop, "1", 40, 0, 0xa, 0x3, 1 ); }
-  region_string(&bigtop, "ms : ", 	0, 20, 0xd, 0x0, 0 );
-  region_string(&bigtop, "samples : ", 	0, 40, 0xd, 0x0, 0 );
-  //  region_string(&bigtop, strbuf, 0, 0, 0xf, 0x0, 1);
-  //  region_string(&bigtop, strbuf, 0, 17, 0xf, 0x0, 1);
+  if(id) { region_string(&bigtop, " 2   ", 40, 0, 0xa, 0x3, 1 ); }
+  else { region_string(&bigtop, " 1   ", 40, 0, 0xa, 0x3, 1 ); }
+  region_string(&bigtop, "ms : ", 	0, 18, 0xd, 0x0, 0 );
+  region_string(&bigtop, "samples : ", 	0, 36, 0xd, 0x0, 0 );
+}
 
+// draw any amplitude
+void render_amp(u32 input, s32 amp) {
+  // decibels
+  memset(numstrbuf, ' ', NUMSTRBUF_LEN);
+  print_fix16(numstrbuf, input_db(input));
+  region_string(&bigtop, numstrbuf, 30, 18, 0xf, 0x0, 1); 
+  memset(numstrbuf, ' ', NUMSTRBUF_LEN);
+  print_fix16(numstrbuf, FRACT_FIX16(amp));
+  region_string(&bigtop, numstrbuf, 30, 18, 0xf, 0x0, 1); 
+}
+
+// feedback touched
+void render_touched_fb(u8 id) {
+  region_fill(&bigtop, 0);
+  region_string(&bigtop, "feedback", 0, 0, 0xa, 0x3, 0 );
+  if(id) { region_string(&bigtop, " 2   ", 40, 0, 0xa, 0x3, 1 ); }
+  else { region_string(&bigtop, " 1   ", 40, 0, 0xa, 0x3, 1 ); }
+  region_string(&bigtop, "decibels : ", 	0, 18, 0xd, 0x0, 0 );
+  region_string(&bigtop, "amplitude : ", 	0, 36, 0xd, 0x0, 0 );
+}
+
+// mix touched
+extern void render_touched_mix(u8 id) {
+  region_fill(&bigtop, 0);
+  region_string(&bigtop, "filter mix", 0, 0, 0xa, 0x3, 0 );
+  if(id) { region_string(&bigtop, " 2   ", 40, 0, 0xa, 0x3, 1 ); }
+  else { region_string(&bigtop, " 1   ", 40, 0, 0xa, 0x3, 1 ); }
+  region_string(&bigtop, "decibels : ", 	0, 18, 0xd, 0x0, 0 );
+  region_string(&bigtop, "amplitude : ", 	0, 36, 0xd, 0x0, 0 );
+}
+
+
+// draw frequency
+void render_freq(u32 input) {
+  memset(numstrbuf, ' ', NUMSTRBUF_LEN);
+  print_fix16(numstrbuf, input_hz(input));
+  region_string(&bigtop, numstrbuf, 30, 18, 0xf, 0x0, 1);
+  memset(numstrbuf, ' ', NUMSTRBUF_LEN);
+  print_fix16(numstrbuf, input_note(input));
+  region_string(&bigtop, numstrbuf, 30, 36, 0xf, 0x0, 1); 
+}
+
+// freq touched
+extern void render_touched_freq(u8 id) {
+  region_fill(&bigtop, 0);
+  region_string(&bigtop, "filter cutoff", 0, 0, 0xa, 0x3, 0 );
+  if(id) { region_string(&bigtop, " 2   ", 40, 0, 0xa, 0x3, 1 ); }
+  else { region_string(&bigtop, " 1   ", 40, 0, 0xa, 0x3, 1 ); }
+  region_string(&bigtop, "hz : ", 	0, 18, 0xd, 0x0, 0 );
+  region_string(&bigtop, "note : ", 	0, 36, 0xd, 0x0, 0 );
+}
+
+// draw resonance
+void render_res(u32 in) {
+  memset(numstrbuf, ' ', NUMSTRBUF_LEN);
+  print_fix16(numstrbuf, IN_FR16(in));
+  region_string(&bigtop, numstrbuf, 30, 18, 0xf, 0x0, 1);
+}
+
+// resonance touched
+extern void render_touched_res(u8 id) {
+  region_fill(&bigtop, 0);
+  region_string(&bigtop, "filter RQ", 0, 0, 0xa, 0x3, 0 );
+  if(id) { region_string(&bigtop, " 2   ", 40, 0, 0xa, 0x3, 1 ); }
+  else { region_string(&bigtop, " 1   ", 40, 0, 0xa, 0x3, 1 ); }
+  region_string(&bigtop, "(0-1) : ", 	0, 18, 0xd, 0x0, 0 );
 }
 
 

@@ -120,13 +120,31 @@ extern void lppr_handler(event_t* ev) {
     break;
     
   case kEventEncoder0:
-    
+    if(touchedThis) {
+      render_touched_fb(0);
+    }
+    ctl_inc_fb(0, ev->eventData);
     break;
+
   case kEventEncoder1:
+    if(touchedThis) {
+      render_touched_mix(0);
+    }
+    ctl_inc_mix(0, ev->eventData);
     break;
+
   case kEventEncoder2:
+    if(touchedThis) {
+      render_touched_freq(0);
+    }
+    ctl_inc_freq(0, ev->eventData);
     break;
+
   case kEventEncoder3:
+    if(touchedThis) {
+      render_touched_res(0);
+    }
+    ctl_inc_res(0, ev->eventData);
     break;
 
   default:

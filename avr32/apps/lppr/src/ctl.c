@@ -13,8 +13,10 @@
 #include "param_common.h"
 // lppr
 #include "ctl.h"
+#include "inputs.h"
 #include "render.h"
 #include "util.h"
+
 
 //----------------------------------------
 //---- static variables
@@ -28,12 +30,28 @@ static u8 loopRec1 = 0;
 
 //-- parameter values
 // inputs. use s32 type but unsigned range (accumulators)
-s32 in_fb0 = 0;
-s32 in_fb1 = 0;
-s32 in_cutoff0 = 0;
-s32 in_cutoff1 = 0;
-s32 in_res0 = 0;
-s32 in_res1 = 0;
+
+// NOTE: all amplitude parameters are set to a maximum of 0.5,
+//  for headroom at mix points.
+// 1.0 will still be the displayed amplitude at max input value.
+
+// feedback
+s32 in_fb[2] = {0, 0};
+// filter wet/dry mix
+s32 in_mix[2] = {0, 0};
+// cutoff frequency
+s32 in_freq[2] = {0, 0};
+// resonance
+s32 in_res[2] = {0, 0};
+
+// input pan L/R (1 vs 2, 3 vs 4)
+s32 in_panInLR[2] = {0, 0};
+// output pan F/B (1+2 vs 3+4)
+s32 in_panInFB[2] = {0, 0}; 
+// input pan L/R (1 vs 2, 3 vs 4)
+s32 in_panOutLR[2] = {0, 0};
+// output pan F/B (1+2 vs 3+4)
+s32 in_panOutFB[2] = {0, 0}; 
 
 /// help!
 static inline s32 fr32_from_float(float x) {
@@ -44,6 +62,33 @@ static inline s32 fr32_from_float(float x) {
   }
 }
 
+/* // add to an input and clamp to allowed range */
+/* static s32 inc_in(s32 a, s32 b) { */
+/*   // this is going to act really weird if it overflows from huge b */
+/*   s32 v = a + b; */
+/*   if (v > IN_MAX) { */
+/*     if(b<0) { */
+/*       // underflowed */
+/*       v = 0; */
+/*     } else { */
+/*       v = IN_MAX; */
+/*     } */
+/*   } else if (v < 0) { */
+/*     v = 0; */
+/*   }  */
+/*   return v; */
+/* } */
+#define CTL_INC_IN(x, a)			\
+  x += a;					\
+  if(x > IN_MAX) {				\
+    if(a<0) {					\
+      x = 0;					\
+    } else {					\
+      x = IN_MAX;				\
+    }						\
+  } else if (x < 0) {				\
+    x = 0;					\
+  }						\
 
 //-------------------------------------
 //------ extern functions
@@ -245,3 +290,66 @@ void ctl_loop_playback(u8 idx) {
     }
   }
 }
+
+
+void ctl_inc_fb(u8 id, s32 delta) {
+  eParam p = id ? eParam_del1_del1 : eParam_del0_del0;
+  s32 amp = input_amp(in_fb[id]);
+  // accumulate
+  CTL_INC_IN(in_fb[id], delta);
+  // send
+  ctl_param_change(p, amp);
+  // draw
+  render_amp(in_fb[id], amp);
+}
+
+void ctl_inc_mix(u8 id, s32 delta) {
+  eParam p = id ? eParam_mix1 : eParam_mix0;
+  s32 amp = input_amp(in_mix[id]);
+  //// FIXME: use a sine panner
+  // accumulate
+  CTL_INC_IN(in_mix[id], delta);
+  // send
+  ctl_param_change(p, amp);
+  // draw
+  render_amp(in_mix[id], amp);
+}
+
+void ctl_inc_freq(u8 id, s32 delta) {
+  eParam p = id ? eParam_coeff1 : eParam_coeff0;
+  // accumulate
+  CTL_INC_IN(in_freq[id], delta);
+  // send
+  ctl_param_change(p, input_freq(in_freq[id]));
+  // draw
+  render_freq(in_freq[id]);
+}
+
+void ctl_inc_res(u8 id, s32 delta) {
+  eParam p = id ? eParam_rq1 : eParam_rq0;
+  // accumulate
+  CTL_INC_IN(in_res[id], delta);
+  // send
+  /// FIXME ??
+  //  ctl_param_change(p, input_res(in_res[id]));
+  ctl_param_change(p, IN_FR32(in_res[id]));
+  // draw
+  render_res(in_res[id]);
+}
+
+void ctl_inc_panInLR(u8 id, s32 delta) {
+  // TODO
+}
+
+void ctl_inc_panInFB(u8 id, s32 delta) {
+  // TODO
+}
+
+void ctl_inc_panOutLR(u8 id, s32 delta) {
+  // TODO
+}
+
+void ctl_inc_panOutFB(u8 id, s32 delta) {
+  // TODO
+}
+
