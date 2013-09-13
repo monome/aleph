@@ -387,6 +387,7 @@ void module_process_frame(void) {
     // process filter
     out_svf[i] = filter_svf_next( &(svf[i]), out_del[i]);  
 
+    // hard patched works better, for some reason
     #if 0
     if(mix_svf[i] == 0 ) {
       ;;
