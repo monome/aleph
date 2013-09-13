@@ -65,10 +65,10 @@ DBGFLAGS =
 # Application optimization used during compilation and linking:
 # -O0, -O1, -O2, -O3 or -Os
 # OPTIMIZATION = -Os
-# OPTIMIZATION = -O0
+OPTIMIZATION = -O0
 # OPTIMIZATION = -O1
 # OPTIMIZATION = -O2
-OPTIMIZATION = -O3
+# OPTIMIZATION = -O3
 
 # debug:
 # OPTIMIZATION = -O0 -fno-inline

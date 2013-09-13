@@ -235,6 +235,5 @@ void screen_startup(void) {
 
   /// draw the glyph
   screen_draw_region(32, 0, 24, 32, (u8*)aleph_hebrew_glyph);
-
 }
 

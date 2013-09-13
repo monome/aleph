@@ -94,7 +94,6 @@ static fix16 scale_knob_value(const s32 v) {
 }
 
 
-
 //========================================
 //====== key handlers
 //--- OPS

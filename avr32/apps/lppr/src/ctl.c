@@ -141,9 +141,12 @@ u8 ctl_report_params(void) {
 
 // set initial parameters
 void ctl_init_params(void) {
-  // no filters
+  // no filter mix
   ctl_param_change(eParam_mix0, 0);
   ctl_param_change(eParam_mix1, 0);
+  // both filters are full lowpass
+  ctl_param_change(eParam_low0,  fr32_from_float(0.99));
+  ctl_param_change(eParam_low1, fr32_from_float(0.99));
   // half dry
   ctl_param_change(eParam_adc0_dac0, fr32_from_float(0.5) );
   // half wet
@@ -156,7 +159,7 @@ void ctl_init_params(void) {
   // del0 -> del1
   ctl_param_change(eParam_del0_del1, fr32_from_float(0.99));				    
   // slight feedback on del0 
-  ctl_param_change(eParam_del0_del0, fix16_one >> 2);
+  ctl_param_change(eParam_del0_del0, fr32_from_float(0.5));
   // set write flags
   ctl_param_change(eParam_write0, 1);
   ctl_param_change(eParam_write1, 1);		   
@@ -217,7 +220,7 @@ void ctl_loop_record(u8 idx) {
       print_dbg("\r\n start writing ");
       ctl_param_change(eParam_write1, 1);
       print_dbg("\r\n full overdub");
-      ctl_param_change(eParam_pre1, fix16_one);
+      ctl_param_change(eParam_pre1, FR32_MAX);
       // can reset loop length
       // by recording, cancelling loop, playing
       ms_loop1 = tcTicks; 
