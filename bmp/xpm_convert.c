@@ -62,7 +62,7 @@ static void process_glyph(const char* name, char* (*glyph)[]) {
   }
 
   // write file output
-  fprintf(fregion, "\r\n const unsigned char %s_glyph = { \r\n", name);
+  fprintf(fregion, "\r\n const unsigned char %s_glyph[] = { \r\n", name);
   // next N strings: data
   for(j=0; j<h; j++) {
     p = (*glyph)[d + 1 + j];
@@ -73,9 +73,9 @@ static void process_glyph(const char* name, char* (*glyph)[]) {
 	  break;
 	}
       }
-      fprintf(fregion, "%02X , ", val);
+      fprintf(fregion, "0x%02X , ", val);
       /// TODO: screen format
-      printf("%02X ", val);
+      printf("0x%02X ", val);
       p++;
     }
   }
