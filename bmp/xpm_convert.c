@@ -63,6 +63,8 @@ static void process_glyph(const char* name, char* (*glyph)[]) {
 
   // write file output
   fprintf(fregion, "\r\n const unsigned char %s_glyph[] = { \r\n", name);
+  // width and height
+  fprintf(fregion, "%d , %d, ", w, h);
   // next N strings: data
   for(j=0; j<h; j++) {
     p = (*glyph)[d + 1 + j];
@@ -92,8 +94,10 @@ int main ( int argc, char *argv[] ) {
 
   // image files as regions (1byte == 1pix)
   fregion = fopen("aleph_bmp_region.c", "w");
-  fprintf(fregion, "/* output from xpm-convert.c */ \r\n\r\n");
-
+  fprintf(fregion, "/* output from xpm-convert.c */ \r\n");
+  fprintf(fregion, "/* first two bytes are width and height */ \r\n\r\n");
+  fprintf(fregion, "/* data follows */ \r\n\r\n");
+  
   // image files as raw screen daa (1byte == 2px, inverted)
   // TODO
   //   fscreen = fopen("aleph_bmp_screen.c", "w");

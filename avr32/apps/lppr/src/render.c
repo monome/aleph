@@ -273,7 +273,7 @@ void render_amp(u32 input, s32 amp) {
   region_string(&bigtop, numstrbuf, 30, 18, 0xf, 0x0, 1); 
   memset(numstrbuf, ' ', NUMSTRBUF_LEN);
   print_fix16(numstrbuf, FRACT_FIX16(amp));
-  region_string(&bigtop, numstrbuf, 30, 18, 0xf, 0x0, 1); 
+  region_string(&bigtop, numstrbuf, 30, 36, 0xf, 0x0, 1); 
 }
 
 // feedback touched
