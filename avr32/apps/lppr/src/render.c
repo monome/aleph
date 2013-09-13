@@ -1,3 +1,6 @@
+// std
+#include <string.h>
+
 // asf
 #include "print_funcs.h"
 
@@ -31,6 +34,9 @@ typedef struct _region {
 
 //-------------------------------------------------
 //----- -static variables
+
+// temp buffer
+#define STRBUF_LEN 16
 
 ///// declare screen-drawing regions.
 //// len, dirty, and data can be left unitialized aand calculated / allocated in region_init.
@@ -203,11 +209,39 @@ void render_force_refresh(void) {
 
 
 void render_sw_on(u8 sw, u8 on) {
-  
+  // highlight the footer
 }
 
 // draw delay time
-extern void render_delay_time(u8 id, u32 ms, u32 samps) {
+void render_delay_time(u8 id, u32 ms, u32 samps) {
+  static char strbuf[12];
+  memset(strbuf, ' ', 12);
+  //  itoa_whole(ms, strbuf, 12);
+  itoa_whole_lj(ms, strbuf);
+  region_string(&bigtop, strbuf, 30, 20, 0xf, 0x0, 1);
+  memset(strbuf, ' ', 12);
+  //  itoa_whole(samps, strbuf, 12);
+  itoa_whole_lj(samps, strbuf);
+  region_string(&bigtop, strbuf, 30, 40, 0xf, 0x0, 1);
 }
+    
+// clear the main region when a new knob is touched
+/* void render_new_param_touch(void) { */
+/*   region_fill(&bigtop, 0x5); */
+/* } */
+
+// draw labels for delay time
+extern void render_touched_delaytime(u8 id) {
+  region_clear(&bigtop);
+  region_string(&bigtop, "delay time", 0, 0, 0xa, 0x3, 0 );
+  if(id) { region_string(&bigtop, "2", 40, 0, 0xa, 0x3, 1 ); }
+  else { region_string(&bigtop, "1", 40, 0, 0xa, 0x3, 1 ); }
+  region_string(&bigtop, "ms : ", 	0, 20, 0xd, 0x0, 0 );
+  region_string(&bigtop, "samples : ", 	0, 40, 0xd, 0x0, 0 );
+  //  region_string(&bigtop, strbuf, 0, 0, 0xf, 0x0, 1);
+  //  region_string(&bigtop, strbuf, 0, 17, 0xf, 0x0, 1);
+
+}
+
 
 #undef LINE_BUF_LEN
