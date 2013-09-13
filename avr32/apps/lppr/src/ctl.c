@@ -348,6 +348,8 @@ void ctl_inc_res(u8 id, s32 delta) {
   // send
   /// FIXME ??
   //  ctl_param_change(p, input_res(in_res[id]));
+  //// HACK
+  if(in_res[id] > 0x7fff) { in_res[id] = 0x7fff; }
   ctl_param_change(p, IN_FR32(in_res[id]));
   // draw
   render_res(in_res[id]);
