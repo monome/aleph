@@ -39,6 +39,9 @@ int main(void) {
 
   // intialize the sport0 for audio rx/tx
   init_sport0();
+  // intialize the sport1 for cv out
+  init_sport0();
+
   // intialize DMA for audio
   init_DMA();
   //  // put the spi back in slave mode to receive param changes from avr32
@@ -50,6 +53,8 @@ int main(void) {
   init_interrupts();
   // begin audio transfers
   enable_DMA_sport0();  
+  // begin cv transfers
+  enable_DMA_sport1();  
 
   //// test: leds on
   SET_LED3;

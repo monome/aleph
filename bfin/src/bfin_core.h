@@ -35,6 +35,9 @@ extern fract32 out[4];
 extern volatile s32 iRxBuf[];
 extern volatile s32 iTxBuf[];
 
+extern volatile u32 cvTxBuf;
+
+
 // audio processing flag
 extern volatile u8 processAudio;
 

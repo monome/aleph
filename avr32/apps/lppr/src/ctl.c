@@ -310,7 +310,7 @@ void ctl_inc_fb(u8 id, s32 delta) {
     if (delta < 0) {
       amp = 0;
     } else {
-      amp = FR32_MAX;
+      amp = 0x7fff0000;
     }
   }
   // send
@@ -341,6 +341,7 @@ void ctl_inc_freq(u8 id, s32 delta) {
   render_freq(in_freq[id]);
 }
 
+/// FIXME: no resonance+scale right now, setting coefficient directly...
 void ctl_inc_res(u8 id, s32 delta) {
   eParam p = id ? eParam_rq1 : eParam_rq0;
   // accumulate

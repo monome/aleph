@@ -103,9 +103,11 @@ void init_1836(void);
 void init_1939(void);
 void init_spi_slave(void);
 void init_sport0(void);
+void init_sport1(void);
 void init_DMA(void);
 void init_interrupts(void);
 void enable_DMA_sport0(void);
+void enable_DMA_sport1(void);
 void init_flags(void);
 
 #endif // header guard
