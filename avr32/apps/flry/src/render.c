@@ -141,7 +141,7 @@ void render_sw_on(u8 sw, u8 on) {
 
 void render_dac(u8 ch, s32 val) {
   region_fill(&bigtop, 0x0);
-  strcpy(numstrbuf, "         ");
+  strcpy(numstrbuf, "   ");
   itoa_whole(ch, numstrbuf, NUMSTRBUF_LEN);
   region_string(&bigtop, numstrbuf, 0, 0, 0xa, 0x1, 1);
   itoa_whole(val, numstrbuf, NUMSTRBUF_LEN);
