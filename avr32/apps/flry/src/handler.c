@@ -77,13 +77,27 @@ extern void flry_handler(event_t* ev) {
     switch (ev->eventType) {
   case kEventSwitch0:
     // display
+    render_sw_on(0, ev->eventData > 0);
+    break;
+  case kEventSwitch1:
+    // display
+    render_sw_on(1, ev->eventData > 0);
+    break;
+  case kEventSwitch2:
+    // display
+    render_sw_on(2, ev->eventData > 0);
+    break;
+  case kEventSwitch4:
+    // display
     render_sw_on(3, ev->eventData > 0);
     break;
     
   case kEventSwitch6:
+    render_sw_on(2, ev->eventData > 0);
     break;
     
   case kEventSwitch7:
+    render_sw_on(3, ev->eventData > 0);
     break;
     
   case kEventEncoder0:

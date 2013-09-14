@@ -136,14 +136,14 @@ void render_force_refresh(void) {
 
 
 void render_sw_on(u8 sw, u8 on) {
-  region_fill(&(foot[sw]), on ? 0xf : 0x4);
+  region_fill(&(foot[sw]), on ? 0xf : 0x1);
 }
 
 void render_dac(u8 ch, s32 val) {
   region_fill(&bigtop, 0x0);
-  strcpy(numstrbuf, "      :  ");
+  strcpy(numstrbuf, "         ");
   itoa_whole(ch, numstrbuf, NUMSTRBUF_LEN);
-  region_string(&bigtop, numstrbuf, 0, 0, 0x5, 0x1, 0);
+  region_string(&bigtop, numstrbuf, 0, 0, 0xa, 0x1, 1);
   itoa_whole(val, numstrbuf, NUMSTRBUF_LEN);
   region_string(&bigtop, numstrbuf, 10, 10, 0xf, 0x0, 1);
 }
