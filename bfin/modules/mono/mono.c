@@ -290,10 +290,10 @@ void module_init(void) {
   ratio2 = fix16_from_float(1.5);
   idx1 = idx2 = 0;
 
-  ioAmp0 = FR32_ONE;
-  ioAmp1 = FR32_ONE;
-  ioAmp2 = FR32_ONE;
-  ioAmp3 = FR32_ONE;
+  ioAmp0 = FR32_MAX;
+  ioAmp1 = FR32_MAX;
+  ioAmp2 = FR32_MAX;
+  ioAmp3 = FR32_MAX;
 
   // init wavetables
   table_fill_harm(tab1, WAVE_TAB_SIZE, 1, 1.f, 0);

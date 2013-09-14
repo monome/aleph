@@ -103,7 +103,7 @@ void init_interrupts(void) {
   // DMA Error (generic)    PID:1 IVG7  CID:0
   *pSIC_IAR0 = 0xfff0ff0f ;
   //  *pSIC_IAR0 = 0xffffffff;
-  // sport1 rx (dma4) = IVG9, core ID 2
+  // sport1 tx (dma4) = IVG9, core ID 2
   *pSIC_IAR1 = 0xfff2ffff;
   // timer0 = IVG11, core ID 4
   *pSIC_IAR2 = 0xfffffff4; 

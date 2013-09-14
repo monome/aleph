@@ -10,6 +10,7 @@ audio_dir = $(core_dir)/../audio
 module_dir = $(core_dir)/modules/$(module_name)
 
 core_src = control.c \
+	dac.c \
 	main.c \
 	init.c \
 	isr.c \

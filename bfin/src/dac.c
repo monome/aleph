@@ -1,7 +1,7 @@
 #include "bfin_core.h"
 #include "dac.h"
 
-//#define DAC_SETUP 0x8000
+// AD5686R: 
 
 #define DAC_COM_WRITE 0x3
 #define DAC_COM_LSHIFT 20

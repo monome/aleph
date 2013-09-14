@@ -88,6 +88,15 @@ void sport0_rx_isr() {
   //  *pFlashA_PortB_Data = leds;
 }
 
+// ISR on sport1 tx completion
+void sport1_tx_isr() {
+  //  u32 stat;
+  // clear the interrupt flag, leave enabled
+  *pDMA4_IRQ_STATUS = 0x0001;
+  //  stat = *pSPORT1_STAT ;
+}
+
+
 // spi receive interrupt (from avr32)
 void spi_rx_isr() {
   //int i=0;
