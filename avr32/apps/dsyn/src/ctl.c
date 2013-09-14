@@ -92,7 +92,7 @@ void ctl_init_params(void) {
   ctl_param_change(  eParamTrig0, 		0 );
   ctl_param_change(  eParamAmp0, 		FR32_MAX - 1 );
   ctl_param_change(  eParamAmpAtkDur0, 		1000 );
-  ctl_param_change(  eParamAmpRelDur0, 		10000 );
+  ctl_param_change(  eParamAmpRelDur0, 		100000 );
   ctl_param_change(  eParamAmpAtkCurve0, 	0 );
   ctl_param_change(  eParamAmpRelCurve0, 	0 );
   ctl_param_change(  eParamFreqAtkDur0, 	100 );
