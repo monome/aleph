@@ -1,51 +1,131 @@
 #include <string.h>
+#include "drumsyn.h"
+#include "env.h"
 #include "module.h"
 #include "params.h" 
+
+
+// set parameter by value (fix16)
+void module_set_param(u32 idx, pval v) {
+  u8 b;
+  switch(idx) {
+  case eParamGate0 :
+    b = v.s > 0;
+    env_asr_set_gate(voices[0]->envAmp, b);
+    env_asr_set_gate(voices[0]->envFreq, b);
+    env_asr_set_gate(voices[0]->envRes, b);
+    break;
+  case eParamAmp0 :
+    voices[0]->amp = v.fr;
+    break;
+  case eParamAmpAtkDur0 : // in samples
+    env_asr_set_atk_dur(voices[0]->envAmp, v.u);
+    break;
+  case eParamAmpRelDur0 :
+    env_asr_set_rel_dur(voices[0]->envAmp, v.u);
+    break;
+  case eParamAmpAtkCurve0 :
+    env_asr_set_atk_shape(voices[0]->envAmp, v.u);
+    break;
+  case eParamAmpRelCurve0 :
+    env_asr_set_rel_shape(voices[0]->envAmp, v.u);
+    break;
+    // freq env
+  case eParamFreqAtkDur0 :
+    env_asr_set_atk_dur(voices[0]->envFreq, v.u);
+    break;
+  case eParamFreqRelDur0 :
+    env_asr_set_rel_dur(voices[0]->envFreq, v.u);
+    break;
+  case eParamFreqAtkCurve0 :
+    env_asr_set_atk_shape(voices[0]->envFreq, v.u);
+    break;
+  case eParamFreqRelCurve0 :
+    env_asr_set_rel_shape(voices[0]->envFreq, v.u);
+    break;
+  case eParamFreqMul0 :
+    voices[0]->envMulFreq = v.fr;
+    break;
+  case eParamFreqAdd0 :
+    voices[0]->envAddFreq = v.fr;
+    break;
+    // res env
+  case eParamResAtkDur0 :
+    env_asr_set_atk_dur(voices[0]->envRes, v.u);
+    break;
+  case eParamResRelDur0 :
+    env_asr_set_rel_dur(voices[0]->envRes, v.u);
+    break;
+  case eParamResAtkCurve0 :
+    env_asr_set_atk_shape(voices[0]->envRes, v.u);
+    break;
+  case eParamResRelCurve0 :
+    env_asr_set_rel_shape(voices[0]->envRes, v.u);
+    break;
+  case eParamResMul0 :
+    voices[0]->envMulRes = v.fr;
+    break;
+  case eParamResAdd0 :
+    voices[0]->envAddRes = v.fr;
+    break;
+    //// TODO
+    /// .. other voices...
+
+  default:
+    break;
+  }
+}
+
+
+
+void fill_param_desc(void) {
+
+}
+
+#if 0
 
 // set parameter by value (fix16)
 void module_set_param(u32 idx, pval v) {
 
-#if 0
-
   switch(idx) {
   case eParamGate:
-    env_asr_set_gate(&(voice[0].ampEnv), v.s > 0);
+    env_asr_set_gate(voices[0]->ampEnv, v.s > 0);
     break;
   case eParamSvfHz :
-    filter_svf_set_hz(&(voice[0].svf), v.fix);
+    filter_svf_set_hz(voices[0]->svf, v.fix);
     break;
   case eParamSvfRq :
-    filter_svf_set_rq(&(voice[0].svf), FIX16_FRACT_TRUNC(v.fix));
+    filter_svf_set_rq(voices[0]->svf, v.fr);
     break;
   case eParamSvfLow :
-    filter_svf_set_low(&(voice[0].svf), FIX16_FRACT_TRUNC(v.fix));
+    filter_svf_set_low(voices[0]->svf, v.fr);
     break;
   case eParamSvfHigh :
-    filter_svf_set_high(&(voice[0].svf), FIX16_FRACT_TRUNC(v.fix));
+    filter_svf_set_high(voices[0]->svf, v.fr);
     break;
   case eParamSvfBand :
-    filter_svf_set_band(&(voice[0].svf), FIX16_FRACT_TRUNC(v.fix));
+    filter_svf_set_band(voices[0]->svf, v.fr);
     break;
   case eParamSvfNotch :
-    filter_svf_set_notch(&(voice[0].svf), FIX16_FRACT_TRUNC(v.fix));
+    filter_svf_set_notch(voices[0]->svf, v.fr);
     break;
   case eParamSvfPeak :
-    filter_svf_set_peak(&(voice[0].svf), FIX16_FRACT_TRUNC(v.fix));
+    filter_svf_set_peak(voices[0]->svf, v.fr);
     break;
   case eParamNoiseAmp :
-    noiseAmp = FIX16_FRACT_TRUNC(v.fix);
+    noiseAmp = v.fr;
     break;
   case eParamInAmp0 :
-    inAmp0 = FIX16_FRACT_TRUNC(v.fix);
+    inAmp0 = v.fr;
     break;
   case eParamInAmp1 :
-    inAmp0 = FIX16_FRACT_TRUNC(v.fix);
+    inAmp0 = v.fr;
     break;
   case eParamInAmp2 :
-    inAmp0 = FIX16_FRACT_TRUNC(v.fix);
+    inAmp0 = v.fr;
     break;
   case eParamInAmp3 :
-    inAmp0 = FIX16_FRACT_TRUNC(v.fix);
+    inAmp0 = v.fr;
     break;
   case eParamAtkDur:
     env_asr_set_atk_dur(ampEnv, sec_to_frames_trunc(v.fix));
@@ -63,16 +143,16 @@ void module_set_param(u32 idx, pval v) {
   default:
     break;
   }
+}
 
 #endif
 
-}
 
-
-void fill_param_desc(void) {
 
 
 #if 0
+
+void fill_param_desc(void) {
 
   strcpy(gModuleData->paramDesc[eParamGate].label, "gate");
   strcpy(gModuleData->paramDesc[eParamGate].unit, "");
@@ -182,9 +262,7 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamInAmp3].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamInAmp3].min = 0;
   gModuleData->paramDesc[eParamInAmp3].max = fix16_one;
-
-#endif
-
 }
+#endif
 
 // EOF

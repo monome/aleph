@@ -43,7 +43,7 @@ static void svf_q_table_init(void);
 //static void filter_svf_calc_freq(filter_svf* f);
 static void filter_svf_calc_reson(filter_svf* f);
 
-
+#if 0
 static void filter_svf_calc_freq(filter_svf* f) {
   //// way too slow if it happens a lot
   /*   float tmp = fix16_to_float(f->hz) / (float)SAMPLERATE; */
@@ -58,6 +58,7 @@ static void filter_svf_calc_freq(filter_svf* f) {
   //    f->freq = float_to_fr32(fix16_to_float(f->hz) / (float)SAMPLERATE);
   //    f->freq = (f->hz & 0xffff) << 16; //fix16_fract_trunc(f->hz);
 }
+#endif
 
 
 static void filter_svf_calc_reson(filter_svf* f) {

@@ -140,12 +140,13 @@ void render_sw_on(u8 sw, u8 on) {
 }
 
 void render_dac(u8 ch, s32 val) {
+  /// FIXME: hella stupid to call a fill from a frequently-triggered handler
   region_fill(&bigtop, 0x0);
   strcpy(numstrbuf, "   ");
   itoa_whole(ch, numstrbuf, NUMSTRBUF_LEN);
   region_string(&bigtop, numstrbuf, 0, 0, 0xa, 0x1, 1);
   itoa_whole(val, numstrbuf, NUMSTRBUF_LEN);
-  region_string(&bigtop, numstrbuf, 10, 10, 0xf, 0x0, 1);
+  region_string(&bigtop, numstrbuf, 5, 20, 0xf, 0x0, 1);
 }
 
 #undef LINE_BUF_LEN

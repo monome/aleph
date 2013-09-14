@@ -30,9 +30,12 @@
 #endif
 
 #include "module.h"
+
 #include "module_custom.h"
 #include "params.h"
 #include "types.h"
+
+#include "drumsyn.h"
 
 #define HZ_MIN 0x200000      // 32
 #define HZ_MAX 0x40000000    // 16384
@@ -49,21 +52,6 @@ typedef struct _drumsData {
 } drumsynData;
 //#endif
 
-typedef struct _drumsynVoice {
-  filter_svf* svf;
-  env_asr* envAmp;
-  env_asr* envFreq;
-  env_asr* envRes;
-  //  fract32 envOffAmp; // offset 
-  //  fract32 envMulAmp; // multiplier
-  fract32 envOffFreq; // offset 
-  fract32 envMulFreq; // multiplier
-  fract32 envOffRes; // offset 
-  fract32 envMulRes; // multiplier
-  lcprng* rngH;
-  lcprng* rngL;
-} drumsynVoice;
-
 //-------------------------
 //----- extern vars (initialized here)
 moduleData * gModuleData; // module data
@@ -77,7 +65,7 @@ u32 dbgCount = 0;
 #endif
 
 /// TEST: one voice
-drumsynVoice* voices[1];
+drumsynVoice* voices[DRUMSYN_NVOICES];
 
 // pointer to local module data, initialize at top of SDRAM
 static drumsynData * data;
@@ -121,8 +109,41 @@ void drumsyn_voice_deinit(drumsynVoice* voice) {
 // next value of voice
 static fract32 drumsyn_voice_next(drumsynVoice* voice);
 fract32 drumsyn_voice_next(drumsynVoice* voice) {
-  return filter_svf_next(voice->svf, 
-			 lcprng_next(voice->rngL) | ( lcprng_next(voice->rngH) << 16) );
+  // FIXME : janky, need more voices
+  static fract32 ampenv, ampenvold, amp;
+  static fract32 freqenv, freqenvold;
+  static fract32 resenv, resenvold;
+
+  ampenv = env_asr_next ( voice->envAmp );
+  if(ampenv != ampenvold) {
+    amp = ampenv * voice->amp;
+    ampenvold = ampenv;
+  }
+
+  freqenv = env_asr_next ( voice->envAmp );
+  if(freqenv != freqenvold) {
+    filter_svf_set_coeff( voice->svf, add_fr1x32(voice->envAddFreq, 
+				     mult_fr1x32x32(freqenv, voice->envMulFreq)
+				     )
+			  );
+    freqenvold = freqenv;
+  }
+
+  resenv = env_asr_next ( voice->envAmp );
+  if(resenv != resenvold) {
+    filter_svf_set_rq( voice->svf, add_fr1x32(voice->envAddRes, 
+				     mult_fr1x32x32(resenv, voice->envMulRes)
+				     )
+			  );
+    resenvold = resenv;
+  }
+  
+  return mult_fr1x32x32( amp,
+			 filter_svf_next(voice->svf, 
+					 lcprng_next(voice->rngL) |
+					 ( lcprng_next(voice->rngH) << 16) 
+					 )
+			 );
 }
 
 

@@ -3,6 +3,7 @@
 
 enum Params {
   eParamGate0,
+  eParamAmp0,
   eParamAmpAtkDur0,
   eParamAmpRelDur0,
   eParamAmpAtkCurve0,
@@ -19,8 +20,13 @@ enum Params {
   eParamResRelCurve0,
   eParamResMul0,
   eParamResAdd0,
+  eParamLow0,
+  eParamHigh0,
+  eParamBand0,
+  eParamNotch0,
 
   eParamGate1,
+  eParamAmp1,
   eParamAmpAtkDur1,
   eParamAmpRelDur1,
   eParamAmpAtkCurve1,
@@ -37,8 +43,13 @@ enum Params {
   eParamResRelCurve1,
   eParamResMul1,
   eParamResAdd1,
+  eParamLow1,
+  eParamHigh1,
+  eParamBand1,
+  eParamNotch1,
 
   eParamGate2,
+  eParamAmp2,
   eParamAmpAtkDur2,
   eParamAmpRelDur2,
   eParamAmpAtkCurve2,
@@ -54,9 +65,14 @@ enum Params {
   eParamResAtkCurve2,
   eParamResRelCurve2,
   eParamResMul2,
-  eParamResAdd2, 
+  eParamResAdd2,
+  eParamLow2,
+  eParamHigh2,
+  eParamBand2,
+  eParamNotch2, 
 
   eParamGate3,
+  eParamAmp3,
   eParamAmpAtkDur3,
   eParamAmpRelDur3,
   eParamAmpAtkCurve3,
@@ -73,6 +89,11 @@ enum Params {
   eParamResRelCurve3,
   eParamResMul3,
   eParamResAdd3,
+  eParamLow3,
+  eParamHigh3,
+  eParamBand3,
+  eParamNotch3,
+
   eParamNumParams
 };
 

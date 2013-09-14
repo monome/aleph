@@ -4,6 +4,9 @@
    noise generators
 */
 
+#ifndef _ALEPH_AUDIO_NOISE_H_
+#define _ALEPH_AUDIO_NOISE_H_
+
 #include "types.h"
 
 
@@ -29,3 +32,5 @@ extern void lcprng_set_c(lcprng* o, s32 v);
 extern void lcprng_set_x(lcprng* o, s32 v);
 // compute next
 extern s32 lcprng_next(lcprng* o);
+
+#endif
