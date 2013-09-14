@@ -1,0 +1,44 @@
+ALEPH 
+
+project ideas
+
+////////////////////
+
+general purpose audio/CV mixer
+
+- extend aleph-dacs.ldr with arbitrary audio i/o mixing
+- convert audio levels to CV and add these as "mix" points
+- avr32 "mixes" incoming CV/ui/HID to bfin dac params, as fast as possible.
+- preset storage
+- i2c: mix points and preset selection
+
+////////////////////
+
+granular engine (bfin)
+
+- record enable
+- record position
+- playback rate
+- playback position
+- scrub rate
+- density
+- diffusion
+
+////////////////////
+
+beat detecting loop / skip
+
+- bfin amplitude follower reports 1ms summaries to avr32 on poll
+- draw waveform and hilite with coarse beat detection
+- select from peaks with knob1, fine-tune with knob2
+- loop or whatever
+
+////////////////////
+
+shlisp interpreter
+( http://www.shbobo.net/ ) 
+
+- compile shlisp opcode graph to bfin
+- avr32 handles chub input from usb-hid
+
+
