@@ -218,7 +218,7 @@ void screen_startup(void) {
 
   // fill screenbuffer with grey background
   for(i=0; i<GRAM_BYTES; i++) {
-    screenBuf[i] = 0x22;
+    screenBuf[i] = 0xff;
   }
 
   print_dbg("\r\n screen_startup");
@@ -234,6 +234,6 @@ void screen_startup(void) {
   spi_unselectChip(OLED_SPI, OLED_SPI_NPCS); 
 
   /// draw the glyph
-  screen_draw_region(32, 0, 24, 32, (u8*)aleph_hebrew_glyph);
+  screen_draw_region(128-24 - 1, 64-32 - 1, 24, 32, (u8*)aleph_hebrew_glyph);
 }
 

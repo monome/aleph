@@ -12,7 +12,7 @@
 // lppr
 #include "files.h"
 
-#define LPPR_LDR_PATH "/dsp/aleph-lines.ldr"
+#define LDR_PATH "/dsp/aleph-dacs.ldr"
 
 // search for our .ldr file in the filesystem
 // load and store in internal flash if found, otherwise report failure
@@ -41,12 +41,12 @@ u8 files_search_dsp(void) {
   u32 size;
   // open file pointer
   print_dbg("\r\n opening dsp file at path: ");
-  print_dbg(LPPR_LDR_PATH);
+  print_dbg(LDR_PATH);
 
   // we don't want to be handling UI interrupts while working with the filesystem
   app_pause();
 
-  fp = fl_fopen(LPPR_LDR_PATH, "r");
+  fp = fl_fopen(LDR_PATH, "r");
   if( fp != NULL) {
     size = ((FL_FILE*)(fp))->filelength;
     print_dbg("\r\n opened file, size: ");

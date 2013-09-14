@@ -16,24 +16,15 @@
 #include "render.h"
 #include "util.h"
 
+// blah
+#define DSP_STRING "aleph-dacs"
+
 //----------------------------------------
 //---- static variables
 
-// milliseconds uptime of last event
-static u32 ms_loop1 = 0;
-// is a loop playing
-static u8 loopPlay1 = 0;
-// is a loop recording
-static u8 loopRec1 = 0;
-
 //-- parameter values
 // inputs. use s32 type but unsigned range (accumulators)
-s32 in_fb0 = 0;
-s32 in_fb1 = 0;
-s32 in_cutoff0 = 0;
-s32 in_cutoff1 = 0;
-s32 in_res0 = 0;
-s32 in_res1 = 0;
+s32 dac[4];
 
 /// help!
 static inline s32 fr32_from_float(float x) {
@@ -86,7 +77,7 @@ u8 ctl_report_params(void) {
 
   print_dbg("\r\n bfin module name: ");
   print_dbg((const char*)buf);
-  if(strcmp((const char*)buf, "aleph-lines")) {
+  if(strcmp((const char*)buf, DSP_STRING)) {
     print_dbg( "\r\n report_params fail (module name mismatch)" );
     return 0;
   } else {
@@ -96,152 +87,36 @@ u8 ctl_report_params(void) {
 
 // set initial parameters
 void ctl_init_params(void) {
-  // no filters
-  ctl_param_change(eParam_mix0, 0);
-  ctl_param_change(eParam_mix1, 0);
-  // half dry
-  ctl_param_change(eParam_adc0_dac0, fr32_from_float(0.5) );
-  // half wet
-  ctl_param_change(eParam_del0_dac0, fr32_from_float(0.5) );
-  ctl_param_change(eParam_del1_dac0, fr32_from_float(0.5) );
-  // adc0 -> del0
-  ctl_param_change(eParam_adc0_del0, fr32_from_float(0.99));
-  // adc0 -> del1
-  ctl_param_change(eParam_adc0_del1, fr32_from_float(0.99));
-  // del0 -> del1
-  ctl_param_change(eParam_del0_del1, fr32_from_float(0.99));				    
-  // slight feedback on del0 
-  ctl_param_change(eParam_del0_del0, fix16_one >> 2);
-  // set write flags
-  ctl_param_change(eParam_write0, 1);
-  ctl_param_change(eParam_write1, 1);		   
-  // set run flags
-  ctl_param_change(eParam_run_write0, 1);
-  ctl_param_change(eParam_run_write1, 1);		   
-  ctl_param_change(eParam_run_read0, 1);
-  ctl_param_change(eParam_run_read1, 1);		   
-  // set delay time
-  ctl_param_change(eParam_delay0, 250 * 48 );
-  ctl_param_change(eParam_delay1, 500 * 48 );
+  // dacs at 0
+  ctl_param_change(eParam_dac0, 0);
+  ctl_param_change(eParam_dac1, 0);
+  ctl_param_change(eParam_dac2, 0);
+  ctl_param_change(eParam_dac3, 0);
+
 }
 
-
-// set delay time in ms
-void  ctl_set_delay_ms(u8 idx, u32 ms)  {
-  u32 samps =  MS_TO_SAMPS(ms);
-  print_dbg("\r\n\r\n ctl_set_delay_ms:");
-  while(samps > PARAM_BUFFER_MAX) {
-    samps -= PARAM_BUFFER_MAX;
-  }
-  // bleh
-  switch(idx) {
-  case 0:
-    ctl_param_change(eParam_delay0, samps);
-    render_delay_time(0, ms, samps);
-    break;
-  case 1:    
-    if(loopPlay1) {
-      print_dbg("\r\n (switching from loop to delay mode");
-      print_dbg("\r\n set loop time to max");
-      ctl_param_change(eParam_loop1, PARAM_BUFFER_MAX);
-      print_dbg("\r\n write enable");
-      ctl_param_change(eParam_write1, 1);
-      print_dbg("\r\n start write head movement");
-      ctl_param_change(eParam_run_write1, 1);
-      print_dbg("\r\n no overdub");
-      ctl_param_change(eParam_pre1, 0);
-      loopPlay1 = 0;
-    }
-    print_dbg("\r\n sync write/read heads");
-    ctl_param_change(eParam_delay1, samps);    
-    render_delay_time(1, ms, samps);
-
-    break;
-  default:
-    break;
-  }
+// set dac value
+void  ctl_set_dac(u8 ch, u16 val) {
+  // param enum hack...
+  dac[ch] = val;
+  ctl_param_change(eParam_dac0 + ch, val);
+  render_dac(ch, val);
 }
 
+// increment dac value
+void ctl_inc_dac(u8 ch, s32 delta) {
+  s32 tmp = dac[ch] + delta;
 
-// start recording loop on given delayline
-void ctl_loop_record(u8 idx) {
-  print_dbg("\r\n\r\n ctl_loop_record:");
-  if(!loopRec1) {
-    if(loopPlay1) {
-      print_dbg("\r\n (existing loop)");
-      print_dbg("\r\n start writing ");
-      ctl_param_change(eParam_write1, 1);
-      print_dbg("\r\n full overdub");
-      ctl_param_change(eParam_pre1, fix16_one);
-      // can reset loop length
-      // by recording, cancelling loop, playing
-      ms_loop1 = tcTicks; 
-    } else {
-      print_dbg("\r\n (new loop)");
-      ms_loop1 = tcTicks;
-      print_dbg("\r\n stop read head movement");
-      ctl_param_change(eParam_run_read1, 0);
-      print_dbg("\r\n reset write head");
-      ctl_param_change(eParam_pos_write1, 0);
-      print_dbg("\r\n write enable");
-      ctl_param_change(eParam_write1, 1);
-      print_dbg("\r\n start write head movement");
-      ctl_param_change(eParam_run_write1, 1);
-    }
-    loopRec1 = 1;
+  if(tmp > PARAM_DAC_MAX) {    
+    tmp = PARAM_DAC_MAX;
   }
-}
 
-// stop recording loop / start playback on given delayline
-void ctl_loop_playback(u8 idx) {
-  u32 samps;
-  u32 ms;
-  print_dbg("\r\n\r\n ctl_loop_playback:");
-
-  if(loopRec1) {
-    // recording
-    if(loopPlay1) {
-
-      // already playing
-      print_dbg("\r\n (existing loop)");
-      print_dbg("\r\n write disable");
-      ctl_param_change(eParam_write1, 0);
+  if(tmp < PARAM_DAC_MIN) {
+    if (delta>0) { // overflow
+      tmp = PARAM_DAC_MAX;
     } else {
-
-      // not playing
-      print_dbg("\r\n (new loop)"); 
-      if (ms_loop1 > tcTicks) { // overflow
-	ms = tcTicks + (0xffffffff - ms_loop1);
-      } else {
-	ms = tcTicks - ms_loop1;
-      }
-      samps = MS_TO_SAMPS(ms) - 1;
-
-      print_dbg("\r\n write disable");
-      ctl_param_change(eParam_write1, 0);
-      print_dbg("\r\n reset write head");
-      ctl_param_change(eParam_pos_write1, 1);
-      print_dbg("\r\n reset read head");
-      ctl_param_change(eParam_pos_read1, 0);
-      print_dbg("\r\n set loop time");
-      ctl_param_change(eParam_loop1, samps);
-      print_dbg("\r\n start read head");
-      ctl_param_change(eParam_run_read1, 1);
-
-      // set loop-playing flag
-      loopPlay1 = 1;
-    }
-    // unset loop-recording
-    loopRec1 = 0;  
-  } else {
-    // not recording
-    if (loopPlay1) {
-      // but a loop is playing
-      // reset the loop 
-	print_dbg("\r\n reset read head");
-	ctl_param_change(eParam_pos_read1, 0);
-    } else {
-      ;; // no action
+      tmp = PARAM_DAC_MIN;
     }
   }
+  ctl_set_dac(ch, tmp);
 }

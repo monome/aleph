@@ -6,8 +6,8 @@
 
  */
 
-#ifndef _ALEPH_AVR32_APP_LPPR_INPUTS_H_
-#define _ALEPH_AVR32_APP_LPPR_INPUTS_H_
+#ifndef _ALEPH_AVR32_APP_FLRY_INPUTS_H_
+#define _ALEPH_AVR32_APP_FLRY_INPUTS_H_
 
 #include "fix.h"
 #include "types.h"

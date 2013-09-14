@@ -33,6 +33,7 @@ CSRCS += \
 	$(ALEPH_AVR32)/src/interrupts.c \
 	$(ALEPH_AVR32)/src/memory.c \
 	$(ALEPH_AVR32)/src/monome.c \
+	$(ALEPH_AVR32)/src/region.c \
 	$(ALEPH_AVR32)/src/screen.c \
 	$(ALEPH_AVR32)/src/simple_string.c \
 	$(ALEPH_AVR32)/src/switches.c \
