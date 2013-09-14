@@ -30,7 +30,6 @@
 #endif
 
 #include "module.h"
-
 #include "module_custom.h"
 #include "params.h"
 #include "types.h"
@@ -138,13 +137,18 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
     resenvold = resenv;
   }
   
+#if 0
   return mult_fr1x32x32( amp,
 			 filter_svf_next(voice->svf, 
 					 lcprng_next(voice->rngL) |
 					 ( lcprng_next(voice->rngH) << 16) 
 					 )
 			 );
+#else  // TEST
+  return mult_fr1x32x32(amp, lcprng_next(voice->rngL) | (lcprng_next(voice->rngH) << 16) );
+#endif
 }
+
 
 
 // frame calculation
@@ -156,6 +160,7 @@ static void calc_frame(void) {
 //----- external functions
 
 void module_init(void) {
+  u8 i;
   // init module/param descriptor
 #ifdef ARCH_BFIN 
   // intialize local data at start of SDRAM
@@ -167,9 +172,17 @@ void module_init(void) {
   dbgFile = fopen( "drums_dbg.txt", "w");
 #endif
   gModuleData = &(data->super);
+  strcpy(gModuleData->name, "aleph-drumsyn");
   gModuleData->paramDesc = data->mParamDesc;
   gModuleData->paramData = data->mParamData;
   gModuleData->numParams = eParamNumParams;
+
+  for(i=0; i<DRUMSYN_NVOICES; i++) {
+    voices[i] = (drumsynVoice*)malloc(sizeof(drumsynVoice));
+    drumsyn_voice_init(voices[i]);
+  }
+
+  fill_param_desc();
 
 }
 

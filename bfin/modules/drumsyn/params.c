@@ -85,6 +85,12 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamGate0].min = 0;
   gModuleData->paramDesc[eParamGate0].max = FR32_MAX;
 
+  strcpy(gModuleData->paramDesc[eParamTrig0].label, "Trig0");
+  strcpy(gModuleData->paramDesc[eParamTrig0].unit, "");
+  gModuleData->paramDesc[eParamTrig0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamTrig0].min = 0;
+  gModuleData->paramDesc[eParamTrig0].max = FR32_MAX;
+
   strcpy(gModuleData->paramDesc[eParamAmp0].label, "Amp0");
   strcpy(gModuleData->paramDesc[eParamAmp0].unit, "");
   gModuleData->paramDesc[eParamAmp0].type = PARAM_TYPE_FRACT;

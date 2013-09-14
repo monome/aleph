@@ -1,7 +1,24 @@
-#ifndef _ALEPH_DRUMSYN_PARAMS_H_
-#define _ALEPH_DRUMSYN_PARAMS_H_
 
-enum Params {
+#ifndef _ALEPH_APP_FLRY_CTL_H_
+#define _ALEPH_APP_FLRY_CTL_H_
+
+#define PARAM_DAC_MIN 0x00000000
+#define PARAM_DAC_MAX 0xffff
+
+//---------------------------
+//---- -external functions
+
+// query the DSP for parameter descriptors. 
+// return 0 if something seems wrong, 1 otherwise
+u8 ctl_report_params(void);
+// set parameters to initial values
+void ctl_init_params(void);
+// set gate
+void  ctl_set_gate(u8 ch, u8 val);
+
+// parameter enum
+// FIXME: just copying from .ldr source for now
+typedef enum Params {
   eParamGate0,
   eParamTrig0,
   eParamAmp0,
@@ -26,10 +43,6 @@ enum Params {
   eParamBand0,
   eParamNotch0,
 
-  // FIXME
-  eParamNumParams
-
-  /*
   eParamGate1,
   eParamTrig1,
   eParamAmp1,
@@ -102,11 +115,10 @@ enum Params {
   eParamBand3,
   eParamNotch3,
 
-    eParamNumParams
-  */
-};
+  eParamNumParams
+} eParam;
 
-extern void fill_param_desc(void);
 
-#endif // header guard 
-// EOF
+
+#endif // h guard
+

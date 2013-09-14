@@ -14,6 +14,7 @@
 #include "types.h"
 
 /// ASR envelope class
+/// can be used in gated mode or triggered mode
 typedef struct _env_asr {
   ///// atk params
   fix16 aUp; // grow coefficient
@@ -48,8 +49,15 @@ extern void env_asr_set_rel_dur(env_asr* env, u32 dur);
 // set release curve in [-1, 1]
 extern void env_asr_set_rel_shape(env_asr* env, fract32 shape);
 
+// set sustain duration in samples (ignored in gated mode)
+extern void env_asr_set_sus_dur(env_asr* env, u32 dur);
+
 // set gate
 extern void env_asr_set_gate(env_asr* env, u8 gate);
+
+// trigger(
+extern void env_asr_set_gate(env_asr* env, u8 gate);
+
 
 // get the next value
 extern fract32 env_asr_next(env_asr* env);
