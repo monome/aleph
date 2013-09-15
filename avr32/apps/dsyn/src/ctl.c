@@ -19,6 +19,27 @@
 // blah
 #define DSP_STRING "aleph-drumsyn"
 
+
+// testing values.
+/* the env_int class takes durations as integrator coefficients.
+   (FIXME: should rename the params in aleph-drumsyn,
+   and use dsyn/inputs.c for conversion).
+*/
+
+//	2640 hz	~= 0.707813107994074	~= 0x5a999eb2
+#define ENV_DUR_ATK_SHORT 0x5a999eb2
+
+//	`55 hz 	~= 0.9928263710316179	~= 0x7f14ef3c
+#define ENV_DUR_ATK_LONG 0x7f14ef3c
+
+//	2 hz	~= 0.9997382348786702	~= 0x7ff76c26
+#define ENV_DUR_REL_SHORT 0x7ff76c26
+
+//	1/2 hz 	~= 0.9999345522948447	~= 0x7ffddafb
+#define ENV_DUR_REL_LONG 0x7ffddafb
+
+
+
 //----------------------------------------
 //---- static variables
 
@@ -91,32 +112,28 @@ void ctl_init_params(void) {
   ctl_param_change(  eParamGate0, 		0 );
   ctl_param_change(  eParamTrig0, 		0 );
   ctl_param_change(  eParamAmp0, 		FR32_MAX - 1 );
-  ctl_param_change(  eParamAmpAtkDur0, 		1000 );
-  ctl_param_change(  eParamAmpRelDur0, 		100000 );
-  ctl_param_change(  eParamAmpAtkCurve0, 	0 );
-  ctl_param_change(  eParamAmpRelCurve0, 	0 );
-  ctl_param_change(  eParamFreqAtkDur0, 	100 );
-  ctl_param_change(  eParamFreqRelDur0, 	20000 );
-  ctl_param_change(  eParamFreqAtkCurve0, 	0 );
-  ctl_param_change(  eParamFreqRelCurve0, 	0 );
+  /// FIXME: durations are actually integrator coefficients :S
+  /// so for now, these are hardcoded constants above.
+  ctl_param_change(  eParamAmpAtkDur0, 		ENV_DUR_ATK_SHORT );
+  ctl_param_change(  eParamAmpRelDur0, 		ENV_DUR_REL_LONG );
+  ctl_param_change(  eParamAmpAtkCurve0, 	0x0 );
+  ctl_param_change(  eParamAmpRelCurve0, 	0x0 );
+  ctl_param_change(  eParamFreqAtkDur0, 	ENV_DUR_ATK_LONG );
+  ctl_param_change(  eParamFreqRelDur0, 	ENV_DUR_REL_SHORT );
+  ctl_param_change(  eParamFreqAtkCurve0, 	0x0 );
+  ctl_param_change(  eParamFreqRelCurve0, 	0x0 );
   ctl_param_change(  eParamFreqMul0, 		fr32_from_float(0.5) );
   ctl_param_change(  eParamFreqAdd0, 		fr32_from_float(0.01) );
-  ctl_param_change(  eParamResAtkDur0, 		100 );
-  ctl_param_change(  eParamResRelDur0, 		40000 );
-  ctl_param_change(  eParamResAtkCurve0, 	0 );
-  ctl_param_change(  eParamResRelCurve0, 	0 );
+  ctl_param_change(  eParamResAtkDur0, 		ENV_DUR_ATK_LONG );
+  ctl_param_change(  eParamResRelDur0, 		ENV_DUR_REL_SHORT );
+  ctl_param_change(  eParamResAtkCurve0, 	0x0 );
+  ctl_param_change(  eParamResRelCurve0, 	0x0 );
   ctl_param_change(  eParamResMul0, 		fr32_from_float(-0.2) );
   ctl_param_change(  eParamResAdd0, 		fr32_from_float(0.4) );
   ctl_param_change(  eParamLow0, 		FR32_MAX - 1 );
   ctl_param_change(  eParamHigh0, 		0 );
   ctl_param_change(  eParamBand0, 		0 );
   ctl_param_change(  eParamNotch0, 		0 );
-  // dacs at 0
-  /* ctl_param_change(eParam_dac0, 0); */
-  /* ctl_param_change(eParam_dac1, 0); */
-  /* ctl_param_change(eParam_dac2, 0); */
-  /* ctl_param_change(eParam_dac3, 0); */
-
 }
 
 // set gate

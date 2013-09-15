@@ -38,6 +38,24 @@
 #define ENV_STATE_OFF      3
 #define ENV_NUM_STATES     4
 
+/*
+    switch(env->state) {
+    case ENV_STATE_OFF:
+      break;	
+    case ENV_STATE_ATK_POS  :
+	break;
+    case ENV_STATE_ATK_NEG  :
+      break;
+    case ENV_STATE_REL_POS  :
+      break;
+    case ENV_STATE_REL_NEG  :
+      break;
+    case ENV_STATE_SUS      :
+      break;
+      break;
+*/
+
+
 //-------------------------------------
 //----- static function declarations
 
@@ -65,114 +83,8 @@ static fract32 env_next_sus(env_asr* env);
 // not playing
 static fract32 env_next_off(env_asr* env);
 
-///// fit when switching mid-segment
-// pos atk -> pos rel
-static void env_asr_fit_papr(env_asr* env) {
-  // pos atk: x is increasing, y is inverted/decreasing
-  // pos rel: x is decreasing, y is decreasing
-  float fy1;
-  float fx0;
-  float fc0;
-  float fc1;
-  // invert y
-  env->y = sub_fr1x32(FR32_MAX, env->y);
-  // if up and down curves are equal, we're done
-  if(env->cUp == env->cDn) {
-    return;
-  }
-  // otherwise, need to fudge x so the output value doesn't change.
-  // previous output equation:
-  // (1-y0)*c0 + x0*(1-c0)
-  // new output equation:
-  // y1*c1+ x1*(1-c1), where y1 = (1 = y0)
-  // solving for x1:
-  // x1 = ( y1*(c0 - c1) + x0*(1 - c0) ) / (1 - c1)
-  fy1 = fr32_to_float(env->y);
-  fx0 = fr32_to_float(env->x);
-  fc0 = fr32_to_float(env->cUp);
-  fc1 = fr32_to_float(env->cDn);
-  // FIXME: can maybe refactor more efficiently ?
-  env->x = float_to_fr32( ( fy1*(fc0 - fc1) + fx0*(1.f - fc0) ) / (1.f - fc1) );
-}
-
-// pos atk -> neg rel
-static void env_asr_fit_panr(env_asr* env) {
-  // pos atk: x is increasing, y is inverted / decreasing
-  // neg rel: x is decreasing, y is inverted / increasing
-  float fy1;
-  float fx0;
-  float fc0;
-  float fc1;
-  // if up and down curves are equal, we're done
-  /// FIXME: can restructure to skip the prolog in this case
-  if(env->cUp == env->cDn) {
-    return;
-  }
-  // otherwise, we need to fudge x so the output value doesn't change.
-  // both output equations:
-  // (1-y)*c + x*(1-c)
-  // c has changed, solving for x:
-  // x1 = ( c0(1 - y - x0) + x0 + c1(y - 1)) / (1 - c1)
-  fy1 = fr32_to_float(env->y);
-  fx0 = fr32_to_float(env->x);
-  fc0 = fr32_to_float(env->cUp);
-  fc1 = fr32_to_float(env->cDn);
-  env->x = float_to_fr32( ( fc0*(1.f - fy1 - fx0) + fx0 + fc1*(fy1 - 1.f)) / (1.f - fc1) );
-}
-
-// neg atk -> pos rel
-static void env_asr_fit_napr(env_asr* env) {
-  // TODO: not using negative curves just yet
-}
-
-// neg atk -> neg rel
-static void env_asr_fit_nanr(env_asr* env) {
-  // TODO: not using negative curves just yet
-}
-
-// pos rel -> pos atk
-static void env_asr_fit_prpa(env_asr* env) {
-  // pos rel: x decreasing, y decreasing
-  // pos atl: x increasing, y inverted / decreasing
-  float fy0;
-  float fx0;
-  float fc0;
-  float fc1;
-  fy0 = fr32_to_float(env->y);
-  /// invert integrator
-  env->y = sub_fr1x32(FR32_MAX, env->y);
-  /// if curves are equal, we're done
-  if(env->cUp == env->cDn) {
-    return;
-  }
-  // otherwise, need to fudge x to make output equal
-  // old output = (c0 * y0) + (x0 * (1 - c0))
-  // new output = (c1 * (1-y1)) + (x1 * (1-c1))
-  // solving for x1:
-  // x1 = ( y0*(c0 - c1) + x0 - x0*c0 ) / (1 - c1)
-  fx0 = fr32_to_float(env->x);
-  fc0 = fr32_to_float(env->cUp);
-  fc1 = fr32_to_float(env->cDn);
-  env->x = float_to_fr32( ( fy0 * (fc0 - fc1) + fx0 - (fx0 * fc0) ) / (1.f - fc1) );
-}
-
-// pos rel -> neg atk
-static void env_asr_fit_prna(env_asr* env) {
-  // TODO: not using negative curves just yet
-  ;;
-}
-// neg rel -> pos atk
-static void env_asr_fit_nrpa(env_asr* env) {
-  // TODO: not using negative curves just yet
-  ;;
-}
-
-// neg rel -> neg atk
-static void env_asr_fit_nrna(env_asr* env) {
-  // TODO: not using negative curves just yet
-  ;;
-}
-
+/// set stage
+//static void env_set_state(env_asr* env, u8 state);
 
 //---------------------------------------------
 //---- external function defs
@@ -188,12 +100,17 @@ void env_asr_set_atk_dur(env_asr* env, u32 dur) {
   env->bUp = float_to_fr32(fB);
   env->aUp = float_to_fr32(1.f / fB);
   env->rUp = FR32_MAX / dur;
+  //  printf("\n env growth coefficient : %08x", env->aUp);
+  //  printf("\n env decay coefficient : %08x", env->bUp);
+  //  printf("\n env ramp increment : %08x", env->rUp);
+  //  env->aUp = 1.0 / env->bUp;
 }
 
 // set release duration in samples
 void env_asr_set_rel_dur(env_asr* env, u32 dur) {
   env->bDn = float_to_fr32( (float)( pow(ENV_MIN_D, 1.0 / (double)dur) ) );
   env->rDn = FR32_MAX / dur;
+  //  env->aDn = 1.0 / env->bUp;
 }
 
 // set attack curve in [-1, 1]
@@ -202,13 +119,12 @@ void env_asr_set_atk_shape(env_asr* env, fract32 c) {
   env->cUp = c;
   if((cOld < 0) != (c < 0)) {
     if (c < 0) {
-      env->stateFP = *(env_next_atk_neg);
+      env->stateFP = &(env_next_atk_neg);
     } else {
-      env->stateFP = *(env_next_atk_pos);
+      env->stateFP = &(env_next_atk_pos);
     }
     if(env->state == ENV_STATE_REL) {
       // invert current phase
-      ///// FIXME: among other things related to negative curves, this seems wrong.
       env->y = sub_fr1x32(FR32_MAX, env->y);
       env->x = sub_fr1x32(FR32_MAX, env->x);
     }
@@ -221,9 +137,9 @@ void env_asr_set_rel_shape(env_asr* env, fract32 c) {
   env->cDn = c;
   if((cOld < 0) != (c < 0)) {
     if (c < 0) {
-      env->stateFP = *(env_next_rel_neg);
+      env->stateFP = &(env_next_rel_neg);
     } else {
-      env->stateFP = *(env_next_rel_pos);
+      env->stateFP = &(env_next_rel_pos);
     }
     if(env->state == ENV_STATE_REL) {
     // invert current phase
@@ -242,6 +158,18 @@ void env_asr_set_gate(env_asr* env, u8 g) {
     if( (env->state == ENV_STATE_ATK) || (env->state == ENV_STATE_SUS) ) {
       env_asr_release(env);
     }
+    /*    
+    switch(env->state) {
+    case ENV_STATE_ATK  :
+    case ENV_STATE_SUS      : 
+      env_asr_release(env);
+      break;
+    case ENV_STATE_REL  :
+    case ENV_STATE_OFF      :
+    default:
+      break;
+    }
+    */
   }
 }
 
@@ -263,20 +191,17 @@ void env_asr_attack(env_asr* env) {
       // nothing to do
       break;
     case ENV_STATE_OFF:
-      // start atk segment from beginning
-      // inverted decay, so integrator starts at 1
       env->y = ENV_MAX;
       env->x = 0;
-      env->stateFP = *(env_next_atk_pos);
+      env->stateFP = &(env_next_atk_pos);
       env->state = ENV_STATE_ATK;
       break;
     case ENV_STATE_REL:
       if(env->cDn >= 0) {
-	env_asr_fit_prpa(env);
-      } else {
-	env_asr_fit_nrpa(env);
+	// release is uninverted decay, want inverted decay
+	env->y = sub_fr1x32(FR32_MAX, env->y);
       }
-      env->stateFP = *(env_next_atk_pos);
+      env->stateFP = &(env_next_atk_pos);
       env->state = ENV_STATE_ATK;
       break;
     default:
@@ -289,19 +214,18 @@ void env_asr_attack(env_asr* env) {
       // nothing to do
       break;
     case ENV_STATE_OFF:
-      // uninverted growth, integrator starts at min
-      env->y = ENV_MIN;
+      env->y = ENV_MAX;
       env->x = 0;
-      env->stateFP = *(env_next_atk_neg);
+      env->stateFP = &(env_next_atk_neg);
       env->state = ENV_STATE_ATK;
       break;
     case ENV_STATE_REL:
-      if(env->cDn >= 0) {
-	env_asr_fit_prna(env);
-      } else {
-	env_asr_fit_nrna(env);
+      if(env->cDn < 0) {
+	// release is inverted growth, want uninverted growth
+	env->y = sub_fr1x32(FR32_MAX, env->y);
       }
-      env->stateFP = *(env_next_atk_neg);
+      /// WTF how is this so wrong
+      env->stateFP = &(env_next_atk_neg);
       env->state = ENV_STATE_ATK;
       break;
       
@@ -314,48 +238,30 @@ void env_asr_attack(env_asr* env) {
 // perform sustain section
 static void env_asr_sustain(env_asr* env) {
     env->state = ENV_STATE_SUS;
-    env->stateFP = *(env_next_sus);
+    env->stateFP = &(env_next_sus);
 }
 
 // perform release section
+/// FIXME: release during attack
 static void env_asr_release(env_asr* env) {
-  if(env->state == ENV_STATE_ATK) {
-    if(env->cDn >= 0) {
-      if(env->cUp >= 0) {
-	env_asr_fit_papr(env);
-      } else {
-	env_asr_fit_napr(env);
-      }
-      // uninverted decay
-      env->stateFP = *(env_next_rel_pos);
-    } else {
-      if(env->cUp >= 0) {
-	env_asr_fit_panr(env);
-      } else {
-	env_asr_fit_nanr(env);
-      }
-      env->stateFP = *(env_next_rel_pos);      
-    }
+    env->state = ENV_STATE_REL;
+ if(env->cDn >= 0) {
+    // uninverted decay
+    env->stateFP = &(env_next_rel_pos);
+    env->y = ENV_MAX;
+    env->x = FR32_MAX;
   } else {
-    if(env->cDn >= 0) {
-      // uninverted decay
-      env->stateFP = *(env_next_rel_pos);
-      env->y = ENV_MAX;
-      env->x = FR32_MAX;
-    } else {
-      // inverted growth
-      env->stateFP = *(env_next_rel_neg);
-      env->y = ENV_MIN;
-      env->x = FR32_MAX;
-    }
-  }
-  env->state = ENV_STATE_REL;
+    // inverted growth
+    env->stateFP = &(env_next_rel_neg);
+    env->y = ENV_MIN;
+    env->x = FR32_MAX;
+ }
 }
 
 // turn off (immediately)
 static void env_asr_off(env_asr* env) {
     env->state = ENV_STATE_OFF;
-    env->stateFP = *(env_next_off);
+    env->stateFP = &(env_next_off);
     env->y = ENV_MIN;
 }
 
@@ -375,12 +281,10 @@ static fract32 env_next_atk_pos(env_asr* env) {
     }
   }
   // interpolate for curve
-
-  env->out =  add_fr1x32( // invert y
+  return add_fr1x32( // invert x:
 		    mult_fr1x32x32( sub_fr1x32(FR32_MAX, env->y), env->cUp ),
 		    mult_fr1x32x32( env->x, sub_fr1x32( FR32_MAX, env->cUp) )
 		    );
-  return env->out;
   
 }
 
@@ -394,16 +298,15 @@ static fract32 env_next_atk_neg(env_asr* env) {
   //  env->y = mult_fr1x32x32(env->y, env->aUp);
     env->y = (fract32)( fix16_mul( (fix16)(env->y >> 16), env->aUp) << 16);
     env->x = add_fr1x32(env->x, (fract32)env->rUp);
-    if ( env->x < 0 ) { // overflow
+    if ( env->x < 0 ) {
       env->x = FR32_MAX;
     }
   }
   // interpolate for curve
-  env->out = add_fr1x32(
+  return add_fr1x32(
 		    mult_fr1x32x32(env->y, cabs),
 		    mult_fr1x32x32(env->x, sub_fr1x32( FR32_MAX, cabs ))
 		    );
-  return env->out;
 }
 
 
@@ -420,11 +323,10 @@ static fract32 env_next_rel_pos(env_asr* env) {
     env->x = 0;
   }
   // interpolate for curve
-  env->out = add_fr1x32(
+  return add_fr1x32(
 		    mult_fr1x32x32( env->y, env->cDn ),
 		    mult_fr1x32x32( env->x, sub_fr1x32(FR32_MAX, env->cDn) )
 		    );
-  return env->out;
 }
 
 // release stage, negative curve
@@ -434,11 +336,10 @@ static fract32 env_next_rel_neg(env_asr* env) {
   //  env->y = mult_fr1x32x32(env->y, env->aDn );
   env->y = (fract32)( fix16_mul( (fix16)(env->y >> 16), env->aDn) << 16);
   // interpolate for curve
-  env->out = add_fr1x32( // invert y:
+  return add_fr1x32( // invert x:
 		    mult_fr1x32x32( sub_fr1x32(FR32_MAX, env->y), env->cDn ),
 		    mult_fr1x32x32( env->x, sub_fr1x32(FR32_MAX, env->cDn) )
 		    );
-  return env->out;
 }
 
 // sustain stage
@@ -450,5 +351,3 @@ static fract32 env_next_sus(env_asr* env) {
 static fract32 env_next_off(env_asr* env) {
   return 0;
 }
-
-

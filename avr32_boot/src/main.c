@@ -321,7 +321,7 @@ int main (void) {
   //  print_dbg_hex(isSwUp);
 
   if(!isSwDown) {
-    //    print_dbg("\r\n switch up, jumping to main");
+    print_dbg("\r\n switch up, jumping to main");
     /// hardcoded jump to firmware location
   
     asm volatile (
@@ -332,11 +332,8 @@ int main (void) {
 
     //    init_avr32();
 
-    //    print_dbg("\r\n sw3 was open, should now continue to runtime executable location");
+    //   print_dbg("\r\n sw3 was open, should now continue to runtime executable location");
   } else {
-  
-
-
     // set up avr32 hardware and peripherals
     init_avr32();
 

@@ -7,7 +7,7 @@
 #include <math.h>
 // aleph
 #include "filter_1p.h"
-
+#include "module.h"
 
 #ifdef ARCH_BFIN
 #include "fract_math.h"
@@ -22,6 +22,10 @@
 
 #define FR32_COMP_THRESH 0x7
 #define FR32_COMP_THRESH_NEG 0xfffffffe
+
+// global temp variable, compute at init
+// inverse of samplerate as float
+static float fSrInv;
 
 //-----------------------
 //---- static functions
@@ -46,26 +50,32 @@ static inline u8 fix16_compare(fix16 a, fix16 b) {
 //===== fix16
 
 // intialize at pre-allocated memory
-void filter_1p_fix16_init(filter_1p_fix16* f, u32 sr, fix16 hz, fix16 in) {
+void filter_1p_fix16_init(filter_1p_fix16* f, fix16 in) {
   f->c = 0;
   f->y = in;
   f->x = in;
   f->sync = 1;
-  f->sr = sr;
-  filter_1p_fix16_set_hz(f, hz);
+  fSrInv = 1.f / (float)SAMPLERATE;
+  f->c = 0xffff;
 }
 
 // set cutoff frequency in hz
 void filter_1p_fix16_set_hz(filter_1p_fix16* f, fix16 hz) { 
   //// debug
   //f32 fc =  (float) exp(-2.0 * M_PI * (double)(fix16_to_float(hz)) / (float)(f->sr) );
-   //  printf("\r1p coefficient: %f\n", fc);
+  //  printf("\r1p coefficient: %f\n", fc);
   /// /FIXME: could optimize
-  f->c = fix16_from_float( (float) exp(-2.0 * M_PI * (double)(fix16_to_float(hz)) / (float)(f->sr) ) ); 
+  f->c = fix16_from_float( (float) exp(-2.0 * M_PI * (double)(fix16_to_float(hz)) * fSrInv ) ); // / (float)(f->sr) ) ); 
   // clamp to < 1.0
   if (f->c > 0xffff) {  f->c = 0xffff; }
   //  printf("\r\n fix16 smoother coefficient: %08x\n",  f->c );
 }
+
+// set integrator coefficient directly
+void filter_1p_fix16_set_coeff(filter_1p_fr32* f, fix16 coeff) {
+  f->c = coeff > 0xffff ? 0xffff : (coeff < 0 ? 0 : coeff);
+}
+
 
 // set target value 
 void filter_1p_fix16_in(filter_1p_fix16* f, fix16 val) {
@@ -97,20 +107,25 @@ fix16 filter_1p_fix16_next(filter_1p_fix16* f) {
 //===== fr32
 
 // intialize at pre-allocated memory
-void filter_1p_fr32_init(filter_1p_fr32* f, u32 sr, fix16 hz, fract32 in) {
+void filter_1p_fr32_init(filter_1p_fr32* f, fract32 in) {
   f->c = 0;
   f->y = in;
   f->x = in;
   f->sync = 1;
-  f->sr = sr;
-  filter_1p_fr32_set_hz(f, hz);
+  fSrInv = 1.f / (float)SAMPLERATE;
+  f->c = 0x7fffffff;
 }
 
 // set cutoff frequency in hz
 void filter_1p_fr32_set_hz(filter_1p_fr32* f, fix16 hz) {
-  f32 fc =  (float) exp(-2.0 * M_PI * (double)(fix16_to_float(hz)) / (float)(f->sr) );
+  f32 fc =  (float) exp(-2.0 * M_PI * (double)(fix16_to_float(hz)) * fSrInv ); // / (float)(f->sr) );
   //  printf("\r1p coefficient: %f\n", fc);
   f->c = float_to_fr32(fc);
+}
+
+// set integrator coefficient directly
+void filter_1p_fr32_set_coeff(filter_1p_fr32* f, fract32 coeff) {
+  f->c = coeff;
 }
 
 // set target value 
@@ -136,4 +151,3 @@ fract32 filter_1p_fr32_next(filter_1p_fr32* f) {
   }
   return f->y;
 }
-

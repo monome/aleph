@@ -73,7 +73,7 @@ static fix16 scale_knob_value(const s32 v) {
 //---- external funcs
 
 // handle key presses
-extern void flry_handler(event_t* ev) {
+extern void dsyn_handler(event_t* ev) {
   u8 b;
   switch (ev->eventType) {
   case kEventSwitch0:

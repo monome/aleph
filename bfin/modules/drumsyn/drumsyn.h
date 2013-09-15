@@ -1,7 +1,7 @@
 #ifndef _ALEPH_DSP_DRUMSYN_H_
 #define _ALEPH_DSP_DRUMSYN_H_
 
-#include "env.h"
+#include "env_int.h"
 #include "filter_svf.h"
 #include "noise.h"
 
@@ -11,9 +11,9 @@ typedef struct _drumsynVoice {
   filter_svf* svf;
   u8 gate;
   fract32 amp;
-  env_asr* envAmp;
-  env_asr* envFreq;
-  env_asr* envRes;
+  env_int* envAmp;
+  env_int* envFreq;
+  env_int* envRes;
   //  fract32 envOffAmp; // offset 
   //  fract32 envMulAmp; // multiplier
   fract32 envAddFreq; // offset 
@@ -27,3 +27,4 @@ typedef struct _drumsynVoice {
 extern drumsynVoice* voices[DRUMSYN_NVOICES];
 
 #endif // h guard
+

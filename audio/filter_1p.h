@@ -9,7 +9,7 @@
 #include "types.h"
 
 typedef struct _filter_1p {
-  u32 sr;    // sample rate
+  //  u32 sr;    // sample rate
   fix16 c; // decay coefficient
   fix16 x; // target value
   fix16 y; // filtered value
@@ -18,7 +18,7 @@ typedef struct _filter_1p {
 
 
 typedef struct _filter_1p_fr32 {
-  u32 sr;    // sample rate
+  //  u32 sr;    // sample rate
   fract32 c; // decay coefficient
   fract32 x; // target value
   fract32 y; // filtered value
@@ -29,9 +29,11 @@ typedef struct _filter_1p_fr32 {
 //==== fix16
 
 // intialize at pre-allocated memory
-extern void filter_1p_fix16_init(   filter_1p_fix16* f, u32 sr, fix16 hz, fix16 in);
+extern void filter_1p_fix16_init(   filter_1p_fix16* f, fix16 in);
 // set cutoff frequency in hz
 extern void filter_1p_fix16_set_hz( filter_1p_fix16* f, fix16 hz);
+// set integrator coefficient directly
+void filter_1p_fix16_set_coeff(   filter_1p_fr32* f, fix16 coeff);
 // set input value
 extern void filter_1p_fix16_in(     filter_1p_fix16* f, fix16 val);
 // get next filtered value
@@ -41,9 +43,11 @@ extern fix16 filter_1p_fix16_next(  filter_1p_fix16* f);
 //==========
 //====== fr32
 // initialize
-extern void filter_1p_fr32_init(filter_1p_fr32* f, u32 sr, fix16 hz, fract32 in);
+extern void filter_1p_fr32_init(filter_1p_fr32* f, fract32 in);
 // set cutoff frequency in hz
 extern void filter_1p_fr32_set_hz(filter_1p_fr32* f, fix16 hz);
+// set coefficient directly
+void filter_1p_fr32_set_coeff(filter_1p_fr32* f, fract32 coeff);
 // set input value
 extern void filter_1p_fr32_in(filter_1p_fr32* f, fract32 val);
 // get next filtered value

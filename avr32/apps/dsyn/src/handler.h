@@ -4,7 +4,7 @@
 #include "app.h"
 // ui handlers
 
-extern void flry_handler(event_t* ev);
+extern void dsyn_handler(event_t* ev);
 
 /* void handle_sw_fn_0( u8 val ); */
 /* void handle_sw_fn_1( u8 val ); */

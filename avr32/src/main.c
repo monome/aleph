@@ -260,6 +260,12 @@ int main (void) {
   print_dbg("r\n init flash, firstrun: ");
   print_dbg_ulong(firstrun);
 
+  // check sw2 and force firstrun if held
+  if(gpio_get_pin_value(SW2_PIN)) {
+    firstrun = 1;
+    print_dbg("r\n sw2 down -> force firstrun ");
+  }
+
   delay_ms(100);
   // notify 
   screen_startup();

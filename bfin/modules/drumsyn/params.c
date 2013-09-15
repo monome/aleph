@@ -1,6 +1,6 @@
 #include <string.h>
 #include "drumsyn.h"
-#include "env.h"
+#include "env_int.h"
 #include "module.h"
 #include "params.h" 
 
@@ -11,59 +11,61 @@ void module_set_param(u32 idx, pval v) {
   switch(idx) {
   case eParamGate0 :
     b = v.s > 0;
-    env_asr_set_gate(voices[0]->envAmp, b);
-    env_asr_set_gate(voices[0]->envFreq, b);
-    env_asr_set_gate(voices[0]->envRes, b);
+    env_int_set_gate(voices[0]->envAmp, b);
+    env_int_set_gate(voices[0]->envFreq, b);
+    env_int_set_gate(voices[0]->envRes, b);
     break;
   case eParamAmp0 :
     voices[0]->amp = v.fr;
     break;
   case eParamAmpAtkDur0 : // in samples
-    env_asr_set_atk_dur(voices[0]->envAmp, v.u);
+    env_int_set_atk_coeff(voices[0]->envAmp, v.u);
     break;
   case eParamAmpRelDur0 :
-    env_asr_set_rel_dur(voices[0]->envAmp, v.u);
+    env_int_set_rel_coeff(voices[0]->envAmp, v.u);
     break;
   case eParamAmpAtkCurve0 :
-    env_asr_set_atk_shape(voices[0]->envAmp, v.u);
+    // TODO
     break;
   case eParamAmpRelCurve0 :
-    env_asr_set_rel_shape(voices[0]->envAmp, v.u);
+    // TODO
     break;
     // freq env
   case eParamFreqAtkDur0 :
-    env_asr_set_atk_dur(voices[0]->envFreq, v.u);
+    env_int_set_atk_coeff(voices[0]->envFreq, v.fr);
     break;
   case eParamFreqRelDur0 :
-    env_asr_set_rel_dur(voices[0]->envFreq, v.u);
+    env_int_set_rel_coeff(voices[0]->envFreq, v.fr);
     break;
   case eParamFreqAtkCurve0 :
-    env_asr_set_atk_shape(voices[0]->envFreq, v.u);
+    // TODO
     break;
   case eParamFreqRelCurve0 :
-    env_asr_set_rel_shape(voices[0]->envFreq, v.u);
+    // TODO
     break;
   case eParamFreqMul0 :
-    voices[0]->envMulFreq = v.fr;
+    //    voices[0]->envMulFreq = v.fr;
+    env_int_set_scale(voices[0]->envFreq, v.fr);
     break;
   case eParamFreqAdd0 :
     voices[0]->envAddFreq = v.fr;
     break;
     // res env
   case eParamResAtkDur0 :
-    env_asr_set_atk_dur(voices[0]->envRes, v.u);
+    env_int_set_atk_coeff(voices[0]->envRes, v.fr);
     break;
   case eParamResRelDur0 :
-    env_asr_set_rel_dur(voices[0]->envRes, v.u);
+    env_int_set_rel_coeff(voices[0]->envRes, v.fr);
     break;
   case eParamResAtkCurve0 :
-    env_asr_set_atk_shape(voices[0]->envRes, v.u);
+    // TODO
     break;
   case eParamResRelCurve0 :
-    env_asr_set_rel_shape(voices[0]->envRes, v.u);
+    // TODO
     break;
   case eParamResMul0 :
-    voices[0]->envMulRes = v.fr;
+    //    voices[0]->envMulRes = v.fr;
+    env_int_set_scale(voices[0]->envRes, v.fr);
     break;
   case eParamResAdd0 :
     voices[0]->envAddRes = v.fr;

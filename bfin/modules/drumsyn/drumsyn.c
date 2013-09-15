@@ -81,12 +81,12 @@ void drumsyn_voice_init(void* mem) {
   drumsynVoice* voice = (drumsynVoice*)mem;
 
   // envelopes
-  voice->envAmp = (env_asr*)malloc(sizeof(env_asr));
-  env_asr_init(voice->envAmp);
-  voice->envFreq = (env_asr*)malloc(sizeof(env_asr));
-  env_asr_init(voice->envFreq);
-  voice->envRes = (env_asr*)malloc(sizeof(env_asr));
-  env_asr_init(voice->envRes);
+  voice->envAmp = (env_int*)malloc(sizeof(env_int));
+  env_int_init(voice->envAmp);
+  voice->envFreq = (env_int*)malloc(sizeof(env_int));
+  env_int_init(voice->envFreq);
+  voice->envRes = (env_int*)malloc(sizeof(env_int));
+  env_int_init(voice->envRes);
   // SVF
   voice->svf = (filter_svf*)malloc(sizeof(filter_svf));
   filter_svf_init(voice->svf);
@@ -113,31 +113,34 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
   static fract32 freqenv, freqenvold;
   static fract32 resenv, resenvold;
 
-  ampenv = env_asr_next ( voice->envAmp );
+  ampenv = env_int_next ( voice->envAmp );
   if(ampenv != ampenvold) {
     amp = ampenv * voice->amp;
     ampenvold = ampenv;
   }
 
-  freqenv = env_asr_next ( voice->envAmp );
+  freqenv = env_int_next ( voice->envFreq );
   if(freqenv != freqenvold) {
-    filter_svf_set_coeff( voice->svf, add_fr1x32(voice->envAddFreq, 
-				     mult_fr1x32x32(freqenv, voice->envMulFreq)
-				     )
-			  );
+    /* filter_svf_set_coeff( voice->svf, add_fr1x32(voice->envAddFreq,  */
+    /* 						 mult_fr1x32x32(freqenv, voice->envMulFreq) */
+    /* 						 ) */
+    /* 			  ); */
+    filter_svf_set_coeff( voice->svf, add_fr1x32(voice->envAddFreq, freqenv) );
+
     freqenvold = freqenv;
   }
 
-  resenv = env_asr_next ( voice->envAmp );
+  resenv = env_int_next ( voice->envRes );
   if(resenv != resenvold) {
-    filter_svf_set_rq( voice->svf, add_fr1x32(voice->envAddRes, 
-				     mult_fr1x32x32(resenv, voice->envMulRes)
-				     )
-			  );
+    /* filter_svf_set_rq( voice->svf, add_fr1x32(voice->envAddRes,  */
+    /* 					      mult_fr1x32x32(resenv, voice->envMulRes) */
+    /* 					      ) */
+    /* 		       ); */
+    filter_svf_set_rq( voice->svf, add_fr1x32(voice->envAddRes, resenv) );
     resenvold = resenv;
   }
   
-#if 0
+#if 1
   return mult_fr1x32x32( amp,
 			 filter_svf_next(voice->svf, 
 					 lcprng_next(voice->rngL) |

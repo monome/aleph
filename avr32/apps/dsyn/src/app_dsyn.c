@@ -32,7 +32,7 @@
 // use for memory allocation..
 void app_init(void) {
   // set handler
-  appEventHandler = &flry_handler;
+  appEventHandler = &dsyn_handler;
   render_init();
 }
 

@@ -13,6 +13,8 @@
 // null
 #include "types.h"
 
+
+
 /// ASR envelope class
 /// can be used in gated mode or triggered mode
 typedef struct _env_asr {
