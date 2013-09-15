@@ -26,5 +26,13 @@ typedef struct _drumsynVoice {
 
 extern drumsynVoice* voices[DRUMSYN_NVOICES];
 
-#endif // h guard
+//////
+///
+/// TESTing 
+// envelope is nuts? try just a raw integrator
+extern filter_1p_fr32 ampLp;
+//
+/////
 
+
+#endif // h guard

@@ -27,16 +27,16 @@
 */
 
 //	2640 hz	~= 0.707813107994074	~= 0x5a999eb2
-#define ENV_DUR_ATK_SHORT 0x5a999eb2
+#define ENV_DUR_ATK_SHORT 	0x5a999eb2
 
-//	`55 hz 	~= 0.9928263710316179	~= 0x7f14ef3c
-#define ENV_DUR_ATK_LONG 0x7f14ef3c
+//	55 hz 	~= 0.9928263710316179	~= 0x7f14ef3c
+#define ENV_DUR_ATK_LONG 	0x7f14ef3c
 
 //	2 hz	~= 0.9997382348786702	~= 0x7ff76c26
-#define ENV_DUR_REL_SHORT 0x7ff76c26
+#define ENV_DUR_REL_SHORT 	0x7ff76c26
 
 //	1/2 hz 	~= 0.9999345522948447	~= 0x7ffddafb
-#define ENV_DUR_REL_LONG 0x7ffddafb
+#define ENV_DUR_REL_LONG	0x7ffddafb
 
 
 
@@ -111,7 +111,7 @@ void ctl_init_params(void) {
   /// TODO: make a text parser for intial parameters and read from sdcard?
   ctl_param_change(  eParamGate0, 		0 );
   ctl_param_change(  eParamTrig0, 		0 );
-  ctl_param_change(  eParamAmp0, 		FR32_MAX - 1 );
+  ctl_param_change(  eParamAmp0, 		FR32_MAX >> 1 );
   /// FIXME: durations are actually integrator coefficients :S
   /// so for now, these are hardcoded constants above.
   ctl_param_change(  eParamAmpAtkDur0, 		ENV_DUR_ATK_SHORT );
@@ -130,10 +130,10 @@ void ctl_init_params(void) {
   ctl_param_change(  eParamResRelCurve0, 	0x0 );
   ctl_param_change(  eParamResMul0, 		fr32_from_float(-0.2) );
   ctl_param_change(  eParamResAdd0, 		fr32_from_float(0.4) );
-  ctl_param_change(  eParamLow0, 		FR32_MAX - 1 );
-  ctl_param_change(  eParamHigh0, 		0 );
-  ctl_param_change(  eParamBand0, 		0 );
-  ctl_param_change(  eParamNotch0, 		0 );
+  /* ctl_param_change(  eParamLow0, 		FR32_MAX - 1 ); */
+  /* ctl_param_change(  eParamHigh0, 		0 ); */
+  /* ctl_param_change(  eParamBand0, 		0 ); */
+  /* ctl_param_change(  eParamNotch0, 		0 ); */
 }
 
 // set gate

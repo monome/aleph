@@ -69,9 +69,15 @@ drumsynVoice* voices[DRUMSYN_NVOICES];
 // pointer to local module data, initialize at top of SDRAM
 static drumsynData * data;
 //-- static allocation (SRAM) for variables that are small and/or frequently accessed:
-//drumsynVoice voice;
 static fract32 frameVal;
 
+//////
+///
+/// TESTing 
+// envelope is nuts? try just a raw integrator
+filter_1p_fr32 ampLp;
+//
+/////
 
 //-----------------------------
 //----- static functions
@@ -83,13 +89,23 @@ void drumsyn_voice_init(void* mem) {
   // envelopes
   voice->envAmp = (env_int*)malloc(sizeof(env_int));
   env_int_init(voice->envAmp);
+
   voice->envFreq = (env_int*)malloc(sizeof(env_int));
   env_int_init(voice->envFreq);
+
   voice->envRes = (env_int*)malloc(sizeof(env_int));
   env_int_init(voice->envRes);
+
+  env_int_set_scale(voice->envAmp, FR32_MAX >> 1);
+
   // SVF
   voice->svf = (filter_svf*)malloc(sizeof(filter_svf));
   filter_svf_init(voice->svf);
+
+  filter_svf_set_low(voice->svf, FR32_MAX >> 1);
+  filter_svf_set_coeff(voice->svf, FR32_MAX >> 2);
+  filter_svf_set_rq(voice->svf, FR32_MAX >> 3);
+
   // RNG
   voice->rngH = (lcprng*)malloc(sizeof(lcprng));
   lcprng_reset(voice->rngH);
@@ -113,12 +129,18 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
   static fract32 freqenv, freqenvold;
   static fract32 resenv, resenvold;
 
+#if 0
   ampenv = env_int_next ( voice->envAmp );
   if(ampenv != ampenvold) {
     amp = ampenv * voice->amp;
     ampenvold = ampenv;
   }
+#else
+  amp = filter_1p_fr32_next(&ampLp);
+#endif
 
+
+#if 0 // arg
   freqenv = env_int_next ( voice->envFreq );
   if(freqenv != freqenvold) {
     /* filter_svf_set_coeff( voice->svf, add_fr1x32(voice->envAddFreq,  */
@@ -126,7 +148,6 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
     /* 						 ) */
     /* 			  ); */
     filter_svf_set_coeff( voice->svf, add_fr1x32(voice->envAddFreq, freqenv) );
-
     freqenvold = freqenv;
   }
 
@@ -139,16 +160,17 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
     filter_svf_set_rq( voice->svf, add_fr1x32(voice->envAddRes, resenv) );
     resenvold = resenv;
   }
+#endif
   
-#if 1
+#if 0
   return mult_fr1x32x32( amp,
 			 filter_svf_next(voice->svf, 
 					 lcprng_next(voice->rngL) |
-					 ( lcprng_next(voice->rngH) << 16) 
+					 ( lcprng_next(voice->rngH) << 15) 
 					 )
 			 );
 #else  // TEST
-  return mult_fr1x32x32(amp, lcprng_next(voice->rngL) | (lcprng_next(voice->rngH) << 16) );
+  return mult_fr1x32x32(amp, lcprng_next(voice->rngL) | (lcprng_next(voice->rngH) << 15) );
 #endif
 }
 
@@ -184,6 +206,15 @@ void module_init(void) {
     voices[i] = (drumsynVoice*)malloc(sizeof(drumsynVoice));
     drumsyn_voice_init(voices[i]);
   }
+
+
+  //////////
+  /// TESTING
+  filter_1p_fr32_init(&ampLp, 0);
+  filter_1p_fr32_set_coeff(&ampLp, 0x7ffff000);
+  ////////
+  ///////
+
 
   fill_param_desc();
 

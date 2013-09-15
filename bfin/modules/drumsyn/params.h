@@ -1,30 +1,34 @@
 #ifndef _ALEPH_DRUMSYN_PARAMS_H_
 #define _ALEPH_DRUMSYN_PARAMS_H_
 
+
+#define PARAM_RQ_MIN 0x00000000
+#define PARAM_RQ_MAX 0x1fffffff
+
 enum Params {
-  eParamGate0,
-  eParamTrig0,
-  eParamAmp0,
-  eParamAmpAtkDur0,
-  eParamAmpRelDur0,
-  eParamAmpAtkCurve0,
-  eParamAmpRelCurve0,
-  eParamFreqAtkDur0,
-  eParamFreqRelDur0,
-  eParamFreqAtkCurve0,
-  eParamFreqRelCurve0,
-  eParamFreqMul0,
-  eParamFreqAdd0,
-  eParamResAtkDur0,
-  eParamResRelDur0,
-  eParamResAtkCurve0,
-  eParamResRelCurve0,
-  eParamResMul0,
-  eParamResAdd0,
-  eParamLow0,
-  eParamHigh0,
-  eParamBand0,
-  eParamNotch0,
+  eParamGate0,		// 0
+  eParamTrig0,		// 1
+  eParamAmp0,		// 2
+  eParamAmpAtkDur0,	// 3
+  eParamAmpRelDur0,	// 4
+  eParamAmpAtkCurve0,	// 5
+  eParamAmpRelCurve0,	// 6
+  eParamFreqAtkDur0,	// 7
+  eParamFreqRelDur0,	// 8
+  eParamFreqAtkCurve0,	// 9
+  eParamFreqRelCurve0,	// 10
+  eParamFreqMul0,	// 11
+  eParamFreqAdd0,	// 12
+  eParamResAtkDur0,	// 13
+  eParamResRelDur0,	// 14
+  eParamResAtkCurve0,	// 15
+  eParamResRelCurve0,	// 16 
+  eParamResMul0,	// 17
+  eParamResAdd0,	// 18
+  eParamLow0,		// 19
+  eParamHigh0,		// 20
+  eParamBand0,		// 21
+  eParamNotch0,		// 22
 
   // FIXME
   eParamNumParams

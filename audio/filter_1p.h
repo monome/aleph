@@ -5,6 +5,9 @@
  * declaration of filtering functions
  */
 
+#ifndef _ALEPH_AUDIO_FILTER_1POLE_H_
+#define _ALEPH_AUDIO_FILTER_1POLE_H_
+
 #include "fix.h"
 #include "types.h"
 
@@ -56,3 +59,4 @@ extern fract32 filter_1p_fr32_next(filter_1p_fr32* f);
 //==========
 //===== s32 (cast and scale)
 
+#endif

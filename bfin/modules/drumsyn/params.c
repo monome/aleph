@@ -1,6 +1,7 @@
 #include <string.h>
 #include "drumsyn.h"
 #include "env_int.h"
+#include "filter_1p.h"
 #include "module.h"
 #include "params.h" 
 
@@ -11,18 +12,26 @@ void module_set_param(u32 idx, pval v) {
   switch(idx) {
   case eParamGate0 :
     b = v.s > 0;
+#if 0
     env_int_set_gate(voices[0]->envAmp, b);
     env_int_set_gate(voices[0]->envFreq, b);
     env_int_set_gate(voices[0]->envRes, b);
+#else // testing
+    if(b) {
+      filter_1p_fr32_in(&ampLp, FR32_MAX >> 1);
+    } else {
+      filter_1p_fr32_in(&ampLp, 0);
+    }
+#endif
     break;
   case eParamAmp0 :
     voices[0]->amp = v.fr;
     break;
   case eParamAmpAtkDur0 : // in samples
-    env_int_set_atk_coeff(voices[0]->envAmp, v.u);
+    env_int_set_atk_coeff(voices[0]->envAmp, v.fr);
     break;
   case eParamAmpRelDur0 :
-    env_int_set_rel_coeff(voices[0]->envAmp, v.u);
+    env_int_set_rel_coeff(voices[0]->envAmp, v.fr);
     break;
   case eParamAmpAtkCurve0 :
     // TODO

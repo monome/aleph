@@ -108,12 +108,11 @@ fix16 filter_1p_fix16_next(filter_1p_fix16* f) {
 
 // intialize at pre-allocated memory
 void filter_1p_fr32_init(filter_1p_fr32* f, fract32 in) {
-  f->c = 0;
   f->y = in;
   f->x = in;
   f->sync = 1;
   fSrInv = 1.f / (float)SAMPLERATE;
-  f->c = 0x7fffffff;
+  f->c = FR32_MAX;
 }
 
 // set cutoff frequency in hz
