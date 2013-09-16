@@ -63,10 +63,10 @@ void module_set_param(u32 idx, pval v) {
 
     // res env
   case eParamResAtkSlew0 :
-
+    voices[0]->resSlewUp = v.s;
     break;
   case eParamResRelSlew0 :
-
+    voices[0]->resSlewDown = v.s;
     break;
 
   case eParamResStart0 :
