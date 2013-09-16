@@ -12,7 +12,7 @@ enum {
   envStateSus,
   envStateRel,
   envStateOff,
-};
+};  
 
 //----------------------------------
 //----- -static function declarations
@@ -37,11 +37,11 @@ static void state_off(env_int* env);
 
 // initialize at pre-allocated memory
 extern void env_int_init(env_int* env) {
-  filter_1p_fr32_init( &(env->intAtk), 0x3fffffff);
-  filter_1p_fr32_init( &(env->intRel), 0);
   env->scale = 0x3fffffff;
+  filter_1p_fr32_init( &(env->intAtk), 0);
+  filter_1p_fr32_init( &(env->intRel), env->scale);
   env->susCount = 0;
-  env->susDur = 1;
+  env->susDur = 16;
   env->gate = 0;
   env->trig = 0;
   env->state = envStateOff;
@@ -98,12 +98,12 @@ extern void env_int_set_scale(env_int* env, fract32 scale) {
 
 // set attack integrator coefficient
 extern void env_int_set_atk_coeff(env_int* env, fract32 c) {
-  filter_1p_fr32_set_coeff(&(env->intAtk), c);
+  filter_1p_fr32_set_slew(&(env->intAtk), c);
 }
 
 // set release integrator coeff
 extern void env_int_set_rel_coeff(env_int* env, fract32 c) {
-  filter_1p_fr32_set_coeff(&(env->intRel), c);
+  filter_1p_fr32_set_slew(&(env->intRel), c);
 }
 
 // set sustain duration (ignored in gated mode)
@@ -114,7 +114,9 @@ extern void env_int_set_sus_dur(env_int* env, u32 samps) {
 //-------------------------------------
 //---- static function definitions
 
-// next-value functions
+//------ next-value functions
+
+/// attack
 static fract32 next_atk(env_int* env) {
   fract32 val;
   val = filter_1p_fr32_next( &(env->intAtk) );
@@ -124,10 +126,12 @@ static fract32 next_atk(env_int* env) {
   return val;
 }
 
+// sustain (trig mode off)
 static fract32 next_sus_trig0(env_int* env) {
   return env->scale;
 }
 
+// sustain (trig mode on)
 static fract32 next_sus_trig1(env_int* env) {
   env->susCount++;
   if(env->susCount == env->susDur) {
@@ -136,6 +140,7 @@ static fract32 next_sus_trig1(env_int* env) {
   return env->scale;
 }
 
+// release
 static fract32 next_rel(env_int* env) {
   fract32 val;
   val = filter_1p_fr32_next( &(env->intRel) );
@@ -143,14 +148,15 @@ static fract32 next_rel(env_int* env) {
     state_off(env);
   }
   return val;
-
 }
 
+// off
 static fract32 next_off(env_int* env) {
   return 0;
 }
 
-// state-change functions
+//-----------------------------
+//---- state-change functions
 static void state_atk(env_int* env) {
   switch(env->state) {
   case envStateOff : 
@@ -210,6 +216,8 @@ static void state_rel(env_int* env) {
     env->intRel.y = env->scale;
     filter_1p_fr32_in(&(env->intRel), 0);    
     break;
+  default:
+    break;
   }
   env->stateFP = &next_rel;
   env->state = envStateRel;
@@ -219,5 +227,6 @@ static void state_off(env_int* env) {
   env->stateFP = &next_off;
   env->state = envStateOff;
 }
+
 
 

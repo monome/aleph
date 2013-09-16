@@ -30,6 +30,11 @@
 // shift from [0,1] in fr32 to [0, tabsize) in fix16
 #define SVF_Q_TAB_RSHIFT 6
 
+// convert from fract32 input to fix16 in resonance range
+// don't use it with negative numbers!
+// this gives max of (fix16)63
+//#define SVF_RESON_FROM_FR32(x) (fix16)((u32)(x) >> 21)
+
 // tables for q and scale from res
 static fract32 svfQTab [SVF_Q_TAB_SIZE];
 static fract32 svfScaleTab [SVF_Q_TAB_SIZE];

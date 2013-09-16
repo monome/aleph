@@ -72,8 +72,8 @@ void filter_1p_fix16_set_hz(filter_1p_fix16* f, fix16 hz) {
 }
 
 // set integrator coefficient directly
-void filter_1p_fix16_set_coeff(filter_1p_fr32* f, fix16 coeff) {
-  f->c = coeff > 0xffff ? 0xffff : (coeff < 0 ? 0 : coeff);
+void filter_1p_fix16_set_slew(filter_1p_fr32* f, fix16 slew) {
+  f->c = slew > 0xffff ? 0xffff : (slew < 0 ? 0 : slew);
 }
 
 
@@ -118,13 +118,13 @@ void filter_1p_fr32_init(filter_1p_fr32* f, fract32 in) {
 // set cutoff frequency in hz
 void filter_1p_fr32_set_hz(filter_1p_fr32* f, fix16 hz) {
   f32 fc =  (float) exp(-2.0 * M_PI * (double)(fix16_to_float(hz)) * fSrInv ); // / (float)(f->sr) );
-  //  printf("\r1p coefficient: %f\n", fc);
+  //  printf("\r1p slewicient: %f\n", fc);
   f->c = float_to_fr32(fc);
 }
 
-// set integrator coefficient directly
-void filter_1p_fr32_set_coeff(filter_1p_fr32* f, fract32 coeff) {
-  f->c = coeff;
+// set integrator slewicient directly
+void filter_1p_fr32_set_slew(filter_1p_fr32* f, fract32 slew) {
+  f->c = slew;
 }
 
 // set target value 

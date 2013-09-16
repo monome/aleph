@@ -22,7 +22,7 @@ typedef struct _filter_svf {
   //  fix16 hz;      // cutoff in hz
   // coefficiet
   fract32 coeff;
-  fract32 reson; // resonance in [0, 100+]
+  fract32 reson; // resonance in [0, 1 ?? ]
   // runtime coeffs
 
   fract32 freq;     // normalized frequency
