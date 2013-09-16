@@ -103,7 +103,8 @@ void render_startup(void) {
 
   region_fill(&bigtop, 0x5);
   region_string(&bigtop, "DSYN", 40, 12, 0xf, 0x0, 2);
-  //  region_string(&(foot[0]), "TAP1", 0, 0, 0xf, 0x0, 0);
+  region_fill(&(foot[0]), 0x0);
+  //region_string(&(foot[0]), "TAP1", 0, 0, 0xf, 0x0, 0);
   //  region_string(&(foot[1]), "TAP2", 0, 0, 0xf, 0x0, 0);
   //  region_string(&(foot[2]), "REC", 0, 0, 0xf, 0x0, 0);
   //  region_string(&(foot[3]), "PLAY", 0, 0, 0xf, 0x0, 0);

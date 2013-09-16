@@ -171,7 +171,7 @@ static void init_ctl(void) {
 // app event loop
 static void check_events(void) {
   static event_t e;
-  u8 launch = 0;
+  //  u8 launch = 0;
   //  print_dbg("\r\n checking events...");
   if( get_next_event(&e) ) {
   /* print_dbg("\r\n handling event, type: "); */
@@ -179,6 +179,7 @@ static void check_events(void) {
   /* print_dbg("\r\n , data: "); */
   /* print_dbg_hex(e.eventData); */
 
+    /*
     if(startup) {
       if( e.eventType == kEventSwitch0
 	  || e.eventType == kEventSwitch1
@@ -203,6 +204,7 @@ static void check_events(void) {
 	}
       }
     } else {
+    */
       switch(e.eventType) {
 	
       case kEventRefresh:
@@ -227,13 +229,14 @@ static void check_events(void) {
 	(*appEventHandler)(&e);
 	break;
       } // event switch
-    } // startup
+      //    } // startup
   } // got event
 }
 
 //int main(void) {
 ////main function
 int main (void) {
+  u8 launch = 0;
   //  u32 waitForCard = 0;
 
   // set up avr32 hardware and peripherals
@@ -270,10 +273,26 @@ int main (void) {
   // notify 
   screen_startup();
 
+
+
   delay_ms(100);
 
-  print_dbg("\r\n starting event loop.\r\n");
+  print_dbg("\r\n launching app");
 
+  launch = app_launch(firstrun);
+  delay_ms(10);
+  if( firstrun) {
+    if(launch) {
+      print_dbg("\r\n app launch ok on firstrun, wirting magic flash ");
+      flash_write_firstrun();
+      return;
+    } else {
+      print_dbg("\r\n app launch failed on firstrun, clearing magic flash ");
+      flash_clear_firstrun();
+    } 
+  }
+  
+  print_dbg("\r\n starting event loop.\r\n");
   while(1) {
     check_events();
   }

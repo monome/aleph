@@ -41,7 +41,7 @@ static void process_glyph(const char* name, char* (*glyph)[]) {
   int w, h, d; // width, height, depth, count
   char colors[16]; // color codes
   char val;
-  int i, j, k;
+  int i, j, k;  
   char* p;
   i = 0;
   // first string : dimensions
@@ -104,6 +104,7 @@ int main ( int argc, char *argv[] ) {
 
   for(i=0; i<nglyphs; i++) {
     process_glyph(names[i], glyphs[i]);
+    fprintf(fregion, "\r\n\r\n");
   }
 
   //  fclose(fscreen);

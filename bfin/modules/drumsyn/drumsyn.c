@@ -96,8 +96,8 @@ void drumsyn_voice_init(void* mem) {
   voice->envFreq = (env_int*)malloc(sizeof(env_int));
   env_int_init(voice->envFreq);
 
-  voice->envRes = (env_int*)malloc(sizeof(env_int));
-  env_int_init(voice->envRes);
+  voice->envRq = (env_int*)malloc(sizeof(env_int));
+  env_int_init(voice->envRq);
 
   env_int_set_scale(voice->envAmp, FR32_MAX >> 1);
 
@@ -123,7 +123,7 @@ void drumsyn_voice_deinit(drumsynVoice* voice) {
 #else 
  free(voice->envAmp);
   free(voice->envFreq);
-  free(voice->envRes);
+  free(voice->envRq);
   free(voice->rngL);
   free(voice->rngH);
   free(voice->svf);
@@ -146,7 +146,7 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
   // FIXME : janky, need more voices
   fract32 ampenv, ampenvold, amp;
   fract32 freqenv, freqenvold;
-  fract32 resenv, resenvold;
+  fract32 rqenv, rqenvold;
   freqenv = env_int_next ( voice->envFreq );
   if(freqenv != freqenvold) {
     /* filter_svf_set_coeff( voice->svf, add_fr1x32(voice->envAddFreq,  */
@@ -156,14 +156,14 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
     filter_svf_set_coeff( voice->svf, add_fr1x32(voice->envAddFreq, freqenv) );
     freqenvold = freqenv;
   }
-  resenv = env_int_next ( voice->envRes );
-  if(resenv != resenvold) {
-    /* filter_svf_set_rq( voice->svf, add_fr1x32(voice->envAddRes,  */
-    /* 					      mult_fr1x32x32(resenv, voice->envMulRes) */
+  rqenv = env_int_next ( voice->envRq );
+  if(rqenv != rqenvold) {
+    /* filter_svf_set_rq( voice->svf, add_fr1x32(voice->envAddRq,  */
+    /* 					      mult_fr1x32x32(rqenv, voice->envMulRq) */
     /* 					      ) */
     /* 		       ); */
-    filter_svf_set_rq( voice->svf, add_fr1x32(voice->envAddRes, resenv) );
-    resenvold = resenv;
+    filter_svf_set_rq( voice->svf, add_fr1x32(voice->envAddRq, rqenv) );
+    rqenvold = rqenv;
   }
 #endif
 

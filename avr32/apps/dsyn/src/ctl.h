@@ -19,26 +19,20 @@ void  ctl_set_gate(u8 ch, u8 val);
 // parameter enum
 // FIXME: just copying from .ldr source for now
 
-enum Params {
+typedef enum Params {
   eParamGate0,		
   eParamTrig0,		
   eParamAmp0,		
   eParamAmpAtkSlew0,	
   eParamAmpRelSlew0,	
-  //  eParamAmpAtkCurve0	
-  //  eParamAmpRelCurve0,	
   eParamFreqAtkSlew0,	
   eParamFreqRelSlew0,	
-  //  eParamFreqAtkCurve0,	
-  //  eParamFreqRelCurve0,	
   eParamFreqStart0,	
   eParamFreqEnd0,	
-  eParamResAtkSlew0,	
-  eParamResRelSlew0,	
-  eParamResAtkCurve0,	
-  eParamResRelCurve0,	
-  eParamResStart0,	
-  eParamResEnd0,	
+  eParamRqAtkSlew0,	
+  eParamRqRelSlew0,	
+  eParamRqStart0,	
+  eParamRqEnd0,	
   eParamLow0,		
   eParamHigh0,		
   eParamBand0,		

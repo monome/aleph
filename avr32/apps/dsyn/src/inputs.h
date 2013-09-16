@@ -30,4 +30,7 @@ extern fix16 input_hz(u32 in);
 // get svf coefficient
 extern fract32 input_freq(u32 in);
 
+// get decay coefficient
+extern 
+
 #endif

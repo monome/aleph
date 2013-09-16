@@ -20,8 +20,8 @@
 #define FIX16_COMP_THRESH 0x10000
 #define FIX16_COMP_THRESH_NEG 0xfffeffff
 
-#define FR32_COMP_THRESH 0x7
-#define FR32_COMP_THRESH_NEG 0xfffffffe
+#define FR32_COMP_THRESH 0xff
+//#define FR32_COMP_THRESH_NEG 0xfffffffe
 
 // global temp variable, compute at init
 // inverse of samplerate as float
@@ -31,8 +31,9 @@ static float fSrInv;
 //---- static functions
 
 static inline u8 fr32_compare(fract32 a, fract32 b) {
-  fract32 dif = sub_fr1x32(a, b);
-  return ( ( dif < FR32_COMP_THRESH ) && ( dif > FR32_COMP_THRESH_NEG ) );
+  //  fract32 dif = sub_fr1x32(a, b);
+  //  return ( ( dif < FR32_COMP_THRESH ) && ( dif > FR32_COMP_THRESH_NEG ) );
+  return ( abs_fr1x32(sub_fr1x32(a, b)) < FR32_COMP_THRESH );
 }
 
 

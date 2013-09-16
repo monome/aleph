@@ -22,25 +22,25 @@ typedef struct _drumsynVoice {
   filter_1p_fr32 lpRq;
   fract32 freqOn;
   fract32 freqOff;
-  fract32 resOn;
-  fract32 resOff;
+  fract32 rqOn;
+  fract32 rqOff;
   fract32 ampSlewUp;
   fract32 ampSlewDown;
   fract32 freqSlewUp;
   fract32 freqSlewDown;
-  fract32 resSlewUp;
-  fract32 resSlewDown;
+  fract32 rqSlewUp;
+  fract32 rqSlewDown;
 #else
   // envelopes
   env_int* envAmp;
   env_int* envFreq;
-  env_int* envRes;
+  env_int* envRq;
   //  fract32 envOffAmp;
   //  fract32 envMulAmp;
   /// rrg
   fract32 envEndFreq;
-  fract32 envStartRes;
-  fract32 envEndRes;
+  fract32 envStartRq;
+  fract32 envEndRq;
 #endif
   u8 gate;
 } drumsynVoice;

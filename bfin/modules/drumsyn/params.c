@@ -5,28 +5,39 @@
 #include "module.h"
 #include "params.h" 
 
+static void set_param_gate(drumsynVoice* vp, s32 val) {
+  u8 b = (val > 0);
+  if(b) { 
+    filter_1p_fr32_set_slew( &(vp->lpAmp) , vp->ampSlewUp);
+    filter_1p_fr32_in( &(vp->lpAmp), vp->amp);
 
-#ifdef DRUMSYN_NOENV
+    filter_1p_fr32_set_slew( &(vp->lpFreq) , vp->freqSlewUp);
+    filter_1p_fr32_in( &(vp->lpFreq), vp->freqOn);
 
+    filter_1p_fr32_set_slew( &(vp->lpRq) , vp->rqSlewUp);
+    filter_1p_fr32_in( &(vp->lpRq), vp->rqOn);
+
+  } else {
+    filter_1p_fr32_set_slew( &(vp->lpAmp) , vp->ampSlewDown);
+    filter_1p_fr32_in( &(vp->lpAmp), 0);
+
+    filter_1p_fr32_set_slew( &(vp->lpFreq) , vp->freqSlewDown);
+    filter_1p_fr32_in( &(vp->lpFreq), vp->freqOff);
+
+    filter_1p_fr32_set_slew( &(vp->lpRq) , vp->rqSlewDown);
+    filter_1p_fr32_in( &(vp->lpRq), vp->rqOff);
+  }
+}
 // set parameter by value
 void module_set_param(u32 idx, pval v) {
   drumsynVoice* vp; // 	tmp voice pointer
-  u8 b; // 		tmp bit
+  //  u8 b; // 		tmp bit
 
   switch(idx) {
 
   case eParamGate0 : // 1bit gate
     vp = voices[0];
-    b = v.s > 0;
-    if(b) { 
-      filter_1p_fr32_set_slew( &(vp->lpAmp) , vp->ampSlewUp);
-      filter_1p_fr32_in( &(vp->lpAmp), vp->amp);
-      filter_1p_fr32_in( &(vp->lpAmp), vp->amp);
-    } else {
-      filter_1p_fr32_set_slew( &(vp->lpAmp) , vp->ampSlewDown);
-      filter_1p_fr32_in( &(vp->lpAmp), 0);
-      filter_1p_fr32_in( &(vp->lpAmp), 0);
-    }
+    set_param_gate(vp, v.s);
     break;
     
   case eParamAmp0 : // fract32 amp
@@ -61,21 +72,35 @@ void module_set_param(u32 idx, pval v) {
     vp->freqOn = v.fr;
     break;
 
-    // res env
-  case eParamResAtkSlew0 :
-    voices[0]->resSlewUp = v.s;
+    // rq env
+  case eParamRqAtkSlew0 :
+    voices[0]->rqSlewUp = v.s;
     break;
-  case eParamResRelSlew0 :
-    voices[0]->resSlewDown = v.s;
+  case eParamRqRelSlew0 :
+    voices[0]->rqSlewDown = v.s;
     break;
 
-  case eParamResStart0 :
-    vp->resOff = v.fr;
-    //    env_int_set_scale(vp->envRes, v.fr);
+  case eParamRqStart0 :
+    vp->rqOff = v.fr;
     break;
-  case eParamResEnd0 :
-    vp->resOn = v.fr;
+  case eParamRqEnd0 :
+    vp->rqOn = v.fr;
     break;
+
+  case eParamLow0 :	       
+    filter_svf_set_low( vp->svf, v.fr);
+    break;
+  case eParamHigh0 :	       
+    filter_svf_set_high( vp->svf, v.fr);
+    break;
+  case eParamBand0 :	       
+    filter_svf_set_band( vp->svf, v.fr);
+    break;
+  case eParamNotch0 :	       
+    filter_svf_set_notch( vp->svf, v.fr);
+    break;
+
+
     //// TODO
     /// .. other voices...
   default:
@@ -85,8 +110,10 @@ void module_set_param(u32 idx, pval v) {
 
 }
 
-#else
+
+
 // set parameter by value (fix16)
+/*
 void module_set_param(u32 idx, pval v) {
   drumsynVoice* vp; // 	tmp voice pointer
   u8 b; // 		tmp bit
@@ -95,33 +122,14 @@ void module_set_param(u32 idx, pval v) {
   case eParamGate0 :
     b = v.s > 0;
     vp = &(voices[0]);
-/* #ifdef DRUMSYN_NOENV */
-/*     if(b) {  */
-/*       filter_1p_fr32_set_coeff( &(vp->lpAmp) , voices[0]-> */
-/*       filter_1p_fr32_in( &(vp->lpAmp), vp->amp); */
-/*       filter_1p_fr32_in( &(vp->lpAmp), vp->amp); */
-/*     } else { */
-/*       filter_1p_fr32_in( &(voices[0]->lpAmp), 0); */
-/*     } */
-/* #else */
     env_int_set_gate(voices[0]->envAmp, b);
     env_int_set_gate(voices[0]->envFreq, b);
-    env_int_set_gate(voices[0]->envRes, b);
-    //#endif
+    env_int_set_gate(voices[0]->envRq, b);
     break;
   case eParamAmp0 :
     voices[0]->amp = v.fr;
     break;
   case eParamAmpAtkSlew0 : // raw 1pole coefficient
-    //#ifdef DRUMSYN_NOENV
-    /* if(b) { */
-    /*   filter_1p_fr32_in( &(voices[0]->lpAmp), voices[0]->amp); */
-    /*   filter_1p_fr32_in( &(voices[0]->lpAmp), voices[0]->amp); */
-    /* } else { */
-    /*   filter_1p_fr32_in( &(voices[0]->lpAmp), 0); */
-    /* } */
-    ///#else
-
     env_int_set_atk_slew(voices[0]->envAmp, v.fr);
     break;
   case eParamAmpRelSlew0 :
@@ -154,28 +162,40 @@ void module_set_param(u32 idx, pval v) {
   case eParamFreqEnd0 :
     voices[0]->envEndFreq = v.fr;
     break;
-    // res env
-  case eParamResAtkSlew0 :
-    env_int_set_atk_slew(voices[0]->envRes, v.fr);
+    // rq env
+  case eParamRqAtkSlew0 :
+    env_int_set_atk_slew(voices[0]->envRq, v.fr);
     break;
-  case eParamResRelSlew0 :
-    env_int_set_rel_slew (voices[0]->envRes, v.fr);
+  case eParamRqRelSlew0 :
+    env_int_set_rel_slew (voices[0]->envRq, v.fr);
     break;
-  case eParamResAtkCurve0 :
+  case eParamRqAtkCurve0 :
     // TODO
     break;
-  case eParamResRelCurve0 :
+  case eParamRqRelCurve0 :
     // TODO
     break;
-  case eParamResStart0 :
-    //    voices[0]->envStartRes = v.fr;
-    env_int_set_scale(voices[0]->envRes, v.fr);
+  case eParamRqStart0 :
+    //    voices[0]->envStartRq = v.fr;
+    env_int_set_scale(voices[0]->envRq, v.fr);
     break;
-  case eParamResEnd0 :
-    voices[0]->envEndRes = v.fr;
+  case eParamRqEnd0 :
+    voices[0]->envEndRq = v.fr;
     break;
+
+  case eParamLow0 :	       
+    break;
+  case eParamHigh0 :	       
+    break;
+  case eParamBand0 :	       
+    break;
+  case eParamNotch0 :	       
+    break;
+
+
     //// TODO
     /// .. other voices...
+
 
   default:
     break;
@@ -184,8 +204,8 @@ void module_set_param(u32 idx, pval v) {
 
 
 
-
 #endif // DRUMSYN_NOENV
+*/
 
 void fill_param_desc(void) {
   strcpy(gModuleData->paramDesc[eParamGate0].label, "Gate0");
@@ -266,41 +286,41 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamFreqEnd0].min = 0;
   gModuleData->paramDesc[eParamFreqEnd0].max = FR32_MAX;
 
-  strcpy(gModuleData->paramDesc[eParamResAtkSlew0].label, "ResAtkSlew0");
-  strcpy(gModuleData->paramDesc[eParamResAtkSlew0].unit, "");
-  gModuleData->paramDesc[eParamResAtkSlew0].type = PARAM_TYPE_FRACT;
-  gModuleData->paramDesc[eParamResAtkSlew0].min = 0;
-  gModuleData->paramDesc[eParamResAtkSlew0].max = FR32_MAX;
+  strcpy(gModuleData->paramDesc[eParamRqAtkSlew0].label, "RqAtkSlew0");
+  strcpy(gModuleData->paramDesc[eParamRqAtkSlew0].unit, "");
+  gModuleData->paramDesc[eParamRqAtkSlew0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamRqAtkSlew0].min = 0;
+  gModuleData->paramDesc[eParamRqAtkSlew0].max = FR32_MAX;
 
-  strcpy(gModuleData->paramDesc[eParamResRelSlew0].label, "ResRelSlew0");
-  strcpy(gModuleData->paramDesc[eParamResRelSlew0].unit, "");
-  gModuleData->paramDesc[eParamResRelSlew0].type = PARAM_TYPE_FRACT;
-  gModuleData->paramDesc[eParamResRelSlew0].min = 0;
-  gModuleData->paramDesc[eParamResRelSlew0].max = FR32_MAX;
+  strcpy(gModuleData->paramDesc[eParamRqRelSlew0].label, "RqRelSlew0");
+  strcpy(gModuleData->paramDesc[eParamRqRelSlew0].unit, "");
+  gModuleData->paramDesc[eParamRqRelSlew0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamRqRelSlew0].min = 0;
+  gModuleData->paramDesc[eParamRqRelSlew0].max = FR32_MAX;
 
-  /* strcpy(gModuleData->paramDesc[eParamResAtkCurve0].label, "ResAtkCurve0"); */
-  /* strcpy(gModuleData->paramDesc[eParamResAtkCurve0].unit, ""); */
-  /* gModuleData->paramDesc[eParamResAtkCurve0].type = PARAM_TYPE_FRACT; */
-  /* gModuleData->paramDesc[eParamResAtkCurve0].min = 0; */
-  /* gModuleData->paramDesc[eParamResAtkCurve0].max = FR32_MAX; */
+  /* strcpy(gModuleData->paramDesc[eParamRqAtkCurve0].label, "RqAtkCurve0"); */
+  /* strcpy(gModuleData->paramDesc[eParamRqAtkCurve0].unit, ""); */
+  /* gModuleData->paramDesc[eParamRqAtkCurve0].type = PARAM_TYPE_FRACT; */
+  /* gModuleData->paramDesc[eParamRqAtkCurve0].min = 0; */
+  /* gModuleData->paramDesc[eParamRqAtkCurve0].max = FR32_MAX; */
 
-  /* strcpy(gModuleData->paramDesc[eParamResRelCurve0].label, "ResRelCurve0"); */
-  /* strcpy(gModuleData->paramDesc[eParamResRelCurve0].unit, ""); */
-  /* gModuleData->paramDesc[eParamResRelCurve0].type = PARAM_TYPE_FRACT; */
-  /* gModuleData->paramDesc[eParamResRelCurve0].min = 0; */
-  /* gModuleData->paramDesc[eParamResRelCurve0].max = FR32_MAX; */
+  /* strcpy(gModuleData->paramDesc[eParamRqRelCurve0].label, "RqRelCurve0"); */
+  /* strcpy(gModuleData->paramDesc[eParamRqRelCurve0].unit, ""); */
+  /* gModuleData->paramDesc[eParamRqRelCurve0].type = PARAM_TYPE_FRACT; */
+  /* gModuleData->paramDesc[eParamRqRelCurve0].min = 0; */
+  /* gModuleData->paramDesc[eParamRqRelCurve0].max = FR32_MAX; */
 
-  strcpy(gModuleData->paramDesc[eParamResStart0].label, "ResStart0");
-  strcpy(gModuleData->paramDesc[eParamResStart0].unit, "");
-  gModuleData->paramDesc[eParamResStart0].type = PARAM_TYPE_FRACT;
-  gModuleData->paramDesc[eParamResStart0].min = 0;
-  gModuleData->paramDesc[eParamResStart0].max = FR32_MAX;
+  strcpy(gModuleData->paramDesc[eParamRqStart0].label, "RqStart0");
+  strcpy(gModuleData->paramDesc[eParamRqStart0].unit, "");
+  gModuleData->paramDesc[eParamRqStart0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamRqStart0].min = 0;
+  gModuleData->paramDesc[eParamRqStart0].max = FR32_MAX;
 
-  strcpy(gModuleData->paramDesc[eParamResEnd0].label, "ResEnd0");
-  strcpy(gModuleData->paramDesc[eParamResEnd0].unit, "");
-  gModuleData->paramDesc[eParamResEnd0].type = PARAM_TYPE_FRACT;
-  gModuleData->paramDesc[eParamResEnd0].min = 0;
-  gModuleData->paramDesc[eParamResEnd0].max = FR32_MAX;
+  strcpy(gModuleData->paramDesc[eParamRqEnd0].label, "RqEnd0");
+  strcpy(gModuleData->paramDesc[eParamRqEnd0].unit, "");
+  gModuleData->paramDesc[eParamRqEnd0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamRqEnd0].min = 0;
+  gModuleData->paramDesc[eParamRqEnd0].max = FR32_MAX;
 
   strcpy(gModuleData->paramDesc[eParamLow0].label, "Low0");
   strcpy(gModuleData->paramDesc[eParamLow0].unit, "");
