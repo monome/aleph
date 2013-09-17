@@ -5,6 +5,7 @@ module_name = drumsyn
 module_obj = drumsyn.o \
 	params.o \
 	$(audiolib)/conversion.o \
+	$(audiolib)/env_exp.o \
 	$(audiolib)/filter_1p.o \
 	$(audiolib)/filter_svf.o \
 	$(audiolib)/noise.o \

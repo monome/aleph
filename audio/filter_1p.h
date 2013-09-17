@@ -1,8 +1,8 @@
-/* filters.h
+/* filter_1p.h
  * null
  * aleph
  *
- * declaration of filtering functions
+ * simple one-pole filters (lowpass and highpass)
  */
 
 #ifndef _ALEPH_AUDIO_FILTER_1POLE_H_
@@ -11,52 +11,43 @@
 #include "fix.h"
 #include "types.h"
 
-typedef struct _filter_1p {
-  //  u32 sr;    // sample rate
-  fix16 c; // integration coefficient
-  fix16 x; // target value
-  fix16 y; // filtered value
-  u8 sync;   // flag if target and filtered values are equal
-} filter_1p_fix16;
-
-
-typedef struct _filter_1p_fr32 {
+//-- lowpass fr32
+typedef struct _filter_1p_lo {
   //  u32 sr;    // sample rate
   fract32 c; // integration coefficient
   fract32 x; // target value
   fract32 y; // filtered value
   u8 sync;   // flag if target and filtered values are equal
-} filter_1p_fr32;
-
-//=============
-//==== fix16
-
-// intialize at pre-allocated memory
-extern void filter_1p_fix16_init(   filter_1p_fix16* f, fix16 in);
-// set cutoff frequency in hz
-extern void filter_1p_fix16_set_hz( filter_1p_fix16* f, fix16 hz);
-// set integrator coefficient directly
-void filter_1p_fix16_set_slew(   filter_1p_fr32* f, fix16 slew);
-// set input value
-extern void filter_1p_fix16_in(     filter_1p_fix16* f, fix16 val);
-// get next filtered value
-extern fix16 filter_1p_fix16_next(  filter_1p_fix16* f);
+} filter_1p_lo;
 
 
 //==========
 //====== fr32
+///---- lowpass
 // initialize
-extern void filter_1p_fr32_init(filter_1p_fr32* f, fract32 in);
+extern void filter_1p_lo_init(filter_1p_lo* f, fract32 in);
 // set cutoff frequency in hz
-extern void filter_1p_fr32_set_hz(filter_1p_fr32* f, fix16 hz);
+extern void filter_1p_lo_set_hz(filter_1p_lo* f, fix16 hz);
 // set coefficient directly
-void filter_1p_fr32_set_slew(filter_1p_fr32* f, fract32 slew);
+void filter_1p_lo_set_slew(filter_1p_lo* f, fract32 slew);
 // set input value
-extern void filter_1p_fr32_in(filter_1p_fr32* f, fract32 val);
+extern void filter_1p_lo_in(filter_1p_lo* f, fract32 val);
 // get next filtered value
-extern fract32 filter_1p_fr32_next(filter_1p_fr32* f);
+extern fract32 filter_1p_lo_next(filter_1p_lo* f);
 
-//==========
-//===== s32 (cast and scale)
+///---- highpass
+
+/*
+o// initialize
+extern void filter_1p_hi_init(filter_1p_hi* f, fract32 in);
+// set cutoff frequency in hz
+extern void filter_1p_hi_set_hz(filter_1p_hi* f, fix16 hz);
+// set coefficient directly
+void filter_1p_hi_set_slew(filter_1p_hi* f, fract32 slew);
+// set input value
+extern void filter_1p_hi_in(filter_1p_hi* f, fract32 val);
+// get next filtered value
+extern fract32 filter_1p_hi_next(filter_1p_hi* f);
+*/
 
 #endif

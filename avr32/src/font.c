@@ -332,9 +332,13 @@ u8* font_string_big(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
       break;
     }
     buf = font_glyph_big(*str, buf, w, a, b);
-    // 1-column space between chars
-    buf++;
+    /* // 1-column space between chars */
+    /* buf++; */
+    /* str++; */
+    // 2-column space between chars
+    buf += 2;
     str++;
+
   }
   return buf;
 }
@@ -349,7 +353,9 @@ u8* font_string_bigbig(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
     }
     buf = font_glyph_bigbig(*str, buf, w, a, b);
     // 1-column space between chars
-    buf++;
+    //    buf++;
+    // 3-column space
+    buf += 3;
     str++;
   }
   return buf;

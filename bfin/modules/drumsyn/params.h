@@ -6,23 +6,36 @@
 #define PARAM_RQ_MAX 0x1fffffff
 
 enum Params {
-  eParamGate0,		// 0
-  eParamTrig0,		// 1
-  eParamAmp0,		// 2
-  eParamAmpAtkSlew0,	// 3
-  eParamAmpRelSlew0,	// 4
-  eParamFreqAtkSlew0,	// 5
-  eParamFreqRelSlew0,	// 6
-  eParamFreqStart0,	// 7
-  eParamFreqEnd0,	// 8
-  eParamRqAtkSlew0,	// 9
-  eParamRqRelSlew0,	// 10
-  eParamRqStart0,	// 11
-  eParamRqEnd0,		// 12
-  eParamLow0,		// 13
-  eParamHigh0,		// 14
-  eParamBand0,		// 15
-  eParamNotch0,		// 16
+  eParamGate0,		
+  eParamTrig0,		
+
+  eParamAmp0,		
+  eParamAmpSus0,      	
+  eParamAmpAtkSlew0,	
+  eParamAmpDecSlew0,	
+  eParamAmpRelSlew0,	
+  eParamAmpSusDur0,	
+
+  eParamFreqOff0,	
+  eParamFreqOn0,	
+  eParamFreqSus0,	
+  eParamFreqAtkSlew0,	
+  eParamFreqDecSlew0,	
+  eParamFreqRelSlew0,	
+  eParamFreqSusDur0,	
+
+  eParamRqOff0,		
+  eParamRqOn0,		
+  eParamRqSus0,		
+  eParamRqAtkSlew0,	
+  eParamRqDecSlew0,	
+  eParamRqRelSlew0,	
+  eParamRqSusDur0,	
+
+  eParamLow0,		
+  eParamHigh0,		
+  eParamBand0,		
+  eParamNotch0,		
 
   // FIXME
   eParamNumParams
@@ -39,14 +52,14 @@ enum Params {
   eParamFreqRelSlew1,
   eParamFreqAtkCurve1,
   eParamFreqRelCurve1,
-  eParamFreqStart1,
-  eParamFreqEnd1,
+  eParamFreqOff1,
+  eParamFreqOn1,
   eParamRqAtkSlew1,
   eParamRqRelSlew1,
   eParamRqAtkCurve1,
   eParamRqRelCurve1,
-  eParamRqStart1,
-  eParamRqEnd1,
+  eParamRqOff1,
+  eParamRqOn1,
   eParamLow1,
   eParamHigh1,
   eParamBand1,
@@ -63,14 +76,14 @@ enum Params {
   eParamFreqRelSlew2,
   eParamFreqAtkCurve2,
   eParamFreqRelCurve2,
-  eParamFreqStart2,
-  eParamFreqEnd2,
+  eParamFreqOff2,
+  eParamFreqOn2,
   eParamRqAtkSlew2,
   eParamRqRelSlew2,
   eParamRqAtkCurve2,
   eParamRqRelCurve2,
-  eParamRqStart2,
-  eParamRqEnd2,
+  eParamRqOff2,
+  eParamRqOn2,
   eParamLow2,
   eParamHigh2,
   eParamBand2,
@@ -87,14 +100,14 @@ enum Params {
   eParamFreqRelSlew3,
   eParamFreqAtkCurve3,
   eParamFreqRelCurve3,
-  eParamFreqStart3,
-  eParamFreqEnd3,
+  eParamFreqOff3,
+  eParamFreqOn3,
   eParamRqAtkSlew3,
   eParamRqRelSlew 3,
   eParamRqAtkCurve3,
   eParamRqRelCurve3,
-  eParamRqStart3,
-  eParamRqEnd3,
+  eParamRqOff3,
+  eParamRqOn3,
   eParamLow3,
   eParamHigh3,
   eParamBand3,
