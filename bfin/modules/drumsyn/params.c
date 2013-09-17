@@ -87,16 +87,16 @@ void module_set_param(u32 idx, pval v) {
     break;
 
   case eParamLow0 :	       
-    filter_svf_set_low( vp->svf, v.fr);
+    filter_svf_set_low( voices[0]->svf, v.fr);
     break;
   case eParamHigh0 :	       
-    filter_svf_set_high( vp->svf, v.fr);
+    filter_svf_set_high( voices[0]->svf, v.fr);
     break;
   case eParamBand0 :	       
-    filter_svf_set_band( vp->svf, v.fr);
+    filter_svf_set_band( voices[0]->svf, v.fr);
     break;
   case eParamNotch0 :	       
-    filter_svf_set_notch( vp->svf, v.fr);
+    filter_svf_set_notch( voices[0]->svf, v.fr);
     break;
 
 

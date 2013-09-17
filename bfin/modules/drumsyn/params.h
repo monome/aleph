@@ -6,23 +6,23 @@
 #define PARAM_RQ_MAX 0x1fffffff
 
 enum Params {
-  eParamGate0,		
-  eParamTrig0,		
-  eParamAmp0,		
-  eParamAmpAtkSlew0,	
-  eParamAmpRelSlew0,	
-  eParamFreqAtkSlew0,	
-  eParamFreqRelSlew0,	
-  eParamFreqStart0,	
-  eParamFreqEnd0,	
-  eParamRqAtkSlew0,	
-  eParamRqRelSlew0,	
-  eParamRqStart0,	
-  eParamRqEnd0,	
-  eParamLow0,		
-  eParamHigh0,		
-  eParamBand0,		
-  eParamNotch0,		
+  eParamGate0,		// 0
+  eParamTrig0,		// 1
+  eParamAmp0,		// 2
+  eParamAmpAtkSlew0,	// 3
+  eParamAmpRelSlew0,	// 4
+  eParamFreqAtkSlew0,	// 5
+  eParamFreqRelSlew0,	// 6
+  eParamFreqStart0,	// 7
+  eParamFreqEnd0,	// 8
+  eParamRqAtkSlew0,	// 9
+  eParamRqRelSlew0,	// 10
+  eParamRqStart0,	// 11
+  eParamRqEnd0,		// 12
+  eParamLow0,		// 13
+  eParamHigh0,		// 14
+  eParamBand0,		// 15
+  eParamNotch0,		// 16
 
   // FIXME
   eParamNumParams

@@ -119,6 +119,11 @@ void drumsyn_voice_init(void* mem) {
 
   voice->amp = FR32_MAX >> 2;
 
+  voice->freqOn = 0x1fffffff;
+  voice->freqOff = 0;
+  voice->rqOn = 0x0fffffff;
+  voice->rqOff = 0x0fffffff;
+
 }
 
 void drumsyn_voice_deinit(drumsynVoice* voice) {
@@ -139,11 +144,11 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
   fract32 amp, freq, rq;
 
     amp = filter_1p_fr32_next(&(voice->lpAmp));
-    //    freq = filter_1p_fr32_next(&(voice->lpFreq));
-    //    rq = filter_1p_fr32_next(&(voice->lpRq));
+    freq = filter_1p_fr32_next(&(voice->lpFreq));
+    rq = filter_1p_fr32_next(&(voice->lpRq));
 
-    //    filter_svf_set_coeff( voice->svf, freq );
-    //    filter_svf_set_rq( voice->svf, rq );
+    filter_svf_set_coeff( voice->svf, freq );
+    filter_svf_set_rq( voice->svf, rq );
 
 #else 
   // FIXME : janky, need more voices
@@ -172,15 +177,10 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
 
 
   /// FIXME : testing only amp env  
-#if 0
-  return mult_fr1x32x32( amp,
-			 filter_svf_next(voice->svf, 
-					 lcprng_next(voice->rngL) |
-					 ( lcprng_next(voice->rngH) << 14) 
-					 )
-			 );
+#if 1
+  return mult_fr1x32x32( amp, filter_svf_next(voice->svf, noise_next(voice) ));
 #else  // TEST
-    return mult_fr1x32x32(amp, noise_next(voice) );
+  return mult_fr1x32x32( amp, noise_next(voice) );
   //  return noise_next(voice);
 #endif
 }
