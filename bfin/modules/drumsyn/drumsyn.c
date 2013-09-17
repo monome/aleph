@@ -120,7 +120,7 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
 static void calc_frame(void) {
   /// mono
   frameVal = shr_fr1x32( drumsyn_voice_next(&(voices[0])), 1 );
-  frameVal = add_fr1x32(frameVal , shr_fr1x32( drumsyn_voice_next(&(voices[1])), 1 ) );
+  // frameVal = add_fr1x32(frameVal , shr_fr1x32( drumsyn_voice_next(&(voices[1])), 1 ) );
   //  frameVal = add_fr1x32(frameVal , shr_fr1x32( drumsyn_voice_next(voices[2]), 1 ) );
   //  frameVal = add_fr1x32(frameVal , shr_fr1x32( drumsyn_voice_next(voices[3]), 1 ) );
 

@@ -23,12 +23,14 @@ typedef enum Params {
   eParamVoice,  // 0
   eParamGate,	// 1	
   eParamTrig,	// 2	
+
   eParamAmp,	// 3	
   eParamAmpSus, // 4     	
   eParamAmpAtkSlew,	// 5
   eParamAmpDecSlew,	// 6
   eParamAmpRelSlew,	// 7
   eParamAmpSusDur,	// 8
+
   eParamFreqOff,	// 9
   eParamFreqOn,		// 10
   eParamFreqSus,	// 11
@@ -36,6 +38,7 @@ typedef enum Params {
   eParamFreqDecSlew,	// 13
   eParamFreqRelSlew,	// 14
   eParamFreqSusDur,	// 15
+
   eParamRqOff,		// 16
   eParamRqOn,		// 17
   eParamRqSus,		// 18
@@ -43,6 +46,7 @@ typedef enum Params {
   eParamRqDecSlew,	// 20
   eParamRqRelSlew,	// 21
   eParamRqSusDur,	// 22
+
   eParamLow,		// 23
   eParamHigh,		// 24
   eParamBand,		// 25
