@@ -20,6 +20,8 @@ void  ctl_set_gate(u8 ch, u8 val);
 // FIXME: just copying from .ldr source for now
 
 typedef enum Params {
+  eParamVoice,
+
   eParamGate0,		
   eParamTrig0,		
 

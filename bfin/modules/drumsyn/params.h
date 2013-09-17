@@ -6,6 +6,7 @@
 #define PARAM_RQ_MAX 0x1fffffff
 
 enum Params {
+  eParamVoice,
   eParamGate0,		
   eParamTrig0,		
 

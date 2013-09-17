@@ -8,7 +8,7 @@
 /// testing
 #define DRUMSYN_NOENV 1
 
-#define DRUMSYN_NVOICES 1
+#define DRUMSYN_NVOICES 4
 
 typedef struct _drumsynVoice {
   // filter

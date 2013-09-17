@@ -6,6 +6,8 @@
 #include "module.h"
 #include "params.h" 
 
+static u8 vid = 0;
+
 static void set_param_gate(drumsynVoice* vp, s32 val) {
   if(val > 0) { 
     lcprng_reset(&(vp->rngH));
@@ -49,96 +51,96 @@ void module_set_param(u32 idx, pval v) {
   switch(idx) {
 
   case eParamGate0 : // 1bit gate
-    //    vp = voices[0];
-    set_param_gate(voices[0], v.s);
+    //    vp = voices[vid];
+    set_param_gate(voices[vid], v.s);
     break;
     
   case eParamAmp0 : // fract32 amp
-    env_exp_set_on( &(voices[0]->envAmp), v.fr);    
+    env_exp_set_on( &(voices[vid]->envAmp), v.fr);    
     break;
     
   case eParamAmpSus0 : // fract32 amp
-    env_exp_set_sus( &(voices[0]->envAmp), v.fr);    
+    env_exp_set_sus( &(voices[vid]->envAmp), v.fr);    
     break;
     
   case eParamAmpAtkSlew0 : // fract32 raw 1pole coefficient
-    env_exp_set_atk_slew( &(voices[0]->envAmp), v.fr);
+    env_exp_set_atk_slew( &(voices[vid]->envAmp), v.fr);
     break;
     
   case eParamAmpDecSlew0 : // fract32 raw 1pole coefficient
-    env_exp_set_dec_slew( &(voices[0]->envAmp), v.fr);
+    env_exp_set_dec_slew( &(voices[vid]->envAmp), v.fr);
     break;
 
   case eParamAmpRelSlew0 :
-    env_exp_set_rel_slew( &(voices[0]->envAmp), v.fr);
+    env_exp_set_rel_slew( &(voices[vid]->envAmp), v.fr);
     break;
 
   case eParamAmpSusDur0 :
-    env_exp_set_sus_dur( &(voices[0]->envAmp), v.u);
+    env_exp_set_sus_dur( &(voices[vid]->envAmp), v.u);
     break;
 
     // freq env
   case eParamFreqAtkSlew0 :
-    env_exp_set_atk_slew( &(voices[0]->envFreq), v.fr);
+    env_exp_set_atk_slew( &(voices[vid]->envFreq), v.fr);
     break;
 
   case eParamFreqDecSlew0 :
-    env_exp_set_dec_slew( &(voices[0]->envFreq), v.fr);
+    env_exp_set_dec_slew( &(voices[vid]->envFreq), v.fr);
     break;
 
   case eParamFreqRelSlew0 :
-    env_exp_set_rel_slew( &(voices[0]->envFreq), v.fr);
+    env_exp_set_rel_slew( &(voices[vid]->envFreq), v.fr);
     break;
 
   case eParamFreqSusDur0 :
-    env_exp_set_sus_dur( &(voices[0]->envFreq), v.u);
+    env_exp_set_sus_dur( &(voices[vid]->envFreq), v.u);
     break;
 
   case eParamFreqOff0 :
-    env_exp_set_off( &(voices[0]->envFreq), v.fr);
+    env_exp_set_off( &(voices[vid]->envFreq), v.fr);
     break;
   case eParamFreqOn0: 
-    env_exp_set_on( &(voices[0]->envFreq), v.fr);
+    env_exp_set_on( &(voices[vid]->envFreq), v.fr);
     break;
   case eParamFreqSus0: 
-    env_exp_set_sus( &(voices[0]->envFreq), v.fr);
+    env_exp_set_sus( &(voices[vid]->envFreq), v.fr);
     break;
 
     // rq env
   case eParamRqAtkSlew0 :
-    env_exp_set_atk_slew( &(voices[0]->envRq), v.fr);
+    env_exp_set_atk_slew( &(voices[vid]->envRq), v.fr);
     break;
   case eParamRqDecSlew0 :
-    env_exp_set_dec_slew( &(voices[0]->envRq), v.fr);
+    env_exp_set_dec_slew( &(voices[vid]->envRq), v.fr);
     break;
   case eParamRqRelSlew0 :
-    env_exp_set_rel_slew( &(voices[0]->envRq), v.fr);
+    env_exp_set_rel_slew( &(voices[vid]->envRq), v.fr);
     break;
   case eParamRqSusDur0 :
-    env_exp_set_sus_dur( &(voices[0]->envRq), v.u);
+    env_exp_set_sus_dur( &(voices[vid]->envRq), v.u);
     break;
 
   case eParamRqOff0 :
-    env_exp_set_off( &(voices[0]->envRq), v.fr);
+    env_exp_set_off( &(voices[vid]->envRq), v.fr);
     break;
   case eParamRqOn0 :
-    env_exp_set_on( &(voices[0]->envRq), v.fr);
+    env_exp_set_on( &(voices[vid]->envRq), v.fr);
     break;
   case eParamRqSus0 :
-    env_exp_set_sus( &(voices[0]->envRq), v.fr);
+    env_exp_set_sus( &(voices[vid]->envRq), v.fr);
     break;
 
   case eParamLow0 :	       
-    filter_svf_set_low( &(voices[0]->svf), v.fr);
+    filter_svf_set_low( &(voices[vid]->svf), v.fr);
     break;
   case eParamHigh0 :	       
-    filter_svf_set_high( &(voices[0]->svf), v.fr);
+    filter_svf_set_high( &(voices[vid]->svf), v.fr);
     break;
   case eParamBand0 :	       
-    filter_svf_set_band( &(voices[0]->svf), v.fr);
+    filter_svf_set_band( &(voices[vid]->svf), v.fr);
     break;
   case eParamNotch0 :	       
-    filter_svf_set_notch( &(voices[0]->svf), v.fr);
+    filter_svf_set_notch( &(voices[vid]->svf), v.fr);
     break;
 
 
@@ -153,6 +155,12 @@ void module_set_param(u32 idx, pval v) {
 
 /// FIXME: missing some param descs
 void fill_param_desc(void) {
+  strcpy(gModuleData->paramDesc[eParamVoice].label, "Voice");
+  strcpy(gModuleData->paramDesc[eParamVoice].unit, "");
+  gModuleData->paramDesc[eParamVoice].type = PARAM_TYPE_UINT;
+  gModuleData->paramDesc[eParamVoice].min = 0;
+  gModuleData->paramDesc[eParamVoice].max = 3;
+
   strcpy(gModuleData->paramDesc[eParamGate0].label, "Gate0");
   strcpy(gModuleData->paramDesc[eParamGate0].unit, "");
   gModuleData->paramDesc[eParamGate0].type = PARAM_TYPE_FRACT;

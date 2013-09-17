@@ -143,34 +143,8 @@ void ctl_init_params(void) {
   */
 
 
-  
-  //+/* //	2640 hz	~= 0.707813107994074	~= 0x5a999eb2 */
-  //+/* #define SLEW_ATK_SHORT 	0x5a999eb2 */
-  // 
-  //-//	55 hz 	~= 0.9928263710316179	~= 0x7f14ef3c
-  //-#define SLEW_ATK_LONG 	0x7f14ef3c
-  //+/* //	55 hz 	~= 0.9928263710316179	~= 0x7f14ef3c */
-  //+/* #define SLEW_ATK_LONG 	0x7f14ef3c */
-  // 
-  //-//	2 hz	~= 0.9997382348786702	~= 0x7ff76c26
-  //-#define SLEW_REL_SHORT 	0x7ff76c26
-  //+/* //	2 hz	~= 0.9997382348786702	~= 0x7ff76c26 */
-  //+/* #define SLEW_REL_SHORT 	0x7ff76c26 */
-  // 
-  //-//	1/2 hz 	~= 0.9999345522948447	~= 0x7ffddafb
-  //-//#define SLEW_REL_LONG	0x7ffddafb
-  //-#define SLEW_REL_LONG	0x7fffaaaa
-  //+/* //	1/2 hz 	~= 0.9999345522948447	~= 0x7ffddafb */
-  //+/* //#define SLEW_REL_LONG	0x7ffddafb */
-  //+/* #define SLEW_REL_LONG	0x7fffaaaa */
- 
- 
-  /// TEST
-  print_dbg("\r\n 2hz slew coefficient: (hardcoded) 0x");
-  print_dbg_hex( (u32)0x7ff76c26 );
-  print_dbg("\r\n ), (computed) 0x ");
-  print_dbg_hex( sec_to_slew(0.5 ) );
-		 
+		
+  ctl_param_change( eParamVoice,	0	);
   ctl_param_change( eParamGate0,	0	);
   ctl_param_change( eParamTrig0,	0	);
 
@@ -198,50 +172,13 @@ void ctl_init_params(void) {
   ctl_param_change( eParamHigh0,	0	);
   ctl_param_change( eParamBand0,	0	);
   ctl_param_change( eParamNotch0,	0	);
-
-		
-
-  /* ctl_param_change( eParamGate0,	kParamInitGate0	); */
-  /* ctl_param_change( eParamTrig0,	kParamInitTrig0	); */
-  /* ctl_param_change( eParamAmp0,		kParamInitAmp0	); */
-  /* ctl_param_change( eParamAmpAtkSlew0,	kParamInitAmpAtkSlew0	); */
-  /* ctl_param_change( eParamAmpRelSlew0,	kParamInitAmpRelSlew0	); */
-  /* ctl_param_change( eParamFreqAtkSlew0,	kParamInitFreqAtkSlew0	); */
-  /* ctl_param_change( eParamFreqRelSlew0,	kParamInitFreqRelSlew0	); */
-  /* ctl_param_change( eParamFreqStart0,	kParamInitFreqStart0	); */
-  /* ctl_param_change( eParamFreqEnd0,	kParamInitFreqEnd0	); */
-  /* ctl_param_change( eParamRqAtkSlew0,	kParamInitRqAtkSlew0	); */
-  /* ctl_param_change( eParamRqRelSlew0,	kParamInitRqRelSlew0	); */
-  /* ctl_param_change( eParamRqStart0,	kParamInitRqStart0	); */
-  /* ctl_param_change( eParamRqEnd0,	kParamInitRqEnd0	); */
-  /* ctl_param_change( eParamLow0,		kParamInitLow0	); */
-  /* ctl_param_change( eParamHigh0,	kParamInitHigh0	); */
-  /* ctl_param_change( eParamBand0,	kParamInitBand0	); */
-  /* ctl_param_change( eParamNotch0,	kParamInitNotch0	); */
-
-
-  /* ctl_param_change(  eParamGate0, 		0 ); */
-  /* ctl_param_change(  eParamTrig0, 		0 ); */
-  /* ctl_param_change(  eParamAmp0, 		kAmp0 ); */
-  /* ctl_param_change(  eParamAmpAtkSlew0, 	kAmpAtkSlew0 ); */
-  /* ctl_param_change(  eParamAmpRelSlew0, 	kAmpRelSlew0 ); */
-
-  /* ctl_param_change(  eParamFreqAtkSlew0, 	SLEW_ATK_LONG ); */
-  /* ctl_param_change(  eParamFreqRelSlew0, 	SLEW_REL_SHORT ); */
-  
-  /* ctl_param_change(  eParamRqAtkSlew0, 		SLEW_ATK_LONG ); */
-  /* ctl_param_change(  eParamRqRelSlew0, 		SLEW_REL_SHORT ); */
-  
-  /* ctl_param_change(  eParamLow0, 		FR32_MAX - 1 ); */
-  /* ctl_param_change(  eParamHigh0, 		0 ); */
-  /* ctl_param_change(  eParamBand0, 		0 ); */
-  /* ctl_param_change(  eParamNotch0, 		0 ); */
 }
 
 // set gate
 void  ctl_set_gate(u8 ch, u8 val) {
   //  static const eParam gateParams[4] = { eParamGate0 , eParamGate1, eParamGate2, eParamGate3  };
-  static const eParam gateParams[4] = { eParamGate0 , eParamGate0, eParamGate0, eParamGate0  };
-  eParam p = gateParams[ch];
-  ctl_param_change(p, (s32)val );
+  //  static const eParam gateParams[4] = { eParamGate0 , eParamGate0, eParamGate0, eParamGate0  };
+  //  eParam p = gateParams[ch];
+  ctl_param_change(eParamVoice, ch );
+  ctl_param_change(eParamGate0, (s32)val );
 }
