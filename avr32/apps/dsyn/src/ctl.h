@@ -20,33 +20,33 @@ void  ctl_set_gate(u8 ch, u8 val);
 // FIXME: just copying from .ldr source for now
 
 typedef enum Params {
-  eParamVoice,
-  eParamGate,		
-  eParamTrig,		
-  eParamAmp,		
-  eParamAmpSus,      	
-  eParamAmpAtkSlew,	
-  eParamAmpDecSlew,	
-  eParamAmpRelSlew,	
-  eParamAmpSusDur,	
-  eParamFreqOff,	
-  eParamFreqOn,	
-  eParamFreqSus,	
-  eParamFreqAtkSlew,	
-  eParamFreqDecSlew,	
-  eParamFreqRelSlew,	
-  eParamFreqSusDur,	
-  eParamRqOff,		
-  eParamRqOn,		
-  eParamRqSus,		
-  eParamRqAtkSlew,	
-  eParamRqDecSlew,	
-  eParamRqRelSlew,	
-  eParamRqSusDur,	
-  eParamLow,		
-  eParamHigh,		
-  eParamBand,		
-  eParamNotch,	
+  eParamVoice,  // 0
+  eParamGate,	// 1	
+  eParamTrig,	// 2	
+  eParamAmp,	// 3	
+  eParamAmpSus, // 4     	
+  eParamAmpAtkSlew,	// 5
+  eParamAmpDecSlew,	// 6
+  eParamAmpRelSlew,	// 7
+  eParamAmpSusDur,	// 8
+  eParamFreqOff,	// 9
+  eParamFreqOn,		// 10
+  eParamFreqSus,	// 11
+  eParamFreqAtkSlew,	// 12
+  eParamFreqDecSlew,	// 13
+  eParamFreqRelSlew,	// 14
+  eParamFreqSusDur,	// 15
+  eParamRqOff,		// 16
+  eParamRqOn,		// 17
+  eParamRqSus,		// 18
+  eParamRqAtkSlew,	// 19
+  eParamRqDecSlew,	// 20
+  eParamRqRelSlew,	// 21
+  eParamRqSusDur,	// 22
+  eParamLow,		// 23
+  eParamHigh,		// 24
+  eParamBand,		// 25
+  eParamNotch,	// 26
 
   // FIXME
   eParamNumParams

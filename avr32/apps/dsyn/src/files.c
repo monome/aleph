@@ -85,7 +85,7 @@ u8 files_search_dsp(void) {
 
     return 1; // ok
   } else {
-    print_dbg("\r\n encountered an error opening .ldr file.");
+    print_dbg("\r\n null file pointer to .ldr");
 
     app_resume();
     return 0; // error opening

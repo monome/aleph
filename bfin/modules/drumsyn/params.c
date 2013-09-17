@@ -12,8 +12,8 @@ static u8 vid = 0;
 // set gate for voice
 static void set_param_gate(drumsynVoice* vp, s32 val) {
   if(val > 0) { 
-    lcprng_reset(&(vp->rngH));
-    lcprng_reset(&(vp->rngL));
+    lcprng_reset(&(vp->rngH), 0xDEADFACE);
+    lcprng_reset(&(vp->rngL), 0xBEEFCAFE);
     env_exp_set_gate( &(vp->envAmp)	, 0xff );
     env_exp_set_gate( &(vp->envFreq)	, 0xff );
     env_exp_set_gate( &(vp->envRq)	, 0xff );
@@ -28,85 +28,85 @@ static void set_param_gate(drumsynVoice* vp, s32 val) {
 void module_set_param(u32 idx, pval v) { 
   switch(idx) {
   case eParamVoice :
-    vid = v.u % (DRUMSYN_NVOICES);    // set voice index
+    vid = v.u % (DRUMSYN_NVOICES);    // set voice indexq
     break;
   case eParamGate : // 1bit gate
-    set_param_gate(voices[vid], v.s);
+    set_param_gate(&(voices[vid]), v.s);
     break;    
   case eParamAmp : // fract32 amp
-    env_exp_set_on( &(voices[vid]->envAmp), v.fr);    
+    env_exp_set_on( &(voices[vid].envAmp), v.fr);    
     break;    
   case eParamAmpSus : // fract32 amp
-    env_exp_set_sus( &(voices[vid]->envAmp), v.fr);    
+    env_exp_set_sus( &(voices[vid].envAmp), v.fr);    
     break;    
   case eParamAmpAtkSlew : // fract32 raw 1pole coefficient
-    env_exp_set_atk_slew( &(voices[vid]->envAmp), v.fr);
+    env_exp_set_atk_slew( &(voices[vid].envAmp), v.fr);
     break;    
   case eParamAmpDecSlew : // fract32 raw 1pole coefficient
-    env_exp_set_dec_slew( &(voices[vid]->envAmp), v.fr);
+    env_exp_set_dec_slew( &(voices[vid].envAmp), v.fr);
     break;
   case eParamAmpRelSlew :
-    env_exp_set_rel_slew( &(voices[vid]->envAmp), v.fr);
+    env_exp_set_rel_slew( &(voices[vid].envAmp), v.fr);
     break;
   case eParamAmpSusDur :
-    env_exp_set_sus_dur( &(voices[vid]->envAmp), v.u);
+    env_exp_set_sus_dur( &(voices[vid].envAmp), v.u);
     break;
     // freq env
   case eParamFreqAtkSlew :
-    env_exp_set_atk_slew( &(voices[vid]->envFreq), v.fr);
+    env_exp_set_atk_slew( &(voices[vid].envFreq), v.fr);
     break;
   case eParamFreqDecSlew :
-    env_exp_set_dec_slew( &(voices[vid]->envFreq), v.fr);
+    env_exp_set_dec_slew( &(voices[vid].envFreq), v.fr);
     break;
   case eParamFreqRelSlew :
-    env_exp_set_rel_slew( &(voices[vid]->envFreq), v.fr);
+    env_exp_set_rel_slew( &(voices[vid].envFreq), v.fr);
     break;
   case eParamFreqSusDur :
-    env_exp_set_sus_dur( &(voices[vid]->envFreq), v.u);
+    env_exp_set_sus_dur( &(voices[vid].envFreq), v.u);
     break;
   case eParamFreqOff :
-    env_exp_set_off( &(voices[vid]->envFreq), v.fr);
+    env_exp_set_off( &(voices[vid].envFreq), v.fr);
     break;
   case eParamFreqOn : 
-    env_exp_set_on( &(voices[vid]->envFreq), v.fr);
+    env_exp_set_on( &(voices[vid].envFreq), v.fr);
     break;
   case eParamFreqSus : 
-    env_exp_set_sus( &(voices[vid]->envFreq), v.fr);
+    env_exp_set_sus( &(voices[vid].envFreq), v.fr);
     break;
     // rq env
   case eParamRqAtkSlew :
-    env_exp_set_atk_slew( &(voices[vid]->envRq), v.fr);
+    env_exp_set_atk_slew( &(voices[vid].envRq), v.fr);
     break;
   case eParamRqDecSlew :
-    env_exp_set_dec_slew( &(voices[vid]->envRq), v.fr);
+    env_exp_set_dec_slew( &(voices[vid].envRq), v.fr);
     break;
   case eParamRqRelSlew :
-    env_exp_set_rel_slew( &(voices[vid]->envRq), v.fr);
+    env_exp_set_rel_slew( &(voices[vid].envRq), v.fr);
     break;
   case eParamRqSusDur :
-    env_exp_set_sus_dur( &(voices[vid]->envRq), v.u);
+    env_exp_set_sus_dur( &(voices[vid].envRq), v.u);
     break;
   case eParamRqOff :
-    env_exp_set_off( &(voices[vid]->envRq), v.fr);
+    env_exp_set_off( &(voices[vid].envRq), v.fr);
     break;
   case eParamRqOn :
-    env_exp_set_on( &(voices[vid]->envRq), v.fr);
+    env_exp_set_on( &(voices[vid].envRq), v.fr);
     break;
   case eParamRqSus :
-    env_exp_set_sus( &(voices[vid]->envRq), v.fr);
+    env_exp_set_sus( &(voices[vid].envRq), v.fr);
     break;
     // svf
   case eParamLow :	       
-    filter_svf_set_low( &(voices[vid]->svf), v.fr);
+    filter_svf_set_low( &(voices[vid].svf), v.fr);
     break;
   case eParamHigh :	       
-    filter_svf_set_high( &(voices[vid]->svf), v.fr);
+    filter_svf_set_high( &(voices[vid].svf), v.fr);
     break;
   case eParamBand :	       
-    filter_svf_set_band( &(voices[vid]->svf), v.fr);
+    filter_svf_set_band( &(voices[vid].svf), v.fr);
     break;
   case eParamNotch : 	       
-    filter_svf_set_notch( &(voices[vid]->svf), v.fr);
+    filter_svf_set_notch( &(voices[vid].svf), v.fr);
     break;
     //// TODO
     /// .. other voices...
@@ -122,7 +122,7 @@ void fill_param_desc(void) {
   // it is pretty painful to use them all.
   // either need scripting tools to handle this stuff ASAP,
   // or something like u32 index into (extensive) shared table of unit types.
-
+  strcpy(gModuleData->paramDesc[eParamVoice].label, "Voice");
   strcpy(gModuleData->paramDesc[eParamGate].label, "Gate");
   strcpy(gModuleData->paramDesc[eParamTrig].label, "Trig");
   // amp
@@ -153,6 +153,4 @@ void fill_param_desc(void) {
   strcpy(gModuleData->paramDesc[eParamHigh].label, "High");
   strcpy(gModuleData->paramDesc[eParamBand].label, "Band");
   strcpy(gModuleData->paramDesc[eParamNotch].label, "Notch");
-  // voice selection
-  strcpy(gModuleData->paramDesc[eParamVoice].label, "Low3");
 }

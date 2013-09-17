@@ -87,7 +87,7 @@ u8 app_launch(u8 firstrun) {
   render_update();
 
   // this is retarded, we need the GPIO for bfin to signal when init done
-  delay_ms(1000);
+  delay_ms(2000);
 
   // report parameters
   render_status("reporting bfin params...       ");

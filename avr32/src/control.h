@@ -26,8 +26,9 @@
 #define MAX_PARAMS 256
 
 // depth of FIFO
-#define CTL_BUF_SIZE 32
-#define CTL_BUF_SIZE_1 31
+#define CTL_BUF_SIZE 256
+#define CTL_BUF_SIZE_1 255
+
 // process at most 1 control change per audio sample
 // so keep (buf size < (samplerate / control rate))
 // frame divisor (sr / kr)

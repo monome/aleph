@@ -14,26 +14,16 @@
 #include "conversion.h"
 #include "env.h"
 #include "filter_svf.h"
+#include "module.h"
 #include "noise.h"
 // bfin
-#ifdef ARCH_BFIN
 #include "bfin_core.h"
 #include "fract_math.h"
 #include <fract2float_conv.h>
-#else
-// linux
-#warning "LINUX"
-#include <stdio.h>
-#include "fract32_emu.h"
-#warning "linux"
-#include "audio.h"
-#endif
-
-#include "module.h"
-#include "module_custom.h"
+// common
 #include "params.h"
 #include "types.h"
-
+// custom
 #include "drumsyn.h"
 
 // define a local data structure that subclasses moduleData.
@@ -54,14 +44,9 @@ moduleData * gModuleData; // module data
 
 //-----------------------
 //------ static variables
-#if ARCH_LINUX
-static FILE* dbgFile;
-u8 dbgFlag = 0;
-u32 dbgCount = 0;
-#endif
 
-/// TEST: one voice
-drumsynVoice* voices[DRUMSYN_NVOICES];
+// voice pointers
+drumsynVoice voices[DRUMSYN_NVOICES];
 
 // pointer to local module data, initialize at top of SDRAM
 static drumsynData * data;
@@ -69,9 +54,9 @@ static drumsynData * data;
 static fract32 frameVal;
 
 //-----------------------------
-//----- static functions
-
-static void drumsyn_voice_init(void* mem);
+  //----- static functions
+  
+static void drumsyn_voice_init(drumsynVoice* voice);
 static fract32 drumsyn_voice_next(drumsynVoice* voice);
 static fract32 noise_next(drumsynVoice* voice);
 
@@ -80,8 +65,8 @@ fract32 noise_next(drumsynVoice* voice) {
 }
 
 // initialize voice
-void drumsyn_voice_init(void* mem) {
-  drumsynVoice* voice = (drumsynVoice*)mem;
+void drumsyn_voice_init(drumsynVoice* voice) {
+  //  drumsynVoice* voice = (drumsynVoice*)mem;
   // svf
   filter_svf_init(&(voice->svf));
 
@@ -89,8 +74,8 @@ void drumsyn_voice_init(void* mem) {
   filter_svf_set_coeff(&(voice->svf), FR32_MAX >> 2);
   filter_svf_set_rq(&(voice->svf), FR32_MAX >> 3);
   // noise
-  lcprng_reset(&(voice->rngH));
-  lcprng_reset(&(voice->rngL));
+  lcprng_reset(&(voice->rngH), 0xDEADFACE);
+  lcprng_reset(&(voice->rngL), 0xBEEFCAFE);
 
   // hipass
   /// TODO
@@ -134,10 +119,10 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
 // frame calculation
 static void calc_frame(void) {
   /// mono
-  frameVal = shr_fr1x32( drumsyn_voice_next(voices[0]), 2 );
-  frameVal = add_fr1x32(frameVal , shr_fr1x32( drumsyn_voice_next(voices[1]), 2 ) );
-  frameVal = add_fr1x32(frameVal , shr_fr1x32( drumsyn_voice_next(voices[2]), 2 ) );
-  frameVal = add_fr1x32(frameVal , shr_fr1x32( drumsyn_voice_next(voices[3]), 2 ) );
+  frameVal = shr_fr1x32( drumsyn_voice_next(&(voices[0])), 1 );
+  frameVal = add_fr1x32(frameVal , shr_fr1x32( drumsyn_voice_next(&(voices[1])), 1 ) );
+  //  frameVal = add_fr1x32(frameVal , shr_fr1x32( drumsyn_voice_next(voices[2]), 1 ) );
+  //  frameVal = add_fr1x32(frameVal , shr_fr1x32( drumsyn_voice_next(voices[3]), 1 ) );
 
 }
 
@@ -146,16 +131,9 @@ static void calc_frame(void) {
 
 void module_init(void) {
   u8 i;
-  // init module/param descriptor
-#ifdef ARCH_BFIN 
   // intialize local data at start of SDRAM
   data = (drumsynData * )SDRAM_ADDRESS;
   // initialize moduleData superclass for core routines
-#else
-  data = (drumsynData*)malloc(sizeof(drumsData));
-  /// debugging output file
-  bparam  dbgFile = fopen( "drums_dbg.txt", "w");
-#endif
   gModuleData = &(data->super);
   strcpy(gModuleData->name, "aleph-drumsyn");
   gModuleData->paramDesc = data->mParamDesc;
@@ -163,8 +141,8 @@ void module_init(void) {
   gModuleData->numParams = eParamNumParams;
 
   for(i=0; i<DRUMSYN_NVOICES; i++) {
-    voices[i] = (drumsynVoice*)malloc(sizeof(drumsynVoice));
-    drumsyn_voice_init(voices[i]);
+    //    voices[i] = (drumsynVoice*)malloc(sizeof(drumsynVoice));
+    drumsyn_voice_init(&(voices[i]));
   }
 
   fill_param_desc();
@@ -172,10 +150,10 @@ void module_init(void) {
 }
 
 void module_deinit(void) {
-  drumsyn_voice_deinit(voices[0]);
-#if ARCH_LINUX 
-  fclose(dbgFile);
-#endif
+  u8 i =0 ;
+  for(i=0; i<DRUMSYN_NVOICES; i++) {
+    //    free(voices[i]);
+  }
 }
 
 
@@ -186,7 +164,6 @@ extern u32 module_get_num_params(void) {
 }
 
 // frame callback
-#ifdef ARCH_BFIN 
 void module_process_frame(void) {
   calc_frame();
   out[0] = (frameVal);
@@ -194,29 +171,3 @@ void module_process_frame(void) {
   out[2] = (frameVal);
   out[3] = (frameVal);
 }
-
-#else //  non-bfin
-void module_process_frame(const f32* in, f32* out) {
-  u32 frame;
-  u8 chan;
-  for(frame=0; frame<BLOCKSIZE; frame++) {
-    calc_frame(); 
-    for(chan=0; chan<NUMCHANNELS; chan++) { // stereo interleaved
-      // FIXME: could use fract for output directly (portaudio setting?)
-      *out = fr32_to_float(frameVal);
-      if(dbgFlag) {  
-	/* fprintf(dbgFile, "%d \t %f \t %f \t %f \r\n",  */
-	/* 	dbgCount,  */
-	/* 	*out */
-	/* 	//		fr32_to_float(osc2), */
-	/* 	//		fr32_to_float((fract32)modIdxOffset << 3) */
-	/* 	//		fr32_to_float((fract32)modIdxOffset << 16) */
-	/* 	//		fr32_to_float((fract32)modIdxOffset) */
-	/* 	); */
-	dbgCount++;
-      }
-      out++;
-    }
-  }
-}
-#endif

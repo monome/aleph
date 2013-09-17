@@ -26,10 +26,10 @@ typedef struct _drumsynVoice {
   env_exp envFreq;
   env_exp envRq;
 // gate!
-  u8 gate;
+//  u8 gate;
 } drumsynVoice;
 
-extern drumsynVoice* voices[DRUMSYN_NVOICES];
+extern drumsynVoice voices[DRUMSYN_NVOICES];
 
 
 #endif // h guard

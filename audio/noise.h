@@ -25,7 +25,7 @@ typedef struct _lcprng {
 } lcprng;
 
 // initialize to reasonable values
-extern void lcprng_reset(lcprng* o);
+extern void lcprng_reset(lcprng* o, u32 seed);
 // set params
 extern void lcprng_set_a(lcprng* o, s32 v);
 extern void lcprng_set_c(lcprng* o, s32 v);

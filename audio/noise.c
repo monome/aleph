@@ -4,12 +4,11 @@
 //--- linear congruential
 
 // initialize to reasonable values
-extern void lcprng_reset(lcprng* o) {
+extern void lcprng_reset(lcprng* o, u32 seed) {
   // from "numerical recipes"
   o->a = 0x19660d;
   o->c = 0x3c6ef35f;
-  // :S
-  o->x = 0xDEADFACE;
+  o->x = seed;
 }
 
 // set params
