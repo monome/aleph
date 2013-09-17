@@ -136,42 +136,44 @@ u8 ctl_report_params(void) {
 
 // set initial parameters
 void ctl_init_params(void) {
+  u8 i;
   /* FIXME:
      make a text parser for intial parameters and read from sdcard?
      use stored input values from UI?
      store in flash?
   */
+  for (i=0; i<4; i++) {
 
+    ctl_param_change( eParamVoice,	i	);
 
-		
-  ctl_param_change( eParamVoice,	0	);
-  ctl_param_change( eParamGate0,	0	);
-  ctl_param_change( eParamTrig0,	0	);
+    ctl_param_change( eParamGate0,	0	);
+    ctl_param_change( eParamTrig0,	0	);
 
-  ctl_param_change( eParamAmp0,		FR32_MAX >> 1	);
-  ctl_param_change( eParamAmpSus0,     	FR32_MAX >> 1	);
-  ctl_param_change( eParamAmpAtkSlew0,	sec_to_slew(0.001)	);
-  ctl_param_change( eParamAmpDecSlew0,	sec_to_slew(2.0)	);
-  ctl_param_change( eParamAmpRelSlew0,	sec_to_slew(4.0)	);
+    ctl_param_change( eParamAmp0,		FR32_MAX >> 1	);
+    ctl_param_change( eParamAmpSus0,     	FR32_MAX >> 1	);
+    ctl_param_change( eParamAmpAtkSlew0,	sec_to_slew(0.001)	);
+    ctl_param_change( eParamAmpDecSlew0,	sec_to_slew(0.1)	);
+    ctl_param_change( eParamAmpRelSlew0,	sec_to_slew(1.0)	);
 
-  ctl_param_change( eParamFreqAtkSlew0,	sec_to_slew(0.004)	);
-  ctl_param_change( eParamFreqDecSlew0,	sec_to_slew(1.0)	);
-  ctl_param_change( eParamFreqRelSlew0,	sec_to_slew(1.0)	);
-  ctl_param_change( eParamFreqOff0,	hz_to_svf(27.5)	);
-  ctl_param_change( eParamFreqOn0,	hz_to_svf(220.0)	);
-  ctl_param_change( eParamFreqSus0,	hz_to_svf(110.0)	);
+    ctl_param_change( eParamFreqAtkSlew0,	sec_to_slew(0.004)	);
+    ctl_param_change( eParamFreqDecSlew0,	sec_to_slew(0.02)	);
+    ctl_param_change( eParamFreqRelSlew0,	sec_to_slew(0.4)	);
+    ctl_param_change( eParamFreqOff0,	hz_to_svf(27.5)	);
+    ctl_param_change( eParamFreqOn0,	hz_to_svf(110.0 * (i+1)) );
+    ctl_param_change( eParamFreqSus0,	hz_to_svf(55.0 * (i+1))	 );
     
-  ctl_param_change( eParamRqAtkSlew0,	sec_to_slew(0.0002)	);
-  ctl_param_change( eParamRqDecSlew0,	sec_to_slew(0.5)	);
-  ctl_param_change( eParamRqRelSlew0,	sec_to_slew(0.1)	);
-  ctl_param_change( eParamRqOff0,	float_to_fr32(0.08)	);
-  ctl_param_change( eParamRqOn0,	float_to_fr32(0.3)	);
-  ctl_param_change( eParamRqSus0,	float_to_fr32(0.1)	);
+    ctl_param_change( eParamRqAtkSlew0,	sec_to_slew(0.0002)	);
+    ctl_param_change( eParamRqDecSlew0,	sec_to_slew(0.1)	);
+    ctl_param_change( eParamRqRelSlew0,	sec_to_slew(0.1)	);
+    ctl_param_change( eParamRqOff0,	float_to_fr32(0.08)	);
+    ctl_param_change( eParamRqOn0,	float_to_fr32(0.3)	);
+    ctl_param_change( eParamRqSus0,	float_to_fr32(0.1)	);
 
-  ctl_param_change( eParamLow0,		float_to_fr32(0.9)	);
-  ctl_param_change( eParamHigh0,	0	);
-  ctl_param_change( eParamBand0,	0	);
-  ctl_param_change( eParamNotch0,	0	);
+    ctl_param_change( eParamLow0,		float_to_fr32(0.9)	);
+    ctl_param_change( eParamHigh0,	0	);
+    ctl_param_change( eParamBand0,	0	);
+    ctl_param_change( eParamNotch0,	0	);
+  }
 }
 
 // set gate

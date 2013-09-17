@@ -10,11 +10,11 @@
 
 // query the DSP for parameter descriptors. 
 // return 0 if something seems wrong, 1 otherwise
-u8 ctl_report_params(void);
+extern u8 ctl_report_params(void);
 // set parameters to initial values
-void ctl_init_params(void);
+extern void ctl_init_params(void);
 // set gate
-void  ctl_set_gate(u8 ch, u8 val);
+extern void  ctl_set_gate(u8 ch, u8 val);
 
 // parameter enum
 // FIXME: just copying from .ldr source for now
