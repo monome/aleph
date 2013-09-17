@@ -29,6 +29,7 @@ static void set_param_gate(drumsynVoice* vp, s32 val) {
     filter_1p_fr32_set_slew( &(vp->lpRq) , vp->rqSlewDown);
     filter_1p_fr32_in( &(vp->lpRq), vp->rqOff);
   }
+
 }
 
 // set parameter by value
