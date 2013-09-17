@@ -22,17 +22,21 @@ void  ctl_set_gate(u8 ch, u8 val);
 typedef enum Params {
   eParamGate0,		
   eParamTrig0,		
-  eParamAmp0,		
+
+  eParamAmp0,	
   eParamAmpAtkSlew0,	
   eParamAmpRelSlew0,	
+
   eParamFreqAtkSlew0,	
   eParamFreqRelSlew0,	
   eParamFreqStart0,	
   eParamFreqEnd0,	
+
   eParamRqAtkSlew0,	
   eParamRqRelSlew0,	
   eParamRqStart0,	
   eParamRqEnd0,	
+
   eParamLow0,		
   eParamHigh0,		
   eParamBand0,		
