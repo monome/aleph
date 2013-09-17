@@ -6,8 +6,7 @@
 #include "params.h" 
 
 static void set_param_gate(drumsynVoice* vp, s32 val) {
-  u8 b = (val > 0);
-  if(b) { 
+  if(val > 0) { 
     filter_1p_fr32_set_slew( &(vp->lpAmp) , vp->ampSlewUp);
     filter_1p_fr32_in( &(vp->lpAmp), vp->amp);
 
@@ -28,10 +27,10 @@ static void set_param_gate(drumsynVoice* vp, s32 val) {
     filter_1p_fr32_in( &(vp->lpRq), vp->rqOff);
   }
 }
+
 // set parameter by value
 void module_set_param(u32 idx, pval v) {
   drumsynVoice* vp; // 	tmp voice pointer
-  //  u8 b; // 		tmp bit
 
   switch(idx) {
 

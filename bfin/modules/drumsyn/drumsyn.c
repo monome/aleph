@@ -36,11 +36,6 @@
 
 #include "drumsyn.h"
 
-
-
-#define HZ_MIN 0x200000      // 32
-#define HZ_MAX 0x40000000    // 16384
-
 // define a local data structure that subclasses moduleData.
 // use this for all data that is large and/or not speed-critical.
 // this structure should statically allocate all necessary memory 
@@ -76,6 +71,14 @@ static fract32 frameVal;
 //-----------------------------
 //----- static functions
 
+static void drumsyn_voice_init(void* mem);
+static fract32 drumsyn_voice_next(drumsynVoice* voice);
+static fract32 noise_next(drumsynVoice* voice);
+
+fract32 noise_next(drumsynVoice* voice) {
+  return lcprng_next(voice->rngL) | ( lcprng_next(voice->rngH) << 14 );
+}
+
 // initialize voice
 void drumsyn_voice_init(void* mem) {
   drumsynVoice* voice = (drumsynVoice*)mem;
@@ -86,21 +89,18 @@ void drumsyn_voice_init(void* mem) {
   filter_1p_fr32_init(&(voice->lpFreq), 0x100);
   filter_1p_fr32_init(&(voice->lpRq), 0x200);
 #else
-
   // envelopes
+  /*   ///// /AHH rrg */
+  /* voice->envAmp = (env_int*)malloc(sizeof(env_int)); */
+  /* env_int_init(voice->envAmp); */
 
-    ///// /AHH rrg
-  voice->envAmp = (env_int*)malloc(sizeof(env_int));
-  env_int_init(voice->envAmp);
+  /* voice->envFreq = (env_int*)malloc(sizeof(env_int)); */
+  /* env_int_init(voice->envFreq); */
 
-  voice->envFreq = (env_int*)malloc(sizeof(env_int));
-  env_int_init(voice->envFreq);
+  /* voice->envRq = (env_int*)malloc(sizeof(env_int)); */
+  /* env_int_init(voice->envRq); */
 
-  voice->envRq = (env_int*)malloc(sizeof(env_int));
-  env_int_init(voice->envRq);
-
-  env_int_set_scale(voice->envAmp, FR32_MAX >> 1);
-
+  /* env_int_set_scale(voice->envAmp, FR32_MAX >> 1); */
 #endif
 
   // SVF
@@ -116,6 +116,9 @@ void drumsyn_voice_init(void* mem) {
   lcprng_reset(voice->rngH);
   voice->rngL = (lcprng*)malloc(sizeof(lcprng));
   lcprng_reset(voice->rngL);
+
+  voice->amp = FR32_MAX >> 2;
+
 }
 
 void drumsyn_voice_deinit(drumsynVoice* voice) {
@@ -136,11 +139,11 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
   fract32 amp, freq, rq;
 
     amp = filter_1p_fr32_next(&(voice->lpAmp));
-    freq = filter_1p_fr32_next(&(voice->lpFreq));
-    rq = filter_1p_fr32_next(&(voice->lpRq));
+    //    freq = filter_1p_fr32_next(&(voice->lpFreq));
+    //    rq = filter_1p_fr32_next(&(voice->lpRq));
 
-    filter_svf_set_coeff( voice->svf, freq );
-    filter_svf_set_rq( voice->svf, rq );
+    //    filter_svf_set_coeff( voice->svf, freq );
+    //    filter_svf_set_rq( voice->svf, rq );
 
 #else 
   // FIXME : janky, need more voices
@@ -177,7 +180,8 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
 					 )
 			 );
 #else  // TEST
-  return mult_fr1x32x32(amp, lcprng_next(voice->rngL) | ( lcprng_next(voice->rngH) << 14 ) );
+    return mult_fr1x32x32(amp, noise_next(voice) );
+  //  return noise_next(voice);
 #endif
 }
 
@@ -214,21 +218,7 @@ void module_init(void) {
     drumsyn_voice_init(voices[i]);
   }
 
-#if 0
-  //////////
-  /// TESTING
-  filter_1p_fr32_init(&ampLp, 0);
-  filter_1p_fr32_set_slew(&ampLp, 0x1000);
-  ////////
-  ///////
-#endif 
-
   fill_param_desc();
-
-
-  //// TEST
-
-
 
 }
 

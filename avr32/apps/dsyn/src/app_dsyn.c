@@ -112,10 +112,17 @@ u8 app_launch(u8 firstrun) {
 
   delay_ms(20);
 
+  /////////////////////
+  ////////////
+  // wtf??
+  //  render_status("waiting some more..        ");
+  //  delay_ms(3000);
+  //////////////
+  ////////////////////
+
   // enable audio
   render_status("run                       ");
   render_update();
-
   bfin_enable();
 
   render_startup();

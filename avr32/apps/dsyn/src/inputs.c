@@ -286,41 +286,71 @@ static void fill_hz_freq_tables(void) {
 // FIXME: abstract some of this table stuff
 //  and put it somewhere else
 // maybe in aleph/audio
-extern void inputs_init(void) {
+ void inputs_init(void) {
   // allocate memory
-  tabAmp = (table*)alloc_mem(sizeof(table));
-  tabDb = (table*)alloc_mem(sizeof(table));
-  tabHz = (table*)alloc_mem(sizeof(table));
-  tabFreq = (table*)alloc_mem(sizeof(table));
+  /* tabAmp = (table*)alloc_mem(sizeof(table)); */
+  /* tabDb = (table*)alloc_mem(sizeof(table)); */
+  /* tabHz = (table*)alloc_mem(sizeof(table)); */
+  /* tabFreq = (table*)alloc_mem(sizeof(table)); */
 
-  fill_amp_db_tables();
-  fill_hz_freq_tables();
+  //  fill_amp_db_tables();
+  //  fill_hz_freq_tables();
 
   // fill pan tables
   // ... TODO
 }
 
 // get amplitude
-extern fract32 input_amp(u32 in) {
+ fract32 input_amp(u32 in) {
   return table_look(tabAmp, in);
 }
 
 // get db
-extern fix16 input_db(u32 in) {
+ fix16 input_db(u32 in) {
   return table_look(tabDb, in);
 }
 
 // get note number from input
-extern fix16 input_note (u32 in) {
+ fix16 input_note (u32 in) {
   return fix16_mul(IN_FR16(in), noteSpan_fix);
 }
 
 // get hz from input
-extern fix16 input_hz (u32 in) {
+ fix16 input_hz (u32 in) {
   return table_look(tabHz, in);
 }
 
 // get frequency coefficient from input
-extern fract32 input_freq (u32 in) {
+ fract32 input_freq (u32 in) {
   return table_look(tabHz, in);
+}
+
+
+// convert duration in seconds (float) to slew coefficient (fract32)
+fract32 sec_to_slew(float sec) {
+
+  //  c = e ^ (-2pi * (hz / sr))
+  return float_to_fr32( 
+			 (float) exp( -2.0 * M_PI * 1.0 / (sec * 48000.0) )
+			  );
+}
+
+// convert frequency in hz (float) to svf cutoff coefficient (fract32) 
+extern fract32 hz_to_svf(float hz) {
+  // f = hz / sr
+  // c = sin (pi * min(f, 0.25) ) * 2 
+  double fx, fy;
+  fx = (hz / 48000.0);
+  // stability limit:
+  if(fx > 0.25) { fx = 0.25; }
+  fy = sinf(M_PI * fx) * 2.0;
+  return float_to_fr32((float)(fy));
+}
+
+s32 float_to_fr32(float x) {
+  if(x > 0.f) {
+    return (s32)((double)x * (double)0x7fffffff);
+  } else {
+    return (s32)((double)(x * -1.f) * (double)0x80000000);
+  }
 }

@@ -30,7 +30,13 @@ extern fix16 input_hz(u32 in);
 // get svf coefficient
 extern fract32 input_freq(u32 in);
 
-// get decay coefficient
-extern 
+// convert duration in seconds (float) to slew coefficient (fract32)
+extern fract32 sec_to_slew(float sec);
+
+// convert frequency in hz (float) to svf cutoff coefficient (fract32) 
+extern fract32 hz_to_svf(float hz);
+
+// convert fr32 to float
+extern s32 float_to_fr32(float x);
 
 #endif
