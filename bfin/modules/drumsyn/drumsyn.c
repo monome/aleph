@@ -84,7 +84,14 @@ void drumsyn_voice_init(void* mem) {
   drumsynVoice* voice = (drumsynVoice*)mem;
   // svf
   filter_svf_init(&(voice->svf));
+
+  filter_svf_set_low(&(voice->svf), FR32_MAX >> 1);
+  filter_svf_set_coeff(&(voice->svf), FR32_MAX >> 2);
+  filter_svf_set_rq(&(voice->svf), FR32_MAX >> 3);
   // noise
+  lcprng_reset(&(voice->rngH));
+  lcprng_reset(&(voice->rngL));
+
   // hipass
   /// TODO
 
@@ -92,43 +99,6 @@ void drumsyn_voice_init(void* mem) {
   env_exp_init(&(voice->envAmp));
   env_exp_init(&(voice->envFreq));
   env_exp_init(&(voice->envRq));
-
-
-#ifdef DRUMSYN_NOENV
-  // integrators
-    /*
-  filter_1p_fr32_init(&(voice->lpAmp), 0);
-  filter_1p_fr32_init(&(voice->lpFreq), 0x100);
-  filter_1p_fr32_init(&(voice->lpRq), 0x200);
-    */
-#else
-  // envelopes
-  /*   ///// /AHH rrg */
-  /* voice->envAmp = (env_int*)malloc(sizeof(env_int)); */
-  /* env_int_init(voice->envAmp); */
-
-  /* voice->envFreq = (env_int*)malloc(sizeof(env_int)); */
-  /* env_int_init(voice->envFreq); */
-
-  /* voice->envRq = (env_int*)malloc(sizeof(env_int)); */
-  /* env_int_init(voice->envRq); */
-
-  /* env_int_set_scale(voice->envAmp, FR32_MAX >> 1); */
-#endif
-
-  // SVF
-  //  voice->svf = (filter_svf*)malloc(sizeof(filter_svf));
-  filter_svf_init(&(voice->svf));
-
-  filter_svf_set_low(&(voice->svf), FR32_MAX >> 1);
-  filter_svf_set_coeff(&(voice->svf), FR32_MAX >> 2);
-  filter_svf_set_rq(&(voice->svf), FR32_MAX >> 3);
-
-  // RNG
-  //  voice->rngH = (lcprng*)malloc(sizeof(lcprng));
-  lcprng_reset(&(voice->rngH));
-  //  voice->rngL = (lcprng*)malloc(sizeof(lcprng));
-  lcprng_reset(&(voice->rngL));
 
   env_exp_set_off( &(voice->envAmp) , 0 );
   env_exp_set_on(  &(voice->envAmp) , FR32_MAX >> 2 );
@@ -144,16 +114,11 @@ void drumsyn_voice_init(void* mem) {
 void drumsyn_voice_deinit(drumsynVoice* voice) {
   //... nothing to do
 }
+
 // next value of voice
 fract32 drumsyn_voice_next(drumsynVoice* voice) {
   filter_svf* f = &(voice->svf);
   fract32 amp, freq, rq;
-
-  /*
-    amp = filter_1p_fr32_next(&(voice->lpAmp));
-    freq = filter_1p_fr32_next(&(voice->lpFreq));
-    rq = filter_1p_fr32_next(&(voice->lpRq));
-  */
   amp = env_exp_next(&(voice->envAmp));
   freq = env_exp_next(&(voice->envFreq));
   rq = env_exp_next(&(voice->envRq));
@@ -168,7 +133,12 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
 
 // frame calculation
 static void calc_frame(void) {
-  frameVal = drumsyn_voice_next(voices[0]);
+  /// mono
+  frameVal = shr_fr1x32( drumsyn_voice_next(voices[0]), 2 );
+  frameVal = add_fr1x32(frameVal , shr_fr1x32( drumsyn_voice_next(voices[1]), 2 ) );
+  frameVal = add_fr1x32(frameVal , shr_fr1x32( drumsyn_voice_next(voices[2]), 2 ) );
+  frameVal = add_fr1x32(frameVal , shr_fr1x32( drumsyn_voice_next(voices[3]), 2 ) );
+
 }
 
 //----------------------
@@ -184,7 +154,7 @@ void module_init(void) {
 #else
   data = (drumsynData*)malloc(sizeof(drumsData));
   /// debugging output file
-  dbgFile = fopen( "drums_dbg.txt", "w");
+  bparam  dbgFile = fopen( "drums_dbg.txt", "w");
 #endif
   gModuleData = &(data->super);
   strcpy(gModuleData->name, "aleph-drumsyn");

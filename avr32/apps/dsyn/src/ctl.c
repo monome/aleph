@@ -136,112 +136,135 @@ u8 ctl_report_params(void) {
 
 // set initial parameters
 void ctl_init_params(void) {
-  /* FIXME:
-     make a text parser for intial parameters and read from sdcard?
-     use stored input values from UI?
-     store in flash?
-  */
 
+  //---- voice 0
+  ctl_param_change( eParamVoice, 	0 );
+  ctl_param_change( eParamGate,	0	);
+  ctl_param_change( eParamTrig,	0	);
 
-  
-  //+/* //	2640 hz	~= 0.707813107994074	~= 0x5a999eb2 */
-  //+/* #define SLEW_ATK_SHORT 	0x5a999eb2 */
-  // 
-  //-//	55 hz 	~= 0.9928263710316179	~= 0x7f14ef3c
-  //-#define SLEW_ATK_LONG 	0x7f14ef3c
-  //+/* //	55 hz 	~= 0.9928263710316179	~= 0x7f14ef3c */
-  //+/* #define SLEW_ATK_LONG 	0x7f14ef3c */
-  // 
-  //-//	2 hz	~= 0.9997382348786702	~= 0x7ff76c26
-  //-#define SLEW_REL_SHORT 	0x7ff76c26
-  //+/* //	2 hz	~= 0.9997382348786702	~= 0x7ff76c26 */
-  //+/* #define SLEW_REL_SHORT 	0x7ff76c26 */
-  // 
-  //-//	1/2 hz 	~= 0.9999345522948447	~= 0x7ffddafb
-  //-//#define SLEW_REL_LONG	0x7ffddafb
-  //-#define SLEW_REL_LONG	0x7fffaaaa
-  //+/* //	1/2 hz 	~= 0.9999345522948447	~= 0x7ffddafb */
-  //+/* //#define SLEW_REL_LONG	0x7ffddafb */
-  //+/* #define SLEW_REL_LONG	0x7fffaaaa */
- 
- 
-  /// TEST
-  print_dbg("\r\n 2hz slew coefficient: (hardcoded) 0x");
-  print_dbg_hex( (u32)0x7ff76c26 );
-  print_dbg("\r\n ), (computed) 0x ");
-  print_dbg_hex( sec_to_slew(0.5 ) );
-		 
-  ctl_param_change( eParamGate0,	0	);
-  ctl_param_change( eParamTrig0,	0	);
+  ctl_param_change( eParamAmp,		FR32_MAX >> 1	);
+  ctl_param_change( eParamAmpSus,     	FR32_MAX >> 1	);
+  ctl_param_change( eParamAmpAtkSlew,	sec_to_slew(0.001)	);
+  ctl_param_change( eParamAmpDecSlew,	sec_to_slew(2.0)	);
+  ctl_param_change( eParamAmpRelSlew,	sec_to_slew(4.0)	);
 
-  ctl_param_change( eParamAmp0,		FR32_MAX >> 1	);
-  ctl_param_change( eParamAmpSus0,     	FR32_MAX >> 1	);
-  ctl_param_change( eParamAmpAtkSlew0,	sec_to_slew(0.001)	);
-  ctl_param_change( eParamAmpDecSlew0,	sec_to_slew(2.0)	);
-  ctl_param_change( eParamAmpRelSlew0,	sec_to_slew(4.0)	);
-
-  ctl_param_change( eParamFreqAtkSlew0,	sec_to_slew(0.004)	);
-  ctl_param_change( eParamFreqDecSlew0,	sec_to_slew(1.0)	);
-  ctl_param_change( eParamFreqRelSlew0,	sec_to_slew(1.0)	);
-  ctl_param_change( eParamFreqOff0,	hz_to_svf(27.5)	);
-  ctl_param_change( eParamFreqOn0,	hz_to_svf(220.0)	);
-  ctl_param_change( eParamFreqSus0,	hz_to_svf(110.0)	);
+  ctl_param_change( eParamFreqAtkSlew,	sec_to_slew(0.004)	);
+  ctl_param_change( eParamFreqDecSlew,	sec_to_slew(1.0)	);
+  ctl_param_change( eParamFreqRelSlew,	sec_to_slew(1.0)	);
+  ctl_param_change( eParamFreqOff,	hz_to_svf(27.5)	);
+  ctl_param_change( eParamFreqOn,	hz_to_svf(220.0)	);
+  ctl_param_change( eParamFreqSus,	hz_to_svf(110.0)	);
     
-  ctl_param_change( eParamRqAtkSlew0,	sec_to_slew(0.0002)	);
-  ctl_param_change( eParamRqDecSlew0,	sec_to_slew(0.5)	);
-  ctl_param_change( eParamRqRelSlew0,	sec_to_slew(0.1)	);
-  ctl_param_change( eParamRqOff0,	float_to_fr32(0.08)	);
-  ctl_param_change( eParamRqOn0,	float_to_fr32(0.3)	);
-  ctl_param_change( eParamRqSus0,	float_to_fr32(0.1)	);
+  ctl_param_change( eParamRqAtkSlew,	sec_to_slew(0.0002)	);
+  ctl_param_change( eParamRqDecSlew,	sec_to_slew(0.5)	);
+  ctl_param_change( eParamRqRelSlew,	sec_to_slew(0.1)	);
+  ctl_param_change( eParamRqOff,	float_to_fr32(0.08)	);
+  ctl_param_change( eParamRqOn,	float_to_fr32(0.3)	);
+  ctl_param_change( eParamRqSus,	float_to_fr32(0.1)	);
 
-  ctl_param_change( eParamLow0,		float_to_fr32(0.9)	);
-  ctl_param_change( eParamHigh0,	0	);
-  ctl_param_change( eParamBand0,	0	);
-  ctl_param_change( eParamNotch0,	0	);
+  ctl_param_change( eParamLow,		float_to_fr32(0.9)	);
+  ctl_param_change( eParamHigh,	0	);
+  ctl_param_change( eParamBand,	0	);
+  ctl_param_change( eParamNotch,	0	);
 
+  //---- voice 1
+  ctl_param_change( eParamVoice, 	1 );
+  ctl_param_change( eParamGate,	0	);
+  ctl_param_change( eParamTrig,	0	);
+
+  ctl_param_change( eParamAmp,		FR32_MAX >> 1	);
+  ctl_param_change( eParamAmpSus,     	FR32_MAX >> 1	);
+  ctl_param_change( eParamAmpAtkSlew,	sec_to_slew(0.001)	);
+  ctl_param_change( eParamAmpDecSlew,	sec_to_slew(2.0)	);
+  ctl_param_change( eParamAmpRelSlew,	sec_to_slew(4.0)	);
+
+  ctl_param_change( eParamFreqAtkSlew,	sec_to_slew(0.004)	);
+  ctl_param_change( eParamFreqDecSlew,	sec_to_slew(1.0)	);
+  ctl_param_change( eParamFreqRelSlew,	sec_to_slew(1.0)	);
+  ctl_param_change( eParamFreqOff,	hz_to_svf(27.5)	);
+  ctl_param_change( eParamFreqOn,	hz_to_svf(220.0)	);
+  ctl_param_change( eParamFreqSus,	hz_to_svf(110.0)	);
+    
+  ctl_param_change( eParamRqAtkSlew,	sec_to_slew(0.0002)	);
+  ctl_param_change( eParamRqDecSlew,	sec_to_slew(0.5)	);
+  ctl_param_change( eParamRqRelSlew,	sec_to_slew(0.1)	);
+  ctl_param_change( eParamRqOff,	float_to_fr32(0.08)	);
+  ctl_param_change( eParamRqOn,	float_to_fr32(0.3)	);
+  ctl_param_change( eParamRqSus,	float_to_fr32(0.1)	);
+
+  ctl_param_change( eParamLow,		float_to_fr32(0.9)	);
+  ctl_param_change( eParamHigh,	0	);
+  ctl_param_change( eParamBand,	0	);
+  ctl_param_change( eParamNotch,	0	);
+
+  //---- voice 2
+  ctl_param_change( eParamVoice, 	2 );
+  ctl_param_change( eParamGate,	0	);
+  ctl_param_change( eParamTrig,	0	);
+
+  ctl_param_change( eParamAmp,		FR32_MAX >> 1	);
+  ctl_param_change( eParamAmpSus,     	FR32_MAX >> 1	);
+  ctl_param_change( eParamAmpAtkSlew,	sec_to_slew(0.001)	);
+  ctl_param_change( eParamAmpDecSlew,	sec_to_slew(2.0)	);
+  ctl_param_change( eParamAmpRelSlew,	sec_to_slew(4.0)	);
+
+  ctl_param_change( eParamFreqAtkSlew,	sec_to_slew(0.004)	);
+  ctl_param_change( eParamFreqDecSlew,	sec_to_slew(1.0)	);
+  ctl_param_change( eParamFreqRelSlew,	sec_to_slew(1.0)	);
+  ctl_param_change( eParamFreqOff,	hz_to_svf(27.5)	);
+  ctl_param_change( eParamFreqOn,	hz_to_svf(220.0)	);
+  ctl_param_change( eParamFreqSus,	hz_to_svf(110.0)	);
+    
+  ctl_param_change( eParamRqAtkSlew,	sec_to_slew(0.0002)	);
+  ctl_param_change( eParamRqDecSlew,	sec_to_slew(0.5)	);
+  ctl_param_change( eParamRqRelSlew,	sec_to_slew(0.1)	);
+  ctl_param_change( eParamRqOff,	float_to_fr32(0.08)	);
+  ctl_param_change( eParamRqOn,	float_to_fr32(0.3)	);
+  ctl_param_change( eParamRqSus,	float_to_fr32(0.1)	);
+
+  ctl_param_change( eParamLow,		float_to_fr32(0.9)	);
+  ctl_param_change( eParamHigh,	0	);
+  ctl_param_change( eParamBand,	0	);
+  ctl_param_change( eParamNotch,	0	);
+
+  //---- voice 3
+  ctl_param_change( eParamVoice, 	3 );
+  ctl_param_change( eParamGate,	0	);
+  ctl_param_change( eParamTrig,	0	);
+
+  ctl_param_change( eParamAmp,		FR32_MAX >> 1	);
+  ctl_param_change( eParamAmpSus,     	FR32_MAX >> 1	);
+  ctl_param_change( eParamAmpAtkSlew,	sec_to_slew(0.001)	);
+  ctl_param_change( eParamAmpDecSlew,	sec_to_slew(2.0)	);
+  ctl_param_change( eParamAmpRelSlew,	sec_to_slew(4.0)	);
+
+  ctl_param_change( eParamFreqAtkSlew,	sec_to_slew(0.004)	);
+  ctl_param_change( eParamFreqDecSlew,	sec_to_slew(1.0)	);
+  ctl_param_change( eParamFreqRelSlew,	sec_to_slew(1.0)	);
+  ctl_param_change( eParamFreqOff,	hz_to_svf(27.5)	);
+  ctl_param_change( eParamFreqOn,	hz_to_svf(220.0)	);
+  ctl_param_change( eParamFreqSus,	hz_to_svf(110.0)	);
+    
+  ctl_param_change( eParamRqAtkSlew,	sec_to_slew(0.0002)	);
+  ctl_param_change( eParamRqDecSlew,	sec_to_slew(0.5)	);
+  ctl_param_change( eParamRqRelSlew,	sec_to_slew(0.1)	);
+  ctl_param_change( eParamRqOff,	float_to_fr32(0.08)	);
+  ctl_param_change( eParamRqOn,	float_to_fr32(0.3)	);
+  ctl_param_change( eParamRqSus,	float_to_fr32(0.1)	);
+
+  ctl_param_change( eParamLow,		float_to_fr32(0.9)	);
+  ctl_param_change( eParamHigh,	0	);
+  ctl_param_change( eParamBand,	0	);
+  ctl_param_change( eParamNotch,	0	);
 		
-
-  /* ctl_param_change( eParamGate0,	kParamInitGate0	); */
-  /* ctl_param_change( eParamTrig0,	kParamInitTrig0	); */
-  /* ctl_param_change( eParamAmp0,		kParamInitAmp0	); */
-  /* ctl_param_change( eParamAmpAtkSlew0,	kParamInitAmpAtkSlew0	); */
-  /* ctl_param_change( eParamAmpRelSlew0,	kParamInitAmpRelSlew0	); */
-  /* ctl_param_change( eParamFreqAtkSlew0,	kParamInitFreqAtkSlew0	); */
-  /* ctl_param_change( eParamFreqRelSlew0,	kParamInitFreqRelSlew0	); */
-  /* ctl_param_change( eParamFreqStart0,	kParamInitFreqStart0	); */
-  /* ctl_param_change( eParamFreqEnd0,	kParamInitFreqEnd0	); */
-  /* ctl_param_change( eParamRqAtkSlew0,	kParamInitRqAtkSlew0	); */
-  /* ctl_param_change( eParamRqRelSlew0,	kParamInitRqRelSlew0	); */
-  /* ctl_param_change( eParamRqStart0,	kParamInitRqStart0	); */
-  /* ctl_param_change( eParamRqEnd0,	kParamInitRqEnd0	); */
-  /* ctl_param_change( eParamLow0,		kParamInitLow0	); */
-  /* ctl_param_change( eParamHigh0,	kParamInitHigh0	); */
-  /* ctl_param_change( eParamBand0,	kParamInitBand0	); */
-  /* ctl_param_change( eParamNotch0,	kParamInitNotch0	); */
-
-
-  /* ctl_param_change(  eParamGate0, 		0 ); */
-  /* ctl_param_change(  eParamTrig0, 		0 ); */
-  /* ctl_param_change(  eParamAmp0, 		kAmp0 ); */
-  /* ctl_param_change(  eParamAmpAtkSlew0, 	kAmpAtkSlew0 ); */
-  /* ctl_param_change(  eParamAmpRelSlew0, 	kAmpRelSlew0 ); */
-
-  /* ctl_param_change(  eParamFreqAtkSlew0, 	SLEW_ATK_LONG ); */
-  /* ctl_param_change(  eParamFreqRelSlew0, 	SLEW_REL_SHORT ); */
-  
-  /* ctl_param_change(  eParamRqAtkSlew0, 		SLEW_ATK_LONG ); */
-  /* ctl_param_change(  eParamRqRelSlew0, 		SLEW_REL_SHORT ); */
-  
-  /* ctl_param_change(  eParamLow0, 		FR32_MAX - 1 ); */
-  /* ctl_param_change(  eParamHigh0, 		0 ); */
-  /* ctl_param_change(  eParamBand0, 		0 ); */
-  /* ctl_param_change(  eParamNotch0, 		0 ); */
 }
 
 // set gate
 void  ctl_set_gate(u8 ch, u8 val) {
   //  static const eParam gateParams[4] = { eParamGate0 , eParamGate1, eParamGate2, eParamGate3  };
-  static const eParam gateParams[4] = { eParamGate0 , eParamGate0, eParamGate0, eParamGate0  };
-  eParam p = gateParams[ch];
-  ctl_param_change(p, (s32)val );
+  //  static const eParam gateParams[4] = { eParamGate0 , eParamGate0, eParamGate0, eParamGate0  };
+  //  eParam p = gateParams[ch];
+  //  ctl_param_change(p, (s32)val );
+  ctl_param_change(eParamVoice, ch );
+  ctl_param_change(eParamGate, (s32)val );
 }
