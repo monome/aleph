@@ -151,7 +151,7 @@ void module_set_param(u32 idx, pval v) {
 
 }
 
-
+/// FIXME: missing some param descs
 void fill_param_desc(void) {
   strcpy(gModuleData->paramDesc[eParamGate0].label, "Gate0");
   strcpy(gModuleData->paramDesc[eParamGate0].unit, "");
