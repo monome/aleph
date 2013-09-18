@@ -40,11 +40,12 @@ static void bfin_transfer_byte(u8 data);
 
 // wait for busy pin to clear
 void bfin_wait(void) {
-  print_dbg("\r\n hwait: ");
-  print_dbg_ulong(gpio_get_pin_value(BFIN_HWAIT_PIN));
+  //  print_dbg("\r\n hwait: ");
+  //  print_dbg_ulong(gpio_get_pin_value(BFIN_HWAIT_PIN));
     while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { 
       print_dbg("\r\n HWAIT asserted..."); 
     }
+    delay_us(50);
 }
 
 
