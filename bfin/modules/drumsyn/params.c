@@ -38,7 +38,7 @@ void module_set_param(u32 idx, pval v) {
   switch(idx) {
 
   case eParamVoice:
-    ;;
+    vid = v.u % DRUMSYN_NVOICES;
     break;
 
   case eParamGate0 : // 1bit gate

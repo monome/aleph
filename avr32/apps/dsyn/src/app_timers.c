@@ -35,9 +35,17 @@ static void screen_timer_callback(int tag) {
 
 // metronome timer callback
 static void metro_timer_callback(int tag) {
+  static u32 i = 0;
   //  print_dbg(" > ");
   // set gate on
+  //  if((i % 2) == 0) {
+  ctl_param_change(eParamVoice, 0);
   ctl_param_change(eParamGate0, 1);
+  //  }
+  if((i++ % 4) == 0) {
+    ctl_param_change(eParamVoice, 1);
+    ctl_param_change(eParamGate0, 1);
+  }
   // set sustain timer (1-shot)
   //  set_timer(&sustainTimer, eSustainTimerTag, 100, &sustain_timer_callback,  0);
 }
