@@ -34,7 +34,7 @@ static void clear_param_dirty(u32 idx) {
 /* static void clear_all_param_dirty(void) { */
 /*   memset(paramsDirty, 0, NUM_PARAMS); */
 /* } */
-b
+
 
 // request a parameter change.
 extern u8 ctl_param_change(u32 idx, u32 val) {

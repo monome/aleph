@@ -10,8 +10,8 @@ static u8 vid = 0;
 
 static void set_param_gate(drumsynVoice* vp, s32 val) {
   if(val > 0) { 
-    lcprng_reset(&(vp->rngH));
-    lcprng_reset(&(vp->rngL));
+    lcprng_reset(&(vp->rngH), 0xDEADFACE);
+    lcprng_reset(&(vp->rngL), 0xDADABEEF);
     env_exp_set_gate( &(vp->envAmp)	, 0xff );
     env_exp_set_gate( &(vp->envFreq)	, 0xff );
     env_exp_set_gate( &(vp->envRq)	, 0xff );
@@ -20,6 +20,7 @@ static void set_param_gate(drumsynVoice* vp, s32 val) {
     env_exp_set_gate( &(vp->envFreq)	, 0 );
     env_exp_set_gate( &(vp->envRq)	, 0 );
   }
+
 }
 
 static void set_param_trig(drumsynVoice* vp, s32 val) {
@@ -31,7 +32,9 @@ static void set_param_trig(drumsynVoice* vp, s32 val) {
 
 
 // set parameter by value
-void module_set_param(u32 idx, pval v) { 
+void module_set_param(u32 idx, pval v) {
+  //  drumsynVoice* vp; // 	tmp voice pointer
+
   switch(idx) {
 
   case eParamVoice:
@@ -96,6 +99,7 @@ void module_set_param(u32 idx, pval v) {
   case eParamFreqSus0: 
     env_exp_set_sus( &(voices[vid]->envFreq), v.fr);
     break;
+
     // rq env
   case eParamRqAtkSlew0 :
     env_exp_set_atk_slew( &(voices[vid]->envRq), v.fr);
@@ -132,14 +136,18 @@ void module_set_param(u32 idx, pval v) {
   case eParamNotch0 :	       
     filter_svf_set_notch( &(voices[vid]->svf), v.fr);
     break;
+
+
     //// TODO
     /// .. other voices...
   default:
     break;
   }
+
+
 }
 
-// fill parameter descriptors
+/// FIXME: missing some param descs
 void fill_param_desc(void) {
   strcpy(gModuleData->paramDesc[eParamVoice].label, "Voice");
   strcpy(gModuleData->paramDesc[eParamVoice].unit, "");

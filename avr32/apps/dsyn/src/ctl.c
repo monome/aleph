@@ -157,7 +157,7 @@ void ctl_init_params(void) {
     ctl_param_change( eParamAmpSusDur0,     	10000 );
 
     ctl_param_change( eParamFreqAtkSlew0,	sec_to_slew(0.002)	);
-    ctl_param_change( eParamFreqDecSlew0,	sec_to_slew(0.0.1)	);
+    ctl_param_change( eParamFreqDecSlew0,	sec_to_slew(0.01)	);
     ctl_param_change( eParamFreqRelSlew0,	sec_to_slew(2.0)	);
     ctl_param_change( eParamFreqOff0,	hz_to_svf(27.5)	);
     ctl_param_change( eParamFreqOn0,	hz_to_svf(220.0) );
@@ -192,7 +192,7 @@ void ctl_init_params(void) {
     ctl_param_change( eParamAmpSusDur0,     	10000 );
 
     ctl_param_change( eParamFreqAtkSlew0,	sec_to_slew(0.002)	);
-    ctl_param_change( eParamFreqDecSlew0,	sec_to_slew(0.0.1)	);
+    ctl_param_change( eParamFreqDecSlew0,	sec_to_slew(0.01)	);
     ctl_param_change( eParamFreqRelSlew0,	sec_to_slew(2.0)	);
     ctl_param_change( eParamFreqOff0,	hz_to_svf(27.5)	);
     ctl_param_change( eParamFreqOn0,	hz_to_svf(220.0) );
