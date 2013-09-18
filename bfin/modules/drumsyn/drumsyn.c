@@ -172,8 +172,8 @@ static void calc_frame(void) {
   frameVal = drumsyn_voice_next(voices[0]);
   /// even discarding the output, we are fucked here...
   dum = drumsyn_voice_next(voices[1]);
-  //  dum = drumsyn_voice_next(voices[2]);
-  //  dum = drumsyn_voice_next(voices[3]);
+  dum = drumsyn_voice_next(voices[2]);
+  dum = drumsyn_voice_next(voices[3]);
 }
 
 //----------------------

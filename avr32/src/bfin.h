@@ -19,6 +19,9 @@
 // 64k is max size of blackfin ldr file
 #define BFIN_LDR_MAX_BYTES 0x10000 
 
+// wait for busy pin to clear
+void bfin_wait(void);
+
 // load bfin from RAM buffer
 void bfin_load_buf(void);
 

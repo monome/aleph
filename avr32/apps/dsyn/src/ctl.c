@@ -11,7 +11,8 @@
 // common
 #include "fix.h"
 #include "param_common.h"
-// lppr
+// app
+#include "app_timers.h"
 #include "ctl.h"
 #include "inputs.h"
 #include "render.h"
@@ -142,32 +143,37 @@ void ctl_init_params(void) {
      use stored input values from UI?
      store in flash?
   */
-  for (i=0; i<4; i++) {
+    for (i=0; i<4; i++) {
+  /// TEST
+  //  for (i=0; i<1; i++) {
 
     ctl_param_change( eParamVoice,	i	);
 
     ctl_param_change( eParamGate0,	0	);
-    ctl_param_change( eParamTrig0,	0	);
+    ctl_param_change( eParamTrig0,	1	);
 
     ctl_param_change( eParamAmp0,		FR32_MAX >> 1	);
     ctl_param_change( eParamAmpSus0,     	FR32_MAX >> 1	);
     ctl_param_change( eParamAmpAtkSlew0,	sec_to_slew(0.001)	);
-    ctl_param_change( eParamAmpDecSlew0,	sec_to_slew(0.1)	);
-    ctl_param_change( eParamAmpRelSlew0,	sec_to_slew(1.0)	);
+    ctl_param_change( eParamAmpDecSlew0,	sec_to_slew(0.01)	);
+    ctl_param_change( eParamAmpRelSlew0,	sec_to_slew(0.01)	);
+    ctl_param_change( eParamAmpSusDur0,     	480	);
 
     ctl_param_change( eParamFreqAtkSlew0,	sec_to_slew(0.004)	);
-    ctl_param_change( eParamFreqDecSlew0,	sec_to_slew(0.02)	);
-    ctl_param_change( eParamFreqRelSlew0,	sec_to_slew(0.4)	);
+    ctl_param_change( eParamFreqDecSlew0,	sec_to_slew(0.002)	);
+    ctl_param_change( eParamFreqRelSlew0,	sec_to_slew(0.005)	);
     ctl_param_change( eParamFreqOff0,	hz_to_svf(27.5)	);
     ctl_param_change( eParamFreqOn0,	hz_to_svf(110.0 * (i+1)) );
     ctl_param_change( eParamFreqSus0,	hz_to_svf(55.0 * (i+1))	 );
+    ctl_param_change( eParamFreqSusDur0,     	480	);
     
     ctl_param_change( eParamRqAtkSlew0,	sec_to_slew(0.0002)	);
-    ctl_param_change( eParamRqDecSlew0,	sec_to_slew(0.1)	);
-    ctl_param_change( eParamRqRelSlew0,	sec_to_slew(0.1)	);
+    ctl_param_change( eParamRqDecSlew0,	sec_to_slew(0.01)	);
+    ctl_param_change( eParamRqRelSlew0,	sec_to_slew(0.01)	);
     ctl_param_change( eParamRqOff0,	float_to_fr32(0.08)	);
     ctl_param_change( eParamRqOn0,	float_to_fr32(0.3)	);
     ctl_param_change( eParamRqSus0,	float_to_fr32(0.1)	);
+    ctl_param_change( eParamRqSusDur0,     	480	);
 
     ctl_param_change( eParamLow0,		float_to_fr32(0.9)	);
     ctl_param_change( eParamHigh0,	0	);
@@ -183,4 +189,17 @@ void  ctl_set_gate(u8 ch, u8 val) {
   //  eParam p = gateParams[ch];
   ctl_param_change(eParamVoice, ch );
   ctl_param_change(eParamGate0, (s32)val );
+}
+
+// increment tempo
+extern void ctl_inc_tempo(s32 val) {
+  static s32 ms = 1000;
+  static const s32 metroMax = 4000;
+  static const s32 metroMin = 20;
+  ms += val;
+  if(ms < metroMin) { ms = metroMin; }
+  if(ms > metroMax) { ms = metroMax; }
+  timers_set_metro_ms((u32)ms);
+  print_dbg("\r\n ms: ");
+  print_dbg_ulong(ms);
 }

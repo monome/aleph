@@ -15,6 +15,8 @@ extern u8 ctl_report_params(void);
 extern void ctl_init_params(void);
 // set gate
 extern void  ctl_set_gate(u8 ch, u8 val);
+// increment tempo
+extern void ctl_inc_tempo(s32 val);
 
 // parameter enum
 // FIXME: just copying from .ldr source for now

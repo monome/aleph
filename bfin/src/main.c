@@ -3,8 +3,9 @@
 #include "sysreg.h"
 // aleph
 #include "bfin_core.h"
+#include "control.h"
+#include "gpio.h"
 #include "init.h"
-#include "leds.h"
 #include "module.h"
 
 long long int dumcount = 0;
@@ -57,11 +58,13 @@ int main(void) {
   enable_DMA_sport1();  
 
   //// test: leds on
-  SET_LED3;
-  SET_LED4;
+  LED3_SET;
+  LED4_SET;
   
   while(1) {
     // fixme: everything happens in ISRs!
-    ;;
+    //    ;;
+    //    ctl_next_frame();	
+    ctl_perform_last_change();			
   }
 }

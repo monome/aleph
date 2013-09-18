@@ -12,37 +12,24 @@ static void set_param_gate(drumsynVoice* vp, s32 val) {
   if(val > 0) { 
     lcprng_reset(&(vp->rngH));
     lcprng_reset(&(vp->rngL));
-
     env_exp_set_gate( &(vp->envAmp)	, 0xff );
     env_exp_set_gate( &(vp->envFreq)	, 0xff );
     env_exp_set_gate( &(vp->envRq)	, 0xff );
-
-    /* filter_1p_fr32_set_slew( &(vp->lpAmp) , vp->ampSlewUp); */
-    /* filter_1p_fr32_in( &(vp->lpAmp), vp->amp); */
-
-    /* filter_1p_fr32_set_slew( &(vp->lpFreq) , vp->freqSlewUp); */
-    /* filter_1p_fr32_in( &(vp->lpFreq), vp->freqOn); */
-
-    /* filter_1p_fr32_set_slew( &(vp->lpRq) , vp->rqSlewUp); */
-    /* filter_1p_fr32_in( &(vp->lpRq), vp->rqOn); */
-
   } else {
-
     env_exp_set_gate( &(vp->envAmp)	, 0 );
     env_exp_set_gate( &(vp->envFreq)	, 0 );
     env_exp_set_gate( &(vp->envRq)	, 0 );
-
-    /* filter_1p_fr32_set_slew( &(vp->lpAmp) , vp->ampSlewDown); */
-    /* filter_1p_fr32_in( &(vp->lpAmp), 0); */
-
-    /* filter_1p_fr32_set_slew( &(vp->lpFreq) , vp->freqSlewDown); */
-    /* filter_1p_fr32_in( &(vp->lpFreq), vp->freqOff); */
-
-    /* filter_1p_fr32_set_slew( &(vp->lpRq) , vp->rqSlewDown); */
-    /* filter_1p_fr32_in( &(vp->lpRq), vp->rqOff); */
   }
 
 }
+
+static void set_param_trig(drumsynVoice* vp, s32 val) {
+  u8 b = (val > 0);
+  env_exp_set_trig( &(vp->envAmp)	, b );
+  env_exp_set_trig( &(vp->envFreq)	, b );
+  env_exp_set_trig( &(vp->envRq)	, b );
+}
+
 
 // set parameter by value
 void module_set_param(u32 idx, pval v) {
@@ -50,9 +37,16 @@ void module_set_param(u32 idx, pval v) {
 
   switch(idx) {
 
+  case eParamVoice:
+    ;;
+    break;
+
   case eParamGate0 : // 1bit gate
-    //    vp = voices[vid];
     set_param_gate(voices[vid], v.s);
+    break;
+
+  case eParamTrig0 : // 1bit trig
+    set_param_trig(voices[vid], v.s);
     break;
     
   case eParamAmp0 : // fract32 amp

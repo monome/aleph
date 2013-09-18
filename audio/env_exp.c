@@ -174,7 +174,8 @@ static fract32 next_sus_trig0(env_exp* env) {
 // sustain (trig mode on)
 static fract32 next_sus_trig1(env_exp* env) {
   env->susCount++;
-  if(env->susCount == env->susDur) {
+  if(env->susCount > env->susDur) {
+    env->gate = 0;
     state_rel(env);
   }
   return env->valSus;

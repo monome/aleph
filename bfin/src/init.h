@@ -2,27 +2,10 @@
 #define _ALEPH_BFIN_INIT_H_
 
 //----------- defines
-// addresses for Port A in Flash A
-// PA0 -> reset pin for ad1836
-//#define pFlashA_PortA_Dir	(volatile unsigned char *)0x20270006
-//#define pFlashA_PortA_Data	(volatile unsigned char *)0x20270004
-// addresses for Port B in Flash A
-// [PB0, PB05] -> [LED1, LED6]
-//#define pFlashA_PortB_Dir	(volatile unsigned char *)0x20270007
-//#define pFlashA_PortB_Data	(volatile unsigned char *)0x20270005
 
-//// inputs:
-/*
-// buttons : pf08-11
-#define PF_IN 0x0f00
-// edge-sensitive
-#define PF_EDGE 0x0f00
-// both rise and fall
-#define PF_BOTH 0x0f00
-// set interrupt mask
-#define_PF_IMASK  0x0f00
-*/
-// nothing:
+
+////---- gpio
+// no gpio inputs:
 #define PF_IN 0
 #define PF_EDGE 0
 // both rise and fall
@@ -32,32 +15,11 @@
 //// OUTPUTS:
 // led3, led4 : pf14,15 
 // codec reset : pf1
-#define PF_DIR           0xc002 
+// busy pin (shared with HWAIT) : pf2
+//#define PF_DIR           0xc002 
+#define PF_DIR           0xc003
 #define CODEC_RESET_MASK 0xfffd 
 #define CODEC_SS_MASK    0xffdf
-// ( led masks are in leds.h so these must synchronize )
-
-/* // names for codec registers, used for sCodec1836TxRegs[] */
-/* #define DAC_CONTROL_1		0x0000 */
-/* #define DAC_CONTROL_2		0x1000 */
-/* #define DAC_VOLUME_0		0x2000 */
-/* #define DAC_VOLUME_1		0x3000 */
-/* #define DAC_VOLUME_2		0x4000 */
-/* #define DAC_VOLUME_3		0x5000 */
-/* #define DAC_VOLUME_4		0x6000 */
-/* #define DAC_VOLUME_5		0x7000 */
-/* #define ADC_0_PEAK_LEVEL	0x8000 */
-/* #define ADC_1_PEAK_LEVEL	0x9000 */
-/* #define ADC_2_PEAK_LEVEL	0xA000 */
-/* #define ADC_3_PEAK_LEVEL	0xB000 */
-/* #define ADC_CONTROL_1		0xC000 */
-/* #define ADC_CONTROL_2		0xD000 */
-/* #define ADC_CONTROL_3		0xE000 */
-
-/* // size of array sCodec1836TxRegs */
-/* #define CODEC_1836_REGS_LENGTH	11 */
-/* // new codec: */
-/* #define CODEC_1938_REGS_LENGTH	11 */
 
 // command byte for setting codec regs (4 << 1 | 1)
 #define CODEC_CMD_BYTE 0x9

@@ -100,6 +100,7 @@ extern void dsyn_handler(event_t* ev) {
     break;
     
   case kEventEncoder0:
+    ctl_inc_tempo(scale_knob_value(ev->eventData));
     //    ctl_inc_dac(0, scale_knob_value(ev->eventData));
     break;
   case kEventEncoder1:

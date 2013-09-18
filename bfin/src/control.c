@@ -7,7 +7,7 @@ static ctlEvent_t ctlBuf[CTL_BUF_SIZE];
 // dirty flags
 static u8 paramsDirty[DIRTY_BYTES];
 // count of param change events
-static u32 evCount = 0;
+static s32 evCount = 0;
 // audio frames since last update
 static u32 frameCount = 0;
 
@@ -73,7 +73,8 @@ extern void ctl_do_last_change(void) {
 // execute the last param change
 //// warning: no lower bounds check on evCount
 extern void ctl_perform_last_change(void) {
-  static u32 idx;
+  static s32 idx;
+  if(evCount == 0) { return; }
   idx = ctlBuf[--evCount].idx;
   module_set_param(idx, ctlBuf[evCount].val);
   clear_param_dirty(idx);
