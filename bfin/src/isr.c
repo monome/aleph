@@ -1,7 +1,7 @@
 #include "bfin_core.h"
 #include "control.h"
+#include "gpio.h"
 #include "init.h"
-#include "leds.h"
 #include "module.h"
 #include "protocol.h"
 #include "spi.h"
@@ -23,29 +23,15 @@ volatile u8 processAudio = 0;
 
 // sport0 receive interrupt (audio input from codec)
 void sport0_rx_isr() {
-  // dbg
-  /* static s32 max = 0; */
-  /* static s32 min = 0; */
-  /* static u8 dum = 0; */
 
-  /* if(in0 > max) { */
-  /*   max = in0; */
-  /*   dum++; */
-  /* } */
-  /* if(in0 < min) { */
-  /*   min = in0; */
-  /*   dum++; */
-  /* } */
-
-  /* if(iRxBuf[0] < 0) { */
-  /*    dum++; */
-  /* } */
   if(!processAudio) { return; }
 
-  // tick the control rate
-  ctl_next_frame();
 
-  UNSET_LED3;
+
+  // tick the control rate
+  //  ctl_next_frame();
+  BUSY_SET;
+  LED3_UNSET;
 
   // confirm interrupt handling
   *pDMA1_IRQ_STATUS = 0x0001;
@@ -66,8 +52,7 @@ void sport0_rx_isr() {
 
   // module-defined frame processing function
 
-    module_process_frame();  
-
+  module_process_frame();  
 
   /* //// TEST: wire */
   /* out0 = in0; */
@@ -81,11 +66,8 @@ void sport0_rx_isr() {
   /* iTxBuf[2] = iRxBuf[2]; */
   /* iTxBuf[3] = iRxBuf[3]; */
 
-  SET_LED3;
-// module-defined LED update function
-  // leds = module_update_leds();
-  ///// FIXME
-  //  *pFlashA_PortB_Data = leds;
+  BUSY_UNSET;
+  LED3_SET;
 }
 
 // ISR on sport1 tx completion
@@ -99,6 +81,7 @@ void sport1_tx_isr() {
 
 // spi receive interrupt (from avr32)
 void spi_rx_isr() {
+  BUSY_SET;
   //int i=0;
   //  processAudio = 0;
   // disable global interrupts
@@ -107,6 +90,7 @@ void spi_rx_isr() {
   // enable global interrupts
   //  asm volatile("sti %0; csync;":"+d"(i));
   //  processAudio = 1;
+  BUSY_UNSET;
 }
 
 // programmable flag interrupt (buttons)

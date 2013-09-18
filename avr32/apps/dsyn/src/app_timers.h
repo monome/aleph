@@ -6,7 +6,8 @@
 // ---- timer tags
 enum { 
   eScreenTimerTag = eNumSysTimers,
-  eMetroTimerTag
+  eMetroTimerTag,
+  //  eSustainTimerTag,
   //  eAdcTimerTag,
   //  eMonomePollTimerTag,
   //  eMonomeRefreshTimerTag,
@@ -16,5 +17,8 @@ enum {
 
 // create application timers
 extern void init_app_timers(void);
+
+// set the metro timer period
+extern void timers_set_metro_ms(u32 ms);
 
 #endif

@@ -23,6 +23,7 @@
 #include "filesystem.h"
 //#include "flash.h"
 #include "global.h"
+#include "interrupts.h"
 #include "types.h"
 #include "util.h"
 #include "bfin.h"
@@ -36,6 +37,16 @@ static void bfin_transfer_byte(u8 data);
 
 //---------------------------------------
 //--- external function definition
+
+// wait for busy pin to clear
+void bfin_wait(void) {
+  //  print_dbg("\r\n hwait: ");
+  //  print_dbg_ulong(gpio_get_pin_value(BFIN_HWAIT_PIN));
+    while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { 
+      print_dbg("\r\n HWAIT asserted..."); 
+    }
+    delay_us(10);
+}
 
 // load bfin executable from the RAM buffer
 void bfin_load_buf(void) {
@@ -61,39 +72,49 @@ void bfin_load_buf(void) {
 
 //void bfin_set_param(u8 idx, f32 x ) {
 void bfin_set_param(u8 idx, fix16_t x ) {
-
-  static ParamValue pval;
+  static u32 ticks = 0;
+  ParamValue pval;
   pval.asInt = (s32)x;
 
-  print_dbg("\r\n bfin_set_param, idx: ");
-  print_dbg_ulong(idx);
+  //  print_dbg("\r\n bfin_set_param, idx: ");
+  //  print_dbg_ulong(idx);
 
-  print_dbg(", val: 0x");
-  print_dbg_hex((u32)x);
+  //  print_dbg(",\t val: 0x");
+  //  print_dbg_hex((u32)x);
+
+  //  print_dbg("\r\n");
+  print_dbg_ulong(tcTicks - ticks);
+  ticks = tcTicks;
 
   //  app_pause();
 
   // command
+  bfin_wait();
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, MSG_SET_PARAM_COM);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   //idx
+  bfin_wait();
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, idx);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   //val0
+  bfin_wait();
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, pval.asByte[0]);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   // val1
+  bfin_wait();
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, pval.asByte[1]);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   //val2
+  bfin_wait();
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, pval.asByte[2]);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   //val3
+  bfin_wait();
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, pval.asByte[3]);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
@@ -276,10 +297,8 @@ void bfin_enable(void) {
 //------ static function definition
 
 static void bfin_transfer_byte(u8 data) {
-    while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { 
-      print_dbg("\r\n HWAIT asserted..."); 
-    }
-    spi_write(BFIN_SPI, data);
+  bfin_wait();
+  spi_write(BFIN_SPI, data);
 }
 
 void bfin_start_transfer(void) {
@@ -343,6 +362,6 @@ void bfin_end_transfer(void) {
   /* spi_setupChipReg(BFIN_SPI, &spiOptions, FPBA_HZ); */
   /* // enable pulldown on bfin HWAIT line */
   /* //// shit! not implemented...  */
-  /* // gpio_enable_pin_pull_down(BFIN_HWAIT_PIN); */
+  /* // gpio_enable_pin_pull_down(BFIN__PIN); */
 
 //}

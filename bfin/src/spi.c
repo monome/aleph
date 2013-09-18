@@ -1,6 +1,6 @@
 #include "bfin_core.h"
 #include "control.h"
-#include "leds.h"
+#include "gpio.h"
 #include "module.h"
 #include "protocol.h"
 #include "types.h"
@@ -21,8 +21,9 @@ static pval pv;
 //------ static functions
 static void spi_set_param(u32 idx, pval pv) {
   //  module_set_param(idx, pv);
-  TOGGLE_LED4;
-  ctl_param_change(idx, pv.u);
+  LED4_TOGGLE;
+  // ctl_param_change(idx, pv.u);
+  module_set_param(idx, pv);
 }
 
 

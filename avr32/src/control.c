@@ -1,4 +1,7 @@
 #include <string.h>
+
+#include "print_funcs.h"
+
 #include "bfin.h"
 #include "control.h"
 //#include "module.h"
@@ -35,6 +38,10 @@ b
 
 // request a parameter change.
 extern u8 ctl_param_change(u32 idx, u32 val) {
+#if 1 // testing: direct set
+  print_dbg("\r\n set: ");
+  bfin_set_param(idx, val);
+#else
   u32 i;
   if(get_param_dirty(idx)) {
     // search for event with this param idx
@@ -58,6 +65,7 @@ extern u8 ctl_param_change(u32 idx, u32 val) {
       return 1;
     }
   }
+#endif
 }
 
 // execute the most recent change
@@ -65,6 +73,8 @@ extern u8 ctl_param_change(u32 idx, u32 val) {
 extern void ctl_perform_last_change(void) {
   static u32 idx;
   idx = ctlBuf[--evCount].idx;
+  print_dbg("\r\n performing control change, decremented count is now 0x");
+  print_dbg_hex((u32)evCount);
   bfin_set_param(idx, ctlBuf[evCount].val.fix);
   clear_param_dirty(idx);
 }
@@ -76,6 +86,7 @@ extern void ctl_perform_all_changes(void) {
   // execute in FIFO order
   for(i=0; i<evCount; i++) {
     idx = ctlBuf[i].idx;
+  print_dbg("\r\n performing control ");
     bfin_set_param(idx, ctlBuf[i].val.fix);
     clear_param_dirty(idx);
   }

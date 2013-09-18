@@ -37,10 +37,19 @@
 // map is varibright, 4 bytes per led, 64 leds
 #define MONOME_RING_MAP_SIZE  32
 
+//--------------------------------
+//------- variables
 
-//---------------------------------
-//--- types
+// connected flag ( TODO: device id? )
+extern u8 monomeConnect;
+// dirt flags for each frame, as bitfield
+extern u8 monomeFrameDirty;
+// a buffer big enough to hold all led data for 256 or arc4
+// each led gets a full byte
+extern u8 monomeLedBuffer[MONOME_MAX_LED_BYTES];
 
+
+//---- function types
 ////// read (all devices)
 typedef void(*read_serial_t)(void);
 
@@ -57,16 +66,6 @@ typedef void(*ring_set_t)(u8 n, u8 rho, u8 val);
 // set all leds in ring 
 typedef void(*ring_map_t)(u8 n, u8* data);
 
-//--------------------------------
-//------- variables
-// connected flag ( TODO: device id? )
-extern u8 monomeConnect;
-// dirt flags for each frame, as bitfield
-extern u8 monomeFrameDirty;
-// a buffer big enough to hold all led data for 256 or arc4
-// each led gets a full byte
-extern u8 monomeLedBuffer[MONOME_MAX_LED_BYTES];
-
 // global pointers to function types defined above.
 // assigned according to detected device protocol.
 extern read_serial_t monome_read_serial;
@@ -75,6 +74,7 @@ extern grid_map_t monome_grid_map;
 extern grid_level_map_t monome_grid_level_map;
 extern ring_map_t monome_ring_map;
 
+//-------------------------------------
 //------ functions
 
 // initialize
@@ -95,7 +95,13 @@ extern void monome_ring_enc_parse_event_data(u32 data, u8* n, s8* delta);
 // ring press/lift
 extern void monome_ring_key_parse_event_data(u32 data, u8* n, u8* val);
 
-// set quadrant dirty flag
+
+// top-level led/set function
+extern void monome_led_set(u8 x, u8 y, u8 val);
+// top-level led/toggle function
+extern void monome_led_toggle(u8 x, u8 y);
+
+// set quadrant dirty flag 
 extern void monome_calc_quadrant_flag(u8 x, u8 y);
 // convert flat framebuffer idx to x,y
 extern void monome_idx_xy(u32 idx, u8* x, u8* y);

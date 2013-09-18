@@ -383,6 +383,15 @@ u32 monome_xy_idx(u8 x, u8 y) {
 }
 
 
+// top-level led/set function
+void monome_led_set(u8 x, u8 y, u8 val) {
+  //..
+}
+
+// top-level led/toggle function
+void monome_led_toggle(u8 x, u8 y) }
+//...
+}
 
 //=============================================
 //------ static function definitions
@@ -673,6 +682,9 @@ static void grid_map_series(u8 x, u8 y, const u8* data) {
 static void ring_map_mext(u8 n, u8* data) {
   // TODO
 }
+
+
+
 
 
 static void test_draw(void) { 

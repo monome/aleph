@@ -33,7 +33,6 @@
 #include "aleph_board.h"
 #include "adc.h"
 #include "app.h"
-#include "app_timers.h"
 #include "bfin.h"
 #include "conf_tc_irq.h"
 #include "encoders.h"
@@ -49,6 +48,7 @@
 #include "memory.h"
 #include "monome.h"
 #include "switches.h"
+#include "sys_timers.h"
 #include "timers.h"
 
 //==================================================
@@ -160,7 +160,6 @@ static void init_ctl(void) {
 
   // start timers
   init_sys_timers();
-  init_app_timers();
   print_dbg("\r\n init_timers");
 
   // enable interrupts

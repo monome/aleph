@@ -6,14 +6,12 @@
 #include "module.h"
 #include "params.h" 
 
-// current voice target
 static u8 vid = 0;
 
-// set gate for voice
 static void set_param_gate(drumsynVoice* vp, s32 val) {
   if(val > 0) { 
-    lcprng_reset(&(vp->rngH), 0xDEADFACE);
-    lcprng_reset(&(vp->rngL), 0xBEEFCAFE);
+    lcprng_reset(&(vp->rngH));
+    lcprng_reset(&(vp->rngL));
     env_exp_set_gate( &(vp->envAmp)	, 0xff );
     env_exp_set_gate( &(vp->envFreq)	, 0xff );
     env_exp_set_gate( &(vp->envRq)	, 0xff );
@@ -24,89 +22,115 @@ static void set_param_gate(drumsynVoice* vp, s32 val) {
   }
 }
 
+static void set_param_trig(drumsynVoice* vp, s32 val) {
+  u8 b = (val > 0);
+  env_exp_set_trig( &(vp->envAmp)	, b );
+  env_exp_set_trig( &(vp->envFreq)	, b );
+  env_exp_set_trig( &(vp->envRq)	, b );
+}
+
+
 // set parameter by value
 void module_set_param(u32 idx, pval v) { 
   switch(idx) {
-  case eParamVoice :
-    vid = v.u % (DRUMSYN_NVOICES);    // set voice indexq
+
+  case eParamVoice:
+    vid = v.u % DRUMSYN_NVOICES;
     break;
-  case eParamGate : // 1bit gate
-    set_param_gate(&(voices[vid]), v.s);
-    break;    
-  case eParamAmp : // fract32 amp
-    env_exp_set_on( &(voices[vid].envAmp), v.fr);    
-    break;    
-  case eParamAmpSus : // fract32 amp
-    env_exp_set_sus( &(voices[vid].envAmp), v.fr);    
-    break;    
-  case eParamAmpAtkSlew : // fract32 raw 1pole coefficient
-    env_exp_set_atk_slew( &(voices[vid].envAmp), v.fr);
-    break;    
-  case eParamAmpDecSlew : // fract32 raw 1pole coefficient
-    env_exp_set_dec_slew( &(voices[vid].envAmp), v.fr);
+
+  case eParamGate0 : // 1bit gate
+    set_param_gate(voices[vid], v.s);
     break;
-  case eParamAmpRelSlew :
-    env_exp_set_rel_slew( &(voices[vid].envAmp), v.fr);
+
+  case eParamTrig0 : // 1bit trig
+    set_param_trig(voices[vid], v.s);
     break;
-  case eParamAmpSusDur :
-    env_exp_set_sus_dur( &(voices[vid].envAmp), v.u);
+    
+  case eParamAmp0 : // fract32 amp
+    env_exp_set_on( &(voices[vid]->envAmp), v.fr);    
     break;
+    
+  case eParamAmpSus0 : // fract32 amp
+    env_exp_set_sus( &(voices[vid]->envAmp), v.fr);    
+    break;
+    
+  case eParamAmpAtkSlew0 : // fract32 raw 1pole coefficient
+    env_exp_set_atk_slew( &(voices[vid]->envAmp), v.fr);
+    break;
+    
+  case eParamAmpDecSlew0 : // fract32 raw 1pole coefficient
+    env_exp_set_dec_slew( &(voices[vid]->envAmp), v.fr);
+    break;
+
+  case eParamAmpRelSlew0 :
+    env_exp_set_rel_slew( &(voices[vid]->envAmp), v.fr);
+    break;
+
+  case eParamAmpSusDur0 :
+    env_exp_set_sus_dur( &(voices[vid]->envAmp), v.u);
+    break;
+
     // freq env
-  case eParamFreqAtkSlew :
-    env_exp_set_atk_slew( &(voices[vid].envFreq), v.fr);
+  case eParamFreqAtkSlew0 :
+    env_exp_set_atk_slew( &(voices[vid]->envFreq), v.fr);
     break;
-  case eParamFreqDecSlew :
-    env_exp_set_dec_slew( &(voices[vid].envFreq), v.fr);
+
+  case eParamFreqDecSlew0 :
+    env_exp_set_dec_slew( &(voices[vid]->envFreq), v.fr);
     break;
-  case eParamFreqRelSlew :
-    env_exp_set_rel_slew( &(voices[vid].envFreq), v.fr);
+
+  case eParamFreqRelSlew0 :
+    env_exp_set_rel_slew( &(voices[vid]->envFreq), v.fr);
     break;
-  case eParamFreqSusDur :
-    env_exp_set_sus_dur( &(voices[vid].envFreq), v.u);
+
+  case eParamFreqSusDur0 :
+    env_exp_set_sus_dur( &(voices[vid]->envFreq), v.u);
     break;
-  case eParamFreqOff :
-    env_exp_set_off( &(voices[vid].envFreq), v.fr);
+
+  case eParamFreqOff0 :
+    env_exp_set_off( &(voices[vid]->envFreq), v.fr);
     break;
-  case eParamFreqOn : 
-    env_exp_set_on( &(voices[vid].envFreq), v.fr);
+  case eParamFreqOn0: 
+    env_exp_set_on( &(voices[vid]->envFreq), v.fr);
     break;
-  case eParamFreqSus : 
-    env_exp_set_sus( &(voices[vid].envFreq), v.fr);
+  case eParamFreqSus0: 
+    env_exp_set_sus( &(voices[vid]->envFreq), v.fr);
     break;
     // rq env
-  case eParamRqAtkSlew :
-    env_exp_set_atk_slew( &(voices[vid].envRq), v.fr);
+  case eParamRqAtkSlew0 :
+    env_exp_set_atk_slew( &(voices[vid]->envRq), v.fr);
     break;
-  case eParamRqDecSlew :
-    env_exp_set_dec_slew( &(voices[vid].envRq), v.fr);
+  case eParamRqDecSlew0 :
+    env_exp_set_dec_slew( &(voices[vid]->envRq), v.fr);
     break;
-  case eParamRqRelSlew :
-    env_exp_set_rel_slew( &(voices[vid].envRq), v.fr);
+  case eParamRqRelSlew0 :
+    env_exp_set_rel_slew( &(voices[vid]->envRq), v.fr);
     break;
-  case eParamRqSusDur :
-    env_exp_set_sus_dur( &(voices[vid].envRq), v.u);
+  case eParamRqSusDur0 :
+    env_exp_set_sus_dur( &(voices[vid]->envRq), v.u);
     break;
-  case eParamRqOff :
-    env_exp_set_off( &(voices[vid].envRq), v.fr);
+
+  case eParamRqOff0 :
+    env_exp_set_off( &(voices[vid]->envRq), v.fr);
     break;
-  case eParamRqOn :
-    env_exp_set_on( &(voices[vid].envRq), v.fr);
+  case eParamRqOn0 :
+    env_exp_set_on( &(voices[vid]->envRq), v.fr);
     break;
-  case eParamRqSus :
-    env_exp_set_sus( &(voices[vid].envRq), v.fr);
+  case eParamRqSus0 :
+    env_exp_set_sus( &(voices[vid]->envRq), v.fr);
     break;
-    // svf
-  case eParamLow :	       
-    filter_svf_set_low( &(voices[vid].svf), v.fr);
+
+  case eParamLow0 :	       
+    filter_svf_set_low( &(voices[vid]->svf), v.fr);
     break;
-  case eParamHigh :	       
-    filter_svf_set_high( &(voices[vid].svf), v.fr);
+  case eParamHigh0 :	       
+    filter_svf_set_high( &(voices[vid]->svf), v.fr);
     break;
-  case eParamBand :	       
-    filter_svf_set_band( &(voices[vid].svf), v.fr);
+  case eParamBand0 :	       
+    filter_svf_set_band( &(voices[vid]->svf), v.fr);
     break;
-  case eParamNotch : 	       
-    filter_svf_set_notch( &(voices[vid].svf), v.fr);
+  case eParamNotch0 :	       
+    filter_svf_set_notch( &(voices[vid]->svf), v.fr);
     break;
     //// TODO
     /// .. other voices...
@@ -117,40 +141,125 @@ void module_set_param(u32 idx, pval v) {
 
 // fill parameter descriptors
 void fill_param_desc(void) {
-  // FIXME: not using most param descriptor fields.
-  // all params are unit-less fract32 in range [0, 1).
-  // it is pretty painful to use them all.
-  // either need scripting tools to handle this stuff ASAP,
-  // or something like u32 index into (extensive) shared table of unit types.
   strcpy(gModuleData->paramDesc[eParamVoice].label, "Voice");
-  strcpy(gModuleData->paramDesc[eParamGate].label, "Gate");
-  strcpy(gModuleData->paramDesc[eParamTrig].label, "Trig");
-  // amp
-  strcpy(gModuleData->paramDesc[eParamAmp].label, "Amp");
-  strcpy(gModuleData->paramDesc[eParamAmpSus].label, "AmpSus");
-  strcpy(gModuleData->paramDesc[eParamAmpSusDur].label, "AmpSusDur");
-  strcpy(gModuleData->paramDesc[eParamAmpAtkSlew].label, "AmpAtkSlew");
-  strcpy(gModuleData->paramDesc[eParamAmpDecSlew].label, "AmpDecSlew");
-  strcpy(gModuleData->paramDesc[eParamAmpRelSlew].label, "AmpRelSlew");
-  // freq
-  strcpy(gModuleData->paramDesc[eParamFreqAtkSlew].label, "FreqAtkSlew");
-  strcpy(gModuleData->paramDesc[eParamFreqDecSlew].label, "FreqDecSlew");
-  strcpy(gModuleData->paramDesc[eParamFreqRelSlew].label, "FreqRelSlew");
-  strcpy(gModuleData->paramDesc[eParamFreqOff].label, "FreqOff");
-  strcpy(gModuleData->paramDesc[eParamFreqOn].label, "FreqOn");
-  strcpy(gModuleData->paramDesc[eParamFreqSus].label, "FreqSus");
-  strcpy(gModuleData->paramDesc[eParamFreqSusDur].label, "FreqSusDur");
-  // rq
-  strcpy(gModuleData->paramDesc[eParamRqAtkSlew].label, "RqAtkSlew");
-  strcpy(gModuleData->paramDesc[eParamRqDecSlew].label, "RqDecSlew");
-  strcpy(gModuleData->paramDesc[eParamRqRelSlew].label, "RqRelSlew");
-  strcpy(gModuleData->paramDesc[eParamRqOff].label, "RqOff");
-  strcpy(gModuleData->paramDesc[eParamRqOn].label, "RqOn");
-  strcpy(gModuleData->paramDesc[eParamRqSus].label, "RqSus");
-  strcpy(gModuleData->paramDesc[eParamRqSusDur].label, "RqSusDur");
-  // svf
-  strcpy(gModuleData->paramDesc[eParamLow].label, "Low");
-  strcpy(gModuleData->paramDesc[eParamHigh].label, "High");
-  strcpy(gModuleData->paramDesc[eParamBand].label, "Band");
-  strcpy(gModuleData->paramDesc[eParamNotch].label, "Notch");
+  strcpy(gModuleData->paramDesc[eParamVoice].unit, "");
+  gModuleData->paramDesc[eParamVoice].type = PARAM_TYPE_UINT;
+  gModuleData->paramDesc[eParamVoice].min = 0;
+  gModuleData->paramDesc[eParamVoice].max = 3;
+
+  strcpy(gModuleData->paramDesc[eParamGate0].label, "Gate0");
+  strcpy(gModuleData->paramDesc[eParamGate0].unit, "");
+  gModuleData->paramDesc[eParamGate0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamGate0].min = 0;
+  gModuleData->paramDesc[eParamGate0].max = FR32_MAX;
+
+  strcpy(gModuleData->paramDesc[eParamTrig0].label, "Trig0");
+  strcpy(gModuleData->paramDesc[eParamTrig0].unit, "");
+  gModuleData->paramDesc[eParamTrig0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamTrig0].min = 0;
+  gModuleData->paramDesc[eParamTrig0].max = FR32_MAX;
+
+  strcpy(gModuleData->paramDesc[eParamAmp0].label, "Amp0");
+  strcpy(gModuleData->paramDesc[eParamAmp0].unit, "");
+  gModuleData->paramDesc[eParamAmp0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamAmp0].min = 0;
+  gModuleData->paramDesc[eParamAmp0].max = FR32_MAX;
+
+  strcpy(gModuleData->paramDesc[eParamAmpAtkSlew0].label, "AmpAtkSlew0");
+  strcpy(gModuleData->paramDesc[eParamAmpAtkSlew0].unit, "");
+  gModuleData->paramDesc[eParamAmpAtkSlew0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamAmpAtkSlew0].min = 0;
+  gModuleData->paramDesc[eParamAmpAtkSlew0].max = FR32_MAX;
+
+  strcpy(gModuleData->paramDesc[eParamAmpRelSlew0].label, "AmpRelSlew0");
+  strcpy(gModuleData->paramDesc[eParamAmpRelSlew0].unit, "");
+  gModuleData->paramDesc[eParamAmpRelSlew0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamAmpRelSlew0].min = 0;
+  gModuleData->paramDesc[eParamAmpRelSlew0].max = FR32_MAX;
+
+  /* strcpy(gModuleData->paramDesc[eParamAmpAtkCurve0].label, "AmpAtkCurve0"); */
+  /* strcpy(gModuleData->paramDesc[eParamAmpAtkCurve0].unit, ""); */
+  /* gModuleData->paramDesc[eParamAmpAtkCurve0].type = PARAM_TYPE_FRACT; */
+  /* gModuleData->paramDesc[eParamAmpAtkCurve0].min = 0; */
+  /* gModuleData->paramDesc[eParamAmpAtkCurve0].max = FR32_MAX; */
+
+  /* strcpy(gModuleData->paramDesc[eParamAmpRelCurve0].label, "AmpRelCurve0"); */
+  /* strcpy(gModuleData->paramDesc[eParamAmpRelCurve0].unit, ""); */
+  /* gModuleData->paramDesc[eParamAmpRelCurve0].type = PARAM_TYPE_FRACT; */
+  /* gModuleData->paramDesc[eParamAmpRelCurve0].min = 0; */
+  /* gModuleData->paramDesc[eParamAmpRelCurve0].max = FR32_MAX; */
+
+  strcpy(gModuleData->paramDesc[eParamFreqAtkSlew0].label, "FreqAtkSlew0");
+  strcpy(gModuleData->paramDesc[eParamFreqAtkSlew0].unit, "");
+  gModuleData->paramDesc[eParamFreqAtkSlew0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamFreqAtkSlew0].min = 0;
+  gModuleData->paramDesc[eParamFreqAtkSlew0].max = FR32_MAX;
+
+  strcpy(gModuleData->paramDesc[eParamFreqRelSlew0].label, "FreqRelSlew0");
+  strcpy(gModuleData->paramDesc[eParamFreqRelSlew0].unit, "");
+  gModuleData->paramDesc[eParamFreqRelSlew0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamFreqRelSlew0].min = 0;
+  gModuleData->paramDesc[eParamFreqRelSlew0].max = FR32_MAX;
+
+  strcpy(gModuleData->paramDesc[eParamFreqOff0].label, "FreqOff0");
+  strcpy(gModuleData->paramDesc[eParamFreqOff0].unit, "");
+  gModuleData->paramDesc[eParamFreqOff0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamFreqOff0].min = 0;
+  gModuleData->paramDesc[eParamFreqOff0].max = FR32_MAX;
+
+  strcpy(gModuleData->paramDesc[eParamFreqOn0].label, "FreqOn0");
+  strcpy(gModuleData->paramDesc[eParamFreqOn0].unit, "");
+  gModuleData->paramDesc[eParamFreqOn0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamFreqOn0].min = 0;
+  gModuleData->paramDesc[eParamFreqOn0].max = FR32_MAX;
+
+  strcpy(gModuleData->paramDesc[eParamRqAtkSlew0].label, "RqAtkSlew0");
+  strcpy(gModuleData->paramDesc[eParamRqAtkSlew0].unit, "");
+  gModuleData->paramDesc[eParamRqAtkSlew0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamRqAtkSlew0].min = 0;
+  gModuleData->paramDesc[eParamRqAtkSlew0].max = FR32_MAX;
+
+  strcpy(gModuleData->paramDesc[eParamRqRelSlew0].label, "RqRelSlew0");
+  strcpy(gModuleData->paramDesc[eParamRqRelSlew0].unit, "");
+  gModuleData->paramDesc[eParamRqRelSlew0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamRqRelSlew0].min = 0;
+  gModuleData->paramDesc[eParamRqRelSlew0].max = FR32_MAX;
+
+  strcpy(gModuleData->paramDesc[eParamRqOff0].label, "RqOff0");
+  strcpy(gModuleData->paramDesc[eParamRqOff0].unit, "");
+  gModuleData->paramDesc[eParamRqOff0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamRqOff0].min = 0;
+  gModuleData->paramDesc[eParamRqOff0].max = FR32_MAX;
+
+  strcpy(gModuleData->paramDesc[eParamRqOn0].label, "RqOn0");
+  strcpy(gModuleData->paramDesc[eParamRqOn0].unit, "");
+  gModuleData->paramDesc[eParamRqOn0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamRqOn0].min = 0;
+  gModuleData->paramDesc[eParamRqOn0].max = FR32_MAX;
+
+  strcpy(gModuleData->paramDesc[eParamLow0].label, "Low0");
+  strcpy(gModuleData->paramDesc[eParamLow0].unit, "");
+  gModuleData->paramDesc[eParamLow0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamLow0].min = 0;
+  gModuleData->paramDesc[eParamLow0].max = FR32_MAX;
+
+  strcpy(gModuleData->paramDesc[eParamHigh0].label, "High0");
+  strcpy(gModuleData->paramDesc[eParamHigh0].unit, "");
+  gModuleData->paramDesc[eParamHigh0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamHigh0].min = 0;
+  gModuleData->paramDesc[eParamHigh0].max = FR32_MAX;
+
+  strcpy(gModuleData->paramDesc[eParamBand0].label, "Band0");
+  strcpy(gModuleData->paramDesc[eParamBand0].unit, "");
+  gModuleData->paramDesc[eParamBand0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamBand0].min = 0;
+  gModuleData->paramDesc[eParamBand0].max = FR32_MAX;
+
+  strcpy(gModuleData->paramDesc[eParamNotch0].label, "Notch0");
+  strcpy(gModuleData->paramDesc[eParamNotch0].unit, "");
+  gModuleData->paramDesc[eParamNotch0].type = PARAM_TYPE_FRACT;
+  gModuleData->paramDesc[eParamNotch0].min = 0;
+  gModuleData->paramDesc[eParamNotch0].max = FR32_MAX;
+
+  /// TODO: more voices
 }

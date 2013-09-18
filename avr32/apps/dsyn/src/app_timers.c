@@ -5,6 +5,8 @@
 #include "timers.h"
 //#include "midi.h"
 #include "app_timers.h"
+#include "ctl.h"
+#include "control.h"
 #include "render.h"
 
 //------ timers
@@ -21,8 +23,10 @@ static swTimer_t screenTimer;
 //static swTimer_t midiPollTimer;
 
 static swTimer_t metroTimer;
+static swTimer_t sustainTimer;
 
 //----- callbacks
+static void sustain_timer_callback(int tag);
 
 // screen refresh callback
 static void screen_timer_callback(int tag) {  
@@ -31,7 +35,26 @@ static void screen_timer_callback(int tag) {
 
 // metronome timer callback
 static void metro_timer_callback(int tag) {
-  print_dbg(" > ");
+  static u32 i = 0;
+  //  print_dbg(" > ");
+  // set gate on
+  //  if((i % 2) == 0) {
+  ctl_param_change(eParamVoice, 0);
+  ctl_param_change(eParamGate0, 1);
+  //  }
+  if((i++ % 4) == 0) {
+    ctl_param_change(eParamVoice, 1);
+    ctl_param_change(eParamGate0, 1);
+  }
+  // set sustain timer (1-shot)
+  //  set_timer(&sustainTimer, eSustainTimerTag, 100, &sustain_timer_callback,  0);
+}
+
+
+// 1-shot sustain callback
+void sustain_timer_callback(int tag) {
+  // turn gate off  
+  ctl_param_change(eParamGate0, 0);
 }
 
 /////////////////////////////
@@ -73,10 +96,16 @@ static void metro_timer_callback(int tag) {
 
 //====== external
 void init_app_timers(void) {
-  set_timer(&screenTimer,        eScreenTimerTag,        20,  &screen_timer_callback,  1);
+  set_timer(&screenTimer,        eScreenTimerTag,        100,  &screen_timer_callback,  1);
   //  set_timer(&adcTimer,           eAdcTimerTag,           5,   &adc_timer_callback,     1);
   //  set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);
   //  set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 20,  &monome_refresh_timer_callback, 1);
   //  set_timer(&midiPollTimer,      eMidiPollTimerTag,      5,  &midi_poll_timer_callback, 1);
-  set_timer(&metroTimer,        eMetroTimerTag,        100,  &metro_timer_callback,  1);
+  set_timer(&metroTimer,        eMetroTimerTag,        1000,  &metro_timer_callback,  1);
+}
+
+// set the metro timer period
+extern void timers_set_metro_ms(u32 ms) {
+  //  metroTimer.timeout = ms;
+  metroTimer.timeoutReload = ms;
 }

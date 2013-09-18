@@ -14,6 +14,7 @@
 
 // aleph-avr32
 #include "app.h"
+#include "app_timers.h"
 #include "bfin.h"
 #include "screen.h"
 #include "events.h"
@@ -124,6 +125,9 @@ u8 app_launch(u8 firstrun) {
   render_status("run                       ");
   render_update();
   bfin_enable();
+
+  // enable timers
+  init_app_timers();
 
   render_startup();
   render_update();
