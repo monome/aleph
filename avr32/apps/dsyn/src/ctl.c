@@ -139,43 +139,78 @@ void ctl_init_params(void) {
      use stored input values from UI?
      store in flash?
   */
-    for (i=0; i<4; i++) {
+  //    for (i=0; i<4; i++) {
   /// TEST
   //  for (i=0; i<1; i++) {
 
-    ctl_param_change( eParamVoice,	i	);
-
+  ///////
+  ///// drum 0
+    ctl_param_change( eParamVoice,	0	);
     ctl_param_change( eParamGate0,	0	);
     ctl_param_change( eParamTrig0,	1	);
 
     ctl_param_change( eParamAmp0,		FR32_MAX >> 1	);
     ctl_param_change( eParamAmpSus0,     	FR32_MAX >> 1	);
-    ctl_param_change( eParamAmpAtkSlew0,	sec_to_slew(0.001)	);
-    ctl_param_change( eParamAmpDecSlew0,	sec_to_slew(0.01 )	);
-    ctl_param_change( eParamAmpRelSlew0,	sec_to_slew(0.01 + (0.1 * i))	);
-    ctl_param_change( eParamAmpSusDur0,     	500 + (250 * i)	);
+    ctl_param_change( eParamAmpAtkSlew0, 	sec_to_slew(0.001)	);
+    ctl_param_change( eParamAmpDecSlew0,	sec_to_slew(0.2 )	);
+    ctl_param_change( eParamAmpRelSlew0,	sec_to_slew(1.0)	);
+    ctl_param_change( eParamAmpSusDur0,     	10000 );
 
-    ctl_param_change( eParamFreqAtkSlew0,	sec_to_slew(0.004)	);
-    ctl_param_change( eParamFreqDecSlew0,	sec_to_slew(0.002)	);
-    ctl_param_change( eParamFreqRelSlew0,	sec_to_slew(0.005)	);
+    ctl_param_change( eParamFreqAtkSlew0,	sec_to_slew(0.002)	);
+    ctl_param_change( eParamFreqDecSlew0,	sec_to_slew(0.0.1)	);
+    ctl_param_change( eParamFreqRelSlew0,	sec_to_slew(2.0)	);
     ctl_param_change( eParamFreqOff0,	hz_to_svf(27.5)	);
-    ctl_param_change( eParamFreqOn0,	hz_to_svf(110.0 * (i+1)) );
-    ctl_param_change( eParamFreqSus0,	hz_to_svf(55.0 * (i+1))	 );
-    ctl_param_change( eParamFreqSusDur0,     	20 + (250 * i)	);
-    
+    ctl_param_change( eParamFreqOn0,	hz_to_svf(220.0) );
+    ctl_param_change( eParamFreqSus0,	hz_to_svf(110.0)	 );
+    ctl_param_change( eParamFreqSusDur0,    	8000);
+
     ctl_param_change( eParamRqAtkSlew0,	sec_to_slew(0.0002)	);
     ctl_param_change( eParamRqDecSlew0,	sec_to_slew(0.01)	);
     ctl_param_change( eParamRqRelSlew0,	sec_to_slew(0.01)	);
-    ctl_param_change( eParamRqOff0,	float_to_fr32(0.2)	);
+    ctl_param_change( eParamRqOff0,	float_to_fr32(0.3)	);
     ctl_param_change( eParamRqOn0,	float_to_fr32(0.3)	);
-    ctl_param_change( eParamRqSus0,	float_to_fr32(0.2)	);
-    ctl_param_change( eParamRqSusDur0,     	200 + (250 * i)	);
+    ctl_param_change( eParamRqSus0,	float_to_fr32(0.04)	);
+    ctl_param_change( eParamRqSusDur0,     	30000	);
 
     ctl_param_change( eParamLow0,		float_to_fr32(0.9)	);
     ctl_param_change( eParamHigh0,	0	);
     ctl_param_change( eParamBand0,	0	);
     ctl_param_change( eParamNotch0,	0	);
-  }
+
+
+  ///////
+  ///// drum 1
+    ctl_param_change( eParamVoice,	0	);
+    ctl_param_change( eParamGate0,	0	);
+    ctl_param_change( eParamTrig0,	1	);
+
+    ctl_param_change( eParamAmp0,		FR32_MAX >> 1	);
+    ctl_param_change( eParamAmpSus0,     	FR32_MAX >> 1	);
+    ctl_param_change( eParamAmpAtkSlew0, 	sec_to_slew(0.001)	);
+    ctl_param_change( eParamAmpDecSlew0,	sec_to_slew(0.2 )	);
+    ctl_param_change( eParamAmpRelSlew0,	sec_to_slew(1.0)	);
+    ctl_param_change( eParamAmpSusDur0,     	10000 );
+
+    ctl_param_change( eParamFreqAtkSlew0,	sec_to_slew(0.002)	);
+    ctl_param_change( eParamFreqDecSlew0,	sec_to_slew(0.0.1)	);
+    ctl_param_change( eParamFreqRelSlew0,	sec_to_slew(2.0)	);
+    ctl_param_change( eParamFreqOff0,	hz_to_svf(27.5)	);
+    ctl_param_change( eParamFreqOn0,	hz_to_svf(220.0) );
+    ctl_param_change( eParamFreqSus0,	hz_to_svf(110.0)	 );
+    ctl_param_change( eParamFreqSusDur0,    	8000);
+
+    ctl_param_change( eParamRqAtkSlew0,	sec_to_slew(0.0002)	);
+    ctl_param_change( eParamRqDecSlew0,	sec_to_slew(0.01)	);
+    ctl_param_change( eParamRqRelSlew0,	sec_to_slew(0.01)	);
+    ctl_param_change( eParamRqOff0,	float_to_fr32(0.3)	);
+    ctl_param_change( eParamRqOn0,	float_to_fr32(0.3)	);
+    ctl_param_change( eParamRqSus0,	float_to_fr32(0.04)	);
+    ctl_param_change( eParamRqSusDur0,     	30000	);
+
+    ctl_param_change( eParamLow0,		float_to_fr32(0.9)	);
+    ctl_param_change( eParamHigh0,	0	);
+    ctl_param_change( eParamBand0,	0	);
+    ctl_param_change( eParamNotch0,	0	);
 }
 
 // set gate
