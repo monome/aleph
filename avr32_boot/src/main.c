@@ -76,6 +76,7 @@ static void init_avr32(void) {
   // clocks
   // setup clocks
   sysclk_init();
+
   // why need here?
   sysclk_enable_pbb_module(SYSCLK_SMC_REGS);
   flashc_set_bus_freq(FCPU_HZ);

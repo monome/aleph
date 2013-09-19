@@ -357,8 +357,8 @@ void module_init(void) {
   ///////////////////
   ////////////
   /// tEST
-  lcprng_reset(&rngL);
-  lcprng_reset(&rngH);
+  lcprng_reset(&rngL, 0xDEADFACE);
+  lcprng_reset(&rngH, 0xBEEFCAFE);
   ///////
   ////////////////////
 

@@ -1,4 +1,4 @@
-/* env_exp.c
+/* env_exp
    
    simple ADSR envelope class based on exponential integrators.
 
@@ -61,9 +61,9 @@ fract32 env_exp_next(env_exp* env) {
 
 // set gate
 void env_exp_set_gate(env_exp* env, u8 g) {
-  if(g == env->gate) {
-    return;
-  }
+  /* if(g == env->gate) { */
+  /*   return; */
+  /* } */
   env->gate = g;
   if( g > 0 ) {
     if (env->trig) {
@@ -104,7 +104,7 @@ void env_exp_set_off(env_exp* env, fract32 v) {
   if(env->state == envStateRel) {
     filter_1p_lo_in(&(env->lpRel), v);
   } else {
-    /// bah
+    // bah
   }
 }
 

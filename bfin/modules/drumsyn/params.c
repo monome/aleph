@@ -137,9 +137,6 @@ void module_set_param(u32 idx, pval v) {
     filter_svf_set_notch( &(voices[vid]->svf), v.fr);
     break;
 
-
-    //// TODO
-    /// .. other voices...
   default:
     break;
   }
@@ -147,7 +144,6 @@ void module_set_param(u32 idx, pval v) {
 
 }
 
-/// FIXME: missing some param descs
 void fill_param_desc(void) {
   strcpy(gModuleData->paramDesc[eParamVoice].label, "Voice");
   strcpy(gModuleData->paramDesc[eParamVoice].unit, "");

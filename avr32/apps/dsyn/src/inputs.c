@@ -330,9 +330,12 @@ static void fill_hz_freq_tables(void) {
 fract32 sec_to_slew(float sec) {
 
   //  c = e ^ (-2pi * (hz / sr))
-  return float_to_fr32( 
+fract32 val =   float_to_fr32( 
 			 (float) exp( -2.0 * M_PI * 1.0 / (sec * 48000.0) )
 			  );
+ print_dbg("\r\n computed slew: ");
+ print_dbg_hex((u32)val);
+ return val;
 }
 
 // convert frequency in hz (float) to svf cutoff coefficient (fract32) 

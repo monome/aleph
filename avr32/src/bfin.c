@@ -45,7 +45,7 @@ void bfin_wait(void) {
     while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { 
       print_dbg("\r\n HWAIT asserted..."); 
     }
-    delay_us(10);
+    delay_us(50);
 }
 
 // load bfin executable from the RAM buffer
@@ -76,15 +76,15 @@ void bfin_set_param(u8 idx, fix16_t x ) {
   ParamValue pval;
   pval.asInt = (s32)x;
 
-  //  print_dbg("\r\n bfin_set_param, idx: ");
-  //  print_dbg_ulong(idx);
+    print_dbg("\r\n bfin_set_param, idx: ");
+    print_dbg_ulong(idx);
 
-  //  print_dbg(",\t val: 0x");
-  //  print_dbg_hex((u32)x);
+    print_dbg(",\t val: 0x");
+    print_dbg_hex((u32)x);
 
-  //  print_dbg("\r\n");
-  print_dbg_ulong(tcTicks - ticks);
-  ticks = tcTicks;
+    print_dbg(", \t elapsed ms: ");
+    print_dbg_ulong(tcTicks - ticks);
+    ticks = tcTicks;
 
   //  app_pause();
 

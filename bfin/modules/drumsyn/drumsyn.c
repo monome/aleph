@@ -135,7 +135,7 @@ void drumsyn_voice_init(void* mem) {
   env_exp_set_on(  &(voice->envFreq) , 0x1fffffff );
 
   env_exp_set_off(  &(voice->envRq) , 0x1fffffff );
-  env_exp_set_on(  &(voice->envRq) , 0xffff );
+  env_exp_set_on(  &(voice->envRq) , 0x1fffffff );
 
 }
 
