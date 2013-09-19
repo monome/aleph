@@ -100,7 +100,7 @@ void sustain_timer_callback(int tag) {
 
 //====== external
 void init_app_timers(void) {
-  set_timer(&screenTimer,        eScreenTimerTag,        100,  &screen_timer_callback,  1);
+  set_timer(&screenTimer,        eScreenTimerTag,        20,  &screen_timer_callback,  1);
   //  set_timer(&adcTimer,           eAdcTimerTag,           5,   &adc_timer_callback,     1);
   //  set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);
   //  set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 20,  &monome_refresh_timer_callback, 1);

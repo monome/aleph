@@ -213,22 +213,23 @@ void ctl_init_params(void) {
     delay_ms(1);
     ctl_param_change( eParamTrig0,	1	);
 
+
     delay_ms(1);
     ctl_param_change( eParamAmp0,		FR32_MAX >> 1	);
     delay_ms(1);
     ctl_param_change( eParamAmpSus0,     	FR32_MAX >> 2	);
     delay_ms(1);
-    ctl_param_change( eParamAmpAtkSlew0, 	sec_to_slew(0.25)	);
+    ctl_param_change( eParamAmpAtkSlew0, 	sec_to_slew(1.f / 32.f)	);
     delay_ms(1);
-    ctl_param_change( eParamAmpDecSlew0,	sec_to_slew(0.25 )	);
+    ctl_param_change( eParamAmpDecSlew0,	sec_to_slew(0.04 )	);
     delay_ms(1);
-    ctl_param_change( eParamAmpRelSlew0,	sec_to_slew(0.25)	);
+    ctl_param_change( eParamAmpRelSlew0,	sec_to_slew(0.0625)	);
     delay_ms(1);
     ctl_param_change( eParamAmpSusDur0,     	20 );
     delay_ms(1);
 
     delay_ms(1);
-    ctl_param_change( eParamFreqAtkSlew0,	sec_to_slew(0.125)	);
+    ctl_param_change( eParamFreqAtkSlew0,	sec_to_slew(1.f / 16.f)	);
     delay_ms(1);
     ctl_param_change( eParamFreqDecSlew0,	sec_to_slew(0.125)	);
     delay_ms(1);
@@ -244,18 +245,18 @@ void ctl_init_params(void) {
     delay_ms(1);
 
     delay_ms(1);
-    ctl_param_change( eParamRqAtkSlew0,	sec_to_slew(0.1)	);
+    ctl_param_change( eParamRqAtkSlew0,	sec_to_slew(0.01)	);
     delay_ms(1);
-    ctl_param_change( eParamRqDecSlew0,	sec_to_slew(0.1)	);
+    ctl_param_change( eParamRqDecSlew0,	sec_to_slew(0.25)	);
     delay_ms(1);
     ctl_param_change( eParamRqRelSlew0,	sec_to_slew(0.1)	);
     delay_ms(1);
 
-    ctl_param_change( eParamRqOff0,	float_to_fr32(0.05)	);
+    ctl_param_change( eParamRqOff0,	float_to_fr32(0.2)	);
     delay_ms(1);
     ctl_param_change( eParamRqOn0,	float_to_fr32(0.2)	);
     delay_ms(1);
-    ctl_param_change( eParamRqSus0,	float_to_fr32(0.1)	);
+    ctl_param_change( eParamRqSus0,	float_to_fr32(0.05)	);
     delay_ms(1);
     ctl_param_change( eParamRqSusDur0,     	30000	);
     delay_ms(1);
@@ -283,7 +284,7 @@ void  ctl_set_gate(u8 ch, u8 val) {
 // increment tempo
 extern void ctl_inc_tempo(s32 val) {
   static s32 ms = 1000;
-  static const s32 metroMax = 4000;
+  static const s32 metroMax = 32000;
   static const s32 metroMin = 50; // 16th @300bpm
   ms += val;
   if(ms < metroMin) { ms = metroMin; }

@@ -115,7 +115,7 @@ extern void init_tc (volatile avr32_tc_t *tc) {
   // we want it to overflow and generate an interrupt every 1 ms
   // so (1 / fPBA / 128) * RC = 0.001
   // so RC = fPBA / 128 / 1000
-  tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 128 / 1000));
+  tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 128000));
   // configure the timer interrupt
   tc_configure_interrupts(tc, APP_TC_CHANNEL, &tc_interrupt);
   // Start the timer/counter.

@@ -16,8 +16,8 @@
 #include "fract32_emu.h"
 #endif
 
-
-#define FR32_COMP_THRESH 0xff
+// a little under -120db
+#define FR32_COMP_THRESH 0x800
 //#define FR32_COMP_THRESH_NEG 0xfffffffe
 
 // global temp variable, compute at init
