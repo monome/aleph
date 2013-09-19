@@ -5,6 +5,7 @@
 #ifndef _EVENTS_H_
 #define _EVENTS_H_
 
+#include "event_types.h"
 #include "types.h"
 
 typedef struct {

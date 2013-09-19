@@ -204,12 +204,6 @@ void screen_clear(void) {
 }
 
 
-
-
-
-
-
-
 // startup screen (FIXME: just grey at the moment)
 void screen_startup(void) {
   u32 i;

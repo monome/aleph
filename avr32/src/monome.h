@@ -10,6 +10,7 @@
 #define _ALEPH_MONOME_INTERFACE_H_
 
 #include "events.h"
+#include "ftdi.h"
 #include "types.h"
 
 //--------------------------------

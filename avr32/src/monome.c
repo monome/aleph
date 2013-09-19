@@ -384,8 +384,9 @@ u32 monome_xy_idx(u8 x, u8 y) {
 
 
 // top-level led/set function
-void monome_led_set(u8 x, u8 y, u8 val) {
-  ;;
+void monome_led_set(u8 x, u8 y, u8 z) {
+  monomeLedBuffer[x | (y << 4)] = z;
+  monome_calc_quadrant_flag(x, y);
 }
 
 // top-level led/toggle function
@@ -440,14 +441,16 @@ static u8 setup_mext(void) {
 
   mdesc.protocol = eProtocolMext;
 
-  delay_ms(10);
+
+  // FIXME: fuck these delays
+  delay_ms(1);
   ftdi_write(&w, 1);	// query
   
-  delay_ms(10);
+  delay_ms(1);
 
   ftdi_read();
 
-  delay_ms(10);
+  delay_ms(1);
   busy = 1;
 
   print_dbg("\r\n setup request ftdi read; waiting...");

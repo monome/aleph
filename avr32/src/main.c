@@ -60,19 +60,7 @@
 //==================================================
 //====  extern variables
 
-/* // handlers for function switches */
-/* sw_handler fnSwHandler[4] = { NULL, NULL, NULL, NULL }; */
-/* // handler for mode switch */
-/* sw_handler modeSwHandler = NULL; */
-/* // handlers for footswitches */
-/* sw_handler footSwHandler[2] = { NULL, NULL }; */
-/* // handlers for the 4 encoders */
-/* enc_handler encHandler[4] = { NULL, NULL, NULL, NULL }; */
-/* // handlers for adcs */
-/* adc_handler adcHandler[4] = { NULL, NULL, NULL, NULL }; */
-/* // monome grid key handler */
-/* monome_key_handler gridHandler = NULL; */
-
+// function pointer to app hhandler
 event_handler appEventHandler;
 
 //==================================================

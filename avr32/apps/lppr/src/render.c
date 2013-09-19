@@ -120,6 +120,7 @@ void render_startup(void) {
 void render_update(void) {
   region* r;  
   u8 i;
+  
   app_pause();
 
   for(i = 0; i<numRegions; i++) {

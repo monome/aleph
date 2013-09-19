@@ -6,7 +6,118 @@
 #include "module.h"
 #include "params.h" 
 
-static u8 vid = 0;
+
+static const char* paramStrings[] = {
+  //  eParamVoice,
+  "Gate0",		
+  "Trig0",		
+  "Amp0",		
+  "AmpSus0",      	
+  "AmpAtkSlew0",	
+  "AmpDecSlew0",	
+  "AmpRelSlew0",	
+  "AmpSusDur0",	
+  "FreqOff0",	
+  "FreqOn0",	
+  "FreqSus0",	
+  "FreqAtkSlew0",	
+  "FreqDecSlew0",	
+  "FreqRelSlew0",	
+  "FreqSusDur0",	
+  "RqOff0",		
+  "RqOn0",		
+  "RqSus0",		
+  "RqAtkSlew0",	
+  "RqDecSlew0",	
+  "RqRelSlew0",	
+  "RqSusDur0",	
+  "Low0",		
+  "High0",		
+  "Band0",		
+  "Notch0",	
+
+  "Gate1",		
+  "Trig1",		
+  "Amp1",		
+  "AmpSus1",      	
+  "AmpAtkSlew1",	
+  "AmpDecSlew1",	
+  "AmpRelSlew1",	
+  "AmpSusDur1",	
+  "FreqOff1",	
+  "FreqOn1",	
+  "FreqSus1",	
+  "FreqAtkSlew1",	
+  "FreqDecSlew1",	
+  "FreqRelSlew1",	
+  "FreqSusDur1",	
+  "RqOff1",		
+  "RqOn1",		
+  "RqSus1",		
+  "RqAtkSlew1",	
+  "RqDecSlew1",	
+  "RqRelSlew1",	
+  "RqSusDur1",	
+  "Low1",		
+  "High1",		
+  "Band1",		
+  "Notch1",			
+
+  "Gate2",		
+  "Trig2",		
+  "Amp2",		
+  "AmpSus2",      	
+  "AmpAtkSlew2",	
+  "AmpDecSlew2",	
+  "AmpRelSlew2",	
+  "AmpSusDur2",	
+  "FreqOff2",	
+  "FreqOn2",	
+  "FreqSus2",	
+  "FreqAtkSlew2",	
+  "FreqDecSlew2",	
+  "FreqRelSlew2",	
+  "FreqSusDur2",	
+  "RqOff2",		
+  "RqOn2",		
+  "RqSus2",		
+  "RqAtkSlew2",	
+  "RqDecSlew2",	
+  "RqRelSlew2",	
+  "RqSusDur2",	
+  "Low2",		
+  "High2",		
+  "Band2",		
+  "Notch2",		
+
+  "Gate3",		
+  "Trig3",		
+  "Amp3",		
+  "AmpSus3",      	
+  "AmpAtkSlew3",	
+  "AmpDecSlew3",	
+  "AmpRelSlew3",	
+  "AmpSusDur3",	
+  "FreqOff3",	
+  "FreqOn3",	
+  "FreqSus3",	
+  "FreqAtkSlew3",	
+  "FreqDecSlew3",	
+  "FreqRelSlew3",	
+  "FreqSusDur3",	
+  "RqOff3",		
+  "RqOn3",		
+  "RqSus3",		
+  "RqAtkSlew3",	
+  "RqDecSlew3",	
+  "RqRelSlew3",	
+  "RqSusDur3",	
+  "Low3",		
+  "High3",		
+  "Band3",		
+  "Notch3",		
+};
+
 
 static void set_param_gate(drumsynVoice* vp, s32 val) {
   if(val > 0) { 
@@ -30,16 +141,25 @@ static void set_param_trig(drumsynVoice* vp, s32 val) {
   env_exp_set_trig( &(vp->envRq)	, b );
 }
 
+static void module_set_voice_param(u8 vid, u32 idx, pval v);
 
 // set parameter by value
 void module_set_param(u32 idx, pval v) {
-  //  drumsynVoice* vp; // 	tmp voice pointer
+  /// offset hack on parameter index
+  if(idx < PARAM_VOICE_NPARAMS) {
+    module_set_voice_param(0, idx, v);
+  } else if (idx < PARAM_VOICE_NPARAMS_x2) {
+    module_set_voice_param(1, idx - PARAM_VOICE_NPARAMS, v);
+  } else if (idx < PARAM_VOICE_NPARAMS_x3) {
+    module_set_voice_param(2, idx - PARAM_VOICE_NPARAMS_x2, v);
+  } else {
+    module_set_voice_param(3, idx - PARAM_VOICE_NPARAMS_x3, v);
+  } 
+}
 
+//
+static void module_set_voice_param(u8 vid, u32 idx, pval v) {
   switch(idx) {
-
-  case eParamVoice:
-    vid = v.u % DRUMSYN_NVOICES;
-    break;
 
   case eParamGate0 : // 1bit gate
     set_param_gate(voices[vid], v.s);
@@ -145,6 +265,18 @@ void module_set_param(u32 idx, pval v) {
 }
 
 void fill_param_desc(void) {
+  u32 i;
+  //char strbuf[32];
+  for(i=0; i<eParamNumParams; i++) {
+    /// ... print to string
+      strcpy(gModuleData->paramDesc[i].label, paramStrings[i]);
+      strcpy(gModuleData->paramDesc[i].unit, "");
+      gModuleData->paramDesc[i].type = PARAM_TYPE_FRACT;
+      gModuleData->paramDesc[i].min = 0;
+      gModuleData->paramDesc[i].max = FR32_MAX;
+  }
+}
+/*
   strcpy(gModuleData->paramDesc[eParamVoice].label, "Voice");
   strcpy(gModuleData->paramDesc[eParamVoice].unit, "");
   gModuleData->paramDesc[eParamVoice].type = PARAM_TYPE_UINT;
@@ -180,18 +312,6 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamAmpRelSlew0].type = PARAM_TYPE_FRACT;
   gModuleData->paramDesc[eParamAmpRelSlew0].min = 0;
   gModuleData->paramDesc[eParamAmpRelSlew0].max = FR32_MAX;
-
-  /* strcpy(gModuleData->paramDesc[eParamAmpAtkCurve0].label, "AmpAtkCurve0"); */
-  /* strcpy(gModuleData->paramDesc[eParamAmpAtkCurve0].unit, ""); */
-  /* gModuleData->paramDesc[eParamAmpAtkCurve0].type = PARAM_TYPE_FRACT; */
-  /* gModuleData->paramDesc[eParamAmpAtkCurve0].min = 0; */
-  /* gModuleData->paramDesc[eParamAmpAtkCurve0].max = FR32_MAX; */
-
-  /* strcpy(gModuleData->paramDesc[eParamAmpRelCurve0].label, "AmpRelCurve0"); */
-  /* strcpy(gModuleData->paramDesc[eParamAmpRelCurve0].unit, ""); */
-  /* gModuleData->paramDesc[eParamAmpRelCurve0].type = PARAM_TYPE_FRACT; */
-  /* gModuleData->paramDesc[eParamAmpRelCurve0].min = 0; */
-  /* gModuleData->paramDesc[eParamAmpRelCurve0].max = FR32_MAX; */
 
   strcpy(gModuleData->paramDesc[eParamFreqAtkSlew0].label, "FreqAtkSlew0");
   strcpy(gModuleData->paramDesc[eParamFreqAtkSlew0].unit, "");
@@ -267,3 +387,4 @@ void fill_param_desc(void) {
 
   /// TODO: more voices
 }
+*/

@@ -21,66 +21,13 @@
 // blah
 #define DSP_STRING "aleph-drumsyn"
 
-/*
-  FIXME: should use dsyn/inputs.c for conversion
-  but for now, use hardcoded initial values only.
-  
-  formula for slew coefficients: 
-  e ^ (-2pi * (hz / sr))
-
-  slew coefficients are stored in fract32
-  
-*/
-
-/* const s32 kParamInitGate0 = 	0x00000000;		 */
-/* const s32 kParamInitTrig0 = 	0x00000000;		 */
-/* const s32 kParamInitAmp0 = 		0x5a999eb2;		 */
-/* const s32 kParamInitAmpAtkSlew0 = 	0x00000000;	 */
-/* const s32 kParamInitAmpRelSlew0 = 	0x00000000;	 */
-/* const s32 kParamInitFreqAtkSlew0 = 	0x7f14ef3c;	 */
-/* const s32 kParamInitFreqRelSlew0 = 	0x00000000;	 */
-/* const s32 kParamInitFreqStart0 = 	0x00000000;	 */
-/* const s32 kParamInitFreqEnd0 = 	0x00000000;	 */
-/* const s32 kParamInitRqAtkSlew0 = 	0x00000000;	 */
-/* const s32 kParamInitRqRelSlew0 = 	0x00000000;	 */
-/* const s32 kParamInitRqStart0 = 	0x00000000;	 */
-/* const s32 kParamInitRqEnd0 = 	0x00000000;	 */
-/* const s32 kParamInitLow0 = 		0x00000000;		 */
-/* const s32 kParamInitHigh0 = 	0x00000000;		 */
-/* const s32 kParamInitBand0 = 	0x00000000;		 */
-/* const s32 kParamInitNotch0 = 	0x00000000;	 */
-
-/* //	2640 hz	~= 0.707813107994074	~= 0x5a999eb2 */
-/* #define SLEW_ATK_SHORT 	0x5a999eb2 */
-
-/* //	55 hz 	~= 0.9928263710316179	~= 0x7f14ef3c */
-/* #define SLEW_ATK_LONG 	0x7f14ef3c */
-
-/* //	2 hz	~= 0.9997382348786702	~= 0x7ff76c26 */
-/* #define SLEW_REL_SHORT 	0x7ff76c26 */
-
-/* //	1/2 hz 	~= 0.9999345522948447	~= 0x7ffddafb */
-/* //#define SLEW_REL_LONG	0x7ffddafb */
-/* #define SLEW_REL_LONG	0x7fffaaaa */
-
-
-
 //----------------------------------------
 //---- static variables
 
-//-- parameter values
-// inputs. use s32 type but unsigned range (accumulators)
-//s32 dac[4];
-
-/// help!
-/* static inline s32 fr32_from_float(float x) { */
-/*   if(x > 0.f) { */
-/*     return (s32)((double)x * (double)0x7fffffff); */
-/*   } else { */
-/*     return (s32)((double)(x * -1.f) * (double)0x80000000); */
-/*   } */
-/* } */
-
+static const int kParamVoiceOff[4] = { 0, 
+				   PARAM_VOICE_NPARAMS,
+				   PARAM_VOICE_NPARAMS_x2,
+				   PARAM_VOICE_NPARAMS_x3 };
 
 //-------------------------------------
 //------ extern functions
@@ -133,7 +80,7 @@ u8 ctl_report_params(void) {
 
 // set initial parameters
 void ctl_init_params(void) {
-  u8 i;
+  //  u8 i;
   /* FIXME:
      make a text parser for intial parameters and read from sdcard?
      use stored input values from UI?
@@ -144,141 +91,139 @@ void ctl_init_params(void) {
   //  for (i=0; i<1; i++) {
 
   ///////
-  ///// drum 1
-    ctl_param_change( eParamVoice,	1	);
-    delay_ms(1);
-    ctl_param_change( eParamGate0,	0	);
-    delay_ms(1);
-    ctl_param_change( eParamTrig0,	1	);
-
-    delay_ms(1);
-    ctl_param_change( eParamAmp0,		FR32_MAX >> 1	);
-    delay_ms(1);
-    ctl_param_change( eParamAmpSus0,     	FR32_MAX >> 1	);
-    delay_ms(1);
-    ctl_param_change( eParamAmpAtkSlew0, 	sec_to_slew(1.0)	);
-    delay_ms(1);
-    ctl_param_change( eParamAmpDecSlew0,	sec_to_slew(1.0 )	);
-    delay_ms(1);
-    ctl_param_change( eParamAmpRelSlew0,	sec_to_slew(1.0)	);
-    delay_ms(1);
-    ctl_param_change( eParamAmpSusDur0,     	100 );
-
-    delay_ms(1);
-    ctl_param_change( eParamFreqAtkSlew0,	sec_to_slew(0.5)	);
-    delay_ms(1);
-    ctl_param_change( eParamFreqDecSlew0,	sec_to_slew(0.5)	);
-    delay_ms(1);
-    ctl_param_change( eParamFreqRelSlew0,	sec_to_slew(0.5)	);
-    delay_ms(1);
-    ctl_param_change( eParamFreqOff0,	hz_to_svf(220.5)	);
-    delay_ms(1);
-    ctl_param_change( eParamFreqOn0,	hz_to_svf(660.0)	);
-    delay_ms(1);
-    ctl_param_change( eParamFreqSus0,	hz_to_svf(440.0)	 );
-    delay_ms(1);
-    ctl_param_change( eParamFreqSusDur0,    	8000);
-
-    delay_ms(1);
-    ctl_param_change( eParamRqAtkSlew0,	sec_to_slew(0.25)	);
-    delay_ms(1);
-    ctl_param_change( eParamRqDecSlew0,	sec_to_slew(0.25)	);
-    delay_ms(1);
-    ctl_param_change( eParamRqRelSlew0,	sec_to_slew(0.25)	);
-    delay_ms(1);
-    ctl_param_change( eParamRqOff0,	float_to_fr32(0.3)	);
-    delay_ms(1);
-    ctl_param_change( eParamRqOn0,	float_to_fr32(0.3)	);
-    delay_ms(1);
-    ctl_param_change( eParamRqSus0,	float_to_fr32(0.3)	);
-    delay_ms(1);
-    ctl_param_change( eParamRqSusDur0,     	300	);
-
-    delay_ms(1);
-    ctl_param_change( eParamLow0,	float_to_fr32(0.7)	);
-    delay_ms(1);
-    ctl_param_change( eParamHigh0,	float_to_fr32(0.2)	);
-    delay_ms(1);
-    ctl_param_change( eParamBand0,	0	);
-    delay_ms(1);
-    ctl_param_change( eParamNotch0,	0	);
-
-
-  ///////
   ///// drum 0
-    delay_ms(1);
-    ctl_param_change( eParamVoice,	0	);
-    delay_ms(1);
-    ctl_param_change( eParamGate0,	0	);
-    delay_ms(1);
-    ctl_param_change( eParamTrig0,	1	);
 
+    ctl_voice_param( 0,  eParamGate,	0	);
+    delay_ms(1);
+    ctl_voice_param( 0,  eParamTrig,	1	);
 
     delay_ms(1);
-    ctl_param_change( eParamAmp0,		FR32_MAX >> 1	);
+    ctl_voice_param( 0,  eParamAmp,		FR32_MAX >> 1	);
     delay_ms(1);
-    ctl_param_change( eParamAmpSus0,     	FR32_MAX >> 2	);
+    ctl_voice_param( 0,  eParamAmpSus,     	FR32_MAX >> 4	);
     delay_ms(1);
-    ctl_param_change( eParamAmpAtkSlew0, 	sec_to_slew(1.f / 32.f)	);
+    ctl_voice_param( 0,  eParamAmpAtkSlew, 	sec_to_slew(1.f / 32.f)	);
     delay_ms(1);
-    ctl_param_change( eParamAmpDecSlew0,	sec_to_slew(0.04 )	);
+    ctl_voice_param( 0,  eParamAmpDecSlew,	sec_to_slew(0.04 )	);
     delay_ms(1);
-    ctl_param_change( eParamAmpRelSlew0,	sec_to_slew(0.0625)	);
+    ctl_voice_param( 0,  eParamAmpRelSlew,	sec_to_slew(0.0625)	);
     delay_ms(1);
-    ctl_param_change( eParamAmpSusDur0,     	20 );
+    ctl_voice_param( 0,  eParamAmpSusDur,     	12 );
     delay_ms(1);
 
     delay_ms(1);
-    ctl_param_change( eParamFreqAtkSlew0,	sec_to_slew(1.f / 16.f)	);
+    ctl_voice_param( 0,  eParamFreqAtkSlew,	sec_to_slew(1.f / 16.f)	);
     delay_ms(1);
-    ctl_param_change( eParamFreqDecSlew0,	sec_to_slew(0.125)	);
+    ctl_voice_param( 0,  eParamFreqDecSlew,	sec_to_slew(0.125)	);
     delay_ms(1);
-    ctl_param_change( eParamFreqRelSlew0,	sec_to_slew(0.125)	);
+    ctl_voice_param( 0,  eParamFreqRelSlew,	sec_to_slew(0.125)	);
     delay_ms(1);
-    ctl_param_change( eParamFreqOff0,	hz_to_svf(77.5)	);
+    ctl_voice_param( 0,  eParamFreqOff,	hz_to_svf(77.5)	);
     delay_ms(1);
-    ctl_param_change( eParamFreqOn0,	hz_to_svf(77.5) );
+    ctl_voice_param( 0,  eParamFreqOn,	hz_to_svf(77.5) );
     delay_ms(1);
-    ctl_param_change( eParamFreqSus0,	hz_to_svf(77.5)	 );
+    ctl_voice_param( 0,  eParamFreqSus,	hz_to_svf(77.5)	 );
     delay_ms(1);
-    ctl_param_change( eParamFreqSusDur0,    	0.2);
-    delay_ms(1);
-
-    delay_ms(1);
-    ctl_param_change( eParamRqAtkSlew0,	sec_to_slew(0.01)	);
-    delay_ms(1);
-    ctl_param_change( eParamRqDecSlew0,	sec_to_slew(0.25)	);
-    delay_ms(1);
-    ctl_param_change( eParamRqRelSlew0,	sec_to_slew(0.1)	);
-    delay_ms(1);
-
-    ctl_param_change( eParamRqOff0,	float_to_fr32(0.2)	);
-    delay_ms(1);
-    ctl_param_change( eParamRqOn0,	float_to_fr32(0.2)	);
-    delay_ms(1);
-    ctl_param_change( eParamRqSus0,	float_to_fr32(0.05)	);
-    delay_ms(1);
-    ctl_param_change( eParamRqSusDur0,     	30000	);
+    ctl_voice_param( 0,  eParamFreqSusDur,    	0.2);
     delay_ms(1);
 
     delay_ms(1);
-    ctl_param_change( eParamLow0,		float_to_fr32(0.9)	);
+    ctl_voice_param( 0,  eParamRqAtkSlew,	sec_to_slew(0.001)	);
     delay_ms(1);
-    ctl_param_change( eParamHigh0,	0	);
+    ctl_voice_param( 0,  eParamRqDecSlew,	sec_to_slew(0.0625)	);
     delay_ms(1);
-    ctl_param_change( eParamBand0,	0	);
+    ctl_voice_param( 0,  eParamRqRelSlew,	sec_to_slew(1.f / 32.f)	);
     delay_ms(1);
-    ctl_param_change( eParamNotch0,	0	);
+
+    ctl_voice_param( 0,  eParamRqOff,	float_to_fr32(0.12)	);
     delay_ms(1);
+    ctl_voice_param( 0,  eParamRqOn,	float_to_fr32(0.10)	);
+    delay_ms(1);
+    ctl_voice_param( 0,  eParamRqSus,	float_to_fr32(0.24)	);
+    delay_ms(1);
+    ctl_voice_param( 0,  eParamRqSusDur,     	30	);
+    delay_ms(1);
+
+    delay_ms(1);
+    ctl_voice_param( 0,  eParamLow,		float_to_fr32(0.9)	);
+    delay_ms(1);
+    ctl_voice_param( 0,  eParamHigh,	0	);
+    delay_ms(1);
+    ctl_voice_param( 0,  eParamBand,	0	);
+    delay_ms(1);
+    ctl_voice_param( 0,  eParamNotch,	0	);
+    delay_ms(1);
+
+
+    //// drum 1
+
+    ctl_voice_param( 1,  eParamGate,	0	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamTrig,	1	);
+
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamAmp,		FR32_MAX >> 1	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamAmpSus,     	FR32_MAX >> 1	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamAmpAtkSlew, 	sec_to_slew(1.f / 32.f)	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamAmpDecSlew,	sec_to_slew(0.04 )	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamAmpRelSlew,	sec_to_slew(1.0)	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamAmpSusDur,     	120 );
+    delay_ms(1);
+
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamFreqAtkSlew,	sec_to_slew(1.f / 16.f)	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamFreqDecSlew,	sec_to_slew(0.125)	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamFreqRelSlew,	sec_to_slew(0.125)	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamFreqOff,	hz_to_svf(27.5)	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamFreqOn,	hz_to_svf(77.5) );
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamFreqSus,	hz_to_svf(55.5)	 );
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamFreqSusDur,    	0.2);
+    delay_ms(1);
+
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamRqAtkSlew,	sec_to_slew(0.001)	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamRqDecSlew,	sec_to_slew(0.0625)	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamRqRelSlew,	sec_to_slew(1.f / 32.f)	);
+    delay_ms(1);
+
+    ctl_voice_param( 1,  eParamRqOff,	float_to_fr32(0.04)	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamRqOn,	float_to_fr32(0.05)	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamRqSus,	float_to_fr32(0.08)	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamRqSusDur,     	30	);
+    delay_ms(1);
+
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamLow,		float_to_fr32(0.9)	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamHigh,	0	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamBand,	0	);
+    delay_ms(1);
+    ctl_voice_param( 1,  eParamNotch,	0	);
+    delay_ms(1);
+
+
 }
 
 // set gate
 void  ctl_set_gate(u8 ch, u8 val) {
-  //  static const eParam gateParams[4] = { eParamGate0 , eParamGate1, eParamGate2, eParamGate3  };
-  //  static const eParam gateParams[4] = { eParamGate0 , eParamGate0, eParamGate0, eParamGate0  };
-  //  eParam p = gateParams[ch];
-  ctl_param_change(eParamVoice, ch );
-  ctl_param_change(eParamGate0, (s32)val );
+  ctl_voice_param(ch, eParamGate, (fract32)val );
 }
 
 // increment tempo
@@ -292,4 +237,9 @@ extern void ctl_inc_tempo(s32 val) {
   timers_set_metro_ms((u32)ms);
   print_dbg("\r\n ms: ");
   print_dbg_ulong(ms);
+}
+
+// set voice and parameter
+extern void ctl_voice_param(u8 vid, u32 pid, fract32 val) {
+  ctl_param_change(pid + kParamVoiceOff[vid], val);
 }

@@ -44,7 +44,7 @@ extern void ctl_inc_panOutLR(u8 id, s32 delta);
 extern void ctl_inc_panOutFB(u8 id, s32 delta);
 
 
-// hugle table of actual DSP parameters.
+// huge table of actual DSP parameters.
 // FIXME: this is blithely copied from aleph/bfin/modules/lines/param.h
 // i suppose there should be some build mechanism to share sources directly.
 

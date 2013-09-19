@@ -22,6 +22,7 @@
 #include "monome.h"
 
 // lppr
+#include "app_timers.h"
 #include "files.h"
 #include "handler.h"
 #include "ctl.h"
@@ -117,6 +118,10 @@ u8 app_launch(u8 firstrun) {
   render_update();
 
   bfin_enable();
+
+  // enable timers
+  init_app_timers();
+
 
   render_startup();
   render_update();
