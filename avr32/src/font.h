@@ -2,10 +2,11 @@
 #define _FONT_H_
 
 //#include "compiler.h"
+#include "fonts/dejavu_numerals_24.h"
 #include "types.h"
 
 
-
+// small bitfield system font
 #define FONT_CHARW 6
 #define FONT_CHARH 8
 #define FONT_CHARH_1 7
@@ -13,9 +14,10 @@
 #define FONT_ASCII_OFFSET 0x20
 
 // big antialiased fonts...
-#define FONT_AA_CHARH 	24
-#define FONT_AA_CHARH_1 23
-#define FONT_AA_CHARW 	16
+#define FONT_AA_CHARH 	FONT_DEJAVU_W
+#define FONT_AA_CHARW 	FONT_DEJAVU_H
+// FIXME: just numerals for now
+#define FONT_AA font_dejavu_24_numerals
 
 //---------------------------
 //---- variables
@@ -52,11 +54,11 @@ extern u8* font_string_bigbig(const char* str, u8* buf, u32 size, u8 w, u8 a, u8
 
 ///--- anti-aliased
 
-// render a single glyph to a buffer, rastering
-// given pointer, row length, foreground, background
-// returns updated pointer
-extern u8* font_glyph_aa(char ch, u8* buf, u8 w, u8 a, u8 b);
-// render a string of packed glyphs to a buffer
-extern u8* font_string_aa(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b);
+// render an anti-aliased (4-bit) glyph to a buffer
+// arguments are character, buffer, target row size, invert flag
+extern u8* font_glyph_aa(char ch, u8* buf, u8 w, u8 invert);
+
+// render a string of ant-aliased glyphs to a buffer
+extern u8* font_string_aa(const char* str, u8* buf, u32 size, u8 w, u8 invert);
 
 #endif // header guard

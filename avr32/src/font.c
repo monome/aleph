@@ -19,9 +19,14 @@
 
 #include "fonts/dejavu_numerals_24.h"
 
+// font string to use for anti-aliased numerals
+#define FONT_AA_NUMERAL_FACE dejavu_numerals_24
+// count of bytes in each anti-aliased, numeral glyph
+// 16 * 24
+// #define FONT_AA_NUMERAL_BYTES 384
+
 // maxiumum string size to attempt rendering
 #define MAX_RENDER_STRING 32
-
 
 // glyph table to use 
 
@@ -29,6 +34,15 @@
 // column-first buffer indexing
 // #define COL_FIRST
 
+// helper functions
+/// copy a pixel
+static void copyPx(const char* src, char* dst) {
+  *dst = *src;
+}
+// copy and invert a pixel (4-bit)
+static void copyPxInv(const char* src, char* dst) {
+  *dst = 0xf - *src;
+}
 
 // glyph.last is the inset from right hand edge of glyph box...
 const glyph_t font_data[]= {
@@ -185,6 +199,7 @@ extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
   u8 j;
   u8 * p = buf;
   const glyph_t* gl = &(font_data[ch - FONT_ASCII_OFFSET]);
+
   // columns to draw
   u8 cols = FONT_CHARW - gl->first - gl->last;
   while(i < cols) {
@@ -279,7 +294,7 @@ extern u8* font_glyph_bigbig(char ch, u8* buf, u8 w, u8 a, u8 b) {
     // increment column count
     i++;
     // set pointer to next (pixel*2) in first row
-    p = buf + (i*4);
+    p = buf + (i << 2);
   }
   return p;
 }
@@ -287,8 +302,6 @@ extern u8* font_glyph_bigbig(char ch, u8* buf, u8 w, u8 a, u8 b) {
 
 // render a string of packed glyphs to a buffer
 u8* font_string(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
-  // u32 x = 0;  // columns processed
-  // u32 off = 0; // offset
   u8* max = buf + size;
   while (buf < max) {
     if (*str == 0) {
@@ -345,30 +358,74 @@ u8* font_string_bigbig(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
 //-------------
 //----- anti-aliased fonts (bitmaps)
 
-// render a single glyph to a buffer, rastering
-// given pointer, row length, foreground, background
-// returns updated pointer
+// render an anti-aliased (4-bit) glyph to a buffer
+// arguments are character, buffer, target row size, invert flag
+extern u8* font_glyph_aa(char ch, u8* buf, u8 w, u8 inv) {
+  //#if 0
+  const char* gl; // glyph data
+  //  u8 gw, gh; // glyph width and height
+  u8 i, j;
+  // how many bytes to move buf pointer for 1st column of next row
+  u32 nextRowBytes;
+    // buf pointer;
+  char* p;
+  // pointer to copy function
+  void (*fp)(const char* src, char* dst);
+  
+  // fixme: wtf why
+  if(inv) { fp = &copyPxInv; } else { fp = &copyPx; }
 
-// lookup in our antialised font table 
-extern u8* font_glyph_aa(char ch, u8* buf, u8 w, u8 a, u8 b) {
-  u8 i=0;
-  u8 j;
-  u8 * p = buf;
+
   /// FIXME: only numerals for now...
   //// hackish
   if( (ch > 45) && (ch < 58)) { // dot + numerals
-    gl = font_dejavu_numerals[ch - 46];
+    gl = FONT_AA[ch - 46].glyph.data;
+    
   } else { 
     return buf;
   }
-  
   /// copy glyph to buffer...
-  //  screen_draw_region
+  p = (char*)buf;
+  //  gw = *gl++;
+  //  gh = *gl++;
+  //  nextRowBytes = w - gw;
+  nextRowBytes = w - FONT_AA_CHARW;
+  // loop over rows
+  for(i=0; i<FONT_AA_CHARH; i++) {
+    // loop over columns
+    for(j=0; j<FONT_AA_CHARW; j++) {
+      // copy pixel and advance pointers
+      //   *p++ = *gl++;
+      (*fp)(gl, p);
+      gl++;
+      p++;
+    }
+    // reset column and advance row
+    p += nextRowBytes;
+  }
+  // return original buf pointer plus glyph width
+  return buf + FONT_AA_CHARW;
+  //#endif
 }
 
 // render a string of packed glyphs to a buffer
-extern u8* font_string_aa(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
-  
+extern u8* font_string_aa(const char* str, u8* buf, u32 size, u8 w, u8 inv) {
+  //#if 0
+  u8* max = buf + size;
+  while (buf < max) {
+    if (*str == 0) {
+      // end of string
+      break;
+    }
+    buf = font_glyph_aa(*str, buf, w, inv);
+    // 1-column space between chars
+    //    buf++;
+    //// cutting the fonts with space included
+    //// so that background doesn't bleed through here
+    str++;
+  }
+  return buf;  
+  //#endif
 }
 
 #endif

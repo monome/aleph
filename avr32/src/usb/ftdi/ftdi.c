@@ -63,7 +63,7 @@ static void ftdi_tx_done(
 			       usb_ep_t ep,
 			       uhd_trans_status_t stat,
 			       iram_size_t nb) {
-  status = stat;2
+  status = stat;
   txBusy = 0;
   /* print_dbg("\r\n ftdi tx transfer callback. status: 0x"); */
   /* print_dbg_hex((u32)status); */

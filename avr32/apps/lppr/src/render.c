@@ -179,11 +179,11 @@ void render_delay_time(u8 id, u32 ms, u32 samps) {
   memset(numstrbuf, ' ', NUMSTRBUF_LEN);
   //  itoa_whole(ms, numstrbuf, 12);
   itoa_whole_lj(ms, numstrbuf);
-  region_string(&bigtop, numstrbuf, 30, 18, 0xf, 0x0, 1);
+  region_string_aa(&bigtop, numstrbuf, 30, 18, 1);
   memset(numstrbuf, ' ', NUMSTRBUF_LEN);
   //  itoa_whole(samps, numstrbuf, 12);
   itoa_whole_lj(samps, numstrbuf);
-  region_string(&bigtop, numstrbuf, 30, 36, 0xf, 0x0, 1);
+  region_string_aa(&bigtop, numstrbuf, 30, 36, 1);
 }
     
 // draw labels for delay time
@@ -192,8 +192,8 @@ void render_touched_delaytime(u8 id) {
   region_string(&bigtop, "delay time", 0, 0, 0xa, 0x3, 0 );
   if(id) { region_string(&bigtop, " 2   ", 40, 0, 0xa, 0x3, 1 ); }
   else { region_string(&bigtop, " 1   ", 40, 0, 0xa, 0x3, 1 ); }
-  region_string(&bigtop, "ms : ", 	0, 18, 0xd, 0x0, 0 );
-  region_string(&bigtop, "samples : ", 	0, 36, 0xd, 0x0, 0 );
+  region_string(&bigtop, "millisec ", 	0, 18, 0xd, 0x0, 0 );
+  region_string(&bigtop, "samples ", 	0, 36, 0xd, 0x0, 0 );
 }
 
 // draw any amplitude
@@ -201,10 +201,10 @@ void render_amp(u32 input, s32 amp) {
   // decibels
   memset(numstrbuf, ' ', NUMSTRBUF_LEN);
   print_fix16(numstrbuf, input_db(input));
-  region_string(&bigtop, numstrbuf, 30, 18, 0xf, 0x0, 1); 
+  region_string_aa(&bigtop, numstrbuf, 30, 18, 1);
   memset(numstrbuf, ' ', NUMSTRBUF_LEN);
   print_fix16(numstrbuf, FRACT_FIX16(amp));
-  region_string(&bigtop, numstrbuf, 30, 36, 0xf, 0x0, 1); 
+  region_string_aa(&bigtop, numstrbuf, 30, 36, 1); 
 }
 
 // feedback touched
@@ -213,8 +213,8 @@ void render_touched_fb(u8 id) {
   region_string(&bigtop, "feedback", 0, 0, 0xa, 0x3, 0 );
   if(id) { region_string(&bigtop, " 2   ", 40, 0, 0xa, 0x3, 1 ); }
   else { region_string(&bigtop, " 1   ", 40, 0, 0xa, 0x3, 1 ); }
-  region_string(&bigtop, "decibels : ", 	0, 18, 0xd, 0x0, 0 );
-  region_string(&bigtop, "amplitude : ", 	0, 36, 0xd, 0x0, 0 );
+  region_string(&bigtop, "decibels  ", 	0, 18, 0xd, 0x0, 0 );
+  region_string(&bigtop, "amplitude  ", 	0, 36, 0xd, 0x0, 0 );
 }
 
 // mix touched
@@ -223,8 +223,8 @@ extern void render_touched_mix(u8 id) {
   region_string(&bigtop, "filter mix", 0, 0, 0xa, 0x3, 0 );
   if(id) { region_string(&bigtop, " 2   ", 40, 0, 0xa, 0x3, 1 ); }
   else { region_string(&bigtop, " 1   ", 40, 0, 0xa, 0x3, 1 ); }
-  region_string(&bigtop, "decibels : ", 	0, 18, 0xd, 0x0, 0 );
-  region_string(&bigtop, "amplitude : ", 	0, 36, 0xd, 0x0, 0 );
+  region_string(&bigtop, "decibels  ", 	0, 18, 0xd, 0x0, 0 );
+  region_string(&bigtop, "amplitude  ", 	0, 36, 0xd, 0x0, 0 );
 }
 
 
@@ -232,10 +232,10 @@ extern void render_touched_mix(u8 id) {
 void render_freq(u32 input) {
   memset(numstrbuf, ' ', NUMSTRBUF_LEN);
   print_fix16(numstrbuf, input_hz(input));
-  region_string(&bigtop, numstrbuf, 30, 18, 0xf, 0x0, 1);
+  region_string_aa(&bigtop, numstrbuf, 30, 18, 1);
   memset(numstrbuf, ' ', NUMSTRBUF_LEN);
   print_fix16(numstrbuf, input_note(input));
-  region_string(&bigtop, numstrbuf, 30, 36, 0xf, 0x0, 1); 
+  region_string_aa(&bigtop, numstrbuf, 30, 36, 1); 
 }
 
 // freq touched
@@ -244,15 +244,15 @@ extern void render_touched_freq(u8 id) {
   region_string(&bigtop, "filter cutoff", 0, 0, 0xa, 0x3, 0 );
   if(id) { region_string(&bigtop, " 2   ", 40, 0, 0xa, 0x3, 1 ); }
   else { region_string(&bigtop, " 1   ", 40, 0, 0xa, 0x3, 1 ); }
-  region_string(&bigtop, "hz : ", 	0, 18, 0xd, 0x0, 0 );
-  region_string(&bigtop, "note : ", 	0, 36, 0xd, 0x0, 0 );
+  region_string(&bigtop, "hz ", 	0, 18, 0xd, 0x0, 0 );
+  region_string(&bigtop, "note ", 	0, 36, 0xd, 0x0, 0 );
 }
 
 // draw resonance
 void render_res(u32 in) {
   memset(numstrbuf, ' ', NUMSTRBUF_LEN);
   print_fix16(numstrbuf, IN_FR16(in));
-  region_string(&bigtop, numstrbuf, 30, 18, 0xf, 0x0, 1);
+  region_string_aa(&bigtop, numstrbuf, 30, 18, 1);
 }
 
 // resonance touched
@@ -261,7 +261,7 @@ extern void render_touched_res(u8 id) {
   region_string(&bigtop, "filter RQ", 0, 0, 0xa, 0x3, 0 );
   if(id) { region_string(&bigtop, " 2   ", 40, 0, 0xa, 0x3, 1 ); }
   else { region_string(&bigtop, " 1   ", 40, 0, 0xa, 0x3, 1 ); }
-  region_string(&bigtop, "(0-1) : ", 	0, 18, 0xd, 0x0, 0 );
+  region_string(&bigtop, "[ 0 , 1 ]", 	0, 18, 0xd, 0x0, 0 );
 }
 
 extern void render_record(void) {

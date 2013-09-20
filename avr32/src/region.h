@@ -29,24 +29,31 @@ typedef struct _region {
 
 
 // allocate and initialize
-void region_alloc(region* reg);
+extern void region_alloc(region* reg);
 
 /// ha
 /*  void region_free(region* reg) */
 
 // render a string to a region with offset
-  void region_string(
-		     region* reg,	 // region
-		     const char* str,// string
-		     u8 x, u8 y, 	 // offset
-		     u8 a, u8 b, 	 // colors
-		     u8 sz);  // size levels (dimensions multiplied by 2**sz)
+extern void region_string(
+		   region* reg,	 // region
+		   const char* str,// string
+		   u8 x, u8 y, 	 // offset
+		   u8 a, u8 b, 	 // colors
+		   u8 sz);  // size levels (dimensions multiplied by 2**sz)
 
+// render a string to a region using the default anti-aliased font.
+extern void region_string_aa(
+		   region* reg,	 // region
+		   const char* str,// string
+		   u8 x, u8 y, 	 // offset
+		   u8 inv ); // inversion flag
+ 
 // fill a region with given color
-void region_fill(region* reg, u8 c);
+extern void region_fill(region* reg, u8 c);
   
 
 // hilight a region with given color and threshold
-void region_hl(region* reg, u8 c, u8 thresh);
+extern void region_hl(region* reg, u8 c, u8 thresh);
 
 #endif // h guardi

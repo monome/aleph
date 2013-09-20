@@ -37,6 +37,20 @@ void region_string(
   reg->dirty = 1;
 }
 
+
+// render a string to a region using the default anti-aliased font.
+void region_string_aa(
+		   region* reg,	 // region
+		   const char* str,// string
+		   u8 x, u8 y, 	 // offset
+		   u8 inv ) // inversion flag
+ 
+{
+  font_string_aa(str, reg->data + (u32)reg->w * (u32)y + (u32)x, reg->len, reg->w, inv);
+  reg->dirty = 1;
+}
+
+
 // fill a region with given color
 void region_fill(region* reg, u8 c) {
   u32 i;

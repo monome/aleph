@@ -1,4 +1,4 @@
-; a scheme program for generating bitmapped fonts from the GIMP.
+  >g; a scheme program for generating bitmapped fonts from the GIMP.
 ; stage 1 of the aleph font process.
 ; produces a pile of images in .xpm format.					
 
@@ -37,7 +37,7 @@
 	    )
 
       (display "font extents: ")
-      (display (gimp-text-get-extents-fontname font size 0 text))
+      (display (gimp-text-get-extents-fontname text size 0 font))
       (display #\newline)
 					; anchor selection
       (gimp-floating-sel-anchor text-float)
