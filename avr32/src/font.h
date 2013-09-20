@@ -14,8 +14,8 @@
 #define FONT_ASCII_OFFSET 0x20
 
 // big antialiased fonts...
-#define FONT_AA_CHARH 	FONT_DEJAVU_W
-#define FONT_AA_CHARW 	FONT_DEJAVU_H
+#define FONT_AA_CHARW 	FONT_DEJAVU_W
+#define FONT_AA_CHARH 	FONT_DEJAVU_H
 // FIXME: just numerals for now
 #define FONT_AA font_dejavu_24_numerals
 

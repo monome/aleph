@@ -108,12 +108,24 @@ void render_status(const char* str) {
 void render_startup(void) {
   //  region_string(&status, "             ", 32, 16, 0xf, 0x0, 1);
 //  region_clear(&status);
+  u32 i, j;
+
   region_fill(&bigtop, 0x5);
   region_string(&bigtop, "LPPR", 40, 12, 0xf, 0x0, 2);
   region_string(&(foot[0]), "TAP1", 0, 0, 0xf, 0x0, 0);
   region_string(&(foot[1]), "TAP2", 0, 0, 0xf, 0x0, 0);
   region_string(&(foot[2]), "REC", 0, 0, 0xf, 0x0, 0);
   region_string(&(foot[3]), "PLAY", 0, 0, 0xf, 0x0, 0);
+
+  
+  /// test the AA font
+  for(i=0; i<24; i++) {
+    for(j=0; j<18; j++) {
+      print_dbg_char(0x20 + font_dejavu_24_numerals[3].glyph.data[i * 18 + j]);
+    }
+    print_dbg("\r\n");
+  }
+
 }
 
 // update dirty regions
