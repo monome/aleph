@@ -1,4 +1,4 @@
-  >g; a scheme program for generating bitmapped fonts from the GIMP.
+; a scheme program for generating bitmapped fonts from the GIMP.
 ; stage 1 of the aleph font process.
 ; produces a pile of images in .xpm format.					
 
@@ -6,14 +6,14 @@
 	 outpath 	; target location
 	 font		; font name
 	 all		; if set, generate all basic ascii characters, otherwise just numerals
-	 img-w		; image width
-	 img-h		; image height
+;	 img-w		; initial (max) image width
+;	 img-h		; initial (max) image height
 	 font-size	; font size
-	 crop-w	; fonts are dumb... its best to arbitrarily crop the output.
-	 crop-h	; 
-	 crop-offx	; 
-	 crop-offy	; 
-
+;	 crop-w	; fonts are dumb... its best to arbitrarily crop the output.
+;	 crop-h	; 
+;	 crop-offx	; 
+;	 crop-offy	; 
+	 ; now using autocrop
 	 )
 
 
@@ -50,10 +50,10 @@
       )
     )
 
-  (define (make_char_img w h char font fontsize)
+  (define (make_char_img char font fontsize)
     (let* (
-	   (img (car (gimp-image-new w h RGB)))
-	   (layer (car (gimp-layer-new img w h
+	   (img (car (gimp-image-new fontsize (* 2 fontsize) RGB)))
+	   (layer (car (gimp-layer-new img fontsize (* 2 fontsize)
 				       RGB "layer 1" 100 NORMAL)))
 ;	   (outpath "/home/emb/Desktop/aleph_fonts/")
 	   (charstring (if (string=? char ".")
@@ -65,7 +65,7 @@
 			   )
 		       )
 	   (outstring 
-		(string-append font "_" (number->string crop-w) "_" (number->string crop-h) "_" (number->string fontsize) "-" charstring ".xpm")
+		(string-append "_" (number->string fontsize) "-" charstring ".xpm")
 		)
 	    )
 	   
@@ -99,13 +99,15 @@
 				  )
 
       ; crop the image ... this is because fonts usually include some padding
-      (gimp-image-crop
-       img
-       crop-w 		; new width
-       crop-h 		; new height
-       crop-offx  		; off-x
-       crop-offy 		; off-y
-      )
+;      (gimp-image-crop
+;       img
+;       crop-w 		; new width
+;       crop-h 		; new height
+;       crop-offx  		; off-x
+;       crop-offy 		; off-y
+;      )
+      ; autocrop
+      (plug-in-autocrop RUN-NONINTERACTIVE img layer)
 
 					; display
       (gimp-display-new img)
@@ -139,7 +141,7 @@
 	      ( (char (substring str (- n 1) n ) ) )
 	    (display char)
 	    (display " ")
-	    (make_char_img img-w img-h char font font-size)
+	    (make_char_img char font font-size)
 	    (strdo (- n 1))
 	    )    
 	  )
