@@ -1,34 +1,26 @@
-ok so to be a little clearer,
-here are the steps you would take to generate an ant-aliased font,
-or any other collection of bitmaps.
+aleph/bmp
 
-i'm looking at xpm_convert.c and remembering that it does many files at once, 
-and that it was most convenient to simply hardcode these since they are C sources.
+ok this has evolved into a little ecosystem of scripts.
 
-so, in xpm_convert.c, change the #includes near the top to include the digit .xpms/.
+the goal is to create arbitrary fonts for the aleph with 4-bit greyscale.
 
-also, add their names to the static array on line 28.
-these are the variable names that will be created in the output.
+right now, there are 3 steps to this process:
 
-then:
+1)  run the scheme script font_xpm_gen.scm
+    this calls the GIMP graphics editor to render a list of ascii chars.
+    run it one of two ways:
+        a)  copy it to ~/.gimp-2.6/scripts,
+            then type: gimp -i -b '(font_xpm_gen)
+        b)  run it from emacs-gimp or from the script-fu console in the GIMP gui.  
+        
+    either way, it should create a lot of .xpm files at the indicated path.    
 
-gcc xpm_convert -o xpm-convert
-
-./xpm-convert
-
-and all the requested bitmap variables should show up in aleph_bmp_region.c
-
-
-to create the images in GIMP:
-
-- canvas size should be the same as the desired output size.
-
-- flatten the image: ( Image/Flatten Image )
-
-- change the color mode to Indexed with 16 optimized colors:
-( Image/Mode -> Indexed... Optimized Pallette + Maximum Colors:16 )
-
-- save as .xpm format.
-
-the colors selected should be [ 0x000000, 0x111111, 0x222222... 0xffffff ],
-which the converter will right-shift to 4 bits.
+2)  compile and run xpm_read.c
+    this scans the output directory of step 1) 
+    and produces 3 include files for use in step 3)
+    
+3)  compile and run xpm_convert.c
+    using the data from step 1) and metadata from step 2), 
+    this produces a single source file with all requested glyph,
+    in ready-to-use format for the avr32 application build.
+    
