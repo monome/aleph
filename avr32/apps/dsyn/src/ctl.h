@@ -2,8 +2,13 @@
 #ifndef _ALEPH_APP_FLRY_CTL_H_
 #define _ALEPH_APP_FLRY_CTL_H_
 
+
+// parameter min/max
 #define PARAM_DAC_MIN 0x00000000
 #define PARAM_DAC_MAX 0xffff
+
+// count of available voices
+#define DSYN_NVOICES 4
 
 //---------------------------
 //---- -external functions

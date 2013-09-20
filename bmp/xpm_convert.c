@@ -1,35 +1,37 @@
 /*
-  simple tool to convert GIMP image-include format to 4-bit grayscale format.
+  tool to convert GIMP image-include format to 4-bit grayscale format.
 
-  TODO: file arguments, from a preprocessor directive i guess.
+   stage 3 of the process of generating a bitmapped antialised font for the aleph screen.
+
+   .xpm files and and intermediate includes are assembled and processed.
+
+   a single final source file is generated, suitable for avr32 compilation.
+
  */
 
 #include <string.h>
 #include <stdio.h>
 
 // include XPM files
-#include "aleph_hebrew.xpm" 
-
-/*
-#include "0.xpm"
-#include "1.xpm"
-#include "2.xpm"
-#include "3.xpm"
-...
- */
+//#include "aleph_hebrew.xpm"
+ 
+#include "aleph_font_headers.h"
 
 // array of pointers to arrays of strings (!)
 // GIMP names each struct according to filename
 static char*(*glyphs[])[] = {
-  &(aleph_hebrew_xpm),
+  //  &(aleph_hebrew_xpm),
+#include "aleph_font_array.inc"
+
 };
 
 // array of glyph names
 static char* names[] = {
-  "aleph_hebrew",
+  //  "aleph_hebrew",
+#include "aleph_font_names.inc"
 };
 
-static const int nglyphs = 1;
+static int nglyphs;
 
 
 static FILE* fregion;
@@ -43,6 +45,7 @@ static void process_glyph(const char* name, char* (*glyph)[]) {
   char val;
   int i, j, k;  
   char* p;
+  nglyphs = sizeof(names);
   i = 0;
   // first string : dimensions
   // width

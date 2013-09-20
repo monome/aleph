@@ -98,6 +98,11 @@ extern void dsyn_handler(event_t* ev) {
   case kEventSwitch7:
     render_sw_on(3, ev->eventData > 0);
     break;
+
+  case kEventMonomeGridKey:
+    //    (*monome_grid_key_handler)((void*)monomeOpFocus, (u32)e->eventData);
+    ctl_key_press
+    break;
     
   case kEventEncoder0:
     ctl_inc_tempo(scale_knob_value(ev->eventData));
