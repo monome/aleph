@@ -1,5 +1,5 @@
 /* XPM */
-static char * aleph_hebrew_xpm[] = {
+static char * aleph_xpm[] = {
 "24 32 16 1",
 " 	c #000000",
 ".	c #111111",

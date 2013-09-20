@@ -2,7 +2,7 @@
 ; stage 1 of the aleph font process.
 ; produces a pile of images in .xpm format.					
 
-(define (fonts_xpm_gen
+(define (font_xpm_gen
 	 outpath 	; target location
 	 font		; font name
 	 all		; if set, generate all basic ascii characters, otherwise just numerals
@@ -18,7 +18,7 @@
 
 
   (define (draw_text img drawable text font size)
-					; start undo gropu
+					; start undo group
     (gimp-undo-push-group-start img)
     
     (let * (
@@ -35,6 +35,10 @@
 			      font		; font name string
 			      )))
 	    )
+
+      (display "font extents: ")
+      (display (gimp-text-get-extents-fontname font size 0 text))
+      (display #\newline)
 					; anchor selection
       (gimp-floating-sel-anchor text-float)
       
@@ -51,7 +55,7 @@
 	   (img (car (gimp-image-new w h RGB)))
 	   (layer (car (gimp-layer-new img w h
 				       RGB "layer 1" 100 NORMAL)))
-	   (outpath "/home/emb/Desktop/aleph_fonts/")
+;	   (outpath "/home/emb/Desktop/aleph_fonts/")
 	   (charstring (if (string=? char ".")
 			   "dot"
 			   (if (string=? char "/")
@@ -61,7 +65,7 @@
 			   )
 		       )
 	   (outstring 
-		(string-append font "_" (number->string w) "_" (number->string h) "_" (number->string fontsize) "-" charstring ".xpm")
+		(string-append font "_" (number->string crop-w) "_" (number->string crop-h) "_" (number->string fontsize) "-" charstring ".xpm")
 		)
 	    )
 	   
@@ -81,7 +85,7 @@
 					; it does NOT represent the actual height of each character.
 					; so, this needs to be fudged with arbitrarily different arguments
 					; for px height of the output image, and px size of the font
-					; can modify xpm_convert tool to discard empty columns / rows ?
+					; ( could modify xpm_convert tool to discard empty columns / rows ? )
       (draw_text img layer char font fontsize)
 
 					; convert to 4-bit indexed

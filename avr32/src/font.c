@@ -17,8 +17,13 @@
 #include "types.h"
 #include "font.h"
 
+#include "fonts/dejavu_numerals_24.h"
+
 // maxiumum string size to attempt rendering
 #define MAX_RENDER_STRING 32
+
+
+// glyph table to use 
 
 /// FIXME: implement this, it would be a little faster
 // column-first buffer indexing
@@ -129,16 +134,6 @@ const glyph_t font_data[]= {
 const U32 font_nglyphs = sizeof(font_data)/sizeof(glyph_t) - 1;
 
 
-//------------
-//--- static temp vars for speed
-// columns to draw
-//static u8 cols;
-// bytes per column
-//static u8 colbytes;
-// pointer to glyph
-//static const glyph_t* gl;
-//static u8 i, j;
-
 
 //------------------------------------------
 //-----  functions
@@ -146,7 +141,6 @@ const U32 font_nglyphs = sizeof(font_data)/sizeof(glyph_t) - 1;
 
 ///// COLUMN FIRST BUFFER INDEXING
 #ifdef COL_FIRST
-
 //// TODO
 
 // render single glyph to a flat buffer (1byte = 1px)
@@ -193,9 +187,6 @@ extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
   const glyph_t* gl = &(font_data[ch - FONT_ASCII_OFFSET]);
   // columns to draw
   u8 cols = FONT_CHARW - gl->first - gl->last;
-  // hm...
-  //  w >>= 1;
-  //  print_dbg("\r\n");
   while(i < cols) {
     for(j=0; j<FONT_CHARH; j++) {
       *p = gl->data[i + gl->first] & (1 << j) ? a : b;
@@ -203,7 +194,6 @@ extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
       // point at next row
       p += w;
     }
-    // print_dbg("\r\n");
     // increment column count
     i++;
     // reset pointer to row
@@ -219,11 +209,6 @@ extern u8* font_glyph_big(char ch, u8* buf, u8 w, u8 a, u8 b) {
   const glyph_t* gl = &(font_data[ch - FONT_ASCII_OFFSET]);
   // columns to draw
   u8 cols = (FONT_CHARW - gl->first - gl->last);
-  // byte offset produced by 1 full column
-  //  u32 colOffset = FONT_CHARH * w - 1;
-  // offset pointer
-  //  pbuf = buf + (y*w + x);
-  //  pbyf
   while(i < cols) {
     for(j=0; j<FONT_CHARH; j++) {
       val = gl->data[i + gl->first] & (1 << j) ? a : b;
@@ -256,11 +241,6 @@ extern u8* font_glyph_bigbig(char ch, u8* buf, u8 w, u8 a, u8 b) {
   const glyph_t* gl = &(font_data[ch - FONT_ASCII_OFFSET]);
   // columns to draw
   u8 cols = (FONT_CHARW - gl->first - gl->last);
-  // byte offset produced by 1 full column
-  //  u32 colOffset = FONT_CHARH * w - 1;
-  // offset pointer
-  //  pbuf = buf + (y*w + x);
-  //  pbyf
   while(i < cols) {
     for(j=0; j<FONT_CHARH; j++) {
       val = gl->data[i + gl->first] & (1 << j) ? a : b;
@@ -359,6 +339,36 @@ u8* font_string_bigbig(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
     str++;
   }
   return buf;
+}
+
+
+//-------------
+//----- anti-aliased fonts (bitmaps)
+
+// render a single glyph to a buffer, rastering
+// given pointer, row length, foreground, background
+// returns updated pointer
+
+// lookup in our antialised font table 
+extern u8* font_glyph_aa(char ch, u8* buf, u8 w, u8 a, u8 b) {
+  u8 i=0;
+  u8 j;
+  u8 * p = buf;
+  /// FIXME: only numerals for now...
+  //// hackish
+  if( (ch > 45) && (ch < 58)) { // dot + numerals
+    gl = font_dejavu_numerals[ch - 46];
+  } else { 
+    return buf;
+  }
+  
+  /// copy glyph to buffer...
+  //  screen_draw_region
+}
+
+// render a string of packed glyphs to a buffer
+extern u8* font_string_aa(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
+  
 }
 
 #endif

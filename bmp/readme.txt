@@ -39,6 +39,9 @@ right now, there are 3 steps to this process:
     so instead there are arguments to arbitrarily crop each image after rendering.
     the crop arguments will have different ideal values for different fonts,
     best determined experimentally i'm afraid.
-    an example invocation that works well for Courier:
+    
+    example invocations:
     
     (fonts_xpm_gen "/home/emb/Desktop/aleph_fonts" "Courier" 0 18 28 32 15 22 2 6)
+    (font_xpm_gen "/home/emb/Desktop/aleph_fonts/" "Monospace" 0 18 28 28 16 24 1 4)
+    

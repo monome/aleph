@@ -4,11 +4,18 @@
 //#include "compiler.h"
 #include "types.h"
 
+
+
 #define FONT_CHARW 6
 #define FONT_CHARH 8
 #define FONT_CHARH_1 7
 // glyph table doesn't include the initial non-ascii chars
 #define FONT_ASCII_OFFSET 0x20
+
+// big antialiased fonts...
+#define FONT_AA_CHARH 	24
+#define FONT_AA_CHARH_1 23
+#define FONT_AA_CHARW 	16
 
 //---------------------------
 //---- variables
@@ -40,5 +47,16 @@ extern u8* font_string(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b);
 extern u8* font_string_big(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b);
 // same as font_string, 4x size
 extern u8* font_string_bigbig(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b);
+
+
+
+///--- anti-aliased
+
+// render a single glyph to a buffer, rastering
+// given pointer, row length, foreground, background
+// returns updated pointer
+extern u8* font_glyph_aa(char ch, u8* buf, u8 w, u8 a, u8 b);
+// render a string of packed glyphs to a buffer
+extern u8* font_string_aa(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b);
 
 #endif // header guard

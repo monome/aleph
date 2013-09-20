@@ -210,7 +210,7 @@ void screen_startup(void) {
 
   #include "startup_glyph.c"
 
-  // fill screenbuffer with grey background
+  // fill screenbuffer with solid background
   for(i=0; i<GRAM_BYTES; i++) {
     screenBuf[i] = 0xff;
   }

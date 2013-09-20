@@ -10,12 +10,13 @@
 
 #include <dirent.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 // path where gimp output lives
-static const char dirpath[] = "/home/emb/Desktop/aleph_fonts";
+static const char dirpath[] = "/home/emb/aleph/bmp/xpm";
 // path to generated headers
-static const char outpath[] = "/home/emb/Desktop"; 
+static const char outpath[] = "/home/emb/aleph/bmp/inc"; 
 
 
 void main(void) {
@@ -28,13 +29,17 @@ void main(void) {
 
   // directory pointer
   DIR * dirp;
-  // dir entry pointer
-  struct dirent *entry;
+  // list of dir entry pointers
+  struct dirent ** entries;
+  // current entry
+  struct dirent* entry;
+  // number of entries
+  int n = scandir(dirpath, &entries, 0, alphasort);
   // length of filename
   int len = 0;
-  // tmp
+ // tmp
   char buf[64];
-  int i;
+  int i, j;
   
   strcpy(buf, outpath);
   strcat(buf, "/aleph_font_headers.inc");
@@ -51,39 +56,36 @@ void main(void) {
   printf("\r\n output file path: %s\r\n", buf);
   f_array = fopen( buf, "w");
 
-  dirp = opendir(dirpath);
+  //  dirp = opendir(dirpath);
 
-  while( (entry = readdir(dirp)) != NULL) {
+  //  while( (entry = readdir(dirp)) != NULL) {
+  for(j=0; j<n; j++) {
+    entry = entries[j];
     len = strlen(entry->d_name);
     if(  len > 2) {
       printf("%s\r\n", entry->d_name);
       strcpy(buf, entry->d_name);      
-      // replace "." with "_" in filename
+      // replace special characters
       for(i=0; i<len; i++) {
+	if(buf[i] == ' ') { buf[i] = '_'; }
+	if(buf[i] == '/') { buf[i] = '_'; }
 	if(buf[i] == '.') { buf[i] = '_'; }
+	if(buf[i] == ',') { buf[i] = '_'; }
+	if(buf[i] == '-') { buf[i] = '_'; }
+	if(buf[i] == '+') { buf[i] = '_'; }
+	if(buf[i] == '=') { buf[i] = '_'; }
       }      
       fprintf( f_headers, "#include \"%s\"\r\n", entry->d_name);
       fprintf( f_array, "&(%s), \r\n", buf);
       fprintf( f_names, "\"%s\", \r\n", buf);
     }
+    free(entry);
   }
-  closedir(dirp);
+  free(entries);
+  //  closedir(dirp);
 
   fclose(f_headers); 
   fclose(f_array); 
   fclose(f_names); 
 }
 
-/*
-
- len = strlen(name);
-   dirp = opendir(".");
-   while ((dp = readdir(dirp)) != NULL)
-           if (dp->d_namlen == len && !strcmp(dp->d_name, name)) {
-                   (void)closedir(dirp);
-                   return FOUND;
-           }
-   (void)closedir(dirp);
-   return NOT_FOUND;
-   
-   */

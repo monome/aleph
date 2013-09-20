@@ -15,23 +15,30 @@
 // include XPM files
 //#include "aleph_hebrew.xpm"
  
-#include "aleph_font_headers.h"
+#include "inc/aleph_font_headers.inc"
 
 // array of pointers to arrays of strings (!)
 // GIMP names each struct according to filename
 static char*(*glyphs[])[] = {
   //  &(aleph_hebrew_xpm),
-#include "aleph_font_array.inc"
+#include "inc/aleph_font_array.inc"
 
 };
 
 // array of glyph names
 static char* names[] = {
   //  "aleph_hebrew",
-#include "aleph_font_names.inc"
+#include "inc/aleph_font_names.inc"
 };
 
-static int nglyphs;
+
+
+/////
+/////// ugh, must set this manually for now...
+static const int nglyphs = 11;
+////
+///
+
 
 static FILE* fregion;
 // TODO:
@@ -44,7 +51,7 @@ static void process_glyph(const char* name, char* (*glyph)[]) {
   char val;
   int i, j, k;  
   char* p;
-  nglyphs = sizeof(names);
+
   i = 0;
   // first string : dimensions
   // width
@@ -53,7 +60,9 @@ static void process_glyph(const char* name, char* (*glyph)[]) {
   h = strtol(p, &p, 10);
   // color depth
   d  = strtol(p, NULL, 10);
-  printf("\r\n w: %d, h: %d, d: %d \r\n", w, h, d);
+
+  printf("\r\n name: %s, w: %d, h: %d, d: %d \r\n", name, w, h, d);
+
   if(d != 16) {
     printf("\r\n warning: unexpected color depth");
   }
@@ -91,7 +100,7 @@ static void process_glyph(const char* name, char* (*glyph)[]) {
 int main ( int argc, char *argv[] ) {
   int i;
 
-  //  printf("\r\n alph_hebrew_xpm addr: &");
+  //  nglyphs = sizeof(names);
 
   // image files as regions (1byte == 1pix)
   fregion = fopen("aleph_bmp_region.c", "w");
