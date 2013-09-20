@@ -33,7 +33,6 @@ static char* names[] = {
 
 static int nglyphs;
 
-
 static FILE* fregion;
 // TODO:
 // static FILE* fscreen;
@@ -86,7 +85,6 @@ static void process_glyph(const char* name, char* (*glyph)[]) {
   }
     fprintf(fregion, "\r\n\r\n };");
     printf("\r\n");
-
 }
 
 // main
