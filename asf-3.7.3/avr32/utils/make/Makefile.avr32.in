@@ -1,0 +1,218 @@
+# Include the config.mk file from the cwd where the user called make.
+include config.mk
+
+# Look for source files relative to the top-level source directory
+VPATH           := $(PRJ_PATH)
+
+# Output project name (target name minus suffix) and target type
+target          := $(TARGET)
+project         := $(basename $(target))
+target_type     := elf
+
+# aleph always linux
+os_type         := Linux
+os              := Linux
+
+CROSS           ?= avr32-
+AR              := $(CROSS)ar
+AS              := $(CROSS)as
+CC              := $(CROSS)gcc
+CPP             := $(CROSS)gcc -E
+CXX             := $(CROSS)g++
+LD              := $(CROSS)gcc
+NM              := $(CROSS)nm
+OBJCOPY         := $(CROSS)objcopy
+OBJDUMP         := $(CROSS)objdump
+SIZE            := $(CROSS)size
+
+PROGRAM         := avr32program
+GDBPROXY        := avr32gdbproxy
+BATCHISP        := batchisp
+ispflags-y      := -device at32$(PART) -hardware usb -operation
+
+# Don't use make's built-in rules and variables, entering dir etc.
+MAKEFLAGS       += -rR --no-print-directory
+
+# Function for reversing the order of a list
+reverse = $(if $(1),$(call reverse,$(wordlist 2,$(words $(1)),$(1)))) $(firstword $(1))
+
+arflags-gnu-y           := $(ARFLAGS)
+asflags-gnu-y           := $(ASFLAGS)
+cflags-gnu-y            := $(CFLAGS)
+cppflags-gnu-y          := $(CPPFLAGS)
+cpuflags-gnu-y          :=
+dbgflags-gnu-y          := $(DBGFLAGS)
+libflags-gnu-y          := $(foreach LIB,$(LIBS),-l$(LIB))
+ldflags-gnu-y           := $(LDFLAGS)
+clean-files             :=
+clean-dirs              :=
+clean-files             += $(wildcard $(target) $(project).map)
+clean-files             += $(wildcard $(project).hex $(project).bin)
+clean-files             += $(wildcard $(project).lss $(project).sym)
+clean-files             += $(wildcard $(build))
+
+# Use pipes instead of temporary files for communication between processes
+cflags-gnu-y    += -pipe
+asflags-gnu-y   += -pipe
+ldflags-gnu-y   += -pipe
+
+arflags-gnu-y   += rcs # Archiver flags.
+
+# Always enable warnings. And be very careful about implicit declarations.
+cflags-gnu-y    += -Wall -Wstrict-prototypes -Wmissing-prototypes
+cflags-gnu-y    += -Werror-implicit-function-declaration
+
+# IAR doesn't allow arithmetic on void pointers, so warn about that.
+cflags-gnu-y    += -Wpointer-arith
+
+# Preprocessor flags.
+cppflags-gnu-y  += $(foreach INC,$(addprefix $(PRJ_PATH)/,$(INC_PATH)),-I$(INC))
+asflags-gnu-y   += $(foreach INC,$(addprefix $(PRJ_PATH)/,$(INC_PATH)),'-Wa,-I$(INC)')
+cpuflags-gnu-y  += -march=$(ARCH) -mpart=$(PART) # CPU specific flags.
+
+depflags        = -MD -MP -MQ $@ # Dependency file flags.
+
+# Debug specific flags.
+ifdef BUILD_DEBUG_LEVEL
+dbgflags-gnu-y  += -g$(BUILD_DEBUG_LEVEL)
+else
+dbgflags-gnu-y  += -g3
+endif
+
+# Optimization specific flags.
+ifdef BUILD_OPTIMIZATION
+optflags-gnu-y  = -O$(BUILD_OPTIMIZATION)
+else
+optflags-gnu-y  = $(OPTIMIZATION)
+endif
+
+# Relax compilation and linking.
+cflags-gnu-y    += -mrelax
+asflags-gnu-y   += -mrelax
+ldflags-gnu-y   += -Wl,--relax,--direct-data
+
+cflags-gnu-y    += -mno-cond-exec-before-reload # Patch for compiler bug
+
+# Always preprocess assembler files.
+asflags-gnu-y   += -x assembler-with-cpp
+# Compile C files using the GNU99 standard.
+cflags-gnu-y    += -std=gnu99
+
+# Use signed character type when compiling.
+cflags-gnu-y    += -funsigned-char
+
+# Don't use strict aliasing (very common in embedded applications).
+cflags-gnu-y    += -fno-strict-aliasing
+
+# Separate each function and data into its own separate section to allow
+# garbage collection of unused sections.
+cflags-gnu-y    += -ffunction-sections -fdata-sections
+
+# Garbage collect unreferred sections when linking.
+ldflags-gnu-y   += -Wl,--gc-sections
+
+# Use the linker script if provided by the project.
+ifneq ($(strip $(LINKER_SCRIPT)),)
+ldflags-gnu-y   += -Wl,-T $(PRJ_PATH)/$(LINKER_SCRIPT)
+endif
+
+# Output a link map file and a cross reference table
+ldflags-gnu-y   += -Wl,-Map=$(project).map,--cref
+
+# Add library search paths relative to the top level directory.
+ldflags-gnu-y   += $(foreach _LIB_PATH,$(addprefix $(PRJ_PATH)/,$(LIB_PATH)),-L$(_LIB_PATH))
+
+a_flags  = $(cpuflags-gnu-y) $(depflags) $(cppflags-gnu-y) $(asflags-gnu-y) -D__ASSEMBLY__
+c_flags  = $(cpuflags-gnu-y) $(dbgflags-gnu-y) $(depflags) $(optflags-gnu-y) $(cppflags-gnu-y) $(cflags-gnu-y)
+l_flags  = $(cpuflags-gnu-y) $(optflags-gnu-y) $(ldflags-gnu-y)
+ar_flags = $(arflags-gnu-y)
+
+# Source files list and part information must already be included before
+# running this makefile
+
+# If a custom build directory is specified, use it -- force trailing / in directory name.
+ifdef BUILD_DIR
+	build-dir       := $(dir $(BUILD_DIR))$(if $(notdir $(BUILD_DIR)),$(notdir $(BUILD_DIR))/)
+else
+	build-dir        =
+endif
+
+# Create object files list from source files list.
+obj-y                   := $(addprefix $(build-dir), $(addsuffix .o,$(basename $(CSRCS) $(ASSRCS))))
+# Create dependency files list from source files list.
+dep-files               := $(wildcard $(foreach f,$(obj-y),$(basename $(f)).d))
+clean-files             += $(wildcard $(obj-y))
+clean-files             += $(dep-files)
+clean-dirs              += $(call reverse,$(sort $(wildcard $(dir $(obj-y)))))
+
+# Default target.
+.PHONY: all
+all: $(target) $(project).lss $(project).sym $(project).hex $(project).bin
+
+# Clean up the project.
+.PHONY: clean
+clean:
+	@$(if $(strip $(clean-files)),echo "RM      *.o *.d")
+	$(if $(strip $(clean-files)),rm $(clean-files),)
+	@$(if $(strip $(clean-dirs)),echo "RMDIR   $(strip $(clean-dirs))")
+# Remove created directories, and make sure we only remove existing
+# directories, since recursive rmdir might help us a bit on the way.
+	$(if $(strip $(clean-dirs)),                        \
+		for directory in $(strip $(clean-dirs)); do     \
+			if [ -d "$$directory" ]; then           \
+				rmdir -p --ignore-fail-on-non-empty $$directory;           \
+			fi                                      \
+		done                                            \
+	)
+
+# Rebuild the project.
+.PHONY: rebuild
+rebuild: clean all
+
+.PHONY: objfiles
+objfiles: $(obj-y)
+
+# Create object files from C source files.
+$(build-dir)%.o: %.c $(MAKEFILE_PATH) config.mk
+	test -d $(dir $@) || echo "MKDIR   $(dir $@)"
+	test -d $(dir $@) || mkdir -p $(dir $@)
+	$(CC) $(c_flags) -c $< -o $@
+
+# Preprocess and assemble: create object files from assembler source files.
+$(build-dir)%.o: %.s $(MAKEFILE_PATH) config.mk
+	test -d $(dir $@) || echo "MKDIR   $(dir $@)"
+	test -d $(dir $@) || mkdir -p $(dir $@)
+	$(CC) $(a_flags) -c $< -o $@
+
+# Preprocess and assemble: create object files from assembler source files.
+$(build-dir)%.o: %.S $(MAKEFILE_PATH) config.mk
+	test -d $(dir $@) || echo "MKDIR   $(dir $@)"
+	test -d $(dir $@) || mkdir -p $(dir $@)
+	$(CC) $(a_flags) -c $< -o $@
+
+# Include all dependency files to add depedency to all header files in use.
+include $(dep-files)
+
+# Link the object files into an ELF file. Also make sure the target is rebuilt
+# if the common Makefile.in or project config.mk is changed.
+$(target): $(PRJ_PATH)/$(LINKER_SCRIPT) $(MAKEFILE_PATH) config.mk $(obj-y)
+	@echo "LN      $@"
+	$(LD) $(l_flags) $(obj-y) -Wl,--start-group $(libflags-gnu-y) -Wl,--end-group -o $@
+	$(SIZE) -Ax $@
+	$(SIZE) -Bx $@
+
+# Create extended function listing from target output file.
+%.lss: $(target)
+	$(OBJDUMP) -h -S $< > $@
+
+# Create symbol table from target output file.
+%.sym: $(target)
+	$(NM) -n $< > $@
+
+# Create Intel HEX image from ELF output file.
+%.hex: $(target)
+	$(OBJCOPY) -O ihex $< $@
+
+# Create binary image from ELF output file.
+%.bin: $(target)
+	$(OBJCOPY) -O binary $< $@
