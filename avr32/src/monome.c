@@ -371,6 +371,12 @@ void monome_calc_quadrant_flag(u8 x, u8 y) {
   /* print_dbg_hex(monomeFrameDirty); */
 }
 
+// set given quadrant dirty flag
+extern void monome_set_quadrant_flag(u8 q) {
+  monomeFrameDirty |= (1 << q);
+}
+
+
 // convert flat framebuffer idx to x,y
 void monome_idx_xy(u32 idx, u8* x, u8* y) {
   *x = idx & 0xf;
@@ -382,16 +388,16 @@ u32 monome_xy_idx(u8 x, u8 y) {
   return x | (y << 4);
 }
 
-
 // top-level led/set function
 void monome_led_set(u8 x, u8 y, u8 z) {
-  monomeLedBuffer[x | (y << 4)] = z;
+  monomeLedBuffer[monome_xy_idx(x, y)] = z;
   monome_calc_quadrant_flag(x, y);
 }
 
 // top-level led/toggle function
 void monome_led_toggle(u8 x, u8 y) {
-  
+  monomeLedBuffer[monome_xy_idx(x,y)] ^= 0xff;
+  monome_calc_quadrant_flag(x, y);  
 }
 
 //=============================================
@@ -542,6 +548,8 @@ static void read_serial_series(void) {
     /* print_dbg_hex(prx[1] & 0xf); */
     /* print_dbg(" ; z : 0x"); */
     /* print_dbg_hex(	 ((prx[0] & 0xf0) == 0) ); */
+    
+    // process consecutive pairs of bytes
     monome_grid_key_write_event( ((prx[1] & 0xf0) >> 4) ,
 				 prx[1] & 0xf,
 				 ((prx[0] & 0xf0) == 0)
@@ -692,7 +700,10 @@ static void ring_map_mext(u8 n, u8* data) {
 
 static void test_draw(void) { 
   // pretty, but too slow
-  /// guess we should implement and use set/led functions after all
+  /// TODO: guess we should implement and use set/led functions after all?
+  /// the problem is there have to be parallel mechanisms in place,
+  // and app must decide if it should to upate a few things rapidly,
+  // or many things at a time.
   return;
   /* u8 glyph[8][8] = { { 1, 1, 0, 0, 1, 1, 1, 0, }, */
   /* 		   {  1, 1, 1, 0, 0, 1, 1, 1, }, */

@@ -24,6 +24,8 @@
 #define MONOME_MAX_LED_BYTES 256
 // how many leds on each side of a quad
 #define MONOME_QUAD_LEDS 8
+// how many leds in 1 row of the buffer
+#define MONOME_LED_ROW_BYTES 16
 //-- sizes for the actual data to be send over usb
 // one frame is an 8x8 quadrant; 256 has 4.
 #define MONOME_GRID_MAX_FRAMES 4
@@ -102,8 +104,11 @@ extern void monome_led_set(u8 x, u8 y, u8 val);
 // top-level led/toggle function
 extern void monome_led_toggle(u8 x, u8 y);
 
-// set quadrant dirty flag 
+// set quadrant dirty flag from (x,y)
 extern void monome_calc_quadrant_flag(u8 x, u8 y);
+// set given quadrant dirty flag
+extern void monome_set_quadrant_flag(u8 q);
+
 // convert flat framebuffer idx to x,y
 extern void monome_idx_xy(u32 idx, u8* x, u8* y);
 // convert x,y to framebuffer idx

@@ -14,9 +14,12 @@
 #include "interrupts.h"
 #include "screen.h"
 // lppr
-#include "handler.h"
+#include "app_event_types.h"
 #include "ctl.h"
+#include "grid.h"
+#include "handler.h"
 #include "render.h"
+#include "sequence.h"
 
 // up and down interval timers for keys and footswitches
 // static u32 swTicks[8][2];
@@ -101,23 +104,30 @@ extern void dsyn_handler(event_t* ev) {
 
   case kEventMonomeGridKey:
     //    (*monome_grid_key_handler)((void*)monomeOpFocus, (u32)e->eventData);
-    ctl_key_press
+    grid_handle_key_event(ev->eventData);
     break;
     
   case kEventEncoder0:
+    /// TEMPO
     ctl_inc_tempo(scale_knob_value(ev->eventData));
-    //    ctl_inc_dac(0, scale_knob_value(ev->eventData));
     break;
   case kEventEncoder1:
-    //    ctl_inc_dac(1, scale_knob_value(ev->eventData));
+    // SCROLL GRID
+    grid_inc_scroll( ev->eventData > 0 ? 1 : -1);
     break;
   case kEventEncoder2:
-    //    ctl_inc_dac(2, scale_knob_value(ev->eventData));
+    // PARAM IDX 
+    // .. .TODO
     break;
   case kEventEncoder3:
-    //    ctl_inc_dac(3, scale_knob_value(ev->eventData));
+    // PARAM VALUE
+    // ... TODO
     break;
 
+  case kEventSeqNext:
+    seq_advance();
+    break;
+    
   default:
     break;
   }

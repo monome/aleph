@@ -2,6 +2,7 @@
 #ifndef _ALEPH_APP_FLRY_CTL_H_
 #define _ALEPH_APP_FLRY_CTL_H_
 
+#include "types.h"
 
 // parameter min/max
 #define PARAM_DAC_MIN 0x00000000

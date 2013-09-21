@@ -1,3 +1,14 @@
+/* app_timers.c
+
+   this is where callbacks are declared for all application-specific software timers.
+   these callbacks are performed from the TC interrupt service routine.
+   therefore, they should be kept small.
+
+   a good strategy is to create application event types in app_events.h
+   and have the timer callbacks post these events to the queue.
+   the main loop will service the queue and call the application event handler.
+ */
+
 //asf
 #include "print_funcs.h"
 
@@ -5,11 +16,14 @@
 #include "monome.h"
 #include "timers.h"
 //#include "midi.h"
-
+#include "app_event_types.h"
 #include "app_timers.h"
 #include "ctl.h"
 #include "control.h"
 #include "render.h"
+
+// tmp
+static event_t e;
 
 //------ timers
 // refresh the screen periodically
@@ -30,6 +44,7 @@ static swTimer_t metroTimer;
 //----- callbacks
 //static void sustain_timer_callback(int tag);
 
+
 // screen refresh callback
 static void screen_timer_callback(int tag) {  
   render_update();
@@ -37,13 +52,12 @@ static void screen_timer_callback(int tag) {
 
 // metronome timer callback
 static void metro_timer_callback(int tag) {
-  static u32 i = 0;
+  //static u32 i = 0;
+  e.eventType = kEventSeqNext;
+  post_event(&e);
+  /*
     print_dbg(" > ");
-    //// 
-    // fixme: a test pattern.
-    // sequencer logic stuff shouldn't happen in an isr. 
-    // application needs its own event queue or some way of defining new main events.
-
+    // : a test pattern.
     if( ((i % 5)==0) || ((i % 2)==0) ) {
       // gate on. should be using triggered mode.
       ctl_voice_param(0, eParamGate, 1);
@@ -52,25 +66,34 @@ static void metro_timer_callback(int tag) {
       ctl_voice_param(1, eParamGate, 1);
     }
     i++;
+  */
 }
 
 
-// 1-shot sustain callback
+/// might want these... 
+/* //1-shot sustain callback */
 /* void sustain_timer_callback(int tag) { */
-/*   // turn gate off   */
+/*   // turn gate off */
 /*   ctl_param_change(eParamGate, 0); */
 /* } */
 
-/////////////////////////////
-//////////////
-//////  not using these:
-
-
-// adc polling callback
+/* //adc polling callback */
 /* static void adc_timer_callback(int tag) { */
 /*   adc_poll(); */
 /* } */
 
+/* //midi polling callback */
+/* static void midi_poll_timer_callback(int tag) { */
+/*   if(midiConnect) { */
+/*     midi_read(); */
+/*   } */
+/* } */
+
+
+
+/// FIXME: should do small optimizations.
+// for example, can set/unset the sw timer 
+// instead of always processing + conditional
 // monome polling callback
 static void monome_poll_timer_callback(int tag) {
   if (monomeConnect > 0) {
@@ -81,7 +104,6 @@ static void monome_poll_timer_callback(int tag) {
 
 // monome refresh callback
 static void monome_refresh_timer_callback(int tag) {
-  static event_t e;
   if (monomeConnect) {
     //    print_dbg("\r\n posting monome refresh event");
     if(monomeFrameDirty > 0) {
@@ -91,15 +113,9 @@ static void monome_refresh_timer_callback(int tag) {
   }
 }
 
-/* //midi polling callback */
-/* static void midi_poll_timer_callback(int tag) { */
-/*   if(midiConnect) { */
-/*     midi_read(); */
-/*   } */
-/* } */
+//----------------------------
+//---- external functions
 
-
-//====== external
 void init_app_timers(void) {
   set_timer(&screenTimer,        eScreenTimerTag,        20,  &screen_timer_callback,  1);
   //  set_timer(&adcTimer,           eAdcTimerTag,           5,   &adc_timer_callback,     1);
@@ -111,6 +127,8 @@ void init_app_timers(void) {
 
 // set the metro timer period
 extern void timers_set_metro_ms(u32 ms) {
+  // doing this will effectively pause the timer while knob moves
   //  metroTimer.timeout = ms;
   metroTimer.timeoutReload = ms;
 }
+
