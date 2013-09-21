@@ -5,10 +5,13 @@
 (define (font_xpm_gen
 	 outpath 	; target location
 	 font		; font name
+	 font-size	; font size
+;	 img-w		; w and height of img
+;	 img-h		; 
+	 crop           ; autocrop flag
 	 all		; if set, generate all basic ascii characters, otherwise just numerals
 ;	 img-w		; initial (max) image width
 ;	 img-h		; initial (max) image height
-	 font-size	; font size
 ;	 crop-w	; fonts are dumb... its best to arbitrarily crop the output.
 ;	 crop-h	; 
 ;	 crop-offx	; 
@@ -36,8 +39,6 @@
 			      )))
 	    )
 
-      (display "font extents: ")
-      (display (gimp-text-get-extents-fontname text size 0 font))
       (display #\newline)
 					; anchor selection
       (gimp-floating-sel-anchor text-float)
@@ -50,25 +51,27 @@
       )
     )
 
-  (define (make_char_img char font fontsize)
+  (define (make_char_img char font fontsize w h)
     (let* (
-	   (img (car (gimp-image-new fontsize (* 2 fontsize) RGB)))
-	   (layer (car (gimp-layer-new img fontsize (* 2 fontsize)
-				       RGB "layer 1" 100 NORMAL)))
-;	   (outpath "/home/emb/Desktop/aleph_fonts/")
-	   (charstring (if (string=? char ".")
-			   "dot"
-			   (if (string=? char "/")
-			       "slash"
-			       char
-			       )
-			   )
-		       )
+	   (img (car (gimp-image-new w h RGB)))
+	   (layer (car (gimp-layer-new img w h RGB "layer 1" 100 NORMAL)))
+;	   (charstring (if (string=? char ".")
+;			   "dot"
+;			   (if (string=? char "/")
+;			       "slash"
+;			       char
+;			       )
+			   ; ... other special chars?
+;			   )
+	   ; use code point of character for filename
+;	   (charstring ( (number->string (char->integer (string-ref char 0))) ))
+;	   (charstring ( (char->name (string-ref char 0) ) ) )
+	   (charstring (number->string (char->integer (string-ref char 0))))
 	   (outstring 
-		(string-append "_" (number->string fontsize) "-" charstring ".xpm")
+		(string-append font "_" (number->string fontsize) "-" charstring ".xpm")
 		)
 	    )
-	   
+
       (display " rendering glyph at path: ")
       (display (string-append outpath outstring) )
       (display #\newline)
@@ -107,8 +110,9 @@
 ;       crop-offy 		; off-y
 ;      )
       ; autocrop
-      (plug-in-autocrop RUN-NONINTERACTIVE img layer)
-
+      (if (> crop 0)
+	  (plug-in-autocrop RUN-NONINTERACTIVE img layer)
+      )
 					; display
       (gimp-display-new img)
 
@@ -129,20 +133,60 @@
   (let* ( (str (if (= all 1)
 		   "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}"
 		   "./0123456789"
-		   )
-	       )
+		   ))
+	  (maxw 0)
+	  (maxh 0)
 	  )
-					; loop through the string
-    (define (strdo n) 
-					; tail-recurse
+
+; loop through string to find max w/h
+    (define (str_scan n) 
+      (if (= n 0)
+	  n
+	  (let*(
+		(char (substring str (- n 1) n ))
+		(w 0)
+		(h 0)
+		(ext '(0 0 0 0))
+		)
+
+	    (set! ext (gimp-text-get-extents-fontname char font-size 0 font))
+
+
+	    (display #\newline)
+	    (display char)
+	    (display " ")
+	    (display "font extents: ")
+	    (display ext)
+	    
+	    (set! w (car ext))
+	    (set! h (car (cdr ext)))
+	    
+	    (display " ( ")
+	    (display w)
+	    (display " , ")
+	    (display h)
+	    (display " ) ")
+
+	    (if (> w maxw)
+		(set! maxw w)
+		)
+	    (if (> h maxh)
+		(set! maxh h)
+		)
+	    (str_scan (- n 1))
+	    )    
+	  )
+      )
+; loop through string to render
+    (define (str_rend n) 
       (if (= n 0)
 	  n
 	  (let* 
 	      ( (char (substring str (- n 1) n ) ) )
 	    (display char)
 	    (display " ")
-	    (make_char_img char font font-size)
-	    (strdo (- n 1))
+	    (make_char_img char font font-size maxw maxh)
+	    (str_rend (- n 1))
 	    )    
 	  )
       )
@@ -150,6 +194,9 @@
     (display " [ size: ")
     (display (string-length str))
     (display " ] ")
-    (strdo (string-length str))
+    (display #\newline)
+
+    (str_scan (string-length str))
+    (str_rend (string-length str))
     )
 )
