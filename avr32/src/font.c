@@ -25,7 +25,8 @@
 /*   "|", "\\", "[", "%", "#" */
 /* }; */
 
-#include "fonts/dejavu_numerals_24.h"
+//#include "fonts/dejavu_numerals_24.h"
+#include "fonts/ume_tgo5_18.h"
 
 // font string to use for anti-aliased numerals
 //#define FONT_AA_NUMERAL_FACE dejavu_numerals_24

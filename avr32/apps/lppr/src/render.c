@@ -121,7 +121,7 @@ void render_startup(void) {
   /// test the AA font
   for(i=0; i<24; i++) {
     for(j=0; j<18; j++) {
-      print_dbg_char(0x20 + font_dejavu_24_numerals[3].glyph.data[i * 18 + j]);
+      print_dbg_char(0x20 + FONT_AA[3].glyph.data[i * 18 + j]);
     }
     print_dbg("\r\n");
   }

@@ -2,7 +2,8 @@
 #define _FONT_H_
 
 //#include "compiler.h"
-#include "fonts/dejavu_numerals_24.h"
+//#include "fonts/dejavu_numerals_24.h"
+#include "fonts/ume_tgo5_18.h"
 #include "types.h"
 
 
@@ -14,10 +15,14 @@
 #define FONT_ASCII_OFFSET 0x20
 
 // big antialiased fonts...
-#define FONT_AA_CHARW 	FONT_DEJAVU_W
-#define FONT_AA_CHARH 	FONT_DEJAVU_H
+//#define FONT_AA_CHARW 	FONT_DEJAVU_W
+//#define FONT_AA_CHARH 	FONT_DEJAVU_H
 // FIXME: just numerals for now
-#define FONT_AA font_dejavu_24_numerals
+//#define FONT_AA font_dejavu_24_numerals
+
+#define FONT_AA font_ume_tgo5_18
+#define FONT_AA_CHARW 	FONT_UME_TGO5_18_W
+#define FONT_AA_CHARH 	FONT_UME_TGO5_18_H
 
 //---------------------------
 //---- variables

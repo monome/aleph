@@ -56,7 +56,7 @@ CSRCS += \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_string.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_table.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_write.c \
-	$(ALEPH_AVR32)/src/fonts/dejavu_numerals_24.c \
+	$(ALEPH_AVR32)/src/fonts/ume_tgo5_18.c \
 	$(ALEPH_COMMON)/fix.c \
 	$(ALEPH_COMMON)/libfixmath/fix16.c
 
