@@ -389,7 +389,8 @@ extern u8* font_glyph_aa(char ch, u8* buf, u8 w, u8 inv) {
   if(inv) { fp = &copyPxInv; } else { fp = &copyPx; }
 
 
-  /// FIXME: only numerals for now...
+#if 0
+  /// FIXME: might want only numerals
   //// hackish
   if( (ch > 45) && (ch < 58)) { // dot + numerals
     gl = FONT_AA[ch - 46].glyph.data;
@@ -400,6 +401,9 @@ extern u8* font_glyph_aa(char ch, u8* buf, u8 w, u8 inv) {
   } else { 
     return buf;
   }
+#else
+  gl = FONT_AA[ch - FONT_ASCII_OFFSET].glyph.data;
+#endif
   /// copy glyph to buffer...
   p = (char*)buf;
   //  gw = *gl++;

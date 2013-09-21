@@ -35,7 +35,7 @@ static char* names[] = {
 
 /////
 /////// ugh, must set this manually for now...
-static const int nglyphs = 11;
+static const int nglyphs = 92;
 ////
 ///
 
