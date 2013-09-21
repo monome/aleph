@@ -56,7 +56,7 @@ static region * allRegions[] = {
 
 static const u8 numRegions = 6;
 // string buffer for numerics
-#define NUMSTRBUF_LEN 12
+#define NUMSTRBUF_LEN 10
 static char numstrbuf[NUMSTRBUF_LEN];
 
 //-------------------------------------------------
@@ -111,7 +111,7 @@ void render_startup(void) {
   u32 i, j;
 
   region_fill(&bigtop, 0x5);
-  region_string(&bigtop, "LPPR", 40, 12, 0xf, 0x0, 2);
+  region_string_aa(&bigtop, "_LPPR", 40, 12, 1);
   region_string(&(foot[0]), "TAP1", 0, 0, 0xf, 0x0, 0);
   region_string(&(foot[1]), "TAP2", 0, 0, 0xf, 0x0, 0);
   region_string(&(foot[2]), "REC", 0, 0, 0xf, 0x0, 0);
@@ -201,11 +201,11 @@ void render_delay_time(u8 id, u32 ms, u32 samps) {
 // draw labels for delay time
 void render_touched_delaytime(u8 id) {
   region_fill(&bigtop, 0);
-  region_string(&bigtop, "delay time", 0, 0, 0xa, 0x3, 0 );
+  region_string(&bigtop, "time", 0, 0, 0xa, 0x3, 0 );
   if(id) { region_string(&bigtop, " 2   ", 40, 0, 0xa, 0x3, 1 ); }
   else { region_string(&bigtop, " 1   ", 40, 0, 0xa, 0x3, 1 ); }
-  region_string(&bigtop, "millisec ", 	0, 18, 0xd, 0x0, 0 );
-  region_string(&bigtop, "samples ", 	0, 36, 0xd, 0x0, 0 );
+  region_string(&bigtop, "ms ", 	0, 18, 0xd, 0x0, 0 );
+  region_string(&bigtop, "samps ", 	0, 36, 0xd, 0x0, 0 );
 }
 
 // draw any amplitude
@@ -222,21 +222,21 @@ void render_amp(u32 input, s32 amp) {
 // feedback touched
 void render_touched_fb(u8 id) {
   region_fill(&bigtop, 0);
-  region_string(&bigtop, "feedback", 0, 0, 0xa, 0x3, 0 );
+  region_string(&bigtop, "feed", 0, 0, 0xa, 0x3, 0 );
   if(id) { region_string(&bigtop, " 2   ", 40, 0, 0xa, 0x3, 1 ); }
   else { region_string(&bigtop, " 1   ", 40, 0, 0xa, 0x3, 1 ); }
-  region_string(&bigtop, "decibels  ", 	0, 18, 0xd, 0x0, 0 );
-  region_string(&bigtop, "amplitude  ", 	0, 36, 0xd, 0x0, 0 );
+  region_string(&bigtop, "dB  ", 	0, 18, 0xd, 0x0, 0 );
+  region_string(&bigtop, "amp  ", 	0, 36, 0xd, 0x0, 0 );
 }
 
 // mix touched
 extern void render_touched_mix(u8 id) {
   region_fill(&bigtop, 0);
-  region_string(&bigtop, "filter mix", 0, 0, 0xa, 0x3, 0 );
+  region_string(&bigtop, "filter", 0, 0, 0xa, 0x3, 0 );
   if(id) { region_string(&bigtop, " 2   ", 40, 0, 0xa, 0x3, 1 ); }
   else { region_string(&bigtop, " 1   ", 40, 0, 0xa, 0x3, 1 ); }
-  region_string(&bigtop, "decibels  ", 	0, 18, 0xd, 0x0, 0 );
-  region_string(&bigtop, "amplitude  ", 	0, 36, 0xd, 0x0, 0 );
+  region_string(&bigtop, "dB  ", 	0, 18, 0xd, 0x0, 0 );
+  region_string(&bigtop, "amp  ", 	0, 36, 0xd, 0x0, 0 );
 }
 
 
@@ -244,16 +244,16 @@ extern void render_touched_mix(u8 id) {
 void render_freq(u32 input) {
   memset(numstrbuf, ' ', NUMSTRBUF_LEN);
   print_fix16(numstrbuf, input_hz(input));
-  region_string_aa(&bigtop, numstrbuf, 30, 18, 1);
+  region_string_aa(&bigtop, numstrbuf, 18, 18, 1);
   memset(numstrbuf, ' ', NUMSTRBUF_LEN);
   print_fix16(numstrbuf, input_note(input));
-  region_string_aa(&bigtop, numstrbuf, 30, 36, 1); 
+  region_string_aa(&bigtop, numstrbuf, 18, 36, 1); 
 }
 
 // freq touched
 extern void render_touched_freq(u8 id) {
   region_fill(&bigtop, 0);
-  region_string(&bigtop, "filter cutoff", 0, 0, 0xa, 0x3, 0 );
+  region_string(&bigtop, "cutoff", 0, 0, 0xa, 0x3, 0 );
   if(id) { region_string(&bigtop, " 2   ", 40, 0, 0xa, 0x3, 1 ); }
   else { region_string(&bigtop, " 1   ", 40, 0, 0xa, 0x3, 1 ); }
   region_string(&bigtop, "hz ", 	0, 18, 0xd, 0x0, 0 );
@@ -264,13 +264,13 @@ extern void render_touched_freq(u8 id) {
 void render_res(u32 in) {
   memset(numstrbuf, ' ', NUMSTRBUF_LEN);
   print_fix16(numstrbuf, IN_FR16(in));
-  region_string_aa(&bigtop, numstrbuf, 30, 18, 1);
+  region_string_aa(&bigtop, numstrbuf, 18, 18, 1);
 }
 
 // resonance touched
 extern void render_touched_res(u8 id) {
   region_fill(&bigtop, 0);
-  region_string(&bigtop, "filter RQ", 0, 0, 0xa, 0x3, 0 );
+  region_string(&bigtop, "RQ", 0, 0, 0xa, 0x3, 0 );
   if(id) { region_string(&bigtop, " 2   ", 40, 0, 0xa, 0x3, 1 ); }
   else { region_string(&bigtop, " 1   ", 40, 0, 0xa, 0x3, 1 ); }
   region_string(&bigtop, "[ 0 , 1 ]", 	0, 18, 0xd, 0x0, 0 );
@@ -278,19 +278,25 @@ extern void render_touched_res(u8 id) {
 
 extern void render_record(void) {
   region_fill(&bigtop, 0x0);
-  region_string(&bigtop, "RECORD", 10, 10, 0xf, 0x0, 2);
+  region_string_aa(&bigtop, "RECORD", 10, 10, 0);
 }
 
 
 extern void render_overdub(void) {
   region_fill(&bigtop, 0x0);
-  region_string(&bigtop, "OVERDUB", 10, 10, 0xf, 0x0, 2);
+  region_string_aa(&bigtop, "OVERDUB", 10, 10, 0);
 }
 
 extern void render_play(void) {
   region_fill(&bigtop, 0x0);
-  region_string(&bigtop, "PLAY", 10, 10, 0xf, 0x0, 2);
+  region_string_aa(&bigtop, "PLAY", 10, 10, 0);
 }
 
+
+void render_test(const char* str) {
+  region_fill(&bigtop, 0);
+  region_string_aa(&bigtop, str, 0, 0, 0 );
+  region_string_aa(&bigtop, str, 0, 20, 1 );
+}
 
 #undef LINE_BUF_LEN

@@ -1,8 +1,14 @@
+#include "print_funcs.h"
+
 #include "monome.h"
 #include "timers.h"
 //#include "midi.h"
 #include "app_timers.h"
 #include "render.h"
+
+///// test
+#include "region.h"
+/////
 
 //------ timers
 // refresh the screen periodically
@@ -17,6 +23,10 @@ static swTimer_t screenTimer;
 // poll midi device
 //static swTimer_t midiPollTimer;
 
+// poll adcs 
+static swTimer_t test;
+
+
 //----- callbacks
 
 // screen refresh callback
@@ -27,6 +37,19 @@ static void screen_timer_callback(int tag) {
   /*   post_event(&e); */
   /*   refresh = 0; */
   /* } */
+}
+
+
+static void test_callback(int tag) {
+  static char testr[] = { 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46};
+  u8 i;
+  render_test(testr);
+  for(i=0; i<14; i++) { 
+    testr[i]++;
+    if(testr[i] > 125) { testr[i] = 33; }
+  }
+  //  print_dbg("\r\n");
+  //  print_dbg(testr);
 }
 
 /////////////////////////////
@@ -69,8 +92,13 @@ static void screen_timer_callback(int tag) {
 //====== external
 void init_app_timers(void) {
   set_timer(&screenTimer,        eScreenTimerTag,        20,  &screen_timer_callback,  1);
+  set_timer(&test,        eTestTag,       100,  &test_callback,  1);
   //  set_timer(&adcTimer,           eAdcTimerTag,           5,   &adc_timer_callback,     1);
   //  set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);
   //  set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 20,  &monome_refresh_timer_callback, 1);
   //  set_timer(&midiPollTimer,      eMidiPollTimerTag,      5,  &midi_poll_timer_callback, 1);
+}
+
+void kill_test(void) {
+  kill_timer(eTestTag);
 }

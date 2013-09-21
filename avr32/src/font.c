@@ -45,13 +45,13 @@
 
 // helper functions
 /// copy a pixel
-static void copyPx(const char* src, char* dst) {
-  *dst = *src;
-}
-// copy and invert a pixel (4-bit)
-static void copyPxInv(const char* src, char* dst) {
-  *dst = 0xf - *src;
-}
+/* static void copyPx(const char* src, char* dst) { */
+/*   *dst = *src; */
+/* } */
+/* // copy and invert a pixel (4-bit) */
+/* static void copyPxInv(const char* src, char* dst) { */
+/*   *dst = 0xf - *src; */
+/* } */
 
 // glyph.last is the inset from right hand edge of glyph box...
 const glyph_t font_data[]= {
@@ -383,11 +383,10 @@ extern u8* font_glyph_aa(char ch, u8* buf, u8 w, u8 inv) {
     // buf pointer;
   char* p;
   // pointer to copy function
-  void (*fp)(const char* src, char* dst);
+  //  void (*fp)(const char* src, char* dst);
   
   // fixme: wtf why
-  if(inv) { fp = &copyPxInv; } else { fp = &copyPx; }
-
+  //  if(inv) { fp = &copyPxInv; } else { fp = &copyPx; }
 
 #if 0
   /// FIXME: might want only numerals
@@ -402,13 +401,17 @@ extern u8* font_glyph_aa(char ch, u8* buf, u8 w, u8 inv) {
     return buf;
   }
 #else
+  //  gl = FONT_AA[ch - FONT_ASCII_OFFSET].glyph.data;
+  /// flaarggg
+  //  print_dbg("\r\n render glyph: ");
+  //  print_dbg_char(ch);
+  //  print_dbg(" ( 0x");
+  //  print_dbg_hex((u32)ch);
+
   gl = FONT_AA[ch - FONT_ASCII_OFFSET].glyph.data;
 #endif
   /// copy glyph to buffer...
   p = (char*)buf;
-  //  gw = *gl++;
-  //  gh = *gl++;
-  //  nextRowBytes = w - gw;
   nextRowBytes = w - FONT_AA_CHARW;
   //  print_dbg("\r\n");
   //  print_dbg("\r\n");

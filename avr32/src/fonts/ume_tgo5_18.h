@@ -7,20 +7,20 @@
 #ifndef _FONT_UME_TGO5_18_H_ 
 #define _FONT_UME_TGO5_18_H_
 
-#define FONT_UME_TGO5_18_W 18
-#define FONT_UME_TGO5_18_H 22
+#define FONT_UME_TGO5_18_W 9
+#define FONT_UME_TGO5_18_H 19
 
 
-#define FONT_UME_TG05_18_NGLYPHS 92
+#define FONT_UME_TG05_18_NGLYPHS 93
 
 // datatype for font glyph.
 typedef union {
   struct { 
     char w;
     char h;
-    char data[396];
+    char data[171];
   } glyph;
-  char raw[398];
+  char raw[173];
 } ume_tgo5_18_glyph;
 
 // table of glyphs in this font

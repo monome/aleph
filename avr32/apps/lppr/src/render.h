@@ -41,4 +41,6 @@ extern void render_touched_res(u8 id);
 //extern void render_touched_panIn(u8 id);
 //extern void render_touched_panOut(u8 id);
 
+extern void render_test(const char* str);
+
 #endif // h guard

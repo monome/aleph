@@ -5,6 +5,7 @@
 (define (font_xpm_gen
 	 outpath 	; target location
 	 font		; font name
+	 pre		; prefix for output .xpm names
 	 font-size	; font size
 ;	 img-w		; w and height of img
 ;	 img-h		; 
@@ -68,7 +69,7 @@
 ;	   (charstring ( (char->name (string-ref char 0) ) ) )
 	   (charstring (number->string (char->integer (string-ref char 0))))
 	   (outstring 
-		(string-append font "_" (number->string fontsize) "-" charstring ".xpm")
+		(string-append pre "_ascii_" charstring ".xpm")
 		)
 	    )
 
@@ -94,11 +95,11 @@
 					; convert to 4-bit indexed
       (gimp-image-convert-indexed img
 				  0	; dither:  no dither
-				  0	; palette type: generate
-				  16	; number of colors
+				  4 ; custom ; 0	; palette type: generate
+				  16; 16	; number of colors
 				  0	; alpha dither: no
-				  0	; ignore unused (n/a)
-				  "none"	; palette name (n/a)
+				  1	; ignore unused (n/a)
+				  "4bitgrey" ; "none"	; palette name (n/a)
 				  )
 
       ; crop the image ... this is because fonts usually include some padding

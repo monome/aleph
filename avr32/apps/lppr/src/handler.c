@@ -14,6 +14,7 @@
 #include "interrupts.h"
 #include "screen.h"
 // lppr
+#include "app_timers.h"
 #include "handler.h"
 #include "ctl.h"
 #include "render.h"
@@ -154,6 +155,8 @@ extern void lppr_handler(event_t* ev) {
   case kEventEncoder0:
     if(touchedThis) {
       render_touched_fb(0);
+      kill_test();
+      
     }
     ctl_inc_fb(0, scale_knob_value(ev->eventData));
     break;
@@ -161,6 +164,8 @@ extern void lppr_handler(event_t* ev) {
   case kEventEncoder1:
     if(touchedThis) {
       render_touched_mix(0);
+
+      kill_test();
     }
     ctl_inc_mix(0, scale_knob_value(ev->eventData));
     break;
@@ -168,6 +173,8 @@ extern void lppr_handler(event_t* ev) {
   case kEventEncoder2:
     if(touchedThis) {
       render_touched_freq(0);
+
+      kill_test();
     }
     ctl_inc_freq(0, scale_knob_value(ev->eventData));
     break;
@@ -175,6 +182,8 @@ extern void lppr_handler(event_t* ev) {
   case kEventEncoder3:
     if(touchedThis) {
       render_touched_res(0);
+
+      kill_test();
     }
     ctl_inc_res(0, scale_knob_value(ev->eventData));
     break;

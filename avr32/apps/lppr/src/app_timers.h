@@ -6,6 +6,7 @@
 // ---- timer tags
 enum { 
   eScreenTimerTag = eNumSysTimers,
+  eTestTag,
   //  eAdcTimerTag,
   //  eMonomePollTimerTag,
   //  eMonomeRefreshTimerTag,
@@ -15,5 +16,7 @@ enum {
 
 // create application timers
 extern void init_app_timers(void);
+
+extern void kill_test(void);
 
 #endif
