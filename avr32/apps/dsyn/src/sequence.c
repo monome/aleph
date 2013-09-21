@@ -70,8 +70,8 @@ const u8 seq_get_pos(void) {
   return pos;
 }
 
-// get next position
-const u8 seq_get_next(void) {
-  return next;
-}
+/* // get next position */
+/* const u8 seq_get_next(void) { */
+/*   return next; */
+/* } */
 

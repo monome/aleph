@@ -96,21 +96,21 @@ static void metro_timer_callback(int tag) {
 // instead of always processing + conditional
 // monome polling callback
 static void monome_poll_timer_callback(int tag) {
-  if (monomeConnect > 0) {
+  //  if (monomeConnect > 0) {
     // start an ftdi transfer, callback handles event posting
     ftdi_read();
-  }
+    //  }
 }
 
 // monome refresh callback
 static void monome_refresh_timer_callback(int tag) {
-  if (monomeConnect) {
+  //  if (monomeConnect) {
     //    print_dbg("\r\n posting monome refresh event");
     if(monomeFrameDirty > 0) {
       e.eventType = kEventMonomeRefresh;
       post_event(&e);
     }
-  }
+    //  }
 }
 
 //----------------------------
@@ -119,16 +119,25 @@ static void monome_refresh_timer_callback(int tag) {
 void init_app_timers(void) {
   set_timer(&screenTimer,        eScreenTimerTag,        20,  &screen_timer_callback,  1);
   //  set_timer(&adcTimer,           eAdcTimerTag,           5,   &adc_timer_callback,     1);
-  set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);
-  set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 20,  &monome_refresh_timer_callback, 1);
+  //  set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);
+  //  set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 20,  &monome_refresh_timer_callback, 1);
   //  set_timer(&midiPollTimer,      eMidiPollTimerTag,      5,  &midi_poll_timer_callback, 1);
   set_timer(&metroTimer,        eMetroTimerTag,        1000,  &metro_timer_callback,  1);
 }
 
 // set the metro timer period
-extern void timers_set_metro_ms(u32 ms) {
+ void timers_set_metro_ms(u32 ms) {
   // doing this will effectively pause the timer while knob moves
   //  metroTimer.timeout = ms;
   metroTimer.timeoutReload = ms;
 }
 
+ void timers_set_monome(void) {
+  set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);
+  set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 20,  &monome_refresh_timer_callback, 1);
+}
+
+ void timers_unset_monome(void) {
+  kill_timer(eMonomePollTimerTag);
+  kill_timer(eMonomeRefreshTimerTag); 
+}

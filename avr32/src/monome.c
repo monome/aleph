@@ -41,12 +41,6 @@ typedef enum {
   eProtocolNumProtocols // dummy and count
 } eMonomeProtocol;
 
-// device enumeration
-typedef enum {
-  eDeviceGrid,   /// any grid device
-  eDeviceArc,     /// any arc device
-  eDeviceNumDevices // dummy and count
-} eMonomeDevice;
 
 // device descriptor
 typedef struct e_monomeDesc {
@@ -66,7 +60,8 @@ static void read_serial_dummy(void) { return; }
 //------ extern variables
 
 // connected flag
-u8 monomeConnect = 0;
+// u8 monomeConnect = 0;
+
 // dirty flags for each quadrant or knob (bitwise)
 u8 monomeFrameDirty = 0;
 // a buffer big enough to hold all l data for 256 or arc4
@@ -108,8 +103,6 @@ static void setup_40h(u8 cols, u8 rows);
 static void setup_series(u8 cols, u8 rows);
 static u8 setup_mext(void);
 
-static void test_draw(void);
-
 // rx for each protocol
 static void read_serial_40h(void);
 static void read_serial_series(void);
@@ -134,10 +127,13 @@ static void grid_map_mext(u8 x, u8 y, const u8* data);
 static void ring_map_mext(u8 n, u8* data);
 
 // event write
+
+//static void connect_write_event(void);
 static inline void monome_grid_key_write_event( u8 x, u8 y, u8 val);
 static inline void monome_grid_adc_write_event( u8 n, u16 val);
 static inline void monome_ring_enc_write_event( u8 n, u8 val);
 static inline void monome_ring_key_write_event( u8 n, u8 val);
+
 
 //---------------------------------
 //----- static variables
@@ -190,10 +186,11 @@ void init_monome(void) {
 }
 
 // determine if FTDI string descriptors match monome device pattern
-u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr) {
+u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr) { 
   char buf[16];
   u8 matchMan = 0;
   u8 i;
+  u8 ret;
   //-- source strings are unicode so we need to look at every other byte
   // manufacturer
   for(i=0; i<MONOME_MANSTR_LEN; i++) {
@@ -220,7 +217,7 @@ u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr) {
       mdesc.cols = 8;
       mdesc.rows = 8;
       // tilt?
-      return 1;
+      ret = 1;
     } else {
       // not a monome
       return 0;
@@ -255,6 +252,7 @@ u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr) {
     // we need to query for device attributes
     return setup_mext();
   }
+  return 0;
 }
 
 // check dirty flags and refresh leds
@@ -300,6 +298,23 @@ void monome_grid_refresh(void) {
 }
 
 //---- convert to/from event data
+// connect
+static inline void monome_connect_write_event(void) {
+  u8* data = (u8*)(&(ev.eventData));
+  ev.eventType = kEventMonomeConnect;
+  *data++ = (u8)(mdesc.device); 	// device (8bits)
+  *data++ = mdesc.cols;		// width / count
+  *data++ = mdesc.rows;		// height / resolution
+  //  *data = 0; 		// unused
+  post_event(&ev);
+}
+
+void monome_connect_parse_event_data(u32 data, eMonomeDevice *dev, u8* w, u8* h) {
+  u8* pdata = (u8*)(&data);
+  *dev = (eMonomeDevice)(*pdata++);
+  *w = *pdata++;
+  *h = *pdata;
+}
 
 // grid key
 static inline void monome_grid_key_write_event(u8 x, u8 y, u8 val) {
@@ -307,7 +322,7 @@ static inline void monome_grid_key_write_event(u8 x, u8 y, u8 val) {
   data[0] = x;
   data[1] = y;
   data[2] = val;
-
+  
   /* print_dbg("\r\n monome.c wrote event; x: 0x"); */
   /* print_dbg_hex(x); */
   /* print_dbg("; y: 0x"); */
@@ -420,8 +435,7 @@ static void setup_40h(u8 cols, u8 rows) {
   mdesc.cols = 8;
   mdesc.rows = 8;
   set_funcs();
-  monomeConnect = 1;
-  test_draw();
+  monome_connect_write_event();
 }
 
 // setup series device
@@ -433,8 +447,9 @@ static void setup_series(u8 cols, u8 rows) {
   mdesc.rows = 8;
   mdesc.tilt = 1;
   set_funcs();
-  monomeConnect = 1;
-  test_draw();
+  monome_connect_write_event();
+  //  monomeConnect = 1;
+  //  test_draw();
 }
 
 // setup extended device, return success /failure of query
@@ -444,16 +459,13 @@ static u8 setup_mext(void) {
   u8 busy;
 
   print_dbg("\r\n setup mext device");
-
   mdesc.protocol = eProtocolMext;
-
 
   // FIXME: fuck these delays
   delay_ms(1);
-  ftdi_write(&w, 1);	// query
-  
-  delay_ms(1);
+  ftdi_write(&w, 1);	// query  
 
+  delay_ms(1);
   ftdi_read();
 
   delay_ms(1);
@@ -499,7 +511,7 @@ static u8 setup_mext(void) {
       mdesc.cols = 16;
     }
     else {
-      return 0;
+      return 0; // bail
     }		
     mdesc.tilt = 1;
   }
@@ -507,13 +519,14 @@ static u8 setup_mext(void) {
     mdesc.device = eDeviceArc;
     mdesc.encs = *(++prx);
   } else {
-    return 0;
+    return 0; // bail
   }
   set_funcs();
-  monomeConnect = 1;
-  print_dbg("\r\n connected monome device, mext protocol");
 
-  test_draw();
+  monome_connect_write_event();
+  //  monomeConnect = 1;
+  print_dbg("\r\n connected monome device, mext protocol");
+  //  test_draw();
   return 1;
 }
 
@@ -692,46 +705,4 @@ static void grid_map_series(u8 x, u8 y, const u8* data) {
 
 static void ring_map_mext(u8 n, u8* data) {
   // TODO
-}
-
-
-
-
-
-static void test_draw(void) { 
-  // pretty, but too slow
-  /// TODO: guess we should implement and use set/led functions after all?
-  /// the problem is there have to be parallel mechanisms in place,
-  // and app must decide if it should to upate a few things rapidly,
-  // or many things at a time.
-  return;
-  /* u8 glyph[8][8] = { { 1, 1, 0, 0, 1, 1, 1, 0, }, */
-  /* 		   {  1, 1, 1, 0, 0, 1, 1, 1, }, */
-  /* 		   {  0, 1, 1, 1, 0, 0, 1, 1, }, */
-  /* 		   {  0, 0, 1, 1, 1, 0, 1, 0, }, */
-  /* 		   {  0, 1, 0, 1, 1, 1, 0, 0, }, */
-  /* 		   {  1, 1, 0, 0, 1, 1, 1, 0, }, */
-  /* 		   {  1, 1, 1, 0, 0, 1, 1, 1, }, */
-  /* 		   {  0, 1, 1, 1, 0, 0, 1, 1 } }; */
-  /* u8 i, j; */
-  /* app_pause(); */
-  /* for(i=0; i<8; i++) { */
-  /*   for(j=0; j<8; j++) { */
-  /*     monomeLedBuffer[monome_xy_idx(i, j)] = glyph[j][i] * 0xff; */
-  /*     monomeFrameDirty = 1; */
-  /*     (*monome_grid_refresh)(); */
-  /*     while(ftdi_tx_busy()) {;;} */
-  /*     delay_ms(5); */
-  /*   } */
-  /* } */
-  /* for(i=0; i<8; i++) { */
-  /*   for(j=0; j<8; j++) { */
-  /*     monomeLedBuffer[monome_xy_idx(i, j)] = 0; */
-  /*     monomeFrameDirty = 1; */
-  /*     (*monome_grid_refresh)(); */
-  /*     while(ftdi_tx_busy()) {;;} */
-  /*     delay_ms(5); */
-  /*   } */
-  /* } */
-  /* app_resume(); */
 }

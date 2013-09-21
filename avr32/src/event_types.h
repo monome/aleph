@@ -62,8 +62,11 @@ typedef enum {
   kEventMonomeGridTilt,
   kEventMonomeRingEnc,
   kEventMonomeRingKey,
+  //// monome connect / disconnect
+  kEventMonomeConnect,
+  kEventMonomeDisconnect,
   /// dummy/count
-  kNumEvents,
+  kNumSysEvents,
 } eEventType;
 
 #endif

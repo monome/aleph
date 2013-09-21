@@ -3,11 +3,9 @@
 
 // application-sepecific event types
 
-// FIXME: this was just tacked on so the nomenclature is odd.
-
 typedef enum {
   // trigger advnacement to the next sequencer stage
-  kEventSeqNext = kNumEvents,
+  kEventSeqNext = kNumSysEvents,
   kNumAppEvents
   
 } eAppEventType;

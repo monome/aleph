@@ -13,11 +13,13 @@
 #include "event_types.h"
 #include "interrupts.h"
 #include "screen.h"
-// lppr
+// dsyn
 #include "app_event_types.h"
+#include "app_timers.h"
 #include "ctl.h"
 #include "grid.h"
 #include "handler.h"
+#include "monome.h"
 #include "render.h"
 #include "sequence.h"
 
@@ -62,14 +64,28 @@ static fix16 scale_knob_value(const s32 v) {
     return v << 5;
   } else if (vabs < 25) {
     //    print_dbg("\r\n knob acc 4");
-    return v << 6;  } 
+    return v << 7;  } 
   else if (vabs < 32) {
     //    print_dbg("\r\n knob acc 4");
-    return v << 6;
+    return v << 9;
   } else {
     //    print_dbg("\r\n knob acc max");
     return v << 12;
   }
+}
+
+static void handle_monome_connect(u32 data) {
+  eMonomeDevice dev;
+  u8 w;
+  u8 h;
+  monome_connect_parse_event_data(data, &dev, &w, &h);
+  if(dev != eDeviceGrid) {
+    print_dbg("\r\n DSYN monome connect: unsupported device");
+    return;
+  }
+  print_dbg("\r\n DSYN: connecting grid device");
+  grid_set_size(w, h);
+  timers_set_monome();
 }
 
 //---------------------------------------
@@ -78,12 +94,22 @@ static fix16 scale_knob_value(const s32 v) {
 // handle key presses
 extern void dsyn_handler(event_t* ev) {
   u8 b;
+
+  print_dbg("\r\n app event handler: ");
+  print_dbg_hex(ev->eventType);
+
   switch (ev->eventType) {
+
+  case kEventSeqNext:
+    seq_advance();
+    break;
+    
   case kEventSwitch0:
     b = ev->eventData > 0;
     ctl_set_gate(0, b);
     render_sw_on(0, b);
     break;
+
   case kEventSwitch1:
     render_sw_on(1, ev->eventData > 0);
     break;
@@ -124,10 +150,9 @@ extern void dsyn_handler(event_t* ev) {
     // ... TODO
     break;
 
-  case kEventSeqNext:
-    seq_advance();
+  case kEventMonomeConnect :
+    handle_monome_connect((u32)ev->eventData);
     break;
-    
   default:
     break;
   }

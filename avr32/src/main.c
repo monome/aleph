@@ -191,31 +191,40 @@ static void check_events(void) {
 	}
       }
     } else {
-    
-      switch(e.eventType) {
+      print_dbg("\r\n main event handler: ");
+      print_dbg_hex(e.eventType);
+      
+      //      if(e.eventType < kNumSysEvents) {
+	// system events
+
+	switch(e.eventType) {
 	
-      case kEventRefresh:
-	// refresh the screen hardware
-	//	screen_refresh();
-	break;
-      case kEventMonomePoll :
-	// poll monome serial input and spawn relevant events
-	monome_read_serial();
-	break;
-      case kEventMonomeRefresh :
-	// refresh monome device from led state buffer
-	monome_grid_refresh();
-	break;
-	//--------------------------------------
-      case kEventFtdiConnect:
-	// perform setup tasks for new ftdi device connection. 
-	// won't work if called from an interrupt.
-	ftdi_setup();
-	break;
-      default:
-	(*appEventHandler)(&e);
-	break;
-      } // event switch
+	case kEventRefresh:
+	  // refresh the screen hardware
+	  //	screen_refresh();
+	  break;
+	case kEventMonomePoll :
+	  // poll monome serial input and spawn relevant events
+	  monome_read_serial();
+	  break;
+	case kEventMonomeRefresh :
+	  // refresh monome device from led state buffer
+	  monome_grid_refresh();
+	  break;
+	  //--------------------------------------
+	case kEventFtdiConnect:
+	  // perform setup tasks for new ftdi device connection. 
+	  // won't work if called from an interrupt.
+	  ftdi_setup();
+	  break;
+	default:
+	  ;;
+	  break;
+	} // event switch
+	//      } else { // non-system (app) events
+	// handle all events in app also...
+      (*appEventHandler)(&e);
+	//      }
     } // startup
   } // got event
 }
