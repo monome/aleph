@@ -17,5 +17,7 @@ extern void grid_show_pos(void);
 extern void grid_show_loop(void);
 // show loop length
 extern void grid_show_len(void);
+// show loop length
+extern void grid_show_page(void);
 
 #endif

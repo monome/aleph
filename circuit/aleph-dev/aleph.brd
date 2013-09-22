@@ -9,7 +9,7 @@
 <grid distance="0.05" unitdist="inch" unit="inch" style="dots" multiple="1" display="yes" altdistance="0.0125" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
-<layer number="2" name="power" color="1" fill="3" visible="no" active="yes"/>
+<layer number="2" name="power" color="1" fill="3" visible="yes" active="yes"/>
 <layer number="3" name="gnd" color="4" fill="3" visible="no" active="yes"/>
 <layer number="4" name="Route4" color="1" fill="4" visible="no" active="no"/>
 <layer number="5" name="Route5" color="4" fill="4" visible="no" active="no"/>
@@ -26,7 +26,7 @@
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="yes"/>
 <layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="yes"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
 <layer number="20" name="Dimension" color="13" fill="1" visible="yes" active="yes"/>
 <layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="22" name="bPlace" color="7" fill="1" visible="no" active="yes"/>
@@ -3161,11 +3161,11 @@ design rules under a new name.</description>
 <attribute name="NAME" x="156.21" y="10.16" size="1.016" layer="26" font="vector" ratio="18" rot="MR0"/>
 <attribute name="VALUE" x="151.13" y="10.16" size="1.016" layer="28" font="vector" ratio="12" rot="MR0"/>
 </element>
-<element name="C146" library="rc-master-smd" package="C0603" value="18p" x="135.89" y="37.465" smashed="yes" rot="MR0">
+<element name="C146" library="rc-master-smd" package="C0603" value="22p" x="135.89" y="37.465" smashed="yes" rot="MR0">
 <attribute name="NAME" x="137.795" y="34.925" size="1.016" layer="26" font="vector" ratio="18" rot="MR0"/>
 <attribute name="VALUE" x="137.16" y="34.925" size="1.016" layer="28" font="vector" ratio="12" rot="MR0"/>
 </element>
-<element name="C147" library="rc-master-smd" package="C0603" value="18p" x="132.08" y="37.465" smashed="yes" rot="MR180">
+<element name="C147" library="rc-master-smd" package="C0603" value="22p" x="132.08" y="37.465" smashed="yes" rot="MR180">
 <attribute name="NAME" x="133.35" y="34.925" size="1.016" layer="26" font="vector" ratio="18" rot="MR0"/>
 <attribute name="VALUE" x="133.35" y="34.925" size="1.016" layer="28" font="vector" ratio="12" rot="MR0"/>
 </element>
@@ -4681,39 +4681,39 @@ design rules under a new name.</description>
 </element>
 <element name="C2" library="rc-master-smd" package="C0603" value="100n" x="350.52" y="95.885" smashed="yes" rot="R180">
 <attribute name="NAME" x="347.98" y="96.2025" size="1.016" layer="25" font="vector" ratio="18" rot="R180"/>
-<attribute name="VALUE" x="351.79" y="97.6313" size="0.8128" layer="27" ratio="10" rot="R180"/>
+<attribute name="VALUE" x="346.71" y="96.3613" size="0.8128" layer="27" ratio="10" rot="R180"/>
 </element>
 <element name="R3" library="rc-master-smd" package="R0603" value="10k" x="351.155" y="97.79" smashed="yes">
 <attribute name="NAME" x="349.25" y="98.1075" size="1.016" layer="25" font="vector" ratio="18" rot="R180"/>
-<attribute name="VALUE" x="349.885" y="96.0437" size="0.8128" layer="27" ratio="10"/>
+<attribute name="VALUE" x="346.075" y="97.3137" size="0.8128" layer="27" ratio="10"/>
 </element>
-<element name="R1" library="rc-master-smd" package="R0603" value="10k" x="351.155" y="99.695" smashed="yes" rot="R180">
+<element name="R1" library="rc-master-smd" package="R0603" value="20k" x="351.155" y="99.695" smashed="yes" rot="R180">
 <attribute name="NAME" x="349.25" y="100.0125" size="1.016" layer="25" font="vector" ratio="18" rot="R180"/>
-<attribute name="VALUE" x="352.425" y="101.4413" size="0.8128" layer="27" ratio="10" rot="R180"/>
+<attribute name="VALUE" x="348.615" y="100.1713" size="0.8128" layer="27" ratio="10" rot="R180"/>
 </element>
 <element name="R8" library="rc-master-smd" package="R0603" value="10k" x="351.155" y="93.98" smashed="yes">
 <attribute name="NAME" x="349.25" y="94.2975" size="1.016" layer="25" font="vector" ratio="18" rot="R180"/>
-<attribute name="VALUE" x="349.885" y="92.2337" size="0.8128" layer="27" ratio="10"/>
+<attribute name="VALUE" x="346.075" y="93.5037" size="0.8128" layer="27" ratio="10"/>
 </element>
-<element name="R11" library="rc-master-smd" package="R0603" value="10k" x="351.155" y="92.075" smashed="yes" rot="R180">
+<element name="R11" library="rc-master-smd" package="R0603" value="20k" x="351.155" y="92.075" smashed="yes" rot="R180">
 <attribute name="NAME" x="349.25" y="92.3925" size="1.016" layer="25" font="vector" ratio="18" rot="R180"/>
-<attribute name="VALUE" x="352.425" y="93.8213" size="0.8128" layer="27" ratio="10" rot="R180"/>
+<attribute name="VALUE" x="348.615" y="92.5513" size="0.8128" layer="27" ratio="10" rot="R180"/>
 </element>
 <element name="R6" library="rc-master-smd" package="R0603" value="10k" x="362.585" y="94.9325" smashed="yes" rot="R180">
 <attribute name="NAME" x="364.49" y="94.2975" size="1.016" layer="25" font="vector" ratio="18"/>
-<attribute name="VALUE" x="363.855" y="96.6788" size="0.8128" layer="27" ratio="10" rot="R180"/>
+<attribute name="VALUE" x="367.665" y="95.4088" size="0.8128" layer="27" ratio="10" rot="R180"/>
 </element>
-<element name="R10" library="rc-master-smd" package="R0603" value="10k" x="362.585" y="93.0275" smashed="yes">
+<element name="R10" library="rc-master-smd" package="R0603" value="20k" x="362.585" y="93.0275" smashed="yes">
 <attribute name="NAME" x="364.49" y="92.3925" size="1.016" layer="25" font="vector" ratio="18"/>
-<attribute name="VALUE" x="361.315" y="91.2812" size="0.8128" layer="27" ratio="10"/>
+<attribute name="VALUE" x="365.125" y="92.5512" size="0.8128" layer="27" ratio="10"/>
 </element>
 <element name="R4" library="rc-master-smd" package="R0603" value="10k" x="362.585" y="96.8375" smashed="yes" rot="R180">
 <attribute name="NAME" x="364.49" y="96.2025" size="1.016" layer="25" font="vector" ratio="18"/>
-<attribute name="VALUE" x="363.855" y="98.5838" size="0.8128" layer="27" ratio="10" rot="R180"/>
+<attribute name="VALUE" x="367.665" y="97.3138" size="0.8128" layer="27" ratio="10" rot="R180"/>
 </element>
-<element name="R2" library="rc-master-smd" package="R0603" value="10k" x="362.585" y="98.7425" smashed="yes">
+<element name="R2" library="rc-master-smd" package="R0603" value="20k" x="362.585" y="98.7425" smashed="yes">
 <attribute name="NAME" x="364.49" y="98.1075" size="1.016" layer="25" font="vector" ratio="18"/>
-<attribute name="VALUE" x="361.315" y="96.9962" size="0.8128" layer="27" ratio="10"/>
+<attribute name="VALUE" x="365.125" y="98.2662" size="0.8128" layer="27" ratio="10"/>
 </element>
 <element name="L5" library="rc-master-smd" package="L0603" value="600" x="365.125" y="79.375" smashed="yes" rot="R270">
 <attribute name="NAME" x="366.7125" y="81.4387" size="1.016" layer="25" font="vector" ratio="18" rot="R270"/>

@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.05" unitdist="inch" unit="inch" style="dots" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -18143,8 +18143,8 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="C179" library="rc-master-smd" deviceset="C_" device="0603" value="33n"/>
 <part name="C189" library="rc-master-smd" deviceset="C_" device="0603" value="33n"/>
 <part name="C188" library="rc-master-smd" deviceset="C_" device="0603" value="100n"/>
-<part name="C146" library="rc-master-smd" deviceset="C_" device="0603" value="18p"/>
-<part name="C147" library="rc-master-smd" deviceset="C_" device="0603" value="18p"/>
+<part name="C146" library="rc-master-smd" deviceset="C_" device="0603" value="22p"/>
+<part name="C147" library="rc-master-smd" deviceset="C_" device="0603" value="22p"/>
 <part name="Y2" library="crystal" deviceset="CRYTAL" device="HC49UP" value="12mhz"/>
 <part name="R168" library="rc-master-smd" deviceset="R_" device="0603" value="39"/>
 <part name="R167" library="rc-master-smd" deviceset="R_" device="0603" value="39"/>
@@ -18719,13 +18719,13 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="IC1" library="analog-devices" deviceset="AD8544" device="RU" value="AD8567"/>
 <part name="C2" library="rc-master-smd" deviceset="C_" device="0603" value="100n"/>
 <part name="R3" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
-<part name="R1" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
+<part name="R1" library="rc-master-smd" deviceset="R_" device="0603" value="20k"/>
 <part name="R8" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
-<part name="R11" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
+<part name="R11" library="rc-master-smd" deviceset="R_" device="0603" value="20k"/>
 <part name="R6" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
-<part name="R10" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
+<part name="R10" library="rc-master-smd" deviceset="R_" device="0603" value="20k"/>
 <part name="R4" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
-<part name="R2" library="rc-master-smd" deviceset="R_" device="0603" value="10k"/>
+<part name="R2" library="rc-master-smd" deviceset="R_" device="0603" value="20k"/>
 <part name="AGND56" library="supply" deviceset="AGND" device=""/>
 <part name="AGND57" library="supply" deviceset="AGND" device=""/>
 <part name="AGND58" library="supply" deviceset="AGND" device=""/>

@@ -26681,7 +26681,7 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <instance part="C43" gate="G$1" x="238.76" y="96.52" rot="R180"/>
 <instance part="C7" gate="G$1" x="345.44" y="111.76" rot="R180"/>
 <instance part="AGND50" gate="VR1" x="379.73" y="90.17"/>
-<instance part="C9" gate="G$1" x="396.24" y="86.36"/>
+<instance part="C9" gate="G$1" x="396.24" y="86.36" rot="R180"/>
 <instance part="R34" gate="G$1" x="382.27" y="83.82" rot="R180"/>
 <instance part="R35" gate="G$1" x="375.92" y="74.93" rot="R270"/>
 <instance part="C44" gate="G$1" x="243.84" y="104.14" rot="R180"/>
@@ -27586,10 +27586,10 @@ body 3.9 mm/JEDEC MS-012AA</description>
 <wire x1="370.84" y1="86.36" x2="387.35" y2="86.36" width="0.1524" layer="91"/>
 <wire x1="387.35" y1="86.36" x2="387.35" y2="83.82" width="0.1524" layer="91"/>
 <pinref part="R34" gate="G$1" pin="1"/>
-<pinref part="C9" gate="G$1" pin="-"/>
+<pinref part="U8" gate="G$1" pin="OUTB"/>
+<pinref part="C9" gate="G$1" pin="+"/>
 <wire x1="387.35" y1="86.36" x2="393.7" y2="86.36" width="0.1524" layer="91"/>
 <junction x="387.35" y="86.36"/>
-<pinref part="U8" gate="G$1" pin="OUTB"/>
 </segment>
 </net>
 <net name="N$149" class="0">
@@ -27794,9 +27794,9 @@ body 3.9 mm/JEDEC MS-012AA</description>
 </net>
 <net name="HPL-J" class="0">
 <segment>
-<pinref part="C9" gate="G$1" pin="+"/>
-<wire x1="398.78" y1="86.36" x2="405.13" y2="86.36" width="0.1524" layer="91"/>
 <label x="407.67" y="86.36" size="1.778" layer="95"/>
+<pinref part="C9" gate="G$1" pin="-"/>
+<wire x1="398.78" y1="86.36" x2="405.13" y2="86.36" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$33" class="0">

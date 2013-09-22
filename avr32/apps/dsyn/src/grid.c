@@ -29,25 +29,28 @@ void grid_inc_scroll(s8 inc) {
 
 // handle a key press
 void grid_handle_key_event(s32 data) {
-  u8 x, y, val, pos;
+  u8 x, y, val;
   monome_grid_key_parse_event_data(data, &x, &y, &val);
   if(val == 0) { return; }
 
-  pos = scroll + x;
   // == top 4 rows : sequence
   if(y < 4) { 
-    seq_tog_stage(y, pos);
+    seq_tog_stage(y, x);
     grid_show_seq();
   } else if(y==7) {
     // ==  bottom row: jump to position
-    seq_set_next(pos);
+    seq_set_next(x);
     /// TODO: or something
     //    grid_show_next();
-  } else if (y == 4) {
+  } else if (y == 5) {
     // == start point
+    seq_set_start(x)
   }
-  else if (y == 5) {
-    // == end point ? length ? 
+  else if (y == 6) {
+    seq_set_len(x);
+  } 
+  else if (y == 4) {
+    seq_set_page(x);
   } 
   else {
     // == ???
@@ -66,31 +69,32 @@ void grid_set_size(u8 w, u8 h) {
     }
   } else {
     // no 8x16 devices... are there?
+    // (bc: rotation of a 128 is a host service, not in the monome firmware)
     nquads = 1;
   }
   maxscroll = SEQ_NSTAGES - w;
 }
 
-// display sequence
+// display sequence --- ROWS 0,1,2,3
 void grid_show_seq(void) {
   const u8 * psrc;
   u8* pdst;
   //  u8 i;
 
   // somewhat hackish
-  psrc = seq_get_voice_data(0) + scroll;
+  psrc = seq_get_voice_data(0);
   pdst = monomeLedBuffer;
   memcpy(pdst, psrc, gw);
 
-  psrc = seq_get_voice_data(1) + scroll;
+  psrc = seq_get_voice_data(1);
   pdst += MONOME_LED_ROW_BYTES;
   memcpy(pdst, psrc, gw);
 
-  psrc = seq_get_voice_data(2) + scroll;
+  psrc = seq_get_voice_data(2);
   pdst += MONOME_LED_ROW_BYTES;
   memcpy(pdst, psrc, gw);
 
-  psrc = seq_get_voice_data(3) + scroll;
+  psrc = seq_get_voice_data(3);
   pdst += MONOME_LED_ROW_BYTES;
   memcpy(pdst, psrc, gw);
 
@@ -106,13 +110,13 @@ void grid_show_seq(void) {
   }
 }
 
-// display position ( / transport / cursor??)
+// display position ( / transport / cursor??) in ROW 7
 void grid_show_pos(void) {
   // hack: MONOME_LED_ROW_BYTES * 7
   static const u32 posRowOffset = 112;
   u8 i;
   u8* p = monomeLedBuffer + posRowOffset;
-  u32 pos = seq_get_pos() + scroll;
+  u32 pos = seq_get_pos();
   for(i=0; i<gw; i++) {
     if(i == pos) {
       *p++ = 0xff;
@@ -128,15 +132,50 @@ void grid_show_pos(void) {
   }
 }
 
-// display loop points
+// display loop start -- ROW 5
 void grid_show_loop(void) {
-  //  static const u32 loopRowOffset = 
-  // TODO...
+  static const u32 loopRowOffset = 80;
+  u8 i;
+  u8* p = monomeLedBuffer + posRowOffset;
+  for(i=0; i<gw; i++) {
+    if(start > end) {     // for rollover width of grid
+      if(i <= end || i >= start) {
+        *p++ = 0xff;
+      } else {
+        *p++ = 0x0;
+      }
+    } else {
+      if(i <= end && i >= start) {
+        *p++ = 0xff;
+      } else {
+        *p++ = 0x0;
+      }
+    }
 }
 
-// display loop length
+// display loop length -- ROW 6: solid bar, start from left
 void grid_show_len(void) {
-  //  static const u32 lenRowOffset = 
-  // TODO
+  static const u32 lenRowOffset = 96;
+  u8 i;
+  u8* p = monomeLedBuffer + posRowOffset;
+  for(i=0; i<gw; i++) {
+    if(i <= len) {
+      *p++ = 0xff;
+    } else {
+      *p++ = 0x0;
+    }
+}
+
+// display data page -- ROW 5: single point
+void grid_show_page(void) {
+  static const u32 lenRowOffset = 64;
+  u8 i;
+  u8* p = monomeLedBuffer + posRowOffset;
+  for(i=0; i<gw; i++) {
+    if(i <= page) {
+      *p++ = 0xff;
+    } else {
+      *p++ = 0x0;
+    }
 }
 
