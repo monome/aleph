@@ -172,7 +172,9 @@ static void calc_frame(void) {
   dum = drumsyn_voice_next(voices[1]);
   frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
   dum = drumsyn_voice_next(voices[2]);
+  frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
   dum = drumsyn_voice_next(voices[3]);
+  frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
 }
 
 //----------------------

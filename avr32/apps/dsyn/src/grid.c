@@ -41,7 +41,8 @@ void grid_handle_key_event(s32 data) {
   } else if(y==7) {
     // ==  bottom row: jump to position
     seq_set_next(pos);
-    grid_show_pos();
+    /// TODO: or something
+    //    grid_show_next();
   } else if (y == 4) {
     // == start point
   }
