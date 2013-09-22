@@ -23,7 +23,17 @@
 static u32 swTicks[8][2];
 
 // keep track of the last touched UI element (when appropriate)
-static eEventType touched = kNumEvents;
+/// fixme: might want to add app-specific events?
+static eEventType touched = kNumSysEvents;
+
+///////
+////////
+// FIXME
+// timer is running at the wrong speed, so have to multiply for ms... gr
+//static inline u32 ticks_ms(u32 
+/////
+///
+
 
 //---------------------------------------------
 //--------- static funcs
@@ -141,15 +151,19 @@ extern void lppr_handler(event_t* ev) {
     break;
     
   case kEventSwitch6:
+    print_dbg("wtf footswitch 1");
     if(ev->eventData > 0) {
       ctl_loop_record(1);
     } 
+    render_sw_on(2, ev->eventData > 0);
     break;
     
   case kEventSwitch7:
+    print_dbg("wtf footswitch 2");
     if(ev->eventData > 0) {
       ctl_loop_playback(1);
     }
+    render_sw_on(3, ev->eventData > 0);
     break;
     
   case kEventEncoder0:

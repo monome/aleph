@@ -44,7 +44,7 @@
 #define TABLE_MASK 	63
 
 // freq range (in note numbers)
-static const double noteMin = 19;  	// ~ 23.5 hz
+static const double noteMin = 19;  	// ~ 24 hz
 static const double noteMax = 116; 	// ~ 6.64 khz
 
 //static // fix representation
@@ -218,15 +218,17 @@ static void fill_hz_freq_tables(void) {
   s32 itmp;
   // 2 ** (1/12)
   const double tempered = 1.0594630943593;
+  char strbuf[11] = "           ";
 
   noteMin_fix = (u32)noteMin << 16;
   noteMax_fix = (u32)noteMax << 16;
-  noteSpan_fix = noteMax_fix - noteMin_fix;  
+  /// IDIOT
+  noteSpan_fix = fix16_sub(noteMax_fix, noteMin_fix);
 
   // fill hz / coeff tables 
   f = 0.0;
   for(i=0; i<TABLE_SIZE; i++) {
-    // note numbers (difference)s
+    // note numbers (difference)
     fn = f * ((double)noteMax - (double)noteMin) - 69.0 + noteMin;
     itmp = (s32)fn;
     // octave multiplier
@@ -246,15 +248,15 @@ static void fill_hz_freq_tables(void) {
     // store as fract32
     tabFreq->data[i] = (s32)(fy * (double)(FR32_MAX));
     // test:
-    //     print_fix16(strbuf, tabHz->data[i]);
-    /* print_dbg("\r\n idx: "); */
-    /* print_dbg_ulong(i); */
-    /* print_dbg(", note : "); */
-    /* print_dbg_ulong((s32)fn + 69); */
-    /* print_dbg(", hz (fix16) : "); */
-    /* print_dbg(strbuf); */
-    /* print_dbg(" coeff : 0x"); */
-    /* print_dbg_hex(tabFreq->data[i]); */
+    print_fix16(strbuf, tabHz->data[i]);
+    print_dbg("\r\n idx: ");
+    print_dbg_ulong(i);
+    print_dbg(", note : ");
+    print_dbg_ulong((s32)fn + 69);
+    print_dbg(", hz (fix16) : ");
+    print_dbg(strbuf);
+    print_dbg(" coeff : 0x");
+    print_dbg_hex(tabFreq->data[i]);
     f += finc;
   }   
   /// hack the endpoints of freq table

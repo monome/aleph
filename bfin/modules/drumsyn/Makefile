@@ -19,8 +19,9 @@ include ../../core.mk
 
 CFLAGS += -D ARCH_BFIN=1
 CFLAGS += -g
-CFLAGS += -O0
-#CFLAGS += --verbose
+# CFLAGS += -O0
+# CFLAGS += -O3
+# CFLAGS += --verbose
 
 $(module_obj): %.o : %.c	
 	$(CC) $(CFLAGS) -I $(audiolib) -c -o $@ $< $(LDFLAGS)

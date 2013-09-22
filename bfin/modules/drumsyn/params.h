@@ -38,7 +38,10 @@ enum Params {
   eParamLow0,		// 22
   eParamHigh0,		// 23
   eParamBand0,		// 24
-  eParamNotch0,	// 25
+  eParamNotch0,		// 25
+  eParamSvfPre0,	// 26
+  eParamFreqEnv0,	// 27
+  eParamRqEnv0,		// 28
 
   eParamGate1,		
   eParamTrig1,		
@@ -65,7 +68,10 @@ enum Params {
   eParamLow1,		
   eParamHigh1,		
   eParamBand1,		
-  eParamNotch1,			
+  eParamNotch1,		
+  eParamSvfPre1,	
+  eParamFreqEnv1,	
+  eParamRqEnv1,		
 
   eParamGate2,		
   eParamTrig2,		
@@ -93,6 +99,9 @@ enum Params {
   eParamHigh2,		
   eParamBand2,		
   eParamNotch2,		
+  eParamSvfPre2,	
+  eParamFreqEnv2,	
+  eParamRqEnv,		
 
 
   eParamGate3,		
@@ -120,7 +129,10 @@ enum Params {
   eParamLow3,		
   eParamHigh3,		
   eParamBand3,		
-  eParamNotch3,		
+  eParamNotch3,				
+  eParamSvfPre3,	
+  eParamFreqEnv3,	
+  eParamRqEnv3,
 
   eParamNumParams
 };

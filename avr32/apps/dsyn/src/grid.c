@@ -6,9 +6,9 @@
 
 // scroll position 
 // (location of x_0 on grid, relative to start of sequence)
-s32 scroll = 0;
+static s32 scroll = 0;
 // sequence length - grid length
-s32 maxscroll = 4;
+static s32 maxscroll = 4;
 
 // count of 8x8 quads in the conneceted grid device
 static u8 nquads = 0;
@@ -16,16 +16,22 @@ static u8 nquads = 0;
 static u8 gw = 0;
 static u8 gh = 0;
 
-// scroll the position of the grid editor relative to the sequence
-void grid_inc_scroll(s8 inc) {
-  scroll += inc;
+static void grid_set_scroll (u8 v) {
+  if(v > maxscroll) { v = maxscroll; }
   if(scroll < 0) { scroll = 0; }
-  if(scroll > maxscroll) { scroll = maxscroll; }
+  scroll = v;
   grid_show_seq();
   grid_show_pos();
   grid_show_loop();
   grid_show_len();
 }
+
+// scroll the position of the grid editor relative to the sequence
+void grid_inc_scroll(s8 inc) {
+  grid_set_scroll(scroll + inc);
+}
+
+
 
 // handle a key press
 void grid_handle_key_event(s32 data) {
@@ -52,8 +58,11 @@ void grid_handle_key_event(s32 data) {
   else if (y == 4) {
     seq_set_page(x);
   } 
-  else {
-    // == ???
+  else if (y==6) {
+    // page
+    switch(x) {
+      
+    }
   }
 }
 
@@ -81,8 +90,9 @@ void grid_show_seq(void) {
   u8* pdst;
   //  u8 i;
 
-  // somewhat hackish
-  psrc = seq_get_voice_data(0);
+  // somewhat hackish:
+  // get pointer to led buf, increment by row offset
+  psrc = seq_get_voice_data(0) + scroll;
   pdst = monomeLedBuffer;
   memcpy(pdst, psrc, gw);
 
@@ -98,10 +108,6 @@ void grid_show_seq(void) {
   pdst += MONOME_LED_ROW_BYTES;
   memcpy(pdst, psrc, gw);
 
-  // dirty flags
-  //for(i=0; i<nquads; i++) {
-  //    monome_set_quadrant_flag(i);
-  //  }
   /// at least this
   monome_set_quadrant_flag(0);
   if(nquads > 1) {

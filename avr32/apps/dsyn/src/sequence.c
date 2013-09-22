@@ -37,15 +37,12 @@ void seq_advance(void) {
   grid_show_pos();
   print_dbg(" : ");
   for(v=0; v<DSYN_NVOICES; v++) {
-    //  for(i=0; i<SEQ_NSTAGES; i++) {
-      // binary... 
-
     if(stages[v][pos + page_step_offset] > 0) {
       // gate on
       ctl_voice_param( v, eParamGate, 1 );
-      print_dbg("0");
-    } else {     
       print_dbg("1");
+    } else {     
+      print_dbg("0");
     }
   }
   print_dbg(" ] ");
@@ -66,7 +63,8 @@ void seq_advance(void) {
 // set stage value 
 void seq_set_stage(u8 vid, u8 sid, u8 val) {
   stages[vid][sid + page_step_offset] = val;
-}
+ }
+
 
 // toggle stage value 
  u8 seq_tog_stage(u8 vid, u8 sid) {
@@ -82,7 +80,7 @@ void seq_set_next(u8 x) {
 }
 
 // get pointer to stage data at given voice
- const u8* seq_get_voice_data(u8 vid) {
+const u8* seq_get_voice_data(u8 vid) {
   return (const u8*)(stages[vid+page_step_offset]);
 }
 
@@ -90,6 +88,7 @@ void seq_set_next(u8 x) {
 void seq_set_start(u8 x) {
   start = x;  
 }
+
 
 // set loop length
 void seq_set_len(u8 x) {
@@ -121,10 +120,3 @@ const u8 seq_get_len(void) {
 const u8 seq_get_page(void) {
   return page;
 }
-
-
-/* // get next position */
-/* const u8 seq_get_next(void) { */
-/*   return next; */
-/* } */
-
