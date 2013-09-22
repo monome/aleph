@@ -267,7 +267,11 @@ void ctl_loop_playback(u8 idx) {
 	ms = tcTicks - ms_loop1;
       }
       samps = MS_TO_SAMPS(ms) - 1;
-
+      print_dbg("\r\n loop playback, ms: ");
+      print_dbg_ulong(ms);
+      print_dbg(", samps: ");
+      print_dbg_ulong(samps);
+      
       print_dbg("\r\n write disable");
       ctl_param_change(eParam_write1, 0);
       print_dbg("\r\n reset write head");

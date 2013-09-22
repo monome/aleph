@@ -32,15 +32,12 @@ u8 end = SEQ_NSTAGES_1;
   grid_show_pos();
   print_dbg(" : ");
   for(v=0; v<DSYN_NVOICES; v++) {
-    //  for(i=0; i<SEQ_NSTAGES; i++) {
-      // binary... 
-
     if(stages[v][pos] > 0) {
       // gate on
       ctl_voice_param( v, eParamGate, 1 );
-      print_dbg("0");
-    } else {     
       print_dbg("1");
+    } else {     
+      print_dbg("0");
     }
   }
   print_dbg(" ] ");
@@ -52,30 +49,30 @@ u8 end = SEQ_NSTAGES_1;
   if(next >  SEQ_NSTAGES_1) {
     next= 0;
   }
-}
+ }
 
 // set stage value 
- void seq_set_stage(u8 vid, u8 sid, u8 val) {
+void seq_set_stage(u8 vid, u8 sid, u8 val) {
   stages[vid][sid] = val;
 }
 
 // toggle stage value 
  u8 seq_tog_stage(u8 vid, u8 sid) {
-  stages[vid][sid] ^= 0xff;
-  return stages[vid][sid];
-}
+   stages[vid][sid] ^= 0xff;
+   return stages[vid][sid];
+ }
 
 
 // set the next stage
- void seq_set_next(u8 x) {
+void seq_set_next(u8 x) {
   // next stage;
   next = x;  
 }
 
 // get pointer to stage data at given voice
  const u8* seq_get_voice_data(u8 vid) {
-  return (const u8*)(stages[vid]);
-}
+   return (const u8*)(stages[vid]);
+ }
 
 
 
