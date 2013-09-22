@@ -43,7 +43,9 @@ void bfin_wait(void) {
   //  print_dbg("\r\n hwait: ");
   //  print_dbg_ulong(gpio_get_pin_value(BFIN_HWAIT_PIN));
     while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { 
-      print_dbg("\r\n HWAIT asserted..."); 
+      ;;
+      //      print_dbg("\r\n HWAIT asserted..."); 
+      //      delay_ms(1);
     }
     delay_us(50);
 }
@@ -84,7 +86,8 @@ void bfin_set_param(u8 idx, fix16_t x ) {
 
     print_dbg(", \t elapsed ms: ");
     print_dbg_ulong(tcTicks - ticks);
-    ticks = tcTicks;
+    print_dbg("\r\n");
+    ticks = tcTicks;    
 
   //  app_pause();
 

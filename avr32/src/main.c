@@ -191,8 +191,8 @@ static void check_events(void) {
 	}
       }
     } else {
-      print_dbg("\r\n main event handler: ");
-      print_dbg_hex(e.eventType);
+      //      print_dbg("\r\n main event handler: ");
+      //      print_dbg_hex(e.eventType);
       
       //      if(e.eventType < kNumSysEvents) {
 	// system events

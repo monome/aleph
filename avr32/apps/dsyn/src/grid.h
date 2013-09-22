@@ -15,5 +15,7 @@ extern void grid_show_seq(void);
 extern void grid_show_pos(void);
 // show loop endpoints
 extern void grid_show_loop(void);
+// show loop length
+extern void grid_show_len(void);
 
 #endif

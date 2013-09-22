@@ -117,7 +117,7 @@ static void monome_refresh_timer_callback(int tag) {
 //---- external functions
 
 void init_app_timers(void) {
-  set_timer(&screenTimer,        eScreenTimerTag,        20,  &screen_timer_callback,  1);
+  set_timer(&screenTimer,        eScreenTimerTag,        50,  &screen_timer_callback,  1);
   //  set_timer(&adcTimer,           eAdcTimerTag,           5,   &adc_timer_callback,     1);
   //  set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);
   //  set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 20,  &monome_refresh_timer_callback, 1);
@@ -133,11 +133,13 @@ void init_app_timers(void) {
 }
 
  void timers_set_monome(void) {
+   print_dbg("\r\n setting monome timers");
   set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);
-  set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 20,  &monome_refresh_timer_callback, 1);
+  set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 50,  &monome_refresh_timer_callback, 1);
 }
 
  void timers_unset_monome(void) {
+   print_dbg("\r\n unsetting monome timers");
   kill_timer(eMonomePollTimerTag);
   kill_timer(eMonomeRefreshTimerTag); 
 }

@@ -1,3 +1,6 @@
+//asf
+#include "print_funcs.h"
+
 #include "ctl.h"
 #include "grid.h"
 #include "sequence.h"
@@ -11,23 +14,36 @@ u8 pos = 0;
 // next position
 u8 next = 1;
 
+// start
+u8 start = 0;
+// end
+u8 end = SEQ_NSTAGES_1;
+
 // init
  void seq_init(void) {
 }
 
 // advance to the next stage for all voices
  void seq_advance(void) {
-  u32 i;
+   //  u32 i;
   u8 v;
+  print_dbg(" [ ");
+  print_dbg_ulong(pos);
+  grid_show_pos();
+  print_dbg(" : ");
   for(v=0; v<DSYN_NVOICES; v++) {
-    for(i=0; i<SEQ_NSTAGES; i++) {
+    //  for(i=0; i<SEQ_NSTAGES; i++) {
       // binary... 
-      if(stages[v][i] > 0) {
-	// gate on
-	ctl_voice_param( i, eParamGate, 1 );
-      }
+
+    if(stages[v][pos] > 0) {
+      // gate on
+      ctl_voice_param( v, eParamGate, 1 );
+      print_dbg("0");
+    } else {     
+      print_dbg("1");
     }
   }
+  print_dbg(" ] ");
   pos = next;
   next++;
   if(pos >  SEQ_NSTAGES_1) {
@@ -36,8 +52,6 @@ u8 next = 1;
   if(next >  SEQ_NSTAGES_1) {
     next= 0;
   }
-  grid_show_seq();
-  grid_show_pos();
 }
 
 // set stage value 

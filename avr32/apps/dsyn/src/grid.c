@@ -7,6 +7,8 @@
 // scroll position 
 // (location of x_0 on grid, relative to start of sequence)
 s32 scroll = 0;
+// sequence length - grid length
+s32 maxscroll = 4;
 
 // count of 8x8 quads in the conneceted grid device
 static u8 nquads = 0;
@@ -18,10 +20,11 @@ static u8 gh = 0;
 void grid_inc_scroll(s8 inc) {
   scroll += inc;
   if(scroll < 0) { scroll = 0; }
-  if(scroll > SEQ_NSTAGES_1) { scroll = SEQ_NSTAGES_1; }
+  if(scroll > maxscroll) { scroll = maxscroll; }
   grid_show_seq();
   grid_show_pos();
   grid_show_loop();
+  grid_show_len();
 }
 
 // handle a key press
@@ -64,6 +67,7 @@ void grid_set_size(u8 w, u8 h) {
     // no 8x16 devices... are there?
     nquads = 1;
   }
+  maxscroll = SEQ_NSTAGES - w;
 }
 
 // display sequence
@@ -103,11 +107,35 @@ void grid_show_seq(void) {
 
 // display position ( / transport / cursor??)
 void grid_show_pos(void) {
-  //...  
+  // hack: MONOME_LED_ROW_BYTES * 7
+  static const u32 posRowOffset = 112;
+  u8 i;
+  u8* p = monomeLedBuffer + posRowOffset;
+  u32 pos = seq_get_pos() + scroll;
+  for(i=0; i<gw; i++) {
+    if(i == pos) {
+      *p++ = 0xff;
+    } else {
+      *p++ = 0x0;
+    }
+  }
+  /// at least this
+  monome_set_quadrant_flag(0);
+  if(nquads > 1) {
+    // and maybe this
+    monome_set_quadrant_flag(1);
+  }
 }
 
 // display loop points
 void grid_show_loop(void) {
-  
+  //  static const u32 loopRowOffset = 
+  // TODO...
+}
+
+// display loop length
+void grid_show_len(void) {
+  //  static const u32 lenRowOffset = 
+  // TODO
 }
 

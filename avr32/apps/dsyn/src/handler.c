@@ -95,8 +95,8 @@ static void handle_monome_connect(u32 data) {
 extern void dsyn_handler(event_t* ev) {
   u8 b;
 
-  print_dbg("\r\n app event handler: ");
-  print_dbg_hex(ev->eventType);
+  //  print_dbg("\r\n app event handler: ");
+  //  print_dbg_hex(ev->eventType);
 
   switch (ev->eventType) {
 
