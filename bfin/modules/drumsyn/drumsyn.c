@@ -75,6 +75,7 @@ static void drumsyn_voice_init(void* mem);
 static fract32 drumsyn_voice_next(drumsynVoice* voice);
 static fract32 noise_next(drumsynVoice* voice);
 
+// get next noise-generator value
 fract32 noise_next(drumsynVoice* voice) {
   return lcprng_next(&(voice->rngL)) | ( lcprng_next(&(voice->rngH)) << 14 );
 }
@@ -85,6 +86,11 @@ void drumsyn_voice_init(void* mem) {
   // svf
   filter_svf_init(&(voice->svf));
   // noise
+
+  // RNG
+  lcprng_reset(&(voice->rngH), 0xDEADFACE);
+  lcprng_reset(&(voice->rngL), 0xDADABEEF);
+
   // hipass
   /// TODO
 
@@ -93,40 +99,12 @@ void drumsyn_voice_init(void* mem) {
   env_exp_init(&(voice->envFreq));
   env_exp_init(&(voice->envRq));
 
-
-#ifdef DRUMSYN_NOENV
-  // integrators
-    /*
-  filter_1p_fr32_init(&(voice->lpAmp), 0);
-  filter_1p_fr32_init(&(voice->lpFreq), 0x100);
-  filter_1p_fr32_init(&(voice->lpRq), 0x200);
-    */
-#else
-  // envelopes
-  /*   ///// /AHH rrg */
-  /* voice->envAmp = (env_int*)malloc(sizeof(env_int)); */
-  /* env_int_init(voice->envAmp); */
-
-  /* voice->envFreq = (env_int*)malloc(sizeof(env_int)); */
-  /* env_int_init(voice->envFreq); */
-
-  /* voice->envRq = (env_int*)malloc(sizeof(env_int)); */
-  /* env_int_init(voice->envRq); */
-
-  /* env_int_set_scale(voice->envAmp, FR32_MAX >> 1); */
-#endif
-
   // SVF
-  //  voice->svf = (filter_svf*)malloc(sizeof(filter_svf));
   filter_svf_init(&(voice->svf));
 
   filter_svf_set_low(&(voice->svf), FR32_MAX >> 1);
   filter_svf_set_coeff(&(voice->svf), FR32_MAX >> 2);
   filter_svf_set_rq(&(voice->svf), FR32_MAX >> 3);
-
-  // RNG
-  lcprng_reset(&(voice->rngH), 0xDEADFACE);
-  lcprng_reset(&(voice->rngL), 0xDADABEEF);
 
   env_exp_set_off( &(voice->envAmp) , 0 );
   env_exp_set_on(  &(voice->envAmp) , FR32_MAX >> 2 );
@@ -147,19 +125,23 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
   filter_svf* f = &(voice->svf);
   fract32 amp, freq, rq;
 
-  /*
-    amp = filter_1p_fr32_next(&(voice->lpAmp));
-    freq = filter_1p_fr32_next(&(voice->lpFreq));
-    rq = filter_1p_fr32_next(&(voice->lpRq));
-  */
   amp = env_exp_next(&(voice->envAmp));
   freq = env_exp_next(&(voice->envFreq));
   rq = env_exp_next(&(voice->envRq));
   
-  filter_svf_set_coeff( f, freq );
-  filter_svf_set_rq( f, rq );
-  
-  return mult_fr1x32x32( amp, filter_svf_next(f, noise_next(voice) ));
+  if(voice->freqEnv > 0) {
+    filter_svf_set_coeff( f, freq );
+  }
+
+  if(voice->rqEnv > 0) {
+    filter_svf_set_rq( f, rq );
+  }
+
+  if(voice->svfPre) {
+    return mult_fr1x32x32( amp, filter_svf_next(f, noise_next(voice) ));
+  } else {
+    return filter_svf_next(f, mult_fr1x32x32( amp, noise_next(voice) ));
+  }
 }
 
 

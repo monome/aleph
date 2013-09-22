@@ -66,6 +66,10 @@ enum Params {
   eParamHigh,		
   eParamBand,		
   eParamNotch,	
+  eParamSvfPre0,	
+  eParamFreqEnv0,	
+  eParamRqEnv0,		
+
 
   /*
   eParamGate1,		

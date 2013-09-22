@@ -16,12 +16,13 @@
 //-------------------------
 //-------- functions
 
+// initialize
 extern void seq_init(void);
 
 // advance to the next stage (all voices)
 extern void seq_advance(void);
 
-// set the next stage (all voices)
+// set (jump to) the next stage (all voices)
 extern void seq_set_next(u8 x);
 
 // set stage value 

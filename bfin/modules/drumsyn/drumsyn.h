@@ -25,33 +25,17 @@ typedef struct _drumsynVoice {
   env_exp envFreq;
   env_exp envRq;
 
-  /*
-  // amplitude
-  fract32 amp;
-  // integrators
-  filter_1p_fr32 lpAmp;
-  filter_1p_fr32 lpFreq;
-  filter_1p_fr32 lpRq;
-  // endpoints
-  fract32 freqOn;
-  fract32 freqOff;
-  fract32 rqOn;
-  fract32 rqOff;
-  // slews
-  fract32 ampSlewUp;
-  fract32 ampSlewDown;
-  fract32 freqSlewUp;
-  fract32 freqSlewDown;
-  fract32 rqSlewUp;
-  fract32 rqSlewDown;
-*/
+  // filter pre/post amplitude
+  u8 svfPre;
+  
+  // env->frequency flag
+  // if false, use freqOn as value
+  u8 freqEnv;
 
-  // sustain duration in samples
-  /*
-  u32 ampDur;
-  u32 freqDur;
-  u32 rqDur;
-  */
+  // env->rq flag
+  // if false, use freqOn as value
+  u8 rqEnv;
+
   // gate!
   u8 gate;
 } drumsynVoice;
