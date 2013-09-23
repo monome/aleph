@@ -66,7 +66,7 @@ void seq_advance(void) {
 
 // set stage value 
 void seq_set_stage(u8 vid, u8 sid, u8 val) {
-  stages[vid][sidXg] = val;
+  stages[vid][sid] = val;
  }
 
 
