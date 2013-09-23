@@ -84,12 +84,12 @@ void grid_handle_key_event(s32 data) {
   u8 x, y, val, pos;
   monome_grid_key_parse_event_data(data, &x, &y, &val);
   if(val == 0) { return; }
+
   pos = scroll + x;
   // == top 4 rows : sequence 
   /// FIXME: ignoring the #defines above
-
   if(y < 4) { 
-    seq_tog_stage(y, x);
+    seq_tog_stage(y, pos);
     grid_show_seq();
   } else if(y==GRID_ROW_POS) {
     /// jump to position
@@ -115,7 +115,6 @@ void grid_handle_key_event(s32 data) {
     if(x < 8) {
       grid_set_page(x);
     }
-
   }
 }
 
@@ -131,13 +130,12 @@ void grid_set_size(u8 w, u8 h) {
     }
   } else {
     // no 8x16 devices... are there?
-    // (bc: rotation of a 128 is a host service, not in the monome firmware)
     nquads = 1;
   }
   maxscroll = SEQ_NSTAGES - w;
 }
 
-// display sequence --- ROWS 0,1,2,3
+// display sequence
 void grid_show_seq(void) {
   const u8 * psrc;
   u8* pdst;
@@ -145,25 +143,25 @@ void grid_show_seq(void) {
 
   // somewhat hackish:
   // get pointer to led buf, increment by row offset
-  psrc = seq_get_voice_data(0);
+  psrc = seq_get_voice_data(0) + scroll;
   pdst = monomeLedBuffer;
   memcpy(pdst, psrc, gw);
 
-  psrc = seq_get_voice_data(1);
+  psrc = seq_get_voice_data(1) + scroll;
   pdst += MONOME_LED_ROW_BYTES;
   memcpy(pdst, psrc, gw);
 
-  psrc = seq_get_voice_data(2);
+  psrc = seq_get_voice_data(2) + scroll;
   pdst += MONOME_LED_ROW_BYTES;
   memcpy(pdst, psrc, gw);
 
-  psrc = seq_get_voice_data(3);
-  pdst += MONOME_LED_ROW_BYTES; 
+  psrc = seq_get_voice_data(3) + scroll;
+  pdst += MONOME_LED_ROW_BYTES;
   memcpy(pdst, psrc, gw);
   dirtquad();
 }
 
-// display position ( / transport / cursor??) in ROW 7
+// display position ( / transport / cursor??)
 void grid_show_pos(void) {
   static const u32 posRowOffset = GRID_ROW_POS * MONOME_LED_ROW_BYTES;
   const u32 ulim = gw + scroll;
