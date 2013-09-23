@@ -91,6 +91,7 @@ void env_exp_set_trig(env_exp* env, u8 trig) {
 // set on value
 void env_exp_set_on(env_exp* env, fract32 v) {
   //  env->scale = scale;
+  env->valOn = v; // omg
   if(env->state == envStateAtk) {
     filter_1p_lo_in(&(env->lpAtk), v);
   } else {
