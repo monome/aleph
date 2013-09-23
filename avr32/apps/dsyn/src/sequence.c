@@ -15,14 +15,10 @@ u8 pos = 0;
 u8 next = 1;
 // start
 u8 start = 0;
-// length
-u8 len = 8;
 // end
-u8 end = start + len;
-// page
-u8 page = 0;
-// page step offset (page * width of grid)
-u8 page_step_offset = 0;
+u8 end = SEQ_NSTAGES_1;
+// length 
+u8 len = 8; //SEQ_NSTAGES_1;
 
 // init
 void seq_init(void) {
@@ -32,37 +28,45 @@ void seq_init(void) {
 void seq_advance(void) {
    //  u32 i;
   u8 v;
-  print_dbg(" [ ");
-  print_dbg_ulong(pos);
-  grid_show_pos();
-  print_dbg(" : ");
-  for(v=0; v<DSYN_NVOICES; v++) {
-    if(stages[v][pos + page_step_offset] > 0) {
-      // gate on
-      ctl_voice_param( v, eParamGate, 1 );
-      print_dbg("1");
-    } else {     
-      print_dbg("0");
-    }
-  }
-  print_dbg(" ] ");
-  
-  if(next >= start+len) {
-    next= start;
-  }
-
-  // rollover
-  if(next >= gw) {
-    next = 0;
-  }
 
   pos = next;
-  next++;
+
+  //  print_dbg(" [ ");
+  //  print_dbg_ulong(pos);
+
+  grid_show_pos();
+  grid_show_page();
+
+  print_dbg(" : ");
+  for(v=0; v<DSYN_NVOICES; v++) {
+    if(stages[v][pos] > 0) {
+      // gate on
+      ctl_voice_param( v, eParamGate, 1 );
+      //      print_dbg("1");
+    } else {     
+      //      print_dbg("0"); 
+    }
+  }
+  //  print_dbg(" ] ");
+
+  // apply loop
+  if(pos == end) {
+    next = start;
+  } else {
+    next++;
+  }
+  // apply bounds
+  if(pos >  SEQ_NSTAGES_1) {
+    pos = 0;
+  }
+  if(next >= SEQ_NSTAGES_1) {
+    next = 0;
+  }
 }
 
 // set stage value 
 void seq_set_stage(u8 vid, u8 sid, u8 val) {
-  stages[vid][sid + page_step_offset] = val;
+  stages[vid][sidXg] = val;
  }
 
 
@@ -79,6 +83,33 @@ void seq_set_next(u8 x) {
   next = x;  
 }
 
+
+// set start
+extern void seq_set_start(u8 x) {
+  start = x;
+  end = start + len - 1;
+}
+
+// set length
+extern void seq_set_len(u8 n) {
+  len = n;
+  end = start + len - 1;
+  /// fixme: wrap? or what
+  if(next > end) { next = start; }
+}
+
+// set end
+extern void seq_set_end(u8 y) {
+  end = y;
+  if(end > start) {
+    len = end - start;
+  } else { // wrap
+    len = end + (SEQ_NSTAGES - start);
+  }
+  /// fixme: wrap? or what
+  if(next > end) { next = start; }
+}
+
 // get pointer to stage data at given voice
 const u8* seq_get_voice_data(u8 vid) {
   return (const u8*)(stages[vid+page_step_offset]);
@@ -89,32 +120,31 @@ void seq_set_start(u8 x) {
   start = x;  
 }
 
-
-// set loop length
-void seq_set_len(u8 x) {
-  len = x;  
-}
-
-// get current page
-void u8 seq_set_page(u8 x) {
-  page = x;
-  page_step_offset = x << 3;  // FIXME this should be grid width
-}
-
 // get current position
 const u8 seq_get_pos(void) {
   return pos;
 }
 
-// get start position
-const u8 seq_get_start(void) {
+// get start
+extern const u8 seq_get_start(void) {
   return start;
 }
 
-// get sequence length
-const u8 seq_get_len(void) {
+// get end
+extern const u8 seq_get_end(void) {
+  return end;
+}
+
+// get length
+extern const u8 seq_get_len(void) {
   return len;
 }
+
+
+/* // get next position */
+/* const u8 seq_get_next(void) { */
+/*   return next; */
+/* } */
 
 // get current page
 const u8 seq_get_page(void) {

@@ -18,7 +18,43 @@
 
 // temp buffer
 #define NUMSTRBUF_LEN 16
+
 static char numstrbuf[NUMSTRBUF_LEN];
+
+
+// FIXME: retarded to have this here
+static const char* paramStrings[] = {
+  "Gate",		// 0
+  "Trig",		// 1
+  "Amp",		// 2
+  "AmpSus",      	// 3
+  "AmpAtkSlew",	// 4
+  "AmpDecSlew",	// 5
+  "AmpRelSlew",	// 6
+  "AmpSusDur",	// 7
+  "FreqOff",	// 8
+  "FreqOn",	// 9
+  "FreqSus",	// 10 
+  "FreqAtkSlew",	// 11
+  "FreqDecSlew",	// 12
+  "FreqRelSlew",	// 13
+  "FreqSusDur",	// 14
+  "RqOff",		// 15
+  "RqOn",		// 16
+  "RqSus",		// 17
+  "RqAtkSlew",	// 18
+  "RqDecSlew",	// 19
+  "RqRelSlew",	// 20
+  "RqSusDur",	// 21
+  "Low",		// 22
+  "High",		// 23
+  "Band",		// 24
+  "Notch",		// 25
+  "SvfPre",	// 26
+  "FreqEnv",	// 27
+  "RqEnv",		// 28
+};
+
 
 ///// declare screen-drawing regions.
 //// len, dirty, and data can be left unitialized aand calculated / allocated in region_init.
@@ -98,7 +134,7 @@ void render_status(const char* str) {
   region_string(&status, str, 0, 0, 0xf, 0, 0);
 }
 
-// fill with initial graphics (id strings)
+// fill with initial graphics
 void render_startup(void) {
 
   region_fill(&bigtop, 0x5);
@@ -143,6 +179,13 @@ void render_sw_on(u8 sw, u8 on) {
   region_fill(&(foot[sw]), on ? 0xf : 0x1);
 }
 
+void render_param(u8 vid, s32 pid, s32 val) {
+  region_string_aa(&bigtop, paramStrings[pid], 0, 0, 1);
+  print_fix16(numstrbuf, val);
+  region_string_aa(&bigtop, numstrbuf, 19, 0, 1);
+}
+
+/*
 void render_dac(u8 ch, s32 val) {
   /// FIXME: hella stupid to call a fill from a frequently-triggered handler
   region_fill(&bigtop, 0x0);
@@ -152,5 +195,5 @@ void render_dac(u8 ch, s32 val) {
   itoa_whole(val, numstrbuf, NUMSTRBUF_LEN);
   region_string(&bigtop, numstrbuf, 5, 20, 0xf, 0x0, 1);
 }
+*/
 
-#undef LINE_BUF_LEN

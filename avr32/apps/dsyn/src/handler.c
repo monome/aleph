@@ -1,14 +1,15 @@
 /*
-  ui.c
-  lppr
+  handler.c
+  dsyn
   aleph-avr32
 
  */
 
 //asf
 #include "print_funcs.h"
-
+#include "gpio.h"
 // avr32
+#include "aleph_board.h"
 #include "control.h"
 #include "event_types.h"
 #include "interrupts.h"
@@ -129,6 +130,19 @@ extern void dsyn_handler(event_t* ev) {
     render_sw_on(3, b);
     seq_tog_stage(3, seq_get_pos());
     break;
+
+  case kEventSwitch4:
+    //    render_sw_on(3, ev->eventData > 0);
+    if(ev->eventData > 0) {
+      grid_toggle_edit_mode();
+      if(gpio_get_pin_value(LED_MODE_PIN)) {
+	gpio_clr_gpio_pin(LED_MODE_PIN);
+      } else {
+	gpio_set_gpio_pin(LED_MODE_PIN);
+      }
+    }
+    break;
+
     
   case kEventSwitch6:
     render_sw_on(2, ev->eventData > 0);
