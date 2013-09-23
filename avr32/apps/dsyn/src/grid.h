@@ -13,9 +13,13 @@ extern void grid_set_size(u8 w, u8 h);
 extern void grid_show_seq(void);
 // display position
 extern void grid_show_pos(void);
-// show loop endpoints
-extern void grid_show_loop(void);
-// show loop length
+// show loop start point
+extern void grid_show_start(void);
+// show loop lenth / end poin
 extern void grid_show_len(void);
+// show page
+extern void grid_show_page(void);
+// toggle edit mode
+extern void grid_toggle_edit_mode(void);
 
 #endif
