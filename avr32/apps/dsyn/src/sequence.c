@@ -13,6 +13,7 @@ static u8 stages[DSYN_NVOICES][SEQ_NSTAGES];
 u8 pos = 0;
 // next position
 u8 next = 1;
+
 // start
 u8 start = 0;
 // end
@@ -21,11 +22,11 @@ u8 end = SEQ_NSTAGES_1;
 u8 len = 8; //SEQ_NSTAGES_1;
 
 // init
-void seq_init(void) {
+ void seq_init(void) {
 }
 
 // advance to the next stage for all voices
-void seq_advance(void) {
+ void seq_advance(void) {
    //  u32 i;
   u8 v;
 
@@ -59,22 +60,22 @@ void seq_advance(void) {
   if(pos >  SEQ_NSTAGES_1) {
     pos = 0;
   }
-  if(next >= SEQ_NSTAGES_1) {
-    next = 0;
+  if(next >  SEQ_NSTAGES_1) {
+    next= 0;
   }
-}
+ 
+ }
 
 // set stage value 
 void seq_set_stage(u8 vid, u8 sid, u8 val) {
   stages[vid][sid] = val;
- }
-
+}
 
 // toggle stage value 
  u8 seq_tog_stage(u8 vid, u8 sid) {
-  stages[vid][sid + page_step_offset] ^= 0xff;
-  return stages[vid][sid];
-}
+   stages[vid][sid] ^= 0xff;
+   return stages[vid][sid];
+ }
 
 
 // set the next stage
@@ -111,14 +112,9 @@ extern void seq_set_end(u8 y) {
 }
 
 // get pointer to stage data at given voice
-const u8* seq_get_voice_data(u8 vid) {
-  return (const u8*)(stages[vid+page_step_offset]);
-}
-
-// set loop start
-void seq_set_start(u8 x) {
-  start = x;  
-}
+ const u8* seq_get_voice_data(u8 vid) {
+   return (const u8*)(stages[vid]);
+ }
 
 // get current position
 const u8 seq_get_pos(void) {
@@ -146,7 +142,3 @@ extern const u8 seq_get_len(void) {
 /*   return next; */
 /* } */
 
-// get current page
-const u8 seq_get_page(void) {
-  return page;
-}
