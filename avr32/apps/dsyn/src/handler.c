@@ -108,16 +108,26 @@ extern void dsyn_handler(event_t* ev) {
     b = ev->eventData > 0;
     ctl_set_gate(0, b);
     render_sw_on(0, b);
+    seq_tog_stage(0, seq_get_pos());
     break;
 
   case kEventSwitch1:
-    render_sw_on(1, ev->eventData > 0);
+    b = ev->eventData > 0;
+    ctl_set_gate(1, b);
+    render_sw_on(1, b);
+    seq_tog_stage(1, seq_get_pos());
     break;
   case kEventSwitch2:
-    render_sw_on(2, ev->eventData > 0);
+    b = ev->eventData > 0;
+    ctl_set_gate(2, b);
+    render_sw_on(2, b);
+    seq_tog_stage(2, seq_get_pos());
     break;
   case kEventSwitch3:
-    render_sw_on(3, ev->eventData > 0);
+    b = ev->eventData > 0;
+    ctl_set_gate(3, b);
+    render_sw_on(3, b);
+    seq_tog_stage(3, seq_get_pos());
     break;
     
   case kEventSwitch6:

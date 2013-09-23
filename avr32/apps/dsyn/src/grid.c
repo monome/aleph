@@ -46,23 +46,18 @@ void grid_handle_key_event(s32 data) {
   } else if(y==7) {
     // ==  bottom row: jump to position
     seq_set_next(x);
-    /// TODO: or something
-    //    grid_show_next();
   } else if (y == 5) {
     // == start point
     seq_set_start(x)
+    grid_show_start();
   }
   else if (y == 6) {
     seq_set_len(x);
+    grid_show_len();
   } 
   else if (y == 4) {
     seq_set_page(x);
-  } 
-  else if (y==6) {
-    // page
-    switch(x) {
-      
-    }
+    grid_show_page();
   }
 }
 
@@ -92,7 +87,7 @@ void grid_show_seq(void) {
 
   // somewhat hackish:
   // get pointer to led buf, increment by row offset
-  psrc = seq_get_voice_data(0) + scroll;
+  psrc = seq_get_voice_data(0);
   pdst = monomeLedBuffer;
   memcpy(pdst, psrc, gw);
 
