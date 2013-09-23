@@ -115,6 +115,10 @@ void drumsyn_voice_init(void* mem) {
   env_exp_set_off(  &(voice->envRq) , 0x1fffffff );
   env_exp_set_on(  &(voice->envRq) , 0x1fffffff );
 
+  voice->freqEnv = 1;
+  voice->rqEnv = 1;
+  voice->svfPre = 1;
+
 }
 
 void drumsyn_voice_deinit(drumsynVoice* voice) {
@@ -126,14 +130,14 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
   fract32 amp, freq, rq;
 
   amp = env_exp_next(&(voice->envAmp));
-  freq = env_exp_next(&(voice->envFreq));
-  rq = env_exp_next(&(voice->envRq));
-  
+
   if(voice->freqEnv > 0) {
+    freq = env_exp_next(&(voice->envFreq));
     filter_svf_set_coeff( f, freq );
   }
 
   if(voice->rqEnv > 0) {
+    rq = env_exp_next(&(voice->envRq));
     filter_svf_set_rq( f, rq );
   }
 

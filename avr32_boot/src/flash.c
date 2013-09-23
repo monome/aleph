@@ -24,7 +24,7 @@
 // value to write during first run
 #define FIRSTRUN_INIT 0x76543210
 // size of RAM buffer for firmware image (.elf)
-#define FIRMWARE_MAX_BYTES 0x20000 // 128K
+#define FIRMWARE_MAX_BYTES 0x80000 // 512K
 
 // storage layout of default data in nonvolatile memory
 typedef const struct {

@@ -11,12 +11,12 @@
 #include "ctrl_access.h"
 #include "delay.h"
 #include "flashc.h"
+#include "gpio.h"
 #include "intc.h"
 #include "pdca.h"
 #include "power_clocks_lib.h"
 #include "print_funcs.h"
 #include "pm.h"
-#include "gpio.h"
 #include "sd_mmc_spi.h"
 #include "smc.h"
 #include "sysclk.h"
@@ -176,6 +176,9 @@ static void check_events(void) {
 	  ) {
 	startup = 0;
 	print_dbg("\r\n key pressed, launching ");
+	if(e.eventType == kEventSwitch3) {
+	  firstrun = 1; 
+	}
 	// return 1 if app completed firstrun tasks
 	launch = app_launch(firstrun);
 	delay_ms(10);

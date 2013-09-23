@@ -32,8 +32,8 @@ u8 len = 8; //SEQ_NSTAGES_1;
 
   pos = next;
 
-  print_dbg(" [ ");
-  print_dbg_ulong(pos);
+  //  print_dbg(" [ ");
+  //  print_dbg_ulong(pos);
 
   grid_show_pos();
   grid_show_page();
@@ -43,12 +43,12 @@ u8 len = 8; //SEQ_NSTAGES_1;
     if(stages[v][pos] > 0) {
       // gate on
       ctl_voice_param( v, eParamGate, 1 );
-      print_dbg("1");
+      //      print_dbg("1");
     } else {     
-      print_dbg("0"); 
+      //      print_dbg("0"); 
     }
   }
-  print_dbg(" ] ");
+  //  print_dbg(" ] ");
 
   // apply loop
   if(pos == end) {

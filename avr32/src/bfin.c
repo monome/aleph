@@ -68,7 +68,7 @@ void bfin_load_buf(void) {
   }
 
   bfin_end_transfer();
-  
+ 
   app_resume();
 }
 

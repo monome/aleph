@@ -25,5 +25,6 @@ void render_startup(void);
  extern void render_sw_on(u8 sw, u8 on);
 // draw dac value
  extern void render_dac(u8 ch, s32 val);
-  
+
+extern void render_param(u8 vid, s32 idx, s32 val);
 #endif // h guard
