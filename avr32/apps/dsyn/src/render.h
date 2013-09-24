@@ -27,4 +27,8 @@ void render_startup(void);
  extern void render_dac(u8 ch, s32 val);
 
 extern void render_param(u8 vid, s32 idx, s32 val);
+
+// render tempo
+void render_tempo(u32 ms);
+
 #endif // h guard

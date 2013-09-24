@@ -62,18 +62,54 @@ static fix16 scale_knob_value(const s32 v) {
     return v << 4;
   } else if (vabs < 19) {
     //    print_dbg("\r\n knob acc 3");
-    return v << 5;
+    return v << 6;
   } else if (vabs < 25) {
     //    print_dbg("\r\n knob acc 4");
-    return v << 7;  } 
+    return v << 9;  } 
   else if (vabs < 32) {
     //    print_dbg("\r\n knob acc 4");
-    return v << 9;
+    return v << 12;
   } else {
     //    print_dbg("\r\n knob acc max");
-    return v << 12;
+    return v << 16;
   }
 }
+
+
+// knob acceleration, faster version
+static fix16 scale_knob_value_fast(const s32 v) {
+  s32 vabs = BIT_ABS(v);
+  s32 ret = v;
+  //  print_dbg("\r\n knob acc, val: ");
+  //  print_dbg_hex((u32)v);
+  if(vabs < 4) {
+    //    print_dbg("\r\n ");
+    //return v;
+    ret = v;
+  } else if (vabs < 8) {
+    //    print_dbg("\r\n knob acc 1");
+    ret = v << 4;
+  } else if (vabs < 12) {
+    //    print_dbg("\r\n knob acc 2");
+    ret = v << 8;
+  } else if (vabs < 19) {
+    //    print_dbg("\r\n knob acc 3");
+    ret = v << 12;
+  } else if (vabs < 25) {
+    //    print_dbg("\r\n knob acc 4");
+    ret = v << 16;  } 
+  else if (vabs < 32) {
+    //    print_dbg("\r\n knob acc 4");
+    ret = v << 18;
+  } else {
+    //    print_dbg("\r\n knob acc max");
+    ret = v << 22;
+  }
+  if (v > 0) { ret &= 0x7fffffff; } else { ret |= 0x80000000; }
+  return ret;
+}
+
+
 
 static void handle_monome_connect(u32 data) {
   eMonomeDevice dev;
@@ -89,12 +125,21 @@ static void handle_monome_connect(u32 data) {
   timers_set_monome();
 }
 
+static void handle_sw(u8 id, u8 b) {
+    //    ctl_set_gate(2, b);
+    render_sw_on(id, b);
+    if(b) {
+      ctl_set_voice_select(id);
+    }			   
+    //    seq_tog_stage(2, seq_get_pos());
+}
+
 //---------------------------------------
 //---- external funcs
 
 // handle key presses
 extern void dsyn_handler(event_t* ev) {
-  u8 b;
+  //  u8 b;
 
   //  print_dbg("\r\n app event handler: ");
   //  print_dbg_hex(ev->eventType);
@@ -106,29 +151,16 @@ extern void dsyn_handler(event_t* ev) {
     break;
     
   case kEventSwitch0:
-    b = ev->eventData > 0;
-    ctl_set_gate(0, b);
-    render_sw_on(0, b);
-    seq_tog_stage(0, seq_get_pos());
+    handle_sw(0, ev->eventData > 0);
     break;
-
   case kEventSwitch1:
-    b = ev->eventData > 0;
-    ctl_set_gate(1, b);
-    render_sw_on(1, b);
-    seq_tog_stage(1, seq_get_pos());
+    handle_sw(1, ev->eventData > 0);
     break;
   case kEventSwitch2:
-    b = ev->eventData > 0;
-    ctl_set_gate(2, b);
-    render_sw_on(2, b);
-    seq_tog_stage(2, seq_get_pos());
+    handle_sw(2, ev->eventData > 0);
     break;
   case kEventSwitch3:
-    b = ev->eventData > 0;
-    ctl_set_gate(3, b);
-    render_sw_on(3, b);
-    seq_tog_stage(3, seq_get_pos());
+    handle_sw(3, ev->eventData > 0);
     break;
 
   case kEventSwitch4:
@@ -167,13 +199,12 @@ extern void dsyn_handler(event_t* ev) {
     break;
   case kEventEncoder2:
     // PARAM IDX 
-    // .. .TODO
+    ctl_inc_param_select( ev->eventData > 0 ? 1 : -1 );
     break;
   case kEventEncoder3:
     // PARAM VALUE
-    // ... TODO
+    ctl_inc_param( scale_knob_value_fast(ev->eventData) );
     break;
-
   case kEventMonomeConnect :
     handle_monome_connect((u32)ev->eventData);
     break;

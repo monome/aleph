@@ -21,19 +21,56 @@
 // blah
 #define DSP_STRING "aleph-drumsyn"
 
-// parameter input values
-static s32 inVal[DSYN_NVOICES][PARAM_VOICE_NPARAMS];
-// current parameter selection for each voice
-static s32 sel[DSYN_NVOICES];
+//---- extern variables
+// blechh
+const char* paramStrings[] = {
+  "Gate",		// 0
+  "Trig",		// 1
+  "Amp",		// 2
+  "AmpSus",      	// 3
+  "AmpAtkSlew",	// 4
+  "AmpDecSlew",	// 5
+  "AmpRelSlew",	// 6
+  "AmpSusDur",	// 7
+  "FreqOff",	// 8
+  "FreqOn",	// 9
+  "FreqSus",	// 10 
+  "FreqAtkSlew",	// 11
+  "FreqDecSlew",	// 12
+  "FreqRelSlew",	// 13
+  "FreqSusDur",	// 14
+  "RqOff",		// 15
+  "RqOn",		// 16
+  "RqSus",		// 17
+  "RqAtkSlew",	// 18
+  "RqDecSlew",	// 19
+  "RqRelSlew",	// 20
+  "RqSusDur",	// 21
+  "Low",		// 22
+  "High",		// 23
+  "Band",		// 24
+  "Notch",		// 25
+  "SvfPre",	// 26
+  "FreqEnv",	// 27
+  "RqEnv",		// 28
+};
+
+
 
 //----------------------------------------
 //---- static variables
+
+// parameter input values
+static s32 voiceParamVal[DSYN_NVOICES][PARAM_VOICE_NPARAMS];
+// current parameter selection for each voice
+static s32 paramSel[DSYN_NVOICES];
+// current voice selection
+static s32 voiceSel;
 
 static const int kParamVoiceOff[4] = { 0, 
 				   PARAM_VOICE_NPARAMS,
 				   PARAM_VOICE_NPARAMS_x2,
 				   PARAM_VOICE_NPARAMS_x3 };
-
 //-------------------------------------
 //------ extern functions
 
@@ -95,7 +132,7 @@ void ctl_init_params(void) {
    // FIXME: better initial input values
    for (i=0; i<DSYN_NVOICES; i++) {
      for(j=0; j<PARAM_VOICE_NPARAMS; j++) {
-       inVal[i][j] = 0x1fffffff;
+       voiceParamVal[i][j] = 0x1fffffff;
      }
    }
 
@@ -318,7 +355,7 @@ void  ctl_set_gate(u8 ch, u8 val) {
 }
 
 // increment tempo
-extern void ctl_inc_tempo(s32 val) {
+void ctl_inc_tempo(s32 val) {
   static s32 ms = 1000;
   static const s32 metroMax = 32000;
   static const s32 metroMin = 50; // 16th @300bpm
@@ -326,38 +363,49 @@ extern void ctl_inc_tempo(s32 val) {
   if(ms < metroMin) { ms = metroMin; }
   if(ms > metroMax) { ms = metroMax; }
   timers_set_metro_ms((u32)ms);
-  print_dbg("\r\n ms: ");
-  print_dbg_ulong(ms);
+  render_tempo(ms);
+  //  print_dbg("\r\n ms: ");
+  //  print_dbg_ulong(ms);
 }
 
 // set voice and parameter
-extern void ctl_voice_param(u8 vid, u32 pid, fract32 val) {
+void ctl_voice_param(u8 vid, u32 pid, fract32 val) {
+  voiceParamVal[vid][pid] = val;
   ctl_param_change(pid + kParamVoiceOff[vid], val);
 }
 
 // increment selected parameter value for voice
-extern void ctl_inc_param(u8 vid, s32 val) {
-  u8 pid = sel[vid];
-  s32 v = inVal[vid][pid] + val; 
-  if(v < 0) { v = 0x7fffffff; }
-  inVal[vid][pid] = v;
-  ctl_voice_param(vid, pid, v);
-  render_param(vid, pid, val);
+void ctl_inc_param(s32 inc) {
+  u8 pid = paramSel[voiceSel];
+  s32 oldVal = voiceParamVal[voiceSel][pid];
+  s32 v = oldVal + inc; 
+  // a good guess
+  if(v < 0) { v = (oldVal > 0x3fffffff) ? 0x7fffffff : 0; }
+  //  voiceParamVal[vid][pid] = v;
+  ctl_voice_param(voiceSel, pid, v);
+  render_param(voiceSel, pid, v);
 }
 
 
 // increment parameter selection
-extern void ctl_inc_param_select(u8 vid, s32 inc) {
-  s32 pid = sel[vid];
+void ctl_inc_param_select(s32 inc) {
+  s32 pid = paramSel[voiceSel];
   pid += inc;
-  if(pid < 0) { pid = 0; }
-  if(pid > PARAM_VOICE_NPARAMS) { pid = 0; }
-  //  ctl_voice_param(vid, pid, v);
-  sel[vid] = pid;
-  render_param(vid, pid, inVal[vid][pid]);
+  if(pid < 0) { pid = PARAM_VOICE_NPARAMS_1; }
+  if(pid > PARAM_VOICE_NPARAMS_1) { pid = 0; }
+  paramSel[voiceSel] = pid;
+  pid = paramSel[voiceSel];
+  render_param(voiceSel, pid, voiceParamVal[voiceSel][pid]);
 }
 
-// get input value
-const u32 ctl_get_inval (u8 vid, u32 pid) {
-  return (const u32)inVal[vid][pid];
+// set voice selection
+void ctl_set_voice_select(u8 vid) {
+  voiceSel = vid;
+  render_param(voiceSel, paramSel[voiceSel], voiceParamVal[voiceSel][paramSel[voiceSel]]);
+}
+
+
+// get param value
+const u32 ctl_get_voice_param (u8 vid, u32 pid) {
+  return (const u32)voiceParamVal[vid][pid];
 }

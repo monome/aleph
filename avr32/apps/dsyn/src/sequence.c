@@ -38,7 +38,7 @@ u8 len = 8; //SEQ_NSTAGES_1;
   grid_show_pos();
   grid_show_page();
 
-  print_dbg(" : ");
+  //  print_dbg(" : ");
   for(v=0; v<DSYN_NVOICES; v++) {
     if(stages[v][pos] > 0) {
       // gate on

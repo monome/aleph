@@ -98,14 +98,14 @@ void files_write_params(void) {
   fp = fl_fopen(CONFIG_PATH, "w");
 
   for(i=0; i<DSYN_NVOICES; i++) {
-    for(j=0; j<DSYN_NVOICES; j++) {
+    for(j=0; j<PARAM_VOICE_NPARAMS; j++) {
       // 8 character hex string per parameter
-      uint_to_hex_ascii(str, ctl_get_inval(i, j));
+      uint_to_hex_ascii(str, ctl_get_voice_param(i, j));
       str[8] = '\0';
       fl_fputs(str, fp);
-      // put whatever descriptive text here...
-      //      fl_fputs(" ( ");
-      //      fl_fputs
+      // the following text should be ignored
+      fl_fputs(" , ", fp);
+      fl_fputs(paramStrings[i * PARAM_VOICE_NPARAMS + j], fp);
       // the newline is important
       fl_fputs("\r\n", fp);
     }
@@ -115,26 +115,42 @@ void files_write_params(void) {
 
 // read parameter values from file
 void files_read_params(void) {
-  // TODO
-  /* u32 i, j; */
-  /* void* fp; */
-  /* char str[32]; */
-  /* app_pause(); */
+  u32 i, j, k;
+  u32 val;
+  void* fp;
+  char str[8];
+  char ch;
+  u8 eof = 0;
 
-  /* fp = fl_fopen(CONFIG_PATH, "w"); */
+  app_pause();
 
-  /* for(i=0; i<DSYN_NVOICES; i++) { */
-  /*   for(j=0; j<DSYN_NVOICES; j++) { */
-  /*     // 8 character hex string per parameter */
-  /*     uint_to_hex_ascii(str, ctl_get_inval(i, j)); */
-  /*     str[8] = '\0'; */
-  /*     fl_fputs(str, fp); */
-  /*     // put whatever descriptive text here... */
-  /*     //      fl_fputs(" ( "); */
-  /*     //      fl_fputs */
-  /*     // the newline is important */
-  /*     fl_puts("\r\n", fp); */
-  /*   } */
-  /* } */
-  /* fl_fclose(fp); */
+  fp = fl_fopen(CONFIG_PATH, "r");
+  if(fp == NULL) {
+    print_dbg("\r\n dsyn config file was NULL");
+    app_resume();
+    return;
+  }
+
+  for(i=0; i<DSYN_NVOICES; i++) {
+    if(eof) { break; }
+    for(j=0; j<PARAM_VOICE_NPARAMS; j++) {      
+      if(eof) { break; }
+      // 8 character hex string -> param value
+      for(k=0; k<8; k++) {
+	str[k] = fl_fgetc(fp);
+      }
+      val = hex_ascii_to_uint(str);
+      // set the parameter
+      ctl_voice_param(i, j, val);
+      // search for the next newline, 
+      // ignore everything in between
+      while(1) {
+	ch = fl_fgetc(fp);
+	if(ch == '\n') { break; }
+	if(ch == EOF) { eof = 1; break; }
+      }
+    }
+  }
+  fl_fclose(fp);
+  app_resume();
 }

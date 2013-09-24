@@ -28,4 +28,7 @@ extern char* hex_ascii_to_byte(u8* dst, char* src);
 // endian-specific!
 void uint_to_hex_ascii(char* dst, u32 src);
 
+// convert ascii hex string to uint
+u32 hex_ascii_to_uint(char* str);
+
 #endif // h guard

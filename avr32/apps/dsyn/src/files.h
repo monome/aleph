@@ -10,6 +10,7 @@ u8 files_search_dsp(void);
 void files_write_params(void);
 
 // get parameter settings from file
+void files_read_params(void);
 
 #endif 
 
