@@ -165,6 +165,9 @@ static void module_set_voice_param(u8 vid, u32 idx, pval v) {
     break;
   case eParamFreqOn0: 
     env_exp_set_on( &(voices[vid]->envFreq), v.fr);
+    if(voices[vid]->freqEnv == 0) {
+      filter_svf_set_coeff(&(voices[vid]->svf), v.fr);
+    }
     break;
   case eParamFreqSus0: 
     env_exp_set_sus( &(voices[vid]->envFreq), v.fr);
@@ -189,6 +192,9 @@ static void module_set_voice_param(u8 vid, u32 idx, pval v) {
     break;
   case eParamRqOn0 :
     env_exp_set_on( &(voices[vid]->envRq), v.fr);
+    if(voices[vid]->rqEnv == 0) {
+      filter_svf_set_rq(&(voices[vid]->svf), v.fr);
+    }
     break;
   case eParamRqSus0 :
     env_exp_set_sus( &(voices[vid]->envRq), v.fr);

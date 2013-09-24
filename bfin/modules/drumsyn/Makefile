@@ -7,6 +7,7 @@ module_obj = drumsyn.o \
 	$(audiolib)/conversion.o \
 	$(audiolib)/env_exp.o \
 	$(audiolib)/filter_1p.o \
+	$(audiolib)/filter_2p.o \
 	$(audiolib)/filter_svf.o \
 	$(audiolib)/noise.o \
 	$(common)/libfixmath/fix32.o \
