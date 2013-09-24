@@ -37,7 +37,8 @@ CSRCS += \
 	$(APP_DIR)/src/ctl.c \
 	$(APP_DIR)/src/inputs.c	\
 	$(APP_DIR)/src/render.c \
-	$(APP_DIR)/src/sequence.c
+	$(APP_DIR)/src/sequence.c \
+	$(APP_DIR)/src/util.c
 
 
 # List of assembler source files.

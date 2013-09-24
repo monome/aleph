@@ -6,19 +6,15 @@
 #include "bfin.h"
 #include "flash.h"
 #include "filesystem.h"
-//#include "screen.h"
 #include "render.h"
 
 // lppr
+#include "ctl.h"
 #include "files.h"
+#include "util.h"
 
 #define LDR_PATH "/dsp/aleph-drumsyn.ldr"
-
-// search for our .ldr file in the filesystem
-// load and store in internal flash if found, otherwise report failure
-
-/* void files_init(void) { */
-/* } */
+#define CONFIG_PATH "/app/dsyn/dsyn_conf.txt"
 
 // fread: no size arg
 static void fake_fread(volatile u8* dst, u32 size, void* fp) {
@@ -76,7 +72,6 @@ u8 files_search_dsp(void) {
     // reboot the DSP from RAM
     print_dbg("\r\n booting DSP from RAM");
 
-
     render_status("booting DSP from RAM...     ");
     render_update();
 
@@ -93,3 +88,53 @@ u8 files_search_dsp(void) {
 }
 
 
+// write parameter values to file
+void files_write_params(void) {
+  u32 i, j;
+  void* fp;
+  char str[32];
+  app_pause();
+
+  fp = fl_fopen(CONFIG_PATH, "w");
+
+  for(i=0; i<DSYN_NVOICES; i++) {
+    for(j=0; j<DSYN_NVOICES; j++) {
+      // 8 character hex string per parameter
+      uint_to_hex_ascii(str, ctl_get_inval(i, j));
+      str[8] = '\0';
+      fl_fputs(str, fp);
+      // put whatever descriptive text here...
+      //      fl_fputs(" ( ");
+      //      fl_fputs
+      // the newline is important
+      fl_fputs("\r\n", fp);
+    }
+  }
+  fl_fclose(fp);
+}
+
+// read parameter values from file
+void files_read_params(void) {
+  // TODO
+  /* u32 i, j; */
+  /* void* fp; */
+  /* char str[32]; */
+  /* app_pause(); */
+
+  /* fp = fl_fopen(CONFIG_PATH, "w"); */
+
+  /* for(i=0; i<DSYN_NVOICES; i++) { */
+  /*   for(j=0; j<DSYN_NVOICES; j++) { */
+  /*     // 8 character hex string per parameter */
+  /*     uint_to_hex_ascii(str, ctl_get_inval(i, j)); */
+  /*     str[8] = '\0'; */
+  /*     fl_fputs(str, fp); */
+  /*     // put whatever descriptive text here... */
+  /*     //      fl_fputs(" ( "); */
+  /*     //      fl_fputs */
+  /*     // the newline is important */
+  /*     fl_puts("\r\n", fp); */
+  /*   } */
+  /* } */
+  /* fl_fclose(fp); */
+}
