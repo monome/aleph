@@ -3,6 +3,7 @@
 
 #include "env_exp.h"
 #include "filter_svf.h"
+#include "filter_2p.h"
 #include "noise.h"
 
 /// testing
@@ -18,8 +19,7 @@ typedef struct _drumsynVoice {
   lcprng rngL;
 
   // 2nd order highpass for noise
-  //// TODO
-  //  filter_2p hipass;
+  filter_2p_hi hipass;
   
   env_exp envAmp;
   env_exp envFreq;

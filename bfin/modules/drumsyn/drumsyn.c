@@ -77,7 +77,10 @@ static fract32 noise_next(drumsynVoice* voice);
 
 // get next noise-generator value
 fract32 noise_next(drumsynVoice* voice) {
-  return lcprng_next(&(voice->rngL)) | ( lcprng_next(&(voice->rngH)) << 14 );
+  //  return lcprng_next(&(voice->rngL)) | ( lcprng_next(&(voice->rngH)) << 14 );
+  return filter_2p_hi_next(&(voice->hipass), 
+			   lcprng_next(&(voice->rngL))
+			   | ( lcprng_next(&(voice->rngH)) << 15 ));
 }
 
 // initialize voice
@@ -92,7 +95,7 @@ void drumsyn_voice_init(void* mem) {
   lcprng_reset(&(voice->rngL), 0xDADABEEF);
 
   // hipass
-  /// TODO
+  filter_2p_hi_init(&(voice->hipass));
 
   // envelopes
   env_exp_init(&(voice->envAmp));
@@ -142,9 +145,9 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
   }
 
   if(voice->svfPre) {
-    return mult_fr1x32x32( amp, filter_svf_next(f, noise_next(voice) ));
+    return shl_fr1x32(1, mult_fr1x32x32( amp, filter_svf_next(f, noise_next(voice) )) );
   } else {
-    return filter_svf_next(f, mult_fr1x32x32( amp, noise_next(voice) ));
+    return shl_fr1x32(1, filter_svf_next(f, mult_fr1x32x32( amp, noise_next(voice) )) );
   }
 }
 

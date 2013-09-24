@@ -12,7 +12,8 @@
 #include "types.h"
 
 //-- lowpass 
-typedef struct _filter_1p_lo {
+/*
+typedef struct _filter_2p_lo {
   //  u32 sr;    // sample rate
   fract32 a; 	// alpha
   fract32 b; 	// beta
@@ -24,9 +25,10 @@ typedef struct _filter_1p_lo {
   fract32 y1; 	// output at (t-1)
   fract32 y2; 	// output at (t-2)
 } filter_2p_lo;
+*/
 
 //-- highpass
-typedef struct _filter_1p_hi {
+typedef struct _filter_2p_hi {
   //  u32 sr;    // sample rate
   fract32 a; 	// alpha
   fract32 b; 	// beta

@@ -40,7 +40,7 @@ static u8 gh = 0;
 	len row sets endpoint,
 */
 
-static u8 lenEditMode = 0;
+static u8 lenEditMode = 1;
 
 //------------------------
 //---- -static funcs

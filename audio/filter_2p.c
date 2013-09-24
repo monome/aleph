@@ -86,7 +86,7 @@ void filter_2p_hi_init(filter_2p_hi* f) {
   f->x = 0;
   rho = (1.0 / (double)SAMPLERATE) * M_TWOPI;
 
-  filter_2p_hi_calc_coeffs(60.f, 10.f, &(f->a), &(f->b), &(f->g));
+  filter_2p_hi_calc_coeffs(30.f, 10.f, &(f->a), &(f->b), &(f->g));
 }
 
 // get next filtered value
