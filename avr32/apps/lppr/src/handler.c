@@ -12,9 +12,11 @@
 #include "control.h"
 #include "event_types.h"
 #include "interrupts.h"
+#include "monome.h"
 #include "screen.h"
 // lppr
 #include "app_timers.h"
+#include "grid.h"
 #include "handler.h"
 #include "ctl.h"
 #include "render.h"
@@ -66,6 +68,21 @@ static fix16 scale_knob_value(const s32 v) {
     return v << 12;
   }
 }
+
+
+ static void handle_monome_connect(u32 data) {
+   eMonomeDevice dev;
+   u8 w;
+   u8 h;
+   monome_connect_parse_event_data(data, &dev, &w, &h);
+   if(dev != eDeviceGrid) {
+     print_dbg("\r\n DSYN monome connect: unsupported device");
+     return;
+   }
+   print_dbg("\r\n DSYN: connecting grid device");
+   grid_set_size(w, h);
+   timers_set_monome();
+ }
 
 
 //---------------------------------------
@@ -146,7 +163,7 @@ extern void lppr_handler(event_t* ev) {
   case kEventEncoder0:
     if(touchedThis) {
       render_touched_fb(0);
-      kill_test();
+      //      kill_test();
       
     }
     ctl_inc_fb(0, scale_knob_value(ev->eventData));
@@ -156,7 +173,7 @@ extern void lppr_handler(event_t* ev) {
     if(touchedThis) {
       render_touched_mix(0);
 
-      kill_test();
+      //      kill_test();
     }
     ctl_inc_mix(0, scale_knob_value(ev->eventData));
     break;
@@ -165,7 +182,7 @@ extern void lppr_handler(event_t* ev) {
     if(touchedThis) {
       render_touched_freq(0);
 
-      kill_test();
+      //      kill_test();
     }
     ctl_inc_freq(0, scale_knob_value(ev->eventData));
     break;
@@ -174,9 +191,13 @@ extern void lppr_handler(event_t* ev) {
     if(touchedThis) {
       render_touched_res(0);
 
-      kill_test();
+      //      kill_test();
     }
     ctl_inc_res(0, scale_knob_value(ev->eventData));
+    break;
+
+  case kEventMonomeConnect :
+    handle_monome_connect((u32)ev->eventData);
     break;
 
   default:
