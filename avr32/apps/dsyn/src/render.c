@@ -264,3 +264,12 @@ void render_dac(u8 ch, s32 val) {
   region_string(&bigtop, numstrbuf, 5, 20, 0xf, 0x0, 1);
 }
 */
+
+void render_file_write(u8 done) {
+  region_fill(&bigtop, 0x0);
+  if(done) {
+    region_string_aa(&bigtop, "saving params...", 0, 0, 0);
+  } else {
+    region_string_aa(&bigtop, "saved", 0, 0, 0);
+  }
+}

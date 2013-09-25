@@ -103,9 +103,9 @@ extern void seq_set_len(u8 n) {
 extern void seq_set_end(u8 y) {
   end = y;
   if(end > start) {
-    len = end - start;
+    len = end - start + 1;
   } else { // wrap
-    len = end + (SEQ_NSTAGES - start);
+    len = end + (SEQ_NSTAGES - start) + 1;
   }
   /// fixme: wrap? or what
   if(next > end) { next = start; }

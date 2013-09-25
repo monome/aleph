@@ -167,6 +167,7 @@
    case kEventSwitch4:
      // mode button: write config file
      if(ev->eventData > 0) {
+       print_dbg("\r\n write params...");
        files_write_params();
        /* grid_toggle_edit_mode(); */
        /* if(gpio_get_pin_value(LED_MODE_PIN)) { */

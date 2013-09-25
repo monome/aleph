@@ -14,6 +14,7 @@
 // app
 #include "app_timers.h"
 #include "ctl.h"
+#include "files.h"
 #include "inputs.h"
 #include "render.h"
 #include "util.h"
@@ -136,6 +137,9 @@ void ctl_init_params(void) {
      }
    }
 
+   //!!!
+
+#if 0
   ///////
   ///// drum 0
 
@@ -347,6 +351,11 @@ void ctl_init_params(void) {
     ctl_voice_param( 3,  eParamSvfPre,	0	);
     ctl_voice_param( 3,  eParamFreqEnv,	0	);
     ctl_voice_param( 3,  eParamRqEnv,	0	);
+
+#else 
+    files_read_params();
+#endif
+    
 }
 
 // set gate

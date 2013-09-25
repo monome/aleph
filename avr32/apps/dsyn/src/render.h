@@ -26,9 +26,15 @@ void render_startup(void);
 // draw dac value
  extern void render_dac(u8 ch, s32 val);
 
+// draw parameter label + value
+/// FIXME: should be separated with different regions
 extern void render_param(u8 vid, s32 idx, s32 val);
 
 // render tempo
 void render_tempo(u32 ms);
+
+// render writing-file
+void render_file_write(u8 done);
+
 
 #endif // h guard

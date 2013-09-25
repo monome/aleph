@@ -1,4 +1,5 @@
 // asf
+#include "delay.h"
 #include "print_funcs.h"
 
 // aleph-avr32
@@ -8,13 +9,15 @@
 #include "filesystem.h"
 #include "render.h"
 
-// lppr
+// dsyn
 #include "ctl.h"
 #include "files.h"
+#include "render.h"
 #include "util.h"
 
 #define LDR_PATH "/dsp/aleph-drumsyn.ldr"
 #define CONFIG_PATH "/app/dsyn/dsyn_conf.txt"
+#define DELIM_TOKEN ','
 
 // fread: no size arg
 static void fake_fread(volatile u8* dst, u32 size, void* fp) {
@@ -93,24 +96,60 @@ void files_write_params(void) {
   u32 i, j;
   void* fp;
   char str[32];
+
+  render_file_write(0);
+  delay_ms(100);
+
   app_pause();
 
   fp = fl_fopen(CONFIG_PATH, "w");
+  print_dbg("\r\n opened conf file, pointer: 0x");
+  print_dbg_hex((u32)fp);
 
   for(i=0; i<DSYN_NVOICES; i++) {
     for(j=0; j<PARAM_VOICE_NPARAMS; j++) {
       // 8 character hex string per parameter
       uint_to_hex_ascii(str, ctl_get_voice_param(i, j));
+      //      print_dbg("\r\n writing parameter hex: ");
+      //      print_dbg(str);
       str[8] = '\0';
+      // arbitrary delimiter token  comes first
+      fl_fputc(DELIM_TOKEN, fp);
+      // data immediately follows
       fl_fputs(str, fp);
-      // the following text should be ignored
-      fl_fputs(" , ", fp);
-      fl_fputs(paramStrings[i * PARAM_VOICE_NPARAMS + j], fp);
-      // the newline is important
-      fl_fputs("\r\n", fp);
+      // following text is ignored by the machine...
+   // which voice
+      fl_fputs(" ", fp);
+      switch(i) {
+      case 0:
+	fl_fputs(" voice 1 ", fp);
+	break;
+      case 1:
+	fl_fputs(" voice 2 ", fp);
+	break;
+      case 2:
+	fl_fputs(" voice 3 ", fp);
+	break;
+      case 3:
+	fl_fputs(" voice 4 ", fp);
+	break;
+      // param string
+      fl_fputs(" ", fp);
+      fl_fputs(paramStrings[j], fp);
+      }
+      // this is not always working? or something
+      fl_fputs("\r\n ", fp);
     }
   }
+  
+  delay_ms(100);
+
   fl_fclose(fp);
+
+
+  delay_ms(100);
+
+  app_resume();
 }
 
 // read parameter values from file
@@ -131,6 +170,10 @@ void files_read_params(void) {
     return;
   }
 
+  if(fl_fgetc(fp) != DELIM_TOKEN) {
+    print_dbg("\r\n warning, didn't find delim token in first character of dsyn conf");
+  }
+
   for(i=0; i<DSYN_NVOICES; i++) {
     if(eof) { break; }
     for(j=0; j<PARAM_VOICE_NPARAMS; j++) {      
@@ -139,6 +182,8 @@ void files_read_params(void) {
       for(k=0; k<8; k++) {
 	str[k] = fl_fgetc(fp);
       }
+      //      print_dbg("\r\n read param: 0x");
+      //      print_dbg(str);
       val = hex_ascii_to_uint(str);
       // set the parameter
       ctl_voice_param(i, j, val);
@@ -146,11 +191,17 @@ void files_read_params(void) {
       // ignore everything in between
       while(1) {
 	ch = fl_fgetc(fp);
-	if(ch == '\n') { break; }
+	//	print_dbg(" ... 0x");
+	//	print_dbg_hex((u32)ch);
+	if(ch == DELIM_TOKEN) { break; }
 	if(ch == EOF) { eof = 1; break; }
+	///???
+	if(ch == 0xff) { eof = 1; break; }
       }
     }
   }
   fl_fclose(fp);
   app_resume();
+
+  render_file_write(1);
 }

@@ -145,9 +145,9 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
   }
 
   if(voice->svfPre) {
-    return shl_fr1x32(1, mult_fr1x32x32( amp, filter_svf_next(f, noise_next(voice) )) );
+    return shl_fr1x32(mult_fr1x32x32( amp, filter_svf_next(f, noise_next(voice) )) , 1);
   } else {
-    return shl_fr1x32(1, filter_svf_next(f, mult_fr1x32x32( amp, noise_next(voice) )) );
+    return shl_fr1x32(filter_svf_next(f, mult_fr1x32x32( amp, noise_next(voice) )) , 1);
   }
 }
 

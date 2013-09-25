@@ -98,21 +98,21 @@ fract32 filter_2p_hi_next(filter_2p_hi* f, fract32 x) {
   y2 = y1;
   y1 = y;
   */
-  f->y = shl_fr1x32( 1, 
+  f->y = shl_fr1x32(
 	      sub_fr1x32(
 			 add_fr1x32(
 				    mult_fr1x32x32( f->a,
 						   add_fr1x32( x, 
 							       sub_fr1x32( f->x2,
-									   shl_fr1x32( 1, f->x1)
+									   shl_fr1x32( f->x1, 1)
 									   )
 							       )
-						   ),
+						    ),
 				    mult_fr1x32x32( f->g, f->y1)
 				    ),
 			 mult_fr1x32x32( f->b, f->y2)
-			 )
-		     );
+			 ), 
+	      1 );
   f->x2 = f->x1;
   f->x1 = x;
   f->y2 = f->y1;
