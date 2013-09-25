@@ -74,7 +74,7 @@ void bfin_load_buf(void) {
 
 //void bfin_set_param(u8 idx, f32 x ) {
 void bfin_set_param(u8 idx, fix16_t x ) {
-  static u32 ticks = 0;
+  //static u32 ticks = 0;
   ParamValue pval;
   pval.asInt = (s32)x;
 

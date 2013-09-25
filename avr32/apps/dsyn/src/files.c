@@ -133,10 +133,10 @@ void files_write_params(void) {
       case 3:
 	fl_fputs(" voice 4 ", fp);
 	break;
+      }
       // param string
       fl_fputs(" ", fp);
       fl_fputs(paramStrings[j], fp);
-      }
       // this is not always working? or something
       fl_fputs("\r\n ", fp);
     }
