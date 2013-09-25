@@ -18,16 +18,6 @@
 #include "util.h"
 
 
-//----------------------------------------
-//---- static variables
-
-// milliseconds uptime of last event
-static u32 ms_loop1 = 0;
-// is a loop playing
-static u8 loopPlay1 = 0;
-// is a loop recording
-static u8 loopRec1 = 0;
-
 //-- parameter values
 // inputs. use s32 type but unsigned range (accumulators)
 
@@ -54,24 +44,38 @@ s32 in_panOutLR[2] = {0, 0};
 s32 in_panOutFB[2] = {0, 0}; 
 
 
+//----------------------------------------
+//---- static variables
+
+// milliseconds uptime of last event
+static u32 msLoopStart1 = 0;
+static u32 msLoopLen1 = 0;
+// is a loop playing
+static u8 loopPlay1 = 0;
+// is a loop recording
+static u8 loopRec1 = 0;
+
 
 // up and down interval timers for keys and footswitches
 ///// fixme: uhh we don't need all of them in the controller module
-static u32 tapTicks[8][2];
+static u32 tapMs[8][2];
+// actual delay ms
+static u32 delayMs[2];
+
 
 // process timing on key press and return interval
 static void tap_time(u8 num, u8 val) {
   u32 ret;
-  if( tapTicks[num][val] > tcTicks) {
+  if( tapMs[num][val] > tcTicks) {
     // overflow
-    ret = tcTicks + (0xffffffff - tapTicks[num][val] );
+    ret = tcTicks + (0xffffffff - tapMs[num][val] );
     print_dbg("\r\n overflow in sw timer");
   } else {
-    ret = tcTicks - tapTicks[num][val];
+    ret = tcTicks - tapMs[num][val];
     print_dbg("\r\n tap_time: "); 
     print_dbg_ulong(ret);
   }
-  tapTicks[num][val] = tcTicks;
+  tapMs[num][val] = tcTicks;
 }
 
 
@@ -229,11 +233,11 @@ void ctl_loop_record(u8 idx) {
       ctl_param_change(eParam_pre1, FR32_MAX);
       // can reset loop length
       // by recording, cancelling loop, playing
-      ms_loop1 = tcTicks; 
+      msLoopStart1 = tcTicks; 
       render_overdub();
     } else {
       print_dbg("\r\n (new loop)");
-      ms_loop1 = tcTicks;
+      msLoopStart1 = tcTicks;
       print_dbg("\r\n stop read head movement");
       ctl_param_change(eParam_run_read1, 0);
       print_dbg("\r\n reset write head");
@@ -267,11 +271,12 @@ void ctl_loop_playback(u8 idx) {
 
       // not playing
       print_dbg("\r\n (new loop)"); 
-      if (ms_loop1 > tcTicks) { // overflow
-	ms = tcTicks + (0xffffffff - ms_loop1);
+      if (msLoopStart1 > tcTicks) { // overflow
+	ms = tcTicks + (0xffffffff - msLoopStart1);
       } else {
-	ms = tcTicks - ms_loop1;
+	ms = tcTicks - msLoopStart1;
       }
+      msLoopLen1 = ms;
       samps = MS_TO_SAMPS(ms) - 1;
       print_dbg("\r\n loop playback, ms: ");
       print_dbg_ulong(ms);
@@ -385,13 +390,54 @@ void ctl_inc_panOutFB(u8 id, s32 delta) {
 // tap delay time
 void ctl_tap_delay(u8 idx, u8 val) {
   tap_time(idx, val);
-  ctl_set_delay_ms(idx, tapTicks[idx][val]);
+  delayMs[idx] = tapMs[idx][1];
+  ctl_set_delay_ms(idx, delayMs[idx]);
 }
 
 // set delay time multiplier
-extern void ctl_set_delay_mul(u8 idx, u8 val) {
-  ctl_set_delay_ms(idx, tapTicks[idx][1] * val);
+void ctl_set_delay_mul(u8 idx, u8 val) {
+  delayMs[idx] = tapMs[idx][1] * val;
+  ctl_set_delay_ms(idx, delayMs[idx]);
 }
 
-// 
+// move both read and write heads to offset multiple of tap time
+// offset can be negative.. 
+void ctl_set_delay_pos(u8 idx, u8 mul) {
+  u32 ms;
+  u32 samps;
 
+  if(idx == 1) {
+    /// line 1... 
+    if(loopPlay1) {
+      // loop is playing; set read position as division of loop time /8
+      samps = (MS_TO_SAMPS(msLoopLen1) >> 3) * mul;
+      samps += MS_TO_SAMPS(msLoopStart1);
+      ctl_param_change(eParam_pos_read1, samps);
+    } else if(loopRec1) {
+      // loop is recording: ???? hmm...
+    } else {
+      // no loop, set write pos as tap mul and sync
+      ms = mul * tapMs[1][1];
+      samps = MS_TO_SAMPS(ms);
+      ctl_param_change(eParam_pos_write1, samps);
+      samps = MS_TO_SAMPS(delayMs[1]);
+      ctl_param_change(eParam_delay1, samps);
+    }
+  } else {
+    // line 0, set write pos to tap mul and sync
+    ms = mul * tapMs[0][1];
+      samps = MS_TO_SAMPS(ms);
+      ctl_param_change(eParam_pos_write0, samps);
+      samps = MS_TO_SAMPS(delayMs[0]);
+      ctl_param_change(eParam_delay0, samps);
+  }
+
+}
+
+// set loop time as multiple of tap time
+void ctl_set_loop(u8 idx, u8 mul) {
+}
+
+// set pre level
+void ctl_set_pre(u8 idx, fract32 val) {
+}
