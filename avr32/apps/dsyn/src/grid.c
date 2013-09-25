@@ -232,7 +232,7 @@ void grid_show_len(void) {
 // show page depending on scroll
 void grid_show_page(void) {
   static const u32 pageRowOffset = GRID_ROW_PAGE * MONOME_LED_ROW_BYTES;
-  /// FIXME: magic hack
+  /// FIXME: magic hack... 
   const u8 pg = scroll >> 3;
   const u8 ps = seq_get_pos() >> 3;
   u8* p = monomeLedBuffer + pageRowOffset;

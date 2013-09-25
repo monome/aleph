@@ -112,7 +112,7 @@ void ftdi_setup(void) {
   char * manstr;
   char * prodstr;
   char * serstr;
-  u8 matchMonome;
+  //  u8 matchMonome;
   print_dbg("\r\n FTDI setup routine");
 
   // get string data...

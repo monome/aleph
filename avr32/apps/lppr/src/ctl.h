@@ -20,15 +20,20 @@ extern s32 in_panOutFB[2];
 
 // query the DSP for parameter descriptors. 
 // return 0 if something seems wrong, 1 otherwise
-u8 ctl_report_params(void);
+extern u8 ctl_report_params(void);
 // set parameters to initial values
-void ctl_init_params(void);
+extern void ctl_init_params(void);
 // set delay time in ms
-void  ctl_set_delay_ms(u8 idx, u32 ms);
+extern void ctl_set_delay_ms(u8 idx, u32 ms);
+// tap delay time
+extern void ctl_tap_delay(u8 idx, u8 val);
+// set delay time multiplier
+extern void ctl_set_delay_mul(u8 idx, u8 val);
+
 // start recording loop on given delayline
-void ctl_loop_record(u8 idx);
+extern void ctl_loop_record(u8 idx);
 // stop recording loop / start playback on given delayline
-void ctl_loop_playback(u8 idx);
+extern void ctl_loop_playback(u8 idx);
 
 // set params from ui
 extern void ctl_inc_fb(u8 id, s32 delta);

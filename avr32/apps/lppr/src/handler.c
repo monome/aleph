@@ -19,9 +19,6 @@
 #include "ctl.h"
 #include "render.h"
 
-// up and down interval timers for keys and footswitches
-static u32 swTicks[8][2];
-
 // keep track of the last touched UI element (when appropriate)
 /// fixme: might want to add app-specific events?
 static eEventType touched = kNumSysEvents;
@@ -38,26 +35,6 @@ static eEventType touched = kNumSysEvents;
 //---------------------------------------------
 //--------- static funcs
 
-// process timing on key press and return interval
-static u32 sw_time(u8 num, u8 val) {
-  u32 ret;
-  if( swTicks[num][val] > tcTicks) {
-    // overflow
-    ret = tcTicks + (0xffffffff - swTicks[num][val] );
-    print_dbg("\r\n overflow in sw timer");
-  } else {
-    ret = tcTicks - swTicks[num][val];
-    print_dbg("\r\n sw_time: "); 
-    print_dbg_ulong(ret);
-  }
-  swTicks[num][val] = tcTicks;
-  return ret;
-}
-
-// set delay time from switch tap
-static void sw_tap_delay(u8 idx, u8 val) {
-  ctl_set_delay_ms(idx,  sw_time(idx, val) );
-}
 //--------------------------
 //--- static func def
 
@@ -112,7 +89,7 @@ extern void lppr_handler(event_t* ev) {
       if(touchedThis) {
 	render_touched_delaytime(0);
       }
-      sw_tap_delay(0, ev->eventData);
+      ctl_tap_delay(0, ev->eventData);
     }
     render_sw_on(0, ev->eventData > 0);
     break;
@@ -123,7 +100,7 @@ extern void lppr_handler(event_t* ev) {
       if(touchedThis) {
 	render_touched_delaytime(1);
       }	
-      sw_tap_delay(1, ev->eventData);
+      ctl_tap_delay(1, ev->eventData);
     }
     render_sw_on(1, ev->eventData > 0);
     break;

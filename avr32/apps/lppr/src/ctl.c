@@ -53,6 +53,28 @@ s32 in_panOutLR[2] = {0, 0};
 // output pan F/B (1+2 vs 3+4)
 s32 in_panOutFB[2] = {0, 0}; 
 
+
+
+// up and down interval timers for keys and footswitches
+///// fixme: uhh we don't need all of them in the controller module
+static u32 tapTicks[8][2];
+
+// process timing on key press and return interval
+static void tap_time(u8 num, u8 val) {
+  u32 ret;
+  if( tapTicks[num][val] > tcTicks) {
+    // overflow
+    ret = tcTicks + (0xffffffff - tapTicks[num][val] );
+    print_dbg("\r\n overflow in sw timer");
+  } else {
+    ret = tcTicks - tapTicks[num][val];
+    print_dbg("\r\n tap_time: "); 
+    print_dbg_ulong(ret);
+  }
+  tapTicks[num][val] = tcTicks;
+}
+
+
 /// help!
 static inline s32 fr32_from_float(float x) {
   if(x > 0.f) {
@@ -63,21 +85,6 @@ static inline s32 fr32_from_float(float x) {
 }
 
 /* // add to an input and clamp to allowed range */
-/* static s32 inc_in(s32 a, s32 b) { */
-/*   // this is going to act really weird if it overflows from huge b */
-/*   s32 v = a + b; */
-/*   if (v > IN_MAX) { */
-/*     if(b<0) { */
-/*       // underflowed */
-/*       v = 0; */
-/*     } else { */
-/*       v = IN_MAX; */
-/*     } */
-/*   } else if (v < 0) { */
-/*     v = 0; */
-/*   }  */
-/*   return v; */
-/* } */
 #define CTL_INC_IN(x, a)			\
   x += a;					\
   if(x > IN_MAX) {				\
@@ -209,7 +216,6 @@ void  ctl_set_delay_ms(u8 idx, u32 ms)  {
     break;
   }
 }
-
 
 // start recording loop on given delayline
 void ctl_loop_record(u8 idx) {
@@ -375,4 +381,17 @@ void ctl_inc_panOutLR(u8 id, s32 delta) {
 void ctl_inc_panOutFB(u8 id, s32 delta) {
   // TODO
 }
+
+// tap delay time
+void ctl_tap_delay(u8 idx, u8 val) {
+  tap_time(idx, val);
+  ctl_set_delay_ms(idx, tapTicks[idx][val]);
+}
+
+// set delay time multiplier
+extern void ctl_set_delay_mul(u8 idx, u8 val) {
+  ctl_set_delay_ms(idx, tapTicks[idx][1] * val);
+}
+
+// 
 

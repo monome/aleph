@@ -157,11 +157,13 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
 static void calc_frame(void) {
   fract32 dum;
   frameVal = shr_fr1x32(drumsyn_voice_next(voices[0]), 1);
-  /// even discarding the output, we are fucked here...
+
   dum = drumsyn_voice_next(voices[1]);
   frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
+
   dum = drumsyn_voice_next(voices[2]);
   frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
+
   dum = drumsyn_voice_next(voices[3]);
   frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
 }
@@ -193,7 +195,6 @@ void module_init(void) {
   }
 
   fill_param_desc();
-
 }
 
 void module_deinit(void) {
