@@ -17,6 +17,7 @@
 #include "app_timers.h"
 #include "bfin.h"
 #include "screen.h"
+#include "encoders.h"
 #include "events.h"
 #include "event_types.h"
 #include "flash.h"
@@ -28,6 +29,9 @@
 #include "ctl.h"
 #include "inputs.h"
 #include "render.h"
+
+
+
 
 // this is called during hardware initialization.
 // use for memory allocation..
@@ -111,6 +115,8 @@ u8 app_launch(u8 firstrun) {
   
   inputs_init();
 
+  /// set encoder 
+  set_enc_thresh(3, 16);
   delay_ms(20);
 
   /////////////////////
