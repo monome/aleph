@@ -140,10 +140,11 @@ extern u8 flash_write_hex_record(u8* data) {
     switch(rec.type) {
     case HEX_EXT_LINEAR_ADDRESS:
       addrOff = rec.address;
+      //      print_dbg("\r\n writing hex 
       break;
     case HEX_DATA:
-      /* print_dbg("\r\n writing firmware to flash at address: "); */
-      /* print_dbg_hex(addrOff + rec.address); */
+      //     print_dbg("\r\n writing firmware to flash at address: ");
+      //     print_dbg_hex(addrOff + rec.address);
       flashc_memcpy( (void*)(addrOff + rec.address), rec.data, rec.count, 1);
       break;
     default:

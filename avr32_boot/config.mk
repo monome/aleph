@@ -29,7 +29,7 @@ PART = uc3a0512
 FLASH = internal@0x80000000
 
 # debug level
-BUILD_DEBUG_LEVEL = 0
+# BUILD_DEBUG_LEVEL = 0
 
 # Clock source to use when programming; xtal, extclk or int
 PROG_CLOCK = int
@@ -142,13 +142,13 @@ LINKER_SCRIPT = $(ALEPH_AVR32)/aleph-boot.lds
 
 # Additional options for debugging. By default the common Makefile.in will
 # add -g3.
-DBGFLAGS = 
+DBGFLAGS = -g3
 
 # Application optimization used during compilation and linking:
 # -O0, -O1, -O2, -O3 or -Os
 # OPTIMIZATION = -O2
-# OPTIMIZATION = -Os
-OPTIMIZATION = -O3
+OPTIMIZATION = -Os
+# OPTIMIZATION = -O3
 # OPTIMIZATION = -O0 -fno-inline
 
 # Extra flags to use when archiving.

@@ -279,7 +279,8 @@ SECTIONS
   .flash_nvram  ORIGIN(FLASH) + LENGTH(FLASH) - __flash_nvram_size__ (NOLOAD):
   {
     *(.flash_nvram)
-  } >FLASH AT>FLASH :FLASH_NVRAM = 0xffffffff
+/*  } >FLASH AT>FLASH :FLASH_NVRAM = 0xffffffff */
+  } >FLASH AT>FLASH :FLASH_NVRAM
   . = ALIGN(0x200);
 
   .userpage       : { *(.userpage .userpage.*) } >USERPAGE AT>USERPAGE :USERPAGE

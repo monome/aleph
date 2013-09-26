@@ -15,7 +15,7 @@ PART = uc3a0512
 
 # Target device flash memory details (used by the avr32program programming
 # tool: [cfi|internal]@address
-FLASH = internal@0x80000000
+FLASH = internal@0x80010000
 
 # Clock source to use when programming; xtal, extclk or int
 PROG_CLOCK = int
@@ -69,7 +69,7 @@ DBGFLAGS =
 # OPTIMIZATION = -O0
 # OPTIMIZATION = -O1
 # OPTIMIZATION = -O2
-OPTIMIZATION = -O3
+OPTIMIZATION = -O2
 
 # debug:
 # OPTIMIZATION = -O0 -fno-inline
@@ -98,10 +98,11 @@ CPPFLAGS = \
        -D BOARD=USER_BOARD -D ARCH_AVR32=1 -D UHD_ENABLE
 
 # Extra flags to use when linking
-LDFLAGS = -nostartfiles -Wl,-e,_trampoline
+# LDFLAGS = -nostartfiles -Wl,-e,_trampoline
+LDFLAGS = -nostartfiles
 
 # for external heap:
 # LDFLAGS += --gc-sections,--defsym,__heap_size__=0x00080000	
 
-# for a bootloader:
+# for bootloader:
 # LDFLAGS = -nostartfiles

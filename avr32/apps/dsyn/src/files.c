@@ -70,7 +70,8 @@ u8 files_search_dsp(void) {
     render_update();
 
     // write buf to flash
-    flash_write_ldr();
+    //    flash_write_ldr();
+
     print_dbg("\r\n finished writing .ldr file to flash");
     // reboot the DSP from RAM
     print_dbg("\r\n booting DSP from RAM");
