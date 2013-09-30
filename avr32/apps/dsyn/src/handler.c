@@ -169,7 +169,6 @@ static s32 scale_knob_value_fast(s32 val) {
      break;
 
    case kEventMonomeGridKey:
-     //    (*monome_grid_key_handler)((void*)monomeOpFocus, (u32)e->eventData);
      grid_handle_key_event(ev->eventData);
      break;
 

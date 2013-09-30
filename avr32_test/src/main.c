@@ -67,11 +67,15 @@ static u8 firstrun = 0;
 //  flag to wait for startup button press
 static u8 startup = 1;
 
+// adc values (input)
+//static u32 adcVal[4] = { 0, 0, 0, 0 };
 
-static u32 adcVal;
+// dac values (output)
+static s32 dacVal[4] = { 0, 0, 0, 0 };
 
-// screen buffer
-//static u8 
+//#define NUMSTRBUF_LEN 16
+//static char numstrbuf[NUMSTRBUF_LEN];
+
 
 //=================================================
 //==== static declarations
@@ -88,6 +92,65 @@ static void handle_monome_grid_key(u32 data) {
   monome_calc_quadrant_flag(x, y);
 
 }
+
+
+static s32 scale_knob_value(s32 val) {
+  static const u32 kNumKnobScales_1 = 23;
+  static const u32 knobScale[24] = {
+    0x00000001,
+    0x00000005,
+    0x0000000C,
+    0x0000001C,
+    0x00000041,
+    0x00000098,
+    0x0000015F,
+    0x0000032C,
+    0x00000756,
+    0x000010F3,
+    0x0000272B,
+    0x00005A82,
+    0x0000D124,
+    0x0001E343,
+    0x00045CAE,
+    0x000A1451,
+    0x00174A5A,
+    0x0035D13F,
+    0x007C5B28,
+    0x011F59AC,
+    0x0297FB5A,
+    0x05FE4435,
+    0x0DD93CDC,
+    0x1FFFFFFD,
+  };
+
+  s32 vabs = BIT_ABS(val);
+  s32 ret = val;
+   if(vabs > kNumKnobScales_1) {
+     vabs = kNumKnobScales_1;
+   }
+   ret = knobScale[vabs];
+   if(val < 0) {
+     ret = BIT_NEG_ABS(ret);
+   }
+   return ret;
+}
+
+
+static void dac_inc(u8 idx, s32 inc) {
+  s32 v = dacVal[idx] + inc;
+  if(v > 0xffff) {
+    v = 0xffff;
+  }
+  if(v < 0) {
+    v = 0;
+  }
+  /// HACK: there are only 4 parameters, which correspond to the dac values.
+  bfin_set_param(idx, v);
+  print_dbg("\r\n setting dac output value: ");
+  print_dbg_hex(v);
+  dacVal[idx] = v;
+}
+
 //=================================================
 //==== definitons
 
@@ -188,7 +251,7 @@ static void init_ctl(void) {
 // app event loop
 static void check_events(void) {
   static event_t e;
-  u8 launch = 0;
+  //  u8 launch = 0;
   //  print_dbg("\r\n checking events...");
   if( get_next_event(&e) ) {
   /* print_dbg("\r\n handling event, type: "); */
@@ -256,18 +319,22 @@ static void check_events(void) {
       case  kEventEncoder0 :
 	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventEncoder0");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	dac_inc(0, scale_knob_value(e.eventData));
 	break;
       case  kEventEncoder1 :
 	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventEncoder1");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	dac_inc(1, scale_knob_value(e.eventData));
 	break;
       case  kEventEncoder2  :
 	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventEncoder2");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	dac_inc(2, scale_knob_value(e.eventData));
 	break;
       case  kEventEncoder3  :
 	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventEncoder3");
 	print_dbg(" : 0x"); print_dbg_hex((u32) e.eventData);
+	dac_inc(3, scale_knob_value(e.eventData));
 	break;
       case  kEventSwitch0 : // fn
 	print_dbg("\r\n ( 0x"); print_dbg_hex((u32)tcTicks); print_dbg(" )  kEventSwitch0");

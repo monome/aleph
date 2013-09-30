@@ -5,6 +5,7 @@
 // lppr
 #include "ctl.h"
 #include "grid.h"
+#include "render.h"
 
 // row assigments
 // /define the row number of each parameter,
@@ -80,32 +81,38 @@ void grid_handle_key_event(s32 data) {
 
   switch(y) {
   case GRID_ROW_MUL_0 :
+    render_touched_delaytime(0);
     ctl_set_delay_mul(0, x + 1);
     grid_show_point(y, x);
     break;
   case  GRID_ROW_POS_0 :
-    ctl_set_delay_mul(0, x + 1);
+    ctl_set_delay_pos(0, x + 1);
     grid_show_point(y, x);
     break;
   case  GRID_LOOP_0 :
-    grid_show_point(y, x);
+    ctl_set_loop(0, x + 1);
+    grid_show_bar(y, x);
     break;
   case  GRID_ROW_PRE_0 :
-    // fixme: magic hack
-    
+    // TODO  FIXME
     grid_show_bar(y, x);
     break;
   case  GRID_ROW_MUL_1 :
+    render_touched_delaytime(1);
+    ctl_set_delay_mul(1, x + 1);
     grid_show_point(y, x);
     break;
   case  GRID_ROW_POS_1 :
+    ctl_set_delay_pos(1, x + 1);
     grid_show_point(y, x);
     break;
   case  GRID_LOOP_1 : 	
-    grid_show_point(y, x);
+    ctl_set_loop(1, x + 1);
+    grid_show_bar(y, x);
     break;
   case GRID_ROW_PRE_1 :
-    grid_show_bar(y, x);
+    /// TODO / FIXME
+    //    grid_show_bar(y, x);
     break;
   }
 }
@@ -148,4 +155,5 @@ void grid_show_bar(u8 row, u8 val) {
   for(i=val; i<MONOME_LED_ROW_BYTES; i++) {
     *p++ = 0x00;
   }
+  dirtquad();
 }

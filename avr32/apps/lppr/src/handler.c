@@ -212,9 +212,15 @@ extern void lppr_handler(event_t* ev) {
     ctl_inc_res(0, scale_knob_value(ev->eventData));
     break;
 
+    //-------- grid
   case kEventMonomeConnect :
     handle_monome_connect((u32)ev->eventData);
     break;
+
+   case kEventMonomeGridKey:
+     grid_handle_key_event(ev->eventData);
+     break;
+
 
   default:
     break;

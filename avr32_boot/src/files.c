@@ -31,6 +31,24 @@
 // (standard atmel linker script with trampoline)
 // #define BIN_EXEC_SRC_LOCATION 0x00002000
 
+/// dumb progress display
+static void showProgress(u8 val) {
+  static u32 x = 0;
+  static u32 y = 20;
+  static u8 level = 0x1;
+  screen_pixel(x, y, val | level);
+  screen_refresh();
+  x++;
+  if(x > NCOLS) {
+    x = 0;
+    y++;
+  }
+  if (y > NROWS) {
+    y = 20;
+    level++;
+  }
+}
+
 //  stupid datatype with fixed number of fixed-length filenames
 // storing this for speed when UI asks us for a lot of strings
 typedef struct _dirList {
@@ -204,7 +222,7 @@ void files_write_firmware_name(const char* name) {
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
   cpu_irq_disable_level(UI_IRQ_PRIORITY);
 
-  //screen_clear();
+  screen_clear();
   screen_line(0, 0, "writing firmware,", 0xf);
   screen_line(0, 1, "please wait...", 0xf);
   screen_refresh();
@@ -235,6 +253,12 @@ void files_write_firmware_name(const char* name) {
       }// else {
       hexRecordData[hIdx++] = (u8)ch;
       //      }
+
+      ///// show progress
+      if( (fIdx % 0x100) == 0) {
+	showProgress(ch);
+      }
+
     }
 
     /// raw binary (not good)
@@ -247,7 +271,7 @@ void files_write_firmware_name(const char* name) {
 
     //flash_write_firmware();
     fl_fclose(fp);
-    print_dbg("finished.");
+    print_dbg("finished writing.");
     
   } else {
     print_dbg("\r\n error: fp was null in files_write_firmware_name\r\n");

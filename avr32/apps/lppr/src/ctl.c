@@ -59,6 +59,7 @@ static u8 loopRec1 = 0;
 // up and down interval timers for keys and footswitches
 ///// fixme: uhh we don't need all of them in the controller module
 static u32 tapMs[8][2];
+static u32 tapDeltaMs[8][2];
 // actual delay ms
 static u32 delayMs[2];
 
@@ -76,6 +77,7 @@ static void tap_time(u8 num, u8 val) {
     print_dbg_ulong(ret);
   }
   tapMs[num][val] = tcTicks;
+  tapDeltaMs[num][val] = ret;
 }
 
 
@@ -390,13 +392,13 @@ void ctl_inc_panOutFB(u8 id, s32 delta) {
 // tap delay time
 void ctl_tap_delay(u8 idx, u8 val) {
   tap_time(idx, val);
-  delayMs[idx] = tapMs[idx][1];
+  delayMs[idx] = tapDeltaMs[idx][1];
   ctl_set_delay_ms(idx, delayMs[idx]);
 }
 
 // set delay time multiplier
 void ctl_set_delay_mul(u8 idx, u8 val) {
-  delayMs[idx] = tapMs[idx][1] * val;
+  delayMs[idx] = tapDeltaMs[idx][1] * val;
   ctl_set_delay_ms(idx, delayMs[idx]);
 }
 
@@ -409,7 +411,7 @@ void ctl_set_delay_pos(u8 idx, u8 mul) {
   if(idx == 1) {
     /// line 1... 
     if(loopPlay1) {
-      // loop is playing; set read position as division of loop time /8
+      // loop is playing; set read position as multiple of loop time /8
       samps = (MS_TO_SAMPS(msLoopLen1) >> 3) * mul;
       samps += MS_TO_SAMPS(msLoopStart1);
       ctl_param_change(eParam_pos_read1, samps);
@@ -417,7 +419,7 @@ void ctl_set_delay_pos(u8 idx, u8 mul) {
       // loop is recording: ???? hmm...
     } else {
       // no loop, set write pos as tap mul and sync
-      ms = mul * tapMs[1][1];
+      ms = mul * tapDeltaMs[1][1];
       samps = MS_TO_SAMPS(ms);
       ctl_param_change(eParam_pos_write1, samps);
       samps = MS_TO_SAMPS(delayMs[1]);
@@ -425,7 +427,7 @@ void ctl_set_delay_pos(u8 idx, u8 mul) {
     }
   } else {
     // line 0, set write pos to tap mul and sync
-    ms = mul * tapMs[0][1];
+    ms = mul * tapDeltaMs[0][1];
       samps = MS_TO_SAMPS(ms);
       ctl_param_change(eParam_pos_write0, samps);
       samps = MS_TO_SAMPS(delayMs[0]);
