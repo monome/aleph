@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS += -std=gnu99
 CFLAGS += -g3
 CFLAGS += -D ARCH_LINUX=1
-CFLAGS += --verbose
+# CFLAGS += --verbose
 
 #linker flags
 LDFLAGS = -lm
