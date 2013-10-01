@@ -47,7 +47,6 @@ $(MONO_OBJ): %.o : %.c
 MONO_INC = -I$(MODULES)/mono
 
 mono : $(APP_OBJ) $(MONO_OBJ)
-	echo "wtf"
 	echo $(MONO_INC)
 	echo $(INC)
 	$(CC) $(CFLAGS) $(INC) $(MONO_INC) -o $@ $^ $(LDFLAGS)
