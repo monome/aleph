@@ -34,7 +34,7 @@ extern void region_alloc(region* reg);
 /// ha
 /*  void region_free(region* reg) */
 
-// render a string to a region with offset
+// render a string to a region with offset, using system font
 extern void region_string(
 		   region* reg,	 // region
 		   const char* str,// string

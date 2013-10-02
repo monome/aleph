@@ -10,16 +10,19 @@
 #include "memory.h"
 #include "region.h"
 #include "screen.h"
+#include "util.h"
 
 // local
 #include "render.h"
 //-------------------------------------------------
 //----- -static variables
 
-// temp buffer
+// temp buffers
 #define NUMSTRBUF_LEN 16
+#define HEXSTRBUF_LEN 9
 
 static char numstrbuf[NUMSTRBUF_LEN];
+static char hexstrbuf[HEXSTRBUF_LEN] = "12345678";
 
 
 // FIXME: retarded to have this here
@@ -90,6 +93,34 @@ static region * allRegions[] = {
 };
 
 static const u8 numRegions = 6;
+
+//-------------------------
+//---- static funcs
+
+// render 16.16 decimal
+static void render_fix16(fix16 val, region * pr, u8 x, u8 y, u8 inv) {
+  memset(numstrbuf, ' ', NUMSTRBUF_LEN);
+  print_fix16(numstrbuf, val);
+  region_string_aa(pr, numstrbuf, x, y, inv);
+}
+
+#if 0
+// render unsigned integer
+static void render_int(s32 val, region * pr, u8 x, u8 y, u8 inv) {
+  memset(numstrbuf, ' ', NUMSTRBUF_LEN);
+  itoa_whole_lj(val, numstrbuf);
+  region_string_aa(pr, numstrbuf, x, y, inv);
+}
+#endif
+
+// render 8-character hexadecimal
+static void render_hex(u32 val, region * pr, u8 x, u8 y, u8 inv) {
+  //  memset(numstrbuf, ' ', NUMSTRBUF_LEN);
+  memset(hexstrbuf, ' ', HEXSTRBUF_LEN);
+  //  itoa_whole_lj(val, hexstrbuf);
+  uint_to_hex_ascii(hexstrbuf, val);
+  region_string_aa(pr, hexstrbuf, x, y, inv);
+}
 
 
 //-------------------------------------------------
@@ -174,15 +205,52 @@ void render_force_refresh(void) {
   render_update();
 }
 
-
+// render switch on/off status
 void render_sw_on(u8 sw, u8 on) {
   region_fill(&(foot[sw]), on ? 0xf : 0x1);
 }
 
+// render parameter indx and value
 void render_param(u8 vid, s32 pid, s32 val) {
-  region_string_aa(&bigtop, paramStrings[pid], 0, 0, 1);
-  print_fix16(numstrbuf, val);
-  region_string_aa(&bigtop, numstrbuf, 19, 0, 1);
+  //// FIXME: way too slow.
+  //// should make renderTouched routines as in lppr,
+  //// do fills and labels there
+  region_fill(&bigtop, 0x0);
+  switch(vid) {
+  case 0:
+    region_string_aa(&bigtop, "voice 1", 0, 0, 1);
+    break;
+  case 1:
+    region_string_aa(&bigtop, "voice 2", 0, 0, 1);
+    break;
+  case 2:
+    region_string_aa(&bigtop, "voice 3", 0, 0, 1);
+    break;
+  case 3:
+    region_string_aa(&bigtop, "voice 4", 0, 0, 1);
+    break;
+  }
+  //  print_dbg("\r\n render param, string: ");
+  //  print_dbg(paramStrings[pid]);
+  region_string_aa(&bigtop, paramStrings[pid], 0, 20, 1);
+  //  print_dbg(", val: 0x");
+  //  print_dbg_hex((u32)val);
+  //  render_fix16(val, &bigtop, 0, 40, 1);
+  render_hex(val, &bigtop, 0, 40, 1);
+}
+
+// render tempo
+void render_tempo(u32 ms) {
+  // FIXME: not the absolute fastest, and broken if ms > 30k (tempo < 2bpm!)
+  // assume sequencer stages are 16ths, i guess
+  const fix16 bpm = fix16_div(fix16_from_int(15000), fix16_from_int(ms));
+  //// FIXME: should make renderTouched routines as in lppr, 
+  //// do fills and labels there
+  region_fill(&bigtop, 0x0);
+  region_string_aa(&bigtop, "tempo", 0, 0, 1);
+  region_string(&bigtop, "(bpm)", 50, 0, 0xf, 0x0, 0);
+  //  print_fix16(numstrbuf, bpm);
+  render_fix16(bpm, &bigtop, 0, 20, 1);
 }
 
 /*
@@ -197,3 +265,11 @@ void render_dac(u8 ch, s32 val) {
 }
 */
 
+void render_file_write(u8 done) {
+  region_fill(&bigtop, 0x0);
+  if(done) {
+    region_string_aa(&bigtop, "saving params...", 0, 0, 0);
+  } else {
+    region_string_aa(&bigtop, "saved", 0, 0, 0);
+  }
+}

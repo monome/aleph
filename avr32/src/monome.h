@@ -29,6 +29,8 @@
 
 // how many leds in 1 row of the buffer
 #define MONOME_LED_ROW_BYTES 16
+// define mul as lshift
+#define MONOME_LED_ROW_LS 4
 
 //-- sizes for the actual data to be send over usb
 // one frame is an 8x8 quadrant; 256 has 4.

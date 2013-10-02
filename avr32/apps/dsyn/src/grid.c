@@ -40,7 +40,7 @@ static u8 gh = 0;
 	len row sets endpoint,
 */
 
-static u8 lenEditMode = 0;
+static u8 lenEditMode = 1;
 
 //------------------------
 //---- -static funcs
@@ -232,7 +232,7 @@ void grid_show_len(void) {
 // show page depending on scroll
 void grid_show_page(void) {
   static const u32 pageRowOffset = GRID_ROW_PAGE * MONOME_LED_ROW_BYTES;
-  /// FIXME: magic hack
+  /// FIXME: magic hack... 
   const u8 pg = scroll >> 3;
   const u8 ps = seq_get_pos() >> 3;
   u8* p = monomeLedBuffer + pageRowOffset;

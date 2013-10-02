@@ -7,10 +7,6 @@
 #define DAC_COM_LSHIFT 20
 #define DAC_ADDR_LSHIFT 16
 
-#define DAC_COM_WRITE 0x3
-#define DAC_COM_LSHIFT 20
-#define DAC_ADDR_LSHIFT 16
-
 //====================
 //=== global variables , initialized here
 volatile u32 cvTxBuf = 0;

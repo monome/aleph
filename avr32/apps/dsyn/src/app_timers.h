@@ -9,7 +9,7 @@ enum {
   eMetroTimerTag,
   //  eSustainTimerTag,
   //  eAdcTimerTag,
-    eMonomePollTimerTag,
+  eMonomePollTimerTag,
   eMonomeRefreshTimerTag,
   //  eMidiPollTimerTag,
   //  eMidiRefreshTimerTag,

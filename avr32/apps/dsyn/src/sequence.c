@@ -38,7 +38,7 @@ u8 len = 8; //SEQ_NSTAGES_1;
   grid_show_pos();
   grid_show_page();
 
-  print_dbg(" : ");
+  //  print_dbg(" : ");
   for(v=0; v<DSYN_NVOICES; v++) {
     if(stages[v][pos] > 0) {
       // gate on
@@ -103,9 +103,9 @@ extern void seq_set_len(u8 n) {
 extern void seq_set_end(u8 y) {
   end = y;
   if(end > start) {
-    len = end - start;
+    len = end - start + 1;
   } else { // wrap
-    len = end + (SEQ_NSTAGES - start);
+    len = end + (SEQ_NSTAGES - start) + 1;
   }
   /// fixme: wrap? or what
   if(next > end) { next = start; }
@@ -135,7 +135,6 @@ extern const u8 seq_get_end(void) {
 extern const u8 seq_get_len(void) {
   return len;
 }
-
 
 /* // get next position */
 /* const u8 seq_get_next(void) { */

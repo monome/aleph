@@ -55,11 +55,11 @@ extern void menu_init(void);
 // de-init
 extern void menu_deinit(void);
 // handle key
-extern void menu_handleKey(uiKey_t key, s16 value);
+//extern void menu_handleKey(uiKey_t key, s16 value);
 // refresh
-extern void menu_refresh(void);
+//extern void menu_refresh(void);
 // get selection on given page
-extern s16 menu_selection(ePage page);
+//extern s16 menu_selection(ePage page);
 // system notification
 //extern void menu_notify(const char* str);
 

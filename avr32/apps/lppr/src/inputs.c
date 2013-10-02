@@ -248,15 +248,15 @@ static void fill_hz_freq_tables(void) {
     // store as fract32
     tabFreq->data[i] = (s32)(fy * (double)(FR32_MAX));
     // test:
-    print_fix16(strbuf, tabHz->data[i]);
-    print_dbg("\r\n idx: ");
-    print_dbg_ulong(i);
-    print_dbg(", note : ");
-    print_dbg_ulong((s32)fn + 69);
-    print_dbg(", hz (fix16) : ");
-    print_dbg(strbuf);
-    print_dbg(" coeff : 0x");
-    print_dbg_hex(tabFreq->data[i]);
+    /* print_fix16(strbuf, tabHz->data[i]); */
+    /* print_dbg("\r\n idx: "); */
+    /* print_dbg_ulong(i); */
+    /* print_dbg(", note : "); */
+    /* print_dbg_ulong((s32)fn + 69); */
+    /* print_dbg(", hz (fix16) : "); */
+    /* print_dbg(strbuf); */
+    /* print_dbg(" coeff : 0x"); */
+    /* print_dbg_hex(tabFreq->data[i]); */
     f += finc;
   }   
   /// hack the endpoints of freq table

@@ -36,6 +36,10 @@
 extern void init_oled(void);
 // draw data at given rectangle
 extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data);
+// draw data at given rectangle, with wrapping
+// useful for scrolling buffers
+extern void screen_draw_region_wrap(u8 x, u8 y, u8 w, u8 h, u8* data, u8* dataWrapAt, u8* dataWrapTo);
+
 // draw the whole screen
 // extern void screen_draw_full(u8 x, u8 y, u8 w, u8 h, u8* data);
 // clear the whole screen

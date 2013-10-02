@@ -9,7 +9,9 @@
 // ordered set of param changes
 static ctlEvent_t ctlBuf[CTL_BUF_SIZE];
 // dirty flags
+#if 0
 static u8 paramsDirty[DIRTY_BYTES];
+#endif
 // count of param change events
 static u32 evCount = 0;
 // audio frames since last update
@@ -17,6 +19,7 @@ static u32 evCount = 0;
 // get dirty flag for param idx (inlined in header)
 //extern u8 get_param_dirty(u32 idx);
 
+#if 0
 static inline u8 get_param_dirty(u32 idx) {
   //return BITTEST(paramsDirty, idx);
   return paramsDirty[idx] > 0;
@@ -24,12 +27,12 @@ static inline u8 get_param_dirty(u32 idx) {
 static void set_param_dirty(u32 idx) {
   //      BITSET(paramsDirty, idx);
   paramsDirty[idx] = 1;
-
 }
 // clear dirty flag
 static void clear_param_dirty(u32 idx) {
   paramsDirty[idx] = 0;
 }
+#endif
 // clear all dirty flags
 /* static void clear_all_param_dirty(void) { */
 /*   memset(paramsDirty, 0, NUM_PARAMS); */
@@ -41,6 +44,7 @@ extern u8 ctl_param_change(u32 idx, u32 val) {
 #if 1 // testing: direct set
   //  print_dbg("\r\n set: ");
   bfin_set_param(idx, val);
+  return 0;
 #else
   u32 i;
   if(get_param_dirty(idx)) {
@@ -76,7 +80,9 @@ extern void ctl_perform_last_change(void) {
   print_dbg("\r\n performing control change, decremented count is now 0x");
   print_dbg_hex((u32)evCount);
   bfin_set_param(idx, ctlBuf[evCount].val.fix);
+  #if 0
   clear_param_dirty(idx);
+  #endif
 }
 
 
@@ -86,9 +92,11 @@ extern void ctl_perform_all_changes(void) {
   // execute in FIFO order
   for(i=0; i<evCount; i++) {
     idx = ctlBuf[i].idx;
-  print_dbg("\r\n performing control ");
+    print_dbg("\r\n performing control ");
     bfin_set_param(idx, ctlBuf[i].val.fix);
+    #if 0
     clear_param_dirty(idx);
+    #endif
   }
   evCount = 0;
 }

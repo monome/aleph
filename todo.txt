@@ -73,77 +73,75 @@ production process-- how to make stuff here
 
 
 
-
-b todo
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-accounting // investment
-estimate // production expenses
-
-test ADC protection.
-
-soft power control, redo resistor values
-
-http://www.myfonts.com/fonts/fonts-by-alex/core-humanist-sans/
-
-
-
 e todo
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-blackfin fixes
--- add DAC support in core framework.
--- implement more modules 
------ poly synth
------ add/test audio filters
-
-USB host support for more devices.
--- MIDI
--- gamepad
--- FTDI
-
-better interrupt management.
--- if a routine needs to disable interrupts, it should check if they are enabled first.
--- might be a better use of priority levels
--- might be necessary to choose specific IRQ lines to enable/disable. macro or inline.
-
-I2C.
-
-optimizations.
-
-more operators.
--- ADC
--- timer
--- basic sequencer
--- etc
-
 BEES
--- ui stuff
 
-better parameter scaling / setting (lookups or smarter dynamic scaling ).
+- rendering
+  reconcile with new region-based screen system
 
-standalones.
+- check scene recall
+  - memory allocation bug probably culprit but need test
+  - need serialization of op data, etc,
+    to keep scene recall working between builds...
 
-
-
-team todo
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-text
-	benchmarking
-	concise description
-	technical/functional/abstract // whitepaper
-	documentation // framework/toolchain and specs
-	manual // instructional
-	bees ui
+- more operators...
 
 
-	
-think about
-	dsp page (integrate with setups page?)
-	symbols when page changing
-	extended menu via last button (up triangle)
-	macros in routing mode, for example: insert trigger here (preserves routing to existing target)
-	operator page, each operator can have menu button which calls custom UI (ie, list editor)
-	remote control system-- all bees functions (ie create operator, etc) callable via USB/serial
+CONTROL
+
+- midi management
+
+- audio load/stream
+  - more investigations: streaming from sd card is so totally doable.
+
+- aleph/host communication 
+  - at the very least, report bfin params to host 
+    and accept direct parameter changes
+  - probably also some way for apps to define custom host control handles   
+
+- malloc
+  - fix the fucking memory map / link options to assign SRAM to heap section.
+    i tried and failed at this once before, could use a fresh set of eyes
+
+
+DSP
+
+- mono/poly
+  - add filter
+  - add envelope routing /scaling
+    probably just one env with separate scaling // offset? hm
+  - more / better wavetables and/or shaping
+
+- grain engine
+  - fill-buffer for grain
+
+- noise
+  - large bank of chaotic maps
+  - envelopes / integrators
+
+- lines
+  - "crossfade" on position change
+    ( ramp between pre/write values )
+
+- dsyn
+  - short delays would be good
+  - use audio inputs more interestingly
+    (ex: 3/4 for saturation/feedback within the filter structure)
+
+- "sampler"
+  - ???
+  
+- analysis
+  - fft
+    - crude pitch detection (peak bin) is probably enough
+    - centroid (weighted avg of bins)
+    - whiteness (distribution of bins)
+    
+    
+- phys. modelling
+  - K-S / coupled oscillation with analog feedback path
+  - waveguide
+
 

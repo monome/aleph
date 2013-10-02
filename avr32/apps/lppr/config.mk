@@ -33,6 +33,7 @@ CSRCS += \
 	$(APP_DIR)/src/app_lppr.c \
 	$(APP_DIR)/src/app_timers.c \
 	$(APP_DIR)/src/files.c \
+	$(APP_DIR)/src/grid.c \
 	$(APP_DIR)/src/handler.c \
 	$(APP_DIR)/src/ctl.c \
 	$(APP_DIR)/src/inputs.c	\

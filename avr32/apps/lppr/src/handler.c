@@ -12,15 +12,14 @@
 #include "control.h"
 #include "event_types.h"
 #include "interrupts.h"
+#include "monome.h"
 #include "screen.h"
 // lppr
 #include "app_timers.h"
+#include "grid.h"
 #include "handler.h"
 #include "ctl.h"
 #include "render.h"
-
-// up and down interval timers for keys and footswitches
-static u32 swTicks[8][2];
 
 // keep track of the last touched UI element (when appropriate)
 /// fixme: might want to add app-specific events?
@@ -38,57 +37,68 @@ static eEventType touched = kNumSysEvents;
 //---------------------------------------------
 //--------- static funcs
 
-// process timing on key press and return interval
-static u32 sw_time(u8 num, u8 val) {
-  u32 ret;
-  if( swTicks[num][val] > tcTicks) {
-    // overflow
-    ret = tcTicks + (0xffffffff - swTicks[num][val] );
-    print_dbg("\r\n overflow in sw timer");
-  } else {
-    ret = tcTicks - swTicks[num][val];
-    print_dbg("\r\n sw_time: "); 
-    print_dbg_ulong(ret);
-  }
-  swTicks[num][val] = tcTicks;
-  return ret;
-}
-
-// set delay time from switch tap
-static void sw_tap_delay(u8 idx, u8 val) {
-  ctl_set_delay_ms(idx,  sw_time(idx, val) );
-}
 //--------------------------
 //--- static func def
 
-// return param increment given encoder ticks (knob acceleration)
-static fix16 scale_knob_value(const s32 v) {
-  s32 vabs = BIT_ABS(v);
-  //  print_dbg("\r\n knob acc, val: ");
-  //  print_dbg_hex((u32)v);
-  if(vabs < 4) {
-    //    print_dbg("\r\n ");
-    return v;
-  } else if (vabs < 8) {
-    //    print_dbg("\r\n knob acc 1");
-    return v << 2;
-  } else if (vabs < 12) {
-    //    print_dbg("\r\n knob acc 2");
-    return v << 4;
-  } else if (vabs < 19) {
-    //    print_dbg("\r\n knob acc 3");
-    return v << 5;
-  } else if (vabs < 25) {
-    //    print_dbg("\r\n knob acc 4");
-    return v << 6;  } 
-  else if (vabs < 32) {
-    //    print_dbg("\r\n knob acc 4");
-    return v << 6;
-  } else {
-    //    print_dbg("\r\n knob acc max");
-    return v << 12;
-  }
+static s32 scale_knob_value(s32 val) {
+  static const u32 kNumKnobScales_1 = 23;
+  static const u32 knobScale[24] = {
+    0x00000001,
+    0x00000005,
+    0x0000000C,
+    0x0000001C,
+    0x00000041,
+    0x00000098,
+    0x0000015F,
+    0x0000032C,
+    0x00000756,
+    0x000010F3,
+    0x0000272B,
+    0x00005A82,
+    0x0000D124,
+    0x0001E343,
+    0x00045CAE,
+    0x000A1451,
+    0x00174A5A,
+    0x0035D13F,
+    0x007C5B28,
+    0x011F59AC,
+    0x0297FB5A,
+    0x05FE4435,
+    0x0DD93CDC,
+    0x1FFFFFFD,
+  };
+
+  s32 vabs = BIT_ABS(val);
+  s32 ret = val;
+   if(vabs > kNumKnobScales_1) {
+     vabs = kNumKnobScales_1;
+   }
+   ret = knobScale[vabs];
+   if(val < 0) {
+     ret = BIT_NEG_ABS(ret);
+   }
+   return ret;
 }
+
+
+static s32 scale_knob_value_fast(s32 val) {
+  return scale_knob_value(val);
+}
+
+ static void handle_monome_connect(u32 data) {
+   eMonomeDevice dev;
+   u8 w;
+   u8 h;
+   monome_connect_parse_event_data(data, &dev, &w, &h);
+   if(dev != eDeviceGrid) {
+     print_dbg("\r\n DSYN monome connect: unsupported device");
+     return;
+   }
+   print_dbg("\r\n DSYN: connecting grid device");
+   grid_set_size(w, h);
+   timers_set_monome();
+ }
 
 
 //---------------------------------------
@@ -112,7 +122,7 @@ extern void lppr_handler(event_t* ev) {
       if(touchedThis) {
 	render_touched_delaytime(0);
       }
-      sw_tap_delay(0, ev->eventData);
+      ctl_tap_delay(0, ev->eventData);
     }
     render_sw_on(0, ev->eventData > 0);
     break;
@@ -123,7 +133,7 @@ extern void lppr_handler(event_t* ev) {
       if(touchedThis) {
 	render_touched_delaytime(1);
       }	
-      sw_tap_delay(1, ev->eventData);
+      ctl_tap_delay(1, ev->eventData);
     }
     render_sw_on(1, ev->eventData > 0);
     break;
@@ -169,7 +179,7 @@ extern void lppr_handler(event_t* ev) {
   case kEventEncoder0:
     if(touchedThis) {
       render_touched_fb(0);
-      kill_test();
+      //      kill_test();
       
     }
     ctl_inc_fb(0, scale_knob_value(ev->eventData));
@@ -179,7 +189,7 @@ extern void lppr_handler(event_t* ev) {
     if(touchedThis) {
       render_touched_mix(0);
 
-      kill_test();
+      //      kill_test();
     }
     ctl_inc_mix(0, scale_knob_value(ev->eventData));
     break;
@@ -188,7 +198,7 @@ extern void lppr_handler(event_t* ev) {
     if(touchedThis) {
       render_touched_freq(0);
 
-      kill_test();
+      //      kill_test();
     }
     ctl_inc_freq(0, scale_knob_value(ev->eventData));
     break;
@@ -197,10 +207,20 @@ extern void lppr_handler(event_t* ev) {
     if(touchedThis) {
       render_touched_res(0);
 
-      kill_test();
+      //      kill_test();
     }
     ctl_inc_res(0, scale_knob_value(ev->eventData));
     break;
+
+    //-------- grid
+  case kEventMonomeConnect :
+    handle_monome_connect((u32)ev->eventData);
+    break;
+
+   case kEventMonomeGridKey:
+     grid_handle_key_event(ev->eventData);
+     break;
+
 
   default:
     break;

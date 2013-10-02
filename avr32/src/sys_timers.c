@@ -56,7 +56,7 @@ static swTimer_t encTimer;
 //// FIXME: this is bees-specific so should go in app code.
 //// will make a general overhall of this timers module.
 // send param changes
-static swTimer_t paramChangeTimer;
+//static swTimer_t paramChangeTimer;
 
 //--- static misc
 static u8 i;
@@ -85,9 +85,9 @@ static void enc_timer_callback(int tag) {
 }
 
 // param change callback
-static void param_change_timer_callback(int tag) {
-  ctl_perform_all_changes();
-}
+/* static void param_change_timer_callback(int tag) { */
+/*   ctl_perform_all_changes(); */
+/* } */
 
 
 //====== external

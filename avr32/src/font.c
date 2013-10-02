@@ -407,7 +407,11 @@ extern u8* font_glyph_aa(char ch, u8* buf, u8 w, u8 inv) {
   //  print_dbg_char(ch);
   //  print_dbg(" ( 0x");
   //  print_dbg_hex((u32)ch);
-
+  
+  ////////
+  /// FIXME: fonct is missing ` or _ or something
+  if(ch > 95) { ch--; }
+  ////////
   gl = FONT_AA[ch - FONT_ASCII_OFFSET].glyph.data;
 #endif
   /// copy glyph to buffer...

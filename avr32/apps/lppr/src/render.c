@@ -273,7 +273,7 @@ extern void render_touched_res(u8 id) {
   region_string(&bigtop, "filter RQ", 0, 0, 0xa, 0x3, 0 );
   if(id) { region_string(&bigtop, " 2   ", 40, 0, 0xa, 0x3, 1 ); }
   else { region_string(&bigtop, " 1   ", 40, 0, 0xa, 0x3, 1 ); }
-  region_string(&bigtop, "[ 0 , 1 ]", 	0, 18, 0xd, 0x0, 0 );
+  //  region_string(&bigtop, "[ 0 , 1 ]", 	0, 18, 0xd, 0x0, 0 );
 }
 
 extern void render_record(void) {
