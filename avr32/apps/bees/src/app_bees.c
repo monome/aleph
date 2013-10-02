@@ -173,7 +173,7 @@ void app_init(void) {
   print_dbg("\r\n scene_init");
 
   /// FIXME: this is arbitrarily but sensitively located in main.c right now...
-  //  files_init();
+  files_init();
   //  print_dbg("\r\n files_init");
 
   menu_init();
@@ -183,10 +183,8 @@ void app_init(void) {
   print_dbg("\r\n play_init");
 
   // set handler
-  //// FIXME
-  //  appEventHandler = &bees_handler;
+  appEventHandler = &bees_handler;
   //  render_init();
-
 }
 
 // this is called from the event queue 

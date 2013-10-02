@@ -1,11 +1,10 @@
 /*
-  page_ops.c
+  page_presets.c
  */
 
 #include "menu_protected.h"
 #include "pages.h"
 #include "render.h"
-
 
 //-------------------------
 //---- static
@@ -33,9 +32,11 @@ void handle_key_2(s32 val) {
 void handle_key_3(s32 val) {
 }
 
+// enc 0 : scroll page
 void handle_enc_0(s32 val) {
 }
 
+// enc 1 : scroll selection
 void handle_enc_1(s32 val) {
 }
 
@@ -49,10 +50,10 @@ void handle_enc_3(s32 val) {
 //----------------------
 // ---- extern 
 // refresh 
-void refresh_ops(void) { 
+void refresh_presets(void) {
 }
 
-const page_handler_t handler_ops[eNumPageHandlers] = {
+const page_handler_t handler_presets[eNumPageHandlers] = {
   &handle_enc_0,
   &handle_enc_1,
   &handle_enc_2,
@@ -62,4 +63,3 @@ const page_handler_t handler_ops[eNumPageHandlers] = {
   &handle_key_2,
   &handle_key_3,
 };
-

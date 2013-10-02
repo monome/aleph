@@ -141,7 +141,7 @@ CSRCS += \
 	$(ALEPH_BEES)/src/app_timers.c \
 	$(ALEPH_BEES)/src/files.c \
 	$(ALEPH_BEES)/src/flash_bees.c \
-	$(ALEPH_BEES)/src/key_handler.c \
+	$(ALEPH_BEES)/src/handler.c \
 	$(ALEPH_BEES)/src/menu.c \
 	$(ALEPH_BEES)/src/net.c \
 	$(ALEPH_BEES)/src/net_monome.c \

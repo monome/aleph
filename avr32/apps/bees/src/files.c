@@ -131,7 +131,7 @@ static void strip_space(char* str, u8 len) {
 
 void files_init(void) {
   // init FAT lib
-  fat_init();
+  //  fat_init();
   // scan directories
   list_scan(&dspList, DSP_PATH);
   list_scan(&sceneList, SCENES_PATH);

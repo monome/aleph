@@ -50,7 +50,8 @@ void handle_enc_3(s32 val) {
 //----------------------
 // ---- extern 
 // refresh 
-void refresh_dsp(void);
+void refresh_dsp(void) {
+}
 
 const page_handler_t handler_dsp[eNumPageHandlers] = {
   &handle_enc_0,
@@ -62,4 +63,3 @@ const page_handler_t handler_dsp[eNumPageHandlers] = {
   &handle_key_2,
   &handle_key_3,
 };
-g
