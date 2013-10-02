@@ -150,7 +150,7 @@ const volatile char* files_get_dsp_name(u8 idx) {
 
 // load a blacfkin executable by index */
 void files_load_dsp(u8 idx) {  
-  app_notify("loading dsp...");
+  //  app_notify("loading dsp...");
   files_load_dsp_name((const char*)files_get_dsp_name(idx));
 }
 

@@ -19,7 +19,8 @@
 
 /// bees
 #include "files.h"
-#include "flash.h"
+//#include "flash.h"
+#include "flash_bees.h"
 #include "global.h"
 #include "memory.h"
 #include "menu.h"
@@ -121,7 +122,7 @@ void scene_read_buf(void) {
   //  delay_ms(2000);
     
   // re-trigger inputs
-  app_notify("re-initializing network/parameters");
+  //  app_notify("re-initializing network/parameters");
   net_retrigger_inputs();
   
   // update bfin parameters

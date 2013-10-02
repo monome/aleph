@@ -183,14 +183,15 @@ void app_init(void) {
   print_dbg("\r\n play_init");
 
   // set handler
-  appEventHandler = &bees_handler;
+  //// FIXME
+  //  appEventHandler = &bees_handler;
   //  render_init();
 
 }
 
 // this is called from the event queue 
 u8 app_launch(u8 firstrun) {
-  app_notify("launching BEES");
+  //  app_notify("launching BEES");
   print_dbg("\r\n launching app with firstrun: ");
   print_dbg_ulong(firstrun);
   if(firstrun) {

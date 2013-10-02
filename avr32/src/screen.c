@@ -186,27 +186,40 @@ void init_oled(void) {
 // draw data at given rectangle, with wrapping
 // useful for scrolling buffers
 // assume x-offset and width are both even!
-void screen_draw_region_wrap(u8 x, u8 y, u8 w, u8 h, u8* data, u8* dataWrapAt, u8* dataWrapTo) {
+//void screen_draw_region_wrap(u8 x, u8 y, u8 w, u8 h, u8* data, u8* dataWrapAt, u8* dataWrapTo) {
+
+  // draw data at given rectangle, with starting byte offset within the region data.
+// will wrap to beginning of region
+// useful for scrolling buffers
+void screen_draw_region_offset(u8 x, u8 y, u8 w, u8 h, u32 len, u8* data, u32 off) {
+  // store region bounds  for wrapping
+  // inclusive lower bound
+  const u8* dataStart = data;
+  // exclusive upper bound
+  const u8* dataEnd = data + len - 1;
+  // begin at specified offset in region
+  data += off;
+
   // 1 row address = 2 horizontal pixels
-  
   // physical screen memory: 2px = 1byte
   w >>= 1;
   x >>= 1;
-  nb = w * h;
+  nb = len >> 1;
 
   /// the screen is mounted upside down!
   // copy, pack, and reverse into the top of the screen buffer
   // 2 bytes input -> 1 byte output
-    pScr = (u8*)screenBuf + nb - 1;
+  pScr = (u8*)screenBuf + nb - 1;
+
   for(j=0; j<h; j++) {
     for(i=0; i<w; i++) {
       // 2 bytes input per 1 byte output
       *pScr = (0xf0 & ((*data) << 4) );
       data++;
-      if(data > dataWrapAt) { data = dataWrapTo; }
+      if(data > dataEnd) { data = dataStart; }
       *pScr |= ((*data) & 0xf);
       data++;
-      if(data > dataWrapAt) { data = dataWrapTo; }
+      if(data > dataEnd) { data = dataStart; }
       pScr--;
     }
   }

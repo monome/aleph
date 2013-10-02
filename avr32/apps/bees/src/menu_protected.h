@@ -13,39 +13,8 @@
 #include "net.h"
 #include "ui.h"
 #include "menu.h"
+#include "pages.h"
 #include "screen.h"
-
-///////////////////
-//////// types
-
-// function pointer for input handling on a given page
-typedef void(*keyHandler_t)(uiKey_t key, s32 val);
-// function pointer for redraw on a given page
-typedef void(*redraw_t)(void);
-
-// messy page mode enum
-/// FIXME this is so stupid
-typedef enum  { 
-   eModeNone,
-   eModeClear,
-   eModeCopy,
-   eModeWrite,
-   eModeRead,
-   eModeDefault,
-} ePageMode;
-
-// class representing a page in a menu
-// includes a title and a key input handler (function pointer)
-typedef struct page_struct {
-  const char* pageString;
-  keyHandler_t keyHandler;
-  redraw_t redraw;
-  s16 selected;
-  ePageMode mode;
-  s8 cursor;
-  // knob sensitivities for this page
-  s8 encSens[4];
-} page_t;
 
 ///////////////////////
 ///// variables
