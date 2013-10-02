@@ -48,6 +48,7 @@
  /* } */
 
 static s32 scale_knob_value(s32 val) {
+  // exponential table
   static const u32 kNumKnobScales_1 = 23;
   static const u32 knobScale[24] = {
     0x00000001,

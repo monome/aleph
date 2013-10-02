@@ -20,6 +20,7 @@
 #include "screen.h"
 // bees
 #include "files.h"
+#include "handler.h"
 #include "menu.h"
 #include "net_monome.h"
 #include "play.h"
@@ -28,7 +29,7 @@
 
 static u8 keyMode = 0;
 
-
+/*
 void app_handle_event(event_t* e) {
   //// APP 
   switch(e->eventType) {
@@ -157,6 +158,7 @@ void app_handle_event(event_t* e) {
     break;
   }
 }
+*/
 
 // this is called during hardware initialization.
 // use for memory allocation.
@@ -179,10 +181,15 @@ void app_init(void) {
 
   play_init();
   print_dbg("\r\n play_init");
+
+  // set handler
+  appEventHandler = &bees_handler;
+  //  render_init();
+
 }
 
 // this is called from the event queue 
-void app_launch(u8 firstrun) {
+u8 app_launch(u8 firstrun) {
   app_notify("launching BEES");
   print_dbg("\r\n launching app with firstrun: ");
   print_dbg_ulong(firstrun);
@@ -196,5 +203,7 @@ void app_launch(u8 firstrun) {
 
     scene_read_default();
   }
-  menu_refresh();
+  //menu_refresh();
+
+  return 1;
 }

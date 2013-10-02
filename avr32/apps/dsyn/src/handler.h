@@ -1,5 +1,5 @@
-#ifndef _ALEPH_APP_FLRY_HANDLER_H_
-#define _ALEPH_APP_FLRY_HANDLER_H_
+#ifndef _ALEPH_APP_DSYN_HANDLER_H_
+#define _ALEPH_APP_DSYN_HANDLER_H_
 
 #include "app.h"
 // ui handlers

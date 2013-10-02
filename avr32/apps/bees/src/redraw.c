@@ -20,6 +20,8 @@
 #include "simple_string.h"
 #include "types.h"
 
+// avr32
+
 // bees
 #include "files.h"
 #include "param.h"
@@ -27,8 +29,17 @@
 #include "preset.h"
 #include "redraw.h"
 #include "scene.h"
-#include "screen.h"
 
+//---------------------------
+//---- defines
+// how many characters in a line
+// this is an upper limit because the system font is variable-spaced
+#define CHAR_COLS 	64
+#define CHAR_COLS_1 	63
+#define CHAR_ROWS   8  // NROWS / FONT_CHARH
+#define CHAR_ROWS_1 7
+// center row of text
+#define CHAR_ROW_CENTER 3
 //------------------------
 //----- static variables
 
@@ -84,23 +95,23 @@ void redraw_ops(void) {
   // total count of ops, including system-controlled
   const u16 num = net_num_ops();
   // draw the header
-  screen_line(0, 0, "OPERATORS", 15);
+  // screen_line(0, 0, "OPERATORS", 15);
   // print selection at center
   nCenter = curPage->selected;
   if (nCenter >= num) {
     nCenter = num;
   }
   n = nCenter;
-  y = SCREEN_ROW_CENTER;
+  y = CHAR_ROW_CENTER;
   draw_line_ops(n, num, y, 15);
-  screen_hl_line(0, y, 1);
+  // screen_hl_line(0, y, 1);
   // print lower entries
   while (y > 1) {
     draw_line_ops(--n, num, --y, 4);
   }
   // re-center
   n = nCenter;
-  y = SCREEN_ROW_CENTER;
+  y = CHAR_ROW_CENTER;
   // print higher entries
   while (y < CHAR_ROWS_3) {
     draw_line_ops(++n, num, ++y, 4);
@@ -110,14 +121,14 @@ void redraw_ops(void) {
   screen_blank_line(0, CHAR_ROWS_2);
   println(" + ", 0);
   appendln(op_registry[userOpTypes[newOpType]].name);
-  endln(); screen_line(0, CHAR_ROWS_2, lineBuf, 8);
+  endln(); // screen_line(0, CHAR_ROWS_2, lineBuf, 8);
   // (function labels)
   // don't allow deletion of system operators
   //  if (net_op_status(net_num_ops() - 1) == eUserOp) {
   if ( net_op_flag(net_num_ops() - 1, eOpFlagSys) ) {
-    screen_line(0, CHAR_ROWS_1, "PARAM ROUTE CREATE", 3);
+    // screen_line(0, CHAR_ROWS_1, "PARAM ROUTE CREATE", 3);
   } else  { 
-    screen_line(0, CHAR_ROWS_1, "PARAM ROUTE CREATE DELETE", 3);
+    // screen_line(0, CHAR_ROWS_1, "PARAM ROUTE CREATE DELETE", 3);
   }
 }
 
@@ -134,9 +145,9 @@ void redraw_ins(void) {
     nCenter = num;
   }
   n = nCenter;
-  y = SCREEN_ROW_CENTER;
+  y = CHAR_ROW_CENTER;
   draw_line_ins(n, num, y, 15);
-  screen_hl_line(0, y, 1);
+  // screen_hl_line(0, y, 1);
   // print lower entries
   while (y > 1) {
     n--;
@@ -145,7 +156,7 @@ void redraw_ins(void) {
   }
   // re-center
   n = nCenter;
-  y = SCREEN_ROW_CENTER;
+  y = CHAR_ROW_CENTER;
   // print higher entries
   while (y < CHAR_ROWS_2) {
     n++;
@@ -153,9 +164,9 @@ void redraw_ins(void) {
     draw_line_ins(n, num, y, 4);
   }    
   // draw the header
-  screen_line(0, 0, "PARAMS", 12);
+  // screen_line(0, 0, "PARAMS", 12);
   // draw footer (function labels)
-  screen_line(0, CHAR_ROWS_1, "GATHER DISCON. STORE PRESET", 10);
+  // screen_line(0, CHAR_ROWS_1, "GATHER DISCON. STORE PRESET", 10);
 }
 
 //==================================================
@@ -171,9 +182,9 @@ void redraw_outs(void) {
     nCenter = num;
   }
   n = nCenter;
-  y = SCREEN_ROW_CENTER;
+  y = CHAR_ROW_CENTER;
   draw_line_outs(n, num, y, 15);  
-  screen_hl_line(0, y, 1);
+  // screen_hl_line(0, y, 1);
   // print lower entries
   while (y > 1) {
     n--;
@@ -182,7 +193,7 @@ void redraw_outs(void) {
   }
   // re-center
   n = nCenter;
-  y = SCREEN_ROW_CENTER;
+  y = CHAR_ROW_CENTER;
   // print higher entries
   while (y < CHAR_ROWS_2) {
     n++;
@@ -190,9 +201,9 @@ void redraw_outs(void) {
     draw_line_outs(n, num, y, 4);
   }
   // header
-  screen_line(0, 0, "ROUTING", 12);
+  // screen_line(0, 0, "ROUTING", 12);
   // (footer)
-  screen_line(0, CHAR_ROWS_1, "FOLLOW DISCONNECT STORE PRESET", 10);
+  // screen_line(0, CHAR_ROWS_1, "FOLLOW DISCONNECT STORE PRESET", 10);
 }
 
 /// redraw gathered outputs
@@ -213,7 +224,7 @@ void redraw_presets(void) {
     nCenter = num;
   }
   n = nCenter;
-  y = SCREEN_ROW_CENTER;
+  y = CHAR_ROW_CENTER;
   // modes
   //  switch(curPage->mode) {  
     //// FIXME
@@ -235,7 +246,7 @@ void redraw_presets(void) {
   draw_edit_string(0, y, preset_name(n), PRESET_NAME_LEN);
     //    break;
     //  }
-  screen_hl_line(0, y, 1);
+  // screen_hl_line(0, y, 1);
   // print lower entries
   while (y > 1) {
     n--;
@@ -244,7 +255,7 @@ void redraw_presets(void) {
   }
   // re-center
   n = nCenter;
-  y = SCREEN_ROW_CENTER;
+  y = CHAR_ROW_CENTER;
   // print higher entries
   while (y < CHAR_ROWS_2) {
     n++;
@@ -252,9 +263,9 @@ void redraw_presets(void) {
     draw_line_presets(n, num, y, 4);
   }
   // draw footer (function labels)
-  screen_line(0, CHAR_ROWS_1, "CLEAR COPY STORE RECALL", 10);
+  // screen_line(0, CHAR_ROWS_1, "CLEAR COPY STORE RECALL", 10);
   // draw the header
-  screen_line(0, 0, "PRESETS", 12);
+  // screen_line(0, 0, "PRESETS", 12);
 }
 
 //==================================================
@@ -269,37 +280,37 @@ void redraw_scenes(void) {
     nCenter = num;
   }
   n = nCenter;
-  y = SCREEN_ROW_CENTER;
+  y = CHAR_ROW_CENTER;
   // modes
   switch(curPage->mode) { 
   /* case eModeClear: */
   /*   screen_line(0, y, "CLEAR?", 14); */
   /*   break; */
   case eModeCopy:
-    screen_line(0, y, "COPY?", 14);
+    // screen_line(0, y, "COPY?", 14);
     break;
   case eModeWrite:
-    screen_line(0, y, "WRITE?", 14);
+    // screen_line(0, y, "WRITE?", 14);
     break;
   case eModeRead:
-    screen_line(0, y, "READ?", 14);
+    // screen_linep(0, y, "READ?", 14);
     break;
   case eModeDefault:
-    screen_line(0, y, "DEFAULT?", 14);
+    // screen_line(0, y, "DEFAULT?", 14);
     break;
   case eModeNone:
   default:
     draw_line_scenes(n, num, y, 15);  
     break;
   }
-  screen_hl_line(0, y, 1);
+  // screen_hl_line(0, y, 1);
   // print lower entries
   while (y > 1) {
     draw_line_scenes(--n, num, --y, 4);
   }
   // re-center
   n = nCenter;
-  y = SCREEN_ROW_CENTER;
+  y = CHAR_ROW_CENTER;
   // print higher entries
   while (y < CHAR_ROWS_3) {
     draw_line_scenes(++n, num, ++y, 4);
@@ -308,9 +319,9 @@ void redraw_scenes(void) {
   screen_blank_line(0, CHAR_ROWS_2);
   draw_edit_string(0, CHAR_ROWS_2, sceneData->desc.sceneName, SCENE_NAME_LEN);
   // draw header
-  screen_line(0, 0, "SCENES", 12);
+  // screen_line(0, 0, "SCENES", 12);
   // draw footer (function labels)
-  screen_line(0, CHAR_ROWS_1, "WRITE READ COPY DEFAULT", 10);
+  // screen_line(0, CHAR_ROWS_1, "WRITE READ COPY DEFAULT", 10);
 }
 
 //==================================================
@@ -327,9 +338,9 @@ void redraw_dsp(void) {
     nCenter = num;
   }
   n = nCenter;
-  y = SCREEN_ROW_CENTER;
+  y = CHAR_ROW_CENTER;
   draw_line_dsp(n, num, y, 15);
-  screen_hl_line(0, y, 1);
+  // screen_hl_line(0, y, 1);
   // print lower entries
   while (y > 1) {
     n--;
@@ -338,16 +349,16 @@ void redraw_dsp(void) {
   }
   // re-center
   n = nCenter;
-  y = SCREEN_ROW_CENTER;
+  y = CHAR_ROW_CENTER;
   // print higher entries
   while (y < CHAR_ROWS_2) {
     n++;
     y++;
     draw_line_dsp(n, num, y, 4);
   }
-  screen_line(0, 0, "DSP", 12);
+  // screen_line(0, 0, "DSP", 12);
   // draw footer (function labels)
-  screen_line(0, CHAR_ROWS_1, "LOAD DEFAULT", 10);
+  // screen_line(0, CHAR_ROWS_1, "LOAD DEFAULT", 10);
 }
 
 //==================================================
@@ -361,10 +372,10 @@ void redraw_play(void) {
     clearln();
     println( play_get_entry(y), 0);
     endln(); 
-    screen_line(0, y + 1, lineBuf, 0x8);
+    // screen_line(0, y + 1, lineBuf, 0x8);
   }
   // draw the header
-  screen_line(0, 0, "PLAY", 12);
+  // screen_line(0, 0, "PLAY", 12);
 }
 
 /////---------------------------
@@ -385,7 +396,7 @@ static void draw_line_ops(s32 n, u16 num, u8 y, u8 hl) {
   screen_string(0, y, lineBuf, hl);
   //  clearln();
   println(net_op_name(n), 0); endln();
-  screen_line(16, y, lineBuf, hl);
+  // screen_line(16, y, lineBuf, hl);
 }
 
 // draw line of inputs page
@@ -411,7 +422,7 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
     
     endln(); screen_string(16, y, lineBuf, hl);
     print_fix16(numBuf, net_get_in_value(n) );
-    screen_line(80, y, numBuf, hl);
+    // screen_line(80, y, numBuf, hl);
 
   } else { // this is a parameter input
     println("P_", 0);
@@ -420,7 +431,7 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
     println( net_in_name(n) , 0);
     endln(); screen_string(24, y, lineBuf, hl);
     print_fix16(numBuf, net_get_in_value(n) );
-    screen_line(80, y, numBuf, hl);
+    // screen_line(80, y, numBuf, hl);
   }
 }
 

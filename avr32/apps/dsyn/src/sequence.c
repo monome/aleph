@@ -136,7 +136,6 @@ extern const u8 seq_get_len(void) {
   return len;
 }
 
-
 /* // get next position */
 /* const u8 seq_get_next(void) { */
 /*   return next; */

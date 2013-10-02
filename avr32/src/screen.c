@@ -31,8 +31,11 @@
 // screen buffer
 static U8 screenBuf[GRAM_BYTES];
 
-// common static vars
+// common temp vars
 static u32 i, j;
+static u8* pScr; // movable pointer to screen buf
+static u32 nb; // count of destination bytes
+
 //static u32 pos;
 // fixed-point text buffer
 //static char buf[FIX_DIG_TOTAL];
@@ -60,7 +63,7 @@ void screen_set_rect(u8 x, u8 y, u8 w, u8 h) {
 }
 
 //------------------
-// external functions
+// al functions
 void init_oled(void) {
   //U32 i;
   // volatile u64 delay;
@@ -140,25 +143,13 @@ void init_oled(void) {
 
 // draw data given target rect
 // assume x-offset and width are both even!
-extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
-  static u8* pScr; // movable pointer to screen buf
-  static u32 nb; // count of destination bytes
-  //  static u32 off; // offset from end of screenbuffer
+ void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
   // 1 row address = 2 horizontal pixels
-  //  u32 wb = w >> 1;
+  
+  // physical screen memory: 2px = 1byte
   w >>= 1;
   x >>= 1;
   nb = w * h;
-
-  /* print_dbg("\r\n screen_draw_region: w:"); */
-  /* // print_dbg("\r\n bytes in row: "); *\/ */
-  /* print_dbg_ulong(w);  */
-  /* print_dbg(" , x:");  */
-  /* print_dbg_ulong(x);  */
-  /* print_dbg(" , h:"); */
-  /* print_dbg_ulong(h); */
-  /* print_dbg(" , y:"); */
-  /* print_dbg_ulong(y); */
 
   /// the screen is mounted upside down!
   // copy, pack, and reverse into the top of the screen buffer
@@ -166,6 +157,7 @@ extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
     pScr = (u8*)screenBuf + nb - 1;
   for(j=0; j<h; j++) {
     for(i=0; i<w; i++) {
+      // 2 bytes input per 1 byte output
       *pScr = (0xf0 & ((*data) << 4) );
       data++;
       *pScr |= ((*data) & 0xf);
@@ -175,7 +167,7 @@ extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
   }
   
   // flip the screen coordinates 
-  x = SCREEN_ROW_BYTES - x -  w;
+  x = SCREEN_ROW_BYTES - x - w;
   y = SCREEN_COL_BYTES - y - h;
   
   // set drawing region
@@ -190,6 +182,54 @@ extern void screen_draw_region(u8 x, u8 y, u8 w, u8 h, u8* data) {
   }
   spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
 }
+
+// draw data at given rectangle, with wrapping
+// useful for scrolling buffers
+// assume x-offset and width are both even!
+void screen_draw_region_wrap(u8 x, u8 y, u8 w, u8 h, u8* data, u8* dataWrapAt, u8* dataWrapTo) {
+  // 1 row address = 2 horizontal pixels
+  
+  // physical screen memory: 2px = 1byte
+  w >>= 1;
+  x >>= 1;
+  nb = w * h;
+
+  /// the screen is mounted upside down!
+  // copy, pack, and reverse into the top of the screen buffer
+  // 2 bytes input -> 1 byte output
+    pScr = (u8*)screenBuf + nb - 1;
+  for(j=0; j<h; j++) {
+    for(i=0; i<w; i++) {
+      // 2 bytes input per 1 byte output
+      *pScr = (0xf0 & ((*data) << 4) );
+      data++;
+      if(data > dataWrapAt) { data = dataWrapTo; }
+      *pScr |= ((*data) & 0xf);
+      data++;
+      if(data > dataWrapAt) { data = dataWrapTo; }
+      pScr--;
+    }
+  }
+  
+  // flip the screen coordinates 
+  x = SCREEN_ROW_BYTES - x - w;
+  y = SCREEN_COL_BYTES - y - h;
+  
+  // set drawing region
+  screen_set_rect(x, y, w, h);
+  // select chip for data
+  spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
+  // register select high for data
+  gpio_set_gpio_pin(OLED_REGISTER_PIN);
+  // send data
+  for(i=0; i<(nb); i++) {
+    spi_write(OLED_SPI, screenBuf[i]);
+  }
+  spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
+}
+
+
+
 
  // clear OLED RAM and local screenbuffer
 void screen_clear(void) {
