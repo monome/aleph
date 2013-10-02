@@ -1,3 +1,77 @@
+chase 7004453152, 021303618
+
+post-announcement todo
+
+followup details
+	pulled from forum responses
+
+video
+	loop cutting
+	cv out
+	gamepad
+	midi
+	synth
+
+accounting
+	how to pay ezra - wed	
+	off payroll
+	catch up numbers
+
+build
+	new face
+	primary existing
+	fix files primary and order
+	fix cv on proto
+	check mechanicals
+		mechanicals eval plus photos
+		keycap fix on plate
+		enclosure needs standoffs
+	knob/keycap
+
+programming
+	BEES
+	interface scrub
+	monome apps
+		flin
+		life
+	dsp
+		node mixer 4in/4out
+			per output
+				input mix per channel
+				dry pass
+				delay ms
+				filter
+					mode
+					cutoff
+					resonance
+				wet pass
+				level
+	i2c
+	serial host via computer
+		osc
+		midi
+		remote
+
+packaging - giffin				
+
+ii kit
+
+
+
+followup text details for web, pulled from forum posts. post update photos.
+new video (loop cutter w/ 64, cv out, gamepad, midi keys, synth) several, not just one vid, spread out
+accounting, payroll, projections-- more details after meeting on wednesday
+proto building-- new face, new primary, final checks 
+mechanical-- fixes/updates to metal parts, knob/key
+packaging w/ giffin
+final part sourcing (sdcards)
+programming-- monome apps, interface assist, bees assist, dsp assist, i2c
+host serial communication-- laptop-based editor-- talk to peter? serial to osc.
+production management-- get manufacturers started
+production process-- how to make stuff here
+
+
+
 
 
 b todo

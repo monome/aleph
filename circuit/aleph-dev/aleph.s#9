@@ -1990,28 +1990,28 @@ shrink quad flat pack, square</description>
 <wire x1="5" y1="7" x2="5" y2="-7.5" width="0.127" layer="21"/>
 <wire x1="5" y1="-7.5" x2="-5" y2="-7.5" width="0.127" layer="21"/>
 <wire x1="-5" y1="-7.5" x2="-5" y2="7" width="0.127" layer="21"/>
-<pad name="1" x="2.2" y="-4.1" drill="1.5"/>
-<pad name="2" x="-2.2" y="-2.5" drill="1.5"/>
-<pad name="3" x="1.7" y="2.5" drill="1.5"/>
-<pad name="4" x="-1.7" y="5" drill="1.5"/>
-<pad name="5" x="0" y="0" drill="1.5"/>
+<pad name="1" x="2.2" y="-4.1" drill="1.2"/>
+<pad name="2" x="-2.2" y="-2.5" drill="1.2"/>
+<pad name="3" x="1.7" y="2.5" drill="1.2"/>
+<pad name="4" x="-1.7" y="5" drill="1.2"/>
+<pad name="5" x="0" y="0" drill="1.2"/>
 <text x="-5" y="-9" size="1.27" layer="25">&gt;NAME</text>
 <text x="-5" y="7.5" size="1.27" layer="27">&gt;VALUE</text>
 </package>
 <package name="NHD-2.7">
-<wire x1="-41" y1="2.5" x2="41" y2="2.5" width="0.127" layer="51"/>
-<wire x1="41" y1="2.5" x2="41" y2="-45" width="0.127" layer="51"/>
-<wire x1="41" y1="-45" x2="-41" y2="-45" width="0.127" layer="51"/>
-<wire x1="-41" y1="-45" x2="-41" y2="2.5" width="0.127" layer="51"/>
-<wire x1="30.5" y1="-5.5" x2="30.5" y2="-36.5" width="0.127" layer="51"/>
-<wire x1="30.5" y1="-36.5" x2="-30.5" y2="-36.5" width="0.127" layer="51"/>
-<wire x1="-30.5" y1="-36.5" x2="-30.5" y2="-5.5" width="0.127" layer="51"/>
-<wire x1="0" y1="0" x2="0" y2="0.5" width="0.127" layer="51"/>
-<wire x1="0" y1="0" x2="0.5" y2="0" width="0.127" layer="51"/>
-<wire x1="-30.5" y1="-5.5" x2="30.5" y2="-5.5" width="0.127" layer="51"/>
-<wire x1="-30.5" y1="-5.5" x2="30.5" y2="-36.5" width="0.127" layer="51"/>
-<wire x1="30.5" y1="-5.5" x2="-30.5" y2="-36.5" width="0.127" layer="51"/>
-<circle x="0" y="-21" radius="0.5" width="0.127" layer="51"/>
+<wire x1="-41" y1="2.5" x2="41" y2="2.5" width="0.127" layer="49"/>
+<wire x1="41" y1="2.5" x2="41" y2="-45" width="0.127" layer="49"/>
+<wire x1="41" y1="-45" x2="-41" y2="-45" width="0.127" layer="49"/>
+<wire x1="-41" y1="-45" x2="-41" y2="2.5" width="0.127" layer="49"/>
+<wire x1="30.5" y1="-5.5" x2="30.5" y2="-36.5" width="0.127" layer="49"/>
+<wire x1="30.5" y1="-36.5" x2="-30.5" y2="-36.5" width="0.127" layer="49"/>
+<wire x1="-30.5" y1="-36.5" x2="-30.5" y2="-5.5" width="0.127" layer="49"/>
+<wire x1="0" y1="0" x2="0" y2="0.5" width="0.127" layer="49"/>
+<wire x1="0" y1="0" x2="0.5" y2="0" width="0.127" layer="49"/>
+<wire x1="-30.5" y1="-5.5" x2="30.5" y2="-5.5" width="0.127" layer="49"/>
+<wire x1="-30.5" y1="-5.5" x2="30.5" y2="-36.5" width="0.127" layer="49"/>
+<wire x1="30.5" y1="-5.5" x2="-30.5" y2="-36.5" width="0.127" layer="49"/>
+<circle x="0" y="-21" radius="0.5" width="0.127" layer="49"/>
 </package>
 <package name="SJ1-3533NG">
 <description>RIGHT ANGLE STEREO JACK 3.5mm</description>
@@ -2066,8 +2066,8 @@ shrink quad flat pack, square</description>
 <pad name="4" x="1" y="-11" drill="0.8" shape="octagon"/>
 <pad name="5" x="3" y="-11" drill="0.8" shape="octagon"/>
 <pad name="6" x="5" y="-11" drill="0.8" shape="octagon"/>
-<pad name="M1" x="-5.5" y="0" drill="2.2" shape="octagon"/>
-<pad name="M2" x="5.5" y="0" drill="2.2" shape="octagon"/>
+<pad name="M1" x="-5.842" y="0" drill="2.2" shape="octagon"/>
+<pad name="M2" x="5.842" y="0" drill="2.2" shape="octagon"/>
 <text x="-7" y="8" size="1.27" layer="25">&gt;NAME</text>
 <text x="-7" y="-14" size="1.27" layer="27">&gt;VALUE</text>
 </package>
