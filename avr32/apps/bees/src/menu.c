@@ -105,7 +105,7 @@ u32 numGathered;
 //-----------------------
 //------ static vars
 // saved idx for toggling in play mode
-static s8 savedPageIdx = 0;
+// static s8 savedPageIdx = 0;
 
 //-----------------------------------
 //----- external function definitions
@@ -235,6 +235,8 @@ void scroll_select(s8 dir, s32 max) {
 
 
 // get selection on given page
+/*
 extern s16 menu_selection(ePage page) {
   return pages[page].select;
 }
+*/

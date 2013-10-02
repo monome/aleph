@@ -18,12 +18,7 @@ static u8 keyMode = 0;
 
 
 void bees_handler(event_t* e) {
-  //// APP 
   switch(e->eventType) {
-
-    //  case kEventRefresh:
-    //screen_refresh();
-    //    break;
 
     //----- function switches
   case kEventSwitch0:
@@ -51,13 +46,14 @@ void bees_handler(event_t* e) {
     if(keyMode) { gpio_set_gpio_pin(LED_MODE_PIN); }
     else { gpio_clr_gpio_pin(LED_MODE_PIN); }
     //    menu_handleKey(eKeyMode, e->eventData);
-    //// witch to play mode
+    //// switch to play mode...
     break;
     
     //---- power switch
   case kEventSwitch5:
     break;
-    
+
+    //---- encoders    
   case kEventEncoder0:
     curPage->handler[ePageHandleEnc0](e->eventData);
     break;

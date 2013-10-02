@@ -1,19 +1,16 @@
 /* render.c
- * bees
- * aleph
- *
- * page-specific render functinos.
+   bees
+   aleph
+   
+   render functions common to pages.
+
  */
 
 
 // std
 #include <string.h>
 
-#ifdef ARCH_AVR32
 #include "print_funcs.h"
-#else
-#include <stdio.h>
-#endif
 
 // common
 #include "fix.h"
@@ -124,7 +121,6 @@ void render_ops(void) {
   endln(); screen_line(0, CHAR_ROWS_2, lineBuf, 8);
   // (function labels)
   // don't allow deletion of system operators
-  //  if (net_op_status(net_num_ops() - 1) == eUserOp) {
   if ( net_op_flag(net_num_ops() - 1, eOpFlagSys) ) {
     screen_line(0, CHAR_ROWS_1, "PARAM ROUTE CREATE", 3);
   } else  { 

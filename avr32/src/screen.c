@@ -183,20 +183,15 @@ void init_oled(void) {
   spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
 }
 
-// draw data at given rectangle, with wrapping
-// useful for scrolling buffers
-// assume x-offset and width are both even!
-//void screen_draw_region_wrap(u8 x, u8 y, u8 w, u8 h, u8* data, u8* dataWrapAt, u8* dataWrapTo) {
-
-  // draw data at given rectangle, with starting byte offset within the region data.
+// draw data at given rectangle, with starting byte offset within the region data.
 // will wrap to beginning of region
 // useful for scrolling buffers
 void screen_draw_region_offset(u8 x, u8 y, u8 w, u8 h, u32 len, u8* data, u32 off) {
   // store region bounds  for wrapping
   // inclusive lower bound
-  const u8* dataStart = data;
+  u8* const dataStart = data;
   // exclusive upper bound
-  const u8* dataEnd = data + len - 1;
+  u8* const dataEnd = data + len - 1;
   // begin at specified offset in region
   data += off;
 
@@ -240,8 +235,6 @@ void screen_draw_region_offset(u8 x, u8 y, u8 w, u8 h, u32 len, u8* data, u32 of
   }
   spi_unselectChip(OLED_SPI, OLED_SPI_NPCS);
 }
-
-
 
 
  // clear OLED RAM and local screenbuffer
