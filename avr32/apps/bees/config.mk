@@ -56,6 +56,7 @@ CSRCS += \
 	$(ALEPH_AVR32)/src/interrupts.c \
 	$(ALEPH_AVR32)/src/memory.c \
 	$(ALEPH_AVR32)/src/monome.c \
+	$(ALEPH_AVR32)/src/region.c \
 	$(ALEPH_AVR32)/src/screen.c \
 	$(ALEPH_AVR32)/src/simple_string.c \
 	$(ALEPH_AVR32)/src/switches.c \
@@ -150,6 +151,7 @@ CSRCS += \
 	$(ALEPH_BEES)/src/param.c \
 	$(ALEPH_BEES)/src/play.c \
 	$(ALEPH_BEES)/src/preset.c \
+	$(ALEPH_BEES)/src/render.c \
 	$(ALEPH_BEES)/src/scene.c \
 	$(ALEPH_BEES)/src/ops/op_add.c \
 	$(ALEPH_BEES)/src/ops/op_enc.c \

@@ -112,6 +112,17 @@ u32 numGathered;
 
 // init
 extern void menu_init(void) {
+  init_page_ins();
+  /*
+    // TODO
+  init_page_outs();
+  init_page_presets();
+  init_page_ops();
+  init_page_scenes();
+  init_page_dsp();
+  init_page_gathered();
+  init_page_play();
+  */
   set_page(pageIdx);
 }
 
