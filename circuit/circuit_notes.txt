@@ -1,3 +1,12 @@
+mech issues 9/13 from initial mcalpin protos.
+	backplate
+		side screw holes too small
+		power/gain holes too small
+		usb host needs to be moved down
+		usb device could be expanded slightly, add corner cuts?
+
+
+
 SPEC LEDs how about 160-1738-1-ND
 TUNE THE DEBOUNCERS!!
 input gain switch needs to be tuned? more gain when engaged?

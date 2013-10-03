@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -18953,7 +18953,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="IC15" library="analog-devices" deviceset="AD8607" device="R" value="AD8606"/>
 <part name="V88" library="supply" deviceset="+5VA" device=""/>
 <part name="V92" library="supply" deviceset="+5VA" device=""/>
-<part name="IC16" library="analog-devices" deviceset="AD8607" device="R"/>
+<part name="IC16" library="analog-devices" deviceset="AD8607" device="R" value="AD8606"/>
 </parts>
 <sheets>
 <sheet>
@@ -26625,7 +26625,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <instance part="AGND89" gate="VR1" x="274.32" y="321.31"/>
 <instance part="IC16" gate="A" x="217.17" y="306.07" rot="MR180"/>
 <instance part="IC16" gate="B" x="281.94" y="330.2" rot="MR180"/>
-<instance part="IC16" gate="P" x="322.58" y="308.61" rot="MR180"/>
+<instance part="IC16" gate="P" x="322.58" y="308.61" rot="MR0"/>
 </instances>
 <busses>
 </busses>
@@ -26839,9 +26839,9 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <wire x1="316.23" y1="299.72" x2="316.23" y2="306.07" width="0.1524" layer="91"/>
 <pinref part="AGND91" gate="VR1" pin="AGND"/>
 <wire x1="322.58" y1="298.45" x2="322.58" y2="299.72" width="0.1524" layer="91"/>
+<pinref part="IC16" gate="P" pin="V-"/>
 <wire x1="322.58" y1="299.72" x2="322.58" y2="300.99" width="0.1524" layer="91"/>
 <junction x="322.58" y="299.72"/>
-<pinref part="IC16" gate="P" pin="V+"/>
 </segment>
 <segment>
 <pinref part="AGND94" gate="VR1" pin="AGND"/>
@@ -27355,11 +27355,11 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="C90" gate="G$1" pin="2"/>
 <wire x1="322.58" y1="317.5" x2="316.23" y2="317.5" width="0.1524" layer="91"/>
 <wire x1="316.23" y1="317.5" x2="316.23" y2="311.15" width="0.1524" layer="91"/>
-<wire x1="322.58" y1="316.23" x2="322.58" y2="317.5" width="0.1524" layer="91"/>
 <pinref part="V95" gate="G$1" pin="+5VA"/>
 <wire x1="322.58" y1="317.5" x2="322.58" y2="318.77" width="0.1524" layer="91"/>
+<pinref part="IC16" gate="P" pin="V+"/>
+<wire x1="322.58" y1="316.23" x2="322.58" y2="317.5" width="0.1524" layer="91"/>
 <junction x="322.58" y="317.5"/>
-<pinref part="IC16" gate="P" pin="V-"/>
 </segment>
 </net>
 <net name="OUT-VREF" class="0">
@@ -29087,6 +29087,11 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="V88" gate="G$1" pin="+5VA"/>
 <wire x1="138.43" y1="196.85" x2="138.43" y2="198.12" width="0.1524" layer="91"/>
 </segment>
+<segment>
+<pinref part="LED5" gate="G$1" pin="A"/>
+<pinref part="V92" gate="G$1" pin="+5VA"/>
+<wire x1="138.43" y1="62.23" x2="138.43" y2="63.5" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="N$165" class="0">
 <segment>
@@ -29392,6 +29397,13 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <pinref part="R60" gate="G$1" pin="2"/>
 <pinref part="LED7" gate="G$1" pin="C"/>
 <wire x1="138.43" y1="187.96" x2="138.43" y2="189.23" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$168" class="0">
+<segment>
+<pinref part="R58" gate="G$1" pin="2"/>
+<pinref part="LED5" gate="G$1" pin="C"/>
+<wire x1="138.43" y1="53.34" x2="138.43" y2="54.61" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
