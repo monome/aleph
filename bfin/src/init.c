@@ -375,7 +375,7 @@ void init_interrupts(void) {
   // spi rx           -> ID3 = IVG10
   // sport1 tx           -> ID4 = IVG11
 #if ADD_DACS // add DACS
-  *pSIC_IAR1 = 0xff3fff24;
+  *pSIC_IAR1 = 0xff34ff2f;
   *pSIC_IAR2 = 0xffffffff;
 #else 
   *pSIC_IAR1 = 0xff3fff2f;
