@@ -149,9 +149,6 @@ void render_startup(void) {
 
 // render text to scrolling buffer during boot procedure
 extern void render_boot(const char* str) {
-  print_dbg("\r\n rendering boot message: ");
-  print_dbg(str);
-  /// FIXME: should clear current line
   /// clear current line
   region_fill_part(&bootRegion, 0x0, bootByteOffset, bootRowBytes);
   // draw text to region at current offset, using system font
@@ -160,19 +157,12 @@ extern void render_boot(const char* str) {
   // advance offset by count of pixels in row
   //  bootOffset += (SCREEN_ROW_PX * FONT_CHARH);
   bootByteOffset += bootRowBytes;
-  print_dbg("\r\n incremented byte offset, now: ");
-  print_dbg_ulong(bootByteOffset);
   bootRowOffset++;
-  print_dbg("\r\n incremented row offset, now: ");
-  print_dbg_ulong(bootRowOffset);
-
   if(bootRowOffset == bootRowCount) {
     bootRowOffset = 0;
-    print_dbg("\r\n wrapped row offset ");
   }
   if(bootByteOffset > bootMaxByteOffset) {
     bootByteOffset = 0;
-    print_dbg("\r\n wrapped byte offset ");
   }
 
   if(bootCount < bootRowCount) {
@@ -181,7 +171,7 @@ extern void render_boot(const char* str) {
     screen_draw_region(0, 0, 128, 64, bootRegion.data);
   } else {
     // scrolling:
-    // render from new ofset with wrapping
+    // render from new ofset with wrap
     screen_draw_region_offset(0, 0, 128, 64, 8192,  
 			      bootRegion.data, bootByteOffset);
   }

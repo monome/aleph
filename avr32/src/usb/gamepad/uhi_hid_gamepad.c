@@ -41,13 +41,19 @@
  *
  */
 
-#include "conf_usb_host.h"
+// std
+#include <string.h>
+
+// asf
 #include "print_funcs.h"
 #include "usb_protocol.h"
 #include "uhd.h"
 #include "uhc.h"
+
+// aleph-avr32
+#include "conf_usb_host.h"
+#include "hid_gamepad.h"
 #include "uhi_hid_gamepad.h"
-#include <string.h>
 
 #ifdef USB_HOST_HUB_SUPPORT
 # error USB HUB support is not implemented on UHI gamepad
@@ -102,9 +108,7 @@ uhc_enum_status_t uhi_hid_gamepad_install(uhc_device_t* dev) {
 
     case USB_DT_INTERFACE:
 
-      /////////////////
-      ///////////////  
-      //#if 1
+#if 0
       print_dbg("\r\n\r\n");
       print_dbg("\r\n iface_desc -> bLength : ");
       print_dbg_hex(ptr_iface->bLength);
@@ -125,14 +129,13 @@ uhc_enum_status_t uhi_hid_gamepad_install(uhc_device_t* dev) {
       print_dbg("\r\n iface_desc -> iInterface : ");
       print_dbg_hex(ptr_iface->iInterface);
       print_dbg("\r\n\r\n");
-      ////////////
-      /////////
+#endif
+
       if ((ptr_iface->bInterfaceClass   == HID_CLASS)
 	  && (ptr_iface->bInterfaceProtocol == HID_PROTOCOL_GENERIC) ) {
-	/////f
+	/////
 	//// FIXME:
 	/// generic HID... assuming this is a gamepad for now!
-
 	// Start allocation endpoint(s)
 	b_iface_supported = true;
       } else {
@@ -172,11 +175,6 @@ uhc_enum_status_t uhi_hid_gamepad_install(uhc_device_t* dev) {
   }
   return UHC_ENUM_UNSUPPORTED; // No interface supported
 }
-  /////////////////
-  ////////////
-// #endif ////
-  //////////
-  ////////////
 
 
 void uhi_hid_gamepad_enable(uhc_device_t* dev) {
@@ -224,10 +222,7 @@ static void uhi_hid_gamepad_report_reception(
 					   uhd_trans_status_t status,
 					   iram_size_t nb_transfered)
 {
-  //  uint8_t state_prev;
-  //uint8_t state_new;
-
-  int i;
+  //  int i;
 
   UNUSED(ep);
 
@@ -235,35 +230,14 @@ static void uhi_hid_gamepad_report_reception(
     return; // HID gamepad transfer aborted
   }
 
-  print_dbg("\r\n gamepad_report: ");
-  for (i=0; i<uhi_hid_gamepad_dev.report_size; i++) {
-    print_dbg(" ");
-    print_dbg_hex((unsigned long int) uhi_hid_gamepad_dev.report[i]);
-  }
-
-  /* // Decode buttons */
-  /* state_prev = uhi_hid_gamepad_dev.report_btn_prev; */
-  /* state_new = uhi_hid_gamepad_dev.report[UHI_HID_GAMEPAD_BTN]; */
-  /* if ((state_prev & 0x01) != (state_new & 0x01)) { */
-  /*   //    UHI_HID_GAMEPAD_EVENT_BTN_LEFT((state_new & 0x01) ? true : false); */
-  /* } */
-  /* if ((state_prev & 0x02) != (state_new & 0x02)) { */
-  /*   //    UHI_HID_GAMEPAD_EVENT_BTN_RIGHT((state_new & 0x02) ? true : false); */
-  /* } */
-  /* if ((state_prev & 0x04) != (state_new & 0x04)) { */
-  /*   //    UHI_HID_GAMEPAD_EVENT_BTN_MIDDLE((state_new & 0x04) ? true : false); */
-  /* } */
-  /* uhi_hid_gamepad_dev.report_btn_prev = state_new; */
-
-  // Decode moves
-  /* if ((uhi_hid_gamepad_dev.report[UHI_HID_GAMEPAD_MOV_X] != 0) */
-  /*     || (uhi_hid_gamepad_dev.report[UHI_HID_GAMEPAD_MOV_Y] != 0) */
-  /*     || (uhi_hid_gamepad_dev.report[UHI_HID_GAMEPAD_MOV_SCROLL] != 0)) { */
-  /*   UHI_HID_GAMEPAD_EVENT_MOUVE( */
-  /* 			      (int8_t)uhi_hid_gamepad_dev.report[UHI_HID_GAMEPAD_MOV_X], */
-  /* 			      (int8_t)uhi_hid_gamepad_dev.report[UHI_HID_GAMEPAD_MOV_Y], */
-  /* 			      (int8_t)uhi_hid_gamepad_dev.report[UHI_HID_GAMEPAD_MOV_SCROLL]); */
+  /* print_dbg("\r\n gamepad_report: "); */
+  /* for (i=0; i<uhi_hid_gamepad_dev.report_size; i++) { */
+  /*   print_dbg(" "); */
+  /*   print_dbg_hex((unsigned long int) uhi_hid_gamepad_dev.report[i]); */
   /* } */
 
+  hid_gamepad_parse_frame(uhi_hid_gamepad_dev.report, uhi_hid_gamepad_dev.report_size);
+
+  // wait for next transmission
   uhi_hid_gamepad_start_trans_report(add);
 }
