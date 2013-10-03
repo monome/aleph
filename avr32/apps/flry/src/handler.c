@@ -18,30 +18,59 @@
 #include "ctl.h"
 #include "render.h"
 
-// up and down interval timers for keys and footswitches
-// static u32 swTicks[8][2];
+// count of buttons
+#define NUM_BUT 4
+// count of joysticks
+#define NUM_JOY 2
+
+// count of triggers
+#define NUM_TRIG 4
+
+//-----------------------------------------
+//---- static vars
+
+// button values
+u8 butVal[NUM_BUT] = { 0, 0, 0, 0 };
+
+// joystick values (2-axis)
+static s8 joy[NUM_JOY][2] = { {0, 0}, {0, 0} };
 
 //---------------------------------------------
 //--------- static funcs
 
-// process timing on key press and return interval
-/* static u32 sw_time(u8 num, u8 val) { */
-/*   u32 ret; */
-/*   if( swTicks[num][val] > tcTicks) { */
-/*     // overflow */
-/*     ret = tcTicks + (0xffffffff - swTicks[num][val] ); */
-/*     print_dbg("\r\n overflow in sw timer"); */
-/*   } else { */
-/*     ret = tcTicks - swTicks[num][val]; */
-/*     print_dbg("\r\n sw_time: ");  */
-/*     print_dbg_ulong(ret); */
-/*   } */
-/*   swTicks[num][val] = tcTicks; */
-/*   return ret; */
-/* } */
+// decode HID bitfield
+// translate to button changes and pass to control module
+static void decode_hid_event(s32 data) {
+  u8 idx, val;
+
+  /// FIXME: there should be a better way to do this.
+  /// perhaps the event is triggered if any of the bytes change,
+  /// and the whole frame is copied to a globally-visible buffer.
+
+  idx = (data & 0x0000ff00) >> 8;
+  val = (data & 0x000000ff);
+
+  /// FIXME: ok, just hardcoding this.
+  /// fix to accomodate your brand of gamepad.
+
+  /// TODO: a "learn" function is not so difficult,
+  /// other option would be to maintain a database of vendor/protocols.
+
+  if(idx == 0) {
+    // joystick 1, left-right axis
+    (s8)val;
+  }
+  
+
+}
+
+
+// exponential scaling for encoders
 static s32 scale_knob_value(s32 val) {
   static const u32 kNumKnobScales_1 = 23;
   static const u32 knobScale[24] = {
+    /// FIXME: should these be aligned better?
+    /// would like to give best possible chance of falling on non-interpolated values.
     0x00000001,
     0x00000005,
     0x0000000C,
@@ -112,23 +141,26 @@ extern void flry_handler(event_t* ev) {
     break;
 
   case kEventHidByte:
+    decode_hid_event(ev->eventData);
+    /*
     print_dbg("\r\n received HID byte, index: ");
     print_dbg_ulong( (ev->eventData & 0x0000ff00) >> 8);
     print_dbg(", value: ");
     print_dbg_hex( (ev->eventData & 0x000000ff));
+    */
     break;
 
   case kEventEncoder0:
-    ctl_inc_dac(0, scale_knob_value(ev->eventData));
+    //    ctl_inc_dac(0, scale_knob_value(ev->eventData));
     break;
   case kEventEncoder1:
-    ctl_inc_dac(1, scale_knob_value(ev->eventData));
+    //    ctl_inc_dac(1, scale_knob_value(ev->eventData));
     break;
   case kEventEncoder2:
-    ctl_inc_dac(2, scale_knob_value(ev->eventData));
+    //    ctl_inc_dac(2, scale_knob_value(ev->eventData));
     break;
   case kEventEncoder3:
-    ctl_inc_dac(3, scale_knob_value(ev->eventData));
+    //    ctl_inc_dac(3, scale_knob_value(ev->eventData));
     break;
 
   default:

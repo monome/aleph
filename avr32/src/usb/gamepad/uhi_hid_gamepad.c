@@ -222,7 +222,7 @@ static void uhi_hid_gamepad_report_reception(
 					   uhd_trans_status_t status,
 					   iram_size_t nb_transfered)
 {
-  //  int i;
+  int i;
 
   UNUSED(ep);
 
@@ -230,11 +230,11 @@ static void uhi_hid_gamepad_report_reception(
     return; // HID gamepad transfer aborted
   }
 
-  /* print_dbg("\r\n gamepad_report: "); */
-  /* for (i=0; i<uhi_hid_gamepad_dev.report_size; i++) { */
-  /*   print_dbg(" "); */
-  /*   print_dbg_hex((unsigned long int) uhi_hid_gamepad_dev.report[i]); */
-  /* } */
+  print_dbg("\r\n gamepad_report: ");
+  for (i=0; i<uhi_hid_gamepad_dev.report_size; i++) {
+    print_dbg(" ");
+    print_dbg_hex((unsigned long int) uhi_hid_gamepad_dev.report[i]);
+  }
 
   hid_gamepad_parse_frame(uhi_hid_gamepad_dev.report, uhi_hid_gamepad_dev.report_size);
 

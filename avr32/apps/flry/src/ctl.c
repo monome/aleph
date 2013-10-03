@@ -1,3 +1,20 @@
+/*
+ctl.c
+flry
+aleph
+
+
+set DAC values with gamepad + keys + encoders.
+
+for each of the 4 dac channels, store a value for each state of the input (on or off)
+also store a slew value for each state.
+
+edit the value for the last touched channel/state using encoder 0.
+edit the slew for the last touched channel/state from encoder 1.
+
+
+ */
+
 // std
 #include <string.h>
 // asf
@@ -19,22 +36,24 @@
 // blah
 #define DSP_STRING "aleph-dacs"
 
+
 //----------------------------------------
 //---- static variables
 
 //-- parameter values
-// inputs. use s32 type but unsigned range (accumulators)
-s32 dac[4];
+// up and down values for each dac
+// actual range in [0, PARAM_DAC_MAX]
+static s32 dac[4][2] = { {0,0}, {0,0}, {0,0}, {0,0} };
 
-/// help!
-static inline s32 fr32_from_float(float x) {
-  if(x > 0.f) {
-    return (s32)((double)x * (double)0x7fffffff);
-  } else {
-    return (s32)((double)(x * -1.f) * (double)0x80000000);
-  }
-}
+// up and down values for each dac slew
+// range in [0, FR32_MAX]
+static s32 slew[4][2] = { {0,0}, {0,0}, {0,0}, {0,0} };
 
+// for each channel, which state was last touched
+static u8 state[4] = {0, 0, 0, 0};
+
+// last touched channel
+static u8 chan = 0;
 
 //-------------------------------------
 //------ extern functions
@@ -95,17 +114,19 @@ void ctl_init_params(void) {
 
 }
 
+
+
 // set dac value
-void  ctl_set_dac(u8 ch, u16 val) {
+void  ctl_set_value(u8 ch, u8 in, u16 val) {
   // param enum hack...
-  dac[ch] = val;
+  dac[ch][in] = val;
   ctl_param_change(eParam_dac0 + ch, val);
   render_dac(ch, val);
 }
 
 // increment dac value
-void ctl_inc_dac(u8 ch, s32 delta) {
-  s32 tmp = dac[ch] + delta;
+void ctl_inc_value(u8 ch, u8 in, s32 delta) {
+  s32 tmp = dac[ch][in] + delta;
 
   if(tmp > PARAM_DAC_MAX) {    
     tmp = PARAM_DAC_MAX;
@@ -118,5 +139,15 @@ void ctl_inc_dac(u8 ch, s32 delta) {
       tmp = PARAM_DAC_MIN;
     }
   }
-  ctl_set_dac(ch, tmp);
+  ctl_set_value(ch, in, tmp);
 }
+
+
+
+// set slew
+// increment slew
+
+
+// joystick in 
+// button in
+// trigger in

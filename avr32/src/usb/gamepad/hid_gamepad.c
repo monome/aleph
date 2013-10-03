@@ -19,6 +19,10 @@ static event_t ev;
 /* static hidEventData evData; */
 
 // parse frame and spawn events
+  /// FIXME: there should be a better way to do this.
+  /// perhaps the event is triggered if any of the bytes change,
+  /// and the 
+
 void hid_gamepad_parse_frame(u8* data, u8 size) {
   u8 i;
   for(i=0; i<size; i++) {
