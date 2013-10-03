@@ -49,7 +49,7 @@ void filter_1p_lo_init(filter_1p_lo* f, fract32 in) {
   f->x = in;
   f->sync = 1;
   fSrInv = 1.f / (float)SAMPLERATE;
-  f->c = FR32_MAX;
+  f->c = FR32_MAX >> 2;
 }
 
 // set cutoff frequency in hz

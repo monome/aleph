@@ -378,7 +378,8 @@ void init_interrupts(void) {
   *pSIC_IAR1 = 0xff34ff2f;
   *pSIC_IAR2 = 0xffffffff;
 #else 
-  *pSIC_IAR1 = 0xff3fff2f;
+  *pSI
+C_IAR1 = 0xff3fff2f;
   *pSIC_IAR2 = 0xffffffff;
 #endif
   // assign ISRs to interrupt vectors:
