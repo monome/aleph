@@ -42,6 +42,46 @@ void app_init(void) {
 u8 app_launch(u8 firstrun) {
   u32 waitForCard;
 
+
+
+  render_boot("thnlskdfi...    ");
+  delay_ms(400);
+  render_boot("rsdwsad...    ");
+  delay_ms(400);
+  render_boot("unbllo...      ");
+  delay_ms(400);
+  render_boot("wffwaof...    ");
+  delay_ms(400);
+  render_boot("bpb...       ");
+  delay_ms(400);
+  render_boot("ok...       ");
+  delay_ms(400);
+  render_boot("what...      ");
+  delay_ms(400);
+  render_boot("zxl...      ");
+  delay_ms(400);
+  render_boot("ooo...       ");
+  delay_ms(400);
+  render_boot("ok...       ");
+  delay_ms(400);
+  render_boot("what...      ");
+  delay_ms(400);
+  render_boot("nlbc...      ");
+  delay_ms(400);
+  render_boot("uhs...       ");
+  delay_ms(400);
+  render_boot("rttlb...       ");
+  delay_ms(400);
+  render_boot("what...      ");
+  delay_ms(400);
+  render_boot("is...      ");
+  delay_ms(400);
+  render_boot("hssffhishot... ");
+  delay_ms(400);
+  render_boot("naonwo...       ");
+  delay_ms(400);
+
+
   print_dbg("\r\n app launch");
   print_dbg("\r\n firstrun: ");
   print_dbg_ulong(firstrun);

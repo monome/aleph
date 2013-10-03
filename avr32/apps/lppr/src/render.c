@@ -73,7 +73,9 @@ static u32 bootRowOffset = 0;
 // how many lines of text fit in the scroll buf
 static const u32 bootRowCount = 8; // SCREEN_COL_PX / FONT_CHARH
 // how many pixels per line of system text
-static const u32 bootRowBytes = 1024;
+static const u32 bootRowBytes = 1024; // screen_row_px * font_char_h
+// max offset before wrapping
+static const u32 bootMaxByteOffset = 7296; // offset of last row
 
 //-------------------------------------------------
 //----- -static functions
@@ -150,16 +152,29 @@ extern void render_boot(const char* str) {
   print_dbg("\r\n rendering boot message: ");
   print_dbg(str);
   /// FIXME: should clear current line
+  /// clear current line
+  region_fill_part(&bootRegion, 0x0, bootByteOffset, bootRowBytes);
   // draw text to region at current offset, using system font
   region_string(&bootRegion, str,
 		0, bootRowOffset * FONT_CHARH, 0xf, 0, 0);
   // advance offset by count of pixels in row
   //  bootOffset += (SCREEN_ROW_PX * FONT_CHARH);
   bootByteOffset += bootRowBytes;
+  print_dbg("\r\n incremented byte offset, now: ");
+  print_dbg_ulong(bootByteOffset);
   bootRowOffset++;
+  print_dbg("\r\n incremented row offset, now: ");
+  print_dbg_ulong(bootRowOffset);
+
   if(bootRowOffset == bootRowCount) {
     bootRowOffset = 0;
+    print_dbg("\r\n wrapped row offset ");
   }
+  if(bootByteOffset > bootMaxByteOffset) {
+    bootByteOffset = 0;
+    print_dbg("\r\n wrapped byte offset ");
+  }
+
   if(bootCount < bootRowCount) {
     // first 8 items: render from the top 
     bootCount++;
@@ -168,7 +183,7 @@ extern void render_boot(const char* str) {
     // scrolling:
     // render from new ofset with wrapping
     screen_draw_region_offset(0, 0, 128, 64, 8192,  
-			    bootRegion.data, bootByteOffset);
+			      bootRegion.data, bootByteOffset);
   }
 }
 

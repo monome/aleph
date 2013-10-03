@@ -51,6 +51,8 @@ extern void region_string_aa(
  
 // fill a region with given color
 extern void region_fill(region* reg, u8 c);
+// fill a contiguous portion of a region with given color
+extern void region_fill_part(region* reg, u8 c, u32 start, u32 len);
   
 
 // hilight a region with given color and threshold
