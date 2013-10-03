@@ -71,6 +71,7 @@ static void* list_open_file_name(dirList_t* list, const char* name, const char* 
 
 //// FIXME: dumb and slow seek/read functions because the real ones are broken
 //// fseek: no offset arg, assume its the first seek since file was opened 
+/*
 static void fake_fseek(void* fp, u32 loc) {
   u32 n = 0;
   u8 dum;
@@ -79,6 +80,8 @@ static void fake_fseek(void* fp, u32 loc) {
     n++;
   }
 }
+*/
+
 // fread: no size arg
 static void fake_fread(volatile u8* dst, u32 size, void* fp) {
   u32 n = 0;
@@ -131,7 +134,7 @@ static void strip_space(char* str, u8 len) {
 
 void files_init(void) {
   // init FAT lib
-  fat_init();
+  //  fat_init();
   // scan directories
   list_scan(&dspList, DSP_PATH);
   list_scan(&sceneList, SCENES_PATH);
@@ -150,7 +153,7 @@ const volatile char* files_get_dsp_name(u8 idx) {
 
 // load a blacfkin executable by index */
 void files_load_dsp(u8 idx) {  
-  app_notify("loading dsp...");
+  //  app_notify("loading dsp...");
   files_load_dsp_name((const char*)files_get_dsp_name(idx));
 }
 

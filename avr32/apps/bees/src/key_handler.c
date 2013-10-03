@@ -25,6 +25,7 @@
 #include "scene.h"
 #include "key_handler.h"
 
+#if 0
 #define FAST_KNOB_LSHIFT 4
 
 //--------------------
@@ -113,7 +114,7 @@ void key_handler_ops(uiKey_t key, s16 val) {
   case eKeyFnDownC:
     // fnC : create new operator of specified type
     net_add_op(userOpTypes[newOpType]);
-    redraw_ops();
+    // redraw_ops();
     break;
   case eKeyFnDownD:
     // fnD : delete
@@ -130,7 +131,7 @@ void key_handler_ops(uiKey_t key, s16 val) {
     if (curPage->selected > n) {
       curPage->selected = n;
     }
-    redraw_ops();
+    // redraw_ops();
     break;
     //// encoder A: scroll pages
   case eKeyEncUpA:
@@ -159,14 +160,14 @@ void key_handler_ops(uiKey_t key, s16 val) {
     if (newOpType >= NUM_USER_OP_TYPES) {
       newOpType = 0;
     }
-    redraw_ops();
+    // redraw_ops();
     break;
   case eKeyEncDownD:
     newOpType--;
     if (newOpType >= NUM_USER_OP_TYPES) {
       newOpType = NUM_USER_OP_TYPES_1;
     }
-    redraw_ops();
+    // redraw_ops();
     // nothing
     break;
   
@@ -389,7 +390,7 @@ void key_handler_play(uiKey_t key, s16 v) {
   if(inIdx >= 0) {
     //    print_dbg("\r\n key_handler_play");
     net_activate(inIdx, val, NULL);
-    redraw_play();
+    // redraw_play();
   }
 }
 
@@ -530,7 +531,7 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
       curPage->mode = eModeRead;
       break;
     case eModeRead:
-      app_notify("\r\n reading scene... ");
+      //      app_notify("\r\n reading scene... ");
       files_load_scene(curPage->selected);
       curPage->mode = eModeNone;
       break;
@@ -560,7 +561,7 @@ extern void key_handler_scenes(uiKey_t key, s16 val) {
       curPage->mode = eModeDefault;
       break;
     case eModeDefault:
-      app_notify("writing default scene...");
+      //      app_notify("writing default scene...");
       scene_write_default();
       curPage->mode = eModeNone;
       break;
@@ -613,7 +614,7 @@ extern void key_handler_dsp(uiKey_t key, s16 val) {
   // print_dbg("\r\n key_handler_dsp");
   switch(key) {
   case eKeyFnDownA:
-    app_notify("loading DSP...");
+    //    app_notify("loading DSP...");
     // load DSP
     files_load_dsp(curPage->selected);
     delay_ms(100);
@@ -625,7 +626,7 @@ extern void key_handler_dsp(uiKey_t key, s16 val) {
     break;
   case eKeyFnDownB:
     // write default
-    app_notify("writing default DSP...");
+    //    app_notify("writing default DSP...");
     files_store_default_dsp(curPage->selected);
     break;
   case eKeyFnDownC:
@@ -660,3 +661,4 @@ extern void key_handler_dsp(uiKey_t key, s16 val) {
   }  
   (*(curPage->redraw))();
 }
+#endif

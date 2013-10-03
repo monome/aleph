@@ -55,7 +55,6 @@ static region * allRegions[] = {
 
 static const u8 numRegions = 6;
 
-
 //-------------------------------------------------
 //----- external functions
 
@@ -140,13 +139,13 @@ void render_sw_on(u8 sw, u8 on) {
 }
 
 void render_dac(u8 ch, s32 val) {
-  /// FIXME: hella stupid to call a fill from a frequently-triggered handler
+  /// FIXME: hella stupid to call a big fill from a frequently-triggered handler
   region_fill(&bigtop, 0x0);
-  strcpy(numstrbuf, "   ");
-  itoa_whole(ch, numstrbuf, NUMSTRBUF_LEN);
+  strcpy(numstrbuf, "    ");
+  itoa_whole_lj(ch, numstrbuf);
   region_string(&bigtop, numstrbuf, 0, 0, 0xa, 0x1, 1);
-  itoa_whole(val, numstrbuf, NUMSTRBUF_LEN);
-  region_string(&bigtop, numstrbuf, 5, 20, 0xf, 0x0, 1);
+  itoa_whole_lj(val, numstrbuf);
+  region_string_aa(&bigtop, numstrbuf, 0, 20, 1);
 }
 
 #undef LINE_BUF_LEN

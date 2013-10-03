@@ -12,6 +12,7 @@
 #include "fix.h"
 #include "types.h"
 
+/*
 //-----------------------------------
 //----- data types
 #define NUM_PAGES 8
@@ -48,6 +49,7 @@ typedef enum eKey {
   eKeyEncDownD = 16,
   eKeyDummy = 17
 } uiKey_t;
+*/
 
 //----- public functions
 // init
@@ -62,6 +64,7 @@ extern void menu_deinit(void);
 //extern s16 menu_selection(ePage page);
 // system notification
 //extern void menu_notify(const char* str);
+
 
 
 #endif // header guard

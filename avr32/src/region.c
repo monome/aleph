@@ -60,6 +60,16 @@ void region_fill(region* reg, u8 c) {
   reg->dirty = 1;
 }
 
+// fill a contiguous portion of a region with given color
+extern void region_fill_part(region* reg, u8 c, u32 start, u32 len) {
+ u32 i;
+ u8* p = (reg->data) + start;
+  for(i=0; i<len; i++) {
+    *p++ = c;
+  }
+  reg->dirty = 1;
+}
+
 
 // hilight a region with given color and threshold
 void region_hl(region* reg, u8 c, u8 thresh) {

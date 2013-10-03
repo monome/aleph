@@ -42,6 +42,46 @@ void app_init(void) {
 u8 app_launch(u8 firstrun) {
   u32 waitForCard;
 
+
+
+  render_boot("thnlskdfi...    ");
+  delay_ms(100);
+  render_boot("rsdwsad...    ");
+  delay_ms(100);
+  render_boot("unbllo...      ");
+  delay_ms(100);
+  render_boot("wffwaof...    ");
+  delay_ms(100);
+  render_boot("bpb...       ");
+  delay_ms(100);
+  render_boot("ok...       ");
+  delay_ms(100);
+  render_boot("what...      ");
+  delay_ms(100);
+  render_boot("zxl...      ");
+  delay_ms(100);
+  render_boot("ooo...       ");
+  delay_ms(100);
+  render_boot("ok...       ");
+  delay_ms(100);
+  render_boot("what...      ");
+  delay_ms(100);
+  render_boot("nlbc...      ");
+  delay_ms(100);
+  render_boot("uhs...       ");
+  delay_ms(100);
+  render_boot("rttlb...       ");
+  delay_ms(100);
+  render_boot("what...      ");
+  delay_ms(100);
+  render_boot("is...      ");
+  delay_ms(100);
+  render_boot("hssffhishot... ");
+  delay_ms(100);
+  render_boot("naonwo...       ");
+  delay_ms(100);
+
+
   print_dbg("\r\n app launch");
   print_dbg("\r\n firstrun: ");
   print_dbg_ulong(firstrun);
@@ -50,7 +90,7 @@ u8 app_launch(u8 firstrun) {
   //  if(firstrun) {
     // it is the first run.
     // need to copy audio module binary from sdcard to internal flash.
-    render_status("first run. waiting for SDcard...");
+    render_boot("first run. waiting for SDcard...");
     render_update();
   
     print_dbg("\r\n SD check... ");
@@ -59,7 +99,7 @@ u8 app_launch(u8 firstrun) {
     }
     print_dbg("\r\nfound SD card. ");
 
-    render_status("found sdcard.. reading DSP...");
+    render_boot("found sdcard.. reading DSP...");
     render_update();
 
     // search for our dsp and load it
@@ -75,39 +115,39 @@ u8 app_launch(u8 firstrun) {
 
     // firstrun pattern was set, so there should be a blackfin executable in flash.
     // read from flash to RAM
-    render_status("loading flash to RAM...");
+    render_boot("loading flash to RAM...");
     render_update();
     flash_read_ldr();
     
-    render_status( "booting DSP from flash...");
+    render_boot( "booting DSP from flash...");
     render_update();
     // reboot DSP from RAM
     bfin_load_buf();
   }
 
-  render_status("waiting for bfin init...      ");
+  render_boot("waiting for bfin init...      ");
   render_update();
 
   // this is retarded, we need the GPIO for bfin to signal when init done
   delay_ms(1000);
 
   // report parameters
-  render_status("reporting bfin params...       ");
+  render_boot("reporting bfin params...       ");
   render_update();
   if( ctl_report_params() ) {
     ;;
   } else {
-    render_status("param report failed!           ");
+    render_boot("param report failed!           ");
     render_update();
     return 0;
   }
 
-  render_status("setting initial parameters...  ");
+  render_boot("setting initial parameters...  ");
   render_update();
 
   ctl_init_params();
 
-  render_status("initializing input scalers...");
+  render_boot("initializing input scalers...");
   render_update();
   
   inputs_init();
@@ -115,7 +155,7 @@ u8 app_launch(u8 firstrun) {
   delay_ms(20);
 
   // enable audio
-  render_status("run                       ");
+  render_boot("running...     ");
   render_update();
 
   bfin_enable();

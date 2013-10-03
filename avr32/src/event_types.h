@@ -65,6 +65,11 @@ typedef enum {
   //// monome connect / disconnect
   kEventMonomeConnect,
   kEventMonomeDisconnect,
+
+  /// MIDI
+
+  /// HID
+  kEventHidByte,
   /// dummy/count
   kNumSysEvents,
 } eEventType;

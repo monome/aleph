@@ -32,7 +32,7 @@
 #include "memory.h"
 #include "inputs.h"
 
-// table size ( 10 bits )
+// table size ( 2^10 words )
 #define TABLE_SIZE	0x400
 #define TABLE_MAX	0x3ff
 

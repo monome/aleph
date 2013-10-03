@@ -11,7 +11,13 @@ BEES
   - need serialization of op data, etc,
     to keep scene recall working between builds...
 
-- more operators...
+- operators 
+  - arbitrary string drawing to param field for UI param changes
+  - edit page
+  - scaler op
+  - metro op
+  - list op
+  
 
 
 CONTROL
@@ -31,6 +37,7 @@ CONTROL
     i tried and failed at this once before, could use a fresh set of eyes
 
 
+
 DSP
 
 - mono/poly
@@ -40,7 +47,7 @@ DSP
   - more / better wavetables and/or shaping
 
 - grain engine
-  - fill-buffer for grain
+  - fill-buffer for grains
 
 - noise
   - large bank of chaotic maps
@@ -59,11 +66,10 @@ DSP
   - ???
   
 - analysis
-  - fft
+  - fft (see AD example project)
     - crude pitch detection (peak bin) is probably enough
     - centroid (weighted avg of bins)
     - whiteness (distribution of bins)
-    
     
 - phys. modelling
   - K-S / coupled oscillation with analog feedback path
@@ -145,7 +151,3 @@ programming-- monome apps, interface assist, bees assist, dsp assist, i2c
 host serial communication-- laptop-based editor-- talk to peter? serial to osc.
 production management-- get manufacturers started
 production process-- how to make stuff here
-
-
-
-

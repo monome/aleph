@@ -1,3 +1,20 @@
+/*
+ctl.c
+flry
+aleph
+
+
+set DAC values with gamepad + keys + encoders.
+
+for each of the 4 dac channels, store a value for each state of the input (on or off)
+also store a slew value for each state.
+
+edit the value for the last touched channel/state using encoder 0.
+edit the slew for the last touched channel/state from encoder 1.
+
+
+ */
+
 // std
 #include <string.h>
 // asf
@@ -19,22 +36,45 @@
 // blah
 #define DSP_STRING "aleph-dacs"
 
+
 //----------------------------------------
 //---- static variables
 
 //-- parameter values
-// inputs. use s32 type but unsigned range (accumulators)
-s32 dac[4];
+// up and down values for each dac
+// actual range in [0, PARAM_DAC_MAX]
+static s32 dac[4][2] = { {0,0}, {0,0}, {0,0}, {0,0} };
+// invert flags
+static s32 inv[4];
 
-/// help!
-static inline s32 fr32_from_float(float x) {
-  if(x > 0.f) {
-    return (s32)((double)x * (double)0x7fffffff);
+
+//// TODO:
+/*
+// up and down values for each dac slew
+// range in [0, FR32_MAX]
+static s32 slew[4][2] = { {0,0}, {0,0}, {0,0}, {0,0} };
+
+// for each channel, which state was last touched
+static u8 state[4] = {0, 0, 0, 0};
+
+// last touched channel
+static u8 chan = 0;
+*/
+
+
+//----------------------------------------
+//---- static functions
+/// send dac value with inversion based on current state
+static void send_dac(u8 ch) {
+  u32 v;
+  if(inv[ch]) {
+    v = PARAM_DAC_MAX - dac[ch][0];
   } else {
-    return (s32)((double)(x * -1.f) * (double)0x80000000);
+    v = dac[ch][0];
   }
+  ctl_param_change(eParam_dac0 + ch, v);
+  render_dac(ch, v);
 }
-
 
 //-------------------------------------
 //------ extern functions
@@ -95,17 +135,24 @@ void ctl_init_params(void) {
 
 }
 
+
+
 // set dac value
-void  ctl_set_dac(u8 ch, u16 val) {
+void  ctl_set_value(u8 ch, u16 val) {
   // param enum hack...
-  dac[ch] = val;
-  ctl_param_change(eParam_dac0 + ch, val);
-  render_dac(ch, val);
+  dac[ch][0] = val;
+  send_dac(ch);
+
+  /* print_dbg("\r\n set dac, channel : "); */
+  /* print_dbg_ulong(ch); */
+  /* print_dbg(", value : 0x"); */
+  /* print_dbg_hex(val); */
+  
 }
 
 // increment dac value
-void ctl_inc_dac(u8 ch, s32 delta) {
-  s32 tmp = dac[ch] + delta;
+void ctl_inc_value(u8 ch, s32 delta) {
+  s32 tmp = dac[ch][0] + delta;
 
   if(tmp > PARAM_DAC_MAX) {    
     tmp = PARAM_DAC_MAX;
@@ -118,5 +165,33 @@ void ctl_inc_dac(u8 ch, s32 delta) {
       tmp = PARAM_DAC_MIN;
     }
   }
-  ctl_set_dac(ch, tmp);
+  ctl_set_value(ch, tmp);
 }
+
+// set slew
+// increment slew
+
+
+// button: invert and send
+void ctl_but(u8 i, u8 val) {
+  //  u32 v;
+  inv[i] = val;
+  send_dac(i);
+  //  if(val) {
+  //    v = 0xffff - dac[i][0];
+  //    ctl_param_change(eParam_dac0 + ch, v);
+  //    render_dac(ch, v);
+  //  }
+}
+
+// joystick axis: change value and send
+void ctl_joy(u8 ch, u8 val) {
+  //  u32 v;
+  // hack: lshift from u8 (joystick) to u16(dac)
+  dac[ch][0] = val << 8;
+  send_dac(ch);
+  //  v = 0xffff - (dac[i][0] << 8);
+}
+
+// button in
+// trigger in

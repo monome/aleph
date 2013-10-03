@@ -56,9 +56,11 @@ CSRCS += \
 	$(ALEPH_AVR32)/src/interrupts.c \
 	$(ALEPH_AVR32)/src/memory.c \
 	$(ALEPH_AVR32)/src/monome.c \
+	$(ALEPH_AVR32)/src/region.c \
 	$(ALEPH_AVR32)/src/screen.c \
 	$(ALEPH_AVR32)/src/simple_string.c \
 	$(ALEPH_AVR32)/src/switches.c \
+	$(ALEPH_AVR32)/src/sys_timers.c \
 	$(ALEPH_AVR32)/src/timers.c \
 	$(ALEPH_AVR32)/src/main.c \
 	$(ALEPH_AVR32)/src/usb.c \
@@ -137,9 +139,10 @@ INC_PATH += \
 # List of C source files.
 CSRCS += \
 	$(ALEPH_BEES)/src/app_bees.c \
-	$(ALEPH_AVR32)/src/app_timers.c \
+	$(ALEPH_BEES)/src/app_timers.c \
 	$(ALEPH_BEES)/src/files.c \
-	$(ALEPH_BEES)/src/key_handler.c \
+	$(ALEPH_BEES)/src/flash_bees.c \
+	$(ALEPH_BEES)/src/handler.c \
 	$(ALEPH_BEES)/src/menu.c \
 	$(ALEPH_BEES)/src/net.c \
 	$(ALEPH_BEES)/src/net_monome.c \
@@ -148,13 +151,22 @@ CSRCS += \
 	$(ALEPH_BEES)/src/param.c \
 	$(ALEPH_BEES)/src/play.c \
 	$(ALEPH_BEES)/src/preset.c \
+	$(ALEPH_BEES)/src/render.c \
 	$(ALEPH_BEES)/src/scene.c \
 	$(ALEPH_BEES)/src/ops/op_add.c \
 	$(ALEPH_BEES)/src/ops/op_enc.c \
 	$(ALEPH_BEES)/src/ops/op_gate.c \
 	$(ALEPH_BEES)/src/ops/op_mul.c \
 	$(ALEPH_BEES)/src/ops/op_monome_grid_raw.c \
-	$(ALEPH_BEES)/src/ops/op_sw.c
+	$(ALEPH_BEES)/src/ops/op_sw.c \
+	$(ALEPH_BEES)/src/pages/page_dsp.c \
+	$(ALEPH_BEES)/src/pages/page_gathered.c \
+	$(ALEPH_BEES)/src/pages/page_ins.c \
+	$(ALEPH_BEES)/src/pages/page_outs.c \
+	$(ALEPH_BEES)/src/pages/page_play.c \
+	$(ALEPH_BEES)/src/pages/page_presets.c \
+	$(ALEPH_BEES)/src/pages/page_scenes.c 
+
 
 # List of assembler source files.
 ASSRCS +=
@@ -183,8 +195,8 @@ DBGFLAGS =
 # OPTIMIZATION = -Os
 # OPTIMIZATION = -O0
 # OPTIMIZATION = -O1
-# OPTIMIZATION = -O2
-OPTIMIZATION = -O3
+OPTIMIZATION = -O2
+# OPTIMIZATION = -O3
 
 # debug:
 # OPTIMIZATION = -O0 -fno-inline

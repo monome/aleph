@@ -2,16 +2,20 @@
 #define _ALEPH_APP_LPPR_RENDER_H_
 
 
-// init
+// initialize
 extern void render_init(void);
 // update
 extern void render_update(void);
 // force refresh
 extern void render_force_refresh(void);
-// render text to statusbar
-void render_status(const char* str);
+
+// render text to status bar
+extern void render_status(const char* str);
 // fill with initial graphics
-void render_startup(void);
+extern void render_startup(void);
+// render text to scrolling buffer during boot procedure
+extern void render_boot(const char* str);
+
 // draw switch-on
  extern void render_sw_on(u8 sw, u8 on);
 // draw delay time
