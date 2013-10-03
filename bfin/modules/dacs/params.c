@@ -30,6 +30,29 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParam_dac3].min = 0x00000000; 
   gModuleData->paramDesc[eParam_dac3].max = 0xffff; // 16 bits?
 
+  strcpy(gModuleData->paramDesc[eParam_slew0].label, "slew0");
+  strcpy(gModuleData->paramDesc[eParam_slew0].unit, "");
+  gModuleData->paramDesc[eParam_slew0].type = PARAM_TYPE_FRACT; 
+  gModuleData->paramDesc[eParam_slew0].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_slew0].max = 0x7fffffff;
+
+  strcpy(gModuleData->paramDesc[eParam_slew1].label, "slew1");
+  strcpy(gModuleData->paramDesc[eParam_slew1].unit, "");
+  gModuleData->paramDesc[eParam_slew1].type = PARAM_TYPE_FRACT; 
+  gModuleData->paramDesc[eParam_slew1].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_slew1].max = 0x7fffffff;
+
+  strcpy(gModuleData->paramDesc[eParam_slew2].label, "slew2");
+  strcpy(gModuleData->paramDesc[eParam_slew2].unit, "");
+  gModuleData->paramDesc[eParam_slew2].type = PARAM_TYPE_FRACT; 
+  gModuleData->paramDesc[eParam_slew2].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_slew2].max = 0x7fffffff; 
+
+  strcpy(gModuleData->paramDesc[eParam_slew3].label, "slew3");
+  strcpy(gModuleData->paramDesc[eParam_slew3].unit, "");
+  gModuleData->paramDesc[eParam_slew3].type = PARAM_TYPE_FRACT; 
+  gModuleData->paramDesc[eParam_slew3].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_slew3].max = 0x7fffffff;
 }
 
 // EOF
