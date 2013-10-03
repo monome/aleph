@@ -95,16 +95,20 @@ void module_set_param(u32 idx, pval v) {
   switch(idx) {
     // dac values
   case eParam_dac0 :
-    filter_1p_lo_in(&(dacSlew[0]), v.fr);
+    //    filter_1p_lo_in(&(dacSlew[0]), v.fr);
+    dac_update(0, v.fr & 0xffff);
     break;
   case eParam_dac1 :
-    filter_1p_lo_in(&(dacSlew[1]), v.fr);
+    //    filter_1p_lo_in(&(dacSlew[1]), v.fr);
+    dac_update(1, v.fr & 0xffff);
     break;
   case eParam_dac2 :
-    filter_1p_lo_in(&(dacSlew[2]), v.fr);
+    //    filter_1p_lo_in(&(dacSlew[2]), v.fr);
+    dac_update(2, v.fr & 0xffff);
     break;
   case eParam_dac3 :
-    filter_1p_lo_in(&(dacSlew[3]), v.fr);
+    //    filter_1p_lo_in(&(dacSlew[3]), v.fr);
+    dac_update(3, v.fr & 0xffff);
     break;
   case eParam_slew0 :
     filter_1p_lo_set_slew(&(dacSlew[0]), v.fr);
