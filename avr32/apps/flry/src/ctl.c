@@ -44,7 +44,12 @@ edit the slew for the last touched channel/state from encoder 1.
 // up and down values for each dac
 // actual range in [0, PARAM_DAC_MAX]
 static s32 dac[4][2] = { {0,0}, {0,0}, {0,0}, {0,0} };
+// invert flags
+static s32 inv[4];
 
+
+//// TODO:
+/*
 // up and down values for each dac slew
 // range in [0, FR32_MAX]
 static s32 slew[4][2] = { {0,0}, {0,0}, {0,0}, {0,0} };
@@ -54,6 +59,22 @@ static u8 state[4] = {0, 0, 0, 0};
 
 // last touched channel
 static u8 chan = 0;
+*/
+
+
+//----------------------------------------
+//---- static functions
+/// send dac value with inversion based on current state
+static void send_dac(u8 ch) {
+  u32 v;
+  if(inv[ch]) {
+    v = PARAM_DAC_MAX - dac[ch][0];
+  } else {
+    v = dac[ch][0];
+  }
+  ctl_param_change(eParam_dac0 + ch, v);
+  render_dac(ch, v);
+}
 
 //-------------------------------------
 //------ extern functions
@@ -120,13 +141,12 @@ void ctl_init_params(void) {
 void  ctl_set_value(u8 ch, u16 val) {
   // param enum hack...
   dac[ch][0] = val;
-  ctl_param_change(eParam_dac0 + ch, val);
-  render_dac(ch, val);
+  send_dac(ch);
 
-  print_dbg("\r\n set dac, channel : ");
-  print_dbg_ulong(ch);
-  print_dbg(", value : 0x");
-  print_dbg_hex(val);
+  /* print_dbg("\r\n set dac, channel : "); */
+  /* print_dbg_ulong(ch); */
+  /* print_dbg(", value : 0x"); */
+  /* print_dbg_hex(val); */
   
 }
 
@@ -152,6 +172,26 @@ void ctl_inc_value(u8 ch, s32 delta) {
 // increment slew
 
 
-// joystick in 
+// button: invert and send
+void ctl_but(u8 i, u8 val) {
+  //  u32 v;
+  inv[i] = val;
+  send_dac(i);
+  //  if(val) {
+  //    v = 0xffff - dac[i][0];
+  //    ctl_param_change(eParam_dac0 + ch, v);
+  //    render_dac(ch, v);
+  //  }
+}
+
+// joystick axis: change value and send
+void ctl_joy(u8 ch, u8 val) {
+  //  u32 v;
+  // hack: lshift from u8 (joystick) to u16(dac)
+  dac[ch][0] = val << 8;
+  send_dac(ch);
+  //  v = 0xffff - (dac[i][0] << 8);
+}
+
 // button in
 // trigger in

@@ -30,10 +30,12 @@
 //---- static vars
 
 // button values
-u8 butVal[NUM_BUT] = { 0, 0, 0, 0 };
+u8 but[NUM_BUT] = { 0, 0, 0, 0 };
 
 // joystick values (2-axis)
-static s8 joy[NUM_JOY][2] = { {0, 0}, {0, 0} };
+// don't actually need to store/compare this with current system
+// (each axis gets its own byte and the event means it changed)
+// static s8 joy[NUM_JOY][2] = { {0, 0}, {0, 0} };
 
 //---------------------------------------------
 //--------- static funcs
@@ -42,7 +44,7 @@ static s8 joy[NUM_JOY][2] = { {0, 0}, {0, 0} };
 // translate to button changes and pass to control module
 static void decode_hid_event(s32 data) {
   u8 idx, val;
-
+  u8 b0, b1, b2, b3;
   /// FIXME: there should be a better way to do this.
   /// perhaps the event is triggered if any of the bytes change,
   /// and the whole frame is copied to a globally-visible buffer.
@@ -56,12 +58,40 @@ static void decode_hid_event(s32 data) {
   /// TODO: a "learn" function is not so difficult,
   /// other option would be to maintain a database of vendor/protocols.
 
-  if(idx == 0) {
-    // joystick 1, left-right axis
-    (s8)val;
-  }
-  
+  switch(idx) {
+  case 0:
+    // joystick 1, x axis
+    ctl_joy(0, val);
+    break;
+  case 1:
+    // joystick 1, y axis
+    ctl_joy(1, val);
+    break;
+  case 2:
+    // joystick 2, x axis
+    ctl_joy(2, val);
+    break;    
+  case 3:
+    // joystick 2, y axis
+    ctl_joy(3, val);
+    break; 
 
+  case 4:
+    // on my joystick, the right-hand set of 4 buttons
+    // are bitfields in upper nibble of this byte.
+    b0 = (val & 0x10) > 0;
+    b1 = (val & 0x20) > 0;
+    b2 = (val & 0x40) > 0;
+    b3 = (val & 0x80) > 0;
+
+    if(b0 != but[0]) { but[0] = b0; ctl_but(0, b0); }
+    if(b1 != but[1]) { but[1] = b1; ctl_but(1, b1); }
+    if(b2 != but[2]) { but[2] = b2; ctl_but(2, b2); }
+    if(b3 != but[3]) { but[3] = b3; ctl_but(3, b3); }
+    // lower nibble is d-pad...
+    break;
+
+  }
 }
 
 
