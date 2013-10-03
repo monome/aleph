@@ -117,16 +117,22 @@ void ctl_init_params(void) {
 
 
 // set dac value
-void  ctl_set_value(u8 ch, u8 in, u16 val) {
+void  ctl_set_value(u8 ch, u16 val) {
   // param enum hack...
-  dac[ch][in] = val;
+  dac[ch][0] = val;
   ctl_param_change(eParam_dac0 + ch, val);
   render_dac(ch, val);
+
+  print_dbg("\r\n set dac, channel : ");
+  print_dbg_ulong(ch);
+  print_dbg(", value : 0x");
+  print_dbg_hex(val);
+  
 }
 
 // increment dac value
-void ctl_inc_value(u8 ch, u8 in, s32 delta) {
-  s32 tmp = dac[ch][in] + delta;
+void ctl_inc_value(u8 ch, s32 delta) {
+  s32 tmp = dac[ch][0] + delta;
 
   if(tmp > PARAM_DAC_MAX) {    
     tmp = PARAM_DAC_MAX;
@@ -139,10 +145,8 @@ void ctl_inc_value(u8 ch, u8 in, s32 delta) {
       tmp = PARAM_DAC_MIN;
     }
   }
-  ctl_set_value(ch, in, tmp);
+  ctl_set_value(ch, tmp);
 }
-
-
 
 // set slew
 // increment slew

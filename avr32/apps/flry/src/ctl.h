@@ -35,14 +35,14 @@ void ctl_key(u8 i, u8 val);
 void ctl_button(u8 i, u8 val);
 
 // set dac value
-void ctl_set_value(u8 channel, u8 in, u16 val);
+void ctl_set_value(u8 channel, u16 val);
 // increment value
-void ctl_inc_value(u8 channel, u8 in, s32 val);
+void ctl_inc_value(u8 channel, s32 val);
 
 // set slew
-void ctl_set_slew(u8 channel, u8 in, u16 value);
+void ctl_set_slew(u8 channel, u16 value);
 // increment slew
-void ctl_inc_slew(u8 channel, u8 in, s32 val);
+void ctl_inc_slew(u8 channel, s32 val);
 
 
 #endif // h guard

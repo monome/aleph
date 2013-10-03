@@ -36,7 +36,7 @@ static void screen_timer_callback(int tag) {
 
 // metronome timer callback
 static void metro_timer_callback(int tag) {
-  print_dbg(">");
+  //  print_dbg(">");
 }
 
 /////////////////////////////
