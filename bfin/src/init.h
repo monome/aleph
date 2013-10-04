@@ -16,8 +16,9 @@
 // led3, led4 : pf14,15 
 // codec reset : pf1
 // busy pin (shared with HWAIT) : pf2
-//#define PF_DIR           0xc002 
-#define PF_DIR           0xc003
+// dac reset: pf6
+//#define PF_DIR           0xc002
+#define PF_DIR           0xc043
 #define CODEC_RESET_MASK 0xfffd 
 #define CODEC_SS_MASK    0xffdf
 

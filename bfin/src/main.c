@@ -4,6 +4,7 @@
 // aleph
 #include "bfin_core.h"
 #include "control.h"
+#include "dac.h"
 #include "gpio.h"
 #include "init.h"
 #include "module.h"

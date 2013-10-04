@@ -31,7 +31,7 @@ void sport0_rx_isr() {
   // tick the control rate
   //  ctl_next_frame();
   BUSY_SET;
-  LED3_UNSET;
+  //  LED3_UNSET;
 
   // confirm interrupt handling
   *pDMA1_IRQ_STATUS = 0x0001;
@@ -67,11 +67,12 @@ void sport0_rx_isr() {
   /* iTxBuf[3] = iRxBuf[3]; */
 
   BUSY_UNSET;
-  LED3_SET;
+  //  LED3_SET;
 }
 
 // ISR on sport1 tx completion
 void sport1_tx_isr() {
+  LED4_UNSET;
   //  u32 stat;
   // clear the interrupt flag, leave enabled
   *pDMA4_IRQ_STATUS = 0x0001;
