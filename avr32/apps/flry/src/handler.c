@@ -98,9 +98,10 @@ static void decode_hid_event(s32 data) {
 // exponential scaling for encoders
 static s32 scale_knob_value(s32 val) {
   static const u32 kNumKnobScales_1 = 23;
-  static const u32 knobScale[24] = {
+  static const u32 knobScale[25] = {
     /// FIXME: should these be aligned better?
     /// would like to give best possible chance of falling on non-interpolated values.
+    0x00000000,
     0x00000001,
     0x00000005,
     0x0000000C,
@@ -129,6 +130,10 @@ static s32 scale_knob_value(s32 val) {
 
   s32 vabs = BIT_ABS(val);
   s32 ret = val;
+
+  print_dbg("\r\n knob acc in: ");
+  print_dbg_ulong(val);
+
   if(vabs > kNumKnobScales_1) {
     vabs = kNumKnobScales_1;
   }
