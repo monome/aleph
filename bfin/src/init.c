@@ -355,25 +355,32 @@ void init_interrupts(void) {
   // no errors (fixme?)
   *pSIC_IAR0 = 0xffffffff;
 
-  //  *pSIC_IAR1 = 0xff32ff1f;
-  *pSIC_IAR1 = 0xff32ffff; 	// sport1 tx -> IVG9 (CID 2), 
+    *pSIC_IAR1 = 0xff32ff1f;	// sport0 rx -> IVG8 (CID 1), 
+				// sport1 tx -> IVG9 (CID 2), 
                            	// spi rx -> IVG10 (CID 3),
-  				// no sport0 !
+    
+    // no codec:
+    //*pSIC_IAR1 = 0xff32ffff;
+
   *pSIC_IAR2 = 0xffffffff;
 
   // assign ISRs to interrupt vectors:
   //  *pEVT9 = sport0_rx_isr;
   //  *pEVT10 = spi_rx_isr;
   //  *pEVT11 = sport1_tx_isr;
-  
+
+  *pEVT8 = sport0_rx_isr;
+  *pEVT9 = sport1_tx_isr;  
   *pEVT10 = spi_rx_isr;
-  *pEVT9 = sport1_tx_isr;
+
 
   // unmask in the core event processor
     //  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); bitset(%0, 11); sti %0; csync;": "+d"(i));
-  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
+  //  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
+  asm volatile ("cli %0; bitset (%0, 8); bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
 
   // unmask in the peripheral interrupt controller
-  //  *pSIC_IMASK = 0x00003200;
-  *pSIC_IMASK = 0x00003000;
+  *pSIC_IMASK = 0x00003200;
+  // no codec:
+  //  *pSIC_IMASK = 0x00003000;
 }
