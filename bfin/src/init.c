@@ -396,5 +396,5 @@ C_IAR1 = 0xff3fff2f;
   asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
 #endif
   // unmask in the peripheral interrupt controller
-  *pSIC_IMASK = 0x00001200;
+  *pSIC_IMASK = 0x00003200;
 }
