@@ -37,13 +37,15 @@ int main(void) {
   // intialize the audio processing unit (assign memory)
   module_init();
 
-  // initialize the codec (spi in master, blast config regs, disable spi)
+  // initialize the codec
   init_1939();
+
   // intialize the sport0 for audio rx/tx
   init_sport0();
 
   /// initialize the CV dac (reset) 
   init_dac();
+
   // intialize the sport1 for cv out
   init_sport0();
 
@@ -58,17 +60,18 @@ int main(void) {
 
   // begin audio transfers
   enable_DMA_sport0();  
+
   // begin cv transfers
   enable_DMA_sport1();  
 
   //// test: leds on
-  LED3_SET;
-  LED4_SET;
+  LED3_HI;
+  LED4_HI;
   
   while(1) {
     // fixme: everything happens in ISRs!
     //    ;;
     //    ctl_next_frame();	
-    ctl_perform_last_change();			
+    //    ctl_perform_last_change();			
   }
 }

@@ -18,9 +18,9 @@
 // busy pin (shared with HWAIT) : pf2
 // dac reset: pf6
 //#define PF_DIR           0xc002
-#define PF_DIR           0xc043
-#define CODEC_RESET_MASK 0xfffd 
-#define CODEC_SS_MASK    0xffdf
+//#define PF_DIR           0xc043
+//#define CODEC_RESET_MASK 0xfffd 
+//#define CODEC_SS_MASK    0xffdf
 
 // command byte for setting codec regs (4 << 1 | 1)
 #define CODEC_CMD_BYTE 0x9

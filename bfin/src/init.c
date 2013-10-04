@@ -1,13 +1,15 @@
 
 #include "bfin_core.h"
+#include "gpio.h"
 #include "isr.h"
 #include "init.h"
 
-#define ADD_DACS 1
+// #define ADD_DACS 1
 
 //------ global variables initialized here
 
 // control registers and associated values for AD1939
+/*
 static volatile short codec1939TxRegs[CODEC_1939_NUM_REGS][2] = {
   {  PLL_CLOCK_0        , 0x80 } , // enable, xtal->master->PLL
   {  PLL_CLOCK_1        , 0x00 } ,
@@ -29,6 +31,7 @@ static volatile short codec1939TxRegs[CODEC_1939_NUM_REGS][2] = {
   {  ADC_CONTROL_2      , 0b01000000 }
   //  {  ADC_CONTROL_2      , 0x00 }
 };
+*/
 
 // SPORT0 DMA transmit buffer
 volatile s32 iTxBuf[4];
@@ -110,10 +113,11 @@ void init_1939(void) {
 
 
   //// reset codec
-  *pFIO_FLAG_D &= CODEC_RESET_MASK;
+  //  *pFIO_FLAG_D &= CODEC_RESET_MASK;
+  CODEC_RESET_LO;
   del = 100; while(del--) { ;; } 
-  *pFIO_FLAG_D |= (0xffff ^ CODEC_RESET_MASK);
-  
+  CODEC_RESET_HI;
+  //  *pFIO_FLAG_D |= (0xffff ^ CODEC_RESET_MASK);
   return;
 
   /// using the codec in standalone now, dont need SPI config
@@ -283,6 +287,7 @@ void init_DMA(void) {
   // Inner loop address increment
   *pDMA2_X_MODIFY = 4;
 
+  /// DMA4: transmit
   /// map dma4 to sport1 tx
   *pDMA4_PERIPHERAL_MAP = 0x4000;
   // configure DMA4
@@ -294,8 +299,6 @@ void init_DMA(void) {
   *pDMA4_X_COUNT = 1;
   // Inner loop address increment
   *pDMA4_X_MODIFY = 4;
-
-
 }
 
 // enable sport0 DMA
@@ -321,54 +324,55 @@ void enable_DMA_sport1(void) {
 
 // initialize programmable flags for button input
 void init_flags(void) {
-  // inputs 
-  *pFIO_INEN = PF_IN;
   // outputs
-  *pFIO_DIR = PF_DIR;
+  *pFIO_DIR = LED3_UNMASK | LED4_UNMASK | BUSY_UNMASK | DAC_RESET_UNMASK;
+
+  /// no gpio inputs.
+  /*
+  // inputs 
+    *pFIO_INEN = 0;
   // edge-sensitive
   *pFIO_EDGE = 0x0f00;
   // both rise and fall
   *pFIO_BOTH = 0x0f00;
   // set interrupt mask
   *pFIO_MASKA_D = 0x0f00;
+  */
 }
 
 // assign interrupts
 void init_interrupts(void) {
   int i=0;
+
+  //// FIXME: should try to get sport0 interrupt on EVT
+
+  // no dacs (only sport0 and spi) :
+  //  *pSIC_IAR1 = 0xff3fff2f;
+  //  *pSIC_IAR2 = 0xffffffff;
   
   // assign core IDs to peripheral interrupts:
 
   // no errors (fixme?)
   *pSIC_IAR0 = 0xffffffff;
-#if ADD_DACS // add DACS
+
   //  *pSIC_IAR1 = 0xff32ff1f;
   *pSIC_IAR1 = 0xff32ffff; 	// sport1 tx -> IVG9 (CID 2), 
                            	// spi rx -> IVG10 (CID 3),
   				// no sport0 !
   *pSIC_IAR2 = 0xffffffff;
-#else 
-  *pSIC_IAR1 = 0xff3fff2f;
-  *pSIC_IAR2 = 0xffffffff;
-#endif
+
   // assign ISRs to interrupt vectors:
   //  *pEVT9 = sport0_rx_isr;
   //  *pEVT10 = spi_rx_isr;
-  *pEVT10 = spi_rx_isr;
-#if ADD_DACS
   //  *pEVT11 = sport1_tx_isr;
+  
+  *pEVT10 = spi_rx_isr;
   *pEVT9 = sport1_tx_isr;
 
-#endif
-
   // unmask in the core event processor
-#if ADD_DACS
     //  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); bitset(%0, 11); sti %0; csync;": "+d"(i));
   asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
 
-#else
-  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
-#endif
   // unmask in the peripheral interrupt controller
   //  *pSIC_IMASK = 0x00003200;
   *pSIC_IMASK = 0x00003000;

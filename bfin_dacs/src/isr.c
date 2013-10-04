@@ -116,7 +116,6 @@ void sport1_tx_isr() {
   //  stat = *pSPORT1_STAT ;
 }
 
-
 //// DEBUG: error handler
 
 void error_isr() {
