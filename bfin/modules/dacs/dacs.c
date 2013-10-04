@@ -18,6 +18,7 @@
 // aleph-bfin
 #include "bfin_core.h"
 #include "dac.h"
+#include "gpio.h"
 #include "fract_math.h"
 #include <fract2float_conv.h>
 
@@ -92,6 +93,7 @@ void module_process_frame(void) {
 
 // parameter set function
 void module_set_param(u32 idx, pval v) {
+  LED4_TOGGLE;
   switch(idx) {
     // dac values
   case eParam_dac0 :

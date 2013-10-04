@@ -69,7 +69,7 @@ void sport0_rx_isr() {
 
 // ISR on sport1 tx completion
 void sport1_tx_isr() {
-  LED4_LO;
+  LED3_LO;
   //  u32 stat;
   // DMA_DONE bit is W1C
   // clear interrupt flag, leave enabled
