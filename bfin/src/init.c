@@ -215,8 +215,7 @@ void init_sport0(void)
 
 // CONFIGURE sport1  [ to drive 3x AD5684 from DT1PRI ]
 void init_sport1(void) {
-  u32 config;
-
+  
   //----- note: edge selection is for *driving* the pins, sampled opposite
   //// TFS/clk driven w/ rising edge : TCKFE  = 0
   //// early frame sync              : LATFS  = 0
@@ -229,33 +228,12 @@ void init_sport1(void) {
   //// MSB first                     : TLSBIT = 0  
   *pSPORT1_TCR1 = ITCLK | ITFS | TFSR;
   
-
-  //----- note: edge selection is for *driving* the pins, sampled opposite
-  //// TFS/clk driven w/ rising edge : TCKFE  = 0
-  //// late frame sync              : LATFS  = 1
-  //// TFS active low               : LTFS   = 1
-  //// data-dependent TFS            : DITFS  = 0
-  //// internal clock                : ITCLK  = 1
-  //// internal TFS                  : ITFS   = 1
-  //// frame sync required           : TFSR  = 1
-  //// no companding                 : TDTYPE = 00
-  //// MSB first                     : TLSBIT = 0  
-  // *pSPORT1_TCR1 = ITCLK | ITFS | TFSR | LTFS | LATFS;
-  
-
-
-  //===== TEST: data-independent TFS
-  //  *pSPORT1_TCR1 = ITCLK | ITFS | DITFS;
- 
-  //// normal mode             : TSFSE = 0
+//// normal mode             : TSFSE = 0
   //// secondary side enabled : TXSE  = 1
   ///// 24-bit word length
-    //     *pSPORT1_TCR2 = 23 | TXSE ;
+  //     *pSPORT1_TCR2 = 23 | TXSE ;
   //// 25-bit cause DACs need an extra cycle to recover, ugggh
-    *pSPORT1_TCR2 = 24 | TXSE ;
-
-  /// TEST: 32-bit word length
-  //  *pSPORT1_TCR2 = slen_32;
+  *pSPORT1_TCR2 = 24 | TXSE ;
 
   // clock division: we want ~10Mhz, core clock is 108Mhz
   // tclk = sclk / ( 2 x (div + 1)
@@ -264,20 +242,10 @@ void init_sport1(void) {
   *pSPORT1_TCLKDIV = 100;
   //// slowest:
   //  *pSPORT1_TCLKDIV = 0xffff;
-
-  // we want frame syncs every 24 clocks,
-  // FS period = clk period * (TFSDIV + 1)
-    //// need an extra bit at the end for the DAC, grr
-    //    *pSPORT1_TFSDIV = 23;
-	
-    //// daisychain x2:
-    //  *pSPORT1_TFSDIV = 48;
-    
-    config = *pSPORT1_TCR1;
-   
-    /// enable sport1
+  
+  /// enable sport1
   ////// do this later for DMA
-    ///    *pSPORT1_TCR1 |= TSPEN;
+  ///    *pSPORT1_TCR1 |= TSPEN;
 
   /// receive configuration: don't care?
   //  *pSPORT1_RCR1 = RFSR | RCKFE;
