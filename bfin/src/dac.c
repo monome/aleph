@@ -13,6 +13,16 @@ volatile u32 cvTxBuf = 0;
 
 //=============================
 // extern functions
+
+void init_dac(void) {
+  u32 delay;
+  // bring the DAC out of reset
+  *pFIO_FLAG_D &= (0xffff ^ (1 << DAC_RESET_PIN));
+  delay = 100000;
+  while(delay > 0) { delay--; }
+  *pFIO_FLAG_D |= (1 << DAC_RESET_PIN);
+}
+
 void dac_update(u8 ch, u16 val) {
   static u32 buf;
   buf = 0;

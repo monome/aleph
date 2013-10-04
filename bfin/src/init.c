@@ -318,8 +318,8 @@ void init_DMA(void) {
   /// map dma4 to sport1 tx
   *pDMA4_PERIPHERAL_MAP = 0x4000;
   // configure DMA4
-    *pDMA4_CONFIG = WDSIZE_32 | FLOW_1;
-    //*pDMA4_CONFIG = WDSIZE_32 | FLOW_1 | DI_EN;
+  *pDMA4_CONFIG = WDSIZE_32 | FLOW_1;
+  //*pDMA4_CONFIG = WDSIZE_32 | FLOW_1 | DI_EN;
   // Start address of data buffer
   *pDMA4_START_ADDR = (void *)(&cvTxBuf);
   // DMA inner loop count
@@ -370,6 +370,8 @@ void init_interrupts(void) {
   int i=0;
   
   // assign core IDs to peripheral interrupts:
+
+  // no errors (fixme?)
   *pSIC_IAR0 = 0xffffffff;
 #if ADD_DACS // add DACS
   //  *pSIC_IAR1 = 0xff32ff1f;

@@ -32,26 +32,29 @@ int main(void) {
   init_flags();  
   // intialize the sdram controller
   init_EBIU();
-  // intialize the flash controller (which, weirdly, handles gpio)
-  //  init_flash();
+
+  // intialize the audio processing unit (assign memory)
+  module_init();
+
   // initialize the codec (spi in master, blast config regs, disable spi)
-
   init_1939();
-
   // intialize the sport0 for audio rx/tx
   init_sport0();
+
+  /// initialize the CV dac (reset) 
+  init_dac();
   // intialize the sport1 for cv out
   init_sport0();
 
-  // intialize DMA for audio
+  // intialize DMA
   init_DMA();
-  //  // put the spi back in slave mode to receive param changes from avr32
+
+  // init spi slave mode
   init_spi_slave();
-   
-  // intialize the audio processing unit (assign memory)
-  module_init();
+
   // assign interrupts
   init_interrupts();
+
   // begin audio transfers
   enable_DMA_sport0();  
   // begin cv transfers
