@@ -29,11 +29,14 @@
 extern fract32 in[4];
 extern fract32 out[4];
 
-// audio DMA buffers
+// ctl change 
+
+// audio DMA registers
 extern volatile s32 iRxBuf[];
 extern volatile s32 iTxBuf[];
-// CV DMA buffer
+
 extern volatile u32 cvTxBuf;
+
 
 // audio processing flag
 extern volatile u8 processAudio;

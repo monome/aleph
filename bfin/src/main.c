@@ -4,7 +4,6 @@
 // aleph
 #include "bfin_core.h"
 #include "control.h"
-#include "dac.h"
 #include "gpio.h"
 #include "init.h"
 #include "module.h"
@@ -33,45 +32,39 @@ int main(void) {
   init_flags();  
   // intialize the sdram controller
   init_EBIU();
+  // intialize the flash controller (which, weirdly, handles gpio)
+  //  init_flash();
+  // initialize the codec (spi in master, blast config regs, disable spi)
 
-  // intialize the audio processing unit (assign memory)
-  module_init();
-
-  // initialize the codec
   init_1939();
 
   // intialize the sport0 for audio rx/tx
   init_sport0();
-
-  /// initialize the CV dac (reset) 
-  init_dac();
-
   // intialize the sport1 for cv out
   init_sport0();
 
-  // intialize DMA
+  // intialize DMA for audio
   init_DMA();
-
-  // init spi slave mode
+  //  // put the spi back in slave mode to receive param changes from avr32
   init_spi_slave();
-
+   
+  // intialize the audio processing unit (assign memory)
+  module_init();
   // assign interrupts
   init_interrupts();
-
   // begin audio transfers
   enable_DMA_sport0();  
-
   // begin cv transfers
   enable_DMA_sport1();  
 
   //// test: leds on
-  LED3_HI;
-  LED4_HI;
+  LED3_SET;
+  LED4_SET;
   
   while(1) {
     // fixme: everything happens in ISRs!
     //    ;;
     //    ctl_next_frame();	
-    //    ctl_perform_last_change();			
+    ctl_perform_last_change();			
   }
 }

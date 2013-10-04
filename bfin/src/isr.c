@@ -26,10 +26,12 @@ void sport0_rx_isr() {
 
   if(!processAudio) { return; }
 
+
+
   // tick the control rate
-  //// ... doing this in main() now
   //  ctl_next_frame();
-  BUSY_HI;
+  BUSY_SET;
+  LED3_UNSET;
 
   // confirm interrupt handling
   *pDMA1_IRQ_STATUS = 0x0001;
@@ -64,15 +66,14 @@ void sport0_rx_isr() {
   /* iTxBuf[2] = iRxBuf[2]; */
   /* iTxBuf[3] = iRxBuf[3]; */
 
-  BUSY_LO;
+  BUSY_UNSET;
+  LED3_SET;
 }
 
 // ISR on sport1 tx completion
 void sport1_tx_isr() {
-  LED3_LO;
   //  u32 stat;
-  // DMA_DONE bit is W1C
-  // clear interrupt flag, leave enabled
+  // clear the interrupt flag, leave enabled
   *pDMA4_IRQ_STATUS = 0x0001;
   //  stat = *pSPORT1_STAT ;
 }
@@ -80,15 +81,30 @@ void sport1_tx_isr() {
 
 // spi receive interrupt (from avr32)
 void spi_rx_isr() {
-  LED3_TOGGLE;
-  //  BUSY_HI;
-  // int i=0;
-  // processAudio = 0;
+  BUSY_SET;
+  //int i=0;
+  //  processAudio = 0;
   // disable global interrupts
-  // asm volatile("cli %0; csync;":"+d"(i));
+  //  asm volatile("cli %0; csync;":"+d"(i));
   *pSPI_TDBR = spi_process(*pSPI_RDBR);
   // enable global interrupts
-  // asm volatile("sti %0; csync;":"+d"(i));
-  // processAudio = 1;
-  //  BUSY_LO;
+  //  asm volatile("sti %0; csync;":"+d"(i));
+  //  processAudio = 1;
+  BUSY_UNSET;
 }
+
+// programmable flag interrupt (buttons)
+/*
+void pf_isr() {
+  /// debug:
+  static u16 butstate = 0;
+  /// flag data bits are 1 regardless of edge direction,
+  //// so we need to toggle... 
+  butstate ^= *pFIO_FLAG_D;
+  // module-defined button handler
+  //  module_handle_button(*pFIO_FLAG_D);
+  module_handle_button(butstate);
+  // confirm interrupt handling (W1C)
+  *pFIO_FLAG_C = 0x0f00;
+}
+*/

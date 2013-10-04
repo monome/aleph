@@ -5,7 +5,6 @@ module_name = dacs
 
 module_obj = dacs.o \
 	params.o \
-	$(audio)/filter_1p.o \
 	$(common)/libfixmath/fix32.o \
 	$(common)/libfixmath/fix16.o
 

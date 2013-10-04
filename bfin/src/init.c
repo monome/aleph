@@ -1,15 +1,13 @@
 
 #include "bfin_core.h"
-#include "gpio.h"
 #include "isr.h"
 #include "init.h"
 
-// #define ADD_DACS 1
+#define ADD_DACS 1
 
 //------ global variables initialized here
 
 // control registers and associated values for AD1939
-/*
 static volatile short codec1939TxRegs[CODEC_1939_NUM_REGS][2] = {
   {  PLL_CLOCK_0        , 0x80 } , // enable, xtal->master->PLL
   {  PLL_CLOCK_1        , 0x00 } ,
@@ -31,7 +29,6 @@ static volatile short codec1939TxRegs[CODEC_1939_NUM_REGS][2] = {
   {  ADC_CONTROL_2      , 0b01000000 }
   //  {  ADC_CONTROL_2      , 0x00 }
 };
-*/
 
 // SPORT0 DMA transmit buffer
 volatile s32 iTxBuf[4];
@@ -113,11 +110,10 @@ void init_1939(void) {
 
 
   //// reset codec
-  //  *pFIO_FLAG_D &= CODEC_RESET_MASK;
-  CODEC_RESET_LO;
+  *pFIO_FLAG_D &= CODEC_RESET_MASK;
   del = 100; while(del--) { ;; } 
-  CODEC_RESET_HI;
-  //  *pFIO_FLAG_D |= (0xffff ^ CODEC_RESET_MASK);
+  *pFIO_FLAG_D |= (0xffff ^ CODEC_RESET_MASK);
+  
   return;
 
   /// using the codec in standalone now, dont need SPI config
@@ -219,7 +215,8 @@ void init_sport0(void)
 
 // CONFIGURE sport1  [ to drive 3x AD5684 from DT1PRI ]
 void init_sport1(void) {
-  
+  u32 config;
+
   //----- note: edge selection is for *driving* the pins, sampled opposite
   //// TFS/clk driven w/ rising edge : TCKFE  = 0
   //// early frame sync              : LATFS  = 0
@@ -232,12 +229,33 @@ void init_sport1(void) {
   //// MSB first                     : TLSBIT = 0  
   *pSPORT1_TCR1 = ITCLK | ITFS | TFSR;
   
-//// normal mode             : TSFSE = 0
+
+  //----- note: edge selection is for *driving* the pins, sampled opposite
+  //// TFS/clk driven w/ rising edge : TCKFE  = 0
+  //// late frame sync              : LATFS  = 1
+  //// TFS active low               : LTFS   = 1
+  //// data-dependent TFS            : DITFS  = 0
+  //// internal clock                : ITCLK  = 1
+  //// internal TFS                  : ITFS   = 1
+  //// frame sync required           : TFSR  = 1
+  //// no companding                 : TDTYPE = 00
+  //// MSB first                     : TLSBIT = 0  
+  // *pSPORT1_TCR1 = ITCLK | ITFS | TFSR | LTFS | LATFS;
+  
+
+
+  //===== TEST: data-independent TFS
+  //  *pSPORT1_TCR1 = ITCLK | ITFS | DITFS;
+ 
+  //// normal mode             : TSFSE = 0
   //// secondary side enabled : TXSE  = 1
   ///// 24-bit word length
-  //     *pSPORT1_TCR2 = 23 | TXSE ;
+    //     *pSPORT1_TCR2 = 23 | TXSE ;
   //// 25-bit cause DACs need an extra cycle to recover, ugggh
-  *pSPORT1_TCR2 = 24 | TXSE ;
+    *pSPORT1_TCR2 = 24 | TXSE ;
+
+  /// TEST: 32-bit word length
+  //  *pSPORT1_TCR2 = slen_32;
 
   // clock division: we want ~10Mhz, core clock is 108Mhz
   // tclk = sclk / ( 2 x (div + 1)
@@ -246,10 +264,20 @@ void init_sport1(void) {
   *pSPORT1_TCLKDIV = 100;
   //// slowest:
   //  *pSPORT1_TCLKDIV = 0xffff;
-  
-  /// enable sport1
+
+  // we want frame syncs every 24 clocks,
+  // FS period = clk period * (TFSDIV + 1)
+    //// need an extra bit at the end for the DAC, grr
+    //    *pSPORT1_TFSDIV = 23;
+	
+    //// daisychain x2:
+    //  *pSPORT1_TFSDIV = 48;
+    
+    config = *pSPORT1_TCR1;
+   
+    /// enable sport1
   ////// do this later for DMA
-  ///    *pSPORT1_TCR1 |= TSPEN;
+    ///    *pSPORT1_TCR1 |= TSPEN;
 
   /// receive configuration: don't care?
   //  *pSPORT1_RCR1 = RFSR | RCKFE;
@@ -287,18 +315,19 @@ void init_DMA(void) {
   // Inner loop address increment
   *pDMA2_X_MODIFY = 4;
 
-  /// DMA4: transmit
   /// map dma4 to sport1 tx
   *pDMA4_PERIPHERAL_MAP = 0x4000;
   // configure DMA4
-  *pDMA4_CONFIG = WDSIZE_32 | FLOW_1;
-  //*pDMA4_CONFIG = WDSIZE_32 | FLOW_1 | DI_EN;
+    *pDMA4_CONFIG = WDSIZE_32 | FLOW_1;
+    //*pDMA4_CONFIG = WDSIZE_32 | FLOW_1 | DI_EN;
   // Start address of data buffer
   *pDMA4_START_ADDR = (void *)(&cvTxBuf);
   // DMA inner loop count
   *pDMA4_X_COUNT = 1;
   // Inner loop address increment
   *pDMA4_X_MODIFY = 4;
+
+
 }
 
 // enable sport0 DMA
@@ -324,63 +353,47 @@ void enable_DMA_sport1(void) {
 
 // initialize programmable flags for button input
 void init_flags(void) {
-  // outputs
-  *pFIO_DIR = LED3_UNMASK | LED4_UNMASK | BUSY_UNMASK | DAC_RESET_UNMASK;
-
-  /// no gpio inputs.
-  /*
   // inputs 
-    *pFIO_INEN = 0;
+  *pFIO_INEN = PF_IN;
+  // outputs
+  *pFIO_DIR = PF_DIR;
   // edge-sensitive
   *pFIO_EDGE = 0x0f00;
   // both rise and fall
   *pFIO_BOTH = 0x0f00;
   // set interrupt mask
   *pFIO_MASKA_D = 0x0f00;
-  */
 }
 
 // assign interrupts
 void init_interrupts(void) {
   int i=0;
-
-  //// FIXME: should try to get sport0 interrupt on EVT
-
-  // no dacs (only sport0 and spi) :
-  //  *pSIC_IAR1 = 0xff3fff2f;
-  //  *pSIC_IAR2 = 0xffffffff;
   
   // assign core IDs to peripheral interrupts:
-
-  // no errors (fixme?)
   *pSIC_IAR0 = 0xffffffff;
-
-    *pSIC_IAR1 = 0xff32ff1f;	// sport0 rx -> IVG8 (CID 1), 
-				// sport1 tx -> IVG9 (CID 2), 
-                           	// spi rx -> IVG10 (CID 3),
-    
-    // no codec:
-    //*pSIC_IAR1 = 0xff32ffff;
-
+  // sport0 rx (dma1) -> ID2 = IVG9 
+  // spi rx           -> ID3 = IVG10
+  // sport1 tx           -> ID4 = IVG11
+#if ADD_DACS // add DACS
+  *pSIC_IAR1 = 0xff3fff24;
   *pSIC_IAR2 = 0xffffffff;
-
+#else 
+  *pSIC_IAR1 = 0xff3fff2f;
+  *pSIC_IAR2 = 0xffffffff;
+#endif
   // assign ISRs to interrupt vectors:
-  //  *pEVT9 = sport0_rx_isr;
-  //  *pEVT10 = spi_rx_isr;
-  //  *pEVT11 = sport1_tx_isr;
-
-  *pEVT8 = sport0_rx_isr;
-  *pEVT9 = sport1_tx_isr;  
+  *pEVT9 = sport0_rx_isr;
   *pEVT10 = spi_rx_isr;
-
+#if ADD_DACS
+  *pEVT11 = sport1_tx_isr;
+#endif
 
   // unmask in the core event processor
-    //  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); bitset(%0, 11); sti %0; csync;": "+d"(i));
-  //  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
-  asm volatile ("cli %0; bitset (%0, 8); bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
-
+#if ADD_DACS
+  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); bitset(%0, 11); sti %0; csync;": "+d"(i));
+#else
+  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
+#endif
   // unmask in the peripheral interrupt controller
-  *pSIC_IMASK = 0x00003200;
-  // no codec:
-  //  *pSIC_IMASK = 0x00003000;
+  *pSIC_IMASK = 0x00002200;
 }

@@ -185,6 +185,7 @@ void module_init(void) {
 #endif
   gModuleData = &(data->super);
   strcpy(gModuleData->name, "aleph-drumsyn");
+
   gModuleData->paramDesc = data->mParamDesc;
   gModuleData->paramData = data->mParamData;
   gModuleData->numParams = eParamNumParams;

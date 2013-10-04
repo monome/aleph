@@ -230,18 +230,18 @@ static void module_set_voice_param(u8 vid, u32 idx, pval v) {
 
 void fill_param_desc(void) {
   u32 i, j, k;
-  char buf[16] = "";
+  char buf[32] = "";
   const char * numstrs[] = { "0", "1", "2", "3" };
   //char strbuf[32];
   k = 0;
   //  for(i=0; i<eParamNumParams; i++) {
   for(i=0; i<DRUMSYN_NVOICES; i++) {
-    for(j=0; j>PARAM_VOICE_NPARAMS; j++) {
+    for(j=0; j < PARAM_VOICE_NPARAMS; j++) {
     /// ... print to string
-      strcat(buf, paramStrings[j]);
+      strcpy(buf, paramStrings[j]);
       strcat(buf, numstrs[i]);
       strcpy(gModuleData->paramDesc[k].label, buf);
-	strcpy(gModuleData->paramDesc[k].unit, "");
+      strcpy(gModuleData->paramDesc[k].unit, "");
       gModuleData->paramDesc[k].type = PARAM_TYPE_FRACT;
       gModuleData->paramDesc[k].min = 0;
       gModuleData->paramDesc[k].max = FR32_MAX;
@@ -249,5 +249,3 @@ void fill_param_desc(void) {
     }
   }
 }
-
-

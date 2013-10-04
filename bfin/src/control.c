@@ -2,9 +2,6 @@
 #include "control.h"
 #include "module.h"
 
-
-//// NOT USING THIS MODULE RIGHT NOW
-#if 0
 // ordered set of param changes
 static ctlEvent_t ctlBuf[CTL_BUF_SIZE];
 // dirty flags
@@ -62,17 +59,19 @@ extern u8 ctl_param_change(u32 idx, u32 val) {
   }
 }
 
-/* // execute the last param change */
-/* extern void ctl_do_last_change(void) { */
-/*   static u32 idx; */
-/*   idx = ctlBuf[evCount - 1].idx; */
-/*   module_set_param(idx, ctlBuf[evCount - 1].val); */
-/*   clear_param_dirty(idx); */
-/*   evCount--; */
-/* } */
+// execute the last param change
+extern void ctl_do_last_change(void) {
+  static u32 idx;
+  idx = ctlBuf[evCount - 1].idx;
+  module_set_param(idx, ctlBuf[evCount - 1].val);
+  clear_param_dirty(idx);
+  evCount--;
+}
+
 
 
 // execute the last param change
+//// warning: no lower bounds check on evCount
 extern void ctl_perform_last_change(void) {
   static s32 idx;
   if(evCount == 0) { return; }
@@ -98,4 +97,3 @@ extern void ctl_next_frame(void) {
     ctl_do_last_change();
   }
 }
-#endif
