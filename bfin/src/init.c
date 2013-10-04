@@ -3,33 +3,7 @@
 #include "isr.h"
 #include "init.h"
 
-#define ADD_DACS 1
-
 //------ global variables initialized here
-
-// control registers and associated values for AD1939
-static volatile short codec1939TxRegs[CODEC_1939_NUM_REGS][2] = {
-  {  PLL_CLOCK_0        , 0x80 } , // enable, xtal->master->PLL
-  {  PLL_CLOCK_1        , 0x00 } ,
-  {  DAC_CONTROL_0      , 0x00 } ,
-  {  DAC_CONTROL_1      , 0x00 } ,
-  {  DAC_CONTROL_2      , 0x00 } ,
-  {  DAC_MUTE           , 0x00 } ,
-  {  DAC_L1_VOLUME      , 0x00 } ,
-  {  DAC_R1_VOLUME      , 0x00 } ,
-  {  DAC_L2_VOLUME      , 0x00 } ,
-  {  DAC_R2_VOLUME      , 0x00 } ,
-  {  DAC_L3_VOLUME      , 0x00 } ,
-  {  DAC_R3_VOLUME      , 0x00 } ,
-  {  DAC_L4_VOLUME      , 0x00 } ,
-  {  DAC_R4_VOLUME      , 0x00 } ,
-  {  ADC_CONTROL_0      , 0x00 } ,
-  {  ADC_CONTROL_1      , 0x00 } ,
-  /// ADC master, abclk
-  {  ADC_CONTROL_2      , 0b01000000 }
-  //  {  ADC_CONTROL_2      , 0x00 }
-};
-
 // SPORT0 DMA transmit buffer
 volatile s32 iTxBuf[4];
 // SPORT0 DMA receive buffer
@@ -46,9 +20,9 @@ void init_clocks(void) {
   //  dum++;
 
   // set MSEL = 20 for core clock of 108Mhz
-//  *pPLL_CTL = 0x2800;
-/////// changing to 533Mhz part
-/// MSEL = 19
+  //  *pPLL_CTL = 0x2800;
+  /////// changing to 533Mhz part
+  /// MSEL = 19
   //// VCO = 19 * CLKIN = 513
   *pPLL_CTL = 0x2600;
   ssync();
@@ -88,26 +62,10 @@ void init_EBIU(void) {
   ssync();
 }
 
-/* void init_flash(void) { */
-/*   // flash A, port A0 -> AD1836_reset */
-/*   //  *pFlashA_PortA_Dir = 0x1; */
-/*   // flash A, ports [B0, B5] -> [led1, led6] */
-/*   //  *pFlashA_PortB_Dir = 0x3f; */
-/* } */
-
-/* static void spi_send_byte(u8 ch) { */
-/*   *pSPI_TDBR = ch; */
-/*   ssync(); */
-
-/*   while( (*pSPI_STAT & TXS)  != 0 ) { ;; } */
-/*   while( (*pSPI_STAT & SPIF) == 0 ) { ;; } */
-/* } */
-
- // setup SPI0 -> AD1939 config */
+// setup SPI0 -> AD1939 config */
 void init_1939(void) { 
   //  u8 i; 
   u32 del;
-
 
   //// reset codec
   *pFIO_FLAG_D &= CODEC_RESET_MASK;
@@ -250,9 +208,9 @@ void init_sport1(void) {
   //// normal mode             : TSFSE = 0
   //// secondary side enabled : TXSE  = 1
   ///// 24-bit word length
-    //     *pSPORT1_TCR2 = 23 | TXSE ;
+  //     *pSPORT1_TCR2 = 23 | TXSE ;
   //// 25-bit cause DACs need an extra cycle to recover, ugggh
-    *pSPORT1_TCR2 = 24 | TXSE ;
+  *pSPORT1_TCR2 = 24 | TXSE ;
 
   /// TEST: 32-bit word length
   //  *pSPORT1_TCR2 = slen_32;
@@ -267,17 +225,17 @@ void init_sport1(void) {
 
   // we want frame syncs every 24 clocks,
   // FS period = clk period * (TFSDIV + 1)
-    //// need an extra bit at the end for the DAC, grr
-    //    *pSPORT1_TFSDIV = 23;
+  //// need an extra bit at the end for the DAC, grr
+  //    *pSPORT1_TFSDIV = 23;
 	
-    //// daisychain x2:
-    //  *pSPORT1_TFSDIV = 48;
+  //// daisychain x2:
+  //  *pSPORT1_TFSDIV = 48;
     
-    config = *pSPORT1_TCR1;
+  config = *pSPORT1_TCR1;
    
-    /// enable sport1
+  /// enable sport1
   ////// do this later for DMA
-    ///    *pSPORT1_TCR1 |= TSPEN;
+  ///    *pSPORT1_TCR1 |= TSPEN;
 
   /// receive configuration: don't care?
   //  *pSPORT1_RCR1 = RFSR | RCKFE;
@@ -318,8 +276,8 @@ void init_DMA(void) {
   /// map dma4 to sport1 tx
   *pDMA4_PERIPHERAL_MAP = 0x4000;
   // configure DMA4
-    *pDMA4_CONFIG = WDSIZE_32 | FLOW_1;
-    //*pDMA4_CONFIG = WDSIZE_32 | FLOW_1 | DI_EN;
+  *pDMA4_CONFIG = WDSIZE_32 | FLOW_1;
+  //*pDMA4_CONFIG = WDSIZE_32 | FLOW_1 | DI_EN;
   // Start address of data buffer
   *pDMA4_START_ADDR = (void *)(&cvTxBuf);
   // DMA inner loop count
@@ -369,31 +327,31 @@ void init_flags(void) {
 void init_interrupts(void) {
   int i=0;
   
-  // assign core IDs to peripheral interrupts:
+  // assign peripheral interrupts to core IDs
   *pSIC_IAR0 = 0xffffffff;
-  // sport0 rx (dma1) -> ID2 = IVG9 
+  // sport0 rx (dma1) -> ID4 = IVG11
+  // spi rx           -> ID2 = IVG9
+  // sport1 tx        -> ID3 = IVG10
+  //  *pSIC_IAR1 = 0xff32ff2f;
+  //  *pSIC_IAR2 = 0xffffffff;
+
+  // by default:
+  // sport0 rx (dma1) -> ID2 = IVG9
+  // sport1 tx        -> ID2 = IVG9
   // spi rx           -> ID3 = IVG10
-  // sport1 tx           -> ID4 = IVG11
-#if ADD_DACS // add DACS
-  *pSIC_IAR1 = 0xff3fff24;
-  *pSIC_IAR2 = 0xffffffff;
-#else 
-  *pSIC_IAR1 = 0xff3fff2f;
-  *pSIC_IAR2 = 0xffffffff;
-#endif
+
+
   // assign ISRs to interrupt vectors:
+  //// ok, this ISR will serve both sports...
   *pEVT9 = sport0_rx_isr;
   *pEVT10 = spi_rx_isr;
-#if ADD_DACS
-  *pEVT11 = sport1_tx_isr;
-#endif
+  //  *pEVT10 = sport1_tx_isr;
 
   // unmask in the core event processor
-#if ADD_DACS
-  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); bitset(%0, 11); sti %0; csync;": "+d"(i));
-#else
-  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
-#endif
-  // unmask in the peripheral interrupt controller
-  *pSIC_IMASK = 0x00002200;
+  asm volatile ("cli %0; bitset(%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
+
+  // unmask peripheral interrupts
+  *pSIC_IMASK = 0x00003200;
+  
+ 
 }

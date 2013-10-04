@@ -24,20 +24,25 @@ volatile u8 processAudio = 0;
 // sport0 receive interrupt (audio input from codec)
 void sport0_rx_isr() {
 
-  if(!processAudio) { return; }
-
-
-
   // tick the control rate
   //  ctl_next_frame();
-  BUSY_SET;
-  LED3_UNSET;
 
   // confirm interrupt handling
-  *pDMA1_IRQ_STATUS = 0x0001;
   
+  /// if this interrupt came from DMA1, clear it and continue(W1C)
+  if(*pDMA1_IRQ_STATUS & 1) { *pDMA1_IRQ_STATUS = 0x0001; }
+  // and if it came from DMA4, clear that and return
+  if(*pDMA4_IRQ_STATUS & 1) { *pDMA4_IRQ_STATUS = 0x0001; return; }
+
+  if(!processAudio) { return; }
+
+  /// inform the world that we're busy processing an audio frame
+  BUSY_SET;
+  LED3_UNSET;
+  
+
   // copy input data from dma input buffer 
-  // shift left from 24-bit
+  // shift left fr21om 24-bit
   in[0] = ( iRxBuf[INTERNAL_ADC_L0] << 8 ) & 0xffffff00;
   in[1] = ( iRxBuf[INTERNAL_ADC_R0] << 8 ) & 0xffffff00;
   in[2] = ( iRxBuf[INTERNAL_ADC_L1] << 8 ) & 0xffffff00;
@@ -82,29 +87,6 @@ void sport1_tx_isr() {
 // spi receive interrupt (from avr32)
 void spi_rx_isr() {
   BUSY_SET;
-  //int i=0;
-  //  processAudio = 0;
-  // disable global interrupts
-  //  asm volatile("cli %0; csync;":"+d"(i));
   *pSPI_TDBR = spi_process(*pSPI_RDBR);
-  // enable global interrupts
-  //  asm volatile("sti %0; csync;":"+d"(i));
-  //  processAudio = 1;
   BUSY_UNSET;
 }
-
-// programmable flag interrupt (buttons)
-/*
-void pf_isr() {
-  /// debug:
-  static u16 butstate = 0;
-  /// flag data bits are 1 regardless of edge direction,
-  //// so we need to toggle... 
-  butstate ^= *pFIO_FLAG_D;
-  // module-defined button handler
-  //  module_handle_button(*pFIO_FLAG_D);
-  module_handle_button(butstate);
-  // confirm interrupt handling (W1C)
-  *pFIO_FLAG_C = 0x0f00;
-}
-*/
