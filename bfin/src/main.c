@@ -72,6 +72,6 @@ int main(void) {
     // fixme: everything happens in ISRs!
     //    ;;
     //    ctl_next_frame();	
-    ctl_perform_last_change();			
+    //    ctl_perform_last_change();			
   }
 }
