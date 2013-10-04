@@ -80,7 +80,8 @@ void sport1_tx_isr() {
 
 // spi receive interrupt (from avr32)
 void spi_rx_isr() {
-  BUSY_HI;
+  LED3_TOGGLE;
+  //  BUSY_HI;
   // int i=0;
   // processAudio = 0;
   // disable global interrupts
@@ -89,5 +90,5 @@ void spi_rx_isr() {
   // enable global interrupts
   // asm volatile("sti %0; csync;":"+d"(i));
   // processAudio = 1;
-  BUSY_LO;
+  //  BUSY_LO;
 }
