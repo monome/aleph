@@ -371,30 +371,35 @@ void init_interrupts(void) {
   
   // assign core IDs to peripheral interrupts:
   *pSIC_IAR0 = 0xffffffff;
-  // sport0 rx (dma1) -> ID2 = IVG9 
-  // spi rx           -> ID3 = IVG10
-  // sport1 tx           -> ID4 = IVG11
 #if ADD_DACS // add DACS
-  *pSIC_IAR1 = 0xff34ff2f;
+  //  *pSIC_IAR1 = 0xff32ff1f;
+  *pSIC_IAR1 = 0xff32ffff; 	// sport1 tx -> IVG9 (CID 2), 
+                           	// spi rx -> IVG10 (CID 3),
+  				// no sport0 !
   *pSIC_IAR2 = 0xffffffff;
 #else 
-  *pSI
-C_IAR1 = 0xff3fff2f;
+  *pSIC_IAR1 = 0xff3fff2f;
   *pSIC_IAR2 = 0xffffffff;
 #endif
   // assign ISRs to interrupt vectors:
-  *pEVT9 = sport0_rx_isr;
+  //  *pEVT9 = sport0_rx_isr;
+  //  *pEVT10 = spi_rx_isr;
   *pEVT10 = spi_rx_isr;
 #if ADD_DACS
-  *pEVT11 = sport1_tx_isr;
+  //  *pEVT11 = sport1_tx_isr;
+  *pEVT9 = sport1_tx_isr;
+
 #endif
 
   // unmask in the core event processor
 #if ADD_DACS
-  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); bitset(%0, 11); sti %0; csync;": "+d"(i));
+    //  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); bitset(%0, 11); sti %0; csync;": "+d"(i));
+  asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
+
 #else
   asm volatile ("cli %0; bitset (%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
 #endif
   // unmask in the peripheral interrupt controller
-  *pSIC_IMASK = 0x00003200;
+  //  *pSIC_IMASK = 0x00003200;
+  *pSIC_IMASK = 0x00003000;
 }
