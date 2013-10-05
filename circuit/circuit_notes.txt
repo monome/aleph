@@ -18,6 +18,7 @@ led opamps need to be 8606
 
 motherfucking avr-isp needs 5v
 holes too small on isp header
+4.7u on the 12v sys needs to be 16V
 
 / avr32 xtal needs 22p
 

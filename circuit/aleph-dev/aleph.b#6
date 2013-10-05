@@ -5326,6 +5326,12 @@ design rules under a new name.</description>
 <attribute name="MF" value="" x="233.045" y="38.1" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="OC_FARNELL" value="1651293" x="233.045" y="38.1" size="1.778" layer="27" rot="R270" display="off"/>
 </element>
+<element name="IC16" library="analog-devices" package="SO8" value="AD8607R" x="-12.7" y="-34.29">
+<attribute name="OC_NEWARK" value="19M8927" x="-12.7" y="-34.29" size="1.778" layer="27" display="off"/>
+<attribute name="MPN" value="AD8607ARMZ-R2" x="-12.7" y="-34.29" size="1.778" layer="27" display="off"/>
+<attribute name="MF" value="" x="-12.7" y="-34.29" size="1.778" layer="27" display="off"/>
+<attribute name="OC_FARNELL" value="1651293" x="-12.7" y="-34.29" size="1.778" layer="27" display="off"/>
+</element>
 </elements>
 <signals>
 <signal name="A-TDI">

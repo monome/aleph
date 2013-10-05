@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS += -std=gnu99
 CFLAGS += -g3
 CFLAGS += -D ARCH_LINUX=1
-CFLAGS += --verbose
+# CFLAGS += --verbose
 
 #linker flags
 LDFLAGS = -lm
@@ -47,7 +47,6 @@ $(MONO_OBJ): %.o : %.c
 MONO_INC = -I$(MODULES)/mono
 
 mono : $(APP_OBJ) $(MONO_OBJ)
-	echo "wtf"
 	echo $(MONO_INC)
 	echo $(INC)
 	$(CC) $(CFLAGS) $(INC) $(MONO_INC) -o $@ $^ $(LDFLAGS)

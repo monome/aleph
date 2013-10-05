@@ -27,8 +27,9 @@
 # our version-controlled dir
 PRJ_PATH = ../../../asf-3.7.3
 
-# Include the common Makefile, which will also include the project specific
-# config.mk file.
+MAKEFILE_PATH = $(PRJ_PATH)/avr32/utils/make/Makefile.avr32.in
+include $(MAKEFILE_PATH)
+
 
 MAKEFILE_PATH = $(PRJ_PATH)/avr32/utils/make/Makefile.avr32.in
 include $(MAKEFILE_PATH)
