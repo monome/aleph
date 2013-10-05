@@ -197,7 +197,7 @@ include $(dep-files)
 # if the common Makefile.in or project config.mk is changed.
 $(target): $(PRJ_PATH)/$(LINKER_SCRIPT) $(MAKEFILE_PATH) config.mk $(obj-y)
 	@echo "LN      $@"
-	$(LD) $(l_flags) $(obj-y) -Wl,--start-group $(libflags-gnu-y) -Wl,--end-group -o $@
+	$(LD) $(l_flags) $(obj-y) -Wl,--start-group $(libflags-gnu-y) -Wl,--end-group -o $@ -lm
 	$(SIZE) -Ax $@
 	$(SIZE) -Bx $@
 
