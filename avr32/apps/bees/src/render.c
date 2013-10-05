@@ -44,7 +44,6 @@ static inline void region_update(region* r) {
 void render_update(void) {
   app_pause();
   region_update(scrollRegion);
-  // these will 
   region_update(headRegion);
   region_update(footRegion);
   app_resume();

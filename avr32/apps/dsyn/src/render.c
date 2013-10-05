@@ -42,7 +42,7 @@ static const char* paramStrings[] = {
   "FreqDecSlew",	// 12
   "FreqRelSlew",	// 13
   "FreqSusDur",	// 14
-  "RqOff",		// 15
+   "RqOff",		// 15
   "RqOn",		// 16
   "RqSus",		// 17
   "RqAtkSlew",	// 18
@@ -92,6 +92,13 @@ static region * allRegions[] = {
   &(foot[3]),
 };
 
+// scrolling boot region
+static region bootScrollRegion = {
+  .w = 128, .h = 64, .x = 0, .y = 0
+};
+// scroller for boot region
+static scroll bootScroll;
+
 static const u8 numRegions = 6;
 
 //-------------------------
@@ -131,37 +138,28 @@ static void render_hex(u32 val, region * pr, u8 x, u8 y, u8 inv) {
 void render_init(void) {
   u32 i;
 
+  // standard regions
   for(i = 0; i<numRegions; i++) {
     region_alloc((region*)(allRegions[i]));
   }
-
-  //  screen_clear();
-
-  // test
-  print_dbg("\r\n\r\n regions:");
-  for(i = 0; i<numRegions; i++) {
-    print_dbg("\r\n ( ");
-    print_dbg_hex(i);
-    print_dbg(" ) @ 0x");
-    print_dbg_hex((u32)(allRegions[i]));
-    print_dbg(", data: @ 0x");
-    print_dbg_hex((u32)(allRegions[i]->data));
-    print_dbg(", w:");
-    print_dbg_ulong((u32)(allRegions[i]->w));
-    print_dbg(", h:");
-    print_dbg_ulong((u32)(allRegions[i]->h));
-    print_dbg(", len: 0x");
-    print_dbg_hex((u32)(allRegions[i]->len));
-  }
+  // scrolling boot region
+  region_alloc((region*)(&bootScrollRegion));
+  scroll_alloc(&bootScroll, &bootScrollRegion);
 }
+
+
+// render to scrolling boot buffer
+void render_boot(const char* str) {
+  
+}
+
 
 // render text to statusbar
 void render_status(const char* str) {
   static u32 i;
   for(i=0; i<(status.len); i++) {
     status.data[i] = 0;
-  }
-  
+  }  
   region_string(&status, str, 0, 0, 0xf, 0, 0);
 }
 
@@ -174,10 +172,6 @@ void render_startup(void) {
   region_fill(&(foot[1]), 0x0);
   region_fill(&(foot[2]), 0x0);
   region_fill(&(foot[3]), 0x0);
-  //region_string(&(foot[0]), "TAP1", 0, 0, 0xf, 0x0, 0);
-  //  region_string(&(foot[1]), "TAP2", 0, 0, 0xf, 0x0, 0);
-  //  region_string(&(foot[2]), "REC", 0, 0, 0xf, 0x0, 0);
-  //  region_string(&(foot[3]), "PLAY", 0, 0, 0xf, 0x0, 0);
 }
 
 // update dirty regions
@@ -230,12 +224,7 @@ void render_param(u8 vid, s32 pid, s32 val) {
     region_string_aa(&bigtop, "voice 4", 0, 0, 1);
     break;
   }
-  //  print_dbg("\r\n render param, string: ");
-  //  print_dbg(paramStrings[pid]);
   region_string_aa(&bigtop, paramStrings[pid], 0, 20, 1);
-  //  print_dbg(", val: 0x");
-  //  print_dbg_hex((u32)val);
-  //  render_fix16(val, &bigtop, 0, 40, 1);
   render_hex(val, &bigtop, 0, 40, 1);
 }
 
@@ -252,18 +241,6 @@ void render_tempo(u32 ms) {
   //  print_fix16(numstrbuf, bpm);
   render_fix16(bpm, &bigtop, 0, 20, 1);
 }
-
-/*
-void render_dac(u8 ch, s32 val) {
-  /// FIXME: hella stupid to call a fill from a frequently-triggered handler
-  region_fill(&bigtop, 0x0);
-  strcpy(numstrbuf, "   ");
-  itoa_whole(ch, numstrbuf, NUMSTRBUF_LEN);
-  region_string(&bigtop, numstrbuf, 0, 0, 0xa, 0x1, 1);
-  itoa_whole(val, numstrbuf, NUMSTRBUF_LEN);
-  region_string(&bigtop, numstrbuf, 5, 20, 0xf, 0x0, 1);
-}
-*/
 
 void render_file_write(u8 done) {
   region_fill(&bigtop, 0x0);

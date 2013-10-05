@@ -79,3 +79,49 @@ void region_hl(region* reg, u8 c, u8 thresh) {
   }
   reg->dirty = 1;
 }
+
+///---- scrolling stuff
+
+// initialize a text scroller at memory
+extern void scroll_init(scroll* scr, region* reg) {
+  scr->reg = reg;
+  scr->lineCount = 0;
+  scr->yOff = 0;
+  scr->byteOff = 0;
+  scr->lineBytes = FONT_CHARH * reg->w;
+  scr->lineCount = reg->h / FONT_CHARH;
+  scr->drawSpace = 0;
+  // offset of last row
+  scr->maxByteOff = reg->w * reg->h - scr->lineBytes;
+  region_fill(reg, 0x0);
+}
+
+/// set scroll position how? e.g., keep current text centered, at bottom, at top...
+
+// draw text to scroll
+extern void scroll_draw(scroll* scr, char* str) {
+  /// clear current line
+  region_fill_part(scr->reg, 0x0, scr->byteOff, scr->lineBytes);
+  // draw text to region at current offset, using system font
+  region_string(scr->reg, str,
+		0, scr->yOff, 0xf, 0, 0);
+  // advance offset by count of pixels in row
+  scr->byteOff += scr->lineBytes;
+  scr->yOff += FONT_CHARH;
+  if(scr->yOff >= scr->reg->h) {
+    scr->yOff = 0;
+  }
+  if(scr->byteOff > scr->maxByteOff) {
+    scr->byteOff = 0;
+  }
+  //// render happens separately,
+  //  so we can e.g. trigger from timer based on dirty flag
+  scr->reg->dirty = 1;
+}
+
+// render scroll to screen
+extern void scroll_render(scroll* scr) {
+  screen_draw_region_offset(0, 0, scr->reg->w, scr->reg->h, scr->reg->len,  
+			    scr->reg->data, scr->byteOff + scr->drawSpace);
+  scr->reg->dirty = 0;
+}
