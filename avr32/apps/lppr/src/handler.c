@@ -82,9 +82,9 @@ static s32 scale_knob_value(s32 val) {
 }
 
 
-static s32 scale_knob_value_fast(s32 val) {
-  return scale_knob_value(val);
-}
+/* static s32 scale_knob_value_fast(s32 val) { */
+/*   return scale_knob_value(val); */
+/* } */
 
  static void handle_monome_connect(u32 data) {
    eMonomeDevice dev;

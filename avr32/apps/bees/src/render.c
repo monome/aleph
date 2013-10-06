@@ -28,6 +28,7 @@
 static region* headRegion = NULL;
 static region* footRegion = NULL;
 static region* scrollRegion = NULL;
+static region* selectRegion = NULL;
 
 // check dirty flag and update region
 static inline void region_update(region* r) {
@@ -37,13 +38,14 @@ static inline void region_update(region* r) {
   }
 }
 
-
 //----------------
 //--- extern
 
 void render_update(void) {
   app_pause();
+  /// draw better
   region_update(scrollRegion);
+  ///
   region_update(headRegion);
   region_update(footRegion);
   app_resume();

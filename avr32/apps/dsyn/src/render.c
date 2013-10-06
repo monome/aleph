@@ -152,6 +152,7 @@ void render_init(void) {
 void render_boot(const char* str) {
   /// FIXME
   render_status(str);
+
 }
 
 
