@@ -133,7 +133,7 @@ u8 app_launch(u8 firstrun) {
   // enable timers
   init_app_timers();
 
-  render_boot();
+  render_boot("running");
   render_update();
   
   return 1;

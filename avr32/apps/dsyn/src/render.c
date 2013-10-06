@@ -144,13 +144,14 @@ void render_init(void) {
   }
   // scrolling boot region
   region_alloc((region*)(&bootScrollRegion));
-  scroll_alloc(&bootScroll, &bootScrollRegion);
+  scroll_init(&bootScroll, &bootScrollRegion);
 }
 
 
 // render to scrolling boot buffer
 void render_boot(const char* str) {
-  
+  /// FIXME
+  render_status(str);
 }
 
 
