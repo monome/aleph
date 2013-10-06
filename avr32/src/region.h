@@ -54,9 +54,9 @@ typedef struct _scroll {
 extern void scroll_init(scroll* scr, region* reg);
 /// set scroll position how? e.g., keep current text centered, at bottom, at top...
 // draw text to scroll
-extern void scroll_draw(scroll* scr, char* str);
-// render scroll to screen
-extern void scroll_render(scroll* scr);
+extern void scroll_string(scroll* scr, char* str);
+// draw scroll to screen
+extern void scroll_draw(scroll* scr);
  
 // allocate and initialize a screen region
 extern void region_alloc(region* reg);

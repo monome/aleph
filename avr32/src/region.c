@@ -98,8 +98,8 @@ extern void scroll_init(scroll* scr, region* reg) {
 
 /// set scroll position how? e.g., keep current text centered, at bottom, at top...
 
-// draw text to scroll
-extern void scroll_draw(scroll* scr, char* str) {
+// render text to scroll
+extern void scroll_string(scroll* scr, char* str) {
   /// clear current line
   region_fill_part(scr->reg, 0x0, scr->byteOff, scr->lineBytes);
   // draw text to region at current offset, using system font
@@ -119,8 +119,8 @@ extern void scroll_draw(scroll* scr, char* str) {
   scr->reg->dirty = 1;
 }
 
-// render scroll to screen
-extern void scroll_render(scroll* scr) {
+// draw scroll to screen
+extern void scroll_draw(scroll* scr) {
   screen_draw_region_offset(0, 0, scr->reg->w, scr->reg->h, scr->reg->len,  
 			    scr->reg->data, scr->byteOff + scr->drawSpace);
   scr->reg->dirty = 0;

@@ -149,9 +149,10 @@ void render_init(void) {
 
 
 // render to scrolling boot buffer
-void render_boot(const char* str) {
+void render_boot(char* str) {
   /// FIXME
-  render_status(str);
+  //  render_status(str);
+  scroll_string(&bootScroll, str);
 
 }
 
@@ -182,6 +183,7 @@ void render_update(void) {
   u8 i;
   app_pause();
 
+  // standard regions
   for(i = 0; i<numRegions; i++) {
     r = allRegions[i]; 
     if(r->dirty) {
@@ -189,6 +191,11 @@ void render_update(void) {
       r->dirty = 0;
     }
   }
+  // scrolling boot region
+  if(bootScroll.reg->dirty) {
+    scroll_draw(&bootScroll);
+  }
+  
   app_resume();
 }
 
@@ -198,6 +205,7 @@ void render_force_refresh(void) {
   for(i = 0; i<numRegions; i++) {
     (allRegions[i])->dirty = 1;
   }
+  scroll_draw(&bootScroll);
   render_update();
 }
 

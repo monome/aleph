@@ -44,8 +44,9 @@ static inline void region_update(region* r) {
 void render_update(void) {
   app_pause();
   /// draw better
-  region_update(scrollRegion);
+  // region_update(scrollRegion);
   ///
+  
   region_update(headRegion);
   region_update(footRegion);
   app_resume();
