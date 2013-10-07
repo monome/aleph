@@ -117,14 +117,6 @@ u8 app_launch(u8 firstrun) {
   set_enc_thresh(3, 16);
   delay_ms(20);
 
-  /////////////////////
-  ////////////
-  // wtf??
-  //  render_boot("waiting some more..        ");
-  //  delay_ms(3000);
-  //////////////
-  ////////////////////
-
   // enable audio
   render_boot("run                       ");
   render_update();
@@ -133,7 +125,8 @@ u8 app_launch(u8 firstrun) {
   // enable timers
   init_app_timers();
 
-  render_boot("running");
+  //  render_boot("running");
+  render_startup();
   render_update();
   
   return 1;

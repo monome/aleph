@@ -183,6 +183,11 @@ void render_update(void) {
   u8 i;
   app_pause();
 
+  // scrolling boot region
+  if(bootScroll.reg->dirty) {
+    scroll_draw(&bootScroll);
+  }
+
   // standard regions
   for(i = 0; i<numRegions; i++) {
     r = allRegions[i]; 
@@ -190,10 +195,6 @@ void render_update(void) {
       screen_draw_region(r->x, r->y, r->w, r->h, r->data);
       r->dirty = 0;
     }
-  }
-  // scrolling boot region
-  if(bootScroll.reg->dirty) {
-    scroll_draw(&bootScroll);
   }
   
   app_resume();
