@@ -70,3 +70,4 @@ void render_set_scroll_region(region* reg) {
   scrollRegion->dirty = 1;
 }
 
+

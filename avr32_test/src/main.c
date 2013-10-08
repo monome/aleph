@@ -164,6 +164,7 @@ static void init_avr32(void) {
   // not sure why but when need to explictly enable clock for static mem ctlr
   sysclk_enable_pbb_module(SYSCLK_SMC_REGS);
   flashc_set_bus_freq(FCPU_HZ);
+  // need this for high-speed operation
   flashc_set_wait_state(1);
 
   /// interrupts

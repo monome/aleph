@@ -84,23 +84,30 @@ void sram_test(void) {
   // Fill the SRAM with the test pattern.
   for (i = 0, j = 0; i < sram_size; i++) {
     if (i == j * progress_inc) {
-      print_dbg("\rFilling SRAM with test pattern: ");
-      print_dbg_ulong(j++);
-      print_dbg_char('%');
+      //      print_dbg("\rFilling SRAM with test pattern: ");
+      //      print_dbg_ulong(j++);
+      //      print_dbg_char('%');
     }
     sram[i] = i;
+    //    print_dbg("\r\n write: 0x");
+    //    print_dbg_hex(i);
   }
   print_dbg("\rSRAM filled with test pattern       \r\n");
 
   // Recover the test pattern from the SRAM and verify it.
   for (i = 0, j = 0; i < sram_size; i++) {
-    if (i == j * progress_inc) {
-      print_dbg("\rRecovering test pattern from SRAM: ");
-      print_dbg_ulong(j++);
-      print_dbg_char('%');
-    }
+    //    if (i == j * progress_inc) {
+    //      print_dbg("\rRecovering test pattern from SRAM: ");
+    //      print_dbg_ulong(j++);
+    //      print_dbg_char('%');
+    //    }
     tmp = sram[i];
+    print_dbg(" \r\n word index/value: 0x");
+    print_dbg_hex(i); 
+    print_dbg(" ; read: 0x");
+    print_dbg_hex(tmp);
     if (tmp != i) {
+      print_dbg(" ERROR");
       noErrors++;
     }
   }

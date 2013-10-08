@@ -2,6 +2,9 @@
   page_ins.c
  */
 
+// std
+#include <string.h>
+
 // avr32
 #include "region.h"
 
@@ -28,8 +31,9 @@ static u8 inPlay = 0;
 // in-clear-confirm state
 static u8 clearConfirm = 0;
 
-// scrolling parameters
-
+// string buffer for new content
+static const u32 strbuflen = 64;
+static char strbuf[64];
 
 
 //-------------------------
@@ -45,6 +49,51 @@ static void handle_key_1(s32 val);
 static void handle_key_2(s32 val);
 static void handle_key_3(s32 val);
 
+
+// fill string buffer with new content
+// given input index
+static void print_content(s16 idx) {
+  const s32 opIdx = net_in_op_idx(idx);
+  char* p = strbuf;
+  memcpy(strbuf, '\0', strbuflen);
+  if(opIdx >= 0) {
+    // operator input
+    // print:
+    // index
+    // op name
+    // input name
+    // value
+  } else {
+    // parameter input
+    strcat(); 
+  }
+}
+
+// edit the current seleciton
+static void select_edit(s32 inc) {
+  //  s16 idx;
+  // write to center of scroll buffer, no highlight
+  
+  // copy to center region with highlight
+}
+
+// scroll the current selection
+static void select_scroll(s8 dir) {
+  // index for new content
+  s16 newIdx;
+  // write new content to scroll (at beginning or end)
+  /// direction is binary, forward or backward
+  if(dir < 0) {
+    // new content is (selection - center row) 
+    newIdx = pages[ePageIns].select + SCROLL_LINES_ABOVE_1;
+    // draw new content to top
+  } else {
+    // new content is )(selection + (num rows - center row))
+    newIdx = pages[ePageIns].select + SCROLL_LINES_ABOVE_1;
+    // draw new content to bottom
+  }
+  // copy new center to center region, mark center region dirty
+}
 
 // draw scrolling region
 // (presumably just changed selection)
