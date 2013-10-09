@@ -17,6 +17,9 @@ idea: should each app have a tiny text description?
 	a) keep app.txt always together with app.hex, store them in separate fields of flash memory
 	b) append set number of descriptor lines to app.hex, perhaps from the makefile (i like this better)
 
+
+
+
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -25,17 +28,19 @@ serial protocol
 
 for usb device mode (via ftdi vcp)
 
-1. bees remote control
+0. debug print
+	scrolling text blobs
 
-modify bees parameters remotely
-	ie. everything you can do via the screen (spawn operators, make connections, change params, etc)
-	enables remote editor, etc
+1. system information
+	parameter index, name, etc
+	network
+
+2. parameter read/write
+
+3. network change
 
 
-2. arbitrary parameter data exchange
 
-indexed end points on each side (host and device) which can be mapped in bees
-	ie. operator osc-receive and operator osc-send
 
 
 
@@ -45,7 +50,7 @@ indexed end points on each side (host and device) which can be mapped in bees
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-i2c protocol
+i2c protocol (see ii.txt)
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 issues:
