@@ -44,8 +44,8 @@ void bfin_wait(void) {
   //  print_dbg_ulong(gpio_get_pin_value(BFIN_HWAIT_PIN));
     while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { 
       ;;
-      //      print_dbg("\r\n HWAIT asserted..."); 
-      //      delay_ms(1);
+      print_dbg("\r\n HWAIT asserted..."); 
+	    //            delay_ms(1);
     }
     delay_us(50);
 }
@@ -136,12 +136,18 @@ void bfin_get_num_params(volatile u32* num) {
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, MSG_GET_NUM_PARAMS_COM);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+  print_dbg("\r\n : spi_write MSG_GET_NUM_PARAMS");
+
   // read num
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, 0); //dont care
   spi_read(BFIN_SPI, &x);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);  
   *num = (u8)(x & 0xff);
+
+  print_dbg("\r\n : spi_read numparams: ");
+  print_dbg_ulong(*num);
 
   app_resume();
 

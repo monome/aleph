@@ -53,10 +53,13 @@ typedef struct _scroll {
 // allocate and initialize a text scroller
 extern void scroll_init(scroll* scr, region* reg);
 /// set scroll position how? e.g., keep current text centered, at bottom, at top...
-// draw text to scroll
-extern void scroll_draw(scroll* scr, char* str);
-// render scroll to screen
-extern void scroll_render(scroll* scr);
+// draw text to front of scroll
+extern void scroll_string_front(scroll* scr, char* str);
+// draw text to back of scroll
+extern void scroll_string_back(scroll* scr, char* str);
+
+// draw scroll to screen
+extern void scroll_draw(scroll* scr);
  
 // allocate and initialize a screen region
 extern void region_alloc(region* reg);
@@ -83,6 +86,8 @@ extern void region_string_aa(
 extern void region_fill(region* reg, u8 c);
 // fill a contiguous portion of a region with given color
 extern void region_fill_part(region* reg, u8 c, u32 start, u32 len);
+
+/// copy-or
   
 
 // hilight a region with given color and threshold

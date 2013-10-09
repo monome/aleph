@@ -6,6 +6,10 @@
   required app-specific implementation of avr32/src/app.h
  */
 
+// std
+/* #include <string.h> */
+/* #include <stdio.h> */
+
 // asf
 #include "gpio.h"
 #include "print_funcs.h"
@@ -39,9 +43,8 @@ void app_init(void) {
   scene_init();
   print_dbg("\r\n scene_init");
 
-  /// FIXME: this is arbitrarily but sensitively located in main.c right now...
   files_init();
-  //  print_dbg("\r\n files_init");
+  print_dbg("\r\n files_init");
 
   menu_init();
   print_dbg("\r\n menu_init");
@@ -56,6 +59,14 @@ void app_init(void) {
 
 // this is called from the event queue 
 u8 app_launch(u8 firstrun) {
+  ////////////////
+  /* ///// TEST */
+  /* char buf[64]; */
+  /* sprintf(buf, " blah blah oh yeah , %d", 666); */
+
+  /////////////////
+
+
   //  app_notify("launching BEES");
   print_dbg("\r\n launching app with firstrun: ");
   print_dbg_ulong(firstrun);

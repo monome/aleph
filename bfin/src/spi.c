@@ -21,7 +21,7 @@ static pval pv;
 //------ static functions
 static void spi_set_param(u32 idx, pval pv) {
   //  module_set_param(idx, pv);
-  LED4_TOGGLE;
+  //  LED4_TOGGLE;
   // ctl_param_change(idx, pv.u);
   module_set_param(idx, pv);
 }

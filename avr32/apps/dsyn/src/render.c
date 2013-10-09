@@ -25,6 +25,7 @@ static char numstrbuf[NUMSTRBUF_LEN];
 static char hexstrbuf[HEXSTRBUF_LEN] = "12345678";
 
 
+
 // FIXME: retarded to have this here
 static const char* paramStrings[] = {
   "Gate",		// 0
@@ -122,9 +123,7 @@ static void render_int(s32 val, region * pr, u8 x, u8 y, u8 inv) {
 
 // render 8-character hexadecimal
 static void render_hex(u32 val, region * pr, u8 x, u8 y, u8 inv) {
-  //  memset(numstrbuf, ' ', NUMSTRBUF_LEN);
   memset(hexstrbuf, ' ', HEXSTRBUF_LEN);
-  //  itoa_whole_lj(val, hexstrbuf);
   uint_to_hex_ascii(hexstrbuf, val);
   region_string_aa(pr, hexstrbuf, x, y, inv);
 }
@@ -149,10 +148,8 @@ void render_init(void) {
 
 
 // render to scrolling boot buffer
-void render_boot(const char* str) {
-  /// FIXME
-  render_status(str);
-
+void render_boot(char* str) {
+  scroll_string_front(&bootScroll, str);
 }
 
 
@@ -182,6 +179,12 @@ void render_update(void) {
   u8 i;
   app_pause();
 
+  // scrolling boot region
+  if(bootScroll.reg->dirty) {
+    scroll_draw(&bootScroll);
+  }
+
+  // standard regions
   for(i = 0; i<numRegions; i++) {
     r = allRegions[i]; 
     if(r->dirty) {
@@ -189,6 +192,7 @@ void render_update(void) {
       r->dirty = 0;
     }
   }
+  
   app_resume();
 }
 
@@ -198,6 +202,7 @@ void render_force_refresh(void) {
   for(i = 0; i<numRegions; i++) {
     (allRegions[i])->dirty = 1;
   }
+  scroll_draw(&bootScroll);
   render_update();
 }
 

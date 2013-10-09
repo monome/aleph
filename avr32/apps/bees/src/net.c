@@ -87,15 +87,8 @@ void net_init(void) {
   print_dbg_hex((u32)net);
 
   for(i=0; i<NET_OP_POOL_SIZE; i++) {
-    net->opPoolMem[i] = (u8)0;
+    net->opPoolMem[i] = 0x00;
   }
-
-  /* print_dbg("\r\n op registry: "); */
-  /* for(i=0; i<numOpClasses; i++) { */
-  /*   print_dbg("\r\n name: "); */
-  /*   print_dbg(op_registry[i].name); */
-  /*   print_ */
-  /* } */
 
   net->opPool = (void*)&(net->opPoolMem);
   net->opPoolOffset = 0;
@@ -141,19 +134,17 @@ void net_init_onode(u16 idx) {
 
 // activate an input node with a value
 void net_activate(s16 inIdx, const io_t val, void* op) {
-  print_dbg("\r\n net_activate, input idx: 0x");
-  print_dbg_hex(inIdx);
-  print_dbg(", val: 0x");
-  print_dbg_hex(val);
-  print_dbg(" , op idx: 0x");
-  print_dbg_hex(net->ins[inIdx].opIdx);
-  print_dbg(" , op in idx: 0x");
-  print_dbg_hex(net->ins[inIdx].opInIdx);
-  print_dbg(" , caller: 0x");
-  print_dbg_hex((u32)op);
-  
-  
-  
+  /* print_dbg("\r\n net_activate, input idx: 0x"); */
+  /* print_dbg_hex(inIdx); */
+  /* print_dbg(", val: 0x"); */
+  /* print_dbg_hex(val); */
+  /* print_dbg(" , op idx: 0x"); */
+  /* print_dbg_hex(net->ins[inIdx].opIdx); */
+  /* print_dbg(" , op in idx: 0x"); */
+  /* print_dbg_hex(net->ins[inIdx].opInIdx); */
+  /* print_dbg(" , caller: 0x"); */
+  /* print_dbg_hex((u32)op); */  
+    
   if(!netActive) {
     if(op != NULL) {
       // if the net isn't active, dont respond to requests from operators
@@ -166,15 +157,12 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
     play_input(inIdx);
 
     if(inIdx < net->numIns) {
-      //(*(net->ins[inIdx].in))(net->ops[net->ins[inIdx].opIdx], val);
       op_set_in_val(net->ops[net->ins[inIdx].opIdx],
 		    net->ins[inIdx].opInIdx,
 		    val);
     } else { 
       // index in dsp param list
       inIdx -= net->numIns;
-      //      print_dbg("\r\n param idx: 0x");
-      //      print_dbg_hex(inIdx);
       if (inIdx >= net->numParams) {
 	return ;
       } else {
@@ -251,12 +239,12 @@ s16 net_pop_op(void) {
   op_t* op = net->ops[net->numOps - 1];
   int i=0;
   int x=0;
-  print_dbg("\r\n deleting op, addr : 0x");
-  print_dbg_hex((u32)op);
-  print_dbg("; ins : ");
-  print_dbg_ulong(op->numInputs);
-  print_dbg("; outs : ");
-  print_dbg_ulong(op->numOutputs);
+  /* print_dbg("\r\n deleting op, addr : 0x"); */
+  /* print_dbg_hex((u32)op); */
+  /* print_dbg("; ins : "); */
+  /* print_dbg_ulong(op->numInputs); */
+  /* print_dbg("; outs : "); */
+  /* print_dbg_ulong(op->numOutputs); */
 
   // de-init
   op_deinit(net->ops[net->numOps - 1]); 
@@ -367,7 +355,7 @@ void net_remove_op(const u32 idx) {
   net->numIns -= nIns;
   net->numOuts -= nOuts;
   net->numOps -= 1;
-  //... and don't crash
+  //... and, uh, don't crash
 }
 
 
@@ -540,10 +528,6 @@ u32 net_gather(s32 iIdx, u32(*outs)[NET_OUTS_MAX]) {
 
 //--- get / set / increment input value
 io_t net_get_in_value(s32 inIdx) {
-  //  print_dbg("\r\n retreiving input val at idx: ");
-  //  print_dbg_hex(inIdx);
-  //  print_dbg(" , address: ");
-  //  print_dbg_hex( &(net->ins[inIdx]) );
   if(inIdx < 0) {
     return 0;
   }
@@ -551,13 +535,11 @@ io_t net_get_in_value(s32 inIdx) {
     inIdx -= net->numIns;
     return get_param_value(inIdx);
   } else {
-    //return (net->ins[inIdx].val);
     return op_get_in_val(net->ops[net->ins[inIdx].opIdx], net->ins[inIdx].opInIdx);
   }
 }
 
 void net_set_in_value(s32 inIdx, io_t val) {
-  //net->ins[inIdx].val = val;
   if (inIdx < 0) return;
   if (inIdx < net->numIns) {
     op_set_in_val(net->ops[net->ins[inIdx].opIdx], net->ins[inIdx].opInIdx, val);
@@ -618,26 +600,11 @@ u8 net_get_out_preset(u32 id) {
 
 // add a new parameter
 void net_add_param(u32 idx, volatile ParamDesc * pdesc) {
-  //net->params[net->numParams].desc = *pdesc;  
   memcpy( &(net->params[net->numParams].desc), (const void*)pdesc, sizeof(ParamDesc) );
-  /* print_dbg("\r\n added param: "); */
-  /* print_dbg_ulong(idx); */
-  /* print_dbg(" , addr: "); */
-  /* print_dbg_hex(  &(net->params[net->numParams]) ); */
-
-  /* print_dbg("\r\n src label: "); */
-  /* print_dbg( pdesc->label ); */
-  /* print_dbg("\r\n dst label: "); */
-  /* print_dbg( &(net->params[net->numParams].desc.label) ); */
-
   net->params[net->numParams].idx = idx; 
   net->params[net->numParams].preset = 1; 
-  net->params[net->numParams].data.value.asInt = pdesc->min; //fix16_from_float(pdesc->min);
-  //  net->params[net->numParams].data.value.asInt = 0;
+  net->params[net->numParams].data.value.asInt = pdesc->min;
   net->numParams++;
-
-  /* print_dbg("\r\n ctlnet: added parameter at index "); */
-  /* print_dbg_ulong(idx); */
 }
 
 // clear existing parameters
@@ -650,9 +617,6 @@ void net_send_params(void) {
   u32 i;
   for(i=0; i<net->numParams; i++) {
     ctl_param_change(i, net->params[i].data.value.asInt);
-    
-    /// TEST
-    //    delay_ms(1);
   }
 }
 

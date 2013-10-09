@@ -1,5 +1,6 @@
 #include "bfin_core.h"
 #include "dac.h"
+#include "gpio.h"
 
 // AD5686R 16-bit quad DAC
 
@@ -9,12 +10,37 @@
 
 //====================
 //=== global variables , initialized here
-volatile u32 cvTxBuf = 0;
+volatile u32 cvTxBuf = 0x00000000;
 
 //=============================
 // extern functions
+
+// intialize the dac
+void init_dac(void) {
+  //#if 0
+  u32 delay;
+  // bring the DAC out of reset
+  //  *pFIO_FLAG_D &= (0xffff ^ (1 << DAC_RESET_PIN));
+  DAC_RESET_LO;
+  delay = 100000;
+  while(delay > 0) { delay--; }
+  //  *pFIO_FLAG_D |= (1 << DAC_RESET_PIN);
+  DAC_RESET_HI;
+  //#endif
+}
+
+
+// update via DMA
 void dac_update(u8 ch, u16 val) {
   static u32 buf;
+  LED3_TOGGLE;
+  // wait for dma4 to become available?
+  /* while(*pDMA4_IRQ_STATUS & 0x0008) { */
+  /*   /// ok, this is always true.... why?? */
+  /*   //// would failure to reset the DAC account??? */
+  /*   LED4_HI; */
+  /* } */
+  LED4_LO;
   buf = 0;
   buf |= (DAC_COM_WRITE << DAC_COM_LSHIFT);
   buf |= ((1 << ch) << DAC_ADDR_LSHIFT);

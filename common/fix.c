@@ -3,9 +3,16 @@
  * aleph
  *
  * additional routines for converting/printing fixed-point datatypes
+ 
+ FIXME: the integer-conversion routines could use optimization.
+ specifically, avoid modulus and refactor to use half as many divides.
+
+here is a good blog post on the topic:
+
+http://embeddedgurus.com/stack-overflow/2011/02/efficient-c-tip-13-use-the-modulus-operator-with-caution/
+ 
  */
 
-//#include "print_funcs.h"
 #include "fix.h"
 
 //// comon temp variables
@@ -15,10 +22,13 @@ static unsigned long int sign;
 // fixme: shouldn't really need these
 static char bufHi[FIX_DIG_HI] = "     ";
 static char bufLo[FIX_DIG_LO] = "    ";
+
+// for fractional part of 16.16
 static const unsigned int places[FIX_DIG_LO] = {
   6553, 655, 65, 7
 };
 
+// print 16.16
 void print_fix16(char* buf , fix16_t x) {
   static char * p;
   // char sign;
@@ -162,12 +172,10 @@ int itoa_whole_lj(int val, char* buf) {
       //      print_dbg("\r\n digit: ");
       //      print_dbg_ulong(i);
       tmp = *(buf + i);
-
       //      print_dbg(" ; tmp: ");
       //      print_dbg_char(tmp);
       //      print_dbg(" , swap with : ");
       //      print_dbg_char( *(buf + len - i - 1) );
-
       *(buf + i) = *(buf + len - i - 1);
       *(buf + len - i - 1) = tmp;
     }

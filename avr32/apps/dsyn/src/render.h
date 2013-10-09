@@ -10,7 +10,7 @@ extern void render_update(void);
 extern void render_force_refresh(void);
 
 // render to scrolling boot buffer
-extern void render_boot(const char* str);
+extern void render_boot(char* str);
 
 // render text to statusbar
 extern void render_status(const char* str);

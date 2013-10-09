@@ -39,7 +39,7 @@ int main(void) {
   update_channel(upCh);
 
   LED3_UNSET;
-  LED4_UNSET;
+  LED4_SET;
   
   while(1) {
     ;;

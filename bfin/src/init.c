@@ -276,6 +276,7 @@ void init_DMA(void) {
   /// map dma4 to sport1 tx
   *pDMA4_PERIPHERAL_MAP = 0x4000;
   // configure DMA4
+  /// no interrupt on completion
   *pDMA4_CONFIG = WDSIZE_32 | FLOW_1;
   //*pDMA4_CONFIG = WDSIZE_32 | FLOW_1 | DI_EN;
   // Start address of data buffer
@@ -312,15 +313,17 @@ void enable_DMA_sport1(void) {
 // initialize programmable flags for button input
 void init_flags(void) {
   // inputs 
-  *pFIO_INEN = PF_IN;
+  //// no gpio input
+  //  *pFIO_INEN = PF_IN;
   // outputs
-  *pFIO_DIR = PF_DIR;
-  // edge-sensitive
-  *pFIO_EDGE = 0x0f00;
-  // both rise and fall
-  *pFIO_BOTH = 0x0f00;
-  // set interrupt mask
-  *pFIO_MASKA_D = 0x0f00;
+    *pFIO_DIR = PF_DIR;
+  //  *pFIO_DIR = (CODEC_RESET_UNMASK) | (DAC_RESET_UNMASK) | (BUSY_UNMASK) | (LED3_UNMASK) | (LED4_UNMASK);
+  /* // edge-sensitive */
+  /* *pFIO_EDGE = 0x0f00; */
+  /* // both rise and fall */
+  /* *pFIO_BOTH = 0x0f00; */
+  /* // set interrupt mask */
+  /* *pFIO_MASKA_D = 0x0f00; */
 }
 
 // assign interrupts

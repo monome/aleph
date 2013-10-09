@@ -4,6 +4,7 @@
 // aleph
 #include "bfin_core.h"
 #include "control.h"
+#include "dac.h"
 #include "gpio.h"
 #include "init.h"
 #include "module.h"
@@ -34,14 +35,18 @@ int main(void) {
   init_EBIU();
   // intialize the flash controller (which, weirdly, handles gpio)
   //  init_flash();
-  // initialize the codec (spi in master, blast config regs, disable spi)
 
+  // initialize the codec (spi in master, blast config regs, disable spi)
   init_1939();
+
+  /// initialize the CV dac (reset) 
+  /// this is HANGING SPI??? WWWWWTTTTTTFFFFFF
+  init_dac();
 
   // intialize the sport0 for audio rx/tx
   init_sport0();
   // intialize the sport1 for cv out
-  init_sport0();
+  init_sport1();
 
   // intialize DMA for audio
   init_DMA();
@@ -58,8 +63,8 @@ int main(void) {
   enable_DMA_sport1();  
 
   //// test: leds on
-  LED3_SET;
-  LED4_SET;
+  //  LED3_SET;
+  //  LED4_SET;
   
   while(1) {
     // fixme: everything happens in ISRs!

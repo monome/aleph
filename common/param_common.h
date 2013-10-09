@@ -24,10 +24,24 @@
 // max charactes in param unit
 #define PARAM_UNIT_LEN 8
 
-//-------- param types
+//---- param data types
 #define PARAM_TYPE_FIX 0
-#define PARAM_TYPE_FRACT 1
-#define PARAM_TYPE_UINT  2
+#define PARAM_TYPE_FRACT 0
+#define PARAM_TYPE_UINT  1
+
+
+///--- parameter use-types
+/// these diferentiate  the actual, numerical use case for the parameter.
+typedef enum {
+  // raw amplitude
+  eParamTypeAmp,
+  // time in samples
+  eParamTypeSamples,
+  // raw coefficient for 1pole lowpass
+  eParamType1plpCoeff,
+  // raw coefficient for SVF
+  eParamTypeSvfCoeff,
+} paramUseType;
 
 // 4-byte union of value representations
 typedef union __attribute__((__packed__)) {

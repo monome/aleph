@@ -96,10 +96,8 @@ extern void scroll_init(scroll* scr, region* reg) {
   region_fill(reg, 0x0);
 }
 
-/// set scroll position how? e.g., keep current text centered, at bottom, at top...
-
-// draw text to scroll
-extern void scroll_draw(scroll* scr, char* str) {
+// render text to front of scroll
+extern void scroll_string_front(scroll* scr, char* str) {
   /// clear current line
   region_fill_part(scr->reg, 0x0, scr->byteOff, scr->lineBytes);
   // draw text to region at current offset, using system font
@@ -108,6 +106,7 @@ extern void scroll_draw(scroll* scr, char* str) {
   // advance offset by count of pixels in row
   scr->byteOff += scr->lineBytes;
   scr->yOff += FONT_CHARH;
+  // wrap
   if(scr->yOff >= scr->reg->h) {
     scr->yOff = 0;
   }
@@ -119,9 +118,32 @@ extern void scroll_draw(scroll* scr, char* str) {
   scr->reg->dirty = 1;
 }
 
-// render scroll to screen
-extern void scroll_render(scroll* scr) {
-  screen_draw_region_offset(0, 0, scr->reg->w, scr->reg->h, scr->reg->len,  
+// render text to back of scroll
+extern void scroll_string_back(scroll* scr, char* str) {
+  // temp because we are going to move the offset backwards
+  s32 byteoff;
+  s8 yoff;
+  /// first, decrement the offsets...
+  byteoff = scr->byteOff = scr->lineBytes;
+  if(byteoff < 0) { byteoff += scr->reg->len; }
+  scr->byteOff = byteoff;
+
+  yoff = scr->yOff - FONT_CHARH;
+  if (yoff < 0) { yoff += scr->reg->h; }
+  scr->yOff = yoff;
+
+  // draw text to region at current offset, using system font
+  region_string(scr->reg, str,
+		0, scr->yOff, 0xf, 0, 0);
+  //// render happens separately,
+  //  so we can e.g. trigger from timer based on dirty flag
+  scr->reg->dirty = 1;
+}
+
+
+// draw scroll to screen
+extern void scroll_draw(scroll* scr) {
+  screen_draw_region_offset(0, 0, scr->reg->w, scr->reg->h, scr->reg->len, 
 			    scr->reg->data, scr->byteOff + scr->drawSpace);
   scr->reg->dirty = 0;
 }
