@@ -35,7 +35,7 @@
 typedef enum {
   // raw amplitude
   eParamTypeAmp,
-  // count of samples
+  // time in samples
   eParamTypeSamples,
   // raw coefficient for 1pole lowpass
   eParamType1plpCoeff,

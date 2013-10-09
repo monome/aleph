@@ -126,12 +126,14 @@ s32 scale_knob_value(s32 val) {
     0x1FFFFFFD,
   };
 
+  if(val == 0) { return 0; }
+
   s32 vabs = BIT_ABS(val);
   s32 ret = val;
    if(vabs > kNumKnobScales_1) {
      vabs = kNumKnobScales_1;
    }
-   ret = knobScale[vabs];
+   ret = knobScale[vabs - 1];
    if(val < 0) {
      ret = BIT_NEG_ABS(ret);
    }

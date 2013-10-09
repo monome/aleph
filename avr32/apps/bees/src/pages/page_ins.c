@@ -3,22 +3,25 @@
  */
 
 // std
-#include <string.h>
+// #include <string.h>
+// #include <stdio.h>
+
+// common
+#include "fix.h"
 
 // avr32
 #include "region.h"
 
 // bees
+#include "handler.h"
 #include "menu_protected.h"
 #include "pages.h"
 #include "render.h"
 
 //-------------------------
 //---- static variables
+
 static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
-static region headRegion = { .w = 128, .h = 8, .x = 0, .y = 0 };
-static region footRegion = { .w = 128, .h = 8, .x = 0, .y = 120 };
-static region centerRegion = {  .w = 128, .h = 8, .x = 0, .y = 16 };
 
 // alt-mode flag (momentary)
 static u8 altMode = 0;
@@ -30,11 +33,6 @@ static u8 inPreset = 0;
 static u8 inPlay = 0;
 // in-clear-confirm state
 static u8 clearConfirm = 0;
-
-// string buffer for new content
-static const u32 strbuflen = 64;
-static char strbuf[64];
-
 
 //-------------------------
 //---- static declarations
@@ -50,31 +48,45 @@ static void handle_key_2(s32 val);
 static void handle_key_3(s32 val);
 
 
-// fill string buffer with new content
+// fill tmp region with new content
 // given input index
-static void print_content(s16 idx) {
-  const s32 opIdx = net_in_op_idx(idx);
-  char* p = strbuf;
-  memcpy(strbuf, '\0', strbuflen);
+static void render_line(s16 idx) {
+  const s16 opIdx = net_in_op_idx(idx);
+  region_fill(tmpRegion, 0x0);
   if(opIdx >= 0) {
     // operator input
-    // print:
-    // index
-    // op name
-    // input name
-    // value
+    // build descriptor string
+    println_int(opIdx, 0);
+    appendln_char(':');
+    println( net_op_name(opIdx), 0 );
+    appendln_char('/');
+    appendln( net_in_name(idx) );
+    endln();
+    region_string(tmpRegion, get_line_buf(), 0, 0, 0xf, 0, 0);
+    clearln();
+    print_fix16(get_line_buf(), net_get_in_value(idx));
+    region_string(tmpRegion, get_line_buf(), 80, 0, 0xf, 0, 0);
   } else {
-    // parameter input
-    strcat(); 
+    // parameter input    
+    println_int( (int)net_param_idx(idx), 0); endln();
+    println( net_in_name(idx), 0); endln();
+    region_string(tmpRegion, get_line_buf(), 0, 0, 0xf, 0, 0);
+    clearln();
+    print_fix16(get_line_buf(), net_get_in_value(idx));
+    region_string(tmpRegion, get_line_buf(), 0, 0, 0xf, 0, 0);
   }
 }
 
 // edit the current seleciton
 static void select_edit(s32 inc) {
-  //  s16 idx;
-  // write to center of scroll buffer, no highlight
+  // increment input value
+  net_inc_in_value(curPage->select, inc);
+  // render to tmp buffer
+  render_line(curPage->select);
+  // copy to scroll with clipping
+  // 
+  // copy to selection with highlight
   
-  // copy to center region with highlight
 }
 
 // scroll the current selection
@@ -86,55 +98,53 @@ static void select_scroll(s8 dir) {
   if(dir < 0) {
     // new content is (selection - center row) 
     newIdx = pages[ePageIns].select + SCROLL_LINES_ABOVE_1;
-    // draw new content to top
+    // render new content
+    render_line(newIdx);
+    // copy to bottom of scroll
+    //...
   } else {
     // new content is )(selection + (num rows - center row))
     newIdx = pages[ePageIns].select + SCROLL_LINES_ABOVE_1;
-    // draw new content to bottom
+    // render new content
+    render_line(newIdx);
+    // copy to bottom of scroll
+    //....
   }
-  // copy new center to center region, mark center region dirty
-}
-
-// draw scrolling region
-// (presumably just changed selection)
-static void scroll_refresh(void) {
-  // write old selection-buffer to center of scrollbuf, no highlight
-  // change scroll
-  // update selection-buffer
-  // write new selection buffer to center, with highlight
-  // mark scroll region as dirty
+  // copy new center region
+  //...
 }
 
 // display the function key labels according to current state
 static void show_foot(void) {
+  region_fill(footRegion, 0x0);
   if(clearConfirm) {
-    region_string(&footRegion, "-   ", 0, 0, 0xf, 0x1, 0);
-    region_string(&footRegion, "-   ", 32, 0, 0xf, 0x1, 0);
-    region_string(&footRegion, "-   ", 64, 0, 0xf, 0x1, 0);
-    region_string(&footRegion, "OK! ", 96, 0, 0xf, 0x1, 0);
+    region_string(footRegion, "-   ", 0, 0, 0xf, 0x1, 0);
+    region_string(footRegion, "-   ", 32, 0, 0xf, 0x1, 0);
+    region_string(footRegion, "-   ", 64, 0, 0xf, 0x1, 0);
+    region_string(footRegion, "OK! ", 96, 0, 0xf, 0x1, 0);
   } else {
     if(altMode) {
-      region_string(&footRegion, "GATHR", 0, 0, 0xf, 0x1, 0);
+      region_string(footRegion, "GATHR", 0, 0, 0xf, 0x1, 0);
       if(inPlay) {
-	region_string(&footRegion, "HIDE", 32, 0, 0xf, 0x1, 0);
+	region_string(footRegion, "HIDE", 32, 0, 0xf, 0x1, 0);
       } else {
-	region_string(&footRegion, "SHOW", 32, 0, 0xf, 0x1, 0);
+	region_string(footRegion, "SHOW", 32, 0, 0xf, 0x1, 0);
       }
       if(playFilter) {
-	region_string(&footRegion, "ALL", 64, 0, 0xf, 0x1, 0);
+	region_string(footRegion, "ALL", 64, 0, 0xf, 0x1, 0);
       } else {
-	region_string(&footRegion, "FILT", 64, 0, 0xf, 0x1, 0);
+	region_string(footRegion, "FILT", 64, 0, 0xf, 0x1, 0);
       }
-      region_string(&footRegion, "ALT", 96, 0, 0xf, 0x5, 0);
+      region_string(footRegion, "ALT", 96, 0, 0xf, 0x5, 0);
     } else {
-      region_string(&footRegion, "STORE", 0, 0, 0xf, 0x1, 0);
+      region_string(footRegion, "STORE", 0, 0, 0xf, 0x1, 0);
       if(inPreset) {
-	region_string(&footRegion, "EXC", 32, 0, 0xf, 0x1, 0);
+	region_string(footRegion, "EXC", 32, 0, 0xf, 0x1, 0);
       } else {
-	region_string(&footRegion, "INC", 32, 0, 0xf, 0x1, 0);
+	region_string(footRegion, "INC", 32, 0, 0xf, 0x1, 0);
       }
-      region_string(&footRegion, "CLEAR", 64, 0, 0xf, 0x1, 0);
-      region_string(&footRegion, "ALT", 96, 0, 0xf, 0x1, 0x0);
+      region_string(footRegion, "CLEAR", 64, 0, 0xf, 0x1, 0);
+      region_string(footRegion, "ALT", 96, 0, 0xf, 0x1, 0x0);
     }
   }
 }
@@ -150,29 +160,18 @@ static void set_alt(u8 val) {
 void init_page_ins(void) {
   // allocate regions
   region_alloc(&scrollRegion);
-  region_alloc(&headRegion);
-  region_alloc(&footRegion);
-  region_alloc(&centerRegion);
   // fill regions
   region_fill(&scrollRegion, 0x0);
-  region_fill(&headRegion, 0x0);
-  region_fill(&footRegion, 0x0);
-  // initial strings
-  region_string(&headRegion, "INPUTS", 0, 0, 0xf, 0x1, 0);
-  region_string(&footRegion, "STORE", 0, 0, 0xf, 0x1, 0);
-  region_string(&footRegion, "INC", 0, 0, 0xf, 0x1, 0);
-  region_string(&footRegion, "CLEAR", 0, 0, 0xf, 0x1, 0);
-  region_string(&footRegion, "ALT", 0, 0, 0xf, 0x1, 0);
 }
 
 // refresh
 // called when this page is selected
 void refresh_ins(void) { 
-  // assign global region pointers to this page's regions
-  // this also marks them dirty
+  // assign global scroll region pointer
+  // also marks dirty
   render_set_scroll_region(&scrollRegion);
-  render_set_head_region(&headRegion);
-  render_set_foot_region(&footRegion);
+  region_fill(headRegion, 0x0);
+  region_string(headRegion, "INPUTS", 0, 0, 0xf, 0x1, 0);
 }
 
 const page_handler_t handler_ins[eNumPageHandlers] = {
@@ -222,6 +221,7 @@ void handle_key_3(s32 val) {
 
 void handle_enc_0(s32 val) {
   // change parameter value, slow
+  select_edit(scale_knob_value(val));
 }
 
 void handle_enc_1(s32 val) {
@@ -229,9 +229,10 @@ void handle_enc_1(s32 val) {
 }
 
 void handle_enc_2(s32 val) {
-  ;;  // not used
+  // scroll page
 }
 
 void handle_enc_3(s32 val) {
-  ;; // not used
+  // scroll selection
+  select_scroll(val);
 }

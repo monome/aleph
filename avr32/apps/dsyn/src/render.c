@@ -25,6 +25,7 @@ static char numstrbuf[NUMSTRBUF_LEN];
 static char hexstrbuf[HEXSTRBUF_LEN] = "12345678";
 
 
+
 // FIXME: retarded to have this here
 static const char* paramStrings[] = {
   "Gate",		// 0
@@ -122,9 +123,7 @@ static void render_int(s32 val, region * pr, u8 x, u8 y, u8 inv) {
 
 // render 8-character hexadecimal
 static void render_hex(u32 val, region * pr, u8 x, u8 y, u8 inv) {
-  //  memset(numstrbuf, ' ', NUMSTRBUF_LEN);
   memset(hexstrbuf, ' ', HEXSTRBUF_LEN);
-  //  itoa_whole_lj(val, hexstrbuf);
   uint_to_hex_ascii(hexstrbuf, val);
   region_string_aa(pr, hexstrbuf, x, y, inv);
 }
@@ -150,10 +149,7 @@ void render_init(void) {
 
 // render to scrolling boot buffer
 void render_boot(char* str) {
-  /// FIXME
-  //  render_status(str);
-  scroll_string(&bootScroll, str);
-
+  scroll_string_front(&bootScroll, str);
 }
 
 
