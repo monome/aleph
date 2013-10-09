@@ -18,8 +18,8 @@ u8 upCh = 0;
 
 //===============================
 //==== static variables
-static const u32 chanIncMul = 8;
-static const u32 incOff = 4;
+static const u32 chanIncMul = 1;
+static const u32 incOff = 1;
 
 static u16 dacData[4] = { 0, 0, 0, 0 };
 //static u16 dacData[4] = { 0xcccc, 0xdddd, 0xeeee, 0xffff };
@@ -112,7 +112,7 @@ void timer0_isr() {
 
 void sport1_tx_isr() {
   //  u32 stat;
-  *pDMA4_IRQ_STATUS = 0x0001;
+  //  *pDMA4_IRQ_STATUS = 0x0001;
   //  stat = *pSPORT1_STAT ;
 }
 

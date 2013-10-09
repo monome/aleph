@@ -69,14 +69,15 @@ void render_init(void) {
   region_alloc((region*)(&selectRegion));
   region_alloc((region*)(&tmpRegion));
   // init each page for rendering
-  init_page_ins();
-  init_page_outs();
-  init_page_presets();
-  init_page_ops();
-  init_page_scenes();
-  init_page_dsp();
-  init_page_gathered();
-  init_page_play();
+  // doing this in menu.c
+  /* init_page_ins(); */
+  /* init_page_outs(); */
+  /* init_page_presets(); */
+  /* init_page_ops(); */
+  /* init_page_scenes(); */
+  /* init_page_dsp(); */
+  /* init_page_gathered(); */
+  /* init_page_play(); */
 }
 
 // update

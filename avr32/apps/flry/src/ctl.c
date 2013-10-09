@@ -87,6 +87,7 @@ u8 ctl_report_params(void) {
   u8 i;
  
   bfin_get_num_params(&numParams);
+
   print_dbg("\r\nnumparams: ");
   print_dbg_ulong(numParams);
 

@@ -128,6 +128,7 @@ void init_dma(void) {
   /// map dma4 to sport1 tx
   *pDMA4_PERIPHERAL_MAP = 0x4000;
   // configure DMA4
+  /// no interrupt...
   *pDMA4_CONFIG = WDSIZE_32 | FLOW_1;
   //*pDMA4_CONFIG = WDSIZE_32 | FLOW_1 | DI_EN;
   // Start address of data buffer
@@ -152,7 +153,7 @@ void init_timers(void) {
   *pTIMER0_CONFIG		= 0x0019;
   //  *pTIMER0_PERIOD		= 0x00080000;
   //  *pTIMER0_WIDTH		= 0x00040000;
-  *pTIMER0_PERIOD		= 0x00001000;
-  *pTIMER0_WIDTH		= 0x00000800;
+  *pTIMER0_PERIOD		= 0x00000020;
+  *pTIMER0_WIDTH		= 0x00000010;
   *pTIMER_ENABLE		= 0x0001;
 }

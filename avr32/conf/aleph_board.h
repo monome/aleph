@@ -133,6 +133,7 @@
 // bfin
 #define BFIN_HWAIT_PIN    AVR32_PIN_PA05
 #define BFIN_RESET_PIN    AVR32_PIN_PA06
+#defibe BGIN_BUSY_PIN
 
 // encoders
 #define ENC0_S0_PIN		AVR32_PIN_PB02

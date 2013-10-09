@@ -25,9 +25,9 @@
 #define PARAM_UNIT_LEN 8
 
 //---- param data types
-// #define PARAM_TYPE_FIX 0
-// #define PARAM_TYPE_FRACT 0
-// #define PARAM_TYPE_UINT  1
+#define PARAM_TYPE_FIX 0
+#define PARAM_TYPE_FRACT 0
+#define PARAM_TYPE_UINT  1
 
 
 ///--- parameter use-types

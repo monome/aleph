@@ -43,9 +43,8 @@ void app_init(void) {
   scene_init();
   print_dbg("\r\n scene_init");
 
-  /// FIXME: this is arbitrarily but sensitively located in main.c right now...
   files_init();
-  //  print_dbg("\r\n files_init");
+  print_dbg("\r\n files_init");
 
   menu_init();
   print_dbg("\r\n menu_init");

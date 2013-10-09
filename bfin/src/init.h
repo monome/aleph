@@ -1,28 +1,31 @@
 #ifndef _ALEPH_BFIN_INIT_H_
 #define _ALEPH_BFIN_INIT_H_
 
+#include "gpio.h"
 //----------- defines
 
 
 ////---- gpio
 // no gpio inputs:
-#define PF_IN 0
-#define PF_EDGE 0
-// both rise and fall
-#define PF_BOTH 0
-// set interrupt mask
-#define PF_IMASK  0
+/* #define PF_IN 0 */
+/* #define PF_EDGE 0 */
+/* // both rise and fall */
+/* #define PF_BOTH 0 */
+/* // set interrupt mask */
+/* #define PF_IMASK  0 */
 //// OUTPUTS:
 // led3, led4 : pf14,15 
 // codec reset : pf1
 // busy pin (shared with HWAIT) : pf2
 //#define PF_DIR           0xc002 
-#define PF_DIR           0xc003
-#define CODEC_RESET_MASK 0xfffd 
-#define CODEC_SS_MASK    0xffdf
+//#define PF_DIR           0xc003
+#define PF_DIR (CODEC_RESET_UNMASK) | (DAC_RESET_UNMASK) | (BUSY_UNMASK) | (LED3_UNMASK) | (LED4_UNMASK)
+//#define CODEC_RESET_MASK 0xfffd 
+//#define CODEC_SS_MASK    0xffdf
 
 // command byte for setting codec regs (4 << 1 | 1)
 #define CODEC_CMD_BYTE 0x9
+
 // control registers for AD1939
 #define PLL_CLOCK_0         0
 #define PLL_CLOCK_1         1

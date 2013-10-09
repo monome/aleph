@@ -107,7 +107,7 @@ static void select_scroll(s8 dir) {
     newIdx = pages[ePageIns].select + SCROLL_LINES_ABOVE_1;
     // render new content
     render_line(newIdx);
-    // copy to bottom of scroll
+    // copy to bottom of scrollx
     //....
   }
   // copy new center region

@@ -23,6 +23,7 @@ volatile u8 processAudio = 0;
 
 // sport0 receive interrupt (audio input from codec)
 void sport0_rx_isr() {
+  //  static u32 dma4count = 0;
 
   // tick the control rate
   //  ctl_next_frame();
@@ -31,14 +32,24 @@ void sport0_rx_isr() {
   
   /// if this interrupt came from DMA1, clear it and continue(W1C)
   if(*pDMA1_IRQ_STATUS & 1) { *pDMA1_IRQ_STATUS = 0x0001; }
+  
   // and if it came from DMA4, clear that and return
-  if(*pDMA4_IRQ_STATUS & 1) { *pDMA4_IRQ_STATUS = 0x0001; return; }
+  //// not enabling DMA4 interrupt...
+  /* if(*pDMA4_IRQ_STATUS & 1) {  */
+  /*   *pDMA4_IRQ_STATUS = 0x0001;  */
+  /*   //    ++dma4count; */
+  /*   //    if(dma4count == 10000) { */
+  /*         LED4_TOGGLE; */
+  /*     //    } */
+  /*   //    LED3_SET; */
+  /*   return;  */
+  /* } */
 
   if(!processAudio) { return; }
 
   /// inform the world that we're busy processing an audio frame
-  BUSY_SET;
-  LED3_UNSET;
+  //  BUSY_HI;
+  //  LED3_UNSET;
   
 
   // copy input data from dma input buffer 
@@ -71,8 +82,10 @@ void sport0_rx_isr() {
   /* iTxBuf[2] = iRxBuf[2]; */
   /* iTxBuf[3] = iRxBuf[3]; */
 
-  BUSY_UNSET;
-  LED3_SET;
+  //  BUSY_LO;
+
+
+  //  LED3_SET;
 }
 
 // ISR on sport1 tx completion
@@ -86,7 +99,7 @@ void sport1_tx_isr() {
 
 // spi receive interrupt (from avr32)
 void spi_rx_isr() {
-  BUSY_SET;
+  //  BUSY_HI;
   *pSPI_TDBR = spi_process(*pSPI_RDBR);
-  BUSY_UNSET;
+  //  BUSY_LO;
 }
