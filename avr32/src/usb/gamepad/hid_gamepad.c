@@ -15,16 +15,13 @@
 static u8 frame[HID_FRAME_MAX_BYTES];
 static event_t ev;
 
-/* typedef union { s32 s; u8 b[4] } hidEventData; */
-/* static hidEventData evData; */
-
 // parse frame and spawn events
-  /// FIXME: there should be a better way to do this.
-  /// perhaps the event is triggered if any of the bytes change,
-  /// and the 
-
 void hid_gamepad_parse_frame(u8* data, u8 size) {
   u8 i;
+
+
+  // FIXME: one event per byte changed, pass byte idx and value as event data.
+  // maybe this is not really too bad since most HID controls are only one byte.
   for(i=0; i<size; i++) {
     if(data[i] != frame[i]) {
       frame[i] = data[i];
@@ -36,5 +33,8 @@ void hid_gamepad_parse_frame(u8* data, u8 size) {
   }
 }
 
-#include "uhc.h"
+/* const volatile u8 * hid_get_frame(void) { */
+/*   return frame; */
+/* } */
 
+#include "uhc.h"

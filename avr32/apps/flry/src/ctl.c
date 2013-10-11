@@ -133,6 +133,11 @@ void ctl_init_params(void) {
   ctl_param_change(eParam_dac1, 0);
   ctl_param_change(eParam_dac2, 0);
   ctl_param_change(eParam_dac3, 0);
+  /// slew at ???
+  ctl_param_change(eParam_slew0, 0x7f000000);
+  ctl_param_change(eParam_slew1, 0x7f000000);
+  ctl_param_change(eParam_slew2, 0x7f000000);
+  ctl_param_change(eParam_slew3, 0x7f000000);
 
 }
 

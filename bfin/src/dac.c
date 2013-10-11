@@ -32,15 +32,7 @@ void init_dac(void) {
 
 // update via DMA
 void dac_update(u8 ch, u16 val) {
-  static u32 buf;
-  LED3_TOGGLE;
-  // wait for dma4 to become available?
-  /* while(*pDMA4_IRQ_STATUS & 0x0008) { */
-  /*   /// ok, this is always true.... why?? */
-  /*   //// would failure to reset the DAC account??? */
-  /*   LED4_HI; */
-  /* } */
-  LED4_LO;
+  u32 buf;
   buf = 0;
   buf |= (DAC_COM_WRITE << DAC_COM_LSHIFT);
   buf |= ((1 << ch) << DAC_ADDR_LSHIFT);

@@ -24,8 +24,6 @@
 static char numstrbuf[NUMSTRBUF_LEN];
 static char hexstrbuf[HEXSTRBUF_LEN] = "12345678";
 
-
-
 // FIXME: retarded to have this here
 static const char* paramStrings[] = {
   "Gate",		// 0
@@ -57,11 +55,10 @@ static const char* paramStrings[] = {
   "SvfPre",	// 26
   "FreqEnv",	// 27
   "RqEnv",		// 28
-};
-
+}
 
 ///// declare screen-drawing regions.
-//// len, dirty, and data can be left unitialized aand calculated / allocated in region_init.
+//// len, dirty, and data can be left unitialized and calculated / allocated in region_init.
 // 1 large region filling the screen
 static region bigtop = { .w = 128, .h = 56, .x = 0, .y = 0, };
 
