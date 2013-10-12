@@ -139,7 +139,7 @@ void render_sw_on(u8 sw, u8 on) {
 }
 
 void render_dac(u8 ch, s32 val) {
-  /// FIXME: hella stupid to call a big fill from a frequently-triggered handler
+
   region_fill(&bigtop, 0x0);
   strcpy(numstrbuf, "    ");
   itoa_whole_lj(ch, numstrbuf);

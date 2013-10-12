@@ -217,7 +217,16 @@ void init_sport1(void) {
 
   // clock division: we want ~10Mhz, core clock is 108Mhz
   // tclk = sclk / ( 2 x (div + 1)
-  *pSPORT1_TCLKDIV = 5;
+  //  *pSPORT1_TCLKDIV = 5;
+  /// DAC datasheet indicates we can go up to 50Mhz
+  // here's 27 Mhz?
+  /// this works fine in the triangle test
+  *pSPORT1_TCLKDIV = 1;
+
+  // ???
+  //  *pSPORT1_TCLKDIV = 2;
+  //  *pSPORT1_TCLKDIV = 10;
+
   //// slower:
   //  *pSPORT1_TCLKDIV = 100;
   //// slowest:

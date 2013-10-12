@@ -82,13 +82,23 @@ u32 module_get_num_params(void) {
 }
 
 
+static u8 dacDirty[4] = { 0, 0, 0, 0};
+
 void module_process_frame(void) { 
   u8 i;
+
+  
   for(i=0; i<4; ++i) {
-    if(dacSlew[i].sync) { continue; }
-    dacVal[i] = filter_1p_lo_next(&(dacSlew[i]));
-    dac_update(i, dacVal[i] & 0xffff);
+    //    if(dacSlew[i].sync) { continue; }
+    //    dacVal[i] = filter_1p_lo_next(&(dacSlew[i]));
+    dac_update(i, dacVal[i] & DAC_VALUE_MASK);
+
+    if(dacDirty[i]) {
+      dac_update(i, dacVal[i] & DAC_VALUE_MASK);
+      dacDirty[i] = 0;
+    }
   }
+  
 }
 
 // parameter set function
@@ -97,19 +107,27 @@ void module_set_param(u32 idx, pval v) {
   switch(idx) {
     // dac values
   case eParam_dac0 :
-        filter_1p_lo_in(&(dacSlew[0]), v.fr);
+    //     filter_1p_lo_in(&(dacSlew[0]), v.fr);
+    dacVal[0] = v.u & DAC_VALUE_MASK;
+    dacDirty[0] = 1;
     //    dac_update(0, v.fr & 0xffff);
     break;
   case eParam_dac1 :
-    filter_1p_lo_in(&(dacSlew[1]), v.fr);
+    //    filter_1p_lo_in(&(dacSlew[1]), v.fr);
+    dacVal[1] = v.u & DAC_VALUE_MASK;
+    dacDirty[0] = 1;
     //    dac_update(1, v.fr & 0xffff);
     break;
   case eParam_dac2 :
-    filter_1p_lo_in(&(dacSlew[2]), v.fr);
+    //    filter_1p_lo_in(&(dacSlew[2]), v.fr);
+    dacVal[2] = v.u & DAC_VALUE_MASK;
+    dacDirty[0] = 1;
     //    dac_update(2, v.fr & 0xffff);
     break;
   case eParam_dac3 :
-    filter_1p_lo_in(&(dacSlew[3]), v.fr);
+    //    filter_1p_lo_in(&(dacSlew[3]), v.fr);
+    dacVal[3] = v.u & DAC_VALUE_MASK;
+    dacDirty[0] = 1;
     //    dac_update(3, v.fr & 0xffff);
     break;
   case eParam_slew0 :

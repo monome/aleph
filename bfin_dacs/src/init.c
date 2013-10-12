@@ -67,7 +67,9 @@ void init_sport1(void) {
 
   // clock division: we want ~10Mhz, core clock is 108Mhz
   // tclk = sclk / ( 2 x (div + 1)
-    *pSPORT1_TCLKDIV = 5;
+    //    *pSPORT1_TCLKDIV = 5;
+    /// part should be capable of 50 Mhz...
+    *pSPORT1_TCLKDIV = 1;
     //// slower:
     //  *pSPORT1_TCLKDIV = 100;
   //// slowest:

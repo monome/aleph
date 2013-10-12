@@ -199,22 +199,11 @@ static void check_events(void) {
 
       case kEventSwitchDown3:
 	//	menu_handleKey(eKeyFnDownD, e.eventData);
-	/////////////
-	/* print_dbg("\r\n jumping to runtime location "); */
-	/* asm volatile ( */
-	/* 	  " mov   r0,LO(0x80010000)\n\t" */
-	/* 	  " orh   r0,HI(0x80010000)\n\t" */
-	/* 	  " mov   pc,r0" */
-	/* 	  ); */
-
-	/* ///////////// */
 	break;
 
       case kEventSwitchUp3:
 	//	menu_handleKey(eKeyFnUpD, e.eventData);
 	break;
-
-
 	/// footswitches
       /* case kEventSwitchDown6: */
       /* 	print_dbg("\r\n footswitch1 down"); */
@@ -311,10 +300,8 @@ int main (void) {
   u32 waitForCard = 0;
   u8 isFirstRun = 0;
   u8 isSwDown = 0;
-
-
   
-  /// check hardware and jump out
+  /// check pin and jump out
   gpio_enable_pin_pull_up(SW3_PIN);
 
   isSwDown = gpio_get_pin_value(SW3_PIN);

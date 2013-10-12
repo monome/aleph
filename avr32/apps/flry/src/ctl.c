@@ -134,6 +134,7 @@ void ctl_init_params(void) {
   ctl_param_change(eParam_dac2, 0);
   ctl_param_change(eParam_dac3, 0);
   /// slew at ???
+  //// work on inputs standardization
   ctl_param_change(eParam_slew0, 0x7fff0000);
   ctl_param_change(eParam_slew1, 0x7fff0000);
   ctl_param_change(eParam_slew2, 0x7fff0000);
@@ -181,27 +182,24 @@ void ctl_but(u8 i, u8 val) {
   //  u32 v;
   inv[i] = val;
   send_dac(i);
-  //  if(val) {
-  //    v = 0xffff - dac[i][0];
-  //    ctl_param_change(eParam_dac0 + ch, v);
-  //    render_dac(ch, v);
-  //  }
 }
 
 // joystick axis: change value and send
 void ctl_joy(u8 ch, u8 val) {
-  //  u32 v;
+  //    u32 v;
 
-  s32 sv = (s32)val;
+  s32 sv = (s32)val - 128;
 
   print_dbg("\r\n ");
   print_dbg("\r\n handling joy event 0x");
-  print_dbg_hex(sv);
+  print_dbg_hex(val);
 
-  dac[ch][0] += val;
+  //// blech
+  dac[ch][0] += sv;
+  
+  //  dac[ch][0] = val << 8;
   send_dac(ch);
-  //  v = 0xffff - (dac[i][0] << 8);
+
 }
 
-// button in
 // trigger in
