@@ -196,3 +196,49 @@ void draw_edit_string(u8 x, u8 y, char* str, u8 len) {
    }
    return ret;
 }
+
+
+// copy temp data to selection (adding highlight)
+void render_to_select(void) {
+  u8* psrc;
+  u8* pdst;
+  u32 i;
+  psrc = tmpRegion->data;
+  pdst = selectRegion->data;
+  for(i=SCROLL_BYTES_PER_LINE; i>0; --i) {
+    *pdst = *psrc | COLOR_HL;
+    ++psrc;
+    ++pdst;
+  } 
+  selectRegion->dirty = 1;
+}
+
+// copy temp data to center of scroll region (clipping)
+void render_to_scroll_center(void) {
+  u8* psrc;
+  u8* pdst;
+  u32 i;
+  psrc = tmpRegion->data;
+  pdst = centerScroll.reg->data + centerScroll.byteOff + SCROLL_CENTER_BYTE_OFFSET;
+  for(i=SCROLL_BYTES_PER_LINE; i>0; --i) {
+    *pdst = *psrc & COLOR_UNSELECT;
+    ++psrc;
+    ++pdst;
+  } 
+  centerScroll.reg->dirty = 1;
+}
+
+// add data to top of scroll region (clipping)
+void render_to_scroll_top(void) {
+  u8* psrc;
+  u8* pdst;
+  u32 i;
+  psrc = tmpRegion->data;
+  for(i=SCROLL_BYTES_PER_LINE; i>0; --i) {
+    *pdst = *psrc & COLOR_UNSELECT;
+    ++psrc;
+    ++pdst;
+  } 
+  centerScroll.reg->dirty = 1;
+}
+

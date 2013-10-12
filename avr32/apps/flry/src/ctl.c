@@ -92,7 +92,7 @@ u8 ctl_report_params(void) {
   print_dbg_ulong(numParams);
 
   if(numParams == 255) {
-    print_dbg("\r\n report_params fail (too many)");
+    print_dbg("\r\n report_params fail (255)");
     return 0;
   }
 
@@ -104,7 +104,7 @@ u8 ctl_report_params(void) {
       print_dbg((const char* )pdesc.label);
     }
   } else {
-    print_dbg("\r\n report_params fail (none)");
+    print_dbg("\r\n report_params fail (0)");
     return 0;
   }
   
@@ -134,10 +134,10 @@ void ctl_init_params(void) {
   ctl_param_change(eParam_dac2, 0);
   ctl_param_change(eParam_dac3, 0);
   /// slew at ???
-  ctl_param_change(eParam_slew0, 0x7f000000);
-  ctl_param_change(eParam_slew1, 0x7f000000);
-  ctl_param_change(eParam_slew2, 0x7f000000);
-  ctl_param_change(eParam_slew3, 0x7f000000);
+  ctl_param_change(eParam_slew0, 0x7fff0000);
+  ctl_param_change(eParam_slew1, 0x7fff0000);
+  ctl_param_change(eParam_slew2, 0x7fff0000);
+  ctl_param_change(eParam_slew3, 0x7fff0000);
 
 }
 
@@ -148,12 +148,10 @@ void  ctl_set_value(u8 ch, u16 val) {
   // param enum hack...
   dac[ch][0] = val;
   send_dac(ch);
-
   /* print_dbg("\r\n set dac, channel : "); */
   /* print_dbg_ulong(ch); */
   /* print_dbg(", value : 0x"); */
   /* print_dbg_hex(val); */
-  
 }
 
 // increment dac value
@@ -193,8 +191,14 @@ void ctl_but(u8 i, u8 val) {
 // joystick axis: change value and send
 void ctl_joy(u8 ch, u8 val) {
   //  u32 v;
-  // hack: lshift from u8 (joystick) to u16(dac)
-  dac[ch][0] = val << 8;
+
+  s32 sv = (s32)val;
+
+  print_dbg("\r\n ");
+  print_dbg("\r\n handling joy event 0x");
+  print_dbg_hex(sv);
+
+  dac[ch][0] += val;
   send_dac(ch);
   //  v = 0xffff - (dac[i][0] << 8);
 }

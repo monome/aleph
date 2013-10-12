@@ -84,9 +84,9 @@ static void select_edit(s32 inc) {
   // render to tmp buffer
   render_line(curPage->select);
   // copy to scroll with clipping
-  // 
+  render_to_scroll();
   // copy to selection with highlight
-  
+  render_to_select();
 }
 
 // scroll the current selection
@@ -107,11 +107,11 @@ static void select_scroll(s8 dir) {
     newIdx = pages[ePageIns].select + SCROLL_LINES_ABOVE_1;
     // render new content
     render_line(newIdx);
-    // copy to bottom of scrollx
-    //....
+    // copy to bottom of scroll
+    
   }
   // copy new center region
-  //...
+  
 }
 
 // display the function key labels according to current state

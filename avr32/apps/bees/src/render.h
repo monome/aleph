@@ -2,6 +2,7 @@
 #define _RENDER_H_
 
 // avr32
+#include "font.h"
 #include "region.h"
 // bees
 #include "menu.h"
@@ -15,11 +16,12 @@
 // lines above center
 #define SCROLL_LINES_BELOW 	3
 #define SCROLL_LINES_ABOVE 	4
-#define SCROLL_LINES_ABOVE_1 	3
+#define SCROLL_LINES_ABOVE_1 	(SCROLL_LINES_ABOVE - 1)
+#define SCROLL_BYTES_PER_LINE (FONT_CHARH * 128)
 // byte offset for top of center row
-#define SCROLL_CENTER_OFFSET 384 // SCROLL_CENTER_LINE * bytes per line
+#define SCROLL_CENTER_OFFSET (SCROLL_CENTER_LINE * SCROLL_BYTES_PER_LINE)
 // in pixels, y-offset for top of center row
-#define SCROLL_CENTER_Y_OFFSET 24 // SCROLL_CENTER_LINE * px per line
+#define SCROLL_CENTER_Y_OFFSET (SCROLL_CENTER_LINE * FONT_CHARH)
 
 #define COLOR_SELECT 0xf
 #define COLOR_UNSELECT 0xa
@@ -47,6 +49,16 @@ extern void render_set_foot_region(region* reg);
 extern void render_set_scroll_region(region* reg) ;
 
 
+// copy temp data to selection (adding highlight)
+extern void render_to_select(void);
+// copy temp data to center of scroll region (clipping)
+extern void render_to_scroll_center(void);
+// add data to top of scroll region (clipping)
+extern void render_to_scroll_top(void);
+// add data to bottom of scroll region (clipping)
+extern void render_to_scroll_bottom(void);
+
+
 
 /// stupid string lib replacements.. 
 // all act on static string buffer in render.c
@@ -71,11 +83,17 @@ extern void endln( void);
 // draw editing string at given position, with cursor highlight
 extern void draw_edit_string( u8 x, u8 y, char* str, u8 len);
 
+
+
+
 //-----------------------------
 //----- extra miscellaneous getters
 // get the line buffer (a string)
 extern char* get_line_buf(void);
 // get current y-offset in scroll
 extern u8 get_yoff(void);
+
+
+
 
 #endif // header guard

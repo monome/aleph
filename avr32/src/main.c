@@ -197,8 +197,9 @@ static void check_events(void) {
       //      print_dbg("\r\n main event handler: ");
       //      print_dbg_hex(e.eventType);
       
-      //      if(e.eventType < kNumSysEvents) {
-	// system events
+      /// hack for early return
+      if(e.eventType < kNumSysEvents) {
+	      // system events
 
 	switch(e.eventType) {
 	
@@ -224,7 +225,7 @@ static void check_events(void) {
 	  ;;
 	  break;
 	} // event switch
-	//      } else { // non-system (app) events
+	    } // else { // non-system (app) events
 	// handle all events in app also...
       (*appEventHandler)(&e);
 	//      }

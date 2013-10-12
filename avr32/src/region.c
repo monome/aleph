@@ -61,11 +61,11 @@ void region_fill(region* reg, u8 c) {
 }
 
 // fill a contiguous portion of a region with given color
-extern void region_fill_part(region* reg, u8 c, u32 start, u32 len) {
+extern void region_fill_part(region* reg, u32 start, u32 len, u8 color) {
  u32 i;
  u8* p = (reg->data) + start;
   for(i=0; i<len; i++) {
-    *p++ = c;
+    *p++ = color;
   }
   reg->dirty = 1;
 }
@@ -99,11 +99,11 @@ extern void scroll_init(scroll* scr, region* reg) {
 // render text to front of scroll
 extern void scroll_string_front(scroll* scr, char* str) {
   /// clear current line
-  region_fill_part(scr->reg, 0x0, scr->byteOff, scr->lineBytes);
+  region_fill_part(scr->reg, scr->byteOff, scr->lineBytes, 0x0);
   // draw text to region at current offset, using system font
   region_string(scr->reg, str,
 		0, scr->yOff, 0xf, 0, 0);
-  // advance offset by count of pixels in row
+  // advance byte offset by count of pixels in row
   scr->byteOff += scr->lineBytes;
   scr->yOff += FONT_CHARH;
   // wrap
@@ -139,6 +139,20 @@ extern void scroll_string_back(scroll* scr, char* str) {
   //  so we can e.g. trigger from timer based on dirty flag
   scr->reg->dirty = 1;
 }
+
+
+
+// draw pixels to front of scroll
+void scroll_data_front(scroll* scr, u8* data) {
+  
+}
+
+// draw pixel to back of scroll
+void scroll_data_back(scroll* scr, u8* data) {
+
+}
+
+
 
 
 // draw scroll to screen

@@ -67,9 +67,9 @@ void init_sport1(void) {
 
   // clock division: we want ~10Mhz, core clock is 108Mhz
   // tclk = sclk / ( 2 x (div + 1)
-  //    *pSPORT1_TCLKDIV = 5;
+    *pSPORT1_TCLKDIV = 5;
   //// slower:
-  *pSPORT1_TCLKDIV = 100;
+    //  *pSPORT1_TCLKDIV = 100;
   //// slowest:
   //  *pSPORT1_TCLKDIV = 0xffff;
 
@@ -151,9 +151,9 @@ void enable_sport1_dma(void) {
 
 void init_timers(void) {
   *pTIMER0_CONFIG		= 0x0019;
-  //  *pTIMER0_PERIOD		= 0x00080000;
-  //  *pTIMER0_WIDTH		= 0x00040000;
-  *pTIMER0_PERIOD		= 0x00000020;
-  *pTIMER0_WIDTH		= 0x00000010;
+    *pTIMER0_PERIOD		= 0x00000100;
+    *pTIMER0_WIDTH		= 0x00000080;
+  //  *pTIMER0_PERIOD		= 0x00000020;
+  //  *pTIMER0_WIDTH		= 0x00000010;
   *pTIMER_ENABLE		= 0x0001;
 }

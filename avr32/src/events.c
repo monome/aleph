@@ -18,7 +18,7 @@
 
 /// NOTE: if we are ever over-filling the event queue, we have problems.
 /// making the event queue bigger not likely to solve the problems.
-#define MAX_EVENTS   64
+#define MAX_EVENTS   32
 
 // macro for incrementing an index into a circular buffer.
 #define INCR_EVENT_INDEX( x )  { if ( ++x == MAX_EVENTS ) x = 0; }
@@ -49,8 +49,6 @@ void init_events( void ) {
 // Returns non-zero if an event was available
 bool get_next_event( event_t *e ) {
   bool status;
-  //  bool fReenableInterrupts = Is_interrupt_level_enabled( TIMER_INT_LEVEL );
-  //  Disable_interrupt_level( TIMER_INT_LEVEL );
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
   
   // if pointers are equal, the queue is empty... don't allow idx's to wrap!
@@ -66,9 +64,6 @@ bool get_next_event( event_t *e ) {
   }
 
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
-  //  if (fReenableInterrupts) {
-    //    Enable_interrupt_level( TIMER_INT_LEVEL );
-  //  }
   return status;
 }
 
@@ -81,9 +76,6 @@ bool post_event( event_t *e ) {
   //  print_dbg("\r\n posting event, type: ");
   //  print_dbg_ulong(e->eventType);
 
-
-  //  bool fReenableInterrupts = Is_interrupt_level_enabled( TIMER_INT_LEVEL );
-  //  Disable_interrupt_level( TIMER_INT_LEVEL );
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
   
   // increment write idx, posbily wrapping
@@ -100,10 +92,6 @@ bool post_event( event_t *e ) {
   } 
 
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
-  //  if (fReenableInterrupts) {
-  //    Enable_interrupt_level( TIMER_INT_LEVEL );
-  //  }
-
   return status;
 }
 

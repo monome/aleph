@@ -3,7 +3,7 @@
 #define _ALEPH_APP_FLRY_CTL_H_
 
 #define PARAM_DAC_MIN 0x00000000
-#define PARAM_DAC_MAX 0xffff
+#define PARAM_DAC_MAX 0x7fff
 
 
 // enumerate parameters

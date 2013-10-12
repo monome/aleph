@@ -10,6 +10,8 @@
 #define DAC_COM_LSHIFT 20
 #define DAC_ADDR_LSHIFT 16
 
+#define DAC_MAX 0x7fff
+
 //====================
 //=== global variables , initialized here
 volatile u32 txBuf = 0;
@@ -21,7 +23,8 @@ u8 upCh = 0;
 static const u32 chanIncMul = 1;
 static const u32 incOff = 1;
 
-static u16 dacData[4] = { 0, 0, 0, 0 };
+static u32 dacData[4] = { 0, 0, 0, 0 };
+
 //static u16 dacData[4] = { 0xcccc, 0xdddd, 0xeeee, 0xffff };
 //static u32 txBuf = 0;
 
@@ -39,6 +42,9 @@ static u16 dacData[4] = { 0, 0, 0, 0 };
 void update_channel(int ch) {
   static u32 buf;
   dacData[ch] += (ch * chanIncMul + incOff);
+  while(dacData[ch] > DAC_MAX) {
+    dacData[ch] -= DAC_MAX;
+  }
   if(ch == 0) {
     if(dacData[ch] > 0x8000) {
       LED3_SET;
@@ -56,9 +62,16 @@ void update_channel(int ch) {
   buf = 0;
   buf |= (DAC_COM_WRITE << DAC_COM_LSHIFT);
   buf |= ((1 << ch) << DAC_ADDR_LSHIFT);
+#if 0
   buf |= dacData[ch];
-  //  sport1_tx(&txBuf);
   txBuf = buf << 1;
+#else
+  buf |= dacData[ch] & 0xffff;
+  txBuf = buf << 1;
+  //  txBuf = buf;
+#endif
+  /// no DMA:
+  //  sport1_tx(&txBuf);
 }
 
 

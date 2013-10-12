@@ -8,6 +8,8 @@
 #define DAC_COM_LSHIFT 20
 #define DAC_ADDR_LSHIFT 16
 
+#define DAC_VALUE_MASK 0x7fff
+
 //====================
 //=== global variables , initialized here
 volatile u32 cvTxBuf = 0x00000000;
@@ -36,6 +38,7 @@ void dac_update(u8 ch, u16 val) {
   buf = 0;
   buf |= (DAC_COM_WRITE << DAC_COM_LSHIFT);
   buf |= ((1 << ch) << DAC_ADDR_LSHIFT);
-  buf |= val;
+  //  buf |= val;
+  buf |= (val & DAC_VALUE_MASK);
   cvTxBuf = buf << 1;
 }
