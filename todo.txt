@@ -85,6 +85,8 @@ DSP
 
 post-announcement todo
 
+pkirn interview
+
 followup details
 	pulled from forum responses
 	post photo
@@ -95,46 +97,25 @@ new video
 		gamepad?
 
 production
-	POs to RLC
 	POs to mcalpin
 
 build
 	new face
 	primary existing
 	fix files primary and order
-	fix cv on proto
-	check mechanicals
-		# mechanicals eval plus photos
-		backplate corrections
-		keycap fix on plate
-		enclosure needs standoffs
 	knob/keycap
 
 programming
-	lppr grid xtras?
 	BEES
 	interface scrub
 	monome apps
 		flin
 		life
-	avr32
-		node mixer 4in/4out using /lines/
-			per output
-				input mix per channel
-				dry pass
-				delay ms
-				filter
-					mode
-					cutoff
-					resonance
-				wet pass
-				level
 	i2c
 	usb communication to laptop, basic param exchange
-	serial host via computer
-		osc
-		midi
-		remote
+	laptop host
+		osc router
+		graphic editor
 
 packaging - giffin				
 ii kit
