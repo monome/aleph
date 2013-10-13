@@ -9,6 +9,7 @@
 #include <string.h>
 // asf
 #include "compiler.h"
+#include "delay.h"
 #include "print_funcs.h"
 
 // aleph-avr32
@@ -19,7 +20,7 @@
 #include "memory.h"
 #include "screen.h"
 #include "menu.h"
-
+#include "wdt.h"
 
 // ---- directory list class
 // params
@@ -31,6 +32,25 @@
 // (standard atmel linker script with trampoline)
 // #define BIN_EXEC_SRC_LOCATION 0x00002000
 
+/// show the size (progress fills) 
+static void showSize(u32 size) {
+  u32 x = 0;
+  u32 y = 20;
+  u32 i = 0;
+  for(i = 0; i< (size / 0x100); ++i) {
+    screen_pixel(x, y, 0x7);
+    ++x;
+    if(x > NCOLS) {
+      x = 0;
+      ++y;
+    }
+    if (y > NROWS) {
+      y = 20;
+    }
+  }
+  screen_refresh();
+}
+
 /// dumb progress display
 static void showProgress(u8 val) {
   static u32 x = 0;
@@ -38,14 +58,14 @@ static void showProgress(u8 val) {
   static u8 level = 0x1;
   screen_pixel(x, y, val | level);
   screen_refresh();
-  x++;
+  ++x;
   if(x > NCOLS) {
     x = 0;
-    y++;
+    ++y;
   }
   if (y > NROWS) {
     y = 20;
-    level++;
+    //    ++level;
   }
 }
 
@@ -105,7 +125,6 @@ static void fake_fread(volatile u8* dst, u32 size, void* fp) {
 
 //---------------------------
 //------------- extern defs
-
 
 void init_files(void) {
   // init FAT lib
@@ -230,12 +249,12 @@ void files_write_firmware_name(const char* name) {
   fp = list_open_file_name(&binList, name, "r", &size);
 
   print_dbg("\r\n writing firmware to flash... ");
-  if( fp != NULL) {
-
-    
+  if( fp != NULL) {    
 
     /////
     /// now using intel-hex format
+
+    showSize(size);
 
     for(fIdx = 0; fIdx<size; fIdx++) {
       ch = fl_fgetc(fp);
@@ -251,7 +270,8 @@ void files_write_firmware_name(const char* name) {
 	// reset hex byte index for next record
 	hIdx =0;
       }// else {
-      hexRecordData[hIdx++] = (u8)ch;
+      hexRecordData[hIdx] = (u8)ch;
+      ++hIdx;
       //      }
 
       ///// show progress
@@ -266,12 +286,19 @@ void files_write_firmware_name(const char* name) {
     /* ch = fl_getc(fp); */
     /* if(ch == EOF) { */
     /* } else  */
-
     /////
 
-    //flash_write_firmware();
     fl_fclose(fp);
-    print_dbg("finished writing.");
+    //    print_dbg("finished writing.");
+    
+
+    delay_ms(1000);
+
+    /// use watchdog to reset CPU... ??? 
+    /// this is ending up with the cpu in some weird state that i don't understand
+    //// maybe we can use the power manager chip instead
+    //    wdt_reset_mcu();
+
     
   } else {
     print_dbg("\r\n error: fp was null in files_write_firmware_name\r\n");
@@ -343,10 +370,3 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   }
   return fp;
 }
-
-/* //// /test: write dummy file */
-/* fp = fl_fopen("/tetblsts.txt", "w"); */
-/* print_dbg("\r\n dummy write test, fp: "); */
-/* print_dbg_hex(fp); */
-/* fl_fputs("hihhihi", fp); */
-/* fl_fclose(fp); */

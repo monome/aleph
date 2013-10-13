@@ -41,7 +41,7 @@ page_t pages[NUM_PAGES] = {
 // pointer to current page
 page_t* curPage;
 // idx of current page
-s8 pageIdx = 0;
+s8 pageIdx = 1;
 
 //-----------------------
 //------ static vars
