@@ -30,8 +30,6 @@ extern void ctl_tap_delay(u8 idx, u8 val);
 // set delay time multiplier
 extern void ctl_set_delay_mul(u8 idx, u8 val);
 
-// set loop position
-
 // move both read and write heads by an offset multiple of tap time
 // offset can be negative.. 
 extern void ctl_set_delay_pos(u8 idx, u8 mul);
