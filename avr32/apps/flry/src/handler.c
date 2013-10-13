@@ -100,6 +100,11 @@ static void decode_hid_event(s32 data) {
 }
 
 
+// linear scaling for encoders
+static s32 scale_lin_enc(s32 val) {
+  return val << 7;    // *128
+}
+
 // exponential scaling for encoders
 static s32 scale_knob_value(s32 val) {
   static const u32 kNumKnobScales_1 = 23;
@@ -191,16 +196,16 @@ extern void flry_handler(event_t* ev) {
     break;
 
   case kEventEncoder0:
-    ctl_inc_value(3, scale_knob_value(ev->eventData));
+    ctl_inc_value(3, scale_lin_enc(ev->eventData));
     break;
   case kEventEncoder1:
-    ctl_inc_value(2, scale_knob_value(ev->eventData));
+    ctl_inc_value(2, scale_lin_enc(ev->eventData));
     break;
   case kEventEncoder2:
-    ctl_inc_value(1, scale_knob_value(ev->eventData));
+    ctl_inc_value(1, scale_lin_enc(ev->eventData));
     break;
   case kEventEncoder3:
-    ctl_inc_value(0, scale_knob_value(ev->eventData));
+    ctl_inc_value(0, scale_lin_enc(ev->eventData));
     break;
 
   default:
