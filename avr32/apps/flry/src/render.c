@@ -137,7 +137,7 @@ void render_dac(u8 ch, s32 val) {
   region_fill(&(dacValueReg[ch]), 0x0);
   strcpy(numstrbuf, "    ");
   itoa_whole_lj(ch, numstrbuf);
-  region_string(&(dacValueReg[ch]), numstrbuf, 0, 0, 0xa, 0x1, 0);
+  region_string(&(dacValueReg[ch]), numstrbuf, 0, 0, 0x2, 0x0, 0);
   itoa_whole_lj(val, numstrbuf);
   region_string_aa(&(dacValueReg[ch]), numstrbuf, 0, 8, 1);
 }
