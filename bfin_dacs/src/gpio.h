@@ -20,4 +20,10 @@
 #define BUSY_SET 	*pFIO_FLAG_D |= BUSY_UNMASK
 #define BUSY_UNSET 	*pFIO_FLAG_D &= BUSY_MASK
 
+
+#define LDAC_UNMASK 1 << 7
+#define LDAC_MASK 0xffff ^ LDAC_UNMASK
+#define LDAC_SET 	*pFIO_FLAG_D |= LDAC_UNMASK
+#define LDAC_UNSET 	*pFIO_FLAG_D &= LDAC_MASK
+
 #endif // h guard
