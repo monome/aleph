@@ -62,11 +62,11 @@ static inline void dirtquad(void) {
 }
 
 // show a single point on a row
-static void grid_show_point(u8 row, u8 val);
-
+//static void grid_show_point(u8 row, u8 val);
 // show a bar-graph value in a row
-static void grid_show_bar(u8 row, u8 val);
-
+//static void grid_show_bar(u8 row, u8 val);
+// show a value as a point in half-grid (32 points)
+static void grid_show_half_point(u8 half, u8 val);
 
 //-----------------------
 //------ external funcs
@@ -76,45 +76,59 @@ static void grid_show_bar(u8 row, u8 val);
 void grid_handle_key_event(s32 data) {
   u8 x, y, val;
   monome_grid_key_parse_event_data(data, &x, &y, &val);
+
   // don't process lifts
   if(val == 0) { return; }
 
-  switch(y) {
-  case GRID_ROW_MUL_0 :
-    render_touched_delaytime(0);
-    ctl_set_delay_mul(0, x + 1);
-    grid_show_point(y, x);
-    break;
-  case  GRID_ROW_POS_0 :
-    ctl_set_delay_pos(0, x + 1);
-    grid_show_point(y, x);
-    break;
-  case  GRID_LOOP_0 :
-    ctl_set_loop(0, x + 1);
-    grid_show_bar(y, x);
-    break;
-  case  GRID_ROW_PRE_0 :
-    // TODO  FIXME
-    grid_show_bar(y, x);
-    break;
-  case  GRID_ROW_MUL_1 :
-    render_touched_delaytime(1);
-    ctl_set_delay_mul(1, x + 1);
-    grid_show_point(y, x);
-    break;
-  case  GRID_ROW_POS_1 :
-    ctl_set_delay_pos(1, x + 1);
-    grid_show_point(y, x);
-    break;
-  case  GRID_LOOP_1 : 	
-    ctl_set_loop(1, x + 1);
-    grid_show_bar(y, x);
-    break;
-  case GRID_ROW_PRE_1 :
-    /// TODO / FIXME
-    //    grid_show_bar(y, x);
-    break;
+  if(y < 4) {
+    /// top half: delay time, [1-32] * tap time
+    val = x + (y >> 3) + 1;
+    ctl_set_delay_mul(0, val);
+    grid_show_half_point(0, val);
+  } else {
+    /// bottom half: loop pos, [0-32] ** looptime / 32)
+    val = x + ((y-4) >> 3) + 1;
+    ctl_set_loop_pos(0, val);
+    grid_show_half_point(1, val);
   }
+
+
+  /* switch(y) { */
+  /* case GRID_ROW_MUL_0 : */
+  /*   render_touched_delaytime(0); */
+  /*   ctl_set_delay_mul(0, x + 1); */
+  /*   grid_show_point(y, x); */
+  /*   break; */
+  /* case  GRID_ROW_POS_0 : */
+  /*   ctl_set_delay_pos(0, x + 1); */
+  /*   grid_show_point(y, x); */
+  /*   break; */
+  /* case  GRID_LOOP_0 : */
+  /*   ctl_set_loop(0, x + 1); */
+  /*   grid_show_bar(y, x); */
+  /*   break; */
+  /* case  GRID_ROW_PRE_0 : */
+  /*   // TODO  FIXME */
+  /*   grid_show_bar(y, x); */
+  /*   break; */
+  /* case  GRID_ROW_MUL_1 : */
+  /*   render_touched_delaytime(1); */
+  /*   ctl_set_delay_mul(1, x + 1); */
+  /*   grid_show_point(y, x); */
+  /*   break; */
+  /* case  GRID_ROW_POS_1 : */
+  /*   ctl_set_delay_pos(1, x + 1); */
+  /*   grid_show_point(y, x); */
+  /*   break; */
+  /* case  GRID_LOOP_1 : 	 */
+  /*   ctl_set_loop(1, x + 1); */
+  /*   grid_show_bar(y, x); */
+  /*   break; */
+  /* case GRID_ROW_PRE_1 : */
+  /*   /// TODO / FIXME */
+  /*   //    grid_show_bar(y, x); */
+  /*   break; */
+  /* } */
 }
  
 // set size of grid
@@ -133,6 +147,7 @@ void grid_set_size(u8 w, u8 h) {
   }
 }
 
+#if 0
 // show a single point in a row
 void grid_show_point(u8 row, u8 val) {
   u8* p = monomeLedBuffer + (row << MONOME_LED_ROW_LS);
@@ -150,10 +165,26 @@ void grid_show_bar(u8 row, u8 val) {
     val = MONOME_LED_ROW_BYTES;
   }
   for(i=0; i<val; i++) {
-    *p++ = 0xff;
+    *p = 0xff;
+    ++p;
   }
   for(i=val; i<MONOME_LED_ROW_BYTES; i++) {
     *p++ = 0x00;
+    ++p;
   }
+  dirtquad();
+}
+#endif
+
+// show a value as a point in half-grid (32 points)
+void grid_show_half_point(u8 half, u8 val) {
+  u8* p;
+  if(half) {
+    p = monomeLedBuffer + (4 << MONOME_LED_ROW_LS);
+  } else {
+    p = monomeLedBuffer;
+  }
+  memset(p, 0x00, MONOME_LED_ROW_BYTES * 4);
+  *(p+val) = 0xff;
   dirtquad();
 }

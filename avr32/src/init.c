@@ -117,7 +117,9 @@ extern void init_tc (volatile avr32_tc_t *tc) {
   // so RC = fPBA / 128 / 1000
   //  tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 128000));
   ///// FIXME: kludge because the timing is slow somehow
-  tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 149707));
+  //  tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 149707));
+  /// moron!
+  tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 109440));
 
   // configure the timer interrupt
   tc_configure_interrupts(tc, APP_TC_CHANNEL, &tc_interrupt);
