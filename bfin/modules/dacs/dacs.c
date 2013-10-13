@@ -91,7 +91,7 @@ void module_process_frame(void) {
   for(i=0; i<4; ++i) {
     //    if(dacSlew[i].sync) { continue; }
     //    dacVal[i] = filter_1p_lo_next(&(dacSlew[i]));
-    dac_update(i, dacVal[i] & DAC_VALUE_MASK);
+    //    dac_update(i, dacVal[i] & DAC_VALUE_MASK);
 
     if(dacDirty[i]) {
       dac_update(i, dacVal[i] & DAC_VALUE_MASK);
@@ -115,19 +115,19 @@ void module_set_param(u32 idx, pval v) {
   case eParam_dac1 :
     //    filter_1p_lo_in(&(dacSlew[1]), v.fr);
     dacVal[1] = v.u & DAC_VALUE_MASK;
-    dacDirty[0] = 1;
+    dacDirty[1] = 1;
     //    dac_update(1, v.fr & 0xffff);
     break;
   case eParam_dac2 :
     //    filter_1p_lo_in(&(dacSlew[2]), v.fr);
     dacVal[2] = v.u & DAC_VALUE_MASK;
-    dacDirty[0] = 1;
+    dacDirty[2] = 1;
     //    dac_update(2, v.fr & 0xffff);
     break;
   case eParam_dac3 :
     //    filter_1p_lo_in(&(dacSlew[3]), v.fr);
     dacVal[3] = v.u & DAC_VALUE_MASK;
-    dacDirty[0] = 1;
+    dacDirty[3] = 1;
     //    dac_update(3, v.fr & 0xffff);
     break;
   case eParam_slew0 :
