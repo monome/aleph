@@ -54,7 +54,7 @@ u8 files_search_dsp(void) {
     print_dbg(" ; pointer: ");
     print_dbg_hex((u32)fp);
 
-    render_status("loading sdcard -> RAM...     ");
+    render_boot("loading sdcard -> RAM...     ");
     render_update();
 
     // read .ldr data to RAM buffer
@@ -67,7 +67,7 @@ u8 files_search_dsp(void) {
     bfinLdrSize = size;
 
 
-    render_status("writing RAM -> flash...     ");
+    render_boot("writing RAM -> flash...     ");
     render_update();
 
     // write buf to flash
@@ -77,7 +77,7 @@ u8 files_search_dsp(void) {
     print_dbg("\r\n booting DSP from RAM");
 
 
-    render_status("booting DSP from RAM...     ");
+    render_boot("booting DSP from RAM...     ");
     render_update();
 
     bfin_load_buf();

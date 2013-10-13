@@ -6,6 +6,9 @@
 
 extern void flry_handler(event_t* ev);
 
+
+//extern void decode_hid_frame(const u8* data);
+
 /* void handle_sw_fn_0( u8 val ); */
 /* void handle_sw_fn_1( u8 val ); */
 /* void handle_sw_fn_2( u8 val ); */

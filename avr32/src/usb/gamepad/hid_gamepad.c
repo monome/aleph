@@ -33,8 +33,14 @@ void hid_gamepad_parse_frame(u8* data, u8 size) {
   }
 }
 
-/* const volatile u8 * hid_get_frame(void) { */
-/*   return frame; */
-/* } */
+// get the frame data and size
+const u8* hid_gamepad_get_frame(void) {
+  return (const u8*)frame;
+}
+
+const u8 hid_gamepad_get_frame_size(void) {
+  return HID_FRAME_MAX_BYTES;
+}
+
 
 #include "uhc.h"

@@ -6,7 +6,7 @@
 // ---- timer tags
 enum { 
   eScreenTimerTag = eNumSysTimers,
-  eMetroTimerTag
+  eHidPollTimerTag
   //  eAdcTimerTag,
   //  eMonomePollTimerTag,
   //  eMonomeRefreshTimerTag,
