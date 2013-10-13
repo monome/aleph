@@ -21,6 +21,7 @@
 #include "sd_mmc_spi.h"
 #include "smc.h"
 #include "sysclk.h"
+#include "wdt.h"
 
 //// aleph
 // bees
@@ -254,6 +255,8 @@ static void check_events(void) {
 //int main(void) {
 ////main function
 int main (void) {
+  wdt_disable();
+
   u32 waitForCard = 0;
   u8 isFirstRun = 0;
   u8 isSwDown = 0;

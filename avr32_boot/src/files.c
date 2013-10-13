@@ -11,6 +11,7 @@
 #include "compiler.h"
 #include "delay.h"
 #include "print_funcs.h"
+#include "wdt.h"
 
 // aleph-avr32
 #include "bfin.h"
@@ -289,15 +290,16 @@ void files_write_firmware_name(const char* name) {
     /////
 
     fl_fclose(fp);
-    //    print_dbg("finished writing.");
+    print_dbg("finished writing.\r\n");
+
+    print_dbg("rebooting now.");
+
+    Disable_global_interrupt();
+    wdt_opt_t opt;
+    opt.us_timeout_period = 1000000;
+    wdt_enable(&opt); 
+    while (1);
     
-
-    delay_ms(1000);
-
-    /// use watchdog to reset CPU... ??? 
-    /// this is ending up with the cpu in some weird state that i don't understand
-    //// maybe we can use the power manager chip instead
-    //    wdt_reset_mcu();
 
     
   } else {
