@@ -7,11 +7,6 @@
 enum { 
   eScreenTimerTag = eNumSysTimers,
   eHidPollTimerTag
-  //  eAdcTimerTag,
-  //  eMonomePollTimerTag,
-  //  eMonomeRefreshTimerTag,
-  //  eMidiPollTimerTag,
-  //  eMidiRefreshTimerTag,
 };
 
 // create application timers

@@ -20,8 +20,8 @@
 
 // count of buttons
 #define NUM_BUT 4
-// count of joysticks
-#define NUM_JOY 2
+// count of joystick axes
+#define NUM_JOY 4
 
 // count of triggers
 #define NUM_TRIG 4
@@ -35,7 +35,7 @@ u8 but[NUM_BUT] = { 0, 0, 0, 0 };
 // joystick values (2-axis)
 // don't actually need to store/compare this with current system
 // (each axis gets its own byte and the event means it changed)
-// static s8 joy[NUM_JOY][2] = { {0, 0}, {0, 0} };
+volatile u8 joyVal[NUM_JOY] = {0, 0, 0, 0};
 
 //---------------------------------------------
 //--------- static funcs
@@ -61,19 +61,24 @@ static void decode_hid_event(s32 data) {
   switch(idx) {
   case 0:
     // joystick 1, x axis
-    ctl_joy(0, val);
+    //    ctl_joy(0, val);
+    //// poll these so they can be used as offsets?
+    joyVal[0] = val;
     break;
   case 1:
     // joystick 1, y axis
-    ctl_joy(1, val);
+    //    ctl_joy(1, val);
+    joyVal[1] = val;
     break;
   case 2:
     // joystick 2, x axis
-    ctl_joy(2, val);
+    //    ctl_joy(2, val);
+    joyVal[2] = val;
     break;    
   case 3:
     // joystick 2, y axis
-    ctl_joy(3, val);
+    //    ctl_joy(3, val);
+    joyVal[3] = val;
     break; 
 
   case 4:
