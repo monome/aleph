@@ -10,6 +10,7 @@
 // asf
 #include "compiler.h"
 #include "print_funcs.h"
+#include "wdt.h"
 
 // aleph-avr32
 #include "bfin.h"
@@ -271,7 +272,16 @@ void files_write_firmware_name(const char* name) {
 
     //flash_write_firmware();
     fl_fclose(fp);
-    print_dbg("finished writing.");
+    print_dbg("finished writing.\r\n");
+
+    print_dbg("rebooting now.");
+
+    Disable_global_interrupt();
+    wdt_opt_t opt;
+    opt.us_timeout_period = 1000000;
+    wdt_enable(&opt); 
+    while (1);
+    
     
   } else {
     print_dbg("\r\n error: fp was null in files_write_firmware_name\r\n");
