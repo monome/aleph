@@ -191,16 +191,16 @@ extern void flry_handler(event_t* ev) {
     break;
 
   case kEventEncoder0:
-    ctl_inc_value(0, scale_knob_value(ev->eventData));
+    ctl_inc_value(3, scale_knob_value(ev->eventData));
     break;
   case kEventEncoder1:
-    ctl_inc_value(1, scale_knob_value(ev->eventData));
-    break;
-  case kEventEncoder2:
     ctl_inc_value(2, scale_knob_value(ev->eventData));
     break;
+  case kEventEncoder2:
+    ctl_inc_value(1, scale_knob_value(ev->eventData));
+    break;
   case kEventEncoder3:
-    ctl_inc_value(3, scale_knob_value(ev->eventData));
+    ctl_inc_value(0, scale_knob_value(ev->eventData));
     break;
 
   default:
