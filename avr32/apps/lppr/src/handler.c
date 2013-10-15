@@ -40,6 +40,11 @@ static eEventType touched = kNumSysEvents;
 //--------------------------
 //--- static func def
 
+// linear scaling for encoders
+static s32 scale_lin_enc(s32 val) {
+  return val << 7;    // *128
+}
+
 static s32 scale_knob_value(s32 val) {
   static const u32 kNumKnobScales_1 = 23;
   static const u32 knobScale[24] = {
@@ -182,7 +187,7 @@ extern void lppr_handler(event_t* ev) {
       //      kill_test();
       
     }
-    ctl_inc_fb(0, scale_knob_value(ev->eventData));
+    ctl_inc_fb(0, scale_lin_enc(ev->eventData));
     break;
 
   case kEventEncoder1:
@@ -191,7 +196,7 @@ extern void lppr_handler(event_t* ev) {
 
       //      kill_test();
     }
-    ctl_inc_mix(0, scale_knob_value(ev->eventData));
+    ctl_inc_mix(0, scale_lin_enc(ev->eventData));
     break;
 
   case kEventEncoder2:
@@ -200,7 +205,7 @@ extern void lppr_handler(event_t* ev) {
 
       //      kill_test();
     }
-    ctl_inc_freq(0, scale_knob_value(ev->eventData));
+    ctl_inc_freq(0, scale_lin_enc(ev->eventData));
     break;
 
   case kEventEncoder3:
@@ -209,7 +214,7 @@ extern void lppr_handler(event_t* ev) {
 
       //      kill_test();
     }
-    ctl_inc_res(0, scale_knob_value(ev->eventData));
+    ctl_inc_res(0, scale_lin_enc(ev->eventData));
     break;
 
     //-------- grid
