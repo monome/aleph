@@ -1,3 +1,5 @@
+#include "print_funcs.h"
+
 #include "font.h"
 #include "memory.h"
 #include "screen.h"
@@ -9,6 +11,8 @@ void region_alloc(region* reg) {
   u32 i;
   reg->len = reg->w * reg->h;
   reg->data = (u8*)alloc_mem(reg->len);
+  
+  //  print_dbg("\r\n zeroing region data... ");
   for(i=0; i<reg->len; i++) {
     reg->data[i] = 0; 
   }
@@ -54,7 +58,7 @@ void region_string_aa(
 // fill a region with given color
 void region_fill(region* reg, u8 c) {
   u32 i;
-  for(i=0; i<reg->len; i++) {
+  for(i=0; i<reg->len; ++i) {
     reg->data[i] = c; 
   }
   reg->dirty = 1;
@@ -142,22 +146,25 @@ extern void scroll_string_back(scroll* scr, char* str) {
 
 
 
+/*
 // draw pixels to front of scroll
 void scroll_data_front(scroll* scr, u8* data) {
   
 }
+*/
 
-// draw pixel to back of scroll
+/*
+// draw pixels to back of scroll
 void scroll_data_back(scroll* scr, u8* data) {
 
 }
+*/
 
-
-
-
+/*
 // draw scroll to screen
 extern void scroll_draw(scroll* scr) {
   screen_draw_region_offset(0, 0, scr->reg->w, scr->reg->h, scr->reg->len, 
 			    scr->reg->data, scr->byteOff + scr->drawSpace);
   scr->reg->dirty = 0;
 }
+*/

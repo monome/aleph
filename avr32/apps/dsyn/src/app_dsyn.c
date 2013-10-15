@@ -47,8 +47,8 @@ u8 app_launch(u8 firstrun) {
   print_dbg("\r\n firstrun: ");
   print_dbg_ulong(firstrun);
 
-  if(1) {
-    //  if(firstrun) {
+  //  if(1) {
+  if(firstrun) {
     // it is the first run.
     // need to copy audio module binary from sdcard to internal flash.
     render_boot("first run. waiting for SDcard...");

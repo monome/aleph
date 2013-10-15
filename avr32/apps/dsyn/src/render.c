@@ -55,7 +55,7 @@ static const char* paramStrings[] = {
   "SvfPre",	// 26
   "FreqEnv",	// 27
   "RqEnv",		// 28
-}
+};
 
 ///// declare screen-drawing regions.
 //// len, dirty, and data can be left unitialized and calculated / allocated in region_init.
@@ -210,7 +210,7 @@ void render_sw_on(u8 sw, u8 on) {
 
 // render parameter indx and value
 void render_param(u8 vid, s32 pid, s32 val) {
-  //// FIXME: way too slow.
+  //// FIXME: too slow.
   //// should make renderTouched routines as in lppr,
   //// do fills and labels there
   region_fill(&bigtop, 0x0);

@@ -1,6 +1,12 @@
+// std
+#include <string.h>
+
 // asf
 #include "delay.h"
 #include "print_funcs.h"
+
+// aleph-common
+#include "fix.h"
 
 // aleph-avr32
 #include "app.h"
@@ -70,7 +76,7 @@ u8 files_search_dsp(void) {
     render_update();
 
     // write buf to flash
-    //    flash_write_ldr();
+    flash_write_ldr();
 
     print_dbg("\r\n finished writing .ldr file to flash");
     // reboot the DSP from RAM
@@ -94,32 +100,43 @@ u8 files_search_dsp(void) {
 
 // write parameter values to file
 void files_write_params(void) {
+  // a counter for writing multiple param sets
+  static u32 idx = 0;
   u32 i, j;
   void* fp;
   char str[32];
+  char numbuf[16];
 
   render_file_write(0);
   delay_ms(100);
 
   app_pause();
 
-  fp = fl_fopen(CONFIG_PATH, "w");
-  print_dbg("\r\n opened conf file, pointer: 0x");
+
+  memset(str, '\0', 32);
+  strcpy(str, CONFIG_PATH);
+  strcat(str, "_");
+  uint_to_hex_ascii(numbuf, idx);
+  ++idx;
+  strcat(str, numbuf);
+
+  fp = fl_fopen(str, "w");
+  print_dbg("\r\n opened conf file, string: ");
+  print_dbg(str);
+  print_dbg(" , pointer: 0x");
   print_dbg_hex((u32)fp);
 
   for(i=0; i<DSYN_NVOICES; i++) {
     for(j=0; j<PARAM_VOICE_NPARAMS; j++) {
       // 8 character hex string per parameter
       uint_to_hex_ascii(str, ctl_get_voice_param(i, j));
-      //      print_dbg("\r\n writing parameter hex: ");
-      //      print_dbg(str);
       str[8] = '\0';
       // arbitrary delimiter token  comes first
       fl_fputc(DELIM_TOKEN, fp);
       // data immediately follows
       fl_fputs(str, fp);
       // following text is ignored by the machine...
-   // which voice
+      // which voice
       fl_fputs(" ", fp);
       switch(i) {
       case 0:
@@ -138,8 +155,7 @@ void files_write_params(void) {
       // param string
       fl_fputs(" ", fp);
       fl_fputs(paramStrings[j], fp);
-      // this is not always working? or something
-      fl_fputs("\r\n ", fp);
+      fl_fputs("\r\n", fp);
     }
   }
   

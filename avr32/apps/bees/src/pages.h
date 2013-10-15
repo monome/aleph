@@ -7,7 +7,7 @@
 // number of pages (including modal pages)
 #define NUM_PAGES 8
 
-// enum of key handlers per page
+// enum of key handlers per menu page
 typedef enum {
   ePageHandleEnc0,
   ePageHandleEnc1,

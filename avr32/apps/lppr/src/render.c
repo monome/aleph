@@ -59,23 +59,14 @@ static const u8 numRegions = 6;
 #define NUMSTRBUF_LEN 10
 static char numstrbuf[NUMSTRBUF_LEN];
 
+// scrolling boot region
+static region bootScrollRegion = {
+  .w = 128, .h = 64, .x = 0, .y = 0
+};
+// scroller for boot region
+static scroll bootScroll;
 
-/////////////
-//// FIXME: scrolling experiments, need cleanup
-// scrolling region for boot messages (not refreshed from render callback)
-static region bootRegion = { .w = 128, .h=64, .x=0, .y=0 };
-// how many items have we stuck in the scroller
-static u32 bootCount = 0;
-// byte offset into boot-display region
-static u32 bootByteOffset = 0;
-// row offset into boot-display region
-static u32 bootRowOffset = 0;
-// how many lines of text fit in the scroll buf
-static const u32 bootRowCount = 8; // SCREEN_COL_PX / FONT_CHARH
-// how many pixels per line of system text
-static const u32 bootRowBytes = 1024; // screen_row_px * font_char_h
-// max offset before wrapping
-static const u32 bootMaxByteOffset = 7296; // offset of last row
+
 
 //-------------------------------------------------
 //----- -static functions
@@ -92,7 +83,9 @@ void render_init(void) {
     region_alloc((region*)(allRegions[i]));
   }
 
-  region_alloc(&bootRegion);
+  // scrolling boot region
+  region_alloc((region*)(&bootScrollRegion));
+  scroll_init(&bootScroll, &bootScrollRegion);
 
   //  screen_clear();
 
@@ -149,32 +142,7 @@ void render_startup(void) {
 
 // render text to scrolling buffer during boot procedure
 extern void render_boot(const char* str) {
-  /// clear current line
-  region_fill_part(&bootRegion, 0x0, bootByteOffset, bootRowBytes);
-  // draw text to region at current offset, using system font
-  region_string(&bootRegion, str,
-		0, bootRowOffset * FONT_CHARH, 0xf, 0, 0);
-  // advance offset by count of pixels in row
-  //  bootOffset += (SCREEN_ROW_PX * FONT_CHARH);
-  bootByteOffset += bootRowBytes;
-  bootRowOffset++;
-  if(bootRowOffset == bootRowCount) {
-    bootRowOffset = 0;
-  }
-  if(bootByteOffset > bootMaxByteOffset) {
-    bootByteOffset = 0;
-  }
-
-  if(bootCount < bootRowCount) {
-    // first 8 items: render from the top 
-    bootCount++;
-    screen_draw_region(0, 0, 128, 64, bootRegion.data);
-  } else {
-    // scrolling:
-    // render from new ofset with wrap
-    screen_draw_region_offset(0, 0, 128, 64, 8192,  
-			      bootRegion.data, bootByteOffset);
-  }
+  scroll_string_front(&bootScroll, str);
 }
 
 // update dirty regions
@@ -183,6 +151,11 @@ void render_update(void) {
   u8 i;
   
   app_pause();
+
+  // scrolling boot region
+  if(bootScroll.reg->dirty) {
+    scroll_draw(&bootScroll);
+  }
 
   for(i = 0; i<numRegions; i++) {
     r = allRegions[i]; 

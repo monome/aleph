@@ -250,20 +250,20 @@ void screen_clear(void) {
 }
 
 
-// startup screen (FIXME: just grey at the moment)
+// startup screen
 void screen_startup(void) {
   u32 i;
 
   #include "startup_glyph.c"
+
+  print_dbg("\r\n screen_startup");
 
   // fill screenbuffer with solid background
   for(i=0; i<GRAM_BYTES; i++) {
     screenBuf[i] = 0xff;
   }
 
-  print_dbg("\r\n screen_startup");
-
-    // send screenbuffer
+  // send screenbuffer
   spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
   // register select high for data
   gpio_set_gpio_pin(OLED_REGISTER_PIN);
@@ -271,9 +271,9 @@ void screen_startup(void) {
   for(i=0; i<GRAM_BYTES; i++) {
     spi_write(OLED_SPI, screenBuf[i]);
   }
+
   spi_unselectChip(OLED_SPI, OLED_SPI_NPCS); 
 
   /// draw the glyph
   screen_draw_region(128-24 - 1, 64-32 - 1, 24, 32, (u8*)aleph_hebrew_glyph);
 }
-

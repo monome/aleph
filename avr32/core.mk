@@ -31,6 +31,7 @@ CSRCS += \
 	$(ALEPH_AVR32)/src/font.c \
 	$(ALEPH_AVR32)/src/init.c	\
 	$(ALEPH_AVR32)/src/interrupts.c \
+	$(ALEPH_AVR32)/src/main.c \
 	$(ALEPH_AVR32)/src/memory.c \
 	$(ALEPH_AVR32)/src/monome.c \
 	$(ALEPH_AVR32)/src/region.c \
@@ -38,7 +39,6 @@ CSRCS += \
 	$(ALEPH_AVR32)/src/simple_string.c \
 	$(ALEPH_AVR32)/src/switches.c \
 	$(ALEPH_AVR32)/src/timers.c \
-	$(ALEPH_AVR32)/src/main.c \
 	$(ALEPH_AVR32)/src/usb.c \
 	$(ALEPH_AVR32)/src/usb/gamepad/hid_gamepad.c \
 	$(ALEPH_AVR32)/src/usb/gamepad/uhi_hid_gamepad.c \

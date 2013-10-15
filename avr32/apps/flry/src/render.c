@@ -146,6 +146,5 @@ void render_dac(u8 ch, s32 val) {
 // render to scrolling boot buffer
 void render_boot(char* str) {
   scroll_string_front(&bootScroll, str);
-  
 }
 

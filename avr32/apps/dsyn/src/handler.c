@@ -49,7 +49,8 @@
 
 static s32 scale_knob_value(s32 val) {
   // exponential table
-  static const u32 kNumKnobScales_1 = 23;
+  static const u32 kNumKnobScales = 24;
+  //  static const u32 kNumKnobScales_1 = 23;
   static const u32 knobScale[24] = {
     0x00000001,
     0x00000005,
@@ -79,13 +80,23 @@ static s32 scale_knob_value(s32 val) {
 
   s32 vabs = BIT_ABS(val);
   s32 ret = val;
-   if(vabs > kNumKnobScales_1) {
-     vabs = kNumKnobScales_1;
+
+  if(val == 0) { return ret; }
+
+   if(vabs > kNumKnobScales) {
+     vabs = kNumKnobScales;
    }
-   ret = knobScale[vabs];
+   ret = knobScale[vabs-1];
+
+   //   print_dbg("\r\n key acc; abs in (clipped): ");
+   //   print_dbg_ulong(vabs);
+   //   print_dbg(", abs out: ");
+   //   print_dbg_ulong(ret);
+
    if(val < 0) {
      ret = BIT_NEG_ABS(ret);
    }
+
    return ret;
 }
 

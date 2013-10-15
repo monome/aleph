@@ -28,7 +28,7 @@
 // pointers to heap-ish
 static heap_t pHeapStart;
 static heap_t  pHeapEnd;
-static u32 heapOffset;
+static u32 heapOffset = 0;
 // bytes in sram hardware
 static u32 heapSize;
 

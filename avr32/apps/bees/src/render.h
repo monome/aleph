@@ -22,10 +22,17 @@
 #define SCROLL_CENTER_OFFSET (SCROLL_CENTER_LINE * SCROLL_BYTES_PER_LINE)
 // in pixels, y-offset for top of center row
 #define SCROLL_CENTER_Y_OFFSET (SCROLL_CENTER_LINE * FONT_CHARH)
+/// offset for last row
+#define SCROLL_LAST_LINE_OFFSET (SCROLL_BYTES_PER_LINE * 7)
 
 #define COLOR_SELECT 0xf
-#define COLOR_UNSELECT 0xa
+#define COLOR_UNSELECT 0x8
 #define COLOR_HL 0x4
+
+
+// line buffer
+#define LINEBUF_LEN 64
+char lineBuf[LINEBUF_LEN];
 
 // screen regions
 extern region* headRegion;
@@ -49,8 +56,10 @@ extern void render_set_foot_region(region* reg);
 extern void render_set_scroll_region(region* reg) ;
 
 
-// copy temp data to selection (adding highlight)
+// copy data to selection (adding highlight)
 extern void render_to_select(void);
+// copy from center of scroll region to select (adding highlight)
+extern void render_from_scroll_center(void);
 // copy temp data to center of scroll region (clipping)
 extern void render_to_scroll_center(void);
 // add data to top of scroll region (clipping)

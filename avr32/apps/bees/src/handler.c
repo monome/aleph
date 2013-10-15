@@ -6,20 +6,94 @@
 
  */
 
+#include "print_funcs.h"
+
 #include "aleph_board.h"
+#include "event_types.h"
 #include "gpio.h"
 #include "handler.h"
 #include "menu_protected.h"
 #include "net_monome.h"
 #include "pages.h"
 
+/// gnarly enum hacks
+static const eEventType kMenuEventMin = kEventEncoder0;
+static const eEventType kMenuEventMax = kEventSwitch3;
+
+
+
 // mode flag
-static u8 keyMode = 0;
+//static u8 keyMode = 0;
 
 
 void bees_handler(event_t* e) {
+  const eEventType t = e->eventType;
+  
+  print_dbg("\r\n bees handler, type: ");
+  print_dbg_ulong(e->eventType);
+
+  print_dbg(" , data: 0x");
+  print_dbg_hex(e->eventData);
+  
+
+  /////// FIXME
+  /// a nasty hack, relying on the relative values of enums ... :S
+
+  //// truly it would be best for every application to define a handler (FP)
+  /// for every UI event.
+
+  if( (t >= kMenuEventMin) && (t <= kMenuEventMax)) {
+    curPage->handler[t - kMenuEventMin](e->eventData);
+  } else {
+    switch(t) {
+    case kEventSwitch6:
+      // .. update op
+      break;
+    case kEventSwitch7:
+      // .. update op
+      break;
+    case kEventAdc0:
+      // .. update op
+      break;
+    case kEventAdc1:
+      // .. update op
+      break;
+    case kEventAdc2:
+      // .. update op
+      break;
+    case kEventAdc3:
+      // .. update op
+      break;
+    case kEventMonomeGridKey:
+      // .. update ops
+      break;
+    case kEventMonomeGridTilt:
+      // .. update ops
+      break;
+    case kEventMonomeRingEnc:
+      // .. update ops
+      break;
+    case kEventMonomeRingKey:
+      // .. update ops
+      break;
+    case kEventHidByte:
+      // .. update ops
+      break;
+    case kEventMonomeConnect:
+      // .. update monome focus
+      break;
+    case kEventMonomeDisconnect:
+      // .. update monome focus 
+      break;
+    default:
+      break;
+    }
+  }
+
+  /*
   switch(e->eventType) {
 
+    
     //----- function switches
   case kEventSwitch0:
     curPage->handler[ePageHandleKey0](e->eventData);
@@ -95,6 +169,7 @@ void bees_handler(event_t* e) {
   default:
     break;
   }
+    */
 }
 
 s32 scale_knob_value(s32 val) {

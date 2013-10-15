@@ -97,6 +97,7 @@ void net_init(void) {
   net->numIns = 0;
   net->numOuts = 0;
   net->numParams = 0;
+
   // unassign all I/O nodes
   for(i=0; i<NET_INS_MAX; i++) {
     net_init_inode(i);
@@ -107,6 +108,7 @@ void net_init(void) {
   print_dbg("\r\n initialized ctlnet, byte count: ");
   print_dbg_hex(sizeof(ctlnet_t));
   add_sys_ops();
+  // ???
   netActive = 1;
 }
 
@@ -179,7 +181,7 @@ s16 net_add_op(op_id_t opId) {
   u8 i;
   op_t* op;
 
-  print_dbg("\r\n createing new operator, type: ");
+  print_dbg("\r\n creating new operator, type: ");
   print_dbg_ulong(opId);
 
   if (net->numOps >= NET_OPS_MAX) {
@@ -191,7 +193,7 @@ s16 net_add_op(op_id_t opId) {
     return -1;
   }
   
-  print_dbg("\r\n allocating memory location: 0x");
+  print_dbg("\r\n allocating op pool location: 0x");
   print_dbg_hex((u32)(net->opPool + net->opPoolOffset));
 
   print_dbg("\r\n size of requested op size: 0x");
@@ -216,21 +218,31 @@ s16 net_add_op(op_id_t opId) {
 
   // add op pointer to list
   net->ops[net->numOps] = op;
+  // advance offset for next allocation
   net->opPoolOffset += op_registry[opId].size;
 
   //---- add inputs and outputs to node list
-    for(i=0; i<ins; i++) {
+    for(i=0; i<ins; ++i) {
       net->ins[net->numIns].opIdx = net->numOps;
       net->ins[net->numIns].opInIdx = i;
-      net->numIns++;
+      ++(net->numIns);
     }
   for(i=0; i<outs; i++) {
     net->outs[net->numOuts].opIdx = net->numOps;
     net->outs[net->numOuts].opOutIdx = i;
     net->outs[net->numOuts].target = -1;
-    net->numOuts++;
+    ++(net->numOuts);
   }
-  net->numOps++;
+  ++(net->numOps);
+
+  print_dbg("\r\n added operator. new input count: ");
+  print_dbg_ulong(net->numIns);
+  print_dbg("\r\n added operator. new output count: ");
+  print_dbg_ulong(net->numOuts);
+  print_dbg("\r\n added operator. new op count: ");
+  print_dbg_ulong(net->numOps);
+
+
   return net->numOps - 1;
 }
 
@@ -263,7 +275,7 @@ s16 net_pop_op(void) {
   net->numIns -= op->numInputs;
   net->numOuts -= op->numOutputs;
 
-  net->opPoolOffset += op_registry[op->type].size;
+  net->opPoolOffset -= op_registry[op->type].size;
   net->numOps -= 1;
   return 0;
 
@@ -528,13 +540,27 @@ u32 net_gather(s32 iIdx, u32(*outs)[NET_OUTS_MAX]) {
 
 //--- get / set / increment input value
 io_t net_get_in_value(s32 inIdx) {
+  print_dbg("\r\n getting net input value... inIdx: 0x");
+  print_dbg_hex(inIdx);
+
+  print_dbg("\r\n net num ins: ");
+  print_dbg_ulong(net->numIns);
+
   if(inIdx < 0) {
     return 0;
   }
   if (inIdx >= net->numIns) {
+    print_dbg("\r\n parameter input");
     inIdx -= net->numIns;
     return get_param_value(inIdx);
   } else {
+    print_dbg(" ; opIdx: ");
+    print_dbg_ulong(net->ins[inIdx].opIdx);
+    print_dbg(" ; op address: 0x");
+    print_dbg_hex((u32)net->ops[net->ins[inIdx].opIdx]);
+    print_dbg(" ; opInIdx: ");
+    print_dbg_ulong(net->ins[inIdx].opInIdx);
+
     return op_get_in_val(net->ops[net->ins[inIdx].opIdx], net->ins[inIdx].opInIdx);
   }
 }

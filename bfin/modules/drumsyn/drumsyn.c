@@ -78,9 +78,13 @@ static fract32 noise_next(drumsynVoice* voice);
 // get next noise-generator value
 fract32 noise_next(drumsynVoice* voice) {
   //  return lcprng_next(&(voice->rngL)) | ( lcprng_next(&(voice->rngH)) << 14 );
+  /*
   return filter_2p_hi_next(&(voice->hipass), 
 			   lcprng_next(&(voice->rngL))
 			   | ( lcprng_next(&(voice->rngH)) << 15 ));
+  */
+  // don't really need both lcprngs i think
+  return filter_2p_hi_next(&voice->hipass, lcprng_next(&(voice->rngH)) << 15 );
 }
 
 // initialize voice
@@ -127,6 +131,7 @@ void drumsyn_voice_init(void* mem) {
 void drumsyn_voice_deinit(drumsynVoice* voice) {
   //... nothing to do
 }
+
 // next value of voice
 fract32 drumsyn_voice_next(drumsynVoice* voice) {
   filter_svf* f = &(voice->svf);

@@ -156,20 +156,50 @@ u8 ctl_report_params(void) {
 // set initial parameters
 void ctl_init_params(void) {
   // no filter mix
-  ctl_param_change(eParam_mix0, 0);
-  ctl_param_change(eParam_mix1, 0);
+  //  ctl_param_change(eParam_mix0, 0);
+  //  ctl_param_change(eParam_mix1, 0);
   // both filters are full lowpass
   ctl_param_change(eParam_low0,  fr32_from_float(0.99));
   ctl_param_change(eParam_low1, fr32_from_float(0.99));
+
   // half dry
   ctl_param_change(eParam_adc0_dac0, fr32_from_float(0.5) );
   // half wet
   ctl_param_change(eParam_del0_dac0, fr32_from_float(0.5) );
   ctl_param_change(eParam_del1_dac0, fr32_from_float(0.5) );
+
+  /// delay on all outputs for feedback
+  ctl_param_change(eParam_del0_dac1, fr32_from_float(0.5) );
+  ctl_param_change(eParam_del1_dac1, fr32_from_float(0.5) );
+
+  ctl_param_change(eParam_del0_dac2, fr32_from_float(0.5) );
+  ctl_param_change(eParam_del1_dac2, fr32_from_float(0.5) );
+
+  ctl_param_change(eParam_del0_dac3, fr32_from_float(0.5) );
+  ctl_param_change(eParam_del1_dac3, fr32_from_float(0.5) );
+
   // adc0 -> del0
   ctl_param_change(eParam_adc0_del0, fr32_from_float(0.99));
   // adc0 -> del1
   ctl_param_change(eParam_adc0_del1, fr32_from_float(0.99));
+
+  // adc1 -> del0
+  ctl_param_change(eParam_adc1_del0, fr32_from_float(0.99));
+  // adc1 -> del1
+  ctl_param_change(eParam_adc1_del1, fr32_from_float(0.99));
+
+
+  // adc2 -> del0
+  ctl_param_change(eParam_adc2_del0, fr32_from_float(0.5));
+  // adc2 -> del1
+  //  ctl_param_change(eParam_adc2_del1, fr32_from_float(0.125));
+
+  // adc3 -> del0
+  ctl_param_change(eParam_adc3_del0, fr32_from_float(0.5));
+  // adc3 -> del1
+  //  ctl_param_change(eParam_adc3_del1, fr32_from_float(0.125));
+
+
   // del0 -> del1
   ctl_param_change(eParam_del0_del1, fr32_from_float(0.99));				    
   // slight feedback on del0 

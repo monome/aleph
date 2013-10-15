@@ -164,12 +164,21 @@ extern void menu_refresh(void) {
 void set_page(ePage n) {
   u8 i;
   pageIdx = n;
+  
+  print_dbg("\r\n setting page... ");
+
   //  print_dbg("\r\n page set");
   curPage = &(pages[pageIdx]);
   //  print_dbg("\r\n render after page set:");
   //  curPage->select();
+
+
+  print_dbg("\r\n refreshing page... ");
+  //  print_dbg(" ( not really ... refresh FP is 0x");
+  //  print_dbg_hex((u32)(curPage->refresh));
   curPage->refresh();
-  //  print_dbg("\r\n set enc sense");
+
+  print_dbg("\r\n set enc sense");
   // set encoder sensetivity
   for(i=0; i<4; i++) {
     //set_enc_thresh(encMap[i], curPage->encSens[i]);

@@ -26,8 +26,6 @@
 // bees
 #include "render.h"
 
-#define LINEBUF_LEN 64
-
 //--------------------------
 //---- extern vars
 region* headRegion = NULL;
@@ -38,6 +36,11 @@ region* tmpRegion = NULL;
 //------------------------
 //---- static vars
 
+static region headRegion_pr = 	{ .w=128, .h=8, .x = 0, .y = 0  };
+static region footRegion_pr = 	{ .w=128, .h=8, .x = 0, .y = 56 };
+static region selectRegion_pr = { .w=128, .h=8, .x = 0, .y = 24 };
+static region tmpRegion_pr = 	{ .w=128, .h=8, .x = 0, .y = 0  };
+
 // pointer to current page scroll region
 static region* scrollRegion = NULL;
 
@@ -45,7 +48,7 @@ static region* scrollRegion = NULL;
 static scroll centerScroll;
 
 // static line buffer
-static char lineBuf[LINEBUF_LEN];
+char lineBuf[LINEBUF_LEN];
 //static char numBuf[FIX_DIG_TOTAL] = "           ";
 static char *pline = lineBuf;
 static char * const pLineEnd = lineBuf + LINEBUF_LEN - 1;
@@ -63,11 +66,50 @@ static inline void region_update(region* r) {
 
 // initialize
 void render_init(void) {
+
+  static region** allRegions[4] = {
+    &headRegion,
+    &footRegion,
+    &selectRegion,
+    &tmpRegion,
+  };
+  
+  u8 i;
+
+
+  print_dbg("\r\n init rendering regions.. ");
   // screen regions allocated here
-  region_alloc((region*)(&headRegion));
-  region_alloc((region*)(&footRegion));
-  region_alloc((region*)(&selectRegion));
-  region_alloc((region*)(&tmpRegion));
+  region_alloc((region*)(&headRegion_pr));
+  region_alloc((region*)(&footRegion_pr));
+  region_alloc((region*)(&selectRegion_pr));
+  region_alloc((region*)(&tmpRegion_pr));
+
+  headRegion = &headRegion_pr;
+  footRegion = &footRegion_pr;
+  selectRegion = &selectRegion_pr;
+  tmpRegion = &tmpRegion_pr;
+
+
+  // test
+  print_dbg("\r\n\r\n regions:");
+  for(i = 0; i<4; i++) {
+    print_dbg("\r\n ( ");
+    print_dbg_hex(i);
+    print_dbg(" ) @ 0x");
+    print_dbg_hex((u32)(*(allRegions[i])));
+    print_dbg(", data: @ 0x");
+    print_dbg_hex((u32)( (*(allRegions[i]))->data));
+    print_dbg(", w:");
+    print_dbg_ulong((u32)( (*(allRegions[i]))->w));
+    print_dbg(", h:");
+    print_dbg_ulong((u32)( (*(allRegions[i]))->h));
+    print_dbg(", len: 0x");
+    print_dbg_hex((u32)( (*(allRegions[i]))->len));
+  }
+
+
+
+
   // init each page for rendering
   // doing this in menu.c
   /* init_page_ins(); */
@@ -122,11 +164,13 @@ void draw_edit_string(u8 x, u8 y, char* str, u8 len) {
   for(i=0; i<len; i++) {
     if(str[i] == 0) { return; }
     if(i == curPage->cursor) {
+#warning TODO: fix string-editing render
       //     x += screen_char_fixed_back(x, y, str[i], 0x0, 0xa);
-      x++;
+      ++x;
     } else {
+#warning TODO: fix string-editing render
       //      x += screen_char_squeeze_back(x, y, str[i], 0x7, 0x0);
-      x++;
+      ++x;
     }
   }
 }
@@ -145,7 +189,9 @@ void draw_edit_string(u8 x, u8 y, char* str, u8 len) {
   //  print_dbg("\n\r line buffer start: ");
   //  print_dbg_hex(pline);
   while((*str != 0) && (pline <= pLineEnd)) {
-    *pline++ = *str++;
+    *pline = *str;
+    ++pline;
+    ++str;
   }
 }
 
@@ -184,12 +230,12 @@ void draw_edit_string(u8 x, u8 y, char* str, u8 len) {
 }
 
 // get the line buffer
- char* get_line_buf(void) {
-   return lineBuf;
-}
+/*  char* get_line_buf(void) { */
+/*    return lineBuf; */
+/* } */
 
 // get current y-offset for center line in scroll
- u8 get_yoff(void) {
+u8 get_yoff(void) {
    u8 ret = centerScroll.yOff + SCROLL_CENTER_Y_OFFSET;
    if(ret > centerScroll.reg->h) {
      ret -= centerScroll.reg->h;
@@ -214,12 +260,13 @@ void render_to_select(void) {
 }
 
 // copy temp data to center of scroll region (clipping)
+/// FIXME: abstract this and place in region.c
 void render_to_scroll_center(void) {
   u8* psrc;
   u8* pdst;
   u32 i;
   psrc = tmpRegion->data;
-  pdst = centerScroll.reg->data + centerScroll.byteOff + SCROLL_CENTER_BYTE_OFFSET;
+  pdst = centerScroll.reg->data + centerScroll.byteOff + SCROLL_CENTER_OFFSET;
   for(i=SCROLL_BYTES_PER_LINE; i>0; --i) {
     *pdst = *psrc & COLOR_UNSELECT;
     ++psrc;
@@ -228,12 +275,45 @@ void render_to_scroll_center(void) {
   centerScroll.reg->dirty = 1;
 }
 
+// copy from center of scroll region to select (adding highlight)
+void render_from_scroll_center(void) {
+  u8* psrc;
+  u8* pdst;
+  u32 i;
+  psrc = centerScroll.reg->data + centerScroll.byteOff + SCROLL_CENTER_OFFSET;
+  pdst = selectRegion->data;
+  for(i=SCROLL_BYTES_PER_LINE; i>0; --i) {
+    *pdst = *psrc | COLOR_HL;
+    ++psrc;
+    ++pdst;
+  } 
+  selectRegion->dirty = 1;  
+}
+
+
 // add data to top of scroll region (clipping)
 void render_to_scroll_top(void) {
   u8* psrc;
   u8* pdst;
   u32 i;
   psrc = tmpRegion->data;
+  pdst = centerScroll.reg->data + centerScroll.byteOff + SCROLL_LAST_LINE_OFFSET;
+  for(i=SCROLL_BYTES_PER_LINE; i>0; --i) {
+    *pdst = *psrc & COLOR_UNSELECT;
+    ++psrc;
+    ++pdst;
+  } 
+  centerScroll.reg->dirty = 1;
+}
+
+
+// add data to bottom of scroll region (clipping)
+void render_to_scroll_bottom(void) {
+  u8* psrc;
+  u8* pdst;
+  u32 i;
+  psrc = tmpRegion->data;
+  pdst = centerScroll.reg->data + centerScroll.byteOff + SCROLL_LAST_LINE_OFFSET;
   for(i=SCROLL_BYTES_PER_LINE; i>0; --i) {
     *pdst = *psrc & COLOR_UNSELECT;
     ++psrc;

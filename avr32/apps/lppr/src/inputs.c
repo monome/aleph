@@ -44,8 +44,8 @@
 #define TABLE_MASK 	63
 
 // freq range (in note numbers)
-static const double noteMin = 19;  	// ~ 24 hz
-static const double noteMax = 116; 	// ~ 6.64 khz
+static const double noteMin = 19.0;  	// ~ 24 hz
+static const double noteMax = 116.0; 	// ~ 6.64 khz
 
 //static // fix representation
 static fix16 noteMin_fix;
@@ -216,31 +216,35 @@ static void fill_hz_freq_tables(void) {
   double fz;
   double fn;
   s32 itmp;
-  // 2 ** (1/12)
-  const double tempered = 1.0594630943593;
+  double ftmp;
+  const double tempered = 1.0594630943593;  // 2 ** (1/12)
+  const double midizerohz = 8.1757989156437; // hz of midi note 0
   char strbuf[11] = "           ";
 
-  noteMin_fix = (u32)noteMin << 16;
-  noteMax_fix = (u32)noteMax << 16;
-  /// IDIOT
+  noteMin_fix = fix16_from_int(noteMin);
+  noteMax_fix = fix16_from_int(noteMax);
+
   noteSpan_fix = fix16_sub(noteMax_fix, noteMin_fix);
 
   // fill hz / coeff tables 
   f = 0.0;
   for(i=0; i<TABLE_SIZE; i++) {
     // note numbers (difference)
-    fn = f * ((double)noteMax - (double)noteMin) - 69.0 + noteMin;
+    fn = f * (noteMax - noteMin) + noteMin;
     itmp = (s32)fn;
+    ftmp = fn - (double)itmp;
     // octave multiplier
-    fy = powf(2.0, (double)(itmp / 12));
+    fy = pow(2.0, (double)(itmp / 12));
     // center frequency
-    fy *= 440.0;
+    fy *= midizerohz;
     // tempered ratio
-    fz = fy * powf(tempered, fmod(fn, 12.0));
+    itmp = itmp % 12;
+    fz = (float)(fy * powf(tempered, (double)itmp + ftmp));
     // store hz
     tabHz->data[i] = fix16_from_float(fz);     
     // svf coefficient
     // HACK : assume samplerate == 48000 ...
+    //    fx = (double)((double)fz / (double)48000.0);
     fx = (double)((double)fz / (double)48000.0);
     // stability limit:
     if(fx > 0.25) { fx = 0.25; }
@@ -306,7 +310,7 @@ extern fix16 input_db(u32 in) {
 
 // get note number from input
 extern fix16 input_note (u32 in) {
-  return fix16_mul(IN_FR16(in), noteSpan_fix);
+  return fix16_add(noteMin_fix, fix16_mul(IN_FR16(in), noteSpan_fix));
 }
 
 // get hz from input

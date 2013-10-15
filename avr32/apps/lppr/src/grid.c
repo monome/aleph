@@ -66,7 +66,7 @@ static inline void dirtquad(void) {
 // show a bar-graph value in a row
 //static void grid_show_bar(u8 row, u8 val);
 // show a value as a point in half-grid (32 points)
-static void grid_show_half_point(u8 half, u8 val);
+static void grid_show_half_point(u8 half, u8 x, u8 y);
 
 //-----------------------
 //------ external funcs
@@ -82,14 +82,14 @@ void grid_handle_key_event(s32 data) {
 
   if(y < 4) {
     /// top half: delay time, [1-32] * tap time
-    val = x + (y >> 3) + 1;
+    val = x + (y << 3) + 1;
     ctl_set_delay_mul(0, val);
-    grid_show_half_point(0, val);
+    grid_show_half_point(0, x, y);
   } else {
     /// bottom half: loop pos, [0-32] ** looptime / 32)
-    val = x + ((y-4) >> 3) + 1;
+    val = x + ((y-4) << 3);
     ctl_set_loop_pos(0, val);
-    grid_show_half_point(1, val);
+    grid_show_half_point(1, x, y-4);
   }
 
 
@@ -177,14 +177,20 @@ void grid_show_bar(u8 row, u8 val) {
 #endif
 
 // show a value as a point in half-grid (32 points)
-void grid_show_half_point(u8 half, u8 val) {
+void grid_show_half_point(u8 half, u8 x, u8 y) {
   u8* p;
+  u8 i;
   if(half) {
     p = monomeLedBuffer + (4 << MONOME_LED_ROW_LS);
   } else {
     p = monomeLedBuffer;
   }
-  memset(p, 0x00, MONOME_LED_ROW_BYTES * 4);
-  *(p+val) = 0xff;
+  for(i=0; i<4; i++) {
+    memset(p, 0x00, MONOME_LED_ROW_BYTES);
+    if(i == y) {
+      p[x] = 0xff;
+    }
+    p += MONOME_LED_ROW_BYTES;
+  }
   dirtquad();
 }

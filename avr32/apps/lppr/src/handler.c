@@ -92,10 +92,10 @@ static s32 scale_knob_value(s32 val) {
    u8 h;
    monome_connect_parse_event_data(data, &dev, &w, &h);
    if(dev != eDeviceGrid) {
-     print_dbg("\r\n DSYN monome connect: unsupported device");
+     print_dbg("\r\n LPPR monome connect: unsupported device");
      return;
    }
-   print_dbg("\r\n DSYN: connecting grid device");
+   print_dbg("\r\n LPPR: connecting grid device");
    grid_set_size(w, h);
    timers_set_monome();
  }
@@ -108,10 +108,10 @@ static s32 scale_knob_value(s32 val) {
 extern void lppr_handler(event_t* ev) {
   u8 touchedThis = 0;
   // clear the main region if this is a new touch
-  print_dbg("\r\n \r\n check type: ");
-  print_dbg_ulong(ev->eventType);
+  //  print_dbg("\r\n \r\n check type: ");
+  //  print_dbg_ulong(ev->eventType);
   if(touched != ev->eventType) {
-    print_dbg("\r\n new touch");
+    //    print_dbg("\r\n new touch");
     touchedThis = 1;
     touched = ev->eventType;
   }
@@ -161,7 +161,7 @@ extern void lppr_handler(event_t* ev) {
     break;
     
   case kEventSwitch6:
-    print_dbg("wtf footswitch 1");
+    //    print_dbg("wtf footswitch 1");
     if(ev->eventData > 0) {
       ctl_loop_record(1);
     } 
@@ -169,7 +169,7 @@ extern void lppr_handler(event_t* ev) {
     break;
     
   case kEventSwitch7:
-    print_dbg("wtf footswitch 2");
+    //    print_dbg("wtf footswitch 2");
     if(ev->eventData > 0) {
       ctl_loop_playback(1);
     }
