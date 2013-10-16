@@ -59,7 +59,8 @@ extern void menu_deinit(void);
 // handle key
 //extern void menu_handleKey(uiKey_t key, s16 value);
 // refresh
-//extern void menu_refresh(void);
+extern void menu_refresh(void);
+
 // get selection on given page
 //extern s16 menu_selection(ePage page);
 // system notification

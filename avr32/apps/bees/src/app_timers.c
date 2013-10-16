@@ -44,7 +44,7 @@ static swTimer_t monomeRefreshTimer;
 
 // screen refresh callback
 static void screen_timer_callback(int tag) {  
-  //  render_update();
+  render_update();
 }
 
 

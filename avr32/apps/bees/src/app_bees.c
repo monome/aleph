@@ -93,7 +93,7 @@ u8 app_launch(u8 firstrun) {
     print_dbg("( not really )");
     //    scene_read_default();
   }
-  //menu_refresh();
+  menu_refresh();
 
   return 1;
 }

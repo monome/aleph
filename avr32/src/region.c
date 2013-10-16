@@ -160,11 +160,9 @@ void scroll_data_back(scroll* scr, u8* data) {
 }
 */
 
-/*
 // draw scroll to screen
 extern void scroll_draw(scroll* scr) {
   screen_draw_region_offset(0, 0, scr->reg->w, scr->reg->h, scr->reg->len, 
 			    scr->reg->data, scr->byteOff + scr->drawSpace);
   scr->reg->dirty = 0;
 }
-*/

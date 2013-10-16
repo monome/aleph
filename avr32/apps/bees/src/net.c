@@ -540,28 +540,27 @@ u32 net_gather(s32 iIdx, u32(*outs)[NET_OUTS_MAX]) {
 
 //--- get / set / increment input value
 io_t net_get_in_value(s32 inIdx) {
-  print_dbg("\r\n getting net input value... inIdx: 0x");
-  print_dbg_hex(inIdx);
+  /* print_dbg("\r\n getting net input value... inIdx: 0x"); */
+  /* print_dbg_hex(inIdx); */
 
-  net_print();
+  /* net_print(); */
 
-  print_dbg("\r\n net num ins: ");
-  print_dbg_ulong(net->numIns);
+  /* print_dbg("\r\n net num ins: "); */
+  /* print_dbg_ulong(net->numIns); */
 
   if(inIdx < 0) {
     return 0;
   }
   if (inIdx >= net->numIns) {
-    print_dbg("\r\n parameter input");
     inIdx -= net->numIns;
     return get_param_value(inIdx);
   } else {
-    print_dbg(" ; opIdx: ");
-    print_dbg_ulong(net->ins[inIdx].opIdx);
-    print_dbg(" ; op address: 0x");
-    print_dbg_hex((u32)net->ops[net->ins[inIdx].opIdx]);
-    print_dbg(" ; opInIdx: ");
-    print_dbg_ulong(net->ins[inIdx].opInIdx);
+    /* print_dbg(" ; opIdx: "); */
+    /* print_dbg_ulong(net->ins[inIdx].opIdx); */
+    /* print_dbg(" ; op address: 0x"); */
+    /* print_dbg_hex((u32)net->ops[net->ins[inIdx].opIdx]); */
+    /* print_dbg(" ; opInIdx: "); */
+    /* print_dbg_ulong(net->ins[inIdx].opInIdx); */
 
     return op_get_in_val(net->ops[net->ins[inIdx].opIdx], net->ins[inIdx].opInIdx);
   }

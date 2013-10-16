@@ -78,24 +78,24 @@ static void render_line(s16 idx) {
     appendln( net_in_name(idx) );
     endln();
 
-    print_dbg("\r\n line buffer: ");
-    print_dbg(lineBuf);
+    /* print_dbg("\r\n line buffer: "); */
+    /* print_dbg(lineBuf); */
 
-    print_dbg("\r\n rendering to tmp buffer, dst : 0x (not really)");
-    print_dbg_hex((u32)(tmpRegion->data));
+    /* print_dbg("\r\n rendering to tmp buffer, dst : 0x (not really)"); */
+    /* print_dbg_hex((u32)(tmpRegion->data)); */
 
     region_string(tmpRegion, lineBuf, 0, 0, 0xf, 0, 0);
     clearln();
 
-    print_dbg("\r\n printing input value to line buf... idx: ");
-    print_dbg_ulong(idx);
-    print_dbg(" , value: 0x");
-    print_dbg_hex(net_get_in_value(idx));
+    /* print_dbg("\r\n printing input value to line buf... idx: "); */
+    /* print_dbg_ulong(idx); */
+    /* print_dbg(" , value: 0x"); */
+    /* print_dbg_hex(net_get_in_value(idx)); */
 
     print_fix16(lineBuf, net_get_in_value(idx));
 
-    print_dbg("\r\n line buffer: ");
-    print_dbg(lineBuf);
+    /* print_dbg("\r\n line buffer: "); */
+    /* print_dbg(lineBuf); */
 
     region_string(tmpRegion, lineBuf, 80, 0, 0xf, 0, 0);
   } else {
@@ -103,15 +103,15 @@ static void render_line(s16 idx) {
     println_int( (int)net_param_idx(idx), 0); endln();
     println( net_in_name(idx), 0); endln();
 
-    print_dbg("\r\n line buffer: ");
-    print_dbg(lineBuf);
+    /* print_dbg("\r\n line buffer: "); */
+    /* print_dbg(lineBuf); */
 
     region_string(tmpRegion, lineBuf, 0, 0, 0xf, 0, 0);
     clearln();
     print_fix16(lineBuf, net_get_in_value(idx));
 
-    print_dbg("\r\n line buffer: ");
-    print_dbg(lineBuf);
+    /* print_dbg("\r\n line buffer: "); */
+    /* print_dbg(lineBuf); */
 
     region_string(tmpRegion, lineBuf, 0, 0, 0xf, 0, 0);
   }
@@ -119,21 +119,25 @@ static void render_line(s16 idx) {
 
 // edit the current seleciton
 static void select_edit(s32 inc) {
-  print_dbg("\r\n handle vlaue knob, selection: ");
-  print_dbg_ulong(curPage->select);
-  print_dbg(", value: 0x");
-  print_dbg_ulong(inc);
+  /* print_dbg("\r\n handle vlaue knob, selection: "); */
+  /* print_dbg_ulong(curPage->select); */
+  /* print_dbg(", value: 0x"); */
+  /* print_dbg_ulong(inc); */
+
   // increment input value
-  print_dbg("\r\n incrementing input value...");
+  //  print_dbg("\r\n incrementing input value...");
   net_inc_in_value(curPage->select, inc);
+
   // render to tmp buffer
-  print_dbg("\r\n rendering to tmp...");
+  //  print_dbg("\r\n rendering to tmp...");
   render_line(curPage->select);
+
   // copy to scroll with clipping
-  print_dbg("\r\n copying to scroll center...");
+  //  print_dbg("\r\n copying to scroll center...");
   render_to_scroll_center();
+
   // copy to selection with highlight
-  print_dbg("\r\n copying to selection...");
+  //  print_dbg("\r\n copying to selection...");
   render_to_select();
 }
 
@@ -150,14 +154,18 @@ static void select_scroll(s8 dir) {
     if(newSel < 0) { newSel = 0; }
     if(newSel > (net_num_ins()-1) ) { newSel = net_num_ins() - 1; }
     pages[ePageIns].select = newSel;    
-    print_dbg("\r\n new selection index: ");
-    print_dbg_ulong(newSel);
+
+    /* print_dbg("\r\n new selection index: "); */
+    /* print_dbg_ulong(newSel); */
+
     // new content is (selection - center row) 
     newIdx = newSel + SCROLL_LINES_ABOVE_1;
+
     // render new content
     render_line(newIdx);
+
     // copy to top of scroll
-    print_dbg("\r\n rendering temp to scroll top...");
+    //    print_dbg("\r\n rendering temp to scroll top...");
     render_to_scroll_top();
 
   } else {
@@ -167,8 +175,8 @@ static void select_scroll(s8 dir) {
     if(newSel > (net_num_ins()-1) ) { newSel = net_num_ins() - 1; }
     pages[ePageIns].select = newSel;    
     
-    print_dbg("\r\n new selection index: ");
-    print_dbg_ulong(newSel);
+    /* print_dbg("\r\n new selection index: "); */
+    /* print_dbg_ulong(newSel); */
 
     // new content is )(selection + (num rows - center row))
     newIdx = pages[ePageIns].select + SCROLL_LINES_ABOVE_1;
@@ -176,12 +184,12 @@ static void select_scroll(s8 dir) {
     render_line(newIdx);
 
     // copy to bottom of scrol
-    print_dbg("\r\n rendering temp to scroll bottom...");
+    //    print_dbg("\r\n rendering temp to scroll bottom...");
     render_to_scroll_bottom();
   //  render_to_select();
   }
   // copy new center region
-  print_dbg("\r\n copying scroll center to selection region");
+  //  print_dbg("\r\n copying scroll center to selection region");
   render_from_scroll_center();
 }
 

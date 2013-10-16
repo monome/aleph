@@ -20,8 +20,6 @@
 static const eEventType kMenuEventMin = kEventEncoder0;
 static const eEventType kMenuEventMax = kEventSwitch3;
 
-
-
 // mode flag
 //static u8 keyMode = 0;
 
@@ -35,6 +33,8 @@ void bees_handler(event_t* e) {
   print_dbg(" , data: 0x");
   print_dbg_hex(e->eventData);
   
+  (*(curPage->handler[e->eventData]))(e->eventData);
+
 
   /////// FIXME
   /// a nasty hack, relying on the relative values of enums ... :S
@@ -43,8 +43,10 @@ void bees_handler(event_t* e) {
   /// for every UI event.
 
   if( (t >= kMenuEventMin) && (t <= kMenuEventMax)) {
+    // index FP 
     curPage->handler[t - kMenuEventMin](e->eventData);
   } else {
+    /// case 
     switch(t) {
     case kEventSwitch6:
       // .. update op

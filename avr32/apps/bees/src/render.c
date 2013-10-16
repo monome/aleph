@@ -168,7 +168,7 @@ void draw_edit_string(u8 x, u8 y, char* str, u8 len) {
       //     x += screen_char_fixed_back(x, y, str[i], 0x0, 0xa);
       ++x;
     } else {
-#warning TODO: fix string-editing render
+      // #warning TODO: fix string-editing render
       //      x += screen_char_squeeze_back(x, y, str[i], 0x7, 0x0);
       ++x;
     }

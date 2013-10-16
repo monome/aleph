@@ -154,11 +154,10 @@ void menu_handleKey(uiKey_t key, s16 val) {
 */
 
 // refresh
-/*
+
 extern void menu_refresh(void) {
   curPage->refresh();
 }
-*/
 
 // set current page
 void set_page(ePage n) {
