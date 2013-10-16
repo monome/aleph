@@ -81,7 +81,7 @@ static void render_line(s16 idx) {
     print_dbg("\r\n line buffer: ");
     print_dbg(lineBuf);
 
-    print_dbg("\r\n rendering to tmp buffer, dst : 0x");
+    print_dbg("\r\n rendering to tmp buffer, dst : 0x (not really)");
     print_dbg_hex((u32)(tmpRegion->data));
 
     region_string(tmpRegion, lineBuf, 0, 0, 0xf, 0, 0);
@@ -257,7 +257,11 @@ void refresh_ins(void) {
 
 // function keys
 void handle_key_0(s32 val) {
+
   print_dbg("\r\n page_ins handle key 0 ");
+  // test
+  net_print();
+
   if(altMode) {
     // gather
   } else {

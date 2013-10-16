@@ -14,7 +14,7 @@
 #include "gpio.h"
 #include "print_funcs.h"
 
-// aleph-avr32nothing seems 
+// aleph-avr32
 #include "app.h"
 #include "bfin.h"
 #include "events.h"
@@ -27,6 +27,7 @@
 #include "files.h"
 #include "handler.h"
 #include "menu.h"
+#include "net.h"
 #include "net_monome.h"
 #include "play.h"
 #include "render.h"
@@ -55,6 +56,7 @@ void app_init(void) {
   menu_init();
 
   print_dbg("\r\n play_init...");
+  //  print_dbg(" ( not really )");
   play_init();
 
   // set handler
@@ -64,17 +66,13 @@ void app_init(void) {
 
 // this is called from the event queue 
 u8 app_launch(u8 firstrun) {
-  ////////////////
-  /* ///// TEST */
-  /* char buf[64]; */
-  /* sprintf(buf, " blah blah oh yeah , %d", 666); */
-
-  /////////////////
 
 
-  //  app_notify("launching BEES");
   print_dbg("\r\n launching app with firstrun: ");
   print_dbg_ulong(firstrun);
+
+  net_print();
+
   if(firstrun) {
     //    scene_write_default();
   } else {

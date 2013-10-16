@@ -30,6 +30,19 @@ static const u8 kValOff  = 14;
 // current idx into scroll
 static u16 scrollIdx = 0;
 
+// test, try to overflow stack
+/* static int killstack0[0xfffffff]; */
+/* static int killstack1[0xfffffff]; */
+/* static int killstack2[0xfffffff]; */
+/* static int killstack3[0xfffffff]; */
+/* static int killstack4[0xfffffff]; */
+/* static int killstack5[0xfffffff]; */
+/* static int killstack6[0xfffffff]; */
+/* static int killstack7[0xfffffff]; */
+/* static int killstack8[0xfffffff]; */
+/* static int killstack9[0xfffffff]; */
+
+
 //-------------------------------
 //--- external functions
 
@@ -40,6 +53,15 @@ void play_init(void) {
     for(j=0; j<PLAY_STR_LEN; j++) {
       //      print_dbg("\r\n buf fill index: ");
       //      print_dbg_hex(i * PLAY_STR_LEN + j);
+
+      ///////////
+      ////////////
+      // test:
+      //      continue;
+      ///////////////
+      /////////////
+
+
       scrollBuf[i * PLAY_STR_LEN + j] = 0x20;
       scrollBuf[i * PLAY_STR_LEN + PLAY_STR_LEN - 1] = 0;
     }

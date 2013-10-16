@@ -543,6 +543,8 @@ io_t net_get_in_value(s32 inIdx) {
   print_dbg("\r\n getting net input value... inIdx: 0x");
   print_dbg_hex(inIdx);
 
+  net_print();
+
   print_dbg("\r\n net num ins: ");
   print_dbg_ulong(net->numIns);
 
@@ -655,6 +657,28 @@ void net_retrigger_inputs(void) {
   }
   netActive = 1;
 }
+
+
+//////////
+///////////////
+// test / dbg
+
+void net_print(void) {
+  print_dbg("\r\n net address: 0x");
+  print_dbg_hex((u32)(net));
+
+  print_dbg("\r\n net input count: ");
+  print_dbg_ulong(net->numIns);
+  print_dbg("\r\n net output count: ");
+  print_dbg_ulong(net->numOuts);
+  print_dbg("\r\n net op count: ");
+  print_dbg_ulong(net->numOps);
+
+}
+
+////////////
+////////
+
 
 //---------------------------------------------------
 //----- static

@@ -60,13 +60,26 @@ u8 dbgFlag = 0;
 u32 dbgCount = 0;
 #endif
 
-/// TEST: one voice
 drumsynVoice* voices[DRUMSYN_NVOICES];
 
 // pointer to local module data, initialize at top of SDRAM
 static drumsynData * data;
 //-- static allocation (SRAM) for variables that are small and/or frequently accessed:
 static fract32 frameVal;
+
+
+/////////
+/////////
+// test: try to overflow stack
+/* static int killstack0[0xffffff]; */
+/* static int killstack1[0xffffff]; */
+/* static int killstack2[0xffffff]; */
+/* static int killstack3[0xffffff]; */
+/* static int killstack4[0xffffff]; */
+/* static int killstack5[0xffffff]; */
+
+////////////
+//////////
 
 //-----------------------------
 //----- static functions

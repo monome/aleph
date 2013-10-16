@@ -221,7 +221,8 @@ void draw_edit_string(u8 x, u8 y, char* str, u8 len) {
 }
 
 // clear line buffer
- inline void clearln(void) {
+inline void clearln(void) {
+  pline = lineBuf;
   memset(pline, ' ', LINEBUF_LEN);
 }
 

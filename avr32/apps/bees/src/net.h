@@ -118,4 +118,8 @@ void net_retrigger_inputs(void);
 // returns count of connections
 u32 net_gather(s32 iIdx, u32(*outs)[NET_OUTS_MAX]);
 
+
+/// test/dbg
+void net_print(void);
+
 #endif // header guard
