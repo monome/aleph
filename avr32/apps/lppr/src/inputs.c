@@ -219,7 +219,7 @@ static void fill_hz_freq_tables(void) {
   double ftmp;
   const double tempered = 1.0594630943593;  // 2 ** (1/12)
   const double midizerohz = 8.1757989156437; // hz of midi note 0
-  char strbuf[11] = "           ";
+  //  char strbuf[11] = "           ";
 
   noteMin_fix = fix16_from_int(noteMin);
   noteMax_fix = fix16_from_int(noteMax);

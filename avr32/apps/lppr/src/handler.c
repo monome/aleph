@@ -42,10 +42,21 @@ static eEventType touched = kNumSysEvents;
 
 // linear scaling for encoders
 static s32 scale_lin_enc(s32 val) {
+#if 0
+  /// you really want our resolution to be limited to 128 for e.g. frequency?
   return val << 7;    // *128
+#else
+  /// at least leave the unit value alive... 
+  if (val == 1) { return 1; }
+  if (val == -1) { return -1; }
+  if(val < 0) { return (val+1)<<7; }
+  return (val-1)<<7;
+#endif
+
 }
 
-static s32 scale_knob_value(s32 val) {
+/*
+static s32 scale_exp_enc(s32 val) {
   static const u32 kNumKnobScales_1 = 23;
   static const u32 knobScale[24] = {
     0x00000001,
@@ -85,6 +96,7 @@ static s32 scale_knob_value(s32 val) {
    }
    return ret;
 }
+*/
 
 
 /* static s32 scale_knob_value_fast(s32 val) { */

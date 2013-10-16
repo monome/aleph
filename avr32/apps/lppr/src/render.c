@@ -142,7 +142,7 @@ void render_startup(void) {
 
 // render text to scrolling buffer during boot procedure
 extern void render_boot(const char* str) {
-  scroll_string_front(&bootScroll, str);
+  scroll_string_front(&bootScroll, (char*)str);
 }
 
 // update dirty regions
