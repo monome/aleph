@@ -242,7 +242,7 @@ void init_page_ins(void) {
   region_alloc(&scrollRegion);
 
   //  print_dbg("\r\n filling scroll region... ");
-  //  print_dbg(" ( not really ) ");
+  //  print_dbg(" ( not really ) "); 
   // fill regions
   region_fill(&scrollRegion, 0x0);
 }
@@ -254,6 +254,8 @@ void refresh_ins(void) {
   // assign global scroll region pointer
   // also marks dirty
   render_set_scroll_region(&scrollRegion);
+
+  
   
   // other regions are static in top-level render, with global handles
   region_fill(headRegion, 0x0);

@@ -81,7 +81,6 @@ u8 app_launch(u8 firstrun) {
     //    flash_read_ldr();
     //    bfin_load_buf();
     
-
     print_dbg("\r\n enable DSP audio...");
     bfin_enable();
 
