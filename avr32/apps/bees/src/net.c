@@ -577,11 +577,14 @@ void net_set_in_value(s32 inIdx, io_t val) {
   }
 }
 
+// probably only called from UI,
+// can err on the side of caution vs speed
 io_t net_inc_in_value(s32 inIdx, io_t inc) {
   op_t* op;
-  if (inIdx >= net->numIns) {
+  if(inIdx >= net->numIns) {
+    // hack to get preset idx
     inIdx -= net->numIns;
-    set_param_value(inIdx, OP_ADD(get_param_value(inIdx), inc));
+    set_param_value(inIdx,  OP_SADD(get_param_value(inIdx), inc));
     return get_param_value(inIdx);
   } else {
     op = net->ops[net->ins[inIdx].opIdx];

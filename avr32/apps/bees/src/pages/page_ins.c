@@ -72,13 +72,6 @@ static void render_line(s16 idx) {
     // operator input
     // build descriptor string
     clearln();
-
-    /* print_dbg("\r\n--- page_ins descriptor"); */
-    /* /\* print_dbg("\r\n line address at start: 0x"); *\/ */
-    /* /\* print_dbg_hex((u32)lineBuf); *\/ */
-    /* print_dbg("\r\n opidx: "); */
-    /* print_dbg_ulong(opIdx); */
-
     appendln_idx_lj(opIdx);
     appendln_char('.');
     appendln( net_op_name(opIdx) );
@@ -86,36 +79,11 @@ static void render_line(s16 idx) {
     appendln( net_in_name(idx) );
     endln();
 
-    /* print_dbg("\r\n line address at end: 0x"); */
-    /* print_dbg_hex((u32)lineBuf); */
-    /* print_dbg("\r\n"); */
-    /* print_dbg(lineBuf); */
-
-
-    /* print_dbg("\r\n input path: "); */
-    /* print_dbg(lineBuf); */
-
-    /* print_dbg("\r\n rendering to tmp buffer, dst : 0x (not really)"); */
-    /* print_dbg_hex((u32)(tmpRegion->data)); */
-
     font_string_region_clip(tmpRegion, lineBuf, 0, 0, 0xa, 0);
     clearln();
 
-    /* print_dbg("; idx: "); */
-    /* print_dbg_ulong(idx); */
-    /* print_dbg(" , value: 0x"); */
-    /* print_dbg_hex(net_get_in_value(idx)); */
-
     print_fix16(lineBuf, net_get_in_value(idx));
-
-    /* print_dbg("; linebuf: "); */
-    /* print_dbg(lineBuf); */
-
     font_string_region_clip(tmpRegion, lineBuf, LINE_VAL_POS, 0, 0xa, 0);
-
-    //// test
-    //    region_update(tmpRegion);
-
   } else {
     // parameter input    
     clearln();
@@ -123,48 +91,21 @@ static void render_line(s16 idx) {
     endln();
     appendln( net_in_name(idx)); 
     endln();
-
-    /* print_dbg("\r\n line buffer: "); */
-    /* print_dbg(lineBuf); */
-
     font_string_region_clip(tmpRegion, lineBuf, 0, 0, 0xa, 0);
     clearln();
     print_fix16(lineBuf, net_get_in_value(idx));
-
-    /* print_dbg("\r\n line buffer: "); */
-    /* print_dbg(lineBuf); */
-
     font_string_region_clip(tmpRegion, lineBuf, 48, 0, 0xa, 0);
-
-
-    //// test
-    //    region_update(tmpRegion);
-    
   }
 }
 
 // edit the current seleciton
 static void select_edit(s32 inc) {
-  /* print_dbg("\r\n handle vlaue knob, selection: "); */
-  /* print_dbg_ulong(curPage->select); */
-  /* print_dbg(", value: 0x"); */
-  /* print_dbg_ulong(inc); */
-
   // increment input value
-  //  print_dbg("\r\n incrementing input value...");
   net_inc_in_value(curPage->select, inc);
-
   // render to tmp buffer
-  //  print_dbg("\r\n rendering to tmp...");
   render_line(curPage->select);
-
   // copy to scroll with highlight
-  //  print_dbg("\r\n copying to scroll center...");
   render_to_scroll_line(SCROLL_CENTER_LINE, 1);
-
-  // copy to selection with highlight
-  //  print_dbg("\r\n copying to selection...");
-  //  render_to_select();
 }
 
 // scroll the current selection
@@ -185,11 +126,9 @@ static void select_scroll(s32 dir) {
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
     // decrement selection
     newSel = curPage->select - 1;
-
     ///// these bounds checks shouldn't really be needed here...
     //    if(newSel < 0) { newSel = 0; }
     //    if(newSel > max ) { newSel = max; }
-
     curPage->select = newSel;    
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
@@ -208,12 +147,10 @@ static void select_scroll(s32 dir) {
   } else {
     // SCROLL UP
     // if selection is already max, do nothing 
-
     if(curPage->select == max) {
       print_dbg("\r\n reached max selection in inputs scroll. ");
       return;
     }
-
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
     // increment selection
@@ -236,41 +173,7 @@ static void select_scroll(s32 dir) {
     render_to_scroll_bottom();
     // add highlight to new center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
-
   }
-
-#if 0
-  /*   // new content is (selection - center row)  */
-  /*   newIdx = newSel - SCROLL_LINES_BELOW; */
-  /*   if(newIdx < 0) {  */
-  /*     region_fill(tmpRegion, 0x0); */
-  /*   } else { */
-  /*     // render new content */
-  /*     render_line(newIdx); */
-  /*     // copy to top of scroll */
-  /*     render_to_scroll_top(); */
-  /*   } */
-  /*   //  } else { */
-  /*   // incerement selection */
-  /*   newSel = pages[ePageIns].select + 1; */
-  /*   if(newSel < 0) { newSel = 0; } */
-  /*   if(newSel > max ) { newSel = max; } */
-  /*   pages[ePageIns].select = newSel;     */
-
-  /*   // new content is )(selection + (num rows - center row)) */
-  /*   newIdx = pages[ePageIns].select + SCROLL_LINES_ABOVE_1; */
-  /*   if(newIdx > max) {  */
-  /*     region_fill(tmpRegion, 0x0); */
-  /*   } else { */
-  /*     // render new content */
-  /*     render_line(newIdx);  */
-  /*   // copy to bottom of scrol */
-  /*     render_to_scroll_bottom(); */
-  /*   } */
-  /* } */
-  /* // copy new center region */
-  /* render_from_scroll_center(); */
-#endif
 }
 
 // display the function key labels according to current state
@@ -321,9 +224,6 @@ void init_page_ins(void) {
   print_dbg("\r\n alloc INS page");
   // allocate regions
   region_alloc(&scrollRegion);
-
-  //  print_dbg("\r\n filling scroll region... ");
-  //  print_dbg(" ( not really ) "); 
   // fill regions
   region_fill(&scrollRegion, 0x0);
   // fill the scroll with actual line values...
@@ -359,8 +259,7 @@ void refresh_ins(void) {
 void handle_key_0(s32 val) {
   //  print_dbg("\r\n page_ins handle key 0 ");
   // test
-  net_print();
-
+  //  net_print();
   if(altMode) {
     // gather
   } else {

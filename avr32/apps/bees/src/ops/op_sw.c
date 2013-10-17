@@ -98,7 +98,7 @@ static void op_sw_inc_func(op_sw_t* sw, const s16 idx, const io_t inc) {
     op_sw_in_tog(sw, &inc);
     break;
   case 2: // multiplier
-    val = OP_ADD(sw->mul, inc);
+    val = OP_SADD(sw->mul, inc);
     op_sw_in_mul(sw, &val);
     break;
   }
