@@ -30,7 +30,7 @@
 //---- extern vars
 region* headRegion = NULL;
 region* footRegion = NULL;
-region* selectRegion = NULL;
+//region* selectRegion = NULL;
 region* tmpRegion = NULL;
 
 //------------------------
@@ -38,8 +38,11 @@ region* tmpRegion = NULL;
 
 static region headRegion_pr = 	{ .w=128, .h=8, .x = 0, .y = 0  };
 static region footRegion_pr = 	{ .w=128, .h=8, .x = 0, .y = 56 };
-static region selectRegion_pr = { .w=128, .h=8, .x = 0, .y = 24 };
+//static region selectRegion_pr = { .w=128, .h=8, .x = 0, .y = 24 };
 static region tmpRegion_pr = 	{ .w=128, .h=8, .x = 0, .y = 0  };
+
+// dummy region with full-screen dimensions but no data
+static region dummyRegion = { .w=128, .h=64, .x=0, .y=0, .data=NULL };
 
 // pointer to current page scroll region
 static region* scrollRegion = NULL;
@@ -49,12 +52,31 @@ static scroll centerScroll;
 
 // static line buffer
 char lineBuf[LINEBUF_LEN];
-//static char numBuf[FIX_DIG_TOTAL] = "           ";
 static char *pline = lineBuf;
 static char * const pLineEnd = lineBuf + LINEBUF_LEN - 1;
 
+static const u8 colorHiFront = 	0xf;
+static const u8 colorHiBack = 	0x2;
+static const u8 colorLoFront = 	0xa; 
+static const u8 colorLoBack = 	0x0;
+
+// byte offsets for text lines
+static u32 scrollLines[8] = {
+  0	,
+  1024	,
+  2048	,
+  3072	,
+  4096	,
+  5120	,
+  6144	,
+  7168
+};
+
 // check dirty flag and update region
-static inline void region_update(region* r) {
+
+//// test:
+//static inline void region_update(region* r) {
+void region_update(region* r) {
   if(r->dirty) {
     screen_draw_region(r->x, r->y, r->w, r->h, r->data);
     r->dirty = 0;
@@ -66,73 +88,71 @@ static inline void region_update(region* r) {
 
 // initialize
 void render_init(void) {
+  /// dbg
+  /* static region** allRegions[4] = { */
+  /*   &headRegion, */
+  /*   &footRegion, */
+  /*   //    &selectRegion, */
+  /*   &tmpRegion, */
+  /* }; */
 
-  static region** allRegions[4] = {
-    &headRegion,
-    &footRegion,
-    &selectRegion,
-    &tmpRegion,
-  };
-  
-  u8 i;
-
+  /* u8 i; */
+  ////////
 
   print_dbg("\r\n init rendering regions.. ");
   // screen regions allocated here
   region_alloc((region*)(&headRegion_pr));
   region_alloc((region*)(&footRegion_pr));
-  region_alloc((region*)(&selectRegion_pr));
+  //  region_alloc((region*)(&selectRegion_pr));
   region_alloc((region*)(&tmpRegion_pr));
 
   headRegion = &headRegion_pr;
   footRegion = &footRegion_pr;
-  selectRegion = &selectRegion_pr;
+  //  selectRegion = &selectRegion_pr;
   tmpRegion = &tmpRegion_pr;
 
+  // scroll init needs to compute offsets based on region size
+  // use a dummy region with correct dimensions but no data
+  scrollRegion = &dummyRegion;
+  scroll_init(&centerScroll, scrollRegion);
 
   // test
-  print_dbg("\r\n\r\n regions:");
-  for(i = 0; i<4; i++) {
-    print_dbg("\r\n ( ");
-    print_dbg_hex(i);
-    print_dbg(" ) @ 0x");
-    print_dbg_hex((u32)(*(allRegions[i])));
-    print_dbg(", data: @ 0x");
-    print_dbg_hex((u32)( (*(allRegions[i]))->data));
-    print_dbg(", w:");
-    print_dbg_ulong((u32)( (*(allRegions[i]))->w));
-    print_dbg(", h:");
-    print_dbg_ulong((u32)( (*(allRegions[i]))->h));
-    print_dbg(", len: 0x");
-    print_dbg_hex((u32)( (*(allRegions[i]))->len));
-  }
-
-
-
-
-  // init each page for rendering
-  // doing this in menu.c
-  /* init_page_ins(); */
-  /* init_page_outs(); */
-  /* init_page_presets(); */
-  /* init_page_ops(); */
-  /* init_page_scenes(); */
-  /* init_page_dsp(); */
-  /* init_page_gathered(); */
-  /* init_page_play(); */
+  /* print_dbg("\r\n\r\n regions:"); */
+  /* for(i = 0; i<4; i++) { */
+  /*   print_dbg("\r\n ( "); */
+  /*   print_dbg_hex(i); */
+  /*   print_dbg(" ) @ 0x"); */
+  /*   print_dbg_hex((u32)(*(allRegions[i]))); */
+  /*   print_dbg(", data: @ 0x"); */
+  /*   print_dbg_hex((u32)( (*(allRegions[i]))->data)); */
+  /*   print_dbg(", w:"); */
+  /*   print_dbg_ulong((u32)( (*(allRegions[i]))->w)); */
+  /*   print_dbg(", h:"); */
+  /*   print_dbg_ulong((u32)( (*(allRegions[i]))->h)); */
+  /*   print_dbg(", x:"); */
+  /*   print_dbg_ulong((u32)( (*(allRegions[i]))->x)); */
+  /*   print_dbg(", y:"); */
+  /*   print_dbg_ulong((u32)( (*(allRegions[i]))->y)); */
+  /*   print_dbg(", len: 0x"); */
+  /*   print_dbg_hex((u32)( (*(allRegions[i]))->len)); */
+  /* } */
 }
 
 // update
 void render_update(void) {
   app_pause();
+
   // scrolling region
-  if(centerScroll.reg->dirty) {
+  if((centerScroll.reg)->dirty) {
     scroll_draw(&centerScroll);
   }
   // standard regions
+
   region_update(headRegion);
   region_update(footRegion);
-  region_update(selectRegion);
+  //// FIXME: eliminate this one
+  //  region_update(selectRegion);
+  
   app_resume();
 }
 
@@ -198,7 +218,7 @@ void draw_edit_string(u8 x, u8 y, char* str, u8 len) {
 // write int to top of line buffer
  inline void println_int(int val, int pos) {
   pline = lineBuf + pos;
-  appendln_int_lj(val);
+  appendln_idx_lj(val);
 }
 
 // append int to line buffer
@@ -211,8 +231,25 @@ void draw_edit_string(u8 x, u8 y, char* str, u8 len) {
 }
 
 // append int to line buffer (left justified, no bounds)
- inline void appendln_int_lj(int val) {
-  pline += itoa_whole_lj(val, pline); 
+/// very fast, for short unsigned values!
+inline void appendln_idx_lj(u16 val) {
+  u16 dig = 0;
+  u16 rem = 0;
+  // 3 digits only 
+  if(val > 999) { rem = 999; } else { rem = val; }
+
+  dig = val / 100U;
+  rem -= dig * 100U;
+  *pline = '0' + dig;
+  ++pline;
+
+  dig = rem / 10U;
+  rem -= dig * 10U;
+  *pline = '0' + dig;
+  ++pline;
+
+  *pline = '0' + rem;
+  ++pline;    
 }
 
 // append char to line buffer
@@ -227,13 +264,8 @@ inline void clearln(void) {
 }
 
  inline void endln(void) {
-  *(pline) = 0;
+  *(pline) = '\0';
 }
-
-// get the line buffer
-/*  char* get_line_buf(void) { */
-/*    return lineBuf; */
-/* } */
 
 // get current y-offset for center line in scroll
 u8 get_yoff(void) {
@@ -253,7 +285,7 @@ void render_to_select(void) {
   psrc = tmpRegion->data;
   pdst = selectRegion->data;
   for(i=SCROLL_BYTES_PER_LINE; i>0; --i) {
-    *pdst = *psrc | COLOR_HL;
+    *pdst = *psrc;
     ++psrc;
     ++pdst;
   } 
@@ -269,11 +301,11 @@ void render_to_scroll_center(void) {
   psrc = tmpRegion->data;
   pdst = centerScroll.reg->data + centerScroll.byteOff + SCROLL_CENTER_OFFSET;
   for(i=SCROLL_BYTES_PER_LINE; i>0; --i) {
-    *pdst = *psrc & COLOR_UNSELECT;
+    *pdst = *psrc;
     ++psrc;
     ++pdst;
   } 
-  centerScroll.reg->dirty = 1;
+  scrollRegion->dirty = 1;
 }
 
 // copy from center of scroll region to select (adding highlight)
@@ -284,7 +316,7 @@ void render_from_scroll_center(void) {
   psrc = centerScroll.reg->data + centerScroll.byteOff + SCROLL_CENTER_OFFSET;
   pdst = selectRegion->data;
   for(i=SCROLL_BYTES_PER_LINE; i>0; --i) {
-    *pdst = *psrc | COLOR_HL;
+    *pdst = *psrc;
     ++psrc;
     ++pdst;
   } 
@@ -292,34 +324,108 @@ void render_from_scroll_center(void) {
 }
 
 
-// add data to top of scroll region (clipping)
+// add data to top of scroll region
 void render_to_scroll_top(void) {
-  u8* psrc;
-  u8* pdst;
-  u32 i;
-  psrc = tmpRegion->data;
-  pdst = centerScroll.reg->data + centerScroll.byteOff + SCROLL_LAST_LINE_OFFSET;
-  for(i=SCROLL_BYTES_PER_LINE; i>0; --i) {
-    *pdst = *psrc & COLOR_UNSELECT;
-    ++psrc;
-    ++pdst;
-  } 
-  centerScroll.reg->dirty = 1;
+  scroll_region_back(&centerScroll, tmpRegion);
 }
 
 
 // add data to bottom of scroll region (clipping)
 void render_to_scroll_bottom(void) {
-  u8* psrc;
-  u8* pdst;
-  u32 i;
-  psrc = tmpRegion->data;
-  pdst = centerScroll.reg->data + centerScroll.byteOff + SCROLL_LAST_LINE_OFFSET;
-  for(i=SCROLL_BYTES_PER_LINE; i>0; --i) {
-    *pdst = *psrc & COLOR_UNSELECT;
-    ++psrc;
-    ++pdst;
-  } 
-  centerScroll.reg->dirty = 1;
+  scroll_region_front(&centerScroll, tmpRegion);
 }
 
+//+++++++++++++++++++++++++++++++++++++
+//+++++++++++++++++++++++++++++++
+
+
+/* note: this type of bounds check (on dstOff in functions below)
+   is only intendeded to catch line offsets.x
+   in other words, it is assumed
+   that scroll offset is always advanced by multiples of line length.
+  */
+
+// render tmp region to arbitrary line of scroll region, with highlight flag
+// no update is performed
+void render_to_scroll_line(u8 n, u8 hl) {
+  u8* src;
+  u8* dst;
+  u8* dstMax;
+  // data offset in scroll
+  s32 dstOff = centerScroll.byteOff + scrollLines[n];
+  while(dstOff >= scrollRegion->len) { dstOff -= scrollRegion->len; }
+  dst = scrollRegion->data + dstOff;
+  // setup copy
+  src = tmpRegion->data;
+  dstMax = dst + tmpRegion->len - 1;
+  // copy and apply color map based on HL
+  // it is assumed that tmp buffer uses colors [0, >0]
+  if(hl) {
+    while(dst < dstMax) {
+      if(*src > 0) {
+	*dst = colorHiFront;
+      } else {
+	*dst = colorHiBack;
+      }
+      src++;
+      dst++;
+    }
+  } else {
+    while(dst < dstMax) {
+      if(*src > 0) {
+	*dst = colorLoFront;
+      } else {
+	*dst = colorLoBack;
+      }
+      src++;
+      dst++;
+    }
+  }
+  scrollRegion->dirty = 1;
+}
+
+/// apply highlight  given line of scroll
+void render_scroll_apply_hl(u8 n, u8 hl) {
+  u8* dst;
+  u8* dstMax;
+  // data offset in scroll
+  s32 dstOff = centerScroll.byteOff + scrollLines[n];
+  while(dstOff >= scrollRegion->len) { dstOff -= scrollRegion->len; }
+  // setup bounds
+  dst = scrollRegion->data + dstOff;
+  dstMax = dst + tmpRegion->len - 1;
+
+  if(hl) {
+    while(dst < dstMax) {
+      if(*dst < colorLoFront) {
+	*dst = colorHiBack;
+      } else {
+	*dst = colorHiFront;
+      }
+      dst++;
+    }  
+  } else {
+    while(dst < dstMax) {
+      if(*dst < colorHiFront) {
+	*dst = colorLoBack;
+      } else {
+	*dst = colorLoFront;
+      }
+      dst++;
+    }  
+  }
+  scrollRegion->dirty = 1;
+}
+
+// fill scroll line with color
+//extern void render_fill_scroll_line(u8 n, u8 col) {
+  /* u8* dst; */
+  /* u8* dstMax; */
+  /* // data offset in scroll */
+  /* s32 dstOff = centerScroll.byteOff + scrollLines[n]; */
+  /* while(dstOff > scrollRegion->len) { dstOff -= scrollRegion->len; } */
+  /* // setup bounds */
+  /* dst = scrollRegion->data + dstOff; */
+  /* dstMax = dst + tmpRegion->len - 1; */
+  //  while(dst < dstMax)
+//}

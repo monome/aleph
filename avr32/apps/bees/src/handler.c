@@ -26,12 +26,13 @@ static const eEventType kMenuEventMax = kEventSwitch3;
 
 void bees_handler(event_t* e) {
   const eEventType t = e->eventType;
-  print_dbg("\r\n --- ");
-  print_dbg("\r\n bees handler, type: ");
-  print_dbg_ulong(e->eventType);
 
-  print_dbg(" , data: 0x");
-  print_dbg_hex(e->eventData);
+  /* print_dbg("\r\n --- "); */
+  /* print_dbg("\r\n bees handler, type: "); */
+  /* print_dbg_ulong(e->eventType); */
+
+  /* print_dbg(" , data: 0x"); */
+  /* print_dbg_hex(e->eventData); */
   
   /////// FIXME
   /// a nasty hack, relying on the relative values of enums ... :S

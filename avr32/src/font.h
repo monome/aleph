@@ -4,6 +4,8 @@
 //#include "compiler.h"
 //#include "fonts/dejavu_numerals_24.h"
 #include "fonts/ume_tgo5_18.h"
+
+#include "region.h"
 #include "types.h"
 
 
@@ -36,9 +38,10 @@ extern const U32 font_nglyphs;
 
 // render a single glyph to a buffer, rastering
 // given pointer, row length, foreground, background
-// returns updated pointer
-extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b);
+// returns count of columns
+extern u8 font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b);
 // same as font_glyph, double size
+/// -- -fixme: these still return updated buf pointers... no width checking
 extern u8* font_glyph_big(char ch, u8* buf, u8 w, u8 a, u8 b);
 // same as font_glyph, 4x size
 extern u8* font_glyph_bigbig(char ch, u8* buf, u8 w, u8 a, u8 b);
@@ -50,6 +53,10 @@ extern u8* font_string_big(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b)
 extern u8* font_string_bigbig(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b);
 
 
+// render a font string to a region.
+// this allows for smarter bounds handling
+extern void font_string_region_wrap(region* reg, const char* str, u8 x, u8 y, u8 fg, u8 bg);
+extern void font_string_region_clip(region* reg, const char* str, u8 x, u8 y, u8 fg, u8 bg);
 
 ///--- anti-aliased
 

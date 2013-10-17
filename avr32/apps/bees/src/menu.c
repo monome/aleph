@@ -48,7 +48,7 @@ page_t pages[NUM_PAGES] = {
   { .name = "INS",
     .refresh = &refresh_ins,
     .handler = handler_ins, // pointer to handlers
-    .encSens = { ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, 0, 0, }, // encoder sens 
+    .encSens = { 0, 0, 0, 0, }, // encoder sens 
   },
   { .name = "OUTS",
     .refresh = &refresh_outs,
