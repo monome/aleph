@@ -1,7 +1,6 @@
 #ifndef _ALEPH_BFIN_GPIO_H_
 #define _ALEPH_BFIN_GPIO_H_
 
-
 // codec reset
 #define CODEC_RESET_PIN	   1
 #define CODEC_RESET_UNMASK (1 << CODEC_RESET_PIN)
@@ -16,12 +15,23 @@
 #define DAC_RESET_LO	 *pFIO_FLAG_D &= DAC_RESET_MASK
 #define DAC_RESET_HI  	 *pFIO_FLAG_D |= DAC_RESET_UNMASK
 
-// "busy" pin - pf12
-#define BUSY_PIN        12
-#define BUSY_UNMASK 	(1 << BUSY_PIN)
-#define BUSY_MASK	(0xffff ^ BUSY_UNMASK)
-#define BUSY_LO 	*pFIO_FLAG_D &= BUSY_MASK
-#define BUSY_HI 	*pFIO_FLAG_D |= BUSY_UNMASK
+// "ready" pin - pf12
+// set high when able to receive param changes
+// e.g. init finished, frame finished
+#define READY_PIN        12
+#define READY_UNMASK 	(1 << READY_PIN)
+#define READY_MASK	(0xffff ^ READY_UNMASK)
+#define READY_LO 	*pFIO_FLAG_D &= READY_MASK
+#define READY_HI 	*pFIO_FLAG_D |= READY_UNMASK
+
+// "request" pin - pf13
+// should it prove necessary, bfin will use this pin
+// to trigger interrupts on avr32.
+#define REQUEST_PIN        13
+#define REQUEST_UNMASK 	(1 << REQUEST_PIN)
+#define REQUEST_MASK	(0xffff ^ REQUEST_UNMASK)
+#define REQUEST_LO 	*pFIO_FLAG_D &= REQUEST_MASK
+#define REQUEST_HI 	*pFIO_FLAG_D |= REQUEST_UNMASK
 
 // leds are on pf14, pf15
 #define LED3_PIN 	14

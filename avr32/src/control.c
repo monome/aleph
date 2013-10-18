@@ -41,7 +41,7 @@ static void clear_param_dirty(u32 idx) {
 
 // request a parameter change.
 extern u8 ctl_param_change(u32 idx, u32 val) {
-#if 1 // testing: direct set
+#if 1 // testing (?): direct set
   //  print_dbg("\r\n set: ");
   bfin_set_param(idx, val);
   return 0;

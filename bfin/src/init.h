@@ -19,7 +19,7 @@
 // busy pin (shared with HWAIT) : pf2
 //#define PF_DIR           0xc002 
 //#define PF_DIR           0xc003
-#define PF_DIR (CODEC_RESET_UNMASK) | (DAC_RESET_UNMASK) | (BUSY_UNMASK) | (LED3_UNMASK) | (LED4_UNMASK)
+//#define PF_DIR (CODEC_RESET_UNMASK) | (DAC_RESET_UNMASK) | (READY_UNMASK) | (LED3_UNMASK) | (LED4_UNMASK)
 //#define CODEC_RESET_MASK 0xfffd 
 //#define CODEC_SS_MASK    0xffdf
 

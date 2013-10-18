@@ -148,6 +148,9 @@ void net_retrigger_inputs(void);
 // returns count of connections
 u32 net_gather(s32 iIdx, u32(*outs)[NET_OUTS_MAX]);
 
+// query the blackfin for parameter list and populate pnodes
+extern u8 net_report_params(void);
+
 /// test/dbg
 void net_print(void);
 

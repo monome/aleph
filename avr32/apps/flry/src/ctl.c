@@ -192,7 +192,7 @@ void ctl_joy(u8 ch, u8 v) {
   if(inc < 4 && inc > -4) { inc = 0; }
 
   /* print_dbg("\r\n "); */
-  /* print_dbg("joystick axis update: 0x"); */
+  /* print_dbg("joystick axis upd ate: 0x"); */
   /* print_dbg_hex(v); */
 
   val = dac[ch][0] + inc;

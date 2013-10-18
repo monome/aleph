@@ -17,6 +17,7 @@
 #endif
 
 // aleph-avr32
+#include "bfin.h"
 #include "control.h"
 
 // bees
@@ -658,6 +659,56 @@ void net_retrigger_inputs(void) {
     net_activate(i, net_get_in_value(i), NULL);
   }
   netActive = 1;
+}
+
+
+
+// query the blackfin for parameter list and populate pnodes
+u8 net_report_params(void) {
+  volatile char buf[64];
+  volatile ParamDesc pdesc;
+  volatile u32 numParams;
+  u8 i;
+ 
+  bfin_get_num_params(&numParams);
+  
+  print_dbg("\r\nnumparams: ");
+  print_dbg_ulong(numParams);
+
+
+
+  if(numParams == 255) {
+    print_dbg("\r\n report_params fail (255)");
+    return 0;
+  }
+
+  if(numParams > 0) {
+    for(i=0; i<numParams; i++) {
+      bfin_get_param_desc(i, &pdesc);
+
+      print_dbg("\r\n recieved descriptor for param : ");
+      print_dbg((const char* )pdesc.label);
+
+      net_add_param(i, &pdesc);
+
+    }
+  } else {
+    print_dbg("\r\n bfin: no parameters reported");
+    return 0;
+  }
+  
+  delay_ms(100);
+
+  print_dbg("\r\n checking module label ");
+  bfin_get_module_name(buf);
+
+  delay_ms(10);
+
+  print_dbg("\r\n bfin module name: ");
+  print_dbg((const char*)buf);
+
+  return (u8)numParams;
+
 }
 
 
