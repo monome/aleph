@@ -413,7 +413,7 @@ void handle_key_3(s32 val) {
 void handle_enc_0(s32 val) {
   //  print_dbg("\r\n page_ins handle enc 0 ");
   // change parameter value, slow
-  select_edit(scale_knob_value(val));
+  select_edit(scale_knob_value_small(val));
 }
 
 void handle_enc_1(s32 val) {

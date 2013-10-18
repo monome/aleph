@@ -174,9 +174,7 @@ void bees_handler(event_t* e) {
     */
 }
 
-
-
-/// weird assemblage of segments
+// full-scale
 s32 scale_knob_value(s32 val) {
   static const u32 kNumKnobScales_1 = 23;
   static const u32 knobScale[24] = {
@@ -211,21 +209,58 @@ s32 scale_knob_value(s32 val) {
     0x20000000 , // 24
   };
 
+
+
   s32 vabs = BIT_ABS(val);
   s32 ret = val;
-  
-  /*
-  print_dbg("\r\n knob scale in : ");
-  if(val < 0) {
-    print_dbg("-");
-    print_dbg_ulong((val + 1) * -1);
-  } else {
-    print_dbg_ulong(val);
+
+  if(vabs > kNumKnobScales_1) {
+    vabs = kNumKnobScales_1;
   }
-  */
-  
-  // can't actually happen
-  //  if(val == 0) { return 0; }
+  ret = knobScale[vabs - 1];
+   if(val < 0) {
+     ret = BIT_NEG_ABS(ret);
+   }
+   return ret;
+}
+
+
+// lower slope
+s32 scale_knob_value_small(s32 val) {
+  static const u32 kNumKnobScales_1 = 23;
+  static const u32 knobScale[24] = {
+    ///--- 3 linear segments:
+    // slope = 1
+    0x00000001, // 1
+    0x00000002, // 2
+    // slope = 0x10
+    0x00000030, // 3
+    0x00000030, // 4
+    0x00000040, // 5
+    0x00000050, // 6
+    0x00000060, // 7
+    0x00000070, // 8
+    0x00000080, // 9
+    0x00000090 ,  // 10
+    0x000000a0 , // 11
+    0x000000b0 , // 12
+    0x000000c0 , // 13
+    0x000000d0 , // 14
+    0x000000e0 , // 15
+    0x000000f0 , // 16
+    // slope == 0z100
+    0x00000100 , // 17
+    0x00000200 , // 18
+    0x00000300 , // 19
+    0x00000400 , // 20
+    0x00000500 , // 21
+    0x00000600 , // 22
+    0x00000700 , // 23
+    0x00000800 , // 24
+  };
+
+  s32 vabs = BIT_ABS(val);
+  s32 ret = val;
 
   if(vabs > kNumKnobScales_1) {
     vabs = kNumKnobScales_1;

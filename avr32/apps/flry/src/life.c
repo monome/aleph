@@ -10,9 +10,9 @@ s8 lifenext[128];
 u8 changed;
 u8 step, mass, v, h;
 
-u8 neighbors(u8 x, u8 y)
+static u8 neighbors(u8 x, u8 y)
 {
-	return lifenow[((x + 1) % 8) + ((y)<<4)] + 
+  return lifenow[((x + 1) % 8) + ((y)<<4)] + 
     lifenow[(x) + (((y + 1) % 8)<<4)] + 
     lifenow[((x + 8 - 1) % 8) + ((y)<<4)] + 
     lifenow[(x) + (((y + 8 - 1) % 8)<<4)] + 
