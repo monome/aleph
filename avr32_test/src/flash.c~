@@ -1,0 +1,168 @@
+// ASF
+#include "flashc.h"
+#include "power_clocks_lib.h"
+#include "print_funcs.h"
+
+// aleph
+#include "flash.h"
+
+#define NV_TESTN 32
+
+// non-volatile data layout
+/* typedef const struct { */
+/*   /// test */
+/*   uint8_t var8; */
+/*   uint32_t var32; */
+/* } nv_t */
+
+/* // locate in flash section */
+/* __attribute__((__section__(".flash_nvram"))) */
+/* static nv_t nv; */
+
+
+//! NVRAM data structure located in the flash array.
+__attribute__((__section__(".flash_nvram")))
+static nvram_data_t flash_nvram_data;
+
+//! NVRAM data structure located in the User page.
+
+__attribute__((__section__(".userpage")))
+static nvram_data_t user_nvram_data;
+
+volatile uint32_t del;
+
+//static const uint32_t write = 0x76543210;
+static const uint8_t writeData[8] = {0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF};
+
+//===================================
+
+
+/*! \brief Prints the variables stored in NVRAM.
+ *
+ * \param nvram_data  Pointer to the NVRAM data structure to print.
+ */
+static void print_nvram_variables(nvram_data_t *nvram_data)
+{
+  print_dbg("var8:\t0x");
+  print_dbg_char_hex(nvram_data->var8);
+
+  print_dbg("\r\nvar16:\t0x");
+  print_dbg_short_hex(nvram_data->var16);
+
+  print_dbg("\r\nvar8_3:\t0x");
+  print_dbg_char_hex(nvram_data->var8_3[0]);
+  print_dbg_char_hex(nvram_data->var8_3[1]);
+  print_dbg_char_hex(nvram_data->var8_3[2]);
+
+  print_dbg("\r\nvar32:\t0x");
+  print_dbg_hex(nvram_data->var32);
+
+  print_dbg("\r\n");
+}
+
+
+/*! \brief This is an example demonstrating flash read / write data accesses
+ *         using the FLASHC driver.
+ *
+ * \param caption     Caption to print before running the example.
+ * \param nvram_data  Pointer to the NVRAM data structure to use in the example.
+ */
+static void flash_rw_example(const char *caption, nvram_data_t *nvram_data)
+{
+  static const uint8_t write_data[8] = {0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF};
+
+  print_dbg(caption);
+
+  print_dbg("Initial values of NVRAM variables:\r\n");
+  print_nvram_variables(nvram_data);
+
+  print_dbg("\r\nClearing NVRAM variables...");
+  flashc_memset((void *)nvram_data, 0x00, 8, sizeof(*nvram_data), true);
+  print_dbg("\r\nNVRAM variables cleared:\r\n");
+  print_nvram_variables(nvram_data);
+
+  print_dbg("\r\nWriting new values to NVRAM variables...");
+  flashc_memcpy((void *)&nvram_data->var8,   &write_data, sizeof(nvram_data->var8),   true);
+  flashc_memcpy((void *)&nvram_data->var16,  &write_data, sizeof(nvram_data->var16),  true);
+  flashc_memcpy((void *)&nvram_data->var8_3, &write_data, sizeof(nvram_data->var8_3), true);
+  flashc_memcpy((void *)&nvram_data->var32,  &write_data, sizeof(nvram_data->var32),  true);
+  print_dbg("\r\nNVRAM variables written:\r\n");
+  print_nvram_variables(nvram_data);
+}
+
+static void test_print_flash_status(void) {
+  print_dbg("\r\n\r\n flash is ready: ");
+  print_dbg_hex(flashc_is_ready());
+  print_dbg("\r\n flashc lock error: ");
+  print_dbg_hex(flashc_is_lock_error());
+  print_dbg("\r\n flash prog error: ");
+  print_dbg_hex(flashc_is_programming_error());
+  print_dbg("\r\n");
+}
+
+static void test_print_nv(nvram_data_t* dat) {
+  print_dbg("\r\n reading... ");
+  print_dbg("\r\n var8: ");
+  print_dbg_hex(dat->var8);
+  print_dbg("\r\n var32: ");
+  print_dbg_hex(dat->var32);
+}
+
+static void test_write_nv(nvram_data_t* dat) {
+  print_dbg("\r\n \r\n writing...");
+  flashc_memcpy( (void*)&dat->var8, &writeData, sizeof(dat->var8), true);
+  flashc_memcpy( (void*)&dat->var32, &writeData, sizeof(dat->var32), true);
+}
+
+static void test_clear_nv(nvram_data_t* dat) {
+  print_dbg("\r\n \r\n clearing...");
+  flashc_memset((void *)(dat), 0x00, 8, sizeof(*dat), true);
+}
+
+
+static void mytest(nvram_data_t* data) {
+  static const uint8_t write_data[8] = {0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF};
+
+  print_dbg("\r\n ----------------- rewrite \r\n");
+  print_dbg("Initial values of NVRAM variables:\r\n");
+  print_nvram_variables(data);
+
+  print_dbg("\r\nClearing NVRAM variables...");
+  flashc_memset((void *)data, 0x00, 8, sizeof(*data), true);
+  print_dbg("\r\nNVRAM variables cleared:\r\n");
+  print_nvram_variables(data);
+
+  print_dbg("\r\nWriting new values to NVRAM variables...");
+  flashc_memcpy((void *)&data->var8,   &write_data, sizeof(data->var8),   true);
+  flashc_memcpy((void *)&data->var16,  &write_data, sizeof(data->var16),  true);
+  flashc_memcpy((void *)&data->var8_3, &write_data, sizeof(data->var8_3), true);
+  flashc_memcpy((void *)&data->var32,  &write_data, sizeof(data->var32),  true);
+  print_dbg("\r\nNVRAM variables written:\r\n");
+  print_nvram_variables(data);
+}
+
+//-------------------------
+void test_flash(void) {
+  void* data = &flash_nvram_data;
+ // Apply the example to the flash array.
+  flash_rw_example("\r\n ASF TEST :", data);
+
+  mytest(data);
+
+
+
+  print_dbg("\r\n \r\n ---------------- running flash test; NV data address: ");
+  print_dbg_hex(data);
+
+  //  test_print_flash_status();
+
+  //  test_print_nv(data);
+  //  test_clear_nv(data);
+  //  test_print_nv(data);
+  //  test_write_nv(data);
+  //  test_print_nv(data);
+
+  test_print_flash_status();
+
+}
+

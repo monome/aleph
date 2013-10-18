@@ -1,0 +1,117 @@
+;; -*- mode: emacs-lisp; coding: emacs-mule; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Wed Oct 16 14:44:20 2013
+;; Desktop file format version 206
+;; Emacs version 23.3.1
+
+;; Global section:
+(setq desktop-missing-file-warning nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+(setq search-ring nil)
+(setq regexp-search-ring nil)
+(setq register-alist nil)
+(setq file-name-history '("~/aleph/tests/avr32_test/src/" "~/aleph/tests/avr32_test/conf" "~/aleph/tests/avr32_test/core.mk"))
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 206
+  "/home/emb/aleph/tests/avr32_test/src/files.c"
+  "files.c"
+  'c-mode
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
+  102
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/tests/avr32_test/config.mk"
+  "config.mk"
+  'makefile-gmake-mode
+  '(semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
+  151
+  '(140 nil)
+  nil
+  nil
+  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/asf-3.7.3/avr32/drivers/ebi/smc/smc.h"
+  "smc.h"
+  'c-mode
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
+  2261
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  nil
+  "conf"
+  'dired-mode
+  nil
+  217
+  '(nil nil)
+  t
+  '("/home/emb/aleph/tests/avr32_test/conf/")
+  nil)
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/asf-3.7.3/common/boards/board.h"
+  "board.h"
+  'c-mode
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
+  11758
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/tests/avr32_test/core.mk"
+  "core.mk"
+  'makefile-gmake-mode
+  '(semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
+  4734
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/asf-3.7.3/avr32/drivers/ebi/smc/smc.c"
+  "smc.c"
+  'c-mode
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
+  1636
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/tests/avr32_test/src/events.h"
+  "events.h"
+  'c-mode
+  '(abbrev-mode semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
+  102
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/emb/aleph/tests/avr32_test/Makefile"
+  "Makefile"
+  'makefile-gmake-mode
+  '(semantic-highlight-edits-mode semantic-show-unmatched-syntax-mode semantic-show-parser-state-mode semantic-stickyfunc-mode semantic-highlight-func-mode senator-minor-mode semantic-idle-scheduler-mode semantic-idle-summary-mode semantic-idle-local-symbol-highlight-mode semantic-idle-completions-mode semantic-mru-bookmark-mode semantic-decoration-mode)
+  1111
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode . t) (buffer-file-coding-system . undecided-dos)))
+
