@@ -27,6 +27,9 @@
 #define SCROLL_CENTER_Y_OFFSET (SCROLL_CENTER_LINE * FONT_CHARH)
 /// offset for last row
 #define SCROLL_LAST_LINE_OFFSET (SCROLL_BYTES_PER_LINE * 7)
+// underline at bottom of line region
+#define LINE_UNDERLINE_LEN 127
+#define LINE_UNDERLINE_OFFSET (SCROLL_BYTES_PER_LINE - LINE_UNDERLINE_LEN - 1)
 
 // x-offset in pixels for value field on each line
 #define LINE_VAL_POS 64
@@ -41,7 +44,7 @@ char lineBuf[LINEBUF_LEN];
 
 // screen regions
 extern region* headRegion;
-extern region* footRegion;
+extern region* footRegion[4];
 extern region* selectRegion;
 extern region* tmpRegion;
 
@@ -55,7 +58,7 @@ extern void render_update(void);
 // set current header region
 extern void render_set_head_region(region* reg);
 // set current footer region
-extern void render_set_foot_region(region* reg);
+extern void render_set_foot_region(region* reg[4]);
 // set current scroll region
 extern void render_set_scroll_region(region* reg) ;
 

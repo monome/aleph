@@ -7,6 +7,7 @@
 
 extern void bees_handler(event_t* ev);
 extern s32 scale_knob_value(s32 val);
+extern s32 scale_knob_value(s32 val);
 
 /* void handle_sw_fn_0( u8 val ); */
 /* void handle_sw_fn_1( u8 val ); */

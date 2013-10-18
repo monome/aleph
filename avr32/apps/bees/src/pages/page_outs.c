@@ -6,6 +6,15 @@
 #include "pages.h"
 #include "render.h"
 
+//-------------------------
+//---- static variables
+
+static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
+
+// alt-mode flag (momentary)
+static u8 altMode = 0;
+// selection-included-in-preset flag (read from network on selection)
+static u8 inPreset = 0;
 
 //-------------------------
 //---- static

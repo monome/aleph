@@ -31,12 +31,17 @@ static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
 static u8 altMode = 0;
 // play-mode filter flag (persistent)
 static u8 playFilter = 0;
+
 // selection-included-in-preset flag (read from network on selection)
 static u8 inPreset = 0;
 // selection-included-in-play flag (read from network on selection)
 static u8 inPlay = 0;
+
 // in-clear-confirm state
 static u8 clearConfirm = 0;
+
+// all function keys take a double-press
+static u8 keyPressed = 255;
 
 //-------------------------
 //---- static declarations
@@ -96,6 +101,8 @@ static void render_line(s16 idx) {
     print_fix16(lineBuf, net_get_in_value(idx));
     font_string_region_clip(tmpRegion, lineBuf, 48, 0, 0xa, 0);
   }
+  // underline
+  region_fill_part(tmpRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
 }
 
 // edit the current seleciton
@@ -177,40 +184,131 @@ static void select_scroll(s32 dir) {
 }
 
 // display the function key labels according to current state
-static void show_foot(void) {
-  region_fill(footRegion, 0x0);
-  if(clearConfirm) {
-    font_string_region_clip(footRegion, "-   ", 0, 0, 0xf, 0x1);
-    font_string_region_clip(footRegion, "-   ", 32, 0, 0xf, 0x1);
-    font_string_region_clip(footRegion, "-   ", 64, 0, 0xf, 0x1);
-    font_string_region_clip(footRegion, "OK! ", 96, 0, 0xf, 0x1);
+/// FIXME: would be more maintainable to use enum and array of funtcions. i guess
+static void show_foot0(void) {
+  u8 fill = 0;
+  if(keyPressed == 0) {
+    fill = 0x5;
+  }
+  region_fill(footRegion[0], fill);
+  if(altMode) {
+    font_string_region_clip(footRegion[0], "GATHER", 0, 0, 0xf, fill);
   } else {
-    if(altMode) {
-      font_string_region_clip(footRegion, "GATHR", 0, 0, 0xf, 0x1);
-      if(inPlay) {
-	font_string_region_clip(footRegion, "HIDE", 32, 0, 0xf, 0x1);
-      } else {
-	font_string_region_clip(footRegion, "SHOW", 32, 0, 0xf, 0x1);
-      }
-      if(playFilter) {
-	font_string_region_clip(footRegion, "ALL", 64, 0, 0xf, 0x1);
-      } else {
-	font_string_region_clip(footRegion, "FILT", 64, 0, 0xf, 0x1);
-      }
-      font_string_region_clip(footRegion, "ALT", 96, 0, 0xf, 0x5);
+    font_string_region_clip(footRegion[0], "STORE", 0, 0, 0xf, fill);
+  }
+}
+
+static void show_foot1(void) {
+  u8 fill = 0;
+  if(keyPressed == 1) {
+    fill = 0x5;
+  }
+  region_fill(footRegion[1], fill);
+  if(altMode) {
+    if(inPlay) {
+      font_string_region_clip(footRegion[1], "HIDE", 0, 0, 0xf, fill);
     } else {
-      font_string_region_clip(footRegion, "STORE", 0, 0, 0xf, 0x1);
-      if(inPreset) {
-	font_string_region_clip(footRegion, "EXC", 32, 0, 0xf, 0x1);
-      } else {
-	font_string_region_clip(footRegion, "INC", 32, 0, 0xf, 0x1);
-      }
-      font_string_region_clip(footRegion, "CLEAR", 64, 0, 0xf, 0x1);
-      font_string_region_clip(footRegion, "ALT", 96, 0, 0xf, 0x1 );
+      font_string_region_clip(footRegion[1], "SHOW", 0, 0, 0xf, fill);
+    }
+  } else {
+    if(inPreset) {
+      font_string_region_clip(footRegion[1], "EXC", 0, 0, 0xf, fill);
+    } else {
+      font_string_region_clip(footRegion[1], "INC", 0, 0, 0xf, fill);
     }
   }
 }
 
+static void show_foot2(void) {
+  u8 fill = 0;
+  if(keyPressed == 2) {
+    fill = 0x5;
+  }
+  region_fill(footRegion[2], fill);
+  if(altMode) {
+    if(playFilter) {
+      font_string_region_clip(footRegion[2], "ALL", 0, 0, 0xf, fill);
+    } else {
+      font_string_region_clip(footRegion[2], "FILT", 0, 0, 0xf, fill);
+    }
+  } else {
+    font_string_region_clip(footRegion[2], "CLEAR", 0, 0, 0xf, fill);
+  }
+}
+
+static void show_foot3(void) {
+  u8 fill = 0;
+  u8 fore = 0xf;
+  if(altMode) {
+    fill = 0xf;
+    fore = 0;
+  }
+  region_fill(footRegion[3], fill);
+  font_string_region_clip(footRegion[3], "ALT", 0, 0, fore, fill);
+}
+
+
+static void show_foot(void) {
+  if(clearConfirm) {
+    font_string_region_clip(footRegion[0], "-   ", 0, 0, 0xf, 0);
+    font_string_region_clip(footRegion[1], "-   ", 0, 0, 0xf, 0);
+    font_string_region_clip(footRegion[2], "-   ", 0, 0, 0xf, 0);
+    font_string_region_clip(footRegion[3], " OK! ", 0, 0, 0xf, 0x5);
+  } else { 
+    show_foot0();
+    show_foot1();
+    show_foot2();
+    show_foot3();
+  }
+  /*
+/// FIXME:
+    // it would be more efficient (redundant compares, etc) 
+    // to combine the fn's above into an ugly if-nest as below.
+    // we don't ever really update the regions independently.
+
+  u8 i;
+  u8 fill[4] = {0, 0, 0, 0};
+  static const u8 footpx[4] = {0, 32, 64, 96};
+  for(i = 0; i<4; i++) {
+    if(keyPressed == i) { fill[i] = 0x5; }
+    //    region_fill_part(footRegion, footpx[i], 32, fill[i]);
+  }
+  if(clearConfirm) {
+    font_string_region_clip(footRegion, "-   ", 0, 0, 0xf, 0);
+    font_string_region_clip(footRegion, "-   ", 32, 0, 0xf, 0);
+    font_string_region_clip(footRegion, "-   ", 64, 0, 0xf, 0);
+    font_string_region_clip(footRegion, " OK! ", 96, 0, 0xf, 0x5);
+  } else {
+    if(altMode) {
+      ///// ALT
+      font_string_region_clip(footRegion, " GATHR ", 0, 0, 0xf, fill[0]);
+      if(inPlay) {
+	font_string_region_clip(footRegion, " HIDE ", 32, 0, 0xf, fill[1]);
+      } else {
+	font_string_region_clip(footRegion, " SHOW ", 32, 0, 0xf, fill[1]);
+      }
+      if(playFilter) {
+	font_string_region_clip(footRegion, " ALL  ", 64, 0, 0xf, fill[3]);
+      } else {
+	font_string_region_clip(footRegion, " FILT ", 64, 0, 0xf, fill[3]);
+      }
+      font_string_region_clip(footRegion, " ALT ", 96, 0, 0x0, 0xf);
+    } else {
+      ///// non-ALT
+      font_string_region_clip(footRegion, " STORE ", 0, 0, 0xf, fill[0]);
+      if(inPreset) {
+	font_string_region_clip(footRegion, " EXC  ", 32, 0, 0xf, fill[1]);
+      } else {
+	font_string_region_clip(footRegion, " INC  ", 32, 0, 0xf, fill[1]);
+      }
+      font_string_region_clip(footRegion, " CLEAR  ", 64, 0, 0xf, fill[2]);
+      font_string_region_clip(footRegion, " ALT ", 96, 0, 0xf, fill[3]);
+    }
+  }
+  */
+}
+
+// set alt mode
 static void set_alt(u8 val) {
   altMode = val;
   show_foot();
@@ -255,34 +353,55 @@ void refresh_ins(void) {
 //--------------------------
 //---- static definitions
 
+static u8 check_key(u8 key) {
+  u8 ret;
+  if(keyPressed == key) {
+    keyPressed = 255;
+    ret = 1;
+  } else {
+    keyPressed = key;
+    ret = 0;
+  }
+  return ret;
+}
+
 // function keys
 void handle_key_0(s32 val) {
-  //  print_dbg("\r\n page_ins handle key 0 ");
-  // test
-  //  net_print();
-  if(altMode) {
-    // gather
-  } else {
-    // store in preset (+ scene?)
+  if(val == 0) { return; }
+  if(check_key(0)) {
+    if(altMode) {
+      // gather
+    } else {
+      // store in preset (+ scene?)
+    }
   }
+  show_foot();
 }
 
 void handle_key_1(s32 val) {
   //  print_dbg("\r\n page_ins handle key 1 ");
-  if(altMode) {
-    // include / exclude
-  } else {
-    // show / hide
+  if(val == 0) { return; }
+  if(check_key(1)) {
+    if(altMode) {
+      // include / exclude
+    } else {
+      // show / hide
+    }
   }
+  show_foot();
 }
 
 void handle_key_2(s32 val) {
   //  print_dbg("\r\n page_ins handle key 2 ");
-  if(altMode) {
-    // filter / all
-  } else {
-    // clear (disconnect all routings) / CONFIRM
-  }
+  if(val == 0) { return; }
+  if(check_key(2)) {
+    if(altMode) {
+      // filter / all
+    } else {
+      // clear (disconnect all routings) / CONFIRM
+    }
+  } 
+  show_foot();
 }
 
 void handle_key_3(s32 val) {
@@ -300,11 +419,17 @@ void handle_enc_0(s32 val) {
 void handle_enc_1(s32 val) {
   //  print_dbg("\r\n page_ins handle enc 1 ");
   // change parameter value, fast
+  select_edit(scale_knob_value(val) << 16);
 }
 
 void handle_enc_2(s32 val) {
   //  print_dbg("\r\n page_ins handle enc 2 ");
   // scroll page
+  if(val > 0) {
+    //    set_page(ePageOuts);
+  } else {
+    //    set_page(ePagePresets);
+  }
 }
 
 void handle_enc_3(s32 val) {

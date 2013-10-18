@@ -28,6 +28,7 @@ typedef enum {
   eOpFlagMenu, // op has a submenu function
   eOpFlagMonomeGrid, // op is a monome grid controller
   eOpFlagMonomeRing, // op is a monome arc controller
+  //...
 } op_flag_t;
 
 

@@ -177,40 +177,44 @@ void bees_handler(event_t* e) {
 s32 scale_knob_value(s32 val) {
   static const u32 kNumKnobScales_1 = 23;
   static const u32 knobScale[24] = {
-    0x00000001,
-    0x00000005,
-    0x0000000C,
-    0x0000001C,
-    0x00000041,
-    0x00000098,
-    0x0000015F,
-    0x0000032C,
-    0x00000756,
-    0x000010F3,
-    0x0000272B,
-    0x00005A82,
-    0x0000D124,
-    0x0001E343,
-    0x00045CAE,
-    0x000A1451,
-    0x00174A5A,
-    0x0035D13F,
-    0x007C5B28,
-    0x011F59AC,
-    0x0297FB5A,
-    0x05FE4435,
-    0x0DD93CDC,
-    0x1FFFFFFD,
+    /// linear segment
+    1, // 0
+    2, // 1
+    3, // 2
+    4, // 3
+    // hyper exponential segment
+    0x00000008, // 4
+    0x00000010, // 5
+    0x00000100, // 6
+    // linear
+    0x00001000, // 7
+    0x00002000, // 8
+    0x00003000 ,  // 9
+    0x00004000 , // 10
+    0x00005000 , // 11
+    0x00006000 , // 12
+    0x00007000 , // 13
+    0x00008000 , // 14
+    0x00009000 , // 15
+    0x0000a000 , // 16
+    0x0000b000 , // 17
+    // exponential
+    0x0000c000 , // 18
+    0x00018000 , // 19
+    0x00030000 , // 20
+    0x00060000 , // 21
+    0x000C0000 , // 22
+    0x00180000 , // 23
   };
 
   if(val == 0) { return 0; }
 
   s32 vabs = BIT_ABS(val);
   s32 ret = val;
-   if(vabs > kNumKnobScales_1) {
-     vabs = kNumKnobScales_1;
-   }
-   ret = knobScale[vabs - 1];
+  if(vabs > kNumKnobScales_1) {
+    vabs = kNumKnobScales_1;
+  }
+  ret = knobScale[vabs - 1];
    if(val < 0) {
      ret = BIT_NEG_ABS(ret);
    }

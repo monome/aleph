@@ -29,15 +29,20 @@
 //--------------------------
 //---- extern vars
 region* headRegion = NULL;
-region* footRegion = NULL;
-//region* selectRegion = NULL;
+region* footRegion[4] = { NULL, NULL, NULL, NULL };
 region* tmpRegion = NULL;
 
 //------------------------
 //---- static vars
 
 static region headRegion_pr = 	{ .w=128, .h=8, .x = 0, .y = 0  };
-static region footRegion_pr = 	{ .w=128, .h=8, .x = 0, .y = 56 };
+static region footRegion_pr[4] = {
+  { .w=32, .h=8, .x = 0,  .y = 56 },
+  { .w=32, .h=8, .x = 32, .y = 56 },
+  { .w=32, .h=8, .x = 64, .y = 56 },
+  { .w=32, .h=8, .x = 96, .y = 56 },
+};
+
 //static region selectRegion_pr = { .w=128, .h=8, .x = 0, .y = 24 };
 static region tmpRegion_pr = 	{ .w=128, .h=8, .x = 0, .y = 0  };
 
@@ -102,12 +107,18 @@ void render_init(void) {
   print_dbg("\r\n init rendering regions.. ");
   // screen regions allocated here
   region_alloc((region*)(&headRegion_pr));
-  region_alloc((region*)(&footRegion_pr));
+  region_alloc((region*)(&(footRegion_pr[0])));
+  region_alloc((region*)(&(footRegion_pr[1])));
+  region_alloc((region*)(&(footRegion_pr[2])));
+  region_alloc((region*)(&(footRegion_pr[3])));
   //  region_alloc((region*)(&selectRegion_pr));
   region_alloc((region*)(&tmpRegion_pr));
 
   headRegion = &headRegion_pr;
-  footRegion = &footRegion_pr;
+  footRegion[0] = &(footRegion_pr[0]);
+  footRegion[1] = &(footRegion_pr[1]);
+  footRegion[2] = &(footRegion_pr[2]);
+  footRegion[3] = &(footRegion_pr[3]);
   //  selectRegion = &selectRegion_pr;
   tmpRegion = &tmpRegion_pr;
 
@@ -115,27 +126,6 @@ void render_init(void) {
   // use a dummy region with correct dimensions but no data
   scrollRegion = &dummyRegion;
   scroll_init(&centerScroll, scrollRegion);
-
-  // test
-  /* print_dbg("\r\n\r\n regions:"); */
-  /* for(i = 0; i<4; i++) { */
-  /*   print_dbg("\r\n ( "); */
-  /*   print_dbg_hex(i); */
-  /*   print_dbg(" ) @ 0x"); */
-  /*   print_dbg_hex((u32)(*(allRegions[i]))); */
-  /*   print_dbg(", data: @ 0x"); */
-  /*   print_dbg_hex((u32)( (*(allRegions[i]))->data)); */
-  /*   print_dbg(", w:"); */
-  /*   print_dbg_ulong((u32)( (*(allRegions[i]))->w)); */
-  /*   print_dbg(", h:"); */
-  /*   print_dbg_ulong((u32)( (*(allRegions[i]))->h)); */
-  /*   print_dbg(", x:"); */
-  /*   print_dbg_ulong((u32)( (*(allRegions[i]))->x)); */
-  /*   print_dbg(", y:"); */
-  /*   print_dbg_ulong((u32)( (*(allRegions[i]))->y)); */
-  /*   print_dbg(", len: 0x"); */
-  /*   print_dbg_hex((u32)( (*(allRegions[i]))->len)); */
-  /* } */
 }
 
 // update
@@ -149,10 +139,10 @@ void render_update(void) {
   // standard regions
 
   region_update(headRegion);
-  region_update(footRegion);
-  //// FIXME: eliminate this one
-  //  region_update(selectRegion);
-  
+  region_update(footRegion[0]);
+  region_update(footRegion[1]);
+  region_update(footRegion[2]);
+  region_update(footRegion[3]);
   app_resume();
 }
 
@@ -163,9 +153,15 @@ void render_set_head_region(region* reg) {
 }
 
 // set current footer region
-void render_set_foot_region(region* reg) {
-  footRegion = reg;
-  footRegion->dirty = 1;
+void render_set_foot_region(region* reg[4]) {
+  footRegion[0] = reg[0];
+  footRegion[1] = reg[1];
+  footRegion[2] = reg[2];
+  footRegion[3] = reg[3];
+  footRegion[0]->dirty = 1;
+  footRegion[1]->dirty = 1;
+  footRegion[2]->dirty = 1;
+  footRegion[3]->dirty = 1;
 }
 
 // set current scroll region
@@ -174,7 +170,6 @@ void render_set_scroll_region(region* reg) {
   scrollRegion->dirty = 1;
   centerScroll.reg = reg;
 }
-
 
 // draw editing string at given position, with cursor highlight
 void draw_edit_string(u8 x, u8 y, char* str, u8 len) {
