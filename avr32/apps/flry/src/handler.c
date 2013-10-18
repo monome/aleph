@@ -17,6 +17,10 @@
 #include "handler.h"
 #include "ctl.h"
 #include "render.h"
+#include "grid.h"
+#include "monome.h"
+#include "app_timers.h"
+#include "life.h"
 
 // count of buttons
 #define NUM_BUT 4
@@ -157,22 +161,42 @@ static s32 scale_knob_value(s32 val) {
 //---------------------------------------
 //---- external funcs
 
+
+ static void handle_monome_connect(u32 data) {
+   eMonomeDevice dev;
+   u8 w;
+   u8 h;
+   monome_connect_parse_event_data(data, &dev, &w, &h);
+   if(dev != eDeviceGrid) {
+     print_dbg("\r\nmonome connect: unsupported device");
+     return;
+   }
+   print_dbg("\r\nconnecting grid device");
+   // grid_set_size(w, h);
+   timers_set_monome();
+ }
+
+
 // handle key presses
 extern void flry_handler(event_t* ev) {
   switch (ev->eventType) {
   case kEventSwitch0:
+    life_change(1,1);
     // display
     // render_sw_on(0, ev->eventData > 0);
     break;
   case kEventSwitch1:
+    life_change(5,5);
     // display
     // render_sw_on(1, ev->eventData > 0);
     break;
   case kEventSwitch2:
+    if(ev->eventData > 0) life_print();
     // display
     // render_sw_on(2, ev->eventData > 0);
     break;
   case kEventSwitch3:
+    life_init();
     // display
     // render_sw_on(3, ev->eventData > 0);
     break;
@@ -207,6 +231,16 @@ extern void flry_handler(event_t* ev) {
   case kEventEncoder3:
     ctl_inc_value(0, scale_lin_enc(ev->eventData));
     break;
+
+  case kEventMonomeConnect :
+    handle_monome_connect((u32)ev->eventData);
+  break;
+
+  case kEventMonomeGridKey:
+    grid_handle_key_event(ev->eventData);
+  break;
+
+
 
   default:
     break;
