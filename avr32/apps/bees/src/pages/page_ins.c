@@ -126,7 +126,7 @@ static void select_scroll(s32 dir) {
     /// SCROLL DOWN
     // if selection is already zero, do nothing 
     if(curPage->select == 0) {
-      print_dbg("\r\n reached min selection in inputs scroll. ");
+      //      print_dbg("\r\n reached min selection in inputs scroll. ");
       return;
     }
     // remove highlight from old center
@@ -155,7 +155,7 @@ static void select_scroll(s32 dir) {
     // SCROLL UP
     // if selection is already max, do nothing 
     if(curPage->select == max) {
-      print_dbg("\r\n reached max selection in inputs scroll. ");
+      //      print_dbg("\r\n reached max selection in inputs scroll. ");
       return;
     }
     // remove highlight from old center

@@ -94,7 +94,7 @@ u8 app_launch(u8 firstrun) {
     while( !gpio_get_pin_value(BFIN_READY_PIN) ) { ;; }
     
     /// TEST:
-    delay_ms(2000);
+    //    delay_ms(2000);
 
 
     print_dbg(" requesting param report...");
