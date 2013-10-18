@@ -56,7 +56,6 @@ void app_init(void) {
   menu_init();
 
   print_dbg("\r\n play_init...");
-  //  print_dbg(" ( not really )");
   play_init();
 
   // set handler
@@ -77,9 +76,9 @@ u8 app_launch(u8 firstrun) {
     //    scene_write_default();
   } else {
     print_dbg("\r\n booting default ldr from flash... ");
-    print_dbg(" ( not really ) ");
-    //    flash_read_ldr();
-    //    bfin_load_buf();
+    //    print_dbg(" ( not really ) ");
+    flash_read_ldr();
+    bfin_load_buf();
     
     print_dbg("\r\n enable DSP audio...");
     bfin_enable();

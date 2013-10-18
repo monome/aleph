@@ -117,7 +117,7 @@ static void select_edit(s32 inc) {
 
 // scroll the current selection
 static void select_scroll(s32 dir) {
-  const s32 max = net_num_ins() - 1;
+  const s32 max = net_num_ins() - 1 + net_num_params();
   // index for new content
   s16 newIdx;
   s16 newSel;
