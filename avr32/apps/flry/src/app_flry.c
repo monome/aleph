@@ -28,6 +28,7 @@
 #include "ctl.h"
 #include "inputs.h"
 #include "render.h"
+#include "life.h"
 
 // this is called during hardware initialization.
 // use for memory allocation..
@@ -35,6 +36,7 @@ void app_init(void) {
   // set handler
   appEventHandler = &flry_handler;
   render_init();
+  life_init();
 }
 
 // this is called from the event queue to start the app 
