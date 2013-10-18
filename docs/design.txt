@@ -33,13 +33,23 @@ for usb device mode (via ftdi vcp)
 
 1. system information
 	parameter index, name, etc
-	network
+	other stuff: current hex, current dsp
 
 2. parameter read/write
 
-3. network change
+3. bees remote control
+	network change
+	preset
+	file read/write
+	etc
 
 
+ex.
+
+0 "debug/0"				// debug print
+1 0						// startup
+1 1 0 "feeback/0"		// parameter index, name
+2 0 1000				// set param 0 to 1000
 
 
 

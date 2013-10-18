@@ -66,3 +66,69 @@ sequencer w/ CV output
 sequencer plus synth/drum/processor
 control operations
 remote i2c control (arduino/etc for sensor expansion), i2c daisy chain
+
+
+
+
+
+
+
+1. First, most generally, why a dedicated box? (And I imagine some of this demand came from Ezra.) Operating systems can cause problems, yes - but then, if we're disabling the GUI, it's possible to get Linux down to < 3 ms latencie, depending on the audio card, and eliminate many sources of performane and reliability trouble.
+
+For myself there are several primary motivations. First and most important is have a machine that powers on almost immediately and is ready to do something interesting, so that it may become something akin to an instrument rather than a fragile environment which fundamnetally requires a lot of setup. It feels strange to be able to power on the aleph, plug in a grid, and immediately be running some sort of algorithmic sequencer driving a synth in strange ways. This is of course all possible on a computer but I find a lot of frustration in perfectly calibrating a huge chain of software and hardware. While I prefer my tools to be unpredictable in what they might sound like, absolutely predictably is pretty important when it comes to simply working as expected. We don't have to worry about operating systems-- there is none. There doesn't need to be an upgrade cycle which creates obsolecense. I like the idea of this platform still working in ten years.
+
+Performance was certainly a goal and is facilitated by designing at the lowest level-- programming directly to the chip. On the DSP side we can do single sample latency, which is a bit abstract, so think perhaps instead of envelopes generated at audio rates: they're fast and sound really good! Ezra has done almost all of the code, so for me also this presented an exceptional opportunity as a learning platform. We decided to extend this learning to anyone interested by making the frameworks open-source, facilitating a development procedure, and very soon creating tutorials. The aleph is looking to be a wonderful little ecosystem for DSP and control experiments.
+
+
+2+3. Second, why Blackfin DSP specifically? What can musicians - or developers - expect out of this platform in terms of performance. And... How easy will it be to develop for? (This question comes up a lot in comments, it seems, both publicly and in private conversations I've had.)
+
+The Blackfin is a nice chip. We fundamentally chose it for its capabilities and well-supported gcc (the standard open-source c compiler) toolchain. If we were trying to make a real operating system we would have chosen something else, but that was not our goal. In terms of development ease I'd say it'll require pretty much the same commitment that most similar projects would require. We're making a disk image with the toolchain set up which can be run in a virtual machine. Both Ezra and I use text editors and the command line, but we know a few people in making it work with Eclipse and the like. It's not going to be an Arduino experience, which is the product of years of great work removing complexity.
+
+But really we have no illusions that the developer audience will be a small fraction of total users. What was important to us is to make these sources availalbe, and to design a system that can be radically altered without programming. I'd rather be patch-editing than programming most of the time. We aimed for some equivalent of patching.
+
+
+4. Can you talk at all about Bees, or show us what it looks like? Thought this was a fascinating idea.
+
+It's basically a control environment which allows control sources (knobs, footswitches, monome grids, midi etc) to be mapped to parameters (control parameters like preset number or knob range, but also DSP parameters like feedback or filter cutoff.) BEES can switch DSP modules (each module tends to have a ton of functionality bundled together) while running, effectively "hosting" ecah one. The DSP module reports what parameters are available to be mapped.
+
+Additionally BEES creates "operators" which transform or generate control streams. So a multiplier could be added between a knob and a DSP parameter (say filter cutoff), changing the sensitivity of the knob. A footswitch could trigger a random operator which drives feedback (stomp stomp stomp stomp). A sequencer operator using a monome grid could drive the CV outs (to a modular) and then a heap of other operators could drive the sequencer in different ways (tempo, step, etc) for something messy and interesting, all within the patching environment.
+
+All of this stuff happens with a menu system. We've made a great effort to make it graceful, but we also acknowledge that designing a complex system requires more visualization, so everything in BEES can be controlled via OSC via the usb connction to a computer. A friend is working on an browser-based editor that we're excited about.
+
+We'll have video soon of all of this.
+
+
+
+5. Is there applicability beyond just aleph? I imagine this would be a question for people investing development time; is there a future for Bees or the stuff they write beyond this very limited-run hardware?
+
+First off I have no intention of this being a limited run-- we simply produce according to perceived demand. If people are interested, we'll make more. But even that shouldn't come into question for a developer-- it makes more sense to think this way when trying to reach markets. Besides, with minor tweaks most DSP code ports across platforms. If aleph feels good and fits your workflow and you own all the source, that seems to resemble a sort of reliable instrument more than deciding on an iphone vs android.
+
+
+6. Just to make certain, I have this right, yes? -- hardware is proprietary, but the software (including Bees) and toolchain will all be open source?
+
+The hardware source will be proprietary in that we're not going to post it publicly and rights will be reserved. But if someone is interested, we'd be happy to share what we've done. But what we've been doing is nothing like DIY electronics or terribly relevant to kit building. We are very reasonable and curious people and prefer that people simply get in touch.
+
+
+7. I'm not doing this in order of importance, or this would be at the top -- what was the musical application envisioned here? It seems there were some notions that were driven by your musical needs, and Ezra's. Can you talk about the personal motivation, and how you think it might extend to the user base?
+
+
+xxxxxx
+
+8. Is there so far any particular connection to the monome community, in terms of interest from there?
+
+There is substantial interest in the monome community in that I suspect many people share my same goals: being able to use controllers in interesting ways in a more immediate way, the same way that people enjoy using modular synths or just playing a real piano.
+
+I suspect many in the monome community are looking forward to getting deeper into programming. The device tends to propel users into learning more about technology then they expected. If that is your thing, it's incredibly empowering.
+
+
+9. What's the latest on monome? What can we expect to happen next? And now that the world is starting to be full of grids, where do you see monome's role - as monochrome and on/off buttons amidst RGB and pressure-sensing grids? (I suppose that in itself is sort of interesting.)
+
+Monome is still just Kelli and myself, though we're hiring on Trent Gill (Galapagoose, co-creator of MLRV) very soon. I'm looking forward to refining and further exploring grids both on the aleph and with our existing application and user base. I still feel our minimalist grids have a level of flexibility not seen in others out there. Staying away from RGB and pressure sensitivity continues to be deliberate-- those features transform the grid into something quite different.
+
+xxxxx
+
+
+10. Someone in comments repeated this idea that you're uninterested in getting these in the hands of lots of people. But whether it was intentional or not, it seems some of the ideas of the monome project *are* in the hands of lots of people. We've talked about this before, but curious if your take has evolved on that, at all, particularly as grids begin to shift to new instrumental applications.
+
+
+
