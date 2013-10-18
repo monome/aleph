@@ -1,7 +1,7 @@
 bootloading
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-if MODE is held while device is started, avr32 runs app-select
+if SWITCH4 is held while device is started, avr32 runs app-select
 
 app-select
 	detects MMC card
@@ -11,13 +11,16 @@ app-select
 		key to select
 	firmware copied to flash. bf program copied to flash for auto-load.
 	
-normal load (no MODE held) simply loads whatever is in 
+normal load (nothing held) simply loads whatever is in 
 idea: should each app have a tiny text description?
 - sure, here are two options:
 	a) keep app.txt always together with app.hex, store them in separate fields of flash memory
 	b) append set number of descriptor lines to app.hex, perhaps from the makefile (i like this better)
 
-
+if SWITCH3 is held down during power-on, forced initialization occurs
+   - this usually means an app will search and reload its DSP module,
+     and clear/create any expected configuration files.
+   - should be performed after bootload and anytime a DSP module is rebuilt.
 
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
