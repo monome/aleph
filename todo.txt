@@ -3,9 +3,10 @@ e todo
 
 BEES
 
-- rendering
-  reconcile with new region-based screen system
-
+- rendering / handling
+  - page_ins is in fine shape, finish attaching handlers
+  - use page_ins as template for other pages
+  
 - check scene recall
   - memory allocation bug probably culprit but need test
   - need serialization of op data, etc,
@@ -16,8 +17,7 @@ BEES
   - edit page
   - scaler op
   - metro op
-  - list op
-  
+  - list op  
 
 
 CONTROL
