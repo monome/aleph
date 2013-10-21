@@ -17,6 +17,7 @@
 #endif
 
 // aleph-avr32
+#include "bfin.h"
 #include "control.h"
 
 // bees
@@ -24,7 +25,7 @@
 #include "op.h" 
 #include "op_derived.h"
 #include "memory.h"
-#include "menu_protected.h"
+#include "pages_protected.h"
 #include "net.h"
 #include "net_protected.h"
 #include "param.h"
@@ -97,6 +98,7 @@ void net_init(void) {
   net->numIns = 0;
   net->numOuts = 0;
   net->numParams = 0;
+
   // unassign all I/O nodes
   for(i=0; i<NET_INS_MAX; i++) {
     net_init_inode(i);
@@ -107,6 +109,7 @@ void net_init(void) {
   print_dbg("\r\n initialized ctlnet, byte count: ");
   print_dbg_hex(sizeof(ctlnet_t));
   add_sys_ops();
+  // ???
   netActive = 1;
 }
 
@@ -179,7 +182,7 @@ s16 net_add_op(op_id_t opId) {
   u8 i;
   op_t* op;
 
-  print_dbg("\r\n createing new operator, type: ");
+  print_dbg("\r\n creating new operator, type: ");
   print_dbg_ulong(opId);
 
   if (net->numOps >= NET_OPS_MAX) {
@@ -191,7 +194,7 @@ s16 net_add_op(op_id_t opId) {
     return -1;
   }
   
-  print_dbg("\r\n allocating memory location: 0x");
+  print_dbg("\r\n allocating op pool location: 0x");
   print_dbg_hex((u32)(net->opPool + net->opPoolOffset));
 
   print_dbg("\r\n size of requested op size: 0x");
@@ -216,21 +219,31 @@ s16 net_add_op(op_id_t opId) {
 
   // add op pointer to list
   net->ops[net->numOps] = op;
+  // advance offset for next allocation
   net->opPoolOffset += op_registry[opId].size;
 
   //---- add inputs and outputs to node list
-    for(i=0; i<ins; i++) {
+    for(i=0; i<ins; ++i) {
       net->ins[net->numIns].opIdx = net->numOps;
       net->ins[net->numIns].opInIdx = i;
-      net->numIns++;
+      ++(net->numIns);
     }
   for(i=0; i<outs; i++) {
     net->outs[net->numOuts].opIdx = net->numOps;
     net->outs[net->numOuts].opOutIdx = i;
     net->outs[net->numOuts].target = -1;
-    net->numOuts++;
+    ++(net->numOuts);
   }
-  net->numOps++;
+  ++(net->numOps);
+
+  print_dbg("\r\n added operator. new input count: ");
+  print_dbg_ulong(net->numIns);
+  print_dbg("\r\n added operator. new output count: ");
+  print_dbg_ulong(net->numOuts);
+  print_dbg("\r\n added operator. new op count: ");
+  print_dbg_ulong(net->numOps);
+
+
   return net->numOps - 1;
 }
 
@@ -263,7 +276,7 @@ s16 net_pop_op(void) {
   net->numIns -= op->numInputs;
   net->numOuts -= op->numOutputs;
 
-  net->opPoolOffset += op_registry[op->type].size;
+  net->opPoolOffset -= op_registry[op->type].size;
   net->numOps -= 1;
   return 0;
 
@@ -528,6 +541,14 @@ u32 net_gather(s32 iIdx, u32(*outs)[NET_OUTS_MAX]) {
 
 //--- get / set / increment input value
 io_t net_get_in_value(s32 inIdx) {
+  /* print_dbg("\r\n getting net input value... inIdx: 0x"); */
+  /* print_dbg_hex(inIdx); */
+
+  /* net_print(); */
+
+  /* print_dbg("\r\n net num ins: "); */
+  /* print_dbg_ulong(net->numIns); */
+
   if(inIdx < 0) {
     return 0;
   }
@@ -535,6 +556,13 @@ io_t net_get_in_value(s32 inIdx) {
     inIdx -= net->numIns;
     return get_param_value(inIdx);
   } else {
+    /* print_dbg(" ; opIdx: "); */
+    /* print_dbg_ulong(net->ins[inIdx].opIdx); */
+    /* print_dbg(" ; op address: 0x"); */
+    /* print_dbg_hex((u32)net->ops[net->ins[inIdx].opIdx]); */
+    /* print_dbg(" ; opInIdx: "); */
+    /* print_dbg_ulong(net->ins[inIdx].opInIdx); */
+
     return op_get_in_val(net->ops[net->ins[inIdx].opIdx], net->ins[inIdx].opInIdx);
   }
 }
@@ -550,11 +578,14 @@ void net_set_in_value(s32 inIdx, io_t val) {
   }
 }
 
+// probably only called from UI,
+// can err on the side of caution vs speed
 io_t net_inc_in_value(s32 inIdx, io_t inc) {
   op_t* op;
-  if (inIdx >= net->numIns) {
+  if(inIdx >= net->numIns) {
+    // hack to get preset idx
     inIdx -= net->numIns;
-    set_param_value(inIdx, OP_ADD(get_param_value(inIdx), inc));
+    set_param_value(inIdx,  OP_SADD(get_param_value(inIdx), inc));
     return get_param_value(inIdx);
   } else {
     op = net->ops[net->ins[inIdx].opIdx];
@@ -629,6 +660,78 @@ void net_retrigger_inputs(void) {
   }
   netActive = 1;
 }
+
+
+
+// query the blackfin for parameter list and populate pnodes
+u8 net_report_params(void) {
+  volatile char buf[64];
+  volatile ParamDesc pdesc;
+  volatile u32 numParams;
+  u8 i;
+ 
+  bfin_get_num_params(&numParams);
+  
+  print_dbg("\r\nnumparams: ");
+  print_dbg_ulong(numParams);
+
+
+
+  if(numParams == 255) {
+    print_dbg("\r\n report_params fail (255)");
+    return 0;
+  }
+
+  if(numParams > 0) {
+    for(i=0; i<numParams; i++) {
+      bfin_get_param_desc(i, &pdesc);
+
+      print_dbg("\r\n recieved descriptor for param : ");
+      print_dbg((const char* )pdesc.label);
+
+      net_add_param(i, &pdesc);
+
+    }
+  } else {
+    print_dbg("\r\n bfin: no parameters reported");
+    return 0;
+  }
+  
+  delay_ms(100);
+
+  print_dbg("\r\n checking module label ");
+  bfin_get_module_name(buf);
+
+  delay_ms(10);
+
+  print_dbg("\r\n bfin module name: ");
+  print_dbg((const char*)buf);
+
+  return (u8)numParams;
+
+}
+
+
+//////////
+///////////////
+// test / dbg
+
+void net_print(void) {
+  print_dbg("\r\n net address: 0x");
+  print_dbg_hex((u32)(net));
+
+  print_dbg("\r\n net input count: ");
+  print_dbg_ulong(net->numIns);
+  print_dbg("\r\n net output count: ");
+  print_dbg_ulong(net->numOuts);
+  print_dbg("\r\n net op count: ");
+  print_dbg_ulong(net->numOps);
+
+}
+
+////////////
+////////
+
 
 //---------------------------------------------------
 //----- static

@@ -112,7 +112,7 @@ fract32 filter_2p_hi_next(filter_2p_hi* f, fract32 x) {
 				    ),
 			 mult_fr1x32x32( f->b, f->y2)
 			 ), 
-	      1 );
+	      1 /*shift*/);
   f->x2 = f->x1;
   f->x1 = x;
   f->y2 = f->y1;

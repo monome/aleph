@@ -185,19 +185,23 @@ void ctl_but(u8 i, u8 val) {
 }
 
 // joystick axis: change value and send
-void ctl_joy(u8 ch, u8 val) {
-  //    u32 v;
+void ctl_joy(u8 ch, u8 v) {
+  s32 inc = (s32)v - 128;
+  s32 val;
 
-  s32 sv = (s32)val - 128;
+  if(inc < 4 && inc > -4) { inc = 0; }
 
-  print_dbg("\r\n ");
-  print_dbg("\r\n handling joy event 0x");
-  print_dbg_hex(val);
+  /* print_dbg("\r\n "); */
+  /* print_dbg("joystick axis upd ate: 0x"); */
+  /* print_dbg_hex(v); */
 
-  //// blech
-  dac[ch][0] += sv;
-  
-  //  dac[ch][0] = val << 8;
+  val = dac[ch][0] + inc;
+
+  if(val > PARAM_DAC_MAX) { val = PARAM_DAC_MAX; }
+  if(val < 0) { val = 0; }
+
+  dac[ch][0] = val;
+
   send_dac(ch);
 
 }

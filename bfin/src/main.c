@@ -31,6 +31,9 @@ int main(void) {
   init_clocks();
   // configure programmable flags
   init_flags();  
+
+  READY_LO;
+
   // intialize the sdram controller
   init_EBIU();
   // intialize the flash controller (which, weirdly, handles gpio)
@@ -62,14 +65,26 @@ int main(void) {
   // begin cv transfers
   enable_DMA_sport1();  
 
-  //// test: leds on
-  //  LED3_SET;
-  //  LED4_SET;
+  // signal the ready flag
+  READY_HI;
+
+  // leds on
+  LED3_HI;
+  LED4_HI;
   
   while(1) {
     // fixme: everything happens in ISRs!
     //    ;;
+
+    /*
+    //// TODO / FIXME: 
+     update a param change FIFO here?
+    for now, the answer is no:
+    instead, we are asking avr32 to hold off sending params 
+    for as long as the ready-pin is deasserted by frame or control change processing.
+    */
+    /// while frame processing 
     //    ctl_next_frame();	
-    ctl_perform_last_change();			
+    //    ctl_perform_last_change();			
   }
 }

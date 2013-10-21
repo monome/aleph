@@ -10,7 +10,7 @@
 #define DAC_COM_LSHIFT 20
 #define DAC_ADDR_LSHIFT 16
 
-#define DAC_MAX 0x7fff
+#define DAC_MAX 0xffff
 
 //====================
 //=== global variables , initialized here

@@ -2,9 +2,13 @@
 #define _ALEPH_APP_FLRY_HANDLER_H_
 
 #include "app.h"
+
 // ui handlers
 
 extern void flry_handler(event_t* ev);
+volatile u8 joyVal[4];
+
+//extern void decode_hid_frame(const u8* data);
 
 /* void handle_sw_fn_0( u8 val ); */
 /* void handle_sw_fn_1( u8 val ); */

@@ -40,6 +40,8 @@ int main(void) {
 
   LED3_UNSET;
   LED4_SET;
+
+  LDAC_UNSET;
   
   while(1) {
     ;;

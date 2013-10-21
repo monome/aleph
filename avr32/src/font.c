@@ -169,7 +169,7 @@ const U32 font_nglyphs = sizeof(font_data)/sizeof(glyph_t) - 1;
 // render single glyph to a flat buffer (1byte = 1px)
 // given pointer to buffer, pixel offset, row length,
 // foreground and background colors
-// return columns used
+// return new pointer
 extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
   //...
   return buf;
@@ -203,7 +203,7 @@ u8* font_string_big(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
 // given pointer to buffer, pixel offset, row length,
 // foreground and background colors
 // return columns used
-extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
+extern u8 font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
   u8 i=0;
   u8 j;
   u8 * p = buf;
@@ -223,7 +223,7 @@ extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
     // reset pointer to row
     p = buf + i;
   }
-  return p;
+  return cols;
 }
 
 // same as font_glyph, double size
@@ -311,19 +311,72 @@ extern u8* font_glyph_bigbig(char ch, u8* buf, u8 w, u8 a, u8 b) {
 
 // render a string of packed glyphs to a buffer
 u8* font_string(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
-  u8* max = buf + size;
-  while (buf < max) {
+  u8* max = buf + size - 8; // pad 1 character width on right edge
+  //  u32 x = 0;
+  //  u8 dx = 0;
+
+  while(buf < max) {
+  //  while (x < w) {
     if (*str == 0) {
       // end of string
       break;
     }
-    buf = font_glyph(*str, buf, w, a, b);
+    //    dx = font_glyph(*str, buf, w, a, b);
+    //    buf = +=dx;
+    buf += font_glyph(*str, buf, w, a, b);
+    //    x += dx;
     // 1-column space between chars
-    buf++;
-    str++;
+    ++buf;
+    //    ++x;
+    ++str;
   }
   return buf;
 }
+
+
+// render a font string to a region.
+// this allows for smarter bounds handling
+void font_string_region_wrap(region* reg, const char* str, u8 xoff, u8 yoff, u8 fg, u8 bg) {
+  u8* buf = reg->data + xoff + (u32)(reg->w) * (u32)yoff;
+  u8* max = reg->data + reg->len;
+  u32 xmax = reg->w - 7; // padding
+  u8 dx = 0;
+  while(buf < max) {
+    // break on end of string
+    if(*str == 0) { break; }    
+    dx = font_glyph(*str, buf, reg->w, fg, bg) + 1;
+    buf += dx;
+    xoff += dx;
+    ++str;
+    // wrap lines
+    if(xoff > xmax) { 
+      xoff = 0; 
+      buf += (reg->w - xoff); 
+      print_dbg("\r\n font_string_region: wrapped line");
+    }
+  } 
+}
+
+// clipping variant
+void font_string_region_clip(region* reg, const char* str, u8 xoff, u8 yoff, u8 fg, u8 bg) {
+  u8* buf = reg->data + xoff + (u32)(reg->w) * (u32)yoff;
+  u8* max = reg->data + reg->len;
+  u32 xmax = reg->w - 7; // padding
+  u8 dx = 0;
+  while(buf < max) {
+    // break on end of string
+    if(*str == 0) { break; }    
+    dx = font_glyph(*str, buf, reg->w, fg, bg) + 1;
+    buf += dx;
+    xoff += dx;
+    ++str;
+    // wrap lines
+    if(xoff > xmax) { 
+      return; 
+    }
+  } 
+}
+
 
 // same as font_string, double size
 u8* font_string_big(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
@@ -339,7 +392,7 @@ u8* font_string_big(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
     /* str++; */
     // 2-column space between chars
     buf += 2;
-    str++;
+    ++str;
 
   }
   return buf;

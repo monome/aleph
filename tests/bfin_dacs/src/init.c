@@ -1,5 +1,6 @@
 
 #include "bfin_core.h"
+#include "gpio.h"
 #include "isr.h"
 #include "init.h"
 
@@ -18,7 +19,7 @@ void init_clocks(void) {
 // ini flags
 void init_flags(void) {
   //  *pFIO_DIR = 0xc000;
-  *pFIO_DIR = (1 << LED0_PIN) |  (1 << LED1_PIN) |  (1 << DAC_RESET_PIN);
+  *pFIO_DIR = (1 << LED0_PIN) |  (1 << LED1_PIN) |  (1 << DAC_RESET_PIN) | LDAC_UNMASK;
 }
 
 // CONFIGURE sport1  [ to drive 3x AD5684 from DT1PRI ]

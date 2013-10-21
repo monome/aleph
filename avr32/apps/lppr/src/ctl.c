@@ -49,7 +49,8 @@ s32 in_panOutFB[2] = {0, 0};
 
 // milliseconds uptime of last event
 static u32 msLoopStart1 = 0;
-static u32 msLoopLen1 = 0;
+// loop length in samples
+static u32 loopLenSamps = 0;
 // is a loop playing
 static u8 loopPlay1 = 0;
 // is a loop recording
@@ -114,6 +115,7 @@ u8 ctl_report_params(void) {
   u8 i;
  
   bfin_get_num_params(&numParams);
+
   print_dbg("\r\nnumparams: ");
   print_dbg_ulong(numParams);
 
@@ -155,20 +157,50 @@ u8 ctl_report_params(void) {
 // set initial parameters
 void ctl_init_params(void) {
   // no filter mix
-  ctl_param_change(eParam_mix0, 0);
-  ctl_param_change(eParam_mix1, 0);
+  //  ctl_param_change(eParam_mix0, 0);
+  //  ctl_param_change(eParam_mix1, 0);
   // both filters are full lowpass
   ctl_param_change(eParam_low0,  fr32_from_float(0.99));
   ctl_param_change(eParam_low1, fr32_from_float(0.99));
+
   // half dry
   ctl_param_change(eParam_adc0_dac0, fr32_from_float(0.5) );
   // half wet
   ctl_param_change(eParam_del0_dac0, fr32_from_float(0.5) );
   ctl_param_change(eParam_del1_dac0, fr32_from_float(0.5) );
+
+  /// delay on all outputs for feedback
+  ctl_param_change(eParam_del0_dac1, fr32_from_float(0.5) );
+  ctl_param_change(eParam_del1_dac1, fr32_from_float(0.5) );
+
+  ctl_param_change(eParam_del0_dac2, fr32_from_float(0.5) );
+  ctl_param_change(eParam_del1_dac2, fr32_from_float(0.5) );
+
+  ctl_param_change(eParam_del0_dac3, fr32_from_float(0.5) );
+  ctl_param_change(eParam_del1_dac3, fr32_from_float(0.5) );
+
   // adc0 -> del0
   ctl_param_change(eParam_adc0_del0, fr32_from_float(0.99));
   // adc0 -> del1
   ctl_param_change(eParam_adc0_del1, fr32_from_float(0.99));
+
+  // adc1 -> del0
+  ctl_param_change(eParam_adc1_del0, fr32_from_float(0.99));
+  // adc1 -> del1
+  ctl_param_change(eParam_adc1_del1, fr32_from_float(0.99));
+
+
+  // adc2 -> del0
+  ctl_param_change(eParam_adc2_del0, fr32_from_float(0.5));
+  // adc2 -> del1
+  //  ctl_param_change(eParam_adc2_del1, fr32_from_float(0.125));
+
+  // adc3 -> del0
+  ctl_param_change(eParam_adc3_del0, fr32_from_float(0.5));
+  // adc3 -> del1
+  //  ctl_param_change(eParam_adc3_del1, fr32_from_float(0.125));
+
+
   // del0 -> del1
   ctl_param_change(eParam_del0_del1, fr32_from_float(0.99));				    
   // slight feedback on del0 
@@ -256,7 +288,6 @@ void ctl_loop_record(u8 idx) {
 
 // stop recording loop / start playback on given delayline
 void ctl_loop_playback(u8 idx) {
-  u32 samps;
   u32 ms;
   print_dbg("\r\n\r\n ctl_loop_playback:");
 
@@ -278,12 +309,11 @@ void ctl_loop_playback(u8 idx) {
       } else {
 	ms = tcTicks - msLoopStart1;
       }
-      msLoopLen1 = ms;
-      samps = MS_TO_SAMPS(ms) - 1;
+      loopLenSamps = MS_TO_SAMPS(ms) - 1;
       print_dbg("\r\n loop playback, ms: ");
       print_dbg_ulong(ms);
       print_dbg(", samps: ");
-      print_dbg_ulong(samps);
+      print_dbg_ulong(loopLenSamps);
       
       print_dbg("\r\n write disable");
       ctl_param_change(eParam_write1, 0);
@@ -292,7 +322,7 @@ void ctl_loop_playback(u8 idx) {
       print_dbg("\r\n reset read head");
       ctl_param_change(eParam_pos_read1, 0);
       print_dbg("\r\n set loop time");
-      ctl_param_change(eParam_loop1, samps);
+      ctl_param_change(eParam_loop1, loopLenSamps);
       print_dbg("\r\n start read head");
       ctl_param_change(eParam_run_read1, 1);
       render_play();
@@ -412,7 +442,7 @@ void ctl_set_delay_pos(u8 idx, u8 mul) {
     /// line 1... 
     if(loopPlay1) {
       // loop is playing; set read position as multiple of loop time /8
-      samps = (MS_TO_SAMPS(msLoopLen1) >> 3) * mul;
+      samps = (loopLenSamps >> 3) * mul;//(MS_TO_SAMPS(msLoopLen1) >> 3) * mul;
       samps += MS_TO_SAMPS(msLoopStart1);
       ctl_param_change(eParam_pos_read1, samps);
     } else if(loopRec1) {
@@ -438,7 +468,23 @@ void ctl_set_delay_pos(u8 idx, u8 mul) {
 
 // set loop time as multiple of tap time
 void ctl_set_loop(u8 idx, u8 mul) {
+  /// uh... need to store loop-tap-time independently of setting it
+  /// so... nevermind
+  //  print_dbg("\r\n set loop time");
+  //  ctl_param_change(eParam_loop1, samps);
 }
+
+
+// set read head position of loop, as subdivision of loop time
+void ctl_set_loop_pos(u8 idx, u8 mul) {
+  u32 samps;
+  // 32 points
+  samps = (loopLenSamps >> 5) * mul;
+  ctl_param_change(eParam_pos_read1, samps);
+
+}
+
+
 
 // set pre level
 void ctl_set_pre(u8 idx, fract32 val) {

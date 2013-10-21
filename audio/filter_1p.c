@@ -38,10 +38,6 @@ static inline u8 fr32_compare(fract32 a, fract32 b) {
 //---- external functions
 
 
-//===============================
-//==============================
-//===== fr32
-
 //-------- lowpass
 // intialize at pre-allocated memory
 void filter_1p_lo_init(filter_1p_lo* f, fract32 in) {
@@ -53,6 +49,7 @@ void filter_1p_lo_init(filter_1p_lo* f, fract32 in) {
 }
 
 // set cutoff frequency in hz
+//// this is very slow!
 void filter_1p_lo_set_hz(filter_1p_lo* f, fix16 hz) {
   f32 fc =  (float) exp(-2.0 * M_PI * (double)(fix16_to_float(hz)) * fSrInv ); // / (float)(f->sr) );
   //  printf("\r1p slewicient: %f\n", fc);
@@ -69,7 +66,7 @@ void filter_1p_lo_in(filter_1p_lo* f, fract32 val) {
   f->x = val;
   f->sync = (val == f->y);
 }
-
+ 
 // get next filtered value
 fract32 filter_1p_lo_next(filter_1p_lo* f) {
   

@@ -1,0 +1,21 @@
+/* app.h
+   avr32
+   aleph
+
+   this is the public API for aleph avr32 controller applications.
+*/
+
+//-------------------------------------
+//-- these should be implemented by the app,
+//-- e.g. aleph/avr32/apps/foo/src/app.c
+
+// called at startup to allocate memory. 
+extern void app_init(void);
+// called from avr32 event loop when startup is finished and UI is running
+extern void app_launch(void);
+
+
+// stop performing UI events
+extern void avr32_app_pause(void);
+// resume UI
+extern void avr32_app_resume(void);

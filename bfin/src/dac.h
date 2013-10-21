@@ -7,7 +7,7 @@
 #define DAC_COM_LSHIFT 20
 #define DAC_ADDR_LSHIFT 16
 
-#define DAC_VALUE_MASK 0x7fff
+#define DAC_VALUE_MASK 0xffff
 
 extern void init_dac(void);
 extern void dac_update(u8 ch, u16 val);

@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "menu.h"
+#include "pages.h"
 #include "net.h"
 #include "net_protected.h"
 #include "preset.h"
@@ -16,7 +16,7 @@ int main(void) { //const int argc, const char** argv) {
   //  net_init(&ctlnet);
   net_init();
   ui_init();
-  menu_init();
+  pages_init();
   preset_init();
   scene_init();
 
@@ -32,7 +32,7 @@ int main(void) { //const int argc, const char** argv) {
 
   scene_deinit();
   preset_deinit();
-  menu_deinit();
+  pages_deinit();
   ui_deinit();
   net_deinit();
 

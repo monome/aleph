@@ -7,7 +7,7 @@
 // number of pages (including modal pages)
 #define NUM_PAGES 8
 
-// enum of key handlers per page
+// enum of key handlers per menu page
 typedef enum {
   ePageHandleEnc0,
   ePageHandleEnc1,
@@ -37,16 +37,6 @@ typedef void(*page_handler_t)(s32 val);
 // function pointer for refresh (selection) on a given page
 typedef void(*page_refresh_t)(void);
 
-// messy page mode enum
-typedef enum  { 
-   eModeNone,
-   eModeClear,
-   eModeCopy,
-   eModeWrite,
-   eModeRead,
-   eModeDefault,
-} ePageMode;
-
 // class representing a page in a menu
 // includes a title and a key input handler (function pointer)
 typedef struct page_struct {
@@ -56,8 +46,6 @@ typedef struct page_struct {
   const page_refresh_t refresh;
   // key handler functions
   const page_handler_t * handler;
-  // current mode
-  ePageMode mode;
   // current row selection
   s16 select;
   // cursor position
@@ -66,6 +54,12 @@ typedef struct page_struct {
   s8 encSens[4];
 } page_t;
 
+
+//-----------------------
+//--- extern variables
+
+//-----------------------
+//--- extern functions
 
 // handles
 extern const page_handler_t handler_ins[eNumPageHandlers];
@@ -96,5 +90,19 @@ extern void refresh_scenes(void);
 extern void refresh_dsp(void);
 extern void refresh_gathered(void);
 extern void refresh_play(void);
+
+
+//----- public functions
+// init all pages
+extern void pages_init(void);
+// de-init
+extern void pages_deinit(void);
+// handle key
+// extern void pages_handleKey(uiKey_t key, s16 value);
+// refresh
+extern void pages_refresh(void);
+
+// check key against last pressed
+extern u8 check_key(u8 key);
 
 #endif  // h guard

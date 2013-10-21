@@ -17,9 +17,11 @@
 #include "print_funcs.h"
 #include "pm.h"
 #include "gpio.h"
+#include "wdt.h"
 #include "sd_mmc_spi.h"
 #include "smc.h"
 #include "sysclk.h"
+#include "wdt.h"
 
 //// aleph
 // bees
@@ -127,18 +129,12 @@ static void init_ctl(void) {
   //memory manager
   init_mem();  
   print_dbg("\r\n init_mem");
-
-  /* // send ADC config */
-  /* init_adc(); */
-  /* print_dbg("\r\n init_adc"); */
-
   // start application timers
   init_app_timers();
-  print_dbg("\r\n init_timers");
-  
-  //// BEES:
 
+  print_dbg("\r\n init_timers");
   menu_init();
+
   print_dbg("\r\n menu_init");
 
   // enable interrupts
@@ -150,11 +146,6 @@ static void check_events(void) {
   static event_t e;  
 
   if( get_next_event(&e) ) {
-
-  /* print_dbg("\r\n handling event, type: "); */
-  /* print_dbg_hex(e.eventType); */
-  /* print_dbg("\r\n , data: "); */
-  /* print_dbg_hex(e.eventData); */
 
     if(startup) {
       if( e.eventType == kEventSwitchDown0
@@ -204,19 +195,6 @@ static void check_events(void) {
       case kEventSwitchUp3:
 	//	menu_handleKey(eKeyFnUpD, e.eventData);
 	break;
-	/// footswitches
-      /* case kEventSwitchDown6: */
-      /* 	print_dbg("\r\n footswitch1 down"); */
-      /* 	break; */
-      /* case kEventSwitchUp6: */
-      /* 	print_dbg("\r\n footswitch1 up"); */
-      /* 	break; */
-      /* case kEventSwitchDown7: */
-      /* 	print_dbg("\r\n footswitch2 down"); */
-      /* 	break; */
-      /* case kEventSwitchUp7: */
-      /* 	print_dbg("\r\n footswitch2 up"); */
-      /* 	break; */
 	// mode switch
       case kEventSwitchDown4:
 	mode ^= 1;
@@ -268,26 +246,6 @@ static void check_events(void) {
 	}
 	break;
 
-      /* case kEventAdc0: */
-      /* 	//	print_dbg("\r\nadc val 0: "); */
-      /* 	//	print_dbg_hex(e.eventData); */
-      /* 	//	displayAdcVal(0, e.eventData); */
-      /* 	break; */
-      /* case kEventAdc1: */
-      /* 	//	 print_dbg("\r\nadc val 1: "); */
-      /* 	//	 print_dbg_hex(e.eventData); */
-      /* 	 //	 displayAdcVal(1, e.eventData); */
-      /* 	break; */
-      /* case kEventAdc2: */
-      /* 	//	 print_dbg("\r\nadc val 2: "); */
-      /* 	//	 print_dbg_hex(e.eventData); */
-      /* 	//	 displayAdcVal(2, e.eventData); */
-      /* 	break; */
-      /* case kEventAdc3: */
-      /* 	//     	print_dbg("\r\nadc val 3: "); */
-      /* 	//     	print_dbg_hex(e.eventData); */
-      /* 	//     	displayAdcVal(3, e.eventData); */
-      /* 	break; */
 
       }
     } // if event
@@ -297,10 +255,16 @@ static void check_events(void) {
 //int main(void) {
 ////main function
 int main (void) {
+  wdt_disable();
+
   u32 waitForCard = 0;
   u8 isFirstRun = 0;
   u8 isSwDown = 0;
   
+  /// trying this...
+  //  wdt_clear();
+  //  wdt_disable();
+
   /// check pin and jump out
   gpio_enable_pin_pull_up(SW3_PIN);
 
@@ -310,7 +274,6 @@ int main (void) {
 
   if(!isSwDown) {
     ///    print_dbg("\r\n switch up, jumping to main");
-    //    delay_ms(10);
     /// hardcoded jump to firmware location
   
     asm volatile (

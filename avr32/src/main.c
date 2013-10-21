@@ -166,6 +166,9 @@ static void check_events(void) {
   /* print_dbg("\r\n , data: "); */
   /* print_dbg_hex(e.eventData); */
 
+    //// 
+    //// FIXME: this control structure is dumb
+
     
     if(startup) {
       if( e.eventType == kEventSwitch0
@@ -203,10 +206,10 @@ static void check_events(void) {
 
 	switch(e.eventType) {
 	
-	case kEventRefresh:
+	  //	case kEventRefresh:
 	  // refresh the screen hardware
 	  //	screen_refresh();
-	  break;
+	  //	  break;
 	case kEventMonomePoll :
 	  // poll monome serial input and spawn relevant events
 	  monome_read_serial();

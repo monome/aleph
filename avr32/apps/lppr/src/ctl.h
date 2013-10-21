@@ -29,11 +29,15 @@ extern void ctl_set_delay_ms(u8 idx, u32 ms);
 extern void ctl_tap_delay(u8 idx, u8 val);
 // set delay time multiplier
 extern void ctl_set_delay_mul(u8 idx, u8 val);
+
 // move both read and write heads by an offset multiple of tap time
 // offset can be negative.. 
 extern void ctl_set_delay_pos(u8 idx, u8 mul);
 // set loop time as multiple of tap time
 extern void ctl_set_loop(u8 idx, u8 mul);
+// set read head position of loop, as subdivision of loop time
+void ctl_set_loop_pos(u8 idx, u8 mul);
+
 // set pre level
 extern void ctl_set_pre(u8 idx, fract32 val);
 

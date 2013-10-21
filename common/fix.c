@@ -137,8 +137,8 @@ int itoa_whole_lj(int val, char* buf) {
 
   if ( sign ) {
     *p = '-';
-    p++;
-    len++;
+    ++p;
+    ++len;
     val = BIT_INVERT(val) + 1; // FIXME: this will wrap at 0xffffffff
   }
 
@@ -148,8 +148,8 @@ int itoa_whole_lj(int val, char* buf) {
     a = u % 10;
     u /= 10;
     *p = '0' + a;
-    p++;
-    len++;
+    ++p;
+    ++len;
   }
 
   /* print_dbg("\r\n printing int: "); */

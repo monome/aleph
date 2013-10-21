@@ -1,14 +1,49 @@
+#include "print_funcs.h"
+
 #include "font.h"
 #include "memory.h"
 #include "screen.h"
 #include "region.h"
 
 
+///=================
+///===== static
+
+
+// increment scroll line
+static void scroll_inc_line(scroll* scr) {
+  s32 byteoff = scr->byteOff + scr->lineBytes;
+  s8 yoff = scr->yOff + FONT_CHARH;
+  if(byteoff > scr->maxByteOff) {
+    byteoff = 0;
+    yoff = 0;
+  }
+  scr->byteOff = byteoff;
+  scr->yOff = yoff;
+}
+
+// decrement scroll line 
+static void scroll_dec_line(scroll* scr) {
+  s32 byteoff = scr->byteOff - scr->lineBytes;
+  s8 yoff = (s8)(scr->yOff) - (s8)FONT_CHARH;
+  if(byteoff < 0) {
+    byteoff = scr->maxByteOff;
+    yoff = scr->lineCount * FONT_CHARH;
+  }
+  scr->byteOff = byteoff;
+  scr->yOff = yoff;
+}
+
+//=========================
+//==== extern
+
 // allocate buffer
 void region_alloc(region* reg) {
   u32 i;
   reg->len = reg->w * reg->h;
   reg->data = (u8*)alloc_mem(reg->len);
+  
+  //  print_dbg("\r\n zeroing region data... ");
   for(i=0; i<reg->len; i++) {
     reg->data[i] = 0; 
   }
@@ -27,12 +62,13 @@ void region_string(
 		   u8 a, u8 b, 	 // colors
 		   u8 sz)  // size levels (dimensions multiplied by 2**sz)
 {
+  u32 bytes = x + ((u16)(reg->w) * (u16)(y));
   if(sz == 0) {
-    font_string(str, reg->data + (u32)reg->w * (u32)y + (u32)x, reg->len, reg->w, a, b);
+    font_string(str, reg->data + bytes, reg->len - bytes, reg->w, a, b);
   } else if (sz == 1) {
-    font_string_big(str, reg->data + (u32)reg->w * (u32)y + (u32)x, reg->len, reg->w, a, b);
+    font_string_big(str, reg->data + bytes, reg->len - bytes, reg->w, a, b);
   } else if (sz == 2) {
-    font_string_bigbig(str, reg->data + (u32)reg->w * (u32)y + (u32)x, reg->len, reg->w, a, b);
+    font_string_bigbig(str, reg->data + bytes, reg->len - bytes, reg->w, a, b);
   }
   reg->dirty = 1;
 }
@@ -54,7 +90,7 @@ void region_string_aa(
 // fill a region with given color
 void region_fill(region* reg, u8 c) {
   u32 i;
-  for(i=0; i<reg->len; i++) {
+  for(i=0; i<reg->len; ++i) {
     reg->data[i] = c; 
   }
   reg->dirty = 1;
@@ -103,36 +139,16 @@ extern void scroll_string_front(scroll* scr, char* str) {
   // draw text to region at current offset, using system font
   region_string(scr->reg, str,
 		0, scr->yOff, 0xf, 0, 0);
-  // advance byte offset by count of pixels in row
-  scr->byteOff += scr->lineBytes;
-  scr->yOff += FONT_CHARH;
-  // wrap
-  if(scr->yOff >= scr->reg->h) {
-    scr->yOff = 0;
-  }
-  if(scr->byteOff > scr->maxByteOff) {
-    scr->byteOff = 0;
-  }
-  //// render happens separately,
-  //  so we can e.g. trigger from timer based on dirty flag
+  // advance after writexs
+  scroll_inc_line(scr);
   scr->reg->dirty = 1;
 }
 
 // render text to back of scroll
 extern void scroll_string_back(scroll* scr, char* str) {
-  // temp because we are going to move the offset backwards
-  s32 byteoff;
-  s8 yoff;
-  /// first, decrement the offsets...
-  byteoff = scr->byteOff = scr->lineBytes;
-  if(byteoff < 0) { byteoff += scr->reg->len; }
-  scr->byteOff = byteoff;
-
-  yoff = scr->yOff - FONT_CHARH;
-  if (yoff < 0) { yoff += scr->reg->h; }
-  scr->yOff = yoff;
-
-  // draw text to region at current offset, using system font
+  // advance before write
+  scroll_dec_line(scr);
+  // draw text to region at new offset, using system font
   region_string(scr->reg, str,
 		0, scr->yOff, 0xf, 0, 0);
   //// render happens separately,
@@ -141,19 +157,42 @@ extern void scroll_string_back(scroll* scr, char* str) {
 }
 
 
-
-// draw pixels to front of scroll
-void scroll_data_front(scroll* scr, u8* data) {
-  
+// copy 1 line worth of bytes from region to front of scroll
+void scroll_region_front(scroll* scr, region* reg) {
+  u8* dst = scr->reg->data + scr->byteOff;
+  u8* src = reg->data;
+  //  s32 byteOff;
+  u32 i;
+    // copy to current line
+  for(i=0; i<scr->lineBytes; ++i) {
+    *dst = *src;
+    ++src;
+    ++dst;
+  }
+  // advance after write
+  scroll_inc_line(scr);
+  scr->reg->dirty = 1;
 }
 
-// draw pixel to back of scroll
-void scroll_data_back(scroll* scr, u8* data) {
+// copy region to back of scroll
+// region should be the correct width!
+void scroll_region_back(scroll* scr, region* reg) {
+  //  s32 byteoff;
+  u32 i;
+  u8* dst;
+  u8* src = reg->data;
+  // decrease before write
+  scroll_dec_line(scr);
+  // setup copy
+  dst = scr->reg->data + scr->byteOff;
+  for(i=0; i<scr->lineBytes; ++i) {
+    *dst = *src;
+    ++dst;
+    ++src;
+  }
 
+  scr->reg->dirty = 1;
 }
-
-
-
 
 // draw scroll to screen
 extern void scroll_draw(scroll* scr) {

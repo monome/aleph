@@ -228,3 +228,21 @@ void buffer_tapN_set_pos(bufferTapN* tap, u32 samps) {
   }
   tap->idx = samps;
 }
+
+//---------------------------
+//---- crossfade
+
+// initialize crossfader
+void buffer_xfadeN_init(bufferXfadeN* fade, audioBuffer* buf) {
+  //...
+}
+
+// set new position, initiating fade
+void buffer_xfadeN_set_pos(bufferXfadeN* fade, u32 samps) {
+  //...
+}
+
+// get next value
+void buffer_xfadeN_next(bufferXfadeN* fade) {
+  // ...
+}

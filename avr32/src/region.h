@@ -45,7 +45,7 @@ typedef struct _scroll {
   u32 yOff;
   // how many lines of text will fit in the region
   u8 lineCount; 
-  // offset for actual rending:
+  // offset for actual rendering:
   // if zero(default), most recent text on last line
   u32 drawSpace;
 } scroll;
@@ -58,10 +58,10 @@ extern void scroll_string_front(scroll* scr, char* str);
 extern void scroll_string_back(scroll* scr, char* str);
 // draw pixels to front of scroll
 /// assumes data has correct dimensions!
-extern void scroll_data_front(scroll* scr, u8* data);
+extern void scroll_region_front(scroll* scr, region* reg);
 // draw pixel to back of scroll
 /// assumes data has correct dimensions!
-extern void scroll_data_back(scroll* scr, u8* data);
+extern void scroll_region_back(scroll* scr, region* reg);
 
 // draw scroll to screen
 extern void scroll_draw(scroll* scr);

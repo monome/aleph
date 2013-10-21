@@ -17,11 +17,15 @@
 #include "handler.h"
 #include "ctl.h"
 #include "render.h"
+#include "grid.h"
+#include "monome.h"
+#include "app_timers.h"
+#include "life.h"
 
 // count of buttons
 #define NUM_BUT 4
-// count of joysticks
-#define NUM_JOY 2
+// count of joystick axes
+#define NUM_JOY 4
 
 // count of triggers
 #define NUM_TRIG 4
@@ -35,7 +39,7 @@ u8 but[NUM_BUT] = { 0, 0, 0, 0 };
 // joystick values (2-axis)
 // don't actually need to store/compare this with current system
 // (each axis gets its own byte and the event means it changed)
-// static s8 joy[NUM_JOY][2] = { {0, 0}, {0, 0} };
+volatile u8 joyVal[NUM_JOY] = {0, 0, 0, 0};
 
 //---------------------------------------------
 //--------- static funcs
@@ -61,19 +65,24 @@ static void decode_hid_event(s32 data) {
   switch(idx) {
   case 0:
     // joystick 1, x axis
-    ctl_joy(0, val);
+    //    ctl_joy(0, val);
+    //// poll these so they can be used as offsets?
+    joyVal[0] = val;
     break;
   case 1:
     // joystick 1, y axis
-    ctl_joy(1, val);
+    //    ctl_joy(1, val);
+    joyVal[1] = val;
     break;
   case 2:
     // joystick 2, x axis
-    ctl_joy(2, val);
+    //    ctl_joy(2, val);
+    joyVal[2] = val;
     break;    
   case 3:
     // joystick 2, y axis
-    ctl_joy(3, val);
+    //    ctl_joy(3, val);
+    joyVal[3] = val;
     break; 
 
   case 4:
@@ -94,6 +103,11 @@ static void decode_hid_event(s32 data) {
   }
 }
 
+
+// linear scaling for encoders
+static s32 scale_lin_enc(s32 val) {
+  return val << 7;    // *128
+}
 
 // exponential scaling for encoders
 static s32 scale_knob_value(s32 val) {
@@ -147,32 +161,52 @@ static s32 scale_knob_value(s32 val) {
 //---------------------------------------
 //---- external funcs
 
+
+ static void handle_monome_connect(u32 data) {
+   eMonomeDevice dev;
+   u8 w;
+   u8 h;
+   monome_connect_parse_event_data(data, &dev, &w, &h);
+   if(dev != eDeviceGrid) {
+     print_dbg("\r\nmonome connect: unsupported device");
+     return;
+   }
+   print_dbg("\r\nconnecting grid device");
+   // grid_set_size(w, h);
+   timers_set_monome();
+ }
+
+
 // handle key presses
 extern void flry_handler(event_t* ev) {
   switch (ev->eventType) {
   case kEventSwitch0:
+    life_change(1,1);
     // display
-    render_sw_on(0, ev->eventData > 0);
+    // render_sw_on(0, ev->eventData > 0);
     break;
   case kEventSwitch1:
+    life_change(5,5);
     // display
-    render_sw_on(1, ev->eventData > 0);
+    // render_sw_on(1, ev->eventData > 0);
     break;
   case kEventSwitch2:
+    if(ev->eventData > 0) life_print();
     // display
-    render_sw_on(2, ev->eventData > 0);
+    // render_sw_on(2, ev->eventData > 0);
     break;
   case kEventSwitch3:
+    life_init();
     // display
-    render_sw_on(3, ev->eventData > 0);
+    // render_sw_on(3, ev->eventData > 0);
     break;
     
   case kEventSwitch6:
-    render_sw_on(2, ev->eventData > 0);
+    // render_sw_on(2, ev->eventData > 0);
     break;
     
   case kEventSwitch7:
-    render_sw_on(3, ev->eventData > 0);
+    // render_sw_on(3, ev->eventData > 0);
     break;
 
   case kEventHidByte:
@@ -186,17 +220,27 @@ extern void flry_handler(event_t* ev) {
     break;
 
   case kEventEncoder0:
-    ctl_inc_value(0, scale_knob_value(ev->eventData));
+    ctl_inc_value(3, scale_lin_enc(ev->eventData));
     break;
   case kEventEncoder1:
-    ctl_inc_value(1, scale_knob_value(ev->eventData));
+    ctl_inc_value(2, scale_lin_enc(ev->eventData));
     break;
   case kEventEncoder2:
-    ctl_inc_value(2, scale_knob_value(ev->eventData));
+    ctl_inc_value(1, scale_lin_enc(ev->eventData));
     break;
   case kEventEncoder3:
-    ctl_inc_value(3, scale_knob_value(ev->eventData));
+    ctl_inc_value(0, scale_lin_enc(ev->eventData));
     break;
+
+  case kEventMonomeConnect :
+    handle_monome_connect((u32)ev->eventData);
+  break;
+
+  case kEventMonomeGridKey:
+    grid_handle_key_event(ev->eventData);
+  break;
+
+
 
   default:
     break;

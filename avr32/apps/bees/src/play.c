@@ -14,7 +14,7 @@
 #include "print_funcs.h"
 #include "simple_string.h"
 // bees
-#include "menu_protected.h"
+#include "pages_protected.h"
 #include "play.h"
 
 // big text buffer
@@ -29,6 +29,13 @@ static const u8 kValOff  = 14;
 // static touched_t touchedParams[PLAY_SCROLL_NUM];
 // current idx into scroll
 static u16 scrollIdx = 0;
+
+// test, try to overflow data section.. can't do it this way
+/// expecting a linker warning when section 
+/* static int killstack0[0xfffffff]; */
+/* static int killstack1[0xfffffff]; */
+/* static int killstack2[0xfffffff]; */
+/* static int killstack3[0xfffffff]; */
 
 //-------------------------------
 //--- external functions

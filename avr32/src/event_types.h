@@ -15,7 +15,8 @@ typedef enum {
   kEventAdc2 ,
   kEventAdc3 ,
   /// screen refresh
-  kEventRefresh,
+  //  kEventRefresh,
+
   /// poll monome
   kEventMonomePoll,
   // refresh monome
@@ -53,6 +54,7 @@ typedef enum {
   kEventSwitch1, // fn2
   kEventSwitch2, // fn3
   kEventSwitch3, // fn4
+  
   kEventSwitch4, // mode
   kEventSwitch5, // power
   kEventSwitch6, // foot1

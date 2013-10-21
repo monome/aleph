@@ -11,8 +11,8 @@
 #include "print_funcs.h"
 #endif
 // aleph
-#include "types.h"
-#include "menu_protected.h"
+//#include "types.h"
+#include "pages_protected.h"
 #include "net.h"
 #include "param.h"
 #include "play.h"

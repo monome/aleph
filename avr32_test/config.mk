@@ -5,7 +5,7 @@ ALEPH_AVR32 = ../avr32_test
 ALEPH_COMMON = ../common
 
 APP = test
-APP_DIR = ../avr32_test/
+APP_DIR = ../avr32_test
 
 
 # Target CPU architecture: ap, ucr1, ucr2 or ucr3

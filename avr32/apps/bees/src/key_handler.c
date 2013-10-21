@@ -18,7 +18,7 @@
 // bees
 #include "op.h"
 #include "op_math.h"
-#include "menu_protected.h"
+#include "pages_protected.h"
 #include "param.h"
 #include "preset.h"
 #include "redraw.h"

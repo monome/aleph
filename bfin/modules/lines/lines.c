@@ -135,13 +135,15 @@ fract32 in[4];
 
 //////////////////
 /////////
-// TES
+// TEST
+/*
 static fract32 noise_next(void) {
   fract32 x = 0;
   x |= lcprng_next(&rngH);
   x |= ((lcprng_next(&rngL) >> 16) & 0x0000ffff);
   return x;
 }
+*/
 
 ///////////////
 /////////////////

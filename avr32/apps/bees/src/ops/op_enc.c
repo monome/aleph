@@ -137,15 +137,15 @@ static void op_enc_inc_input(op_enc_t* enc, const s16 idx, const io_t inc) {
     op_enc_in_move(enc, &inc);
     break; 
   case 1:  // min
-    val = OP_ADD(enc->min, inc);
+    val = OP_SADD(enc->min, inc);
     op_enc_in_min(enc, &val);
     break;
   case 2:  // max
-    val = OP_ADD(enc->max, inc);
+    val = OP_SADD(enc->max, inc);
     op_enc_in_max(enc, &val);
     break;
   case 3: // step
-    val = OP_ADD(enc->step, inc);
+    val = OP_SADD(enc->step, inc);
     op_enc_in_step(enc, &val);
     break;
   case 4: // wrap mode
