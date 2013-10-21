@@ -37,18 +37,6 @@ typedef void(*page_handler_t)(s32 val);
 // function pointer for refresh (selection) on a given page
 typedef void(*page_refresh_t)(void);
 
-/*
-// messy page mode enum
-typedef enum  { 
-   eModeNone,
-   eModeClear,
-   eModeCopy,
-   eModeWrite,
-   eModeRead,
-   eModeDefault,
-} ePageMode;
-*/
-
 // class representing a page in a menu
 // includes a title and a key input handler (function pointer)
 typedef struct page_struct {
@@ -58,8 +46,6 @@ typedef struct page_struct {
   const page_refresh_t refresh;
   // key handler functions
   const page_handler_t * handler;
-  // current mode
-  //  ePageMode mode;
   // current row selection
   s16 select;
   // cursor position
@@ -71,9 +57,6 @@ typedef struct page_struct {
 
 //-----------------------
 //--- extern variables
-
-
-
 
 //-----------------------
 //--- extern functions
@@ -118,6 +101,5 @@ extern void pages_deinit(void);
 // extern void pages_handleKey(uiKey_t key, s16 value);
 // refresh
 extern void pages_refresh(void);
-
 
 #endif  // h guard

@@ -335,7 +335,7 @@ void render_to_scroll_bottom(void) {
 
 
 /* note: this type of bounds check (on dstOff in functions below)
-   is only intendeded to catch line offsets.x
+   is only intendeded to catch line offsets.
    in other words, it is assumed
    that scroll offset is always advanced by multiples of line length.
   */

@@ -14,7 +14,7 @@
 #include "print_funcs.h"
 #include "simple_string.h"
 // bees
-#include "menu_protected.h"
+#include "pages_protected.h"
 #include "play.h"
 
 // big text buffer

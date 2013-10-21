@@ -23,7 +23,7 @@
 #include "flash_bees.h"
 #include "global.h"
 #include "memory.h"
-#include "menu.h"
+#include "pages.h"
 #include "net_protected.h"
 #include "preset.h"
 #include "types.h"

@@ -2,7 +2,7 @@
   page_play.c
  */
 
-#include "menu_protected.h"
+#include "pages_protected.h"
 #include "pages.h"
 #include "render.h"
 

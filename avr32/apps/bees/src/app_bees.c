@@ -59,7 +59,7 @@ void app_init(void) {
   pages_init();
 
   print_dbg("\r\n play_init...");
-  play_init();
+  //  play_init();
 
   // set handler
   print_dbg("\r\n setting handler ");

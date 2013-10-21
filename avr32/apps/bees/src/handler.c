@@ -12,7 +12,7 @@
 #include "event_types.h"
 #include "gpio.h"
 #include "handler.h"
-#include "menu_protected.h"
+#include "pages_protected.h"
 #include "net_monome.h"
 #include "pages.h"
 
@@ -121,7 +121,7 @@ void bees_handler(event_t* e) {
     keyMode ^= 1;
     if(keyMode) { gpio_set_gpio_pin(LED_MODE_PIN); }
     else { gpio_clr_gpio_pin(LED_MODE_PIN); }
-    //    menu_handleKey(eKeyMode, e->eventData);
+    //    pages_handleKey(eKeyMode, e->eventData);
     //// switch to play mode...
     break;
     

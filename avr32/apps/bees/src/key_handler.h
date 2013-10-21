@@ -2,8 +2,8 @@
 #define _KEY_HANDLER_H_
 
 //#include "compiler.h"
-#include "menu.h"
-#include "menu_protected.h"
+#include "pages.h"
+#include "pages_protected.h"
 
 /*
 //// page-specific key handlers

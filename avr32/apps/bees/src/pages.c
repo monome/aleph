@@ -9,7 +9,6 @@
 #include "encoders.h"
 #endif
 
-#include "key_handler.h"
 #include "pages.h"
 //#include "pages_protected.h"
 #include "net.h"
@@ -43,7 +42,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
 };
 */
 
-// page structures - synchronize with ePage enum in menu.h
+// page structures - synchronize with ePage enum in pages.h
 page_t pages[NUM_PAGES] = {
   { .name = "INS",
     .refresh = &refresh_ins,
