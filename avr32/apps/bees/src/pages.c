@@ -27,20 +27,6 @@
 
 //--------------------------
 //--------- variables
-// const array of user-creatable operator type id's
-/// FIXME: this is dumb, should somehow be specified in op.c or similar
-/*
-const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
-  eOpAdd,
-  eOpMul,
-  eOpGate,
-  eOpMonomeGridRaw
-  // many, many more...
-  /// more...
-  // eOpAccum,
-  // eOpSelect,
-};
-*/
 
 // page structures - synchronize with ePage enum in pages.h
 page_t pages[NUM_PAGES] = {
@@ -91,26 +77,14 @@ page_t pages[NUM_PAGES] = {
 page_t* curPage;
 // idx of current page
 s8 pageIdx = 0;
-
-/*
-// new operator type
-op_id_t newOpType;
-// array of onode pointers for gathering
-u32(*gathered)[NET_OUTS_MAX];
-// how many gathered
-u32 numGathered;
-*/
-
-//-----------------------
-//------ static vars
-// saved idx for toggling in play mode
-// static s8 savedPageIdx = 0;
+// last pressed key
+u8 keyPressed = 255;
 
 //-----------------------------------
 //----- external function definitions
 
 // init
-extern void pages_init(void) {
+ void pages_init(void) {
   init_page_ins();
   /*
     // TODO
@@ -126,12 +100,12 @@ extern void pages_init(void) {
 }
 
 // de-init
-extern void pages_deinit(void) {
+ void pages_deinit(void) {
 }
 
 // refresh
 
-extern void pages_refresh(void) {
+void pages_refresh(void) {
   curPage->refresh();
 }
 
@@ -156,7 +130,21 @@ void set_page(ePage n) {
   print_dbg("\r\n set enc sense");
   // set encoder sensetivity
   for(i=0; i<4; i++) {
+    //// FIXME: use encoder map?
     //set_enc_thresh(encMap[i], curPage->encSens[i]);
     set_enc_thresh(i, curPage->encSens[i]);
   }
+}
+
+// check key against last pressed
+u8 check_key(u8 key) {
+  u8 ret;
+  if(keyPressed == key) {
+    keyPressed = 255;
+    ret = 1;
+  } else {
+    keyPressed = key;
+    ret = 0;
+  }
+  return ret;
 }

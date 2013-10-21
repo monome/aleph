@@ -46,7 +46,7 @@ char lineBuf[LINEBUF_LEN];
 extern region* headRegion;
 extern region* footRegion[4];
 extern region* selectRegion;
-extern region* tmpRegion;
+extern region* lineRegion;
 
 //======================================
 //=== extern functions

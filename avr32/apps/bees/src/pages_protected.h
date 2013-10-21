@@ -25,4 +25,8 @@ extern s8 pageIdx;
 
 extern void set_page(ePage n);
 
+// lass pressed key
+u8 keyPressed;
+
+
 #endif // h guard

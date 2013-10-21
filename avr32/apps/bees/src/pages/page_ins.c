@@ -2,10 +2,6 @@
   page_ins.c
  */
 
-// std
-// #include <string.h>
-// #include <stdio.h>
-
 // asf
 #include "print_funcs.h"
 
@@ -40,9 +36,6 @@ static u8 inPlay = 0;
 // in-clear-confirm state
 static u8 clearConfirm = 0;
 
-// all function keys take a double-press
-static u8 keyPressed = 255;
-
 //-------------------------
 //---- static declarations
 
@@ -68,11 +61,16 @@ const page_handler_t handler_ins[eNumPageHandlers] = {
   &handle_key_3,
 };
 
+// refresh preset inclusion status of current selection
+static void refresh_preset(void) {
+  
+}
+
 // fill tmp region with new content
 // given input index
 static void render_line(s16 idx) {
   const s16 opIdx = net_in_op_idx(idx);
-  region_fill(tmpRegion, 0x0);
+  region_fill(lineRegion, 0x0);
   if(opIdx >= 0) {
     // operator input
     // build descriptor string
@@ -84,11 +82,11 @@ static void render_line(s16 idx) {
     appendln( net_in_name(idx) );
     endln();
 
-    font_string_region_clip(tmpRegion, lineBuf, 0, 0, 0xa, 0);
+    font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
     clearln();
 
     print_fix16(lineBuf, net_get_in_value(idx));
-    font_string_region_clip(tmpRegion, lineBuf, LINE_VAL_POS, 0, 0xa, 0);
+    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, 0xa, 0);
   } else {
     // parameter input    
     clearln();
@@ -96,13 +94,13 @@ static void render_line(s16 idx) {
     endln();
     appendln( net_in_name(idx)); 
     endln();
-    font_string_region_clip(tmpRegion, lineBuf, 0, 0, 0xa, 0);
+    font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
     clearln();
     print_fix16(lineBuf, net_get_in_value(idx));
-    font_string_region_clip(tmpRegion, lineBuf, 48, 0, 0xa, 0);
+    font_string_region_clip(lineRegion, lineBuf, 48, 0, 0xa, 0);
   }
   // underline
-  region_fill_part(tmpRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
+  region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
 }
 
 // edit the current seleciton
@@ -136,12 +134,16 @@ static void select_scroll(s32 dir) {
     ///// these bounds checks shouldn't really be needed here...
     //    if(newSel < 0) { newSel = 0; }
     //    if(newSel > max ) { newSel = max; }
-    curPage->select = newSel;    
+    curPage->select = newSel;
+ 
+    // update preset-inclusion flag
+    refresh_preset();
+    
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
     if(newIdx < 0) { 
       // empty row
-      region_fill(tmpRegion, 0);
+      region_fill(lineRegion, 0);
     } else {
       render_line(newIdx);
     }
@@ -171,7 +173,7 @@ static void select_scroll(s32 dir) {
     newIdx = newSel + SCROLL_LINES_ABOVE;
     if(newIdx > max) { 
       // empty row
-      region_fill(tmpRegion, 0);
+      region_fill(lineRegion, 0);
     } else {
       render_line(newIdx);
     }
@@ -264,8 +266,7 @@ static void show_foot(void) {
 /// FIXME:
     // it would be more efficient (redundant compares, etc) 
     // to combine the fn's above into an ugly if-nest as below.
-    // we don't ever really update the regions independently.
-
+    // we don't ever really update the foot regions independently.
   u8 i;
   u8 fill[4] = {0, 0, 0, 0};
   static const u8 footpx[4] = {0, 32, 64, 96};
@@ -353,18 +354,6 @@ void refresh_ins(void) {
 //--------------------------
 //---- static definitions
 
-static u8 check_key(u8 key) {
-  u8 ret;
-  if(keyPressed == key) {
-    keyPressed = 255;
-    ret = 1;
-  } else {
-    keyPressed = key;
-    ret = 0;
-  }
-  return ret;
-}
-
 // function keys
 void handle_key_0(s32 val) {
   if(val == 0) { return; }
@@ -379,7 +368,6 @@ void handle_key_0(s32 val) {
 }
 
 void handle_key_1(s32 val) {
-  //  print_dbg("\r\n page_ins handle key 1 ");
   if(val == 0) { return; }
   if(check_key(1)) {
     if(altMode) {
@@ -392,7 +380,6 @@ void handle_key_1(s32 val) {
 }
 
 void handle_key_2(s32 val) {
-  //  print_dbg("\r\n page_ins handle key 2 ");
   if(val == 0) { return; }
   if(check_key(2)) {
     if(altMode) {
@@ -405,25 +392,21 @@ void handle_key_2(s32 val) {
 }
 
 void handle_key_3(s32 val) {
-  //  print_dbg("\r\n page_ins handle key 3 ");
   // alt mode
   set_alt((u8)val);
 }
 
 void handle_enc_0(s32 val) {
-  //  print_dbg("\r\n page_ins handle enc 0 ");
   // change parameter value, slow
   select_edit(scale_knob_value_small(val));
 }
 
 void handle_enc_1(s32 val) {
-  //  print_dbg("\r\n page_ins handle enc 1 ");
   // change parameter value, fast
   select_edit(scale_knob_value(val) << 16);
 }
 
 void handle_enc_2(s32 val) {
-  //  print_dbg("\r\n page_ins handle enc 2 ");
   // scroll page
   if(val > 0) {
     //    set_page(ePageOuts);
@@ -433,7 +416,6 @@ void handle_enc_2(s32 val) {
 }
 
 void handle_enc_3(s32 val) {
-  //  print_dbg("\r\n page_ins handle enc 3 ");
   // scroll selection
   select_scroll(val);
 }

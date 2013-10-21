@@ -102,4 +102,7 @@ extern void pages_deinit(void);
 // refresh
 extern void pages_refresh(void);
 
+// check key against last pressed
+extern u8 check_key(u8 key);
+
 #endif  // h guard

@@ -21,13 +21,6 @@ typedef fix16_t io_t;
 
 // arithmetic macros
 
-// #define OP_ADD(a, b) ((a) + (b))
-// #define OP_SUB(a, b) ((a) - (b))
-// #define OP_MUL(a, b) ((a) * (b))
-// #define OP_DIV(a, b) ((a) / (b))
-
-/// TODO: int conversion
-
 // standard (overflow)
 #define OP_ADD(a, b) (fix16_add((a), (b)))
 #define OP_SUB(a, b) (fix16_sub((a), (b)))

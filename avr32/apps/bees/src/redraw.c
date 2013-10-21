@@ -448,11 +448,12 @@ static void draw_line_outs(s32 n, u16 num, u8 y, u8 hl) {
   screen_blank_line(0, y);
   if (target >= 0) {
     println_int(net_out_op_idx(n), 0);
-    endln(); screen_string(0, y, lineBuf, hl);
+    //    endln(); screen_string(0, y, lineBuf, hl);
     println( net_op_name(net_out_op_idx(n)) , 0);
     appendln_char('/');
     appendln( net_out_name(n) );
     endln(); screen_string(16, y, lineBuf, hl);
+   
     println("-> ", 0);
     appendln_int_lj( net_in_op_idx(target) );
     appendln_char('.');

@@ -6,11 +6,16 @@
 
  */
 
+// asf
+#include "gpio.h"
+#include "delay.h"
 #include "print_funcs.h"
 
+// aleph-avr32
 #include "aleph_board.h"
 #include "event_types.h"
-#include "gpio.h"
+
+// bees
 #include "handler.h"
 #include "pages_protected.h"
 #include "net_monome.h"
@@ -48,10 +53,21 @@ void bees_handler(event_t* e) {
   } else {
     /// case 
     switch(t) {
-    case kEventSwitch6:
+    case kEventSwitch4: // mode
+      // change mode
+      break;
+    case kEventSwitch5: // power
+      // write default scene...
+      // power down
+      print_dbg("\r\n powering down...");
+      delay_ms(1000);
+      gpio_clr_gpio_pin(POWER_CTL_PIN);
+      
+      break;
+    case kEventSwitch6: // FS 0
       // .. update op
       break;
-    case kEventSwitch7:
+    case kEventSwitch7: // FS 1
       // .. update op
       break;
     case kEventAdc0:
