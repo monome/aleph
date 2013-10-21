@@ -10,6 +10,8 @@ s8 lifenext[128];
 u8 changed;
 u8 step, mass, v, h;
 
+//---------------------------------------
+//--- static functions
 static u8 neighbors(u8 x, u8 y)
 {
   return lifenow[((x + 1) % 8) + ((y)<<4)] + 
@@ -22,11 +24,14 @@ static u8 neighbors(u8 x, u8 y)
     lifenow[((x + 1) % 8) + (((y + 8 - 1) % 8)<<4)]; 
 }
 
+//---------------------------------
+//-- external functions
+
 void life_print(void) {
 	u8 x,y;
 	print_dbg("\r\n");
 	for(y=0;y<8;y++)
-		for(x=0;x<8;x++)
+		for(x=0;x<8;x++) 
 			print_dbg_ulong(lifenext[x+(y<<4)]);
 }
 

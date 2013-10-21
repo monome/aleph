@@ -16,6 +16,9 @@
 #include "pages.h"
 #include "screen.h"
 
+/// FIXME: kill this header
+
+
 ///////////////////////
 ///// variables
 
@@ -44,12 +47,12 @@ extern op_id_t newOpType;
 // set current page
 extern void set_page(ePage n);
 // scroll current page
-extern void scroll_page(s8 dir);
+//extern void scroll_page(s8 dir);
 // scroll selection in current page
-extern void scroll_select(s8 dir, s32 max);
+//extern void scroll_select(s8 dir, s32 max);
 // scroll selection in current page
-extern void scroll_select_clip(s8 dir, s32 max);
+//extern void scroll_select_clip(s8 dir, s32 max);
 // scroll selection in current page
-extern void scroll_select_wrap(s8 dir, s32 max);
+//extern void scroll_select_wrap(s8 dir, s32 max);
 
 #endif // header guard

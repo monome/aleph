@@ -19,12 +19,12 @@ CSRCS += \
 	$(APP_DIR)/src/files.c \
 	$(APP_DIR)/src/flash_bees.c \
 	$(APP_DIR)/src/handler.c \
-	$(APP_DIR)/src/menu.c \
 	$(APP_DIR)/src/net.c \
 	$(APP_DIR)/src/net_monome.c \
 	$(APP_DIR)/src/net_poll.c \
 	$(APP_DIR)/src/op.c \
 	$(APP_DIR)/src/param.c \
+	$(APP_DIR)/src/pages.c \
 	$(APP_DIR)/src/play.c \
 	$(APP_DIR)/src/preset.c \
 	$(APP_DIR)/src/render.c \

@@ -4,7 +4,7 @@
   bees
 
   required app-specific implementation of avr32/src/app.h
-[ */
+ */
 
 // asf
 #include "delay.h"

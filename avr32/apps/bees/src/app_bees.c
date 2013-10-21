@@ -27,9 +27,9 @@
 #include "app_timers.h"
 #include "files.h"
 #include "handler.h"
-#include "menu.h"
 #include "net.h"
 #include "net_monome.h"
+#include "pages.h"
 #include "play.h"
 #include "render.h"
 #include "scene.h"
@@ -55,8 +55,8 @@ void app_init(void) {
   print_dbg("\r\n render_init...");
   render_init();
 
-  print_dbg("\r\n menu_init...");
-  menu_init();
+  print_dbg("\r\n pages_init...");
+  pages_init();
 
   print_dbg("\r\n play_init...");
   play_init();
@@ -111,7 +111,7 @@ u8 app_launch(u8 firstrun) {
     print_dbg("( not really )");
     //    scene_read_default();
   }
-  menu_refresh();
+  pages_refresh();
 
   return 1;
 }

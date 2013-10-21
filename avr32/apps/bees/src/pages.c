@@ -1,5 +1,5 @@
 /*
-  menu.c
+  pages.c
   bees
   aleph
 */
@@ -10,8 +10,8 @@
 #endif
 
 #include "key_handler.h"
-#include "menu.h"
-#include "menu_protected.h"
+#include "pages.h"
+//#include "pages_protected.h"
 #include "net.h"
 #include "op.h"
 #include "pages.h"
@@ -111,7 +111,7 @@ u32 numGathered;
 //----- external function definitions
 
 // init
-extern void menu_init(void) {
+extern void pages_init(void) {
   init_page_ins();
   /*
     // TODO
@@ -127,35 +127,12 @@ extern void menu_init(void) {
 }
 
 // de-init
-extern void menu_deinit(void) {
+extern void pages_deinit(void) {
 }
-
-// top level key handler
-/*
-void menu_handleKey(uiKey_t key, s16 val) {
-  if (key == eKeyMode) {
-    if (pageIdx == ePagePlay) {
-      // restore saved page
-      set_page(savedPageIdx);
-    } else {
-      // save the page and switch to Play mode
-      savedPageIdx = pageIdx;
-      set_page(ePagePlay);
-    }
-  } else {
-    //    print_dbg("\r\n menu_handleKey");
-    curPage->keyHandler(key, val);
-    
-  }
-#if ARCH_LINUX
-  screen_refresh();
-#endif
-}
-*/
 
 // refresh
 
-extern void menu_refresh(void) {
+extern void pages_refresh(void) {
   curPage->refresh();
 }
 
@@ -184,78 +161,3 @@ void set_page(ePage n) {
     set_enc_thresh(i, curPage->encSens[i]);
   }
 }
-
-//// ins -> outs -> (gathered) -> presets -> scenes -> dsp
-// scroll current page
-void scroll_page(s8 dir) {
-  //  print_dbg("\r\nscroll page: ");
-  //  print_dbg_hex(pageIdx);
-  switch(pageIdx) {
-  case ePageIns:
-    pageIdx = dir>0 ? ePageOuts : ePageDsp ;
-    break;
-  case ePageOuts:
-    pageIdx = dir>0 ? ePagePresets : ePageIns ;
-    break;
-  case ePageGathered:
-    pageIdx = dir>0 ? ePagePresets : ePageIns ;
-    break;
-  case ePagePresets:
-    pageIdx = dir>0 ? ePageOps : ePageOuts ;
-    break;
-  case ePageOps:
-    pageIdx = dir>0 ? ePageScenes : ePagePresets ;
-    break;
-  case ePageScenes:
-    pageIdx = dir>0 ? ePageDsp : ePageOps ;
-    break;
-  case ePageDsp:
-    pageIdx = dir>0 ? ePageIns : ePageScenes ;
-    break;
-  }
-  //  print_dbg("\r\n new page idx: ");
-  //  print_dbg_hex(pageIdx);
-  set_page(pageIdx);
-}
-
-
-
-// scroll current page selection
-//--  clipping variant
-void scroll_select_clip(s8 dir, s32 max) {
-  s32 val = curPage->select + dir;
-  if(val >= max) {
-    val = max - 1;
-  }
-  if(val < 0) {
-    val = 0;
-  }
-  //curPage->select(val);
-}
-
-//--  wrapping variant
-void scroll_select_wrap(s8 dir, s32 max) {
-  s32 val = curPage->select + dir;
-  //  curPage->selected += dir;
-    while (val < 0) {
-      val += max;
-    }
-    while (val >= max) {
-      val -= max; 
-    }
-    //  curPage->render();
-    //    curPage->select(val);
-}
-
-//-- default: wrap
-void scroll_select(s8 dir, s32 max) {
-  scroll_select_wrap(dir, max);
-}
-
-
-// get selection on given page
-/*
-extern s16 menu_selection(ePage page) {
-  return pages[page].select;
-}
-*/

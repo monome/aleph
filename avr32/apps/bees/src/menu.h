@@ -53,13 +53,13 @@ typedef enum eKey {
 
 //----- public functions
 // init
-extern void menu_init(void);
+extern void pages_init(void);
 // de-init
-extern void menu_deinit(void);
+extern void pages_deinit(void);
 // handle key
-//extern void menu_handleKey(uiKey_t key, s16 value);
+//extern void pages_handleKey(uiKey_t key, s16 value);
 // refresh
-extern void menu_refresh(void);
+extern void pages_refresh(void);
 
 // get selection on given page
 //extern s16 menu_selection(ePage page);
