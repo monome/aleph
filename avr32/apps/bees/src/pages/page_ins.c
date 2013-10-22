@@ -90,7 +90,7 @@ static void render_line(s16 idx) {
     font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
     clearln();
     print_fix16(lineBuf, net_get_in_value(idx));
-    font_string_region_clip(lineRegion, lineBuf, 48, 0, 0xa, 0);
+    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, 0xa, 0);
   }
   // underline
   region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);

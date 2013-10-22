@@ -295,7 +295,6 @@ static void show_foot(void) {
 //----------------------
 // ---- extern
 
-
 // init
 void init_page_outs(void) {
   u8 i, n;
