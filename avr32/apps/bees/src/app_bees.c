@@ -65,9 +65,9 @@ void app_init(void) {
   print_dbg("\r\n setting handler ");
   appEventHandler = &bees_handler;
 
-					       
+  //// FIXME					       
   // pull up power control pin, enabling soft-powerdown
-  gpio_set_gpio_pin(POWER_CTL_PIN);
+  //  gpio_set_gpio_pin(POWER_CTL_PIN);
 
 }
 

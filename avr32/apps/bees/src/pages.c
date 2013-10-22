@@ -86,9 +86,9 @@ u8 keyPressed = 255;
 // init
  void pages_init(void) {
   init_page_ins();
+  init_page_outs();
   /*
     // TODO
-  init_page_outs();
   init_page_presets();
   init_page_ops();
   init_page_scenes();
@@ -134,6 +134,7 @@ void set_page(ePage n) {
     //set_enc_thresh(encMap[i], curPage->encSens[i]);
     set_enc_thresh(i, curPage->encSens[i]);
   }
+  print_dbg("\r\n ...done setting page.");
 }
 
 // check key against last pressed

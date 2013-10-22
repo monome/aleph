@@ -23,8 +23,6 @@
 
 static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
 
-// alt-mode flag (momentary)
-static u8 altMode = 0;
 // play-mode filter flag (persistent)
 static u8 playFilter = 0;
 
@@ -61,11 +59,6 @@ const page_handler_t handler_ins[eNumPageHandlers] = {
   &handle_key_3,
 };
 
-// refresh preset inclusion status of current selection
-static void refresh_preset(void) {
-  
-}
-
 // fill tmp region with new content
 // given input index
 static void render_line(s16 idx) {
@@ -91,13 +84,13 @@ static void render_line(s16 idx) {
     // parameter input    
     clearln();
     appendln_idx_lj( (int)net_param_idx(idx)); 
-    endln();
+    appendln_char('.');
     appendln( net_in_name(idx)); 
     endln();
     font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
     clearln();
     print_fix16(lineBuf, net_get_in_value(idx));
-    font_string_region_clip(lineRegion, lineBuf, 48, 0, 0xa, 0);
+    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, 0xa, 0);
   }
   // underline
   region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
@@ -115,7 +108,7 @@ static void select_edit(s32 inc) {
 
 // scroll the current selection
 static void select_scroll(s32 dir) {
-  const s32 max = net_num_ins() - 1 + net_num_params();
+  const s32 max = net_num_ins() - 1;
   // index for new content
   s16 newIdx;
   s16 newSel;
@@ -135,10 +128,9 @@ static void select_scroll(s32 dir) {
     //    if(newSel < 0) { newSel = 0; }
     //    if(newSel > max ) { newSel = max; }
     curPage->select = newSel;
- 
     // update preset-inclusion flag
-    refresh_preset();
-    
+    inPreset = (u8)net_get_in_preset((u32)(curPage->select));
+   
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
     if(newIdx < 0) { 
@@ -169,6 +161,9 @@ static void select_scroll(s32 dir) {
     //    if(newSel > max ) { newSel = max; }
     /////
     curPage->select = newSel;    
+    // update preset-inclusion flag
+    inPreset = (u8)net_get_in_preset((u32)(curPage->select));
+    
     // add new content at bottom of screen
     newIdx = newSel + SCROLL_LINES_ABOVE;
     if(newIdx > max) { 
@@ -309,12 +304,6 @@ static void show_foot(void) {
   */
 }
 
-// set alt mode
-static void set_alt(u8 val) {
-  altMode = val;
-  show_foot();
-}
-
 //----------------------
 // ---- extern 
 // init
@@ -345,7 +334,6 @@ void refresh_ins(void) {
   // assign global scroll region pointer
   // also marks dirty
   render_set_scroll_region(&scrollRegion);
-  
   // other regions are static in top-level render, with global handles
   region_fill(headRegion, 0x0);
   font_string_region_clip(headRegion, "INPUTS", 0, 0, 0xf, 0x1);
@@ -393,7 +381,8 @@ void handle_key_2(s32 val) {
 
 void handle_key_3(s32 val) {
   // alt mode
-  set_alt((u8)val);
+  altMode = (u8)(val>0);
+  show_foot();
 }
 
 void handle_enc_0(s32 val) {
@@ -409,7 +398,7 @@ void handle_enc_1(s32 val) {
 void handle_enc_2(s32 val) {
   // scroll page
   if(val > 0) {
-    //    set_page(ePageOuts);
+    set_page(ePageOuts);
   } else {
     //    set_page(ePagePresets);
   }

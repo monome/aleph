@@ -182,6 +182,12 @@ static void check_events(void) {
 	if(e.eventType == kEventSwitch3) {
 	  firstrun = 1; 
 	}
+	// pending events?
+	print_pending_events();
+	/// wipe out the event queue
+	init_events();
+	/// clear the fucking power sw interrupt? wtf??
+	gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
 	// return 1 if app completed firstrun tasks
 	launch = app_launch(firstrun);
 	delay_ms(10);

@@ -91,7 +91,6 @@ extern void refresh_dsp(void);
 extern void refresh_gathered(void);
 extern void refresh_play(void);
 
-
 //----- public functions
 // init all pages
 extern void pages_init(void);
@@ -101,7 +100,6 @@ extern void pages_deinit(void);
 // extern void pages_handleKey(uiKey_t key, s16 value);
 // refresh
 extern void pages_refresh(void);
-
 // check key against last pressed
 extern u8 check_key(u8 key);
 
