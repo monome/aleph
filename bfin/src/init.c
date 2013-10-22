@@ -324,9 +324,16 @@ void init_flags(void) {
   // inputs 
   //// no gpio input
   //  *pFIO_INEN = PF_IN;
+
   // outputs
-    *pFIO_DIR = PF_DIR;
-  //  *pFIO_DIR = (CODEC_RESET_UNMASK) | (DAC_RESET_UNMASK) | (BUSY_UNMASK) | (LED3_UNMASK) | (LED4_UNMASK);
+  *pFIO_DIR = 0;
+  *pFIO_DIR |= CODEC_RESET_UNMASK;
+  *pFIO_DIR |= CODEC_RESET_UNMASK;
+  *pFIO_DIR |= DAC_RESET_UNMASK;
+  *pFIO_DIR |= READY_UNMASK;
+  *pFIO_DIR |= LED3_UNMASK;
+  *pFIO_DIR |= LED4_UNMASK;
+
   /* // edge-sensitive */
   /* *pFIO_EDGE = 0x0f00; */
   /* // both rise and fall */
@@ -347,23 +354,22 @@ void init_interrupts(void) {
   //  *pSIC_IAR1 = 0xff32ff2f;
   //  *pSIC_IAR2 = 0xffffffff;
 
+
   // by default:
   // sport0 rx (dma1) -> ID2 = IVG9
   // sport1 tx        -> ID2 = IVG9
   // spi rx           -> ID3 = IVG10
 
-
   // assign ISRs to interrupt vectors:
   //// ok, this ISR will serve both sports...
   *pEVT9 = sport0_rx_isr;
   *pEVT10 = spi_rx_isr;
+
   //  *pEVT10 = sport1_tx_isr;
 
   // unmask in the core event processor
   asm volatile ("cli %0; bitset(%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
 
   // unmask peripheral interrupts
-  *pSIC_IMASK = 0x00003200;
-  
- 
+  *pSIC_IMASK = 0x00003200; 
 }

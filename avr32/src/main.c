@@ -166,6 +166,9 @@ static void check_events(void) {
   /* print_dbg("\r\n , data: "); */
   /* print_dbg_hex(e.eventData); */
 
+    //// 
+    //// FIXME: this control structure is dumb
+
     
     if(startup) {
       if( e.eventType == kEventSwitch0

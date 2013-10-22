@@ -21,7 +21,7 @@
 #include "ncurses.h"
 #include "screen.h"
 #include "types.h"
-#include "menu.h"
+#include "pages.h"
 
 #if ARCH_LINUX
 //---- defines
@@ -145,57 +145,57 @@ u8 ui_loop(void) {
     }
     break;
   case KEY_EDIT:
-    menu_handleKey(eKeyMode, 1);
+    pages_handleKey(eKeyMode, 1);
     break;
     /// "encoders"
   case KEY_ENC_A_UP:
-    menu_handleKey(eKeyEncUpA, 1);
+    pages_handleKey(eKeyEncUpA, 1);
     break;
   case KEY_ENC_A_DOWN:
-    menu_handleKey(eKeyEncDownA, 1);
+    pages_handleKey(eKeyEncDownA, 1);
     break;
   case KEY_ENC_B_UP:
-    menu_handleKey(eKeyEncUpB, 1);
+    pages_handleKey(eKeyEncUpB, 1);
     break;
   case KEY_ENC_B_DOWN:
-    menu_handleKey(eKeyEncDownB, 1);
+    pages_handleKey(eKeyEncDownB, 1);
     break;
   case KEY_ENC_C_UP:
-    menu_handleKey(eKeyEncUpC, 1);
+    pages_handleKey(eKeyEncUpC, 1);
     break;
   case KEY_ENC_C_DOWN:
-    menu_handleKey(eKeyEncDownC, 1);
+    pages_handleKey(eKeyEncDownC, 1);
     break;
   case KEY_ENC_D_UP:
-    menu_handleKey(eKeyEncUpD, 1);
+    pages_handleKey(eKeyEncUpD, 1);
     break;
   case KEY_ENC_D_DOWN:
-    menu_handleKey(eKeyEncDownD, 1);
+    pages_handleKey(eKeyEncDownD, 1);
     break;
     // function keys
   case KEY_FN_A_DOWN:
-    menu_handleKey(eKeyFnDownA, 1);
+    pages_handleKey(eKeyFnDownA, 1);
     break;
   case KEY_FN_A_UP:
-    menu_handleKey(eKeyFnUpA, 1);
+    pages_handleKey(eKeyFnUpA, 1);
     break;
   case KEY_FN_B_DOWN:
-    menu_handleKey(eKeyFnDownB, 1);
+    pages_handleKey(eKeyFnDownB, 1);
     break;
   case KEY_FN_B_UP:
-    menu_handleKey(eKeyFnUpB, 1);
+    pages_handleKey(eKeyFnUpB, 1);
     break;
   case KEY_FN_C_DOWN:
-    menu_handleKey(eKeyFnDownC, 1);
+    pages_handleKey(eKeyFnDownC, 1);
     break;
   case KEY_FN_C_UP:
-    menu_handleKey(eKeyFnUpC, 1);
+    pages_handleKey(eKeyFnUpC, 1);
     break;
   case KEY_FN_D_DOWN:
-    menu_handleKey(eKeyFnDownD, 1);
+    pages_handleKey(eKeyFnDownD, 1);
     break;
   case KEY_FN_D_UP:
-    menu_handleKey(eKeyFnUpD, 1);
+    pages_handleKey(eKeyFnUpD, 1);
     break;
   default:
     break;

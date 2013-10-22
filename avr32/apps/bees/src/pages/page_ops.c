@@ -2,10 +2,24 @@
   page_ops.c
  */
 
-#include "menu_protected.h"
+#include "op.h"
+#include "pages_protected.h"
 #include "pages.h"
 #include "render.h"
 
+
+const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
+  eOpAdd,
+  eOpMul,
+  eOpGate,
+  eOpMonomeGridRaw
+  // many more...
+  // eOpAccum,
+  // eOpSelect,
+};
+
+// new operator type
+op_id_t newOpType;
 
 //-------------------------
 //---- static

@@ -146,7 +146,7 @@ void render_init(void) {
 
 // render to scrolling boot buffer
 void render_boot(char* str) {
-  scroll_string_front(&bootScroll, str);
+  scroll_string_front(&bootScroll, str);  
 }
 
 

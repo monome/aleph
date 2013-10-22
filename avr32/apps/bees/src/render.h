@@ -5,8 +5,8 @@
 #include "font.h"
 #include "region.h"
 // bees
-#include "menu.h"
-#include "menu_protected.h"
+#include "pages.h"
+#include "pages_protected.h"
 
 //========================================
 //=== positioning constants
@@ -46,7 +46,7 @@ char lineBuf[LINEBUF_LEN];
 extern region* headRegion;
 extern region* footRegion[4];
 extern region* selectRegion;
-extern region* tmpRegion;
+extern region* lineRegion;
 
 //======================================
 //=== extern functions

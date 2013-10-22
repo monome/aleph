@@ -30,7 +30,7 @@
 //---- extern vars
 region* headRegion = NULL;
 region* footRegion[4] = { NULL, NULL, NULL, NULL };
-region* tmpRegion = NULL;
+region* lineRegion = NULL;
 
 //------------------------
 //---- static vars
@@ -44,16 +44,25 @@ static region footRegion_pr[4] = {
 };
 
 //static region selectRegion_pr = { .w=128, .h=8, .x = 0, .y = 24 };
-static region tmpRegion_pr = 	{ .w=128, .h=8, .x = 0, .y = 0  };
+static region lineRegion_pr = 	{ .w=128, .h=8, .x = 0, .y = 0  };
 
 // dummy region with full-screen dimensions but no data
 static region dummyRegion = { .w=128, .h=64, .x=0, .y=0, .data=NULL };
 
 // pointer to current page scroll region
-static region* scrollRegion = NULL;
-
+static region* pageScrollRegion = NULL;
 // scroller
 static scroll centerScroll;
+
+
+// scrolling boot region
+static region bootScrollRegion = {
+  .w = 128, .h = 64, .x = 0, .y = 0
+};
+// scroller for boot region
+static scroll bootScroll;
+
+
 
 // static line buffer
 char lineBuf[LINEBUF_LEN];
@@ -98,7 +107,7 @@ void render_init(void) {
   /*   &headRegion, */
   /*   &footRegion, */
   /*   //    &selectRegion, */
-  /*   &tmpRegion, */
+  /*   &lineRegion, */
   /* }; */
 
   /* u8 i; */
@@ -112,7 +121,7 @@ void render_init(void) {
   region_alloc((region*)(&(footRegion_pr[2])));
   region_alloc((region*)(&(footRegion_pr[3])));
   //  region_alloc((region*)(&selectRegion_pr));
-  region_alloc((region*)(&tmpRegion_pr));
+  region_alloc((region*)(&lineRegion_pr));
 
   headRegion = &headRegion_pr;
   footRegion[0] = &(footRegion_pr[0]);
@@ -120,12 +129,12 @@ void render_init(void) {
   footRegion[2] = &(footRegion_pr[2]);
   footRegion[3] = &(footRegion_pr[3]);
   //  selectRegion = &selectRegion_pr;
-  tmpRegion = &tmpRegion_pr;
+  lineRegion = &lineRegion_pr;
 
   // scroll init needs to compute offsets based on region size
   // use a dummy region with correct dimensions but no data
-  scrollRegion = &dummyRegion;
-  scroll_init(&centerScroll, scrollRegion);
+  pageScrollRegion = &dummyRegion;
+  scroll_init(&centerScroll, pageScrollRegion);
 }
 
 // update
@@ -166,8 +175,8 @@ void render_set_foot_region(region* reg[4]) {
 
 // set current scroll region
 void render_set_scroll_region(region* reg) {
-  scrollRegion = reg;
-  scrollRegion->dirty = 1;
+  pageScrollRegion = reg;
+  pageScrollRegion->dirty = 1;
   centerScroll.reg = reg;
 }
 
@@ -277,7 +286,7 @@ void render_to_select(void) {
   u8* psrc;
   u8* pdst;
   u32 i;
-  psrc = tmpRegion->data;
+  psrc = lineRegion->data;
   pdst = selectRegion->data;
   for(i=SCROLL_BYTES_PER_LINE; i>0; --i) {
     *pdst = *psrc;
@@ -293,14 +302,14 @@ void render_to_scroll_center(void) {
   u8* psrc;
   u8* pdst;
   u32 i;
-  psrc = tmpRegion->data;
+  psrc = lineRegion->data;
   pdst = centerScroll.reg->data + centerScroll.byteOff + SCROLL_CENTER_OFFSET;
   for(i=SCROLL_BYTES_PER_LINE; i>0; --i) {
     *pdst = *psrc;
     ++psrc;
     ++pdst;
   } 
-  scrollRegion->dirty = 1;
+  pageScrollRegion->dirty = 1;
 }
 
 // copy from center of scroll region to select (adding highlight)
@@ -321,13 +330,13 @@ void render_from_scroll_center(void) {
 
 // add data to top of scroll region
 void render_to_scroll_top(void) {
-  scroll_region_back(&centerScroll, tmpRegion);
+  scroll_region_back(&centerScroll, lineRegion);
 }
 
 
 // add data to bottom of scroll region (clipping)
 void render_to_scroll_bottom(void) {
-  scroll_region_front(&centerScroll, tmpRegion);
+  scroll_region_front(&centerScroll, lineRegion);
 }
 
 //+++++++++++++++++++++++++++++++++++++
@@ -335,7 +344,7 @@ void render_to_scroll_bottom(void) {
 
 
 /* note: this type of bounds check (on dstOff in functions below)
-   is only intendeded to catch line offsets.x
+   is only intendeded to catch line offsets.
    in other words, it is assumed
    that scroll offset is always advanced by multiples of line length.
   */
@@ -348,11 +357,11 @@ void render_to_scroll_line(u8 n, u8 hl) {
   u8* dstMax;
   // data offset in scroll
   s32 dstOff = centerScroll.byteOff + scrollLines[n];
-  while(dstOff >= scrollRegion->len) { dstOff -= scrollRegion->len; }
-  dst = scrollRegion->data + dstOff;
+  while(dstOff >= pageScrollRegion->len) { dstOff -= pageScrollRegion->len; }
+  dst = pageScrollRegion->data + dstOff;
   // setup copy
-  src = tmpRegion->data;
-  dstMax = dst + tmpRegion->len - 1;
+  src = lineRegion->data;
+  dstMax = dst + lineRegion->len - 1;
   // copy and apply color map based on HL
   // it is assumed that tmp buffer uses colors [0, >0]
   if(hl) {
@@ -376,7 +385,7 @@ void render_to_scroll_line(u8 n, u8 hl) {
       dst++;
     }
   }
-  scrollRegion->dirty = 1;
+  pageScrollRegion->dirty = 1;
 }
 
 /// apply highlight  given line of scroll
@@ -385,10 +394,10 @@ void render_scroll_apply_hl(u8 n, u8 hl) {
   u8* dstMax;
   // data offset in scroll
   s32 dstOff = centerScroll.byteOff + scrollLines[n];
-  while(dstOff >= scrollRegion->len) { dstOff -= scrollRegion->len; }
+  while(dstOff >= pageScrollRegion->len) { dstOff -= pageScrollRegion->len; }
   // setup bounds
-  dst = scrollRegion->data + dstOff;
-  dstMax = dst + tmpRegion->len - 1;
+  dst = pageScrollRegion->data + dstOff;
+  dstMax = dst + lineRegion->len - 1;
 
   if(hl) {
     while(dst < dstMax) {
@@ -409,7 +418,7 @@ void render_scroll_apply_hl(u8 n, u8 hl) {
       dst++;
     }  
   }
-  scrollRegion->dirty = 1;
+  pageScrollRegion->dirty = 1;
 }
 
 // fill scroll line with color
@@ -418,9 +427,9 @@ void render_scroll_apply_hl(u8 n, u8 hl) {
   /* u8* dstMax; */
   /* // data offset in scroll */
   /* s32 dstOff = centerScroll.byteOff + scrollLines[n]; */
-  /* while(dstOff > scrollRegion->len) { dstOff -= scrollRegion->len; } */
+  /* while(dstOff > pageScrollRegion->len) { dstOff -= pageScrollRegion->len; } */
   /* // setup bounds */
-  /* dst = scrollRegion->data + dstOff; */
-  /* dstMax = dst + tmpRegion->len - 1; */
+  /* dst = pageScrollRegion->data + dstOff; */
+  /* dstMax = dst + lineRegion->len - 1; */
   //  while(dst < dstMax)
 //}

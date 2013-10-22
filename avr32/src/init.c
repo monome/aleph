@@ -59,16 +59,17 @@ void init_gpio(void) {
   gpio_enable_pin_pull_up(SW2_PIN);
   gpio_enable_pin_pull_up(SW3_PIN);
   gpio_enable_pin_pull_up(SW_MODE_PIN);
-#endif
-
   gpio_enable_pin_pull_up(SW_POWER_PIN);
+#endif
 
   /// trying this...
   /* gpio_enable_pin_glitch_filter(SW0_PIN); */
   /* gpio_enable_pin_glitch_filter(SW1_PIN); */
   /* gpio_enable_pin_glitch_filter(SW2_PIN); */
   /* gpio_enable_pin_glitch_filter(SW3_PIN); */
-  gpio_enable_pin_glitch_filter(SW_MODE_PIN); 
+
+  /// was trying with broken key on "sandwich" proto
+  //  gpio_enable_pin_glitch_filter(SW_MODE_PIN); 
 }
 
 // initialize application timer
@@ -269,6 +270,7 @@ void init_bfin_resources(void) {
     .bits         = 8,
     .spck_delay   = 0,
     //    .trans_delay  = 0,
+    //// try and reduce this...
     .trans_delay = 20,
     .stay_act     = 1,
     .spi_mode     = 1,

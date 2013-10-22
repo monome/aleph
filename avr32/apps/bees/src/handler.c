@@ -6,13 +6,18 @@
 
  */
 
+// asf
+#include "gpio.h"
+#include "delay.h"
 #include "print_funcs.h"
 
+// aleph-avr32
 #include "aleph_board.h"
 #include "event_types.h"
-#include "gpio.h"
+
+// bees
 #include "handler.h"
-#include "menu_protected.h"
+#include "pages_protected.h"
 #include "net_monome.h"
 #include "pages.h"
 
@@ -48,10 +53,21 @@ void bees_handler(event_t* e) {
   } else {
     /// case 
     switch(t) {
-    case kEventSwitch6:
+    case kEventSwitch4: // mode
+      // change mode
+      break;
+    case kEventSwitch5: // power
+      // write default scene...
+      // power down
+      print_dbg("\r\n powering down...");
+      delay_ms(1000);
+      gpio_clr_gpio_pin(POWER_CTL_PIN);
+      
+      break;
+    case kEventSwitch6: // FS 0
       // .. update op
       break;
-    case kEventSwitch7:
+    case kEventSwitch7: // FS 1
       // .. update op
       break;
     case kEventAdc0:
@@ -121,7 +137,7 @@ void bees_handler(event_t* e) {
     keyMode ^= 1;
     if(keyMode) { gpio_set_gpio_pin(LED_MODE_PIN); }
     else { gpio_clr_gpio_pin(LED_MODE_PIN); }
-    //    menu_handleKey(eKeyMode, e->eventData);
+    //    pages_handleKey(eKeyMode, e->eventData);
     //// switch to play mode...
     break;
     
@@ -174,43 +190,94 @@ void bees_handler(event_t* e) {
     */
 }
 
+// full-scale
 s32 scale_knob_value(s32 val) {
   static const u32 kNumKnobScales_1 = 23;
   static const u32 knobScale[24] = {
-    /// linear segment
-    1, // 0
-    2, // 1
-    3, // 2
-    4, // 3
-    // hyper exponential segment
-    0x00000008, // 4
-    0x00000010, // 5
-    0x00000100, // 6
-    // linear
-    0x00001000, // 7
-    0x00002000, // 8
-    0x00003000 ,  // 9
-    0x00004000 , // 10
-    0x00005000 , // 11
-    0x00006000 , // 12
-    0x00007000 , // 13
-    0x00008000 , // 14
-    0x00009000 , // 15
-    0x0000a000 , // 16
-    0x0000b000 , // 17
-    // exponential
-    0x0000c000 , // 18
-    0x00018000 , // 19
-    0x00030000 , // 20
-    0x00060000 , // 21
-    0x000C0000 , // 22
-    0x00180000 , // 23
+    ///--- 3 linear segments:
+    // slope = 1
+    0x00000001, // 1
+    0x00000002, // 2
+    // slope = 0x10
+    0x00000030, // 3
+    0x00000030, // 4
+    0x00000040, // 5
+    0x00000050, // 6
+    0x00000060, // 7
+    0x00000070, // 8
+    0x00000080, // 9
+    0x00000090 ,  // 10
+    0x000000a0 , // 11
+    0x000000b0 , // 12
+    // slope = 0x100
+    0x00000c00 , // 13
+    0x00000d00 , // 14
+    0x00000e00 , // 15
+    0x00000f00 , // 16
+    0x00001000 , // 17
+    0x00001100 , // 18
+    0x00001200 , // 19
+    0x00001300 , // 20
+    0x00001400 , // 21
+    0x00001500 , // 22
+    // ultra fast
+    0x10000000 , // 23
+    0x20000000 , // 24
   };
 
-  if(val == 0) { return 0; }
+
 
   s32 vabs = BIT_ABS(val);
   s32 ret = val;
+
+  if(vabs > kNumKnobScales_1) {
+    vabs = kNumKnobScales_1;
+  }
+  ret = knobScale[vabs - 1];
+   if(val < 0) {
+     ret = BIT_NEG_ABS(ret);
+   }
+   return ret;
+}
+
+
+// lower slope
+s32 scale_knob_value_small(s32 val) {
+  static const u32 kNumKnobScales_1 = 23;
+  static const u32 knobScale[24] = {
+    ///--- 3 linear segments:
+    // slope = 1
+    0x00000001, // 1
+    0x00000002, // 2
+    // slope = 0x10
+    0x00000030, // 3
+    0x00000030, // 4
+    0x00000040, // 5
+    0x00000050, // 6
+    0x00000060, // 7
+    0x00000070, // 8
+    0x00000080, // 9
+    0x00000090 ,  // 10
+    0x000000a0 , // 11
+    0x000000b0 , // 12
+    0x000000c0 , // 13
+    0x000000d0 , // 14
+    0x000000e0 , // 15
+    0x000000f0 , // 16
+    // slope == 0z100
+    0x00000100 , // 17
+    0x00000200 , // 18
+    0x00000300 , // 19
+    0x00000400 , // 20
+    0x00000500 , // 21
+    0x00000600 , // 22
+    0x00000700 , // 23
+    0x00000800 , // 24
+  };
+
+  s32 vabs = BIT_ABS(val);
+  s32 ret = val;
+
   if(vabs > kNumKnobScales_1) {
     vabs = kNumKnobScales_1;
   }

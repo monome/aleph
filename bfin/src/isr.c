@@ -28,10 +28,8 @@ void sport0_rx_isr() {
   // tick the control rate
   //  ctl_next_frame();
 
-  // confirm interrupt handling
-  
-  /// if this interrupt came from DMA1, clear it and continue(W1C)
-  if(*pDMA1_IRQ_STATUS & 1) { *pDMA1_IRQ_STATUS = 0x0001; }
+  READY_LO;
+  // confirm interrupt handling  
   
   // and if it came from DMA4, clear that and return
   //// not enabling DMA4 interrupt...
@@ -45,7 +43,12 @@ void sport0_rx_isr() {
   /*   return;  */
   /* } */
 
-  if(!processAudio) { return; }
+  if(!processAudio) { 
+    READY_HI;
+/// if this interrupt came from DMA1, clear it and continue(W1C)
+    if(*pDMA1_IRQ_STATUS & 1) { *pDMA1_IRQ_STATUS = 0x0001; }
+    return;
+  }
 
   /// inform the world that we're busy processing an audio frame
   //  BUSY_HI;
@@ -86,6 +89,11 @@ void sport0_rx_isr() {
 
 
   //  LED3_SET;
+
+  READY_HI;
+  /// if this interrupt came from DMA1, clear it and continue(W1C)
+  if(*pDMA1_IRQ_STATUS & 1) { *pDMA1_IRQ_STATUS = 0x0001; }
+
 }
 
 // ISR on sport1 tx completion

@@ -13,7 +13,7 @@
 #include "ui.h"
 #include "net.h"
 #include "net_protected.h"
-#include "menu.h"
+#include "pages.h"
 #include "param.h"
 #include "bfin.h"
 
