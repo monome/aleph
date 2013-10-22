@@ -408,7 +408,7 @@ u16 net_num_ops(void) {
   return net->numOps;
 }
 
-// get current count of inputs
+// get current count of inputs (including DSP parameters)
 u16 net_num_ins(void) {
   return net->numIns + net->numParams;
 }

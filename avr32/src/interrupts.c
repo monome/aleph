@@ -204,6 +204,7 @@ static void irq_port1_line2(void) {
   print_dbg("\r\n interrupt on pb16-pb23 : ");
   //SW_POWER
   if(gpio_get_pin_interrupt_flag(SW_POWER_PIN)) {
+    print_dbg("......... sw 5 ! ");
     gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
     process_sw(5);
   }

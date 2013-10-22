@@ -21,13 +21,12 @@
 #include "net_monome.h"
 #include "pages.h"
 
+// alt-mode flag (momentary)
+u8 altMode = 0;
+
 /// gnarly enum hacks
 static const eEventType kMenuEventMin = kEventEncoder0;
 static const eEventType kMenuEventMax = kEventSwitch3;
-
-// mode flag
-//static u8 keyMode = 0;
-
 
 void bees_handler(event_t* e) {
   const eEventType t = e->eventType;
@@ -42,8 +41,8 @@ void bees_handler(event_t* e) {
   /////// FIXME
   /// a nasty hack, relying on the relative values of enums ... :S
 
-  //// truly it would be best for every application to define a handler (FP)
-  /// for every UI event:
+  //// truly it would be best for every application (here, every page)
+  // to define a handler (FP) for every UI event:
   //  (*(curPage->handler[e->eventType]))(e->eventData);
 
 
@@ -59,9 +58,10 @@ void bees_handler(event_t* e) {
     case kEventSwitch5: // power
       // write default scene...
       // power down
-      print_dbg("\r\n powering down...");
-      delay_ms(1000);
-      gpio_clr_gpio_pin(POWER_CTL_PIN);
+      //// FIXME
+      //      print_dbg("\r\n powering down...");
+      //      delay_ms(1000);
+      //      gpio_clr_gpio_pin(POWER_CTL_PIN);
       
       break;
     case kEventSwitch6: // FS 0
@@ -107,87 +107,6 @@ void bees_handler(event_t* e) {
       break;
     }
   }
-
-  /*
-  switch(e->eventType) {
-
-    
-    //----- function switches
-  case kEventSwitch0:
-    curPage->handler[ePageHandleKey0](e->eventData);
-     break;
-  case kEventSwitch1:
-    curPage->handler[ePageHandleKey1](e->eventData);
-     break;
-  case kEventSwitch2:
-    curPage->handler[ePageHandleKey2](e->eventData);
-     break;
-  case kEventSwitch3:
-    curPage->handler[ePageHandleKey3](e->eventData);
-     break;
-
-    //----- foot switches
-  case kEventSwitch6:
-     break;
-  case kEventSwitch7:
-     break;
-
-    //---- mode switch
-  case kEventSwitch4:
-    keyMode ^= 1;
-    if(keyMode) { gpio_set_gpio_pin(LED_MODE_PIN); }
-    else { gpio_clr_gpio_pin(LED_MODE_PIN); }
-    //    pages_handleKey(eKeyMode, e->eventData);
-    //// switch to play mode...
-    break;
-    
-    //---- power switch
-  case kEventSwitch5:
-    break;
-
-    //---- encoders    
-  case kEventEncoder0:
-    curPage->handler[ePageHandleEnc0](e->eventData);
-    break;
-  case kEventEncoder1:
-    curPage->handler[ePageHandleEnc1](e->eventData);
-    break;
-  case kEventEncoder2:
-    curPage->handler[ePageHandleEnc2](e->eventData);
-    break;
-  case kEventEncoder3:
-    curPage->handler[ePageHandleEnc3](e->eventData);
-    break;
-
-    //=====  controllers
-    //--- monome
-  case kEventMonomeGridKey:
-    (*monome_grid_key_handler)((void*)monomeOpFocus, (u32)e->eventData);
-    break;
-  case kEventMonomeGridTilt:
-    break;
-  case kEventMonomeRingEnc:
-    break;
-  case kEventMonomeRingKey:
-    break;
-    //--- midi
-    // TODO
-    ///---- HID
-    // TODO
-
-    //---- CV in
-  case kEventAdc0:
-    break;
-  case kEventAdc1:
-    break;
-  case kEventAdc2:
-    break;
-  case kEventAdc3:
-    break;
-  default:
-    break;
-  }
-    */
 }
 
 // full-scale
@@ -264,7 +183,7 @@ s32 scale_knob_value_small(s32 val) {
     0x000000d0 , // 14
     0x000000e0 , // 15
     0x000000f0 , // 16
-    // slope == 0z100
+    // slope == 0x100
     0x00000100 , // 17
     0x00000200 , // 18
     0x00000300 , // 19

@@ -2,8 +2,11 @@
   page_outs.c
  */
 
+// asf
 #include "print_funcs.h"
 
+// bees
+#include "handler.h"
 #include "pages_protected.h"
 #include "pages.h"
 #include "render.h"
@@ -13,10 +16,10 @@
 
 static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
 
-// alt-mode flag (momentary)
-static u8 altMode = 0;
 // selection-included-in-preset flag (read from network on selection)
 static u8 inPreset = 0;
+// confirm clear operation
+static u8 clearConfirm = 0;
 
 //-------------------------
 //---- static
@@ -38,7 +41,6 @@ static void show_foot2(void);
 static void show_foot3(void);
 static void show_foot(void);
 
-
 // array of handlers
 const page_handler_t handler_outs[eNumPageHandlers] = {
   &handle_enc_0,
@@ -51,13 +53,12 @@ const page_handler_t handler_outs[eNumPageHandlers] = {
   &handle_key_3,
 };
 
-
-
 // fill tmp region with new content
 // given input index
 static void render_line(s16 idx) {
   //  const s16 opIdx = net_in_op_idx(idx);
   s16 target;
+  s16 targetOpIdx;
   region_fill(lineRegion, 0x0);
 
   target = net_get_target(idx);
@@ -67,27 +68,41 @@ static void render_line(s16 idx) {
     // render output
     clearln();
     appendln_idx_lj(net_out_op_idx(idx));
+    appendln_char('.');
+    appendln( net_op_name(net_out_op_idx(idx)));
     appendln_char('/');
     appendln( net_out_name(idx) );
     endln();
     font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
     // render target
-    appendln("-> ");
-    appendln_idx_lj(net_in_op_idx(target));
-    appendln_char('/');
-    appendln( net_op_name(net_in_op_idx(target)) );
-    appendln_char('/');
-    appendln( net_in_name(target) );
-    font_string_region_clip(lineRegion, lineBuf, 60, 0, 0xa, 0);
-
+    targetOpIdx = net_in_op_idx(target);
     clearln();
-    print_fix16(lineBuf, net_get_in_value(idx));
-    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, 0xa, 0);
+    appendln("-> ");
+    if(targetOpIdx >= 0) {
+      // target is operator input
+      appendln_idx_lj(net_in_op_idx(target));
+      appendln_char('.');
+      appendln( net_op_name(net_in_op_idx(target)) );
+      appendln_char('/');
+      appendln( net_in_name(target) );
+    } else {
+      // target is parameter input
+      appendln_idx_lj( (int)net_param_idx(target)); 
+      appendln_char('.');
+      appendln( net_in_name(target)); 
+    }
+    endln();
+    font_string_region_clip(lineRegion, lineBuf, 60, 0, 0xa, 0);
+    clearln();
+    //    print_fix16(lineBuf, net_get_in_value(idx));
+    //    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, 0xa, 0);
+
   } else {
     //// no target
     // render output
     clearln();
     appendln_idx_lj(net_out_op_idx(idx));
+    appendln_char('.');
     appendln( net_op_name(net_out_op_idx(idx)));
     appendln_char('/');
     appendln( net_out_name(idx) );
@@ -124,7 +139,7 @@ static void select_edit(s32 inc) {
 
 // scroll the current selection
 static void select_scroll(s32 dir) {
-  const s32 max = net_num_ins() - 1 + net_num_params();
+  const s32 max = net_num_outs() - 1;
   // index for new content
   s16 newIdx;
   s16 newSel;
@@ -146,6 +161,8 @@ static void select_scroll(s32 dir) {
     //    if(newSel < 0) { newSel = 0; }
     //    if(newSel > max ) { newSel = max; }
     curPage->select = newSel;    
+    // update preset-inclusion flag
+    inPreset = (u8)net_get_out_preset((u32)(curPage->select));
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
     if(newIdx < 0) { 
@@ -176,6 +193,8 @@ static void select_scroll(s32 dir) {
     //    if(newSel > max ) { newSel = max; }
     /////
     curPage->select = newSel;    
+    // update preset-inclusion flag
+    inPreset = (u8)net_get_out_preset((u32)(curPage->select));
     // add new content at bottom of screen
     newIdx = newSel + SCROLL_LINES_ABOVE;
     if(newIdx > max) { 
@@ -209,7 +228,7 @@ static void show_foot0(void) {
   }
   region_fill(footRegion[0], fill);
   if(altMode) {
-    font_string_region_clip(footRegion[0], "GATHER", 0, 0, 0xf, fill);
+    font_string_region_clip(footRegion[0], "FOLLOW", 0, 0, 0xf, fill);
   } else {
     font_string_region_clip(footRegion[0], "STORE", 0, 0, 0xf, fill);
   }
@@ -221,13 +240,9 @@ static void show_foot1(void) {
     fill = 0x5;
   }
   region_fill(footRegion[1], fill);
-  /*
+  
   if(altMode) {
-    if(inPlay) {
-      font_string_region_clip(footRegion[1], "HIDE", 0, 0, 0xf, fill);
-    } else {
-      font_string_region_clip(footRegion[1], "SHOW", 0, 0, 0xf, fill);
-    }
+    font_string_region_clip(footRegion[1], "SPLIT", 0, 0, 0xf, fill);
   } else {
     if(inPreset) {
       font_string_region_clip(footRegion[1], "EXC", 0, 0, 0xf, fill);
@@ -235,7 +250,7 @@ static void show_foot1(void) {
       font_string_region_clip(footRegion[1], "INC", 0, 0, 0xf, fill);
     }
   }
-  */
+  
 }
 
 static void show_foot2(void) {
@@ -244,18 +259,8 @@ static void show_foot2(void) {
     fill = 0x5;
   }
   region_fill(footRegion[2], fill);
-  if(altMode) {
-    /*
-    if(playFilter) {
-      font_string_region_clip(footRegion[2], "ALL", 0, 0, 0xf, fill);
-    } else {
-      font_string_region_clip(footRegion[2], "FILT", 0, 0, 0xf, fill);
-    }
-    */
-  } else {
-    //    font_string_region_clip(footRegion[2], "CLEAR", 0, 0, 0xf, fill);
-  }
-    
+  font_string_region_clip(footRegion[2], "CLEAR", 0, 0, 0xf, fill);
+  
 }
 
 static void show_foot3(void) {
@@ -271,20 +276,20 @@ static void show_foot3(void) {
 
 
 static void show_foot(void) {
-  /*
+  
   if(clearConfirm) {
-    font_string_region_clip(footRegion[0], "-   ", 0, 0, 0xf, 0);
-    font_string_region_clip(footRegion[1], "-   ", 0, 0, 0xf, 0);
-    font_string_region_clip(footRegion[2], "-   ", 0, 0, 0xf, 0);
-    font_string_region_clip(footRegion[3], " OK! ", 0, 0, 0xf, 0x5);
+    font_string_region_clip(footRegion[0], "-    ", 0, 0, 0xf, 0);
+    font_string_region_clip(footRegion[1], "-    ", 0, 0, 0xf, 0);
+    font_string_region_clip(footRegion[2], "OK!  ", 0, 0, 0xf, 0);
+    font_string_region_clip(footRegion[3], "-    ", 0, 0, 0xf, 0x5);
   } else { 
-  */
+    /// FIXME: each of these fn's compares altMode flag. dumb
     show_foot0();
     show_foot1();
     show_foot2();
     show_foot3();
-    /* }
-     */
+  }
+  
 }
 
 //----------------------
@@ -294,6 +299,7 @@ static void show_foot(void) {
 // init
 void init_page_outs(void) {
   u8 i, n;
+  print_dbg("\r\n alloc OUTS page");
   // allocate regions
   region_alloc(&scrollRegion);
   // fill regions
@@ -313,23 +319,39 @@ void init_page_outs(void) {
  
 // refresh 
 void refresh_outs(void) {
+  print_dbg("\r\n refresh OUTS... ");
+  // assign global scroll region pointer
+  // also marks dirty
+  render_set_scroll_region(&scrollRegion);
+  // other regions are static in top-level render, with global handles
+  region_fill(headRegion, 0x0);
+  font_string_region_clip(headRegion, "OUTPUTS", 0, 0, 0xf, 0x1);
+
 }
 
 // function key handlers
 void handle_key_0(s32 val) {
+  // store (follow)
 }
 
 void handle_key_1(s32 val) {
+  // inc/exc (split)
 }
 
 void handle_key_2(s32 val) {
+  // clear/confirm
 }
 
 void handle_key_3(s32 val) {
+  // alt mode
+  altMode = (u8)(val > 0);
+  show_foot();
 }
 
 // encoder handlers
-void handle_enc_0(s32 val) {
+void handle_enc_0(s32 val) { 
+  // edit selection (target)
+  select_edit(val);
 }
 
 void handle_enc_1(s32 val) {
@@ -338,9 +360,9 @@ void handle_enc_1(s32 val) {
 void handle_enc_2(s32 val) {
   // scroll page
   if(val > 0) {
-    //    set_page(ePageScenes);
+    //    set_page(ePageScenes);calls a 
   } else {
-    //    set_page(ePageIns);
+    set_page(ePageIns);
   }
 
 }
