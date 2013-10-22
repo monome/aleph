@@ -46,7 +46,7 @@ static const eEventType kSwitchEvents[NUM_SW] = {
 void process_sw( const U8 swIdx )  {
   static event_t e;   
   e.eventType = kSwitchEvents[swIdx];
-  e.eventData = gpio_get_pin_value(kSwitchPins[swIdx]);
+  e.eventData = gpio_get_pin_value(kSwitchPins[swIdx]); 
   post_event(&e);
 }
 

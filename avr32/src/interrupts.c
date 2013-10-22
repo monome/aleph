@@ -205,6 +205,8 @@ static void irq_port1_line2(void) {
   //SW_POWER
   if(gpio_get_pin_interrupt_flag(SW_POWER_PIN)) {
     print_dbg("......... sw 5 ! ");
+    //   print_dbg(" value: ");
+    //    print_dbg_ulong(
     gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
     process_sw(5);
   }

@@ -65,9 +65,8 @@ void app_init(void) {
   print_dbg("\r\n setting handler ");
   appEventHandler = &bees_handler;
 
-  //// FIXME					       
   // pull up power control pin, enabling soft-powerdown
-  //  gpio_set_gpio_pin(POWER_CTL_PIN);
+  gpio_set_gpio_pin(POWER_CTL_PIN);
 
 }
 
@@ -101,7 +100,6 @@ u8 app_launch(u8 firstrun) {
     /// TEST:
     //    delay_ms(2000);
 
-
     print_dbg(" requesting param report...");
     net_report_params();
 
@@ -115,10 +113,10 @@ u8 app_launch(u8 firstrun) {
     print_dbg("\r\n reading default scene... ");
     print_dbg("( not really )");
     //    scene_read_default();
-    print_dbg("\r\n size of scene data: ");
-    print_dbg_ulong(sizeof(sceneData_t));
-    
+    //    print_dbg("\r\n size of scene data: ");
+    //    print_dbg_ulong(sizeof(sceneData_t));    
   }
+
   pages_refresh();
 
   return 1;

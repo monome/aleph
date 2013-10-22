@@ -56,12 +56,14 @@ void bees_handler(event_t* e) {
       // change mode
       break;
     case kEventSwitch5: // power
+      print_dbg("\r\n bees handler got power-switch event, value: ");
+      print_dbg_hex(e->eventData);
+      /// FIXME: write default scene
       // write default scene...
       // power down
-      //// FIXME
-      //      print_dbg("\r\n powering down...");
-      //      delay_ms(1000);
-      //      gpio_clr_gpio_pin(POWER_CTL_PIN);
+      print_dbg("\r\n powering down...");
+      delay_ms(1000);
+      gpio_clr_gpio_pin(POWER_CTL_PIN);
       
       break;
     case kEventSwitch6: // FS 0
