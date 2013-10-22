@@ -115,6 +115,9 @@ u8 app_launch(u8 firstrun) {
     print_dbg("\r\n reading default scene... ");
     print_dbg("( not really )");
     //    scene_read_default();
+    print_dbg("\r\n size of scene data: ");
+    print_dbg_ulong(sizeof(sceneData_t));
+    
   }
   pages_refresh();
 

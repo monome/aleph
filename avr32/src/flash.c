@@ -31,13 +31,15 @@ typedef const struct {
   char ldrString[LDR_FLASH_STRING_LEN];
   u8 ldrData[LDR_FLASH_BYTES]; // LDR data
   //sceneData_t sceneData;       // scene data
+  // app-specific nonvolatile storage
+  u8 appData[APP_FLASH_BYTES];
 } nvram_data_t;
 
 //----------------------------------------
 // ---- static vars
 // NVRAM data structure located in the flash array.
 __attribute__((__section__(".flash_nvram")))
-static nvram_data_t flash_nvram_data;
+nvram_data_t flash_nvram_data;
 
 //--------------------------------
 // ---- extern vars
@@ -114,16 +116,21 @@ void flash_write_ldr(void) {
 }
 
 // read firstrun status
-extern u8 flash_read_firstrun(void) {
+u8 flash_read_firstrun(void) {
   return (flash_nvram_data.firstRun == FIRSTRUN_MAGIC);
 }
 
 // write firstrun status
-extern void flash_write_firstrun(void) {
+void flash_write_firstrun(void) {
   flashc_memset32((void*)&(flash_nvram_data.firstRun), FIRSTRUN_MAGIC, 4, true);
 }
 
 // clear firstrun status
-extern void flash_clear_firstrun(void) {
+void flash_clear_firstrun(void) {
   flashc_memset32((void*)&(flash_nvram_data.firstRun), 0x00000000, 4, true);
+}
+
+/// get pointer to application data in flash
+void* flash_app_data(void) {
+  return (void*)(&(flash_nvram_data.appData));
 }

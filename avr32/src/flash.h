@@ -17,6 +17,10 @@
 /// DO NOT CHANGE
 #define FIRMWARE_FLASH_ADDRESS 0x80010000
 
+// bytes available for application-specific storage
+// (increase as needed)
+#define APP_FLASH_BYTES 0x20000
+
 //------------------------
 // extern variables
 
@@ -49,5 +53,7 @@ extern void flash_clear_firstrun(void);
 // return 1 if EOF, 0 otherwise
 extern u8 flash_write_hex_record(u8* data);
 
+/// get pointer to application data in flash
+extern void* flash_app_data(void);
 
 #endif // h guard
