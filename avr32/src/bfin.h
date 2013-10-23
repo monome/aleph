@@ -50,4 +50,7 @@ extern void bfin_spi_master(void);
 // enable audio processing
 extern void bfin_enable(void);
 
+// wait for ready status (e.g. after module init)
+extern void bfin_wait_ready(void);
+
 #endif // header guard

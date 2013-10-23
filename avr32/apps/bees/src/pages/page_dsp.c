@@ -5,6 +5,9 @@
 // asf
 #include "print_funcs.h"
 
+// aleph-avr32
+#include "bfin.h"
+
 // bees
 #include "files.h"
 #include "handler.h"
@@ -19,10 +22,6 @@
 static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
 // scroll manager
 static scroll centerScroll;
-
-// in-write-confirm state
-static u8 writeConfirm = 0;
-
 
 // handler declarations
 static void handle_enc_0(s32 val);
@@ -49,21 +48,12 @@ const page_handler_t handler_dsp[eNumPageHandlers] = {
 // fill tmp region with new content
 // given input index
 static void render_line(s16 idx, u16 max) {
-  //  const s16 opIdx = net_in_op_idx(idx);
   region_fill(lineRegion, 0x0);
   if((idx > max) || (idx < 0)) { return; }
   clearln();
-  print_dbg("\r\n render DSP line: ");
-  print_dbg(files_get_dsp_name(idx));
- 
   appendln((const char*)files_get_dsp_name(idx));
   endln();
-
-  print_dbg("\r\n line buffer: ");
-  print_dbg(lineBuf);
-
   font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
-  //  region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
 }
 
 
@@ -89,8 +79,6 @@ static void select_scroll(s32 dir) {
     //    if(newSel < 0) { newSel = 0; }
     //    if(newSel > max ) { newSel = max; }
     curPage->select = newSel;
-    // update preset-inclusion flag
-   
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
     if(newIdx < 0) { 
@@ -121,10 +109,6 @@ static void select_scroll(s32 dir) {
     //    if(newSel > max ) { newSel = max; }
     /////
     curPage->select = newSel;    
-
-    // update preset-inclusion flag
-    //    inPreset = (u8)net_get_in_preset((u32)(curPage->select));
-    
     // add new content at bottom of screen
     newIdx = newSel + SCROLL_LINES_ABOVE;
     if(newIdx > max) { 
@@ -147,109 +131,67 @@ static void show_foot0(void) {
   if(keyPressed == 0) {
     fill = 0x5;
   }
-  /*
   region_fill(footRegion[0], fill);
-  if(altMode) {
-    font_string_region_clip(footRegion[0], "GATHER", 0, 0, 0xf, fill);
-  } else {
-    font_string_region_clip(footRegion[0], "STORE", 0, 0, 0xf, fill);
-  }
-  */
-}
+  font_string_region_clip(footRegion[0], "LOAD", 0, 0, 0xf, fill);
+ }
 
 static void show_foot1(void) {
   u8 fill = 0;
   if(keyPressed == 1) {
     fill = 0x5;
   }
-  /*
+  
   region_fill(footRegion[1], fill);
-  if(altMode) {
-    if(inPlay) {
-      font_string_region_clip(footRegion[1], "HIDE", 0, 0, 0xf, fill);
-    } else {
-      font_string_region_clip(footRegion[1], "SHOW", 0, 0, 0xf, fill);
-    }
-  } else {
-    if(inPreset) {
-      font_string_region_clip(footRegion[1], "EXC", 0, 0, 0xf, fill);
-    } else {
-      font_string_region_clip(footRegion[1], "INC", 0, 0, 0xf, fill);
-    }
-  }
-  */
-}
-
-static void show_foot2(void) {
-  u8 fill = 0;
-  if(keyPressed == 2) {
-    fill = 0x5;
-  }
-  region_fill(footRegion[2], fill);
-  /*
-  if(altMode) {
-    if(playFilter) {
-      font_string_region_clip(footRegion[2], "ALL", 0, 0, 0xf, fill);
-    } else {
-      font_string_region_clip(footRegion[2], "FILT", 0, 0, 0xf, fill);
-    }
-  } else {
-    font_string_region_clip(footRegion[2], "CLEAR", 0, 0, 0xf, fill);
-  }
-  */
-}
-
-static void show_foot3(void) {
-  u8 fill = 0;
-  u8 fore = 0xf;
-  if(altMode) {
-    fill = 0xf;
-    fore = 0;
-  }
-  region_fill(footRegion[3], fill);
-  font_string_region_clip(footRegion[3], "ALT", 0, 0, fore, fill);
+  font_string_region_clip(footRegion[1], "WRITE", 0, 0, 0xf, fill);
+  
 }
 
 
 static void show_foot(void) {
-  /*
-  if(writeConfirm) {
-    font_string_region_clip(footRegion[0], "-   ", 0, 0, 0xf, 0);
-    font_string_region_clip(footRegion[1], "-   ", 0, 0, 0xf, 0);
-    font_string_region_clip(footRegion[2], "-   ", 0, 0, 0xf, 0);
-    font_string_region_clip(footRegion[3], " OK! ", 0, 0, 0xf, 0x5);
-  } else { 
-    show_foot0();
-    show_foot1();
-    show_foot2();
-    show_foot3();
-  }
-  */
+  show_foot0();
+  show_foot1();
 }
-
 
 
 // function keys
 void handle_key_0(s32 val) {
   // load module
+  if(val == 0) { return; }
+  if(check_key(0)) {
+    // load module
+    files_load_dsp(curPage->select);
+    bfin_wait_ready();
+    net_report_params();
+  }
+  show_foot();
+
 }
 
 void handle_key_1(s32 val) {
-  // render status to head region
-  
-  render_update();
-  
-  // write module as default 
-  files_store_default_dsp(curPage->select);
-  
-  // render status to head region
-  render_update();
+  if(val == 0) { return; }
+  if(check_key(1)) {
+    // render status to head region  
+    region_fill(headRegion, 0x0);
+    font_string_region_clip(headRegion, "writing DSP module -> flash...", 0, 0, 0xa, 0);
+    headRegion->dirty = 1;
+    render_update();
+    // write module as default 
+    files_store_default_dsp(curPage->select);
+    // render status to head region 
+    region_fill(headRegion, 0x0);
+    font_string_region_clip(headRegion, "finished writing.", 0, 0, 0xa, 0);
+    headRegion->dirty = 1;
+    render_update();
+  }
+  show_foot();
 }
 
 void handle_key_2(s32 val) {
+  // nothing
 }
 
 void handle_key_3(s32 val) {
+  // nothing
 }
 
 // enc 0 : scroll page

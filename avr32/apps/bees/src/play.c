@@ -30,13 +30,6 @@ static const u8 kValOff  = 14;
 // current idx into scroll
 static u16 scrollIdx = 0;
 
-// test, try to overflow data section.. can't do it this way
-/// expecting a linker warning when section 
-/* static int killstack0[0xfffffff]; */
-/* static int killstack1[0xfffffff]; */
-/* static int killstack2[0xfffffff]; */
-/* static int killstack3[0xfffffff]; */
-
 //-------------------------------
 //--- external functions
 

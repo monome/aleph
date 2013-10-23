@@ -335,6 +335,12 @@ void bfin_end_transfer(void) {
   /* bfin_report_params(); */
 }
 
+// wait for ready status (e.g. after module init)
+void bfin_wait_ready(void) {
+  // use ready pin
+  while( !gpio_get_pin_value(BFIN_READY_PIN) ) { ;; }
+  //    delay_ms(100);
+}
 
 /* void bfin_spi_slave(void) { */
   

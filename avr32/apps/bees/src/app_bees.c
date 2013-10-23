@@ -97,16 +97,9 @@ u8 app_launch(u8 firstrun) {
     /// ???
     delay_ms(10);
 
-    bfin_load_buf();
-    
+    bfin_load_buf();    
     print_dbg("\r\n DSP booted, waiting to query params...");
-    
-    // use busy pin
-    while( !gpio_get_pin_value(BFIN_READY_PIN) ) { ;; }
-    
-    /// TEST:
-    //    delay_ms(2000);
-
+    bfin_wait_ready();
     print_dbg(" requesting param report...");
     net_report_params();
 

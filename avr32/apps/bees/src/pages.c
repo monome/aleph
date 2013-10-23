@@ -33,43 +33,43 @@ page_t pages[NUM_PAGES] = {
   { .name = "INS",
     .refresh = &refresh_ins, // refresh function
     .handler = handler_ins,  // pointer to handlers
-    .encSens = { 0, 0, 0, 0, }, // encoder sens 
+    .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   { .name = "OUTS",
     .refresh = &refresh_outs, // refresh function
     .handler = handler_outs,  // pointer to handlers
-    .encSens = { ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, 4, 0, }, // encoder sens 
+    .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   { .name = "PRESETS",
     .refresh = &refresh_presets, // refresh function
     .handler = handler_presets, // pointer to handlers
-    .encSens = { ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, 4, 4, }, // encoder sens 
+    .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   { .name = "OPS",
     .refresh = &refresh_dsp, // refresh function
     .handler = handler_dsp, // pointer to handlers
-    .encSens = { ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, 4, 4, }, // encoder sens 
+    .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   { .name = "SCENES",
     .refresh = &refresh_scenes, // refresh function
     .handler = handler_scenes, // pointer to handlers
-    .encSens = { ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, 4, 4, }, // encoder sens 
+    .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   { .name = "DSP",
     .refresh = &refresh_dsp, // refresh function
     .handler = handler_dsp, // pointer to handlers
-    .encSens = { ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, 4, 4, }, // encoder sens 
+    .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   // modal:
   { .name = "GATHERED", 
     .refresh = &refresh_gathered, // refresh function
     .handler = handler_gathered, // pointer to handlers
-    .encSens = { ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, 4, 0, }, // encoder sens 
+    .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   { .name = "PLAY",
     .refresh = &refresh_play, // refresh function
     .handler = handler_play, // pointer to handlers
-    .encSens = { ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, 0, 0, }, // encoder sens 
+    .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   }
 };
 
@@ -117,10 +117,7 @@ void set_page(ePage n) {
   
   print_dbg("\r\n setting page... ");
 
-  //  print_dbg("\r\n page set");
   curPage = &(pages[pageIdx]);
-  //  print_dbg("\r\n render after page set:");
-  //  curPage->select();
 
   print_dbg("\r\n refreshing page... ");
   print_dbg(" refresh FP is 0x");
