@@ -15,6 +15,7 @@
 //---- static variables
 
 static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
+static scroll centerScroll;
 
 // selection-included-in-preset flag (read from network on selection)
 static u8 inPreset = 0;
@@ -301,13 +302,15 @@ void init_page_outs(void) {
   print_dbg("\r\n alloc OUTS page");
   // allocate regions
   region_alloc(&scrollRegion);
+  // init scroll
+  scroll_init(&centerScroll, &scrollRegion);
   // fill regions
   region_fill(&scrollRegion, 0x0);
   // fill the scroll with actual line values...
   n = 3;
   i = 0;
   //// need to actually set the scroll region at least temporarily
-  render_set_scroll_region(&scrollRegion);
+  render_set_scroll(&centerScroll);
   while(i<5) {
     render_line(i);
     render_to_scroll_line(n, i == 0 ? 1 : 0);
@@ -321,7 +324,7 @@ void refresh_outs(void) {
   print_dbg("\r\n refresh OUTS... ");
   // assign global scroll region pointer
   // also marks dirty
-  render_set_scroll_region(&scrollRegion);
+  render_set_scroll(&centerScroll);
   // other regions are static in top-level render, with global handles
   region_fill(headRegion, 0x0);
   font_string_region_clip(headRegion, "OUTPUTS", 0, 0, 0xf, 0x1);
@@ -359,11 +362,10 @@ void handle_enc_1(s32 val) {
 void handle_enc_2(s32 val) {
   // scroll page
   if(val > 0) {
-    //    set_page(ePageScenes);calls a 
+    set_page(ePageDsp);
   } else {
     set_page(ePageIns);
   }
-
 }
 
 void handle_enc_3(s32 val) {

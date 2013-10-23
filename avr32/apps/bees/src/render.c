@@ -26,7 +26,7 @@
 // bees
 #include "render.h"
 
-//--------------------------
+
 //---- extern vars
 region* headRegion = NULL;
 region* footRegion[4] = { NULL, NULL, NULL, NULL };
@@ -52,7 +52,7 @@ static region dummyRegion = { .w=128, .h=64, .x=0, .y=0, .data=NULL };
 // pointer to current page scroll region
 static region* pageScrollRegion = NULL;
 // scroller
-static scroll centerScroll;
+static scroll* pageCenterScroll = NULL;
 
 
 // scrolling boot region
@@ -131,10 +131,11 @@ void render_init(void) {
   //  selectRegion = &selectRegion_pr;
   lineRegion = &lineRegion_pr;
 
+  //// don't need? using pointer to page-specific scroller
   // scroll init needs to compute offsets based on region size
   // use a dummy region with correct dimensions but no data
-  pageScrollRegion = &dummyRegion;
-  scroll_init(&centerScroll, pageScrollRegion);
+  //  pageScrollRegion = &dummyRegion;
+  //  scroll_init(pageCenterScroll, pageScrollRegion);
 }
 
 // update
@@ -142,8 +143,8 @@ void render_update(void) {
   app_pause();
 
   // scrolling region
-  if((centerScroll.reg)->dirty) {
-    scroll_draw(&centerScroll);
+  if((pageCenterScroll->reg)->dirty) {
+    scroll_draw(pageCenterScroll);
   }
   // standard regions
 
@@ -174,10 +175,10 @@ void render_set_foot_region(region* reg[4]) {
 }
 
 // set current scroll region
-void render_set_scroll_region(region* reg) {
-  pageScrollRegion = reg;
+void render_set_scroll(scroll* scr) {
+  pageCenterScroll = scr;
+  pageScrollRegion = scr->reg;
   pageScrollRegion->dirty = 1;
-  centerScroll.reg = reg;
 }
 
 // draw editing string at given position, with cursor highlight
@@ -272,13 +273,15 @@ inline void clearln(void) {
 }
 
 // get current y-offset for center line in scroll
+/*
 u8 get_yoff(void) {
-   u8 ret = centerScroll.yOff + SCROLL_CENTER_Y_OFFSET;
-   if(ret > centerScroll.reg->h) {
-     ret -= centerScroll.reg->h;
+   u8 ret = pageCenterScroll->yOff + SCROLL_CENTER_Y_OFFSET;
+   if(ret > pageCenterScroll->reg->h) {
+     ret -= pageCenterScroll->reg->h;
    }
    return ret;
 }
+*/
 
 
 // copy temp data to selection (adding highlight)
@@ -303,7 +306,7 @@ void render_to_scroll_center(void) {
   u8* pdst;
   u32 i;
   psrc = lineRegion->data;
-  pdst = centerScroll.reg->data + centerScroll.byteOff + SCROLL_CENTER_OFFSET;
+  pdst = pageCenterScroll->reg->data + pageCenterScroll->byteOff + SCROLL_CENTER_OFFSET;
   for(i=SCROLL_BYTES_PER_LINE; i>0; --i) {
     *pdst = *psrc;
     ++psrc;
@@ -317,7 +320,7 @@ void render_from_scroll_center(void) {
   u8* psrc;
   u8* pdst;
   u32 i;
-  psrc = centerScroll.reg->data + centerScroll.byteOff + SCROLL_CENTER_OFFSET;
+  psrc = pageCenterScroll->reg->data + pageCenterScroll->byteOff + SCROLL_CENTER_OFFSET;
   pdst = selectRegion->data;
   for(i=SCROLL_BYTES_PER_LINE; i>0; --i) {
     *pdst = *psrc;
@@ -330,13 +333,13 @@ void render_from_scroll_center(void) {
 
 // add data to top of scroll region
 void render_to_scroll_top(void) {
-  scroll_region_back(&centerScroll, lineRegion);
+  scroll_region_back(pageCenterScroll, lineRegion);
 }
 
 
 // add data to bottom of scroll region (clipping)
 void render_to_scroll_bottom(void) {
-  scroll_region_front(&centerScroll, lineRegion);
+  scroll_region_front(pageCenterScroll, lineRegion);
 }
 
 //+++++++++++++++++++++++++++++++++++++
@@ -356,7 +359,7 @@ void render_to_scroll_line(u8 n, u8 hl) {
   u8* dst;
   u8* dstMax;
   // data offset in scroll
-  s32 dstOff = centerScroll.byteOff + scrollLines[n];
+  s32 dstOff = pageCenterScroll->byteOff + scrollLines[n];
   while(dstOff >= pageScrollRegion->len) { dstOff -= pageScrollRegion->len; }
   dst = pageScrollRegion->data + dstOff;
   // setup copy
@@ -371,8 +374,8 @@ void render_to_scroll_line(u8 n, u8 hl) {
       } else {
 	*dst = colorHiBack;
       }
-      src++;
-      dst++;
+      ++src;
+      ++dst;
     }
   } else {
     while(dst < dstMax) {
@@ -381,8 +384,8 @@ void render_to_scroll_line(u8 n, u8 hl) {
       } else {
 	*dst = colorLoBack;
       }
-      src++;
-      dst++;
+      ++src;
+      ++dst;
     }
   }
   pageScrollRegion->dirty = 1;
@@ -393,7 +396,7 @@ void render_scroll_apply_hl(u8 n, u8 hl) {
   u8* dst;
   u8* dstMax;
   // data offset in scroll
-  s32 dstOff = centerScroll.byteOff + scrollLines[n];
+  s32 dstOff = pageCenterScroll->byteOff + scrollLines[n];
   while(dstOff >= pageScrollRegion->len) { dstOff -= pageScrollRegion->len; }
   // setup bounds
   dst = pageScrollRegion->data + dstOff;
@@ -426,7 +429,7 @@ void render_scroll_apply_hl(u8 n, u8 hl) {
   /* u8* dst; */
   /* u8* dstMax; */
   /* // data offset in scroll */
-  /* s32 dstOff = centerScroll.byteOff + scrollLines[n]; */
+  /* s32 dstOff = pageCenterScroll->byteOff + scrollLines[n]; */
   /* while(dstOff > pageScrollRegion->len) { dstOff -= pageScrollRegion->len; } */
   /* // setup bounds */
   /* dst = pageScrollRegion->data + dstOff; */

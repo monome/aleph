@@ -60,7 +60,7 @@ extern void render_set_head_region(region* reg);
 // set current footer region
 extern void render_set_foot_region(region* reg[4]);
 // set current scroll region
-extern void render_set_scroll_region(region* reg) ;
+extern void render_set_scroll(scroll* scr) ;
 
 // copy data to selection (adding highlight)
 extern void render_to_select(void);
@@ -117,6 +117,6 @@ extern void draw_edit_string( u8 x, u8 y, char* str, u8 len);
 // get the line buffer (a string)
 extern char* get_line_buf(void);
 // get current y-offset in scroll
-extern u8 get_yoff(void);
+//extern u8 get_yoff(void);
 
 #endif // header guard

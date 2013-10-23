@@ -39,7 +39,7 @@
 // ...
 
 //===================================
-//==== external functions
+//==== external functionsx
 
 // initialize non-peripheral GPIO
 void init_gpio(void) {

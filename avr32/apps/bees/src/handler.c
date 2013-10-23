@@ -20,6 +20,7 @@
 #include "pages_protected.h"
 #include "net_monome.h"
 #include "pages.h"
+#include "scene.h"
 
 // alt-mode flag (momentary)
 u8 altMode = 0;
@@ -34,7 +35,6 @@ void bees_handler(event_t* e) {
   /* print_dbg("\r\n --- "); */
   /* print_dbg("\r\n bees handler, type: "); */
   /* print_dbg_ulong(e->eventType); */
-
   /* print_dbg(" , data: 0x"); */
   /* print_dbg_hex(e->eventData); */
   
@@ -48,6 +48,8 @@ void bees_handler(event_t* e) {
 
   if( (t >= kMenuEventMin) && (t <= kMenuEventMax)) {
     // index FP 
+    /* print_dbg("\r\n page handler: 0x"); */
+    /* print_dbg_hex((u32) (curPage->handler[t - kMenuEventMin])); */
     curPage->handler[t - kMenuEventMin](e->eventData);
   } else {
     /// case 
@@ -56,15 +58,17 @@ void bees_handler(event_t* e) {
       // change mode
       break;
     case kEventSwitch5: // power
+      /*
       print_dbg("\r\n bees handler got power-switch event, value: ");
       print_dbg_hex(e->eventData);
-      /// FIXME: write default scene
       // write default scene...
+      print_dbg("\r\n writing default scene to flash...");
+      scene_write_default();
       // power down
       print_dbg("\r\n powering down...");
       delay_ms(1000);
       gpio_clr_gpio_pin(POWER_CTL_PIN);
-      
+      */
       break;
     case kEventSwitch6: // FS 0
       // .. update op

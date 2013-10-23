@@ -31,43 +31,43 @@
 // page structures - synchronize with ePage enum in pages.h
 page_t pages[NUM_PAGES] = {
   { .name = "INS",
-    .refresh = &refresh_ins,
-    .handler = handler_ins, // pointer to handlers
+    .refresh = &refresh_ins, // refresh function
+    .handler = handler_ins,  // pointer to handlers
     .encSens = { 0, 0, 0, 0, }, // encoder sens 
   },
   { .name = "OUTS",
-    .refresh = &refresh_outs,
-    .handler = handler_outs, // pointer to handlers
+    .refresh = &refresh_outs, // refresh function
+    .handler = handler_outs,  // pointer to handlers
     .encSens = { ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, 4, 0, }, // encoder sens 
   },
   { .name = "PRESETS",
-    .refresh = &refresh_presets,
+    .refresh = &refresh_presets, // refresh function
     .handler = handler_presets, // pointer to handlers
     .encSens = { ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, 4, 4, }, // encoder sens 
   },
   { .name = "OPS",
-    .refresh = &refresh_dsp,
+    .refresh = &refresh_dsp, // refresh function
     .handler = handler_dsp, // pointer to handlers
     .encSens = { ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, 4, 4, }, // encoder sens 
   },
   { .name = "SCENES",
-    .refresh = &refresh_scenes,
+    .refresh = &refresh_scenes, // refresh function
     .handler = handler_scenes, // pointer to handlers
     .encSens = { ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, 4, 4, }, // encoder sens 
   },
   { .name = "DSP",
-    .refresh = &refresh_dsp,
+    .refresh = &refresh_dsp, // refresh function
     .handler = handler_dsp, // pointer to handlers
     .encSens = { ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, 4, 4, }, // encoder sens 
   },
   // modal:
-  { .name = "GATHERED",
-    .refresh = &refresh_gathered,
+  { .name = "GATHERED", 
+    .refresh = &refresh_gathered, // refresh function
     .handler = handler_gathered, // pointer to handlers
     .encSens = { ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, 4, 0, }, // encoder sens 
   },
   { .name = "PLAY",
-    .refresh = &refresh_play,
+    .refresh = &refresh_play, // refresh function
     .handler = handler_play, // pointer to handlers
     .encSens = { ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, 0, 0, }, // encoder sens 
   }
@@ -76,7 +76,7 @@ page_t pages[NUM_PAGES] = {
 // pointer to current page
 page_t* curPage;
 // idx of current page
-s8 pageIdx = 0;
+s8 pageIdx;
 // last pressed key
 u8 keyPressed = 255;
 
@@ -87,15 +87,16 @@ u8 keyPressed = 255;
  void pages_init(void) {
   init_page_ins();
   init_page_outs();
+  init_page_dsp();
   /*
     // TODO
   init_page_presets();
   init_page_ops();
   init_page_scenes();
-  init_page_dsp();
   init_page_gathered();
   init_page_play();
   */
+  pageIdx = ePageIns;
   set_page(pageIdx);
 }
 
@@ -121,14 +122,13 @@ void set_page(ePage n) {
   //  print_dbg("\r\n render after page set:");
   //  curPage->select();
 
-
   print_dbg("\r\n refreshing page... ");
-  //  print_dbg(" ( not really ... refresh FP is 0x");
-  //  print_dbg_hex((u32)(curPage->refresh));
+  print_dbg(" refresh FP is 0x");
+  print_dbg_hex((u32)(curPage->refresh));
   curPage->refresh();
 
   print_dbg("\r\n set enc sense");
-  // set encoder sensetivity
+  // set encoder sensitivity
   for(i=0; i<4; i++) {
     //// FIXME: use encoder map?
     //set_enc_thresh(encMap[i], curPage->encSens[i]);

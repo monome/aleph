@@ -21,7 +21,10 @@
 //-------------------------
 //---- static variables
 
+// scroll region
 static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
+// scroll manager
+static scroll centerScroll;
 
 // play-mode filter flag (persistent)
 static u8 playFilter = 0;
@@ -181,7 +184,6 @@ static void select_scroll(s32 dir) {
 }
 
 // display the function key labels according to current state
-/// FIXME: would be more maintainable to use enum and array of funtcions. i guess
 static void show_foot0(void) {
   u8 fill = 0;
   if(keyPressed == 0) {
@@ -312,13 +314,15 @@ void init_page_ins(void) {
   print_dbg("\r\n alloc INS page");
   // allocate regions
   region_alloc(&scrollRegion);
+  // init scroll
+  scroll_init(&centerScroll, &scrollRegion);
   // fill regions
   region_fill(&scrollRegion, 0x0);
   // fill the scroll with actual line values...
   n = 3;
   i = 0;
   //// need to actually set the scroll region at least temporarily
-  render_set_scroll_region(&scrollRegion);
+  render_set_scroll(&centerScroll);
   while(i<5) {
     render_line(i);
     render_to_scroll_line(n, i == 0 ? 1 : 0);
@@ -333,7 +337,7 @@ void refresh_ins(void) {
   print_dbg("\r\n refresh INS... ");
   // assign global scroll region pointer
   // also marks dirty
-  render_set_scroll_region(&scrollRegion);
+  render_set_scroll(&centerScroll);
   // other regions are static in top-level render, with global handles
   region_fill(headRegion, 0x0);
   font_string_region_clip(headRegion, "INPUTS", 0, 0, 0xf, 0x1);
@@ -400,7 +404,7 @@ void handle_enc_2(s32 val) {
   if(val > 0) {
     set_page(ePageOuts);
   } else {
-    //    set_page(ePagePresets);
+    set_page(ePageDsp);
   }
 }
 

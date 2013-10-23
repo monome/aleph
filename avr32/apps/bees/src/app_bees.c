@@ -38,7 +38,7 @@
 // this is called durig hardware initialization.
 // allocate memory.
 void app_init(void) {
-  print_dbg("\r\n net_... ");
+  print_dbg("\r\n net_init... ");
   net_init();
 
   print_dbg("\r\n preset_init...");  
@@ -59,14 +59,14 @@ void app_init(void) {
   pages_init();
 
   print_dbg("\r\n play_init...");
-  //  play_init();
+  play_init();
 
   // set handler
   print_dbg("\r\n setting handler ");
-  appEventHandler = &bees_handler;
+   appEventHandler = &bees_handler;
 
   // pull up power control pin, enabling soft-powerdown
-  gpio_set_gpio_pin(POWER_CTL_PIN);
+  //  gpio_set_gpio_pin(POWER_CTL_PIN);
 
 }
 
@@ -74,14 +74,21 @@ void app_init(void) {
 u8 app_launch(u8 firstrun) {
 
 
+  /////////
+  //////// TEST
+  //  return 0;
+  /////////
+  ///////////
+
   print_dbg("\r\n launching app with firstrun: ");
   print_dbg_ulong(firstrun);
 
   net_print();
 
   if(firstrun) {
-    print_dbg("\r\n writing default scene... ");
-    print_dbg("( not really )");    
+    print_dbg("\r\n first run, don't load DSP");
+    //    print_dbg("\r\n writing default scene... ");
+    //    print_dbg("( not really )");    
     //    scene_write_default();
   } else {
     print_dbg("\r\n booting default ldr from flash... ");
@@ -105,19 +112,20 @@ u8 app_launch(u8 firstrun) {
 
     print_dbg("\r\n enable DSP audio...");
     bfin_enable();
-
-    // enable timers
-    print_dbg("\r\n enable app timers...");
-    init_app_timers();
     
     print_dbg("\r\n reading default scene... ");
-    print_dbg("( not really )");
-    //    scene_read_default();
+    //    print_dbg("( not really )");
+    scene_read_default();
     //    print_dbg("\r\n size of scene data: ");
     //    print_dbg_ulong(sizeof(sceneData_t));    
   }
 
   pages_refresh();
+
+  // enable timers
+  print_dbg("\r\n enable app timers...");
+  init_app_timers();
+    
 
   return 1;
 }
