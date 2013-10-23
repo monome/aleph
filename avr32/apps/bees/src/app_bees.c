@@ -66,19 +66,12 @@ void app_init(void) {
    appEventHandler = &bees_handler;
 
   // pull up power control pin, enabling soft-powerdown
-  //  gpio_set_gpio_pin(POWER_CTL_PIN);
+  gpio_set_gpio_pin(POWER_CTL_PIN);
 
 }
 
 // this is called from the event queue 
 u8 app_launch(u8 firstrun) {
-
-
-  /////////
-  //////// TEST
-  //  return 0;
-  /////////
-  ///////////
 
   print_dbg("\r\n launching app with firstrun: ");
   print_dbg_ulong(firstrun);

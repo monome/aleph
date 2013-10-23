@@ -129,7 +129,7 @@ void scene_read_buf(void) {
   net_send_params();
   print_dbg("\r\n sent new params");
   
-
+  // enable audio processing
   bfin_enable();
   app_resume();
 }
