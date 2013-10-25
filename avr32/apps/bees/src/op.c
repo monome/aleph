@@ -74,6 +74,9 @@ static const u8 outStringChars = 8;
 s16 op_init(op_t* op, op_id_t opId) {
   // no flags by default
   op->flags = 0x00000000;
+  // set function pointers to NULL
+  op->pickle = NULL;
+  op->unpickle = NULL;
   // run class init function
   (*(op_registry[opId].init))(op);
   return 0;
@@ -81,7 +84,7 @@ s16 op_init(op_t* op, op_id_t opId) {
 
 // de-initialize operator
 s16 op_deinit(op_t* op) {
-  op_class_deinit_t f = op_registry[op->type].deinit;
+  op_class_deinit f = op_registry[op->type].deinit;
   
   if(f != NULL) {
     print_dbg("\r\n de-initializing operator at address 0x");
@@ -123,8 +126,17 @@ io_t op_get_in_val(op_t* op, s16 idx) {
 void op_set_in_val(op_t* op, s16 idx, io_t val) {
   io_t * const pIn = (op->in_val[idx]);
   *pIn = val;
-  (*(op->in_func[idx]))(op, pIn);  
-  //  param_feedback(idx, val);
+  (*(op->in_fn[idx]))(op, pIn);  
+  // TODO: check for play flag and stuff
   //  play_input(idx);
-  // TODO: check for play flag
+}
+
+// pickle
+void op_pickle(op_t* op, u8* dst) {
+  (*(op->pickle))(op, dst);
+}
+
+// unpickle
+void op_unpickle(op_t* op, u8* src) {
+    (*(op->unpickle))(op, src);
 }

@@ -18,7 +18,7 @@ static const char* op_mgrid_raw_opstring = "RAWGRID";
 //---- input functions
 
 //// network inputs: 
-static void op_mgrid_raw_inc_func(op_mgrid_raw_t* grid, const s16 idx, const io_t inc);
+static void op_mgrid_raw_inc_fn(op_mgrid_raw_t* grid, const s16 idx, const io_t inc);
 static void op_mgrid_raw_in_focus(op_mgrid_raw_t* grid, const io_t* val);
 static void op_mgrid_raw_in_tog(op_mgrid_raw_t* grid, const io_t* val);
 static void op_mgrid_raw_in_mono(op_mgrid_raw_t* grid, const io_t* val);
@@ -27,10 +27,10 @@ static void op_mgrid_raw_in_mono(op_mgrid_raw_t* grid, const io_t* val);
 static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata);
 
 // input func pointer array
-static op_in_func_t op_mgrid_raw_in_func[3] = {
-  (op_in_func_t)&op_mgrid_raw_in_focus,
-  (op_in_func_t)&op_mgrid_raw_in_tog,
-  (op_in_func_t)&op_mgrid_raw_in_mono,
+static op_in_fn op_mgrid_raw_in_fn[3] = {
+  (op_in_fn)&op_mgrid_raw_in_focus,
+  (op_in_fn)&op_mgrid_raw_in_tog,
+  (op_in_fn)&op_mgrid_raw_in_mono,
 };
 
 //-------------------------------------------------
@@ -47,8 +47,8 @@ void op_mgrid_raw_init(void* mem) {
 
   op->super.in_val = op->in_val;
   op->super.out = op->outs;
-  op->super.inc_func = (op_inc_func)op_mgrid_raw_inc_func;
-  op->super.in_func = op_mgrid_raw_in_func;
+  op->super.inc_fn = (op_inc_fn)op_mgrid_raw_inc_fn;
+  op->super.in_fn = op_mgrid_raw_in_fn;
   //  op->super.deinit = op_mgrid_raw_deinit;
 
   op->super.opString = op_mgrid_raw_opstring;
@@ -174,7 +174,7 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
 
 
 /// increment param value from UI:
-static void op_mgrid_raw_inc_func(op_mgrid_raw_t* op, const s16 idx, const io_t inc) {
+static void op_mgrid_raw_inc_fn(op_mgrid_raw_t* op, const s16 idx, const io_t inc) {
   switch(idx) {
   case 0: // focus
     op_mgrid_raw_in_focus(op, &inc);

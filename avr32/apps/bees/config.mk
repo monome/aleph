@@ -25,6 +25,7 @@ CSRCS += \
 	$(APP_DIR)/src/op.c \
 	$(APP_DIR)/src/param.c \
 	$(APP_DIR)/src/pages.c \
+	$(APP_DIR)/src/pickle.c \
 	$(APP_DIR)/src/play.c \
 	$(APP_DIR)/src/preset.c \
 	$(APP_DIR)/src/render.c \

@@ -1,5 +1,5 @@
 #include "net_protected.h"
-//#include "print_funcs.h"
+//#include "print_fns.h"
 #include "op_preset.h"
 
 // inputs:
@@ -15,19 +15,19 @@ static const char* op_preset_opstring = "PRESET";
 
 //-------------------------------------------------
 //----- static function declaration
-static void op_preset_inc_func(op_preset_t* preset, const s16 idx, const io_t inc);
+static void op_preset_inc_fn(op_preset_t* preset, const s16 idx, const io_t inc);
 static void op_preset_in_read(op_preset_t* preset, const io_t* v);
 static void op_preset_in_write(op_preset_t* preset, const io_t* v);
 static void op_preset_in_reread(op_preset_t* preset, const io_t* v);
 static void op_preset_in_rewrite(op_preset_t* preset, const io_t* v);
 static void op_preset_in_getidx(op_preset_t* preset, const io_t* v);
 
-static op_in_func_t op_preset_in_func[3] = {
-  (op_in_func_t) &op_preset_in_read, 
-  (op_in_func_t) &op_preset_in_write, 
-  (op_in_func_t) &op_preset_in_reread, 
-  (op_in_func_t) &op_preset_in_rewrite, 
-  (op_in_func_t) &op_preset_in_getidx, 
+static op_in_fn op_preset_in_fn[3] = {
+  (op_in_fn) &op_preset_in_read, 
+  (op_in_fn) &op_preset_in_write, 
+  (op_in_fn) &op_preset_in_reread, 
+  (op_in_fn) &op_preset_in_rewrite, 
+  (op_in_fn) &op_preset_in_getidx, 
 };
 
 //---------------------------------------------
@@ -38,8 +38,8 @@ void op_preset_init(op_preset_t* preset) {
   preset->super.numInputs = 5;
   preset->super.numOutputs = 1;
   preset->outs[0] = -1;
-  preset->super.inc_func = (op_inc_func)op_preset_inc_func;
-  preset->super.in_func = op_preset_in_func;
+  preset->super.inc_fn = (op_inc_fn)op_preset_inc_fn;
+  preset->super.in_fn = op_preset_in_fn;
   preset->super.in_val = preset->in_val;
   preset->in_val[0] = &(preset->state);
   preset->in_val[1] = &(preset->tog);
@@ -103,7 +103,7 @@ static void op_preset_in_mul(op_preset_t* preset, const io_t* v) {
 //===== UI input
 
 // increment
-static void op_preset_inc_func(op_preset_t* preset, const s16 idx, const io_t inc) {
+static void op_preset_inc_fn(op_preset_t* preset, const s16 idx, const io_t inc) {
   io_t val;
   switch(idx) {
   case 0: // current value

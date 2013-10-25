@@ -589,7 +589,7 @@ io_t net_inc_in_value(s32 inIdx, io_t inc) {
     return get_param_value(inIdx);
   } else {
     op = net->ops[net->ins[inIdx].opIdx];
-    (*(op->inc_func))(op, net->ins[inIdx].opInIdx, inc);
+    (*(op->inc_fn))(op, net->ins[inIdx].opInIdx, inc);
     return net_get_in_value(inIdx);
   }
 }
@@ -630,7 +630,7 @@ u8 net_get_out_preset(u32 id) {
 //------ params
 
 // add a new parameter
-void net_add_param(u32 idx, volatile ParamDesc * pdesc) {
+void net_add_param(u32 idx, const ParamDesc * pdesc) {
   memcpy( &(net->params[net->numParams].desc), (const void*)pdesc, sizeof(ParamDesc) );
   net->params[net->numParams].idx = idx; 
   net->params[net->numParams].preset = 1; 
@@ -689,7 +689,7 @@ u8 net_report_params(void) {
       print_dbg("\r\n recieved descriptor for param : ");
       print_dbg((const char* )pdesc.label);
 
-      net_add_param(i, &pdesc);
+      net_add_param(i, (const ParamDesc*)&pdesc);
 
     }
   } else {
@@ -711,6 +711,59 @@ u8 net_report_params(void) {
 
 }
 
+
+// pickle the network!
+u8* net_pickle(u8* dst) {
+  u32 i;
+  op_t* op;
+  // store count of operators
+  // (use 4 bytes for alignment)
+  dst = pickle_32((u32)(net.numOps), dst);
+  // loop over operators
+  for(i=0; i<net.numOps; ++i) {
+    op = net.ops[i];
+    // store class index
+    dst = pickle_32(op->class, dst);
+
+    // store offset of op location in pool
+    //    dst = pickle_32((u32)op - (u32)opPool, dst);
+
+    // pickle the operator state (if needed)
+    if(op->pickle != NULL) {
+      dst = *(op->pickle)(op, dst);
+    }
+  }
+  // loop over 
+  return dst;
+}
+
+// unpickle the network!
+u8* net_unpickle(const u8* src) {
+  u32 i, count, dum;
+  op_id_t id;
+  op_t* op;
+  // reset operator count and pool offset
+  net.numOps = 0;
+  net.opPoolOffset = 0;
+  // get count of operators
+  // (use 4 bytes for alignment)
+  src = unpickle_32(src, &count);
+  // loop over operators
+  for(i=0; i<count; ++i) {
+    // get operator class id
+    src = unpickle_32(src, &dum);
+    id = (op_id_t)dum;
+    // add and initialize from class id
+    /// .. this should update the operator count
+    net_add_op(id);
+    // unpickle operator state (if needed)
+    op = net.ops[net.numOps - 1];
+    if(op->unpickle != NULL) {
+      stc = (*(op->unpickle))(op, src);
+    }
+  }
+  return (u8*)src;
+}
 
 //////////
 ///////////////

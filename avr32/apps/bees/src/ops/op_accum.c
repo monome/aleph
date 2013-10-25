@@ -67,12 +67,12 @@ static void op_accum_in_carry(op_accum_t* accum, const io_t* v) {
   accum->carry = (io_t)(v != 0);
 }
 
-static op_in_func_t op_accum_inputs[5] = {
-(op_in_func_t)&op_accum_in_value,
-(op_in_func_t)&op_accum_in_count,
-(op_in_func_t)&op_accum_in_min, 
-(op_in_func_t)&op_accum_in_max,
-(op_in_func_t)&op_accum_in_carry
+static op_in_fn op_accum_inputs[5] = {
+(op_in_fn)&op_accum_in_value,
+(op_in_fn)&op_accum_in_count,
+(op_in_fn)&op_accum_in_min, 
+(op_in_fn)&op_accum_in_max,
+(op_in_fn)&op_accum_in_carry
 };
 
 void op_accum_init(op_accum_t* accum) {
@@ -80,7 +80,7 @@ void op_accum_init(op_accum_t* accum) {
   accum->super.numOutputs = 2;
   accum->outs[0] = -1;
   accum->outs[1] = -1;
-  accum->super.in_func = op_accum_inputs;
+  accum->super.in_fn = op_accum_inputs;
   accum->super.out = accum->outs;
   accum->super.opString = op_accum_opstring;
   accum->super.inString = op_accum_instring;

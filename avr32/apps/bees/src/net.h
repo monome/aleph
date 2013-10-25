@@ -33,123 +33,131 @@
 //---- public functions
 
 // initialize the network 
-void net_init(void);
+extern void net_init(void);
 
 // de-initialize the network 
-void net_deinit(void);
+extern void net_deinit(void);
 
 // intialize (clear) an input node
-void net_init_inode(u16 idx);
+extern void net_init_inode(u16 idx);
 
 // intialize (clear) an output node
-void net_init_onode(u16 idx);
+extern void net_init_onode(u16 idx);
 
 // create a new operator given class ID, return index (-1 == fail)
-s16 net_add_op(op_id_t opId);
+extern s16 net_add_op(op_id_t opId);
 
 // remove the last created operator
-s16 net_pop_op(void);
+extern s16 net_pop_op(void);
 
 // remove an arbitrary operator
 // FIXME: not tested really... use at your own risk
-void net_remove_op(const u32 idx);
+extern void net_remove_op(const u32 idx);
 
 // activate an input node with some input data
-void net_activate(s16 inIdx, const io_t val, void* op);
+extern void net_activate(s16 inIdx, const io_t val, void* op);
 
 // get current count of operators
-u16 net_num_ops(void);
+extern u16 net_num_ops(void);
 
 // get current count of inputs
-u16 net_num_ins(void);
+extern u16 net_num_ins(void);
 
 // get current count of outputs
-u16 net_num_outs(void);
+extern u16 net_num_outs(void);
 
 // get param index given index
-s16 net_param_idx(u16 inIdx);
+extern s16 net_param_idx(u16 inIdx);
 
 // get num params (subset of inputs)
-u16 net_num_params(void);
+extern u16 net_num_params(void);
 
 // get string for operator at given idx
-const char* net_op_name(const s16 idx);
+extern const char* net_op_name(const s16 idx);
 
 // get name for input at given idx
-const char* net_in_name(u16 idx);
+extern const char* net_in_name(u16 idx);
 
 // get name for output at given idx
-const char* net_out_name(const u16 idx);
+extern const char* net_out_name(const u16 idx);
 
 // get op index for input at given idx
-s16 net_in_op_idx(const u16 idx);
+extern s16 net_in_op_idx(const u16 idx);
 
 // get op index for output at given idx
-s16 net_out_op_idx(const u16 idx);
+extern s16 net_out_op_idx(const u16 idx);
 
 // get global index for a given input of given op
-u16 net_op_in_idx(const u16 opIdx, const u16 inIdx);
+extern u16 net_op_in_idx(const u16 opIdx, const u16 inIdx);
 
 // get global index for a given output of given op
-u16 net_op_out_idx(const u16 opIdx, const u16 outIdx);
+extern u16 net_op_out_idx(const u16 opIdx, const u16 outIdx);
 
 // get connection index for output
-s16 net_get_target(u16 outIdx);
+extern s16 net_get_target(u16 outIdx);
 
 // is this input connected to anything?
-u8 net_in_connected(s32 iIdx);
+extern u8 net_in_connected(s32 iIdx);
 
 // get true/false for given op behavior flag
 // (see op.h)
-u8 net_op_flag(const u16 opIdx, op_flag_t flag);
+extern u8 net_op_flag(const u16 opIdx, op_flag_t flag);
 
 // get / set / increment input value
-io_t net_get_in_value(s32 inIdx);
-void net_set_in_value(s32 inIdx, io_t val);
-io_t net_inc_in_value(s32 inIdx, io_t inc);
+extern io_t net_get_in_value(s32 inIdx);
+extern void net_set_in_value(s32 inIdx, io_t val);
+extern io_t net_inc_in_value(s32 inIdx, io_t inc);
 
 // connect a given output and input idx pair
-void net_connect(u32 outIdx, u32 inIdx);
+extern void net_connect(u32 outIdx, u32 inIdx);
+
 // disconnect a given output
-void net_disconnect(u32 outIdx);
+extern void net_disconnect(u32 outIdx);
 
 // toggle preset inclusion for input
-u8 net_toggle_in_preset(u32 inIdx);
+extern u8 net_toggle_in_preset(u32 inIdx);
 
 // toggle preset inclusion for output
-u8 net_toggle_out_preset(u32 outIdx);
+extern u8 net_toggle_out_preset(u32 outIdx);
 
 // set preset inclusion for input
-void net_set_in_preset(u32 inIdx, u8 val);
+extern void net_set_in_preset(u32 inIdx, u8 val);
 
 // set preset inclusion for output
-void net_set_out_preset(u32 outIdx, u8 val);
+extern void net_set_out_preset(u32 outIdx, u8 val);
 
 // get preset inclusion for input
-u8 net_get_in_preset(u32 inIdx);
+extern u8 net_get_in_preset(u32 inIdx);
 
 // get preset inclusion for output
-u8 net_get_out_preset(u32 outIdx);
+extern u8 net_get_out_preset(u32 outIdx);
 
 // add a new parameter
-void net_add_param(u32 idx, volatile ParamDesc* pdesc);
-//void net_add_param(u32 idx, const char* name, f32 min, f32 max, s32 val);
+extern void net_add_param(u32 idx, const ParamDesc* pdesc);
 
 // clear existing parameters
-void net_clear_params(void);
+extern void net_clear_params(void);
 
 // resend all parameter values
-void net_send_params(void);
+extern void net_send_params(void);
 
 // retrigger all inputs
-void net_retrigger_inputs(void);
+extern void net_retrigger_inputs(void);
 
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections
-u32 net_gather(s32 iIdx, u32(*outs)[NET_OUTS_MAX]);
+extern u32 net_gather(s32 iIdx, u32(*outs)[NET_OUTS_MAX]);
 
 // query the blackfin for parameter list and populate pnodes
 extern u8 net_report_params(void);
+
+// pickle the network!
+// return incremented pointer to dst
+extern u8* net_pickle(u8* dst);
+
+// unpickle the network!
+// return incremented pointer to src
+extern u8* net_unpickle(const u8* src);
 
 /// test/dbg
 void net_print(void);

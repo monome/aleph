@@ -56,13 +56,17 @@ typedef enum {
 // a function pointer to represent an operator's input
 // each function is passed a void* to its receiver
 // and a pointer to const s32 for input value
-typedef void(*op_in_func_t)(void* op, const io_t* input );
+typedef void(*op_in_fn)(void* op, const io_t* input );
 // function type to increment a value from UI
-typedef void(*op_inc_func)(void* op, const s16 idx, const io_t inc);
+typedef void(*op_inc_fn)(void* op, const s16 idx, const io_t inc);
 // init function type
-typedef void(*op_class_init_t)(void* op);
+typedef void(*op_class_init)(void* op);
 // de-init function type
-typedef void(*op_class_deinit_t)(void* op);
+typedef void(*op_class_deinit)(void* op);
+// pickle function
+typedef u8* (*op_pickle_fn)(void* op, u8* dst);
+// unpickle function
+typedef u8* (*op_unpickle_fn)(void* op, const u8* src);
 
 // ---- output type
 // an index into the global output table
@@ -73,13 +77,16 @@ typedef s16 op_out_t;
 // base class for all processors in a control network
 // exposes a set of IO points and takes action when (some) inputs are activated
 typedef struct op_struct {
-  // u16 size;
   u8 numInputs;
   u8 numOutputs;
   // input increment function (for UI)
-  op_inc_func inc_func;
+  op_inc_fn inc_fn;
   // array of input function pointers
-  op_in_func_t* in_func;
+  op_in_fn* in_fn;
+  // pickle function
+  op_pickle_fn pickle;
+  // unpickle function
+  op_unpickle_fn unpickle;
   // dynamic array of pointers to input values
   io_t ** in_val;
   // array of indices for output targets.
@@ -101,8 +108,8 @@ typedef struct op_struct {
 typedef struct op_desc_struct {
   const char* name;
   const u32 size;
-  op_class_init_t init;
-  op_class_deinit_t deinit;
+  op_class_init init;
+  op_class_deinit deinit;
 } op_desc_t;
 
 
@@ -125,5 +132,10 @@ extern const char* op_out_name(op_t* op, const u8 idx);
 extern io_t op_get_in_val(op_t* op, s16 idx);
 // set input valueo
 extern void op_set_in_val(op_t* op, s16 idx, const io_t val);
+
+// pickle
+extern void op_pickle(op_t* op, u8* dst);
+// unpickle
+extern void op_unpickle(op_t* op, u8* src);
 
 #endif // header guard

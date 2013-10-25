@@ -10,10 +10,10 @@ static void op_mul_in_btrig(op_mul_t* mul, const io_t* v);
 
 //-------------------------------------------------
 //----- static vars
-static op_in_func_t op_mul_in_func[3] = {
-  (op_in_func_t)&op_mul_in_a,
-  (op_in_func_t)&op_mul_in_b,
-  (op_in_func_t)&op_mul_in_btrig
+static op_in_fn op_mul_in_fn[3] = {
+  (op_in_fn)&op_mul_in_a,
+  (op_in_fn)&op_mul_in_b,
+  (op_in_fn)&op_mul_in_btrig
 };
 
 static const char* op_mul_instring  = "A       B       B_TRIG  ";
@@ -27,8 +27,8 @@ void op_mul_init(void* mem) {
   mul->super.numInputs = 3;
   mul->super.numOutputs = 1;
   mul->outs[0] = -1;
-  mul->super.inc_func = (op_inc_func)op_mul_inc_input;
-  mul->super.in_func = op_mul_in_func;
+  mul->super.inc_fn = (op_inc_fn)op_mul_inc_input;
+  mul->super.in_fn = op_mul_in_fn;
   mul->super.in_val = mul->in_val;
   mul->super.out = mul->outs;
   mul->super.opString = op_mul_opstring;

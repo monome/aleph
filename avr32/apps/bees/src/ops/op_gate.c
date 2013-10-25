@@ -14,10 +14,10 @@ static const char* op_gate_instring = "VALUE   GATE    STORE   ";
 static const char* op_gate_outstring = "GATED   ";
 static const char* op_gate_opstring = "GATE";
 
-static op_in_func_t op_gate_in_func[3] = {
-  (op_in_func_t)&op_gate_in_value,
-  (op_in_func_t)&op_gate_in_gate, 
-  (op_in_func_t)&op_gate_in_store
+static op_in_fn op_gate_in_fn[3] = {
+  (op_in_fn)&op_gate_in_value,
+  (op_in_fn)&op_gate_in_gate, 
+  (op_in_fn)&op_gate_in_store
 };
 
 //-------------------------------------------------
@@ -27,8 +27,8 @@ void op_gate_init(void* mem) {
   gate->super.numInputs = 3;
   gate->super.numOutputs = 1;
   gate->outs[0] = -1;
-  gate->super.inc_func = (op_inc_func)op_gate_inc_input;
-  gate->super.in_func = op_gate_in_func;
+  gate->super.inc_fn = (op_inc_fn)op_gate_inc_input;
+  gate->super.in_fn = op_gate_in_fn;
   gate->super.in_val = gate->in_val;
   gate->super.out = gate->outs;
   gate->super.opString = op_gate_opstring;

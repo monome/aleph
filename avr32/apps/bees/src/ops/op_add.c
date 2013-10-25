@@ -14,10 +14,10 @@ static const char* op_add_instring = "A       B       B_TRIG  ";
 static const char* op_add_outstring = "SUM     ";
 static const char* op_add_opstring = "ADDER";
 
-static op_in_func_t op_add_in_func[3] = {
-  (op_in_func_t)&op_add_in_a,
-  (op_in_func_t)&op_add_in_b, 
-  (op_in_func_t)&op_add_in_btrig
+static op_in_fn op_add_in_fn[3] = {
+  (op_in_fn)&op_add_in_a,
+  (op_in_fn)&op_add_in_b, 
+  (op_in_fn)&op_add_in_btrig
 };
 
 //-------------------------------------------------
@@ -27,8 +27,8 @@ void op_add_init(void* mem) {
   add->super.numInputs = 3;
   add->super.numOutputs = 1;
   add->outs[0] = -1;
-  add->super.inc_func = (op_inc_func)op_add_inc_input;
-  add->super.in_func = op_add_in_func;
+  add->super.inc_fn = (op_inc_fn)op_add_inc_input;
+  add->super.in_fn = op_add_in_fn;
   add->super.in_val = add->in_val;
   add->super.out = add->outs;
   add->super.opString = op_add_opstring;

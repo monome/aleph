@@ -19,12 +19,12 @@ static const char* op_enc_opstring  = "ENC";
 static void op_enc_perform(op_enc_t* enc);
 
 // input function pointers
-static op_in_func_t op_enc_in_func[5] = {
-  (op_in_func_t)&op_enc_in_move,
-  (op_in_func_t)&op_enc_in_min,
-  (op_in_func_t)&op_enc_in_max,
-  (op_in_func_t)&op_enc_in_step,
-  (op_in_func_t)&op_enc_in_wrap,
+static op_in_fn op_enc_in_fn[5] = {
+  (op_in_fn)&op_enc_in_move,
+  (op_in_fn)&op_enc_in_min,
+  (op_in_fn)&op_enc_in_max,
+  (op_in_fn)&op_enc_in_step,
+  (op_in_fn)&op_enc_in_wrap,
 };
 
 //-------------------------------------------------
@@ -36,8 +36,8 @@ void op_enc_init(void* mem) {
   enc->super.numOutputs = 2;
   enc->outs[0] = -1;
   enc->outs[1] = -1;
-  enc->super.inc_func = (op_inc_func)op_enc_inc_input;
-  enc->super.in_func = op_enc_in_func;
+  enc->super.inc_fn = (op_inc_fn)op_enc_inc_input;
+  enc->super.in_fn = op_enc_in_fn;
   enc->super.in_val = enc->in_val;
   enc->super.out = enc->outs;
   enc->super.opString = op_enc_opstring;

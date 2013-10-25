@@ -1,9 +1,7 @@
 /* op_math.h
  * bees
  *
- * we define macros for arithmetic in BEES
- * this is to allow for (relatively) painless migration
- * between numerical representations
+ * macros for arithmetic in BEES
  */
 
 #ifndef _OP_MATH_H_
@@ -11,13 +9,14 @@
 
 #include "types.h"
 #include "fix.h"
-
-//#define OP_IO_FLOAT 1
-#define OP_IO_FIX16 1
+#include "pickle.h"
 
 // input/output data type
 // typedef f32 io_t;
 typedef fix16_t io_t;
+// use 32-bit routine for pickling
+#define pickle_io(src, dst) pickle_32(src, dst);
+#define unpickle_io(src, dst) unpickle_32(src, dst);
 
 // arithmetic macros
 
