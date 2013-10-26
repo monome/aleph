@@ -132,6 +132,8 @@ fract32 in[4];
 //----------------------
 //----- static functions
 
+static inline 
+
 
 //////////////////
 /////////
@@ -157,6 +159,10 @@ static void mix_del_inputs(void) {
   //--- del 0
   in_del[0] = 0;
   // adc
+
+
+
+  /// FIXME: compares are retarded and ops are 32-bit, worst of both worlds
   mul = mix_adc_del[0][0];
    if(mul != 0) {  in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(in[0], mul));  } 
   mul = mix_adc_del[1][0];

@@ -25,7 +25,7 @@
 ///////////////////////////////////////////
 
 #include "param_common.h"
-#include "param.h"
+//#include "param.h"
 // parameter data
 #include "types.h"
 #include "op.h"

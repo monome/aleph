@@ -81,8 +81,7 @@ void report_params(void) {
     for(i=0; i<numParams; i++) {
       bfin_get_param_desc(i, &pdesc);
 
-      /// FIXME: arg, this belongs only in BEES
-      net_add_param(i, &pdesc);     
+      net_add_param(i, (const ParamDesc*)&pdesc);     
       
       print_dbg("\r\n got pdesc : ");
       print_dbg((const char* )pdesc.label);
@@ -90,6 +89,36 @@ void report_params(void) {
   }
 
   /// TODO: get values...
+  /// let the user decide.
+  // bfin_enable();
+}
 
-  //  bfin_enable();
+
+// pickle / unpickle
+u8* param_pickle(pnode_t* pnode, u8* dst) {
+  /// wasting some space to preserve 4-byte alignment
+  // store idx
+  dst = pickle_32((u32)pnode->idx, dst);
+  // store value
+  dst = pickle_32(pnode->data.value.asUint, dst);
+  // store preset-inclusion 
+  dst = pickle_32((u32)(pnode->preset), dst);
+  // store descriptor
+  // ... 
+  return dst;
+}
+
+const u8* param_unpickle(pnode_t* pnode, const u8* src) {
+  u32 val;
+  // load idx
+  src = unpickle_32(src, &val);
+  pnode->idx = (u8)val;
+  // load value
+  src = unpickle_32(src, &(pnode->data.value.asUint));
+  // load preset-inclusion 
+  src = unpickle_32(src, &val);
+  pnode->preset = (u8)val;
+  // load descriptor .. ?
+  // ... 
+  return src;
 }

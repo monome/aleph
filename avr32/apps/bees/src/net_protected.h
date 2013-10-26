@@ -18,7 +18,7 @@
 #include "module_common.h"
 #include "net.h"
 #include "op.h"
-#include "param.h"
+//#include "param.h"
 //#include "scene_types.h"
 #include "types.h"
 #include "util.h"
@@ -91,10 +91,6 @@ typedef struct _ctlnet {
   onode_t outs[NET_OUTS_MAX];
   // DSP params
   pnode_t params[NET_PARAMS_MAX];
-  // module name
-  //  char moduleName[MODULE_NAME_LEN];
-  // scene descriptor (scene and module name)
-  //  sceneDesc_t sceneDesc;
 } ctlnet_t;
 
 //// external variables

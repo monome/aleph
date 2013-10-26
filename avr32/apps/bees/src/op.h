@@ -134,8 +134,8 @@ extern io_t op_get_in_val(op_t* op, s16 idx);
 extern void op_set_in_val(op_t* op, s16 idx, const io_t val);
 
 // pickle
-extern void op_pickle(op_t* op, u8* dst);
+extern u8* op_pickle(op_t* op, u8* dst);
 // unpickle
-extern void op_unpickle(op_t* op, u8* src);
+extern const u8* op_unpickle(op_t* op, const u8* src);
 
 #endif // header guard

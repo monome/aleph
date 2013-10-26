@@ -26,11 +26,8 @@ static void spi_set_param(u32 idx, pval pv) {
   module_set_param(idx, pv);
 }
 
-
-//// TODO: 
-/// check that the compiler is implementing this as a jump table.
-//// if it isn't, use a fp table instead.
-//// make the terminal cases into inline funcs for readability.
+///  FIXME: generated code for case statement sucks.
+//////  should be table of function pointers
 
 //------- function definitions
 // deal with new data in the spi rx ringbuffer

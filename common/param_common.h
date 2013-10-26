@@ -72,8 +72,8 @@ typedef struct __attribute__((__packed__)) ParamDescStruct {
 
 // parameter data
 typedef struct __attribute__((__packed__)) ParamDataStruct {
-  volatile ParamValue value;
-  volatile u8 changed;
+  ParamValue value;
+  u8 changed;
 } ParamData;
 
 #endif // header guard

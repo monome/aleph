@@ -27,7 +27,8 @@ LDR = $(CROSS_COMPILE)ldr
 CPU = bf533
 CFLAGS += -Wall -mcpu=$(CPU) $(INC)
 # CFLAGS += -00 -g # debug
-CFLAGS += -02
+# CFLAGS += -02
+CFLAGS += -03
 
 
 LDFLAGS += -mcpu=$(CPU)

@@ -13,13 +13,13 @@
 
 // 32-bit
 extern u8* pickle_32(const u32 src, u8* dst);
-extern u8* unpickle_32(u8* src, u32* dst);
+extern const u8* unpickle_32(const u8* src, u32* dst);
 
 // 16-bit
 // ... probably never a great idea;
 /// seems more convenient to maintain 4-byte alignment.
-extern u8* pickle_16(u32 src, u8* dst);
-extern u8* unpickle_16(u8* src, u32* dst);
+extern u8* pickle_16(const u32 src, u8* dst);
+extern const u8* unpickle_16(const u8* src, u32* dst);
 
 
 #endif

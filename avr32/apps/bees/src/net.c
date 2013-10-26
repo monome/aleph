@@ -718,22 +718,25 @@ u8* net_pickle(u8* dst) {
   op_t* op;
   // store count of operators
   // (use 4 bytes for alignment)
-  dst = pickle_32((u32)(net.numOps), dst);
+  dst = pickle_32((u32)(net->numOps), dst);
   // loop over operators
-  for(i=0; i<net.numOps; ++i) {
-    op = net.ops[i];
-    // store class index
-    dst = pickle_32(op->class, dst);
+  for(i=0; i<net->numOps; ++i) {
+    op = net->ops[i];
+    // store type id
+    dst = pickle_32(op->type, dst);
 
     // store offset of op location in pool
     //    dst = pickle_32((u32)op - (u32)opPool, dst);
 
     // pickle the operator state (if needed)
     if(op->pickle != NULL) {
-      dst = *(op->pickle)(op, dst);
+      dst = (*(op->pickle))(op, dst);
     }
   }
-  // loop over 
+  // parameter values
+  for(i=0; i<net->numParams; ++i) {
+    //    pickle_32(net->params[i].data.
+  }
   return dst;
 }
 
@@ -743,8 +746,8 @@ u8* net_unpickle(const u8* src) {
   op_id_t id;
   op_t* op;
   // reset operator count and pool offset
-  net.numOps = 0;
-  net.opPoolOffset = 0;
+  net->numOps = 0;
+  net->opPoolOffset = 0;
   // get count of operators
   // (use 4 bytes for alignment)
   src = unpickle_32(src, &count);
@@ -757,9 +760,9 @@ u8* net_unpickle(const u8* src) {
     /// .. this should update the operator count
     net_add_op(id);
     // unpickle operator state (if needed)
-    op = net.ops[net.numOps - 1];
+    op = net->ops[net->numOps - 1];
     if(op->unpickle != NULL) {
-      stc = (*(op->unpickle))(op, src);
+      src = (*(op->unpickle))(op, src);
     }
   }
   return (u8*)src;

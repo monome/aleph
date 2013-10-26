@@ -36,8 +36,8 @@ void op_sw_init(void* op) {
   // superclass functions
   sw->super.inc_fn = (op_inc_fn)&op_sw_inc;
   sw->super.in_fn = op_sw_in;
-  sw->super.pickle = &op_sw_pickle;
-  sw->super.unpickle = &op_sw_unpickle;
+  sw->super.pickle = (op_pickle_fn) (&op_sw_pickle);
+  sw->super.unpickle = (op_unpickle_fn) (&op_sw_unpickle);
   
   // superclass state
   sw->super.numInputs = 3;

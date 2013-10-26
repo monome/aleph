@@ -7,6 +7,7 @@
 #define _PARAM_H_
 
 // common
+#include "param_common.h"
 #include "types.h"
 // bees
 #include "net_protected.h"
@@ -41,6 +42,10 @@ void set_param_value(u32 idx, io_t val);
 
 // get param descriptors and initial values from DSP
 void report_params(void);
+
+// pickle / unpickle
+extern u8* param_pickle(   pnode_t* pnode, u8* dst);
+extern const u8* param_unpickle( pnode_t* pnode, const u8* src);
 
 
 #endif // header guard
