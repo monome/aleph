@@ -93,7 +93,6 @@ void net_init(void) {
 
   net->opPool = (void*)&(net->opPoolMem);
   net->opPoolOffset = 0;
-
   net->numOps = 0;
   net->numIns = 0;
   net->numOuts = 0;
@@ -120,6 +119,11 @@ void net_deinit(void) {
   for(i=0; i<net->numOps; i++) {
     op_deinit(net->ops[i]);
   }
+  net->opPoolOffset = 0;
+  net->numOps = 0;
+  net->numIns = 0;
+  net->numOuts = 0;
+  net->numParams = 0;
 }
 
 // initialize an input node
@@ -768,8 +772,11 @@ u8* net_unpickle(const u8* src) {
   print_dbg("\r\n unpickling network");
  
   // reset operator count and pool offset
-  net->numOps = 0;
-  net->opPoolOffset = 0;
+  /* net->numOps = 0; */
+  /* net->opPoolOffset = 0; */
+  net_deinit();
+
+
   // get count of operators
   // (use 4 bytes for alignment)
   src = unpickle_32(src, &count);

@@ -86,7 +86,6 @@ u8 app_launch(u8 firstrun) {
   } else {
     print_dbg("\r\n booting default ldr from flash... ");
     flash_read_ldr();
-
     /// ???
     delay_ms(10);
 

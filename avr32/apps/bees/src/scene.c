@@ -90,7 +90,7 @@ void scene_read_buf(void) {
   s8 modName[MODULE_NAME_LEN];
   u32 i;
   u8* src = (u8*)&(sceneData->pickle);
-  //  s8 neq = 0;
+    s8 neq = 0;
 
   app_pause();
 
@@ -98,7 +98,8 @@ void scene_read_buf(void) {
   memcpy(modName, sceneData->desc.moduleName, MODULE_NAME_LEN);
 
   // de-initialize network and operators
-  net_deinit();
+  /// unpickle should do this
+  //  net_deinit();
 
   // copy network/presets
   //  memcpy( (void*)net, &(sceneData->net),  sizeof(ctlnet_t) );
@@ -121,26 +122,27 @@ void scene_read_buf(void) {
   }
 
   // compare module name
-  //  neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
+    neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
 
-  //  if(neq) {
-  // load bfin module if it changed names
+    if(neq) {
+      // load bfin module if it changed names
 
-  print_dbg("\r\n loading module name: ");
-  print_dbg(sceneData->desc.moduleName);
-  files_load_dsp_name(sceneData->desc.moduleName);
-
-  //  }
+      print_dbg("\r\n loading module name: ");
+      print_dbg(sceneData->desc.moduleName);
+      files_load_dsp_name(sceneData->desc.moduleName);
+    }
 
   //// TODO: module version check
   // "aaaabbbbccccddddeeeeffff"
 
   // re-trigger inputs
   //  app_notify("re-initializing network/parameters");
-  net_retrigger_inputs();
+  /// hopefully don't need to do this?
+  //  net_retrigger_inputs();
   
   // update bfin parameters
-  net_send_params();
+  #warning "scene load->param change still broken"
+  //  net_send_params();
   print_dbg("\r\n sent new params");
   
   // enable audio processing
@@ -154,7 +156,6 @@ void scene_write_default(void) {
   print_dbg("\r\n writing default scene to flash... ");
   print_dbg("module name: ");
   print_dbg(sceneData->desc.moduleName);
-  scene_write_buf();
   flash_write_scene();
   print_dbg("\r\n finished writing ");
   app_resume();
@@ -165,7 +166,6 @@ void scene_read_default(void) {
   app_pause();
   print_dbg("\r\n reading default scene from flash... ");
   flash_read_scene();
-  scene_read_buf();
   print_dbg("\r\n finsihed reading ");  
   app_resume();
 }
