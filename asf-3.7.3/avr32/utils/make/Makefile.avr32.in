@@ -380,6 +380,7 @@ ifeq ($(target_type),elf)
 # if the common Makefile.in or project config.mk is changed.
 $(target): $(PRJ_PATH)/$(LINKER_SCRIPT) $(MAKEFILE_PATH) config.mk $(obj-y)
 	@echo $(MSG_LINKING)
+	# edit: have to add -lm here as far as i can see. -emb
 	$(Q)$(LD) $(l_flags) $(obj-y) -Wl,--start-group $(libflags-gnu-y) -Wl,--end-group -o $@ -lm
 	@echo $(MSG_SIZE)
 	$(Q)$(SIZE) -Ax $@

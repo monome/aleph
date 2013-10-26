@@ -368,7 +368,10 @@ void net_remove_op(const u32 idx) {
   }
 
   //// VERY DANGEROUSly move all the op memory above this, byte by byte
-  for(pMem = (u8*)op + opSize; (u32)pMem<((u32)(net->opPool) + net->opPoolOffset); pMem++) {
+  for( pMem = (u8*)op + opSize; 
+       (u32)pMem < ((u32)(net->opPool) + net->opPoolOffset);
+       pMem++
+       ) {
     *((u8*)(pMem - opSize)) = *((u8*)pMem);
   }
   /// move the memory offset back
@@ -379,7 +382,6 @@ void net_remove_op(const u32 idx) {
   net->numOps -= 1;
   //... and, uh, don't crash
 }
-
 
 // create a connection between given idx pairs
 void net_connect(u32 oIdx, u32 iIdx) {

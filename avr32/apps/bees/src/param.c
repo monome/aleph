@@ -96,6 +96,7 @@ void report_params(void) {
 
 // pickle / unpickle
 u8* param_pickle(pnode_t* pnode, u8* dst) {
+  u32 i;
   /// wasting some space to preserve 4-byte alignment
   // store idx
   dst = pickle_32((u32)pnode->idx, dst);
@@ -104,7 +105,7 @@ u8* param_pickle(pnode_t* pnode, u8* dst) {
   // store preset-inclusion 
   dst = pickle_32((u32)(pnode->preset), dst);
   // store descriptor
-  // ... 
+  
   return dst;
 }
 
@@ -118,7 +119,7 @@ const u8* param_unpickle(pnode_t* pnode, const u8* src) {
   // load preset-inclusion 
   src = unpickle_32(src, &val);
   pnode->preset = (u8)val;
-  // load descriptor .. ?
+  // load descriptor
   // ... 
   return src;
 }
