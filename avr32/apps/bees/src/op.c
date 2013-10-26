@@ -1,7 +1,7 @@
 /* ctl_op.c
  * aleph-avr32
  *
- * operator implmentation (base and derived classes)
+ * operator implmentation (base  class)
  */
 
 // std
@@ -63,7 +63,7 @@ const op_desc_t op_registry[numOpClasses] = {
 
 
 // input and output strings are all the same length, concatenated
-// this is lazy, but also efficient.
+// lazy
 static const u8 inStringChars = 8;
 static const u8 outStringChars = 8;
 
@@ -131,7 +131,8 @@ void op_set_in_val(op_t* op, s16 idx, io_t val) {
   //  play_input(idx);
 }
 
-/// err... user 
+/// err... user is calling subclass directly, whatever
+
 // pickle
 /* u8* op_pickle(op_t* op, u8* dst) { */
 /*   return (*(op->pickle))(op, dst); */

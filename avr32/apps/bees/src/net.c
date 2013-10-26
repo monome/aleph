@@ -146,7 +146,7 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
   /* print_dbg(" , op in idx: 0x"); */
   /* print_dbg_hex(net->ins[inIdx].opInIdx); */
   /* print_dbg(" , caller: 0x"); */
-  /* print_dbg_hex((u32)op); */  
+  /* print_dbg_hex((u32)op);   */
     
   if(!netActive) {
     if(op != NULL) {
@@ -157,7 +157,11 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
   }
 
   if(inIdx >= 0) {
-    play_input(inIdx);
+    //    print_dbg("\r\n play_input ");
+    //    print_dbg(" ( not really ) ");
+
+    //// FIXME: play is broken and it will crash. but input mapping should work
+    //    play_input(inIdx);
 
     if(inIdx < net->numIns) {
       op_set_in_val(net->ops[net->ins[inIdx].opIdx],
