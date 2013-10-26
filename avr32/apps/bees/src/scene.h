@@ -18,11 +18,26 @@ typedef struct _sceneDesc {
   char moduleName[MODULE_NAME_LEN];
 } sceneDesc_t;
 
-// scene storage layout type
+/* switching to serialization. 
+ i guess the proper way to do this would be
+ to actually specify serialized size of each object.
+ this seems like an incredible pain in the ass,
+ so i am picking an arbitrary size and will be 
+ vigilant w/r/t overreaching it.
+*/
+// a buffer to hold pickled scene data.
+// 65k worth
+#define SCENE_PICKLE_SIZE 0x10000
+typedef u8 scenePickle_t[SCENE_PICKLE_SIZE];
+
 typedef struct _sceneData {
+  // txt descriptor
   sceneDesc_t desc;
-  ctlnet_t net;
-  preset_t presets[NET_PRESETS_MAX];
+  //  ctlnet_t net;
+  // preset_t presets[NET_PRESETS_MAX];
+
+  // a blob of serialized data
+  scenePickle_t pickle;
 } sceneData_t;
 
 //----------------------------------------

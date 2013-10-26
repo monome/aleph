@@ -160,7 +160,8 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
     //    print_dbg("\r\n play_input ");
     //    print_dbg(" ( not really ) ");
 
-    //// FIXME: play is broken and it will crash. but input mapping should work
+    //// FIXME: play is broken and it will crash.
+    // but output->input mapping should work without it
     //    play_input(inIdx);
 
     if(inIdx < net->numIns) {
@@ -720,9 +721,24 @@ u8 net_report_params(void) {
 u8* net_pickle(u8* dst) {
   u32 i;
   op_t* op;
+  u32 dum = 0;
+
+  print_dbg("\r\n pickling network");
+
   // store count of operators
   // (use 4 bytes for alignment)
   dst = pickle_32((u32)(net->numOps), dst);
+
+  print_dbg("\r\n , count of ops: ");
+  print_dbg_ulong(net->numOps);
+  print_dbg(" ( 0x");
+  print_dbg_hex(net->numOps);
+  print_dbg(" )");
+
+  pickle_32((u32)(net->numOps), (u8*)(&dum));
+  print_dbg("\r\n test pickled word; numOps : 0x");
+  print_dbg_hex(dum);
+
   // loop over operators
   for(i=0; i<net->numOps; ++i) {
     op = net->ops[i];
@@ -749,26 +765,41 @@ u8* net_unpickle(const u8* src) {
   u32 i, count, dum;
   op_id_t id;
   op_t* op;
+  print_dbg("\r\n unpickling network");
+ 
   // reset operator count and pool offset
   net->numOps = 0;
   net->opPoolOffset = 0;
   // get count of operators
   // (use 4 bytes for alignment)
   src = unpickle_32(src, &count);
+  print_dbg("\r\n , count of ops: ");
+  print_dbg_ulong(count);
+  print_dbg(" ( 0x");
+  print_dbg_hex(count);
+  print_dbg(" )");
+
   // loop over operators
   for(i=0; i<count; ++i) {
     // get operator class id
     src = unpickle_32(src, &dum);
     id = (op_id_t)dum;
+    print_dbg("\r\n op id: ");
+    print_dbg_ulong(id);
     // add and initialize from class id
     /// .. this should update the operator count
     net_add_op(id);
     // unpickle operator state (if needed)
     op = net->ops[net->numOps - 1];
     if(op->unpickle != NULL) {
+      print_dbg("\r\n unpickling operator at address: 0x");
+      print_dbg_hex((u32)(op));
       src = (*(op->unpickle))(op, src);
     }
   }
+  /// params...
+
+  /// presets... (?)
   return (u8*)src;
 }
 

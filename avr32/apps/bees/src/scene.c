@@ -55,11 +55,13 @@ void scene_deinit(void) {
 
 // fill global RAM buffer with current state of system
 void scene_write_buf(void) {
-
+  u8* dst = (u8*) &(sceneData->pickle);
   ///// print parmameters
   u32 i;
+
   print_dbg("\r\n writing scene data... ");
-  for(i=0; i<net->numParams; i++) {
+
+  /*  for(i=0; i<net->numParams; i++) {
     print_dbg("\r\n param ");
     print_dbg_ulong(i);
     print_dbg(" : ");
@@ -67,18 +69,27 @@ void scene_write_buf(void) {
     print_dbg(" ; val ");
     print_dbg_hex((u32)net->params[i].data.value.asInt);
   }
+  */
   //////////////////////
-
+  /*
+  memcpy( &(sceneData
   memcpy( &(sceneData->net),     (void*)net,  sizeof(ctlnet_t));
   print_dbg("\r\n copied network data to scene buffer.");
   memcpy( &(sceneData->presets), &presets, sizeof(preset_t) * NET_PRESETS_MAX); 
   print_dbg("\r\n copied preset data to scene buffer.");
+  */
+
+  // pickle network
+  dst = net_pickle(dst);
+  // pickle presets
+  //dst = presets_pickle(dst); 
 }
 
 // set current state of system from global RAM buffer
 void scene_read_buf(void) {
   s8 modName[MODULE_NAME_LEN];
   u32 i;
+  u8* src = (u8*)&(sceneData->pickle);
   //  s8 neq = 0;
 
   app_pause();
@@ -90,8 +101,14 @@ void scene_read_buf(void) {
   net_deinit();
 
   // copy network/presets
-  memcpy( (void*)net, &(sceneData->net),  sizeof(ctlnet_t) );
-  memcpy( &presets, &(sceneData->presets), sizeof(preset_t) * NET_PRESETS_MAX );
+  //  memcpy( (void*)net, &(sceneData->net),  sizeof(ctlnet_t) );
+  //  memcpy( &presets, &(sceneData->presets), sizeof(preset_t) * NET_PRESETS_MAX );
+
+  // unpickle network 
+  src = net_unpickle(src);
+  // unpickle presets
+  //  src = presets_unpickle(src);
+
   print_dbg("\r\n copied stored network and presets to RAM ");
 
   for(i=0; i<net->numParams; i++) {
@@ -112,15 +129,12 @@ void scene_read_buf(void) {
   print_dbg("\r\n loading module name: ");
   print_dbg(sceneData->desc.moduleName);
   files_load_dsp_name(sceneData->desc.moduleName);
-  //app_pause();
 
   //  }
 
   //// TODO: module version check
   // "aaaabbbbccccddddeeeeffff"
 
-  //  delay_ms(2000);
-    
   // re-trigger inputs
   //  app_notify("re-initializing network/parameters");
   net_retrigger_inputs();
@@ -160,13 +174,6 @@ void scene_read_default(void) {
 void scene_set_name(const char* name) {
   strncpy(sceneData->desc.sceneName, name, SCENE_NAME_LEN);
 }
-
-/* // set scene name char */
-/* void scene_set_name_char(u8 idx, char ch) { */
-/*   if(idx < SCENE_NAME_LEN) { */
-/*     sceneData->desc.moduleName[idx] = ch; */
-/*   } */
-/* } */
 
 // set module name
 void scene_set_module_name(const char* name) {
