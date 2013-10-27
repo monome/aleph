@@ -378,9 +378,9 @@ else
 ifeq ($(target_type),elf)
 # Link the object files into an ELF file. Also make sure the target is rebuilt
 # if the common Makefile.in or project config.mk is changed.
+# 	edit: have to add -lm here as far as i can see. -emb
 $(target): $(PRJ_PATH)/$(LINKER_SCRIPT) $(MAKEFILE_PATH) config.mk $(obj-y)
 	@echo $(MSG_LINKING)
-	# edit: have to add -lm here as far as i can see. -emb
 	$(Q)$(LD) $(l_flags) $(obj-y) -Wl,--start-group $(libflags-gnu-y) -Wl,--end-group -o $@ -lm
 	@echo $(MSG_SIZE)
 	$(Q)$(SIZE) -Ax $@

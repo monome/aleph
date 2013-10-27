@@ -22,7 +22,7 @@
 
 // manufacturer string length
 #define MONOME_MANSTR_LEN 6
-// product string length
+// product string lengthextern 
 #define MONOME_PRODSTR_LEN 8
 // serial string length
 #define MONOME_SERSTR_LEN 9
@@ -70,11 +70,11 @@ u8 monomeLedBuffer[MONOME_MAX_LED_BYTES];
 
 // global pointers to send functions.
 read_serial_t monome_read_serial = &read_serial_dummy;
-//grid_led_t monome_grid_led;
+set_intense_t monome_set_intense;
+// grid_led_t monome_grid_led;
 grid_map_t monome_grid_map;
 grid_level_map_t monome_grid_level_map;
 ring_map_t monome_ring_map;
-
 //-----------------------------------------
 //----- static variables
 
@@ -108,6 +108,12 @@ static void read_serial_40h(void);
 static void read_serial_series(void);
 static void read_serial_mext(void);
 
+
+// set intensity
+static void set_intense_series(u8 level);
+static void set_intense_mext(u8 level);
+
+
 // tx for each protocol
 ///// no real reason not to use only grid/map at the moment
 /* static void grid_led_40h(u8 x, u8 y, u8 val); */
@@ -126,8 +132,6 @@ static void grid_map_mext(u8 x, u8 y, const u8* data);
 //static void ring_set_mext(u8 n, u8 rho, u8 val);
 static void ring_map_mext(u8 n, u8* data);
 
-// event write
-
 //static void connect_write_event(void);
 static inline void monome_grid_key_write_event( u8 x, u8 y, u8 val);
 static inline void monome_grid_adc_write_event( u8 n, u16 val);
@@ -138,12 +142,22 @@ static inline void monome_ring_key_write_event( u8 n, u8 val);
 //---------------------------------
 //----- static variables
 
-//  function pointer arrays
-static read_serial_t readSerialFuncs[eProtocolNumProtocols] = {
+//----  function pointer arrays
+
+// read serial and spawn events
+static const read_serial_t readSerialFuncs[eProtocolNumProtocols] = {
   &read_serial_40h,
   &read_serial_series,
   &read_serial_mext,
 };
+
+// set intensity
+static const set_intense_t intenseFuncs[eProtocolNumProtocols] = {
+  NULL, // unsupported
+  &set_intense_series,
+  &set_intense_mext,
+};
+
 
 // grid/led
 /* static grid_led_t gridLedFuncs[eProtocolNumProtocols] = { */
@@ -153,7 +167,7 @@ static read_serial_t readSerialFuncs[eProtocolNumProtocols] = {
 /* }; */
 
 // grid/map
-static grid_map_t gridMapFuncs[eProtocolNumProtocols] = {
+static const grid_map_t gridMapFuncs[eProtocolNumProtocols] = {
   &grid_map_40h,
   &grid_map_series,
   &grid_map_mext,
@@ -167,7 +181,7 @@ static grid_map_t gridMapFuncs[eProtocolNumProtocols] = {
 /*   &grid_map_level_mext, */
 /* }; */
 
-static ring_map_t ringMapFuncs[eProtocolNumProtocols] = {
+static const ring_map_t ringMapFuncs[eProtocolNumProtocols] = {
   NULL, // unsupported
   NULL, // unsupported
   &ring_map_mext,
@@ -426,7 +440,16 @@ static inline void set_funcs(void) {
   monome_grid_map = gridMapFuncs[mdesc.protocol];
   monome_grid_level_map = gridMapFuncs[mdesc.protocol];
   monome_ring_map = ringMapFuncs[mdesc.protocol];
+  monome_set_intense = intenseFuncs[mdesc.protocol];
 }
+
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+///// protocol - specific functions
+
+
+/////////////////////////////
+// setup
 
 // setup 40h-protocol device
 static void setup_40h(u8 cols, u8 rows) {
@@ -530,8 +553,7 @@ static u8 setup_mext(void) {
   return 1;
 }
 
-//----- protocol-specific functions
-
+////////////////////////////
 //--- rx
 // rx for each protocol
 /// parse serial input from device
@@ -691,10 +713,10 @@ static void grid_map_series(u8 x, u8 y, const u8* data) {
     for(j=0; j<MONOME_QUAD_LEDS; j++) {
       // binary value of data byte to bitfield of tx byte
       *ptx |= ((*data > 0) << j);
-      data++;
+      ++data;
     }
     data += MONOME_QUAD_LEDS; // skip the rest of the row to get back in target quad
-    ptx++;
+    ++ptx;
   }
   ftdi_write(txBuf, MONOME_QUAD_LEDS + 1);  
 }
@@ -704,5 +726,23 @@ static void grid_map_series(u8 x, u8 y, const u8* data) {
 /* } */
 
 static void ring_map_mext(u8 n, u8* data) {
+  // TODO
+}
+
+static void set_intense_series(u8 v) {
+/*
+message id:	(10) intensity
+bytes:		1
+format:		iiiibbbb
+			i (message id) = 10
+			b (brightness) = 0-15 (4 bits)
+encode:		byte 0 = ((id) << 4) | b = 160 + b
+*/
+  txBuf[0] = 0xa0;
+  txBuf[0] |= (v & 0x0f);
+  ftdi_write(txBuf, 1);
+}
+
+static void set_intense_mext(u8 v) {
   // TODO
 }

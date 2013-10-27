@@ -115,6 +115,8 @@ static s32 scale_exp_enc(s32 val) {
    print_dbg("\r\n LPPR: connecting grid device");
    grid_set_size(w, h);
    timers_set_monome();
+
+   (*monome_set_intense)(0);
  }
 
 

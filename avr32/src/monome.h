@@ -2,7 +2,7 @@
   monome.h
   aleph-avr32
   
-  monome device interface declarations
+  monome single-device interface declarations
 
  */
 
@@ -79,8 +79,11 @@ extern u8 monomeLedBuffer[MONOME_MAX_LED_BYTES];
 
 ////// read raw serial data (all devices)
 typedef void(*read_serial_t)(void);
+//// set intensity
+// set led intensity of connected device
+typedef void(*set_intense_t)(u8 level);
 
-///// write (grid)
+///// write (grid)extern 
 // single led
 typedef void(*grid_led_t)(u8 x, u8 y, u8 val);
 // binary 8x8 frame
@@ -96,7 +99,9 @@ typedef void(*ring_map_t)(u8 n, u8* data);
 
 // global pointers to function types defined above.
 // assigned according to detected device protocol.
+/// FIXME: will need multiple device support eventually.
 extern read_serial_t monome_read_serial;
+extern set_intense_t monome_set_intense;
 extern grid_led_t monome_grid_led;
 extern grid_map_t monome_grid_map;
 extern grid_level_map_t monome_grid_level_map;
@@ -109,6 +114,7 @@ extern ring_map_t monome_ring_map;
 extern void init_monome(void);
 // check monome device  from FTDI string descriptors
 extern u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr);
+
 // check dirty flags and refresh leds
 extern void monome_grid_refresh(void);
 
@@ -116,7 +122,6 @@ extern void monome_grid_refresh(void);
   monome_*_parse_event_data :
   convert event data as handled by the event queue,
   into useful parameters, depending on the type of event.
-  these functions should be called
  */
 
 // connection event
@@ -144,7 +149,6 @@ extern void monome_ring_enc_parse_event_data(u32 data, u8* n, s8* delta);
 // ring press/lift
 // parameters: which ring, on/off value
 extern void monome_ring_key_parse_event_data(u32 data, u8* n, u8* val);
-
 
 /*
   led_set, led_toggle
