@@ -76,8 +76,8 @@ extern fract32 delay_next(delayLine* dl, fract32 in) {
 // set loop endpoint in seconds
 extern void delay_set_loop_sec(delayLine* dl, fix16 sec) {
   u32 samps = sec_to_frames_trunc(sec);
-  dl->tapRd.loop = samps - 1;
-  dl->tapWr.loop = samps - 1;
+  buffer_tapN_set_loop(&(dl->tapRd), samps - 1);
+  buffer_tapN_set_loop(&(dl->tapWr), samps - 1);
 }
 
 // set loop endpoint in samples

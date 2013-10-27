@@ -40,6 +40,16 @@ void buffer_init(audioBuffer *buf, fract32 *data, u32 frames) {
   /* }   */
 }
 
+// intialize index data with buffer
+void buffer_tap_init(bufferTap * tap, audioBuffer* buf) {
+  tap->buf = buf;
+  tap->loop = buf->frames;
+  tap->inc.i = 1;
+  tap->inc.fr = 0;
+  tap->idx.i = 0;
+  tap->idx.fr = 0;
+}
+
 // interpolated read
 fract32 buffer_tap_read(bufferTap *tap) {
   static s32 idxB;
@@ -60,7 +70,7 @@ void buffer_tap_write(bufferTap *tap, fract32 val) {
   a = mult_fr1x32x32(val, sub_fr1x32(FR32_MAX, tap->idx.fr));
   b = mult_fr1x32x32(val, tap->idx.fr);
   idxB = tap->idx.i + 1;
-  while(idxB >= tap->loop) { idxB -= tap->buf->frames; }
+  while(idxB >= tap->loop) { idxB -= tap->loop; }
   // we can assume idxA is already wrapped
   tap->buf->data[tap->idx.i] = a;
   tap->buf->data[idxB] = b;  
@@ -73,7 +83,7 @@ void buffer_tap_mix(bufferTap *tap, fract32 val, fract32 preLevel) {
   a = mult_fr1x32x32(val, sub_fr1x32(FR32_MAX, tap->idx.fr));
   b = mult_fr1x32x32(val, tap->idx.fr);
   idxB = tap->idx.i + 1;
-  while(idxB > tap->loop) { idxB -= tap->buf->frames; }
+  while(idxB > tap->loop) { idxB -= tap->loop; }
   // we can assume idxA is already wrapped
   tap->buf->data[tap->idx.i] = add_fr1x32(a, mult_fr1x32x32(tap->buf->data[tap->idx.i], preLevel));
   tap->buf->data[tap->idx.i] = add_fr1x32(b, mult_fr1x32x32(tap->buf->data[idxB], preLevel));
@@ -105,16 +115,6 @@ void buffer_tap_next(bufferTap *tap) {
 // set rate (per-sample increment)
 void buffer_tap_set_rate(bufferTap *tap, fix16 rate) {
    fix16_to_fix32(&rate, &(tap->inc));
-}
-
-// intialize index data with buffer
-void buffer_tap_init(bufferTap * tap, audioBuffer* buf) {
-  tap->buf = buf;
-  tap->loop = buf->frames;
-  tap->inc.i = 1;
-  tap->inc.fr = 0;
-  tap->idx.i = 0;
-  tap->idx.fr = 0;
 }
 
 // set tap position directly
@@ -199,6 +199,12 @@ void buffer_tapN_set_inc(bufferTapN *tap, u32 inc) {
 // set rate divisor
 void buffer_tapN_set_div(bufferTapN *tap, u32 div) {
   tap->div = div;
+}
+
+// set rate divisor
+void buffer_tapN_set_loop(bufferTapN *tap, u32 loop) {
+  while(loop > (tap->buf->frames - 1)) {loop -= tap->buf->frames; }
+  tap->loop = loop;
 }
 
 // initialize tap with buffer descriptor

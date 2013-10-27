@@ -117,8 +117,8 @@ fract32 out_svf[NLINES] = { 0, 0 };
 /////////////
 ///////////
 // TEST: noise gen
-static lcprng rngH;
-static lcprng rngL;
+//static lcprng rngH;
+//static lcprng rngL;
 /////////////
 //////
 
@@ -132,7 +132,7 @@ fract32 in[4];
 //----------------------
 //----- static functions
 
-static inline 
+//static inline 
 
 
 //////////////////
@@ -365,8 +365,8 @@ void module_init(void) {
   ///////////////////
   ////////////
   /// tEST
-  lcprng_reset(&rngL, 0xDEADFACE);
-  lcprng_reset(&rngH, 0xBEEFCAFE);
+  //  lcprng_reset(&rngL, 0xDEADFACE);
+  //  lcprng_reset(&rngH, 0xBEEFCAFE);
   ///////
   ////////////////////
 

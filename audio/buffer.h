@@ -154,8 +154,8 @@ extern void buffer_tapN_set_div(bufferTapN *tap, u32 div);
 // set a different buffer (resets position)
 extern void buffer_tapN_set_buf(bufferTapN* tap, audioBuffer* buf);
 
-// set loop endpoint in seconds
-extern void buffer_tapN_set_loop(bufferTapN* tap, fix16 sec);
+// set loop endpoint in samples
+extern void buffer_tapN_set_loop(bufferTapN* tap, u32 samps);
 
 // synchronize one tap with another at a given offset in seconds.
 // useful for delays
