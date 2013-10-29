@@ -43,9 +43,14 @@ void set_param_value(u32 idx, io_t val);
 // get param descriptors and initial values from DSP
 void report_params(void);
 
-// pickle / unpickle
+//---- pickle / unpickle
+
+// node 
 extern u8* param_pickle(   pnode_t* pnode, u8* dst);
 extern const u8* param_unpickle( pnode_t* pnode, const u8* src);
+// descriptor
+extern u8* pdesc_pickle(ParamDesc* pdesc, u8* dst);
+extern const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src);
 
 
 #endif // header guard

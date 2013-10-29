@@ -96,7 +96,7 @@ void report_params(void) {
 
 // pickle / unpickle
 u8* param_pickle(pnode_t* pnode, u8* dst) {
-  u32 i;
+  //  u32 i;
   /// wasting some space to preserve 4-byte alignment
   // store idx
   dst = pickle_32((u32)pnode->idx, dst);
@@ -121,5 +121,45 @@ const u8* param_unpickle(pnode_t* pnode, const u8* src) {
   pnode->preset = (u8)val;
   // load descriptor
   // ... 
+  return src;
+}
+
+// pickle/unpickle for param descriptors 
+// (struct definition in param_common.h
+u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
+  u8 i;
+  // store label string
+  for(i=0; i<PARAM_LABEL_LEN; ++i) {
+    *dst++ = pdesc->label[i];
+  }
+  // store unit string
+  for(i=0; i<PARAM_UNIT_LEN; ++i) {
+    *dst++ = pdesc->unit[i];
+  }
+  // store type
+  *dst++ = pdesc->type;
+  // store min
+  dst = pickle_32(pdesc->min, dst);
+  // store max
+  dst = pickle_32(pdesc->max, dst);
+  return dst;
+}
+
+const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
+  u8 i;
+  // store label string
+  for(i=0; i<PARAM_LABEL_LEN; ++i) {
+    pdesc->label[i] = *src++;
+  }
+  // store unit string
+  for(i=0; i<PARAM_UNIT_LEN; ++i) {
+    pdesc->unit[i] = *src++;
+  }
+  // store type
+  pdesc->type = *src++;
+  // store min
+  src = unpickle_32(src, (u32*)&(pdesc->min));
+  // store max
+  src = unpickle_32(src, (u32*)&(pdesc->max));
   return src;
 }
