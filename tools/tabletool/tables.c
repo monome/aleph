@@ -36,9 +36,24 @@ alternative implementation:
   PROBLEM: 
   rounding of the divisor causes overshoot/undershoot and nasty jagged output.
 
+  unforunately, it doesn't seem that 16 fractional bits is enough for adequate linear interpolation on e.g. amplitude tables. bah.
+
 ///////////////////////
 
-unforunately, it doesn't seem that 16 fractional bits is enough for adequate linear interpolation on e.g. amplitude tables. bah.
+case-specific:
+
+ok, the real goal here is to make an efficient crossfade / grain envelope on blackfin.
+bf instruction set has fast, packed 16-bit multiplies.
+16 bits is enough resolution for amplitudes.
+the problem as we have seen comes from the representation of the delta... 
+
+a basic case would have just enough data points 
+so that each delta is near or just below the threshold of perceptual discernment.
+then we can simply divide the rate... 
+wish there was a way to compute the the per-sample delta as each data point is reached.
+seems too expensive though.
+
+/////////////////////
  
 */
 
