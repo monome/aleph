@@ -160,10 +160,11 @@ void ctl_init_params(void) {
   //  ctl_param_change(eParam_mix0, 0);
   //  ctl_param_change(eParam_mix1, 0);
   // both filters are full lowpass
-  ctl_param_change(eParam_low0,  fr32_from_float(0.99));
+  ctl_param_change(eParam_low0, fr32_from_float(0.99));
   ctl_param_change(eParam_low1, fr32_from_float(0.99));
 
   // half dry
+  ctl_param_change(eParam_adc0_dac0, fr32_from_float(0.5) );
   ctl_param_change(eParam_adc0_dac0, fr32_from_float(0.5) );
   // half wet
   ctl_param_change(eParam_del0_dac0, fr32_from_float(0.5) );
@@ -223,9 +224,7 @@ void ctl_init_params(void) {
 void  ctl_set_delay_ms(u8 idx, u32 ms)  {
   u32 samps =  MS_TO_SAMPS(ms);
   print_dbg("\r\n\r\n ctl_set_delay_ms:");
-  while(samps > PARAM_BUFFER_MAX) {
-    samps -= PARAM_BUFFER_MAX;
-  }
+  if (samps > PARAM_BUFFER_MAX) { samps = PARAM_BUFFER_MAX; }
   // bleh
   switch(idx) {
   case 0:
@@ -289,41 +288,42 @@ void ctl_loop_record(u8 idx) {
 // stop recording loop / start playback on given delayline
 void ctl_loop_playback(u8 idx) {
   u32 ms;
-  print_dbg("\r\n\r\n ctl_loop_playback:");
+  //  print_dbg("\r\n\r\n ctl_loop_playback:");
 
   if(loopRec1) {
     // recording
     if(loopPlay1) {
 
       // already playing
-      print_dbg("\r\n (existing loop)");
-      print_dbg("\r\n write disable");
+      //      print_dbg("\r\n (existing loop)");
+      //      print_dbg("\r\n write disable");
       ctl_param_change(eParam_write1, 0);
       render_play();
     } else {
 
       // not playing
-      print_dbg("\r\n (new loop)"); 
+      //      print_dbg("\r\n (new loop)"); 
       if (msLoopStart1 > tcTicks) { // overflow
 	ms = tcTicks + (0xffffffff - msLoopStart1);
       } else {
 	ms = tcTicks - msLoopStart1;
       }
       loopLenSamps = MS_TO_SAMPS(ms) - 1;
-      print_dbg("\r\n loop playback, ms: ");
+      //      print_dbg("\r\n loop playback, ms: ");
       print_dbg_ulong(ms);
-      print_dbg(", samps: ");
+      //      print_dbg(", samps: ");
       print_dbg_ulong(loopLenSamps);
       
-      print_dbg("\r\n write disable");
+      //      print_dbg("\r\n write disable");
       ctl_param_change(eParam_write1, 0);
-      print_dbg("\r\n reset write head");
+      //      print_dbg("\r\n reset write head");
       ctl_param_change(eParam_pos_write1, 1);
-      print_dbg("\r\n reset read head");
+      //      print_dbg("\r\n reset read head");
       ctl_param_change(eParam_pos_read1, 0);
-      print_dbg("\r\n set loop time");
+      //      print_dbg("\r\n set loop time");
+      if (loopLenSamps > PARAM_BUFFER_MAX) { loopLenSamps = PARAM_BUFFER_MAX; }
       ctl_param_change(eParam_loop1, loopLenSamps);
-      print_dbg("\r\n start read head");
+      //      print_dbg("\r\n start read head");
       ctl_param_change(eParam_run_read1, 1);
       render_play();
       // set loop-playing flag
@@ -336,7 +336,7 @@ void ctl_loop_playback(u8 idx) {
     if (loopPlay1) {
       // but a loop is playing
       // reset the loop 
-	print_dbg("\r\n reset read head");
+      //	print_dbg("\r\n reset read head");
 	ctl_param_change(eParam_pos_read1, 0);
 	render_play();
     } else {
@@ -451,16 +451,20 @@ void ctl_set_delay_pos(u8 idx, u8 mul) {
       // no loop, set write pos as tap mul and sync
       ms = mul * tapDeltaMs[1][1];
       samps = MS_TO_SAMPS(ms);
+      if (samps > PARAM_BUFFER_MAX) { samps = PARAM_BUFFER_MAX; }
       ctl_param_change(eParam_pos_write1, samps);
       samps = MS_TO_SAMPS(delayMs[1]);
+      if (samps > PARAM_BUFFER_MAX) { samps = PARAM_BUFFER_MAX; };
       ctl_param_change(eParam_delay1, samps);
     }
   } else {
     // line 0, set write pos to tap mul and sync
     ms = mul * tapDeltaMs[0][1];
       samps = MS_TO_SAMPS(ms);
+      if (samps > PARAM_BUFFER_MAX) { samps = PARAM_BUFFER_MAX; }
       ctl_param_change(eParam_pos_write0, samps);
       samps = MS_TO_SAMPS(delayMs[0]);
+      if (samps > PARAM_BUFFER_MAX) { samps = PARAM_BUFFER_MAX; }
       ctl_param_change(eParam_delay0, samps);
   }
 
@@ -480,12 +484,13 @@ void ctl_set_loop_pos(u8 idx, u8 mul) {
   u32 samps;
   // 32 points
   samps = (loopLenSamps >> 5) * mul;
+  if (samps > PARAM_BUFFER_MAX) { samps = PARAM_BUFFER_MAX; }
   ctl_param_change(eParam_pos_read1, samps);
-
 }
 
 
 
 // set pre level
 void ctl_set_pre(u8 idx, fract32 val) {
+  //...
 }

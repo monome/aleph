@@ -8,18 +8,15 @@ CFLAGS += -g3
 LDFLAGS = -lm
 
 # source directories
-COMMON = ../common
+COMMON = ../../common
 LIBFIXMATH = $(COMMON)/libfixmath
 
 #include paths
 INC := -I$(COMMON) -I$(LIBFIXMATH)
 
 # common object list for all modules
-APP_OBJ = main.o \
+APP_OBJ = tables.o \
 	$(LIBFIXMATH)/fix16.o  \
-	$(LIBFIXMATH)/fix32.o \
-	$(LIBFIXMATH)/fract32.o \
-	$(COMMON)/fract32_emu.o \
 	$(COMMON)/fix.o
 
 $(APP_OBJ): %.o : %.c	
