@@ -759,10 +759,11 @@ u8* net_pickle(u8* dst) {
       dst = (*(op->pickle))(op, dst);
     }
   }
-  // parameter values
+  // parameter nodes (includes value and descriptor)
   for(i=0; i<net->numParams; ++i) {
-    //    pickle_32(net->params[i].data.
+    dst = param_pickle(&(net->params[i]), dst);
   }
+
   return dst;
 }
 
@@ -806,7 +807,10 @@ u8* net_unpickle(const u8* src) {
       src = (*(op->unpickle))(op, src);
     }
   }
-  /// params...
+ // parameter nodes (includes value and descriptor)
+  for(i=0; i<net->numParams; ++i) {
+    src = param_unpickle(&(net->params[i]), src);
+  }
 
   /// presets... (?)
   return (u8*)src;
