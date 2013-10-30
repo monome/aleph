@@ -140,9 +140,13 @@ void select_scroll(s8 dir) {
 
 // render new operator type name
 void render_op_type(void) {
+  const char* name = op_registry[userOpTypes[newOpType]].name;
+  print_dbg("\r\n new op selection: ");
+  print_dbg(name);
+  region_fill(headRegion, 0x0);
   clearln();
   appendln_char('+');
-  appendln(op_registry[userOpTypes[newOpType]].name);
+  appendln(name);
   endln();
   font_string_region_clip(headRegion, lineBuf, 0, 0, 0xa, 0);
 }
@@ -198,6 +202,7 @@ void handle_key_0(s32 val) {
   if(val == 0) { return; }
   if(check_key(0)) {
     // select op's inputs on ins page
+    //...
   }
 }
 
@@ -205,14 +210,18 @@ void handle_key_1(s32 val) {
   if(val == 0) { return; }
   if(check_key(1)) {
     // select op's outputs on outs page
+    //...
   }
 }
 
 void handle_key_2(s32 val) {
-  // create new operator of selected type
-  net_add_op(userOpTypes[newOpType]);
-  // redraw...
-  
+  if(val == 0) { return; }
+  if(check_key(2)) { 
+    // create new operator of selected type
+    net_add_op(userOpTypes[newOpType]);
+    // redraw...
+  }
+  show_foot();
 }
 
 void handle_key_3(s32 val) {
