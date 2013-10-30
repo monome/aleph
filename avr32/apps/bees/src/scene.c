@@ -57,7 +57,7 @@ void scene_deinit(void) {
 void scene_write_buf(void) {
   u8* dst = (u8*) &(sceneData->pickle);
   ///// print parmameters
-  u32 i;
+  //  u32 i;
 
   print_dbg("\r\n writing scene data... ");
 
@@ -141,7 +141,7 @@ void scene_read_buf(void) {
   //  net_retrigger_inputs();
   
   // update bfin parameters
-  #warning "scene load->param change still broken"
+  #warning "scene load->param change still broken, probably"
   //  net_send_params();
   print_dbg("\r\n sent new params");
   

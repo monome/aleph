@@ -47,8 +47,8 @@ void op_sw_init(void* op) {
   sw->super.in_val = sw->in_val;
   sw->in_val[0] = &(sw->state);
   sw->in_val[1] = &(sw->tog);
-  sw->in_val[2] = &(sw->mul)
-;
+  sw->in_val[2] = &(sw->mul);
+
   sw->super.out = sw->outs;
   sw->super.opString = op_sw_opstring;
   sw->super.inString = op_sw_instring;

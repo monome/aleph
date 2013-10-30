@@ -332,7 +332,7 @@ void init_page_ins(void) {
 }
 
 // refresh
-// called when this page is selected
+// called when the page is selected to update render 
 void refresh_ins(void) { 
   print_dbg("\r\n refresh INS... ");
   // assign global scroll region pointer
@@ -343,9 +343,12 @@ void refresh_ins(void) {
   font_string_region_clip(headRegion, "INPUTS", 0, 0, 0xf, 0x1);
 }
 
-//--------------------------
-//---- static definitions
+//========================================================
+//======= static definitions
 
+
+//------------------------
+//-- handlers
 // function keys
 void handle_key_0(s32 val) {
   if(val == 0) { return; }

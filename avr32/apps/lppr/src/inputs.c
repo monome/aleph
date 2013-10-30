@@ -320,5 +320,5 @@ extern fix16 input_hz (u32 in) {
 
 // get frequency coefficient from input
 extern fract32 input_freq (u32 in) {
-  return table_look(tabHz, in);
+  return table_look(tabFreq, in);
 }

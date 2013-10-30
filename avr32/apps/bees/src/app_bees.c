@@ -63,10 +63,7 @@ void app_init(void) {
 
   // set handler
   print_dbg("\r\n setting handler ");
-   appEventHandler = &bees_handler;
-
-  // pull up power control pin, enabling soft-powerdown
-  gpio_set_gpio_pin(POWER_CTL_PIN);
+  appEventHandler = &bees_handler;
 
 }
 
@@ -80,25 +77,32 @@ u8 app_launch(u8 firstrun) {
 
   if(firstrun) {
     print_dbg("\r\n first run, don't load DSP or scene");
+    render_boot("launching app, first run");
     //    print_dbg("\r\n writing default scene... ");
     //    print_dbg("( not really )");    
     //    scene_write_default();
   } else {
     print_dbg("\r\n booting default ldr from flash... ");
+    render_boot("booting DSP from flash");
     flash_read_ldr();
     /// ???
     delay_ms(10);
 
     bfin_load_buf();    
     print_dbg("\r\n DSP booted, waiting to query params...");
+    render_boot("waiting for DSP init");
+
     bfin_wait_ready();
     print_dbg(" requesting param report...");
+    render_boot("requesting DSP params");
     net_report_params();
 
     print_dbg("\r\n enable DSP audio...");
+    render_boot("enabling audio");
     bfin_enable();
     
     print_dbg("\r\n reading default scene... ");
+    render_boot("reading default scene");
     //    print_dbg("( not really )");
     scene_read_default();
     //    print_dbg("\r\n size of scene data: ");
@@ -109,8 +113,11 @@ u8 app_launch(u8 firstrun) {
 
   // enable timers
   print_dbg("\r\n enable app timers...");
+    render_boot("enabling app timers");
   init_app_timers();
     
+  // pull up power control pin, enabling soft-powerdown
+  gpio_set_gpio_pin(POWER_CTL_PIN);
 
   return 1;
 }

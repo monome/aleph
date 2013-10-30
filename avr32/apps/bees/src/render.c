@@ -88,9 +88,9 @@ static u32 scrollLines[8] = {
 
 // check dirty flag and update region
 
-//// test:
-//static inline void region_update(region* r) {
-void region_update(region* r) {
+// static inline void region_update(region* r) {
+//// test: extern
+void region_update(region* r) { 
   if(r->dirty) {
     screen_draw_region(r->x, r->y, r->w, r->h, r->data);
     r->dirty = 0;
@@ -102,16 +102,10 @@ void region_update(region* r) {
 
 // initialize
 void render_init(void) {
-  /// dbg
-  /* static region** allRegions[4] = { */
-  /*   &headRegion, */
-  /*   &footRegion, */
-  /*   //    &selectRegion, */
-  /*   &lineRegion, */
-  /* }; */
-
-  /* u8 i; */
-  ////////
+ 
+  // scrolling boot region
+  region_alloc((region*)(&bootScrollRegion));
+  scroll_init(&bootScroll, &bootScrollRegion);
 
   print_dbg("\r\n init rendering regions.. ");
   // screen regions allocated here
@@ -131,12 +125,14 @@ void render_init(void) {
   //  selectRegion = &selectRegion_pr;
   lineRegion = &lineRegion_pr;
 
-  //// don't need? using pointer to page-specific scroller
-  // scroll init needs to compute offsets based on region size
-  // use a dummy region with correct dimensions but no data
-  //  pageScrollRegion = &dummyRegion;
-  //  scroll_init(pageCenterScroll, pageScrollRegion);
 }
+
+// render text to scrolling buffer during boot procedure
+extern void render_boot(const char* str) {
+  scroll_string_front(&bootScroll, (char*)str);
+  region_update(bootScroll.reg);
+}
+
 
 // update
 void render_update(void) {

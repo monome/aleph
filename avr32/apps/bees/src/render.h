@@ -53,6 +53,10 @@ extern region* lineRegion;
 
 // initialize
 extern void render_init(void);
+
+// render text to scrolling buffer during boot procedure
+extern void render_boot(const char* str);
+
 // draw dirty regions to the screen
 extern void render_update(void);
 // set current header region
@@ -82,7 +86,9 @@ extern void render_fill_scroll_line(u8 n, u8 col);
 extern void render_scroll_apply_hl(u8 n, u8 hl);
 
 /////
-/// test (can/should be declared static)
+/// this can and should be a static function
+/// it is external right now for testing
+/// update a single region
 extern void region_update(region* r);
 ////
 
@@ -93,30 +99,28 @@ extern void region_update(region* r);
 
 // draw to top of string buffer
 extern void println( const char* str, int pos);
+
 // append to line buffer
 extern void appendln( const char* str);
+
 // write int to top of line buffer
 extern void println_int( int val, int pos);
+
 // append int to line buffer (right justified, with bound argument)
 extern void appendln_int_rj( int val, int len);
+
 // append int to line buffer (left justified, no bounds)
 /// for short unsigned values (3 digits)
 extern void appendln_idx_lj(u16 val);
+
 // append char to line buffer
 extern void appendln_char( char c);
-// clear line buffer
+// clear line buffer, and reset position
 extern void clearln( void);
 // end line buffer (write a zero to next position)
 extern void endln( void);
 
 // draw editing string at given position, with cursor highlight
 extern void draw_edit_string( u8 x, u8 y, char* str, u8 len);
-
-//-----------------------------
-//----- extra miscellaneous getters
-// get the line buffer (a string)
-extern char* get_line_buf(void);
-// get current y-offset in scroll
-//extern u8 get_yoff(void);
 
 #endif // header guard

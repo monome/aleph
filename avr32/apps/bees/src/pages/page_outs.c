@@ -12,18 +12,23 @@
 #include "render.h"
 
 //-------------------------
-//---- static variables
+//==== static variables
 
+//--- these are common to all pages
+
+// a region for the center scroll
 static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
+// a scroll class that manages write/read offsets into the scroll region
 static scroll centerScroll;
 
+//--- page-specific state variables
 // selection-included-in-preset flag (read from network on selection)
 static u8 inPreset = 0;
 // confirm clear operation
 static u8 clearConfirm = 0;
 
-//-------------------------
-//---- static
+//==========================================
+//===== static function declarations
 
 // handler declarations
 static void handle_enc_0(s32 val);
@@ -221,7 +226,6 @@ static void select_scroll(s32 dir) {
 
 
 // display the function key labels according to current state
-/// FIXME: would be more maintainable to use enum and array of funtcions. i guess
 static void show_foot0(void) {
   u8 fill = 0;
   if(keyPressed == 0) {

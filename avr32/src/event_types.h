@@ -7,26 +7,20 @@
 #ifndef _EVENT_TYPES_H_
 #define _EVENT_TYPES_H_
 
+// enumerate event types
+// WARNING: changing this will break existing avr32 applications..
 typedef enum {
   ///------ periodic system events:
-  /// ADC polling
-  kEventAdc0 ,
+  kEventAdc0 , 	// receive values from polled ADC channels
   kEventAdc1 ,
   kEventAdc2 ,
   kEventAdc3 ,
-  /// screen refresh
-  //  kEventRefresh,
-
-  /// poll monome
-  kEventMonomePoll,
-  // refresh monome
-  kEventMonomeRefresh,
-  // handle rx data
-
-  /// midi polling
-  //...
-  /// HID polling
-  //...
+  kEventMonomePoll,	// poll monome
+  kEventMonomeRefresh, 	// refresh monome
+  kEventMidiPoll, 	// poll MIDI
+  kEventMidiRefresh, 	// refresh
+  /// poll HID
+  kEventHidPoll,
   ///------ discrete system events
   /// connect/disconnect usb devices
   kEventFtdiConnect,
@@ -67,9 +61,6 @@ typedef enum {
   //// monome connect / disconnect
   kEventMonomeConnect,
   kEventMonomeDisconnect,
-
-  /// MIDI
-
   /// HID
   kEventHidByte,
   /// dummy/count

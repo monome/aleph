@@ -41,6 +41,9 @@ typedef enum {
   eParamType1plpCoeff,
   // raw coefficient for SVF
   eParamTypeSvfCoeff,
+  //...
+  //...
+  //...
 } paramUseType;
 
 // 4-byte union of value representations

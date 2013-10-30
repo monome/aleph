@@ -20,6 +20,7 @@
 #include "pages_protected.h"
 #include "net_monome.h"
 #include "pages.h"
+#include "render.h"
 #include "scene.h"
 
 // alt-mode flag (momentary)
@@ -29,22 +30,27 @@ u8 altMode = 0;
 static const eEventType kMenuEventMin = kEventEncoder0;
 static const eEventType kMenuEventMax = kEventSwitch3;
 
+// dummy handler
+static void handle_dummy(s32 data) { ;; }
+
+// power-down handler
+static void handle_powerdown(s32 data) {
+  render_boot("powering down");
+  render_boot("writing current scene to flash");
+  scene_write_default();
+  // power down
+  delay_ms(100);
+  gpio_clr_gpio_pin(POWER_CTL_PIN);
+}
+
+// array of handlers for all event types (!)
+
+
+/// FIXME:
+// shouldn't use. 
+/// apps should define an array of function pointers for handlers.
 void bees_handler(event_t* e) {
   const eEventType t = e->eventType;
-
-  /* print_dbg("\r\n --- "); */
-  /* print_dbg("\r\n bees handler, type: "); */
-  /* print_dbg_ulong(e->eventType); */
-  /* print_dbg(" , data: 0x"); */
-  /* print_dbg_hex(e->eventData); */
-  
-  /////// FIXME
-  /// a nasty hack, relying on the relative values of enums ... :S
-
-  //// truly it would be best for every application (here, every page)
-  // to define a handler (FP) for every UI event:
-  //  (*(curPage->handler[e->eventType]))(e->eventData);
-
 
   if( (t >= kMenuEventMin) && (t <= kMenuEventMax)) {
     // index FP 
@@ -62,12 +68,7 @@ void bees_handler(event_t* e) {
       //      print_dbg_hex(e->eventData);
       // write default scene...
       //      print_dbg("\r\n writing default scene to flash...");
-      scene_write_default();
-      // power down
-      //      print_dbg("\r\n powering down...");
-      delay_ms(100);
-      gpio_clr_gpio_pin(POWER_CTL_PIN);
-      
+      handle_powerdown(e->eventData);
       break;
     case kEventSwitch6: // FS 0
       // .. update op
@@ -148,9 +149,6 @@ s32 scale_knob_value(s32 val) {
     0x10000000 , // 23
     0x20000000 , // 24
   };
-
-
-
   s32 vabs = BIT_ABS(val);
   s32 ret = val;
 
