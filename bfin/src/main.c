@@ -43,7 +43,6 @@ int main(void) {
   init_1939();
 
   /// initialize the CV dac (reset) 
-  /// this is HANGING SPI??? WWWWWTTTTTTFFFFFF
   init_dac();
 
   // intialize the sport0 for audio rx/tx

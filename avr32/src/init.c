@@ -65,6 +65,9 @@ void init_gpio(void) {
   gpio_enable_pin_pull_up(SW_POWER_PIN);
 
 
+  // try making bfin report ready by default??
+  //  gpio_enable_pin_pull_up(BFIN_READY_PIN);
+
   /// trying this...
   /* gpio_enable_pin_glitch_filter(SW0_PIN); */
   /* gpio_enable_pin_glitch_filter(SW1_PIN); */

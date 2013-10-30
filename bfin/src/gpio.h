@@ -18,7 +18,7 @@
 // "ready" pin - pf12
 // set high when able to receive param changes
 // e.g. init finished, frame finished
-#define READY_PIN        12
+#define READY_PIN        13
 #define READY_UNMASK 	(1 << READY_PIN)
 #define READY_MASK	(0xffff ^ READY_UNMASK)
 #define READY_LO 	*pFIO_FLAG_D &= READY_MASK
@@ -27,7 +27,7 @@
 // "request" pin - pf13
 // should it prove necessary, bfin will use this pin
 // to trigger interrupts on avr32.
-#define REQUEST_PIN        13
+#define REQUEST_PIN        12
 #define REQUEST_UNMASK 	(1 << REQUEST_PIN)
 #define REQUEST_MASK	(0xffff ^ REQUEST_UNMASK)
 #define REQUEST_LO 	*pFIO_FLAG_D &= REQUEST_MASK

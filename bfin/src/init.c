@@ -71,10 +71,9 @@ void init_1939(void) {
   *pFIO_FLAG_D &= CODEC_RESET_MASK;
   del = 100; while(del--) { ;; } 
   *pFIO_FLAG_D |= (0xffff ^ CODEC_RESET_MASK);
-  
-  return;
 
   /// using the codec in standalone now, dont need SPI config
+  return;
 
   /* //// TESTING: */
   /* /// wait for the codec to reset */

@@ -85,12 +85,18 @@ u8 app_launch(u8 firstrun) {
     print_dbg("\r\n booting default ldr from flash... ");
     render_boot("booting DSP from flash");
     flash_read_ldr();
-    /// ???
-    delay_ms(10);
 
     bfin_load_buf();    
     print_dbg("\r\n DSP booted, waiting to query params...");
     render_boot("waiting for DSP init");
+
+    //  ?
+    delay_ms(5);
+
+    /// blackfin should clear ready pin ASAP on boot.
+    /// but give it a moment to accomplish that.
+    delay_ms(5);
+    
 
     bfin_wait_ready();
     print_dbg(" requesting param report...");
