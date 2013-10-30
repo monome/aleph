@@ -31,7 +31,7 @@ static const eEventType kMenuEventMin = kEventEncoder0;
 static const eEventType kMenuEventMax = kEventSwitch3;
 
 // dummy handler
-static void handle_dummy(s32 data) { ;; }
+// static void handle_dummy(s32 data) { ;; }
 
 // power-down handler
 static void handle_powerdown(s32 data) {

@@ -407,7 +407,7 @@ void handle_enc_2(s32 val) {
   if(val > 0) {
     set_page(ePageOuts);
   } else {
-    set_page(ePageDsp);
+    set_page(ePageOps);
   }
 }
 

@@ -39,6 +39,7 @@ CSRCS += \
 	$(APP_DIR)/src/pages/page_dsp.c \
 	$(APP_DIR)/src/pages/page_gathered.c \
 	$(APP_DIR)/src/pages/page_ins.c \
+	$(APP_DIR)/src/pages/page_ops.c \
 	$(APP_DIR)/src/pages/page_outs.c \
 	$(APP_DIR)/src/pages/page_play.c \
 	$(APP_DIR)/src/pages/page_presets.c \

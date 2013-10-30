@@ -96,8 +96,6 @@ extern void refresh_play(void);
 extern void pages_init(void);
 // de-init
 extern void pages_deinit(void);
-// handle key
-// extern void pages_handleKey(uiKey_t key, s16 value);
 // refresh
 extern void pages_refresh(void);
 // check key against last pressed

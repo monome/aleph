@@ -46,8 +46,8 @@ page_t pages[NUM_PAGES] = {
     .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   { .name = "OPS",
-    .refresh = &refresh_dsp, // refresh function
-    .handler = handler_dsp, // pointer to handlers
+    .refresh = &refresh_ops, // refresh function
+    .handler = handler_ops, // pointer to handlers
     .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   { .name = "SCENES",
@@ -88,10 +88,10 @@ u8 keyPressed = 255;
   init_page_ins();
   init_page_outs();
   init_page_dsp();
+  init_page_ops();
   /*
     // TODO
   init_page_presets();
-  init_page_ops();
   init_page_scenes();
   init_page_gathered();
   init_page_play();
@@ -115,8 +115,8 @@ void set_page(ePage n) {
   u8 i;
   pageIdx = n;
   
-  print_dbg("\r\n setting page... ");
-
+  print_dbg("\r\n setting page, idx: ");
+  print_dbg_ulong(n);
   curPage = &(pages[pageIdx]);
 
   print_dbg("\r\n refreshing page... ");

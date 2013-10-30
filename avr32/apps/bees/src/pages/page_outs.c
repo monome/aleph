@@ -11,11 +11,10 @@
 #include "pages.h"
 #include "render.h"
 
-//-------------------------
+//====================================
 //==== static variables
 
 //--- these are common to all pages
-
 // a region for the center scroll
 static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
 // a scroll class that manages write/read offsets into the scroll region

@@ -140,7 +140,6 @@ static void show_foot1(void) {
   if(keyPressed == 1) {
     fill = 0x5;
   }
-  
   region_fill(footRegion[1], fill);
   font_string_region_clip(footRegion[1], "WRITE", 0, 0, 0xf, fill);
   
@@ -207,7 +206,7 @@ void handle_enc_1(s32 val) {
 void handle_enc_2(s32 val) {
   // scroll page
   if(val > 0) {
-    set_page(ePageIns);
+    set_page(ePageOps);
   } else {
     set_page(ePageOuts);
   }

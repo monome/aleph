@@ -47,7 +47,7 @@ static region footRegion_pr[4] = {
 static region lineRegion_pr = 	{ .w=128, .h=8, .x = 0, .y = 0  };
 
 // dummy region with full-screen dimensions but no data
-static region dummyRegion = { .w=128, .h=64, .x=0, .y=0, .data=NULL };
+// static region dummyRegion = { .w=128, .h=64, .x=0, .y=0, .data=NULL };
 
 // pointer to current page scroll region
 static region* pageScrollRegion = NULL;
