@@ -7,6 +7,7 @@
 #include "print_funcs.h"
 #include "sd_mmc_spi.h"
 #include "tc.h"
+#include "usart.h"
 // aleph
 #include "aleph_board.h"
 #include "bfin.h"
@@ -66,6 +67,12 @@ static void irq_port1_line2(void);
 // irq for PB24-PB31
 __attribute__((__interrupt__))
 static void irq_port1_line3(void);
+
+
+// irq for uart
+__attribute__((__interrupt__))
+static void irq_usart(void);
+
 
 //---------------------------------
 //----- static function definitions
@@ -226,6 +233,18 @@ static void irq_port1_line3(void) {
   }
 }
 
+
+// interrupt handler for uart
+__attribute__((__interrupt__))
+static void irq_usart(void) {
+  int c;
+  usart_read_char(FTDI_USART,&c);
+  usart_write_char(FTDI_USART,c);
+}
+
+
+
+
   //-----------------------------
   //---- external function definitions
 
@@ -280,4 +299,7 @@ static void irq_port1_line3(void) {
 
     // register TC interrupt
     INTC_register_interrupt(&irq_tc, APP_TC_IRQ, APP_TC_IRQ_PRIORITY);
+
+    // register uart interrupt
+    INTC_register_interrupt(&irq_usart, AVR32_USART0_IRQ, UI_IRQ_PRIORITY);
   }

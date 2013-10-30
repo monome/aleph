@@ -155,6 +155,8 @@ void init_ftdi_usart (void) {
 
   // Initialize in RS232 mode.
   usart_init_rs232(FTDI_USART, &FTDI_USART_OPTIONS, FPBA_HZ);
+
+  FTDI_USART->ier = AVR32_USART_IER_RXRDY_MASK;
 }
 
 // initialize spi1: OLED, ADC, SD/MMC
