@@ -66,8 +66,10 @@ static void render_op_type(void);
 
 // render a given line
 void render_line(s16 idx) {
+  region_fill(lineRegion, 0x0);
   clearln();
   appendln_idx_lj((u8)idx);
+  appendln_char('.');
   appendln(net_op_name(idx));
   endln();
   font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
@@ -218,6 +220,19 @@ void handle_key_3(s32 val) {
 }
 
 void handle_enc_0(s32 val) {
+  // select new operator type
+  newOpType++;
+  if (newOpType >= NUM_USER_OP_TYPES) {
+    newOpType = 0;
+  }
+  render_op_type();
+}
+
+void handle_enc_1(s32 val) {
+  // nothing
+}
+
+void handle_enc_2(s32 val) {
   // scroll page
   if(val > 0) {
     set_page(ePageIns);
@@ -226,22 +241,9 @@ void handle_enc_0(s32 val) {
   }
 }
 
-void handle_enc_1(s32 val) {
+void handle_enc_3(s32 val) {
   // scroll selection
   select_scroll(val);
-}
-
-void handle_enc_2(s32 val) {
-  // (nothing)
-}
-
-void handle_enc_3(s32 val) {
-  // select new operator type
-  newOpType++;
-  if (newOpType >= NUM_USER_OP_TYPES) {
-    newOpType = 0;
-  }
-  render_op_type();
 }
 
 
@@ -272,13 +274,13 @@ void init_page_ops(void) {
 
 // refresh 
 void refresh_ops(void) { 
-  print_dbg("\r\n refresh OUTS... ");
+  print_dbg("\r\n refresh OPS... ");
   // assign global scroll region pointer
   // also marks dirty
   render_set_scroll(&centerScroll);
   // other regions are static in top-level render, with global handles
   region_fill(headRegion, 0x0);
-  font_string_region_clip(headRegion, "OUTPUTS", 0, 0, 0xf, 0x1);
+  font_string_region_clip(headRegion, "OPERATORS", 0, 0, 0xf, 0x1);
 }
 
 const page_handler_t handler_ops[eNumPageHandlers] = {
