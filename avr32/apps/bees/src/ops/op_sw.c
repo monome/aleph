@@ -136,4 +136,3 @@ u8* op_sw_unpickle(op_sw_t* sw, const u8* src) {
   src = unpickle_io(src, (u32*)&(sw->tog));
   return (u8*)src;
 }
-

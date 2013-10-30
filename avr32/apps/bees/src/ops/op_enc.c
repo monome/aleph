@@ -1,5 +1,6 @@
 #include "net_protected.h"
 #include "op_enc.h"
+#include "pickle.h"
 
 //-------------------------------------------------
 //----- static function declarations
@@ -10,6 +11,11 @@ static void op_enc_in_max    ( op_enc_t* enc, const io_t* v);
 static void op_enc_in_min    ( op_enc_t* enc, const io_t* v);
 static void op_enc_in_move   ( op_enc_t* enc, const io_t* v);
 static void op_enc_in_step   ( op_enc_t* enc, const io_t* v);
+
+// pickles
+static u8* op_enc_pickle(op_enc_t* enc, u8* dst);
+static const u8* op_enc_unpickle(op_enc_t* sw, const u8* src);
+
 
 //-------------------------------------------------
 //----- static vars
@@ -32,12 +38,18 @@ static op_in_fn op_enc_in_fn[5] = {
 // initialize
 void op_enc_init(void* mem) {
   op_enc_t* enc = (op_enc_t*)mem;
+
+  // superclass functions
+  enc->super.inc_fn = (op_inc_fn)op_enc_inc_input;
+  enc->super.in_fn = op_enc_in_fn;
+  enc->super.pickle = (op_pickle_fn) (&op_enc_pickle);
+  enc->super.unpickle = (op_unpickle_fn) (&op_enc_unpickle);
+
+  // superclass state
   enc->super.numInputs = 5;
   enc->super.numOutputs = 2;
   enc->outs[0] = -1;
   enc->outs[1] = -1;
-  enc->super.inc_fn = (op_inc_fn)op_enc_inc_input;
-  enc->super.in_fn = op_enc_in_fn;
   enc->super.in_val = enc->in_val;
   enc->super.out = enc->outs;
   enc->super.opString = op_enc_opstring;
@@ -46,6 +58,7 @@ void op_enc_init(void* mem) {
   enc->super.type = eOpEnc;
   enc->super.flags |= (1 << eOpFlagSys); // system 
   enc->super.flags |= (1 << eOpFlagCtl); // control generator
+
   enc->in_val[0] = &(enc->move);
   enc->in_val[1] = &(enc->min);
   enc->in_val[2] = &(enc->max);
@@ -152,4 +165,23 @@ static void op_enc_inc_input(op_enc_t* enc, const s16 idx, const io_t inc) {
     op_enc_in_wrap(enc, &inc);
     break;
   }
+}
+
+// pickles
+u8* op_enc_pickle(op_enc_t* enc, u8* dst) {
+  dst = pickle_io(enc->val, dst);
+  dst = pickle_io(enc->step, dst);
+  dst = pickle_io(enc->min, dst);
+  dst = pickle_io(enc->max, dst);
+  dst = pickle_io(enc->wrap, dst);
+  return dst;
+}
+
+const u8* op_enc_unpickle(op_enc_t* enc, const u8* src) {
+  src = unpickle_io(src, (u32*)&(enc->val));
+  src = unpickle_io(src, (u32*)&(enc->step));
+  src = unpickle_io(src, (u32*)&(enc->min));
+  src = unpickle_io(src, (u32*)&(enc->max));
+  src = unpickle_io(src, (u32*)&(enc->wrap));
+  return src;
 }
