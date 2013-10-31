@@ -62,36 +62,36 @@ void set_param_value(u32 idx, io_t val) {
 
 
 // get param descriptors and initial values from DSP
-void report_params(void) {
-  volatile ParamDesc pdesc;
-  u32 numParams;
-  u8 i;
+/* void report_params(void) { */
+/*   volatile ParamDesc pdesc; */
+/*   u32 numParams; */
+/*   u8 i; */
 
-  bfin_get_num_params(&numParams);
-  // print_dbg("\r\nnumparams: ");
-  // print_dbg_ulong(numParams);
+/*   bfin_get_num_params(&numParams); */
+/*   // print_dbg("\r\nnumparams: "); */
+/*   // print_dbg_ulong(numParams); */
 
-  if(numParams == 255) {
-    // print_dbg("\r\n bfin reported too many parameters; something went wrong.");
-    return;
-  }
+/*   if(numParams == 255) { */
+/*     // print_dbg("\r\n bfin reported too many parameters; something went wrong."); */
+/*     return; */
+/*   } */
 
-  if(numParams > 0) {
-    net_clear_params();
-    for(i=0; i<numParams; i++) {
-      bfin_get_param_desc(i, &pdesc);
+/*   if(numParams > 0) { */
+/*     net_clear_params(); */
+/*     for(i=0; i<numParams; i++) { */
+/*       bfin_get_param_desc(i, &pdesc); */
 
-      net_add_param(i, (const ParamDesc*)&pdesc);     
+/*       net_add_param(i, (const ParamDesc*)&pdesc);      */
       
-      // print_dbg("\r\n got pdesc : ");
-      // print_dbg((const char* )pdesc.label);
-    }
-  }
+/*       // print_dbg("\r\n got pdesc : "); */
+/*       // print_dbg((const char* )pdesc.label); */
+/*     } */
+/*   } */
 
-  /// TODO: get values...
-  /// let the user decide.
-  // bfin_enable();
-}
+/*   /// TODO: get values... */
+/*   /// let the user decide. */
+/*   // bfin_enable(); */
+/* } */
 
 
 // pickle / unpickle

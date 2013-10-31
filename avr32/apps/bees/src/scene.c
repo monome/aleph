@@ -141,8 +141,8 @@ void scene_read_buf(void) {
   //  net_retrigger_inputs();
   
   // update bfin parameters
-  #warning "scene load->param change still broken, probably"
-  //  net_send_params();
+    //  #warning "scene load->param change still broken, probably"
+  net_send_params();
   print_dbg("\r\n sent new params");
   
   // enable audio processing

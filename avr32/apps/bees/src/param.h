@@ -41,7 +41,7 @@ void set_param_value(u32 idx, io_t val);
 //const ParamDesc* getParamDesc(); 
 
 // get param descriptors and initial values from DSP
-void report_params(void);
+// void report_params(void);
 
 //---- pickle / unpickle
 

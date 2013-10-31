@@ -646,11 +646,12 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
   net->params[net->numParams].idx = idx; 
   net->params[net->numParams].preset = 1; 
   net->params[net->numParams].data.value.asInt = pdesc->min;
-  net->numParams++;
+  net->numParams += 1;
 }
 
 // clear existing parameters
 void net_clear_params(void) {
+  print_dbg("\r\n clearing parameter list... ");
   net->numParams = 0;
 }
 
@@ -672,8 +673,6 @@ void net_retrigger_inputs(void) {
   netActive = 1;
 }
 
-
-
 // query the blackfin for parameter list and populate pnodes
 u8 net_report_params(void) {
   volatile char buf[64];
@@ -686,14 +685,15 @@ u8 net_report_params(void) {
   print_dbg("\r\nnumparams: ");
   print_dbg_ulong(numParams);
 
-
-
   if(numParams == 255) {
     print_dbg("\r\n report_params fail (255)");
     return 0;
   }
-
+  
   if(numParams > 0) {
+
+    net_clear_params();
+
     for(i=0; i<numParams; i++) {
       bfin_get_param_desc(i, &pdesc);
 
