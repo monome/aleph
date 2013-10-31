@@ -75,7 +75,7 @@ extern page_t* curPage;
 // idx of current page
 extern s8 pageIdx;
 // last pressed key
-u8 keyPressed;
+extern u8 keyPressed;
 
 //-----------------------
 //--- extern functions
@@ -121,5 +121,7 @@ extern void pages_refresh(void);
 extern void set_page(ePage n);
 // check key against last pressed
 extern u8 check_key(u8 key);
+// toggle play mode
+extern u8 pages_toggle_play(void);
 
 #endif  // h guard

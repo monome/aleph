@@ -71,9 +71,9 @@ extern void render_to_select(void);
 extern void render_from_scroll_center(void);
 // copy temp data to center of scroll region (clipping)
 extern void render_to_scroll_center(void);
-// add data to top of scroll region (clipping)
+// add line region to top of scroll region (clipping)
 extern void render_to_scroll_top(void);
-// add data to bottom of scroll region (clipping)
+// add line region to bottom of scroll region (clipping)
 extern void render_to_scroll_bottom(void);
 
 

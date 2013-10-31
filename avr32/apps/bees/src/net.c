@@ -138,6 +138,7 @@ void net_init_onode(u16 idx) {
 
 // activate an input node with a value
 void net_activate(s16 inIdx, const io_t val, void* op) {
+  static inode_t* pIn;
   /* print_dbg("\r\n net_activate, input idx: 0x"); */
   /* print_dbg_hex(inIdx); */
   /* print_dbg(", val: 0x"); */
@@ -148,7 +149,7 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
   /* print_dbg_hex(net->ins[inIdx].opInIdx); */
   /* print_dbg(" , caller: 0x"); */
   /* print_dbg_hex((u32)op);   */
-    
+  
   if(!netActive) {
     if(op != NULL) {
       // if the net isn't active, dont respond to requests from operators
@@ -158,17 +159,25 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
   }
 
   if(inIdx >= 0) {
-    //    print_dbg("\r\n play_input ");
-    //    print_dbg(" ( not really ) ");
+    // input exists
+    pIn = &(net->ins[inIdx]);
 
-    play_input(inIdx);
+    /// only process for play mode if we're in play mode
+    if(pageIdx == ePagePlay) {
+      /// FIXME: use play-included flag
+      // for now, process all activations with play mode
+      //if(pIn->play) {
+      play_input(inIdx);
+      //    }
+    }
 
     if(inIdx < net->numIns) {
-      op_set_in_val(net->ops[net->ins[inIdx].opIdx],
-		    net->ins[inIdx].opInIdx,
+      // this is an op input
+      op_set_in_val(net->ops[pIn->opIdx],
+		    pIn->opInIdx,
 		    val);
     } else { 
-      // index in dsp param list
+      // this is a parameter
       inIdx -= net->numIns;
       if (inIdx >= net->numParams) {
 	return ;
@@ -755,9 +764,18 @@ u8* net_pickle(u8* dst) {
       dst = (*(op->pickle))(op, dst);
     }
   }
+
+  /// TODO:
+  // need to store play- and preset-include for input nodes... 
+
+  // TODO:
+  // need to store preset-include for output nodes... 
+
+
   // write count of parameters
   val = (u32)(net->numParams);
   dst = pickle_32(val, dst);
+
   // write parameter nodes (includes value and descriptor)
   for(i=0; i<net->numParams; ++i) {
     dst = param_pickle(&(net->params[i]), dst);
@@ -814,6 +832,12 @@ u8* net_unpickle(const u8* src) {
       src = (*(op->unpickle))(op, src);
     }
   }
+
+  // TODO:
+  // need to load play- and preset-include for input nodes... 
+
+  // TODO:
+  // need to load  preset-include for output nodes... 
 
   // get count of parameters
   src = unpickle_32(src, &val);

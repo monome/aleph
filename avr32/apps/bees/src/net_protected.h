@@ -38,6 +38,8 @@ typedef struct _inode {
   u8 opInIdx;
   // preset inclusion flag
   u8 preset;
+  // play inclusion flag
+  u8 play;
 } inode_t;
 
 // output node type (index into inode list)

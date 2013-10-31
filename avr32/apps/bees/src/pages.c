@@ -80,6 +80,11 @@ s8 pageIdx;
 // last pressed key
 u8 keyPressed = 255;
 
+//--------------
+//--- static vars
+// saved idx of last non-play page
+static s8 lastPageIdx = 0;
+
 //-----------------------------------
 //----- external function definitions
 
@@ -143,6 +148,20 @@ u8 check_key(u8 key) {
   } else {
     keyPressed = key;
     ret = 0;
+  }
+  return ret;
+}
+
+// toggle play mode
+u8 pages_toggle_play(void) {
+  u8 ret;
+  if(pageIdx == ePagePlay) {
+    ret = 0;
+    set_page(lastPageIdx);
+  } else {
+    ret = 1;
+    lastPageIdx = pageIdx;
+    set_page(ePagePlay);
   }
   return ret;
 }

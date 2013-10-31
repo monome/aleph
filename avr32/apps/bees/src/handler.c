@@ -46,7 +46,7 @@ static void handle_powerdown(s32 data) {
 
 
 /// FIXME:
-// shouldn't use. 
+// shouldn't use. generated ASM for big case statements is horrible.
 /// apps should define an array of function pointers for handlers.
 void bees_handler(event_t* e) {
   const eEventType t = e->eventType;
@@ -57,10 +57,15 @@ void bees_handler(event_t* e) {
     /* print_dbg_hex((u32) (curPage->handler[t - kMenuEventMin])); */
     curPage->handler[t - kMenuEventMin](e->eventData);
   } else {
-    /// case 
     switch(t) {
     case kEventSwitch4: // mode
-      // change mode
+      if(e->eventData > 0) {
+	if(pages_toggle_play()) {
+	  gpio_set_gpio_pin(LED_MODE_PIN);
+	} else {
+	  gpio_clr_gpio_pin(LED_MODE_PIN);
+	}
+      }
       break;
     case kEventSwitch5: // power      
       //      print_dbg("\r\n bees handler got power-switch event, value: ");

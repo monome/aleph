@@ -20,13 +20,6 @@
 // size of buffer (product)
 #define PLAY_SCROLL_BUF_LEN 196
 
-// list of recently touched parameter idxs
-/* typedef struct _touched { */
-/*   u16 idx; */
-/*   io_t val; */
-/*   char name[PARAM_LABEL_LEN]; */
-/* } touched_t; */
-
 // init
 extern void play_init(void); 
 // process input node

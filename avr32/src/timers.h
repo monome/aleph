@@ -9,7 +9,6 @@
 #define _TIMERS_H_
 
 #include <compiler.h>
-#include "types.h"
 
 // maximum number of timers
 #define MAX_TIMERS (12)
@@ -27,17 +26,8 @@ typedef struct _swTimer {
   int        tag;        	// unique ID value 
   int        timeout;           // timer expiration period in ticks
   int        timeoutReload;     // reload value for periodic timer 
-  timerCallback callback;   	// callback function prototype
-  struct _swTimer* next;
-  struct _swTimer* prev;
+  timerCallback callback;   	// callback function prototype 
 } swTimer_t;
-
-// list of timers
-typedef struct _swTimer_list {
-	void* top;
-	void* cur;
-	u32 num;
-} swTimer_list_t;
 
 //---- functions
 // create a timer with a callback

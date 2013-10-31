@@ -42,5 +42,35 @@ extern void play_enable_render(void) {
 
 // process input in play mode
 extern void play_input(u16 idx) {
-}
+  const s16 opIdx = net_in_op_idx(idx);
+  region_fill(lineRegion, 0x0);
+  if(opIdx >= 0) {
+    // operator input
+    // build descriptor string
+    clearln();
+    appendln_idx_lj(opIdx);
+    appendln_char('.');
+    appendln( net_op_name(opIdx) );
+    appendln_char('/');
+    appendln( net_in_name(idx) );
+    endln();
 
+    font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
+    clearln();
+
+    print_fix16(lineBuf, net_get_in_value(idx));
+    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, 0xa, 0);
+  } else {
+    // parameter input    
+    clearln();
+    appendln_idx_lj( (int)net_param_idx(idx)); 
+    appendln_char('.');
+    appendln( net_in_name(idx)); 
+    endln();
+    font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
+    clearln();
+    print_fix16(lineBuf, net_get_in_value(idx));
+    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, 0xa, 0);
+  }
+   render_to_scroll_bottom();
+}
