@@ -157,13 +157,12 @@ void handle_key_0(s32 val) {
   // load module
   if(val == 0) { return; }
   if(check_key(0)) {
-    // load module
     files_load_dsp(curPage->select);
     bfin_wait_ready();
     net_report_params();
+    bfin_enable();
   }
   show_foot();
-
 }
 
 void handle_key_1(s32 val) {

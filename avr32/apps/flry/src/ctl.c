@@ -72,6 +72,7 @@ static void send_dac(u8 ch) {
   } else {
     v = dac[ch][0];
   }
+  
   ctl_param_change(eParam_dac0 + ch, v);
   render_dac(ch, v);
 }

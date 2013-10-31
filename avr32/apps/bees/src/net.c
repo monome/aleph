@@ -596,7 +596,7 @@ io_t net_inc_in_value(s32 inIdx, io_t inc) {
   if(inIdx >= net->numIns) {
     // hack to get preset idx
     inIdx -= net->numIns;
-    set_param_value(inIdx,  OP_SADD(get_param_value(inIdx), inc));
+    set_param_value(inIdx, OP_SADD(get_param_value(inIdx), inc));
     return get_param_value(inIdx);
   } else {
     op = net->ops[net->ins[inIdx].opIdx];
@@ -646,11 +646,12 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
   net->params[net->numParams].idx = idx; 
   net->params[net->numParams].preset = 1; 
   net->params[net->numParams].data.value.asInt = pdesc->min;
-  net->numParams++;
+  net->numParams += 1;
 }
 
 // clear existing parameters
 void net_clear_params(void) {
+  print_dbg("\r\n clearing parameter list... ");
   net->numParams = 0;
 }
 
@@ -672,8 +673,6 @@ void net_retrigger_inputs(void) {
   netActive = 1;
 }
 
-
-
 // query the blackfin for parameter list and populate pnodes
 u8 net_report_params(void) {
   volatile char buf[64];
@@ -686,18 +685,19 @@ u8 net_report_params(void) {
   print_dbg("\r\nnumparams: ");
   print_dbg_ulong(numParams);
 
-
-
   if(numParams == 255) {
     print_dbg("\r\n report_params fail (255)");
     return 0;
   }
-
+  
   if(numParams > 0) {
+
+    net_clear_params();
+
     for(i=0; i<numParams; i++) {
       bfin_get_param_desc(i, &pdesc);
 
-      print_dbg("\r\n recieved descriptor for param : ");
+      print_dbg("\r\n received descriptor for param : ");
       print_dbg((const char* )pdesc.label);
 
       net_add_param(i, (const ParamDesc*)&pdesc);
@@ -727,7 +727,7 @@ u8 net_report_params(void) {
 u8* net_pickle(u8* dst) {
   u32 i;
   op_t* op;
-  u32 dum = 0;
+  u32 val = 0;
 
   print_dbg("\r\n pickling network");
 
@@ -741,9 +741,9 @@ u8* net_pickle(u8* dst) {
   print_dbg_hex(net->numOps);
   print_dbg(" )");
 
-  pickle_32((u32)(net->numOps), (u8*)(&dum));
+  pickle_32((u32)(net->numOps), (u8*)(&val));
   print_dbg("\r\n test pickled word; numOps : 0x");
-  print_dbg_hex(dum);
+  print_dbg_hex(val);
 
   // loop over operators
   for(i=0; i<net->numOps; ++i) {
@@ -752,16 +752,31 @@ u8* net_pickle(u8* dst) {
     dst = pickle_32(op->type, dst);
 
     // store offset of op location in pool
-    //    dst = pickle_32((u32)op - (u32)opPool, dst);
+    //// hm don't need this, re-creating op structure instead
+    // dst = pickle_32((u32)op - (u32)opPool, dst);
 
     // pickle the operator state (if needed)
     if(op->pickle != NULL) {
       dst = (*(op->pickle))(op, dst);
     }
   }
-  // parameter nodes (includes value and descriptor)
+  // write count of parameters
+  val = (u32)(net->numParams);
+  dst = pickle_32(val, dst);
+  // write parameter nodes (includes value and descriptor)
   for(i=0; i<net->numParams; ++i) {
     dst = param_pickle(&(net->params[i]), dst);
+  }
+  
+  // write output targets
+  for(i=0; i < net->numOuts; i++) {
+    print_dbg("\r\n output index ");
+    print_dbg_ulong(i);
+    print_dbg(" ; target: ");
+    print_dbg_hex(net->outs[i].target);
+
+    val = (u32)(net->outs[i].target);
+    dst = pickle_32(val, dst);
   }
 
   return dst;
@@ -769,16 +784,13 @@ u8* net_pickle(u8* dst) {
 
 // unpickle the network!
 u8* net_unpickle(const u8* src) {
-  u32 i, count, dum;
+  u32 i, count, val;
   op_id_t id;
   op_t* op;
   print_dbg("\r\n unpickling network");
  
-  // reset operator count and pool offset
-  /* net->numOps = 0; */
-  /* net->opPoolOffset = 0; */
+  // reset operator count, param count, pool offset, etc
   net_deinit();
-
 
   // get count of operators
   // (use 4 bytes for alignment)
@@ -792,34 +804,45 @@ u8* net_unpickle(const u8* src) {
   // loop over operators
   for(i=0; i<count; ++i) {
     // get operator class id
-    src = unpickle_32(src, &dum);
-    id = (op_id_t)dum;
+    src = unpickle_32(src, &val);
+    id = (op_id_t)val;
     print_dbg("\r\n op id: ");
     print_dbg_ulong(id);
     // add and initialize from class id
-    /// .. this should update the operator count
+    /// .. this should update the operator count, inodes and onodes
     net_add_op(id);
     // unpickle operator state (if needed)
     op = net->ops[net->numOps - 1];
     if(op->unpickle != NULL) {
-      print_dbg("\r\n unpickling operator at address: 0x");
+      print_dbg("\r\n added op, unpickling state at address: 0x");
       print_dbg_hex((u32)(op));
       src = (*(op->unpickle))(op, src);
     }
   }
- // parameter nodes (includes value and descriptor)
-  for(i=0; i<net->numParams; ++i) {
+
+  // get count of parameters
+  src = unpickle_32(src, &val);
+  print_dbg("\r\n number of parameters from pickled scene: ");
+  print_dbg_ulong(val);
+  net->numParams = (u16)val;
+  
+  // parameter nodes (includes value and descriptor)
+  for(i=0; i<(net->numParams); ++i) {
     src = param_unpickle(&(net->params[i]), src);
   }
 
-  /// presets... (?)
+  // read output targets
+  for(i=0; i < net->numOuts; i++) {
+    src = unpickle_32(src, &val);
+    net->outs[i].target = (s16)val;
+  }
+  
   return (u8*)src;
 }
 
 //////////
 ///////////////
 // test / dbg
-
 void net_print(void) {
   print_dbg("\r\n net address: 0x");
   print_dbg_hex((u32)(net));
@@ -832,7 +855,6 @@ void net_print(void) {
   print_dbg_ulong(net->numOps);
 
 }
-
 ////////////
 ////////
 

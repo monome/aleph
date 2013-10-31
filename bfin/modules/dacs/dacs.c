@@ -110,8 +110,7 @@ void module_process_frame(void) {
     if(++dacChan == 4) {
       dacChan = 0;
     }
-    //  }
-  
+    //  } 
 }
 
 // parameter set function

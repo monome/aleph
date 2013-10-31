@@ -34,29 +34,8 @@
 //----- static variables
 
 //--- timers
-// refresh the screen periodically
-// static swTimer_t screenTimer;
 // poll encoder accumulators periodically
 static swTimer_t encTimer;
-
-// poll switches
-//static swTimer_t swTimer;
-// poll ADC
-/* static swTimer_t adcTimer; */
-/* // poll monome device  */
-/* static swTimer_t monomePollTimer; */
-/* // refresh monome device  */
-/* static swTimer_t monomeRefreshTimer; */
-/* // poll monome device  */
-/* static swTimer_t monomePollTimer; */
-/* // poll midi device */
-/* static swTimer_t midiPollTimer; */
-// refresh midi device
-//static swTimer_t midiRefreshTimer;
-//// FIXME: this is bees-specific so should go in app code.
-//// will make a general overhall of this timers module.
-// send param changes
-//static swTimer_t paramChangeTimer;
 
 //--- static misc
 static u8 i;
@@ -68,8 +47,11 @@ static event_t e;
 //// FIXME optimize
 static void enc_timer_callback(int tag) {
   static s16 val;
+
   for(i=0; i<NUM_ENC; i++) {
     val = enc[i].val;
+
+    /// FIXME: this comparison is obviously retarded
     if ( (val > enc[i].thresh) || (val < (enc[i].thresh * -1)) ) {
     //  if( (val > ENC_THRESH) || (val < ENC_NEG_THRESH) ) {
       e.eventType = enc[i].event;

@@ -55,7 +55,7 @@ void scene_deinit(void) {
 
 // fill global RAM buffer with current state of system
 void scene_write_buf(void) {
-  u8* dst = (u8*) &(sceneData->pickle);
+  u8* dst = (u8*)(sceneData->pickle);
   ///// print parmameters
   //  u32 i;
 
@@ -141,8 +141,8 @@ void scene_read_buf(void) {
   //  net_retrigger_inputs();
   
   // update bfin parameters
-  #warning "scene load->param change still broken, probably"
-  //  net_send_params();
+    //  #warning "scene load->param change still broken, probably"
+  net_send_params();
   print_dbg("\r\n sent new params");
   
   // enable audio processing

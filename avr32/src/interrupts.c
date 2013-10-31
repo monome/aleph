@@ -242,9 +242,6 @@ static void irq_usart(void) {
   usart_write_char(FTDI_USART,c);
 }
 
-
-
-
   //-----------------------------
   //---- external function definitions
 

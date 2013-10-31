@@ -43,6 +43,13 @@ static void clear_param_dirty(u32 idx) {
 extern u8 ctl_param_change(u32 idx, u32 val) {
 #if 1 // testing (?): direct set
   //  print_dbg("\r\n set: ");
+
+  print_dbg("\r\n ctl_param_change ; idx: 0x");
+  print_dbg_hex(idx);
+
+  print_dbg(" ; value: 0x"); 
+  print_dbg_hex(val);
+ 
   bfin_set_param(idx, val);
   return 0;
 #else
