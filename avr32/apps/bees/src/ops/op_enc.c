@@ -88,16 +88,16 @@ static void op_enc_in_step(op_enc_t* enc, const io_t* v) {
 // move
 static void op_enc_in_move(op_enc_t* enc, const io_t* v) {
   //  enc->val += enc->step * (*v); 
-  print_dbg("\r\n encoder movement ; input: ");
-  print_dbg_hex((u32)*v);
-  print_dbg(" ; previous value: ");
-  print_dbg_hex((u32)(enc->val));
-  print_dbg(" ; step: ");
-  print_dbg_hex((u32)(enc->step));
+  // print_dbg("\r\n encoder movement ; input: ");
+  // print_dbg_hex((u32)*v);
+  // print_dbg(" ; previous value: ");
+  // print_dbg_hex((u32)(enc->val));
+  // print_dbg(" ; step: ");
+  // print_dbg_hex((u32)(enc->step));
   //  enc->val = OP_ADD(enc->val, OP_MUL(enc->step, *v));
   enc->val = OP_ADD(enc->val, OP_MUL(enc->step, OP_INT(*v)));
-  print_dbg(" ; new value: ");
-  print_dbg_hex((u32)(enc->val));
+  // print_dbg(" ; new value: ");
+  // print_dbg_hex((u32)(enc->val));
   op_enc_perform(enc);
 }
 
@@ -147,8 +147,8 @@ static void op_enc_perform(op_enc_t* enc){
     }
   }
 
-  print_dbg(" ; activate network at target: ");
-  print_dbg_hex((u32)(enc->outs[0]));
+  // print_dbg(" ; activate network at target: ");
+  // print_dbg_hex((u32)(enc->outs[0]));
 
   // output the value
   net_activate(enc->outs[0], enc->val, enc);
