@@ -29,22 +29,8 @@ const char* get_param_name(u32 idx);
 
 // set value with default numerical representation 
 void set_param_value(u32 idx, io_t val);
-// set value with float
-// void set_param_float_value(u32 idx, f32 val);
-// set value, full-scale int
-// void set_param_step_value(u32 idx, s32 val);
-
-/* // copy descriptor */
-/* void param_desc_copy(ParamDesc* dst, ParamDesc* src);  */
-
-// get pointer to descriptor
-//const ParamDesc* getParamDesc(); 
-
-// get param descriptors and initial values from DSP
-// void report_params(void);
 
 //---- pickle / unpickle
-
 // node 
 extern u8* param_pickle(   pnode_t* pnode, u8* dst);
 extern const u8* param_unpickle( pnode_t* pnode, const u8* src);

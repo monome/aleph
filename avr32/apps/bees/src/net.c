@@ -596,7 +596,7 @@ io_t net_inc_in_value(s32 inIdx, io_t inc) {
   if(inIdx >= net->numIns) {
     // hack to get preset idx
     inIdx -= net->numIns;
-    set_param_value(inIdx,  OP_SADD(get_param_value(inIdx), inc));
+    set_param_value(inIdx, OP_SADD(get_param_value(inIdx), inc));
     return get_param_value(inIdx);
   } else {
     op = net->ops[net->ins[inIdx].opIdx];
@@ -697,7 +697,7 @@ u8 net_report_params(void) {
     for(i=0; i<numParams; i++) {
       bfin_get_param_desc(i, &pdesc);
 
-      print_dbg("\r\n recieved descriptor for param : ");
+      print_dbg("\r\n received descriptor for param : ");
       print_dbg((const char* )pdesc.label);
 
       net_add_param(i, (const ParamDesc*)&pdesc);
