@@ -30,7 +30,7 @@
 #define NET_OP_POOL_SIZE 0x08000 // 32K
 #endif
 
-// input node type (function pointer)
+// input node type
 typedef struct _inode {
   // parent op index in net list
   s32 opIdx;
@@ -42,7 +42,7 @@ typedef struct _inode {
 
 // output node type (index into inode list)
 typedef struct _onode {
-  // output idx in parent op's output list2
+  // output idx in parent op's output list
   u8 opOutIdx;
   // target input idx in net list
   s16 target;
