@@ -26,9 +26,10 @@ typedef struct _sceneDesc {
  vigilant w/r/t overreaching it.
 */
 // a buffer to hold pickled scene data.
-// 65k worth
-#define SCENE_PICKLE_SIZE 0x10000
-typedef u8 scenePickle_t[SCENE_PICKLE_SIZE];
+// 65k worth (!)
+/// ok, 32k worth (!)
+#define SCENE_PICKLE_SIZE 0x8000
+//typedef u8 scenePickle_t[SCENE_PICKLE_SIZE];
 
 typedef struct _sceneData {
   // txt descriptor
@@ -37,7 +38,7 @@ typedef struct _sceneData {
   // preset_t presets[NET_PRESETS_MAX];
 
   // a blob of serialized data
-  scenePickle_t pickle;
+  u8 pickle[SCENE_PICKLE_SIZE];
 } sceneData_t;
 
 //----------------------------------------
@@ -68,10 +69,5 @@ extern void scene_set_name(const char* name);
 extern void scene_set_name_char(u8 idx, char ch);
 // set module name
 extern void scene_set_module_name(const char* name);
-
-/// convenience setters
-// scroll character at given position in name
-//extern u8 scene_inc_char(u8 idx, u8 pos);
-//extern u8 scene_dec_char(u8 idx, u8 pos);
  
 #endif

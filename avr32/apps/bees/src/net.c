@@ -759,7 +759,10 @@ u8* net_pickle(u8* dst) {
       dst = (*(op->pickle))(op, dst);
     }
   }
-  // parameter nodes (includes value and descriptor)
+  // write count of parameters
+  dum = (u32)(net->numParams);
+  dst = pickle_32(dum, dst);
+  // write parameter nodes (includes value and descriptor)
   for(i=0; i<net->numParams; ++i) {
     dst = param_pickle(&(net->params[i]), dst);
   }
@@ -774,7 +777,7 @@ u8* net_unpickle(const u8* src) {
   op_t* op;
   print_dbg("\r\n unpickling network");
  
-  // reset operator count and pool offset
+  // reset operator count, param count, pool offset, etc
   /* net->numOps = 0; */
   /* net->opPoolOffset = 0; */
   net_deinit();
@@ -802,13 +805,21 @@ u8* net_unpickle(const u8* src) {
     // unpickle operator state (if needed)
     op = net->ops[net->numOps - 1];
     if(op->unpickle != NULL) {
-      print_dbg("\r\n unpickling operator at address: 0x");
+      print_dbg("\r\n added op, unpickling state at address: 0x");
       print_dbg_hex((u32)(op));
       src = (*(op->unpickle))(op, src);
     }
   }
- // parameter nodes (includes value and descriptor)
-  for(i=0; i<net->numParams; ++i) {
+
+  // get count of parameters
+  src = unpickle_32(src, &dum);
+  print_dbg("\r\n number of parameters from pickled scene: ");
+  print_dbg_ulong(dum);
+  net->numParams = (u16)dum;
+  
+  // parameter nodes (includes value and descriptor)
+  for(i=0; i<(net->numParams); ++i) {
+    
     src = param_unpickle(&(net->params[i]), src);
   }
 

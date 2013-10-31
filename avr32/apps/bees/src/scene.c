@@ -55,7 +55,7 @@ void scene_deinit(void) {
 
 // fill global RAM buffer with current state of system
 void scene_write_buf(void) {
-  u8* dst = (u8*) &(sceneData->pickle);
+  u8* dst = (u8*)(sceneData->pickle);
   ///// print parmameters
   //  u32 i;
 

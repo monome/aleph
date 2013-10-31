@@ -47,6 +47,7 @@ typedef enum {
 } paramUseType;
 
 // 4-byte union of value representations
+#if 1
 typedef union __attribute__((__packed__)) {
   f32 asFloat;
   fract32 asFract;
@@ -55,6 +56,9 @@ typedef union __attribute__((__packed__)) {
   u8 asByte[4];
   u16 asShort[2];
 } ParamValue;
+#else
+typedef u32 ParamValue;
+#endif
 
 // a simpler form for internal use
 typedef union { u32 u; s32 s; fix16 fix; fract32 fr; } pval;
