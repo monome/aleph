@@ -15,7 +15,7 @@
 // pointers to timers
 // static swTimer_t*  timers[ MAX_TIMERS ];
 
-static swTimer_list_t* timers;
+static swTimer_list_t timers;
 
 //-----------------------------------------------
 //---- static functions
@@ -75,27 +75,27 @@ static bool add_timer( swTimer_t* newTimer) {
   swTimer_t* saveNext; 
   swTimer_t* savePrev;
   swTimer_t* saveCur;
-  swTimer_t* curOp = (swTimer_t*)(timers->cur);
-  if(timers->num == 0) {
-    timers->cur = newTimer;
-    curOp->next = timers->cur;
-    curOp->prev = timers->cur;
-    timers->top = timers->cur;
+  swTimer_t* curOp = (swTimer_t*)(timers.cur);
+  if(timers.num == 0) {
+    timers.cur = newTimer;
+    curOp->next = timers.cur;
+    curOp->prev = timers.cur;
+    timers.top = timers.cur;
   } else {
     saveNext = curOp->next;
-    saveCur = timers->cur;
-    savePrev = (((swTimer_t*)timers->cur))->prev;
+    saveCur = timers.cur;
+    savePrev = (((swTimer_t*)timers.cur))->prev;
     curOp->next = newTimer;
-    timers->cur = curOp->next;
+    timers.cur = curOp->next;
     curOp->next = saveNext;
     curOp->prev = savePrev;
-    (curOp->next)->prev = timers->cur;
-    if( curOp->next == timers->top ) {
-      ((swTimer_t*)(timers->top))->prev = timers->cur;
+    (curOp->next)->prev = timers.cur;
+    if( curOp->next == timers.top ) {
+      ((swTimer_t*)(timers.top))->prev = timers.cur;
     }
-    timers->cur = curOp->next;
+    timers.cur = curOp->next;
   }
-  timers->num++;
+  timers.num++;
 
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
 
@@ -131,9 +131,9 @@ static bool add_timer( swTimer_t* newTimer) {
 
 // initialize the timer system.
 void init_timers( void ) {
-  timers->top = NULL;
-  timers->cur = NULL;
-  timers->num = 0;
+  timers.top = NULL;
+  timers.cur = NULL;
+  timers.num = 0;
 
   // int k;
 
@@ -196,16 +196,17 @@ bool kill_timer( int tag ) {
 void process_timers( void ) {
   swTimer_t* t;
 
-  if(timers->num > 0) {
-    t = timers->top;
+  if(timers.num > 0) {
+    t = timers.top;
 
-    for(char i=0;i<timers->num;i++) {
+    for(char i=0;i<timers.num;i++) {
       t->timeout--;
 
       if ( t->timeout <= 0 ) {
         if ( t->callback != 0 ) {
             (*t->callback)( t->tag );        
         }
+	t->timeout = t->timeoutReload;
 
         // TODO periodic
       }

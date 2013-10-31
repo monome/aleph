@@ -11,14 +11,12 @@
 #include "print_funcs.h"
 #endif
 // aleph
-//#include "types.h"
-#include "pages_protected.h"
 #include "net.h"
-#include "param.h"
-#include "play.h"
 #include "op.h"
 #include "op_math.h"
 #include "op_derived.h"
+#include "param.h"
+#include "play.h"
 
 // operator class registry
 // must be laid out identically to eOpId enum!

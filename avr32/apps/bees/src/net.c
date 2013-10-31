@@ -19,20 +19,17 @@
 // aleph-avr32
 #include "bfin.h"
 #include "control.h"
-
-// bees
-#include "util.h"
-#include "op.h" 
-#include "op_derived.h"
 #include "memory.h"
-#include "pages_protected.h"
+#include "types.h"
+// bees
 #include "net.h"
 #include "net_protected.h"
+#include "op.h" 
+#include "op_derived.h"
+#include "pages.h"
 #include "param.h"
 #include "play.h"
-#include "types.h"
 #include "util.h"
-
 
 //=========================================
 //===== variables

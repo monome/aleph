@@ -17,7 +17,6 @@
 
 // bees
 #include "handler.h"
-#include "pages_protected.h"
 #include "net_monome.h"
 #include "pages.h"
 #include "render.h"

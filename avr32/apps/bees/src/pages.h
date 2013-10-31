@@ -1,3 +1,10 @@
+/* pages.h
+   bees
+   aleph-avr32
+   
+*/
+
+
 #ifndef _ALEPH_AVR32_APP_BEES_PAGE_H_
 #define _ALEPH_AVR32_APP_BEES_PAGE_H_
 
@@ -58,6 +65,16 @@ typedef struct page_struct {
 //-----------------------
 //--- extern variables
 
+
+// page structures
+extern page_t pages[NUM_PAGES];
+// pointer to current page
+extern page_t* curPage;
+// idx of current page
+extern s8 pageIdx;
+// last pressed key
+u8 keyPressed;
+
 //-----------------------
 //--- extern functions
 
@@ -98,6 +115,8 @@ extern void pages_init(void);
 extern void pages_deinit(void);
 // refresh
 extern void pages_refresh(void);
+// set page
+extern void set_page(ePage n);
 // check key against last pressed
 extern u8 check_key(u8 key);
 

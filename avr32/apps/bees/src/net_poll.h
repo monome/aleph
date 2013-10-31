@@ -6,7 +6,7 @@
   the network needs to keep a list of registered operators that require a tick.
   tickable operators should inherit from op_poll_t.
   this superclass contains a pointer to the next ticked operator, 
-  so thhe network can maintain a linked list without allocating additional memory.
+  so the network can maintain a linked list without allocating additional memory.
 
  */
 
@@ -38,7 +38,7 @@ typedef struct _op_list {
 //--- extern functions
 extern void op_list_init(op_list_t* list);
 
-// add op pointer after the current positio
+// add op pointer after the current position
 extern void net_poll_list_add(op_list_t* list, op_poll_t* op);
 // delete op pointer at current position, return next pointer in list
 extern op_poll_t* net_poll_list_remove(op_list_t* list, op_poll_t* op);

@@ -41,7 +41,7 @@ extern void net_poll_list_add(op_list_t* l, op_poll_t* op) {
     }
     l->cur = curOp->next;
   }
-  l->num++;
+  l->num += 1;
 }
 
 // delete op pointer at current position, return next pointer in list

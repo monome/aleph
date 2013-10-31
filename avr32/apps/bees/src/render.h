@@ -6,7 +6,6 @@
 #include "region.h"
 // bees
 #include "pages.h"
-#include "pages_protected.h"
 
 //========================================
 //=== positioning constants
