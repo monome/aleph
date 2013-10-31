@@ -2,7 +2,8 @@
   page_scenes.c
  */
 
-#include "pages_protected.h"
+#include "handler.h"
+#include "net.h"
 #include "pages.h"
 #include "render.h"
 

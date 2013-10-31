@@ -3,7 +3,6 @@
  */
 
 #include "net_protected.h"
-#include "pages_protected.h"
 #include "pages.h"
 #include "render.h"
 

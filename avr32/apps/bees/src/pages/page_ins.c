@@ -13,9 +13,8 @@
 
 // bees
 #include "handler.h"
-#include "pages_protected.h"
+#include "net.h"
 #include "pages.h"
-#include "print_funcs.h"
 #include "render.h"
 
 //-------------------------

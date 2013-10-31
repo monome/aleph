@@ -7,7 +7,7 @@
 
 // bees
 #include "handler.h"
-#include "pages_protected.h"
+#include "net.h"
 #include "pages.h"
 #include "render.h"
 
@@ -223,7 +223,6 @@ static void select_scroll(s32 dir) {
   }
 }
 
-
 // display the function key labels according to current state
 static void show_foot0(void) {
   u8 fill = 0;
@@ -254,7 +253,6 @@ static void show_foot1(void) {
       font_string_region_clip(footRegion[1], "INC", 0, 0, 0xf, fill);
     }
   }
-  
 }
 
 static void show_foot2(void) {
@@ -374,6 +372,5 @@ void handle_enc_2(s32 val) {
 void handle_enc_3(s32 val) {
   // scroll selection
   select_scroll(val);
-
 }
 

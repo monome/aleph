@@ -9,7 +9,6 @@
 #include "handler.h"
 #include "net.h"
 #include "op.h"
-#include "pages_protected.h"
 #include "pages.h"
 #include "render.h"
 

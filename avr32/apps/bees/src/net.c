@@ -161,9 +161,7 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
     //    print_dbg("\r\n play_input ");
     //    print_dbg(" ( not really ) ");
 
-    //// FIXME: play is broken and it will crash.
-    // but output->input mapping should work without it
-    //    play_input(inIdx);
+    play_input(inIdx);
 
     if(inIdx < net->numIns) {
       op_set_in_val(net->ops[net->ins[inIdx].opIdx],

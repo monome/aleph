@@ -11,7 +11,7 @@
 // bees
 #include "files.h"
 #include "handler.h"
-#include "pages_protected.h"
+#include "net.h"
 #include "pages.h"
 #include "render.h"
 

@@ -8,6 +8,8 @@
 #ifndef _ALEPH_AVR32_APP_BEES_PAGE_H_
 #define _ALEPH_AVR32_APP_BEES_PAGE_H_
 
+#include "types.h"
+
 //------------
 //-- define
 
