@@ -71,6 +71,25 @@ static void add_sys_ops(void) {
   //  net_add_op(eOpPreset);
 }
 
+static u8* onode_pickle(onode_t* out, u8* dst) {
+  // operator index
+  *dst++ = out->opOutIdx;
+  // target
+  dst = pickle_16(out->target, dst);
+  // dummy byte for alignment
+  *dst++ = 0;
+  // parent op's index in net list
+  dst = pickle_32(out->opIdx, dst);
+  // preset inclusion flag ; cast to 4 bytes for alignbment
+  dst = pickle_32((u32)(out->preset), dst);
+  return dst;
+}
+
+static u8* onode_unpickle(u8* src, onode_t* out) {
+  
+}
+
+
 //==================================================
 //========= public functions
 

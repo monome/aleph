@@ -106,25 +106,25 @@ void flash_write_ldr(void) {
   flashc_memcpy((void*)&(flash_nvram_data.ldrData), (const void*)bfinLdrData, bfinLdrSize, true);
 }
 
-static u32 flashoff =0x80000000;
-static void print_flash(void) {
-  u32 i, j;
-  u32 b, boff;
-  print_dbg("\r\n");
-  print_dbg_hex(flashoff);
-  print_dbg(" : ");
-  for(j=0; j<8; j++) {
-    b = 0;
-    boff = 24;
-    for(i=0; i<4; i++) {
-      b |= ( *(u8*)flashoff ) << boff;
-      flashoff++;
-      boff -= 8;
-    }
-    print_dbg_hex(b);
-    print_dbg(" ");
-  }
-}
+/* static u32 flashoff =0x80000000; */
+/* static void print_flash(void) { */
+/*   u32 i, j; */
+/*   u32 b, boff; */
+/*   print_dbg("\r\n"); */
+/*   print_dbg_hex(flashoff); */
+/*   print_dbg(" : "); */
+/*   for(j=0; j<8; j++) { */
+/*     b = 0; */
+/*     boff = 24; */
+/*     for(i=0; i<4; i++) { */
+/*       b |= ( *(u8*)flashoff ) << boff; */
+/*       flashoff++; */
+/*       boff -= 8; */
+/*     } */
+/*     print_dbg_hex(b); */
+/*     print_dbg(" "); */
+/*   } */
+/* } */
 
 // parse a hex record and write the contents to flash if appropriate
 // return 1 if EOF, 0 otherwise
@@ -143,8 +143,8 @@ extern u8 flash_write_hex_record(u8* data) {
       //      print_dbg("\r\n writing hex 
       break;
     case HEX_DATA:
-      //     print_dbg("\r\n writing firmware to flash at address: ");
-      //     print_dbg_hex(addrOff + rec.address);
+      /* print_dbg("\r\n writing firmware to flash at address: "); */
+      /* print_dbg_hex(addrOff + rec.address); */
       flashc_memcpy( (void*)(addrOff + rec.address), rec.data, rec.count, 1);
       break;
     default:
@@ -152,4 +152,5 @@ extern u8 flash_write_hex_record(u8* data) {
       print_dbg((const char*)data);
     }
   }
+  return 0;
 }

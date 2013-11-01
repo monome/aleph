@@ -19,5 +19,7 @@ void flash_read_scene(void) {
 // write default scene data from global buffer
 void flash_write_scene(void) { 
   scene_write_buf();
+  print_dbg("\r\n writing scene data tto address: 0x");
+  
   flashc_memcpy( flash_app_data(), (void*)sceneData, sizeof(sceneData_t), true);
 }

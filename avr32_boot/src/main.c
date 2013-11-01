@@ -110,7 +110,7 @@ static void init_avr32(void) {
   // enable interrupts
   cpu_irq_enable();
 
-  print_dbg("\r\n avr32 init done ");
+  // print_dbg("\r\n avr32 init done ");
 }
 
 // control / network / logic init
@@ -120,22 +120,22 @@ static void init_ctl(void) {
 
   // intialize the event queue
   init_events();
-  print_dbg("\r\n init_events");
+  // print_dbg("\r\n init_events");
 
   // intialize encoders
   init_encoders();
-  print_dbg("\r\n init_encoders");
+  // print_dbg("\r\n init_encoders");
 
   //memory manager
   init_mem();  
-  print_dbg("\r\n init_mem");
+  // print_dbg("\r\n init_mem");
   // start application timers
   init_app_timers();
 
-  print_dbg("\r\n init_timers");
+  // print_dbg("\r\n init_timers");
   menu_init();
 
-  print_dbg("\r\n menu_init");
+  // print_dbg("\r\n menu_init");
 
   // enable interrupts
   cpu_irq_enable();
@@ -206,15 +206,15 @@ static void check_events(void) {
 	break;
 	// power switch
       case kEventSwitchDown5:
-	screen_line(0, 0, "powering down!", 0x3f);
-	print_dbg("\r\n AVR32 received power down switch event");
+	//	screen_line(0, 0, "powering down!", 0x3f);
+	//	print_dbg("\r\n AVR32 received power down switch event");
 	screen_refresh();
 	gpio_clr_gpio_pin(POWER_CTL_PIN);
 	break;
       case kEventSwitchUp5:
 	break;
       case kEventEncoder0:
-			print_dbg("\r\n encoder 0");
+			// print_dbg("\r\n encoder 0");
       	if(e.eventData > 0) {
       	  menu_handleKey(eKeyEncUpD, e.eventData);
       	} else {
@@ -222,7 +222,7 @@ static void check_events(void) {
       	}
       	break;
       case kEventEncoder1:
-	print_dbg("\r\n encoder 1");
+	// print_dbg("\r\n encoder 1");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpC, e.eventData);
 	} else {
@@ -230,7 +230,7 @@ static void check_events(void) {
 	}
 	break;
       case kEventEncoder2:
-	print_dbg("\r\n encoder 2");
+	// print_dbg("\r\n encoder 2");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpB, e.eventData);
 	} else {
@@ -238,7 +238,7 @@ static void check_events(void) {
 	}
 	break;
       case kEventEncoder3:
-	print_dbg("\r\n encoder 3");
+	// print_dbg("\r\n encoder 3");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpA, e.eventData);
 	} else {
@@ -294,11 +294,11 @@ int main (void) {
     screen_line(0, 1, "waiting for SD card...", 0x3f);
     screen_refresh();
   
-    print_dbg("\r\n SD check... ");
+    //    print_dbg("\r\n SD check... ");
     while (!sd_mmc_spi_mem_check()) {
       waitForCard++;
     }
-    print_dbg("\r\nfound SD card. ");
+    //    print_dbg("\r\nfound SD card. ");
 
     screen_blank_line(0, 0);
     screen_blank_line(0, 1);
@@ -328,7 +328,7 @@ int main (void) {
     /*   print_dbg("\r\n finished booting"); */
     /* } */
 
-    print_dbg("\r\n starting event loop.\r\n");
+    //    print_dbg("\r\n starting event loop.\r\n");
   }
 
   while(1) {

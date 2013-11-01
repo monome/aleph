@@ -128,8 +128,8 @@ void scroll_page(s8 dir) {
 //--  clipping variant
 void scroll_select_clip(s8 dir, s32 max) {
   curPage->selected += dir;
-  print_dbg("\r\n curPage->selected: ");
-  print_dbg_hex(curPage->selected);
+  //  print_dbg("\r\n curPage->selected: ");
+  //  print_dbg_hex(curPage->selected);
 
   if(curPage->selected >= max) {
     curPage->selected = max - 1;

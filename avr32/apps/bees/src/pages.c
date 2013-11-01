@@ -91,15 +91,16 @@ static s8 lastPageIdx = 0;
 // init
  void pages_init(void) {
   init_page_ins();
-  init_page_outs();
   init_page_dsp();
-  init_page_ops();
+  init_page_ops();  
+  init_page_outs();
+  init_page_play();
+
   /*
     // TODO
   init_page_presets();
   init_page_scenes();
   init_page_gathered();
-  init_page_play();
   */
   pageIdx = ePageIns;
   set_page(pageIdx);
