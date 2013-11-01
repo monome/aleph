@@ -233,7 +233,6 @@ static void irq_port1_line3(void) {
   }
 }
 
-
 // interrupt handler for uart
 __attribute__((__interrupt__))
 static void irq_usart(void) {
@@ -279,7 +278,7 @@ void register_interrupts(void) {
   INTC_register_interrupt( &irq_port0_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA24 / 8), UI_IRQ_PRIORITY);
 
   // PB00 - PB07
-  INTC_register_interrupt( &irq_port1_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB00 / 8), UI_IRQ_PRIORITY );
+  INTC_register_interrupt( &irq_port1_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB00 / 8), UI_IRQ_PRIORITY);
 
   // PB08 - PB15
   INTC_register_interrupt( &irq_port1_line1, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB08 / 8), UI_IRQ_PRIORITY);
@@ -298,6 +297,6 @@ void register_interrupts(void) {
   INTC_register_interrupt(&irq_tc, APP_TC_IRQ, APP_TC_IRQ_PRIORITY);
 
   // register uart interrupt
-  /// test: disable
   //  INTC_register_interrupt(&irq_usart, AVR32_USART0_IRQ, UI_IRQ_PRIORITY);
+
 }
