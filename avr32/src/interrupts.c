@@ -242,61 +242,62 @@ static void irq_usart(void) {
   usart_write_char(FTDI_USART,c);
 }
 
-  //-----------------------------
-  //---- external function definitions
+//-----------------------------
+//---- external function definitions
 
-  // register interrupts
-  void register_interrupts(void) {
-    // enable interrupts on GPIO inputs
+// register interrupts
+void register_interrupts(void) {
+  // enable interrupts on GPIO inputs
 
-    // BFIN_HWAIT
-    // gpio_enable_pin_interrupt( BFIN_HWAIT_PIN, GPIO_PIN_CHANGE);
-    gpio_enable_pin_interrupt( BFIN_HWAIT_PIN, GPIO_RISING_EDGE);
+  // BFIN_HWAIT
+  // gpio_enable_pin_interrupt( BFIN_HWAIT_PIN, GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( BFIN_HWAIT_PIN, GPIO_RISING_EDGE);
 
-    // encoders
-    gpio_enable_pin_interrupt( ENC0_S0_PIN,	GPIO_PIN_CHANGE);
-    gpio_enable_pin_interrupt( ENC0_S1_PIN,	GPIO_PIN_CHANGE);
-    gpio_enable_pin_interrupt( ENC1_S0_PIN,	GPIO_PIN_CHANGE);
-    gpio_enable_pin_interrupt( ENC1_S1_PIN,	GPIO_PIN_CHANGE);
-    gpio_enable_pin_interrupt( ENC2_S0_PIN,	GPIO_PIN_CHANGE);
-    gpio_enable_pin_interrupt( ENC2_S1_PIN,	GPIO_PIN_CHANGE);
-    gpio_enable_pin_interrupt( ENC3_S0_PIN,	GPIO_PIN_CHANGE);
-    gpio_enable_pin_interrupt( ENC3_S1_PIN,	GPIO_PIN_CHANGE);
+  // encoders
+  gpio_enable_pin_interrupt( ENC0_S0_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC0_S1_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC1_S0_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC1_S1_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC2_S0_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC2_S1_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC3_S0_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC3_S1_PIN,	GPIO_PIN_CHANGE);
 
-    // switches
-    gpio_enable_pin_interrupt( SW0_PIN,	        GPIO_PIN_CHANGE);
-    gpio_enable_pin_interrupt( SW1_PIN,	        GPIO_PIN_CHANGE);
-    gpio_enable_pin_interrupt( SW2_PIN,	        GPIO_PIN_CHANGE);
-    gpio_enable_pin_interrupt( SW3_PIN,	        GPIO_PIN_CHANGE);
+  // switches
+  gpio_enable_pin_interrupt( SW0_PIN,	        GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW1_PIN,	        GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW2_PIN,	        GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW3_PIN,	        GPIO_PIN_CHANGE);
 
-    gpio_enable_pin_interrupt( FS0_PIN,	GPIO_PIN_CHANGE);
-    gpio_enable_pin_interrupt( FS1_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( FS0_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( FS1_PIN,	GPIO_PIN_CHANGE);
 
-    gpio_enable_pin_interrupt( SW_MODE_PIN,	GPIO_PIN_CHANGE);
-    gpio_enable_pin_interrupt( SW_POWER_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW_MODE_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW_POWER_PIN,	GPIO_PIN_CHANGE);
  
-    // PA24 - PA31
-    INTC_register_interrupt( &irq_port0_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA24 / 8), UI_IRQ_PRIORITY);
+  // PA24 - PA31
+  INTC_register_interrupt( &irq_port0_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA24 / 8), UI_IRQ_PRIORITY);
 
-    // PB00 - PB07
-    INTC_register_interrupt( &irq_port1_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB00 / 8), UI_IRQ_PRIORITY );
+  // PB00 - PB07
+  INTC_register_interrupt( &irq_port1_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB00 / 8), UI_IRQ_PRIORITY );
 
-    // PB08 - PB15
-    INTC_register_interrupt( &irq_port1_line1, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB08 / 8), UI_IRQ_PRIORITY);
+  // PB08 - PB15
+  INTC_register_interrupt( &irq_port1_line1, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB08 / 8), UI_IRQ_PRIORITY);
 
-    // PB16 - PB23
-    INTC_register_interrupt( &irq_port1_line2, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB16 / 8), UI_IRQ_PRIORITY);
+  // PB16 - PB23
+  INTC_register_interrupt( &irq_port1_line2, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB16 / 8), UI_IRQ_PRIORITY);
 
-    // PB24 - PB31
-    INTC_register_interrupt( &irq_port1_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB24 / 8), UI_IRQ_PRIORITY);
+  // PB24 - PB31
+  INTC_register_interrupt( &irq_port1_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB24 / 8), UI_IRQ_PRIORITY);
 
 
-    // register IRQ for PDCA transfer
-    INTC_register_interrupt(&irq_pdca, AVR32_PDCA_IRQ_0, SYS_IRQ_PRIORITY);
+  // register IRQ for PDCA transfer
+  INTC_register_interrupt(&irq_pdca, AVR32_PDCA_IRQ_0, SYS_IRQ_PRIORITY);
 
-    // register TC interrupt
-    INTC_register_interrupt(&irq_tc, APP_TC_IRQ, APP_TC_IRQ_PRIORITY);
+  // register TC interrupt
+  INTC_register_interrupt(&irq_tc, APP_TC_IRQ, APP_TC_IRQ_PRIORITY);
 
-    // register uart interrupt
-    INTC_register_interrupt(&irq_usart, AVR32_USART0_IRQ, UI_IRQ_PRIORITY);
-  }
+  // register uart interrupt
+  /// test: disable
+  //  INTC_register_interrupt(&irq_usart, AVR32_USART0_IRQ, UI_IRQ_PRIORITY);
+}

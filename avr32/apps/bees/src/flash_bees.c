@@ -3,6 +3,7 @@
 
 // asf
 #include "flashc.h"
+#include "print_funcs.h"
 
 // aleph-avr32
 #include "flash.h"
