@@ -40,19 +40,19 @@ typedef struct _inode {
   u8 preset;
   // play inclusion flag
   u8 play;
-} inode_t;
+} __attribute__((packed)) inode_t;
 
 // output node type (index into inode list)
 typedef struct _onode {
+  // preset inclusion flag
+  u8 preset;
   // output idx in parent op's output list
   u8 opOutIdx;
   // target input idx in net list
   s16 target;
   // parent op's index in net list
   s32 opIdx;
-  // preset inclusion flag
-  u8 preset;
-} onode_t;
+} __attribute__((packed)) onode_t;
 
 // parameter I/O node
 typedef struct _pnode {
@@ -60,7 +60,7 @@ typedef struct _pnode {
   ParamData data;
   u8 idx;
   u8 preset;
-} pnode_t;
+} __attribute__((packed)) pnode_t;
 
 
 // big old class for the network

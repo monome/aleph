@@ -71,22 +71,81 @@ static void add_sys_ops(void) {
   //  net_add_op(eOpPreset);
 }
 
+///----- node pickling
+
 static u8* onode_pickle(onode_t* out, u8* dst) {
-  // operator index
-  *dst++ = out->opOutIdx;
+  // operator output index
+  dst = pickle_32((u32)(out->opOutIdx), dst);
   // target
-  dst = pickle_16(out->target, dst);
-  // dummy byte for alignment
-  *dst++ = 0;
+  dst = pickle_32((u32)(out->target), dst);
+  print_dbg("\r\n pickled output target: 0x");
+  print_dbg_hex((u32)(out->target));
+
+  print_dbg(", data: 0x");
+  print_dbg_hex((u32)(*dst));
+
   // parent op's index in net list
-  dst = pickle_32(out->opIdx, dst);
-  // preset inclusion flag ; cast to 4 bytes for alignbment
+  dst = pickle_32((u32)(out->opIdx), dst);
+  // preset inclusion flag ; cast to 4 bytes for alignment
   dst = pickle_32((u32)(out->preset), dst);
   return dst;
 }
 
-static u8* onode_unpickle(u8* src, onode_t* out) {
-  
+static const u8* onode_unpickle(const u8* src, onode_t* out) {
+  u32 v32;
+  // operator output index
+  src = unpickle_32(src, &v32);
+  out->opOutIdx = (u8)v32;
+  // output target
+  src = unpickle_32(src, &v32);
+  out->target = (s16)v32;
+
+  print_dbg("\r\n unpickled output target: 0x");
+  print_dbg_hex((u32)(out->target));
+
+  // index of parent op
+  src = unpickle_32(src, &v32);
+  out->opIdx = (s32)v32;
+  // preset flag: 32 bits for alignment
+  src = unpickle_32(src, &v32);
+  out->preset = (u8)v32;
+  return src;
+}
+
+
+static u8* inode_pickle(inode_t* in, u8* dst) {
+  /// don't need to pickle indices because we recreate the op list from scratch
+  // parent op's index in net list
+  //  dst = pickle_32((u32)(in->opIdx), dst);
+  // operator input index
+  //  *dst++ = in->opInIdx;
+  // preset inclusion flag
+  *dst++ = in->preset;
+  // play inclusion flag
+  *dst++ = in->play;
+  // dummy byte for alignment
+  *dst++ = 0;
+  // dummy byte for alignment
+  *dst++ = 0;
+  return dst;
+}
+
+static const u8* inode_unpickle(const u8* src, inode_t* in) {
+  /// don't need to pickle indices because we recreate the op list from scratch
+  // parent op's index in net list
+  //  src = unpickle_32(src, &v32);
+  //  in->opIdx = (s32)v32;
+  // operator input index
+  //   in->opInIdx = *src++;
+  // preset inclusion flag
+  in->preset = *src++;
+  // play inclusion flag
+  in->play = *src++;
+  // dummy byte for alignment
+  ++src; 
+  // dummy byte for alignment
+  ++src; 
+  return src;
 }
 
 
@@ -214,23 +273,23 @@ s16 net_add_op(op_id_t opId) {
   u8 i;
   op_t* op;
 
-  print_dbg("\r\n creating new operator, type: ");
-  print_dbg_ulong(opId);
+  //  print_dbg("\r\n creating new operator, type: ");
+  //  print_dbg_ulong(opId);
 
   if (net->numOps >= NET_OPS_MAX) {
     return -1;
   }
 
   if (op_registry[opId].size > NET_OP_POOL_SIZE - net->opPoolOffset) {
-    print_dbg("\r\n op creation failed; out of memory.");
+    //    print_dbg("\r\n op creation failed; out of memory.");
     return -1;
   }
   
-  print_dbg("\r\n allocating op pool location: 0x");
-  print_dbg_hex((u32)(net->opPool + net->opPoolOffset));
+  //  print_dbg("\r\n allocating op pool location: 0x");
+  //  print_dbg_hex((u32)(net->opPool + net->opPoolOffset));
 
-  print_dbg("\r\n size of requested op size: 0x");
-  print_dbg_hex(op_registry[opId].size);
+  //  print_dbg("\r\n size of requested op size: 0x");
+  //  print_dbg_hex(op_registry[opId].size);
 
   op = (op_t*)((u8*)net->opPool + net->opPoolOffset);
   // use the class ID to initialize a new object in scratch
@@ -268,12 +327,12 @@ s16 net_add_op(op_id_t opId) {
   }
   ++(net->numOps);
 
-  print_dbg("\r\n added operator. new input count: ");
-  print_dbg_ulong(net->numIns);
-  print_dbg("\r\n added operator. new output count: ");
-  print_dbg_ulong(net->numOuts);
-  print_dbg("\r\n added operator. new op count: ");
-  print_dbg_ulong(net->numOps);
+  //  print_dbg("\r\n added operator. new input count: ");
+  //  print_dbg_ulong(net->numIns);
+  //  print_dbg("\r\n added operator. new output count: ");
+  //  print_dbg_ulong(net->numOuts);
+  //  print_dbg("\r\n added operator. new op count: ");
+  //  print_dbg_ulong(net->numOps);
 
 
   return net->numOps - 1;
@@ -752,44 +811,38 @@ u8* net_pickle(u8* dst) {
   op_t* op;
   u32 val = 0;
 
-  print_dbg("\r\n pickling network");
-
   // store count of operators
   // (use 4 bytes for alignment)
   dst = pickle_32((u32)(net->numOps), dst);
-
-  print_dbg("\r\n , count of ops: ");
-  print_dbg_ulong(net->numOps);
-  print_dbg(" ( 0x");
-  print_dbg_hex(net->numOps);
-  print_dbg(" )");
-
   pickle_32((u32)(net->numOps), (u8*)(&val));
-  print_dbg("\r\n test pickled word; numOps : 0x");
-  print_dbg_hex(val);
 
   // loop over operators
   for(i=0; i<net->numOps; ++i) {
     op = net->ops[i];
     // store type id
     dst = pickle_32(op->type, dst);
-
-    // store offset of op location in pool
-    //// hm don't need this, re-creating op structure instead
-    // dst = pickle_32((u32)op - (u32)opPool, dst);
-
     // pickle the operator state (if needed)
     if(op->pickle != NULL) {
       dst = (*(op->pickle))(op, dst);
     }
   }
 
-  /// TODO:
-  // need to store play- and preset-include for input nodes... 
+  print_dbg("\r\n pickling inputs, count: ");
+  print_dbg_ulong(net->numIns);
 
-  // TODO:
-  // need to store preset-include for output nodes... 
+  // write input nodes
+  for(i=0; i < net->numIns; ++i) {
+    dst = inode_pickle(&(net->ins[i]), dst);
+  }
 
+  print_dbg("\r\n pickling outputs, count: ");
+  print_dbg_ulong(net->numOuts);
+
+
+  // write output nodes
+  for(i=0; i < net->numOuts; ++i) {
+    dst = onode_pickle(&(net->outs[i]), dst);
+  }
 
   // write count of parameters
   val = (u32)(net->numParams);
@@ -798,17 +851,6 @@ u8* net_pickle(u8* dst) {
   // write parameter nodes (includes value and descriptor)
   for(i=0; i<net->numParams; ++i) {
     dst = param_pickle(&(net->params[i]), dst);
-  }
-  
-  // write output targets
-  for(i=0; i < net->numOuts; i++) {
-    print_dbg("\r\n output index ");
-    print_dbg_ulong(i);
-    print_dbg(" ; target: ");
-    print_dbg_hex(net->outs[i].target);
-
-    val = (u32)(net->outs[i].target);
-    dst = pickle_32(val, dst);
   }
 
   return dst;
@@ -819,60 +861,56 @@ u8* net_unpickle(const u8* src) {
   u32 i, count, val;
   op_id_t id;
   op_t* op;
-  print_dbg("\r\n unpickling network");
- 
+
   // reset operator count, param count, pool offset, etc
   net_deinit();
 
   // get count of operators
   // (use 4 bytes for alignment)
   src = unpickle_32(src, &count);
-  print_dbg("\r\n , count of ops: ");
-  print_dbg_ulong(count);
-  print_dbg(" ( 0x");
-  print_dbg_hex(count);
-  print_dbg(" )");
 
   // loop over operators
   for(i=0; i<count; ++i) {
     // get operator class id
     src = unpickle_32(src, &val);
     id = (op_id_t)val;
-    print_dbg("\r\n op id: ");
-    print_dbg_ulong(id);
+
     // add and initialize from class id
     /// .. this should update the operator count, inodes and onodes
     net_add_op(id);
     // unpickle operator state (if needed)
     op = net->ops[net->numOps - 1];
     if(op->unpickle != NULL) {
-      print_dbg("\r\n added op, unpickling state at address: 0x");
-      print_dbg_hex((u32)(op));
       src = (*(op->unpickle))(op, src);
     }
   }
 
-  // TODO:
-  // need to load play- and preset-include for input nodes... 
+  print_dbg("\r\n unpickling inputs, count: ");
+  print_dbg_ulong(net->numIns);
 
-  // TODO:
-  // need to load  preset-include for output nodes... 
+  // read input nodes
+  for(i=0; i < net->numIns; ++i) {
+    src = inode_unpickle(src, &(net->ins[i]));
+  }
+
+  print_dbg("\r\n unpickling outputs, count: ");
+  print_dbg_ulong(net->numOuts);
+
+
+  // read output nodes
+  for(i=0; i < net->numOuts; ++i) {
+    src = onode_unpickle(src, &(net->outs[i]));
+    // reconnect so the parent operator knows what to do
+    net_connect(i, net->outs[i].target);
+  }
 
   // get count of parameters
   src = unpickle_32(src, &val);
-  print_dbg("\r\n number of parameters from pickled scene: ");
-  print_dbg_ulong(val);
   net->numParams = (u16)val;
   
-  // parameter nodes (includes value and descriptor)
+  // read parameter nodes (includes value and descriptor)
   for(i=0; i<(net->numParams); ++i) {
     src = param_unpickle(&(net->params[i]), src);
-  }
-
-  // read output targets
-  for(i=0; i < net->numOuts; i++) {
-    src = unpickle_32(src, &val);
-    net->outs[i].target = (s16)val;
   }
   
   return (u8*)src;

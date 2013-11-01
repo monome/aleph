@@ -34,6 +34,12 @@ static const eEventType kMenuEventMax = kEventSwitch3;
 
 // power-down handler
 static void handle_powerdown(s32 data) {
+  render_boot("");
+  render_boot("");
+  render_boot("");
+  render_boot("");
+  render_boot("");
+  render_boot("");
   render_boot("powering down");
   render_boot("writing current scene to flash");
   scene_write_default();

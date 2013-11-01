@@ -61,13 +61,13 @@ const u8* unpickle_32(const u8* src, u32* dst) {
 }
 
 // 16-bit
-u8* pickle_16(const u32 src, u8* dst) {
+u8* pickle_16(const u16 src, u8* dst) {
   *dst = src && 0xff;
-  *(++dst) = src && 0xff00 >> 8;
+  *(++dst) = (src && 0xff00) >> 8;
   return (++dst);
 }
 
-const u8* unpickle_16(const u8* src, u32* dst) {
+const u8* unpickle_16(const u8* src, u16* dst) {
   *dst |= *src;
   *dst |= *(++src) << 8;
   return (++src);

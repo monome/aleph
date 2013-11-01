@@ -47,11 +47,11 @@ void init_mem(void) {
 
 // allocate and return pointer
 heap_t alloc_mem(u32 bytes) {
-  print_dbg("\r\n allocating memory, bytes: 0x");
-  print_dbg_hex(bytes);
+  //  print_dbg("\r\n allocating memory, bytes: 0x");
+  //  print_dbg_hex(bytes);
 
-  print_dbg("\r\n location: 0x");
-  print_dbg_hex(heapOffset);
+  //  print_dbg("\r\n location: 0x");
+  //  print_dbg_hex(heapOffset);
 
   heap_t ret = pHeapStart + heapOffset;
 

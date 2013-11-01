@@ -157,10 +157,21 @@ void handle_key_0(s32 val) {
   // load module
   if(val == 0) { return; }
   if(check_key(0)) {
+    region_fill(headRegion, 0x0);
+    font_string_region_clip(headRegion, "loading DSP module...", 0, 0, 0xa, 0);
+    headRegion->dirty = 1;
+    render_update();
+    
     files_load_dsp(curPage->select);
     bfin_wait_ready();
     net_report_params();
     bfin_enable();
+    // render status to head region 
+    region_fill(headRegion, 0x0);
+    font_string_region_clip(headRegion, "finished loading.", 0, 0, 0xa, 0);
+    headRegion->dirty = 1;
+    render_update();
+
   }
   show_foot();
 }
@@ -244,12 +255,12 @@ void init_page_dsp(void) {
  
 // refresh 
 void refresh_dsp(void) {
-  print_dbg("\r\n refresh DSP... ");
+  //  print_dbg("\r\n refresh DSP... ");
   // assign global scroll region pointer
   // also marks dirty
   render_set_scroll(&centerScroll);
   // other regions are static in top-level render, with global handles
   region_fill(headRegion, 0x0);
   font_string_region_clip(headRegion, "DSP", 0, 0, 0xf, 0x1);
-  print_dbg("\r\n finished DSP page refresh");
+  //  print_dbg("\r\n finished DSP page refresh");
 }
