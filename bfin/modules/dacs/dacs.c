@@ -103,13 +103,19 @@ void module_process_frame(void) {
     //    dacVal[i] = filter_1p_lo_next(&(dacSlew[i]));
     //    dac_update(i, dacVal[i] & DAC_VALUE_MASK);
 
-    if(dacDirty[dacChan]) {
-      dac_update(dacChan, dacVal[dacChan]);
-      dacDirty[dacChan] = 0;
-    }
-    if(++dacChan == 4) {
-      dacChan = 0;
-    }
+    /* if(dacDirty[dacChan]) { */
+    /*   dac_update(dacChan, dacVal[dacChan]); */
+    /*   dacDirty[dacChan] = 0; */
+    /* } */
+
+  if(dacSlew[dacChan].sync) { ;; } else {
+    dacVal[dacChan] = filter_1p_lo_next(&(dacSlew[dacChan]));
+    dac_update(dacChan, dacVal[dacChan] & DAC_VALUE_MASK);
+  }
+ 
+  if(++dacChan == 4) {
+    dacChan = 0;
+  }
     //  } 
 }
 
@@ -119,27 +125,27 @@ void module_set_param(u32 idx, pval v) {
   switch(idx) {
     // dac values
   case eParam_dac0 :
-    //     filter_1p_lo_in(&(dacSlew[0]), v.fr);
-    dacVal[0] = v.fr & DAC_VALUE_MASK;
-    dacDirty[0] = 1;
+    filter_1p_lo_in(&(dacSlew[0]), v.fr);
+    //    dacVal[0] = v.fr & DAC_VALUE_MASK;
+    //    dacDirty[0] = 1;
     //    dac_update(0, v.fr & 0xffff);
     break;
   case eParam_dac1 :
-    //    filter_1p_lo_in(&(dacSlew[1]), v.fr);
-    dacVal[1] = v.fr & DAC_VALUE_MASK;
-    dacDirty[1] = 1;
+    filter_1p_lo_in(&(dacSlew[1]), v.fr);
+    //    dacVal[1] = v.fr & DAC_VALUE_MASK;
+    //    dacDirty[1] = 1;
     //    dac_update(1, v.fr & 0xffff);
     break;
   case eParam_dac2 :
-    //    filter_1p_lo_in(&(dacSlew[2]), v.fr);
-    dacVal[2] = v.fr & DAC_VALUE_MASK;
-    dacDirty[2] = 1;
+    filter_1p_lo_in(&(dacSlew[2]), v.fr);
+    //    dacVal[2] = v.fr & DAC_VALUE_MASK;
+    //    dacDirty[2] = 1;
     //    dac_update(2, v.fr & 0xffff);
     break;
   case eParam_dac3 :
-    //    filter_1p_lo_in(&(dacSlew[3]), v.fr);
-    dacVal[3] = v.fr & DAC_VALUE_MASK;
-    dacDirty[3] = 1;
+    filter_1p_lo_in(&(dacSlew[3]), v.fr);
+    //    dacVal[3] = v.fr & DAC_VALUE_MASK;
+    //    dacDirty[3] = 1;
     //    dac_update(3, v.fr & 0xffff);
     break;
   case eParam_slew0 :

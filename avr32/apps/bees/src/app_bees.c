@@ -123,7 +123,7 @@ u8 app_launch(u8 firstrun) {
   init_app_timers();
     
   // pull up power control pin, enabling soft-powerdown
-  //  gpio_set_gpio_pin(POWER_CTL_PIN);
+  gpio_set_gpio_pin(POWER_CTL_PIN);
 
   return 1;
 }
