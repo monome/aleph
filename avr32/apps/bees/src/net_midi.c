@@ -1,3 +1,7 @@
+// asf
+#include "print_funcs.h"
+
+// bees
 #include "net_midi.h"
 
 //-----------------------------
@@ -26,13 +30,13 @@ void net_midi_list_add(op_midi_t* op) {
   } else {
     curOp = ml.cur;
     saveNext = curOp->next;
-    saveCur = ml.cur;
-    savePrev = (((op_midi_t*)ml.cur))->prev;
+    saveCur = curOp;
+    savePrev = curOp->prev;
     curOp->next = op;
-    ml.cur = curOp->next;
+    curOp = ml.cur = op;
     curOp->next = saveNext;
     curOp->prev = savePrev;
-    (curOp->next)->prev = ml.cur;
+    (curOp->next)->prev = op;
     if( curOp->next == ml.top ) {
       ((op_midi_t*)(ml.top))->prev = ml.cur;
     }
@@ -65,6 +69,8 @@ op_midi_t* net_midi_list_remove(op_midi_t* op) {
 void net_handle_midi_packet(u32 data) {
   u32 i;
   op_midi_t* op = ml.top;
+  print_dbg("\r\n net_handle_midi_packet, num ops: ");
+  print_dbg_ulong(ml.num);
   for(i=0; i < ml.num; ++i) {
     (*(op->handler))(op, data);
     op = op->next;

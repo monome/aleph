@@ -11,13 +11,15 @@
 
 typedef struct op_adc_struct {
   op_t super;
-  //  io_t* in_val[1];
-  io_t* val0;
-  io_t* val1;
-  io_t* val2;
-  io_t* val3;
+  io_t* in_val[4];
+  io_t val0;
+  io_t val1;
+  io_t val2;
+  io_t val3;
   op_out_t outs[4];
 } op_adc_t;
-void op_adc_init(op_adc_t* adc);
+
+void op_adc_init(void* op);
+void op_adc_deinit(op_adc_t* adc);
 
 #endif // header guard

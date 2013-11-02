@@ -56,6 +56,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_midi_note_t),
     .init = &op_midi_note_init,
     .deinit = &op_midi_note_deinit
+  }, {
+    .name = "ADC",
+    .size = sizeof(op_adc_t),
+    .init = &op_adc_init,
+    .deinit = &op_adc_deinit
   }
 };
 

@@ -1,3 +1,7 @@
+// asf
+#include "print_funcs.h"
+
+// bees
 #include "net_protected.h"
 #include "op_midi_note.h"
 
@@ -110,6 +114,13 @@ static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
 	vel = (data & 0xff00) >> 8;
 	net_activate(op->outs[0], OP_FROM_INT(num), op);
 	net_activate(op->outs[1], OP_FROM_INT(vel), op);
+
+
+      print_dbg("\r\n op_midi note on ; num: ");
+      print_dbg_ulong(num);
+      print_dbg(" ; vel: ");
+      print_dbg_ulong(vel);
+
       }
     }
   } else if (com == 0x80) {
@@ -119,6 +130,10 @@ static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
       vel = (data & 0xff00) >> 8;
       net_activate(op->outs[0], OP_FROM_INT(num), op);
       net_activate(op->outs[1], OP_FROM_INT(vel), op);
+
+      print_dbg("\r\n op_midi note off ; num: ");
+      print_dbg_ulong(num);
+
     } else {
       ch = (data & 0x0f000000) >> 24;
       if(ch == op->chan) {
