@@ -20,7 +20,7 @@
 // handler function type
 typedef void(*monome_handler_t)(void* op, u32 event);
 
-// generic monome operatortype
+// abstract superclass for monome operators
 // has event handler and focus flag
 typedef struct _op_monome {
   // handler function, will connect to app event handler

@@ -18,7 +18,7 @@ static void op_enc_in_step   ( op_enc_t* enc, const io_t* v);
 
 // pickles
 static u8* op_enc_pickle(op_enc_t* enc, u8* dst);
-static const u8* op_enc_unpickle(op_enc_t* sw, const u8* src);
+static const u8* op_enc_unpickle(op_enc_t* enc, const u8* src);
 
 
 //-------------------------------------------------

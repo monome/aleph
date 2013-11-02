@@ -6,7 +6,7 @@
 #include "op_math.h"
 #include "types.h"
 
-//--- op_monome_grid_raw : monome as a simple bank of switches 
+//--- op_monome_grid_raw : monome grid as a simple bank of switches 
 typedef struct op_mgrid_raw_struct {
   op_t super;
   op_monome_t monome;

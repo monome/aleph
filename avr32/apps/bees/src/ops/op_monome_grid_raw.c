@@ -23,6 +23,10 @@ static void op_mgrid_raw_in_focus(op_mgrid_raw_t* grid, const io_t* val);
 static void op_mgrid_raw_in_tog(op_mgrid_raw_t* grid, const io_t* val);
 static void op_mgrid_raw_in_mono(op_mgrid_raw_t* grid, const io_t* val);
 
+// pickles
+static u8* op_mgrid_raw_pickle(op_mgrid_raw_t* enc, u8* dst);
+static const u8* op_mgrid_raw_unpickle(op_mgrid_raw_t* enc, const u8* src);
+
 /// monome event handler
 static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata);
 
@@ -36,9 +40,22 @@ static op_in_fn op_mgrid_raw_in_fn[3] = {
 //-------------------------------------------------
 //----- extern function definition
 void op_mgrid_raw_init(void* mem) {
-  print_dbg("\r\n op_mgrid_raw_init ");
-
+  //  print_dbg("\r\n op_mgrid_raw_init ");
   op_mgrid_raw_t* op = (op_mgrid_raw_t*)mem;
+
+  // superclass functions
+  //--- op
+  op->super.inc_fn = (op_inc_fn)op_mgrid_raw_inc_fn;
+  op->super.in_fn = op_mgrid_raw_in_fn;
+  op->super.pickle = (op_pickle_fn) (&op_mgrid_raw_pickle);
+  op->super.unpickle = (op_unpickle_fn) (&op_mgrid_raw_unpickle);
+
+  //--- monome
+  op->monome.handler = (monome_handler_t)&op_mgrid_raw_handler;
+  op->monome.op = op;
+
+  // superclass state
+
   op->super.type = eOpMonomeGridRaw;
   op->super.flags |= (1 << eOpFlagMonomeGrid);
 
@@ -47,9 +64,6 @@ void op_mgrid_raw_init(void* mem) {
 
   op->super.in_val = op->in_val;
   op->super.out = op->outs;
-  op->super.inc_fn = (op_inc_fn)op_mgrid_raw_inc_fn;
-  op->super.in_fn = op_mgrid_raw_in_fn;
-  //  op->super.deinit = op_mgrid_raw_deinit;
 
   op->super.opString = op_mgrid_raw_opstring;
   op->super.inString = op_mgrid_raw_instring;
@@ -62,12 +76,9 @@ void op_mgrid_raw_init(void* mem) {
   op->outs[1] = -1;
   op->outs[2] = -1;
 
-  op->monome.handler = (monome_handler_t)&op_mgrid_raw_handler;
-  op->monome.op = op;
-  net_monome_set_focus(&(op->monome), 1);
-
   op->lastPos = 0;
   op->focus = OP_ONE;
+  net_monome_set_focus(&(op->monome), 1);
 }
 
 // de-init
@@ -174,7 +185,7 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
 
 
 /// increment param value from UI:
-static void op_mgrid_raw_inc_fn(op_mgrid_raw_t* op, const s16 idx, const io_t inc) {
+void op_mgrid_raw_inc_fn(op_mgrid_raw_t* op, const s16 idx, const io_t inc) {
   switch(idx) {
   case 0: // focus
     op_mgrid_raw_in_focus(op, &inc);
@@ -188,3 +199,18 @@ static void op_mgrid_raw_inc_fn(op_mgrid_raw_t* op, const s16 idx, const io_t in
   }
 }
 
+// pickle / unpickle
+u8* op_mgrid_raw_pickle(op_mgrid_raw_t* mgrid, u8* dst) {
+  dst = pickle_io(mgrid->focus, dst);
+  dst = pickle_io(mgrid->tog, dst);
+  dst = pickle_io(mgrid->mono, dst);
+  return dst;
+}
+
+const u8* op_mgrid_raw_unpickle(op_mgrid_raw_t* mgrid, const u8* src) {
+  src = unpickle_io(src, (u32*)&(mgrid->focus));
+  src = unpickle_io(src, (u32*)&(mgrid->tog));
+  src = unpickle_io(src, (u32*)&(mgrid->mono));
+  net_monome_set_focus( &(mgrid->monome), mgrid->focus > 0);
+  return src;
+}

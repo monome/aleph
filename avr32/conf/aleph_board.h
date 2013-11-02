@@ -62,7 +62,9 @@
 #define FTDI_USART_TX_PIN        AVR32_USART0_TXD_0_0_PIN
 #define FTDI_USART_TX_FUNCTION   AVR32_USART0_TXD_0_0_FUNCTION
 //#define FTDI_USART_BAUDRATE      230400
-#define FTDI_USART_BAUDRATE      57600
+//#define FTDI_USART_BAUDRATE      57600
+#define FTDI_USART_BAUDRATE      500000
+
 /// compatibility with ASF print funcs
 #define DBG_USART              FTDI_USART
 #define DBG_USART_RX_PIN       FTDI_USART_RX_PIN

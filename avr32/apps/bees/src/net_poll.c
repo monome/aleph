@@ -17,11 +17,15 @@ extern void op_list_init(op_list_t* l) {
 }
 
 // add op pointer after the current position
-extern void net_poll_list_add(op_list_t* l, op_poll_t* op) {
+extern void net_poll_list_add(op_poll_t* op) {
   op_poll_t* saveNext; 
   op_poll_t* savePrev;
   op_poll_t* saveCur;
+  //// fixme: this is broken, don't use it
   op_poll_t* curOp = (op_poll_t*)(l->cur);
+ 
+#warning "compiling broken net_poll_list_add()"
+
   if(l->num == 0) {
     l->cur = op;
     curOp->next = l->cur;

@@ -16,7 +16,9 @@
 #include "event_types.h"
 
 // bees
+#include "app_timers.h"
 #include "handler.h"
+#include "net_midi.h"
 #include "net_monome.h"
 #include "pages.h"
 #include "render.h"
@@ -114,10 +116,23 @@ void bees_handler(event_t* e) {
       // .. update ops
       break;
     case kEventMonomeConnect:
-      // .. update monome focus
+      // .. start poll/refresh, update op focus
+      timers_set_monome();
       break;
     case kEventMonomeDisconnect:
-      // .. update monome focus 
+      timers_unset_monome();
+      // .. stop poll/refresh ,update op focus
+      break;
+    case kEventMidiConnect:
+      // .. start poll/refresh
+      timers_set_midi();
+      break;
+    case kEventMidiDisconnect:
+      // .. stop poll/refresh
+      timers_unset_midi();
+      break;
+    case kEventMidiPacket:
+      net_handle_midi_packet(e->eventData);
       break;
     default:
       break;

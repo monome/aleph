@@ -6,25 +6,32 @@
 // ---- timer tags
 enum { 
   eScreenTimerTag = eNumSysTimers,
-  eMetroTimerTag,
-  //  eSustainTimerTag,
-  //  eAdcTimerTag,
+  eAdcPollTimerTag,
   eMonomePollTimerTag,
   eMonomeRefreshTimerTag,
-  //  eMidiPollTimerTag,
-  //  eMidiRefreshTimerTag,
+  eMidiPollTimerTag,
+  eMidiRefreshTimerTag,
 };
 
 // create application timers
 extern void init_app_timers(void);
-
-// set the metro timer period
-extern void timers_set_metro_ms(u32 ms);
 
 // start monome polling/refresh timers
 extern void timers_set_monome(void);
 
 // stop monome polling/refresh timers
 extern void timers_unset_monome(void);
+
+// start midi polling/refresh timers
+extern void timers_set_midi(void);
+
+// stop midi polling/refresh timers
+extern void timers_unset_midi(void);
+
+// start adc polling timer
+extern void timers_set_adc(void);
+
+// stop adc polling timer
+extern void timers_unset_adc(void);
 
 #endif
