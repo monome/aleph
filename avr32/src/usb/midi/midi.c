@@ -89,16 +89,16 @@ static void midi_parse(void) {
       dst = packetStart;
       //      print_dbg("\r\n parsed status byte. packet contents: 0x");
       //      print_dbg_hex(packet.data);
-      print_dbg(" | SB ( ");
-      print_dbg_hex(packet.data);
-      print_dbg(" )");
+      //      print_dbg(" | SB ( ");
+      //      print_dbg_hex(packet.data);
+      //      print_dbg(" )");
 
       if(stat) {
 	// if we already had a status byte, send the previous packet
 	ev.eventData = packet.sdata;
-	print_dbg("\r\n sending MIDI packet: "); 
-	print_dbg_hex(packet.data);
-	//	post_event(&ev);
+	//	print_dbg("\r\n sending MIDI packet: "); 
+	//	print_dbg_hex(packet.data);
+	post_event(&ev);
       }
       *dst = b;
       stat = 1;  
@@ -115,13 +115,13 @@ static void midi_parse(void) {
   }
   // at the end of a buffer, send a packet if we have a pending status
   if(stat) {
-    print_dbg("\r\n sending MIDI packet: "); 
+    //    print_dbg("\r\n sending MIDI packet: "); 
     ev.eventData = packet.sdata;
-    print_dbg_hex(packet.data);
-    //    post_event(&ev);
+    //    print_dbg_hex(packet.data);
+    post_event(&ev);
   }
-  print_dbg("\r\n");
-  print_dbg("\r\n");
+  //  print_dbg("\r\n");
+  //  print_dbg("\r\n");
 }
 
 /*   for(i=0; i<rxBytes; ++i) { */

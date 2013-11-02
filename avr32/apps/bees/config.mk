@@ -33,6 +33,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_add.c \
 	$(APP_DIR)/src/ops/op_enc.c \
 	$(APP_DIR)/src/ops/op_gate.c \
+	$(APP_DIR)/src/ops/op_midi_note.c \
 	$(APP_DIR)/src/ops/op_mul.c \
 	$(APP_DIR)/src/ops/op_monome_grid_raw.c \
 	$(APP_DIR)/src/ops/op_sw.c \

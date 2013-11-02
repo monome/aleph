@@ -95,7 +95,7 @@ static void op_enc_in_move(op_enc_t* enc, const io_t* v) {
   // print_dbg(" ; step: ");
   // print_dbg_hex((u32)(enc->step));
   //  enc->val = OP_ADD(enc->val, OP_MUL(enc->step, *v));
-  enc->val = OP_ADD(enc->val, OP_MUL(enc->step, OP_INT(*v)));
+  enc->val = OP_ADD(enc->val, OP_MUL(enc->step, OP_FROM_INT(*v)));
   // print_dbg(" ; new value: ");
   // print_dbg_hex((u32)(enc->val));
   op_enc_perform(enc);

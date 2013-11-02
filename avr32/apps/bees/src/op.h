@@ -28,6 +28,7 @@ typedef enum {
   eOpFlagMenu, // op has a submenu function
   eOpFlagMonomeGrid, // op is a monome grid controller
   eOpFlagMonomeRing, // op is a monome arc controller
+  eOpFlagMidiIn, // op is a midi input
   //...
 } op_flag_t;
 
@@ -40,6 +41,7 @@ typedef enum {
   eOpMul,
   eOpGate,
   eOpMonomeGridRaw,
+  eOpMidiNote,
   // eOpAccum,
   // eOpSelect,
   // eOpMapLin,

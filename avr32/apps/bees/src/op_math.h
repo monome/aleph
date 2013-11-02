@@ -38,7 +38,8 @@ typedef fix16_t io_t;
 #define OP_MIN_VAL fix16_min
 #define OP_MAX_VAL fix16_max
 
-#define OP_INT(x) (fix16_from_int(x))
+#define OP_FROM_INT(x) (fix16_from_int(x))
+#define OP_TO_INT(x) (fix16_to_int(x))
 
 //----- conversion
 

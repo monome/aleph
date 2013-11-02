@@ -51,12 +51,12 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_mgrid_raw_t),
     .init = &op_mgrid_raw_init,
     .deinit = &op_mgrid_raw_deinit
+  } , {
+    .name = "MIDINOTE",
+    .size = sizeof(op_midi_note_t),
+    .init = &op_midi_note_init,
+    .deinit = &op_midi_note_deinit
   }
-  // { "ACCUMULATE", sizeof(op_accum_t) },
-  // { "SELECT", sizeof(op_sel_t) },
-  // { "LINEAR MAP", sizeof(op_lin_t) },
-  // { "PARAMETER", sizeof(op_param_t) }, q
-  // { "PRESET", sizeof(op_preset_t) }
 };
 
 
