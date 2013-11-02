@@ -66,7 +66,7 @@ void net_handle_midi_packet(u32 data) {
   u32 i;
   op_midi_t* op = ml.top;
   for(i=0; i < ml.num; ++i) {
-    (*(op->handler))(data);
+    (*(op->handler))(op, data);
     op = op->next;
   }
 }

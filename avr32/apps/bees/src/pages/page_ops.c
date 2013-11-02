@@ -25,7 +25,7 @@ static scroll centerScroll;
 //--- page-specific state variables
 
 // const array of user-creatable operator types
-#define NUM_USER_OP_TYPES 4
+#define NUM_USER_OP_TYPES 6
 static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAdd,
   eOpMul,

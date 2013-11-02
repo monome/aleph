@@ -70,7 +70,7 @@ void op_midi_note_init(void* mem) {
   op->chan = 0;
 
   // FIXME: should sanity-check that the op isn't already in the dang list.
-  net_midi_list_add(op);
+  net_midi_list_add(&(op->midi));
 }
 
 // de-init
