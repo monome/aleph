@@ -17,7 +17,7 @@ static void op_enc_in_move   ( op_enc_t* enc, const io_t* v);
 static void op_enc_in_step   ( op_enc_t* enc, const io_t* v);
 
 // pickles
-static u8* op_enc_pickle(op_enc_t* enc, u8* dst);
+static u8* op_enc_pickle	(op_enc_t* enc, u8* dst);
 static const u8* op_enc_unpickle(op_enc_t* enc, const u8* src);
 
 
@@ -44,7 +44,7 @@ void op_enc_init(void* mem) {
   op_enc_t* enc = (op_enc_t*)mem;
 
   // superclass functions
-  enc->super.inc_fn = (op_inc_fn)op_enc_inc_input;
+  enc->super.inc_fn = (op_inc_fn)(&op_enc_inc_input);
   enc->super.in_fn = op_enc_in_fn;
   enc->super.pickle = (op_pickle_fn) (&op_enc_pickle);
   enc->super.unpickle = (op_unpickle_fn) (&op_enc_unpickle);

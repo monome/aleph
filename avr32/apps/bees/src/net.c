@@ -838,6 +838,8 @@ u8* net_pickle(u8* dst) {
     // pickle the operator state (if needed)
     //#warning skipping op state pickle
     //#if 0
+    print_dbg("\r\n op pickle; FP: 0x");
+    print_dbg_hex((u32)(op->pickle));
     if(op->pickle != NULL) {
       dst = (*(op->pickle))(op, dst);
     }
@@ -904,6 +906,10 @@ u8* net_unpickle(const u8* src) {
     op = net->ops[net->numOps - 1];
     //#warning skipping op state unpickle
     //#if 0
+
+    print_dbg("\r\n op unpickle; FP: 0x");
+    print_dbg_hex((u32)(op->unpickle));
+
     if(op->unpickle != NULL) {
       src = (*(op->unpickle))(op, src);
     }
