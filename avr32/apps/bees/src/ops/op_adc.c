@@ -3,7 +3,7 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_sw_instring	= "VAL0    VAL1    VAL2    VAL3    ";
+static const char* op_adc_instring	= "VAL0    VAL1    VAL2    VAL3    ";
 static const char* op_adc_outstring	= "VAL0    VAL1    VAL2    VAL3    ";
 static const char* op_adc_opstring	= "ADC";
 
@@ -31,7 +31,7 @@ static const u8* op_adc_unpickle(op_adc_t* adc, const u8* src);
 
 /// initialize
 void op_adc_init(op_adc_t* sw) {
-  adc->super.numInputs = 0;
+  adc->super.numInputs = 4;
   adc->super.numOutputs = 4;
   adc->outs[0] = -1;
   adc->outs[1] = -1;

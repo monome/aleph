@@ -53,8 +53,8 @@ void op_midi_note_init(void* mem) {
   op->super.type = eOpMidiNote;
   op->super.flags |= (1 << eOpFlagMidiIn);
 
-  op->super.numInputs = 3;
-  op->super.numOutputs = 3;
+  op->super.numInputs = 1;
+  op->super.numOutputs = 2;
 
   op->super.in_val = op->in_val;
   op->super.out = op->outs;
