@@ -50,7 +50,7 @@ void op_midi_note_init(void* mem) {
 
   //--- midi
   op->midi.handler = (midi_handler_t)&op_midi_note_handler;
-  op->midi.op = op;
+  op->midi.sub = op;
 
   // superclass state
 
@@ -67,14 +67,14 @@ void op_midi_note_init(void* mem) {
   op->super.inString = op_midi_note_instring;
   op->super.outString = op_midi_note_outstring;
 
-  op->in_val[0] = &(op->chan);
+  op->in_val[0] = &(op->chanIo);
   op->outs[0] = -1;
   op->outs[1] = -1;
 
   op->chan = 0;
 
   // FIXME: should sanity-check that the op isn't already in the dang list.
-  net_midi_list_add(&(op->midi));
+  net_midi_list_push(&(op->midi));
 }
 
 // de-init
@@ -88,14 +88,19 @@ void op_midi_note_deinit(void* op) {
 
 //--- network input functions
 static void op_midi_note_in_chan(op_midi_note_t* op, const io_t* v) {
-  op->chan = *v;
+  op->chanIo = *v;
+  // range is [-1, 16] in fix16... this is ugly, whatever
+  if(op->chanIo > 0x00100000) { op->chanIo = 0x00100000; }
+  if(op->chanIo < 0xffff0000) { op->chanIo = 0xffff0000; }
+  op->chan = (s8)(OP_TO_INT(*v));
+  
 }
 
 
 static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
   static u8 com;
   static u8 ch, num, vel;
-  op_midi_note_t* op = (op_midi_note_t*)(op_midi->op);
+  op_midi_note_t* op = (op_midi_note_t*)(op_midi->sub);
 
   // check status byte  
   com = (data & 0xf0000000) >> 28; 
@@ -152,20 +157,23 @@ static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
 
 /// increment param value from UI:
 void op_midi_note_inc_fn(op_midi_note_t* op, const s16 idx, const io_t inc) {
+  io_t val;
   switch(idx) {
   case 0: // channel
-    op_midi_note_in_chan(op, &inc);
+    val = OP_SADD(op->chanIo, inc); 
+    op_midi_note_in_chan(op, &val);
     break;
   }
 }
 
 // pickle / unpickle
 u8* op_midi_note_pickle(op_midi_note_t* mnote, u8* dst) {
-  dst = pickle_io(mnote->chan, dst);
+  dst = pickle_io(mnote->chanIo, dst);
   return dst;
 }
 
 const u8* op_midi_note_unpickle(op_midi_note_t* mnote, const u8* src) {
-  src = unpickle_io(src, (u32*)&(mnote->chan));
+  src = unpickle_io(src, (u32*)&(mnote->chanIo));
+  mnote->chan = OP_TO_INT(mnote->chanIo);
   return src;
 }

@@ -160,7 +160,7 @@ static void show_foot0(void) {
   if(keyPressed == 0) {
     fill = 0x5;
   }
-  region_fill(footRegion[1], fill);
+  region_fill(footRegion[0], fill);
   font_string_region_clip(footRegion[1], "INS", 0, 0, 0xf, fill);
 }
 
@@ -231,9 +231,16 @@ void handle_key_3(s32 val) {
 
 void handle_enc_0(s32 val) {
   // select new operator type
-  newOpType++;
-  if (newOpType >= NUM_USER_OP_TYPES) {
-    newOpType = 0;
+  if(val > 0) {
+    newOpType++;
+    if (newOpType >= NUM_USER_OP_TYPES) {
+      newOpType = 0;
+    }
+  } else {
+    newOpType--;
+    if (newOpType >= NUM_USER_OP_TYPES) {
+      newOpType = NUM_USER_OP_TYPES - 1;
+    }
   }
   render_op_type();
 }

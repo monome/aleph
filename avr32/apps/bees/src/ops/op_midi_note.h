@@ -15,8 +15,10 @@ typedef struct op_midi_note_struct {
   io_t* in_val[1];
   // outputs: note, velocity
   op_out_t outs[2];
-  // target channel (negative == all channels)
-  s32 chan;
+  // channel, input value(negative == all channels)
+  io_t chanIo;
+  /// actual channel number
+  s8 chan;
 } op_midi_note_t;
 
 // init

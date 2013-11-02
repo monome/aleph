@@ -21,7 +21,7 @@ typedef struct _op_midi {
   // handler function, will connect to app event handler
   midi_handler_t handler;
   // pointer to operator subclass
-  void* op;
+  void* sub;
   // pointers to adjacent list elements
   struct _op_midi* next;
   struct _op_midi* prev;
@@ -32,8 +32,8 @@ typedef struct _op_midi {
 
 // list structure
 typedef struct _op_list {
-  void* top;
-  void* cur;
+  op_midi_t* top;
+  op_midi_t* cur;
   u32 num;
 } op_midi_list_t;
 
@@ -42,7 +42,8 @@ typedef struct _op_list {
 //--- extern functions
 
 // add op pointer after the current position
-extern void net_midi_list_add(op_midi_t* op);
+//extern void net_midi_list_add(op_midi_t* op);
+extern void net_midi_list_push(op_midi_t* op);
 // delete op pointer at current position, return next pointer in list
 extern op_midi_t* net_midi_list_remove(op_midi_t* op);
 // handle incoming midi packet

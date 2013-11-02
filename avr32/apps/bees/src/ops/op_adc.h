@@ -20,6 +20,6 @@ typedef struct op_adc_struct {
 } op_adc_t;
 
 void op_adc_init(void* op);
-void op_adc_deinit(op_adc_t* adc);
+void op_adc_deinit(void* op);
 
 #endif // header guard

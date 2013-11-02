@@ -62,7 +62,8 @@ void op_adc_init(void* op) {
   adc->val3 = 0;
 }
 
-void op_adc_deinit(op_adc_t* adc) {
+void op_adc_deinit(void* adc) {
+  // ... TODO
 }
 
 //-------------------------------------------------
