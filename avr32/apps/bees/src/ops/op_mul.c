@@ -8,6 +8,11 @@ static void op_mul_in_a(op_mul_t* mul, const io_t* v);
 static void op_mul_in_b(op_mul_t* mul, const io_t* v);
 static void op_mul_in_btrig(op_mul_t* mul, const io_t* v);
 
+// pickle / unpickle
+static u8* op_mul_pickle(op_mul_t* op, u8* dst);
+static const u8* op_mul_unpickle(const u8* src, op_mul_t* op);
+
+
 //-------------------------------------------------
 //----- static vars
 static op_in_fn op_mul_in_fn[3] = {
@@ -27,8 +32,12 @@ void op_mul_init(void* mem) {
   mul->super.numInputs = 3;
   mul->super.numOutputs = 1;
   mul->outs[0] = -1;
+
   mul->super.inc_fn = (op_inc_fn)op_mul_inc_input;
   mul->super.in_fn = op_mul_in_fn;
+  mul->super.pickle = (op_pickle_fn) (&op_mul_pickle);
+  mul->super.unpickle = (op_unpickle_fn) (&op_mul_unpickle);
+
   mul->super.in_val = mul->in_val;
   mul->super.out = mul->outs;
   mul->super.opString = op_mul_opstring;
@@ -82,4 +91,19 @@ static void op_mul_inc_input(op_mul_t* mul, const s16 idx, const io_t inc) {
     op_mul_in_btrig(mul, &inc);
     break;
   }
+}
+
+// pickle / unpickle
+u8* op_mul_pickle(op_mul_t* op, u8* dst) {
+  dst = pickle_io(op->a, dst);
+  dst = pickle_io(op->b, dst);
+  dst = pickle_io(op->btrig, dst);
+  return dst;
+}
+
+const u8* op_mul_unpickle(const u8* src, op_mul_t* op) {
+  src = unpickle_io(src, &(op->a));
+  src = unpickle_io(src, &(op->b));
+  src = unpickle_io(src, &(op->btrig));
+  return src;
 }

@@ -8,6 +8,10 @@ static void op_add_in_b(op_add_t* add, const io_t* v);
 static void op_add_in_btrig(op_add_t* add, const io_t* v);
 static void op_add_inc_input(op_add_t* mul, const s16 idx, const io_t inc);
 
+// pickle / unpickle
+static u8* op_add_pickle(op_add_t* op, u8* dst);
+static const u8* op_add_unpickle(const u8* src, op_add_t* op);
+
 //-------------------------------------------------
 //---- static vars
 static const char* op_add_instring = "A       B       B_TRIG  ";
@@ -27,9 +31,13 @@ void op_add_init(void* mem) {
   add->super.numInputs = 3;
   add->super.numOutputs = 1;
   add->outs[0] = -1;
+
   add->super.inc_fn = (op_inc_fn)op_add_inc_input;
   add->super.in_fn = op_add_in_fn;
   add->super.in_val = add->in_val;
+  add->super.pickle = (op_pickle_fn) (&op_add_pickle);
+  add->super.unpickle = (op_unpickle_fn) (&op_add_unpickle);
+
   add->super.out = add->outs;
   add->super.opString = op_add_opstring;
   add->super.inString = op_add_instring;
@@ -77,4 +85,20 @@ static void op_add_inc_input(op_add_t* add, const s16 idx, const io_t inc) {
     op_add_in_btrig(add, &inc);
     break;
   }
+}
+
+
+// pickle / unpickle
+u8* op_add_pickle(op_add_t* op, u8* dst) {
+  dst = pickle_io(op->a, dst);
+  dst = pickle_io(op->b, dst);
+  dst = pickle_io(op->btrig, dst);
+  return dst;
+}
+
+const u8* op_add_unpickle(const u8* src, op_add_t* op) {
+  src = unpickle_io(src, &(op->a));
+  src = unpickle_io(src, &(op->b));
+  src = unpickle_io(src, &(op->btrig));
+  return src;
 }

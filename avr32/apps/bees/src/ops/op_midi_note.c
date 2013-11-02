@@ -71,7 +71,8 @@ void op_midi_note_init(void* mem) {
   op->outs[0] = -1;
   op->outs[1] = -1;
 
-  op->chan = 0;
+  op->chan = -1;
+  op->chanIo = 0xffff000;
 
   // FIXME: should sanity-check that the op isn't already in the dang list.
   net_midi_list_push(&(op->midi));
@@ -89,11 +90,16 @@ void op_midi_note_deinit(void* op) {
 //--- network input functions
 static void op_midi_note_in_chan(op_midi_note_t* op, const io_t* v) {
   op->chanIo = *v;
+  print_dbg("\r\n midi_note, setting channel from input: 0x");
+  print_dbg_hex((u32)*v);
   // range is [-1, 16] in fix16... this is ugly, whatever
-  if(op->chanIo > 0x00100000) { op->chanIo = 0x00100000; }
-  if(op->chanIo < 0xffff0000) { op->chanIo = 0xffff0000; }
-  op->chan = (s8)(OP_TO_INT(*v));
-  
+  //  if(op->chanIo > 0x00100000) { op->chanIo = 0x00100000; }
+  //  if(op->chanIo < 0xffff0000) { op->chanIo = 0xffff0000; }
+  op->chan = (s8)(OP_TO_INT(op->chanIo));
+  if(op->chan < -1) { op->chan = -1; }
+  if(op->chan > 15) { op->chan = 15; }
+  print_dbg(" , channel: ");
+  print_dbg_hex((u32)(op->chan));
 }
 
 
@@ -105,7 +111,7 @@ static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
   // check status byte  
   com = (data & 0xf0000000) >> 28; 
   if (com == 0x9) {
-    if(op->chan == -1) {
+    if(op->chan < 0) {
       num = (data & 0xff0000) >> 16;
       vel = (data & 0xff00) >> 8;
       net_activate(op->outs[0], OP_FROM_INT(num), op);
@@ -113,6 +119,8 @@ static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
     } else {
       // note on
       ch = (data & 0x0f000000) >> 24;
+      /* print_dbg("\r\n midi got channel: "); */
+      /* print_dbg_hex((u32)ch); */
       if(ch == op->chan) {
 	// matches our channel, so perform it
 	num = (data & 0xff0000) >> 16;

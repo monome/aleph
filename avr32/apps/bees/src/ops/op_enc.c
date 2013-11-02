@@ -195,10 +195,10 @@ u8* op_enc_pickle(op_enc_t* enc, u8* dst) {
 }
 
 const u8* op_enc_unpickle(op_enc_t* enc, const u8* src) {
-  src = unpickle_io(src, (u32*)&(enc->val));
-  src = unpickle_io(src, (u32*)&(enc->step));
-  src = unpickle_io(src, (u32*)&(enc->min));
-  src = unpickle_io(src, (u32*)&(enc->max));
-  src = unpickle_io(src, (u32*)&(enc->wrap));
+  src = unpickle_io(src, &(enc->val));
+  src = unpickle_io(src, &(enc->step));
+  src = unpickle_io(src, &(enc->min));
+  src = unpickle_io(src, &(enc->max));
+  src = unpickle_io(src, &(enc->wrap));
   return src;
 }
