@@ -25,7 +25,7 @@ static void op_midi_note_in_chan(op_midi_note_t* grid, const io_t* val);
 
 // pickles
 static u8* op_midi_note_pickle(op_midi_note_t* enc, u8* dst);
-static const u8* op_midi_note_unpickle(op_midi_note_t* enc, const u8* src);
+static const u8* op_midi_note_unpickle(op_midi_note_t* mnote, const u8* src);
 
 /// midi event handler
 static void op_midi_note_handler(op_midi_t* op_midi, u32 edata);

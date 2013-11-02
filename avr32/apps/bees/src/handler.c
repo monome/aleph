@@ -50,9 +50,6 @@ static void handle_powerdown(s32 data) {
   gpio_clr_gpio_pin(POWER_CTL_PIN);
 }
 
-// array of handlers for all event types (!)
-
-
 /// FIXME:
 // shouldn't use. generated ASM for big case statements is horrible.
 /// apps should define an array of function pointers for handlers.
