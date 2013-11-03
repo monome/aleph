@@ -59,22 +59,23 @@ static void show_foot(void);
 /* }; */
 
 // fill tmp region with new content
-// given input index
+// given input index and foreground color
 static void render_line(s16 idx) {
   //  const s16 opIdx = net_in_op_idx(idx);
   s16 target;
   s16 targetOpIdx;
+  s16 srcOpIdx; 
   region_fill(lineRegion, 0x0);
 
   target = net_get_target(idx);
-
+  srcOpIdx = net_out_op_idx(idx);
   if(target >= 0) {
     //// output has target
     // render output
     clearln();
-    appendln_idx_lj(net_out_op_idx(idx));
+    appendln_idx_lj(srcOpIdx);
     appendln_char('.');
-    appendln( net_op_name(net_out_op_idx(idx)));
+    appendln( net_op_name(srcOpIdx));
     appendln_char('/');
     appendln( net_out_name(idx) );
     endln();
@@ -97,7 +98,13 @@ static void render_line(s16 idx) {
       appendln( net_in_name(target)); 
     }
     endln();
-    font_string_region_clip(lineRegion, lineBuf, 60, 0, 0xa, 0);
+    if(targetOpIdx == srcOpIdx) {
+      // the network doesn't actually perform connections from an op to itself.
+      // reflect this in UI by dimming this line
+      font_string_region_clip(lineRegion, lineBuf, 60, 0, 0x5, 0);
+    } else {
+      font_string_region_clip(lineRegion, lineBuf, 60, 0, 0xa, 0);
+    }
     clearln();
     //    print_fix16(lineBuf, net_get_in_value(idx));
     //    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, 0xa, 0);
@@ -135,7 +142,9 @@ static void select_edit(s32 inc) {
       target = net_num_ins() - 1;
     }
   }
+
   net_connect(curPage->select, target);
+
   // render to tmp buffer
   render_line(curPage->select);
   // copy to scroll with highlight

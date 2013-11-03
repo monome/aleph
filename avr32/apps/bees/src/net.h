@@ -132,6 +132,15 @@ extern u8 net_get_in_preset(u32 inIdx);
 // get preset inclusion for output
 extern u8 net_get_out_preset(u32 outIdx);
 
+// toggle play inclusion for input
+extern u8 net_toggle_in_play(u32 inIdx);
+
+// set play inclusion for input
+extern void net_set_in_play(u32 inIdx, u8 val);
+
+// get play inclusion for input
+extern u8 net_get_in_play(u32 inIdx);
+
 // add a new parameter
 extern void net_add_param(u32 idx, const ParamDesc* pdesc);
 

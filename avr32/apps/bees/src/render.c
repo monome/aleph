@@ -62,8 +62,6 @@ static region bootScrollRegion = {
 // scroller for boot region
 static scroll bootScroll;
 
-
-
 // static line buffer
 char lineBuf[LINEBUF_LEN];
 static char *pline = lineBuf;
@@ -296,7 +294,7 @@ void render_to_select(void) {
 }
 
 // copy temp data to center of scroll region (clipping)
-/// FIXME: abstract this and place in region.c
+/// FIXME: abstract this and place in region.c ?
 void render_to_scroll_center(void) {
   u8* psrc;
   u8* pdst;
@@ -362,13 +360,12 @@ void render_to_scroll_line(u8 n, u8 hl) {
   src = lineRegion->data;
   dstMax = dst + lineRegion->len - 1;
   // copy and apply color map based on HL
-  // it is assumed that tmp buffer uses colors [0, >0]
   if(hl) {
     while(dst < dstMax) {
-      if(*src > 0) {
-	*dst = colorHiFront;
-      } else {
+      if(*src == 0) {
 	*dst = colorHiBack;
+      } else {
+	*dst = *src;
       }
       ++src;
       ++dst;
@@ -400,19 +397,24 @@ void render_scroll_apply_hl(u8 n, u8 hl) {
 
   if(hl) {
     while(dst < dstMax) {
-      if(*dst < colorLoFront) {
-	*dst = colorHiBack;
-      } else {
+      
+      if(*dst >= colorLoFront) {
 	*dst = colorHiFront;
+      } else {
+	if(*dst == 0) {
+	  *dst = colorHiBack;
+	}
       }
       dst++;
     }  
   } else {
     while(dst < dstMax) {
-      if(*dst < colorHiFront) {
+      if(*dst <= colorHiBack) {
 	*dst = colorLoBack;
       } else {
-	*dst = colorLoFront;
+	if(*dst == colorHiFront) {
+	  *dst = colorLoFront;
+	}
       }
       dst++;
     }  
