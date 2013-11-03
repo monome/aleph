@@ -108,21 +108,34 @@ void init_adc(void) {
 void adc_poll(void) {
   static u16 adcVal[4] = {0, 0, 0, 0};
   static u16 adcOldVal[4] = {0, 0, 0, 0};
+  u16 valMask;
   static event_t e;
   u8 i;
 
   adc_convert(&adcVal);
 
+#if 0
   for(i=0; i<4; i++) {        
     // TODO:
-    /// probably want more filtering before posting events
+    /// probably want more filtering before posting events?? i dunno
     //    if(adcVal[i] != adcOldVal[i]) {
     /// this is a dirty way! but the two lower bits are pretty noisy.
-    if( (adcVal[i] & 0xffc) != ( adcOldVal[i] & 0xffc) ) {
-      adcOldVal[i] = adcVal[i];
+    valMask = adcVal[i] & 0xff8;
+    if( valMask != adcOldVal[i] ) {
+      adcOldVal[i] = valMask;
       e.type = adctypes[i];
+      // use the data without the mask
       e.data = (S16)(adcVal[i]);
       event_post(&e);
     }
   }
+#else 
+  /// test with no filtering.. maybe this is fine
+  for(i=0; i<4; i++) {        
+    e.type = adctypes[i];
+    e.data = (S16)(adcVal[i]);
+    event_post(&e);
+  }
+#endif
+
 }

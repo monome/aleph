@@ -131,11 +131,13 @@ static void handler_Switch5(s32 data) {
 }
 
 static void handler_Switch6(s32 data) {
-  // TODO: update footswitch op
+  // footswitch 1
+  net_activate(net_op_in_idx(opSysSwIdx[4], 0), data, NULL);
 }
 
 static void handler_Switch7(s32 data) { 
-  // TODO: update footswitch op
+  // footswitch 2
+  net_activate(net_op_in_idx(opSysSwIdx[5], 0), data, NULL);
 } 
 
 static void handler_MonomeConnect(s32 data) { 
