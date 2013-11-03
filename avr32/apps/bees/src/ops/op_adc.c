@@ -122,8 +122,8 @@ void op_adc_in_period (op_adc_t* adc, const io_t* v) {
 static void op_adc_in_val0(op_adc_t* adc, const io_t* v) {
   // simply passes value to output
   adc->val0 = *v;
-  /* print_dbg("\r\n adc op output, channel 0, value: 0x"); */
-  /* print_dbg_hex(adc->val0); */
+  print_dbg("\r\n adc op output, channel 0, value: 0x");
+  print_dbg_hex(adc->val0);
   net_activate(adc->outs[0], adc->val0, &(adc->super));
 }
 
@@ -131,8 +131,8 @@ static void op_adc_in_val0(op_adc_t* adc, const io_t* v) {
 static void op_adc_in_val1(op_adc_t* adc, const io_t* v) {
   // simply passes value to output
   adc->val1 = *v;
-  /* print_dbg("\r\n adc op output, channel 1, value: 0x"); */
-  /* print_dbg_hex(adc->val1); */
+  print_dbg("\r\n adc op output, channel 1, value: 0x");
+  print_dbg_hex(adc->val1);
   net_activate(adc->outs[1], adc->val1, &(adc->super));
 }
 
@@ -140,8 +140,8 @@ static void op_adc_in_val1(op_adc_t* adc, const io_t* v) {
 static void op_adc_in_val2(op_adc_t* adc, const io_t* v) {
   // simply passes value to output
   adc->val2 = *v;
-  /* print_dbg("\r\n adc op output, channel 2, value: 0x"); */
-  /* print_dbg_hex(adc->val2); */
+  print_dbg("\r\n adc op output, channel 2, value: 0x");
+  print_dbg_hex(adc->val2);
   net_activate(adc->outs[2], adc->val2, &(adc->super));
 }
 
@@ -149,8 +149,8 @@ static void op_adc_in_val2(op_adc_t* adc, const io_t* v) {
 static void op_adc_in_val3(op_adc_t* adc, const io_t* v) {
   // simply passes value to output
   adc->val3 = *v;
-  /* print_dbg("\r\n adc op output, channel 3, value: 0x"); */
-  /* print_dbg_hex(adc->val3); */
+  print_dbg("\r\n adc op output, channel 3, value: 0x");
+  print_dbg_hex(adc->val3);
   net_activate(adc->outs[3], adc->val3, &(adc->super));
 }
 
