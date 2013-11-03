@@ -277,7 +277,7 @@
 8001718c T bfin_report_params
 800171f8 T bfin_load_buf
 80017428 T init_events
-8001744c T post_event
+8001744c T event_post
 8001749c T get_next_event
 800174e8 T set_enc_thresh
 800174f8 T process_enc

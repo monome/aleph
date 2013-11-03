@@ -208,10 +208,10 @@ static void irq_port1_line1(void) {
 // interrupt handler for PB16-PB23
 __attribute__((__interrupt__))
 static void irq_port1_line2(void) {
-  print_dbg("\r\n interrupt on pb16-pb23 : ");
+  //  print_dbg("\r\n interrupt on pb16-pb23 : ");
   //SW_POWER
   if(gpio_get_pin_interrupt_flag(SW_POWER_PIN)) {
-    print_dbg("......... sw 5 ! ");
+    //    print_dbg("......... sw 5 ! ");
     //   print_dbg(" value: ");
     //    print_dbg_ulong(
     gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
@@ -296,6 +296,6 @@ void register_interrupts(void) {
   INTC_register_interrupt(&irq_tc, APP_TC_IRQ, APP_TC_IRQ_PRIORITY);
 
   // register uart interrupt
+#warning TODO: usart RX, polling or interrupt
   //  INTC_register_interrupt(&irq_usart, AVR32_USART0_IRQ, UI_IRQ_PRIORITY);
-
 }

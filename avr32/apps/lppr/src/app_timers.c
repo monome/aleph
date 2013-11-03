@@ -79,8 +79,8 @@ static void monome_refresh_timer_callback(int tag) {
   //  if (monomeConnect) {
     //    print_dbg("\r\n posting monome refresh event");
   if(monomeFrameDirty > 0) {
-      e.eventType = kEventMonomeRefresh;
-      post_event(&e);
+      e.type = kEventMonomeRefresh;
+      event_post(&e);
     }
     //  }
 }
@@ -146,8 +146,8 @@ void init_app_timers(void) {
 /* static void screen_timer_callback(int tag) {   */
 /*   render_update(); */
 /*   /\* if(refresh) { *\/ */
-/*   /\*   e.eventType = kEventRefresh; *\/ */
-/*   /\*   post_event(&e); *\/ */
+/*   /\*   e.type = kEventRefresh; *\/ */
+/*   /\*   event_post(&e); *\/ */
 /*   /\*   refresh = 0; *\/ */
 /*   /\* } *\/ */
 /* } */
@@ -188,8 +188,8 @@ void init_app_timers(void) {
 /* /\*   if (monomeConnect) { *\/ */
 /* /\*     //    print_dbg("\r\n posting monome refresh event"); *\/ */
 /* /\*     if(monomeFrameDirty > 0) { *\/ */
-/* /\*       e.eventType = kEventMonomeRefresh; *\/ */
-/* /\*       post_event(&e); *\/ */
+/* /\*       e.type = kEventMonomeRefresh; *\/ */
+/* /\*       event_post(&e); *\/ */
 /* /\*     } *\/ */
 /* /\*   } *\/ */
 /* /\* } *\/ */

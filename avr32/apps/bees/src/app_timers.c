@@ -36,19 +36,14 @@ static swTimer_t monomePollTimer;
 // refresh monome device 
 static swTimer_t monomeRefreshTimer;
 
-
 // poll midi device 
 static swTimer_t midiPollTimer;
 // refresh midi device 
 /// TODO:
 // static swTimer_t midiRefreshTimer;
 
-// poll adcs 
+// poll adc 
 static swTimer_t adcPollTimer;
-
-// poll midi device
-static swTimer_t midiPollTimer;
-
 
 //----- callbacks
 
@@ -81,8 +76,8 @@ static void monome_refresh_timer_callback(int tag) {
   //  if (monomeConnect) {
   //    print_dbg("\r\n posting monome refresh event");
   if(monomeFrameDirty > 0) {
-    e.eventType = kEventMonomeRefresh;
-    post_event(&e);
+    e.type = kEventMonomeRefresh;
+    event_post(&e);
   }
   //  }
 }

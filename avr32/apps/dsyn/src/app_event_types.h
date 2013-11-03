@@ -8,6 +8,6 @@ typedef enum {
   kEventSeqNext = kNumSysEvents,
   kNumAppEvents
   
-} eAppEventType;
+} eApptype;
 
 #endif

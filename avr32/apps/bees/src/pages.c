@@ -79,6 +79,8 @@ page_t* curPage;
 s8 pageIdx;
 // last pressed key
 u8 keyPressed = 255;
+// alt-mode flag
+u8 altMode = 0;
 
 //--------------
 //--- static vars

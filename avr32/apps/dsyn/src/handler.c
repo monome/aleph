@@ -137,30 +137,30 @@ static s32 scale_knob_value_fast(s32 val) {
    //  u8 b;
 
    //  print_dbg("\r\n app event handler: ");
-   //  print_dbg_hex(ev->eventType);
+   //  print_dbg_hex(ev->type);
 
-   switch (ev->eventType) {
+   switch (ev->type) {
 
    case kEventSeqNext:
      seq_advance();
      break;
 
    case kEventSwitch0:
-     handle_sw(0, ev->eventData > 0);
+     handle_sw(0, ev->data > 0);
      break;
    case kEventSwitch1:
-     handle_sw(1, ev->eventData > 0);
+     handle_sw(1, ev->data > 0);
      break;
    case kEventSwitch2:
-     handle_sw(2, ev->eventData > 0);
+     handle_sw(2, ev->data > 0);
      break;
    case kEventSwitch3:
-     handle_sw(3, ev->eventData > 0);
+     handle_sw(3, ev->data > 0);
      break;
 
    case kEventSwitch4:
      // mode button: write config file
-     if(ev->eventData > 0) {
+     if(ev->data > 0) {
        print_dbg("\r\n write params...");
        files_write_params();
        /* grid_toggle_edit_mode(); */
@@ -173,35 +173,35 @@ static s32 scale_knob_value_fast(s32 val) {
      break;
 
    case kEventSwitch6:
-     render_sw_on(2, ev->eventData > 0);
+     render_sw_on(2, ev->data > 0);
      break;
 
    case kEventSwitch7:
-     render_sw_on(3, ev->eventData > 0);
+     render_sw_on(3, ev->data > 0);
      break;
 
    case kEventMonomeGridKey:
-     grid_handle_key_event(ev->eventData);
+     grid_handle_key_event(ev->data);
      break;
 
    case kEventEncoder0:
      /// TEMPO
-     ctl_inc_tempo(scale_knob_value(ev->eventData));
+     ctl_inc_tempo(scale_knob_value(ev->data));
      break;
   case kEventEncoder1:
     // SCROLL GRID
-    grid_inc_scroll( ev->eventData > 0 ? 1 : -1);
+    grid_inc_scroll( ev->data > 0 ? 1 : -1);
     break;
   case kEventEncoder2:
     // PARAM VALUE
-    ctl_inc_param( scale_knob_value_fast(ev->eventData) );
+    ctl_inc_param( scale_knob_value_fast(ev->data) );
     break;
   case kEventEncoder3:
     // PARAM IDX 
-    ctl_inc_param_select( ev->eventData > 0 ? 1 : -1 );
+    ctl_inc_param_select( ev->data > 0 ? 1 : -1 );
     break;
   case kEventMonomeConnect :
-    handle_monome_connect((u32)ev->eventData);
+    handle_monome_connect((u32)ev->data);
     break;
   default:
     break;

@@ -314,13 +314,13 @@ void monome_grid_refresh(void) {
 //---- convert to/from event data
 // connect
 static inline void monome_connect_write_event(void) {
-  u8* data = (u8*)(&(ev.eventData));
-  ev.eventType = kEventMonomeConnect;
+  u8* data = (u8*)(&(ev.data));
+  ev.type = kEventMonomeConnect;
   *data++ = (u8)(mdesc.device); 	// device (8bits)
   *data++ = mdesc.cols;		// width / count
   *data++ = mdesc.rows;		// height / resolution
   //  *data = 0; 		// unused
-  post_event(&ev);
+  event_post(&ev);
 }
 
 void monome_connect_parse_event_data(u32 data, eMonomeDevice *dev, u8* w, u8* h) {
@@ -332,7 +332,7 @@ void monome_connect_parse_event_data(u32 data, eMonomeDevice *dev, u8* w, u8* h)
 
 // grid key
 static inline void monome_grid_key_write_event(u8 x, u8 y, u8 val) {
-  u8* data = (u8*)(&(ev.eventData));
+  u8* data = (u8*)(&(ev.data));
   data[0] = x;
   data[1] = y;
   data[2] = val;
@@ -344,8 +344,8 @@ static inline void monome_grid_key_write_event(u8 x, u8 y, u8 val) {
   /* print_dbg("; z: 0x"); */
   /* print_dbg_hex(val); */
 
-  ev.eventType = kEventMonomeGridKey;
-  post_event(&ev);
+  ev.type = kEventMonomeGridKey;
+  event_post(&ev);
 }
 
 void monome_grid_key_parse_event_data(u32 data, u8* x, u8* y, u8* val) {

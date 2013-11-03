@@ -332,7 +332,7 @@ void files_store_scene_name(const char* name) {
   app_resume();
 
   print_dbg("\r\n resumed UI and app timer interrupts.");
-  print_pending_events();
+  //  print_pending_events();
   /* delay_ms(100); */
 }
 

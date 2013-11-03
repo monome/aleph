@@ -5,35 +5,35 @@
 
 void app_handle_event(event_t* e) {
   //// APP 
-  switch(e->eventType) {
+  switch(e->type) {
 
   case kEventRefresh:
     screen_refresh();
     break;
     //----- function switches
   case kEventSwitchDown0:
-    menu_handleKey(eKeyFnDownA, e.eventData);
+    menu_handleKey(eKeyFnDownA, e.data);
     break;
   case kEventSwitchUp0:
-    menu_handleKey(eKeyFnUpA, e.eventData);
+    menu_handleKey(eKeyFnUpA, e.data);
     break;
   case kEventSwitchDown1:
-    menu_handleKey(eKeyFnDownB, e.eventData);
+    menu_handleKey(eKeyFnDownB, e.data);
     break;
   case kEventSwitchUp1:
-    menu_handleKey(eKeyFnUpB, e.eventData);
+    menu_handleKey(eKeyFnUpB, e.data);
     break;
   case kEventSwitchDown2:
-    menu_handleKey(eKeyFnDownC, e.eventData);
+    menu_handleKey(eKeyFnDownC, e.data);
     break;
   case kEventSwitchUp2:
-    menu_handleKey(eKeyFnUpC, e.eventData);
+    menu_handleKey(eKeyFnUpC, e.data);
     break;
   case kEventSwitchDown3:
-    menu_handleKey(eKeyFnDownD, e.eventData);
+    menu_handleKey(eKeyFnDownD, e.data);
     break;
   case kEventSwitchUp3:
-    menu_handleKey(eKeyFnUpD, e.eventData);
+    menu_handleKey(eKeyFnUpD, e.data);
     break;
     /// footswitches
   case kEventSwitchDown6:
@@ -53,7 +53,7 @@ void app_handle_event(event_t* e) {
     mode ^= 1;
     if(mode) { gpio_set_gpio_pin(LED_MODE_PIN); }
     else { gpio_clr_gpio_pin(LED_MODE_PIN); }
-    menu_handleKey(eKeyMode, e.eventData);
+    menu_handleKey(eKeyMode, e.data);
     break;
   case kEventSwitchUp4:
     break;
@@ -62,56 +62,56 @@ void app_handle_event(event_t* e) {
     break;
   case kEventEncoder0:
     //	 print_dbg("\r\n encoder 0");
-    if(e.eventData > 0) {
-      menu_handleKey(eKeyEncUpD, e.eventData);
+    if(e.data > 0) {
+      menu_handleKey(eKeyEncUpD, e.data);
     } else {
-      menu_handleKey(eKeyEncDownD, e.eventData);
+      menu_handleKey(eKeyEncDownD, e.data);
     }
     break;
   case kEventEncoder1:
     //	print_dbg("\r\n encoder 1");
-    if(e.eventData > 0) {
-      menu_handleKey(eKeyEncUpC, e.eventData);
+    if(e.data > 0) {
+      menu_handleKey(eKeyEncUpC, e.data);
     } else {
-      menu_handleKey(eKeyEncDownC, e.eventData);
+      menu_handleKey(eKeyEncDownC, e.data);
     }
     break;
   case kEventEncoder2:
     //	print_dbg("\r\n encoder 2");
-    if(e.eventData > 0) {
-      menu_handleKey(eKeyEncUpB, e.eventData);
+    if(e.data > 0) {
+      menu_handleKey(eKeyEncUpB, e.data);
     } else {
-      menu_handleKey(eKeyEncDownB, e.eventData);
+      menu_handleKey(eKeyEncDownB, e.data);
     }
     break;
   case kEventEncoder3:
     //	print_dbg("\r\n encoder 3");
-    if(e.eventData > 0) {
-      menu_handleKey(eKeyEncUpA, e.eventData);
+    if(e.data > 0) {
+      menu_handleKey(eKeyEncUpA, e.data);
     } else {
-      menu_handleKey(eKeyEncDownA, e.eventData);
+      menu_handleKey(eKeyEncDownA, e.data);
     }
     break;
 
   case kEventAdc0:
     //	print_dbg("\r\nadc val 0: ");
-    //	print_dbg_hex(e.eventData);
-    //	displayAdcVal(0, e.eventData);
+    //	print_dbg_hex(e.data);
+    //	displayAdcVal(0, e.data);
     break;
   case kEventAdc1:
     //	 print_dbg("\r\nadc val 1: ");
-    //	 print_dbg_hex(e.eventData);
-    //	 displayAdcVal(1, e.eventData);
+    //	 print_dbg_hex(e.data);
+    //	 displayAdcVal(1, e.data);
     break;
   case kEventAdc2:
     //	 print_dbg("\r\nadc val 2: ");
-    //	 print_dbg_hex(e.eventData);
-    //	 displayAdcVal(2, e.eventData);
+    //	 print_dbg_hex(e.data);
+    //	 displayAdcVal(2, e.data);
     break;
   case kEventAdc3:
     //     	print_dbg("\r\nadc val 3: ");
-    //     	print_dbg_hex(e.eventData);
-    //     	displayAdcVal(3, e.eventData);
+    //     	print_dbg_hex(e.data);
+    //     	displayAdcVal(3, e.data);
     break;
   }
 }

@@ -9,56 +9,21 @@
 #ifndef _ALEPH_AVR32_APP_H_
 #define _ALEPH_AVR32_APP_H_
 
+#include "event_types.h"
 #include "events.h"
 #include "types.h"
-//--------------------------------
-//---- event handler function types
-//--- handler functions specialized for each type of event.
 
-// event handler function pointer type
-typedef void (*event_handler)(event_t* ev);
-// application's current event handler
-extern event_handler appEventHandler;
+// event handler function type
+//typedef void (*app_event_handler)(s32 data);
 
-// switch, emits state
-/* typedef void (*sw_handler)(u8 state); */
-/* // encoder emits signed value at the time it was polled. */
-/* // note that the range of this value is a function of the pollling period. */
-/* typedef void (*enc_handler)(s32 val); */
-/* // adc emits unsigned 12-bit value. */
-/* typedef void (*adc_handler)(u16 val); */
-/* // monome key press */
-/* typedef void (*monome_key_handler)(u16 x, u16 y, u8 val); */
-// monome ring turn
-//typedef void (*monome_ring_handler)(void/* TODO */);
+// global array of event handlers
+//extern app_event_handler ** appEventHandlers;
 
-// midi note
-// midi cc
-// HID mouse
-// HID key
-// HID generic
-///... ?
+// global pointer to array of pointers to handlers
+//extern void (*(*app_event_handlers)[])(s32 data);
 
-///----- handler pointers
-//-- these should be initialized to NULL in the core, and assigned by the app.
-//-- core should obviously never attempt to use a null-valued handler.
-
-// handlers for function switches
-
-/* sw_handler fnSwHandler[4]; // = { NULL, NULL, NULL, NULL }; */
-/* // handler for mode switch */
-/* sw_handler modeSwHandler; */
-/* // handlers for footswitches */
-/* sw_handler footSwHandler[2]; */
-/* // handlers for the 4 encoders */
-/* enc_handler encHandler[4]; */
-/* // handlers for adcs */
-/* adc_handler adcHandler[4]; */
-/* // monome grid press handler */
-/* monome_key_handler gridHandle; */
-// mouse handler
-// keyboard handler
-// generic HID handler
+// global array of pointers to handlers
+extern void (*app_event_handlers[])(s32 data);
 
 //-------------------------------------
 //-- these should be implemented by the app,

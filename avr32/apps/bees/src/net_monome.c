@@ -6,7 +6,7 @@
 
    keeps pointers to handler functions,
    manages operator focus
- */
+*/
 
 #include "print_funcs.h"
 #include "net_monome.h"

@@ -35,7 +35,7 @@
 #include "scene.h"
 
 
-// this is called durig hardware initialization.
+// this is called during hardware initialization.
 // allocate memory.
 void app_init(void) {
   print_dbg("\r\n net_init... ");
@@ -60,14 +60,9 @@ void app_init(void) {
 
   print_dbg("\r\n play_init...");
   play_init();
-
-  // set handler
-  print_dbg("\r\n setting handler ");
-  appEventHandler = &bees_handler;
-
 }
 
-// this is called from the event queue 
+// this is called from main event handler
 u8 app_launch(u8 firstrun) {
 
   print_dbg("\r\n launching app with firstrun: ");
@@ -78,9 +73,6 @@ u8 app_launch(u8 firstrun) {
   if(firstrun) {
     print_dbg("\r\n first run, don't load DSP or scene");
     render_boot("launching app, first run");
-    //    print_dbg("\r\n writing default scene... ");
-    //    print_dbg("( not really )");    
-    //    scene_write_default();
   } else {
     print_dbg("\r\n booting default ldr from flash... ");
     render_boot("booting DSP from flash");
@@ -90,14 +82,10 @@ u8 app_launch(u8 firstrun) {
     print_dbg("\r\n DSP booted, waiting to query params...");
     render_boot("waiting for DSP init");
 
-    //  ?
-    delay_ms(5);
-
     /// blackfin should clear ready pin ASAP on boot.
     /// but give it a moment to accomplish that.
-    delay_ms(5);
+    delay_ms(2);
     
-
     bfin_wait_ready();
     print_dbg(" requesting param report...");
     render_boot("requesting DSP params");
@@ -109,21 +97,24 @@ u8 app_launch(u8 firstrun) {
     
     print_dbg("\r\n reading default scene... ");
     render_boot("reading default scene");
-    //    print_dbg("( not really )");
     scene_read_default();
-    //    print_dbg("\r\n size of scene data: ");
-    //    print_dbg_ulong(sizeof(sceneData_t));    
   }
 
   pages_refresh();
 
   // enable timers
   print_dbg("\r\n enable app timers...");
-    render_boot("enabling app timers");
+  render_boot("enabling app timers");
   init_app_timers();
     
   // pull up power control pin, enabling soft-powerdown
   gpio_set_gpio_pin(POWER_CTL_PIN);
+
+  // assign app event handlers
+
+  // set handler
+  print_dbg("\r\n setting handler ");
+  assign_bees_event_handlers();
 
   return 1;
 }

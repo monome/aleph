@@ -2,9 +2,18 @@
   handler.c
   bees
 
-  app-specific UI event handler
+  app-specific UI event handlers.
+  
+  app.c defines a global array of function pointers to handle system events.
+  main.c defines its own handlers, most of which don't do anything.
+  some events (e.g. ftdiConnect, monomePoll) call pretty low-level driver stuff,
+  and there shouldn't be any need for bees or other applications to customize them.
 
- */
+  handlers that do need to be customized go here.
+  define static functions and then populate the global array with pointers to these functions.
+  this step should happen in e.g. app_launch().
+
+*/
 
 // asf
 #include "gpio.h"
@@ -13,6 +22,7 @@
 
 // aleph-avr32
 #include "aleph_board.h"
+#include "app.h"
 #include "event_types.h"
 
 // bees
@@ -24,18 +34,74 @@
 #include "render.h"
 #include "scene.h"
 
-// alt-mode flag (momentary)
-u8 altMode = 0;
+///-------------------------------------
+///---- static event handlers
 
-/// gnarly enum hacks
-static const eEventType kMenuEventMin = kEventEncoder0;
-static const eEventType kMenuEventMax = kEventSwitch3;
 
-// dummy handler
-// static void handle_dummy(s32 data) { ;; }
+static void handler_Adc0(s32 data) { 
+  // TODO: update ADC op
+}
 
-// power-down handler
-static void handle_powerdown(s32 data) {
+static void handler_Adc1(s32 data) { 
+  // TODO: update ADC op
+}
+
+static void handler_Adc2(s32 data) { 
+  // TODO: update ADC op
+}
+
+static void handler_Adc3(s32 data) { 
+  // TODO: update ADC op
+}
+
+
+// function key and encoder handlers are page-specific
+/* static void handler_Encoder0(s32 data) {  */
+/*   /// ech, this is wrong... */
+/*   curPage->handler[kEventEncoder0](data); */
+/* } */
+
+/* static void handler_Encoder1(s32 data) {  */
+/*   curPage->handler[kEventEncoder1](data); */
+/* } */
+
+/* static void handler_Encoder2(s32 data) {  */
+/*   curPage->handler[kEventEncoder2](data); */
+/* } */
+
+/* static void handler_Encoder3(s32 data) {  */
+/*   curPage->handler[kEventEncoder3](data); */
+/* } */
+
+/* static void handler_Switch0(s32 data) {  */
+/*   curPage->handler[kEventSwitch0](data); */
+/* } */
+
+/* static void handler_Switch1(s32 data) {  */
+/*   curPage->handler[kEventSwitch1](data); */
+/* } */
+
+/* static void handler_Switch2(s32 data) {  */
+/*   curPage->handler[kEventSwitch2](data); */
+/* } */
+
+/* static void handler_Switch3(s32 data) {  */
+/*   curPage->handler[kEventSwitch3](data); */
+/* } */
+
+static void handler_Switch4(s32 data) { 
+  // mode switch
+  if(data > 0) {
+    if(pages_toggle_play()) {
+      gpio_set_gpio_pin(LED_MODE_PIN);
+    } else {
+      gpio_clr_gpio_pin(LED_MODE_PIN);
+    }
+  }
+}
+
+static void handler_Switch5(s32 data) { 
+  /// power switch
   render_boot("");
   render_boot("");
   render_boot("");
@@ -50,92 +116,102 @@ static void handle_powerdown(s32 data) {
   gpio_clr_gpio_pin(POWER_CTL_PIN);
 }
 
-/// FIXME:
-// shouldn't use. generated ASM for big case statements is horrible.
-/// apps should define an array of function pointers for handlers.
-void bees_handler(event_t* e) {
-  const eEventType t = e->eventType;
-
-  if( (t >= kMenuEventMin) && (t <= kMenuEventMax)) {
-    // index FP 
-    /* print_dbg("\r\n page handler: 0x"); */
-    /* print_dbg_hex((u32) (curPage->handler[t - kMenuEventMin])); */
-    curPage->handler[t - kMenuEventMin](e->eventData);
-  } else {
-    switch(t) {
-    case kEventSwitch4: // mode
-      if(e->eventData > 0) {
-	if(pages_toggle_play()) {
-	  gpio_set_gpio_pin(LED_MODE_PIN);
-	} else {
-	  gpio_clr_gpio_pin(LED_MODE_PIN);
-	}
-      }
-      break;
-    case kEventSwitch5: // power      
-      //      print_dbg("\r\n bees handler got power-switch event, value: ");
-      //      print_dbg_hex(e->eventData);
-      // write default scene...
-      //      print_dbg("\r\n writing default scene to flash...");
-      handle_powerdown(e->eventData);
-      break;
-    case kEventSwitch6: // FS 0
-      // .. update op
-      break;
-    case kEventSwitch7: // FS 1
-      // .. update op
-      break;
-    case kEventAdc0:
-      // .. update op
-      break;
-    case kEventAdc1:
-      // .. update op
-      break;
-    case kEventAdc2:
-      // .. update op
-      break;
-    case kEventAdc3:
-      // .. update op
-      break;
-    case kEventMonomeGridKey:
-      // .. update ops
-      break;
-    case kEventMonomeGridTilt:
-      // .. update ops
-      break;
-    case kEventMonomeRingEnc:
-      // .. update ops
-      break;
-    case kEventMonomeRingKey:
-      // .. update ops
-      break;
-    case kEventHidByte:
-      // .. update ops
-      break;
-    case kEventMonomeConnect:
-      // .. start poll/refresh, update op focus
-      timers_set_monome();
-      break;
-    case kEventMonomeDisconnect:
-      timers_unset_monome();
-      // .. stop poll/refresh ,update op focus
-      break;
-    case kEventMidiConnect:
-      // .. start poll/refresh
-      timers_set_midi();
-      break;
-    case kEventMidiDisconnect:
-      // .. stop poll/refresh
-      timers_unset_midi();
-      break;
-    case kEventMidiPacket:
-      net_handle_midi_packet(e->eventData);
-      break;
-    default:
-      break;
-    }
-  }
+static void handler_Switch6(s32 data) {
+  // TODO: update footswitch op
 }
+
+static void handler_Switch7(s32 data) { 
+  // TODO: update footswitch op
+} 
+
+static void handler_MonomeConnect(s32 data) { 
+  timers_set_monome();
+}
+
+static void handler_MonomeDisconnect(s32 data) { 
+  timers_unset_monome();
+}
+
+static void handler_MonomeGridKey(s32 data) { 
+  // net_monome.c defines a dynamic pointer to a single grid event handler.
+  // this is so bees can arbitrate focus between multiple grid ops.
+  (*monome_grid_key_handler)(monomeOpFocus, data);
+}
+
+static void handler_MonomeGridTilt(s32 data) { 
+  // TODO: update ops
+}
+
+static void handler_MonomeRingEnc(s32 data) {
+  // TODO: update ops 
+}
+
+static void handler_MonomeRingKey(s32 data) { 
+  // TODO: update ops
+}
+
+static void handler_MidiConnect(s32 data) {
+  timers_set_midi();
+}
+
+static void handler_MidiDisconnect(s32 data) { 
+  timers_unset_midi();
+}
+
+static void handler_MidiPacket(s32 data) {
+  net_handle_midi_packet(data);
+}
+
+static void handler_HidConnect(s32 data) {
+  // nothing to do... ?
+}
+
+static void handler_HidDisconnect(s32 data) {
+  // nothing to do... ?
+}
+
+static void handler_HidByte(s32 data) {
+  // TODO: update ops
+}
+
+//-------------------------------------
+//---- extern
+
+/// more maintainable, perhaps, to explicitly assign these...
+/// this way the order of the event types enum doesn't matter.
+void assign_bees_event_handlers(void) {
+  app_event_handlers[ kEventAdc0 ]	= &handler_Adc0 ;
+  app_event_handlers[ kEventAdc1 ]	= &handler_Adc1 ;
+  app_event_handlers[ kEventAdc2 ]	= &handler_Adc2 ;
+  app_event_handlers[ kEventAdc3 ]	= &handler_Adc3 ;
+  app_event_handlers[ kEventEncoder0 ]	= &handler_Encoder0 ;
+  app_event_handlers[ kEventEncoder1 ]	= &handler_Encoder1 ;
+  app_event_handlers[ kEventEncoder2 ]	= &handler_Encoder2 ;
+  app_event_handlers[ kEventEncoder3 ]	= &handler_Encoder3 ;
+  app_event_handlers[ kEventSwitch0 ]	= &handler_Switch0 ;
+  app_event_handlers[ kEventSwitch1 ]	= &handler_Switch1 ;
+  app_event_handlers[ kEventSwitch2 ]	= &handler_Switch2 ;
+  app_event_handlers[ kEventSwitch3 ]	= &handler_Switch3 ;
+  app_event_handlers[ kEventSwitch4 ]	= &handler_Switch4 ;
+  app_event_handlers[ kEventSwitch5 ]	= &handler_Switch5 ;
+  app_event_handlers[ kEventSwitch6 ]	= &handler_Switch6 ;
+  app_event_handlers[ kEventSwitch7 ]	= &handler_Switch7 ;
+  app_event_handlers[ kEventMonomeConnect ]	= &handler_MonomeConnect ;
+  app_event_handlers[ kEventMonomeDisconnect ]	= &handler_MonomeDisconnect ;
+  app_event_handlers[ kEventMonomeGridKey ]	= &handler_MonomeGridKey ;
+  app_event_handlers[ kEventMonomeGridTilt ]	= &handler_MonomeGridTilt ;
+  app_event_handlers[ kEventMonomeRingEnc ]	= &handler_MonomeRingEnc ;
+  app_event_handlers[ kEventMonomeRingKey ]	= &handler_MonomeRingKey ;
+  app_event_handlers[ kEventMidiConnect ]	= &handler_MidiConnect ;
+  app_event_handlers[ kEventMidiDisconnect ]	= &handler_MidiDisconnect ;
+  app_event_handlers[ kEventMidiPacket ]	= &handler_MidiPacket ;
+  app_event_handlers[ kEventHidConnect ]	= &handler_HidConnect ;
+  app_event_handlers[ kEventHidDisconnect ]	= &handler_HidDisconnect ;
+  app_event_handlers[ kEventHidByte ]	= &handler_HidByte ;
+}
+
+//------------------------
+//--- knob scaling
 
 // full-scale
 s32 scale_knob_value(s32 val) {
@@ -178,10 +254,10 @@ s32 scale_knob_value(s32 val) {
     vabs = kNumKnobScales_1;
   }
   ret = knobScale[vabs - 1];
-   if(val < 0) {
-     ret = BIT_NEG_ABS(ret);
-   }
-   return ret;
+  if(val < 0) {
+    ret = BIT_NEG_ABS(ret);
+  }
+  return ret;
 }
 
 
@@ -226,8 +302,8 @@ s32 scale_knob_value_small(s32 val) {
     vabs = kNumKnobScales_1;
   }
   ret = knobScale[vabs - 1];
-   if(val < 0) {
-     ret = BIT_NEG_ABS(ret);
-   }
-   return ret;
+  if(val < 0) {
+    ret = BIT_NEG_ABS(ret);
+  }
+  return ret;
 }

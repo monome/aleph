@@ -1771,10 +1771,10 @@ Linker script and memory map
                 0x80017428       0x24 ../src/events.o
                                  0x2c (size before relaxing)
                 0x80017428                init_events
- .text.post_event
+ .text.event_post
                 0x8001744c       0x50 ../src/events.o
                                  0x5c (size before relaxing)
-                0x8001744c                post_event
+                0x8001744c                event_post
  .text.get_next_event
                 0x8001749c       0x4c ../src/events.o
                                  0x50 (size before relaxing)
@@ -5186,7 +5186,7 @@ pm_wait_for_pll1_locked                           avr32/drivers/pm/pm.o
                                                   avr32/drivers/pm/pm_conf_clocks.o
 pm_write_gplp                                     avr32/drivers/pm/pm.o
                                                   avr32/drivers/pm/power_clocks_lib.o
-post_event                                        ../src/events.o
+event_post                                        ../src/events.o
                                                   ../src/switches.o
                                                   ../src/app_timers.o
                                                   ../src/adc.o

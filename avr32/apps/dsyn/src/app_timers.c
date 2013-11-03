@@ -53,8 +53,8 @@ static void screen_timer_callback(int tag) {
 // metronome timer callback
 static void metro_timer_callback(int tag) {
   //static u32 i = 0;
-  e.eventType = kEventSeqNext;
-  post_event(&e);
+  e.type = kEventSeqNext;
+  event_post(&e);
   /*
     print_dbg(" > ");
     // : a test pattern.
@@ -107,8 +107,8 @@ static void monome_refresh_timer_callback(int tag) {
   //  if (monomeConnect) {
     //    print_dbg("\r\n posting monome refresh event");
     if(monomeFrameDirty > 0) {
-      e.eventType = kEventMonomeRefresh;
-      post_event(&e);
+      e.type = kEventMonomeRefresh;
+      event_post(&e);
     }
     //  }
 }

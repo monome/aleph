@@ -76,6 +76,9 @@ extern page_t* curPage;
 extern s8 pageIdx;
 // last pressed key
 extern u8 keyPressed;
+// alt-mode flag
+extern u8 altMode;
+
 
 //-----------------------
 //--- extern functions

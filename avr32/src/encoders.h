@@ -21,7 +21,7 @@ typedef struct _enc {
   // threshold to set sensitivity
     S16 thresh;
   // event number to post on change
-  eEventType event;
+  etype event;
 } enc_t;
 
 // encoder pin array (see interrupt handler for usage)

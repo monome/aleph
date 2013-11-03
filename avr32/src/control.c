@@ -46,6 +46,7 @@ extern u8 ctl_param_change(u32 idx, u32 val) {
   /* print_dbg_hex(idx); */
   /* print_dbg(" ; value: 0x");  */
   /* print_dbg_hex(val); */ 
+  bfin_wait_ready();
   bfin_set_param(idx, val);
   return 0;
 #else
