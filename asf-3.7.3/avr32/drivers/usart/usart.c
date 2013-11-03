@@ -379,7 +379,7 @@ int usart_init_rs232_tx_only(volatile avr32_usart_t *usart, const usart_options_
   // Setup complete; enable communication.
   // Enable only output as input is not possible in synchronous mode without
   // transferring clock.
-  usart->cr = AVR32_USART_CR_TXEN_MASK;
+  // usart->cr = AVR32_USART_CR_TXEN_MASK;
 
   return USART_SUCCESS;
 }
