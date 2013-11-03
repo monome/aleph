@@ -41,33 +41,57 @@ static u8 netActive = 0;
 //---- external
 ctlnet_t* net;
 
+//-- indices of system-created ops
+// encoders
+s32 opSysEncIdx[4] = { -1, -1, -1, -1 };
+// function keys and footswitches
+s32 opSysSwIdx[6] = { -1, -1, -1, -1, -1, -1};
+// adc
+s32 opSysAdcIdx = -1;
+// preset
+s32 opSysPresetIdx = -1;
+
+
 //===============================================
 //========= static functions
-
-
-// forward/backward search for input/output nodes
-/* static s32 net_next_in(void); */
-/* static s32 net_prev_in(void); */
-/* static s32 net_next_out(void); */
-/* static s32 net_prev_out(void); */
-/* static void net_reset_in_search(void); */
-/* static void net_reset_out_search(void); */
 
 // create all system operators
 static void add_sys_ops(void);
 static void add_sys_ops(void) {
-  // print_dbg("\r\n creating system operators.");
+  /// create each system operator and store its index.
+  /// this is kind of a bad hack, 
+  // because we assume that the indices of sys ops in scene data 
+  // will always have the same values as when we created them.
+  // the assumption holds as long as we don't mess with order of creation...
+
   // 4 encoders
   net_add_op(eOpEnc);
+  opSysEncIdx[0] = net->numOps - 1;
   net_add_op(eOpEnc);
+  opSysEncIdx[1] = net->numOps - 1;
   net_add_op(eOpEnc);
+  opSysEncIdx[2] = net->numOps - 1;
   net_add_op(eOpEnc);
-  // 4 switches
+  opSysEncIdx[3] = net->numOps - 1;
+  // 4 function switches
   net_add_op(eOpSwitch);
+  opSysSwIdx[0] = net->numOps - 1;
   net_add_op(eOpSwitch);
+  opSysSwIdx[1] = net->numOps - 1;
   net_add_op(eOpSwitch);
+  opSysSwIdx[2] = net->numOps - 1;
   net_add_op(eOpSwitch);
+  opSysSwIdx[3] = net->numOps - 1;
+  // 2 footswitches  
+  net_add_op(eOpSwitch);
+  opSysSwIdx[4] = net->numOps - 1;
+  net_add_op(eOpSwitch);
+  opSysSwIdx[5] = net->numOps - 1;
+  // 1 adc
+  net_add_op(eOpAdc);
+  opSysAdcIdx = -1;
   // 1 preset receiver
+  //// FIXME
   //  net_add_op(eOpPreset);
 }
 
@@ -78,16 +102,7 @@ static u8* onode_pickle(onode_t* out, u8* dst) {
   dst = pickle_32((u32)(out->opOutIdx), dst);
   // target
   dst = pickle_32((u32)(out->target), dst);
-  //  print_dbg("\r\n pickled output target: 0x");
-  //  print_dbg_hex((u32)(out->target));
-
   // parent op's index in net list
-  //  print_dbg(", parent index: 0x");
-  //  print_dbg_hex((u32)(out->opIdx));
-
-  //  print_dbg(", op index: 0x");
-  //  print_dbg_hex((u32)(out->opOutIdx));  
-
   dst = pickle_32((u32)(out->opIdx), dst);
   // preset inclusion flag ; cast to 4 bytes for alignment
   dst = pickle_32((u32)(out->preset), dst);
@@ -103,33 +118,17 @@ static const u8* onode_unpickle(const u8* src, onode_t* out) {
   src = unpickle_32(src, &v32);
   out->target = (s16)v32;
 
-  //  print_dbg("\r\n unpickled output target: 0x");
-  //  print_dbg_hex((u32)(out->target));
-
   // index of parent op
   src = unpickle_32(src, &v32);
   out->opIdx = (s32)v32;
-
-  //  print_dbg(", parent index: 0x");
-  //  print_dbg_hex((u32)(out->opIdx));
-
-  //  print_dbg(", op index: 0x");
-  //  print_dbg_hex((u32)(out->opOutIdx));
-
-
   // preset flag: 32 bits for alignment
   src = unpickle_32(src, &v32);
   out->preset = (u8)v32;
   return src;
 }
 
-
 static u8* inode_pickle(inode_t* in, u8* dst) {
   /// don't need to pickle indices because we recreate the op list from scratch
-  // parent op's index in net list
-  //  dst = pickle_32((u32)(in->opIdx), dst);
-  // operator input index
-  //  *dst++ = in->opInIdx;
   // preset inclusion flag
   *dst++ = in->preset;
   // play inclusion flag
@@ -143,12 +142,7 @@ static u8* inode_pickle(inode_t* in, u8* dst) {
 
 static const u8* inode_unpickle(const u8* src, inode_t* in) {
   /// don't need to pickle indices because we recreate the op list from scratch
-  // parent op's index in net list
-  //  src = unpickle_32(src, &v32);
-  //  in->opIdx = (s32)v32;
-  // operator input index
-  //   in->opInIdx = *src++;
-  // preset inclusion flag
+  // only need these flags:
   in->preset = *src++;
   // play inclusion flag
   in->play = *src++;
@@ -166,12 +160,7 @@ static const u8* inode_unpickle(const u8* src, inode_t* in) {
 // initialize network at pre-allocated memory
 void net_init(void) {
   u32 i;
-  //  u32 res;
-  
-  //  net = &netPrivate;
   net = (ctlnet_t*)alloc_mem(sizeof(ctlnet_t));
-  //  print_dbg("\r\n network address: 0x");
-  //  print_dbg_hex((u32)net);
 
   for(i=0; i<NET_OP_POOL_SIZE; i++) {
     net->opPoolMem[i] = 0x00;
@@ -231,17 +220,6 @@ void net_init_onode(u16 idx) {
 // activate an input node with a value
 void net_activate(s16 inIdx, const io_t val, void* op) {
   static inode_t* pIn;
-  /* print_dbg("\r\n net_activate, input idx: 0x"); */
-  /* print_dbg_hex(inIdx); */
-  /* print_dbg(", val: 0x"); */
-  /* print_dbg_hex(val); */
-  /* print_dbg(" , op idx: 0x"); */
-  /* print_dbg_hex(net->ins[inIdx].opIdx); */
-  /* print_dbg(" , op in idx: 0x"); */
-  /* print_dbg_hex(net->ins[inIdx].opInIdx); */
-  /* print_dbg(" , caller: 0x"); */
-  /* print_dbg_hex((u32)op);   */
-  
   if(!netActive) {
     if(op != NULL) {
       // if the net isn't active, dont respond to requests from operators
@@ -287,23 +265,14 @@ s16 net_add_op(op_id_t opId) {
   u8 i;
   op_t* op;
 
-  //  print_dbg("\r\n creating new operator, type: ");
-  //  print_dbg_ulong(opId);
-
   if (net->numOps >= NET_OPS_MAX) {
     return -1;
   }
 
   if (op_registry[opId].size > NET_OP_POOL_SIZE - net->opPoolOffset) {
-    //    print_dbg("\r\n op creation failed; out of memory.");
+    print_dbg("\r\n op creation failed; out of memory.");
     return -1;
   }
-  
-  //  print_dbg("\r\n allocating op pool location: 0x");
-  //  print_dbg_hex((u32)(net->opPool + net->opPoolOffset));
-
-  //  print_dbg("\r\n size of requested op size: 0x");
-  //  print_dbg_hex(op_registry[opId].size);
 
   op = (op_t*)((u8*)net->opPool + net->opPoolOffset);
   // use the class ID to initialize a new object in scratch
@@ -341,14 +310,6 @@ s16 net_add_op(op_id_t opId) {
   }
   ++(net->numOps);
 
-  //  print_dbg("\r\n added operator. new input count: ");
-  //  print_dbg_ulong(net->numIns);
-  //  print_dbg("\r\n added operator. new output count: ");
-  //  print_dbg_ulong(net->numOuts);
-  //  print_dbg("\r\n added operator. new op count: ");
-  //  print_dbg_ulong(net->numOps);
-
-
   return net->numOps - 1;
 }
 
@@ -357,13 +318,6 @@ s16 net_pop_op(void) {
   op_t* op = net->ops[net->numOps - 1];
   int i=0;
   int x=0;
-  /* print_dbg("\r\n deleting op, addr : 0x"); */
-  /* print_dbg_hex((u32)op); */
-  /* print_dbg("; ins : "); */
-  /* print_dbg_ulong(op->numInputs); */
-  /* print_dbg("; outs : "); */
-  /* print_dbg_ulong(op->numOutputs); */
-
   // de-init
   op_deinit(net->ops[net->numOps - 1]); 
   // store the global index of the first input
@@ -476,30 +430,12 @@ void net_remove_op(const u32 idx) {
   net->numIns -= nIns;
   net->numOuts -= nOuts;
   net->numOps -= 1;
-  //... and, uh, don't crash
+  //... and, uh, don't crash?
 }
 
 // create a connection between given idx pairs
 void net_connect(u32 oIdx, u32 iIdx) {
   net->ops[net->outs[oIdx].opIdx]->out[net->outs[oIdx].opOutIdx] = iIdx;
-
-  /* print_dbg("\r\n net_connect, out idx: 0x"); */
-  /* print_dbg_hex(oIdx); */
-  /* print_dbg(" , in idx: 0x"); */
-  /* print_dbg_hex(iIdx); */
-  /* print_dbg(" , op idx: 0x"); */
-  /* print_dbg_hex(net->outs[oIdx].opIdx); */
-  /* print_dbg(" , op out idx: 0x"); */
-  /* print_dbg_hex(net->outs[oIdx].opOutIdx); */
-
-  /* print_dbg(" ;  out op name: "); */
-  /* print_dbg(net_op_name( net->outs[oIdx].opIdx) ); */
-  /* print_dbg(" ;  out name: "); */
-  /* print_dbg(net_out_name(oIdx)); */
-
-  /* print_dbg(" ;  in name: "); */
-  /* print_dbg(net_in_name(iIdx)); */
-
   net->outs[oIdx].target = iIdx;
 }
 
@@ -537,10 +473,6 @@ s16 net_param_idx(u16 inIdx) {
 
 // get string for operator at given idx
 const char* net_op_name(const s16 idx) {
-  //  print_dbg("\r\n get op string, idx: ");
-  //  print_dbg_ulong(idx);
-  //  print_dbg("\r\n op addr: @0x: ");
-  //  print_dbg_hex( &(net->ops[idx] ) );
   if (idx < 0) {
     return "";
   }
@@ -623,11 +555,6 @@ u8 net_in_connected(s32 iIdx) {
   return f;
 }
 
-// get status (user/system) of op at given idx
-/* opStatus_t net_op_status(u16 opIdx) { */
-/*   return net->ops[opIdx]->status; */
-/* } */
-
 u8 net_op_flag(const u16 opIdx, op_flag_t flag) {
   return net->ops[opIdx]->flags & (1 << flag);
 }
@@ -648,14 +575,6 @@ u32 net_gather(s32 iIdx, u32(*outs)[NET_OUTS_MAX]) {
 
 //--- get / set / increment input value
 io_t net_get_in_value(s32 inIdx) {
-  /* print_dbg("\r\n getting net input value... inIdx: 0x"); */
-  /* print_dbg_hex(inIdx); */
-
-  /* net_print(); */
-
-  /* print_dbg("\r\n net num ins: "); */
-  /* print_dbg_ulong(net->numIns); */
-
   if(inIdx < 0) {
     return 0;
   }
@@ -663,13 +582,6 @@ io_t net_get_in_value(s32 inIdx) {
     inIdx -= net->numIns;
     return get_param_value(inIdx);
   } else {
-    /* print_dbg(" ; opIdx: "); */
-    /* print_dbg_ulong(net->ins[inIdx].opIdx); */
-    /* print_dbg(" ; op address: 0x"); */
-    /* print_dbg_hex((u32)net->ops[net->ins[inIdx].opIdx]); */
-    /* print_dbg(" ; opInIdx: "); */
-    /* print_dbg_ulong(net->ins[inIdx].opInIdx); */
-
     return op_get_in_val(net->ops[net->ins[inIdx].opIdx], net->ins[inIdx].opInIdx);
   }
 }
@@ -836,26 +748,15 @@ u8* net_pickle(u8* dst) {
     // store type id
     dst = pickle_32(op->type, dst);
     // pickle the operator state (if needed)
-    //#warning skipping op state pickle
-    //#if 0
-    //    print_dbg("\r\n op pickle; FP: 0x");
-    //    print_dbg_hex((u32)(op->pickle));
     if(op->pickle != NULL) {
       dst = (*(op->pickle))(op, dst);
     }
-    //#endif
   }
-
-  //  print_dbg("\r\n pickling inputs, count: ");
-  //  print_dbg_ulong(net->numIns);
 
   // write input nodes
   for(i=0; i < net->numIns; ++i) {
     dst = inode_pickle(&(net->ins[i]), dst);
   }
-
-  //  print_dbg("\r\n pickling outputs, count: ");
-  //  print_dbg_ulong(net->numOuts);
 
   // write output nodes
   for(i=0; i < net->numOuts; ++i) {
@@ -893,41 +794,22 @@ u8* net_unpickle(const u8* src) {
     src = unpickle_32(src, &val);
     id = (op_id_t)val;
 
-    //    print_dbg("\r\n unpickled operator type: ");
-    //    print_dbg_ulong(id);
-
     // add and initialize from class id
     /// .. this should update the operator count, inodes and onodes
     net_add_op(id);
 
-    //    print_dbg(" .. added the operator. ");
-
     // unpickle operator state (if needed)
     op = net->ops[net->numOps - 1];
-    //#warning skipping op state unpickle
-    //#if 0
-
-    //    print_dbg("\r\n op unpickle; FP: 0x");
-    //    print_dbg_hex((u32)(op->unpickle));
 
     if(op->unpickle != NULL) {
       src = (*(op->unpickle))(op, src);
     }
-    //    print_dbg(" .. unpickled operator state.. ");
-    //#endif
   }
-
-  //  print_dbg("\r\n unpickling inputs, count: ");
-  //  print_dbg_ulong(net->numIns);
 
   // read input nodes
   for(i=0; i < net->numIns; ++i) {
     src = inode_unpickle(src, &(net->ins[i]));
   }
-
-  //  print_dbg("\r\n unpickling outputs, count: ");
-  //  print_dbg_ulong(net->numOuts);
-
 
   // read output nodes
   for(i=0; i < net->numOuts; ++i) {
@@ -948,7 +830,6 @@ u8* net_unpickle(const u8* src) {
   return (u8*)src;
 }
 
-//////////
 ///////////////
 // test / dbg
 void net_print(void) {
@@ -961,59 +842,4 @@ void net_print(void) {
   print_dbg_ulong(net->numOuts);
   print_dbg("\r\n net op count: ");
   print_dbg_ulong(net->numOps);
-
 }
-////////////
-////////
-
-
-//---------------------------------------------------
-//----- static
-// forward/backward search for input/output nodes
-/* s32 net_next_in(void) { */
-/*   while( inSearchIdx < NET_INS_MAX ) { */
-/*     if(net->ins[inSearchIdx].opIdx >= 0) { */
-/*       return inSearchIdx; */
-/*     } */
-/*     inSearchIdx++; */
-/*  }  */
-/*   return -1; // no inputs */
-/* } */
-
-/* s32 net_prev_in(void) { */
-/*   while( inSearchIdx >=0 ) { */
-/*     if(net->ins[inSearchIdx].opIdx >= 0) { */
-/*       return inSearchIdx; */
-/*     } */
-/*     inSearchIdx--; */
-/*   } */
-/*   return -1; // no inputs */
-/* } */
-
-/* s32 net_next_out(void) { */
-/*   while( outSearchIdx < NET_OUTS_MAX ) { */
-/*     if(net->outs[outSearchIdx].opIdx >= 0) { */
-/*       return outSearchIdx; */
-/*     } */
-/*     outSearchIdx++; */
-/*   } */
-/*   return -1; // no outputs */
-/* } */
-
-/* s32 net_prev_out(void) { */
-/*   while( outSearchIdx >=0 ) { */
-/*     if(net->outs[outSearchIdx].opIdx >= 0) { */
-/*       return outSearchIdx; */
-/*     } */
-/*     outSearchIdx--; */
-/*   } */
-/*   return -1; // no outputs */
-/* } */
-
-/* void net_reset_in_search(void) { */
-/*   inSearchIdx = 0; */
-/* } */
-
-/* void net_reset_out_search(void) { */
-/*   outSearchIdx = 0; */
-/* } */

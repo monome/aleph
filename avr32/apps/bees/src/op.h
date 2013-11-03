@@ -118,6 +118,8 @@ typedef struct op_desc_struct {
 
 //-----------------------------------
 //---- public data
+
+// operator class registry
 extern const op_desc_t op_registry[numOpClasses];
 
 //-----------------------------------

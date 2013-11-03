@@ -121,7 +121,7 @@ static void op_enc_in_wrap(op_enc_t* enc, const io_t* v) {
 }
 
 // perform wrapping and output
-static void op_enc_perform(op_enc_t* enc){ 
+static void op_enc_perform(op_enc_t* enc) { 
   io_t wrap = 0;
   io_t dif = 0;
   if (enc->wrap) { // wrapping...

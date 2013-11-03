@@ -2,6 +2,7 @@
 #define _ALEPH_AVR32_APP_TIMERS_H_
 
 #include "sys_timers.h"
+#include "types.h"
 
 // ---- timer tags
 enum { 
@@ -29,9 +30,13 @@ extern void timers_set_midi(void);
 extern void timers_unset_midi(void);
 
 // start adc polling timer
-extern void timers_set_adc(void);
+extern void timers_set_adc(u32 period);
 
 // stop adc polling timer
 extern void timers_unset_adc(void);
+
+// change period of adc polling timer
+extern void timers_set_adc_period(u32 period);
+
 
 #endif

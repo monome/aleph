@@ -11,11 +11,16 @@
 
 typedef struct op_adc_struct {
   op_t super;
-  io_t* in_val[4];
+  // in:
+  // enable, update period, 4 values
+  io_t* in_val[6];
+  io_t enable;
+  io_t period;
   io_t val0;
   io_t val1;
   io_t val2;
   io_t val3;
+  // out: 4 values
   op_out_t outs[4];
 } op_adc_t;
 

@@ -96,6 +96,19 @@ typedef struct _ctlnet {
 } ctlnet_t;
 
 //// external variables
+
+// pointer to network!
 extern ctlnet_t* net;
+
+//-- indices of system-created ops
+// encoders
+extern s32 opSysEncIdx[4];
+// function keys and footswitches
+extern s32 opSysSwIdx[6];
+// adc
+extern s32 opSysAdcIdx;
+// preset
+extern s32 opSysPresetIdx;
+
 
 #endif // header guard

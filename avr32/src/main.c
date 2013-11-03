@@ -83,21 +83,37 @@ static void check_startup(void);
 
 // core event handlers
 static void handler_Adc0(s32 data) { ;; }
+
 static void handler_Adc1(s32 data) { ;; }
+
 static void handler_Adc2(s32 data) { ;; }
+
 static void handler_Adc3(s32 data) { ;; }
+
 static void handler_Encoder0(s32 data) { ;; }
+
 static void handler_Encoder1(s32 data) { ;; }
+
 static void handler_Encoder2(s32 data) { ;; }
+
 static void handler_Encoder3(s32 data) { ;; }
+
 static void handler_Switch0(s32 data) { check_startup(); }
+
 static void handler_Switch1(s32 data) { check_startup(); }
+
 static void handler_Switch2(s32 data) { check_startup(); }
+
 static void handler_Switch3(s32 data) { check_startup(); }
+
 static void handler_Switch4(s32 data) { ;; }
+
 static void handler_Switch5(s32 data) { ;; }
+
 static void handler_Switch6(s32 data) { ;; }
+
 static void handler_Switch7(s32 data) { ;; }
+
 static void handler_FtdiConnect(s32 data) {
   ftdi_setup();
 }
@@ -112,7 +128,9 @@ static void handler_MonomeConnect(s32 data) {
     monomeConnect = 1;
   }
 }
+
 static void handler_MonomeDisconnect(s32 data) { ;; }
+
 static void handler_MonomePoll(s32 data) {
   monome_read_serial();
 }
@@ -122,25 +140,35 @@ static void handler_MonomeRefresh(s32 data) {
 }
 
 static void handler_MonomeGridKey(s32 data) { ;; }
+
 static void handler_MonomeGridTilt(s32 data) { ;; }
+
 static void handler_MonomeRingEnc(s32 data) { ;; }
+
 static void handler_MonomeRingKey(s32 data) { ;; }
+
 static void handler_MidiConnect(s32 data) { 
   if(!launch) {
     midiConnect = 1;
   }
 }
+
 static void handler_MidiDisconnect(s32 data) { ;; }
+
 static void handler_MidiPacket(s32 data) { ;; }
+
 static void handler_MidiRefresh(s32 data) {
   // TODO
 }
+
 static void handler_HidConnect(s32 data) { 
   if(!launch) {
     hidConnect = 1;
   }
 }
+
 static void handler_HidDisconnect(s32 data) { ;; }
+
 static void handler_HidByte(s32 data) { ;; }
 
 /// explicitly assign default event handlers.
@@ -268,6 +296,8 @@ void check_startup(void) {
     gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
     // return 1 if app completed firstrun tasks
     launch = app_launch(firstrun);
+
+    // wait for no real reason...
     delay_ms(10);
     if(launch) {
       // successfully launched on firstrun, so write magic number to flash
@@ -346,11 +376,9 @@ int main (void) {
   }
 
   // assign default event handlers
-  //  app_event_handlers = &main_event_handlers;
   assign_main_event_handlers();
 
   print_dbg("\r\n starting event loop.\r\n");
-
   while(1) {
     check_events();
   }
