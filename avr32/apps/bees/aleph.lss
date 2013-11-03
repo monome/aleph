@@ -15456,9 +15456,9 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 8001684e:	8c b8       	ld.uh	r8,r6[0x6]
 80016850:	f3 e8 20 08 	eor	r8,r9,r8
 80016854:	e2 18 0f fc 	andl	r8,0xffc,COH
-      e.eventType = adcEventTypes[i];
-      e.eventData = (S16)(adcVal[i]);
-      post_event(&e);
+      e.type = adctypes[i];
+      e.data = (S16)(adcVal[i]);
+      event_post(&e);
     }
   }
 }
@@ -15469,21 +15469,21 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
     /// this is a dirty way! but the two lower bits are pretty noisy.
     if( (adcVal[i] & 0xffc) != ( adcOldVal[i] & 0xffc) ) {
       adcOldVal[i] = adcVal[i];
-      e.eventType = adcEventTypes[i];
+      e.type = adctypes[i];
 8001685c:	e3 cd 80 c0 	ldm	sp++,r6-r7,pc
-      e.eventData = (S16)(adcVal[i]);
+      e.data = (S16)(adcVal[i]);
 80016860:	e0 68 08 24 	mov	r8,2084
-      post_event(&e);
+      event_post(&e);
 80016864:	ac 09       	st.h	r6[0x0],r9
     /// probably want more filtering before posting events
     //    if(adcVal[i] != adcOldVal[i]) {
     /// this is a dirty way! but the two lower bits are pretty noisy.
     if( (adcVal[i] & 0xffc) != ( adcOldVal[i] & 0xffc) ) {
       adcOldVal[i] = adcVal[i];
-      e.eventType = adcEventTypes[i];
+      e.type = adctypes[i];
 80016866:	91 19       	st.w	r8[0x4],r9
-      e.eventData = (S16)(adcVal[i]);
-      post_event(&e);
+      e.data = (S16)(adcVal[i]);
+      event_post(&e);
 80016868:	30 09       	mov	r9,0
 8001686a:	10 9c       	mov	r12,r8
 8001686c:	91 09       	st.w	r8[0x0],r9
@@ -15493,22 +15493,22 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
     /// this is a dirty way! but the two lower bits are pretty noisy.
     if( (adcVal[i] & 0xffc) != ( adcOldVal[i] & 0xffc) ) {
       adcOldVal[i] = adcVal[i];
-8001686e:	e0 a0 05 ef 	rcall	8001744c <post_event>
-      e.eventType = adcEventTypes[i];
+8001686e:	e0 a0 05 ef 	rcall	8001744c <event_post>
+      e.type = adctypes[i];
 80016872:	cd fb       	rjmp	80016830 <adc_poll+0x108>
-      e.eventData = (S16)(adcVal[i]);
+      e.data = (S16)(adcVal[i]);
 80016874:	e0 68 08 1c 	mov	r8,2076
-      post_event(&e);
+      event_post(&e);
 80016878:	b0 39       	st.h	r8[0x6],r9
     /// probably want more filtering before posting events
     //    if(adcVal[i] != adcOldVal[i]) {
     /// this is a dirty way! but the two lower bits are pretty noisy.
     if( (adcVal[i] & 0xffc) != ( adcOldVal[i] & 0xffc) ) {
       adcOldVal[i] = adcVal[i];
-      e.eventType = adcEventTypes[i];
+      e.type = adctypes[i];
 8001687a:	e0 68 08 24 	mov	r8,2084
-      e.eventData = (S16)(adcVal[i]);
-      post_event(&e);
+      e.data = (S16)(adcVal[i]);
+      event_post(&e);
 8001687e:	91 19       	st.w	r8[0x4],r9
     }
   }
@@ -15522,12 +15522,12 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
     /// this is a dirty way! but the two lower bits are pretty noisy.
     if( (adcVal[i] & 0xffc) != ( adcOldVal[i] & 0xffc) ) {
       adcOldVal[i] = adcVal[i];
-80016886:	e0 a0 05 e3 	rcall	8001744c <post_event>
-      e.eventType = adcEventTypes[i];
+80016886:	e0 a0 05 e3 	rcall	8001744c <event_post>
+      e.type = adctypes[i];
 8001688a:	2f fd       	sub	sp,-4
-      e.eventData = (S16)(adcVal[i]);
+      e.data = (S16)(adcVal[i]);
 8001688c:	e3 cd 80 c0 	ldm	sp++,r6-r7,pc
-      post_event(&e);
+      event_post(&e);
 80016890:	e0 68 08 1c 	mov	r8,2076
 80016894:	b0 29       	st.h	r8[0x4],r9
 80016896:	e0 68 08 24 	mov	r8,2084
@@ -15539,20 +15539,20 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
       adcOldVal[i] = adcVal[i];
 8001689a:	91 19       	st.w	r8[0x4],r9
 8001689c:	30 29       	mov	r9,2
-      e.eventType = adcEventTypes[i];
+      e.type = adctypes[i];
 8001689e:	10 9c       	mov	r12,r8
-      e.eventData = (S16)(adcVal[i]);
+      e.data = (S16)(adcVal[i]);
 800168a0:	91 09       	st.w	r8[0x0],r9
     /// probably want more filtering before posting events
     //    if(adcVal[i] != adcOldVal[i]) {
     /// this is a dirty way! but the two lower bits are pretty noisy.
     if( (adcVal[i] & 0xffc) != ( adcOldVal[i] & 0xffc) ) {
       adcOldVal[i] = adcVal[i];
-      e.eventType = adcEventTypes[i];
-800168a2:	e0 a0 05 d5 	rcall	8001744c <post_event>
+      e.type = adctypes[i];
+800168a2:	e0 a0 05 d5 	rcall	8001744c <event_post>
 800168a6:	cd 3b       	rjmp	8001684c <adc_poll+0x124>
-      e.eventData = (S16)(adcVal[i]);
-      post_event(&e);
+      e.data = (S16)(adcVal[i]);
+      event_post(&e);
 800168a8:	e0 68 08 1c 	mov	r8,2076
 800168ac:	b0 19       	st.h	r8[0x2],r9
 800168ae:	e0 68 08 24 	mov	r8,2084
@@ -15560,7 +15560,7 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 800168b4:	30 19       	mov	r9,1
 800168b6:	10 9c       	mov	r12,r8
 800168b8:	91 09       	st.w	r8[0x0],r9
-800168ba:	e0 a0 05 c9 	rcall	8001744c <post_event>
+800168ba:	e0 a0 05 c9 	rcall	8001744c <event_post>
 800168be:	cc 0b       	rjmp	8001683e <adc_poll+0x116>
 
 800168c0 <init_app_timers>:
@@ -15613,15 +15613,15 @@ void init_app_timers(void) {
   if(refresh) {
 8001690c:	0f 88       	ld.ub	r8,r7[0x0]
 8001690e:	58 08       	cp.w	r8,0
-    e.eventType = kEventRefresh;
+    e.type = kEventRefresh;
 80016910:	c0 a0       	breq	80016924 <screen_timer_callback+0x20>
 80016912:	e0 68 08 6c 	mov	r8,2156
 80016916:	30 49       	mov	r9,4
-    post_event(&e);
+    event_post(&e);
 80016918:	10 9c       	mov	r12,r8
 8001691a:	91 09       	st.w	r8[0x0],r9
     refresh = 0;
-8001691c:	e0 a0 05 98 	rcall	8001744c <post_event>
+8001691c:	e0 a0 05 98 	rcall	8001744c <event_post>
 80016920:	30 08       	mov	r8,0
 80016922:	ae 88       	st.b	r7[0x0],r8
 80016924:	e3 cd 80 80 	ldm	sp++,r7,pc
@@ -15642,7 +15642,7 @@ static void enc_timer_callback(int tag) {
     val = enc[i].val;
     if ( (val > enc[i].thresh) || (val < (enc[i].thresh * -1)) ) {
     //  if( (val > ENC_THRESH) || (val < ENC_NEG_THRESH) ) {
-      e.eventType = enc[i].event;
+      e.type = enc[i].event;
 8001693a:	e0 65 08 74 	mov	r5,2164
 
 // encoder accumulator polling callback
@@ -15657,8 +15657,8 @@ static void enc_timer_callback(int tag) {
 80016946:	30 33       	mov	r3,3
     if ( (val > enc[i].thresh) || (val < (enc[i].thresh * -1)) ) {
     //  if( (val > ENC_THRESH) || (val < ENC_NEG_THRESH) ) {
-      e.eventType = enc[i].event;
-      e.eventData = val;
+      e.type = enc[i].event;
+      e.data = val;
       enc[i].val = 0;
 80016948:	c0 28       	rjmp	8001694c <enc_timer_callback+0x24>
 8001694a:	10 9a       	mov	r10,r8
@@ -15672,7 +15672,7 @@ static void enc_timer_callback(int tag) {
 80016950:	f0 cb ff ff 	sub	r11,r8,-1
     if ( (val > enc[i].thresh) || (val < (enc[i].thresh * -1)) ) {
     //  if( (val > ENC_THRESH) || (val < ENC_NEG_THRESH) ) {
-      e.eventType = enc[i].event;
+      e.type = enc[i].event;
 80016954:	ee 0b 04 29 	ld.sh	r9,r7[r11<<0x2]
 //// FIXME optimize
 static void enc_timer_callback(int tag) {
@@ -15687,8 +15687,8 @@ static void enc_timer_callback(int tag) {
 80016966:	90 18       	ld.sh	r8,r8[0x2]
 80016968:	f0 09 19 00 	cp.h	r9,r8
     //  if( (val > ENC_THRESH) || (val < ENC_NEG_THRESH) ) {
-      e.eventType = enc[i].event;
-      e.eventData = val;
+      e.type = enc[i].event;
+      e.data = val;
 8001696c:	e0 89 00 05 	brgt	80016976 <enc_timer_callback+0x4e>
       enc[i].val = 0;
 80016970:	5c 38       	neg	r8
@@ -15698,18 +15698,18 @@ static void enc_timer_callback(int tag) {
     val = enc[i].val;
     if ( (val > enc[i].thresh) || (val < (enc[i].thresh * -1)) ) {
     //  if( (val > ENC_THRESH) || (val < ENC_NEG_THRESH) ) {
-      e.eventType = enc[i].event;
+      e.type = enc[i].event;
 80016974:	c1 54       	brge	8001699e <enc_timer_callback+0x76>
-      e.eventData = val;
+      e.data = val;
       enc[i].val = 0;
-      post_event(&e);
+      event_post(&e);
 80016976:	89 19       	st.w	r4[0x4],r9
 80016978:	7c 28       	ld.w	r8,lr[0x8]
       print_dbg("\r\n posting encoder event, num: ");
 8001697a:	ee 0b 0a 22 	st.h	r7[r11<<0x2],r2
 8001697e:	89 08       	st.w	r4[0x0],r8
       print_dbg_ulong(i);
-80016980:	e0 a0 05 66 	rcall	8001744c <post_event>
+80016980:	e0 a0 05 66 	rcall	8001744c <event_post>
 80016984:	48 cc       	lddpc	r12,800169b4 <enc_timer_callback+0x8c>
       print_dbg(" , val: ");
 80016986:	fe b0 e3 63 	rcall	8001304c <print_dbg>
@@ -17485,7 +17485,7 @@ void init_events( void ) {
 
   // zero out the event records
   for ( k = 0; k < MAX_EVENTS; k++ ) {
-    sysEvents[ k ].eventType = 0;
+    sysEvents[ k ].type = 0;
 80017430:	e0 6a 08 80 	mov	r10,2176
 void init_events( void ) {
   int k;
@@ -17506,8 +17506,8 @@ void init_events( void ) {
 
   // zero out the event records
   for ( k = 0; k < MAX_EVENTS; k++ ) {
-    sysEvents[ k ].eventType = 0;
-    sysEvents[ k ].eventData = 0;
+    sysEvents[ k ].type = 0;
+    sysEvents[ k ].data = 0;
 8001743c:	f0 ca ff 00 	sub	r10,r8,-256
   // set queue (circular list) to empty
   putIdx = 0;
@@ -17517,8 +17517,8 @@ void init_events( void ) {
   for ( k = 0; k < MAX_EVENTS; k++ ) {
 80017440:	91 09       	st.w	r8[0x0],r9
 80017442:	91 19       	st.w	r8[0x4],r9
-    sysEvents[ k ].eventType = 0;
-    sysEvents[ k ].eventData = 0;
+    sysEvents[ k ].type = 0;
+    sysEvents[ k ].data = 0;
   }
 }
 80017444:	2f 88       	sub	r8,-8
@@ -17526,7 +17526,7 @@ void init_events( void ) {
 80017448:	cf c1       	brne	80017440 <init_events+0x18>
 8001744a:	5e fc       	retal	r12
 
-8001744c <post_event>:
+8001744c <event_post>:
 8001744c:	d4 01       	pushm	lr
 8001744e:	d3 33       	ssrf	0x13
 80017450:	e0 69 08 7c 	mov	r9,2172
@@ -17545,12 +17545,12 @@ void init_events( void ) {
   if ( putIdx != getIdx  ) {
 80017468:	e0 6b 08 80 	mov	r11,2176
 8001746c:	76 0b       	ld.w	r11,r11[0x0]
-    sysEvents[ putIdx ].eventType = e->eventType;
+    sysEvents[ putIdx ].type = e->type;
 8001746e:	10 3b       	cp.w	r11,r8
-80017470:	c0 d0       	breq	8001748a <post_event+0x3e>
+80017470:	c0 d0       	breq	8001748a <event_post+0x3e>
 80017472:	78 0a       	ld.w	r10,r12[0x0]
 80017474:	e0 69 08 84 	mov	r9,2180
-    sysEvents[ putIdx ].eventData = e->eventData;
+    sysEvents[ putIdx ].data = e->data;
 80017478:	f2 08 09 3a 	st.w	r9[r8<<0x3],r10
 8001747c:	f2 08 00 38 	add	r8,r9,r8<<0x3
     // idx wrapped, so queue is full, restore idx
@@ -17567,8 +17567,8 @@ void init_events( void ) {
   return status;
 }
 80017482:	30 1c       	mov	r12,1
-    sysEvents[ putIdx ].eventType = e->eventType;
-    sysEvents[ putIdx ].eventData = e->eventData;
+    sysEvents[ putIdx ].type = e->type;
+    sysEvents[ putIdx ].data = e->data;
     status = true;
   } else {
     // idx wrapped, so queue is full, restore idx
@@ -17578,7 +17578,7 @@ void init_events( void ) {
 80017486:	d5 33       	csrf	0x13
 80017488:	d8 02       	popm	pc
 8001748a:	93 0a       	st.w	r9[0x0],r10
-8001748c:	48 3c       	lddpc	r12,80017498 <post_event+0x4c>
+8001748c:	48 3c       	lddpc	r12,80017498 <event_post+0x4c>
   } 
 
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
@@ -17615,22 +17615,22 @@ void init_events( void ) {
 800174b2:	95 08       	st.w	r10[0x0],r8
 800174b4:	e0 48 00 20 	cp.w	r8,32
 800174b8:	f9 b8 00 00 	moveq	r8,0
-    e->eventType = sysEvents[ getIdx ].eventType;
+    e->type = sysEvents[ getIdx ].type;
 800174bc:	f5 f8 0a 00 	st.weq	r10[0x0],r8
-    e->eventData = sysEvents[ getIdx ].eventData;
+    e->data = sysEvents[ getIdx ].data;
 800174c0:	e0 6a 08 84 	mov	r10,2180
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
   
   // if pointers are equal, the queue is empty... don't allow idx's to wrap!
   if ( getIdx != putIdx ) {
     INCR_EVENT_INDEX( getIdx );
-    e->eventType = sysEvents[ getIdx ].eventType;
+    e->type = sysEvents[ getIdx ].type;
 800174c4:	f4 08 00 3b 	add	r11,r10,r8<<0x3
-    e->eventData = sysEvents[ getIdx ].eventData;
+    e->data = sysEvents[ getIdx ].data;
 800174c8:	f4 08 03 38 	ld.w	r8,r10[r8<<0x3]
 800174cc:	99 08       	st.w	r12[0x0],r8
-    e->eventType  = 0xff;
-    e->eventData = 0;
+    e->type  = 0xff;
+    e->data = 0;
     status = false;
   }
 
@@ -17642,29 +17642,29 @@ void init_events( void ) {
   return status;
 }
 800174d0:	99 18       	st.w	r12[0x4],r8
-    e->eventType = sysEvents[ getIdx ].eventType;
-    e->eventData = sysEvents[ getIdx ].eventData;
+    e->type = sysEvents[ getIdx ].type;
+    e->data = sysEvents[ getIdx ].data;
     status = true;
   } else {
-    e->eventType  = 0xff;
-    e->eventData = 0;
+    e->type  = 0xff;
+    e->data = 0;
 800174d2:	30 1c       	mov	r12,1
     INCR_EVENT_INDEX( getIdx );
-    e->eventType = sysEvents[ getIdx ].eventType;
-    e->eventData = sysEvents[ getIdx ].eventData;
+    e->type = sysEvents[ getIdx ].type;
+    e->data = sysEvents[ getIdx ].data;
     status = true;
   } else {
-    e->eventType  = 0xff;
+    e->type  = 0xff;
 800174d4:	d5 33       	csrf	0x13
 800174d6:	5e fc       	retal	r12
-    e->eventData = 0;
+    e->data = 0;
 800174d8:	30 0c       	mov	r12,0
     INCR_EVENT_INDEX( getIdx );
-    e->eventType = sysEvents[ getIdx ].eventType;
-    e->eventData = sysEvents[ getIdx ].eventData;
+    e->type = sysEvents[ getIdx ].type;
+    e->data = sysEvents[ getIdx ].data;
     status = true;
   } else {
-    e->eventType  = 0xff;
+    e->type  = 0xff;
 800174da:	e0 68 00 ff 	mov	r8,255
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
   //  if (fReenableInterrupts) {
@@ -22395,7 +22395,7 @@ void str_copy(const char* src, char * dst, s8 len) {
 void process_sw( const U8 swIdx )  {
 80018d64:	eb cd 40 c0 	pushm	r6-r7,lr
   static event_t e;   
-    e.eventType = kSwitchEvents[swIdx][gpio_get_pin_value(kSwitchPins[swIdx])];
+    e.type = kSwitchEvents[swIdx][gpio_get_pin_value(kSwitchPins[swIdx])];
 80018d68:	48 d8       	lddpc	r8,80018d9c <process_sw+0x38>
   { kEventSwitchDown7, kEventSwitchUp7 },
 };
@@ -22405,7 +22405,7 @@ void process_sw( const U8 swIdx )  {
 void process_sw( const U8 swIdx )  {
 80018d6a:	18 97       	mov	r7,r12
   static event_t e;   
-    e.eventType = kSwitchEvents[swIdx][gpio_get_pin_value(kSwitchPins[swIdx])];
+    e.type = kSwitchEvents[swIdx][gpio_get_pin_value(kSwitchPins[swIdx])];
 80018d6c:	f0 0c 07 0c 	ld.ub	r12,r8[r12]
 80018d70:	fe b0 cc bc 	rcall	800126e8 <gpio_get_pin_value>
 80018d74:	48 b8       	lddpc	r8,80018da0 <process_sw+0x3c>
@@ -22419,9 +22419,9 @@ void process_sw( const U8 swIdx )  {
     print_dbg_ulong(swIdx);
 80018d8a:	0e 9c       	mov	r12,r7
 80018d8c:	fe b0 d1 3e 	rcall	80013008 <print_dbg_ulong>
-    post_event(&e);
+    event_post(&e);
 80018d90:	0c 9c       	mov	r12,r6
-80018d92:	fe b0 f3 5d 	rcall	8001744c <post_event>
+80018d92:	fe b0 f3 5d 	rcall	8001744c <event_post>
 }
 80018d96:	e3 cd 80 c0 	ldm	sp++,r6-r7,pc
 80018d9a:	d7 03       	nop
@@ -23449,7 +23449,7 @@ static void check_events(void) {
 800191de:	5f 09       	sreq	r9
 800191e0:	f5 e9 10 09 	or	r9,r10,r9
 800191e4:	ee 09 18 00 	cp.b	r9,r7
-      if( e.eventType == kEventSwitchDown0
+      if( e.type == kEventSwitchDown0
 800191e8:	c0 71       	brne	800191f6 <main+0x19e>
 800191ea:	58 d8       	cp.w	r8,13
 800191ec:	c0 50       	breq	800191f6 <main+0x19e>
@@ -23477,7 +23477,7 @@ static void app_launch(void) {
       }
     } else {
       
-      switch(e.eventType) {
+      switch(e.type) {
 8001920e:	fe b0 cf 1f 	rcall	8001304c <print_dbg>
 80019212:	cd 9b       	rjmp	800191c4 <main+0x16c>
 80019214:	4d dc       	lddpc	r12,80019388 <main+0x330>
@@ -23494,7 +23494,7 @@ static void app_launch(void) {
 80019222:	cd 1b       	rjmp	800191c4 <main+0x16c>
 80019224:	30 0b       	mov	r11,0
       case kEventSwitchUp3:
-	menu_handleKey(eKeyFnUpD, e.eventData);
+	menu_handleKey(eKeyFnUpD, e.data);
 	break;
 	/// footswitches
       case kEventSwitchDown6:
@@ -23555,77 +23555,77 @@ static void app_launch(void) {
 8001926e:	88 3b       	ld.sh	r11,r4[0x6]
 80019270:	30 7c       	mov	r12,7
 	else { gpio_clr_gpio_pin(LED_MODE_PIN); }
-	menu_handleKey(eKeyMode, e.eventData);
+	menu_handleKey(eKeyMode, e.data);
 80019272:	e0 a0 28 f5 	rcall	8001e45c <menu_handleKey>
 80019276:	ca 7b       	rjmp	800191c4 <main+0x16c>
 80019278:	88 3b       	ld.sh	r11,r4[0x6]
 8001927a:	30 6c       	mov	r12,6
 	break;
       case kEventSwitchDown3:
-	menu_handleKey(eKeyFnDownD, e.eventData);
+	menu_handleKey(eKeyFnDownD, e.data);
 	break;
       case kEventSwitchUp3:
-	menu_handleKey(eKeyFnUpD, e.eventData);
+	menu_handleKey(eKeyFnUpD, e.data);
 8001927c:	e0 a0 28 f0 	rcall	8001e45c <menu_handleKey>
 80019280:	ca 2b       	rjmp	800191c4 <main+0x16c>
 80019282:	88 3b       	ld.sh	r11,r4[0x6]
 80019284:	30 5c       	mov	r12,5
 	break;
       case kEventSwitchUp2:
-	menu_handleKey(eKeyFnUpC, e.eventData);
+	menu_handleKey(eKeyFnUpC, e.data);
 	break;
       case kEventSwitchDown3:
-	menu_handleKey(eKeyFnDownD, e.eventData);
+	menu_handleKey(eKeyFnDownD, e.data);
 80019286:	e0 a0 28 eb 	rcall	8001e45c <menu_handleKey>
 8001928a:	c9 db       	rjmp	800191c4 <main+0x16c>
 8001928c:	88 3b       	ld.sh	r11,r4[0x6]
 8001928e:	30 4c       	mov	r12,4
 	break;
       case kEventSwitchDown2:
-	menu_handleKey(eKeyFnDownC, e.eventData);
+	menu_handleKey(eKeyFnDownC, e.data);
 	break;
       case kEventSwitchUp2:
-	menu_handleKey(eKeyFnUpC, e.eventData);
+	menu_handleKey(eKeyFnUpC, e.data);
 80019290:	e0 a0 28 e6 	rcall	8001e45c <menu_handleKey>
 80019294:	c9 8b       	rjmp	800191c4 <main+0x16c>
 80019296:	88 3b       	ld.sh	r11,r4[0x6]
 80019298:	30 3c       	mov	r12,3
 	break;
       case kEventSwitchUp1:
-	menu_handleKey(eKeyFnUpB, e.eventData);
+	menu_handleKey(eKeyFnUpB, e.data);
 	break;
       case kEventSwitchDown2:
-	menu_handleKey(eKeyFnDownC, e.eventData);
+	menu_handleKey(eKeyFnDownC, e.data);
 8001929a:	e0 a0 28 e1 	rcall	8001e45c <menu_handleKey>
 8001929e:	c9 3b       	rjmp	800191c4 <main+0x16c>
 800192a0:	88 3b       	ld.sh	r11,r4[0x6]
 800192a2:	30 2c       	mov	r12,2
 	break;
       case kEventSwitchDown1:
-	menu_handleKey(eKeyFnDownB, e.eventData);
+	menu_handleKey(eKeyFnDownB, e.data);
 	break;
       case kEventSwitchUp1:
-	menu_handleKey(eKeyFnUpB, e.eventData);
+	menu_handleKey(eKeyFnUpB, e.data);
 800192a4:	e0 a0 28 dc 	rcall	8001e45c <menu_handleKey>
 800192a8:	c8 eb       	rjmp	800191c4 <main+0x16c>
 800192aa:	88 3b       	ld.sh	r11,r4[0x6]
 800192ac:	30 1c       	mov	r12,1
 	break;
       case kEventSwitchUp0:
-	menu_handleKey(eKeyFnUpA, e.eventData);
+	menu_handleKey(eKeyFnUpA, e.data);
 	break;
       case kEventSwitchDown1:
-	menu_handleKey(eKeyFnDownB, e.eventData);
+	menu_handleKey(eKeyFnDownB, e.data);
 800192ae:	e0 a0 28 d7 	rcall	8001e45c <menu_handleKey>
 800192b2:	c8 9b       	rjmp	800191c4 <main+0x16c>
 800192b4:	68 1b       	ld.w	r11,r4[0x4]
 800192b6:	58 0b       	cp.w	r11,0
 	//----- function switches
       case kEventSwitchDown0:
-	menu_handleKey(eKeyFnDownA, e.eventData);
+	menu_handleKey(eKeyFnDownA, e.data);
 	break;
       case kEventSwitchUp0:
-	menu_handleKey(eKeyFnUpA, e.eventData);
+	menu_handleKey(eKeyFnUpA, e.data);
 800192b8:	e0 8a 00 29 	brle	8001930a <main+0x2b2>
 800192bc:	5c 8b       	casts.h	r11
 800192be:	30 9c       	mov	r12,9
@@ -23635,35 +23635,35 @@ static void app_launch(void) {
 	break;
 	//----- function switches
       case kEventSwitchDown0:
-	menu_handleKey(eKeyFnDownA, e.eventData);
+	menu_handleKey(eKeyFnDownA, e.data);
 800192c4:	c8 0b       	rjmp	800191c4 <main+0x16c>
 800192c6:	68 1b       	ld.w	r11,r4[0x4]
 800192c8:	58 0b       	cp.w	r11,0
 800192ca:	e0 8a 00 2a 	brle	8001931e <main+0x2c6>
-	  menu_handleKey(eKeyEncDownB, e.eventData);
+	  menu_handleKey(eKeyEncDownB, e.data);
 	}
 	break;
       case kEventEncoder3:
 	//	print_dbg("\r\n encoder 3");
-	if(e.eventData > 0) {
+	if(e.data > 0) {
 800192ce:	5c 8b       	casts.h	r11
 800192d0:	30 bc       	mov	r12,11
 800192d2:	e0 a0 28 c5 	rcall	8001e45c <menu_handleKey>
-	  menu_handleKey(eKeyEncUpA, e.eventData);
+	  menu_handleKey(eKeyEncUpA, e.data);
 800192d6:	c7 7b       	rjmp	800191c4 <main+0x16c>
 800192d8:	68 1b       	ld.w	r11,r4[0x4]
 800192da:	58 0b       	cp.w	r11,0
 800192dc:	e0 8a 00 1c 	brle	80019314 <main+0x2bc>
-	  menu_handleKey(eKeyEncDownC, e.eventData);
+	  menu_handleKey(eKeyEncDownC, e.data);
 	}
 	break;
       case kEventEncoder2:
 	//	print_dbg("\r\n encoder 2");
-	if(e.eventData > 0) {
+	if(e.data > 0) {
 800192e0:	5c 8b       	casts.h	r11
 800192e2:	30 fc       	mov	r12,15
 800192e4:	e0 a0 28 bc 	rcall	8001e45c <menu_handleKey>
-	  menu_handleKey(eKeyEncUpB, e.eventData);
+	  menu_handleKey(eKeyEncUpB, e.data);
 800192e8:	c6 eb       	rjmp	800191c4 <main+0x16c>
 800192ea:	68 1b       	ld.w	r11,r4[0x4]
 800192ec:	58 0b       	cp.w	r11,0
@@ -23673,31 +23673,31 @@ static void app_launch(void) {
 	break;
       case kEventEncoder0:
 	//	 print_dbg("\r\n encoder 0");
-      	if(e.eventData > 0) {
+      	if(e.data > 0) {
 800192f2:	5c 8b       	casts.h	r11
 800192f4:	30 dc       	mov	r12,13
 800192f6:	e0 a0 28 b3 	rcall	8001e45c <menu_handleKey>
-      	  menu_handleKey(eKeyEncUpD, e.eventData);
+      	  menu_handleKey(eKeyEncUpD, e.data);
 800192fa:	c6 5b       	rjmp	800191c4 <main+0x16c>
 800192fc:	fe b0 f9 5a 	rcall	800185b0 <screen_refresh>
 80019300:	c6 2b       	rjmp	800191c4 <main+0x16c>
-      	  menu_handleKey(eKeyEncDownD, e.eventData);
+      	  menu_handleKey(eKeyEncDownD, e.data);
       	}
       	break;
       case kEventEncoder1:
 	//	print_dbg("\r\n encoder 1");
-	if(e.eventData > 0) {
+	if(e.data > 0) {
 80019302:	31 7c       	mov	r12,23
 80019304:	fe b0 ca 0a 	rcall	80012718 <gpio_clr_gpio_pin>
 80019308:	ca 9b       	rjmp	8001925a <main+0x202>
-	  menu_handleKey(eKeyEncUpC, e.eventData);
+	  menu_handleKey(eKeyEncUpC, e.data);
 8001930a:	5c 8b       	casts.h	r11
 8001930c:	30 ac       	mov	r12,10
 8001930e:	e0 a0 28 a7 	rcall	8001e45c <menu_handleKey>
 80019312:	c5 9b       	rjmp	800191c4 <main+0x16c>
     } else {
       
-      switch(e.eventType) {
+      switch(e.type) {
 
       case kEventRefresh:
 	screen_refresh();
@@ -23715,30 +23715,30 @@ static void app_launch(void) {
 80019320:	30 cc       	mov	r12,12
       case kEventEncoder3:
 	//	print_dbg("\r\n encoder 3");
-	if(e.eventData > 0) {
-	  menu_handleKey(eKeyEncUpA, e.eventData);
+	if(e.data > 0) {
+	  menu_handleKey(eKeyEncUpA, e.data);
 	} else {
-	  menu_handleKey(eKeyEncDownA, e.eventData);
+	  menu_handleKey(eKeyEncDownA, e.data);
 80019322:	e0 a0 28 9d 	rcall	8001e45c <menu_handleKey>
 80019326:	c4 fb       	rjmp	800191c4 <main+0x16c>
 80019328:	5c 8b       	casts.h	r11
 8001932a:	30 ec       	mov	r12,14
       case kEventEncoder0:
 	//	 print_dbg("\r\n encoder 0");
-      	if(e.eventData > 0) {
-      	  menu_handleKey(eKeyEncUpD, e.eventData);
+      	if(e.data > 0) {
+      	  menu_handleKey(eKeyEncUpD, e.data);
       	} else {
-      	  menu_handleKey(eKeyEncDownD, e.eventData);
+      	  menu_handleKey(eKeyEncDownD, e.data);
 8001932c:	e0 a0 28 98 	rcall	8001e45c <menu_handleKey>
 80019330:	c4 ab       	rjmp	800191c4 <main+0x16c>
 80019332:	d7 03       	nop
 80019334:	80 02       	ld.sh	r2,r0[0x0]
       case kEventEncoder2:
 	//	print_dbg("\r\n encoder 2");
-	if(e.eventData > 0) {
-	  menu_handleKey(eKeyEncUpB, e.eventData);
+	if(e.data > 0) {
+	  menu_handleKey(eKeyEncUpB, e.data);
 	} else {
-	  menu_handleKey(eKeyEncDownB, e.eventData);
+	  menu_handleKey(eKeyEncDownB, e.data);
 80019336:	28 1c       	sub	r12,-127
 80019338:	80 02       	ld.sh	r2,r0[0x0]
 8001933a:	28 30       	sub	r0,-125
@@ -23746,10 +23746,10 @@ static void app_launch(void) {
 8001933e:	28 38       	sub	r8,-125
       case kEventEncoder1:
 	//	print_dbg("\r\n encoder 1");
-	if(e.eventData > 0) {
-	  menu_handleKey(eKeyEncUpC, e.eventData);
+	if(e.data > 0) {
+	  menu_handleKey(eKeyEncUpC, e.data);
 	} else {
-	  menu_handleKey(eKeyEncDownC, e.eventData);
+	  menu_handleKey(eKeyEncDownC, e.data);
 80019340:	80 02       	ld.sh	r2,r0[0x0]
 80019342:	28 50       	sub	r0,-123
 80019344:	80 02       	ld.sh	r2,r0[0x0]

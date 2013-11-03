@@ -49,17 +49,17 @@ static void handle_key_1(s32 val);
 static void handle_key_2(s32 val);
 static void handle_key_3(s32 val);
 
-// array of handlers
-const page_handler_t handler_ins[eNumPageHandlers] = {
-  &handle_enc_0,
-  &handle_enc_1,
-  &handle_enc_2,
-  &handle_enc_3,
-  &handle_key_0,
-  &handle_key_1,
-  &handle_key_2,
-  &handle_key_3,
-};
+/* // array of handlers */
+/* const page_handler_t handler_ins[eNumPageHandlers] = { */
+/*   &handle_enc_0, */
+/*   &handle_enc_1, */
+/*   &handle_enc_2, */
+/*   &handle_enc_3, */
+/*   &handle_key_0, */
+/*   &handle_key_1, */
+/*   &handle_key_2, */
+/*   &handle_key_3, */
+/* }; */
 
 // fill tmp region with new content
 // given input index
@@ -330,16 +330,25 @@ void init_page_ins(void) {
   }
 }
 
-// refresh
-// called when the page is selected to update render 
-void refresh_ins(void) { 
-  print_dbg("\r\n refresh INS... ");
+// selected
+// called when the page is selected
+// assign rendering buffers and UI handlers 
+void select_ins(void) { 
   // assign global scroll region pointer
   // also marks dirty
   render_set_scroll(&centerScroll);
   // other regions are static in top-level render, with global handles
   region_fill(headRegion, 0x0);
   font_string_region_clip(headRegion, "INPUTS", 0, 0, 0xf, 0x1);
+  // assign handlers
+  app_event_handlers[ kEventEncoder0 ]	= &handle_enc_0 ;
+  app_event_handlers[ kEventEncoder1 ]	= &handle_enc_1 ;
+  app_event_handlers[ kEventEncoder2 ]	= &handle_enc_2 ;
+  app_event_handlers[ kEventEncoder3 ]	= &handle_enc_3 ;
+  app_event_handlers[ kEventSwitch0 ]	= &handle_key_0 ;
+  app_event_handlers[ kEventSwitch1 ]	= &handle_key_1 ;
+  app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
+  app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ;
 }
 
 //========================================================

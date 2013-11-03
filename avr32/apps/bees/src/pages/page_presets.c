@@ -50,8 +50,8 @@ void handle_enc_3(s32 val) {
 
 //----------------------
 // ---- extern 
-// refresh 
-void refresh_presets(void) {
+// select
+void select_presets(void) {
 }
 
 const page_handler_t handler_presets[eNumPageHandlers] = {

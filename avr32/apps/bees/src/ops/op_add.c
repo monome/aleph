@@ -10,7 +10,7 @@ static void op_add_inc_input(op_add_t* mul, const s16 idx, const io_t inc);
 
 // pickle / unpickle
 static u8* op_add_pickle(op_add_t* op, u8* dst);
-static const u8* op_add_unpickle(const u8* src, op_add_t* op);
+static const u8* op_add_unpickle(op_add_t* op, const u8* src);
 
 //-------------------------------------------------
 //---- static vars
@@ -96,7 +96,7 @@ u8* op_add_pickle(op_add_t* op, u8* dst) {
   return dst;
 }
 
-const u8* op_add_unpickle(const u8* src, op_add_t* op) {
+const u8* op_add_unpickle(op_add_t* op, const u8* src) {
   src = unpickle_io(src, &(op->a));
   src = unpickle_io(src, &(op->b));
   src = unpickle_io(src, &(op->btrig));

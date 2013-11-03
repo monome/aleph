@@ -54,28 +54,132 @@
 //==================================================
 //====  defines
 
-// run an event handler with NULL check
-// #define APP_HANDLE_EVENT(handler, args) if( handler != NULL) (*handler)(args)
-
 //==================================================
 //====  extern variables
-
-// function pointer to app hhandler
-event_handler appEventHandler;
 
 //==================================================
 //====  static variables
 // flag for firstrun
 static u8 firstrun = 0;
 //  flag to wait for startup button press
-static u8 startup = 1;
+static u8 launch = 0;
+// flags for device connection events.
+// need to re-send after app launch.
+static u8 ftdiConnect = 0;
+static u8 monomeConnect = 0;
+static u8 hidConnect = 0;
+static u8 midiConnect = 0;
 
 //=================================================
 //==== static declarations
 
+// initializations
 static void init_avr32(void);
 static void init_ctl(void);
+// check the event queue
 static void check_events(void);
+// check startup status and possibly launch the application
+static void check_startup(void);
+
+// core event handlers
+static void handler_Adc0(s32 data) { ;; }
+static void handler_Adc1(s32 data) { ;; }
+static void handler_Adc2(s32 data) { ;; }
+static void handler_Adc3(s32 data) { ;; }
+static void handler_Encoder0(s32 data) { ;; }
+static void handler_Encoder1(s32 data) { ;; }
+static void handler_Encoder2(s32 data) { ;; }
+static void handler_Encoder3(s32 data) { ;; }
+static void handler_Switch0(s32 data) { check_startup(); }
+static void handler_Switch1(s32 data) { check_startup(); }
+static void handler_Switch2(s32 data) { check_startup(); }
+static void handler_Switch3(s32 data) { check_startup(); }
+static void handler_Switch4(s32 data) { ;; }
+static void handler_Switch5(s32 data) { ;; }
+static void handler_Switch6(s32 data) { ;; }
+static void handler_Switch7(s32 data) { ;; }
+static void handler_FtdiConnect(s32 data) {
+  ftdi_setup();
+}
+static void handler_FtdiDisconnect(s32 data) { 
+  // FIXME: 
+  // i guess we should spawn the appropriate class-specific event
+  // (e.g. monomeDisconnect)
+}
+
+static void handler_MonomeConnect(s32 data) {
+  if(!launch) {
+    monomeConnect = 1;
+  }
+}
+static void handler_MonomeDisconnect(s32 data) { ;; }
+static void handler_MonomePoll(s32 data) {
+  monome_read_serial();
+}
+static void handler_MonomeRefresh(s32 data) {
+  monome_grid_refresh();
+  // FIXME: arc?
+}
+
+static void handler_MonomeGridKey(s32 data) { ;; }
+static void handler_MonomeGridTilt(s32 data) { ;; }
+static void handler_MonomeRingEnc(s32 data) { ;; }
+static void handler_MonomeRingKey(s32 data) { ;; }
+static void handler_MidiConnect(s32 data) { 
+  if(!launch) {
+    midiConnect = 1;
+  }
+}
+static void handler_MidiDisconnect(s32 data) { ;; }
+static void handler_MidiPacket(s32 data) { ;; }
+static void handler_MidiRefresh(s32 data) {
+  // TODO
+}
+static void handler_HidConnect(s32 data) { 
+  if(!launch) {
+    hidConnect = 1;
+  }
+}
+static void handler_HidDisconnect(s32 data) { ;; }
+static void handler_HidByte(s32 data) { ;; }
+
+/// explicitly assign default event handlers.
+/// this way the order of the event types enum doesn't matter.
+static inline void assign_main_event_handlers(void) {
+  app_event_handlers[ kEventAdc0]	= &handler_Adc0 ;
+  app_event_handlers[ kEventAdc1 ]	= &handler_Adc1 ;
+  app_event_handlers[ kEventAdc2 ]	= &handler_Adc2 ;
+  app_event_handlers[ kEventAdc3 ]	= &handler_Adc3 ;
+  app_event_handlers[ kEventEncoder0 ]	= &handler_Encoder0 ;
+  app_event_handlers[ kEventEncoder1 ]	= &handler_Encoder1 ;
+  app_event_handlers[ kEventEncoder2 ]	= &handler_Encoder2 ;
+  app_event_handlers[ kEventEncoder3 ]	= &handler_Encoder3 ;
+  app_event_handlers[ kEventSwitch0 ]	= &handler_Switch0 ;
+  app_event_handlers[ kEventSwitch1 ]	= &handler_Switch1 ;
+  app_event_handlers[ kEventSwitch2 ]	= &handler_Switch2 ;
+  app_event_handlers[ kEventSwitch3 ]	= &handler_Switch3 ;
+  app_event_handlers[ kEventSwitch4 ]	= &handler_Switch4 ;
+  app_event_handlers[ kEventSwitch5 ]	= &handler_Switch5 ;
+  app_event_handlers[ kEventSwitch6 ]	= &handler_Switch6 ;
+  app_event_handlers[ kEventSwitch7 ]	= &handler_Switch7 ;
+  app_event_handlers[ kEventFtdiConnect ]	= &handler_FtdiConnect ;
+  app_event_handlers[ kEventFtdiDisconnect ]	= &handler_FtdiDisconnect ;
+  app_event_handlers[ kEventMonomeConnect ]	= &handler_MonomeConnect ;
+  app_event_handlers[ kEventMonomeDisconnect ]	= &handler_MonomeDisconnect ;
+  app_event_handlers[ kEventMonomePoll ]	= &handler_MonomePoll ;
+  app_event_handlers[ kEventMonomeRefresh ]	= &handler_MonomeRefresh ;
+  app_event_handlers[ kEventMonomeGridKey ]	= &handler_MonomeGridKey ;
+  app_event_handlers[ kEventMonomeGridTilt ]	= &handler_MonomeGridTilt ;
+  app_event_handlers[ kEventMonomeRingEnc ]	= &handler_MonomeRingEnc ;
+  app_event_handlers[ kEventMonomeRingKey ]	= &handler_MonomeRingKey ;
+  app_event_handlers[ kEventMidiConnect ]	= &handler_MidiConnect ;
+  app_event_handlers[ kEventMidiDisconnect ]	= &handler_MidiDisconnect ;
+  app_event_handlers[ kEventMidiPacket ]	= &handler_MidiPacket ;
+  app_event_handlers[ kEventMidiRefresh ]	= &handler_MidiRefresh ;
+  app_event_handlers[ kEventHidConnect ]	= &handler_HidConnect ;
+  app_event_handlers[ kEventHidDisconnect ]	= &handler_HidDisconnect ;
+  app_event_handlers[ kEventHidByte ]	= &handler_HidByte ;
+}
 
 //=================================================
 //==== definitons
@@ -121,10 +225,8 @@ static void init_avr32(void) {
 
   // usb host controller
   init_usb_host();
-  // initialize usb classes
+  // initialize usb class drivers
   init_monome();
-  //  init_midi();
-  //  init_hid();
 
   print_dbg("\r\n avr32 init done ");
 }
@@ -152,104 +254,69 @@ static void init_ctl(void) {
 
   // enable interrupts
   cpu_irq_enable();
+}
 
+// launch application
+void check_startup(void) {
+  event_t e = { .data = 0 };
+
+  if(!launch) {
+    //// haven't launched yet
+    // wipe out the event queue
+    init_events();
+    // clear the power sw interrupt? wtf?? ok
+    gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
+    // return 1 if app completed firstrun tasks
+    launch = app_launch(firstrun);
+    delay_ms(10);
+    if(launch) {
+      // successfully launched on firstrun, so write magic number to flash
+      flash_write_firstrun();
+      // re-send connection events if we got any
+      if(ftdiConnect) {
+	e.type = kEventFtdiConnect;
+	event_post(&e);
+      } 
+      if(monomeConnect) {
+	e.type = kEventMonomeConnect;
+	event_post(&e);
+      } 
+      if(hidConnect) {
+	e.type = kEventHidConnect;
+	event_post(&e);
+      } 
+      if(midiConnect) {
+	e.type = kEventMidiConnect;
+	event_post(&e);
+      } 
+    } else {      
+      if( firstrun) {
+	// firstrun, but app launch failed, so clear magic number to try again
+	flash_clear_firstrun();
+      } 
+    }
+  }
 }
 
 // app event loop
-static void check_events(void) {
+void check_events(void) {
   static event_t e;
-  u8 launch = 0;
-  //  print_dbg("\r\n checking events...");
-  if( get_next_event(&e) ) {
-  /* print_dbg("\r\n handling event, type: "); */
-  /* print_dbg_hex(e.eventType); */
-  /* print_dbg("\r\n , data: "); */
-  /* print_dbg_hex(e.eventData); */
-
-    //// 
-    //// FIXME: this control structure is dumb
-
-    
-    if(startup) {
-      if( e.eventType == kEventSwitch0
-	  || e.eventType == kEventSwitch1
-	  || e.eventType == kEventSwitch2
-	  || e.eventType == kEventSwitch3
-	  || e.eventType == kEventSwitch4
-	  ) {
-	startup = 0;
-	print_dbg("\r\n key pressed, launching ");
-	if(e.eventType == kEventSwitch3) {
-	  firstrun = 1; 
-	}
-	// pending events?
-	print_pending_events();
-	/// wipe out the event queue
-	init_events();
-	/// clear the fucking power sw interrupt? wtf??
-	gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
-	// return 1 if app completed firstrun tasks
-	launch = app_launch(firstrun);
-	delay_ms(10);
-	if( firstrun) {
-	  if(launch) {
-	    // successfully launched on firstrun, so write magic number to flash
-	    flash_write_firstrun();
-	    return;
-	  } else {
-	    // firstrun, but app launch failed, so clear magic number to try again
-	    flash_clear_firstrun();
-	  } 
-	}
-      }
-    } else {
-      //      print_dbg("\r\n main event handler: ");
-      //      print_dbg_hex(e.eventType);
-      
-      /// hack for early return
-      if(e.eventType < kNumSysEvents) {
-	      // system events
-
-	switch(e.eventType) {
-	
-	  //	case kEventRefresh:
-	  // refresh the screen hardware
-	  //	screen_refresh();
-	  //	  break;
-	case kEventMonomePoll :
-	  // poll monome serial input and spawn relevant events
-	  monome_read_serial();
-	  break;
-	case kEventMonomeRefresh :
-	  // refresh monome device from led state buffer
-	  monome_grid_refresh();
-	  break;
-	  //--------------------------------------
-	case kEventFtdiConnect:
-	  // perform setup tasks for new ftdi device connection. 
-	  // won't work if called from an interrupt.
-	  ftdi_setup();
-	  break;
-	default:
-	  ;;
-	  break;
-	} // event switch
-	    } // else { // non-system (app) events
-	// handle all events in app also...
-      (*appEventHandler)(&e);
-	//      }
-    } // startup
-  } // got event
+  if( event_next(&e) ) {
+    //(*((*appEventHandlers)[e.type]))(e.data);
+    //    (*app_event_handlers)[e.type](e.data);
+    (app_event_handlers)[e.type](e.data);
+  }
 }
 
-//int main(void) {
-////main function
+// !!!!!!!!!!!!!
+// main function
 int main (void) {
-  //  u8 launch = 0;
-  //  u32 waitForCard = 0;
 
   // set up avr32 hardware and peripherals
   init_avr32();
+
+  // show the startup screen
+  screen_startup();  
 
   //memory manager
   init_mem();  
@@ -278,32 +345,13 @@ int main (void) {
     print_dbg("r\n sw2 down -> force firstrun ");
   }
 
-  delay_ms(100);
-  // notify 
-  screen_startup();
+  // assign default event handlers
+  //  app_event_handlers = &main_event_handlers;
+  assign_main_event_handlers();
 
-  //  delay_ms(2000);
-
-  print_dbg("\r\n launching app");
-
-  /*
-  launch = app_launch(firstrun);
-  delay_ms(10);
-  if( firstrun) {
-    if(launch) {
-      print_dbg("\r\n app launch ok on firstrun, wirting magic flash ");
-      flash_write_firstrun();
-    } else {
-      print_dbg("\r\n app launch failed on firstrun, clearing magic flash ");
-      flash_clear_firstrun();
-    } 
-  }
-  */
-  
   print_dbg("\r\n starting event loop.\r\n");
+
   while(1) {
     check_events();
   }
 }
-
-

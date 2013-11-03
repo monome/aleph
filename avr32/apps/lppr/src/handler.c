@@ -23,7 +23,7 @@
 
 // keep track of the last touched UI element (when appropriate)
 /// fixme: might want to add app-specific events?
-static eEventType touched = kNumSysEvents;
+static etype touched = kNumSysEvents;
 
 ///////
 ////////
@@ -128,71 +128,71 @@ extern void lppr_handler(event_t* ev) {
   u8 touchedThis = 0;
   // clear the main region if this is a new touch
   //  print_dbg("\r\n \r\n check type: ");
-  //  print_dbg_ulong(ev->eventType);
-  if(touched != ev->eventType) {
+  //  print_dbg_ulong(ev->type);
+  if(touched != ev->type) {
     //    print_dbg("\r\n new touch");
     touchedThis = 1;
-    touched = ev->eventType;
+    touched = ev->type;
   }
-  switch (ev->eventType) {
+  switch (ev->type) {
   case kEventSwitch0:
     /// tap delaytime 1
-    if(ev->eventData > 0) {
+    if(ev->data > 0) {
       if(touchedThis) {
 	render_touched_delaytime(0);
       }
-      ctl_tap_delay(0, ev->eventData);
+      ctl_tap_delay(0, ev->data);
     }
-    render_sw_on(0, ev->eventData > 0);
+    render_sw_on(0, ev->data > 0);
     break;
 
   case kEventSwitch1:
     // tap delaytime 2
-    if(ev->eventData > 0) {
+    if(ev->data > 0) {
       if(touchedThis) {
 	render_touched_delaytime(1);
       }	
-      ctl_tap_delay(1, ev->eventData);
+      ctl_tap_delay(1, ev->data);
     }
-    render_sw_on(1, ev->eventData > 0);
+    render_sw_on(1, ev->data > 0);
     break;
 
   case kEventSwitch2:
-    if(ev->eventData > 0) {
+    if(ev->data > 0) {
       if(touchedThis) {
 	//	render_new_param_touch();
       }
       // record loop on line 1
       ctl_loop_record(1);
     } 
-    render_sw_on(2, ev->eventData > 0);
+    render_sw_on(2, ev->data > 0);
     break;
 
   case kEventSwitch3:
-    if(ev->eventData > 0) {
+    if(ev->data > 0) {
       if(touchedThis) {
 	//	render_new_param_touch();
       }
       // record loop on line 2
       ctl_loop_playback(1);
     }
-    render_sw_on(3, ev->eventData > 0);
+    render_sw_on(3, ev->data > 0);
     break;
     
   case kEventSwitch6:
     //    print_dbg("wtf footswitch 1");
-    if(ev->eventData > 0) {
+    if(ev->data > 0) {
       ctl_loop_record(1);
     } 
-    render_sw_on(2, ev->eventData > 0);
+    render_sw_on(2, ev->data > 0);
     break;
     
   case kEventSwitch7:
     //    print_dbg("wtf footswitch 2");
-    if(ev->eventData > 0) {
+    if(ev->data > 0) {
       ctl_loop_playback(1);
     }
-    render_sw_on(3, ev->eventData > 0);
+    render_sw_on(3, ev->data > 0);
     break;
     
   case kEventEncoder0:
@@ -201,7 +201,7 @@ extern void lppr_handler(event_t* ev) {
       //      kill_test();
       
     }
-    ctl_inc_fb(0, scale_lin_enc(ev->eventData));
+    ctl_inc_fb(0, scale_lin_enc(ev->data));
     break;
 
   case kEventEncoder1:
@@ -210,7 +210,7 @@ extern void lppr_handler(event_t* ev) {
 
       //      kill_test();
     }
-    ctl_inc_mix(0, scale_lin_enc(ev->eventData));
+    ctl_inc_mix(0, scale_lin_enc(ev->data));
     break;
 
   case kEventEncoder2:
@@ -219,7 +219,7 @@ extern void lppr_handler(event_t* ev) {
 
       //      kill_test();
     }
-    ctl_inc_freq(0, scale_lin_enc(ev->eventData));
+    ctl_inc_freq(0, scale_lin_enc(ev->data));
     break;
 
   case kEventEncoder3:
@@ -228,16 +228,16 @@ extern void lppr_handler(event_t* ev) {
 
       //      kill_test();
     }
-    ctl_inc_res(0, scale_lin_enc(ev->eventData));
+    ctl_inc_res(0, scale_lin_enc(ev->data));
     break;
 
     //-------- grid
   case kEventMonomeConnect :
-    handle_monome_connect((u32)ev->eventData);
+    handle_monome_connect((u32)ev->data);
     break;
 
    case kEventMonomeGridKey:
-     grid_handle_key_event(ev->eventData);
+     grid_handle_key_event(ev->data);
      break;
 
 

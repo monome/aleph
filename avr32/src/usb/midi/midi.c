@@ -48,11 +48,11 @@ static u8 txBusy = 0;
 // address of last packet byte
 //u8* packetEnd = &(packet.buf[3]);
 // event
-static event_t ev = { .eventType = kEventMidiPacket, .eventData = 0x00000000 };
+static event_t ev = { .type = kEventMidiPacket, .data = 0x00000000 };
 static union { u8 buf[4]; u32 data; s32 sdata; } packet;
 // pointers into the event data (hacky)
-//static u8* const packetStart = (u8*)&(ev.eventData);
-//static u8* const packetEnd = (u8*)&(ev.eventData) + 3;
+//static u8* const packetStart = (u8*)&(ev.data);
+//static u8* const packetEnd = (u8*)&(ev.data) + 3;
 static u8* const packetStart = &(packet.buf[0]);
 static u8* const packetEnd = &(packet.buf[3]);
 
@@ -75,10 +75,10 @@ static void midi_parse(void) {
   u8 nb = 0;
 
   // clear packet data
-  //  ev.eventData = 0x00000000;
+  //  ev.data = 0x00000000;
   packet.data = 0x00000000;
 
-  print_dbg("\r\n ");
+  //  print_dbg("\r\n ");
 
   while(nb < rxBytes) {
     b = *src;
@@ -95,10 +95,10 @@ static void midi_parse(void) {
 
       if(stat) {
 	// if we already had a status byte, send the previous packet
-	ev.eventData = packet.sdata;
+	ev.data = packet.sdata;
 	//	print_dbg("\r\n sending MIDI packet: "); 
 	//	print_dbg_hex(packet.data);
-	post_event(&ev);
+	event_post(&ev);
       }
       *dst = b;
       stat = 1;  
@@ -116,9 +116,9 @@ static void midi_parse(void) {
   // at the end of a buffer, send a packet if we have a pending status
   if(stat) {
     //    print_dbg("\r\n sending MIDI packet: "); 
-    ev.eventData = packet.sdata;
+    ev.data = packet.sdata;
     //    print_dbg_hex(packet.data);
-    post_event(&ev);
+    event_post(&ev);
   }
   //  print_dbg("\r\n");
   //  print_dbg("\r\n");
@@ -134,15 +134,15 @@ static void midi_parse(void) {
 /*       if(packOk) { */
 /* 	// send the previous packet */
 /* 	print_dbg("\r\n sending MIDI packet: "); */
-/* 	print_dbg_char_hex((ev.eventData & 0xff000000) >> 24); */
+/* 	print_dbg_char_hex((ev.data & 0xff000000) >> 24); */
 /* 	print_dbg(" "); */
-/* 	print_dbg_char_hex((ev.eventData & 0xff0000) >> 16); */
+/* 	print_dbg_char_hex((ev.data & 0xff0000) >> 16); */
 /* 	print_dbg(" "); */
-/* 	print_dbg_char_hex((ev.eventData & 0xff00) >> 8); */
+/* 	print_dbg_char_hex((ev.data & 0xff00) >> 8); */
 /* 	print_dbg(" "); */
-/* 	print_dbg_char_hex(ev.eventData & 0xff); */
+/* 	print_dbg_char_hex(ev.data & 0xff); */
 /* 	print_dbg(" "); */
-/* 	post_event(&ev); */
+/* 	event_post(&ev); */
 /* 	// don't want to send again at the end of the loop */
 /* 	packOk = 0; */
 /*       } else { */
@@ -166,15 +166,15 @@ static void midi_parse(void) {
 /*   if(packOk) { */
 /*     // send the previous packet */
 /*     print_dbg("\r\n sending MIDI packet: "); */
-/*     print_dbg_char_hex(ev.eventData & 0xff); */
+/*     print_dbg_char_hex(ev.data & 0xff); */
 /*     print_dbg(" "); */
-/*     print_dbg_char_hex((ev.eventData & 0xff00) >> 8); */
+/*     print_dbg_char_hex((ev.data & 0xff00) >> 8); */
 /*     print_dbg(" "); */
-/*     print_dbg_char_hex((ev.eventData & 0xff0000) >> 16); */
+/*     print_dbg_char_hex((ev.data & 0xff0000) >> 16); */
 /*     print_dbg(" "); */
-/*     print_dbg_char_hex((ev.eventData & 0xff000000) >> 24); */
+/*     print_dbg_char_hex((ev.data & 0xff000000) >> 24); */
 /*     print_dbg(" "); */
-/*     post_event(&ev); */
+/*     event_post(&ev); */
 /*   } */
 /* } */
 
@@ -183,25 +183,23 @@ static void midi_rx_done( usb_add_t add,
 			  usb_ep_t ep,
 			  uhd_trans_status_t stat,
 			  iram_size_t nb) {
-  int i;
+  //  int i;
  
   if(nb > 0) {
-
-    print_dbg("\r\n midi rx; status: 0x");
-    print_dbg_hex((u32)stat);
-    print_dbg(" ; nb: ");
-    print_dbg_ulong(nb);
-    print_dbg(" ; data: ");
-    for(i=0; i<nb; i++) {
-      print_dbg_char_hex(rxBuf[i]);
-      print_dbg(" ");
-    }
-  }
-  //  rxBytes = nb;
-  // weird extra first byte...
-  rxBytes = nb - 1;
-  midi_parse();
- 
+    /* print_dbg("\r\n midi rx; status: 0x"); */
+    /* print_dbg_hex((u32)stat); */
+    /* print_dbg(" ; nb: "); */
+    /* print_dbg_ulong(nb); */
+    /* print_dbg(" ; data: "); */
+    /* for(i=0; i<nb; i++) { */
+    /*   print_dbg_char_hex(rxBuf[i]); */
+    /*   print_dbg(" "); */
+    /* } */
+    //  rxBytes = nb;
+    // weird extra first byte...
+    rxBytes = nb - 1;
+    midi_parse();
+  } 
 }
 
 static void midi_tx_done( usb_add_t add,
@@ -238,12 +236,12 @@ extern void midi_write(u8* data, u32 bytes) {
 extern void midi_change(uhc_device_t* dev, u8 plug) {
   event_t e;
   if(plug) { 
-    e.eventType = kEventMidiConnect; 
+    e.type = kEventMidiConnect; 
   } else {
-    e.eventType = kEventMidiDisconnect;
+    e.type = kEventMidiDisconnect;
   }
   // posting an event so the main loop can respond
-  post_event(&e); 
+  event_post(&e); 
   //  midiConnect = plug;
 }
 

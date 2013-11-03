@@ -1,4 +1,4 @@
-/* init.c
+/* ini.c
    aleph-avr32
    
    low-level peripheral  initialization.

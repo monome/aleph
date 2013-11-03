@@ -25,14 +25,13 @@ static scroll centerScroll;
 //--- page-specific state variables
 
 // const array of user-creatable operator types
-#define NUM_USER_OP_TYPES 6
+#define NUM_USER_OP_TYPES 5
 static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAdd,
   eOpMul,
   eOpGate,
   eOpMonomeGridRaw,
   eOpMidiNote,
-  eOpAdc,
   // many more...
   // eOpAccum,
   // eOpSelect,
@@ -40,7 +39,6 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
 
 // current selected new operator type
 static op_id_t newOpType = 0;
-
 
 //==========================================
 //===== static function declarations
@@ -142,8 +140,8 @@ void select_scroll(s8 dir) {
 // render new operator type name
 void render_op_type(void) {
   const char* name = op_registry[userOpTypes[newOpType]].name;
-  print_dbg("\r\n new op selection: ");
-  print_dbg(name);
+  //  print_dbg("\r\n new op selection: ");
+  //  print_dbg(name);
   region_fill(headRegion, 0x0);
   clearln();
   appendln_char('+');
@@ -161,7 +159,7 @@ static void show_foot0(void) {
     fill = 0x5;
   }
   region_fill(footRegion[0], fill);
-  font_string_region_clip(footRegion[1], "INS", 0, 0, 0xf, fill);
+  font_string_region_clip(footRegion[0], "INS", 0, 0, 0xf, fill);
 }
 
 static void show_foot1(void) {
@@ -289,25 +287,21 @@ void init_page_ops(void) {
   }
 }
 
-// refresh 
-void refresh_ops(void) { 
-  print_dbg("\r\n refresh OPS... ");
+// select 
+void select_ops(void) { 
   // assign global scroll region pointer
   // also marks dirty
   render_set_scroll(&centerScroll);
   // other regions are static in top-level render, with global handles
   region_fill(headRegion, 0x0);
   font_string_region_clip(headRegion, "OPERATORS", 0, 0, 0xf, 0x1);
+  // assign handlers
+  app_event_handlers[ kEventEncoder0 ]	= &handle_enc_0 ;
+  app_event_handlers[ kEventEncoder1 ]	= &handle_enc_1 ;
+  app_event_handlers[ kEventEncoder2 ]	= &handle_enc_2 ;
+  app_event_handlers[ kEventEncoder3 ]	= &handle_enc_3 ;
+  app_event_handlers[ kEventSwitch0 ]	= &handle_key_0 ;
+  app_event_handlers[ kEventSwitch1 ]	= &handle_key_1 ;
+  app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
+  app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ;
 }
-
-const page_handler_t handler_ops[eNumPageHandlers] = {
-  &handle_enc_0,
-  &handle_enc_1,
-  &handle_enc_2,
-  &handle_enc_3,
-  &handle_key_0,
-  &handle_key_1,
-  &handle_key_2,
-  &handle_key_3,
-};
-

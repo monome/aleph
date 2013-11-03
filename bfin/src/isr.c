@@ -108,6 +108,8 @@ void sport1_tx_isr() {
 // spi receive interrupt (from avr32)
 void spi_rx_isr() {
   //  BUSY_HI;
+  READY_LO;
   *pSPI_TDBR = spi_process(*pSPI_RDBR);
+  READY_HI;
   //  BUSY_LO;
 }

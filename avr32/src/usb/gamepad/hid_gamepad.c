@@ -19,16 +19,15 @@ static event_t ev;
 void hid_gamepad_parse_frame(u8* data, u8 size) {
   u8 i;
 
-
   // FIXME: one event per byte changed, pass byte idx and value as event data.
   // maybe this is not really too bad since most HID controls are only one byte.
   for(i=0; i<size; i++) {
     if(data[i] != frame[i]) {
       frame[i] = data[i];
-      ev.eventType = kEventHidByte;
-      ev.eventData = frame[i];
-      ev.eventData |= (i << 8);
-      post_event(&ev);
+      ev.type = kEventHidByte;
+      ev.data = frame[i];
+      ev.data |= (i << 8);
+      event_post(&ev);
     }
   }
 }

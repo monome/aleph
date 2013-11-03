@@ -54,10 +54,10 @@ static void enc_timer_callback(int tag) {
     /// FIXME: this comparison is obviously retarded
     if ( (val > enc[i].thresh) || (val < (enc[i].thresh * -1)) ) {
     //  if( (val > ENC_THRESH) || (val < ENC_NEG_THRESH) ) {
-      e.eventType = enc[i].event;
-      e.eventData = val;
+      e.type = enc[i].event;
+      e.data = val;
       enc[i].val = 0;
-      post_event(&e);
+      event_post(&e);
       //      print_dbg("\r\n posting encoder event, num: ");'
       //      print_dbg_ulong(i);
       //      print_dbg(" , val: ");

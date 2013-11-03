@@ -8,7 +8,6 @@
 #define _EVENT_TYPES_H_
 
 // enumerate event types
-// WARNING: changing layout of this could break existing avr32 applications.. :S
 typedef enum {
   kEventAdc0 , 	// receive values from polled ADC channels
   kEventAdc1 ,
@@ -50,7 +49,7 @@ typedef enum {
   kEventHidDisconnect,
   kEventHidByte,
   /// dummy/count
-  kNumSysEvents,
-} eEventType;
+  kNumEventTypes,
+} etype;
 
 #endif

@@ -99,12 +99,12 @@ void ftdi_read(void) {
 void ftdi_change(uhc_device_t* dev, u8 plug) {
   print_dbg("\r\n changed FTDI connection status");
   if(plug) { 
-    e.eventType = kEventFtdiConnect; 
+    e.type = kEventFtdiConnect; 
   } else {
-    e.eventType = kEventFtdiDisconnect;
+    e.type = kEventFtdiDisconnect;
   }
   // posting an event so the main loop can respond
-  post_event(&e); 
+  event_post(&e); 
 }
 
 // setup new device connection

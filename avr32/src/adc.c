@@ -26,7 +26,7 @@
 #define AD7923_CMD_BASE ( AD7923_CTL_WRITE | AD7923_CTL_PM0 | AD7923_CTL_PM1 | AD7923_CTL_CODING)
 
 // adc events
-static const eEventType adcEventTypes[4] = { 
+static const etype adctypes[4] = { 
   kEventAdc0 ,
   kEventAdc1 ,
   kEventAdc2 ,
@@ -120,9 +120,9 @@ void adc_poll(void) {
     /// this is a dirty way! but the two lower bits are pretty noisy.
     if( (adcVal[i] & 0xffc) != ( adcOldVal[i] & 0xffc) ) {
       adcOldVal[i] = adcVal[i];
-      e.eventType = adcEventTypes[i];
-      e.eventData = (S16)(adcVal[i]);
-      post_event(&e);
+      e.type = adctypes[i];
+      e.data = (S16)(adcVal[i]);
+      event_post(&e);
     }
   }
 }

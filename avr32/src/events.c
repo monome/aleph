@@ -40,26 +40,26 @@ void init_events( void ) {
 
   // zero out the event records
   for ( k = 0; k < MAX_EVENTS; k++ ) {
-    sysEvents[ k ].eventType = 0;
-    sysEvents[ k ].eventData = 0;
+    sysEvents[ k ].type = 0;
+    sysEvents[ k ].data = 0;
   }
 }
 
 // get next event
 // Returns non-zero if an event was available
-bool get_next_event( event_t *e ) {
-  bool status;
+u8 event_next( event_t *e ) {
+  u8 status;
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
   
   // if pointers are equal, the queue is empty... don't allow idx's to wrap!
   if ( getIdx != putIdx ) {
     INCR_EVENT_INDEX( getIdx );
-    e->eventType = sysEvents[ getIdx ].eventType;
-    e->eventData = sysEvents[ getIdx ].eventData;
+    e->type = sysEvents[ getIdx ].type;
+    e->data = sysEvents[ getIdx ].data;
     status = true;
   } else {
-    e->eventType  = 0xff;
-    e->eventData = 0;
+    e->type  = 0xff;
+    e->data = 0;
     status = false;
   }
 
@@ -69,12 +69,12 @@ bool get_next_event( event_t *e ) {
 
 
 // add event to queue, return success status
-bool post_event( event_t *e ) {
-  bool status = false;
+u8 event_post( event_t *e ) {
+  u8 status = false;
   int saveIndex;
 
   //  print_dbg("\r\n posting event, type: ");
-  //  print_dbg_ulong(e->eventType);
+  //  print_dbg_ulong(e->type);
 
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
   
@@ -82,8 +82,8 @@ bool post_event( event_t *e ) {
   saveIndex = putIdx;
   INCR_EVENT_INDEX( putIdx );
   if ( putIdx != getIdx  ) {
-    sysEvents[ putIdx ].eventType = e->eventType;
-    sysEvents[ putIdx ].eventData = e->eventData;
+    sysEvents[ putIdx ].type = e->type;
+    sysEvents[ putIdx ].data = e->data;
     status = true;
   } else {
     // idx wrapped, so queue is full, restore idx
@@ -101,7 +101,7 @@ bool post_event( event_t *e ) {
 /// testing
 //u32 get_max_events(void) { return MAX_EVENTS; }
 //extern event_t* get_sys_events(void) { return (event_t*)sysEvents; }
-
+/*
 void print_pending_events(void) {
   u32 i;
   i = getIdx;
@@ -112,12 +112,12 @@ void print_pending_events(void) {
     print_dbg("\r\v event at idx ");
     print_dbg_ulong(i);
     print_dbg(" type: ");
-    print_dbg_ulong( sysEvents[i].eventType);
+    print_dbg_ulong( sysEvents[i].type);
     print_dbg(" data: 0x");
-    print_dbg_hex(sysEvents[i].eventType);
+    print_dbg_hex(sysEvents[i].type);
 
     INCR_EVENT_INDEX(i);
   }
 }
-
+*/
 //////////////////////////////

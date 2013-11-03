@@ -10,7 +10,7 @@ static void op_mul_in_btrig(op_mul_t* mul, const io_t* v);
 
 // pickle / unpickle
 static u8* op_mul_pickle(op_mul_t* op, u8* dst);
-static const u8* op_mul_unpickle(const u8* src, op_mul_t* op);
+static const u8* op_mul_unpickle(op_mul_t* op, const u8* src);
 
 
 //-------------------------------------------------
@@ -101,7 +101,7 @@ u8* op_mul_pickle(op_mul_t* op, u8* dst) {
   return dst;
 }
 
-const u8* op_mul_unpickle(const u8* src, op_mul_t* op) {
+const u8* op_mul_unpickle(op_mul_t* op, const u8* src ) {
   src = unpickle_io(src, &(op->a));
   src = unpickle_io(src, &(op->b));
   src = unpickle_io(src, &(op->btrig));

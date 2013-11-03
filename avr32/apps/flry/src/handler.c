@@ -179,65 +179,65 @@ static s32 scale_knob_value(s32 val) {
 
 // handle key presses
 extern void flry_handler(event_t* ev) {
-  switch (ev->eventType) {
+  switch (ev->type) {
   case kEventSwitch0:
     life_change(1,1);
     // display
-    // render_sw_on(0, ev->eventData > 0);
+    // render_sw_on(0, ev->data > 0);
     break;
   case kEventSwitch1:
     life_change(5,5);
     // display
-    // render_sw_on(1, ev->eventData > 0);
+    // render_sw_on(1, ev->data > 0);
     break;
   case kEventSwitch2:
-    if(ev->eventData > 0) life_print();
+    if(ev->data > 0) life_print();
     // display
-    // render_sw_on(2, ev->eventData > 0);
+    // render_sw_on(2, ev->data > 0);
     break;
   case kEventSwitch3:
     life_init();
     // display
-    // render_sw_on(3, ev->eventData > 0);
+    // render_sw_on(3, ev->data > 0);
     break;
     
   case kEventSwitch6:
-    // render_sw_on(2, ev->eventData > 0);
+    // render_sw_on(2, ev->data > 0);
     break;
     
   case kEventSwitch7:
-    // render_sw_on(3, ev->eventData > 0);
+    // render_sw_on(3, ev->data > 0);
     break;
 
   case kEventHidByte:
-    decode_hid_event(ev->eventData);
+    decode_hid_event(ev->data);
     /*
     print_dbg("\r\n received HID byte, index: ");
-    print_dbg_ulong( (ev->eventData & 0x0000ff00) >> 8);
+    print_dbg_ulong( (ev->data & 0x0000ff00) >> 8);
     print_dbg(", value: ");
-    print_dbg_hex( (ev->eventData & 0x000000ff));
+    print_dbg_hex( (ev->data & 0x000000ff));
     */
     break;
 
   case kEventEncoder0:
-    ctl_inc_value(3, scale_lin_enc(ev->eventData));
+    ctl_inc_value(3, scale_lin_enc(ev->data));
     break;
   case kEventEncoder1:
-    ctl_inc_value(2, scale_lin_enc(ev->eventData));
+    ctl_inc_value(2, scale_lin_enc(ev->data));
     break;
   case kEventEncoder2:
-    ctl_inc_value(1, scale_lin_enc(ev->eventData));
+    ctl_inc_value(1, scale_lin_enc(ev->data));
     break;
   case kEventEncoder3:
-    ctl_inc_value(0, scale_lin_enc(ev->eventData));
+    ctl_inc_value(0, scale_lin_enc(ev->data));
     break;
 
   case kEventMonomeConnect :
-    handle_monome_connect((u32)ev->eventData);
+    handle_monome_connect((u32)ev->data);
   break;
 
   case kEventMonomeGridKey:
-    grid_handle_key_event(ev->eventData);
+    grid_handle_key_event(ev->data);
   break;
 
 
