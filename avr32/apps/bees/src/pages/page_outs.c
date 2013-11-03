@@ -60,7 +60,7 @@ static void show_foot(void);
 
 // fill tmp region with new content
 // given input index and foreground color
-static void render_line(s16 idx) {
+static void render_line(s16 idx, u8 fg) {
   //  const s16 opIdx = net_in_op_idx(idx);
   s16 target;
   s16 targetOpIdx;
@@ -79,7 +79,7 @@ static void render_line(s16 idx) {
     appendln_char('/');
     appendln( net_out_name(idx) );
     endln();
-    font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
+    font_string_region_clip(lineRegion, lineBuf, 0, 0, fg, 0);
     // render target
     targetOpIdx = net_in_op_idx(target);
     clearln();
@@ -103,12 +103,9 @@ static void render_line(s16 idx) {
       // reflect this in UI by dimming this line
       font_string_region_clip(lineRegion, lineBuf, 60, 0, 0x5, 0);
     } else {
-      font_string_region_clip(lineRegion, lineBuf, 60, 0, 0xa, 0);
+      font_string_region_clip(lineRegion, lineBuf, 60, 0, fg, 0);
     }
     clearln();
-    //    print_fix16(lineBuf, net_get_in_value(idx));
-    //    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, 0xa, 0);
-
   } else {
     //// no target
     // render output
@@ -119,7 +116,7 @@ static void render_line(s16 idx) {
     appendln_char('/');
     appendln( net_out_name(idx) );
     endln();
-    font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
+    font_string_region_clip(lineRegion, lineBuf, 0, 0, fg, 0);
   }
   // underline
   region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
@@ -146,7 +143,7 @@ static void select_edit(s32 inc) {
   net_connect(curPage->select, target);
 
   // render to tmp buffer
-  render_line(curPage->select);
+  render_line(curPage->select, 0xf);
   // copy to scroll with highlight
   render_to_scroll_line(SCROLL_CENTER_LINE, 1);
 }
@@ -183,7 +180,7 @@ static void select_scroll(s32 dir) {
       // empty row
       region_fill(lineRegion, 0);
     } else {
-      render_line(newIdx);
+      render_line(newIdx, 0xa);
     }
     // render tmp region to bottom of scroll
     // (this also updates scroll byte offset) 
@@ -215,7 +212,7 @@ static void select_scroll(s32 dir) {
       // empty row
       region_fill(lineRegion, 0);
     } else {
-      render_line(newIdx);
+      render_line(newIdx, 0xa);
     }
     // render tmp region to bottom of scroll
     // (this also updates scroll byte offset) 
@@ -322,7 +319,7 @@ void init_page_outs(void) {
   //// need to actually set the scroll region at least temporarily
   render_set_scroll(&centerScroll);
   while(i<5) {
-    render_line(i);
+    render_line(i, 0xa);
     render_to_scroll_line(n, i == 0 ? 1 : 0);
     ++n;
     ++i;

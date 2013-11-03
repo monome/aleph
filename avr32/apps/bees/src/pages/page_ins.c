@@ -100,7 +100,7 @@ static void render_line(s16 idx, u8 fg) {
   }
   // draw something to indicate play mode visibility
   if(net_get_in_play(idx)) {
-    font_string_region_clip(lineRegion, "|", 124, 0, fg, 0);
+    font_string_region_clip(lineRegion, "|", 126, 0, fg, 0);
   }
 
   // underline
