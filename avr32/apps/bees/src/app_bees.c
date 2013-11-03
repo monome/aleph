@@ -100,7 +100,8 @@ u8 app_launch(u8 firstrun) {
     scene_read_default();
   }
 
-  pages_refresh();
+  // update page rendering and handlers
+  pages_reselect();
 
   // enable timers
   print_dbg("\r\n enable app timers...");

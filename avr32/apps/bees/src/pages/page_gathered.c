@@ -55,8 +55,8 @@ void handle_enc_3(s32 val) {
 
 //----------------------
 // ---- extern 
-// refresh 
-void refresh_gathered(void) {
+// select 
+void select_gathered(void) {
 }
 
 const page_handler_t handler_gathered[eNumPageHandlers] = {

@@ -44,7 +44,7 @@ typedef enum {
 // function pointers for input handling on a given page
 typedef void(*page_handler_t)(s32 val);
 // function pointer for refresh (selection) on a given page
-typedef void(*page_refresh_t)(void);
+typedef void(*page_select_t)(void);
 
 // class representing a page in a menu
 // includes a title and a key input handler (function pointer)
@@ -52,7 +52,7 @@ typedef struct page_struct {
   // page title
   const char* name;
   // refresh function (call on selection)
-  const page_refresh_t refresh;
+  const page_select_t select_fn;
   // key handler functions
   const page_handler_t * handler;
   // current row selection
@@ -84,14 +84,14 @@ extern u8 altMode;
 //--- extern functions
 
 // handles
-extern const page_handler_t handler_ins[eNumPageHandlers];
-extern const page_handler_t handler_outs[eNumPageHandlers];
-extern const page_handler_t handler_presets[eNumPageHandlers];
-extern const page_handler_t handler_ops[eNumPageHandlers];
-extern const page_handler_t handler_scenes[eNumPageHandlers];
-extern const page_handler_t handler_dsp[eNumPageHandlers];
-extern const page_handler_t handler_gathered[eNumPageHandlers];
-extern const page_handler_t handler_play[eNumPageHandlers];
+/* extern const page_handler_t handler_ins[eNumPageHandlers]; */
+/* extern const page_handler_t handler_outs[eNumPageHandlers]; */
+/* extern const page_handler_t handler_presets[eNumPageHandlers]; */
+/* extern const page_handler_t handler_ops[eNumPageHandlers]; */
+/* extern const page_handler_t handler_scenes[eNumPageHandlers]; */
+/* extern const page_handler_t handler_dsp[eNumPageHandlers]; */
+/* extern const page_handler_t handler_gathered[eNumPageHandlers]; */
+/* extern const page_handler_t handler_play[eNumPageHandlers]; */
 
 // init functions
 extern void init_page_ins(void);
@@ -103,15 +103,15 @@ extern void init_page_dsp(void);
 extern void init_page_gathered(void);
 extern void init_page_play(void);
 
-// refresh functions
-extern void refresh_ins(void);
-extern void refresh_outs(void);
-extern void refresh_presets(void);
-extern void refresh_ops(void);
-extern void refresh_scenes(void);
-extern void refresh_dsp(void);
-extern void refresh_gathered(void);
-extern void refresh_play(void);
+// select functions
+extern void select_ins(void);
+extern void select_outs(void);
+extern void select_presets(void);
+extern void select_ops(void);
+extern void select_scenes(void);
+extern void select_dsp(void);
+extern void select_gathered(void);
+extern void select_play(void);
 
 //----- public functions
 // init all pages
@@ -119,7 +119,7 @@ extern void pages_init(void);
 // de-init
 extern void pages_deinit(void);
 // refresh
-extern void pages_refresh(void);
+extern void pages_reselect(void);
 // set page
 extern void set_page(ePage n);
 // check key against last pressed

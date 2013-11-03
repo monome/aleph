@@ -10,6 +10,10 @@
   
  */
 
+// aleph-avr32
+#include "app.h"
+#include "event_types.h"
+// bees
 #include "net.h"
 #include "pages.h"
 #include "play.h"
@@ -80,7 +84,7 @@ void handle_enc_3(s32 val) {
 
 // init
 void init_page_play(void) {
-  // assign system input indicies
+  // assign system input indices
   sw0_idx = net_op_in_idx(4, 0);
   sw1_idx = net_op_in_idx(5, 0);
   sw2_idx = net_op_in_idx(6, 0);
@@ -91,22 +95,19 @@ void init_page_play(void) {
   enc3_idx  = net_op_in_idx(3, 0);
 }
 
-// refresh 
-void refresh_play(void) {
+// select 
+void select_play(void) {
   play_enable_render();
   // other regions are static in top-level render, with global handles
   region_fill(headRegion, 0x0);
   font_string_region_clip(headRegion, "PLAY", 0, 0, 0xf, 0x1);
-
+  // assign handlers
+  app_event_handlers[ kEventEncoder0 ]	= &handle_enc_0 ;
+  app_event_handlers[ kEventEncoder1 ]	= &handle_enc_1 ;
+  app_event_handlers[ kEventEncoder2 ]	= &handle_enc_2 ;
+  app_event_handlers[ kEventEncoder3 ]	= &handle_enc_3 ;
+  app_event_handlers[ kEventSwitch0 ]	= &handle_key_0 ;
+  app_event_handlers[ kEventSwitch1 ]	= &handle_key_1 ;
+  app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
+  app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ;
 }
-
-const page_handler_t handler_play[eNumPageHandlers] = {
-  &handle_enc_0,
-  &handle_enc_1,
-  &handle_enc_2,
-  &handle_enc_3,
-  &handle_key_0,
-  &handle_key_1,
-  &handle_key_2,
-  &handle_key_3,
-};
