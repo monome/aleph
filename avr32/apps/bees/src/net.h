@@ -55,7 +55,7 @@ extern s16 net_pop_op(void);
 extern void net_remove_op(const u32 idx);
 
 // activate an input node with some input data
-extern void net_activate(s16 inIdx, const io_t val, void* op);
+extern void net_activate(s16 inIdx, const io_t val, void* srcOp);
 
 // get current count of operators
 extern u16 net_num_ops(void);

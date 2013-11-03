@@ -4,6 +4,10 @@
    there should only ever be one of these, created at network initialzation
  */
 
+// asf
+#include "print_funcs.h"
+
+// bees
 #include "app_timers.h"
 #include "net_protected.h"
 #include "op_adc.h"
@@ -47,8 +51,8 @@ static const u8* op_adc_unpickle(op_adc_t* adc, const u8* src);
 /// initialize
 void op_adc_init(void* op) {
   op_adc_t* adc = (op_adc_t*)op;
-  adc->super.numInputs = 4;
-  adc->super.numOutputs = 6;
+  adc->super.numInputs = 6;
+  adc->super.numOutputs = 4;
   adc->outs[0] = -1;
   adc->outs[1] = -1;
   adc->outs[2] = -1;
@@ -75,7 +79,7 @@ void op_adc_init(void* op) {
   adc->val1 = 0;
   adc->val2 = 0;
   adc->val3 = 0;
-  adc->period = 10;
+  adc->period = OP_FROM_INT(20);
   adc->enable = 0;
 }
 
@@ -91,11 +95,15 @@ void op_adc_deinit(void* adc) {
 // input enable / disable
 void op_adc_in_enable	(op_adc_t* adc, const io_t* v) {
   if(*v > 0) {
-    adc->enable = OP_ONE;
-    timers_set_adc(OP_TO_INT(adc->period));
+    if(!(adc->enable)) {
+      adc->enable = OP_ONE;
+      timers_set_adc(OP_TO_INT(adc->period));
+    }
   } else {
-    adc->enable = 0;
-    timers_unset_adc();
+    if(adc->enable) {
+      adc->enable = 0;
+      timers_unset_adc();
+    }
   }
 }
 
@@ -114,6 +122,8 @@ void op_adc_in_period (op_adc_t* adc, const io_t* v) {
 static void op_adc_in_val0(op_adc_t* adc, const io_t* v) {
   // simply passes value to output
   adc->val0 = *v;
+  /* print_dbg("\r\n adc op output, channel 0, value: 0x"); */
+  /* print_dbg_hex(adc->val0); */
   net_activate(adc->outs[0], adc->val0, &(adc->super));
 }
 
@@ -121,6 +131,8 @@ static void op_adc_in_val0(op_adc_t* adc, const io_t* v) {
 static void op_adc_in_val1(op_adc_t* adc, const io_t* v) {
   // simply passes value to output
   adc->val1 = *v;
+  /* print_dbg("\r\n adc op output, channel 1, value: 0x"); */
+  /* print_dbg_hex(adc->val1); */
   net_activate(adc->outs[1], adc->val1, &(adc->super));
 }
 
@@ -128,6 +140,8 @@ static void op_adc_in_val1(op_adc_t* adc, const io_t* v) {
 static void op_adc_in_val2(op_adc_t* adc, const io_t* v) {
   // simply passes value to output
   adc->val2 = *v;
+  /* print_dbg("\r\n adc op output, channel 2, value: 0x"); */
+  /* print_dbg_hex(adc->val2); */
   net_activate(adc->outs[2], adc->val2, &(adc->super));
 }
 
@@ -135,6 +149,8 @@ static void op_adc_in_val2(op_adc_t* adc, const io_t* v) {
 static void op_adc_in_val3(op_adc_t* adc, const io_t* v) {
   // simply passes value to output
   adc->val3 = *v;
+  /* print_dbg("\r\n adc op output, channel 3, value: 0x"); */
+  /* print_dbg_hex(adc->val3); */
   net_activate(adc->outs[3], adc->val3, &(adc->super));
 }
 
@@ -179,11 +195,16 @@ static void op_adc_inc_fn(op_adc_t* adc, const s16 idx, const io_t inc) {
 //===== pickles
 
 u8* op_adc_pickle(op_adc_t* adc, u8* dst) {
-  // no state
+  dst = pickle_io(adc->enable, dst);
+  dst = pickle_io(adc->period, dst);
   return dst;
 }
 
 const u8* op_adc_unpickle(op_adc_t* adc, const u8* src) {
-  // no state 
+  src = unpickle_io(src, &(adc->enable));
+  src = unpickle_io(src, &(adc->period));
+  if(adc->enable) {
+    timers_set_adc(OP_TO_INT(adc->period));    
+  }
   return src;
 }

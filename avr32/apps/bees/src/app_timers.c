@@ -121,8 +121,9 @@ void timers_unset_midi(void) {
 
 // adc : start polling
 void timers_set_adc(u32 period) {
-  print_dbg("\r\n setting adc timers");
-  set_timer(&adcPollTimer,    eAdcPollTimerTag,    period,  &adc_poll_timer_callback,    1);
+  print_dbg("\r\n setting adc timers, period: ");
+  print_dbg_ulong(period);
+  set_timer(&adcPollTimer,  eAdcPollTimerTag, period,  &adc_poll_timer_callback,    1);
 }
 
 // adc : stop polling

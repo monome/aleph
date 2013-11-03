@@ -89,7 +89,7 @@ static void add_sys_ops(void) {
   opSysSwIdx[5] = net->numOps - 1;
   // 1 adc
   net_add_op(eOpAdc);
-  opSysAdcIdx = -1;
+  opSysAdcIdx = net->numOps -1;
   // 1 preset receiver
   //// FIXME
   //  net_add_op(eOpPreset);

@@ -30,6 +30,7 @@
 #include "handler.h"
 #include "net_midi.h"
 #include "net_monome.h"
+#include "net_protected.h"
 #include "pages.h"
 #include "render.h"
 #include "scene.h"
@@ -39,21 +40,34 @@
 
 
 static void handler_Adc0(s32 data) { 
-  // TODO: update ADC op
+  // update ADC system operator
+  /* print_dbg("\r\n bees handle adc0 event, data: 0x"); */
+  /* print_dbg_hex(data); */
+  net_activate(net_op_in_idx(opSysAdcIdx, 2), data, NULL);
 }
 
 static void handler_Adc1(s32 data) { 
-  // TODO: update ADC op
+  // update ADC system operator
+  /* print_dbg("\r\n bees handle adc0 event, data: 0x"); */
+  /* print_dbg_hex(data); */
+  net_activate(net_op_in_idx(opSysAdcIdx, 3), data, NULL);
+
 }
 
 static void handler_Adc2(s32 data) { 
-  // TODO: update ADC op
+  // update ADC system operator
+  /* print_dbg("\r\n bees handle adc0 event, data: 0x"); */
+  /* print_dbg_hex(data); */
+  net_activate(net_op_in_idx(opSysAdcIdx, 4), data, NULL);
+
 }
 
 static void handler_Adc3(s32 data) { 
-  // TODO: update ADC op
+  // update ADC system operator
+  /* print_dbg("\r\n bees handle adc0 event, data: 0x"); */
+  /* print_dbg_hex(data); */
+  net_activate(net_op_in_idx(opSysAdcIdx, 5), data, NULL);
 }
-
 
 // function key and encoder handlers are page-specific
 /* static void handler_Encoder0(s32 data) {  */
