@@ -115,6 +115,16 @@ static void irq_tc(void) {
   tc_read_sr(APP_TC, APP_TC_CHANNEL);
 }
 
+
+// interrupt handler for PA00-PA07
+__attribute__((__interrupt__))
+static void irq_port0_line0(void) {
+  if(gpio_get_pin_interrupt_flag(AVR32_PIN_PA04)) {
+    gpio_clear_pin_interrupt_flag(AVR32_PIN_PA04);
+      gpio_toggle_pin(LED_MODE_PIN);
+  }
+}
+
 // interrupt handler for PA23-PA30
 __attribute__((__interrupt__))
 static void irq_port0_line3(void) {
@@ -236,9 +246,11 @@ static void irq_port1_line3(void) {
 // interrupt handler for uart
 __attribute__((__interrupt__))
 static void irq_usart(void) {
-  int c;
-  usart_read_char(FTDI_USART,&c);
-  usart_write_char(FTDI_USART,c);
+  // int c;
+  // usart_read_char(FTDI_USART,&c);
+  // usart_write_char(FTDI_USART,c);
+  print_dbg("\r\nusb cable change.");
+  gpio_toggle_pin(LED_MODE_PIN);
 }
 
 //-----------------------------
@@ -247,6 +259,10 @@ static void irq_usart(void) {
 // register interrupts
 void register_interrupts(void) {
   // enable interrupts on GPIO inputs
+
+  // CTS change
+  gpio_enable_pin_interrupt( AVR32_PIN_PA04, GPIO_PIN_CHANGE);
+
 
   // BFIN_HWAIT
   // gpio_enable_pin_interrupt( BFIN_HWAIT_PIN, GPIO_PIN_CHANGE);
@@ -274,6 +290,9 @@ void register_interrupts(void) {
   gpio_enable_pin_interrupt( SW_MODE_PIN,	GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( SW_POWER_PIN,	GPIO_PIN_CHANGE);
  
+  // CTS
+  INTC_register_interrupt( &irq_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), UI_IRQ_PRIORITY);
+
   // PA24 - PA31
   INTC_register_interrupt( &irq_port0_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA24 / 8), UI_IRQ_PRIORITY);
 
@@ -297,6 +316,5 @@ void register_interrupts(void) {
   INTC_register_interrupt(&irq_tc, APP_TC_IRQ, APP_TC_IRQ_PRIORITY);
 
   // register uart interrupt
-  //  INTC_register_interrupt(&irq_usart, AVR32_USART0_IRQ, UI_IRQ_PRIORITY);
-
+  // INTC_register_interrupt(&irq_usart, AVR32_USART0_IRQ, UI_IRQ_PRIORITY);
 }
