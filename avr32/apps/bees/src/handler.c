@@ -184,14 +184,7 @@ void assign_bees_event_handlers(void) {
   app_event_handlers[ kEventAdc1 ]	= &handler_Adc1 ;
   app_event_handlers[ kEventAdc2 ]	= &handler_Adc2 ;
   app_event_handlers[ kEventAdc3 ]	= &handler_Adc3 ;
-  /* app_event_handlers[ kEventEncoder0 ]	= &handler_Encoder0 ; */
-  /* app_event_handlers[ kEventEncoder1 ]	= &handler_Encoder1 ; */
-  /* app_event_handlers[ kEventEncoder2 ]	= &handler_Encoder2 ; */
-  /* app_event_handlers[ kEventEncoder3 ]	= &handler_Encoder3 ; */
-  /* app_event_handlers[ kEventSwitch0 ]	= &handler_Switch0 ; */
-  /* app_event_handlers[ kEventSwitch1 ]	= &handler_Switch1 ; */
-  /* app_event_handlers[ kEventSwitch2 ]	= &handler_Switch2 ; */
-  /* app_event_handlers[ kEventSwitch3 ]	= &handler_Switch3 ; */
+  // power/mode/footswitches here, fn switches in page handlers
   app_event_handlers[ kEventSwitch4 ]	= &handler_Switch4 ;
   app_event_handlers[ kEventSwitch5 ]	= &handler_Switch5 ;
   app_event_handlers[ kEventSwitch6 ]	= &handler_Switch6 ;

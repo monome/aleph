@@ -34,7 +34,6 @@
 #include "render.h"
 #include "scene.h"
 
-
 // this is called during hardware initialization.
 // allocate memory.
 void app_init(void) {
@@ -68,7 +67,7 @@ u8 app_launch(u8 firstrun) {
   print_dbg("\r\n launching app with firstrun: ");
   print_dbg_ulong(firstrun);
 
-  net_print();
+  //  net_print();
 
   if(firstrun) {
     print_dbg("\r\n first run, don't load DSP or scene");

@@ -125,14 +125,14 @@ void set_page(ePage n) {
   curPage = &(pages[pageIdx]);
   curPage->select_fn();
 
-  print_dbg("\r\n set enc sense");
+  //  print_dbg("\r\n set enc sense");
   // set encoder sensitivity
   for(i=0; i<4; i++) {
     //// FIXME: use encoder map?
     //set_enc_thresh(encMap[i], curPage->encSens[i]);
     set_enc_thresh(i, curPage->encSens[i]);
   }
-  print_dbg("\r\n ...done setting page.");
+  //  print_dbg("\r\n ...done setting page.");
 }
 
 // check key against last pressed

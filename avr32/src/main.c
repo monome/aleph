@@ -90,11 +90,11 @@ static void handler_Encoder0(s32 data) { ;; }
 static void handler_Encoder1(s32 data) { ;; }
 static void handler_Encoder2(s32 data) { ;; }
 static void handler_Encoder3(s32 data) { ;; }
-static void handler_Switch0(s32 data) { ;; }
+static void handler_Switch0(s32 data) { check_startup(); }
 static void handler_Switch1(s32 data) { check_startup(); }
 static void handler_Switch2(s32 data) { check_startup(); }
 static void handler_Switch3(s32 data) { check_startup(); }
-static void handler_Switch4(s32 data) { check_startup(); }
+static void handler_Switch4(s32 data) { ;; }
 static void handler_Switch5(s32 data) { ;; }
 static void handler_Switch6(s32 data) { ;; }
 static void handler_Switch7(s32 data) { ;; }
@@ -269,28 +269,28 @@ void check_startup(void) {
     // return 1 if app completed firstrun tasks
     launch = app_launch(firstrun);
     delay_ms(10);
-    if( firstrun) {
-      if(launch) {
-	// successfully launched on firstrun, so write magic number to flash
-	flash_write_firstrun();
-	// re-send connection events if we got any
-	if(ftdiConnect) {
-	  e.type = kEventFtdiConnect;
-	  event_post(&e);
-	} 
-	if(monomeConnect) {
-	  e.type = kEventMonomeConnect;
-	  event_post(&e);
-	} 
-	if(hidConnect) {
-	  e.type = kEventHidConnect;
-	  event_post(&e);
-	} 
-	if(midiConnect) {
-	  e.type = kEventMidiConnect;
-	  event_post(&e);
-	} 
-      } else {
+    if(launch) {
+      // successfully launched on firstrun, so write magic number to flash
+      flash_write_firstrun();
+      // re-send connection events if we got any
+      if(ftdiConnect) {
+	e.type = kEventFtdiConnect;
+	event_post(&e);
+      } 
+      if(monomeConnect) {
+	e.type = kEventMonomeConnect;
+	event_post(&e);
+      } 
+      if(hidConnect) {
+	e.type = kEventHidConnect;
+	event_post(&e);
+      } 
+      if(midiConnect) {
+	e.type = kEventMidiConnect;
+	event_post(&e);
+      } 
+    } else {      
+      if( firstrun) {
 	// firstrun, but app launch failed, so clear magic number to try again
 	flash_clear_firstrun();
       } 

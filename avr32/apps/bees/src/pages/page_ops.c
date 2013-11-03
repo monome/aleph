@@ -140,8 +140,8 @@ void select_scroll(s8 dir) {
 // render new operator type name
 void render_op_type(void) {
   const char* name = op_registry[userOpTypes[newOpType]].name;
-  print_dbg("\r\n new op selection: ");
-  print_dbg(name);
+  //  print_dbg("\r\n new op selection: ");
+  //  print_dbg(name);
   region_fill(headRegion, 0x0);
   clearln();
   appendln_char('+');
