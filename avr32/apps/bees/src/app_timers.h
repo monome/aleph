@@ -4,15 +4,15 @@
 #include "sys_timers.h"
 #include "types.h"
 
-// ---- timer tags
-enum { 
-  eScreenTimerTag = eNumSysTimers,
-  eAdcPollTimerTag,
-  eMonomePollTimerTag,
-  eMonomeRefreshTimerTag,
-  eMidiPollTimerTag,
-  eMidiRefreshTimerTag,
-};
+/* // ---- timer tags */
+/* enum {  */
+/*   eScreenTimerTag = eNumSysTimers, */
+/*   eAdcPollTimerTag, */
+/*   eMonomePollTimerTag, */
+/*   eMonomeRefreshTimerTag, */
+/*   eMidiPollTimerTag, */
+/*   eMidiRefreshTimerTag, */
+/* }; */
 
 // create application timers
 extern void init_app_timers(void);
