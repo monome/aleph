@@ -48,9 +48,11 @@ static void irq_pdca(void);
 __attribute__((__interrupt__))
 static void irq_tc(void);
 
+#if 0
 // irq for PA00-PA07
 __attribute__((__interrupt__))
 static void irq_port0_line0(void);
+#endif
 
 // irq for PA24-PA31
 __attribute__((__interrupt__))
@@ -122,6 +124,7 @@ static void irq_tc(void) {
 
 // detect usart-usb enumeration (via CTS)
 // interrupt handler for PA00-PA07
+#if 0
 __attribute__((__interrupt__))
 static void irq_port0_line0(void) {
   if(gpio_get_pin_interrupt_flag(USART_USB_DETECT_PIN)) {
@@ -135,6 +138,7 @@ static void irq_port0_line0(void) {
     gpio_clear_pin_interrupt_flag(USART_USB_DETECT_PIN);
   }
 }
+#endif
 
 // interrupt handler for PA23-PA30
 __attribute__((__interrupt__))
