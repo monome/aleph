@@ -1,11 +1,11 @@
 
 # avr32 core directory
-ALEPH_AVR32 = ../tests/avr32_test
+ALEPH_AVR32 = ../avr32_usart_test
 # aleph common directory
 ALEPH_COMMON = ../common
 
-APP = test
-APP_DIR = ../tests/avr32_test
+APP = usart-test
+APP_DIR = ../avr32_usart_test
 
 
 # Target CPU architecture: ap, ucr1, ucr2 or ucr3
@@ -29,8 +29,7 @@ TARGET = aleph-$(APP).elf
 include $(ALEPH_AVR32)/core.mk
 
 # List of C source files.
-CSRCS += \
-	$(APP_DIR)/src/files.c
+CSRCS += 
 # CSRCS += \
 #	$(APP_DIR)/src/app_lppr.c \
 #	$(APP_DIR)/src/app_timers.c \

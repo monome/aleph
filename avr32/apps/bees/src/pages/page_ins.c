@@ -62,9 +62,13 @@ static void handle_key_3(s32 val);
 /* }; */
 
 // fill tmp region with new content
-// given input index
-static void render_line(s16 idx) {
+// given input index and foreground color
+static void render_line(s16 idx, u8 fg) {
   const s16 opIdx = net_in_op_idx(idx);
+  /// slightly weird place to update this but whatever
+  //?/ ... ?? /  .?? 
+  //  inPlay = net_get_in_play(idx);
+  
   region_fill(lineRegion, 0x0);
   if(opIdx >= 0) {
     // operator input
@@ -77,11 +81,11 @@ static void render_line(s16 idx) {
     appendln( net_in_name(idx) );
     endln();
 
-    font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
+    font_string_region_clip(lineRegion, lineBuf, 0, 0, fg, 0);
     clearln();
 
     print_fix16(lineBuf, net_get_in_value(idx));
-    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, 0xa, 0);
+    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, fg, 0);
   } else {
     // parameter input    
     clearln();
@@ -92,8 +96,13 @@ static void render_line(s16 idx) {
     font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
     clearln();
     print_fix16(lineBuf, net_get_in_value(idx));
-    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, 0xa, 0);
+    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, fg, 0);
   }
+  // draw something to indicate play mode visibility
+  if(net_get_in_play(idx)) {
+    font_string_region_clip(lineRegion, "|", 126, 0, fg, 0);
+  }
+
   // underline
   region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
 }
@@ -103,7 +112,7 @@ static void select_edit(s32 inc) {
   // increment input value
   net_inc_in_value(curPage->select, inc);
   // render to tmp buffer
-  render_line(curPage->select);
+  render_line(curPage->select, 0xf);
   // copy to scroll with highlight
   render_to_scroll_line(SCROLL_CENTER_LINE, 1);
 }
@@ -139,7 +148,7 @@ static void select_scroll(s32 dir) {
       // empty row
       region_fill(lineRegion, 0);
     } else {
-      render_line(newIdx);
+      render_line(newIdx, 0xa);
     }
     // render tmp region to bottom of scroll
     // (this also updates scroll byte offset) 
@@ -172,7 +181,7 @@ static void select_scroll(s32 dir) {
       // empty row
       region_fill(lineRegion, 0);
     } else {
-      render_line(newIdx);
+      render_line(newIdx, 0xa);
     }
     // render tmp region to bottom of scroll
     // (this also updates scroll byte offset) 
@@ -323,7 +332,7 @@ void init_page_ins(void) {
   //// need to actually set the scroll region at least temporarily
   render_set_scroll(&centerScroll);
   while(i<5) {
-    render_line(i);
+    render_line(i, 0xa);
     render_to_scroll_line(n, i == 0 ? 1 : 0);
     ++n;
     ++i;
@@ -374,7 +383,11 @@ void handle_key_1(s32 val) {
   if(val == 0) { return; }
   if(check_key(1)) {
     if(altMode) {
-      // include / exclude
+      inPlay = net_toggle_in_play(curPage->select);
+      // render to tmp buffer
+      render_line(curPage->select, 0xf);
+      // copy to scroll with highlight
+      render_to_scroll_line(SCROLL_CENTER_LINE, 1);
     } else {
       // show / hide
     }

@@ -225,6 +225,7 @@ extern void init_spi1 (void) {
   spiOptions.spi_mode    = 0;
   spiOptions.modfdis     = 1;
 
+  spi_setupChipReg( SD_MMC_SPI, &spiOptions, FPBA_HZ );
   // Initialize SD/MMC driver with SPI clock (PBA).
   sd_mmc_spi_init(spiOptions, FPBA_HZ);
 }

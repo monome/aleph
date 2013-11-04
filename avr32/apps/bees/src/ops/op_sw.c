@@ -71,31 +71,46 @@ void op_sw_init(void* op) {
 static void op_sw_in_state(op_sw_t* sw, const io_t* v) {
   if (sw->tog) {
     // toggle mode, sw state toggles on positive input
-    if ( *v > 0) {
-      if (sw->state != 0) { 
+    if ( (*v) > 0) {
+      print_dbg("\r\n op_sw_in_state, current state: 0x");
+      print_dbg_hex((u32)(sw->state));
+      print_dbg(", input: 0x");
+      print_dbg_hex((u32)(*v));
+
+      if ((sw->state) != 0) { 
+	print_dbg("\r\n op_sw (toggle), state was !=0, setting to 0 ");
 	sw->state = 0; 
       } else {
+	print_dbg("\r\n op_sw (toggle), state was 0, setting to mul : 0x");
+	print_dbg_hex((u32)(sw->mul));
 	sw->state = sw->mul;
       }
+      print_dbg("\r\n output: 0x");
+      print_dbg_hex((u32)(sw->state));
+    
       net_activate(sw->outs[0], sw->state, sw);
     } 
   } else {
     // momentary mode, sw value takes input
+
     if((*v) > 0) { sw->state = sw->mul; } else { sw->state = 0; }
+    print_dbg("\r\n op_sw (momentary), output: 0x");
+    print_dbg_hex((u32)(sw->state));
+
     net_activate(sw->outs[0], sw->state, sw);
   }
 }
 
 // input toggle mode
 static void op_sw_in_tog(op_sw_t* sw, const io_t* v) {
-  if (*v > 0) { sw->tog = OP_ONE; } else  { sw->tog = 0; } 
+  if ((*v) > 0) { sw->tog = OP_ONE; } else  { sw->tog = 0; } 
 }
 
 // input multiplier
 static void op_sw_in_mul(op_sw_t* sw, const io_t* v) {
   sw->mul = *v;
   if (sw->state > 0) {
-    sw->state = *v;
+    sw->state = (*v);
     net_activate(sw->outs[0], sw->state, sw);
   }
 }

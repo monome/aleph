@@ -1,10 +1,13 @@
 /* main.c
- * avr32
- * aleph
- *
+   aleph-avr32
+   
+   calls hardware initialization
+   processes event queue,
+   sets default event handlers
+ 
  */
 
-// ASF
+// asf
 #include "compiler.h"
 #include "board.h"
 #include "conf_sd_mmc_spi.h"
@@ -251,8 +254,8 @@ static void init_ctl(void) {
   print_dbg("\r\n init_adc");
 
   // start timers
-  init_sys_timers();
-  print_dbg("\r\n init_timers");
+  //  init_sys_timers();
+  //  print_dbg("\r\n init_timers");
 
   // enable interrupts
   cpu_irq_enable();

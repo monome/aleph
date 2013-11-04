@@ -25,7 +25,6 @@ CSRCS += \
         common/services/usb/uhc/uhc.c \
 	$(ALEPH_AVR32)/src/adc.c \
 	$(ALEPH_AVR32)/src/app.c \
-	$(ALEPH_AVR32)/src/sys_timers.c \
 	$(ALEPH_AVR32)/src/bfin.c \
 	$(ALEPH_AVR32)/src/control.c \
 	$(ALEPH_AVR32)/src/events.c \

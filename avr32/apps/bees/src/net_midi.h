@@ -13,6 +13,8 @@
 #include "types.h"
 #include "midi.h"
 
+//-----------------------
+//---- types
 typedef void(*midi_handler_t)(void* op, u32 event);
 
 // abstract superclass for midi operators
@@ -27,16 +29,6 @@ typedef struct _op_midi {
   struct _op_midi* prev;
 
 } op_midi_t;
-
-//---- linked list of instantiated midi operators
-
-// list structure
-typedef struct _op_list {
-  op_midi_t* top;
-  op_midi_t* cur;
-  u32 num;
-} op_midi_list_t;
-
 
 //-------------------------
 //--- extern functions

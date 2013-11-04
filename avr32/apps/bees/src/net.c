@@ -234,11 +234,10 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
 
     /// only process for play mode if we're in play mode
     if(pageIdx == ePagePlay) {
-      /// FIXME: use play-included flag
-      // for now, process all activations with play mode
-      //if(pIn->play) {
-      play_input(inIdx);
-      //    }
+      // only process if play-mode-visibility is set
+      if(pIn->play) {
+	play_input(inIdx);
+      }
     }
 
     if(inIdx < net->numIns) {
@@ -435,8 +434,18 @@ void net_remove_op(const u32 idx) {
 
 // create a connection between given idx pairs
 void net_connect(u32 oIdx, u32 iIdx) {
-  net->ops[net->outs[oIdx].opIdx]->out[net->outs[oIdx].opOutIdx] = iIdx;
+  const s32 srcOpIdx = net->outs[oIdx].opIdx; 
+  const s32 dstOpIdx = net->ins[iIdx].opIdx;
+
   net->outs[oIdx].target = iIdx;
+  // FIXME: this could be smarter.
+  // but for now, just don't an op to connect to itself 
+  // (keep the target in the onode for UI purposes, 
+  // but don't actually update the operator.)
+  if(srcOpIdx == dstOpIdx) {
+    return; 
+  } 
+  net->ops[srcOpIdx]->out[net->outs[oIdx].opOutIdx] = iIdx;
 }
 
 // disconnect given output
@@ -644,6 +653,26 @@ u8 net_get_in_preset(u32 id) {
 u8 net_get_out_preset(u32 id) {
   return net->outs[id].preset;
 }
+
+
+// toggle play inclusion for input
+u8 net_toggle_in_play(u32 inIdx) {
+  net->ins[inIdx].play ^= 1;
+  //  print_dbg("\r\n toggle in.play, result: ");
+  //  print_dbg(net->ins[inIdx].play ? "1" : "0");
+  return net->ins[inIdx].play;
+}
+
+// set play inclusion for input
+void net_set_in_play(u32 inIdx, u8 val) {
+  net->ins[inIdx].play = val;
+}
+
+// get play inclusion for input
+u8 net_get_in_play(u32 inIdx) {
+  return net->ins[inIdx].play;
+}
+
 
 //------------------------------------
 //------ params

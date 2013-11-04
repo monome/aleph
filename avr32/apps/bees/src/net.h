@@ -88,6 +88,7 @@ extern s16 net_in_op_idx(const u16 idx);
 extern s16 net_out_op_idx(const u16 idx);
 
 // get global index for a given input of given op
+//// NOTE: this is relatively slow, try not to use in realtime
 extern u16 net_op_in_idx(const u16 opIdx, const u16 inIdx);
 
 // get global index for a given output of given op
@@ -131,6 +132,15 @@ extern u8 net_get_in_preset(u32 inIdx);
 
 // get preset inclusion for output
 extern u8 net_get_out_preset(u32 outIdx);
+
+// toggle play inclusion for input
+extern u8 net_toggle_in_play(u32 inIdx);
+
+// set play inclusion for input
+extern void net_set_in_play(u32 inIdx, u8 val);
+
+// get play inclusion for input
+extern u8 net_get_in_play(u32 inIdx);
 
 // add a new parameter
 extern void net_add_param(u32 idx, const ParamDesc* pdesc);

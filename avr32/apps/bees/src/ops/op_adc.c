@@ -60,8 +60,15 @@ void op_adc_init(void* op) {
   // ui increment function
   adc->super.inc_fn = (op_inc_fn)op_adc_inc_fn;
   adc->super.in_fn = op_adc_in_fn;
-  // input function array
+  // input value array
   adc->super.in_val = adc->in_val;
+  adc->in_val[0] = &(adc->enable);
+  adc->in_val[1] = &(adc->period);
+  adc->in_val[2] = &(adc->val0);
+  adc->in_val[3] = &(adc->val1);
+  adc->in_val[4] = &(adc->val2);
+  adc->in_val[5] = &(adc->val3);
+
   // pickles
   adc->super.pickle = (op_pickle_fn)(&op_adc_pickle);
   adc->super.unpickle = (op_unpickle_fn)(&op_adc_unpickle);
@@ -94,13 +101,18 @@ void op_adc_deinit(void* adc) {
 
 // input enable / disable
 void op_adc_in_enable	(op_adc_t* adc, const io_t* v) {
-  if(*v > 0) {
-    if(!(adc->enable)) {
+  print_dbg("\r\n op_adc_in_enable: 0x");
+  print_dbg_hex((u32)(*v));
+
+  if((*v) > 0) {
+    print_dbg(" (input value high) ");
+    if(adc->enable == 0) {
       adc->enable = OP_ONE;
       timers_set_adc(OP_TO_INT(adc->period));
     }
   } else {
-    if(adc->enable) {
+    print_dbg(" (input value low) ");
+    if(adc->enable > 0) {
       adc->enable = 0;
       timers_unset_adc();
     }
@@ -109,7 +121,7 @@ void op_adc_in_enable	(op_adc_t* adc, const io_t* v) {
 
 // input polling period
 void op_adc_in_period (op_adc_t* adc, const io_t* v) {
-  if(*v < OP_ONE) {
+  if((*v) < OP_ONE) {
     adc->period = OP_ONE;
   } else {
     adc->period = *v;
@@ -122,8 +134,8 @@ void op_adc_in_period (op_adc_t* adc, const io_t* v) {
 static void op_adc_in_val0(op_adc_t* adc, const io_t* v) {
   // simply passes value to output
   adc->val0 = *v;
-  /* print_dbg("\r\n adc op output, channel 0, value: 0x"); */
-  /* print_dbg_hex(adc->val0); */
+  //  print_dbg("\r\n adc op output, channel 0, value: 0x");
+  //  print_dbg_hex(adc->val0);
   net_activate(adc->outs[0], adc->val0, &(adc->super));
 }
 
@@ -131,8 +143,8 @@ static void op_adc_in_val0(op_adc_t* adc, const io_t* v) {
 static void op_adc_in_val1(op_adc_t* adc, const io_t* v) {
   // simply passes value to output
   adc->val1 = *v;
-  /* print_dbg("\r\n adc op output, channel 1, value: 0x"); */
-  /* print_dbg_hex(adc->val1); */
+  //  print_dbg("\r\n adc op output, channel 1, value: 0x");
+  //  print_dbg_hex(adc->val1);
   net_activate(adc->outs[1], adc->val1, &(adc->super));
 }
 
@@ -140,8 +152,8 @@ static void op_adc_in_val1(op_adc_t* adc, const io_t* v) {
 static void op_adc_in_val2(op_adc_t* adc, const io_t* v) {
   // simply passes value to output
   adc->val2 = *v;
-  /* print_dbg("\r\n adc op output, channel 2, value: 0x"); */
-  /* print_dbg_hex(adc->val2); */
+  //  print_dbg("\r\n adc op output, channel 2, value: 0x");
+  //  print_dbg_hex(adc->val2);
   net_activate(adc->outs[2], adc->val2, &(adc->super));
 }
 
@@ -149,8 +161,8 @@ static void op_adc_in_val2(op_adc_t* adc, const io_t* v) {
 static void op_adc_in_val3(op_adc_t* adc, const io_t* v) {
   // simply passes value to output
   adc->val3 = *v;
-  /* print_dbg("\r\n adc op output, channel 3, value: 0x"); */
-  /* print_dbg_hex(adc->val3); */
+  //  print_dbg("\r\n adc op output, channel 3, value: 0x");
+  //  print_dbg_hex(adc->val3);
   net_activate(adc->outs[3], adc->val3, &(adc->super));
 }
 

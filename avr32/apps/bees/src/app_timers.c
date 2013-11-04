@@ -12,9 +12,10 @@
 //asf
 #include "print_funcs.h"
 
-// aleph-monome
+// aleph-avr32
 #include "adc.h"
 #include "control.h"
+#include "encoders.h"
 #include "events.h"
 #include "midi.h"
 #include "monome.h"
@@ -24,55 +25,87 @@
 #include "app_timers.h"
 #include "render.h"
 
-// tmp
+//---------------------------
+//---- static variables
+
+// event 
 static event_t e;
 
 //------ timers
-// refresh the screen periodically
-static swTimer_t screenTimer;
+// refresh screen
+static softTimer_t screenTimer = { .next = NULL };
+
+// poll encoders
+static softTimer_t encTimer = { .next = NULL };
 
 // poll monome device 
-static swTimer_t monomePollTimer;
+static softTimer_t monomePollTimer = { .next = NULL };
+
 // refresh monome device 
-static swTimer_t monomeRefreshTimer;
+static softTimer_t monomeRefreshTimer  = { .next = NULL };
 
 // poll midi device 
-static swTimer_t midiPollTimer;
+static softTimer_t midiPollTimer = { .next = NULL };
+
 // refresh midi device 
 /// TODO:
-// static swTimer_t midiRefreshTimer;
+// static softTimer_t midiRefreshTimer;
 
 // poll adc 
-static swTimer_t adcPollTimer;
+static softTimer_t adcPollTimer = { .next = NULL };
+
+//--------------------------
+//----- static functions
 
 //----- callbacks
 
 // screen refresh callback
-static void screen_timer_callback(int tag) {  
+static void screen_timer_callback(void) {  
   render_update();
 }
 
+// encoder accumulator polling callback
+static void enc_timer_callback(void) {
+  static s16 val, valAbs;
+  u8 i;
+
+  for(i=0; i<NUM_ENC; i++) {
+    val = enc[i].val;
+
+    /// FIXME: this comparison is pretty dumb
+    //    if ( (val > enc[i].thresh) || (val < (enc[i].thresh ^ -1)) ) {
+    valAbs = (val & 0x8000 ? (val ^ 0xffff) + 1 : val);
+    if(valAbs > enc[i].thresh) {
+      e.type = enc[i].event;
+      e.data = val;
+      enc[i].val = 0;
+      event_post(&e);
+    }
+  }
+}
+
+
 //adc polling callback
-static void adc_poll_timer_callback(int tag) {
+static void adc_poll_timer_callback(void) {
   adc_poll();
 }
 
 //midi polling callback
-static void midi_poll_timer_callback(int tag) {
+static void midi_poll_timer_callback(void) {
   // asynchronous, non-blocking read
   // UHC callback spawns appropriate events
   midi_read();
 }
 
 // monome polling callback
-static void monome_poll_timer_callback(int tag) {
+static void monome_poll_timer_callback(void) {
   // asynchronous, non-blocking read
   // UHC callback spawns appropriate events
   ftdi_read();
 }
 
 // monome refresh callback
-static void monome_refresh_timer_callback(int tag) {
+static void monome_refresh_timer_callback(void) {
   //  if (monomeConnect) {
   //    print_dbg("\r\n posting monome refresh event");
   if(monomeFrameDirty > 0) {
@@ -86,53 +119,54 @@ static void monome_refresh_timer_callback(int tag) {
 //---- external functions
 
 void init_app_timers(void) {
-  set_timer(&screenTimer,        eScreenTimerTag,        50,  &screen_timer_callback,  1);
+  timer_add(&screenTimer, 50, &screen_timer_callback );
+  timer_add(&encTimer, 50, &enc_timer_callback );
 }
 
 // monome: start polling
 void timers_set_monome(void) {
   print_dbg("\r\n setting monome timers");
-  set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);
-  set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 50,  &monome_refresh_timer_callback, 1);
+  timer_add(&monomePollTimer, 	 20, &monome_poll_timer_callback );
+  timer_add(&monomeRefreshTimer, 50, &monome_refresh_timer_callback );
 }
 
 // monome stop polling
 void timers_unset_monome(void) {
   print_dbg("\r\n unsetting monome timers");
-  kill_timer(eMonomePollTimerTag);
-  kill_timer(eMonomeRefreshTimerTag); 
+  timer_remove( &monomePollTimer );
+  timer_remove( &monomeRefreshTimer ); 
 }
 
 // midi : start polling
 void timers_set_midi(void) {
   print_dbg("\r\n setting midi timers");
-  set_timer(&midiPollTimer,    eMidiPollTimerTag,    20,  &midi_poll_timer_callback,    1);
+  timer_add( &midiPollTimer, 20, &midi_poll_timer_callback );
   // TODO:
-  //  set_timer(&midiRefreshTimer, eMidiRefreshTimerTag, 50,  &midi_refresh_timer_callback, 1);
+  //  timer_add(&midiRefreshTimer, eMidiRefreshTimerTag, 50,  &midi_refresh_timer_callback, 1);
 }
 
 // midi : stop polling
 void timers_unset_midi(void) {
   print_dbg("\r\n unsetting midi timers");
-  kill_timer(eMidiPollTimerTag);
+  timer_remove( &midiPollTimer );
   // TODO:
-  //  kill_timer(eMidiRefreshTimerTag); 
+  //  timer_remove(eMidiRefreshTimerTag); 
 }
 
 // adc : start polling
 void timers_set_adc(u32 period) {
   print_dbg("\r\n setting adc timers, period: ");
   print_dbg_ulong(period);
-  set_timer(&adcPollTimer,  eAdcPollTimerTag, period,  &adc_poll_timer_callback,    1);
+  timer_add(&adcPollTimer, period, &adc_poll_timer_callback );
 }
 
 // adc : stop polling
 void timers_unset_adc(void) {
   print_dbg("\r\n unsetting adc timers");
-  kill_timer(eAdcPollTimerTag);
+  timer_remove( &adcPollTimer );
 } 
 
 // change period of adc polling timer
 extern void timers_set_adc_period(u32 period) {
-  adcPollTimer.timeoutReload = period;
+  adcPollTimer.ticks = period;
 }
