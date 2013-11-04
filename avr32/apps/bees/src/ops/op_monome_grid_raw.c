@@ -19,16 +19,16 @@ static const char* op_mgrid_raw_opstring = "RAWGRID";
 
 //// network inputs: 
 static void op_mgrid_raw_inc_fn(op_mgrid_raw_t* grid, const s16 idx, const io_t inc);
-static void op_mgrid_raw_in_focus(op_mgrid_raw_t* grid, const io_t* val);
-static void op_mgrid_raw_in_tog(op_mgrid_raw_t* grid, const io_t* val);
-static void op_mgrid_raw_in_mono(op_mgrid_raw_t* grid, const io_t* val);
+static void op_mgrid_raw_in_focus(op_mgrid_raw_t* grid, const io_t val);
+static void op_mgrid_raw_in_tog(op_mgrid_raw_t* grid, const io_t val);
+static void op_mgrid_raw_in_mono(op_mgrid_raw_t* grid, const io_t val);
 
 // pickles
 static u8* op_mgrid_raw_pickle(op_mgrid_raw_t* enc, u8* dst);
 static const u8* op_mgrid_raw_unpickle(op_mgrid_raw_t* enc, const u8* src);
 
 /// monome event handler
-static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata);
+static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 data);
 
 // input func pointer array
 static op_in_fn op_mgrid_raw_in_fn[3] = {
@@ -91,8 +91,8 @@ void op_mgrid_raw_deinit(void* op) {
 //----- static function definition
 
 //--- network input functions
-static void op_mgrid_raw_in_focus(op_mgrid_raw_t* op, const io_t* v) {
-  if((*v) > 0) {
+static void op_mgrid_raw_in_focus(op_mgrid_raw_t* op, const io_t v) {
+  if((v) > 0) {
     op->focus = OP_ONE;
   } else {
     op->focus = 0;;
@@ -100,12 +100,12 @@ static void op_mgrid_raw_in_focus(op_mgrid_raw_t* op, const io_t* v) {
   net_monome_set_focus( &(op->monome), op->focus > 0);
 }
 
-static void op_mgrid_raw_in_tog(op_mgrid_raw_t* op, const io_t* v) {
-  op->tog  = (*v > 0) ? OP_ONE : 0;
+static void op_mgrid_raw_in_tog(op_mgrid_raw_t* op, const io_t v) {
+  op->tog  = (v > 0) ? OP_ONE : 0;
 }
 
-static void op_mgrid_raw_in_mono(op_mgrid_raw_t* op, const io_t* v) {
-  op->mono  = (*v > 0) ? OP_ONE : 0;
+static void op_mgrid_raw_in_mono(op_mgrid_raw_t* op, const io_t v) {
+  op->mono  = (v > 0) ? OP_ONE : 0;
 }
 
 static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
@@ -188,13 +188,13 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
 void op_mgrid_raw_inc_fn(op_mgrid_raw_t* op, const s16 idx, const io_t inc) {
   switch(idx) {
   case 0: // focus
-    op_mgrid_raw_in_focus(op, &inc);
+    op_mgrid_raw_in_focus(op, inc);
     break;
   case 1: // toggle mode
-    op_mgrid_raw_in_tog(op, &inc);
+    op_mgrid_raw_in_tog(op, inc);
     break;
   case 2: // mono mode
-    op_mgrid_raw_in_mono(op, &inc);
+    op_mgrid_raw_in_mono(op, inc);
     break;
   }
 }

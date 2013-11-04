@@ -3,9 +3,9 @@
 
 //-------------------------------------------------
 //---- static func declare
-static void op_add_in_a(op_add_t* add, const io_t* v);
-static void op_add_in_b(op_add_t* add, const io_t* v);
-static void op_add_in_btrig(op_add_t* add, const io_t* v);
+static void op_add_in_a(op_add_t* add, const io_t v);
+static void op_add_in_b(op_add_t* add, const io_t v);
+static void op_add_in_btrig(op_add_t* add, const io_t v);
 static void op_add_inc_input(op_add_t* mul, const s16 idx, const io_t inc);
 
 // pickle / unpickle
@@ -51,21 +51,21 @@ void op_add_init(void* mem) {
 //-------------------------------------------------
 //---- static func define
 
-static void op_add_in_a(op_add_t* add, const io_t* v) {
-  add->a = *v;
+static void op_add_in_a(op_add_t* add, const io_t v) {
+  add->a = v;
   add->val = OP_ADD(add->a, add->b);
   net_activate(add->outs[0], add->val, add);
 }
 
-static void op_add_in_b(op_add_t* add, const io_t* v) {
-  add->b = *v;
+static void op_add_in_b(op_add_t* add, const io_t v) {
+  add->b = v;
   add->val = OP_ADD(add->a, add->b);
   if(add->btrig) {
     net_activate(add->outs[0], add->val, add);
   }
 }
 
-static void op_add_in_btrig(op_add_t* add, const io_t* v) {
+static void op_add_in_btrig(op_add_t* add, const io_t v) {
   add->btrig = (v != 0);
 }
 
@@ -75,14 +75,14 @@ static void op_add_inc_input(op_add_t* add, const s16 idx, const io_t inc) {
   switch(idx) {
   case 0:  // a
     val = OP_ADD(add->a, inc);
-    op_add_in_a(add, &val);
+    op_add_in_a(add, val);
     break; 
   case 1:  // b
     val = OP_ADD(add->b, inc);
-    op_add_in_b(add, &val);
+    op_add_in_b(add, val);
     break;
   case 2:  // trig
-    op_add_in_btrig(add, &inc);
+    op_add_in_btrig(add, inc);
     break;
   }
 }

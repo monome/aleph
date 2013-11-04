@@ -12,11 +12,11 @@ typedef struct op_midi_note_struct {
   // midi operator abstract class
   op_midi_t midi;  
   // input: channel number
-  io_t* in_val[1];
+  volatile io_t* in_val[1];
   // outputs: note, velocity
   op_out_t outs[2];
   // channel, input value(negative == all channels)
-  io_t chanIo;
+  volatile io_t chanIo;
   /// actual channel number
   s8 chan;
 } op_midi_note_t;

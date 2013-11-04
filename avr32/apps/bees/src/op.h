@@ -54,12 +54,10 @@ typedef enum {
 } op_id_t;
 
 
+//--- function types
 
-//---- input type
-// a function pointer to represent an operator's input
-// each function is passed a void* to its receiver
-// and a pointer to const s32 for input value
-typedef void(*op_in_fn)(void* op, const io_t* input );
+// set an input
+typedef void(*op_in_fn)(void* op, const io_t input );
 // function type to increment a value from UI
 typedef void(*op_inc_fn)(void* op, const s16 idx, const io_t inc);
 // init function type
@@ -91,7 +89,7 @@ typedef struct op_struct {
   // unpickle function
   op_unpickle_fn unpickle;
   // dynamic array of pointers to input values
-  io_t ** in_val;
+  volatile io_t ** in_val;
   // array of indices for output targets.
   op_out_t * out; 
   // name string

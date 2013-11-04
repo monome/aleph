@@ -21,14 +21,14 @@ static const char* op_midi_note_opstring = "MIDINOTE";
 
 //// network inputs: 
 static void op_midi_note_inc_fn(op_midi_note_t* grid, const s16 idx, const io_t inc);
-static void op_midi_note_in_chan(op_midi_note_t* grid, const io_t* val);
+static void op_midi_note_in_chan(op_midi_note_t* grid, const io_t val);
 
 // pickles
 static u8* op_midi_note_pickle(op_midi_note_t* enc, u8* dst);
 static const u8* op_midi_note_unpickle(op_midi_note_t* mnote, const u8* src);
 
 /// midi event handler
-static void op_midi_note_handler(op_midi_t* op_midi, u32 edata);
+static void op_midi_note_handler(op_midi_t* op_midi, u32 data);
 
 // input func pointer array
 static op_in_fn op_midi_note_in_fn[3] = {
@@ -74,7 +74,7 @@ void op_midi_note_init(void* mem) {
   op->chan = -1;
   op->chanIo = 0xffff000;
 
-  // FIXME: should sanity-check that the op isn't already in the dang list.
+  // FIXME: should sanity-check that the op isn't already in the dang list
   net_midi_list_push(&(op->midi));
 }
 
@@ -88,10 +88,10 @@ void op_midi_note_deinit(void* op) {
 //----- static function definition
 
 //--- network input functions
-static void op_midi_note_in_chan(op_midi_note_t* op, const io_t* v) {
-  op->chanIo = *v;
+static void op_midi_note_in_chan(op_midi_note_t* op, const io_t v) {
+  op->chanIo = v;
   print_dbg("\r\n midi_note, setting channel from input: 0x");
-  print_dbg_hex((u32)*v);
+  print_dbg_hex((u32)v);
   // range is [-1, 16] in fix16... this is ugly, whatever
   //  if(op->chanIo > 0x00100000) { op->chanIo = 0x00100000; }
   //  if(op->chanIo < 0xffff0000) { op->chanIo = 0xffff0000; }
@@ -169,7 +169,7 @@ void op_midi_note_inc_fn(op_midi_note_t* op, const s16 idx, const io_t inc) {
   switch(idx) {
   case 0: // channel
     val = OP_SADD(op->chanIo, inc); 
-    op_midi_note_in_chan(op, &val);
+    op_midi_note_in_chan(op, val);
     break;
   }
 }

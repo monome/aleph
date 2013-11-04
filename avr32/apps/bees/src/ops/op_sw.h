@@ -10,11 +10,11 @@ typedef struct op_sw_struct {
   // superclass
   op_t super;
   // state variables
-  io_t state;
-  io_t mul;
-  io_t tog;
+  volatile io_t state;
+  volatile io_t mul;
+  volatile io_t tog;
   // pointers for external access
-  io_t* in_val[3];
+  volatile io_t* in_val[3];
   op_out_t outs[1];
 } op_sw_t;
 

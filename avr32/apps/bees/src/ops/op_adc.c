@@ -21,12 +21,12 @@ static const char* op_adc_opstring	= "ADC";
 //-------------------------------------------------
 //----- static function declaration
 static void op_adc_inc_fn	(op_adc_t* adc, const s16 idx, const io_t inc);
-static void op_adc_in_enable	(op_adc_t* adc, const io_t* v);
-static void op_adc_in_period	(op_adc_t* adc, const io_t* v);
-static void op_adc_in_val0	(op_adc_t* adc, const io_t* v);
-static void op_adc_in_val1	(op_adc_t* adc, const io_t* v);
-static void op_adc_in_val2	(op_adc_t* adc, const io_t* v);
-static void op_adc_in_val3	(op_adc_t* adc, const io_t* v);
+static void op_adc_in_enable	(op_adc_t* adc, const io_t v);
+static void op_adc_in_period	(op_adc_t* adc, const io_t v);
+static void op_adc_in_val0	(op_adc_t* adc, const io_t v);
+static void op_adc_in_val1	(op_adc_t* adc, const io_t v);
+static void op_adc_in_val2	(op_adc_t* adc, const io_t v);
+static void op_adc_in_val3	(op_adc_t* adc, const io_t v);
 
 // pickles
 static u8* op_adc_pickle(op_adc_t* adc, u8* dst);
@@ -100,11 +100,11 @@ void op_adc_deinit(void* adc) {
 //===== operator input
 
 // input enable / disable
-void op_adc_in_enable	(op_adc_t* adc, const io_t* v) {
+void op_adc_in_enable	(op_adc_t* adc, const io_t v) {
   print_dbg("\r\n op_adc_in_enable: 0x");
-  print_dbg_hex((u32)(*v));
+  print_dbg_hex((u32)(v));
 
-  if((*v) > 0) {
+  if((v) > 0) {
     print_dbg(" (input value high) ");
     if(adc->enable == 0) {
       adc->enable = OP_ONE;
@@ -120,47 +120,47 @@ void op_adc_in_enable	(op_adc_t* adc, const io_t* v) {
 }
 
 // input polling period
-void op_adc_in_period (op_adc_t* adc, const io_t* v) {
-  if((*v) < OP_ONE) {
+void op_adc_in_period (op_adc_t* adc, const io_t v) {
+  if((v) < OP_ONE) {
     adc->period = OP_ONE;
   } else {
-    adc->period = *v;
+    adc->period = v;
   }
   timers_set_adc_period(OP_TO_INT(adc->period));
 }
 
 
 // input value
-static void op_adc_in_val0(op_adc_t* adc, const io_t* v) {
+static void op_adc_in_val0(op_adc_t* adc, const io_t v) {
   // simply passes value to output
-  adc->val0 = *v;
+  adc->val0 = v;
   //  print_dbg("\r\n adc op output, channel 0, value: 0x");
   //  print_dbg_hex(adc->val0);
   net_activate(adc->outs[0], adc->val0, &(adc->super));
 }
 
 // input value
-static void op_adc_in_val1(op_adc_t* adc, const io_t* v) {
+static void op_adc_in_val1(op_adc_t* adc, const io_t v) {
   // simply passes value to output
-  adc->val1 = *v;
+  adc->val1 = v;
   //  print_dbg("\r\n adc op output, channel 1, value: 0x");
   //  print_dbg_hex(adc->val1);
   net_activate(adc->outs[1], adc->val1, &(adc->super));
 }
 
 // input value
-static void op_adc_in_val2(op_adc_t* adc, const io_t* v) {
+static void op_adc_in_val2(op_adc_t* adc, const io_t v) {
   // simply passes value to output
-  adc->val2 = *v;
+  adc->val2 = v;
   //  print_dbg("\r\n adc op output, channel 2, value: 0x");
   //  print_dbg_hex(adc->val2);
   net_activate(adc->outs[2], adc->val2, &(adc->super));
 }
 
 // input value
-static void op_adc_in_val3(op_adc_t* adc, const io_t* v) {
+static void op_adc_in_val3(op_adc_t* adc, const io_t v) {
   // simply passes value to output
-  adc->val3 = *v;
+  adc->val3 = v;
   //  print_dbg("\r\n adc op output, channel 3, value: 0x");
   //  print_dbg_hex(adc->val3);
   net_activate(adc->outs[3], adc->val3, &(adc->super));
@@ -175,31 +175,31 @@ static void op_adc_inc_fn(op_adc_t* adc, const s16 idx, const io_t inc) {
   case 0: // enable (toggle)
     if(adc->enable) {
       val = 0;
-      op_adc_in_enable(adc, &val);
+      op_adc_in_enable(adc, val);
     } else {
       val = OP_ONE;
-      op_adc_in_enable(adc, &val);
+      op_adc_in_enable(adc, val);
     }
     break;
   case 1: // period
     val = OP_SADD(adc->period, inc);
-    op_adc_in_period(adc, &val);
+    op_adc_in_period(adc, val);
     break;
   case 2: // val0
     val = OP_SADD(adc->val0, inc);
-    op_adc_in_val0(adc, &val);
+    op_adc_in_val0(adc, val);
     break;
   case 3: // val1
     val = OP_SADD(adc->val1, inc);
-    op_adc_in_val1(adc, &val);
+    op_adc_in_val1(adc, val);
     break;
   case 4: // val2
     val = OP_SADD(adc->val2, inc);
-    op_adc_in_val2(adc, &val);
+    op_adc_in_val2(adc, val);
     break;
   case 5: // val3
     val = OP_SADD(adc->val3, inc);
-    op_adc_in_val3(adc, &val);
+    op_adc_in_val3(adc, val);
     break;
   }
 }

@@ -9,10 +9,10 @@
 typedef struct op_mul_struct {
   op_t super;
   io_t val; 
-  io_t a;
-  io_t b;
-  io_t btrig;
-  io_t * in_val[3]; // a, b, btrig
+  volatile io_t a;
+  volatile io_t b;
+  volatile io_t btrig;
+  volatile io_t* in_val[3]; // a, b, btrig
   op_out_t outs[1];
 } op_mul_t;
 

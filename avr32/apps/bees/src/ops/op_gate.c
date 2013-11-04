@@ -3,9 +3,9 @@
 
 //-------------------------------------------------
 //----- static function declaration
-static void op_gate_in_value(op_gate_t* gate, const io_t* v);
-static void op_gate_in_gate(op_gate_t* gate, const io_t* v);
-static void op_gate_in_store(op_gate_t* gate, const io_t* v);
+static void op_gate_in_value(op_gate_t* gate, const io_t v);
+static void op_gate_in_gate(op_gate_t* gate, const io_t v);
+static void op_gate_in_store(op_gate_t* gate, const io_t v);
 static void op_gate_inc_input(op_gate_t* gate, const s16 idx, const io_t inc);
 
 //-------------------------------------------------
@@ -44,24 +44,23 @@ void op_gate_init(void* mem) {
 
 //-------------------------------------------------
 //----- static function definitions
-static void op_gate_in_value(op_gate_t* gate, const io_t* v) {
-  gate->val = *v;
+static void op_gate_in_value(op_gate_t* gate, const io_t v) {
+  gate->val = v;
   if(gate->gate != 0) {
     net_activate(gate->outs[0], gate->val, gate);
   }
 }
 
-static void op_gate_in_gate(op_gate_t* gate, const io_t* v) {
-  //  gate->gate = (io_t)(*v != 0);
-  if(*v > 0) { gate->gate = 1; } else { gate->gate = 0; }
+static void op_gate_in_gate(op_gate_t* gate, const io_t v) {
+  if(v > 0) { gate->gate = 1; } else { gate->gate = 0; }
   if (gate->store) {
     net_activate(gate->outs[0], gate->val, gate);
   }
 }
 
-static void op_gate_in_store(op_gate_t* gate, const io_t* v) {
+static void op_gate_in_store(op_gate_t* gate, const io_t v) {
   //  gate->store = (*v != 0);
-  if(*v > 0) { gate->store = 1; } else { gate->store = 0; }
+  if(v > 0) { gate->store = 1; } else { gate->store = 0; }
 }
 
 static void op_gate_inc_input(op_gate_t* gate, const s16 idx, const io_t inc) {
@@ -69,13 +68,13 @@ static void op_gate_inc_input(op_gate_t* gate, const s16 idx, const io_t inc) {
   switch(idx) {
   case 0:  // value
       val = OP_ADD(gate->val, inc);
-      op_gate_in_value(gate, &val);
+      op_gate_in_value(gate, val);
     break; 
   case 1:  // gate
-    op_gate_in_gate(gate, &inc);
+    op_gate_in_gate(gate, inc);
     break;
   case 2:  // storage mode
-    op_gate_in_store(gate, &inc);
+    op_gate_in_store(gate, inc);
     break;
   }
 }

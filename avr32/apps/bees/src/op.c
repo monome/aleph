@@ -127,10 +127,12 @@ io_t op_get_in_val(op_t* op, s16 idx) {
 
 // set input value
 void op_set_in_val(op_t* op, s16 idx, io_t val) {
-  io_t * const pIn = (op->in_val[idx]);
-  *pIn = val;
-  (*(op->in_fn[idx]))(op, pIn);  
-  // TODO: check for play flag and stuff
+  //  volatile io_t * const pIn = (op->in_val[idx]);
+  //  *pIn = val;
+  //  (*(op->in_fn[idx]))(op, pIn);  
+  (*(op->in_fn[idx]))(op, val);  
+  // TODO: check for play flag and stuff.. ?
+  // or, do this in activation
   //  play_input(idx);
 }
 

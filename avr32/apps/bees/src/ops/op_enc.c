@@ -10,11 +10,11 @@
 //----- static function declarations
 static void op_enc_inc_input ( op_enc_t* enc, const s16 idx, const io_t inc);
 static void op_enc_perform   ( op_enc_t* enc) ;
-static void op_enc_in_wrap   ( op_enc_t* enc, const io_t* v);
-static void op_enc_in_max    ( op_enc_t* enc, const io_t* v);
-static void op_enc_in_min    ( op_enc_t* enc, const io_t* v);
-static void op_enc_in_move   ( op_enc_t* enc, const io_t* v);
-static void op_enc_in_step   ( op_enc_t* enc, const io_t* v);
+static void op_enc_in_wrap   ( op_enc_t* enc, const io_t v);
+static void op_enc_in_max    ( op_enc_t* enc, const io_t v);
+static void op_enc_in_min    ( op_enc_t* enc, const io_t v);
+static void op_enc_in_move   ( op_enc_t* enc, const io_t v);
+static void op_enc_in_step   ( op_enc_t* enc, const io_t v);
 
 // pickles
 static u8* op_enc_pickle	(op_enc_t* enc, u8* dst);
@@ -80,13 +80,13 @@ void op_enc_init(void* mem) {
 
 //======= operator input
 // step
-static void op_enc_in_step(op_enc_t* enc, const io_t* v) {
-  enc->step = *v;
+static void op_enc_in_step(op_enc_t* enc, const io_t v) {
+  enc->step = v;
   // op_enc_perform(enc);
 }
 
 // move
-static void op_enc_in_move(op_enc_t* enc, const io_t* v) {
+static void op_enc_in_move(op_enc_t* enc, const io_t v) {
   //  enc->val += enc->step * (*v); 
   // print_dbg("\r\n encoder movement ; input: ");
   // print_dbg_hex((u32)*v);
@@ -95,28 +95,28 @@ static void op_enc_in_move(op_enc_t* enc, const io_t* v) {
   // print_dbg(" ; step: ");
   // print_dbg_hex((u32)(enc->step));
   //  enc->val = OP_ADD(enc->val, OP_MUL(enc->step, *v));
-  enc->val = OP_ADD(enc->val, OP_MUL(enc->step, OP_FROM_INT(*v)));
+  enc->val = OP_ADD(enc->val, OP_MUL(enc->step, OP_FROM_INT(v)));
   // print_dbg(" ; new value: ");
   // print_dbg_hex((u32)(enc->val));
   op_enc_perform(enc);
 }
 
 // max
-static void op_enc_in_min(op_enc_t* enc, const io_t* v) {
-  enc->min = *v;
+static void op_enc_in_min(op_enc_t* enc, const io_t v) {
+  enc->min = v;
   op_enc_perform(enc);
 }
 
 // max
-static void op_enc_in_max(op_enc_t* enc, const io_t* v) {
-  enc->max = *v;
+static void op_enc_in_max(op_enc_t* enc, const io_t v) {
+  enc->max = v;
   op_enc_perform(enc);
 }
 
 // wrap behavior
-static void op_enc_in_wrap(op_enc_t* enc, const io_t* v) {
+static void op_enc_in_wrap(op_enc_t* enc, const io_t v) {
   //  enc->wrap = (*v > 0);
-  if(*v > 0) { enc->wrap = OP_ONE; } else { enc->wrap = 0; }
+  if(v > 0) { enc->wrap = OP_ONE; } else { enc->wrap = 0; }
   //  op_enc_perform(enc);
 }
 
@@ -164,22 +164,22 @@ static void op_enc_inc_input(op_enc_t* enc, const s16 idx, const io_t inc) {
   io_t val;
   switch(idx) {
   case 0:  // move
-    op_enc_in_move(enc, &inc);
+    op_enc_in_move(enc, inc);
     break; 
   case 1:  // min
     val = OP_SADD(enc->min, inc);
-    op_enc_in_min(enc, &val);
+    op_enc_in_min(enc, val);
     break;
   case 2:  // max
     val = OP_SADD(enc->max, inc);
-    op_enc_in_max(enc, &val);
+    op_enc_in_max(enc, val);
     break;
   case 3: // step
     val = OP_SADD(enc->step, inc);
-    op_enc_in_step(enc, &val);
+    op_enc_in_step(enc, val);
     break;
   case 4: // wrap mode
-    op_enc_in_wrap(enc, &inc);
+    op_enc_in_wrap(enc, inc);
     break;
   }
 }
