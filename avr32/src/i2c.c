@@ -2,7 +2,7 @@
 #include "print_funcs.h"
 #include "twi.h"
 // aleph
-#include "conf_aleph.h"
+// #include "conf_aleph.h"
 #include "i2c.h"
 
 //=========================================
@@ -98,7 +98,7 @@ u8 send_master(u8 chip, u32 addr, u8 addr_len, u32 data_len, void* data) {
   // perform a write access and return status
   return twi_master_write(&AVR32_TWI, &pac);
   // non-blocking...
-  //  return twi_master_write_ex(&AVR32_TWI, &pac);
+   // return twi_master_write_ex(&AVR32_TWI, &pac);
 } 
 
 u8 init_slave(void) {
