@@ -260,7 +260,7 @@ void screen_startup(void) {
 
   // fill screenbuffer with solid background
   for(i=0; i<GRAM_BYTES; i++) {
-    screenBuf[i] = 0x22;
+    screenBuf[i] = 0x88;
   }
 
   // send screenbuffer

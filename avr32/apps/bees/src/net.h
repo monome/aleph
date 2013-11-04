@@ -88,6 +88,7 @@ extern s16 net_in_op_idx(const u16 idx);
 extern s16 net_out_op_idx(const u16 idx);
 
 // get global index for a given input of given op
+//// NOTE: this is relatively slow, try not to use in realtime
 extern u16 net_op_in_idx(const u16 opIdx, const u16 inIdx);
 
 // get global index for a given output of given op

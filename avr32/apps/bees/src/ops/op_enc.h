@@ -9,7 +9,11 @@
 typedef struct op_enc_struct {
   op_t super;
   io_t val;
-  io_t move, step, min, max, wrap;
+  io_t move;
+  io_t step;
+  io_t min;
+  io_t max;
+  io_t wrap;
   io_t * in_val[5];
   op_out_t outs[2];
 } op_enc_t;

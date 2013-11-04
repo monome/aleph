@@ -15,6 +15,7 @@
 #include "event_types.h"
 // bees
 #include "net.h"
+#include "net_protected.h"
 #include "pages.h"
 #include "play.h"
 #include "render.h"
@@ -85,14 +86,14 @@ void handle_enc_3(s32 val) {
 // init
 void init_page_play(void) {
   // assign system input indices
-  sw0_idx = net_op_in_idx(4, 0);
-  sw1_idx = net_op_in_idx(5, 0);
-  sw2_idx = net_op_in_idx(6, 0);
-  sw3_idx = net_op_in_idx(7, 0);
-  enc0_idx = net_op_in_idx(0, 0);
-  enc1_idx = net_op_in_idx(1, 0);
-  enc2_idx = net_op_in_idx(2, 0);
-  enc3_idx  = net_op_in_idx(3, 0);
+  sw0_idx = net_op_in_idx(opSysSwIdx[0], 0);
+  sw1_idx = net_op_in_idx(opSysSwIdx[1], 0);
+  sw2_idx = net_op_in_idx(opSysSwIdx[2], 0);
+  sw3_idx = net_op_in_idx(opSysSwIdx[3], 0);
+  enc0_idx = net_op_in_idx(opSysEncIdx[0], 0);
+  enc1_idx = net_op_in_idx(opSysEncIdx[1], 0);
+  enc2_idx = net_op_in_idx(opSysEncIdx[2], 0);
+  enc3_idx  = net_op_in_idx(opSysEncIdx[3], 0);
 }
 
 // select 
