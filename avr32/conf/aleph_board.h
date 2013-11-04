@@ -124,6 +124,9 @@
 //==============================================
 //==== GPIO
 
+// CTS used for usb-usart enumeration detection
+#define USART_USB_DETECT_PIN	AVR32_PIN_PA04
+
 // sd card
 #define SD_MMC_CARD_DETECT_PIN      AVR32_PIN_PB00
 #define SD_MMC_WRITE_PROTECT_PIN    AVR32_PIN_PB01
@@ -164,11 +167,6 @@
 #define SW_POWER_PIN    AVR32_PIN_PB16
 #define POWER_CTL_PIN   AVR32_PIN_PB15
 
-// aux pullup gates
-#define AUX_PULLUP0_PIN AVR32_PIN_PB20
-#define AUX_PULLUP1_PIN AVR32_PIN_PB21
-#define AUX_PULLUP2_PIN AVR32_PIN_PB22
-#define AUX_PULLUP3_PIN AVR32_PIN_PB23
 
 //TWI
 #define TWI_DATA_PIN            AVR32_TWI_SDA_0_0_PIN

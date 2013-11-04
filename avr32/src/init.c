@@ -163,7 +163,7 @@ void init_ftdi_usart (void) {
   // not sure this matters.
   // in any case, doing this here often puts the processor into an infinite loopback,
   // or something.
-  // FTDI_USART->ier = AVR32_USART_IER_CTSIC_MASK;
+  FTDI_USART->ier = AVR32_USART_IER_RXRDY_MASK;
 }
 
 // initialize spi1: OLED, ADC, SD/MMC

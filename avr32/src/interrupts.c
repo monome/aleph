@@ -48,6 +48,10 @@ static void irq_pdca(void);
 __attribute__((__interrupt__))
 static void irq_tc(void);
 
+// irq for PA00-PA07
+__attribute__((__interrupt__))
+static void irq_port0_line0(void);
+
 // irq for PA24-PA31
 __attribute__((__interrupt__))
 static void irq_port0_line3(void);
@@ -116,12 +120,19 @@ static void irq_tc(void) {
 }
 
 
+// detect usart-usb enumeration (via CTS)
 // interrupt handler for PA00-PA07
 __attribute__((__interrupt__))
 static void irq_port0_line0(void) {
-  if(gpio_get_pin_interrupt_flag(AVR32_PIN_PA04)) {
-    gpio_clear_pin_interrupt_flag(AVR32_PIN_PA04);
-      gpio_toggle_pin(LED_MODE_PIN);
+  if(gpio_get_pin_interrupt_flag(USART_USB_DETECT_PIN)) {
+    if(gpio_get_pin_value(USART_USB_DETECT_PIN)) {
+      gpio_set_pin_high(LED_MODE_PIN);
+//      FTDI_USART->ier = AVR32_USART_IER_RXRDY_MASK;
+    } else {
+      gpio_set_pin_low(LED_MODE_PIN);
+  //    FTDI_USART->idr = AVR32_USART_IER_RXRDY_MASK;
+    }
+    gpio_clear_pin_interrupt_flag(USART_USB_DETECT_PIN);
   }
 }
 
@@ -221,9 +232,6 @@ static void irq_port1_line2(void) {
   //  print_dbg("\r\n interrupt on pb16-pb23 : ");
   //SW_POWER
   if(gpio_get_pin_interrupt_flag(SW_POWER_PIN)) {
-    //    print_dbg("......... sw 5 ! ");
-    //   print_dbg(" value: ");
-    //    print_dbg_ulong(
     gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
     process_sw(5);
   }
@@ -246,11 +254,11 @@ static void irq_port1_line3(void) {
 // interrupt handler for uart
 __attribute__((__interrupt__))
 static void irq_usart(void) {
-  // int c;
-  // usart_read_char(FTDI_USART,&c);
+  int c;
+  usart_read_char(FTDI_USART,&c);
   // usart_write_char(FTDI_USART,c);
-  print_dbg("\r\nusb cable change.");
   gpio_toggle_pin(LED_MODE_PIN);
+
 }
 
 //-----------------------------
@@ -260,8 +268,8 @@ static void irq_usart(void) {
 void register_interrupts(void) {
   // enable interrupts on GPIO inputs
 
-  // CTS change
-  gpio_enable_pin_interrupt( AVR32_PIN_PA04, GPIO_PIN_CHANGE);
+  // usart-usb enumeration detection
+  gpio_enable_pin_interrupt( USART_USB_DETECT_PIN, GPIO_PIN_CHANGE);
 
 
   // BFIN_HWAIT
@@ -290,8 +298,8 @@ void register_interrupts(void) {
   gpio_enable_pin_interrupt( SW_MODE_PIN,	GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( SW_POWER_PIN,	GPIO_PIN_CHANGE);
  
-  // CTS
-  INTC_register_interrupt( &irq_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), UI_IRQ_PRIORITY);
+  // usb-usart detection
+  // INTC_register_interrupt( &irq_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), UI_IRQ_PRIORITY);
 
   // PA24 - PA31
   INTC_register_interrupt( &irq_port0_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA24 / 8), UI_IRQ_PRIORITY);
@@ -315,6 +323,5 @@ void register_interrupts(void) {
   INTC_register_interrupt(&irq_tc, APP_TC_IRQ, APP_TC_IRQ_PRIORITY);
 
   // register uart interrupt
-  // INTC_register_interrupt(&irq_usart, AVR32_USART0_IRQ, UI_IRQ_PRIORITY);
-#warning TODO: usart RX, polling or interrupt
+  INTC_register_interrupt(&irq_usart, AVR32_USART0_IRQ, UI_IRQ_PRIORITY);
 }
