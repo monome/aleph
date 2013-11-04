@@ -40,6 +40,7 @@ CSRCS += \
 	$(ALEPH_AVR32)/src/screen.c \
 	$(ALEPH_AVR32)/src/simple_string.c \
 	$(ALEPH_AVR32)/src/switches.c \
+	$(ALEPH_AVR32)/src/sys_timers.c \
 	$(ALEPH_AVR32)/src/timers.c \
 	$(ALEPH_AVR32)/src/usb.c \
 	$(ALEPH_AVR32)/src/usb/gamepad/hid_gamepad.c \
