@@ -11,7 +11,7 @@ ALEPH_AVR32 = ../
 # aleph common directory
 ALEPH_COMMON = ../../common
 # application directory
-APP_DIR = ../..//apps/$(APP)
+APP_DIR = ../../apps/$(APP)
 
 # Target CPU architecture: ap, ucr1, ucr2 or ucr3
 ARCH = ucr2
