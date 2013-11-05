@@ -44,66 +44,6 @@ volatile u8 joyVal[NUM_JOY] = {0, 0, 0, 0};
 //---------------------------------------------
 //--------- static funcs
 
-// decode HID bitfield
-// translate to button changes and pass to control module
-static void decode_hid_event(s32 data) {
-  u8 idx, val;
-  u8 b0, b1, b2, b3;
-  /// FIXME: there should be a better way to do this.
-  /// perhaps the event is triggered if any of the bytes change,
-  /// and the whole frame is copied to a globally-visible buffer.
-
-  idx = (data & 0x0000ff00) >> 8;
-  val = (data & 0x000000ff);
-
-  /// FIXME: ok, just hardcoding this.
-  /// fix to accomodate your brand of gamepad.
-
-  /// TODO: a "learn" function is not so difficult,
-  /// other option would be to maintain a database of vendor/protocols.
-
-  switch(idx) {
-  case 0:
-    // joystick 1, x axis
-    //    ctl_joy(0, val);
-    //// poll these so they can be used as offsets?
-    joyVal[0] = val;
-    break;
-  case 1:
-    // joystick 1, y axis
-    //    ctl_joy(1, val);
-    joyVal[1] = val;
-    break;
-  case 2:
-    // joystick 2, x axis
-    //    ctl_joy(2, val);
-    joyVal[2] = val;
-    break;    
-  case 3:
-    // joystick 2, y axis
-    //    ctl_joy(3, val);
-    joyVal[3] = val;
-    break; 
-
-  case 4:
-    // on my joystick, the right-hand set of 4 buttons
-    // are bitfields in upper nibble of this byte.
-    b0 = (val & 0x10) > 0;
-    b1 = (val & 0x20) > 0;
-    b2 = (val & 0x40) > 0;
-    b3 = (val & 0x80) > 0;
-
-    if(b0 != but[0]) { but[0] = b0; ctl_but(0, b0); }
-    if(b1 != but[1]) { but[1] = b1; ctl_but(1, b1); }
-    if(b2 != but[2]) { but[2] = b2; ctl_but(2, b2); }
-    if(b3 != but[3]) { but[3] = b3; ctl_but(3, b3); }
-    // lower nibble is d-pad...
-    break;
-
-  }
-}
-
-
 // linear scaling for encoders
 static s32 scale_lin_enc(s32 val) {
   return val << 7;    // *128
@@ -158,91 +98,124 @@ static s32 scale_knob_value(s32 val) {
   return ret;
 }
 
+//--------------------------------
+//----- handlers
+static void handler_Switch0(s32 data) {
+  life_change(1,1);
+}
+static void handler_Switch1(s32 data) {
+  life_change(5,5);
+}
+static void handler_Switch2(s32 data) {
+  if(ev->data > 0) life_print();
+}
+static void handler_Switch3(s32 data) {
+  life_init();
+}
+    
+// decode a HID byte and make appropraite control changes
+static void handler_HidByte(s32 data) {
+  u8 idx, val;
+  u8 b0, b1, b2, b3;
+  
+  // which 
+  idx = (data & 0x0000ff00) >> 8;
+  val = (data & 0x000000ff);
+
+  /// FIXME: ok, just hardcoding this.
+  /// fix to accomodate your brand of gamepad.
+
+  /// TODO: a "learn" function is not so difficult,
+  /// other option would be to maintain a database of vendor/protocols.
+
+  switch(idx) {
+  case 0:
+    // joystick 1, x axis
+    //// store these and poll later
+    joyVal[0] = val;
+    break;
+  case 1:
+    // joystick 1, y axis
+    joyVal[1] = val;
+    break;
+  case 2:
+    // joystick 2, x axis
+    joyVal[2] = val;
+    break;    
+  case 3:
+    // joystick 2, y axis
+    joyVal[3] = val;
+    break; 
+
+  case 4:
+    // on my joystick, the right-hand set of 4 buttons
+    // are bitfields in upper nibble of this byte.
+    b0 = (val & 0x10) > 0;
+    b1 = (val & 0x20) > 0;
+    b2 = (val & 0x40) > 0;
+    b3 = (val & 0x80) > 0;
+
+    if(b0 != but[0]) { but[0] = b0; ctl_but(0, b0); }
+    if(b1 != but[1]) { but[1] = b1; ctl_but(1, b1); }
+    if(b2 != but[2]) { but[2] = b2; ctl_but(2, b2); }
+    if(b3 != but[3]) { but[3] = b3; ctl_but(3, b3); }
+    // lower nibble is d-pad...
+    break;
+  }
+}
+
+static void handler_Encoder0(s32 data) {
+  ctl_inc_value(3, scale_lin_enc(ev->data));
+}
+static void handler_Encoder1(s32 data) {
+  ctl_inc_value(2, scale_lin_enc(ev->data));
+}
+static void handler_Encoder2(s32 data) {
+  ctl_inc_value(1, scale_lin_enc(ev->data));
+}
+static void handler_Encoder3(s32 data) {
+  ctl_inc_value(0, scale_lin_enc(ev->data));
+}
+
+static void handle_MonomeConnect(u32 data) {
+  eMonomeDevice dev;
+  u8 w;
+  u8 h;
+  monome_connect_parse_event_data(data, &dev, &w, &h);
+  if(dev != eDeviceGrid) {
+    print_dbg("\r\nmonome connect: unsupported device");
+    return;
+  }
+  print_dbg("\r\nconnecting grid device");
+  // grid_set_size(w, h);
+  timers_set_monome();
+}
+
+static void handle_MonomeDisconnect(u32 data) {
+  timers_unset_monome();
+}
+
+static void handler_MonomeGridKey(s32 data) {
+  grid_handle_key_event(ev->data);
+}
+
+
 //---------------------------------------
 //---- external funcs
 
+void flry_assign_event_handlers(void) {
+  app_event_handlers[ kEventSwitch0 ] = &handler_Switch0;
+  app_event_handlers[ kEventSwitch1 ] = &handler_Switch1;
+  app_event_handlers[ kEventSwitch2 ] = &handler_Switch2;
+  app_event_handlers[ kEventSwitch3 ] = &handler_Switch3;
 
- static void handle_monome_connect(u32 data) {
-   eMonomeDevice dev;
-   u8 w;
-   u8 h;
-   monome_connect_parse_event_data(data, &dev, &w, &h);
-   if(dev != eDeviceGrid) {
-     print_dbg("\r\nmonome connect: unsupported device");
-     return;
-   }
-   print_dbg("\r\nconnecting grid device");
-   // grid_set_size(w, h);
-   timers_set_monome();
- }
+  app_event_handlers[ kEventEncoder0 ] = &handler_Encoder0;
+  app_event_handlers[ kEventEncoder1 ] = &handler_Encoder1;
+  app_event_handlers[ kEventEncoder2 ] = &handler_Encoder2;
+  app_event_handlers[ kEventEncoder3 ] = &handler_Encoder3;
 
+  app_event_handlers[ kEventMonomeConnect ] = &handler_MonomeConnect;
+  app_event_handlers[ kEventMonomeDisconnect ] = &handler_MonomeDisconnect;
+  app_event_handlers[ kEventMonomeGridKey ] = &handler_MonomeGridKey;
 
-// handle key presses
-extern void flry_handler(event_t* ev) {
-  switch (ev->type) {
-  case kEventSwitch0:
-    life_change(1,1);
-    // display
-    // render_sw_on(0, ev->data > 0);
-    break;
-  case kEventSwitch1:
-    life_change(5,5);
-    // display
-    // render_sw_on(1, ev->data > 0);
-    break;
-  case kEventSwitch2:
-    if(ev->data > 0) life_print();
-    // display
-    // render_sw_on(2, ev->data > 0);
-    break;
-  case kEventSwitch3:
-    life_init();
-    // display
-    // render_sw_on(3, ev->data > 0);
-    break;
-    
-  case kEventSwitch6:
-    // render_sw_on(2, ev->data > 0);
-    break;
-    
-  case kEventSwitch7:
-    // render_sw_on(3, ev->data > 0);
-    break;
-
-  case kEventHidByte:
-    decode_hid_event(ev->data);
-    /*
-    print_dbg("\r\n received HID byte, index: ");
-    print_dbg_ulong( (ev->data & 0x0000ff00) >> 8);
-    print_dbg(", value: ");
-    print_dbg_hex( (ev->data & 0x000000ff));
-    */
-    break;
-
-  case kEventEncoder0:
-    ctl_inc_value(3, scale_lin_enc(ev->data));
-    break;
-  case kEventEncoder1:
-    ctl_inc_value(2, scale_lin_enc(ev->data));
-    break;
-  case kEventEncoder2:
-    ctl_inc_value(1, scale_lin_enc(ev->data));
-    break;
-  case kEventEncoder3:
-    ctl_inc_value(0, scale_lin_enc(ev->data));
-    break;
-
-  case kEventMonomeConnect :
-    handle_monome_connect((u32)ev->data);
-  break;
-
-  case kEventMonomeGridKey:
-    grid_handle_key_event(ev->data);
-  break;
-
-
-
-  default:
-    break;
-  }
 }

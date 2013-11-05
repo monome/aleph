@@ -13,17 +13,17 @@
 
 //------ timers
 // refresh the screen periodically
-static swTimer_t screenTimer;
-static swTimer_t hidPollTimer;
+static swTimer_t screenTimer = {.next = NULL };
+static swTimer_t hidPollTimer  = {.next = NULL };
 
 // poll monome device 
-static swTimer_t monomePollTimer;
+static swTimer_t monomePollTimer  = {.next = NULL };
 // refresh monome device 
-static swTimer_t monomeRefreshTimer;
+static swTimer_t monomeRefreshTimer  = {.next = NULL };
 // poll midi device
 //static swTimer_t midiPollTimer;
 
-static swTimer_t lifeTimer;
+static swTimer_t lifeTimer  = {.next = NULL };
 
 //----- callbacks
 

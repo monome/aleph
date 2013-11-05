@@ -126,6 +126,11 @@ u8 app_launch(u8 firstrun) {
 
   render_startup();
   render_update();
+
+  // set handler
+  print_dbg("\r\n setting handler ");
+  flry_assign_event_handlers();
+
   
   return 1;
 }
