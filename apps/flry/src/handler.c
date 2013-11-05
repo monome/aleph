@@ -100,21 +100,21 @@ static s32 scale_knob_value(s32 val) {
 
 //--------------------------------
 //----- handlers
-static void handler_Switch0(s32 data) {
+static void handle_Switch0(s32 data) {
   life_change(1,1);
 }
-static void handler_Switch1(s32 data) {
+static void handle_Switch1(s32 data) {
   life_change(5,5);
 }
-static void handler_Switch2(s32 data) {
-  if(ev->data > 0) life_print();
+static void handle_Switch2(s32 data) {
+  if(data > 0) life_print();
 }
-static void handler_Switch3(s32 data) {
+static void handle_Switch3(s32 data) {
   life_init();
 }
     
 // decode a HID byte and make appropraite control changes
-static void handler_HidByte(s32 data) {
+static void handle_HidByte(s32 data) {
   u8 idx, val;
   u8 b0, b1, b2, b3;
   
@@ -164,24 +164,24 @@ static void handler_HidByte(s32 data) {
   }
 }
 
-static void handler_Encoder0(s32 data) {
-  ctl_inc_value(3, scale_lin_enc(ev->data));
+static void handle_Encoder0(s32 data) {
+  ctl_inc_value(3, scale_lin_enc(data));
 }
-static void handler_Encoder1(s32 data) {
-  ctl_inc_value(2, scale_lin_enc(ev->data));
+static void handle_Encoder1(s32 data) {
+  ctl_inc_value(2, scale_lin_enc(data));
 }
-static void handler_Encoder2(s32 data) {
-  ctl_inc_value(1, scale_lin_enc(ev->data));
+static void handle_Encoder2(s32 data) {
+  ctl_inc_value(1, scale_lin_enc(data));
 }
-static void handler_Encoder3(s32 data) {
-  ctl_inc_value(0, scale_lin_enc(ev->data));
+static void handle_Encoder3(s32 data) {
+  ctl_inc_value(0, scale_lin_enc(data));
 }
 
-static void handle_MonomeConnect(u32 data) {
+static void handle_MonomeConnect(s32 data) {
   eMonomeDevice dev;
   u8 w;
   u8 h;
-  monome_connect_parse_event_data(data, &dev, &w, &h);
+  monome_connect_parse_event_data((u32)data, &dev, &w, &h);
   if(dev != eDeviceGrid) {
     print_dbg("\r\nmonome connect: unsupported device");
     return;
@@ -191,12 +191,12 @@ static void handle_MonomeConnect(u32 data) {
   timers_set_monome();
 }
 
-static void handle_MonomeDisconnect(u32 data) {
+static void handle_MonomeDisconnect(s32 data) {
   timers_unset_monome();
 }
 
-static void handler_MonomeGridKey(s32 data) {
-  grid_handle_key_event(ev->data);
+static void handle_MonomeGridKey(s32 data) {
+  grid_handle_key_event(data);
 }
 
 
@@ -204,18 +204,18 @@ static void handler_MonomeGridKey(s32 data) {
 //---- external funcs
 
 void flry_assign_event_handlers(void) {
-  app_event_handlers[ kEventSwitch0 ] = &handler_Switch0;
-  app_event_handlers[ kEventSwitch1 ] = &handler_Switch1;
-  app_event_handlers[ kEventSwitch2 ] = &handler_Switch2;
-  app_event_handlers[ kEventSwitch3 ] = &handler_Switch3;
+  app_event_handlers[ kEventSwitch0 ] = &handle_Switch0;
+  app_event_handlers[ kEventSwitch1 ] = &handle_Switch1;
+  app_event_handlers[ kEventSwitch2 ] = &handle_Switch2;
+  app_event_handlers[ kEventSwitch3 ] = &handle_Switch3;
 
-  app_event_handlers[ kEventEncoder0 ] = &handler_Encoder0;
-  app_event_handlers[ kEventEncoder1 ] = &handler_Encoder1;
-  app_event_handlers[ kEventEncoder2 ] = &handler_Encoder2;
-  app_event_handlers[ kEventEncoder3 ] = &handler_Encoder3;
+  app_event_handlers[ kEventEncoder0 ] = &handle_Encoder0;
+  app_event_handlers[ kEventEncoder1 ] = &handle_Encoder1;
+  app_event_handlers[ kEventEncoder2 ] = &handle_Encoder2;
+  app_event_handlers[ kEventEncoder3 ] = &handle_Encoder3;
 
-  app_event_handlers[ kEventMonomeConnect ] = &handler_MonomeConnect;
-  app_event_handlers[ kEventMonomeDisconnect ] = &handler_MonomeDisconnect;
-  app_event_handlers[ kEventMonomeGridKey ] = &handler_MonomeGridKey;
+  app_event_handlers[ kEventMonomeConnect ] = &handle_MonomeConnect;
+  app_event_handlers[ kEventMonomeDisconnect ] = &handle_MonomeDisconnect;
+  app_event_handlers[ kEventMonomeGridKey ] = &handle_MonomeGridKey;
 
 }

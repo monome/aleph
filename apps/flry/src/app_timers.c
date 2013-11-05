@@ -13,27 +13,25 @@
 
 //------ timers
 // refresh the screen periodically
-static swTimer_t screenTimer = {.next = NULL };
-static swTimer_t hidPollTimer  = {.next = NULL };
+static softTimer_t screenTimer = {.next = NULL };
+/// static softTimer_t hidPollTimer  = {.next = NULL };
 
 // poll monome device 
-static swTimer_t monomePollTimer  = {.next = NULL };
+static softTimer_t monomePollTimer  = {.next = NULL };
 // refresh monome device 
-static swTimer_t monomeRefreshTimer  = {.next = NULL };
-// poll midi device
-//static swTimer_t midiPollTimer;
+static softTimer_t monomeRefreshTimer  = {.next = NULL };
 
-static swTimer_t lifeTimer  = {.next = NULL };
+static softTimer_t lifeTimer  = {.next = NULL };
 
 //----- callbacks
 
 // screen refresh callback
-static void screen_timer_callback(int tag) {  
+static void screen_timer_callback(void* obj) {  
   render_update();
 }
 
 // hid poll timer callback
-static void hid_poll_timer_callback(int tag) {
+static void hid_poll_timer_callback(void* obj) {
   u8 i = 0;
   for(i=0; i<4; i++) {
     ctl_joy(i, joyVal[i]);
@@ -43,19 +41,15 @@ static void hid_poll_timer_callback(int tag) {
 static event_t e;
 
 
-static void life_timer_callback(int tag) {
+static void life_timer_callback(void* obj) {
   life_update();
 }
 
-
 //====== external
 void init_app_timers(void) {
-  set_timer(&screenTimer,        eScreenTimerTag,        20,  &screen_timer_callback,  1);
-  print_dbg("\r\n ALERT!!!!! hidPollTimer disabled. see line 55 app_timers.c");
-  // set_timer(&hidPollTimer,        eHidPollTimerTag,        20,  &hid_poll_timer_callback,  1);
-  // set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);
-  // set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 20,  &monome_refresh_timer_callback, 1);
-  set_timer(&lifeTimer,   eLifeTimerTag, 100, &life_timer_callback, 1);
+  timer_add(&screenTimer, 20,  &screen_timer_callback, NULL);
+  // timer_add(&hidPollTimer,        eHidPollTimerTag,        20,  &hid_poll_timer_callback,  1);
+  timer_add(&lifeTimer, 100, &life_timer_callback, NULL);
  
 }
 
@@ -64,35 +58,32 @@ void init_app_timers(void) {
 // for example, can set/unset the sw timer 
 // instead of always processing + conditional
 // monome polling callback
-static void monome_poll_timer_callback(int tag) {
+static void monome_poll_timer_callback(void* obj) {
   //  if (monomeConnect > 0) {
-    // start an ftdi transfer, callback handles event posting
-    ftdi_read();
-    //  }
+  // start an ftdi transfer, callback handles event posting
+  ftdi_read();
+  //  }
 }
 
 // monome refresh callback
-static void monome_refresh_timer_callback(int tag) {
+static void monome_refresh_timer_callback(void* obj) {
   //  if (monomeConnect) {
-    //    print_dbg("\r\n posting monome refresh event");
-    if(monomeFrameDirty > 0) {
-      e.type = kEventMonomeRefresh;
-      event_post(&e);
-    }
-    //  }
+  //    print_dbg("\r\n posting monome refresh event");
+  if(monomeFrameDirty > 0) {
+    e.type = kEventMonomeRefresh;
+    event_post(&e);
+  }
+  //  }
 }
 
-
-
- void timers_set_monome(void) {
-   print_dbg("\r\n setting monome timers");
-  set_timer(&monomePollTimer,    eMonomePollTimerTag,    20,  &monome_poll_timer_callback,    1);
-  set_timer(&monomeRefreshTimer, eMonomeRefreshTimerTag, 50,  &monome_refresh_timer_callback, 1);
+void timers_set_monome(void) {
+  print_dbg("\r\n setting monome timers");
+  timer_add(&monomePollTimer, 20, &monome_poll_timer_callback, NULL);
+  timer_add(&monomeRefreshTimer, 50, &monome_refresh_timer_callback, NULL);
 }
 
- void timers_unset_monome(void) {
-   print_dbg("\r\n unsetting monome timers");
-  kill_timer(eMonomePollTimerTag);
-  kill_timer(eMonomeRefreshTimerTag); 
+void timers_unset_monome(void) {
+  print_dbg("\r\n unsetting monome timers");
+  timer_remove(&monomePollTimer);
+  timer_remove(&monomeRefreshTimer); 
 }
-
