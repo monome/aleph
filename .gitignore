@@ -11,6 +11,7 @@
 *.elf
 *.hex
 *.lss
+*.ldr
 *.map
 *.sym
 
