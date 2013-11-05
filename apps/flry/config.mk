@@ -5,11 +5,10 @@
 
 APP = flry
 
-
 # boilerplate avr32 configuration
-include ../../core_config.mk
+include ../../avr32_lib/avr32_lib_config.mk
 # boilerplate avr32 sources
-include ../../core_src.mk
+include ../../avr32_lib/avr32_lib_src.mk
 
 # List of C source files.
 CSRCS += \

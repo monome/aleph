@@ -6,9 +6,10 @@
 # app name
 APP = dsyn
 
-#include boilerplate
-include ../../core_config.mk
-include ../../core_src.mk
+# boilerplate avr32 configuration
+include ../../avr32_lib/avr32_lib_config.mk
+# boilerplate avr32 sources
+include ../../avr32_lib/avr32_lib_src.mk
 
 # app sources
 CSRCS += \
