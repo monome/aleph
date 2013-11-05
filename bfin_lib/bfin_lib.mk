@@ -2,14 +2,15 @@
 #
 # this should be included from module makefiles.
 
-core_dir = ../../
-core_srcdir = $(core_dir)src/
-core_objdir = $(core_dir)obj/
-common_dir = $(core_dir)/../common
-audio_dir = $(core_dir)/../audio
-module_dir = $(core_dir)/modules/$(module_name)
+# paths are relative to module directory
+bfin_lib_dir = ../../bfin_lib/
+bfin_lib_srcdir = $(bfin_lib_dir)src/
+bfin_lib_objdir = $(bfin_lib_dir)obj/
+common_dir = $(bfin_lib_dir)/../common
+audio_dir = $(bfin_lib_dir)/../dsp
+module_dir = ./
 
-core_src = control.c \
+bfin_lib_src = control.c \
 	dac.c \
 	main.c \
 	init.c \
@@ -17,9 +18,13 @@ core_src = control.c \
 	spi.c \
 	util.c
 
-core_obj = $(patsubst %.c, %.o, $(core_src))
+bfin_lib_obj = $(patsubst %.c, %.o, $(bfin_lib_src))
 
-INC += -I$(core_srcdir) -I$(common_dir) -I$(common_dir)/libfixmath -I$(audio_dir) -I$(module_dir)
+INC += -I$(bfin_lib_srcdir) \
+	-I$(common_dir) \
+	-I$(common_dir)/libfixmath \
+	-I$(audio_dir) \
+	-I$(module_dir)
 
 CROSS_COMPILE = bfin-elf-
 CC = $(CROSS_COMPILE)gcc
@@ -32,23 +37,23 @@ CFLAGS += -03
 
 
 LDFLAGS += -mcpu=$(CPU)
-# LDRFLAGS += --initcode $(core_objdir)init.o
+# LDRFLAGS += --initcode $(bfin_lib_objdir)init.o
 LDRFLAGS += --bits 16 --dma 8
 LDRFLAGS += --bmode spi_slave --port F --gpio 2
 LDRFLAGS += --verbose
 
-core_target: $(patsubst %.o, $(core_objdir)%.o, $(core_obj))
-	@echo core objects are complete in $(core_objdir)
+bfin_lib_target: $(patsubst %.o, $(bfin_lib_objdir)%.o, $(bfin_lib_obj))
+	@echo bfin_lib objects are complete in $(bfin_lib_objdir)
 
-$(core_objdir)%.o : # $(core_srcdir)%.c
+$(bfin_lib_objdir)%.o : # $(bfin_lib_srcdir)%.c
 	$(CC) $(CFLAGS) $(INC) -c \
-	$(patsubst $(core_objdir)%.o, $(core_srcdir)%.c, $@) \
+	$(patsubst $(bfin_lib_objdir)%.o, $(bfin_lib_srcdir)%.c, $@) \
 	-o $@
 
 %.ldr: %
 	$(LDR) -T $(CPU) -c $(LDRFLAGS) $@ $<
 
-core_clean:
-	rm $(core_objdir)*.o
+bfin_lib_clean:
+	rm $(bfin_lib_objdir)*.o
 
-.PHONY: core_target core_clean
+.PHONY: bfin_lib_target bfin_lib_clean
