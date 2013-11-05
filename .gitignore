@@ -32,6 +32,12 @@
 *.sql
 *.sqlite
 
+# app support files #
+################
+*~
+.emacs.desktop
+.kermrc
+
 # OS generated files #
 ######################
 .DS_Store
@@ -42,4 +48,3 @@
 Icon?
 ehthumbs.db
 Thumbs.db
-avr32/apps/bees/src/net_adc.c
