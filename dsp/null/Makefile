@@ -12,10 +12,10 @@ LDFLAGS += -lncurses
 LDFLAGS += -lm
 
 # source directories
-COMMON = ../common
+COMMON = ../../common
 LIBFIXMATH = $(COMMON)/libfixmath
-AUDIOLIB = ../audio
-MODULES = ../bfin/modules
+AUDIOLIB = ../
+MODULES = ../../modules
 
 #include paths
 INC := -I$(COMMON) -I$(LIBFIXMATH) -I$(AUDIOLIB) -I./ -I../../../$(AUDIOLIB)
