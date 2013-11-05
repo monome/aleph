@@ -1,0 +1,5 @@
+gcc -g -std=gnu99 -v -c -I../common -o main.o main.c
+gcc -g -std=gnu99 -v -c -I../common -o audio.o audio.c
+gcc -g -std=gnu99 -v -c -I../common -o ui.o ui.c
+gcc -g -std=gnu99 -v -c -I../common -o wire.o wire.c
+gcc -g -std=gnu99 -v -I../common -lm -lportaudio -lncurses -o nullp main.o audio.o ui.o wire.o
