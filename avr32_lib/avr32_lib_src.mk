@@ -23,44 +23,44 @@ CSRCS += \
         common/services/clock/uc3a0_a1/sysclk.c            \
 	common/services/storage/ctrl_access/ctrl_access.c \
         common/services/usb/uhc/uhc.c \
-	$(ALEPH_AVR32)/src/adc.c \
-	$(ALEPH_AVR32)/src/app.c \
-	$(ALEPH_AVR32)/src/bfin.c \
-	$(ALEPH_AVR32)/src/control.c \
-	$(ALEPH_AVR32)/src/events.c \
-	$(ALEPH_AVR32)/src/encoders.c \
-	$(ALEPH_AVR32)/src/filesystem.c \
-	$(ALEPH_AVR32)/src/flash.c \
-	$(ALEPH_AVR32)/src/font.c \
-	$(ALEPH_AVR32)/src/i2c.c \
-	$(ALEPH_AVR32)/src/init.c	\
-	$(ALEPH_AVR32)/src/interrupts.c \
-	$(ALEPH_AVR32)/src/main.c \
-	$(ALEPH_AVR32)/src/memory.c \
-	$(ALEPH_AVR32)/src/monome.c \
-	$(ALEPH_AVR32)/src/region.c \
-	$(ALEPH_AVR32)/src/screen.c \
-	$(ALEPH_AVR32)/src/simple_string.c \
-	$(ALEPH_AVR32)/src/switches.c \
-	$(ALEPH_AVR32)/src/timers.c \
-	$(ALEPH_AVR32)/src/usb.c \
-	$(ALEPH_AVR32)/src/usb/gamepad/hid_gamepad.c \
-	$(ALEPH_AVR32)/src/usb/gamepad/uhi_hid_gamepad.c \
-	$(ALEPH_AVR32)/src/usb/ftdi/uhi_ftdi.c \
-	$(ALEPH_AVR32)/src/usb/ftdi/ftdi.c \
-	$(ALEPH_AVR32)/src/usb/midi/uhi_midi.c \
-	$(ALEPH_AVR32)/src/usb/midi/midi.c \
-	$(ALEPH_AVR32)/src/usb/mouse/hid_mouse.c \
-	$(ALEPH_AVR32)/src/usb/mouse/uhi_hid_mouse.c \
-	$(ALEPH_AVR32)/src/fat_io_lib/fat_access.c \
-	$(ALEPH_AVR32)/src/fat_io_lib/fat_cache.c \
-	$(ALEPH_AVR32)/src/fat_io_lib/fat_filelib.c \
-	$(ALEPH_AVR32)/src/fat_io_lib/fat_format.c \
-	$(ALEPH_AVR32)/src/fat_io_lib/fat_misc.c \
-	$(ALEPH_AVR32)/src/fat_io_lib/fat_string.c \
-	$(ALEPH_AVR32)/src/fat_io_lib/fat_table.c \
-	$(ALEPH_AVR32)/src/fat_io_lib/fat_write.c \
-	$(ALEPH_AVR32)/src/fonts/ume_tgo5_18.c \
+	$(ALEPH_AVR32)src/adc.c \
+	$(ALEPH_AVR32)src/app.c \
+	$(ALEPH_AVR32)src/bfin.c \
+	$(ALEPH_AVR32)src/control.c \
+	$(ALEPH_AVR32)src/events.c \
+	$(ALEPH_AVR32)src/encoders.c \
+	$(ALEPH_AVR32)src/filesystem.c \
+	$(ALEPH_AVR32)src/flash.c \
+	$(ALEPH_AVR32)src/font.c \
+	$(ALEPH_AVR32)src/i2c.c \
+	$(ALEPH_AVR32)src/init.c	\
+	$(ALEPH_AVR32)src/interrupts.c \
+	$(ALEPH_AVR32)src/main.c \
+	$(ALEPH_AVR32)src/memory.c \
+	$(ALEPH_AVR32)src/monome.c \
+	$(ALEPH_AVR32)src/region.c \
+	$(ALEPH_AVR32)src/screen.c \
+	$(ALEPH_AVR32)src/simple_string.c \
+	$(ALEPH_AVR32)src/switches.c \
+	$(ALEPH_AVR32)src/timers.c \
+	$(ALEPH_AVR32)src/usb.c \
+	$(ALEPH_AVR32)src/usb/gamepad/hid_gamepad.c \
+	$(ALEPH_AVR32)src/usb/gamepad/uhi_hid_gamepad.c \
+	$(ALEPH_AVR32)src/usb/ftdi/uhi_ftdi.c \
+	$(ALEPH_AVR32)src/usb/ftdi/ftdi.c \
+	$(ALEPH_AVR32)src/usb/midi/uhi_midi.c \
+	$(ALEPH_AVR32)src/usb/midi/midi.c \
+	$(ALEPH_AVR32)src/usb/mouse/hid_mouse.c \
+	$(ALEPH_AVR32)src/usb/mouse/uhi_hid_mouse.c \
+	$(ALEPH_AVR32)src/fat_io_lib/fat_access.c \
+	$(ALEPH_AVR32)src/fat_io_lib/fat_cache.c \
+	$(ALEPH_AVR32)src/fat_io_lib/fat_filelib.c \
+	$(ALEPH_AVR32)src/fat_io_lib/fat_format.c \
+	$(ALEPH_AVR32)src/fat_io_lib/fat_misc.c \
+	$(ALEPH_AVR32)src/fat_io_lib/fat_string.c \
+	$(ALEPH_AVR32)src/fat_io_lib/fat_table.c \
+	$(ALEPH_AVR32)src/fat_io_lib/fat_write.c \
+	$(ALEPH_AVR32)src/fonts/ume_tgo5_18.c \
 	$(ALEPH_COMMON)/fix.c \
 	$(ALEPH_COMMON)/libfixmath/fix16.c
 
@@ -108,13 +108,13 @@ INC_PATH += \
        common/services/usb/uhc                            \
        common/utils                \
 	$(ALEPH_AVR32)	           \
-	$(ALEPH_AVR32)/src	   \
+	$(ALEPH_AVR32)src	   \
 	$(ALEPH_AVR32)/conf	   \
-	$(ALEPH_AVR32)/src/fat_io_lib  \
-	$(ALEPH_AVR32)/src/usb     \
-	$(ALEPH_AVR32)/src/usb/ftdi   \
-	$(ALEPH_AVR32)/src/usb/gamepad \
-	$(ALEPH_AVR32)/src/usb/midi   \
-	$(ALEPH_AVR32)/src/usb/mouse   \
+	$(ALEPH_AVR32)src/fat_io_lib  \
+	$(ALEPH_AVR32)src/usb     \
+	$(ALEPH_AVR32)src/usb/ftdi   \
+	$(ALEPH_AVR32)src/usb/gamepad \
+	$(ALEPH_AVR32)src/usb/midi   \
+	$(ALEPH_AVR32)src/usb/mouse   \
 	$(ALEPH_COMMON)	           \
 	$(ALEPH_COMMON)/libfixmath
