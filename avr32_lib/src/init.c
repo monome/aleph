@@ -305,10 +305,10 @@ void init_bfin_resources(void) {
 
   // intialize the chip register
   spi_setupChipReg(BFIN_SPI, &spiOptions, FPBA_HZ);
-  // enable pulldown on bfin HWAIT line
-  //// shit! not implemented... 
-  // gpio_enable_pin_pull_down(BFIN_HWAIT_PIN);
-  
+  // we would do an internal pulldown on HWAIT here,
+  // but this avr32 part family doesn't have it.
+  // so there is an external pulldown instead.
+
   // enable pullup on bfin RESET line
   gpio_enable_pin_pull_up(BFIN_RESET_PIN);
 }
@@ -329,3 +329,4 @@ void init_usb_host (void) {
   //  pm_configure_usb_clock();
   uhc_start();
 }
+

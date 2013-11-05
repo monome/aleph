@@ -54,11 +54,13 @@ void app_init(void) {
   print_dbg("\r\n render_init...");
   render_init();
 
-  print_dbg("\r\n pages_init...");
-  pages_init();
+  /// move these after scene load,
+  // so that initial graphics reflect scene data
+  /* print_dbg("\r\n pages_init..."); */
+  /* pages_init(); */
 
-  print_dbg("\r\n play_init...");
-  play_init();
+  /* print_dbg("\r\n play_init..."); */
+  /* play_init(); */
 }
 
 // this is called from main event handler
@@ -99,6 +101,13 @@ u8 app_launch(u8 firstrun) {
     scene_read_default();
   }
 
+  // init pages (fill graphics buffers)
+  print_dbg("\r\n pages_init...");
+  pages_init();
+
+  print_dbg("\r\n play_init...");
+  play_init();
+
   // update page rendering and handlers
   pages_reselect();
 
@@ -111,9 +120,7 @@ u8 app_launch(u8 firstrun) {
   gpio_set_gpio_pin(POWER_CTL_PIN);
 
   // assign app event handlers
-
-  // set handler
-  print_dbg("\r\n setting handler ");
+  print_dbg("\r\n assigning handlers ");
   assign_bees_event_handlers();
 
   return 1;

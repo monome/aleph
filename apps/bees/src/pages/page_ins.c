@@ -49,26 +49,10 @@ static void handle_key_1(s32 val);
 static void handle_key_2(s32 val);
 static void handle_key_3(s32 val);
 
-/* // array of handlers */
-/* const page_handler_t handler_ins[eNumPageHandlers] = { */
-/*   &handle_enc_0, */
-/*   &handle_enc_1, */
-/*   &handle_enc_2, */
-/*   &handle_enc_3, */
-/*   &handle_key_0, */
-/*   &handle_key_1, */
-/*   &handle_key_2, */
-/*   &handle_key_3, */
-/* }; */
-
 // fill tmp region with new content
 // given input index and foreground color
 static void render_line(s16 idx, u8 fg) {
-  const s16 opIdx = net_in_op_idx(idx);
-  /// slightly weird place to update this but whatever
-  //?/ ... ?? /  .?? 
-  //  inPlay = net_get_in_play(idx);
-  
+  const s16 opIdx = net_in_op_idx(idx);  
   region_fill(lineRegion, 0x0);
   if(opIdx >= 0) {
     // operator input
@@ -81,7 +65,7 @@ static void render_line(s16 idx, u8 fg) {
     appendln( net_in_name(idx) );
     endln();
 
-    font_string_region_clip(lineRegion, lineBuf, 0, 0, fg, 0);
+    font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
     clearln();
 
     print_fix16(lineBuf, net_get_in_value(idx));
@@ -93,7 +77,7 @@ static void render_line(s16 idx, u8 fg) {
     appendln_char('.');
     appendln( net_in_name(idx)); 
     endln();
-    font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
+    font_string_region_clip(lineRegion, lineBuf, 2, 0, 0xa, 0);
     clearln();
     print_fix16(lineBuf, net_get_in_value(idx));
     font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, fg, 0);
@@ -102,9 +86,13 @@ static void render_line(s16 idx, u8 fg) {
   if(net_get_in_play(idx)) {
     font_string_region_clip(lineRegion, "|", 126, 0, fg, 0);
   }
+  // draw something to indicate preset inclusion
+  if(net_get_in_preset(idx)) {
+    font_string_region_clip(lineRegion, "|", 0, 0, fg, 0);
+  }
 
   // underline
-  region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
+  //  region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
 }
 
 // edit the current seleciton
@@ -141,6 +129,8 @@ static void select_scroll(s32 dir) {
     curPage->select = newSel;
     // update preset-inclusion flag
     inPreset = (u8)net_get_in_preset((u32)(curPage->select));
+    // update play-inclusion flag
+    inPlay = (u8)net_get_in_play((u32)(curPage->select));
    
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
@@ -174,7 +164,8 @@ static void select_scroll(s32 dir) {
     curPage->select = newSel;    
     // update preset-inclusion flag
     inPreset = (u8)net_get_in_preset((u32)(curPage->select));
-    
+    // update play-inclusion flag
+    inPlay = (u8)net_get_in_play((u32)(curPage->select));
     // add new content at bottom of screen
     newIdx = newSel + SCROLL_LINES_ABOVE;
     if(newIdx > max) { 

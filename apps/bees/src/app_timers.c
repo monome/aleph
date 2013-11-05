@@ -60,12 +60,12 @@ static softTimer_t adcPollTimer = { .next = NULL };
 //----- callbacks
 
 // screen refresh callback
-static void screen_timer_callback(void) {  
+static void screen_timer_callback(void* obj) {  
   render_update();
 }
 
 // encoder accumulator polling callback
-static void enc_timer_callback(void) {
+static void enc_timer_callback(void* obj) {
   static s16 val, valAbs;
   u8 i;
 
@@ -86,26 +86,26 @@ static void enc_timer_callback(void) {
 
 
 //adc polling callback
-static void adc_poll_timer_callback(void) {
+static void adc_poll_timer_callback(void* obj) {
   adc_poll();
 }
 
 //midi polling callback
-static void midi_poll_timer_callback(void) {
+static void midi_poll_timer_callback(void* obj) {
   // asynchronous, non-blocking read
   // UHC callback spawns appropriate events
   midi_read();
 }
 
 // monome polling callback
-static void monome_poll_timer_callback(void) {
+static void monome_poll_timer_callback(void* obj) {
   // asynchronous, non-blocking read
   // UHC callback spawns appropriate events
   ftdi_read();
 }
 
 // monome refresh callback
-static void monome_refresh_timer_callback(void) {
+static void monome_refresh_timer_callback(void* obj) {
   //  if (monomeConnect) {
   //    print_dbg("\r\n posting monome refresh event");
   if(monomeFrameDirty > 0) {
@@ -119,15 +119,15 @@ static void monome_refresh_timer_callback(void) {
 //---- external functions
 
 void init_app_timers(void) {
-  timer_add(&screenTimer, 50, &screen_timer_callback );
-  timer_add(&encTimer, 50, &enc_timer_callback );
+  timer_add(&screenTimer, 50, &screen_timer_callback, NULL );
+  timer_add(&encTimer, 50, &enc_timer_callback, NULL );
 }
 
 // monome: start polling
 void timers_set_monome(void) {
   print_dbg("\r\n setting monome timers");
-  timer_add(&monomePollTimer, 	 20, &monome_poll_timer_callback );
-  timer_add(&monomeRefreshTimer, 50, &monome_refresh_timer_callback );
+  timer_add(&monomePollTimer, 	 20, &monome_poll_timer_callback, NULL );
+  timer_add(&monomeRefreshTimer, 50, &monome_refresh_timer_callback, NULL );
 }
 
 // monome stop polling
@@ -140,9 +140,9 @@ void timers_unset_monome(void) {
 // midi : start polling
 void timers_set_midi(void) {
   print_dbg("\r\n setting midi timers");
-  timer_add( &midiPollTimer, 20, &midi_poll_timer_callback );
+  timer_add( &midiPollTimer, 20, &midi_poll_timer_callback, NULL );
   // TODO:
-  //  timer_add(&midiRefreshTimer, eMidiRefreshTimerTag, 50,  &midi_refresh_timer_callback, 1);
+  //  timer_add(&midiRefreshTimer, eMidiRefreshTimerTag, 50,  &midi_refresh_timer_callback, NULL, 1);
 }
 
 // midi : stop polling
@@ -157,7 +157,7 @@ void timers_unset_midi(void) {
 void timers_set_adc(u32 period) {
   print_dbg("\r\n setting adc timers, period: ");
   print_dbg_ulong(period);
-  timer_add(&adcPollTimer, period, &adc_poll_timer_callback );
+  timer_add(&adcPollTimer, period, &adc_poll_timer_callback, NULL );
 }
 
 // adc : stop polling

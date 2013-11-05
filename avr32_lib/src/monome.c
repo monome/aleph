@@ -365,10 +365,24 @@ void monome_grid_adc_parse_event_data(u32 data, u8* n, u16* val) {
 
 // ring encoder
 static inline void monome_ring_enc_write_event( u8 n, u8 val) {
-  // TODO
+  u8* data = (u8*)(&(ev.data));
+  data[0] = n;
+  data[1] = val;
+  
+  /* print_dbg("\r\n monome.c wrote event; x: 0x"); */
+  /* print_dbg_hex(x); */
+  /* print_dbg("; y: 0x"); */
+  /* print_dbg_hex(y); */
+  /* print_dbg("; z: 0x"); */
+  /* print_dbg_hex(val); */
+
+  ev.type = kEventMonomeRingEnc;
+  event_post(&ev);
 }
 void monome_ring_enc_parse_event_data(u32 data, u8* n, s8* val) {
-  /// TODO
+  u8* bdata = (u8*)(&data);
+  *n = bdata[0];
+  *val = bdata[1];  // FIXME this needs a cast to signed?
 }
 
 // ring press/lift
@@ -726,7 +740,25 @@ static void grid_map_series(u8 x, u8 y, const u8* data) {
 /* } */
 
 static void ring_map_mext(u8 n, u8* data) {
-  // TODO
+  //  static u8 tx[11] = { 0x14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  static u8* ptx;
+  static u8 i;
+
+  txBuf[0] = 0x92;
+  txBuf[1] = n;
+  
+  ptx = txBuf + 2;
+  
+  // smash 64 LEDs together, nibbles
+  for(i=0; i<32; i++) {
+    *ptx = *data << 4;
+    data++;
+    *ptx |= *data;
+    data++;
+    ptx++;
+  }
+
+  ftdi_write(txBuf, 32 + 2);
 }
 
 static void set_intense_series(u8 v) {

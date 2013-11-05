@@ -23,8 +23,8 @@ static scroll centerScroll;
 //--- page-specific state variables
 // selection-included-in-preset flag (read from network on selection)
 static u8 inPreset = 0;
-// confirm clear operation
-static u8 clearConfirm = 0;
+// in clear operation
+static u8 inClear = 0;
 
 //==========================================
 //===== static function declarations
@@ -46,31 +46,23 @@ static void show_foot2(void);
 static void show_foot3(void);
 static void show_foot(void);
 
-/* // array of handlers */
-/* const page_handler_t handler_outs[eNumPageHandlers] = { */
-/*   &handle_enc_0, */
-/*   &handle_enc_1, */
-/*   &handle_enc_2, */
-/*   &handle_enc_3, */
-/*   &handle_key_0, */
-/*   &handle_key_1, */
-/*   &handle_key_2, */
-/*   &handle_key_3, */
-/* }; */
-
 // fill tmp region with new content
 // given input index and foreground color
 static void render_line(s16 idx, u8 fg) {
   //  const s16 opIdx = net_in_op_idx(idx);
   s16 target;
-  s16 targetOpIdx;
+  s16 targetOpIdx = -1;
   s16 srcOpIdx; 
   region_fill(lineRegion, 0x0);
 
   target = net_get_target(idx);
   srcOpIdx = net_out_op_idx(idx);
+  targetOpIdx = net_out_op_idx(target);
   if(target >= 0) {
     //// output has target
+    // the network doesn't actually execute connections from an op to itself.
+    // reflect this in UI by dimming this line
+    if(targetOpIdx == srcOpIdx) { fg = 0x5; }
     // render output
     clearln();
     appendln_idx_lj(srcOpIdx);
@@ -79,7 +71,7 @@ static void render_line(s16 idx, u8 fg) {
     appendln_char('/');
     appendln( net_out_name(idx) );
     endln();
-    font_string_region_clip(lineRegion, lineBuf, 0, 0, fg, 0);
+    font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
     // render target
     targetOpIdx = net_in_op_idx(target);
     clearln();
@@ -98,13 +90,7 @@ static void render_line(s16 idx, u8 fg) {
       appendln( net_in_name(target)); 
     }
     endln();
-    if(targetOpIdx == srcOpIdx) {
-      // the network doesn't actually perform connections from an op to itself.
-      // reflect this in UI by dimming this line
-      font_string_region_clip(lineRegion, lineBuf, 60, 0, 0x5, 0);
-    } else {
-      font_string_region_clip(lineRegion, lineBuf, 60, 0, fg, 0);
-    }
+    font_string_region_clip(lineRegion, lineBuf, 60, 0, fg, 0);
     clearln();
   } else {
     //// no target
@@ -116,10 +102,14 @@ static void render_line(s16 idx, u8 fg) {
     appendln_char('/');
     appendln( net_out_name(idx) );
     endln();
-    font_string_region_clip(lineRegion, lineBuf, 0, 0, fg, 0);
+    font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
+  }
+  // draw something to indicate preset inclusion
+  if(net_get_in_preset(idx)) {
+    font_string_region_clip(lineRegion, "|", 0, 0, fg, 0);
   }
   // underline
-  region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
+  //  region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
 }
 
 // edit the current seleciton
@@ -284,8 +274,7 @@ static void show_foot3(void) {
 
 
 static void show_foot(void) {
-  
-  if(clearConfirm) {
+  if(inClear) {
     font_string_region_clip(footRegion[0], "-    ", 0, 0, 0xf, 0);
     font_string_region_clip(footRegion[1], "-    ", 0, 0, 0xf, 0);
     font_string_region_clip(footRegion[2], "OK!  ", 0, 0, 0xf, 0);
@@ -296,8 +285,7 @@ static void show_foot(void) {
     show_foot1();
     show_foot2();
     show_foot3();
-  }
-  
+  } 
 }
 
 //----------------------
@@ -371,6 +359,7 @@ void handle_enc_0(s32 val) {
 }
 
 void handle_enc_1(s32 val) {
+  ;;  // nothing to do
 }
 
 void handle_enc_2(s32 val) {

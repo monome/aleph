@@ -118,9 +118,3 @@ char* preset_name(u32 id) {
   //  print_dbg_hex((u32)&(presets[id]));
   return presets[id].name;
 }
-
-
-//// so dirty
-/* preset_t** preset_get_presets(void) { */
-/*   return (preset_t**)&presets; */
-/* } */

@@ -67,7 +67,5 @@ void preset_store(u32 preIdx);
 void preset_recall(u32 preIdx);
 // preset name
 char* preset_name(u32 id);
-////// this is so terrible and dirty
-//preset_t** preset_get_presets(void);
 
 #endif

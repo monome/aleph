@@ -22,9 +22,6 @@
 //---- flags enum; 
 typedef enum {
   eOpFlagSys,  // op is system-owned
-  eOpFlagCtl,  // op is control generator
-  eOpFlagRec,  // op is control receiver
-  eOpFlagTick, // op is time-sensitive and requires a tick
   eOpFlagMenu, // op has a submenu function
   eOpFlagMonomeGrid, // op is a monome grid controller
   eOpFlagMonomeRing, // op is a monome arc controller
@@ -43,6 +40,7 @@ typedef enum {
   eOpMonomeGridRaw,
   eOpMidiNote,
   eOpAdc,
+  eOpMetro,
   // eOpAccum,
   // eOpSelect,
   // eOpMapLin,

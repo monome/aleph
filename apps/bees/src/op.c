@@ -61,6 +61,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_adc_t),
     .init = &op_adc_init,
     .deinit = &op_adc_deinit
+  }, {
+    .name = "METRO",
+    .size = sizeof(op_metro_t),
+    .init = &op_metro_init,
+    .deinit = &op_metro_deinit
   }
 };
 

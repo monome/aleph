@@ -48,12 +48,6 @@ static void irq_pdca(void);
 __attribute__((__interrupt__))
 static void irq_tc(void);
 
-#if 0
-// irq for PA00-PA07
-__attribute__((__interrupt__))
-static void irq_port0_line0(void);
-#endif
-
 // irq for PA24-PA31
 __attribute__((__interrupt__))
 static void irq_port0_line3(void);
@@ -73,7 +67,6 @@ static void irq_port1_line2(void);
 // irq for PB24-PB31
 __attribute__((__interrupt__))
 static void irq_port1_line3(void);
-
 
 // irq for uart
 __attribute__((__interrupt__))
@@ -122,23 +115,14 @@ static void irq_tc(void) {
 }
 
 
-// detect usart-usb enumeration (via CTS)
-// interrupt handler for PA00-PA07
-#if 0
-__attribute__((__interrupt__))
-static void irq_port0_line0(void) {
-  if(gpio_get_pin_interrupt_flag(USART_USB_DETECT_PIN)) {
-    if(gpio_get_pin_value(USART_USB_DETECT_PIN)) {
-      gpio_set_pin_high(LED_MODE_PIN);
-//      FTDI_USART->ier = AVR32_USART_IER_RXRDY_MASK;
-    } else {
-      gpio_set_pin_low(LED_MODE_PIN);
-  //    FTDI_USART->idr = AVR32_USART_IER_RXRDY_MASK;
-    }
-    gpio_clear_pin_interrupt_flag(USART_USB_DETECT_PIN);
-  }
-}
-#endif
+/* // interrupt handler for PA00-PA07 */
+/* __attribute__((__interrupt__)) */
+/* static void irq_port0_line0(void) { */
+/*   if(gpio_get_pin_interrupt_flag(AVR32_PIN_PA04)) { */
+/*     gpio_clear_pin_interrupt_flag(AVR32_PIN_PA04); */
+/*       gpio_toggle_pin(LED_MODE_PIN); */
+/*   } */
+/* } */
 
 // interrupt handler for PA23-PA30
 __attribute__((__interrupt__))
@@ -261,6 +245,7 @@ static void irq_usart(void) {
   int c;
   usart_read_char(FTDI_USART,&c);
   // usart_write_char(FTDI_USART,c);
+  // print_dbg("\r\nusb cable change.");
   gpio_toggle_pin(LED_MODE_PIN);
 
 }
@@ -272,12 +257,7 @@ static void irq_usart(void) {
 void register_interrupts(void) {
   // enable interrupts on GPIO inputs
 
-  // usart-usb enumeration detection
-  gpio_enable_pin_interrupt( USART_USB_DETECT_PIN, GPIO_PIN_CHANGE);
-
-
   // BFIN_HWAIT
-  // gpio_enable_pin_interrupt( BFIN_HWAIT_PIN, GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( BFIN_HWAIT_PIN, GPIO_RISING_EDGE);
 
   // encoders
@@ -302,9 +282,6 @@ void register_interrupts(void) {
   gpio_enable_pin_interrupt( SW_MODE_PIN,	GPIO_PIN_CHANGE);
   gpio_enable_pin_interrupt( SW_POWER_PIN,	GPIO_PIN_CHANGE);
  
-  // usb-usart detection
-  // INTC_register_interrupt( &irq_port0_line0, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA00 / 8), UI_IRQ_PRIORITY);
-
   // PA24 - PA31
   INTC_register_interrupt( &irq_port0_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA24 / 8), UI_IRQ_PRIORITY);
 

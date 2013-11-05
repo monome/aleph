@@ -61,7 +61,6 @@ void op_enc_init(void* mem) {
   enc->super.outString = op_enc_outstring;
   enc->super.type = eOpEnc;
   enc->super.flags |= (1 << eOpFlagSys); // system 
-  enc->super.flags |= (1 << eOpFlagCtl); // control generator
 
   enc->in_val[0] = &(enc->move);
   enc->in_val[1] = &(enc->min);

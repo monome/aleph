@@ -205,7 +205,6 @@ void assign_bees_event_handlers(void) {
   app_event_handlers[ kEventSwitch5 ]	= &handler_Switch5 ;
   app_event_handlers[ kEventSwitch6 ]	= &handler_Switch6 ;
   app_event_handlers[ kEventSwitch7 ]	= &handler_Switch7 ;
-  //  encoders in page handlers
   app_event_handlers[ kEventMonomeConnect ]	= &handler_MonomeConnect ;
   app_event_handlers[ kEventMonomeDisconnect ]	= &handler_MonomeDisconnect ;
   app_event_handlers[ kEventMonomeGridKey ]	= &handler_MonomeGridKey ;
