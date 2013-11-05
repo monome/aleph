@@ -1,17 +1,17 @@
 # ------------------------
-# -- core_config.mk
+# -- avr32_lib_config.mk
 
 # boilerplate configuration makefile for aleph-avr32 applications.
 
 # app developers: feel free to include this or copy/edit as you like,
 # but beware of breaking things / bricking your unit..
 
-# avr32 core directory
-ALEPH_AVR32 = ../avr32
+# avr32 core directory, relative to top-level asf
+ALEPH_AVR32 = ../
 # aleph common directory
-ALEPH_COMMON = ../common
+ALEPH_COMMON = ../../common
 # application directory
-APP_DIR = ../avr32/apps/$(APP)
+APP_DIR = ../..//apps/$(APP)
 
 # Target CPU architecture: ap, ucr1, ucr2 or ucr3
 ARCH = ucr2
