@@ -76,6 +76,11 @@ u8 init_flash() {
   } return 0;
 }
 
+// clear firstrun status
+void flash_clear_firstrun(void) {
+  flashc_memset32((void*)&(flash_nvram_data.firstRun), 0x00000000, 4, true);
+}
+
 // read default blackfin
 void flash_read_ldr(void) {
   bfinLdrSize = flash_nvram_data.ldrSize;
@@ -118,11 +123,15 @@ extern u8 flash_write_hex_record(u8* data) {
   if(err) {
     // print_dbg("\r\n failure parsing hex record: \r\n");
     // print_dbg((const char*)data);
+
+    screen_line(0, 6, "WARNING:", 0xf);
+    screen_line(0, 7, "error parsing hex record!", 0xf);
+    screen_refresh();
+
   } else {
     switch(rec.type) {
     case HEX_EXT_LINEAR_ADDRESS:
       addrOff = rec.address;
-      //      // print_dbg("\r\n writing hex 
       break;
     case HEX_DATA:
       /* // print_dbg("\r\n writing firmware to flash at address: "); */
@@ -131,8 +140,6 @@ extern u8 flash_write_hex_record(u8* data) {
       break;
     default:
       ;;
-      // print_dbg("\r\n unhandled hex record type: \r\n");
-      // print_dbg((const char*)data);
     }
   }
   return 0;

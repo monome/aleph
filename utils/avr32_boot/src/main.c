@@ -49,7 +49,7 @@
 #include "memory.h"
 #include "switches.h"
 #include "timers.h"
-
+#include "watchdog.h"
 
 //==================================================
 //====  variables
@@ -65,8 +65,6 @@ static u8 mode = 0;
 static void init_avr32(void);
 static void init_ctl(void);
 static void check_events(void);
-///// test
-static void print_flash(void);
 
 //=================================================
 //==== definitons
@@ -175,23 +173,10 @@ static void check_events(void) {
       case kEventSwitchUp1:
 	menu_handleKey(eKeyFnUpB, e.eventData);
 	break;
-      case kEventSwitchDown2:
-	//	menu_handleKey(eKeyFnDownC, e.eventData);
-	/////////
-	print_flash();
-	//////////////
-	break;
       case kEventSwitchUp2:
 	menu_handleKey(eKeyFnUpC, e.eventData);
 	break;
 
-      case kEventSwitchDown3:
-	//	menu_handleKey(eKeyFnDownD, e.eventData);
-	break;
-
-      case kEventSwitchUp3:
-	//	menu_handleKey(eKeyFnUpD, e.eventData);
-	break;
 	// mode switch
       case kEventSwitchDown4:
 	mode ^= 1;
@@ -199,16 +184,12 @@ static void check_events(void) {
 	else { gpio_clr_gpio_pin(LED_MODE_PIN); }
 	menu_handleKey(eKeyMode, e.eventData);
 	break;
-      case kEventSwitchUp4:
-	break;
 	// power switch
       case kEventSwitchDown5:
 	//	screen_line(0, 0, "powering down!", 0x3f);
 	//	// print_dbg("\r\n AVR32 received power down switch event");
 	screen_refresh();
 	gpio_clr_gpio_pin(POWER_CTL_PIN);
-	break;
-      case kEventSwitchUp5:
 	break;
       case kEventEncoder0:
 			// // print_dbg("\r\n encoder 0");
@@ -254,7 +235,6 @@ static void check_events(void) {
 int main (void) {
   wdt_disable();
 
-  u32 waitForCard = 0;
   u8 isFirstRun = 0;
   u8 isSwDown = 0;
   
@@ -263,11 +243,9 @@ int main (void) {
   //  wdt_disable();
 
   /// check pin and jump out
-  gpio_enable_pin_pull_up(SW3_PIN);
+  gpio_enable_pin_pull_up(SW_MODE_PIN);
 
-  isSwDown = gpio_get_pin_value(SW3_PIN);
-  //  // print_dbg("\r\n sw value: ");
-  //  // print_dbg_hex(isSwUp);
+  isSwDown = gpio_get_pin_value(SW_MODE_PIN);
 
   if(!isSwDown) {
     /// hardcoded jump to runtime code location
@@ -301,6 +279,8 @@ int main (void) {
 
     // flash init, check firstrun
     isFirstRun = init_flash();
+
+    menu_refresh();
 
   }
 

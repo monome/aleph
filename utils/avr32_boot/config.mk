@@ -73,6 +73,7 @@ CSRCS = \
 	$(ALEPH_AVR32)/src/switches.c \
 	$(ALEPH_AVR32)/src/timers.c \
 	$(ALEPH_AVR32)/src/main.c \
+	$(ALEPH_AVR32)/src/watchdog.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_access.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_cache.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_filelib.c \

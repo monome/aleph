@@ -257,6 +257,9 @@ void files_write_firmware_name(const char* name) {
     //    // print_dbg("finished writing.\r\n");
     //    // print_dbg("rebooting now.");
 
+    // clear firstrun field
+    flash_clear_firstrun();
+
     Disable_global_interrupt();
 
     watchdog_reset();
