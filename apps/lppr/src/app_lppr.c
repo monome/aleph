@@ -32,8 +32,6 @@
 // this is called during hardware initialization.
 // use for memory allocation.
 void app_init(void) {
-  // set handler
-  appEventHandler = &lppr_handler;
   render_init();
 }
 
@@ -123,9 +121,11 @@ u8 app_launch(u8 firstrun) {
   // enable timers
   init_app_timers();
 
-
   render_startup();
   render_update();
   
+  // set event handlers
+  lppr_assign_event_handlers();
+
   return 1;
 }

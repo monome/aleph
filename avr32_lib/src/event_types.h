@@ -48,8 +48,10 @@ typedef enum {
   kEventHidConnect,
   kEventHidDisconnect,
   kEventHidByte,
+  // a sneaky little event type for app cutsomization
+  kEventAppCustom,
   /// dummy/count
-  kNumEventTypes,
+  kNumEvents,
 } etype;
 
 #endif

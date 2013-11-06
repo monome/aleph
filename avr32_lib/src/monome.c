@@ -174,9 +174,8 @@ static const grid_map_t gridMapFuncs[eProtocolNumProtocols] = {
   &grid_map_mext,
 };
 
-
 // grid/level/map
-/* static grid_level_map_t gridMapLevelFuncs[eProtocolNumProtocols] = { */
+/* static grid_level_map_t gridMapLevelFuncs[eProtocolNumProtavr32_lib/src/ocols] = { */
 /*   NULL, // unsupported */
 /*   NULL, // unsupported */
 /*   &grid_map_level_mext, */

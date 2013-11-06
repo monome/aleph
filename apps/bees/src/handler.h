@@ -4,8 +4,7 @@
 #include "app.h"
 #include "types.h"
 
-// ui handlers  set_alt(val);3
-//extern void bees_handler(event_t* ev);
+// ui handlers  
 extern void assign_bees_event_handlers(void);
 
 extern s32 scale_knob_value(s32 val);

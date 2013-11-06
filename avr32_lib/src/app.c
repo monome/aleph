@@ -10,7 +10,7 @@
 #include "screen.h"
 
 // global array of pointers to handlers
-void (*app_event_handlers[kNumEventTypes])(s32 data);
+void (*app_event_handlers[kNumEvents])(s32 data);
 
 
 // pause/resume functions
