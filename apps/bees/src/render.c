@@ -176,13 +176,13 @@ void render_set_scroll(scroll* scr) {
 }
 
 // draw editing string at given position, with cursor highlight
-void draw_edit_string(u8 x, u8 y, char* str, u8 len) {
+void draw_edit_string(u8 x, u8 y, char* str, u8 len, u8 cursor) {
   //// FIXME... need more abstraction
   u8 i;
   y *= FONT_CHARH;
   for(i=0; i<len; i++) {
     if(str[i] == 0) { return; }
-    if(i == curPage->cursor) {
+    if(i == cursor) {
 #warning TODO: fix string-editing render
       //     x += screen_char_fixed_back(x, y, str[i], 0x0, 0xa);
       ++x;

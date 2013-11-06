@@ -64,8 +64,11 @@ CSRCS = \
 	$(ALEPH_AVR32)/src/font.c \
 	$(ALEPH_AVR32)/src/init.c	\
 	$(ALEPH_AVR32)/src/interrupts.c \
+	$(ALEPH_AVR32)/src/key_handler.c \
 	$(ALEPH_AVR32)/src/memory.c \
+	$(ALEPH_AVR32)/src/menu.c \
 	$(ALEPH_AVR32)/src/parse_hex.c \
+	$(ALEPH_AVR32)/src/redraw.c \
 	$(ALEPH_AVR32)/src/screen.c \
 	$(ALEPH_AVR32)/src/simple_string.c \
 	$(ALEPH_AVR32)/src/switches.c \
@@ -79,11 +82,6 @@ CSRCS = \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_string.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_table.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_write.c \
-	$(ALEPH_BOOT_BEES)/key_handler.c \
-	$(ALEPH_BOOT_BEES)/menu.c \
-	$(ALEPH_BOOT_BEES)/redraw.c \
-	$(ALEPH_COMMON)/fix.c \
-	$(ALEPH_COMMON)/libfixmath/fix16.c
 
 # List of assembler source files.
 ASSRCS = \

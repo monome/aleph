@@ -12,13 +12,8 @@
 // common
 #include "files.h"
 // bees
-#include "op.h"
-#include "op_math.h"
 #include "menu_protected.h"
-#include "param.h"
-#include "preset.h"
 #include "redraw.h"
-#include "scene.h"
 #include "key_handler.h"
 
 #define FAST_KNOB_LSHIFT 4

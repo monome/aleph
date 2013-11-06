@@ -9,9 +9,6 @@
 #ifndef _MENU_PROTECTED_H_
 #define _MENU_PROTECTED_H_
 
-#include "op.h"
-#include "net.h"
-#include "ui.h"
 #include "menu.h"
 #include "screen.h"
 
@@ -54,26 +51,9 @@ extern page_t* curPage;
 extern s8 pageIdx;
 
 // array of onode pointers for gathering
-extern u32(*gathered)[NET_OUTS_MAX];
-// how many gathered
-extern u32 numGathered;
 // page structures
 extern page_t pages[NUM_PAGES];
 
-// const array of user-creatable operator type id's
-#define NUM_USER_OP_TYPES 6
-#define NUM_USER_OP_TYPES_1 5
-extern const opId_t userOpTypes[NUM_USER_OP_TYPES];
-// selected new operator type
-extern opId_t newOpType;
-
-// list of recently touched parameter idxs
-typedef struct _touched {
-  u16 idx;
-  //  f32 val;
-  fix16 val;
-} touched_t;
-extern touched_t touchedParams[CHAR_ROWS];
  
 ////////////////////////////
 ///// functions

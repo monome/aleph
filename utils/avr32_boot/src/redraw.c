@@ -19,10 +19,7 @@
 // aleph
 #include "files.h"
 #include "fix.h"
-#include "param.h"
-#include "preset.h"
 #include "redraw.h"
-#include "scene.h"
 #include "screen.h"
 #include "types.h"
 
@@ -94,7 +91,7 @@ void redraw_dsp(void) {
     y++;
     draw_line_dsp(n, num, y, 4);
   }
-  screen_line(0, 0, "DSP", 12);
+  screen_line(0, 0, "MODULES", 12);
   // draw footer (function labels)
   screen_line(0, CHAR_ROWS_1, "LOAD DEFAULT", 10);
 }
@@ -131,7 +128,7 @@ void redraw_fw(void) {
     y++;
     draw_line_fw(n, num, y, 4);
   }
-  screen_line(0, 0, "FIRMWARE", 12);
+  screen_line(0, 0, "APPLICATIONS", 12);
   // draw footer (function labels)
   screen_line(0, CHAR_ROWS_1, "WRITE", 10);
 }

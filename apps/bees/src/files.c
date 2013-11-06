@@ -45,7 +45,6 @@ typedef struct _dirList {
   u32 num;
 } dirList_t;
 
-
 //-----------------------------
 //----  extern vars
 
