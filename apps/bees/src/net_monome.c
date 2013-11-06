@@ -28,6 +28,15 @@ static void monome_grid_key_loopback(void* op, u32 edata) {
 //---------------------------------
 // extern variables, initialized here.
 
+
+// FIXME: a similar problem to avr32_lib/monome.c
+// we are assuming there is only one connected device,
+// but of course we would like to implement hub support
+// and allow for multiple devices in the future.
+
+// this would means that multiple operators might be mapped
+// arbitrarily to different sources! oy...
+
 monome_handler_t monome_grid_key_handler = &monome_grid_key_loopback;
 monome_handler_t monome_ring_enc_handler = &dummyHandler;
 op_monome_t* monomeOpFocus = NULL;
@@ -70,7 +79,7 @@ extern void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
   }
 }
 
-// set operator attributes from connected grid device
+// set operator attributes from connected grid device .. ??
 extern void net_monome_set_attributes() {
   //... TODO
 }

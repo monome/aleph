@@ -30,6 +30,7 @@
 #include "handler.h"
 #include "net_midi.h"
 #include "net_monome.h"
+#include "net_poll.h"
 #include "net_protected.h"
 #include "pages.h"
 #include "render.h"
@@ -39,14 +40,14 @@
 ///---- static event handlers
 
 
-static void handler_Adc0(s32 data) { 
+static void handle_Adc0(s32 data) { 
   // update ADC system operator
   /* print_dbg("\r\n bees handle adc0 event, data: 0x"); */
   /* print_dbg_hex(data); */
   net_activate(net_op_in_idx(opSysAdcIdx, 2), data, NULL);
 }
 
-static void handler_Adc1(s32 data) { 
+static void handle_Adc1(s32 data) { 
   // update ADC system operator
   /* print_dbg("\r\n bees handle adc0 event, data: 0x"); */
   /* print_dbg_hex(data); */
@@ -54,7 +55,7 @@ static void handler_Adc1(s32 data) {
 
 }
 
-static void handler_Adc2(s32 data) { 
+static void handle_Adc2(s32 data) { 
   // update ADC system operator
   /* print_dbg("\r\n bees handle adc0 event, data: 0x"); */
   /* print_dbg_hex(data); */
@@ -62,48 +63,19 @@ static void handler_Adc2(s32 data) {
 
 }
 
-static void handler_Adc3(s32 data) { 
+static void handle_Adc3(s32 data) { 
   // update ADC system operator
   /* print_dbg("\r\n bees handle adc0 event, data: 0x"); */
   /* print_dbg_hex(data); */
   net_activate(net_op_in_idx(opSysAdcIdx, 5), data, NULL);
 }
 
-// function key and encoder handlers are page-specific
-/* static void handler_Encoder0(s32 data) {  */
-/*   /// ech, this is wrong... */
-/*   curPage->handler[kEventEncoder0](data); */
-/* } */
+////////////////
+// function key and encoder handles are page-specific
+/// ....
+//////////
 
-/* static void handler_Encoder1(s32 data) {  */
-/*   curPage->handler[kEventEncoder1](data); */
-/* } */
-
-/* static void handler_Encoder2(s32 data) {  */
-/*   curPage->handler[kEventEncoder2](data); */
-/* } */
-
-/* static void handler_Encoder3(s32 data) {  */
-/*   curPage->handler[kEventEncoder3](data); */
-/* } */
-
-/* static void handler_Switch0(s32 data) {  */
-/*   curPage->handler[kEventSwitch0](data); */
-/* } */
-
-/* static void handler_Switch1(s32 data) {  */
-/*   curPage->handler[kEventSwitch1](data); */
-/* } */
-
-/* static void handler_Switch2(s32 data) {  */
-/*   curPage->handler[kEventSwitch2](data); */
-/* } */
-
-/* static void handler_Switch3(s32 data) {  */
-/*   curPage->handler[kEventSwitch3](data); */
-/* } */
-
-static void handler_Switch4(s32 data) { 
+static void handle_Switch4(s32 data) { 
   // mode switch
   if(data > 0) {
     if(pages_toggle_play()) {
@@ -114,7 +86,7 @@ static void handler_Switch4(s32 data) {
   }
 }
 
-static void handler_Switch5(s32 data) { 
+static void handle_Switch5(s32 data) { 
   /// power switch
   render_boot("");
   render_boot("");
@@ -130,93 +102,96 @@ static void handler_Switch5(s32 data) {
   gpio_clr_gpio_pin(POWER_CTL_PIN);
 }
 
-static void handler_Switch6(s32 data) {
+static void handle_Switch6(s32 data) {
   // footswitch 1
   net_activate(net_op_in_idx(opSysSwIdx[4], 0), data, NULL);
 }
 
-static void handler_Switch7(s32 data) { 
+static void handle_Switch7(s32 data) { 
   // footswitch 2
   net_activate(net_op_in_idx(opSysSwIdx[5], 0), data, NULL);
 } 
 
-static void handler_MonomeConnect(s32 data) { 
+static void handle_MonomeConnect(s32 data) { 
   timers_set_monome();
 }
 
-static void handler_MonomeDisconnect(s32 data) { 
+static void handle_MonomeDisconnect(s32 data) { 
   timers_unset_monome();
 }
 
-static void handler_MonomeGridKey(s32 data) { 
-  // net_monome.c defines a dynamic pointer to a single grid event handler.
+static void handle_MonomeGridKey(s32 data) { 
+  // net_monome.c defines a dynamic pointer to a single grid event handle.
   // this is so bees can arbitrate focus between multiple grid ops.
   (*monome_grid_key_handler)(monomeOpFocus, data);
 }
 
-static void handler_MonomeGridTilt(s32 data) { 
+static void handle_MonomeGridTilt(s32 data) { 
   // TODO: update ops
 }
 
-static void handler_MonomeRingEnc(s32 data) {
+static void handle_MonomeRingEnc(s32 data) {
   // TODO: update ops 
 }
 
-static void handler_MonomeRingKey(s32 data) { 
+static void handle_MonomeRingKey(s32 data) { 
   // TODO: update ops
 }
 
-static void handler_MidiConnect(s32 data) {
+static void handle_MidiConnect(s32 data) {
   timers_set_midi();
 }
 
-static void handler_MidiDisconnect(s32 data) { 
+static void handle_MidiDisconnect(s32 data) { 
   timers_unset_midi();
 }
 
-static void handler_MidiPacket(s32 data) {
+static void handle_MidiPacket(s32 data) {
   net_handle_midi_packet(data);
 }
 
-static void handler_HidConnect(s32 data) {
+static void handle_HidConnect(s32 data) {
   // nothing to do... ?
 }
 
-static void handler_HidDisconnect(s32 data) {
+static void handle_HidDisconnect(s32 data) {
   // nothing to do... ?
 }
 
-static void handler_HidByte(s32 data) {
+static void handle_HidByte(s32 data) {
   // TODO: update ops
 }
 
 //-------------------------------------
 //---- extern
 
-/// more maintainable, perhaps, to explicitly assign these...
+/// explicitly assign these...
 /// this way the order of the event types enum doesn't matter.
 void assign_bees_event_handlers(void) {
-  app_event_handlers[ kEventAdc0 ]	= &handler_Adc0 ;
-  app_event_handlers[ kEventAdc1 ]	= &handler_Adc1 ;
-  app_event_handlers[ kEventAdc2 ]	= &handler_Adc2 ;
-  app_event_handlers[ kEventAdc3 ]	= &handler_Adc3 ;
+  /// app-specific:
+  app_event_handlers[ kEventAppCustom ]	= &net_poll_handler ;
+  // system-defined:
+  app_event_handlers[ kEventAdc0 ]	= &handle_Adc0 ;
+  app_event_handlers[ kEventAdc1 ]	= &handle_Adc1 ;
+  app_event_handlers[ kEventAdc2 ]	= &handle_Adc2 ;
+  app_event_handlers[ kEventAdc3 ]	= &handle_Adc3 ;
   // power/mode/footswitches here, fn switches in page handlers
-  app_event_handlers[ kEventSwitch4 ]	= &handler_Switch4 ;
-  app_event_handlers[ kEventSwitch5 ]	= &handler_Switch5 ;
-  app_event_handlers[ kEventSwitch6 ]	= &handler_Switch6 ;
-  app_event_handlers[ kEventSwitch7 ]	= &handler_Switch7 ;
-  app_event_handlers[ kEventMonomeConnect ]	= &handler_MonomeConnect ;
-  app_event_handlers[ kEventMonomeDisconnect ]	= &handler_MonomeDisconnect ;
-  app_event_handlers[ kEventMonomeGridKey ]	= &handler_MonomeGridKey ;
-  app_event_handlers[ kEventMonomeGridTilt ]	= &handler_MonomeGridTilt ;
-  app_event_handlers[ kEventMonomeRingEnc ]	= &handler_MonomeRingEnc ;
-  app_event_handlers[ kEventMonomeRingKey ]	= &handler_MonomeRingKey ;
-  app_event_handlers[ kEventMidiConnect ]	= &handler_MidiConnect ;
-  app_event_handlers[ kEventMidiDisconnect ]	= &handler_MidiDisconnect ;
-  app_event_handlers[ kEventMidiPacket ]	= &handler_MidiPacket ;
-  app_event_handlers[ kEventHidConnect ]	= &handler_HidConnect ;
-  app_event_handlers[ kEventHidDisconnect ]	= &handler_HidDisconnect ;
-  app_event_handlers[ kEventHidByte ]	= &handler_HidByte ;
+  app_event_handlers[ kEventSwitch4 ]	= &handle_Switch4 ;
+  app_event_handlers[ kEventSwitch5 ]	= &handle_Switch5 ;
+  app_event_handlers[ kEventSwitch6 ]	= &handle_Switch6 ;
+  app_event_handlers[ kEventSwitch7 ]	= &handle_Switch7 ;
+  app_event_handlers[ kEventMonomeConnect ]	= &handle_MonomeConnect ;
+  app_event_handlers[ kEventMonomeDisconnect ]	= &handle_MonomeDisconnect ;
+  app_event_handlers[ kEventMonomeGridKey ]	= &handle_MonomeGridKey ;
+  app_event_handlers[ kEventMonomeGridTilt ]	= &handle_MonomeGridTilt ;
+  app_event_handlers[ kEventMonomeRingEnc ]	= &handle_MonomeRingEnc ;
+  app_event_handlers[ kEventMonomeRingKey ]	= &handle_MonomeRingKey ;
+  app_event_handlers[ kEventMidiConnect ]	= &handle_MidiConnect ;
+  app_event_handlers[ kEventMidiDisconnect ]	= &handle_MidiDisconnect ;
+  app_event_handlers[ kEventMidiPacket ]	= &handle_MidiPacket ;
+  app_event_handlers[ kEventHidConnect ]	= &handle_HidConnect ;
+  app_event_handlers[ kEventHidDisconnect ]	= &handle_HidDisconnect ;
+  app_event_handlers[ kEventHidByte ]	= &handle_HidByte ;
 }
 
 //------------------------
@@ -268,7 +243,6 @@ s32 scale_knob_value(s32 val) {
   }
   return ret;
 }
-
 
 // lower slope
 s32 scale_knob_value_small(s32 val) {

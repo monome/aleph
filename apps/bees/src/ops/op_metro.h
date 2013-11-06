@@ -5,6 +5,7 @@
 #include "timers.h"
 
 // bees
+#include "net_poll.h"
 #include "op.h"
 #include "op_math.h"
 #include "types.h"
@@ -24,6 +25,8 @@ typedef struct op_metro_struct {
   op_out_t outs[1];
   // timer data
   softTimer_t timer;
+  // polled operator superclass
+  op_poll_t op_poll;
 } op_metro_t;
 
 // init
@@ -31,10 +34,5 @@ void op_metro_init(void* op);
 
 // de-init
 void op_metro_deinit(void* op);
-
-// callback
-// callback
-void op_metro_callback(void* op);
-
 
 #endif // header guard

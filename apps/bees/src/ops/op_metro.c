@@ -1,7 +1,5 @@
-/* op_metro.c
+/* op_metro.
 
-   ADC system operator, 4 channels.
-   there should only ever be one of these, created at network initialzation
 */
 
 // asf
@@ -9,6 +7,7 @@
 
 // bees
 #include "app_timers.h"
+#include "net_poll.h"
 #include "net_protected.h"
 #include "op_metro.h"
 
@@ -25,15 +24,13 @@ static void op_metro_in_enable	(op_metro_t* metro, const io_t v);
 static void op_metro_in_period	(op_metro_t* metro, const io_t v);
 static void op_metro_in_value	(op_metro_t* metro, const io_t v);
 
-// pickles
-static u8* op_metro_pickle(op_metro_t* metro, u8* dst);
-static const u8* op_metro_unpickle(op_metro_t* metro, const u8* src);
-
+// array of input functions
 static op_in_fn op_metro_in_fn[3] = {
   (op_in_fn)&op_metro_in_enable,
   (op_in_fn)&op_metro_in_period,
   (op_in_fn)&op_metro_in_value,
 };
+
 
 // pickles
 static u8* op_metro_pickle(op_metro_t* metro, u8* dst);
@@ -43,15 +40,22 @@ static const u8* op_metro_unpickle(op_metro_t* metro, const u8* src);
 static inline void op_metro_set_timer(op_metro_t* metro);
 static inline void op_metro_unset_timer(op_metro_t* metro);
 
+// polled-operator handler
+void op_metro_poll_handler(void* op);
+
 //---------------------------------------------
 //----- external function definition
 
 /// initialize
 void op_metro_init(void* op) {
   op_metro_t* metro = (op_metro_t*)op;
+  // operator superclass
   metro->super.numInputs = 3;
   metro->super.numOutputs = 1;
   metro->outs[0] = -1;
+  // polled operator superclass
+  metro->op_poll.handler = (poll_handler_t)(&op_metro_poll_handler);
+  metro->op_poll.op = metro;
   // ui increment function
   metro->super.inc_fn = (op_inc_fn)op_metro_inc_fn;
   metro->super.in_fn = op_metro_in_fn;
@@ -121,14 +125,14 @@ void op_metro_in_period (op_metro_t* metro, const io_t v) {
 }
 
 
-// input polling period
+// input value
 void op_metro_in_value (op_metro_t* metro, const io_t v) {
   metro->value = v;
 }
 
 
-// timer callback
-void op_metro_callback(void* op) {
+// poll event handler
+void op_metro_poll_handler(void* op) {
   op_metro_t* metro = (op_metro_t*)op;
   //  print_dbg("\r\n op_metro timer callback, value: 0x");
   //  print_dbg_hex((u32)(metro->value));
@@ -182,13 +186,19 @@ const u8* op_metro_unpickle(op_metro_t* metro, const u8* src) {
 
 // timer manipulation
 static inline void op_metro_set_timer(op_metro_t* metro) {
-  timer_add(&(metro->timer), OP_TO_INT(metro->period), &op_metro_callback, (void*)metro);
+  //  timer_add(&(metro->timer), OP_TO_INT(metro->period), &op_metro_callback, (void*)metro);
+  /* timer_add(&(metro->timer), OP_TO_INT(metro->period), &app_custom_event_callback, metro); */
+
+  timers_set_metro(&(metro->timer), OP_TO_INT(metro->period), &(metro->op_poll) );
+  
   //  print_dbg("\r\n op_metro add timer, return value: ");
   //  print_dbg(ret ? "1" : "0");
 }
 
 static inline void op_metro_unset_timer(op_metro_t* metro) {
   timer_remove(&(metro->timer));
+  timers_unset_metro(&(metro->timer));
+
   //  print_dbg("\r\n op_metro remove timer, return value: ");
   //  print_dbg(ret ? "1" : "0");
 }

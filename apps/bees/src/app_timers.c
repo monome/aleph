@@ -4,9 +4,8 @@
    these callbacks are performed from the TC interrupt service routine.
    therefore, they should be kept small.
 
-   a good strategy is to create application event types in app_events.h
-   and have the timer callbacks post these events to the queue.
-   the main loop will service the queue and call the application event handler.
+   avr32_lib defines a custom application event type, 
+   which should be used when timer-based processing needs to be deferred to the main loop.
 */
 
 //asf
@@ -19,9 +18,11 @@
 #include "events.h"
 #include "midi.h"
 #include "monome.h"
+#include "net_poll.h"
 #include "timers.h"
 
 // bees
+#include "ops/op_metro.h"
 #include "app_timers.h"
 #include "render.h"
 
@@ -54,10 +55,23 @@ static softTimer_t midiPollTimer = { .next = NULL };
 // poll adc 
 static softTimer_t adcPollTimer = { .next = NULL };
 
+
 //--------------------------
 //----- static functions
 
 //----- callbacks
+
+// the system defines a single event type for application events.
+// event data is a pointer to an arbitrary object
+// here we use it for polled operators like op_metro.
+static void app_custom_event_callback(void* obj) {
+  print_dbg("\r\n bees, app_custom_event_callback, obj: 0x");
+  print_dbg_hex((u32)obj);
+  e.type = kEventAppCustom;
+  // post the object's address in the event data field
+  e.data = (s32)obj;
+  event_post(&e);
+}
 
 // screen refresh callback
 static void screen_timer_callback(void* obj) {  
@@ -71,9 +85,6 @@ static void enc_timer_callback(void* obj) {
 
   for(i=0; i<NUM_ENC; i++) {
     val = enc[i].val;
-
-    /// FIXME: this comparison is pretty dumb
-    //    if ( (val > enc[i].thresh) || (val < (enc[i].thresh ^ -1)) ) {
     valAbs = (val & 0x8000 ? (val ^ 0xffff) + 1 : val);
     if(valAbs > enc[i].thresh) {
       e.type = enc[i].event;
@@ -167,6 +178,19 @@ void timers_unset_adc(void) {
 } 
 
 // change period of adc polling timer
-extern void timers_set_adc_period(u32 period) {
+void timers_set_adc_period(u32 period) {
   adcPollTimer.ticks = period;
+}
+
+// set metro callback
+void timers_set_metro(softTimer_t* timer, u32 period, void* obj) {
+  print_dbg("\r\n set metro timer, period: ");
+  print_dbg_ulong(period);
+  timer_add(timer, period, &app_custom_event_callback, obj );
+}
+
+
+// unset metro callback
+void timers_unset_metro(softTimer_t* timer) {
+  timer_remove(timer);
 }

@@ -3,10 +3,10 @@
   bees
   aleph
   
-  the network needs to keep a list of registered operators that require a tick.
-  tickable operators should inherit from op_poll_t.
-  this superclass contains a pointer to the next ticked operator, 
-  so the network can maintain a linked list without allocating additional memory.
+  abstract superclass and handling glue for polled operators.
+
+  avr32_lib defines a generic event type for app-specific events.
+  here we use it for operators that require a timer callback.
 
  */
 
@@ -19,29 +19,20 @@
 //-------------------
 //---- types
 
-//---- linked list of polled operators
+typedef void(*poll_handler_t)(void* op);
 
-// polled operator superclass, element in list
+// polled operator superclass
 typedef struct _op_poll {
-  struct _op_poll* next;
-  struct _op_poll* prev;
-  void* op; // pointer to operator subclass
+// pointer to operator subclass
+  void* op; 
+  // pointer to handler function
+  poll_handler_t handler; 
 } op_poll_t;
 
-// list structure
-typedef struct _op_list {
-  void* top;
-  void* cur;
-  u32 num;
-} op_list_t;
-
-//-------------------------
+//--------------------
 //--- extern functions
-extern void op_poll_list_init(void);
 
-// add op pointer after the current position
-extern void net_poll_list_add(op_poll_t* op);
-// delete op pointer at current position, return next pointer in list
-extern op_poll_t* net_poll_list_remove(op_poll_t* op);
+// generic callback
+void net_poll_handler(s32 data);
 
 #endif // h guard

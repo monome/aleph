@@ -4,7 +4,7 @@
 #include "app.h"
 #include "types.h"
 
-// ui handlers  
+// assign ui handlers  
 extern void assign_bees_event_handlers(void);
 
 extern s32 scale_knob_value(s32 val);

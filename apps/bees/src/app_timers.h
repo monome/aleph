@@ -1,7 +1,7 @@
 #ifndef _ALEPH_AVR32_APP_TIMERS_H_
 #define _ALEPH_AVR32_APP_TIMERS_H_
 
-#include "sys_timers.h"
+#include "timers.h"
 #include "types.h"
 
 /* // ---- timer tags */
@@ -37,6 +37,12 @@ extern void timers_unset_adc(void);
 
 // change period of adc polling timer
 extern void timers_set_adc_period(u32 period);
+
+// set metro timer
+extern void timers_set_metro(softTimer_t* timer, u32 period, void* obj);
+
+// unset metro timer
+extern void timers_unset_metro(softTimer_t* timer);
 
 
 #endif

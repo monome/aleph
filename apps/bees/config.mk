@@ -22,6 +22,7 @@ CSRCS += \
 	$(APP_DIR)/src/net.c \
 	$(APP_DIR)/src/net_midi.c \
 	$(APP_DIR)/src/net_monome.c \
+	$(APP_DIR)/src/net_poll.c \
 	$(APP_DIR)/src/op.c \
 	$(APP_DIR)/src/param.c \
 	$(APP_DIR)/src/pages.c \
