@@ -27,15 +27,15 @@ static event_t e;
 
 //------ timers
 // refresh the screen periodically
-static swTimer_t screenTimer  = { .next = NULL };
+static softTimer_t screenTimer  = { .next = NULL };
 
 // poll monome device 
-static swTimer_t monomePollTimer  = { .next = NULL };
+static softTimer_t monomePollTimer  = { .next = NULL };
 
 // refresh monome device 
-static swTimer_t monomeRefreshTimer  = { .next = NULL };
+static softTimer_t monomeRefreshTimer  = { .next = NULL };
 
-static swTimer_t metroTimer  = { .next = NULL };
+static softTimer_t metroTimer  = { .next = NULL };
 
 // screen refresh callback
 static void screen_timer_callback(void* obj) {  
@@ -44,7 +44,7 @@ static void screen_timer_callback(void* obj) {
 
 // metronome timer callback
 static void metro_timer_callback(void* obj) {
-  e.type = kEventSeqNext;
+  e.type = kEventAppCustom;
   event_post(&e);
 }
 
@@ -75,7 +75,7 @@ void init_app_timers(void) {
 void timers_set_metro_ms(u32 ms) {
   // doing this will effectively pause the timer while knob moves...
   //  metroTimer.timeout = ms;
-  metroTimer.timeoutReload = ms;
+  metroTimer.ticks = ms;
 }
 
 void timers_set_monome(void) {

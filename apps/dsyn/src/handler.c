@@ -94,64 +94,64 @@ static inline void handle_sw(u8 id, u8 b) {
 ///// this is an application-specific event.
 /// use it so that sequence processing can take place
 // outside the ISR / timer callback
-static void handle_SeqNext(s32 data) {
+static void handle_AppCustom(s32 data) {
   seq_advance();
 }
 
 static void handle_Switch0(s32 data) {
-  handle_sw(0, ev->data > 0);
+  handle_sw(0, data > 0);
 }
 
 static void handle_Switch1(s32 data) {
-  handle_sw(1, ev->data > 0);
+  handle_sw(1, data > 0);
 }
 
 static void handle_Switch2(s32 data) {
-  handle_sw(2, ev->data > 0);
+  handle_sw(2, data > 0);
 }
 
 static void handle_Switch3(s32 data) {
-  handle_sw(3, ev->data > 0);
+  handle_sw(3, data > 0);
 }
 
 static void handle_Switch4(s32 data) {
   // mode button: write config file
-  if(ev->data > 0) {
+  if(data > 0) {
     print_dbg("\r\n write params...");
     files_write_params();
   }
 }
 
 static void handle_Switch6(s32 data) {
-  render_sw_on(2, ev->data > 0);
+  render_sw_on(2, data > 0);
 }
 
 static void handle_Switch7(s32 data) {
-  render_sw_on(3, ev->data > 0);
+  render_sw_on(3, data > 0);
 }
 
 static void handle_MonomeGridKey(s32 data) {
-  grid_handle_key_event(ev->data);
+  grid_handle_key_event(data);
 }
 
 static void handle_Encoder0(s32 data) {
   /// TEMPO
-  ctl_inc_tempo(scale_knob_value(ev->data));
+  ctl_inc_tempo(scale_knob_value(data));
 }
 
 static void handle_Encoder1(s32 data) {
   // SCROLL GRID
-  grid_inc_scroll( ev->data > 0 ? 1 : -1);
+  grid_inc_scroll( data > 0 ? 1 : -1);
 }
 
 static void handle_Encoder2(s32 data) {
   // PARAM VALUE
-  ctl_inc_param( scale_knob_value_fast(ev->data) );
+  ctl_inc_param( scale_knob_value(data) );
 }
 
 static void handle_Encoder3(s32 data) {
   // PARAM IDX 
-  ctl_inc_param_select( ev->data > 0 ? 1 : -1 );
+  ctl_inc_param_select( data > 0 ? 1 : -1 );
 }
 
 static void handle_MonomeConnect (s32 data) {
@@ -176,7 +176,7 @@ static void handle_MonomeDisconnect (s32 data) {
 //---- external funcs
 void dsyn_assign_event_handlers(void) {
   /// app-specific:
-  app_event_handlers[ kEventSeqNext ]	= &handle_SeqNext ;
+  app_event_handlers[ kEventAppCustom ]	= &handle_AppCustom ;
   // system-defined:
   app_event_handlers[ kEventEncoder0 ]	= &handle_Encoder0 ;
   app_event_handlers[ kEventEncoder1 ]	= &handle_Encoder1 ;
@@ -187,8 +187,9 @@ void dsyn_assign_event_handlers(void) {
   app_event_handlers[ kEventSwitch1 ]	= &handle_Switch1 ;
   app_event_handlers[ kEventSwitch2 ]	= &handle_Switch2 ;
   app_event_handlers[ kEventSwitch3 ]	= &handle_Switch3 ;
-  //// FIXME: use mode / power keys
-  //  app_event_handlers[ kEventSwitch4 ]	= &handle_Switch4 ;
+  //// FIXME: use power key for soft-powerdown and save.
+  /// for now, mode key stores configuration
+  app_event_handlers[ kEventSwitch4 ]	= &handle_Switch4 ;
   //  app_event_handlers[ kEventSwitch5 ]	= &handle_Switch5 ;
   app_event_handlers[ kEventSwitch6 ]	= &handle_Switch6 ;
   app_event_handlers[ kEventSwitch7 ]	= &handle_Switch7 ;

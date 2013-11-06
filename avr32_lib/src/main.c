@@ -149,6 +149,7 @@ static void handler_HidConnect(s32 data) {
 }
 static void handler_HidDisconnect(s32 data) { ;; }
 static void handler_HidByte(s32 data) { ;; }
+static void handler_AppCustom(s32 data) { ;; }
 
 /// explicitly assign default event handlers.
 /// this way the order of the event types enum doesn't matter.
@@ -186,6 +187,7 @@ static inline void assign_main_event_handlers(void) {
   app_event_handlers[ kEventHidConnect ]	= &handler_HidConnect ;
   app_event_handlers[ kEventHidDisconnect ]	= &handler_HidDisconnect ;
   app_event_handlers[ kEventHidByte ]	= &handler_HidByte ;
+  app_event_handlers[ kEventAppCustom ]	= &handler_AppCustom ;
 }
 
 //=================================================
