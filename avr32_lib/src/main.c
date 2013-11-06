@@ -108,13 +108,17 @@ static void handler_FtdiDisconnect(s32 data) {
   // FIXME: 
   // i guess we should spawn the appropriate class-specific event
   // (e.g. monomeDisconnect)
+  event_t e = { .type = kEventMonomeDisconnect };
+  event_post(&e);
 }
 
 static void handler_MonomeConnect(s32 data) {
+  // this just stores a flag to re-send connection event to app
   if(!launch) {
     monomeConnect = 1;
   }
 }
+
 static void handler_MonomeDisconnect(s32 data) { ;; }
 static void handler_MonomePoll(s32 data) {
   monome_read_serial();

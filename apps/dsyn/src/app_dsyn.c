@@ -33,8 +33,6 @@
 // this is called during hardware initialization.
 // use for memory allocation..
 void app_init(void) {
-  // set handler
-  appEventHandler = &dsyn_handler;
   render_init();
 }
 
@@ -128,6 +126,10 @@ u8 app_launch(u8 firstrun) {
   //  render_boot("running");
   render_startup();
   render_update();
-  
+
+  // set app event handlers
+  dsyn_assign_event_handlers();
+
   return 1;
 }
+

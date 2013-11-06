@@ -49,7 +49,7 @@ typedef enum {
   kEventHidDisconnect,
   kEventHidByte,
   /// dummy/count
-  kNumEventTypes,
+  kNumSysEvents,
 } etype;
 
 #endif
