@@ -13,10 +13,11 @@
 # standalone application.
 TARGET = aleph-boot.elf
 
-ALEPH_AVR32 = ../avr32_boot
-ALEPH_COMMON = ../common
+# these paths are relative to top-level ASF directory
+ALEPH_AVR32 = ../../utils/avr32_boot
+ALEPH_COMMON = ../../common
 #ALEPH_BEES = ../bees
-ALEPH_BOOT_BEES = ../avr32_boot/bees
+ALEPH_BOOT_BEES = ../../utils/avr32_boot/bees
 
 # Target CPU architecture: ap, ucr1, ucr2 or ucr3
 ARCH = ucr2
