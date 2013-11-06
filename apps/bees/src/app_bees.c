@@ -101,7 +101,7 @@ u8 app_launch(u8 firstrun) {
     //    scene_read_default();
 
     ///// TEST; read from filesystem!
-    files_load_scene_name("test_default");
+    files_load_scene_name("test_default.scn");
     //    files_load_test_scene();
   }
 
