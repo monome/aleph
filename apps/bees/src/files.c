@@ -35,7 +35,7 @@
 #define DIR_LIST_NAME_BUF_SIZE 1024 // len * num
 
 #define DSP_PATH     "/dsp/"
-#define SCENES_PATH  "/scenes/"
+#define SCENES_PATH  "/bees/scenes/"
 
 //  stupid datatype with fixed number of fixed-length filenames
 // storing this for speed when UI asks us for a lot of strings
@@ -420,11 +420,11 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
       if (strcmp(dirent.filename, name) == 0) {
 	strncat(path, dirent.filename, 58);
 	
-	/* print_dbg("\r\n attempting to open file at path: \r\n"); */
-	/* print_dbg(path); */
+	print_dbg("\r\n attempting to open file at path: \r\n");
+	print_dbg(path);
 	
-	/* print_dbg("\r\n name: \r\n"); */
-	/* print_dbg(path); */
+	print_dbg("\r\n name: \r\n");
+	print_dbg(path);
 
 	fp = fl_fopen(path, mode);
 	*size = dirent.size;
@@ -439,4 +439,31 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
     fp = NULL;
   }
   return fp;
+}
+
+
+
+//////////
+/// test
+extern void files_load_test_scene(void) {
+  void* fp;
+
+
+  app_pause();
+  
+  fp = fl_fopen("/bees/scenes/test_default.scn", "r");
+  print_dbg("\r\n opened test sceme. fp: 0x");
+  print_dbg_hex((u32)fp);
+
+  if(fp == NULL) {
+    print_dbg("\r\n test scene file was NULL");
+    app_resume();
+    return;
+  }
+  fake_fread((volatile u8*)sceneData, sizeof(sceneData_t), fp);
+  scene_read_buf();
+
+
+  fl_fclose(fp);
+  app_resume();
 }

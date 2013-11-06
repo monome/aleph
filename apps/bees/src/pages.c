@@ -97,10 +97,9 @@ static s8 lastPageIdx = 0;
   init_page_ops();  
   init_page_outs();
   init_page_play();
-
+  init_page_presets();
   /*
     // TODO
-  init_page_presets();
   init_page_scenes();
   init_page_gathered();
   */

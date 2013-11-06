@@ -27,6 +27,7 @@
 
 // bees
 #include "app_timers.h"
+#include "files.h"
 #include "handler.h"
 #include "net_midi.h"
 #include "net_monome.h"
@@ -96,7 +97,13 @@ static void handle_Switch5(s32 data) {
   render_boot("");
   render_boot("powering down");
   render_boot("writing current scene to flash");
-  scene_write_default();
+
+
+  //  scene_write_default();
+  //  //// TEST: write to filesystem!
+  files_store_scene_name("test_default");
+  //  files_store_test_scene();
+
   // power down
   delay_ms(100);
   gpio_clr_gpio_pin(POWER_CTL_PIN);
