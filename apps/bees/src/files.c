@@ -136,6 +136,9 @@ void files_init(void) {
   // init FAT lib
   //  fat_init();
   // scan directories
+
+  print_dbg("\r\n BEES file_init, scanning directories..");
+
   list_scan(&dspList, DSP_PATH);
   list_scan(&sceneList, SCENES_PATH);
   //  file_write_test();
@@ -258,6 +261,11 @@ void files_load_scene_name(const char* name) {
   u32 size = 0;
 
   app_pause();
+
+  ////// TEST: rescan
+  list_scan(&sceneList, SCENES_PATH);
+  //////
+
 
   fp = list_open_file_name(&sceneList, name, "r", &size);
 
@@ -412,8 +420,8 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   //  name = list_get_name(lista, idx);
   strcpy(path, list->path);
 
-  /* print_dbg("\r\n attempting to open file at path: \r\n"); */
-  /* print_dbg(path); */
+  print_dbg("\r\n attempting to open directory at path: \r\n");
+  print_dbg(path);
 
   if(fl_opendir(path, &dirstat)) {
     while (fl_readdir(&dirstat, &dirent) == 0) {
