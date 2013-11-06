@@ -83,6 +83,7 @@ void menu_handleKey(uiKey_t key, s16 val) {
 // refresh gfx
 extern void menu_refresh(void) {
   curPage->redraw();
+  screen_refresh();
 }
 
 

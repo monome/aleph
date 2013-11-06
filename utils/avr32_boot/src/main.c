@@ -265,7 +265,7 @@ int main (void) {
     //    // print_dbg("\r\n SD check... ");
     if (!sd_mmc_spi_mem_check()) {
       screen_line(0, 1, "no SD card found.", 0x3f);
-      screen_line(0, 1, "resetting...", 0x3f);
+      screen_line(0, 2, "resetting...", 0x3f);
       screen_refresh();
       delay_ms(1000);
       watchdog_reset();
@@ -280,6 +280,7 @@ int main (void) {
     // flash init, check firstrun
     isFirstRun = init_flash();
 
+    delay_ms(500);
     menu_refresh();
 
   }

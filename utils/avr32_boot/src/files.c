@@ -28,7 +28,7 @@
 #define DIR_LIST_NAME_BUF_SIZE 2048 // len * num
 
 /// show the size (progress fills) 
-static void showSize(u32 size) {
+static void show_size(u32 size) {
   u32 x = 0;
   u32 y = 0;
   u32 i = 0;
@@ -52,7 +52,7 @@ static void showSize(u32 size) {
 }
 
 /// dumb progress display
-static void showProgress(u8 val) {
+static void show_progress(u8 val) {
   static u32 x = 0;
   static u32 y = 00;
   static u8 level = 0x1;
@@ -223,7 +223,8 @@ void files_write_firmware_name(const char* name) {
     /////
     /// now using intel-hex format
 
-    showSize(size);
+    screen_clear();
+    show_size(size);
 
     for(fIdx = 0; fIdx<size; fIdx++) {
       ch = fl_fgetc(fp);
@@ -242,7 +243,7 @@ void files_write_firmware_name(const char* name) {
 
       ///// show progress
       if( (fIdx % 0x100) == 0) {
-	showProgress(ch);
+	show_progress(ch);
       }
     }
 
