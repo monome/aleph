@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 // asf
-#include "print_funcs.h"
+// #include "print_funcs.h"
 #include "smc.h"
 
 // aleph
@@ -40,13 +40,13 @@ void init_mem(void) {
   pHeapEnd = (heap_t)((u32)pHeapStart + heapSize);
   heapOffset = 0;
 
-  print_dbg("\r\n \r\n memory init!!" );
-    print_dbg("\r\n pHeapStart: ");
-    print_dbg_hex((unsigned long int)pHeapStart);
-    print_dbg("\r\n pHeapEnd: ");
-    print_dbg_hex((unsigned long int)pHeapEnd);
-    print_dbg("\r\n heapOffset: ");
-    print_dbg_hex((unsigned long int)heapOffset);
+  // print_dbg("\r\n \r\n memory init!!" );
+    // print_dbg("\r\n pHeapStart: ");
+    // print_dbg_hex((unsigned long int)pHeapStart);
+    // print_dbg("\r\n pHeapEnd: ");
+    // print_dbg_hex((unsigned long int)pHeapEnd);
+    // print_dbg("\r\n heapOffset: ");
+    // print_dbg_hex((unsigned long int)heapOffset);
 }
 
 // allocate and return pointer
@@ -63,16 +63,16 @@ heap_t alloc_mem(u32 bytes) {
     heapOffset = tmp;
   } else {
     ret = (heap_t)ALLOC_FAIL;
-    print_dbg("\r\n memory allocation failed.");
+    // print_dbg("\r\n memory allocation failed.");
 
-    print_dbg("\r\n pHeapStart: ");
-    print_dbg_hex((unsigned long int)pHeapStart);
-    print_dbg("\r\n pHeapEnd: ");
-    print_dbg_hex((unsigned long int)pHeapEnd);
-    print_dbg("\r\n heapOffset: ");
-    print_dbg_hex((unsigned long int)heapOffset);
-    print_dbg("\r\n requested bytes: ");
-    print_dbg_hex((unsigned long int)bytes);
+    // print_dbg("\r\n pHeapStart: ");
+    // print_dbg_hex((unsigned long int)pHeapStart);
+    // print_dbg("\r\n pHeapEnd: ");
+    // print_dbg_hex((unsigned long int)pHeapEnd);
+    // print_dbg("\r\n heapOffset: ");
+    // print_dbg_hex((unsigned long int)heapOffset);
+    // print_dbg("\r\n requested bytes: ");
+    // print_dbg_hex((unsigned long int)bytes);
 
   }
   return ret;
@@ -86,36 +86,36 @@ void sram_test(u32 numBytes, u32 offset) {
   
   //sram_size = SRAM_SIZE >> 2;
   sram_size = numBytes >> 2; // count of 32-bit words
-  print_dbg("\x0CSRAM size: ");
-  print_dbg_ulong(sram_size >> 18);
-  print_dbg(" MB\r\n");
+  // print_dbg("\x0CSRAM size: ");
+  // print_dbg_ulong(sram_size >> 18);
+  // print_dbg(" MB\r\n");
   
   progress_inc = (sram_size + 50) / 100; // words per progress report
 
   // Fill the SRAM with the test pattern.
   for (i = 0, j = 0; i < sram_size; i++) {
     if (i == j * progress_inc) {
-      print_dbg("\rFilling SRAM with test pattern: ");
-      print_dbg_ulong(j++);
-      print_dbg_char('%');
+      // print_dbg("\rFilling SRAM with test pattern: ");
+      // print_dbg_ulong(j++);
+      // print_dbg_char('%');
     }
     sram[i] = i;
   }
-  print_dbg("\rSRAM filled with test pattern       \r\n");
+  // print_dbg("\rSRAM filled with test pattern       \r\n");
 
   // Recover the test pattern from the SRAM and verify it.
   for (i = 0, j = 0; i < sram_size; i++) {
     if (i == j * progress_inc) {
-      print_dbg("\rRecovering test pattern from SRAM: ");
-      print_dbg_ulong(j++);
-      print_dbg_char('%');
+      // print_dbg("\rRecovering test pattern from SRAM: ");
+      // print_dbg_ulong(j++);
+      // print_dbg_char('%');
     }
     tmp = sram[i];
     if (tmp != i) {
       noErrors++;
     }
   }
-  print_dbg("\rSRAM tested: ");
-  print_dbg_ulong(noErrors);
-  print_dbg(" corrupted word(s)       \r\n");
+  // print_dbg("\rSRAM tested: ");
+  // print_dbg_ulong(noErrors);
+  // print_dbg(" corrupted word(s)       \r\n");
 }

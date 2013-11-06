@@ -13,7 +13,7 @@
 #include "gpio.h"
 #include "util.h"
 #include "intc.h"
-#include "print_funcs.h"
+// #include "print_funcs.h"
 #include "spi.h"
 // aleph
 #include "aleph_board.h"
@@ -223,8 +223,8 @@ U8 screen_char_squeeze(U16 col, U16 row, char gl, U8 a) {
   static const glyph_t * g;
   g = &(font_data[gl - FONT_ASCII_OFFSET]);
   xnum = FONT_CHARW - g->first - g->last;
-  //  print_dbg("\r\n char at row: ");
-  //  print_dbg_ulong(row);
+  //  // print_dbg("\r\n char at row: ");
+  //  // print_dbg_ulong(row);
   for(j=0; j<FONT_CHARH; j++) {
     for(i=0; i<xnum; i++) {
       if( (g->data[i + g->first] & (1 << j))) {
@@ -327,8 +327,8 @@ U8 screen_line(U16 x, U16 l, char *str, U8 hl) {
   x = screen_string(x, l, str, hl);
   screen_blank_line(x, l);
   //// test
-  //  print_dbg("\r\n");
-  //  print_dbg(str);
+  //  // print_dbg("\r\n");
+  //  // print_dbg(str);
   refresh = 1;
   return NCOLS;
 }

@@ -10,7 +10,6 @@
 #include "delay.h"
 #include "gpio.h"
 #include "spi.h"
-#include "print_funcs.h"
 
 // aleph/common
 #include "param_common.h"
@@ -34,7 +33,7 @@ static void bfin_transfer_byte(u8 data);
 
 static void bfin_transfer_byte(u8 data) {
     while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { 
-      print_dbg("\r\n HWAIT asserted..."); 
+      ;;//      // print_dbg("\r\n HWAIT asserted..."); 
     }
     spi_write(BFIN_SPI, data);
 }
@@ -54,9 +53,9 @@ void bfin_start_transfer(void) {
 
 void bfin_end_transfer(void) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  //  print_dbg("\r\n done loading; waiting... ");
+  //  // print_dbg("\r\n done loading; waiting... ");
   delay_ms(200);
-  //  print_dbg("\r\n done waiting; reporting... ");
+  //  // print_dbg("\r\n done waiting; reporting... ");
   bfin_report_params();
 }
 
@@ -70,22 +69,22 @@ void bfin_load_buf(void) {
   //  volatile u64 delay;
 
   if(bfinLdrSize > BFIN_LDR_MAX_BYTES) {
-    print_dbg("\r\n bfin load error: size : "); print_dbg_hex(bfinLdrSize);
+    // print_dbg("\r\n bfin load error: size : "); // print_dbg_hex(bfinLdrSize);
     return;
   }
 
-  print_dbg("\r\n\r\n bfin_load_buf; \r\n size: ");
-  print_dbg_hex(bfinLdrSize);
-  print_dbg("\r\n data: ");
+  // print_dbg("\r\n\r\n bfin_load_buf; \r\n size: ");
+  // print_dbg_hex(bfinLdrSize);
+  // print_dbg("\r\n data: ");
   
-  print_dbg_hex( (bfinLdrData[0] << 3) | (bfinLdrData[1] << 2) | (bfinLdrData[2]<<1) | bfinLdrData[3]); 
-  print_dbg("\r\n");
-  print_dbg_hex( (bfinLdrData[4] << 7) | (bfinLdrData[5] << 6) | (bfinLdrData[6]<<5) | bfinLdrData[7]); 
-  print_dbg("\r\n");
-  print_dbg_hex( (bfinLdrData[8] << 11) | (bfinLdrData[9] << 2) | (bfinLdrData[10]<<1) | bfinLdrData[11]); 
-  print_dbg("\r\n");
-  print_dbg_hex( (bfinLdrData[12] << 15) | (bfinLdrData[13] << 14) | (bfinLdrData[14]<<13) | bfinLdrData[15]); 
-  print_dbg("\r\n");
+  // print_dbg_hex( (bfinLdrData[0] << 3) | (bfinLdrData[1] << 2) | (bfinLdrData[2]<<1) | bfinLdrData[3]); 
+  // print_dbg("\r\n");
+  // print_dbg_hex( (bfinLdrData[4] << 7) | (bfinLdrData[5] << 6) | (bfinLdrData[6]<<5) | bfinLdrData[7]); 
+  // print_dbg("\r\n");
+  // print_dbg_hex( (bfinLdrData[8] << 11) | (bfinLdrData[9] << 2) | (bfinLdrData[10]<<1) | bfinLdrData[11]); 
+  // print_dbg("\r\n");
+  // print_dbg_hex( (bfinLdrData[12] << 15) | (bfinLdrData[13] << 14) | (bfinLdrData[14]<<13) | bfinLdrData[15]); 
+  // print_dbg("\r\n");
 
 
 
@@ -246,8 +245,8 @@ void bfin_report_params(void) {
   u8 i;
 
   bfin_get_num_params(&numParams);
-  print_dbg("\r\nnumparams: ");
-  print_dbg_ulong(numParams);
+  // print_dbg("\r\nnumparams: ");
+  // print_dbg_ulong(numParams);
 
   if(numParams > 0) {
     //net_clear_params();
@@ -256,8 +255,8 @@ void bfin_report_params(void) {
 
       //      net_add_param(i, &pdesc);
 
-      print_dbg("\r\n got pdesc : ");
-      print_dbg((const char* )pdesc.label);
+      // print_dbg("\r\n got pdesc : ");
+      // print_dbg((const char* )pdesc.label);
     }
   }
 }

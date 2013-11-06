@@ -3,7 +3,6 @@
 // ASF
 #include "flashc.h"
 #include "power_clocks_lib.h"
-#include "print_funcs.h"
 #include "wdt.h"
 // aleph-bees
 // aleph-avr32
@@ -70,7 +69,7 @@ u8 init_flash() {
     fwBinData[i] = 0;
   }
   if(flash_nvram_data.firstRun != FIRSTRUN_INIT) {
-    print_dbg("\r\n writing firstrun, no bfin load");
+    // print_dbg("\r\n writing firstrun, no bfin load");
     bfinLdrSize = 0;
     flashc_memset32((void*)&flash_nvram_data.firstRun, FIRSTRUN_INIT, 4, true);
     return 1;
@@ -93,9 +92,9 @@ void flash_write_ldr(void) {
 /* static void print_flash(void) { */
 /*   u32 i, j; */
 /*   u32 b, boff; */
-/*   print_dbg("\r\n"); */
-/*   print_dbg_hex(flashoff); */
-/*   print_dbg(" : "); */
+/*   // print_dbg("\r\n"); */
+/*   // print_dbg_hex(flashoff); */
+/*   // print_dbg(" : "); */
 /*   for(j=0; j<8; j++) { */
 /*     b = 0; */
 /*     boff = 24; */
@@ -104,8 +103,8 @@ void flash_write_ldr(void) {
 /*       flashoff++; */
 /*       boff -= 8; */
 /*     } */
-/*     print_dbg_hex(b); */
-/*     print_dbg(" "); */
+/*     // print_dbg_hex(b); */
+/*     // print_dbg(" "); */
 /*   } */
 /* } */
 
@@ -117,22 +116,23 @@ extern u8 flash_write_hex_record(u8* data) {
   int err;
   err = parse_raw_hex_record(data, &rec);
   if(err) {
-    print_dbg("\r\n failure parsing hex record: \r\n");
-    print_dbg((const char*)data);
+    // print_dbg("\r\n failure parsing hex record: \r\n");
+    // print_dbg((const char*)data);
   } else {
     switch(rec.type) {
     case HEX_EXT_LINEAR_ADDRESS:
       addrOff = rec.address;
-      //      print_dbg("\r\n writing hex 
+      //      // print_dbg("\r\n writing hex 
       break;
     case HEX_DATA:
-      /* print_dbg("\r\n writing firmware to flash at address: "); */
-      /* print_dbg_hex(addrOff + rec.address); */
+      /* // print_dbg("\r\n writing firmware to flash at address: "); */
+      /* // print_dbg_hex(addrOff + rec.address); */
       flashc_memcpy( (void*)(addrOff + rec.address), rec.data, rec.count, 1);
       break;
     default:
-      print_dbg("\r\n unhandled hex record type: \r\n");
-      print_dbg((const char*)data);
+      ;;
+      // print_dbg("\r\n unhandled hex record type: \r\n");
+      // print_dbg((const char*)data);
     }
   }
   return 0;

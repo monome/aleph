@@ -7,7 +7,7 @@
 
 // asf
 #ifdef ARCH_AVR32
-#include "print_funcs.h"
+// #include "print_funcs.h"
 #endif
 // common
 #include "files.h"
@@ -36,13 +36,13 @@ static const char kLabelChars[] = "abcdefghijklmnopqrstuvwxyz_012345789";
 /* static fix16 scale_knob_value(const s32 v) { */
 /*   s32 vabs = BIT_ABS(v); */
 /*   if(vabs < 6) { */
-/*     //    print_dbg("\r\n slow"); */
+/*     //    // print_dbg("\r\n slow"); */
 /*     return v; */
 /*   } else if (vabs < 12) { */
-/*     //    print_dbg("\r\n fast"); */
+/*     //    // print_dbg("\r\n fast"); */
 /*     return v * 8; */
 /*   } else { */
-/*     //    print_dbg("\r\n fastest"); */
+/*     //    // print_dbg("\r\n fastest"); */
 /*     return v * 32; */
 /*   } */
 /* } */

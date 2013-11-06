@@ -3,7 +3,6 @@
 #include "gpio.h"
 #include "intc.h"
 #include "pdca.h"
-#include "print_funcs.h"
 #include "sd_mmc_spi.h"
 #include "tc.h"
 // aleph
@@ -58,14 +57,6 @@ static void irq_port1_line0(void);
 __attribute__((__interrupt__))
 static void irq_port1_line1(void);
 
-// irq for PB16-PB23
-/* __attribute__((__interrupt__)) */
-/* static void irq_port1_line2(void); */
-
-// irq for PB24-PB31
-__attribute__((__interrupt__))
-static void irq_port1_line3(void);
-
 //---------------------------------
 //----- static function definitions
 __attribute__((__interrupt__))
@@ -106,7 +97,7 @@ static void irq_tc(void) {
 // interrupt handler for PA23-PA30
 __attribute__((__interrupt__))
 static void irq_port0_line3(void) {
-  //  print_dbg("\r\n interrupt on port0_line3");
+  //  // print_dbg("\r\n interrupt on port0_line3");
   //SW_F0
   if(gpio_get_pin_interrupt_flag(SW0_PIN)) {
     gpio_clear_pin_interrupt_flag(SW0_PIN);
@@ -143,7 +134,7 @@ static void irq_port0_line3(void) {
 // interrupt handler for PB00-PB07
 __attribute__((__interrupt__))
 static void irq_port1_line0(void) {
-  // print_dbg("\r\b\interrupt on PB00-PB07.");
+  // // print_dbg("\r\b\interrupt on PB00-PB07.");
   // ENC0_0
   if(gpio_get_pin_interrupt_flag(ENC0_S0_PIN)) {
     process_enc(0);
@@ -179,7 +170,7 @@ static void irq_port1_line0(void) {
 // interrupt handler for PB08-PB15
 __attribute__((__interrupt__))
 static void irq_port1_line1(void) {
-  //    print_dbg("\r\b\interrupt on PB08-PB15.");
+  //    // print_dbg("\r\b\interrupt on PB08-PB15.");
   // ENC3_0
   if(gpio_get_pin_interrupt_flag(ENC3_S0_PIN)) {
     process_enc(3);
@@ -191,31 +182,6 @@ static void irq_port1_line1(void) {
     gpio_clear_pin_interrupt_flag(ENC3_S1_PIN);
   }
 
-}
-
-/* // interrupt handler for PB16-PB23 */
-/* __attribute__((__interrupt__)) */
-/* static void irq_port1_line2(void) { */
-/*   //  print_dbg("\r\n interrupt on pb16-pb23 : "); */
-/*   //SW_POWER */
-/*   if(gpio_get_pin_interrupt_flag(SW_POWER_PIN)) { */
-/*     gpio_clear_pin_interrupt_flag(SW_POWER_PIN); */
-/*     process_sw(5); */
-/*   } */
-/* } */
-
-// interrupt handler for PB24-PB31
-__attribute__((__interrupt__))
-static void irq_port1_line3(void) {
-  //  print_dbg("\r\n irq_port1_line3");
-  if(gpio_get_pin_interrupt_flag(FS0_PIN)) {
-    gpio_clear_pin_interrupt_flag(FS0_PIN);
-    process_sw(6);
-  }
-  if(gpio_get_pin_interrupt_flag(FS1_PIN)) {
-    gpio_clear_pin_interrupt_flag(FS1_PIN);
-    process_sw(7);
-  }
 }
 
   //-----------------------------
@@ -245,9 +211,6 @@ static void irq_port1_line3(void) {
     gpio_enable_pin_interrupt( SW2_PIN,	        GPIO_PIN_CHANGE);
     gpio_enable_pin_interrupt( SW3_PIN,	        GPIO_PIN_CHANGE);
 
-    gpio_enable_pin_interrupt( FS0_PIN,	GPIO_PIN_CHANGE);
-    gpio_enable_pin_interrupt( FS1_PIN,	GPIO_PIN_CHANGE);
-
     gpio_enable_pin_interrupt( SW_MODE_PIN,	GPIO_PIN_CHANGE);
     //  gpio_enable_pin_interrupt( SW_POWER_PIN,	GPIO_PIN_CHANGE);
  
@@ -262,10 +225,6 @@ static void irq_port1_line3(void) {
 
     // PB16 - PB23
     //  INTC_register_interrupt( &irq_port1_line2, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB16 / 8), UI_IRQ_PRIORITY);
-
-    // PB24 - PB31
-    INTC_register_interrupt( &irq_port1_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PB24 / 8), UI_IRQ_PRIORITY);
-
 
     // register IRQ for PDCA transfer
     INTC_register_interrupt(&irq_pdca, AVR32_PDCA_IRQ_0, SYS_IRQ_PRIORITY);

@@ -23,11 +23,9 @@
 #include "gpio.h"
 #include "pdca.h"
 #include "power_clocks_lib.h"
-#include "print_funcs.h"
 #include "sd_mmc_spi.h"
 #include "spi.h"
 #include "tc.h"
-#include "usart.h"
 // aleph
 //#include "conf_aleph.h"
 #include "aleph_board.h"
@@ -122,32 +120,6 @@ extern void init_tc (volatile avr32_tc_t *tc) {
   tc_start(tc, APP_TC_CHANNEL);
 }
 
-
-// initialize usb USART
-void init_ftdi_usart (void) {
-  // GPIO map for USART.
-  static const gpio_map_t FTDI_USART_GPIO_MAP = {
-    { FTDI_USART_RX_PIN, FTDI_USART_RX_FUNCTION },
-    { FTDI_USART_TX_PIN, FTDI_USART_TX_FUNCTION }
-  };
-  
-  // Options for USART.
-  static const usart_options_t FTDI_USART_OPTIONS = {
-    .baudrate = FTDI_USART_BAUDRATE,
-    .charlength = 8,
-    .paritytype = USART_NO_PARITY,
-    .stopbits = USART_1_STOPBIT,
-    .channelmode = USART_NORMAL_CHMODE
-  };
-
-  // Set up GPIO for FTDI_USART
-  gpio_enable_module(FTDI_USART_GPIO_MAP,
-                     sizeof(FTDI_USART_GPIO_MAP) / sizeof(FTDI_USART_GPIO_MAP[0]));
-
-  // Initialize in RS232 mode.
-  usart_init_rs232(FTDI_USART, &FTDI_USART_OPTIONS, FPBA_HZ);
-}
-
 // initialize spi1: OLED, ADC, SD/MMC
 extern void init_spi1 (void) {
   
@@ -177,25 +149,15 @@ extern void init_spi1 (void) {
 		     sizeof(OLED_SPI_GPIO_MAP) / sizeof(OLED_SPI_GPIO_MAP[0]));
   // Initialize as master.
   spi_initMaster(OLED_SPI, &spiOptions);
+
   // Set SPI selection mode: variable_ps, pcs_decode, delay.
   spi_selectionMode(OLED_SPI, 0, 0, 0);
+
   // Enable SPI module.
   spi_enable(OLED_SPI);
 
   // setup chip register for OLED
   spi_setupChipReg( OLED_SPI, &spiOptions, FPBA_HZ );
-
-  // add ADC chip register
-  spiOptions.reg          = ADC_SPI_NPCS;
-  spiOptions.baudrate     = 20000000;
-  spiOptions.bits         = 16;
-  spiOptions.spi_mode     = 2;
-  spiOptions.spck_delay   = 0;
-  spiOptions.trans_delay  = 5;
-  spiOptions.stay_act     = 0;
-  spiOptions.modfdis      = 0;
-
-  spi_setupChipReg( ADC_SPI, &spiOptions, FPBA_HZ );
 
   // add SD/MMC chip register
   spiOptions.reg         = SD_MMC_SPI_NPCS;
@@ -253,17 +215,9 @@ void init_bfin_resources(void) {
   
   spi_options_t spiOptions = {
     .reg          = BFIN_SPI_NPCS,
-    //// FIXME: 
-    //// would prefer fast baudrate / lower trans delay during boot,
-    //// but need multiple registers for boot (fast) and run (slow)
-    //// investigate if this is possible...
-    //   .baudrate     = 20000000,
-    //     .baudrate     = 10000000,
-    //     .baudrate     = 5000000,
      .baudrate     = 20000000,
     .bits         = 8,
     .spck_delay   = 0,
-    //    .trans_delay  = 0,
     .trans_delay = 20,
     .stay_act     = 1,
     .spi_mode     = 1,
@@ -292,20 +246,3 @@ void init_bfin_resources(void) {
   // enable pullup on bfin RESET line
   gpio_enable_pin_pull_up(BFIN_RESET_PIN);
 }
-
-// intialize two-wire interface
-void init_twi(void) {
-  // TWI/I2C GPIO map
-  static const gpio_map_t TWI_GPIO_MAP = {
-    { TWI_DATA_PIN, TWI_DATA_FUNCTION },
-    { TWI_CLOCK_PIN, TWI_CLOCK_FUNCTION }
-  };
-  gpio_enable_module(TWI_GPIO_MAP, sizeof(TWI_GPIO_MAP) / sizeof(TWI_GPIO_MAP[0]));
-}
-
-
-/* // initialize USB host stack */
-/* void init_usb_host (void) { */
-/*   //  pm_configure_usb_clock(); */
-/*   uhc_start(); */
-/* } */

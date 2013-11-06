@@ -49,7 +49,6 @@ CSRCS = \
         avr32/drivers/tc/tc.c                          \
 	avr32/drivers/usart/usart.c                        \
 	avr32/drivers/wdt/wdt.c                        \
-	avr32/utils/debug/print_funcs.c                    \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.c \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.c \
         common/services/clock/uc3a0_a1/sysclk.c            \

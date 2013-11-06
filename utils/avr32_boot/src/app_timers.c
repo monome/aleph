@@ -2,9 +2,7 @@
 #include "compiler.h"
 #include "gpio.h"
 #include "math.h"
-#include "print_funcs.h"
 // aleph
-#include "adc.h"
 #include "encoders.h"
 #include "events.h"
 #include "event_types.h"

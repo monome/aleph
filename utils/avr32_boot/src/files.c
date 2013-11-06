@@ -10,7 +10,6 @@
 // asf
 #include "compiler.h"
 #include "delay.h"
-#include "print_funcs.h"
 #include "wdt.h"
 
 // aleph-avr32
@@ -163,23 +162,23 @@ void files_load_dsp_name(const char* name) {
   fp = list_open_file_name(&dspList, name, "r", &size);
 
   if( fp != NULL) {	  
-    /* print_dbg("\r\n found file, loading dsp "); */
-    /* print_dbg(name); */
+    /* // print_dbg("\r\n found file, loading dsp "); */
+    /* // print_dbg(name); */
     /// FIXME:
     /// arrg, why is fl_fread intermittently broken?
     /// check our media access functions against fat_filelib.c, i guess
     //    bytesRead = fl_fread((void*)bfinLdrData, 1, size, fp);
     fake_fread(bfinLdrData, size, fp);
 
-    //    print_dbg(" \r\n bytesRead: ");
-    //print_dbg_hex(bytesRead);
+    //    // print_dbg(" \r\n bytesRead: ");
+    //// print_dbg_hex(bytesRead);
 
     fl_fclose(fp);
     bfinLdrSize = size;
     bfin_load_buf();
 
   } else {
-    //    print_dbg("\r\n error: fp was null in files_load_dsp_name \r\n");
+    //    // print_dbg("\r\n error: fp was null in files_load_dsp_name \r\n");
   }
  
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
@@ -200,15 +199,15 @@ void files_store_default_dsp(u8 idx) {
   fp = list_open_file_name(&dspList, name, "r", &size);
 
   if( fp != NULL) {
-    //    print_dbg("\r\n writing (this may take a while)...");
+    //    // print_dbg("\r\n writing (this may take a while)...");
     bfinLdrSize = size;
     fl_fread((void*)bfinLdrData, 1, size, fp);
     flash_write_ldr();
     fl_fclose(fp);
-    //    print_dbg("finished writing LDR to flash");
+    //    // print_dbg("finished writing LDR to flash");
     
   } else {
-    //    print_dbg("\r\n error: fp was null in files_store_default_dsp \r\n");
+    //    // print_dbg("\r\n error: fp was null in files_store_default_dsp \r\n");
   }
 
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
@@ -249,7 +248,7 @@ void files_write_firmware_name(const char* name) {
 
   fp = list_open_file_name(&binList, name, "r", &size);
 
-  //  print_dbg("\r\n writing firmware to flash... ");
+  //  // print_dbg("\r\n writing firmware to flash... ");
   if( fp != NULL) {    
 
     /////
@@ -265,8 +264,8 @@ void files_write_firmware_name(const char* name) {
 	if(hIdx > 0) {
 	  flash_write_hex_record(hexRecordData);
 	  /// test:
-	  //	  print_dbg((const char*)hexRecordData);
-	  //	  print_dbg(" - ");
+	  //	  // print_dbg((const char*)hexRecordData);
+	  //	  // print_dbg(" - ");
 	}
 	// reset hex byte index for next record
 	hIdx =0;
@@ -290,8 +289,8 @@ void files_write_firmware_name(const char* name) {
     /////
 
     fl_fclose(fp);
-    //    print_dbg("finished writing.\r\n");
-    //    print_dbg("rebooting now.");
+    //    // print_dbg("finished writing.\r\n");
+    //    // print_dbg("rebooting now.");
 
     Disable_global_interrupt();
     wdt_opt_t opt;
@@ -300,7 +299,7 @@ void files_write_firmware_name(const char* name) {
     while (1);
         
   } else {
-    print_dbg("\r\n error: fp was null in files_write_firmware_name\r\n");
+    // print_dbg("\r\n error: fp was null in files_write_firmware_name\r\n");
   }
 
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
@@ -341,19 +340,19 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   //  name = list_get_name(lista, idx);
   strcpy(path, list->path);
 
-  //  print_dbg("\r\n attempting to open file at path: \r\n");
-  //  print_dbg(path);
+  //  // print_dbg("\r\n attempting to open file at path: \r\n");
+  //  // print_dbg(path);
 
   if(fl_opendir(path, &dirstat)) {
     while (fl_readdir(&dirstat, &dirent) == 0) {
       if (strcmp(dirent.filename, name) == 0) {
 	strncat(path, dirent.filename, 58);
 	
-	//	print_dbg("\r\n attempting to open file at path: \r\n");
-	//	print_dbg(path);
+	//	// print_dbg("\r\n attempting to open file at path: \r\n");
+	//	// print_dbg(path);
 	
-	//	print_dbg("\r\n name: \r\n");
-	//	print_dbg(path);
+	//	// print_dbg("\r\n name: \r\n");
+	//	// print_dbg(path);
 
 	fp = fl_fopen(path, mode);
 	*size = dirent.size;

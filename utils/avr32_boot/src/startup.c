@@ -3,7 +3,7 @@
 #include "eic.h"
 #include "flashc.h"
 #include "pm.h"
-#include "print_funcs.h"
+// #include "print_funcs.h"
 #include "smc.h"
 #include "sysclk.h"
 
@@ -29,23 +29,23 @@ int _init_startup(void) {
   init_dbg_rs232(FPBA_HZ);
 
   // Display a header to user
-  print_dbg("\x1B[2J\x1B[H\r\nSMC Example\r\n");
+  // print_dbg("\x1B[2J\x1B[H\r\nSMC Example\r\n");
 
-  print_dbg("Board running at ");
-  //	print_dbg_ulong(FOSC0 / 1000000);
-  print_dbg_ulong(FCPU_HZ / 1000000);
-  print_dbg(" MHz\r\n");
+  // print_dbg("Board running at ");
+  //	// print_dbg_ulong(FOSC0 / 1000000);
+  // print_dbg_ulong(FCPU_HZ / 1000000);
+  // print_dbg(" MHz\r\n");
 
-  print_dbg("Initializing SRAM at address: ");
-  print_dbg_hex((unsigned long int)SRAM);
-  print_dbg(" ...");
+  // print_dbg("Initializing SRAM at address: ");
+  // print_dbg_hex((unsigned long int)SRAM);
+  // print_dbg(" ...");
 
   // Initialize the external SRAM chip.
   //	smc_init(FOSC0);
   smc_init(FHSB_HZ);
-  print_dbg("done\r\n\r\n");
+  // print_dbg("done\r\n\r\n");
 
-  print_dbg("Testing SRAM...\r\n");
+  // print_dbg("Testing SRAM...\r\n");
 
   // Test each address location inside the chip with a write/readback
   uint32_t total_tests  = 0;
@@ -57,21 +57,21 @@ int _init_startup(void) {
     if (total_tests != sram[total_tests]) {
       total_errors++;
 
-      print_dbg("Error at 0x");
-      print_dbg_hex((uint32_t)&sram[total_tests]);
-      print_dbg("\r\n");
+      // print_dbg("Error at 0x");
+      // print_dbg_hex((uint32_t)&sram[total_tests]);
+      // print_dbg("\r\n");
     }
   }
 
   if (total_errors == 0) {
-    print_dbg("SRAM test successfully completed\r\n");
+    // print_dbg("SRAM test successfully completed\r\n");
   }
   else {
-    print_dbg("SRAM test completed with ");
-    print_dbg_ulong(total_errors);
-    print_dbg(" errors out of ");
-    print_dbg_ulong(total_tests);
-    print_dbg(" tests\r\n");
+    // print_dbg("SRAM test completed with ");
+    // print_dbg_ulong(total_errors);
+    // print_dbg(" errors out of ");
+    // print_dbg_ulong(total_tests);
+    // print_dbg(" tests\r\n");
   }
 
   return 0;
@@ -97,7 +97,7 @@ int _init_startup(void) {
   /*  irq_initialize_vectors(); */
 
   /*  init_dbg_rs232(FPBA_HZ); */
-  /*  print_dbg("\r\n _init_startup"); */
+  /*  // print_dbg("\r\n _init_startup"); */
 
   /*  // setup static memory controller  */
   /*  smc_init(FHSB_HZ); */

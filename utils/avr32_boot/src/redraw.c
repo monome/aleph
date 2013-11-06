@@ -13,7 +13,7 @@
 //#include <stdio.h>
 
 #ifdef ARCH_AVR32
-#include "print_funcs.h"
+// #include "print_funcs.h"
 #endif
 
 // aleph
@@ -65,8 +65,8 @@ void redraw_dsp(void) {
   u8 y = 0;                       // which line
   s32 n, nCenter;         // which list entry
   u16 num = files_get_dsp_count();
-  /* print_dbg("\r\n count of DSP files: "); */
-  /* print_dbg_ulong(num); */
+  /* // print_dbg("\r\n count of DSP files: "); */
+  /* // print_dbg_ulong(num); */
   // print selection at center
   nCenter = curPage->selected;
   if (nCenter >= num) {
@@ -102,8 +102,8 @@ void redraw_fw(void) {
   u8 y = 0;                       // which line
   s32 n, nCenter;         // which list entry
   u16 num = files_get_firmware_count();
-  /* print_dbg("\r\n count of DSP files: "); */
-  /* print_dbg_ulong(num); */
+  /* // print_dbg("\r\n count of DSP files: "); */
+  /* // print_dbg_ulong(num); */
   // print selection at center
   nCenter = curPage->selected;
   if (nCenter >= num) {
@@ -171,8 +171,8 @@ static inline void println(const char* str, int pos) {
 
 // append to line buffer
 static inline void appendln(const char* str) {
-  //  print_dbg("\n\r line buffer start: ");
-  //  print_dbg_hex(pline);
+  //  // print_dbg("\n\r line buffer start: ");
+  //  // print_dbg_hex(pline);
   while((*str != 0) && (pline <= pLineEnd)) {
     *pline++ = *str++;
   }
