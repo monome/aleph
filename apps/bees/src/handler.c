@@ -159,7 +159,7 @@ static void handler_MonomeGridTilt(s32 data) {
 }
 
 static void handler_MonomeRingEnc(s32 data) {
-  // TODO: update ops 
+  (*monome_ring_enc_handler)(monomeOpFocus, data);
 }
 
 static void handler_MonomeRingKey(s32 data) { 

@@ -36,7 +36,7 @@ typedef struct _op_monome {
 
 extern monome_handler_t monome_grid_key_handler;
 extern monome_handler_t monome_grid_key_handler;
-//extern monome_handler_t monome_ring_enc_handler;
+extern monome_handler_t monome_ring_enc_handler;
 op_monome_t* monomeOpFocus;
 
 //------------------------

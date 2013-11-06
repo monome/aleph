@@ -97,6 +97,9 @@ typedef void(*ring_set_t)(u8 n, u8 rho, u8 val);
 // set all leds in ring 
 typedef void(*ring_map_t)(u8 n, u8* data);
 
+//// refresh (grid vs arc)
+typedef void(*refresh_t)(void);
+
 // global pointers to function types defined above.
 // assigned according to detected device protocol.
 /// FIXME: will need multiple device support eventually.
@@ -106,6 +109,7 @@ extern grid_led_t monome_grid_led;
 extern grid_map_t monome_grid_map;
 extern grid_level_map_t monome_grid_level_map;
 extern ring_map_t monome_ring_map;
+extern refresh_t monome_refresh;
 
 //-------------------------------------
 //------ functions
@@ -117,6 +121,9 @@ extern u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr);
 
 // check dirty flags and refresh leds
 extern void monome_grid_refresh(void);
+
+// check dirty flags and refresh leds
+extern void monome_arc_refresh(void);
 
 /*
   monome_*_parse_event_data :

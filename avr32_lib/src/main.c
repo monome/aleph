@@ -120,7 +120,7 @@ static void handler_MonomePoll(s32 data) {
   monome_read_serial();
 }
 static void handler_MonomeRefresh(s32 data) {
-  monome_grid_refresh();
+  (*monome_refresh)();
   // FIXME: arc?
 }
 

@@ -75,6 +75,7 @@ set_intense_t monome_set_intense;
 grid_map_t monome_grid_map;
 grid_level_map_t monome_grid_level_map;
 ring_map_t monome_ring_map;
+refresh_t monome_refresh;
 //-----------------------------------------
 //----- static variables
 
@@ -185,6 +186,12 @@ static const ring_map_t ringMapFuncs[eProtocolNumProtocols] = {
   NULL, // unsupported
   NULL, // unsupported
   &ring_map_mext,
+};
+
+// grid vs arc refresh
+static const refresh_t refreshFuncs[eProtocolNumProtocols] = {
+  &monome_grid_refresh,
+  &monome_arc_refresh
 };
 
 //================================================
@@ -311,6 +318,61 @@ void monome_grid_refresh(void) {
   while( busy ) { busy = ftdi_tx_busy(); }
 }
 
+
+// check flags and refresh arc
+void monome_arc_refresh(void) {
+  // may need to wait after each quad until tx transfer is complete
+  u8 busy = ftdi_tx_busy();
+  u8 i;
+
+  for(i=0;i<mdesc.encs;i++) {
+    if(monomeFrameDirty & (1<<i)) {
+      while(busy) { busy = ftdi_tx_busy(); }
+      (*monome_ring_map)(i, monomeLedBuffer);
+      monomeFrameDirty &= !(1<<i);
+      busy = 1;
+    }
+  }
+
+
+  // // check quad 0
+  // if( monomeFrameDirty & 0b0001 ) {
+  //   while( busy ) { busy = ftdi_tx_busy(); }
+  //   (*monome_ring_map)(0, monomeLedBuffer);
+  //   monomeFrameDirty &= 0b1110;
+  //   busy = 1;
+  // }
+  // // check quad 1
+  // if( monomeFrameDirty & 0b0010 ) {
+  //   if ( mdesc.cols > 8 ) {
+  //     while( busy ) { busy = ftdi_tx_busy(); }
+  //     (*monome_ring_map)(1, monomeLedBuffer + 8);
+  //     monomeFrameDirty &= 0b1101;
+  //     busy = 1;
+  //   }
+  // }
+  // // check quad 2
+  // if( monomeFrameDirty &  0b0100 ) { 
+  //   if( mdesc.rows > 8 ) {
+  //     while( busy ) { busy = ftdi_tx_busy(); }
+  //     (*monome_ring_map)(0, 8, monomeLedBuffer + 128);
+  //     monomeFrameDirty &= 0b1011;
+  //     busy = 1;
+  //   }
+  // }
+  // // check quad 3
+  // if( monomeFrameDirty & 0b1000 ) {
+  //   if( (mdesc.rows > 8) && (mdesc.cols > 8) )  {
+  //     while( busy ) { busy = ftdi_tx_busy(); }
+  //     (*monome_ring_map)(8, 8, monomeLedBuffer + 136);
+  //     monomeFrameDirty &= 0b0111;
+  //     busy = 1;
+  //   }
+  // }
+  while( busy ) { busy = ftdi_tx_busy(); }
+}
+
+
 //---- convert to/from event data
 // connect
 static inline void monome_connect_write_event(void) {
@@ -369,12 +431,10 @@ static inline void monome_ring_enc_write_event( u8 n, u8 val) {
   data[0] = n;
   data[1] = val;
   
-  /* print_dbg("\r\n monome.c wrote event; x: 0x"); */
-  /* print_dbg_hex(x); */
-  /* print_dbg("; y: 0x"); */
-  /* print_dbg_hex(y); */
-  /* print_dbg("; z: 0x"); */
-  /* print_dbg_hex(val); */
+   // print_dbg("\r\n monome.c wrote event; n: 0x"); 
+   // print_dbg_hex(n); 
+   // print_dbg("; d: 0x"); 
+   // print_dbg_hex(val); 
 
   ev.type = kEventMonomeRingEnc;
   event_post(&ev);
@@ -382,7 +442,7 @@ static inline void monome_ring_enc_write_event( u8 n, u8 val) {
 void monome_ring_enc_parse_event_data(u32 data, u8* n, s8* val) {
   u8* bdata = (u8*)(&data);
   *n = bdata[0];
-  *val = bdata[1];  // FIXME this needs a cast to signed?
+  *val = bdata[1];
 }
 
 // ring press/lift
@@ -455,6 +515,7 @@ static inline void set_funcs(void) {
   monome_grid_level_map = gridMapFuncs[mdesc.protocol];
   monome_ring_map = ringMapFuncs[mdesc.protocol];
   monome_set_intense = intenseFuncs[mdesc.protocol];
+  monome_refresh = refreshFuncs[mdesc.device == eDeviceArc];   // toggle on grid vs arc
 }
 
 /////////////////////////////////////////////////////
@@ -523,8 +584,7 @@ static u8 setup_mext(void) {
   print_dbg_ulong(rxBytes);
 
   if(rxBytes != 6 ){
-    print_dbg("\r\n got unexpected byte count in response to mext setup request; aborting");
-    return 0;
+    print_dbg("\r\n got unexpected byte count in response to mext setup request; ");
   }
   
   prx = ftdi_rx_buf();
@@ -556,6 +616,9 @@ static u8 setup_mext(void) {
     mdesc.device = eDeviceArc;
     mdesc.encs = *(++prx);
   } else {
+    print_dbg_hex(*prx);
+    print_dbg_hex(*(++prx));
+    print_dbg_hex(*(++prx));
     return 0; // bail
   }
   set_funcs();

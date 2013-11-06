@@ -158,22 +158,18 @@ void SetupHardware(void)
 	clock_prescale_set(clock_div_1);
 
 
-	UBRR1  = 0;
-	UCSR1C = 6;
+	UBRR1  = 0;		// 500000 baud
+	UCSR1C = 6;		// 8n1
 	UCSR1A = (1 << U2X1);
 	UCSR1B = ((1 << RXCIE1) | (1 << TXEN1) | (1 << RXEN1));
 
 	/* Hardware Initialization */
-	// LEDs_Init();
 	USB_Init();
 }
 
 /** Event handler for the library USB Connection event. */
 void EVENT_USB_Device_Connect(void)
 {
-	// LEDs_SetAllLEDs(LEDMASK_USB_ENUMERATING);
-	// PORTB &= ~(CTS);
-
 	RingBuffer_InitBuffer(&USBtoUSART_Buffer, USBtoUSART_Buffer_Data, sizeof(USBtoUSART_Buffer_Data));
 	RingBuffer_InitBuffer(&USARTtoUSB_Buffer, USARTtoUSB_Buffer_Data, sizeof(USARTtoUSB_Buffer_Data));
 
@@ -182,14 +178,8 @@ void EVENT_USB_Device_Connect(void)
 /** Event handler for the library USB Disconnection event. */
 void EVENT_USB_Device_Disconnect(void)
 {
-	// LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
-	// PORTB |= CTS;
-
 	RingBuffer_InitBuffer(&USBtoUSART_Buffer, USBtoUSART_Buffer_Data, sizeof(USBtoUSART_Buffer_Data));
 	RingBuffer_InitBuffer(&USARTtoUSB_Buffer, USARTtoUSB_Buffer_Data, sizeof(USARTtoUSB_Buffer_Data));
-
-	
-
 }
 
 /** Event handler for the library USB Configuration Changed event. */
@@ -198,8 +188,6 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 	bool ConfigSuccess = true;
 
 	ConfigSuccess &= CDC_Device_ConfigureEndpoints(&VirtualSerial_CDC_Interface);
-
-	// LEDs_SetAllLEDs(ConfigSuccess ? LEDMASK_USB_READY : LEDMASK_USB_ERROR);
 }
 
 /** Event handler for the library USB Control Request reception event. */
