@@ -24,6 +24,20 @@ static void monome_grid_key_loopback(void* op, u32 edata) {
   monome_calc_quadrant_flag(x, y);
 }
 
+// use led state buffer and dirty flags
+static void monome_ring_enc_loopback(void* op, u32 edata) {
+  u8 n;
+  s8 val;
+  /// FIXME: this is pretty broken
+  print_dbg("\r\n arc: 0x");
+  print_dbg_hex(val);
+  monome_ring_enc_parse_event_data(edata, &n, &val);
+  monomeLedBuffer[val + (n<<6)] = 15;
+  monomeFrameDirty = 0x0f;
+}
+
+
+
 
 //---------------------------------
 // extern variables, initialized here.
@@ -38,7 +52,7 @@ static void monome_grid_key_loopback(void* op, u32 edata) {
 // arbitrarily to different sources! oy...
 
 monome_handler_t monome_grid_key_handler = &monome_grid_key_loopback;
-monome_handler_t monome_ring_enc_handler = &dummyHandler;
+monome_handler_t monome_ring_enc_handler = &monome_ring_enc_loopback;
 op_monome_t* monomeOpFocus = NULL;
 
 /// TODO: tilt and key press should be decoupled from grid/ring??? yeah probly. 
