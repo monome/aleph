@@ -32,7 +32,7 @@ static void show_size(u32 size) {
   u32 x = 0;
   u32 y = 0;
   u32 i = 0;
-  for(i = 0; i< (size / 0x100); ++i) {
+  for(i = 0; i< (size / 0x200); ++i) {
     screen_pixel(x, y, 0x7);
     screen_pixel(x, y+1, 0x7);
     screen_pixel(x+1, y, 0x7);
@@ -242,7 +242,7 @@ void files_write_firmware_name(const char* name) {
       ++hIdx;
 
       ///// show progress
-      if( (fIdx % 0x100) == 0) {
+      if( (fIdx % 0x200) == 0) {
 	show_progress(ch);
       }
     }

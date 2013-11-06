@@ -9,14 +9,6 @@
 #include <pll.h>
 #include <sysclk.h>
 
-
-/* // From module: USB HID Device protocol */
-/* /#include <usb_protocol_hid.h> */
-/* // From module: USB Host HID Mouse (Single Class support) */
-/* #include <uhi_hid_mouse.h> */
-/* #include <uhc.h> */
-/* #include <uhd.h> */
-
 #include "compiler.h"
 #include "conf_sd_mmc_spi.h"
 #include "util.h"
@@ -61,15 +53,19 @@ void init_gpio(void) {
 
   gpio_enable_pin_pull_up(SW_POWER_PIN);
 
-  /// trying this...
-  /* gpio_enable_pin_glitch_filter(SW0_PIN); */
-  /* gpio_enable_pin_glitch_filter(SW1_PIN); */
-  /* gpio_enable_pin_glitch_filter(SW2_PIN); */
-  /* gpio_enable_pin_glitch_filter(SW3_PIN); */
-  gpio_enable_pin_glitch_filter(SW_MODE_PIN); 
+
+  // test: 
+  // getting some weird noise on the USART during certain peripheral uses.
+  // don't really want to use the usart at all in bootloader. 
+  // i am wondering if leaving the pins floating is causing spurious noise.
+  // so here, hackishly treat them as GPIO and pull them to ground.
+
+  gpio_clr_gpio_pin(AVR32_USART0_TXD_0_0_PIN);
+  gpio_clr_gpio_pin(AVR32_USART0_RXD_0_0_PIN);
+
 }
 
-// initialize application timer
+// INITIALIZE application timer
 extern void init_tc (volatile avr32_tc_t *tc) {
   // waveform options
   static const tc_waveform_opt_t waveform_opt = {

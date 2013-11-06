@@ -34,14 +34,12 @@ static void screen_timer_callback(int tag) {
 }
 
 // encoder accumulator polling callback
-//// FIXME optimize
 static void enc_timer_callback(int tag) {
   static s16 val;
   for(i=0; i<NUM_ENC; i++) {
     val = enc[i].val;
     if ( (val > enc[i].thresh) || (val < (enc[i].thresh * -1)) ) {
-    //  if( (val > ENC_THRESH) || (val < ENC_NEG_THRESH) ) {
-      e.eventType = enc[i].event;
+       e.eventType = enc[i].event;
       e.eventData = val;
       enc[i].val = 0;
       post_event(&e);
