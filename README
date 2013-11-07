@@ -60,11 +60,11 @@ the dsp side of the aleph presents another area of extendability. the different 
 -----------------------
 ---- controller :
 
-aleph/avr32/src : 
+aleph/avr32_lib/src
 	contains default low-level routines specific to the Aleph hardware.
 	application authors can use these sources, or replace them with their own as desired.
 
-aleph/asf-x.x.x :
+aleph/avr32_lib/asf-x.x.x :
 	a copy of the Atmel Software Framework.	
 	this contains low-level drivers and utilies provided by Atmel, lightly modified by us.
 
@@ -80,26 +80,26 @@ aleph/common :
 	routines that both the dsp and the controller need to agree on.
 	this includes the SPI protocol and fixed-point math routines.
 
-aleph/avr32_boot  : 
+aleph/utils/avr32_boot  : 
 	avr32 bootloader and hardware test program.
 
 ---------------------
 ---- dsp :
 
-aleph/bfin/src:	
+aleph/bfin_lib/src:	
 	low-level sources for audio programs.
 	these routines interact with the blackfin hardware directly, 
 	and should be changed only with great care to avoid damaging the proces
 
-aleph/bfin/modules :
+aleph/modules :
 	contains a number of project directories for specific audio modules.
 	
-aleph/audio : 
+aleph/dsp : 
 	common audio functions implemented in fixed-point for speed on the blackfin,
 	(envelopes, filters, buffers, oscillators, etc);
 	these should be freely added to as needed by new modules.	
 	currently there is no rigid class structure to these things, but we could impose one.
 
-aleph/null : 
+aleph/audio/null : 
 	a portaudio-based audio wrapper, 
 	suitable for preliminary development of new audio modules.
