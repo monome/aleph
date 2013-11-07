@@ -65,8 +65,8 @@ static softTimer_t adcPollTimer = { .next = NULL };
 // event data is a pointer to an arbitrary object
 // here we use it for polled operators like op_metro.
 static void app_custom_event_callback(void* obj) {
-  print_dbg("\r\n bees, app_custom_event_callback, obj: 0x");
-  print_dbg_hex((u32)obj);
+  // print_dbg("\r\n bees, app_custom_event_callback, obj: 0x");
+  // print_dbg_hex((u32)obj);
   e.type = kEventAppCustom;
   // post the object's address in the event data field
   e.data = (s32)obj;

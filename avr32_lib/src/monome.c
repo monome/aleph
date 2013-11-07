@@ -326,48 +326,14 @@ void monome_arc_refresh(void) {
 
   for(i=0;i<mdesc.encs;i++) {
     if(monomeFrameDirty & (1<<i)) {
+      if(i==1) print_dbg("\r\nsecond");
       while(busy) { busy = ftdi_tx_busy(); }
-      (*monome_ring_map)(i, monomeLedBuffer);
-      monomeFrameDirty &= !(1<<i);
+      (*monome_ring_map)(i, monomeLedBuffer + (i<<6));
+      monomeFrameDirty &= ~(1<<i);
       busy = 1;
     }
   }
 
-
-  // // check quad 0
-  // if( monomeFrameDirty & 0b0001 ) {
-  //   while( busy ) { busy = ftdi_tx_busy(); }
-  //   (*monome_ring_map)(0, monomeLedBuffer);
-  //   monomeFrameDirty &= 0b1110;
-  //   busy = 1;
-  // }
-  // // check quad 1
-  // if( monomeFrameDirty & 0b0010 ) {
-  //   if ( mdesc.cols > 8 ) {
-  //     while( busy ) { busy = ftdi_tx_busy(); }
-  //     (*monome_ring_map)(1, monomeLedBuffer + 8);
-  //     monomeFrameDirty &= 0b1101;
-  //     busy = 1;
-  //   }
-  // }
-  // // check quad 2
-  // if( monomeFrameDirty &  0b0100 ) { 
-  //   if( mdesc.rows > 8 ) {
-  //     while( busy ) { busy = ftdi_tx_busy(); }
-  //     (*monome_ring_map)(0, 8, monomeLedBuffer + 128);
-  //     monomeFrameDirty &= 0b1011;
-  //     busy = 1;
-  //   }
-  // }
-  // // check quad 3
-  // if( monomeFrameDirty & 0b1000 ) {
-  //   if( (mdesc.rows > 8) && (mdesc.cols > 8) )  {
-  //     while( busy ) { busy = ftdi_tx_busy(); }
-  //     (*monome_ring_map)(8, 8, monomeLedBuffer + 136);
-  //     monomeFrameDirty &= 0b0111;
-  //     busy = 1;
-  //   }
-  // }
   while( busy ) { busy = ftdi_tx_busy(); }
 }
 
@@ -502,6 +468,7 @@ void monome_led_toggle(u8 x, u8 y) {
   monome_calc_quadrant_flag(x, y);  
 }
 
+
 //=============================================
 //------ static function definitions
 
@@ -614,6 +581,8 @@ static u8 setup_mext(void) {
   else if(*prx == 5) {
     mdesc.device = eDeviceArc;
     mdesc.encs = *(++prx);
+    print_dbg("\r\n monome arc ");
+    print_dbg_ulong(*prx);
   } else {
     print_dbg_hex(*prx);
     print_dbg_hex(*(++prx));
