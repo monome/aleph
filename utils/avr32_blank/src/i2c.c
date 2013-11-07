@@ -70,7 +70,7 @@ void i2c_master_tx(u8* tx) {
   print_dbg("\r\n i2c_master_tx, TWI location: 0x");
   print_dbg_hex((u32)AVR32_TWI_ADDRESS);
 
-  twi_master_write(&AVR32_TWI, &packet_tx);
+  twi_master_write_ex(&AVR32_TWI, &packet_tx);
 }
 
 // master receive
