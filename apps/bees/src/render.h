@@ -119,7 +119,12 @@ extern void clearln( void);
 // end line buffer (write a zero to next position)
 extern void endln( void);
 
-// draw editing string at given position, with cursor highlight
-extern void draw_edit_string( u8 x, u8 y, char* str, u8 len);
+// draw editing string to given region, with cursor highlight
+extern void draw_edit_string( region* reg, char* str, u8 len, u8 cursor);
+
+// scroll character at cursor position in string
+extern void edit_string_inc_char(char* str, u8 pos);
+extern void edit_string_dec_char(char* str, u8 pos);
+
 
 #endif // header guard

@@ -49,7 +49,6 @@ CSRCS = \
         avr32/drivers/tc/tc.c                          \
 	avr32/drivers/usart/usart.c                        \
 	avr32/drivers/wdt/wdt.c                        \
-	avr32/utils/debug/print_funcs.c                    \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.c \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.c \
         common/services/clock/uc3a0_a1/sysclk.c            \
@@ -64,13 +63,17 @@ CSRCS = \
 	$(ALEPH_AVR32)/src/font.c \
 	$(ALEPH_AVR32)/src/init.c	\
 	$(ALEPH_AVR32)/src/interrupts.c \
+	$(ALEPH_AVR32)/src/key_handler.c \
 	$(ALEPH_AVR32)/src/memory.c \
+	$(ALEPH_AVR32)/src/menu.c \
 	$(ALEPH_AVR32)/src/parse_hex.c \
+	$(ALEPH_AVR32)/src/redraw.c \
 	$(ALEPH_AVR32)/src/screen.c \
 	$(ALEPH_AVR32)/src/simple_string.c \
 	$(ALEPH_AVR32)/src/switches.c \
 	$(ALEPH_AVR32)/src/timers.c \
 	$(ALEPH_AVR32)/src/main.c \
+	$(ALEPH_AVR32)/src/watchdog.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_access.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_cache.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_filelib.c \
@@ -79,11 +82,6 @@ CSRCS = \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_string.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_table.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_write.c \
-	$(ALEPH_BOOT_BEES)/key_handler.c \
-	$(ALEPH_BOOT_BEES)/menu.c \
-	$(ALEPH_BOOT_BEES)/redraw.c \
-	$(ALEPH_COMMON)/fix.c \
-	$(ALEPH_COMMON)/libfixmath/fix16.c
 
 # List of assembler source files.
 ASSRCS = \
@@ -147,10 +145,8 @@ DBGFLAGS = -g3
 
 # Application optimization used during compilation and linking:
 # -O0, -O1, -O2, -O3 or -Os
-# OPTIMIZATION = -O2
+# bootloader just needs to be small
 OPTIMIZATION = -Os
-# OPTIMIZATION = -O3
-# OPTIMIZATION = -O0 -fno-inline
 
 # Extra flags to use when archiving.
 ARFLAGS = 

@@ -10,7 +10,6 @@
 #include "delay.h"
 #include "gpio.h"
 #include "spi.h"
-#include "print_funcs.h"
 
 // aleph/common
 #include "param_common.h"
@@ -34,7 +33,7 @@ static void bfin_transfer_byte(u8 data);
 
 static void bfin_transfer_byte(u8 data) {
     while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { 
-      print_dbg("\r\n HWAIT asserted..."); 
+      ;;
     }
     spi_write(BFIN_SPI, data);
 }
@@ -54,9 +53,7 @@ void bfin_start_transfer(void) {
 
 void bfin_end_transfer(void) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  //  print_dbg("\r\n done loading; waiting... ");
   delay_ms(200);
-  //  print_dbg("\r\n done waiting; reporting... ");
   bfin_report_params();
 }
 
@@ -66,59 +63,19 @@ void bfin_end_transfer(void) {
 // load bfin executable from the RAM buffer
 void bfin_load_buf(void) {
   u64 i; /// byte index in .ldr
-  //  u8 data;
-  //  volatile u64 delay;
 
   if(bfinLdrSize > BFIN_LDR_MAX_BYTES) {
-    print_dbg("\r\n bfin load error: size : "); print_dbg_hex(bfinLdrSize);
     return;
   }
-
-  print_dbg("\r\n\r\n bfin_load_buf; \r\n size: ");
-  print_dbg_hex(bfinLdrSize);
-  print_dbg("\r\n data: ");
-  
-  print_dbg_hex( (bfinLdrData[0] << 3) | (bfinLdrData[1] << 2) | (bfinLdrData[2]<<1) | bfinLdrData[3]); 
-  print_dbg("\r\n");
-  print_dbg_hex( (bfinLdrData[4] << 7) | (bfinLdrData[5] << 6) | (bfinLdrData[6]<<5) | bfinLdrData[7]); 
-  print_dbg("\r\n");
-  print_dbg_hex( (bfinLdrData[8] << 11) | (bfinLdrData[9] << 2) | (bfinLdrData[10]<<1) | bfinLdrData[11]); 
-  print_dbg("\r\n");
-  print_dbg_hex( (bfinLdrData[12] << 15) | (bfinLdrData[13] << 14) | (bfinLdrData[14]<<13) | bfinLdrData[15]); 
-  print_dbg("\r\n");
-
-
 
   bfin_start_transfer();
 
   for(i=0; i<bfinLdrSize; i++) {
-    //    data = fl_fgetc(fp);
     bfin_transfer_byte(bfinLdrData[i]);
-    //    delay = 0; while(delay < 0x80) { delay++; }
   }
 
   bfin_end_transfer();
 }
-
-/* // load an .ldr from internal flash */
-/* void bfin_load_flash(void) { */
-/*  u64 i; /// byte index in .ldr */
-/*  u32 size; */
-/*   u8 data; */
-
-/*   flash_read_ldr_data(); */
-
-/*   bfin_start_transfer(); */
-/*   for(i=0; i<bfinLdrSize; i++) { */
-/*     bfin_transfer_byte(bfinLdrData[i]); */
-/*     /\* for(i=0; i<size; i++) { *\/ */
-/*   /\*   flash_read_ldr_byte(&data, i); *\/ */
-/*   /\*   bfin_transfer_byte(data); *\/ */
-/*   /\* } *\/ */
- 
-/*   bfin_end_transfer(); */
-/* } */
-
 
 //void bfin_set_param(u8 idx, f32 x ) {
 void bfin_set_param(u8 idx, fix16_t x ) {
@@ -239,25 +196,17 @@ void bfin_get_module_name(volatile char* buf) {
 }
 
 
-// clear and add params to ctl network
+// report parameters
 void bfin_report_params(void) {
   volatile ParamDesc pdesc;
   u32 numParams;
   u8 i;
 
   bfin_get_num_params(&numParams);
-  print_dbg("\r\nnumparams: ");
-  print_dbg_ulong(numParams);
 
   if(numParams > 0) {
-    //net_clear_params();
     for(i=0; i<numParams; i++) {
       bfin_get_param_desc(i, &pdesc);
-
-      //      net_add_param(i, &pdesc);
-
-      print_dbg("\r\n got pdesc : ");
-      print_dbg((const char* )pdesc.label);
     }
   }
 }

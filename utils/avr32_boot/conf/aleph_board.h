@@ -74,23 +74,6 @@
 #define APP_TC_IRQ_GROUP       AVR32_TC_IRQ_GROUP
 
 //==============================================
-//==== USART
-// debug usart
-#define FTDI_USART               (&AVR32_USART0)
-#define FTDI_USART_RX_PIN        AVR32_USART0_RXD_0_0_PIN
-#define FTDI_USART_RX_FUNCTION   AVR32_USART0_RXD_0_0_FUNCTION
-#define FTDI_USART_TX_PIN        AVR32_USART0_TXD_0_0_PIN
-#define FTDI_USART_TX_FUNCTION   AVR32_USART0_TXD_0_0_FUNCTION
-#define FTDI_USART_BAUDRATE      57600
-/// compatibility with ASF print funcs
-#define DBG_USART              FTDI_USART
-#define DBG_USART_RX_PIN       FTDI_USART_RX_PIN
-#define DBG_USART_RX_FUNCTION  FTDI_USART_RX_FUNCTION
-#define DBG_USART_TX_PIN       FTDI_USART_TX_PIN
-#define DBG_USART_TX_FUNCTION  FTDI_USART_TX_FUNCTION
-#define DBG_USART_BAUDRATE     FTDI_USART_BAUDRATE
-
-//==============================================
 //==== SPI
 
 
@@ -110,9 +93,6 @@
 #define OLED_SPI_NPCS1_FUNCTION    AVR32_SPI1_NPCS_1_0_FUNCTION
 #define OLED_SPI_NPCS              0
 
-// adc, multiplexed
-#define ADC_SPI                    OLED_SPI
-#define ADC_SPI_NPCS               1
 
 // sdcard, multiplexed
 #define SD_MMC_SPI                 OLED_SPI
@@ -169,21 +149,13 @@
 #define SW1_PIN		AVR32_PIN_PA26
 #define SW2_PIN		AVR32_PIN_PA27
 #define SW3_PIN		AVR32_PIN_PA28
-// footswitches
-#define FS0_PIN         AVR32_PIN_PB30 
-#define FS1_PIN         AVR32_PIN_PB31
+
 // edit/play mode
 #define LED_MODE_PIN    AVR32_PIN_PA23
 #define SW_MODE_PIN     AVR32_PIN_PA24
 // power-down control
 #define SW_POWER_PIN    AVR32_PIN_PB16
 #define POWER_CTL_PIN   AVR32_PIN_PB15
-
-// aux pullup gates
-#define AUX_PULLUP0_PIN AVR32_PIN_PB20
-#define AUX_PULLUP1_PIN AVR32_PIN_PB21
-#define AUX_PULLUP2_PIN AVR32_PIN_PB22
-#define AUX_PULLUP3_PIN AVR32_PIN_PB23
 
 //TWI
 #define TWI_DATA_PIN            AVR32_TWI_SDA_0_0_PIN

@@ -5,7 +5,6 @@
 // asf
 #include "compiler.h"
 #include "gpio.h"
-#include "print_funcs.h"
 
 // aleph
 //#include "conf_aleph.h"

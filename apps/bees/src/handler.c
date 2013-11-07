@@ -27,6 +27,7 @@
 
 // bees
 #include "app_timers.h"
+#include "files.h"
 #include "handler.h"
 #include "net_midi.h"
 #include "net_monome.h"
@@ -96,7 +97,13 @@ static void handle_Switch5(s32 data) {
   render_boot("");
   render_boot("powering down");
   render_boot("writing current scene to flash");
-  scene_write_default();
+
+
+  //  scene_write_default();
+  //  //// TEST: write to filesystem!
+  files_store_scene_name("test_default.scn");
+  //  files_store_test_scene();
+
   // power down
   delay_ms(100);
   gpio_clr_gpio_pin(POWER_CTL_PIN);
@@ -123,6 +130,8 @@ static void handle_MonomeDisconnect(s32 data) {
 static void handle_MonomeGridKey(s32 data) { 
   // net_monome.c defines a dynamic pointer to a single grid event handle.
   // this is so bees can arbitrate focus between multiple grid ops.
+  /// FIXME: we need to differentiate
+  /// of course, first we need USB hub support.
   (*monome_grid_key_handler)(monomeOpFocus, data);
 }
 

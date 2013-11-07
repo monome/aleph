@@ -38,7 +38,7 @@ page_t pages[NUM_PAGES] = {
   { .name = "OUTS",
     .select_fn = &select_outs, // select function
     //    .handler = handler_outs,  // pointer to handlers
-    .encSens = { 4, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
+    .encSens = { 8, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   { .name = "PRESETS",
     .select_fn = &select_presets, // select function
@@ -97,10 +97,9 @@ static s8 lastPageIdx = 0;
   init_page_ops();  
   init_page_outs();
   init_page_play();
-
+  init_page_presets();
   /*
     // TODO
-  init_page_presets();
   init_page_scenes();
   init_page_gathered();
   */

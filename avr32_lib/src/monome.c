@@ -584,9 +584,9 @@ static u8 setup_mext(void) {
     print_dbg("\r\n monome arc ");
     print_dbg_ulong(*prx);
   } else {
-    print_dbg_ulong(*prx);
-    print_dbg_ulong(*(++prx));
-    print_dbg_ulong(*(++prx));
+    print_dbg_hex(*prx);
+    print_dbg_hex(*(++prx));
+    print_dbg_hex(*(++prx));
     return 0; // bail
   }
   set_funcs();

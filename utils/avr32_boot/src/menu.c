@@ -5,19 +5,16 @@
 */
 
 #ifdef ARCH_AVR32
-#include "print_funcs.h"
+// #include "print_funcs.h"
 #include "encoders.h"
 #endif
 
 #include "key_handler.h"
 #include "menu.h"
 #include "menu_protected.h"
-#include "net.h"
-#include "op.h"
-#include "param.h"
 #include "redraw.h"
 #include "screen.h"
-#include "ui.h"
+//#include "ui.h"
 
 // encoder sensitivities
 #define ENC_THRESH_PAGESCROLL 32
@@ -86,6 +83,7 @@ void menu_handleKey(uiKey_t key, s16 val) {
 // refresh gfx
 extern void menu_refresh(void) {
   curPage->redraw();
+  screen_refresh();
 }
 
 
@@ -128,8 +126,8 @@ void scroll_page(s8 dir) {
 //--  clipping variant
 void scroll_select_clip(s8 dir, s32 max) {
   curPage->selected += dir;
-  //  print_dbg("\r\n curPage->selected: ");
-  //  print_dbg_hex(curPage->selected);
+  //  // print_dbg("\r\n curPage->selected: ");
+  //  // print_dbg_hex(curPage->selected);
 
   if(curPage->selected >= max) {
     curPage->selected = max - 1;

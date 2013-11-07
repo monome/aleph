@@ -15,7 +15,7 @@
 /* #define SW_PRESS_TICKS 2 */
 /* #define SW_RELEASE_TICKS 20 */
 
-#define NUM_SW    8
+#define NUM_SW    6
 
 // generate events from switch interrupts
 extern void process_sw( const U8 swIdx );

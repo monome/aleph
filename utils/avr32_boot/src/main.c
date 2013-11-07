@@ -14,7 +14,7 @@
 #include "intc.h"
 #include "pdca.h"
 #include "power_clocks_lib.h"
-#include "print_funcs.h"
+// #include "print_funcs.h"
 #include "pm.h"
 #include "gpio.h"
 #include "wdt.h"
@@ -44,13 +44,12 @@
 #include "flash.h"
 #include "font.h"
 #include "global.h"
-#include "i2c.h"
 #include "init.h"
 #include "interrupts.h"
 #include "memory.h"
 #include "switches.h"
 #include "timers.h"
-
+#include "watchdog.h"
 
 //==================================================
 //====  variables
@@ -66,8 +65,6 @@ static u8 mode = 0;
 static void init_avr32(void);
 static void init_ctl(void);
 static void check_events(void);
-///// test
-static void print_flash(void);
 
 //=================================================
 //==== definitons
@@ -89,11 +86,9 @@ static void init_avr32(void) {
 
   // disable all interrupts for now
   cpu_irq_disable();
-  // serial usb
-  init_ftdi_usart();
   // external sram
   smc_init(FHSB_HZ);
-  // initialize spi1: OLED, ADC, SD/MMC
+  // initialize spi1: OLED, SD/MMC
   init_spi1();
   // initialize PDCA controller
   init_local_pdca();
@@ -110,7 +105,7 @@ static void init_avr32(void) {
   // enable interrupts
   cpu_irq_enable();
 
-  // print_dbg("\r\n avr32 init done ");
+  // // print_dbg("\r\n avr32 init done ");
 }
 
 // control / network / logic init
@@ -120,22 +115,22 @@ static void init_ctl(void) {
 
   // intialize the event queue
   init_events();
-  // print_dbg("\r\n init_events");
+  // // print_dbg("\r\n init_events");
 
   // intialize encoders
   init_encoders();
-  // print_dbg("\r\n init_encoders");
+  // // print_dbg("\r\n init_encoders");
 
   //memory manager
   init_mem();  
-  // print_dbg("\r\n init_mem");
+  // // print_dbg("\r\n init_mem");
   // start application timers
   init_app_timers();
 
-  // print_dbg("\r\n init_timers");
+  // // print_dbg("\r\n init_timers");
   menu_init();
 
-  // print_dbg("\r\n menu_init");
+  // // print_dbg("\r\n menu_init");
 
   // enable interrupts
   cpu_irq_enable();
@@ -178,23 +173,10 @@ static void check_events(void) {
       case kEventSwitchUp1:
 	menu_handleKey(eKeyFnUpB, e.eventData);
 	break;
-      case kEventSwitchDown2:
-	//	menu_handleKey(eKeyFnDownC, e.eventData);
-	/////////
-	print_flash();
-	//////////////
-	break;
       case kEventSwitchUp2:
 	menu_handleKey(eKeyFnUpC, e.eventData);
 	break;
 
-      case kEventSwitchDown3:
-	//	menu_handleKey(eKeyFnDownD, e.eventData);
-	break;
-
-      case kEventSwitchUp3:
-	//	menu_handleKey(eKeyFnUpD, e.eventData);
-	break;
 	// mode switch
       case kEventSwitchDown4:
 	mode ^= 1;
@@ -202,19 +184,15 @@ static void check_events(void) {
 	else { gpio_clr_gpio_pin(LED_MODE_PIN); }
 	menu_handleKey(eKeyMode, e.eventData);
 	break;
-      case kEventSwitchUp4:
-	break;
 	// power switch
       case kEventSwitchDown5:
 	//	screen_line(0, 0, "powering down!", 0x3f);
-	//	print_dbg("\r\n AVR32 received power down switch event");
+	//	// print_dbg("\r\n AVR32 received power down switch event");
 	screen_refresh();
 	gpio_clr_gpio_pin(POWER_CTL_PIN);
 	break;
-      case kEventSwitchUp5:
-	break;
       case kEventEncoder0:
-			// print_dbg("\r\n encoder 0");
+			// // print_dbg("\r\n encoder 0");
       	if(e.eventData > 0) {
       	  menu_handleKey(eKeyEncUpD, e.eventData);
       	} else {
@@ -222,7 +200,7 @@ static void check_events(void) {
       	}
       	break;
       case kEventEncoder1:
-	// print_dbg("\r\n encoder 1");
+	// // print_dbg("\r\n encoder 1");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpC, e.eventData);
 	} else {
@@ -230,7 +208,7 @@ static void check_events(void) {
 	}
 	break;
       case kEventEncoder2:
-	// print_dbg("\r\n encoder 2");
+	// // print_dbg("\r\n encoder 2");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpB, e.eventData);
 	} else {
@@ -238,7 +216,7 @@ static void check_events(void) {
 	}
 	break;
       case kEventEncoder3:
-	// print_dbg("\r\n encoder 3");
+	// // print_dbg("\r\n encoder 3");
 	if(e.eventData > 0) {
 	  menu_handleKey(eKeyEncUpA, e.eventData);
 	} else {
@@ -257,7 +235,6 @@ static void check_events(void) {
 int main (void) {
   wdt_disable();
 
-  u32 waitForCard = 0;
   u8 isFirstRun = 0;
   u8 isSwDown = 0;
   
@@ -266,45 +243,34 @@ int main (void) {
   //  wdt_disable();
 
   /// check pin and jump out
-  gpio_enable_pin_pull_up(SW3_PIN);
+  gpio_enable_pin_pull_up(SW_MODE_PIN);
 
-  isSwDown = gpio_get_pin_value(SW3_PIN);
-  //  print_dbg("\r\n sw value: ");
-  //  print_dbg_hex(isSwUp);
+  isSwDown = gpio_get_pin_value(SW_MODE_PIN);
 
   if(!isSwDown) {
-    ///    print_dbg("\r\n switch up, jumping to main");
-    /// hardcoded jump to firmware location
-  
+    /// hardcoded jump to runtime code location
     asm volatile (
-    		  " mov   r0,LO(0x80010000)\n\t"
-    		  " orh   r0,HI(0x80010000)\n\t"
+    		  " mov   r0,LO(0x80009000)\n\t"
+    		  " orh   r0,HI(0x80009000)\n\t"
     		  " mov   pc,r0"
     		  );
-
-    //    init_avr32();
-
-    //    print_dbg("\r\n sw3 was open, should now continue to runtime executable location");
   } else {
     // set up avr32 hardware and peripherals
     init_avr32();
 
     // wait for sd card
-    screen_line(0, 0, "ALEPH", 0x3f);
-    screen_line(0, 1, "waiting for SD card...", 0x3f);
+    screen_line(0, 0, "ALEPH BOOTLOADER", 0x3f);
     screen_refresh();
   
-    //    print_dbg("\r\n SD check... ");
-    while (!sd_mmc_spi_mem_check()) {
-      waitForCard++;
+    //    // print_dbg("\r\n SD check... ");
+    if (!sd_mmc_spi_mem_check()) {
+      screen_line(0, 1, "no SD card found.", 0x3f);
+      screen_line(0, 2, "resetting...", 0x3f);
+      screen_refresh();
+      delay_ms(1000);
+      watchdog_reset();
+      
     }
-    //    print_dbg("\r\nfound SD card. ");
-
-    screen_blank_line(0, 0);
-    screen_blank_line(0, 1);
-    screen_line(0, 0, "SD card detected.", 0x3f);
-    screen_refresh();
-
     // initialize higher-level program stuff
     init_ctl();
 
@@ -314,21 +280,9 @@ int main (void) {
     // flash init, check firstrun
     isFirstRun = init_flash();
 
-    // don't bother loading bfin during bootloader
-    // but do put this in the runtime code
- 
-    /* if(isFirstRun) { */
-    /*   ;; */
-    /* } else {  */
-    /*   print_dbg("\r\n reading default .ldr..."); */
-    /*   flash_read_ldr(); */
-    /*   print_dbg("\r\n finished reading."); */
-    /*   print_dbg("\r\n booting blackfin from default...."); */
-    /*   bfin_load_buf();  */
-    /*   print_dbg("\r\n finished booting"); */
-    /* } */
+    delay_ms(500);
+    menu_refresh();
 
-    //    print_dbg("\r\n starting event loop.\r\n");
   }
 
   while(1) {
@@ -339,26 +293,26 @@ int main (void) {
 
 // testing flash
 
-static u32 flashoff =0x8000ff00;
-static void print_flash(void) {
-  u32 i, j;
-  u32 b, boff;
-  print_dbg("\r\n");
-  print_dbg_hex(flashoff);
-  print_dbg(" : ");
-  for(j=0; j<8; j++) {
-    b = 0;
-    boff = 24;
-    for(i=0; i<4; i++) {
-      b |= ( *(u8*)flashoff ) << boff;
-      flashoff++;
-      boff -= 8;
-    }
-    print_dbg_hex(b);
-    print_dbg(" ");
-  }
+/* static u32 flashoff =0x8000ff00; */
+/* static void print_flash(void) { */
+/*   u32 i, j; */
+/*   u32 b, boff; */
+/*   // print_dbg("\r\n"); */
+/*   // print_dbg_hex(flashoff); */
+/*   // print_dbg(" : "); */
+/*   for(j=0; j<8; j++) { */
+/*     b = 0; */
+/*     boff = 24; */
+/*     for(i=0; i<4; i++) { */
+/*       b |= ( *(u8*)flashoff ) << boff; */
+/*       flashoff++; */
+/*       boff -= 8; */
+/*     } */
+/*     // print_dbg_hex(b); */
+/*     // print_dbg(" "); */
+/*   } */
 
-    //  print_dbg_hex(flash);
-  //  flashOff += 4;
-}
+/*     //  // print_dbg_hex(flash); */
+/*   //  flashOff += 4; */
+/* } */
 

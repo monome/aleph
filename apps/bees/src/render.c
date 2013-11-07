@@ -26,6 +26,9 @@
 // bees
 #include "render.h"
 
+// scroll a single character in a string
+#define MAX_EDIT_CHAR 120
+#define MIN_EDIT_CHAR 32
 
 //---- extern vars
 region* headRegion = NULL;
@@ -175,23 +178,21 @@ void render_set_scroll(scroll* scr) {
   pageScrollRegion->dirty = 1;
 }
 
-// draw editing string at given position, with cursor highlight
-void draw_edit_string(u8 x, u8 y, char* str, u8 len) {
-  //// FIXME... need more abstraction
-  u8 i;
-  y *= FONT_CHARH;
-  for(i=0; i<len; i++) {
-    if(str[i] == 0) { return; }
-    if(i == curPage->cursor) {
-#warning TODO: fix string-editing render
-      //     x += screen_char_fixed_back(x, y, str[i], 0x0, 0xa);
-      ++x;
-    } else {
-      // #warning TODO: fix string-editing render
-      //      x += screen_char_squeeze_back(x, y, str[i], 0x7, 0x0);
-      ++x;
-    }
-  }
+// draw editing string to given region, with cursor highlight
+void draw_edit_string(region* reg, char* str, u8 len, u8 cursor) {
+  /* u8 i; */
+  /* y *= FONT_CHARH; */
+  /* for(i=0; i<len; i++) { */
+  /*   if(str[i] == 0) { return; } */
+  /*   if(i == cursor) { */
+  /*     //     x += screen_char_fixed_back(x, y, str[i], 0x0, 0xa); */
+ 
+  /*     ++x; */
+  /*   } else { */
+  /*     //      x += screen_char_squeeze_back(x, y, str[i], 0x7, 0x0); */
+  /*     ++x; */
+  /*   } */
+  /* } */
 }
 
 /// stupid string lib replacements.. 
@@ -434,3 +435,28 @@ void render_scroll_apply_hl(u8 n, u8 hl) {
   /* dstMax = dst + lineRegion->len - 1; */
   //  while(dst < dstMax)
 //}
+
+// scroll character up
+void edit_string_inc_char(char* str, u8 pos) {
+  u8 tmp = str[pos]; 
+  if(tmp == 0) { tmp = MIN_EDIT_CHAR; }
+  if ( tmp < MAX_EDIT_CHAR ) {
+    tmp++;
+  } else {
+    tmp = MIN_EDIT_CHAR;
+  }
+  str[pos] = tmp;
+  //return tmp;
+}
+
+// scroll character down
+void edit_string_dec_char(char* str, u8 pos) {
+  u8 tmp = str[pos]; 
+  if (tmp > MIN_EDIT_CHAR) {
+    tmp--;
+  } else {
+    tmp = MAX_EDIT_CHAR;
+  }
+  str[pos] = tmp;
+  //  return tmp;
+}

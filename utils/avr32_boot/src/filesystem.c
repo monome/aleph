@@ -8,13 +8,12 @@
 // asf
 #include "compiler.h"
 #include "pdca.h"
-#include "print_funcs.h"
 #include "sd_mmc_spi.h"
 #include "spi.h"
 #include "types.h"
 // aleph
 #include "filesystem.h"
-
+#include "screen.h"
 
 //----- extern 
 // Local RAM buffer to store data  to/from the SD/MMC card
@@ -64,8 +63,8 @@ int media_read(unsigned long sector, unsigned char *buffer, unsigned long sector
 	buffer[i] = pdcaRxBuf[i];
       }
     } else {
-      print_dbg("\r\n error opening PDCA at sector "); 
-      print_dbg_ulong(sector);
+      screen_line(0, 7, "filesystem error!", 0xf);
+      screen_refresh();
     }
     sector ++;
     buffer += FS_BUF_SIZE;
@@ -85,19 +84,11 @@ int media_write(unsigned long sector, unsigned char *buffer, unsigned long secto
   status = sd_mmc_spi_write_open(sector);
 
   if(status == false) {
-    print_dbg("\r\n error opening sd_mmc_spi, sector: ");
-    print_dbg_hex(sector);
     return 0;
   }
 
   for (i=0;i<sector_count;i++) {
     status = sd_mmc_spi_write_sector_from_ram(buffer);
-    /////////// dbg
-    if(status == false) {
-      print_dbg("\r\n error writing sd_mmc_spi, sector: ");
-      print_dbg_hex(sector);
-    }
-    //////////////
     sector++;
     buffer += 512;
   }
@@ -110,16 +101,10 @@ int media_write(unsigned long sector, unsigned char *buffer, unsigned long secto
 // extern
 
 int fat_init(void) {
-  // Initialise File IO Library
-  print_dbg("\r\n beginning FAT library init.");
   fl_init();
-  print_dbg("\r\n finished FAT library init.");
-  // Attach media access functions to library
   if ( fl_attach_media((fn_diskio_read)media_read, (fn_diskio_write)media_write) != FAT_INIT_OK ) {
-    print_dbg("\r\n failed to attach media access functions to fat_io_lib \r\n");
     return 1;
   } else {
-    print_dbg("\r\n attached media access functions to fat_io_lib");
     return 0;
   }
 }

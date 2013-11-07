@@ -43,7 +43,7 @@
 #include "fat_filelib.h"
 #include "fat_cache.h"
 
-#include "print_funcs.h"
+// #include "print_funcs.h"
 
 //-----------------------------------------------------------------------------
 // Locals
@@ -671,10 +671,10 @@ int fl_attach_media(fn_diskio_read rd, fn_diskio_write wr)
     if ((res = fatfs_init(&_fs)) != FAT_INIT_OK)
     {
       //        FAT_PRINTF(("FAT_FS: Error could not load FAT details (%d)!\r\n", res));
-            print_dbg("FAT_FS: Error could not load FAT details!\r\n");
-	    print_dbg("error number: ");
-	    print_dbg_hex(res);
-	    print_dbg("\r\n");
+            // print_dbg("FAT_FS: Error could not load FAT details!\r\n");
+	    // print_dbg("error number: ");
+	    // print_dbg_hex(res);
+	    // print_dbg("\r\n");
         return res;
     }
 
