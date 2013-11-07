@@ -50,6 +50,9 @@
 
 // ===== PLL Options
 #define CONFIG_PLL0_SOURCE          PLL_SRC_OSC0
+/// we want master clock = 66Mhz
+/// fosc0 is 12Mhz
+// so we want fosc0 * 11 / 2
 #define CONFIG_PLL0_MUL             11 /* Fpll = (Fclk * PLL_mul) / PLL_div */
 #define CONFIG_PLL0_DIV             2 /* Fpll = (Fclk * PLL_mul) / PLL_div */
 
@@ -69,6 +72,7 @@
 				     | (1 << SYSCLK_INTC) \
 				     | (1 << SYSCLK_GPIO) \
 				     | (1 << SYSCLK_TC)	\
+				     | (1 << SYSCLK_TWI)	\
 				     | (1 << SYSCLK_PDCA_PB) \
 				     | (1 << SYSCLK_SPI0) \
 				     | (1 << SYSCLK_SPI1) )

@@ -16,6 +16,7 @@
 #include "pm.h"
 #include "gpio.h"
 #include "sysclk.h"
+#include "twi.h"
 
 //// aleph
 // avr32
@@ -51,7 +52,7 @@ static void init_avr32(void) {
   sysclk_init();
 
   // not sure why but when need to explictly enable clock for static mem ctlr
-  sysclk_enable_pbb_module(SYSCLK_SMC_REGS);
+  //  sysclk_enable_pbb_module(SYSCLK_SMC_REGS);
   flashc_set_bus_freq(FCPU_HZ);
   // need this for high-speed operation
   flashc_set_wait_state(1);
@@ -59,7 +60,7 @@ static void init_avr32(void) {
   /// interrupts
   //  print_dbg("\r\n  irq_initialize_vectors() ");
   irq_initialize_vectors();
-  // disable all interrupts for now
+  // disable all interrupts for init
   //  print_dbg("\r\n  cpu_irq_disable() ");
   cpu_irq_disable();
 
@@ -72,20 +73,45 @@ static void init_avr32(void) {
   init_gpio();
 
   // register interrupts
-  print_dbg("\r\n  register_interrupts() ");
-  register_interrupts();
+  //  print_dbg("\r\n  register_interrupts() ");
+  //  register_interrupts();
 
   // enable interrupts
   print_dbg("\r\n  cpu_irq_enable() ");
   cpu_irq_enable();
+
+  // i2c slave
+  //  print_dbg("\r\n  init_i2c_slave() ");
+  //  init_i2c_slave();
+
+  // i2c master
+  print_dbg("\r\n  init_i2c_master() ");
+  init_i2c_master();
+  
 }
 
 ////main function
 int main (void) {
+  u8 tx = 0;
+  u8 rx = 0;
   // set up avr32 hardware and peripherals
   init_avr32();
 
+  print_dbg("\r\n enter tx loop");
+
     while(1) {
-      ;;// check_events();
+      print_dbg("\r\n i2c tx: 0x");
+      print_dbg_char_hex(tx);
+
+      // test i2c with loopback
+      i2c_master_tx(&tx);
+      //      delay_us(100);
+      //      i2c_master_rx(&rx);
+      
+      //      print_dbg(" , rx: 0x");
+      //      print_dbg_char_hex(rx);
+      
+      ++tx;
+      delay_ms(250);
     }
 }

@@ -4,7 +4,7 @@ ALEPH_AVR32 = ../../utils/avr32_blank
 # aleph common directory
 ALEPH_COMMON = ../../common
 
-APP = usart-test
+APP = blank
 APP_DIR = ../../utils/avr32_blank
 
 
@@ -65,9 +65,9 @@ DBGFLAGS =
 # Application optimization used during compilation and linking:
 # -O0, -O1, -O2, -O3 or -Os
 # OPTIMIZATION = -Os
-# OPTIMIZATION = -O0
+OPTIMIZATION = -O0
 # OPTIMIZATION = -O1
-OPTIMIZATION = -O2
+# OPTIMIZATION = -O2
 # OPTIMIZATION = -O3
 
 # debug:

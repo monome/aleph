@@ -30,19 +30,19 @@
 //#define PLL_OUTPUT_FREQ 132000000UL
 
 #if 1
-#define FMCK_HZ   		66000000   // master */
-#define FCPU_HZ   		FMCK_HZ    // cpu */
-#define FHSB_HZ   		FCPU_HZ    // highspeed bus */
-#define FPBA_HZ   		FMCK_HZ    // peripheral bus A */
-#define FPBB_HZ   		FMCK_HZ    // peripheral bus B */
+#define FMCK_HZ   		66000000   // master 
+#define FCPU_HZ   		FMCK_HZ    // cpu 
+#define FHSB_HZ   		FCPU_HZ    // highspeed bus 
+#define FPBA_HZ   		FMCK_HZ    // peripheral bus A 
+#define FPBB_HZ   		FMCK_HZ    // peripheral bus B 
 #else
 // 
 ///// using osc0
-#define FMCK_HZ   		12000000   // master */
-#define FCPU_HZ   		FMCK_HZ    // cpu */
-#define FHSB_HZ   		FCPU_HZ    // highspeed bus */
-#define FPBA_HZ   		FMCK_HZ    // peripheral bus A */
-#define FPBB_HZ   		FMCK_HZ    // peripheral bus B */
+#define FMCK_HZ   		12000000   // master 
+#define FCPU_HZ   		FMCK_HZ    // cpu 
+#define FHSB_HZ   		FCPU_HZ    // highspeed bus 
+#define FPBA_HZ   		FMCK_HZ    // peripheral bus A 
+#define FPBB_HZ   		FMCK_HZ    // peripheral bus B 
 #endif
 
 // clock manager needs these
@@ -61,7 +61,7 @@
 #define FTDI_USART_RX_FUNCTION   AVR32_USART0_RXD_0_0_FUNCTION
 #define FTDI_USART_TX_PIN        AVR32_USART0_TXD_0_0_PIN
 #define FTDI_USART_TX_FUNCTION   AVR32_USART0_TXD_0_0_FUNCTION
-#define FTDI_USART_BAUDRATE      57600
+#define FTDI_USART_BAUDRATE      500000
 /// compatibility with ASF print funcs
 #define DBG_USART              FTDI_USART
 #define DBG_USART_RX_PIN       FTDI_USART_RX_PIN
@@ -170,8 +170,8 @@
 #define TWI_DATA_FUNCTION   AVR32_TWI_SDA_0_0_FUNCTION
 #define TWI_CLOCK_PIN           AVR32_TWI_SCL_0_0_PIN
 #define TWI_CLOCK_FUNCTION  AVR32_TWI_SCL_0_0_FUNCTION
-//#define TWI_SPEED 50000;
-#define TWI_SPEED 132000;
+// NOTE: atmel's twi driver has a really shitty speed calculation
+#define TWI_SPEED 400000
 
 // USB pins
 

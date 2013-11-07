@@ -9,8 +9,10 @@ CSRCS += \
 	avr32/drivers/pm/power_clocks_lib.c                \
         avr32/drivers/tc/tc.c                          \
 	avr32/drivers/usart/usart.c                        \
+	avr32/drivers/twi/twi.c                        \
 	avr32/utils/debug/print_funcs.c                    \
         common/services/clock/uc3a0_a1/sysclk.c            \
+	$(ALEPH_AVR32)/src/i2c.c	\
 	$(ALEPH_AVR32)/src/init.c	\
 	$(ALEPH_AVR32)/src/interrupts.c \
 	$(ALEPH_AVR32)/src/main.c \

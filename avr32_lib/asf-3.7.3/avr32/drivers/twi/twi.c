@@ -44,11 +44,11 @@
  *
  ******************************************************************************/
 
-
 #include <avr32/io.h>
 #include "compiler.h"
 #include "twi.h"
 
+#include "print_funcs.h"
 
 //! Pointer to the instance of the TWI registers for IT.
 static volatile avr32_twi_t *twi_inst;
@@ -80,7 +80,6 @@ static twi_slave_fct_t twi_slave_fct;
 
 #endif
 
-
 #define CONF_TWI_IRQ_LINE          AVR32_TWI_IRQ
 #define CONF_TWI_IRQ_GROUP         AVR32_TWI_IRQ_GROUP
 
@@ -91,6 +90,9 @@ ISR(twi_master_interrupt_handler, CONF_TWI_IRQ_GROUP, CONF_TWI_IRQ_LEVEL)
 {
 	// get masked status register value
 	int status = twi_inst->sr & twi_it_mask;
+
+	// print_dbg("\r\n twi_master_interrupt_handler(), status: 0x");
+	// print_dbg_hex((u32)status);
 
 	// this is a NACK
 	if (status & AVR32_TWI_SR_NACK_MASK) {
@@ -164,6 +166,9 @@ ISR(twi_slave_interrupt_handler, AVR32_TWI_IRQ_GROUP, CONF_TWI_IRQ_LEVEL)
 		twi_inst->idr = AVR32_TWI_IDR_TXRDY_MASK
 				| AVR32_TWI_IDR_RXRDY_MASK
 				| AVR32_TWI_IER_EOSACC_MASK;
+
+
+		//		// print_dbg("\r\n twi driver ISR");
 
 		// Re-enable detection slave access
 		twi_it_mask = AVR32_TWI_IER_SVACC_MASK;
@@ -462,11 +467,17 @@ int twi_master_read(volatile avr32_twi_t *twi, const twi_package_t *package)
 
 int twi_master_write(volatile avr32_twi_t *twi, const twi_package_t *package)
 {
+
+  // print_dbg("\r\n twi_master_write... WTF");
 	// No data to send
 	if (package->length == 0) {
+	  // print_dbg("\r\n twi_master_write, 0-length packet");
 		return TWI_INVALID_ARGUMENT;
 	}
 
+
+
+	// print_dbg("\r\n twi_master_write, waiting on TWI not-busy...");
 	while (twi_is_busy()) {
 		cpu_relax();
 	};
@@ -492,21 +503,37 @@ int twi_master_write(volatile avr32_twi_t *twi, const twi_package_t *package)
 	// set internal address for remote chip
 	twi->iadr = twi_mk_addr(package->addr, package->addr_length);
 
+	// print_dbg("\r\n twi_master_write, final address field: 0x");
+	// print_dbg_hex((u32)(twi->iadr));
+
 	// get a pointer to applicative data
 	twi_tx_data = package->buffer;
+	// print_dbg("\r\n twi_master_write, final data address: 0x");
+	// print_dbg_hex((u32)(twi_tx_data));
+
+	// print_dbg("\r\n twi_master_write, final data paylod: 0x");
+	// print_dbg_hex((u32)(*twi_tx_data));
+
 
 	// get a copy of nb bytes to write
+	// print_dbg("\r\n twi_master_write, get packet length: ");
+	// print_dbg_char_hex(package->length);
+
 	twi_tx_nb_bytes = package->length;
 
 	// put the first byte in the Transmit Holding Register
+	// print_dbg("\r\n twi_master_write, write data to holding register...");
 	twi->thr = *twi_tx_data++;
 
 	// mask NACK and TXRDY interrupts
+	// print_dbg("\r\n twi_master_write, mask NACK and TXRDY...");
 	twi_it_mask = AVR32_TWI_IER_NACK_MASK | AVR32_TWI_IER_TXRDY_MASK;
 
+	// print_dbg("\r\n twi_master_write, set IER...");
 	// update IMR through IER
 	twi->ier = twi_it_mask;
 
+	// print_dbg("\r\n twi_master_write, waiting on TWI not-busy...");
 	// send data
 	while (twi_is_busy()) {
 		cpu_relax();
@@ -516,6 +543,7 @@ int twi_master_write(volatile avr32_twi_t *twi, const twi_package_t *package)
 	twi->cr =  AVR32_TWI_CR_MSDIS_MASK;
 
 	if (twi_nack) {
+	  // print_dbg("\r\n twi_master_write() : NACK");
 		return TWI_RECEIVE_NACK;
 	}
 

@@ -23,11 +23,16 @@ extern void init_local_pdca(void);
 extern void init_spi1 (void);
 // initialize application timer
 extern void init_tc (volatile avr32_tc_t *tc);
-// intialize two-wire interface
-extern void init_twi(void);
+
 // initialize SPI and GPIO for sdcard
 extern void init_sd_mmc_resources(void);
 // initialize USB host stack
 void init_usb_host (void);
+
+
+// intialize TWI
+extern void init_i2c_slave(void);
+extern void init_i2c_master(void);
+
 
 #endif
