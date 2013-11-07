@@ -28,12 +28,11 @@ static void monome_grid_key_loopback(void* op, u32 edata) {
 static void monome_ring_enc_loopback(void* op, u32 edata) {
   u8 n;
   s8 val;
-  /// FIXME: this is pretty broken
-  print_dbg("\r\n arc: 0x");
-  print_dbg_hex(val);
   monome_ring_enc_parse_event_data(edata, &n, &val);
-  monomeLedBuffer[val + (n<<6)] = 15;
-  monomeFrameDirty = 0x0f;
+  if(val > 0) {
+    monomeLedBuffer[val + (n<<6)] = 15;
+    monomeFrameDirty |= (1<<n);
+  }
 }
 
 
