@@ -615,9 +615,9 @@ static u8 setup_mext(void) {
     mdesc.device = eDeviceArc;
     mdesc.encs = *(++prx);
   } else {
-    print_dbg_ulong(*prx);
-    print_dbg_ulong(*(++prx));
-    print_dbg_ulong(*(++prx));
+    print_dbg_hex(*prx);
+    print_dbg_hex(*(++prx));
+    print_dbg_hex(*(++prx));
     return 0; // bail
   }
   set_funcs();

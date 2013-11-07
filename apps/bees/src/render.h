@@ -120,6 +120,6 @@ extern void clearln( void);
 extern void endln( void);
 
 // draw editing string at given position, with cursor highlight
-extern void draw_edit_string( u8 x, u8 y, char* str, u8 len);
+extern void draw_edit_string( u8 x, u8 y, char* str, u8 len, u8 cursor);
 
 #endif // header guard

@@ -2,14 +2,26 @@
   page_scenes.c
  */
 
+#include "print_funcs.h"
+
+#include "files.h"
 #include "handler.h"
 #include "net.h"
 #include "pages.h"
 #include "render.h"
+#include "scene.h"
 
 
 //------------------------------
 // static vars
+
+//--- these are common to all pages
+// a region for the center scroll
+static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
+// a scroll class that manages write/read offsets into the scroll region
+static scroll centerScroll;
+
+//--- page-specific state variables
 static u8 inClear = 0;
 static u8 inCopy = 0;
 
@@ -48,7 +60,7 @@ static void scroll_edit_char(u8 dir);
 static void render_line(s16 idx, u8 fg) {
   region_fill(lineRegion, 0x0);
   clearln();
-  appendln(files_get_scene_name(idx));
+  appendln((const char*)files_get_scene_name(idx));
   font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
 }
 
@@ -58,8 +70,6 @@ static void select_scroll(s32 dir) {
   // index for new content
   s16 newIdx;
   s16 newSel;
-  // new flags
-  u8 newInPreset;
 
   if(dir < 0) {
     /// SCROLL DOWN
@@ -210,7 +220,7 @@ static void show_foot(void) {
 // ---- extern 
 
 // init
-void init_page_outs(void) {
+void init_page_scenes(void) {
   u8 i, n;
   print_dbg("\r\n alloc SCENES page");
   // allocate regions
