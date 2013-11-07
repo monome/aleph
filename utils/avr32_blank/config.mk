@@ -1,11 +1,11 @@
-
+# paths are relatviet to toplevel ASF
 # avr32 core directory
-ALEPH_AVR32 = ../avr32_usart_test
+ALEPH_AVR32 = ../../utils/avr32_blank
 # aleph common directory
-ALEPH_COMMON = ../common
+ALEPH_COMMON = ../../common
 
 APP = usart-test
-APP_DIR = ../avr32_usart_test
+APP_DIR = ../../utils/avr32_blank
 
 
 # Target CPU architecture: ap, ucr1, ucr2 or ucr3
@@ -45,7 +45,8 @@ ASSRCS +=
 # List of include paths.	
 INC_PATH += \
 	$(APP_DIR)	           \
-	$(APP_DIR)/src
+	$(APP_DIR)/src \
+	$(APP_DIR)/conf
 
 # Additional search paths for libraries.
 LIB_PATH = 

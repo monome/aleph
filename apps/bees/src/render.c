@@ -460,18 +460,4 @@ void render_edit_string(region* reg, char* str, u8 len, u8 cursor) {
   }
   reg->dirty = 1;
 
-  
-  /* u8 i; */
-  /* y *= FONT_CHARH; */
-  /* for(i=0; i<len; i++) { */
-  /*   if(str[i] == 0) { return; } */
-  /*   if(i == cursor) { */
-  /*     //     x += screen_char_fixed_back(x, y, str[i], 0x0, 0xa); */
- 
-  /*     ++x; */
-  /*   } else { */
-  /*     //      x += screen_char_squeeze_back(x, y, str[i], 0x7, 0x0); */
-  /*     ++x; */
-  /*   } */
-  /* } */
 }
