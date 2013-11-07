@@ -155,13 +155,9 @@ void init_i2c_slave(void) {
   gpio_enable_module(TWI_GPIO_MAP, sizeof(TWI_GPIO_MAP) / sizeof(TWI_GPIO_MAP[0]));
 
   // options settings
-  //  opt.pba_hz = FOSC0;
   opt.pba_hz = FPBA_HZ;
   opt.speed = TWI_SPEED;
-  //  opt.chip = EEPROM_ADDRESS;
-  //  opt.chip = 100;
-  //  opt.chip = 200;
-  opt.chip = 0;
+  opt.chip = 100;
 
   // initialize TWI driver with options
   twi_slave_fct.rx = &i2c_slave_rx;

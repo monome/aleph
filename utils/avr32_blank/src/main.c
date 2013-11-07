@@ -81,12 +81,12 @@ static void init_avr32(void) {
   cpu_irq_enable();
 
   // i2c slave
-  //  print_dbg("\r\n  init_i2c_slave() ");
-  //  init_i2c_slave();
+  print_dbg("\r\n  init_i2c_slave() ");
+  init_i2c_slave();
 
   // i2c master
-  print_dbg("\r\n  init_i2c_master() ");
-  init_i2c_master();
+  //  print_dbg("\r\n  init_i2c_master() ");
+  //  init_i2c_master();
   
 }
 
@@ -100,18 +100,22 @@ int main (void) {
   print_dbg("\r\n enter tx loop");
 
     while(1) {
+      /*
       print_dbg("\r\n i2c tx: 0x");
       print_dbg_char_hex(tx);
 
       // test i2c with loopback
       i2c_master_tx(&tx);
-      //      delay_us(100);
-      //      i2c_master_rx(&rx);
+
+      delay_us(10);      
+      i2c_master_rx(&rx);
       
-      //      print_dbg(" , rx: 0x");
-      //      print_dbg_char_hex(rx);
+      print_dbg(" , rx: 0x");
+      print_dbg_char_hex(rx);
       
       ++tx;
-      delay_ms(250);
+      delay_ms(100);
+      */
     }
+      
 }

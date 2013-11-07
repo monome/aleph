@@ -34,8 +34,8 @@ twi_package_t packet_tx = {
 
 twi_package_t packet_rx = { 
   .chip = 100, 
-  .addr = {100, 100, 100}, 
-  .addr_length=1,
+  //  .addr = {100, 100, 100}, 
+  //  .addr_length=0,
   .length=1 
 }; 
 
