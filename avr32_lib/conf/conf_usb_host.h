@@ -12,7 +12,8 @@
 #define UHD_NO_SLEEP_MGR
 
 //! Array of UHI APIs Define the list of UHI supported by USB host.
-#define USB_HOST_UHI        UHI_HID_MOUSE , UHI_HID_GAMEPAD , UHI_FTDI , UHI_MIDI ,
+//#define USB_HOST_UHI        UHI_HID_MOUSE , UHI_HID_GAMEPAD , UHI_FTDI , UHI_MIDI ,
+#define USB_HOST_UHI        UHI_HID , UHI_FTDI , UHI_MIDI ,
 
 //! Maximum current allowed on Vbus (mA)
 #define USB_HOST_POWER_MAX  500
@@ -53,17 +54,16 @@
 //! Called when a USB device enumeration is completed.
 #define UHC_ENUM_EVENT(dev,b_status)        usb_enum(dev,b_status)
 
+/* // mouse functions */
+/* #define UHI_HID_MOUSE_CHANGE(dev,b_plug) */
+/* // FIXME : wtf why are these here */
+/* #define UHI_HID_MOUSE_EVENT_BTN_LEFT(b_state)    hid_mouse_btn_left(b_state) */
+/* #define UHI_HID_MOUSE_EVENT_BTN_RIGHT(b_state)   hid_mouse_btn_right(b_state) */
+/* #define UHI_HID_MOUSE_EVENT_BTN_MIDDLE(b_state)  hid_mouse_btn_middle(b_state) */
+/* #define UHI_HID_MOUSE_EVENT_MOUVE(x,y,scroll)    hid_mouse_move(x,y,scroll) */
 
-// mouse functions
-#define UHI_HID_MOUSE_CHANGE(dev,b_plug)
-// FIXME : wtf why are these here
-#define UHI_HID_MOUSE_EVENT_BTN_LEFT(b_state)    hid_mouse_btn_left(b_state)
-#define UHI_HID_MOUSE_EVENT_BTN_RIGHT(b_state)   hid_mouse_btn_right(b_state)
-#define UHI_HID_MOUSE_EVENT_BTN_MIDDLE(b_state)  hid_mouse_btn_middle(b_state)
-#define UHI_HID_MOUSE_EVENT_MOUVE(x,y,scroll)    hid_mouse_move(x,y,scroll)
-
-// gamepad functions
-#define UHI_HID_GAMEPAD_CHANGE(dev,b_plug)
+// generic HID functions
+#define UHI_HID_CHANGE(dev,b_plug)
 
 // ftdi functions
 #define UHI_FTDI_CHANGE(dev, b_plug) ftdi_change(dev, b_plug)
@@ -73,8 +73,7 @@
 
 
 #include "uhi_ftdi.h"
-#include "uhi_hid_mouse.h"
-#include "uhi_hid_gamepad.h"
+#include "uhi_hid.h"
 #include "uhi_midi.h"
 //#include "ui.h"
 #include "usb.h"

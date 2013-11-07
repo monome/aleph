@@ -52,18 +52,18 @@
 
 // aleph-avr32
 #include "conf_usb_host.h"
-#include "hid_gamepad.h"
-#include "uhi_hid_gamepad.h"
+#include "hid.h"
+#include "uhi_hid.h"
 
 #ifdef USB_HOST_HUB_SUPPORT
 # error USB HUB support is not implemented on UHI gamepad
 #endif
 
 // events
-#define UHI_HID_GAMEPAD_BTN        0
-#define UHI_HID_GAMEPAD_MOV_X      1
-#define UHI_HID_GAMEPAD_MOV_Y      2
-#define UHI_HID_GAMEPAD_MOV_SCROLL 3
+/* #define UHI_HID_BTN        0 */
+/* #define UHI_HID_MOV_X      1 */
+/* #define UHI_HID_MOV_Y      2 */
+/* #define UHI_HID_MOV_SCROLL 3 */
 
 // device data structure
 typedef struct {
@@ -72,16 +72,16 @@ typedef struct {
   uint8_t report_size;
   uint8_t *report;
   //  uint8_t report_btn_prev;
-}uhi_hid_gamepad_dev_t;
+}uhi_hid_dev_t;
 
-static uhi_hid_gamepad_dev_t uhi_hid_gamepad_dev = {
+static uhi_hid_dev_t uhi_hid_dev = {
   .dev = NULL,
   .report = NULL,
 };
 
 //------- static funcs
-static void uhi_hid_gamepad_start_trans_report(usb_add_t add);
-static void uhi_hid_gamepad_report_reception(
+static void uhi_hid_start_trans_report(usb_add_t add);
+static void uhi_hid_report_reception(
 					   usb_add_t add,
 					   usb_ep_t ep,
 					   uhd_trans_status_t status,
@@ -89,12 +89,12 @@ static void uhi_hid_gamepad_report_reception(
 //@}
 
 //----- external (UHC) functions
-uhc_enum_status_t uhi_hid_gamepad_install(uhc_device_t* dev) {
+uhc_enum_status_t uhi_hid_install(uhc_device_t* dev) {
   bool b_iface_supported;
   uint16_t conf_desc_lgt;
   usb_iface_desc_t *ptr_iface;
 
-  if (uhi_hid_gamepad_dev.dev != NULL) {
+  if (uhi_hid_dev.dev != NULL) {
     return UHC_ENUM_SOFTWARE_LIMIT; // Device already allocated
   }
   conf_desc_lgt = le16_to_cpu(dev->conf_desc->wTotalLength);
@@ -153,15 +153,15 @@ uhc_enum_status_t uhi_hid_gamepad_install(uhc_device_t* dev) {
 	return UHC_ENUM_HARDWARE_LIMIT; // Endpoint allocation fail
       }
       Assert(((usb_ep_desc_t*)ptr_iface)->bEndpointAddress & USB_EP_DIR_IN);
-      uhi_hid_gamepad_dev.ep_in = ((usb_ep_desc_t*)ptr_iface)->bEndpointAddress;
-      uhi_hid_gamepad_dev.report_size =
+      uhi_hid_dev.ep_in = ((usb_ep_desc_t*)ptr_iface)->bEndpointAddress;
+      uhi_hid_dev.report_size =
 	le16_to_cpu(((usb_ep_desc_t*)ptr_iface)->wMaxPacketSize);
-      uhi_hid_gamepad_dev.report = malloc(uhi_hid_gamepad_dev.report_size);
-      if (uhi_hid_gamepad_dev.report == NULL) {
+      uhi_hid_dev.report = malloc(uhi_hid_dev.report_size);
+      if (uhi_hid_dev.report == NULL) {
 	Assert(false);
 	return UHC_ENUM_MEMORY_LIMIT; // Internal RAM allocation fail
       }
-      uhi_hid_gamepad_dev.dev = dev;
+      uhi_hid_dev.dev = dev;
       // All endpoints of all interfaces supported allocated
       return UHC_ENUM_SUCCESS;
 
@@ -177,25 +177,25 @@ uhc_enum_status_t uhi_hid_gamepad_install(uhc_device_t* dev) {
 }
 
 
-void uhi_hid_gamepad_enable(uhc_device_t* dev) {
-  if (uhi_hid_gamepad_dev.dev != dev) {
+void uhi_hid_enable(uhc_device_t* dev) {
+  if (uhi_hid_dev.dev != dev) {
     return;  // No interface to enable
   }
 
   // Init value
-  //uhi_hid_gamepad_dev.report_btn_prev = 0;
-  uhi_hid_gamepad_start_trans_report(dev->address);
-  UHI_HID_GAMEPAD_CHANGE(dev, true);
+  //uhi_hid_dev.report_btn_prev = 0;
+  uhi_hid_start_trans_report(dev->address);
+  UHI_HID_CHANGE(dev, true);
 }
 
-void uhi_hid_gamepad_uninstall(uhc_device_t* dev) {
-  if (uhi_hid_gamepad_dev.dev != dev) {
+void uhi_hid_uninstall(uhc_device_t* dev) {
+  if (uhi_hid_dev.dev != dev) {
     return; // Device not enabled in this interface
   }
-  uhi_hid_gamepad_dev.dev = NULL;
-  Assert(uhi_hid_gamepad_dev.report!=NULL);
-  free(uhi_hid_gamepad_dev.report);
-  UHI_HID_GAMEPAD_CHANGE(dev, false);
+  uhi_hid_dev.dev = NULL;
+  Assert(uhi_hid_dev.report!=NULL);
+  free(uhi_hid_dev.report);
+  UHI_HID_CHANGE(dev, false);
 }
 
 /**
@@ -203,10 +203,10 @@ void uhi_hid_gamepad_uninstall(uhc_device_t* dev) {
  *
  * \param add   USB address to use
  */
-static void uhi_hid_gamepad_start_trans_report(usb_add_t add) {
+static void uhi_hid_start_trans_report(usb_add_t add) {
   // Start transfer on interrupt endpoint IN
-  uhd_ep_run(add, uhi_hid_gamepad_dev.ep_in, true, uhi_hid_gamepad_dev.report,
-	     uhi_hid_gamepad_dev.report_size, 0, uhi_hid_gamepad_report_reception);
+  uhd_ep_run(add, uhi_hid_dev.ep_in, true, uhi_hid_dev.report,
+	     uhi_hid_dev.report_size, 0, uhi_hid_report_reception);
 }
 
 /**
@@ -216,7 +216,7 @@ static void uhi_hid_gamepad_start_trans_report(usb_add_t add) {
  * \param status        Transfer status
  * \param nb_transfered Number of data transfered
  */
-static void uhi_hid_gamepad_report_reception(
+static void uhi_hid_report_reception(
 					   usb_add_t add,
 					   usb_ep_t ep,
 					   uhd_trans_status_t status,
@@ -232,14 +232,14 @@ static void uhi_hid_gamepad_report_reception(
 
   /*
   print_dbg("\r\n gamepad_report: ");
-  for (i=0; i<uhi_hid_gamepad_dev.report_size; i++) {
+  for (i=0; i<uhi_hid_dev.report_size; i++) {
     print_dbg(" ");
-    print_dbg_hex((unsigned long int) uhi_hid_gamepad_dev.report[i]);
+    print_dbg_hex((unsigned long int) uhi_hid_dev.report[i]);
   }
   */
 
-  hid_gamepad_parse_frame(uhi_hid_gamepad_dev.report, uhi_hid_gamepad_dev.report_size);
+  hid_parse_frame(uhi_hid_dev.report, uhi_hid_dev.report_size);
 
   // wait for next transmission
-  uhi_hid_gamepad_start_trans_report(add);
+  uhi_hid_start_trans_report(add);
 }

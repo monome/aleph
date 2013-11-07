@@ -9,13 +9,6 @@
 #include <pll.h>
 #include <sysclk.h>
 
-// From module: USB HID Device protocol
-#include <usb_protocol_hid.h>
-// From module: USB Host HID Mouse (Single Class support)
-#include <uhi_hid_mouse.h>
-#include <uhc.h>
-#include <uhd.h>
-
 #include "compiler.h"
 #include "conf_sd_mmc_spi.h"
 #include "util.h"
@@ -26,6 +19,7 @@
 #include "sd_mmc_spi.h"
 #include "spi.h"
 #include "tc.h"
+#include "uhc.h"
 #include "usart.h"
 // aleph
 //#include "conf_aleph.h"

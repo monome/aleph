@@ -44,14 +44,12 @@ CSRCS += \
 	$(ALEPH_AVR32)src/switches.c \
 	$(ALEPH_AVR32)src/timers.c \
 	$(ALEPH_AVR32)src/usb.c \
-	$(ALEPH_AVR32)src/usb/gamepad/hid_gamepad.c \
-	$(ALEPH_AVR32)src/usb/gamepad/uhi_hid_gamepad.c \
 	$(ALEPH_AVR32)src/usb/ftdi/uhi_ftdi.c \
 	$(ALEPH_AVR32)src/usb/ftdi/ftdi.c \
+	$(ALEPH_AVR32)src/usb/hid/hid.c \
+	$(ALEPH_AVR32)src/usb/hid/uhi_hid.c \
 	$(ALEPH_AVR32)src/usb/midi/uhi_midi.c \
 	$(ALEPH_AVR32)src/usb/midi/midi.c \
-	$(ALEPH_AVR32)src/usb/mouse/hid_mouse.c \
-	$(ALEPH_AVR32)src/usb/mouse/uhi_hid_mouse.c \
 	$(ALEPH_AVR32)src/fat_io_lib/fat_access.c \
 	$(ALEPH_AVR32)src/fat_io_lib/fat_cache.c \
 	$(ALEPH_AVR32)src/fat_io_lib/fat_filelib.c \
@@ -113,8 +111,7 @@ INC_PATH += \
 	$(ALEPH_AVR32)src/fat_io_lib  \
 	$(ALEPH_AVR32)src/usb     \
 	$(ALEPH_AVR32)src/usb/ftdi   \
-	$(ALEPH_AVR32)src/usb/gamepad \
+	$(ALEPH_AVR32)src/usb/hid \
 	$(ALEPH_AVR32)src/usb/midi   \
-	$(ALEPH_AVR32)src/usb/mouse   \
 	$(ALEPH_COMMON)	           \
 	$(ALEPH_COMMON)/libfixmath
