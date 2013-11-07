@@ -165,28 +165,28 @@ void files_load_dsp_name(const char* name) {
 }
 
 
-// store .ldr as default in internal flash
-void files_store_default_dsp(u8 idx) {
-  const char* name;
-  void* fp;	  
-  u32 size;
+/* // store .ldr as default in internal flash */
+/* void files_store_default_dsp(u8 idx) { */
+/*   const char* name; */
+/*   void* fp;	   */
+/*   u32 size; */
 
-  cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
-  cpu_irq_disable_level(UI_IRQ_PRIORITY);
+/*   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY); */
+/*   cpu_irq_disable_level(UI_IRQ_PRIORITY); */
 
-  name = (const char*)files_get_dsp_name(idx);
-  fp = list_open_file_name(&dspList, name, "r", &size);
+/*   name = (const char*)files_get_dsp_name(idx); */
+/*   fp = list_open_file_name(&dspList, name, "r", &size); */
 
-  if( fp != NULL) {
-    bfinLdrSize = size;
-    fl_fread((void*)bfinLdrData, 1, size, fp);
-    flash_write_ldr();
-    fl_fclose(fp);
-  }
+/*   if( fp != NULL) { */
+/*     bfinLdrSize = size; */
+/*     fl_fread((void*)bfinLdrData, 1, size, fp); */
+/*     flash_write_ldr(); */
+/*     fl_fclose(fp); */
+/*   } */
 
-  cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
-  cpu_irq_enable_level(UI_IRQ_PRIORITY);
-}
+/*   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY); */
+/*   cpu_irq_enable_level(UI_IRQ_PRIORITY); */
+/* } */
 
 // return count of dsp files
 u8 files_get_dsp_count(void) {
@@ -218,14 +218,13 @@ void files_write_firmware_name(const char* name) {
   fp = list_open_file_name(&appList, name, "r", &size);
 
   //  // print_dbg("\r\n writing firmware to flash... ");
-  if( fp != NULL) {    
-
-    /////
-    /// now using intel-hex format
+  if( fp != NULL) {   
 
     screen_clear();
     show_size(size);
 
+
+    /// using intel-hex format
     for(fIdx = 0; fIdx<size; fIdx++) {
       ch = fl_fgetc(fp);
       if(ch == ':') {
@@ -235,7 +234,7 @@ void files_write_firmware_name(const char* name) {
 	  flash_write_hex_record(hexRecordData);
 	}
 	// reset hex byte index for next record
-	hIdx =0;
+	hIdx = 0;
       }
 
       hexRecordData[hIdx] = (u8)ch;

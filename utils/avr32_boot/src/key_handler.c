@@ -27,10 +27,10 @@ extern void key_handler_dsp(uiKey_t key, s16 val) {
     // load DSP (and update the parameter list)
     files_load_dsp(curPage->selected);
     break;
-  case eKeyFnDownB:
-    //// set as default
-    files_store_default_dsp(curPage->selected);
-    break;
+  /* case eKeyFnDownB: */
+  /*   //// set as default */
+  /*   files_store_default_dsp(curPage->selected); */
+  /*   break; */
     //// encoder A: scroll pages
   case eKeyEncUpA:
     scroll_page(1);

@@ -88,10 +88,10 @@ void flash_read_ldr(void) {
 }
 
 // write default blackfin
-void flash_write_ldr(void) {
-  flashc_memset32((void*)&(flash_nvram_data.ldrSize), bfinLdrSize, 4, true);
-  flashc_memcpy((void*)&(flash_nvram_data.ldrData), (const void*)bfinLdrData, bfinLdrSize, true);
-}
+/* void flash_write_ldr(void) { */
+/*   flashc_memset32((void*)&(flash_nvram_data.ldrSize), bfinLdrSize, 4, true); */
+/*   flashc_memcpy((void*)&(flash_nvram_data.ldrData), (const void*)bfinLdrData, bfinLdrSize, true); */
+/* } */
 
 /* static u32 flashoff =0x80000000; */
 /* static void print_flash(void) { */

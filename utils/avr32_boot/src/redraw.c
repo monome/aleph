@@ -93,7 +93,8 @@ void redraw_dsp(void) {
   }
   screen_line(0, 0, "MODULES", 12);
   // draw footer (function labels)
-  screen_line(0, CHAR_ROWS_1, "LOAD DEFAULT", 10);
+  //  screen_line(0, CHAR_ROWS_1, "LOAD DEFAULT", 10);
+  screen_line(0, CHAR_ROWS_1, "LOAD", 10);
 }
 
 //==================================================

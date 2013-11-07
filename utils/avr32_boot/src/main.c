@@ -250,8 +250,8 @@ int main (void) {
   if(!isSwDown) {
     /// hardcoded jump to runtime code location
     asm volatile (
-    		  " mov   r0,LO(0x80010000)\n\t"
-    		  " orh   r0,HI(0x80010000)\n\t"
+    		  " mov   r0,LO(0x80009000)\n\t"
+    		  " orh   r0,HI(0x80009000)\n\t"
     		  " mov   pc,r0"
     		  );
   } else {

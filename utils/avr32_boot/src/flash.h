@@ -12,9 +12,10 @@
 #include "screen.h"
 
 /// target address of firmware in internal flash
-/// NOTE: this is hardcoded ASM in main() !
-/// DO NOT CHANGE
-#define FIRMWARE_FLASH_ADDRESS 0x80010000
+/// NOTE: this is hardcoded ASM in main()!
+/// also it is hardcoded in application linker scripts!
+/// DO NOT CHANGE. EVER.
+#define FIRMWARE_FLASH_ADDRESS 0x80009000
 
 //------------------------
 // extern variables
@@ -36,7 +37,7 @@ extern void flash_clear_firstrun(void);
 
 // read/write default blackfin loader file to/from global ram buffer 
 extern void flash_read_ldr(void);
-extern void flash_write_ldr(void);
+//extern void flash_write_ldr(void);
 
 // write avr32 firmware
 // extern void flash_write_firmware(void);
