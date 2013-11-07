@@ -261,38 +261,17 @@ void files_store_scene_name(const char* name) {
   pScene = (u8*)sceneData;
 
   fl_fwrite((const void*)pScene, sizeof(sceneData_t), 1, fp);
-  list_scan(&sceneList, SCENES_PATH);
   fl_fclose(fp);
+
+  list_scan(&sceneList, SCENES_PATH);
+
+  //  print_dbg("\r\n scanned it. scanned!");
+  //  print_dbg("\r\n skipped the scan!");
 
   delay_ms(10);
   app_resume();
 }
 
-
-// store scene from filesystem  as default in internal flash
-//// NOTE: unimplemented and i'm not sure we really want to do this?
-void files_store_default_scene(u8 idx) {
-  /* const char* name; */
-  /* void* fp;	   */
-  /* u32 size; */
-
-  /* app_pause(); */
-
-  /* name = (const char*)files_get_scene_name(idx); */
-  /* fp = list_open_file_name(&dspList, name, "r", &size); */
-
-  /* if( fp != NULL) { */
-  /*   print_dbg("\r\n warning: files_store_default_scene is unimplemented"); */
-  /*   //// TODO */
-  /*   fl_fclose(fp); */
-  /*   //    print_dbg("finished storing default scene"); */
-    
-  /* } else { */
-  /*   print_dbg("\r\n error: fp was null in files_store_default_scene \r\n"); */
-  /* } */
-
-  /* app_resume(); */
-}
 
 // return count of dsp files
 u8 files_get_scene_count(void) {
@@ -307,7 +286,7 @@ const char* list_get_name(dirList_t* list, u8 idx) {
 }
 
 void list_scan(dirList_t* list, const char* path) {
-  FL_DIR dirstat;
+  FL_DIR dirstat; 
   struct fs_dir_ent dirent;
 
   list->num = 0;
@@ -317,7 +296,11 @@ void list_scan(dirList_t* list, const char* path) {
     while (fl_readdir(&dirstat, &dirent) == 0) {
       if( !(dirent.is_dir) ) {
 	strcpy((char*)(list->nameBuf + (list->num * DIR_LIST_NAME_LEN)), dirent.filename);
-	list->num++;
+	print_dbg("\r\n added file: ");
+	print_dbg(dirent.filename);
+	print_dbg(" , count: ");
+	print_dbg_ulong(list->num);
+	list->num += 1;
       }
     }
   }

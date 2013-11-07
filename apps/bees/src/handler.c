@@ -99,9 +99,9 @@ static void handle_Switch5(s32 data) {
   render_boot("writing current scene to flash");
 
 
-  //  scene_write_default();
+  scene_write_default();
   //  //// TEST: write to filesystem!
-  files_store_scene_name("test_default.scn");
+  //  files_store_scene_name("test_default.scn");
   //  files_store_test_scene();
 
   // power down

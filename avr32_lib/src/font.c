@@ -226,6 +226,28 @@ extern u8 font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
   return cols;
 }
 
+// fixed_width variant
+extern u8 font_glyph_fixed(char ch, u8* buf, u8 w, u8 a, u8 b) {
+  u8 i=0;
+  u8 j;
+  u8 * p = buf;
+  const glyph_t* gl = &(font_data[ch - FONT_ASCII_OFFSET]);
+
+  // columns to draw
+  while(i < FONT_CHARW) {
+    for(j=0; j<FONT_CHARH; j++) {
+      *p = gl->data[i + gl->first] & (1 << j) ? a : b;
+      // point at next row
+      p += w;
+    }
+    // increment column count
+    i++;
+    // reset pointer to row
+    p = buf + i;
+  }
+  return FONT_CHARW;
+}
+
 // same as font_glyph, double size
 extern u8* font_glyph_big(char ch, u8* buf, u8 w, u8 a, u8 b) {
   u8 i=0, j, val;

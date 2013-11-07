@@ -44,11 +44,6 @@ extern void files_store_scene(u8 idx);
 // store scene by filename
 extern void files_store_scene_name(const char* name);
 
-// store default scene in flash, by index
-extern void files_store_default_scene(u8 idx);
-
-/// test
-extern void     files_load_test_scene(void);
 
 
 #endif // header guard 

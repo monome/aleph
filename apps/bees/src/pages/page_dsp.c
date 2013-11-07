@@ -181,7 +181,7 @@ void handle_key_1(s32 val) {
   if(check_key(1)) {
     // render status to head region  
     region_fill(headRegion, 0x0);
-    font_string_region_clip(headRegion, "writing DSP module -> flash...", 0, 0, 0xa, 0);
+    font_string_region_clip(headRegion, "writing DSP module to flash...", 0, 0, 0xa, 0);
     headRegion->dirty = 1;
     render_update();
     // write module as default 

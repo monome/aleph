@@ -40,6 +40,8 @@ extern const U32 font_nglyphs;
 // given pointer, row length, foreground, background
 // returns count of columns
 extern u8 font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b);
+// fixed-width variant
+extern u8 font_glyph_fixed(char ch, u8* buf, u8 w, u8 a, u8 b);
 // same as font_glyph, double size
 /// -- -fixme: these still return updated buf pointers... no width checking
 extern u8* font_glyph_big(char ch, u8* buf, u8 w, u8 a, u8 b);

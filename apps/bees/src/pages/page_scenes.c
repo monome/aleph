@@ -55,17 +55,13 @@ static void render_line(s16 idx, u8 fg);
 // scroll the current selection
 static void select_scroll(s32 dir);
 
-/* // scroll cursor position in scene name */
-/* static void scroll_edit_cursor(u8 dir); */
-/* // edit character under cursor in scene name */
-/* static void scroll_edit_char(u8 dir); */
+static void redraw_lines(void);
 
 // fill tmp region with new content
 // given input index and foreground color
 static void render_line(s16 idx, u8 fg) {
   region_fill(lineRegion, 0x0);
-  if( (idx > 0) && (idx < files_get_scene_count()) ) {
-    
+  if( (idx >= 0) && (idx < files_get_scene_count()) ) {
     clearln();
     appendln((const char*)files_get_scene_name(idx));
     font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
@@ -130,12 +126,61 @@ static void select_scroll(s32 dir) {
   }
 }
 
-
-// function keys
-void handle_key_0(s32 val) {
+static void redraw_lines(void) {
+  u8 i=0;
+  u8 n = 3;
+  while(i<5) {
+    render_line(i, 0xa);
+    render_to_scroll_line(n, i == 0 ? 1 : 0);
+    ++n;
+    ++i;
+  }
 }
 
+//---- function keys
+
+// store
+void handle_key_0(s32 val) {
+  if(val == 0) { return; }
+  if(check_key(0)) {
+    region_fill(headRegion, 0x0);
+    font_string_region_clip(headRegion, "writing scene to card...", 0, 0, 0xa, 0);
+    headRegion->dirty = 1;
+    render_update();
+    region_fill(headRegion, 0x0);
+
+    files_store_scene_name(sceneData->desc.sceneName);
+
+    print_dbg("\r\n stored scene, back to handler");
+    
+    font_string_region_clip(headRegion, "done writing.", 0, 0, 0xa, 0);
+    headRegion->dirty = 1;
+    render_update();
+
+    // refresh
+    redraw_lines();
+  }
+  show_foot();
+}
+
+// recall
 void handle_key_1(s32 val) {
+  if(val == 1) { return; }
+  if(check_key(1)) {
+    region_fill(headRegion, 0x0);
+    font_string_region_clip(headRegion, "reading scene from card...", 0, 0, 0xa, 0);
+    headRegion->dirty = 1;
+    render_update();
+
+    files_load_scene(curPage->select);
+
+    region_fill(headRegion, 0x0);
+    font_string_region_clip(headRegion, "done reading.", 0, 0, 0xa, 0);
+    headRegion->dirty = 1;
+    render_update();
+
+  }
+  show_foot();
 }
 
 void handle_key_2(s32 val) {
@@ -143,7 +188,6 @@ void handle_key_2(s32 val) {
 
 void handle_key_3(s32 val) {
 }
-
 
 // scroll character value at cursor positoin in scene name
 void handle_enc_0(s32 val) {
@@ -154,7 +198,7 @@ void handle_enc_0(s32 val) {
   }
   print_dbg("\r\b edited scene name: ");
   print_dbg(sceneData->desc.sceneName);
-  draw_edit_string(headRegion, sceneData->desc.sceneName, SCENE_NAME_LEN, cursor);
+  render_edit_string(headRegion, sceneData->desc.sceneName, SCENE_NAME_LEN, cursor);
 }
 
 // scroll cursor position in current scene name
@@ -170,7 +214,7 @@ void handle_enc_1(s32 val) {
       cursor = SCENE_NAME_LEN - 1;
     } 
   }
-  draw_edit_string(headRegion, sceneData->desc.sceneName, SCENE_NAME_LEN, cursor);
+  render_edit_string(headRegion, sceneData->desc.sceneName, SCENE_NAME_LEN, cursor);
 }
 
 
@@ -205,7 +249,7 @@ static void show_foot1(void) {
     fill = 0x5;
   }
   region_fill(footRegion[1], fill);
-  font_string_region_clip(footRegion[2], "RECALL", 0, 0, 0xf, fill);  
+  font_string_region_clip(footRegion[1], "RECALL", 0, 0, 0xf, fill);  
 
 }
 
@@ -217,9 +261,9 @@ static void show_foot2(void) {
   region_fill(footRegion[2], fill);
 
   if(altMode) {
-    font_string_region_clip(footRegion[1], "COPY", 0, 0, 0xf, fill);
+    font_string_region_clip(footRegion[2], "COPY", 0, 0, 0xf, fill);
   } else {
-    font_string_region_clip(footRegion[1], "CLEAR", 0, 0, 0xf, fill);
+    font_string_region_clip(footRegion[2], "CLEAR", 0, 0, 0xf, fill);
   } 
 }
 
@@ -267,12 +311,13 @@ void init_page_scenes(void) {
   i = 0;
   //// need to actually set the scroll region at least temporarily
   render_set_scroll(&centerScroll);
-  while(i<5) {
-    render_line(i, 0xa);
-    render_to_scroll_line(n, i == 0 ? 1 : 0);
-    ++n;
-    ++i;
-  }
+  /* while(i<5) { */
+  /*   render_line(i, 0xa); */
+  /*   render_to_scroll_line(n, i == 0 ? 1 : 0); */
+  /*   ++n; */
+  /*   ++i; */
+  /* } */
+  redraw_lines();
 }
 
 // select 

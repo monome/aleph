@@ -98,10 +98,10 @@ u8 app_launch(u8 firstrun) {
     
     print_dbg("\r\n reading default scene... ");
     render_boot("reading default scene");
-    //    scene_read_default();
+    scene_read_default();
 
     ///// TEST; read from filesystem!
-    files_load_scene_name("test_default.scn");
+    //    files_load_scene_name("test_default.scn");
     //    files_load_test_scene();
   }
 

@@ -178,39 +178,6 @@ void render_set_scroll(scroll* scr) {
   pageScrollRegion->dirty = 1;
 }
 
-// draw editing string to given region, with cursor highlight
-void draw_edit_string(region* reg, char* str, u8 len, u8 cursor) {
-  u8 i;
-  u8 x = 0;
-  u8* dst = (u8*)reg->data;
-  for(i=0; i<len; ++i) {
-    if(str[i] == 0) { break; }
-    if(i == cursor) {
-      font_glyph(str[i], dst, reg->w, 0x0, 0xf);
-      x += 6;
-    } else {
-      x += font_glyph(str[i], dst, reg->w, 0xf, 0x0);
-    }
-    dst += x;
-  }
-  reg->dirty = 1;
-
-  
-  /* u8 i; */
-  /* y *= FONT_CHARH; */
-  /* for(i=0; i<len; i++) { */
-  /*   if(str[i] == 0) { return; } */
-  /*   if(i == cursor) { */
-  /*     //     x += screen_char_fixed_back(x, y, str[i], 0x0, 0xa); */
- 
-  /*     ++x; */
-  /*   } else { */
-  /*     //      x += screen_char_squeeze_back(x, y, str[i], 0x7, 0x0); */
-  /*     ++x; */
-  /*   } */
-  /* } */
-}
-
 /// stupid string lib replacements.. 
 // all act on static string buffer in render.c
 
@@ -475,4 +442,36 @@ void edit_string_dec_char(char* str, u8 pos) {
   }
   str[pos] = tmp;
   //  return tmp;
+}
+
+// draw editing string to given region, with cursor highlight
+void render_edit_string(region* reg, char* str, u8 len, u8 cursor) {
+  u8 i;
+  u8* dst = (u8*)reg->data;
+  region_fill(reg, 0x0);
+  for(i=0; i<len; ++i) {
+    if(str[i] == 0) { break; }
+    if(i == cursor) {
+      dst += font_glyph_fixed(str[i], dst, reg->w, 0x0, 0xf);
+    } else {
+      dst += font_glyph(str[i], dst, reg->w, 0xf, 0x0);
+      ++dst;
+    }
+  }
+  reg->dirty = 1;
+
+  
+  /* u8 i; */
+  /* y *= FONT_CHARH; */
+  /* for(i=0; i<len; i++) { */
+  /*   if(str[i] == 0) { return; } */
+  /*   if(i == cursor) { */
+  /*     //     x += screen_char_fixed_back(x, y, str[i], 0x0, 0xa); */
+ 
+  /*     ++x; */
+  /*   } else { */
+  /*     //      x += screen_char_squeeze_back(x, y, str[i], 0x7, 0x0); */
+  /*     ++x; */
+  /*   } */
+  /* } */
 }
