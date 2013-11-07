@@ -64,14 +64,17 @@ static void select_scroll(s32 dir);
 // given input index and foreground color
 static void render_line(s16 idx, u8 fg) {
   region_fill(lineRegion, 0x0);
-  clearln();
-  appendln((const char*)files_get_scene_name(idx));
-  font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
+  if( (idx > 0) && (idx < files_get_scene_count()) ) {
+    
+    clearln();
+    appendln((const char*)files_get_scene_name(idx));
+    font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
+  }
 }
 
 // scroll the current selection
 static void select_scroll(s32 dir) {
-  const s32 max = net_num_outs() - 1;
+  const s32 max = files_get_scene_count() -1;
   // index for new content
   s16 newIdx;
   s16 newSel;
@@ -103,7 +106,7 @@ static void select_scroll(s32 dir) {
   } else {
     // SCROLL UP
     // if selection is already max, do nothing 
-    if(curPage->select == (files_get_scene_count() -1) ) {
+    if(curPage->select == (max) ) {
       return;
     }
     // remove highlight from old center
@@ -149,6 +152,8 @@ void handle_enc_0(s32 val) {
   } else {
     edit_string_dec_char(sceneData->desc.sceneName, cursor);
   }
+  print_dbg("\r\b edited scene name: ");
+  print_dbg(sceneData->desc.sceneName);
   draw_edit_string(headRegion, sceneData->desc.sceneName, SCENE_NAME_LEN, cursor);
 }
 
@@ -271,13 +276,17 @@ void init_page_scenes(void) {
 
 // select 
 void select_scenes(void) {
+  //  print_dbg("\r\n select SCENES... ");
   // assign global scroll region pointer
   // also marks dirty
+  //  print_dbg("\r\n set scroll region...");
   render_set_scroll(&centerScroll);
+  //  print_dbg("\r\n fill head region...");
   // other regions are static in top-level render, with global handles
   region_fill(headRegion, 0x0);
   font_string_region_clip(headRegion, "SCENES", 0, 0, 0xf, 0x1);
   // assign handlers
+  //  print_dbg("\r\n assign page handlers.....");
   app_event_handlers[ kEventEncoder0 ]	= &handle_enc_0 ;
   app_event_handlers[ kEventEncoder1 ]	= &handle_enc_1 ;
   app_event_handlers[ kEventEncoder2 ]	= &handle_enc_2 ;

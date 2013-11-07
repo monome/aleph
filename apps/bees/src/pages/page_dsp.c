@@ -218,7 +218,7 @@ void handle_enc_2(s32 val) {
   if(val > 0) {
     set_page(ePageOps);
   } else {
-    set_page(ePageOuts);
+    set_page(ePageScenes);
   }
 }
 
