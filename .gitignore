@@ -50,3 +50,4 @@
 Icon?
 ehthumbs.db
 Thumbs.db
+utils/avr32_boot/src/simple_string.c

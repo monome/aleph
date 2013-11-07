@@ -26,7 +26,7 @@
 // bees
 #include "render.h"
 
-// scroll a single character in a string
+// range of characters for editable strings
 #define MAX_EDIT_CHAR 120
 #define MIN_EDIT_CHAR 32
 
@@ -180,6 +180,22 @@ void render_set_scroll(scroll* scr) {
 
 // draw editing string to given region, with cursor highlight
 void draw_edit_string(region* reg, char* str, u8 len, u8 cursor) {
+  u8 i;
+  u8 x = 0;
+  u8* dst = (u8*)reg->data;
+  for(i=0; i<len; ++i) {
+    if(str[i] == 0) { break; }
+    if(i == cursor) {
+      font_glyph(str[i], dst, reg->w, 0x0, 0xf);
+      x += 6;
+    } else {
+      x += font_glyph(str[i], dst, reg->w, 0xf, 0x0);
+    }
+    dst += x;
+  }
+  reg->dirty = 1;
+
+  
   /* u8 i; */
   /* y *= FONT_CHARH; */
   /* for(i=0; i<len; i++) { */
