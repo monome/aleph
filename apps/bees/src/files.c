@@ -34,8 +34,8 @@
 #define DIR_LIST_NAME_LEN 32
 #define DIR_LIST_NAME_BUF_SIZE 1024 // len * num
 
-#define DSP_PATH     "/dsp/"
-#define SCENES_PATH  "/bees/scenes/"
+#define DSP_PATH     "/mod/"
+#define SCENES_PATH  "/data/bees/scenes/"
 
 //  stupid datatype with fixed number of fixed-length filenames
 // storing this for speed when UI asks us for a lot of strings

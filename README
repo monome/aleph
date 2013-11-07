@@ -12,7 +12,7 @@ is there an sdcard in it? there should be... then try:
 
 - load an avr32 application from hex, in /hex folder on sdcard
 
-- hold switch 3 while powerup up to force app-defined DSP update after bootload
+- the unit should now reset and launch the chosen application. 
 
 use usb cable and minicom/kermit to connect to aleph device port and get debug messages. currently using slow baudrate (57600) and a device spelled something like /dev/ttyACM0 . 
 

@@ -33,10 +33,10 @@ static void show_size(u32 size) {
   u32 y = 0;
   u32 i = 0;
   for(i = 0; i< (size / 0x200); ++i) {
-    screen_pixel(x, y, 0x7);
-    screen_pixel(x, y+1, 0x7);
-    screen_pixel(x+1, y, 0x7);
-    screen_pixel(x+1, y+1, 0x7);
+    screen_pixel(x, y, 0x2);
+    screen_pixel(x, y+1, 0x2);
+    screen_pixel(x+1, y, 0x2);
+    screen_pixel(x+1, y+1, 0x2);
     ++x;
     ++x;
     if(x > NCOLS) {
@@ -55,7 +55,7 @@ static void show_size(u32 size) {
 static void show_progress(u8 val) {
   static u32 x = 0;
   static u32 y = 00;
-  static u8 level = 0x1;
+  static const u8 level = 0x0;
   screen_pixel(x, y, val | level);
   screen_pixel(x, y+1, val | level);
   screen_pixel(x+1, y, val | level);

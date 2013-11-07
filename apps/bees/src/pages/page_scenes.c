@@ -22,8 +22,12 @@ static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
 static scroll centerScroll;
 
 //--- page-specific state variables
+// clear flag
 static u8 inClear = 0;
+// copy flag
 static u8 inCopy = 0;
+// editing cursor position
+static s8 cursor = 0;
 
 //-------------------------
 //---- static funcs
@@ -50,10 +54,11 @@ static void show_foot(void);
 static void render_line(s16 idx, u8 fg);
 // scroll the current selection
 static void select_scroll(s32 dir);
-// scroll cursor position in scene name
-static void scroll_edit_cursor(u8 dir);
-// edit character under cursor in scene name
-static void scroll_edit_char(u8 dir);
+
+/* // scroll cursor position in scene name */
+/* static void scroll_edit_cursor(u8 dir); */
+/* // edit character under cursor in scene name */
+/* static void scroll_edit_char(u8 dir); */
 
 // fill tmp region with new content
 // given input index and foreground color
@@ -122,6 +127,7 @@ static void select_scroll(s32 dir) {
   }
 }
 
+
 // function keys
 void handle_key_0(s32 val) {
 }
@@ -135,8 +141,35 @@ void handle_key_2(s32 val) {
 void handle_key_3(s32 val) {
 }
 
-// enc 0 : scroll page
+
+// scroll character value at cursor positoin in scene name
 void handle_enc_0(s32 val) {
+  if(val > 0) {
+    edit_string_inc_char(sceneData->desc.sceneName, cursor);
+  } else {
+    edit_string_dec_char(sceneData->desc.sceneName, cursor);
+  }
+  draw_edit_string(headRegion, sceneData->desc.sceneName, SCENE_NAME_LEN, cursor);
+}
+
+// scroll cursor position in current scene name
+void handle_enc_1(s32 val) {
+  if(val > 0) {
+    ++cursor;
+    if (cursor >= SCENE_NAME_LEN) {
+      cursor = 0;
+    } 
+  } else {
+    --cursor;
+    if (cursor < 0) {
+      cursor = SCENE_NAME_LEN - 1;
+    } 
+  }
+}
+
+
+// enc 0 : scroll page
+void handle_enc_2(s32 val) {
    if(val > 0) {
     set_page(ePageDsp);
   } else {
@@ -145,14 +178,8 @@ void handle_enc_0(s32 val) {
 }
 
 // enc 1 : scroll selection
-void handle_enc_1(s32 val) {
-  select_scroll(val);
-}
-
-void handle_enc_2(s32 val) {
-}
-
 void handle_enc_3(s32 val) {
+  select_scroll(val);
 }
 
 // display the function key labels according to current state
