@@ -16,8 +16,6 @@ TARGET = aleph-boot.elf
 # these paths are relative to top-level ASF directory
 ALEPH_AVR32 = ../../utils/avr32_boot
 ALEPH_COMMON = ../../common
-#ALEPH_BEES = ../bees
-ALEPH_BOOT_BEES = ../../utils/avr32_boot/bees
 
 # Target CPU architecture: ap, ucr1, ucr2 or ucr3
 ARCH = ucr2
@@ -124,8 +122,6 @@ INC_PATH = \
 	$(ALEPH_AVR32)/src	   \
 	$(ALEPH_AVR32)/src/fat_io_lib \
 	$(ALEPH_AVR32)/conf	   \
-	$(ALEPH_BEES)	           \
-	$(ALEPH_BOOT_BEES)          \
 	$(ALEPH_COMMON)	           \
 	$(ALEPH_COMMON)/libfixmath \
 

@@ -1,11 +1,11 @@
 
 # avr32 core directory
-ALEPH_AVR32 = ../avr32_test
+ALEPH_AVR32 = ../../utils/avr32_test
 # aleph common directory
-ALEPH_COMMON = ../common
+ALEPH_COMMON = ../../common
 
 APP = test
-APP_DIR = ../avr32_test
+APP_DIR = ../../utils/avr32_test
 
 
 # Target CPU architecture: ap, ucr1, ucr2 or ucr3
