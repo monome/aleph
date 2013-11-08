@@ -49,14 +49,14 @@ void filter_1p_lo_init(filter_1p_lo* f, fract32 in) {
 }
 
 // set cutoff frequency in hz
-//// this is very slow!
+//// warning: this is very slow!
 void filter_1p_lo_set_hz(filter_1p_lo* f, fix16 hz) {
   f32 fc =  (float) exp(-2.0 * M_PI * (double)(fix16_to_float(hz)) * fSrInv ); // / (float)(f->sr) );
   //  printf("\r1p slewicient: %f\n", fc);
   f->c = float_to_fr32(fc);
 }
 
-// set integrator slewicient directly
+// set integrator coefficient directly
 void filter_1p_lo_set_slew(filter_1p_lo* f, fract32 slew) {
   f->c = slew;
 }

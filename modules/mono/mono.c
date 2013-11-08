@@ -120,13 +120,13 @@ static fract32   amp2;          // amplitude (secondary)
 
 static env_asr*  env;           // ASR amplitude envelope
  
-static filter_1p_fix16* hz1Lp;  // 1plp smoother for hz1
-static filter_1p_fix16* hz2Lp;  // 1plp smoother for hz2
-static filter_1p_fr32* pmLp;    // 1plp smoother for pm
-static filter_1p_fr32* wave1Lp; // 1plp smoother for wave1
-static filter_1p_fr32* wave2Lp; // 1plp smoother for wave2
-static filter_1p_fr32* amp1Lp;  // 1plp smoother for amp1
-static filter_1p_fr32* amp2Lp;  // 1plp smoother for amp2
+static filter_1p_lo* hz1Lp;  // 1plp smoother for hz1
+static filter_1p_lo* hz2Lp;  // 1plp smoother for hz2
+static filter_1p_lo* pmLp;    // 1plp smoother for pm
+static filter_1p_lo* wave1Lp; // 1plp smoother for wave1
+static filter_1p_lo* wave2Lp; // 1plp smoother for wave2
+static filter_1p_lo* amp1Lp;  // 1plp smoother for amp1
+static filter_1p_lo* amp2Lp;  // 1plp smoother for amp2
 
 // dry I->O amplitudes
 static fract32 ioAmp0;
@@ -156,10 +156,10 @@ static void fill_param_desc(void);
 static inline void set_hz1(fix16 hz) {  
   if( hz < OSC_HZ_MIN ) hz = OSC_HZ_MIN;
   if( hz > OSC_HZ_MAX ) hz = OSC_HZ_MAX;
-  filter_1p_fix16_in(hz1Lp, hz);
+  filter_1p_lo_in(hz1Lp, hz);
   hz1 = hz;
   if(track) {
-    filter_1p_fix16_in(hz2Lp, fix16_mul(hz1, ratio2) ) ;
+    filter_1p_lo_in(hz2Lp, fix16_mul(hz1, ratio2) ) ;
   }
 }
 
@@ -168,7 +168,7 @@ static inline void set_ratio2(const fix16 ratio) {
   ratio2 = ratio;
   if (ratio2 > RATIO_MAX) ratio2 = RATIO_MAX;
   if (ratio2 < RATIO_MIN) ratio2 = RATIO_MIN;
-  filter_1p_fix16_in(hz2Lp, fix16_mul(hz1, ratio2));
+  filter_1p_lo_in(hz2Lp, fix16_mul(hz1, ratio2));
   track = 1;
 }
 
@@ -176,7 +176,7 @@ static inline void set_ratio2(const fix16 ratio) {
 static inline void set_hz2(fix16 hz) {
   if( hz < OSC_HZ_MIN ) hz = OSC_HZ_MIN;
   if( hz > OSC_HZ_MAX ) hz = OSC_HZ_MAX;
-  filter_1p_fix16_in(hz2Lp, hz);
+  filter_1p_lo_in(hz2Lp, hz);
   track = 0;
 }
 
@@ -195,15 +195,15 @@ static inline fract32 lookup_wave(const fix16 idx, const fract32 wave) {
 static void calc_frame(void) {
   // ----- smoothers:
   // pm
-  pm = filter_1p_fr32_next(pmLp);
+  pm = filter_1p_lo_next(pmLp);
   // amp1
-  amp1 = filter_1p_fr32_next(amp1Lp);
+  amp1 = filter_1p_lo_next(amp1Lp);
   // amp2
-  amp2 = filter_1p_fr32_next(amp2Lp);
+  amp2 = filter_1p_lo_next(amp2Lp);
   // wave1
-  wave1 = filter_1p_fr32_next(wave1Lp);
+  wave1 = filter_1p_lo_next(wave1Lp);
   // wave2
-  wave2 = filter_1p_fr32_next(wave2Lp);
+  wave2 = filter_1p_lo_next(wave2Lp);
 
   // lookup osc2
   osc2 = lookup_wave(idx2, wave2);
@@ -240,10 +240,10 @@ static void calc_frame(void) {
 
   // increment and apply hz smoothers
   if(!(hz1Lp->sync)) {
-    inc1 = fix16_mul(filter_1p_fix16_next(hz1Lp), ips);
+    inc1 = fix16_mul(filter_1p_lo_next(hz1Lp), ips);
   } 
   if(!(hz2Lp->sync)) {
-    inc2 = fix16_mul(filter_1p_fix16_next(hz2Lp), ips);
+    inc2 = fix16_mul(filter_1p_lo_next(hz2Lp), ips);
   } 
 
   // increment phasor idx and wrap
@@ -309,26 +309,26 @@ void module_init(void) {
   env_asr_set_rel_dur(env, 10000);
 
   // allocate smoothers
-  hz1Lp = (filter_1p_fix16*)malloc(sizeof(filter_1p_fix16));
-  filter_1p_fix16_init( hz1Lp, SAMPLERATE, 16 << 16, hz1 );
+  hz1Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
+  filter_1p_lo_init( hz1Lp, hz1 );
 
-  hz2Lp = (filter_1p_fix16*)malloc(sizeof(filter_1p_fix16));
-  filter_1p_fix16_init( hz2Lp, SAMPLERATE, 32 << 16, hz2 );
+  hz2Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
+  filter_1p_lo_init( hz2Lp, hz2 );
 
-  pmLp = (filter_1p_fr32*)malloc(sizeof(filter_1p_fr32));
-  filter_1p_fr32_init( pmLp, SAMPLERATE, 0x4000, pm );
+  pmLp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
+  filter_1p_lo_init( pmLp, pm );
 
-  wave1Lp = (filter_1p_fr32*)malloc(sizeof(filter_1p_fr32));
-  filter_1p_fr32_init( wave1Lp, SAMPLERATE, 0xa0000, wave1 );
+  wave1Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
+  filter_1p_lo_init( wave1Lp, wave1 );
 
-  wave2Lp = (filter_1p_fr32*)malloc(sizeof(filter_1p_fr32));
-  filter_1p_fr32_init( wave2Lp,  SAMPLERATE, 0xa0000, wave2 );
+  wave2Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
+  filter_1p_lo_init( wave2Lp, wave2 );
 
-  amp1Lp = (filter_1p_fr32*)malloc(sizeof(filter_1p_fr32));
-  filter_1p_fr32_init( amp1Lp, SAMPLERATE, 0xa0000, amp1 );
+  amp1Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
+  filter_1p_lo_init( amp1Lp, amp1 );
 
-  amp2Lp = (filter_1p_fr32*)malloc(sizeof(filter_1p_fr32));
-  filter_1p_fr32_init( amp2Lp, SAMPLERATE, 0xa0000, amp2 );
+  amp2Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
+  filter_1p_lo_init( amp2Lp, amp2 );
 
   // initialize osc phasor increment
   inc1 = fix16_mul(hz1, ips);
@@ -370,19 +370,19 @@ void module_set_param(u32 idx, pval v) {
     set_hz2(v.fix);
     break;
   case eParamWave1:
-    filter_1p_fr32_in(wave1Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
+    filter_1p_lo_in(wave1Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamWave2:
-    filter_1p_fr32_in(wave2Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
+    filter_1p_lo_in(wave2Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamPm:
-    filter_1p_fr32_in(pmLp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
+    filter_1p_lo_in(pmLp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamAmp1:
-    filter_1p_fr32_in(amp1Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
+    filter_1p_lo_in(amp1Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamAmp2:
-    filter_1p_fr32_in(amp2Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
+    filter_1p_lo_in(amp2Lp, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamGate:
      env_asr_set_gate(env, v.s > 0);
@@ -400,25 +400,25 @@ void module_set_param(u32 idx, pval v) {
     env_asr_set_atk_shape(env, FIX16_FRACT_TRUNC(BIT_ABS(v.fix)));
     break;
   case eParamHz1Smooth:
-    filter_1p_fix16_set_hz(hz1Lp, v.fix);
+    filter_1p_lo_set_hz(hz1Lp, v.fix);
     break;
   case eParamHz2Smooth:
-    filter_1p_fix16_set_hz(hz2Lp, v.fix);
+    filter_1p_lo_set_hz(hz2Lp, v.fix);
     break;
   case eParamPmSmooth:
-    filter_1p_fr32_set_hz(pmLp, v.fix);
+    filter_1p_lo_set_hz(pmLp, v.fix);
     break;
   case eParamWave1Smooth:
-    filter_1p_fr32_set_hz(wave1Lp, v.fix);
+    filter_1p_lo_set_hz(wave1Lp, v.fix);
     break;
   case eParamWave2Smooth:
-    filter_1p_fr32_set_hz(wave2Lp, v.fix);
+    filter_1p_lo_set_hz(wave2Lp, v.fix);
     break;
   case eParamAmp1Smooth:
-    filter_1p_fr32_set_hz(amp1Lp, v.fix);
+    filter_1p_lo_set_hz(amp1Lp, v.fix);
     break;
   case eParamAmp2Smooth:
-    filter_1p_fr32_set_hz(amp2Lp, v.fix);
+    filter_1p_lo_set_hz(amp2Lp, v.fix);
     break;
   case eParamIoAmp0:
     ioAmp0 = FIX16_FRACT_TRUNC(v.fix);

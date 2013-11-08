@@ -3,16 +3,6 @@
 #include "fix.h"
 #include "module.h"
 
-/* // bfin */
-/* #ifdef ARCH_BFIN */
-/* #include "bfin_core.h" */
-/* #include "fract_math.h" */
-/* #include <fract2float_conv.h> */
-/* #else */
-/* // linux */
-/* #include "fract32_emu.h" */
-/* #include "audio.h" */
-/* #endif */
 
 /// convert fix16 seconds to u32 frames, truncating
 
@@ -46,3 +36,11 @@ u32 sec_to_frames_trunc(fix16 sec) {
 }
 
 
+/*
+// multiply fix16 by (truncated) fract32
+// non-saturating, unfortunately
+static inline fract32 mul_fr32_fix16(fract32 fr, fix16 fix) {
+  return shl_fr1x32(fix16_mul(trunc_fr1x32(fr), fix), 15);
+}
+
+*/

@@ -234,6 +234,8 @@ extern u32 module_get_num_params(void) {
 #ifdef ARCH_BFIN 
 void module_process_frame(void) {
   calc_frame();
+
+  /// mono   :(
   out[0] = (frameVal);
   out[1] = (frameVal);
   out[2] = (frameVal);
