@@ -72,19 +72,6 @@ moduleData * gModuleData; // module data
 
 //-----------------------
 //------ static variables
-#if ARCH_LINUX
-static FILE* dbgFile;
-u8 dbgFlag = 0;
-u32 dbgCount = 0;
-
-//////////////
-/////////////
-// debug: osc2 * pm  * tablesize, in fix16
-//fix16 modIdxOffset;
-fract32 modIdxOffset;
-///////////
-/////////////
-#endif
 
 // pointer to local module data, initialize/v at top of SDRAM
 static monoFmData * monoData;
@@ -333,12 +320,7 @@ void module_init(void) {
   // initialize osc phasor increment
   inc1 = fix16_mul(hz1, ips);
   inc2 = fix16_mul(hz2, ips);
-
-  /// DEBUG
-  //printf("\n\n module init debug \n
-
-  /// TEST (gate on by default)
-  env_asr_set_gate(env, 1);
+;
 }
 
 // de-init
@@ -627,4 +609,3 @@ static void fill_param_desc(void) {
   gModuleData->paramDesc[eParamAmp2Smooth].min = SMOOTH_HZ_MIN;
   gModuleData->paramDesc[eParamAmp2Smooth].max = SMOOTH_HZ_MAX;
 }
-
