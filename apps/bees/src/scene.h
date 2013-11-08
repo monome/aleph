@@ -34,15 +34,14 @@ typedef struct _sceneDesc {
 typedef struct _sceneData {
   // txt descriptor
   sceneDesc_t desc;
-  //  ctlnet_t net;
-  // preset_t presets[NET_PRESETS_MAX];
-
   // a blob of serialized data
   u8 pickle[SCENE_PICKLE_SIZE];
 } sceneData_t;
 
 //----------------------------------------
 //----- external variables
+
+// global data structure for current scene
 extern sceneData_t* sceneData;
 
 //----------------------------------------

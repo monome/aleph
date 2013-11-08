@@ -374,13 +374,19 @@ void handle_key_1(s32 val) {
   if(val == 0) { return; }
   if(check_key(1)) {
     if(altMode) {
+      // show / hide on play screen
       inPlay = net_toggle_in_play(curPage->select);
       // render to tmp buffer
       render_line(curPage->select, 0xf);
       // copy to scroll with highlight
       render_to_scroll_line(SCROLL_CENTER_LINE, 1);
     } else {
-      // show / hide
+      // include / exclude in preset
+      inPreset = net_toggle_in_preset(curPage->select);
+      // render to tmp buffer
+      render_line(curPage->select, 0xf);
+      // copy to scroll with highlight
+      render_to_scroll_line(SCROLL_CENTER_LINE, 1);
     }
   }
   show_foot();

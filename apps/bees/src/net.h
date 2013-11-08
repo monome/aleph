@@ -139,7 +139,7 @@ extern u8 net_toggle_in_play(u32 inIdx);
 // set play inclusion for input
 extern void net_set_in_play(u32 inIdx, u8 val);
 
-// get play inclusion for input
+// get play inclusion for input 
 extern u8 net_get_in_play(u32 inIdx);
 
 // add a new parameter

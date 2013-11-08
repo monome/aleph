@@ -2,18 +2,18 @@
   page_presets.c
  */
 
-// asf
 #include "print_funcs.h"
 
-// bees
+#include "files.h"
 #include "handler.h"
 #include "net.h"
 #include "pages.h"
 #include "render.h"
+#include "preset.h"
 
 
-//--------------------------
-//----- static variables
+//------------------------------
+// static vars
 
 //--- these are common to all pages
 // a region for the center scroll
@@ -22,11 +22,17 @@ static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
 static scroll centerScroll;
 
 //--- page-specific state variables
-// in copy operation
+// clear flag
+static u8 inClear = 0;
+// copy flag
 static u8 inCopy = 0;
+// editing cursor position
+static s8 cursor = 0;
+// max index
+static const s32 maxPresetIdx = NET_PRESETS_MAX - 1;
 
 //-------------------------
-//---- static declarations
+//---- static funcs
 
 // handler declarations
 static void handle_enc_0(s32 val);
@@ -38,67 +44,249 @@ static void handle_key_1(s32 val);
 static void handle_key_2(s32 val);
 static void handle_key_3(s32 val);
 
-static void show_foot(void);
+// show footers
 static void show_foot0(void);
 static void show_foot1(void);
 static void show_foot2(void);
 static void show_foot3(void);
+static void show_foot(void);
 
-// render line given index, foreground color
+
+// render line
 static void render_line(s16 idx, u8 fg);
-// scroll current selection
+// scroll the current selection
 static void select_scroll(s32 dir);
 
-//-----------------------------
-//------ static definition
+static void redraw_lines(void);
 
-void render_line(s16 idx, u8 fg) {
-  clearln();
-  appendln_idx_lj(idx);
+// fill tmp region with new content
+// given input index and foreground color
+static void render_line(s16 idx, u8 fg) {
+  region_fill(lineRegion, 0x0);
+  //  if( (idx >= 0) && (idx < files_get_scene_count()) ) {
+    clearln();
+    appendln((const char*)files_get_scene_name(idx));
+    font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
+    //  }
+}
+
+// scroll the current selection
+static void select_scroll(s32 dir) {
   
-}
-// scroll current selection
-void select_scroll(s32 dir) {
+  // index for new content
+  s16 newIdx;
+  s16 newSel;
+
+  if(dir < 0) {
+    /// SCROLL DOWN
+    if(curPage->select == 0) {
+      return;
+    }
+    // remove highlight from old center
+    render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
+    // decrement selection
+    newSel = curPage->select - 1;
+    curPage->select = newSel;    
+    // add new content at top
+    newIdx = newSel - SCROLL_LINES_BELOW;
+    if(newIdx < 0) { 
+      // empty row
+      region_fill(lineRegion, 0);
+    } else {
+      render_line(newIdx, 0xa);
+    }
+    // render tmp region to bottom of scroll
+    // (this also updates scroll byte offset) 
+    render_to_scroll_top();
+    // add highlight to new center
+    render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
+
+  } else {
+    // SCROLL UP
+    // if selection is already max, do nothing 
+    if(curPage->select == (maxPresetIdx) ) {
+      return;
+    }
+    // remove highlight from old center
+    render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
+    // increment selection
+    newSel = curPage->select + 1;
+    curPage->select = newSel;    
+    // add new content at bottom of screen
+    newIdx = newSel + SCROLL_LINES_ABOVE;
+    if(newIdx > maxPresetIdx) { 
+      // empty row
+      region_fill(lineRegion, 0);
+    } else {
+      render_line(newIdx, 0xa);
+    }
+    // render tmp region to bottom of scroll
+    // (this also updates scroll byte offset) 
+    render_to_scroll_bottom();
+    // add highlight to new center
+    render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
+  }
 }
 
+static void redraw_lines(void) {
+  u8 i=0;
+  u8 n = 3;
+  while(i<5) {
+    render_line(i, 0xa);
+    render_to_scroll_line(n, i == 0 ? 1 : 0);
+    ++n;
+    ++i;
+  }
+}
+
+//---- function keys
+
+// store
+void handle_key_0(s32 val) {
+  if(val == 0) { return; }
+  if(check_key(0)) {
+    region_fill(headRegion, 0x0);
+    font_string_region_clip(headRegion, "writing scene to card...", 0, 0, 0xa, 0);
+    headRegion->dirty = 1;
+    render_update();
+    region_fill(headRegion, 0x0);
+
+    //    files_store_scene_name(sceneData->desc.sceneName);
+
+    print_dbg("\r\n stored scene, back to handler");
+    
+    font_string_region_clip(headRegion, "done writing.", 0, 0, 0xa, 0);
+    headRegion->dirty = 1;
+    render_update();
+
+    // refresh
+    redraw_lines();
+  }
+  show_foot();
+}
+
+// recall
+void handle_key_1(s32 val) {
+  if(val == 1) { return; }
+  if(check_key(1)) {
+    region_fill(headRegion, 0x0);
+    font_string_region_clip(headRegion, "reading scene from card...", 0, 0, 0xa, 0);
+    headRegion->dirty = 1;
+    render_update();
+
+    files_load_scene(curPage->select);
+
+    region_fill(headRegion, 0x0);
+    font_string_region_clip(headRegion, "done reading.", 0, 0, 0xa, 0);
+    headRegion->dirty = 1;
+    render_update();
+
+  }
+  show_foot();
+}
+
+void handle_key_2(s32 val) {
+}
+
+void handle_key_3(s32 val) {
+}
+
+// scroll character value at cursor positoin in scene name
+void handle_enc_0(s32 val) {
+  /*
+  if(val > 0) {
+    edit_string_inc_char(sceneData->desc.sceneName, cursor);
+  } else {
+    edit_string_dec_char(sceneData->desc.sceneName, cursor);
+  }
+  print_dbg("\r\b edited scene name: ");
+  print_dbg(sceneData->desc.sceneName);
+  render_edit_string(headRegion, sceneData->desc.sceneName, SCENE_NAME_LEN, cursor);
+  */
+}
+
+// scroll cursor position in current scene name
+void handle_enc_1(s32 val) {
+  /*
+  if(val > 0) {
+    ++cursor;
+    if (cursor >= SCENE_NAME_LEN) {
+      cursor = 0;
+    } 
+  } else {
+    --cursor;
+    if (cursor < 0) {
+      cursor = SCENE_NAME_LEN - 1;
+    } 
+  }
+  render_edit_string(headRegion, sceneData->desc.sceneName, SCENE_NAME_LEN, cursor);
+  */
+}
+
+
+// enc 0 : scroll page
+void handle_enc_2(s32 val) {
+   if(val > 0) {
+    set_page(ePageDsp);
+  } else {
+    set_page(ePageOuts);
+  }
+}
+
+// enc 1 : scroll selection
+void handle_enc_3(s32 val) {
+  select_scroll(val);
+}
 
 // display the function key labels according to current state
- void show_foot0(void) {
+static void show_foot0(void) {
   u8 fill = 0;
   if(keyPressed == 0) {
     fill = 0x5;
   }
+  region_fill(footRegion[0], fill);
   font_string_region_clip(footRegion[0], "STORE", 0, 0, 0xf, fill);
+  
 }
 
- void show_foot1(void) {
+static void show_foot1(void) {
   u8 fill = 0;
   if(keyPressed == 1) {
     fill = 0x5;
   }
   region_fill(footRegion[1], fill);
-  font_string_region_clip(footRegion[1], "RECALL", 0, 0, 0xf, fill);
+  font_string_region_clip(footRegion[1], "RECALL", 0, 0, 0xf, fill);  
+
 }
 
- void show_foot2(void) {
+static void show_foot2(void) {
   u8 fill = 0;
   if(keyPressed == 2) {
     fill = 0x5;
   }
   region_fill(footRegion[2], fill);
-  font_string_region_clip(footRegion[2], "COPY", 0, 0, 0xf, fill); 
+
+  if(altMode) {
+    font_string_region_clip(footRegion[2], "COPY", 0, 0, 0xf, fill);
+  } else {
+    font_string_region_clip(footRegion[2], "CLEAR", 0, 0, 0xf, fill);
+  } 
 }
 
- void show_foot3(void) {
+static void show_foot3(void) {
   u8 fill = 0;
   u8 fore = 0xf;
+  if(altMode) {
+    fill = 0xf;
+    fore = 0;
+  }
   region_fill(footRegion[3], fill);
-  font_string_region_clip(footRegion[3], "DEFAULT", 0, 0, fore, fill);
+  font_string_region_clip(footRegion[3], "ALT", 0, 0, fore, fill);
 }
 
 
- void show_foot(void) {
-  if(inCopy) {
+static void show_foot(void) {
+  if(inClear || inCopy) {
     font_string_region_clip(footRegion[0], "-    ", 0, 0, 0xf, 0);
     font_string_region_clip(footRegion[1], "-    ", 0, 0, 0xf, 0);
     font_string_region_clip(footRegion[2], "OK!  ", 0, 0, 0xf, 0);
@@ -110,51 +298,6 @@ void select_scroll(s32 dir) {
     show_foot3();
   } 
 }
-
-
-// function keys
-void handle_key_0(s32 val) {
-  // store selected
-  show_foot();
-}
-
-void handle_key_1(s32 val) {
-  // recall selected
-  show_foot();
-}
-
-void handle_key_2(s32 val) {
-  // copy / confirm
-  show_foot();
-}
-
-void handle_key_3(s32 val) {
-  // default
-  show_foot();
-}
-
-void handle_enc_0(s32 val) {
-  // scroll position in name
-}
-
-void handle_enc_1(s32 val) {
-  // scroll character at position in name
-}
-
-void handle_enc_2(s32 val) {
-  // scroll page
-  if(val > 0) {
-    set_page(ePageDsp);
-  } else {
-    set_page(ePageOuts);
-  }
-}
-
-void handle_enc_3(s32 val) {
-  // scroll selection
-  select_scroll(val);
-}
-
 
 //----------------------
 // ---- extern 
@@ -174,15 +317,10 @@ void init_page_presets(void) {
   i = 0;
   //// need to actually set the scroll region at least temporarily
   render_set_scroll(&centerScroll);
-  while(i<5) {
-    render_line(i, 0xa);
-    render_to_scroll_line(n, i == 0 ? 1 : 0);
-    ++n;
-    ++i;
-  }
+  redraw_lines();
 }
 
-// select
+// select 
 void select_presets(void) {
   // assign global scroll region pointer
   // also marks dirty
@@ -198,5 +336,5 @@ void select_presets(void) {
   app_event_handlers[ kEventSwitch0 ]	= &handle_key_0 ;
   app_event_handlers[ kEventSwitch1 ]	= &handle_key_1 ;
   app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
-  app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ;
+  app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ; 
 }

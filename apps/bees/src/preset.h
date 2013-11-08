@@ -10,7 +10,6 @@
 
 #define PRESET_NAME_LEN 16
 
-
 //=================================
 //===== types
 
@@ -65,7 +64,7 @@ void preset_store_out(u32 preIdx, u32 outIdx);
 void preset_store(u32 preIdx);
 // recall everything enabled in given preset
 void preset_recall(u32 preIdx);
-// preset name
+// get preset name
 char* preset_name(u32 id);
 
 #endif

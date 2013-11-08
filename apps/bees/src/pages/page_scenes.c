@@ -311,12 +311,6 @@ void init_page_scenes(void) {
   i = 0;
   //// need to actually set the scroll region at least temporarily
   render_set_scroll(&centerScroll);
-  /* while(i<5) { */
-  /*   render_line(i, 0xa); */
-  /*   render_to_scroll_line(n, i == 0 ? 1 : 0); */
-  /*   ++n; */
-  /*   ++i; */
-  /* } */
   redraw_lines();
 }
 
