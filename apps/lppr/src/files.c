@@ -12,7 +12,7 @@
 // lppr
 #include "files.h"
 
-#define LPPR_LDR_PATH "/dsp/aleph-lines.ldr"
+#define LPPR_LDR_PATH "/mod/aleph-lines.ldr"
 
 // search for our .ldr file in the filesystem
 // load and store in internal flash if found, otherwise report failure

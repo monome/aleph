@@ -36,6 +36,7 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   // many more...
   // eOpAccum,
   // eOpSelect,
+  // eOpToggle
 };
 
 // current selected new operator type

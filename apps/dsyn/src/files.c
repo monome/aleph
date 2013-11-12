@@ -21,8 +21,8 @@
 #include "render.h"
 #include "util.h"
 
-#define LDR_PATH "/dsp/aleph-drumsyn.ldr"
-#define CONFIG_PATH "/app/dsyn/dsyn_conf.txt"
+#define LDR_PATH "/mod/aleph-drumsyn.ldr"
+#define CONFIG_PATH "/data/dsyn/dsyn_conf.txt"
 #define DELIM_TOKEN ','
 
 // fread: no size arg

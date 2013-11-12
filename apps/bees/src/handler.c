@@ -178,6 +178,8 @@ static void handle_HidByte(s32 data) {
 /// this way the order of the event types enum doesn't matter.
 void assign_bees_event_handlers(void) {
   /// app-specific:
+  /// FIXME:
+  //// better naming for customized application events
   app_event_handlers[ kEventAppCustom ]	= &net_poll_handler ;
   // system-defined:
   app_event_handlers[ kEventAdc0 ]	= &handle_Adc0 ;

@@ -118,15 +118,16 @@ const volatile char* files_get_dsp_name(u8 idx) {
 }
 
 // load a blacfkin executable by index */
-void files_load_dsp(u8 idx) {  
+u8 files_load_dsp(u8 idx) {  
   //  app_notify("loading dsp...");
-  files_load_dsp_name((const char*)files_get_dsp_name(idx));
+  return files_load_dsp_name((const char*)files_get_dsp_name(idx));
 }
 
 // search for specified dsp file and load it
-void files_load_dsp_name(const char* name) {
+u8 files_load_dsp_name(const char* name) {
   void* fp;
   u32 size = 0;
+  u8 ret;
 
   delay_ms(10);
 
@@ -157,14 +158,17 @@ void files_load_dsp_name(const char* name) {
       print_dbg("\r\n finished load");
       // write module name in global scene data
       scene_set_module_name(name);
+      ret = 1;
     } else {
       print_dbg("\r\n bfin ldr size was <=0, aborting");
+      ret = 0;
     }
   } else {
     print_dbg("\r\n error: fp was null in files_load_dsp_name \r\n");
+    ret = 0;
   }
-
   app_resume();
+  return ret;
 }
 
 
@@ -206,14 +210,16 @@ const volatile char* files_get_scene_name(u8 idx) {
 }
 
 // load scene by index */
-void files_load_scene(u8 idx) {  
-  files_load_scene_name((const char*)files_get_scene_name(idx));
+u8 files_load_scene(u8 idx) {  
+  return files_load_scene_name((const char*)files_get_scene_name(idx));
 }
 
 // search for specified scene file and load it
-void files_load_scene_name(const char* name) {
+// return 1 on success, 0 on failure
+u8 files_load_scene_name(const char* name) {
   void* fp;
   u32 size = 0;
+  u8 ret = 0;
 
   app_pause();
 
@@ -223,11 +229,18 @@ void files_load_scene_name(const char* name) {
     fake_fread((volatile u8*)sceneData, sizeof(sceneData_t), fp);
     fl_fclose(fp);
     scene_read_buf();
+
+    // try and load dsp module indicated by scene descriptor
+    ret = files_load_dsp_name(sceneData->desc.moduleName);
+
+    ret = 1;
   } else {
     print_dbg("\r\n error: fp was null in files_load_scene_name \r\n");
+    ret = 0;
   }
  
   app_resume();
+  return ret;
 }
 
 

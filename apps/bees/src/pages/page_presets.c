@@ -63,11 +63,11 @@ static void redraw_lines(void);
 // given input index and foreground color
 static void render_line(s16 idx, u8 fg) {
   region_fill(lineRegion, 0x0);
-  //  if( (idx >= 0) && (idx < files_get_scene_count()) ) {
+  if( (idx >= 0) && (idx < maxPresetIdx) ) {
     clearln();
-    appendln((const char*)files_get_scene_name(idx));
+    appendln((const char*)preset_name(idx));
     font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
-    //  }
+  }
 }
 
 // scroll the current selection
@@ -145,22 +145,7 @@ static void redraw_lines(void) {
 void handle_key_0(s32 val) {
   if(val == 0) { return; }
   if(check_key(0)) {
-    region_fill(headRegion, 0x0);
-    font_string_region_clip(headRegion, "writing scene to card...", 0, 0, 0xa, 0);
-    headRegion->dirty = 1;
-    render_update();
-    region_fill(headRegion, 0x0);
-
-    //    files_store_scene_name(sceneData->desc.sceneName);
-
-    print_dbg("\r\n stored scene, back to handler");
-    
-    font_string_region_clip(headRegion, "done writing.", 0, 0, 0xa, 0);
-    headRegion->dirty = 1;
-    render_update();
-
-    // refresh
-    redraw_lines();
+    preset_store(curPage->select);
   }
   show_foot();
 }
@@ -169,25 +154,16 @@ void handle_key_0(s32 val) {
 void handle_key_1(s32 val) {
   if(val == 1) { return; }
   if(check_key(1)) {
-    region_fill(headRegion, 0x0);
-    font_string_region_clip(headRegion, "reading scene from card...", 0, 0, 0xa, 0);
-    headRegion->dirty = 1;
-    render_update();
-
-    files_load_scene(curPage->select);
-
-    region_fill(headRegion, 0x0);
-    font_string_region_clip(headRegion, "done reading.", 0, 0, 0xa, 0);
-    headRegion->dirty = 1;
-    render_update();
-
+    preset_recall(curPage->select);
   }
   show_foot();
 }
 
+// copy / clear / confirm
 void handle_key_2(s32 val) {
 }
 
+// alt
 void handle_key_3(s32 val) {
 }
 

@@ -487,55 +487,55 @@ static void fill_param_desc(void) {
   strcpy(gModuleData->paramDesc[eParamAmp1].unit, "");
   gModuleData->paramDesc[eParamAmp1].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamAmp1].min = 0;
-  gModuleData->paramDesc[eParamAmp1].max = FIX16_ONE;
+  gModuleData->paramDesc[eParamAmp1].max = FIX16_ONE - 1;
   
   strcpy(gModuleData->paramDesc[eParamAmp2].label, "amplitude 2");
   strcpy(gModuleData->paramDesc[eParamAmp2].unit, "");
   gModuleData->paramDesc[eParamAmp2].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamAmp2].min = 0;
-  gModuleData->paramDesc[eParamAmp2].max = FIX16_ONE;
+  gModuleData->paramDesc[eParamAmp2].max = FIX16_ONE - 1;
   
   strcpy(gModuleData->paramDesc[eParamIoAmp0].label, "I/O amp 1");
   strcpy(gModuleData->paramDesc[eParamIoAmp0].unit, "");
   gModuleData->paramDesc[eParamIoAmp0].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamIoAmp0].min = 0;
-  gModuleData->paramDesc[eParamIoAmp0].max = FIX16_ONE;
+  gModuleData->paramDesc[eParamIoAmp0].max = FIX16_ONE - 1;
 
   strcpy(gModuleData->paramDesc[eParamIoAmp1].label, "I/O amp 2");
   strcpy(gModuleData->paramDesc[eParamIoAmp1].unit, "");
   gModuleData->paramDesc[eParamIoAmp1].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamIoAmp1].min = 0;
-  gModuleData->paramDesc[eParamIoAmp1].max = FIX16_ONE;
+  gModuleData->paramDesc[eParamIoAmp1].max = FIX16_ONE - 1;
 
   strcpy(gModuleData->paramDesc[eParamIoAmp2].label, "I/O amp 3");
   strcpy(gModuleData->paramDesc[eParamIoAmp2].unit, "");
   gModuleData->paramDesc[eParamIoAmp2].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamIoAmp2].min = 0;
-  gModuleData->paramDesc[eParamIoAmp2].max = FIX16_ONE;
+  gModuleData->paramDesc[eParamIoAmp2].max = FIX16_ONE - 1;
 
   strcpy(gModuleData->paramDesc[eParamIoAmp3].label, "I/O amp 4");
   strcpy(gModuleData->paramDesc[eParamIoAmp3].unit, "");
   gModuleData->paramDesc[eParamIoAmp3].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamIoAmp3].min = 0;
-  gModuleData->paramDesc[eParamIoAmp3].max = FIX16_ONE;
+  gModuleData->paramDesc[eParamIoAmp3].max = FIX16_ONE - 1;
 
   strcpy(gModuleData->paramDesc[eParamPm].label, "phase mod depth");
   strcpy(gModuleData->paramDesc[eParamPm].unit, "");
   gModuleData->paramDesc[eParamPm].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamPm].min = 0;
-  gModuleData->paramDesc[eParamPm].max = FIX16_ONE;
+  gModuleData->paramDesc[eParamPm].max = FIX16_ONE - 1;
   
   strcpy(gModuleData->paramDesc[eParamWave1].label, "waveshape 1");
   strcpy(gModuleData->paramDesc[eParamWave1].unit, "");
   gModuleData->paramDesc[eParamWave1].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamWave1].min = 0;
-  gModuleData->paramDesc[eParamWave1].max = FIX16_ONE;
+  gModuleData->paramDesc[eParamWave1].max = FIX16_ONE - 1;
   
   strcpy(gModuleData->paramDesc[eParamWave2].label, "waveshape 2");
   strcpy(gModuleData->paramDesc[eParamWave2].unit, "");
   gModuleData->paramDesc[eParamWave2].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamWave2].min = 0;
-  gModuleData->paramDesc[eParamWave2].max = FIX16_ONE;
+  gModuleData->paramDesc[eParamWave2].max = FIX16_ONE - 1;
   
   strcpy(gModuleData->paramDesc[eParamGate].label, "gate");
   strcpy(gModuleData->paramDesc[eParamGate].unit, "");
@@ -544,10 +544,10 @@ static void fill_param_desc(void) {
   gModuleData->paramDesc[eParamGate].max = FIX16_ONE;
   
   strcpy(gModuleData->paramDesc[eParamAtkDur].label, "amp env attack");
-  strcpy(gModuleData->paramDesc[eParamAtkDur].unit, "sec");
+  strcpy(gModuleData->paramDesc[eParamAtkDur].unit, "hz");
   gModuleData->paramDesc[eParamAtkDur].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamAtkDur].min = 0;
-  gModuleData->paramDesc[eParamAtkDur].max = FIX16_ONE;
+  gModuleData->paramDesc[eParamAtkDur].max = FIX16_ONE - 1;
   
   strcpy(gModuleData->paramDesc[eParamRelDur].label, "amp env release");
   strcpy(gModuleData->paramDesc[eParamRelDur].unit, "hz");
@@ -559,13 +559,13 @@ static void fill_param_desc(void) {
   strcpy(gModuleData->paramDesc[eParamAtkCurve].unit, "hz");
   gModuleData->paramDesc[eParamAtkCurve].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamAtkCurve].min = 0;
-  gModuleData->paramDesc[eParamAtkCurve].max = FIX16_ONE;
+  gModuleData->paramDesc[eParamAtkCurve].max = FIX16_ONE - 1;
   
   strcpy(gModuleData->paramDesc[eParamRelCurve].label, "amp env rel curve");
   strcpy(gModuleData->paramDesc[eParamRelCurve].unit, "hz");
   gModuleData->paramDesc[eParamRelCurve].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamRelCurve].min = 0;
-  gModuleData->paramDesc[eParamRelCurve].max = FIX16_ONE;
+  gModuleData->paramDesc[eParamRelCurve].max = FIX16_ONE - 1;
   
   strcpy(gModuleData->paramDesc[eParamHz1Smooth].label, "hz 1 smoothing");
   strcpy(gModuleData->paramDesc[eParamHz1Smooth].unit, "hz");

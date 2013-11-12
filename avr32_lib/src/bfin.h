@@ -28,6 +28,9 @@ void bfin_load_buf(void);
 // set a parameter
 void bfin_set_param(U8 idx, fix16_t val);
 
+// TODO: 
+// fix16_t bfin_get_param(u8 idx);
+
 // get number of parameters 
 void bfin_get_num_params(volatile u32* num);
 // get a parameter name

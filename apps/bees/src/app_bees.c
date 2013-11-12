@@ -6,10 +6,6 @@
   required app-specific implementation of avr32/src/app.h
  */
 
-// std
-/* #include <string.h> */
-/* #include <stdio.h> */
-
 // asf
 #include "delay.h"
 #include "gpio.h"

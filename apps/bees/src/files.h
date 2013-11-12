@@ -21,10 +21,12 @@ extern const volatile char* files_get_dsp_name(u8 idx);
 // return count of dsp files
 extern u8 files_get_dsp_count(void);
 // load a blackfin executable by index
-extern void files_load_dsp(u8 idx);
+extern u8 files_load_dsp(u8 idx);
 // load a blackfin executable by filename
-extern void files_load_dsp_name(const char* name);
+// return 1 on success, 0 on failure
+extern u8 files_load_dsp_name(const char* name);
 // store dsp in flash, by index
+// return 1 on success, 0 on failure
 extern void files_store_default_dsp(u8 idx);
 
 
@@ -36,9 +38,11 @@ extern const volatile char* files_get_scene_name(u8 idx);
 // return count of dsp files
 extern u8 files_get_scene_count(void);
 // load scene by index
-extern void files_load_scene(u8 idx);
+// return 1 on success, 0 on failure
+extern u8 files_load_scene(u8 idx);
 // load scene by filename
-extern void files_load_scene_name(const char* name);
+// return 1 on success, 0 on failure
+extern u8 files_load_scene_name(const char* name);
 // store scene by index
 extern void files_store_scene(u8 idx);
 // store scene by filename

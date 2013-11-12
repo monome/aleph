@@ -92,15 +92,19 @@ SCENES:
 				      if the name has been edited, a new file will be created.
 	SW1:	RECALL:         load scene (halts network processing and may make noise).
 	SW2:	COPY/OK:	begin copy / confirm and finish copy.
-	SW3:	DEFAULT:	store current settings as default
+	SW3:	ALT:	
+	ALT0:   DEFAULT:        store current settings as default
+	ALT1:   ---
+	ALT2:   CLEAR/OK:	clear the current scene
+	ALT3:	---
 	ENC2:   ---		scroll position in name.
 	ENC3:	---		scroll character at position.
 
 OPERATORS:
-	SW0:	INPUTS		select this op's inputs on ins page, and go there.
-	SW1: 	OUTPUTS		select this op's outputs on outs page, and go there.
-	SW2:	CREATE		add a new operator of selected type.
-	SW3:	PAGE/LIST	toggle op-specific subpage 
+	SW0:	INPUTS:		select this op's inputs on ins page, and go there.
+	SW1: 	OUTPUTS:	select this op's outputs on outs page, and go there.
+	SW2:	CREATE:		add a new operator of selected type.
+	SW3:	PAGE/LIST:	toggle op-specific subpage 
 	ENC2:	---		---
 	ENC3:	---		select operator type for creation.
 

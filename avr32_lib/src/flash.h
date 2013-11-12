@@ -47,6 +47,8 @@ extern void flash_write_firstrun(void);
 // clear firstrun status (FALSE)
 extern void flash_clear_firstrun(void);
 
+// TODO:
+// extern const char* flash_get_dsp_name(void);
 
 // switch to intel-hex format...
 // parse a hex record and write the contents to flash if appropriate

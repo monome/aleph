@@ -29,7 +29,6 @@ typedef enum {
   //...
 } op_flag_t;
 
-
 //---- operator list enum
 typedef enum {
   eOpSwitch,

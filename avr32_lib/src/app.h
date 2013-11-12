@@ -13,15 +13,6 @@
 #include "events.h"
 #include "types.h"
 
-// event handler function type
-//typedef void (*app_event_handler)(s32 data);
-
-// global array of event handlers
-//extern app_event_handler ** appEventHandlers;
-
-// global pointer to array of pointers to handlers
-//extern void (*(*app_event_handlers)[])(s32 data);
-
 // global array of pointers to handlers
 extern void (*app_event_handlers[])(s32 data);
 

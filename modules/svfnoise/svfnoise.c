@@ -322,5 +322,3 @@ static void fill_param_desc(void) {
   gModuleData->paramDesc[eParamInAmp3].min = 0;
   gModuleData->paramDesc[eParamInAmp3].max = fix16_one;
 }
-
-

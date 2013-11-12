@@ -50,7 +50,6 @@ void scene_init(void) {
 }
 
 void scene_deinit(void) {
-  //  free(sceneData);
 }
 
 // fill global RAM buffer with current state of system
@@ -70,19 +69,9 @@ void scene_write_buf(void) {
     print_dbg_hex((u32)net->params[i].data.value.asInt);
   }
   */
-  //////////////////////
-  /*
-  memcpy( &(sceneData
-  memcpy( &(sceneData->net),     (void*)net,  sizeof(ctlnet_t));
-  print_dbg("\r\n copied network data to scene buffer.");
-  memcpy( &(sceneData->presets), &presets, sizeof(preset_t) * NET_PRESETS_MAX); 
-  print_dbg("\r\n copied preset data to scene buffer.");
-  */
 
   // pickle network
   dst = net_pickle(dst);
-  // pickle presets
-  //dst = presets_pickle(dst); 
 }
 
 // set current state of system from global RAM buffer
@@ -97,18 +86,8 @@ void scene_read_buf(void) {
   // store current mod name in scene desc
   memcpy(modName, sceneData->desc.moduleName, MODULE_NAME_LEN);
 
-  // de-initialize network and operators
-  /// unpickle should do this
-  //  net_deinit();
-
-  // copy network/presets
-  //  memcpy( (void*)net, &(sceneData->net),  sizeof(ctlnet_t) );
-  //  memcpy( &presets, &(sceneData->presets), sizeof(preset_t) * NET_PRESETS_MAX );
-
   // unpickle network 
   src = net_unpickle(src);
-  // unpickle presets
-  //  src = presets_unpickle(src);
 
   print_dbg("\r\n copied stored network and presets to RAM ");
 
@@ -122,18 +101,16 @@ void scene_read_buf(void) {
   }
 
   // compare module name
+  /*
     neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
 
     if(neq) {
-      // load bfin module if it changed names
-
+      // load bfin module if it doesn't match the current scene desc
       print_dbg("\r\n loading module name: ");
       print_dbg(sceneData->desc.moduleName);
       files_load_dsp_name(sceneData->desc.moduleName);
     }
-
-  //// TODO: module version check
-  // "aaaabbbbccccddddeeeeffff"
+  */
 
   // re-trigger inputs
   //  app_notify("re-initializing network/parameters");
@@ -141,7 +118,6 @@ void scene_read_buf(void) {
   //  net_retrigger_inputs();
   
   // update bfin parameters
-    //  #warning "scene load->param change still broken, probably"
   net_send_params();
   print_dbg("\r\n sent new params");
   
@@ -166,6 +142,7 @@ void scene_read_default(void) {
   app_pause();
   print_dbg("\r\n reading default scene from flash... ");
   flash_read_scene();
+  
   print_dbg("\r\n finsihed reading ");  
   app_resume();
 }
