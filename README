@@ -110,6 +110,110 @@ aleph/dsp :
 	these should be freely added to as needed by new modules.	
 	currently there is no rigid class structure to these things, but we could impose one.
 
-aleph/audio/null : 
-	a portaudio-based audio wrapper, 
+aleph/dsp/null : 
+	a clunky little portaudio-based audio wrapper, 
 	suitable for preliminary development of new audio modules.
+
+
+
+development setup
+----------------
+
+
+clone git repository: 
+git clone https://github.com/tehn/aleph.git
+
+
+------------------
+AVR32
+-----
+
+get the toolchain and header files from atmel.com.
+
+currently the page is here, (but it could move)
+http://www.atmel.com/tools/ATMELAVRTOOLCHAINFORLINUX.aspx
+you will need to sign up / login.
+
+get the appopriate toolchain release for your architecture, and the latest headers,
+now you have 2 files similar to:
+
+avr32-gnu-toolchain-3.4.1.348-linux.any.x86.tar.gz
+avr-headers-3.2.3.970.tar.gz
+
+GET 32 BIT
+
+extracting the toolchain archive gives you something like 
+avr32-gnu-toolchain-linux_x86/
+
+move/rename this directory however you like and make sure the binaries are in your $PATH
+
+extracting the headers gives you
+avr-headers-3.2.3.970/
+
+move or copy the headers subdirectories avr/ and avr32/ to the avr32/include/ subdirectory of the toolchain location.
+no, i have no idea why atmel chose to do it this way!
+
+here is an example of the whole process:
+
+
+cd ~/Downloads
+
+tar -xzf avr32-gnu-toolchain-3.4.1.348-linux.any.x86_64.tar.gz
+unzip -xzf avr-headers-3.2.3.970.zip
+
+mv avr32-gnu-toolchain-linux_x86_64 ~/avr32-gnu-toolchain
+echo "PATH="\$PATH:~/avr32-gnu-toolchain/bin" >> ~/.bashrc
+PATH=$PATH:~/avr32-gnu-toolchain/bin
+
+cd avr-headers-3.2.3.970
+cp avr/ ~/avr32-gnu-toolchain/include/ -R
+cp avr32/ ~/avr32-gnu-toolchain/include/ -R
+
+
+you should now be able to run 'make' from aleph/avr32 and produce aleph.elf. yeah!
+let me know if there are problems: emb@catfact.net
+
+-- JTAG
+
+chances are you will only be using the bootloader.
+
+in order to program or debug the avr32 over jtag, we unforunately need to install "AVR32 Studio" from atmel, 
+which is an eclipse plugin. some binary tools only included in this package are required.
+
+http://www.atmel.com/tools/avr32studio2_6.aspx
+
+e.g. my .bashrc contains the line
+PATH=$PATH:~/as4e-ide/plugins/com.atmel.avr.utilities.linux.x86_64_3.0.0.201009140848/os/linux/x86_64/bin
+
+BTW: i'm now including a stripped copy of the ASF in our git because it is sometimes most expedient to hack it. 
+so you don't need to worry about installing that.
+you may want to get a fresh copy of the ASF for development though;
+if you want to use any additional resources from it, copy and add them to our git.
+
+
+--------------
+BLACKFIN
+-----
+
+general instructions are here:
+http://blackfin.uclinux.org/doku.php?id=toolchain:installing
+
+we are only building standalone binaries (no uclinux), so only the bfin-elf-gcc toolchain is needed. 
+
+get the most recent stable release for your architecture (2012-RC2 as of this writing), unpack it and add the binaries to your path. 
+
+example: 
+visit: http://sourceforge.net/projects/adi-toolchain/files/2012R2/2012R2-RC2/i386/blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2/download
+
+:> cd ~/Downloads [or wherever]
+:> su [probably]
+:> mv blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2 /
+:> cd /
+:> tar -xjvf blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2
+:> export PATH=$PATH:/opt/uClinux/bfin-elf/bin
+
+the toolchain will be extracted to ./opt/uClinux by default.
+of course you can use a different location if you like.
+you probably also want to add the path to your .bashrc or whatever.
+
+you should now be able to run 'make' from aleph/modules/lines or any other module.
