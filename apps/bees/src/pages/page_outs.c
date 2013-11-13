@@ -376,3 +376,14 @@ void handle_enc_3(s32 val) {
   select_scroll(val);
 }
 
+// redraw all lines, based on current selection
+void redraw_outs(void) {
+  u8 i=0;
+  u8 n = curPage->select - 3;
+  while(i<8) {
+    render_line( n, 0xa );
+    render_to_scroll_line(i, n == curPage->select ? 1 : 0);
+    ++i;
+    ++n;
+  }
+}

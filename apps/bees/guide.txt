@@ -11,7 +11,7 @@ and allows for some live manipulation of the current network.
 there are several layers of data organization used in bees,
 so we must establish a consistent terminology, however silly:
 
-CONTROL:	"control voltage" value, a full-scale unsigned integer 
+CONTROL:	"control voltage" value, 4 bytes
 
 MODULE: 	a DSP executable running on aleph's audio slave processor.
 

@@ -113,6 +113,17 @@ extern void select_dsp(void);
 extern void select_gathered(void);
 extern void select_play(void);
 
+
+// redraw functions
+extern void redraw_ins(void);
+extern void redraw_outs(void);
+extern void redraw_presets(void);
+extern void redraw_ops(void);
+extern void redraw_scenes(void);
+extern void redraw_dsp(void);
+extern void redraw_gathered(void);
+extern void redraw_play(void);
+
 //----- public functions
 // init all pages
 extern void pages_init(void);

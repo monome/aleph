@@ -13,11 +13,11 @@
 //-----------------------------------------------
 //---- static variables
 
-// use a simple one-way linked list.
-// not really worth declaring a class for this...
-
+// store timers in a simple one-way linked list.
+// FIXME: remove() would be faster with two-way list.
 // top of list
 softTimer_t* top = NULL;
+// size of list
 u32 num = 0;
 
 //------------------------------

@@ -62,7 +62,7 @@ static void select_scroll(s8 dir);
 // render new operator type name
 static void render_op_type(void);
 // redraw all lines, based on current selection
-static void redraw_lines(void);
+//static void redraw_lines(void);
 
 //=================================
 //==== static definitions
@@ -70,7 +70,7 @@ static void redraw_lines(void);
 // render a given line
 void render_line(s16 idx) {
   region_fill(lineRegion, 0x0);
-  if(idx > 0 && idx < net_num_ops()) {
+  if((idx >= 0) && (idx < net_num_ops()) ) {
     clearln();
     appendln_idx_lj((u8)idx);
     appendln_char('.');
@@ -207,16 +207,28 @@ void handle_key_0(s32 val) {
   if(val == 0) { return; }
   if(check_key(0)) {
     // select op's inputs on ins page
-    //...
+    pages[ePageIns].select = net_op_in_idx(curPage->select, 0);
+    print_dbg("\r\n got 1st input index for selected op ( ");
+    print_dbg_ulong( curPage->select );
+    print_dbg(", result : ");
+    print_dbg_ulong( net_op_in_idx(curPage->select, 0));
+    // go to inputs page
+    set_page(ePageIns);
+    redraw_ins();
   }
+  show_foot();
 }
 
 void handle_key_1(s32 val) {
   if(val == 0) { return; }
   if(check_key(1)) {
     // select op's outputs on outs page
-    //...
+    pages[ePageOuts].select = net_op_out_idx(curPage->select, 0);
+    // go to outputs page
+    set_page(ePageOuts);
+    redraw_outs();
   }
+  show_foot();
 }
 
 void handle_key_2(s32 val) {
@@ -224,8 +236,10 @@ void handle_key_2(s32 val) {
   if(check_key(2)) { 
     // create new operator of selected type
     net_add_op(userOpTypes[newOpType]);
+    // change selection to last op
+    curPage->select = net_num_ops() - 1;
     // redraw...
-    
+    redraw_ops();
   }
   show_foot();
 }
@@ -314,13 +328,13 @@ void select_ops(void) {
 }
 
 // redraw all lines, based on current selection
-static void redraw_lines(void) {
+void redraw_ops(void) {
   u8 i=0;
-  u8 n = 3;
-  while(i<5) {
-    render_line( i + curPage->select - 3);
-    render_to_scroll_line(n, i == 0 ? 1 : 0);
-    ++n;
+  u8 n = curPage->select - 3;
+  while(i<8) {
+    render_line( n );
+    render_to_scroll_line(i, n == curPage->select ? 1 : 0);
     ++i;
+    ++n;
   }
 }

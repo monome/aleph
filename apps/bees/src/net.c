@@ -533,7 +533,7 @@ u16 net_op_in_idx(const u16 opIdx, const u16 inIdx) {
       return (which + inIdx);
     }
   }
-  return 0; // shouldn't get here
+  return 0; // get here if op has no inputs
 }
 
 // get global index for a given output of given op

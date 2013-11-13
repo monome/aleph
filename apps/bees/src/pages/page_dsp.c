@@ -272,3 +272,15 @@ void select_dsp(void) {
   app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ;
 
 }
+
+// redraw all lines, based on current selection
+void redraw_dsp(void) {
+  u8 i=0;
+  u8 n = curPage->select - 3;
+  while(i<8) {
+    render_line( n, 0xa );
+    render_to_scroll_line(i, n == curPage->select ? 1 : 0);
+    ++i;
+    ++n;
+  }
+}

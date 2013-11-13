@@ -51,7 +51,6 @@
 #include "memory.h"
 #include "monome.h"
 #include "switches.h"
-#include "sys_timers.h"
 #include "timers.h"
 
 //==================================================
@@ -361,6 +360,8 @@ int main (void) {
   assign_main_event_handlers();
 
   print_dbg("\r\n starting event loop.\r\n");
+
+  check_startup();
 
   while(1) {
     check_events();
