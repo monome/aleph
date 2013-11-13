@@ -16,6 +16,7 @@ typedef struct _delayLine {
   //-- audio buffer class
   audioBuffer buffer;
   //-- read and write taps (non-interpolated)
+  /// FIXME: make these interpolated of course
   bufferTapN tapRd;
   bufferTapN tapWr;
   // flag to synchronize read tap with write tap

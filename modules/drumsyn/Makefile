@@ -1,22 +1,19 @@
-audio = ../../dsp
-common = ../../common
+include ../../bfin_lib/bfin_lib.mk
 
 module_name = drumsyn
 module_obj = drumsyn.o \
 	params.o \
 	$(audio)/conversion.o \
-	$(audio)/env_exp.o \
-	$(audio)/filter_1p.o \
-	$(audio)/filter_2p.o \
-	$(audio)/filter_svf.o \
-	$(audio)/noise.o \
-	$(common)/libfixmath/fix32.o \
-	$(common)/libfixmath/fix16.o \
-	$(common)/libfixmath/fix16_sqrt.o
+	$(audio_dir)/env_exp.o \
+	$(audio_dir)/filter_1p.o \
+	$(audio_dir)/filter_2p.o \
+	$(audio_dir)/filter_svf.o \
+	$(audio_dir)/noise.o \
+	$(bfin_lib_srcdir)/libfixmath/fix32.o \
+	$(bfin_lib_srcdir)/libfixmath/fix16.o \
+	$(bfin_lib_srcdir)/libfixmath/fix16_sqrt.o
 
 all: aleph-$(module_name).ldr
-
-include ../../bfin_lib/bfin_lib.mk
 
 CFLAGS += -D ARCH_BFIN=1
 CFLAGS += -g
@@ -25,7 +22,7 @@ CFLAGS += -g
 # CFLAGS += --verbose
 
 $(module_obj): %.o : %.c	
-	$(CC) $(CFLAGS) -I $(audio) -c -o $@ $< $(LDFLAGS)
+	$(CC) $(CFLAGS) -I $(audio_dir) -c -o $@ $< $(LDFLAGS)
 
 aleph-$(module_name): bfin_lib_target $(module_obj)
 	$(CC) $(LDFLAGS) -T aleph-$(module_name).lds \
