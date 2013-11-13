@@ -79,7 +79,7 @@ void scene_read_buf(void) {
   s8 modName[MODULE_NAME_LEN];
   u32 i;
   u8* src = (u8*)&(sceneData->pickle);
-    s8 neq = 0;
+  //    s8 neq = 0;
 
   app_pause();
 
@@ -101,6 +101,7 @@ void scene_read_buf(void) {
   }
 
   // compare module name
+  //// FIXME (??)
   /*
     neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
 

@@ -89,10 +89,10 @@ static void handler_Adc0(s32 data) { ;; }
 static void handler_Adc1(s32 data) { ;; }
 static void handler_Adc2(s32 data) { ;; }
 static void handler_Adc3(s32 data) { ;; }
-static void handler_Encoder0(s32 data) { ;; }
-static void handler_Encoder1(s32 data) { ;; }
-static void handler_Encoder2(s32 data) { ;; }
-static void handler_Encoder3(s32 data) { ;; }
+static void handler_Encoder0(s32 data) { ;; } 
+static void handler_Encoder1(s32 data) { ;; } 
+static void handler_Encoder2(s32 data) { ;; } 
+static void handler_Encoder3(s32 data) { ;; } 
 static void handler_Switch0(s32 data) { check_startup(); }
 static void handler_Switch1(s32 data) { check_startup(); }
 static void handler_Switch2(s32 data) { check_startup(); }

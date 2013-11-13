@@ -78,6 +78,10 @@ static s32 scale_knob_value(s32 val) {
 
   // clear the main region if this is a new touch
 static inline void check_touch(etype et) {
+  print_dbg("\r\n lppr_check_touch, event type: ");
+  print_dbg_ulong(et);
+  print_dbg(" , previous touched value: ");
+  print_dbg_ulong(touched);
   if(touched != et) {
     touchedThis = 1;
     touched = et;
@@ -147,6 +151,8 @@ static void handle_Switch7(s32 data) {
 }
     
 static void handle_Encoder0(s32 data) {
+  print_dbg("\r\n handle encoder 0, data: ");
+  print_dbg_hex(data);
   check_touch(kEventEncoder0);
   if(touchedThis) {
     render_touched_fb(0);

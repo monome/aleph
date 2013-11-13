@@ -61,6 +61,8 @@ static void render_line(s16 idx);
 static void select_scroll(s8 dir);
 // render new operator type name
 static void render_op_type(void);
+// redraw all lines, based on current selection
+static void redraw_lines(void);
 
 //=================================
 //==== static definitions
@@ -68,13 +70,15 @@ static void render_op_type(void);
 // render a given line
 void render_line(s16 idx) {
   region_fill(lineRegion, 0x0);
-  clearln();
-  appendln_idx_lj((u8)idx);
-  appendln_char('.');
-  appendln(net_op_name(idx));
-  endln();
-  font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
-  region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
+  if(idx > 0 && idx < net_num_ops()) {
+    clearln();
+    appendln_idx_lj((u8)idx);
+    appendln_char('.');
+    appendln(net_op_name(idx));
+    endln();
+    font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
+    region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
+  }
 }
 
 // scroll the current selection
@@ -221,6 +225,7 @@ void handle_key_2(s32 val) {
     // create new operator of selected type
     net_add_op(userOpTypes[newOpType]);
     // redraw...
+    
   }
   show_foot();
 }
@@ -306,4 +311,16 @@ void select_ops(void) {
   app_event_handlers[ kEventSwitch1 ]	= &handle_key_1 ;
   app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
   app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ;
+}
+
+// redraw all lines, based on current selection
+static void redraw_lines(void) {
+  u8 i=0;
+  u8 n = 3;
+  while(i<5) {
+    render_line( i + curPage->select - 3);
+    render_to_scroll_line(n, i == 0 ? 1 : 0);
+    ++n;
+    ++i;
+  }
 }
