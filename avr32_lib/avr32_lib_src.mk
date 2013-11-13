@@ -59,8 +59,9 @@ CSRCS += \
 	$(ALEPH_AVR32)src/fat_io_lib/fat_table.c \
 	$(ALEPH_AVR32)src/fat_io_lib/fat_write.c \
 	$(ALEPH_AVR32)src/fonts/ume_tgo5_18.c \
-	$(ALEPH_COMMON)/fix.c \
-	$(ALEPH_COMMON)/libfixmath/fix16.c
+	$(ALEPH_AVR32)src/fix.c \
+	$(ALEPH_AVR32)src/libfixmath/fix16.c
+
 
 
 # List of assembler source files.
@@ -113,5 +114,4 @@ INC_PATH += \
 	$(ALEPH_AVR32)src/usb/ftdi   \
 	$(ALEPH_AVR32)src/usb/hid \
 	$(ALEPH_AVR32)src/usb/midi   \
-	$(ALEPH_COMMON)	           \
-	$(ALEPH_COMMON)/libfixmath
+	$(ALEPH_AVR32)src/libfixmath

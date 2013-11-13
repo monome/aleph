@@ -3,10 +3,10 @@
 void module_set_param(u32 idx, pval v) {
   switch(idx) {
     // delayN line params
-  case eParam_delayN0 :
+  case eParam_delay0 :
     delayN_set_delayN_samp(&(lines[0]), v.u);
     break;
-  case eParam_delayN1 :
+  case eParam_delay1 :
     delayN_set_delayN_samp(&(lines[1]), v.u);
     break;
   case eParam_loop0 :
