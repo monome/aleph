@@ -5,15 +5,15 @@ module_name = lines
 
 module_obj = lines.o \
 	params.o \
-	$(audio)/buffer.o \
-	$(audio)/conversion.o \
-	$(audio)/delay.o \
-	$(audio)/filter_svf.o \
-	$(audio)/noise.o \
-	$(audio)/table.o \
-	$(common)/libfixmath/fix32.o \
-	$(common)/libfixmath/fix16.o \
-	$(common)/libfixmath/fix16_sqrt.o
+	$(audio_dir)/buffer.o \
+	$(audio_dir)/conversion.o \
+	$(audio_dir)/delay.o \
+	$(audio_dir)/filter_svf.o \
+	$(audio_dir)/noise.o \
+	$(audio_dir)/table.o \
+	$(bfin_lib_srcdir)/libfixmath/fix32.o \
+	$(bfin_lib_srcdir)/libfixmath/fix16.o \
+	$(bfin_lib_srcdir)/libfixmath/fix16_sqrt.o
 
 all: aleph-$(module_name).ldr
 

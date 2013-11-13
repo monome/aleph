@@ -8,7 +8,7 @@
 #ifndef _TABLE_H_
 #define _TABLE_H_
 
-#include "../common/fix.h"
+#include "fix.h"
 
 #ifdef ARCH_BFIN
 #include "fract_math.h"

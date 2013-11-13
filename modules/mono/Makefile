@@ -1,25 +1,24 @@
-audiolib = ../../dsp
-common = ../../common
+
+include ../../bfin_lib/bfin_lib.mk
+
 
 module_name = mono
 module_obj = mono.o  \
-	$(audiolib)/env.o \
-	$(audiolib)/filter_1p.o \
-	$(audiolib)/table.o \
-	$(audiolib)/conversion.o \
-	$(common)/libfixmath/fix32.o \
-	$(common)/libfixmath/fix16.o
+	$(audio_dir)/env.o \
+	$(audio_dir)/filter_1p.o \
+	$(audio_dir)/table.o \
+	$(audio_dir)/conversion.o \
+	$(bfin_lib_srcdir)/libfixmath/fix32.o \
+	$(bfin_lib_srcdir)/libfixmath/fix16.o
 
 all: aleph-$(module_name).ldr
-
-include ../../bfin_lib/bfin_lib.mk
 
 CFLAGS += -D ARCH_BFIN=1
 CFLAGS += -g
 #CFLAGS += --verbose
 
 $(module_obj): %.o : %.c	
-	$(CC) $(CFLAGS) -I $(audiolib) -c -o $@ $< $(LDFLAGS)
+	$(CC) $(CFLAGS) -c -o $@ $< $(LDFLAGS)
 
 aleph-$(module_name): bfin_lib_target $(module_obj)
 	$(CC) $(LDFLAGS) -T aleph-$(module_name).lds \

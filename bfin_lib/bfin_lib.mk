@@ -21,8 +21,8 @@ bfin_lib_src = control.c \
 bfin_lib_obj = $(patsubst %.c, %.o, $(bfin_lib_src))
 
 INC += -I$(bfin_lib_srcdir) \
+	-I$(bfin_lib_srcdir)/libfixmath \
 	-I$(common_dir) \
-	-I$(common_dir)/libfixmath \
 	-I$(audio_dir) \
 	-I$(module_dir)
 
