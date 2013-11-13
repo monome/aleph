@@ -31,6 +31,7 @@ void init_usb_host (void);
 
 
 // intialize TWI
+extern void init_i2c(void);
 extern void init_i2c_slave(void);
 extern void init_i2c_master(void);
 

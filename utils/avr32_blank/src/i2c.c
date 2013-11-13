@@ -4,6 +4,7 @@
 
 #include "print_funcs.h"
 #include "twi.h"
+#include "gpio.h"
 
 #include "i2c.h"
 
@@ -24,7 +25,7 @@
 
 twi_package_t packet_tx = { 
   /// this is the standard i2c "address"
-  .chip = 100,
+  .chip = 102,
   /// this "address" field is not the standard i2c address,
   //// it assumes we are talking to an EEPROM or something.
   //  .addr = {100, 100, 100}, 
@@ -52,7 +53,7 @@ u8 i2c_slave_tx(void) {
 void i2c_slave_rx(u8 value) {
   print_dbg("\r\n slave rx: ");
   print_dbg_char_hex(value);
-
+  gpio_toggle_pin(LED_MODE_PIN);
 }
 
 // stop function
@@ -67,10 +68,10 @@ void i2c_master_tx(u8* tx) {
   print_dbg(", data value: 0x");
   print_dbg_char_hex(*tx);
   packet_tx.buffer = tx;
-  print_dbg("\r\n i2c_master_tx, TWI location: 0x");
-  print_dbg_hex((u32)AVR32_TWI_ADDRESS);
+  // print_dbg("\r\n i2c_master_tx, TWI location: 0x");
+  // print_dbg_hex((u32)AVR32_TWI_ADDRESS);
 
-  twi_master_write_ex(&AVR32_TWI, &packet_tx);
+  twi_master_write(&AVR32_TWI, &packet_tx);
 }
 
 // master receive

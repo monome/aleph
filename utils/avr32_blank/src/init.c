@@ -31,6 +31,11 @@
 //==== static variables
 // ...
 
+twi_options_t opt;
+twi_slave_fct_t twi_slave_fct;
+
+
+
 //===================================
 //==== external functions
 
@@ -141,46 +146,9 @@ void init_ftdi_usart (void) {
   usart_init_rs232(FTDI_USART, &FTDI_USART_OPTIONS, FPBA_HZ);
 }
 
-// intialize TWI in slave mode
-void init_i2c_slave(void) {
-  twi_options_t opt;
-  twi_slave_fct_t twi_slave_fct;
-  int status;
 
-  // TWI/I2C GPIO map
-  static const gpio_map_t TWI_GPIO_MAP = {
-    { TWI_DATA_PIN, TWI_DATA_FUNCTION },
-    { TWI_CLOCK_PIN, TWI_CLOCK_FUNCTION }
-  };
-  gpio_enable_module(TWI_GPIO_MAP, sizeof(TWI_GPIO_MAP) / sizeof(TWI_GPIO_MAP[0]));
-
-  // options settings
-  opt.pba_hz = FPBA_HZ;
-  opt.speed = TWI_SPEED;
-  opt.chip = 100;
-
-  // initialize TWI driver with options
-  twi_slave_fct.rx = &i2c_slave_rx;
-  twi_slave_fct.tx = &i2c_slave_tx;
-  twi_slave_fct.stop = &i2c_slave_stop;
-  status = twi_slave_init(&AVR32_TWI, &opt, &twi_slave_fct );
-
-  // check init result
-  if (status == TWI_SUCCESS)
-    {
-      // display test result to user
-      print_dbg("Slave start:\tPASS\r\n");
-    }
-  else
-    {
-      // display test result to user
-      print_dbg("slave start:\tFAIL\r\n");
-    }
-}
-
-// intialize I2C in master mode
-void init_i2c_master(void) {
-  twi_options_t opt;
+// initialize i2c
+void init_i2c(void) {
   int status;
   /* clock div calculation in the twi is grossly inaccurate,
      so we manually re-set the divisors to get as close to 400k as possible.
@@ -202,22 +170,80 @@ void init_i2c_master(void) {
   // options settings
   opt.pba_hz = FPBA_HZ;
   opt.speed = TWI_SPEED;
-  //  opt.chip = 100;
-  opt.chip = 0;
+  // FIXME: make this an argument
+  opt.chip = 100;
 
-  status = twi_master_init(&AVR32_TWI, &opt);
+    // initialize TWI driver with options
+  twi_slave_fct.rx = &i2c_slave_rx;
+  twi_slave_fct.tx = &i2c_slave_tx;
+  twi_slave_fct.stop = &i2c_slave_stop;
+  status = twi_slave_init(&AVR32_TWI, &opt, &twi_slave_fct );
+
+  // overwrite clock settings with 400k
   AVR32_TWI.cwgr = ((c_lh_div << AVR32_TWI_CWGR_CLDIV_OFFSET) |
-			(c_lh_div << AVR32_TWI_CWGR_CHDIV_OFFSET) |
-			(ckdiv << AVR32_TWI_CWGR_CKDIV_OFFSET));
+      (c_lh_div << AVR32_TWI_CWGR_CHDIV_OFFSET) |
+      (ckdiv << AVR32_TWI_CWGR_CKDIV_OFFSET));
+}
+
+
+// intialize TWI in slave mode
+void init_i2c_slave(void) {
+  int status;
+
+  // FIXME: make this an argument
+  opt.chip = 100;
+
+  // // initialize TWI driver with options
+  // twi_slave_fct.rx = &i2c_slave_rx;
+  // twi_slave_fct.tx = &i2c_slave_tx;
+  // twi_slave_fct.stop = &i2c_slave_stop;
+  status = twi_slave_init(&AVR32_TWI, &opt, &twi_slave_fct );
+
+  // // check init result
+  // if (status == TWI_SUCCESS)
+  //   {
+  //     // display test result to user
+  //     print_dbg("\r\ntwi slave start:\tPASS");
+  //   }
+  // else
+  //   {
+  //     // display test result to user
+  //     print_dbg("\r\ntwi slave start:\tFAIL");
+  //   }
+}
+
+// intialize I2C in master mode
+void init_i2c_master(void) {
+  int status;
+
+  /* clock div calculation in the twi is grossly inaccurate,
+     so we manually re-set the divisors to get as close to 400k as possible.
+     there is also some very weird offset going on, 
+     so these values are experimentally determined,
+     and don't really match what one would expect from the datasheet :S
+   */
+
+  u32 c_lh_div = 63;
+  u32 ckdiv = 0;
+  
+  status = twi_master_init(&AVR32_TWI, &opt);
+  // AVR32_TWI.cwgr = ((c_lh_div << AVR32_TWI_CWGR_CLDIV_OFFSET) |
+		// 	(c_lh_div << AVR32_TWI_CWGR_CHDIV_OFFSET) |
+		// 	(ckdiv << AVR32_TWI_CWGR_CKDIV_OFFSET));
   // check init result
-  if (status == TWI_SUCCESS)
-    {
-      // display test result to user
-      print_dbg("twi master start:\tPASS\r\n");
-    }
-  else
-    {
-      // display test result to user
-      print_dbg("twi master start:\tFAIL\r\n");
-    }
+  // if (status == TWI_SUCCESS)
+  //   {
+  //     // display test result to user
+  //     print_dbg("\r\ntwi master start:\tPASS");
+  //   }
+  // else
+  //   {
+  //     // display test result to user
+  //     print_dbg("\r\ntwi master start:\tFAIL");
+  //   }
+
+    // overwrite clock settings with 400k
+  AVR32_TWI.cwgr = ((c_lh_div << AVR32_TWI_CWGR_CLDIV_OFFSET) |
+      (c_lh_div << AVR32_TWI_CWGR_CHDIV_OFFSET) |
+      (ckdiv << AVR32_TWI_CWGR_CKDIV_OFFSET));
 }

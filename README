@@ -14,7 +14,12 @@ is there an sdcard in it? there should be... then try:
 
 - the unit should now reset and launch the chosen application. 
 
-use usb cable and minicom/kermit to connect to aleph device port and get debug messages. currently using slow baudrate (57600) and a device spelled something like /dev/ttyACM0 . 
+use usb cable and minicom/kermit to connect to aleph device port and get debug messages. 
+
+currently using baudrate 500000 and a device spelled something like /dev/ttyACM0 . 
+
+for the "green sandwich" proto, the device is called /dev/ttyUSBx on linux, looks like FTDI,
+and you may need to lower the baudrate.
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :::: device description

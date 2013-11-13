@@ -81,18 +81,18 @@ static void init_avr32(void) {
   cpu_irq_enable();
 
   // i2c slave
-  print_dbg("\r\n  init_i2c_slave() ");
-  init_i2c_slave();
+  print_dbg("\r\n  init_i2c() ");
+  init_i2c();
 
   // i2c master
-  //  print_dbg("\r\n  init_i2c_master() ");
-  //  init_i2c_master();
+   // print_dbg("\r\n  init_i2c_master() ");
+   // init_i2c_master();
   
 }
 
 ////main function
 int main (void) {
-  u8 tx = 0;
+  u8 tx = 50;
   u8 rx = 0;
   // set up avr32 hardware and peripherals
   init_avr32();
@@ -100,22 +100,28 @@ int main (void) {
   print_dbg("\r\n enter tx loop");
 
     while(1) {
-      /*
-      print_dbg("\r\n i2c tx: 0x");
-      print_dbg_char_hex(tx);
+      // print_dbg("\r\n i2c tx: 0x");
+      // print_dbg_char_hex(tx);
 
       // test i2c with loopback
+      init_i2c_master();
       i2c_master_tx(&tx);
+      // while(twi_is_busy()) {
+      //   // delay_us(1);
+      //   ;;
+      // }
+      // delay_us(250);
+      init_i2c_slave();
 
-      delay_us(10);      
-      i2c_master_rx(&rx);
+
+      // delay_us(10);      
+      // i2c_master_rx(&rx);
       
-      print_dbg(" , rx: 0x");
-      print_dbg_char_hex(rx);
+      // print_dbg(" , rx: 0x");
+      // print_dbg_char_hex(rx);
       
       ++tx;
-      delay_ms(100);
-      */
+      delay_ms(803);
     }
       
 }
