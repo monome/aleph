@@ -116,7 +116,7 @@ aleph/modules :
 	contains a number of project directories for specific audio modules.
 	
 aleph/dsp : 
-	common audio functions implemented in fixed-point for speed on the blackfin,
+	common audio functions implemented in 32-bit fixed-point,
 	(envelopes, filters, buffers, oscillators, etc);
 	these should be freely added to as needed by new modules.	
 	currently there is no rigid class structure to these things, but we could impose one.
