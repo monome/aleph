@@ -79,7 +79,7 @@ int media_write(unsigned long sector, unsigned char *buffer, unsigned long secto
   unsigned long i;
   bool status;
 
-  // PDCA write isn't implemented in ASF... 
+  // PDCA write isn't implemented in ASF... ! dang
   // for the moment use slower blocking write.
 
   status = sd_mmc_spi_write_open(sector);

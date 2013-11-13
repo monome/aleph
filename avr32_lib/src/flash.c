@@ -30,7 +30,6 @@ typedef const struct {
   u32 ldrSize;                 // size of stored LDR
   char ldrString[LDR_FLASH_STRING_LEN];
   u8 ldrData[LDR_FLASH_BYTES]; // LDR data
-  //sceneData_t sceneData;       // scene data
   // app-specific nonvolatile storage
   u8 appData[APP_FLASH_BYTES];
 } nvram_data_t;

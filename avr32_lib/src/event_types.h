@@ -49,8 +49,9 @@ typedef enum {
   kEventHidDisconnect,
   kEventHidByte,
 
-  // uart from computer
 
+// TODO:
+  // uart from computer
   //--- main handlers
   // kEventSerialDebugFlag,
   // kEventSerialCaptureFlag,
@@ -65,9 +66,9 @@ typedef enum {
   kEventAppCustom,
   //// better?
   // kEventAppTimer
-
   // kEventApp...
   // kEventApp...,
+  // ??
   
   /// dummy/count
   kNumEventTypes,

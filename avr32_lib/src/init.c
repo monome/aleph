@@ -47,29 +47,8 @@ void init_gpio(void) {
   gpio_enable_pin_pull_up(ENC3_S0_PIN);
   gpio_enable_pin_pull_up(ENC3_S1_PIN);
 
-#if 0
-  gpio_enable_pin_pull_up(SW0_PIN);
-  gpio_enable_pin_pull_up(SW1_PIN);
-  gpio_enable_pin_pull_up(SW2_PIN);
-  gpio_enable_pin_pull_up(SW3_PIN);
-  gpio_enable_pin_pull_up(SW_MODE_PIN);
-
-#endif
   // no power-switch pullup on board
   gpio_enable_pin_pull_up(SW_POWER_PIN);
-
-
-  // try making bfin report ready by default??
-  //  gpio_enable_pin_pull_up(BFIN_READY_PIN);
-
-  /// trying this...
-  /* gpio_enable_pin_glitch_filter(SW0_PIN); */
-  /* gpio_enable_pin_glitch_filter(SW1_PIN); */
-  /* gpio_enable_pin_glitch_filter(SW2_PIN); */
-  /* gpio_enable_pin_glitch_filter(SW3_PIN); */
-
-  /// was trying with broken key on "sandwich" proto
-  //  gpio_enable_pin_glitch_filter(SW_MODE_PIN); 
 }
 
 // initialize application timer
@@ -117,10 +96,8 @@ extern void init_tc (volatile avr32_tc_t *tc) {
   // so (1 / fPBA / 128) * RC = 0.001
   // so RC = fPBA / 128 / 1000
   //  tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 128000));
-  ///// FIXME: kludge because the timing is slow somehow
+  ///// FIXME: kludge because the timing is slow somehow... 
   tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 149707));
-  /// moron!
-  //  tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 109440));
 
   // configure the timer interrupt
   tc_configure_interrupts(tc, APP_TC_CHANNEL, &tc_interrupt);
@@ -270,10 +247,7 @@ void init_bfin_resources(void) {
     //// would prefer fast baudrate / lower trans delay during boot,
     //// but need multiple registers for boot (fast) and run (slow)
     //// investigate if this is possible...
-    //   .baudrate     = 20000000,
-    //     .baudrate     = 10000000,
-    //     .baudrate     = 5000000,
-     .baudrate     = 20000000,
+    .baudrate     = 20000000,
     .bits         = 8,
     .spck_delay   = 0,
     //    .trans_delay  = 0,
@@ -320,7 +294,5 @@ void init_twi(void) {
 
 // initialize USB host stack
 void init_usb_host (void) {
-  //  pm_configure_usb_clock();
   uhc_start();
 }
-

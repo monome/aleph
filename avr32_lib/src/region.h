@@ -1,6 +1,6 @@
 /* regions.h 
    
-   draw and otherwise manipulate  arbitrary grids of pixels.
+   draw and otherwise manipulate arbitrary grids of pixels.
 
  */
 

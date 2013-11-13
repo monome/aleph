@@ -58,9 +58,6 @@
 
 //! The number of bank bits for this SDRAM (1 or 2).
 #define SDRAM_BANK_BITS                 2
-///////// TEST !!!!!!
-//#define SDRAM_BANK_BITS                 1
-/////////
 
 //! The number of row bits for this SDRAM (11 to 13).
 #define SDRAM_ROW_BITS                  13

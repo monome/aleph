@@ -36,28 +36,17 @@ extern fract32 delay_next(delayLine* dl, fract32 in) {
     if(dl->write) {
       // write and replace
       buffer_tapN_write(&(dl->tapWr), in);
-    } // else {
-    // clear
-    //      buffer_tapN_write(&(dl->tapWr), 0);
-      //      ;; // no change
-      //    }
+    }
   } else if(dl->preLevel < 0) { // consider <0 to be == 1
     if(dl->write) {
       // overdub
       buffer_tapN_add(&(dl->tapWr), in);
-    } //else {
-      // no change
-    //      ;;
-    //    }
+    }
   } else { // prelevel is non-zero, non-full
     if(dl->write) {
       // write mix
       buffer_tapN_mix(&(dl->tapWr), in, dl->preLevel);
-    } //else {
-      // attenuate only
-      //      buffer_tapN_mix(&(dl->tapWr), 0, dl->preLevel);
-    //      ;;
-    //    }
+    }
   }
 
   // advance the read phasor 
@@ -127,6 +116,7 @@ extern void delay_set_pos_write_sec(delayLine* dl, fix16 sec) {
   u32 samp = sec_to_frames_trunc(sec);
   buffer_tapN_set_pos(&(dl->tapWr), samp);
 }
+
 extern void delay_set_pos_write_samp(delayLine* dl, u32 samp) {
   buffer_tapN_set_pos(&(dl->tapWr), samp);
 }

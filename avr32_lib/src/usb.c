@@ -10,6 +10,16 @@
 #include "print_funcs.h"
 #include "usb.h"
 
+/*
+///// TODO! 
+most of these things don't really need to be implemented
+the ASF usb host stack needs them to be defined though.
+
+we might be able to use vbus_error for overcurrent notifications.
+
+
+   */
+
 // usb mode change callback
 void usb_mode_change(bool b_host_mode) {
   // print_dbg("\r\n mode change (ignore) ");

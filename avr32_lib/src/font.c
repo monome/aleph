@@ -17,22 +17,7 @@
 #include "types.h"
 #include "font.h"
 
-
-///dbg
-/* static const char * dbgStr[] = { */
-/*   " ", ".", ",", ":", ";", */
-/*   "~", "\"", "^", "<", ">", */
-/*   "|", "\\", "[", "%", "#" */
-/* }; */
-
-//#include "fonts/dejavu_numerals_24.h"
 #include "fonts/ume_tgo5_18.h"
-
-// font string to use for anti-aliased numerals
-//#define FONT_AA_NUMERAL_FACE dejavu_numerals_24
-// count of bytes in each anti-aliased, numeral glyph
-// 16 * 24
-// #define FONT_AA_NUMERAL_BYTES 384
 
 // maxiumum string size to attempt rendering
 #define MAX_RENDER_STRING 32
@@ -42,16 +27,6 @@
 /// FIXME: implement this, it would be a little faster
 // column-first buffer indexing
 // #define COL_FIRST
-
-// helper functions
-/// copy a pixel
-/* static void copyPx(const char* src, char* dst) { */
-/*   *dst = *src; */
-/* } */
-/* // copy and invert a pixel (4-bit) */
-/* static void copyPxInv(const char* src, char* dst) { */
-/*   *dst = 0xf - *src; */
-/* } */
 
 // glyph.last is the inset from right hand edge of glyph box...
 const glyph_t font_data[]= {
@@ -161,43 +136,6 @@ const U32 font_nglyphs = sizeof(font_data)/sizeof(glyph_t) - 1;
 //------------------------------------------
 //-----  functions
 
-
-///// COLUMN FIRST BUFFER INDEXING
-#ifdef COL_FIRST
-//// TODO
-
-// render single glyph to a flat buffer (1byte = 1px)
-// given pointer to buffer, pixel offset, row length,
-// foreground and background colors
-// return new pointer
-extern u8* font_glyph(char ch, u8* buf, u8 w, u8 a, u8 b) {
-  //...
-  return buf;
-}
-
-// same as font_glyph, double size
-
-extern u8* font_glyph_big(char ch, u8* buf, u8 w, u8 a, u8 b) {
-  //...
-  return buf;
-}
-
-// render a string of packed glyphs to a buffer
-u8* font_string(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
-  //...
-  return buf;
-}
-
-// same as font_string, double size
-u8* font_string_big(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
-  return buf;
-  //...
-}
-
-
-
-#else
-////// ROW FIRST BUFFER INDEXING
 
 // render single glyph to a flat buffer (1byte = 1px)
 // given pointer to buffer, pixel offset, row length,
@@ -484,7 +422,7 @@ extern u8* font_glyph_aa(char ch, u8* buf, u8 w, u8 inv) {
   //  print_dbg_hex((u32)ch);
   
   ////////
-  /// FIXME: fonct is missing ` or _ or something
+  /// FIXME: font is missing ` or _ or something
   if(ch > 95) { ch--; }
   ////////
   gl = FONT_AA[ch - FONT_ASCII_OFFSET].glyph.data;
@@ -534,7 +472,6 @@ extern u8* font_glyph_aa(char ch, u8* buf, u8 w, u8 inv) {
 
 // render a string of packed glyphs to a buffer
 extern u8* font_string_aa(const char* str, u8* buf, u32 size, u8 w, u8 inv) {
-  //#if 0
   u8* max = buf + size;
   // print_dbg("\r\n antialiased string \"");
   // print_dbg(str);
@@ -559,7 +496,4 @@ extern u8* font_string_aa(const char* str, u8* buf, u32 size, u8 w, u8 inv) {
     str++;
   }
   return buf;  
-  //#endif
 }
-
-#endif

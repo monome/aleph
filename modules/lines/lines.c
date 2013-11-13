@@ -158,41 +158,38 @@ static void mix_del_inputs(void) {
   
   //--- del 0
   in_del[0] = 0;
-  // adc
-
-
 
   /// FIXME: compares are retarded and ops are 32-bit, worst of both worlds
   mul = mix_adc_del[0][0];
-   if(mul != 0) {  in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(in[0], mul));  } 
+  /*   if(mul != 0) { */ in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(in[0], mul)); /* } */
   mul = mix_adc_del[1][0];
-   if(mul != 0) {  in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(in[1], mul));  } 
+  /*   if(mul != 0) { */ in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(in[1], mul)); /* } */
   mul = mix_adc_del[2][0];
-   if(mul != 0) {  in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(in[2], mul));  } 
+  /*   if(mul != 0) { */ in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(in[2], mul)); /* } */
   mul = mix_adc_del[3][0];
-   if(mul != 0) {  in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(in[3], mul));  } 
+  /*   if(mul != 0) { */ in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(in[3], mul)); /* } */
   // del 
-  mul = mix_del_del[0][0];
-   if(mul != 0) {  in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(out_del[0], mul));  } 
+  /*  mul = mix_del_del[0][0];
+      if(mul != 0) { */ in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(out_del[0], mul)); /* } */
   mul = mix_del_del[1][0];
-   if(mul != 0) {  in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(out_del[1], mul));  } 
+  /*   if(mul != 0) { */ in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(out_del[1], mul)); /* } */
 
   //--- del 1
   in_del[1] = 0;
   // adc
   mul = mix_adc_del[0][1];
-   if(mul != 0) {  in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(in[0], mul));  } 
+  /*   if(mul != 0) { */ in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(in[0], mul)); /* } */
   mul = mix_adc_del[1][1];
-   if(mul != 0) {  in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(in[1], mul));  } 
+  /*   if(mul != 0) { */ in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(in[1], mul)); /* } */
   mul = mix_adc_del[2][1];
-   if(mul != 0) {  in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(in[2], mul));  } 
+  /*   if(mul != 0) { */ in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(in[2], mul)); /* } */
   mul = mix_adc_del[3][1];
-   if(mul != 0) {  in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(in[3], mul));  } 
+  /*   if(mul != 0) { */ in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(in[3], mul)); /* } */
   // del 
   mul = mix_del_del[0][1];
-   if(mul != 0) {  in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(out_del[0], mul));  } 
+  /*   if(mul != 0) { */ in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(out_del[0], mul)); /* } */
   mul = mix_del_del[1][0];
-   if(mul != 0) {  in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(out_del[1], mul));  }
+  /*   if(mul != 0) { */ in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(out_del[1], mul));/*  }*/
 }
 
 
@@ -257,69 +254,69 @@ static void mix_outputs(void) {
   out[0] = 0;
   // del
   mul = mix_del_dac[0][0];
-   if(mul != 0) {  out[0] = add_fr1x32(out[0], mult_fr1x32x32(out_del[0], mul));  } 
+  /*  if(mul != 0) { */ out[0] = add_fr1x32(out[0], mult_fr1x32x32(out_del[0], mul)); /* } */
   mul = mix_del_dac[1][0];
-   if(mul != 0) {  out[0] = add_fr1x32(out[0], mult_fr1x32x32(out_del[1], mul));  } 
+  /*   if(mul != 0) { */ out[0] = add_fr1x32(out[0], mult_fr1x32x32(out_del[1], mul)); /* } */
   // adc
   mul = mix_adc_dac[0][0];
-   if(mul != 0) {  out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[0], mul));  } 
+  /*   if(mul != 0) { */ out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[0], mul)); /* } */
   mul = mix_adc_dac[1][0];
-   if(mul != 0) {  out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[1], mul));  } 
+  /*   if(mul != 0) { */ out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[1], mul)); /* } */
   mul = mix_adc_dac[2][0];
-   if(mul != 0) {  out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[2], mul));  } 
+  /*   if(mul != 0) { */ out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[2], mul)); /* } */
   mul = mix_adc_dac[3][0];
-   if(mul != 0) {  out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[3], mul));  } 
+  /*   if(mul != 0) { */ out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[3], mul)); /* } */
 
   //-- out 1
   out[1] = 0;
   // del
   mul = mix_del_dac[0][1];
-   if(mul != 0) {  out[1] = add_fr1x32(out[1], mult_fr1x32x32(out_del[0], mul));  } 
+  /*   if(mul != 0) { */ out[1] = add_fr1x32(out[1], mult_fr1x32x32(out_del[0], mul)); /* } */
   mul = mix_del_dac[1][1];
-   if(mul != 0) {  out[1] = add_fr1x32(out[1], mult_fr1x32x32(out_del[1], mul));  } 
+  /*   if(mul != 0) { */ out[1] = add_fr1x32(out[1], mult_fr1x32x32(out_del[1], mul)); /* } */
   // adc
   mul = mix_adc_dac[0][1];
-   if(mul != 0) {  out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[0], mul));  } 
+  /*   if(mul != 0) { */ out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[0], mul)); /* } */
   mul = mix_adc_dac[1][1];
-   if(mul != 0) {  out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[1], mul));  } 
+  /*   if(mul != 0) { */ out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[1], mul)); /* } */
   mul = mix_adc_dac[2][1];
-   if(mul != 0) {  out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[2], mul));  } 
+  /*   if(mul != 0) { */ out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[2], mul)); /* } */
   mul = mix_adc_dac[3][1];
-   if(mul != 0) {  out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[3], mul));  } 
+  /*   if(mul != 0) { */ out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[3], mul)); /* } */
 
   //-- out 2
   out[2] = 0;
   // del
   mul = mix_del_dac[0][2];
-   if(mul != 0) {  out[2] = add_fr1x32(out[2], mult_fr1x32x32(out_del[0], mul));  } 
+  /*   if(mul != 0) { */ out[2] = add_fr1x32(out[2], mult_fr1x32x32(out_del[0], mul)); /* } */
   mul = mix_del_dac[1][2];
-   if(mul != 0) {  out[2] = add_fr1x32(out[2], mult_fr1x32x32(out_del[1], mul));  } 
+  /*   if(mul != 0) { */ out[2] = add_fr1x32(out[2], mult_fr1x32x32(out_del[1], mul)); /* } */
   // adc
   mul = mix_adc_dac[0][2];
-   if(mul != 0) {  out[2] = add_fr1x32(out[2], mult_fr1x32x32(in[0], mul));  } 
+  /*   if(mul != 0) { */ out[2] = add_fr1x32(out[2], mult_fr1x32x32(in[0], mul)); /* } */
   mul = mix_adc_dac[1][2];
-   if(mul != 0) {  out[2] = add_fr1x32(out[2], mult_fr1x32x32(in[1], mul));  } 
+  /*   if(mul != 0) { */ out[2] = add_fr1x32(out[2], mult_fr1x32x32(in[1], mul)); /* } */
   mul = mix_adc_dac[2][2];
-   if(mul != 0) {  out[2] = add_fr1x32(out[2], mult_fr1x32x32(in[2], mul));  } 
+  /*   if(mul != 0) { */ out[2] = add_fr1x32(out[2], mult_fr1x32x32(in[2], mul)); /* } */
   mul = mix_adc_dac[3][2];
-   if(mul != 0) {  out[2] = add_fr1x32(out[2], mult_fr1x32x32(in[3], mul));  } 
+  /*   if(mul != 0) { */ out[2] = add_fr1x32(out[2], mult_fr1x32x32(in[3], mul)); /* } */
 
   //-- out 3
   out[3] = 0;
   // del
   mul = mix_del_dac[0][3];
-   if(mul != 0) {  out[3] = add_fr1x32(out[3], mult_fr1x32x32(out_del[0], mul));  } 
+  /*   if(mul != 0) { */ out[3] = add_fr1x32(out[3], mult_fr1x32x32(out_del[0], mul)); /* } */
   mul = mix_del_dac[1][3];
-   if(mul != 0) {  out[3] = add_fr1x32(out[3], mult_fr1x32x32(out_del[1], mul));  } 
+  /*   if(mul != 0) { */ out[3] = add_fr1x32(out[3], mult_fr1x32x32(out_del[1], mul)); /* } */
   // adc
   mul = mix_adc_dac[0][3];
-   if(mul != 0) {  out[3] = add_fr1x32(out[3], mult_fr1x32x32(in[0], mul));  } 
+  /*   if(mul != 0) { */ out[3] = add_fr1x32(out[3], mult_fr1x32x32(in[0], mul)); /* } */
   mul = mix_adc_dac[1][3];
-   if(mul != 0) {  out[3] = add_fr1x32(out[3], mult_fr1x32x32(in[1], mul));  } 
+  /*   if(mul != 0) { */ out[3] = add_fr1x32(out[3], mult_fr1x32x32(in[1], mul)); /* } */
   mul = mix_adc_dac[2][3];
-   if(mul != 0) {  out[3] = add_fr1x32(out[3], mult_fr1x32x32(in[2], mul));  } 
+  /*   if(mul != 0) { */ out[3] = add_fr1x32(out[3], mult_fr1x32x32(in[2], mul)); /* } */
   mul = mix_adc_dac[3][3];
-   if(mul != 0) {  out[3] = add_fr1x32(out[3], mult_fr1x32x32(in[3], mul));  } 
+  /*   if(mul != 0) { */ out[3] = add_fr1x32(out[3], mult_fr1x32x32(in[3], mul)); /* } */
 
 }
 

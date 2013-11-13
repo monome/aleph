@@ -132,7 +132,7 @@ static void irq_port0_line3(void) {
   if(gpio_get_pin_interrupt_flag(SW0_PIN)) {
     gpio_clear_pin_interrupt_flag(SW0_PIN);
     /// process_sw() will post an event, which calls cpu_irq_disable().
-    /// apparently, this also clears the GPIO interrupt flags (!?)
+    /// apparently, this also clears the GPIO interrupt flags,
     /// so clear the flag first to avoid triggering an infinite series of interrupts.
     /// this might be problematic if we were expecting faster interrupts from switches,
     /// but hardware pre-filtering should preclude this.
