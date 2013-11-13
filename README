@@ -8,7 +8,7 @@ aleph.
 
 is there an sdcard in it? there should be... then try:
 
-- hold switch 4 while powering up to launch the bootloader
+- hold mode switch (square, upper right) while powering up to launch the bootloader [*]
 
 - load an avr32 application from hex, in /hex folder on sdcard
 
@@ -16,9 +16,14 @@ is there an sdcard in it? there should be... then try:
 
 use usb cable and minicom/kermit to connect to aleph device port and get debug messages. 
 
-currently using baudrate 500000 and a device spelled something like /dev/ttyACM0 . 
+currently using baudrate 500000 and a device spelled something like /dev/ttyACM0. [**] 
 
-for the "green sandwich" proto, the device is called /dev/ttyUSBx on linux, looks like FTDI,
+
+
+[*] for the "green sandwich" proto, mode switch is broken, bootloader toggle is SW4.
+
+
+[**] for the "green sandwich" proto, the device is called /dev/ttyUSBx on linux, looks like FTDI,
 and you may need to lower the baudrate.
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
