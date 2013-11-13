@@ -50,9 +50,6 @@ CPPFLAGS = \
 ## NOTE:
 # use this line instead if you want to use without the bootloader!
 # linking with the trampoline on a bootloaded app is bad news.
-
-
-
 # LDFLAGS = -nostartfiles -Wl,-e,_trampoline
 LDFLAGS = -nostartfiles
 
