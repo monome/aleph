@@ -48,7 +48,7 @@ page_t pages[NUM_PAGES] = {
   { .name = "OPS",
     .select_fn = &select_ops, // select function
     //    .handler = handler_ops, // pointer to handlers
-    .encSens = {8, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
+    .encSens = {12, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   { .name = "SCENES",
     .select_fn = &select_scenes, // select function
