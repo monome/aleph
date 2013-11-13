@@ -1,7 +1,7 @@
 /* memory.h
    avr32
    aleph
-
+ 
    a hacky sort of interface to explicitly allocate regions of SRAM
    like malloc() without the free() !
 */
