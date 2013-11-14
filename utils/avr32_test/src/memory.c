@@ -102,12 +102,12 @@ void sram_test(void) {
     //      print_dbg_char('%');
     //    }
     tmp = sram[i];
-    print_dbg(" \r\n word index/value: 0x");
-    print_dbg_hex(i); 
-    print_dbg(" ; read: 0x");
-    print_dbg_hex(tmp);
+    // print_dbg(" \r\n word index/value: 0x");
+    // print_dbg_hex(i); 
+    // print_dbg(" ; read: 0x");
+    // print_dbg_hex(tmp);
     if (tmp != i) {
-      print_dbg(" ERROR");
+      // print_dbg(" ERROR");
       noErrors++;
     }
   }
