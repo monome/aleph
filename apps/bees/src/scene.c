@@ -97,7 +97,7 @@ void scene_read_buf(void) {
     print_dbg(" : ");
     print_dbg(net->params[i].desc.label);
     print_dbg(" ; val ");
-    print_dbg_hex((u32)net->params[i].data.value.asInt);
+    print_dbg_hex((u32)net->params[i].data.value);
   }
 
   // compare module name

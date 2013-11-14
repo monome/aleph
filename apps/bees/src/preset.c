@@ -55,8 +55,8 @@ void presets_init(void) {
     }
     // empty outputs
     for(j=0; i<NET_OUTS_MAX; i++) {
-      presets[i].outs[j].idx = -1;
-      presets[i].outs[j].value = 0;
+      presets[i].outs[j].target = -1;
+      presets[i].outs[j].outIdx = -1;
       presets[i].outs[j].enabled = 0;
     }
 
