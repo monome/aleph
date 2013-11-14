@@ -71,7 +71,7 @@ void module_set_param(u32 idx, pval v) {
     break;
     // filter params
   case eParam_coeff0 :
-    filter_svf_set_coeff( &(svf[0]), v.fr );
+    filter_svf_set_coeff(&(svf[0]), v.fr );
     break;
   case eParam_coeff1 :
     filter_svf_set_coeff(&(svf[1]), v.fr );
@@ -106,14 +106,24 @@ void module_set_param(u32 idx, pval v) {
   case eParam_notch1 :
     filter_svf_set_notch(&(svf[1]), v.fr);
     break;
+
     // filter balance
-  case eParam_mix0 :
+  case eParam_fwet0 :
+    mix_fwet[0] = v.fr;
     break;
-    mix_svf[0] = v.fr;
+
+  case eParam_fwet1 :
+    mix_fwet[1] = v.fr;
     break;
-  case eParam_mix1 :
-    mix_svf[1] = v.fr;
+
+  case eParam_fdry0 :
+    mix_fdry[0] = v.fr;
     break;
+
+  case eParam_fdry1 :
+    mix_fdry[1] = v.fr;
+    break;
+
     /// mix points
   case eParam_adc0_del0 :
     mix_adc_del[0][0] = v.fr;

@@ -152,11 +152,17 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParam_notch0].min = 0x00000000; 
   gModuleData->paramDesc[eParam_notch0].max = 0x00010000;
 
-  strcpy(gModuleData->paramDesc[eParam_mix0].label, "mix0");
-  strcpy(gModuleData->paramDesc[eParam_mix0].unit, "u");
-  gModuleData->paramDesc[eParam_mix0].type = PARAM_TYPE_FRACT; 
-  gModuleData->paramDesc[eParam_mix0].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_mix0].max = FR32_MAX; 
+  strcpy(gModuleData->paramDesc[eParam_fwet0].label, "fwet0");
+  strcpy(gModuleData->paramDesc[eParam_fwet0].unit, "u");
+  gModuleData->paramDesc[eParam_fwet0].type = PARAM_TYPE_FRACT; 
+  gModuleData->paramDesc[eParam_fwet0].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_fwet0].max = FR32_MAX; 
+
+  strcpy(gModuleData->paramDesc[eParam_fdry0].label, "fdry0");
+  strcpy(gModuleData->paramDesc[eParam_fdry0].unit, "u");
+  gModuleData->paramDesc[eParam_fdry0].type = PARAM_TYPE_FRACT; 
+  gModuleData->paramDesc[eParam_fdry0].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_fdry0].max = FR32_MAX; 
 
   strcpy(gModuleData->paramDesc[eParam_coeff1].label, "coeff1");
   strcpy(gModuleData->paramDesc[eParam_coeff1].unit, "coeff");
@@ -194,11 +200,18 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParam_notch1].min = 0x00000000; 
   gModuleData->paramDesc[eParam_notch1].max = FR32_MAX;
 
-  strcpy(gModuleData->paramDesc[eParam_mix1].label, "mix1");
-  strcpy(gModuleData->paramDesc[eParam_mix1].unit, "u");
-  gModuleData->paramDesc[eParam_mix1].type = PARAM_TYPE_FRACT; 
-  gModuleData->paramDesc[eParam_mix1].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_mix1].max = FR32_MAX;
+
+  strcpy(gModuleData->paramDesc[eParam_fwet1].label, "fwet1");
+  strcpy(gModuleData->paramDesc[eParam_fwet1].unit, "u");
+  gModuleData->paramDesc[eParam_fwet1].type = PARAM_TYPE_FRACT; 
+  gModuleData->paramDesc[eParam_fwet1].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_fwet1].max = FR32_MAX; 
+
+  strcpy(gModuleData->paramDesc[eParam_fdry1].label, "fdry1");
+  strcpy(gModuleData->paramDesc[eParam_fdry1].unit, "u");
+  gModuleData->paramDesc[eParam_fdry1].type = PARAM_TYPE_FRACT; 
+  gModuleData->paramDesc[eParam_fdry1].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_fdry1].max = FR32_MAX; 
 
   strcpy(gModuleData->paramDesc[eParam_adc0_del0].label, "adc0_del0");
   strcpy(gModuleData->paramDesc[eParam_adc0_del0].unit, "u");

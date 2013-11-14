@@ -18,6 +18,21 @@
 #include "util.h"
 
 
+// fixme: sucks
+/* // add to an input and clamp to allowed range */
+#define CTL_INC_IN(x, a)			\
+  x += a;					\
+  if(x > IN_MAX) {				\
+    if(a<0) {					\
+      x = 0;					\
+    } else {					\
+      x = IN_MAX;				\
+    }						\
+  } else if (x < 0) {				\
+    x = 0;					\
+  }						\
+
+
 //-- parameter values
 // inputs. use s32 type but unsigned range (accumulators)
 
@@ -28,7 +43,7 @@
 // feedback
 s32 in_fb[2] = {0, 0};
 // filter wet/dry mix
-s32 in_mix[2] = {0, 0};
+s32 in_fwet[2] = {0, 0};
 // cutoff frequency
 s32 in_freq[2] = {0, 0};
 // resonance
@@ -90,19 +105,6 @@ static inline s32 fr32_from_float(float x) {
     return (s32)((double)(x * -1.f) * (double)0x80000000);
   }
 }
-
-/* // add to an input and clamp to allowed range */
-#define CTL_INC_IN(x, a)			\
-  x += a;					\
-  if(x > IN_MAX) {				\
-    if(a<0) {					\
-      x = 0;					\
-    } else {					\
-      x = IN_MAX;				\
-    }						\
-  } else if (x < 0) {				\
-    x = 0;					\
-  }						\
 
 //-------------------------------------
 //------ extern functions
@@ -205,7 +207,9 @@ void ctl_init_params(void) {
   // del0 -> del1
   ctl_param_change(eParam_del0_del1, fr32_from_float(0.99));				    
   // slight feedback on del0 
-  ctl_param_change(eParam_del0_del0, fr32_from_float(0.5));
+  /// test
+  //  ctl_param_change(eParam_del0_del0, fr32_from_float(0.5));
+
   // set write flags
   ctl_param_change(eParam_write0, 1);
   ctl_param_change(eParam_write1, 1);		   
@@ -360,6 +364,11 @@ void ctl_inc_fb(u8 id, s32 delta) {
       amp = 0x7fff0000;
     }
   }
+  //  print_dbg("\r\n setting feedback; param index: ");
+  //  print_dbg_ulong(p);
+  //  print_dbg(", value: 0x");
+  //  print_dbg_hex(amp);
+
   // send
   ctl_param_change(p, amp);
   // draw
@@ -367,15 +376,30 @@ void ctl_inc_fb(u8 id, s32 delta) {
 }
 
 void ctl_inc_mix(u8 id, s32 delta) {
-  eParam p = id ? eParam_mix1 : eParam_mix0;
-  s32 amp = input_amp(in_mix[id]);
-  //// FIXME: use a sine panner
+  eParam pwet, pdry;
+  s32 amp = input_amp(in_fwet[id]);
+  if(id == 0) {
+    pwet = eParam_fwet0;
+    pdry = eParam_fdry0;
+  } else {
+    pwet = eParam_fwet0;
+    pdry = eParam_fdry0;
+  }
   // accumulate
-  CTL_INC_IN(in_mix[id], delta);
-  // send
-  ctl_param_change(p, amp);
+  CTL_INC_IN(in_fwet[id], delta);
+  
+  // sendy
+  print_dbg("\r\n setting wet amp: 0x");
+  print_dbg_hex(amp);
+
+  print_dbg(", dry amp: 0x");
+  print_dbg_hex(0x7fffffff - amp);
+  ctl_param_change(pwet, amp);
+  
+  // FIXME: dirty hack linear fade. probly sounds bad too
+  ctl_param_change(pdry, 0x7fffffff - amp);
   // draw
-  render_amp(in_mix[id], amp);
+  render_amp(in_fwet[id], amp);
 }
 
 void ctl_inc_freq(u8 id, s32 delta) {
