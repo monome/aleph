@@ -365,7 +365,7 @@ void handle_enc_1(s32 val) {
 void handle_enc_2(s32 val) {
   // scroll page
   if(val > 0) {
-    set_page(ePageScenes);
+    set_page(ePagePresets);
   } else {
     set_page(ePageIns);
   }

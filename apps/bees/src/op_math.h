@@ -14,6 +14,7 @@
 // input/output data type
 // typedef f32 io_t;
 typedef fix16_t io_t;
+
 //--- pickling
 #define pickle_io(src, dst) pickle_32((u32)src, dst);
 #define unpickle_io(src, dst) unpickle_32(src, (u32*)dst);

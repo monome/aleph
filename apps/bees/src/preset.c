@@ -34,21 +34,46 @@ preset_t* presets;
 //====== function definitions
 
 // initialize
-void preset_init(void) {
-  u8 i, j;
+void presets_init(void) {
+  u32 i, j;
 
   presets = (preset_t*)alloc_mem(NET_PRESETS_MAX * sizeof(preset_t));
-
+  
   for(i=0; i<NET_PRESETS_MAX; i++) {
+
+    // empty name
     for(j=0; j<PRESET_NAME_LEN; j++) {
-      presets[i].name[j] = 0;
+      presets[i].name[j] = '\0';
     }
-    str_copy(presets[i].name, "[empty]", PRESET_NAME_LEN);
+    str_copy(presets[i].name, "_", PRESET_NAME_LEN);
+
+    // empty inputs
+    for(j=0; i<NET_INS_MAX; i++) {
+      presets[i].ins[j].idx = -1;
+      presets[i].ins[j].value = 0;
+      presets[i].ins[j].enabled = 0;
+    }
+    // empty outputs
+    for(j=0; i<NET_OUTS_MAX; i++) {
+      presets[i].outs[j].idx = -1;
+      presets[i].outs[j].value = 0;
+      presets[i].outs[j].enabled = 0;
+    }
+
+    // empty params
+    for(j=0; i<NET_PARAMS_MAX; i++) {
+      presets[i].params[j].idx = -1;
+      presets[i].params[j].value = 0;
+      presets[i].params[j].enabled = 0;
+    } 
   }
+  
+  // 
+
 }
 
 // de-initialize
-void preset_deinit(void) {
+void presets_deinit(void) {
 }
 
 // store a particular input
