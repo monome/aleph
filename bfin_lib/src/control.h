@@ -42,7 +42,7 @@
 // parameter change event type
 typedef struct _ctlEvent {
   u8 idx;
-  pval val;
+  ParamValue val;
 } ctlEvent_t;
 
 //---------------------------------------------
