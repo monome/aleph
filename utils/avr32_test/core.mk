@@ -55,8 +55,8 @@ CSRCS += \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_string.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_table.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_write.c \
-	$(ALEPH_COMMON)/fix.c \
-	$(ALEPH_COMMON)/libfixmath/fix16.c
+	$(ALEPH_AVR32)/src/fix.c \
+	$(ALEPH_AVR32)/src/libfixmath/fix16.c
 
 
 # List of assembler source files.
@@ -109,5 +109,5 @@ INC_PATH += \
 	$(ALEPH_AVR32)/src/usb/gamepad \
 	$(ALEPH_AVR32)/src/usb/midi   \
 	$(ALEPH_AVR32)/src/usb/mouse   \
-	$(ALEPH_COMMON)	           \
-	$(ALEPH_COMMON)/libfixmath
+	$(ALEPH_AVR32)/src/libfixmath \
+	$(ALEPH_COMMON)
