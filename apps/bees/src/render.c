@@ -178,7 +178,7 @@ void render_set_scroll(scroll* scr) {
   pageScrollRegion->dirty = 1;
 }
 
-/// stupid string lib replacements.. 
+//----- stupid string lib replacements.. 
 // all act on static string buffer in render.c
 
 // write to top of line buffer
@@ -216,6 +216,9 @@ void render_set_scroll(scroll* scr) {
 // append int to line buffer (left justified, no bounds)
 /// very fast, for short unsigned values!
 inline void appendln_idx_lj(u16 val) {
+#if 0
+  pline = atoi_idx(pline, val);
+#else
   u16 dig = 0;
   u16 rem = 0;
   // 3 digits only 
@@ -233,6 +236,7 @@ inline void appendln_idx_lj(u16 val) {
 
   *pline = '0' + rem;
   ++pline;    
+#endif
 }
 
 // append char to line buffer
@@ -429,19 +433,18 @@ void edit_string_inc_char(char* str, u8 pos) {
     tmp = MIN_EDIT_CHAR;
   }
   str[pos] = tmp;
-  //return tmp;
 }
 
 // scroll character down
 void edit_string_dec_char(char* str, u8 pos) {
   u8 tmp = str[pos]; 
+  if(tmp == 0) { tmp = MAX_EDIT_CHAR; }
   if (tmp > MIN_EDIT_CHAR) {
     tmp--;
   } else {
     tmp = MAX_EDIT_CHAR;
   }
   str[pos] = tmp;
-  //  return tmp;
 }
 
 // draw editing string to given region, with cursor highlight
@@ -459,5 +462,4 @@ void render_edit_string(region* reg, char* str, u8 len, u8 cursor) {
     }
   }
   reg->dirty = 1;
-
 }

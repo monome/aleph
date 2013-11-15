@@ -72,13 +72,17 @@ void scene_write_buf(void) {
 
   // pickle network
   dst = net_pickle(dst);
+
+  // pickle presets
+  dst = presets_pickle(dst);
+  
 }
 
 // set current state of system from global RAM buffer
 void scene_read_buf(void) {
   s8 modName[MODULE_NAME_LEN];
   u32 i;
-  u8* src = (u8*)&(sceneData->pickle);
+  const u8* src = (u8*)&(sceneData->pickle);
   //    s8 neq = 0;
 
   app_pause();
@@ -89,6 +93,9 @@ void scene_read_buf(void) {
   // unpickle network 
   src = net_unpickle(src);
 
+  // unpickle presets
+  src = presets_unpickle(src);
+  
   print_dbg("\r\n copied stored network and presets to RAM ");
 
   for(i=0; i<net->numParams; i++) {
