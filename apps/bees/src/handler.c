@@ -76,13 +76,6 @@ static void handle_Adc3(s32 data) {
 /// ....
 //////////
 
-static void handle_Switch8(s32 data) { 
-  // mode switch
-  // if(data > 0) {
-    render_boot("USB");
-  // }
-}
-
 static void handle_Switch4(s32 data) { 
   // mode switch
   if(data > 0) {
@@ -197,8 +190,7 @@ void assign_bees_event_handlers(void) {
   app_event_handlers[ kEventSwitch4 ]	= &handle_Switch4 ;
   app_event_handlers[ kEventSwitch5 ]	= &handle_Switch5 ;
   app_event_handlers[ kEventSwitch6 ]	= &handle_Switch6 ;
-  app_event_handlers[ kEventSwitch7 ] = &handle_Switch7 ;
-  app_event_handlers[ kEventSwitch8 ] = &handle_Switch8 ;
+  app_event_handlers[ kEventSwitch7 ]	= &handle_Switch7 ;
   app_event_handlers[ kEventMonomeConnect ]	= &handle_MonomeConnect ;
   app_event_handlers[ kEventMonomeDisconnect ]	= &handle_MonomeDisconnect ;
   app_event_handlers[ kEventMonomeGridKey ]	= &handle_MonomeGridKey ;
