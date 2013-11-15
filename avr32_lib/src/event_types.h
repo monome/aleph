@@ -27,6 +27,7 @@ typedef enum {
   kEventSwitch5, // power
   kEventSwitch6, // foot1
   kEventSwitch7, // foot2
+  kEventSwitch8, // usart-usb-detect
   /// connect/disconnect FTDI-based devices
   kEventFtdiConnect,
   kEventFtdiDisconnect,
@@ -51,9 +52,10 @@ typedef enum {
 
 
 // TODO:
+  // kEventSerialIncoming,
   // uart from computer
   //--- main handlers
-  // kEventSerialDebugFlag,
+  kEventSerialDebugFlag,
   // kEventSerialCaptureFlag,
   // kEventSerialParamSet,
   // kEventSerialParamGet,

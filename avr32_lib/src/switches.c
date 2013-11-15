@@ -23,6 +23,7 @@ static const U8 kSwitchPins[NUM_SW] = {
   SW_POWER_PIN,
   FS0_PIN,
   FS1_PIN,
+  USART_USB_DETECT_PIN
 };
 
 static const etype kSwitchEvents[NUM_SW] = {
@@ -34,6 +35,7 @@ static const etype kSwitchEvents[NUM_SW] = {
   kEventSwitch5,
   kEventSwitch6,
   kEventSwitch7,
+  kEventSwitch8
 };
 
 
