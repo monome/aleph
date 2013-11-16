@@ -683,7 +683,7 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
   memcpy( &(net->params[net->numParams].desc), (const void*)pdesc, sizeof(ParamDesc) );
   net->params[net->numParams].idx = idx; 
   net->params[net->numParams].preset = 1; 
-  net->params[net->numParams].data.value.asInt = pdesc->min;
+  net->params[net->numParams].data.value = pdesc->min;
   net->numParams += 1;
 }
 
@@ -697,7 +697,7 @@ void net_clear_params(void) {
 void net_send_params(void) {
   u32 i;
   for(i=0; i<net->numParams; i++) {
-    ctl_param_change(i, net->params[i].data.value.asInt);
+    ctl_param_change(i, net->params[i].data.value);
   }
 }
 

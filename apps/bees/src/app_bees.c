@@ -37,7 +37,7 @@ void app_init(void) {
   net_init();
 
   print_dbg("\r\n preset_init...");  
-  preset_init();
+  presets_init();
 
   print_dbg("\r\n scene_init...");
   scene_init();

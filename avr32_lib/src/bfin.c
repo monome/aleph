@@ -75,7 +75,7 @@ void bfin_load_buf(void) {
 //void bfin_set_param(u8 idx, f32 x ) {
 void bfin_set_param(u8 idx, fix16_t x ) {
   //static u32 ticks = 0;
-  ParamValue pval;
+  ParamValueCommon pval;
   pval.asInt = (s32)x;
 
   
@@ -156,7 +156,7 @@ void bfin_get_num_params(volatile u32* num) {
 }
 
 void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
-  ParamValue pval;
+  ParamValueCommon pval;
   u16 x; // u16 for spi_read()
   u8 i;
 

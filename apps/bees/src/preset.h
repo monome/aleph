@@ -67,5 +67,9 @@ void preset_store(u32 preIdx);
 void preset_recall(u32 preIdx);
 // get preset name
 char* preset_name(u32 id);
+// pickle presets
+u8* presets_pickle(u8* dst);
+// unpickle
+const u8* presets_unpickle(const u8* src);
 
 #endif
