@@ -139,6 +139,10 @@ git clone https://github.com/tehn/aleph.git
 AVR32
 -----
 
+for mac install, this does it: https://github.com/jsnyder/avr32-toolchain
+
+for linux:
+
 get the toolchain and header files from atmel.com.
 
 currently the page is here, (but it could move)
