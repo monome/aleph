@@ -1,0 +1,6 @@
+for python 2
+
+you need:
+
+pyOSC: https://pypi.python.org/pypi/pyOSC
+pySerial: 
