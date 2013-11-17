@@ -16,13 +16,14 @@ static u8 com;
 // current param index
 static u8 idx;
 // param value;
-static pval pv;
+//static ParamValue pv;
 
 //------ static functions
-static void spi_set_param(u32 idx, pval pv) {
+static void spi_set_param(u32 idx, ParamValue pv) {
   //  module_set_param(idx, pv);
   //  LED4_TOGGLE;
   // ctl_param_change(idx, pv.u);
+  gModuleData->paramData[idx].value = pv;
   module_set_param(idx, pv);
 }
 
@@ -33,7 +34,7 @@ static void spi_set_param(u32 idx, pval pv) {
 // deal with new data in the spi rx ringbuffer
 // return byte to load for next MISO
 u8 spi_process(u8 rx) {
-  static ParamValue pval;
+  static ParamValueCommon pval;
   switch(byte) {
   /// caveman style case statement
   case eCom :
@@ -78,29 +79,35 @@ u8 spi_process(u8 rx) {
     break;
   case eSetParamData0 :
     byte = eSetParamData1;
+  // FIXME: not really using this global parameter data.
+  // but we probably will if we want a bfin control rate or FIFO. 
+  // so for now it is just here, burning resources.
     // byte-swap from BE on avr32
-    gModuleData->paramData[idx].value.asByte[3] = rx; // set paramval
+    pval.asByte[3] = rx; // set paramval
+    //    gModuleData->paramData[idx].value = pval.asInt;
     return 0; // don't care
     break;
   case eSetParamData1 :
     byte = eSetParamData2;
     // byte-swap from BE on avr32
-    gModuleData->paramData[idx].value.asByte[2] = rx; // set paramval
+    pval.asByte[2] = rx; // set paramval
+    //    gModuleData->paramData[idx].value = pval.asInt;
     return 0; // don't care
     break;
   case eSetParamData2 :
     byte = eSetParamData3;
     // byte-swap from BE on avr32
-    gModuleData->paramData[idx].value.asByte[1] = rx; // set paramval
+    //    gModuleData->paramData[idx].value.asByte[1] = rx; // set paramval
+    pval.asByte[1] = rx; // set paramval
+    //    gModuleData->paramData[idx].value = pval.asInt;
     return 0; // don't care
     break;
   case eSetParamData3 :
     // byte-swap from BE on avr32
-    gModuleData->paramData[idx].value.asByte[0] = rx;
-    // FIXME: not really using this flag. should just remove it 
-    //    gModuleData->paramData[idx].changed = 1; // done -> mark changed
-    pv.s = gModuleData->paramData[idx].value.asInt;
-    spi_set_param(idx, pv);
+    //    pv.s = gModuleData->paramData[idx].value.asInt;
+    //    spi_set_param(idx, pv);
+    pval.asByte[0] = rx; // set paramval
+    spi_set_param(idx, pval.asInt);
     byte = eCom; //reset
     return 0; // don't care
     break;
@@ -110,26 +117,31 @@ u8 spi_process(u8 rx) {
   case eGetParamIdx :
     idx = rx; // set index
     byte = eGetParamData0;
+    pval.asInt = gModuleData->paramData[idx].value;
     // byte-swap from BE on avr32
-    return gModuleData->paramData[idx].value.asByte[3];
+      //    return gModuleData->paramData[idx].value.asByte[3];
+    return pval.asByte[3];
+      
     break;
   case eGetParamData0 :
     byte = eGetParamData1;
     // byte-swap from BE on avr32
-    return gModuleData->paramData[idx].value.asByte[2];
+    //    return gModuleData->paramData[idx].value.asByte[2];
+    return pval.asByte[2];
     break;
   case eGetParamData1 :
     byte = eGetParamData2;
     // byte-swap from BE on avr32
-    return gModuleData->paramData[idx].value.asByte[1];
+    //    return gModuleData->paramData[idx].value.asByte[1];
+    return pval.asByte[1];
     break;
   case eGetParamData2 :
     byte = eGetParamData3;
     // byte-swap from BE on avr32
-    return gModuleData->paramData[idx].value.asByte[0];
+    //    return gModuleData->paramData[idx].value.asByte[0];
+    return pval.asByte[0];
     break;
   case eGetParamData3 :
-    // byte-swap from BE on avr32
     byte = eCom; //reset
     return 0; // don't care
     break;

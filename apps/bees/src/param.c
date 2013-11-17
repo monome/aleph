@@ -20,7 +20,7 @@
 
 // get value for param at given idx
 io_t get_param_value(u32 idx) {
-  return (io_t)(net->params[idx].data.value.asInt); 
+  return (io_t)(net->params[idx].data.value); 
 }
 
 // get preset-enabled flag for param at given idx
@@ -54,7 +54,7 @@ void set_param_value(u32 idx, io_t val) {
   if(val < net->params[idx].desc.min) {
     val = net->params[idx].desc.min;
   }
-  net->params[idx].data.value.asInt = val;
+  net->params[idx].data.value = val;
   net->params[idx].data.changed = 1;
   //  bfin_set_param(idx, val);
   ctl_param_change(idx, (u32)val);
@@ -72,7 +72,7 @@ u8* param_pickle(pnode_t* pnode, u8* dst) {
   // print_dbg_hex(pnode->data.value.asUint);
 
   // store value
-  val = pnode->data.value.asUint;
+  val = (u32)(pnode->data.value);
   dst = pickle_32(val, dst);
 
   // store preset-inclusion 
@@ -94,7 +94,7 @@ const u8* param_unpickle(pnode_t* pnode, const u8* src) {
   // load value
   
   src = unpickle_32(src, &val);
-  pnode->data.value.asUint = val;
+  pnode->data.value = (ParamValue)val;
   //  src = unpickle_32(src, &(pnode->data.value.asUint));
 
   // print_dbg("\r\n unpickled param value: ");

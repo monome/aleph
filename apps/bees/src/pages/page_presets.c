@@ -169,41 +169,41 @@ void handle_key_3(s32 val) {
 
 // scroll character value at cursor positoin in scene name
 void handle_enc_0(s32 val) {
-  /*
+  
   if(val > 0) {
-    edit_string_inc_char(sceneData->desc.sceneName, cursor);
+    edit_string_inc_char(preset_name(curPage->select), cursor);
   } else {
-    edit_string_dec_char(sceneData->desc.sceneName, cursor);
+    edit_string_dec_char(preset_name(curPage->select), cursor);
   }
-  print_dbg("\r\b edited scene name: ");
-  print_dbg(sceneData->desc.sceneName);
-  render_edit_string(headRegion, sceneData->desc.sceneName, SCENE_NAME_LEN, cursor);
-  */
+  print_dbg("\r\b edited preset name: ");
+  print_dbg(preset_name(curPage->select));
+  render_edit_string(headRegion, preset_name(curPage->select), PRESET_NAME_LEN, cursor);
+  
 }
 
 // scroll cursor position in current scene name
 void handle_enc_1(s32 val) {
-  /*
+  
   if(val > 0) {
     ++cursor;
-    if (cursor >= SCENE_NAME_LEN) {
+    if (cursor >= PRESET_NAME_LEN) {
       cursor = 0;
     } 
   } else {
     --cursor;
     if (cursor < 0) {
-      cursor = SCENE_NAME_LEN - 1;
+      cursor = PRESET_NAME_LEN - 1;
     } 
   }
-  render_edit_string(headRegion, sceneData->desc.sceneName, SCENE_NAME_LEN, cursor);
-  */
+  render_edit_string(headRegion, preset_name(curPage->select), PRESET_NAME_LEN, cursor);
+  
 }
 
 
 // enc 0 : scroll page
 void handle_enc_2(s32 val) {
    if(val > 0) {
-    set_page(ePageDsp);
+    set_page(ePageScenes);
   } else {
     set_page(ePageOuts);
   }

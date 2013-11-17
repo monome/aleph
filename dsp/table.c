@@ -25,6 +25,7 @@ typedef union { f32 fl; fract32 fr; } fu;
 fract32 table_lookup_idx(fract32* tab, u32 size, fix16 idx) {
   fract32 a, b, f;
   u32 ia, ib;
+  // integer part
   ia = idx >> 16;
   while(ia > (size - 1)) { ia -= (size); }
   ib = ia + 1;
@@ -32,6 +33,7 @@ fract32 table_lookup_idx(fract32* tab, u32 size, fix16 idx) {
   a = tab[ia];
   b = tab[ib];
   f = (fract32)( (idx << 15) & 0x7fffffff );
+  /// is this correct...
   return add_fr1x32(a, mult_fr1x32x32(f, sub_fr1x32(b, a)));
 }
 

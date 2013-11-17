@@ -46,22 +46,17 @@ typedef enum {
   //...
 } paramUseType;
 
-// 4-byte union of value representations
-#if 1
+
+// a union type for byteswapping
+
 typedef union __attribute__((__packed__)) {
-  f32 asFloat;
-  fract32 asFract;
   s32 asInt;
   u32 asUint;
   u8 asByte[4];
-  u16 asShort[2];
-} ParamValue;
-#else
-typedef u32 ParamValue;
-#endif
+} ParamValueCommon;
 
-// a simpler form for internal use
-typedef union { u32 u; s32 s; fix16 fix; fract32 fr; } pval;
+// data type
+typedef s32 ParamValue;
 
 // parameter descriptor
 typedef struct __attribute__((__packed__)) ParamDescStruct {
