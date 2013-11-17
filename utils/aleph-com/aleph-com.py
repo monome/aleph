@@ -18,29 +18,37 @@ c = OSC.OSCClient()
 # And, if the client supports it, a '/subscribe' & '/unsubscribe' handler
 #s.addDefaultHandlers()
 
+output = []
+
+def out(data):
+  if(data==0 or data == 27):
+    output.append(27)
+  output.append(data)
 
 # define a message-handler function for the server to call.
 def aleph_handler(addr, tags, data, source):
-  print "\n\033[92m### osc: %s %s\033[0m" % (addr,data)
+  global output
   output = []
+  print "\n\033[92m### osc: %s %s\033[0m" % (addr,data)
   if addr == "/aleph/param/count":
     output.append(2)
     output.append(0)
   elif addr == "/aleph/param/info":
     output.append(3)
+    out(data[0])
     output.append(data[0])
     output.append(0)
   elif addr == "/aleph/param/get":
     output.append(4)
-    output.append(data[0])
+    out(data[0])
     output.append(0)
   elif addr == "/aleph/param/set":
     output.append(5)
-    output.append(data[0])
-    output.append(data[1])
-    output.append(data[2])
-    output.append(data[3])
-    output.append(data[4])
+    out(data[0])
+    out(data[1])
+    out(data[2])
+    out(data[3])
+    out(data[4])
     output.append(0)
 
   if output != []:

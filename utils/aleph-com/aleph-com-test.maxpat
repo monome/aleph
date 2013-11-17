@@ -37,7 +37,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 305.0, 77.0, 147.0, 18.0 ],
 					"presentation_rect" : [ 305.0, 72.0, 0.0, 0.0 ],
-					"text" : "/aleph/param/info 1"
+					"text" : "/aleph/param/info 0"
 				}
 
 			}
@@ -50,9 +50,9 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 375.0, 164.0, 198.0, 18.0 ],
+					"patching_rect" : [ 375.0, 164.0, 205.0, 18.0 ],
 					"presentation_rect" : [ 376.0, 164.0, 0.0, 0.0 ],
-					"text" : "/aleph/param/set 1 1 2 3 4"
+					"text" : "/aleph/param/set 1 0 2 3 27"
 				}
 
 			}
@@ -65,9 +65,9 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 361.0, 122.0, 140.0, 18.0 ],
+					"patching_rect" : [ 361.0, 122.0, 147.0, 18.0 ],
 					"presentation_rect" : [ 375.0, 76.0, 0.0, 0.0 ],
-					"text" : "/aleph/param/get 1"
+					"text" : "/aleph/param/get 27"
 				}
 
 			}
