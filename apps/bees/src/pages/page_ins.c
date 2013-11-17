@@ -399,6 +399,11 @@ void handle_key_2(s32 val) {
       // filter / all
     } else {
       // clear (disconnect all routings) / CONFIRM
+      net_set_in_value(curPage->select, 0);
+      // render to tmp buffer
+      render_line(curPage->select, 0xf);
+      // copy to scroll with highlight
+      render_to_scroll_line(SCROLL_CENTER_LINE, 1);
     }
   } 
   show_foot();

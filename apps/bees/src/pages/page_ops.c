@@ -77,7 +77,7 @@ void render_line(s16 idx) {
     appendln(net_op_name(idx));
     endln();
     font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
-    region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
+    // region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
   }
 }
 
