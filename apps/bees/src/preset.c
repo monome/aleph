@@ -30,6 +30,8 @@
 
 /// array of presets
 preset_t* presets;
+// last loaded index
+
 
 //------------------------------
 //---- static func
