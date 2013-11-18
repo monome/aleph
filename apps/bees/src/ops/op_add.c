@@ -43,6 +43,7 @@ void op_add_init(void* mem) {
   add->super.inString = op_add_instring;
   add->super.outString = op_add_outstring;
   add->super.type = eOpAdd;  
+
   add->in_val[0] = &(add->a);
   add->in_val[1] = &(add->b);
   add->in_val[2] = &(add->btrig);

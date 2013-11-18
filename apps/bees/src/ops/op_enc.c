@@ -72,6 +72,7 @@ void op_enc_init(void* mem) {
   enc->max = OP_ONE;
   enc->step = OP_MIN_INC;
   enc->wrap = 0;
+
 }
 
 //-------------------------------------------------

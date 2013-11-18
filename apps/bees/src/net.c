@@ -43,13 +43,23 @@ ctlnet_t* net;
 
 //-- indices of system-created ops
 // encoders
-s32 opSysEncIdx[4] = { -1, -1, -1, -1 };
+//s32 opSysEncIdx[4] = { -1, -1, -1, -1 };
 // function keys and footswitches
-s32 opSysSwIdx[6] = { -1, -1, -1, -1, -1, -1};
+//s32 opSysSwIdx[6] = { -1, -1, -1, -1, -1, -1};
 // adc
-s32 opSysAdcIdx = -1;
+//s32 opSysAdcIdx = -1;
 // preset
-s32 opSysPresetIdx = -1;
+//s32 opSysPresetIdx = -1;
+
+// pointers to system-created ops
+// encoders
+op_enc_t* opSysEnc[4] = { NULL, NULL, NULL, NULL };
+// function keys and footswitches
+op_sw_t* opSysSw[6] = { NULL, NULL, NULL, NULL, NULL, NULL };
+// adc
+op_adc_t* opSysAdc = NULL;
+// preset
+op_preset_t* opSysPreset = NULL;
 
 
 //===============================================
@@ -66,33 +76,33 @@ static void add_sys_ops(void) {
 
   // 4 encoders
   net_add_op(eOpEnc);
-  opSysEncIdx[0] = net->numOps - 1;
+  opSysEnc[0] = (op_enc_t*)net->ops[net->numOps - 1];
   net_add_op(eOpEnc);
-  opSysEncIdx[1] = net->numOps - 1;
+  opSysEnc[1] = (op_enc_t*)net->ops[net->numOps - 1];
   net_add_op(eOpEnc);
-  opSysEncIdx[2] = net->numOps - 1;
+  opSysEnc[2] = (op_enc_t*)net->ops[net->numOps - 1];
   net_add_op(eOpEnc);
-  opSysEncIdx[3] = net->numOps - 1;
+  opSysEnc[3] = (op_enc_t*)net->ops[net->numOps - 1];
   // 4 function switches
   net_add_op(eOpSwitch);
-  opSysSwIdx[0] = net->numOps - 1;
+  opSysSw[0] = (op_sw_t*)net->ops[net->numOps - 1];
   net_add_op(eOpSwitch);
-  opSysSwIdx[1] = net->numOps - 1;
+  opSysSw[1] = (op_sw_t*)net->ops[net->numOps - 1];
   net_add_op(eOpSwitch);
-  opSysSwIdx[2] = net->numOps - 1;
+  opSysSw[2] = (op_sw_t*)net->ops[net->numOps - 1];
   net_add_op(eOpSwitch);
-  opSysSwIdx[3] = net->numOps - 1;
+  opSysSw[3] = (op_sw_t*)net->ops[net->numOps - 1];
   // 2 footswitches  
   net_add_op(eOpSwitch);
-  opSysSwIdx[4] = net->numOps - 1;
+  opSysSw[4] = (op_sw_t*)net->ops[net->numOps - 1];
   net_add_op(eOpSwitch);
-  opSysSwIdx[5] = net->numOps - 1;
+  opSysSw[5] = (op_sw_t*)net->ops[net->numOps - 1];
   // 1 adc
   net_add_op(eOpAdc);
-  opSysAdcIdx = net->numOps -1;
+  opSysAdc = (op_adc_t*)net->ops[net->numOps -1];
   // 1 preset receiver
-  //// FIXME
-  //  net_add_op(eOpPreset);
+    net_add_op(eOpPreset);
+  opSysPreset = (op_preset_t*)net->ops[net->numOps -1];
 }
 
 ///----- node pickling

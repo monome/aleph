@@ -27,14 +27,14 @@
 
 // indices of system operator inputs
 // set them in page_init
-static s16 sw0_idx;
-static s16 sw1_idx;
-static s16 sw2_idx;
-static s16 sw3_idx;
-static s16 enc0_idx;
-static s16 enc1_idx;
-static s16 enc2_idx;
-static s16 enc3_idx;
+/* static s16 sw0_idx; */
+/* static s16 sw1_idx; */
+/* static s16 sw2_idx; */
+/* static s16 sw3_idx; */
+/* static s16 enc0_idx; */
+/* static s16 enc1_idx; */
+/* static s16 enc2_idx; */
+/* static s16 enc3_idx; */
 
 // handler declarations
 static void handle_enc_0(s32 val);
@@ -49,35 +49,35 @@ static void handle_key_3(s32 val);
 // handlers activate system UI operator nodes.
 
 void handle_key_0(s32 val) {
-  net_activate(sw0_idx, val, NULL);
+  //  net_activate(sw0_idx, val, NULL);
 }
 
 void handle_key_1(s32 val) {
-  net_activate(sw1_idx, val, NULL);
+  //  net_activate(sw1_idx, val, NULL);
 }
 
 void handle_key_2(s32 val) {
-  net_activate(sw2_idx, val, NULL);
+  //  net_activate(sw2_idx, val, NULL);
 }
 
 void handle_key_3(s32 val) {
-  net_activate(sw3_idx, val, NULL);
+  //  net_activate(sw3_idx, val, NULL);
 }
 
 void handle_enc_0(s32 val) {
-  net_activate(enc0_idx, val, NULL);
+  //  net_activate(enc0_idx, val, NULL);
 }
 
 void handle_enc_1(s32 val) {
-  net_activate(enc1_idx, val, NULL);
+  //  net_activate(enc1_idx, val, NULL);
 }
 
 void handle_enc_2(s32 val) {
-  net_activate(enc2_idx, val, NULL);
+  //  net_activate(enc2_idx, val, NULL);
 }
 
 void handle_enc_3(s32 val) {
-  net_activate(enc3_idx, val, NULL);
+  //  net_activate(enc3_idx, val, NULL);
 }
 
 //----------------------
@@ -86,14 +86,14 @@ void handle_enc_3(s32 val) {
 // init
 void init_page_play(void) {
   // assign system input indices
-  sw0_idx = net_op_in_idx(opSysSwIdx[0], 0);
-  sw1_idx = net_op_in_idx(opSysSwIdx[1], 0);
-  sw2_idx = net_op_in_idx(opSysSwIdx[2], 0);
-  sw3_idx = net_op_in_idx(opSysSwIdx[3], 0);
-  enc0_idx = net_op_in_idx(opSysEncIdx[0], 0);
-  enc1_idx = net_op_in_idx(opSysEncIdx[1], 0);
-  enc2_idx = net_op_in_idx(opSysEncIdx[2], 0);
-  enc3_idx  = net_op_in_idx(opSysEncIdx[3], 0);
+  /* sw0_idx = net_op_in_idx(opSysSwIdx[0], 0); */
+  /* sw1_idx = net_op_in_idx(opSysSwIdx[1], 0); */
+  /* sw2_idx = net_op_in_idx(opSysSwIdx[2], 0); */
+  /* sw3_idx = net_op_in_idx(opSysSwIdx[3], 0); */
+  /* enc0_idx = net_op_in_idx(opSysEncIdx[0], 0); */
+  /* enc1_idx = net_op_in_idx(opSysEncIdx[1], 0); */
+  /* enc2_idx = net_op_in_idx(opSysEncIdx[2], 0); */
+  /* enc3_idx  = net_op_in_idx(opSysEncIdx[3], 0); */
 }
 
 // select 

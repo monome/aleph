@@ -42,34 +42,19 @@
 
 
 static void handle_Adc0(s32 data) { 
-  // update ADC system operator
-  /* print_dbg("\r\n bees handle adc0 event, data: 0x"); */
-  /* print_dbg_hex(data); */
-  net_activate(net_op_in_idx(opSysAdcIdx, 2), data, NULL);
+  op_adc_sys_input(opSysAdc, 0, data);
 }
 
 static void handle_Adc1(s32 data) { 
-  // update ADC system operator
-  /* print_dbg("\r\n bees handle adc0 event, data: 0x"); */
-  /* print_dbg_hex(data); */
-  net_activate(net_op_in_idx(opSysAdcIdx, 3), data, NULL);
-
+  op_adc_sys_input(opSysAdc, 1, data);
 }
 
 static void handle_Adc2(s32 data) { 
-  // update ADC system operator
-  /* print_dbg("\r\n bees handle adc0 event, data: 0x"); */
-  /* print_dbg_hex(data); */
-  net_activate(net_op_in_idx(opSysAdcIdx, 4), data, NULL);
-
+  op_adc_sys_input(opSysAdc, 2, data);
 }
 
 static void handle_Adc3(s32 data) { 
-  // update ADC system operator
-  /* print_dbg("\r\n bees handle adc0 event, data: 0x"); */
-  /* print_dbg_hex(data); */
-  net_activate(net_op_in_idx(opSysAdcIdx, 5), data, NULL);
-}
+  op_adc_sys_input(opSysAdc, 3, data);}
 
 ////////////////
 // function key and encoder handles are page-specific
@@ -111,12 +96,15 @@ static void handle_Switch5(s32 data) {
 
 static void handle_Switch6(s32 data) {
   // footswitch 1
-  net_activate(net_op_in_idx(opSysSwIdx[4], 0), data, NULL);
+  op_sw_sys_input(opSysSw[4], data > 0);
+  //  net_activate(net_op_in_idx(opSysSwIdx[4], 0), data, NULL);
 }
 
 static void handle_Switch7(s32 data) { 
   // footswitch 2
-  net_activate(net_op_in_idx(opSysSwIdx[5], 0), data, NULL);
+
+  op_sw_sys_input(opSysSw[5], data > 0);
+  //  net_activate(net_op_in_idx(opSysSwIdx[5], 0), data, NULL);
 } 
 
 static void handle_MonomeConnect(s32 data) { 
@@ -130,7 +118,7 @@ static void handle_MonomeDisconnect(s32 data) {
 static void handle_MonomeGridKey(s32 data) { 
   // net_monome.c defines a dynamic pointer to a single grid event handle.
   // this is so bees can arbitrate focus between multiple grid ops.
-  /// FIXME: we need to differentiate
+  /// FIXME: we need to differentiate between multiple devices.
   /// of course, first we need USB hub support.
   (*monome_grid_key_handler)(monomeOpFocus, data);
 }

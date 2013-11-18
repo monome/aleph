@@ -18,6 +18,7 @@
 #include "module_common.h"
 #include "net.h"
 #include "op.h"
+#include "op_derived.h"
 //#include "param.h"
 //#include "scene_types.h"
 #include "types.h"
@@ -102,13 +103,23 @@ extern ctlnet_t* net;
 
 //-- indices of system-created ops
 // encoders
-extern s32 opSysEncIdx[4];
+/* extern s32 opSysEncIdx[4]; */
+/* // function keys and footswitches */
+/* extern s32 opSysSwIdx[6]; */
+/* // adc */
+/* extern s32 opSysAdcIdx; */
+/* // preset */
+/* extern s32 opSysPresetIdx; */
+
+// pointers to system-created ops
+// encoders
+extern op_enc_t* opSysEnc[4];
 // function keys and footswitches
-extern s32 opSysSwIdx[6];
+extern op_sw_t* opSysSw[6];
 // adc
-extern s32 opSysAdcIdx;
+extern op_adc_t* opSysAdc;
 // preset
-extern s32 opSysPresetIdx;
+extern op_preset_t* opSysPreset;
 
 
 #endif // header guard

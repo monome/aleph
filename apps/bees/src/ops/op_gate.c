@@ -35,7 +35,6 @@ void op_gate_init(void* mem) {
   gate->super.inString = op_gate_instring;
   gate->super.outString = op_gate_outstring;
   gate->super.type = eOpGate;  
-  //gate->super.status = eUserOp;
 
   gate->in_val[0] = &(gate->val);
   gate->in_val[1] = &(gate->gate);

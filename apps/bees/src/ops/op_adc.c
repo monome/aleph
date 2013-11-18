@@ -53,6 +53,7 @@ void op_adc_init(void* op) {
   op_adc_t* adc = (op_adc_t*)op;
   adc->super.numInputs = 2;
   adc->super.numOutputs = 4;
+
   adc->outs[0] = -1;
   adc->outs[1] = -1;
   adc->outs[2] = -1;
@@ -64,10 +65,6 @@ void op_adc_init(void* op) {
   adc->super.in_val = adc->in_val;
   adc->in_val[0] = &(adc->enable);
   adc->in_val[1] = &(adc->period);
-  /* adc->in_val[2] = &(adc->val0); */
-  /* adc->in_val[3] = &(adc->val1); */
-  /* adc->in_val[4] = &(adc->val2); */
-  /* adc->in_val[5] = &(adc->val3); */
 
   // pickles
   adc->super.pickle = (op_pickle_fn)(&op_adc_pickle);
@@ -81,6 +78,7 @@ void op_adc_init(void* op) {
   // type
   adc->super.type = eOpAdc;
   adc->super.flags |= (1 << eOpFlagSys);
+
   /// state
   adc->val[0] = 0;
   adc->val[1] = 0;
