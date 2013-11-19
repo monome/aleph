@@ -12,15 +12,6 @@
 
 // asf
 #include "print_funcs.h"
-
-// aleph-avr32
-#include "app.h"
-#include "event_types.h"
-// bees
-#include "net.h"
-#include "net_protected.h"
-#include "pages.h"
-#include "play.h"
 #include "render.h"
 
 

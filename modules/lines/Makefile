@@ -1,5 +1,5 @@
 audio = ../../dsp
-common = ../../common
+bfin = ../../bfin_lib/src
 
 module_name = lines
 
@@ -11,9 +11,9 @@ module_obj = lines.o \
 	$(audio)/filter_svf.o \
 	$(audio)/noise.o \
 	$(audio)/table.o \
-	$(common)/libfixmath/fix32.o \
-	$(common)/libfixmath/fix16.o \
-	$(common)/libfixmath/fix16_sqrt.o
+	$(bfin)/libfixmath/fix32.o \
+	$(bfin)/libfixmath/fix16.o \
+	$(bfin)/libfixmath/fix16_sqrt.o
 
 all: aleph-$(module_name).ldr
 
