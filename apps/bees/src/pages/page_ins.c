@@ -15,6 +15,7 @@
 #include "handler.h"
 #include "net.h"
 #include "pages.h"
+#include "preset.h"
 #include "render.h"
 
 //-------------------------
@@ -32,6 +33,11 @@ static u8 playFilter = 0;
 static u8 inPreset = 0;
 // selection-included-in-play flag (read from network on selection)
 static u8 inPlay = 0;
+// we are in preset=selection momentary mode
+static u8 inPresetSelect = 0;
+// selected preset
+static s32 presetSelect = 0;
+
 
 // in-clear-confirm state
 static u8 clearConfirm = 0;
@@ -48,6 +54,10 @@ static void handle_key_0(s32 val);
 static void handle_key_1(s32 val);
 static void handle_key_2(s32 val);
 static void handle_key_3(s32 val);
+
+// redraw based on provisional preset seleciton
+static void redraw_ins_preset(u8 idx);
+
 
 // fill tmp region with new content
 // given input index and foreground color
@@ -257,6 +267,7 @@ static void show_foot(void) {
     show_foot2();
     show_foot3();
   }
+
   /*
 /// FIXME:
     // it would be more efficient (redundant compares, etc) 
@@ -410,7 +421,16 @@ void handle_key_2(s32 val) {
 
 void handle_key_3(s32 val) {
   // alt mode
-  altMode = (u8)(val>0);
+  if(val > 0) {
+    altMode = 1;
+  } else {
+    altMode = 0;
+    if(inPresetSelect) {
+      // load selected preset
+      preset_recall(presetSelect);
+      inPresetSelect = 0;
+    }
+  }
   show_foot();
 }
 
@@ -434,8 +454,27 @@ void handle_enc_2(s32 val) {
 }
 
 void handle_enc_3(s32 val) {
-  // scroll selection
-  select_scroll(val);
+  // alt: scroll preset
+  if(altMode) {
+    inPresetSelect = 1;
+    if(val > 0) {
+    } else {
+    }
+    if(presetSelect > NET_PRESETS_MAX - 1) {
+      presetSelect = 0;
+    }
+    if(presetSelect > NET_PRESETS_MAX - 1) {
+      presetSelect = 0;
+    }
+    // refresh line data
+    redraw_ins_preset((u8)presetSelect);
+    // draw preset name in header
+    font_string_region_clip(headRegion, preset_name((u8)presetSelect), 64, 0, 0x5, 0);
+  } else {
+    // scroll selection
+    select_scroll(val);
+  }
+
 }
 
 // redraw all lines, based on current selection
@@ -445,6 +484,24 @@ void redraw_ins(void) {
   while(i<8) {
     render_line( n, 0xa );
     render_to_scroll_line(i, n == curPage->select ? 1 : 0);
+    ++i;
+    ++n;
+  }
+}
+
+// redraw based on provisional preset seleciton
+void redraw_ins_preset (u8 idx) {
+  u8 i=0;
+  u8 n = curPage->select - 3;
+  u8 in;
+  while(i<8) {
+    in = net_get_in_preset(n);
+    render_line( n, in ? 0xa : 0x2 );
+    // TODO: render target value
+    //    region_fill_part(lineRegion, ...
+    // print_fix16(...
+    // font_string_region(lineRegion...
+    render_to_scroll_line(i, in ? 1 : 0);
     ++i;
     ++n;
   }

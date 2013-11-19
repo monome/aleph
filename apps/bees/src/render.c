@@ -451,21 +451,22 @@ void edit_string_dec_char(char* str, u8 pos) {
 void render_edit_string(region* reg, char* str, u8 len, u8 cursor) {
   u8 i;
   u8* dst = (u8*)reg->data;
-  u32 off = 0, dif;
-  const u32 squarePx = FONT_CHARW * FONT_CHARH;
+  u32 off = 0;
+  const u32 squarePx = (FONT_CHARW+2) * FONT_CHARH;
+  u32 dif;
   region_fill(reg, 0x0);
   for(i=0; i<len; ++i) {
     if(str[i] == 0) { break; }
     if(i == cursor) {
       region_fill_part(reg, off, squarePx, 0xf);
-      dif = font_glyph_fixed(str[i], dst + 1, reg->w, 0x0, 0xf) + 2;
+      font_glyph_fixed(str[i], dst + 3, reg->w, 0x0, 0xf) + 4;
+      dif = FONT_CHARW + 2;
       dst += dif;
       off += dif;
     } else {
-      dif = font_glyph(str[i], dst, reg->w, 0xf, 0x0);
+      dif = font_glyph(str[i], dst, reg->w, 0xf, 0x0) + 1;
       dst += dif;
       off += dif;
-      ++dst;
     }
   }
   reg->dirty = 1;
