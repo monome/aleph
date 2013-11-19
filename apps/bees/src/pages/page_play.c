@@ -12,6 +12,12 @@
 
 // asf
 #include "print_funcs.h"
+
+// bees
+#include "app.h"
+#include "net_protected.h"
+#include "pages.h"
+#include "play.h"
 #include "render.h"
 
 

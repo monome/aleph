@@ -130,10 +130,12 @@ static void select_scroll(s32 dir) {
    
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
-    if(newIdx > max || newIdx < 0) { 
-      // empty row
+    if(newIdx == -1) {
       region_fill(lineRegion, 0);
     } else {
+      if(newIdx < -1) {
+	newIdx = newIdx + max + 2;
+      }
       render_line(newIdx, 0xa);
     }
     // render tmp region to bottom of scroll
@@ -160,12 +162,17 @@ static void select_scroll(s32 dir) {
     inPlay = (u8)net_get_in_play((u32)(curPage->select));
     // add new content at bottom of screen
     newIdx = newSel + SCROLL_LINES_ABOVE;
-    if(newIdx > max || newIdx < 0) { 
-      // empty row
+
+    if(newIdx == (max + 1)) {
       region_fill(lineRegion, 0);
     } else {
+      if(newIdx > max) {
+	newIdx = newIdx - (max+2);
+      }
       render_line(newIdx, 0xa);
     }
+
+
     // render tmp region to bottom of scroll
     // (this also updates scroll byte offset) 
     render_to_scroll_bottom();

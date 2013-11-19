@@ -1,5 +1,5 @@
 #include "net_protected.h"
-//#include "print_fns.h"
+#include "preset.h"
 #include "op_preset.h"
 
 // inputs:
@@ -9,7 +9,7 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_preset_instring = "READ    WRITE   REREAD  REWRITE  GETIDX  ";
+static const char* op_preset_instring = "READ    WRITE   IDX     ";
 static const char* op_preset_outstring = "IDX     ";
 static const char* op_preset_opstring = "PRESET";
 
@@ -18,12 +18,12 @@ static const char* op_preset_opstring = "PRESET";
 static void op_preset_inc_fn(op_preset_t* preset, const s16 idx, const io_t inc);
 static void op_preset_in_read(op_preset_t* preset, const io_t* v);
 static void op_preset_in_write(op_preset_t* preset, const io_t* v);
-static void op_preset_in_idx(op_preset_t* preset, const io_t* v);
+static void op_preset_idx(op_preset_t* preset, const io_t* v);
 
 static op_in_fn op_preset_in_fn[3] = {
   (op_in_fn) &op_preset_in_read, 
   (op_in_fn) &op_preset_in_write, 
-  (op_in_fn) &op_preset_in_idx,
+  (op_in_fn) &op_preset_idx,
 };
 
 //---------------------------------------------
@@ -54,38 +54,33 @@ void op_preset_init(void* mem) {
 
 //===== operator input
 
-// input state
+// input read index
 static void op_preset_in_read(op_preset_t* preset, const io_t* v) {
   // recall given preset
+  preset_recall( OP_TO_INT(*v) );
 }
 
-// input toggle mode
+// input write index
 static void op_preset_in_write(op_preset_t* preset, const io_t* v) {
   // store given preset
+  preset_store( OP_TO_INT(*v) );
 
 }
 
-// input multiplier
-static void op_preset_in_idx(op_preset_t* preset, const io_t* v) {
-  // report the last used index
-  //...
-  //  net_activate
+// input, report last idx (???)
+static void op_preset_idx(op_preset_t* preset, const io_t* rw) {
+  if(*rw > 0) {
+    ///... output
+    // preset_last_write();
+  } else {
+    ///... output
+    // preset_last_read();
+  }
 }
 
 //===== UI input
 
 // increment
 static void op_preset_inc_fn(op_preset_t* preset, const s16 idx, const io_t inc) {
-  /// no meaningful UI
-
-  /* io_t val; */
-  /* switch(idx) { */
-  /* case 0: // current value */
-  /*   break; */
-  /* case 1: // toggle mode */
-  /*   break; */
-  /* case 2: // multiplier */
-  /*   op_preset_in_mul(sw, &val); */
-  /*   break; */
-  /* } */
+  /// FIXME? no meaningful UI
 }

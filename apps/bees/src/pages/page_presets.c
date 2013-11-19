@@ -177,7 +177,9 @@ void handle_enc_0(s32 val) {
   }
   print_dbg("\r\b edited preset name: ");
   print_dbg(preset_name(curPage->select));
-  render_edit_string(headRegion, preset_name(curPage->select), PRESET_NAME_LEN, cursor);
+
+  render_edit_string(lineRegion, preset_name(curPage->select), PRESET_NAME_LEN, cursor);
+  render_to_scroll_line(SCROLL_CENTER_LINE, 0);
   
 }
 

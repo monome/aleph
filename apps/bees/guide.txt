@@ -62,6 +62,8 @@ INPUTS:
 	ALT0: 	GATHER:		go to modal page with only the outputs connected to this input
 	ALT1:	SHOW/HIDE:	toggle inclusion of this input in play-mode listing	
 	ALT2:	FILT/ALL:	show only play-enabled inputs in this list, or show all (default).
+	ALTENC0: select preset for recall + edit
+
 	ENC2:   ---		change parameter value, slow
 	ENC3:	---		change parameter vlaue, fast
 	       
