@@ -458,8 +458,12 @@ void render_edit_string(region* reg, char* str, u8 len, u8 cursor) {
   for(i=0; i<len; ++i) {
     if(str[i] == 0) { break; }
     if(i == cursor) {
-      region_fill_part(reg, off, squarePx, 0xf);
-      font_glyph_fixed(str[i], dst + 3, reg->w, 0x0, 0xf) + 4;
+      /// fixme: net art
+      //      region_fill_part(reg, off, squarePx, 0xf);
+      // hack a column_fill with a space character
+      font_glyph(' ', dst, reg->w, 0x0, 0xf);
+      dst += 2; off += 2;
+      font_glyph_fixed(str[i], dst, reg->w, 0x0, 0xf);
       dif = FONT_CHARW + 2;
       dst += dif;
       off += dif;

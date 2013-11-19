@@ -458,7 +458,9 @@ void handle_enc_3(s32 val) {
   if(altMode) {
     inPresetSelect = 1;
     if(val > 0) {
+      ++presetSelect;
     } else {
+      --presetSelect;
     }
     if(presetSelect > NET_PRESETS_MAX - 1) {
       presetSelect = 0;

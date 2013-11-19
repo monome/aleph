@@ -197,6 +197,10 @@ void handle_enc_1(s32 val) {
       cursor = PRESET_NAME_LEN - 1;
     } 
   }
+
+  if(preset_name(curPage->select)[cursor] == '\0') { 
+    preset_name(curPage->select)[cursor] = '_';
+  }
   render_edit_string(lineRegion, preset_name(curPage->select), PRESET_NAME_LEN, cursor);
   render_to_scroll_line(SCROLL_CENTER_LINE, 0);
   

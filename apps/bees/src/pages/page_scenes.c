@@ -214,6 +214,9 @@ void handle_enc_1(s32 val) {
       cursor = SCENE_NAME_LEN - 1;
     } 
   }
+  if(sceneData->desc.sceneName[cursor] == '\0') { 
+    sceneData->desc.sceneName[cursor] = '_';
+  }
   render_edit_string(headRegion, sceneData->desc.sceneName, SCENE_NAME_LEN, cursor);
 }
 
