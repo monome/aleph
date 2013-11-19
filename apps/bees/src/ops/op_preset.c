@@ -56,17 +56,20 @@ void op_preset_init(void* mem) {
 
 // input state
 static void op_preset_in_read(op_preset_t* preset, const io_t* v) {
-
+  // recall given preset
 }
 
 // input toggle mode
 static void op_preset_in_write(op_preset_t* preset, const io_t* v) {
+  // store given preset
 
 }
 
 // input multiplier
 static void op_preset_in_idx(op_preset_t* preset, const io_t* v) {
-
+  // report the last used index
+  //...
+  //  net_activate
 }
 
 //===== UI input

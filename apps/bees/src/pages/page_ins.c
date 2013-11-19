@@ -84,11 +84,11 @@ static void render_line(s16 idx, u8 fg) {
   }
   // draw something to indicate play mode visibility
   if(net_get_in_play(idx)) {
-    font_string_region_clip(lineRegion, "|", 126, 0, fg, 0);
+    font_string_region_clip(lineRegion, "*", 0, 0, fg, 0);
   }
   // draw something to indicate preset inclusion
   if(net_get_in_preset(idx)) {
-    font_string_region_clip(lineRegion, "|", 0, 0, fg, 0);
+    font_string_region_clip(lineRegion, "*", 126, 0, fg, 0);
   }
 
   // underline
@@ -114,18 +114,14 @@ static void select_scroll(s32 dir) {
 
   if(dir < 0) {
     /// SCROLL DOWN
-    // if selection is already zero, do nothing 
-    if(curPage->select == 0) {
-      //      print_dbg("\r\n reached min selection in inputs scroll. ");
-      return;
+    // wrap with blank line
+    if(curPage->select == -1) {
+      curPage->select = max;
     }
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
     // decrement selection
     newSel = curPage->select - 1;
-    ///// these bounds checks shouldn't really be needed here...
-    //    if(newSel < 0) { newSel = 0; }
-    //    if(newSel > max ) { newSel = max; }
     curPage->select = newSel;
     // update preset-inclusion flag
     inPreset = (u8)net_get_in_preset((u32)(curPage->select));
@@ -134,7 +130,7 @@ static void select_scroll(s32 dir) {
    
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
-    if(newIdx < 0) { 
+    if(newIdx > max || newIdx < 0) { 
       // empty row
       region_fill(lineRegion, 0);
     } else {
@@ -148,19 +144,15 @@ static void select_scroll(s32 dir) {
 
   } else {
     // SCROLL UP
-    // if selection is already max, do nothing 
+    // wrap with a blank line
     if(curPage->select == max) {
-      //      print_dbg("\r\n reached max selection in inputs scroll. ");
-      return;
+      curPage->select = -1;
     }
+     
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
     // increment selection
     newSel = curPage->select + 1;
-    ///// these bounds checks shouldn't really be needed here...
-    //    if(newSel < 0) { newSel = 0; }
-    //    if(newSel > max ) { newSel = max; }
-    /////
     curPage->select = newSel;    
     // update preset-inclusion flag
     inPreset = (u8)net_get_in_preset((u32)(curPage->select));
@@ -168,7 +160,7 @@ static void select_scroll(s32 dir) {
     inPlay = (u8)net_get_in_play((u32)(curPage->select));
     // add new content at bottom of screen
     newIdx = newSel + SCROLL_LINES_ABOVE;
-    if(newIdx > max) { 
+    if(newIdx > max || newIdx < 0) { 
       // empty row
       region_fill(lineRegion, 0);
     } else {

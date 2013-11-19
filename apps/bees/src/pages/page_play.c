@@ -10,6 +10,9 @@
   
  */
 
+// asf
+#include "print_funcs.h"
+
 // aleph-avr32
 #include "app.h"
 #include "event_types.h"
@@ -49,35 +52,41 @@ static void handle_key_3(s32 val);
 // handlers activate system UI operator nodes.
 
 void handle_key_0(s32 val) {
-  //  net_activate(sw0_idx, val, NULL);
+  print_dbg("\r\n play handler, key 0, op address: 0x");
+  print_dbg_hex((u32)opSysSw[0]);
+
+   op_sw_sys_input(opSysSw[0], (s8)val);
 }
 
 void handle_key_1(s32 val) {
-  //  net_activate(sw1_idx, val, NULL);
+   op_sw_sys_input(opSysSw[1], (s8)val);
 }
 
 void handle_key_2(s32 val) {
-  //  net_activate(sw2_idx, val, NULL);
+   op_sw_sys_input(opSysSw[2], (s8)val);
 }
 
 void handle_key_3(s32 val) {
-  //  net_activate(sw3_idx, val, NULL);
+   op_sw_sys_input(opSysSw[3], (s8)val);
 }
 
 void handle_enc_0(s32 val) {
-  //  net_activate(enc0_idx, val, NULL);
+  print_dbg("\r\n play handler, enc 0, op address: 0x");
+  print_dbg_hex((u32)opSysEnc[0]);
+
+  op_enc_sys_input(opSysEnc[0], (s8)val);
 }
 
 void handle_enc_1(s32 val) {
-  //  net_activate(enc1_idx, val, NULL);
+   op_enc_sys_input(opSysEnc[1], (s8)val);
 }
 
 void handle_enc_2(s32 val) {
-  //  net_activate(enc2_idx, val, NULL);
+   op_enc_sys_input(opSysEnc[2], (s8)val);
 }
 
 void handle_enc_3(s32 val) {
-  //  net_activate(enc3_idx, val, NULL);
+   op_enc_sys_input(opSysEnc[3], (s8)val);
 }
 
 //----------------------
@@ -85,15 +94,6 @@ void handle_enc_3(s32 val) {
 
 // init
 void init_page_play(void) {
-  // assign system input indices
-  /* sw0_idx = net_op_in_idx(opSysSwIdx[0], 0); */
-  /* sw1_idx = net_op_in_idx(opSysSwIdx[1], 0); */
-  /* sw2_idx = net_op_in_idx(opSysSwIdx[2], 0); */
-  /* sw3_idx = net_op_in_idx(opSysSwIdx[3], 0); */
-  /* enc0_idx = net_op_in_idx(opSysEncIdx[0], 0); */
-  /* enc1_idx = net_op_in_idx(opSysEncIdx[1], 0); */
-  /* enc2_idx = net_op_in_idx(opSysEncIdx[2], 0); */
-  /* enc3_idx  = net_op_in_idx(opSysEncIdx[3], 0); */
 }
 
 // select 
