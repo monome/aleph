@@ -54,22 +54,29 @@ extern preset_t* presets;
 //==== functions
 
 // intialize
-void presets_init(void);
+extern void presets_init(void);
 // de-initialize
-void presets_deinit(void);
+extern void presets_deinit(void);
 // store (and enable) a particular input
-void preset_store_in(u32 preIdx, u32 inIdx);
+extern void preset_store_in(u32 preIdx, u32 inIdx);
 // store (and enable) a particular output
-void preset_store_out(u32 preIdx, u32 outIdx);
+extern void preset_store_out(u32 preIdx, u32 outIdx);
 // store everything enabled in given preset
-void preset_store(u32 preIdx);
+extern void preset_store(u32 preIdx);
 // recall everything enabled in given preset
-void preset_recall(u32 preIdx);
+extern void preset_recall(u32 preIdx);
 // get preset name
-char* preset_name(u32 id);
+extern char* preset_name(u32 id);
 // pickle presets
-u8* presets_pickle(u8* dst);
+extern u8* presets_pickle(u8* dst);
 // unpickle
-const u8* presets_unpickle(const u8* src);
+extern const u8* presets_unpickle(const u8* src);
+
+
+// get last read index
+extern s32 preset_last_read(void);
+
+// get last write index
+extern s32 preset_last_write(void);
 
 #endif

@@ -30,8 +30,11 @@
 
 /// array of presets
 preset_t* presets;
-// last loaded index
 
+// last read index
+s32 readIdx = -1;
+// last write index
+s32 writeIdx = -1;
 
 //------------------------------
 //---- static func
@@ -171,6 +174,7 @@ void preset_recall(u32 preIdx) {
       set_param_value( i, presets[preIdx].params[i].value );
     }
   }
+  readIdx = preIdx;
 }
 
 // preset name
@@ -246,4 +250,14 @@ const u8* presets_unpickle(const u8* src) {
     }
   }
   return src;
+}
+
+// get last read index
+s32 preset_last_read(void) {
+  return readIdx;
+}
+
+// get last write index
+s32 preset_last_write(void) {
+  return writeIdx;
 }
