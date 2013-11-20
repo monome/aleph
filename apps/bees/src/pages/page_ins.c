@@ -130,6 +130,8 @@ static void select_scroll(s32 dir) {
     } else {
       // decrement selection
       newSel = curPage->select - 1;
+      print_dbg("\r\n scroll down to new selection on ins page: ");
+      print_dbg_ulong(newSel);
     }
     curPage->select = newSel;
     // remove highlight from old center
@@ -164,6 +166,10 @@ static void select_scroll(s32 dir) {
       // increment selection
       newSel = curPage->select + 1;
     }
+
+      print_dbg("\r\n scroll up to new selection on ins page: ");
+      print_dbg_ulong(newSel);
+
     curPage->select = newSel;    
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
