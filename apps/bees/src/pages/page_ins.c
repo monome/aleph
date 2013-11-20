@@ -122,11 +122,14 @@ static void select_scroll(s32 dir) {
   s16 newIdx;
   s16 newSel;
 
+  print_dbg("\r\n scroll_select ins, max value: ");
+  print_dbg_ulong(max);
+
   if(dir < 0) {
     /// SCROLL DOWN
     // wrap with blank line
     if(curPage->select == -1) {
-      curPage->select = max;
+      newSel = max;
     } else {
       // decrement selection
       newSel = curPage->select - 1;
@@ -161,15 +164,14 @@ static void select_scroll(s32 dir) {
     // SCROLL UP
     // wrap with a blank line
     if(curPage->select == max) {
-      curPage->select = -1;
+      newSel = -1;
     }  else {
       // increment selection
       newSel = curPage->select + 1;
     }
-
-      print_dbg("\r\n scroll up to new selection on ins page: ");
-      print_dbg_ulong(newSel);
-
+    print_dbg("\r\n scroll up to new selection on ins page: ");
+    print_dbg_ulong(newSel);
+    
     curPage->select = newSel;    
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
