@@ -144,12 +144,12 @@ void render_update(void) {
     scroll_draw(pageCenterScroll);
   }
   // standard regions
-
   region_update(headRegion);
   region_update(footRegion[0]);
   region_update(footRegion[1]);
   region_update(footRegion[2]);
   region_update(footRegion[3]);
+
   app_resume();
 }
 

@@ -79,7 +79,7 @@ void presets_init(void) {
 
     // empty name
     for(j=0; j<PRESET_NAME_LEN; j++) {
-      presets[i].name[j] = 0;
+      presets[i].name[j] = '\0';
     }
 
     p = presets[i].name;
@@ -106,9 +106,7 @@ void presets_init(void) {
       presets[i].params[j].enabled = 0;
     } 
   }
-  
-  // 
-
+ 
 }
 
 // de-initialize
@@ -156,18 +154,23 @@ void preset_store(u32 preIdx) {
 // recall everything enabled in given preset
 void preset_recall(u32 preIdx) {
   u16 i;
+  print_dbg("\r\n preset_recall INS");
   // ins
   for(i=0; i<NET_INS_MAX; ++i) {
     if(presets[preIdx].ins[i].enabled) {
       net_set_in_value( i, presets[preIdx].ins[i].value );
     }
   }
+
+  print_dbg("\r\n preset_recall OUTS");
   // outs
   for(i=0; i<NET_OUTS_MAX; ++i) {
     if(presets[preIdx].outs[i].enabled) {
       net_connect( i, presets[preIdx].outs[i].target );
     }
   }
+
+  print_dbg("\r\n preset_recall PARAMS");
   // params
   for(i=0; i<NET_PARAMS_MAX; ++i) {
     if(presets[preIdx].params[i].enabled) {

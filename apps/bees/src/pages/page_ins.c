@@ -373,8 +373,11 @@ void handle_key_0(s32 val) {
   if(check_key(0)) {
     if(altMode) {
       // gather
+      /// TODO
     } else {
-      // store in preset (+ scene?)
+      // store in preset
+      
+      // TODO: store in scene?
     }
   }
   show_foot();
@@ -427,6 +430,8 @@ void handle_key_3(s32 val) {
     altMode = 0;
     if(inPresetSelect) {
       // load selected preset
+      print_dbg("\r\n recalling preset from ins page, idx:");
+      print_dbg_ulong(presetSelect);
       preset_recall(presetSelect);
       inPresetSelect = 0;
     }
@@ -465,13 +470,11 @@ void handle_enc_3(s32 val) {
     if(presetSelect > NET_PRESETS_MAX - 1) {
       presetSelect = 0;
     }
-    if(presetSelect > NET_PRESETS_MAX - 1) {
-      presetSelect = 0;
+    if(presetSelect < 0) {
+      presetSelect = NET_PRESETS_MAX - 1;
     }
     // refresh line data
     redraw_ins_preset((u8)presetSelect);
-    // draw preset name in header
-    font_string_region_clip(headRegion, preset_name((u8)presetSelect), 64, 0, 0x5, 0);
   } else {
     // scroll selection
     select_scroll(val);
@@ -496,6 +499,11 @@ void redraw_ins_preset (u8 idx) {
   u8 i=0;
   u8 n = curPage->select - 3;
   u8 in;
+
+  print_dbg("\r\n drawing preset selection on inputs page... ");
+
+  
+
   while(i<8) {
     in = net_get_in_preset(n);
     render_line( n, in ? 0xa : 0x2 );
@@ -507,4 +515,13 @@ void redraw_ins_preset (u8 idx) {
     ++i;
     ++n;
   }
+
+  // draw preset name in header
+  
+  font_string_region_clip(headRegion, preset_name((u8)presetSelect), 64, 0, 0x5, 0);
+  headRegion->dirty = 1;
+  print_dbg("\r\n drawing preset name on inputs page: ");
+  print_dbg(preset_name((u8)presetSelect));
+
+  print_dbg("done drawing. ");
 }

@@ -174,7 +174,7 @@ static inline void set_freq2(fix16 freq) {
 static inline fract32 lookup_wave(const fix16 idx, const fract32 wave) {
   ///// FIXME: this is far from optimized.
   //// add refactored double-lookup method to table.h
-  const fract32 waveInv = sub_fr1x32(INT32_MAX, wave);
+  const fract32 waveInv = sub_fr1x32(FR32_MAX, wave);
   return add_fr1x32( 
 		    mult_fr1x32x32(table_lookup_idx(tab1, WAVE_TAB_SIZE, idx), waveInv),
 		    mult_fr1x32x32(table_lookup_idx(tab2, WAVE_TAB_SIZE, idx), wave)
@@ -285,7 +285,7 @@ void module_init(void) {
 
   // init wavetables
   table_fill_harm(tab1, WAVE_TAB_SIZE, 1, 1.f, 0);
-  table_fill_harm(tab2, WAVE_TAB_SIZE, 5, 0.5, 1);
+  table_fill_harm(tab2, WAVE_TAB_SIZE, 5, 0.5f, 1);
 
   // allocate envelope
   env = (env_asr*)malloc(sizeof(env_asr));
