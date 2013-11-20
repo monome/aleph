@@ -57,7 +57,8 @@ static void handle_key_3(s32 val);
 
 // redraw based on provisional preset seleciton
 static void redraw_ins_preset(u8 idx);
-
+// draw preset name in head region
+static void draw_ins_preset_name(void);
 
 // fill tmp region with new content
 // given input index and foreground color
@@ -384,11 +385,8 @@ void handle_key_0(s32 val) {
     // gather
     /// TODO
   } else {
-  
     // show selected preset
-    font_string_region_clip(headRegion, preset_name((u8)presetSelect), 64, 0, 0x5, 0);
-    headRegion->dirty = 1;
-
+    draw_ins_preset_name();
     if(check_key(0)) {
       // store in preset
       net_set_in_preset(curPage->select, 1);
@@ -413,8 +411,7 @@ void handle_key_1(s32 val) {
     } else {
       if(check_key(1)) {
 	// show preset name in head region
-	font_string_region_clip(headRegion, preset_name((u8)presetSelect), 64, 0, 0x5, 0);
-	headRegion->dirty = 1;
+	draw_ins_preset_name();
 	// include / exclude in preset
 	inPreset = net_toggle_in_preset(curPage->select);
 	// render to tmp buffer
@@ -521,12 +518,10 @@ void redraw_ins_preset (u8 idx) {
   u8 n = curPage->select - 3;
   u8 in;
 
-  print_dbg("\r\n drawing preset selection on inputs page... ");
-
   while(i<8) {
     in = net_get_in_preset(n);
     render_line( n, in ? 0xa : 0x2 );
-    // TODO: render target value
+    // TODO: render target value ?
     //    region_fill_part(lineRegion, ...
     // print_fix16(...
     // font_string_region(lineRegion...
@@ -534,13 +529,12 @@ void redraw_ins_preset (u8 idx) {
     ++i;
     ++n;
   }
+  draw_ins_preset_name();
+}
 
+void draw_ins_preset_name(void) {
   // draw preset name in header
-  
+  font_string_region_clip(headRegion, "                  ", 64, 0, 0, 0);
   font_string_region_clip(headRegion, preset_name((u8)presetSelect), 64, 0, 0x5, 0);
   headRegion->dirty = 1;
-  print_dbg("\r\n drawing preset name on inputs page: ");
-  print_dbg(preset_name((u8)presetSelect));
-
-  print_dbg("done drawing. ");
 }

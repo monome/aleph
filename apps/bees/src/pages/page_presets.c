@@ -83,8 +83,11 @@ static void select_scroll(s32 dir) {
       return;
     }
     // remove highlight from old center
-    render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
-    // decrement selection
+    //    render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
+    // redraw center row without editing cursor, etc
+    render_line(curPage->select, 0xa);
+    // copy to scroll
+    render_to_scroll_center();
     newSel = curPage->select - 1;
     curPage->select = newSel;    
     // add new content at top
