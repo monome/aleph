@@ -89,28 +89,36 @@ void init_dbg_rs232_ex(unsigned long baudrate, long pba_hz)
 void print_dbg(const char *str)
 {
   // Redirection to the debug USART.
+  usart_putchar(DBG_USART,1);
   print(DBG_USART, str);
+  usart_putchar(DBG_USART,0);
 }
 
 
 void print_dbg_char(int c)
 {
   // Redirection to the debug USART.
+  usart_putchar(DBG_USART,1);
   print_char(DBG_USART, c);
+  usart_putchar(DBG_USART,0);
 }
 
 
 void print_dbg_ulong(unsigned long n)
 {
   // Redirection to the debug USART.
+  usart_putchar(DBG_USART,1);
   print_ulong(DBG_USART, n);
+  usart_putchar(DBG_USART,0);
 }
 
 
 void print_dbg_char_hex(unsigned char n)
 {
   // Redirection to the debug USART.
-  print_char_hex(DBG_USART, n);
+  usart_putchar(DBG_USART,1);
+  print_char_hex(DBG_USART, n);  
+  usart_putchar(DBG_USART,0);
 }
 
 
@@ -124,7 +132,9 @@ void print_dbg_short_hex(unsigned short n)
 void print_dbg_hex(unsigned long n)
 {
   // Redirection to the debug USART.
+  usart_putchar(DBG_USART,1);
   print_hex(DBG_USART, n);
+  usart_putchar(DBG_USART,0);
 }
 
 

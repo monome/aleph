@@ -30,13 +30,12 @@ def aleph_handler(addr, tags, data, source):
   global output
   output = []
   print "\n\033[92m### osc: %s %s\033[0m" % (addr,data)
-  if addr == "/aleph/param/count":
+  if addr == "/aleph/param/num":
     output.append(2)
     output.append(0)
   elif addr == "/aleph/param/info":
     output.append(3)
     out(data[0])
-    output.append(data[0])
     output.append(0)
   elif addr == "/aleph/param/get":
     output.append(4)
@@ -52,7 +51,7 @@ def aleph_handler(addr, tags, data, source):
     output.append(0)
 
   if output != []:
-    print "\033[94m--- serial write: %s\033[0m" % (output)
+    print "\033[94m<--- serial write: %s\033[0m" % (output)
     ser.write(''.join(chr(v) for v in output))
 
 s.addMsgHandler('default', aleph_handler) # adding our function
@@ -76,23 +75,58 @@ try :
   incoming_bytes = []
 
   while 1:
+    escape = 0
+    pos = 0
     while ser.inWaiting():
-      i = ser.read()
-      sys.stdout.write(i)
-      sys.stdout.flush()
-      # incoming_bytes.append(ser.read())
-      # print "serial received: %s" % (incoming_bytes[0])
+      i = ord(ser.read())
+      if(i==27 and escape ==0): escape = 1
+      elif(i==0 and escape ==0):
+        n=0
 
-      # m = OSC.OSCMessage()
+        if(incoming_bytes == []): incoming_bytes.append(0)
 
-      # m.setAddress("/debug")
-      # m.append(ord(incoming_bytes[0]))
-        
-      # try:
-      #   c.send(m)
-      # except OSCClientError:
-      #   pass
-      #   incoming_bytes = []
+        if(incoming_bytes[0]==1):     #debug
+          while(n<pos):
+            sys.stdout.write(chr(incoming_bytes[n]))
+            n += 1
+          sys.stdout.flush()
+
+        elif(incoming_bytes[0]==2):   #param/num
+          print "\n\033[94m---> number of params " + str(incoming_bytes[1]) + "\033[0m"
+          m = OSC.OSCMessage()
+          m.setAddress("/aleph/param/num")
+          m.append(incoming_bytes[1])
+          try:
+            c.send(m)
+          except OSCClientError:
+            pass
+        elif(incoming_bytes[0]==3):   #param/info
+          print "\n\033[94m---> param info for index " + str(incoming_bytes[1]) + "\033[0m"
+          sep = incoming_bytes.index(31);
+          stt = incoming_bytes[2:sep]
+          stt = [chr(i) for i in stt]
+          m = OSC.OSCMessage()
+          m.setAddress("/aleph/param/info")
+          m.append(incoming_bytes[1])
+          m.append(''.join(stt))
+          try:
+            c.send(m)
+          except OSCClientError:
+            pass
+
+        incoming_bytes = []
+        pos = 0
+      elif(i == 31 and escape == 1):
+        # separator
+        incoming_bytes.append(27)
+        incoming_bytes.append(31)
+        pos += 2
+        escape = 0
+      else:
+        incoming_bytes.append(i)
+        pos += 1
+        escape = 0
+
     time.sleep(0.1)
 
 except serial.serialutil.SerialException:
