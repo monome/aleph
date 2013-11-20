@@ -127,12 +127,13 @@ static void select_scroll(s32 dir) {
     // wrap with blank line
     if(curPage->select == -1) {
       curPage->select = max;
+    } else {
+      // decrement selection
+      newSel = curPage->select - 1;
     }
+    curPage->select = newSel;
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
-    // decrement selection
-    newSel = curPage->select - 1;
-    curPage->select = newSel;
     // update preset-inclusion flag
     inPreset = (u8)net_get_in_preset((u32)(curPage->select));
     // update play-inclusion flag
@@ -159,13 +160,13 @@ static void select_scroll(s32 dir) {
     // wrap with a blank line
     if(curPage->select == max) {
       curPage->select = -1;
+    }  else {
+      // increment selection
+      newSel = curPage->select + 1;
     }
-     
+    curPage->select = newSel;    
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
-    // increment selection
-    newSel = curPage->select + 1;
-    curPage->select = newSel;    
     // update preset-inclusion flag
     inPreset = (u8)net_get_in_preset((u32)(curPage->select));
     // update play-inclusion flag
@@ -370,13 +371,20 @@ void select_ins(void) {
 // function keys
 void handle_key_0(s32 val) {
   if(val == 0) { return; }
-  if(check_key(0)) {
-    if(altMode) {
-      // gather
-      /// TODO
-    } else {
+
+  if(altMode) {
+    // gather
+    /// TODO
+  } else {
+  
+    // show selected preset
+    font_string_region_clip(headRegion, preset_name((u8)presetSelect), 64, 0, 0x5, 0);
+    headRegion->dirty = 1;
+
+    if(check_key(0)) {
       // store in preset
-      
+      net_set_in_preset(curPage->select, 1);
+      preset_store_in(presetSelect, curPage->select);
       // TODO: store in scene?
     }
   }
@@ -385,24 +393,29 @@ void handle_key_0(s32 val) {
 
 void handle_key_1(s32 val) {
   if(val == 0) { return; }
-  if(check_key(1)) {
     if(altMode) {
-      // show / hide on play screen
-      inPlay = net_toggle_in_play(curPage->select);
-      // render to tmp buffer
-      render_line(curPage->select, 0xf);
-      // copy to scroll with highlight
-      render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+      if(check_key(1)) {
+	// show / hide on play screen
+	inPlay = net_toggle_in_play(curPage->select);
+	// render to tmp buffer
+	render_line(curPage->select, 0xf);
+	// copy to scroll with highlight
+	render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+      }
     } else {
-      // include / exclude in preset
-      inPreset = net_toggle_in_preset(curPage->select);
-      // render to tmp buffer
-      render_line(curPage->select, 0xf);
-      // copy to scroll with highlight
-      render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+      if(check_key(1)) {
+	// show preset name in head region
+	font_string_region_clip(headRegion, preset_name((u8)presetSelect), 64, 0, 0x5, 0);
+	headRegion->dirty = 1;
+	// include / exclude in preset
+	inPreset = net_toggle_in_preset(curPage->select);
+	// render to tmp buffer
+	render_line(curPage->select, 0xf);
+	// copy to scroll with highlight
+	render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+      }
     }
-  }
-  show_foot();
+    show_foot();
 }
 
 void handle_key_2(s32 val) {
@@ -501,8 +514,6 @@ void redraw_ins_preset (u8 idx) {
   u8 in;
 
   print_dbg("\r\n drawing preset selection on inputs page... ");
-
-  
 
   while(i<8) {
     in = net_get_in_preset(n);

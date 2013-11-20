@@ -106,7 +106,6 @@ void presets_init(void) {
       presets[i].params[j].enabled = 0;
     } 
   }
- 
 }
 
 // de-initialize
@@ -158,6 +157,8 @@ void preset_recall(u32 preIdx) {
   // ins
   for(i=0; i<NET_INS_MAX; ++i) {
     if(presets[preIdx].ins[i].enabled) {
+      print_dbg("\r\n recalling enabled input in target preset, idx: ");
+      print_dbg_ulong(i);
       net_set_in_value( i, presets[preIdx].ins[i].value );
     }
   }
@@ -166,6 +167,9 @@ void preset_recall(u32 preIdx) {
   // outs
   for(i=0; i<NET_OUTS_MAX; ++i) {
     if(presets[preIdx].outs[i].enabled) {
+
+      print_dbg("\r\n recalling enabled input in target preset, idx: ");
+      print_dbg_ulong(i);
       net_connect( i, presets[preIdx].outs[i].target );
     }
   }
@@ -174,6 +178,10 @@ void preset_recall(u32 preIdx) {
   // params
   for(i=0; i<NET_PARAMS_MAX; ++i) {
     if(presets[preIdx].params[i].enabled) {
+
+      print_dbg("\r\n recalling enabled input in target preset, idx: ");
+      print_dbg_ulong(i);
+
       set_param_value( i, presets[preIdx].params[i].value );
     }
   }
