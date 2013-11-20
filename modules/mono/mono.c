@@ -261,6 +261,7 @@ void module_init(void) {
   monoData = (monoFmData * )SDRAM_ADDRESS;
   // initialize moduleData superclass for core routines
   gModuleData = &(monoData->super);
+    strcpy(gModuleData->name, "aleph-mono");
   gModuleData->paramDesc = monoData->mParamDesc;
   gModuleData->paramData = monoData->mParamData;
   gModuleData->numParams = eParamNumParams;
