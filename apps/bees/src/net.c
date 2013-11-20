@@ -101,7 +101,8 @@ static void add_sys_ops(void) {
   net_add_op(eOpAdc);
   opSysAdc = (op_adc_t*)net->ops[net->numOps -1];
   // 1 preset receiver
-    net_add_op(eOpPreset);
+  ////... TEST
+  net_add_op(eOpPreset);
   opSysPreset = (op_preset_t*)net->ops[net->numOps -1];
 }
 

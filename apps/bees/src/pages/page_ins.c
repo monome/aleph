@@ -75,7 +75,7 @@ static void render_line(s16 idx, u8 fg) {
     appendln( net_in_name(idx) );
     endln();
 
-    font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
+    font_string_region_clip(lineRegion, lineBuf, 4, 0, fg, 0);
     clearln();
 
     print_fix16(lineBuf, net_get_in_value(idx));
@@ -87,18 +87,18 @@ static void render_line(s16 idx, u8 fg) {
     appendln_char('.');
     appendln( net_in_name(idx)); 
     endln();
-    font_string_region_clip(lineRegion, lineBuf, 2, 0, 0xa, 0);
+    font_string_region_clip(lineRegion, lineBuf, 4, 0, 0xa, 0);
     clearln();
     print_fix16(lineBuf, net_get_in_value(idx));
     font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, fg, 0);
   }
   // draw something to indicate play mode visibility
   if(net_get_in_play(idx)) {
-    font_string_region_clip(lineRegion, "*", 0, 0, fg, 0);
+    font_string_region_clip(lineRegion, ".", 0, 0, fg, 0);
   }
   // draw something to indicate preset inclusion
   if(net_get_in_preset(idx)) {
-    font_string_region_clip(lineRegion, "*", 126, 0, fg, 0);
+    font_string_region_clip(lineRegion, ".", 126, 0, fg, 0);
   }
 
   // underline
