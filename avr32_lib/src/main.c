@@ -171,10 +171,9 @@ static void handler_SerialParamInfo(s32 data) {
   // print_dbg_ulong(serial_buffer[data]);
 
   // TODO check out of bounds index
-
+  static ParamDesc p;
   u8 idx = serial_buffer[data+1];
   u8 c = 1, n = 0;
-  ParamDesc p;
   bfin_get_param_desc(idx, &p);
   serial_send_start(3);
   serial_send_byte(idx);

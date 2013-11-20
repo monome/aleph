@@ -12,12 +12,13 @@
 // unit separator is 31 (for end-of variable-length params)
 // end-of-packet is 0 (NULL)
 
+//----------------------------
+//----- extern vatrs
+volatile u8 serial_buffer[SERIAL_BUFFER_SIZE];
 
-u8 serial_buffer[SERIAL_BUFFER_SIZE];
-u16 serial_read_pos = 0;
-u16 serial_write_pos = 0;
 
-u8 escape = 0;
+//----------------------------
+//-- static vars / types
 
 typedef enum {
   eComNull,
@@ -28,6 +29,18 @@ typedef enum {
   eComSetParamVal,
   eComNumCommands
 } eSerialCommands;
+
+static u16 serial_read_pos = 0;
+static u16 serial_write_pos = 0;
+static u8 escape = 0;
+static event_t e;
+
+//--------------------------------
+//---- static funcs
+static void com_req_num_params(u16);
+static void com_req_param_info(u16);
+static void com_get_param(u16);
+static void com_set_param(u16);
 
 static void serial_decode_dummy(u16 pos) { return; }
 
@@ -46,8 +59,9 @@ void serial_send_start(u8 index) {
 
 void serial_send_byte(u8 data) {
   // FIXME this is slow
-  if(data == 0 || data == 27 || data == 31)
+  if(data == 0 || data == 27 || data == 31) {
     usart_putchar(DBG_USART,27);
+  }
   usart_putchar(DBG_USART,data);
 }
 
@@ -101,7 +115,6 @@ void serial_process() {
 }
 
 void com_req_num_params(u16 pos) {
-  static event_t e;   
   e.type = kEventSerialParamNum;
   e.data = pos; 
   event_post(&e);
@@ -114,7 +127,6 @@ void com_req_param_info(u16 pos) {
   // print_dbg("req_param_info:");
   // print_dbg_ulong(serial_buffer[pos]);
   // print_dbg_ulong(serial_buffer[pos+1]);
-  static event_t e;   
   e.type = kEventSerialParamInfo;
   e.data = pos; 
   event_post(&e);	
@@ -124,7 +136,6 @@ void com_get_param(u16 pos) {
   // print_dbg("get_param:");
   // print_dbg_ulong(serial_buffer[pos]);
   // print_dbg_ulong(serial_buffer[pos+1]);
-  static event_t e;   
   e.type = kEventSerialParamGet;
   e.data = pos; 
   event_post(&e);
@@ -138,7 +149,6 @@ void com_set_param(u16 pos) {
   // print_dbg_ulong(serial_buffer[pos+3]);
   // print_dbg_ulong(serial_buffer[pos+4]);
   // print_dbg_ulong(serial_buffer[pos+5]);
-  static event_t e;   
   e.type = kEventSerialParamSet;
   e.data = pos; 
   event_post(&e);
