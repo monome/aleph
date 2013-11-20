@@ -138,8 +138,9 @@ git clone https://github.com/tehn/aleph.git
 ------------------
 AVR32
 -----
+for mac:
 
-for mac install, this does it: https://github.com/jsnyder/avr32-toolchain
+https://github.com/jsnyder/avr32-toolchain
 
 for linux:
 
