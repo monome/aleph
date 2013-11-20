@@ -36,8 +36,7 @@
 //==== external functionsx
 
 // initialize non-peripheral GPIO
-void init_gpio(void) {
-  
+void init_gpio(void) {  
   gpio_enable_pin_pull_up(ENC0_S0_PIN);
   gpio_enable_pin_pull_up(ENC0_S1_PIN);
   gpio_enable_pin_pull_up(ENC1_S0_PIN);
