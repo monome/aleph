@@ -46,14 +46,14 @@
 #define FRACT_FIX16(x) ( BIT_SIGN(x) ? ((x)>>15) | 0xffff0000 : (x)>>15 )
 
 // print to a buffer
-void print_fix16(char* buf , fix16_t x);
+extern void print_fix16(char* buf , fix16_t x);
 // whole-part integer to ascii, right-justified, fixed-length
-void itoa_whole(int val, char* buf, int len);
+extern void itoa_whole(int val, char* buf, int len);
 // whole-part integer to ascii, lef_justfied, return length
-int itoa_whole_lj(int val, char* buf);
+extern int itoa_whole_lj(int val, char* buf);
 
 // fractional part to ascii, fixed length
-void itoa_fract(int val, char* buf);
+extern void itoa_fract(int val, char* buf);
 
 #endif
 

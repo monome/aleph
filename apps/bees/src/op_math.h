@@ -45,6 +45,10 @@ typedef fix16_t io_t;
 //----- conversion
 
 ///// print formatted string
+<<<<<<< HEAD
 #define OP_PRINT(buf, x) print_fix16( (buf), (x) )
+=======
+#define OP_PRINT(buf, x) itoa_whole_lj((x), (buf))
+>>>>>>> 49be863... bees: param scale to s16, fixes, prune
 
 #endif
