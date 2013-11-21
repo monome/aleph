@@ -521,7 +521,7 @@ void redraw_ins(void) {
 
 // redraw based on provisional preset seleciton
 void redraw_ins_preset (u8 idx) {
-  static char numBuf[13] = "            ";
+  //  static char numBuf[13] = "            ";
   s32 max = net_num_ins() - 1;
   u8 i=0;
   u8 n = curPage->select - 3;
