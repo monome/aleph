@@ -79,7 +79,8 @@ static void render_line(s16 idx, u8 fg) {
     font_string_region_clip(lineRegion, lineBuf, 4, 0, fg, 0);
     clearln();
 
-    print_fix16(lineBuf, net_get_in_value(idx));
+    OP_PRINT(lineBuf, net_get_in_value(idx));
+
     font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, fg, 0);
   } else {
     // parameter input    
@@ -90,7 +91,9 @@ static void render_line(s16 idx, u8 fg) {
     endln();
     font_string_region_clip(lineRegion, lineBuf, 4, 0, 0xa, 0);
     clearln();
-    print_fix16(lineBuf, net_get_in_value(idx));
+
+    OP_PRINT(lineBuf, net_get_in_value(idx));
+
     font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, fg, 0);
   }
   // draw something to indicate play mode visibility
@@ -550,7 +553,7 @@ void redraw_ins_preset (u8 idx) {
       render_line( n, enabled ? 0xa : 0x2 );
       // TODO: render target value ?
       font_string_region_clip(lineRegion, "                  ", LINE_VAL_POS, 0, 0, 0);
-      // print_fix16(...
+      // OP_PRINT(...
       // font_string_region(lineRegion...
       render_to_scroll_line(i, enabled ? 1 : 0);
     }
