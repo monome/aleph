@@ -755,6 +755,7 @@ u8 net_report_params(void) {
       print_dbg_hex(val);
 
       net_add_param(i, (const ParamDesc*)&pdesc);
+      net->params[net->numParams - 1].value = val; 
 
     }
   } else {
