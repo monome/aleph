@@ -387,13 +387,17 @@ void handle_key_0(s32 val) {
     // gather
     /// TODO
   } else {
-    // show selected preset
+    // show selected preset name
     draw_ins_preset_name();
     if(check_key(0)) {
       // store in preset
       net_set_in_preset(curPage->select, 1);
+      inPreset = 1;
       preset_store_in(presetSelect, curPage->select);
-      // TODO: store in scene?
+      // redraw selected line
+      render_line(curPage->select, 0xa);
+      render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
+      // TODO: store directly in scene?
     }
   }
   show_foot();
@@ -516,18 +520,30 @@ void redraw_ins(void) {
 
 // redraw based on provisional preset seleciton
 void redraw_ins_preset (u8 idx) {
+  s32 max = net_num_ins() - 1;
   u8 i=0;
   u8 n = curPage->select - 3;
-  u8 in;
+  u8 enabled;
+  u8 isParam;
+
 
   while(i<8) {
-    in = net_get_in_preset(n);
-    render_line( n, in ? 0xa : 0x2 );
-    // TODO: render target value ?
-    //    region_fill_part(lineRegion, ...
-    // print_fix16(...
-    // font_string_region(lineRegion...
-    render_to_scroll_line(i, in ? 1 : 0);
+    ///    in = net_get_in_preset(n);
+        //// no, more complicated to get target inclusion... rrg
+    if(n <= max) {
+      isParam = ((max - n) <= net_num_params());
+      if(isParam) {
+	enabled = preset_param_enabled(presetSelect, net_param_idx(n));
+      } else {
+	enabled = preset_in_enabled(presetSelect, n);
+      }
+      render_line( n, enabled ? 0xa : 0x2 );
+      // TODO: render target value ?
+      //    region_fill_part(lineRegion, ...
+      // print_fix16(...
+      // font_string_region(lineRegion...
+      render_to_scroll_line(i, enabled ? 1 : 0);
+    }
     ++i;
     ++n;
   }

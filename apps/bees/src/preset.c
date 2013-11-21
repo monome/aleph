@@ -272,3 +272,21 @@ s32 preset_last_read(void) {
 s32 preset_last_write(void) {
   return writeIdx;
 }
+
+
+// get inclusion flag for given input, given preset
+extern u8 preset_in_enabled(u32 preIdx, u32 inIdx) {
+  return presets[preIdx].ins[inIdx].enabled;
+}
+
+// get inclusion flag for given output, given preset
+extern u8 preset_out_enabled(u32 preIdx, u32 inIdx) {
+  return presets[preIdx].ins[inIdx].enabled;
+}
+
+// get inclusion flag for given param, given preset
+extern u8 preset_param_enabled(u32 preIdx, u32 inIdx) {
+  return presets[preIdx].ins[inIdx].enabled;
+}
+
+

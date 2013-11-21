@@ -79,4 +79,11 @@ extern s32 preset_last_read(void);
 // get last write index
 extern s32 preset_last_write(void);
 
+// get inclusion flag for given input, given preset
+extern u8 preset_in_enabled(u32 preIdx, u32 inIdx);
+// get inclusion flag for given output, given preset
+extern u8 preset_out_enabled(u32 preIdx, u32 inIdx);
+// get inclusion flag for given param, given preset
+extern u8 preset_param_enabled(u32 preIdx, u32 inIdx);
+
 #endif
