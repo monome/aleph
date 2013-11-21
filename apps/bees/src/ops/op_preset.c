@@ -6,8 +6,9 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_preset_instring = "READ    WRITE   IDX     ";
-static const char* op_preset_outstring = "IDX     ";
+static const char* op_preset_instring = "READ    WRITE   ";
+//static const char* op_preset_outstring = "IDX     ";
+static const char* op_preset_outstring = "";
 static const char* op_preset_opstring = "PRESET";
 
 //-------------------------------------------------
@@ -15,17 +16,17 @@ static const char* op_preset_opstring = "PRESET";
 static void op_preset_inc_fn(op_preset_t* preset, const s16 idx, const io_t inc);
 static void op_preset_in_read(op_preset_t* preset, const io_t v);
 static void op_preset_in_write(op_preset_t* preset, const io_t v);
-static void op_preset_idx(op_preset_t* preset, const io_t v);
+//static void op_preset_idx(op_preset_t* preset, const io_t v);
 
 // pickles
 static u8* op_preset_pickle	(op_preset_t* preset, u8* dst);
 static const u8* op_preset_unpickle(op_preset_t* preset, const u8* src);
 
 
-static op_in_fn op_preset_in_fn[3] = {
+static op_in_fn op_preset_in_fn[2] = {
   (op_in_fn) &op_preset_in_read, 
   (op_in_fn) &op_preset_in_write, 
-  (op_in_fn) &op_preset_idx,
+  //  (op_in_fn) &op_preset_idx,
 };
 
 //---------------------------------------------
@@ -42,14 +43,14 @@ void op_preset_init(void* mem) {
   preset->super.unpickle = (op_unpickle_fn) (&op_preset_unpickle);
 
   // superclass state
-  preset->super.numInputs = 3;
-  preset->super.numOutputs = 1;
-  preset->super.out = preset->outs;
+  preset->super.numInputs = 2;
+  preset->super.numOutputs = 0;
+  //  preset->super.out = preset->outs;
 
-  preset->outs[0] = -1;
+  //preset->outs[0] = -1;
   preset->in_val[0] = &(preset->read);
   preset->in_val[1] = &(preset->write);
-  preset->in_val[2] = &(preset->idx);
+  //  preset->in_val[2] = &(preset->idx);
   
   preset->super.type = eOpPreset;
   preset->super.flags |= (1 << eOpFlagSys);
@@ -88,15 +89,15 @@ static void op_preset_in_write(op_preset_t* preset, const io_t v) {
 }
 
 // input, report last idx (???)
-static void op_preset_idx(op_preset_t* preset, const io_t rw) {
-  if(rw > 0) {
-    ///... output
-    // preset_last_write();
-  } else {
-    ///... output
-    // preset_last_read();
-  }
-}
+/* static void op_preset_idx(op_preset_t* preset, const io_t rw) { */
+/*   if(rw > 0) { */
+/*     ///... output */
+/*     // preset_last_write(); */
+/*   } else { */
+/*     ///... output */
+/*     // preset_last_read(); */
+/*   } */
+/* } */
 
 //===== UI input
 

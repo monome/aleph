@@ -295,9 +295,6 @@ void module_init(void) {
 
   // non-default initial values 
   // (FIXME: defaults should just be more correct i guess?)
-  /// wrong
-  gModuleData->paramData[eParamAmp1].value = amp1;
-  gModuleData->paramData[eParamAmp2].value = amp2;
   
 
   /// ok, for now
@@ -305,11 +302,15 @@ void module_init(void) {
   gModuleData->paramData[eParamFreq2 ].value = freq2 ;
   gModuleData->paramData[eParamRatio2 ].value = ratio2 ;
 
-  /// rrg wrong
-  gModuleData->paramData[eParamIoAmp0 ].value = ioAmp0 ;
-  gModuleData->paramData[eParamIoAmp1 ].value = ioAmp1 ;
-  gModuleData->paramData[eParamIoAmp2 ].value = ioAmp2 ;
-  gModuleData->paramData[eParamIoAmp3 ].value = ioAmp3 ;
+  /// FIXME: silly way to get amplitudes back.
+  // this stuff will get better with unified preset scaling.
+  gModuleData->paramData[eParamAmp1].value = amp1 >> 15;
+  gModuleData->paramData[eParamAmp2].value = amp2 >> 15;
+
+  gModuleData->paramData[eParamIoAmp0 ].value = ioAmp0 >> 15;
+  gModuleData->paramData[eParamIoAmp1 ].value = ioAmp1 >> 15;
+  gModuleData->paramData[eParamIoAmp2 ].value = ioAmp2 >> 15;
+  gModuleData->paramData[eParamIoAmp3 ].value = ioAmp3 >> 15;
 
 
   // init wavetables

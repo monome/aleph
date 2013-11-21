@@ -12,11 +12,11 @@ typedef struct op_preset_struct {
   // - set and load index
   // - set and store index
   // - get current index
-  volatile io_t read, write, idx;
-  volatile io_t* in_val[3];
+  volatile io_t read, write;
+  volatile io_t* in_val[2];
   // outputs: 
   // - current index
-  op_out_t outs[1];
+  //  op_out_t outs[1];
 } op_preset_t;
 
 void op_preset_init(void* preset);
