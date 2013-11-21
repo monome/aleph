@@ -693,7 +693,7 @@ u8 net_get_in_play(u32 inIdx) {
 void net_add_param(u32 idx, const ParamDesc * pdesc) {
   memcpy( &(net->params[net->numParams].desc), (const void*)pdesc, sizeof(ParamDesc) );
   net->params[net->numParams].idx = idx; 
-  net->params[net->numParams].preset = 1; 
+  net->params[net->numParams].preset = 0; 
   net->params[net->numParams].data.value = pdesc->min;
   net->numParams += 1;
 }
