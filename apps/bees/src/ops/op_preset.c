@@ -1,11 +1,8 @@
+#include "print_funcs.h"
+
 #include "net_protected.h"
 #include "preset.h"
 #include "op_preset.h"
-
-// inputs:
-
-// 0 
-
 
 //-------------------------------------------------
 //----- descriptor
@@ -16,9 +13,9 @@ static const char* op_preset_opstring = "PRESET";
 //-------------------------------------------------
 //----- static function declaration
 static void op_preset_inc_fn(op_preset_t* preset, const s16 idx, const io_t inc);
-static void op_preset_in_read(op_preset_t* preset, const io_t* v);
-static void op_preset_in_write(op_preset_t* preset, const io_t* v);
-static void op_preset_idx(op_preset_t* preset, const io_t* v);
+static void op_preset_in_read(op_preset_t* preset, const io_t v);
+static void op_preset_in_write(op_preset_t* preset, const io_t v);
+static void op_preset_idx(op_preset_t* preset, const io_t v);
 
 // pickles
 static u8* op_preset_pickle	(op_preset_t* preset, u8* dst);
@@ -69,21 +66,30 @@ void op_preset_init(void* mem) {
 //===== operator input
 
 // input read index
-static void op_preset_in_read(op_preset_t* preset, const io_t* v) {
+static void op_preset_in_read(op_preset_t* preset, const io_t v) {
+  int idx = OP_TO_INT(v);
   // recall given preset
-  preset_recall( OP_TO_INT(*v) );
+  print_dbg("\r\n recalling preset from operator, idx: ");
+  print_dbg_ulong(idx);
+  if(idx >=0 && idx < NET_PRESETS_MAX) { 
+    preset_recall( idx );
+  }
 }
 
 // input write index
-static void op_preset_in_write(op_preset_t* preset, const io_t* v) {
+static void op_preset_in_write(op_preset_t* preset, const io_t v) {
+  int idx = OP_TO_INT(v);
   // store given preset
-  preset_store( OP_TO_INT(*v) );
-
+  print_dbg("\r\n storing preset from operator, idx: ");
+  print_dbg_ulong(idx);
+  if(idx >=0 && idx < NET_PRESETS_MAX) { 
+    preset_store( idx );
+  }
 }
 
 // input, report last idx (???)
-static void op_preset_idx(op_preset_t* preset, const io_t* rw) {
-  if(*rw > 0) {
+static void op_preset_idx(op_preset_t* preset, const io_t rw) {
+  if(rw > 0) {
     ///... output
     // preset_last_write();
   } else {

@@ -128,21 +128,21 @@ void preset_store_out(u32 preIdx, u32 outIdx) {
 void preset_store(u32 preIdx) {
   u16 i;
   // ins
-  for(i=0; i<NET_INS_MAX; ++i) {
+  for(i=0; i<net_num_ins(); ++i) {
     if( net_get_in_preset(i) ) {
       presets[preIdx].ins[i].value = net_get_in_value(i);
       presets[preIdx].ins[i].enabled = 1;
     }
   }
   // outs
-  for(i=0; i<NET_OUTS_MAX; ++i) {
+  for(i=0; i<net_num_outs(); ++i) {
     if(net_get_out_preset(i)) {
       presets[preIdx].outs[i].target = net_get_target(i);
       presets[preIdx].outs[i].enabled = 1;
     }
   }
   // params
-  for(i=0; i<NET_PARAMS_MAX; ++i) {
+  for(i=0; i<net_num_params(); ++i) {
     if(get_param_preset(i)) {
       presets[preIdx].params[i].value =  get_param_value( i );
       presets[preIdx].params[i].enabled = 1;
@@ -155,7 +155,7 @@ void preset_recall(u32 preIdx) {
   u16 i;
   print_dbg("\r\n preset_recall INS");
   // ins
-  for(i=0; i<NET_INS_MAX; ++i) {
+  for(i=0; i<net_num_ins(); ++i) {
     if(presets[preIdx].ins[i].enabled) {
       print_dbg("\r\n recalling enabled input in target preset, idx: ");
       print_dbg_ulong(i);
@@ -165,7 +165,7 @@ void preset_recall(u32 preIdx) {
 
   print_dbg("\r\n preset_recall OUTS");
   // outs
-  for(i=0; i<NET_OUTS_MAX; ++i) {
+  for(i=0; i<net_num_outs(); ++i) {
     if(presets[preIdx].outs[i].enabled) {
 
       print_dbg("\r\n recalling enabled input in target preset, idx: ");
@@ -176,7 +176,7 @@ void preset_recall(u32 preIdx) {
 
   print_dbg("\r\n preset_recall PARAMS");
   // params
-  for(i=0; i<NET_PARAMS_MAX; ++i) {
+  for(i=0; i<net_num_params(); ++i) {
     if(presets[preIdx].params[i].enabled) {
 
       print_dbg("\r\n recalling enabled input in target preset, idx: ");
@@ -206,15 +206,15 @@ u8* presets_pickle(u8* dst) {
       dst = pickle_32(presets[i].ins[j].idx, dst);
       dst = pickle_32(presets[i].ins[j].enabled, dst);
     }
-    // pickle outputs
-    for(j=0; j<NET_INS_MAX; j++) {
+    // pickle outpu
+    for(j=0; j<NET_OUTS_MAX; j++) {
       // waste some space for 4-byte alignment
       dst = pickle_32(presets[i].outs[j].target, dst);
       dst = pickle_32(presets[i].outs[j].outIdx, dst);
       dst = pickle_32(presets[i].outs[j].enabled, dst);
     }
     // pickle params
-    for(j=0; j<NET_INS_MAX; j++) {
+    for(j=0; j<NET_PARAMS_MAX; j++) {
       // waste some space for 4-byte alignment
       dst = pickle_32(presets[i].params[j].value, dst);
       dst = pickle_32(presets[i].params[j].idx, dst);
@@ -240,7 +240,7 @@ const u8* presets_unpickle(const u8* src) {
       presets[i].ins[j].enabled = v32;
     }
     // unpickle outputs
-    for(j=0; j<NET_INS_MAX; j++) {
+    for(j=0; j<NET_OUTS_MAX; j++) {
       // waste some space for 4-byte alignment
       src = unpickle_32(src, &v32);
       presets[i].outs[j].target = (io_t)v32;
@@ -250,7 +250,7 @@ const u8* presets_unpickle(const u8* src) {
       presets[i].outs[j].enabled = v32;
     }
     // unpickle params
-    for(j=0; j<NET_INS_MAX; j++) {
+    for(j=0; j<NET_PARAMS_MAX; j++) {
       // waste some space for 4-byte alignment
       src = unpickle_32(src, &v32);
       presets[i].params[j].value = (io_t)v32;

@@ -95,6 +95,7 @@ void scene_read_buf(void) {
 
   // unpickle presets
   src = presets_unpickle(src);
+
   
   print_dbg("\r\n copied stored network and presets to RAM ");
 
