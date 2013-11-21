@@ -108,6 +108,7 @@ static void render_line(s16 idx, u8 fg) {
 
 // edit the current seleciton
 static void select_edit(s32 inc) {
+  if(page->select < 0) { return; }
   // increment input value
   net_inc_in_value(curPage->select, inc);
   // render to tmp buffer
