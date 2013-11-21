@@ -1,4 +1,4 @@
-# List of available make goals:
+\# List of available make goals:
 #
 # all                     Default target, builds the project
 # clean                   Clean up the project
@@ -154,11 +154,11 @@ MAKEFLAGS       += --no-print-directory
 
 # Function for reversing the order of a list
 reverse = $(if $(1),$(call reverse,$(wordlist 2,$(words $(1)),$(1)))) $(firstword $(1))
-
-# Hide command output by default, but allow the user to override this
-# by adding V=1 on the command line.
 #
-# This is inspired by the Kbuild system used by the Linux kernel.
+
+# commands
+
+# V=1 for verbose build
 ifdef V
   ifeq ("$(origin V)", "command line")
     VERBOSE = $(V)
