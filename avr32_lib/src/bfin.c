@@ -78,8 +78,6 @@ void bfin_set_param(u8 idx, fix16_t x ) {
   ParamValueCommon pval;
   pval.asInt = (s32)x;
 
-  
-  
   print_dbg("\r\n bfin_set_param, idx: ");
   print_dbg_ulong(idx);
 
@@ -105,7 +103,7 @@ void bfin_set_param(u8 idx, fix16_t x ) {
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, idx);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  //val0
+  // val0
   bfin_wait();
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, pval.asByte[0]);
@@ -341,46 +339,52 @@ void bfin_end_transfer(void) {
 void bfin_wait_ready(void) {
   // use ready pin
   while( !gpio_get_pin_value(BFIN_READY_PIN) ) { ;; }
-  //    delay_ms(100);
 }
 
-/* void bfin_spi_slave(void) { */
+// get parameter value
+s32 bfin_get_param(u8 idx) {
+  ParamValueCommon pval;
+  u16 x;
   
-/*   //...//  */
-/* } */
+  app_pause();
 
+  // command
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, MSG_GET_PARAM_COM);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 
-// void bfin_spi_master(void) {
-  /* spi_options_t spiOptions = { */
-  /*   .reg          = BFIN_SPI_NPCS, */
-  /*   // fast baudrate / low trans delay suitable for boot process  */
-  /*   .baudrate     = 5000000, */
-  /*   //     .baudrate     = 20000000, */
-  /*   .bits         = 8, */
-  /*   .spck_delay   = 0, */
-  /*   .trans_delay  = 0, */
-  /*   //    .trans_delay = 20, */
-  /*   .stay_act     = 1, */
-  /*   .spi_mode     = 1, */
-  /*   .modfdis      = 1 */
-  /* }; */
+  // idx
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, idx);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+  /// read value
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, 0); // don't care
+  spi_read(BFIN_SPI, &x);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  pval.asByte[0] = (u8)x;
+
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, 0); // don't care
+  spi_read(BFIN_SPI, &x);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  pval.asByte[1] = (u8)x;
+
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, 0); // don't care
+  spi_read(BFIN_SPI, &x);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  pval.asByte[2] = (u8)x;
+
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, 0); // don't care
+  spi_read(BFIN_SPI, &x);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  pval.asByte[3] = (u8)x;
+
+  app_resume();
+
+  return pval.asInt;
   
-  /* // stop */
-  /* spi_disable(); */
-
-  /* // intialize as master */
-  /* spi_initMaster(BFIN_SPI, &spiOptions); */
-
-  /* // set selection mode: variable_ps, pcs_decode, delay. */
-  /* spi_selectionMode(BFIN_SPI, 0, 0, 0); */
-
-  /* // enable SPI. */
-  /* spi_enable(BFIN_SPI); */
-
-  /* // intialize the chip register */
-  /* spi_setupChipReg(BFIN_SPI, &spiOptions, FPBA_HZ); */
-  /* // enable pulldown on bfin HWAIT line */
-  /* //// shit! not implemented...  */
-  /* // gpio_enable_pin_pull_down(BFIN__PIN); */
-
-//}
+}

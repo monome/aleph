@@ -727,6 +727,7 @@ u8 net_report_params(void) {
   volatile char buf[64];
   volatile ParamDesc pdesc;
   volatile u32 numParams;
+  s32 val;
   u8 i;
  
   bfin_get_num_params(&numParams);
@@ -749,6 +750,10 @@ u8 net_report_params(void) {
       print_dbg("\r\n received descriptor for param : ");
       print_dbg((const char* )pdesc.label);
 
+      print_dbg(" ; \t initial value: 0x");
+      val = bfin_get_param(i);
+      print_dbg_hex(val);
+
       net_add_param(i, (const ParamDesc*)&pdesc);
 
     }
@@ -767,6 +772,16 @@ u8 net_report_params(void) {
   print_dbg("\r\n bfin module name: ");
   print_dbg((const char*)buf);
 
+
+  //  if(numParams > 0 && numParams != 255) {
+    /// test bfin_get_param on initial values
+    //    print_dbg("\r\n reporting inital param values: ");
+    //    for(i=0; i<numParams; ++i) {
+    //  print_dbg("\r\n 0x");
+  //      val = bfin_get_param(i);
+  //      print_dbg_hex(val);
+      //    }
+      //  }
   return (u8)numParams;
 
 }
