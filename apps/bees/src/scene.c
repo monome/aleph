@@ -74,7 +74,7 @@ void scene_write_buf(void) {
   dst = net_pickle(dst);
 
   // pickle presets
-  gdst = presets_pickle(dst);
+  dst = presets_pickle(dst);
   
 }
 
