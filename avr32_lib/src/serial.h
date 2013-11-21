@@ -1,21 +1,18 @@
 #include "types.h"
 
-#define SERIAL_BUFFER_SIZE		128
-// #define SERIAL_NUM_COMMANDS		4
+#define SERIAL_BUFFER_SIZE		1024
 
-typedef void(*process_serial_t)(void);
+typedef void(*process_serial_t)(u16);
 
-extern u8 serial_buffer[SERIAL_BUFFER_SIZE];
-extern u8 serial_read_pos;
-extern u8 serial_write_pos;
-extern u8 serial_new_bytes;
+extern volatile u8 serial_buffer[SERIAL_BUFFER_SIZE];
 
 extern void serial_process(void);
+extern void serial_send_start(u8);
+extern void serial_send_byte(u8);
+extern void serial_send_long(u32);
+extern void serial_send_separator(void);
+extern void serial_send_end(void);
 
-void com_req_num_params(void);
-void com_req_param_info(void);
-void com_get_param(void);
-void com_set_param(void);
 
 // incoming serial:
 

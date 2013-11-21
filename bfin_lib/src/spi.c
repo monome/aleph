@@ -27,9 +27,6 @@ static void spi_set_param(u32 idx, ParamValue pv) {
   module_set_param(idx, pv);
 }
 
-///  FIXME: generated code for case statement sucks.
-//////  should be table of function pointers
-
 //------- function definitions
 // deal with new data in the spi rx ringbuffer
 // return byte to load for next MISO

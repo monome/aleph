@@ -56,4 +56,7 @@ extern void bfin_enable(void);
 // wait for ready status (e.g. after module init)
 extern void bfin_wait_ready(void);
 
+// get param value
+extern s32 bfin_get_param(u8 idx);
+
 #endif // header guard

@@ -115,6 +115,11 @@ typedef enum {
   eModuleName21,
   eModuleName22,
   eModuleName23,
+  //---- buffer stuff
+  //-- get buf descriptor
+  // buf channels
+  // buf frames
+  //-- send buffer data
   eNumSpiBytes
 } eSpiByte;
 

@@ -20,6 +20,11 @@ static void op_preset_in_read(op_preset_t* preset, const io_t* v);
 static void op_preset_in_write(op_preset_t* preset, const io_t* v);
 static void op_preset_idx(op_preset_t* preset, const io_t* v);
 
+// pickles
+static u8* op_preset_pickle	(op_preset_t* preset, u8* dst);
+static const u8* op_preset_unpickle(op_preset_t* preset, const u8* src);
+
+
 static op_in_fn op_preset_in_fn[3] = {
   (op_in_fn) &op_preset_in_read, 
   (op_in_fn) &op_preset_in_write, 
@@ -32,21 +37,30 @@ static op_in_fn op_preset_in_fn[3] = {
 /// initialize
 void op_preset_init(void* mem) {
   op_preset_t* preset = (op_preset_t*)mem;
-  preset->super.numInputs = 3;
-  preset->super.numOutputs = 1;
-  preset->outs[0] = -1;
+
+  // superclass functions
   preset->super.inc_fn = (op_inc_fn)op_preset_inc_fn;
   preset->super.in_fn = op_preset_in_fn;
-  preset->super.in_val = preset->in_val;
+  preset->super.pickle = (op_pickle_fn) (&op_preset_pickle);
+  preset->super.unpickle = (op_unpickle_fn) (&op_preset_unpickle);
+
+  // superclass state
+  preset->super.numInputs = 3;
+  preset->super.numOutputs = 1;
+  preset->super.out = preset->outs;
+
+  preset->outs[0] = -1;
   preset->in_val[0] = &(preset->read);
   preset->in_val[1] = &(preset->write);
   preset->in_val[2] = &(preset->idx);
-  preset->super.out = preset->outs;
+  
+  preset->super.type = eOpPreset;
+  preset->super.flags |= (1 << eOpFlagSys);
+  preset->super.in_val = preset->in_val;
+ 
   preset->super.opString = op_preset_opstring;
   preset->super.inString = op_preset_instring;
   preset->super.outString = op_preset_outstring;
-  preset->super.type = eOpSwitch;
-  preset->super.flags |= (1 << eOpFlagSys);
 }
 
 //-------------------------------------------------
@@ -83,4 +97,17 @@ static void op_preset_idx(op_preset_t* preset, const io_t* rw) {
 // increment
 static void op_preset_inc_fn(op_preset_t* preset, const s16 idx, const io_t inc) {
   /// FIXME? no meaningful UI
+}
+
+
+
+// pickles
+u8* op_preset_pickle(op_preset_t* preset, u8* dst) {
+  //... nothing to do
+  return dst;
+}
+
+const u8* op_preset_unpickle(op_preset_t* preset, const u8* src) {
+  //... nothing to do
+  return src;
 }

@@ -174,7 +174,7 @@ static inline void set_freq2(fix16 freq) {
 static inline fract32 lookup_wave(const fix16 idx, const fract32 wave) {
   ///// FIXME: this is far from optimized.
   //// add refactored double-lookup method to table.h
-  const fract32 waveInv = sub_fr1x32(INT32_MAX, wave);
+  const fract32 waveInv = sub_fr1x32(FR32_MAX, wave);
   return add_fr1x32( 
 		    mult_fr1x32x32(table_lookup_idx(tab1, WAVE_TAB_SIZE, idx), waveInv),
 		    mult_fr1x32x32(table_lookup_idx(tab2, WAVE_TAB_SIZE, idx), wave)
@@ -255,12 +255,14 @@ static void calc_frame(void) {
 //----- external functions
 
 void module_init(void) {
+  u32 i;
 
   // init module/param descriptor
   // intialize local data at start of SDRAM
   monoData = (monoFmData * )SDRAM_ADDRESS;
   // initialize moduleData superclass for core routines
   gModuleData = &(monoData->super);
+  strcpy(gModuleData->name, "aleph-mono");
   gModuleData->paramDesc = monoData->mParamDesc;
   gModuleData->paramData = monoData->mParamData;
   gModuleData->numParams = eParamNumParams;
@@ -268,13 +270,21 @@ void module_init(void) {
   fill_param_desc();
 
   // init params
+
+  /// fill values with minima as default
+  for(i=0; i<eParamNumParams; ++i) {
+    gModuleData->paramData[i].value = gModuleData->paramDesc[i].min;
+  }
+
   sr = SAMPLERATE;
   ips = fix16_from_float( (f32)WAVE_TAB_SIZE / (f32)sr );
 
   track = 1;
   amp1 = amp2 = INT32_MAX >> 1;
+  
   freq1 = fix16_from_int(220);
   freq2 = fix16_from_int(330);
+
   ratio2 = fix16_from_float(1.5);
   idx1 = idx2 = 0;
 
@@ -283,9 +293,26 @@ void module_init(void) {
   ioAmp2 = FR32_MAX;
   ioAmp3 = FR32_MAX;
 
+  // non-default initial values 
+  // (FIXME: defaults should just be more correct i guess?)
+  gModuleData->paramData[eParamAmp1].value = amp1;
+  gModuleData->paramData[eParamAmp2].value = amp2;
+  
+  gModuleData->paramData[eParamFreq1 ].value = freq1 ;
+  gModuleData->paramData[eParamFreq2 ].value = freq2 ;
+  gModuleData->paramData[eParamRatio2 ].value = ratio2 ;
+
+  gModuleData->paramData[eParamIoAmp0 ].value = ioAmp0 ;
+  gModuleData->paramData[eParamIoAmp1 ].value = ioAmp1 ;
+  gModuleData->paramData[eParamIoAmp2 ].value = ioAmp2 ;
+  gModuleData->paramData[eParamIoAmp3 ].value = ioAmp3 ;
+
+
   // init wavetables
   table_fill_harm(tab1, WAVE_TAB_SIZE, 1, 1.f, 0);
-  table_fill_harm(tab2, WAVE_TAB_SIZE, 5, 0.5, 1);
+
+  /// FIXME: does this work?
+  table_fill_harm(tab2, WAVE_TAB_SIZE, 5, 0.5f, 1);
 
   // allocate envelope
   env = (env_asr*)malloc(sizeof(env_asr));
@@ -515,67 +542,67 @@ static void fill_param_desc(void) {
   gModuleData->paramDesc[eParamGate].min = 0;
   gModuleData->paramDesc[eParamGate].max = FIX16_ONE;
   
-  strcpy(gModuleData->paramDesc[eParamAtkDur].label, "amp env attack");
+  strcpy(gModuleData->paramDesc[eParamAtkDur].label, "amp env atk");
   strcpy(gModuleData->paramDesc[eParamAtkDur].unit, "freq");
   gModuleData->paramDesc[eParamAtkDur].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamAtkDur].min = 0;
   gModuleData->paramDesc[eParamAtkDur].max = FIX16_ONE - 1;
   
-  strcpy(gModuleData->paramDesc[eParamRelDur].label, "amp env release");
-  strcpy(gModuleData->paramDesc[eParamRelDur].unit, "freq");
+  strcpy(gModuleData->paramDesc[eParamRelDur].label, "amp env rel");
+  strcpy(gModuleData->paramDesc[eParamRelDur].unit, "");
   gModuleData->paramDesc[eParamRelDur].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamRelDur].min = 0;
   gModuleData->paramDesc[eParamRelDur].max = FIX16_ONE;
   
   strcpy(gModuleData->paramDesc[eParamAtkCurve].label, "amp env atk curve");
-  strcpy(gModuleData->paramDesc[eParamAtkCurve].unit, "freq");
+  strcpy(gModuleData->paramDesc[eParamAtkCurve].unit, "");
   gModuleData->paramDesc[eParamAtkCurve].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamAtkCurve].min = 0;
   gModuleData->paramDesc[eParamAtkCurve].max = FIX16_ONE - 1;
   
   strcpy(gModuleData->paramDesc[eParamRelCurve].label, "amp env rel curve");
-  strcpy(gModuleData->paramDesc[eParamRelCurve].unit, "freq");
+  strcpy(gModuleData->paramDesc[eParamRelCurve].unit, "");
   gModuleData->paramDesc[eParamRelCurve].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamRelCurve].min = 0;
   gModuleData->paramDesc[eParamRelCurve].max = FIX16_ONE - 1;
   
-  strcpy(gModuleData->paramDesc[eParamFreq1Smooth].label, "freq 1 smoothing");
-  strcpy(gModuleData->paramDesc[eParamFreq1Smooth].unit, "freq");
+  strcpy(gModuleData->paramDesc[eParamFreq1Smooth].label, "freq 1 smooth");
+  strcpy(gModuleData->paramDesc[eParamFreq1Smooth].unit, "");
   gModuleData->paramDesc[eParamFreq1Smooth].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamFreq1Smooth].min = SMOOTH_FREQ_MIN;
   gModuleData->paramDesc[eParamFreq1Smooth].max = SMOOTH_FREQ_MAX;
   
-  strcpy(gModuleData->paramDesc[eParamFreq2Smooth].label, "freq 2 smoothing");
+  strcpy(gModuleData->paramDesc[eParamFreq2Smooth].label, "freq 2 smooth");
   strcpy(gModuleData->paramDesc[eParamFreq2Smooth].unit, "");
   gModuleData->paramDesc[eParamFreq2Smooth].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamFreq2Smooth].min = SMOOTH_FREQ_MIN;
   gModuleData->paramDesc[eParamFreq2Smooth].max = SMOOTH_FREQ_MAX;
   
-  strcpy(gModuleData->paramDesc[eParamPmSmooth].label, "phase mod smoothing");
+  strcpy(gModuleData->paramDesc[eParamPmSmooth].label, "phase mod smooth");
   strcpy(gModuleData->paramDesc[eParamPmSmooth].unit, "");
   gModuleData->paramDesc[eParamPmSmooth].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamPmSmooth].min = SMOOTH_FREQ_MIN;
   gModuleData->paramDesc[eParamPmSmooth].max = SMOOTH_FREQ_MAX;
   
-  strcpy(gModuleData->paramDesc[eParamWave1Smooth].label, "wave 1 smoothing");
+  strcpy(gModuleData->paramDesc[eParamWave1Smooth].label, "wave 1 smooth");
   strcpy(gModuleData->paramDesc[eParamWave1Smooth].unit, "");
   gModuleData->paramDesc[eParamWave1Smooth].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamWave1Smooth].min = SMOOTH_FREQ_MIN;
   gModuleData->paramDesc[eParamWave1Smooth].max = SMOOTH_FREQ_MAX;
   
-  strcpy(gModuleData->paramDesc[eParamWave2Smooth].label, "wave 2 smoothing");
+  strcpy(gModuleData->paramDesc[eParamWave2Smooth].label, "wave 2 smooth");
   strcpy(gModuleData->paramDesc[eParamWave2Smooth].unit, "");
   gModuleData->paramDesc[eParamWave2Smooth].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamWave2Smooth].min = SMOOTH_FREQ_MIN;
   gModuleData->paramDesc[eParamWave2Smooth].max = SMOOTH_FREQ_MAX;
   
-  strcpy(gModuleData->paramDesc[eParamAmp1Smooth].label, "amp 1 smoothing");
+  strcpy(gModuleData->paramDesc[eParamAmp1Smooth].label, "amp 1 smooth");
   strcpy(gModuleData->paramDesc[eParamAmp1Smooth].unit, "freq");
   gModuleData->paramDesc[eParamAmp1Smooth].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamAmp1Smooth].min = SMOOTH_FREQ_MIN;
   gModuleData->paramDesc[eParamAmp1Smooth].max = SMOOTH_FREQ_MAX;
   
-  strcpy(gModuleData->paramDesc[eParamAmp2Smooth].label, "amp 2 smoothing");
+  strcpy(gModuleData->paramDesc[eParamAmp2Smooth].label, "amp 2 smooth");
   strcpy(gModuleData->paramDesc[eParamAmp2Smooth].unit, "freq");
   gModuleData->paramDesc[eParamAmp2Smooth].type = PARAM_TYPE_FIX;
   gModuleData->paramDesc[eParamAmp2Smooth].min = SMOOTH_FREQ_MIN;

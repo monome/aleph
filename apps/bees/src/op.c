@@ -70,7 +70,7 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "PRESET",
     .size = sizeof(op_preset_t),
     .init = &op_preset_init,
-    .deinit = NULL //&op_preset_deinit
+    .deinit = NULL
   }
 };
 

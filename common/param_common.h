@@ -1,5 +1,5 @@
 
-/* param.h
+/* param_common.h
  * aleph-common
  * 
  * common parameter data types

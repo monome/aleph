@@ -43,7 +43,7 @@ static const char* paramStrings[] = {
 static void set_param_gate(drumsynVoice* vp, s32 val) {
   if(val > 0) { 
     lcprng_reset(&(vp->rngH), 0xDEADFACE);
-    lcprng_reset(&(vp->rngL), 0xDADABEEF);
+    //    lcprng_reset(&(vp->rngL), 0xDADABEEF);
     env_exp_set_gate( &(vp->envAmp)	, 0xff );
     env_exp_set_gate( &(vp->envFreq)	, 0xff );
     env_exp_set_gate( &(vp->envRq)	, 0xff );
@@ -160,7 +160,7 @@ static void module_set_voice_param(u8 vid, u32 idx, pval v) {
     env_exp_set_sus_dur( &(voices[vid]->envFreq), v.u);
     break;
 
-  case eParamFreqOff0 :
+  case eParamFreqOff0 : // fract32 raw SVF corner coefficient
     env_exp_set_off( &(voices[vid]->envFreq), v.fr);
     break;
   case eParamFreqOn0: 
@@ -187,7 +187,7 @@ static void module_set_voice_param(u8 vid, u32 idx, pval v) {
     env_exp_set_sus_dur( &(voices[vid]->envRq), v.u);
     break;
 
-  case eParamRqOff0 :
+  case eParamRqOff0 : // fract32 raw SVF daming coefficient
     env_exp_set_off( &(voices[vid]->envRq), v.fr);
     break;
   case eParamRqOn0 :

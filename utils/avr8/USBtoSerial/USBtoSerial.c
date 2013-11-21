@@ -36,6 +36,9 @@
 
 #include "USBtoSerial.h"
 
+// CTS is PB7
+#define PIN_CTS		0x80
+
 /** Circular buffer to hold data from the host before it is sent to the device via the serial port. */
 static RingBuffer_t USBtoUSART_Buffer;
 
@@ -89,14 +92,16 @@ int main(void)
 	RingBuffer_InitBuffer(&USBtoUSART_Buffer, USBtoUSART_Buffer_Data, sizeof(USBtoUSART_Buffer_Data));
 	RingBuffer_InitBuffer(&USARTtoUSB_Buffer, USARTtoUSB_Buffer_Data, sizeof(USARTtoUSB_Buffer_Data));
 
-	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
 	GlobalInterruptEnable();
 
-	while(USB_DeviceState != DEVICE_STATE_Configured);
+	while(USB_DeviceState != DEVICE_STATE_Configured) { ;; }
 
 	for (;;)
 	{
-		while(USB_DeviceState != DEVICE_STATE_Configured);
+		if(USB_DeviceState == DEVICE_STATE_Configured) PORTB &= ~PIN_CTS;
+		else PORTB |= PIN_CTS;
+
+		while(USB_DeviceState != DEVICE_STATE_Configured) { ;; }
 
 		/* Only try to read in bytes from the CDC interface if the transmit buffer is not full */
 		if (!(RingBuffer_IsFull(&USBtoUSART_Buffer)))
@@ -157,8 +162,11 @@ void SetupHardware(void)
 	/* Disable clock division */
 	clock_prescale_set(clock_div_1);
 
+	DDRB = 0;			// outputs
+	PORTB = 0xff;		// pull high
 
-	UBRR1  = 0;		// 500000 baud
+	// initialize USART immediately to prevent noise messing up the AVR32
+	UBRR1  = 3;		// 500000 baud
 	UCSR1C = 6;		// 8n1
 	UCSR1A = (1 << U2X1);
 	UCSR1B = ((1 << RXCIE1) | (1 << TXEN1) | (1 << RXEN1));
@@ -172,7 +180,6 @@ void EVENT_USB_Device_Connect(void)
 {
 	RingBuffer_InitBuffer(&USBtoUSART_Buffer, USBtoUSART_Buffer_Data, sizeof(USBtoUSART_Buffer_Data));
 	RingBuffer_InitBuffer(&USARTtoUSB_Buffer, USARTtoUSB_Buffer_Data, sizeof(USARTtoUSB_Buffer_Data));
-
 }
 
 /** Event handler for the library USB Disconnection event. */

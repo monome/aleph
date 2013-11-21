@@ -254,7 +254,7 @@ void screen_clear(void) {
 void screen_startup(void) {
   u32 i;
 
-  // #include "startup_glyph.c"
+#include "startup_glyph.c"
 
   // print_dbg("\r\n screen_startup");
 
@@ -275,5 +275,5 @@ void screen_startup(void) {
   spi_unselectChip(OLED_SPI, OLED_SPI_NPCS); 
 
   /// draw the glyph
-  // screen_draw_region(128-24 - 1, 64-32 - 1, 24, 32, (u8*)aleph_hebrew_glyph);
+  screen_draw_region(128-24 - 1, 64-32 - 1, 24, 32, (u8*)aleph_hebrew_glyph);
 }

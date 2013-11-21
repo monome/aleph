@@ -144,12 +144,12 @@ void render_update(void) {
     scroll_draw(pageCenterScroll);
   }
   // standard regions
-
   region_update(headRegion);
   region_update(footRegion[0]);
   region_update(footRegion[1]);
   region_update(footRegion[2]);
   region_update(footRegion[3]);
+
   app_resume();
 }
 
@@ -452,7 +452,7 @@ void render_edit_string(region* reg, char* str, u8 len, u8 cursor) {
   u8 i;
   u8* dst = (u8*)reg->data;
   u32 off = 0;
-  const u32 squarePx = (FONT_CHARW+2) * FONT_CHARH;
+  //  const u32 squarePx = (FONT_CHARW+2) * FONT_CHARH;
   u32 dif;
   region_fill(reg, 0x0);
   for(i=0; i<len; ++i) {
@@ -460,7 +460,7 @@ void render_edit_string(region* reg, char* str, u8 len, u8 cursor) {
     if(i == cursor) {
       /// fixme: net art
       //      region_fill_part(reg, off, squarePx, 0xf);
-      // hack a column_fill with a space character
+      // hack a column fill with a space character
       font_glyph(' ', dst, reg->w, 0x0, 0xf);
       dst += 2; off += 2;
       font_glyph_fixed(str[i], dst, reg->w, 0x0, 0xf);
