@@ -458,6 +458,7 @@ void handle_key_3(s32 val) {
       print_dbg_ulong(presetSelect);
       preset_recall(presetSelect);
       inPresetSelect = 0;
+      redraw_ins();
     }
   }
   show_foot();
@@ -520,6 +521,7 @@ void redraw_ins(void) {
 
 // redraw based on provisional preset seleciton
 void redraw_ins_preset (u8 idx) {
+  static char numBuf[13] = "            ";
   s32 max = net_num_ins() - 1;
   u8 i=0;
   u8 n = curPage->select - 3;
@@ -537,9 +539,17 @@ void redraw_ins_preset (u8 idx) {
       } else {
 	enabled = preset_in_enabled(presetSelect, n);
       }
+      print_dbg("\r\n");
+      print_dbg("\r\n page_ins, preset draw, idx: ");
+      print_dbg_ulong(n);
+      print_dbg(", enabled: ");
+      print_dbg_ulong(enabled);
+      print_dbg(", is parameter: ");
+      print_dbg_ulong(isParam);
+
       render_line( n, enabled ? 0xa : 0x2 );
       // TODO: render target value ?
-      //    region_fill_part(lineRegion, ...
+      font_string_region_clip(lineRegion, "                  ", LINE_VAL_POS, 0, 0, 0);
       // print_fix16(...
       // font_string_region(lineRegion...
       render_to_scroll_line(i, enabled ? 1 : 0);

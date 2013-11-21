@@ -68,8 +68,19 @@ u8 app_launch(u8 firstrun) {
   //  net_print();
 
   if(firstrun) {
-    print_dbg("\r\n first run, don't load DSP or scene");
     render_boot("launching app, first run");
+    print_dbg("\r\n first run, try and load default DSP");
+    files_load_dsp_name("default.ldr");
+    
+    bfin_wait_ready();
+    print_dbg(" requesting param report...");
+    render_boot("requesting DSP params");
+    net_report_params();
+
+    print_dbg("\r\n enable DSP audio...");
+    render_boot("enabling audio");
+    bfin_enable();
+
   } else {
     print_dbg("\r\n booting default ldr from flash... ");
     render_boot("booting DSP from flash");

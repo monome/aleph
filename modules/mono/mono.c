@@ -295,13 +295,17 @@ void module_init(void) {
 
   // non-default initial values 
   // (FIXME: defaults should just be more correct i guess?)
+  /// wrong
   gModuleData->paramData[eParamAmp1].value = amp1;
   gModuleData->paramData[eParamAmp2].value = amp2;
   
+
+  /// ok, for now
   gModuleData->paramData[eParamFreq1 ].value = freq1 ;
   gModuleData->paramData[eParamFreq2 ].value = freq2 ;
   gModuleData->paramData[eParamRatio2 ].value = ratio2 ;
 
+  /// rrg wrong
   gModuleData->paramData[eParamIoAmp0 ].value = ioAmp0 ;
   gModuleData->paramData[eParamIoAmp1 ].value = ioAmp1 ;
   gModuleData->paramData[eParamIoAmp2 ].value = ioAmp2 ;
