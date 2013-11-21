@@ -108,12 +108,14 @@ static void render_line(s16 idx, u8 fg) {
 
 // edit the current seleciton
 static void select_edit(s32 inc) {
-  // increment input value
-  net_inc_in_value(curPage->select, inc);
-  // render to tmp buffer
-  render_line(curPage->select, 0xf);
-  // copy to scroll with highlight
-  render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+  if(curPage->select != -1) {
+    // increment input value
+    net_inc_in_value(curPage->select, inc);
+    // render to tmp buffer
+    render_line(curPage->select, 0xf);
+    // copy to scroll with highlight
+    render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+  }
 }
 
 // scroll the current selection
