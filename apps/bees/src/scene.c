@@ -74,7 +74,7 @@ void scene_write_buf(void) {
   dst = net_pickle(dst);
 
   // pickle presets
-  //  dst = presets_pickle(dst);
+  gdst = presets_pickle(dst);
   
 }
 
@@ -94,7 +94,7 @@ void scene_read_buf(void) {
   src = net_unpickle(src);
 
   // unpickle presets
-  //  src = presets_unpickle(src);
+  src = presets_unpickle(src);
 
   
   print_dbg("\r\n copied stored network and presets to RAM ");
