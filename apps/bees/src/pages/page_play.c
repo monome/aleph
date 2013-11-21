@@ -49,9 +49,8 @@ static void handle_key_3(s32 val);
 // handlers activate system UI operator nodes.
 
 void handle_key_0(s32 val) {
-  print_dbg("\r\n play handler, key 0, op address: 0x");
-  print_dbg_hex((u32)opSysSw[0]);
-
+  //  print_dbg("\r\n play handler, key 0, op address: 0x");
+  //  print_dbg_hex((u32)opSysSw[0]);
    op_sw_sys_input(opSysSw[0], (s8)val);
 }
 

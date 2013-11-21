@@ -67,24 +67,24 @@ void op_preset_init(void* mem) {
 
 // input read index
 static void op_preset_in_read(op_preset_t* preset, const io_t v) {
+  int idx = OP_TO_INT(v);
   // recall given preset
   print_dbg("\r\n recalling preset from operator, idx: ");
-  print_dbg_ulong(OP_TO_INT(v));
-  if(v >=0 && v < NET_PRESETS_MAX) { 
-    preset_recall( OP_TO_INT(v) );
+  print_dbg_ulong(idx);
+  if(idx >=0 && idx < NET_PRESETS_MAX) { 
+    preset_recall( idx );
   }
 }
 
 // input write index
 static void op_preset_in_write(op_preset_t* preset, const io_t v) {
+  int idx = OP_TO_INT(v);
   // store given preset
-
   print_dbg("\r\n storing preset from operator, idx: ");
-  print_dbg_ulong(OP_TO_INT(v));
-  if(v >=0 && v < NET_PRESETS_MAX) { 
-    preset_store( OP_TO_INT(v) );
+  print_dbg_ulong(idx);
+  if(idx >=0 && idx < NET_PRESETS_MAX) { 
+    preset_store( idx );
   }
-
 }
 
 // input, report last idx (???)
