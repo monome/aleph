@@ -33,13 +33,13 @@ static void show_size(u32 size) {
   u32 y = 0;
   u32 i = 0;
   for(i = 0; i< (size / 0x200); ++i) {
-    screen_pixel(x, y, 0x2);
-    screen_pixel(x, y+1, 0x2);
-    screen_pixel(x+1, y, 0x2);
-    screen_pixel(x+1, y+1, 0x2);
+    screen_pixel(x, y, 0xf);
+    screen_pixel(x, y+1, 0xf);
+    screen_pixel(x+1, y, 0xf);
+    screen_pixel(x+1, y+1, 0xf);
     ++x;
     ++x;
-    if(x > NCOLS) {
+    if(x >= NCOLS) {
       x = 0;
       ++y;
       ++y;
@@ -63,7 +63,7 @@ static void show_progress(u8 val) {
   screen_refresh();
   ++x;
   ++x;
-  if(x > NCOLS) {
+  if(x >= NCOLS) {
     x = 0;
     ++y;
     ++y;

@@ -57,7 +57,7 @@
 //  flag to wait for startup button press
 static u8 startup = 1;
 // mode switch
-static u8 mode = 0;
+// static u8 mode = 0;
 
 //=================================================
 //==== declarations
@@ -179,9 +179,9 @@ static void check_events(void) {
 
 	// mode switch
       case kEventSwitchDown4:
-	mode ^= 1;
-	if(mode) { gpio_set_gpio_pin(LED_MODE_PIN); }
-	else { gpio_clr_gpio_pin(LED_MODE_PIN); }
+	// mode ^= 1;
+	// if(mode) { gpio_set_gpio_pin(LED_MODE_PIN); }
+	// else { gpio_clr_gpio_pin(LED_MODE_PIN); }
 	menu_handleKey(eKeyMode, e.eventData);
 	break;
 	// power switch
