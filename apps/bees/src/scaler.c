@@ -9,12 +9,8 @@
 #include "scaler.h"
 #include "types.h"
 
-// data type
-typedef struct _paramScaler {
-  
-  s32* data;
-  
-} ParamScaler;
+// type-specific
+//#include "scaler_
 
 // array of scaling functions.
 s32(*scaler_val_pr[])(io_t in) = {

@@ -130,7 +130,7 @@ u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
 }
 
 const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
-  u32 val;
+  //  u32 val;
   u8 i;
   // store label string
   for(i=0; i<PARAM_LABEL_LEN; ++i) {
