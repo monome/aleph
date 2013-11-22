@@ -193,8 +193,6 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   pDesc->type = (U8)(x & 0xff);
   // read min
-  /*
-    //// don't need with new type system...
   for(i=0; i<4; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
     spi_write(BFIN_SPI, 0); //dont care
@@ -212,7 +210,7 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
     pval.asByte[i] = (u8)(x & 0xff);
   }
   pDesc->max = pval.asInt;
-  */
+ 
   app_resume();
 }
 
@@ -269,39 +267,6 @@ void bfin_get_module_version(moduleVersion_t* vers) {
 }
 
 
-// clear and add params to ctl network
-/* void bfin_report_params(void) { */
-/*   volatile ParamDesc pdesc; */
-/*   u32 numParams; */
-/*   u8 i; */
-
-/*   bfin_get_num_params(&numParams); */
-/*   print_dbg("\r\nnumparams: "); */
-/*   print_dbg_ulong(numParams); */
-
-/*   if(numParams == 255) { */
-/*     print_dbg("\r\n bfin reported too many parameters; sonmething went wrong."); */
-/*     return; */
-/*   } */
-
-/*   if(numParams > 0) { */
-/*     net_clear_params(); */
-/*     for(i=0; i<numParams; i++) { */
-/*       bfin_get_param_desc(i, &pdesc); */
-
-/*       /// FIXME: arg, this belongs only in BEES */
-/*       net_add_param(i, &pdesc);      */
-      
-/*       print_dbg("\r\n got pdesc : "); */
-/*       print_dbg((const char* )pdesc.label); */
-/*     } */
-/*   } */
-
-  
-
-/*   bfin_enable(); */
-/* } */
-
 void bfin_enable(void) {
   // enable audio processing
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
@@ -333,11 +298,6 @@ void bfin_start_transfer(void) {
 
 void bfin_end_transfer(void) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  print_dbg("\r\n done loading; waiting... ");
-  delay_ms(100);
-  //  delay_ms(2000);
-  /* print_dbg("\r\n done waiting; reporting... "); */
-  /* bfin_report_params(); */
 }
 
 // wait for ready status (e.g. after module init)

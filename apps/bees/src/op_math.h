@@ -12,9 +12,9 @@
 #include "pickle.h"
 
 // input/output data type
-// typedef f32 io_t;
-// typedef fix16_t io_t;
+
 typedef s16 io_t;
+#define IO_BITS 16
 
 //--- pickling
 //#define pickle_io(src, dst) pickle_32((u32)src, dst);

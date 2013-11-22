@@ -16,17 +16,22 @@
 
 ///--- parameter use-types
 /// these diferentiate  the actual, numerical use case for the parameter.
+// add as needed, sync with param scaler definitions
 typedef enum {
-  // raw amplitude
+  // amplitude (0-1)
   eParamTypeAmp,
   // time in samples
   eParamTypeSamples,
-  // raw coefficient for 1pole lowpass
-  eParamType1plpCoeff,
-  // raw coefficient for SVF
-  eParamTypeSvfCoeff,
-  // oscillator, normalized frequency
+  // frequency coefficient for 1pole filter
+  eParamType1pFreq,
+  // frequency coefficient for SVF
+  eParamTypeSvfFreq,
+  // RQ coefficient for SVF
+  eParamTypeSvfRq,
+  // oscillator, base frequency
   eParamTypeOscFreq,
+  // oscillator tuning ratio
+  eParamTypeOscTune,
   //...?
   eParamNumTypes
 } ParamType;
@@ -48,6 +53,8 @@ typedef struct __attribute__((__packed__)) ParamDescStruct {
   char label[PARAM_LABEL_LEN];
   // type
   ParamType type;
+  fix16 min;
+  fix16 max;
 } ParamDesc;
 
 // parameter data

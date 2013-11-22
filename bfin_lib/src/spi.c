@@ -31,7 +31,7 @@ static void spi_set_param(u32 idx, ParamValue pv) {
 u8 spi_process(u8 rx) {
   static ParamValueCommon pval;
   switch(byte) {
-  /// caveman style case statement
+    /// caveman style case statement
   case eCom :
     com = rx;
     switch(com) {
@@ -66,7 +66,7 @@ u8 spi_process(u8 rx) {
     return 0;
     break;
 
-  //---- set param
+    //---- set param
   case eSetParamIdx :
     idx = rx; // set index
     byte = eSetParamData0;
@@ -99,7 +99,7 @@ u8 spi_process(u8 rx) {
     break;
 
 
-  //---- get param
+    //---- get param
   case eGetParamIdx :
     idx = rx; // set index
     byte = eGetParamData0;
@@ -128,19 +128,19 @@ u8 spi_process(u8 rx) {
     return 0; // don't care
     break;
 
-  //---- get num params
+    //---- get num params
   case eNumParamsVal :
     byte = eCom; //reset
     return 0; // don't care 
     break;
 
-  //---- get param descriptor
+    //---- get param descriptor
   case eParamDescIdx :
     byte = eParamDescLabel0;
     idx = rx;
     return gModuleData->paramDesc[idx].label[0]; // load label 
     break;
-  // label
+    // label
   case eParamDescLabel0 :
     byte = eParamDescLabel1;
     return gModuleData->paramDesc[idx].label[1]; // load label 
@@ -205,53 +205,50 @@ u8 spi_process(u8 rx) {
     byte = eParamDescUnit0;
     return gModuleData->paramDesc[idx].unit[0]; // load label 
     break;
-  // unit
-  /*
-// don't need with new type system... didn't really need anyways
+    // unit
+    /*
+    // don't need with new type system... didn't really need anyways
 
-  case eParamDescUnit0 :
+    case eParamDescUnit0 :
     byte = eParamDescUnit1;
     return gModuleData->paramDesc[idx].unit[1]; // load unit
     break;
-  case eParamDescUnit1 :
+    case eParamDescUnit1 :
     byte = eParamDescUnit2;
     return gModuleData->paramDesc[idx].unit[2]; // load unit
     break;
-  case eParamDescUnit2 :
+    case eParamDescUnit2 :
     byte = eParamDescUnit3;
     return gModuleData->paramDesc[idx].unit[3]; // load unit
     break;
-  case eParamDescUnit3 :
+    case eParamDescUnit3 :
     byte = eParamDescUnit4;
     return gModuleData->paramDesc[idx].unit[4]; // load unit
     break;
-  case eParamDescUnit4 :
+    case eParamDescUnit4 :
     byte = eParamDescUnit5;
     return gModuleData->paramDesc[idx].unit[5]; // load unit
     break;
-  case eParamDescUnit5 :
+    case eParamDescUnit5 :
     byte = eParamDescUnit6;
     return gModuleData->paramDesc[idx].unit[6]; // load unit
     break;
-  case eParamDescUnit6 :
+    case eParamDescUnit6 :
     byte = eParamDescUnit7;
     return gModuleData->paramDesc[idx].unit[7]; // load unit
     break;
-  case eParamDescUnit7 :
+    case eParamDescUnit7 :
     byte = eParamDescType;
     return gModuleData->paramDesc[idx].type; // load type
     break;
-  */
-  // type
+    */
+    // type
   case eParamDescType :
-    byte = eParamCom; // reset
-    return 0; // don't care    
+    byte = eParamDescMin0;
+    pval.asInt = gModuleData->paramDesc[idx].min;
+    return pval.asByte[3]; // min, high byte
     break;
-
-  /*
-// don't need with new type system...
-
-  // min  // === byteswap for BE on avr32
+    // min  // === byteswap for BE on avr32
   case eParamDescMin0 :
     byte = eParamDescMin1;
     return pval.asByte[2];
@@ -269,7 +266,7 @@ u8 spi_process(u8 rx) {
     pval.asInt = gModuleData->paramDesc[idx].max;
     return pval.asByte[3]; // max, high byte
     break;
-  // max  // === byteswap for BE on avr32
+    // max  // === byteswap for BE on avr32
   case eParamDescMax0 :
     byte = eParamDescMax1;
     return pval.asByte[2];
@@ -286,8 +283,6 @@ u8 spi_process(u8 rx) {
     byte = eCom; // reset
     return 0; // dont care
     break;
-  */
-
     //----- get module name
   case eModuleName0 :
     byte = eModuleName1;

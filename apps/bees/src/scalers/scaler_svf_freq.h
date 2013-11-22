@@ -1,0 +1,3 @@
+/* 
+   scaler for SVF corner frequency
+*/

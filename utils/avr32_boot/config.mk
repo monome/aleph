@@ -28,7 +28,7 @@ PART = uc3a0512
 FLASH = internal@0x80000000
 
 # debug level
-# BUILD_DEBUG_LEVEL = 0
+BUILD_DEBUG_LEVEL = 0
 
 # Clock source to use when programming; xtal, extclk or int
 PROG_CLOCK = int
