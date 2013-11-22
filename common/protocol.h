@@ -68,6 +68,9 @@ typedef enum {
   eParamDescLabel14,
   eParamDescLabel15,
   // unit
+
+  /*
+// don't need with new type system... didn't really need anyways
   eParamDescUnit0,
   eParamDescUnit1,
   eParamDescUnit2,
@@ -76,8 +79,12 @@ typedef enum {
   eParamDescUnit5,
   eParamDescUnit6,
   eParamDescUnit7,
+  */
   // type
   eParamDescType,
+  /*
+// don't need with new type system...
+
   // min
   eParamDescMin0,
   eParamDescMin1,
@@ -88,6 +95,7 @@ typedef enum {
   eParamDescMax1,
   eParamDescMax2,
   eParamDescMax3,
+  */
   // get module name
   eGetModuleName,
   // module name bytes

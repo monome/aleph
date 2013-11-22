@@ -175,6 +175,8 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     pDesc->label[i] = (char)(x & 0xff);
   }
+  /*
+    //// don't need with new type system... didn't exactly need anyways
   // read unit
   for(i=0; i<PARAM_UNIT_LEN; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
@@ -183,6 +185,7 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     pDesc->unit[i] = (char)(x & 0xff);
   }
+  */
   // read type
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, 0); //dont care
@@ -190,6 +193,8 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   pDesc->type = (U8)(x & 0xff);
   // read min
+  /*
+    //// don't need with new type system...
   for(i=0; i<4; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
     spi_write(BFIN_SPI, 0); //dont care
@@ -207,7 +212,7 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
     pval.asByte[i] = (u8)(x & 0xff);
   }
   pDesc->max = pval.asInt;
-
+  */
   app_resume();
 }
 
