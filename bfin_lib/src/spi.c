@@ -15,8 +15,6 @@ static eSpiByte byte = eCom;
 static u8 com;
 // current param index
 static u8 idx;
-// param value;
-//static ParamValue pv;
 
 //------ static functions
 static void spi_set_param(u32 idx, ParamValue pv) {
@@ -76,33 +74,24 @@ u8 spi_process(u8 rx) {
     break;
   case eSetParamData0 :
     byte = eSetParamData1;
-  // FIXME: not really using this global parameter data.
-  // but we probably will if we want a bfin control rate or FIFO. 
-  // so for now it is just here, burning resources.
     // byte-swap from BE on avr32
     pval.asByte[3] = rx; // set paramval
-    //    gModuleData->paramData[idx].value = pval.asInt;
     return 0; // don't care
     break;
   case eSetParamData1 :
     byte = eSetParamData2;
     // byte-swap from BE on avr32
     pval.asByte[2] = rx; // set paramval
-    //    gModuleData->paramData[idx].value = pval.asInt;
     return 0; // don't care
     break;
   case eSetParamData2 :
     byte = eSetParamData3;
     // byte-swap from BE on avr32
-    //    gModuleData->paramData[idx].value.asByte[1] = rx; // set paramval
     pval.asByte[1] = rx; // set paramval
-    //    gModuleData->paramData[idx].value = pval.asInt;
     return 0; // don't care
     break;
   case eSetParamData3 :
     // byte-swap from BE on avr32
-    //    pv.s = gModuleData->paramData[idx].value.asInt;
-    //    spi_set_param(idx, pv);
     pval.asByte[0] = rx; // set paramval
     spi_set_param(idx, pval.asInt);
     byte = eCom; //reset
@@ -116,26 +105,22 @@ u8 spi_process(u8 rx) {
     byte = eGetParamData0;
     pval.asInt = gModuleData->paramData[idx].value;
     // byte-swap from BE on avr32
-      //    return gModuleData->paramData[idx].value.asByte[3];
     return pval.asByte[3];
       
     break;
   case eGetParamData0 :
     byte = eGetParamData1;
     // byte-swap from BE on avr32
-    //    return gModuleData->paramData[idx].value.asByte[2];
     return pval.asByte[2];
     break;
   case eGetParamData1 :
     byte = eGetParamData2;
     // byte-swap from BE on avr32
-    //    return gModuleData->paramData[idx].value.asByte[1];
     return pval.asByte[1];
     break;
   case eGetParamData2 :
     byte = eGetParamData3;
     // byte-swap from BE on avr32
-    //    return gModuleData->paramData[idx].value.asByte[0];
     return pval.asByte[0];
     break;
   case eGetParamData3 :
@@ -221,6 +206,9 @@ u8 spi_process(u8 rx) {
     return gModuleData->paramDesc[idx].unit[0]; // load label 
     break;
   // unit
+  /*
+// don't need with new type system... didn't really need anyways
+
   case eParamDescUnit0 :
     byte = eParamDescUnit1;
     return gModuleData->paramDesc[idx].unit[1]; // load unit
@@ -253,17 +241,21 @@ u8 spi_process(u8 rx) {
     byte = eParamDescType;
     return gModuleData->paramDesc[idx].type; // load type
     break;
+  */
   // type
   case eParamDescType :
-    byte = eParamDescMin0;
-    pval.asInt = gModuleData->paramDesc[idx].min;
-    return pval.asByte[3]; // min, high byte
-      break;
+    byte = eParamCom; // reset
+    return 0; // don't care    
+    break;
+
+  /*
+// don't need with new type system...
+
   // min  // === byteswap for BE on avr32
   case eParamDescMin0 :
     byte = eParamDescMin1;
     return pval.asByte[2];
-      break;
+    break;
   case eParamDescMin1 :
     byte = eParamDescMin2;
     return pval.asByte[1];
@@ -294,6 +286,7 @@ u8 spi_process(u8 rx) {
     byte = eCom; // reset
     return 0; // dont care
     break;
+  */
 
     //----- get module name
   case eModuleName0 :
@@ -398,76 +391,3 @@ u8 spi_process(u8 rx) {
     break;
   }
 }
-
-  /*
-  // on the first byte, check the message type
-  if (spiByte == 0) {
-    switch(rxMsg.generic.command) {
-    case MSG_SET_PARAM_COM:
-      spiLastByte = sizeof(msgSetParam_t) - 1;
-      // no tx data
-      break;
-    case MSG_GET_PARAM_COM:
-      spiLastByte = sizeof(msgGetParam_t) - 1;
-      // tx fill must wait for idx
-      break;
-    case MSG_GET_NUM_PARAMS_COM:
-      spiLastByte = sizeof(msgGetNumParams_t) - 1;
-      txMsg.getNumParams.value = moduleData->numParams;
-      // byte swap for the fucking avr32
-      // byte_swap((U8*)(&(txMsg.getNumParams.value)), 2);
-      break;
-    case MSG_GET_PARAM_DESC_COM:
-      spiLastByte = sizeof(msgGetParamDesc_t) - 1;
-      // tx fill must wait for idx..
-      break;
-    default:
-      break;
-    }
-  }
- 
-  // spi counter at last byte of idx field;
-  // so parse the idx and fill remainder of tx message data
-  if (spiByte == kIdxByte) {
-    if (rxMsg.generic.command == MSG_GET_PARAM_DESC_COM) {
-      //   U8 dum;
-      idx = rxMsg.getParamDesc.idx;
-
-      //      dbgDscIdx[n][0] = idx;
-
-      // byte swap the index
-      //byte_swap((u8*)(&idx), 2);
-
-   
-      txMsg.getParamDesc.desc = moduleData->paramDesc[idx];
-      /// byte-swap the float fields
-      byte_swap((u8*)(&txMsg.getParamDesc.desc.min), 4);
-      byte_swap((u8*)(&txMsg.getParamDesc.desc.max), 4);
-    }
-    if (rxMsg.generic.command == MSG_GET_PARAM_COM) {
-     
-      idx = rxMsg.getParam.idx;
-      // byte swap the index     
-      //byte_swap((u8*)(&idx), 2);
-      txMsg.getParam.value = moduleData->paramData[idx].value;
-      // byte-swap the float fields
-      byte_swap((u8*)(&txMsg.getParam.value), 4);
-    }
-  }
-
-  // final byte -> do something with MOSI data
-  if (spiByte == spiLastByte) {
-    // set parameter
-    if (rxMsg.generic.command == MSG_SET_PARAM_COM) {
-      // avr32 is big endian! so shitty
-      //byte_swap((u8*)(&(rxMsg.setParam.idx)), 2);
-      if (rxMsg.setParam.idx < moduleData->numParams) {
-	byte_swap((u8*)(&(rxMsg.setParam.value)), 4);
-	moduleData->paramData[rxMsg.setParam.idx].value = rxMsg.setParam.value;
-	moduleData->paramData[rxMsg.setParam.idx].changed = 1;
-      }
-    }
-  }
-}
-*/
-

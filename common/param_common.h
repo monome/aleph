@@ -11,24 +11,8 @@
 #include "fix.h"
 #include "types.h"
 
-//======@@@@@@@++++++########!!!!!!!
-//!!!!!!====== BEWARE !!!!!!********
-/// there are all kinds of dirty hacks 
-/// dependent on the layout of data types in this header:
-///// in the bytecount #defines in protocol.h
-///// in param.c:get_param_value
-/////____change the layouts only with extraordinary caution!!! _ez
-
 // max characters in param name
 #define PARAM_LABEL_LEN 16
-// max charactes in param unit
-#define PARAM_UNIT_LEN 8
-
-//---- param data types
-#define PARAM_TYPE_FIX 0
-#define PARAM_TYPE_FRACT 0
-#define PARAM_TYPE_UINT  1
-
 
 ///--- parameter use-types
 /// these diferentiate  the actual, numerical use case for the parameter.
@@ -41,14 +25,14 @@ typedef enum {
   eParamType1plpCoeff,
   // raw coefficient for SVF
   eParamTypeSvfCoeff,
-  //...
-  //...
-  //...
-} paramUseType;
+  // oscillator, normalized frequency
+  eParamTypeOscFreq,
+  //...?
+  eParamNumTypes
+} ParamType;
 
 
 // a union type for byteswapping
-
 typedef union __attribute__((__packed__)) {
   s32 asInt;
   u32 asUint;
@@ -62,19 +46,14 @@ typedef s32 ParamValue;
 typedef struct __attribute__((__packed__)) ParamDescStruct {
   // parameter name
   char label[PARAM_LABEL_LEN];
-  // parameter unit name
-  char unit[PARAM_UNIT_LEN];
   // type
-  u8 type;
-  // range
-  fix16 min;
-  fix16 max;
-  // other stuff? id for mapping? (hz, pole, db, rate, etc?)
+  ParamType type;
 } ParamDesc;
 
 // parameter data
 typedef struct __attribute__((__packed__)) ParamDataStruct {
   ParamValue value;
+  // not sure we need to use this but keep it around and updated
   u8 changed;
 } ParamData;
 

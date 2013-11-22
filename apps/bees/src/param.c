@@ -37,26 +37,19 @@ const char* get_param_name(u32 idx) {
 // set value for param at given idx
 //-- see also net_set_in_value()
 void set_param_value(u32 idx, io_t val) {
-  //  print_dbg("\r\n setting param : idx 0x");
-  //  print_dbg_hex(idx);
-  /* print_dbg(" , label: "); */
-  /* print_dbg(net->params[idx].desc.label); */
-  //  print_dbg(" , value: 0x"); 
-  //  print_dbg_hex((u32)val); 
-   /* print_dbg(" , min: 0x"); */
-  /* print_dbg_hex((u32)net->params[idx].desc.min); */
-  /* print_dbg(" , max: 0x"); */
-  /* print_dbg_hex((u32)net->params[idx].desc.max); */
 
-  if(val > net->params[idx].desc.max) {
-    val = net->params[idx].desc.max;
-  }
-  if(val < net->params[idx].desc.min) {
-    val = net->params[idx].desc.min;
-  }
-  net->params[idx].data.value = val;
-  net->params[idx].data.changed = 1;
-  //  bfin_set_param(idx, val);
+  /* if(val > net->params[idx].desc.max) { */
+  /*   val = net->params[idx].desc.max; */
+  /* } */
+  /* if(val < net->params[idx].desc.min) { */
+  /*   val = net->params[idx].desc.min; */
+  /* } */
+
+
+  // FIXME: use scaler
+  //net->params[idx].data.value = val;
+  //  net->params[idx].data.changed = 1;
+
   ctl_param_change(idx, (u32)val);
 }
 
@@ -122,17 +115,17 @@ u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
     ++dst;
   }
   // store unit string
-  for(i=0; i<PARAM_UNIT_LEN; ++i) {
-    *dst = pdesc->unit[i];
-    ++dst;
-  }
+  /* for(i=0; i<PARAM_UNIT_LEN; ++i) { */
+  /*   *dst = pdesc->unit[i]; */
+  /*   ++dst; */
+  /* } */
   // store type
   *dst = pdesc->type;
   ++dst;
-  // store min
-  dst = pickle_32(pdesc->min, dst);
-  // store max
-  dst = pickle_32(pdesc->max, dst);
+  /* // store min */
+  /* dst = pickle_32(pdesc->min, dst); */
+  /* // store max */
+  /* dst = pickle_32(pdesc->max, dst); */
   return dst;
 }
 
@@ -148,11 +141,11 @@ const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
   // print_dbg("\r\n unpickled param label: ");
   // print_dbg(pdesc->label);
 
-  // store unit string
-  for(i=0; i<PARAM_UNIT_LEN; ++i) {
-    pdesc->unit[i] = *src;
-    ++src;
-  }
+  /* // store unit string */
+  /* for(i=0; i<PARAM_UNIT_LEN; ++i) { */
+  /*   pdesc->unit[i] = *src; */
+  /*   ++src; */
+  /* } */
 
   // print_dbg("\r\n unpickled param unit: ");
   // print_dbg(pdesc->unit);
@@ -164,16 +157,16 @@ const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
   // print_dbg("\r\n unpickled param type: ");
   // print_dbg_ulong((u32)(pdesc->type));
   
-  // store min
-  src = unpickle_32(src, &val);
-  pdesc->min = val;
+  /* // store min */
+  /* src = unpickle_32(src, &val); */
+  /* pdesc->min = val; */
 
-  // print_dbg("\r\n unpickled param min: ");
-  // print_dbg_hex(pdesc->min);
+  /* // print_dbg("\r\n unpickled param min: "); */
+  /* // print_dbg_hex(pdesc->min); */
 
-  // store max
-  src = unpickle_32(src, &val);
-  pdesc->max = val;
+  /* // store max */
+  /* src = unpickle_32(src, &val); */
+  /* pdesc->max = val; */
 
   // print_dbg("\r\n unpickled param max: ");
   // print_dbg_hex(pdesc->max);

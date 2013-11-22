@@ -26,8 +26,7 @@ u8 get_param_preset(u32 idx);
 // get name
 const char* get_param_name(u32 idx);
 
-
-// set value with default numerical representation 
+// set value
 void set_param_value(u32 idx, io_t val);
 
 //---- pickle / unpickle
