@@ -45,7 +45,6 @@ CSRCS = \
 	avr32/drivers/pm/power_clocks_lib.c                \
 	avr32/drivers/spi/spi.c                            \
         avr32/drivers/tc/tc.c                          \
-	avr32/drivers/usart/usart.c                        \
 	avr32/drivers/wdt/wdt.c                        \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.c \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.c \

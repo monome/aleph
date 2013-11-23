@@ -143,63 +143,68 @@ static U8 hex_digit_to_int( char digit )
 {
   U8 retVal = 0xFF;
 
-  switch (digit)
-    {
-    case '0':
-      retVal = 0;
-      break;
-    case '1':
-      retVal = 1;
-      break;
-    case '2':
-      retVal = 2;
-      break;
-    case '3':
-      retVal = 3;
-      break;
-    case '4':
-      retVal = 4;
-      break;
-    case '5':
-      retVal = 5;
-      break;
-    case '6':
-      retVal = 6;
-      break;
-    case '7':
-      retVal = 7;
-      break;
-    case '8':
-      retVal = 8;
-      break;
-    case '9':
-      retVal = 9;
-      break;
-    case 'a':
-    case 'A':
-      retVal = 10;
-      break;
-    case 'b':
-    case 'B':
-      retVal = 11;
-      break;
-    case 'c':
-    case 'C':
-      retVal = 12;
-      break;
-    case 'd':
-    case 'D':
-      retVal = 13;
-      break;
-    case 'e':
-    case 'E':
-      retVal = 14;
-      break;
-    case 'f':
-    case 'F':
-      retVal = 15;
-      break;
-    }
+  // smaller size but same speed:
+  retVal = digit - 48;
+  if(retVal > 9) retVal = retVal - 7;
+  if(retVal > 15) retVal = retVal - 32;
+
+  // switch (digit)
+  //   {
+  //   case '0':
+  //     retVal = 0;
+  //     break;
+  //   case '1':
+  //     retVal = 1;
+  //     break;
+  //   case '2':
+  //     retVal = 2;
+  //     break;
+  //   case '3':
+  //     retVal = 3;
+  //     break;
+  //   case '4':
+  //     retVal = 4;
+  //     break;
+  //   case '5':
+  //     retVal = 5;
+  //     break;
+  //   case '6':
+  //     retVal = 6;
+  //     break;
+  //   case '7':
+  //     retVal = 7;
+  //     break;
+  //   case '8':
+  //     retVal = 8;
+  //     break;
+  //   case '9':
+  //     retVal = 9;
+  //     break;
+  //   case 'a':
+  //   case 'A':
+  //     retVal = 10;
+  //     break;
+  //   case 'b':
+  //   case 'B':
+  //     retVal = 11;
+  //     break;
+  //   case 'c':
+  //   case 'C':
+  //     retVal = 12;
+  //     break;
+  //   case 'd':
+  //   case 'D':
+  //     retVal = 13;
+  //     break;
+  //   case 'e':
+  //   case 'E':
+  //     retVal = 14;
+  //     break;
+  //   case 'f':
+  //   case 'F':
+  //     retVal = 15;
+  //     break;
+  //   }
 
   return retVal;
 }
