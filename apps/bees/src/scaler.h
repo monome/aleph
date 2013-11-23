@@ -24,7 +24,7 @@
 #include "param_common.h"
 
 // initialize scaler for given type
-extern void scaler_init(ParamType type);
+extern void scaler_init(ParamType type, fix16 min, fix16 max);
 // get DSP value for given type, input
 extern void scaler_get_value(ParamType type, io_t in);
 // get readable value for given type, input
