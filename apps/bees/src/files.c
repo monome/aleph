@@ -36,6 +36,7 @@
 
 #define DSP_PATH     "/mod/"
 #define SCENES_PATH  "/data/bees/scenes/"
+#define SCALERS_PATH  "/data/bees/scalers/"
 
 //  stupid datatype with fixed number of fixed-length filenames
 // storing this for speed when UI asks us for a lot of strings
@@ -54,6 +55,7 @@ typedef struct _dirList {
 // directory lists;
 static dirList_t dspList;
 static dirList_t sceneList;
+static dirList_t scalerList;
 
 //----------------------------------
 //---- static functions
@@ -107,10 +109,12 @@ void files_init(void) {
   print_dbg("\r\n BEES file_init, scanning directories..");
   list_scan(&dspList, DSP_PATH);
   list_scan(&sceneList, SCENES_PATH);
+  list_scan(&scalerList, SCALERS_PATH);
 }
 
 
-//----- dsp management
+////////////////////////
+//// modules
 
 // return filename for DSP given index in list
 const volatile char* files_get_dsp_name(u8 idx) {
@@ -138,13 +142,6 @@ u8 files_load_dsp_name(const char* name) {
   if( fp != NULL) {	  
     print_dbg("\r\n found file, loading dsp ");
     print_dbg(name);
-    /// FIXME:
-    /// arrg, why is fl_fread intermittently broken?
-    /// check our media access functions against fat_filelib.c, i guess
-    //    bytesRead = fl_fread((void*)bfinLdrData, 1, size, fp);
-
-    print_dbg("\r\n bfinLdrData : @0x");
-    print_dbg_hex( (u32)bfinLdrData );
     fake_fread(bfinLdrData, size, fp);
 
     // print_dbg("\r\n finished fakefread");
@@ -203,7 +200,9 @@ u8 files_get_dsp_count(void) {
   return dspList.num;
 }
 
-//----- scenes management
+////////////////////////
+//// scenes
+
 // return filename for scene given index in list
 const volatile char* files_get_scene_name(u8 idx) {
   return list_get_name(&sceneList, idx);
@@ -232,13 +231,10 @@ u8 files_load_scene_name(const char* name) {
 
     // try and load dsp module indicated by scene descriptor
     ret = files_load_dsp_name(sceneData->desc.moduleName);
-
-    ret = 1;
   } else {
     print_dbg("\r\n error: fp was null in files_load_scene_name \r\n");
     ret = 0;
-  }
- 
+  } 
   app_resume();
   return ret;
 }
@@ -261,35 +257,100 @@ void files_store_scene_name(const char* name) {
 
   strcat(namebuf, name);
   strip_space(namebuf, 32);
- 
-  print_dbg("\r\n write scene at: ");
-  print_dbg(namebuf);  
-
   // fill the scene RAM buffer from current state of system
   scene_write_buf(); 
-
   // open FP for writing
   fp = fl_fopen(namebuf, "wb");
-
   pScene = (u8*)sceneData;
-
   fl_fwrite((const void*)pScene, sizeof(sceneData_t), 1, fp);
   fl_fclose(fp);
-
+  // rescan
   list_scan(&sceneList, SCENES_PATH);
-
-  //  print_dbg("\r\n scanned it. scanned!");
-  //  print_dbg("\r\n skipped the scan!");
-
   delay_ms(10);
+
   app_resume();
 }
 
 
-// return count of dsp files
+// return count of scene files
 u8 files_get_scene_count(void) {
   return sceneList.num;
 }
+
+////////////////////////
+//// scalers
+
+
+// return filename for scaler given index in list
+const volatile char* files_get_scaler_name(u8 idx) {
+  return list_get_name(&scalerList, idx);
+}
+
+// search for specified scaler file and load it
+// return 1 on success, 0 on failure
+u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
+  void* fp;
+  u32 size = 0;
+  u32 i;
+  union { u32 u; s32 s; u8 b[4]; } swap;
+  u8 ret = 0;
+
+  app_pause();
+
+  fp = list_open_file_name(&scalerList, name, "r", &size);
+
+  if( fp != NULL) {	  
+    
+    //    fake_fread((u8*)swap.b), 4, fp);
+    /// byteswap from little endian
+    swap.b[3] = fl_fgetc(fp);
+    swap.b[2] = fl_fgetc(fp);
+    swap.b[1] = fl_fgetc(fp);
+    swap.b[0] = fl_fgetc(fp);
+    size = swap.u;
+
+    if(size > dstSize) {
+      print_dbg("\r\n warning: requested scaler data is larger target, truncating");
+      for(i=0; i<dstSize; ++i) {
+	swap.b[3] = fl_fgetc(fp);
+	swap.b[2] = fl_fgetc(fp);
+	swap.b[1] = fl_fgetc(fp);
+	swap.b[0] = fl_fgetc(fp);
+	*dst++ = swap.s;
+      }
+    } else if (size < dstSize) {
+      print_dbg("\r\n warning: requested scaler data is smaller than target, padding");
+      for(i=0; i<size; ++i) {
+	swap.b[3] = fl_fgetc(fp);
+	swap.b[2] = fl_fgetc(fp);
+	swap.b[1] = fl_fgetc(fp);
+	swap.b[0] = fl_fgetc(fp);
+	*dst++ = swap.s;
+      }
+      // remainder
+      size = dstSize - size;
+      for(i=0; i<size; ++i) {
+	*dst++ = 0;
+      }
+    } else {
+      for(i=0; i<size; ++i) {
+	swap.b[3] = fl_fgetc(fp);
+	swap.b[2] = fl_fgetc(fp);
+	swap.b[1] = fl_fgetc(fp);
+	swap.b[0] = fl_fgetc(fp);
+	*dst++ = swap.s;
+      }
+    }
+
+    fl_fclose(fp);
+  } else {
+    print_dbg("\r\n error: fp was null in files_load_scaler_name \r\n");
+    ret = 0;
+  } 
+  app_resume();
+  return ret;
+}
+
 
 //---------------------
 //------ static
@@ -354,25 +415,3 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   return fp;
 }
 
-//////////
-/// test
-/* extern void files_load_test_scene(void) { */
-/*   void* fp; */
-/*   app_pause(); */
-  
-/*   fp = fl_fopen("/bees/scenes/test_default.scn", "r"); */
-/*   print_dbg("\r\n opened test sceme. fp: 0x"); */
-/*   print_dbg_hex((u32)fp); */
-
-/*   if(fp == NULL) { */
-/*     print_dbg("\r\n test scene file was NULL"); */
-/*     app_resume(); */
-/*     return; */
-/*   } */
-/*   fake_fread((volatile u8*)sceneData, sizeof(sceneData_t), fp); */
-/*   scene_read_buf(); */
-
-
-/*   fl_fclose(fp); */
-/*   app_resume(); */
-/* } */
