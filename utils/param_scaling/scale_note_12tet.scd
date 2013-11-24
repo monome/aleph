@@ -30,7 +30,6 @@ i = Array.series(n);
 	* (~root_semi ** (j % 12))
  });
 
-
 // ~fsemi.plot;
 
 // fill in semitones on main table
@@ -78,3 +77,16 @@ f.do({ |x, j|
 	}, { ""
 	}).postln;
 });
+
+/// write to files
+
+// get human-readable representation
+
+// float-to-fix16 function
+~float_fix16  = { arg x;
+	var xin, xfr;
+	xin = x.floor.asInteger;
+	xfr = 
+};
+
+// get unit frequency
