@@ -144,7 +144,6 @@ u8 files_load_dsp_name(const char* name) {
     print_dbg(name);
     fake_fread(bfinLdrData, size, fp);
 
-    // print_dbg("\r\n finished fakefread");
     fl_fclose(fp);
     bfinLdrSize = size;
 
@@ -296,12 +295,8 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
   u8 ret = 0;
 
   app_pause();
-
   fp = list_open_file_name(&scalerList, name, "r", &size);
-
   if( fp != NULL) {	  
-    
-    //    fake_fread((u8*)swap.b), 4, fp);
     /// byteswap from little endian
     swap.b[3] = fl_fgetc(fp);
     swap.b[2] = fl_fgetc(fp);
@@ -310,7 +305,7 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
     size = swap.u;
 
     if(size > dstSize) {
-      print_dbg("\r\n warning: requested scaler data is larger target, truncating");
+      print_dbg("\r\n warning: requested scaler data is > target, truncating");
       for(i=0; i<dstSize; ++i) {
 	swap.b[3] = fl_fgetc(fp);
 	swap.b[2] = fl_fgetc(fp);
@@ -319,7 +314,7 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
 	*dst++ = swap.s;
       }
     } else if (size < dstSize) {
-      print_dbg("\r\n warning: requested scaler data is smaller than target, padding");
+      print_dbg("\r\n warning: requested scaler data is < target, padding");
       for(i=0; i<size; ++i) {
 	swap.b[3] = fl_fgetc(fp);
 	swap.b[2] = fl_fgetc(fp);
@@ -341,8 +336,8 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
 	*dst++ = swap.s;
       }
     }
-
     fl_fclose(fp);
+    ret = 1;
   } else {
     print_dbg("\r\n error: fp was null in files_load_scaler_name \r\n");
     ret = 0;
@@ -414,4 +409,3 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   }
   return fp;
 }
-

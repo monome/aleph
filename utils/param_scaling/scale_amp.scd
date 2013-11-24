@@ -1,7 +1,7 @@
 // amplitude scaling table
 
-// 12-bit linear input
-n = 2**12;
+// 10-bit linear input
+n = 2**10;
 (1.0 / n).postln;
 i = Array.series(n);
 

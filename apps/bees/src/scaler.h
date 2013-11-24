@@ -23,8 +23,32 @@
 #include "op_math.h"
 #include "param_common.h"
 
-// scaler class
-typedef struct _scaler scaler;
+
+//-- function types
+// get DSP value for given type, input
+typedef s32 (*scaler_get_value_fn)(io_t in);
+// get readable value for given type, input
+// this datatype can change! 
+// users should check the associated paramDesc if needed
+typedef s32 (*scaler_get_rep_fn)(io_t in);
+// perform a tuning routine
+typedef s32 (*scaler_tune_fn)(u8 tuneId, io_t in);
+
+// class structure
+typedef struct _scaler { 
+   // get value
+  scaler_get_value_fn get_val;
+  // get ui representation
+  scaler_get_rep_fn get_rep;
+  // array of tuning functions
+  scaler_tune_fn * tune;
+  // num tuning functions
+  u8 numTune;
+} scaler;
+
+// initialize scaler for given param (protected)
+typedef void (*scaler_init_fn)(scaler* sc, const ParamDesc* desc);
+
 
 // initialize scaler for given param
 extern void scaler_init(scaler* sc, const ParamDesc* desc);

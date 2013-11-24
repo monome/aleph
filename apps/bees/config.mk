@@ -49,7 +49,8 @@ CSRCS += \
 	$(APP_DIR)/src/pages/page_outs.c \
 	$(APP_DIR)/src/pages/page_play.c \
 	$(APP_DIR)/src/pages/page_presets.c \
-	$(APP_DIR)/src/pages/page_scenes.c 
+	$(APP_DIR)/src/pages/page_scenes.c \
+	$(APP_DIR)/src/scalers/scaler_amp.c 
 
 
 # List of assembler source files.
