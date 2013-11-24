@@ -23,11 +23,21 @@
 #include "op_math.h"
 #include "param_common.h"
 
-// initialize scaler for given type
-extern void scaler_init(ParamType type, fix16 min, fix16 max);
-// get DSP value for given type, input
-extern s32 scaler_get_value(ParamType type, io_t in);
-// get readable value for given type, input
-extern fix16 scaler_get_rep(ParamType type, io_t in);
+// scaler class
+typedef struct _scaler scaler;
+
+// initialize scaler for given param
+extern void scaler_init(scaler* sc, const ParamDesc* desc);
+
+// get DSP value 
+extern s32 scaler_get_value(scaler* sc, io_t in);
+// get readable value
+/*
+ this datatype can change! 
+ usually it is signed 16.16,
+ but integer params may need a bigger range of values.
+ caller should check the associated paramDesc and cast if needed
+*/
+extern s32 scaler_get_rep(scaler* sc, io_t in);
 
 #endif

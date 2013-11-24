@@ -1,12 +1,12 @@
 #include "scaler_amp.h"
 
-extern scaler_init_amp(fix16 min, fix16 max) {
+void scaler_init_amp(scaler* sc, const ParamDesc* desc) {
   // ignore requested ranges and load from file...
   
 }
 
-extern scaler_val_amp(io_t in) {
+s32 scaler_val_amp(scaler* sc, io_t in) {
 }
 
-extern scaler_rep_amp(io_t in) {
+s32 scaler_rep_amp(scaler* sc, io_t in) {
 }

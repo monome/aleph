@@ -132,8 +132,7 @@ void module_set_param(u32 idx, pval v) {
     //    dacDirty[0] = 1;
         dac_update(0, v.fr & 0xffff);
     break;
-  case eParam_dac1 :
-    // filter_1p_lo_in(&(dacSlew[1]), shl_fr1x32(v.fr, 15));
+  case eParam_dac1 :    // filter_1p_lo_in(&(dacSlew[1]), shl_fr1x32(v.fr, 15));
     //    dacVal[1] = v.fr & DAC_VALUE_MASK;
     //    dacDirty[1] = 1;
         dac_update(1, v.fr & 0xffff);

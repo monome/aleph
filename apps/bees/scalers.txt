@@ -1,4 +1,4 @@
-need to properly implement arbitrary parameter scaling and type managment.
+>need to properly implement arbitrary parameter scaling and type managment.
 
 my current thinking is that we can afford to have a large set of parameters defined, 
 distinguished according to their algorithmic use, e.g. 
@@ -50,5 +50,8 @@ probably just using supercollider (sorry!)
 
 -ez
 
+//////////////////
+13/11/24
 
-
+procedural table tuning...
+e.g. "roll the big dice"
