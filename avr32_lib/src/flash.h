@@ -12,11 +12,6 @@
 //#include "filesystem.h"
 #include "types.h"
 
-/// target address of firmware in internal flash
-/// NOTE: this is hardcoded ASM in bootloader main() !
-/// DO NOT CHANGE
-#define FIRMWARE_FLASH_ADDRESS 0x80009000
-
 // bytes available for application-specific storage
 // (increase as needed)
 #define APP_FLASH_BYTES 0x20000

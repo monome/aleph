@@ -97,7 +97,9 @@ CPPFLAGS = \
        -D BOARD=USER_BOARD -D ARCH_AVR32=1 -D UHD_ENABLE
 
 # Extra flags to use when linking
-LDFLAGS = -nostartfiles -Wl,-e,_trampoline
+# FIXME: parameterisze this
+# LDFLAGS = -nostartfiles -Wl,-e,_trampoline
+LDFLAGS = -nostartfiles
 
 # for external heap:
 # LDFLAGS += --gc-sections,--defsym,__heap_size__=0x00080000	

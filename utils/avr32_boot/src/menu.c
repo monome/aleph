@@ -29,10 +29,10 @@
 page_t pages[NUM_PAGES] = {
   // list:
   { "DSP", (keyHandler_t)&key_handler_dsp, (redraw_t)&redraw_dsp, 0, eModeNone, -1, 
-    { ENC_THRESH_PAGESCROLL,  ENC_THRESH_LISTSCROLL, 4, 4 } },
+    { ENC_THRESH_LISTSCROLL, ENC_THRESH_PAGESCROLL, 4, 4 } },
 
   { "FIRMWARE", (keyHandler_t)&key_handler_fw, (redraw_t)&redraw_fw, 0, eModeNone, -1, 
-    { ENC_THRESH_PAGESCROLL,  ENC_THRESH_LISTSCROLL, 4, 4 } },
+    { ENC_THRESH_LISTSCROLL, ENC_THRESH_PAGESCROLL, 4, 4 } },
 };
 
 // pointer to current page

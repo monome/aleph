@@ -55,9 +55,9 @@
 //====  variables
 
 //  flag to wait for startup button press
-static u8 startup = 1;
+// static u8 startup = 1;
 // mode switch
-static u8 mode = 0;
+// static u8 mode = 0;
 
 //=================================================
 //==== declarations
@@ -142,18 +142,6 @@ static void check_events(void) {
 
   if( get_next_event(&e) ) {
 
-    if(startup) {
-      if( e.eventType == kEventSwitchDown0
-	  || e.eventType == kEventSwitchDown1
-	  || e.eventType == kEventSwitchDown2
-	  || e.eventType == kEventSwitchDown3
-	  || e.eventType == kEventSwitchDown4
-	  ) {  
-	startup = 0;
-	/// FIXME: should go to some default UI state here
-	return;
-      }
-    } else {
     
       switch(e.eventType) {
 
@@ -167,46 +155,46 @@ static void check_events(void) {
       case kEventSwitchUp0:
 	menu_handleKey(eKeyFnUpA, e.eventData);
 	break;
-      case kEventSwitchDown1:
-	menu_handleKey(eKeyFnDownB, e.eventData);
-	break;
-      case kEventSwitchUp1:
-	menu_handleKey(eKeyFnUpB, e.eventData);
-	break;
-      case kEventSwitchUp2:
-	menu_handleKey(eKeyFnUpC, e.eventData);
-	break;
+ //      case kEventSwitchDown1:
+	// menu_handleKey(eKeyFnDownB, e.eventData);
+	// break;
+ //      case kEventSwitchUp1:
+	// menu_handleKey(eKeyFnUpB, e.eventData);
+	// break;
+ //      case kEventSwitchUp2:
+	// menu_handleKey(eKeyFnUpC, e.eventData);
+	// break;
 
-	// mode switch
-      case kEventSwitchDown4:
-	mode ^= 1;
-	if(mode) { gpio_set_gpio_pin(LED_MODE_PIN); }
-	else { gpio_clr_gpio_pin(LED_MODE_PIN); }
-	menu_handleKey(eKeyMode, e.eventData);
-	break;
-	// power switch
-      case kEventSwitchDown5:
-	//	screen_line(0, 0, "powering down!", 0x3f);
-	//	// print_dbg("\r\n AVR32 received power down switch event");
-	screen_refresh();
-	gpio_clr_gpio_pin(POWER_CTL_PIN);
-	break;
-      case kEventEncoder0:
-			// // print_dbg("\r\n encoder 0");
-      	if(e.eventData > 0) {
-      	  menu_handleKey(eKeyEncUpD, e.eventData);
-      	} else {
-      	  menu_handleKey(eKeyEncDownD, e.eventData);
-      	}
-      	break;
-      case kEventEncoder1:
-	// // print_dbg("\r\n encoder 1");
-	if(e.eventData > 0) {
-	  menu_handleKey(eKeyEncUpC, e.eventData);
-	} else {
-	  menu_handleKey(eKeyEncDownC, e.eventData);
-	}
-	break;
+	// // mode switch
+ //      case kEventSwitchDown4:
+	// // mode ^= 1;
+	// // if(mode) { gpio_set_gpio_pin(LED_MODE_PIN); }
+	// // else { gpio_clr_gpio_pin(LED_MODE_PIN); }
+	// menu_handleKey(eKeyMode, e.eventData);
+	// break;
+	// // power switch
+ //      case kEventSwitchDown5:
+	// //	screen_line(0, 0, "powering down!", 0x3f);
+	// //	// print_dbg("\r\n AVR32 received power down switch event");
+	// // screen_refresh();
+	// gpio_clr_gpio_pin(POWER_CTL_PIN);
+	// break;
+ //      case kEventEncoder0:
+	// 		// // print_dbg("\r\n encoder 0");
+ //      	if(e.eventData > 0) {
+ //      	  menu_handleKey(eKeyEncUpD, e.eventData);
+ //      	} else {
+ //      	  menu_handleKey(eKeyEncDownD, e.eventData);
+ //      	}
+ //      	break;
+ //      case kEventEncoder1:
+	// // // print_dbg("\r\n encoder 1");
+	// if(e.eventData > 0) {
+	//   menu_handleKey(eKeyEncUpC, e.eventData);
+	// } else {
+	//   menu_handleKey(eKeyEncDownC, e.eventData);
+	// }
+	// break;
       case kEventEncoder2:
 	// // print_dbg("\r\n encoder 2");
 	if(e.eventData > 0) {
@@ -225,7 +213,6 @@ static void check_events(void) {
 	break;
 
 
-      }
     } // if event
   } // if !startup
 }

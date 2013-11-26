@@ -45,7 +45,6 @@ CSRCS = \
 	avr32/drivers/pm/power_clocks_lib.c                \
 	avr32/drivers/spi/spi.c                            \
         avr32/drivers/tc/tc.c                          \
-	avr32/drivers/usart/usart.c                        \
 	avr32/drivers/wdt/wdt.c                        \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi.c \
 	avr32/components/memory/sd_mmc/sd_mmc_spi/sd_mmc_spi_mem.c \
@@ -62,6 +61,7 @@ CSRCS = \
 	$(ALEPH_AVR32)/src/init.c	\
 	$(ALEPH_AVR32)/src/interrupts.c \
 	$(ALEPH_AVR32)/src/key_handler.c \
+	$(ALEPH_AVR32)/src/main.c \
 	$(ALEPH_AVR32)/src/memory.c \
 	$(ALEPH_AVR32)/src/menu.c \
 	$(ALEPH_AVR32)/src/parse_hex.c \
@@ -70,7 +70,7 @@ CSRCS = \
 	$(ALEPH_AVR32)/src/simple_string.c \
 	$(ALEPH_AVR32)/src/switches.c \
 	$(ALEPH_AVR32)/src/timers.c \
-	$(ALEPH_AVR32)/src/main.c \
+	$(ALEPH_AVR32)/src/util.c \
 	$(ALEPH_AVR32)/src/watchdog.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_access.c \
 	$(ALEPH_AVR32)/src/fat_io_lib/fat_cache.c \
@@ -121,9 +121,9 @@ INC_PATH = \
 	$(ALEPH_AVR32)	           \
 	$(ALEPH_AVR32)/src	   \
 	$(ALEPH_AVR32)/src/fat_io_lib \
+	$(ALEPH_AVR32)/src/libfixmath \
 	$(ALEPH_AVR32)/conf	   \
-	$(ALEPH_COMMON)	           \
-	$(ALEPH_COMMON)/libfixmath \
+	$(ALEPH_COMMON)	           
 
 # Additional search paths for libraries.
 LIB_PATH = 

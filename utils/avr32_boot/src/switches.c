@@ -19,22 +19,22 @@
 //u8 sw4State = 0;
 ////
 
-static const U8 kSwitchPins[NUM_SW] = {
+static const U8 kSwitchPins[1] = {
   SW0_PIN,
-  SW1_PIN,
-  SW2_PIN,
-  SW3_PIN,
-  SW_MODE_PIN,
-  SW_POWER_PIN,
+  // SW1_PIN,
+  // SW2_PIN,
+  // SW3_PIN,
+  // SW_MODE_PIN,
+  // SW_POWER_PIN,
 };
 
-static const eEventType kSwitchEvents[NUM_SW][2] = {
+static const eEventType kSwitchEvents[1][2] = {
   { kEventSwitchDown0, kEventSwitchUp0 },
-  { kEventSwitchDown1, kEventSwitchUp1 },
-  { kEventSwitchDown2, kEventSwitchUp2 },
-  { kEventSwitchDown3, kEventSwitchUp3 },
-  { kEventSwitchDown4, kEventSwitchUp4 },
-  { kEventSwitchDown5, kEventSwitchUp5 },
+  // { kEventSwitchDown1, kEventSwitchUp1 },
+  // { kEventSwitchDown2, kEventSwitchUp2 },
+  // { kEventSwitchDown3, kEventSwitchUp3 },
+  // { kEventSwitchDown4, kEventSwitchUp4 },
+  // { kEventSwitchDown5, kEventSwitchUp5 },
 };
 
 

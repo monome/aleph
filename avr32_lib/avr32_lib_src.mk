@@ -114,4 +114,5 @@ INC_PATH += \
 	$(ALEPH_AVR32)src/usb/ftdi   \
 	$(ALEPH_AVR32)src/usb/hid \
 	$(ALEPH_AVR32)src/usb/midi   \
-	$(ALEPH_AVR32)src/libfixmath
+	$(ALEPH_AVR32)src/libfixmath \
+	$(ALEPH_COMMON)

@@ -2,76 +2,76 @@
 
 void module_set_param(u32 idx, pval v) {
   switch(idx) {
-    // delayN line params
+    // delay line params
   case eParam_delay0 :
-    delayN_set_delayN_samp(&(lines[0]), v.u);
+    delay_set_delay_samp(&(lines[0]), v.u);
     break;
   case eParam_delay1 :
-    delayN_set_delayN_samp(&(lines[1]), v.u);
+    delay_set_delay_samp(&(lines[1]), v.u);
     break;
   case eParam_loop0 :
-    delayN_set_loop_samp(&(lines[0]), v.u);
+    delay_set_loop_samp(&(lines[0]), v.u);
     break;
   case eParam_loop1 :
-    delayN_set_loop_samp(&(lines[1]), v.u);
+    delay_set_loop_samp(&(lines[1]), v.u);
     break;
   case eParam_pos_write0 :
-    delayN_set_pos_write_samp(&(lines[0]), v.u);
+    delay_set_pos_write_samp(&(lines[0]), v.u);
     break;
   case eParam_pos_write1 :
-    delayN_set_pos_write_samp(&(lines[1]), v.u);
+    delay_set_pos_write_samp(&(lines[1]), v.u);
     break;
   case eParam_pos_read0 :
-    delayN_set_pos_read_samp(&(lines[0]), v.u);
+    delay_set_pos_read_samp(&(lines[0]), v.u);
     break;
   case eParam_pos_read1 :
-    delayN_set_pos_read_samp(&(lines[1]), v.u);
+    delay_set_pos_read_samp(&(lines[1]), v.u);
     break;
   case eParam_run_write0 :
-    delayN_set_run_write(&(lines[0]), v.fr);
+    delay_set_run_write(&(lines[0]), v.fr);
     break;
   case eParam_run_write1 :
-    delayN_set_run_write(&(lines[1]), v.fr);
+    delay_set_run_write(&(lines[1]), v.fr);
     break;
   case eParam_run_read0 :
-    delayN_set_run_read(&(lines[0]), v.fr);
+    delay_set_run_read(&(lines[0]), v.fr);
     break;
   case eParam_run_read1 :
-    delayN_set_run_read(&(lines[1]), v.fr);
+    delay_set_run_read(&(lines[1]), v.fr);
     break;
   case eParam_rate0 :
     /// FIXME
-    //    delayN_set_rate(&(lines[0]), v.fix);
+    //    delay_set_rate(&(lines[0]), v.fix);
     break;
   case eParam_rate1 :
     /// FIXME
-    //    delayN_set_rate(&(lines[1]), v.fix);
+    //    delay_set_rate(&(lines[1]), v.fix);
     break;
   case eParam_write0 :
-    delayN_set_write(&(lines[0]), v.s > 0);
+    delay_set_write(&(lines[0]), v.s > 0);
     break;
   case eParam_write1 :
-    delayN_set_write(&(lines[1]), v.fr > 0);
+    delay_set_write(&(lines[1]), v.fr > 0);
     break;
   case eParam_pre0 :
     if(v.fr == FR32_MAX) {
       // negative == full
-      delayN_set_pre(&(lines[0]), -1);
+      delay_set_pre(&(lines[0]), -1);
     } else {
-      delayN_set_pre(&(lines[0]), v.fr);
+      delay_set_pre(&(lines[0]), v.fr);
     }
     break;
   case eParam_pre1 :
     if(v.fr == FR32_MAX) {
       // negative == full
-      delayN_set_pre(&(lines[1]), -1);
+      delay_set_pre(&(lines[1]), -1);
     } else {
-      delayN_set_pre(&(lines[1]), v.fr);
+      delay_set_pre(&(lines[1]), v.fr);
     }
     break;
     // filter params
   case eParam_coeff0 :
-    filter_svf_set_coeff( &(svf[0]), v.fr );
+    filter_svf_set_coeff(&(svf[0]), v.fr );
     break;
   case eParam_coeff1 :
     filter_svf_set_coeff(&(svf[1]), v.fr );
@@ -106,14 +106,24 @@ void module_set_param(u32 idx, pval v) {
   case eParam_notch1 :
     filter_svf_set_notch(&(svf[1]), v.fr);
     break;
+
     // filter balance
-  case eParam_mix0 :
+  case eParam_fwet0 :
+    mix_fwet[0] = v.fr;
     break;
-    mix_svf[0] = v.fr;
+
+  case eParam_fwet1 :
+    mix_fwet[1] = v.fr;
     break;
-  case eParam_mix1 :
-    mix_svf[1] = v.fr;
+
+  case eParam_fdry0 :
+    mix_fdry[0] = v.fr;
     break;
+
+  case eParam_fdry1 :
+    mix_fdry[1] = v.fr;
+    break;
+
     /// mix points
   case eParam_adc0_del0 :
     mix_adc_del[0][0] = v.fr;

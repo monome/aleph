@@ -2,6 +2,7 @@
 #include <string.h>
 // ASF
 #include "flashc.h"
+//#include "print_funcs.h"
 #include "power_clocks_lib.h"
 #include "wdt.h"
 // aleph-bees
@@ -12,6 +13,7 @@
 #include "types.h"
 // boot
 #include "parse_hex.h"
+#include "util.h"
 
 //-----------------------------------
 //----  define, typedef
@@ -22,6 +24,10 @@
 #define FIRSTRUN_INIT 0x76543210
 // size of RAM buffer for firmware image (.elf)
 #define FIRMWARE_MAX_BYTES 0x80000 // 512K
+/// target address of firmware in internal flash
+/// NOTE: this is hardcoded ASM in bootloader main() !
+/// DO NOT CHANGE
+#define FIRMWARE_FLASH_ADDRESS 0x80009000
 
 // storage layout of default data in nonvolatile memory
 typedef const struct {
@@ -118,6 +124,8 @@ void flash_read_ldr(void) {
 extern u8 flash_write_hex_record(u8* data) {
   static hexRecord_t rec;
   static u32 addrOff = 0;
+  static u32 dst;
+  static char hexBuf[9] = {0,0,0,0,0,0,0,0,0};
   int err;
   err = parse_raw_hex_record(data, &rec);
   if(err) {
@@ -136,7 +144,18 @@ extern u8 flash_write_hex_record(u8* data) {
     case HEX_DATA:
       /* // print_dbg("\r\n writing firmware to flash at address: "); */
       /* // print_dbg_hex(addrOff + rec.address); */
-      flashc_memcpy( (void*)(addrOff + rec.address), rec.data, rec.count, 1);
+      dst = addrOff + rec.address;
+      if(dst < FIRMWARE_FLASH_ADDRESS) {
+	// don't allow writes to anything below the runtime location!
+	// this is where the bootloader lives!
+	// app data goes at the end of flash.
+	screen_line(0, 6, "WARNING:", 0xf);
+	screen_line(0, 7, "scary address! ", 0xf);
+	uint_to_hex_ascii( hexBuf, dst);
+	screen_line(64, 7, hexBuf, 0xf);
+      } else {
+	flashc_memcpy( (void*)(dst), rec.data, rec.count, 1);
+      }
       break;
     default:
       ;;

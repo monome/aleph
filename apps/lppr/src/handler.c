@@ -78,10 +78,10 @@ static s32 scale_knob_value(s32 val) {
 
   // clear the main region if this is a new touch
 static inline void check_touch(etype et) {
-  print_dbg("\r\n lppr_check_touch, event type: ");
-  print_dbg_ulong(et);
-  print_dbg(" , previous touched value: ");
-  print_dbg_ulong(touched);
+  //  print_dbg("\r\n lppr_check_touch, event type: ");
+  //  print_dbg_ulong(et);
+  //  print_dbg(" , previous touched value: ");
+  //  print_dbg_ulong(touched);
   if(touched != et) {
     touchedThis = 1;
     touched = et;
@@ -115,7 +115,6 @@ static void handle_Switch1(s32 data) {
 static void handle_Switch2(s32 data) {
   //  check_touch(kEventSwitch2);
   if(data > 0) {
-    //    if(touchedThis) { ;; }
     // record loop on line 1
     ctl_loop_record(1);
   } 
@@ -125,34 +124,38 @@ static void handle_Switch2(s32 data) {
 static void handle_Switch3(s32 data) {
   //  check_touch(kEventSwitch3);
   if(data > 0) {
-    if(touchedThis) { ;; }
     // record loop on line 2
     ctl_loop_playback(1);
   }
   render_sw_on(3, data > 0);
 }
     
+/// mode switch
+static void handle_Switch4(s32 data) {
+  check_touch(kEventSwitch4);
+}
+    
+
+// footswitch 1    
 static void handle_Switch6(s32 data) {
   check_touch(kEventSwitch6);
-  //    print_dbg("wtf footswitch 1");
   if(data > 0) {
     ctl_loop_record(1);
   } 
   render_sw_on(2, data > 0);
 }
     
+// footswitch 2
 static void handle_Switch7(s32 data) {
   check_touch(kEventSwitch7);
-  //    print_dbg("wtf footswitch 2");
   if(data > 0) {
     ctl_loop_playback(1);
   }
   render_sw_on(3, data > 0);
 }
     
+// feedback 
 static void handle_Encoder0(s32 data) {
-  print_dbg("\r\n handle encoder 0, data: ");
-  print_dbg_hex(data);
   check_touch(kEventEncoder0);
   if(touchedThis) {
     render_touched_fb(0);
@@ -160,6 +163,7 @@ static void handle_Encoder0(s32 data) {
   ctl_inc_fb(0, scale_knob_value(data));
 }
 
+// filter mix, line 1
 static void handle_Encoder1(s32 data) {
   check_touch(kEventEncoder1);
   if(touchedThis) {
@@ -218,13 +222,12 @@ void lppr_assign_event_handlers(void) {
   app_event_handlers[ kEventEncoder1 ]	= &handle_Encoder1 ;
   app_event_handlers[ kEventEncoder2 ]	= &handle_Encoder2 ;
   app_event_handlers[ kEventEncoder3 ]	= &handle_Encoder3 ;
-  //// FIXME: use mode / power keys
   app_event_handlers[ kEventSwitch0 ]	= &handle_Switch0 ;
   app_event_handlers[ kEventSwitch1 ]	= &handle_Switch1 ;
   app_event_handlers[ kEventSwitch2 ]	= &handle_Switch2 ;
   app_event_handlers[ kEventSwitch3 ]	= &handle_Switch3 ;
-  //// FIXME: use mode / power keys
-  //  app_event_handlers[ kEventSwitch4 ]	= &handle_Switch4 ;
+  app_event_handlers[ kEventSwitch4 ]	= &handle_Switch4 ;
+  //// FIXME: use power key for soft shutdown + save state
   //  app_event_handlers[ kEventSwitch5 ]	= &handle_Switch5 ;
   app_event_handlers[ kEventSwitch6 ]	= &handle_Switch6 ;
   app_event_handlers[ kEventSwitch7 ]	= &handle_Switch7 ;

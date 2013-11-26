@@ -1,7 +1,7 @@
 /* memory.h
    avr32
    aleph
-
+ 
    a hacky sort of interface to explicitly allocate regions of SRAM
    like malloc() without the free() !
 */
@@ -82,7 +82,7 @@ heap_t alloc_mem(u32 bytes) {
 void sram_test(u32 numBytes, u32 offset) {
 
   unsigned long sram_size, progress_inc, i, j, tmp, noErrors = 0;
-  volatile unsigned long *sram = SRAM + offset;
+  volatile unsigned long *sram = (unsigned long*)SRAM + offset;
   
   //sram_size = SRAM_SIZE >> 2;
   sram_size = numBytes >> 2; // count of 32-bit words

@@ -32,17 +32,17 @@ extern void key_handler_dsp(uiKey_t key, s16 val) {
   /*   files_store_default_dsp(curPage->selected); */
   /*   break; */
     //// encoder A: scroll pages
-  case eKeyEncUpA:
+  case eKeyEncUpB:
     scroll_page(1);
     break;
-  case eKeyEncDownA:
+  case eKeyEncDownB:
     scroll_page (-1);
     break;
     //// encoder B: scroll selection
-  case eKeyEncUpB:
+  case eKeyEncUpA:
     scroll_select_clip(1,  files_get_dsp_count() );
     break;
-  case eKeyEncDownB:
+  case eKeyEncDownA:
     scroll_select_clip(-1, files_get_dsp_count() );
     break;
   default:
@@ -62,18 +62,18 @@ extern void key_handler_fw(uiKey_t key, s16 val) {
     files_write_firmware(curPage->selected);
     break;
     //// encoder A: scroll pages
-  case eKeyEncUpA:
+  case eKeyEncUpB:
     scroll_page(1);
     break;
-  case eKeyEncDownA:
+  case eKeyEncDownB:
     scroll_page (-1);
     break;
     //// encoder B: scroll selection
-  case eKeyEncUpB:
-    scroll_select_clip(1,  files_get_dsp_count() );
+  case eKeyEncUpA:
+    scroll_select_clip(1,  files_get_firmware_count() );
     break;
-  case eKeyEncDownB:
-    scroll_select_clip(-1, files_get_dsp_count() );
+  case eKeyEncDownA:
+    scroll_select_clip(-1, files_get_firmware_count() );
     break;
   default:
     ;; // nothing
