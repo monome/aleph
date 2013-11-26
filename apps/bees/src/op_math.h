@@ -33,12 +33,17 @@ typedef s16 io_t;
 /* #define OP_SDIV(a, b) (fix16_sdiv((a), (b))) */
 
 // standard (overflow)
-#define OP_ADD(a, b) (a + b)
-#define OP_SUB(a, b) (a - b)
-#define OP_MUL(a, b) (a * b)
-#define OP_DIV(a, b) (a / b)
+#define OP_ADD(a, b) ((a) + (b))
+#define OP_SUB(a, b) ((a) - (b))
+#define OP_MUL(a, b) ((a) * (b))
+#define OP_DIV(a, b) ((a) / (b))
+
 // saturating
-///// FIXME
+///// FIXME! probably need inline ASM
+// satadd.w 	Rd, Rx, Ry 
+// mulsatwh.w 	Rd, Rx, Ry 
+// etc
+///// for now, ignore! haha good joke
 #define OP_SADD(a, b) OP_ADD(a,b)
 #define OP_SSUB(a, b) OP_SUB(a,b)
 #define OP_SMUL(a, b) OP_MUL(a,b)
@@ -61,6 +66,6 @@ typedef s16 io_t;
 
 //----- conversion
 ///// print formatted string
-#define OP_PRINT(buf, x) itoa_whole_lj((x), (buf))
+#define OP_PRINT(buf, x) itoa_whole((x), (buf), 6)
 
 #endif

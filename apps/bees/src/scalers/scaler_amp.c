@@ -4,7 +4,7 @@
 #include "memory.h"
 // bees
 #include "files.h"
-#include "scaler.h"
+#include "param_scaler.h"
 #include "scaler_amp.h"
 
 // table size
@@ -32,7 +32,7 @@ static s32 scaler_amp_rep(io_t in) {
 //---- ectern funcs
 // init function
 // this should only be called once
-void scaler_amp_init(scaler* sc, const ParamDesc* desc) {
+void scaler_amp_init(ParamScaler* sc, const ParamDesc* desc) {
   // only allow one initialzation
   if(initFlag) { return; } else { initFlag = 1; }
   // check descriptor

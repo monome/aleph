@@ -33,7 +33,7 @@ void print_fix16(char* buf , fix16_t x) {
   static char * p;
   // char sign;
   int y, i;
-  sign = BIT_SIGN(x);
+  sign = BIT_SIGN_32(x);
   p = buf;
 
   if(sign == 0)  {
@@ -96,11 +96,11 @@ void itoa_whole(int val, char* buf, int len) {
     }
     return;
   }
-  sign = BIT_SIGN(val);
+  sign = BIT_SIGN_32(val);
 
   if ( sign ) {
     len--;
-    val = BIT_INVERT(val) + 1; // FIXME: this will wrap at 0xffffffff
+    val = BIT_INVERT_32(val) + 1; // FIXME: this will wrap at 0xffffffff
   }
 
   u = (unsigned int)val;
@@ -120,6 +120,37 @@ void itoa_whole(int val, char* buf, int len) {
 }
 
 
+
+void itoa_fract(int val, char* buf) {  
+  static char* p;
+  int i;
+  unsigned int mul;
+
+  p = buf;
+  u = (unsigned int)val;
+  
+  for(i=0; i<FIX_DIG_LO; i++) {
+    mul = places[i];
+    a = (u / mul);
+    if (a > 9) { a = 9; }
+    u -= (mul * a);
+    *p++ = a + '0';
+  } 
+}
+
+
+
+
+
+
+
+
+
+
+/////////
+/////////////
+/// FIXME
+#if 0
 // format whole part, left justified, no length argument (!)
 int itoa_whole_lj(int val, char* buf) {
   static char* p;
@@ -132,14 +163,14 @@ int itoa_whole_lj(int val, char* buf) {
     return 1;
   }
 
-  sign = BIT_SIGN(val);
+  sign = BIT_SIGN_32(val);
   p = buf;
 
   if ( sign ) {
     *p = '-';
     ++p;
     ++len;
-    val = BIT_INVERT(val) + 1; // FIXME: this will wrap at 0xffffffff
+    val = BIT_INVERT_32(val) + 1; // FIXME: this will wrap at 0xffffffff
   }
 
   u = (unsigned int)val;
@@ -185,20 +216,4 @@ int itoa_whole_lj(int val, char* buf) {
 
   return len;
 }
-
-void itoa_fract(int val, char* buf) {  
-  static char* p;
-  int i;
-  unsigned int mul;
-
-  p = buf;
-  u = (unsigned int)val;
-  
-  for(i=0; i<FIX_DIG_LO; i++) {
-    mul = places[i];
-    a = (u / mul);
-    if (a > 9) { a = 9; }
-    u -= (mul * a);
-    *p++ = a + '0';
-  } 
-}
+#endif

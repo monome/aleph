@@ -45,12 +45,12 @@ void set_param_value(u32 idx, io_t val) {
   /*   val = net->params[idx].desc.min; */
   /* } */
 
+  net->params[idx].data.value = val;
+  net->params[idx].data.changed = 1;
+  // scale
 
-  // FIXME: use scaler
-  //net->params[idx].data.value = val;
-  //  net->params[idx].data.changed = 1;
-
-  ctl_param_change(idx, (u32)val);
+  
+  ctl_param_change(idx, net->params[idx].data.value);
 }
 
 
@@ -122,15 +122,15 @@ u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
   // store type
   *dst = pdesc->type;
   ++dst;
-  /* // store min */
-  /* dst = pickle_32(pdesc->min, dst); */
-  /* // store max */
-  /* dst = pickle_32(pdesc->max, dst); */
+  // store min
+  dst = pickle_32(pdesc->min, dst);
+  // store max
+  dst = pickle_32(pdesc->max, dst);
   return dst;
 }
 
 const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
-  //  u32 val;
+  u32 val;
   u8 i;
   // store label string
   for(i=0; i<PARAM_LABEL_LEN; ++i) {
@@ -157,19 +157,24 @@ const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
   // print_dbg("\r\n unpickled param type: ");
   // print_dbg_ulong((u32)(pdesc->type));
   
-  /* // store min */
-  /* src = unpickle_32(src, &val); */
-  /* pdesc->min = val; */
+  // store min
+  src = unpickle_32(src, &val);
+  pdesc->min = val;
 
-  /* // print_dbg("\r\n unpickled param min: "); */
-  /* // print_dbg_hex(pdesc->min); */
+  // print_dbg("\r\n unpickled param min: ");
+  // print_dbg_hex(pdesc->min);
 
-  /* // store max */
-  /* src = unpickle_32(src, &val); */
-  /* pdesc->max = val; */
+  // store max
+  src = unpickle_32(src, &val);
+  pdesc->max = val;
 
   // print_dbg("\r\n unpickled param max: ");
   // print_dbg_hex(pdesc->max);
 
   return src;
+}
+
+
+// fill buffer with readable value string
+void get_param_string(char* dst, u32 idx) {
 }

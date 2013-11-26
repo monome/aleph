@@ -24,17 +24,18 @@
 #define FR32_MAX  0x7fffffff
 #define FIX16_ONE 0x00010000
 
-#if ARCH_BFIN
-#else
-
 #define FRACT32_MAX     ((fract32)0x7fffffff)    /* max value of a fract32 */
 #define FRACT32_MIN     ((fract32)0x80000000)    /* min value of a fract32 */
-#endif
 
-#define BIT_SIGN(x) ((x) & 0x80000000)
-#define BIT_INVERT(x) ( (s32)( ((x) ^ 0xffffffff) + 1) )
-#define BIT_ABS(x) (BIT_SIGN(x) ? BIT_INVERT(x) : (x))
-#define BIT_NEG_ABS(x) (BIT_SIGN(x) ? (x) : BIT_INVERT(x))
+#define BIT_SIGN_32(x) ((x) & 0x80000000)
+#define BIT_INVERT_32(x) ( (s32)( ((x) ^ 0xffffffff) + 1) )
+#define BIT_ABS_32(x) (BIT_SIGN_32(x) ? BIT_INVERT_32(x) : (x))
+#define BIT_NEG_ABS_32(x) (BIT_SIGN_32(x) ? (x) : BIT_INVERT_32(x))
+
+#define BIT_SIGN_16(x) ((x) & 0x8000)
+#define BIT_INVERT_16(x) ( (s16)( ((x) ^ 0xffff) + 1) )
+#define BIT_ABS_16(x) (BIT_SIGN_16(x) ? BIT_INVERT_16(x) : (x))
+#define BIT_NEG_ABS_16(x) (BIT_SIGN_16(x) ? (x) : BIT_INVERT_16(x))
 
 // macros for fract32/fix16 conversion
 #define FIX16_TO_U16(x) (u16)((x) >> 16)

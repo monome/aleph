@@ -691,7 +691,13 @@ u8 net_get_in_play(u32 inIdx) {
 
 // add a new parameter
 void net_add_param(u32 idx, const ParamDesc * pdesc) {
+  // copyp descriptor, hm
   memcpy( &(net->params[net->numParams].desc), (const void*)pdesc, sizeof(ParamDesc) );
+  ///////////////
+  // initialize scaler
+  
+  ////////////
+
   net->params[net->numParams].idx = idx; 
   net->params[net->numParams].preset = 0; 
   net->numParams += 1;

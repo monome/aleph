@@ -19,8 +19,7 @@
 #include "net.h"
 #include "op.h"
 #include "op_derived.h"
-//#include "param.h"
-//#include "scene_types.h"
+#include "param_scaler.h"
 #include "types.h"
 #include "util.h"
 
@@ -56,9 +55,11 @@ typedef struct _onode {
 } __attribute__((packed)) onode_t;
 
 // parameter I/O node
+//// this is 
 typedef struct _pnode {
   ParamDesc desc;
   ParamData data;
+  ParamScaler scale;
   u8 idx;
   u8 preset;
 } __attribute__((packed)) pnode_t;
