@@ -47,9 +47,9 @@ void set_param_value(u32 idx, io_t val) {
 
   net->params[idx].data.value = val;
   net->params[idx].data.changed = 1;
+
   // scale
-  
-  
+  ctl_param_change(idx, scaler_get_value( &(net->params[idx].scaler), val) );
   //  ctl_param_change(idx, net->params[idx].data.value);
 }
 

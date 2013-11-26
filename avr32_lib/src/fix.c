@@ -90,8 +90,8 @@ void print_fix16(char* buf , fix16_t x) {
 void itoa_whole(int val, char* buf, int len) {
   static char* p;
 
-  print_dbg("\r\n printing integer, val: 0x");
-  print_dbg_hex(val);
+  //  print_dbg("\r\n printing integer, val: 0x");
+  //  print_dbg_hex(val);
 
   p = buf + len - 1; // right justify; start at end
   if(val == 0) {
@@ -107,8 +107,8 @@ void itoa_whole(int val, char* buf, int len) {
   if ( sign ) {
     len--;
     val = BIT_INVERT_32(val);
-    print_dbg("\r\n printing negative integer, val after bitinvert: 0x");
-    print_dbg_hex(val);
+    //    print_dbg("\r\n printing negative integer, val after bitinvert: 0x");
+    //    print_dbg_hex(val);
   }
   u = (unsigned int)val;
   //// FIXME: pretty slow
@@ -126,8 +126,6 @@ void itoa_whole(int val, char* buf, int len) {
   if(sign) { *buf = '-'; }
 }
 
-
-
 void itoa_fract(int val, char* buf) {  
   static char* p;
   int i;
@@ -144,13 +142,6 @@ void itoa_fract(int val, char* buf) {
     *p++ = a + '0';
   } 
 }
-
-
-
-
-
-
-
 
 
 

@@ -26,7 +26,9 @@ scaler_init_fn scaler_init_pr[eParamNumTypes] = {
 //-------------------------------,
 //---- extern function
 void scaler_init(ParamScaler* sc, const ParamDesc* desc) {
-  (*(scaler_init_pr[desc->type]))(sc, desc);
+  if(scaler_init_pr[desc->type] != NULL) {
+    (*(scaler_init_pr[desc->type]))(sc, desc);
+  }
 }
 
 s32 scaler_get_value(ParamScaler* sc, io_t in) {

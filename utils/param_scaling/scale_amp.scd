@@ -27,7 +27,6 @@ f = i.collect({ |j|
 	})
 	
 });
-//f.plot("log");
 
 // find a breakpoint based on slope, linear-ize below it 
 /// FIXME: would be better to match the slope with a polynomial interpolation.
@@ -51,7 +50,7 @@ b = block { |break|
 };
 
 // this is the index of the inflection point
- b.postln;
+b.postln;
 
 // linear fill
 ~bval = f[b];
@@ -63,8 +62,11 @@ b.do({ arg j;
 //// table for output values
 /// type is 1.31, unit is amplitude
 v = f.collect({ |x| 
+	x.postln;
 	(x * 0x7fffffff).asInteger;
 });
+
+v.do({ |x| x.asHexString.postln; });
 
 // table for UI representation
 // type is 16.16, unit is decibels
@@ -84,7 +86,7 @@ r = v.collect({ |x|
 r.do({ |x| x.asHexString.postln; });
 
 ////// output to files
-/// binary, little endian
+/// binary, big endian
 
 // value
 ~vf = File.open(File.getcwd ++ "/scaler_amp_val.bin", "wb");
@@ -93,6 +95,7 @@ r.do({ |x| x.asHexString.postln; });
 // write data
 v.do({ |x| ~vf.putInt32(x) });
 ~vf.close;
+
 
 // representation
 ~rf = File.open(File.getcwd ++ "/scaler_amp_rep.bin", "wb");

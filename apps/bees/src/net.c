@@ -709,7 +709,7 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
   memcpy( &(net->params[net->numParams].desc), (const void*)pdesc, sizeof(ParamDesc) );
   ///////////////
   // initialize scaler
-  
+  scaler_init(&(net->params[net->numParams].scaler), pdesc);
   ////////////
 
   net->params[net->numParams].idx = idx; 
