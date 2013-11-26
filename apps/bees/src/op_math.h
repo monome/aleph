@@ -66,6 +66,6 @@ typedef s16 io_t;
 
 //----- conversion
 ///// print formatted string
-#define OP_PRINT(buf, x) itoa_whole((x), (buf), 6)
+#define OP_PRINT(buf, x) itoa_whole((s32)(x), (buf), 6)
 
 #endif

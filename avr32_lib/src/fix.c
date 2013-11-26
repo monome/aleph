@@ -13,6 +13,8 @@ http://embeddedgurus.com/stack-overflow/2011/02/efficient-c-tip-13-use-the-modul
  
  */
 
+#include "print_funcs.h"
+
 #include "fix.h"
 
 //// comon temp variables
@@ -87,6 +89,10 @@ void print_fix16(char* buf , fix16_t x) {
 // format whole part, right justified
 void itoa_whole(int val, char* buf, int len) {
   static char* p;
+
+  print_dbg("\r\n printing integer, val: 0x");
+  print_dbg_hex(val);
+
   p = buf + len - 1; // right justify; start at end
   if(val == 0) {
     *p = '0'; p--;
@@ -100,11 +106,12 @@ void itoa_whole(int val, char* buf, int len) {
 
   if ( sign ) {
     len--;
-    val = BIT_INVERT_32(val) + 1; // FIXME: this will wrap at 0xffffffff
+    val = BIT_INVERT_32(val);
+    print_dbg("\r\n printing negative integer, val after bitinvert: 0x");
+    print_dbg_hex(val);
   }
-
   u = (unsigned int)val;
-
+  //// FIXME: pretty slow
   while(p >= buf) {
     if (u > 0) {
       a = u % 10;
@@ -182,13 +189,6 @@ int itoa_whole_lj(int val, char* buf) {
     ++p;
     ++len;
   }
-
-  /* print_dbg("\r\n printing int: "); */
-  /* print_dbg_ulong(val); */
-  /* print_dbg(" ; len: "); */
-  /* print_dbg_ulong(len); */
-  /* print_dbg(" ; buf: "); */
-  /* print_dbg(buf); */
   
   //// FIXME
   /// ugh, swap digits
@@ -200,20 +200,11 @@ int itoa_whole_lj(int val, char* buf) {
     }
   } else {
     for (i=0; i<(len >>1); i++) {
-      //      print_dbg("\r\n digit: ");
-      //      print_dbg_ulong(i);
       tmp = *(buf + i);
-      //      print_dbg(" ; tmp: ");
-      //      print_dbg_char(tmp);
-      //      print_dbg(" , swap with : ");
-      //      print_dbg_char( *(buf + len - i - 1) );
       *(buf + i) = *(buf + len - i - 1);
       *(buf + len - i - 1) = tmp;
     }
   }
-  //  print_dbg(" ; buf (swap): ");
-  //  print_dbg(buf);
-
   return len;
 }
 #endif

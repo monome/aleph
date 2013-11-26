@@ -59,7 +59,7 @@ typedef struct _onode {
 typedef struct _pnode {
   ParamDesc desc;
   ParamData data;
-  ParamScaler scale;
+  ParamScaler scaler;
   u8 idx;
   u8 preset;
 } __attribute__((packed)) pnode_t;
