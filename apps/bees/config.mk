@@ -30,7 +30,7 @@ CSRCS += \
 	$(APP_DIR)/src/play.c \
 	$(APP_DIR)/src/preset.c \
 	$(APP_DIR)/src/render.c \
-	$(APP_DIR)/src/scaler.c \
+	$(APP_DIR)/src/param_scaler.c \
 	$(APP_DIR)/src/scene.c \
 	$(APP_DIR)/src/ops/op_add.c \
 	$(APP_DIR)/src/ops/op_adc.c \

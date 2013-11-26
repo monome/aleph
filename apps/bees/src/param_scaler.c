@@ -1,4 +1,4 @@
-/* scaler.c
+/* param_scaler.c
    bees
 
    parameter-scaling module.
@@ -6,7 +6,7 @@
 */
 
 
-#include "scaler.h"
+#include "param_scaler.h"
 #include "types.h"
 
 // type-specific includes
@@ -25,14 +25,16 @@ scaler_init_fn scaler_init_pr[eParamNumTypes] = {
 
 //-------------------------------,
 //---- extern function
-void scaler_init(scaler* sc, const ParamDesc* desc) {
-  (*(scaler_init_pr[desc->type]))(sc, desc);
+void scaler_init(ParamScaler* sc, const ParamDesc* desc) {
+  if(scaler_init_pr[desc->type] != NULL) {
+    (*(scaler_init_pr[desc->type]))(sc, desc);
+  }
 }
 
-s32 scaler_get_value(scaler* sc, io_t in) {
+s32 scaler_get_value(ParamScaler* sc, io_t in) {
   return sc->get_val(in);
 }
 
-s32 scaler_get_rep(scaler* sc, io_t in) {
+s32 scaler_get_rep(ParamScaler* sc, io_t in) {
   return sc->get_rep(in);
 }

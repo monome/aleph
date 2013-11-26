@@ -622,14 +622,28 @@ void net_set_in_value(s32 inIdx, io_t val) {
 // can err on the side of caution vs speed
 io_t net_inc_in_value(s32 inIdx, io_t inc) {
   op_t* op;
+    
+    print_dbg("\r\n incrementing input in network, value: ");
+    print_dbg_hex(net_get_in_value(inIdx < 0 ? 0 : (u16)inIdx));
+    print_dbg(" , increment: ");
+    print_dbg_hex(inc);
+    
   if(inIdx >= net->numIns) {
     // hack to get preset idx
     inIdx -= net->numIns;
     set_param_value(inIdx, OP_SADD(get_param_value(inIdx), inc));
+
+
+
     return get_param_value(inIdx);
   } else {
     op = net->ops[net->ins[inIdx].opIdx];
+
     (*(op->inc_fn))(op, net->ins[inIdx].opInIdx, inc);
+
+    print_dbg(" , result: ");
+    print_dbg_hex( net_get_in_value(inIdx));
+
     return net_get_in_value(inIdx);
   }
 }
@@ -691,7 +705,13 @@ u8 net_get_in_play(u32 inIdx) {
 
 // add a new parameter
 void net_add_param(u32 idx, const ParamDesc * pdesc) {
+  // copyp descriptor, hm
   memcpy( &(net->params[net->numParams].desc), (const void*)pdesc, sizeof(ParamDesc) );
+  ///////////////
+  // initialize scaler
+  scaler_init(&(net->params[net->numParams].scaler), pdesc);
+  ////////////
+
   net->params[net->numParams].idx = idx; 
   net->params[net->numParams].preset = 0; 
   net->numParams += 1;

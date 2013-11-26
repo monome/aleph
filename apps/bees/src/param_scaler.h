@@ -1,4 +1,4 @@
-/* scaler.h
+/* param_scaler.h
    bees
 
    parameter-scaling module.
@@ -34,8 +34,8 @@ typedef s32 (*scaler_get_rep_fn)(io_t in);
 // perform a tuning routine
 typedef s32 (*scaler_tune_fn)(u8 tuneId, io_t in);
 
-// class structure
-typedef struct _scaler { 
+// class structure i
+typedef struct _paramScaler { 
    // get value
   scaler_get_value_fn get_val;
   // get ui representation
@@ -44,17 +44,17 @@ typedef struct _scaler {
   scaler_tune_fn * tune;
   // num tuning functions
   u8 numTune;
-} scaler;
+} ParamScaler;
 
 // initialize scaler for given param (protected)
-typedef void (*scaler_init_fn)(scaler* sc, const ParamDesc* desc);
+typedef void (*scaler_init_fn)(ParamScaler* sc, const ParamDesc* desc);
 
 
 // initialize scaler for given param
-extern void scaler_init(scaler* sc, const ParamDesc* desc);
+extern void scaler_init(ParamScaler* sc, const ParamDesc* desc);
 
 // get DSP value 
-extern s32 scaler_get_value(scaler* sc, io_t in);
+extern s32 scaler_get_value(ParamScaler* sc, io_t in);
 // get readable value
 /*
  this datatype can change! 
@@ -62,6 +62,6 @@ extern s32 scaler_get_value(scaler* sc, io_t in);
  but integer params may need a bigger range of values.
  caller should check the associated paramDesc and cast if needed
 */
-extern s32 scaler_get_rep(scaler* sc, io_t in);
+extern s32 scaler_get_rep(ParamScaler* sc, io_t in);
 
 #endif

@@ -2,12 +2,13 @@
 #define _ALEPH_APP_BEES_HANDLER_H_
 
 #include "app.h"
+#include "op_math.h"
 #include "types.h"
 
 // assign ui handlers  
 extern void assign_bees_event_handlers(void);
 
-extern s32 scale_knob_value(s32 val);
-extern s32 scale_knob_value_small(s32 val);
+extern io_t scale_knob_value(io_t val);
+extern io_t scale_knob_value_small(io_t val);
 
 #endif 
