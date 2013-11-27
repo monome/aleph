@@ -33,6 +33,12 @@ s32 scaler_amp_val(io_t in) {
 }
 
 s32 scaler_amp_rep(io_t in) {
+  print_dbg("\r\n requesting amp_scaler representation for input: 0x");
+  print_dbg_hex((u32)in);
+
+  print_dbg(" ; value: 0x");
+  print_dbg_hex(tabRep[in >> inRshift]);
+
   return tabRep[in >> inRshift];
 }
 

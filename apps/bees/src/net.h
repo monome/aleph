@@ -110,6 +110,7 @@ extern io_t net_get_in_value(s32 inIdx);
 extern void net_set_in_value(s32 inIdx, io_t val);
 extern io_t net_inc_in_value(s32 inIdx, io_t inc);
 
+
 // connect a given output and input idx pair
 extern void net_connect(u32 outIdx, u32 inIdx);
 
@@ -152,6 +153,10 @@ extern void net_clear_params(void);
 // resend all parameter values
 extern void net_send_params(void);
 
+// get parameter string representations,
+// given string buffer and index in inputs list
+extern void net_get_param_value_string(char* dst, u32 idx);
+
 // retrigger all inputs
 extern void net_retrigger_inputs(void);
 
@@ -169,6 +174,7 @@ extern u8* net_pickle(u8* dst);
 // unpickle the network!
 // return incremented pointer to src
 extern u8* net_unpickle(const u8* src);
+
 
 /// test/dbg
 void net_print(void);
