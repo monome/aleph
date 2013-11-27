@@ -251,6 +251,7 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
 		    val);
     } else { 
       // this is a parameter
+      //// FIXME this is horrible
       inIdx -= net->numIns;
       if (inIdx >= net->numParams) {
 	return ;
@@ -901,6 +902,21 @@ u8* net_unpickle(const u8* src) {
   }
   
   return (u8*)src;
+}
+
+// get parameter string representations,
+// given string buffer and index in inputs list
+void net_get_param_value_string(char* dst, u32 idx) {
+  //// FIXME
+  /// get param index! rrrgg
+  idx -= net->numIns;
+  /// lookup representation from stored input value and print to buf
+  print_fix16(	dst, 
+		scaler_get_rep(	&(net->params[idx].scaler), 
+				  net->params[idx].data.value
+				) 
+		);
+				  
 }
 
 ///////////////
