@@ -20,21 +20,22 @@ static u8 initFlag = 0;
 
 //-------------------
 //--- static funcs
-static s32 scaler_amp_val(io_t in);
-static s32 scaler_amp_val(io_t in) {
+
+
+//-----------------------
+//---- extern funcs
+
+s32 scaler_amp_val(io_t in) {
   print_dbg("\r\n requesting amp_scaler value for input: 0x");
   print_dbg_hex((u32)in);
 
   return tabVal[in >> inRshift];
 }
 
-static s32 scaler_amp_rep(io_t in);
-static s32 scaler_amp_rep(io_t in) {
+s32 scaler_amp_rep(io_t in) {
   return tabRep[in >> inRshift];
 }
 
-//-----------------------
-//---- ectern funcs
 // init function
 void scaler_amp_init(ParamScaler* sc, const ParamDesc* desc) {
   // check descriptor
@@ -56,49 +57,58 @@ void scaler_amp_init(ParamScaler* sc, const ParamDesc* desc) {
     files_load_scaler_name("scaler_amp_rep.bin", tabRep, tabSize);
   }
 
+  sc->type = eParamTypeAmp;
+
   /// FIXME: should consider requested param range,
   //  and compute a customized multiplier here if necessary.
   // for now, scaling functions are static.
 
   print_dbg("\r\n finished loading amp scaler data from files.");
-  
-  // assign lookup functions
-  print_dbg("\r\n assigning lookup functions... 0x");
-  print_dbg_hex((u32)&scaler_amp_val);
-  print_dbg(", 0x");
-  print_dbg_hex((u32)&scaler_amp_rep);
 
-  print_dbg("\r\n scaler address: 0x");
-  print_dbg_hex((u32)sc);
-  print_dbg("\r\n scaler get_val address: 0x");
-  print_dbg_hex((u32)&(sc->get_val));
-  print_dbg("\r\n scaler get_rep address: 0x");
-  print_dbg_hex((u32)&(sc->get_rep));
 
-  //  sc->get_val = &scaler_amp_val;
-  //  sc->get_rep = &scaler_amp_rep;
+
+  ///// this was driving me nuts so instead used a static table of FPs in param_scaler.c 
+
+  /* // assign lookup functions */
+  /* print_dbg("\r\n assigning lookup functions... 0x"); */
+  /* print_dbg_hex((u32)&scaler_amp_val); */
+  /* print_dbg(", 0x"); */
+  /* print_dbg_hex((u32)&scaler_amp_rep); */
+
+  /* print_dbg("\r\n scaler address: 0x"); */
+  /* print_dbg_hex((u32)sc); */
+  /* print_dbg("\r\n scaler get_val address: 0x"); */
+  /* print_dbg_hex((u32)&(sc->get_val)); */
+  /* print_dbg("\r\n scaler get_rep address: 0x"); */
+  /* print_dbg_hex((u32)&(sc->get_rep)); */
+
+  /* //  sc->get_val = &scaler_amp_val; */
+  /* //  sc->get_rep = &scaler_amp_rep; */
  
-  /// god damn, why is this crashing??
-  //   sc->get_val = (scaler_get_value_fn)NULL;
-  // sc->get_rep = (scaler_get_rep_fn)NULL;
-  //  print_dbg("\r\n (just kidding)");
+  /* /// god damn, why is this crashing?? */
+  /* //   sc->get_val = (scaler_get_value_fn)NULL; */
+  /* // sc->get_rep = (scaler_get_rep_fn)NULL; */
+  /* //  print_dbg("\r\n (just kidding)"); */
 
 
-  /// if we don't cast + dereference, this access crashes!
-  /// wtf !??!??!
-  print_dbg("\r\n scaler get_val value: 0x");
-  print_dbg_hex(*((const u32*)&(sc->get_val)));
-  print_dbg("\r\n scaler get_rep value: 0x");
-  print_dbg_hex(*((const u32*)&(sc->get_rep)));
+  /* /// if we don't cast + dereference, this access crashes! */
+  /* /// wtf !??!??! */
+  /* print_dbg("\r\n scaler get_val value: 0x"); */
+  /* print_dbg_hex(*((const u32*)&(sc->get_val))); */
+  /* print_dbg("\r\n scaler get_rep value: 0x"); */
+  /* print_dbg_hex(*((const u32*)&(sc->get_rep))); */
  
 
-  /// ok, an utterly barbaric attempt... 
-  /// why does it work?
-  *((u32*)&(sc->get_val)) = (u32)&(scaler_amp_val);
-  *((u32*)&(sc->get_rep)) = (u32)&(scaler_amp_rep);
+  /* /// ok, an utterly barbaric attempt...  */
+  /* /// why does it work? */
+  /* *((u32*)&(sc->get_val)) = (u32)&(scaler_amp_val); */
+  /* *((u32*)&(sc->get_rep)) = (u32)&(scaler_amp_rep); */
   
-  print_dbg(" \r\n done.");
+  /* print_dbg(" \r\n done."); */
   
+ 
+
+
   //// FIXME: add tuning functions (???)
   //  sc->tune = NULL;
   //  sc->numTune = 0;  
