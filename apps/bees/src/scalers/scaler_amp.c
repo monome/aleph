@@ -44,7 +44,9 @@ void scaler_amp_init(ParamScaler* sc, const ParamDesc* desc) {
   }
   
   // init flag for static data
-  if(initFlag) { return; } else {
+  if(initFlag) { 
+    ;;
+  } else {
     initFlag = 1;
     // allocate
     print_dbg("\r\n allocating static memory for amp scalers");
@@ -55,17 +57,14 @@ void scaler_amp_init(ParamScaler* sc, const ParamDesc* desc) {
     print_dbg("\r\n loading gain scaler data from sdcard");
     files_load_scaler_name("scaler_amp_val.bin", tabVal, tabSize);
     files_load_scaler_name("scaler_amp_rep.bin", tabRep, tabSize);
+   print_dbg("\r\n finished loading amp scaler data from files.");
   }
 
   sc->type = eParamTypeAmp;
 
   /// FIXME: should consider requested param range,
   //  and compute a customized multiplier here if necessary.
-  // for now, scaling functions are static.
-
-  print_dbg("\r\n finished loading amp scaler data from files.");
-
-
+  // for now, scaling functions are static.>.????
 
   ///// this was driving me nuts so instead used a static table of FPs in param_scaler.c 
 

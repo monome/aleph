@@ -61,7 +61,17 @@ void scaler_init(ParamScaler* sc, const ParamDesc* desc) {
 s32 scaler_get_value(ParamScaler* sc, io_t in) {
   print_dbg("\r\n requesting scaler value for input: 0x");
   print_dbg_hex((u32)in);
+
+  print_dbg("\r\n scaler address: 0x");
+  print_dbg_hex((u32)sc);
   
+  print_dbg("\r\n scaler type: ");
+  print_dbg_ulong(sc->type);
+
+  print_dbg("\r\n input value: ");
+  print_dbg_hex((u32)in);
+
+
   //// FIXME: inefficient
   if(scaler_get_val_pr[sc->type] != NULL) {
     return (*(scaler_get_val_pr[sc->type]))(in);
