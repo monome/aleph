@@ -106,7 +106,6 @@ typedef struct op_desc_struct {
   op_class_deinit deinit;
 } op_desc_t;
 
-
 //-----------------------------------
 //---- public data
 

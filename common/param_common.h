@@ -14,6 +14,12 @@
 // max characters in param name
 #define PARAM_LABEL_LEN 16
 
+
+///////////
+///////////
+// hack !
+#define PARAM_TYPE_FIX eParamTypeAmp
+
 ///--- parameter use-types
 /// these diferentiate  the actual, numerical use case for the parameter.
 // add as needed, sync with param scaler definitions

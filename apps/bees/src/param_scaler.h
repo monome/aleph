@@ -40,10 +40,13 @@ typedef struct _paramScaler {
   scaler_get_value_fn get_val;
   // get ui representation
   scaler_get_rep_fn get_rep;
+  // type
+  ParamType type;
+  //// TODO, perhaps
   // array of tuning functions
-  scaler_tune_fn * tune;
+  //  scaler_tune_fn * tune;
   // num tuning functions
-  u8 numTune;
+  //  u8 numTune;
 } ParamScaler;
 
 // initialize scaler for given param (protected)

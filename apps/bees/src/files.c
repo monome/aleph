@@ -38,6 +38,9 @@
 #define SCENES_PATH  "/data/bees/scenes/"
 #define SCALERS_PATH  "/data/bees/scalers/"
 
+// endinanness
+// #define SCALER_LE
+
 //  stupid datatype with fixed number of fixed-length filenames
 // storing this for speed when UI asks us for a lot of strings
 typedef struct _dirList {
@@ -297,29 +300,56 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
   app_pause();
   fp = list_open_file_name(&scalerList, name, "r", &size);
   if( fp != NULL) {	  
-    /// byteswap from little endian
+
+    print_dbg("\r\n scaler file pointer: 0x");
+    print_dbg_hex((u32)fp);
+#ifdef SCALER_LE
     swap.b[3] = fl_fgetc(fp);
     swap.b[2] = fl_fgetc(fp);
     swap.b[1] = fl_fgetc(fp);
     swap.b[0] = fl_fgetc(fp);
+#else
+    swap.b[0] = fl_fgetc(fp);
+    swap.b[1] = fl_fgetc(fp);
+    swap.b[2] = fl_fgetc(fp);
+    swap.b[3] = fl_fgetc(fp);
+#endif
     size = swap.u;
+
+    print_dbg("\r\n read size: 0x");
+    print_dbg_ulong(size);
 
     if(size > dstSize) {
       print_dbg("\r\n warning: requested scaler data is > target, truncating");
       for(i=0; i<dstSize; ++i) {
-	swap.b[3] = fl_fgetc(fp);
-	swap.b[2] = fl_fgetc(fp);
-	swap.b[1] = fl_fgetc(fp);
-	swap.b[0] = fl_fgetc(fp);
+
+#ifdef SCALER_LE
+    swap.b[3] = fl_fgetc(fp);
+    swap.b[2] = fl_fgetc(fp);
+    swap.b[1] = fl_fgetc(fp);
+    swap.b[0] = fl_fgetc(fp);
+#else
+    swap.b[0] = fl_fgetc(fp);
+    swap.b[1] = fl_fgetc(fp);
+    swap.b[2] = fl_fgetc(fp);
+    swap.b[3] = fl_fgetc(fp);
+#endif
 	*dst++ = swap.s;
       }
     } else if (size < dstSize) {
       print_dbg("\r\n warning: requested scaler data is < target, padding");
       for(i=0; i<size; ++i) {
-	swap.b[3] = fl_fgetc(fp);
-	swap.b[2] = fl_fgetc(fp);
-	swap.b[1] = fl_fgetc(fp);
-	swap.b[0] = fl_fgetc(fp);
+#ifdef SCALER_LE
+    swap.b[3] = fl_fgetc(fp);
+    swap.b[2] = fl_fgetc(fp);
+    swap.b[1] = fl_fgetc(fp);
+    swap.b[0] = fl_fgetc(fp);
+#else
+    swap.b[0] = fl_fgetc(fp);
+    swap.b[1] = fl_fgetc(fp);
+    swap.b[2] = fl_fgetc(fp);
+    swap.b[3] = fl_fgetc(fp);
+#endif
 	*dst++ = swap.s;
       }
       // remainder
@@ -329,10 +359,17 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
       }
     } else {
       for(i=0; i<size; ++i) {
-	swap.b[3] = fl_fgetc(fp);
-	swap.b[2] = fl_fgetc(fp);
-	swap.b[1] = fl_fgetc(fp);
-	swap.b[0] = fl_fgetc(fp);
+#ifdef SCALER_LE
+    swap.b[3] = fl_fgetc(fp);
+    swap.b[2] = fl_fgetc(fp);
+    swap.b[1] = fl_fgetc(fp);
+    swap.b[0] = fl_fgetc(fp);
+#else
+    swap.b[0] = fl_fgetc(fp);
+    swap.b[1] = fl_fgetc(fp);
+    swap.b[2] = fl_fgetc(fp);
+    swap.b[3] = fl_fgetc(fp);
+#endif
 	*dst++ = swap.s;
       }
     }
@@ -342,6 +379,9 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
     print_dbg("\r\n error: fp was null in files_load_scaler_name \r\n");
     ret = 0;
   } 
+
+  print_dbg("\r\n finished loading scaler file (?)");
+
   app_resume();
   return ret;
 }

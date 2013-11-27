@@ -41,16 +41,6 @@ static u8 netActive = 0;
 //---- external
 ctlnet_t* net;
 
-//-- indices of system-created ops
-// encoders
-//s32 opSysEncIdx[4] = { -1, -1, -1, -1 };
-// function keys and footswitches
-//s32 opSysSwIdx[6] = { -1, -1, -1, -1, -1, -1};
-// adc
-//s32 opSysAdcIdx = -1;
-// preset
-//s32 opSysPresetIdx = -1;
-
 // pointers to system-created ops
 // encoders
 op_enc_t* opSysEnc[4] = { NULL, NULL, NULL, NULL };
@@ -68,11 +58,13 @@ op_preset_t* opSysPreset = NULL;
 // create all system operators
 static void add_sys_ops(void);
 static void add_sys_ops(void) {
-  /// create each system operator and store its index.
-  /// this is kind of a bad hack, 
-  // because we assume that the indices of sys ops in scene data 
-  // will always have the same values as when we created them.
-  // the assumption holds as long as we don't mess with order of creation...
+  /// FIXME: 
+  /* broke scene storage i think. need to either :
+     a) reassign these pointers after unpickling 
+         probably by index like the old hack, or
+     b) don't pickle system ops at all, only their inputs.
+         still needs to make a fixed assumption about order.
+   */ 
 
   // 4 encoders
   net_add_op(eOpEnc);
@@ -101,7 +93,6 @@ static void add_sys_ops(void) {
   net_add_op(eOpAdc);
   opSysAdc = (op_adc_t*)net->ops[net->numOps -1];
   // 1 preset receiver
-  ////... TEST
   net_add_op(eOpPreset);
   opSysPreset = (op_preset_t*)net->ops[net->numOps -1];
 }
@@ -191,6 +182,7 @@ void net_init(void) {
   for(i=0; i<NET_OUTS_MAX; i++) {
     net_init_onode(i);
   }
+
   print_dbg("\r\n initialized ctlnet, byte count: ");
   print_dbg_hex(sizeof(ctlnet_t));
   add_sys_ops();
@@ -705,12 +697,14 @@ u8 net_get_in_play(u32 inIdx) {
 
 // add a new parameter
 void net_add_param(u32 idx, const ParamDesc * pdesc) {
-  // copyp descriptor, hm
+  // copy descriptor, hm
   memcpy( &(net->params[net->numParams].desc), (const void*)pdesc, sizeof(ParamDesc) );
+
   ///////////////
   // initialize scaler
   scaler_init(&(net->params[net->numParams].scaler), pdesc);
   ////////////
+  print_dbg("\r\n finished initializing param scaler.");
 
   net->params[net->numParams].idx = idx; 
   net->params[net->numParams].preset = 0; 
@@ -774,6 +768,8 @@ u8 net_report_params(void) {
       print_dbg_hex(val);
 
       net_add_param(i, (const ParamDesc*)&pdesc);
+      print_dbg("\r\n finished adding parameter.");
+
       net->params[net->numParams - 1].data.value = val; 
       net->params[net->numParams - 1].data.changed = 0; 
 

@@ -93,6 +93,10 @@ static void render_line(s16 idx, u8 fg) {
     clearln();
 
     OP_PRINT(lineBuf, net_get_in_value(idx));
+    /// FIXME: this is pretty dumb, 
+    // params and inputs should just be on separate pages i guess
+    // print_fix16(lineBuf, net_get_param_unit_value(idx));
+    //    print_fix16(lineBuf, net_get_param_unit_string(idx));
 
     font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, fg, 0);
   }
