@@ -79,7 +79,7 @@ static void render_line(s16 idx, u8 fg) {
     font_string_region_clip(lineRegion, lineBuf, 4, 0, fg, 0);
     clearln();
 
-    OP_PRINT(lineBuf, net_get_in_value(idx));
+    op_print(lineBuf, net_get_in_value(idx));
 
     font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, fg, 0);
   } else {
@@ -92,7 +92,7 @@ static void render_line(s16 idx, u8 fg) {
     font_string_region_clip(lineRegion, lineBuf, 4, 0, 0xa, 0);
     clearln();
 
-    //    OP_PRINT(lineBuf, net_get_in_value(idx));
+    //    op_print(lineBuf, net_get_in_value(idx));
     /// FIXME: this is pretty dumb, 
     // params and inputs should just be on separate pages i guess
     net_get_param_value_string(lineBuf, idx);
@@ -556,7 +556,7 @@ void redraw_ins_preset (u8 idx) {
       render_line( n, enabled ? 0xa : 0x2 );
       // TODO: render target value ?
       font_string_region_clip(lineRegion, "                  ", LINE_VAL_POS, 0, 0, 0);
-      // OP_PRINT(...
+      // op_print(...
       // font_string_region(lineRegion...
       render_to_scroll_line(i, enabled ? 1 : 0);
     }

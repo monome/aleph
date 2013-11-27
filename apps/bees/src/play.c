@@ -61,7 +61,7 @@ extern void play_input(u16 idx) {
     font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
     clearln();
 
-    OP_PRINT(lineBuf, net_get_in_value(idx));
+    op_print(lineBuf, net_get_in_value(idx));
     //    itoa_int(net_get_in_value(idx), (char*)lineBuf);
     //    print_s32((char*)lineBuf, net_get_in_value(idx));
 
@@ -76,7 +76,7 @@ extern void play_input(u16 idx) {
     font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
     clearln();
     
-    OP_PRINT(lineBuf, net_get_in_value(idx));
+    op_print(lineBuf, net_get_in_value(idx));
 
     font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, 0xa, 0);
   }

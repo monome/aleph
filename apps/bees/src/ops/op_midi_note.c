@@ -72,7 +72,7 @@ void op_midi_note_init(void* mem) {
   op->outs[1] = -1;
 
   op->chan = -1;
-  op->chanIo = OP_NEGONE;
+  op->chanIo = OP_NEG_ONE;
 
   // FIXME: should sanity-check that the op isn't already in the dang list
   net_midi_list_push(&(op->midi));
@@ -95,7 +95,7 @@ static void op_midi_note_in_chan(op_midi_note_t* op, const io_t v) {
   // range is [-1, 16] in fix16... this is ugly, whatever
   //  if(op->chanIo > 0x00100000) { op->chanIo = 0x00100000; }
   //  if(op->chanIo < 0xffff0000) { op->chanIo = 0xffff0000; }
-  op->chan = (s8)(OP_TO_INT(op->chanIo));
+  op->chan = (s8)(op_to_int(op->chanIo));
   if(op->chan < -1) { op->chan = -1; }
   if(op->chan > 15) { op->chan = 15; }
   print_dbg(" , channel: ");
@@ -114,8 +114,8 @@ static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
     if(op->chan < 0) {
       num = (data & 0xff0000) >> 16;
       vel = (data & 0xff00) >> 8;
-      net_activate(op->outs[0], OP_FROM_INT(num), op);
-      net_activate(op->outs[1], OP_FROM_INT(vel), op);
+      net_activate(op->outs[0], op_from_int(num), op);
+      net_activate(op->outs[1], op_from_int(vel), op);
     } else {
       // note on
       ch = (data & 0x0f000000) >> 24;
@@ -125,8 +125,8 @@ static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
 	// matches our channel, so perform it
 	num = (data & 0xff0000) >> 16;
 	vel = (data & 0xff00) >> 8;
-	net_activate(op->outs[0], OP_FROM_INT(num), op);
-	net_activate(op->outs[1], OP_FROM_INT(vel), op);
+	net_activate(op->outs[0], op_from_int(num), op);
+	net_activate(op->outs[1], op_from_int(vel), op);
 
 
       print_dbg("\r\n op_midi note on ; num: ");
@@ -141,8 +141,8 @@ static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
     if(op->chan == -1) {
       num = (data & 0xff0000) >> 16;
       vel = (data & 0xff00) >> 8;
-      net_activate(op->outs[0], OP_FROM_INT(num), op);
-      net_activate(op->outs[1], OP_FROM_INT(vel), op);
+      net_activate(op->outs[0], op_from_int(num), op);
+      net_activate(op->outs[1], op_from_int(vel), op);
 
       print_dbg("\r\n op_midi note off ; num: ");
       print_dbg_ulong(num);
@@ -153,7 +153,7 @@ static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
 	// matches our channel, so perform it
 	num = (data & 0xff0000) >> 16;
 	vel = (data & 0xff00) >> 8;
-	net_activate(op->outs[0], OP_FROM_INT(num), op);
+	net_activate(op->outs[0], op_from_int(num), op);
 	// FIXME: should noteoff be a separate off, retain release velocity?
 	/// or, a 3rd output for on/off ?? hm
 	net_activate(op->outs[1], 0, op);
@@ -168,7 +168,7 @@ void op_midi_note_inc_fn(op_midi_note_t* op, const s16 idx, const io_t inc) {
   io_t val;
   switch(idx) {
   case 0: // channel
-    val = OP_SADD(op->chanIo, inc); 
+    val = op_sadd(op->chanIo, inc); 
     op_midi_note_in_chan(op, val);
     break;
   }
@@ -182,6 +182,6 @@ u8* op_midi_note_pickle(op_midi_note_t* mnote, u8* dst) {
 
 const u8* op_midi_note_unpickle(op_midi_note_t* mnote, const u8* src) {
   src = unpickle_io(src, (u32*)&(mnote->chanIo));
-  mnote->chan = OP_TO_INT(mnote->chanIo);
+  mnote->chan = op_to_int(mnote->chanIo);
   return src;
 }

@@ -24,38 +24,23 @@ typedef s16 io_t;
 
 //---- arithmetic macros
 // standard (overflow)
-/* #define OP_ADD(a, b) (fix16_add((a), (b))) */
-/* #define OP_SUB(a, b) (fix16_sub((a), (b))) */
-/* #define OP_MUL(a, b) (fix16_mul((a), (b))) */
+/* #define op_add(a, b) (fix16_add((a), (b))) */
+/* #define op_sub(a, b) (fix16_sub((a), (b))) */
+/* #define op_mul(a, b) (fix16_mul((a), (b))) */
 /* #define OP_DIV(a, b) (fix16_div((a), (b))) */
 // saturating
-/* #define OP_SADD(a, b) (fix16_sadd((a), (b))) */
-/* #define OP_SSUB(a, b) (fix16_ssub((a), (b))) */
-/* #define OP_SMUL(a, b) (fix16_smul((a), (b))) */
+/* #define op_sadd(a, b) (fix16_sadd((a), (b))) */
+/* #define op_ssub(a, b) (fix16_ssub((a), (b))) */
+/* #define op_smul(a, b) (fix16_smul((a), (b))) */
 /* #define OP_SDIV(a, b) (fix16_sdiv((a), (b))) */
 
-// standard (overflow)
-#define OP_ADD(a, b) ((a) + (b))
-#define OP_SUB(a, b) ((a) - (b))
-#define OP_MUL(a, b) ((a) * (b))
-#define OP_DIV(a, b) ((a) / (b))
 
-// saturating
-///// FIXME! probably need inline ASM
-// satadd.w 	Rd, Rx, Ry 
-// mulsatwh.w 	Rd, Rx, Ry 
-// etc
-///// for now, ignore! haha good joke
-#define OP_SADD(a, b) OP_ADD(a,b)
-#define OP_SSUB(a, b) OP_SUB(a,b)
-#define OP_SMUL(a, b) OP_MUL(a,b)
-#define OP_SDIV(a, b) OP_DIV(a,b)
 
 //----- constants
 // unity 
 #define OP_ONE 1
 // negative unity
-#define OP_NEGONE -1
+#define OP_NEG_ONE -1
 
 // smallest incremnet
 #define OP_MIN_INC 1
@@ -63,11 +48,24 @@ typedef s16 io_t;
 #define OP_MIN_VAL 0
 #define OP_MAX_VAL 0x7fff
 
-#define OP_FROM_INT(x) (x)
-#define OP_TO_INT(x) (x)
+#define op_from_int(x) (x)
+#define op_to_int(x) (x)
 
 //----- conversion
+
+// standard (overflow) 
+extern io_t op_add(io_t a, io_t b);
+extern io_t op_sub(io_t a, io_t b);
+extern io_t op_mul(io_t a, io_t b);
+extern io_t op_div(io_t a, io_t b);
+
+// saturating
+extern io_t op_sadd(io_t a, io_t b);
+extern io_t op_ssub(io_t a, io_t b);
+//extern io_t op_smul(io_t a, io_t b);
+//extern io_t op_sdiv(io_t a, io_t b);
+
 ///// print formatted string
-#define OP_PRINT(buf, x) itoa_whole((s32)(x), (buf), 6)
+extern void op_print(char* buf, io_t x);
 
 #endif

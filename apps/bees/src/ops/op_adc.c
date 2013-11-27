@@ -84,7 +84,7 @@ void op_adc_init(void* op) {
   adc->val[1] = 0;
   adc->val[2] = 0;
   adc->val[3] = 0;
-  adc->period = OP_FROM_INT(20);
+  adc->period = op_from_int(20);
   adc->enable = 0;
 }
 
@@ -106,7 +106,7 @@ void op_adc_in_enable	(op_adc_t* adc, const io_t v) {
     print_dbg(" (input value high) ");
     if(adc->enable == 0) {
       adc->enable = OP_ONE;
-      timers_set_adc(OP_TO_INT(adc->period));
+      timers_set_adc(op_to_int(adc->period));
     }
   } else {
     print_dbg(" (input value low) ");
@@ -124,7 +124,7 @@ void op_adc_in_period (op_adc_t* adc, const io_t v) {
   } else {
     adc->period = v;
   }
-  timers_set_adc_period(OP_TO_INT(adc->period));
+  timers_set_adc_period(op_to_int(adc->period));
 }
 
 
@@ -180,23 +180,23 @@ static void op_adc_inc_fn(op_adc_t* adc, const s16 idx, const io_t inc) {
     }
     break;
   case 1: // period
-    val = OP_SADD(adc->period, inc);
+    val = op_sadd(adc->period, inc);
     op_adc_in_period(adc, val);
     break;
   /* case 2: // val0 */
-  /*   val = OP_SADD(adc->val0, inc); */
+  /*   val = op_sadd(adc->val0, inc); */
   /*   op_adc_in_val0(adc, val); */
   /*   break; */
   /* case 3: // val1 */
-  /*   val = OP_SADD(adc->val1, inc); */
+  /*   val = op_sadd(adc->val1, inc); */
   /*   op_adc_in_val1(adc, val); */
   /*   break; */
   /* case 4: // val2 */
-  /*   val = OP_SADD(adc->val2, inc); */
+  /*   val = op_sadd(adc->val2, inc); */
   /*   op_adc_in_val2(adc, val); */
   /*   break; */
   /* case 5: // val3 */
-  /*   val = OP_SADD(adc->val3, inc); */
+  /*   val = op_sadd(adc->val3, inc); */
   /*   op_adc_in_val3(adc, val); */
   /*   break; */
   }
@@ -214,7 +214,7 @@ const u8* op_adc_unpickle(op_adc_t* adc, const u8* src) {
   src = unpickle_io(src, &(adc->enable));
   src = unpickle_io(src, &(adc->period));
   if(adc->enable) {
-    timers_set_adc(OP_TO_INT(adc->period));    
+    timers_set_adc(op_to_int(adc->period));    
   }
   return src;
 }

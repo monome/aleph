@@ -66,7 +66,7 @@ static void op_gate_inc_input(op_gate_t* gate, const s16 idx, const io_t inc) {
   io_t val;
   switch(idx) {
   case 0:  // value
-      val = OP_ADD(gate->val, inc);
+      val = op_add(gate->val, inc);
       op_gate_in_value(gate, val);
     break; 
   case 1:  // gate

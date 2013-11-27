@@ -421,7 +421,7 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
     appendln( net_in_name(n) );
     
     endln(); screen_string(16, y, lineBuf, hl);
-    OP_PRINT(numBuf, net_get_in_value(n) );
+    op_print(numBuf, net_get_in_value(n) );
     // screen_line(80, y, numBuf, hl);
 
   } else { // this is a parameter input
@@ -430,7 +430,7 @@ static void draw_line_ins(s32 n, u16 num, u8 y, u8 hl) {
     endln(); screen_string(0, y, lineBuf, hl);
     println( net_in_name(n) , 0);
     endln(); screen_string(24, y, lineBuf, hl);
-    OP_PRINT(numBuf, net_get_in_value(n) );
+    op_print(numBuf, net_get_in_value(n) );
     // screen_line(80, y, numBuf, hl);
   }
 }

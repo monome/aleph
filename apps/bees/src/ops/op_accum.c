@@ -12,9 +12,9 @@ static void op_accum_boundscheck(op_accum_t* accum) {
       while(accum->val > accum->max) {
         //accum->val -= (accum->max > 0 ? accum->max : accum->max * -1);
 	if(accum->max > 0) {
-	  accum->val = OP_SUB(accum->val, accum_max);
+	  accum->val = op_sub(accum->val, accum_max);
 	} else {
-	  accum->val = OP_ADD(accum->val, accum_max);
+	  accum->val = op_add(accum->val, accum_max);
 	}
       }
       net_activate(accum->outs[1], accum->val); // carry output with wrapped value
@@ -26,9 +26,9 @@ static void op_accum_boundscheck(op_accum_t* accum) {
     if(accum->carry) {
       while(accum->val < accum->min) {
 	if(accum->min < 0) {
-	  accum->val = OP_SUB(accum->val, accum_min);
+	  accum->val = op_sub(accum->val, accum_min);
 	} else {
-	  accum->val = OP_ADD(accum->val, accum_min);
+	  accum->val = op_add(accum->val, accum_min);
 	}
       }
       net_activate(accum->outs[1], accum->val); // carry output with wrapped value
@@ -47,7 +47,7 @@ static void op_accum_in_value(op_accum_t* accum, const io_t* v) {
 
 static void op_accum_in_count(op_accum_t* accum, const io_t* v) {
   printf("accum at %d received COUNT %d\n", (int)accum, (int)*v);
-  acum->val = OP_ADD(accum->val, *v);
+  acum->val = op_add(accum->val, *v);
   op_accum_boundscheck(accum);
   net_activate(accum->outs[0], accum->val);
 }
