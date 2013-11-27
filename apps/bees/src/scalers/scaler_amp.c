@@ -77,18 +77,25 @@ void scaler_amp_init(ParamScaler* sc, const ParamDesc* desc) {
 
   //  sc->get_val = &scaler_amp_val;
   //  sc->get_rep = &scaler_amp_rep;
-  
+ 
   /// god damn, why is this crashing??
   //   sc->get_val = (scaler_get_value_fn)NULL;
   // sc->get_rep = (scaler_get_rep_fn)NULL;
-  print_dbg("\r\n (just kidding)");
+  //  print_dbg("\r\n (just kidding)");
 
- /// even this kind of access crashes... ?!?!?!
-  //  print_dbg("\r\n scaler get_val value: 0x");
-  //  print_dbg_hex((u32)(sc->get_val));
-  //  print_dbg("\r\n scaler get_rep value: 0x");
-  //  print_dbg_hex((u32)(sc->get_rep));
+
+  /// if we don't cast + dereference, this access crashes!
+  /// wtf !??!??!
+  print_dbg("\r\n scaler get_val value: 0x");
+  print_dbg_hex(*((const u32*)&(sc->get_val)));
+  print_dbg("\r\n scaler get_rep value: 0x");
+  print_dbg_hex(*((const u32*)&(sc->get_rep)));
  
+
+  /// ok, an utterly barbaric attempt... 
+  /// why does it work?
+  *((u32*)&(sc->get_val)) = (u32)&(scaler_amp_val);
+  *((u32*)&(sc->get_rep)) = (u32)&(scaler_amp_rep);
   
   print_dbg(" \r\n done.");
   
