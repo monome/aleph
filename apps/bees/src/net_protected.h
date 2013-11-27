@@ -40,7 +40,8 @@ typedef struct _inode {
   u8 preset;
   // play inclusion flag
   u8 play;
-} __attribute__((packed)) inode_t;
+  //} __attribute__((packed)) inode_t;
+} inode_t;
 
 // output node type (index into inode list)
 typedef struct _onode {
@@ -52,17 +53,18 @@ typedef struct _onode {
   s16 target;
   // parent op's index in net list
   s32 opIdx;
-} __attribute__((packed)) onode_t;
+  //} __attribute__((packed)) onode_t;
+} onode_t;
 
 // parameter I/O node
-//// this is 
 typedef struct _pnode {
   ParamDesc desc;
   ParamData data;
   ParamScaler scaler;
   u8 idx;
   u8 preset;
-} __attribute__((packed)) pnode_t;
+  //} __attribute__((packed)) pnode_t;
+} pnode_t;
 
 
 // big old class for the network
@@ -95,6 +97,7 @@ typedef struct _ctlnet {
   onode_t outs[NET_OUTS_MAX];
   // DSP params
   pnode_t params[NET_PARAMS_MAX];
+
 } ctlnet_t;
 
 //// external variables

@@ -20,6 +20,7 @@ static u8 initFlag = 0;
 
 //-------------------
 //--- static funcs
+static s32 scaler_amp_val(io_t in);
 static s32 scaler_amp_val(io_t in) {
   print_dbg("\r\n requesting amp_scaler value for input: 0x");
   print_dbg_hex((u32)in);
@@ -27,6 +28,7 @@ static s32 scaler_amp_val(io_t in) {
   return tabVal[in >> inRshift];
 }
 
+static s32 scaler_amp_rep(io_t in);
 static s32 scaler_amp_rep(io_t in) {
   return tabRep[in >> inRshift];
 }
@@ -73,14 +75,20 @@ void scaler_amp_init(ParamScaler* sc, const ParamDesc* desc) {
   print_dbg("\r\n scaler get_rep address: 0x");
   print_dbg_hex((u32)&(sc->get_rep));
 
- 
   //  sc->get_val = &scaler_amp_val;
   //  sc->get_rep = &scaler_amp_rep;
   
   /// god damn, why is this crashing??
-  //   sc->get_val = NULL;
-  //  sc->get_rep = NULL;
+  //   sc->get_val = (scaler_get_value_fn)NULL;
+  // sc->get_rep = (scaler_get_rep_fn)NULL;
   print_dbg("\r\n (just kidding)");
+
+ /// even this kind of access crashes... ?!?!?!
+  //  print_dbg("\r\n scaler get_val value: 0x");
+  //  print_dbg_hex((u32)(sc->get_val));
+  //  print_dbg("\r\n scaler get_rep value: 0x");
+  //  print_dbg_hex((u32)(sc->get_rep));
+ 
   
   print_dbg(" \r\n done.");
   
