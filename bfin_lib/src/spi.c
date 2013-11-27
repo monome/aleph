@@ -202,8 +202,10 @@ u8 spi_process(u8 rx) {
     return gModuleData->paramDesc[idx].label[15]; // load label 
     break;
   case eParamDescLabel15 :
-    byte = eParamDescUnit0;
-    return gModuleData->paramDesc[idx].unit[0]; // load label 
+    //    byte = eParamDescUnit0;
+    byte = eParamDescType;
+    //    return gModuleData->paramDesc[idx].unit[0]; // load label 
+    return gModuleData->paramDesc[idx].type;
     break;
     // unit
     /*

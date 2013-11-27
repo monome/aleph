@@ -20,14 +20,6 @@ this is to avoid some annoying issues of inclusion order.
 #include "net_protected.h"
 #include "op_math.h"
 
-#define PARAM_BITS 16
-#define PARAM_MAX 32767
-#define PARAM_MAX_F 32767.f
-#define PARAM_MAX_RF 3.0517578125e-05
-#define PARAM_MIN -32768
- 
-
-
 // get value for param at given idx
 io_t get_param_value(u32 idx);
 // get preset flag for param at given idx
