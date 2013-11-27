@@ -44,6 +44,7 @@ typedef s16 io_t;
 // mulsatwh.w 	Rd, Rx, Ry 
 // etc
 ///// for now, ignore! haha good joke
+/// need c implementation for now! overflow behavior is really bad
 #define OP_SADD(a, b) OP_ADD(a,b)
 #define OP_SSUB(a, b) OP_SUB(a,b)
 #define OP_SMUL(a, b) OP_MUL(a,b)
