@@ -37,6 +37,7 @@ scaler_get_value_fn scaler_get_val_pr[eParamNumTypes] = {
   NULL,
   NULL,
 };
+
 // array of pointers to get_str functions.
 scaler_get_str_fn scaler_get_str_pr[eParamNumTypes] = {
   &scaler_amp_str,
@@ -47,6 +48,19 @@ scaler_get_str_fn scaler_get_str_pr[eParamNumTypes] = {
   NULL,
   NULL,
 };
+
+
+// array of pointers to get_in functions.
+scaler_get_str_fn scaler_get_in_pr[eParamNumTypes] = {
+  &scaler_amp_in,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+};
+
 
 //-------------------------------,
 //---- extern function
@@ -59,18 +73,17 @@ void scaler_init(ParamScaler* sc, const ParamDesc* desc) {
 }
 
 s32 scaler_get_value(ParamScaler* sc, io_t in) {
-  print_dbg("\r\n requesting scaler value for input: 0x");
-  print_dbg_hex((u32)in);
+  /* print_dbg("\r\n requesting scaler value for input: 0x"); */
+  /* print_dbg_hex((u32)in); */
 
-  print_dbg("\r\n scaler address: 0x");
-  print_dbg_hex((u32)sc);
+  /* print_dbg("\r\n scaler address: 0x"); */
+  /* print_dbg_hex((u32)sc); */
   
-  print_dbg("\r\n scaler type: ");
-  print_dbg_ulong(sc->type);
+  /* print_dbg("\r\n scaler type: "); */
+  /* print_dbg_ulong(sc->type); */
 
-  print_dbg("\r\n input value: ");
-  print_dbg_hex((u32)in);
-
+  /* print_dbg("\r\n input value: "); */
+  /* print_dbg_hex((u32)in); */
 
   //// FIXME: inefficient
   if(scaler_get_val_pr[sc->type] != NULL) {
@@ -79,26 +92,20 @@ s32 scaler_get_value(ParamScaler* sc, io_t in) {
     print_dbg("\r\n null function pointer");
     return 0;
   }
-  
-  /*
-  if(sc->get_val == NULL) {
-    return 0; 
-  } else {
-    return (*(sc->get_val))(in);
-  }
-  */
 }
 
+// get UI string representation for input
 void scaler_get_str(char* dst, ParamScaler* sc, io_t in) {
 
   //// FIXME: inefficient
   if(scaler_get_str_pr[sc->type] != NULL) {
     (*(scaler_get_str_pr[sc->type]))(dst, in);
   }
-  /* return (*(sc->get_str))(in); */
-  /* if(sc->get_str == NULL) { */
-  /*   return 0;  */
-  /* } else { */
-  /*   return (*(sc->get_str))(in); */
-  /* } */
+}
+
+// get input given DSP value (use sparingly)
+io_t scaler_get_in(ParamScaler* sc, s32 value) {
+  if(scaler_get_str_pr[sc->type] != NULL) {
+    (*(scaler_get_str_pr[sc->type]))(dst, in);
+  }
 }
