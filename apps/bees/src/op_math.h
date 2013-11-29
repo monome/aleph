@@ -60,8 +60,8 @@ extern io_t op_div(io_t a, io_t b);
 // saturating
 extern io_t op_sadd(io_t a, io_t b);
 extern io_t op_ssub(io_t a, io_t b);
-extern io_t op_smul(io_t a, io_t b);
-extern io_t op_sdiv(io_t a, io_t b);
+//extern io_t op_smul(io_t a, io_t b);
+//extern io_t op_sdiv(io_t a, io_t b);
 
 ///// print formatted string
 extern void op_print(char* buf, io_t x);
