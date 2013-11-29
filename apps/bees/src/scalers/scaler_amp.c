@@ -1,3 +1,5 @@
+// std
+#include <string.h>
 // asf
 #include "print_funcs.h"
 // aleph-avr32
@@ -29,7 +31,6 @@ s32 scaler_amp_val(io_t in) {
   print_dbg("\r\n requesting amp_scaler value for input: 0x");
   print_dbg_hex((u32)in);
   if(in < 0) { in = 0; }
-
   return tabVal[(u16)(in >> inRshift)];
 }
 
@@ -37,12 +38,15 @@ void scaler_amp_str(char* dst, io_t in) {
   print_dbg("\r\n requesting amp_scaler representation for input: 0x");
   print_dbg_hex((u32)in);
 
-  if(in < 0) { in = 0; }
-  /* print_dbg(" ; value: 0x"); */
-  /* print_dbg_hex(tabRep[(u16)(in >> inRshift)]); */
+  in >>= inRshift;
 
-  //  return tabRep[(u16)(in >> inRshift)];
-  print_fix16(dst, tabRep[(u16)(in >> inRshift)] );
+  if(in <= 0) {
+    strcpy(dst, "   -inf");
+  } else if (in == (tabSize - 1)) {
+    print_fix16(dst, 0);
+  } else {
+    print_fix16(dst, tabRep[(u16)in] );
+  }
 }
 
 // init function
@@ -90,8 +94,14 @@ io_t scaler_amp_in(s32 x) {
   s32 jl = 0;
   s32 ju = tabSize - 1;
   s32 jm;
+
+  // first, cheat and check zero.
+  /// will often be true
+  if(x == 0) { return 0; }
+
   while(ju - jl > 1) {
     jm = (ju + jl) >> 1;
+    // value table is always ascending
     if(x >= tabVal[jm]) {
       jl = jm;
     } else {
