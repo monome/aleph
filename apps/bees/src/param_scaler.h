@@ -33,7 +33,7 @@ typedef void (*scaler_get_str_fn)(char* dst, io_t in);
 typedef s32 (*scaler_tune_fn)(u8 tuneId, io_t in);
 // search for closest input to DSP value
 // - this will tend to be slow, use sparingly in realtime contexts
-typedef io_t(*scaler_get_input_fn)(s32 value);
+typedef io_t (*scaler_get_in_fn)(s32 value);
 
 // class structure i
 typedef struct _paramScaler { 
@@ -61,5 +61,8 @@ extern void scaler_init(ParamScaler* sc, const ParamDesc* desc);
 extern s32 scaler_get_value(ParamScaler* sc, io_t in);
 // print readable value to string bffer
 extern void scaler_get_str(char* dst, ParamScaler* sc, io_t in);
+
+// get input given DSP value (use sparingly)
+extern io_t scaler_get_in(ParamScaler* sc, s32 value);
 
 #endif

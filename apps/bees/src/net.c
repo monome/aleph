@@ -769,7 +769,11 @@ u8 net_report_params(void) {
       net_add_param(i, (const ParamDesc*)&pdesc);
       print_dbg("\r\n finished adding parameter.");
 
-      net->params[net->numParams - 1].data.value = val; 
+      //      net->params[net->numParams - 1].data.value = val; 
+      //// use reverse-lookup method from scaler      
+      net->params[net->numParams - 1].data.value = 
+	scaler_get_in( &(net->params[net->numParams - 1].scaler), val);
+
       net->params[net->numParams - 1].data.changed = 0; 
 
     }

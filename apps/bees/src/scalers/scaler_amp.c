@@ -73,51 +73,30 @@ void scaler_amp_init(ParamScaler* sc, const ParamDesc* desc) {
 
   /// FIXME: should consider requested param range,
   //  and compute a customized multiplier here if necessary.
-  // for now, scaling functions are static.>.????
 
-  ///// this was driving me nuts so instead used a static table of FPs in param_scaler.c 
-
-  /* // assign lookup functions */
-  /* print_dbg("\r\n assigning lookup functions... 0x"); */
-  /* print_dbg_hex((u32)&scaler_amp_val); */
-  /* print_dbg(", 0x"); */
-  /* print_dbg_hex((u32)&scaler_amp_rep); */
-
-  /* print_dbg("\r\n scaler address: 0x"); */
-  /* print_dbg_hex((u32)sc); */
-  /* print_dbg("\r\n scaler get_val address: 0x"); */
-  /* print_dbg_hex((u32)&(sc->get_val)); */
-  /* print_dbg("\r\n scaler get_rep address: 0x"); */
-  /* print_dbg_hex((u32)&(sc->get_rep)); */
-
-  /* //  sc->get_val = &scaler_amp_val; */
-  /* //  sc->get_rep = &scaler_amp_rep; */
- 
-  /* /// god damn, why is this crashing?? */
-  /* //   sc->get_val = (scaler_get_value_fn)NULL; */
-  /* // sc->get_rep = (scaler_get_rep_fn)NULL; */
-  /* //  print_dbg("\r\n (just kidding)"); */
-
-
-  /* /// if we don't cast + dereference, this access crashes! */
-  /* /// wtf !??!??! */
-  /* print_dbg("\r\n scaler get_val value: 0x"); */
-  /* print_dbg_hex(*((const u32*)&(sc->get_val))); */
-  /* print_dbg("\r\n scaler get_rep value: 0x"); */
-  /* print_dbg_hex(*((const u32*)&(sc->get_rep))); */
- 
-
-  /* /// ok, an utterly barbaric attempt...  */
-  /* /// why does it work? */
-  /* *((u32*)&(sc->get_val)) = (u32)&(scaler_amp_val); */
-  /* *((u32*)&(sc->get_rep)) = (u32)&(scaler_amp_rep); */
-  
-  /* print_dbg(" \r\n done."); */
-  
- 
-
+  /// proper class-based initialization was breaking for some reason, 
+  // driving me insane.
+  // so for now, scaling functions are static.>.????
 
   //// FIXME: add tuning functions (???)
   //  sc->tune = NULL;
   //  sc->numTune = 0;  
+}
+
+
+// get input given DSP value (use sparingly)
+io_t scaler_amp_in(s32 x) {
+  // value table is monotonic, can binary search
+  s32 jl = 0;
+  s32 ju = tabSize - 1;
+  s32 jm;
+  while(ju - jl > 1) {
+    jm = (ju + jl) >> 1;
+    if(x >= tabVal[jm]) {
+      jl = jm;
+    } else {
+      ju = jm;
+    }
+  }
+  return (u16)jm << inRshift;
 }
