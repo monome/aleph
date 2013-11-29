@@ -55,7 +55,7 @@ void op_mul_init(void* mem) {
 static void op_mul_in_a(op_mul_t* mul, const io_t v) {
   // printf("mul at %d received A %d\n", (int)mul, (int)*v);
   mul->a = v;
-  mul->val = OP_MUL(mul->a, mul->b);
+  mul->val = op_mul(mul->a, mul->b);
   net_activate(mul->outs[0], mul->val, mul);
 }
 
@@ -63,7 +63,7 @@ static void op_mul_in_a(op_mul_t* mul, const io_t v) {
 static void op_mul_in_b(op_mul_t* mul, const io_t v) {
   //printf("mul at %d received B %d\n", (int)mul, (int)*v);
   mul->b = v;
-  mul->val = OP_MUL(mul->a, mul->b);
+  mul->val = op_mul(mul->a, mul->b);
   if(mul->btrig) {
     net_activate(mul->outs[0], mul->val, mul);
   }
@@ -80,11 +80,11 @@ static void op_mul_inc_input(op_mul_t* mul, const s16 idx, const io_t inc) {
   io_t val;
   switch(idx) {
   case 0:  // a
-    val = OP_ADD(mul->a, inc);
+    val = op_add(mul->a, inc);
     op_mul_in_a(mul, val);
     break; 
   case 1:  // b
-    val = OP_ADD(mul->b, inc);
+    val = op_add(mul->b, inc);
     op_mul_in_b(mul, val);
     break;
   case 2:  // trig

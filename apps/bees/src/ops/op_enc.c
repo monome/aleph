@@ -87,7 +87,7 @@ static void op_enc_in_step(op_enc_t* enc, const io_t v) {
 
 // move
 /* static void op_enc_in_move(op_enc_t* enc, const io_t v) { */
-/*   enc->val = OP_ADD(enc->val, OP_MUL(enc->step, OP_FROM_INT(v))); */
+/*   enc->val = op_add(enc->val, op_mul(enc->step, op_from_int(v))); */
 /*   op_enc_perform(enc); */
 /* } */
 
@@ -117,14 +117,14 @@ static void op_enc_perform(op_enc_t* enc) {
   if (enc->wrap) { // wrapping...
     // if value needs wrapping, output the applied difference
     while (enc->val > enc->max) { 
-      dif = OP_SUB(enc->min, enc->max);
-      wrap = OP_ADD(wrap, dif);
-      enc->val = OP_ADD(enc->val, dif);
+      dif = op_sub(enc->min, enc->max);
+      wrap = op_add(wrap, dif);
+      enc->val = op_add(enc->val, dif);
     }
     while (enc->val < enc->min) { 
-      dif = OP_SUB(enc->max, enc->min);
-      wrap = OP_ADD(wrap, dif);
-      enc->val = OP_ADD(enc->val, dif);
+      dif = op_sub(enc->max, enc->min);
+      wrap = op_add(wrap, dif);
+      enc->val = op_add(enc->val, dif);
     }
   } else { // saturating...
     if (enc->val > enc->max) {
@@ -154,15 +154,15 @@ static void op_enc_inc_input(op_enc_t* enc, const s16 idx, const io_t inc) {
   /*   op_enc_in_move(enc, inc); */
   /*   break;  */
   case 0:  // min
-    val = OP_SADD(enc->min, inc);
+    val = op_sadd(enc->min, inc);
     op_enc_in_min(enc, val);
     break;
   case 1:  // max
-    val = OP_SADD(enc->max, inc);
+    val = op_sadd(enc->max, inc);
     op_enc_in_max(enc, val);
     break;
   case 2: // step
-    val = OP_SADD(enc->step, inc);
+    val = op_sadd(enc->step, inc);
     op_enc_in_step(enc, val);
     break;
   case 3: // wrap mode
@@ -194,6 +194,6 @@ void op_enc_sys_input(op_enc_t* enc, s8 v) {
   //  print_dbg("\r\n enc sys input, address: 0x");
   //  print_dbg_hex((u32)enc);
 
-  enc->val = OP_ADD(enc->val, OP_MUL(enc->step, OP_FROM_INT(v)));
+  enc->val = op_add(enc->val, op_mul(enc->step, op_from_int(v)));
   op_enc_perform(enc);  
 }

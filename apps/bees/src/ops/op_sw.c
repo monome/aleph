@@ -140,7 +140,7 @@ static void op_sw_inc(op_sw_t* sw, const s16 idx, const io_t inc) {
     op_sw_in_tog(sw, inc);
     break;
   case 1: // multiplier
-    val = OP_SADD(sw->mul, inc);
+    val = op_sadd(sw->mul, inc);
     op_sw_in_mul(sw, val);
     break;
   }

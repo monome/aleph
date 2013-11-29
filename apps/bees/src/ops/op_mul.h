@@ -1,5 +1,5 @@
-#ifndef _OP_MUL_H_
-#define _OP_MUL_H_
+#ifndef _op_mul_H_
+#define _op_mul_H_
 
 #include "op.h"
 #include "op_math.h"

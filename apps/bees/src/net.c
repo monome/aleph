@@ -624,7 +624,7 @@ io_t net_inc_in_value(s32 inIdx, io_t inc) {
   if(inIdx >= net->numIns) {
     // hack to get param idx
     inIdx -= net->numIns;
-    set_param_value(inIdx, OP_SADD(get_param_value(inIdx), inc));
+    set_param_value(inIdx, op_sadd(get_param_value(inIdx), inc));
     return get_param_value(inIdx);
 
   } else {
