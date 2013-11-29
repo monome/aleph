@@ -909,12 +909,15 @@ void net_get_param_value_string(char* dst, u32 idx) {
   /// get param index! rrrgg
   idx -= net->numIns;
   /// lookup representation from stored input value and print to buf
-  print_fix16(	dst, 
-		scaler_get_rep(	&(net->params[idx].scaler), 
-				  net->params[idx].data.value
-				) 
-		);
-				  
+  /* print_fix16(	dst,  */
+  /* 		scaler_get_rep(	&(net->params[idx].scaler),  */
+  /* 				  net->params[idx].data.value */
+  /* 				)  */
+  /* 		); */
+  scaler_get_str( dst,	
+		  &(net->params[idx].scaler), 
+		  net->params[idx].data.value
+		  );
 }
 
 ///////////////
