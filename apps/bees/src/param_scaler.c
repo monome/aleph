@@ -37,9 +37,9 @@ scaler_get_value_fn scaler_get_val_pr[eParamNumTypes] = {
   NULL,
   NULL,
 };
-// array of pointers to get_rep functions.
-scaler_get_rep_fn scaler_get_rep_pr[eParamNumTypes] = {
-  &scaler_amp_rep,
+// array of pointers to get_str functions.
+scaler_get_str_fn scaler_get_str_pr[eParamNumTypes] = {
+  &scaler_amp_str,
   NULL,
   NULL,
   NULL,
@@ -89,19 +89,16 @@ s32 scaler_get_value(ParamScaler* sc, io_t in) {
   */
 }
 
-s32 scaler_get_rep(ParamScaler* sc, io_t in) {
+void scaler_get_str(char* dst, ParamScaler* sc, io_t in) {
 
   //// FIXME: inefficient
-  if(scaler_get_rep_pr[sc->type] != NULL) {
-    return (*(scaler_get_rep_pr[sc->type]))(in);
-  } else {
-    return 0;
+  if(scaler_get_str_pr[sc->type] != NULL) {
+    (*(scaler_get_str_pr[sc->type]))(dst, in);
   }
-
-  /* return (*(sc->get_rep))(in); */
-  /* if(sc->get_rep == NULL) { */
+  /* return (*(sc->get_str))(in); */
+  /* if(sc->get_str == NULL) { */
   /*   return 0;  */
   /* } else { */
-  /*   return (*(sc->get_rep))(in); */
+  /*   return (*(sc->get_str))(in); */
   /* } */
 }

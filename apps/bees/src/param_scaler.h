@@ -3,7 +3,7 @@
 
    parameter-scaling module.
 
-   a scaler converts io_t to full-scale 4-byte parameter representation (native DSP value.) 
+   a scaler converts io_t to full-scale 4-byte parameter value  (native DSP unit.) 
    sometimes this can be done by calculation, more often i think by tuned tabled lookup.
 
    each scaler type must maintain a lookup table size.
@@ -27,19 +27,20 @@
 //-- function types
 // get DSP value for given type, input
 typedef s32 (*scaler_get_value_fn)(io_t in);
-// get readable value for given type, input
-// this datatype can change! 
-// users should check the associated paramDesc if needed
-typedef s32 (*scaler_get_rep_fn)(io_t in);
+// print human-readable value to string
+typedef void (*scaler_get_str_fn)(char* dst, io_t in);
 // perform a tuning routine
 typedef s32 (*scaler_tune_fn)(u8 tuneId, io_t in);
+// search for closest input to DSP value
+// - this will tend to be slow, use sparingly in realtime contexts
+typedef io_t(*scaler_get_input_fn)(s32 value);
 
 // class structure i
 typedef struct _paramScaler { 
    // get value
   scaler_get_value_fn get_val;
   // get ui representation
-  scaler_get_rep_fn get_rep;
+  scaler_get_str_fn get_str;
   // type
   ParamType type;
   //// TODO, perhaps
@@ -58,13 +59,7 @@ extern void scaler_init(ParamScaler* sc, const ParamDesc* desc);
 
 // get DSP value 
 extern s32 scaler_get_value(ParamScaler* sc, io_t in);
-// get readable value
-/*
- this datatype can change! 
- usually it is signed 16.16,
- but integer params may need a bigger range of values.
- caller should check the associated paramDesc and cast if needed
-*/
-extern s32 scaler_get_rep(ParamScaler* sc, io_t in);
+// print readable value to string bffer
+extern void scaler_get_str(char* dst, ParamScaler* sc, io_t in);
 
 #endif

@@ -10,8 +10,8 @@
 // table size
 static const u8 tabBits = 10;
 static const u32 tabSize = 1024;
-// shift from io_t size
-static const u8 inRshift = 6;
+// shift from io_t size to index
+static const u8 inRshift = 5;
 
 static s32* tabVal;
 static s32* tabRep;
@@ -28,18 +28,21 @@ static u8 initFlag = 0;
 s32 scaler_amp_val(io_t in) {
   print_dbg("\r\n requesting amp_scaler value for input: 0x");
   print_dbg_hex((u32)in);
+  if(in < 0) { in = 0; }
 
-  return tabVal[in >> inRshift];
+  return tabVal[(u16)(in >> inRshift)];
 }
 
-s32 scaler_amp_rep(io_t in) {
+void scaler_amp_str(char* dst, io_t in) {
   print_dbg("\r\n requesting amp_scaler representation for input: 0x");
   print_dbg_hex((u32)in);
 
-  print_dbg(" ; value: 0x");
-  print_dbg_hex(tabRep[in >> inRshift]);
+  if(in < 0) { in = 0; }
+  /* print_dbg(" ; value: 0x"); */
+  /* print_dbg_hex(tabRep[(u16)(in >> inRshift)]); */
 
-  return tabRep[in >> inRshift];
+  //  return tabRep[(u16)(in >> inRshift)];
+  print_fix16(dst, tabRep[(u16)(in >> inRshift)] );
 }
 
 // init function
