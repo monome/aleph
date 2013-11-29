@@ -30,13 +30,57 @@
 				"box" : 				{
 					"fontname" : "Andale Mono",
 					"fontsize" : 12.0,
+					"id" : "obj-46",
+					"maxclass" : "newobj",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "int" ],
+					"patching_rect" : [ 555.0, 39.0, 32.5, 20.0 ],
+					"text" : "- 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Andale Mono",
+					"fontsize" : 12.0,
+					"id" : "obj-45",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 555.0, 77.0, 54.0, 18.0 ],
+					"text" : "max $1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Andale Mono",
+					"fontsize" : 12.0,
+					"id" : "obj-43",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 163.0, 215.0, 50.0, 18.0 ],
+					"text" : "24"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Andale Mono",
+					"fontsize" : 12.0,
 					"id" : "obj-38",
 					"maxclass" : "number",
+					"maximum" : 23,
+					"minimum" : 0,
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "int", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 518.0, 32.0, 50.0, 20.0 ]
+					"patching_rect" : [ 555.0, 107.0, 50.0, 20.0 ]
 				}
 
 			}
@@ -105,7 +149,7 @@
 					"fontname" : "Andale Mono",
 					"fontsize" : 12.0,
 					"id" : "obj-14",
-					"items" : [ 19, "phase mod smooth", ",", 18, "hz 2 smoothing", ",", 17, "hz 1 smoothing", ",", 16, "amp env rel curv", ",", 15, "amp env atk curv", ",", 14, "amp env release", ",", 13, "amp env attack", ",", 12, "gate", ",", 11, "waveshape 2", ",", 10, "waveshape 1", ",", 9, "phase mod depth", ",", 8, "I/O amp 4", ",", 7, "I/O amp 3", ",", 6, "I/O amp 2", ",", 5, "I/O amp 1", ",", 4, "amplitude 2", ",", 3, "amplitude 1", ",", 2, "osc 2 ratio", ",", 1, "osc 2 freq", ",", 0, "osc 1 freq", ",", 1, "osc 2 freq", ",", 2, "osc 2 ratio", ",", 3, "amplitude 1", ",", 4, "amplitude 2", ",", 5, "I/O amp 1", ",", 6, "I/O amp 2", ",", 7, "I/O amp 3", ",", 9, "phase mod depth", ",", 10, "waveshape 1", ",", 11, "waveshape 2", ",", 12, "gate", ",", 13, "amp env attack", ",", 14, "amp env release", ",", 16, "amp env rel curv", ",", 17, "hz 1 smoothing", ",", 19, "phase mod smooth", ",", 20, "wave 1 smoothing", ",", 21, "wave 2 smoothing", ",", 22, "amp 1 smoothing", ",", 23, "amp 2 smoothing", ",", 24, "", ",", 25, "", ",", 26, "", ",", 27, "ï", ",", 28, "ÿÿÿ¿ê¾þ_uÿÿÿÿÿ»", ",", 29, "wÿßÿ¯ÿ{ÿÿ÷ÿÿïú¿ý", ",", 30, "ÿqÿý¾ÿ×¿ýýïþú«ý", ",", 27, "", ",", 32, "¿·ÿûÿWÿÿ¿ÿÛÏßÿ÷", ",", 33, "¿ÿªÿÿÿ×ïþïþÿŸß¿ÿ", ",", 34, "ÿ¯ÿíß_ÿÛÿïßÿÿßÿ»" ],
+					"items" : [ 0, "osc 1 freq", ",", 1, "osc 2 freq", ",", 2, "osc 2 ratio", ",", 3, "amplitude 1", ",", 4, "amplitude 2", ",", 5, "I/O amp 1", ",", 6, "I/O amp 2", ",", 7, "I/O amp 3", ",", 8, "I/O amp 4", ",", 9, "phase mod depth", ",", 10, "waveshape 1", ",", 11, "waveshape 2", ",", 12, "gate", ",", 13, "amp env attack", ",", 14, "amp env release", ",", 15, "amp env atk curv", ",", 16, "amp env rel curv", ",", 17, "hz 1 smoothing", ",", 18, "hz 2 smoothing", ",", 19, "phase mod smooth", ",", 20, "wave 1 smoothing", ",", 21, "wave 2 smoothing", ",", 22, "amp 1 smoothing", ",", 23, "amp 2 smoothing", ",", 23, "amp 2 smoothing", ",", 23, "amp 2 smoothing", ",", 23, "amp 2 smoothing", ",", 23, "amp 2 smoothing", ",", 23, "amp 2 smoothing", ",", 23, "amp 2 smoothing" ],
 					"maxclass" : "umenu",
 					"numinlets" : 1,
 					"numoutlets" : 3,
@@ -138,7 +182,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 209.0, 55.0, 32.5, 18.0 ],
+					"patching_rect" : [ 262.0, 32.0, 32.5, 18.0 ],
 					"text" : "/"
 				}
 
@@ -152,8 +196,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 70.0, 98.0, 158.0, 18.0 ],
-					"text" : "/aleph/param/num 24"
+					"patching_rect" : [ 70.0, 98.0, 240.0, 18.0 ],
+					"text" : "/aleph/param/get 1 112.5"
 				}
 
 			}
@@ -166,7 +210,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 385.0, 77.0, 155.0, 18.0 ],
+					"patching_rect" : [ 422.0, 152.0, 155.0, 18.0 ],
 					"text" : "/aleph/param/info $1"
 				}
 
@@ -180,8 +224,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 462.0, 280.0, 212.0, 18.0 ],
-					"text" : "/aleph/param/set 1 255 0 0 0"
+					"patching_rect" : [ 462.0, 280.0, 183.0, 18.0 ],
+					"text" : "/aleph/param/set 1 112.5"
 				}
 
 			}
@@ -194,8 +238,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 448.0, 238.0, 147.0, 18.0 ],
-					"text" : "/aleph/param/get 27"
+					"patching_rect" : [ 465.0, 238.0, 140.0, 18.0 ],
+					"text" : "/aleph/param/get 1"
 				}
 
 			}
@@ -297,6 +341,24 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-43", 1 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-13", 1 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-46", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-13", 1 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-21", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
@@ -364,6 +426,24 @@
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-4", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-38", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-45", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-45", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-46", 0 ]
 				}
 
 			}

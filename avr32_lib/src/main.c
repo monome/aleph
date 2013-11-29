@@ -151,62 +151,10 @@ static void handler_HidConnect(s32 data) {
 static void handler_HidDisconnect(s32 data) { ;; }
 static void handler_HidByte(s32 data) { ;; }
 
-static void handler_SerialParamNum(s32 data) {
-  // print_dbg("\nhandler_SerialParamNum. data: ");
-  // print_dbg_ulong(data);
-  // print_dbg(" buffer: ");
-  // print_dbg_ulong(serial_buffer[data]);
-
-  u32 num;
-  bfin_get_num_params(&num);
-  serial_send_start(2);
-  serial_send_byte(num);
-  serial_send_end();
-}
-
-static void handler_SerialParamInfo(s32 data) {
-  // print_dbg("\nhandler_SerialParamInfo. data: ");
-  // print_dbg_ulong(data);
-  // print_dbg(" buffer: ");
-  // print_dbg_ulong(serial_buffer[data]);
-
-  // TODO check out of bounds index
-  static ParamDesc p;
-  u8 idx = serial_buffer[data+1];
-  u8 c = 1, n = 0;
-  bfin_get_param_desc(idx, &p);
-  serial_send_start(3);
-  serial_send_byte(idx);
-  while(c != 0 && n < PARAM_LABEL_LEN) {
-    c = p.label[n];
-    serial_send_byte(c);
-    n++;
-  }
-  serial_send_separator();
-  serial_send_end();
-}
-
-static void handler_SerialParamGet(s32 data) {
-  print_dbg("\nhandler_SerialParamGet. data: ");
-  print_dbg_ulong(data);
-  print_dbg(" buffer: ");
-  print_dbg_ulong(serial_buffer[data]);
-
-  // TODO, not in bfin
-}
-
-static void handler_SerialParamSet(s32 data) {
-  // print_dbg("\nhandler_SerialParamSet. data: ");
-  // print_dbg_ulong(data);
-  // print_dbg(" buffer: ");
-  // print_dbg_ulong(serial_buffer[data]);
-
-  u8 idx = serial_buffer[data+1];
-  s32 val = (serial_buffer[data+2]<<24) + (serial_buffer[data+3]<<16) + (serial_buffer[data+4]<<8) + (serial_buffer[data+5]);
-  bfin_set_param(idx, val);
-}
-
-
+static void handler_SerialParamNum(s32 data) { serial_param_num(data); }
+static void handler_SerialParamInfo(s32 data) { serial_param_info(data); }
+static void handler_SerialParamGet(s32 data) { serial_param_get(data); }
+static void handler_SerialParamSet(s32 data) { serial_param_set(data); }
 
 static void handler_AppCustom(s32 data) { ;; }
 

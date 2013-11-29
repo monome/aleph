@@ -3,6 +3,7 @@
 #include "aleph_board.h"
 #include "usart.h"
 
+#include "bfin.h"
 #include "events.h"
 #include "event_types.h"
 #include "serial.h"
@@ -86,9 +87,6 @@ void serial_process() {
 
   //buffer, try to grab more than one byte if available
   while(usart_read_char(FTDI_USART,&c) == USART_SUCCESS) {
-    // FIXME: overflow control
-    // if(serial_write_pos > SERIAL_BUFFER_SIZE) ;;
-
     // DONE: implement proper framing, ie: http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
     // code 27 is escape
     if(c == 27 && escape == 0) escape = 1;
@@ -113,6 +111,70 @@ void serial_process() {
     }
   }
 }
+
+// from handler
+void serial_param_num(s32 data) {
+  u32 num;
+  bfin_get_num_params(&num);
+  serial_send_start(2);
+  serial_send_byte(num);
+  serial_send_end();
+}
+
+void serial_param_info(s32 data) {
+    // TODO check out of bounds index
+  static ParamDesc p;
+  u8 idx = serial_buffer[data+1];
+  u8 c = 1, n = 0;
+  bfin_get_param_desc(idx, &p);
+  serial_send_start(3);
+  serial_send_byte(idx);
+  while(c != 0 && n < PARAM_LABEL_LEN) {
+    c = p.label[n];
+    serial_send_byte(c);
+    n++;
+  }
+  serial_send_separator();
+  serial_send_end();
+}
+
+void serial_param_get(s32 data) {
+  u32 val;
+  u8 idx = serial_buffer[data+1];
+
+  // index check for bounds?
+  val = bfin_get_param(idx);
+  // print_dbg("\nvalue: ");
+  // print_dbg_ulong(val);
+  // print_dbg(" : ");
+  // print_dbg_ulong((u8)(val>>24 & 0xff));
+  // print_dbg(" ");
+  // print_dbg_ulong((u8)(val>>16 & 0xff));
+  // print_dbg(" ");
+  // print_dbg_ulong((u8)(val>>8 & 0xff));
+  // print_dbg(" ");
+  // print_dbg_ulong((u8)val & 0xff);
+
+  serial_send_start(4);
+  serial_send_byte(idx);
+  serial_send_byte((u8)(val>>24 & 0xff));
+  serial_send_byte((u8)(val>>16 & 0xff));
+  serial_send_byte((u8)(val>>8 & 0xff));
+  serial_send_byte((u8)val & 0xff);
+  serial_send_end();
+}
+
+void serial_param_set(s32 data) {
+  u8 idx = serial_buffer[data+1];
+  s32 val = (serial_buffer[data+2]<<24) + (serial_buffer[data+3]<<16) + (serial_buffer[data+4]<<8) + (serial_buffer[data+5]);
+  bfin_set_param(idx, val);
+}
+
+
+
+
+
+// packet parsing called from serial_process according to index
 
 void com_req_num_params(u16 pos) {
   e.type = kEventSerialParamNum;

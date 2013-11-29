@@ -43,11 +43,13 @@ def aleph_handler(addr, tags, data, source):
     output.append(0)
   elif addr == "/aleph/param/set":
     output.append(5)
+    i = int(data[1])
+    f = int((data[1] % 1) * 65535)
     out(data[0])
-    out(data[1])
-    out(data[2])
-    out(data[3])
-    out(data[4])
+    out((i >> 8) & 0xff)
+    out(i & 0xff)
+    out((f >> 8) & 0xff)
+    out(f & 0xff)
     output.append(0)
 
   if output != []:
@@ -113,6 +115,17 @@ try :
             c.send(m)
           except OSCClientError:
             pass
+        elif(incoming_bytes[0]==4):   #param/get
+          print "\n\033[94m---> param value for index " + str(incoming_bytes[1]) + "\033[0m"
+          val = (incoming_bytes[2] << 8) + (incoming_bytes[3]) + (((incoming_bytes[4] << 8) + (incoming_bytes[5])) / 65535.0)
+          m = OSC.OSCMessage()
+          m.setAddress("/aleph/param/get")
+          m.append(incoming_bytes[1])
+          m.append(val)
+          try:
+            c.send(m)
+          except OSCClientError:
+            pass
 
         incoming_bytes = []
         pos = 0
@@ -127,7 +140,7 @@ try :
         pos += 1
         escape = 0
 
-    time.sleep(0.1)
+    time.sleep(0.01)
 
 except serial.serialutil.SerialException:
     print "didn't connect"
