@@ -51,7 +51,7 @@ scaler_get_str_fn scaler_get_str_pr[eParamNumTypes] = {
 
 
 // array of pointers to get_in functions.
-scaler_get_str_fn scaler_get_in_pr[eParamNumTypes] = {
+scaler_get_in_fn scaler_get_in_pr[eParamNumTypes] = {
   &scaler_amp_in,
   NULL,
   NULL,
@@ -105,7 +105,9 @@ void scaler_get_str(char* dst, ParamScaler* sc, io_t in) {
 
 // get input given DSP value (use sparingly)
 io_t scaler_get_in(ParamScaler* sc, s32 value) {
-  if(scaler_get_str_pr[sc->type] != NULL) {
-    (*(scaler_get_str_pr[sc->type]))(dst, in);
+  if(scaler_get_in_pr[sc->type] != NULL) {
+    return (*(scaler_get_in_pr[sc->type]))(value);
+  } else {
+    return 0;
   }
 }

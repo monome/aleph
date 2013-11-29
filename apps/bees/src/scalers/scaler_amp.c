@@ -74,7 +74,6 @@ void scaler_amp_init(ParamScaler* sc, const ParamDesc* desc) {
   /// FIXME: should consider requested param range,
   //  and compute a customized multiplier here if necessary.
 
-
   /// proper class-based initialization was breaking for some reason, 
   // driving me insane.
   // so for now, scaling functions are static.>.????
