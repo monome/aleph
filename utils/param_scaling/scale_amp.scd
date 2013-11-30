@@ -11,7 +11,7 @@ i = Array.series(n);
 // 0xffffffff has the special meaning of unity gain. 
 
 /// minimum value in db for logarithmic curve
-~mindb = -48;
+~mindb = -60;
 
 /// float values for output
 f = i.collect({ |j|
@@ -73,13 +73,18 @@ v.do({ |x| x.asHexString.postln; });
 r = v.collect({ |x|
 	var db, dbint, dbfr;
 	db = (x.asFloat / (0x7fffffff.asFloat + 1.0)).ampdb;
-	db.postln;
-	dbint = db.floor.asInteger;
+	db.post; " , ".post;
+	dbint = db.ceil.asInteger;
+	dbint.postln;
 	dbfr = db - (dbint.asFloat);
 	if(dbint == -inf, {
 		0xffffffff
 	}, {
-		(dbint << 15) | ((dbfr * 0x10000).floor.asInteger);
+		if(dbint == 0, { 
+			(dbfr * 0x10000).floor.asInteger
+		}, {
+			(dbint << 16) | (0xffff & ((dbfr * 0x10000).floor.asInteger))
+		})
 	});
 });
 
