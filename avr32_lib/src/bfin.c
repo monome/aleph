@@ -210,7 +210,13 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
     pval.asByte[i] = (u8)(x & 0xff);
   }
   pDesc->max = pval.asInt;
- 
+
+  // read radix
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, 0); //dont care
+    spi_read(BFIN_SPI, &x);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    pDesc->radix = (u8)(x & 0xff);
   app_resume();
 }
 

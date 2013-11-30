@@ -21,12 +21,10 @@ typedef s32 ParamValue;
 /// these differentiate  the actual, numerical use case for the parameter.
 // add as needed, sync with param scaler definitions
 typedef enum {
-  // linear 16.16
+  /// fixed-point linear (radix is separate)
   eParamTypeFix,
-  // linear 1.31
-  eParamTypeFract,
-  // unsigned 32
-  eParamTypeUint,
+  // binary toggle
+  eParamTypeToggle,
   // amplitude (0-1)
   eParamTypeAmp,
   // time in samples
@@ -61,6 +59,10 @@ typedef struct __attribute__((__packed__)) ParamDescStruct {
   // range (may be independent of type) 
   s32 min;
   s32 max;
+  // positive radix
+  // 1 = signed fract (1.32)
+  // 32 = signed int
+  u8 radix;
 } ParamDesc;
 
 // parameter data
