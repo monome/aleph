@@ -33,6 +33,7 @@ CSRCS += \
 	$(APP_DIR)/src/render.c \
 	$(APP_DIR)/src/param_scaler.c \
 	$(APP_DIR)/src/scene.c \
+	$(APP_DIR)/src/util.c \
 	$(APP_DIR)/src/ops/op_add.c \
 	$(APP_DIR)/src/ops/op_adc.c \
 	$(APP_DIR)/src/ops/op_enc.c \
@@ -51,7 +52,10 @@ CSRCS += \
 	$(APP_DIR)/src/pages/page_play.c \
 	$(APP_DIR)/src/pages/page_presets.c \
 	$(APP_DIR)/src/pages/page_scenes.c \
-	$(APP_DIR)/src/scalers/scaler_amp.c 
+	$(APP_DIR)/src/scalers/scaler_amp.c \
+	$(APP_DIR)/src/scalers/scaler_fix.c \
+	$(APP_DIR)/src/scalers/scaler_fract.c \
+	$(APP_DIR)/src/scalers/scaler_uint.c
 
 
 # List of assembler source files.

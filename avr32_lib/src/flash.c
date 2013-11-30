@@ -16,11 +16,6 @@
 //-----------------------------------
 //----  define, typedef
 
-/// 64K of blackfin executable storage in flash
-#define LDR_FLASH_BYTES 0x10000
-// length of .ldr string identifier in flash
-#define LDR_FLASH_STRING_LEN 64
-
 // arbitrary magic number to write during first run
 #define FIRSTRUN_MAGIC 0x76543210
 

@@ -626,7 +626,7 @@ io_t net_inc_in_value(s32 inIdx, io_t inc) {
     inIdx -= net->numIns;
     //    set_param_value(inIdx, op_sadd(get_param_value(inIdx), inc));
     //    return get_param_value(inIdx);
-    return inc_param_value(inIdx, inx);
+    return inc_param_value(inIdx, inc);
 
   } else {
     op = net->ops[net->ins[inIdx].opIdx];

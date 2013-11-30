@@ -13,9 +13,16 @@
 
 // type-specific includes
 #include "scalers/scaler_amp.h"
+#include "scalers/scaler_fix.h"
+#include "scalers/scaler_fract.h"
+#include "scalers/scaler_uint.h"
 
 // array of pointers to initialization functions.
+// order must be in sync with types enum in param_common.h
 scaler_init_fn scaler_init_pr[eParamNumTypes] = {
+   &scaler_fix_init,
+  &scaler_fract_init,
+  &scaler_uint_init,
   &scaler_amp_init,
   NULL,
   NULL,
@@ -25,10 +32,17 @@ scaler_init_fn scaler_init_pr[eParamNumTypes] = {
   NULL,
 };
 
+/// FIXME: 
 /// doing this rather improperly as a workaround,
-/// super weird problems in class init? not getting it.
+/// was having super weird problems in class init? not getting it.
+// so for now, a static array of fn pointers.
+// their orders must all be in sync with types enum in param_common.h
+
 // array of pointers to get_value functions.
 scaler_get_value_fn scaler_get_val_pr[eParamNumTypes] = {
+  &scaler_fix_val,
+  &scaler_fract_val,
+  &scaler_uint_val,
   &scaler_amp_val,
   NULL,
   NULL,
@@ -40,6 +54,9 @@ scaler_get_value_fn scaler_get_val_pr[eParamNumTypes] = {
 
 // array of pointers to get_str functions.
 scaler_get_str_fn scaler_get_str_pr[eParamNumTypes] = {
+  &scaler_fix_str,
+  &scaler_fract_str,
+  &scaler_uint_str,
   &scaler_amp_str,
   NULL,
   NULL,
@@ -52,6 +69,9 @@ scaler_get_str_fn scaler_get_str_pr[eParamNumTypes] = {
 
 // array of pointers to get_in functions.
 scaler_get_in_fn scaler_get_in_pr[eParamNumTypes] = {
+  &scaler_fix_in,
+  &scaler_fract_in,
+  &scaler_uint_in,
   &scaler_amp_in,
   NULL,
   NULL,

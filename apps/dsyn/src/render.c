@@ -62,7 +62,7 @@ static const char* paramStrings[] = {
 // 1 large region filling the screen
 static region bigtop = { .w = 128, .h = 56, .x = 0, .y = 0, };
 
-// 4 small squares along the bottom text row of the scree
+// 4 small squares along the bottom text row of the screen
 static region foot[4] = {
   //  { .w = 64, .h = 28, .len =1792, .x =  0, .y =  0, .dirty = 0 } ,
   { .w = 32, .h = 8, .x = 0,  .y = 56, },
