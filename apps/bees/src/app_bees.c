@@ -70,6 +70,7 @@ u8 app_launch(u8 firstrun) {
   if(firstrun) {
     render_boot("launching app, first run");
     print_dbg("\r\n first run, try and load default DSP");
+    render_boot("launching default.ldr");
     files_load_dsp_name("default.ldr");
     
     bfin_wait_ready();

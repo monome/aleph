@@ -78,7 +78,7 @@ static void render_line(s16 idx, u8 fg) {
 
     font_string_region_clip(lineRegion, lineBuf, 4, 0, fg, 0);
     clearln();
-
+ 
     op_print(lineBuf, net_get_in_value(idx));
 
     font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, fg, 0);
