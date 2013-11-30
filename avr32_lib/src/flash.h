@@ -14,7 +14,13 @@
 
 // bytes available for application-specific storage
 // (increase as needed)
-#define APP_FLASH_BYTES 0x20000
+#define APP_FLASH_BYTES 0x20000 
+
+/// 64K of blackfin executable storage in flash
+#define LDR_FLASH_BYTES 0x10000
+// length of .ldr string identifier in flash
+#define LDR_FLASH_STRING_LEN 64
+
 
 //------------------------
 // extern variables

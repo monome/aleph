@@ -18,15 +18,12 @@
 
 // convert data byte to hex characters
 extern char* byte_to_hex_ascii(char* dst, u8 byte);
-
 // convert hex characters to data byte
 // return new position in char buffer
 extern char* hex_ascii_to_byte(u8* dst, char* src);
-
 // convert (4-byte) unsigned integer to hex ascii
 // endian-specific!
 void uint_to_hex_ascii(char* dst, u32 src);
-
 // convert ascii hex string to uint
 u32 hex_ascii_to_uint(char* str);
 
