@@ -14,34 +14,36 @@
 // max characters in param name
 #define PARAM_LABEL_LEN 16
 
-
-///////////
-///////////
-// hack !
-#define PARAM_TYPE_FIX eParamTypeAmp
+// data type
+typedef s32 ParamValue;
 
 ///--- parameter use-types
-/// these diferentiate  the actual, numerical use case for the parameter.
+/// these differentiate  the actual, numerical use case for the parameter.
 // add as needed, sync with param scaler definitions
 typedef enum {
+  // linear 16.16
+  eParamTypeFix,
+  // linear 1.31
+  eParamTypeFract,
+  // unsigned 32
+  eParamTypeUint,
   // amplitude (0-1)
   eParamTypeAmp,
   // time in samples
   eParamTypeSamples,
   // frequency coefficient for 1pole filter
   eParamType1pFreq,
-  // frequency coefficient for SVF
-  eParamTypeSvfFreq,
-  // RQ coefficient for SVF
-  eParamTypeSvfRq,
   // oscillator, base frequency
   eParamTypeOscFreq,
   // oscillator tuning ratio
   eParamTypeOscTune,
+  // frequency coefficient for SVF
+  eParamTypeSvfFreq,
+  // RQ coefficient for SVF
+  eParamTypeSvfRq,
   //...?
   eParamNumTypes
 } ParamType;
-
 
 // a union type for byteswapping
 typedef union __attribute__((__packed__)) {
@@ -50,17 +52,15 @@ typedef union __attribute__((__packed__)) {
   u8 asByte[4];
 } ParamValueCommon;
 
-// data type
-typedef s32 ParamValue;
-
 // parameter descriptor
 typedef struct __attribute__((__packed__)) ParamDescStruct {
   // parameter name
   char label[PARAM_LABEL_LEN];
   // type
   ParamType type;
-  fix16 min;
-  fix16 max;
+  // range (may be independent of type) 
+  s32 min;
+  s32 max;
 } ParamDesc;
 
 // parameter data

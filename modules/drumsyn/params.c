@@ -242,7 +242,7 @@ void fill_param_desc(void) {
       strcat(buf, numstrs[i]);
       strcpy(gModuleData->paramDesc[k].label, buf);
       strcpy(gModuleData->paramDesc[k].unit, "");
-      gModuleData->paramDesc[k].type = PARAM_TYPE_FRACT;
+      gModuleData->paramDesc[k].type = eParamTypeFract;
       gModuleData->paramDesc[k].min = 0;
       gModuleData->paramDesc[k].max = FR32_MAX;
       k++;

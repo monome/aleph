@@ -43,25 +43,29 @@ typedef struct _paramScaler {
   scaler_get_str_fn get_str;
   // type
   ParamType type;
+  /// min / max
+  // . .. this could be independent of type.
+  io_t min;
+  io_t max;
+
   //// TODO, perhaps
   // array of tuning functions
   //  scaler_tune_fn * tune;
   // num tuning functions
   //  u8 numTune;
+  
 } ParamScaler;
 
-// initialize scaler for given param (protected)
+// initialize scaler for given param (protected, derived)
 typedef void (*scaler_init_fn)(ParamScaler* sc, const ParamDesc* desc);
 
-
-// initialize scaler for given param
+// initialize scaler for given param (public, abstract)
 extern void scaler_init(ParamScaler* sc, const ParamDesc* desc);
 
 // get DSP value 
 extern s32 scaler_get_value(ParamScaler* sc, io_t in);
 // print readable value to string bffer
 extern void scaler_get_str(char* dst, ParamScaler* sc, io_t in);
-
 // get input given DSP value (use sparingly)
 extern io_t scaler_get_in(ParamScaler* sc, s32 value);
 
