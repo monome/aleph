@@ -702,7 +702,8 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
 
   ///////////////
   // initialize scaler
-  scaler_init(&(net->params[net->numParams].scaler), pdesc);
+  scaler_init(&(net->params[net->numParams].scaler), 
+	      &(net->params[net->numParams].desc));
   ////////////
   print_dbg("\r\n finished initializing param scaler.");
 

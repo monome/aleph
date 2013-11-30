@@ -25,15 +25,15 @@
 
 
 //-- function types
-// get DSP value for given type, input
-typedef s32 (*scaler_get_value_fn)(io_t in);
+// get DSP value for given scaler, input
+typedef s32 (*scaler_get_value_fn)(void* scaler, io_t in);
 // print human-readable value to string
-typedef void (*scaler_get_str_fn)(char* dst, io_t in);
-// perform a tuning routine
-typedef s32 (*scaler_tune_fn)(u8 tuneId, io_t in);
+typedef void (*scaler_get_str_fn)(char* dst, void* scaler, io_t in);
 // search for closest input to DSP value
 // - this will tend to be slow, use sparingly in realtime contexts
-typedef io_t (*scaler_get_in_fn)(s32 value);
+typedef io_t (*scaler_get_in_fn)(void* scaler, s32 value);
+// perform a tuning routine
+typedef s32 (*scaler_tune_fn)(void* scaler, u8 tuneId, io_t in);
 
 // class structure i
 typedef struct _paramScaler { 
@@ -41,13 +41,8 @@ typedef struct _paramScaler {
   scaler_get_value_fn get_val;
   // get ui representation
   scaler_get_str_fn get_str;
-  // type
-  ParamType type;
-  /// min / max
-  // . .. this could be independent of type.
-  io_t min;
-  io_t max;
-
+  // param desc pointer
+  const ParamDesc *desc;
   //// TODO, perhaps
   // array of tuning functions
   //  scaler_tune_fn * tune;
@@ -57,7 +52,7 @@ typedef struct _paramScaler {
 } ParamScaler;
 
 // initialize scaler for given param (protected, derived)
-typedef void (*scaler_init_fn)(ParamScaler* sc, const ParamDesc* desc);
+typedef void (*scaler_init_fn)(void* scaler);
 
 // initialize scaler for given param (public, abstract)
 extern void scaler_init(ParamScaler* sc, const ParamDesc* desc);
