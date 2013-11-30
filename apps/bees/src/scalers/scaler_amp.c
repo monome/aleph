@@ -27,14 +27,14 @@ static u8 initFlag = 0;
 //-----------------------
 //---- extern funcs
 
-s32 scaler_amp_val(io_t in) {
+s32 scaler_amp_val(void* scaler, io_t in) {
   /* print_dbg("\r\n requesting amp_scaler value for input: 0x"); */
   /* print_dbg_hex((u32)in); */
   u16 uin = BIT_ABS_16((s16)in);
   return tabVal[(u16)((u16)uin >> inRshift)];
 }
 
-void scaler_amp_str(char* dst, io_t in) {
+void scaler_amp_str(char* dst, void* scaler,  io_t in) {
   /* print_dbg("\r\n requesting amp_scaler representation for input: 0x"); */
   /* print_dbg_hex((u32)in); */
 
@@ -51,9 +51,10 @@ void scaler_amp_str(char* dst, io_t in) {
 }
 
 // init function
-void scaler_amp_init(ParamScaler* sc, const ParamDesc* desc) {
+void scaler_amp_init(void* scaler) {
+  ParamScaler* sc = (ParamScaler*)scaler;
   // check descriptor
-  if( desc->type != eParamTypeAmp) {
+  if( sc->desc->type != eParamTypeAmp) {
     print_dbg("\r\n !!! warning: wrong param type for amp scaler");
   }
   
@@ -74,8 +75,6 @@ void scaler_amp_init(ParamScaler* sc, const ParamDesc* desc) {
    print_dbg("\r\n finished loading amp scaler data from files.");
   }
 
-  sc->type = eParamTypeAmp;
-
   /// FIXME: should consider requested param range,
   //  and compute a customized multiplier here if necessary.
 
@@ -90,7 +89,7 @@ void scaler_amp_init(ParamScaler* sc, const ParamDesc* desc) {
 
 
 // get input given DSP value (use sparingly)
-io_t scaler_amp_in(s32 x) {
+io_t scaler_amp_in(void* scaler, s32 x) {
   // value table is monotonic, can binary search
   s32 jl = 0;
   s32 ju = tabSize - 1;

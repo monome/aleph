@@ -8,9 +8,9 @@
 #include "param_scaler.h"
 #include "types.h"
 
-extern void scaler_fix_init(ParamScaler* sc, const ParamDesc* desc);
-extern s32 scaler_fix_val(io_t in);
-extern void scaler_fix_str(char* dst, io_t in);
-extern io_t scaler_fix_in(s32 val);
+extern void scaler_fix_init(void* scaler);
+extern s32 scaler_fix_val(void* scaler, io_t in);
+extern void scaler_fix_str(char* dst, void* scaler, io_t in);
+extern io_t scaler_fix_in(void* scaler, s32 val);
 
 #endif

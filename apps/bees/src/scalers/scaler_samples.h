@@ -1,3 +1,0 @@
-/*
-  scaler for time in samples
- */
