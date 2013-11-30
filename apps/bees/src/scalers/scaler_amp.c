@@ -30,22 +30,23 @@ static u8 initFlag = 0;
 s32 scaler_amp_val(io_t in) {
   /* print_dbg("\r\n requesting amp_scaler value for input: 0x"); */
   /* print_dbg_hex((u32)in); */
-  if(in < 0) { in = 0; }
-  return tabVal[(u16)(in >> inRshift)];
+  u16 uin = BIT_ABS_16((s16)in);
+  return tabVal[(u16)((u16)uin >> inRshift)];
 }
 
 void scaler_amp_str(char* dst, io_t in) {
   /* print_dbg("\r\n requesting amp_scaler representation for input: 0x"); */
   /* print_dbg_hex((u32)in); */
 
-  in >>= inRshift;
+  //  in >>= inRshift;
+  u16 uin = BIT_ABS_16((s16)in) >> inRshift;
 
-  if(in <= 0) {
+  if(uin == 0) {
     strcpy(dst, "   -inf");
-  } else if (in == (tabSize - 1)) {
+  } else if (uin == (tabSize - 1)) {
     print_fix16(dst, 0);
   } else {
-    print_fix16(dst, tabRep[(u16)in] );
+    print_fix16(dst, tabRep[(u16)uin] );
   }
 }
 

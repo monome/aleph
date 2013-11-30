@@ -616,16 +616,17 @@ void net_set_in_value(s32 inIdx, io_t val) {
 io_t net_inc_in_value(s32 inIdx, io_t inc) {
   op_t* op;
     
-    print_dbg("\r\n incrementing input in network, value: ");
-    print_dbg_hex(net_get_in_value(inIdx < 0 ? 0 : (u16)inIdx));
-    print_dbg(" , increment: ");
-    print_dbg_hex(inc);
+    /* print_dbg("\r\n incrementing input in network, value: "); */
+    /* print_dbg_hex(net_get_in_value(inIdx < 0 ? 0 : (u16)inIdx)); */
+    /* print_dbg(" , increment: "); */
+    /* print_dbg_hex(inc); */
     
   if(inIdx >= net->numIns) {
     // hack to get param idx
     inIdx -= net->numIns;
-    set_param_value(inIdx, op_sadd(get_param_value(inIdx), inc));
-    return get_param_value(inIdx);
+    //    set_param_value(inIdx, op_sadd(get_param_value(inIdx), inc));
+    //    return get_param_value(inIdx);
+    return inc_param_value(inIdx, inx);
 
   } else {
     op = net->ops[net->ins[inIdx].opIdx];
@@ -913,11 +914,6 @@ void net_get_param_value_string(char* dst, u32 idx) {
   /// get param index! rrrgg
   idx -= net->numIns;
   /// lookup representation from stored input value and print to buf
-  /* print_fix16(	dst,  */
-  /* 		scaler_get_rep(	&(net->params[idx].scaler),  */
-  /* 				  net->params[idx].data.value */
-  /* 				)  */
-  /* 		); */
   scaler_get_str( dst,	
 		  &(net->params[idx].scaler), 
 		  net->params[idx].data.value

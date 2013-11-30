@@ -21,16 +21,18 @@ this is to avoid some annoying issues of inclusion order.
 #include "op_math.h"
 
 // get value for param at given idx
-io_t get_param_value(u32 idx);
+extern io_t get_param_value(u32 idx);
 // get preset flag for param at given idx
-u8 get_param_preset(u32 idx);
+extern u8 get_param_preset(u32 idx);
 // get name
-const char* get_param_name(u32 idx);
+extern const char* get_param_name(u32 idx);
 // fill buffer with readable value string
-void get_param_string(char* dst, u32 idx);
+extern void get_param_string(char* dst, u32 idx);
 
 // set value
-void set_param_value(u32 idx, io_t val);
+extern void set_param_value(u32 idx, io_t val);
+// increment value
+extern s32 inc_param_value(u32 idx, io_t inx);
 
 //---- pickle / unpickle
 // node 

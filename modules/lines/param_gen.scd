@@ -259,7 +259,7 @@ void fill_param_desc(void) {
 	~params_c.write("\");
 ");
 
-	~params_c.write("gModuleData->paramDesc[" ++ sym ++ "].type = PARAM_TYPE_FIX; 
+	~params_c.write("gModuleData->paramDesc[" ++ sym ++ "].type = eParamTypeFix; 
 ");
 	~params_c.write("gModuleData->paramDesc[" ++ sym ++ "].min = " ++ min ++ "; 
 ");

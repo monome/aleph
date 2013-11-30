@@ -176,5 +176,13 @@ const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
 
 
 // fill buffer with readable value string
+/* ???
 void get_param_string(char* dst, u32 idx) {
+}
+*/
+
+// increment value
+s32 inc_param_value(u32 idx, io_t inc) {
+  op_sadd(get_param_value(inIdx), inc);
+  
 }
