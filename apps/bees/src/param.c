@@ -183,6 +183,8 @@ void get_param_string(char* dst, u32 idx) {
 
 // increment value
 s32 inc_param_value(u32 idx, io_t inc) {
-  op_sadd(get_param_value(inIdx), inc);
-  
+  s32 val = op_sadd(get_param_value(idx), inc);
+  // TODO: bounds chek on scaler ranges
+    //... 
+  return val;
 }
