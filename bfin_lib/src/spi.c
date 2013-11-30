@@ -282,6 +282,11 @@ u8 spi_process(u8 rx) {
     return pval.asByte[0]; // max, low byte
     break;
   case eParamDescMax3 :
+    byte = eParamDescRadix;
+    return gModuleData->paramDesc[idx].radix;
+    break;
+    // radix
+  case eParamDescRadix :
     byte = eCom; // reset
     return 0; // dont care
     break;

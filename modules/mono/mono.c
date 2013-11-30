@@ -38,15 +38,19 @@
 #include "types.h"
 
 //---------- defines
-// ranges - all are fix16
+// ranges and radix
 #define OSC_FREQ_MIN 0x200000      // 32
 #define OSC_FREQ_MAX 0x40000000    // 16384
+#define OSC_FREQ_RADIX 15
 #define RATIO_MIN 0x2000     // 1/8
 #define RATIO_MAX 0x80000    // 8
+#define RATIO_RADIX 4
 #define ENV_DUR_MIN 0x0040   // 1/1024
 #define ENV_DUR_MAX 0x100000 // 32
+#define ENV_DUR_RADIX 6
 #define SMOOTH_FREQ_MIN 0x2000 // 1/8
 #define SMOOTH_FREQ_MAX 0x400000 // 128
+#define SMOOTH_FREQ_RADIX 8
 
 //-------- data types
 
@@ -391,10 +395,12 @@ void module_set_param(u32 idx, ParamValue v) {
     filter_1p_lo_in(pmLp, FIX16_FRACT_TRUNC(BIT_ABS(v)));
     break;
   case eParamAmp1:
-    filter_1p_lo_in(amp1Lp, FIX16_FRACT_TRUNC(BIT_ABS(v)));
+    //    filter_1p_lo_in(amp1Lp, FIX16_FRACT_TRUNC(BIT_ABS(v)));
+    filter_1p_lo_in(amp1Lp, v);
     break;
   case eParamAmp2:
-    filter_1p_lo_in(amp2Lp, FIX16_FRACT_TRUNC(BIT_ABS(v)));
+    //    filter_1p_lo_in(amp2Lp, FIX16_FRACT_TRUNC(BIT_ABS(v)));
+    filter_1p_lo_in(amp1Lp, v);
     break;
   case eParamGate:
      env_asr_set_gate(env, v > 0);
@@ -473,119 +479,143 @@ static void fill_param_desc(void) {
   gModuleData->paramDesc[eParamFreq1].type = eParamTypeFix;
   gModuleData->paramDesc[eParamFreq1].min = OSC_FREQ_MIN;
   gModuleData->paramDesc[eParamFreq1].max = OSC_FREQ_MAX;
+  gModuleData->paramDesc[eParamFreq1].radix = OSC_FREQ_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamFreq2].label, "osc 2 freq");
   gModuleData->paramDesc[eParamFreq2].type = eParamTypeFix;
   gModuleData->paramDesc[eParamFreq2].min = OSC_FREQ_MIN;
   gModuleData->paramDesc[eParamFreq2].max = OSC_FREQ_MAX;
+  gModuleData->paramDesc[eParamFreq2].radix = OSC_FREQ_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamRatio2].label, "osc 2 ratio");
   gModuleData->paramDesc[eParamRatio2].type = eParamTypeFix;
   gModuleData->paramDesc[eParamRatio2].min = RATIO_MIN;
   gModuleData->paramDesc[eParamRatio2].max = RATIO_MAX;
+  gModuleData->paramDesc[eParamRatio2].radix = RATIO_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamAmp1].label, "amplitude 1");
-  gModuleData->paramDesc[eParamAmp1].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamAmp1].type = eParamTypeAmp;
   gModuleData->paramDesc[eParamAmp1].min = 0;
-  gModuleData->paramDesc[eParamAmp1].max = FIX16_ONE - 1;
+  gModuleData->paramDesc[eParamAmp1].max = FRACT32_MAX >> 1;
+  gModuleData->paramDesc[eParamAmp1].radix = 32;
   
   strcpy(gModuleData->paramDesc[eParamAmp2].label, "amplitude 2");
-  gModuleData->paramDesc[eParamAmp2].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamAmp2].type = eParamTypeAmp;
   gModuleData->paramDesc[eParamAmp2].min = 0;
-  gModuleData->paramDesc[eParamAmp2].max = FIX16_ONE - 1;
+  gModuleData->paramDesc[eParamAmp2].max = FRACT32_MAX >> 1;
+  gModuleData->paramDesc[eParamAmp2].radix = 32;
   
   strcpy(gModuleData->paramDesc[eParamIoAmp0].label, "I/O amp 1");
-  gModuleData->paramDesc[eParamIoAmp0].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamIoAmp0].type = eParamTypeAmp;
   gModuleData->paramDesc[eParamIoAmp0].min = 0;
-  gModuleData->paramDesc[eParamIoAmp0].max = FIX16_ONE - 1;
+  gModuleData->paramDesc[eParamIoAmp0].max = FRACT32_MAX >> 1;
+  gModuleData->paramDesc[eParamIoAmp0].radix = 32;
 
   strcpy(gModuleData->paramDesc[eParamIoAmp1].label, "I/O amp 2");
-  gModuleData->paramDesc[eParamIoAmp1].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamIoAmp1].type = eParamTypeAmp;
   gModuleData->paramDesc[eParamIoAmp1].min = 0;
-  gModuleData->paramDesc[eParamIoAmp1].max = FIX16_ONE - 1;
+  gModuleData->paramDesc[eParamIoAmp1].max = FRACT32_MAX >> 1;
+  gModuleData->paramDesc[eParamIoAmp1].radix = 32;
 
   strcpy(gModuleData->paramDesc[eParamIoAmp2].label, "I/O amp 3");
-  gModuleData->paramDesc[eParamIoAmp2].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamIoAmp2].type = eParamTypeAmp;
   gModuleData->paramDesc[eParamIoAmp2].min = 0;
-  gModuleData->paramDesc[eParamIoAmp2].max = FIX16_ONE - 1;
+  gModuleData->paramDesc[eParamIoAmp2].max = FRACT32_MAX >> 1;
+  gModuleData->paramDesc[eParamIoAmp2].radix = 32;
 
   strcpy(gModuleData->paramDesc[eParamIoAmp3].label, "I/O amp 4");
-  gModuleData->paramDesc[eParamIoAmp3].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamIoAmp3].type = eParamTypeAmp;
   gModuleData->paramDesc[eParamIoAmp3].min = 0;
-  gModuleData->paramDesc[eParamIoAmp3].max = FIX16_ONE - 1;
+  gModuleData->paramDesc[eParamIoAmp3].max = FRACT32_MAX >> 1;
+  gModuleData->paramDesc[eParamIoAmp3].radix = 32;
 
   strcpy(gModuleData->paramDesc[eParamPm].label, "phase mod depth");
   gModuleData->paramDesc[eParamPm].type = eParamTypeFix;
   gModuleData->paramDesc[eParamPm].min = 0;
-  gModuleData->paramDesc[eParamPm].max = FIX16_ONE - 1;
+  gModuleData->paramDesc[eParamPm].max = FRACT32_MAX;
+  gModuleData->paramDesc[eParamPm].radix = 1;
   
   strcpy(gModuleData->paramDesc[eParamWave1].label, "waveshape 1");
   gModuleData->paramDesc[eParamWave1].type = eParamTypeFix;
   gModuleData->paramDesc[eParamWave1].min = 0;
-  gModuleData->paramDesc[eParamWave1].max = FIX16_ONE - 1;
+  gModuleData->paramDesc[eParamWave1].max = FRACT32_MAX;
+  gModuleData->paramDesc[eParamWave1].radix = 1;
   
   strcpy(gModuleData->paramDesc[eParamWave2].label, "waveshape 2");
   gModuleData->paramDesc[eParamWave2].type = eParamTypeFix;
   gModuleData->paramDesc[eParamWave2].min = 0;
-  gModuleData->paramDesc[eParamWave2].max = FIX16_ONE - 1;
+  gModuleData->paramDesc[eParamWave2].max = FRACT32_MAX;
+  gModuleData->paramDesc[eParamWave2].radix = 1;
   
   strcpy(gModuleData->paramDesc[eParamGate].label, "gate");
-  gModuleData->paramDesc[eParamGate].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamGate].type = eParamTypeToggle;
   gModuleData->paramDesc[eParamGate].min = 0;
-  gModuleData->paramDesc[eParamGate].max = FIX16_ONE;
+  gModuleData->paramDesc[eParamGate].max = 1;
+  gModuleData->paramDesc[eParamGate].radix = 32;
   
   strcpy(gModuleData->paramDesc[eParamAtkDur].label, "amp env atk");
   gModuleData->paramDesc[eParamAtkDur].type = eParamTypeFix;
   gModuleData->paramDesc[eParamAtkDur].min = 0;
-  gModuleData->paramDesc[eParamAtkDur].max = FIX16_ONE - 1;
+  gModuleData->paramDesc[eParamAtkDur].max = ENV_DUR_MAX;
+  gModuleData->paramDesc[eParamAtkDur].radix = ENV_DUR_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamRelDur].label, "amp env rel");
   gModuleData->paramDesc[eParamRelDur].type = eParamTypeFix;
   gModuleData->paramDesc[eParamRelDur].min = 0;
-  gModuleData->paramDesc[eParamRelDur].max = FIX16_ONE;
+  gModuleData->paramDesc[eParamRelDur].max = ENV_DUR_MAX;
+  gModuleData->paramDesc[eParamRelDur].radix = 6;
   
   strcpy(gModuleData->paramDesc[eParamAtkCurve].label, "amp env atk curve");
   gModuleData->paramDesc[eParamAtkCurve].type = eParamTypeFix;
   gModuleData->paramDesc[eParamAtkCurve].min = 0;
-  gModuleData->paramDesc[eParamAtkCurve].max = FIX16_ONE - 1;
+  gModuleData->paramDesc[eParamAtkCurve].max = FRACT32_MAX;
+  gModuleData->paramDesc[eParamAtkCurve].radix = 1;
   
   strcpy(gModuleData->paramDesc[eParamRelCurve].label, "amp env rel curve");
   gModuleData->paramDesc[eParamRelCurve].type = eParamTypeFix;
   gModuleData->paramDesc[eParamRelCurve].min = 0;
-  gModuleData->paramDesc[eParamRelCurve].max = FIX16_ONE - 1;
+  gModuleData->paramDesc[eParamRelCurve].max = FRACT32_MAX;
+  gModuleData->paramDesc[eParamRelCurve].radix = 1;
   
   strcpy(gModuleData->paramDesc[eParamFreq1Smooth].label, "freq 1 smooth");
   gModuleData->paramDesc[eParamFreq1Smooth].type = eParamTypeFix;
   gModuleData->paramDesc[eParamFreq1Smooth].min = SMOOTH_FREQ_MIN;
   gModuleData->paramDesc[eParamFreq1Smooth].max = SMOOTH_FREQ_MAX;
+  gModuleData->paramDesc[eParamFreq1Smooth].radix = SMOOTH_FREQ_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamFreq2Smooth].label, "freq 2 smooth");
   gModuleData->paramDesc[eParamFreq2Smooth].type = eParamTypeFix;
   gModuleData->paramDesc[eParamFreq2Smooth].min = SMOOTH_FREQ_MIN;
   gModuleData->paramDesc[eParamFreq2Smooth].max = SMOOTH_FREQ_MAX;
+  gModuleData->paramDesc[eParamFreq2Smooth].radix = SMOOTH_FREQ_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamPmSmooth].label, "phase mod smooth");
   gModuleData->paramDesc[eParamPmSmooth].type = eParamTypeFix;
   gModuleData->paramDesc[eParamPmSmooth].min = SMOOTH_FREQ_MIN;
   gModuleData->paramDesc[eParamPmSmooth].max = SMOOTH_FREQ_MAX;
+  gModuleData->paramDesc[eParamFreq2Smooth].radix = SMOOTH_FREQ_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamWave1Smooth].label, "wave 1 smooth");
   gModuleData->paramDesc[eParamWave1Smooth].type = eParamTypeFix;
   gModuleData->paramDesc[eParamWave1Smooth].min = SMOOTH_FREQ_MIN;
   gModuleData->paramDesc[eParamWave1Smooth].max = SMOOTH_FREQ_MAX;
+  gModuleData->paramDesc[eParamWave1Smooth].radix = SMOOTH_FREQ_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamWave2Smooth].label, "wave 2 smooth");
   gModuleData->paramDesc[eParamWave2Smooth].type = eParamTypeFix;
   gModuleData->paramDesc[eParamWave2Smooth].min = SMOOTH_FREQ_MIN;
   gModuleData->paramDesc[eParamWave2Smooth].max = SMOOTH_FREQ_MAX;
+  gModuleData->paramDesc[eParamWave2Smooth].radix = SMOOTH_FREQ_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamAmp1Smooth].label, "amp 1 smooth");
   gModuleData->paramDesc[eParamAmp1Smooth].type = eParamTypeFix;
   gModuleData->paramDesc[eParamAmp1Smooth].min = SMOOTH_FREQ_MIN;
   gModuleData->paramDesc[eParamAmp1Smooth].max = SMOOTH_FREQ_MAX;
+  gModuleData->paramDesc[eParamAmp1Smooth].radix = SMOOTH_FREQ_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamAmp2Smooth].label, "amp 2 smooth");
   gModuleData->paramDesc[eParamAmp2Smooth].type = eParamTypeFix;
   gModuleData->paramDesc[eParamAmp2Smooth].min = SMOOTH_FREQ_MIN;
   gModuleData->paramDesc[eParamAmp2Smooth].max = SMOOTH_FREQ_MAX;
+  gModuleData->paramDesc[eParamAmp2Smooth].radix = SMOOTH_FREQ_RADIX;
 }

@@ -186,5 +186,6 @@ s32 inc_param_value(u32 idx, io_t inc) {
   s32 val = op_sadd(get_param_value(idx), inc);
   // TODO: bounds chek on scaler ranges
     //... 
+  set_param_value(idx, val);
   return val;
 }
