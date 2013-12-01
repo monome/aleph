@@ -40,7 +40,7 @@
 //---------- defines
 // ranges and radix
 // radix should be minimal bits to accommodate entire integer range.
-#define OSC_FREQ_MIN 0x200000      // 32
+#define OSC_FREQ_MIN 0x100000      // 16
 #define OSC_FREQ_MAX 0x40000000    // 16384
 #define OSC_FREQ_RADIX 15
 #define RATIO_MIN 0x2000     // 1/8
@@ -52,6 +52,7 @@
 #define SMOOTH_FREQ_MIN 0x2000 // 1/8
 #define SMOOTH_FREQ_MAX 0x400000 // 64
 #define SMOOTH_FREQ_RADIX 7
+
 
 //-------- data types
 
@@ -386,13 +387,13 @@ void module_set_param(u32 idx, ParamValue v) {
     set_freq2(v);
     break;
   case eParamWave1:
-    filter_1p_lo_in(wave1Lp, BIT_ABS(v));
+    filter_1p_lo_in(wave1Lp, BIT_ABS(FIX16_FRACT_TRUNC(v)));
     break;
   case eParamWave2:
-    filter_1p_lo_in(wave2Lp, BIT_ABS(v));
+    filter_1p_lo_in(wave2Lp, BIT_ABS(FIX16_FRACT_TRUNC(v)));
     break;
   case eParamPm:
-    filter_1p_lo_in(pmLp, BIT_ABS(v));
+    filter_1p_lo_in(pmLp, BIT_ABS(FIX16_FRACT_TRUNC(v)));
     break;
   case eParamAmp1:
     filter_1p_lo_in(amp1Lp, v);
@@ -411,10 +412,10 @@ void module_set_param(u32 idx, ParamValue v) {
     env_asr_set_rel_dur(env, sec_to_frames_trunc(v));
     break;
   case eParamAtkCurve:
-    env_asr_set_atk_shape(env, BIT_ABS(v));
+    env_asr_set_atk_shape(env, BIT_ABS(FIX16_FRACT_TRUNC(v)));
     break;
   case eParamRelCurve:
-    env_asr_set_atk_shape(env, BIT_ABS(v));
+    env_asr_set_atk_shape(env, BIT_ABS(FIX16_FRACT_TRUNC(v)));
     break;
   case eParamFreq1Smooth:
     filter_1p_lo_set_hz(freq1Lp, v);
@@ -460,7 +461,7 @@ extern u32 module_get_num_params(void) {
 }
 
 // frame callback
-void module_process_frame(void) {
+void module_process_frame(void) {c
   calc_frame();
   out[0] = add_fr1x32(frameVal, mult_fr1x32x32(in[0], ioAmp0));
   out[1] = add_fr1x32(frameVal, mult_fr1x32x32(in[1], ioAmp1));
@@ -592,7 +593,7 @@ static void fill_param_desc(void) {
   gModuleData->paramDesc[eParamPmSmooth].type = eParamTypeFix;
   gModuleData->paramDesc[eParamPmSmooth].min = SMOOTH_FREQ_MIN;
   gModuleData->paramDesc[eParamPmSmooth].max = SMOOTH_FREQ_MAX;
-  gModuleData->paramDesc[eParamFreq2Smooth].radix = SMOOTH_FREQ_RADIX;
+  gModuleData->paramDesc[eParamPmSmooth].radix = SMOOTH_FREQ_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamWave1Smooth].label, "wave 1 smooth");
   gModuleData->paramDesc[eParamWave1Smooth].type = eParamTypeFix;

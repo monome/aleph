@@ -49,7 +49,7 @@ void print_fix16(char* buf , fix16_t x) {
     p++;
   } else {
     // whole
-    y = ( (x >> 16) ^ 0xffff ) & 0xffff;
+    y = ( ( (x >> 16) ^ 0xffff ) & 0xffff );
     itoa_whole(y, bufHi, FIX_DIG_HI);
     // fract
     y = (x ^ 0xffff) & 0xffff;
