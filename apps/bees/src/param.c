@@ -40,6 +40,16 @@ const char* get_param_name(u32 idx) {
 void set_param_value(u32 idx, io_t val) {
   
   s32 scaled = scaler_get_value( &(net->params[idx].scaler), val);
+
+  print_dbg("\r\n set_param_value, index: ");
+  print_dbg_ulong(idx);
+
+  print_dbg(" , value: 0x");
+  print_dbg_hex(val);
+
+
+  print_dbg(" , scaled: 0x");
+  print_dbg_hex(scaled);
     
   /* if(val > net->params[idx].desc.max) { */
   /*   val = net->params[idx].desc.max; */
@@ -185,10 +195,30 @@ void get_param_string(char* dst, u32 idx) {
 */
 
 // increment value
-io_t inc_param_value(u32 idx, io_t inc) {
-  io_t in = get_param_value(idx);
+io_t inc_param_value(u32 idx,  io_t inc) {
+  io_t in;
+  s32 scaled;
+
+  print_dbg("\r\n inc_param_value, index: ");
+  print_dbg_ulong(idx);
+
+  print_dbg(" , input: 0x");
+  print_dbg_hex(get_param_value(idx));
+
+  print_dbg(" , increment: 0x");
+  print_dbg_hex(inc);
+
+
+  in = get_param_value(idx);
   // use scaler to increment and lookup
-  s32 scaled = scaler_inc( &(net->params[idx].scaler), &in, inc);
+  scaled = scaler_inc( &(net->params[idx].scaler), &in, inc);
+
+  print_dbg(" , new input: 0x");
+  print_dbg_hex(in);
+
+  print_dbg(" , scaled: 0x");
+  print_dbg_hex(scaled);
+
   // store input value in pnode
   net->params[idx].data.value = in;
   net->params[idx].data.changed = 1;

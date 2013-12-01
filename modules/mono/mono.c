@@ -39,6 +39,7 @@
 
 //---------- defines
 // ranges and radix
+// radix should be minimal bits to accommodate entire integer range.
 #define OSC_FREQ_MIN 0x200000      // 32
 #define OSC_FREQ_MAX 0x40000000    // 16384
 #define OSC_FREQ_RADIX 15
@@ -47,10 +48,10 @@
 #define RATIO_RADIX 4
 #define ENV_DUR_MIN 0x0040   // 1/1024
 #define ENV_DUR_MAX 0x100000 // 32
-#define ENV_DUR_RADIX 6
+#define ENV_DUR_RADIX 5
 #define SMOOTH_FREQ_MIN 0x2000 // 1/8
-#define SMOOTH_FREQ_MAX 0x400000 // 128
-#define SMOOTH_FREQ_RADIX 8
+#define SMOOTH_FREQ_MAX 0x400000 // 64
+#define SMOOTH_FREQ_RADIX 7
 
 //-------- data types
 
