@@ -15,21 +15,21 @@
 #include "scaler_fix.h"
 
 void scaler_fix_init(void* scaler) {
-  print_dbg("\r\n init fixed-point linear scaler");
-  //  ParamScaler* sc = (ParamScaler*)scaler;
-  // nothing to do
+  ParamScaler* sc = (ParamScaler*)scaler;
+  //  print_dbg("\r\n init fixed-point linear scaler");
+  sc->inMin = scaler_fix_in(scaler, sc->desc->min);
+  sc->inMax = scaler_fix_in(scaler, sc->desc->max);
 }
 
 s32 scaler_fix_val(void* scaler, io_t in) {
+  // normalize
   s32 norm = in << (32 - IO_BITS);
 
-  print_dbg("\r\n linear-fixed scaler, get value; input: 0x");
-  print_dbg_hex(in);
+  /* print_dbg("\r\n linear-fixed scaler, get value; input: 0x"); */
+  /* print_dbg_hex(in); */
+  /* print_dbg(", normalized: 0x"); */
+  /* print_dbg_hex(norm); */
 
-  print_dbg(", normalized: 0x");
-  print_dbg_hex(norm);
-
-  // normalize
   return norm;
 }
 
@@ -38,26 +38,40 @@ void scaler_fix_str(char* dst, void* scaler, io_t in) {
   s32 norm = in << (32 - IO_BITS);
   u8 r = ((ParamScaler*)scaler)->desc->radix;
 
-  print_dbg("\r\n linear-fixed scaler, get string; input: 0x");
-  print_dbg_hex(in);
-
-  print_dbg(" , normalized: 0x");
-  print_dbg_hex(norm);
-
+  /* print_dbg("\r\n linear-fixed scaler, get string; input: 0x"); */
+  /* print_dbg_hex(in); */
+  /* print_dbg(" , normalized: 0x"); */
+  /* print_dbg_hex(norm); */
 
   // rshift back for display, depending on radix
   if(r < 16) {
     norm >>= (16 - r);
   }
-
-  print_dbg(" , adjusted for radix: 0x");
-  print_dbg_hex(norm);
-
-
-  print_fix16(dst, norm);
+  /* print_dbg(" , adjusted for radix: 0x"); */
+  /* print_dbg_hex(norm); */
+   print_fix16(dst, norm); 
 }
 
 io_t scaler_fix_in(void* scaler, s32 val) {
-  // de-normalize
+  // un-normalize
   return val >> (32 - IO_BITS);
+}
+
+// increment input by pointer, return value
+s32 scaler_fix_inc(void* sc, io_t* pin, io_t inc ) {
+  s32 val;
+  ParamScaler* scaler = (ParamScaler*)sc;
+  // use saturation
+  *pin = op_sadd(*pin, inc);
+  // check bounds again after scaling
+  val = scaler_fix_val(sc, *pin);
+  if(val > scaler->desc->max) {
+    *pin = scaler->inMax;
+    return scaler->desc->max;
+  }
+  if(val < scaler->desc->min) {
+    *pin = scaler->inMin;
+    return scaler->desc->min;
+  }
+  return val;
 }

@@ -23,8 +23,6 @@ typedef s32 ParamValue;
 typedef enum {
   /// fixed-point linear (radix is stored separately)
   eParamTypeFix,
-  // binary toggle
-  eParamTypeToggle,
   // amplitude (0-1)
   eParamTypeAmp,
   // time in samples
