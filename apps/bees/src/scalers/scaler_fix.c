@@ -24,10 +24,11 @@ void scaler_fix_init(void* scaler) {
 s32 scaler_fix_val(void* scaler, io_t in) {
   // normalize
   s32 norm = in << (32 - IO_BITS);
-  u8 r = ((ParamScaler*)scaler)->desc->radix;
-  if(r < 16) {
-    norm >>= (16 - r);
-  }
+
+  /* u8 r = ((ParamScaler*)scaler)->desc->radix; */
+  /* if(r < 16) { */
+  /*   norm >>= (16 - r); */
+  /* } */
 
   /* print_dbg("\r\n linear-fixed scaler, get value; input: 0x"); */
   /* print_dbg_hex(in); */
