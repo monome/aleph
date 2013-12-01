@@ -103,3 +103,16 @@ io_t scaler_amp_in(void* scaler, s32 x) {
   }
   return (u16)jm << inRshift;
 }
+
+
+// increment input by pointer, return value
+s32 scaler_amp_inc(void* sc, io_t* pin, io_t inc ) {
+  static const io_t incMul = 1 << (IO_BITS - tabBits);
+  // multiply by smallest significant abcissa
+  inc *= incMul;
+  // use saturation
+  *pin = op_sadd(*pin, inc);
+  // scale and return.
+  // ignoring ranges in descriptor at least for now.
+  return scaler_amp_val(sc, *pin);
+}

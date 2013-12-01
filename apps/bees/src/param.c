@@ -36,8 +36,11 @@ const char* get_param_name(u32 idx) {
 
 // set value for param at given idx
 //-- see also net_set_in_value()
+// return sign of clamping operation, if clamped
 void set_param_value(u32 idx, io_t val) {
-
+  
+  s32 scaled = scaler_get_value( &(net->params[idx].scaler), val);
+    
   /* if(val > net->params[idx].desc.max) { */
   /*   val = net->params[idx].desc.max; */
   /* } */
@@ -49,7 +52,7 @@ void set_param_value(u32 idx, io_t val) {
   net->params[idx].data.changed = 1;
 
   // scale
-  ctl_param_change(idx, scaler_get_value( &(net->params[idx].scaler), val) );
+  ctl_param_change(idx, scaled );
   //  ctl_param_change(idx, net->params[idx].data.value);
 }
 
@@ -182,10 +185,15 @@ void get_param_string(char* dst, u32 idx) {
 */
 
 // increment value
-s32 inc_param_value(u32 idx, io_t inc) {
-  s32 val = op_sadd(get_param_value(idx), inc);
-  // TODO: bounds chek on scaler ranges
-    //... 
-  set_param_value(idx, val);
-  return val;
+io_t inc_param_value(u32 idx, io_t inc) {
+  io_t in = get_param_value(idx);
+  // use scaler to increment and lookup
+  s32 scaled = scaler_inc( &(net->params[idx].scaler), &in, inc);
+  // store input value in pnode
+  net->params[idx].data.value = in;
+  net->params[idx].data.changed = 1;
+  ctl_param_change(idx, scaled );  
+
+  return in;
+			   
 }

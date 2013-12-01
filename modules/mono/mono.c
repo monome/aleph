@@ -548,9 +548,9 @@ static void fill_param_desc(void) {
   gModuleData->paramDesc[eParamWave2].radix = 1;
   
   strcpy(gModuleData->paramDesc[eParamGate].label, "gate");
-  gModuleData->paramDesc[eParamGate].type = eParamTypeToggle;
+  gModuleData->paramDesc[eParamGate].type = eParamTypeFix;
   gModuleData->paramDesc[eParamGate].min = 0;
-  gModuleData->paramDesc[eParamGate].max = 1;
+  gModuleData->paramDesc[eParamGate].max = 1;    //???
   gModuleData->paramDesc[eParamGate].radix = 32;
   
   strcpy(gModuleData->paramDesc[eParamAtkDur].label, "amp env atk");

@@ -34,15 +34,23 @@ typedef void (*scaler_get_str_fn)(char* dst, void* scaler, io_t in);
 typedef io_t (*scaler_get_in_fn)(void* scaler, s32 value);
 // perform a tuning routine
 typedef s32 (*scaler_tune_fn)(void* scaler, u8 tuneId, io_t in);
+// use a scaler to increment input type
+typedef s32 (*scaler_inc_fn)(void* scaler, io_t *pin, io_t inc);
 
 // class structure i
 typedef struct _paramScaler { 
+  //// not using these because retarded
    // get value
-  scaler_get_value_fn get_val;
+  //  scaler_get_value_fn get_val;
   // get ui representation
-  scaler_get_str_fn get_str;
+  //  scaler_get_str_fn get_str;
+
   // param desc pointer
   const ParamDesc *desc;
+  // input ranges
+  io_t inMin;
+  io_t inMax;
+
   //// TODO, perhaps
   // array of tuning functions
   //  scaler_tune_fn * tune;
@@ -63,5 +71,7 @@ extern s32 scaler_get_value(ParamScaler* sc, io_t in);
 extern void scaler_get_str(char* dst, ParamScaler* sc, io_t in);
 // get input given DSP value (use sparingly)
 extern io_t scaler_get_in(ParamScaler* sc, s32 value);
+// increment input by pointer, return value
+extern s32 scaler_inc(ParamScaler* sc, io_t *pin, io_t inc );
 
 #endif

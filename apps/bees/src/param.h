@@ -32,7 +32,7 @@ extern void get_param_string(char* dst, u32 idx);
 // set value
 extern void set_param_value(u32 idx, io_t val);
 // increment value
-extern s32 inc_param_value(u32 idx, io_t inx);
+extern io_t inc_param_value(u32 idx, io_t inc);
 
 //---- pickle / unpickle
 // node 
