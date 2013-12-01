@@ -113,9 +113,9 @@ io_t scaler_amp_in(void* scaler, s32 x) {
     }
   }
 
+  /* print_dbg(" , median index: "); */
+  /* print_dbg_ulong(jm); */
 
-  print_dbg(" , median index: ");
-  print_dbg_ulong(jm);
   return (u16)jm << inRshift;
 }
 
