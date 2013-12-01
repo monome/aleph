@@ -73,7 +73,7 @@ scaler_get_in_fn scaler_get_in_pr[eParamNumTypes] = {
   NULL,
 };
 // array of pointers to inc functions.
-scaler_get_in_fn scaler_inc_pr[eParamNumTypes] = {
+scaler_inc_fn scaler_inc_pr[eParamNumTypes] = {
   &scaler_fix_inc,
   &scaler_amp_inc,
   NULL,
