@@ -722,8 +722,6 @@ void net_clear_params(void) {
 void net_send_params(void) {
   u32 i;
   for(i=0; i<net->numParams; i++) {
-    //    ctl_param_change(i, net->params[i].data.value);
-    // retard! use scalers
     set_param_value(i, net->params[i].data.value);
   }
 }

@@ -47,7 +47,6 @@ void set_param_value(u32 idx, io_t val) {
   print_dbg(" , value: 0x");
   print_dbg_hex(val);
 
-
   print_dbg(" , scaled: 0x");
   print_dbg_hex(scaled);
     

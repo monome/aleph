@@ -17,11 +17,6 @@ typedef s16 io_t;
 #define IO_BITS 16
 
 //--- pickling
-<<<<<<< HEAD
-=======
-//#define pickle_io(src, dst) pickle_32((u32)src, dst);
-//#define unpickle_io(src, dst) unpickle_32(src, (u32*)dst);
->>>>>>> exp_squash
 #define pickle_io(src, dst) pickle_16((u16)src, dst);
 #define unpickle_io(src, dst) unpickle_16(src, (u16*)dst);
 
