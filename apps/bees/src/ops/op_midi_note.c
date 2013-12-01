@@ -72,7 +72,7 @@ void op_midi_note_init(void* mem) {
   op->outs[1] = -1;
 
   op->chan = -1;
-  op->chanIo = 0xffff000;
+  op->chanIo = OP_NEGONE;
 
   // FIXME: should sanity-check that the op isn't already in the dang list
   net_midi_list_push(&(op->midi));
