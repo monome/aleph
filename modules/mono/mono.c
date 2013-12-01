@@ -39,6 +39,7 @@
 
 //---------- defines
 // ranges and radix
+// radix should be minimal bits to accommodate entire integer range.
 #define OSC_FREQ_MIN 0x200000      // 32
 #define OSC_FREQ_MAX 0x40000000    // 16384
 #define OSC_FREQ_RADIX 15
@@ -47,10 +48,10 @@
 #define RATIO_RADIX 4
 #define ENV_DUR_MIN 0x0040   // 1/1024
 #define ENV_DUR_MAX 0x100000 // 32
-#define ENV_DUR_RADIX 6
+#define ENV_DUR_RADIX 5
 #define SMOOTH_FREQ_MIN 0x2000 // 1/8
-#define SMOOTH_FREQ_MAX 0x400000 // 128
-#define SMOOTH_FREQ_RADIX 8
+#define SMOOTH_FREQ_MAX 0x400000 // 64
+#define SMOOTH_FREQ_RADIX 7
 
 //-------- data types
 
@@ -299,22 +300,21 @@ void module_init(void) {
 
   // non-default initial values 
   // (FIXME: defaults should just be more correct i guess?)
-  
-
+ 
   /// ok, for now
   gModuleData->paramData[eParamFreq1 ].value = freq1 ;
   gModuleData->paramData[eParamFreq2 ].value = freq2 ;
   gModuleData->paramData[eParamRatio2 ].value = ratio2 ;
 
   /// FIXME: silly way to get amplitudes back.
-  // this stuff will get better with unified preset scaling.
-  gModuleData->paramData[eParamAmp1].value = amp1 >> 15;
-  gModuleData->paramData[eParamAmp2].value = amp2 >> 15;
+  // this stuff will get better with unified param scaling.
+  gModuleData->paramData[eParamAmp1].value = amp1;
+  gModuleData->paramData[eParamAmp2].value = amp2;
 
-  gModuleData->paramData[eParamIoAmp0 ].value = ioAmp0 >> 15;
-  gModuleData->paramData[eParamIoAmp1 ].value = ioAmp1 >> 15;
-  gModuleData->paramData[eParamIoAmp2 ].value = ioAmp2 >> 15;
-  gModuleData->paramData[eParamIoAmp3 ].value = ioAmp3 >> 15;
+  gModuleData->paramData[eParamIoAmp0 ].value = ioAmp0;
+  gModuleData->paramData[eParamIoAmp1 ].value = ioAmp1;
+  gModuleData->paramData[eParamIoAmp2 ].value = ioAmp2;
+  gModuleData->paramData[eParamIoAmp3 ].value = ioAmp3;
 
 
   // init wavetables
@@ -386,36 +386,35 @@ void module_set_param(u32 idx, ParamValue v) {
     set_freq2(v);
     break;
   case eParamWave1:
-    filter_1p_lo_in(wave1Lp, FIX16_FRACT_TRUNC(BIT_ABS(v)));
+    filter_1p_lo_in(wave1Lp, BIT_ABS(v));
     break;
   case eParamWave2:
-    filter_1p_lo_in(wave2Lp, FIX16_FRACT_TRUNC(BIT_ABS(v)));
+    filter_1p_lo_in(wave2Lp, BIT_ABS(v));
     break;
   case eParamPm:
-    filter_1p_lo_in(pmLp, FIX16_FRACT_TRUNC(BIT_ABS(v)));
+    filter_1p_lo_in(pmLp, BIT_ABS(v));
     break;
   case eParamAmp1:
-    //    filter_1p_lo_in(amp1Lp, FIX16_FRACT_TRUNC(BIT_ABS(v)));
     filter_1p_lo_in(amp1Lp, v);
     break;
   case eParamAmp2:
-    //    filter_1p_lo_in(amp2Lp, FIX16_FRACT_TRUNC(BIT_ABS(v)));
     filter_1p_lo_in(amp1Lp, v);
     break;
   case eParamGate:
      env_asr_set_gate(env, v > 0);
     break;
   case eParamAtkDur:
+    // hm... 
     env_asr_set_atk_dur(env, sec_to_frames_trunc(v));
     break;
   case eParamRelDur:
     env_asr_set_rel_dur(env, sec_to_frames_trunc(v));
     break;
   case eParamAtkCurve:
-    env_asr_set_atk_shape(env, FIX16_FRACT_TRUNC(BIT_ABS(v)));
+    env_asr_set_atk_shape(env, BIT_ABS(v));
     break;
   case eParamRelCurve:
-    env_asr_set_atk_shape(env, FIX16_FRACT_TRUNC(BIT_ABS(v)));
+    env_asr_set_atk_shape(env, BIT_ABS(v));
     break;
   case eParamFreq1Smooth:
     filter_1p_lo_set_hz(freq1Lp, v);
@@ -439,16 +438,16 @@ void module_set_param(u32 idx, ParamValue v) {
     filter_1p_lo_set_hz(amp2Lp, v);
     break;
   case eParamIoAmp0:
-    ioAmp0 = FIX16_FRACT_TRUNC(v);
+    ioAmp0 = (v);
     break;
   case eParamIoAmp1:
-    ioAmp1 = FIX16_FRACT_TRUNC(v);
+    ioAmp1 = (v);
     break;
   case eParamIoAmp2:
-    ioAmp2 = FIX16_FRACT_TRUNC(v);
+    ioAmp2 = (v);
     break;
   case eParamIoAmp3:
-    ioAmp3 = FIX16_FRACT_TRUNC(v);
+    ioAmp3 = (v);
     break;
   default:
     break;

@@ -25,6 +25,11 @@ s32 scaler_fix_val(void* scaler, io_t in) {
   // normalize
   s32 norm = in << (32 - IO_BITS);
 
+  /* u8 r = ((ParamScaler*)scaler)->desc->radix; */
+  /* if(r < 16) { */
+  /*   norm >>= (16 - r); */
+  /* } */
+
   /* print_dbg("\r\n linear-fixed scaler, get value; input: 0x"); */
   /* print_dbg_hex(in); */
   /* print_dbg(", normalized: 0x"); */
@@ -54,6 +59,11 @@ void scaler_fix_str(char* dst, void* scaler, io_t in) {
 
 io_t scaler_fix_in(void* scaler, s32 val) {
   // un-normalize
+  u8 r = ((ParamScaler*)scaler)->desc->radix;
+  if(r < 16) {
+    val <<= (16 - r);
+  }
+
   return val >> (32 - IO_BITS);
 }
 
@@ -66,10 +76,14 @@ s32 scaler_fix_inc(void* sc, io_t* pin, io_t inc ) {
   // check bounds again after scaling
   val = scaler_fix_val(sc, *pin);
   if(val > scaler->desc->max) {
+    print_dbg("\r\n high saturation in sacler_fix_inc, value: 0x");
+    print_dbg_hex(val);
     *pin = scaler->inMax;
     return scaler->desc->max;
   }
   if(val < scaler->desc->min) {
+    print_dbg("\r\n low saturation in sacler_fix_inc, value: 0x");
+    print_dbg_hex(val);
     *pin = scaler->inMin;
     return scaler->desc->min;
   }

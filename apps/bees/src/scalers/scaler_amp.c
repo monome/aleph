@@ -28,8 +28,9 @@ static u8 initFlag = 0;
 s32 scaler_amp_val(void* scaler, io_t in) {
   /* print_dbg("\r\n requesting amp_scaler value for input: 0x"); */
   /* print_dbg_hex((u32)in); */
-  u16 uin = BIT_ABS_16((s16)in);
-  return tabVal[(u16)((u16)uin >> inRshift)];
+  //  u16 uin = BIT_ABS_16((s16)in);
+  if(in < 0) { in = 0; }
+  return tabVal[(u16)((u16)in >> inRshift)];
 }
 
 void scaler_amp_str(char* dst, void* scaler,  io_t in) {
@@ -93,6 +94,15 @@ io_t scaler_amp_in(void* scaler, s32 x) {
   s32 jl = 0;
   s32 ju = tabSize - 1;
   s32 jm;
+
+  /* print_dbg("\r\n scaler_amp_in, x: 0x"); */
+  /* print_dbg_hex(x); */
+
+  // first, cheat and check zero.
+  /// will often be true
+  if(x == 0) { return 0; }
+
+
   while(ju - jl > 1) {
     jm = (ju + jl) >> 1;
     if(x >= tabVal[jm]) {
@@ -101,6 +111,10 @@ io_t scaler_amp_in(void* scaler, s32 x) {
       ju = jm;
     }
   }
+
+  /* print_dbg(" , median index: "); */
+  /* print_dbg_ulong(jm); */
+
   return (u16)jm << inRshift;
 }
 
@@ -112,6 +126,7 @@ s32 scaler_amp_inc(void* sc, io_t* pin, io_t inc ) {
   inc *= incMul;
   // use saturation
   *pin = op_sadd(*pin, inc);
+  if(*pin < 0) { *pin = 0; }
   // scale and return.
   // ignoring ranges in descriptor at least for now.
   return scaler_amp_val(sc, *pin);
