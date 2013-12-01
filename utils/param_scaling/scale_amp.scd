@@ -70,25 +70,29 @@ v.do({ |x| x.asHexString.postln; });
 
 // table for UI representation
 // type is 16.16, unit is decibels
-r = v.collect({ |x|
+r = v.collect({ |x, i|
 	var db, dbint, dbfr;
+	var val;
 	db = (x.asFloat / (0x7fffffff.asFloat + 1.0)).ampdb;
-	db.post; " , ".post;
-	dbint = db.ceil.asInteger;
-	dbint.postln;
+	db = db * -1.0;
+	dbint = db.floor.asInteger;
+	[i, db, dbint].postln;
 	dbfr = db - (dbint.asFloat);
 	if(dbint == -inf, {
-		0xffffffff
+		val = 0x80000000;
 	}, {
 		if(dbint == 0, { 
-			(dbfr * 0x10000).floor.asInteger
+			val = (dbfr * 0x10000).floor.asInteger
 		}, {
-			(dbint << 16) | (0xffff & ((dbfr * 0x10000).floor.asInteger))
+			val = (dbint << 16) | (0xffff & ((dbfr * 0x10000).floor.asInteger))
 		})
 	});
+	val = val * -1;
 });
 
-r.do({ |x| x.asHexString.postln; });
+r.do({ |x, i| [i, x.asHexString].postln; });
+
+r.plot;
 
 ////// output to files
 /// binary, big endian

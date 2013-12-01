@@ -16,25 +16,34 @@
 
 void scaler_fix_init(void* scaler) {
   ParamScaler* sc = (ParamScaler*)scaler;
-  //  print_dbg("\r\n init fixed-point linear scaler");
+
   sc->inMin = scaler_fix_in(scaler, sc->desc->min);
   sc->inMax = scaler_fix_in(scaler, sc->desc->max);
+
+  print_dbg("\r\n init fixed-point linear scaler");
+  print_dbg(", input min: 0x");
+  print_dbg_hex(sc->inMin);
+  print_dbg(", input max: 0x");
+  print_dbg_hex(sc->inMax);
+
 }
 
 s32 scaler_fix_val(void* scaler, io_t in) {
   // normalize
   s32 norm = in << (32 - IO_BITS);
 
-  /* u8 r = ((ParamScaler*)scaler)->desc->radix; */
-  /* if(r < 16) { */
-  /*   norm >>= (16 - r); */
-  /* } */
+  // apply radix to put us in the correct range
+  u8 r = ((ParamScaler*)scaler)->desc->radix;
+  if(r < 32 - IO_BITS) {
+    norm >>= (32 - IO_BITS - r);
+  }
 
   /* print_dbg("\r\n linear-fixed scaler, get value; input: 0x"); */
   /* print_dbg_hex(in); */
   /* print_dbg(", normalized: 0x"); */
   /* print_dbg_hex(norm); */
 
+  // set full-scale
   return norm;
 }
 
@@ -49,9 +58,10 @@ void scaler_fix_str(char* dst, void* scaler, io_t in) {
   /* print_dbg_hex(norm); */
 
   // rshift back for display, depending on radix
-  if(r < 16) {
-    norm >>= (16 - r);
+  if(r < 32 - IO_BITS) {
+    norm >>= (32 - IO_BITS - r);
   }
+
   /* print_dbg(" , adjusted for radix: 0x"); */
   /* print_dbg_hex(norm); */
    print_fix16(dst, norm); 
@@ -61,7 +71,7 @@ io_t scaler_fix_in(void* scaler, s32 val) {
   // un-normalize
   u8 r = ((ParamScaler*)scaler)->desc->radix;
   if(r < 16) {
-    val <<= (16 - r);
+    val <<= (32 - IO_BITS - r);
   }
 
   return val >> (32 - IO_BITS);
@@ -78,12 +88,18 @@ s32 scaler_fix_inc(void* sc, io_t* pin, io_t inc ) {
   if(val > scaler->desc->max) {
     print_dbg("\r\n high saturation in sacler_fix_inc, value: 0x");
     print_dbg_hex(val);
+    print_dbg(", max: 0x");
+    print_dbg_hex(scaler->desc->max);
+
     *pin = scaler->inMax;
     return scaler->desc->max;
   }
   if(val < scaler->desc->min) {
     print_dbg("\r\n low saturation in sacler_fix_inc, value: 0x");
     print_dbg_hex(val);
+    print_dbg(", min: 0x");
+    print_dbg_hex(scaler->desc->min);
+
     *pin = scaler->inMin;
     return scaler->desc->min;
   }
