@@ -461,7 +461,7 @@ extern u32 module_get_num_params(void) {
 }
 
 // frame callback
-void module_process_frame(void) {c
+void module_process_frame(void) {
   calc_frame();
   out[0] = add_fr1x32(frameVal, mult_fr1x32x32(in[0], ioAmp0));
   out[1] = add_fr1x32(frameVal, mult_fr1x32x32(in[1], ioAmp1));
