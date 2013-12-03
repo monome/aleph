@@ -1,5 +1,6 @@
 module_name = mono
 module_obj = mono.o  \
+	params.o \
 	$(audio_dir)/env.o \
 	$(audio_dir)/filter_1p.o \
 	$(audio_dir)/table.o \
