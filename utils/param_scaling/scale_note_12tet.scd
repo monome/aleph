@@ -1,14 +1,13 @@
 // note scaling table
 // 12-tone equal temperament, with microtunes
 
-// 10-bit linear input gives 7 microtunes, costs 8k
+// 10-bit linear input gives 7 microtunes, costs 4k
 n = 2**10;
 
-// 12-bit linear input gives 31 microtunes, costs 32k
+// 12-bit linear input gives 31 microtunes, costs 16k
 // n = 2**12;
 
 i = Array.series(n);
-
 
 // let's use 128 semitones.
 // so the full range is 10 octaves + 8 semitones.
@@ -19,21 +18,19 @@ i = Array.series(n);
 // microtuned steps per semitone
 ~nmicro = n / ~nsemi;
 
-// constant 12th root of 2
+// esemitone tempered ratio
 ~root_semi = 2 ** (1/12);
-// constant 32 root of tet
+// microtune tempered ratio
 ~root_micro = ~root_semi ** (1/~nmicro);
 
-// semitone ratios
+// semitone ratios of fundamental
 ~fsemi = ~nsemi.collect({
 	|j| (2 ** ( j / 12).floor) 
 	* (~root_semi ** (j % 12))
  });
 
-// ~fsemi.plot;
-
 // fill in semitones on main table
- // float ratios
+// float ratios
 f = i.collect({ |j| 
 	if( (j % ~nmicro) == 0, {
 		~fsemi[ (j / ~nmicro).floor ]
@@ -41,7 +38,6 @@ f = i.collect({ |j|
 		nil
 	});
 });
-o
 
 // fill in microtunings
 {
@@ -59,9 +55,7 @@ o
 	});
 }.value;
 
-//f.do({ |j, x| if(x.isNil, { "PHFPOH!POPW!OH!W".postln; }) }); 
-
-// base frequency: concert middle c, minus 5 octaves (~8hz)
+// base frequency: concert middle c, minus 5 octaves (~8hz !)
 ~base = 60.midicps / 32;
 ~base.postln;
 	
@@ -78,16 +72,29 @@ f.do({ |x, j|
 	}).postln;
 });
 
-/// write to files
+// convert to 16.16.
+// fortunately, it doesn't cost much to use the 16.16 representation directly in the DSP.
+// so i think we can get away with only one table.
+v = f.collect({ |x, i|
+	var xint, xfr, y;
 
-// get human-readable representation
+	xint = x.floor;
+	xfr = x - xint;
+	xint = xint.asInteger;
 
-// float-to-fix16 function
-~float_fix16  = { arg x;
-	var xin, xfr;
-	xin = x.floor.asInteger;
-	xfr = 
-};
+	y = (xint << 16) | (0xffff & ((xfr * 0x10000).floor.asInteger));
+});
+v.do({ arg y; y.asHexString.postln; });
 
-// get unit frequency
-//... do we even need this?
+
+
+////// output to files
+/// binary, big endian
+
+// value
+~vf = File.open(File.getcwd ++ "/scaler_note_12tet_val.dat", "wb");
+// write size
+~vf.putInt32(n);
+// write data
+v.do({ |x| ~vf.putInt32(x) });
+~vf.close;

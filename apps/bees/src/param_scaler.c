@@ -15,6 +15,7 @@
 #include "scalers/scaler_amp.h"
 #include "scalers/scaler_fix.h"
 #include "scalers/scaler_integrator.h"
+// #include "scalers/scaler_note.h"
 
 // array of pointers to initialization functions.
 // order must be in sync with types enum in param_common.h
