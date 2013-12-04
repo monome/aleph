@@ -31,7 +31,8 @@
 #define LINE_UNDERLINE_OFFSET (SCROLL_BYTES_PER_LINE - LINE_UNDERLINE_LEN - 1)
 
 // x-offset in pixels for value field on each line
-#define LINE_VAL_POS 78
+#define LINE_VAL_POS_SHORT 78
+#define LINE_VAL_POS_LONG 78
 
 // line buffer, length in characters
 #define LINEBUF_LEN 32

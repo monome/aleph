@@ -81,7 +81,7 @@ static void render_line(s16 idx, u8 fg) {
  
     op_print(lineBuf, net_get_in_value(idx));
 
-    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, fg, 0);
+    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_SHORT, 0, fg, 0);
   } else {
     // parameter input    
     clearln();
@@ -97,7 +97,7 @@ static void render_line(s16 idx, u8 fg) {
     // params and inputs should just be on separate pages i guess
     net_get_param_value_string(lineBuf, idx);
 
-    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, fg, 0);
+    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, fg, 0);
   }
   // draw something to indicate play mode visibility
   if(net_get_in_play(idx)) {
@@ -555,7 +555,7 @@ void redraw_ins_preset (u8 idx) {
 
       render_line( n, enabled ? 0xa : 0x2 );
       // TODO: render target value ? urg
-      font_string_region_clip(lineRegion, "          ", LINE_VAL_POS, 0, 0, 0);
+      font_string_region_clip(lineRegion, "          ", LINE_VAL_POS_LONG, 0, 0, 0);
       // op_print(...
       // font_string_region(lineRegion...
       render_to_scroll_line(i, enabled ? 1 : 0);
