@@ -51,7 +51,7 @@ f = i.collect({ |j|
 f = i.collect({ |j|
 	var x = j.linexp(0, n-1, 1.0, 1000.0) - 1.0;
 	x = x.linlin(0.0, 999.0, ~mint, ~maxt);
-	x }
+	x 
 });
 f.plot;
 f.do({ |x| x.postln; });

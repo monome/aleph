@@ -85,6 +85,7 @@ static fract32   wave2;          // waveshape (secondary)
 static fract32   amp1;          // amplitude (primary)
 static fract32   amp2;          // amplitude (secondary)
 
+// this is kind of unnecessary really. amp integrators do a better job...
 static env_asr*  env;           // ASR amplitude envelope
  
 static filter_1p_lo* freq1Lp;  // 1plp smoother for freq1
