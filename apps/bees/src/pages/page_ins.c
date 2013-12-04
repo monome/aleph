@@ -554,8 +554,8 @@ void redraw_ins_preset (u8 idx) {
       print_dbg_ulong(isParam);
 
       render_line( n, enabled ? 0xa : 0x2 );
-      // TODO: render target value ?
-      font_string_region_clip(lineRegion, "                  ", LINE_VAL_POS, 0, 0, 0);
+      // TODO: render target value ? urg
+      font_string_region_clip(lineRegion, "          ", LINE_VAL_POS, 0, 0, 0);
       // op_print(...
       // font_string_region(lineRegion...
       render_to_scroll_line(i, enabled ? 1 : 0);

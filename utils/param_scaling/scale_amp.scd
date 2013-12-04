@@ -98,7 +98,7 @@ r.plot;
 /// binary, big endian
 
 // value
-~vf = File.open(File.getcwd ++ "/scaler_amp_val.bin", "wb");
+~vf = File.open(File.getcwd ++ "/scaler_amp_val.dat", "wb");
 // write size
 ~vf.putInt32(n);
 // write data
@@ -107,7 +107,7 @@ v.do({ |x| ~vf.putInt32(x) });
 
 
 // representation
-~rf = File.open(File.getcwd ++ "/scaler_amp_rep.bin", "wb");
+~rf = File.open(File.getcwd ++ "/scaler_amp_rep.dat", "wb");
 // write size
 ~rf.putInt32(n);
 // write data

@@ -153,7 +153,6 @@ static inline void set_freq2(fix16 freq) {
 // double-lookup and interpolate
 static inline fract32 lookup_wave(const fix16 idx, const fract32 wave) {
   ///// FIXME: this is far from optimized.
-  //// add refactored double-lookup method to table.h
   const fract32 waveInv = sub_fr1x32(FR32_MAX, wave);
   return add_fr1x32( 
 		    mult_fr1x32x32(table_lookup_idx(tab1, WAVE_TAB_SIZE, idx), waveInv),

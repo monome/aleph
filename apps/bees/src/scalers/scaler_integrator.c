@@ -7,7 +7,7 @@
 // bees
 #include "files.h"
 #include "param_scaler.h"
-#include "scaler_amp.h"
+#include "scaler_integrator.h"
 
 // table size
 static const u8 tabBits = 10;
@@ -27,32 +27,18 @@ static u8 initFlag = 0;
 //-----------------------
 //---- extern funcs
 
-s32 scaler_amp_val(void* scaler, io_t in) {
-  /* print_dbg("\r\n requesting amp_scaler value for input: 0x"); */
-  /* print_dbg_hex((u32)in); */
-  //  u16 uin = BIT_ABS_16((s16)in);
+s32 scaler_integrator_val(void* scaler, io_t in) {
   if(in < 0) { in = 0; }
   return tabVal[(u16)((u16)in >> inRshift)];
 }
 
-void scaler_amp_str(char* dst, void* scaler,  io_t in) {
-  /* print_dbg("\r\n requesting amp_scaler representation for input: 0x"); */
-  /* print_dbg_hex((u32)in); */
-
-  //  in >>= inRshift;
+void scaler_integrator_str(char* dst, void* scaler,  io_t in) {
   u16 uin = BIT_ABS_16((s16)in) >> inRshift;
-
-  if(uin == 0) {
-    strcpy(dst, "   -inf");
-  } else if (uin == (tabSize - 1)) {
-    print_fix16(dst, 0);
-  } else {
-    print_fix16(dst, tabRep[(u16)uin] );
-  }
+  print_fix16(dst, tabRep[(u16)uin] );
 }
 
 // init function
-void scaler_amp_init(void* scaler) {
+void scaler_integrator_init(void* scaler) {
   ParamScaler* sc = (ParamScaler*)scaler;
   // check descriptor
   if( sc->desc->type != eParamTypeAmp) {
@@ -71,32 +57,27 @@ void scaler_amp_init(void* scaler) {
     
     // load gain data
     print_dbg("\r\n loading gain scaler data from sdcard");
-    files_load_scaler_name("scaler_amp_val.dat", tabVal, tabSize);
-    files_load_scaler_name("scaler_amp_rep.dat", tabRep, tabSize);
+    files_load_scaler_name("scaler_integrator_val.bin", tabVal, tabSize);
+    files_load_scaler_name("scaler_integrator_rep.bin", tabRep, tabSize);
    print_dbg("\r\n finished loading amp scaler data from files.");
   }
 
-  /// FIXME: should consider requested param range,
-  //  and compute a customized multiplier here if necessary.
-
-  /// proper class-based initialization was breaking for some reason, 
-  // driving me insane.
-  // so for now, scaling functions are static...
-
-  //// FIXME: add tuning functions (???)
+  //// FIXME: add tuning functions....
+  /// here, that would mean adjusting for actual samplerate. 
+  /// table data assumes 48k.
   //  sc->tune = NULL;
   //  sc->numTune = 0;  
 }
 
 
 // get input given DSP value (use sparingly)
-io_t scaler_amp_in(void* scaler, s32 x) {
+io_t scaler_integrator_in(void* scaler, s32 x) {
   // value table is monotonic, can binary search
   s32 jl = 0;
   s32 ju = tabSize - 1;
   s32 jm;
 
-  print_dbg("\r\n scaler_amp_in, x: 0x");
+  print_dbg("\r\n scaler_integrator_in, x: 0x");
   print_dbg_hex(x);
 
   // first, cheat and check zero.
@@ -113,12 +94,15 @@ io_t scaler_amp_in(void* scaler, s32 x) {
     }
   }
 
+  /* print_dbg(" , median index: "); */
+  /* print_dbg_ulong(jm); */
+
   return (u16)jm << inRshift;
 }
 
 
 // increment input by pointer, return value
-s32 scaler_amp_inc(void* sc, io_t* pin, io_t inc ) {
+s32 scaler_integrator_inc(void* sc, io_t* pin, io_t inc ) {
   static const io_t incMul = 1 << (IO_BITS - tabBits);
   // multiply by smallest significant abcissa
   inc *= incMul;
@@ -127,5 +111,5 @@ s32 scaler_amp_inc(void* sc, io_t* pin, io_t inc ) {
   if(*pin < 0) { *pin = 0; }
   // scale and return.
   // ignoring ranges in descriptor at least for now.
-  return scaler_amp_val(sc, *pin);
+  return scaler_integrator_val(sc, *pin);
 }
