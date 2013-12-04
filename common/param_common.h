@@ -27,6 +27,8 @@ typedef enum {
   eParamTypeAmp,
   // integrator time/coefficient
   eParamTypeIntegrator,
+  // note number -> hz
+  eParamTypeNote,
   // time in samples
   //  eParamTypeSamples,
   // frequency coefficient for 1pole filter
