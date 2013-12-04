@@ -11,8 +11,9 @@
    and hopefully from the aleph UI at some point.
 
    in addition to a DSP use value, 
-   scaler must provide human-readable value as well (in 16.16 i guess)
-   so, two tables per initialized parameter type.
+   scaler must provide human-readable value as well (in 16.16)
+   so, two tables per initialized parameter type, 
+   unless a simple mapping function exists (e.g. fixed point linear.)
    
 */
 

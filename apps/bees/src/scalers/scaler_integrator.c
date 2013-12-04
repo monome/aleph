@@ -57,8 +57,8 @@ void scaler_integrator_init(void* scaler) {
     
     // load gain data
     print_dbg("\r\n loading gain scaler data from sdcard");
-    files_load_scaler_name("scaler_integrator_val.bin", tabVal, tabSize);
-    files_load_scaler_name("scaler_integrator_rep.bin", tabRep, tabSize);
+    files_load_scaler_name("scaler_integrator_val.dat", tabVal, tabSize);
+    files_load_scaler_name("scaler_integrator_rep.dat", tabRep, tabSize);
    print_dbg("\r\n finished loading amp scaler data from files.");
   }
 

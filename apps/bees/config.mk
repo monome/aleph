@@ -53,7 +53,8 @@ CSRCS += \
 	$(APP_DIR)/src/pages/page_presets.c \
 	$(APP_DIR)/src/pages/page_scenes.c \
 	$(APP_DIR)/src/scalers/scaler_amp.c \
-	$(APP_DIR)/src/scalers/scaler_fix.c
+	$(APP_DIR)/src/scalers/scaler_fix.c \
+	$(APP_DIR)/src/scalers/scaler_integrator.c
 
 # List of assembler source files.
 ASSRCS +=

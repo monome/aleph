@@ -25,18 +25,20 @@ typedef enum {
   eParamTypeFix,
   // amplitude (0-1)
   eParamTypeAmp,
+  // integrator time/coefficient
+  eParamTypeIntegrator,
   // time in samples
-  eParamTypeSamples,
+  //  eParamTypeSamples,
   // frequency coefficient for 1pole filter
-  eParamType1pFreq,
+  //  eParamType1pFreq,
   // oscillator, base frequency
-  eParamTypeOscFreq,
+  //  eParamTypeOscFreq,
   // oscillator tuning ratio
-  eParamTypeOscTune,
+  //  eParamTypeOscTune,
   // frequency coefficient for SVF
-  eParamTypeSvfFreq,
+  //  eParamTypeSvfFreq,
   // RQ coefficient for SVF
-  eParamTypeSvfRq,
+  //  eParamTypeSvfRq,
   //...?
   eParamNumTypes
 } ParamType;
@@ -57,7 +59,7 @@ typedef struct __attribute__((__packed__)) ParamDescStruct {
   // range (may be independent of type) 
   s32 min;
   s32 max;
-  // positive radix
+  // radix = integer bits (including sign bit) :
   // 1 = signed fract (1.32)
   // 16 = 16.16
   // 32 = signed int
@@ -72,4 +74,3 @@ typedef struct __attribute__((__packed__)) ParamDataStruct {
 } ParamData;
 
 #endif // header guard
-
