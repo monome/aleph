@@ -70,7 +70,7 @@ void scaler_note_init(void* scaler) {
 
   /// proper class-based initialization was breaking for some reason, 
   // driving me insane.
-  // so for now, scaling functions are static...
+  // so for now, scaling functions are in a static array in param_scaler.c
 
   //// FIXME: add tuning functions (???)
   //  sc->tune = NULL;

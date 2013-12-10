@@ -18,7 +18,7 @@ i = Array.series(n);
 // microtuned steps per semitone
 ~nmicro = n / ~nsemi;
 
-// esemitone tempered ratio
+// semitone tempered ratio
 ~root_semi = 2 ** (1/12);
 // microtune tempered ratio
 ~root_micro = ~root_semi ** (1/~nmicro);
@@ -85,8 +85,6 @@ v = f.collect({ |x, i|
 	y = (xint << 16) | (0xffff & ((xfr * 0x10000).floor.asInteger));
 });
 v.do({ arg y; y.asHexString.postln; });
-
-
 
 ////// output to files
 /// binary, big endian
