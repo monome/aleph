@@ -13,6 +13,7 @@
 
 // type-specific includes
 #include "scalers/scaler_amp.h"
+#include "scalers/scaler_bool.h"
 #include "scalers/scaler_fix.h"
 #include "scalers/scaler_integrator.h"
 #include "scalers/scaler_note.h"
@@ -20,6 +21,7 @@
 // array of pointers to initialization functions.
 // order must be in sync with types enum in param_common.h
 scaler_init_fn scaler_init_pr[eParamNumTypes] = {
+  &scaler_bool_init,
   &scaler_fix_init,
   &scaler_amp_init,
   &scaler_integrator_init,
@@ -35,6 +37,7 @@ scaler_init_fn scaler_init_pr[eParamNumTypes] = {
 
 // array of pointers to get_value functions.
 scaler_get_value_fn scaler_get_val_pr[eParamNumTypes] = {
+  &scaler_bool_val,
   &scaler_fix_val,
   &scaler_amp_val,
   &scaler_integrator_val,
@@ -43,6 +46,7 @@ scaler_get_value_fn scaler_get_val_pr[eParamNumTypes] = {
 
 // array of pointers to get_str functions.
 scaler_get_str_fn scaler_get_str_pr[eParamNumTypes] = {
+  &scaler_bool_str,
   &scaler_fix_str,
   &scaler_amp_str,
   &scaler_integrator_str,
@@ -52,6 +56,7 @@ scaler_get_str_fn scaler_get_str_pr[eParamNumTypes] = {
 
 // array of pointers to get_in functions.
 scaler_get_in_fn scaler_get_in_pr[eParamNumTypes] = {
+  &scaler_bool_in,
   &scaler_fix_in,
   &scaler_amp_in,
   &scaler_integrator_in,
@@ -60,6 +65,7 @@ scaler_get_in_fn scaler_get_in_pr[eParamNumTypes] = {
 
 // array of pointers to inc functions.
 scaler_inc_fn scaler_inc_pr[eParamNumTypes] = {
+  &scaler_bool_inc,
   &scaler_fix_inc,
   &scaler_amp_inc,
   &scaler_integrator_inc,

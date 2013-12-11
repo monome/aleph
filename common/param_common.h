@@ -21,6 +21,8 @@ typedef s32 ParamValue;
 /// these differentiate  the actual, numerical use case for the parameter.
 // add as needed, sync with param scaler definitions
 typedef enum {
+  // boolean
+  eParamTypeBool,
   /// fixed-point linear (radix is stored separately)
   eParamTypeFix,
   // amplitude (0-1)

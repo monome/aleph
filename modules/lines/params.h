@@ -1,10 +1,16 @@
 #ifndef _ALEPH_LINES_PARAMS_H_
 #define _ALEPH_LINES_PARAMS_H_
 
+// filter reciprocal of Q
 #define PARAM_RQ_MIN 0x00000000
 #define PARAM_RQ_MAX 0x00400000
 
-#define PARAM_BUFFER_MAX 0x002bf1ff // LINES_BUF_FRAMES - 1
+//#define PARAM_BUFFER_MAX 0x002bf1ff // LINES_BUF_FRAMES - 1
+// max time in seconds, 16.16
+#define PARAM_SECONDS_MAX 0x003c0000
+#define PARAM_SECONDS_RADIX 6
+// rate
+
 
 #define PARAM_COEFF_MAX 0x1F400000;  // fixme
 
