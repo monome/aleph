@@ -9,7 +9,7 @@
 #define _CTL_INTERFACE_H_
 
 ////////////////////////////////
-//////  uhh it is easiest to just put these here. suggestions welcome...
+//////  uhh it is easiest to just put these here. sorry. suggestions welcome...
 
 // maximum allocated parameters, connections, and operators
 // max operator inputs
