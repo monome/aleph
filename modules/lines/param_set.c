@@ -4,28 +4,28 @@ void module_set_param(u32 idx, ParamValue v) {
   switch(idx) {
     // delay line params
   case eParam_delay0 :
-    delay_set_delay_samp(&(lines[0]), (u32)v);
+    delay_set_delay_sec(&(lines[0]), v);
     break;
   case eParam_delay1 :
-    delay_set_delay_samp(&(lines[1]), (u32)v);
+    delay_set_delay_sec(&(lines[1]), v);
     break;
   case eParam_loop0 :
-    delay_set_loop_samp(&(lines[0]), (u32)v);
+    delay_set_loop_sec(&(lines[0]), v);
     break;
   case eParam_loop1 :
-    delay_set_loop_samp(&(lines[1]), (u32)v);
+    delay_set_loop_sec(&(lines[1]), v);
     break;
   case eParam_pos_write0 :
-    delay_set_pos_write_samp(&(lines[0]), (u32)v);
+    delay_set_pos_write_sec(&(lines[0]), v);
     break;
   case eParam_pos_write1 :
-    delay_set_pos_write_samp(&(lines[1]), (u32)v);
+    delay_set_pos_write_sec(&(lines[1]), v);
     break;
   case eParam_pos_read0 :
-    delay_set_pos_read_samp(&(lines[0]), (u32)v);
+    delay_set_pos_read_sec(&(lines[0]), v);
     break;
   case eParam_pos_read1 :
-    delay_set_pos_read_samp(&(lines[1]), (u32)v);
+    delay_set_pos_read_sec(&(lines[1]), v);
     break;
   case eParam_run_write0 :
     delay_set_run_write(&(lines[0]), v);

@@ -122,7 +122,7 @@ void render_startup(void) {
 //  region_clear(&status);
   //u32 i, j;
 
-  region_fill(&bigtop, 0x5);
+  region_fill(&bigtop, 0x0);
   region_string_aa(&bigtop, "_LPPR", 40, 12, 1);
   region_string(&(foot[0]), "TAP1", 0, 0, 0xf, 0x0, 0);
   region_string(&(foot[1]), "TAP2", 0, 0, 0xf, 0x0, 0);
@@ -300,18 +300,18 @@ extern void render_touched_res(u8 id) {
 
 extern void render_record(void) {
   region_fill(&bigtop, 0x0);
-  region_string_aa(&bigtop, "RECORD", 10, 10, 0);
+  region_string_aa(&bigtop, "RECORD", 10, 10, 1);
 }
 
 
 extern void render_overdub(void) {
   region_fill(&bigtop, 0x0);
-  region_string_aa(&bigtop, "OVERDUB", 10, 10, 0);
+  region_string_aa(&bigtop, "OVERDUB", 10, 10, 1);
 }
 
 extern void render_play(void) {
   region_fill(&bigtop, 0x0);
-  region_string_aa(&bigtop, "PLAY", 10, 10, 0);
+  region_string_aa(&bigtop, "PLAY", 10, 10, 1);
 }
 
 

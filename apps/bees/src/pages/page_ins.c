@@ -534,7 +534,6 @@ void redraw_ins_preset (u8 idx) {
   u8 enabled;
   u8 isParam;
 
-
   while(i<8) {
     ///    in = net_get_in_preset(n);
         //// no, more complicated to get target inclusion... rrg

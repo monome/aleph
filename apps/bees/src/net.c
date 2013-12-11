@@ -51,6 +51,7 @@ op_adc_t* opSysAdc = NULL;
 // preset
 op_preset_t* opSysPreset = NULL;
 
+static const char emptystring[] = "            ";
 
 //===============================================
 //========= static functions
@@ -488,7 +489,7 @@ s16 net_param_idx(u16 inIdx) {
 // get string for operator at given idx
 const char* net_op_name(const s16 idx) {
   if (idx < 0) {
-    return "";
+    return (const char*)emptystring;
   }
 
   return net->ops[idx]->opString;
@@ -501,7 +502,7 @@ const char* net_in_name(u16 idx) {
     idx -= net->numIns;
     if (idx >= net->numParams) {
       // not a param input either, whoops
-      return "";
+      return (const char*)emptystring;
     } else {
       // param input
       return net->params[idx].desc.label;
@@ -514,7 +515,11 @@ const char* net_in_name(u16 idx) {
 
 // get name for output at given idx
 const char* net_out_name(const u16 idx) {
-  return op_out_name(net->ops[net->outs[idx].opIdx], net->outs[idx].opOutIdx);
+  if(idx < net->numOuts) {
+    return op_out_name(net->ops[net->outs[idx].opIdx], net->outs[idx].opOutIdx);
+  } else {
+    return (const char*)emptystring;
+  }  
 }
 
 // get op index for input at given idx
