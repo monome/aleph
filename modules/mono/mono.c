@@ -115,6 +115,8 @@ static inline fract32 lookup_wave(const fix16 idx, const fract32 wave);
 // frame calculation
 static void calc_frame(void);
 // set all parameter descriptors
+//
+
 static void fill_param_desc(void);
 
 //----------------------

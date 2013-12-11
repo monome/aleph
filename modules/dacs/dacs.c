@@ -122,44 +122,44 @@ void module_process_frame(void) {
 }
 
 // parameter set function
-void module_set_param(u32 idx, pval v) {
+void module_set_param(u32 idx, ParamValue v) {
   LED4_TOGGLE;
   switch(idx) {
     // dac values
   case eParam_dac0 :
-    filter_1p_lo_in(&(dacSlew[0]), shl_fr1x32(v.fr, 15));
-    //    dacVal[0] = v.fr & DAC_VALUE_MASK;
+    filter_1p_lo_in(&(dacSlew[0]), shl_fr1x32(v, 15));
+    //    dacVal[0] = v & DAC_VALUE_MASK;
     //    dacDirty[0] = 1;
-        dac_update(0, v.fr & 0xffff);
+        dac_update(0, v & 0xffff);
     break;
-  case eParam_dac1 :    // filter_1p_lo_in(&(dacSlew[1]), shl_fr1x32(v.fr, 15));
-    //    dacVal[1] = v.fr & DAC_VALUE_MASK;
+  case eParam_dac1 :    // filter_1p_lo_in(&(dacSlew[1]), shl_fr1x32(v, 15));
+    //    dacVal[1] = v & DAC_VALUE_MASK;
     //    dacDirty[1] = 1;
-        dac_update(1, v.fr & 0xffff);
+        dac_update(1, v & 0xffff);
     break;
   case eParam_dac2 :
-    // filter_1p_lo_in(&(dacSlew[2]), shl_fr1x32(v.fr, 15));
-    //    dacVal[2] = v.fr & DAC_VALUE_MASK;
+    // filter_1p_lo_in(&(dacSlew[2]), shl_fr1x32(v, 15));
+    //    dacVal[2] = v & DAC_VALUE_MASK;
     //    dacDirty[2] = 1;
-        dac_update(2, v.fr & 0xffff);
+        dac_update(2, v & 0xffff);
     break;
   case eParam_dac3 :
-    // filter_1p_lo_in(&(dacSlew[3]), shl_fr1x32(v.fr, 15));
-    //    dacVal[3] = v.fr & DAC_VALUE_MASK;
+    // filter_1p_lo_in(&(dacSlew[3]), shl_fr1x32(v, 15));
+    //    dacVal[3] = v & DAC_VALUE_MASK;
     //    dacDirty[3] = 1;
-        dac_update(3, v.fr & 0xffff);
+        dac_update(3, v & 0xffff);
     break;
   case eParam_slew0 :
-    filter_1p_lo_set_slew(&(dacSlew[0]), v.fr);
+    filter_1p_lo_set_slew(&(dacSlew[0]), v);
     break;
   case eParam_slew1 :
-    filter_1p_lo_set_slew(&(dacSlew[1]), v.fr);
+    filter_1p_lo_set_slew(&(dacSlew[1]), v);
     break;
   case eParam_slew2 :
-    filter_1p_lo_set_slew(&(dacSlew[2]), v.fr);
+    filter_1p_lo_set_slew(&(dacSlew[2]), v);
     break;
   case eParam_slew3 :
-    filter_1p_lo_set_slew(&(dacSlew[3]), v.fr);
+    filter_1p_lo_set_slew(&(dacSlew[3]), v);
     break;
   default:
     break;
