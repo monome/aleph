@@ -222,11 +222,23 @@ void handle_key_0(s32 val) {
 void handle_key_1(s32 val) {
   if(val == 0) { return; }
   if(check_key(1)) {
+
+    print_dbg("\r\n got 1st output index for selected op ( ");
+    print_dbg_ulong( curPage->select );
+    print_dbg(", result : ");
+    print_dbg_ulong( net_op_out_idx(curPage->select, 0));
+
     // select op's outputs on outs page
     pages[ePageOuts].select = net_op_out_idx(curPage->select, 0);
+
+    print_dbg("\r\n performed set-selection");
+
     // go to outputs page
     set_page(ePageOuts);
+    print_dbg("\r\n performed select-page");
+    // 
     redraw_outs();
+    print_dbg("\r\n performed redraw");
   }
   show_foot();
 }

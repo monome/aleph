@@ -54,7 +54,7 @@ static void render_line(s16 idx, u8 fg) {
   s16 targetOpIdx = -1;
   s16 srcOpIdx; 
   region_fill(lineRegion, 0x0);
-
+  if(idx >= net_num_outs() ) { return; }
   target = net_get_target(idx);
   srcOpIdx = net_out_op_idx(idx);
   targetOpIdx = net_out_op_idx(target);
@@ -106,7 +106,7 @@ static void render_line(s16 idx, u8 fg) {
   }
   // draw something to indicate preset inclusion
   if(net_get_in_preset(idx)) {
-    font_string_region_clip(lineRegion, "|", 0, 0, fg, 0);
+    font_string_region_clip(lineRegion, ".", 0, 0, fg, 0);
   }
   // underline
   //  region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
@@ -381,6 +381,11 @@ void redraw_outs(void) {
   u8 i=0;
   u8 n = curPage->select - 3;
   while(i<8) {
+    print_dbg("\r\n redraw_outs, line: ");
+    print_dbg_ulong(i);
+    print_dbg("index: ");
+    print_dbg_ulong(n);
+
     render_line( n, 0xa );
     render_to_scroll_line(i, n == curPage->select ? 1 : 0);
     ++i;
