@@ -11,7 +11,7 @@
 #define PARAM_SECONDS_RADIX 6
 // rate
 
-
+/// FIXME
 #define PARAM_COEFF_MAX 0x1F400000;  // fixme
 
 // enumerate parameters

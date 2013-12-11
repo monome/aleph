@@ -49,17 +49,17 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParam_pos_read0].max = PARAM_SECONDS_MAX; 
   gModuleData->paramDesc[eParam_pos_read0].radix = PARAM_SECONDS_RADIX;
 
-  //// FIXME: boolean
   strcpy(gModuleData->paramDesc[eParam_run_write0].label, "run_write0");
-  gModuleData->paramDesc[eParam_run_write0].type = eParamTypeFract; 
-  gModuleData->paramDesc[eParam_run_write0].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_run_write0].max = fix16_one; 
+  gModuleData->paramDesc[eParam_run_write0].type = eParamTypeBool; 
+  gModuleData->paramDesc[eParam_run_write0].min = 0;
+  gModuleData->paramDesc[eParam_run_write0].max = 1; 
+  gModuleData->paramDesc[eParam_run_write0].radix = 2; 
 
-  //// FIXME: boolean
   strcpy(gModuleData->paramDesc[eParam_run_read0].label, "run_read0");
-  gModuleData->paramDesc[eParam_run_read0].type = eParamTypeFract; 
-  gModuleData->paramDesc[eParam_run_read0].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_run_read0].max = fix16_one; 
+  gModuleData->paramDesc[eParam_run_read0].type = eParamTypeBool; 
+  gModuleData->paramDesc[eParam_run_read0].min = 0;
+  gModuleData->paramDesc[eParam_run_read0].max = 1; 
+  gModuleData->paramDesc[eParam_run_read0].radix = 2; 
 
   strcpy(gModuleData->paramDesc[eParam_delay1].label, "delay1");
   gModuleData->paramDesc[eParam_delay1].type = eParamTypeFix; 
@@ -74,6 +74,7 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParam_loop1].radix = PARAM_SECONDS_RADIX;
 
   /// FIXME
+  //// ????
   strcpy(gModuleData->paramDesc[eParam_rate1].label, "rate1");
   gModuleData->paramDesc[eParam_rate1].type = eParamTypeFix; 
   gModuleData->paramDesc[eParam_rate1].min = 0x00000000; 
@@ -103,30 +104,32 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParam_pos_read1].max = PARAM_SECONDS_MAX; 
   gModuleData->paramDesc[eParam_pos_read1].radix = PARAM_SECONDS_RADIX;
 
-  //// FIXME: boolean
   strcpy(gModuleData->paramDesc[eParam_run_write1].label, "run_write1");
-  gModuleData->paramDesc[eParam_run_write1].type = eParamTypeFract; 
-  gModuleData->paramDesc[eParam_run_write1].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_run_write1].max = fix16_one; 
+  gModuleData->paramDesc[eParam_run_write1].type = eParamTypeBool; 
+  gModuleData->paramDesc[eParam_run_write1].min = 0;
+  gModuleData->paramDesc[eParam_run_write1].max = 1;
+  gModuleData->paramDesc[eParam_run_write1].radix = 2;
 
-  /// FIXME: boolean
   strcpy(gModuleData->paramDesc[eParam_run_read1].label, "run_read1");
-  gModuleData->paramDesc[eParam_run_read1].type = eParamTypeFract; 
-  gModuleData->paramDesc[eParam_run_read1].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_run_read1].max = fix16_one; 
+  gModuleData->paramDesc[eParam_run_read1].type = eParamTypeBool; 
+  gModuleData->paramDesc[eParam_run_read1].min = 0;
+  gModuleData->paramDesc[eParam_run_read1].max = 1;
+  gModuleData->paramDesc[eParam_run_read1].radix = 2;
 
   //// FIXME
   strcpy(gModuleData->paramDesc[eParam_coeff0].label, "coeff0");
-  gModuleData->paramDesc[eParam_coeff0].type = eParamTypeFract; 
+  gModuleData->paramDesc[eParam_coeff0].type = eParamTypeFix; 
   gModuleData->paramDesc[eParam_coeff0].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_coeff0].max = PARAM_COEFF_MAX
+  gModuleData->paramDesc[eParam_coeff0].max = PARAM_COEFF_MAX;
+  gModuleData->paramDesc[eParam_coeff0].radix = 32;
 
-    ///// FIXME
+  ///// FIXME
   strcpy(gModuleData->paramDesc[eParam_rq0].label, "rq0");
-  gModuleData->paramDesc[eParam_rq0].type = eParamTypeAmp; 
+  gModuleData->paramDesc[eParam_rq0].type = eParamTypeFix; 
   gModuleData->paramDesc[eParam_rq0].min = PARAM_RQ_MIN;
-  gModuleData->paramDesc[eParam_rq0].max = PARAM_RQ_MAX; 
-
+  gModuleData->paramDesc[eParam_rq0].max = PARAM_RQ_MAX;
+  gModuleData->paramDesc[eParam_rq0].radix = 32;
+  
   strcpy(gModuleData->paramDesc[eParam_low0].label, "low0");
   gModuleData->paramDesc[eParam_low0].type = eParamTypeAmp; 
   gModuleData->paramDesc[eParam_low0].min = 0x00000000; 
@@ -164,15 +167,17 @@ void fill_param_desc(void) {
 
   //// FIXME
   strcpy(gModuleData->paramDesc[eParam_coeff1].label, "coeff1");
-  gModuleData->paramDesc[eParam_coeff1].type = eParamTypeFract; 
+  gModuleData->paramDesc[eParam_coeff1].type = eParamTypeFix; 
   gModuleData->paramDesc[eParam_coeff1].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_coeff1].max = 0x1F400000; 
+  gModuleData->paramDesc[eParam_coeff1].max = PARAM_COEFF_MAX; 
+  gModuleData->paramDesc[eParam_coeff1].radix = 32;
 
   ///// FIXME
   strcpy(gModuleData->paramDesc[eParam_rq1].label, "rq1");
-  gModuleData->paramDesc[eParam_rq1].type = eParamTypeFract; 
+  gModuleData->paramDesc[eParam_rq1].type = eParamTypeFix; 
   gModuleData->paramDesc[eParam_rq1].min = PARAM_RQ_MIN;
   gModuleData->paramDesc[eParam_rq1].max = PARAM_RQ_MAX; 
+  gModuleData->paramDesc[eParam_rq1].radix = 32;
  
   strcpy(gModuleData->paramDesc[eParam_low1].label, "low1");
   gModuleData->paramDesc[eParam_low1].type = eParamTypeAmp; 
