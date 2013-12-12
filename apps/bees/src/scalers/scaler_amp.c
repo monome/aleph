@@ -47,7 +47,7 @@ void scaler_amp_str(char* dst, void* scaler,  io_t in) {
   } else if (uin == (tabSize - 1)) {
     print_fix16(dst, 0);
   } else {
-    print_fix16(dst, tabRep[(u16)uin] );`
+    print_fix16(dst, tabRep[(u16)uin] );
   }
 }
 
