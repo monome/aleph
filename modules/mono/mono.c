@@ -86,7 +86,7 @@ static fract32   amp1;          // amplitude (primary)
 static fract32   amp2;          // amplitude (secondary)
 
 // this is kind of unnecessary really. amp integrators do a better job...
-static env_asr*  env;           // ASR amplitude envelope
+// static env_asr*  env;           // ASR amplitude envelope
  
 static filter_1p_lo* freq1Lp;  // 1plp smoother for freq1
 static filter_1p_lo* freq2Lp;  // 1plp smoother for freq2
@@ -115,9 +115,7 @@ static inline fract32 lookup_wave(const fix16 idx, const fract32 wave);
 // frame calculation
 static void calc_frame(void);
 // set all parameter descriptors
-//
-
-static void fill_param_desc(void);
+//static void fill_param_desc(void);
 
 //----------------------
 //----- static functions
@@ -209,8 +207,8 @@ static void calc_frame(void) {
 			);
 
 
-  // increment and apply envelope
-    frameVal = mult_fr1x32x32(frameVal, env_asr_next(env));
+  /* // increment and apply envelope */
+  /* frameVal = mult_fr1x32x32(frameVal, env_asr_next(env)); */
 
   // increment and apply freq smoothers
   if(!(freq1Lp->sync)) {
@@ -262,7 +260,7 @@ void module_init(void) {
   ips = fix16_from_float( (f32)WAVE_TAB_SIZE / (f32)sr );
 
   track = 1;
-  amp1 = amp2 = INT32_MAX >> 1;
+  amp1 = amp2 = INT32_MAX >> 2;
   
   freq1 = fix16_from_int(220);
   freq2 = fix16_from_int(330);
@@ -301,13 +299,13 @@ void module_init(void) {
   table_fill_harm(tab2, WAVE_TAB_SIZE, 5, 0.5f, 1);
 
   // allocate envelope
-  env = (env_asr*)malloc(sizeof(env_asr));
-  env_asr_init(env);
+  /* env = (env_asr*)malloc(sizeof(env_asr)); */
+  /* env_asr_init(env); */
 
-  env_asr_set_atk_shape(env, float_to_fr32(0.5));
-  env_asr_set_rel_shape(env, float_to_fr32(0.5));
-  env_asr_set_atk_dur(env, 1000);
-  env_asr_set_rel_dur(env, 10000);
+  /* env_asr_set_atk_shape(env, float_to_fr32(0.5)); */
+  /* env_asr_set_rel_shape(env, float_to_fr32(0.5)); */
+  /* env_asr_set_atk_dur(env, 1000); */
+  /* env_asr_set_rel_dur(env, 10000); */
 
   // allocate smoothers
   freq1Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
@@ -339,7 +337,7 @@ void module_init(void) {
 
 // de-init
 void module_deinit(void) {
-  free(env);
+  //  free(env);
   free(freq1Lp);
   free(freq2Lp);
   free(pmLp);

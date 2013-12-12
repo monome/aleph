@@ -80,6 +80,8 @@ ARFLAGS +=
 # Extra flags to use when assembling.
 ASFLAGS += 
 
+# extra flags for compiling
+# CFLAGS += --verbose
 
 # debug:
 # OPTIMIZATION = -Og

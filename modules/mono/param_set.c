@@ -27,21 +27,21 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParamAmp2:
     filter_1p_lo_in(amp1Lp, v);
     break;
-  case eParamGate:
-     env_asr_set_gate(env, v > 0);
-    break;
-  case eParamAtkDur:
-    env_asr_set_atk_dur(env, sec_to_frames_trunc(v));
-    break;
-  case eParamRelDur:
-    env_asr_set_rel_dur(env, sec_to_frames_trunc(v));
-    break;
-  case eParamAtkCurve:
-    env_asr_set_atk_shape(env, BIT_ABS(FIX16_FRACT_TRUNC(v)));
-    break;
-  case eParamRelCurve:
-    env_asr_set_atk_shape(env, BIT_ABS(FIX16_FRACT_TRUNC(v)));
-    break;
+  /* case eParamGate: */
+  /*    env_asr_set_gate(env, v > 0); */
+  /*   break; */
+  /* case eParamAtkDur: */
+  /*   env_asr_set_atk_dur(env, sec_to_frames_trunc(v)); */
+  /*   break; */
+  /* case eParamRelDur: */
+  /*   env_asr_set_rel_dur(env, sec_to_frames_trunc(v)); */
+  /*   break; */
+  /* case eParamAtkCurve: */
+  /*   env_asr_set_atk_shape(env, BIT_ABS(FIX16_FRACT_TRUNC(v))); */
+  /*   break; */
+  /* case eParamRelCurve: */
+  /*   env_asr_set_atk_shape(env, BIT_ABS(FIX16_FRACT_TRUNC(v))); */
+  /*   break; */
   case eParamFreq1Smooth:
     filter_1p_lo_set_slew(freq1Lp, v);
     break;

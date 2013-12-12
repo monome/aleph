@@ -40,9 +40,16 @@ void scaler_integrator_str(char* dst, void* scaler,  io_t in) {
 // init function
 void scaler_integrator_init(void* scaler) {
   ParamScaler* sc = (ParamScaler*)scaler;
+
+
+  print_dbg("\r\n initializing integrator scaler for param, label: ");
+  print_dbg(sc->desc->label);
+
   // check descriptor
-  if( sc->desc->type != eParamTypeAmp) {
-    print_dbg("\r\n !!! warning: wrong param type for amp scaler");
+  if( sc->desc->type != eParamTypeIntegrator) {
+    print_dbg("\r\n !!! warning: wrong param type for integrator scaler");
+    print_dbg(" ; this param has type: ");
+    print_dbg_ulong(sc->desc->type);
   }
   
   // init flag for static data

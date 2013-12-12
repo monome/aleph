@@ -29,18 +29,18 @@ enum params {
 
   eParamIoAmp0,
   eParamIoAmp1, 
-
   eParamIoAmp2,
   eParamIoAmp3,
 
   eParamPm,
   eParamWave1,
   eParamWave2,
-  eParamGate,
-  eParamAtkDur,
-  eParamRelDur,
-  eParamAtkCurve,
-  eParamRelCurve,
+
+  /* eParamGate, */
+  /* eParamAtkDur, */
+  /* eParamRelDur, */
+  /* eParamAtkCurve, */
+  /* eParamRelCurve, */
   eParamFreq1Smooth,
   eParamFreq2Smooth,
   eParamPmSmooth,

@@ -17,15 +17,17 @@
 void scaler_fix_init(void* scaler) {
   ParamScaler* sc = (ParamScaler*)scaler;
 
+  print_dbg("\r\n initializing fixed-point scaler for param, label: ");
+  print_dbg(sc->desc->label);
+
   sc->inMin = scaler_fix_in(scaler, sc->desc->min);
   sc->inMax = scaler_fix_in(scaler, sc->desc->max);
 
-  print_dbg("\r\n init fixed-point linear scaler");
-  print_dbg(", input min: 0x");
-  print_dbg_hex(sc->inMin);
-  print_dbg(", input max: 0x");
-  print_dbg_hex(sc->inMax);
-
+  /* print_dbg("\r\n init fixed-point linear scaler"); */
+  /* print_dbg(", input min: 0x"); */
+  /* print_dbg_hex(sc->inMin); */
+  /* print_dbg(", input max: 0x"); */
+  /* print_dbg_hex(sc->inMax); */
 }
 
 s32 scaler_fix_val(void* scaler, io_t in) {
@@ -86,20 +88,18 @@ s32 scaler_fix_inc(void* sc, io_t* pin, io_t inc ) {
   // check bounds again after scaling
   val = scaler_fix_val(sc, *pin);
   if(val > scaler->desc->max) {
-    print_dbg("\r\n high saturation in sacler_fix_inc, value: 0x");
-    print_dbg_hex(val);
-    print_dbg(", max: 0x");
-    print_dbg_hex(scaler->desc->max);
-
+    /* print_dbg("\r\n high saturation in sacler_fix_inc, value: 0x"); */
+    /* print_dbg_hex(val); */
+    /* print_dbg(", max: 0x"); */
+    /* print_dbg_hex(scaler->desc->max); */
     *pin = scaler->inMax;
     return scaler->desc->max;
   }
   if(val < scaler->desc->min) {
-    print_dbg("\r\n low saturation in sacler_fix_inc, value: 0x");
-    print_dbg_hex(val);
-    print_dbg(", min: 0x");
-    print_dbg_hex(scaler->desc->min);
-
+    /* print_dbg("\r\n low saturation in sacler_fix_inc, value: 0x"); */
+    /* print_dbg_hex(val); */
+    /* print_dbg(", min: 0x"); */
+    /* print_dbg_hex(scaler->desc->min); */
     *pin = scaler->inMin;
     return scaler->desc->min;
   }

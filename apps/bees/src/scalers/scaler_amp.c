@@ -28,8 +28,8 @@ static u8 initFlag = 0;
 //---- extern funcs
 
 s32 scaler_amp_val(void* scaler, io_t in) {
-  /* print_dbg("\r\n requesting amp_scaler value for input: 0x"); */
-  /* print_dbg_hex((u32)in); */
+  print_dbg("\r\n requesting amp_scaler value for input: 0x");
+  print_dbg_hex((u32)in);
   //  u16 uin = BIT_ABS_16((s16)in);
   if(in < 0) { in = 0; }
   return tabVal[(u16)((u16)in >> inRshift)];
@@ -47,16 +47,20 @@ void scaler_amp_str(char* dst, void* scaler,  io_t in) {
   } else if (uin == (tabSize - 1)) {
     print_fix16(dst, 0);
   } else {
-    print_fix16(dst, tabRep[(u16)uin] );
+    print_fix16(dst, tabRep[(u16)uin] );`
   }
 }
 
 // init function
 void scaler_amp_init(void* scaler) {
   ParamScaler* sc = (ParamScaler*)scaler;
+  print_dbg("\r\n initializing amp scaler for param, label: ");
+  print_dbg(sc->desc->label);
   // check descriptor
   if( sc->desc->type != eParamTypeAmp) {
     print_dbg("\r\n !!! warning: wrong param type for amp scaler");
+    print_dbg(" ; this param has type: ");
+    print_dbg_ulong(sc->desc->type);
   }
   
   // init flag for static data

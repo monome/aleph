@@ -80,35 +80,35 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamWave2].max = FRACT32_MAX;
   gModuleData->paramDesc[eParamWave2].radix = 1;
   
-  strcpy(gModuleData->paramDesc[eParamGate].label, "gate");
-  gModuleData->paramDesc[eParamGate].type = eParamTypeFix;
-  gModuleData->paramDesc[eParamGate].min = 0;
-  gModuleData->paramDesc[eParamGate].max = 1;    //???
-  gModuleData->paramDesc[eParamGate].radix = 32;
+  /* strcpy(gModuleData->paramDesc[eParamGate].label, "gate"); */
+  /* gModuleData->paramDesc[eParamGate].type = eParamTypeFix; */
+  /* gModuleData->paramDesc[eParamGate].min = 0; */
+  /* gModuleData->paramDesc[eParamGate].max = 1;    //??? */
+  /* gModuleData->paramDesc[eParamGate].radix = 32; */
   
-  strcpy(gModuleData->paramDesc[eParamAtkDur].label, "amp env atk");
-  gModuleData->paramDesc[eParamAtkDur].type = eParamTypeFix;
-  gModuleData->paramDesc[eParamAtkDur].min = 0;
-  gModuleData->paramDesc[eParamAtkDur].max = ENV_DUR_MAX;
-  gModuleData->paramDesc[eParamAtkDur].radix = ENV_DUR_RADIX;
+  /* strcpy(gModuleData->paramDesc[eParamAtkDur].label, "amp env atk"); */
+  /* gModuleData->paramDesc[eParamAtkDur].type = eParamTypeFix; */
+  /* gModuleData->paramDesc[eParamAtkDur].min = 0; */
+  /* gModuleData->paramDesc[eParamAtkDur].max = ENV_DUR_MAX; */
+  /* gModuleData->paramDesc[eParamAtkDur].radix = ENV_DUR_RADIX; */
   
-  strcpy(gModuleData->paramDesc[eParamRelDur].label, "amp env rel");
-  gModuleData->paramDesc[eParamRelDur].type = eParamTypeFix;
-  gModuleData->paramDesc[eParamRelDur].min = 0;
-  gModuleData->paramDesc[eParamRelDur].max = ENV_DUR_MAX;
-  gModuleData->paramDesc[eParamRelDur].radix = 6;
+  /* strcpy(gModuleData->paramDesc[eParamRelDur].label, "amp env rel"); */
+  /* gModuleData->paramDesc[eParamRelDur].type = eParamTypeFix; */
+  /* gModuleData->paramDesc[eParamRelDur].min = 0; */
+  /* gModuleData->paramDesc[eParamRelDur].max = ENV_DUR_MAX; */
+  /* gModuleData->paramDesc[eParamRelDur].radix = 6; */
   
-  strcpy(gModuleData->paramDesc[eParamAtkCurve].label, "amp env atk curve");
-  gModuleData->paramDesc[eParamAtkCurve].type = eParamTypeFix;
-  gModuleData->paramDesc[eParamAtkCurve].min = 0;
-  gModuleData->paramDesc[eParamAtkCurve].max = FRACT32_MAX;
-  gModuleData->paramDesc[eParamAtkCurve].radix = 1;
+  /* strcpy(gModuleData->paramDesc[eParamAtkCurve].label, "amp env atk curve"); */
+  /* gModuleData->paramDesc[eParamAtkCurve].type = eParamTypeFix; */
+  /* gModuleData->paramDesc[eParamAtkCurve].min = 0; */
+  /* gModuleData->paramDesc[eParamAtkCurve].max = FRACT32_MAX; */
+  /* gModuleData->paramDesc[eParamAtkCurve].radix = 1; */
   
-  strcpy(gModuleData->paramDesc[eParamRelCurve].label, "amp env rel curve");
-  gModuleData->paramDesc[eParamRelCurve].type = eParamTypeFix;
-  gModuleData->paramDesc[eParamRelCurve].min = 0;
-  gModuleData->paramDesc[eParamRelCurve].max = FRACT32_MAX;
-  gModuleData->paramDesc[eParamRelCurve].radix = 1;
+  /* strcpy(gModuleData->paramDesc[eParamRelCurve].label, "amp env rel curve"); */
+  /* gModuleData->paramDesc[eParamRelCurve].type = eParamTypeFix; */
+  /* gModuleData->paramDesc[eParamRelCurve].min = 0; */
+  /* gModuleData->paramDesc[eParamRelCurve].max = FRACT32_MAX; */
+  /* gModuleData->paramDesc[eParamRelCurve].radix = 1; */
   
   strcpy(gModuleData->paramDesc[eParamFreq1Smooth].label, "freq 1 smooth");
   gModuleData->paramDesc[eParamFreq1Smooth].type = eParamTypeIntegrator;

@@ -8,8 +8,15 @@
 // aleph-avr32
 #include "flash.h"
 #include "flash_bees.h"
+#include "param_scaler.h"
 #include "scene.h"
 
+/*
+typedef struct {
+  u8 sceneBytes[sizeof(sceneData_t)];
+  u8 scalerBytes[PARAM_SCALER_DATA_SIZE];
+}
+*/
 
 // read default scene data to global buffer
 void flash_read_scene(void) { 
