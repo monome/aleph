@@ -138,14 +138,10 @@ git clone https://github.com/tehn/aleph.git
 ------------------
 AVR32
 -----
-for mac:
 
-<<<<<<< HEAD
 for mac:
-
-=======
->>>>>>> exp_squash
 https://github.com/jsnyder/avr32-toolchain
+
 
 for linux:
 
