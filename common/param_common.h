@@ -31,18 +31,8 @@ typedef enum {
   eParamTypeIntegrator,
   // note number -> hz
   eParamTypeNote,
-  // time in samples
-  //  eParamTypeSamples,
-  // frequency coefficient for 1pole filter
-  //  eParamType1pFreq,
-  // oscillator, base frequency
-  //  eParamTypeOscFreq,
-  // oscillator tuning ratio
-  //  eParamTypeOscTune,
   // frequency coefficient for SVF
-  //  eParamTypeSvfFreq,
-  // RQ coefficient for SVF
-  //  eParamTypeSvfRq,
+  eParamTypeSvfFreq,
   //...?
   eParamNumTypes
 } ParamType;

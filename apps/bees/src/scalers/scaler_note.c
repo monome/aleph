@@ -44,11 +44,11 @@ void scaler_note_str(char* dst, void* scaler,  io_t in) {
 
 // init function
 void scaler_note_init(void* scaler) {
-  ParamScaler* sc = (ParamScaler*)scaler;
+  //  ParamScaler* sc = (ParamScaler*)scaler;
   // check descriptor
-  if( sc->desc->type != eParamTypeNote) {
-    print_dbg("\r\n !!! warning: wrong param type for note scaler");
-  }
+  /* if( sc->desc->type != eParamTypeNote) { */
+  /*   print_dbg("\r\n !!! warning: wrong param type for note scaler"); */
+  /* } */
   
   // init flag for static data
   if(initFlag) { 

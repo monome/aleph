@@ -10,9 +10,10 @@
 #define PARAM_SECONDS_MAX 0x003c0000
 #define PARAM_SECONDS_RADIX 6
 // rate
+//...
 
-/// FIXME
-#define PARAM_COEFF_MAX 0x1F400000;  // fixme
+// filter cutoff frequency
+#define PARAM_FREQ_MAX 0x1F400000;  // fixme
 
 // enumerate parameters
 enum params {
@@ -40,7 +41,7 @@ enum params {
   eParam_run_write1,		// 17
 
   // filter 01
-  eParam_coeff0,		// 18
+  eParam_freq0,		// 18
   eParam_rq0,			// 19
   eParam_low0,			// 20
   eParam_high0,			// 21
@@ -50,7 +51,7 @@ enum params {
   eParam_fdry0,			// 25
 
   // filter 1
-  eParam_coeff1,		// 26
+  eParam_freq1,		// 26
   eParam_rq1,			// 27
   eParam_low1,			// 28
   eParam_high1,			// 29

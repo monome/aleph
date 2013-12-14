@@ -56,7 +56,8 @@ CSRCS += \
 	$(APP_DIR)/src/scalers/scaler_bool.c \
 	$(APP_DIR)/src/scalers/scaler_fix.c \
 	$(APP_DIR)/src/scalers/scaler_integrator.c \
-	$(APP_DIR)/src/scalers/scaler_note.c
+	$(APP_DIR)/src/scalers/scaler_note.c \
+	$(APP_DIR)/src/scalers/scaler_svf_fc.c
 
 # List of assembler source files.
 ASSRCS +=

@@ -7,6 +7,7 @@ n = 2**10;
 // 12-bit linear input gives 31 microtunes, costs 16k
 // n = 2**12;
 
+
 i = Array.series(n);
 
 // let's use 128 semitones.
@@ -61,8 +62,7 @@ f = i.collect({ |j|
 	
 // multiply float ratio table
 f = f * ~base;
-
-f.plot;
+//f.plot;
 
 f.do({ |x, j|
 	(" " ++ j ++ " : " ++ x ++ " hz : " ++ x.cpsmidi).post; 
@@ -96,3 +96,24 @@ v.do({ arg y; y.asHexString.postln; });
 // write data
 v.do({ |x| ~vf.putInt32(x) });
 ~vf.close;
+
+// use the same 16.16 values for SVF corner frequency representation.
+// new table for corresponding coefficients.
+
+// 2x oversampled
+~sr = 96000.0;
+~cf = f.collect({ |fc| 
+	2.0 * sin(pi * min(0.25, fc / ~sr));
+});
+//~cf.do({ |x| x.postln; });
+//~cf.plot;
+
+~cfv = ~cf.collect({ |x| (x * 0x7fffffff).asInteger });
+~cfv.do({ |x| x.postln; });
+// value
+~cfvf = File.open(File.getcwd ++ "/scaler_svf_fc_val.dat", "wb");
+// write size
+~cfvf.putInt32(n);
+// write data
+~cfv.do({ |x| ~cfvf.putInt32(x) });
+~cfvf.close;
