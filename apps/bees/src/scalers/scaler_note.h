@@ -8,6 +8,8 @@
 #include "param_scaler.h"
 #include "types.h"
 
+#define PARAM_SCALER_NOTE_DATA_SIZE (1024 * 4)
+
 extern void scaler_note_init(void* scaler);
 extern s32 scaler_note_val(void* scaler, io_t in);
 extern void scaler_note_str(char* dst, void* scaler, io_t in);

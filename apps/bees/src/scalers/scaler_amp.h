@@ -8,6 +8,8 @@
 #include "param_scaler.h"
 #include "types.h"
 
+#define PARAM_SCALER_AMP_DATA_SIZE (1024 * 4 * 2)
+
 extern void scaler_amp_init(void* scaler);
 extern s32 scaler_amp_val(void* scaler, io_t in);
 extern void scaler_amp_str(char* dst, void* scaler, io_t in);

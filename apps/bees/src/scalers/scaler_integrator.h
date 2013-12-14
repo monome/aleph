@@ -8,6 +8,8 @@
 #include "param_scaler.h"
 #include "types.h"
 
+#define PARAM_SCALER_INTEGRATOR_DATA_SIZE (1024 * 4 * 2)
+
 extern void scaler_integrator_init(void* scaler);
 extern s32 scaler_integrator_val(void* scaler, io_t in);
 extern void scaler_integrator_str(char* dst, void* scaler, io_t in);

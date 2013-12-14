@@ -24,7 +24,26 @@
 #include "op_math.h"
 #include "param_common.h"
 
+// type-specific includes
+/// need these for data size calculation
+#include "scalers/scaler_amp.h"
+#include "scalers/scaler_bool.h"
+#include "scalers/scaler_fix.h"
+#include "scalers/scaler_integrator.h"
+#include "scalers/scaler_note.h"
+#include "scalers/scaler_svf_fc.h"
 
+//----------------------
+//---- defines
+#define PARAM_SCALER_DATA_SIZE (PARAM_SCALER_AMP_DATA_SIZE	\
+				+ PARAM_SCALER_BOOL_DATA_SIZE	\
+				+ PARAM_SCALER_FIX_DATA_SIZE	\
+				+ PARAM_SCALER_INTEGRATOR_DATA_SIZE	\
+				+ PARAM_SCALER_NOTE_DATA_SIZE		\
+				+ PARAM_SCALER_SVF_FC_DATA_SIZE )
+// + ...
+
+//---------------------
 //-- function types
 // get DSP value for given scaler, input
 typedef s32 (*scaler_get_value_fn)(void* scaler, io_t in);

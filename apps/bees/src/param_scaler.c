@@ -11,14 +11,6 @@
 #include "param_scaler.h"
 #include "types.h"
 
-// type-specific includes
-#include "scalers/scaler_amp.h"
-#include "scalers/scaler_bool.h"
-#include "scalers/scaler_fix.h"
-#include "scalers/scaler_integrator.h"
-#include "scalers/scaler_note.h"
-#include "scalers/scaler_svf_fc.h"
-
 // array of pointers to initialization functions.
 // order must be in sync with types enum in param_common.h
 scaler_init_fn scaler_init_pr[eParamNumTypes] = {

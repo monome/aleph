@@ -8,6 +8,8 @@
 #include "param_scaler.h"
 #include "types.h"
 
+#define PARAM_SCALER_FIX_DATA_SIZE 0
+
 extern void scaler_fix_init(void* scaler);
 extern s32 scaler_fix_val(void* scaler, io_t in);
 extern void scaler_fix_str(char* dst, void* scaler, io_t in);
