@@ -109,4 +109,8 @@ extern const char* scaler_get_rep_path(ParamType p);
 extern u32 scaler_get_data_offset(ParamType p);
 extern u32 scaler_get_rep_offset(ParamType p);
 
+// get pointers to NV memory for table assignment
+extern const s32* scaler_get_nv_data(ParamType p);
+extern const s32* scaler_get_nv_rep(ParamType p);
+
 #endif

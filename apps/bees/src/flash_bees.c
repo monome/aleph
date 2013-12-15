@@ -21,12 +21,6 @@ static s32* scalerBuf;
 // max size of data in single scaler file
 static const u32 scalerMaxValues = 1024;
 
-
-typedef struct {
-  u8 sceneBytes[sizeof(sceneData_t)];
-  u8 scalerBytes[PARAM_SCALER_DATA_SIZE];
-} beesFlashData;
-
 // read default scene data to global buffer
 void flash_read_scene(void) { 
   memcpy((void*)sceneData, flash_app_data(), sizeof(sceneData_t)); 

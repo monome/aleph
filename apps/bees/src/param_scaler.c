@@ -5,9 +5,14 @@
 
 */
 
-
+// asf
 #include "print_funcs.h"
 
+// avr32_lib
+#include "flash.h"
+
+// bees
+#include "flash_bees.h"
 #include "param_scaler.h"
 #include "types.h"
 
@@ -132,7 +137,9 @@ scaler_inc_fn scaler_inc_pr[eParamNumTypes] = {
 
 
 //-------------------------------,
-//---- extern function
+//---- extern functions
+
+// initialize a scaler
 void scaler_init(ParamScaler* sc, const ParamDesc* desc) {
   // store pointer to constant descriptor data
   sc->desc = desc;
@@ -161,7 +168,6 @@ void scaler_get_str(char* dst, ParamScaler* sc, io_t in) {
   if(fn != NULL) {
     (*fn)(dst, sc, in);
   }
-
 }
 
 // get input given DSP value (use sparingly)
@@ -183,7 +189,6 @@ extern s32 scaler_inc(ParamScaler* sc, io_t * pin, io_t inc ) {
     return 0;
   }
 }
-
 
 // bytes in data file (may be zero)
 u32 scaler_get_data_bytes(ParamType p) {
@@ -213,4 +218,13 @@ u32 scaler_get_data_offset(ParamType p) {
 
 u32 scaler_get_rep_offset(ParamType p) {
   return scalerRepOffset[p];
+}
+
+// get pointers to NV memory for table assignment
+const s32* scaler_get_nv_data(ParamType p) {
+  return (s32*) &(((beesFlashData*)flash_app_data() )->scalerBytes) + scaler_get_data_offset(p);
+}
+
+const s32* scaler_get_nv_rep(ParamType p) {
+  return (s32*) &(((beesFlashData*)flash_app_data() )->scalerBytes) + scaler_get_rep_offset(p);
 }
