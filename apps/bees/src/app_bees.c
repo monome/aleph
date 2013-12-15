@@ -22,6 +22,7 @@
 // bees
 #include "app_timers.h"
 #include "files.h"
+#include "flash_bees.h"
 #include "handler.h"
 #include "net.h"
 #include "net_monome.h"
@@ -57,6 +58,10 @@ void app_init(void) {
 
   /* print_dbg("\r\n play_init..."); */
   /* play_init(); */
+
+  // initialize flash-management buffers
+  print_dbg("\r\n flash_bees_init...");
+  flash_bees_init();
 }
 
 // this is called from main event handler
@@ -70,7 +75,11 @@ u8 app_launch(u8 firstrun) {
   if(firstrun) {
     render_boot("launching app, first run");
     print_dbg("\r\n first run, writing nonvolatile data...");
-    //...
+    
+    ///... write param scaler data
+    // this is done at firstrun instead of being linked statically,
+    // so that users can tune scaler data offline without recompiling
+    flash_init_scaler_data();
 
     
     print_dbg("\r\n first run, try and load default DSP");

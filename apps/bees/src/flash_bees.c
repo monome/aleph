@@ -6,10 +6,20 @@
 #include "print_funcs.h"
 
 // aleph-avr32
+#include "memory.h"
 #include "flash.h"
+
+// bees
+#include "files.h"
 #include "flash_bees.h"
 #include "param_scaler.h"
 #include "scene.h"
+
+// buffer for scaler data in flash init
+/// FIXME: this would be a temp buffer if we had malloc.
+static s32* scalerBuf;
+// max size of data in single scaler file
+static const u32 scalerMaxValues = 1024;
 
 
 typedef struct {
@@ -29,4 +39,32 @@ void flash_write_scene(void) {
   print_dbg("\r\n writing scene data tto address: 0x");
   
   flashc_memcpy( flash_app_data(), (void*)sceneData, sizeof(sceneData_t), true);
+}
+
+// initialize nonvolatile scaler data
+void flash_init_scaler_data(void) {
+  ///// for each param type, get number of offline data bytes,
+  ///// load file and write to flash if necessary
+  u32 b;
+  const char* path;
+  u8 p;
+  for(p=0; p<eParamNumTypes; ++p) {
+    b = scaler_get_data_bytes(p);
+    if(b > 0) {
+      path = scaler_get_data_path(p);
+      files_load_scaler_name(path, scalerBuf, scalerMaxValues);
+      // flash_write_scaler(scaler_get_data_offset(p));
+    }
+    b = scaler_get_rep_bytes(p);
+    if(b > 0) {
+      path = scaler_get_rep_path(p);
+      files_load_scaler_name(path, scalerBuf, scalerMaxValues);
+      //      flash_write_scaler(scaler_get_rep_offset(p));
+    }
+  }
+}
+
+// initialize buffer
+void flash_bees_init(void) {
+  scalerBuf = alloc_mem(scalerMaxValues * 4);
 }

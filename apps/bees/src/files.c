@@ -288,7 +288,7 @@ const volatile char* files_get_scaler_name(u8 idx) {
   return list_get_name(&scalerList, idx);
 }
 
-// search for specified scaler file and load it
+// search for specified scaler file and load it to specified buffer
 // return 1 on success, 0 on failure
 u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
   void* fp;

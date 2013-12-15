@@ -71,7 +71,7 @@ typedef struct _paramScaler {
   io_t inMin;
   io_t inMax;
 
-  //// TODO, perhaps
+  //// TODO, perhapsb
   // array of tuning functions
   //  scaler_tune_fn * tune;
   // num tuning functions
@@ -93,5 +93,16 @@ extern void scaler_get_str(char* dst, ParamScaler* sc, io_t in);
 extern io_t scaler_get_in(ParamScaler* sc, s32 value);
 // increment input by pointer, return value
 extern s32 scaler_inc(ParamScaler* sc, io_t *pin, io_t inc );
+
+//--- data initialization stuff
+// bytes in data file (may be zero)
+extern u32 scaler_get_data_bytes(ParamType p);
+// bytes in rep file (may be zero)
+extern u32 scaler_get_rep_bytes(ParamType p);
+
+// get pathname for data file (if any)
+extern const char* scaler_get_data_path(ParamType p);
+// get pathname for representation file (if any)
+extern const char* scaler_get_rep_path(ParamType p);
 
 #endif
