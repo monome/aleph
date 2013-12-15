@@ -16,7 +16,7 @@ static const u32 tabSize = 1024;
 // shift from io_t size to index
 static const u8 inRshift = 5;
 
-static s32* tabVal;
+static const s32* tabVal;
 
 static u8 initFlag = 0;
 
@@ -52,14 +52,18 @@ void scaler_svf_fc_init(void* scaler) {
     ;;
   } else {
     initFlag = 1;
+
+    // assign
+    tabVal = scaler_get_nv_data(eParamTypeSvfFreq);
+
     // allocate
-    print_dbg("\r\n allocating static memory for svf_fc scalers");
-    tabVal = (s32*)alloc_mem(tabSize * 4);
+    /* print_dbg("\r\n allocating static memory for svf_fc scalers"); */
+    /* tabVal = (s32*)alloc_mem(tabSize * 4); */
         
-    // load gain data
-    print_dbg("\r\n loading gain scaler data from sdcard");
-    files_load_scaler_name("scaler_svf_fc_val.dat", tabVal, tabSize);
-    print_dbg("\r\n finished loading svf_fc scaler data from files.");
+    /* // load gain data */
+    /* print_dbg("\r\n loading gain scaler data from sdcard"); */
+    /* files_load_scaler_name("scaler_svf_fc_val.dat", tabVal, tabSize); */
+    /* print_dbg("\r\n finished loading svf_fc scaler data from files."); */
   }
 
   // hack:

@@ -15,8 +15,8 @@ static const u32 tabSize = 1024;
 // shift from io_t size to index
 static const u8 inRshift = 5;
 
-static s32* tabVal;
-static s32* tabRep;
+static const s32* tabVal;
+static const s32* tabRep;
 
 static u8 initFlag = 0;
 
@@ -68,16 +68,22 @@ void scaler_amp_init(void* scaler) {
     ;;
   } else {
     initFlag = 1;
-    // allocate
-    print_dbg("\r\n allocating static memory for amp scalers");
-    tabVal = (s32*)alloc_mem(tabSize * 4);
-    tabRep = (s32*)alloc_mem(tabSize * 4);
+
+    // assign
+    tabVal = scaler_get_nv_data(eParamTypeAmp);
+    tabRep = scaler_get_nv_rep(eParamTypeAmp);
     
+
+    // allocate
+    //    print_dbg("\r\n allocating static memory for amp scalers");
+    //    tabVal = (s32*)alloc_mem(tabSize * 4);
+    //    tabRep = (s32*)alloc_mem(tabSize * 4);
+
     // load gain data
-    print_dbg("\r\n loading gain scaler data from sdcard");
-    files_load_scaler_name("scaler_amp_val.dat", tabVal, tabSize);
-    files_load_scaler_name("scaler_amp_rep.dat", tabRep, tabSize);
-   print_dbg("\r\n finished loading amp scaler data from files.");
+    //    print_dbg("\r\n loading gain scaler data from sdcard");
+    //    files_load_scaler_name("scaler_amp_val.dat", tabVal, tabSize);
+    //    files_load_scaler_name("scaler_amp_rep.dat", tabRep, tabSize);
+    //   print_dbg("\r\n finished loading amp scaler data from files.");
   }
 
   /// FIXME: should consider requested param range,
