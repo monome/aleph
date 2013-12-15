@@ -51,6 +51,25 @@ static const char scalerRepPath[eParamNumTypes][32] = {
   "", 	//  eParamTypeSvfFreq,
 };
 
+// pretty wack, sorry:
+// arrays of offsets into scaler NV data, for value and rep
+static const u32 scalerDataOffset[eParamNumTypes] = {
+    0, 	//  eParamTypeBool,
+    0, 	//  eParamTypeFix,
+    0, 	//  eParamTypeAmp,
+    1024, 	//  eParamTypeIntegrator,
+    2048, 	//  eParamTypeNote,
+    3072, 	//  eParamTypeSvfFreq,
+};
+// put rep data after value data, just easier to check visually
+static const u32 scalerRepOffset[eParamNumTypes] = {
+  0, 	//  eParamTypeBool,
+  0, 	//  eParamTypeFix,
+  4096, 	//  eParamTypeAmp,
+  5120, 	//  eParamTypeIntegrator,
+  0, 	//  eParamTypeNote,
+  0, 	//  eParamTypeSvfFreq,
+};
 
 // array of pointers to initialization functions.
 // order must be in sync with types enum in param_common.h
@@ -185,4 +204,13 @@ const char* scaler_get_data_path(ParamType p) {
 // get pathname for representation file (if any)
 const char* scaler_get_rep_path(ParamType p) { 
   return scalerRepPath[p];
+}
+
+// get offsets into NV memory
+u32 scaler_get_data_offset(ParamType p) {
+    return scalerDataOffset[p];
+}
+
+u32 scaler_get_rep_offset(ParamType p) {
+  return scalerRepOffset[p];
 }

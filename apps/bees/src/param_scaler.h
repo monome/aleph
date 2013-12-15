@@ -105,4 +105,8 @@ extern const char* scaler_get_data_path(ParamType p);
 // get pathname for representation file (if any)
 extern const char* scaler_get_rep_path(ParamType p);
 
+// get offsets into NV memory
+extern u32 scaler_get_data_offset(ParamType p);
+extern u32 scaler_get_rep_offset(ParamType p);
+
 #endif
