@@ -65,7 +65,6 @@ void scaler_integrator_init(void* scaler) {
     tabVal = scaler_get_nv_data(eParamTypeIntegrator);
     tabRep = scaler_get_nv_rep(eParamTypeIntegrator);
 
-
     // allocate
     //    print_dbg("\r\n allocating static memory for integrator scalers");
     //    tabVal = (s32*)alloc_mem(tabSize * 4);

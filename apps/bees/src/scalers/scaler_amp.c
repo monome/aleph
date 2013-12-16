@@ -36,17 +36,22 @@ s32 scaler_amp_val(void* scaler, io_t in) {
 }
 
 void scaler_amp_str(char* dst, void* scaler,  io_t in) {
-  /* print_dbg("\r\n requesting amp_scaler representation for input: 0x"); */
-  /* print_dbg_hex((u32)in); */
-
-  //  in >>= inRshift;
   u16 uin = BIT_ABS_16((s16)in) >> inRshift;
+
+  print_dbg("\r\n requesting amp_scaler representation for input: 0x");
+  print_dbg_hex((u32)in);
+
+  print_dbg(", index: ");
+  print_dbg_hex((u32)uin);
+
 
   if(uin == 0) {
     strcpy(dst, "   -inf");
   } else if (uin == (tabSize - 1)) {
     print_fix16(dst, 0);
   } else {
+    print_dbg(",  result: 0x");
+    print_dbg_hex((u32)tabRep[(u16)uin]);
     print_fix16(dst, tabRep[(u16)uin] );
   }
 }
@@ -72,7 +77,6 @@ void scaler_amp_init(void* scaler) {
     // assign
     tabVal = scaler_get_nv_data(eParamTypeAmp);
     tabRep = scaler_get_nv_rep(eParamTypeAmp);
-    
 
     // allocate
     //    print_dbg("\r\n allocating static memory for amp scalers");

@@ -17,7 +17,7 @@
 #include "types.h"
 
 // array of data bytes required per param type
-static u32 scalerDataBytes[eParamNumTypes] = {
+static u32 scalerDataWords[eParamNumTypes] = {
   0, 	//  eParamTypeBool,
   0, 	//  eParamTypeFix,
   1024, 	//  eParamTypeAmp,
@@ -27,7 +27,7 @@ static u32 scalerDataBytes[eParamNumTypes] = {
 };
 
 // array of representation bytes required per param type
-static u32 scalerRepBytes[eParamNumTypes] = {
+static u32 scalerRepWords[eParamNumTypes] = {
   0, 	//  eParamTypeBool,
   0, 	//  eParamTypeFix,
   1024, 	//  eParamTypeAmp,
@@ -42,7 +42,7 @@ static const char scalerDataPath[eParamNumTypes][32] = {
   "", 	//  eParamTypeFix,
   "scaler_amp_val.dat", 	//  eParamTypeAmp,
   "scaler_integrator_val.dat", 	//  eParamTypeIntegrator,
-  "scaler_note_val.dat", 	//  eParamTypeNote,
+  "scaler_note_12tet_val.dat", 	//  eParamTypeNote,
   "scaler_svf_fc_val.dat", 	//  eParamTypeSvfFreq,
 };
 
@@ -57,7 +57,7 @@ static const char scalerRepPath[eParamNumTypes][32] = {
 };
 
 // pretty wack, sorry:
-// arrays of offsets into scaler NV data, for value and rep
+// arrays of offsets (in words) into scaler NV data, for value and rep
 static const u32 scalerDataOffset[eParamNumTypes] = {
     0, 	//  eParamTypeBool,
     0, 	//  eParamTypeFix,
@@ -192,12 +192,12 @@ extern s32 scaler_inc(ParamScaler* sc, io_t * pin, io_t inc ) {
 
 // bytes in data file (may be zero)
 u32 scaler_get_data_bytes(ParamType p) {
-  return scalerDataBytes[p];
+  return scalerDataWords[p] * 4;
 }
 
 // bytes in rep file (may be zero)
 u32 scaler_get_rep_bytes(ParamType p) {
-  return scalerRepBytes[p];
+  return scalerRepWords[p] * 4;
 }
 
 //--- data initializatoin stuff
@@ -213,18 +213,26 @@ const char* scaler_get_rep_path(ParamType p) {
 
 // get offsets into NV memory
 u32 scaler_get_data_offset(ParamType p) {
-    return scalerDataOffset[p];
+    return scalerDataOffset[p] * 4;
 }
 
 u32 scaler_get_rep_offset(ParamType p) {
-  return scalerRepOffset[p];
+  return scalerRepOffset[p] * 4;
 }
 
 // get pointers to NV memory for table assignment
 const s32* scaler_get_nv_data(ParamType p) {
-  return (s32*) &(((beesFlashData*)flash_app_data() )->scalerBytes) + scaler_get_data_offset(p);
+  void* scalerBytes = (void*)&(((beesFlashData*)(flash_app_data()))->scalerBytes);
+  print_dbg("\r\n param_scaler:scaler_get_nv_data, result: 0x");
+  print_dbg_hex((u32)((s32*)scalerBytes + scaler_get_data_offset(p)));
+  return (s32*)scalerBytes + scaler_get_data_offset(p);
+  //  return (s32*) &(((beesFlashData*)flash_app_data() )->scalerBytes) + scaler_get_data_offset(p);
 }
 
 const s32* scaler_get_nv_rep(ParamType p) {
-  return (s32*) &(((beesFlashData*)flash_app_data() )->scalerBytes) + scaler_get_rep_offset(p);
+  void* scalerBytes = (void*)&(((beesFlashData*)(flash_app_data()))->scalerBytes);
+  print_dbg("\r\n param_scaler:scaler_get_nv_rep, result: 0x");
+  print_dbg_hex((u32)((s32*)scalerBytes + scaler_get_rep_offset(p)));
+  return (s32*)scalerBytes + scaler_get_rep_offset(p);
+  //  return (s32*) &(((beesFlashData*)flash_app_data() )->scalerBytes) + scaler_get_rep_offset(p);
 }

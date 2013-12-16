@@ -316,7 +316,7 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
 #endif
     size = swap.u;
 
-    print_dbg("\r\n read size: 0x");
+    print_dbg("\r\n read size (words): 0x");
     print_dbg_ulong(size);
 
     if(size > dstSize) {

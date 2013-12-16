@@ -43,23 +43,100 @@ void flash_init_scaler_data(void) {
   u32 b;
   const char* path;
   u8 p;
+  u8* dst;
+  void* scalerBytes;
+
+  print_dbg("\r\n initializing NV data for param scaling, total bytes: ");
+  print_dbg_ulong(PARAM_SCALER_DATA_SIZE);
+
+  print_dbg("\r\n application data address in flash: 0x");
+  print_dbg_hex((u32)flash_app_data());
+  print_dbg("\r\n scaler data address: 0x");
+  print_dbg_hex((u32)  &(((beesFlashData*)(flash_app_data()))->scalerBytes) );
+
+  scalerBytes = (void*)&(((beesFlashData*)(flash_app_data()))->scalerBytes);
+
   for(p=0; p<eParamNumTypes; ++p) {
     b = scaler_get_data_bytes(p);
     if(b > 0) {
       path = scaler_get_data_path(p);
+      print_dbg("\r\n writing scaler data to flash: ");
+      print_dbg(path);
       files_load_scaler_name(path, scalerBuf, scalerMaxValues);
-      flashc_memcpy( (void*)(&( ((beesFlashData*)(flash_app_data()))->scalerBytes) + scaler_get_data_offset(p)),
-		     (void*)sceneData, sizeof(sceneData_t), true);
-      //      flash_write_scaler(scaler_get_data_offset(p));
+
+      /// TEST: print values from file
+      /* print_dbg("\r\n values read from file: "); */
+      /* for(u32 i=0; i<(b>>2); ++i) { */
+      /* 	print_dbg("\r\n 0x"); */
+      /* 	print_dbg_hex(scalerBuf[i]); */
+      /* } */
+      print_dbg("\r\n first/last values read from file: ");
+      print_dbg("\r\n 0x");
+      print_dbg_hex(scalerBuf[0]);
+      print_dbg("\r\n 0x");
+      print_dbg_hex(scalerBuf[ (b >> 2) - 1]);
+
+      //      dst = (void*)(&( ((beesFlashData*)(flash_app_data()))->scalerBytes) + scaler_get_data_offset(p));
+      //      dst = scalerBytes + scaler_get_data_offset(p);
+      dst = (void*)scaler_get_nv_data(p);
+      print_dbg("\r\n writing scaler val data to flash at address: 0x");
+      print_dbg_hex((u32)dst);
+      flashc_memcpy( dst, (void*)scalerBuf, b, true);
+
+      /// TEST: print values from flash
+      /* print_dbg("\r\n values in flash after write: "); */
+      /* for(u32 i=0; i<(b>>2); ++i) { */
+      /* 	s32* src = (s32*)(dst + (i << 2)); */
+      /* 	print_dbg("\r\n 0x"); */
+      /* 	print_dbg_hex((u32)(*src)); */
+      /* } */
+      print_dbg("\r\n first/last values in flash after write: ");
+      print_dbg("\r\n 0x");
+      print_dbg_hex((u32)(*((s32*)dst)));
+      print_dbg("\r\n 0x");
+      print_dbg_hex((u32)(*((s32*)(dst + b - 4))));
+
     }
     b = scaler_get_rep_bytes(p);
     if(b > 0) {
       path = scaler_get_rep_path(p);
+      print_dbg("\r\n writing scaler data to flash: ");
+      print_dbg(path);
       files_load_scaler_name(path, scalerBuf, scalerMaxValues);
-      flashc_memcpy( (void*)(&( ((beesFlashData*)(flash_app_data()))->scalerBytes) + scaler_get_rep_offset(p)),
-		     (void*)sceneData, sizeof(sceneData_t), true);
-      //      flash_write_scaler(scaler_get_rep_offset(p));
-      ///      flashc_memcpy(flash_app_data(), scaler_get_rep_offset(p));
+
+      /// TEST: print values from file
+      /* print_dbg("\r\n values read from file: "); */
+      /* for(u32 i=0; i<(b>>2); ++i) { */
+      /* 	print_dbg("\r\n 0x"); */
+      /* 	print_dbg_hex(scalerBuf[i]); */
+      /* } */
+      print_dbg("\r\n first/last values read from file: ");
+      print_dbg("\r\n 0x");
+      print_dbg_hex(scalerBuf[0]);
+      print_dbg("\r\n 0x");
+      print_dbg_hex(scalerBuf[ (b >> 2) - 1]);
+
+      //      dst = (void*)(&( ((beesFlashData*)(flash_app_data()))->scalerBytes) + scaler_get_rep_offset(p));
+      //      dst = scalerBytes + scaler_get_rep_offset(p);
+      dst = (void*)scaler_get_nv_rep(p);
+      print_dbg("\r\n writing scaler rep data to flash at address: 0x");
+      print_dbg_hex((u32)dst);
+      flashc_memcpy( dst, (void*)scalerBuf, b, true);
+
+      /// TEST: print values from flash
+      /* print_dbg("\r\n values in flash after write: "); */
+      /* for(u32 i=0; i<(b>>2); ++i) { */
+      /* 	s32* src = (s32*)(dst + (i << 2)); */
+      /* 	print_dbg("\r\n 0x"); */
+      /* 	print_dbg_hex((u32)(*src)); */
+      /* } */
+      print_dbg("\r\n first/last values in flash after write: ");
+      print_dbg("\r\n 0x");
+      print_dbg_hex((u32)(*((s32*)dst)));
+      print_dbg("\r\n 0x");
+      print_dbg_hex((u32)(*((s32*)(dst + b - 4))));
+
+
     }
   }
 }
