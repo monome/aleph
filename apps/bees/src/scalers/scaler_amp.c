@@ -28,8 +28,8 @@ static u8 initFlag = 0;
 //---- extern funcs
 
 s32 scaler_amp_val(void* scaler, io_t in) {
-  print_dbg("\r\n requesting amp_scaler value for input: 0x");
-  print_dbg_hex((u32)in);
+  //  print_dbg("\r\n requesting amp_scaler value for input: 0x");
+  //  print_dbg_hex((u32)in);
   //  u16 uin = BIT_ABS_16((s16)in);
   if(in < 0) { in = 0; }
   return tabVal[(u16)((u16)in >> inRshift)];
@@ -38,20 +38,19 @@ s32 scaler_amp_val(void* scaler, io_t in) {
 void scaler_amp_str(char* dst, void* scaler,  io_t in) {
   u16 uin = BIT_ABS_16((s16)in) >> inRshift;
 
-  print_dbg("\r\n requesting amp_scaler representation for input: 0x");
-  print_dbg_hex((u32)in);
+  /* print_dbg("\r\n requesting amp_scaler representation for input: 0x"); */
+  /* print_dbg_hex((u32)in); */
 
-  print_dbg(", index: ");
-  print_dbg_hex((u32)uin);
-
+  /* print_dbg(", index: "); */
+  /* print_dbg_hex((u32)uin); */
 
   if(uin == 0) {
     strcpy(dst, "   -inf");
   } else if (uin == (tabSize - 1)) {
     print_fix16(dst, 0);
   } else {
-    print_dbg(",  result: 0x");
-    print_dbg_hex((u32)tabRep[(u16)uin]);
+    /* print_dbg(",  result: 0x"); */
+    /* print_dbg_hex((u32)tabRep[(u16)uin]); */
     print_fix16(dst, tabRep[(u16)uin] );
   }
 }
@@ -110,8 +109,8 @@ io_t scaler_amp_in(void* scaler, s32 x) {
   s32 ju = tabSize - 1;
   s32 jm;
 
-  print_dbg("\r\n scaler_amp_in, x: 0x");
-  print_dbg_hex(x);
+  /* print_dbg("\r\n scaler_amp_in, x: 0x"); */
+  /* print_dbg_hex(x); */
 
   // first, cheat and check zero.
   /// will often be true

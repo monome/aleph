@@ -79,13 +79,16 @@ u8 app_launch(u8 firstrun) {
     ///... write param scaler data
     // this is done at firstrun instead of being linked statically,
     // so that users can tune scaler data offline without recompiling
+    render_boot("init param scaling data...");
     flash_init_scaler_data();
 
     
     print_dbg("\r\n first run, try and load default DSP");
-    render_boot("launching default.ldr");
+    render_boot("launching default DSP...");
+    //// FIXME (?)
     files_load_dsp_name("default.ldr");
     
+    render_boot("waiting for DSP init...");
     bfin_wait_ready();
     print_dbg(" requesting param report...");
     render_boot("requesting DSP params");
@@ -102,7 +105,7 @@ u8 app_launch(u8 firstrun) {
 
     bfin_load_buf();    
     print_dbg("\r\n DSP booted, waiting to query params...");
-    render_boot("waiting for DSP init");
+    render_boot("waiting for DSP init...");
 
     /// blackfin should clear ready pin ASAP on boot.
     /// but give it a moment to accomplish that.
@@ -138,7 +141,7 @@ u8 app_launch(u8 firstrun) {
 
   // enable timers
   print_dbg("\r\n enable app timers...");
-  render_boot("enabling app timers");
+  render_boot("enabling app timers...");
   init_app_timers();
     
   // pull up power control pin, enabling soft-powerdown
@@ -146,6 +149,7 @@ u8 app_launch(u8 firstrun) {
 
   // assign app event handlers
   print_dbg("\r\n assigning handlers ");
+  render_boot("assigning UI handlers...");
   assign_bees_event_handlers();
 
   return 1;

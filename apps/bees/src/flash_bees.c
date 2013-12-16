@@ -70,11 +70,11 @@ void flash_init_scaler_data(void) {
       /* 	print_dbg("\r\n 0x"); */
       /* 	print_dbg_hex(scalerBuf[i]); */
       /* } */
-      print_dbg("\r\n first/last values read from file: ");
-      print_dbg("\r\n 0x");
-      print_dbg_hex(scalerBuf[0]);
-      print_dbg("\r\n 0x");
-      print_dbg_hex(scalerBuf[ (b >> 2) - 1]);
+      /* print_dbg("\r\n first/last values read from file: "); */
+      /* print_dbg("\r\n 0x"); */
+      /* print_dbg_hex(scalerBuf[0]); */
+      /* print_dbg("\r\n 0x"); */
+      /* print_dbg_hex(scalerBuf[ (b >> 2) - 1]); */
 
       //      dst = (void*)(&( ((beesFlashData*)(flash_app_data()))->scalerBytes) + scaler_get_data_offset(p));
       //      dst = scalerBytes + scaler_get_data_offset(p);
@@ -90,11 +90,11 @@ void flash_init_scaler_data(void) {
       /* 	print_dbg("\r\n 0x"); */
       /* 	print_dbg_hex((u32)(*src)); */
       /* } */
-      print_dbg("\r\n first/last values in flash after write: ");
-      print_dbg("\r\n 0x");
-      print_dbg_hex((u32)(*((s32*)dst)));
-      print_dbg("\r\n 0x");
-      print_dbg_hex((u32)(*((s32*)(dst + b - 4))));
+      /* print_dbg("\r\n first/last values in flash after write: "); */
+      /* print_dbg("\r\n 0x"); */
+      /* print_dbg_hex((u32)(*((s32*)dst))); */
+      /* print_dbg("\r\n 0x"); */
+      /* print_dbg_hex((u32)(*((s32*)(dst + b - 4)))); */
 
     }
     b = scaler_get_rep_bytes(p);
@@ -110,11 +110,11 @@ void flash_init_scaler_data(void) {
       /* 	print_dbg("\r\n 0x"); */
       /* 	print_dbg_hex(scalerBuf[i]); */
       /* } */
-      print_dbg("\r\n first/last values read from file: ");
-      print_dbg("\r\n 0x");
-      print_dbg_hex(scalerBuf[0]);
-      print_dbg("\r\n 0x");
-      print_dbg_hex(scalerBuf[ (b >> 2) - 1]);
+      /* print_dbg("\r\n first/last values read from file: "); */
+      /* print_dbg("\r\n 0x"); */
+      /* print_dbg_hex(scalerBuf[0]); */
+      /* print_dbg("\r\n 0x"); */
+      /* print_dbg_hex(scalerBuf[ (b >> 2) - 1]); */
 
       //      dst = (void*)(&( ((beesFlashData*)(flash_app_data()))->scalerBytes) + scaler_get_rep_offset(p));
       //      dst = scalerBytes + scaler_get_rep_offset(p);
@@ -130,11 +130,11 @@ void flash_init_scaler_data(void) {
       /* 	print_dbg("\r\n 0x"); */
       /* 	print_dbg_hex((u32)(*src)); */
       /* } */
-      print_dbg("\r\n first/last values in flash after write: ");
-      print_dbg("\r\n 0x");
-      print_dbg_hex((u32)(*((s32*)dst)));
-      print_dbg("\r\n 0x");
-      print_dbg_hex((u32)(*((s32*)(dst + b - 4))));
+      /* print_dbg("\r\n first/last values in flash after write: "); */
+      /* print_dbg("\r\n 0x"); */
+      /* print_dbg_hex((u32)(*((s32*)dst))); */
+      /* print_dbg("\r\n 0x"); */
+      /* print_dbg_hex((u32)(*((s32*)(dst + b - 4)))); */
 
 
     }
