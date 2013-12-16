@@ -70,10 +70,10 @@ void module_set_param(u32 idx, ParamValue v) {
     }
     break;
     // filter params
-  case eParam_coeff0 :
+  case eParam_freq0 :
     filter_svf_set_coeff(&(svf[0]), v );
     break;
-  case eParam_coeff1 :
+  case eParam_freq1 :
     filter_svf_set_coeff(&(svf[1]), v );
     break;
   case eParam_rq0 :
