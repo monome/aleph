@@ -3,7 +3,7 @@
 
 // filter reciprocal of Q
 #define PARAM_RQ_MIN 0x00000000
-#define PARAM_RQ_MAX 0x00400000
+#define PARAM_RQ_MAX 0x7fffffff
 
 //#define PARAM_BUFFER_MAX 0x002bf1ff // LINES_BUF_FRAMES - 1
 // max time in seconds, 16.16

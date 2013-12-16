@@ -18,7 +18,7 @@ s32 scaler_bool_val(void* scaler, io_t in) {
 }
 
 void scaler_bool_str(char* dst, void* scaler, io_t in) {
-   print_fix16(dst, in > 0); 
+  print_fix16(dst, in > 0 ? fix16_one : 0); 
 }
 
 io_t scaler_bool_in(void* scaler, s32 val) {

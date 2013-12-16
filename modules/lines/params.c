@@ -128,7 +128,7 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParam_rq0].type = eParamTypeFix; 
   gModuleData->paramDesc[eParam_rq0].min = PARAM_RQ_MIN;
   gModuleData->paramDesc[eParam_rq0].max = PARAM_RQ_MAX;
-  gModuleData->paramDesc[eParam_rq0].radix = 32;
+  gModuleData->paramDesc[eParam_rq0].radix = 2;
   
   strcpy(gModuleData->paramDesc[eParam_low0].label, "low0");
   gModuleData->paramDesc[eParam_low0].type = eParamTypeAmp; 
@@ -177,7 +177,7 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParam_rq1].type = eParamTypeFix; 
   gModuleData->paramDesc[eParam_rq1].min = PARAM_RQ_MIN;
   gModuleData->paramDesc[eParam_rq1].max = PARAM_RQ_MAX; 
-  gModuleData->paramDesc[eParam_rq1].radix = 32;
+  gModuleData->paramDesc[eParam_rq1].radix = 2;
  
   strcpy(gModuleData->paramDesc[eParam_low1].label, "low1");
   gModuleData->paramDesc[eParam_low1].type = eParamTypeAmp; 
