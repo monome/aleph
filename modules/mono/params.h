@@ -4,6 +4,7 @@
 
 //---------- defines
 // ranges and radix
+// ranges are in 16.16
 // radix should be minimal bits to accommodate entire integer range.
 #define OSC_FREQ_MIN 0x100000      // 16
 #define OSC_FREQ_MAX 0x40000000    // 16384

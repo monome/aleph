@@ -77,10 +77,14 @@ void module_set_param(u32 idx, ParamValue v) {
     filter_svf_set_coeff(&(svf[1]), v );
     break;
   case eParam_rq0 :
-    filter_svf_set_rq(&(svf[0]), v);
+    // incoming param value is 16.16
+    // target is 2.30
+    //    filter_svf_set_rq(&(svf[0]), v);
+    filter_svf_set_rq(&(svf[0]), v << 14);
     break;
   case eParam_rq1 :
-    filter_svf_set_rq(&(svf[1]), v);
+    //    filter_svf_set_rq(&(svf[1]), v);
+    filter_svf_set_rq(&(svf[1]), v << 14);
     break;
   case eParam_low0 :
     filter_svf_set_low(&(svf[0]), v);
