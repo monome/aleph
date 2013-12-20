@@ -148,7 +148,7 @@ void itoa_fract(int val, char* buf) {
 /////////
 /////////////
 /// FIXME
-#if 0
+#if 1
 // format whole part, left justified, no length argument (!)
 int itoa_whole_lj(int val, char* buf) {
   static char* p;
