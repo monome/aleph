@@ -74,12 +74,25 @@ u8 init_flash() {
   }
 }
 
-// read default blackfin
+// read default blackfin 
 void flash_read_ldr(void) {
   bfinLdrSize = flash_nvram_data.ldrSize;
   print_dbg("\r\n read ldrSize from flash: ");
   print_dbg_ulong(bfinLdrSize);
   memcpy((void*)bfinLdrData, (void*)flash_nvram_data.ldrData, bfinLdrSize); 
+
+    // TEST: print module data in RAM
+#if 0
+    for(u32 i = 0; i<bfinLdrSize; i += 4) {
+      if((i % 16) == 0) {
+	print_dbg("\r\n");
+      }
+      print_dbg(" 0x");
+      print_dbg_hex(*((u32*)(bfinLdrData + i)));
+    }
+#endif
+
+  
   //  print_flash((u32)flash_nvram_data.ldrData, bfinLdrSize);
 }
 

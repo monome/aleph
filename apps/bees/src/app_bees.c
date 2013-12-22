@@ -127,7 +127,7 @@ u8 app_launch(u8 firstrun) {
     ///// TEST; read from filesystem!
     //    files_load_scene_name("test_default.scn");
     //    files_load_test_scene();
-  }
+   }
 
   // init pages (fill graphics buffers)
   print_dbg("\r\n pages_init...");

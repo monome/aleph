@@ -142,7 +142,14 @@ void scene_write_default(void) {
   print_dbg("module name: ");
   print_dbg(sceneData->desc.moduleName);
   flash_write_scene();
-  print_dbg("\r\n finished writing ");
+
+  // write default LDR
+  print_dbg("\r\n writing default LDR from scene descriptor");
+  files_store_default_dsp_name(sceneData->desc.moduleName);
+
+  delay_ms(100);
+
+  print_dbg("\r\n finished writing default scene");
   app_resume();
 }
 

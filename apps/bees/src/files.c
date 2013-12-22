@@ -212,10 +212,25 @@ void files_store_default_dsp_name(const char* name) {
   if( fp != NULL) {
     print_dbg("\r\n writing default DSP...");
     bfinLdrSize = size;
-    fl_fread((void*)bfinLdrData, 1, size, fp);
+    print_dbg(" , size: ");
+    print_dbg_ulong(size);
+    //    fl_fread((void*)bfinLdrData, 1, size, fp);
+    fake_fread((void*)bfinLdrData, size, fp);
+
+    // TEST: print module data
+#if 0
+    for(u32 i = 0; i<size; i += 4) {
+ if((i % 16) == 0) {
+	print_dbg("\r\n");
+      }
+      print_dbg(" 0x");
+      print_dbg_hex(*((u32*)(bfinLdrData + i)));
+    }
+#endif
+
     flash_write_ldr();
     fl_fclose(fp);
-    print_dbg("finished writing LDR to flash");
+    print_dbg("\r\n finished writing default LDR to flash");
     
   } else {
     print_dbg("\r\n error: fp was null in files_store_default_dsp \r\n");
