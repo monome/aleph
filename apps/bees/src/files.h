@@ -28,7 +28,8 @@ extern u8 files_load_dsp_name(const char* name);
 // store dsp in flash, by index
 // return 1 on success, 0 on failure
 extern void files_store_default_dsp(u8 idx);
-
+// store .ldr as default in internal flash, given name
+extern void files_store_default_dsp_name(const char* name);
 
 //----- scenes
 // populate scene filelist with names and return count

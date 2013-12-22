@@ -171,15 +171,42 @@ u8 files_load_dsp_name(const char* name) {
 }
 
 
-// store .ldr as default in internal flash
+// store .ldr as default in internal flash, given index
 void files_store_default_dsp(u8 idx) {
-  const char* name;
+  files_store_default_dsp_name((const char*)files_get_dsp_name(idx));
+  /* const char* name; */
+  /* void* fp;	   */
+  /* u32 size; */
+
+  /* app_pause(); */
+
+  /* name = (const char*)files_get_dsp_name(idx); */
+  /* fp = list_open_file_name(&dspList, name, "r", &size); */
+
+  /* if( fp != NULL) { */
+  /*   print_dbg("\r\n writing default DSP..."); */
+  /*   bfinLdrSize = size; */
+  /*   fl_fread((void*)bfinLdrData, 1, size, fp); */
+  /*   flash_write_ldr(); */
+  /*   fl_fclose(fp); */
+  /*   print_dbg("finished writing LDR to flash"); */
+    
+  /* } else { */
+  /*   print_dbg("\r\n error: fp was null in files_store_default_dsp \r\n"); */
+  /* } */
+
+  /* app_resume(); */
+}
+
+// store .ldr as default in internal flash, given name
+void files_store_default_dsp_name(const char* name) {
+  //  const char* name;
   void* fp;	  
   u32 size;
 
   app_pause();
 
-  name = (const char*)files_get_dsp_name(idx);
+  //  name = (const char*)files_get_dsp_name(idx);
   fp = list_open_file_name(&dspList, name, "r", &size);
 
   if( fp != NULL) {
@@ -196,6 +223,7 @@ void files_store_default_dsp(u8 idx) {
 
   app_resume();
 }
+
 
 // return count of dsp files
 u8 files_get_dsp_count(void) {
