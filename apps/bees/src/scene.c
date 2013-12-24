@@ -55,6 +55,10 @@ void scene_deinit(void) {
 // fill global RAM buffer with current state of system
 void scene_write_buf(void) {
   u8* dst = (u8*)(sceneData->pickle);
+
+  u32 bytes = 0;
+  u8* newDst = NULL;
+
   ///// print parmameters
   //  u32 i;
 
@@ -71,11 +75,24 @@ void scene_write_buf(void) {
   */
 
   // pickle network
-  dst = net_pickle(dst);
-
+  newDst = net_pickle(dst);
+  bytes += (newDst - dst);
+  print_dbg("\r\n bytes written: 0x");
+  print_dbg_hex(bytes);
+  dst = newDst;
   // pickle presets
-  dst = presets_pickle(dst);
+  newDst = presets_pickle(dst);
+  bytes += (newDst - dst);
+  print_dbg("\r\n bytes written: 0x");
+  print_dbg_hex(bytes);
+  dst = newDst;
   
+  /* if((u32)dst > ((u32)(sceneData->pickle) + SCENE_PICKLE_SIZE)) { */
+  /*   print_dbg(" !!!!!!!! error: serialized scene data is exceeded allocated bounds !!!!! "); */
+  /* } */
+  if(bytes > SCENE_PICKLE_SIZE) {
+    print_dbg(" !!!!!!!! error: serialized scene data is exceeded allocated bounds !!!!! ");
+  }
 }
 
 // set current state of system from global RAM buffer

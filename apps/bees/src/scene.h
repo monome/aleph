@@ -28,7 +28,11 @@ typedef struct _sceneDesc {
 // a buffer to hold pickled scene data.
 // 65k worth (!)
 /// ok, 32k worth (!)
-#define SCENE_PICKLE_SIZE 0x8000
+//#define SCENE_PICKLE_SIZE 0x8000
+// back to 64K 
+// #define SCENE_PICKLE_SIZE 0x10000
+/// more?? jeez.. might not have enough
+#define SCENE_PICKLE_SIZE 0x19000
 //typedef u8 scenePickle_t[SCENE_PICKLE_SIZE];
 
 typedef struct _sceneData {

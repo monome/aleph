@@ -188,7 +188,7 @@ void handle_key_1(s32 val) {
     files_store_default_dsp(curPage->select);
     // render status to head region 
     region_fill(headRegion, 0x0);
-    font_string_region_clip(headRegion, "\r\n finished writing default LDR.", 0, 0, 0xa, 0);
+    font_string_region_clip(headRegion, "\r\n finished writing.", 0, 0, 0xa, 0);
     headRegion->dirty = 1;
     render_update();
   }

@@ -14,7 +14,7 @@
 
 // bytes available for application-specific storage
 // (increase as needed)
-#define APP_FLASH_BYTES 0x20000 
+#define APP_FLASH_BYTES 0x28000 
 
 /// 64K of blackfin executable storage in flash
 #define LDR_FLASH_BYTES 0x10000

@@ -21,7 +21,7 @@
 // max DSP parameter inputs
 #define NET_PARAMS_MAX 256
 // max presets
-#define NET_PRESETS_MAX 32
+#define NET_PRESETS_MAX 16
 
 ///////////////////////////////////////////
 

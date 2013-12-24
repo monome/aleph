@@ -206,7 +206,7 @@ u8* presets_pickle(u8* dst) {
       dst = pickle_32(presets[i].ins[j].idx, dst);
       dst = pickle_32(presets[i].ins[j].enabled, dst);
     }
-    // pickle outpu
+    // pickle output
     for(j=0; j<NET_OUTS_MAX; j++) {
       // waste some space for 4-byte alignment
       dst = pickle_32(presets[i].outs[j].target, dst);

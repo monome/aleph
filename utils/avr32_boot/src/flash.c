@@ -24,10 +24,6 @@
 #define FIRSTRUN_INIT 0x76543210
 // size of RAM buffer for firmware image (.elf)
 #define FIRMWARE_MAX_BYTES 0x80000 // 512K
-/// target address of firmware in internal flash
-/// NOTE: this is hardcoded ASM in bootloader main() !
-/// DO NOT CHANGE
-#define FIRMWARE_FLASH_ADDRESS 0x80009000
 
 // storage layout of default data in nonvolatile memory
 typedef const struct {

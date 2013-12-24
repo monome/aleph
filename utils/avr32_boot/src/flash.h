@@ -15,7 +15,7 @@
 /// NOTE: this is hardcoded ASM in main()!
 /// also it is hardcoded in application linker scripts!
 /// DO NOT CHANGE. EVER.
-#define FIRMWARE_FLASH_ADDRESS 0x80009000
+#define FIRMWARE_FLASH_ADDRESS 0x80008000
 
 //------------------------
 // extern variables

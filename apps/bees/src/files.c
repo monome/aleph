@@ -73,7 +73,7 @@ static void* list_open_file_name(dirList_t* list, const char* name, const char* 
 
 //// FIXME: dumb and slow seek/read functions because the real ones are broken
 //// fseek: no offset arg, assume its the first seek since file was opened 
-/*
+/* // not used
 static void fake_fseek(void* fp, u32 loc) {
   u32 n = 0;
   u8 dum;

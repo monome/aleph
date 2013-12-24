@@ -27,7 +27,8 @@
 #else
 // size of operator pool in bytes
 //#define NET_OP_POOL_SIZE 0x10000 // 64K
-#define NET_OP_POOL_SIZE 0x08000 // 32K
+//#define NET_OP_POOL_SIZE 0x08000 // 32K
+#define NET_OP_POOL_SIZE 0x04000 // 16K
 #endif
 
 // input node type
