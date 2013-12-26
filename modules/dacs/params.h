@@ -1,6 +1,15 @@
 #ifndef _ALEPH_DACS_PARAMS_H_
 #define _ALEPH_DACS_PARAMS_H_
 
+#define SMOOTH_FREQ_MIN 0x2000 // 1/8
+#define SMOOTH_FREQ_MAX 0x400000 // 64
+#define SMOOTH_FREQ_RADIX 7
+
+#define DAC_MIN 0x0000
+#define DAC_MAX FRACT32_MAX
+#define DAC_RADIX 32
+
+
 // enumerate parameters
 enum params {
   eParam_dac0,

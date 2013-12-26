@@ -122,9 +122,6 @@ static void calc_frame(void);
 
 // set primary freq
 static inline void set_freq1(fix16 freq) {  
-
-
-
   if( freq < OSC_FREQ_MIN ) freq = OSC_FREQ_MIN;
   if( freq > OSC_FREQ_MAX ) freq = OSC_FREQ_MAX;
   filter_1p_lo_in(freq1Lp, freq);
@@ -188,7 +185,7 @@ static void calc_frame(void) {
 		      );
 
   // wrap negative
-  while (BIT_SIGN(idx1Mod)) {
+  while (BIT_SIGN_32(idx1Mod)) {
     idx1Mod = fix16_add(idx1Mod, WAVE_TAB_MAX16);
   }
 
@@ -197,7 +194,7 @@ static void calc_frame(void) {
     idx1Mod = fix16_sub(idx1Mod, WAVE_TAB_MAX16); 
   }
 
-  // lookup osc1
+  // lookup osc11
   osc1 = lookup_wave(idx1Mod, wave1);
 
   // apply amplitudes and sum 

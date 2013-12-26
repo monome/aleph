@@ -50,7 +50,7 @@ fract32 table_lookup_fract(fract32* tab, u32 size, fract32 phase) {
 /////////////////////
 
 
-// fill a table of given size with harmonics up to given order
+// fill a table of given size with all harmonics up to given order
 // also given: decay coefficient, normalization flag
 extern void table_fill_harm(fract32* tab, u32 size, u8 order, f32 decay, u8 norm) {
   f32 min, max;
@@ -97,25 +97,4 @@ extern void table_fill_harm(fract32* tab, u32 size, u8 order, f32 decay, u8 norm
   for(s=0; s<size; s++) {
     TAB_AS_FR32(tab, s) = float_to_fr32( TAB_AS_FLOAT(tab, s) );
   }
-
-
-  /////////////// DEBUG
-  // print
-  /*
-  printf("\n { ");
-  for(s=0; s<size; s++) {
-    printf(" 0x%08x, ", tab[s] ); 
-  }
-  printf("\n } ");
-  */
-}
-
-// fill a table of given size with cheby polynomial of given order
-extern void table_fill_cheby(fract32* tab, u32 size, u8 order) {
-  // TODO (i guess)
-/* chebyshev polynomials:
-   T[0](x) = 1
-   T[1](x) = x
-   T[n+1](x) = 2*x*T[n](x) - T[n-1](x)
-*/  
 }

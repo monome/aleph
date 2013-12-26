@@ -38,33 +38,6 @@
 // de-intialize
 //extern void fixtable_deinit(fract32* tab);
 
-// lookup given real index in [0, size-1]
-//// FIXME: how can i inline these without multiple definition errors?
-/*
-inline fract32 fixtable_lookup_idx(fract32* tab, u32 size, fix16 idx) {
-  fract32 a, b, f;
-  u32 ia, ib;
-  ia = idx >> 16;
-  while(ia > (size - 1)) { ia -= (size); }
-  ib = ia + 1;
-  while(ib > (size - 1)) { ib -= (size); }
-  a = tab[ia];
-  b = tab[ib];
-  f = (fract32)( (idx << 15) & 0x7fffffff );
-  return add_fr1x32(a, mult_fr1x32x32(f, sub_fr1x32(b, a)));
-}
-
-// lookup given normalized index in [-1, 1]
-inline fract32 fixtable_lookup_fract(fract32* tab, u32 size, fract32 phase) {
-  fix16 idx;
-  if (idx < 0) {
-    idx = (phase + 0x40000000) >> 1;
-  } else {
-    idx  = (phase >> 1) + 0x3fffffff;
-  } 
-  return fixtable_lookup_idx(tab, size,idx);
-}
-*/
 extern fract32 table_lookup_idx(fract32* tab, u32 size, fix16 idx);
 extern fract32 table_lookup_fract(fract32* tab, u32 size, fract32 phase);
 
