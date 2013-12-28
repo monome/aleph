@@ -31,8 +31,14 @@ void scaler_fix_init(void* scaler) {
 }
 
 s32 scaler_fix_val(void* scaler, io_t in) {
+  s32 norm;
+  ParamScaler* sc = (ParamScaler*)scaler;
+
+  if(in > sc->inMax) { in = sc->inMax; }
+  if(in < sc->inMin) { in = sc->inMin; }
+
   // normalize
-  s32 norm = in << (32 - IO_BITS);
+  norm  = in << (32 - IO_BITS);
 
   // apply radix to put us in the correct range
   u8 r = ((ParamScaler*)scaler)->desc->radix;
@@ -50,8 +56,13 @@ s32 scaler_fix_val(void* scaler, io_t in) {
 }
 
 void scaler_fix_str(char* dst, void* scaler, io_t in) {
-  // first normalize
-  s32 norm = in << (32 - IO_BITS);
+  s32 norm;
+  ParamScaler* sc = (ParamScaler*)scaler;
+
+  if(in > sc->inMax) { in = sc->inMax; }
+  if(in < sc->inMin) { in = sc->inMin; }
+
+  norm = in << (32 - IO_BITS);
   u8 r = ((ParamScaler*)scaler)->desc->radix;
 
   /* print_dbg("\r\n linear-fixed scaler, get string; input: 0x"); */
@@ -83,25 +94,49 @@ io_t scaler_fix_in(void* scaler, s32 val) {
 s32 scaler_fix_inc(void* sc, io_t* pin, io_t inc ) {
   s32 val;
   ParamScaler* scaler = (ParamScaler*)sc;
+
+  print_dbg("\r\n scaler_fix_inc, input: 0x");
+  print_dbg_hex(*pin);
+  print_dbg(" , inc: 0x");
+  print_dbg_hex(inc);
+
   // use saturation
   *pin = op_sadd(*pin, inc);
+
+  print_dbg(" , input sum: 0x");
+  print_dbg_hex(*pin);
+
+
   // check bounds again after scaling
   val = scaler_fix_val(sc, *pin);
+
+  print_dbg(" \r\n scaled result: 0x");
+  print_dbg_hex(val);
+
+    print_dbg("\r\n descriptor max: 0x");
+    print_dbg_hex(scaler->desc->max);
+      print_dbg(", min: 0x");
+    print_dbg_hex(scaler->desc->min);
+
+  if(val > scaler->desc->max)
+
   if(val > scaler->desc->max) {
-    /* print_dbg("\r\n high saturation in sacler_fix_inc, value: 0x"); */
-    /* print_dbg_hex(val); */
-    /* print_dbg(", max: 0x"); */
-    /* print_dbg_hex(scaler->desc->max); */
+    print_dbg("\r\n high saturation in scaler_fix_inc, value: 0x");
+    print_dbg_hex(val);
+    print_dbg(", max: 0x");
+    print_dbg_hex(scaler->desc->max);
     *pin = scaler->inMax;
     return scaler->desc->max;
   }
+
   if(val < scaler->desc->min) {
-    /* print_dbg("\r\n low saturation in sacler_fix_inc, value: 0x"); */
-    /* print_dbg_hex(val); */
-    /* print_dbg(", min: 0x"); */
-    /* print_dbg_hex(scaler->desc->min); */
+    print_dbg("\r\n low saturation in scaler_fix_inc, value: 0x");
+    print_dbg_hex(val);
+    print_dbg(", min: 0x");
+    print_dbg_hex(scaler->desc->min);
     *pin = scaler->inMin;
     return scaler->desc->min;
   }
+
   return val;
 }

@@ -9,26 +9,26 @@ void fill_param_desc(void) {
   strcpy(gModuleData->paramDesc[eParam_dac0].label, "dac0");
   gModuleData->paramDesc[eParam_dac0].type = eParamTypeFix; 
   gModuleData->paramDesc[eParam_dac0].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_dac0].max = 0xffff; // 16 bits?
-  gModuleData->paramDesc[eParam_dac0].radix = 32;
+  gModuleData->paramDesc[eParam_dac0].max = PARAM_DAC_MAX;
+  gModuleData->paramDesc[eParam_dac0].radix = PARAM_DAC_RADIX;
 
   strcpy(gModuleData->paramDesc[eParam_dac1].label, "dac1");
   gModuleData->paramDesc[eParam_dac1].type = eParamTypeFix; 
   gModuleData->paramDesc[eParam_dac1].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_dac1].max = 0xffff; // 16 bits?
-  gModuleData->paramDesc[eParam_dac1].radix = 32;
+  gModuleData->paramDesc[eParam_dac1].max = PARAM_DAC_MAX;
+  gModuleData->paramDesc[eParam_dac1].radix = PARAM_DAC_RADIX;
 
   strcpy(gModuleData->paramDesc[eParam_dac2].label, "dac2");
   gModuleData->paramDesc[eParam_dac2].type = eParamTypeFix; 
   gModuleData->paramDesc[eParam_dac2].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_dac2].max = 0xffff; // 16 bits?
-  gModuleData->paramDesc[eParam_dac2].radix = 32;
+  gModuleData->paramDesc[eParam_dac2].max = PARAM_DAC_MAX;
+  gModuleData->paramDesc[eParam_dac2].radix = PARAM_DAC_RADIX;
 
   strcpy(gModuleData->paramDesc[eParam_dac3].label, "dac3");
   gModuleData->paramDesc[eParam_dac3].type = eParamTypeFix; 
   gModuleData->paramDesc[eParam_dac3].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_dac3].max = 0xffff; // 16 bits?
-  gModuleData->paramDesc[eParam_dac3].radix = 32;
+  gModuleData->paramDesc[eParam_dac3].max = PARAM_DAC_MAX;
+  gModuleData->paramDesc[eParam_dac3].radix = PARAM_DAC_RADIX;
 
   strcpy(gModuleData->paramDesc[eParam_slew0].label, "slew0");
   gModuleData->paramDesc[eParam_slew0].type = eParamTypeIntegrator; 

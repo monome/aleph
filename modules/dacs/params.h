@@ -5,9 +5,9 @@
 #define SMOOTH_FREQ_MAX 0x400000 // 64
 #define SMOOTH_FREQ_RADIX 7
 
-#define DAC_MIN 0x0000
-#define DAC_MAX FRACT32_MAX
-#define DAC_RADIX 32
+#define PARAM_DAC_MIN 0
+#define PARAM_DAC_MAX (10 << 16)
+#define PARAM_DAC_RADIX 5
 
 
 // enumerate parameters
