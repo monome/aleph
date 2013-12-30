@@ -1,9 +1,9 @@
 #ifndef _ALEPH_DACS_PARAMS_H_
 #define _ALEPH_DACS_PARAMS_H_
 
-#define SMOOTH_FREQ_MIN 0x2000 // 1/8
-#define SMOOTH_FREQ_MAX 0x400000 // 64
-#define SMOOTH_FREQ_RADIX 7
+#define OSC_FREQ_MIN (4 << 16)
+#define OSC_FREQ_MAX (8192 << 16)
+#define OSC_FREQ_RADIX 8
 
 #define PARAM_DAC_MIN 0
 #define PARAM_DAC_MAX (10 << 16)

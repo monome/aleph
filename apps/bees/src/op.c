@@ -71,6 +71,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_preset_t),
     .init = &op_preset_init,
     .deinit = NULL
+    }, {
+    .name = "TOG",
+    .size = sizeof(op_tog_t),
+    .init = &op_tog_init,
+    .deinit = NULL
   }
 };
 

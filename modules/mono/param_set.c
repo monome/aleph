@@ -22,7 +22,7 @@ void module_set_param(u32 idx, ParamValue v) {
     filter_1p_lo_in(pmLp, BIT_ABS_32(FIX16_FRACT_TRUNC(v)));
     break;
   case eParamAmp1:
-    filter_1p_lo_in(amp1Lp, v);
+    filter_1p_lo_in(amp1Lp, v);ga
     break;
   case eParamAmp2:
     filter_1p_lo_in(amp2Lp, v);

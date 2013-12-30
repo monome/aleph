@@ -9,13 +9,13 @@
 
 void fill_param_desc(void) {
   strcpy(gModuleData->paramDesc[eParamFreq1].label, "osc 1 freq");
-  gModuleData->paramDesc[eParamFreq1].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamFreq1].type = eParamTypeNote;
   gModuleData->paramDesc[eParamFreq1].min = OSC_FREQ_MIN;
   gModuleData->paramDesc[eParamFreq1].max = OSC_FREQ_MAX;
   gModuleData->paramDesc[eParamFreq1].radix = OSC_FREQ_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamFreq2].label, "osc 2 freq");
-  gModuleData->paramDesc[eParamFreq2].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamFreq2].type = eParamTypeNote;
   gModuleData->paramDesc[eParamFreq2].min = OSC_FREQ_MIN;
   gModuleData->paramDesc[eParamFreq2].max = OSC_FREQ_MAX;
   gModuleData->paramDesc[eParamFreq2].radix = OSC_FREQ_RADIX;

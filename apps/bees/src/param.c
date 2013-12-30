@@ -218,6 +218,8 @@ io_t inc_param_value(u32 idx,  io_t inc) {
   print_dbg(" , scaled: 0x");
   print_dbg_hex(scaled);
 
+  print_dbg("\r\n\rn");
+
   // store input value in pnode
   net->params[idx].data.value = in;
   net->params[idx].data.changed = 1;

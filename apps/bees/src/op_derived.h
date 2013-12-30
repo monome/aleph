@@ -20,5 +20,6 @@
 #include "ops/op_preset.h"
 //#include "ops/op_timer.h"
 #include "ops/op_sw.h"
+#include "ops/op_tog.h"
 
 #endif

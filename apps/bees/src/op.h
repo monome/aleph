@@ -41,6 +41,7 @@ typedef enum {
   eOpAdc,
   eOpMetro,
   eOpPreset,
+  eOpTog,
   numOpClasses // dummy/count 
 } op_id_t;
 
