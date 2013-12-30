@@ -25,7 +25,7 @@ void module_set_param(u32 idx, ParamValue v) {
     filter_1p_lo_in(amp1Lp, v);
     break;
   case eParamAmp2:
-    filter_1p_lo_in(amp1Lp, v);
+    filter_1p_lo_in(amp2Lp, v);
     break;
   /* case eParamGate: */
   /*    env_asr_set_gate(env, v > 0); */
