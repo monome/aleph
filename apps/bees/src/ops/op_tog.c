@@ -49,7 +49,7 @@ void op_tog_init(void* op) {
   tog->outs[0] = -1;
  
   tog->super.in_val = tog->in_val;
-  //  tog->in_val[0] = &(tog->state);
+  tog->in_val[0] = &(tog->state);
   tog->in_val[0] = &(tog->tog);
   tog->in_val[1] = &(tog->mul);
 

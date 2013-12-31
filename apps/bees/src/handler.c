@@ -81,7 +81,7 @@ static void handle_Switch5(s32 data) {
   render_boot("");
   render_boot("");
   render_boot("powering down");
-  render_boot("writing current scene to flash");
+
 
 
   scene_write_default();

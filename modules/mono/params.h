@@ -28,6 +28,7 @@ enum params {
   eParamFreq1,
   eParamFreq2,
   eParamRatio2,
+  eParamTrack,
   eParamAmp1,
   eParamAmp2,
 

@@ -137,7 +137,7 @@ static inline void set_ratio2(const fix16 ratio) {
   if (ratio2 > RATIO_MAX) ratio2 = RATIO_MAX;
   if (ratio2 < RATIO_MIN) ratio2 = RATIO_MIN;
   filter_1p_lo_in(freq2Lp, fix16_mul(freq1, ratio2));
-  track = 1;
+  //  track = 1;
 }
 
 // set secondary frequency - leaves pitch tracking mode
@@ -145,7 +145,7 @@ static inline void set_freq2(fix16 freq) {
   if( freq < OSC_FREQ_MIN ) freq = OSC_FREQ_MIN;
   if( freq > OSC_FREQ_MAX ) freq = OSC_FREQ_MAX;
   filter_1p_lo_in(freq2Lp, freq);
-  track = 0;
+  //  track = 0;
 }
 
 // double-lookup and interpolate

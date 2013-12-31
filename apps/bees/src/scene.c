@@ -26,8 +26,9 @@
 #include "pages.h"
 #include "net_protected.h"
 #include "preset.h"
-#include "types.h"
+#include "render.h"
 #include "scene.h"
+#include "types.h"
 
 //-----------------------------
 // ---- extern data
@@ -100,7 +101,7 @@ void scene_read_buf(void) {
   s8 modName[MODULE_NAME_LEN];
   u32 i;
   const u8* src = (u8*)&(sceneData->pickle);
-  //    s8 neq = 0;
+  s8 neq = 0;
 
   app_pause();
 
@@ -126,8 +127,8 @@ void scene_read_buf(void) {
   }
 
   // compare module name
-  //// FIXME (??)
-  /*
+
+  
     neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
 
     if(neq) {
@@ -136,13 +137,14 @@ void scene_read_buf(void) {
       print_dbg(sceneData->desc.moduleName);
       files_load_dsp_name(sceneData->desc.moduleName);
     }
-  */
-
+    
   // re-trigger inputs
   //  app_notify("re-initializing network/parameters");
   /// hopefully don't need to do this?
   //  net_retrigger_inputs();
   
+    bfin_wait_ready();
+
   // update bfin parameters
   net_send_params();
   print_dbg("\r\n sent new params");
@@ -155,12 +157,16 @@ void scene_read_buf(void) {
 // write current state as default
 void scene_write_default(void) {
   app_pause();
-  print_dbg("\r\n writing default scene to flash... ");
+  render_boot("writing scene to flash");
+
+  print_dbg("\r\n writing scene to flash... ");
   print_dbg("module name: ");
   print_dbg(sceneData->desc.moduleName);
+
   flash_write_scene();
 
   // write default LDR
+  render_boot("writing DSP to flash");
   print_dbg("\r\n writing default LDR from scene descriptor");
   files_store_default_dsp_name(sceneData->desc.moduleName);
 
@@ -176,7 +182,7 @@ void scene_read_default(void) {
   print_dbg("\r\n reading default scene from flash... ");
   flash_read_scene();
   
-  print_dbg("\r\n finsihed reading ");  
+  print_dbg("\r\n finished reading ");  
   app_resume();
 }
 

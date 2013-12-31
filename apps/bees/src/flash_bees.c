@@ -30,7 +30,7 @@ void flash_read_scene(void) {
 // write default scene data from global buffer
 void flash_write_scene(void) { 
   scene_write_buf();
-  print_dbg("\r\n writing scene data tto address: 0x");
+  //  print_dbg("\r\n writing scene data to address: 0x");
   
   flashc_memcpy( &( ((beesFlashData*)(flash_app_data()))->sceneBytes),
 		 (void*)sceneData, sizeof(sceneData_t), true);
