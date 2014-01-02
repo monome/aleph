@@ -1,91 +1,185 @@
+#include "net_protected.h"
+#include "print_funcs.h"
+
+#include "pickle.h"
+#include "op_tog.h"
 
 //-------------------------------------------------
-//------ accumulator
-#if 0 // needs work
-static const char* op_accum_instring = "VALUE   COUNT   MIN     MAX     WRAP    ";
-static const char* op_accum_outstring = "VALUE   WRAP    ";
-static const char* op_accum_opstring = "ACCUM";
+//----- descriptor
+static const char* op_tog_instring = "TOG     MUL     ";
+static const char* op_tog_outstring = "VAL     ";
+static const char* op_tog_opstring = "TOG";
 
-static void op_accum_boundscheck(op_accum_t* accum) {
-  if(accum->val > accum->max) {
-    if(accum->carry != 0) {
-      while(accum->val > accum->max) {
-        //accum->val -= (accum->max > 0 ? accum->max : accum->max * -1);
-	if(accum->max > 0) {
-	  accum->val = op_sub(accum->val, accum_max);
-	} else {
-	  accum->val = op_add(accum->val, accum_max);
-	}
-      }
-      net_activate(accum->outs[1], accum->val); // carry output with wrapped value
-    } else {
-      accum->val = accum->max;
-    }
-  }
-  if(accum->val < accum->min) {
-    if(accum->carry) {
-      while(accum->val < accum->min) {
-	if(accum->min < 0) {
-	  accum->val = op_sub(accum->val, accum_min);
-	} else {
-	  accum->val = op_add(accum->val, accum_min);
-	}
-      }
-      net_activate(accum->outs[1], accum->val); // carry output with wrapped value
-    } else {
-      accum->val = accum->min;
-    }
-  }  
-}
+//-------------------------------------------------
+//----- static function declaration
 
-static void op_accum_in_value(op_accum_t* accum, const io_t* v) {
-  printf("accum at %d received VALUE %d\n", (int)accum, (int)*v);
-  accum->val = *v;
-  op_accum_boundscheck(accum);
-  net_activate(accum->outs[0], accum->val);
-}
 
-static void op_accum_in_count(op_accum_t* accum, const io_t* v) {
-  printf("accum at %d received COUNT %d\n", (int)accum, (int)*v);
-  acum->val = op_add(accum->val, *v);
-  op_accum_boundscheck(accum);
-  net_activate(accum->outs[0], accum->val);
-}
+// UI increment
+static void op_tog_inc(op_tog_t* tog, const s16 idx, const io_t inc);
+// set inputs
+static void op_tog_in_state(op_tog_t* tog, const io_t v);
+static void op_tog_in_tog(op_tog_t* tog, const io_t v);
+static void op_tog_in_mul(op_tog_t* tog, const io_t );
+// pickle / unpickle
+static u8* op_tog_pickle(op_tog_t* tog, u8* dst);
+static u8* op_tog_unpickle(op_tog_t* tog, const u8* src);
 
-static void op_accum_in_min(op_accum_t* accum, const io_t* v) {
-  printf("accum at %d received MIN %d\n", (int)accum, (int)*v);
-  accum->min = *v;
-}
-
-static void op_accum_in_max(op_accum_t* accum, const io_t* v) {
-  printf("accum at %d received MAX %d\n", (int)accum, (int)*v);
-  accum->max = *v;
-}
-
-static void op_accum_in_carry(op_accum_t* accum, const io_t* v) {
-  printf("accum at %d received CARRY %d\n", (int)accum, (int)*v);
-  accum->carry = (io_t)(v != 0);
-}
-
-static op_in_fn op_accum_inputs[5] = {
-(op_in_fn)&op_accum_in_value,
-(op_in_fn)&op_accum_in_count,
-(op_in_fn)&op_accum_in_min, 
-(op_in_fn)&op_accum_in_max,
-(op_in_fn)&op_accum_in_carry
+// array of input functions 
+static op_in_fn op_tog_in[3] = {
+  (op_in_fn)&op_tog_in_state,
+  (op_in_fn)&op_tog_in_tog,
+  (op_in_fn)&op_tog_in_mul
 };
 
-void op_accum_init(op_accum_t* accum) {
-  accum->super.numInputs = 5;
-  accum->super.numOutputs = 2;
-  accum->outs[0] = -1;
-  accum->outs[1] = -1;
-  accum->super.in_fn = op_accum_inputs;
-  accum->super.out = accum->outs;
-  accum->super.opString = op_accum_opstring;
-  accum->super.inString = op_accum_instring;
-  accum->super.outString = op_accum_outstring;
-  accum->super.type = eOpAccum; 
-  accum->super.status = eUserOp;  
-//  accum->super.size = sizeof(op_accum_t);
+//----- external function definition
+
+/// initialize
+void op_tog_init(void* op) {
+  op_tog_t* tog = (op_tog_t*)op;
+
+  // superclass functions
+  tog->super.inc_fn = (op_inc_fn)&op_tog_inc;
+  tog->super.in_fn = op_tog_in;
+  tog->super.pickle = (op_pickle_fn) (&op_tog_pickle);
+  tog->super.unpickle = (op_unpickle_fn) (&op_tog_unpickle);
+  
+  // superclass state
+  tog->super.numInputs = 2;
+  tog->super.numOutputs = 1;
+  tog->outs[0] = -1;
+ 
+  tog->super.in_val = tog->in_val;
+  tog->in_val[0] = &(tog->state);
+  tog->in_val[0] = &(tog->tog);
+  tog->in_val[1] = &(tog->mul);
+
+  tog->super.out = tog->outs;
+  tog->super.opString = op_tog_opstring;
+  tog->super.inString = op_tog_instring;
+  tog->super.outString = op_tog_outstring;
+  tog->super.type = eOpTog;
+
+
+  // class state
+  tog->state = 0;
+  tog->mul = OP_ONE;
+  tog->tog = 0;
+}
+
+//-------------------------------------------------
+//----- static function definition
+
+//===== operator input
+
+// input state
+static void op_tog_in_state(op_tog_t* tog, const io_t v) {
+  //  print_dbg("\r\n\r\n op_tog_in_state, current state: 0x");
+  //  print_dbg_hex((u32)(tog->state));
+  //  print_dbg(", input: 0x");
+  //  print_dbg_hex((u32)(v));
+
+  if (tog->tog) {
+    // toggle mode, state toggles on positive input
+    if ( (v) > 0) {
+
+      if ((tog->state) == 0) {
+	//	print_dbg("\r\n op_tog (toggle), state was == 0, setting to mul : 0x");
+	//	print_dbg_hex((u32)(tog->mul));
+	tog->state = tog->mul;
+      } else {
+	//	print_dbg("\r\n op_tog (toggle), state was !=0, setting to 0 ");
+	tog->state = 0;
+      }
+      //      print_dbg("\r\n output: 0x");
+      //      print_dbg_hex((u32)(tog->state));
+    
+      net_activate(tog->outs[0], tog->state, tog);
+    }
+  } else {
+    // momentary mode, tog value takes input
+    //    print_dbg("\r\n op_tog (momentary), old state: 0x");
+    //    print_dbg_hex((u32)(tog->state));
+
+    if((v) > 0) { tog->state = tog->mul; } else { tog->state = 0; }
+
+    //    print_dbg(", new state: 0x");
+    //    print_dbg_hex((u32)(tog->state));
+
+    net_activate(tog->outs[0], tog->state, tog);
+  }
+}
+
+// input toggle mode
+static void op_tog_in_tog(op_tog_t* tog, const io_t v) {
+  //  print_dbg("\r\n op_tog_in_mul");
+  if ((v) > 0) { tog->tog = OP_ONE; } else  { tog->tog = 0; } 
+}
+
+// input multiplier
+static void op_tog_in_mul(op_tog_t* tog, const io_t v) {
+  //  print_dbg("\r\n op_tog_in_mul");
+
+  tog->mul = v;
+  if (tog->state > 0) {
+    tog->state = (v);
+    net_activate(tog->outs[0], tog->state, tog);
+  }
+}
+
+//===== UI input
+
+// increment
+static void op_tog_inc(op_tog_t* tog, const s16 idx, const io_t inc) {
+  io_t val;
+  //  print_dbg("\r\n op_tog_inc");
+  switch(idx) {
+  case 0: // current value
+    op_tog_in_state(tog, inc);
+    break;
+  case 1: // toggle mode
+    op_tog_in_tog(tog, inc);
+    break;
+  case 2: // multiplier
+    val = op_sadd(tog->mul, inc);
+    op_tog_in_mul(tog, val);
+    break;
+  }
+}
+
+
+// serialization
+u8* op_tog_pickle(op_tog_t* tog, u8* dst) {
+  // store state variables
+  dst = pickle_io(tog->state, dst);
+  dst = pickle_io(tog->mul, dst);
+  dst = pickle_io(tog->tog, dst);
+  return dst;
+}
+
+u8* op_tog_unpickle(op_tog_t* tog, const u8* src) {
+  // retreive state variables
+  src = unpickle_io(src, (u32*)&(tog->state));
+  src = unpickle_io(src, (u32*)&(tog->mul));
+  src = unpickle_io(src, (u32*)&(tog->tog));
+  return (u8*)src;
+}
+
+
+// handle input from system 
+void op_tog_sys_input(op_tog_t* tog, u8 v) {
+  if (tog->tog) {
+    // toggle mode, tog state toggles on positive input
+    if ( (v) > 0) {
+      if ((tog->state) == 0) { 
+	tog->state = tog->mul;
+      } else {
+	tog->state = 0; 
+      }
+      net_activate(tog->outs[0], tog->state, tog);
+    } 
+  } else {
+    // momentary mode, tog value takes input
+    if((v) > 0) { tog->state = tog->mul; } else { tog->state = 0; }
+    net_activate(tog->outs[0], tog->state, tog);
+  }
 }

@@ -141,7 +141,12 @@ extern u8 flash_write_hex_record(u8* data) {
       /* // print_dbg("\r\n writing firmware to flash at address: "); */
       /* // print_dbg_hex(addrOff + rec.address); */
       dst = addrOff + rec.address;
-      if(dst < FIRMWARE_FLASH_ADDRESS) {
+
+      /// TEST!!
+            if(dst < FIRMWARE_FLASH_ADDRESS) {
+      //      if(0) {
+
+
 	// don't allow writes to anything below the runtime location!
 	// this is where the bootloader lives!
 	// app data goes at the end of flash.

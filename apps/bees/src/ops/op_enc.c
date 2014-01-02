@@ -191,8 +191,10 @@ const u8* op_enc_unpickle(op_enc_t* enc, const u8* src) {
 }
 
 void op_enc_sys_input(op_enc_t* enc, s8 v) {
-  //  print_dbg("\r\n enc sys input, address: 0x");
-  //  print_dbg_hex((u32)enc);
+  print_dbg("\r\n enc sys input, address: 0x");
+  print_dbg_hex((u32)enc);
+  print_dbg(" , input value: 0x");
+  print_dbg_hex((u32)v);
 
   enc->val = op_add(enc->val, op_mul(enc->step, op_from_int(v)));
   op_enc_perform(enc);  
