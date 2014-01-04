@@ -21,7 +21,7 @@
 #include "ops/op_monome_grid_raw.h"
 #include "ops/op_preset.h"
 #include "ops/op_split.h"
-//#include "ops/op_timer.h"
+#include "ops/op_timer.h"
 #include "ops/op_sub.h"
 #include "ops/op_sw.h"
 #include "ops/op_tog.h"

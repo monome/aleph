@@ -96,6 +96,7 @@ extern void init_tc (volatile avr32_tc_t *tc) {
   // so RC = fPBA / 128 / 1000
   //  tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 128000));
   ///// FIXME: kludge because the timing is slow somehow... 
+  ///// this constant is experimentally determined...
   tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 149707));
 
   // configure the timer interrupt
@@ -131,8 +132,6 @@ void init_ftdi_usart (void) {
 
   // atmel example actually sets this after registering the interrupt handler.
   // not sure this matters.
-  // in any case, doing this here often puts the processor into an infinite loopback,
-  // or something.
   FTDI_USART->ier = AVR32_USART_IER_RXRDY_MASK;
 }
 

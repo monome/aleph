@@ -48,6 +48,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_split.c \
 	$(APP_DIR)/src/ops/op_sub.c \
 	$(APP_DIR)/src/ops/op_sw.c \
+	$(APP_DIR)/src/ops/op_timer.c \
 	$(APP_DIR)/src/ops/op_tog.c \
 	$(APP_DIR)/src/pages/page_dsp.c \
 	$(APP_DIR)/src/pages/page_gathered.c \

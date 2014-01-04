@@ -46,6 +46,7 @@ typedef enum {
   eOpSplit,
   eOpDiv,
   eOpSub,
+  eOpTimer,
   numOpClasses // dummy/count 
 } op_id_t;
 

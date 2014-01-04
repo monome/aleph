@@ -98,6 +98,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_sub_t),
     .init = &op_sub_init,
     .deinit = NULL
+  }, {
+    .name = "TIMER",
+    .size = sizeof(op_timer_t),
+    .init = &op_timer_init,
+    .deinit = NULL
   }
 
 };
