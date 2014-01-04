@@ -25,10 +25,12 @@ static scroll centerScroll;
 //--- page-specific state variables
 
 // const array of user-creatable operator types
-#define NUM_USER_OP_TYPES 9
+#define NUM_USER_OP_TYPES 11
 static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAdd,
+  eOpSub,
   eOpMul,
+  eOpDiv,
   eOpGate,
   eOpMonomeGridRaw,
   eOpMidiNote,
@@ -36,13 +38,6 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpTog,
   eOpAccum,
   eOpSplit,
-  // many more...
-  // eOpAccum,
-  // eOpSelect,
-  // eOpStore,
-  // eOpGate,
-  // eOpSplit,
-  // eOpSeq
 };
 
 // current selected new operator type

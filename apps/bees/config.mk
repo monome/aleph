@@ -37,6 +37,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_add.c \
 	$(APP_DIR)/src/ops/op_accum.c \
 	$(APP_DIR)/src/ops/op_adc.c \
+	$(APP_DIR)/src/ops/op_div.c \
 	$(APP_DIR)/src/ops/op_enc.c \
 	$(APP_DIR)/src/ops/op_gate.c \
 	$(APP_DIR)/src/ops/op_metro.c \
@@ -45,6 +46,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_monome_grid_raw.c \
 	$(APP_DIR)/src/ops/op_preset.c \
 	$(APP_DIR)/src/ops/op_split.c \
+	$(APP_DIR)/src/ops/op_sub.c \
 	$(APP_DIR)/src/ops/op_sw.c \
 	$(APP_DIR)/src/ops/op_tog.c \
 	$(APP_DIR)/src/pages/page_dsp.c \

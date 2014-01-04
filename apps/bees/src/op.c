@@ -19,7 +19,9 @@
 #include "play.h"
 
 // operator class registry
-// must be laid out identically to eOpId enum!
+////// WARNING:
+// must be laid out identically to eOpId enum in op.h!
+// therefore, recommend adding in chronological order (?)
 const op_desc_t op_registry[numOpClasses] = {
   {
     .name = "SW",
@@ -86,7 +88,18 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_split_t),
     .init = &op_split_init,
     .deinit = NULL
+  }, {
+    .name = "DIV",
+    .size = sizeof(op_div_t),
+    .init = &op_div_init,
+    .deinit = NULL
+  }, {
+    .name = "SUB",
+    .size = sizeof(op_sub_t),
+    .init = &op_sub_init,
+    .deinit = NULL
   }
+
 };
 
 
