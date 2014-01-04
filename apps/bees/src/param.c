@@ -41,14 +41,14 @@ void set_param_value(u32 idx, io_t val) {
   
   s32 scaled = scaler_get_value( &(net->params[idx].scaler), val);
 
-  print_dbg("\r\n set_param_value, index: ");
-  print_dbg_ulong(idx);
+  /* print_dbg("\r\n set_param_value, index: "); */
+  /* print_dbg_ulong(idx); */
 
-  print_dbg(" , value: 0x");
-  print_dbg_hex(val);
+  /* print_dbg(" , value: 0x"); */
+  /* print_dbg_hex(val); */
 
-  print_dbg(" , scaled: 0x");
-  print_dbg_hex(scaled);
+  /* print_dbg(" , scaled: 0x"); */
+  /* print_dbg_hex(scaled); */
     
   /* if(val > net->params[idx].desc.max) { */
   /*   val = net->params[idx].desc.max; */

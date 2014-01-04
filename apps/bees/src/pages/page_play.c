@@ -67,8 +67,8 @@ void handle_key_3(s32 val) {
 }
 
 void handle_enc_0(s32 val) {
-  print_dbg("\r\n play handler, enc 0, op address: 0x");
-  print_dbg_hex((u32)opSysEnc[0]);
+  //  print_dbg("\r\n play handler, enc 0, op address: 0x");
+  //  print_dbg_hex((u32)opSysEnc[0]);
 
   op_enc_sys_input(opSysEnc[0], (s8)val);
 }

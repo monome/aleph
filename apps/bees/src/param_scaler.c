@@ -223,16 +223,16 @@ u32 scaler_get_rep_offset(ParamType p) {
 // get pointers to NV memory for table assignment
 const s32* scaler_get_nv_data(ParamType p) {
   void* scalerBytes = (void*)&(((beesFlashData*)(flash_app_data()))->scalerBytes);
-  print_dbg("\r\n param_scaler:scaler_get_nv_data, result: 0x");
-  print_dbg_hex((u32)((s32*)scalerBytes + scaler_get_data_offset(p)));
+  //  print_dbg("\r\n param_scaler:scaler_get_nv_data, result: 0x");
+  //  print_dbg_hex((u32)((s32*)scalerBytes + scaler_get_data_offset(p)));
   return (s32*)scalerBytes + scaler_get_data_offset(p);
   //  return (s32*) &(((beesFlashData*)flash_app_data() )->scalerBytes) + scaler_get_data_offset(p);
 }
 
 const s32* scaler_get_nv_rep(ParamType p) {
   void* scalerBytes = (void*)&(((beesFlashData*)(flash_app_data()))->scalerBytes);
-  print_dbg("\r\n param_scaler:scaler_get_nv_rep, result: 0x");
-  print_dbg_hex((u32)((s32*)scalerBytes + scaler_get_rep_offset(p)));
+  //  print_dbg("\r\n param_scaler:scaler_get_nv_rep, result: 0x");
+  //  print_dbg_hex((u32)((s32*)scalerBytes + scaler_get_rep_offset(p)));
   return (s32*)scalerBytes + scaler_get_rep_offset(p);
   //  return (s32*) &(((beesFlashData*)flash_app_data() )->scalerBytes) + scaler_get_rep_offset(p);
 }
