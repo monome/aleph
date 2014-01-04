@@ -71,10 +71,20 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_preset_t),
     .init = &op_preset_init,
     .deinit = NULL
-    }, {
+  }, {
     .name = "TOG",
     .size = sizeof(op_tog_t),
     .init = &op_tog_init,
+    .deinit = NULL
+  }, {
+    .name = "ACCUM",
+    .size = sizeof(op_accum_t),
+    .init = &op_accum_init,
+    .deinit = NULL
+  }, {
+    .name = "SPLIT",
+    .size = sizeof(op_split_t),
+    .init = &op_split_init,
     .deinit = NULL
   }
 };

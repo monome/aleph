@@ -6,8 +6,10 @@
 #define OSC_FREQ_RADIX 8
 
 #define PARAM_DAC_MIN 0
-#define PARAM_DAC_MAX (10 << 16)
-#define PARAM_DAC_RADIX 5
+//#define PARAM_DAC_MAX (10 << 16)
+// bah
+#define PARAM_DAC_MAX 0x7fffffff
+#define PARAM_DAC_RADIX 16
 
 
 // enumerate parameters

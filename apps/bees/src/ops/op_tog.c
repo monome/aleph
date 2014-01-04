@@ -6,7 +6,7 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_tog_instring = "TOG     MUL     ";
+static const char* op_tog_instring = "STATE   MUL     ";
 static const char* op_tog_outstring = "VAL     ";
 static const char* op_tog_opstring = "TOG";
 
@@ -18,16 +18,14 @@ static const char* op_tog_opstring = "TOG";
 static void op_tog_inc(op_tog_t* tog, const s16 idx, const io_t inc);
 // set inputs
 static void op_tog_in_state(op_tog_t* tog, const io_t v);
-static void op_tog_in_tog(op_tog_t* tog, const io_t v);
 static void op_tog_in_mul(op_tog_t* tog, const io_t );
 // pickle / unpickle
 static u8* op_tog_pickle(op_tog_t* tog, u8* dst);
 static u8* op_tog_unpickle(op_tog_t* tog, const u8* src);
 
 // array of input functions 
-static op_in_fn op_tog_in[3] = {
+static op_in_fn op_tog_in[2] = {
   (op_in_fn)&op_tog_in_state,
-  (op_in_fn)&op_tog_in_tog,
   (op_in_fn)&op_tog_in_mul
 };
 
@@ -50,7 +48,6 @@ void op_tog_init(void* op) {
  
   tog->super.in_val = tog->in_val;
   tog->in_val[0] = &(tog->state);
-  tog->in_val[0] = &(tog->tog);
   tog->in_val[1] = &(tog->mul);
 
   tog->super.out = tog->outs;
@@ -59,11 +56,9 @@ void op_tog_init(void* op) {
   tog->super.outString = op_tog_outstring;
   tog->super.type = eOpTog;
 
-
   // class state
   tog->state = 0;
   tog->mul = OP_ONE;
-  tog->tog = 0;
 }
 
 //-------------------------------------------------
@@ -73,52 +68,19 @@ void op_tog_init(void* op) {
 
 // input state
 static void op_tog_in_state(op_tog_t* tog, const io_t v) {
-  //  print_dbg("\r\n\r\n op_tog_in_state, current state: 0x");
-  //  print_dbg_hex((u32)(tog->state));
-  //  print_dbg(", input: 0x");
-  //  print_dbg_hex((u32)(v));
+  if ( (v) > 0) {
 
-  if (tog->tog) {
-    // toggle mode, state toggles on positive input
-    if ( (v) > 0) {
-
-      if ((tog->state) == 0) {
-	//	print_dbg("\r\n op_tog (toggle), state was == 0, setting to mul : 0x");
-	//	print_dbg_hex((u32)(tog->mul));
-	tog->state = tog->mul;
-      } else {
-	//	print_dbg("\r\n op_tog (toggle), state was !=0, setting to 0 ");
-	tog->state = 0;
-      }
-      //      print_dbg("\r\n output: 0x");
-      //      print_dbg_hex((u32)(tog->state));
-    
-      net_activate(tog->outs[0], tog->state, tog);
+    if ((tog->state) == 0) {
+      tog->state = tog->mul;
+    } else {
+      tog->state = 0;
     }
-  } else {
-    // momentary mode, tog value takes input
-    //    print_dbg("\r\n op_tog (momentary), old state: 0x");
-    //    print_dbg_hex((u32)(tog->state));
-
-    if((v) > 0) { tog->state = tog->mul; } else { tog->state = 0; }
-
-    //    print_dbg(", new state: 0x");
-    //    print_dbg_hex((u32)(tog->state));
-
     net_activate(tog->outs[0], tog->state, tog);
   }
 }
 
-// input toggle mode
-static void op_tog_in_tog(op_tog_t* tog, const io_t v) {
-  //  print_dbg("\r\n op_tog_in_mul");
-  if ((v) > 0) { tog->tog = OP_ONE; } else  { tog->tog = 0; } 
-}
-
 // input multiplier
 static void op_tog_in_mul(op_tog_t* tog, const io_t v) {
-  //  print_dbg("\r\n op_tog_in_mul");
-
   tog->mul = v;
   if (tog->state > 0) {
     tog->state = (v);
@@ -131,15 +93,11 @@ static void op_tog_in_mul(op_tog_t* tog, const io_t v) {
 // increment
 static void op_tog_inc(op_tog_t* tog, const s16 idx, const io_t inc) {
   io_t val;
-  //  print_dbg("\r\n op_tog_inc");
   switch(idx) {
   case 0: // current value
     op_tog_in_state(tog, inc);
     break;
-  case 1: // toggle mode
-    op_tog_in_tog(tog, inc);
-    break;
-  case 2: // multiplier
+  case 1: // multiplier
     val = op_sadd(tog->mul, inc);
     op_tog_in_mul(tog, val);
     break;
@@ -152,7 +110,6 @@ u8* op_tog_pickle(op_tog_t* tog, u8* dst) {
   // store state variables
   dst = pickle_io(tog->state, dst);
   dst = pickle_io(tog->mul, dst);
-  dst = pickle_io(tog->tog, dst);
   return dst;
 }
 
@@ -160,26 +117,5 @@ u8* op_tog_unpickle(op_tog_t* tog, const u8* src) {
   // retreive state variables
   src = unpickle_io(src, (u32*)&(tog->state));
   src = unpickle_io(src, (u32*)&(tog->mul));
-  src = unpickle_io(src, (u32*)&(tog->tog));
-  return (u8*)src;
-}
-
-
-// handle input from system 
-void op_tog_sys_input(op_tog_t* tog, u8 v) {
-  if (tog->tog) {
-    // toggle mode, tog state toggles on positive input
-    if ( (v) > 0) {
-      if ((tog->state) == 0) { 
-	tog->state = tog->mul;
-      } else {
-	tog->state = 0; 
-      }
-      net_activate(tog->outs[0], tog->state, tog);
-    } 
-  } else {
-    // momentary mode, tog value takes input
-    if((v) > 0) { tog->state = tog->mul; } else { tog->state = 0; }
-    net_activate(tog->outs[0], tog->state, tog);
-  }
+   return (u8*)src;
 }
