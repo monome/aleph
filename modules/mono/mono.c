@@ -91,7 +91,7 @@ static fract32   pm;           // phase modulation depth
 static fix16     freq1;            // base frequency (primary oscillator)
 static fix16     freq2;            // base frequency (secondary oscillator)
 static fix16     ratio2;         // frequency ratio for secondary oscillator
-static u8        track;         // pitch-tracking flag
+//static u8        track;         // pitch-tracking flag
 
 static fract32   wave1;          // waveshape (primary)
 static fract32   wave2;          // waveshape (secondary)
@@ -125,7 +125,7 @@ static fract32 ioAmp3;
 // set primary freq
 static inline void set_freq1(fix16 freq);
 // set secondary pitch ratio - enters pitch tracking mode
-static inline void set_ratio2(const fix16 ratio);
+//static inline void set_ratio2(const fix16 ratio);
 // set secondary frequency - leaves pitch tracking mode
 static inline void set_freq2(fix16 freq);
 // double-lookup and interpolate
@@ -144,19 +144,19 @@ static inline void set_freq1(fix16 freq) {
   if( freq > OSC_FREQ_MAX ) freq = OSC_FREQ_MAX;
   filter_1p_lo_in(freq1Lp, freq);
   freq1 = freq;
-  if(track) {
-    filter_1p_lo_in(freq2Lp, fix16_mul(freq1, ratio2) ) ;
-  }
+  /* if(track) { */
+  /*   filter_1p_lo_in(freq2Lp, fix16_mul(freq1, ratio2) ) ; */
+  /* } */
 }
 
-// set secondary pitch ratio - enters pitch tracking mode
-static inline void set_ratio2(const fix16 ratio) {
-  ratio2 = ratio;
-  if (ratio2 > RATIO_MAX) ratio2 = RATIO_MAX;
-  if (ratio2 < RATIO_MIN) ratio2 = RATIO_MIN;
-  filter_1p_lo_in(freq2Lp, fix16_mul(freq1, ratio2));
-  //  track = 1;
-}
+/* // set secondary pitch ratio - enters pitch tracking mode */
+/* static inline void set_ratio2(const fix16 ratio) { */
+/*   ratio2 = ratio; */
+/*   if (ratio2 > RATIO_MAX) ratio2 = RATIO_MAX; */
+/*   if (ratio2 < RATIO_MIN) ratio2 = RATIO_MIN; */
+/*   filter_1p_lo_in(freq2Lp, fix16_mul(freq1, ratio2)); */
+/*   //  track = 1; */
+/* } */
 
 // set secondary frequency - leaves pitch tracking mode
 static inline void set_freq2(fix16 freq) {
@@ -315,10 +315,10 @@ void module_init(void) {
   sr = SAMPLERATE;
   ips = fix16_from_float( (f32)WAVE_TAB_SIZE / (f32)sr );
 
-  track = 1;
+  //track = 1;
   amp1 = amp2 = INT32_MAX >> 2;
   
-  freq1 = fix16_from_int(220);
+  freq1 = fix16_from_int(220)
   freq2 = fix16_from_int(330);
 
   ratio2 = fix16_from_float(1.5);
