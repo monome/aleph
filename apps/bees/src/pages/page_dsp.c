@@ -166,6 +166,7 @@ void handle_key_0(s32 val) {
     bfin_wait_ready();
     net_report_params();
     bfin_enable();
+
     // render status to head region 
     region_fill(headRegion, 0x0);
     font_string_region_clip(headRegion, "finished loading.", 0, 0, 0xa, 0);

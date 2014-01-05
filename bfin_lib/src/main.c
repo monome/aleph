@@ -11,14 +11,6 @@
 
 long long int dumcount = 0;
 
-//// testing
-/* static fract32 add_fr(fract32 x, fract32 y) { */
-/*   fract32 res; */
-/*   res = add_fr1x32(x, y); */
-/*   return res; */
-/* } */
-////
-
 //-------------------------------
 // main function
 int main(void) {
@@ -39,7 +31,7 @@ int main(void) {
   // intialize the flash controller (which, weirdly, handles gpio)
   //  init_flash();
 
-  // initialize the codec (spi in master, blast config regs, disable spi)
+  // initialize the codec
   init_1939();
 
   /// initialize the CV dac (reset) 
@@ -64,12 +56,12 @@ int main(void) {
   // begin cv transfers
   enable_DMA_sport1();  
 
-  // signal the ready flag
-  READY_HI;
-
   // leds on
   LED3_HI;
   LED4_HI;
+
+  // signal the ready flag
+  READY_HI;
   
   while(1) {
     // fixme: everything happens in ISRs!

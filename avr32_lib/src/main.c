@@ -348,7 +348,7 @@ int main (void) {
 
   // intialize the FAT filesystem
   fat_init();
-  print_dbg("\r\n init fat");
+  print_dbg("\r\n init filesystem");
 
   // setup control logic
   init_ctl();

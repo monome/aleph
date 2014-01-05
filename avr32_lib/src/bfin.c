@@ -54,6 +54,18 @@ void bfin_wait(void) {
 void bfin_load_buf(void) {
   u64 i; /// byte index in .ldr
 
+  /////
+  //// TEST: print contents of buffer
+  /* print_dbg("\r\n\r\n .ldr buffer for: "); */
+  /* contents(i=0; i<bfinLdrSize; i++) { */
+  /*   print_dbg("\r\n 0x"); */
+  /*   print_dbg_hex(bfinLdrData[i]); */
+  /* } */
+  /* print_dbg("\r\n\r\n"); */
+  ////
+  /////////
+
+
   if(bfinLdrSize > BFIN_LDR_MAX_BYTES) {
     print_dbg("\r\n bfin load error: size : "); print_dbg_hex(bfinLdrSize);
     return;
@@ -309,7 +321,9 @@ void bfin_end_transfer(void) {
 // wait for ready status (e.g. after module init)
 void bfin_wait_ready(void) {
   // use ready pin
-  while( !gpio_get_pin_value(BFIN_READY_PIN) ) { ;; }
+  while( !gpio_get_pin_value(BFIN_READY_PIN) ) { 
+    print_dbg("\r\n waiting on bfin ready pin... ");
+  }
 }
 
 // get parameter value

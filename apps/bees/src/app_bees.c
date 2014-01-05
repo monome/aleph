@@ -72,6 +72,29 @@ u8 app_launch(u8 firstrun) {
 
   //  net_print();
 
+  // init pages (fill graphics buffers)
+  print_dbg("\r\n pages_init...");
+  pages_init();
+
+  print_dbg("\r\n play_init...");
+  play_init();
+
+  // enable timers
+  print_dbg("\r\n enable app timers...");
+  render_boot("enabling app timers...");
+  init_app_timers();
+
+  // pull up power control pin, enabling soft-powerdown
+  gpio_set_gpio_pin(POWER_CTL_PIN);
+
+  // assign app event handlers
+  print_dbg("\r\n assigning handlers ");
+  render_boot("assigning UI handlers...");
+  assign_bees_event_handlers();
+
+  //// start up DSP at end of launch...???
+  //  delay_ms(8000);
+
   if(firstrun) {
     render_boot("launching app, first run");
     print_dbg("\r\n first run, writing nonvolatile data...");
@@ -82,23 +105,29 @@ u8 app_launch(u8 firstrun) {
     render_boot("init param scaling data...");
     flash_init_scaler_data();
 
-    
     print_dbg("\r\n first run, try and load default DSP");
     render_boot("launching default DSP...");
+
+
+    
+
     //// FIXME (?)
     files_load_dsp_name("default.ldr");
     
-    render_boot("waiting for DSP init...");
+    //    render_boot("waiting for DSP init...");
     bfin_wait_ready();
-    print_dbg(" requesting param report...");
-    render_boot("requesting DSP params");
+    //    print_dbg(" requesting param report...");
+    //    render_boot("requesting DSP params");
     net_report_params();
 
-    print_dbg("\r\n enable DSP audio...");
-    render_boot("enabling audio");
+    //    print_dbg("\r\n enable DSP audio...");
+    //    render_boot("enabling audio");
     bfin_enable();
 
   } else {
+
+    app_pause();
+
     print_dbg("\r\n booting default ldr from flash... ");
     render_boot("booting DSP from flash");
     flash_read_ldr();
@@ -124,33 +153,12 @@ u8 app_launch(u8 firstrun) {
     render_boot("reading default scene");
     scene_read_default();
 
-    ///// TEST; read from filesystem!
-    //    files_load_scene_name("test_default.scn");
-    //    files_load_test_scene();
+    app_resume();
+    
    }
-
-  // init pages (fill graphics buffers)
-  print_dbg("\r\n pages_init...");
-  pages_init();
-
-  print_dbg("\r\n play_init...");
-  play_init();
 
   // update page rendering and handlers
   pages_reselect();
-
-  // enable timers
-  print_dbg("\r\n enable app timers...");
-  render_boot("enabling app timers...");
-  init_app_timers();
-    
-  // pull up power control pin, enabling soft-powerdown
-  gpio_set_gpio_pin(POWER_CTL_PIN);
-
-  // assign app event handlers
-  print_dbg("\r\n assigning handlers ");
-  render_boot("assigning UI handlers...");
-  assign_bees_event_handlers();
 
   return 1;
 }

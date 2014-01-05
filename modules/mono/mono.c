@@ -291,8 +291,6 @@ void module_init(void) {
 
   // init wavetables
   table_fill_harm(tab1, WAVE_TAB_SIZE, 1, 1.f, 0);
-
-  /// FIXME: does this work?
   table_fill_harm(tab2, WAVE_TAB_SIZE, 5, 0.5f, 1);
 
   // allocate envelope
