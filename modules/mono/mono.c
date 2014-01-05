@@ -11,11 +11,9 @@
 #include <string.h>
 // aleph-common
 #include "fix.h"
-//#include "simple_string.h"
 // audio lib
-#include "env.h"
-//#include "filters.h"
 #include "filter_1p.h"
+#include "filter_svf.h"
 #include "table.h"
 #include "conversion.h"
 // bfin
@@ -100,6 +98,10 @@ static fract32   wave2;          // waveshape (secondary)
 
 static fract32   amp1;          // amplitude (primary)
 static fract32   amp2;          // amplitude (secondary)
+
+// filters
+static filter_svf svf1;
+static filter_svf svf2;
 
 // this is kind of unnecessary really. amp integrators do a better job...
 // static env_asr*  env;           // ASR amplitude envelope
@@ -202,6 +204,10 @@ static inline fract32 lookup_wave(const fix16 idx, const fract32 wave) {
 
 // frame calculation
 static void calc_frame(void) {
+
+  /// testing
+  fract32 tmp;
+
   // ----- smoothers:
   // pm
   pm = filter_1p_lo_next(pmLp);
@@ -239,6 +245,16 @@ static void calc_frame(void) {
 
   // lookup osc11
   osc1 = lookup_wave(idx1Mod, wave1);
+
+
+  ///////////
+  ///////////
+  // apply filters
+  tmp = filter_svf_next( &(svf1), osc1);  
+  tmp = filter_svf_next( &(svf1), osc2);  
+  /////////
+  /////////
+
 
   // apply amplitudes and sum 
   frameVal = add_fr1x32(
@@ -319,7 +335,7 @@ void module_init(void) {
   /// ok, for now
   gModuleData->paramData[eParamFreq1 ].value = freq1 ;
   gModuleData->paramData[eParamFreq2 ].value = freq2 ;
-  gModuleData->paramData[eParamRatio2 ].value = ratio2 ;
+  //  gModuleData->paramData[eParamRatio2 ].value = ratio2 ;
 
   /// FIXME: silly way to get amplitudes back.
   // this stuff will get better with unified param scaling.
@@ -344,6 +360,19 @@ void module_init(void) {
   /* env_asr_set_rel_shape(env, float_to_fr32(0.5)); */
   /* env_asr_set_atk_dur(env, 1000); */
   /* env_asr_set_rel_dur(env, 10000); */
+
+  // filters
+  filter_svf_init(&(svf1));
+  filter_svf_init(&(svf2));    
+
+  filter_svf_set_rq(&(svf1), 0x1000);
+  filter_svf_set_low(&(svf1), 0x4000);
+  filter_svf_set_coeff(&(svf1), 0x5ff00000 );
+    
+  filter_svf_set_rq(&(svf2), 0x1000);
+  filter_svf_set_low(&(svf2), 0x4000);
+  filter_svf_set_coeff(&(svf2), 0x4ff00000 );
+    
 
   // allocate smoothers
   freq1Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
@@ -383,7 +412,6 @@ void module_deinit(void) {
   free(wave2Lp);
   free(amp1Lp);
   free(amp2Lp);
-
 }
 
 

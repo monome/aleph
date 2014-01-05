@@ -9,12 +9,12 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParamFreq2:
     set_freq2(v);
     break;
-  case eParamRatio2:
-    set_ratio2(v);
-    break;
-  case eParamTrack:
-    track = (v > 0);
-    break;
+  /* case eParamRatio2: */
+  /*   set_ratio2(v); */
+  /*   break; */
+  /* case eParamTrack: */
+  /*   track = (v > 0); */
+  /*   break; */
   case eParamWave1:
         filter_1p_lo_in(wave1Lp, BIT_ABS_32(FIX16_FRACT_TRUNC(v)));
     //    filter_1p_lo_in(wave1Lp, BIT_ABS_32((v)));

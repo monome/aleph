@@ -22,13 +22,21 @@
 #define SMOOTH_FREQ_MAX 0x400000 // 64
 #define SMOOTH_FREQ_RADIX 7
 
+// svf cutoff
+// filter cutoff frequency
+#define PARAM_FREQ_MAX 0x1F400000;  // fixme
+
+// filter reciprocal of Q
+#define PARAM_RQ_MIN 0x00000000
+#define PARAM_RQ_MAX 0x7fffffff
+
+
 
 // parameters
 enum params {
   eParamFreq1,
   eParamFreq2,
-  eParamRatio2,
-  eParamTrack,
+
   eParamAmp1,
   eParamAmp2,
 

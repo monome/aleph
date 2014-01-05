@@ -20,17 +20,17 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamFreq2].max = OSC_FREQ_MAX;
   gModuleData->paramDesc[eParamFreq2].radix = OSC_FREQ_RADIX;
   
-  strcpy(gModuleData->paramDesc[eParamRatio2].label, "osc2_ratio");
-  gModuleData->paramDesc[eParamRatio2].type = eParamTypeFix;
-  gModuleData->paramDesc[eParamRatio2].min = RATIO_MIN;
-  gModuleData->paramDesc[eParamRatio2].max = RATIO_MAX;
-  gModuleData->paramDesc[eParamRatio2].radix = RATIO_RADIX;
+  /* strcpy(gModuleData->paramDesc[eParamRatio2].label, "osc2_ratio"); */
+  /* gModuleData->paramDesc[eParamRatio2].type = eParamTypeFix; */
+  /* gModuleData->paramDesc[eParamRatio2].min = RATIO_MIN; */
+  /* gModuleData->paramDesc[eParamRatio2].max = RATIO_MAX; */
+  /* gModuleData->paramDesc[eParamRatio2].radix = RATIO_RADIX; */
   
-  strcpy(gModuleData->paramDesc[eParamTrack].label, "osc2_track");
-  gModuleData->paramDesc[eParamTrack].type = eParamTypeBool;
-  gModuleData->paramDesc[eParamTrack].min = 0;
-  gModuleData->paramDesc[eParamTrack].max = 1;
-  gModuleData->paramDesc[eParamTrack].radix = 2;
+  /* strcpy(gModuleData->paramDesc[eParamTrack].label, "osc2_track"); */
+  /* gModuleData->paramDesc[eParamTrack].type = eParamTypeBool; */
+  /* gModuleData->paramDesc[eParamTrack].min = 0; */
+  /* gModuleData->paramDesc[eParamTrack].max = 1; */
+  /* gModuleData->paramDesc[eParamTrack].radix = 2; */
   
   strcpy(gModuleData->paramDesc[eParamAmp1].label, "amplitude 1");
   gModuleData->paramDesc[eParamAmp1].type = eParamTypeAmp;
