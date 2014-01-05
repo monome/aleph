@@ -43,8 +43,8 @@ extern fract32 table_lookup_fract(fract32* tab, u32 size, fract32 phase);
 
 // fill a table of given size with harmonics up to given order
 // also given: decay coefficient, normalization flag
-extern void table_fill_harm(fract32* tab, u32 size, u8 order, f32 decay, u8 norm);
+//extern void table_fill_harm(fract32* tab, u32 size, u8 order, f32 decay, u8 norm);
 // fill a table with cheby polynomial of given order
-extern void table_fill_cheby(fract32* tab, u32 size, u8 order);
+//extern void table_fill_cheby(fract32* tab, u32 size, u8 order);
 
 #endif // header guard

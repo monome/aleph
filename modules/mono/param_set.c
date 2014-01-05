@@ -16,13 +16,16 @@ void module_set_param(u32 idx, ParamValue v) {
     track = (v > 0);
     break;
   case eParamWave1:
-    filter_1p_lo_in(wave1Lp, BIT_ABS_32(FIX16_FRACT_TRUNC(v)));
+        filter_1p_lo_in(wave1Lp, BIT_ABS_32(FIX16_FRACT_TRUNC(v)));
+    //    filter_1p_lo_in(wave1Lp, BIT_ABS_32((v)));
     break;
   case eParamWave2:
-    filter_1p_lo_in(wave2Lp, BIT_ABS_32(FIX16_FRACT_TRUNC(v)));
+        filter_1p_lo_in(wave2Lp, BIT_ABS_32(FIX16_FRACT_TRUNC(v)));
+	//    filter_1p_lo_in(wave2Lp, BIT_ABS_32((v)));
     break;
   case eParamPm:
-    filter_1p_lo_in(pmLp, BIT_ABS_32(FIX16_FRACT_TRUNC(v)));
+       filter_1p_lo_in(pmLp, BIT_ABS_32(FIX16_FRACT_TRUNC(v)));
+       //    filter_1p_lo_in(pmLp, BIT_ABS_32((v)));
     break;
   case eParamAmp1:
     filter_1p_lo_in(amp1Lp, v);

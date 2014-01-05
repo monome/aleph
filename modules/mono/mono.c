@@ -41,8 +41,17 @@ typedef struct _monoFmData {
   ParamData mParamData[eParamNumParams];
 } monoFmData;
 
-//--- wavetable
-#define WAVE_TAB_SIZE 	2048
+//--- wavetables
+// how many wavetables
+#define WAVE_TAB_NUM 5
+#define WAVE_TAB_SIZE 	1024
+// rshift from shape variable to get table index
+#define WAVE_TAB_RSHIFT 29
+// mask to get interpolation constant
+#define WAVE_TAB_MASK 0x1fffffff
+// lshift after mask to get multiplier 
+#define WAVE_TAB_LSHIFT 2
+
 #define WAVE_TAB_SIZE_1 (WAVE_TAB_SIZE - 1)
 #define WAVE_TAB_MAX16 	(WAVE_TAB_SIZE * FIX16_ONE - 1)
 
@@ -58,11 +67,18 @@ static monoFmData * monoData;
 
 //-- static allocation (SRAM) for variables that are small and/or frequently accessed:
 
-static   fract32   tab1[WAVE_TAB_SIZE]; // wavetable1
-static   fract32   tab2[WAVE_TAB_SIZE]; // wavetable1
+/* static   fract32   tab1[WAVE_TAB_SIZE]; // wavetable1 */
+/* static   fract32   tab2[WAVE_TAB_SIZE]; // wavetable1 */
+
+/// FIXME: wavetables are statically linked constants for now.
+/// would like to have them in SDRAM and allow arbitrary asynchronous load.
+static const fract32 wavtab[WAVE_TAB_NUM][WAVE_TAB_SIZE] = { 
+#include "wavtab_data_inc.c" 
+};
+
 
 static u32       sr;            // sample rate
-static fix16     ips;        // index change per sample
+static fix16    ips;        // index change per sample
 
 static fix16     idx1;          // current phase (fractional idx) (primary)
 static fix16     idx2;          // current phase (fractional idx) (secondary)
@@ -150,12 +166,38 @@ static inline void set_freq2(fix16 freq) {
 
 // double-lookup and interpolate
 static inline fract32 lookup_wave(const fix16 idx, const fract32 wave) {
-  ///// FIXME: this is far from optimized.
-  const fract32 waveInv = sub_fr1x32(FR32_MAX, wave);
+
+  // assume wave variable is positive
+  // shift shape param right to get table index
+
+  /// TEST
+#if 1
+  u32 idxA = wave >> WAVE_TAB_RSHIFT;
+  u32 idxB = idxA + 1;
+
+  fract32 mul = (wave & WAVE_TAB_MASK) << WAVE_TAB_LSHIFT;
+  fract32 mulInv = sub_fr1x32(FR32_MAX, mul);
+#else 
+  u32 idxA = 0;
+  u32 idxB = idxA + 1;
+
+  fract32 mul = wave;
+  fract32 mulInv = sub_fr1x32(FR32_MAX, mul);
+#endif
+
+
+
   return add_fr1x32( 
-		    mult_fr1x32x32(table_lookup_idx(tab1, WAVE_TAB_SIZE, idx), waveInv),
-		    mult_fr1x32x32(table_lookup_idx(tab2, WAVE_TAB_SIZE, idx), wave)
+		    mult_fr1x32x32(table_lookup_idx((fract32*)wavtab[idxA], WAVE_TAB_SIZE, idx), mulInv),
+		    mult_fr1x32x32(table_lookup_idx((fract32*)wavtab[idxB], WAVE_TAB_SIZE, idx), mul)
 		     );
+
+  ///// FIXME: this is far from optimized.
+  /* const fract32 waveInv = sub_fr1x32(FR32_MAX, wave); */
+  /* return add_fr1x32(  */
+  /* 		    mult_fr1x32x32(table_lookup_idx(tab1, WAVE_TAB_SIZE, idx), waveInv), */
+  /* 		    mult_fr1x32x32(table_lookup_idx(tab2, WAVE_TAB_SIZE, idx), wave) */
+  /* 		     ); */
 }
 
 // frame calculation
@@ -173,6 +215,7 @@ static void calc_frame(void) {
   wave1 = filter_1p_lo_next(wave1Lp);
   // wave2
   wave2 = filter_1p_lo_next(wave2Lp);
+
   // lookup osc2
   osc2 = lookup_wave(idx2, wave2);
   
@@ -290,8 +333,8 @@ void module_init(void) {
 
 
   // init wavetables
-  table_fill_harm(tab1, WAVE_TAB_SIZE, 1, 1.f, 0);
-  table_fill_harm(tab2, WAVE_TAB_SIZE, 5, 0.5f, 1);
+  //  table_fill_harm(tab1, WAVE_TAB_SIZE, 1, 1.f, 0);
+  //  table_fill_harm(tab2, WAVE_TAB_SIZE, 5, 0.5f, 1);
 
   // allocate envelope
   /* env = (env_asr*)malloc(sizeof(env_asr)); */
