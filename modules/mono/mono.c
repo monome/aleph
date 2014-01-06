@@ -251,7 +251,7 @@ static void calc_frame(void) {
   ///////////
   // apply filters
   tmp = filter_svf_next( &(svf1), osc1);  
-  tmp = filter_svf_next( &(svf1), osc2);  
+  tmp = filter_svf_next( &(svf2), osc2);  
   /////////
   /////////
 
@@ -318,7 +318,7 @@ void module_init(void) {
   //track = 1;
   amp1 = amp2 = INT32_MAX >> 2;
   
-  freq1 = fix16_from_int(220)
+  freq1 = fix16_from_int(220);
   freq2 = fix16_from_int(330);
 
   ratio2 = fix16_from_float(1.5);
