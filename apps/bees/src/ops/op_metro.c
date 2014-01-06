@@ -116,8 +116,8 @@ void op_metro_in_enable	(op_metro_t* metro, const io_t v) {
 
 // input polling period
 void op_metro_in_period (op_metro_t* metro, const io_t v) {
-  if((v) < OP_ONE) {
-    metro->period = OP_ONE;
+  if((v) < 5) {
+    metro->period = 5;
   } else {
     metro->period = v;
   }
