@@ -231,11 +231,14 @@ static void show_foot1(void) {
   }
   region_fill(footRegion[1], fill);
   if(altMode) {
+    // TODO
+#if 0
     if(inPlay) {
       font_string_region_clip(footRegion[1], "HIDE", 0, 0, 0xf, fill);
     } else {
       font_string_region_clip(footRegion[1], "SHOW", 0, 0, 0xf, fill);
     }
+#endif
   } else {
     if(inPreset) {
       font_string_region_clip(footRegion[1], "EXC", 0, 0, 0xf, fill);

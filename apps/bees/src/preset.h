@@ -72,12 +72,10 @@ extern u8* presets_pickle(u8* dst);
 // unpickle
 extern const u8* presets_unpickle(const u8* src);
 
-
-// get last read index
-extern s32 preset_last_read(void);
-
-// get last write index
-extern s32 preset_last_write(void);
+// get current read/write selection
+extern s32 preset_get_select(void);
+// set current read/write selection
+extern void preset_select(s32 idx);
 
 // get inclusion flag for given input, given preset
 extern u8 preset_in_enabled(u32 preIdx, u32 inIdx);

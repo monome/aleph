@@ -335,15 +335,37 @@ void select_outs(void) {
 
 // function key handlers
 void handle_key_0(s32 val) {
-  // store (follow)
+#if 0
+  if(altMode) {
+    // follow
+    
+  } else {
+    // store
+    // show selected preset name
+    draw_outs_preset_name();
+    if(check_key(0)) {
+      // store in preset
+      net_set_in_preset(curPage->select, 1);
+      inPreset = 1;
+      preset_store_in(presetSelect, curPage->select);
+      // redraw selected line
+      render_line(curPage->select, 0xa);
+      render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
+      // TODO: store directly in scene?
+    }
+  }
+  show_foot();
+#endif
 }
 
 void handle_key_1(s32 val) {
   // inc/exc (split)
+  // TODO
 }
 
 void handle_key_2(s32 val) {
   // clear/confirm
+  // TODO
 }
 
 void handle_key_3(s32 val) {
