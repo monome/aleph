@@ -47,6 +47,10 @@ void op_sub_init(void* mem) {
   sub->in_val[0] = &(sub->a);
   sub->in_val[1] = &(sub->b);
   sub->in_val[2] = &(sub->btrig);
+
+  sub->a = 0;
+  sub->b = 0;
+  sub->btrig = 0;
 }
 
 //-------------------------------------------------

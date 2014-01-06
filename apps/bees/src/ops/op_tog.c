@@ -69,7 +69,6 @@ void op_tog_init(void* op) {
 // input state
 static void op_tog_in_state(op_tog_t* tog, const io_t v) {
   if ( (v) > 0) {
-
     if ((tog->state) == 0) {
       tog->state = tog->mul;
     } else {

@@ -75,7 +75,9 @@ extern const u8* presets_unpickle(const u8* src);
 // get current read/write selection
 extern s32 preset_get_select(void);
 // set current read/write selection
-extern void preset_select(s32 idx);
+extern void preset_set_select(s32 idx);
+// increment current selection
+extern void preset_inc_select(s32 inc);
 
 // get inclusion flag for given input, given preset
 extern u8 preset_in_enabled(u32 preIdx, u32 inIdx);

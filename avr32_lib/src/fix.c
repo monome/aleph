@@ -23,7 +23,7 @@ static unsigned long int sign;
 
 // fixme: shouldn't really need these
 static char bufHi[FIX_DIG_HI] = "     ";
-static char bufLo[FIX_DIG_LO] = "    ";
+static char bufLo[FIX_DIG_LO] = "     ";
 
 // for fractional part of 16.16
 static const unsigned int places[FIX_DIG_LO] = {

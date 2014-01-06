@@ -36,7 +36,7 @@ static u8 inPlay = 0;
 // we are in preset=selection momentary mode
 static u8 inPresetSelect = 0;
 // selected preset
-static s32 presetSelect = 0;
+//static s32 presetSelect = 0;
 
 
 // in-clear-confirm state
@@ -403,7 +403,7 @@ void handle_key_0(s32 val) {
       // store in preset
       net_set_in_preset(curPage->select, 1);
       inPreset = 1;
-      preset_store_in(presetSelect, curPage->select);
+      preset_store_in(preset_get_select(), curPage->select);
       // redraw selected line
       render_line(curPage->select, 0xa);
       render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
@@ -465,8 +465,8 @@ void handle_key_3(s32 val) {
     if(inPresetSelect) {
       // load selected preset
       print_dbg("\r\n recalling preset from ins page, idx:");
-      print_dbg_ulong(presetSelect);
-      preset_recall(presetSelect);
+      print_dbg_ulong(preset_get_select());
+      preset_recall(preset_get_select());
       inPresetSelect = 0;
       redraw_ins();
     }
@@ -498,23 +498,16 @@ void handle_enc_3(s32 val) {
   if(altMode) {
     inPresetSelect = 1;
     if(val > 0) {
-      ++presetSelect;
+      preset_inc_select(1);
     } else {
-      --presetSelect;
-    }
-    if(presetSelect > NET_PRESETS_MAX - 1) {
-      presetSelect = 0;
-    }
-    if(presetSelect < 0) {
-      presetSelect = NET_PRESETS_MAX - 1;
+      preset_inc_select(-1);
     }
     // refresh line data
-    redraw_ins_preset((u8)presetSelect);
+    redraw_ins_preset((u8)preset_get_select());
   } else {
     // scroll selection
     select_scroll(val);
   }
-
 }
 
 // redraw all lines, based on current selection
@@ -544,9 +537,9 @@ void redraw_ins_preset (u8 idx) {
     if(n <= max) {
       isParam = ((max - n) <= net_num_params());
       if(isParam) {
-	enabled = preset_param_enabled(presetSelect, net_param_idx(n));
+	enabled = preset_param_enabled(preset_get_select(), net_param_idx(n));
       } else {
-	enabled = preset_in_enabled(presetSelect, n);
+	enabled = preset_in_enabled(preset_get_select(), n);
       }
       print_dbg("\r\n");
       print_dbg("\r\n page_ins, preset draw, idx: ");
@@ -558,7 +551,7 @@ void redraw_ins_preset (u8 idx) {
 
       render_line( n, enabled ? 0xa : 0x2 );
       // TODO: render target value ? urg
-      font_string_region_clip(lineRegion, "          ", LINE_VAL_POS_LONG, 0, 0, 0);
+      font_string_region_clip(lineRegion, "   ", LINE_VAL_POS_LONG, 0, 0, 0);
       // op_print(...
       // font_string_region(lineRegion...
       render_to_scroll_line(i, enabled ? 1 : 0);
@@ -572,6 +565,6 @@ void redraw_ins_preset (u8 idx) {
 void draw_ins_preset_name(void) {
   // draw preset name in header
   font_string_region_clip(headRegion, "                  ", 64, 0, 0, 0);
-  font_string_region_clip(headRegion, preset_name((u8)presetSelect), 64, 0, 0x5, 0);
+  font_string_region_clip(headRegion, preset_name((u8)preset_get_select()), 64, 0, 0x5, 0);
   headRegion->dirty = 1;
 }

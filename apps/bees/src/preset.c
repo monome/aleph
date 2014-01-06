@@ -268,9 +268,28 @@ s32 preset_get_select(void) {
 }
 
 // set current read/write selection
-void preset_select(s32 idx) {
-  select = idx;
+void preset_set_select(s32 idx) {
+  select = idx;;
+  if(select > NET_PRESETS_MAX - 1) {
+    select = 0;
+  }
+  if(select < 0) {
+    select = NET_PRESETS_MAX - 1;
+  }
 }
+
+// increment current selection
+void preset_inc_select(s32 inc) {
+  select += inc;
+  if(select > NET_PRESETS_MAX - 1) {
+    select = 0;
+  }
+  if(select < 0) {
+    select = NET_PRESETS_MAX - 1;
+  }
+
+}
+
 
 // get inclusion flag for given input, given preset
 extern u8 preset_in_enabled(u32 preIdx, u32 inIdx) {

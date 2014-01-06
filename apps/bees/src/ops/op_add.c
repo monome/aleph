@@ -16,7 +16,7 @@ static const u8* op_add_unpickle(op_add_t* op, const u8* src);
 //---- static vars
 static const char* op_add_instring = "A       B       B_TRIG  ";
 static const char* op_add_outstring = "SUM     ";
-static const char* op_add_opstring = "ADDER";
+static const char* op_add_opstring = "ADD";
 
 static op_in_fn op_add_in_fn[3] = {
   (op_in_fn)&op_add_in_a,
@@ -47,6 +47,11 @@ void op_add_init(void* mem) {
   add->in_val[0] = &(add->a);
   add->in_val[1] = &(add->b);
   add->in_val[2] = &(add->btrig);
+
+  add->a = 0;
+  add->b = 0;
+  add->btrig = 0;
+
 }
 
 //-------------------------------------------------

@@ -47,6 +47,10 @@ void op_div_init(void* mem) {
   div->in_val[0] = &(div->a);
   div->in_val[1] = &(div->b);
   div->in_val[2] = &(div->btrig);
+
+  div->a = 1;
+  div->b = 1;
+  div->btrig = 0;
 }
 
 //-------------------------------------------------
@@ -62,7 +66,9 @@ static void op_div_in_a(op_div_t* div, const io_t v) {
 // set operand B
 static void op_div_in_b(op_div_t* div, const io_t v) {
   //printf("div at %d received B %d\n", (int)div, (int)*v);
-  div->b = v;
+  if(v == 0) { div->b = 1; } else {
+    div->b = v;
+  }
   div->val = op_div(div->a, div->b);
   if(div->btrig) {
     net_activate(div->outs[0], div->val, div);

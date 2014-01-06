@@ -16,7 +16,7 @@
 //typedef fix16_t fix16;
 
 // constants for printing formatted 16.16
-#define FIX_DIG_LO    4 // digits after decimal
+#define FIX_DIG_LO    5 // digits after decimal
 #define FIX_DIG_HI    5 // digits before decimal
 #define FIX_DIG_TOTAL 11 // lo + hi + '.' + '-'
 

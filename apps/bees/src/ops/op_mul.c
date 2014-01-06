@@ -47,6 +47,10 @@ void op_mul_init(void* mem) {
   mul->in_val[0] = &(mul->a);
   mul->in_val[1] = &(mul->b);
   mul->in_val[2] = &(mul->btrig);
+
+  mul->a = 0;
+  mul->b = 0;
+  mul->btrig = 0;
 }
 
 //-------------------------------------------------
