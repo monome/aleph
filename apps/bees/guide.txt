@@ -57,11 +57,11 @@ function mapping for each page in the main menu:
 INPUTS:
 	SW0:	STORE:		store current value in current preset
 	SW1:	INC/EXC:	toggle inclusion of this input in current preset management
-	SW2:	CLEAR:		disconnect everything from this input
+	SW2:	CLEAR:		set input to zero
 	SW3:	ALT:		momentarily enter alternate commands	
 	ALT0: 	GATHER:		go to modal page with only the outputs connected to this input
 	ALT1:	SHOW/HIDE:	toggle inclusion of this input in play-mode listing	
-	ALT2:	FILT/ALL:	show only play-enabled inputs in this list, or show all (default).
+	ALT2:	FILT/ALL:	show only play-enabled inputs in this list, or show all (default).	
 	ALTENC0: select preset for recall + edit
 
 	ENC2:   ---		change parameter value, slow

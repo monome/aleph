@@ -231,14 +231,11 @@ static void show_foot1(void) {
   }
   region_fill(footRegion[1], fill);
   if(altMode) {
-    // TODO
-#if 0
     if(inPlay) {
       font_string_region_clip(footRegion[1], "HIDE", 0, 0, 0xf, fill);
     } else {
       font_string_region_clip(footRegion[1], "SHOW", 0, 0, 0xf, fill);
     }
-#endif
   } else {
     if(inPreset) {
       font_string_region_clip(footRegion[1], "EXC", 0, 0, 0xf, fill);
@@ -255,11 +252,13 @@ static void show_foot2(void) {
   }
   region_fill(footRegion[2], fill);
   if(altMode) {
+#if 0
     if(playFilter) {
       font_string_region_clip(footRegion[2], "ALL", 0, 0, 0xf, fill);
     } else {
       font_string_region_clip(footRegion[2], "FILT", 0, 0, 0xf, fill);
     }
+#endif
   } else {
     font_string_region_clip(footRegion[2], "CLEAR", 0, 0, 0xf, fill);
   }
@@ -445,7 +444,7 @@ void handle_key_2(s32 val) {
     if(altMode) {
       // filter / all
     } else {
-      // clear (disconnect all routings) / CONFIRM
+      /// set to 0
       net_set_in_value(curPage->select, 0);
       // render to tmp buffer
       render_line(curPage->select, 0xf);
