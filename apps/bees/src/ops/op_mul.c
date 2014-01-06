@@ -76,7 +76,7 @@ static void op_mul_in_b(op_mul_t* mul, const io_t v) {
 // set b-trigger mode
 static void op_mul_in_btrig(op_mul_t* mul, const io_t v) {
   //printf("mul at %d received BTRIG %d\n", (int)mul, (int)*v);
-  if(v > 0) { mul->btrig = OP_ONE; } { mul->btrig = 0; }
+  if(v > 0) { mul->btrig = OP_ONE; } else { mul->btrig = 0; }
 }
 
 //===== UI input

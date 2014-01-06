@@ -72,7 +72,7 @@ static void op_add_in_b(op_add_t* add, const io_t v) {
 }
 
 static void op_add_in_btrig(op_add_t* add, const io_t v) {
-  add->btrig = (v != 0);
+  if(v > 0) { add->btrig = OP_ONE; } else { add->btrig = 0; }
 }
 
 //===== UI input

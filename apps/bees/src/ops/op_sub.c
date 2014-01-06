@@ -71,7 +71,7 @@ static void op_sub_in_b(op_sub_t* sub, const io_t v) {
 }
 
 static void op_sub_in_btrig(op_sub_t* sub, const io_t v) {
-  sub->btrig = (v != 0);
+  if(v > 0) { sub->btrig = OP_ONE; } { sub->btrig = 0; }
 }
 
 //===== UI input

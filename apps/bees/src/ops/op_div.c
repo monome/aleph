@@ -78,7 +78,7 @@ static void op_div_in_b(op_div_t* div, const io_t v) {
 // set b-trigger mode
 static void op_div_in_btrig(op_div_t* div, const io_t v) {
   //printf("div at %d received BTRIG %d\n", (int)div, (int)*v);
-  if(v > 0) { div->btrig = OP_ONE; } { div->btrig = 0; }
+  if(v > 0) { div->btrig = OP_ONE; } else { div->btrig = 0; }
 }
 
 //===== UI input
