@@ -6,7 +6,7 @@
 #include "aleph_board.h"
 #include "conf_tc_irq.h"
 #include "delay.h"
-#include "events.h"qz
+#include "events.h"
 #include "screen.h"
 
 // global array of pointers to handlers

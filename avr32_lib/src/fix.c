@@ -27,7 +27,7 @@ static char bufLo[FIX_DIG_LO] = "     ";
 
 // for fractional part of 16.16
 static const unsigned int places[FIX_DIG_LO] = {
-  6553, 655, 65, 7
+  6553, 655, 65, 7, 1
 };
 
 // print 16.16
