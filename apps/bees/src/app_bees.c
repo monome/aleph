@@ -72,28 +72,6 @@ u8 app_launch(u8 firstrun) {
 
   //  net_print();
 
-  // init pages (fill graphics buffers)
-  print_dbg("\r\n pages_init...");
-  pages_init();
-
-  print_dbg("\r\n play_init...");
-  play_init();
-
-  // enable timers
-  print_dbg("\r\n enable app timers...");
-  render_boot("enabling app timers...");
-  init_app_timers();
-
-  // pull up power control pin, enabling soft-powerdown
-  gpio_set_gpio_pin(POWER_CTL_PIN);
-
-  // assign app event handlers
-  print_dbg("\r\n assigning handlers ");
-  render_boot("assigning UI handlers...");
-  assign_bees_event_handlers();
-
-  //// start up DSP at end of launch...???
-  //  delay_ms(8000);
 
   if(firstrun) {
     render_boot("launching app, first run");
@@ -107,9 +85,6 @@ u8 app_launch(u8 firstrun) {
 
     print_dbg("\r\n first run, try and load default DSP");
     render_boot("launching default DSP...");
-
-
-    
 
     //// FIXME (?)
     files_load_dsp_name("default.ldr");
@@ -156,6 +131,26 @@ u8 app_launch(u8 firstrun) {
     app_resume();
     
    }
+
+  // init pages (fill graphics buffers)
+  print_dbg("\r\n pages_init...");
+  pages_init();
+
+  print_dbg("\r\n play_init...");
+  play_init();
+
+  // enable timers
+  print_dbg("\r\n enable app timers...");
+  render_boot("enabling app timers...");
+  init_app_timers();
+
+  // pull up power control pin, enabling soft-powerdown
+  gpio_set_gpio_pin(POWER_CTL_PIN);
+
+  // assign app event handlers
+  print_dbg("\r\n assigning handlers ");
+  render_boot("assigning UI handlers...");
+  assign_bees_event_handlers();
 
   // update page rendering and handlers
   pages_reselect();
