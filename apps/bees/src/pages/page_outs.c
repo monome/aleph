@@ -57,7 +57,7 @@ static void render_line(s16 idx, u8 fg) {
   if(idx >= net_num_outs() ) { return; }
   target = net_get_target(idx);
   srcOpIdx = net_out_op_idx(idx);
-  targetOpIdx = net_out_op_idx(target);
+  targetOpIdx = net_in_op_idx(target);
   if(target >= 0) {
     //// output has target
     // the network doesn't actually execute connections from an op to itself.

@@ -217,7 +217,8 @@ static void show_foot0(void) {
   }
   region_fill(footRegion[0], fill);
   if(altMode) {
-    font_string_region_clip(footRegion[0], "GATHER", 0, 0, 0xf, fill);
+    /// TODO
+    //    font_string_region_clip(footRegion[0], "GATHER", 0, 0, 0xf, fill);
   } else {
     font_string_region_clip(footRegion[0], "STORE", 0, 0, 0xf, fill);
   }
