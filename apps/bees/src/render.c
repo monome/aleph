@@ -346,7 +346,7 @@ void render_to_scroll_line(u8 n, u8 hl) {
   dst = pageScrollRegion->data + dstOff;
   // setup copy
   src = lineRegion->data;
-  dstMax = dst + lineRegion->len - 1;
+  dstMax = dst + lineRegion->len;
   // copy and apply color map based on HL
   if(hl) {
     while(dst < dstMax) {
@@ -381,7 +381,7 @@ void render_scroll_apply_hl(u8 n, u8 hl) {
   while(dstOff >= pageScrollRegion->len) { dstOff -= pageScrollRegion->len; }
   // setup bounds
   dst = pageScrollRegion->data + dstOff;
-  dstMax = dst + lineRegion->len - 1;
+  dstMax = dst + lineRegion->len;
 
   if(hl) {
     while(dst < dstMax) {
@@ -410,22 +410,9 @@ void render_scroll_apply_hl(u8 n, u8 hl) {
   pageScrollRegion->dirty = 1;
 }
 
-// fill scroll line with color
-//extern void render_fill_scroll_line(u8 n, u8 col) {
-  /* u8* dst; */
-  /* u8* dstMax; */
-  /* // data offset in scroll */
-  /* s32 dstOff = pageCenterScroll->byteOff + scrollLines[n]; */
-  /* while(dstOff > pageScrollRegion->len) { dstOff -= pageScrollRegion->len; } */
-  /* // setup bounds */
-  /* dst = pageScrollRegion->data + dstOff; */
-  /* dstMax = dst + lineRegion->len - 1; */
-  //  while(dst < dstMax)
-//}
-
 // scroll character up
 void edit_string_inc_char(char* str, u8 pos) {
-  u8 tmp = str[pos]; 
+  u8 tmp = str[pos];
   if(tmp == 0) { tmp = MIN_EDIT_CHAR; }
   if ( tmp < MAX_EDIT_CHAR ) {
     tmp++;
@@ -437,7 +424,7 @@ void edit_string_inc_char(char* str, u8 pos) {
 
 // scroll character down
 void edit_string_dec_char(char* str, u8 pos) {
-  u8 tmp = str[pos]; 
+  u8 tmp = str[pos];
   if(tmp == 0) { tmp = MAX_EDIT_CHAR; }
   if (tmp > MIN_EDIT_CHAR) {
     tmp--;
