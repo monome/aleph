@@ -76,7 +76,9 @@ extern void play_input(u16 idx) {
     font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
     clearln();
     
-    op_print(lineBuf, net_get_in_value(idx));
+    //    op_print(lineBuf, net_get_in_value(idx));
+    net_get_param_value_string(lineBuf, idx);
+
 
     font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, 0xa, 0);
   }
