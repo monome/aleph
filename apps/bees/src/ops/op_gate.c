@@ -10,7 +10,7 @@ static void op_gate_inc_input(op_gate_t* gate, const s16 idx, const io_t inc);
 
 //-------------------------------------------------
 //----- static vars
-static const char* op_gate_instring = "VALUE   GATE    STORE   ";
+static const char* op_gate_instring = "VAL     GATE    STORE   ";
 static const char* op_gate_outstring = "GATED   ";
 static const char* op_gate_opstring = "GATE";
 
