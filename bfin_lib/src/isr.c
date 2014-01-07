@@ -10,7 +10,7 @@
 #include "isr.h"
 
 //--------- global variables (initialized here)
-// 4 channels of input from ad1836
+// 4 channels of input from codec
 //fract32 in0, in1, in2, in3;
 fract32 in[4] = { 0, 0, 0, 0 };
 // 4 channels of output to ad1836
@@ -43,12 +43,19 @@ void sport0_rx_isr() {
   /*   return;  */
   /* } */
 
+
+
+
+  /////
+  //// TESTING !
+  /*
   if(!processAudio) { 
     READY_HI;
 /// if this interrupt came from DMA1, clear it and continue(W1C)
     if(*pDMA1_IRQ_STATUS & 1) { *pDMA1_IRQ_STATUS = 0x0001; }
     return;
   }
+  */
 
   /// inform the world that we're busy processing an audio frame
   //  BUSY_HI;

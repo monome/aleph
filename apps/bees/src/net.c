@@ -269,6 +269,7 @@ s16 net_add_op(op_id_t opId) {
   u16 ins, outs;
   u8 i;
   op_t* op;
+  s32 numInsSave = net->numIns;
 
   if (net->numOps >= NET_OPS_MAX) {
     return -1;
@@ -302,19 +303,43 @@ s16 net_add_op(op_id_t opId) {
   net->opPoolOffset += op_registry[opId].size;
 
   //---- add inputs and outputs to node list
-    for(i=0; i<ins; ++i) {
-      net->ins[net->numIns].opIdx = net->numOps;
-      net->ins[net->numIns].opInIdx = i;
-      ++(net->numIns);
-    }
+  for(i=0; i<ins; ++i) {
+    net->ins[net->numIns].opIdx = net->numOps;
+    net->ins[net->numIns].opInIdx = i;
+    ++(net->numIns);
+  }
+  
   for(i=0; i<outs; i++) {
     net->outs[net->numOuts].opIdx = net->numOps;
     net->outs[net->numOuts].opOutIdx = i;
     net->outs[net->numOuts].target = -1;
     ++(net->numOuts);
   }
-  ++(net->numOps);
 
+
+  // if we added input nodes, need to adjust connections to DSP params
+  for(i=0; i<outs; i++) {
+    /// have to do this check for initial sysOp add
+    if(net->numOps > 0) {
+      if((net->outs[i].target != 0xffffffff)
+	 && (net->outs[i].target >= numInsSave)) {
+	
+	print_dbg("\r\n adjusting target after op creation; old op count: ");
+	print_dbg_ulong(net->numOps);
+	print_dbg(" , output index: ");
+	print_dbg_ulong(i);
+	print_dbg(" , current target ");
+	print_dbg_ulong(net->outs[i].target);
+	print_dbg(" , count of inputs in new op: ");
+	print_dbg_ulong(ins);
+
+	// preset target, add offset for new inputs
+	net->outs[i].target += ins;
+      }
+    }
+  }
+
+  ++(net->numOps);
   return net->numOps - 1;
 }
 
