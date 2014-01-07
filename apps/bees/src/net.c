@@ -953,6 +953,7 @@ void net_get_param_value_string(char* dst, u32 idx) {
 
 ///////////////
 // test / dbg
+#if 0
 void net_print(void) {
   print_dbg("\r\n net address: 0x");
   print_dbg_hex((u32)(net));
@@ -964,3 +965,4 @@ void net_print(void) {
   print_dbg("\r\n net op count: ");
   print_dbg_ulong(net->numOps);
 }
+#endif
