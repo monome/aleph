@@ -269,6 +269,7 @@ s16 net_add_op(op_id_t opId) {
   u16 ins, outs;
   u8 i;
   op_t* op;
+  u32 numInsSave = net->numIns;
 
   if (net->numOps >= NET_OPS_MAX) {
     return -1;
@@ -302,11 +303,12 @@ s16 net_add_op(op_id_t opId) {
   net->opPoolOffset += op_registry[opId].size;
 
   //---- add inputs and outputs to node list
-    for(i=0; i<ins; ++i) {
-      net->ins[net->numIns].opIdx = net->numOps;
-      net->ins[net->numIns].opInIdx = i;
-      ++(net->numIns);
-    }
+  for(i=0; i<ins; ++i) {
+    net->ins[net->numIns].opIdx = net->numOps;
+    net->ins[net->numIns].opInIdx = i;
+    ++(net->numIns);
+  }
+  
   for(i=0; i<outs; i++) {
     net->outs[net->numOuts].opIdx = net->numOps;
     net->outs[net->numOuts].opOutIdx = i;
@@ -314,6 +316,15 @@ s16 net_add_op(op_id_t opId) {
     ++(net->numOuts);
   }
   ++(net->numOps);
+
+  // if we added input nodes, need to adjust connections to DSP params
+  for(i=0; i<outs; i++) {
+    if(net->outs[i].target >= numInsSave) {
+      // preset target, add offset for new inputs
+      net->outs[i].target += ins;
+    }
+  }
+
 
   return net->numOps - 1;
 }
