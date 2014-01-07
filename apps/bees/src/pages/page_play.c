@@ -49,39 +49,50 @@ static void handle_key_3(s32 val);
 // handlers activate system UI operator nodes.
 
 void handle_key_0(s32 val) {
-  //  print_dbg("\r\n play handler, key 0, op address: 0x");
-  //  print_dbg_hex((u32)opSysSw[0]);
+  //   print_dbg("\r\n play handler, key 0, op address: 0x");
+  //   print_dbg_hex((u32)opSysSw[0]);
    op_sw_sys_input(opSysSw[0], (s8)val);
 }
 
 void handle_key_1(s32 val) {
+  //   print_dbg("\r\n play handler, key 1, op address: 0x");
+  //   print_dbg_hex((u32)opSysSw[1]);
    op_sw_sys_input(opSysSw[1], (s8)val);
 }
 
 void handle_key_2(s32 val) {
+  //   print_dbg("\r\n play handler, key 2, op address: 0x");
+  //   print_dbg_hex((u32)opSysSw[2]);
    op_sw_sys_input(opSysSw[2], (s8)val);
 }
 
 void handle_key_3(s32 val) {
+  //   print_dbg("\r\n play handler, key 3, op address: 0x");
+  //   print_dbg_hex((u32)opSysSw[3]);
    op_sw_sys_input(opSysSw[3], (s8)val);
 }
 
 void handle_enc_0(s32 val) {
   //  print_dbg("\r\n play handler, enc 0, op address: 0x");
   //  print_dbg_hex((u32)opSysEnc[0]);
-
   op_enc_sys_input(opSysEnc[0], (s8)val);
 }
 
 void handle_enc_1(s32 val) {
+  //  print_dbg("\r\n play handler, enc 1, op address: 0x");
+  //  print_dbg_hex((u32)opSysEnc[1]);
    op_enc_sys_input(opSysEnc[1], (s8)val);
 }
 
 void handle_enc_2(s32 val) {
+  //  print_dbg("\r\n play handler, enc 2, op address: 0x");
+  //  print_dbg_hex((u32)opSysEnc[2]);
    op_enc_sys_input(opSysEnc[2], (s8)val);
 }
 
 void handle_enc_3(s32 val) {
+  //  print_dbg("\r\n play handler, enc 3, op address: 0x");
+  //  print_dbg_hex((u32)opSysEnc[3]);
    op_enc_sys_input(opSysEnc[3], (s8)val);
 }
 

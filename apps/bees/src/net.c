@@ -227,6 +227,13 @@ void net_init_onode(u16 idx) {
 // activate an input node with a value
 void net_activate(s16 inIdx, const io_t val, void* op) {
   static inode_t* pIn;
+
+  print_dbg("\r\n net_activate, input idx: ");
+  print_dbg_hex(inIdx);
+  print_dbg(" , value: ");
+  print_dbg_hex(val);
+
+
   if(!netActive) {
     if(op != NULL) {
       // if the net isn't active, dont respond to requests from operators
@@ -282,7 +289,7 @@ s16 net_add_op(op_id_t opId) {
   }
 
   if (op_registry[opId].size > NET_OP_POOL_SIZE - net->opPoolOffset) {
-    print_dbg("\r\n op creation failed; out of memory.");
+    print_dbg("\r\n op creation failed; op memory pool is exhausted.");
     return -1;
   }
 
@@ -329,24 +336,22 @@ s16 net_add_op(op_id_t opId) {
       /* if((net->outs[i].target != -1)     /// have to do this check for initial sysOp add? */
       /* 	 && (net->outs[i].target >= numInsSave)) { */
 
-      print_dbg("\r\n checking output no. ");
-      print_dbg_ulong(i);
-      print_dbg(" ; target: ");
-      print_dbg_ulong(net->outs[i].target);
-      
-      
+      /* print_dbg("\r\n checking output no. "); */
+      /* print_dbg_ulong(i); */
+      /* print_dbg(" ; target: "); */
+      /* print_dbg_ulong(net->outs[i].target); */
+            
       if(net->outs[i].target >= numInsSave) {
-	print_dbg("\r\n adjusting target after op creation; old op count: ");
-	print_dbg_ulong(net->numOps);
-	print_dbg(" , output index: ");
-	print_dbg_ulong(i);
-	print_dbg(" , current target ");
-	print_dbg_ulong(net->outs[i].target);
-	print_dbg(" , count of inputs in new op: ");
-	print_dbg_ulong(ins);
+	/* print_dbg("\r\n adjusting target after op creation; old op count: "); */
+	/* print_dbg_ulong(net->numOps); */
+	/* print_dbg(" , output index: "); */
+	/* print_dbg_ulong(i); */
+	/* print_dbg(" , current target "); */
+	/* print_dbg_ulong(net->outs[i].target); */
+	/* print_dbg(" , count of inputs in new op: "); */
+	/* print_dbg_ulong(ins); */
 
 	// preset target, add offset for new inputs
-	//	net->outs[i].target += ins;
 	net_connect(i, net->outs[i].target + ins);
       }
     }
@@ -487,11 +492,14 @@ void net_connect(u32 oIdx, u32 iIdx) {
   net->outs[oIdx].target = iIdx;
   // FIXME: this could be smarter.
   // but for now, just don't allow an op to connect to itself 
-  // (keep the target in the onode for UI purposes, 
-  // but don't actually update the operator.)
+  // (keep the target in the onode for UI purposes,
+  // but don't actually update the operator output variable)
   if(srcOpIdx == dstOpIdx) {
     return; 
   } 
+  
+  /// something weird is happening!
+  //  value seems to drift on each disconnect/reconnect...?
   net->ops[srcOpIdx]->out[net->outs[oIdx].opOutIdx] = iIdx;
 }
 

@@ -531,6 +531,8 @@ void redraw_ins_preset (u8 idx) {
   u8 i=0;
   u8 n = *pageSelect - 3;
   u8 enabled;
+  io_t opVal;
+  s32 paramVal
   u8 isParam;
 
   while(i<8) {
@@ -540,23 +542,14 @@ void redraw_ins_preset (u8 idx) {
       isParam = ((max - n) <= net_num_params());
       if(isParam) {
 	enabled = preset_param_enabled(preset_get_select(), net_param_idx(n));
+	paramVal = preset_get_selected->params[net_param_idx(n)].value;
+	
+	
       } else {
 	enabled = preset_in_enabled(preset_get_select(), n);
-      }
-      print_dbg("\r\n");
-      print_dbg("\r\n page_ins, preset draw, idx: ");
-      print_dbg_ulong(n);
-      print_dbg(", enabled: ");
-      print_dbg_ulong(enabled);
-      print_dbg(", is parameter: ");
-      print_dbg_ulong(isParam);
-
-      render_line( n, enabled ? 0xa : 0x2 );
-      // TODO: render target value ? urg
-      font_string_region_clip(lineRegion, "   ", LINE_VAL_POS_LONG, 0, 0, 0);
-      // op_print(...
-      // font_string_region(lineRegion...
-      render_to_scroll_line(i, enabled ? 1 : 0);
+	render_line( n, enabled ? 0xa : 0x2 );
+	net_get_param_value_string(lineBuf, idx);
+	font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, 0x5, 0);
     }
     ++i;
     ++n;

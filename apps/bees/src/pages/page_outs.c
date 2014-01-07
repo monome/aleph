@@ -119,6 +119,10 @@ static void render_line(s16 idx, u8 fg) {
 
 // edit the current seleciton
 static void select_edit(s32 inc) {
+  /// TEST
+  if(altMode) { 
+    ;;
+  } else { 
   s16 target = net_get_target(*pageSelect);
   if(inc > 0) {
     // increment target
@@ -141,6 +145,7 @@ static void select_edit(s32 inc) {
   render_line(*pageSelect, 0xf);
   // copy to scroll with highlight
   render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+  }
 }
 
 // scroll the current selection
