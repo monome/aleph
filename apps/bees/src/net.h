@@ -156,6 +156,9 @@ extern void net_send_params(void);
 // get parameter string representations,
 // given string buffer and index in inputs list
 extern void net_get_param_value_string(char* dst, u32 idx);
+// same, with arbitrary value
+extern void net_get_param_value_string_conversion(char* dst, u32 idx, s32 val);
+
 
 // retrigger all inputs
 extern void net_retrigger_inputs(void);

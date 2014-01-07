@@ -61,12 +61,14 @@ static const char emptystring[] = "            ";
 static void add_sys_ops(void);
 static void add_sys_ops(void) {
   /// FIXME: 
-  /* broke scene storage i think. need to either :
+  /* dangerous for scene storage, 
+     will break in the unlikely event that op pool is assigned differently.
+     should either:
      a) reassign these pointers after unpickling 
          probably by index like the old hack, or
      b) don't pickle system ops at all, only their inputs.
          still needs to make a fixed assumption about order.
-   */ 
+   */
 
   // 4 encoders
   net_add_op(eOpEnc);
@@ -248,6 +250,9 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
 
     /// only process for play mode if we're in play mode
     if(pageIdx == ePagePlay) {
+      print_dbg(" , play mode active, ");
+      print_dbg(" , play visibility flag : ");
+      print_dbg_ulong(pIn->play);
       // only process if play-mode-visibility is set
       if(pIn->play) {
 	play_input(inIdx);
@@ -980,6 +985,21 @@ void net_get_param_value_string(char* dst, u32 idx) {
 		  net->params[idx].data.value
 		  );
 }
+
+
+// same, with arbitrary value
+void net_get_param_value_string_conversion(char* dst, u32 idx, s32 val) {
+  //// FIXME
+  /// get param index! rrrgg
+  idx -= net->numIns;
+  /// lookup representation from stored input value and print to buf
+  scaler_get_str( dst,	
+		  &(net->params[idx].scaler), 
+		  val
+		  );
+}
+
+/// scale
 
 ///////////////
 // test / dbg

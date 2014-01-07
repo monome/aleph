@@ -9,7 +9,6 @@
 typedef struct op_enc_struct {
   op_t super;
   io_t val;
-  //  volatile io_t move;
   volatile io_t step;
   volatile io_t min;
   volatile io_t max;

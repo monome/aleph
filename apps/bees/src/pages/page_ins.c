@@ -526,31 +526,69 @@ void redraw_ins(void) {
 
 // redraw based on provisional preset seleciton
 void redraw_ins_preset (u8 idx) {
-  //  static char numBuf[13] = "            ";
   s32 max = net_num_ins() - 1;
   u8 i=0;
   u8 n = *pageSelect - 3;
   u8 enabled;
   io_t opVal;
-  s32 paramVal
-  u8 isParam;
+  s32 paramVal;
+  //  u8 isParam;
+  u8 fg;
+  s16 opIdx;
 
   while(i<8) {
-    ///    in = net_get_in_preset(n);
-        //// no, more complicated to get target inclusion... rrg
+    region_fill(lineRegion, 0x0);
+
+    opIdx = net_in_op_idx(idx);  
+
     if(n <= max) {
-      isParam = ((max - n) <= net_num_params());
-      if(isParam) {
+      //      isParam = ((max - n) <= net_num_params());
+      if(opIdx < 0 ) {
+
+	clearln();
+	appendln_idx_lj( (int)net_param_idx(n)); 
+	appendln_char('.');
+	appendln( net_in_name(n)); 
+	endln();
+	font_string_region_clip(lineRegion, lineBuf, 4, 0, 0xa, 0);
+	clearln();
+
 	enabled = preset_param_enabled(preset_get_select(), net_param_idx(n));
-	paramVal = preset_get_selected->params[net_param_idx(n)].value;
-	
-	
+	if(enabled) {
+	  paramVal = preset_get_selected()->params[net_param_idx(n)].value;	
+	  net_get_param_value_string_conversion(lineBuf, n, paramVal);
+	  fg = 0xf;
+	} else {
+	  net_get_param_value_string(lineBuf, n);
+	  fg = 0x5;
+	}
+	font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, fg, 0);
       } else {
+
+	// op input
+	clearln();
+	appendln_idx_lj(opIdx);
+	appendln_char('.');
+	appendln( net_op_name(opIdx) );
+	appendln_char('/');
+	appendln( net_in_name(n) );
+	endln();
+
+	font_string_region_clip(lineRegion, lineBuf, 4, 0, 0xa, 0);
+
 	enabled = preset_in_enabled(preset_get_select(), n);
-	render_line( n, enabled ? 0xa : 0x2 );
-	net_get_param_value_string(lineBuf, idx);
-	font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, 0x5, 0);
+	if(enabled) {
+	  opVal = preset_get_selected()->ins[n].value;
+	  fg = 0xf;
+	} else {
+	  opVal = net_get_in_value(n);
+	  fg = 0x5;
+	}
+	op_print(lineBuf, opVal);
+	font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_SHORT, 0, fg, 0);
+      }
     }
+    render_to_scroll_line(i, n == *pageSelect ?  1 : 0);
     ++i;
     ++n;
   }
