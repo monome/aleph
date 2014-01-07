@@ -30,18 +30,18 @@ typedef struct _presetOut {
 } presetOut_t;
 
 
-// minimal storage for parameter
-typedef struct _presetParam {
-  io_t value;
-  s16 idx;
-  u8 enabled;
-} presetParam_t;
+/* // minimal storage for parameter */
+/* typedef struct _presetParam { */
+/*   io_t value; */
+/*   s16 idx; */
+/*   u8 enabled; */
+/* } presetParam_t; */
 
 // preset structure
 typedef struct _preset {
   presetIn_t ins[NET_INS_MAX];
   presetOut_t outs[NET_OUTS_MAX];
-  presetParam_t params[NET_PARAMS_MAX];
+  //  presetParam_t params[NET_PARAMS_MAX];
   char name[PRESET_NAME_LEN];  
 } preset_t;
 
@@ -87,7 +87,7 @@ extern u8 preset_in_enabled(u32 preIdx, u32 inIdx);
 // get inclusion flag for given output, given preset
 extern u8 preset_out_enabled(u32 preIdx, u32 inIdx);
 // get inclusion flag for given param, given preset
-extern u8 preset_param_enabled(u32 preIdx, u32 inIdx);
+//extern u8 preset_param_enabled(u32 preIdx, u32 inIdx);
 
 //---- set
 // get inclusion flag for given input, given preset

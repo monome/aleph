@@ -404,11 +404,12 @@ void handle_key_0(s32 val) {
     if(check_key(0)) {
       // store in preset
       net_set_in_preset(*pageSelect, 1);
-      inPreset = 1;
+      //      inPreset = 1;
       preset_store_in(preset_get_select(), *pageSelect);
       // redraw selected line
-      render_line(*pageSelect, 0xa);
-      render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
+      render_line(*pageSelect, 0xf);
+      render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+	//      render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
       // TODO: store directly in scene?
     }
   }
@@ -431,7 +432,7 @@ void handle_key_1(s32 val) {
 	// show preset name in head region
 	draw_preset_name();
 	// include / exclude in preset
-	inPreset = net_toggle_in_preset(*pageSelect);
+	//	inPreset = net_toggle_in_preset(*pageSelect);
 	// render to tmp buffer
 	render_line(*pageSelect, 0xf);
 	// copy to scroll with highlight
@@ -532,41 +533,36 @@ void redraw_ins_preset (u8 idx) {
   u8 enabled;
   io_t opVal;
   s32 paramVal;
-  //  u8 isParam;
-  u8 fg;
   s16 opIdx;
 
   while(i<8) {
     region_fill(lineRegion, 0x0);
 
-    opIdx = net_in_op_idx(idx);  
+    opIdx = net_in_op_idx(n);  
 
     if(n <= max) {
-      //      isParam = ((max - n) <= net_num_params());
+      enabled = net_get_in_preset(n);
       if(opIdx < 0 ) {
-	
 	// parameter...
-
 	clearln();
 	appendln_idx_lj( (int)net_param_idx(n)); 
 	appendln_char('.');
-	appendln( net_in_name(n)); 
+	appendln( net_in_name(n)) ; 
 	endln();
-	font_string_region_clip(lineRegion, lineBuf, 4, 0, 0xa, 0);
+	font_string_region_clip(lineRegion, lineBuf, 4, 0, 0xf, 0);
 	clearln();
 
-	enabled = preset_param_enabled(preset_get_select(), net_param_idx(n));
 	if(enabled) {
-	  paramVal = preset_get_selected()->params[net_param_idx(n)].value;	
-	  net_get_param_value_string_conversion(lineBuf, n, paramVal);
-	  fg = 0xf;
+	  paramVal = preset_get_selected()->ins[n].value;
+	  net_get_param_value_string_conversion(lineBuf, net_param_idx(n), paramVal);
+	  //	  print_dbg("\r\n 0x");
+	  //	  print_dbg_hex(paramVal);
 	} else {
 	  net_get_param_value_string(lineBuf, n);
-	  fg = 0x5;
+	  //	  print_dbg("\r\n ... ");
 	}
-	font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, fg, 0);
+	font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, 0xf, 0);
       } else {
-
 	// op input
 	clearln();
 	appendln_idx_lj(opIdx);
@@ -576,23 +572,29 @@ void redraw_ins_preset (u8 idx) {
 	appendln( net_in_name(n) );
 	endln();
 
-	font_string_region_clip(lineRegion, lineBuf, 4, 0, 0xa, 0);
+	font_string_region_clip(lineRegion, lineBuf, 4, 0, 0xf, 0);
 
-	enabled = preset_in_enabled(preset_get_select(), n);
 	if(enabled) {
 	  opVal = preset_get_selected()->ins[n].value;
-	  fg = 0xf;
+	  //	  print_dbg("\r\n 0x");
+	  //	  print_dbg_hex((u32)opVal);
 	} else {
 	  opVal = net_get_in_value(n);
-	  fg = 0x5;
+	  //	  print_dbg("\r\n ...");
 	}
 	op_print(lineBuf, opVal);
-	font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_SHORT, 0, fg, 0);
+
+	font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_SHORT, 0, 0xf, 0);
+      }
+      // draw something to indicate preset inclusion
+      if(enabled) {
+	font_string_region_clip(lineRegion, ".", 126, 0, 0xf, 0);
       }
     }
-    render_to_scroll_line(i, n == *pageSelect ?  1 : 0);
+    render_to_scroll_line(i, 0);
     ++i;
     ++n;
   }
+  print_dbg("\r\n\r\n");
   draw_preset_name();
 }

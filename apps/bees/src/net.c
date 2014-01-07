@@ -703,7 +703,13 @@ io_t net_inc_in_value(s32 inIdx, io_t inc) {
 u8 net_toggle_in_preset(u32 id) {
   //  net->ins[id].preset ^= 1;
   //  return net->ins[id].preset;
-  return preset_get_selected()->ins[id].enabled ^= 1;
+  /* if(id >= net->numIns) {  */
+  /*   id -= net->numIns;  */
+    
+  /*   return preset_get_selected()->params[id].enabled ^= 1; */
+  /* } else { */
+    return preset_get_selected()->ins[id].enabled ^= 1;
+    //  }
 }
 
 // toggle preset inclusion for output
@@ -716,7 +722,12 @@ u8 net_toggle_out_preset(u32 id) {
 // set preset inclusion for input
 void net_set_in_preset(u32 id, u8 val) {
   //  net->ins[id].preset = val;
-  preset_get_selected()->ins[id].enabled = 1;
+  /* if(id >= net->numIns) {  */
+  /*   id -= net->numIns;  */
+  /*   preset_get_selected()->params[id].enabled = val; */
+  /* } else { */
+    preset_get_selected()->ins[id].enabled = val;
+    //  }
 }
 
   // set preset inclusion for output
@@ -728,7 +739,12 @@ void net_set_out_preset(u32 id, u8 val) {
 // get preset inclusion for input
 u8 net_get_in_preset(u32 id) {
   //  return net->ins[id].preset;
-  return preset_get_selected()->ins[id].enabled;
+  /* if(id >= net->numIns) {  */
+  /*   id -= net->numIns;  */
+  /*   return preset_get_selected()->params[id].enabled; */
+  /* } else { */
+    return preset_get_selected()->ins[id].enabled;
+    //  }
 }
 
 // get preset inclusion for output
@@ -989,9 +1005,6 @@ void net_get_param_value_string(char* dst, u32 idx) {
 
 // same, with arbitrary value
 void net_get_param_value_string_conversion(char* dst, u32 idx, s32 val) {
-  //// FIXME
-  /// get param index! rrrgg
-  idx -= net->numIns;
   /// lookup representation from stored input value and print to buf
   scaler_get_str( dst,	
 		  &(net->params[idx].scaler), 

@@ -98,11 +98,11 @@ void presets_init(void) {
     }
 
     // empty params
-    for(j=0; j<NET_PARAMS_MAX; ++j) {
-      presets[i].params[j].idx = -1;
-      presets[i].params[j].value = 0;
-      presets[i].params[j].enabled = 0;
-    } 
+    /* for(j=0; j<NET_PARAMS_MAX; ++j) { */
+    /*   presets[i].params[j].idx = -1; */
+    /*   presets[i].params[j].value = 0; */
+    /*   presets[i].params[j].enabled = 0; */
+    /* }  */
   }
 }
 
@@ -112,7 +112,8 @@ void presets_deinit(void) {
 
 // store a particular input
 void preset_store_in(u32 preIdx, u32 inIdx) {  
-  presets[preIdx].ins[inIdx].enabled = net_get_in_preset(inIdx);
+  //  presets[preIdx].ins[inIdx].enabled = net_get_in_preset(inIdx);
+  presets[preIdx].ins[inIdx].enabled = 1;
   presets[preIdx].ins[inIdx].value = net_get_in_value(inIdx);
 }
 
@@ -140,12 +141,12 @@ void preset_store(u32 preIdx) {
     }
   }
   // params
-  for(i=0; i<net_num_params(); ++i) {
-    if(get_param_preset(i)) {
-      presets[preIdx].params[i].value =  get_param_value( i );
-      presets[preIdx].params[i].enabled = 1;
-    }
-  }
+  /* for(i=0; i<net_num_params(); ++i) { */
+  /*   if(get_param_preset(i)) { */
+  /*     presets[preIdx].params[i].value =  get_param_value( i ); */
+  /*     presets[preIdx].params[i].enabled = 1; */
+  /*   } */
+  /* } */
   select = preIdx;
 }
 
@@ -173,17 +174,17 @@ void preset_recall(u32 preIdx) {
     }
   }
 
-  print_dbg("\r\n preset_recall PARAMS");
-  // params
-  for(i=0; i<net_num_params(); ++i) {
-    if(presets[preIdx].params[i].enabled) {
+  /* print_dbg("\r\n preset_recall PARAMS"); */
+  /* // params */
+  /* for(i=0; i<net_num_params(); ++i) { */
+  /*   if(presets[preIdx].params[i].enabled) { */
 
-      print_dbg("\r\n recalling enabled input in target preset, idx: ");
-      print_dbg_ulong(i);
+  /*     print_dbg("\r\n recalling enabled input in target preset, idx: "); */
+  /*     print_dbg_ulong(i); */
 
-      set_param_value( i, presets[preIdx].params[i].value );
-    }
-  }
+  /*     set_param_value( i, presets[preIdx].params[i].value ); */
+  /*   } */
+  /* } */
   select = preIdx;
 }
 
@@ -212,13 +213,13 @@ u8* presets_pickle(u8* dst) {
       dst = pickle_32(presets[i].outs[j].outIdx, dst);
       dst = pickle_32(presets[i].outs[j].enabled, dst);
     }
-    // pickle params
-    for(j=0; j<NET_PARAMS_MAX; j++) {
-      // waste some space for 4-byte alignment
-      dst = pickle_32(presets[i].params[j].value, dst);
-      dst = pickle_32(presets[i].params[j].idx, dst);
-      dst = pickle_32(presets[i].params[j].enabled, dst);
-    }
+    /* // pickle params */
+    /* for(j=0; j<NET_PARAMS_MAX; j++) { */
+    /*   // waste some space for 4-byte alignment */
+    /*   dst = pickle_32(presets[i].params[j].value, dst); */
+    /*   dst = pickle_32(presets[i].params[j].idx, dst); */
+    /*   dst = pickle_32(presets[i].params[j].enabled, dst); */
+    /* } */
   }
   return dst;  
 }
@@ -249,15 +250,15 @@ const u8* presets_unpickle(const u8* src) {
       presets[i].outs[j].enabled = v32;
     }
     // unpickle params
-    for(j=0; j<NET_PARAMS_MAX; j++) {
-      // waste some space for 4-byte alignment
-      src = unpickle_32(src, &v32);
-      presets[i].params[j].value = (io_t)v32;
-      src = unpickle_32(src, &v32);
-      presets[i].params[j].idx = v32;
-      src = unpickle_32(src, &v32);
-      presets[i].params[j].enabled = v32;
-    }
+    /* for(j=0; j<NET_PARAMS_MAX; j++) { */
+    /*   // waste some space for 4-byte alignment */
+    /*   src = unpickle_32(src, &v32); */
+    /*   presets[i].params[j].value = (io_t)v32; */
+    /*   src = unpickle_32(src, &v32); */
+    /*   presets[i].params[j].idx = v32; */
+    /*   src = unpickle_32(src, &v32); */
+    /*   presets[i].params[j].enabled = v32; */
+    /* } */
   }
   return src;
 }
@@ -306,9 +307,9 @@ extern u8 preset_out_enabled(u32 preIdx, u32 inIdx) {
   return presets[preIdx].ins[inIdx].enabled;
 }
 
-// get inclusion flag for given param, given preset
-extern u8 preset_param_enabled(u32 preIdx, u32 inIdx) {
-  return presets[preIdx].ins[inIdx].enabled;
-}
+/* // get inclusion flag for given param, given preset */
+/* extern u8 preset_param_enabled(u32 preIdx, u32 idx) { */
+/*   return presets[preIdx].params[idx].enabled; */
+/* } */
 
 
