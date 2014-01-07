@@ -272,6 +272,10 @@ s16 net_add_op(op_id_t opId) {
   u8 i;
   op_t* op;
   s32 numInsSave = net->numIns;
+  s32 numOutsSave = net->numOuts;
+
+  print_dbg("\r\n adding operator; old input count: ");
+  print_dbg_ulong(numInsSave);
 
   if (net->numOps >= NET_OPS_MAX) {
     return -1;
@@ -318,14 +322,20 @@ s16 net_add_op(op_id_t opId) {
     ++(net->numOuts);
   }
 
+  if(net->numOps > 0) {
+    // if we added input nodes, need to adjust connections to DSP params
+    for(i=0; i < numOutsSave; i++) {
 
-  // if we added input nodes, need to adjust connections to DSP params
-  for(i=0; i<outs; i++) {
-    /// have to do this check for initial sysOp add
-    if(net->numOps > 0) {
-      if((net->outs[i].target != 0xffffffff)
-	 && (net->outs[i].target >= numInsSave)) {
-	
+      /* if((net->outs[i].target != -1)     /// have to do this check for initial sysOp add? */
+      /* 	 && (net->outs[i].target >= numInsSave)) { */
+
+      print_dbg("\r\n checking output no. ");
+      print_dbg_ulong(i);
+      print_dbg(" ; target: ");
+      print_dbg_ulong(net->outs[i].target);
+      
+      
+      if(net->outs[i].target >= numInsSave) {
 	print_dbg("\r\n adjusting target after op creation; old op count: ");
 	print_dbg_ulong(net->numOps);
 	print_dbg(" , output index: ");
@@ -336,9 +346,13 @@ s16 net_add_op(op_id_t opId) {
 	print_dbg_ulong(ins);
 
 	// preset target, add offset for new inputs
-	net->outs[i].target += ins;
+	//	net->outs[i].target += ins;
+	net_connect(i, net->outs[i].target + ins);
       }
     }
+
+    // 
+
   }
 
   ++(net->numOps);
@@ -472,7 +486,7 @@ void net_connect(u32 oIdx, u32 iIdx) {
 
   net->outs[oIdx].target = iIdx;
   // FIXME: this could be smarter.
-  // but for now, just don't an op to connect to itself 
+  // but for now, just don't allow an op to connect to itself 
   // (keep the target in the onode for UI purposes, 
   // but don't actually update the operator.)
   if(srcOpIdx == dstOpIdx) {

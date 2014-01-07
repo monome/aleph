@@ -83,8 +83,8 @@ void op_accum_init(void* op) {
 
 // input increment
 static void op_accum_in_inc(op_accum_t* accum, const io_t v) { 
-
-  accum->val = op_add(accum->val, v);
+  accum->inc = v;
+  accum->val = op_sadd(accum->val, v);
   op_accum_wrap_out(accum);
 }
 

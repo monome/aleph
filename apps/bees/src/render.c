@@ -20,6 +20,7 @@
 // avr32
 #include "app.h"
 #include "font.h"
+#include "preset.h"
 #include "region.h"
 #include "screen.h"
 
@@ -461,4 +462,12 @@ void render_edit_string(region* reg, char* str, u8 len, u8 cursor) {
     }
   }
   reg->dirty = 1;
+}
+
+
+// draw preset name in header
+void draw_preset_name(void) {
+  font_string_region_clip(headRegion, "                  ", 64, 0, 0, 0);
+  font_string_region_clip(headRegion, preset_name((u8)preset_get_select()), 64, 0, 0x5, 0);
+  headRegion->dirty = 1;
 }

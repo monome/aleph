@@ -127,5 +127,8 @@ extern void render_edit_string( region* reg, char* str, u8 len, u8 cursor);
 extern void edit_string_inc_char(char* str, u8 pos);
 extern void edit_string_dec_char(char* str, u8 pos);
 
+// draw preset name in header
+extern void draw_preset_name(void);
+
 
 #endif // header guard

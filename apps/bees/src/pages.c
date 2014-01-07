@@ -161,10 +161,3 @@ u8 pages_toggle_play(void) {
   }
   return ret;
 }
-
-// draw preset name in header
-void draw_preset_name(void) {
-  font_string_region_clip(headRegion, "                  ", 64, 0, 0, 0);
-  font_string_region_clip(headRegion, preset_name((u8)preset_get_select()), 64, 0, 0x5, 0);
-  headRegion->dirty = 1;
-}

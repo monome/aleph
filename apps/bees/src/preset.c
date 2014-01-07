@@ -32,7 +32,7 @@
 preset_t* presets;
 
 // read/write selection
-s32 select = -1;
+s32 select = 0;
 
 //------------------------------
 //---- static func

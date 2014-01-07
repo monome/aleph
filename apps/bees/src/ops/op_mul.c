@@ -44,6 +44,7 @@ void op_mul_init(void* mem) {
   mul->super.inString = op_mul_instring;
   mul->super.outString = op_mul_outstring;
   mul->super.type = eOpMul;  
+
   mul->in_val[0] = &(mul->a);
   mul->in_val[1] = &(mul->b);
   mul->in_val[2] = &(mul->btrig);
