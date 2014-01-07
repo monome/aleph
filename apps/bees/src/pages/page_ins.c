@@ -544,6 +544,8 @@ void redraw_ins_preset (u8 idx) {
     if(n <= max) {
       //      isParam = ((max - n) <= net_num_params());
       if(opIdx < 0 ) {
+	
+	// parameter...
 
 	clearln();
 	appendln_idx_lj( (int)net_param_idx(n)); 
