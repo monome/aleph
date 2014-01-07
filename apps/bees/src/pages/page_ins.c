@@ -30,9 +30,9 @@ static scroll centerScroll;
 // static u8 playFilter = 0;
 
 // selection-included-in-preset flag (read from network on selection)
-static u8 inPreset = 0;
+// static u8 inPreset = 0;
 // selection-included-in-play flag (read from network on selection)
-static u8 inPlay = 0;
+//static u8 inPlay = 0;
 // we are in preset=selection momentary mode
 static u8 inPresetSelect = 0;
 // selected preset
@@ -152,9 +152,9 @@ static void select_scroll(s32 dir) {
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
     // update preset-inclusion flag
-    inPreset = (u8)net_get_in_preset((u32)(*pageSelect));
+    //inPreset = (u8)net_get_in_preset((u32)(*pageSelect));
     // update play-inclusion flag
-    inPlay = (u8)net_get_in_play((u32)(*pageSelect));
+    //    inPlay = (u8)net_get_in_play((u32)(*pageSelect));
    
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
@@ -188,9 +188,9 @@ static void select_scroll(s32 dir) {
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
     // update preset-inclusion flag
-    inPreset = (u8)net_get_in_preset((u32)(*pageSelect));
+    //inPreset = (u8)net_get_in_preset((u32)(*pageSelect));
     // update play-inclusion flag
-    inPlay = (u8)net_get_in_play((u32)(*pageSelect));
+    //    inPlay = (u8)net_get_in_play((u32)(*pageSelect));
     // add new content at bottom of screen
     newIdx = newSel + SCROLL_LINES_ABOVE;
 
@@ -234,13 +234,13 @@ static void show_foot1(void) {
   }
   region_fill(footRegion[1], fill);
   if(altMode) {
-    if(inPlay) {
+    if(net_get_in_play(*pageSelect)) {
       font_string_region_clip(footRegion[1], "HIDE", 0, 0, 0xf, fill);
     } else {
       font_string_region_clip(footRegion[1], "SHOW", 0, 0, 0xf, fill);
     }
   } else {
-    if(inPreset) {
+    if(net_get_in_preset(*pageSelect)) {
       font_string_region_clip(footRegion[1], "EXC", 0, 0, 0xf, fill);
     } else {
       font_string_region_clip(footRegion[1], "INC", 0, 0, 0xf, fill);
@@ -421,7 +421,8 @@ void handle_key_1(s32 val) {
     if(altMode) {
       if(check_key(1)) {
 	// show / hide on play screen
-	inPlay = net_toggle_in_play(*pageSelect);
+	//	inPlay = net_toggle_in_play(*pageSelect);
+	net_toggle_in_play(*pageSelect);
 	// render to tmp buffer
 	render_line(*pageSelect, 0xf);
 	// copy to scroll with highlight
@@ -433,6 +434,7 @@ void handle_key_1(s32 val) {
 	draw_preset_name();
 	// include / exclude in preset
 	//	inPreset = net_toggle_in_preset(*pageSelect);
+	net_toggle_in_preset(*pageSelect);
 	// render to tmp buffer
 	render_line(*pageSelect, 0xf);
 	// copy to scroll with highlight
