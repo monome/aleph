@@ -50,7 +50,7 @@ void op_mul_init(void* mem) {
   mul->in_val[2] = &(mul->btrig);
 
   mul->a = 0;
-  mul->b = 0;
+  mul->b = 1;
   mul->btrig = 0;
 }
 
