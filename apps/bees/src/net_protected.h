@@ -38,7 +38,7 @@ typedef struct _inode {
   // input index in parent op list
   u8 opInIdx;
   // preset inclusion flag
-  u8 preset;
+  //  u8 preset;
   // play inclusion flag
   u8 play;
   //} __attribute__((packed)) inode_t;
@@ -47,7 +47,7 @@ typedef struct _inode {
 // output node type (index into inode list)
 typedef struct _onode {
   // preset inclusion flag
-  u8 preset;
+  //  u8 preset;
   // output idx in parent op's output list
   u8 opOutIdx;
   // target input idx in net list

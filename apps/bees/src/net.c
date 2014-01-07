@@ -29,6 +29,7 @@
 #include "pages.h"
 #include "param.h"
 #include "play.h"
+#include "preset.h"
 #include "util.h"
 
 //=========================================
@@ -108,7 +109,7 @@ static u8* onode_pickle(onode_t* out, u8* dst) {
   // parent op's index in net list
   dst = pickle_32((u32)(out->opIdx), dst);
   // preset inclusion flag ; cast to 4 bytes for alignment
-  dst = pickle_32((u32)(out->preset), dst);
+  //  dst = pickle_32((u32)(out->preset), dst);
   return dst;
 }
 
@@ -125,15 +126,16 @@ static const u8* onode_unpickle(const u8* src, onode_t* out) {
   src = unpickle_32(src, &v32);
   out->opIdx = (s32)v32;
   // preset flag: 32 bits for alignment
-  src = unpickle_32(src, &v32);
-  out->preset = (u8)v32;
+  //  src = unpickle_32(src, &v32);
+  //  out->preset = (u8)v32;
   return src;
 }
 
 static u8* inode_pickle(inode_t* in, u8* dst) {
   /// don't need to pickle indices because we recreate the op list from scratch
   // preset inclusion flag
-  *dst++ = in->preset;
+  //// this is a preset variable
+  //  *dst++ = in->preset;
   // play inclusion flag
   *dst++ = in->play;
   // dummy byte for alignment
@@ -146,7 +148,7 @@ static u8* inode_pickle(inode_t* in, u8* dst) {
 static const u8* inode_unpickle(const u8* src, inode_t* in) {
   /// don't need to pickle indices because we recreate the op list from scratch
   // only need these flags:
-  in->preset = *src++;
+  //  in->preset = *src++;
   // play inclusion flag
   in->play = *src++;
   // dummy byte for alignment
@@ -211,7 +213,7 @@ void net_deinit(void) {
 // initialize an input node
 void net_init_inode(u16 idx) {
   net->ins[idx].opIdx = -1;
-  net->ins[idx].preset = 0;
+  //  net->ins[idx].preset = 0;
   net->ins[idx].play = 0;
 }
 
@@ -219,7 +221,7 @@ void net_init_inode(u16 idx) {
 void net_init_onode(u16 idx) {
   net->outs[idx].opIdx = -1;
   net->outs[idx].target = -1;
-  net->outs[idx].preset = 0;
+  //  net->outs[idx].preset = 0;
 }
 
 // activate an input node with a value
@@ -672,34 +674,40 @@ io_t net_inc_in_value(s32 inIdx, io_t inc) {
 
 // toggle preset inclusion for input
 u8 net_toggle_in_preset(u32 id) {
-  net->ins[id].preset ^= 1;
-  return net->ins[id].preset;
+  //  net->ins[id].preset ^= 1;
+  //  return net->ins[id].preset;
+  return preset_get_selected()->ins[id].enabled ^= 1;
 }
 
 // toggle preset inclusion for output
 u8 net_toggle_out_preset(u32 id) {
-  net->outs[id].preset ^= 1;
-  return net->outs[id].preset;
+  //  net->outs[id].preset ^= 1;
+  //  return net->outs[id].preset;
+  return preset_get_selected()->outs[id].enabled ^= 1;
 }
 
 // set preset inclusion for input
 void net_set_in_preset(u32 id, u8 val) {
-  net->ins[id].preset = val;
+  //  net->ins[id].preset = val;
+  preset_get_selected()->ins[id].enabled = 1;
 }
 
-// set preset inclusion for output
-void net_set_out_preset(u32 outIdx, u8 val) {
-  net->outs[outIdx].preset = val;
+  // set preset inclusion for output
+void net_set_out_preset(u32 id, u8 val) {
+  //  net->outs[outIdx].preset = val;
+  preset_get_selected()->outs[id].enabled = val;
 }
 
 // get preset inclusion for input
 u8 net_get_in_preset(u32 id) {
-  return net->ins[id].preset;
+  //  return net->ins[id].preset;
+  return preset_get_selected()->ins[id].enabled;
 }
 
 // get preset inclusion for output
 u8 net_get_out_preset(u32 id) {
-  return net->outs[id].preset;
+  //  return net->outs[id].preset;
+  return preset_get_selected()->outs[id].enabled = 1;
 }
 
 

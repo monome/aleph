@@ -31,6 +31,9 @@ static s8 cursor = 0;
 // max index
 static const s32 maxPresetIdx = NET_PRESETS_MAX - 1;
 
+// constant pointer to this page's selection
+static s16* const pageSelect = &(pages[ePagePresets].select);
+
 //-------------------------
 //---- static funcs
 
@@ -79,17 +82,17 @@ static void select_scroll(s32 dir) {
 
   if(dir < 0) {
     /// SCROLL DOWN
-    if(curPage->select == 0) {
+    if(*pageSelect == 0) {
       return;
     }
     // remove highlight from old center
     //    render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
     // redraw center row without editing cursor, etc
-    render_line(curPage->select, 0xa);
+    render_line(*pageSelect, 0xa);
     // copy to scroll
     render_to_scroll_center();
-    newSel = curPage->select - 1;
-    curPage->select = newSel;    
+    newSel = *pageSelect - 1;
+    *pageSelect = newSel;    
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
     if(newIdx < 0) { 
@@ -107,14 +110,14 @@ static void select_scroll(s32 dir) {
   } else {
     // SCROLL UP
     // if selection is already max, do nothing 
-    if(curPage->select == (maxPresetIdx) ) {
+    if(*pageSelect == (maxPresetIdx) ) {
       return;
     }
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
     // increment selection
-    newSel = curPage->select + 1;
-    curPage->select = newSel;    
+    newSel = *pageSelect + 1;
+    *pageSelect = newSel;    
     // add new content at bottom of screen
     newIdx = newSel + SCROLL_LINES_ABOVE;
     if(newIdx > maxPresetIdx) { 
@@ -148,7 +151,7 @@ static void redraw_lines(void) {
 void handle_key_0(s32 val) {
   if(val == 0) { return; }
   if(check_key(0)) {
-    preset_store(curPage->select);
+    preset_store(*pageSelect);
   }
   show_foot();
 }
@@ -157,7 +160,7 @@ void handle_key_0(s32 val) {
 void handle_key_1(s32 val) {
   if(val == 1) { return; }
   if(check_key(1)) {
-    preset_recall(curPage->select);
+    preset_recall(*pageSelect);
   }
   show_foot();
 }
@@ -174,14 +177,14 @@ void handle_key_3(s32 val) {
 void handle_enc_0(s32 val) {
   
   if(val > 0) {
-    edit_string_inc_char(preset_name(curPage->select), cursor);
+    edit_string_inc_char(preset_name(*pageSelect), cursor);
   } else {
-    edit_string_dec_char(preset_name(curPage->select), cursor);
+    edit_string_dec_char(preset_name(*pageSelect), cursor);
   }
   print_dbg("\r\b edited preset name: ");
-  print_dbg(preset_name(curPage->select));
+  print_dbg(preset_name(*pageSelect));
 
-  render_edit_string(lineRegion, preset_name(curPage->select), PRESET_NAME_LEN, cursor);
+  render_edit_string(lineRegion, preset_name(*pageSelect), PRESET_NAME_LEN, cursor);
   render_to_scroll_line(SCROLL_CENTER_LINE, 0);
   
 }
@@ -201,10 +204,10 @@ void handle_enc_1(s32 val) {
     } 
   }
 
-  if(preset_name(curPage->select)[cursor] == '\0') { 
-    preset_name(curPage->select)[cursor] = '_';
+  if(preset_name(*pageSelect)[cursor] == '\0') { 
+    preset_name(*pageSelect)[cursor] = '_';
   }
-  render_edit_string(lineRegion, preset_name(curPage->select), PRESET_NAME_LEN, cursor);
+  render_edit_string(lineRegion, preset_name(*pageSelect), PRESET_NAME_LEN, cursor);
   render_to_scroll_line(SCROLL_CENTER_LINE, 0);
   
   
@@ -329,10 +332,10 @@ void select_presets(void) {
 // redraw all lines, based on current selection
 void redraw_presets(void) {
   u8 i=0;
-  u8 n = curPage->select - 3;
+  u8 n = *pageSelect - 3;
   while(i<8) {
     render_line( n, 0xa );
-    render_to_scroll_line(i, n == curPage->select ? 1 : 0);
+    render_to_scroll_line(i, n == *pageSelect ? 1 : 0);
     ++i;
     ++n;
   }

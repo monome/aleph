@@ -9,6 +9,7 @@
 #include "handler.h"
 #include "net.h"
 #include "pages.h"
+#include "preset.h"
 #include "render.h"
 
 //====================================
@@ -25,6 +26,10 @@ static scroll centerScroll;
 static u8 inPreset = 0;
 // in clear operation
 static u8 inClear = 0;
+
+// kludge:
+// constant pointer to this page's selection
+static s16* const pageSelect = &(pages[ePageOuts].select);
 
 //==========================================
 //===== static function declarations
@@ -114,7 +119,7 @@ static void render_line(s16 idx, u8 fg) {
 
 // edit the current seleciton
 static void select_edit(s32 inc) {
-  s16 target = net_get_target(curPage->select);
+  s16 target = net_get_target(*pageSelect);
   if(inc > 0) {
     // increment target
     ++target;
@@ -130,10 +135,10 @@ static void select_edit(s32 inc) {
     }
   }
 
-  net_connect(curPage->select, target);
+  net_connect(*pageSelect, target);
 
   // render to tmp buffer
-  render_line(curPage->select, 0xf);
+  render_line(*pageSelect, 0xf);
   // copy to scroll with highlight
   render_to_scroll_line(SCROLL_CENTER_LINE, 1);
 }
@@ -150,20 +155,20 @@ static void select_scroll(s32 dir) {
   if(dir < 0) {
     /// SCROLL DOWN
     // if selection is already zero, do nothing 
-    if(curPage->select == 0) {
+    if(*pageSelect == 0) {
       //      print_dbg("\r\n reached min selection in inputs scroll. ");
       return;
     }
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
     // decrement selection
-    newSel = curPage->select - 1;
+    newSel = *pageSelect - 1;
     ///// these bounds checks shouldn't really be needed here...
     //    if(newSel < 0) { newSel = 0; }
     //    if(newSel > max ) { newSel = max; }
-    curPage->select = newSel;    
+    *pageSelect = newSel;    
     // update preset-inclusion flag
-    inPreset = (u8)net_get_out_preset((u32)(curPage->select));
+    inPreset = (u8)net_get_out_preset((u32)(*pageSelect));
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
     if(newIdx < 0) { 
@@ -181,21 +186,21 @@ static void select_scroll(s32 dir) {
   } else {
     // SCROLL UP
     // if selection is already max, do nothing 
-    if(curPage->select == max) {
+    if(*pageSelect == max) {
       //      print_dbg("\r\n reached max selection in inputs scroll. ");
       return;
     }
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
     // increment selection
-    newSel = curPage->select + 1;
+    newSel = *pageSelect + 1;
     ///// these bounds checks shouldn't really be needed here...
     //    if(newSel < 0) { newSel = 0; }
     //    if(newSel > max ) { newSel = max; }
     /////
-    curPage->select = newSel;    
+    *pageSelect = newSel;    
     // update preset-inclusion flag
-    inPreset = (u8)net_get_out_preset((u32)(curPage->select));
+    inPreset = (u8)net_get_out_preset((u32)(*pageSelect));
     // add new content at bottom of screen
     newIdx = newSel + SCROLL_LINES_ABOVE;
     if(newIdx > max) { 
@@ -211,11 +216,12 @@ static void select_scroll(s32 dir) {
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
   }
   /// update flags
-  newInPreset = net_get_in_preset(curPage->select);
+  newInPreset = net_get_in_preset(*pageSelect);
   if(newInPreset != inPreset) {
     inPreset = newInPreset;
     // update inc/exc label
-    show_foot1();
+    //// wtf?? no
+    //    show_foot1();
   }
 }
 
@@ -335,37 +341,47 @@ void select_outs(void) {
 
 // function key handlers
 void handle_key_0(s32 val) {
-#if 0
+  if(val == 0) { return; }
+  
   if(altMode) {
-    // follow
-    
+    //// TODO:
+    ///// follow
+    // select target on ins page
+    /// 
   } else {
     // store
     // show selected preset name
-    draw_outs_preset_name();
+    //// TODO
+    //    draw_outs_preset_name();
     if(check_key(0)) {
       // store in preset
-      net_set_in_preset(curPage->select, 1);
+      net_set_out_preset(*pageSelect, 1);
       inPreset = 1;
-      preset_store_in(presetSelect, curPage->select);
+      preset_store_out(preset_get_select(), *pageSelect);
+
       // redraw selected line
-      render_line(curPage->select, 0xa);
+      render_line(*pageSelect, 0xa);
       render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
       // TODO: store directly in scene?
     }
   }
   show_foot();
-#endif
 }
 
 void handle_key_1(s32 val) {
-  // inc/exc (split)
-  // TODO
+  if(check_key(1)) {
+    // inc/exc (split)
+    if(altMode) {
+    } else {
+      net_toggle_out_preset(*pageSelect);
+      // redraw preset inc/exc glyph
+      //... 
+    }
+  }
 }
 
 void handle_key_2(s32 val) {
-  // clear/confirm
-  // TODO
+  
 }
 
 void handle_key_3(s32 val) {
@@ -401,7 +417,7 @@ void handle_enc_3(s32 val) {
 // redraw all lines, based on current selection
 void redraw_outs(void) {
   u8 i=0;
-  u8 n = curPage->select - 3;
+  u8 n = *pageSelect - 3;
   while(i<8) {
     print_dbg("\r\n redraw_outs, line: ");
     print_dbg_ulong(i);
@@ -409,8 +425,9 @@ void redraw_outs(void) {
     print_dbg_ulong(n);
 
     render_line( n, 0xa );
-    render_to_scroll_line(i, n == curPage->select ? 1 : 0);
+    render_to_scroll_line(i, n == *pageSelect ? 1 : 0);
     ++i;
     ++n;
   }
 }
+

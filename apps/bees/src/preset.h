@@ -72,18 +72,37 @@ extern u8* presets_pickle(u8* dst);
 // unpickle
 extern const u8* presets_unpickle(const u8* src);
 
-// get current read/write selection
+// get current read/write selection index
 extern s32 preset_get_select(void);
+// get pointer to selected preset
+extern preset_t* preset_get_selected(void);
 // set current read/write selection
 extern void preset_set_select(s32 idx);
 // increment current selection
 extern void preset_inc_select(s32 inc);
 
+//---- get
 // get inclusion flag for given input, given preset
 extern u8 preset_in_enabled(u32 preIdx, u32 inIdx);
 // get inclusion flag for given output, given preset
 extern u8 preset_out_enabled(u32 preIdx, u32 inIdx);
 // get inclusion flag for given param, given preset
 extern u8 preset_param_enabled(u32 preIdx, u32 inIdx);
+
+//---- set
+// get inclusion flag for given input, given preset
+/* extern u8 preset_set_in_enabled(u32 preIdx, u32 inIdx); */
+/* // get inclusion flag for given output, given preset */
+/* extern u8 preset_set_out_enabled(u32 preIdx, u32 inIdx); */
+/* // get inclusion flag for given param, given preset */
+/* extern u8 preset_set_param_enabled(u32 preIdx, u32 inIdx); */
+
+/* //---- inc */
+/* // get inclusion flag for given input, given preset */
+/* extern u8 preset_inc_in_enabled(u32 preIdx, u32 inIdx); */
+/* // get inclusion flag for given output, given preset */
+/* extern u8 preset_inc_out_enabled(u32 preIdx, u32 inIdx); */
+/* // get inclusion flag for given param, given preset */
+/* extern u8 preset_inc_param_enabled(u32 preIdx, u32 inIdx); */
 
 #endif

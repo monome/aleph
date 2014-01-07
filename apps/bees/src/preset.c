@@ -267,6 +267,11 @@ s32 preset_get_select(void) {
   return select;
 }
 
+// get pointer to selected preset
+preset_t* preset_get_selected(void) {
+  return &(presets[select]);
+}
+
 // set current read/write selection
 void preset_set_select(s32 idx) {
   select = idx;;

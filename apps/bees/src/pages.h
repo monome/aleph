@@ -138,4 +138,8 @@ extern u8 check_key(u8 key);
 // toggle play mode
 extern u8 pages_toggle_play(void);
 
+  // draw preset name in header
+extern void draw_preset_name(void);
+
+
 #endif  // h guard

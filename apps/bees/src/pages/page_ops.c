@@ -24,6 +24,8 @@ static scroll centerScroll;
 
 //--- page-specific state variables
 
+static s16* const pageSelect = &(pages[ePageOps].select);
+
 // const array of user-creatable operator types
 #define NUM_USER_OP_TYPES 13
 static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
@@ -92,18 +94,18 @@ void select_scroll(s8 dir) {
   if(dir < 0) {
     /// SCROLL DOWN
     // if selection is already zero, do nothing 
-    if(curPage->select == 0) {
+    if(*pageSelect == 0) {
       //      print_dbg("\r\n reached min selection in inputs scroll. ");
       return;
     }
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
     // decrement selection
-    newSel = curPage->select - 1;
+    newSel = *pageSelect - 1;
     ///// these bounds checks shouldn't really be needed here...
     //    if(newSel < 0) { newSel = 0; }
     //    if(newSel > max ) { newSel = max; }
-    curPage->select = newSel;    
+    *pageSelect = newSel;    
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
     if(newIdx < 0) { 
@@ -121,15 +123,15 @@ void select_scroll(s8 dir) {
   } else {
     // SCROLL UP
     // if selection is already max, do nothing 
-    if(curPage->select == max) {
+    if(*pageSelect == max) {
       //      print_dbg("\r\n reached max selection in inputs scroll. ");
       return;
     }
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
     // increment selection
-    newSel = curPage->select + 1;
-    curPage->select = newSel;    
+    newSel = *pageSelect + 1;
+    *pageSelect = newSel;    
     // add new content at bottom of screen
     newIdx = newSel + SCROLL_LINES_ABOVE;
     if(newIdx > max) { 
@@ -210,11 +212,11 @@ void handle_key_0(s32 val) {
   if(val == 0) { return; }
   if(check_key(0)) {
     // select op's inputs on ins page
-    pages[ePageIns].select = net_op_in_idx(curPage->select, 0);
+    pages[ePageIns].select = net_op_in_idx(*pageSelect, 0);
     print_dbg("\r\n got 1st input index for selected op ( ");
-    print_dbg_ulong( curPage->select );
+    print_dbg_ulong( *pageSelect );
     print_dbg(", result : ");
-    print_dbg_ulong( net_op_in_idx(curPage->select, 0));
+    print_dbg_ulong( net_op_in_idx(*pageSelect, 0));
     // go to inputs page
     set_page(ePageIns);
     redraw_ins();
@@ -227,12 +229,12 @@ void handle_key_1(s32 val) {
   if(check_key(1)) {
 
     print_dbg("\r\n got 1st output index for selected op ( ");
-    print_dbg_ulong( curPage->select );
+    print_dbg_ulong( *pageSelect );
     print_dbg(", result : ");
-    print_dbg_ulong( net_op_out_idx(curPage->select, 0));
+    print_dbg_ulong( net_op_out_idx(*pageSelect, 0));
 
     // select op's outputs on outs page
-    pages[ePageOuts].select = net_op_out_idx(curPage->select, 0);
+    pages[ePageOuts].select = net_op_out_idx(*pageSelect, 0);
 
     print_dbg("\r\n performed set-selection");
 
@@ -252,7 +254,7 @@ void handle_key_2(s32 val) {
     // create new operator of selected type
     net_add_op(userOpTypes[newOpType]);
     // change selection to last op
-    curPage->select = net_num_ops() - 1;
+    *pageSelect = net_num_ops() - 1;
     // redraw...
     redraw_ops();
   }
@@ -345,10 +347,10 @@ void select_ops(void) {
 // redraw all lines, based on current selection
 void redraw_ops(void) {
   u8 i=0;
-  u8 n = curPage->select - 3;
+  u8 n = *pageSelect - 3;
   while(i<8) {
     render_line( n );
-    render_to_scroll_line(i, n == curPage->select ? 1 : 0);
+    render_to_scroll_line(i, n == *pageSelect  ? 1 : 0);
     ++i;
     ++n;
   }

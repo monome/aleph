@@ -53,6 +53,7 @@ static void op_gate_in_value(op_gate_t* gate, const io_t v) {
 static void op_gate_in_gate(op_gate_t* gate, const io_t v) {
   if(v > 0) { gate->gate = 1; } else { gate->gate = 0; }
   if (gate->store) {
+    // in storage mode, 2nd input emits stored value
     net_activate(gate->outs[0], gate->val, gate);
   }
 }

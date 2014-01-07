@@ -15,6 +15,7 @@
 #include "op.h"
 #include "pages.h"
 #include "param.h"
+#include "preset.h"
 #include "render.h"
 #include "screen.h"
 #include "ui.h"
@@ -159,4 +160,11 @@ u8 pages_toggle_play(void) {
     set_page(ePagePlay);
   }
   return ret;
+}
+
+// draw preset name in header
+void draw_preset_name(void) {
+  font_string_region_clip(headRegion, "                  ", 64, 0, 0, 0);
+  font_string_region_clip(headRegion, preset_name((u8)preset_get_select()), 64, 0, 0x5, 0);
+  headRegion->dirty = 1;
 }
