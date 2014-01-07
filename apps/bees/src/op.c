@@ -103,6 +103,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_timer_t),
     .init = &op_timer_init,
     .deinit = NULL
+  }, {
+    .name = "RANDOM",
+    .size = sizeof(op_timer_t),
+    .init = &op_random_init,
+    .deinit = NULL    
   }
 
 };
