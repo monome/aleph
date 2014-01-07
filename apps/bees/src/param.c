@@ -24,9 +24,9 @@ io_t get_param_value(u32 idx) {
 }
 
 // get preset-enabled flag for param at given idx
-u8 get_param_preset(u32 idx) {
-  return net->params[idx].preset;
-}
+/* u8 get_param_preset(u32 idx) { */
+/*   return net->params[idx].preset; */
+/* } */
 
 
 // get name (label) for param at given idx
@@ -81,7 +81,7 @@ u8* param_pickle(pnode_t* pnode, u8* dst) {
   dst = pickle_32(val, dst);
 
   // store preset-inclusion 
-  dst = pickle_32((u32)(pnode->preset), dst);
+  //  dst = pickle_32((u32)(pnode->preset), dst);
   // store descriptor
   dst = pdesc_pickle(&(pnode->desc), dst);
   return dst;
@@ -106,12 +106,12 @@ const u8* param_unpickle(pnode_t* pnode, const u8* src) {
   // print_dbg_ulong(val);
 
   // load preset-inclusion 
-  src = unpickle_32(src, &val);
+  //  src = unpickle_32(src, &val);
 
   // print_dbg("\r\n unpickled param preset flag: ");
   // print_dbg_ulong(val);
 
-  pnode->preset = (u8)val;
+  //  pnode->preset = (u8)val;
   // load descriptor
   src = pdesc_unpickle(&(pnode->desc), src);
   return src;

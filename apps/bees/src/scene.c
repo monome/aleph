@@ -99,9 +99,9 @@ void scene_write_buf(void) {
 // set current state of system from global RAM buffer
 void scene_read_buf(void) {
   s8 modName[MODULE_NAME_LEN];
-  u32 i;
   const u8* src = (u8*)&(sceneData->pickle);
   s8 neq = 0;
+  //  u32 i;
 
   app_pause();
 
@@ -113,37 +113,34 @@ void scene_read_buf(void) {
 
   // unpickle presets
   src = presets_unpickle(src);
-
   
   print_dbg("\r\n copied stored network and presets to RAM ");
 
-  for(i=0; i<net->numParams; i++) {
-    print_dbg("\r\n param ");
-    print_dbg_ulong(i);
-    print_dbg(" : ");
-    print_dbg(net->params[i].desc.label);
-    print_dbg(" ; val ");
-    print_dbg_hex((u32)net->params[i].data.value);
-  }
+  /* for(i=0; i<net->numParams; i++) { */
+  /*   print_dbg("\r\n param "); */
+  /*   print_dbg_ulong(i); */
+  /*   print_dbg(" : "); */
+  /*   print_dbg(net->params[i].desc.label); */
+  /*   print_dbg(" ; val "); */
+  /*   print_dbg_hex((u32)net->params[i].data.value); */
+  /* } */
 
-  // compare module name
-
+  // compare module name  
+  neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
   
-    neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
-
-    if(neq) {
-      // load bfin module if it doesn't match the current scene desc
-      print_dbg("\r\n loading module name: ");
-      print_dbg(sceneData->desc.moduleName);
-      files_load_dsp_name(sceneData->desc.moduleName);
-    }
+  if(neq) {
+    // load bfin module if it doesn't match the current scene desc
+    print_dbg("\r\n loading module name: ");
+    print_dbg(sceneData->desc.moduleName);
+    files_load_dsp_name(sceneData->desc.moduleName);
+  }
     
   // re-trigger inputs
   //  app_notify("re-initializing network/parameters");
   /// hopefully don't need to do this?
   //  net_retrigger_inputs();
   
-    bfin_wait_ready();
+  bfin_wait_ready();
 
   // update bfin parameters
   net_send_params();
@@ -156,6 +153,9 @@ void scene_read_buf(void) {
 
 // write current state as default
 void scene_write_default(void) {
+  s8 neq = 0;
+  s8 modName[MODULE_NAME_LEN];
+
   app_pause();
   render_boot("writing scene to flash");
 
@@ -165,13 +165,14 @@ void scene_write_default(void) {
 
   flash_write_scene();
 
-  // write default LDR
-  render_boot("writing DSP to flash");
-  print_dbg("\r\n writing default LDR from scene descriptor");
-  files_store_default_dsp_name(sceneData->desc.moduleName);
-
-  delay_ms(100);
-
+  // write default LDR if changed 
+  neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
+  if(neq) {
+    render_boot("writing DSP to flash");
+    print_dbg("\r\n writing default LDR from scene descriptor");
+    files_store_default_dsp_name(sceneData->desc.moduleName);
+  }    
+  delay_ms(20);
   print_dbg("\r\n finished writing default scene");
   app_resume();
 }

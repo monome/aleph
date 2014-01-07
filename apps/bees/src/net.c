@@ -138,6 +138,13 @@ static u8* inode_pickle(inode_t* in, u8* dst) {
   // preset inclusion flag
   //// this is a preset variable
   //  *dst++ = in->preset;
+  print_dbg("\r\n pickling input node, op index: ");
+  print_dbg_ulong(in->opIdx);
+  print_dbg(" , input idx: ");
+  print_dbg_ulong(in->opInIdx);
+  print_dbg(" , play flag: ");
+  print_dbg_ulong(in->play);
+
   // play inclusion flag
   *dst++ = in->play;
   // dummy byte for alignment
@@ -153,10 +160,15 @@ static const u8* inode_unpickle(const u8* src, inode_t* in) {
   //  in->preset = *src++;
   // play inclusion flag
   in->play = *src++;
+
+  print_dbg("\r\n unpickled input node play flag: ");
+  print_dbg_ulong(in->play);
+
   // dummy byte for alignment
   ++src; 
   // dummy byte for alignment
   ++src; 
+
   return src;
 }
 
@@ -757,8 +769,14 @@ u8 net_get_out_preset(u32 id) {
 // toggle play inclusion for input
 u8 net_toggle_in_play(u32 inIdx) {
   net->ins[inIdx].play ^= 1;
-  //  print_dbg("\r\n toggle in.play, result: ");
-  //  print_dbg(net->ins[inIdx].play ? "1" : "0");
+
+  print_dbg("\r\n toggle in.play, op index: ");
+  print_dbg_ulong(net->ins[inIdx].opIdx);
+  print_dbg(" , input idx: ");
+  print_dbg_ulong(net->ins[inIdx].opInIdx);
+  print_dbg(" , result: ");
+   print_dbg(net->ins[inIdx].play ? "1" : "0");
+
   return net->ins[inIdx].play;
 }
 
@@ -789,7 +807,7 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
   print_dbg("\r\n finished initializing param scaler.");
 
   net->params[net->numParams].idx = idx; 
-  net->params[net->numParams].preset = 0; 
+  //  net->params[net->numParams].preset = 0; 
   net->numParams += 1;
 }
 
