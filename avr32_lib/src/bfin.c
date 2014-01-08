@@ -54,6 +54,18 @@ void bfin_wait(void) {
 void bfin_load_buf(void) {
   u64 i; /// byte index in .ldr
 
+  /////
+  //// TEST: print contents of buffer
+  /* print_dbg("\r\n\r\n .ldr buffer for: "); */
+  /* contents(i=0; i<bfinLdrSize; i++) { */
+  /*   print_dbg("\r\n 0x"); */
+  /*   print_dbg_hex(bfinLdrData[i]); */
+  /* } */
+  /* print_dbg("\r\n\r\n"); */
+  ////
+  /////////
+
+
   if(bfinLdrSize > BFIN_LDR_MAX_BYTES) {
     print_dbg("\r\n bfin load error: size : "); print_dbg_hex(bfinLdrSize);
     return;
@@ -75,11 +87,9 @@ void bfin_load_buf(void) {
 //void bfin_set_param(u8 idx, f32 x ) {
 void bfin_set_param(u8 idx, fix16_t x ) {
   //static u32 ticks = 0;
-  ParamValue pval;
+  ParamValueCommon pval;
   pval.asInt = (s32)x;
 
-  
-  
   print_dbg("\r\n bfin_set_param, idx: ");
   print_dbg_ulong(idx);
 
@@ -105,7 +115,7 @@ void bfin_set_param(u8 idx, fix16_t x ) {
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, idx);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  //val0
+  // val0
   bfin_wait();
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, pval.asByte[0]);
@@ -156,7 +166,7 @@ void bfin_get_num_params(volatile u32* num) {
 }
 
 void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
-  ParamValue pval;
+  ParamValueCommon pval;
   u16 x; // u16 for spi_read()
   u8 i;
 
@@ -177,6 +187,8 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     pDesc->label[i] = (char)(x & 0xff);
   }
+  /*
+    //// don't need with new type system... didn't exactly need anyways
   // read unit
   for(i=0; i<PARAM_UNIT_LEN; i++) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
@@ -185,6 +197,7 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     pDesc->unit[i] = (char)(x & 0xff);
   }
+  */
   // read type
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, 0); //dont care
@@ -210,6 +223,12 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
   }
   pDesc->max = pval.asInt;
 
+  // read radix
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, 0); //dont care
+    spi_read(BFIN_SPI, &x);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    pDesc->radix = (u8)(x & 0xff);
   app_resume();
 }
 
@@ -266,39 +285,6 @@ void bfin_get_module_version(moduleVersion_t* vers) {
 }
 
 
-// clear and add params to ctl network
-/* void bfin_report_params(void) { */
-/*   volatile ParamDesc pdesc; */
-/*   u32 numParams; */
-/*   u8 i; */
-
-/*   bfin_get_num_params(&numParams); */
-/*   print_dbg("\r\nnumparams: "); */
-/*   print_dbg_ulong(numParams); */
-
-/*   if(numParams == 255) { */
-/*     print_dbg("\r\n bfin reported too many parameters; sonmething went wrong."); */
-/*     return; */
-/*   } */
-
-/*   if(numParams > 0) { */
-/*     net_clear_params(); */
-/*     for(i=0; i<numParams; i++) { */
-/*       bfin_get_param_desc(i, &pdesc); */
-
-/*       /// FIXME: arg, this belongs only in BEES */
-/*       net_add_param(i, &pdesc);      */
-      
-/*       print_dbg("\r\n got pdesc : "); */
-/*       print_dbg((const char* )pdesc.label); */
-/*     } */
-/*   } */
-
-  
-
-/*   bfin_enable(); */
-/* } */
-
 void bfin_enable(void) {
   // enable audio processing
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
@@ -330,57 +316,60 @@ void bfin_start_transfer(void) {
 
 void bfin_end_transfer(void) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  print_dbg("\r\n done loading; waiting... ");
-  delay_ms(100);
-  //  delay_ms(2000);
-  /* print_dbg("\r\n done waiting; reporting... "); */
-  /* bfin_report_params(); */
 }
 
 // wait for ready status (e.g. after module init)
 void bfin_wait_ready(void) {
   // use ready pin
-  while( !gpio_get_pin_value(BFIN_READY_PIN) ) { ;; }
-  //    delay_ms(100);
+  while( !gpio_get_pin_value(BFIN_READY_PIN) ) { 
+    //    print_dbg("\r\n waiting on bfin ready pin... ");
+  }
 }
 
-/* void bfin_spi_slave(void) { */
+// get parameter value
+s32 bfin_get_param(u8 idx) {
+  ParamValueCommon pval;
+  u16 x;
   
-/*   //...//  */
-/* } */
+  app_pause();
 
+  // command
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, MSG_GET_PARAM_COM);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 
-// void bfin_spi_master(void) {
-  /* spi_options_t spiOptions = { */
-  /*   .reg          = BFIN_SPI_NPCS, */
-  /*   // fast baudrate / low trans delay suitable for boot process  */
-  /*   .baudrate     = 5000000, */
-  /*   //     .baudrate     = 20000000, */
-  /*   .bits         = 8, */
-  /*   .spck_delay   = 0, */
-  /*   .trans_delay  = 0, */
-  /*   //    .trans_delay = 20, */
-  /*   .stay_act     = 1, */
-  /*   .spi_mode     = 1, */
-  /*   .modfdis      = 1 */
-  /* }; */
+  // idx
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, idx);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+  /// read value
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, 0); // don't care
+  spi_read(BFIN_SPI, &x);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  pval.asByte[0] = (u8)x;
+
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, 0); // don't care
+  spi_read(BFIN_SPI, &x);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  pval.asByte[1] = (u8)x;
+
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, 0); // don't care
+  spi_read(BFIN_SPI, &x);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  pval.asByte[2] = (u8)x;
+
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, 0); // don't care
+  spi_read(BFIN_SPI, &x);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  pval.asByte[3] = (u8)x;
+
+  app_resume();
+
+  return pval.asInt;
   
-  /* // stop */
-  /* spi_disable(); */
-
-  /* // intialize as master */
-  /* spi_initMaster(BFIN_SPI, &spiOptions); */
-
-  /* // set selection mode: variable_ps, pcs_decode, delay. */
-  /* spi_selectionMode(BFIN_SPI, 0, 0, 0); */
-
-  /* // enable SPI. */
-  /* spi_enable(BFIN_SPI); */
-
-  /* // intialize the chip register */
-  /* spi_setupChipReg(BFIN_SPI, &spiOptions, FPBA_HZ); */
-  /* // enable pulldown on bfin HWAIT line */
-  /* //// shit! not implemented...  */
-  /* // gpio_enable_pin_pull_down(BFIN__PIN); */
-
-//}
+}

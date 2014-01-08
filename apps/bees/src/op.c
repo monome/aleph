@@ -19,7 +19,9 @@
 #include "play.h"
 
 // operator class registry
-// must be laid out identically to eOpId enum!
+////// WARNING:
+// must be laid out identically to eOpId enum in op.h!
+// therefore, recommend adding in chronological order (?)
 const op_desc_t op_registry[numOpClasses] = {
   {
     .name = "SW",
@@ -47,7 +49,7 @@ const op_desc_t op_registry[numOpClasses] = {
     .init = &op_gate_init,
     .deinit = NULL
   } , {
-    .name = "RAWGRID",
+    .name = "GRID",
     .size = sizeof(op_mgrid_raw_t),
     .init = &op_mgrid_raw_init,
     .deinit = &op_mgrid_raw_deinit
@@ -66,7 +68,53 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_metro_t),
     .init = &op_metro_init,
     .deinit = &op_metro_deinit
+  }, {
+    .name = "PRESET",
+    .size = sizeof(op_preset_t),
+    .init = &op_preset_init,
+    .deinit = NULL
+  }, {
+    .name = "TOG",
+    .size = sizeof(op_tog_t),
+    .init = &op_tog_init,
+    .deinit = NULL
+  }, {
+    .name = "ACCUM",
+    .size = sizeof(op_accum_t),
+    .init = &op_accum_init,
+    .deinit = NULL
+  }, {
+    .name = "SPLIT",
+    .size = sizeof(op_split_t),
+    .init = &op_split_init,
+    .deinit = NULL
+  }, {
+    .name = "DIV",
+    .size = sizeof(op_div_t),
+    .init = &op_div_init,
+    .deinit = NULL
+  }, {
+    .name = "SUB",
+    .size = sizeof(op_sub_t),
+    .init = &op_sub_init,
+    .deinit = NULL
+  }, {
+    .name = "TIMER",
+    .size = sizeof(op_timer_t),
+    .init = &op_timer_init,
+    .deinit = NULL
+  }, {
+    .name = "RANDOM",
+    .size = sizeof(op_random_t),
+    .init = &op_random_init,
+    .deinit = NULL    
+  }, {
+    .name = "LIST8",
+    .size = sizeof(op_list8_t),
+    .init = &op_list8_init,
+    .deinit = NULL    
   }
+
 };
 
 
@@ -135,7 +183,12 @@ void op_set_in_val(op_t* op, s16 idx, io_t val) {
   //  volatile io_t * const pIn = (op->in_val[idx]);
   //  *pIn = val;
   //  (*(op->in_fn[idx]))(op, pIn);  
+
+  print_dbg("\r\n setting op input, value: 0x");
+  print_dbg_hex(val);
+
   (*(op->in_fn[idx]))(op, val);  
+
   // TODO: check for play flag and stuff.. ?
   // or, do this in activation
   //  play_input(idx);

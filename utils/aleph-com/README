@@ -1,0 +1,18 @@
+for python 2
+
+you need:
+
+pyOSC: https://pypi.python.org/pypi/pyOSC
+pySerial: https://pypi.python.org/pypi/pyserial
+
+change line 6 of aleph-com.py to match your serial device (ie /dev/ttyACM0 on linux)
+
+also on linux you need to be root
+
+a.sh provided for less typing
+
+listens for OSC on port 12001
+
+default sends to port 12010
+
+failed to test OSC on linux, get this to try: http://fukuchi.org/works/oscsend/index.html.en

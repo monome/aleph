@@ -10,11 +10,19 @@
 #define __ALEPH_FLASH_H__
 
 //#include "filesystem.h"
+#include "bfin.h"
 #include "types.h"
 
 // bytes available for application-specific storage
 // (increase as needed)
-#define APP_FLASH_BYTES 0x20000
+#define APP_FLASH_BYTES 0x28000 
+
+/// 64K of blackfin executable storage in flash
+//// actually, the ldr itself can be bigger than the SRAM.
+#define LDR_FLASH_BYTES BFIN_LDR_MAX_BYTES
+// length of .ldr string identifier in flash
+#define LDR_FLASH_STRING_LEN 64
+
 
 //------------------------
 // extern variables

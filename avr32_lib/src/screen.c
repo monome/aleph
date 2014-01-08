@@ -254,13 +254,13 @@ void screen_clear(void) {
 void screen_startup(void) {
   u32 i;
 
-  #include "startup_glyph.c"
+#include "startup_glyph.c"
 
-  print_dbg("\r\n screen_startup");
+  // print_dbg("\r\n screen_startup");
 
   // fill screenbuffer with solid background
   for(i=0; i<GRAM_BYTES; i++) {
-    screenBuf[i] = 0x88;
+    screenBuf[i] = 0;
   }
 
   // send screenbuffer

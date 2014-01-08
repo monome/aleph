@@ -8,16 +8,17 @@
 //--- op_enc_t : encoder
 typedef struct op_enc_struct {
   op_t super;
-  volatile io_t val;
-  volatile io_t move;
+  io_t val;
   volatile io_t step;
   volatile io_t min;
   volatile io_t max;
   volatile io_t wrap;
-  volatile io_t * in_val[5];
+  volatile io_t * in_val[4];
   op_out_t outs[2];
 } op_enc_t;
 
-void op_enc_init(void* mem);
+extern void op_enc_init(void* mem);
+
+extern void op_enc_sys_input(op_enc_t* enc, s8 dir);
 
 #endif // header guard

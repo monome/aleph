@@ -71,3 +71,6 @@ PRJ_PATH = ../../avr32_lib/asf-3.7.3
 
 MAKEFILE_PATH = $(PRJ_PATH)/avr32/utils/make/Makefile.avr32.in
 include $(MAKEFILE_PATH)
+
+fuses:
+	avr32program writefuses -f internal@80000000 0xfff7ffff

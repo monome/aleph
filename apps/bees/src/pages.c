@@ -15,6 +15,7 @@
 #include "op.h"
 #include "pages.h"
 #include "param.h"
+#include "preset.h"
 #include "render.h"
 #include "screen.h"
 #include "ui.h"
@@ -32,43 +33,35 @@
 page_t pages[NUM_PAGES] = {
   { .name = "INS",
     .select_fn = &select_ins, // select function
-    //    .handler = handler_ins,  // pointer to handlers
     .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   { .name = "OUTS",
     .select_fn = &select_outs, // select function
-    //    .handler = handler_outs,  // pointer to handlers
     .encSens = { 8, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   { .name = "PRESETS",
     .select_fn = &select_presets, // select function
-    //    .handler = handler_presets, // pointer to handlers
-    .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
+    .encSens = { 8, 8, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   { .name = "OPS",
     .select_fn = &select_ops, // select function
-    //    .handler = handler_ops, // pointer to handlers
     .encSens = {12, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   { .name = "SCENES",
     .select_fn = &select_scenes, // select function
-    //    .handler = handler_scenes, // pointer to handlers
-    .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
+    .encSens = { 8, 8, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   { .name = "DSP",
     .select_fn = &select_dsp, // select function
-    //    .handler = handler_dsp, // pointer to handlers
     .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   // modal:
   { .name = "GATHERED", 
     .select_fn = &select_gathered, // select function
-    //    .handler = handler_gathered, // pointer to handlers
     .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   },
   { .name = "PLAY",
     .select_fn = &select_play, // select function
-    //    .handler = handler_play, // pointer to handlers
     .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
   }
 };

@@ -16,11 +16,6 @@
 //-----------------------------------
 //----  define, typedef
 
-/// 64K of blackfin executable storage in flash
-#define LDR_FLASH_BYTES 0x10000
-// length of .ldr string identifier in flash
-#define LDR_FLASH_STRING_LEN 64
-
 // arbitrary magic number to write during first run
 #define FIRSTRUN_MAGIC 0x76543210
 
@@ -79,12 +74,25 @@ u8 init_flash() {
   }
 }
 
-// read default blackfin
+// read default blackfin 
 void flash_read_ldr(void) {
   bfinLdrSize = flash_nvram_data.ldrSize;
   print_dbg("\r\n read ldrSize from flash: ");
   print_dbg_ulong(bfinLdrSize);
   memcpy((void*)bfinLdrData, (void*)flash_nvram_data.ldrData, bfinLdrSize); 
+
+    // TEST: print module data in RAM
+#if 0
+    for(u32 i = 0; i<bfinLdrSize; i += 4) {
+      if((i % 16) == 0) {
+	print_dbg("\r\n");
+      }
+      print_dbg(" 0x");
+      print_dbg_hex(*((u32*)(bfinLdrData + i)));
+    }
+#endif
+
+  
   //  print_flash((u32)flash_nvram_data.ldrData, bfinLdrSize);
 }
 

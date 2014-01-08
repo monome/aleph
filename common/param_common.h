@@ -1,5 +1,5 @@
 
-/* param.h
+/* param_common.h
  * aleph-common
  * 
  * common parameter data types
@@ -11,75 +11,59 @@
 #include "fix.h"
 #include "types.h"
 
-//======@@@@@@@++++++########!!!!!!!
-//!!!!!!====== BEWARE !!!!!!********
-/// there are all kinds of dirty hacks 
-/// dependent on the layout of data types in this header:
-///// in the bytecount #defines in protocol.h
-///// in param.c:get_param_value
-/////____change the layouts only with extraordinary caution!!! _ez
-
 // max characters in param name
 #define PARAM_LABEL_LEN 16
-// max charactes in param unit
-#define PARAM_UNIT_LEN 8
 
-//---- param data types
-#define PARAM_TYPE_FIX 0
-#define PARAM_TYPE_FRACT 0
-#define PARAM_TYPE_UINT  1
-
+// data type
+typedef s32 ParamValue;
 
 ///--- parameter use-types
-/// these diferentiate  the actual, numerical use case for the parameter.
+/// these differentiate  the actual, numerical use case for the parameter.
+// add as needed, sync with param scaler definitions
 typedef enum {
-  // raw amplitude
+  // boolean
+  eParamTypeBool,
+  /// fixed-point linear (radix is stored separately)
+  eParamTypeFix,
+  // amplitude (0-1)
   eParamTypeAmp,
-  // time in samples
-  eParamTypeSamples,
-  // raw coefficient for 1pole lowpass
-  eParamType1plpCoeff,
-  // raw coefficient for SVF
-  eParamTypeSvfCoeff,
-  //...
-  //...
-  //...
-} paramUseType;
+  // integrator time/coefficient
+  eParamTypeIntegrator,
+  // note number -> hz
+  eParamTypeNote,
+  // frequency coefficient for SVF
+  eParamTypeSvfFreq,
+  //...?
+  eParamNumTypes
+} ParamType;
 
-// 4-byte union of value representations
-#if 1
+// a union type for byteswapping
 typedef union __attribute__((__packed__)) {
-  f32 asFloat;
-  fract32 asFract;
   s32 asInt;
   u32 asUint;
   u8 asByte[4];
-  u16 asShort[2];
-} ParamValue;
-#else
-typedef u32 ParamValue;
-#endif
-
-// a simpler form for internal use
-typedef union { u32 u; s32 s; fix16 fix; fract32 fr; } pval;
+} ParamValueCommon;
 
 // parameter descriptor
 typedef struct __attribute__((__packed__)) ParamDescStruct {
   // parameter name
   char label[PARAM_LABEL_LEN];
-  // parameter unit name
-  char unit[PARAM_UNIT_LEN];
   // type
-  u8 type;
-  // range
-  fix16 min;
-  fix16 max;
-  // other stuff? id for mapping? (hz, pole, db, rate, etc?)
+  ParamType type;
+  // range (may be independent of type) 
+  s32 min;
+  s32 max;
+  // radix = integer bits (including sign bit) :
+  // 1 = signed fract (1.32)
+  // 16 = 16.16
+  // 32 = signed int
+  u8 radix;
 } ParamDesc;
 
 // parameter data
 typedef struct __attribute__((__packed__)) ParamDataStruct {
   ParamValue value;
+  // not sure we need to use this but keep it around and updated
   u8 changed;
 } ParamData;
 

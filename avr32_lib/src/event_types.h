@@ -55,9 +55,10 @@ typedef enum {
   //--- main handlers
   // kEventSerialDebugFlag,
   // kEventSerialCaptureFlag,
-  // kEventSerialParamSet,
-  // kEventSerialParamGet,
-  // kEventSerialParamReport,
+  kEventSerialParamNum,
+  kEventSerialParamInfo,
+  kEventSerialParamSet,
+  kEventSerialParamGet,
   //---- app handler
   // kEventSerialAppCustom,
 

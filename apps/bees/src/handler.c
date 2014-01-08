@@ -42,34 +42,19 @@
 
 
 static void handle_Adc0(s32 data) { 
-  // update ADC system operator
-  /* print_dbg("\r\n bees handle adc0 event, data: 0x"); */
-  /* print_dbg_hex(data); */
-  net_activate(net_op_in_idx(opSysAdcIdx, 2), data, NULL);
+  op_adc_sys_input(opSysAdc, 0, data);
 }
 
 static void handle_Adc1(s32 data) { 
-  // update ADC system operator
-  /* print_dbg("\r\n bees handle adc0 event, data: 0x"); */
-  /* print_dbg_hex(data); */
-  net_activate(net_op_in_idx(opSysAdcIdx, 3), data, NULL);
-
+  op_adc_sys_input(opSysAdc, 1, data);
 }
 
 static void handle_Adc2(s32 data) { 
-  // update ADC system operator
-  /* print_dbg("\r\n bees handle adc0 event, data: 0x"); */
-  /* print_dbg_hex(data); */
-  net_activate(net_op_in_idx(opSysAdcIdx, 4), data, NULL);
-
+  op_adc_sys_input(opSysAdc, 2, data);
 }
 
 static void handle_Adc3(s32 data) { 
-  // update ADC system operator
-  /* print_dbg("\r\n bees handle adc0 event, data: 0x"); */
-  /* print_dbg_hex(data); */
-  net_activate(net_op_in_idx(opSysAdcIdx, 5), data, NULL);
-}
+  op_adc_sys_input(opSysAdc, 3, data);}
 
 ////////////////
 // function key and encoder handles are page-specific
@@ -96,10 +81,12 @@ static void handle_Switch5(s32 data) {
   render_boot("");
   render_boot("");
   render_boot("powering down");
-  render_boot("writing current scene to flash");
 
 
-  scene_write_default();
+  // skip flash write if MODE is down
+  if(!gpio_get_pin_value(SW_MODE_PIN)) 
+    scene_write_default();
+
   //  //// TEST: write to filesystem!
   //  files_store_scene_name("test_default.scn");
   //  files_store_test_scene();
@@ -111,12 +98,15 @@ static void handle_Switch5(s32 data) {
 
 static void handle_Switch6(s32 data) {
   // footswitch 1
-  net_activate(net_op_in_idx(opSysSwIdx[4], 0), data, NULL);
+  op_sw_sys_input(opSysSw[4], data > 0);
+  //  net_activate(net_op_in_idx(opSysSwIdx[4], 0), data, NULL);
 }
 
 static void handle_Switch7(s32 data) { 
   // footswitch 2
-  net_activate(net_op_in_idx(opSysSwIdx[5], 0), data, NULL);
+
+  op_sw_sys_input(opSysSw[5], data > 0);
+  //  net_activate(net_op_in_idx(opSysSwIdx[5], 0), data, NULL);
 } 
 
 static void handle_MonomeConnect(s32 data) { 
@@ -130,7 +120,7 @@ static void handle_MonomeDisconnect(s32 data) {
 static void handle_MonomeGridKey(s32 data) { 
   // net_monome.c defines a dynamic pointer to a single grid event handle.
   // this is so bees can arbitrate focus between multiple grid ops.
-  /// FIXME: we need to differentiate
+  /// FIXME: we need to differentiate between multiple devices.
   /// of course, first we need USB hub support.
   (*monome_grid_key_handler)(monomeOpFocus, data);
 }
@@ -208,63 +198,65 @@ void assign_bees_event_handlers(void) {
 //------------------------
 //--- knob scaling
 
+
+#if IO_BITS == 16
 // full-scale
-s32 scale_knob_value(s32 val) {
-  static const u32 kNumKnobScales_1 = 23;
-  static const u32 knobScale[24] = {
+io_t scale_knob_value(io_t val) {
+  static const u8 kNumKnobScales_1 = 23;
+  static const s16 knobScale[24] = {
     ///--- 3 linear segments:
     // slope = 1
-    0x00000001, // 1
-    0x00000002, // 2
+    0x0001, // 1
+    0x0002, // 2
+    0x0003, // 3
     // slope = 0x10
-    0x00000030, // 3
-    0x00000030, // 4
-    0x00000040, // 5
-    0x00000050, // 6
-    0x00000060, // 7
-    0x00000070, // 8
-    0x00000080, // 9
-    0x00000090 ,  // 10
-    0x000000a0 , // 11
-    0x000000b0 , // 12
+    0x0030, // 4
+    0x0040, // 5
+    0x0050, // 6
+    0x0060, // 7
+    0x0070, // 8
+    0x0080, // 9
+    0x0090 ,  // 10
+    0x00a0 , // 11
+    0x00b0 , // 12
     // slope = 0x100
-    0x00000c00 , // 13
-    0x00000d00 , // 14
-    0x00000e00 , // 15
-    0x00000f00 , // 16
-    0x00001000 , // 17
-    0x00001100 , // 18
-    0x00001200 , // 19
-    0x00001300 , // 20
-    0x00001400 , // 21
-    0x00001500 , // 22
+    0x0c00 , // 13
+    0x0d00 , // 14
+    0x0e00 , // 15
+    0x0f00 , // 16
+    0x1000 , // 17
+    0x1100 , // 18
+    0x1200 , // 19
+    0x1300 , // 20
+    0x1400 , // 21
+    0x1500 , // 22
     // ultra fast
-    0x10000000 , // 23
-    0x20000000 , // 24
+    0x2000 , // 23
+    0x4000 , // 24
   };
-  s32 vabs = BIT_ABS(val);
-  s32 ret = val;
+  s16 vabs = BIT_ABS_16(val);
+  s16 ret = val;
 
   if(vabs > kNumKnobScales_1) {
     vabs = kNumKnobScales_1;
   }
   ret = knobScale[vabs - 1];
   if(val < 0) {
-    ret = BIT_NEG_ABS(ret);
+    ret = BIT_NEG_ABS_16(ret);
   }
   return ret;
 }
 
 // lower slope
-s32 scale_knob_value_small(s32 val) {
+io_t scale_knob_value_small(io_t val) {
   static const u32 kNumKnobScales_1 = 23;
   static const u32 knobScale[24] = {
     ///--- 3 linear segments:
     // slope = 1
     0x00000001, // 1
     0x00000002, // 2
+    0x00000003, // 3
     // slope = 0x10
-    0x00000030, // 3
     0x00000030, // 4
     0x00000040, // 5
     0x00000050, // 6
@@ -289,15 +281,120 @@ s32 scale_knob_value_small(s32 val) {
     0x00000800 , // 24
   };
 
-  s32 vabs = BIT_ABS(val);
-  s32 ret = val;
+  s16 vabs = BIT_ABS_16(val);
+  s16 ret = val;
 
   if(vabs > kNumKnobScales_1) {
     vabs = kNumKnobScales_1;
   }
+  /* print_dbg("\r\n knob scaling, input: 0x"); */
+  /* print_dbg_hex(val); */
+  /* print_dbg(", abs: 0x"); */
+  /* print_dbg_hex(vabs); */
+
   ret = knobScale[vabs - 1];
   if(val < 0) {
-    ret = BIT_NEG_ABS(ret);
+    ret = BIT_NEG_ABS_16(ret);
   }
+  //  print_dbg(", result: 0x");
+  //  print_dbg_hex(ret);
+
   return ret;
 }
+#endif
+
+#if IO_BITS == 32
+/* // full-scale */
+/* s32 scale_knob_value(s32 val) { */
+/*   static const u32 kNumKnobScales_1 = 23; */
+/*   static const u32 knobScale[24] = { */
+/*     ///--- 3 linear segments: */
+/*     // slope = 1 */
+/*     0x00000001, // 1 */
+/*     0x00000002, // 2 */
+/*     // slope = 0x10 */
+/*     0x00000030, // 3 */
+/*     0x00000030, // 4 */
+/*     0x00000040, // 5 */
+/*     0x00000050, // 6 */
+/*     0x00000060, // 7 */
+/*     0x00000070, // 8 */
+/*     0x00000080, // 9 */
+/*     0x00000090 ,  // 10 */
+/*     0x000000a0 , // 11 */
+/*     0x000000b0 , // 12 */
+/*     // slope = 0x100 */
+/*     0x00000c00 , // 13 */
+/*     0x00000d00 , // 14 */
+/*     0x00000e00 , // 15 */
+/*     0x00000f00 , // 16 */
+/*     0x00001000 , // 17 */
+/*     0x00001100 , // 18 */
+/*     0x00001200 , // 19 */
+/*     0x00001300 , // 20 */
+/*     0x00001400 , // 21 */
+/*     0x00001500 , // 22 */
+/*     // ultra fast */
+/*     0x10000000 , // 23 */
+/*     0x20000000 , // 24 */
+/*   }; */
+/*   s32 vabs = BIT_ABS(val); */
+/*   s32 ret = val; */
+
+/*   if(vabs > kNumKnobScales_1) { */
+/*     vabs = kNumKnobScales_1; */
+/*   } */
+/*   ret = knobScale[vabs - 1]; */
+/*   if(val < 0) { */
+/*     ret = BIT_NEG_ABS(ret); */
+/*   } */
+/*   return ret; */
+/* } */
+
+/* // lower slope */
+/* s32 scale_knob_value_small(s32 val) { */
+/*   static const u32 kNumKnobScales_1 = 23; */
+/*   static const u32 knobScale[24] = { */
+/*     ///--- 3 linear segments: */
+/*     // slope = 1 */
+/*     0x00000001, // 1 */
+/*     0x00000002, // 2 */
+/*     // slope = 0x10 */
+/*     0x00000030, // 3 */
+/*     0x00000030, // 4 */
+/*     0x00000040, // 5 */
+/*     0x00000050, // 6 */
+/*     0x00000060, // 7 */
+/*     0x00000070, // 8 */
+/*     0x00000080, // 9 */
+/*     0x00000090 ,  // 10 */
+/*     0x000000a0 , // 11 */
+/*     0x000000b0 , // 12 */
+/*     0x000000c0 , // 13 */
+/*     0x000000d0 , // 14 */
+/*     0x000000e0 , // 15 */
+/*     0x000000f0 , // 16 */
+/*     // slope == 0x100 */
+/*     0x00000100 , // 17 */
+/*     0x00000200 , // 18 */
+/*     0x00000300 , // 19 */
+/*     0x00000400 , // 20 */
+/*     0x00000500 , // 21 */
+/*     0x00000600 , // 22 */
+/*     0x00000700 , // 23 */
+/*     0x00000800 , // 24 */
+/*   }; */
+
+/*   s32 vabs = BIT_ABS(val); */
+/*   s32 ret = val; */
+
+/*   if(vabs > kNumKnobScales_1) { */
+/*     vabs = kNumKnobScales_1; */
+/*   } */
+/*   ret = knobScale[vabs - 1]; */
+/*   if(val < 0) { */
+/*     ret = BIT_NEG_ABS(ret); */
+/*   } */
+/*   return ret; */
+/* } */
+#endif

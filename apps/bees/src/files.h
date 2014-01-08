@@ -15,7 +15,7 @@ extern void files_check_dsp(void);
 
 //----- dsp
 // populate the dsp filelist with names and return count
-extern void files_scan_dsp(void);
+// extern void files_scan_dsp(void);
 // return dsp filename for given index
 extern const volatile char* files_get_dsp_name(u8 idx);
 // return count of dsp files
@@ -28,14 +28,15 @@ extern u8 files_load_dsp_name(const char* name);
 // store dsp in flash, by index
 // return 1 on success, 0 on failure
 extern void files_store_default_dsp(u8 idx);
-
+// store .ldr as default in internal flash, given name
+extern void files_store_default_dsp_name(const char* name);
 
 //----- scenes
 // populate scene filelist with names and return count
-extern void files_scan_scene(void);
-// return dsp filename for given index
+// extern void files_scan_scene(void);
+// return scene filename for given index
 extern const volatile char* files_get_scene_name(u8 idx);
-// return count of dsp files
+// return count of scene files
 extern u8 files_get_scene_count(void);
 // load scene by index
 // return 1 on success, 0 on failure
@@ -49,5 +50,13 @@ extern void files_store_scene(u8 idx);
 extern void files_store_scene_name(const char* name);
 
 
+//----- scalers
+// return dsp filename for given index
+extern const volatile char* files_get_scaler_name(u8 idx);
+// return count of dsp files
+extern u8 files_get_scaler_count(void);
+// load scaler by filename
+// return 1 on success, 0 on failure
+extern u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize);
 
 #endif // header guard 

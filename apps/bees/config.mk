@@ -24,22 +24,34 @@ CSRCS += \
 	$(APP_DIR)/src/net_monome.c \
 	$(APP_DIR)/src/net_poll.c \
 	$(APP_DIR)/src/op.c \
+	$(APP_DIR)/src/op_math.c \
 	$(APP_DIR)/src/param.c \
 	$(APP_DIR)/src/pages.c \
 	$(APP_DIR)/src/pickle.c \
 	$(APP_DIR)/src/play.c \
 	$(APP_DIR)/src/preset.c \
 	$(APP_DIR)/src/render.c \
+	$(APP_DIR)/src/param_scaler.c \
 	$(APP_DIR)/src/scene.c \
+	$(APP_DIR)/src/util.c \
 	$(APP_DIR)/src/ops/op_add.c \
+	$(APP_DIR)/src/ops/op_accum.c \
 	$(APP_DIR)/src/ops/op_adc.c \
+	$(APP_DIR)/src/ops/op_div.c \
 	$(APP_DIR)/src/ops/op_enc.c \
 	$(APP_DIR)/src/ops/op_gate.c \
 	$(APP_DIR)/src/ops/op_metro.c \
 	$(APP_DIR)/src/ops/op_midi_note.c \
 	$(APP_DIR)/src/ops/op_mul.c \
 	$(APP_DIR)/src/ops/op_monome_grid_raw.c \
+	$(APP_DIR)/src/ops/op_preset.c \
+	$(APP_DIR)/src/ops/op_split.c \
+	$(APP_DIR)/src/ops/op_sub.c \
 	$(APP_DIR)/src/ops/op_sw.c \
+	$(APP_DIR)/src/ops/op_timer.c \
+	$(APP_DIR)/src/ops/op_tog.c \
+	$(APP_DIR)/src/ops/op_random.c \
+	$(APP_DIR)/src/ops/op_list8.c \
 	$(APP_DIR)/src/pages/page_dsp.c \
 	$(APP_DIR)/src/pages/page_gathered.c \
 	$(APP_DIR)/src/pages/page_ins.c \
@@ -47,8 +59,13 @@ CSRCS += \
 	$(APP_DIR)/src/pages/page_outs.c \
 	$(APP_DIR)/src/pages/page_play.c \
 	$(APP_DIR)/src/pages/page_presets.c \
-	$(APP_DIR)/src/pages/page_scenes.c 
-
+	$(APP_DIR)/src/pages/page_scenes.c \
+	$(APP_DIR)/src/scalers/scaler_amp.c \
+	$(APP_DIR)/src/scalers/scaler_bool.c \
+	$(APP_DIR)/src/scalers/scaler_fix.c \
+	$(APP_DIR)/src/scalers/scaler_integrator.c \
+	$(APP_DIR)/src/scalers/scaler_note.c \
+	$(APP_DIR)/src/scalers/scaler_svf_fc.c
 
 # List of assembler source files.
 ASSRCS +=
@@ -72,6 +89,8 @@ ARFLAGS +=
 # Extra flags to use when assembling.
 ASFLAGS += 
 
+# extra flags for compiling
+# CFLAGS += --verbose
 
 # debug:
 # OPTIMIZATION = -Og

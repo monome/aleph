@@ -5,6 +5,8 @@
 
 #if ARCH_AVR32
 // avr32 is big-endian
+//// FIXME: should probably byteswap,
+///  so that other systems can more easily parse the resultant blobs.
 
 // 32-bit store to bytestream
 // return updated stream pointer
@@ -15,22 +17,18 @@ u8* pickle_32(const u32 src, u8* dst) {
 
   // print_dbg("\r\n pickle nibble: 0x");
   // print_dbg_hex(*dst);
-  
   *(++dst) = (src & 0xff00) >> 8;
 
   // print_dbg("\r\n pickle nibble: 0x");
   // print_dbg_hex(*dst);
-
   *(++dst) = (src & 0xff0000) >> 16;
 
   // print_dbg("\r\n pickle nibble: 0x");
   // print_dbg_hex(*dst);
-
   *(++dst) = (src & 0xff000000) >> 24;
 
   // print_dbg("\r\n pickle nibble: 0x");
   // print_dbg_hex(*dst);
-
   return (++dst);
 }
 
@@ -62,12 +60,13 @@ const u8* unpickle_32(const u8* src, u32* dst) {
 
 // 16-bit
 u8* pickle_16(const u16 src, u8* dst) {
-  *dst = src && 0xff;
-  *(++dst) = (src && 0xff00) >> 8;
+  *dst = src & 0xff;
+  *(++dst) = (src & 0xff00) >> 8;
   return (++dst);
 }
 
 const u8* unpickle_16(const u8* src, u16* dst) {
+  *dst = 0;
   *dst |= *src;
   *dst |= *(++src) << 8;
   return (++src);

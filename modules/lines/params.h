@@ -1,12 +1,19 @@
 #ifndef _ALEPH_LINES_PARAMS_H_
 #define _ALEPH_LINES_PARAMS_H_
 
+// filter reciprocal of Q
 #define PARAM_RQ_MIN 0x00000000
-#define PARAM_RQ_MAX 0x00400000
+#define PARAM_RQ_MAX 0x7fffffff
 
-#define PARAM_BUFFER_MAX 0x002bf1ff // LINES_BUF_FRAMES - 1
+//#define PARAM_BUFFER_MAX 0x002bf1ff // LINES_BUF_FRAMES - 1
+// max time in seconds, 16.16
+#define PARAM_SECONDS_MAX 0x003c0000
+#define PARAM_SECONDS_RADIX 6
+// rate
+//...
 
-#define PARAM_COEFF_MAX 0x1F400000;  // fixme
+// filter cutoff frequency
+#define PARAM_FREQ_MAX 0x1F400000;  // fixme
 
 // enumerate parameters
 enum params {
@@ -14,7 +21,8 @@ enum params {
   // delay 0
   eParam_delay0,		// 0
   eParam_loop0,			// 1 
-  eParam_rate0,			// 2
+  eParam_rMul0,			// 11
+  eParam_rDiv0,			// 2
   eParam_write0,		// 3
   eParam_pre0,			// 4
   eParam_pos_write0,		// 5
@@ -25,7 +33,8 @@ enum params {
   // delay 1
   eParam_delay1,		// 9
   eParam_loop1,			// 10
-  eParam_rate1,			// 11
+  eParam_rMul1,			// 11
+  eParam_rDiv1,			// 11
   eParam_write1,		// 12
   eParam_pre1,			// 13
   eParam_pos_write1,		// 14
@@ -33,8 +42,8 @@ enum params {
   eParam_run_read1,		// 16
   eParam_run_write1,		// 17
 
-  // filter 01
-  eParam_coeff0,		// 18
+  // filter 1
+  eParam_freq0,		// 18
   eParam_rq0,			// 19
   eParam_low0,			// 20
   eParam_high0,			// 21
@@ -44,7 +53,7 @@ enum params {
   eParam_fdry0,			// 25
 
   // filter 1
-  eParam_coeff1,		// 26
+  eParam_freq1,		// 26
   eParam_rq1,			// 27
   eParam_low1,			// 28
   eParam_high1,			// 29

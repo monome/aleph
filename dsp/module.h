@@ -27,7 +27,10 @@
 typedef struct _moduleData {
   char name[MODULE_NAME_LEN];
   ParamDesc* paramDesc;
-  ParamData* paramData;
+  // FIXME: not really using this global parameter data.
+  // but we probably will if we want a bfin control rate or FIFO. 
+  // so for now it is just here, burning resources.
+  ParamData* paramData; 
   u16 numParams;
 } moduleData;
 
@@ -45,14 +48,10 @@ extern void module_init(void);
 extern void module_deinit(void);
 // callback
 
-#if ARCH_BFIN
 extern void module_process_frame(void);
-#else
-extern void module_process_frame(const f32* in, f32* out);
-#endif
 
 // set parameter  
-extern void module_set_param(u32 idx, pval val);
+extern void module_set_param(u32 idx, ParamValue val);
 // get number of parameters
 extern u32 module_get_num_params(void);
 

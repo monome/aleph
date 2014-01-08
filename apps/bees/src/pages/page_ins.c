@@ -15,6 +15,7 @@
 #include "handler.h"
 #include "net.h"
 #include "pages.h"
+#include "preset.h"
 #include "render.h"
 
 //-------------------------
@@ -25,16 +26,16 @@ static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
 // scroll manager
 static scroll centerScroll;
 
-// play-mode filter flag (persistent)
-static u8 playFilter = 0;
 
-// selection-included-in-preset flag (read from network on selection)
-static u8 inPreset = 0;
-// selection-included-in-play flag (read from network on selection)
-static u8 inPlay = 0;
+// we are in preset=selection momentary mode
+static u8 inPresetSelect = 0;
 
-// in-clear-confirm state
+// in-clear-confirm stateS
 static u8 clearConfirm = 0;
+
+// kludge:
+// constant pointer to this page's selection
+static s16* const pageSelect = &(pages[ePageIns].select);
 
 //-------------------------
 //---- static declarations
@@ -48,6 +49,9 @@ static void handle_key_0(s32 val);
 static void handle_key_1(s32 val);
 static void handle_key_2(s32 val);
 static void handle_key_3(s32 val);
+
+// redraw based on provisional preset seleciton
+static void redraw_ins_preset(u8 idx);
 
 // fill tmp region with new content
 // given input index and foreground color
@@ -65,11 +69,12 @@ static void render_line(s16 idx, u8 fg) {
     appendln( net_in_name(idx) );
     endln();
 
-    font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
+    font_string_region_clip(lineRegion, lineBuf, 4, 0, fg, 0);
     clearln();
+ 
+    op_print(lineBuf, net_get_in_value(idx));
 
-    print_fix16(lineBuf, net_get_in_value(idx));
-    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, fg, 0);
+    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_SHORT, 0, fg, 0);
   } else {
     // parameter input    
     clearln();
@@ -77,32 +82,37 @@ static void render_line(s16 idx, u8 fg) {
     appendln_char('.');
     appendln( net_in_name(idx)); 
     endln();
-    font_string_region_clip(lineRegion, lineBuf, 2, 0, 0xa, 0);
+    font_string_region_clip(lineRegion, lineBuf, 4, 0, 0xa, 0);
     clearln();
-    print_fix16(lineBuf, net_get_in_value(idx));
-    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, fg, 0);
+
+    //    op_print(lineBuf, net_get_in_value(idx));
+    /// FIXME: this is pretty dumb, 
+    // params and inputs should just be on separate pages i guess
+    net_get_param_value_string(lineBuf, idx);
+
+    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, fg, 0);
   }
   // draw something to indicate play mode visibility
   if(net_get_in_play(idx)) {
-    font_string_region_clip(lineRegion, "|", 126, 0, fg, 0);
+    font_string_region_clip(lineRegion, ".", 0, 0, fg, 0);
   }
   // draw something to indicate preset inclusion
   if(net_get_in_preset(idx)) {
-    font_string_region_clip(lineRegion, "|", 0, 0, fg, 0);
+    font_string_region_clip(lineRegion, ".", 126, 0, fg, 0);
   }
 
-  // underline
-  //  region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
 }
 
 // edit the current seleciton
 static void select_edit(s32 inc) {
-  // increment input value
-  net_inc_in_value(curPage->select, inc);
-  // render to tmp buffer
-  render_line(curPage->select, 0xf);
-  // copy to scroll with highlight
-  render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+  if(*pageSelect != -1) {
+    // increment input value
+    net_inc_in_value(*pageSelect, inc);
+    // render to tmp buffer
+    render_line(*pageSelect, 0xf);
+    // copy to scroll with highlight
+    render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+  }
 }
 
 // scroll the current selection
@@ -114,30 +124,26 @@ static void select_scroll(s32 dir) {
 
   if(dir < 0) {
     /// SCROLL DOWN
-    // if selection is already zero, do nothing 
-    if(curPage->select == 0) {
-      //      print_dbg("\r\n reached min selection in inputs scroll. ");
-      return;
+    // wrap with blank line
+    if(*pageSelect == -1) {
+      newSel = max;
+    } else {
+      // decrement selection
+      newSel = *pageSelect - 1;
+      //      print_dbg("\r\n scroll down to new selection on ins page: ");
+      //      print_dbg_ulong(newSel);
     }
+    *pageSelect = newSel;
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
-    // decrement selection
-    newSel = curPage->select - 1;
-    ///// these bounds checks shouldn't really be needed here...
-    //    if(newSel < 0) { newSel = 0; }
-    //    if(newSel > max ) { newSel = max; }
-    curPage->select = newSel;
-    // update preset-inclusion flag
-    inPreset = (u8)net_get_in_preset((u32)(curPage->select));
-    // update play-inclusion flag
-    inPlay = (u8)net_get_in_play((u32)(curPage->select));
-   
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
-    if(newIdx < 0) { 
-      // empty row
+    if(newIdx == -1) {
       region_fill(lineRegion, 0);
     } else {
+      if(newIdx < -1) {
+	newIdx = newIdx + max + 2;
+      }
       render_line(newIdx, 0xa);
     }
     // render tmp region to bottom of scroll
@@ -148,32 +154,32 @@ static void select_scroll(s32 dir) {
 
   } else {
     // SCROLL UP
-    // if selection is already max, do nothing 
-    if(curPage->select == max) {
-      //      print_dbg("\r\n reached max selection in inputs scroll. ");
-      return;
+    // wrap with a blank line
+    if(*pageSelect == max) {
+      newSel = -1;
+    }  else {
+      // increment selection
+      newSel = *pageSelect + 1;
     }
+    //    print_dbg("\r\n scroll up to new selection on ins page: ");
+    //    print_dbg_ulong(newSel);
+    
+    *pageSelect = newSel;    
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
-    // increment selection
-    newSel = curPage->select + 1;
-    ///// these bounds checks shouldn't really be needed here...
-    //    if(newSel < 0) { newSel = 0; }
-    //    if(newSel > max ) { newSel = max; }
-    /////
-    curPage->select = newSel;    
-    // update preset-inclusion flag
-    inPreset = (u8)net_get_in_preset((u32)(curPage->select));
-    // update play-inclusion flag
-    inPlay = (u8)net_get_in_play((u32)(curPage->select));
     // add new content at bottom of screen
     newIdx = newSel + SCROLL_LINES_ABOVE;
-    if(newIdx > max) { 
-      // empty row
+
+    if(newIdx == (max + 1)) {
       region_fill(lineRegion, 0);
     } else {
+      if(newIdx > max) {
+	newIdx = newIdx - (max+2);
+      }
       render_line(newIdx, 0xa);
     }
+
+
     // render tmp region to bottom of scroll
     // (this also updates scroll byte offset) 
     render_to_scroll_bottom();
@@ -190,7 +196,8 @@ static void show_foot0(void) {
   }
   region_fill(footRegion[0], fill);
   if(altMode) {
-    font_string_region_clip(footRegion[0], "GATHER", 0, 0, 0xf, fill);
+    /// TODO
+    //    font_string_region_clip(footRegion[0], "GATHER", 0, 0, 0xf, fill);
   } else {
     font_string_region_clip(footRegion[0], "STORE", 0, 0, 0xf, fill);
   }
@@ -203,13 +210,13 @@ static void show_foot1(void) {
   }
   region_fill(footRegion[1], fill);
   if(altMode) {
-    if(inPlay) {
+    if(net_get_in_play(*pageSelect)) {
       font_string_region_clip(footRegion[1], "HIDE", 0, 0, 0xf, fill);
     } else {
       font_string_region_clip(footRegion[1], "SHOW", 0, 0, 0xf, fill);
     }
   } else {
-    if(inPreset) {
+    if(net_get_in_preset(*pageSelect)) {
       font_string_region_clip(footRegion[1], "EXC", 0, 0, 0xf, fill);
     } else {
       font_string_region_clip(footRegion[1], "INC", 0, 0, 0xf, fill);
@@ -224,11 +231,13 @@ static void show_foot2(void) {
   }
   region_fill(footRegion[2], fill);
   if(altMode) {
+#if 0
     if(playFilter) {
       font_string_region_clip(footRegion[2], "ALL", 0, 0, 0xf, fill);
     } else {
       font_string_region_clip(footRegion[2], "FILT", 0, 0, 0xf, fill);
     }
+#endif
   } else {
     font_string_region_clip(footRegion[2], "CLEAR", 0, 0, 0xf, fill);
   }
@@ -258,6 +267,7 @@ static void show_foot(void) {
     show_foot2();
     show_foot3();
   }
+
   /*
 /// FIXME:
     // it would be more efficient (redundant compares, etc) 
@@ -360,11 +370,23 @@ void select_ins(void) {
 // function keys
 void handle_key_0(s32 val) {
   if(val == 0) { return; }
-  if(check_key(0)) {
-    if(altMode) {
-      // gather
-    } else {
-      // store in preset (+ scene?)
+
+  if(altMode) {
+    // gather
+    /// TODO
+  } else {
+    // show selected preset name
+    draw_preset_name();
+    if(check_key(0)) {
+      // store in preset
+      net_set_in_preset(*pageSelect, 1);
+      //      inPreset = 1;
+      preset_store_in(preset_get_select(), *pageSelect);
+      // redraw selected line
+      render_line(*pageSelect, 0xf);
+      render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+	//      render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
+      // TODO: store directly in scene?
     }
   }
   show_foot();
@@ -372,24 +394,30 @@ void handle_key_0(s32 val) {
 
 void handle_key_1(s32 val) {
   if(val == 0) { return; }
-  if(check_key(1)) {
     if(altMode) {
-      // show / hide on play screen
-      inPlay = net_toggle_in_play(curPage->select);
-      // render to tmp buffer
-      render_line(curPage->select, 0xf);
-      // copy to scroll with highlight
-      render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+      if(check_key(1)) {
+	// show / hide on play screen
+	//	inPlay = net_toggle_in_play(*pageSelect);
+	net_toggle_in_play(*pageSelect);
+	// render to tmp buffer
+	render_line(*pageSelect, 0xf);
+	// copy to scroll with highlight
+	render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+      }
     } else {
-      // include / exclude in preset
-      inPreset = net_toggle_in_preset(curPage->select);
-      // render to tmp buffer
-      render_line(curPage->select, 0xf);
-      // copy to scroll with highlight
-      render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+      if(check_key(1)) {
+	// show preset name in head region
+	draw_preset_name();
+	// include / exclude in preset
+	//	inPreset = net_toggle_in_preset(*pageSelect);
+	net_toggle_in_preset(*pageSelect);
+	// render to tmp buffer
+	render_line(*pageSelect, 0xf);
+	// copy to scroll with highlight
+	render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+      }
     }
-  }
-  show_foot();
+    show_foot();
 }
 
 void handle_key_2(s32 val) {
@@ -398,7 +426,12 @@ void handle_key_2(s32 val) {
     if(altMode) {
       // filter / all
     } else {
-      // clear (disconnect all routings) / CONFIRM
+      /// set to 0
+      net_set_in_value(*pageSelect, 0);
+      // render to tmp buffer
+      render_line(*pageSelect, 0xf);
+      // copy to scroll with highlight
+      render_to_scroll_line(SCROLL_CENTER_LINE, 1);
     }
   } 
   show_foot();
@@ -406,7 +439,19 @@ void handle_key_2(s32 val) {
 
 void handle_key_3(s32 val) {
   // alt mode
-  altMode = (u8)(val>0);
+  if(val > 0) {
+    altMode = 1;
+  } else {
+    altMode = 0;
+    if(inPresetSelect) {
+      // load selected preset
+      print_dbg("\r\n recalling preset from ins page, idx:");
+      print_dbg_ulong(preset_get_select());
+      preset_recall(preset_get_select());
+      inPresetSelect = 0;
+      redraw_ins();
+    }
+  }
   show_foot();
 }
 
@@ -430,18 +475,104 @@ void handle_enc_2(s32 val) {
 }
 
 void handle_enc_3(s32 val) {
-  // scroll selection
-  select_scroll(val);
+  // alt: scroll preset
+  if(altMode) {
+    inPresetSelect = 1;
+    if(val > 0) {
+      preset_inc_select(1);
+    } else {
+      preset_inc_select(-1);
+    }
+    // refresh line data
+    redraw_ins_preset((u8)preset_get_select());
+  } else {
+    // scroll selection
+    select_scroll(val);
+  }
 }
 
 // redraw all lines, based on current selection
 void redraw_ins(void) {
   u8 i=0;
-  u8 n = curPage->select - 3;
+  u8 n = *pageSelect - 3;
   while(i<8) {
     render_line( n, 0xa );
-    render_to_scroll_line(i, n == curPage->select ? 1 : 0);
+    render_to_scroll_line(i, n == *pageSelect ? 1 : 0);
     ++i;
     ++n;
   }
+}
+
+// redraw based on provisional preset seleciton
+void redraw_ins_preset (u8 idx) {
+  s32 max = net_num_ins() - 1;
+  u8 i=0;
+  u8 n = *pageSelect - 3;
+  u8 enabled;
+  io_t opVal;
+  s32 paramVal;
+  s16 opIdx;
+
+  while(i<8) {
+    region_fill(lineRegion, 0x0);
+
+    opIdx = net_in_op_idx(n);  
+
+    if(n <= max) {
+      enabled = net_get_in_preset(n);
+      if(opIdx < 0 ) {
+	// parameter...
+	clearln();
+	appendln_idx_lj( (int)net_param_idx(n)); 
+	appendln_char('.');
+	appendln( net_in_name(n)) ; 
+	endln();
+	font_string_region_clip(lineRegion, lineBuf, 4, 0, 0xf, 0);
+	clearln();
+
+	if(enabled) {
+	  paramVal = preset_get_selected()->ins[n].value;
+	  net_get_param_value_string_conversion(lineBuf, net_param_idx(n), paramVal);
+	  //	  print_dbg("\r\n 0x");
+	  //	  print_dbg_hex(paramVal);
+	} else {
+	  net_get_param_value_string(lineBuf, n);
+	  //	  print_dbg("\r\n ... ");
+	}
+	font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, 0xf, 0);
+      } else {
+	// op input
+	clearln();
+	appendln_idx_lj(opIdx);
+	appendln_char('.');
+	appendln( net_op_name(opIdx) );
+	appendln_char('/');
+	appendln( net_in_name(n) );
+	endln();
+
+	font_string_region_clip(lineRegion, lineBuf, 4, 0, 0xf, 0);
+
+	if(enabled) {
+	  opVal = preset_get_selected()->ins[n].value;
+	  //	  print_dbg("\r\n 0x");
+	  //	  print_dbg_hex((u32)opVal);
+	} else {
+	  opVal = net_get_in_value(n);
+	  //	  print_dbg("\r\n ...");
+	}
+	op_print(lineBuf, opVal);
+
+	font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_SHORT, 0, 0xf, 0);
+      }
+      // draw something to indicate preset inclusion
+      if(enabled) {
+	font_string_region_clip(lineRegion, ".", 126, 0, 0xf, 0);
+      }
+    }
+    render_to_scroll_line(i, 0);
+    ++i;
+    ++n;
+  }
+  print_dbg("\r\n\r\n");
+  draw_preset_name();
 }

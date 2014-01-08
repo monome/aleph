@@ -10,11 +10,11 @@
   
  */
 
-// aleph-avr32
-#include "app.h"
-#include "event_types.h"
+// asf
+#include "print_funcs.h"
+
 // bees
-#include "net.h"
+#include "app.h"
 #include "net_protected.h"
 #include "pages.h"
 #include "play.h"
@@ -27,14 +27,14 @@
 
 // indices of system operator inputs
 // set them in page_init
-static s16 sw0_idx;
-static s16 sw1_idx;
-static s16 sw2_idx;
-static s16 sw3_idx;
-static s16 enc0_idx;
-static s16 enc1_idx;
-static s16 enc2_idx;
-static s16 enc3_idx;
+/* static s16 sw0_idx; */
+/* static s16 sw1_idx; */
+/* static s16 sw2_idx; */
+/* static s16 sw3_idx; */
+/* static s16 enc0_idx; */
+/* static s16 enc1_idx; */
+/* static s16 enc2_idx; */
+/* static s16 enc3_idx; */
 
 // handler declarations
 static void handle_enc_0(s32 val);
@@ -49,35 +49,53 @@ static void handle_key_3(s32 val);
 // handlers activate system UI operator nodes.
 
 void handle_key_0(s32 val) {
-  net_activate(sw0_idx, val, NULL);
+  //   print_dbg("\r\n play handler, key 0, op address: 0x");
+  //   print_dbg_hex((u32)opSysSw[0]);
+   op_sw_sys_input(opSysSw[0], (s8)val);
 }
 
 void handle_key_1(s32 val) {
-  net_activate(sw1_idx, val, NULL);
+  //   print_dbg("\r\n play handler, key 1, op address: 0x");
+  //   print_dbg_hex((u32)opSysSw[1]);
+   op_sw_sys_input(opSysSw[1], (s8)val);
 }
 
 void handle_key_2(s32 val) {
-  net_activate(sw2_idx, val, NULL);
+  //   print_dbg("\r\n play handler, key 2, op address: 0x");
+  //   print_dbg_hex((u32)opSysSw[2]);
+   op_sw_sys_input(opSysSw[2], (s8)val);
 }
 
 void handle_key_3(s32 val) {
-  net_activate(sw3_idx, val, NULL);
+  //   print_dbg("\r\n play handler, key 3, op address: 0x");
+  //   print_dbg_hex((u32)opSysSw[3]);
+   op_sw_sys_input(opSysSw[3], (s8)val);
 }
 
+
 void handle_enc_0(s32 val) {
-  net_activate(enc0_idx, val, NULL);
+  //  print_dbg("\r\n play handler, enc 0, op address: 0x");
+  //  print_dbg_hex((u32)opSysEnc[0]);
+// FIXME: this is a hack to make the operators work with the correct numbers
+
+  op_enc_sys_input(opSysEnc[3], (s8)val);
 }
 
 void handle_enc_1(s32 val) {
-  net_activate(enc1_idx, val, NULL);
+  //  print_dbg("\r\n play handler, enc 1, op address: 0x");
+  //  print_dbg_hex((u32)opSysEnc[1]);
+   op_enc_sys_input(opSysEnc[1], (s8)val);
 }
 
 void handle_enc_2(s32 val) {
-  net_activate(enc2_idx, val, NULL);
+  //  print_dbg("\r\n play handler, enc 2, op address: 0x");
+  //  print_dbg_hex((u32)opSysEnc[2]);
+   op_enc_sys_input(opSysEnc[2], (s8)val);
 }
 
 void handle_enc_3(s32 val) {
-  net_activate(enc3_idx, val, NULL);
+  // FIXME: this is a hack to make the operators work with the correct numbers
+   op_enc_sys_input(opSysEnc[0], (s8)val);
 }
 
 //----------------------
@@ -85,15 +103,6 @@ void handle_enc_3(s32 val) {
 
 // init
 void init_page_play(void) {
-  // assign system input indices
-  sw0_idx = net_op_in_idx(opSysSwIdx[0], 0);
-  sw1_idx = net_op_in_idx(opSysSwIdx[1], 0);
-  sw2_idx = net_op_in_idx(opSysSwIdx[2], 0);
-  sw3_idx = net_op_in_idx(opSysSwIdx[3], 0);
-  enc0_idx = net_op_in_idx(opSysEncIdx[0], 0);
-  enc1_idx = net_op_in_idx(opSysEncIdx[1], 0);
-  enc2_idx = net_op_in_idx(opSysEncIdx[2], 0);
-  enc3_idx  = net_op_in_idx(opSysEncIdx[3], 0);
 }
 
 // select 

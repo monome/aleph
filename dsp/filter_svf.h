@@ -12,35 +12,18 @@
 #include "fix.h"
 #include "types.h"
 
-// define false for float (sorry)
-#define SVF_FP 0
 
 //==============================================
 //===== types
 
 typedef struct _filter_svf {
-  //  fix16 hz;      // cutoff in hz
-  // coefficiet
-  fract32 coeff;
-  fract32 reson; // resonance in [0, 1 ?? ]
-  // runtime coeffs
-
-  fract32 freq;     // normalized frequency
+  fract32 freq;  // normalized frequency
   fract32 rq;    // reciprocal of q (resonance / bandwidth)
-  // fix16 rq;    // reciprocal of q (resonance / bandwidth)
-  fract32 scale; // scale input by resonance
+                 // range is [0, 2]
   fract32 low;   // lowpass
   fract32 band;  // bandpass
   fract32 high;
   fract32 notch;
-  
-  /* float freq;     // normalized frequency */
-  /* float rq;    // reciprocal of q (resonance / bandwidth) */
-  /* float scale; // scale input by resonance */
-  /* float low;   // lowpass */
-  /* float band;  // bandpass */
-  /* float high; */
-  /* float notch; */
   
   // output mix
   fract32 lowMix;
@@ -48,6 +31,10 @@ typedef struct _filter_svf {
   fract32 bandMix;
   fract32 notchMix;
   fract32 peakMix;
+  
+  // kinda retarded, but use rshift for rq values >=1
+  u8 rqShift;
+
 } filter_svf;
 
 
