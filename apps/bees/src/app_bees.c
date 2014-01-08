@@ -88,10 +88,11 @@ u8 app_launch(u8 firstrun) {
 
     files_load_dsp_name("aleph-mono.ldr");
     
-    //    render_boot("waiting for DSP init...");
+    render_boot("waiting for DSP init...");
     bfin_wait_ready();
+
     //    print_dbg(" requesting param report...");
-        render_boot("requesting DSP params");
+    render_boot("requesting DSP params");
     net_report_params();
 
     //    print_dbg("\r\n enable DSP audio...");
