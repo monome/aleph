@@ -172,19 +172,19 @@ static inline fract32 lookup_wave(const fix16 idx, const fract32 wave) {
   // assume wave variable is positive
   // shift shape param right to get table index
 
-  /// TEST
+
 #if 1
   u32 idxA = wave >> WAVE_TAB_RSHIFT;
   u32 idxB = idxA + 1;
 
   fract32 mul = (wave & WAVE_TAB_MASK) << WAVE_TAB_LSHIFT;
   fract32 mulInv = sub_fr1x32(FR32_MAX, mul);
-#else 
-  u32 idxA = 0;
-  u32 idxB = idxA + 1;
+#else   /// TEST
+  /* u32 idxA = 0; */
+  /* u32 idxB = idxA + 1; */
 
-  fract32 mul = wave;
-  fract32 mulInv = sub_fr1x32(FR32_MAX, mul);
+  /* fract32 mul = wave; */
+  /* fract32 mulInv = sub_fr1x32(FR32_MAX, mul); */
 #endif
 
 
