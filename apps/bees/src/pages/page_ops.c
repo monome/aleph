@@ -29,19 +29,19 @@ static s16* const pageSelect = &(pages[ePageOps].select);
 // const array of user-creatable operator types
 #define NUM_USER_OP_TYPES 13
 static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
+  eOpAccum,
   eOpAdd,
-  eOpSub,
-  eOpMul,
   eOpDiv,
   eOpGate,
-  eOpMonomeGridRaw,
-  eOpMidiNote,
   eOpMetro,
-  eOpTog,
-  eOpAccum,
+  eOpMidiNote,
+  eOpMonomeGridRaw,
+  eOpMul,
+  eOpRandom,
   eOpSplit,
+  eOpSub,
+  eOpTog,
   eOpTimer,
-  eOpRandom
 };
 
 // current selected new operator type
