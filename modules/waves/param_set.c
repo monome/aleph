@@ -37,6 +37,7 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParamAmp2:
     filter_1p_lo_in(amp2Lp, v);
     break;
+
   case eParamFreq1Smooth:
     filter_1p_lo_set_slew( &(osc1.lpInc), v); 
     break;
@@ -70,6 +71,7 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParamAmp2Smooth:
     filter_1p_lo_set_slew(amp2Lp, v);
     break;
+
   case eParamIoAmp0:
     ioAmp0 = (v);
     break;
@@ -85,4 +87,5 @@ void module_set_param(u32 idx, ParamValue v) {
   default:
     break;
   }
+
 }
