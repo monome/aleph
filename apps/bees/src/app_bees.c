@@ -86,19 +86,21 @@ u8 app_launch(u8 firstrun) {
     print_dbg("\r\n first run, try and load default DSP");
     render_boot("launching default DSP...");
 
-    //// FIXME (?)
-    files_load_dsp_name("default.ldr");
+    files_load_dsp_name("aleph-mono.ldr");
     
     //    render_boot("waiting for DSP init...");
     bfin_wait_ready();
     //    print_dbg(" requesting param report...");
-    //    render_boot("requesting DSP params");
+        render_boot("requesting DSP params");
     net_report_params();
 
     //    print_dbg("\r\n enable DSP audio...");
-    //    render_boot("enabling audio");
+        render_boot("enabling audio");
     bfin_enable();
 
+    render_boot("writing default dsp to flash...");
+    files_store_default_dsp_name("aleph-mono.dsp");
+    
   } else {
 
     app_pause();
