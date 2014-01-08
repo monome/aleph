@@ -48,6 +48,7 @@ typedef enum {
   eOpSub,
   eOpTimer,
   eOpRandom,
+  eOpList8,
   numOpClasses // dummy/count 
 } op_id_t;
 
