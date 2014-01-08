@@ -105,11 +105,11 @@ static void calc_frame(void);
 
 // frame calculation
 static void calc_frame(void) {
-
+  fract32 out1, out2;
+  
   // osc output
-  oscOut1 = osc_next( &(osc1) );
-  oscOut2 = osc_next( &(osc2) );
-
+  oscOut1 = shr_fr1x32(osc_next( &(osc1) ), 1);
+  oscOut2 = shr_fr1x32(osc_next( &(osc2) ), 1);
 
   // phase mod feedback with 1frame delay
   osc_pm_in( &osc1, oscOut2 );
@@ -133,18 +133,17 @@ static void calc_frame(void) {
   oscAmp2 = filter_1p_lo_next(amp2Lp);
 
   // apply osc amplitudes and sum 
-  frameVal = add_fr1x32(mult_fr1x32x32( mult_fr1x32x32( oscOut1, oscAmp1), fdry1),
-			mult_fr1x32x32( mult_fr1x32x32( oscOut2, oscAmp2), fdry2)
-			);
+  out1 = mult_fr1x32x32(oscAmp1,
+			add_fr1x32(mult_fr1x32x32( oscOut1, fdry1),
+				   mult_fr1x32x32( svfOut1, fwet1)
+				   ));
+  
+  out2 = mult_fr1x32x32(oscAmp2,
+			add_fr1x32(mult_fr1x32x32( oscOut2, fdry2),
+				   mult_fr1x32x32( svfOut2, fwet2)
+				   ));
 
-  frameVal = add_fr1x32( frameVal,
-			 mult_fr1x32x32( svfOut1, fwet1)
-			);
-
-  frameVal = add_fr1x32( frameVal,
-			 mult_fr1x32x32( svfOut2, fwet2)
-			);
-
+  frameVal = add_fr1x32( out1, out2);
   
 }
 
