@@ -22,6 +22,18 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamFreq2].max = OSC_HZ_MAX;
   gModuleData->paramDesc[eParamFreq2].radix = OSC_HZ_RADIX;
 
+  strcpy(gModuleData->paramDesc[eParamTune1].label, "tune1");
+  gModuleData->paramDesc[eParamTune1].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamTune1].min = RATIO_MIN;
+  gModuleData->paramDesc[eParamTune1].max = RATIO_MAX;
+  gModuleData->paramDesc[eParamTune1].radix = RATIO_RADIX;
+  
+  strcpy(gModuleData->paramDesc[eParamTune2].label, "tune2");
+  gModuleData->paramDesc[eParamTune2].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamTune2].min = RATIO_MIN;
+  gModuleData->paramDesc[eParamTune2].max = RATIO_MAX;
+  gModuleData->paramDesc[eParamTune2].radix = RATIO_RADIX;
+    
   strcpy(gModuleData->paramDesc[eParamAmp1].label, "amp1");
   gModuleData->paramDesc[eParamAmp1].type = eParamTypeAmp;
   gModuleData->paramDesc[eParamAmp1].min = 0;
@@ -94,6 +106,19 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamWave2].max = FRACT32_MAX;
   gModuleData->paramDesc[eParamWave2].radix = 1;
   
+
+  strcpy(gModuleData->paramDesc[eParamBl1].label, "wave1");
+  gModuleData->paramDesc[eParamBl1].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamBl1].min = 0;
+  gModuleData->paramDesc[eParamBl1].max = FRACT32_MAX;
+  gModuleData->paramDesc[eParamBl1].radix = 1;
+  
+  strcpy(gModuleData->paramDesc[eParamBl2].label, "wave2");
+  gModuleData->paramDesc[eParamBl2].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamBl2].min = 0;
+  gModuleData->paramDesc[eParamBl2].max = FRACT32_MAX;
+  gModuleData->paramDesc[eParamBl2].radix = 1;
+
   strcpy(gModuleData->paramDesc[eParamFreq1Smooth].label, "hz1Slew");
   gModuleData->paramDesc[eParamFreq1Smooth].type = eParamTypeIntegrator;
   gModuleData->paramDesc[eParamFreq1Smooth].min = SMOOTH_FREQ_MIN;

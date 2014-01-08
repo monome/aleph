@@ -18,6 +18,10 @@ enum params {
   eParamFreq1,
   eParamFreq2,
 
+
+  eParamTune1,
+  eParamTune2,
+
   eParamWave1,
   eParamWave2,
 
@@ -38,6 +42,9 @@ enum params {
 
   eParamWm12Smooth,
   eParamWm21Smooth,
+
+  eParamBl1,
+  eParamBl2,
 
   eParamWave1Smooth,
   eParamWave2Smooth,

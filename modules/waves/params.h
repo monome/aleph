@@ -10,13 +10,9 @@
 /* #define OSC_FREQ_MAX 0x40000000    // 16384 hz */
 /* #define OSC_FREQ_RADIX 15 */
 
-#define RATIO_MIN 0x2000     // 1/8
-#define RATIO_MAX 0x80000    // 8
-#define RATIO_RADIX 4
-
-#define ENV_DUR_MIN 0x0040   // 1/1024
-#define ENV_DUR_MAX 0x100000 // 32
-#define ENV_DUR_RADIX 5
+#define RATIO_MIN 0x4000     // 1/4
+#define RATIO_MAX 0x40000    // 4
+#define RATIO_RADIX 3
 
 #define SMOOTH_FREQ_MIN 0x2000 // 1/8
 #define SMOOTH_FREQ_MAX 0x400000 // 64

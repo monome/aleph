@@ -10,6 +10,13 @@ void module_set_param(u32 idx, ParamValue v) {
     osc_set_hz( &osc2, v );
     break;
 
+  case eParamTune1:
+    osc_set_tune( &osc1, v );
+    break;
+  case eParamTune2:
+    osc_set_tune( &osc2, v );
+    break;
+
   case eParamWave1:
     osc_set_shape( &osc1, BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
     break;
@@ -37,6 +44,12 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParamAmp2:
     filter_1p_lo_in(amp2Lp, v);
     break;
+
+  case eParamBl1 :
+    osc_set_bl( &osc1, BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
+
+  case eParamBl2 :
+    osc_set_bl( &osc1, BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
 
   case eParamFreq1Smooth:
     filter_1p_lo_set_slew( &(osc1.lpInc), v); 
