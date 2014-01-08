@@ -26,5 +26,6 @@
 #include "ops/op_sw.h"
 #include "ops/op_tog.h"
 #include "ops/op_random.h"
+#include "ops/op_list8.h"
 
 #endif

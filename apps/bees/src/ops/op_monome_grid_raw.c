@@ -10,7 +10,7 @@
 //---- descriptor strings
 static const char* op_mgrid_raw_instring = "FOCUS   TOG     MONO    ";
 static const char* op_mgrid_raw_outstring = "COL     ROW     VAL     ";
-static const char* op_mgrid_raw_opstring = "RAWGRID";
+static const char* op_mgrid_raw_opstring = "GRID";
 
 //-------------------------------------------------
 //----- static function declaration

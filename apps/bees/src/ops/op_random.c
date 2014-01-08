@@ -73,7 +73,7 @@ static void op_random_in_trig(op_random_t* random, const io_t v) {
   random->val =random->x;
   if(random->val < 0)
     random->val *= -1;
-  random->val = (random->val % ((random->max - random->min) + 1)) - random->min;
+  random->val = (random->val % ((random->max - random->min) + 1)) + random->min;
   net_activate(random->outs[0], random->val, random);
   // if(v > 0) { random->trig = OP_ONE; } else { random->trig = 0; }
 }
