@@ -138,12 +138,12 @@ static u8* inode_pickle(inode_t* in, u8* dst) {
   // preset inclusion flag
   //// this is a preset variable
   //  *dst++ = in->preset;
-  print_dbg("\r\n pickling input node, op index: ");
-  print_dbg_ulong(in->opIdx);
-  print_dbg(" , input idx: ");
-  print_dbg_ulong(in->opInIdx);
-  print_dbg(" , play flag: ");
-  print_dbg_ulong(in->play);
+  /* print_dbg("\r\n pickling input node, op index: "); */
+  /* print_dbg_ulong(in->opIdx); */
+  /* print_dbg(" , input idx: "); */
+  /* print_dbg_ulong(in->opInIdx); */
+  /* print_dbg(" , play flag: "); */
+  /* print_dbg_ulong(in->play); */
 
   // play inclusion flag
   *dst++ = in->play;
@@ -161,8 +161,8 @@ static const u8* inode_unpickle(const u8* src, inode_t* in) {
   // play inclusion flag
   in->play = *src++;
 
-  print_dbg("\r\n unpickled input node play flag: ");
-  print_dbg_ulong(in->play);
+  /* print_dbg("\r\n unpickled input node play flag: "); */
+  /* print_dbg_ulong(in->play); */
 
   // dummy byte for alignment
   ++src; 
@@ -242,11 +242,10 @@ void net_init_onode(u16 idx) {
 void net_activate(s16 inIdx, const io_t val, void* op) {
   static inode_t* pIn;
 
-  print_dbg("\r\n net_activate, input idx: ");
-  print_dbg_hex(inIdx);
-  print_dbg(" , value: ");
-  print_dbg_hex(val);
-
+  /* print_dbg("\r\n net_activate, input idx: "); */
+  /* print_dbg_hex(inIdx); */
+  /* print_dbg(" , value: "); */
+  /* print_dbg_hex(val); */
 
   if(!netActive) {
     if(op != NULL) {
@@ -262,9 +261,9 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
 
     /// only process for play mode if we're in play mode
     if(pageIdx == ePagePlay) {
-      print_dbg(" , play mode active, ");
-      print_dbg(" , play visibility flag : ");
-      print_dbg_ulong(pIn->play);
+      /* print_dbg(" , play mode active, "); */
+      /* print_dbg(" , play visibility flag : "); */
+      /* print_dbg_ulong(pIn->play); */
       // only process if play-mode-visibility is set
       if(pIn->play) {
 	play_input(inIdx);
