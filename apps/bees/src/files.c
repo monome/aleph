@@ -275,7 +275,9 @@ u8 files_load_scene_name(const char* name) {
     scene_read_buf();
 
     // try and load dsp module indicated by scene descriptor
-    ret = files_load_dsp_name(sceneData->desc.moduleName);
+    //// DUDE! NO!!! scene does this. when did this happen!
+    //// probably snuck in in some merge.
+    //    ret = files_load_dsp_name(sceneData->desc.moduleName);
   } else {
     print_dbg("\r\n error: fp was null in files_load_scene_name \r\n");
     ret = 0;

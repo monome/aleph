@@ -26,17 +26,9 @@ static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
 // scroll manager
 static scroll centerScroll;
 
-// play-mode filter flag (persistent)
-// static u8 playFilter = 0;
 
-// selection-included-in-preset flag (read from network on selection)
-// static u8 inPreset = 0;
-// selection-included-in-play flag (read from network on selection)
-//static u8 inPlay = 0;
 // we are in preset=selection momentary mode
 static u8 inPresetSelect = 0;
-// selected preset
-//static s32 presetSelect = 0;
 
 // in-clear-confirm stateS
 static u8 clearConfirm = 0;
@@ -60,8 +52,6 @@ static void handle_key_3(s32 val);
 
 // redraw based on provisional preset seleciton
 static void redraw_ins_preset(u8 idx);
-// draw preset name in head region
-// static void draw_ins_preset_name(void);
 
 // fill tmp region with new content
 // given input index and foreground color
@@ -111,8 +101,6 @@ static void render_line(s16 idx, u8 fg) {
     font_string_region_clip(lineRegion, ".", 126, 0, fg, 0);
   }
 
-  // underline
-  //  region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
 }
 
 // edit the current seleciton
@@ -134,9 +122,6 @@ static void select_scroll(s32 dir) {
   s16 newIdx;
   s16 newSel;
 
-  print_dbg("\r\n scroll_select ins, max value: ");
-  print_dbg_ulong(max);
-
   if(dir < 0) {
     /// SCROLL DOWN
     // wrap with blank line
@@ -151,11 +136,6 @@ static void select_scroll(s32 dir) {
     *pageSelect = newSel;
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
-    // update preset-inclusion flag
-    //inPreset = (u8)net_get_in_preset((u32)(*pageSelect));
-    // update play-inclusion flag
-    //    inPlay = (u8)net_get_in_play((u32)(*pageSelect));
-   
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
     if(newIdx == -1) {
@@ -187,10 +167,6 @@ static void select_scroll(s32 dir) {
     *pageSelect = newSel;    
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
-    // update preset-inclusion flag
-    //inPreset = (u8)net_get_in_preset((u32)(*pageSelect));
-    // update play-inclusion flag
-    //    inPlay = (u8)net_get_in_play((u32)(*pageSelect));
     // add new content at bottom of screen
     newIdx = newSel + SCROLL_LINES_ABOVE;
 

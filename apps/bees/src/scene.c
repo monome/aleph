@@ -108,10 +108,23 @@ void scene_read_buf(void) {
   // store current mod name in scene desc
   memcpy(modName, sceneData->desc.moduleName, MODULE_NAME_LEN);
 
+
+  ///// always load:
+    print_dbg("\r\n loading module name: ");
+    print_dbg(sceneData->desc.moduleName);
+    files_load_dsp_name(sceneData->desc.moduleName);
+    //  }
+
+    bfin_wait_ready();
+
+    net_report_params();
+
   // unpickle network 
+  print_dbg("\r\n unpickling network for scene recall...");
   src = net_unpickle(src);
 
   // unpickle presets
+  print_dbg("\r\n unpickling presets for scene recall...");
   src = presets_unpickle(src);
   
   print_dbg("\r\n copied stored network and presets to RAM ");
@@ -126,28 +139,28 @@ void scene_read_buf(void) {
   /* } */
 
   // compare module name  
-  neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
+
+  //// is strncmp fucking with us??
+  ///  neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
   
-  if(neq) {
+  //  if(neq) {
     // load bfin module if it doesn't match the current scene desc
-    print_dbg("\r\n loading module name: ");
-    print_dbg(sceneData->desc.moduleName);
-    files_load_dsp_name(sceneData->desc.moduleName);
-  }
+
     
-  // re-trigger inputs
-  //  app_notify("re-initializing network/parameters");
-  /// hopefully don't need to do this?
-  //  net_retrigger_inputs();
-  
-  bfin_wait_ready();
+    bfin_wait_ready();
+
+  //// well let's try it, actually that would explain osme things..
+    //  delay_ms(10);
 
   // update bfin parameters
   net_send_params();
   print_dbg("\r\n sent new params");
-  
+
+  delay_ms(5);
+
   // enable audio processing
   bfin_enable();
+  
   app_resume();
 }
 

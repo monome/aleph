@@ -198,27 +198,27 @@ io_t inc_param_value(u32 idx,  io_t inc) {
   io_t in;
   s32 scaled;
 
-  print_dbg("\r\n inc_param_value, index: ");
-  print_dbg_ulong(idx);
+  /* print_dbg("\r\n inc_param_value, index: "); */
+  /* print_dbg_ulong(idx); */
 
-  print_dbg(" , input: 0x");
-  print_dbg_hex(get_param_value(idx));
+  /* print_dbg(" , input: 0x"); */
+  /* print_dbg_hex(get_param_value(idx)); */
 
-  print_dbg(" , increment: 0x");
-  print_dbg_hex(inc);
+  /* print_dbg(" , increment: 0x"); */
+  /* print_dbg_hex(inc); */
 
 
   in = get_param_value(idx);
   // use scaler to increment and lookup
   scaled = scaler_inc( &(net->params[idx].scaler), &in, inc);
 
-  print_dbg(" , new input: 0x");
-  print_dbg_hex(in);
+  /* print_dbg(" , new input: 0x"); */
+  /* print_dbg_hex(in); */
 
-  print_dbg(" , scaled: 0x");
-  print_dbg_hex(scaled);
+  /* print_dbg(" , scaled: 0x"); */
+  /* print_dbg_hex(scaled); */
 
-  print_dbg("\r\n\rn");
+  /* print_dbg("\r\n\r\n "); */
 
   // store input value in pnode
   net->params[idx].data.value = in;
