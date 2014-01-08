@@ -45,17 +45,13 @@ void sport0_rx_isr() {
 
 
 
-
-  /////
-  //// TESTING !
-  /*
   if(!processAudio) { 
     READY_HI;
 /// if this interrupt came from DMA1, clear it and continue(W1C)
     if(*pDMA1_IRQ_STATUS & 1) { *pDMA1_IRQ_STATUS = 0x0001; }
     return;
   }
-  */
+  
 
   /// inform the world that we're busy processing an audio frame
   //  BUSY_HI;

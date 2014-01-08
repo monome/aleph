@@ -6,6 +6,8 @@
 // ranges and radix
 // ranges are in 16.16
 // radix should be minimal bits to accommodate entire integer range.
+
+//// these are defined in the oscillator dsp unit.
 /* #define OSC_FREQ_MIN 0x040000      // 4 hz */
 /* #define OSC_FREQ_MAX 0x40000000    // 16384 hz */
 /* #define OSC_FREQ_RADIX 15 */
@@ -20,7 +22,7 @@
 
 // svf cutoff
 // filter cutoff frequency
-#define PARAM_FREQ_MAX 0x1F400000;  // fixme
+#define PARAM_FREQ_MAX 0x1F400000;  // fixme?
 
 // filter reciprocal of Q
 #define PARAM_RQ_MIN 0x00000000

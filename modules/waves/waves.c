@@ -71,6 +71,10 @@ static fract32 oscOut2 = 0;
 // filters
 static filter_svf svf1;
 static filter_svf svf2;
+static fract32 fdry1 = FR32_MAX;
+static fract32 fdry2 = FR32_MAX;
+static fract32 fwet1 = 0;
+static fract32 fwet2 = 0;
 
 // filter output busses
 static fract32 svfOut1 = 0;
@@ -119,8 +123,8 @@ static void calc_frame(void) {
   ///////////
   ///////////
   // apply filters
-  //  tmp = filter_svf_next( &(svf1), osc1);  
-  //  tmp = filter_svf_next( &(svf2), osc2);  
+  svfOut1 = filter_svf_next( &(svf1), oscOut1);  
+  svfOut2 = filter_svf_next( &(svf2), oscOut2);  
   /////////
   /////////
 
@@ -128,19 +132,19 @@ static void calc_frame(void) {
   oscAmp1 = filter_1p_lo_next(amp1Lp);
   oscAmp2 = filter_1p_lo_next(amp2Lp);
 
-  // apply amplitudes and sum 
-  ////////////
-  //// TEST
-#if 1
-  frameVal = add_fr1x32(
-			mult_fr1x32x32(oscOut1, oscAmp1),
-			mult_fr1x32x32(oscOut2, oscAmp2)
+  // apply osc amplitudes and sum 
+  frameVal = add_fr1x32(mult_fr1x32x32( mult_fr1x32x32( oscOut1, oscAmp1), fdry1),
+			mult_fr1x32x32( mult_fr1x32x32( oscOut2, oscAmp2), fdry2)
 			);
-#else
-  //////////
-  frameVal = oscOut1 >> 2;
-  ///////////////
-#endif 
+
+  frameVal = add_fr1x32( frameVal,
+			 mult_fr1x32x32( svfOut1, fwet1)
+			);
+
+  frameVal = add_fr1x32( frameVal,
+			 mult_fr1x32x32( svfOut2, fwet2)
+			);
+
   
 }
 

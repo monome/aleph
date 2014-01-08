@@ -15,9 +15,9 @@
 
 ///// inputs
 enum params {
+
   eParamFreq1,
   eParamFreq2,
-
 
   eParamTune1,
   eParamTune2,
@@ -34,6 +34,29 @@ enum params {
   eParamWm12,
   eParamWm21,
 
+  eParamBl1,
+  eParamBl2,
+
+  // filter 1
+  eParam_cut1,		
+  eParam_rq1,		
+  eParam_low1,		
+  eParam_high1,		
+  eParam_band1,		
+  eParam_notch1,	
+  eParam_fwet1,		
+  eParam_fdry1,		
+
+  // filter 2
+  eParam_cut2,
+  eParam_rq2,
+  eParam_low2,		
+  eParam_high2,		
+  eParam_band2,		
+  eParam_notch2,	
+  eParam_fwet2,		
+  eParam_fdry2,		
+
   eParamFreq1Smooth,
   eParamFreq2Smooth,
 
@@ -42,9 +65,6 @@ enum params {
 
   eParamWm12Smooth,
   eParamWm21Smooth,
-
-  eParamBl1,
-  eParamBl2,
 
   eParamWave1Smooth,
   eParamWave2Smooth,

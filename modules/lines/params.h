@@ -40,7 +40,7 @@ enum params {
   eParam_run_read1,		// 16
   eParam_run_write1,		// 17
 
-  // filter 01
+  // filter 1
   eParam_freq0,		// 18
   eParam_rq0,			// 19
   eParam_low0,			// 20

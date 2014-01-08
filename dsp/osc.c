@@ -74,7 +74,7 @@ static inline void osc_calc_pm(osc* osc) {
 								   osc->pmAmt ) ),
 				      WAVE_TAB_MAX16
 				      ) );
-    // wrap negative
+  // wrap negative
   while (BIT_SIGN_32(osc->idxMod)) {
     osc->idxMod = fix16_add(osc->idxMod, WAVE_TAB_MAX16);
   }
