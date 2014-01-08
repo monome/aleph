@@ -107,13 +107,13 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamWave2].radix = 1;
   
 
-  strcpy(gModuleData->paramDesc[eParamBl1].label, "wave1");
+  strcpy(gModuleData->paramDesc[eParamBl1].label, "bl1");
   gModuleData->paramDesc[eParamBl1].type = eParamTypeFix;
   gModuleData->paramDesc[eParamBl1].min = 0;
   gModuleData->paramDesc[eParamBl1].max = FRACT32_MAX;
   gModuleData->paramDesc[eParamBl1].radix = 1;
   
-  strcpy(gModuleData->paramDesc[eParamBl2].label, "wave2");
+  strcpy(gModuleData->paramDesc[eParamBl2].label, "bl2");
   gModuleData->paramDesc[eParamBl2].type = eParamTypeFix;
   gModuleData->paramDesc[eParamBl2].min = 0;
   gModuleData->paramDesc[eParamBl2].max = FRACT32_MAX;
@@ -178,4 +178,7 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamAmp2Smooth].min = SMOOTH_FREQ_MIN;
   gModuleData->paramDesc[eParamAmp2Smooth].max = SMOOTH_FREQ_MAX;
   gModuleData->paramDesc[eParamAmp2Smooth].radix = SMOOTH_FREQ_RADIX;
+
+
+
 }
