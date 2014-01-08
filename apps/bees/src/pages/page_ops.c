@@ -33,6 +33,7 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAdd,
   eOpDiv,
   eOpGate,
+  eOpList8,
   eOpMetro,
   eOpMidiNote,
   eOpMonomeGridRaw,
@@ -42,8 +43,6 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpSub,
   eOpTog,
   eOpTimer,
-  eOpRandom,
-  eOpList8
 };
 
 // current selected new operator type
