@@ -49,7 +49,7 @@ const op_desc_t op_registry[numOpClasses] = {
     .init = &op_gate_init,
     .deinit = NULL
   } , {
-    .name = "RAWGRID",
+    .name = "GRID",
     .size = sizeof(op_mgrid_raw_t),
     .init = &op_mgrid_raw_init,
     .deinit = &op_mgrid_raw_deinit
