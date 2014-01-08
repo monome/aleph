@@ -71,7 +71,7 @@ static void op_sub_in_b(op_sub_t* sub, const io_t v) {
 }
 
 static void op_sub_in_btrig(op_sub_t* sub, const io_t v) {
-  if(v > 0) { sub->btrig = OP_ONE; } { sub->btrig = 0; }
+  if(v > 0) { sub->btrig = OP_ONE; } else { sub->btrig = 0; }
 }
 
 //===== UI input
@@ -79,11 +79,11 @@ static void op_sub_inc_input(op_sub_t* sub, const s16 idx, const io_t inc) {
   io_t val;
   switch(idx) {
   case 0:  // a
-    val = op_ssub(sub->a, inc);
+    val = op_sadd(sub->a, inc);
     op_sub_in_a(sub, val);
     break; 
   case 1:  // b
-    val = op_ssub(sub->b, inc);
+    val = op_sadd(sub->b, inc);
     op_sub_in_b(sub, val);
     break;
   case 2:  // trig

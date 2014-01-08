@@ -181,8 +181,8 @@ static void select_scroll(s32 dir) {
       // increment selection
       newSel = *pageSelect + 1;
     }
-    print_dbg("\r\n scroll up to new selection on ins page: ");
-    print_dbg_ulong(newSel);
+    //    print_dbg("\r\n scroll up to new selection on ins page: ");
+    //    print_dbg_ulong(newSel);
     
     *pageSelect = newSel;    
     // remove highlight from old center

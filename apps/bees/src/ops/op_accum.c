@@ -72,7 +72,7 @@ void op_accum_init(void* op) {
   accum->inc = OP_ONE;
   accum->val = 0;
   accum->min = 0;
-  accum->max = OP_MAX_VAL;
+  accum->max = OP_MAX_VAL >> 1;
   accum->wrap = 1;
 }
 
@@ -161,12 +161,12 @@ void op_accum_wrap_out(op_accum_t* accum) {
     }
   } else { // saturating...
     if (accum->val > accum->max) {
+      wrap = dif = op_sub(accum->val, accum->max);
       accum->val = accum->max;
-      dif = 1; // force wrap output
     }
     if (accum->val < accum->min) {
+      wrap = dif = op_sub(accum->val , accum->min);
       accum->val = accum->min;
-      dif = -1; // force wrap output
     }
   }
 

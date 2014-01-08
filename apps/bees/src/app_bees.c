@@ -100,7 +100,7 @@ u8 app_launch(u8 firstrun) {
     bfin_enable();
 
     render_boot("writing default dsp to flash...");
-    files_store_default_dsp_name("aleph-mono.dsp");
+    files_store_default_dsp_name("aleph-mono.ldr");
     
   } else {
 

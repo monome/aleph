@@ -74,6 +74,7 @@ static void render_op_type(void);
 
 // render a given line
 void render_line(s16 idx) {
+
   region_fill(lineRegion, 0x0);
   if((idx >= 0) && (idx < net_num_ops()) ) {
     clearln();
@@ -318,11 +319,14 @@ void init_page_ops(void) {
   //// need to actually set the scroll region at least temporarily
   render_set_scroll(&centerScroll);
   while(i<5) {
+    print_dbg("\r\n init ops page, line ");
+    print_dbg_ulong(i);
     render_line(i);
     render_to_scroll_line(n, i == 0 ? 1 : 0);
     ++n;
     ++i;
   }
+  print_dbg("\r\n done.");
 }
 
 // select 

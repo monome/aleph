@@ -8,7 +8,9 @@
 //--- op_sub_t : subtraction
 typedef struct op_sub_struct {
   op_t super;
+  // state
   volatile io_t val; 
+  //inputs:
   volatile io_t a;
   volatile io_t b;
   volatile io_t btrig;

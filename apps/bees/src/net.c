@@ -930,7 +930,9 @@ u8* net_pickle(u8* dst) {
   }
 
   // write input nodes
-  for(i=0; i < (net->numIns + net->numParams); ++i) {
+  //  for(i=0; i < (net->numIns + net->numParams); ++i) {
+  /// FIXME: doing params is breaking stuff, somehow...
+  for(i=0; i < (net->numIns); ++i) {
     dst = inode_pickle(&(net->ins[i]), dst);
   }
 
@@ -983,7 +985,9 @@ u8* net_unpickle(const u8* src) {
   }
 
   // read input nodes
-  for(i=0; i < (net->numIns + net->numParams); ++i) {
+  //  for(i=0; i < (net->numIns + net->numParams); ++i) {
+  ///// FIXME: doing the params is breaking stuff, somehow.
+  for(i=0; i < (net->numIns); ++i) {
     src = inode_unpickle(src, &(net->ins[i]));
   }
 
