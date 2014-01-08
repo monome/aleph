@@ -29,6 +29,9 @@ static inline void osc_calc_wm(osc* osc) {
   fract32 sm; // mod shape
   fract32 sl; // shape limit given current freq
 
+  ///////
+  ///// TEST
+#if 1
   // add modulation
   sm = add_fr1x32(osc->shape, mult_fr1x32x32(osc->wmIn, osc->wmAmt) );
   
@@ -45,6 +48,13 @@ static inline void osc_calc_wm(osc* osc) {
     sm = dsp_lerp32(sm, sl, osc->bandLim);
   }
   osc->shapeMod = sm;
+  /////////////
+  ////////
+#else
+  osc->shapeMod = osc->shape;
+#endif
+  /////////
+  //////////
 }
 
 // calculate phase incremnet
@@ -178,5 +188,6 @@ fract32 osc_next(osc* osc) {
   osc_advance(osc);
   
   // lookup 
-  return osc_lookup(osc);
+  //  return osc_lookup(osc);
+  return 0;
 }
