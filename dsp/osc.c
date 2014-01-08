@@ -32,7 +32,7 @@ static inline void osc_calc_wm(osc* osc) {
 
   ///////
   ///// TEST
-#if 1
+#if 0
   // add modulation
   sm = add_fr1x32(osc->shape, mult_fr1x32x32(osc->wmIn, osc->wmAmt) );
   
@@ -52,7 +52,7 @@ static inline void osc_calc_wm(osc* osc) {
   /////////////
   ////////
 #else
-  //  osc->shapeMod = osc->shape;
+    osc->shapeMod = osc->shape;
 #endif
   /////////
   //////////
@@ -61,6 +61,10 @@ static inline void osc_calc_wm(osc* osc) {
 // calculate phase incremnet
 static inline void osc_calc_inc( osc* osc) {
   filter_1p_lo_in( &(osc->lpInc), fix16_mul(osc->ratio, fix16_mul(osc->hz, ips)) );
+
+  /// TEST:
+  osc->inc = fix16_mul(osc->ratio, fix16_mul(osc->hz, ips));
+ 
 }
 
 // calculate phase
@@ -115,16 +119,30 @@ static inline void osc_advance(osc* osc) {
 // initialize given table data and samplerate
 void osc_init(osc* osc, wavtab_t tab, u32 sr) {
   osc->tab = tab;
+
   ips = fix16_from_float( (f32)WAVE_TAB_SIZE / (f32)sr );
+
   incMin = fix16_mul(ips, OSC_HZ_MIN);
   incMax = fix16_mul(ips, OSC_HZ_MAX);
   incRange = (u32)incMax - (u32)incMin;
   shapeLimMul = 0x7fffffff / incRange;
-  osc->idx = 0;
+
   filter_1p_lo_init( &(osc->lpInc) , FIX16_ONE);
   filter_1p_lo_init( &(osc->lpShape) , FIX16_ONE);
   filter_1p_lo_init( &(osc->lpPm) , FIX16_ONE);
   filter_1p_lo_init( &(osc->lpWm) , FIX16_ONE);
+
+  osc->val = 0;
+  osc->idx = 0;
+  osc->ratio = FIX16_ONE;
+  osc->shape = 0;
+  osc->shapeMod = 0;
+  osc->idx = 0;
+  osc->idxMod = 0;
+  osc->bandLim = 0;
+  osc->pmAmt = 0;
+  osc->wmAmt = 0;
+
 }
 
 // set waveshape (table)
@@ -174,11 +192,14 @@ void osc_set_bl(osc* osc, fract32 bl) {
 fract32 osc_next(osc* osc) {
 
   /// update param smoothers
+  //// TEST:
+  
   osc->inc = filter_1p_lo_next( &(osc->lpInc) );
   osc->shape = filter_1p_lo_next( &(osc->lpShape) );
   osc->pmAmt = filter_1p_lo_next( &(osc->lpShape) );
   osc->wmAmt = filter_1p_lo_next( &(osc->lpShape) );
   
+
   // calculate waveshape modulation + bandlimiting
   osc_calc_wm(osc);
 

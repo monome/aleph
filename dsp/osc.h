@@ -31,7 +31,7 @@
 #define WAVE_TAB_LSHIFT 2
 
 // wavetable type: pointer to 2d array
-typedef fract32 (*wavtab_t) [WAVE_TAB_NUM][WAVE_TAB_SIZE];
+typedef const fract32 (*wavtab_t) [WAVE_TAB_NUM][WAVE_TAB_SIZE];
 
 // class structure
 typedef struct _osc {

@@ -105,6 +105,9 @@ static void calc_frame(void) {
   oscOut1 = osc_next( &(osc1) );
   oscOut2 = osc_next( &(osc2) );
 
+  ///// TODO:
+  //// no phase mod yet
+
   ///////////
   ///////////
   // apply filters
@@ -118,10 +121,19 @@ static void calc_frame(void) {
   oscAmp2 = filter_1p_lo_next(amp2Lp);
 
   // apply amplitudes and sum 
+  ////////////
+  //// TEST
+#if 0  
   frameVal = add_fr1x32(
 			mult_fr1x32x32(oscOut1, oscAmp1),
 			mult_fr1x32x32(oscOut2, oscAmp2)
 			);
+#else
+  //////////
+  frameVal = oscOut1 >> 2;
+  ///////////////
+#endif 
+  
 }
 
 //----------------------
@@ -135,7 +147,7 @@ void module_init(void) {
   data = (wavesData * )SDRAM_ADDRESS;
   // initialize moduleData superclass for core routines
   gModuleData = &(data->super);
-  strcpy(gModuleData->name, "aleph-mono");
+  strcpy(gModuleData->name, "aleph-waves");
   gModuleData->paramDesc = data->mParamDesc;
   gModuleData->paramData = data->mParamData;
   gModuleData->numParams = eParamNumParams;
