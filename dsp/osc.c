@@ -28,7 +28,7 @@ static u32 shapeLimMul;
 // calculate modulated and bandlimited waveshape
 static inline void osc_calc_wm(osc* osc) {
   fract32 sm; // mod shape
-  fract32 sl; // shape limit given current freq
+  // fract32 sl; // shape limit given current freq
 
 
   // add modulation
@@ -39,13 +39,22 @@ static inline void osc_calc_wm(osc* osc) {
   //- max freq = min shape, min freq = max shape
   // :
   // map phase increment to [0,1] fract32
-  sl = (fract32)(((u32)(osc->inc) - incRange) * shapeLimMul);
-  // invert [0,1] to [1,0]
-  sl = sub_fr1x32(FR32_MAX, sl);
-  // limit
-  if(sl < sm) {
-    sm = dsp_lerp32(sm, sl, osc->bandLim);
-  }
+
+  /* sl = (fract32)(((u32)(osc->inc) - incRange) * shapeLimMul); */
+  /* // invert [0,1] to [1,0] */
+  /* sl = sub_fr1x32(FR32_MAX, sl); */
+  
+  /* // limit */
+  /* if(sl < sm) { */
+  /*   sm = dsp_lerp32(sm, sl, osc->bandLim); */
+  /* } */
+
+  // ok, time for serious bullshit!
+  sm = sub_fr1x32(sm, 
+		  shl_fr1x32( mult_fr1x32x32( (fract32)fix16_sub(osc->inc, incMin), 
+					      osc->bandLim ),
+			      1 ) );
+  if(sm < 0) { sm = 0; }
   osc->shapeMod = sm;
 }
 
@@ -130,7 +139,7 @@ void osc_init(osc* osc, wavtab_t tab, u32 sr) {
   osc->shapeMod = 0;
   osc->idx = 0;
   osc->idxMod = 0;
-  osc->bandLim = 0;
+  osc->bandLim = FR32_MAX >> 2;
   osc->pmAmt = 0;
   osc->wmAmt = 0;
 
