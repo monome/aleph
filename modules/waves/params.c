@@ -287,4 +287,54 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamIoAmp3].max = FRACT32_MAX >> 1;
   gModuleData->paramDesc[eParamIoAmp3].radix = 32;
 
+
+  strcpy(gModuleData->paramDesc[eParam_dacVal0].label, "dac0");
+  gModuleData->paramDesc[eParam_dacVal0].type = eParamTypeFix; 
+  gModuleData->paramDesc[eParam_dacVal0].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_dacVal0].max = PARAM_DAC_MAX;
+  gModuleData->paramDesc[eParam_dacVal0].radix = PARAM_DAC_RADIX;
+
+  strcpy(gModuleData->paramDesc[eParam_dacVal1].label, "dac1");
+  gModuleData->paramDesc[eParam_dacVal1].type = eParamTypeFix; 
+  gModuleData->paramDesc[eParam_dacVal1].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_dacVal1].max = PARAM_DAC_MAX;
+  gModuleData->paramDesc[eParam_dacVal1].radix = PARAM_DAC_RADIX;
+
+  strcpy(gModuleData->paramDesc[eParam_dacVal2].label, "dac2");
+  gModuleData->paramDesc[eParam_dacVal2].type = eParamTypeFix; 
+  gModuleData->paramDesc[eParam_dacVal2].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_dacVal2].max = PARAM_DAC_MAX;
+  gModuleData->paramDesc[eParam_dacVal2].radix = PARAM_DAC_RADIX;
+
+  strcpy(gModuleData->paramDesc[eParam_dacVal3].label, "dac3");
+  gModuleData->paramDesc[eParam_dacVal3].type = eParamTypeFix; 
+  gModuleData->paramDesc[eParam_dacVal3].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_dacVal3].max = PARAM_DAC_MAX;
+  gModuleData->paramDesc[eParam_dacVal3].radix = PARAM_DAC_RADIX;
+
+  strcpy(gModuleData->paramDesc[eParam_dacSlew0].label, "dacSlew0");
+  gModuleData->paramDesc[eParam_dacSlew0].type = eParamTypeIntegrator; 
+  gModuleData->paramDesc[eParam_dacSlew0].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_dacSlew0].max = 0x7fffffff;
+  gModuleData->paramDesc[eParam_dacSlew0].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParam_dacSlew1].label, "dacSlew1");
+  gModuleData->paramDesc[eParam_dacSlew1].type = eParamTypeIntegrator; 
+  gModuleData->paramDesc[eParam_dacSlew1].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_dacSlew1].max = 0x7fffffff;
+  gModuleData->paramDesc[eParam_dacSlew1].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParam_dacSlew2].label, "dacSlew2");
+  gModuleData->paramDesc[eParam_dacSlew2].type = eParamTypeIntegrator; 
+  gModuleData->paramDesc[eParam_dacSlew2].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_dacSlew2].max = 0x7fffffff; 
+  gModuleData->paramDesc[eParam_dacSlew2].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParam_dacSlew3].label, "dacSlew3");
+  gModuleData->paramDesc[eParam_dacSlew3].type = eParamTypeIntegrator; 
+  gModuleData->paramDesc[eParam_dacSlew3].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_dacSlew3].max = 0x7fffffff;
+  gModuleData->paramDesc[eParam_dacSlew3].radix = 32;
+
+
 }

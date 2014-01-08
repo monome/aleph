@@ -76,6 +76,16 @@ enum params {
   eParamIoAmp2,
   eParamIoAmp3,
 
+  eParam_dacVal0,
+  eParam_dacVal1,
+  eParam_dacVal2,
+  eParam_dacVal3,
+  eParam_dacSlew0,
+  eParam_dacSlew1,
+  eParam_dacSlew2,
+  eParam_dacSlew3,
+
+
   eParamNumParams
 };
 

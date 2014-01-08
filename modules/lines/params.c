@@ -18,12 +18,19 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParam_loop0].max = PARAM_SECONDS_MAX; 
   gModuleData->paramDesc[eParam_loop0].radix = PARAM_SECONDS_RADIX;
 
-  //////// FIXME
-  strcpy(gModuleData->paramDesc[eParam_rate0].label, "rate0");
-  gModuleData->paramDesc[eParam_rate0].type = eParamTypeFix; 
-  gModuleData->paramDesc[eParam_rate0].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_rate0].max = 0x00010000; 
-  gModuleData->paramDesc[eParam_rate0].radix = 32;
+  // rate multiplier
+  strcpy(gModuleData->paramDesc[eParam_rMul0].label, "rMul0");
+  gModuleData->paramDesc[eParam_rMul0].type = eParamTypeFix; 
+  gModuleData->paramDesc[eParam_rMul0].min = 0x00010000; 
+  gModuleData->paramDesc[eParam_rMul0].max = 0x00080000; 
+  gModuleData->paramDesc[eParam_rMul0].radix = 32;
+
+  // rate divider
+  strcpy(gModuleData->paramDesc[eParam_rDiv0].label, "rDiv0");
+  gModuleData->paramDesc[eParam_rDiv0].type = eParamTypeFix; 
+  gModuleData->paramDesc[eParam_rDiv0].min = 0x00010000; 
+  gModuleData->paramDesc[eParam_rDiv0].max = 0x00080000; 
+  gModuleData->paramDesc[eParam_rDiv0].radix = 32;
 
   strcpy(gModuleData->paramDesc[eParam_write0].label, "write0");
   gModuleData->paramDesc[eParam_write0].type = eParamTypeAmp; 
@@ -75,10 +82,17 @@ void fill_param_desc(void) {
 
   /// FIXME
   //// ????
-  strcpy(gModuleData->paramDesc[eParam_rate1].label, "rate1");
-  gModuleData->paramDesc[eParam_rate1].type = eParamTypeFix; 
-  gModuleData->paramDesc[eParam_rate1].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_rate1].max = 0x00010000; 
+  strcpy(gModuleData->paramDesc[eParam_rMul1].label, "rMul1");
+  gModuleData->paramDesc[eParam_rMul1].type = eParamTypeFix; 
+  gModuleData->paramDesc[eParam_rMul1].min = 0x00010000; 
+  gModuleData->paramDesc[eParam_rMul1].max = 0x00080000; 
+  gModuleData->paramDesc[eParam_rMul1].radix = 32; 
+
+  strcpy(gModuleData->paramDesc[eParam_rDiv1].label, "rDiv1");
+  gModuleData->paramDesc[eParam_rDiv1].type = eParamTypeFix; 
+  gModuleData->paramDesc[eParam_rDiv1].min = 0x00010000; 
+  gModuleData->paramDesc[eParam_rDiv1].max = 0x00080000; 
+  gModuleData->paramDesc[eParam_rDiv1].radix = 32; 
 
   strcpy(gModuleData->paramDesc[eParam_write1].label, "write1");
   gModuleData->paramDesc[eParam_write1].type = eParamTypeAmp; 

@@ -18,6 +18,7 @@
 #include "conversion.h"
 // bfin
 #include "bfin_core.h"
+#include "dac.h"
 #include "fract_math.h"
 #include <fract2float_conv.h>
 
@@ -94,9 +95,13 @@ static fract32 ioAmp1;
 static fract32 ioAmp2;
 static fract32 ioAmp3;
 
-
 /// FIXME
 static fract32 frameVal;
+
+// dac values (u16, but use fract32 and audio integrators)
+static fract32 dacVal[4];
+static filter_1p_lo dacSlew[4];
+static u8 dacChan = 0;
 
 //----------------------
 //----- static function declaration
@@ -215,6 +220,13 @@ void module_init(void) {
 
   amp2Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
   filter_1p_lo_init( amp2Lp, oscAmp2 );
+
+  // dac
+  filter_1p_lo_init( &(dacSlew[0]), 0 );
+  filter_1p_lo_init( &(dacSlew[1]), 0 );
+  filter_1p_lo_init( &(dacSlew[2]), 0 );
+  filter_1p_lo_init( &(dacSlew[3]), 0 );
+
 }
 
 // de-init
@@ -233,10 +245,21 @@ extern u32 module_get_num_params(void) {
 void module_process_frame(void) {
 
   calc_frame();
+
   out[0] = add_fr1x32(frameVal, mult_fr1x32x32(in[0], ioAmp0));
   out[1] = add_fr1x32(frameVal, mult_fr1x32x32(in[1], ioAmp1));
   out[2] = add_fr1x32(frameVal, mult_fr1x32x32(in[2], ioAmp2));
   out[3] = add_fr1x32(frameVal, mult_fr1x32x32(in[3], ioAmp3));
+  
+  if(dacSlew[dacChan].sync) { ;; } else {
+    dacVal[dacChan] = filter_1p_lo_next(&(dacSlew[dacChan]));
+    dac_update(dacChan, shr_fr1x32(dacVal[dacChan], 15) & DAC_VALUE_MASK);
+  }
+ 
+  if(++dacChan == 4) {
+    dacChan = 0;
+  }
+
 }
 
 #include "param_set.c"

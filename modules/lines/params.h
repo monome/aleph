@@ -21,7 +21,8 @@ enum params {
   // delay 0
   eParam_delay0,		// 0
   eParam_loop0,			// 1 
-  eParam_rate0,			// 2
+  eParam_rMul0,			// 11
+  eParam_rDiv0,			// 2
   eParam_write0,		// 3
   eParam_pre0,			// 4
   eParam_pos_write0,		// 5
@@ -32,7 +33,8 @@ enum params {
   // delay 1
   eParam_delay1,		// 9
   eParam_loop1,			// 10
-  eParam_rate1,			// 11
+  eParam_rMul1,			// 11
+  eParam_rDiv1,			// 11
   eParam_write1,		// 12
   eParam_pre1,			// 13
   eParam_pos_write1,		// 14

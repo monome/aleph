@@ -39,11 +39,20 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_run_read1 :
     delay_set_run_read(&(lines[1]), v);
     break;
-  case eParam_rate0 :
+  case eParam_rMul0 :
     /// FIXME
     //    delay_set_rate(&(lines[0]), v.fix);
     break;
-  case eParam_rate1 :
+  case eParam_rDiv0 :
+    /// FIXME
+    //    delay_set_rate(&(lines[0]), v.fix);
+    break;
+
+  case eParam_rMul1 :
+    /// FIXME
+    //    delay_set_rate(&(lines[1]), v.fix);
+    break;
+  case eParam_rDiv1 :
     /// FIXME
     //    delay_set_rate(&(lines[1]), v.fix);
     break;
