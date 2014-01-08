@@ -48,10 +48,10 @@ void module_set_param(u32 idx, ParamValue v) {
 
   case eParamBl1 :
     osc_set_bl( &osc1, BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
-
+    break;
   case eParamBl2 :
     osc_set_bl( &osc1, BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
-
+    break;
 
     //// filter params:
   case eParam_cut1 :
