@@ -6,9 +6,9 @@
 // ranges and radix
 // ranges are in 16.16
 // radix should be minimal bits to accommodate entire integer range.
-#define OSC_FREQ_MIN 0x100000      // 16
-#define OSC_FREQ_MAX 0x40000000    // 16384
-#define OSC_FREQ_RADIX 15
+/* #define OSC_FREQ_MIN 0x040000      // 4 hz */
+/* #define OSC_FREQ_MAX 0x40000000    // 16384 hz */
+/* #define OSC_FREQ_RADIX 15 */
 
 #define RATIO_MIN 0x2000     // 1/8
 #define RATIO_MAX 0x80000    // 8
