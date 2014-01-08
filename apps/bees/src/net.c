@@ -333,7 +333,7 @@ s16 net_add_op(op_id_t opId) {
   net->opPoolOffset += op_registry[opId].size;
 
   //---- add inputs and outputs to node list
-  for(i=0; i<ins; ++i) {
+    for(i=0; i<ins; ++i) {
     net->ins[net->numIns].opIdx = net->numOps;
     net->ins[net->numIns].opInIdx = i;
     ++(net->numIns);
@@ -931,7 +931,7 @@ u8* net_pickle(u8* dst) {
   }
 
   // write input nodes
-  for(i=0; i < net->numIns; ++i) {
+  for(i=0; i < (net->numIns + net->numParams); ++i) {
     dst = inode_pickle(&(net->ins[i]), dst);
   }
 
@@ -984,7 +984,7 @@ u8* net_unpickle(const u8* src) {
   }
 
   // read input nodes
-  for(i=0; i < net->numIns; ++i) {
+  for(i=0; i < (net->numIns + net->numParams); ++i) {
     src = inode_unpickle(src, &(net->ins[i]));
   }
 
