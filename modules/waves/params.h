@@ -30,40 +30,6 @@
 #define PARAM_RQ_MIN 0x00000000
 #define PARAM_RQ_MAX 0x7fffffff
 
-
-
-// parameters
-enum params {
-  eParamFreq1,
-  eParamFreq2,
-
-  eParamAmp1,
-  eParamAmp2,
-
-  eParamIoAmp0,
-  eParamIoAmp1, 
-  eParamIoAmp2,
-  eParamIoAmp3,
-
-  eParamPm,
-  eParamWave1,
-  eParamWave2,
-
-  /* eParamGate, */
-  /* eParamAtkDur, */
-  /* eParamRelDur, */
-  /* eParamAtkCurve, */
-  /* eParamRelCurve, */
-  eParamFreq1Smooth,
-  eParamFreq2Smooth,
-  eParamPmSmooth,
-  eParamWave1Smooth,
-  eParamWave2Smooth,
-  eParamAmp1Smooth,
-  eParamAmp2Smooth,
-  eParamNumParams
-};
-
 #define NUM_PARAMS eParamNumParams
 
 extern void fill_param_desc(void);

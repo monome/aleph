@@ -18,26 +18,37 @@ enum params {
   eParamFreq1,
   eParamFreq2,
 
-  eParamAmp1,
-  eParamAmp2,
-
-  eParamIoAmp0,
-  eParamIoAmp1, 
-
-  eParamIoAmp2,
-  eParamIoAmp3,
-
-  eParamPm,
   eParamWave1,
   eParamWave2,
 
+  eParamAmp1,
+  eParamAmp2,
+
+  eParamPm12,
+  eParamPm21,
+
+  eParamWm12,
+  eParamWm21,
+
   eParamFreq1Smooth,
   eParamFreq2Smooth,
-  eParamPmSmooth,
+
+  eParamPm12Smooth,
+  eParamPm21Smooth,
+
+  eParamWm12Smooth,
+  eParamWm21Smooth,
+
   eParamWave1Smooth,
   eParamWave2Smooth,
   eParamAmp1Smooth,
   eParamAmp2Smooth,
+
+  eParamIoAmp0,
+  eParamIoAmp1, 
+  eParamIoAmp2,
+  eParamIoAmp3,
+
   eParamNumParams
 };
 

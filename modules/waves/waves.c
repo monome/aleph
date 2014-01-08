@@ -22,6 +22,7 @@
 #include <fract2float_conv.h>
 
 #include "module.h"
+#include "module_custom.h"
 #include "params.h"
 #include "types.h"
 
@@ -105,9 +106,15 @@ static void calc_frame(void) {
   oscOut1 = osc_next( &(osc1) );
   oscOut2 = osc_next( &(osc2) );
 
-  
-  // phase mod from osc2 -> osc1 with 1frame delay
+
+  // phase mod feedback with 1frame delay
   osc_pm_in( &osc1, oscOut2 );
+  osc_pm_in( &osc2, oscOut1 );
+
+  // shape mod feedback with 1frame delay
+  osc_wm_in( &osc1, oscOut2 );
+  osc_wm_in( &osc2, oscOut1 );
+
 
   ///////////
   ///////////
