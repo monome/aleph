@@ -1,4 +1,10 @@
+// bfin
 #include <fract2float_conv.h>
+#include "fract_math.h"
+
+// aleph/dsp
+#include "interpolate.h"
+#include "table.h"
 
 #include "osc.h"
 
@@ -19,19 +25,19 @@ static u32 shapeLimMul;
 
 
 // calculate modulated and bandlimited waveshape
-static inline void osc_calc_shape(osc* osc) {
+static inline void osc_calc_wm(osc* osc) {
   fract32 sm; // mod shape
   fract32 sl; // shape limit given current freq
 
   // add modulation
-  sm = add_fr1x32(osc->shape, mul_fr1x32x32(osc->wmIn, osc->wmAmt) );
+  sm = add_fr1x32(osc->shape, mult_fr1x32x32(osc->wmIn, osc->wmAmt) );
   
   //- hacky magic formula for pseudo-bandlimiting:
   //- with maximal bandlimiting, want to limit shape to a function of unit freq
   //- max freq = min shape, min freq = max shape
   // :
   // map phase increment to [0,1] fract32
-  sl  = ((u32)(osc->inc) - incRange) * shapelimMul;
+  sl  = ((u32)(osc->inc) - incRange) * shapeLimMul;
   // invert [0,1] to [1,0]
   sl = (s32)sl * -1 + 0x7fffffff;
   // limit
@@ -49,10 +55,19 @@ static inline void osc_calc_inc( osc* osc) {
 // calculate phase
 static inline void osc_calc_pm(osc* osc) {
   osc->idxMod = fix16_add( osc->idx, 
-			   fix16_mul( FRACT_FIX16( mul_fr1x32x32( 
-								 osc->pmIn, 
-								 osc->pmAmt 
-								  ) ) ) );
+			   fix16_mul( FRACT_FIX16( mult_fr1x32x32( osc->pmIn, 
+								   osc->pmAmt ) ),
+				      WAVE_TAB_MAX16
+				      ) );
+    // wrap negative
+  while (BIT_SIGN_32(osc->idxMod)) {
+    osc->idxMod = fix16_add(osc->idxMod, WAVE_TAB_MAX16);
+  }
+
+  // wrap positive
+  while(osc->idxMod > WAVE_TAB_MAX16) { 
+    osc->idxMod = fix16_sub(osc->idxMod, WAVE_TAB_MAX16); 
+  }
 }
 
 // lookup 
@@ -77,9 +92,11 @@ static inline fract32 osc_lookup(osc* osc) {
 
 // advance phase
 static inline void osc_advance(osc* osc) {
-  
+  osc->idx = fix16_add(osc->idx, osc->inc);
+  while(osc->idx > WAVE_TAB_MAX16) { 
+    osc->idx = fix16_sub(osc->idx, WAVE_TAB_MAX16);
+  }
 }
- 
 
 //----------------
 //--- extern funcs
@@ -92,13 +109,16 @@ void osc_init(osc* osc, fract32** tab, u32 sr) {
   incMax = fix16_mul(ips, OSC_HZ_MAX);
   incRange = (u32)incMax - (u32)incMin;
   shapeLimMul = 0x7fffffff / incRange;
+  osc->idx = 0;
+  filter_1p_lo_init( &(osc->lpInc) , FIX16_ONE);
+  filter_1p_lo_init( &(osc->lpShape) , FIX16_ONE);
+  filter_1p_lo_init( &(osc->lpPm) , FIX16_ONE);
+  filter_1p_lo_init( &(osc->lpWm) , FIX16_ONE);
 }
 
 // set waveshape (table)
 void osc_set_shape(osc* osc, fract32 shape) {
-  //  osc->shape = shape;
-  //  osc_calc_shape(osc);
-  filter_1p_lo_in( &(osc->lpShape, shape) );
+  filter_1p_lo_in( &(osc->lpShape), shape );
 }
 
 // set base frequency in hz
@@ -136,23 +156,27 @@ void osc_wm_in(osc* osc, fract32 val) {
 
 // set bandlimiting
 void osc_set_bl(osc* osc, fract32 bl) {
-  osc->bandLimit = bl;
+  osc->bandLim = bl;
 }
 
-// get next value
-fract32 osc_next(void) {
+// get next frame value
+fract32 osc_next(osc* osc) {
+
   /// update param smoothers
   osc->inc = filter_1p_lo_next( &(osc->lpInc) );
   osc->shape = filter_1p_lo_next( &(osc->lpShape) );
   osc->pmAmt = filter_1p_lo_next( &(osc->lpShape) );
   osc->wmAmt = filter_1p_lo_next( &(osc->lpShape) );
   
-  // calculate waveshape
-  osc_calc_shape(osc);
+  // calculate waveshape modulation + bandlimiting
+  osc_calc_wm(osc);
 
-  // calculate phase
+  // calculate phase modulation
   osc_calc_pm(osc);
 
+  // advance phase
+  osc_advance(osc);
+  
   // lookup 
   return osc_lookup(osc);
 }

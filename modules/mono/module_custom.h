@@ -17,7 +17,7 @@
 enum params {
   eParamFreq1,
   eParamFreq2,
-  eParamRatio2,
+
   eParamAmp1,
   eParamAmp2,
 
@@ -30,11 +30,7 @@ enum params {
   eParamPm,
   eParamWave1,
   eParamWave2,
-  eParamGate,
-  eParamAtkDur,
-  eParamRelDur,
-  eParamAtkCurve,
-  eParamRelCurve,
+
   eParamFreq1Smooth,
   eParamFreq2Smooth,
   eParamPmSmooth,

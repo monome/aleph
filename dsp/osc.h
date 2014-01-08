@@ -3,7 +3,6 @@
    aleph
 
    a simple wavetable oscillator with phase and shape modulation.
-
  */
 
 #ifndef _ALEPH_DSP_OSC_H_
@@ -22,6 +21,8 @@
 #define WAVE_TAB_NUM 5
 // size of each table
 #define WAVE_TAB_SIZE 	1024
+#define WAVE_TAB_SIZE_1 (WAVE_TAB_SIZE - 1)
+#define WAVE_TAB_MAX16 	(WAVE_TAB_SIZE * FIX16_ONE - 1)
 // rshift from shape variable to get table index
 #define WAVE_TAB_RSHIFT 29
 // mask to get interpolation constant
@@ -31,6 +32,8 @@
 
 // class structure
 typedef struct _osc {
+  // output value
+  fract32 val;
   // wavetable data (table of tables)
   fract32** tab;
   // normalized waveshape
@@ -59,7 +62,7 @@ typedef struct _osc {
   /// store last modulation input values for recalculation
   fract32 pmIn, wmIn;
 
-  /// 1pole filters for smoothing phase increment, waveshape, mod
+  /// 1pole filters for smoothing phase increment, shape, modulation params
   filter_1p_lo lpInc;
   filter_1p_lo lpShape;
   filter_1p_lo lpPm;
@@ -73,7 +76,7 @@ typedef struct _osc {
 } osc;
 
 // initialize given table data and samplerate
-extern voi osc_init(osc* osc, fract32** tabs, u32 sr);
+extern void osc_init(osc* osc, fract32** tabs, u32 sr);
 
 // set waveshape (table)
 extern void osc_set_shape(osc* osc, fract32 shape);
@@ -94,7 +97,8 @@ extern void osc_wm_in(osc* osc, fract32 wm);
 
 // set bandlimiting coefficient
 extern void osc_set_bl(osc* osc, fract32 bl);
-// get next value
-extern fract32 osc_next(void);
+
+// compute next value
+extern fract32 osc_next( osc* osc);
 
 #endif
