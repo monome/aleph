@@ -27,9 +27,9 @@
 // bees
 #include "render.h"
 
-// range of characters for editable strings
-#define MAX_EDIT_CHAR 120
-#define MIN_EDIT_CHAR 32
+// min/max legal characters for editable strings
+#define MAX_EDIT_CHAR 122
+#define MIN_EDIT_CHAR 45
 
 //---- extern vars
 region* headRegion = NULL;
@@ -97,6 +97,24 @@ void region_update(region* r) {
     screen_draw_region(r->x, r->y, r->w, r->h, r->data);
     r->dirty = 0;
   }
+}
+
+/// utility to restrict characters in legal filenames
+// return 0 if ok
+static u8 check_edit_char(char c) {
+  /*
+    45 		dash
+    48-57 	nums
+    65-90	upper
+    95		underscore
+    97-122	lower
+  */
+  if(c == 45) { return 0; }
+  if(c == 95) { return 0; }
+  if( (c >= 48) && (c <= 57) ) { return 0; }
+  if( (c >= 65) && (c <= 90) ) { return 0; }
+  if( (c >= 97) && (c <= 122) ) { return 0; }
+  return 1;
 }
 
 //-----------------------
@@ -413,25 +431,39 @@ void render_scroll_apply_hl(u8 n, u8 hl) {
 
 // scroll character up
 void edit_string_inc_char(char* str, u8 pos) {
-  u8 tmp = str[pos];
-  if(tmp == 0) { tmp = MIN_EDIT_CHAR; }
-  if ( tmp < MAX_EDIT_CHAR ) {
-    tmp++;
-  } else {
-    tmp = MIN_EDIT_CHAR;
+  s32 tmp = (s32)str[pos];
+  ++tmp;
+  while(check_edit_char((char)tmp)) {
+    ++tmp;
+    if(tmp > MAX_EDIT_CHAR) {
+      tmp = MAX_EDIT_CHAR;
+    }
   }
+  /* if(tmp == 0) { tmp = MIN_EDIT_CHAR; } */
+  /* if ( tmp < MAX_EDIT_CHAR ) { */
+  /*   tmp++; */
+  /* } else { */
+  /*   tmp = MIN_EDIT_CHAR; */
+  /* } */
   str[pos] = tmp;
 }
 
 // scroll character down
 void edit_string_dec_char(char* str, u8 pos) {
   u8 tmp = str[pos];
-  if(tmp == 0) { tmp = MAX_EDIT_CHAR; }
-  if (tmp > MIN_EDIT_CHAR) {
-    tmp--;
-  } else {
-    tmp = MAX_EDIT_CHAR;
+  --tmp;
+  while(check_edit_char((char)tmp)) {
+    --tmp;
+    if(tmp < MIN_EDIT_CHAR) {
+      tmp = MIN_EDIT_CHAR;
+    }
   }
+  /* if(tmp == 0) { tmp = MAX_EDIT_CHAR; } */
+  /* if (tmp > MIN_EDIT_CHAR) { */
+  /*   tmp--; */
+  /* } else { */
+  /*   tmp = MAX_EDIT_CHAR; */
+  /* } */
   str[pos] = tmp;
 }
 
