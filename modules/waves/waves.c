@@ -148,8 +148,8 @@ void module_init(void) {
     gModuleData->paramData[i].value = gModuleData->paramDesc[i].min;
   }
 
-  osc_init( &osc1, (fract32**)wavtab, SAMPLERATE );
-  osc_init( &osc2, (fract32**)wavtab, SAMPLERATE );
+  osc_init( &osc1, &wavtab, SAMPLERATE );
+  osc_init( &osc2, &wavtab, SAMPLERATE );
 
   oscAmp1 = oscAmp2 = INT32_MAX >> 2;
 

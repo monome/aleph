@@ -10,6 +10,7 @@
 
 //----------------
 //--- static vars
+
 /// assume all oscs have the same samplerate
 /// phase increment at 1hz:
 static fix16 ips;
@@ -51,7 +52,7 @@ static inline void osc_calc_wm(osc* osc) {
   /////////////
   ////////
 #else
-  osc->shapeMod = osc->shape;
+  //  osc->shapeMod = osc->shape;
 #endif
   /////////
   //////////
@@ -89,11 +90,11 @@ static inline fract32 osc_lookup(osc* osc) {
   fract32 mulInv = sub_fr1x32(FR32_MAX, mul);
   
   return add_fr1x32( 
-		    mult_fr1x32x32(table_lookup_idx( (fract32*)osc->tab[idxA], 
+		    mult_fr1x32x32(table_lookup_idx( (fract32*)(*(osc->tab))[idxA], 
 						     WAVE_TAB_SIZE, 
 						     osc->idxMod
 						     ), mulInv ),
-		    mult_fr1x32x32(table_lookup_idx( (fract32*)osc->tab[idxB],
+		    mult_fr1x32x32(table_lookup_idx( (fract32*)(*(osc->tab))[idxB],
 						     WAVE_TAB_SIZE,
 						     osc->idxMod 
 						     ), mul 
@@ -112,7 +113,7 @@ static inline void osc_advance(osc* osc) {
 //--- extern funcs
 
 // initialize given table data and samplerate
-void osc_init(osc* osc, fract32** tab, u32 sr) {
+void osc_init(osc* osc, wavtab_t tab, u32 sr) {
   osc->tab = tab;
   ips = fix16_from_float( (f32)WAVE_TAB_SIZE / (f32)sr );
   incMin = fix16_mul(ips, OSC_HZ_MIN);
@@ -188,6 +189,5 @@ fract32 osc_next(osc* osc) {
   osc_advance(osc);
   
   // lookup 
-  //  return osc_lookup(osc);
-  return 0;
+  return osc_lookup(osc);
 }

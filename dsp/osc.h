@@ -30,12 +30,15 @@
 // lshift after mask to get multiplier 
 #define WAVE_TAB_LSHIFT 2
 
+// wavetable type: pointer to 2d array
+typedef fract32 (*wavtab_t) [WAVE_TAB_NUM][WAVE_TAB_SIZE];
+
 // class structure
 typedef struct _osc {
   // output value
   fract32 val;
-  // wavetable data (table of tables)
-  fract32** tab;
+  // wavetable data (pointer to table of tables)
+  wavtab_t tab;
   // normalized waveshape
   fract32 shape;
   // smoothed and normalized waveshape
@@ -76,7 +79,7 @@ typedef struct _osc {
 } osc;
 
 // initialize given table data and samplerate
-extern void osc_init(osc* osc, fract32** tabs, u32 sr);
+extern void osc_init(osc* osc, wavtab_t tab, u32 sr);
 
 // set waveshape (table)
 extern void osc_set_shape(osc* osc, fract32 shape);
