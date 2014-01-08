@@ -57,7 +57,7 @@ static const fract32 wavtab[WAVE_TAB_NUM][WAVE_TAB_SIZE] = {
 #include "wavtab_data_inc.c" 
 };
 
-static u32 sr;
+// static u32 sr;
 
 // oscillators
 static osc osc1;
@@ -105,8 +105,9 @@ static void calc_frame(void) {
   oscOut1 = osc_next( &(osc1) );
   oscOut2 = osc_next( &(osc2) );
 
-  ///// TODO:
-  //// no phase mod yet
+  
+  // phase mod from osc2 -> osc1 with 1frame delay
+  osc_pm_in( &osc1, oscOut2 );
 
   ///////////
   ///////////
@@ -123,7 +124,7 @@ static void calc_frame(void) {
   // apply amplitudes and sum 
   ////////////
   //// TEST
-#if 0  
+#if 1
   frameVal = add_fr1x32(
 			mult_fr1x32x32(oscOut1, oscAmp1),
 			mult_fr1x32x32(oscOut2, oscAmp2)

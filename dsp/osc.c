@@ -30,9 +30,7 @@ static inline void osc_calc_wm(osc* osc) {
   fract32 sm; // mod shape
   fract32 sl; // shape limit given current freq
 
-  ///////
-  ///// TEST
-#if 0
+
   // add modulation
   sm = add_fr1x32(osc->shape, mult_fr1x32x32(osc->wmIn, osc->wmAmt) );
   
@@ -41,21 +39,14 @@ static inline void osc_calc_wm(osc* osc) {
   //- max freq = min shape, min freq = max shape
   // :
   // map phase increment to [0,1] fract32
-  sl  = ((u32)(osc->inc) - incRange) * shapeLimMul;
+  sl = (fract32)(((u32)(osc->inc) - incRange) * shapeLimMul);
   // invert [0,1] to [1,0]
-  sl = (s32)sl * -1 + 0x7fffffff;
+  sl = sub_fr1x32(FR32_MAX, sl);
   // limit
   if(sl < sm) {
     sm = dsp_lerp32(sm, sl, osc->bandLim);
   }
   osc->shapeMod = sm;
-  /////////////
-  ////////
-#else
-    osc->shapeMod = osc->shape;
-#endif
-  /////////
-  //////////
 }
 
 // calculate phase incremnet
@@ -63,7 +54,7 @@ static inline void osc_calc_inc( osc* osc) {
   filter_1p_lo_in( &(osc->lpInc), fix16_mul(osc->ratio, fix16_mul(osc->hz, ips)) );
 
   /// TEST:
-  osc->inc = fix16_mul(osc->ratio, fix16_mul(osc->hz, ips));
+  //  osc->inc = fix16_mul(osc->ratio, fix16_mul(osc->hz, ips));
  
 }
 
@@ -192,12 +183,11 @@ void osc_set_bl(osc* osc, fract32 bl) {
 fract32 osc_next(osc* osc) {
 
   /// update param smoothers
-  //// TEST:
-  
+    
   osc->inc = filter_1p_lo_next( &(osc->lpInc) );
   osc->shape = filter_1p_lo_next( &(osc->lpShape) );
-  osc->pmAmt = filter_1p_lo_next( &(osc->lpShape) );
-  osc->wmAmt = filter_1p_lo_next( &(osc->lpShape) );
+  osc->pmAmt = filter_1p_lo_next( &(osc->lpPm) );
+  osc->wmAmt = filter_1p_lo_next( &(osc->lpWm) );
   
 
   // calculate waveshape modulation + bandlimiting
