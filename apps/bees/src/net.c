@@ -241,6 +241,7 @@ void net_init_onode(u16 idx) {
 // activate an input node with a value
 void net_activate(s16 inIdx, const io_t val, void* op) {
   static inode_t* pIn;
+  s16 pIndex;
 
   /* print_dbg("\r\n net_activate, input idx: "); */
   /* print_dbg_hex(inIdx); */
@@ -259,6 +260,22 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
     // input exists
     pIn = &(net->ins[inIdx]);
 
+    if(inIdx < net->numIns) {
+      // this is an op input
+      op_set_in_val(net->ops[pIn->opIdx],
+		    pIn->opInIdx,
+		    val);
+    } else { 
+      // this is a parameter
+      //// FIXME this is horrible
+      pIndex = inIdx - net->numIns;
+      if (pIndex >= net->numParams) {
+	return ;
+      } else {
+	set_param_value(pIndex, val);
+      }
+    }
+
     /// only process for play mode if we're in play mode
     if(pageIdx == ePagePlay) {
       /* print_dbg(" , play mode active, "); */
@@ -270,21 +287,6 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
       }
     }
 
-    if(inIdx < net->numIns) {
-      // this is an op input
-      op_set_in_val(net->ops[pIn->opIdx],
-		    pIn->opInIdx,
-		    val);
-    } else { 
-      // this is a parameter
-      //// FIXME this is horrible
-      inIdx -= net->numIns;
-      if (inIdx >= net->numParams) {
-	return ;
-      } else {
-	set_param_value(inIdx, val);
-      }
-    }
   }  
 }
 

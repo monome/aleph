@@ -168,9 +168,6 @@ void module_init(void) {
   gModuleData->paramData = data->mParamData;
   gModuleData->numParams = eParamNumParams;
 
-  // fill param descriptor
-  fill_param_desc();
-
   // fill param values with minima as default
   for(i=0; i<eParamNumParams; ++i) {
     gModuleData->paramData[i].value = gModuleData->paramDesc[i].min;
