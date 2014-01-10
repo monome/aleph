@@ -1,0 +1,166 @@
+====== lines ======
+
+lines is a dual delay line with complex modulation matrix possibilities.
+
+==== architecture ====
+
+=== routing ===
+
+each delay line accepts input from any hardware input channel and from any delay line output.
+
+each delay line output is routed through a state variable filter with an arbitrary mix of lowpass, bandpass, highpass and notch outputs.
+
+each filter output is mixed arbitrarily with the unfiltered delay line output to an output bus
+
+each output bus is mixed arbitrarily to each hardware output channel, and also to each delay line input.
+
+=== delay line implementation === 
+
+it is beneficial to understand each delay line as a combination of three elements:
+
+  - an audio buffer of a certain length // (currently 32 seconds, will increase shortly) //
+  - a "write head"
+  - a "read head"
+
+each "head" is actually a phasor: a position value which is updated each sample. when the position reaches the end of the buffer (or the position specified by the "loop" parameter, if that comes first), it will wrap to 0.
+
+by setting the "delay" parameter, you are asking the read head to move to a position behind the write head by a given offset. this results in an echo. 
+
+the "run" parameters tell the read/write heads to start or stop moving completely.
+
+the "pos" parameters set the position of the read/write heads directly.
+
+the "loop" parameter tells the read and write heads where to wrap to zero.
+
+additionally, the "writeN" and "preN" parameters specifify amplitudes with which to write new content and preserve old content. 
+
+by manipulating these last parameter sets, one can create all sorts of looping / overdubbing algorithms. 
+
+a final note on implementation: these delay lines are currently //uninterpolated.// this means that the rate of each phasor can only be an integer division of the sample rate. we're working on proper interpolation (it's a minor numerical challenge on the blackfin,) and for now there is a weird system where you can specify arbitrary "mul" and "div" rates, which respectively cause the read phasor to jump by intervals of "mul" samples, and/or hold/interpolate each value for "div" samples. this allows for a limited form of lo-fi pitch-shifting by low-order harmonic ratios.
+
+
+==== parameters ====
+ 
+
+=== per delay line ==
+
+- "delayN": \\
+delay time in seconds \\
+setting this moves the read position to the specified offset behind the write position. \\
+param type: Fix \\
+range: [0, 32] // (for now) // \\
+
+- "loopN": \\
+position, in seconds, at which read/write positions will wrap. \\
+use this for looping applications,  \\
+or for weird stuff if you set loop < delay. \\
+param type: Fix \\
+range: [0, 32] // (for now) // \\
+
+- "rMulN": \\
+multiplies the speed of the read phasor, for a sort of lo-fi upwards pitch shift. \\
+param type: Fix  \\
+range: [1, 8] (integers only) \\
+
+- "rDivN": \\
+multiplies the speed of the read phasor, for a sort of lo-fi downwards pitch shift. \\
+param type: Fix  \\
+range: [1, 8] (integers only) \\
+
+- "writeN": \\
+amplitude at which new data is written to the delay line at the write position. \\
+param type: Amp \\
+range: [0, 1] (bees displays decibels) \\
+
+- "preN": \\
+amplitude at which old data is preserved in the delay line at the write position. \\
+param type: Amp \\
+range: [0, 1] (bees displays decibels)
+
+- "pos_writeN": \\
+sets the position (in seconds) of the write head. \\
+param type: Fix \\
+range: [0, 32] // (for now) //
+
+- "pos_readN": \\
+sets the position (in seconds) of the read head. \\
+param type: Fix \\
+range: [0, 32] // (for now) //
+
+- "run_writeN": \\
+flag to enable/disable writing to the delay line. \\
+param type: Bool \\
+range: [0, 1]
+
+- "run_readN": \\
+flag to enable/disable reading from the delay line. \\
+param type: Bool \\
+range: [0, 1]
+
+
+=== per filter ===
+
+- "cutN" : \\
+filter cutoff frequency for filter N \\
+parameter type: SvfFreq \\
+range: [ ~8hz, ~16000hz ]
+
+- "rqN" : \\
+reciprocal of Q for filter N \\
+zero equals full resonance \\
+parameter type: Fixed
+range: [0, 2]
+
+- "lowN" : \\
+lowpass output amplitude for filter N \\
+parameter type: Amp \\
+range: [0, 1.0] (bees will display dB
+
+- "highN" : \\
+highpass output amplitude for filter N \\
+parameter type: Amp \\
+range: [0, 1.0] (bees will display dB
+
+- "bandN" : \\
+bandpass output amplitude for filter N \\
+parameter type: Amp \\
+range: [0, 1.0] (bees will display dB
+
+- "notchN" : \\
+notch output amplitude for filter N \\
+parameter type: Amp \\
+range: [0, 1.0] (bees will display dB
+
+
+=== per input -> delay pair ===
+
+- "adcX_delY" : \\
+amplitude of mix point between hardware input channel X and delay input Y \\
+param type: Amp \\
+range: [0, 1] (bees displays decibels)
+
+=== per input -> output pair ===
+
+- "adcX_dacY" : \\
+amplitude of mix point between hardware input channel X and output channel Y \\
+param type: Amp \\
+range: [0, 1] (bees displays decibels)
+
+
+=== per delay -> delay pair ===
+- "delX_delY" : \\
+amplitude of mix point between delay output X and delay input Y \\
+X and Y can be equal for feedback. \\
+param type: Amp \\
+range: [0, 1] (bees displays decibels)
+
+=== per delay -> output pair ===
+- "delX_dacY" : \\
+amplitude of mix point between delay output X and hardware output channel Y \\
+param type: Amp \\
+range: [0, 1] (bees displays decibels)
+
+
+==== in use ====
+
+TODO ?
