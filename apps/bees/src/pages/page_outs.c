@@ -116,7 +116,7 @@ static void render_line(s16 idx, u8 fg) {
     font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
   }
   // draw something to indicate preset inclusion
-  if(net_get_in_preset(idx)) {
+  if(net_get_out_preset(idx)) {
     font_string_region_clip(lineRegion, ".", 0, 0, fg, 0);
   }
   // underline
@@ -245,7 +245,7 @@ static void select_scroll(s32 dir) {
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
   }
   /// update flags
-  /* newInPreset = net_get_in_preset(*pageSelect); */
+  /* newInPreset = net_get_out_preset(*pageSelect); */
   /* if(newInPreset != inPreset) { */
   /*   inPreset = newInPreset; */
   /*   // update inc/exc label */
@@ -262,7 +262,8 @@ static void show_foot0(void) {
   }
   region_fill(footRegion[0], fill);
   if(altMode) {
-    font_string_region_clip(footRegion[0], "FOLLOW", 0, 0, 0xf, fill);
+    /// TODO
+    //    font_string_region_clip(footRegion[0], "FOLLOW", 0, 0, 0xf, fill);
   } else {
     font_string_region_clip(footRegion[0], "STORE", 0, 0, 0xf, fill);
   }
@@ -381,6 +382,7 @@ void handle_key_0(s32 val) {
   } else {
     // store
     // show selected preset name
+    draw_preset_name();
     //// TODO
     //    draw_outs_preset_name();
     if(check_key(0)) {
@@ -400,18 +402,21 @@ void handle_key_0(s32 val) {
 }
 
 void handle_key_1(s32 val) {
+  if(val == 0) { return; }
   if(check_key(1)) {
     // inc/exc (split)
     if(altMode) {
       // TODO: split
     } else {
+	// show preset name in head region
+      draw_preset_name();
+      // include / exclude in preset
       net_toggle_out_preset(*pageSelect);
       // re-draw selected line to update inclusion glyph
       // render to tmp buffer
       render_line(*pageSelect, 0xf);
       // copy to scroll with highlight
       render_to_scroll_line(SCROLL_CENTER_LINE, 1);
-
     }
   }
   show_foot();
@@ -483,8 +488,6 @@ void redraw_outs(void) {
 }
 
 
-
-
 // redraw based on provisional preset seleciton
 void redraw_outs_preset (void) {
   //  s32 max = net_num_outs() - 1;
@@ -495,6 +498,8 @@ void redraw_outs_preset (void) {
   s16 target;
   s16 targetOpIdx = -1;
   s16 srcOpIdx; 
+
+  print_dbg("\r\n redraw_outs_preset()");
 
   while(i<8) {
     region_fill(lineRegion, 0x0);
@@ -549,8 +554,8 @@ void redraw_outs_preset (void) {
       font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
     }
     // draw something to indicate preset inclusion
-    if(net_get_in_preset(idx)) {
-      font_string_region_clip(lineRegion, ".", 0, 0, fg, 0);
+    if(net_get_out_preset(idx)) {
+      font_string_region_clip(lineRegion, ".", 126, 0, fg, 0);
     }
   render_to_scroll_line(i, 0);
     ++i;
