@@ -52,6 +52,9 @@ static void show_foot2(void);
 static void show_foot3(void);
 static void show_foot(void);
 
+// redraw based on provisional preset seleciton
+static void redraw_outs_preset (u8 idx);
+
 // fill tmp region with new content
 // given input index and foreground color
 static void render_line(s16 idx, u8 fg) {
@@ -408,6 +411,7 @@ void handle_key_3(s32 val) {
 void handle_enc_0(s32 val) { 
   // edit selection (target)
   select_edit(val);
+
 }
 
 void handle_enc_1(s32 val) {
@@ -424,8 +428,21 @@ void handle_enc_2(s32 val) {
 }
 
 void handle_enc_3(s32 val) {
-  // scroll selection
-  select_scroll(val);
+  if(altMode) {
+    inPresetSelect = 1;
+    if(val > 0) {
+      preset_inc_select(1);
+    } else {
+      preset_inc_select(-1);
+    }
+    // refresh line data
+    redraw_outs_preset((u8)preset_get_select());
+    
+  } else {
+
+    // scroll selection
+    select_scroll(val);
+  }
 }
 
 // redraw all lines, based on current selection
