@@ -53,7 +53,7 @@ static void show_foot3(void);
 static void show_foot(void);
 
 // redraw based on provisional preset seleciton
-static void redraw_outs_preset (u8 idx);
+static void redraw_outs_preset (void);
 
 // fill tmp region with new content
 // given input index and foreground color
@@ -436,7 +436,7 @@ void handle_enc_3(s32 val) {
       preset_inc_select(-1);
     }
     // refresh line data
-    redraw_outs_preset((u8)preset_get_select());
+    redraw_outs_preset();
     
   } else {
 
@@ -466,10 +466,10 @@ void redraw_outs(void) {
 
 
 // redraw based on provisional preset seleciton
-void redraw_outs_preset (u8 idx) {
+void redraw_outs_preset (void) {
   //  s32 max = net_num_outs() - 1;
   u8 i=0;
-  u8 n = *pageSelect - 3;
+  u8 idx = *pageSelect - 3;
   u8 fg;
   //  u8 enabled;
   s16 target;
@@ -534,7 +534,7 @@ void redraw_outs_preset (u8 idx) {
     }
   render_to_scroll_line(i, 0);
     ++i;
-    ++n;
+    ++idx;
   }
   print_dbg("\r\n\r\n");
   draw_preset_name();

@@ -228,7 +228,7 @@ void net_deinit(void) {
 void net_init_inode(u16 idx) {
   net->ins[idx].opIdx = -1;
   //  net->ins[idx].preset = 0;
-  net->ins[idx].play = 1;
+  net->ins[idx].play = 0;
 }
 
 // initialize an output node
@@ -811,6 +811,7 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
   net->params[net->numParams].idx = idx; 
   //  net->params[net->numParams].preset = 0; 
   net->numParams += 1;
+  
 }
 
 // clear existing parameters
