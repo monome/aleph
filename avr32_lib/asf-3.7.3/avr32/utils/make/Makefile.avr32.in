@@ -77,7 +77,9 @@ target          := $(TARGET)
 project         := $(basename $(target))
 
 # version string
-version := $(shell cat version.txt)
+# version := $(shell cat version.txt)
+include version.mk
+version := $(maj).$(min).$(rev)
 
 # Output target file (typically ELF or static library)
 ifeq ($(suffix $(target)),.a)
