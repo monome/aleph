@@ -28,6 +28,8 @@ static u8 inPresetSelect = 0;
 // in clear operation
 static u8 clearConfirm = 0;
 
+static s16 tmpTarget = -1;
+
 // kludge:
 // constant pointer to this page's selection
 static s16* const pageSelect = &(pages[ePageOuts].select);
@@ -127,6 +129,21 @@ static void select_edit(s32 inc) {
   if(altMode) { 
     ;;
   } else { 
+  /* s16 target = net_get_target(*pageSelect); */
+  /* if(inc > 0) { */
+  /*   // increment target */
+  /*   ++target; */
+  /*   if(target == net_num_ins()) { */
+  /*     // scroll past all inputs : disconnect and wrap */
+  /*     target = -1; */
+  /*   } */
+  /* } else { */
+  /*   --target; */
+  /*   if (target == -2) { */
+  /*     //  scrolled down from disconnect: connect and wrap */
+  /*     target = net_num_ins() - 1; */
+  /*   } */
+  /* } */
   s16 target = net_get_target(*pageSelect);
   if(inc > 0) {
     // increment target
@@ -143,7 +160,10 @@ static void select_edit(s32 inc) {
     }
   }
 
+  /*
   net_connect(*pageSelect, target);
+  */
+  
 
   // render to tmp buffer
   render_line(*pageSelect, 0xf);
