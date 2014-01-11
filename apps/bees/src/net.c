@@ -228,14 +228,15 @@ void net_deinit(void) {
 void net_init_inode(u16 idx) {
   net->ins[idx].opIdx = -1;
   //  net->ins[idx].preset = 0;
-  net->ins[idx].play = 0;
+  net->ins[idx].play = 1;
 }
 
 // initialize an output node
 void net_init_onode(u16 idx) {
   net->outs[idx].opIdx = -1;
   net->outs[idx].target = -1;
-  //  net->outs[idx].preset = 0;
+  //net->outs[idx].preset = 0;
+  //  net->outs[idx].play = 1;
 }
 
 // activate an input node with a value
