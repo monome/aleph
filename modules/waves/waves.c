@@ -113,8 +113,8 @@ static void calc_frame(void) {
   fract32 out1, out2;
   
   // osc output
-  oscOut1 = shr_fr1x32(osc_next( &(osc1) ), 1);
-  oscOut2 = shr_fr1x32(osc_next( &(osc2) ), 1);
+  oscOut1 = shr_fr1x32(osc_next( &(osc1) ), 2);
+  oscOut2 = shr_fr1x32(osc_next( &(osc2) ), 2);
 
   // phase mod feedback with 1frame delay
   osc_pm_in( &osc1, oscOut2 );
@@ -124,12 +124,15 @@ static void calc_frame(void) {
   osc_wm_in( &osc1, oscOut2 );
   osc_wm_in( &osc2, oscOut1 );
 
-
   ///////////
   ///////////
   // apply filters
-  svfOut1 = filter_svf_next( &(svf1), oscOut1);  
-  svfOut2 = filter_svf_next( &(svf2), oscOut2);  
+
+  //  svfOut1 = shl_fr1x32(filter_svf_next( &(svf1), shr_fr1x32(oscOut1, 1)), 1);
+  //  svfOut2 = shl_fr1x32(filter_svf_next( &(svf2), shr_fr1x32(oscOut2, 1)), 1);
+  svfOut1 = filter_svf_next( &(svf1), shr_fr1x32(oscOut1, 1));
+  svfOut2 = filter_svf_next( &(svf2), shr_fr1x32(oscOut2, 1));
+
   /////////
   /////////
 
@@ -223,6 +226,11 @@ void module_init(void) {
   filter_1p_lo_init( &(dacSlew[1]), 0 );
   filter_1p_lo_init( &(dacSlew[2]), 0 );
   filter_1p_lo_init( &(dacSlew[3]), 0 );
+
+
+  // write descriptors
+  /// FIXME: eliminate and move offline
+  fill_param_desc();
 
 }
 

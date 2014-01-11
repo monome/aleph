@@ -1,5 +1,6 @@
 module_name = waves
 module_obj = waves.o  \
+	params.o \
 	$(audio_dir)/conversion.o \
 	$(audio_dir)/filter_1p.o \
 	$(audio_dir)/filter_svf.o \
