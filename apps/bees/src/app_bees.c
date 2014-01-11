@@ -19,6 +19,7 @@
 #include "flash.h"
 #include "monome.h"
 #include "screen.h"
+
 // bees
 #include "app_timers.h"
 #include "files.h"
@@ -30,6 +31,8 @@
 #include "play.h"
 #include "render.h"
 #include "scene.h"
+
+static char versionString[8] = VERSIONSTRING;
 
 // this is called during hardware initialization.
 // allocate memory.
@@ -72,6 +75,9 @@ u8 app_launch(u8 firstrun) {
 
   //  net_print();
 
+  
+  render_boot("BEES, version:");
+  render_boot(versionString);
 
   if(firstrun) {
     render_boot("launching app, first run");
