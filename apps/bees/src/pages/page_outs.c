@@ -22,10 +22,11 @@ static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
 static scroll centerScroll;
 
 //--- page-specific state variables
-// selection-included-in-preset flag (read from network on selection)
-static u8 inPreset = 0;
+// we are in preset=selection momentary mode
+static u8 inPresetSelect = 0;
+
 // in clear operation
-static u8 inClear = 0;
+static u8 clearConfirm = 0;
 
 // kludge:
 // constant pointer to this page's selection
@@ -155,7 +156,7 @@ static void select_scroll(s32 dir) {
   s16 newIdx;
   s16 newSel;
   // new flags
-  u8 newInPreset;
+  //  u8 newInPreset;
 
   if(dir < 0) {
     /// SCROLL DOWN
@@ -173,7 +174,7 @@ static void select_scroll(s32 dir) {
     //    if(newSel > max ) { newSel = max; }
     *pageSelect = newSel;    
     // update preset-inclusion flag
-    inPreset = (u8)net_get_out_preset((u32)(*pageSelect));
+    // inPreset = (u8)net_get_out_preset((u32)(*pageSelect));
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
     if(newIdx < 0) { 
@@ -205,7 +206,7 @@ static void select_scroll(s32 dir) {
     /////
     *pageSelect = newSel;    
     // update preset-inclusion flag
-    inPreset = (u8)net_get_out_preset((u32)(*pageSelect));
+    //    inPreset = (u8)net_get_out_preset((u32)(*pageSelect));
     // add new content at bottom of screen
     newIdx = newSel + SCROLL_LINES_ABOVE;
     if(newIdx > max) { 
@@ -221,13 +222,13 @@ static void select_scroll(s32 dir) {
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
   }
   /// update flags
-  newInPreset = net_get_in_preset(*pageSelect);
-  if(newInPreset != inPreset) {
-    inPreset = newInPreset;
-    // update inc/exc label
-    //// wtf?? no
-    //    show_foot1();
-  }
+  /* newInPreset = net_get_in_preset(*pageSelect); */
+  /* if(newInPreset != inPreset) { */
+  /*   inPreset = newInPreset; */
+  /*   // update inc/exc label */
+  /*   //// wtf?? no */
+  /*   //    show_foot1(); */
+  /* } */
 }
 
 // display the function key labels according to current state
@@ -254,7 +255,8 @@ static void show_foot1(void) {
   if(altMode) {
     font_string_region_clip(footRegion[1], "SPLIT", 0, 0, 0xf, fill);
   } else {
-    if(inPreset) {
+    if(net_get_out_preset((u32)(*pageSelect))) {
+      //    if(inPreset) {
       font_string_region_clip(footRegion[1], "EXC", 0, 0, 0xf, fill);
     } else {
       font_string_region_clip(footRegion[1], "INC", 0, 0, 0xf, fill);
@@ -285,7 +287,7 @@ static void show_foot3(void) {
 
 
 static void show_foot(void) {
-  if(inClear) {
+  if(clearConfirm) {
     font_string_region_clip(footRegion[0], "-    ", 0, 0, 0xf, 0);
     font_string_region_clip(footRegion[1], "-    ", 0, 0, 0xf, 0);
     font_string_region_clip(footRegion[2], "OK!  ", 0, 0, 0xf, 0);
@@ -361,7 +363,8 @@ void handle_key_0(s32 val) {
     if(check_key(0)) {
       // store in preset
       net_set_out_preset(*pageSelect, 1);
-      inPreset = 1;
+      //inPreset = 1;
+      //      net_get_out_preset((u32)(*pageSelect))
       preset_store_out(preset_get_select(), *pageSelect);
 
       // redraw selected line
@@ -377,12 +380,18 @@ void handle_key_1(s32 val) {
   if(check_key(1)) {
     // inc/exc (split)
     if(altMode) {
+      // TODO: split
     } else {
       net_toggle_out_preset(*pageSelect);
-      // redraw preset inc/exc glyph
-      //... 
+      // re-draw selected line to update inclusion glyph
+      // render to tmp buffer
+      render_line(*pageSelect, 0xf);
+      // copy to scroll with highlight
+      render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+
     }
   }
+  show_foot();
 }
 
 void handle_key_2(s32 val) {
@@ -436,3 +445,80 @@ void redraw_outs(void) {
   }
 }
 
+
+
+
+// redraw based on provisional preset seleciton
+void redraw_outs_preset (u8 idx) {
+  //  s32 max = net_num_outs() - 1;
+  u8 i=0;
+  u8 n = *pageSelect - 3;
+  u8 fg;
+  //  u8 enabled;
+  s16 target;
+  s16 targetOpIdx = -1;
+  s16 srcOpIdx; 
+
+  while(i<8) {
+    region_fill(lineRegion, 0x0);
+    if(idx >= net_num_outs() ) { return; }
+    target = net_get_target(idx);
+    srcOpIdx = net_out_op_idx(idx);
+    targetOpIdx = net_in_op_idx(target);
+    if(target >= 0) {
+      //// output has target
+      // the network doesn't actually execute connections from an op to itself.
+      // reflect this in UI by dimming this line
+      if(targetOpIdx == srcOpIdx) { fg = 0x5; }
+      // render output
+      clearln();
+      appendln_idx_lj(srcOpIdx);
+      appendln_char('.');
+      appendln( net_op_name(srcOpIdx));
+      appendln_char('/');
+      appendln( net_out_name(idx) );
+      endln();
+      font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
+      // render target
+      targetOpIdx = net_in_op_idx(target);
+      clearln();
+      appendln("-> ");
+      if(targetOpIdx >= 0) {
+	// target is operator input
+	appendln_idx_lj(net_in_op_idx(target));
+	appendln_char('.');
+	appendln( net_op_name(net_in_op_idx(target)) );
+	appendln_char('/');
+	appendln( net_in_name(target) );
+      } else {
+	// target is parameter input
+	appendln_idx_lj( (int)net_param_idx(target)); 
+	appendln_char('.');
+	appendln( net_in_name(target)); 
+      }
+      endln();
+      font_string_region_clip(lineRegion, lineBuf, 60, 0, fg, 0);
+      clearln();
+    } else {
+      //// no target
+      // render output
+      clearln();
+      appendln_idx_lj(net_out_op_idx(idx));
+      appendln_char('.');
+      appendln( net_op_name(net_out_op_idx(idx)));
+      appendln_char('/');
+      appendln( net_out_name(idx) );
+      endln();
+      font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
+    }
+    // draw something to indicate preset inclusion
+    if(net_get_in_preset(idx)) {
+      font_string_region_clip(lineRegion, ".", 0, 0, fg, 0);
+    }
+  render_to_scroll_line(i, 0);
+    ++i;
+    ++n;
+  }
+  print_dbg("\r\n\r\n");
+  draw_preset_name();
+}
