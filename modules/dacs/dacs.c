@@ -133,23 +133,23 @@ void module_set_param(u32 idx, ParamValue v) {
   switch(idx) {
     // dac values
   case eParam_dac0 :
-    //filter_1p_lo_in(&(dacSlew[0]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
-        dac_update(0, v >> (PARAM_DAC_RADIX - 1));
+   filter_1p_lo_in(&(dacSlew[0]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
+   //     dac_update(0, v >> (PARAM_DAC_RADIX - 1));
     break;
   case eParam_dac1 :
-    //filter_1p_lo_in(&(dacSlew[1]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
-    dac_update(1, v >> (PARAM_DAC_RADIX - 1));
+    filter_1p_lo_in(&(dacSlew[1]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
+    //dac_update(1, v >> (PARAM_DAC_RADIX - 1));
     break;
   case eParam_dac2 :
-    //filter_1p_lo_in(&(dacSlew[2]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
-    dac_update(2, v >> (PARAM_DAC_RADIX - 1));
+    filter_1p_lo_in(&(dacSlew[2]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
+    //dac_update(2, v >> (PARAM_DAC_RADIX - 1));
     break;
   case eParam_dac3 :
-    // filter_1p_lo_in(&(dacSlew[3]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
-       dac_update(3, v >> (PARAM_DAC_RADIX - 1));
+     filter_1p_lo_in(&(dacSlew[3]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
+     //   dac_update(3, v >> (PARAM_DAC_RADIX - 1));
     break;
   case eParam_slew0 :
-    filter_1p_lo_set_slew(&(dacSlew[0]), v);
+   filter_1p_lo_set_slew(&(dacSlew[0]), v);
     break;
   case eParam_slew1 :
     filter_1p_lo_set_slew(&(dacSlew[1]), v);
