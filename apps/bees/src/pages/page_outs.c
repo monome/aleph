@@ -27,8 +27,10 @@ static u8 inPresetSelect = 0;
 
 // in clear operation
 static u8 clearConfirm = 0;
-
+// privisional target selections16  
 static s16 tmpTarget = -1;
+// in-target-select mode
+static u8 targetSelect = 0;
 
 // kludge:
 // constant pointer to this page's selection
@@ -66,7 +68,11 @@ static void render_line(s16 idx, u8 fg) {
   s16 srcOpIdx; 
   region_fill(lineRegion, 0x0);
   if(idx >= net_num_outs() ) { return; }
+    if(targetSelect) { 
   target = net_get_target(idx);
+    } else {
+      target = tmpTarget;
+    }
   srcOpIdx = net_out_op_idx(idx);
   targetOpIdx = net_in_op_idx(target);
   if(target >= 0) {
@@ -125,44 +131,45 @@ static void render_line(s16 idx, u8 fg) {
 
 // edit the current seleciton
 static void select_edit(s32 inc) {
-  /// TEST
   if(altMode) { 
     ;;
-  } else { 
-  /* s16 target = net_get_target(*pageSelect); */
-  /* if(inc > 0) { */
-  /*   // increment target */
-  /*   ++target; */
-  /*   if(target == net_num_ins()) { */
-  /*     // scroll past all inputs : disconnect and wrap */
-  /*     target = -1; */
-  /*   } */
-  /* } else { */
-  /*   --target; */
-  /*   if (target == -2) { */
-  /*     //  scrolled down from disconnect: connect and wrap */
-  /*     target = net_num_ins() - 1; */
-  /*   } */
-  /* } */
-  s16 target = net_get_target(*pageSelect);
-  if(inc > 0) {
-    // increment target
-    ++target;
-    if(target == net_num_ins()) {
-      // scroll past all inputs : disconnect and wrap
-      target = -1;
-    }
   } else {
-    --target;
-    if (target == -2) {
-      //  scrolled down from disconnect: connect and wrap
-      target = net_num_ins() - 1;
-    }
-  }
-
-  /*
+    /* s16 target = net_get_target(*pageSelect); */
+    /* if(inc > 0) { */
+    /*   // increment target */
+    /*   ++target; */
+    /*   if(target == net_num_ins()) { */
+    /*     // scroll past all inputs : disconnect and wrap */
+    /*     target = -1; */
+    /*   } */
+    /* } else { */
+    /*   --target; */
+    /*   if (target == -2) { */
+    /*     //  scrolled down from disconnect: connect and wrap */
+    /*     target = net_num_ins() - 1; */
+    /*   } */
+    /* } */
+    // enter target-select mode
+    targetSelect = 1;
+    tmpTarget = net_get_target(*pageSelect);
+    if(inc > 0) {
+      // increment tmpTarget
+      ++tmpTarget;
+      if(tmpTarget == net_num_ins()) {
+	// scroll past all inputs : disconnect and wrap
+	tmpTarget = -1;
+      } else {
+	--tmpTarget;
+	if (tmpTarget == -2) {
+	  //  scrolled down from disconnect: connect and wrap
+	  tmpTarget = net_num_ins() - 1;
+	}
+      }
+    }    
+  
+    /*
   net_connect(*pageSelect, target);
-  */
+    */
   
 
   // render to tmp buffer
@@ -294,8 +301,11 @@ static void show_foot2(void) {
     fill = 0x5;
   }
   region_fill(footRegion[2], fill);
-  font_string_region_clip(footRegion[2], "CLEAR", 0, 0, 0xf, fill);
-  
+  if(targetSelect) {
+    font_string_region_clip(footRegion[2], "CONNECT", 0, 0, 0xf, fill);
+  } else {
+    font_string_region_clip(footRegion[2], "DISCON", 0, 0, 0xf, fill);
+  }
 }
 
 static void show_foot3(void) {
@@ -423,7 +433,17 @@ void handle_key_1(s32 val) {
 }
 
 void handle_key_2(s32 val) {
-  
+  if(val == 0) { return; }
+  if(check_key(2)) {
+    if(targetSelect) {
+      // we are selecting a target, so perform the connection
+      net_connect(*pageSelect, tmpTarget);
+      targetSelect = 0;
+    } else {
+      // not selecting, clear current connection
+      net_disconnect(*pageSelect);
+    }
+  }
 }
 
 void handle_key_3(s32 val) {
@@ -433,10 +453,9 @@ void handle_key_3(s32 val) {
 }
 
 // encoder handlers
-void handle_enc_0(s32 val) { 
+void handle_enc_0(s32 val) {   
   // edit selection (target)
   select_edit(val);
-
 }
 
 void handle_enc_1(s32 val) {
