@@ -119,7 +119,7 @@ void preset_store_in(u32 preIdx, u32 inIdx) {
 
 // store a particular output
 void preset_store_out(u32 preIdx, u32 outIdx) {
-  presets[preIdx].outs[outIdx].enabled = net_get_out_preset(outIdx);
+  presets[preIdx].outs[outIdx].enabled = 1; //net_get_out_preset(outIdx);
   presets[preIdx].outs[outIdx].target = net_get_target(outIdx);  
 }
 
@@ -302,8 +302,8 @@ extern u8 preset_in_enabled(u32 preIdx, u32 inIdx) {
 }
 
 // get inclusion flag for given output, given preset
-extern u8 preset_out_enabled(u32 preIdx, u32 inIdx) {
-  return presets[preIdx].ins[inIdx].enabled;
+extern u8 preset_out_enabled(u32 preIdx, u32 outIdx) {
+  return presets[preIdx].outs[outIdx].enabled;
 }
 
 /* // get inclusion flag for given param, given preset */

@@ -728,9 +728,16 @@ u8 net_toggle_in_preset(u32 id) {
 
 // toggle preset inclusion for output
 u8 net_toggle_out_preset(u32 id) {
+  u8 tmp = preset_out_enabled(preset_get_select(), id) ^ 1;
   //  net->outs[id].preset ^= 1;
   //  return net->outs[id].preset;
-  return preset_get_selected()->outs[id].enabled ^= 1;
+  print_dbg("\r\n toggled output-preset_enable");
+  print_dbg(", out: ");
+  print_dbg_ulong(id);
+  print_dbg(", flag: ");
+  print_dbg_ulong(tmp);
+  preset_get_selected()->outs[id].enabled = tmp;
+  return tmp;
 }
 
 // set preset inclusion for input
@@ -764,7 +771,7 @@ u8 net_get_in_preset(u32 id) {
 // get preset inclusion for output
 u8 net_get_out_preset(u32 id) {
   //  return net->outs[id].preset;
-  return preset_get_selected()->outs[id].enabled = 1;
+  return preset_get_selected()->outs[id].enabled;
 }
 
 
