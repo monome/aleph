@@ -216,10 +216,10 @@ void module_init(void) {
   filter_1p_lo_init( amp2Lp, oscAmp2 );
 
   // dac
-  filter_1p_lo_init( &(dacSlew[0]), 0 );
-  filter_1p_lo_init( &(dacSlew[1]), 0 );
-  filter_1p_lo_init( &(dacSlew[2]), 0 );
-  filter_1p_lo_init( &(dacSlew[3]), 0 );
+  filter_1p_lo_init( &(dacSlew[0]), 0xf );
+  filter_1p_lo_init( &(dacSlew[1]), 0xf );
+  filter_1p_lo_init( &(dacSlew[2]), 0xf );
+  filter_1p_lo_init( &(dacSlew[3]), 0xf );
 
 
   // write descriptors
@@ -317,15 +317,16 @@ void module_process_frame(void) {
   out[2] = add_fr1x32(frameVal, mult_fr1x32x32(in[2], ioAmp2));
   out[3] = add_fr1x32(frameVal, mult_fr1x32x32(in[3], ioAmp3));
   
+  
   if(dacSlew[dacChan].sync) { ;; } else {
     dacVal[dacChan] = filter_1p_lo_next(&(dacSlew[dacChan]));
-    dac_update(dacChan, shr_fr1x32(dacVal[dacChan], 15) & DAC_VALUE_MASK);
+    dac_update(dacChan, dacVal[dacChan]);
   }
  
   if(++dacChan == 4) {
     dacChan = 0;
   }
-
+  
 }
 
 #include "param_set.c"
