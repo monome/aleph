@@ -239,7 +239,7 @@ static void show_foot2(void) {
     }
 #endif
   } else {
-    font_string_region_clip(footRegion[2], "CLEAR", 0, 0, 0xf, fill);
+    font_string_region_clip(footRegion[2], "ZERO", 0, 0, 0xf, fill);
   }
 }
 
