@@ -102,7 +102,7 @@ void fill_param_desc(void) {
   strcpy(gModuleData->paramDesc[eParam_cut1].label, "cut1");
   gModuleData->paramDesc[eParam_cut1].type = eParamTypeSvfFreq; 
   gModuleData->paramDesc[eParam_cut1].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_cut1].max = PARAM_FREQ_MAX;
+  gModuleData->paramDesc[eParam_cut1].max = PARAM_CUT_MAX;
   gModuleData->paramDesc[eParam_cut1].radix = 32;
 
   ///// FIXME
@@ -116,43 +116,43 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParam_low1].type = eParamTypeAmp; 
   gModuleData->paramDesc[eParam_low1].min = 0x00000000; 
   gModuleData->paramDesc[eParam_low1].max = FR32_MAX;
-  gModuleData->paramDesc[eParam_low1].radix = 1;
+  gModuleData->paramDesc[eParam_low1].radix = 0;
 
   strcpy(gModuleData->paramDesc[eParam_high1].label, "high1");
   gModuleData->paramDesc[eParam_high1].type = eParamTypeAmp; 
   gModuleData->paramDesc[eParam_high1].min = 0x00000000; 
   gModuleData->paramDesc[eParam_high1].max = FR32_MAX;
-  gModuleData->paramDesc[eParam_high1].radix = 1;
+  gModuleData->paramDesc[eParam_high1].radix = 0;
 
   strcpy(gModuleData->paramDesc[eParam_band1].label, "band1");
   gModuleData->paramDesc[eParam_band1].type = eParamTypeAmp; 
   gModuleData->paramDesc[eParam_band1].min = 0x00000000; 
   gModuleData->paramDesc[eParam_band1].max = FR32_MAX;
-  gModuleData->paramDesc[eParam_band1].radix = 1;
+  gModuleData->paramDesc[eParam_band1].radix = 0;
 
   strcpy(gModuleData->paramDesc[eParam_notch1].label, "notch1");
   gModuleData->paramDesc[eParam_notch1].type = eParamTypeAmp; 
   gModuleData->paramDesc[eParam_notch1].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_notch1].max = 0x00010000;
-  gModuleData->paramDesc[eParam_notch1].radix = 32;
+  gModuleData->paramDesc[eParam_notch1].max = FR32_MAX;
+  gModuleData->paramDesc[eParam_notch1].radix = 0;
 
   strcpy(gModuleData->paramDesc[eParam_fwet1].label, "fwet1");
   gModuleData->paramDesc[eParam_fwet1].type = eParamTypeAmp; 
   gModuleData->paramDesc[eParam_fwet1].min = 0x00000000; 
   gModuleData->paramDesc[eParam_fwet1].max = FR32_MAX; 
-  gModuleData->paramDesc[eParam_fwet1].radix = 1;
+  gModuleData->paramDesc[eParam_fwet1].radix = 0;
 
   strcpy(gModuleData->paramDesc[eParam_fdry1].label, "fdry1");
   gModuleData->paramDesc[eParam_fdry1].type = eParamTypeAmp; 
   gModuleData->paramDesc[eParam_fdry1].min = 0x00000000; 
   gModuleData->paramDesc[eParam_fdry1].max = FR32_MAX; 
-  gModuleData->paramDesc[eParam_fdry1].radix = 1;
+  gModuleData->paramDesc[eParam_fdry1].radix = 0;
 
   // svf 2
   strcpy(gModuleData->paramDesc[eParam_cut2].label, "cut2");
   gModuleData->paramDesc[eParam_cut2].type = eParamTypeSvfFreq; 
   gModuleData->paramDesc[eParam_cut2].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_cut2].max = PARAM_FREQ_MAX;
+  gModuleData->paramDesc[eParam_cut2].max = PARAM_CUT_MAX;
   gModuleData->paramDesc[eParam_cut2].radix = 32;
 
   ///// FIXME

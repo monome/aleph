@@ -108,6 +108,12 @@ static u8 dacChan = 0;
 // frame calculation
 static void calc_frame(void);
 
+// initial param set
+static inline void param_setup(u32 id, ParamValue v) {
+  gModuleData->paramData[id].value = v;
+  module_set_param(id, v);
+}
+
 // frame calculation
 static void calc_frame(void) {
   fract32 out1, out2;
@@ -234,58 +240,58 @@ void module_init(void) {
   /* gModuleData->paramData[eParamIoAmp3 ].value = ioAmp3; */
 
   // set parameters to defaults
-  module_set_param(  eParamFreq1, 	220 << 16 );
-  module_set_param(  eParamFreq2, 	330 << 16 );
-  module_set_param(  eParamTune1, 	FIX16_ONE );
-  module_set_param(  eParamTune2, 	FIX16_ONE );
-  module_set_param(  eParamWave1, 	0 );
-  module_set_param(  eParamWave2, 	0 );
-  module_set_param(  eParamAmp1, 	FRACT32_MAX >> 2 );
-  module_set_param(  eParamAmp2, 	FRACT32_MAX >> 2 );
-  module_set_param(  eParamPm12, 	0 );
-  module_set_param(  eParamPm21, 	0 );
-  module_set_param(  eParamWm12, 	0 );
-  module_set_param(  eParamWm21, 	0 );
-  module_set_param(  eParamBl1,  	0 );
-  module_set_param(  eParamBl2,  	0 );
-  module_set_param(  eParam_cut1,	0x3fffffff);
-  module_set_param(  eParam_rq1,	0x2fffffff);
-  module_set_param(  eParam_low1,       FRACT32_MAX >> 1 );
-  module_set_param(  eParam_high1,	0 );
-  module_set_param(  eParam_band1,	0 );
-  module_set_param(  eParam_notch1,	0 );
-  module_set_param(  eParam_fwet1,	FRACT32_MAX >> 1 );
-  module_set_param(  eParam_fdry1,	FRACT32_MAX >> 1 );
-  module_set_param(  eParam_cut2, 	0x3fffffff );
-  module_set_param(  eParam_rq2, 	0x2fffffff );
-  module_set_param(  eParam_low2,	FRACT32_MAX >> 1 );
-  module_set_param(  eParam_high2,	0 );
-  module_set_param(  eParam_band2,	0 );
-  module_set_param(  eParam_notch2,	0 );
-  module_set_param(  eParam_fwet2,	FRACT32_MAX >> 1 );
-  module_set_param(  eParam_fdry2,	FRACT32_MAX >> 1 );
-  module_set_param(  eParamFreq1Smooth, SMOOTHER_DEFAULT );
-  module_set_param(  eParamFreq2Smooth, SMOOTHER_DEFAULT );
-  module_set_param(  eParamPm12Smooth, 	SMOOTHER_DEFAULT );
-  module_set_param(  eParamPm21Smooth, 	SMOOTHER_DEFAULT );
-  module_set_param(  eParamWm12Smooth, 	SMOOTHER_DEFAULT );
-  module_set_param(  eParamWm21Smooth, 	SMOOTHER_DEFAULT );
-  module_set_param(  eParamWave1Smooth, SMOOTHER_DEFAULT );
-  module_set_param(  eParamWave2Smooth, SMOOTHER_DEFAULT );
-  module_set_param(  eParamAmp1Smooth, 	SMOOTHER_DEFAULT );
-  module_set_param(  eParamAmp2Smooth, SMOOTHER_DEFAULT );
-  module_set_param(  eParamIoAmp0, 	FRACT32_MAX );
-  module_set_param(  eParamIoAmp1,  	FRACT32_MAX );
-  module_set_param(  eParamIoAmp2, 	FRACT32_MAX );
-  module_set_param(  eParamIoAmp3, 	FRACT32_MAX );
-  module_set_param(  eParam_dacVal0, 	FRACT32_MAX >> 1);
-  module_set_param(  eParam_dacVal1, 	FRACT32_MAX >> 1);
-  module_set_param(  eParam_dacVal2, 	FRACT32_MAX >> 1);
-  module_set_param(  eParam_dacVal3, 	FRACT32_MAX >> 1 );
-  module_set_param(  eParam_dacSlew0, 	SMOOTHER_DEFAULT );
-  module_set_param(  eParam_dacSlew1, 	SMOOTHER_DEFAULT );
-  module_set_param(  eParam_dacSlew2, 	SMOOTHER_DEFAULT );
-  module_set_param(  eParam_dacSlew3, 	SMOOTHER_DEFAULT );
+  param_setup(  eParamFreq1, 	220 << 16 );
+  param_setup(  eParamFreq2, 	330 << 16 );
+  param_setup(  eParamTune1, 	FIX16_ONE );
+  param_setup(  eParamTune2, 	FIX16_ONE );
+  param_setup(  eParamWave1, 	0 );
+  param_setup(  eParamWave2, 	0 );
+  param_setup(  eParamAmp1, 	PARAM_AMP_6 );
+  param_setup(  eParamAmp2, 	PARAM_AMP_6 );
+  param_setup(  eParamPm12, 	0 );
+  param_setup(  eParamPm21, 	0 );
+  param_setup(  eParamWm12, 	0 );
+  param_setup(  eParamWm21, 	0 );
+  param_setup(  eParamBl1,  	0 );
+  param_setup(  eParamBl2,  	0 );
+  param_setup(  eParam_cut1,	PARAM_CUT_DEFAULT);
+  param_setup(  eParam_rq1,	PARAM_RQ_DEFAULT);
+  param_setup(  eParam_low1,       PARAM_AMP_6 );
+  param_setup(  eParam_high1,	0 );
+  param_setup(  eParam_band1,	0 );
+  param_setup(  eParam_notch1,	0 );
+  param_setup(  eParam_fwet1,	PARAM_AMP_6 );
+  param_setup(  eParam_fdry1,	PARAM_AMP_6 );
+  param_setup(  eParam_cut2, 	PARAM_CUT_DEFAULT );
+  param_setup(  eParam_rq2, 	PARAM_RQ_DEFAULT );
+  param_setup(  eParam_low2,	FRACT32_MAX >> 1 );
+  param_setup(  eParam_high2,	0 );
+  param_setup(  eParam_band2,	0 );
+  param_setup(  eParam_notch2,	0 );
+  param_setup(  eParam_fwet2,	PARAM_AMP_6 );
+  param_setup(  eParam_fdry2,	PARAM_AMP_6 );
+  param_setup(  eParamFreq1Smooth, PARAM_SMOOTH_DEFAULT );
+  param_setup(  eParamFreq2Smooth, PARAM_SMOOTH_DEFAULT );
+  param_setup(  eParamPm12Smooth, 	PARAM_SMOOTH_DEFAULT );
+  param_setup(  eParamPm21Smooth, 	PARAM_SMOOTH_DEFAULT );
+  param_setup(  eParamWm12Smooth, 	PARAM_SMOOTH_DEFAULT );
+  param_setup(  eParamWm21Smooth, 	PARAM_SMOOTH_DEFAULT );
+  param_setup(  eParamWave1Smooth, PARAM_SMOOTH_DEFAULT );
+  param_setup(  eParamWave2Smooth, PARAM_SMOOTH_DEFAULT );
+  param_setup(  eParamAmp1Smooth, 	PARAM_SMOOTH_DEFAULT );
+  param_setup(  eParamAmp2Smooth, PARAM_SMOOTH_DEFAULT );
+  param_setup(  eParamIoAmp0, 	FRACT32_MAX );
+  param_setup(  eParamIoAmp1,  	FRACT32_MAX );
+  param_setup(  eParamIoAmp2, 	FRACT32_MAX );
+  param_setup(  eParamIoAmp3, 	FRACT32_MAX );
+  param_setup(  eParam_dacVal0, 	FRACT32_MAX >> 1 );
+  param_setup(  eParam_dacVal1, 	FRACT32_MAX >> 1 );
+  param_setup(  eParam_dacVal2, 	FRACT32_MAX >> 1 );
+  param_setup(  eParam_dacVal3, 	FRACT32_MAX >> 1 );
+  param_setup(  eParam_dacSlew0, 	PARAM_SMOOTH_DEFAULT );
+  param_setup(  eParam_dacSlew1, 	PARAM_SMOOTH_DEFAULT );
+  param_setup(  eParam_dacSlew2, 	PARAM_SMOOTH_DEFAULT );
+  param_setup(  eParam_dacSlew3, 	PARAM_SMOOTH_DEFAULT );
 
 }
 
