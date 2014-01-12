@@ -76,7 +76,7 @@ u8 app_launch(u8 firstrun) {
   //  net_print();
 
   
-  render_boot("BEES, version:");
+  render_boot("BEES");
   render_boot(versionString);
 
   if(firstrun) {

@@ -67,14 +67,23 @@ static void render_line(s16 idx, u8 fg) {
   s16 targetOpIdx = -1;
   s16 srcOpIdx; 
   region_fill(lineRegion, 0x0);
+
+  print_dbg("\r\n page_outs: render_line");
+
+
   if(idx >= net_num_outs() ) { return; }
-    if(targetSelect) { 
-  target = net_get_target(idx);
-    } else {
-      target = tmpTarget;
-    }
+  if(targetSelect) { 
+      print_dbg(" , in targetSelect");
+    target = tmpTarget;
+  } else {
+    target = net_get_target(idx);
+  }
   srcOpIdx = net_out_op_idx(idx);
   targetOpIdx = net_in_op_idx(target);
+
+  print_dbg(" , target: ");
+  print_dbg_ulong(target);
+
   if(target >= 0) {
     //// output has target
     // the network doesn't actually execute connections from an op to itself.
@@ -94,6 +103,7 @@ static void render_line(s16 idx, u8 fg) {
     clearln();
     appendln("-> ");
     if(targetOpIdx >= 0) {
+      print_dbg(" , target is op in");
       // target is operator input
       appendln_idx_lj(net_in_op_idx(target));
       appendln_char('.');
@@ -101,6 +111,7 @@ static void render_line(s16 idx, u8 fg) {
       appendln_char('/');
       appendln( net_in_name(target) );
     } else {
+      print_dbg(" , target is param in");
       // target is parameter input
       appendln_idx_lj( (int)net_param_idx(target)); 
       appendln_char('.');
@@ -131,9 +142,9 @@ static void render_line(s16 idx, u8 fg) {
 
 // edit the current seleciton
 static void select_edit(s32 inc) {
-  if(altMode) { 
-    ;;
-  } else {
+  /* if(altMode) {  */
+  /*   ;; */
+  /* } else { */
     /* s16 target = net_get_target(*pageSelect); */
     /* if(inc > 0) { */
     /*   // increment target */
@@ -149,18 +160,30 @@ static void select_edit(s32 inc) {
     /*     target = net_num_ins() - 1; */
     /*   } */
     /* } */
+
+  print_dbg("\r\n page_outs: render_line");
     // enter target-select mode
-    targetSelect = 1;
-    tmpTarget = net_get_target(*pageSelect);
+    if(targetSelect == 0) {
+        print_dbg(" , set targetSelect mode");
+      targetSelect = 1;
+      tmpTarget = net_get_target(*pageSelect);
+      print_dbg("\r\n target value: ");
+      print_dbg_ulong(tmpTarget);
+    }
     if(inc > 0) {
+        print_dbg(" , inc tmpTarget");
+        print_dbg(" , value: ");
+	print_dbg_ulong(tmpTarget);
       // increment tmpTarget
       ++tmpTarget;
       if(tmpTarget == net_num_ins()) {
+        print_dbg(" , tmpTarget at max");
 	// scroll past all inputs : disconnect and wrap
 	tmpTarget = -1;
       } else {
 	--tmpTarget;
 	if (tmpTarget == -2) {
+        print_dbg(" , tmpTarget at min");
 	  //  scrolled down from disconnect: connect and wrap
 	  tmpTarget = net_num_ins() - 1;
 	}
@@ -170,13 +193,12 @@ static void select_edit(s32 inc) {
     /*
   net_connect(*pageSelect, target);
     */
-  
 
   // render to tmp buffer
   render_line(*pageSelect, 0xf);
   // copy to scroll with highlight
   render_to_scroll_line(SCROLL_CENTER_LINE, 1);
-  }
+  //  }
 }
 
 // scroll the current selection
@@ -284,7 +306,8 @@ static void show_foot1(void) {
   region_fill(footRegion[1], fill);
   
   if(altMode) {
-    font_string_region_clip(footRegion[1], "SPLIT", 0, 0, 0xf, fill);
+    /// TODO
+    //    font_string_region_clip(footRegion[1], "SPLIT", 0, 0, 0xf, fill);
   } else {
     if(net_get_out_preset((u32)(*pageSelect))) {
       //    if(inPreset) {
