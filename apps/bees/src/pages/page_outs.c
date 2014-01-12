@@ -489,7 +489,19 @@ void handle_key_2(s32 val) {
 
 void handle_key_3(s32 val) {
   // alt mode
-  altMode = (u8)(val > 0);
+  if(val > 0) {
+    altMode = 1;
+  } else {
+    altMode = 0;
+    if(inPresetSelect) {
+      // load selected preset
+      print_dbg("\r\n recalling preset from ins page, idx:");
+      print_dbg_ulong(preset_get_select());
+      preset_recall(preset_get_select());
+      inPresetSelect = 0;
+      redraw_outs();
+    }
+  }
   show_foot();
 }
 
@@ -522,9 +534,7 @@ void handle_enc_3(s32 val) {
     }
     // refresh line data
     redraw_outs_preset();
-    
   } else {
-
     // scroll selection
     select_scroll(val);
   }
