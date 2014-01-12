@@ -291,8 +291,7 @@ static void show_foot0(void) {
   }
   region_fill(footRegion[0], fill);
   if(altMode) {
-    /// TODO
-    //    font_string_region_clip(footRegion[0], "FOLLOW", 0, 0, 0xf, fill);
+    font_string_region_clip(footRegion[0], "FOLLOW", 0, 0, 0xf, fill);
   } else {
     font_string_region_clip(footRegion[0], "STORE", 0, 0, 0xf, fill);
   }
@@ -408,10 +407,14 @@ void handle_key_0(s32 val) {
   if(val == 0) { return; }
   
   if(altMode) {
-    //// TODO:
+  
     ///// follow
     // select target on ins page
-    /// 
+    tmpTarget = net_get_target(*pageSelect)
+    if(tmpTarget >= 0) {
+      pages[ePageIns].select = tmpTarget;
+      set_page(ePageIns);
+      redraw_ins();
   } else {
     // store
     // show selected preset name
