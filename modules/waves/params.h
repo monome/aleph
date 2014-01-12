@@ -34,6 +34,10 @@
 #define PARAM_RQ_MIN 0x00000000
 #define PARAM_RQ_MAX 0x7fffffff
 
+
+/// smoother default
+#define SMOOTHER_DEFAULT 0x7fceb65b
+
 #define NUM_PARAMS eParamNumParams
 
 

@@ -134,10 +134,10 @@ static void render_line(s16 idx, u8 fg) {
   }
   // draw something to indicate preset inclusion
   if(net_get_out_preset(idx)) {
-    font_string_region_clip(lineRegion, ".", 0, 0, fg, 0);
+    font_string_region_clip(lineRegion, ".", 125, 0, fg, 0);
   }
   // underline
-  //  region_fill_part(lineRegion, LINE_UNDERLINE_OFFSET, LINE_UNDERLINE_LEN, 0x1);
+  //  region_fill_part(lineRegion, LINE_UNDERLINE_FSET, LINE_UNDERLINE_LEN, 0x1);
 }
 
 // edit the current seleciton
@@ -145,59 +145,63 @@ static void select_edit(s32 inc) {
   /* if(altMode) {  */
   /*   ;; */
   /* } else { */
-    /* s16 target = net_get_target(*pageSelect); */
-    /* if(inc > 0) { */
-    /*   // increment target */
-    /*   ++target; */
-    /*   if(target == net_num_ins()) { */
-    /*     // scroll past all inputs : disconnect and wrap */
-    /*     target = -1; */
-    /*   } */
-    /* } else { */
-    /*   --target; */
-    /*   if (target == -2) { */
-    /*     //  scrolled down from disconnect: connect and wrap */
-    /*     target = net_num_ins() - 1; */
-    /*   } */
-    /* } */
+  /* s16 target = net_get_target(*pageSelect); */
+  /* if(inc > 0) { */
+  /*   // increment target */
+  /*   ++target; */
+  /*   if(target == net_num_ins()) { */
+  /*     // scroll past all inputs : disconnect and wrap */
+  /*     target = -1; */
+  /*   } */
+  /* } else { */
+  /*   --target; */
+  /*   if (target == -2) { */
+  /*     //  scrolled down from disconnect: connect and wrap */
+  /*     target = net_num_ins() - 1; */
+  /*   } */
+  /* } */
 
-  print_dbg("\r\n page_outs: render_line");
-    // enter target-select mode
-    if(targetSelect == 0) {
-        print_dbg(" , set targetSelect mode");
-      targetSelect = 1;
-      tmpTarget = net_get_target(*pageSelect);
-      print_dbg("\r\n target value: ");
-      print_dbg_ulong(tmpTarget);
+  print_dbg("\r\n page_outs: select_edit");
+  // enter target-select mode
+  if(targetSelect == 0) {
+    print_dbg(" , set targetSelect mode");
+    targetSelect = 1;
+    tmpTarget = net_get_target(*pageSelect);
+
+  }
+
+  print_dbg("\r\n tmpTarget: ");
+  print_dbg_ulong(tmpTarget);
+
+  if(inc > 0) {
+    print_dbg(" , inc tmpTarget");
+    print_dbg(" , value: ");
+    print_dbg_ulong(tmpTarget);
+    // increment tmpTarget
+    ++tmpTarget;
+    if(tmpTarget == net_num_ins()) {
+      print_dbg(" , tmpTarget at max");
+      // scroll past all inputs : disconnect and wrap
+      tmpTarget = -1;
+    } 
+  } else {
+    --tmpTarget;
+    if (tmpTarget == -2) {
+      print_dbg(" , tmpTarget at min");
+      //  scrolled down from disconnect: connect and wrap
+      tmpTarget = net_num_ins() - 1;
     }
-    if(inc > 0) {
-        print_dbg(" , inc tmpTarget");
-        print_dbg(" , value: ");
-	print_dbg_ulong(tmpTarget);
-      // increment tmpTarget
-      ++tmpTarget;
-      if(tmpTarget == net_num_ins()) {
-        print_dbg(" , tmpTarget at max");
-	// scroll past all inputs : disconnect and wrap
-	tmpTarget = -1;
-      } else {
-	--tmpTarget;
-	if (tmpTarget == -2) {
-        print_dbg(" , tmpTarget at min");
-	  //  scrolled down from disconnect: connect and wrap
-	  tmpTarget = net_num_ins() - 1;
-	}
-      }
-    }    
+  }    
   
-    /*
-  net_connect(*pageSelect, target);
-    */
+  /*
+    net_connect(*pageSelect, target);
+  */
 
   // render to tmp buffer
   render_line(*pageSelect, 0xf);
   // copy to scroll with highlight
   render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+  show_foot();
   //  }
 }
 
@@ -210,6 +214,8 @@ static void select_scroll(s32 dir) {
   // new flags
   //  u8 newInPreset;
 
+  targetSelect = 0;
+  
   if(dir < 0) {
     /// SCROLL DOWN
     // if selection is already zero, do nothing 
@@ -324,9 +330,9 @@ static void show_foot2(void) {
   }
   region_fill(footRegion[2], fill);
   if(targetSelect) {
-    font_string_region_clip(footRegion[2], "CONNECT", 0, 0, 0xf, fill);
+    font_string_region_clip(footRegion[2], "CONN", 0, 0, 0xf, fill);
   } else {
-    font_string_region_clip(footRegion[2], "DISCON", 0, 0, 0xf, fill);
+    font_string_region_clip(footRegion[2], "DISC", 0, 0, 0xf, fill);
   }
 }
 
@@ -410,11 +416,13 @@ void handle_key_0(s32 val) {
   
     ///// follow
     // select target on ins page
-    tmpTarget = net_get_target(*pageSelect)
+    tmpTarget = net_get_target(*pageSelect);
     if(tmpTarget >= 0) {
       pages[ePageIns].select = tmpTarget;
       set_page(ePageIns);
       redraw_ins();
+    }
+
   } else {
     // store
     // show selected preset name
@@ -460,7 +468,7 @@ void handle_key_1(s32 val) {
 
 void handle_key_2(s32 val) {
   if(val == 0) { return; }
-  if(check_key(2)) {
+  if(check_key(2)) {  
     if(targetSelect) {
       // we are selecting a target, so perform the connection
       net_connect(*pageSelect, tmpTarget);
@@ -468,8 +476,15 @@ void handle_key_2(s32 val) {
     } else {
       // not selecting, clear current connection
       net_disconnect(*pageSelect);
+      // re-draw selected line 
+      render_line(*pageSelect, 0xf);
+      // copy to scroll with hi,ghlight
+      render_to_scroll_line(SCROLL_CENTER_LINE, 1);
+
+      
     }
   }
+  show_foot();
 }
 
 void handle_key_3(s32 val) {

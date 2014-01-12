@@ -189,30 +189,18 @@ void module_init(void) {
   ioAmp2 = FR32_MAX;
   ioAmp3 = FR32_MAX;
 
-  // initial param values
-  /// ok, for now
-  gModuleData->paramData[eParamFreq1 ].value = osc1.hz ;
-  gModuleData->paramData[eParamFreq2 ].value = osc2.hz ;
-
-  gModuleData->paramData[eParamAmp1].value = oscAmp1;
-  gModuleData->paramData[eParamAmp2].value = oscAmp2;
-
-  gModuleData->paramData[eParamIoAmp0 ].value = ioAmp0;
-  gModuleData->paramData[eParamIoAmp1 ].value = ioAmp1;
-  gModuleData->paramData[eParamIoAmp2 ].value = ioAmp2;
-  gModuleData->paramData[eParamIoAmp3 ].value = ioAmp3;
 
   // filters
   filter_svf_init(&(svf1));
   filter_svf_init(&(svf2));    
 
-  filter_svf_set_rq(&(svf1), 0x1000);
-  filter_svf_set_low(&(svf1), 0x4000);
-  filter_svf_set_coeff(&(svf1), 0x5ff00000 );
+  /* filter_svf_set_rq(&(svf1), 0x1000); */
+  /* filter_svf_set_low(&(svf1), 0x4000); */
+  /* filter_svf_set_coeff(&(svf1), 0x5ff00000 ); */
     
-  filter_svf_set_rq(&(svf2), 0x1000);
-  filter_svf_set_low(&(svf2), 0x4000);
-  filter_svf_set_coeff(&(svf2), 0x4ff00000 );
+  /* filter_svf_set_rq(&(svf2), 0x1000); */
+  /* filter_svf_set_low(&(svf2), 0x4000); */
+  /* filter_svf_set_coeff(&(svf2), 0x4ff00000 ); */
     
   // allocate smoothers
   amp1Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
@@ -229,8 +217,75 @@ void module_init(void) {
 
 
   // write descriptors
-  /// FIXME: eliminate and move offline
+  /// FIXME: eliminate and move offline !
   fill_param_desc();
+
+  /* // write initial param values */
+  /* /// ok, for now */
+  /* gModuleData->paramData[eParamFreq1 ].value = osc1.hz ; */
+  /* gModuleData->paramData[eParamFreq2 ].value = osc2.hz ; */
+
+  /* gModuleData->paramData[eParamAmp1].value = oscAmp1; */
+  /* gModuleData->paramData[eParamAmp2].value = oscAmp2; */
+
+  /* gModuleData->paramData[eParamIoAmp0 ].value = ioAmp0; */
+  /* gModuleData->paramData[eParamIoAmp1 ].value = ioAmp1; */
+  /* gModuleData->paramData[eParamIoAmp2 ].value = ioAmp2; */
+  /* gModuleData->paramData[eParamIoAmp3 ].value = ioAmp3; */
+
+  // set parameters to defaults
+  module_set_param(  eParamFreq1, 	220 << 16 );
+  module_set_param(  eParamFreq2, 	330 << 16 );
+  module_set_param(  eParamTune1, 	FIX16_ONE );
+  module_set_param(  eParamTune2, 	FIX16_ONE );
+  module_set_param(  eParamWave1, 	0 );
+  module_set_param(  eParamWave2, 	0 );
+  module_set_param(  eParamAmp1, 	FRACT32_MAX >> 2 );
+  module_set_param(  eParamAmp2, 	FRACT32_MAX >> 2 );
+  module_set_param(  eParamPm12, 	0 );
+  module_set_param(  eParamPm21, 	0 );
+  module_set_param(  eParamWm12, 	0 );
+  module_set_param(  eParamWm21, 	0 );
+  module_set_param(  eParamBl1,  	0 );
+  module_set_param(  eParamBl2,  	0 );
+  module_set_param(  eParam_cut1,	0x3fffffff);
+  module_set_param(  eParam_rq1,	0x2fffffff);
+  module_set_param(  eParam_low1,       FRACT32_MAX >> 1 );
+  module_set_param(  eParam_high1,	0 );
+  module_set_param(  eParam_band1,	0 );
+  module_set_param(  eParam_notch1,	0 );
+  module_set_param(  eParam_fwet1,	FRACT32_MAX >> 1 );
+  module_set_param(  eParam_fdry1,	FRACT32_MAX >> 1 );
+  module_set_param(  eParam_cut2, 	0x3fffffff );
+  module_set_param(  eParam_rq2, 	0x2fffffff );
+  module_set_param(  eParam_low2,	FRACT32_MAX >> 1 );
+  module_set_param(  eParam_high2,	0 );
+  module_set_param(  eParam_band2,	0 );
+  module_set_param(  eParam_notch2,	0 );
+  module_set_param(  eParam_fwet2,	FRACT32_MAX >> 1 );
+  module_set_param(  eParam_fdry2,	FRACT32_MAX >> 1 );
+  module_set_param(  eParamFreq1Smooth, SMOOTHER_DEFAULT );
+  module_set_param(  eParamFreq2Smooth, SMOOTHER_DEFAULT );
+  module_set_param(  eParamPm12Smooth, 	SMOOTHER_DEFAULT );
+  module_set_param(  eParamPm21Smooth, 	SMOOTHER_DEFAULT );
+  module_set_param(  eParamWm12Smooth, 	SMOOTHER_DEFAULT );
+  module_set_param(  eParamWm21Smooth, 	SMOOTHER_DEFAULT );
+  module_set_param(  eParamWave1Smooth, SMOOTHER_DEFAULT );
+  module_set_param(  eParamWave2Smooth, SMOOTHER_DEFAULT );
+  module_set_param(  eParamAmp1Smooth, 	SMOOTHER_DEFAULT );
+  module_set_param(  eParamAmp2Smooth, SMOOTHER_DEFAULT );
+  module_set_param(  eParamIoAmp0, 	FRACT32_MAX );
+  module_set_param(  eParamIoAmp1,  	FRACT32_MAX );
+  module_set_param(  eParamIoAmp2, 	FRACT32_MAX );
+  module_set_param(  eParamIoAmp3, 	FRACT32_MAX );
+  module_set_param(  eParam_dacVal0, 	FRACT32_MAX >> 1);
+  module_set_param(  eParam_dacVal1, 	FRACT32_MAX >> 1);
+  module_set_param(  eParam_dacVal2, 	FRACT32_MAX >> 1);
+  module_set_param(  eParam_dacVal3, 	FRACT32_MAX >> 1 );
+  module_set_param(  eParam_dacSlew0, 	SMOOTHER_DEFAULT );
+  module_set_param(  eParam_dacSlew1, 	SMOOTHER_DEFAULT );
+  module_set_param(  eParam_dacSlew2, 	SMOOTHER_DEFAULT );
+  module_set_param(  eParam_dacSlew3, 	SMOOTHER_DEFAULT );
 
 }
 
