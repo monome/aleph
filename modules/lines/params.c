@@ -178,7 +178,6 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParam_fdry0].max = FR32_MAX; 
   gModuleData->paramDesc[eParam_fdry0].radix = 1;
 
-  //// FIXME
   strcpy(gModuleData->paramDesc[eParam_freq1].label, "cut1");
   gModuleData->paramDesc[eParam_freq1].type = eParamTypeSvfFreq; 
   gModuleData->paramDesc[eParam_freq1].min = 0x00000000; 

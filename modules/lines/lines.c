@@ -116,6 +116,7 @@ static void mix_del_inputs(void) {
   //--- del 0
   in_del[0] = 0;
 
+  //adc->del
   mul = mix_adc_del[0][0];
   in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(in[0], mul)); 
   mul = mix_adc_del[1][0];
@@ -125,7 +126,7 @@ static void mix_del_inputs(void) {
   mul = mix_adc_del[3][0];
   in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(in[3], mul)); 
 
-  // del 
+  // del->del
   mul = mix_del_del[0][0];
   in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(out_del[0], mul)); 
   mul = mix_del_del[1][0];
@@ -156,7 +157,7 @@ static void mix_outputs(void) {
   out[0] = 0;
   // del
   mul = mix_del_dac[0][0];
-  /*  if(mul != 0) { */ out[0] = add_fr1x32(out[0], mult_fr1x32x32(out_del[0], mul)); 
+  out[0] = add_fr1x32(out[0], mult_fr1x32x32(out_del[0], mul)); 
   mul = mix_del_dac[1][0];
   out[0] = add_fr1x32(out[0], mult_fr1x32x32(out_del[1], mul)); 
   // adc
