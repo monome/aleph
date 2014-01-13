@@ -39,7 +39,7 @@ u32 dbgCount = 0;
 #endif
 
 // total SDRAM is 64M
-// five each line 60 seconds for now
+// each line 60ish seconds for now
 #define LINES_BUF_FRAMES 0x2bf200
 #define NLINES 2
 
@@ -262,22 +262,22 @@ void module_init(void) {
   param_setup( 	eParam_loop0,		PARAM_SECONDS_MAX );
   param_setup( 	eParam_rMul0,		0x10000 );
   param_setup( 	eParam_rDiv0,		0x10000 );
-  param_setup( 	eParam_write0,		0x10000 );
+  param_setup( 	eParam_write0,		FRACT32_MAX );
   param_setup( 	eParam_pre0,		0 );
   param_setup( 	eParam_pos_write0,		0 );
   param_setup( 	eParam_pos_read0,		0 );
-  param_setup( 	eParam_run_read0,		0 );
-  param_setup( 	eParam_run_write0,		0 );
-  param_setup( 	eParam_delay1,		0x6000 );
+  param_setup( 	eParam_run_read0, 1 );
+  param_setup( 	eParam_run_write0, 1 );
+  param_setup( 	eParam_delay1,		0x4000 );
   param_setup( 	eParam_loop1,		PARAM_SECONDS_MAX );
   param_setup( 	eParam_rMul1,		0x10000 );
   param_setup( 	eParam_rDiv1,		0x10000 );
-  param_setup( 	eParam_write1,		0x10000 );
+  param_setup( 	eParam_write1,		FRACT32_MAX );
   param_setup( 	eParam_pre1,		0 );
   param_setup( 	eParam_pos_write1,		0 );
   param_setup( 	eParam_pos_read1,		0 );
-  param_setup( 	eParam_run_read1,		0 );
-  param_setup( 	eParam_run_write1,		0 );
+  param_setup( 	eParam_run_read1, 1 );
+  param_setup( 	eParam_run_write1, 1 );
   param_setup( 	eParam_freq0,		PARAM_CUT_DEFAULT );
   param_setup( 	eParam_rq0,		PARAM_RQ_DEFAULT );
   param_setup( 	eParam_low0,		PARAM_AMP_6 );
