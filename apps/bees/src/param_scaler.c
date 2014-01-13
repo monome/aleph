@@ -183,6 +183,11 @@ io_t scaler_get_in(ParamScaler* sc, s32 value) {
 // increment input
 extern s32 scaler_inc(ParamScaler* sc, io_t * pin, io_t inc ) {
   scaler_inc_fn fn =  scaler_inc_pr[sc->desc->type];
+  //  s32 sInc = (s32)inc;
+  
+  /* if(inc > 0x7fff) { */
+  /*   //    sInc =  */
+  /* } */
   if( fn != NULL) {
     return (*fn)(sc, pin, inc);
   } else {

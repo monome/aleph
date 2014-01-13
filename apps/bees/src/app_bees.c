@@ -72,6 +72,9 @@ u8 app_launch(u8 firstrun) {
 
   //  net_print();
 
+  
+  render_boot("BEES");
+  render_boot(versionString);
 
   if(firstrun) {
     render_boot("launching app, first run");
@@ -86,7 +89,7 @@ u8 app_launch(u8 firstrun) {
     print_dbg("\r\n first run, try and load default DSP");
     render_boot("launching default DSP...");
 
-    files_load_dsp_name("aleph-mono.ldr");
+    files_load_dsp_name("aleph-waves.ldr");
     
     render_boot("waiting for DSP init...");
     bfin_wait_ready();
@@ -100,7 +103,7 @@ u8 app_launch(u8 firstrun) {
     bfin_enable();
 
     render_boot("writing default dsp to flash...");
-    files_store_default_dsp_name("aleph-mono.ldr");
+    files_store_default_dsp_name("aleph-waves.ldr");
     
   } else {
 

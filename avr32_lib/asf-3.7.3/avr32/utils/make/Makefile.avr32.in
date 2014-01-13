@@ -76,6 +76,11 @@ target          := $(TARGET)
 # Output project name (target name minus suffix)
 project         := $(basename $(target))
 
+# version string
+# version := $(shell cat version.txt)
+include version.mk
+version := $(maj).$(min).$(rev)
+
 # Output target file (typically ELF or static library)
 ifeq ($(suffix $(target)),.a)
 target_type     := lib
