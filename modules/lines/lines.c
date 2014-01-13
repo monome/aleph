@@ -147,7 +147,7 @@ static void mix_del_inputs(void) {
   mul = mix_del_del[0][1];
   in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(out_del[0], mul)); 
   mul = mix_del_del[1][1];
-  in_del[0] = add_fr1x32(in_del[1], mult_fr1x32x32(out_del[1], mul));/*  }*/
+  in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(out_del[1], mul));/*  }*/
 }
 
 static void mix_outputs(void) {
@@ -259,7 +259,7 @@ void module_init(void) {
   }
 
   /// setup params with intial values
-  param_setup( 	eParam_delay0,		0x4000 );
+
   param_setup( 	eParam_loop0,		PARAM_SECONDS_MAX );
   param_setup( 	eParam_rMul0,		0x10000 );
   param_setup( 	eParam_rDiv0,		0x10000 );
@@ -267,9 +267,12 @@ void module_init(void) {
   param_setup( 	eParam_pre0,		0 );
   param_setup( 	eParam_pos_write0,		0 );
   param_setup( 	eParam_pos_read0,		0 );
+
+  param_setup( 	eParam_delay0,		0x4000 );
+
   param_setup( 	eParam_run_read0, 1 );
   param_setup( 	eParam_run_write0, 1 );
-  param_setup( 	eParam_delay1,		0x4000 );
+
   param_setup( 	eParam_loop1,		PARAM_SECONDS_MAX );
   param_setup( 	eParam_rMul1,		0x10000 );
   param_setup( 	eParam_rDiv1,		0x10000 );
@@ -277,44 +280,17 @@ void module_init(void) {
   param_setup( 	eParam_pre1,		0 );
   param_setup( 	eParam_pos_write1,		0 );
   param_setup( 	eParam_pos_read1,		0 );
+
+  param_setup( 	eParam_delay1,		0x4000 );
+
   param_setup( 	eParam_run_read1, 1 );
   param_setup( 	eParam_run_write1, 1 );
-  param_setup( 	eParam_freq0,		PARAM_CUT_DEFAULT );
-  param_setup( 	eParam_rq0,		PARAM_RQ_DEFAULT );
-  param_setup( 	eParam_low0,		PARAM_AMP_6 );
-  param_setup( 	eParam_high0,		0 );
-  param_setup( 	eParam_band0,		0 );
-  param_setup( 	eParam_notch0,		0 );
-  param_setup( 	eParam_fwet0,		0 );
-  param_setup( 	eParam_fdry0,		0 );
-  param_setup( 	eParam_freq1,		0 );
-  param_setup( 	eParam_rq1,		0 );
-  param_setup( 	eParam_low1,		0 );
-  param_setup( 	eParam_high1,		0 );
-  param_setup( 	eParam_band1,		0 );
-  param_setup( 	eParam_notch1,		0 );
-  param_setup( 	eParam_fwet1,		PARAM_AMP_6 );
-  param_setup( 	eParam_fdry1,		PARAM_AMP_6 );
-  param_setup( 	eParam_adc0_del0,		PARAM_AMP_0 );
-  param_setup( 	eParam_adc0_del1,		0 );
-  param_setup( 	eParam_adc1_del0,		0 );
-  param_setup( 	eParam_adc1_del1,		PARAM_AMP_0 );
-  param_setup( 	eParam_adc2_del0,		PARAM_AMP_0 );
-  param_setup( 	eParam_adc2_del1,		0 );
-  param_setup( 	eParam_adc3_del0,		0 );
-  param_setup( 	eParam_adc3_del1,		PARAM_AMP_0 );
-  param_setup( 	eParam_del0_del0,		0 );
-  param_setup( 	eParam_del0_del1,		0 );
-  param_setup( 	eParam_del1_del0,		0 );
-  param_setup( 	eParam_del1_del1,		0 );
-  param_setup( 	eParam_del0_dac0,		PARAM_AMP_6 );
-  param_setup( 	eParam_del0_dac1,		PARAM_AMP_12 );
-  param_setup( 	eParam_del0_dac2,		PARAM_AMP_6 );
-  param_setup( 	eParam_del0_dac3,		PARAM_AMP_12 );
+
   param_setup( 	eParam_del1_dac0,		PARAM_AMP_12 );
   param_setup( 	eParam_del1_dac1,		PARAM_AMP_6 );
   param_setup( 	eParam_del1_dac2,		PARAM_AMP_12 );
-  param_setup( 	eParam_del1_dac3,		PARAM_AMP_12 );
+  param_setup( 	eParam_del1_dac3,		PARAM_AMP_6 );
+
   param_setup( 	eParam_adc0_dac0,		PARAM_AMP_12 );
   param_setup( 	eParam_adc0_dac1,		PARAM_AMP_12 );
   param_setup( 	eParam_adc0_dac2,		PARAM_AMP_12 );
@@ -362,6 +338,7 @@ void module_process_frame(void) {
     // mix
     tmpDel = mult_fr1x32x32( tmpDel, mix_fdry[i] );
     tmpDel = add_fr1x32(tmpDel, mult_fr1x32x32(tmpSvf, mix_fwet[i]) );
+
     out_del[i] = tmpDel;
     // hard patching always works...
     //      out_del[i] = out_svf[i];
