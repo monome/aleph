@@ -54,6 +54,8 @@ void bfin_get_module_version(moduleVersion_t* vers);
 extern void bfin_spi_master(void);
 // enable audio processing
 extern void bfin_enable(void);
+// disable audio processing
+extern void bfin_disable(void);
 
 // wait for ready status (e.g. after module init)
 extern void bfin_wait_ready(void);
