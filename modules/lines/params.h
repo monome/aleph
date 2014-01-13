@@ -1,14 +1,45 @@
 #ifndef _ALEPH_LINES_PARAMS_H_
 #define _ALEPH_LINES_PARAMS_H_
 
-// filter reciprocal of Q
-#define PARAM_RQ_MIN 0x00000000
-#define PARAM_RQ_MAX 0x7fffffff
+#define PARAM_HZ_MIN OSC_FREQ_MIN
+#define PARAM_HZ_MAX OSC_FREQ_MIN
+#define PARAM_HZ_DEFAULT (OSC_FREQ_MIN * 16)
 
-//#define PARAM_BUFFER_MAX 0x002bf1ff // LINES_BUF_FRAMES - 1
+#define PARAM_DAC_MIN 0
+//#define PARAM_DAC_MAX (10 << 16)
+// bah?
+#define PARAM_DAC_MAX 0x7fffffff
+#define PARAM_DAC_RADIX 16
+
+#define PARAM_RATE_MIN 0x2000 // 1/8
+#define PARAM_RATE_MAX 0x80000 // 8
+#define PARAM_RATE_RADIX 3
+
+/* #define RATIO_MIN 0x4000     // 1/4 */
+/* #define RATIO_MAX 0x40000    // 4 */
+/* #define RATIO_RADIX 3 */
+
+#define SMOOTH_FREQ_MIN 0x2000 // 1/8
+#define SMOOTH_FREQ_MAX 0x400000 // 64
+#define SMOOTH_FREQ_RADIX 7
+
+// svf cutoff
+#define PARAM_CUT_MAX     0x7fffffff
+#define PARAM_CUT_DEFAULT 0x43D0A8EC
+
+// rq
+#define PARAM_RQ_MIN 0x00000000
+#define PARAM_RQ_MAX 0x0000ffff
+#define PARAM_RQ_DEFAULT 0x0000FFF0
+
+#define PARAM_AMP_0 (FRACT32_MAX)
+#define PARAM_AMP_6 (FRACT32_MAX >> 1)
+#define PARAM_AMP_12 (FRACT32_MAX >> 2)
+
 // max time in seconds, 16.16
 #define PARAM_SECONDS_MAX 0x003c0000
 #define PARAM_SECONDS_RADIX 6
+
 // rate
 //...
 
@@ -108,6 +139,7 @@ enum params {
 
   eParamNumParams
 };  
+
 
 extern void fill_param_desc(void);
 

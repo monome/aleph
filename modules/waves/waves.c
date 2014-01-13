@@ -200,14 +200,6 @@ void module_init(void) {
   filter_svf_init(&(svf1));
   filter_svf_init(&(svf2));    
 
-  /* filter_svf_set_rq(&(svf1), 0x1000); */
-  /* filter_svf_set_low(&(svf1), 0x4000); */
-  /* filter_svf_set_coeff(&(svf1), 0x5ff00000 ); */
-    
-  /* filter_svf_set_rq(&(svf2), 0x1000); */
-  /* filter_svf_set_low(&(svf2), 0x4000); */
-  /* filter_svf_set_coeff(&(svf2), 0x4ff00000 ); */
-    
   // allocate smoothers
   amp1Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
   filter_1p_lo_init( amp1Lp, oscAmp1 );
@@ -225,19 +217,6 @@ void module_init(void) {
   // write descriptors
   /// FIXME: eliminate and move offline !
   fill_param_desc();
-
-  /* // write initial param values */
-  /* /// ok, for now */
-  /* gModuleData->paramData[eParamFreq1 ].value = osc1.hz ; */
-  /* gModuleData->paramData[eParamFreq2 ].value = osc2.hz ; */
-
-  /* gModuleData->paramData[eParamAmp1].value = oscAmp1; */
-  /* gModuleData->paramData[eParamAmp2].value = oscAmp2; */
-
-  /* gModuleData->paramData[eParamIoAmp0 ].value = ioAmp0; */
-  /* gModuleData->paramData[eParamIoAmp1 ].value = ioAmp1; */
-  /* gModuleData->paramData[eParamIoAmp2 ].value = ioAmp2; */
-  /* gModuleData->paramData[eParamIoAmp3 ].value = ioAmp3; */
 
   // set parameters to defaults
   param_setup(  eParamFreq1, 	220 << 16 );
