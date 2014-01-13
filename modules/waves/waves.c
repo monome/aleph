@@ -299,7 +299,8 @@ void module_process_frame(void) {
   
   if(dacSlew[dacChan].sync) { ;; } else {
     dacVal[dacChan] = filter_1p_lo_next(&(dacSlew[dacChan]));
-    dac_update(dacChan, dacVal[dacChan]);
+    dac_update(dacChan, dacVal[dacChan] >> 15
+);
   }
  
   if(++dacChan == 4) {
