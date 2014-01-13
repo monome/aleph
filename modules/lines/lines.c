@@ -147,7 +147,7 @@ static void mix_del_inputs(void) {
   mul = mix_del_del[0][1];
   in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(out_del[0], mul)); 
   mul = mix_del_del[1][1];
-  in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(out_del[1], mul));/*  }*/
+  in_del[1] = add_fr1x32(in_del[1], mult_fr1x32x32(out_del[1], mul));
 }
 
 static void mix_outputs(void) {
