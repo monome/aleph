@@ -12,13 +12,9 @@
 /* #define OSC_FREQ_MAX 0x40000000    // 16384 hz */
 /* #define OSC_FREQ_RADIX 15 */
 
-#define PARAM_HZ_MIN OSC_FREQ_MIN
-#define PARAM_HZ_MAX OSC_FREQ_MIN
-#define PARAM_HZ_DEFAULT (OSC_FREQ_MIN * 16)
-
 #define PARAM_DAC_MIN 0
 //#define PARAM_DAC_MAX (10 << 16)
-// bah?
+// bah
 #define PARAM_DAC_MAX 0x7fffffff
 #define PARAM_DAC_RADIX 16
 
@@ -31,20 +27,12 @@
 #define SMOOTH_FREQ_RADIX 7
 
 // svf cutoff
-#define PARAM_CUT_MAX     0x7fffffff
-#define PARAM_CUT_DEFAULT 0x43D0A8EC
+// filter cutoff frequency
+#define PARAM_FREQ_MAX 0x1F400000;  // fixme?
 
-// rq
+// filter reciprocal of Q
 #define PARAM_RQ_MIN 0x00000000
-#define PARAM_RQ_MAX 0x0000ffff
-#define PARAM_RQ_DEFAULT 0x0000FFF0
-
-#define PARAM_AMP_6 (FRACT32_MAX >> 1)
-#define PARAM_AMP_12 (FRACT32_MAX >> 2)
-
-/// smoother default
-// about 1ms?
-#define PARAM_SMOOTH_DEFAULT  0x76000000
+#define PARAM_RQ_MAX 0x7fffffff
 
 #define NUM_PARAMS eParamNumParams
 

@@ -439,6 +439,12 @@ void edit_string_inc_char(char* str, u8 pos) {
       tmp = MAX_EDIT_CHAR;
     }
   }
+  /* if(tmp == 0) { tmp = MIN_EDIT_CHAR; } */
+  /* if ( tmp < MAX_EDIT_CHAR ) { */
+  /*   tmp++; */
+  /* } else { */
+  /*   tmp = MIN_EDIT_CHAR; */
+  /* } */
   str[pos] = tmp;
 }
 
@@ -452,6 +458,12 @@ void edit_string_dec_char(char* str, u8 pos) {
       tmp = MIN_EDIT_CHAR;
     }
   }
+  /* if(tmp == 0) { tmp = MAX_EDIT_CHAR; } */
+  /* if (tmp > MIN_EDIT_CHAR) { */
+  /*   tmp--; */
+  /* } else { */
+  /*   tmp = MAX_EDIT_CHAR; */
+  /* } */
   str[pos] = tmp;
 }
 

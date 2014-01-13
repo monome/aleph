@@ -228,15 +228,14 @@ void net_deinit(void) {
 void net_init_inode(u16 idx) {
   net->ins[idx].opIdx = -1;
   //  net->ins[idx].preset = 0;
-  net->ins[idx].play = 1;
+  net->ins[idx].play = 0;
 }
 
 // initialize an output node
 void net_init_onode(u16 idx) {
   net->outs[idx].opIdx = -1;
   net->outs[idx].target = -1;
-  //net->outs[idx].preset = 0;
-  //  net->outs[idx].play = 1;
+  //  net->outs[idx].preset = 0;
 }
 
 // activate an input node with a value
@@ -728,16 +727,9 @@ u8 net_toggle_in_preset(u32 id) {
 
 // toggle preset inclusion for output
 u8 net_toggle_out_preset(u32 id) {
-  u8 tmp = preset_out_enabled(preset_get_select(), id) ^ 1;
   //  net->outs[id].preset ^= 1;
   //  return net->outs[id].preset;
-  print_dbg("\r\n toggled output-preset_enable");
-  print_dbg(", out: ");
-  print_dbg_ulong(id);
-  print_dbg(", flag: ");
-  print_dbg_ulong(tmp);
-  preset_get_selected()->outs[id].enabled = tmp;
-  return tmp;
+  return preset_get_selected()->outs[id].enabled ^= 1;
 }
 
 // set preset inclusion for input
@@ -771,7 +763,7 @@ u8 net_get_in_preset(u32 id) {
 // get preset inclusion for output
 u8 net_get_out_preset(u32 id) {
   //  return net->outs[id].preset;
-  return preset_get_selected()->outs[id].enabled;
+  return preset_get_selected()->outs[id].enabled = 1;
 }
 
 
@@ -818,7 +810,6 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
   net->params[net->numParams].idx = idx; 
   //  net->params[net->numParams].preset = 0; 
   net->numParams += 1;
-  
 }
 
 // clear existing parameters

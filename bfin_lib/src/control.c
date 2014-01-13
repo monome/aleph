@@ -2,17 +2,6 @@
 #include "control.h"
 #include "module.h"
 
-
-///// FIXME! 
-
-/*
-  there is no buffer or separate task for control changes.
-  they are set directly from the SPI ISR!
-  very bad.
- */
-
-#if 0
-
 // ordered set of param changes
 static ctlEvent_t ctlBuf[CTL_BUF_SIZE];
 // dirty flags
@@ -108,5 +97,3 @@ extern void ctl_next_frame(void) {
     ctl_do_last_change();
   }
 }
-
-#endif

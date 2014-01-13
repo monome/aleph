@@ -292,13 +292,6 @@ void bfin_enable(void) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 }
 
-void bfin_disable(void) {
-  // disable audio processing
-  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  spi_write(BFIN_SPI, MSG_DISABLE_AUDIO);
-  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-}
-
 //---------------------------------------------
 //------ static function definition
 

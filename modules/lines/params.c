@@ -130,12 +130,14 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParam_run_read1].max = 1;
   gModuleData->paramDesc[eParam_run_read1].radix = 2;
 
-  strcpy(gModuleData->paramDesc[eParam_freq0].label, "cut0");
+  //// FIXME
+  strcpy(gModuleData->paramDesc[eParam_freq0].label, "Freq0");
   gModuleData->paramDesc[eParam_freq0].type = eParamTypeSvfFreq; 
   gModuleData->paramDesc[eParam_freq0].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_freq0].max = PARAM_CUT_MAX;
+  gModuleData->paramDesc[eParam_freq0].max = PARAM_FREQ_MAX;
   gModuleData->paramDesc[eParam_freq0].radix = 32;
 
+  ///// FIXME
   strcpy(gModuleData->paramDesc[eParam_rq0].label, "rq0");
   gModuleData->paramDesc[eParam_rq0].type = eParamTypeFix; 
   gModuleData->paramDesc[eParam_rq0].min = PARAM_RQ_MIN;
@@ -178,10 +180,11 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParam_fdry0].max = FR32_MAX; 
   gModuleData->paramDesc[eParam_fdry0].radix = 1;
 
-  strcpy(gModuleData->paramDesc[eParam_freq1].label, "cut1");
+  //// FIXME
+  strcpy(gModuleData->paramDesc[eParam_freq1].label, "Freq1");
   gModuleData->paramDesc[eParam_freq1].type = eParamTypeSvfFreq; 
   gModuleData->paramDesc[eParam_freq1].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_freq1].max = PARAM_CUT_MAX; 
+  gModuleData->paramDesc[eParam_freq1].max = PARAM_FREQ_MAX; 
   gModuleData->paramDesc[eParam_freq1].radix = 1;
 
   ///// FIXME
