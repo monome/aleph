@@ -40,12 +40,6 @@
 #define PARAM_SECONDS_MAX 0x003c0000
 #define PARAM_SECONDS_RADIX 6
 
-// rate
-//...
-
-// filter cutoff frequency
-#define PARAM_FREQ_MAX 0x1F400000;  // fixme
-
 // enumerate parameters
 enum params {
 
