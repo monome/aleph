@@ -167,8 +167,7 @@ void preset_recall(u32 preIdx) {
   // outs
   for(i=0; i<net_num_outs(); ++i) {
     if(presets[preIdx].outs[i].enabled) {
-
-      print_dbg("\r\n recalling enabled input in target preset, idx: ");
+      print_dbg("\r\n recalling enabled output in target preset, idx: ");
       print_dbg_ulong(i);
       net_connect( i, presets[preIdx].outs[i].target );
     }

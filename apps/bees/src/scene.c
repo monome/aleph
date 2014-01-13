@@ -185,7 +185,7 @@ void scene_write_default(void) {
   if(neq) {
     render_boot("writing DSP to flash");
     print_dbg("\r\n writing default LDR from scene descriptor");
-    files_store_default_dsp_name(sceneData->desc.moduleName);
+    //    files_store_default_dsp_name(sceneData->desc.moduleName);
   }    
   delay_ms(20);
   print_dbg("\r\n finished writing default scene");

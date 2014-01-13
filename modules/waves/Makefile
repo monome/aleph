@@ -1,5 +1,11 @@
 module_name = waves
+
+include version.mk
+version = $(maj).$(min).$(rev)
+ldr_name = aleph-$(module_name)-$(version).ldr
+
 module_obj = waves.o  \
+	params.o \
 	$(audio_dir)/conversion.o \
 	$(audio_dir)/filter_1p.o \
 	$(audio_dir)/filter_svf.o \
@@ -9,27 +15,26 @@ module_obj = waves.o  \
 	$(bfin_lib_srcdir)/libfixmath/fix32.o \
 	$(bfin_lib_srcdir)/libfixmath/fix16.o
 
-all: aleph-$(module_name).ldr
+all: $(ldr_name)
 
 include ../../bfin_lib/bfin_lib.mk
-
 CFLAGS += -D ARCH_BFIN=1
-CFLAGS += -g
+#CFLAGS += -g
 #CFLAGS += --verbose
 
 $(module_obj): %.o : %.c	
 	$(CC) $(CFLAGS) -c -o $@ $< $(LDFLAGS)
 
-aleph-$(module_name): bfin_lib_target $(module_obj)
+$(ldr_name): bfin_lib_target $(module_obj)
+	echo $(ldr_name)
 	$(CC) $(LDFLAGS) -T aleph-$(module_name).lds \
 	$(patsubst %.o, $(bfin_lib_objdir)%.o, $(bfin_lib_obj)) \
 	$(module_obj) \
-	-o aleph-$(module_name) \
+	-o $(ldr_name) \
 	-lm -lbfdsp -lbffastfp
 
 clean: bfin_lib_clean
 	rm $(module_obj)
-	rm aleph-$(module_name).ldr 
-	rm aleph-$(module_name)
+	rm $(ldr_name)
 
 .PHONY: clean
