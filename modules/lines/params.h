@@ -44,30 +44,30 @@
 enum params {
 
   // delay input mix
-  eParam_adc0_del0,		// 34
-  eParam_adc0_del1,		// 35
-  eParam_adc1_del0,		// 36
-  eParam_adc1_del1,		// 37
-  eParam_adc2_del0,		// 38
-  eParam_adc2_del1,		// 39
-  eParam_adc3_del0,		// 40
-  eParam_adc3_del1,		// 41
+  eParam_adc0_del0,		
+  eParam_adc0_del1,		
+  eParam_adc1_del0,		
+  eParam_adc1_del1,		
+  eParam_adc2_del0,		
+  eParam_adc2_del1,		
+  eParam_adc3_del0,		
+  eParam_adc3_del1,		
 
   // delay output mix
-  eParam_del0_dac0,		// 46
-  eParam_del0_dac1,		// 47
-  eParam_del0_dac2,		// 48
-  eParam_del0_dac3,		// 49
-  eParam_del1_dac0,		// 
-  eParam_del1_dac1,		// 50
-  eParam_del1_dac2,		// 51
-  eParam_del1_dac3,		// 52
+  eParam_del0_dac0,		
+  eParam_del0_dac1,		
+  eParam_del0_dac2,		
+  eParam_del0_dac3,		
+  eParam_del1_dac0,		
+  eParam_del1_dac1,		
+  eParam_del1_dac2,		
+  eParam_del1_dac3,		
 
   // feedback mix
-  eParam_del0_del0,		// 42
-  eParam_del0_del1,		// 43
-  eParam_del1_del0,		// 44
-  eParam_del1_del1,		// 45
+  eParam_del0_del0,		
+  eParam_del0_del1,		
+  eParam_del1_del0,		
+  eParam_del1_del1,		
 
   // dry
   eParam_adc0_dac0,		
