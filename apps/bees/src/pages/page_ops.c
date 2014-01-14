@@ -190,7 +190,11 @@ static void show_foot2(void) {
     fill = 0x5;
   }
   region_fill(footRegion[2], fill);
-  font_string_region_clip(footRegion[2], "CREATE", 0, 0, 0xf, fill);
+  if(altMode) {
+    font_string_region_clip(footRegion[2], "DELETE", 0, 0, 0xf, fill);
+  } else {
+    font_string_region_clip(footRegion[2], "CREATE", 0, 0, 0xf, fill);
+  }
   
 }
 
@@ -253,18 +257,23 @@ void handle_key_1(s32 val) {
 void handle_key_2(s32 val) {
   if(val == 0) { return; }
   if(check_key(2)) { 
-    // create new operator of selected type
-    net_add_op(userOpTypes[newOpType]);
-    // change selection to last op
-    *pageSelect = net_num_ops() - 1;
-    // redraw...
-    redraw_ops();
+    if(altMode) {
+      // delete last created operator
+      net_pop_op();
+    } else {
+      // create new operator of selected type
+      net_add_op(userOpTypes[newOpType]);
+      // change selection to last op
+      *pageSelect = net_num_ops() - 1;
+      // redraw...
+    }
+      redraw_ops();
   }
   show_foot();
 }
 
 void handle_key_3(s32 val) {
-  // delete? subpage?
+  // op-specific subpage...?
 }
 
 void handle_enc_0(s32 val) {

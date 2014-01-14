@@ -369,9 +369,6 @@ s16 net_add_op(op_id_t opId) {
     // if we added input nodes, need to adjust connections to DSP params
     for(i=0; i < numOutsSave; i++) {
 
-      /* if((net->outs[i].target != -1)     /// have to do this check for initial sysOp add? */
-      /* 	 && (net->outs[i].target >= numInsSave)) { */
-
       /* print_dbg("\r\n checking output no. "); */
       /* print_dbg_ulong(i); */
       /* print_dbg(" ; target: "); */
@@ -391,9 +388,6 @@ s16 net_add_op(op_id_t opId) {
 	net_connect(i, net->outs[i].target + ins);
       }
     }
-
-    // 
-
   }
 
   ++(net->numOps);

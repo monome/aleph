@@ -54,14 +54,6 @@ void app_init(void) {
   print_dbg("\r\n render_init...");
   render_init();
 
-  /// move these after scene load,
-  // so that initial graphics reflect scene data
-  /* print_dbg("\r\n pages_init..."); */
-  /* pages_init(); */
-
-  /* print_dbg("\r\n play_init..."); */
-  /* play_init(); */
-
   // initialize flash-management buffers
   print_dbg("\r\n flash_bees_init...");
   flash_bees_init();
@@ -74,7 +66,6 @@ u8 app_launch(u8 firstrun) {
   print_dbg_ulong(firstrun);
 
   //  net_print();
-
   
   render_boot("BEES");
   render_boot(versionString);

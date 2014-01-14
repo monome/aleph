@@ -68,9 +68,7 @@ static void render_line(s16 idx, u8 fg) {
   s16 srcOpIdx; 
   region_fill(lineRegion, 0x0);
 
-  print_dbg("\r\n page_outs: render_line");
-
-
+  //  print_dbg("\r\n page_outs: render_line");
   if(idx >= net_num_outs() ) { return; }
   if(targetSelect) { 
       print_dbg(" , in targetSelect");
@@ -520,9 +518,7 @@ void handle_enc_1(s32 val) {
   ;;  // nothing to do
 }
 
-void handle_enc_2(s32 val) {
-
-  
+void handle_enc_2(s32 val) {  
   if(targetSelect) {
     targetSelect = 0;
     redraw_outs();
@@ -537,7 +533,7 @@ void handle_enc_2(s32 val) {
 
 void handle_enc_3(s32 val) {
 
-  print_dbg("\r\n outs page: handling encoder 3");
+  //  print_dbg("\r\n outs page: handling encoder 3");
   if(targetSelect) {
     targetSelect = 0;
     redraw_outs();
@@ -563,10 +559,10 @@ void redraw_outs(void) {
   u8 i=0;
   u8 n = *pageSelect - 3;
   while(i<8) {
-    print_dbg("\r\n redraw_outs, line: ");
-    print_dbg_ulong(i);
-    print_dbg("index: ");
-    print_dbg_ulong(n);
+    /* print_dbg("\r\n redraw_outs, line: "); */
+    /* print_dbg_ulong(i); */
+    /* print_dbg("index: "); */
+    /* print_dbg_ulong(n); */
 
     render_line( n, 0xa );
     render_to_scroll_line(i, n == *pageSelect ? 1 : 0);
