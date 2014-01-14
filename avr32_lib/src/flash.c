@@ -58,7 +58,13 @@ u8 init_flash() {
   print_dbg("\r\n init flash... ");
 
   // allocate bfin loader buf
+  ////////////////////
+  /////////// TESTING
+#if 0
   bfinLdrData = alloc_mem(BFIN_LDR_MAX_BYTES);
+#else
+  bfinLdrData = alloc_mem(BFIN_LDR_MAX_BYTES * 4);
+#endif
   for(i=0; i<BFIN_LDR_MAX_BYTES; i++) { bfinLdrData[i] = 0; }
 
   if(flash_nvram_data.firstRun != FIRSTRUN_MAGIC) {
