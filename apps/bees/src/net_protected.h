@@ -127,5 +127,7 @@ extern op_adc_t* opSysAdc;
 // preset
 extern op_preset_t* opSysPreset;
 
+// clear ops and i/o
+extern void net_clear_user_ops(void);
 
 #endif // header guard

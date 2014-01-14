@@ -166,6 +166,7 @@ void handle_key_0(s32 val) {
     headRegion->dirty = 1;
     render_update();
     
+    net_deinit();
     files_load_dsp(*pageSelect);
     bfin_wait_ready();
     net_report_params();
