@@ -396,19 +396,23 @@ s16 net_add_op(op_id_t opId) {
 
 // destroy last operator created
 s16 net_pop_op(void) {
-  op_t* op = net->ops[net->numOps - 1];
+  const s16 opIdx = net->numOps - 1;
+  op_t* op = net->ops[opIdx];
   int i=0;
   int x=0;
+
+  // bail if system op
+  if(net_op_flag (opIdx, eOpFlagSys)) { return 1; }
   // de-init
-  op_deinit(net->ops[net->numOps - 1]); 
+  op_deinit(op);
   // store the global index of the first input
-  x = net_op_in_idx(net->numOps - 1, 0); 
+  x = net_op_in_idx(opIdx, 0); 
   // erase input nodes
   for(i=0; i<op->numInputs; i++) {
     net_init_inode(x++);
   }
   // store the global index of the first output
-  x = net_op_out_idx(net->numOps - 1, 0);
+  x = net_op_out_idx(opIdx, 0);
   // erase output nodes
   for(i=0; i<op->numOutputs; i++) {
     net_init_onode(x++);
