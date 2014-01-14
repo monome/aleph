@@ -76,11 +76,6 @@ target          := $(TARGET)
 # Output project name (target name minus suffix)
 project         := $(basename $(target))
 
-# version string
-# version := $(shell cat version.txt)
-include version.mk
-version := $(maj).$(min).$(rev)
-
 # Output target file (typically ELF or static library)
 ifeq ($(suffix $(target)),.a)
 target_type     := lib
@@ -172,6 +167,25 @@ endif
 ifndef VERBOSE
   VERBOSE = 0
 endif
+
+ifdef R
+  ifeq ("$(origin R)", "command line")
+    RELEASE = $(R)
+  endif
+endif
+ifndef RELEASE
+  RELEASE = 0
+endif
+
+# version string
+# version := $(shell cat version.txt)
+include version.mk
+ifeq ($(RELEASE), 1)
+  version := $(maj).$(min).$(rev)
+else
+  version := $(maj).$(min).$(rev)-dbg
+endif
+
 
 ifeq ($(VERBOSE), 1)
   Q =
@@ -282,7 +296,7 @@ ldflags-gnu-y   += -Wl,-Map=$(project).map,--cref
 ldflags-gnu-y   += $(foreach _LIB_PATH,$(addprefix $(PRJ_PATH)/,$(LIB_PATH)),-L$(_LIB_PATH))
 
 a_flags  = $(cpuflags-gnu-y) $(depflags) $(cppflags-gnu-y) $(asflags-gnu-y) -D__ASSEMBLY__
-c_flags  = $(cpuflags-gnu-y) $(dbgflags-gnu-y) $(depflags) $(optflags-gnu-y) $(cppflags-gnu-y) $(cflags-gnu-y) 	-D VERSIONSTRING='"$(version)"'
+c_flags  = $(cpuflags-gnu-y) $(dbgflags-gnu-y) $(depflags) $(optflags-gnu-y) $(cppflags-gnu-y) $(cflags-gnu-y) 	-D VERSIONSTRING='"$(version)"' -D RELEASEBUILD=$(RELEASE)
 cxx_flags= $(cpuflags-gnu-y) $(dbgflags-gnu-y) $(depflags) $(optflags-gnu-y) $(cppflags-gnu-y) $(cxxflags-gnu-y)
 l_flags  = $(cpuflags-gnu-y) $(optflags-gnu-y) $(ldflags-gnu-y)
 ar_flags = $(arflags-gnu-y)

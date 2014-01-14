@@ -507,15 +507,26 @@ void handle_key_3(s32 val) {
 
 // encoder handlers
 void handle_enc_0(s32 val) {   
-  // edit selection (target)
+  // edit selection / target
   select_edit(val);
 }
 
 void handle_enc_1(s32 val) {
+
+  if(targetSelect) {
+    targetSelect = 0;
+    redraw_outs();
+  }
   ;;  // nothing to do
 }
 
 void handle_enc_2(s32 val) {
+
+  
+  if(targetSelect) {
+    targetSelect = 0;
+    redraw_outs();
+  }
   // scroll page
   if(val > 0) {
     set_page(ePagePresets);
@@ -525,6 +536,13 @@ void handle_enc_2(s32 val) {
 }
 
 void handle_enc_3(s32 val) {
+
+  print_dbg("\r\n outs page: handling encoder 3");
+  if(targetSelect) {
+    targetSelect = 0;
+    redraw_outs();
+  }
+
   if(altMode) {
     inPresetSelect = 1;
     if(val > 0) {
@@ -557,80 +575,88 @@ void redraw_outs(void) {
   }
 }
 
-
 // redraw based on provisional preset seleciton
 void redraw_outs_preset (void) {
   //  s32 max = net_num_outs() - 1;
   u8 i=0;
   u8 idx = *pageSelect - 3;
   u8 fg;
-  //  u8 enabled;
+  u8 enabled;
   s16 target;
   s16 targetOpIdx = -1;
   s16 srcOpIdx; 
-
-  print_dbg("\r\n redraw_outs_preset()");
+  s32 preSel = preset_get_select();
+  //  print_dbg("\r\n redraw_outs_preset()");
 
   while(i<8) {
     region_fill(lineRegion, 0x0);
     if(idx >= net_num_outs() ) { return; }
-    target = net_get_target(idx);
-    srcOpIdx = net_out_op_idx(idx);
-    targetOpIdx = net_in_op_idx(target);
-    if(target >= 0) {
-      //// output has target
-      // the network doesn't actually execute connections from an op to itself.
-      // reflect this in UI by dimming this line
-      if(targetOpIdx == srcOpIdx) { fg = 0x5; }
-      // render output
-      clearln();
-      appendln_idx_lj(srcOpIdx);
-      appendln_char('.');
-      appendln( net_op_name(srcOpIdx));
-      appendln_char('/');
-      appendln( net_out_name(idx) );
-      endln();
-      font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
-      // render target
+
+    enabled = preset_out_enabled(preSel, idx);
+    if(enabled) {
+      // if it's enabled, show the preset's target (including if blank)
+      target = preset_get_selected()->outs[idx].target;
+      srcOpIdx = net_out_op_idx(idx);
       targetOpIdx = net_in_op_idx(target);
-      clearln();
-      appendln("-> ");
-      if(targetOpIdx >= 0) {
-	// target is operator input
-	appendln_idx_lj(net_in_op_idx(target));
+      if(target >= 0) {
+	//// output has target
+	// the network doesn't actually execute connections from an op to itself.
+	// reflect this in UI by dimming this line
+	if(targetOpIdx == srcOpIdx) { fg = 0x5; }
+	// render output
+	clearln();
+	appendln_idx_lj(srcOpIdx);
 	appendln_char('.');
-	appendln( net_op_name(net_in_op_idx(target)) );
+	appendln( net_op_name(srcOpIdx));
 	appendln_char('/');
-	appendln( net_in_name(target) );
+	appendln( net_out_name(idx) );
+	endln();
+	font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
+	// render target
+	targetOpIdx = net_in_op_idx(target);
+	clearln();
+	appendln("-> ");
+	if(targetOpIdx >= 0) {
+	  // target is operator input
+	  appendln_idx_lj(net_in_op_idx(target));
+	  appendln_char('.');
+	  appendln( net_op_name(net_in_op_idx(target)) );
+	  appendln_char('/');
+	  appendln( net_in_name(target) );
+	} else {
+	  // target is parameter input
+	  appendln_idx_lj( (int)net_param_idx(target)); 
+	  appendln_char('.');
+	  appendln( net_in_name(target)); 
+	}
+	endln();
+	font_string_region_clip(lineRegion, lineBuf, 60, 0, fg, 0);
+	clearln();
       } else {
-	// target is parameter input
-	appendln_idx_lj( (int)net_param_idx(target)); 
+	//// no target
+	// render output
+	clearln();
+	appendln_idx_lj(net_out_op_idx(idx));
 	appendln_char('.');
-	appendln( net_in_name(target)); 
+	appendln( net_op_name(net_out_op_idx(idx)));
+	appendln_char('/');
+	appendln( net_out_name(idx) );
+	endln();
+	font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
       }
-      endln();
-      font_string_region_clip(lineRegion, lineBuf, 60, 0, fg, 0);
-      clearln();
+      // draw something to indicate preset inclusion
+      if(net_get_out_preset(idx)) {
+	font_string_region_clip(lineRegion, ".", 126, 0, fg, 0);
+      }
+    
     } else {
-      //// no target
-      // render output
-      clearln();
-      appendln_idx_lj(net_out_op_idx(idx));
-      appendln_char('.');
-      appendln( net_op_name(net_out_op_idx(idx)));
-      appendln_char('/');
-      appendln( net_out_name(idx) );
-      endln();
-      font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
+      // not enabled, draw as normal with dim coloring
+      render_line(idx, 0x5);
     }
-    // draw something to indicate preset inclusion
-    if(net_get_out_preset(idx)) {
-      font_string_region_clip(lineRegion, ".", 126, 0, fg, 0);
-    }
-  render_to_scroll_line(i, 0);
+
+    render_to_scroll_line(i, 0);
     ++i;
     ++idx;
   }
-  print_dbg("\r\n\r\n");
   draw_preset_name();
 }
