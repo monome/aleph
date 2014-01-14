@@ -3,6 +3,13 @@
  * aleph
  */
 
+
+//////
+/////  
+/* NOTE: pnode_t is defined in net_protected.h, not here
+this is to avoid some annoying issues of inclusion order.
+*/
+
 #ifndef _PARAM_H_ 
 #define _PARAM_H_
 
@@ -13,22 +20,19 @@
 #include "net_protected.h"
 #include "op_math.h"
 
-#define PARAM_BITS 16
-#define PARAM_MAX 32767
-#define PARAM_MAX_F 32767.f
-#define PARAM_MAX_RF 3.0517578125e-05
-#define PARAM_MIN -32768
- 
 // get value for param at given idx
-io_t get_param_value(u32 idx);
+extern io_t get_param_value(u32 idx);
 // get preset flag for param at given idx
-u8 get_param_preset(u32 idx);
+extern u8 get_param_preset(u32 idx);
 // get name
-const char* get_param_name(u32 idx);
+extern const char* get_param_name(u32 idx);
+// fill buffer with readable value string
+extern void get_param_string(char* dst, u32 idx);
 
-
-// set value with default numerical representation 
-void set_param_value(u32 idx, io_t val);
+// set value
+extern void set_param_value(u32 idx, io_t val);
+// increment value
+extern io_t inc_param_value(u32 idx, io_t inc);
 
 //---- pickle / unpickle
 // node 

@@ -18,6 +18,9 @@ typedef struct op_sw_struct {
   op_out_t outs[1];
 } op_sw_t;
 
-void op_sw_init(void* sw);
+extern void op_sw_init(void* sw);
+
+// handle input from system 
+extern void op_sw_sys_input(op_sw_t* sw, u8 val);
 
 #endif // header guard

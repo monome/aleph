@@ -9,11 +9,14 @@
 #include "string.h"
 // common
 #include "fix.h"
+
 // aleph-avr32
 #include "print_funcs.h"
 #include "region.h"
+
 // bees
 #include "net.h"
+#include "op_math.h"
 #include "pages.h"
 #include "play.h"
 #include "render.h"
@@ -26,6 +29,7 @@ static scroll centerScroll;
 
 // initialize
 extern void play_init(void) {
+  print_dbg("\r\n play_init");
   // allocate regions
   region_alloc(&scrollRegion);
   // init scroll
@@ -58,8 +62,11 @@ extern void play_input(u16 idx) {
     font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
     clearln();
 
-    print_fix16(lineBuf, net_get_in_value(idx));
-    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, 0xa, 0);
+    op_print(lineBuf, net_get_in_value(idx));
+    //    itoa_int(net_get_in_value(idx), (char*)lineBuf);
+    //    print_s32((char*)lineBuf, net_get_in_value(idx));
+
+    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_SHORT, 0, 0xa, 0);
   } else {
     // parameter input    
     clearln();
@@ -69,8 +76,12 @@ extern void play_input(u16 idx) {
     endln();
     font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
     clearln();
-    print_fix16(lineBuf, net_get_in_value(idx));
-    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS, 0, 0xa, 0);
+    
+    //    op_print(lineBuf, net_get_in_value(idx));
+    net_get_param_value_string(lineBuf, idx);
+
+
+    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, 0xa, 0);
   }
    render_to_scroll_bottom();
 }

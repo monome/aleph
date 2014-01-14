@@ -25,11 +25,8 @@ typedef struct _sceneDesc {
  so i am picking an arbitrary size and will be 
  vigilant w/r/t overreaching it.
 */
-// a buffer to hold pickled scene data.
-// 65k worth (!)
-/// ok, 32k worth (!)
-#define SCENE_PICKLE_SIZE 0x8000
-//typedef u8 scenePickle_t[SCENE_PICKLE_SIZE];
+// this is only used for parsing application NVRAM space.
+#define SCENE_PICKLE_SIZE 0x19000
 
 typedef struct _sceneData {
   // txt descriptor

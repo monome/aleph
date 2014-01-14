@@ -66,6 +66,7 @@ heap_t alloc_mem(u32 bytes) {
     heapOffset = tmp;
     //    ret = pHeapStart + heapOffset;
   } else {
+    print_dbg("\r\n memory allocation failed!");
     ret = (heap_t)ALLOC_FAIL;
   }
   return ret;

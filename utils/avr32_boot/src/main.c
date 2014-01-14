@@ -237,8 +237,8 @@ int main (void) {
   if(!isSwDown) {
     /// hardcoded jump to runtime code location
     asm volatile (
-    		  " mov   r0,LO(0x80009000)\n\t"
-    		  " orh   r0,HI(0x80009000)\n\t"
+    		  " mov   r0,LO(0x80008000)\n\t"
+    		  " orh   r0,HI(0x80008000)\n\t"
     		  " mov   pc,r0"
     		  );
   } else {
@@ -246,8 +246,8 @@ int main (void) {
     init_avr32();
 
     // wait for sd card
-    screen_line(0, 0, "ALEPH BOOTLOADER", 0x3f);
-    screen_refresh();
+    // screen_line(0, 0, "ALEPH BOOTLOADER", 0x3f);
+    // screen_refresh();
   
     //    // print_dbg("\r\n SD check... ");
     if (!sd_mmc_spi_mem_check()) {

@@ -20,15 +20,16 @@
 // avr32
 #include "app.h"
 #include "font.h"
+#include "preset.h"
 #include "region.h"
 #include "screen.h"
 
 // bees
 #include "render.h"
 
-// range of characters for editable strings
-#define MAX_EDIT_CHAR 120
-#define MIN_EDIT_CHAR 32
+// min/max legal characters for editable strings
+#define MAX_EDIT_CHAR 122
+#define MIN_EDIT_CHAR 45
 
 //---- extern vars
 region* headRegion = NULL;
@@ -98,6 +99,24 @@ void region_update(region* r) {
   }
 }
 
+/// utility to restrict characters in legal filenames
+// return 0 if ok
+static u8 check_edit_char(char c) {
+  /*
+    45 		dash
+    48-57 	nums
+    65-90	upper
+    95		underscore
+    97-122	lower
+  */
+  if(c == 45) { return 0; }
+  if(c == 95) { return 0; }
+  if( (c >= 48) && (c <= 57) ) { return 0; }
+  if( (c >= 65) && (c <= 90) ) { return 0; }
+  if( (c >= 97) && (c <= 122) ) { return 0; }
+  return 1;
+}
+
 //-----------------------
 //---- extern functions
 
@@ -144,12 +163,12 @@ void render_update(void) {
     scroll_draw(pageCenterScroll);
   }
   // standard regions
-
   region_update(headRegion);
   region_update(footRegion[0]);
   region_update(footRegion[1]);
   region_update(footRegion[2]);
   region_update(footRegion[3]);
+
   app_resume();
 }
 
@@ -178,7 +197,7 @@ void render_set_scroll(scroll* scr) {
   pageScrollRegion->dirty = 1;
 }
 
-/// stupid string lib replacements.. 
+//----- stupid string lib replacements.. 
 // all act on static string buffer in render.c
 
 // write to top of line buffer
@@ -216,6 +235,9 @@ void render_set_scroll(scroll* scr) {
 // append int to line buffer (left justified, no bounds)
 /// very fast, for short unsigned values!
 inline void appendln_idx_lj(u16 val) {
+#if 0
+  pline = atoi_idx(pline, val);
+#else
   u16 dig = 0;
   u16 rem = 0;
   // 3 digits only 
@@ -233,6 +255,7 @@ inline void appendln_idx_lj(u16 val) {
 
   *pline = '0' + rem;
   ++pline;    
+#endif
 }
 
 // append char to line buffer
@@ -342,7 +365,7 @@ void render_to_scroll_line(u8 n, u8 hl) {
   dst = pageScrollRegion->data + dstOff;
   // setup copy
   src = lineRegion->data;
-  dstMax = dst + lineRegion->len - 1;
+  dstMax = dst + lineRegion->len;
   // copy and apply color map based on HL
   if(hl) {
     while(dst < dstMax) {
@@ -377,7 +400,7 @@ void render_scroll_apply_hl(u8 n, u8 hl) {
   while(dstOff >= pageScrollRegion->len) { dstOff -= pageScrollRegion->len; }
   // setup bounds
   dst = pageScrollRegion->data + dstOff;
-  dstMax = dst + lineRegion->len - 1;
+  dstMax = dst + lineRegion->len;
 
   if(hl) {
     while(dst < dstMax) {
@@ -406,58 +429,77 @@ void render_scroll_apply_hl(u8 n, u8 hl) {
   pageScrollRegion->dirty = 1;
 }
 
-// fill scroll line with color
-//extern void render_fill_scroll_line(u8 n, u8 col) {
-  /* u8* dst; */
-  /* u8* dstMax; */
-  /* // data offset in scroll */
-  /* s32 dstOff = pageCenterScroll->byteOff + scrollLines[n]; */
-  /* while(dstOff > pageScrollRegion->len) { dstOff -= pageScrollRegion->len; } */
-  /* // setup bounds */
-  /* dst = pageScrollRegion->data + dstOff; */
-  /* dstMax = dst + lineRegion->len - 1; */
-  //  while(dst < dstMax)
-//}
-
 // scroll character up
 void edit_string_inc_char(char* str, u8 pos) {
-  u8 tmp = str[pos]; 
-  if(tmp == 0) { tmp = MIN_EDIT_CHAR; }
-  if ( tmp < MAX_EDIT_CHAR ) {
-    tmp++;
-  } else {
-    tmp = MIN_EDIT_CHAR;
+  s32 tmp = (s32)str[pos];
+  ++tmp;
+  while(check_edit_char((char)tmp)) {
+    ++tmp;
+    if(tmp > MAX_EDIT_CHAR) {
+      tmp = MAX_EDIT_CHAR;
+    }
   }
+  /* if(tmp == 0) { tmp = MIN_EDIT_CHAR; } */
+  /* if ( tmp < MAX_EDIT_CHAR ) { */
+  /*   tmp++; */
+  /* } else { */
+  /*   tmp = MIN_EDIT_CHAR; */
+  /* } */
   str[pos] = tmp;
-  //return tmp;
 }
 
 // scroll character down
 void edit_string_dec_char(char* str, u8 pos) {
-  u8 tmp = str[pos]; 
-  if (tmp > MIN_EDIT_CHAR) {
-    tmp--;
-  } else {
-    tmp = MAX_EDIT_CHAR;
+  u8 tmp = str[pos];
+  --tmp;
+  while(check_edit_char((char)tmp)) {
+    --tmp;
+    if(tmp < MIN_EDIT_CHAR) {
+      tmp = MIN_EDIT_CHAR;
+    }
   }
+  /* if(tmp == 0) { tmp = MAX_EDIT_CHAR; } */
+  /* if (tmp > MIN_EDIT_CHAR) { */
+  /*   tmp--; */
+  /* } else { */
+  /*   tmp = MAX_EDIT_CHAR; */
+  /* } */
   str[pos] = tmp;
-  //  return tmp;
 }
 
 // draw editing string to given region, with cursor highlight
 void render_edit_string(region* reg, char* str, u8 len, u8 cursor) {
   u8 i;
   u8* dst = (u8*)reg->data;
+  u32 off = 0;
+  //  const u32 squarePx = (FONT_CHARW+2) * FONT_CHARH;
+  u32 dif;
   region_fill(reg, 0x0);
   for(i=0; i<len; ++i) {
     if(str[i] == 0) { break; }
     if(i == cursor) {
-      dst += font_glyph_fixed(str[i], dst, reg->w, 0x0, 0xf);
+      /// fixme: net art
+      //      region_fill_part(reg, off, squarePx, 0xf);
+      // hack a column fill with a space character
+      font_glyph(' ', dst, reg->w, 0x0, 0xf);
+      dst += 2; off += 2;
+      font_glyph_fixed(str[i], dst, reg->w, 0x0, 0xf);
+      dif = FONT_CHARW + 2;
+      dst += dif;
+      off += dif;
     } else {
-      dst += font_glyph(str[i], dst, reg->w, 0xf, 0x0);
-      ++dst;
+      dif = font_glyph(str[i], dst, reg->w, 0xf, 0x0) + 1;
+      dst += dif;
+      off += dif;
     }
   }
   reg->dirty = 1;
+}
 
+
+// draw preset name in header
+void draw_preset_name(void) {
+  font_string_region_clip(headRegion, "                  ", 64, 0, 0, 0);
+  font_string_region_clip(headRegion, preset_name((u8)preset_get_select()), 64, 0, 0x5, 0);
+  headRegion->dirty = 1;
 }

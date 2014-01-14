@@ -48,6 +48,7 @@ dacsData* pDacsData;
 // dac values (u16, but use fract32 and audio integrators)
 static fract32 dacVal[4];
 static filter_1p_lo dacSlew[4];
+static u8 dacChan = 0;
 
 //----------------------
 //----- external functions
@@ -83,7 +84,7 @@ u32 module_get_num_params(void) {
 
 
 /// fixme: don't really need these
-static u8 dacDirty[4] = { 0, 0, 0, 0};
+//static u8 dacDirty[4] = { 0, 0, 0, 0};
 //// FIXME:
 /* for now, stagger DAC channels across consecutive audio frames
    better method might be:
@@ -92,11 +93,11 @@ static u8 dacDirty[4] = { 0, 0, 0, 0};
    - last thing audio ISR does is call the first DAC channel to be loaded
    - dac_update writes to 4x16 volatile buffer
 */
-static u8 dacChan = 0;
+//static u8 dacChan = 0;
 /// 
 
 void module_process_frame(void) { 
-  u8 i;
+  //  u8 i;
   
   //  for(i=0; i<4; ++i) {
     //    if(dacSlew[i].sync) { continue; }
@@ -108,7 +109,7 @@ void module_process_frame(void) {
     /*   dacDirty[dacChan] = 0; */
     /* } */
 
-  /*
+  
   if(dacSlew[dacChan].sync) { ;; } else {
     dacVal[dacChan] = filter_1p_lo_next(&(dacSlew[dacChan]));
     dac_update(dacChan, shr_fr1x32(dacVal[dacChan], 15) & DAC_VALUE_MASK);
@@ -117,50 +118,47 @@ void module_process_frame(void) {
   if(++dacChan == 4) {
     dacChan = 0;
   }
-  */
+  
+  out[0] = in[0];
+  out[1] = in[1];
+  out[2] = in[2];
+  out[3] = in[3];
+  
     //  } 
 }
 
 // parameter set function
-void module_set_param(u32 idx, pval v) {
+void module_set_param(u32 idx, ParamValue v) {
   LED4_TOGGLE;
   switch(idx) {
     // dac values
   case eParam_dac0 :
-    filter_1p_lo_in(&(dacSlew[0]), shl_fr1x32(v.fr, 15));
-    //    dacVal[0] = v.fr & DAC_VALUE_MASK;
-    //    dacDirty[0] = 1;
-        dac_update(0, v.fr & 0xffff);
+    //filter_1p_lo_in(&(dacSlew[0]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
+        dac_update(0, v >> (PARAM_DAC_RADIX - 1));
     break;
   case eParam_dac1 :
-    // filter_1p_lo_in(&(dacSlew[1]), shl_fr1x32(v.fr, 15));
-    //    dacVal[1] = v.fr & DAC_VALUE_MASK;
-    //    dacDirty[1] = 1;
-        dac_update(1, v.fr & 0xffff);
+    //filter_1p_lo_in(&(dacSlew[1]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
+    dac_update(1, v >> (PARAM_DAC_RADIX - 1));
     break;
   case eParam_dac2 :
-    // filter_1p_lo_in(&(dacSlew[2]), shl_fr1x32(v.fr, 15));
-    //    dacVal[2] = v.fr & DAC_VALUE_MASK;
-    //    dacDirty[2] = 1;
-        dac_update(2, v.fr & 0xffff);
+    //filter_1p_lo_in(&(dacSlew[2]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
+    dac_update(2, v >> (PARAM_DAC_RADIX - 1));
     break;
   case eParam_dac3 :
-    // filter_1p_lo_in(&(dacSlew[3]), shl_fr1x32(v.fr, 15));
-    //    dacVal[3] = v.fr & DAC_VALUE_MASK;
-    //    dacDirty[3] = 1;
-        dac_update(3, v.fr & 0xffff);
+    // filter_1p_lo_in(&(dacSlew[3]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
+       dac_update(3, v >> (PARAM_DAC_RADIX - 1));
     break;
   case eParam_slew0 :
-    filter_1p_lo_set_slew(&(dacSlew[0]), v.fr);
+    filter_1p_lo_set_slew(&(dacSlew[0]), v);
     break;
   case eParam_slew1 :
-    filter_1p_lo_set_slew(&(dacSlew[1]), v.fr);
+    filter_1p_lo_set_slew(&(dacSlew[1]), v);
     break;
   case eParam_slew2 :
-    filter_1p_lo_set_slew(&(dacSlew[2]), v.fr);
+    filter_1p_lo_set_slew(&(dacSlew[2]), v);
     break;
   case eParam_slew3 :
-    filter_1p_lo_set_slew(&(dacSlew[3]), v.fr);
+    filter_1p_lo_set_slew(&(dacSlew[3]), v);
     break;
   default:
     break;

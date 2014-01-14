@@ -10,7 +10,7 @@ static void op_gate_inc_input(op_gate_t* gate, const s16 idx, const io_t inc);
 
 //-------------------------------------------------
 //----- static vars
-static const char* op_gate_instring = "VALUE   GATE    STORE   ";
+static const char* op_gate_instring = "VAL     GATE    STORE   ";
 static const char* op_gate_outstring = "GATED   ";
 static const char* op_gate_opstring = "GATE";
 
@@ -35,7 +35,6 @@ void op_gate_init(void* mem) {
   gate->super.inString = op_gate_instring;
   gate->super.outString = op_gate_outstring;
   gate->super.type = eOpGate;  
-  //gate->super.status = eUserOp;
 
   gate->in_val[0] = &(gate->val);
   gate->in_val[1] = &(gate->gate);
@@ -54,6 +53,7 @@ static void op_gate_in_value(op_gate_t* gate, const io_t v) {
 static void op_gate_in_gate(op_gate_t* gate, const io_t v) {
   if(v > 0) { gate->gate = 1; } else { gate->gate = 0; }
   if (gate->store) {
+    // in storage mode, 2nd input emits stored value
     net_activate(gate->outs[0], gate->val, gate);
   }
 }
@@ -67,7 +67,7 @@ static void op_gate_inc_input(op_gate_t* gate, const s16 idx, const io_t inc) {
   io_t val;
   switch(idx) {
   case 0:  // value
-      val = OP_ADD(gate->val, inc);
+      val = op_add(gate->val, inc);
       op_gate_in_value(gate, val);
     break; 
   case 1:  // gate

@@ -1,5 +1,5 @@
-#ifndef _OP_ADD_H_
-#define _OP_ADD_H_
+#ifndef _op_add_H_
+#define _op_add_H_
 
 #include "types.h"
 #include "op.h"

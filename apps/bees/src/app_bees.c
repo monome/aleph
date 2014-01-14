@@ -22,6 +22,7 @@
 // bees
 #include "app_timers.h"
 #include "files.h"
+#include "flash_bees.h"
 #include "handler.h"
 #include "net.h"
 #include "net_monome.h"
@@ -37,7 +38,7 @@ void app_init(void) {
   net_init();
 
   print_dbg("\r\n preset_init...");  
-  preset_init();
+  presets_init();
 
   print_dbg("\r\n scene_init...");
   scene_init();
@@ -57,6 +58,10 @@ void app_init(void) {
 
   /* print_dbg("\r\n play_init..."); */
   /* play_init(); */
+
+  // initialize flash-management buffers
+  print_dbg("\r\n flash_bees_init...");
+  flash_bees_init();
 }
 
 // this is called from main event handler
@@ -67,17 +72,47 @@ u8 app_launch(u8 firstrun) {
 
   //  net_print();
 
+
   if(firstrun) {
-    print_dbg("\r\n first run, don't load DSP or scene");
     render_boot("launching app, first run");
+    print_dbg("\r\n first run, writing nonvolatile data...");
+    
+    ///... write param scaler data
+    // this is done at firstrun instead of being linked statically,
+    // so that users can tune scaler data offline without recompiling
+    render_boot("init param scaling data...");
+    flash_init_scaler_data();
+
+    print_dbg("\r\n first run, try and load default DSP");
+    render_boot("launching default DSP...");
+
+    files_load_dsp_name("aleph-mono.ldr");
+    
+    render_boot("waiting for DSP init...");
+    bfin_wait_ready();
+
+    //    print_dbg(" requesting param report...");
+    render_boot("requesting DSP params");
+    net_report_params();
+
+    //    print_dbg("\r\n enable DSP audio...");
+        render_boot("enabling audio");
+    bfin_enable();
+
+    render_boot("writing default dsp to flash...");
+    files_store_default_dsp_name("aleph-mono.ldr");
+    
   } else {
+
+    app_pause();
+
     print_dbg("\r\n booting default ldr from flash... ");
     render_boot("booting DSP from flash");
     flash_read_ldr();
 
     bfin_load_buf();    
     print_dbg("\r\n DSP booted, waiting to query params...");
-    render_boot("waiting for DSP init");
+    render_boot("waiting for DSP init...");
 
     /// blackfin should clear ready pin ASAP on boot.
     /// but give it a moment to accomplish that.
@@ -96,10 +131,9 @@ u8 app_launch(u8 firstrun) {
     render_boot("reading default scene");
     scene_read_default();
 
-    ///// TEST; read from filesystem!
-    //    files_load_scene_name("test_default.scn");
-    //    files_load_test_scene();
-  }
+    app_resume();
+    
+   }
 
   // init pages (fill graphics buffers)
   print_dbg("\r\n pages_init...");
@@ -108,20 +142,24 @@ u8 app_launch(u8 firstrun) {
   print_dbg("\r\n play_init...");
   play_init();
 
-  // update page rendering and handlers
-  pages_reselect();
-
   // enable timers
   print_dbg("\r\n enable app timers...");
-  render_boot("enabling app timers");
+  render_boot("enabling app timers...");
   init_app_timers();
-    
+
   // pull up power control pin, enabling soft-powerdown
   gpio_set_gpio_pin(POWER_CTL_PIN);
 
   // assign app event handlers
   print_dbg("\r\n assigning handlers ");
+  render_boot("assigning UI handlers...");
   assign_bees_event_handlers();
+
+  // update page rendering and handlers
+  pages_reselect();
+
+  // start in play mode 
+  pages_toggle_play();
 
   return 1;
 }

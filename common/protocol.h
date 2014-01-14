@@ -67,15 +67,6 @@ typedef enum {
   eParamDescLabel13,
   eParamDescLabel14,
   eParamDescLabel15,
-  // unit
-  eParamDescUnit0,
-  eParamDescUnit1,
-  eParamDescUnit2,
-  eParamDescUnit3,
-  eParamDescUnit4,
-  eParamDescUnit5,
-  eParamDescUnit6,
-  eParamDescUnit7,
   // type
   eParamDescType,
   // min
@@ -88,6 +79,8 @@ typedef enum {
   eParamDescMax1,
   eParamDescMax2,
   eParamDescMax3,
+  // radix
+  eParamDescRadix,
   // get module name
   eGetModuleName,
   // module name bytes
@@ -115,6 +108,17 @@ typedef enum {
   eModuleName21,
   eModuleName22,
   eModuleName23,
+  //---- added:
+  //---- buffer stuff
+  /// get number of buffers
+  eNumBuffersVal,
+  //-- get buffer descriptor
+  eBufferDescIdx,
+  eBufferDescChannels,
+  eBufferDescFrames,
+  //-- send buffer data
+  eSendBufferData,
+  
   eNumSpiBytes
 } eSpiByte;
 

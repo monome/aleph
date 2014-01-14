@@ -13,7 +13,7 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_metro_instring	= "ENABLE  PERIOD  VALUE   ";
+static const char* op_metro_instring	= "ENABLE  PERIOD  VAL     ";
 static const char* op_metro_outstring	= "TICK    ";
 static const char* op_metro_opstring	= "METRO";
 
@@ -77,7 +77,7 @@ void op_metro_init(void* op) {
   // type
   metro->super.type = eOpMetro;
   /// state
-  metro->period = OP_FROM_INT(20);
+  metro->period = op_from_int(20);
   metro->enable = 0;
   metro->value = OP_ONE;
   // timer (unlinked)
@@ -116,12 +116,12 @@ void op_metro_in_enable	(op_metro_t* metro, const io_t v) {
 
 // input polling period
 void op_metro_in_period (op_metro_t* metro, const io_t v) {
-  if((v) < OP_ONE) {
-    metro->period = OP_ONE;
+  if((v) < 5) {
+    metro->period = 5;
   } else {
     metro->period = v;
   }
-  metro->timer.ticks = OP_TO_INT(metro->period);
+  metro->timer.ticks = op_to_int(metro->period);
 }
 
 
@@ -146,7 +146,8 @@ static void op_metro_inc_fn(op_metro_t* metro, const s16 idx, const io_t inc) {
   io_t val;
   switch(idx) {
   case 0: // enable (toggle)
-    if(metro->enable) {
+    //if(metro->enable) {
+    if(inc < 0) {
       val = 0;
       op_metro_in_enable(metro, val);
     } else {
@@ -155,11 +156,11 @@ static void op_metro_inc_fn(op_metro_t* metro, const s16 idx, const io_t inc) {
     }
     break;
   case 1: // period
-    val = OP_SADD(metro->period, inc);
+    val = op_sadd(metro->period, inc);
     op_metro_in_period(metro, val);
     break;
   case 2: // value
-    val = OP_SADD(metro->value, inc);
+    val = op_sadd(metro->value, inc);
     op_metro_in_value(metro, val);
     break;
   }
@@ -186,10 +187,10 @@ const u8* op_metro_unpickle(op_metro_t* metro, const u8* src) {
 
 // timer manipulation
 static inline void op_metro_set_timer(op_metro_t* metro) {
-  //  timer_add(&(metro->timer), OP_TO_INT(metro->period), &op_metro_callback, (void*)metro);
-  /* timer_add(&(metro->timer), OP_TO_INT(metro->period), &app_custom_event_callback, metro); */
+  //  timer_add(&(metro->timer), op_to_int(metro->period), &op_metro_callback, (void*)metro);
+  /* timer_add(&(metro->timer), op_to_int(metro->period), &app_custom_event_callback, metro); */
 
-  timers_set_metro(&(metro->timer), OP_TO_INT(metro->period), &(metro->op_poll) );
+  timers_set_metro(&(metro->timer), op_to_int(metro->period), &(metro->op_poll) );
   
   //  print_dbg("\r\n op_metro add timer, return value: ");
   //  print_dbg(ret ? "1" : "0");

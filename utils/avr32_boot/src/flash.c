@@ -24,10 +24,6 @@
 #define FIRSTRUN_INIT 0x76543210
 // size of RAM buffer for firmware image (.elf)
 #define FIRMWARE_MAX_BYTES 0x80000 // 512K
-/// target address of firmware in internal flash
-/// NOTE: this is hardcoded ASM in bootloader main() !
-/// DO NOT CHANGE
-#define FIRMWARE_FLASH_ADDRESS 0x80009000
 
 // storage layout of default data in nonvolatile memory
 typedef const struct {
@@ -145,7 +141,12 @@ extern u8 flash_write_hex_record(u8* data) {
       /* // print_dbg("\r\n writing firmware to flash at address: "); */
       /* // print_dbg_hex(addrOff + rec.address); */
       dst = addrOff + rec.address;
-      if(dst < FIRMWARE_FLASH_ADDRESS) {
+
+      /// TEST!!
+            if(dst < FIRMWARE_FLASH_ADDRESS) {
+      //      if(0) {
+
+
 	// don't allow writes to anything below the runtime location!
 	// this is where the bootloader lives!
 	// app data goes at the end of flash.

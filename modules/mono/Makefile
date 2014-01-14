@@ -1,17 +1,17 @@
-
-include ../../bfin_lib/bfin_lib.mk
-
-
 module_name = mono
 module_obj = mono.o  \
+	params.o \
 	$(audio_dir)/env.o \
 	$(audio_dir)/filter_1p.o \
+	$(audio_dir)/filter_svf.o \
 	$(audio_dir)/table.o \
 	$(audio_dir)/conversion.o \
 	$(bfin_lib_srcdir)/libfixmath/fix32.o \
 	$(bfin_lib_srcdir)/libfixmath/fix16.o
 
 all: aleph-$(module_name).ldr
+
+include ../../bfin_lib/bfin_lib.mk
 
 CFLAGS += -D ARCH_BFIN=1
 CFLAGS += -g

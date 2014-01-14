@@ -18,6 +18,10 @@
 //-------------------------
 //---- static variables
 
+
+// constant pointer to this page's selection
+static s16* const pageSelect = &(pages[ePageDsp].select);
+
 // scroll region
 static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
 // scroll manager
@@ -67,18 +71,18 @@ static void select_scroll(s32 dir) {
   if(dir < 0) {
     /// SCROLL DOWN
     // if selection is already zero, do nothing 
-    if(curPage->select == 0) {
+    if(*pageSelect == 0) {
       //      print_dbg("\r\n reached min selection in inputs scroll. ");
       return;
     }
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
     // decrement selection
-    newSel = curPage->select - 1;
+    newSel = *pageSelect - 1;
     ///// these bounds checks shouldn't really be needed here...
     //    if(newSel < 0) { newSel = 0; }
     //    if(newSel > max ) { newSel = max; }
-    curPage->select = newSel;
+    *pageSelect = newSel;
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
     if(newIdx < 0) { 
@@ -96,19 +100,19 @@ static void select_scroll(s32 dir) {
   } else {
     // SCROLL UP
     // if selection is already max, do nothing 
-    if(curPage->select == max) {
+    if(*pageSelect == max) {
       //      print_dbg("\r\n reached max selection in inputs scroll. ");
       return;
     }
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
     // increment selection
-    newSel = curPage->select + 1;
+    newSel = *pageSelect + 1;
     ///// these bounds checks shouldn't really be needed here...
     //    if(newSel < 0) { newSel = 0; }
     //    if(newSel > max ) { newSel = max; }
     /////
-    curPage->select = newSel;    
+    *pageSelect = newSel;    
     // add new content at bottom of screen
     newIdx = newSel + SCROLL_LINES_ABOVE;
     if(newIdx > max) { 
@@ -162,10 +166,11 @@ void handle_key_0(s32 val) {
     headRegion->dirty = 1;
     render_update();
     
-    files_load_dsp(curPage->select);
+    files_load_dsp(*pageSelect);
     bfin_wait_ready();
     net_report_params();
     bfin_enable();
+
     // render status to head region 
     region_fill(headRegion, 0x0);
     font_string_region_clip(headRegion, "finished loading.", 0, 0, 0xa, 0);
@@ -185,7 +190,7 @@ void handle_key_1(s32 val) {
     headRegion->dirty = 1;
     render_update();
     // write module as default 
-    files_store_default_dsp(curPage->select);
+    files_store_default_dsp(*pageSelect);
     // render status to head region 
     region_fill(headRegion, 0x0);
     font_string_region_clip(headRegion, "finished writing.", 0, 0, 0xa, 0);
@@ -276,10 +281,10 @@ void select_dsp(void) {
 // redraw all lines, based on current selection
 void redraw_dsp(void) {
   u8 i=0;
-  u8 n = curPage->select - 3;
+  u8 n = *pageSelect - 3;
   while(i<8) {
     render_line( n, 0xa );
-    render_to_scroll_line(i, n == curPage->select ? 1 : 0);
+    render_to_scroll_line(i, n == *pageSelect ? 1 : 0);
     ++i;
     ++n;
   }

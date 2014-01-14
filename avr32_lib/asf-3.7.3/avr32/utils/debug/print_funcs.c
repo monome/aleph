@@ -48,9 +48,15 @@
 #include "usart.h"
 #include "print_funcs.h"
 
+// #define USART_BEGIN_DBG_TX   usart_putchar(DBG_USART,1)
+// #define USART_END_DBG_TX   usart_putchar(DBG_USART,0)
+
+#define USART_BEGIN_DBG_TX ;
+#define USART_END_DBG_TX ;
 
 //! ASCII representation of hexadecimal digits.
 static const char HEX_DIGITS[16] = "0123456789ABCDEF";
+
 
 
 void init_dbg_rs232(long pba_hz)
@@ -89,28 +95,36 @@ void init_dbg_rs232_ex(unsigned long baudrate, long pba_hz)
 void print_dbg(const char *str)
 {
   // Redirection to the debug USART.
+  USART_BEGIN_DBG_TX;
   print(DBG_USART, str);
+  USART_END_DBG_TX;
 }
 
 
 void print_dbg_char(int c)
 {
   // Redirection to the debug USART.
+  USART_BEGIN_DBG_TX;
   print_char(DBG_USART, c);
+  USART_END_DBG_TX;
 }
 
 
 void print_dbg_ulong(unsigned long n)
 {
   // Redirection to the debug USART.
+  USART_BEGIN_DBG_TX;
   print_ulong(DBG_USART, n);
+  USART_END_DBG_TX;
 }
 
 
 void print_dbg_char_hex(unsigned char n)
 {
   // Redirection to the debug USART.
-  print_char_hex(DBG_USART, n);
+  USART_BEGIN_DBG_TX;
+  print_char_hex(DBG_USART, n);  
+  USART_END_DBG_TX;
 }
 
 
@@ -124,7 +138,9 @@ void print_dbg_short_hex(unsigned short n)
 void print_dbg_hex(unsigned long n)
 {
   // Redirection to the debug USART.
+  USART_BEGIN_DBG_TX;
   print_hex(DBG_USART, n);
+  USART_END_DBG_TX;
 }
 
 

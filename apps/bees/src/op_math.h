@@ -12,38 +12,58 @@
 #include "pickle.h"
 
 // input/output data type
-// typedef f32 io_t;
-typedef fix16_t io_t;
+
+typedef s16 io_t;
+#define IO_BITS 16
+
 //--- pickling
-#define pickle_io(src, dst) pickle_32((u32)src, dst);
-#define unpickle_io(src, dst) unpickle_32(src, (u32*)dst);
+#define pickle_io(src, dst) pickle_16((u16)src, dst);
+#define unpickle_io(src, dst) unpickle_16(src, (u16*)dst);
 
 //---- arithmetic macros
 // standard (overflow)
-#define OP_ADD(a, b) (fix16_add((a), (b)))
-#define OP_SUB(a, b) (fix16_sub((a), (b)))
-#define OP_MUL(a, b) (fix16_mul((a), (b)))
-#define OP_DIV(a, b) (fix16_div((a), (b)))
+/* #define op_add(a, b) (fix16_add((a), (b))) */
+/* #define op_sub(a, b) (fix16_sub((a), (b))) */
+/* #define op_mul(a, b) (fix16_mul((a), (b))) */
+/* #define OP_DIV(a, b) (fix16_div((a), (b))) */
 // saturating
-#define OP_SADD(a, b) (fix16_sadd((a), (b)))
-#define OP_SSUB(a, b) (fix16_ssub((a), (b)))
-#define OP_SMUL(a, b) (fix16_smul((a), (b)))
-#define OP_SDIV(a, b) (fix16_sdiv((a), (b)))
+/* #define op_sadd(a, b) (fix16_sadd((a), (b))) */
+/* #define op_ssub(a, b) (fix16_ssub((a), (b))) */
+/* #define op_smul(a, b) (fix16_smul((a), (b))) */
+/* #define OP_SDIV(a, b) (fix16_sdiv((a), (b))) */
+
+
 
 //----- constants
 // unity 
-#define OP_ONE fix16_one
-// smallest incremnet
-#define OP_MIN_INC 0x1
-#define OP_MIN_VAL fix16_min
-#define OP_MAX_VAL fix16_max
+#define OP_ONE 1
+// negative unity
+#define OP_NEG_ONE -1
 
-#define OP_FROM_INT(x) (fix16_from_int(x))
-#define OP_TO_INT(x) (fix16_to_int(x))
+// smallest incremnet
+#define OP_MIN_INC 1
+// ranges
+#define OP_MIN_VAL 0
+#define OP_MAX_VAL 0x7fff
+
+#define op_from_int(x) (x)
+#define op_to_int(x) (x)
 
 //----- conversion
 
+// standard (overflow) 
+extern io_t op_add(io_t a, io_t b);
+extern io_t op_sub(io_t a, io_t b);
+extern io_t op_mul(io_t a, io_t b);
+extern io_t op_div(io_t a, io_t b);
+
+// saturating
+extern io_t op_sadd(io_t a, io_t b);
+extern io_t op_ssub(io_t a, io_t b);
+//extern io_t op_smul(io_t a, io_t b);
+//extern io_t op_sdiv(io_t a, io_t b);
+
 ///// print formatted string
-#define OP_PRINT(buf, x) print_fix16( (buf), (x) )
+extern void op_print(char* buf, io_t x);
 
 #endif

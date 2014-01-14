@@ -36,6 +36,10 @@
 
 #define DSP_PATH     "/mod/"
 #define SCENES_PATH  "/data/bees/scenes/"
+#define SCALERS_PATH  "/data/bees/scalers/"
+
+// endinanness
+// #define SCALER_LE
 
 //  stupid datatype with fixed number of fixed-length filenames
 // storing this for speed when UI asks us for a lot of strings
@@ -54,6 +58,7 @@ typedef struct _dirList {
 // directory lists;
 static dirList_t dspList;
 static dirList_t sceneList;
+static dirList_t scalerList;
 
 //----------------------------------
 //---- static functions
@@ -68,7 +73,7 @@ static void* list_open_file_name(dirList_t* list, const char* name, const char* 
 
 //// FIXME: dumb and slow seek/read functions because the real ones are broken
 //// fseek: no offset arg, assume its the first seek since file was opened 
-/*
+/* // not used
 static void fake_fseek(void* fp, u32 loc) {
   u32 n = 0;
   u8 dum;
@@ -107,10 +112,12 @@ void files_init(void) {
   print_dbg("\r\n BEES file_init, scanning directories..");
   list_scan(&dspList, DSP_PATH);
   list_scan(&sceneList, SCENES_PATH);
+  list_scan(&scalerList, SCALERS_PATH);
 }
 
 
-//----- dsp management
+////////////////////////
+//// modules
 
 // return filename for DSP given index in list
 const volatile char* files_get_dsp_name(u8 idx) {
@@ -138,16 +145,8 @@ u8 files_load_dsp_name(const char* name) {
   if( fp != NULL) {	  
     print_dbg("\r\n found file, loading dsp ");
     print_dbg(name);
-    /// FIXME:
-    /// arrg, why is fl_fread intermittently broken?
-    /// check our media access functions against fat_filelib.c, i guess
-    //    bytesRead = fl_fread((void*)bfinLdrData, 1, size, fp);
-
-    print_dbg("\r\n bfinLdrData : @0x");
-    print_dbg_hex( (u32)bfinLdrData );
     fake_fread(bfinLdrData, size, fp);
 
-    // print_dbg("\r\n finished fakefread");
     fl_fclose(fp);
     bfinLdrSize = size;
 
@@ -172,24 +171,66 @@ u8 files_load_dsp_name(const char* name) {
 }
 
 
-// store .ldr as default in internal flash
+// store .ldr as default in internal flash, given index
 void files_store_default_dsp(u8 idx) {
-  const char* name;
+  files_store_default_dsp_name((const char*)files_get_dsp_name(idx));
+  /* const char* name; */
+  /* void* fp;	   */
+  /* u32 size; */
+
+  /* app_pause(); */
+
+  /* name = (const char*)files_get_dsp_name(idx); */
+  /* fp = list_open_file_name(&dspList, name, "r", &size); */
+
+  /* if( fp != NULL) { */
+  /*   print_dbg("\r\n writing default DSP..."); */
+  /*   bfinLdrSize = size; */
+  /*   fl_fread((void*)bfinLdrData, 1, size, fp); */
+  /*   flash_write_ldr(); */
+  /*   fl_fclose(fp); */
+  /*   print_dbg("finished writing LDR to flash"); */
+    
+  /* } else { */
+  /*   print_dbg("\r\n error: fp was null in files_store_default_dsp \r\n"); */
+  /* } */
+
+  /* app_resume(); */
+}
+
+// store .ldr as default in internal flash, given name
+void files_store_default_dsp_name(const char* name) {
+  //  const char* name;
   void* fp;	  
   u32 size;
 
   app_pause();
 
-  name = (const char*)files_get_dsp_name(idx);
+  //  name = (const char*)files_get_dsp_name(idx);
   fp = list_open_file_name(&dspList, name, "r", &size);
 
   if( fp != NULL) {
     print_dbg("\r\n writing default DSP...");
     bfinLdrSize = size;
-    fl_fread((void*)bfinLdrData, 1, size, fp);
+    print_dbg(" , size: ");
+    print_dbg_ulong(size);
+    //    fl_fread((void*)bfinLdrData, 1, size, fp);
+    fake_fread((void*)bfinLdrData, size, fp);
+
+    // TEST: print module data
+#if 0
+    for(u32 i = 0; i<size; i += 4) {
+ if((i % 16) == 0) {
+	print_dbg("\r\n");
+      }
+      print_dbg(" 0x");
+      print_dbg_hex(*((u32*)(bfinLdrData + i)));
+    }
+#endif
+
     flash_write_ldr();
     fl_fclose(fp);
-    print_dbg("finished writing LDR to flash");
+    print_dbg("\r\n finished writing default LDR to flash");
     
   } else {
     print_dbg("\r\n error: fp was null in files_store_default_dsp \r\n");
@@ -198,12 +239,15 @@ void files_store_default_dsp(u8 idx) {
   app_resume();
 }
 
+
 // return count of dsp files
 u8 files_get_dsp_count(void) {
   return dspList.num;
 }
 
-//----- scenes management
+////////////////////////
+//// scenes
+
 // return filename for scene given index in list
 const volatile char* files_get_scene_name(u8 idx) {
   return list_get_name(&sceneList, idx);
@@ -231,14 +275,13 @@ u8 files_load_scene_name(const char* name) {
     scene_read_buf();
 
     // try and load dsp module indicated by scene descriptor
-    ret = files_load_dsp_name(sceneData->desc.moduleName);
-
-    ret = 1;
+    //// DUDE! NO!!! scene does this. when did this happen!
+    //// probably snuck in in some merge.
+    //    ret = files_load_dsp_name(sceneData->desc.moduleName);
   } else {
     print_dbg("\r\n error: fp was null in files_load_scene_name \r\n");
     ret = 0;
-  }
- 
+  } 
   app_resume();
   return ret;
 }
@@ -261,35 +304,133 @@ void files_store_scene_name(const char* name) {
 
   strcat(namebuf, name);
   strip_space(namebuf, 32);
- 
-  print_dbg("\r\n write scene at: ");
-  print_dbg(namebuf);  
-
   // fill the scene RAM buffer from current state of system
   scene_write_buf(); 
-
   // open FP for writing
   fp = fl_fopen(namebuf, "wb");
-
   pScene = (u8*)sceneData;
-
   fl_fwrite((const void*)pScene, sizeof(sceneData_t), 1, fp);
   fl_fclose(fp);
-
+  // rescan
   list_scan(&sceneList, SCENES_PATH);
-
-  //  print_dbg("\r\n scanned it. scanned!");
-  //  print_dbg("\r\n skipped the scan!");
-
   delay_ms(10);
+
   app_resume();
 }
 
 
-// return count of dsp files
+// return count of scene files
 u8 files_get_scene_count(void) {
   return sceneList.num;
 }
+
+////////////////////////
+//// scalers
+
+
+// return filename for scaler given index in list
+const volatile char* files_get_scaler_name(u8 idx) {
+  return list_get_name(&scalerList, idx);
+}
+
+// search for specified scaler file and load it to specified buffer
+// return 1 on success, 0 on failure
+u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
+  void* fp;
+  u32 size = 0;
+  u32 i;
+  union { u32 u; s32 s; u8 b[4]; } swap;
+  u8 ret = 0;
+
+  app_pause();
+  fp = list_open_file_name(&scalerList, name, "r", &size);
+  if( fp != NULL) {	  
+
+    print_dbg("\r\n scaler file pointer: 0x");
+    print_dbg_hex((u32)fp);
+#ifdef SCALER_LE
+    swap.b[3] = fl_fgetc(fp);
+    swap.b[2] = fl_fgetc(fp);
+    swap.b[1] = fl_fgetc(fp);
+    swap.b[0] = fl_fgetc(fp);
+#else
+    swap.b[0] = fl_fgetc(fp);
+    swap.b[1] = fl_fgetc(fp);
+    swap.b[2] = fl_fgetc(fp);
+    swap.b[3] = fl_fgetc(fp);
+#endif
+    size = swap.u;
+
+    print_dbg("\r\n read size (words): 0x");
+    print_dbg_ulong(size);
+
+    if(size > dstSize) {
+      print_dbg("\r\n warning: requested scaler data is > target, truncating");
+      for(i=0; i<dstSize; ++i) {
+
+#ifdef SCALER_LE
+    swap.b[3] = fl_fgetc(fp);
+    swap.b[2] = fl_fgetc(fp);
+    swap.b[1] = fl_fgetc(fp);
+    swap.b[0] = fl_fgetc(fp);
+#else
+    swap.b[0] = fl_fgetc(fp);
+    swap.b[1] = fl_fgetc(fp);
+    swap.b[2] = fl_fgetc(fp);
+    swap.b[3] = fl_fgetc(fp);
+#endif
+	*dst++ = swap.s;
+      }
+    } else if (size < dstSize) {
+      print_dbg("\r\n warning: requested scaler data is < target, padding");
+      for(i=0; i<size; ++i) {
+#ifdef SCALER_LE
+    swap.b[3] = fl_fgetc(fp);
+    swap.b[2] = fl_fgetc(fp);
+    swap.b[1] = fl_fgetc(fp);
+    swap.b[0] = fl_fgetc(fp);
+#else
+    swap.b[0] = fl_fgetc(fp);
+    swap.b[1] = fl_fgetc(fp);
+    swap.b[2] = fl_fgetc(fp);
+    swap.b[3] = fl_fgetc(fp);
+#endif
+	*dst++ = swap.s;
+      }
+      // remainder
+      size = dstSize - size;
+      for(i=0; i<size; ++i) {
+	*dst++ = 0;
+      }
+    } else {
+      for(i=0; i<size; ++i) {
+#ifdef SCALER_LE
+    swap.b[3] = fl_fgetc(fp);
+    swap.b[2] = fl_fgetc(fp);
+    swap.b[1] = fl_fgetc(fp);
+    swap.b[0] = fl_fgetc(fp);
+#else
+    swap.b[0] = fl_fgetc(fp);
+    swap.b[1] = fl_fgetc(fp);
+    swap.b[2] = fl_fgetc(fp);
+    swap.b[3] = fl_fgetc(fp);
+#endif
+	*dst++ = swap.s;
+      }
+    }
+    fl_fclose(fp);
+    ret = 1;
+  } else {
+    print_dbg("\r\n error: fp was null in files_load_scaler_name \r\n");
+    ret = 0;
+  } 
+
+  print_dbg("\r\n finished loading scaler file (?)");
+
+  app_resume();
+  return ret;
+}
+
 
 //---------------------
 //------ static
@@ -353,26 +494,3 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   }
   return fp;
 }
-
-//////////
-/// test
-/* extern void files_load_test_scene(void) { */
-/*   void* fp; */
-/*   app_pause(); */
-  
-/*   fp = fl_fopen("/bees/scenes/test_default.scn", "r"); */
-/*   print_dbg("\r\n opened test sceme. fp: 0x"); */
-/*   print_dbg_hex((u32)fp); */
-
-/*   if(fp == NULL) { */
-/*     print_dbg("\r\n test scene file was NULL"); */
-/*     app_resume(); */
-/*     return; */
-/*   } */
-/*   fake_fread((volatile u8*)sceneData, sizeof(sceneData_t), fp); */
-/*   scene_read_buf(); */
-
-
-/*   fl_fclose(fp); */
-/*   app_resume(); */
-/* } */

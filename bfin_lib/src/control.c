@@ -39,7 +39,7 @@ extern u8 ctl_param_change(u32 idx, u32 val) {
     // search for event with this param idx
     for(i=0; i<evCount; i++) {
       if(ctlBuf[i].idx == idx) {
-	ctlBuf[i].val.u = val;
+	ctlBuf[i].val = (ParamValue)val;
 	break;
       }
     }
@@ -48,7 +48,7 @@ extern u8 ctl_param_change(u32 idx, u32 val) {
     // add a new event
     if(evCount < CTL_BUF_SIZE_1) {
       ctlBuf[evCount].idx = idx;
-      ctlBuf[evCount].val.u = val;
+      ctlBuf[evCount].val = (ParamValue)val;
       evCount++; 
       // update dirty flag
       set_param_dirty(idx);

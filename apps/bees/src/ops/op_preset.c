@@ -1,58 +1,64 @@
+#include "print_funcs.h"
+
 #include "net_protected.h"
-//#include "print_fns.h"
+#include "preset.h"
 #include "op_preset.h"
-
-// inputs:
-
-// 0 
-
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_preset_instring = "READ    WRITE   REREAD  REWRITE  GETIDX  "
-static const char* op_preset_outstring = "IDX     ";
+static const char* op_preset_instring = "READ    WRITE   ";
+//static const char* op_preset_outstring = "IDX     ";
+static const char* op_preset_outstring = "";
 static const char* op_preset_opstring = "PRESET";
 
 //-------------------------------------------------
 //----- static function declaration
 static void op_preset_inc_fn(op_preset_t* preset, const s16 idx, const io_t inc);
-static void op_preset_in_read(op_preset_t* preset, const io_t* v);
-static void op_preset_in_write(op_preset_t* preset, const io_t* v);
-static void op_preset_in_reread(op_preset_t* preset, const io_t* v);
-static void op_preset_in_rewrite(op_preset_t* preset, const io_t* v);
-static void op_preset_in_getidx(op_preset_t* preset, const io_t* v);
+static void op_preset_in_read(op_preset_t* preset, const io_t v);
+static void op_preset_in_write(op_preset_t* preset, const io_t v);
+//static void op_preset_idx(op_preset_t* preset, const io_t v);
 
-static op_in_fn op_preset_in_fn[3] = {
+// pickles
+static u8* op_preset_pickle	(op_preset_t* preset, u8* dst);
+static const u8* op_preset_unpickle(op_preset_t* preset, const u8* src);
+
+
+static op_in_fn op_preset_in_fn[2] = {
   (op_in_fn) &op_preset_in_read, 
   (op_in_fn) &op_preset_in_write, 
-  (op_in_fn) &op_preset_in_reread, 
-  (op_in_fn) &op_preset_in_rewrite, 
-  (op_in_fn) &op_preset_in_getidx, 
+  //  (op_in_fn) &op_preset_idx,
 };
 
 //---------------------------------------------
 //----- external function definition
 
 /// initialize
-void op_preset_init(op_preset_t* preset) {
-  preset->super.numInputs = 5;
-  preset->super.numOutputs = 1;
-  preset->outs[0] = -1;
+void op_preset_init(void* mem) {
+  op_preset_t* preset = (op_preset_t*)mem;
+
+  // superclass functions
   preset->super.inc_fn = (op_inc_fn)op_preset_inc_fn;
   preset->super.in_fn = op_preset_in_fn;
+  preset->super.pickle = (op_pickle_fn) (&op_preset_pickle);
+  preset->super.unpickle = (op_unpickle_fn) (&op_preset_unpickle);
+
+  // superclass state
+  preset->super.numInputs = 2;
+  preset->super.numOutputs = 0;
+  //  preset->super.out = preset->outs;
+
+  //preset->outs[0] = -1;
+  preset->in_val[0] = &(preset->read);
+  preset->in_val[1] = &(preset->write);
+  //  preset->in_val[2] = &(preset->idx);
+  
+  preset->super.type = eOpPreset;
+  preset->super.flags |= (1 << eOpFlagSys);
   preset->super.in_val = preset->in_val;
-  preset->in_val[0] = &(preset->state);
-  preset->in_val[1] = &(preset->tog);
-  preset->in_val[2] = &(preset->mul);
-  preset->super.out = preset->outs;
+ 
   preset->super.opString = op_preset_opstring;
   preset->super.inString = op_preset_instring;
   preset->super.outString = op_preset_outstring;
-  preset->super.type = eOpSwitch;
-  preset->super.flags |= (1 << eOpFlagSys);
-  preset->state = 0;
-  preset->mul = OP_ONE;
-  preset->tog = 0;
 }
 
 //-------------------------------------------------
@@ -60,63 +66,55 @@ void op_preset_init(op_preset_t* preset) {
 
 //===== operator input
 
-// input state
-static void op_preset_in_state(op_preset_t* preset, const io_t* v) {
-  if (preset->tog) {
-    // toggle mode, sw state toggles on positive input
-    if ( *v > 0) {
-      if (preset->state != 0) { 
-	preset->state = 0; 
-      } else {
-	preset->state = preset->mul;
-      }
-      net_activate(preset->outs[0], preset->state);
-    } 
-  } else {
-    // momentary mode, sw value takes input
-    //    preset->state = (((*v) > 0) ? preset->mul : 0);
-    if((*v) > 0) { preset->state = preset->mul; } else { preset->state = 0; }
-    net_activate(preset->outs[0], preset->state);
+// input read index
+static void op_preset_in_read(op_preset_t* preset, const io_t v) {
+  int idx = op_to_int(v);
+  // recall given preset
+  print_dbg("\r\n recalling preset from operator, idx: ");
+  print_dbg_ulong(idx);
+  if(idx >=0 && idx < NET_PRESETS_MAX) { 
+    preset_recall( idx );
   }
 }
 
-// input toggle mode
-static void op_preset_in_tog(op_preset_t* preset, const io_t* v) {
-  //  preset->tog = (io_t)(*v > 0);
-  if (*v > 0) { preset->tog = OP_ONE; } else  { preset->tog = 0; } 
-  /*
-  if (preset-> val > 0) { preset->state = 0; }
-  else { preset->state = preset->mul; }
-  net_activate(preset->outs[0], preset->state);
-  */
-}
-
-// input multiplier
-static void op_preset_in_mul(op_preset_t* preset, const io_t* v) {
-  preset->mul = *v;
-  if (preset->state > 0) {
-    preset->state = *v;
-    net_activate(preset->outs[0], preset->state);
+// input write index
+static void op_preset_in_write(op_preset_t* preset, const io_t v) {
+  int idx = op_to_int(v);
+  // store given preset
+  print_dbg("\r\n storing preset from operator, idx: ");
+  print_dbg_ulong(idx);
+  if(idx >=0 && idx < NET_PRESETS_MAX) { 
+    preset_store( idx );
   }
 }
+
+// input, report last idx (???)
+/* static void op_preset_idx(op_preset_t* preset, const io_t rw) { */
+/*   if(rw > 0) { */
+/*     ///... output */
+/*     // preset_last_write(); */
+/*   } else { */
+/*     ///... output */
+/*     // preset_last_read(); */
+/*   } */
+/* } */
 
 //===== UI input
 
 // increment
 static void op_preset_inc_fn(op_preset_t* preset, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0: // current value
-    op_preset_in_state(sw, &inc);
-    break;
-  case 1: // toggle mode
-    op_preset_in_tog(sw, &inc);
-    break;
-  case 2: // multiplier
-    val = OP_ADD(preset->mul, inc);
-    /* print_dbg("\r\n sw/mul increment; val: "); */
-    /* print_dbg_hex(val); */
-    op_preset_in_mul(sw, &val);
-    break;
-  }
+  /// FIXME? no meaningful UI
+}
+
+
+
+// pickles
+u8* op_preset_pickle(op_preset_t* preset, u8* dst) {
+  //... nothing to do
+  return dst;
+}
+
+const u8* op_preset_unpickle(op_preset_t* preset, const u8* src) {
+  //... nothing to do
+  return src;
 }

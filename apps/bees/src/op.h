@@ -40,13 +40,15 @@ typedef enum {
   eOpMidiNote,
   eOpAdc,
   eOpMetro,
-  // eOpAccum,
-  // eOpSelect,
-  // eOpMapLin,
-  // eOpParam,
-  // eOpPreset,
-  // eOpList,
-  // eOpTimer
+  eOpPreset,
+  eOpTog,
+  eOpAccum,
+  eOpSplit,
+  eOpDiv,
+  eOpSub,
+  eOpTimer,
+  eOpRandom,
+  eOpList8,
   numOpClasses // dummy/count 
 } op_id_t;
 
@@ -99,6 +101,8 @@ typedef struct op_struct {
   u32 type;
   // behavior flags
   u32 flags;
+  // pointer to child class
+  void* child;
 } op_t;
 
 
@@ -109,7 +113,6 @@ typedef struct op_desc_struct {
   op_class_init init;
   op_class_deinit deinit;
 } op_desc_t;
-
 
 //-----------------------------------
 //---- public data

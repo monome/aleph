@@ -16,15 +16,17 @@ typedef struct op_adc_struct {
   volatile io_t* in_val[6];
   volatile io_t enable;
   volatile io_t period;
-  volatile io_t val0;
-  volatile io_t val1;
-  volatile io_t val2;
-  volatile io_t val3;
+  volatile io_t val[4];
+  /* volatile io_t val1; */
+  /* volatile io_t val2; */
+  /* volatile io_t val3; */
   // out: 4 values
   op_out_t outs[4];
 } op_adc_t;
 
-void op_adc_init(void* op);
-void op_adc_deinit(void* op);
+extern void op_adc_init(void* op);
+extern void op_adc_deinit(void* op);
+
+extern void op_adc_sys_input(op_adc_t* adc, u8 ch, u16 val);
 
 #endif // header guard

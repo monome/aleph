@@ -62,7 +62,6 @@ typedef enum {
 //== use events instead
 // extern u8 monomeConnect;
 
-
 // dirt flags for each frame, as bitfield
 extern u8 monomeFrameDirty;
 

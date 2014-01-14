@@ -20,13 +20,13 @@
 
 // get value for param at given idx
 io_t get_param_value(u32 idx) {
-  return (io_t)(net->params[idx].data.value.asInt); 
+  return (io_t)(net->params[idx].data.value); 
 }
 
 // get preset-enabled flag for param at given idx
-u8 get_param_preset(u32 idx) {
-  return net->params[idx].preset;
-}
+/* u8 get_param_preset(u32 idx) { */
+/*   return net->params[idx].preset; */
+/* } */
 
 
 // get name (label) for param at given idx
@@ -36,28 +36,33 @@ const char* get_param_name(u32 idx) {
 
 // set value for param at given idx
 //-- see also net_set_in_value()
+// return sign of clamping operation, if clamped
 void set_param_value(u32 idx, io_t val) {
-  //  print_dbg("\r\n setting param : idx 0x");
-  //  print_dbg_hex(idx);
-  /* print_dbg(" , label: "); */
-  /* print_dbg(net->params[idx].desc.label); */
-  //  print_dbg(" , value: 0x"); 
-  //  print_dbg_hex((u32)val); 
-   /* print_dbg(" , min: 0x"); */
-  /* print_dbg_hex((u32)net->params[idx].desc.min); */
-  /* print_dbg(" , max: 0x"); */
-  /* print_dbg_hex((u32)net->params[idx].desc.max); */
+  
+  s32 scaled = scaler_get_value( &(net->params[idx].scaler), val);
 
-  if(val > net->params[idx].desc.max) {
-    val = net->params[idx].desc.max;
-  }
-  if(val < net->params[idx].desc.min) {
-    val = net->params[idx].desc.min;
-  }
-  net->params[idx].data.value.asInt = val;
+  /* print_dbg("\r\n set_param_value, index: "); */
+  /* print_dbg_ulong(idx); */
+
+  /* print_dbg(" , value: 0x"); */
+  /* print_dbg_hex(val); */
+
+  /* print_dbg(" , scaled: 0x"); */
+  /* print_dbg_hex(scaled); */
+    
+  /* if(val > net->params[idx].desc.max) { */
+  /*   val = net->params[idx].desc.max; */
+  /* } */
+  /* if(val < net->params[idx].desc.min) { */
+  /*   val = net->params[idx].desc.min; */
+  /* } */
+
+  net->params[idx].data.value = val;
   net->params[idx].data.changed = 1;
-  //  bfin_set_param(idx, val);
-  ctl_param_change(idx, (u32)val);
+
+  // scale
+  ctl_param_change(idx, scaled );
+  //  ctl_param_change(idx, net->params[idx].data.value);
 }
 
 
@@ -72,11 +77,11 @@ u8* param_pickle(pnode_t* pnode, u8* dst) {
   // print_dbg_hex(pnode->data.value.asUint);
 
   // store value
-  val = pnode->data.value.asUint;
+  val = (u32)(pnode->data.value);
   dst = pickle_32(val, dst);
 
   // store preset-inclusion 
-  dst = pickle_32((u32)(pnode->preset), dst);
+  //  dst = pickle_32((u32)(pnode->preset), dst);
   // store descriptor
   dst = pdesc_pickle(&(pnode->desc), dst);
   return dst;
@@ -94,19 +99,19 @@ const u8* param_unpickle(pnode_t* pnode, const u8* src) {
   // load value
   
   src = unpickle_32(src, &val);
-  pnode->data.value.asUint = val;
+  pnode->data.value = (ParamValue)val;
   //  src = unpickle_32(src, &(pnode->data.value.asUint));
 
   // print_dbg("\r\n unpickled param value: ");
   // print_dbg_ulong(val);
 
   // load preset-inclusion 
-  src = unpickle_32(src, &val);
+  //  src = unpickle_32(src, &val);
 
   // print_dbg("\r\n unpickled param preset flag: ");
   // print_dbg_ulong(val);
 
-  pnode->preset = (u8)val;
+  //  pnode->preset = (u8)val;
   // load descriptor
   src = pdesc_unpickle(&(pnode->desc), src);
   return src;
@@ -122,10 +127,10 @@ u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
     ++dst;
   }
   // store unit string
-  for(i=0; i<PARAM_UNIT_LEN; ++i) {
-    *dst = pdesc->unit[i];
-    ++dst;
-  }
+  /* for(i=0; i<PARAM_UNIT_LEN; ++i) { */
+  /*   *dst = pdesc->unit[i]; */
+  /*   ++dst; */
+  /* } */
   // store type
   *dst = pdesc->type;
   ++dst;
@@ -148,11 +153,11 @@ const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
   // print_dbg("\r\n unpickled param label: ");
   // print_dbg(pdesc->label);
 
-  // store unit string
-  for(i=0; i<PARAM_UNIT_LEN; ++i) {
-    pdesc->unit[i] = *src;
-    ++src;
-  }
+  /* // store unit string */
+  /* for(i=0; i<PARAM_UNIT_LEN; ++i) { */
+  /*   pdesc->unit[i] = *src; */
+  /*   ++src; */
+  /* } */
 
   // print_dbg("\r\n unpickled param unit: ");
   // print_dbg(pdesc->unit);
@@ -179,4 +184,47 @@ const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
   // print_dbg_hex(pdesc->max);
 
   return src;
+}
+
+
+// fill buffer with readable value string
+/* ???
+void get_param_string(char* dst, u32 idx) {
+}
+*/
+
+// increment value
+io_t inc_param_value(u32 idx,  io_t inc) {
+  io_t in;
+  s32 scaled;
+
+  /* print_dbg("\r\n inc_param_value, index: "); */
+  /* print_dbg_ulong(idx); */
+
+  /* print_dbg(" , input: 0x"); */
+  /* print_dbg_hex(get_param_value(idx)); */
+
+  /* print_dbg(" , increment: 0x"); */
+  /* print_dbg_hex(inc); */
+
+
+  in = get_param_value(idx);
+  // use scaler to increment and lookup
+  scaled = scaler_inc( &(net->params[idx].scaler), &in, inc);
+
+  /* print_dbg(" , new input: 0x"); */
+  /* print_dbg_hex(in); */
+
+  /* print_dbg(" , scaled: 0x"); */
+  /* print_dbg_hex(scaled); */
+
+  /* print_dbg("\r\n\r\n "); */
+
+  // store input value in pnode
+  net->params[idx].data.value = in;
+  net->params[idx].data.changed = 1;
+  ctl_param_change(idx, scaled );  
+
+  return in;
+			   
 }

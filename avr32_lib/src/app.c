@@ -14,14 +14,17 @@ void (*app_event_handlers[kNumEventTypes])(s32 data);
 
 
 // pause/resume functions
-void app_pause(void) {
+/// note: these are not very smart; 
+// in particular, nesting multiple calls to pause/resume will not work as expected.
 
+void app_pause(void) {
+  //  print_dbg("\r\n ... APP PAUSED ... ");
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
   cpu_irq_disable_level(UI_IRQ_PRIORITY);
-
 }
 
 void app_resume(void) {
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
   cpu_irq_enable_level(UI_IRQ_PRIORITY);  
+  //  print_dbg("\r\n ... APP RESUMED ... ");
 }

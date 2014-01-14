@@ -29,6 +29,7 @@
 #include "pages.h"
 #include "param.h"
 #include "play.h"
+#include "preset.h"
 #include "util.h"
 
 //=========================================
@@ -41,16 +42,17 @@ static u8 netActive = 0;
 //---- external
 ctlnet_t* net;
 
-//-- indices of system-created ops
+// pointers to system-created ops
 // encoders
-s32 opSysEncIdx[4] = { -1, -1, -1, -1 };
+op_enc_t* opSysEnc[4] = { NULL, NULL, NULL, NULL };
 // function keys and footswitches
-s32 opSysSwIdx[6] = { -1, -1, -1, -1, -1, -1};
+op_sw_t* opSysSw[6] = { NULL, NULL, NULL, NULL, NULL, NULL };
 // adc
-s32 opSysAdcIdx = -1;
+op_adc_t* opSysAdc = NULL;
 // preset
-s32 opSysPresetIdx = -1;
+op_preset_t* opSysPreset = NULL;
 
+static const char emptystring[] = "            ";
 
 //===============================================
 //========= static functions
@@ -58,41 +60,45 @@ s32 opSysPresetIdx = -1;
 // create all system operators
 static void add_sys_ops(void);
 static void add_sys_ops(void) {
-  /// create each system operator and store its index.
-  /// this is kind of a bad hack, 
-  // because we assume that the indices of sys ops in scene data 
-  // will always have the same values as when we created them.
-  // the assumption holds as long as we don't mess with order of creation...
+  /// FIXME: 
+  /* dangerous for scene storage, 
+     will break in the unlikely event that op pool is assigned differently.
+     should either:
+     a) reassign these pointers after unpickling 
+         probably by index like the old hack, or
+     b) don't pickle system ops at all, only their inputs.
+         still needs to make a fixed assumption about order.
+   */
 
   // 4 encoders
   net_add_op(eOpEnc);
-  opSysEncIdx[0] = net->numOps - 1;
+  opSysEnc[0] = (op_enc_t*)net->ops[net->numOps - 1];
   net_add_op(eOpEnc);
-  opSysEncIdx[1] = net->numOps - 1;
+  opSysEnc[1] = (op_enc_t*)net->ops[net->numOps - 1];
   net_add_op(eOpEnc);
-  opSysEncIdx[2] = net->numOps - 1;
+  opSysEnc[2] = (op_enc_t*)net->ops[net->numOps - 1];
   net_add_op(eOpEnc);
-  opSysEncIdx[3] = net->numOps - 1;
+  opSysEnc[3] = (op_enc_t*)net->ops[net->numOps - 1];
   // 4 function switches
   net_add_op(eOpSwitch);
-  opSysSwIdx[0] = net->numOps - 1;
+  opSysSw[0] = (op_sw_t*)net->ops[net->numOps - 1];
   net_add_op(eOpSwitch);
-  opSysSwIdx[1] = net->numOps - 1;
+  opSysSw[1] = (op_sw_t*)net->ops[net->numOps - 1];
   net_add_op(eOpSwitch);
-  opSysSwIdx[2] = net->numOps - 1;
+  opSysSw[2] = (op_sw_t*)net->ops[net->numOps - 1];
   net_add_op(eOpSwitch);
-  opSysSwIdx[3] = net->numOps - 1;
+  opSysSw[3] = (op_sw_t*)net->ops[net->numOps - 1];
   // 2 footswitches  
   net_add_op(eOpSwitch);
-  opSysSwIdx[4] = net->numOps - 1;
+  opSysSw[4] = (op_sw_t*)net->ops[net->numOps - 1];
   net_add_op(eOpSwitch);
-  opSysSwIdx[5] = net->numOps - 1;
+  opSysSw[5] = (op_sw_t*)net->ops[net->numOps - 1];
   // 1 adc
   net_add_op(eOpAdc);
-  opSysAdcIdx = net->numOps -1;
+  opSysAdc = (op_adc_t*)net->ops[net->numOps -1];
   // 1 preset receiver
-  //// FIXME
-  //  net_add_op(eOpPreset);
+  net_add_op(eOpPreset);
+  opSysPreset = (op_preset_t*)net->ops[net->numOps -1];
 }
 
 ///----- node pickling
@@ -105,7 +111,7 @@ static u8* onode_pickle(onode_t* out, u8* dst) {
   // parent op's index in net list
   dst = pickle_32((u32)(out->opIdx), dst);
   // preset inclusion flag ; cast to 4 bytes for alignment
-  dst = pickle_32((u32)(out->preset), dst);
+  //  dst = pickle_32((u32)(out->preset), dst);
   return dst;
 }
 
@@ -122,15 +128,23 @@ static const u8* onode_unpickle(const u8* src, onode_t* out) {
   src = unpickle_32(src, &v32);
   out->opIdx = (s32)v32;
   // preset flag: 32 bits for alignment
-  src = unpickle_32(src, &v32);
-  out->preset = (u8)v32;
+  //  src = unpickle_32(src, &v32);
+  //  out->preset = (u8)v32;
   return src;
 }
 
 static u8* inode_pickle(inode_t* in, u8* dst) {
   /// don't need to pickle indices because we recreate the op list from scratch
   // preset inclusion flag
-  *dst++ = in->preset;
+  //// this is a preset variable
+  //  *dst++ = in->preset;
+  /* print_dbg("\r\n pickling input node, op index: "); */
+  /* print_dbg_ulong(in->opIdx); */
+  /* print_dbg(" , input idx: "); */
+  /* print_dbg_ulong(in->opInIdx); */
+  /* print_dbg(" , play flag: "); */
+  /* print_dbg_ulong(in->play); */
+
   // play inclusion flag
   *dst++ = in->play;
   // dummy byte for alignment
@@ -143,13 +157,18 @@ static u8* inode_pickle(inode_t* in, u8* dst) {
 static const u8* inode_unpickle(const u8* src, inode_t* in) {
   /// don't need to pickle indices because we recreate the op list from scratch
   // only need these flags:
-  in->preset = *src++;
+  //  in->preset = *src++;
   // play inclusion flag
   in->play = *src++;
+
+  /* print_dbg("\r\n unpickled input node play flag: "); */
+  /* print_dbg_ulong(in->play); */
+
   // dummy byte for alignment
   ++src; 
   // dummy byte for alignment
   ++src; 
+
   return src;
 }
 
@@ -180,6 +199,7 @@ void net_init(void) {
   for(i=0; i<NET_OUTS_MAX; i++) {
     net_init_onode(i);
   }
+
   print_dbg("\r\n initialized ctlnet, byte count: ");
   print_dbg_hex(sizeof(ctlnet_t));
   add_sys_ops();
@@ -207,7 +227,7 @@ void net_deinit(void) {
 // initialize an input node
 void net_init_inode(u16 idx) {
   net->ins[idx].opIdx = -1;
-  net->ins[idx].preset = 0;
+  //  net->ins[idx].preset = 0;
   net->ins[idx].play = 0;
 }
 
@@ -215,12 +235,18 @@ void net_init_inode(u16 idx) {
 void net_init_onode(u16 idx) {
   net->outs[idx].opIdx = -1;
   net->outs[idx].target = -1;
-  net->outs[idx].preset = 0;
+  //  net->outs[idx].preset = 0;
 }
 
 // activate an input node with a value
 void net_activate(s16 inIdx, const io_t val, void* op) {
   static inode_t* pIn;
+
+  /* print_dbg("\r\n net_activate, input idx: "); */
+  /* print_dbg_hex(inIdx); */
+  /* print_dbg(" , value: "); */
+  /* print_dbg_hex(val); */
+
   if(!netActive) {
     if(op != NULL) {
       // if the net isn't active, dont respond to requests from operators
@@ -235,6 +261,9 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
 
     /// only process for play mode if we're in play mode
     if(pageIdx == ePagePlay) {
+      /* print_dbg(" , play mode active, "); */
+      /* print_dbg(" , play visibility flag : "); */
+      /* print_dbg_ulong(pIn->play); */
       // only process if play-mode-visibility is set
       if(pIn->play) {
 	play_input(inIdx);
@@ -248,6 +277,7 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
 		    val);
     } else { 
       // this is a parameter
+      //// FIXME this is horrible
       inIdx -= net->numIns;
       if (inIdx >= net->numParams) {
 	return ;
@@ -264,13 +294,18 @@ s16 net_add_op(op_id_t opId) {
   u16 ins, outs;
   u8 i;
   op_t* op;
+  s32 numInsSave = net->numIns;
+  s32 numOutsSave = net->numOuts;
+
+  print_dbg("\r\n adding operator; old input count: ");
+  print_dbg_ulong(numInsSave);
 
   if (net->numOps >= NET_OPS_MAX) {
     return -1;
   }
 
   if (op_registry[opId].size > NET_OP_POOL_SIZE - net->opPoolOffset) {
-    print_dbg("\r\n op creation failed; out of memory.");
+    print_dbg("\r\n op creation failed; op memory pool is exhausted.");
     return -1;
   }
 
@@ -298,18 +333,50 @@ s16 net_add_op(op_id_t opId) {
 
   //---- add inputs and outputs to node list
     for(i=0; i<ins; ++i) {
-      net->ins[net->numIns].opIdx = net->numOps;
-      net->ins[net->numIns].opInIdx = i;
-      ++(net->numIns);
-    }
+    net->ins[net->numIns].opIdx = net->numOps;
+    net->ins[net->numIns].opInIdx = i;
+    ++(net->numIns);
+  }
+  
   for(i=0; i<outs; i++) {
     net->outs[net->numOuts].opIdx = net->numOps;
     net->outs[net->numOuts].opOutIdx = i;
     net->outs[net->numOuts].target = -1;
     ++(net->numOuts);
   }
-  ++(net->numOps);
 
+  if(net->numOps > 0) {
+    // if we added input nodes, need to adjust connections to DSP params
+    for(i=0; i < numOutsSave; i++) {
+
+      /* if((net->outs[i].target != -1)     /// have to do this check for initial sysOp add? */
+      /* 	 && (net->outs[i].target >= numInsSave)) { */
+
+      /* print_dbg("\r\n checking output no. "); */
+      /* print_dbg_ulong(i); */
+      /* print_dbg(" ; target: "); */
+      /* print_dbg_ulong(net->outs[i].target); */
+            
+      if(net->outs[i].target >= numInsSave) {
+	/* print_dbg("\r\n adjusting target after op creation; old op count: "); */
+	/* print_dbg_ulong(net->numOps); */
+	/* print_dbg(" , output index: "); */
+	/* print_dbg_ulong(i); */
+	/* print_dbg(" , current target "); */
+	/* print_dbg_ulong(net->outs[i].target); */
+	/* print_dbg(" , count of inputs in new op: "); */
+	/* print_dbg_ulong(ins); */
+
+	// preset target, add offset for new inputs
+	net_connect(i, net->outs[i].target + ins);
+      }
+    }
+
+    // 
+
+  }
+
+  ++(net->numOps);
   return net->numOps - 1;
 }
 
@@ -440,12 +507,15 @@ void net_connect(u32 oIdx, u32 iIdx) {
 
   net->outs[oIdx].target = iIdx;
   // FIXME: this could be smarter.
-  // but for now, just don't an op to connect to itself 
-  // (keep the target in the onode for UI purposes, 
-  // but don't actually update the operator.)
+  // but for now, just don't allow an op to connect to itself 
+  // (keep the target in the onode for UI purposes,
+  // but don't actually update the operator output variable)
   if(srcOpIdx == dstOpIdx) {
     return; 
   } 
+  
+  /// something weird is happening!
+  //  value seems to drift on each disconnect/reconnect...?
   net->ops[srcOpIdx]->out[net->outs[oIdx].opOutIdx] = iIdx;
 }
 
@@ -484,7 +554,7 @@ s16 net_param_idx(u16 inIdx) {
 // get string for operator at given idx
 const char* net_op_name(const s16 idx) {
   if (idx < 0) {
-    return "";
+    return (const char*)emptystring;
   }
 
   return net->ops[idx]->opString;
@@ -497,7 +567,7 @@ const char* net_in_name(u16 idx) {
     idx -= net->numIns;
     if (idx >= net->numParams) {
       // not a param input either, whoops
-      return "";
+      return (const char*)emptystring;
     } else {
       // param input
       return net->params[idx].desc.label;
@@ -510,7 +580,11 @@ const char* net_in_name(u16 idx) {
 
 // get name for output at given idx
 const char* net_out_name(const u16 idx) {
-  return op_out_name(net->ops[net->outs[idx].opIdx], net->outs[idx].opOutIdx);
+  if(idx < net->numOuts) {
+    return op_out_name(net->ops[net->outs[idx].opIdx], net->outs[idx].opOutIdx);
+  } else {
+    return (const char*)emptystring;
+  }  
 }
 
 // get op index for input at given idx
@@ -611,56 +685,97 @@ void net_set_in_value(s32 inIdx, io_t val) {
 // can err on the side of caution vs speed
 io_t net_inc_in_value(s32 inIdx, io_t inc) {
   op_t* op;
+    
+    /* print_dbg("\r\n incrementing input in network, value: "); */
+    /* print_dbg_hex(net_get_in_value(inIdx < 0 ? 0 : (u16)inIdx)); */
+    /* print_dbg(" , increment: "); */
+    /* print_dbg_hex(inc); */
+    
   if(inIdx >= net->numIns) {
-    // hack to get preset idx
+    // hack to get param idx
     inIdx -= net->numIns;
-    set_param_value(inIdx, OP_SADD(get_param_value(inIdx), inc));
-    return get_param_value(inIdx);
+    //    set_param_value(inIdx, op_sadd(get_param_value(inIdx), inc));
+    //    return get_param_value(inIdx);
+    return inc_param_value(inIdx, inc);
+
   } else {
     op = net->ops[net->ins[inIdx].opIdx];
+
     (*(op->inc_fn))(op, net->ins[inIdx].opInIdx, inc);
+
+    print_dbg(" , result: ");
+    print_dbg_hex( net_get_in_value(inIdx));
+
     return net_get_in_value(inIdx);
   }
 }
 
 // toggle preset inclusion for input
 u8 net_toggle_in_preset(u32 id) {
-  net->ins[id].preset ^= 1;
-  return net->ins[id].preset;
+  //  net->ins[id].preset ^= 1;
+  //  return net->ins[id].preset;
+  /* if(id >= net->numIns) {  */
+  /*   id -= net->numIns;  */
+    
+  /*   return preset_get_selected()->params[id].enabled ^= 1; */
+  /* } else { */
+    return preset_get_selected()->ins[id].enabled ^= 1;
+    //  }
 }
 
 // toggle preset inclusion for output
 u8 net_toggle_out_preset(u32 id) {
-  net->outs[id].preset ^= 1;
-  return net->outs[id].preset;
+  //  net->outs[id].preset ^= 1;
+  //  return net->outs[id].preset;
+  return preset_get_selected()->outs[id].enabled ^= 1;
 }
 
 // set preset inclusion for input
 void net_set_in_preset(u32 id, u8 val) {
-  net->ins[id].preset = val;
+  //  net->ins[id].preset = val;
+  /* if(id >= net->numIns) {  */
+  /*   id -= net->numIns;  */
+  /*   preset_get_selected()->params[id].enabled = val; */
+  /* } else { */
+    preset_get_selected()->ins[id].enabled = val;
+    //  }
 }
 
-// set preset inclusion for output
-void net_set_out_preset(u32 outIdx, u8 val) {
-  net->outs[outIdx].preset = val;
+  // set preset inclusion for output
+void net_set_out_preset(u32 id, u8 val) {
+  //  net->outs[outIdx].preset = val;
+  preset_get_selected()->outs[id].enabled = val;
 }
 
 // get preset inclusion for input
 u8 net_get_in_preset(u32 id) {
-  return net->ins[id].preset;
+  //  return net->ins[id].preset;
+  /* if(id >= net->numIns) {  */
+  /*   id -= net->numIns;  */
+  /*   return preset_get_selected()->params[id].enabled; */
+  /* } else { */
+    return preset_get_selected()->ins[id].enabled;
+    //  }
 }
 
 // get preset inclusion for output
 u8 net_get_out_preset(u32 id) {
-  return net->outs[id].preset;
+  //  return net->outs[id].preset;
+  return preset_get_selected()->outs[id].enabled = 1;
 }
 
 
 // toggle play inclusion for input
 u8 net_toggle_in_play(u32 inIdx) {
   net->ins[inIdx].play ^= 1;
-  //  print_dbg("\r\n toggle in.play, result: ");
-  //  print_dbg(net->ins[inIdx].play ? "1" : "0");
+
+  print_dbg("\r\n toggle in.play, op index: ");
+  print_dbg_ulong(net->ins[inIdx].opIdx);
+  print_dbg(" , input idx: ");
+  print_dbg_ulong(net->ins[inIdx].opInIdx);
+  print_dbg(" , result: ");
+   print_dbg(net->ins[inIdx].play ? "1" : "0");
+
   return net->ins[inIdx].play;
 }
 
@@ -680,10 +795,18 @@ u8 net_get_in_play(u32 inIdx) {
 
 // add a new parameter
 void net_add_param(u32 idx, const ParamDesc * pdesc) {
+  // copy descriptor, hm
   memcpy( &(net->params[net->numParams].desc), (const void*)pdesc, sizeof(ParamDesc) );
+
+  ///////////////
+  // initialize scaler
+  scaler_init(&(net->params[net->numParams].scaler), 
+	      &(net->params[net->numParams].desc));
+  ////////////
+  print_dbg("\r\n finished initializing param scaler.");
+
   net->params[net->numParams].idx = idx; 
-  net->params[net->numParams].preset = 1; 
-  net->params[net->numParams].data.value.asInt = pdesc->min;
+  //  net->params[net->numParams].preset = 0; 
   net->numParams += 1;
 }
 
@@ -697,7 +820,7 @@ void net_clear_params(void) {
 void net_send_params(void) {
   u32 i;
   for(i=0; i<net->numParams; i++) {
-    ctl_param_change(i, net->params[i].data.value.asInt);
+    set_param_value(i, net->params[i].data.value);
   }
 }
 
@@ -716,6 +839,7 @@ u8 net_report_params(void) {
   volatile char buf[64];
   volatile ParamDesc pdesc;
   volatile u32 numParams;
+  s32 val;
   u8 i;
  
   bfin_get_num_params(&numParams);
@@ -738,7 +862,19 @@ u8 net_report_params(void) {
       print_dbg("\r\n received descriptor for param : ");
       print_dbg((const char* )pdesc.label);
 
+      print_dbg(" ; \t initial value: 0x");
+      val = bfin_get_param(i);
+      print_dbg_hex(val);
+
       net_add_param(i, (const ParamDesc*)&pdesc);
+      print_dbg("\r\n finished adding parameter.");
+
+      //      net->params[net->numParams - 1].data.value = val; 
+      //// use reverse-lookup method from scaler      
+      net->params[net->numParams - 1].data.value = 
+	scaler_get_in( &(net->params[net->numParams - 1].scaler), val);
+
+      net->params[net->numParams - 1].data.changed = 0; 
 
     }
   } else {
@@ -756,6 +892,16 @@ u8 net_report_params(void) {
   print_dbg("\r\n bfin module name: ");
   print_dbg((const char*)buf);
 
+
+  //  if(numParams > 0 && numParams != 255) {
+    /// test bfin_get_param on initial values
+    //    print_dbg("\r\n reporting inital param values: ");
+    //    for(i=0; i<numParams; ++i) {
+    //  print_dbg("\r\n 0x");
+  //      val = bfin_get_param(i);
+  //      print_dbg_hex(val);
+      //    }
+      //  }
   return (u8)numParams;
 
 }
@@ -784,7 +930,9 @@ u8* net_pickle(u8* dst) {
   }
 
   // write input nodes
-  for(i=0; i < net->numIns; ++i) {
+  //  for(i=0; i < (net->numIns + net->numParams); ++i) {
+  /// FIXME: doing params is breaking stuff, somehow...
+  for(i=0; i < (net->numIns); ++i) {
     dst = inode_pickle(&(net->ins[i]), dst);
   }
 
@@ -837,7 +985,11 @@ u8* net_unpickle(const u8* src) {
   }
 
   // read input nodes
-  for(i=0; i < net->numIns; ++i) {
+  //  for(i=0; i < (net->numIns + net->numParams); ++i) {
+  ///// FIXME: 
+  /// tried adding the params to input list here, for play-mode flag
+  /// but somehow, this breaks stuff.
+  for(i=0; i < (net->numIns); ++i) {
     src = inode_unpickle(src, &(net->ins[i]));
   }
 
@@ -860,8 +1012,34 @@ u8* net_unpickle(const u8* src) {
   return (u8*)src;
 }
 
+// get parameter string representations,
+// given string buffer and index in inputs list
+void net_get_param_value_string(char* dst, u32 idx) {
+  //// FIXME
+  /// get param index! rrrgg
+  idx -= net->numIns;
+  /// lookup representation from stored input value and print to buf
+  scaler_get_str( dst,	
+		  &(net->params[idx].scaler), 
+		  net->params[idx].data.value
+		  );
+}
+
+
+// same, with arbitrary value
+void net_get_param_value_string_conversion(char* dst, u32 idx, s32 val) {
+  /// lookup representation from stored input value and print to buf
+  scaler_get_str( dst,	
+		  &(net->params[idx].scaler), 
+		  val
+		  );
+}
+
+/// scale
+
 ///////////////
 // test / dbg
+#if 0
 void net_print(void) {
   print_dbg("\r\n net address: 0x");
   print_dbg_hex((u32)(net));
@@ -873,3 +1051,4 @@ void net_print(void) {
   print_dbg("\r\n net op count: ");
   print_dbg_ulong(net->numOps);
 }
+#endif

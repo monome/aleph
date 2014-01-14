@@ -18,6 +18,7 @@
 #include "filesystem.h"
 #include "global.h"
 #include "interrupts.h"
+#include "serial.h"
 #include "switches.h"
 #include "timers.h"
 #include "types.h"
@@ -242,12 +243,10 @@ static void irq_port1_line3(void) {
 // interrupt handler for uart
 __attribute__((__interrupt__))
 static void irq_usart(void) {
-  int c;
-  usart_read_char(FTDI_USART,&c);
+  serial_process();
   // usart_write_char(FTDI_USART,c);
   // print_dbg("\r\nusb cable change.");
   gpio_toggle_pin(LED_MODE_PIN);
-
 }
 
 //-----------------------------

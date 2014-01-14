@@ -15,14 +15,10 @@
 #include "fix.h"
 #include "types.h"
 
-#ifdef ARCH_BFIN // bfin
+
 #include "bfin_core.h"
 #include "fract_math.h"
 #include <fract2float_conv.h>
-#else // linux
-#include "fract32_emu.h"
-#include "audio.h"
-#endif
 
 // audio
 #include "buffer.h"
@@ -127,7 +123,6 @@ static void mix_del_inputs(void) {
   //--- del 0
   in_del[0] = 0;
 
-  /// FIXME: compares are retarded and ops are 32-bit, worst of both worlds
   mul = mix_adc_del[0][0];
   in_del[0] = add_fr1x32(in_del[0], mult_fr1x32x32(in[0], mul)); 
   mul = mix_adc_del[1][0];

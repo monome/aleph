@@ -23,6 +23,7 @@
 #include "sd_mmc_spi.h"
 #include "smc.h"
 #include "sysclk.h"
+#include "usart.h"
 
 //// aleph
 // common
@@ -50,6 +51,7 @@
 #include "interrupts.h"
 #include "memory.h"
 #include "monome.h"
+#include "serial.h"
 #include "switches.h"
 #include "timers.h"
 
@@ -148,6 +150,12 @@ static void handler_HidConnect(s32 data) {
 }
 static void handler_HidDisconnect(s32 data) { ;; }
 static void handler_HidByte(s32 data) { ;; }
+
+static void handler_SerialParamNum(s32 data) { serial_param_num(data); }
+static void handler_SerialParamInfo(s32 data) { serial_param_info(data); }
+static void handler_SerialParamGet(s32 data) { serial_param_get(data); }
+static void handler_SerialParamSet(s32 data) { serial_param_set(data); }
+
 static void handler_AppCustom(s32 data) { ;; }
 
 /// explicitly assign default event handlers.
@@ -186,6 +194,12 @@ static inline void assign_main_event_handlers(void) {
   app_event_handlers[ kEventHidConnect ]	= &handler_HidConnect ;
   app_event_handlers[ kEventHidDisconnect ]	= &handler_HidDisconnect ;
   app_event_handlers[ kEventHidByte ]	= &handler_HidByte ;
+
+  app_event_handlers[ kEventSerialParamNum ] = &handler_SerialParamNum ;
+  app_event_handlers[ kEventSerialParamInfo ] = &handler_SerialParamInfo ;
+  app_event_handlers[ kEventSerialParamGet ] = &handler_SerialParamGet ;
+  app_event_handlers[ kEventSerialParamSet ] = &handler_SerialParamSet ;
+
   app_event_handlers[ kEventAppCustom ]	= &handler_AppCustom ;
 }
 
@@ -334,7 +348,7 @@ int main (void) {
 
   // intialize the FAT filesystem
   fat_init();
-  print_dbg("\r\n init fat");
+  print_dbg("\r\n init filesystem");
 
   // setup control logic
   init_ctl();

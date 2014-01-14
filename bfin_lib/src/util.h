@@ -15,5 +15,4 @@
 // and some byte-swapping functions, unfortunately!
 void byte_swap(u8* pTarget, u8 bytes);
 
-
 #endif // header guard

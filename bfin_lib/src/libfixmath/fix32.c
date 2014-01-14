@@ -44,7 +44,7 @@ void add_fix32(fix32* a, fix32* b) {
 // subtract with over/underflow checking
 void sub_fix32(fix32* a, fix32* b) {
   fix32 bTmp;
-  bTmp.i = BIT_INVERT(b->i);
+  bTmp.i = BIT_INVERT_32(b->i);
   add_fix32(a, &bTmp);
 }
 

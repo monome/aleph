@@ -29,6 +29,10 @@ static u8 inCopy = 0;
 // editing cursor position
 static s8 cursor = 0;
 
+// kludge:
+// constant pointer to this page's selection
+static s16* const pageSelect = &(pages[ePageDsp].select);
+
 //-------------------------
 //---- static funcs
 
@@ -77,14 +81,14 @@ static void select_scroll(s32 dir) {
 
   if(dir < 0) {
     /// SCROLL DOWN
-    if(curPage->select == 0) {
+    if(*pageSelect == 0) {
       return;
     }
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
     // decrement selection
-    newSel = curPage->select - 1;
-    curPage->select = newSel;    
+    newSel = *pageSelect - 1;
+    *pageSelect = newSel;    
     // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
     if(newIdx < 0) { 
@@ -102,14 +106,14 @@ static void select_scroll(s32 dir) {
   } else {
     // SCROLL UP
     // if selection is already max, do nothing 
-    if(curPage->select == (max) ) {
+    if(*pageSelect == (max) ) {
       return;
     }
     // remove highlight from old center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
     // increment selection
-    newSel = curPage->select + 1;
-    curPage->select = newSel;    
+    newSel = *pageSelect + 1;
+    *pageSelect = newSel;    
     // add new content at bottom of screen
     newIdx = newSel + SCROLL_LINES_ABOVE;
     if(newIdx > max) { 
@@ -172,7 +176,7 @@ void handle_key_1(s32 val) {
     headRegion->dirty = 1;
     render_update();
 
-    files_load_scene(curPage->select);
+    files_load_scene(*pageSelect);
 
     region_fill(headRegion, 0x0);
     font_string_region_clip(headRegion, "done reading.", 0, 0, 0xa, 0);
@@ -214,6 +218,9 @@ void handle_enc_1(s32 val) {
       cursor = SCENE_NAME_LEN - 1;
     } 
   }
+  if(sceneData->desc.sceneName[cursor] == '\0') { 
+    sceneData->desc.sceneName[cursor] = '_';
+  }
   render_edit_string(headRegion, sceneData->desc.sceneName, SCENE_NAME_LEN, cursor);
 }
 
@@ -223,7 +230,7 @@ void handle_enc_2(s32 val) {
    if(val > 0) {
     set_page(ePageDsp);
   } else {
-    set_page(ePageOuts);
+    set_page(ePagePresets);
   }
 }
 
@@ -341,10 +348,10 @@ void select_scenes(void) {
 // redraw all lines, based on current selection
 void redraw_scenes(void) {
   u8 i=0;
-  u8 n = curPage->select - 3;
+  u8 n = *pageSelect - 3;
   while(i<8) {
     render_line( n, 0xa );
-    render_to_scroll_line(i, n == curPage->select ? 1 : 0);
+    render_to_scroll_line(i, n == *pageSelect ? 1 : 0);
     ++i;
     ++n;
   }

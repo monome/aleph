@@ -31,7 +31,8 @@
 #define LINE_UNDERLINE_OFFSET (SCROLL_BYTES_PER_LINE - LINE_UNDERLINE_LEN - 1)
 
 // x-offset in pixels for value field on each line
-#define LINE_VAL_POS 80
+#define LINE_VAL_POS_SHORT 98
+#define LINE_VAL_POS_LONG 78
 
 // line buffer, length in characters
 #define LINEBUF_LEN 32
@@ -125,6 +126,9 @@ extern void render_edit_string( region* reg, char* str, u8 len, u8 cursor);
 // scroll character at cursor position in string
 extern void edit_string_inc_char(char* str, u8 pos);
 extern void edit_string_dec_char(char* str, u8 pos);
+
+// draw preset name in header
+extern void draw_preset_name(void);
 
 
 #endif // header guard
