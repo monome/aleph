@@ -28,9 +28,6 @@ static u8 initFlag = 0;
 //---- extern funcs
 
 s32 scaler_integrator_val(void* scaler, io_t in) {
-  print_dbg("\r\n requesting amp_scaler value for input: 0x");
-  print_dbg_hex((u32)in);
-
   if(in < 0) { in = 0; }
   return tabVal[(u16)((u16)in >> inRshift)];
 }
