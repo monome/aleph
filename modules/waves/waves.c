@@ -90,10 +90,10 @@ static filter_1p_lo* amp1Lp;
 static filter_1p_lo* amp0Lp;
 
 // dry I->O amplitudes
-/* static fract32 ioAmp0; */
-/* static fract32 ioAmp1; */
-/* static fract32 ioAmp2; */
-/* static fract32 ioAmp3; */
+static fract32 ioAmp0; 
+static fract32 ioAmp1; 
+static fract32 ioAmp2;
+static fract32 ioAmp3;
 
 /// mixes
 // each input -> each output
@@ -108,7 +108,7 @@ static fract32 mix_osc_dac[2][4] = { { 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
 
 
 /// FIXME
-// static fract32 frameVal;
+static fract32 frameVal;
 
 // 10v dac values (u16, but use fract32 and audio integrators, for now)
 static fract32 cvVal[4];
@@ -169,9 +169,12 @@ static void calc_frame(void) {
 				   mult_fr1x32x32( svfOut0, fwet0)
 				   ));
 
-  //  frameVal = add_fr1x32( out1, out2);
+  ////
+  /// fixme: mono
+  frameVal = add_fr1x32( oscOut0, oscOut1);
 
   // mix to output
+  //...todo
   
 }
 
@@ -272,10 +275,10 @@ void module_init(void) {
   param_setup(  eParamWave0Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamAmp1Slew, 	PARAM_SLEW_DEFAULT );
   param_setup(  eParamAmp0Slew, PARAM_SLEW_DEFAULT );
-  /* param_setup(  eParamIoAmp0, 	FRACT32_MAX ); */
-  /* param_setup(  eParamIoAmp1,  	FRACT32_MAX ); */
-  /* param_setup(  eParamIoAmp2, 	FRACT32_MAX ); */
-  /* param_setup(  eParamIoAmp3, 	FRACT32_MAX ); */
+  param_setup(  eParam_adc0_dac0, 	FRACT32_MAX );
+  param_setup(  eParam_adc1_dac1,  	FRACT32_MAX );
+  param_setup(  eParam_adc2_dac2, 	FRACT32_MAX );
+  param_setup(  eParam_adc3_dac3, 	FRACT32_MAX );
   param_setup(  eParam_cvVal0, 	FRACT32_MAX >> 1 );
   param_setup(  eParam_cvVal1, 	FRACT32_MAX >> 1 );
   param_setup(  eParam_cvVal2, 	FRACT32_MAX >> 1 );
@@ -307,11 +310,10 @@ void module_process_frame(void) {
 
   calc_frame();
 
-  /* out[0] = add_fr1x32(frameVal, mult_fr1x32x32(in[0], ioAmp0)); */
-  /* out[1] = add_fr1x32(frameVal, mult_fr1x32x32(in[1], ioAmp1)); */
-  /* out[2] = add_fr1x32(frameVal, mult_fr1x32x32(in[2], ioAmp2)); */
-  /* out[3] = add_fr1x32(frameVal, mult_fr1x32x32(in[3], ioAmp3)); */
-  
+  out[0] = add_fr1x32(frameVal, mult_fr1x32x32(in[0], ioAmp0));
+  out[1] = add_fr1x32(frameVal, mult_fr1x32x32(in[1], ioAmp1));
+  out[2] = add_fr1x32(frameVal, mult_fr1x32x32(in[2], ioAmp2));
+  out[3] = add_fr1x32(frameVal, mult_fr1x32x32(in[3], ioAmp3));
   
   if(cvSlew[cvChan].sync) { ;; } else {
     cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));

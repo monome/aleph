@@ -148,6 +148,7 @@ void scene_read_buf(void) {
   //  if(neq) {
     // load bfin module if it doesn't match the current scene desc
 
+  //...
     
     bfin_wait_ready();
 

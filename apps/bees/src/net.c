@@ -870,7 +870,9 @@ u8 net_report_params(void) {
     for(i=0; i<numParams; i++) {
       bfin_get_param_desc(i, &pdesc);
 
-      print_dbg("\r\n received descriptor for param : ");
+      print_dbg("\r\n received descriptor for param, index : ");
+      print_dbg_ulong(i);
+      print_dbg(" , label : ");
       print_dbg((const char* )pdesc.label);
 
       print_dbg(" ; \t initial value: 0x");

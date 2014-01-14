@@ -90,7 +90,7 @@ enum params {
   /* eParamIoAmp3, */
 
   // smoothing parameter for ALL mix values!
-  eParamMixSmooth,
+  eParamMixSlew,
 
   /// osc out mix
   eParam_osc0_dac0,

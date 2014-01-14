@@ -514,6 +514,12 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamBand0Slew].max = FR32_MAX;
   gModuleData->paramDesc[eParamBand0Slew].radix = 32;
 
+  strcpy(gModuleData->paramDesc[eParamNotch0Slew].label, "notch0Slew");
+  gModuleData->paramDesc[eParamNotch0Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamNotch0Slew].min = 0;
+  gModuleData->paramDesc[eParamNotch0Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamNotch0Slew].radix = 32;
+
   strcpy(gModuleData->paramDesc[eParamDry0Slew].label, "dry0Slew");
   gModuleData->paramDesc[eParamDry0Slew].type = eParamTypeIntegrator;
   gModuleData->paramDesc[eParamDry0Slew].min = 0;
@@ -556,6 +562,12 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamBand1Slew].max = FR32_MAX;
   gModuleData->paramDesc[eParamBand1Slew].radix = 32;
 
+  strcpy(gModuleData->paramDesc[eParamNotch1Slew].label, "notch1Slew");
+  gModuleData->paramDesc[eParamNotch1Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamNotch1Slew].min = 0;
+  gModuleData->paramDesc[eParamNotch1Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamNotch1Slew].radix = 32;
+
   strcpy(gModuleData->paramDesc[eParamDry1Slew].label, "dry1Slew");
   gModuleData->paramDesc[eParamDry1Slew].type = eParamTypeIntegrator;
   gModuleData->paramDesc[eParamDry1Slew].min = 0;
@@ -567,5 +579,13 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamWet1Slew].min = 0;
   gModuleData->paramDesc[eParamWet1Slew].max = FR32_MAX;
   gModuleData->paramDesc[eParamWet1Slew].radix = 32;
+
+
+  strcpy(gModuleData->paramDesc[eParamMixSlew].label, "mixSlew");
+  gModuleData->paramDesc[eParamMixSlew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamMixSlew].min = 0;
+  gModuleData->paramDesc[eParamMixSlew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamMixSlew].radix = 32;
+
 
 }

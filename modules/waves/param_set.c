@@ -148,6 +148,7 @@ void module_set_param(u32 idx, ParamValue v) {
     filter_1p_lo_set_slew(amp0Lp, v);
     break;
 
+    ////// FIXME:
   /* case eParamIoAmp0: */
   /*   ioAmp0 = (v); */
   /*   break; */
@@ -194,7 +195,8 @@ void module_set_param(u32 idx, ParamValue v) {
 
    // i/o mix:
   case eParam_adc0_dac0 :
-    mix_adc_dac[0][0] = v;
+    //    mix_adc_dac[0][0] = v;
+    ioAmp0 = v;
     break;
   case eParam_adc0_dac1 :
     mix_adc_dac[0][1] = v;
@@ -209,7 +211,8 @@ void module_set_param(u32 idx, ParamValue v) {
     mix_adc_dac[1][0] = v;
     break;
   case eParam_adc1_dac1 :
-    mix_adc_dac[1][1] = v;
+    //    mix_adc_dac[1][1] = v;
+    ioAmp1 = v;
     break;
   case eParam_adc1_dac2 :
     mix_adc_dac[1][2] = v;
@@ -224,7 +227,8 @@ void module_set_param(u32 idx, ParamValue v) {
     mix_adc_dac[2][1] = v;
     break;
   case eParam_adc2_dac2 :
-    mix_adc_dac[2][2] = v;
+    //    mix_adc_dac[2][2] = v;
+    ioAmp2 = v;
     break;
   case eParam_adc2_dac3 :
     mix_adc_dac[2][3] = v;
@@ -239,7 +243,8 @@ void module_set_param(u32 idx, ParamValue v) {
     mix_adc_dac[3][2] = v;
     break;
   case eParam_adc3_dac3 :
-    mix_adc_dac[3][3] = v;
+    //    mix_adc_dac[3][3] = v;
+    ioAmp3 = v;
     break;
     // osc mix:
   case eParam_osc0_dac0 :
