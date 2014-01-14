@@ -171,8 +171,10 @@ void scene_read_buf(void) {
 
 // write current state as default
 void scene_write_default(void) {
+#if 0
   s8 neq = 0;
   s8 modName[MODULE_NAME_LEN];
+#endif
 
   app_pause();
   render_boot("writing scene to flash");
@@ -183,13 +185,15 @@ void scene_write_default(void) {
 
   flash_write_scene();
 
+# if 0 // not storing .ldr in flash for the moment!
   // write default LDR if changed 
   neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
   if(neq) {
     render_boot("writing DSP to flash");
     print_dbg("\r\n writing default LDR from scene descriptor");
-    //    files_store_default_dsp_name(sceneData->desc.moduleName);
-  }    
+    files_store_default_dsp_name(sceneData->desc.moduleName);
+  } 
+#endif    
   delay_ms(20);
   print_dbg("\r\n finished writing default scene");
   app_resume();

@@ -399,14 +399,22 @@ s16 net_pop_op(void) {
   const s16 opIdx = net->numOps - 1;
   op_t* op = net->ops[opIdx];
   int i=0;
-  int x=0;
-
+  int x;
   // bail if system op
   if(net_op_flag (opIdx, eOpFlagSys)) { return 1; }
   // de-init
   op_deinit(op);
   // store the global index of the first input
-  x = net_op_in_idx(opIdx, 0); 
+  x = net_op_in_idx(opIdx, 0);
+
+  // check if anything connects here
+  for(i=0; i<net->numOuts; i++) {
+    // this check works b/c we know this is last op in list
+    if( net->outs[i].target >= x ) {
+      net_disconnect(i);
+    }
+  }
+
   // erase input nodes
   for(i=0; i<op->numInputs; i++) {
     net_init_inode(x++);
@@ -417,6 +425,7 @@ s16 net_pop_op(void) {
   for(i=0; i<op->numOutputs; i++) {
     net_init_onode(x++);
   }
+
   net->numIns -= op->numInputs;
   net->numOuts -= op->numOutputs;
 
@@ -426,6 +435,7 @@ s16 net_pop_op(void) {
 
 }
 
+#if 0 // FIXME: this is not called and not tested. it would obvs be a good feature though.
 /// delete an arbitrary operator, and do horrible ugly management stuff
 void net_remove_op(const u32 idx) {
   /// FIXME: network processing must be halted during this procedure!
@@ -455,13 +465,13 @@ void net_remove_op(const u32 idx) {
     }
     lastIn = firstIn + nIns - 1;
     // check if anything connects here
-    for(i=0; i<net->numIns; i++) {
+    for(i=0; i<net->numOuts; i++) {
       if( net->outs[i].target >= firstIn ) {
 	if( net->outs[i].target > lastIn ) {
 	  // connections to higher inlets get moved down
 	  net->outs[i].target -= nIns;
 	} else {
-	  // disconnect from this op's inlets
+	  // disconnect from this op's inputs
 	  net->outs[i].target =  -1;
 	}
       }
@@ -517,6 +527,7 @@ void net_remove_op(const u32 idx) {
   net->numOps -= 1;
   //... and, uh, don't crash?
 }
+#endif
 
 // create a connection between given idx pairs
 void net_connect(u32 oIdx, u32 iIdx) {

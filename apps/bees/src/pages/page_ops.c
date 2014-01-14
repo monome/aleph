@@ -268,9 +268,11 @@ void handle_key_2(s32 val) {
       net_add_op(userOpTypes[newOpType]);
       // change selection to last op
       *pageSelect = net_num_ops() - 1;
-      // redraw...
     }
-      redraw_ops();
+    redraw_ops();
+    redraw_outs();
+    redraw_ins();
+
   }
   show_foot();
 }
