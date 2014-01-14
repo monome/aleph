@@ -270,9 +270,6 @@ void handle_key_2(s32 val) {
       *pageSelect = net_num_ops() - 1;
     }
     redraw_ops();
-    redraw_outs();
-    redraw_ins();
-
   }
   show_foot();
 }
