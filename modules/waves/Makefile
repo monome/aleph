@@ -11,6 +11,7 @@ module_obj = waves.o  \
 	$(bfin_lib_srcdir)/libfixmath/fix32.o \
 	$(bfin_lib_srcdir)/libfixmath/fix16.o
 
+
 all: aleph-$(module_name).ldr
 	cp aleph-$(module_name).ldr aleph-$(module_name)-$(maj).$(min).$(rev).ldr
 
