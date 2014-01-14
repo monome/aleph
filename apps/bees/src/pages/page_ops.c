@@ -200,10 +200,13 @@ static void show_foot2(void) {
 
 static void show_foot3(void) {
   u8 fill = 0;
-  //  u8 fore = 0xf;
-  //..???
+  u8 fore = 0xf;
+  if(altMode) {
+    fill = 0xf;
+    fore = 0;
+  }
   region_fill(footRegion[3], fill);
-  //font_string_region_clip(footRegion[3], "ALT", 0, 0, fore, fill);
+  font_string_region_clip(footRegion[3], "ALT", 0, 0, fore, fill);
 }
 
 static void show_foot(void) {
@@ -273,7 +276,13 @@ void handle_key_2(s32 val) {
 }
 
 void handle_key_3(s32 val) {
-  // op-specific subpage...?
+  // alt mode
+  if(val > 0) {
+    altMode = 1;
+  } else {
+    altMode = 0;
+  }
+  show_foot();
 }
 
 void handle_enc_0(s32 val) {
