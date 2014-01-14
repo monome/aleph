@@ -44,7 +44,9 @@ void scaler_note_str(char* dst, void* scaler,  io_t in) {
 
 // init function
 void scaler_note_init(void* scaler) {
-  //  ParamScaler* sc = (ParamScaler*)scaler;
+  ParamScaler* sc = (ParamScaler*)scaler;
+
+  // HACK: we are doing this from the svf scaler, so don't want a warning.
   // check descriptor
   /* if( sc->desc->type != eParamTypeNote) { */
   /*   print_dbg("\r\n !!! warning: wrong param type for note scaler"); */
@@ -57,23 +59,10 @@ void scaler_note_init(void* scaler) {
     initFlag = 1;
     // assign
     tabVal = scaler_get_nv_data(eParamTypeNote);
-
-    /* // allocate */
-    /* print_dbg("\r\n allocating static memory for note scalers"); */
-    /* tabVal = (s32*)alloc_mem(tabSize * 4); */
-        
-    /* // load gain data */
-    /* print_dbg("\r\n loading gain scaler data from sdcard"); */
-    /* files_load_scaler_name("scaler_note_val.dat", tabVal, tabSize); */
-    /* print_dbg("\r\n finished loading note scaler data from files."); */
   }
 
-  /// FIXME: should consider requested param range,
-  //  and compute a customized multiplier here if necessary.
-
-  /// proper class-based initialization was breaking for some reason, 
-  // driving me insane.
-  // so for now, scaling functions are in a static array in param_scaler.c
+  sc->inMin = 0;
+  sc->inMax = (tabSize - 1) << inRshift;
 
   //// FIXME: add tuning functions (???)
   //  sc->tune = NULL;
@@ -106,14 +95,28 @@ io_t scaler_note_in(void* scaler, s32 x) {
 
 
 // increment input by pointer, return value
-s32 scaler_note_inc(void* sc, io_t* pin, io_t inc ) {
-  static const io_t incMul = 1 << (IO_BITS - tabBits);
-  // multiply by smallest significant abcissa
-  inc *= incMul;
+s32 scaler_note_inc(void* scaler, io_t* pin, io_t inc ) {
+  ParamScaler* sc = (ParamScaler*)scaler;
+  // this speeds up the knob a great deal.
+#if 0
+  s32 sinc;
+  // scale up to smallest significant abscissa:
+  // check for 16b overflow
+  sinc = (s32)inc << inRshift;
+  if(sinc > 0x3fff) { 
+    inc = (io_t)0x3fff;
+  } 
+  else if (sinc < (s32)0xffffc000) { 
+    inc = (io_t)0xc000;
+  }
+#endif
+  
   // use saturation
   *pin = op_sadd(*pin, inc);
-  if(*pin < 0) { *pin = 0; }
-  // scale and return.
+
+  if(*pin < sc->inMin) { *pin = sc->inMin; }
+  if(*pin > sc->inMax) { *pin = sc->inMax; }
+
   // ignoring ranges in descriptor at least for now.
   return scaler_note_val(sc, *pin);
 }

@@ -32,14 +32,17 @@ s32 scaler_amp_val(void* scaler, io_t in) {
 }
 
 void scaler_amp_str(char* dst, void* scaler,  io_t in) {
-  u16 uin = BIT_ABS_16((s16)in) >> inRshift;
+  //  u16 uin = BIT_ABS_16((s16)in) >> inRshift;
+  if(in < 0) { in = 0; }
 
-  if(uin == 0) {
+  in >>= inRshift;
+
+  if(in == 0) {
     strcpy(dst, "   -inf");
-  } else if (uin == (tabSize - 1)) {
+  } else if (in == (tabSize - 1)) {
     print_fix16(dst, 0);
   } else {
-    print_fix16(dst, tabRep[(u16)uin] );
+    print_fix16(dst, tabRep[(u16)in] );
   }
 }
 
@@ -81,7 +84,7 @@ io_t scaler_amp_in(void* scaler, s32 x) {
   s32 ju = tabSize - 1;
   s32 jm;
 
-  /// FIXME: this result is often off by one, or something like it.
+  /// FIXME: this search result is often off by one, or something like it.
 
   // first, cheat and check zero.
   /// will often be true
@@ -103,11 +106,9 @@ io_t scaler_amp_in(void* scaler, s32 x) {
 // increment input by pointer, return value
 s32 scaler_amp_inc(void* scaler, io_t* pin, io_t inc ) {
   ParamScaler* sc = (ParamScaler*)scaler;
-  s32 val;
-  s32 sinc;
-
   // this speeds up the knob a great deal.
 #if 0
+  s32 sinc;
   // scale up to smallest significant abscissa:
   // check for 16b overflow
   sinc = (s32)inc << inRshift;
@@ -126,7 +127,5 @@ s32 scaler_amp_inc(void* scaler, io_t* pin, io_t inc ) {
   if(*pin > sc->inMax) { *pin = sc->inMax; }
 
   // FIXME: no customization of output range.
-  val = scaler_amp_val(sc, *pin);
-
-  return val;
+  return scaler_amp_val(sc, *pin);
 }
