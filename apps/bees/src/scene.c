@@ -119,6 +119,8 @@ void scene_read_buf(void) {
 
     bfin_wait_ready();
 
+    net_clear_user_ops();
+
     net_report_params();
 
   // unpickle network 

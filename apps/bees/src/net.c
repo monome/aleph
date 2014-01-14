@@ -207,6 +207,7 @@ void net_init(void) {
   netActive = 1;
 }
 
+
 // de-initialize network
 void net_deinit(void) {
   u32 i;
@@ -222,6 +223,22 @@ void net_deinit(void) {
   net->numIns = 0;
   net->numOuts = 0;
   net->numParams = 0;
+
+
+  // unassign all I/O nodes
+  for(i=0; i<NET_INS_MAX; i++) {
+    net_init_inode(i);
+  }
+  for(i=0; i<NET_OUTS_MAX; i++) {
+    net_init_onode(i);
+  }
+
+}
+
+// clear ops and i/o
+void net_clear_user_ops(void) {
+  net_deinit();
+  add_sys_ops();
 }
 
 // initialize an input node

@@ -134,6 +134,7 @@ enum params {
   eParam_cvVal2,
   eParam_cvVal1,
   eParam_cvVal0,
+
   // filter 1
   eParam_cut1,		
   eParam_rq1,		

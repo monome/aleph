@@ -127,5 +127,4 @@ extern op_adc_t* opSysAdc;
 // preset
 extern op_preset_t* opSysPreset;
 
-
 #endif // header guard

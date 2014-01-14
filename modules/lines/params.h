@@ -15,6 +15,11 @@
 #define PARAM_RATE_MAX 0x80000 // 8
 #define PARAM_RATE_RADIX 3
 
+
+#define PARAM_FADE_MIN 0x400 // 1/64
+#define PARAM_FADE_MAX 0x80000 // 8
+#define PARAM_FADE_RADIX 3
+
 /* #define RATIO_MIN 0x4000     // 1/4 */
 /* #define RATIO_MAX 0x40000    // 4 */
 /* #define RATIO_RADIX 3 */
@@ -42,6 +47,45 @@
 
 // enumerate parameters
 enum params {
+
+  // xfade time.. TODO, heh
+  eParamFade0,
+  eParamFade1,
+
+  /// smoothers have to be processed first!
+  eParamAmp0Slew,
+  eParamAmp1Slew,
+  eParamHz0Slew,
+  eParamHz1Slew,
+  eParamWave0Slew,
+  eParamWave1Slew,
+  eParamPm10Slew,
+  eParamPm01Slew,
+  eParamWm10Slew,
+  eParamWm01Slew,
+
+  eParamCut0Slew,
+  eParamRq0Slew,
+  eParamLow0Slew,
+  eParamHigh0Slew,
+  eParamBand0Slew,
+  eParamNotch0Slew,
+
+  eParamCut1Slew,
+  eParamRq1Slew,
+  eParamLow1Slew,
+  eParamHigh1Slew,
+  eParamBand1Slew,
+  eParamNotch1Slew,
+
+  eParamDry0Slew,
+  eParamWet0Slew,
+
+  eParamDry1Slew,
+  eParamWet1Slew,
+
+  // smoothing parameter for ALL mix values!
+  eParamMixSlew,
 
   // delay input mix
   eParam_adc0_del0,		
@@ -86,6 +130,18 @@ enum params {
   eParam_adc3_dac1,		
   eParam_adc3_dac2,		
   eParam_adc3_dac3,		
+
+    // cv
+  eParam_cvSlew3,
+  eParam_cvSlew2,
+  eParam_cvSlew1,
+  eParam_cvSlew0,
+
+  eParam_cvVal3,
+  eParam_cvVal2,
+  eParam_cvVal1,
+  eParam_cvVal0,
+
 
   // line 1
   eParam_freq1,		
