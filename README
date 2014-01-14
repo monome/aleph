@@ -184,7 +184,7 @@ PATH=$PATH:~/avr32-gnu-toolchain/bin
 
 cd avr-headers-3.2.3.970
 cp avr/ ~/avr32-gnu-toolchain/include/ -R
-cp avr32/ ~/avr32-gnu-toolchain/include/ -R
+cp avr32/ ~/avr32-gnu-toolchain/avr32/include/ -R
 
 
 you should now be able to run 'make' from aleph/avr32 and produce aleph.elf. yeah!
