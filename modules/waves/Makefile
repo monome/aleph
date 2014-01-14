@@ -1,3 +1,4 @@
+
 module_name = waves
 module_obj = waves.o  \
 	params.o \
@@ -11,12 +12,15 @@ module_obj = waves.o  \
 	$(bfin_lib_srcdir)/libfixmath/fix16.o
 
 all: aleph-$(module_name).ldr
+	cp aleph-$(module_name).ldr aleph-$(module_name)-$(maj).$(min).$(rev).ldr
 
 include ../../bfin_lib/bfin_lib.mk
 
 CFLAGS += -D ARCH_BFIN=1
 CFLAGS += -g
 #CFLAGS += --verbose
+
+include version.mk
 
 $(module_obj): %.o : %.c	
 	$(CC) $(CFLAGS) -c -o $@ $< $(LDFLAGS)
@@ -30,6 +34,7 @@ aleph-$(module_name): bfin_lib_target $(module_obj)
 
 clean: bfin_lib_clean
 	rm $(module_obj)
+	rm aleph-$(module_name)-$(maj).$(min).$(rev).ldr
 	rm aleph-$(module_name).ldr 
 	rm aleph-$(module_name)
 
