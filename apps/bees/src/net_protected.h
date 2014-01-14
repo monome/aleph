@@ -63,6 +63,7 @@ typedef struct _pnode {
   ParamData data;
   ParamScaler scaler;
   u8 idx;
+  //// ah.. has no play inclusion flag
   //  u8 preset;
   //} __attribute__((packed)) pnode_t;
 } pnode_t;
@@ -125,6 +126,5 @@ extern op_sw_t* opSysSw[6];
 extern op_adc_t* opSysAdc;
 // preset
 extern op_preset_t* opSysPreset;
-
 
 #endif // header guard

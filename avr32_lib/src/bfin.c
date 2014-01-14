@@ -65,11 +65,16 @@ void bfin_load_buf(void) {
   ////
   /////////
 
-
+  ////////////
+  //// tESTING don't check
+#if 0
   if(bfinLdrSize > BFIN_LDR_MAX_BYTES) {
     print_dbg("\r\n bfin load error: size : "); print_dbg_hex(bfinLdrSize);
     return;
   }
+#endif
+  ///////////////
+  ////////////////
 
   app_pause();
 
@@ -289,6 +294,13 @@ void bfin_enable(void) {
   // enable audio processing
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, MSG_ENABLE_AUDIO);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+}
+
+void bfin_disable(void) {
+  // disable audio processing
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, MSG_DISABLE_AUDIO);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 }
 

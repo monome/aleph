@@ -18,7 +18,7 @@
 
 // 64k is max size of blackfin ldr file
 //#define BFIN_LDR_MAX_BYTES 0x10000 
-//// actually, the ldr itself can be bigger than the SRAM.
+//// actually, the ldr itself can be bigger than the bfin's sram...??
 #define BFIN_LDR_MAX_BYTES 0x12000
 
 // wait for busy pin to clear
@@ -54,6 +54,8 @@ void bfin_get_module_version(moduleVersion_t* vers);
 extern void bfin_spi_master(void);
 // enable audio processing
 extern void bfin_enable(void);
+// disable audio processing
+extern void bfin_disable(void);
 
 // wait for ready status (e.g. after module init)
 extern void bfin_wait_ready(void);

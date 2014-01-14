@@ -100,14 +100,16 @@ void scene_write_buf(void) {
 void scene_read_buf(void) {
   s8 modName[MODULE_NAME_LEN];
   const u8* src = (u8*)&(sceneData->pickle);
-  s8 neq = 0;
+
+  /// FIXME: we really should be using this comparison
+  
+  //  s8 neq = 0;
   //  u32 i;
 
   app_pause();
 
   // store current mod name in scene desc
   memcpy(modName, sceneData->desc.moduleName, MODULE_NAME_LEN);
-
 
   ///// always load:
     print_dbg("\r\n loading module name: ");
@@ -116,6 +118,8 @@ void scene_read_buf(void) {
     //  }
 
     bfin_wait_ready();
+
+    net_clear_user_ops();
 
     net_report_params();
 
@@ -146,10 +150,11 @@ void scene_read_buf(void) {
   //  if(neq) {
     // load bfin module if it doesn't match the current scene desc
 
+  //...
     
     bfin_wait_ready();
 
-  //// well let's try it, actually that would explain osme things..
+  //// well let's try it, actually that would explain some things..
     //  delay_ms(10);
 
   // update bfin parameters
@@ -183,7 +188,7 @@ void scene_write_default(void) {
   if(neq) {
     render_boot("writing DSP to flash");
     print_dbg("\r\n writing default LDR from scene descriptor");
-    files_store_default_dsp_name(sceneData->desc.moduleName);
+    //    files_store_default_dsp_name(sceneData->desc.moduleName);
   }    
   delay_ms(20);
   print_dbg("\r\n finished writing default scene");

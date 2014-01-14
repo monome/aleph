@@ -51,7 +51,7 @@ static void handle_key_2(s32 val);
 static void handle_key_3(s32 val);
 
 // redraw based on provisional preset seleciton
-static void redraw_ins_preset(u8 idx);
+static void redraw_ins_preset(void );
 
 // fill tmp region with new content
 // given input index and foreground color
@@ -239,7 +239,7 @@ static void show_foot2(void) {
     }
 #endif
   } else {
-    font_string_region_clip(footRegion[2], "CLEAR", 0, 0, 0xf, fill);
+    font_string_region_clip(footRegion[2], "ZERO", 0, 0, 0xf, fill);
   }
 }
 
@@ -484,7 +484,8 @@ void handle_enc_3(s32 val) {
       preset_inc_select(-1);
     }
     // refresh line data
-    redraw_ins_preset((u8)preset_get_select());
+    //    redraw_ins_preset((u8)preset_get_select());
+    redraw_ins_preset();
   } else {
     // scroll selection
     select_scroll(val);
@@ -504,7 +505,7 @@ void redraw_ins(void) {
 }
 
 // redraw based on provisional preset seleciton
-void redraw_ins_preset (u8 idx) {
+void redraw_ins_preset ( void ) {
   s32 max = net_num_ins() - 1;
   u8 i=0;
   u8 n = *pageSelect - 3;

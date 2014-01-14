@@ -207,6 +207,7 @@ void net_init(void) {
   netActive = 1;
 }
 
+
 // de-initialize network
 void net_deinit(void) {
   u32 i;
@@ -222,25 +223,43 @@ void net_deinit(void) {
   net->numIns = 0;
   net->numOuts = 0;
   net->numParams = 0;
+
+
+  // unassign all I/O nodes
+  for(i=0; i<NET_INS_MAX; i++) {
+    net_init_inode(i);
+  }
+  for(i=0; i<NET_OUTS_MAX; i++) {
+    net_init_onode(i);
+  }
+
+}
+
+// clear ops and i/o
+void net_clear_user_ops(void) {
+  net_deinit();
+  add_sys_ops();
 }
 
 // initialize an input node
 void net_init_inode(u16 idx) {
   net->ins[idx].opIdx = -1;
   //  net->ins[idx].preset = 0;
-  net->ins[idx].play = 0;
+  net->ins[idx].play = 1;
 }
 
 // initialize an output node
 void net_init_onode(u16 idx) {
   net->outs[idx].opIdx = -1;
   net->outs[idx].target = -1;
-  //  net->outs[idx].preset = 0;
+  //net->outs[idx].preset = 0;
+  //  net->outs[idx].play = 1;
 }
 
 // activate an input node with a value
 void net_activate(s16 inIdx, const io_t val, void* op) {
   static inode_t* pIn;
+  s16 pIndex;
 
   /* print_dbg("\r\n net_activate, input idx: "); */
   /* print_dbg_hex(inIdx); */
@@ -259,6 +278,22 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
     // input exists
     pIn = &(net->ins[inIdx]);
 
+    if(inIdx < net->numIns) {
+      // this is an op input
+      op_set_in_val(net->ops[pIn->opIdx],
+		    pIn->opInIdx,
+		    val);
+    } else { 
+      // this is a parameter
+      //// FIXME this is horrible
+      pIndex = inIdx - net->numIns;
+      if (pIndex >= net->numParams) {
+	return ;
+      } else {
+	set_param_value(pIndex, val);
+      }
+    }
+
     /// only process for play mode if we're in play mode
     if(pageIdx == ePagePlay) {
       /* print_dbg(" , play mode active, "); */
@@ -270,21 +305,6 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
       }
     }
 
-    if(inIdx < net->numIns) {
-      // this is an op input
-      op_set_in_val(net->ops[pIn->opIdx],
-		    pIn->opInIdx,
-		    val);
-    } else { 
-      // this is a parameter
-      //// FIXME this is horrible
-      inIdx -= net->numIns;
-      if (inIdx >= net->numParams) {
-	return ;
-      } else {
-	set_param_value(inIdx, val);
-      }
-    }
   }  
 }
 
@@ -725,9 +745,16 @@ u8 net_toggle_in_preset(u32 id) {
 
 // toggle preset inclusion for output
 u8 net_toggle_out_preset(u32 id) {
+  u8 tmp = preset_out_enabled(preset_get_select(), id) ^ 1;
   //  net->outs[id].preset ^= 1;
   //  return net->outs[id].preset;
-  return preset_get_selected()->outs[id].enabled ^= 1;
+  print_dbg("\r\n toggled output-preset_enable");
+  print_dbg(", out: ");
+  print_dbg_ulong(id);
+  print_dbg(", flag: ");
+  print_dbg_ulong(tmp);
+  preset_get_selected()->outs[id].enabled = tmp;
+  return tmp;
 }
 
 // set preset inclusion for input
@@ -761,7 +788,7 @@ u8 net_get_in_preset(u32 id) {
 // get preset inclusion for output
 u8 net_get_out_preset(u32 id) {
   //  return net->outs[id].preset;
-  return preset_get_selected()->outs[id].enabled = 1;
+  return preset_get_selected()->outs[id].enabled;
 }
 
 
@@ -808,6 +835,7 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
   net->params[net->numParams].idx = idx; 
   //  net->params[net->numParams].preset = 0; 
   net->numParams += 1;
+  
 }
 
 // clear existing parameters
@@ -859,7 +887,9 @@ u8 net_report_params(void) {
     for(i=0; i<numParams; i++) {
       bfin_get_param_desc(i, &pdesc);
 
-      print_dbg("\r\n received descriptor for param : ");
+      print_dbg("\r\n received descriptor for param, index : ");
+      print_dbg_ulong(i);
+      print_dbg(" , label : ");
       print_dbg((const char* )pdesc.label);
 
       print_dbg(" ; \t initial value: 0x");

@@ -130,14 +130,12 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParam_run_read1].max = 1;
   gModuleData->paramDesc[eParam_run_read1].radix = 2;
 
-  //// FIXME
-  strcpy(gModuleData->paramDesc[eParam_freq0].label, "Freq0");
+  strcpy(gModuleData->paramDesc[eParam_freq0].label, "cut0");
   gModuleData->paramDesc[eParam_freq0].type = eParamTypeSvfFreq; 
   gModuleData->paramDesc[eParam_freq0].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_freq0].max = PARAM_FREQ_MAX;
+  gModuleData->paramDesc[eParam_freq0].max = PARAM_CUT_MAX;
   gModuleData->paramDesc[eParam_freq0].radix = 32;
 
-  ///// FIXME
   strcpy(gModuleData->paramDesc[eParam_rq0].label, "rq0");
   gModuleData->paramDesc[eParam_rq0].type = eParamTypeFix; 
   gModuleData->paramDesc[eParam_rq0].min = PARAM_RQ_MIN;
@@ -180,11 +178,10 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParam_fdry0].max = FR32_MAX; 
   gModuleData->paramDesc[eParam_fdry0].radix = 1;
 
-  //// FIXME
-  strcpy(gModuleData->paramDesc[eParam_freq1].label, "Freq1");
+  strcpy(gModuleData->paramDesc[eParam_freq1].label, "cut1");
   gModuleData->paramDesc[eParam_freq1].type = eParamTypeSvfFreq; 
   gModuleData->paramDesc[eParam_freq1].min = 0x00000000; 
-  gModuleData->paramDesc[eParam_freq1].max = PARAM_FREQ_MAX; 
+  gModuleData->paramDesc[eParam_freq1].max = PARAM_CUT_MAX; 
   gModuleData->paramDesc[eParam_freq1].radix = 1;
 
   ///// FIXME
@@ -445,6 +442,187 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParam_del1_dac3].min = 0x00000000; 
   gModuleData->paramDesc[eParam_del1_dac3].max = FR32_MAX; 
   gModuleData->paramDesc[eParam_del1_dac3].radix = 1;
+
+  // filter slew
+
+  strcpy(gModuleData->paramDesc[eParamCut0Slew].label, "cut0Slew");
+  gModuleData->paramDesc[eParamCut0Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamCut0Slew].min = 0;
+  gModuleData->paramDesc[eParamCut0Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamCut0Slew].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamRq0Slew].label, "rq0Slew");
+  gModuleData->paramDesc[eParamRq0Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamRq0Slew].min = 0;
+  gModuleData->paramDesc[eParamRq0Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamRq0Slew].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamLow0Slew].label, "low0Slew");
+  gModuleData->paramDesc[eParamLow0Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamLow0Slew].min = 0;
+  gModuleData->paramDesc[eParamLow0Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamLow0Slew].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamHigh0Slew].label, "high0Slew");
+  gModuleData->paramDesc[eParamHigh0Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamHigh0Slew].min = 0;
+  gModuleData->paramDesc[eParamHigh0Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamHigh0Slew].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamBand0Slew].label, "band0Slew");
+  gModuleData->paramDesc[eParamBand0Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamBand0Slew].min = 0;
+  gModuleData->paramDesc[eParamBand0Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamBand0Slew].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamNotch0Slew].label, "notch0Slew");
+  gModuleData->paramDesc[eParamNotch0Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamNotch0Slew].min = 0;
+  gModuleData->paramDesc[eParamNotch0Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamNotch0Slew].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamDry0Slew].label, "dry0Slew");
+  gModuleData->paramDesc[eParamDry0Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamDry0Slew].min = 0;
+  gModuleData->paramDesc[eParamDry0Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamDry0Slew].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamWet0Slew].label, "wet0Slew");
+  gModuleData->paramDesc[eParamWet0Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamWet0Slew].min = 0;
+  gModuleData->paramDesc[eParamWet0Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamWet0Slew].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamCut1Slew].label, "cut1Slew");
+  gModuleData->paramDesc[eParamCut1Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamCut1Slew].min = 0;
+  gModuleData->paramDesc[eParamCut1Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamCut1Slew].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamRq1Slew].label, "rq1Slew");
+  gModuleData->paramDesc[eParamRq1Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamRq1Slew].min = 0;
+  gModuleData->paramDesc[eParamRq1Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamRq1Slew].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamLow1Slew].label, "low1Slew");
+  gModuleData->paramDesc[eParamLow1Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamLow1Slew].min = 0;
+  gModuleData->paramDesc[eParamLow1Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamLow1Slew].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamHigh1Slew].label, "high1Slew");
+  gModuleData->paramDesc[eParamHigh1Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamHigh1Slew].min = 0;
+  gModuleData->paramDesc[eParamHigh1Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamHigh1Slew].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamBand1Slew].label, "band1Slew");
+  gModuleData->paramDesc[eParamBand1Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamBand1Slew].min = 0;
+  gModuleData->paramDesc[eParamBand1Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamBand1Slew].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamNotch1Slew].label, "notch1Slew");
+  gModuleData->paramDesc[eParamNotch1Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamNotch1Slew].min = 0;
+  gModuleData->paramDesc[eParamNotch1Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamNotch1Slew].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamDry1Slew].label, "dry1Slew");
+  gModuleData->paramDesc[eParamDry1Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamDry1Slew].min = 0;
+  gModuleData->paramDesc[eParamDry1Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamDry1Slew].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamWet1Slew].label, "wet1Slew");
+  gModuleData->paramDesc[eParamWet1Slew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamWet1Slew].min = 0;
+  gModuleData->paramDesc[eParamWet1Slew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamWet1Slew].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamMixSlew].label, "mixSlew");
+  gModuleData->paramDesc[eParamMixSlew].type = eParamTypeIntegrator;
+  gModuleData->paramDesc[eParamMixSlew].min = 0;
+  gModuleData->paramDesc[eParamMixSlew].max = FR32_MAX;
+  gModuleData->paramDesc[eParamMixSlew].radix = 32;
+
+  /////
+
+  strcpy(gModuleData->paramDesc[eParam_cvVal0].label, "cv0");
+  gModuleData->paramDesc[eParam_cvVal0].type = eParamTypeFix; 
+  gModuleData->paramDesc[eParam_cvVal0].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_cvVal0].max = PARAM_DAC_MAX;
+  gModuleData->paramDesc[eParam_cvVal0].radix = PARAM_DAC_RADIX;
+
+  strcpy(gModuleData->paramDesc[eParam_cvVal1].label, "cv1");
+  gModuleData->paramDesc[eParam_cvVal1].type = eParamTypeFix; 
+  gModuleData->paramDesc[eParam_cvVal1].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_cvVal1].max = PARAM_DAC_MAX;
+  gModuleData->paramDesc[eParam_cvVal1].radix = PARAM_DAC_RADIX;
+
+  strcpy(gModuleData->paramDesc[eParam_cvVal2].label, "cv2");
+  gModuleData->paramDesc[eParam_cvVal2].type = eParamTypeFix; 
+  gModuleData->paramDesc[eParam_cvVal2].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_cvVal2].max = PARAM_DAC_MAX;
+  gModuleData->paramDesc[eParam_cvVal2].radix = PARAM_DAC_RADIX;
+
+  strcpy(gModuleData->paramDesc[eParam_cvVal3].label, "cv3");
+  gModuleData->paramDesc[eParam_cvVal3].type = eParamTypeFix; 
+  gModuleData->paramDesc[eParam_cvVal3].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_cvVal3].max = PARAM_DAC_MAX;
+  gModuleData->paramDesc[eParam_cvVal3].radix = PARAM_DAC_RADIX;
+
+  strcpy(gModuleData->paramDesc[eParam_cvSlew0].label, "cvSlew0");
+  gModuleData->paramDesc[eParam_cvSlew0].type = eParamTypeIntegrator; 
+  gModuleData->paramDesc[eParam_cvSlew0].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_cvSlew0].max = 0x7fffffff;
+  gModuleData->paramDesc[eParam_cvSlew0].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParam_cvSlew1].label, "cvSlew1");
+  gModuleData->paramDesc[eParam_cvSlew1].type = eParamTypeIntegrator; 
+  gModuleData->paramDesc[eParam_cvSlew1].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_cvSlew1].max = 0x7fffffff;
+  gModuleData->paramDesc[eParam_cvSlew1].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParam_cvSlew2].label, "cvSlew2");
+  gModuleData->paramDesc[eParam_cvSlew2].type = eParamTypeIntegrator; 
+  gModuleData->paramDesc[eParam_cvSlew2].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_cvSlew2].max = 0x7fffffff; 
+  gModuleData->paramDesc[eParam_cvSlew2].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParam_cvSlew3].label, "cvSlew3");
+  gModuleData->paramDesc[eParam_cvSlew3].type = eParamTypeIntegrator; 
+  gModuleData->paramDesc[eParam_cvSlew3].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_cvSlew3].max = 0x7fffffff;
+  gModuleData->paramDesc[eParam_cvSlew3].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParam_cvSlew2].label, "cvSlew2");
+  gModuleData->paramDesc[eParam_cvSlew2].type = eParamTypeIntegrator; 
+  gModuleData->paramDesc[eParam_cvSlew2].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_cvSlew2].max = 0x7fffffff; 
+  gModuleData->paramDesc[eParam_cvSlew2].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParam_cvSlew3].label, "cvSlew3");
+  gModuleData->paramDesc[eParam_cvSlew3].type = eParamTypeIntegrator; 
+  gModuleData->paramDesc[eParam_cvSlew3].min = 0x00000000; 
+  gModuleData->paramDesc[eParam_cvSlew3].max = 0x7fffffff;
+  gModuleData->paramDesc[eParam_cvSlew3].radix = 32;
+
+  strcpy(gModuleData->paramDesc[eParamFade0].label, "fade0");
+  gModuleData->paramDesc[eParamFade0].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamFade0].min = PARAM_FADE_MIN;
+  gModuleData->paramDesc[eParamFade0].max = PARAM_FADE_MAX;
+  gModuleData->paramDesc[eParamFade0].radix = PARAM_FADE_RADIX;
+
+  strcpy(gModuleData->paramDesc[eParamFade1].label, "fade1");
+  gModuleData->paramDesc[eParamFade0].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamFade0].min = PARAM_FADE_MIN;
+  gModuleData->paramDesc[eParamFade0].max = PARAM_FADE_MAX;
+  gModuleData->paramDesc[eParamFade0].radix = PARAM_FADE_RADIX;
+
+
+
 }
 
 // EOF

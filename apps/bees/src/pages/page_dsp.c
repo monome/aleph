@@ -166,6 +166,8 @@ void handle_key_0(s32 val) {
     headRegion->dirty = 1;
     render_update();
     
+    net_clear_user_ops();
+
     files_load_dsp(*pageSelect);
     bfin_wait_ready();
     net_report_params();
@@ -182,6 +184,7 @@ void handle_key_0(s32 val) {
 }
 
 void handle_key_1(s32 val) {
+  /*
   if(val == 0) { return; }
   if(check_key(1)) {
     // render status to head region  
@@ -190,7 +193,8 @@ void handle_key_1(s32 val) {
     headRegion->dirty = 1;
     render_update();
     // write module as default 
-    files_store_default_dsp(*pageSelect);
+    //    files_store_default_dsp(*pageSelect);
+
     // render status to head region 
     region_fill(headRegion, 0x0);
     font_string_region_clip(headRegion, "finished writing.", 0, 0, 0xa, 0);
@@ -198,10 +202,15 @@ void handle_key_1(s32 val) {
     render_update();
   }
   show_foot();
+  */
 }
 
 void handle_key_2(s32 val) {
-  // nothing
+  if(check_key(2)) {
+    bfin_disable();
+    net_report_params();
+    bfin_enable();
+  }
 }
 
 void handle_key_3(s32 val) {

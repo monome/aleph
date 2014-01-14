@@ -172,6 +172,7 @@ u8 files_load_dsp_name(const char* name) {
 
 
 // store .ldr as default in internal flash, given index
+#if 0
 void files_store_default_dsp(u8 idx) {
   files_store_default_dsp_name((const char*)files_get_dsp_name(idx));
   /* const char* name; */
@@ -197,7 +198,9 @@ void files_store_default_dsp(u8 idx) {
 
   /* app_resume(); */
 }
+#endif
 
+/*
 // store .ldr as default in internal flash, given name
 void files_store_default_dsp_name(const char* name) {
   //  const char* name;
@@ -238,6 +241,7 @@ void files_store_default_dsp_name(const char* name) {
 
   app_resume();
 }
+*/
 
 
 // return count of dsp files

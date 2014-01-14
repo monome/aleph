@@ -184,8 +184,8 @@ void op_set_in_val(op_t* op, s16 idx, io_t val) {
   //  *pIn = val;
   //  (*(op->in_fn[idx]))(op, pIn);  
 
-  print_dbg("\r\n setting op input, value: 0x");
-  print_dbg_hex(val);
+  //  print_dbg("\r\n setting op input, value: 0x");
+  //  print_dbg_hex(val);
 
   (*(op->in_fn[idx]))(op, val);  
 

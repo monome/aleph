@@ -172,9 +172,15 @@ void scaler_get_str(char* dst, ParamScaler* sc, io_t in) {
 
 // get input given DSP value (use sparingly)
 io_t scaler_get_in(ParamScaler* sc, s32 value) {
+  /// debug
+  io_t val;
   scaler_get_in_fn fn =  scaler_get_in_pr[sc->desc->type];
   if( fn != NULL) {
-    return (*fn)(sc, value);
+    val = (*fn)(sc, value);
+    print_dbg("\r\n getting input value for scaler. ");
+    print_dbg(" param type from desc: ");
+    print_dbg_ulong(sc->desc->type);
+    return val;
   } else {
     return 0;
   }
@@ -183,6 +189,11 @@ io_t scaler_get_in(ParamScaler* sc, s32 value) {
 // increment input
 extern s32 scaler_inc(ParamScaler* sc, io_t * pin, io_t inc ) {
   scaler_inc_fn fn =  scaler_inc_pr[sc->desc->type];
+  //  s32 sInc = (s32)inc;
+  
+  /* if(inc > 0x7fff) { */
+  /*   //    sInc =  */
+  /* } */
   if( fn != NULL) {
     return (*fn)(sc, pin, inc);
   } else {
