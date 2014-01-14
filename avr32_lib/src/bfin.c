@@ -65,11 +65,16 @@ void bfin_load_buf(void) {
   ////
   /////////
 
-
+  ////////////
+  //// tESTING don't check
+#if 0
   if(bfinLdrSize > BFIN_LDR_MAX_BYTES) {
     print_dbg("\r\n bfin load error: size : "); print_dbg_hex(bfinLdrSize);
     return;
   }
+#endif
+  ///////////////
+  ////////////////
 
   app_pause();
 
