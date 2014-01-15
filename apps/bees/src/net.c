@@ -259,10 +259,15 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
   static inode_t* pIn;
   s16 pIndex;
 
-  /* print_dbg("\r\n net_activate, input idx: "); */
-  /* print_dbg_hex(inIdx); */
-  /* print_dbg(" , value: "); */
-  /* print_dbg_hex(val); */
+  print_dbg("\r\n net_activate, input idx: ");
+  print_dbg_hex(inIdx);
+  print_dbg(" , value: ");
+  print_dbg_hex(val);
+
+  print_dbg("\r, op index: ");
+  print_dbg_ulong(net->ins[inIdx].opIdx);
+  print_dbg(" , input idx: ");
+  print_dbg_ulong(net->ins[inIdx].opInIdx);
 
   if(!netActive) {
     if(op != NULL) {
@@ -294,15 +299,14 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
 
     /// only process for play mode if we're in play mode
     if(pageIdx == ePagePlay) {
-      /* print_dbg(" , play mode active, "); */
-      /* print_dbg(" , play visibility flag : "); */
-      /* print_dbg_ulong(pIn->play); */
+      print_dbg(" , play mode active, ");
+      print_dbg(" , play visibility flag : ");
+      print_dbg_ulong(pIn->play);
       // only process if play-mode-visibility is set
       if(pIn->play) {
 	play_input(inIdx);
       }
     }
-
   }  
 }
 
