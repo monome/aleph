@@ -52,8 +52,8 @@ static const char scalerRepPath[eParamNumTypes][32] = {
   "", 	//  eParamTypeBool,
   "", 	//  eParamTypeFix,
   "scaler_amp_rep.dat", 	//  eParamTypeAmp,
-  "", 	//  eParamTypeAmp,
-  "scaler_integrator_rep.dat", 	//  eParamTypeIntegrator,
+  //  "scaler_integrator_rep.dat", 	//  eParamTypeIntegrator,
+  "", 	//  eParamTypeIntegrator,
   "", 	//  eParamTypeNote,
   "", 	//  eParamTypeSvfFreq,
 };

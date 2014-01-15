@@ -51,9 +51,10 @@ static inline void osc_calc_wm(osc* osc) {
 
   // ok, time for serious bullshit!
   sm = sub_fr1x32(sm, 
-		  shl_fr1x32( mult_fr1x32x32( (fract32)fix16_sub(osc->inc, incMin), 
-					      osc->bandLim ),
-			      1 ) );
+		  mult_fr1x32x32( (fract32)(fix16_sub(osc->inc, incMin) * shapeLimMul),
+				   osc->bandLim 
+				  )
+		  );
   if(sm < 0) { sm = 0; }
   osc->shapeMod = sm;
 }

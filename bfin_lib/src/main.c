@@ -29,10 +29,7 @@ int main(void) {
   // intialize the sdram controller
   init_EBIU();
   // intialize the flash controller (which, weirdly, handles gpio)
-  //  init_flash();
-
-  // initialize the codec
-  init_1939();
+  //  init_flash();  
 
   /// initialize the CV dac (reset) 
   init_dac();
@@ -49,12 +46,17 @@ int main(void) {
    
   // intialize the audio processing unit (assign memory)
   module_init();
+
   // assign interrupts
   init_interrupts();
+
   // begin audio transfers
   enable_DMA_sport0();  
   // begin cv transfers
   enable_DMA_sport1();  
+
+  // initialize the codec
+  init_1939();
 
   // leds on
   LED3_HI;
