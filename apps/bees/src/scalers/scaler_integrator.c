@@ -16,7 +16,7 @@ static const u32 tabSize = 1024;
 static const u8 inRshift = 5;
 
 static const s32* tabVal;
-static const s32* tabRep;
+//static const s32* tabRep;
 
 static u8 initFlag = 0;
 
@@ -33,10 +33,24 @@ s32 scaler_integrator_val(void* scaler, io_t in) {
 }
 
 void scaler_integrator_str(char* dst, void* scaler,  io_t in) {
-  u16 uin = (in < 0) ? 0 : ((u16)in >> inRshift) ;
-  print_dbg("\r\n ingegrator_str() , index: ");
-  print_dbg_hex(uin);
-  print_fix16(dst, tabRep[uin] );
+  //  u16 uin = (in < 0) ? 0 : ((u16)in >> inRshift) ;
+  /* print_dbg("\r\n ingegrator_str() , input: 0x"); */
+  /* print_dbg_hex(in); */
+  /* print_dbg(" , index : 0x"); */
+  /* print_dbg_hex(uin); */
+  /* print_dbg(" , val : 0x"); */
+  /* print_dbg_hex(tabRep[uin]); */
+
+  ///// HACK:
+  // trying non-table solution... slow :S
+  /// in this test, using known magic-number multiplier.
+  /// should compute from descriptor in init.
+  //  print_dbg(" , computed val : 0x");
+  if(in < 0) { in = 0; }
+  //  print_dbg_hex(fix16_mul((s32)in << 1, 0x400000) );
+  print_fix16(dst, fix16_mul((s32)in << 1, 0x400000) );
+  
+  //  print_fix16(dst, tabRep[uin] );
 }
 
 // init function
@@ -62,7 +76,7 @@ void scaler_integrator_init(void* scaler) {
 
     // assign
     tabVal = scaler_get_nv_data(eParamTypeIntegrator);
-    tabRep = scaler_get_nv_rep(eParamTypeIntegrator);
+    //    tabRep = scaler_get_nv_rep(eParamTypeIntegrator);
   }
 
   sc->inMin = 0;
