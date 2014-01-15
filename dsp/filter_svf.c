@@ -16,7 +16,7 @@
 #include "module.h"
 #include "fix.h"
 #include "fract_math.h"
-#include "sin_fr32.h"
+//#include "sin_fr32.h"
 #include "table.h"
 #include "filter_svf.h"
 
