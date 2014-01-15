@@ -1,5 +1,5 @@
 ============================================
-130114
+130114b
 
 ----------------
 bees	0.2.0
@@ -7,6 +7,7 @@ bees	0.2.0
 - add preset-recall notify to play page
 - correct enc0, enc1 scaling on play page
 - preset names stored in scene
+- 'zero' command now 'zero/max'
 - add 'thresh' operator
 
 ----------------
