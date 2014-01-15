@@ -1,12 +1,16 @@
 ===========================================
 
+----------------
 bees	0.2.1
+
 - fix crash when selected 1st operator's inputs from ops page
 
 ============================================
 140114b
 
+----------------
 bees	0.2.0
+
 - add 2nd sensitivity knob on ins page
 - add preset-recall notify to play page
 - correct enc0, enc1 scaling on play page
