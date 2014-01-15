@@ -616,12 +616,10 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamFade0].radix = PARAM_FADE_RADIX;
 
   strcpy(gModuleData->paramDesc[eParamFade1].label, "fade1");
-  gModuleData->paramDesc[eParamFade0].type = eParamTypeFix;
-  gModuleData->paramDesc[eParamFade0].min = PARAM_FADE_MIN;
-  gModuleData->paramDesc[eParamFade0].max = PARAM_FADE_MAX;
-  gModuleData->paramDesc[eParamFade0].radix = PARAM_FADE_RADIX;
-
-
+  gModuleData->paramDesc[eParamFade1].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamFade1].min = PARAM_FADE_MIN;
+  gModuleData->paramDesc[eParamFade1].max = PARAM_FADE_MAX;
+  gModuleData->paramDesc[eParamFade1].radix = PARAM_FADE_RADIX;
 
 }
 
