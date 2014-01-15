@@ -1,10 +1,24 @@
+============================================
+130114
+
+----------------
+bees	0.2.0
+- add 2nd sensitivity knob on ins page
+- add preset-recall notify to play page
+- correct enc0, enc1 scaling on play page
+- preset names stored in scene
+- add 'thresh' operator
+
+----------------
+lines	0.0.2
+- fix param descriptors so doesn't crash on scene load.
+
 
 ============================================
 130114
 
 ----------------
 bees	0.1.0
-
 - added DELETE to ops page; removes most recent op.
 - fix saturation in table-based param scalers.
 - cleanup
@@ -20,8 +34,7 @@ lines	0.0.1
 - delay codec reset at startup until interrupts enabled. catches some startup bugs.
 
 
-
-===================================================
+============================================
 130113
 
 bees 	0.0.0

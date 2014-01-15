@@ -77,7 +77,6 @@ void handle_enc_0(s32 val) {
   //  print_dbg("\r\n play handler, enc 0, op address: 0x");
   //  print_dbg_hex((u32)opSysEnc[0]);
 // FIXME: this is a hack to make the operators work with the correct numbers
-
   op_enc_sys_input(opSysEnc[3], (s8)val);
 }
 

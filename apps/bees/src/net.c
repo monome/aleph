@@ -245,7 +245,6 @@ void net_clear_user_ops(void) {
 // initialize an input node
 void net_init_inode(u16 idx) {
   net->ins[idx].opIdx = -1;
-  //  net->ins[idx].preset = 0;
   net->ins[idx].play = 1;
 }
 
@@ -253,8 +252,6 @@ void net_init_inode(u16 idx) {
 void net_init_onode(u16 idx) {
   net->outs[idx].opIdx = -1;
   net->outs[idx].target = -1;
-  //net->outs[idx].preset = 0;
-  //  net->outs[idx].play = 1;
 }
 
 // activate an input node with a value
@@ -1084,7 +1081,6 @@ void net_get_param_value_string_conversion(char* dst, u32 idx, s32 val) {
 		  val
 		  );
 }
-
 /// scale
 
 ///////////////

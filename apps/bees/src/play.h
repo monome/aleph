@@ -27,4 +27,7 @@ extern void play_input(u16 idx);
 // enable rendering (play modal page was selected) 
 extern void play_enable_render(void);
 
+// process preset change
+extern void play_preset(u16 idx);
+
 #endif // h guard

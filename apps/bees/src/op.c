@@ -113,6 +113,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_list8_t),
     .init = &op_list8_init,
     .deinit = NULL    
+  }, {
+    .name = "THRESH",
+    .size = sizeof(op_thresh_t),
+    .init = &op_thresh_init,
+    .deinit = NULL    
   }
 
 };

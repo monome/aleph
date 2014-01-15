@@ -201,54 +201,13 @@ void assign_bees_event_handlers(void) {
 
 #if IO_BITS == 16
 // full-scale
-io_t scale_knob_value(io_t val) {
-  static const u8 kNumKnobScales_1 = 23;
-  static const s16 knobScale[24] = {
-    ///--- 3 linear segments:
-    // slope = 1
-    0x0001, // 1
-    0x0002, // 2
-    0x0003, // 3
-    // slope = 0x10
-    0x0030, // 4
-    0x0040, // 5
-    0x0050, // 6
-    0x0060, // 7
-    0x0070, // 8
-    0x0080, // 9
-    0x0090 ,  // 10
-    0x00a0 , // 11
-    0x00b0 , // 12
-    // slope = 0x100
-    0x0c00 , // 13
-    0x0d00 , // 14
-    0x0e00 , // 15
-    0x0f00 , // 16
-    0x1000 , // 17
-    0x1100 , // 18
-    0x1200 , // 19
-    0x1300 , // 20
-    0x1400 , // 21
-    0x1500 , // 22
-    // ultra fast
-    0x2000 , // 23
-    0x4000 , // 24
-  };
-  s16 vabs = BIT_ABS_16(val);
-  s16 ret = val;
-
-  if(vabs > kNumKnobScales_1) {
-    vabs = kNumKnobScales_1;
-  }
-  ret = knobScale[vabs - 1];
-  if(val < 0) {
-    ret = BIT_NEG_ABS_16(ret);
-  }
-  return ret;
+io_t scale_knob_value_small(io_t val) {
+  // ha!
+  return val;
 }
 
 // lower slope
-io_t scale_knob_value_small(io_t val) {
+io_t scale_knob_value(io_t val) {
   static const u32 kNumKnobScales_1 = 23;
   static const u32 knobScale[24] = {
     ///--- 3 linear segments:

@@ -16,7 +16,9 @@
 #endif
 // bees
 #include "net_protected.h"
+#include "pages.h"
 #include "param.h"
+#include "play.h"
 #include "preset.h"
 // aleph
 #include "memory.h"
@@ -188,6 +190,13 @@ void preset_recall(u32 preIdx) {
   /*   } */
   /* } */
 
+  
+  /// process for play mode if we're in play mode
+  if(pageIdx == ePagePlay) {
+    play_preset(preIdx);
+  }
+
+  // update selection
   select = preIdx;
 }
 
