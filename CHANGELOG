@@ -1,3 +1,17 @@
+===========================================
+140115
+
+----------------
+bees	0.2.2
+
+- fix 256 detection bug
+- add 40h protocol
+
+----------------
+bees	0.2.1
+
+- fix crash when selected 1st operator's inputs from ops page
+
 ============================================
 130114b
 
