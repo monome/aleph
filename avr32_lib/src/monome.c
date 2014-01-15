@@ -262,7 +262,7 @@ u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr) {
       setup_series(8, 16);
       return 1;
     }
-    if( strncmp(buf, "m128-", 5) == 0 ) {
+    if( strncmp(buf, "m256-", 5) == 0 ) {
       // series 256
       setup_series(16, 16);
       return 1;
@@ -494,6 +494,7 @@ static inline void set_funcs(void) {
 
 // setup 40h-protocol device
 static void setup_40h(u8 cols, u8 rows) {
+  print_dbg("\r\n setup 40h device");
   mdesc.protocol = eProtocol40h;
   mdesc.device = eDeviceGrid;
   mdesc.cols = 8;
@@ -606,6 +607,38 @@ static u8 setup_mext(void) {
 /// (e.g. from usb transfer callback )
 
 static void read_serial_40h(void) {
+  u8* prx = ftdi_rx_buf();
+  u8 i;
+  rxBytes = ftdi_rx_bytes();
+  // print_dbg("\r\n read_serial_40h, byte count: ");
+  // print_dbg_ulong(rxBytes);
+  // print_dbg(" ; data : [ 0x");
+  // print_dbg_hex(prx[0]);
+  // print_dbg(" , 0x");
+  // print_dbg_hex(prx[1]);
+  // print_dbg(" ]");
+  i = 0;
+  while(i < rxBytes) {
+    // FIXME: can we expect other event types? (besides press/lift)
+    // print_dbg(" ; x : 0x");
+    // print_dbg_hex((prx[1] & 0xf0) >> 4);
+    // print_dbg("; y : 0x");
+    // print_dbg_hex(prx[1] & 0xf);
+    // print_dbg(" ; z : 0x");
+    // print_dbg_hex(   ((prx[0] & 0xf) != 0) );
+
+    // press event
+    if ((prx[0] & 0xf0) == 0) {
+      monome_grid_key_write_event( 
+        ((prx[1] & 0xf0) >> 4),
+        prx[1] & 0xf,
+        ((prx[0] & 0xf) != 0)
+      );
+    }
+    
+    i += 2;
+    prx += 2;
+  }
 }
 
 static void read_serial_series(void) {
@@ -618,7 +651,7 @@ static void read_serial_series(void) {
   /* print_dbg_hex(prx[0]); */
   /* print_dbg(" , 0x"); */
   /* print_dbg_hex(prx[1]); */
-  /* print_dbg(" ]");   */
+  /* print_dbg(" ]"); */
   i = 0;
   while(i < rxBytes) {
     // FIXME: can we expect other event types? (besides press/lift)
@@ -738,7 +771,24 @@ static void grid_map_mext( u8 x, u8 y, const u8* data ) {
 
 
 static void grid_map_40h(u8 x, u8 y, const u8* data) {
-  // TODO : (use 8 row commands and ignore x/y)
+  // print_dbg("\n\r=== grid_map_40h ===");
+  static u8 i, j, row;
+  for(i=0; i<MONOME_QUAD_LEDS; i++) {
+    txBuf[0] = 0x70 + i;
+    row = 0;
+    for(j=0; j<MONOME_QUAD_LEDS; j++) {
+      // binary value of data byte to bitfield of tx byte
+      row |= ((*data > 0) << j);
+      ++data;
+    }
+    data += MONOME_QUAD_LEDS;
+    txBuf[1] = row;
+    // print_dbg("\n\r 40h: send led_row command: ");
+    // print_dbg_hex(txBuf[0]);
+    // print_dbg(" row data: 0x");
+    // print_dbg_hex(txBuf[1]);    
+    ftdi_write(txBuf, 2);
+  }
 }
 
 static void grid_map_series(u8 x, u8 y, const u8* data) {
