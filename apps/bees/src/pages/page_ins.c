@@ -515,6 +515,9 @@ void redraw_ins(void) {
   u8 i=0;
   u8 n = *pageSelect - 3;
   while(i<8) {
+    while(n < 0) {
+      n += (net_num_ins() + net_num_params());
+    }
     render_line( n, 0xa );
     render_to_scroll_line(i, n == *pageSelect ? 1 : 0);
     ++i;
