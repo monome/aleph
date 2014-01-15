@@ -262,7 +262,7 @@ u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr) {
       setup_series(8, 16);
       return 1;
     }
-    if( strncmp(buf, "m128-", 5) == 0 ) {
+    if( strncmp(buf, "m256-", 5) == 0 ) {
       // series 256
       setup_series(16, 16);
       return 1;
