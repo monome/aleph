@@ -17,6 +17,7 @@
 #endif
 
 // aleph-avr32
+#include "app.h"
 #include "bfin.h"
 #include "control.h"
 #include "memory.h"
@@ -244,7 +245,6 @@ void net_clear_user_ops(void) {
 // initialize an input node
 void net_init_inode(u16 idx) {
   net->ins[idx].opIdx = -1;
-  //  net->ins[idx].preset = 0;
   net->ins[idx].play = 1;
 }
 
@@ -252,8 +252,6 @@ void net_init_inode(u16 idx) {
 void net_init_onode(u16 idx) {
   net->outs[idx].opIdx = -1;
   net->outs[idx].target = -1;
-  //net->outs[idx].preset = 0;
-  //  net->outs[idx].play = 1;
 }
 
 // activate an input node with a value
@@ -399,30 +397,38 @@ s16 net_pop_op(void) {
   const s16 opIdx = net->numOps - 1;
   op_t* op = net->ops[opIdx];
   int i=0;
-  int x;
+  int x, y;
+
+  app_pause();
   // bail if system op
   if(net_op_flag (opIdx, eOpFlagSys)) { return 1; }
   // de-init
   op_deinit(op);
   // store the global index of the first input
   x = net_op_in_idx(opIdx, 0);
+  y = x + op->numInputs;
 
   // check if anything connects here
   for(i=0; i<net->numOuts; i++) {
     // this check works b/c we know this is last op in list
     if( net->outs[i].target >= x ) {
-      net_disconnect(i);
+      if( net->outs[i].target < y) {
+	net_disconnect(i);
+      } else {
+	//	net->outs[i].target -= op->numInputs;
+	net_connect(i, net->outs[i].target - op->numInputs); 
+      }
     }
   }
-
   // erase input nodes
-  for(i=0; i<op->numInputs; i++) {
+  while(x < y) {
     net_init_inode(x++);
   }
   // store the global index of the first output
   x = net_op_out_idx(opIdx, 0);
+  y = x + op->numOutputs;
   // erase output nodes
-  for(i=0; i<op->numOutputs; i++) {
+  while(x < y) {
     net_init_onode(x++);
   }
 
@@ -431,6 +437,8 @@ s16 net_pop_op(void) {
 
   net->opPoolOffset -= op_registry[op->type].size;
   net->numOps -= 1;
+
+  app_resume();
   return 0;
 
 }
@@ -1073,7 +1081,6 @@ void net_get_param_value_string_conversion(char* dst, u32 idx, s32 val) {
 		  val
 		  );
 }
-
 /// scale
 
 ///////////////

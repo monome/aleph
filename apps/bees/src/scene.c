@@ -81,6 +81,7 @@ void scene_write_buf(void) {
   print_dbg("\r\n bytes written: 0x");
   print_dbg_hex(bytes);
   dst = newDst;
+
   // pickle presets
   newDst = presets_pickle(dst);
   bytes += (newDst - dst);
@@ -88,11 +89,8 @@ void scene_write_buf(void) {
   print_dbg_hex(bytes);
   dst = newDst;
   
-  /* if((u32)dst > ((u32)(sceneData->pickle) + SCENE_PICKLE_SIZE)) { */
-  /*   print_dbg(" !!!!!!!! error: serialized scene data is exceeded allocated bounds !!!!! "); */
-  /* } */
   if(bytes > SCENE_PICKLE_SIZE) {
-    print_dbg(" !!!!!!!! error: serialized scene data is exceeded allocated bounds !!!!! ");
+    print_dbg(" !!!!!!!! error: serialized scene data exceeded allocated bounds !!!!! ");
   }
 }
 

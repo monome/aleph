@@ -53,8 +53,9 @@ void op_preset_init(void* mem) {
   //  preset->in_val[2] = &(preset->idx);
   
   preset->super.type = eOpPreset;
-  preset->super.flags |= (1 << eOpFlagSys);
   preset->super.in_val = preset->in_val;
+
+  preset->super.flags |= (1 << eOpFlagSys);
  
   preset->super.opString = op_preset_opstring;
   preset->super.inString = op_preset_instring;
@@ -69,6 +70,7 @@ void op_preset_init(void* mem) {
 // input read index
 static void op_preset_in_read(op_preset_t* preset, const io_t v) {
   int idx = op_to_int(v);
+  preset->read = v;
   // recall given preset
   print_dbg("\r\n recalling preset from operator, idx: ");
   print_dbg_ulong(idx);
@@ -80,6 +82,7 @@ static void op_preset_in_read(op_preset_t* preset, const io_t v) {
 // input write index
 static void op_preset_in_write(op_preset_t* preset, const io_t v) {
   int idx = op_to_int(v);
+  preset->write = v;
   // store given preset
   print_dbg("\r\n storing preset from operator, idx: ");
   print_dbg_ulong(idx);
@@ -90,6 +93,7 @@ static void op_preset_in_write(op_preset_t* preset, const io_t v) {
 
 // input, report last idx (???)
 /* static void op_preset_idx(op_preset_t* preset, const io_t rw) { */
+
 /*   if(rw > 0) { */
 /*     ///... output */
 /*     // preset_last_write(); */
@@ -105,8 +109,6 @@ static void op_preset_in_write(op_preset_t* preset, const io_t v) {
 static void op_preset_inc_fn(op_preset_t* preset, const s16 idx, const io_t inc) {
   /// FIXME? no meaningful UI
 }
-
-
 
 // pickles
 u8* op_preset_pickle(op_preset_t* preset, u8* dst) {

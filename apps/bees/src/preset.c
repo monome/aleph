@@ -16,7 +16,9 @@
 #endif
 // bees
 #include "net_protected.h"
+#include "pages.h"
 #include "param.h"
+#include "play.h"
 #include "preset.h"
 // aleph
 #include "memory.h"
@@ -169,6 +171,9 @@ void preset_recall(u32 preIdx) {
     if(presets[preIdx].outs[i].enabled) {
       print_dbg("\r\n recalling enabled output in target preset, idx: ");
       print_dbg_ulong(i);
+      print_dbg("\r\n , value: 0x");
+      print_dbg_hex(presets[preIdx].outs[i].target);
+
       net_connect( i, presets[preIdx].outs[i].target );
     }
   }
@@ -184,6 +189,14 @@ void preset_recall(u32 preIdx) {
   /*     set_param_value( i, presets[preIdx].params[i].value ); */
   /*   } */
   /* } */
+
+  
+  /// process for play mode if we're in play mode
+  if(pageIdx == ePagePlay) {
+    play_preset(preIdx);
+  }
+
+  // update selection
   select = preIdx;
 }
 
@@ -219,6 +232,11 @@ u8* presets_pickle(u8* dst) {
     /*   dst = pickle_32(presets[i].params[j].idx, dst); */
     /*   dst = pickle_32(presets[i].params[j].enabled, dst); */
     /* } */
+    
+    // read name!
+    for(j=0; j<PRESET_NAME_LEN; j++) {
+      *dst++ = presets[i].name[j];
+    }
   }
   return dst;  
 }
@@ -258,6 +276,10 @@ const u8* presets_unpickle(const u8* src) {
     /*   src = unpickle_32(src, &v32); */
     /*   presets[i].params[j].enabled = v32; */
     /* } */
+    // write name!
+    for(j=0; j<PRESET_NAME_LEN; j++) {
+      presets[i].name[j] = *src++;
+    }
   }
   return src;
 }
@@ -295,7 +317,6 @@ void preset_inc_select(s32 inc) {
 
 }
 
-
 // get inclusion flag for given input, given preset
 extern u8 preset_in_enabled(u32 preIdx, u32 inIdx) {
   return presets[preIdx].ins[inIdx].enabled;
@@ -310,5 +331,3 @@ extern u8 preset_out_enabled(u32 preIdx, u32 outIdx) {
 /* extern u8 preset_param_enabled(u32 preIdx, u32 idx) { */
 /*   return presets[preIdx].params[idx].enabled; */
 /* } */
-
-

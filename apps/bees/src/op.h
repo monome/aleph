@@ -30,6 +30,9 @@ typedef enum {
 } op_flag_t;
 
 //---- operator list enum
+/////////////
+///// WARNING: adding to the end of this is fine,
+//// but reordering will break scene compatibility.
 typedef enum {
   eOpSwitch,
   eOpEnc,
@@ -49,6 +52,7 @@ typedef enum {
   eOpTimer,
   eOpRandom,
   eOpList8,
+  eOpThresh,
   numOpClasses // dummy/count 
 } op_id_t;
 

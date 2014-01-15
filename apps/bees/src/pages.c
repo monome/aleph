@@ -62,7 +62,7 @@ page_t pages[NUM_PAGES] = {
   },
   { .name = "PLAY",
     .select_fn = &select_play, // select function
-    .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
+    .encSens = { 0, 0, 0, 0, }, // encoder sens 
   }
 };
 

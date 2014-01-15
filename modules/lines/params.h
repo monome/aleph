@@ -53,17 +53,6 @@ enum params {
   eParamFade1,
 
   /// smoothers have to be processed first!
-  eParamAmp0Slew,
-  eParamAmp1Slew,
-  eParamHz0Slew,
-  eParamHz1Slew,
-  eParamWave0Slew,
-  eParamWave1Slew,
-  eParamPm10Slew,
-  eParamPm01Slew,
-  eParamWm10Slew,
-  eParamWm01Slew,
-
   eParamCut0Slew,
   eParamRq0Slew,
   eParamLow0Slew,

@@ -40,6 +40,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_div.c \
 	$(APP_DIR)/src/ops/op_enc.c \
 	$(APP_DIR)/src/ops/op_gate.c \
+	$(APP_DIR)/src/ops/op_list8.c \
 	$(APP_DIR)/src/ops/op_metro.c \
 	$(APP_DIR)/src/ops/op_midi_note.c \
 	$(APP_DIR)/src/ops/op_mul.c \
@@ -49,9 +50,9 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_sub.c \
 	$(APP_DIR)/src/ops/op_sw.c \
 	$(APP_DIR)/src/ops/op_timer.c \
+	$(APP_DIR)/src/ops/op_thresh.c \
 	$(APP_DIR)/src/ops/op_tog.c \
 	$(APP_DIR)/src/ops/op_random.c \
-	$(APP_DIR)/src/ops/op_list8.c \
 	$(APP_DIR)/src/pages/page_dsp.c \
 	$(APP_DIR)/src/pages/page_gathered.c \
 	$(APP_DIR)/src/pages/page_ins.c \

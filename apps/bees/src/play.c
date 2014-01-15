@@ -19,9 +19,10 @@
 #include "op_math.h"
 #include "pages.h"
 #include "play.h"
+#include "preset.h"
 #include "render.h"
 
-// scroll region
+// scroll regionsrc/
 static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
 
 // scroll manager
@@ -84,4 +85,12 @@ extern void play_input(u16 idx) {
     font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, 0xa, 0);
   }
    render_to_scroll_bottom();
+}
+
+
+// process preset change in play mode
+void play_preset(u16 idx) {
+  region_fill(lineRegion, 0x0);  
+  font_string_region_clip(lineRegion, preset_name(idx), 0, 0, 0xa, 0);
+  render_to_scroll_bottom();
 }
