@@ -203,63 +203,63 @@ void fill_param_desc(void) {
 
   strcpy(gModuleData->paramDesc[eParamHz0Slew].label, "hz0Slew");
   gModuleData->paramDesc[eParamHz0Slew].type = eParamTypeIntegrator;
-  gModuleData->paramDesc[eParamHz0Slew].min = SLEW_FREQ_MIN;
-  gModuleData->paramDesc[eParamHz0Slew].max = SLEW_FREQ_MAX;
-  gModuleData->paramDesc[eParamHz0Slew].radix = SLEW_FREQ_RADIX;
+  gModuleData->paramDesc[eParamHz0Slew].min = SLEW_SECONDS_MIN;
+  gModuleData->paramDesc[eParamHz0Slew].max = SLEW_SECONDS_MAX;
+  gModuleData->paramDesc[eParamHz0Slew].radix = SLEW_SECONDS_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamHz1Slew].label, "hz1Slew");
   gModuleData->paramDesc[eParamHz1Slew].type = eParamTypeIntegrator;
-  gModuleData->paramDesc[eParamHz1Slew].min = SLEW_FREQ_MIN;
-  gModuleData->paramDesc[eParamHz1Slew].max = SLEW_FREQ_MAX;
-  gModuleData->paramDesc[eParamHz1Slew].radix = SLEW_FREQ_RADIX;
+  gModuleData->paramDesc[eParamHz1Slew].min = SLEW_SECONDS_MIN;
+  gModuleData->paramDesc[eParamHz1Slew].max = SLEW_SECONDS_MAX;
+  gModuleData->paramDesc[eParamHz1Slew].radix = SLEW_SECONDS_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamPm10Slew].label, "pm10Slew");
   gModuleData->paramDesc[eParamPm10Slew].type = eParamTypeIntegrator;
-  gModuleData->paramDesc[eParamPm10Slew].min = SLEW_FREQ_MIN;
-  gModuleData->paramDesc[eParamPm10Slew].max = SLEW_FREQ_MAX;
-  gModuleData->paramDesc[eParamPm10Slew].radix = SLEW_FREQ_RADIX;
+  gModuleData->paramDesc[eParamPm10Slew].min = SLEW_SECONDS_MIN;
+  gModuleData->paramDesc[eParamPm10Slew].max = SLEW_SECONDS_MAX;
+  gModuleData->paramDesc[eParamPm10Slew].radix = SLEW_SECONDS_RADIX;
 
   strcpy(gModuleData->paramDesc[eParamPm01Slew].label, "pm01Slew");
   gModuleData->paramDesc[eParamPm01Slew].type = eParamTypeIntegrator;
-  gModuleData->paramDesc[eParamPm01Slew].min = SLEW_FREQ_MIN;
-  gModuleData->paramDesc[eParamPm01Slew].max = SLEW_FREQ_MAX;
-  gModuleData->paramDesc[eParamPm01Slew].radix = SLEW_FREQ_RADIX;
+  gModuleData->paramDesc[eParamPm01Slew].min = SLEW_SECONDS_MIN;
+  gModuleData->paramDesc[eParamPm01Slew].max = SLEW_SECONDS_MAX;
+  gModuleData->paramDesc[eParamPm01Slew].radix = SLEW_SECONDS_RADIX;
 
   strcpy(gModuleData->paramDesc[eParamWm10Slew].label, "wm10Slew");
   gModuleData->paramDesc[eParamWm10Slew].type = eParamTypeIntegrator;
-  gModuleData->paramDesc[eParamWm10Slew].min = SLEW_FREQ_MIN;
-  gModuleData->paramDesc[eParamWm10Slew].max = SLEW_FREQ_MAX;
-  gModuleData->paramDesc[eParamWm10Slew].radix = SLEW_FREQ_RADIX;
+  gModuleData->paramDesc[eParamWm10Slew].min = SLEW_SECONDS_MIN;
+  gModuleData->paramDesc[eParamWm10Slew].max = SLEW_SECONDS_MAX;
+  gModuleData->paramDesc[eParamWm10Slew].radix = SLEW_SECONDS_RADIX;
 
   strcpy(gModuleData->paramDesc[eParamWm01Slew].label, "wm01Slew");
   gModuleData->paramDesc[eParamWm01Slew].type = eParamTypeIntegrator;
-  gModuleData->paramDesc[eParamWm01Slew].min = SLEW_FREQ_MIN;
-  gModuleData->paramDesc[eParamWm01Slew].max = SLEW_FREQ_MAX;
-  gModuleData->paramDesc[eParamWm01Slew].radix = SLEW_FREQ_RADIX;
+  gModuleData->paramDesc[eParamWm01Slew].min = SLEW_SECONDS_MIN;
+  gModuleData->paramDesc[eParamWm01Slew].max = SLEW_SECONDS_MAX;
+  gModuleData->paramDesc[eParamWm01Slew].radix = SLEW_SECONDS_RADIX;
 
   strcpy(gModuleData->paramDesc[eParamWave1Slew].label, "wave1Slew");
   gModuleData->paramDesc[eParamWave1Slew].type = eParamTypeIntegrator;
-  gModuleData->paramDesc[eParamWave1Slew].min = SLEW_FREQ_MIN;
-  gModuleData->paramDesc[eParamWave1Slew].max = SLEW_FREQ_MAX;
-  gModuleData->paramDesc[eParamWave1Slew].radix = SLEW_FREQ_RADIX;
+  gModuleData->paramDesc[eParamWave1Slew].min = SLEW_SECONDS_MIN;
+  gModuleData->paramDesc[eParamWave1Slew].max = SLEW_SECONDS_MAX;
+  gModuleData->paramDesc[eParamWave1Slew].radix = SLEW_SECONDS_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamWave0Slew].label, "wave0Slew");
   gModuleData->paramDesc[eParamWave0Slew].type = eParamTypeIntegrator;
-  gModuleData->paramDesc[eParamWave0Slew].min = SLEW_FREQ_MIN;
-  gModuleData->paramDesc[eParamWave0Slew].max = SLEW_FREQ_MAX;
-  gModuleData->paramDesc[eParamWave0Slew].radix = SLEW_FREQ_RADIX;
+  gModuleData->paramDesc[eParamWave0Slew].min = SLEW_SECONDS_MIN;
+  gModuleData->paramDesc[eParamWave0Slew].max = SLEW_SECONDS_MAX;
+  gModuleData->paramDesc[eParamWave0Slew].radix = SLEW_SECONDS_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamAmp1Slew].label, "amp1Slew");
   gModuleData->paramDesc[eParamAmp1Slew].type = eParamTypeIntegrator;
-  gModuleData->paramDesc[eParamAmp1Slew].min = SLEW_FREQ_MIN;
-  gModuleData->paramDesc[eParamAmp1Slew].max = SLEW_FREQ_MAX;
-  gModuleData->paramDesc[eParamAmp1Slew].radix = SLEW_FREQ_RADIX;
+  gModuleData->paramDesc[eParamAmp1Slew].min = SLEW_SECONDS_MIN;
+  gModuleData->paramDesc[eParamAmp1Slew].max = SLEW_SECONDS_MAX;
+  gModuleData->paramDesc[eParamAmp1Slew].radix = SLEW_SECONDS_RADIX;
   
   strcpy(gModuleData->paramDesc[eParamAmp0Slew].label, "amp0Slew");
   gModuleData->paramDesc[eParamAmp0Slew].type = eParamTypeIntegrator;
-  gModuleData->paramDesc[eParamAmp0Slew].min = SLEW_FREQ_MIN;
-  gModuleData->paramDesc[eParamAmp0Slew].max = SLEW_FREQ_MAX;
-  gModuleData->paramDesc[eParamAmp0Slew].radix = SLEW_FREQ_RADIX;
+  gModuleData->paramDesc[eParamAmp0Slew].min = SLEW_SECONDS_MIN;
+  gModuleData->paramDesc[eParamAmp0Slew].max = SLEW_SECONDS_MAX;
+  gModuleData->paramDesc[eParamAmp0Slew].radix = SLEW_SECONDS_RADIX;
 
   /* strcpy(gModuleData->paramDesc[eParamIoAmp0].label, "ioAmp1"); */
   /* gModuleData->paramDesc[eParamIoAmp0].type = eParamTypeAmp; */

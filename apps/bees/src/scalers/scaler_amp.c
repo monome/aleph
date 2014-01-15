@@ -23,35 +23,26 @@ static u8 initFlag = 0;
 //-------------------
 //--- static funcs
 
-
 //-----------------------
 //---- extern funcs
 
 s32 scaler_amp_val(void* scaler, io_t in) {
-  //  print_dbg("\r\n requesting amp_scaler value for input: 0x");
-  //  print_dbg_hex((u32)in);
-  //  u16 uin = BIT_ABS_16((s16)in);
   if(in < 0) { in = 0; }
   return tabVal[(u16)((u16)in >> inRshift)];
 }
 
 void scaler_amp_str(char* dst, void* scaler,  io_t in) {
-  u16 uin = BIT_ABS_16((s16)in) >> inRshift;
+  //  u16 uin = BIT_ABS_16((s16)in) >> inRshift;
+  if(in < 0) { in = 0; }
 
-  /* print_dbg("\r\n requesting amp_scaler representation for input: 0x"); */
-  /* print_dbg_hex((u32)in); */
+  in >>= inRshift;
 
-  /* print_dbg(", index: "); */
-  /* print_dbg_hex((u32)uin); */
-
-  if(uin == 0) {
+  if(in == 0) {
     strcpy(dst, "   -inf");
-  } else if (uin == (tabSize - 1)) {
+  } else if (in == (tabSize - 1)) {
     print_fix16(dst, 0);
   } else {
-    /* print_dbg(",  result: 0x"); */
-    /* print_dbg_hex((u32)tabRep[(u16)uin]); */
-    print_fix16(dst, tabRep[(u16)uin] );
+    print_fix16(dst, tabRep[(u16)in] );
   }
 }
 
@@ -77,30 +68,14 @@ void scaler_amp_init(void* scaler) {
     tabVal = scaler_get_nv_data(eParamTypeAmp);
     tabRep = scaler_get_nv_rep(eParamTypeAmp);
 
-    // allocate
-    //    print_dbg("\r\n allocating static memory for amp scalers");
-    //    tabVal = (s32*)alloc_mem(tabSize * 4);
-    //    tabRep = (s32*)alloc_mem(tabSize * 4);
-
-    // load gain data
-    //    print_dbg("\r\n loading gain scaler data from sdcard");
-    //    files_load_scaler_name("scaler_amp_val.dat", tabVal, tabSize);
-    //    files_load_scaler_name("scaler_amp_rep.dat", tabRep, tabSize);
-    //   print_dbg("\r\n finished loading amp scaler data from files.");
   }
 
+    sc->inMin = 0;
+    sc->inMax = (tabSize - 1) << inRshift;
   /// FIXME: should consider requested param range,
   //  and compute a customized multiplier here if necessary.
-
-  /// proper class-based initialization was breaking for some reason, 
-  // driving me insane.
-  // so for now, scaling functions are static...
-
-  //// FIXME: add tuning functions (???)
-  //  sc->tune = NULL;
-  //  sc->numTune = 0;  
+ 
 }
-
 
 // get input given DSP value (use sparingly)
 io_t scaler_amp_in(void* scaler, s32 x) {
@@ -109,8 +84,7 @@ io_t scaler_amp_in(void* scaler, s32 x) {
   s32 ju = tabSize - 1;
   s32 jm;
 
-  /* print_dbg("\r\n scaler_amp_in, x: 0x"); */
-  /* print_dbg_hex(x); */
+  /// FIXME: this search result is often off by one, or something like it.
 
   // first, cheat and check zero.
   /// will often be true
@@ -125,20 +99,33 @@ io_t scaler_amp_in(void* scaler, s32 x) {
       ju = jm;
     }
   }
-
   return (u16)jm << inRshift;
 }
 
 
 // increment input by pointer, return value
-s32 scaler_amp_inc(void* sc, io_t* pin, io_t inc ) {
-  static const io_t incMul = 1 << (IO_BITS - tabBits);
-  // multiply by smallest significant abcissa
-  inc *= incMul;
+s32 scaler_amp_inc(void* scaler, io_t* pin, io_t inc ) {
+  ParamScaler* sc = (ParamScaler*)scaler;
+  // this speeds up the knob a great deal.
+#if 0
+  s32 sinc;
+  // scale up to smallest significant abscissa:
+  // check for 16b overflow
+  sinc = (s32)inc << inRshift;
+  if(sinc > 0x3fff) { 
+    inc = (io_t)0x3fff;
+  } 
+  else if (sinc < (s32)0xffffc000) { 
+    inc = (io_t)0xc000;
+  }
+#endif
+  
   // use saturation
   *pin = op_sadd(*pin, inc);
-  if(*pin < 0) { *pin = 0; }
-  // scale and return.
-  // ignoring ranges in descriptor at least for now.
+
+  if(*pin < sc->inMin) { *pin = sc->inMin; }
+  if(*pin > sc->inMax) { *pin = sc->inMax; }
+
+  // FIXME: no customization of output range.
   return scaler_amp_val(sc, *pin);
 }

@@ -190,16 +190,23 @@ static void show_foot2(void) {
     fill = 0x5;
   }
   region_fill(footRegion[2], fill);
-  font_string_region_clip(footRegion[2], "CREATE", 0, 0, 0xf, fill);
+  if(altMode) {
+    font_string_region_clip(footRegion[2], "DELETE", 0, 0, 0xf, fill);
+  } else {
+    font_string_region_clip(footRegion[2], "CREATE", 0, 0, 0xf, fill);
+  }
   
 }
 
 static void show_foot3(void) {
   u8 fill = 0;
-  //  u8 fore = 0xf;
-  //..???
+  u8 fore = 0xf;
+  if(altMode) {
+    fill = 0xf;
+    fore = 0;
+  }
   region_fill(footRegion[3], fill);
-  //font_string_region_clip(footRegion[3], "ALT", 0, 0, fore, fill);
+  font_string_region_clip(footRegion[3], "ALT", 0, 0, fore, fill);
 }
 
 static void show_foot(void) {
@@ -253,18 +260,28 @@ void handle_key_1(s32 val) {
 void handle_key_2(s32 val) {
   if(val == 0) { return; }
   if(check_key(2)) { 
-    // create new operator of selected type
-    net_add_op(userOpTypes[newOpType]);
-    // change selection to last op
-    *pageSelect = net_num_ops() - 1;
-    // redraw...
+    if(altMode) {
+      // delete last created operator
+      net_pop_op();
+    } else {
+      // create new operator of selected type
+      net_add_op(userOpTypes[newOpType]);
+      // change selection to last op
+      *pageSelect = net_num_ops() - 1;
+    }
     redraw_ops();
   }
   show_foot();
 }
 
 void handle_key_3(s32 val) {
-  // delete? subpage?
+  // alt mode
+  if(val > 0) {
+    altMode = 1;
+  } else {
+    altMode = 0;
+  }
+  show_foot();
 }
 
 void handle_enc_0(s32 val) {

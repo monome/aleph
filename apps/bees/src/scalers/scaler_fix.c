@@ -88,18 +88,10 @@ s32 scaler_fix_inc(void* sc, io_t* pin, io_t inc ) {
   // check bounds again after scaling
   val = scaler_fix_val(sc, *pin);
   if(val > scaler->desc->max) {
-    /* print_dbg("\r\n high saturation in sacler_fix_inc, value: 0x"); */
-    /* print_dbg_hex(val); */
-    /* print_dbg(", max: 0x"); */
-    /* print_dbg_hex(scaler->desc->max); */
     *pin = scaler->inMax;
     return scaler->desc->max;
   }
   if(val < scaler->desc->min) {
-    /* print_dbg("\r\n low saturation in sacler_fix_inc, value: 0x"); */
-    /* print_dbg_hex(val); */
-    /* print_dbg(", min: 0x"); */
-    /* print_dbg_hex(scaler->desc->min); */
     *pin = scaler->inMin;
     return scaler->desc->min;
   }

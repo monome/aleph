@@ -65,13 +65,14 @@ void init_EBIU(void) {
 // setup SPI0 -> AD1939 config */
 void init_1939(void) { 
   //  u8 i; 
-  u32 del;
+  volatile u32 del;
 
   //// reset codec
   *pFIO_FLAG_D &= CODEC_RESET_MASK;
   del = 100; while(del--) { ;; } 
+  //  del = 1000; while(del--) { ;; } 
   *pFIO_FLAG_D |= (0xffff ^ CODEC_RESET_MASK);
-
+  del = 10000; while(del--) { ;; } 
   /// using the codec in standalone now, dont need SPI config
   return;
 

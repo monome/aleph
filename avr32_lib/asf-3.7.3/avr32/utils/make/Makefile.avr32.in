@@ -206,7 +206,7 @@ clean-files             :=
 clean-dirs              :=
 
 clean-files             += $(wildcard $(target) $(project).map)
-clean-files             += $(wildcard $(project)-$(version).hex $(project).bin)
+clean-files             += $(wildcard $(project)-$(version).hex $(project).hex $(project).bin)
 clean-files             += $(wildcard $(project).lss $(project).sym)
 clean-files             += $(wildcard $(build))
 
@@ -327,7 +327,7 @@ ifeq ($(target_type),lib)
 all: $(target) $(project).lss $(project).sym
 else
 ifeq ($(target_type),elf)
-all: $(target) $(project).lss $(project).sym $(project)-$(version).hex $(project).bin
+all: $(target) $(project).lss $(project).sym $(project).hex $(project).bin
 endif
 endif
 
@@ -418,9 +418,10 @@ endif
 	$(Q)$(NM) -n $< > $@
 
 # Create Intel HEX image from ELF output file.
-%-$(version).hex: $(target)
+%.hex: $(target)
 	@echo $(MSG_IHEX_IMAGE)
 	$(Q)$(OBJCOPY) -O ihex $< $@
+	cp $@ $(project)-$(version).hex
 
 # Create binary image from ELF output file.
 %.bin: $(target)

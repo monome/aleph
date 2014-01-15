@@ -1,0 +1,33 @@
+
+============================================
+130114
+
+----------------
+bees	0.1.0
+
+- added DELETE to ops page; removes most recent op.
+- fix saturation in table-based param scalers.
+- cleanup
+
+
+---------------- 
+waves	0.0.1
+- more attempts at bandlimiting. works a little but not will because operating on linear frequency.
+- delay codec reset at startup until interrupts enabled. catches some startup bugs.
+
+----------------
+lines	0.0.1
+- delay codec reset at startup until interrupts enabled. catches some startup bugs.
+
+
+
+===================================================
+130113
+
+bees 	0.0.0
+
+lines	0.0.0
+
+waves	0.0.0
+
+first public release

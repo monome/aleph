@@ -31,7 +31,8 @@ static u32 scalerRepWords[eParamNumTypes] = {
   0, 	//  eParamTypeBool,
   0, 	//  eParamTypeFix,
   1024, 	//  eParamTypeAmp,
-  1024, 	//  eParamTypeIntegrator,
+  //  1024, 	//  eParamTypeIntegrator,
+  0, 	//  eParamTypeIntegrator,
   0, 	//  eParamTypeNote,
   0, 	//  eParamTypeSvfFreq,
 };
@@ -51,7 +52,8 @@ static const char scalerRepPath[eParamNumTypes][32] = {
   "", 	//  eParamTypeBool,
   "", 	//  eParamTypeFix,
   "scaler_amp_rep.dat", 	//  eParamTypeAmp,
-  "scaler_integrator_rep.dat", 	//  eParamTypeIntegrator,
+  //  "scaler_integrator_rep.dat", 	//  eParamTypeIntegrator,
+  "", 	//  eParamTypeIntegrator,
   "", 	//  eParamTypeNote,
   "", 	//  eParamTypeSvfFreq,
 };
@@ -71,7 +73,8 @@ static const u32 scalerRepOffset[eParamNumTypes] = {
   0, 	//  eParamTypeBool,
   0, 	//  eParamTypeFix,
   4096, 	//  eParamTypeAmp,
-  5120, 	//  eParamTypeIntegrator,
+  //  5120, 	//  eParamTypeIntegrator,
+  0, 	//  eParamTypeIntegrator,
   0, 	//  eParamTypeNote,
   0, 	//  eParamTypeSvfFreq,
 };

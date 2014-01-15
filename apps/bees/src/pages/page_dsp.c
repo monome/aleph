@@ -37,18 +37,6 @@ static void handle_key_1(s32 val);
 static void handle_key_2(s32 val);
 static void handle_key_3(s32 val);
 
-/* // array of handlers */
-/* const page_handler_t handler_dsp[eNumPageHandlers] = { */
-/*   &handle_enc_0, */
-/*   &handle_enc_1, */
-/*   &handle_enc_2, */
-/*   &handle_enc_3, */
-/*   &handle_key_0, */
-/*   &handle_key_1, */
-/*   &handle_key_2, */
-/*   &handle_key_3, */
-/* }; */
-
 // fill tmp region with new content
 // given input index
 static void render_line(s16 idx, u16 max) {
@@ -184,7 +172,7 @@ void handle_key_0(s32 val) {
 }
 
 void handle_key_1(s32 val) {
-  /*
+#if 0 // don't store DSP in flash for now
   if(val == 0) { return; }
   if(check_key(1)) {
     // render status to head region  
@@ -202,7 +190,7 @@ void handle_key_1(s32 val) {
     render_update();
   }
   show_foot();
-  */
+#endif  
 }
 
 void handle_key_2(s32 val) {

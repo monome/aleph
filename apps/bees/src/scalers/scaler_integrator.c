@@ -16,7 +16,7 @@ static const u32 tabSize = 1024;
 static const u8 inRshift = 5;
 
 static const s32* tabVal;
-static const s32* tabRep;
+//static const s32* tabRep;
 
 static u8 initFlag = 0;
 
@@ -28,16 +28,29 @@ static u8 initFlag = 0;
 //---- extern funcs
 
 s32 scaler_integrator_val(void* scaler, io_t in) {
-  print_dbg("\r\n requesting amp_scaler value for input: 0x");
-  print_dbg_hex((u32)in);
-
   if(in < 0) { in = 0; }
   return tabVal[(u16)((u16)in >> inRshift)];
 }
 
 void scaler_integrator_str(char* dst, void* scaler,  io_t in) {
-  u16 uin = BIT_ABS_16((s16)in) >> inRshift;
-  print_fix16(dst, tabRep[(u16)uin] );
+  //  u16 uin = (in < 0) ? 0 : ((u16)in >> inRshift) ;
+  /* print_dbg("\r\n ingegrator_str() , input: 0x"); */
+  /* print_dbg_hex(in); */
+  /* print_dbg(" , index : 0x"); */
+  /* print_dbg_hex(uin); */
+  /* print_dbg(" , val : 0x"); */
+  /* print_dbg_hex(tabRep[uin]); */
+
+  ///// HACK:
+  // trying non-table solution... slow :S
+  /// in this test, using known magic-number multiplier.
+  /// should compute from descriptor in init.
+  //  print_dbg(" , computed val : 0x");
+  if(in < 0) { in = 0; }
+  //  print_dbg_hex(fix16_mul((s32)in << 1, 0x400000) );
+  print_fix16(dst, fix16_mul((s32)in << 1, 0x400000) );
+  
+  //  print_fix16(dst, tabRep[uin] );
 }
 
 // init function
@@ -63,19 +76,12 @@ void scaler_integrator_init(void* scaler) {
 
     // assign
     tabVal = scaler_get_nv_data(eParamTypeIntegrator);
-    tabRep = scaler_get_nv_rep(eParamTypeIntegrator);
-
-    // allocate
-    //    print_dbg("\r\n allocating static memory for integrator scalers");
-    //    tabVal = (s32*)alloc_mem(tabSize * 4);
-    //    tabRep = (s32*)alloc_mem(tabSize * 4);
-    
-    // load gain data
-    //    print_dbg("\r\n loading integrator scaler data from sdcard");
-    //    files_load_scaler_name("scaler_integrator_val.dat", tabVal, tabSize);
-    //    files_load_scaler_name("scaler_integrator_rep.dat", tabRep, tabSize);
-    //   print_dbg("\r\n finished loading amp scaler data from files.");
+    //    tabRep = scaler_get_nv_rep(eParamTypeIntegrator);
   }
+
+  sc->inMin = 0;
+  sc->inMax = (tabSize - 1) << inRshift;
+
 
   //// FIXME: add tuning functions....
   /// here, that would mean adjusting for actual samplerate. 
@@ -117,13 +123,28 @@ io_t scaler_integrator_in(void* scaler, s32 x) {
 
 
 // increment input by pointer, return value
-s32 scaler_integrator_inc(void* sc, io_t* pin, io_t inc ) {
-  static const io_t incMul = 1 << (IO_BITS - tabBits);
-  // multiply by smallest significant abcissa
-  inc *= incMul;
+s32 scaler_integrator_inc(void* scaler, io_t* pin, io_t inc ) {
+  ParamScaler* sc = (ParamScaler*)scaler;
+  // this speeds up the knob a great deal.
+#if 0
+  s32 sinc;
+  // scale up to smallest significant abscissa:
+  // check for 16b overflow
+  sinc = (s32)inc << inRshift;
+  if(sinc > 0x3fff) { 
+    inc = (io_t)0x3fff;
+  } 
+  else if (sinc < (s32)0xffffc000) { 
+    inc = (io_t)0xc000;
+  }
+#endif
+
   // use saturation
   *pin = op_sadd(*pin, inc);
-  if(*pin < 0) { *pin = 0; }
+
+  if(*pin < sc->inMin) { *pin = sc->inMin; }
+  if(*pin > sc->inMax) { *pin = sc->inMax; }
+
   // scale and return.
   // ignoring ranges in descriptor at least for now.
   return scaler_integrator_val(sc, *pin);

@@ -26,9 +26,9 @@
 #define RATIO_MAX 0x40000    // 4
 #define RATIO_RADIX 3
 
-#define SLEW_FREQ_MIN 0x2000 // 1/8
-#define SLEW_FREQ_MAX 0x400000 // 64
-#define SLEW_FREQ_RADIX 7
+#define SLEW_SECONDS_MIN 0x2000 // 1/8
+#define SLEW_SECONDS_MAX 0x400000 // 64
+#define SLEW_SECONDS_RADIX 7
 
 // svf cutoff
 #define PARAM_CUT_MAX     0x7fffffff

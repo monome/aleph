@@ -106,9 +106,7 @@ static void handler_FtdiConnect(s32 data) {
   ftdi_setup();
 }
 static void handler_FtdiDisconnect(s32 data) { 
-  // FIXME: 
-  // i guess we should spawn the appropriate class-specific event
-  // (e.g. monomeDisconnect)
+  /// FIXME: assuming that FTDI == monome
   event_t e = { .type = kEventMonomeDisconnect };
   event_post(&e);
 }
@@ -255,7 +253,7 @@ static void init_avr32(void) {
   print_dbg("\r\n ++++++++++++++++ avr32 init done ");
 }
 
-// control / network / logic init
+// init timer-related stuff.
 static void init_ctl(void) {
   // disable interrupts
   cpu_irq_disable();
@@ -271,10 +269,6 @@ static void init_ctl(void) {
   // send ADC config
   init_adc();
   print_dbg("\r\n init_adc");
-
-  // start timers
-  //  init_sys_timers();
-  //  print_dbg("\r\n init_timers");
 
   // enable interrupts
   cpu_irq_enable();
@@ -292,10 +286,14 @@ void check_startup(void) {
     gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
     // return 1 if app completed firstrun tasks
     launch = app_launch(firstrun);
+
     delay_ms(10);
+
     if(launch) {
-      // successfully launched on firstrun, so write magic number to flash
-      flash_write_firstrun();
+      if(firstrun) {
+	// successfully launched on firstrun, so write magic number to flash
+	flash_write_firstrun();
+      }
       // re-send connection events if we got any
       if(ftdiConnect) {
 	e.type = kEventFtdiConnect;
@@ -326,8 +324,6 @@ void check_startup(void) {
 void check_events(void) {
   static event_t e;
   if( event_next(&e) ) {
-    //(*((*appEventHandlers)[e.type]))(e.data);
-    //    (*app_event_handlers)[e.type](e.data);
     (app_event_handlers)[e.type](e.data);
   }
 }
@@ -370,7 +366,6 @@ int main (void) {
   }
 
   // assign default event handlers
-  //  app_event_handlers = &main_event_handlers;
   assign_main_event_handlers();
 
   print_dbg("\r\n starting event loop.\r\n");

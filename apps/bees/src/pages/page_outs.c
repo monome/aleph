@@ -68,9 +68,7 @@ static void render_line(s16 idx, u8 fg) {
   s16 srcOpIdx; 
   region_fill(lineRegion, 0x0);
 
-  print_dbg("\r\n page_outs: render_line");
-
-
+  //  print_dbg("\r\n page_outs: render_line");
   if(idx >= net_num_outs() ) { return; }
   if(targetSelect) { 
       print_dbg(" , in targetSelect");
@@ -103,7 +101,7 @@ static void render_line(s16 idx, u8 fg) {
     clearln();
     appendln("-> ");
     if(targetOpIdx >= 0) {
-      print_dbg(" , target is op in");
+      //      print_dbg(" , target is op in");
       // target is operator input
       appendln_idx_lj(net_in_op_idx(target));
       appendln_char('.');
@@ -111,7 +109,7 @@ static void render_line(s16 idx, u8 fg) {
       appendln_char('/');
       appendln( net_in_name(target) );
     } else {
-      print_dbg(" , target is param in");
+      //      print_dbg(" , target is param in");
       // target is parameter input
       appendln_idx_lj( (int)net_param_idx(target)); 
       appendln_char('.');
@@ -142,61 +140,35 @@ static void render_line(s16 idx, u8 fg) {
 
 // edit the current seleciton
 static void select_edit(s32 inc) {
-  /* if(altMode) {  */
-  /*   ;; */
-  /* } else { */
-  /* s16 target = net_get_target(*pageSelect); */
-  /* if(inc > 0) { */
-  /*   // increment target */
-  /*   ++target; */
-  /*   if(target == net_num_ins()) { */
-  /*     // scroll past all inputs : disconnect and wrap */
-  /*     target = -1; */
-  /*   } */
-  /* } else { */
-  /*   --target; */
-  /*   if (target == -2) { */
-  /*     //  scrolled down from disconnect: connect and wrap */
-  /*     target = net_num_ins() - 1; */
-  /*   } */
-  /* } */
-
-  print_dbg("\r\n page_outs: select_edit");
+  //  print_dbg("\r\n page_outs: select_edit");
   // enter target-select mode
   if(targetSelect == 0) {
-    print_dbg(" , set targetSelect mode");
+    //    print_dbg(" , set targetSelect mode");
     targetSelect = 1;
     tmpTarget = net_get_target(*pageSelect);
-
   }
-
-  print_dbg("\r\n tmpTarget: ");
-  print_dbg_ulong(tmpTarget);
-
+  /* print_dbg("\r\n tmpTarget: "); */
+  /* print_dbg_ulong(tmpTarget); */
   if(inc > 0) {
-    print_dbg(" , inc tmpTarget");
-    print_dbg(" , value: ");
-    print_dbg_ulong(tmpTarget);
+    /* print_dbg(" , inc tmpTarget"); */
+    /* print_dbg(" , value: "); */
+    /* print_dbg_ulong(tmpTarget); */
     // increment tmpTarget
     ++tmpTarget;
     if(tmpTarget == net_num_ins()) {
-      print_dbg(" , tmpTarget at max");
+      //      print_dbg(" , tmpTarget at max");
       // scroll past all inputs : disconnect and wrap
       tmpTarget = -1;
     } 
   } else {
     --tmpTarget;
     if (tmpTarget == -2) {
-      print_dbg(" , tmpTarget at min");
+      //      print_dbg(" , tmpTarget at min");
       //  scrolled down from disconnect: connect and wrap
       tmpTarget = net_num_ins() - 1;
     }
   }    
   
-  /*
-    net_connect(*pageSelect, target);
-  */
-
   // render to tmp buffer
   render_line(*pageSelect, 0xf);
   // copy to scroll with highlight
@@ -212,7 +184,6 @@ static void select_scroll(s32 dir) {
   s16 newIdx;
   s16 newSel;
   // new flags
-  //  u8 newInPreset;
 
   targetSelect = 0;
   
@@ -231,9 +202,6 @@ static void select_scroll(s32 dir) {
     //    if(newSel < 0) { newSel = 0; }
     //    if(newSel > max ) { newSel = max; }
     *pageSelect = newSel;    
-    // update preset-inclusion flag
-    // inPreset = (u8)net_get_out_preset((u32)(*pageSelect));
-    // add new content at top
     newIdx = newSel - SCROLL_LINES_BELOW;
     if(newIdx < 0) { 
       // empty row
@@ -263,8 +231,6 @@ static void select_scroll(s32 dir) {
     //    if(newSel > max ) { newSel = max; }
     /////
     *pageSelect = newSel;    
-    // update preset-inclusion flag
-    //    inPreset = (u8)net_get_out_preset((u32)(*pageSelect));
     // add new content at bottom of screen
     newIdx = newSel + SCROLL_LINES_ABOVE;
     if(newIdx > max) { 
@@ -279,14 +245,6 @@ static void select_scroll(s32 dir) {
     // add highlight to new center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
   }
-  /// update flags
-  /* newInPreset = net_get_out_preset(*pageSelect); */
-  /* if(newInPreset != inPreset) { */
-  /*   inPreset = newInPreset; */
-  /*   // update inc/exc label */
-  /*   //// wtf?? no */
-  /*   //    show_foot1(); */
-  /* } */
 }
 
 // display the function key labels according to current state
@@ -411,9 +369,7 @@ void select_outs(void) {
 // function key handlers
 void handle_key_0(s32 val) {
   if(val == 0) { return; }
-  
   if(altMode) {
-  
     ///// follow
     // select target on ins page
     tmpTarget = net_get_target(*pageSelect);
@@ -422,20 +378,14 @@ void handle_key_0(s32 val) {
       set_page(ePageIns);
       redraw_ins();
     }
-
   } else {
     // store
     // show selected preset name
     draw_preset_name();
-    //// TODO
-    //    draw_outs_preset_name();
     if(check_key(0)) {
       // store in preset
       net_set_out_preset(*pageSelect, 1);
-      //inPreset = 1;
-      //      net_get_out_preset((u32)(*pageSelect))
       preset_store_out(preset_get_select(), *pageSelect);
-
       // redraw selected line
       render_line(*pageSelect, 0xa);
       render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
@@ -448,10 +398,10 @@ void handle_key_0(s32 val) {
 void handle_key_1(s32 val) {
   if(val == 0) { return; }
   if(check_key(1)) {
-    // inc/exc (split)
     if(altMode) {
       // TODO: split
     } else {
+      // include / exclude in selected preset
 	// show preset name in head region
       draw_preset_name();
       // include / exclude in preset
@@ -479,9 +429,7 @@ void handle_key_2(s32 val) {
       // re-draw selected line 
       render_line(*pageSelect, 0xf);
       // copy to scroll with hi,ghlight
-      render_to_scroll_line(SCROLL_CENTER_LINE, 1);
-
-      
+      render_to_scroll_line(SCROLL_CENTER_LINE, 1);   
     }
   }
   show_foot();
@@ -520,9 +468,7 @@ void handle_enc_1(s32 val) {
   ;;  // nothing to do
 }
 
-void handle_enc_2(s32 val) {
-
-  
+void handle_enc_2(s32 val) {  
   if(targetSelect) {
     targetSelect = 0;
     redraw_outs();
@@ -537,7 +483,7 @@ void handle_enc_2(s32 val) {
 
 void handle_enc_3(s32 val) {
 
-  print_dbg("\r\n outs page: handling encoder 3");
+  //  print_dbg("\r\n outs page: handling encoder 3");
   if(targetSelect) {
     targetSelect = 0;
     redraw_outs();
@@ -563,10 +509,10 @@ void redraw_outs(void) {
   u8 i=0;
   u8 n = *pageSelect - 3;
   while(i<8) {
-    print_dbg("\r\n redraw_outs, line: ");
-    print_dbg_ulong(i);
-    print_dbg("index: ");
-    print_dbg_ulong(n);
+    /* print_dbg("\r\n redraw_outs, line: "); */
+    /* print_dbg_ulong(i); */
+    /* print_dbg("index: "); */
+    /* print_dbg_ulong(n); */
 
     render_line( n, 0xa );
     render_to_scroll_line(i, n == *pageSelect ? 1 : 0);

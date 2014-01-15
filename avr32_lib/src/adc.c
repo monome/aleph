@@ -101,8 +101,6 @@ void init_adc(void) {
 // perform conversion, check for changes, and post events
 void adc_poll(void) {
   static u16 adcVal[4] = {0, 0, 0, 0};
-  //  static u16 adcOldVal[4] = {0, 0, 0, 0};
-  //u16 valMask;
   static event_t e;
   u8 i;
 

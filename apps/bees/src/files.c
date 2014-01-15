@@ -345,6 +345,9 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
   u32 i;
   union { u32 u; s32 s; u8 b[4]; } swap;
   u8 ret = 0;
+  //// test
+  s32* p = dst;
+  ///
 
   app_pause();
   fp = list_open_file_name(&scalerList, name, "r", &size);
@@ -430,6 +433,13 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
   } 
 
   print_dbg("\r\n finished loading scaler file (?)");
+
+  ///// TEST: verify
+  for(i=0; i<size; i++) {
+
+    print_dbg(" 0x"); print_dbg_hex(p[i]); if((i%4)==0) { print_dbg("\r\n"); }
+  }
+
 
   app_resume();
   return ret;

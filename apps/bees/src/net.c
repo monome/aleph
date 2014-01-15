@@ -369,9 +369,6 @@ s16 net_add_op(op_id_t opId) {
     // if we added input nodes, need to adjust connections to DSP params
     for(i=0; i < numOutsSave; i++) {
 
-      /* if((net->outs[i].target != -1)     /// have to do this check for initial sysOp add? */
-      /* 	 && (net->outs[i].target >= numInsSave)) { */
-
       /* print_dbg("\r\n checking output no. "); */
       /* print_dbg_ulong(i); */
       /* print_dbg(" ; target: "); */
@@ -391,9 +388,6 @@ s16 net_add_op(op_id_t opId) {
 	net_connect(i, net->outs[i].target + ins);
       }
     }
-
-    // 
-
   }
 
   ++(net->numOps);
@@ -402,23 +396,36 @@ s16 net_add_op(op_id_t opId) {
 
 // destroy last operator created
 s16 net_pop_op(void) {
-  op_t* op = net->ops[net->numOps - 1];
+  const s16 opIdx = net->numOps - 1;
+  op_t* op = net->ops[opIdx];
   int i=0;
-  int x=0;
+  int x;
+  // bail if system op
+  if(net_op_flag (opIdx, eOpFlagSys)) { return 1; }
   // de-init
-  op_deinit(net->ops[net->numOps - 1]); 
+  op_deinit(op);
   // store the global index of the first input
-  x = net_op_in_idx(net->numOps - 1, 0); 
+  x = net_op_in_idx(opIdx, 0);
+
+  // check if anything connects here
+  for(i=0; i<net->numOuts; i++) {
+    // this check works b/c we know this is last op in list
+    if( net->outs[i].target >= x ) {
+      net_disconnect(i);
+    }
+  }
+
   // erase input nodes
   for(i=0; i<op->numInputs; i++) {
     net_init_inode(x++);
   }
   // store the global index of the first output
-  x = net_op_out_idx(net->numOps - 1, 0);
+  x = net_op_out_idx(opIdx, 0);
   // erase output nodes
   for(i=0; i<op->numOutputs; i++) {
     net_init_onode(x++);
   }
+
   net->numIns -= op->numInputs;
   net->numOuts -= op->numOutputs;
 
@@ -428,6 +435,7 @@ s16 net_pop_op(void) {
 
 }
 
+#if 0 // FIXME: this is not called and not tested. it would obvs be a good feature though.
 /// delete an arbitrary operator, and do horrible ugly management stuff
 void net_remove_op(const u32 idx) {
   /// FIXME: network processing must be halted during this procedure!
@@ -457,13 +465,13 @@ void net_remove_op(const u32 idx) {
     }
     lastIn = firstIn + nIns - 1;
     // check if anything connects here
-    for(i=0; i<net->numIns; i++) {
+    for(i=0; i<net->numOuts; i++) {
       if( net->outs[i].target >= firstIn ) {
 	if( net->outs[i].target > lastIn ) {
 	  // connections to higher inlets get moved down
 	  net->outs[i].target -= nIns;
 	} else {
-	  // disconnect from this op's inlets
+	  // disconnect from this op's inputs
 	  net->outs[i].target =  -1;
 	}
       }
@@ -519,6 +527,7 @@ void net_remove_op(const u32 idx) {
   net->numOps -= 1;
   //... and, uh, don't crash?
 }
+#endif
 
 // create a connection between given idx pairs
 void net_connect(u32 oIdx, u32 iIdx) {
