@@ -133,6 +133,7 @@ u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
   dst = pickle_32(pdesc->min, dst);
   // store max
   dst = pickle_32(pdesc->max, dst);
+  //// FIXME: needs radix!!
   return dst;
 }
 
