@@ -64,11 +64,12 @@ heap_t alloc_mem(u32 bytes) {
   }
   if (tmp < heapSize) {
     heapOffset = tmp;
-    //    ret = pHeapStart + heapOffset;
   } else {
     print_dbg("\r\n memory allocation failed!");
     ret = (heap_t)ALLOC_FAIL;
   }
+  print_dbg("\r\n memory allocation result: 0x");
+  print_dbg_hex((u32)ret);
   return ret;
 }
 

@@ -906,6 +906,12 @@ u8 net_report_params(void) {
     net_clear_params();
 
     for(i=0; i<numParams; i++) {
+
+
+        /* FIXME: 
+   need to move this to bees, or move params out of bees, or something...
+   */
+
       bfin_get_param_desc(i, &pdesc);
 
       print_dbg("\r\n received descriptor for param, index : ");

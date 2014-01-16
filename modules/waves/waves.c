@@ -37,7 +37,6 @@
 // so it can simply be loaded at the start of SDRAM.
 typedef struct _wavesData {
   ModuleData super;
-  ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
 } wavesData;
 
@@ -181,7 +180,6 @@ static void calc_frame(void) {
 //----- external functions
 
 void module_init(void) {
-  u32 i;
 
   // init module/param descriptor
   // intialize local data at start of SDRAM
@@ -189,14 +187,8 @@ void module_init(void) {
   // initialize moduleData superclass for core routines
   gModuleData = &(data->super);
   strcpy(gModuleData->name, "aleph-waves");
-  gModuleData->paramDesc = data->mParamDesc;
   gModuleData->paramData = data->mParamData;
   gModuleData->numParams = eParamNumParams;
-
-  // fill param values with minima as default
-  for(i=0; i<eParamNumParams; ++i) {
-    gModuleData->paramData[i].value = gModuleData->paramDesc[i].min;
-  }
 
   osc_init( &osc1, &wavtab, SAMPLERATE );
   osc_init( &osc0, &wavtab, SAMPLERATE );

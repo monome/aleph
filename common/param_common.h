@@ -42,7 +42,7 @@ typedef union __attribute__((__packed__)) {
   s32 asInt;
   u32 asUint;
   u8 asByte[4];
-} ParamValueCommon;
+} ParamValueSwap;
 
 // parameter descriptor
 typedef struct __attribute__((__packed__)) ParamDescStruct {

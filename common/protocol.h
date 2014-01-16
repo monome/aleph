@@ -19,8 +19,9 @@
 #define MSG_SET_PARAM_COM           0 
 #define MSG_GET_PARAM_COM           1
 #define MSG_GET_NUM_PARAMS_COM      2
-#define MSG_GET_PARAM_DESC_COM      3
+#define MSG_GET_PARAM_DESC_COM      3 // not using, but leave reserved
 #define MSG_GET_MODULE_NAME_COM     4
+// get 4-byte version packet
 #define MSG_GET_MODULE_VERSION_COM  5
 #define MSG_ENABLE_AUDIO            6
 #define MSG_DISABLE_AUDIO           7
@@ -49,6 +50,8 @@ typedef enum {
   //---- get num params
   eNumParamsVal,
   //---- get param descriptor
+  /// param descriptors in aleph-module.dsc
+#if 0
   eParamDescIdx,
   // label
   eParamDescLabel0,
@@ -81,6 +84,7 @@ typedef enum {
   eParamDescMax3,
   // radix
   eParamDescRadix,
+#endif
   // get module name
   eGetModuleName,
   // module name bytes
@@ -108,6 +112,7 @@ typedef enum {
   eModuleName21,
   eModuleName22,
   eModuleName23,
+#if 0 // include these in offline desc
   //---- added:
   //---- buffer stuff
   /// get number of buffers
@@ -118,6 +123,7 @@ typedef enum {
   eBufferDescFrames,
   //-- send buffer data
   eSendBufferData,
+#endif
   
   eNumSpiBytes
 } eSpiByte;

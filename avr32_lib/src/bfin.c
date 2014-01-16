@@ -92,7 +92,7 @@ void bfin_load_buf(void) {
 //void bfin_set_param(u8 idx, f32 x ) {
 void bfin_set_param(u8 idx, fix16_t x ) {
   //static u32 ticks = 0;
-  ParamValueCommon pval;
+  ParamValueSwap pval;
   pval.asInt = (s32)x;
 
   print_dbg("\r\n bfin_set_param, idx: ");
@@ -170,8 +170,16 @@ void bfin_get_num_params(volatile u32* num) {
 
 }
 
+
+
+/// moving param descriptor offline
+#if 1
+//void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
+  //...
+//}
+#else 
 void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
-  ParamValueCommon pval;
+  ParamValueSwap pval;
   u16 x; // u16 for spi_read()
   u8 i;
 
@@ -236,6 +244,8 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
     pDesc->radix = (u8)(x & 0xff);
   app_resume();
 }
+#endif
+
 
 // get module name
 void bfin_get_module_name(volatile char* buf) {
@@ -340,7 +350,7 @@ void bfin_wait_ready(void) {
 
 // get parameter value
 s32 bfin_get_param(u8 idx) {
-  ParamValueCommon pval;
+  ParamValueSwap pval;
   u16 x;
   
   app_pause();

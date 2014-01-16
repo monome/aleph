@@ -45,13 +45,16 @@ u8 spi_process(u8 rx) {
       byte = eNumParamsVal;
       return gModuleData->numParams; // load num params
       break;
+      /*
     case MSG_GET_PARAM_DESC_COM:
       byte = eParamDescIdx;
       break;
+      */
     case MSG_GET_MODULE_NAME_COM:
       byte = eModuleName0;
       return gModuleData->name[0];
       break;
+
     case MSG_ENABLE_AUDIO:
       processAudio = 1;
       return processAudio;
@@ -135,6 +138,7 @@ u8 spi_process(u8 rx) {
     break;
 
     //---- get param descriptor
+#if 0
   case eParamDescIdx :
     byte = eParamDescLabel0;
     idx = rx;
@@ -290,6 +294,9 @@ u8 spi_process(u8 rx) {
     byte = eCom; // reset
     return 0; // dont care
     break;
+#endif
+
+
     //----- get module name
   case eModuleName0 :
     byte = eModuleName1;
