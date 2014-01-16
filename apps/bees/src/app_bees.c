@@ -95,10 +95,10 @@ u8 app_launch(u8 firstrun) {
     net_report_params();
 
     //    print_dbg("\r\n enable DSP audio...");
-        render_boot("enabling audio");
+    render_boot("enabling audio");
     bfin_enable();
 
-    render_boot("writing default dsp to flash...");
+    //    render_boot("writing default dsp to flash...");
     //    files_store_default_dsp_name("aleph-waves.ldr");
     
   } else {
@@ -129,6 +129,8 @@ u8 app_launch(u8 firstrun) {
     print_dbg("\r\n reading default scene... ");
     render_boot("reading default scene");
     scene_read_default();
+
+    delay_ms(2); 
 
     app_resume();
     
