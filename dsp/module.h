@@ -32,11 +32,11 @@ typedef struct _moduleData {
   // so for now it is just here, burning resources.
   ParamData* paramData; 
   u16 numParams;
-} moduleData;
+} ModuleData;
 
 //---------
 // global pointer to module descriptor
-extern moduleData* gModuleData;
+extern ModuleData* gModuleData;
 
 // debug output flag
 extern u8 dbgFlag;
@@ -52,6 +52,7 @@ extern void module_process_frame(void);
 
 // set parameter  
 extern void module_set_param(u32 idx, ParamValue val);
+
 // get number of parameters
 extern u32 module_get_num_params(void);
 

@@ -40,10 +40,10 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParamAmp1:
-     filter_1p_lo_in(amp1Lp, v);
+     filter_1p_lo_in(&amp1Lp, v);
     break;
   case eParamAmp0:
-    filter_1p_lo_in(amp0Lp, v);
+    filter_1p_lo_in(&amp0Lp, v);
     break;
 
   case eParamBl1 :
@@ -142,10 +142,10 @@ void module_set_param(u32 idx, ParamValue v) {
     filter_1p_lo_set_slew( &(osc0.lpShape), v); 
     break;
   case eParamAmp1Slew:
-    filter_1p_lo_set_slew(amp1Lp, v);
+    filter_1p_lo_set_slew(&amp1Lp, v);
     break;
   case eParamAmp0Slew:
-    filter_1p_lo_set_slew(amp0Lp, v);
+    filter_1p_lo_set_slew(&amp0Lp, v);
     break;
 
     ////// FIXME:

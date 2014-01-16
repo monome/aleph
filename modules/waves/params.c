@@ -9,6 +9,8 @@
 #include "osc.h"
 #include "params.h" 
 
+//ModuleData dat;
+
 void fill_param_desc(void) {
 
   strcpy(gModuleData->paramDesc[eParamHz0].label, "hz0");

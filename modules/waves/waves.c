@@ -36,15 +36,14 @@
 // this structure should statically allocate all necessary memory 
 // so it can simply be loaded at the start of SDRAM.
 typedef struct _wavesData {
-  moduleData super;
+  ModuleData super;
   ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
 } wavesData;
 
 //-------------------------
 //----- extern vars (initialized here)
-moduleData * gModuleData; // module data
-
+ModuleData * gModuleData; // module data
 //-----------------------
 //------ static variables
 
@@ -86,8 +85,8 @@ static fract32  oscAmp1;
 static fract32  oscAmp0;
 
 // amp smoothers
-static filter_1p_lo* amp1Lp;  
-static filter_1p_lo* amp0Lp;
+static filter_1p_lo amp1Lp;  
+static filter_1p_lo amp0Lp;
 
 // dry I->O amplitudes
 static fract32 ioAmp0; 
@@ -155,8 +154,8 @@ static void calc_frame(void) {
   /////////
 
   // amp smoothers
-  oscAmp1 = filter_1p_lo_next(amp1Lp);
-  oscAmp0 = filter_1p_lo_next(amp0Lp);
+  oscAmp1 = filter_1p_lo_next(&amp1Lp);
+  oscAmp0 = filter_1p_lo_next(&amp0Lp);
 
   // apply osc amplitudes and sum 
   oscOut1 = mult_fr1x32x32(oscAmp1,
@@ -204,24 +203,13 @@ void module_init(void) {
 
   oscAmp1 = oscAmp0 = INT32_MAX >> 2;
 
-  /* osc_set_hz( &osc1, fix16_from_int(220) ); */
-  /* osc_set_hz( &osc0, fix16_from_int(330) ); */
-
-  /* ioAmp0 = FR32_MAX; */
-  /* ioAmp1 = FR32_MAX; */
-  /* ioAmp2 = FR32_MAX; */
-  /* ioAmp3 = FR32_MAX; */
-
   // filters
   filter_svf_init(&(svf1));
   filter_svf_init(&(svf0));    
 
   // allocate smoothers
-  amp1Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
-  filter_1p_lo_init( amp1Lp, oscAmp1 );
-
-  amp0Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
-  filter_1p_lo_init( amp0Lp, oscAmp0 );
+  filter_1p_lo_init( &amp1Lp, oscAmp1 );
+  filter_1p_lo_init( &amp0Lp, oscAmp0 );
 
   // dac
   filter_1p_lo_init( &(cvSlew[0]), 0xf );
@@ -293,11 +281,9 @@ void module_init(void) {
 }
 
 // de-init
-void module_deinit(void) {
-  /// why bother, it never happens
-  /* free(amp1Lp); */
-  /* free(amp0Lp); */
-}
+/*   /// why bother, it never happens */
+/* void module_deinit(void) { */
+/* } */
 
 
 // get number of parameters

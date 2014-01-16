@@ -46,7 +46,7 @@ u32 dbgCount = 0;
 
 // data structure of external memory
 typedef struct _linesData {
-  moduleData super;
+  ModuleData super;
   ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
   fract32 audioBuffer[NLINES][LINES_BUF_FRAMES];
@@ -54,7 +54,7 @@ typedef struct _linesData {
 
 //-------------------------
 //----- extern vars (initialized here)
-moduleData* gModuleData; 
+ModuleData* gModuleData; 
 
 
 //-----------------------
