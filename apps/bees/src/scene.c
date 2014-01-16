@@ -110,26 +110,32 @@ void scene_read_buf(void) {
   memcpy(modName, sceneData->desc.moduleName, MODULE_NAME_LEN);
 
   ///// always load:
-    print_dbg("\r\n loading module name: ");
+    print_dbg("\r\n loading module from card, module name: ");
     print_dbg(sceneData->desc.moduleName);
     files_load_dsp_name(sceneData->desc.moduleName);
     //  }
 
+    print_dbg("\r\n waiting for DSP init...");
     bfin_wait_ready();
 
+    print_dbg("\r\n clearing operator list...");
     net_clear_user_ops();
 
+    print_dbg("\r\n reporting DSP parameters...");
     net_report_params();
 
-  // unpickle network 
-  print_dbg("\r\n unpickling network for scene recall...");
-  src = net_unpickle(src);
+    /// FIXME: 
+    // there should be a check here for mismatched parameter list.
 
-  // unpickle presets
-  print_dbg("\r\n unpickling presets for scene recall...");
-  src = presets_unpickle(src);
+    // unpickle network 
+    print_dbg("\r\n unpickling network for scene recall...");
+    src = net_unpickle(src);
+    
+    // unpickle presets
+    print_dbg("\r\n unpickling presets for scene recall...");
+    src = presets_unpickle(src);
   
-  print_dbg("\r\n copied stored network and presets to RAM ");
+    print_dbg("\r\n copied stored network and presets to RAM ");
 
   /* for(i=0; i<net->numParams; i++) { */
   /*   print_dbg("\r\n param "); */
@@ -157,7 +163,7 @@ void scene_read_buf(void) {
 
   // update bfin parameters
   net_send_params();
-  print_dbg("\r\n sent new params");
+  print_dbg("\r\n sent new parameter values");
 
   delay_ms(5);
 

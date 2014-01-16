@@ -84,8 +84,9 @@ static void handle_Switch5(s32 data) {
 
 
   // skip flash write if MODE is down
-  if(!gpio_get_pin_value(SW_MODE_PIN)) 
+  if(!gpio_get_pin_value(SW_MODE_PIN)) {
     scene_write_default();
+  }
 
   //  //// TEST: write to filesystem!
   //  files_store_scene_name("test_default.scn");

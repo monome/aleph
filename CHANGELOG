@@ -1,3 +1,11 @@
+----------------
+bees	0.2.3
+
+- release build now actually supresses debug prints
+- fix potential LDR boot problems
+- fix onscreen boot messages 
+
+
 ===========================================
 140115
 
