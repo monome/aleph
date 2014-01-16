@@ -139,9 +139,9 @@ static void op_enc_perform(op_enc_t* enc) {
   /* /\* print_dbg(" , val: "); *\/ */
   /* /\* print_dbg_hex(enc->val32); *\/ */
 
-  /* if (enc->wrap) { // wrapping... */
-  /*   // if value needs wrapping, output the applied difference */
-  /*   while (enc->val32 > max32) {  */
+  if (enc->wrap) { // wrapping...
+    // if value needs wrapping, output the applied difference
+    while (enc->val32 > max32) {
 
       print_dbg(" ... wrapping high... ");
 
