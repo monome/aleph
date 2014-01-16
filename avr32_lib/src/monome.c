@@ -772,17 +772,27 @@ static void grid_map_mext( u8 x, u8 y, const u8* data ) {
 
 static void grid_map_40h(u8 x, u8 y, const u8* data) {
   // print_dbg("\n\r=== grid_map_40h ===");
-  static u8 i, j, row;
+  static u8 i, j;
+  // ignore all but first quadrant -- do any devices larger than 8x8 speak 40h?
+  if (x != 0 || y != 0) {
+    return;
+  }
   for(i=0; i<MONOME_QUAD_LEDS; i++) {
+    // led row command + row number
     txBuf[0] = 0x70 + i;
-    row = 0;
+    txBuf[1] = 0;
+    // print_dbg("\r\n * data bytes: ");
     for(j=0; j<MONOME_QUAD_LEDS; j++) {
-      // binary value of data byte to bitfield of tx byte
-      row |= ((*data > 0) << j);
+      // set row bit if led should be on
+      // print_dbg("0x");
+      // print_dbg_hex(*data);
+      // print_dbg(" ");
+      txBuf[1] |= ((*data > 0) << j);
+      // advance data to next bit
       ++data;
     }
+    // skip next 8 bytes to get to next row
     data += MONOME_QUAD_LEDS;
-    txBuf[1] = row;
     // print_dbg("\n\r 40h: send led_row command: ");
     // print_dbg_hex(txBuf[0]);
     // print_dbg(" row data: 0x");
