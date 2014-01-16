@@ -5,7 +5,8 @@
 bees	0.2.2
 
 - fix 256 detection bug
-- add 40h protocol
+- add 40h protocold
+- fix overflow in op_enc and ban some pathological settings
 
 ----------------
 bees	0.2.1

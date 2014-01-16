@@ -15,6 +15,8 @@ typedef struct op_enc_struct {
   volatile io_t wrap;
   volatile io_t * in_val[4];
   op_out_t outs[2];
+  /// non-exposed state:
+  s32 val32;
 } op_enc_t;
 
 extern void op_enc_init(void* mem);
