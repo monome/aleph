@@ -148,20 +148,6 @@ void module_set_param(u32 idx, ParamValue v) {
     filter_1p_lo_set_slew(&amp0Lp, v);
     break;
 
-    ////// FIXME:
-  /* case eParamIoAmp0: */
-  /*   ioAmp0 = (v); */
-  /*   break; */
-  /* case eParamIoAmp1: */
-  /*   ioAmp1 = (v); */
-  /*   break; */
-  /* case eParamIoAmp2: */
-  /*   ioAmp2 = (v); */
-  /*   break; */
-  /* case eParamIoAmp3: */
-  /*   ioAmp3 = (v); */
-  /*   break; */
-
     // cv values
   case eParam_cvVal0 :
     filter_1p_lo_in(&(cvSlew[0]), (v >> ( PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
@@ -196,6 +182,7 @@ void module_set_param(u32 idx, ParamValue v) {
    // i/o mix:
   case eParam_adc0_dac0 :
     //    mix_adc_dac[0][0] = v;
+    ///// FIXME:
     ioAmp0 = v;
     break;
   case eParam_adc0_dac1 :
@@ -212,6 +199,7 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_adc1_dac1 :
     //    mix_adc_dac[1][1] = v;
+    /////// FIXME:
     ioAmp1 = v;
     break;
   case eParam_adc1_dac2 :

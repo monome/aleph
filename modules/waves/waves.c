@@ -220,7 +220,9 @@ void module_init(void) {
 
   // write descriptors
   /// FIXME: eliminate and move offline !
+#if 0
   fill_param_desc();
+#endif
 
   // set parameters to defaults
   param_setup(  eParamHz1, 	220 << 16 );

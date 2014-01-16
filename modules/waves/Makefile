@@ -6,7 +6,6 @@ version = $(maj).$(min).$(rev)
 ldr_name = aleph-$(module_name)-$(version).ldr
 
 module_obj = waves.o  \
-	params.o \
 	$(audio_dir)/conversion.o \
 	$(audio_dir)/filter_1p.o \
 	$(audio_dir)/filter_svf.o \
@@ -26,6 +25,12 @@ CFLAGS += -D ARCH_BFIN=1
 #CFLAGS += --verbose
 
 include version.mk
+
+desc:
+	gcc params.c $(INC) ../../bfin_lib/src/pickle.c \
+	-D NAME=\"$(module_name)\" \
+	-o params
+
 
 $(module_obj): %.o : %.c	
 	$(CC) $(CFLAGS) -c -o $@ $< $(LDFLAGS)

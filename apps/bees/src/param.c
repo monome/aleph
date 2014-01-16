@@ -126,11 +126,6 @@ u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
     *dst = pdesc->label[i];
     ++dst;
   }
-  // store unit string
-  /* for(i=0; i<PARAM_UNIT_LEN; ++i) { */
-  /*   *dst = pdesc->unit[i]; */
-  /*   ++dst; */
-  /* } */
   // store type
   *dst = pdesc->type;
   ++dst;
@@ -138,6 +133,9 @@ u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
   dst = pickle_32(pdesc->min, dst);
   // store max
   dst = pickle_32(pdesc->max, dst);
+  // store radix (waste space for alignment)
+  dst = pickle_32((u32)(pdesc->radix), dst);
+
   return dst;
 }
 
@@ -169,19 +167,22 @@ const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
   // print_dbg("\r\n unpickled param type: ");
   // print_dbg_ulong((u32)(pdesc->type));
   
-  // store min
+  // min
   src = unpickle_32(src, &val);
   pdesc->min = val;
 
   // print_dbg("\r\n unpickled param min: ");
   // print_dbg_hex(pdesc->min);
-
-  // store max
+  // max
   src = unpickle_32(src, &val);
   pdesc->max = val;
 
   // print_dbg("\r\n unpickled param max: ");
   // print_dbg_hex(pdesc->max);
+
+  // radix (waste space for alignment)
+  src = unpickle_32(src, &val);
+  pdesc->radix = (u8)val;
 
   return src;
 }
