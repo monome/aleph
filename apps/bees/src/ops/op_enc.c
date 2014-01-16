@@ -93,13 +93,16 @@ static void op_enc_in_step(op_enc_t* enc, const io_t v) {
 
 // max
 static void op_enc_in_min(op_enc_t* enc, const io_t v) {
-  enc->min = v;
+  /// fixme: for now, i am banning this kind of pathological shit:
+  if(v >= enc->max) { enc->min = enc->max - 1; }
+  else { enc->min = v; }
   op_enc_perform(enc);
 }
 
 // max
 static void op_enc_in_max(op_enc_t* enc, const io_t v) {
-  enc->max = v;
+  if(v <= enc->min) { enc->max = enc->min + 1; }
+  else { enc->max = v; }
   op_enc_perform(enc);
 }
 
@@ -112,28 +115,77 @@ static void op_enc_in_wrap(op_enc_t* enc, const io_t v) {
 
 // perform wrapping and output
 static void op_enc_perform(op_enc_t* enc) { 
-  io_t wrap = 0;
-  io_t dif = 0;
-  if (enc->wrap) { // wrapping...
-    // if value needs wrapping, output the applied difference
-    while (enc->val > enc->max) { 
-      dif = op_sub(enc->min, enc->max);
-      wrap = op_add(wrap, dif);
-      enc->val = op_add(enc->val, dif);
+  s32 wrap = 0;
+  s32 dif = 0;
+
+  /// FIXME: this 32-bit business is pretty foul stuff.
+  s32 min32;
+  s32 max32;
+  if(enc->min < 0) {
+    min32 = (s32)(enc->min) | 0xffff0000;
+  } else {
+    min32 = (s32)(enc->min);
+  }
+  if(enc->max < 0) {
+    max32 = (s32)(enc->max) | 0xffff0000;
+  } else {
+    max32 = (s32)(enc->max);
+  }
+  
+  /* /\* print_dbg("\r\n calculating enc output... min: 0x"); *\/ */
+  /* /\* print_dbg_hex(min32); *\/ */
+  /* /\* print_dbg(" , max: "); *\/ */
+  /* /\* print_dbg_hex(max32); *\/ */
+  /* /\* print_dbg(" , val: "); *\/ */
+  /* /\* print_dbg_hex(enc->val32); *\/ */
+
+  /* if (enc->wrap) { // wrapping... */
+  /*   // if value needs wrapping, output the applied difference */
+  /*   while (enc->val32 > max32) {  */
+
+      print_dbg(" ... wrapping high... ");
+
+      dif = min32 - max32;
+
+      if(dif == 0) { dif = -1; }
+      /* print_dbg(" , dif: "); */
+      /* print_dbg_hex(dif); */
+
+      wrap += dif;
+      enc->val32 = enc->val32 + dif;
+
+      /* print_dbg(" , new val: "); */
+      /* print_dbg_hex(enc->val32); */
+
     }
-    while (enc->val < enc->min) { 
-      dif = op_sub(enc->max, enc->min);
-      wrap = op_add(wrap, dif);
-      enc->val = op_add(enc->val, dif);
+    while (enc->val32 < min32) { 
+      /* print_dbg(" ... wrapping low... "); */
+      
+      dif = max32 - min32;
+      if(dif == 0) { dif = 1; }
+
+      /* print_dbg(" , dif: "); */
+      /* print_dbg_hex(dif); */
+
+
+      wrap += dif;
+      enc->val32 = enc->val32 + dif;
+
+  /* print_dbg(" , new val: "); */
+  /* print_dbg_hex(enc->val32); */
+
     }
+    enc->val = op_from_int(enc->val32);
   } else { // saturating...
-    if (enc->val > enc->max) {
+    if (enc->val32 > (s32)(enc->max)) {
       enc->val = enc->max;
       dif = 1; // force wrap output
     }
-    if (enc->val < enc->min) {
+    else if (enc->val32 < (s32)(enc->min)) {
       enc->val = enc->min;
       dif = -1; // force wrap output
+    } else {
+      enc->val = op_from_int(enc->val32);
     }
   }
 
@@ -142,7 +194,7 @@ static void op_enc_perform(op_enc_t* enc) {
 
   // output the wrap amount
   if (dif != 0) {
-    net_activate(enc->outs[1], wrap, enc);  
+    net_activate(enc->outs[1], op_from_int(wrap), enc);  
   }
 }
 
@@ -195,6 +247,10 @@ void op_enc_sys_input(op_enc_t* enc, s8 v) {
   /* print_dbg_hex((u32)enc); */
   /* print_dbg(" , input value: 0x"); */
   /* print_dbg_hex((u32)v); */
-  enc->val = op_add(enc->val, op_mul(enc->step, op_from_int(v)));
+  // use saturating add. have to explicitly check for "would-be overflow" in wrap mode with max val.
+  //  enc->val = op_sadd(enc->val, op_mul(enc->step, op_from_int(v)));
+  /// HACK: assuming the io_t is small enough t
+  /// that we can void overflow by casting to 4 bytes.
+  enc->val32 = (s32)(enc->val) + (s32)(op_mul(enc->step, op_from_int(v)));
   op_enc_perform(enc);  
 }
