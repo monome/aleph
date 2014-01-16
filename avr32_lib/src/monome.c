@@ -779,26 +779,26 @@ static void grid_map_40h(u8 x, u8 y, const u8* data) {
   }
   for(i=0; i<MONOME_QUAD_LEDS; i++) {
     // led row command + row number
-    txBuf[0] = 0x70 + i;
-    txBuf[1] = 0;
+    txBuf[(i*2)] = 0x70 + i;
+    txBuf[(i*2)+1] = 0;
     // print_dbg("\r\n * data bytes: ");
     for(j=0; j<MONOME_QUAD_LEDS; j++) {
       // set row bit if led should be on
       // print_dbg("0x");
       // print_dbg_hex(*data);
       // print_dbg(" ");
-      txBuf[1] |= ((*data > 0) << j);
+      txBuf[(i*2)+1] |= ((*data > 0) << j);
       // advance data to next bit
       ++data;
     }
     // skip next 8 bytes to get to next row
     data += MONOME_QUAD_LEDS;
     // print_dbg("\n\r 40h: send led_row command: ");
-    // print_dbg_hex(txBuf[0]);
+    // print_dbg_hex(txBuf[i*2]);
     // print_dbg(" row data: 0x");
-    // print_dbg_hex(txBuf[1]);    
-    ftdi_write(txBuf, 2);
+    // print_dbg_hex(txBuf[(i*2) + 1]);
   }
+  ftdi_write(txBuf, 16);
 }
 
 static void grid_map_series(u8 x, u8 y, const u8* data) {
