@@ -128,6 +128,8 @@ u8 app_launch(u8 firstrun) {
     
     print_dbg("\r\n reading default scene... ");
     render_boot("reading default scene");
+
+    /// this also attempts to load associated .ldr
     scene_read_default();
 
     delay_ms(2); 
