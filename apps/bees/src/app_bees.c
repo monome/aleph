@@ -34,6 +34,9 @@
 
 static char versionString[12] = VERSIONSTRING;
 
+#define DEFAULT_LDR "aleph-waves.ldr"
+#define DEFAULT_DSC "aleph-waves.dsc"
+
 // this is called during hardware initialization.
 // allocate memory.
 void app_init(void) {
@@ -81,17 +84,18 @@ u8 app_launch(u8 firstrun) {
     flash_init_scaler_data();
 
     print_dbg("\r\n first run, try and load default DSP");
-    render_boot("launching default DSP...");
+    render_boot("launching default DSP");
 
-    files_load_dsp_name("aleph-waves.ldr");
+    //// startup using default DSP name
+    files_load_dsp_name(DEFAULT_LDR);
     
     render_boot("waiting for DSP init...");
     print_dbg("\r\n DSP booted, waiting to query params...");
-    print_dbg(" requesting param report...");
+    print_dbg(" requesting param report");
     bfin_wait_ready();
 
     //    print_dbg(" requesting param report...");
-    render_boot("requesting DSP params");
+    render_boot("requesting DSP parameterss");
     net_report_params();
 
     //    print_dbg("\r\n enable DSP audio...");
@@ -127,7 +131,7 @@ u8 app_launch(u8 firstrun) {
     //    bfin_enable();
     
     print_dbg("\r\n reading default scene... ");
-    render_boot("reading default scene");
+    render_boot("reading  scene from flash");
 
     /// this also attempts to load associated .ldr
     scene_read_default();
@@ -139,6 +143,7 @@ u8 app_launch(u8 firstrun) {
    }
 
   // init pages (fill graphics buffers)
+  render_boot("initializing gfx");
   print_dbg("\r\n pages_init...");
   pages_init();
 
@@ -147,15 +152,15 @@ u8 app_launch(u8 firstrun) {
 
   // enable timers
   print_dbg("\r\n enable app timers...");
-  render_boot("enabling app timers...");
+  render_boot("enabling app timers");
   init_app_timers();
 
   // pull up power control pin, enabling soft-powerdown
   gpio_set_gpio_pin(POWER_CTL_PIN);
 
   // assign app event handlers
-  print_dbg("\r\n assigning handlers ");
-  render_boot("assigning UI handlers...");
+  print_dbg("\r\n assigning handlers... ");
+  render_boot("assigning UI handlers");
   assign_bees_event_handlers();
 
   // update page rendering and handlers
