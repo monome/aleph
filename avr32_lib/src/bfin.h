@@ -39,7 +39,7 @@ void bfin_get_num_params(volatile u32* num);
 // void bfin_get_param_name(u16 paramIdx, volatile char* name);
 // get parameter descriptor
 void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc);
-// get load module namefa
+// get load module name
 void bfin_get_module_name(volatile char* buf);
 // get loaded module version
 void bfin_get_module_version(ModuleVersion* vers);

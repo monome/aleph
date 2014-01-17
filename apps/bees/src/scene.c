@@ -140,7 +140,10 @@ void scene_write_buf(void) {
 void scene_read_buf(void) {
   const u8* src = (u8*)&(sceneData->pickle);
   int i;
-
+  //// TEST
+  volatile char moduleName[32];
+  ModuleVersion moduleVersion;
+  ////
    app_pause();
 
   // store current mod name in scene desc
@@ -164,6 +167,7 @@ void scene_read_buf(void) {
     sceneData->desc.moduleName[i] = *src;
     src++;
   }
+
   print_dbg("\r\n unpickled module name: ");
   print_dbg(sceneData->desc.moduleName);
 
@@ -183,7 +187,7 @@ void scene_read_buf(void) {
 
 
   ///// load the DSP now!
-  print_dbg("\r\n loading module from card, module name: ");
+  print_dbg("\r\n loading module from card, filename: ");
   print_dbg(sceneData->desc.moduleName);
   files_load_dsp_name(sceneData->desc.moduleName);
 
@@ -195,7 +199,29 @@ void scene_read_buf(void) {
 
   print_dbg("\r\n reporting DSP parameters...");
   net_report_params();
-  
+
+
+#if RELEASEBUILD==1
+#else
+  // query module name / version
+  print_dbg("\r\n querying module name...");
+  bfin_get_module_name(moduleName);
+  print_dbg("\r\n querying module version...");
+  bfin_get_module_version(&moduleVersion);
+
+
+  print_dbg("\r\n received module name: ");
+  print_dbg((char*)moduleName);
+
+  print_dbg("\r\n received module version: ");
+  print_dbg_ulong(moduleVersion.maj);
+  print_dbg(".");
+  print_dbg_ulong(moduleVersion.min);
+  print_dbg(".");
+  print_dbg_ulong(moduleVersion.rev);
+#endif
+
+
   /// FIXME:
   /// check the module version and warn if different!
   // there could also be a check here for mismatched parameter list.
