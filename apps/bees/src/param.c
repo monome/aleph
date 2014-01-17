@@ -126,11 +126,6 @@ u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
     *dst = pdesc->label[i];
     ++dst;
   }
-  // store unit string
-  /* for(i=0; i<PARAM_UNIT_LEN; ++i) { */
-  /*   *dst = pdesc->unit[i]; */
-  /*   ++dst; */
-  /* } */
   // store type
   *dst = pdesc->type;
   ++dst;

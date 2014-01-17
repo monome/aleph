@@ -59,7 +59,12 @@
 #
 # \asf_license_stop
 #
-#
+
+
+/*
+	this Atmel Software Framework file has been slightly modified for use on the monome aleph.
+*/
+
 # Include the config.mk file from the current working path, e.g., where the
 # user called make.
 include config.mk
@@ -296,7 +301,7 @@ ldflags-gnu-y   += -Wl,-Map=$(project).map,--cref
 ldflags-gnu-y   += $(foreach _LIB_PATH,$(addprefix $(PRJ_PATH)/,$(LIB_PATH)),-L$(_LIB_PATH))
 
 a_flags  = $(cpuflags-gnu-y) $(depflags) $(cppflags-gnu-y) $(asflags-gnu-y) -D__ASSEMBLY__
-c_flags  = $(cpuflags-gnu-y) $(dbgflags-gnu-y) $(depflags) $(optflags-gnu-y) $(cppflags-gnu-y) $(cflags-gnu-y) 	-D VERSIONSTRING='"$(version)"' -D RELEASEBUILD=$(RELEASE)
+c_flags  = $(cpuflags-gnu-y) $(dbgflags-gnu-y) $(depflags) $(optflags-gnu-y) $(cppflags-gnu-y) $(cflags-gnu-y) 	-D VERSIONSTRING='"$(version)"' -D MAJ=$(maj) -D MIN=$(min) -D REV=$(rev) -D RELEASEBUILD=$(RELEASE)
 cxx_flags= $(cpuflags-gnu-y) $(dbgflags-gnu-y) $(depflags) $(optflags-gnu-y) $(cppflags-gnu-y) $(cxxflags-gnu-y)
 l_flags  = $(cpuflags-gnu-y) $(optflags-gnu-y) $(ldflags-gnu-y)
 ar_flags = $(arflags-gnu-y)

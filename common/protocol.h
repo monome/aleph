@@ -118,6 +118,12 @@ typedef enum {
   eBufferDescFrames,
   //-- send buffer data
   eSendBufferData,
+
+  // module version
+  eModuleVersionMaj,
+  eModuleVersionMin,
+  eModuleVersionRev0,
+  eModuleVersionRev1,
   
   eNumSpiBytes
 } eSpiByte;

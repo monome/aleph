@@ -261,32 +261,32 @@ void bfin_get_module_name(volatile char* buf) {
 
 // get module version
 void bfin_get_module_version(moduleVersion_t* vers) {
-  //  u16 x;
+  u16 x;
   
-  /* // command  */
-  /* spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS); */
-  /* spi_write(BFIN_SPI, MSG_GET_MODULE_VERSION_COM); */
-  /* spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS); */
-  /* // major */
-  /* spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS); */
-  /* spi_read(BFIN_SPI, &x); */
-  /* spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS); */
-  /* vers->maj = x; */
-  /* // minor */
-  /* spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS); */
-  /* spi_read(BFIN_SPI, &x); */
-  /* spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS); */
-  /* vers->min = x; */
-  /*   // rev high */
-  /* spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS); */
-  /* spi_read(BFIN_SPI, &x); */
-  /* spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS); */
-  /* vers->rev |= (x << 8) & 0xff; */
-  /*   // rev low */
-  /* spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS); */
-  /* spi_read(BFIN_SPI, &x); */
-  /* spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS); */
-  /* vers->rev |= x & 0xff; */
+  // command
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, MSG_GET_MODULE_VERSION_COM);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  // major
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_read(BFIN_SPI, &x);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  vers->maj = x;
+  // minor
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_read(BFIN_SPI, &x);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  vers->min = x;
+    // rev high
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_read(BFIN_SPI, &x);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  vers->rev |= ((x << 8) & 0xff);
+    // rev low
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_read(BFIN_SPI, &x);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  vers->rev |= (x & 0xff00)
 }
 
 

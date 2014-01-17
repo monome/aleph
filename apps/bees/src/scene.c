@@ -59,6 +59,7 @@ void scene_write_buf(void) {
 
   u32 bytes = 0;
   u8* newDst = NULL;
+  int i;
 
   ///// print parmameters
   //  u32 i;
@@ -75,20 +76,42 @@ void scene_write_buf(void) {
   }
   */
 
+  // write name? or just get it from file
+#if 0
+  for(i=0; i<SCENE_NAME_LEN; i++) {
+    *dst = (sceneData->desc.sceneName)[i] = ' ';
+  }
+#endif
+  
+  // write bees version
+  *dst = beesVersion.min;
+  *dst = beesVersion.maj;
+  dst = pickle_16(beesVersion.rev, dst);
+  bytes += 4;
+
+  // write module version
+  *dst = moduleVersion.min;
+  *dst = moduleVersion.maj;
+  dst = pickle_16(moduleVersion.rev, dst);
+  bytes += 4;
+  
   // pickle network
   newDst = net_pickle(dst);
   bytes += (newDst - dst);
-  print_dbg("\r\n bytes written: 0x");
+  print_dbg("\r\n pickled network, bytes written: 0x");
   print_dbg_hex(bytes);
   dst = newDst;
 
   // pickle presets
   newDst = presets_pickle(dst);
   bytes += (newDst - dst);
-  print_dbg("\r\n bytes written: 0x");
+  print_dbg("\r\n pickled presets, bytes written: 0x");
   print_dbg_hex(bytes);
   dst = newDst;
-  
+
+  if(bytes > SCENE_PICKLE_SIZE - 0x800) {
+    print_dbg(" !!!!!!!! warning: serialized scene data approaching allocated bounds !!!!! ");
+  }
   if(bytes > SCENE_PICKLE_SIZE) {
     print_dbg(" !!!!!!!! error: serialized scene data exceeded allocated bounds !!!!! ");
   }
@@ -113,7 +136,6 @@ void scene_read_buf(void) {
     print_dbg("\r\n loading module from card, module name: ");
     print_dbg(sceneData->desc.moduleName);
     files_load_dsp_name(sceneData->desc.moduleName);
-    //  }
 
     print_dbg("\r\n waiting for DSP init...");
     bfin_wait_ready();

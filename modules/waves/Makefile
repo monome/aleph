@@ -34,6 +34,7 @@ aleph-$(module_name): bfin_lib_target $(module_obj)
 	$(CC) $(LDFLAGS) -T aleph-$(module_name).lds \
 	$(patsubst %.o, $(bfin_lib_objdir)%.o, $(bfin_lib_obj)) \
 	$(module_obj) \
+	-D MAJ=$(maj) -D MIN=$(min) -D REV=$(rev) \
 	-o aleph-$(module_name) \
 	-lm -lbfdsp -lbffastfp
 
