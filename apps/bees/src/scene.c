@@ -66,7 +66,7 @@ void scene_write_buf(void) {
   u8* newDst = NULL;
     int i;
 
-  ///// print parmameters
+  ///// print paramameters
   //  u32 i;
 
   print_dbg("\r\n writing scene data... ");
@@ -83,7 +83,7 @@ void scene_write_buf(void) {
 
   // write name
   for(i=0; i<SCENE_NAME_LEN; i++) {
-    *dst = (sceneData->desc.sceneName)[i];
+    *dst = sceneData->desc.sceneName[i];
     dst++;
     bytes++;
   }
@@ -105,7 +105,9 @@ void scene_write_buf(void) {
 
   // write module version
   *dst = sceneData->desc.moduleVersion.min;
+  dst++;
   *dst = sceneData->desc.moduleVersion.maj;
+  dst++;
   dst = pickle_16(sceneData->desc.moduleVersion.rev, dst);
   bytes += 4;
   
@@ -123,12 +125,15 @@ void scene_write_buf(void) {
   print_dbg_hex(bytes);
   dst = newDst;
 
+#if RELEASEBUILD==1
+#else
   if(bytes > SCENE_PICKLE_SIZE - 0x800) {
     print_dbg(" !!!!!!!! warning: serialized scene data approaching allocated bounds !!!!! ");
   }
   if(bytes > SCENE_PICKLE_SIZE) {
     print_dbg(" !!!!!!!! error: serialized scene data exceeded allocated bounds !!!!! ");
   }
+#endif
 }
 
 // set current state of system from global RAM buffer
@@ -146,6 +151,7 @@ void scene_read_buf(void) {
     sceneData->desc.sceneName[i] = *src;
     src++;
   }
+
    // read bees version
   sceneData->desc.beesVersion.min = *src;
   src++;
@@ -158,12 +164,22 @@ void scene_read_buf(void) {
     sceneData->desc.moduleName[i] = *src;
     src++;
   }
+  print_dbg("\r\n unpickled module name: ");
+  print_dbg(sceneData->desc.moduleName);
+
    // read module version
   sceneData->desc.moduleVersion.min = *src;
   src++;
   sceneData->desc.moduleVersion.maj = *src;
   src++;
   src = unpickle_16(src, &(sceneData->desc.moduleVersion.rev));
+
+  print_dbg("\r\n unpickled module version: ");
+  print_dbg_ulong(sceneData->desc.moduleVersion.maj);
+  print_dbg(".");
+  print_dbg_ulong(sceneData->desc.moduleVersion.min);
+  print_dbg(".");
+  print_dbg_ulong(sceneData->desc.moduleVersion.rev);
 
 
   ///// load the DSP now!
@@ -179,7 +195,6 @@ void scene_read_buf(void) {
 
   print_dbg("\r\n reporting DSP parameters...");
   net_report_params();
-
   
   /// FIXME:
   /// check the module version and warn if different!

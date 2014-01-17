@@ -133,7 +133,8 @@ u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
   dst = pickle_32(pdesc->min, dst);
   // store max
   dst = pickle_32(pdesc->max, dst);
-  //// FIXME: needs radix!!
+  // store radix
+  dst = pickle_32(pdesc->radix, dst);
   return dst;
 }
 
@@ -175,6 +176,10 @@ const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
   // store max
   src = unpickle_32(src, &val);
   pdesc->max = val;
+
+  // store radix
+  src = unpickle_32(src, &val);
+  pdesc->radix = val;
 
   // print_dbg("\r\n unpickled param max: ");
   // print_dbg_hex(pdesc->max);

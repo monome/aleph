@@ -18,7 +18,7 @@ scaler_oscCoarse.tuning = Vicentzio;
 
 
 in addition to intelligently mapping input values
-[ e.g., a frequency scaler should obey the rule (in * 2) => (out + 1octave) ]
+[ e.g., a frequency scaler should be linear by octaves ]
 a scaler would be responsible for reporting human-readable values.
 so each probably consists of 2 tables (real value in whatever, human readable value in 16.16 or whatever.)
 

@@ -1017,6 +1017,9 @@ u8* net_unpickle(const u8* src) {
   // (use 4 bytes for alignment)
   src = unpickle_32(src, &count);
 
+  print_dbg("\r\n count of ops: ");
+  print_dbg_ulong(count);
+
   // loop over operators
   for(i=0; i<count; ++i) {
     // get operator class id
@@ -1025,12 +1028,17 @@ u8* net_unpickle(const u8* src) {
 
     // add and initialize from class id
     /// .. this should update the operator count, inodes and onodes
+    print_dbg("\r\n adding op, class id: ");
+    print_dbg_ulong(id);
+  
     net_add_op(id);
 
     // unpickle operator state (if needed)
     op = net->ops[net->numOps - 1];
 
     if(op->unpickle != NULL) {
+      print_dbg(" ... unpickling op .... ");
+      print_dbg_ulong(id);
       src = (*(op->unpickle))(op, src);
     }
   }
@@ -1040,9 +1048,15 @@ u8* net_unpickle(const u8* src) {
   ///// FIXME: 
   /// tried adding the params to input list here, for play-mode flag
   /// but somehow, this breaks stuff.
+  print_dbg("\r\n reading input nodes, count: ");
+  print_dbg_ulong(net->numIns);
+  
   for(i=0; i < (net->numIns); ++i) {
     src = inode_unpickle(src, &(net->ins[i]));
   }
+
+  print_dbg("\r\n reading output nodes, count: ");
+  print_dbg_ulong(net->numOuts);
 
   // read output nodes
   for(i=0; i < net->numOuts; ++i) {
@@ -1051,10 +1065,14 @@ u8* net_unpickle(const u8* src) {
     net_connect(i, net->outs[i].target);
   }
 
+
   // get count of parameters
   src = unpickle_32(src, &val);
   net->numParams = (u16)val;
-  
+
+  print_dbg("\r\n reading params, count: ");
+  print_dbg_ulong(net->numParams);
+
   // read parameter nodes (includes value and descriptor)
   for(i=0; i<(net->numParams); ++i) {
     src = param_unpickle(&(net->params[i]), src);
