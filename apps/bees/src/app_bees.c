@@ -21,6 +21,7 @@
 #include "screen.h"
 
 // bees
+#include "app_bees.h"
 #include "app_timers.h"
 #include "files.h"
 #include "flash_bees.h"

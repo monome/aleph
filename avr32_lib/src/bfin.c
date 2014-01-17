@@ -260,7 +260,7 @@ void bfin_get_module_name(volatile char* buf) {
 }
 
 // get module version
-void bfin_get_module_version(moduleVersion_t* vers) {
+void bfin_get_module_version(ModuleVersion* vers) {
   u16 x;
   
   // command

@@ -10,6 +10,10 @@
 #include <string.h>
 // asf
 #include "delay.h"
+
+// aleph-common
+#include "module_common.h"
+
 //avr32
 #include "app.h"
 #include "bfin.h"
@@ -18,6 +22,7 @@
 #include "simple_string.h"
 
 /// bees
+#include "app_bees.h"
 #include "files.h"
 //#include "flash.h"
 #include "flash_bees.h"
@@ -59,7 +64,11 @@ void scene_write_buf(void) {
 
   u32 bytes = 0;
   u8* newDst = NULL;
-  int i;
+  //  int i;
+
+  ModuleVersion moduleVersion;
+
+  bfin_get_module_version(&moduleVersion);
 
   ///// print parmameters
   //  u32 i;
