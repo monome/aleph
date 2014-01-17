@@ -194,13 +194,6 @@ void scene_read_buf(void) {
   print_dbg("\r\n waiting for DSP init...");
   bfin_wait_ready();
 
-  print_dbg("\r\n clearing operator list...");
-  net_clear_user_ops();
-
-  print_dbg("\r\n reporting DSP parameters...");
-  net_report_params();
-
-
 #if RELEASEBUILD==1
 #else
   // query module name / version
@@ -220,6 +213,13 @@ void scene_read_buf(void) {
   print_dbg(".");
   print_dbg_ulong(moduleVersion.rev);
 #endif
+
+
+  print_dbg("\r\n clearing operator list...");
+  net_clear_user_ops();
+
+  print_dbg("\r\n reporting DSP parameters...");
+  net_report_params();
 
 
   /// FIXME:

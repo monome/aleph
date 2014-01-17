@@ -69,6 +69,7 @@ static void add_sys_ops(void) {
          probably by index like the old hack, or
      b) don't pickle system ops at all, only their inputs.
          still needs to make a fixed assumption about order.
+... i dunno
    */
 
   // 4 encoders
@@ -314,7 +315,7 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
 // attempt to allocate a new operator from the static memory pool, return index
 s16 net_add_op(op_id_t opId) {
   u16 ins, outs;
-  u8 i;
+  u8 i, j;
   op_t* op;
   s32 numInsSave = net->numIns;
   s32 numOutsSave = net->numOuts;
@@ -389,8 +390,23 @@ s16 net_add_op(op_id_t opId) {
 	// preset target, add offset for new inputs
 	net_connect(i, net->outs[i].target + ins);
       }
+
+      /// do the same in all presets!
+      for(j=0; j<NET_PRESETS_MAX; j++) {
+	if(preset_out_enabled(i)) {
+	  s16 tar = presets->outs->target;
+	  if(tar >= numInsSave) {
+	    tar = tar + ins;
+	    presets->outs->target = tar;
+	  }
+	}
+      }
+
     }
   }
+
+  //// FIXME: preset targets ar f'd up too!
+  ///// 
 
   ++(net->numOps);
   return net->numOps - 1;
@@ -1012,6 +1028,7 @@ u8* net_unpickle(const u8* src) {
 
   // reset operator count, param count, pool offset, etc
   net_deinit();
+
 
   // get count of operators
   // (use 4 bytes for alignment)

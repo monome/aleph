@@ -277,16 +277,18 @@ void bfin_get_module_version(ModuleVersion* vers) {
   spi_read(BFIN_SPI, &x);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   vers->min = x;
-    // rev high
+  // rev
+  vers->rev = 0;
+  // rev high
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_read(BFIN_SPI, &x);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  vers->rev |= ((x << 8) & 0xff);
+  vers->rev |= ((x << 8) & 0xff00);
     // rev low
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_read(BFIN_SPI, &x);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  vers->rev |= (x & 0xff00);
+  vers->rev |= (x & 0x00ff);
 }
 
 

@@ -399,8 +399,11 @@ u8 spi_process(u8 rx) {
     byte = eModuleVersionMin;
     return MIN; 
     break;
+
   case eModuleVersionMin :
     byte = eModuleVersionRev0;
+    // patch (u16)
+    // === byteswap for BE on avr32
     return REV >> 8;  
     break;
   case eModuleVersionRev0 :
