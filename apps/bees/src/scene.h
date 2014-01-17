@@ -1,6 +1,7 @@
 #ifndef _ALEPH_BEES_SCENE_H_
 #define _ALEPH_BEES_SCENE_H_
 
+#include "app_bees.h"
 #include "net_protected.h"
 #include "module_common.h"
 #include "preset.h"
@@ -19,9 +20,9 @@ typedef struct _sceneDesc {
   // lodaed module name
   char moduleName[MODULE_NAME_LEN];
   // module version 
-  u32 modVersion;
+  ModuleVersion moduleVersion;
   // bees version
-  u32 beesVersion;
+  AppVersion beesVersion;
 } sceneDesc_t;
 
 /* switching to serialization. 
