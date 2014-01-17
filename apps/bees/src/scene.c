@@ -90,9 +90,11 @@ void scene_write_buf(void) {
 
   // write bees version
   *dst = sceneData->desc.beesVersion.min;
+  dst++; bytes++;
   *dst = sceneData->desc.beesVersion.maj;
+  dst++; bytes++;
   dst = pickle_16(sceneData->desc.beesVersion.rev, dst);
-  bytes += 4;
+  bytes += 2;
 
   // write module name
   for(i=0; i<MODULE_NAME_LEN; i++) {
