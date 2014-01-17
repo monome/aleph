@@ -61,9 +61,10 @@
 #
 
 
-/*
-	this Atmel Software Framework file has been slightly modified for use on the monome aleph.
-*/
+#---------------------------------------------------
+# this Atmel Software Framework file has been slightly modified
+# for use with the monome aleph, an avr32-based device.
+#-----------------------------------------
 
 # Include the config.mk file from the current working path, e.g., where the
 # user called make.
