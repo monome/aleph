@@ -286,7 +286,7 @@ void bfin_get_module_version(moduleVersion_t* vers) {
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_read(BFIN_SPI, &x);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  vers->rev |= (x & 0xff00)
+  vers->rev |= (x & 0xff00);
 }
 
 
