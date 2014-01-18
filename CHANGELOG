@@ -13,6 +13,22 @@ bees	0.3.0
 - scene stores bees + module versions (sort of) 
 - general scene serialization stability
 
+--------------------
+
+waves 0.2.0
+
+! breaks scene compatbility !
+
+- added fmDel parmaeters (not functional) 
+- added version reporting
+
+
+lines 0.1.0
+
+! breaks scene compatbility !
+
+- added version reporting
+
 ----------------
 bees	0.2.3
 
@@ -27,7 +43,7 @@ bees	0.2.3
 bees	0.2.2
 
 - fix 256 detection bug
-- add 40h protocol
+- add 40h protocold
 - fix overflow in op_enc and ban some pathological settings
 
 ----------------
@@ -36,10 +52,11 @@ bees	0.2.1
 - fix crash when selected 1st operator's inputs from ops page
 
 ============================================
-130114b
+140114b
 
 ----------------
 bees	0.2.0
+
 - add 2nd sensitivity knob on ins page
 - add preset-recall notify to play page
 - correct enc0, enc1 scaling on play page
@@ -47,13 +64,14 @@ bees	0.2.0
 - 'zero' command now 'zero/max'
 - add 'thresh' operator
 
+
 ----------------
 lines	0.0.2
 - fix param descriptors so doesn't crash on scene load.
 
 
 ============================================
-130114
+140114
 
 ----------------
 bees	0.1.0
@@ -73,7 +91,7 @@ lines	0.0.1
 
 
 ============================================
-130113
+140113
 
 bees 	0.0.0
 
