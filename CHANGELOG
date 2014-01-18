@@ -3,11 +3,15 @@
 140117
 
 ----------------
-bees	0.2.4
+bees	0.3.4
+
+! breaks scene compatbility !
 
 - include param radix in scene data
-- blackfin reports version
-- scene stores versions 
+- include play vis. flag in scene data
+- blackfin reports version (sort of)
+- scene stores bees + module versions (sort of) 
+- general scene stability
 
 ----------------
 bees	0.2.3
