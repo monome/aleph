@@ -1081,13 +1081,11 @@ u8* net_unpickle(const u8* src) {
   /// but somehow, this breaks stuff.
 #if 1
   /// copy ALL i/o nodes, even unused
-
   print_dbg("\r\n reading all input nodes ");
   
   for(i=0; i < (NET_INS_MAX); ++i) {
     src = inode_unpickle(src, &(net->ins[i]));
   }
- 
   print_dbg("\r\n reading all output nodes");
   // read output nodes
   for(i=0; i < NET_OUTS_MAX; ++i) {
