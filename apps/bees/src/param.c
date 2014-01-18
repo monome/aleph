@@ -72,6 +72,7 @@ u8* param_pickle(pnode_t* pnode, u8* dst) {
 
   // store preset-inclusion 
   //  dst = pickle_32((u32)(pnode->preset), dst);
+
   // store descriptor
   dst = pdesc_pickle(&(pnode->desc), dst);
   return dst;

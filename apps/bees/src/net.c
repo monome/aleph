@@ -16,12 +16,14 @@
 #include "delay.h"
 #endif
 
-// aleph-avr32
+// aleph-avr32?
+
 #include "app.h"
 #include "bfin.h"
 #include "control.h"
 #include "memory.h"
 #include "types.h"
+
 // bees
 #include "net.h"
 #include "net_protected.h"
@@ -393,11 +395,11 @@ s16 net_add_op(op_id_t opId) {
 
       /// do the same in all presets!
       for(j=0; j<NET_PRESETS_MAX; j++) {
-	if(preset_out_enabled(i)) {
-	  s16 tar = presets->outs->target;
+	if(preset_out_enabled(j, i)) {
+	  s16 tar = presets[j].outs[i].target;
 	  if(tar >= numInsSave) {
 	    tar = tar + ins;
-	    presets->outs->target = tar;
+	    presets[j].outs[i].target = tar;
 	  }
 	}
       }
@@ -983,7 +985,6 @@ u8* net_pickle(u8* dst) {
   // store count of operators
   // (use 4 bytes for alignment)
   dst = pickle_32((u32)(net->numOps), dst);
-  pickle_32((u32)(net->numOps), (u8*)(&val));
 
   // loop over operators
   for(i=0; i<net->numOps; ++i) {
@@ -998,7 +999,18 @@ u8* net_pickle(u8* dst) {
 
   // write input nodes
   //  for(i=0; i < (net->numIns + net->numParams); ++i) {
-  /// FIXME: doing params is breaking stuff, somehow...
+  /// FIXME: doing params is breaking stuff, somehow...!! arg
+
+#if 1
+  for(i=0; i < (NET_INS_MAX); ++i) {
+    dst = inode_pickle(&(net->ins[i]), dst);
+  }
+
+  // write output nodes
+  for(i=0; i < NET_OUTS_MAX; ++i) {
+    dst = onode_pickle(&(net->outs[i]), dst);
+  }
+#else
   for(i=0; i < (net->numIns); ++i) {
     dst = inode_pickle(&(net->ins[i]), dst);
   }
@@ -1007,6 +1019,7 @@ u8* net_pickle(u8* dst) {
   for(i=0; i < net->numOuts; ++i) {
     dst = onode_pickle(&(net->outs[i]), dst);
   }
+#endif
 
   // write count of parameters
   val = (u32)(net->numParams);
@@ -1027,6 +1040,7 @@ u8* net_unpickle(const u8* src) {
   op_t* op;
 
   // reset operator count, param count, pool offset, etc
+  // no system operators after this
   net_deinit();
 
 
@@ -1065,6 +1079,25 @@ u8* net_unpickle(const u8* src) {
   ///// FIXME: 
   /// tried adding the params to input list here, for play-mode flag
   /// but somehow, this breaks stuff.
+#if 1
+  /// copy ALL i/o nodes, even unused
+
+  print_dbg("\r\n reading all input nodes ");
+  
+  for(i=0; i < (NET_INS_MAX); ++i) {
+    src = inode_unpickle(src, &(net->ins[i]));
+  }
+ 
+  print_dbg("\r\n reading all output nodes");
+  // read output nodes
+  for(i=0; i < NET_OUTS_MAX; ++i) {
+    src = onode_unpickle(src, &(net->outs[i]));
+    if(i < net->numOuts) {
+      // reconnect so the parent operator knows what to do
+      net_connect(i, net->outs[i].target);
+    }
+  }
+#else
   print_dbg("\r\n reading input nodes, count: ");
   print_dbg_ulong(net->numIns);
   
@@ -1081,7 +1114,7 @@ u8* net_unpickle(const u8* src) {
     // reconnect so the parent operator knows what to do
     net_connect(i, net->outs[i].target);
   }
-
+#endif
 
   // get count of parameters
   src = unpickle_32(src, &val);

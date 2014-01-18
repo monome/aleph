@@ -138,6 +138,7 @@ void scene_write_buf(void) {
 
 // set current state of system from global RAM buffer
 void scene_read_buf(void) {
+  /// pointer to serial blob
   const u8* src = (u8*)&(sceneData->pickle);
   int i;
   //// TEST
@@ -196,12 +197,13 @@ void scene_read_buf(void) {
 
 #if RELEASEBUILD==1
 #else
+  /*
+//// THIS IS BROKEN
   // query module name / version
   print_dbg("\r\n querying module name...");
   bfin_get_module_name(moduleName);
   print_dbg("\r\n querying module version...");
   bfin_get_module_version(&moduleVersion);
-
 
   print_dbg("\r\n received module name: ");
   print_dbg((char*)moduleName);
@@ -212,15 +214,14 @@ void scene_read_buf(void) {
   print_dbg_ulong(moduleVersion.min);
   print_dbg(".");
   print_dbg_ulong(moduleVersion.rev);
+  */
 #endif
-
 
   print_dbg("\r\n clearing operator list...");
   net_clear_user_ops();
 
   print_dbg("\r\n reporting DSP parameters...");
   net_report_params();
-
 
   /// FIXME:
   /// check the module version and warn if different!
