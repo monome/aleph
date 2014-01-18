@@ -39,6 +39,13 @@
 #define PARAM_RQ_MAX 0x0000ffff
 #define PARAM_RQ_DEFAULT 0x0000FFF0
 
+// fm delay
+#define PARAM_FM_DEL_MIN 0
+#define PARAM_FM_DEL_MAX 0x10000
+#define PARAM_FM_DEL_DEFAULT 0x00010
+#define PARAM_FM_DEL_RADIX 1
+
+
 #define PARAM_AMP_6 (FRACT32_MAX >> 1)
 #define PARAM_AMP_12 (FRACT32_MAX >> 2)
 
@@ -156,6 +163,10 @@ enum params {
   eParam_fdry0,		
 
   // osc parameters
+
+  eParamFmDel0,
+  eParamFmDel1,
+
   eParamBl1,
   eParamBl0,
 
