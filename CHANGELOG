@@ -13,6 +13,14 @@ bees	0.3.0
 - scene stores bees + module versions (sort of) 
 - general scene serialization stability
 
+--------------------
+
+waves 0.2.0
+
+! breaks scene compatbility !
+
+- added fmDel parmaeters (not functional) 
+
 ----------------
 bees	0.2.3
 
