@@ -52,6 +52,12 @@ u8 spi_process(u8 rx) {
       byte = eModuleName0;
       return gModuleData->name[0];
       break;
+
+    case MSG_GET_MODULE_VERSION_COM:
+      byte = eModuleVersionMaj;
+      return MAJ;
+      break;
+
     case MSG_ENABLE_AUDIO:
       processAudio = 1;
       return processAudio;
@@ -106,8 +112,8 @@ u8 spi_process(u8 rx) {
     pval.asInt = gModuleData->paramData[idx].value;
     // byte-swap from BE on avr32
     return pval.asByte[3];
-      
     break;
+
   case eGetParamData0 :
     byte = eGetParamData1;
     // byte-swap from BE on avr32
@@ -387,6 +393,31 @@ u8 spi_process(u8 rx) {
     byte = eCom; // reset
     return 0;    // don't care
     break;
+
+    /// version
+  case eModuleVersionMaj :
+    byte = eModuleVersionMin;
+    return MIN; 
+    break;
+
+  case eModuleVersionMin :
+    byte = eModuleVersionRev0;
+    // patch (u16)
+    // === byteswap for BE on avr32
+    return REV >> 8;  
+    break;
+
+  case eModuleVersionRev0 :
+    byte = eModuleVersionRev1;
+    return REV & 0x00ff;
+    break;
+
+  case eModuleVersionRev1 :
+    byte = eCom; // reset
+    return 0;    // don't care
+    break;
+
+
   default:
     byte = eCom; // reset
     return 0;

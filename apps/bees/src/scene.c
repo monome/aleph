@@ -10,6 +10,10 @@
 #include <string.h>
 // asf
 #include "delay.h"
+
+// aleph-common
+#include "module_common.h"
+
 //avr32
 #include "app.h"
 #include "bfin.h"
@@ -18,6 +22,7 @@
 #include "simple_string.h"
 
 /// bees
+#include "app_bees.h"
 #include "files.h"
 //#include "flash.h"
 #include "flash_bees.h"
@@ -59,83 +64,178 @@ void scene_write_buf(void) {
 
   u32 bytes = 0;
   u8* newDst = NULL;
+    int i;
 
-  ///// print parmameters
+  ///// print paramameters
   //  u32 i;
 
   print_dbg("\r\n writing scene data... ");
 
   /*  for(i=0; i<net->numParams; i++) {
-    print_dbg("\r\n param ");
-    print_dbg_ulong(i);
-    print_dbg(" : ");
-    print_dbg(net->params[i].desc.label);
-    print_dbg(" ; val ");
-    print_dbg_hex((u32)net->params[i].data.value.asInt);
-  }
+      print_dbg("\r\n param ");
+      print_dbg_ulong(i);
+      print_dbg(" : ");
+      print_dbg(net->params[i].desc.label);
+      print_dbg(" ; val ");
+      print_dbg_hex((u32)net->params[i].data.value.asInt);
+      }
   */
 
+  // write name
+  for(i=0; i<SCENE_NAME_LEN; i++) {
+    *dst = sceneData->desc.sceneName[i];
+    dst++;
+    bytes++;
+  }
+
+  // write bees version
+  *dst = sceneData->desc.beesVersion.min;
+  dst++; bytes++;
+  *dst = sceneData->desc.beesVersion.maj;
+  dst++; bytes++;
+  dst = pickle_16(sceneData->desc.beesVersion.rev, dst);
+  bytes += 2;
+
+  // write module name
+  for(i=0; i<MODULE_NAME_LEN; i++) {
+    *dst = (sceneData->desc.moduleName)[i];
+    dst++;
+    bytes++;
+  }
+
+  // write module version
+  *dst = sceneData->desc.moduleVersion.min;
+  dst++;
+  *dst = sceneData->desc.moduleVersion.maj;
+  dst++;
+  dst = pickle_16(sceneData->desc.moduleVersion.rev, dst);
+  bytes += 4;
+  
   // pickle network
   newDst = net_pickle(dst);
   bytes += (newDst - dst);
-  print_dbg("\r\n bytes written: 0x");
+  print_dbg("\r\n pickled network, bytes written: 0x");
   print_dbg_hex(bytes);
   dst = newDst;
 
   // pickle presets
   newDst = presets_pickle(dst);
   bytes += (newDst - dst);
-  print_dbg("\r\n bytes written: 0x");
+  print_dbg("\r\n pickled presets, bytes written: 0x");
   print_dbg_hex(bytes);
   dst = newDst;
-  
+
+#if RELEASEBUILD==1
+#else
+  if(bytes > SCENE_PICKLE_SIZE - 0x800) {
+    print_dbg(" !!!!!!!! warning: serialized scene data approaching allocated bounds !!!!! ");
+  }
   if(bytes > SCENE_PICKLE_SIZE) {
     print_dbg(" !!!!!!!! error: serialized scene data exceeded allocated bounds !!!!! ");
   }
+#endif
 }
 
 // set current state of system from global RAM buffer
 void scene_read_buf(void) {
-  s8 modName[MODULE_NAME_LEN];
+  /// pointer to serial blob
   const u8* src = (u8*)&(sceneData->pickle);
-
-  /// FIXME: we really should be using this comparison
-  
-  //  s8 neq = 0;
-  //  u32 i;
-
-  app_pause();
+  int i;
+  //// TEST
+  volatile char moduleName[32];
+  ModuleVersion moduleVersion;
+  ////
+   app_pause();
 
   // store current mod name in scene desc
-  memcpy(modName, sceneData->desc.moduleName, MODULE_NAME_LEN);
+   //  memcpy(modName, sceneData->desc.moduleName, MODULE_NAME_LEN);
 
-  ///// always load:
-    print_dbg("\r\n loading module from card, module name: ");
-    print_dbg(sceneData->desc.moduleName);
-    files_load_dsp_name(sceneData->desc.moduleName);
-    //  }
+   // read scene name
+  for(i=0; i<SCENE_NAME_LEN; i++) {
+    sceneData->desc.sceneName[i] = *src;
+    src++;
+  }
 
-    print_dbg("\r\n waiting for DSP init...");
-    bfin_wait_ready();
+   // read bees version
+  sceneData->desc.beesVersion.min = *src;
+  src++;
+  sceneData->desc.beesVersion.maj = *src;
+  src++;
+  src = unpickle_16(src, &(sceneData->desc.beesVersion.rev));
 
-    print_dbg("\r\n clearing operator list...");
-    net_clear_user_ops();
+ // read module name
+  for(i=0; i<SCENE_NAME_LEN; i++) {
+    sceneData->desc.moduleName[i] = *src;
+    src++;
+  }
 
-    print_dbg("\r\n reporting DSP parameters...");
-    net_report_params();
+  print_dbg("\r\n unpickled module name: ");
+  print_dbg(sceneData->desc.moduleName);
 
-    /// FIXME: 
-    // there should be a check here for mismatched parameter list.
+   // read module version
+  sceneData->desc.moduleVersion.min = *src;
+  src++;
+  sceneData->desc.moduleVersion.maj = *src;
+  src++;
+  src = unpickle_16(src, &(sceneData->desc.moduleVersion.rev));
 
-    // unpickle network 
-    print_dbg("\r\n unpickling network for scene recall...");
-    src = net_unpickle(src);
+  print_dbg("\r\n unpickled module version: ");
+  print_dbg_ulong(sceneData->desc.moduleVersion.maj);
+  print_dbg(".");
+  print_dbg_ulong(sceneData->desc.moduleVersion.min);
+  print_dbg(".");
+  print_dbg_ulong(sceneData->desc.moduleVersion.rev);
+
+
+  ///// load the DSP now!
+  print_dbg("\r\n loading module from card, filename: ");
+  print_dbg(sceneData->desc.moduleName);
+  files_load_dsp_name(sceneData->desc.moduleName);
+
+  print_dbg("\r\n waiting for DSP init...");
+  bfin_wait_ready();
+
+#if RELEASEBUILD==1
+#else
+  /*
+//// THIS IS BROKEN
+  // query module name / version
+  print_dbg("\r\n querying module name...");
+  bfin_get_module_name(moduleName);
+  print_dbg("\r\n querying module version...");
+  bfin_get_module_version(&moduleVersion);
+
+  print_dbg("\r\n received module name: ");
+  print_dbg((char*)moduleName);
+
+  print_dbg("\r\n received module version: ");
+  print_dbg_ulong(moduleVersion.maj);
+  print_dbg(".");
+  print_dbg_ulong(moduleVersion.min);
+  print_dbg(".");
+  print_dbg_ulong(moduleVersion.rev);
+  */
+#endif
+
+  print_dbg("\r\n clearing operator list...");
+  net_clear_user_ops();
+
+  print_dbg("\r\n reporting DSP parameters...");
+  net_report_params();
+
+  /// FIXME:
+  /// check the module version and warn if different!
+  // there could also be a check here for mismatched parameter list.
+
+  // unpickle network 
+  print_dbg("\r\n unpickling network for scene recall...");
+  src = net_unpickle(src);
     
-    // unpickle presets
-    print_dbg("\r\n unpickling presets for scene recall...");
-    src = presets_unpickle(src);
+  // unpickle presets
+  print_dbg("\r\n unpickling presets for scene recall...");
+  src = presets_unpickle(src);
   
-    print_dbg("\r\n copied stored network and presets to RAM ");
+  print_dbg("\r\n copied stored network and presets to RAM ");
 
   /* for(i=0; i<net->numParams; i++) { */
   /*   print_dbg("\r\n param "); */
@@ -146,21 +246,7 @@ void scene_read_buf(void) {
   /*   print_dbg_hex((u32)net->params[i].data.value); */
   /* } */
 
-  // compare module name  
-
-  //// is strncmp fucking with us??
-  ///  neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN);
-  
-  //  if(neq) {
-    // load bfin module if it doesn't match the current scene desc
-
-  //...
-    
-    bfin_wait_ready();
-
-  //// well let's try it, actually that would explain some things..
-    //  delay_ms(10);
-
+  bfin_wait_ready();
   // update bfin parameters
   net_send_params();
   print_dbg("\r\n sent new parameter values");

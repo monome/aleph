@@ -95,6 +95,20 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamBl0].max = FRACT32_MAX;
   gModuleData->paramDesc[eParamBl0].radix = 1;
 
+
+  strcpy(gModuleData->paramDesc[eParamFmDel1].label, "fmDel1");
+  gModuleData->paramDesc[eParamFmDel1].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamFmDel1].min = PARAM_FM_DEL_MIN;
+  gModuleData->paramDesc[eParamFmDel1].max = PARAM_FM_DEL_MAX;
+  gModuleData->paramDesc[eParamFmDel1].radix = PARAM_FM_DEL_RADIX;
+  
+  strcpy(gModuleData->paramDesc[eParamFmDel0].label, "fmDel0");
+  gModuleData->paramDesc[eParamFmDel0].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamFmDel0].min = PARAM_FM_DEL_MIN;
+  gModuleData->paramDesc[eParamFmDel0].max = PARAM_FM_DEL_MAX;
+  gModuleData->paramDesc[eParamFmDel0].radix = PARAM_FM_DEL_RADIX;
+
+
   /////////////////////
   /////////////
 

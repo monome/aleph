@@ -13,13 +13,11 @@
 #include "delay.h"
 #include "print_funcs.h"
 
+// aleph-common 
+#include "module_common.h"
 // aleph-avr32
 #include "app.h"
 #include "bfin.h"
-///////////////////////////////////
-//// test
-#include "events.h"
-/////////////////////////////////
 #include "filesystem.h"
 #include "flash.h"
 #include "memory.h"
@@ -135,6 +133,7 @@ u8 files_load_dsp_name(const char* name) {
   void* fp;
   u32 size = 0;
   u8 ret;
+  //  ModuleVersion modVers;
 
   delay_ms(10);
 
@@ -157,6 +156,9 @@ u8 files_load_dsp_name(const char* name) {
       print_dbg("\r\n finished load");
       // write module name in global scene data
       scene_set_module_name(name);
+      // get moduleversion to scene data
+      bfin_get_module_version(&(sceneData->desc.moduleVersion));
+
       ret = 1;
     } else {
       print_dbg("\r\n bfin ldr size was <=0, aborting");

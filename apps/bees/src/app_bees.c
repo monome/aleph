@@ -21,6 +21,7 @@
 #include "screen.h"
 
 // bees
+#include "app_bees.h"
 #include "app_timers.h"
 #include "files.h"
 #include "flash_bees.h"
@@ -32,6 +33,15 @@
 #include "render.h"
 #include "scene.h"
 
+//-------------------------------------------
+//-- extern vars (here)
+
+// maj = 1byte, min = 1byte, rev = 2byte
+//const u32 beesVersion = (MAJ << 24) | (MIN << 16) | (REV << 8);
+const AppVersion beesVersion = { .min = MIN , .maj = MAJ , .rev = REV };
+
+//--------------------------------
+//--- static vars
 static char versionString[12] = VERSIONSTRING;
 
 // this is called during hardware initialization.
