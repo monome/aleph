@@ -35,6 +35,7 @@
 region* headRegion = NULL;
 region* footRegion[4] = { NULL, NULL, NULL, NULL };
 region* lineRegion = NULL;
+region* selectRegion = NULL;
 
 //------------------------
 //---- static vars

@@ -2,7 +2,7 @@
 #include <string.h>
 
 // asf
-#include "flashc.h"
+//#include "flashc.h"
 #include "print_funcs.h"
 
 // aleph-avr32
@@ -24,7 +24,7 @@ static const u32 scalerMaxValues = 1024;
 
 // read default scene data to global buffer
 void flash_read_scene(void) { 
-  memcpy((void*)sceneData, flash_app_data(), sizeof(sceneData_t)); 
+  //  memcpy((void*)sceneData, flash_app_data(), sizeof(sceneData_t)); 
   scene_read_buf();
 }
 
@@ -33,8 +33,8 @@ void flash_write_scene(void) {
   scene_write_buf();
   //  print_dbg("\r\n writing scene data to address: 0x");
   
-  flashc_memcpy( &( ((beesFlashData*)(flash_app_data()))->sceneBytes),
-		 (void*)sceneData, sizeof(sceneData_t), true);
+  //  flashc_memcpy( &( ((beesFlashData*)(flash_app_data()))->sceneBytes),
+  //		 (void*)sceneData, sizeof(sceneData_t), true);
 }
 
 // initialize nonvolatile scaler data
@@ -82,7 +82,7 @@ void flash_init_scaler_data(void) {
       dst = (void*)scaler_get_nv_data(p);
       print_dbg("\r\n writing scaler val data to flash at address: 0x");
       print_dbg_hex((u32)dst);
-      flashc_memcpy( dst, (void*)scalerBuf, b, true);
+      //      flashc_memcpy( dst, (void*)scalerBuf, b, true);
 
       /// TEST: print values from flash
       /* print_dbg("\r\n values in flash after write: "); */
@@ -122,7 +122,7 @@ void flash_init_scaler_data(void) {
       dst = (void*)scaler_get_nv_rep(p);
       print_dbg("\r\n writing scaler rep data to flash at address: 0x");
       print_dbg_hex((u32)dst);
-      flashc_memcpy( dst, (void*)scalerBuf, b, true);
+      //      flashc_memcpy( dst, (void*)scalerBuf, b, true);
 
       /// TEST: print values from flash
       /* print_dbg("\r\n values in flash after write: "); */

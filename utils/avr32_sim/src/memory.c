@@ -11,7 +11,7 @@
 
 // asf
 #include "print_funcs.h"
-#include "smc.h"
+//#include "smc.h"
 
 // aleph
 #include "screen.h"
@@ -35,6 +35,8 @@ static u32 heapSize;
 
 // setup heap-ish
 void init_mem(void) {
+#if 1
+#else
   heapSize = SRAM_SIZE;
   pHeapStart = (heap_t)SRAM;
   pHeapEnd = (heap_t)((u32)pHeapStart + heapSize);
@@ -43,10 +45,16 @@ void init_mem(void) {
   print_dbg("\r\n SRAM size: 0x");
   print_dbg_hex(heapSize);
 
+#endif
 }
 
 // allocate and return pointer
 heap_t alloc_mem(u32 bytes) {
+#if 1
+
+  return malloc(bytes);
+
+#else
   //  print_dbg("\r\n allocating memory, bytes: 0x");
   //  print_dbg_hex(bytes);
 
@@ -75,10 +83,13 @@ heap_t alloc_mem(u32 bytes) {
     ret = (heap_t)ALLOC_FAIL;
   }
   return ret;
+#endif
 }
 
 // memory test routine
 void sram_test(u32 numBytes, u32 offset) {
+#if 1
+#else
 
   /* unsigned long sram_size, progress_inc, i, j, tmp, noErrors = 0; */
   /* volatile unsigned long *sram = SRAM + offset; */
@@ -117,4 +128,5 @@ void sram_test(u32 numBytes, u32 offset) {
   /* print_dbg("\rSRAM tested: "); */
   /* print_dbg_ulong(noErrors); */
   /* print_dbg(" corrupted word(s)       \r\n"); */
+#endif
 }

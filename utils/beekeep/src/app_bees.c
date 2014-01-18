@@ -8,7 +8,7 @@
 
 // asf
 #include "delay.h"
-#include "gpio.h"
+// #include "gpio.h"
 #include "print_funcs.h"
 
 // aleph-avr32
@@ -36,18 +36,11 @@
 //-------------------------------------------
 //-- extern vars (here)
 
-#ifndef MIN
+
 #define MIN 0
-#endif
-#ifndef MAJ
 #define MAJ 0
-#endif
-#ifndef REV
 #define REV 0
-#endif
-#ifndef VERSIONSTRING
 #define VERSIONSTRING "none"
-#endif
 
 // maj = 1byte, min = 1byte, rev = 2byte
 //const u32 beesVersion = (MAJ << 24) | (MIN << 16) | (REV << 8);
@@ -174,7 +167,7 @@ u8 app_launch(u8 firstrun) {
   init_app_timers();
 
   // pull up power control pin, enabling soft-powerdown
-  gpio_set_gpio_pin(POWER_CTL_PIN);
+  //  gpio_set_gpio_pin(POWER_CTL_PIN);
 
   // assign app event handlers
   print_dbg("\r\n assigning handlers ");
