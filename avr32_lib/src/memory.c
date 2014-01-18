@@ -58,6 +58,11 @@ heap_t alloc_mem(u32 bytes) {
   u32 tmp = heapOffset + bytes;
   u8 mtmp = tmp % 4;
 
+  print_dbg("\r\n alloc_mem(), requested bytes: 0x");
+  print_dbg_hex(bytes);
+  print_dbg("\r\n location: 0x");
+  print_dbg_hex(ret);
+
   // align to 4 bytes
   if ( mtmp != 0) {
     tmp += ( 4 - mtmp );
