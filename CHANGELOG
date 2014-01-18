@@ -3,7 +3,7 @@
 140117
 
 ----------------
-bees	0.3.4
+bees	0.3.0
 
 ! breaks scene compatbility !
 
@@ -11,13 +11,13 @@ bees	0.3.4
 - include play vis. flag in scene data
 - blackfin reports version (sort of)
 - scene stores bees + module versions (sort of) 
-- general scene stability
+- general scene serialization stability
 
 ----------------
 bees	0.2.3
 
 - release build now actually supresses debug prints
-- fix potential LDR boot problems
+- fix LDR boot problems
 - fix onscreen boot messages 
 
 ===========================================
