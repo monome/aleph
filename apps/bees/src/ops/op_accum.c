@@ -156,12 +156,12 @@ void op_accum_wrap_out(op_accum_t* accum) {
   if (accum->wrap) { // wrapping...
     // if value needs wrapping, output the applied difference
     while (accum->val > accum->max) { 
-      dif = op_sub(accum->min, accum->max);
+      dif = op_sub(accum->min, accum->max) - 1;
       wrap = op_add(wrap, dif);
       accum->val = op_add(accum->val, dif);
     }
     while (accum->val < accum->min) { 
-      dif = op_sub(accum->max, accum->min);
+      dif = op_sub(accum->max, accum->min) + 1;
       wrap = op_add(wrap, dif);
       accum->val = op_add(accum->val, dif);
     }
