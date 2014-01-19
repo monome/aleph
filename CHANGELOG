@@ -4,17 +4,19 @@
 
 ----------------
 bees	0.3.1
+
 - forbid pathological settings for op_accum and fix wrap bug
 - slight cleanup in rendering
 - disconnect params on module switch instead of clearing scene
-- attempt to clear scene with buttton on scenes page (?)
-
+- clear scene with buttton on scenes page
+- store reported module version in scene data (still using filename though)
+- add "headless bees" (compiles but needs work)
 
 ============================================
 140117
 
 ----------------
-bees	0.3.0
+bees	0.3.0 
 
 ! breaks scene compatbility !
 
