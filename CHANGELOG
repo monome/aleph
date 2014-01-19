@@ -1,5 +1,16 @@
 
 ============================================
+140118
+
+----------------
+bees	0.3.1
+- forbid pathological settings for op_accum and fix wrap bug
+- slight cleanup in rendering
+- disconnect params on module switch instead of clearing scene
+- attempt to clear scene with buttton on scenes page (?)
+
+
+============================================
 140117
 
 ----------------
