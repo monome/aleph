@@ -197,8 +197,9 @@ void scene_read_buf(void) {
 
 #if RELEASEBUILD==1
 #else
-  /*
-//// THIS IS BROKEN
+  
+//// THIS IS BROKEN?? rrrggg whhyy
+
   // query module name / version
   print_dbg("\r\n querying module name...");
   bfin_get_module_name(moduleName);
@@ -214,8 +215,10 @@ void scene_read_buf(void) {
   print_dbg_ulong(moduleVersion.min);
   print_dbg(".");
   print_dbg_ulong(moduleVersion.rev);
-  */
+
 #endif
+
+  app_pause();
 
   print_dbg("\r\n clearing operator list...");
   net_clear_user_ops();

@@ -265,6 +265,7 @@ void bfin_get_module_version(ModuleVersion* vers) {
   u16 x;
   
   app_pause();
+
   // command
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, MSG_GET_MODULE_VERSION_COM);
@@ -272,23 +273,30 @@ void bfin_get_module_version(ModuleVersion* vers) {
 
   // major
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, 0); //dont care
   spi_read(BFIN_SPI, &x);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   vers->maj = x;
+
   // minor
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, 0); //dont care
   spi_read(BFIN_SPI, &x);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   vers->min = x;
+
   // rev
   vers->rev = 0;
   // rev high
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, 0); //dont care
   spi_read(BFIN_SPI, &x);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   vers->rev |= ((x << 8) & 0xff00);
+
     // rev low
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, 0); //dont care
   spi_read(BFIN_SPI, &x);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   vers->rev |= (x & 0x00ff);
