@@ -1,4 +1,11 @@
 
+----------------
+bees	0.3.2
+- enable SPLIT command and change operator label ('Y')
+- headless bees runs and almost loads a scene
+- app init cleanup
+
+
 ============================================
 140118
 
