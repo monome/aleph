@@ -155,9 +155,17 @@ u8 files_load_dsp_name(const char* name) {
       bfin_load_buf();
       print_dbg("\r\n finished load");
       // write module name in global scene data
+
+      /////////////////
+      /// FIXME: filename and reported modulename should be decoupled
+      /// bees should search for aleph-module-m.n.r.ldr
+      /// but try aleph-module*.ldr on failure
+      ////
+      /// query name and version to the scene data
+      scene_query_module();
+      /// now set it to the actual filename because we are dumb
       scene_set_module_name(name);
-      // get moduleversion to scene data
-      bfin_get_module_version(&(sceneData->desc.moduleVersion));
+      ///////////////////////////
 
       ret = 1;
     } else {
