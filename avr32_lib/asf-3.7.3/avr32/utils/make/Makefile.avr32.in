@@ -426,6 +426,7 @@ endif
 # Create Intel HEX image from ELF output file.
 %.hex: $(target)
 	@echo $(MSG_IHEX_IMAGE)
+	@echo $(version)
 	$(Q)$(OBJCOPY) -O ihex $< $@
 	cp $@ $(project)-$(version).hex
 

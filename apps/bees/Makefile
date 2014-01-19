@@ -38,5 +38,9 @@ deploy:
 	echo "building -dbg..."
 	make -k
 	rm avr32/utils/debug/print_funcs.o
+	rm $(project).hex	
 	echo "building release..."
 	make -k R=1
+	cp  $(project).hex ../../release/	
+	cp  $(project)-$(maj).$(min).$(rev).hex ../../release/	
+	cp  $(project)-$(maj).$(min).$(rev)-dbg.hex ../../release/	

@@ -18,7 +18,6 @@ module_obj = waves.o  \
 
 
 all: aleph-$(module_name).ldr
-	cp aleph-$(module_name).ldr aleph-$(module_name)-$(maj).$(min).$(rev).ldr
 
 include ../../bfin_lib/bfin_lib.mk
 CFLAGS += -D ARCH_BFIN=1
@@ -44,4 +43,11 @@ clean: bfin_lib_clean
 	rm aleph-$(module_name).ldr 
 	rm aleph-$(module_name)
 
+deploy: aleph-$(module_name).ldr
+	cp aleph-$(module_name).ldr aleph-$(module_name)-$(maj).$(min).$(rev).ldr
+	cp aleph-$(module_name).ldr ../../release/
+	cp aleph-$(module_name)-$(maj).$(min).$(rev).ldr ../../release/
+
+
 .PHONY: clean
+	deploy
