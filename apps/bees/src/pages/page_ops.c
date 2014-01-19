@@ -39,11 +39,11 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpMidiNote,
   eOpMul,
   eOpRandom,
-  eOpSplit,
   eOpSub,
   eOpTog,
   eOpThresh,
   eOpTimer,
+  eOpSplit, // "Y"
 };
 
 // current selected new operator type

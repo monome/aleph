@@ -8,19 +8,17 @@
 // std
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+
 // asf
 //#include "compiler.h"
-#include "delay.h"
+//#include "delay.h"
 #include "print_funcs.h"
 
 // aleph-common 
-#include "module_common.h"
+//#include "module_common.h"
 // aleph-avr32
 #include "app.h"
-#include "bfin.h"
-#include "filesystem.h"
-#include "flash.h"
-#include "memory.h"
 
 /// bees
 #include "files.h"
@@ -267,6 +265,12 @@ u8 files_load_scene(u8 idx) {
 // search for specified scene file and load it
 // return 1 on success, 0 on failure
 u8 files_load_scene_name(const char* name) {
+  FILE* f = fopen(name, "r");
+  fread(sceneData, sizeof(sceneData_t), 1, f);
+  fclose(f);
+
+  scene_read_buf();
+
   /* void* fp; */
   /* u32 size = 0; */
   /* u8 ret = 0; */

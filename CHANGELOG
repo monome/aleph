@@ -12,9 +12,6 @@ bees	0.3.1
 - store reported module version in scene data (still using filename though)
 - add "headless bees" (compiles but needs work)
 
-============================================
-140117
-
 ----------------
 bees	0.3.0    ! breaks scene compatbility !
 

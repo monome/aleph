@@ -184,6 +184,11 @@ extern void net_clear_user_ops(void);
 // disconnect from parameters
 extern void net_disconnect_params(void);
 
+// insert a split after an output node
+// return out11 of split if original out was unconnected,
+// otherwise connect out1 of split to old target and return out2
+extern s16 net_split_out(s16 outIdx);
+
 /// test/dbg
 void net_print(void);
 

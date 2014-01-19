@@ -156,6 +156,9 @@ void bfin_set_param(u8 idx, fix16_t x ) {
 
 void bfin_get_num_params(volatile u32* num) {
 #if 1
+
+  *num = 0;
+
 #else
   u16 x;
 
