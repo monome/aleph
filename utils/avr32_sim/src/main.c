@@ -61,7 +61,7 @@
 
 int main(void) { 
 
-
+  app_init();
   app_launch(0);
 
   return 0; 

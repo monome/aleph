@@ -149,12 +149,11 @@ void handle_key_0(s32 val) {
   // load module
   if(val == 0) { return; }
   if(check_key(0)) {
-    region_fill(headRegion, 0x0);
-    font_string_region_clip(headRegion, "loading DSP module...", 0, 0, 0xa, 0);
-    headRegion->dirty = 1;
-    render_update();
-    
-    net_clear_user_ops();
+    notify("loading...");
+    // don't do this! let it break?
+    //    net_clear_user_ops();
+    // disconnect parameters though
+    net_disconnect_params();
 
     files_load_dsp(*pageSelect);
     bfin_wait_ready();
@@ -162,11 +161,7 @@ void handle_key_0(s32 val) {
     bfin_enable();
 
     // render status to head region 
-    region_fill(headRegion, 0x0);
-    font_string_region_clip(headRegion, "finished loading.", 0, 0, 0xa, 0);
-    headRegion->dirty = 1;
-    render_update();
-
+    notify("finished loading.");
   }
   show_foot();
 }
@@ -176,18 +171,12 @@ void handle_key_1(s32 val) {
   if(val == 0) { return; }
   if(check_key(1)) {
     // render status to head region  
-    region_fill(headRegion, 0x0);
-    font_string_region_clip(headRegion, "writing DSP module to flash...", 0, 0, 0xa, 0);
-    headRegion->dirty = 1;
-    render_update();
+    notify("writing...");
     // write module as default 
     //    files_store_default_dsp(*pageSelect);
 
     // render status to head region 
-    region_fill(headRegion, 0x0);
-    font_string_region_clip(headRegion, "finished writing.", 0, 0, 0xa, 0);
-    headRegion->dirty = 1;
-    render_update();
+    notify("done writing.");
   }
   show_foot();
 #endif  

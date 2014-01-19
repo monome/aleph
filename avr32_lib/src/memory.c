@@ -61,7 +61,7 @@ heap_t alloc_mem(u32 bytes) {
   print_dbg("\r\n >>> alloc_mem(), requested bytes: 0x");
   print_dbg_hex(bytes);
   print_dbg(" , location: 0x");
-  print_dbg_hex(ret);
+  print_dbg_hex((u32)ret);
 
   // align to 4 bytes
   if ( mtmp != 0) {

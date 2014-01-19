@@ -87,11 +87,11 @@ cflags += $(foreach path,$(inc),-I$(path))
 $(build-dir)%.o: %.c 
 	echo $(cflags)
 	$(Q)test -d $(dir $@) || mkdir -p $(dir $@)
-	gcc $(cflags) -c $< -o $@
+	gcc $(cflags) -g -c $< -o $@
 
 beekeep: $(obj)	
 	echo $(obj)
-	gcc $(obj) $(cflags) -o beekeep
+	gcc $(obj) -g $(cflags) -o beekeep
 
 all: beekeep
 

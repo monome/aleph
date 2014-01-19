@@ -492,3 +492,11 @@ void draw_preset_name(void) {
   font_string_region_clip(headRegion, preset_name((u8)preset_get_select()), 64, 0, 0x5, 0);
   headRegion->dirty = 1;
 }
+
+// draw to the head region
+void notify(const char* str) {
+    region_fill(headRegion, 0x0);
+    font_string_region_clip(headRegion, "done reading.", 0, 0, 0xa, 0);
+    headRegion->dirty = 1;
+    render_update();
+}

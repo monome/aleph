@@ -1153,6 +1153,22 @@ void net_get_param_value_string_conversion(char* dst, u32 idx, s32 val) {
 }
 /// scale
 
+
+// disconnect from parameters
+void net_disconnect_params(void) {
+  int i;
+  int j;
+  int t = net->numIns; // test target
+  for(i=0; i<net->numParams; ++i) {
+    for(j=0; j<net->numOuts; ++j) {
+      if(net->outs[j].target == t) {
+	net_disconnect(j);
+      }
+    }
+    t++;
+  }
+}
+
 ///////////////
 // test / dbg
 #if 0
@@ -1168,3 +1184,4 @@ void net_print(void) {
   print_dbg_ulong(net->numOps);
 }
 #endif
+
