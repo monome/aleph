@@ -53,6 +53,7 @@ void scene_init(void) {
   for(i=0; i<MODULE_NAME_LEN; i++) {
     (sceneData->desc.moduleName)[i] = ' ';
   }
+  strcpy(sceneData->desc.sceneName, "____________.scn");
 }
 
 void scene_deinit(void) {

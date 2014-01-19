@@ -54,10 +54,43 @@ src += 	$(bees)/src/app_timers.c \
 
 
 # "fake" sources
-src += 	src/app_bees.c
-src += 	src/flash_bees.c
-src += 	src/files.c
-src +=	src/handler.c
+src += 	src/app_beekeep.c \
+	src/flash_beekeep.c \
+	src/files.c \
+	src/handler.c \
+	src/main.c	
+
+
+# srcs from simulator
+src += \
+	$(sim)/src/adc.c \
+	$(sim)/src/app.c \
+	$(sim)/src/bfin.c \
+	$(sim)/src/control.c \
+	$(sim)/src/delay.c \
+	$(sim)/src/events.c \
+	$(sim)/src/encoders.c \
+	$(sim)/src/filesystem.c \
+	$(sim)/src/flash.c \
+	$(sim)/src/font.c \
+	$(sim)/src/i2c.c \
+	$(sim)/src/init.c	\
+	$(sim)/src/interrupts.c \
+	$(sim)/src/memory.c \
+	$(sim)/src/monome.c\
+	$(sim)/src/print_funcs.c \
+	$(sim)/src/region.c \
+	$(sim)/src/screen.c \
+	$(sim)/src/serial.c \
+	$(sim)/src/simple_string.c \
+	$(sim)/src/switches.c \
+	$(sim)/src/timers.c \
+	$(sim)/src/usb.c \
+	$(sim)/src/usb/midi/midi.c \
+	$(sim)/src/usb/ftdi/ftdi.c \
+	$(sim)/src/fonts/ume_tgo5_18.c \
+	$(sim)/src/fix.c \
+	$(sim)/src/libfixmath/fix16.c
 
 #includes
 inc = 	$(bees) \
@@ -72,7 +105,6 @@ inc = 	$(bees) \
 	$(sim)/src/usb/mouse \
 	$(sim)/src/usb/hub \
 
-include $(sim)/avr32_sim.mk
 
 ifdef BUILD_DIR
 	build-dir       := $(dir $(BUILD_DIR))$(if $(notdir $(BUILD_DIR)),$(notdir $(BUILD_DIR))/)

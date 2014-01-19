@@ -1,3 +1,13 @@
+
+
+----------------
+bees	0.3.2
+- enable SPLIT command and change operator label ('Y')
+- headless bees runs and almost loads a scene
+- app init cleanup
+
+
+
 ============================================
 140118
 
@@ -10,9 +20,6 @@ bees	0.3.1
 - clear scene with button on scenes page
 - store reported module version in scene data (still using filename though)
 - add "headless bees" (compiles but needs work)
-
-============================================
-140117
 
 ----------------
 bees	0.3.0    ! breaks scene compatbility !

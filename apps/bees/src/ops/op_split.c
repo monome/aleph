@@ -6,9 +6,9 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_split_instring = "VAL     ";
-static const char* op_split_outstring = "OUT1    OUT2    ";
-static const char* op_split_opstring = "SPLIT";
+static const char* op_split_instring = "X       ";
+static const char* op_split_outstring = "A       B       ";
+static const char* op_split_opstring = "Y";
 
 //-------------------------------------------------
 //----- static function declaration

@@ -142,12 +142,12 @@ static u8* inode_pickle(inode_t* in, u8* dst) {
   // preset inclusion flag
   //// this is a preset variable
   //  *dst++ = in->preset;
-  /* print_dbg("\r\n pickling input node, op index: "); */
-  /* print_dbg_ulong(in->opIdx); */
-  /* print_dbg(" , input idx: "); */
-  /* print_dbg_ulong(in->opInIdx); */
-  /* print_dbg(" , play flag: "); */
-  /* print_dbg_ulong(in->play); */
+  print_dbg("\r\n pickling input node, op index: ");
+  print_dbg_ulong(in->opIdx);
+  print_dbg(" , input idx: ");
+  print_dbg_ulong(in->opInIdx);
+  print_dbg(" , play flag: ");
+  print_dbg_ulong(in->play);
 
   // play inclusion flag
   *dst++ = in->play;
@@ -155,6 +155,10 @@ static u8* inode_pickle(inode_t* in, u8* dst) {
   *dst++ = 0;
   // dummy byte for alignment
   *dst++ = 0;
+
+  //// FIXME: dumb, this isn't aligned yet..
+  // dummy byte for alignment
+  //  *dst++ = 0;
   return dst;
 }
 
@@ -165,13 +169,17 @@ static const u8* inode_unpickle(const u8* src, inode_t* in) {
   // play inclusion flag
   in->play = *src++;
 
-  /* print_dbg("\r\n unpickled input node play flag: "); */
-  /* print_dbg_ulong(in->play); */
+  print_dbg("\r\n unpickled input node play flag: ");
+  print_dbg_ulong(in->play);
 
   // dummy byte for alignment
   ++src; 
   // dummy byte for alignment
   ++src; 
+  //// FIXME: dumb, this isn't aligned yet..
+  // dummy byte for alignment
+  //  ++src; 
+
 
   return src;
 }
@@ -328,14 +336,22 @@ s16 net_add_op(op_id_t opId) {
   if (net->numOps >= NET_OPS_MAX) {
     return -1;
   }
+  print_dbg(" , op class: ");
+  print_dbg_ulong(opId);
+  print_dbg(" , size: ");
+  print_dbg_ulong(op_registry[opId].size);
+
 
   if (op_registry[opId].size > NET_OP_POOL_SIZE - net->opPoolOffset) {
     print_dbg("\r\n op creation failed; op memory pool is exhausted.");
     return -1;
   }
 
+  print_dbg(" ; allocating... ");
   op = (op_t*)((u8*)net->opPool + net->opPoolOffset);
   // use the class ID to initialize a new object in scratch
+
+  print_dbg(" ;  initializing... ");
   op_init(op, opId);
 
   ins = op->numInputs;
@@ -1086,6 +1102,7 @@ u8* net_unpickle(const u8* src) {
   for(i=0; i < (NET_INS_MAX); ++i) {
     src = inode_unpickle(src, &(net->ins[i]));
   }
+
   print_dbg("\r\n reading all output nodes");
   // read output nodes
   for(i=0; i < NET_OUTS_MAX; ++i) {
@@ -1169,9 +1186,44 @@ void net_disconnect_params(void) {
   }
 }
 
+
+// insert a split after an output node
+// return out11 of split if original out was unconnected,
+// otherwise connect out1 of split to old target and return out2
+s16 net_split_out(s16 outIdx) {
+  // saved target
+  s16 target =   net->outs[outIdx].target;
+  // index of added split operator
+  s16 split;
+  if( target < 0) {
+    // no target
+    split = net_add_op(eOpSplit);
+    if(split < 0) {
+      // failed to add, do nothing
+      return outIdx; 
+    } else {
+      // FIXME: net_op_in_idx is pretty slow
+      net_connect(outIdx, net_op_in_idx(split, 0));
+      return net_op_out_idx(split, 0);
+    } // add ok
+  } else {
+    // had target; reroute
+    split = net_add_op(eOpSplit);
+    if(split < 0) {
+      // failed to add, do nothing
+      return outIdx; 
+    } else {
+      // FIXME: net_op_in_idx is pretty slow
+      net_connect(outIdx, net_op_in_idx(split, 0));
+      net_connect(net_op_out_idx(split, 0), target);
+      return net_op_out_idx(split, 1);
+    } // add ok
+  }
+}
+
 ///////////////
 // test / dbg
-#if 0
+#if 1
 void net_print(void) {
   print_dbg("\r\n net address: 0x");
   print_dbg_hex((u32)(net));
@@ -1184,4 +1236,5 @@ void net_print(void) {
   print_dbg_ulong(net->numOps);
 }
 #endif
+
 
