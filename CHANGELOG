@@ -1,11 +1,22 @@
 
 ============================================
+140118
+
+----------------
+bees	0.3.1
+
+- forbid pathological settings for op_accum and fix wrap bug
+- slight cleanup in rendering
+- disconnect params on module switch instead of clearing scene
+- clear scene with button on scenes page
+- store reported module version in scene data (still using filename though)
+- add "headless bees" (compiles but needs work)
+
+============================================
 140117
 
 ----------------
-bees	0.3.0
-
-! breaks scene compatbility !
+bees	0.3.0    ! breaks scene compatbility !
 
 - include param radix in scene data
 - include play vis. flag in scene data
@@ -15,17 +26,13 @@ bees	0.3.0
 
 --------------------
 
-waves 0.2.0
+waves 0.2.0   ! breaks scene compatbility !
 
-! breaks scene compatbility !
-
-- added fmDel parmaeters (not functional) 
+- added fmDel parameters (not functional) 
 - added version reporting
 
 
 lines 0.1.0
-
-! breaks scene compatbility !
 
 - added version reporting
 

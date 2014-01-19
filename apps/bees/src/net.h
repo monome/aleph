@@ -181,6 +181,8 @@ extern u8* net_unpickle(const u8* src);
 // clear ops and i/o
 extern void net_clear_user_ops(void);
 
+// disconnect from parameters
+extern void net_disconnect_params(void);
 
 /// test/dbg
 void net_print(void);

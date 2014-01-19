@@ -35,6 +35,7 @@
 region* headRegion = NULL;
 region* footRegion[4] = { NULL, NULL, NULL, NULL };
 region* lineRegion = NULL;
+region* selectRegion = NULL;
 
 //------------------------
 //---- static vars
@@ -490,4 +491,12 @@ void draw_preset_name(void) {
   font_string_region_clip(headRegion, "                  ", 64, 0, 0, 0);
   font_string_region_clip(headRegion, preset_name((u8)preset_get_select()), 64, 0, 0x5, 0);
   headRegion->dirty = 1;
+}
+
+// draw to the head region
+void notify(const char* str) {
+    region_fill(headRegion, 0x0);
+    font_string_region_clip(headRegion, str, 0, 0, 0xa, 0);
+    headRegion->dirty = 1;
+    render_update();
 }

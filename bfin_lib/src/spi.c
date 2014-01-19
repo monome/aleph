@@ -417,7 +417,6 @@ u8 spi_process(u8 rx) {
     return 0;    // don't care
     break;
 
-
   default:
     byte = eCom; // reset
     return 0;

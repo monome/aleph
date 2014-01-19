@@ -98,12 +98,18 @@ static void op_accum_in_val(op_accum_t* accum, const io_t v) {
 // minimum
 static void op_accum_in_min(op_accum_t* accum, const io_t v) {
   accum->min = v;
+  if(accum->min >= accum->max) {
+    accum->min = accum->max - 1;
+  }
   op_accum_wrap_out(accum);
 }
 
 // maximum
 static void op_accum_in_max(op_accum_t* accum, const io_t v) {
   accum->max = v;
+  if(accum->min >= accum->max) {
+    accum->max = accum->min + 1;
+  }
   op_accum_wrap_out(accum);
 }
 
@@ -150,12 +156,12 @@ void op_accum_wrap_out(op_accum_t* accum) {
   if (accum->wrap) { // wrapping...
     // if value needs wrapping, output the applied difference
     while (accum->val > accum->max) { 
-      dif = op_sub(accum->min, accum->max);
+      dif = op_sub(accum->min, accum->max) - 1;
       wrap = op_add(wrap, dif);
       accum->val = op_add(accum->val, dif);
     }
     while (accum->val < accum->min) { 
-      dif = op_sub(accum->max, accum->min);
+      dif = op_sub(accum->max, accum->min) + 1;
       wrap = op_add(wrap, dif);
       accum->val = op_add(accum->val, dif);
     }

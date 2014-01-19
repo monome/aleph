@@ -71,7 +71,7 @@ static void render_line(s16 idx, u8 fg) {
   //  print_dbg("\r\n page_outs: render_line");
   if(idx >= net_num_outs() ) { return; }
   if(targetSelect) { 
-      print_dbg(" , in targetSelect");
+    //      print_dbg(" , in targetSelect");
     target = tmpTarget;
   } else {
     target = net_get_target(idx);
@@ -79,8 +79,8 @@ static void render_line(s16 idx, u8 fg) {
   srcOpIdx = net_out_op_idx(idx);
   targetOpIdx = net_in_op_idx(target);
 
-  print_dbg(" , target: ");
-  print_dbg_ulong(target);
+  /* print_dbg(" , target: "); */
+  /* print_dbg_ulong(target); */
 
   if(target >= 0) {
     //// output has target

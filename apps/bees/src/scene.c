@@ -149,7 +149,7 @@ void scene_read_buf(void) {
 
   // store current mod name in scene desc
    //  memcpy(modName, sceneData->desc.moduleName, MODULE_NAME_LEN);
-
+   
    // read scene name
   for(i=0; i<SCENE_NAME_LEN; i++) {
     sceneData->desc.sceneName[i] = *src;
@@ -197,9 +197,9 @@ void scene_read_buf(void) {
 
 #if RELEASEBUILD==1
 #else
-  /*
-//// THIS IS BROKEN
+  
   // query module name / version
+  //// FIXME: currently nothing happens with this.
   print_dbg("\r\n querying module name...");
   bfin_get_module_name(moduleName);
   print_dbg("\r\n querying module version...");
@@ -214,8 +214,10 @@ void scene_read_buf(void) {
   print_dbg_ulong(moduleVersion.min);
   print_dbg(".");
   print_dbg_ulong(moduleVersion.rev);
-  */
+
 #endif
+
+  app_pause();
 
   print_dbg("\r\n clearing operator list...");
   net_clear_user_ops();
@@ -307,4 +309,28 @@ void scene_set_name(const char* name) {
 // set module name
 void scene_set_module_name(const char* name) {
   strncpy(sceneData->desc.moduleName, name, MODULE_NAME_LEN);
+}
+
+// query module name and version
+void scene_query_module(void) {
+  volatile char * moduleName = sceneData->desc.moduleName;
+  ModuleVersion * moduleVersion = &(sceneData->desc.moduleVersion);
+
+  /// sets module name/version in scene data to reported name/version
+
+  print_dbg("\r\n querying module name...");
+  bfin_get_module_name(moduleName);
+  print_dbg("\r\n querying module version...");
+  bfin_get_module_version(moduleVersion);
+
+  print_dbg("\r\n received module name: ");
+  print_dbg((char*)moduleName);
+
+  print_dbg("\r\n received module version: ");
+  print_dbg_ulong(moduleVersion->maj);
+  print_dbg(".");
+  print_dbg_ulong(moduleVersion->min);
+  print_dbg(".");
+  print_dbg_ulong(moduleVersion->rev);
+
 }

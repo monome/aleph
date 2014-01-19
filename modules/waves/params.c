@@ -39,13 +39,13 @@ void fill_param_desc(void) {
   gModuleData->paramDesc[eParamAmp1].type = eParamTypeAmp;
   gModuleData->paramDesc[eParamAmp1].min = 0;
   gModuleData->paramDesc[eParamAmp1].max = FRACT32_MAX >> 1;
-  gModuleData->paramDesc[eParamAmp1].radix = 32;
+  gModuleData->paramDesc[eParamAmp1].radix = 1;
   
   strcpy(gModuleData->paramDesc[eParamAmp0].label, "amp0");
   gModuleData->paramDesc[eParamAmp0].type = eParamTypeAmp;
   gModuleData->paramDesc[eParamAmp0].min = 0;
   gModuleData->paramDesc[eParamAmp0].max = FRACT32_MAX >> 1;
-  gModuleData->paramDesc[eParamAmp0].radix = 30;
+  gModuleData->paramDesc[eParamAmp0].radix = 1;
   
   strcpy(gModuleData->paramDesc[eParamPm10].label, "pm10");
   gModuleData->paramDesc[eParamPm10].type = eParamTypeFix;
