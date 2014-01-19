@@ -188,7 +188,7 @@ void handle_key_2(s32 val) {
     net_clear_user_ops();
     notify("done clearing.");
   }
-
+  show_foot();
 }
 
 void handle_key_3(s32 val) {

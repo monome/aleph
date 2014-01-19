@@ -149,7 +149,7 @@ void scene_read_buf(void) {
 
   // store current mod name in scene desc
    //  memcpy(modName, sceneData->desc.moduleName, MODULE_NAME_LEN);
-
+   
    // read scene name
   for(i=0; i<SCENE_NAME_LEN; i++) {
     sceneData->desc.sceneName[i] = *src;
