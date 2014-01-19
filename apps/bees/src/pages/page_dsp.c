@@ -14,6 +14,7 @@
 #include "net.h"
 #include "pages.h"
 #include "render.h"
+#include "scene.h"
 
 //-------------------------
 //---- static variables
@@ -156,17 +157,22 @@ void handle_key_0(s32 val) {
     net_disconnect_params();
 
     files_load_dsp(*pageSelect);
+
     bfin_wait_ready();
+
+    scene_query_module();
+
     net_report_params();
+
     bfin_enable();
 
-    // render status to head region 
     notify("finished loading.");
   }
   show_foot();
 }
 
 void handle_key_1(s32 val) {
+    /// FIXME:
 #if 0 // don't store DSP in flash for now
   if(val == 0) { return; }
   if(check_key(1)) {
@@ -175,7 +181,7 @@ void handle_key_1(s32 val) {
     // write module as default 
     //    files_store_default_dsp(*pageSelect);
 
-    // render status to head region 
+
     notify("done writing.");
   }
   show_foot();

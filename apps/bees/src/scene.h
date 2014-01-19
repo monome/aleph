@@ -71,9 +71,9 @@ extern void scene_set_name(const char* name);
 // set scene name, single character
 extern void scene_set_name_char(u8 idx, char ch);
 // set module name
-//extern void scene_set_module_name(const char* name);
+extern void scene_set_module_name(const char* name);
 
 // query module name and version
-extern void scene_query_module(const char* name);
+extern void scene_query_module(void);
  
 #endif
