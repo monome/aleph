@@ -496,7 +496,7 @@ void draw_preset_name(void) {
 // draw to the head region
 void notify(const char* str) {
     region_fill(headRegion, 0x0);
-    font_string_region_clip(headRegion, "done reading.", 0, 0, 0xa, 0);
+    font_string_region_clip(headRegion, str, 0, 0, 0xa, 0);
     headRegion->dirty = 1;
     render_update();
 }
