@@ -1,3 +1,7 @@
+----------------
+bees	0.3.3
+- major bugfix when storing/recalling default scene after clean boot
+- .scn extension applied directly to scene name
 
 ----------------
 bees	0.3.2
