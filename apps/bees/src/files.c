@@ -96,8 +96,8 @@ static void fake_fread(volatile u8* dst, u32 size, void* fp) {
 static void strip_space(char* str, u8 len) {
   u8 i;
   for( i=(len-1); i>0; i-- ) {
-    if(str[i] == 0) { continue; }
-    else if(str[i] == ' ') { str[i] = 0; }
+    if(str[i] == '\0') { continue; }
+    else if(str[i] == ' ') { str[i] = '\0'; }
     else { break; }
   }
 }
@@ -142,7 +142,7 @@ u8 files_load_dsp_name(const char* name) {
   fp = list_open_file_name(&dspList, name, "r", &size);
 
   if( fp != NULL) {	  
-    print_dbg("\r\n found file, loading dsp ");
+    print_dbg("\r\n found file, loading dsp: ");
     print_dbg(name);
     fake_fread(bfinLdrData, size, fp);
 
@@ -162,10 +162,13 @@ u8 files_load_dsp_name(const char* name) {
       /// but try aleph-module*.ldr on failure
       ////
       /// query name and version to the scene data
-      scene_query_module();
+      //      scene_query_module();
       /// now set it to the actual filename because we are dumb
       scene_set_module_name(name);
       ///////////////////////////
+
+      print_dbg("\r\n sceneData->moduleName : ");
+      print_dbg(name);
 
       ret = 1;
     } else {
@@ -318,6 +321,7 @@ void files_store_scene_name(const char* name) {
 
   strcat(namebuf, name);
   strip_space(namebuf, 32);
+  strcat(namebuf, ".scn");
   // fill the scene RAM buffer from current state of system
   scene_write_buf(); 
   // open FP for writing

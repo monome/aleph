@@ -53,7 +53,7 @@ void scene_init(void) {
   for(i=0; i<MODULE_NAME_LEN; i++) {
     (sceneData->desc.moduleName)[i] = ' ';
   }
-  strcpy(sceneData->desc.sceneName, "____________.scn");
+  strcpy(sceneData->desc.sceneName, ""); 
 }
 
 void scene_deinit(void) {
@@ -62,7 +62,7 @@ void scene_deinit(void) {
 // fill global RAM buffer with current state of system
 void scene_write_buf(void) {
   u8* dst = (u8*)(sceneData->pickle);
-
+  char test[SCENE_NAME_LEN] = "                ";
   u32 bytes = 0;
   u8* newDst = NULL;
     int i;
@@ -97,12 +97,25 @@ void scene_write_buf(void) {
   dst = pickle_16(sceneData->desc.beesVersion.rev, dst);
   bytes += 2;
 
+  print_dbg("\r\n scene_write buf; module name: ");
+  print_dbg(sceneData->desc.moduleName);
+
   // write module name
   for(i=0; i<MODULE_NAME_LEN; i++) {
     *dst = (sceneData->desc.moduleName)[i];
     dst++;
     bytes++;
   }
+
+  
+
+  //// TEST
+for(i=0; i<MODULE_NAME_LEN; i++) {
+  test[i] = *(dst - MODULE_NAME_LEN + i);
+ } 
+  print_dbg("; test buffer after write: ");
+  print_dbg(test);
+  ////
 
   // write module version
   *dst = sceneData->desc.moduleVersion.min;
