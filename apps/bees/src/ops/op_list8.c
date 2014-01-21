@@ -150,8 +150,6 @@ static void op_list8_in_i7(op_list8_t* list8, const io_t val) {
 }
 
 
-
-
 //===== UI input
 static void op_list8_inc_input(op_list8_t* list8, const s16 idx, const io_t inc) {
   io_t val;
