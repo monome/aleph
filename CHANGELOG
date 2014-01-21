@@ -1,4 +1,10 @@
 ----------------
+bees	0.3.4
+- move default scene to sdcard
+- major bugfix in net activation / play mode
+- play mode defaults to 1 for params, 0 for op inputs
+
+----------------
 bees	0.3.3
 - major bugfix when storing/recalling default scene after clean boot
 - .scn extension applied directly to scene name
