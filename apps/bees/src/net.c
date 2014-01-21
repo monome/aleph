@@ -121,6 +121,7 @@ static u8* onode_pickle(onode_t* out, u8* dst) {
 
 static const u8* onode_unpickle(const u8* src, onode_t* out) {
   u32 v32;
+
   // operator output index
   src = unpickle_32(src, &v32);
   out->opOutIdx = (u8)v32;
@@ -131,9 +132,18 @@ static const u8* onode_unpickle(const u8* src, onode_t* out) {
   // index of parent op
   src = unpickle_32(src, &v32);
   out->opIdx = (s32)v32;
+
   // preset flag: 32 bits for alignment
   //  src = unpickle_32(src, &v32);
   //  out->preset = (u8)v32;
+
+  print_dbg(" ; opIdx: ");
+  print_dbg_ulong(out->opIdx);
+  print_dbg(" ; opOutIdx: ");
+  print_dbg_ulong(out->opOutIdx);
+  print_dbg(" ; target: ");
+  print_dbg_ulong(out->target);
+
   return src;
 }
 
@@ -169,7 +179,13 @@ static const u8* inode_unpickle(const u8* src, inode_t* in) {
   // play inclusion flag
   in->play = *src++;
 
-  print_dbg("\r\n unpickled input node play flag: ");
+  print_dbg(" ; opIdx: ");
+  print_dbg_ulong(in->opIdx);
+  print_dbg(" ; opInIdx: ");
+  print_dbg_ulong(in->opInIdx);
+
+
+  print_dbg("; got flag: ");
   print_dbg_ulong(in->play);
 
   // dummy byte for alignment
@@ -288,15 +304,27 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
     }
   }
 
-  if(inIdx >= 0) {
-    // input exists
-    pIn = &(net->ins[inIdx]);
 
+  //// AHH! pIn may be pointed nowhere if params + ins > ins_max.
+  if(inIdx >= 0) {
     if(inIdx < net->numIns) {
       // this is an op input
+      pIn = &(net->ins[inIdx]);
       op_set_in_val(net->ops[pIn->opIdx],
 		    pIn->opInIdx,
 		    val);
+
+      /// only process for play mode if we're in play mode
+      if(pageIdx == ePagePlay) {
+	print_dbg(" , play mode active, ");
+	print_dbg(" , play visibility flag : ");
+	print_dbg_ulong(pIn->play);
+	// only process if play-mode-visibility is set
+	if(pIn->play) {
+	  play_input(inIdx);
+	}
+      }    
+
     } else { 
       // this is a parameter
       //// FIXME this is horrible
@@ -305,17 +333,6 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
 	return ;
       } else {
 	set_param_value(pIndex, val);
-      }
-    }
-
-    /// only process for play mode if we're in play mode
-    if(pageIdx == ePagePlay) {
-      print_dbg(" , play mode active, ");
-      print_dbg(" , play visibility flag : ");
-      print_dbg_ulong(pIn->play);
-      // only process if play-mode-visibility is set
-      if(pIn->play) {
-	play_input(inIdx);
       }
     }
   }  
@@ -849,16 +866,27 @@ u8 net_get_out_preset(u32 id) {
 
 // toggle play inclusion for input
 u8 net_toggle_in_play(u32 inIdx) {
-  net->ins[inIdx].play ^= 1;
+  u32 pidx;
+  if(inIdx < net->numIns) {
+    net->ins[inIdx].play ^= 1;
+    print_dbg("\r\n toggle in.play, op index: ");
+    print_dbg_ulong(net->ins[inIdx].opIdx);
+    print_dbg(" , input idx: ");
+    print_dbg_ulong(net->ins[inIdx].opInIdx);
+    print_dbg(" , result: ");
+    print_dbg(net->ins[inIdx].play ? "1" : "0");
+    return net->ins[inIdx].play;
+  } else {
+    pidx = inIdx - net->numIns;
+    net->params[pidx].play ^= 1;
+    print_dbg("\r\n toggle param.play, index: ");
+    print_dbg_ulong(pidx);
+    print_dbg(" , result: ");
+    print_dbg(net->params[pidx].play ? "1" : "0");
+      return net->params[pidx].play;
+  }
 
-  print_dbg("\r\n toggle in.play, op index: ");
-  print_dbg_ulong(net->ins[inIdx].opIdx);
-  print_dbg(" , input idx: ");
-  print_dbg_ulong(net->ins[inIdx].opInIdx);
-  print_dbg(" , result: ");
-   print_dbg(net->ins[inIdx].play ? "1" : "0");
 
-  return net->ins[inIdx].play;
 }
 
 // set play inclusion for input
@@ -1100,16 +1128,24 @@ u8* net_unpickle(const u8* src) {
   print_dbg("\r\n reading all input nodes ");
   
   for(i=0; i < (NET_INS_MAX); ++i) {
+    print_dbg("\r\n unpickling input node, idx: ");
+    print_dbg_ulong(i);
+
     src = inode_unpickle(src, &(net->ins[i]));
   }
 
   print_dbg("\r\n reading all output nodes");
   // read output nodes
   for(i=0; i < NET_OUTS_MAX; ++i) {
+    print_dbg("\r\n unpickling output node, idx: ");
+    print_dbg_ulong(i);
+
     src = onode_unpickle(src, &(net->outs[i]));
     if(i < net->numOuts) {
-      // reconnect so the parent operator knows what to do
-      net_connect(i, net->outs[i].target);
+      if(net->outs[i].target >= 0) {
+	// reconnect so the parent operator knows what to do
+	net_connect(i, net->outs[i].target);
+      }
     }
   }
 #else
@@ -1140,6 +1176,9 @@ u8* net_unpickle(const u8* src) {
 
   // read parameter nodes (includes value and descriptor)
   for(i=0; i<(net->numParams); ++i) {
+    print_dbg("\r\n unpickling param, idx: ");
+    print_dbg_ulong(i);
+
     src = param_unpickle(&(net->params[i]), src);
   }
   

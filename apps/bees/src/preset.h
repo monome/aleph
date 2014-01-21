@@ -17,6 +17,7 @@
 // minimal storage for input
 typedef struct _presetIn {
   io_t value;
+  // why do we need to store idx?
   s16 idx;
   u8 enabled;
 } presetIn_t;
@@ -25,6 +26,7 @@ typedef struct _presetIn {
 // minimal storage for output
 typedef struct _presetOut {
   s16 target;
+  // why do we need to store idx?
   s16 outIdx;
   u8 enabled;
 } presetOut_t;
