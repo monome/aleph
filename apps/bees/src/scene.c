@@ -37,6 +37,9 @@
 
 
 #define DEFAULT_SCENE_NAME "default"
+/// FIXME: this is retarded, 
+// but sometimes the name needs to have extension and sometimes not.
+#define DEFAULT_SCENE_NAME_EXT "default.scn"
 
 //-----------------------------
 // ---- extern data
@@ -189,6 +192,9 @@ void scene_read_buf(void) {
   print_dbg("\r\n unpickled module name: ");
   print_dbg(sceneData->desc.moduleName);
 
+  render_boot("loading DSP module:");
+  render_boot(sceneData->desc.moduleName);
+
    // read module version
   sceneData->desc.moduleVersion.min = *src;
   src++;
@@ -205,10 +211,15 @@ void scene_read_buf(void) {
 
 
   ///// load the DSP now!
+  render_boot("loading module from sdcard");
+
   print_dbg("\r\n loading module from card, filename: ");
   print_dbg(sceneData->desc.moduleName);
+
   files_load_dsp_name(sceneData->desc.moduleName);
 
+
+  render_boot("waiting for module init");
   print_dbg("\r\n waiting for DSP init...");
   bfin_wait_ready();
 
@@ -326,7 +337,7 @@ void scene_read_default(void) {
   /* print_dbg("\r\n reading default scene from flash... "); */
   /* flash_read_scene(); */
   print_dbg("\r\n reading default scene from card... ");
-  files_load_scene_name(DEFAULT_SCENE_NAME);
+  files_load_scene_name(DEFAULT_SCENE_NAME_EXT);
   
   print_dbg("\r\n finished reading ");  
   app_resume();

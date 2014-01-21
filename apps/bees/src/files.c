@@ -320,8 +320,12 @@ void files_store_scene_name(const char* name) {
   app_pause();
 
   strcat(namebuf, name);
-  strip_space(namebuf, 32);
+  strip_space(namebuf, 64);
   strcat(namebuf, ".scn");
+
+  print_dbg("\r\n opening scene file for writing: ");
+  print_dbg(namebuf);
+
   // fill the scene RAM buffer from current state of system
   scene_write_buf(); 
   // open FP for writing
@@ -498,13 +502,28 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   char path[64];
   void* fp;
 
+  print_dbg("\r\n *list_open_file_name: "); 
+  print_dbg(path); 
+  print_dbg(" at ");
+  print_dbg(list->path);
+  print_dbg(" request: ");
+  print_dbg(name);
+
+
   strcpy(path, list->path);
 
   if(fl_opendir(path, &dirstat)) {
     
     while (fl_readdir(&dirstat, &dirent) == 0) {
+      print_dbg("\r\n ... checking against "); 
+      print_dbg(dirent.filename);
+
       if (strcmp(dirent.filename, name) == 0) {
 	strncat(path, dirent.filename, 58);
+	
+	print_dbg("\r\n ... found, opening at:  "); 
+	print_dbg(path);
+      
 	fp = fl_fopen(path, mode);
 	*size = dirent.size;
 	break;
