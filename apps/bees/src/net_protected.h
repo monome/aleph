@@ -65,8 +65,9 @@ typedef struct _pnode {
   ParamData data;
   ParamScaler scaler;
   u8 idx;
-  //// ah.. has no play inclusion flag
-  //  u8 preset;
+  // play inclusion flag
+  /// must be separate from inputs list for large input counts!
+  u8 play;
   //} __attribute__((packed)) pnode_t;
 } pnode_t;
 
