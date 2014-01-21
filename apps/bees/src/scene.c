@@ -337,8 +337,11 @@ void scene_query_module(void) {
   print_dbg("\r\n querying module version...");
   bfin_get_module_version(moduleVersion);
 
+  strcat((char*)moduleName, ".ldr");
+
   print_dbg("\r\n received module name: ");
   print_dbg((char*)moduleName);
+
 
   print_dbg("\r\n received module version: ");
   print_dbg_ulong(moduleVersion->maj);
