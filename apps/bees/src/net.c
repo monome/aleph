@@ -272,7 +272,7 @@ void net_clear_user_ops(void) {
 // initialize an input node
 void net_init_inode(u16 idx) {
   net->ins[idx].opIdx = -1;
-  net->ins[idx].play = 1;
+  net->ins[idx].play = 0;
 }
 
 // initialize an output node
@@ -285,13 +285,14 @@ void net_init_onode(u16 idx) {
 void net_activate(s16 inIdx, const io_t val, void* op) {
   static inode_t* pIn;
   s16 pIndex;
+  u8 vis;
 
   print_dbg("\r\n net_activate, input idx: ");
   print_dbg_hex(inIdx);
   print_dbg(" , value: ");
   print_dbg_hex(val);
 
-  print_dbg("\r, op index: ");
+  print_dbg(" , op index: ");
   print_dbg_ulong(net->ins[inIdx].opIdx);
   print_dbg(" , input idx: ");
   print_dbg_ulong(net->ins[inIdx].opInIdx);
@@ -305,39 +306,44 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
   }
 
 
-  //// AHH! pIn may be pointed nowhere if params + ins > ins_max.
-  if(inIdx >= 0) {
-    if(inIdx < net->numIns) {
-      // this is an op input
-      pIn = &(net->ins[inIdx]);
-      op_set_in_val(net->ops[pIn->opIdx],
-		    pIn->opInIdx,
-		    val);
 
-      /// only process for play mode if we're in play mode
-      if(pageIdx == ePagePlay) {
-	print_dbg(" , play mode active, ");
-	print_dbg(" , play visibility flag : ");
-	print_dbg_ulong(pIn->play);
-	// only process if play-mode-visibility is set
-	if(pIn->play) {
-	  play_input(inIdx);
-	}
-      }    
+  if(inIdx < 0) {
+    return;
+  }
 
-    } else { 
-      // this is a parameter
-      //// FIXME this is horrible
-      pIndex = inIdx - net->numIns;
-      if (pIndex >= net->numParams) {
-	return ;
-      } else {
-	set_param_value(pIndex, val);
-      }
+  vis = net_get_in_play(inIdx);
+    print_dbg(" , play visibility flag : ");
+    print_dbg_ulong(vis);
+
+  if(inIdx < net->numIns) {      
+    // this is an op input
+    pIn = &(net->ins[inIdx]);
+    
+    print_dbg(" ; input node pointer: 0x"); print_dbg_hex((u32)pIn);
+
+    op_set_in_val(net->ops[pIn->opIdx],
+		  pIn->opInIdx,
+		  val);
+    
+  } else { 
+    // this is a parameter
+    //// FIXME this is horrible
+    pIndex = inIdx - net->numIns;
+    if (pIndex >= net->numParams) { return; }
+    print_dbg(" ; param index: 0x"); print_dbg_ulong(pIndex);
+    set_param_value(pIndex, val);
+  }
+
+  /// only process for play mode if we're in play mode
+  if(pageIdx == ePagePlay) {
+    print_dbg(" , play mode active ");
+    // only process if play-mode-visibility is set
+    if(vis) {
+      play_input(inIdx);
     }
   }  
+  
 }
-
 
 // attempt to allocate a new operator from the static memory pool, return index
 s16 net_add_op(op_id_t opId) {
@@ -439,9 +445,6 @@ s16 net_add_op(op_id_t opId) {
 
     }
   }
-
-  //// FIXME: preset targets ar f'd up too!
-  ///// 
 
   ++(net->numOps);
   return net->numOps - 1;
@@ -883,10 +886,8 @@ u8 net_toggle_in_play(u32 inIdx) {
     print_dbg_ulong(pidx);
     print_dbg(" , result: ");
     print_dbg(net->params[pidx].play ? "1" : "0");
-      return net->params[pidx].play;
+    return net->params[pidx].play;
   }
-
-
 }
 
 // set play inclusion for input
@@ -896,7 +897,11 @@ void net_set_in_play(u32 inIdx, u8 val) {
 
 // get play inclusion for input
 u8 net_get_in_play(u32 inIdx) {
-  return net->ins[inIdx].play;
+  if(inIdx < net->numIns) {
+    return net->ins[inIdx].play;
+  } else {
+    return net->params[inIdx - net->numIns].play;
+  }
 }
 
 
@@ -916,6 +921,8 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
   print_dbg("\r\n finished initializing param scaler.");
 
   net->params[net->numParams].idx = idx; 
+  net->params[net->numParams].play = 1;
+
   //  net->params[net->numParams].preset = 0; 
   net->numParams += 1;
   
