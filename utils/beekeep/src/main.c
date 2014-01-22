@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 
   app_init();
 
-  app_launch(0);
+  app_launch(1);
 
   files_load_scene_name(sceneName);
 

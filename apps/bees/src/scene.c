@@ -161,10 +161,13 @@ void scene_read_buf(void) {
   /// pointer to serial blob
   const u8* src = (u8*)&(sceneData->pickle);
   int i;
+  // param count reported from dsp
+  u32 paramsReported;
   //// TEST
   volatile char moduleName[32];
   ModuleVersion moduleVersion;
   ////
+
    app_pause();
 
   // store current mod name in scene desc
@@ -251,7 +254,7 @@ void scene_read_buf(void) {
   net_clear_user_ops();
 
   print_dbg("\r\n reporting DSP parameters...");
-  net_report_params();
+  paramsReported = net_report_params();
 
   /// FIXME:
   /// check the module version and warn if different!
@@ -278,7 +281,12 @@ void scene_read_buf(void) {
 
   bfin_wait_ready();
   // update bfin parameters
-  net_send_params();
+  if(net->numParams != paramsReported) {
+    print_dbg("\r\n !!!!!! WARNING ! param count from scene does not match reported count from DSP");
+    render_boot("warning: param count mismatch!");
+  } else {
+    net_send_params();
+  }
   print_dbg("\r\n sent new parameter values");
 
   delay_ms(5);

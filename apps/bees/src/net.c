@@ -611,7 +611,11 @@ void net_connect(u32 oIdx, u32 iIdx) {
   
   /// something weird is happening!
   //  value seems to drift on each disconnect/reconnect...?
-  net->ops[srcOpIdx]->out[net->outs[oIdx].opOutIdx] = iIdx;
+  if((srcOpIdx >=0) && (srcOpIdx < net->numOps)) {
+    net->ops[srcOpIdx]->out[net->outs[oIdx].opOutIdx] = iIdx;
+  } else {
+    print_dbg(" !!!!!! WARNING ! invalid source operator index in net_connect() ");
+  }
 }
 
 // disconnect given output
