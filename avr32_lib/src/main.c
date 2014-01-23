@@ -114,6 +114,7 @@ static void handler_FtdiDisconnect(s32 data) {
 static void handler_MonomeConnect(s32 data) {
   // this just stores a flag to re-send connection event to app
   if(!launch) {
+    print_dbg("\r\n got monome device connection, saving flag for app launch");
     monomeConnect = 1;
   }
 }
@@ -300,6 +301,7 @@ void check_startup(void) {
 	event_post(&e);
       } 
       if(monomeConnect) {
+	print_dbg("\r\n posting MonomeConnect event after app launch");
 	e.type = kEventMonomeConnect;
 	event_post(&e);
       } 

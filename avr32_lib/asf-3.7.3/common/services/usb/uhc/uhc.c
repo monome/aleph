@@ -964,8 +964,6 @@ void uhc_notify_resume(void)
 }
 
 //! @}
-
-
 /**
  * \name Functions to control the USB host stack
  *

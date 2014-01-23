@@ -60,11 +60,15 @@ static char versionString[12] = VERSIONSTRING;
 // this is called during hardware initialization.
 // allocate memory.
 void app_init(void) {
-  print_dbg("\r\n net_init... ");
-  net_init();
 
   print_dbg("\r\n preset_init...");  
   presets_init();
+
+  // this must come after preset init!
+  // uses preset data when adding system ops...
+  print_dbg("\r\n net_init... ");
+  net_init();
+
 
   print_dbg("\r\n scene_init...");
   scene_init();
