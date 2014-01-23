@@ -60,6 +60,9 @@ src += 	src/app_beekeep.c \
 	src/handler.c \
 	src/main.c	
 
+# new sources
+src += src/json.c
+
 
 # srcs from simulator
 src += \
@@ -123,7 +126,7 @@ $(build-dir)%.o: %.c
 
 beekeep: $(obj)	
 	echo $(obj)
-	gcc $(obj) -g $(cflags) -o beekeep
+	gcc $(obj) -g $(cflags) -o beekeep -ljansson
 
 all: beekeep
 

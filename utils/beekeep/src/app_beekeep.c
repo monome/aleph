@@ -87,9 +87,6 @@ u8 app_launch(u8 firstrun) {
 
   return;
 
-
-
-
   /* //  net_print(); */
   
   /* render_boot("BEES"); */

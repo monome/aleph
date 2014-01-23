@@ -54,12 +54,12 @@ void scene_init(void) {
   u32 i;
   sceneData = (sceneData_t*)alloc_mem( sizeof(sceneData_t) );
   for(i=0; i<SCENE_NAME_LEN; i++) {
-    (sceneData->desc.sceneName)[i] = ' ';
+    (sceneData->desc.sceneName)[i] = '\0';
   }
   for(i=0; i<MODULE_NAME_LEN; i++) {
-    (sceneData->desc.moduleName)[i] = ' ';
+    (sceneData->desc.moduleName)[i] = '\0';
   }
-  strcpy(sceneData->desc.sceneName, ""); 
+  strcpy(sceneData->desc.sceneName, "_"); 
 }
 
 void scene_deinit(void) {
