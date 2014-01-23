@@ -111,7 +111,8 @@ static void handle_Switch7(s32 data) {
 } 
 
 static void handle_MonomeConnect(s32 data) { 
-  timers_set_monome();
+  print_dbg("\r\n received MonomeConnect event in BEES");
+  //  timers_set_monome();
 }
 
 static void handle_MonomeDisconnect(s32 data) { 

@@ -342,6 +342,16 @@ void monome_arc_refresh(void) {
 // connect
 static inline void monome_connect_write_event(void) {
   u8* data = (u8*)(&(ev.data));
+  
+  print_dbg("\r\n posting monome connection event. ");
+  print_dbg(" device type: ");
+  print_dbg_ulong(mdesc.device);
+  print_dbg(" cols : ");
+  print_dbg_ulong(mdesc.cols);
+  print_dbg(" rows: ");
+  print_dbg_ulong(mdesc.rows);
+
+  ev.type = kEventMonomeConnect;
   ev.type = kEventMonomeConnect;
   *data++ = (u8)(mdesc.device); 	// device (8bits)
   *data++ = mdesc.cols;		// width / count
