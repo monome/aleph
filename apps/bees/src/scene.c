@@ -305,7 +305,7 @@ void scene_write_default(void) {
   render_boot("writing default scene");
   print_dbg("\r\n writing default scene to card... ");
 
-  files_store_scene_name(DEFAULT_SCENE_NAME);
+  files_store_scene_name(DEFAULT_SCENE_NAME_EXT, 0);
 
   //  app_resume();
 

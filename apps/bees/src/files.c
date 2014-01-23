@@ -158,7 +158,7 @@ u8 files_load_dsp_name(const char* name) {
 
       /////////////////
       /// FIXME: filename and reported modulename should be decoupled
-      /// bees should search for aleph-module-m.n.r.ldr
+      /// bees should search for aleph-module-x.y.z.ldr
       /// but try aleph-module*.ldr on failure
       ////
       /// query name and version to the scene data
@@ -306,12 +306,12 @@ u8 files_load_scene_name(const char* name) {
 
 // store scene to sdcard at idx
 void files_store_scene(u8 idx) {
-  files_store_scene_name((const char*)files_get_scene_name(idx));
+  files_store_scene_name((const char*)files_get_scene_name(idx), 0);
 }
 
 
 // store scene to sdcard at name
-void files_store_scene_name(const char* name) {
+void files_store_scene_name(const char* name, u8 ext) {
   //u32 i;
   void* fp;
   char namebuf[64] = SCENES_PATH;
@@ -320,8 +320,12 @@ void files_store_scene_name(const char* name) {
   app_pause();
 
   strcat(namebuf, name);
-  strip_space(namebuf, 64);
-  strcat(namebuf, ".scn");
+
+  if(ext) {
+    // weird..
+    strip_space(namebuf, 32);
+    strcat(namebuf, ".scn");
+  }
 
   print_dbg("\r\n opening scene file for writing: ");
   print_dbg(namebuf);
