@@ -153,7 +153,7 @@ void handle_key_0(s32 val) {
     render_update();
     region_fill(headRegion, 0x0);
 
-    files_store_scene_name(sceneData->desc.sceneName);
+    files_store_scene_name(sceneData->desc.sceneName, 1);
 
     print_dbg("\r\n stored scene, back to handler");
     

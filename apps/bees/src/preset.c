@@ -265,6 +265,7 @@ const u8* presets_unpickle(const u8* src) {
       print_dbg_ulong(v32);
 
       src = unpickle_32(src, &v32);
+      presets[i].ins[j].idx = v32;
 
       print_dbg(" ; idx: ");
       print_dbg_ulong(v32);
@@ -274,8 +275,6 @@ const u8* presets_unpickle(const u8* src) {
 
       print_dbg(" ; enabled: ");
       print_dbg_ulong(v32);
-
-      
 
     }
     // unpickle outputs
