@@ -1,4 +1,8 @@
 ----------------
+bees	0.3.7
+- fixed monome timer set in bees!
+
+----------------
 bees	0.3.6
 - fix gnarly init-order bug that was killing UHC
 

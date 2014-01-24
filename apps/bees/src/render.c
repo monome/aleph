@@ -483,6 +483,8 @@ void render_edit_string(region* reg, char* str, u8 len, u8 cursor) {
     }
   }
   reg->dirty = 1;
+  print_dbg("\r\n edited string: ");
+  print_dbg(str);
 }
 
 

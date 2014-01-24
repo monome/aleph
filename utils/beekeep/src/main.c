@@ -2,7 +2,7 @@
   main.c
   beekeep
 
-  a bees simulator, heeavily stripped. 
+  a bees simulator, heavily stripped. 
   its first job is to parse scene files and convert them to JSON/something.
   
  */
@@ -10,8 +10,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "app.h"
+// jannson is a JSON manipulation library
+#include "jansson.h"
 
+#include "app.h"
+#include "json.h"
 
 
 int main(int argc, char* argv[]) {
@@ -32,6 +35,10 @@ int main(int argc, char* argv[]) {
   files_load_scene_name(sceneName);
 
   net_print();
+
+
+  strcat(sceneName, ".json");
+  net_write_json(sceneName);
 
   printf("\r\n\r\n");
 }
