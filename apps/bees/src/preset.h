@@ -17,7 +17,7 @@
 // minimal storage for input
 typedef struct _presetIn {
   io_t value;
-  // why do we need to store idx?
+  // FIXME: why do we need to store idx?
   s16 idx;
   u8 enabled;
 } presetIn_t;
@@ -41,6 +41,7 @@ typedef struct _presetOut {
 
 // preset structure
 typedef struct _preset {
+  /// FIX<E: preset input node count should be ins + params...
   presetIn_t ins[NET_INS_MAX];
   presetOut_t outs[NET_OUTS_MAX];
   //  presetParam_t params[NET_PARAMS_MAX];
