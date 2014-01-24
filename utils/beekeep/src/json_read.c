@@ -7,6 +7,8 @@
 #include "preset.h"
 #include "scene.h"
 
+//-----------------
+//---- static declare
 static void net_read_json_scene(json_t* o);
 static void net_read_json_ops(json_t* o);
 static void net_read_json_ins(json_t* o);
@@ -14,6 +16,8 @@ static void net_read_json_outs(json_t* o);
 static void net_read_json_params(json_t* o);
 static void net_read_json_presets(json_t* o);
 
+//-------------------
+//---- extern define
 void net_read_json(const char* name) {
   json_t *root;
   json_error_t err;
@@ -30,25 +34,31 @@ void net_read_json(const char* name) {
   net_read_json_scene(json_object_get(root, "presets"));
 }
 
+//-------------------
+// ---- static define
 
 static void net_read_json_scene(json_t* o) {
   strcpy(sceneData->desc.sceneName, json_string_value(json_object_get(o, "sceneName")));
   strcpy(sceneData->desc.moduleName, json_string_value(json_object_get(o, "moduleName")));
- 
+  //...
 }
 
 static void net_read_json_ops(json_t* o) { 
-
+  //...
 }
 
 static void net_read_json_ins(json_t* o) {
+  //...
 }
 
 static void net_read_json_outs(json_t* o) {
+  //...
 }
 
 static void net_read_json_params(json_t* o) {
+  //...
 }
 
 static void net_read_json_presets(json_t* o) {
+  //...
 }
