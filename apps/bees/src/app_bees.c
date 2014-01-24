@@ -21,6 +21,7 @@
 #include "screen.h"
 
 // bees
+#include "app_bees.h"
 #include "app_timers.h"
 #include "files.h"
 #include "flash_bees.h"
@@ -32,6 +33,28 @@
 #include "render.h"
 #include "scene.h"
 
+//-------------------------------------------
+//-- extern vars (here)
+
+#ifndef MIN
+#define MIN 0
+#endif
+#ifndef MAJ
+#define MAJ 0
+#endif
+#ifndef REV
+#define REV 0
+#endif
+#ifndef VERSIONSTRING
+#define VERSIONSTRING "none"
+#endif
+
+// maj = 1byte, min = 1byte, rev = 2byte
+//const u32 beesVersion = (MAJ << 24) | (MIN << 16) | (REV << 8);
+const AppVersion beesVersion = { .min = MIN , .maj = MAJ , .rev = REV };
+
+//--------------------------------
+//--- static vars
 static char versionString[12] = VERSIONSTRING;
 
 #define DEFAULT_LDR "aleph-waves.ldr"
@@ -40,11 +63,15 @@ static char versionString[12] = VERSIONSTRING;
 // this is called during hardware initialization.
 // allocate memory.
 void app_init(void) {
-  print_dbg("\r\n net_init... ");
-  net_init();
 
   print_dbg("\r\n preset_init...");  
   presets_init();
+
+  // this must come after preset init!
+  // uses preset data when adding system ops...
+  print_dbg("\r\n net_init... ");
+  net_init();
+
 
   print_dbg("\r\n scene_init...");
   scene_init();

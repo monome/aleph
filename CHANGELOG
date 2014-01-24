@@ -1,10 +1,73 @@
 ----------------
+bees	0.3.7
+- fixed monome timer set in bees!
+
+----------------
+bees	0.3.6
+- fix gnarly init-order bug that was killing UHC
+
+----------------
+bees	0.3.5
+- scene filename / extension bugfix
+
+----------------
+bees	0.3.4
+- move default scene to sdcard
+- major bugfix in net activation / play mode
+- play mode defaults to 1 for params, 0 for op inputs
+
+----------------
+bees	0.3.3
+- major bugfix when storing/recalling default scene after clean boot
+- .scn extension applied directly to scene name
+
+----------------
+bees	0.3.2
+- enable SPLIT command and change operator label ('Y')
+- headless bees runs and almost loads a scene
+- app init cleanup
+
+
+============================================
+140118
+
+----------------
+bees	0.3.1
+
+- forbid pathological settings for op_accum and fix wrap bug
+- slight cleanup in rendering
+- disconnect params on module switch instead of clearing scene
+- clear scene with button on scenes page
+- store reported module version in scene data (still using filename though)
+- add "headless bees" (compiles but needs work)
+
+----------------
+bees	0.3.0    ! breaks scene compatbility !
+
+- include param radix in scene data
+- include play vis. flag in scene data
+- blackfin reports version (sort of)
+- scene stores bees + module versions (sort of) 
+- general scene serialization stability
+
+--------------------
+
+waves 0.2.0   ! breaks scene compatbility !
+
+- added fmDel parameters (not functional) 
+- added version reporting
+
+
+lines 0.1.0
+
+- added version reporting
+
+----------------
 bees	0.2.3
 
 - release build now actually supresses debug prints
-- fix potential LDR boot problems
+- fix LDR boot problems
 - fix onscreen boot messages 
-
 
 ===========================================
 140115
@@ -13,7 +76,7 @@ bees	0.2.3
 bees	0.2.2
 
 - fix 256 detection bug
-- add 40h protocol
+- add 40h protocold
 - fix overflow in op_enc and ban some pathological settings
 
 ----------------
@@ -22,10 +85,11 @@ bees	0.2.1
 - fix crash when selected 1st operator's inputs from ops page
 
 ============================================
-130114b
+140114b
 
 ----------------
 bees	0.2.0
+
 - add 2nd sensitivity knob on ins page
 - add preset-recall notify to play page
 - correct enc0, enc1 scaling on play page
@@ -33,13 +97,14 @@ bees	0.2.0
 - 'zero' command now 'zero/max'
 - add 'thresh' operator
 
+
 ----------------
 lines	0.0.2
 - fix param descriptors so doesn't crash on scene load.
 
 
 ============================================
-130114
+140114
 
 ----------------
 bees	0.1.0
@@ -59,7 +124,7 @@ lines	0.0.1
 
 
 ============================================
-130113
+140113
 
 bees 	0.0.0
 

@@ -153,7 +153,7 @@ void handle_key_0(s32 val) {
     render_update();
     region_fill(headRegion, 0x0);
 
-    files_store_scene_name(sceneData->desc.sceneName);
+    files_store_scene_name(sceneData->desc.sceneName, 1);
 
     print_dbg("\r\n stored scene, back to handler");
     
@@ -171,29 +171,31 @@ void handle_key_0(s32 val) {
 void handle_key_1(s32 val) {
   if(val == 1) { return; }
   if(check_key(1)) {
-    region_fill(headRegion, 0x0);
-    font_string_region_clip(headRegion, "reading scene from card...", 0, 0, 0xa, 0);
-    headRegion->dirty = 1;
-    render_update();
-
+    notify("reading...");
     files_load_scene(*pageSelect);
+    notify("done reading.");
 
-    region_fill(headRegion, 0x0);
-    font_string_region_clip(headRegion, "done reading.", 0, 0, 0xa, 0);
-    headRegion->dirty = 1;
-    render_update();
 
   }
   show_foot();
 }
 
 void handle_key_2(s32 val) {
+  // clear
+  if(val == 1) { return; }
+  if(check_key(2)) {
+    notify("clearing...");
+    net_clear_user_ops();
+    notify("done clearing.");
+  }
+  show_foot();
 }
 
 void handle_key_3(s32 val) {
+  // alt
 }
 
-// scroll character value at cursor positoin in scene name
+// scroll character value at cursor position2 in scene name
 void handle_enc_0(s32 val) {
   if(val > 0) {
     edit_string_inc_char(sceneData->desc.sceneName, cursor);

@@ -9,17 +9,15 @@
 #include <stdlib.h>
 #include <string.h>
 // asf
-#include "compiler.h"
+//#include "compiler.h"
 #include "delay.h"
 #include "print_funcs.h"
 
+// aleph-common 
+#include "module_common.h"
 // aleph-avr32
 #include "app.h"
 #include "bfin.h"
-///////////////////////////////////
-//// test
-#include "events.h"
-/////////////////////////////////
 #include "filesystem.h"
 #include "flash.h"
 #include "memory.h"
@@ -98,8 +96,8 @@ static void fake_fread(volatile u8* dst, u32 size, void* fp) {
 static void strip_space(char* str, u8 len) {
   u8 i;
   for( i=(len-1); i>0; i-- ) {
-    if(str[i] == 0) { continue; }
-    else if(str[i] == ' ') { str[i] = 0; }
+    if(str[i] == '\0') { continue; }
+    else if(str[i] == ' ') { str[i] = '\0'; }
     else { break; }
   }
 }
@@ -135,6 +133,7 @@ u8 files_load_dsp_name(const char* name) {
   void* fp;
   u32 size = 0;
   u8 ret;
+  //  ModuleVersion modVers;
 
   delay_ms(10);
 
@@ -143,7 +142,7 @@ u8 files_load_dsp_name(const char* name) {
   fp = list_open_file_name(&dspList, name, "r", &size);
 
   if( fp != NULL) {	  
-    print_dbg("\r\n found file, loading dsp ");
+    print_dbg("\r\n found file, loading dsp: ");
     print_dbg(name);
     fake_fread(bfinLdrData, size, fp);
 
@@ -156,7 +155,21 @@ u8 files_load_dsp_name(const char* name) {
       bfin_load_buf();
       print_dbg("\r\n finished load");
       // write module name in global scene data
+
+      /////////////////
+      /// FIXME: filename and reported modulename should be decoupled
+      /// bees should search for aleph-module-x.y.z.ldr
+      /// but try aleph-module*.ldr on failure
+      ////
+      /// query name and version to the scene data
+      //      scene_query_module();
+      /// now set it to the actual filename because we are dumb
       scene_set_module_name(name);
+      ///////////////////////////
+
+      print_dbg("\r\n sceneData->moduleName : ");
+      print_dbg(name);
+
       ret = 1;
     } else {
       print_dbg("\r\n bfin ldr size was <=0, aborting");
@@ -293,12 +306,12 @@ u8 files_load_scene_name(const char* name) {
 
 // store scene to sdcard at idx
 void files_store_scene(u8 idx) {
-  files_store_scene_name((const char*)files_get_scene_name(idx));
+  files_store_scene_name((const char*)files_get_scene_name(idx), 0);
 }
 
 
 // store scene to sdcard at name
-void files_store_scene_name(const char* name) {
+void files_store_scene_name(const char* name, u8 ext) {
   //u32 i;
   void* fp;
   char namebuf[64] = SCENES_PATH;
@@ -307,7 +320,16 @@ void files_store_scene_name(const char* name) {
   app_pause();
 
   strcat(namebuf, name);
-  strip_space(namebuf, 32);
+
+  if(ext) {
+    // weird..
+    strip_space(namebuf, 32);
+    strcat(namebuf, ".scn");
+  }
+
+  print_dbg("\r\n opening scene file for writing: ");
+  print_dbg(namebuf);
+
   // fill the scene RAM buffer from current state of system
   scene_write_buf(); 
   // open FP for writing
@@ -484,13 +506,28 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   char path[64];
   void* fp;
 
+  print_dbg("\r\n *list_open_file_name: "); 
+  print_dbg(path); 
+  print_dbg(" at ");
+  print_dbg(list->path);
+  print_dbg(" request: ");
+  print_dbg(name);
+
+
   strcpy(path, list->path);
 
   if(fl_opendir(path, &dirstat)) {
     
     while (fl_readdir(&dirstat, &dirent) == 0) {
+      print_dbg("\r\n ... checking against "); 
+      print_dbg(dirent.filename);
+
       if (strcmp(dirent.filename, name) == 0) {
 	strncat(path, dirent.filename, 58);
+	
+	print_dbg("\r\n ... found, opening at:  "); 
+	print_dbg(path);
+      
 	fp = fl_fopen(path, mode);
 	*size = dirent.size;
 	break;

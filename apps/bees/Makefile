@@ -29,3 +29,19 @@ PRJ_PATH = ../../avr32_lib/asf-3.7.3
 
 MAKEFILE_PATH = $(PRJ_PATH)/avr32/utils/make/Makefile.avr32.in
 include $(MAKEFILE_PATH)
+
+
+# nasty recursive hack for deployment.
+deploy:
+	echo "cleaning project..."
+	make clean
+	echo "building -dbg..."
+	make -k
+	rm avr32/utils/debug/print_funcs.o
+	rm src/app_bees.o
+	rm $(project).hex	
+	echo "building release..."
+	make -k R=1
+	cp  $(project).hex ../../release/	
+	cp  $(project)-$(maj).$(min).$(rev).hex ../../release/	
+	cp  $(project)-$(maj).$(min).$(rev)-dbg.hex ../../release/	

@@ -46,6 +46,7 @@ bfin_lib_target: $(patsubst %.o, $(bfin_lib_objdir)%.o, $(bfin_lib_obj))
 
 $(bfin_lib_objdir)%.o : # $(bfin_lib_srcdir)%.c
 	$(CC) $(CFLAGS) $(INC) -c \
+	-D MAJ=$(maj) -D MIN=$(min) -D REV=$(rev) \
 	$(patsubst $(bfin_lib_objdir)%.o, $(bfin_lib_srcdir)%.c, $@) \
 	-o $@
 

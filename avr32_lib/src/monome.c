@@ -342,6 +342,16 @@ void monome_arc_refresh(void) {
 // connect
 static inline void monome_connect_write_event(void) {
   u8* data = (u8*)(&(ev.data));
+  
+  print_dbg("\r\n posting monome connection event. ");
+  print_dbg(" device type: ");
+  print_dbg_ulong(mdesc.device);
+  print_dbg(" cols : ");
+  print_dbg_ulong(mdesc.cols);
+  print_dbg(" rows: ");
+  print_dbg_ulong(mdesc.rows);
+
+  ev.type = kEventMonomeConnect;
   ev.type = kEventMonomeConnect;
   *data++ = (u8)(mdesc.device); 	// device (8bits)
   *data++ = mdesc.cols;		// width / count
@@ -645,13 +655,13 @@ static void read_serial_series(void) {
   u8* prx = ftdi_rx_buf();
   u8 i;
   rxBytes = ftdi_rx_bytes();
-  /* print_dbg("\r\n read_serial_series, byte count: "); */
-  /* print_dbg_ulong(rxBytes); */
-  /* print_dbg(" ; data : [ 0x"); */
-  /* print_dbg_hex(prx[0]); */
-  /* print_dbg(" , 0x"); */
-  /* print_dbg_hex(prx[1]); */
-  /* print_dbg(" ]"); */
+  print_dbg("\r\n read_serial_series, byte count: ");
+  print_dbg_ulong(rxBytes);
+  print_dbg(" ; data : [ 0x");
+  print_dbg_hex(prx[0]);
+  print_dbg(" , 0x");
+  print_dbg_hex(prx[1]);
+  print_dbg(" ]");
   i = 0;
   while(i < rxBytes) {
     // FIXME: can we expect other event types? (besides press/lift)
@@ -779,26 +789,26 @@ static void grid_map_40h(u8 x, u8 y, const u8* data) {
   }
   for(i=0; i<MONOME_QUAD_LEDS; i++) {
     // led row command + row number
-    txBuf[0] = 0x70 + i;
-    txBuf[1] = 0;
+    txBuf[(i*2)] = 0x70 + i;
+    txBuf[(i*2)+1] = 0;
     // print_dbg("\r\n * data bytes: ");
     for(j=0; j<MONOME_QUAD_LEDS; j++) {
       // set row bit if led should be on
       // print_dbg("0x");
       // print_dbg_hex(*data);
       // print_dbg(" ");
-      txBuf[1] |= ((*data > 0) << j);
+      txBuf[(i*2)+1] |= ((*data > 0) << j);
       // advance data to next bit
       ++data;
     }
     // skip next 8 bytes to get to next row
     data += MONOME_QUAD_LEDS;
     // print_dbg("\n\r 40h: send led_row command: ");
-    // print_dbg_hex(txBuf[0]);
+    // print_dbg_hex(txBuf[i*2]);
     // print_dbg(" row data: 0x");
-    // print_dbg_hex(txBuf[1]);    
-    ftdi_write(txBuf, 2);
+    // print_dbg_hex(txBuf[(i*2) + 1]);
   }
+  ftdi_write(txBuf, 16);
 }
 
 static void grid_map_series(u8 x, u8 y, const u8* data) {

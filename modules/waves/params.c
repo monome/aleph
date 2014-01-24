@@ -133,17 +133,17 @@ void fill_param_desc(void) {
   data.paramDesc[eParamTune0].max = RATIO_MAX;
   data.paramDesc[eParamTune0].radix = RATIO_RADIX;
     
-  strcpy(data.paramDesc[eParamAmp1].label, "amp1");
-  data.paramDesc[eParamAmp1].type = eParamTypeAmp;
-  data.paramDesc[eParamAmp1].min = 0;
-  data.paramDesc[eParamAmp1].max = FRACT32_MAX >> 1;
-  data.paramDesc[eParamAmp1].radix = 32;
+  strcpy(gModuleData->paramDesc[eParamAmp1].label, "amp1");
+  gModuleData->paramDesc[eParamAmp1].type = eParamTypeAmp;
+  gModuleData->paramDesc[eParamAmp1].min = 0;
+  gModuleData->paramDesc[eParamAmp1].max = FRACT32_MAX >> 1;
+  gModuleData->paramDesc[eParamAmp1].radix = 1;
   
-  strcpy(data.paramDesc[eParamAmp0].label, "amp0");
-  data.paramDesc[eParamAmp0].type = eParamTypeAmp;
-  data.paramDesc[eParamAmp0].min = 0;
-  data.paramDesc[eParamAmp0].max = FRACT32_MAX >> 1;
-  data.paramDesc[eParamAmp0].radix = 30;
+  strcpy(gModuleData->paramDesc[eParamAmp0].label, "amp0");
+  gModuleData->paramDesc[eParamAmp0].type = eParamTypeAmp;
+  gModuleData->paramDesc[eParamAmp0].min = 0;
+  gModuleData->paramDesc[eParamAmp0].max = FRACT32_MAX >> 1;
+  gModuleData->paramDesc[eParamAmp0].radix = 1;
   
   strcpy(data.paramDesc[eParamPm10].label, "pm10");
   data.paramDesc[eParamPm10].type = eParamTypeFix;
@@ -192,6 +192,20 @@ void fill_param_desc(void) {
   data.paramDesc[eParamBl0].min = 0;
   data.paramDesc[eParamBl0].max = FRACT32_MAX;
   data.paramDesc[eParamBl0].radix = 1;
+
+
+  strcpy(gModuleData->paramDesc[eParamFmDel1].label, "fmDel1");
+  gModuleData->paramDesc[eParamFmDel1].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamFmDel1].min = PARAM_FM_DEL_MIN;
+  gModuleData->paramDesc[eParamFmDel1].max = PARAM_FM_DEL_MAX;
+  gModuleData->paramDesc[eParamFmDel1].radix = PARAM_FM_DEL_RADIX;
+  
+  strcpy(gModuleData->paramDesc[eParamFmDel0].label, "fmDel0");
+  gModuleData->paramDesc[eParamFmDel0].type = eParamTypeFix;
+  gModuleData->paramDesc[eParamFmDel0].min = PARAM_FM_DEL_MIN;
+  gModuleData->paramDesc[eParamFmDel0].max = PARAM_FM_DEL_MAX;
+  gModuleData->paramDesc[eParamFmDel0].radix = PARAM_FM_DEL_RADIX;
+
 
   /////////////////////
   /////////////

@@ -130,5 +130,8 @@ extern void edit_string_dec_char(char* str, u8 pos);
 // draw preset name in header
 extern void draw_preset_name(void);
 
+// draw to the head region
+extern void notify(const char* str);
+
 
 #endif // header guard

@@ -71,7 +71,7 @@ static void render_line(s16 idx, u8 fg) {
   //  print_dbg("\r\n page_outs: render_line");
   if(idx >= net_num_outs() ) { return; }
   if(targetSelect) { 
-      print_dbg(" , in targetSelect");
+    //      print_dbg(" , in targetSelect");
     target = tmpTarget;
   } else {
     target = net_get_target(idx);
@@ -79,8 +79,8 @@ static void render_line(s16 idx, u8 fg) {
   srcOpIdx = net_out_op_idx(idx);
   targetOpIdx = net_in_op_idx(target);
 
-  print_dbg(" , target: ");
-  print_dbg_ulong(target);
+  /* print_dbg(" , target: "); */
+  /* print_dbg_ulong(target); */
 
   if(target >= 0) {
     //// output has target
@@ -269,8 +269,7 @@ static void show_foot1(void) {
   region_fill(footRegion[1], fill);
   
   if(altMode) {
-    /// TODO
-    //    font_string_region_clip(footRegion[1], "SPLIT", 0, 0, 0xf, fill);
+    font_string_region_clip(footRegion[1], "SPLIT", 0, 0, 0xf, fill);
   } else {
     if(net_get_out_preset((u32)(*pageSelect))) {
       //    if(inPreset) {
@@ -396,10 +395,15 @@ void handle_key_0(s32 val) {
 }
 
 void handle_key_1(s32 val) {
+  s16 newOut;
   if(val == 0) { return; }
   if(check_key(1)) {
     if(altMode) {
-      // TODO: split
+      print_dbg("\r\n splitting output: ");
+      print_dbg_ulong(*pageSelect);
+      newOut = net_split_out(*pageSelect);
+      *pageSelect = newOut;
+      redraw_outs();
     } else {
       // include / exclude in selected preset
 	// show preset name in head region

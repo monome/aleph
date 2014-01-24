@@ -86,6 +86,8 @@ uhc_enum_status_t uhi_ftdi_install(uhc_device_t* dev) {
   uint16_t conf_desc_lgt, vid, pid;
   usb_iface_desc_t *ptr_iface;
 
+  print_dbg("\r\n run uhi_ftdi_install");
+
   if (uhi_ftdi_dev.dev != NULL) {
     return UHC_ENUM_SOFTWARE_LIMIT; // Device already allocated
   }

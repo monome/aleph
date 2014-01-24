@@ -33,17 +33,17 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAdd,
   eOpDiv,
   eOpGate,
+  eOpMonomeGridRaw, // "grid"
   eOpList8,
   eOpMetro,
   eOpMidiNote,
-  eOpMonomeGridRaw,
   eOpMul,
   eOpRandom,
-  eOpSplit,
   eOpSub,
   eOpTog,
   eOpThresh,
   eOpTimer,
+  eOpSplit, // "Y"
 };
 
 // current selected new operator type
@@ -338,8 +338,8 @@ void init_page_ops(void) {
   //// need to actually set the scroll region at least temporarily
   render_set_scroll(&centerScroll);
   while(i<5) {
-    print_dbg("\r\n init ops page, line ");
-    print_dbg_ulong(i);
+    /* print_dbg("\r\n init ops page, line "); */
+    /* print_dbg_ulong(i); */
     render_line(i);
     render_to_scroll_line(n, i == 0 ? 1 : 0);
     ++n;

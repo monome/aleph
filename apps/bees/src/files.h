@@ -44,10 +44,12 @@ extern u8 files_load_scene(u8 idx);
 // load scene by filename
 // return 1 on success, 0 on failure
 extern u8 files_load_scene_name(const char* name);
+extern u8 files_load_scene_path(const char* name);
+
 // store scene by index
 extern void files_store_scene(u8 idx);
 // store scene by filename
-extern void files_store_scene_name(const char* name);
+extern void files_store_scene_name(const char* name, u8 ext);
 
 
 //----- scalers

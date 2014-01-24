@@ -1,6 +1,7 @@
 #ifndef _ALEPH_BEES_SCENE_H_
 #define _ALEPH_BEES_SCENE_H_
 
+#include "app_bees.h"
 #include "net_protected.h"
 #include "module_common.h"
 #include "preset.h"
@@ -14,8 +15,14 @@
 
 // scene descriptor type
 typedef struct _sceneDesc {
+  // scene name
   char sceneName[SCENE_NAME_LEN];
+  // lodaed module name
   char moduleName[MODULE_NAME_LEN];
+  // module version 
+  ModuleVersion moduleVersion;
+  // bees version
+  AppVersion beesVersion;
 } sceneDesc_t;
 
 /* switching to serialization. 
@@ -23,7 +30,7 @@ typedef struct _sceneDesc {
  to actually specify serialized size of each object.
  this seems like an incredible pain in the ass,
  so i am picking an arbitrary size and will be 
- vigilant w/r/t overreaching it.
+ vigilant w/r/t overreaching it...!!! oh man
 */
 // this is only used for parsing application NVRAM space.
 #define SCENE_PICKLE_SIZE 0x19000
@@ -31,7 +38,7 @@ typedef struct _sceneDesc {
 typedef struct _sceneData {
   // txt descriptor
   sceneDesc_t desc;
-  // a blob of serialized data
+  // a (huge) blob of serialized data
   u8 pickle[SCENE_PICKLE_SIZE];
 } sceneData_t;
 
@@ -65,5 +72,8 @@ extern void scene_set_name(const char* name);
 extern void scene_set_name_char(u8 idx, char ch);
 // set module name
 extern void scene_set_module_name(const char* name);
+
+// query module name and version
+extern void scene_query_module(void);
  
 #endif

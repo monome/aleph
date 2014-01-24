@@ -25,8 +25,6 @@
 #include "simple_string.h"
 #include "types.h"
 
-
-
 //-------------------------
 //----- extern vars
 
@@ -246,25 +244,69 @@ const u8* presets_unpickle(const u8* src) {
   u32 i, j;
   u32 v32;
   for(i=0; i<NET_PRESETS_MAX; i++) {
+    
+
+    print_dbg("\r\n ... \r\n unpickling preset, idx: ");
+    print_dbg_ulong(i);
+    print_dbg("\r\n ...");
+
+    
     // pickle inputs
     for(j=0; j<NET_INS_MAX; j++) {
+
+    print_dbg("\r\n unpickling preset input, idx: ");
+    print_dbg_ulong(j);
+
       // waste some space for 4-byte alignment
       src = unpickle_32(src, &v32);
       presets[i].ins[j].value = (io_t)v32;
+      
+      print_dbg(" ; val: ");
+      print_dbg_ulong(v32);
+
       src = unpickle_32(src, &v32);
       presets[i].ins[j].idx = v32;
+
+      print_dbg(" ; idx: ");
+      print_dbg_ulong(v32);
+
       src = unpickle_32(src, &v32);
       presets[i].ins[j].enabled = v32;
+
+      print_dbg(" ; enabled: ");
+      print_dbg_ulong(v32);
+
     }
     // unpickle outputs
     for(j=0; j<NET_OUTS_MAX; j++) {
+
+    print_dbg("\r\n unpickling preset output, idx: ");
+    print_dbg_ulong(j);
+
+
       // waste some space for 4-byte alignment
       src = unpickle_32(src, &v32);
       presets[i].outs[j].target = (io_t)v32;
+
+      print_dbg(" ; target: ");
+      print_dbg_ulong(v32);
+
+
+
       src = unpickle_32(src, &v32);
       presets[i].outs[j].outIdx = v32;
+
+      print_dbg(" ; outIdx: ");
+      print_dbg_ulong(v32);
+
+
       src = unpickle_32(src, &v32);
       presets[i].outs[j].enabled = v32;
+
+
+      print_dbg(" ; enabled: ");
+      print_dbg_ulong(v32);
+
     }
     // unpickle params
     /* for(j=0; j<NET_PARAMS_MAX; j++) { */
@@ -280,6 +322,10 @@ const u8* presets_unpickle(const u8* src) {
     for(j=0; j<PRESET_NAME_LEN; j++) {
       presets[i].name[j] = *src++;
     }
+
+      print_dbg(" ; name: ");
+      print_dbg(presets[i].name);
+
   }
   return src;
 }
