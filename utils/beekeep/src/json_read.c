@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include <string.h>
 
 #include "jansson.h"
 
@@ -34,8 +34,7 @@ void net_read_json(const char* name) {
 static void net_read_json_scene(json_t* o) {
   strcpy(sceneData->desc.sceneName, json_string_value(json_object_get(o, "sceneName")));
   strcpy(sceneData->desc.moduleName, json_string_value(json_object_get(o, "moduleName")));
-    
-    
+ 
 }
 
 static void net_read_json_ops(json_t* o) { 
