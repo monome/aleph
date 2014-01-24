@@ -16,5 +16,6 @@
 char strbuf[STRBUF_LEN];
 
 extern void net_write_json(const char* name);
+extern void net_read_json(const char* name);
 
 #endif

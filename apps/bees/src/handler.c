@@ -82,15 +82,10 @@ static void handle_Switch5(s32 data) {
   render_boot("");
   render_boot("powering down");
 
-
   // skip flash write if MODE is down
   if(!gpio_get_pin_value(SW_MODE_PIN)) {
     scene_write_default();
   }
-
-  //  //// TEST: write to filesystem!
-  //  files_store_scene_name("test_default.scn");
-  //  files_store_test_scene();
 
   // power down
   delay_ms(100);
@@ -100,19 +95,16 @@ static void handle_Switch5(s32 data) {
 static void handle_Switch6(s32 data) {
   // footswitch 1
   op_sw_sys_input(opSysSw[4], data > 0);
-  //  net_activate(net_op_in_idx(opSysSwIdx[4], 0), data, NULL);
 }
 
 static void handle_Switch7(s32 data) { 
   // footswitch 2
-
   op_sw_sys_input(opSysSw[5], data > 0);
-  //  net_activate(net_op_in_idx(opSysSwIdx[5], 0), data, NULL);
 } 
 
 static void handle_MonomeConnect(s32 data) { 
   print_dbg("\r\n received MonomeConnect event in BEES");
-  //  timers_set_monome();
+  timers_set_monome();
 }
 
 static void handle_MonomeDisconnect(s32 data) { 
@@ -124,6 +116,9 @@ static void handle_MonomeGridKey(s32 data) {
   // this is so bees can arbitrate focus between multiple grid ops.
   /// FIXME: we need to differentiate between multiple devices.
   /// of course, first we need USB hub support.
+  
+  print_dbg("\r\n monome grid key event in BEES.");
+
   (*monome_grid_key_handler)(monomeOpFocus, data);
 }
 

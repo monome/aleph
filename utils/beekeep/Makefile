@@ -61,7 +61,8 @@ src += 	src/app_beekeep.c \
 	src/main.c	
 
 # new sources
-src += src/json.c
+src += src/json_read.c \
+	src/json_write .c
 
 
 # srcs from simulator
