@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "print_funcs.h"
  
 void print_dbg(const char *str) {
