@@ -41,4 +41,13 @@ int main(int argc, char* argv[]) {
   net_write_json(sceneName);
 
   printf("\r\n\r\n");
+
+  // test it by reading back into network...
+  net_read_json(sceneName);
+  // ... and writing back to scene
+  strcat(sceneName, ".scn");
+
+  files_store_scene_name(sceneName);
+  
+
 }
