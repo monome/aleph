@@ -53,6 +53,11 @@ typedef enum {
   eOpRandom,
   eOpList8,
   eOpThresh,
+  eOpMod,
+  eOpBits,
+  eOpIs,
+  eOpLogic,
+  eOpList2,
   numOpClasses // dummy/count 
 } op_id_t;
 
