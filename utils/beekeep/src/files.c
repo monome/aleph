@@ -305,6 +305,11 @@ void files_store_scene(u8 idx) {
 
 // store scene to sdcard at name
 void files_store_scene_name(const char* name, u8 ext) {
+  FILE* f = fopen(name, "w");
+  scene_write_buf();
+  fwrite((const void*)sceneData, sizeof(sceneData_t), 1, f);
+  fclose(f);
+
   /* //u32 i; */
   /* void* fp; */
   /* char namebuf[64] = SCENES_PATH; */

@@ -1135,13 +1135,8 @@ u8* net_unpickle(const u8* src) {
     }
   }
 
-  // read input nodes
-  //  for(i=0; i < (net->numIns + net->numParams); ++i) {
-  ///// FIXME: 
-  /// tried adding the params to input list here, for play-mode flag
-  /// but somehow, this breaks stuff.
 #if 1
-  /// copy ALL i/o nodes, even unused
+  /// copy ALL i/o nodes, even unused!
   print_dbg("\r\n reading all input nodes ");
   
   for(i=0; i < (NET_INS_MAX); ++i) {

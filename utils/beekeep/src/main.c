@@ -16,29 +16,63 @@
 #include "app.h"
 #include "json.h"
 
+static char filename[32];
+static char ext[16];
+
+void scan_ext(void) {
+  int len;
+  int i;
+  int dotpos = -1;
+
+  len = strlen(filename);
+  // search for '.' backwards from end
+  i = len;
+  while(i > 0) {
+    --i;
+    if(filename[i] == '.') {
+      dotpos = i;
+      break;
+    }
+  }
+  if(dotpos > 0) {
+    strncpy(ext, filename + dotpos, len - i + 1);
+  }
+
+}
 
 int main(int argc, char* argv[]) {
-  // argument: filename
-  char sceneName[32];
 
   if(argc < 2) { 
     print_dbg("\r\n need filename arg \r\n");
     return 1;
   }
 
-  strcpy(sceneName, argv[1]);
+  strcpy(filename, argv[1]);
+  scan_ext();
+
+  printf("\r\n file extension: %s", ext);
 
   app_init();
-
   app_launch(1);
 
-  files_load_scene_name(sceneName);
+  if(strcmp(ext, ".scn") == 0) {
+    printf(" \r\n file type is .scn, converting to .json \r\n");
+    files_load_scene_name(filename);
+    net_print();
+    strcat(filename, ".json");
+    net_write_json(filename);
+    return 0;
+  }
 
-  net_print();
+  if(strcmp(ext, ".json") == 0) {
+    printf(" \r\n file type is .json, converting to .scn \r\n");
+    net_read_json(filename);
+    strcat(filename, ".scn");
+    files_store_scene_name(filename);
+    return 0;
+  }
+  
+  printf(" unrecognized file type, exiting \r\n");
+  return 1;
 
-
-  strcat(sceneName, ".json");
-  net_write_json(sceneName);
-
-  printf("\r\n\r\n");
 }

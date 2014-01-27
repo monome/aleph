@@ -53,6 +53,11 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_thresh.c \
 	$(APP_DIR)/src/ops/op_tog.c \
 	$(APP_DIR)/src/ops/op_random.c \
+	$(APP_DIR)/src/ops/op_mod.c \
+	$(APP_DIR)/src/ops/op_bits.c \
+	$(APP_DIR)/src/ops/op_is.c \
+	$(APP_DIR)/src/ops/op_logic.c \
+	$(APP_DIR)/src/ops/op_list2.c \
 	$(APP_DIR)/src/pages/page_dsp.c \
 	$(APP_DIR)/src/pages/page_gathered.c \
 	$(APP_DIR)/src/pages/page_ins.c \
