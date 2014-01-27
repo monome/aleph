@@ -3,7 +3,8 @@ import time, threading
 import serial
 import sys
 
-path = '/dev/tty.usbmodemfd111'
+# path = '/dev/tty.usbmodemfd111'
+path = '/dev/ttyACM0'
 receive_address = '127.0.0.1', 12001
 
 ser = serial.Serial()
@@ -88,6 +89,7 @@ try :
         if(incoming_bytes == []): incoming_bytes.append(0)
 
         if(incoming_bytes[0]==1):     #debug
+          n = 1;
           while(n<pos):
             sys.stdout.write(chr(incoming_bytes[n]))
             n += 1
