@@ -169,6 +169,13 @@ u8 app_launch(u8 firstrun) {
   print_dbg("\r\n pages_init...");
   pages_init();
 
+  /* redraw_dsp(); */
+  /* redraw_ins(); */
+  /* redraw_outs(); */
+  /* redraw_ops(); */
+  /* redraw_presets(); */
+  /* redraw_scenes(); */
+
   print_dbg("\r\n play_init...");
   play_init();
 
@@ -185,7 +192,7 @@ u8 app_launch(u8 firstrun) {
   render_boot("assigning UI handlers...");
   assign_bees_event_handlers();
 
-  // update page rendering and handlers
+  // update page rendering and handlers...
   pages_reselect();
 
   // start in play mode 

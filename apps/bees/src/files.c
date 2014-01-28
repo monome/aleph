@@ -24,6 +24,7 @@
 
 /// bees
 #include "files.h"
+#include "pages.h"
 #include "scene.h"
 
 // ---- directory list class

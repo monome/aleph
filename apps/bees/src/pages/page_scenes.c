@@ -173,9 +173,11 @@ void handle_key_1(s32 val) {
   if(check_key(1)) {
     notify("reading...");
     files_load_scene(*pageSelect);
+    redraw_ins();
+    redraw_outs();
+    redraw_ops();
+    redraw_scenes();
     notify("done reading.");
-
-
   }
   show_foot();
 }
@@ -186,6 +188,10 @@ void handle_key_2(s32 val) {
   if(check_key(2)) {
     notify("clearing...");
     net_clear_user_ops();
+    redraw_ins();
+    redraw_outs();
+    redraw_ops();
+    redraw_scenes();
     notify("done clearing.");
   }
   show_foot();
@@ -344,6 +350,7 @@ void select_scenes(void) {
   app_event_handlers[ kEventSwitch1 ]	= &handle_key_1 ;
   app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
   app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ; 
+
 }
 
 
@@ -351,6 +358,12 @@ void select_scenes(void) {
 void redraw_scenes(void) {
   u8 i=0;
   u8 n = *pageSelect - 3;
+
+  // set scroll region
+  // FIXME: should be separate function i guess
+  render_set_scroll(&centerScroll);
+
+
   while(i<8) {
     render_line( n, 0xa );
     render_to_scroll_line(i, n == *pageSelect ? 1 : 0);

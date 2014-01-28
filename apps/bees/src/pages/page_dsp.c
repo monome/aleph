@@ -166,6 +166,9 @@ void handle_key_0(s32 val) {
 
     bfin_enable();
 
+    redraw_ins();
+    redraw_dsp();
+
     notify("finished loading.");
   }
   show_foot();
@@ -274,6 +277,13 @@ void select_dsp(void) {
 void redraw_dsp(void) {
   u8 i=0;
   u8 n = *pageSelect - 3;
+
+  // set scroll region
+  // FIXME: should be separate function i guess
+  render_set_scroll(&centerScroll);
+
+
+  print_dbg("\r\n redraw_dsp() ");
   while(i<8) {
     render_line( n, 0xa );
     render_to_scroll_line(i, n == *pageSelect ? 1 : 0);
