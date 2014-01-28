@@ -10,6 +10,7 @@
 #include "op_math.h"
 
 #define PRESET_NAME_LEN 16
+#define PRESET_INODES_COUNT (NET_INS_MAX + NET_PARAMS_MAX)
 
 //=================================
 //===== types
@@ -41,8 +42,7 @@ typedef struct _presetOut {
 
 // preset structure
 typedef struct _preset {
-  /// FIX<E: preset input node count should be ins + params...
-  presetIn_t ins[NET_INS_MAX];
+  presetIn_t ins[PRESET_INODES_COUNT];
   presetOut_t outs[NET_OUTS_MAX];
   //  presetParam_t params[NET_PARAMS_MAX];
   char name[PRESET_NAME_LEN];  

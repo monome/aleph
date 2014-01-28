@@ -85,7 +85,8 @@ void presets_init(void) {
     *p = '_';
 
     // empty inputs
-    for(j=0; j<NET_INS_MAX; ++j) {
+    //    for(j=0; j<NET_INS_MAX; ++j) {
+    for(j=0; j<PRESET_INODES_COUNT; ++j) {
       presets[i].ins[j].idx = -1;
       presets[i].ins[j].value = 0;
       presets[i].ins[j].enabled = 0;
@@ -210,7 +211,8 @@ u8* presets_pickle(u8* dst) {
   u32 i, j;
   for(i=0; i<NET_PRESETS_MAX; i++) {
     // pickle inputs
-    for(j=0; j<NET_INS_MAX; j++) {
+    //    for(j=0; j<NET_INS_MAX; j++) {
+    for(j=0; j < PRESET_INODES_COUNT; ++j) {
       // waste some space for 4-byte alignment
       dst = pickle_32(presets[i].ins[j].value, dst);
       dst = pickle_32(presets[i].ins[j].idx, dst);
@@ -252,7 +254,8 @@ const u8* presets_unpickle(const u8* src) {
 
     
     // pickle inputs
-    for(j=0; j<NET_INS_MAX; j++) {
+    //    for(j=0; j<NET_INS_MAX; j++) {
+    for(j=0; j < PRESET_INODES_COUNT; j++) {
 
     /* print_dbg("\r\n unpickling preset input, idx: "); */
     /* print_dbg_ulong(j); */

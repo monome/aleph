@@ -173,10 +173,8 @@ static u8* inode_pickle(inode_t* in, u8* dst) {
   *dst++ = 0;
   // dummy byte for alignment
   *dst++ = 0;
-
-  //// FIXME: dumb, this isn't aligned yet..
   // dummy byte for alignment
-  //  *dst++ = 0;
+  *dst++ = 0;
   return dst;
 }
 
@@ -201,9 +199,8 @@ static const u8* inode_unpickle(const u8* src, inode_t* in) {
   ++src; 
   // dummy byte for alignment
   ++src; 
-  //// FIXME: dumb, this isn't aligned yet..
   // dummy byte for alignment
-  //  ++src; 
+  ++src; 
 
 
   return src;
@@ -989,12 +986,14 @@ u8 net_report_params(void) {
 
     for(i=0; i<numParams; i++) {
 
-
-        /* FIXME: 
-   need to move this to bees, or move params out of bees, or something...
-   */
-
+      
+      ///////
+      ///////
+      // TODO: offline param descriptor
       bfin_get_param_desc(i, &pdesc);
+      ///////
+      /////
+
 
       print_dbg("\r\n received descriptor for param, index : ");
       print_dbg_ulong(i);
