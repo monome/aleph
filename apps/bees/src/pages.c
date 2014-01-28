@@ -96,8 +96,19 @@ static s8 lastPageIdx = 0;
     // TODO
   init_page_gathered();
   */
+
+
   pageIdx = ePageIns;
   set_page(pageIdx);
+
+  redraw_dsp();
+  redraw_outs();
+  redraw_ops();
+  redraw_presets();
+  redraw_scenes();
+  //... last
+  redraw_ins();
+
 }
 
 // de-init

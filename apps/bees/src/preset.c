@@ -248,64 +248,64 @@ const u8* presets_unpickle(const u8* src) {
 
     print_dbg("\r\n ... \r\n unpickling preset, idx: ");
     print_dbg_ulong(i);
-    print_dbg("\r\n ...");
+    //    print_dbg("\r\n ...");
 
     
     // pickle inputs
     for(j=0; j<NET_INS_MAX; j++) {
 
-    print_dbg("\r\n unpickling preset input, idx: ");
-    print_dbg_ulong(j);
+    /* print_dbg("\r\n unpickling preset input, idx: "); */
+    /* print_dbg_ulong(j); */
 
       // waste some space for 4-byte alignment
       src = unpickle_32(src, &v32);
       presets[i].ins[j].value = (io_t)v32;
       
-      print_dbg(" ; val: ");
-      print_dbg_ulong(v32);
+      /* print_dbg(" ; val: "); */
+      /* print_dbg_ulong(v32); */
 
       src = unpickle_32(src, &v32);
       presets[i].ins[j].idx = v32;
 
-      print_dbg(" ; idx: ");
-      print_dbg_ulong(v32);
+      /* print_dbg(" ; idx: "); */
+      /* print_dbg_ulong(v32); */
 
       src = unpickle_32(src, &v32);
       presets[i].ins[j].enabled = v32;
 
-      print_dbg(" ; enabled: ");
-      print_dbg_ulong(v32);
+      /* print_dbg(" ; enabled: "); */
+      /* print_dbg_ulong(v32); */
 
     }
     // unpickle outputs
     for(j=0; j<NET_OUTS_MAX; j++) {
 
-    print_dbg("\r\n unpickling preset output, idx: ");
-    print_dbg_ulong(j);
+    /* print_dbg("\r\n unpickling preset output, idx: "); */
+    /* print_dbg_ulong(j); */
 
 
       // waste some space for 4-byte alignment
       src = unpickle_32(src, &v32);
       presets[i].outs[j].target = (io_t)v32;
 
-      print_dbg(" ; target: ");
-      print_dbg_ulong(v32);
+      /* print_dbg(" ; target: "); */
+      /* print_dbg_ulong(v32); */
 
 
 
       src = unpickle_32(src, &v32);
       presets[i].outs[j].outIdx = v32;
 
-      print_dbg(" ; outIdx: ");
-      print_dbg_ulong(v32);
+      /* print_dbg(" ; outIdx: "); */
+      /* print_dbg_ulong(v32); */
 
 
       src = unpickle_32(src, &v32);
       presets[i].outs[j].enabled = v32;
 
 
-      print_dbg(" ; enabled: ");
-      print_dbg_ulong(v32);
+      /* print_dbg(" ; enabled: "); */
+      /* print_dbg_ulong(v32); */
 
     }
     // unpickle params
@@ -323,8 +323,8 @@ const u8* presets_unpickle(const u8* src) {
       presets[i].name[j] = *src++;
     }
 
-      print_dbg(" ; name: ");
-      print_dbg(presets[i].name);
+    print_dbg(" ; name: ");
+    print_dbg(presets[i].name);
 
   }
   return src;

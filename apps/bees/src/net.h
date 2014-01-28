@@ -61,7 +61,7 @@ extern void net_activate(s16 inIdx, const io_t val, void* srcOp);
 // get current count of operators
 extern u16 net_num_ops(void);
 
-// get current count of inputs
+// get current count of inputs (including dsp parameters!)
 extern u16 net_num_ins(void);
 
 // get current count of outputs

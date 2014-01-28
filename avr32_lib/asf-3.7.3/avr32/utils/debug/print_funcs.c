@@ -48,8 +48,8 @@
 #include "usart.h"
 #include "print_funcs.h"
 
-// #define USART_BEGIN_DBG_TX   usart_putchar(DBG_USART,1)
-// #define USART_END_DBG_TX   usart_putchar(DBG_USART,0)
+//#define USART_BEGIN_DBG_TX   usart_putchar(DBG_USART,1)
+//#define USART_END_DBG_TX   usart_putchar(DBG_USART,0)
 
 #define USART_BEGIN_DBG_TX ;
 #define USART_END_DBG_TX ;

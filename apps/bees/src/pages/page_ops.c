@@ -27,7 +27,7 @@ static scroll centerScroll;
 static s16* const pageSelect = &(pages[ePageOps].select);
 
 // const array of user-creatable operator types
-#define NUM_USER_OP_TYPES 20
+#define NUM_USER_OP_TYPES 21
 static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAccum,
   eOpAdd,
@@ -36,6 +36,7 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpGate,
   eOpMonomeGridRaw, // "grid"
   eOpIs,
+  eOpLife,
   eOpList2,
   eOpList8,
   eOpLogic,
@@ -274,7 +275,10 @@ void handle_key_2(s32 val) {
       net_add_op(userOpTypes[newOpType]);
       // change selection to last op
       *pageSelect = net_num_ops() - 1;
+
     }
+    redraw_ins();
+    redraw_outs();
     redraw_ops();
   }
   show_foot();
@@ -370,12 +374,19 @@ void select_ops(void) {
   app_event_handlers[ kEventSwitch1 ]	= &handle_key_1 ;
   app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
   app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ;
+
 }
 
 // redraw all lines, based on current selection
 void redraw_ops(void) {
   u8 i=0;
   u8 n = *pageSelect - 3;
+
+
+  // set scroll region
+  // FIXME: should be separate function i guess
+  render_set_scroll(&centerScroll);
+
   while(i<8) {
     render_line( n );
     render_to_scroll_line(i, n == *pageSelect  ? 1 : 0);

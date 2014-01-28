@@ -58,6 +58,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_is.c \
 	$(APP_DIR)/src/ops/op_logic.c \
 	$(APP_DIR)/src/ops/op_list2.c \
+	$(APP_DIR)/src/ops/op_life.c \
 	$(APP_DIR)/src/pages/page_dsp.c \
 	$(APP_DIR)/src/pages/page_gathered.c \
 	$(APP_DIR)/src/pages/page_ins.c \
