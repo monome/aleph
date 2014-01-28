@@ -70,8 +70,8 @@ u8* param_pickle(pnode_t* pnode, u8* dst) {
   val = (u32)(pnode->data.value);
   dst = pickle_32(val, dst);
 
-  // store preset-inclusion 
-  //  dst = pickle_32((u32)(pnode->preset), dst);
+  // store play-inclusion 
+  dst = pickle_32((u32)(pnode->play), dst);
 
   // store descriptor
   dst = pdesc_pickle(&(pnode->desc), dst);
@@ -92,20 +92,20 @@ const u8* param_unpickle(pnode_t* pnode, const u8* src) {
   src = unpickle_32(src, &val);
   pnode->data.value = (ParamValue)val;
 
-  print_dbg(" , val: ");
-  print_dbg_ulong(val);
+  //  print_dbg(" , val: ");
+  //  print_dbg_ulong(val);
   //  src = unpickle_32(src, &(pnode->data.value.asUint));
 
   // print_dbg("\r\n unpickled param value: ");
   // print_dbg_ulong(val);
 
-  // load preset-inclusion 
-  //  src = unpickle_32(src, &val);
+  // load play-inclusion 
+  src = unpickle_32(src, &val);
+  pnode->play = (u8)val;
 
   // print_dbg("\r\n unpickled param preset flag: ");
   // print_dbg_ulong(val);
 
-  //  pnode->preset = (u8)val;
   // load descriptor
   src = pdesc_unpickle(&(pnode->desc), src);
   return src;
