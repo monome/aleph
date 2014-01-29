@@ -1,5 +1,12 @@
+name = beekeep
+
 bees = ../../apps/bees
 sim = ../avr32_sim
+
+
+include $(bees)/version.mk
+version = $(maj).$(min).$(rev)
+target = $(name)-$(version)
 
 # bees sources
 src += 	$(bees)/src/app_timers.c \
@@ -21,12 +28,18 @@ src += 	$(bees)/src/app_timers.c \
 	$(bees)/src/ops/op_add.c \
 	$(bees)/src/ops/op_accum.c \
 	$(bees)/src/ops/op_adc.c \
+	$(bees)/src/ops/op_bits.c \
 	$(bees)/src/ops/op_div.c \
 	$(bees)/src/ops/op_enc.c \
 	$(bees)/src/ops/op_gate.c \
+	$(bees)/src/ops/op_is.c \
+	$(bees)/src/ops/op_life.c \
+	$(bees)/src/ops/op_list2.c \
 	$(bees)/src/ops/op_list8.c \
+	$(bees)/src/ops/op_logic.c \
 	$(bees)/src/ops/op_metro.c \
 	$(bees)/src/ops/op_midi_note.c \
+	$(bees)/src/ops/op_mod.c \
 	$(bees)/src/ops/op_mul.c \
 	$(bees)/src/ops/op_monome_grid_raw.c \
 	$(bees)/src/ops/op_preset.c \
@@ -119,15 +132,16 @@ endif
 obj = $(addprefix $(build-dir), $(addsuffix .o,$(basename $(src))))
 
 cflags += $(foreach path,$(inc),-I$(path))
+cflags += -std=gnu99
 
 $(build-dir)%.o: %.c 
 	echo $(cflags)
 	$(Q)test -d $(dir $@) || mkdir -p $(dir $@)
 	gcc $(cflags) -g -c $< -o $@
 
-beekeep: $(obj)	
+target: $(obj)	
 	echo $(obj)
-	gcc $(obj) -g $(cflags) -o beekeep -ljansson
+	gcc $(obj) -g $(cflags) -o $(target) -ljansson
 
 all: beekeep
 
