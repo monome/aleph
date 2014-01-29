@@ -36,6 +36,8 @@ void op_logic_init(void* mem) {
   logic->super.numInputs = 5;
   logic->super.numOutputs = 3;
   logic->outs[0] = -1;
+  logic->outs[1] = -1;
+  logic->outs[2] = -1;
 
   logic->super.inc_fn = (op_inc_fn)op_logic_inc_input;
   logic->super.in_fn = op_logic_in_fn;
