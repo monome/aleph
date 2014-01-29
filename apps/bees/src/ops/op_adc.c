@@ -16,7 +16,7 @@
 //----- descriptor
 static const char* op_adc_instring	= "ENABLE  PERIOD  MODE    ";
 static const char* op_adc_outstring	= "VAL0    VAL1    VAL2    VAL3    ";
-static const char* op_adc_opstring	= "ADC";
+static const char* op_adc_opstring	= "CV-IN";
 
 //-------------------------------------------------
 //----- static function declaration
