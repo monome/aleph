@@ -33,7 +33,8 @@ typedef struct _sceneDesc {
  vigilant w/r/t overreaching it...!!! oh man
 */
 // this is only used for parsing application NVRAM space.
-#define SCENE_PICKLE_SIZE 0x19000
+//#define SCENE_PICKLE_SIZE 0x19000
+#define SCENE_PICKLE_SIZE 0x22000
 
 typedef struct _sceneData {
   // txt descriptor
