@@ -47,6 +47,14 @@ void op_bits_init(void* mem) {
   bits->super.numInputs = 9;
   bits->super.numOutputs = 9;
   bits->outs[0] = -1;
+  bits->outs[1] = -1;
+  bits->outs[2] = -1;
+  bits->outs[3] = -1;
+  bits->outs[4] = -1;
+  bits->outs[5] = -1;
+  bits->outs[6] = -1;
+  bits->outs[7] = -1;
+  bits->outs[8] = -1;
 
   bits->super.inc_fn = (op_inc_fn)op_bits_inc_input;
   bits->super.in_fn = op_bits_in_fn;

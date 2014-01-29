@@ -62,7 +62,6 @@ void op_life_init(void* mem) {
 
   life->super.numInputs = 8;
   life->super.numOutputs = 6;
-  life->outs[0] = -1;
 
   life->super.inc_fn = (op_inc_fn)op_life_inc_input;
   life->super.in_fn = op_life_in_fn;
@@ -85,6 +84,12 @@ void op_life_init(void* mem) {
   life->in_val[5] = &(life->set);
   life->in_val[6] = &(life->noise);
   life->in_val[7] = &(life->rules);
+  life->outs[0] = -1;
+  life->outs[1] = -1;
+  life->outs[2] = -1;
+  life->outs[3] = -1;
+  life->outs[4] = -1;
+  life->outs[5] = -1;
 
   life->next = 0;
   life->xsize = 16;
@@ -151,8 +156,8 @@ static void op_life_in_next(op_life_t* life, const io_t v) {
     // FIXME: OPTIMIZE
     monome_set_quadrant_flag(0);
 
-    if(life->xsize>8) monome_set_quadrant_flag(1);
-    if(life->ysize>8) { monome_set_quadrant_flag(2); monome_set_quadrant_flag(3); }
+    if(life->xsize>8) monome_set_quadrant_flag(2);
+    if(life->ysize>8) { monome_set_quadrant_flag(1); monome_set_quadrant_flag(3); }
 
     op_life_output(life);
   }
@@ -330,25 +335,19 @@ static u8 neighbors(u8 x, u8 y, u16 s)
 
 // pickle / unpickle
 u8* op_life_pickle(op_life_t* op, u8* dst) {
-  dst = pickle_io(op->next, dst);
   dst = pickle_io(op->xsize, dst);
   dst = pickle_io(op->ysize, dst);
   dst = pickle_io(op->x, dst);
   dst = pickle_io(op->y, dst);
-  dst = pickle_io(op->set, dst);
-  dst = pickle_io(op->noise, dst);
   dst = pickle_io(op->rules, dst);
   return dst;
 }
 
 const u8* op_life_unpickle(op_life_t* op, const u8* src ) {
-  src = unpickle_io(src, &(op->next));
   src = unpickle_io(src, &(op->xsize));
   src = unpickle_io(src, &(op->ysize));
   src = unpickle_io(src, &(op->x));
   src = unpickle_io(src, &(op->y));
-  src = unpickle_io(src, &(op->set));
-  src = unpickle_io(src, &(op->noise));
   src = unpickle_io(src, &(op->rules));
   return src;
 }
