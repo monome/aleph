@@ -11,11 +11,14 @@
 
 typedef struct op_adc_struct {
   op_t super;
+
+  volatile u8 prev[4];
   // in:
   // enable, update period, 4 values
-  volatile io_t* in_val[6];
+  volatile io_t* in_val[3];
   volatile io_t enable;
   volatile io_t period;
+  volatile io_t mode;
   volatile io_t val[4];
   /* volatile io_t val1; */
   /* volatile io_t val2; */

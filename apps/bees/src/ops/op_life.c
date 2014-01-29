@@ -44,7 +44,7 @@ static op_in_fn op_life_in_fn[8] = {
 };
 
 static const char* op_life_instring  = "NEXT    XSIZE   YSIZE   X       Y       SET     NOISE   RULES   ";
-static const char* op_life_outstring = "VAL     POP     DELTA   AVG     XD      YD      ";
+static const char* op_life_outstring = "VAL     POP     DELTA   AVG     ";
 static const char* op_life_opstring  = "LIFE";
 
 
@@ -61,7 +61,7 @@ void op_life_init(void* mem) {
   life->monome.op = life;
 
   life->super.numInputs = 8;
-  life->super.numOutputs = 6;
+  life->super.numOutputs = 4;
   life->outs[0] = -1;
   life->outs[1] = -1;
   life->outs[2] = -1;
@@ -94,8 +94,6 @@ void op_life_init(void* mem) {
   life->outs[1] = -1;
   life->outs[2] = -1;
   life->outs[3] = -1;
-  life->outs[4] = -1;
-  life->outs[5] = -1;
 
   life->next = 0;
   life->xsize = 16;
@@ -162,8 +160,8 @@ static void op_life_in_next(op_life_t* life, const io_t v) {
     // FIXME: OPTIMIZE
     monome_set_quadrant_flag(0);
 
-    if(life->xsize>8) monome_set_quadrant_flag(2);
-    if(life->ysize>8) { monome_set_quadrant_flag(1); monome_set_quadrant_flag(3); }
+    if(life->xsize>8) monome_set_quadrant_flag(1);
+    if(life->ysize>8) { monome_set_quadrant_flag(2); monome_set_quadrant_flag(3); }
 
     op_life_output(life);
   }
@@ -278,16 +276,6 @@ static void op_life_output(op_life_t* life) {
   life->apop -= life->apop / 8;
   life->apop += life->pop * 8;
   net_activate(life->outs[3], life->apop / 64, life);
-
-  u8 p,px,py;
-  p=px=py=0;
-  for(u8 y=0;y<8;y++)
-    for(u8 x=0;x<8;x++) {
-
-
-    }
-  net_activate(life->outs[4], px, life);
-  net_activate(life->outs[5], py, life);
 }
 
 
