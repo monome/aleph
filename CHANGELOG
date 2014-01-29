@@ -1,10 +1,11 @@
-----------------
-bees	0.4.0  ! breaks scene compatbility !
-- presets now store all inputs, play flag
-
 
 =================================
 140128
+
+----------------
+bees	0.4.0  ! breaks scene compatbility !
+- presets now store all inputs, play flag
+- max count of operators / ins / presets increased
 
 ----------------
 bees	0.3.8
