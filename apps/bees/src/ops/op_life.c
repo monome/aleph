@@ -20,7 +20,7 @@ static void op_life_output(op_life_t* life);
 // life
 static void life_change(u8,u8);
 static void life_init(void);
-static u8 neighbors(u8,u8);
+static u8 neighbors(u8,u8,u16);
 
 // monome event handler
 static void op_life_handler(op_monome_t* op_monome, u32 data);
@@ -121,9 +121,9 @@ static void op_life_in_next(op_life_t* life, const io_t v) {
     u8 i, x, y, count;
     u8 *p = monomeLedBuffer;
 
-    for(x=0;x<8;x++)
+    for(x=0;x<life->xsize;x++)
     {
-      for(y=0;y<8;y++)
+      for(y=0;y<life->ysize;y++)
       {
         i = x+(y<<4);
         if(lifenext[i]==1)
@@ -140,12 +140,12 @@ static void op_life_in_next(op_life_t* life, const io_t v) {
       }
     }
 
-    for(x=0; x < 8; x++)
+    for(x=0; x < life->xsize; x++)
     { 
-      for(y=0; y < 8; y++) 
+      for(y=0; y < life->ysize; y++) 
       { 
         i = x+(y<<4);
-        count = neighbors(x, y);
+        count = neighbors(x, y, life->xsize * life->ysize);
 
         if (count == 3 && lifenow[i] == 0 && life->rules != 2) 
           lifenext[i]=1;
@@ -156,10 +156,9 @@ static void op_life_in_next(op_life_t* life, const io_t v) {
 
     // FIXME: OPTIMIZE
     monome_set_quadrant_flag(0);
-    // if(life->xsize>8) monome_set_quadrant_flag(1);
-    // if(life->ysize>8) { monome_set_quadrant_flag(2); monome_set_quadrant_flag(2); }
 
-    // net_activate(life->outs[0], life->val, life);
+    if(life->xsize>8) monome_set_quadrant_flag(1);
+    if(life->ysize>8) { monome_set_quadrant_flag(2); monome_set_quadrant_flag(3); }
 
     op_life_output(life);
   }
@@ -179,12 +178,16 @@ static void op_life_in_x(op_life_t* life, const io_t v) {
   if(v < 0) life->x = 0;
   else if(v > life->xsize) life->x = life->xsize;
   else life->x = v;
+
+  net_activate(life->outs[0], lifenow[life->x + (life->y << 4)], life);
 }
 
 static void op_life_in_y(op_life_t* life, const io_t v) {
   if(v < 0) life->y = 0;
   else if(v > life->ysize) life->y = life->ysize;
   else life->y = v;
+
+  net_activate(life->outs[0], lifenow[life->x + (life->y << 4)], life);
 }
 
 static void op_life_in_set(op_life_t* life, const io_t v) {
@@ -196,6 +199,8 @@ static void op_life_in_set(op_life_t* life, const io_t v) {
 
   p[i]=lifenow[i];
   monome_calc_quadrant_flag(life->x, life->y);
+
+  op_life_output(life);
 }
 
 static void op_life_in_noise(op_life_t* life, const io_t v) {
@@ -269,7 +274,15 @@ static void op_life_output(op_life_t* life) {
   life->apop += life->pop * 8;
   net_activate(life->outs[3], life->apop / 64, life);
 
+  u8 p,px,py;
+  p=px=py=0;
+  for(u8 y=0;y<8;y++)
+    for(u8 x=0;x<8;x++) {
 
+
+    }
+  net_activate(life->outs[4], px, life);
+  net_activate(life->outs[5], py, life);
 }
 
 
@@ -290,16 +303,35 @@ static void life_change(u8 x,u8 y) {
   monome_calc_quadrant_flag(x, y);
 }
 
-static u8 neighbors(u8 x, u8 y)
+static u8 neighbors(u8 x, u8 y, u16 s)
 {
-  return lifenow[((x + 1) % 8) + ((y)<<4)] + 
-    lifenow[(x) + (((y + 1) % 8)<<4)] + 
-    lifenow[((x + 8 - 1) % 8) + ((y)<<4)] + 
-    lifenow[(x) + (((y + 8 - 1) % 8)<<4)] + 
-    lifenow[((x + 1) % 8) + (((y + 1) % 8)<<4)] + 
-    lifenow[((x + 8 - 1) % 8) + (((y + 1) % 8)<<4)] + 
-    lifenow[((x + 8 - 1) % 8) + (((y + 8 - 1) % 8)<<4)] + 
-    lifenow[((x + 1) % 8) + (((y + 8 - 1) % 8)<<4)]; 
+  if(s==64)
+    return lifenow[((x + 1) % 8) + ((y)<<4)] + 
+      lifenow[(x) + (((y + 1) % 8)<<4)] + 
+      lifenow[((x + 8 - 1) % 8) + ((y)<<4)] + 
+      lifenow[(x) + (((y + 8 - 1) % 8)<<4)] + 
+      lifenow[((x + 1) % 8) + (((y + 1) % 8)<<4)] + 
+      lifenow[((x + 8 - 1) % 8) + (((y + 1) % 8)<<4)] + 
+      lifenow[((x + 8 - 1) % 8) + (((y + 8 - 1) % 8)<<4)] + 
+      lifenow[((x + 1) % 8) + (((y + 8 - 1) % 8)<<4)];
+  else if(s==256)
+    return lifenow[((x + 1) % 16) + ((y)<<4)] + 
+      lifenow[(x) + (((y + 1) % 16)<<4)] + 
+      lifenow[((x + 16 - 1) % 16) + ((y)<<4)] + 
+      lifenow[(x) + (((y + 16 - 1) % 16)<<4)] + 
+      lifenow[((x + 1) % 16) + (((y + 1) % 16)<<4)] + 
+      lifenow[((x + 16 - 1) % 16) + (((y + 1) % 16)<<4)] + 
+      lifenow[((x + 16 - 1) % 16) + (((y + 16 - 1) % 16)<<4)] + 
+      lifenow[((x + 1) % 16) + (((y + 16 - 1) % 16)<<4)];
+  else
+    return lifenow[((x + 1) % 16) + ((y)<<4)] + 
+      lifenow[(x) + (((y + 1) % 8)<<4)] + 
+      lifenow[((x + 16 - 1) % 16) + ((y)<<4)] + 
+      lifenow[(x) + (((y + 8 - 1) % 8)<<4)] + 
+      lifenow[((x + 1) % 16) + (((y + 1) % 8)<<4)] + 
+      lifenow[((x + 16 - 1) % 16) + (((y + 1) % 8)<<4)] + 
+      lifenow[((x + 16 - 1) % 16) + (((y + 8 - 1) % 8)<<4)] + 
+      lifenow[((x + 1) % 16) + (((y + 8 - 1) % 8)<<4)];
 }
 
 // pickle / unpickle
