@@ -62,6 +62,12 @@ void op_life_init(void* mem) {
 
   life->super.numInputs = 8;
   life->super.numOutputs = 6;
+  life->outs[0] = -1;
+  life->outs[1] = -1;
+  life->outs[2] = -1;
+  life->outs[3] = -1;
+  life->outs[4] = -1;
+  life->outs[5] = -1;
 
   life->super.inc_fn = (op_inc_fn)op_life_inc_input;
   life->super.in_fn = op_life_in_fn;

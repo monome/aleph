@@ -6,7 +6,10 @@
 
 // bees-specific NV data structure
 typedef struct {
+  // moved scene storage out of flash
+#ifdef SCENE_FLASH
   u8 sceneBytes[sizeof(sceneData_t)];
+#endif
   u8 scalerBytes[PARAM_SCALER_DATA_SIZE];
 } beesFlashData;
 

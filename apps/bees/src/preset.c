@@ -5,7 +5,13 @@
  * definitions for preset management 
  *
 
- TODO: operator network hashes
+
+ a couple of notes:
+
+ serialization: it is up in the air whether ot ultimately store the entire preset RAM or to choose elements conditionally. certainly the latter if we switch to JSON.
+
+parameters / inputs: presets make no distincation between DSP paraemters and op inputs. the input node list is flattemed, with idx corresponding to the idx as requested from operator (total count is sum of op inputs and reported params.) this stuff should generally be cleaned up throughout the codebase, functionally separating the parameter and input node lists and maybe putting them on separate menus too.
+
 
  */
 
@@ -85,15 +91,16 @@ void presets_init(void) {
     *p = '_';
 
     // empty inputs
-    for(j=0; j<NET_INS_MAX; ++j) {
-      presets[i].ins[j].idx = -1;
+    //    for(j=0; j<NET_INS_MAX; ++j) {
+    for(j=0; j<PRESET_INODES_COUNT; ++j) {
+      //      presets[i].ins[j].idx = -1;
       presets[i].ins[j].value = 0;
       presets[i].ins[j].enabled = 0;
     }
     // empty outputs
     for(j=0; j<NET_OUTS_MAX; ++j) {
       presets[i].outs[j].target = -1;
-      presets[i].outs[j].outIdx = -1;
+      //      presets[i].outs[j].outIdx = -1;
       presets[i].outs[j].enabled = 0;
     }
 
@@ -210,17 +217,26 @@ u8* presets_pickle(u8* dst) {
   u32 i, j;
   for(i=0; i<NET_PRESETS_MAX; i++) {
     // pickle inputs
-    for(j=0; j<NET_INS_MAX; j++) {
+    //    for(j=0; j<NET_INS_MAX; j++) {
+    for(j=0; j < PRESET_INODES_COUNT; ++j) {
       // waste some space for 4-byte alignment
       dst = pickle_32(presets[i].ins[j].value, dst);
-      dst = pickle_32(presets[i].ins[j].idx, dst);
+      ///////////////
+      /////////////////
+      /// NOTE: not storing idx for now.
+      /// this could change if we switch to conditional storage
+      //      dst = pickle_32(presets[i].ins[j].idx, dst);
       dst = pickle_32(presets[i].ins[j].enabled, dst);
     }
     // pickle output
     for(j=0; j<NET_OUTS_MAX; j++) {
       // waste some space for 4-byte alignment
       dst = pickle_32(presets[i].outs[j].target, dst);
-      dst = pickle_32(presets[i].outs[j].outIdx, dst);
+      ///////////////
+      /////////////////
+      /// NOTE: not storing idx for now.
+      /// this could change if we switch to conditional storage
+      //      dst = pickle_32(presets[i].outs[j].outIdx, dst);
       dst = pickle_32(presets[i].outs[j].enabled, dst);
     }
     /* // pickle params */
@@ -252,7 +268,8 @@ const u8* presets_unpickle(const u8* src) {
 
     
     // pickle inputs
-    for(j=0; j<NET_INS_MAX; j++) {
+    //    for(j=0; j<NET_INS_MAX; j++) {
+    for(j=0; j < PRESET_INODES_COUNT; j++) {
 
     /* print_dbg("\r\n unpickling preset input, idx: "); */
     /* print_dbg_ulong(j); */
@@ -264,8 +281,12 @@ const u8* presets_unpickle(const u8* src) {
       /* print_dbg(" ; val: "); */
       /* print_dbg_ulong(v32); */
 
-      src = unpickle_32(src, &v32);
-      presets[i].ins[j].idx = v32;
+      ///////////////
+      /////////////////
+      /// NOTE: not storing idx for now.
+      /// this could change if we switch to conditional storage
+      /* src = unpickle_32(src, &v32); */
+      /* presets[i].ins[j].idx = v32; */
 
       /* print_dbg(" ; idx: "); */
       /* print_dbg_ulong(v32); */
@@ -292,9 +313,13 @@ const u8* presets_unpickle(const u8* src) {
       /* print_dbg_ulong(v32); */
 
 
+      ///////////////
+      /////////////////
+      /// NOTE: not storing idx for now.
+      /// this could change if we switch to conditional storage
 
-      src = unpickle_32(src, &v32);
-      presets[i].outs[j].outIdx = v32;
+      /* src = unpickle_32(src, &v32); */
+      /* presets[i].outs[j].outIdx = v32; */
 
       /* print_dbg(" ; outIdx: "); */
       /* print_dbg_ulong(v32); */
