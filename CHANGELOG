@@ -8,6 +8,8 @@ bees	0.4.0  ! breaks scene compatbility !
 - max count of operators / ins / presets increased
 - op_ADC enable input no longer acts like a toggle
 - op_ADC mode input added, set to one for trigger input which outputs only on transition
+- new op: HISTORY
+- op_LIFE fixed, outputs reduced
 
 ----------------
 bees	0.3.8

@@ -34,5 +34,6 @@
 #include "ops/op_logic.h"
 #include "ops/op_list2.h"
 #include "ops/op_life.h"
+#include "ops/op_history.h"
 
 #endif

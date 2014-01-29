@@ -44,7 +44,7 @@ static op_in_fn op_life_in_fn[8] = {
 };
 
 static const char* op_life_instring  = "NEXT    XSIZE   YSIZE   X       Y       SET     NOISE   RULES   ";
-static const char* op_life_outstring = "VAL     POP     DELTA   AVG     ";
+static const char* op_life_outstring = "VAL     POP     DELTA   ";
 static const char* op_life_opstring  = "LIFE";
 
 
@@ -61,13 +61,10 @@ void op_life_init(void* mem) {
   life->monome.op = life;
 
   life->super.numInputs = 8;
-  life->super.numOutputs = 4;
+  life->super.numOutputs = 3;
   life->outs[0] = -1;
   life->outs[1] = -1;
   life->outs[2] = -1;
-  life->outs[3] = -1;
-  life->outs[4] = -1;
-  life->outs[5] = -1;
 
   life->super.inc_fn = (op_inc_fn)op_life_inc_input;
   life->super.in_fn = op_life_in_fn;
@@ -90,10 +87,6 @@ void op_life_init(void* mem) {
   life->in_val[5] = &(life->set);
   life->in_val[6] = &(life->noise);
   life->in_val[7] = &(life->rules);
-  life->outs[0] = -1;
-  life->outs[1] = -1;
-  life->outs[2] = -1;
-  life->outs[3] = -1;
 
   life->next = 0;
   life->xsize = 16;
@@ -104,7 +97,7 @@ void op_life_init(void* mem) {
   life->noise = 0;
   life->rules = 0;
 
-  life->pop = life->lpop = life->apop = 0;
+  life->pop = life->lpop = 0;
 
   life_init();
 
@@ -273,9 +266,6 @@ static void op_life_output(op_life_t* life) {
   for(u16 i=0;i<256;i++) life->pop += lifenow[i];
   net_activate(life->outs[1], life->pop, life);
   net_activate(life->outs[2], (life->pop - life->lpop), life);
-  life->apop -= life->apop / 8;
-  life->apop += life->pop * 8;
-  net_activate(life->outs[3], life->apop / 64, life);
 }
 
 
