@@ -58,6 +58,7 @@ void op_history_init(void* mem) {
 static void op_history_in_in(op_history_t* history, const io_t v) {
   // printf("history at %d received A %d\n", (int)history, (int)*v);
   s32 avg = 0;
+  u8 i;
 
   history->in = v;
 
@@ -70,7 +71,7 @@ static void op_history_in_in(op_history_t* history, const io_t v) {
   history->val[1] = history->val[0];
   history->val[0] = v;
 
-  for(u8 i=0;i<8;i++) avg += history->val[i];
+  for(i=0;i<8;i++) avg += history->val[i];
   avg = avg / 8;
 
   net_activate(history->outs[0], avg, history);

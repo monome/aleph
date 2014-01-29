@@ -184,22 +184,25 @@ static json_t* net_write_json_presets(void) {
     p = json_object();
     json_object_set(p, "name", json_string( preset_name(i)) );
     l = json_array();
-    // FIXME: count should be ins + params, or something...
-    for(j=0; j<NET_INS_MAX; j++) {
+    for(j=0; j<PRESET_INODES_COUNT; j++) {
+      /// 
       o = json_object();
-      /// FIXME: shouldn't need idx here
-      json_object_set(o, "idx", json_integer( presets[i].ins[j].idx ));
-      json_object_set(o, "value", json_integer( presets[i].ins[j].value ));
       json_object_set(o, "enabled", json_integer( presets[i].ins[j].enabled ));
-      
+      /// FIXME: shouldn't need idx here
+      //      json_object_set(o, "idx", json_integer( presets[i].ins[j].idx ));
+      /// store for readibility anyhow
+      json_object_set(o,"idx", json_integer( j ));
+      json_object_set(o, "value", json_integer( presets[i].ins[j].value ));
       json_array_append(l, o);
     }
     json_object_set(p, "ins", l);
 
-    for(j=0; j<NET_INS_MAX; j++) {
+    for(j=0; j<NET_OUTS_MAX; j++) {
       o = json_object();
       /// FIXME: shouldn't need idx here
-      json_object_set(o, "idx", json_integer( presets[i].outs[j].outIdx ));
+      //      json_object_set(o, "idx", json_integer( presets[i].outs[j].outIdx ));
+      /// store for readibility anyhow
+      json_object_set(o,"idx", json_integer( j ));
       json_object_set(o, "target", json_integer( presets[i].outs[j].target ));
       json_object_set(o, "enabled", json_integer( presets[i].outs[j].enabled ));
       json_array_append(l, o);

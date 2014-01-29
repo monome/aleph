@@ -174,7 +174,7 @@ static void net_read_json_presets(json_t* o) {
     for(j=0; j<n; j++) {
       /// FIXME: shouldn't need idx here
       q = json_array_get(arr, j);
-      presets[i].ins[j].idx = json_integer_value(json_object_get(q, "idx"));
+      //      presets[i].ins[j].idx = json_integer_value(json_object_get(q, "idx"));
       presets[i].ins[j].value = json_integer_value(json_object_get(q, "value"));
       presets[i].ins[j].enabled = json_integer_value(json_object_get(q, "enabled"));
     }
@@ -184,7 +184,7 @@ static void net_read_json_presets(json_t* o) {
     for(j=0; j<n; j++) {
       /// FIXME: shouldn't need idx here
       q = json_array_get(arr, j);
-      presets[i].outs[j].outIdx = json_integer_value(json_object_get(q, "idx"));
+      //      presets[i].outs[j].outIdx = json_integer_value(json_object_get(q, "idx"));
       presets[i].outs[j].target = json_integer_value(json_object_get(q, "target"));
       presets[i].outs[j].enabled = json_integer_value(json_object_get(q, "enabled"));
     }
