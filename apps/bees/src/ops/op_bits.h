@@ -20,7 +20,7 @@ typedef struct op_bits_struct {
   volatile io_t i7;
 
   volatile io_t * in_val[9];
-  op_out_t outs[1];
+  op_out_t outs[9];
 } op_bits_t;
 void op_bits_init(void* mem);
 
