@@ -13,15 +13,15 @@
 
 // maximum allocated parameters, connections, and operators
 // max operator inputs
-#define NET_INS_MAX 128
+#define NET_INS_MAX 512
 // max operator outputs
-#define NET_OUTS_MAX 128
+#define NET_OUTS_MAX 512
 // max  operators
-#define NET_OPS_MAX 64
+#define NET_OPS_MAX 128
 // max DSP parameter inputs
-#define NET_PARAMS_MAX 256
+#define NET_PARAMS_MAX 512
 // max presets
-#define NET_PRESETS_MAX 16
+#define NET_PRESETS_MAX 128 
 
 ///////////////////////////////////////////
 
