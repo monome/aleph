@@ -113,11 +113,11 @@ static void add_sys_ops(void) {
 
 static u8* onode_pickle(onode_t* out, u8* dst) {
   // operator output index
-  dst = pickle_32((u32)(out->opOutIdx), dst);
+  //  dst = pickle_32((u32)(out->opOutIdx), dst);
   // target
   dst = pickle_32((u32)(out->target), dst);
   // parent op's index in net list
-  dst = pickle_32((u32)(out->opIdx), dst);
+  //  dst = pickle_32((u32)(out->opIdx), dst);
   // preset inclusion flag ; cast to 4 bytes for alignment
   //  dst = pickle_32((u32)(out->preset), dst);
   return dst;
@@ -126,16 +126,17 @@ static u8* onode_pickle(onode_t* out, u8* dst) {
 static const u8* onode_unpickle(const u8* src, onode_t* out) {
   u32 v32;
 
-  // operator output index
-  src = unpickle_32(src, &v32);
-  out->opOutIdx = (u8)v32;
+  /* // operator output index */
+  /* src = unpickle_32(src, &v32); */
+  /* out->opOutIdx = (u8)v32; */
+
   // output target
   src = unpickle_32(src, &v32);
   out->target = (s16)v32;
 
-  // index of parent op
-  src = unpickle_32(src, &v32);
-  out->opIdx = (s32)v32;
+  /* // index of parent op */
+  /* src = unpickle_32(src, &v32); */
+  /* out->opIdx = (s32)v32; */
 
   // preset flag: 32 bits for alignment
   //  src = unpickle_32(src, &v32);
@@ -173,10 +174,8 @@ static u8* inode_pickle(inode_t* in, u8* dst) {
   *dst++ = 0;
   // dummy byte for alignment
   *dst++ = 0;
-
-  //// FIXME: dumb, this isn't aligned yet..
   // dummy byte for alignment
-  //  *dst++ = 0;
+  *dst++ = 0;
   return dst;
 }
 
@@ -201,9 +200,8 @@ static const u8* inode_unpickle(const u8* src, inode_t* in) {
   ++src; 
   // dummy byte for alignment
   ++src; 
-  //// FIXME: dumb, this isn't aligned yet..
   // dummy byte for alignment
-  //  ++src; 
+  ++src; 
 
 
   return src;
@@ -988,7 +986,15 @@ u8 net_report_params(void) {
     net_clear_params();
 
     for(i=0; i<numParams; i++) {
+
+      
+      ///////
+      ///////
+      // TODO: offline param descriptor
       bfin_get_param_desc(i, &pdesc);
+      ///////
+      /////
+
 
       print_dbg("\r\n received descriptor for param, index : ");
       print_dbg_ulong(i);
