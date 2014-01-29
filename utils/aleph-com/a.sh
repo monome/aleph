@@ -1,1 +1,1 @@
-python aleph-com.py
+python aleph-com.py /dev/tty.usbmodemfd111

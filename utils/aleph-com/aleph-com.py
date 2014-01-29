@@ -3,8 +3,10 @@ import time, threading
 import serial
 import sys
 
-# path = '/dev/tty.usbmodemfd111'
-path = '/dev/ttyACM0'
+path = sys.argv[1]
+print path
+#'/dev/tty.usbmodemfd111'
+# path = '/dev/ttyACM0'
 receive_address = '127.0.0.1', 12001
 
 ser = serial.Serial()
