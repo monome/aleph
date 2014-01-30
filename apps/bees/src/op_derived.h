@@ -28,5 +28,12 @@
 #include "ops/op_thresh.h"
 #include "ops/op_timer.h"
 #include "ops/op_tog.h"
+#include "ops/op_mod.h"
+#include "ops/op_bits.h"
+#include "ops/op_is.h"
+#include "ops/op_logic.h"
+#include "ops/op_list2.h"
+#include "ops/op_life.h"
+#include "ops/op_history.h"
 
 #endif

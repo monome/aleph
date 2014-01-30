@@ -363,6 +363,7 @@ void select_outs(void) {
   app_event_handlers[ kEventSwitch1 ]	= &handle_key_1 ;
   app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
   app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ;
+
 }
 
 // function key handlers
@@ -512,6 +513,13 @@ void handle_enc_3(s32 val) {
 void redraw_outs(void) {
   u8 i=0;
   u8 n = *pageSelect - 3;
+
+  // set scroll region
+  // FIXME: should be separate function i guess
+  render_set_scroll(&centerScroll);
+
+  print_dbg("\r\n redraw_outs() ");
+
   while(i<8) {
     /* print_dbg("\r\n redraw_outs, line: "); */
     /* print_dbg_ulong(i); */
@@ -536,7 +544,8 @@ void redraw_outs_preset (void) {
   s16 targetOpIdx = -1;
   s16 srcOpIdx; 
   s32 preSel = preset_get_select();
-  //  print_dbg("\r\n redraw_outs_preset()");
+
+  print_dbg("\r\n redraw_outs_preset()");
 
   while(i<8) {
     region_fill(lineRegion, 0x0);

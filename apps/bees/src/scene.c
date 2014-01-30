@@ -53,6 +53,9 @@ sceneData_t* sceneData;
 void scene_init(void) {
   u32 i;
   sceneData = (sceneData_t*)alloc_mem( sizeof(sceneData_t) );
+  sceneData->desc.beesVersion.maj = beesVersion.maj;
+  sceneData->desc.beesVersion.min = beesVersion.min;
+  sceneData->desc.beesVersion.rev = beesVersion.rev;
   for(i=0; i<SCENE_NAME_LEN; i++) {
     (sceneData->desc.sceneName)[i] = '\0';
   }
@@ -245,6 +248,13 @@ void scene_read_buf(void) {
   print_dbg_ulong(moduleVersion.min);
   print_dbg(".");
   print_dbg_ulong(moduleVersion.rev);
+
+  // store in scene data
+  sceneData->desc.moduleVersion.maj = moduleVersion.maj;
+  sceneData->desc.moduleVersion.min = moduleVersion.min;
+  sceneData->desc.moduleVersion.rev = moduleVersion.rev;
+  strcpy(sceneData->desc.moduleName, (const char*)moduleName);
+
 
 #endif
 

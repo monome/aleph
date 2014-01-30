@@ -327,12 +327,18 @@ void select_presets(void) {
   app_event_handlers[ kEventSwitch1 ]	= &handle_key_1 ;
   app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
   app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ; 
+
 }
 
 // redraw all lines, based on current selection
 void redraw_presets(void) {
   u8 i=0;
   u8 n = *pageSelect - 3;
+
+  // set scroll region
+  // FIXME: should be separate function i guess
+  render_set_scroll(&centerScroll);
+
   while(i<8) {
     render_line( n, 0xa );
     render_to_scroll_line(i, n == *pageSelect ? 1 : 0);

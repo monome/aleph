@@ -35,6 +35,10 @@
 #include "preset.h"
 #include "util.h"
 
+
+// define for serialization debugging
+// #define PRINT_PICKLE 1
+
 //=========================================
 //===== variables
 
@@ -109,11 +113,11 @@ static void add_sys_ops(void) {
 
 static u8* onode_pickle(onode_t* out, u8* dst) {
   // operator output index
-  dst = pickle_32((u32)(out->opOutIdx), dst);
+  //  dst = pickle_32((u32)(out->opOutIdx), dst);
   // target
   dst = pickle_32((u32)(out->target), dst);
   // parent op's index in net list
-  dst = pickle_32((u32)(out->opIdx), dst);
+  //  dst = pickle_32((u32)(out->opIdx), dst);
   // preset inclusion flag ; cast to 4 bytes for alignment
   //  dst = pickle_32((u32)(out->preset), dst);
   return dst;
@@ -122,27 +126,30 @@ static u8* onode_pickle(onode_t* out, u8* dst) {
 static const u8* onode_unpickle(const u8* src, onode_t* out) {
   u32 v32;
 
-  // operator output index
-  src = unpickle_32(src, &v32);
-  out->opOutIdx = (u8)v32;
+  /* // operator output index */
+  /* src = unpickle_32(src, &v32); */
+  /* out->opOutIdx = (u8)v32; */
+
   // output target
   src = unpickle_32(src, &v32);
   out->target = (s16)v32;
 
-  // index of parent op
-  src = unpickle_32(src, &v32);
-  out->opIdx = (s32)v32;
+  /* // index of parent op */
+  /* src = unpickle_32(src, &v32); */
+  /* out->opIdx = (s32)v32; */
 
   // preset flag: 32 bits for alignment
   //  src = unpickle_32(src, &v32);
   //  out->preset = (u8)v32;
 
+#ifdef PRINT_PICKLE
   print_dbg(" ; opIdx: ");
   print_dbg_ulong(out->opIdx);
   print_dbg(" ; opOutIdx: ");
   print_dbg_ulong(out->opOutIdx);
   print_dbg(" ; target: ");
   print_dbg_ulong(out->target);
+#endif
 
   return src;
 }
@@ -152,12 +159,14 @@ static u8* inode_pickle(inode_t* in, u8* dst) {
   // preset inclusion flag
   //// this is a preset variable
   //  *dst++ = in->preset;
+#ifdef PRINT_PICKLE
   print_dbg("\r\n pickling input node, op index: ");
   print_dbg_ulong(in->opIdx);
   print_dbg(" , input idx: ");
   print_dbg_ulong(in->opInIdx);
   print_dbg(" , play flag: ");
   print_dbg_ulong(in->play);
+#endif
 
   // play inclusion flag
   *dst++ = in->play;
@@ -165,10 +174,8 @@ static u8* inode_pickle(inode_t* in, u8* dst) {
   *dst++ = 0;
   // dummy byte for alignment
   *dst++ = 0;
-
-  //// FIXME: dumb, this isn't aligned yet..
   // dummy byte for alignment
-  //  *dst++ = 0;
+  *dst++ = 0;
   return dst;
 }
 
@@ -179,22 +186,22 @@ static const u8* inode_unpickle(const u8* src, inode_t* in) {
   // play inclusion flag
   in->play = *src++;
 
+#ifdef PRINT_PICKLE
   print_dbg(" ; opIdx: ");
   print_dbg_ulong(in->opIdx);
   print_dbg(" ; opInIdx: ");
   print_dbg_ulong(in->opInIdx);
 
-
   print_dbg("; got flag: ");
   print_dbg_ulong(in->play);
+#endif
 
   // dummy byte for alignment
   ++src; 
   // dummy byte for alignment
   ++src; 
-  //// FIXME: dumb, this isn't aligned yet..
   // dummy byte for alignment
-  //  ++src; 
+  ++src; 
 
 
   return src;
@@ -337,9 +344,13 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
   /// only process for play mode if we're in play mode
   if(pageIdx == ePagePlay) {
     print_dbg(" , play mode active ");
-    // only process if play-mode-visibility is set
-    if(vis) {
-      play_input(inIdx);
+    if(opPlay) {
+      // operators have focus, do nothing
+    } else {
+      // process if play-mode-visibility is set on this input
+      if(vis) {
+	play_input(inIdx);
+      }
     }
   }  
   
@@ -630,7 +641,7 @@ u16 net_num_ops(void) {
   return net->numOps;
 }
 
-// get current count of inputs (including DSP parameters)
+// get current count of inputs (including DSP parameters!)
 u16 net_num_ins(void) {
   return net->numIns + net->numParams;
 }
@@ -979,7 +990,15 @@ u8 net_report_params(void) {
     net_clear_params();
 
     for(i=0; i<numParams; i++) {
+
+      
+      ///////
+      ///////
+      // TODO: offline param descriptor
       bfin_get_param_desc(i, &pdesc);
+      ///////
+      /////
+
 
       print_dbg("\r\n received descriptor for param, index : ");
       print_dbg_ulong(i);
@@ -1103,8 +1122,10 @@ u8* net_unpickle(const u8* src) {
   // (use 4 bytes for alignment)
   src = unpickle_32(src, &count);
 
-  print_dbg("\r\n count of ops: ");
-  print_dbg_ulong(count);
+  #ifdef PRINT_PICKLE
+    print_dbg("\r\n count of ops: ");
+    print_dbg_ulong(count);
+  #endif
 
   // loop over operators
   for(i=0; i<count; ++i) {
@@ -1112,39 +1133,50 @@ u8* net_unpickle(const u8* src) {
     src = unpickle_32(src, &val);
     id = (op_id_t)val;
 
+    #ifdef PRINT_PICKLE
+        print_dbg("\r\n adding op, class id: ");
+        print_dbg_ulong(id);
+    #endif
+
     // add and initialize from class id
     /// .. this should update the operator count, inodes and onodes
-    print_dbg("\r\n adding op, class id: ");
-    print_dbg_ulong(id);
-  
     net_add_op(id);
 
     // unpickle operator state (if needed)
     op = net->ops[net->numOps - 1];
 
-    if(op->unpickle != NULL) {
-      print_dbg(" ... unpickling op .... ");
-      print_dbg_ulong(id);
+    if(op->unpickle != NULL)  {
+      #ifdef PRINT_PICKLE
+            print_dbg(" ... unpickling op .... ");
+            print_dbg_ulong(id);
+      #endif
       src = (*(op->unpickle))(op, src);
     }
   }
 
 #if 1
+
   /// copy ALL i/o nodes, even unused!
   print_dbg("\r\n reading all input nodes ");
   
   for(i=0; i < (NET_INS_MAX); ++i) {
+#ifdef PRINT_PICKLE
     print_dbg("\r\n unpickling input node, idx: ");
     print_dbg_ulong(i);
+#endif
 
     src = inode_unpickle(src, &(net->ins[i]));
   }
 
+#ifdef PRINT_PICKLE
   print_dbg("\r\n reading all output nodes");
+#endif
   // read output nodes
   for(i=0; i < NET_OUTS_MAX; ++i) {
+#ifdef PRINT_PICKLE
     print_dbg("\r\n unpickling output node, idx: ");
     print_dbg_ulong(i);
+#endif 
 
     src = onode_unpickle(src, &(net->outs[i]));
     if(i < net->numOuts) {
@@ -1154,36 +1186,46 @@ u8* net_unpickle(const u8* src) {
       }
     }
   }
-#else
-  print_dbg("\r\n reading input nodes, count: ");
-  print_dbg_ulong(net->numIns);
+
+#else 
+#error broken input node unserialization
+/* /\* #ifdef PRINT_PICKLE *\/ */
+/* /\*   print_dbg("\r\n reading input nodes, count: "); *\/ */
+/* /\*   print_dbg_ulong(net->numIns); *\/ */
+/* /\* #endif *\/ */
   
-  for(i=0; i < (net->numIns); ++i) {
-    src = inode_unpickle(src, &(net->ins[i]));
-  }
+/*   for(i=0; i < (net->numIns); ++i) { */
+/*     src = inode_unpickle(src, &(net->ins[i])); */
+/*   } */
 
-  print_dbg("\r\n reading output nodes, count: ");
-  print_dbg_ulong(net->numOuts);
+/* /\* #ifdef PRINT_PICKLE *\/ */
+/* /\*   print_dbg("\r\n reading output nodes, count: "); *\/ */
+/* /\*   print_dbg_ulong(net->numOuts); *\/ */
+/* /\* #endif *\/ */
 
-  // read output nodes
-  for(i=0; i < net->numOuts; ++i) {
-    src = onode_unpickle(src, &(net->outs[i]));
-    // reconnect so the parent operator knows what to do
-    net_connect(i, net->outs[i].target);
-  }
+/*   // read output nodes */
+/*   for(i=0; i < net->numOuts; ++i) { */
+/*     src = onode_unpickle(src, &(net->outs[i])); */
+/*     // reconnect so the parent operator knows what to do */
+/*     net_connect(i, net->outs[i].target); */
+/*   } */
 #endif
 
   // get count of parameters
   src = unpickle_32(src, &val);
   net->numParams = (u16)val;
 
+#ifdef PRINT_PICKLE
   print_dbg("\r\n reading params, count: ");
   print_dbg_ulong(net->numParams);
+#endif
 
   // read parameter nodes (includes value and descriptor)
   for(i=0; i<(net->numParams); ++i) {
+#ifdef PRINT_PICKLE
     print_dbg("\r\n unpickling param, idx: ");
     print_dbg_ulong(i);
+#endif
 
     src = param_unpickle(&(net->params[i]), src);
   }

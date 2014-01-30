@@ -36,19 +36,6 @@
 //-------------------------------------------
 //-- extern vars (here)
 
-#ifndef MIN
-#define MIN 0
-#endif
-#ifndef MAJ
-#define MAJ 0
-#endif
-#ifndef REV
-#define REV 0
-#endif
-#ifndef VERSIONSTRING
-#define VERSIONSTRING "none"
-#endif
-
 // maj = 1byte, min = 1byte, rev = 2byte
 //const u32 beesVersion = (MAJ << 24) | (MIN << 16) | (REV << 8);
 const AppVersion beesVersion = { .min = MIN , .maj = MAJ , .rev = REV };
@@ -169,6 +156,13 @@ u8 app_launch(u8 firstrun) {
   print_dbg("\r\n pages_init...");
   pages_init();
 
+  /* redraw_dsp(); */
+  /* redraw_ins(); */
+  /* redraw_outs(); */
+  /* redraw_ops(); */
+  /* redraw_presets(); */
+  /* redraw_scenes(); */
+
   print_dbg("\r\n play_init...");
   play_init();
 
@@ -185,7 +179,7 @@ u8 app_launch(u8 firstrun) {
   render_boot("assigning UI handlers...");
   assign_bees_event_handlers();
 
-  // update page rendering and handlers
+  // update page rendering and handlers...
   pages_reselect();
 
   // start in play mode 

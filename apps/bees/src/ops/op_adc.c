@@ -14,15 +14,16 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_adc_instring	= "ENABLE  PERIOD";
+static const char* op_adc_instring	= "ENABLE  PERIOD  MODE    ";
 static const char* op_adc_outstring	= "VAL0    VAL1    VAL2    VAL3    ";
-static const char* op_adc_opstring	= "ADC";
+static const char* op_adc_opstring	= "CV-IN";
 
 //-------------------------------------------------
 //----- static function declaration
 static void op_adc_inc_fn	(op_adc_t* adc, const s16 idx, const io_t inc);
 static void op_adc_in_enable	(op_adc_t* adc, const io_t v);
-static void op_adc_in_period	(op_adc_t* adc, const io_t v);
+static void op_adc_in_period  (op_adc_t* adc, const io_t v);
+static void op_adc_in_mode	(op_adc_t* adc, const io_t v);
 /* static void op_adc_in_val0	(op_adc_t* adc, const io_t v); */
 /* static void op_adc_in_val1	(op_adc_t* adc, const io_t v); */
 /* static void op_adc_in_val2	(op_adc_t* adc, const io_t v); */
@@ -32,9 +33,10 @@ static void op_adc_in_period	(op_adc_t* adc, const io_t v);
 static u8* op_adc_pickle(op_adc_t* adc, u8* dst);
 static const u8* op_adc_unpickle(op_adc_t* adc, const u8* src);
 
-static op_in_fn op_adc_in_fn[2] = {
+static op_in_fn op_adc_in_fn[3] = {
   (op_in_fn)&op_adc_in_enable,
   (op_in_fn)&op_adc_in_period,
+  (op_in_fn)&op_adc_in_mode
   /* (op_in_fn)&op_adc_in_val0, */
   /* (op_in_fn)&op_adc_in_val1, */
   /* (op_in_fn)&op_adc_in_val2, */
@@ -51,7 +53,7 @@ static const u8* op_adc_unpickle(op_adc_t* adc, const u8* src);
 /// initialize
 void op_adc_init(void* op) {
   op_adc_t* adc = (op_adc_t*)op;
-  adc->super.numInputs = 2;
+  adc->super.numInputs = 3;
   adc->super.numOutputs = 4;
 
   adc->outs[0] = -1;
@@ -65,6 +67,7 @@ void op_adc_init(void* op) {
   adc->super.in_val = adc->in_val;
   adc->in_val[0] = &(adc->enable);
   adc->in_val[1] = &(adc->period);
+  adc->in_val[2] = &(adc->mode);
 
   // pickles
   adc->super.pickle = (op_pickle_fn)(&op_adc_pickle);
@@ -86,6 +89,12 @@ void op_adc_init(void* op) {
   adc->val[3] = 0;
   adc->period = op_from_int(20);
   adc->enable = 0;
+  adc->mode = 0;
+
+  adc->prev[0] = 0;
+  adc->prev[1] = 0;
+  adc->prev[2] = 0;
+  adc->prev[3] = 0;
 }
 
 void op_adc_deinit(void* adc) {
@@ -125,6 +134,14 @@ void op_adc_in_period (op_adc_t* adc, const io_t v) {
     adc->period = v;
   }
   timers_set_adc_period(op_to_int(adc->period));
+}
+
+void op_adc_in_mode (op_adc_t* adc, const io_t v) {
+  if((v) < OP_ONE) {
+    adc->mode = 0;
+  } else {
+    adc->mode = OP_ONE;
+  }
 }
 
 
@@ -170,18 +187,17 @@ void op_adc_in_period (op_adc_t* adc, const io_t v) {
 static void op_adc_inc_fn(op_adc_t* adc, const s16 idx, const io_t inc) {
   io_t val;
   switch(idx) {
-  case 0: // enable (toggle)
-    if(adc->enable) {
-      val = 0;
-      op_adc_in_enable(adc, val);
-    } else {
-      val = OP_ONE;
-      op_adc_in_enable(adc, val);
-    }
+  case 0: 
+    val = inc + adc->enable;
+    op_adc_in_enable(adc, val);
     break;
   case 1: // period
     val = op_sadd(adc->period, inc);
     op_adc_in_period(adc, val);
+    break;
+  case 2: 
+    val = inc + adc->mode;
+    op_adc_in_mode(adc, val);
     break;
   /* case 2: // val0 */
   /*   val = op_sadd(adc->val0, inc); */
@@ -207,12 +223,14 @@ static void op_adc_inc_fn(op_adc_t* adc, const s16 idx, const io_t inc) {
 u8* op_adc_pickle(op_adc_t* adc, u8* dst) {
   dst = pickle_io(adc->enable, dst);
   dst = pickle_io(adc->period, dst);
+  dst = pickle_io(adc->mode, dst);
   return dst;
 }
 
 const u8* op_adc_unpickle(op_adc_t* adc, const u8* src) {
   src = unpickle_io(src, &(adc->enable));
   src = unpickle_io(src, &(adc->period));
+  src = unpickle_io(src, &(adc->mode));
   if(adc->enable) {
     timers_set_adc(op_to_int(adc->period));    
   }
@@ -221,6 +239,16 @@ const u8* op_adc_unpickle(op_adc_t* adc, const u8* src) {
 
 
 void op_adc_sys_input(op_adc_t* adc, u8 ch, u16 val) {
-  adc->val[ch] = val;
-  net_activate(adc->outs[ch], val, &(adc->super));
+  if(adc->mode) {
+    u8 i = val > 1000;    // thresh around 2.5v ?
+    if(adc->prev[ch] != i) {
+      net_activate(adc->outs[ch], i, &(adc->super));
+      adc->prev[ch] = i;
+    }
+  }
+  else {
+    adc->val[ch] = val;
+
+    net_activate(adc->outs[ch], val, &(adc->super));
+  }
 }

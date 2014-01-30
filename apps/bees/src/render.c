@@ -145,11 +145,17 @@ void render_init(void) {
   footRegion[3] = &(footRegion_pr[3]);
   //  selectRegion = &selectRegion_pr;
   lineRegion = &lineRegion_pr;
-
 }
 
 // render text to scrolling buffer during boot procedure
 extern void render_boot(const char* str) {
+  int i;
+  u8* p = bootScroll.reg->data;
+  // first kind of dim the old stuff in the scroll region
+  for(i=0; i<bootScroll.reg->len; i++) {
+    if(*p > 0x4) { *p = 0x4; }
+    p++;
+  }
   scroll_string_front(&bootScroll, (char*)str);
   region_update(bootScroll.reg);
 }

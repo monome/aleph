@@ -118,6 +118,41 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_thresh_t),
     .init = &op_thresh_init,
     .deinit = NULL    
+  }, {
+    .name = "MOD",
+    .size = sizeof(op_mod_t),
+    .init = &op_mod_init,
+    .deinit = NULL    
+  }, {
+    .name = "BITS",
+    .size = sizeof(op_bits_t),
+    .init = &op_bits_init,
+    .deinit = NULL    
+  }, {
+    .name = "IS",
+    .size = sizeof(op_is_t),
+    .init = &op_is_init,
+    .deinit = NULL    
+  }, {
+    .name = "LOGIC",
+    .size = sizeof(op_logic_t),
+    .init = &op_logic_init,
+    .deinit = NULL    
+  }, {
+    .name = "LIST2",
+    .size = sizeof(op_list2_t),
+    .init = &op_list2_init,
+    .deinit = NULL    
+  }, {
+    .name = "LIFE",
+    .size = sizeof(op_life_t),
+    .init = &op_life_init,
+    .deinit = NULL    
+  }, {
+    .name = "HISTORY",
+    .size = sizeof(op_history_t),
+    .init = &op_history_init,
+    .deinit = NULL    
   }
 
 };

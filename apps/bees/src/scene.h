@@ -33,12 +33,22 @@ typedef struct _sceneDesc {
  vigilant w/r/t overreaching it...!!! oh man
 */
 // this is only used for parsing application NVRAM space.
-#define SCENE_PICKLE_SIZE 0x19000
+//#define SCENE_PICKLE_SIZE 0x19000
+//#define SCENE_PICKLE_SIZE 0x22000
+
+////
+// FIXME:
+/* we're not using NVRAM for scene right now.
+   however, we still need to keep a statically allocated serial blob in RAM (dumb, i know...)
+   we should be streaming the scene data to the sdcard with just a tiny RAM buffer.
+*/
+#define SCENE_PICKLE_SIZE 0x40000
+
 
 typedef struct _sceneData {
   // txt descriptor
   sceneDesc_t desc;
-  // a (huge) blob of serialized data
+  // a (huge) blob of serialized data (ugh)
   u8 pickle[SCENE_PICKLE_SIZE];
 } sceneData_t;
 

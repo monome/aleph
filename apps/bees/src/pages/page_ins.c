@@ -370,6 +370,7 @@ void select_ins(void) {
   app_event_handlers[ kEventSwitch1 ]	= &handle_key_1 ;
   app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
   app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ;
+
 }
 
 //========================================================
@@ -510,15 +511,41 @@ void handle_enc_3(s32 val) {
   }
 }
 
-// redraw all lines, based on current selection
+// redraw all lines, force selection
 void redraw_ins(void) {
   u8 i=0;
-  u8 n = *pageSelect - 3;
+  s32 n = *pageSelect - 3;
+  // num_ins() includes param count!
+  const s32 max = net_num_ins() - 1;
+
+  // set scroll region
+  // FIXME: should be separate function i guess
+  render_set_scroll(&centerScroll);
+
+  print_dbg("\r\n redraw_ins() ");
+
   while(i<8) {
-    while(n < 0) {
-      n += (net_num_ins() + net_num_params());
+    print_dbg("\r\n input page redraw, n: ");
+    print_dbg_ulong(n);
+
+    if(n == -1) {
+      // draw a blank line
+      region_fill(lineRegion, 0);
+    } else if(n == (max+1)) {
+      // draw a blank line
+      region_fill(lineRegion, 0);
+    } else {
+      if(n < -1) {
+	n += (max + 2);
+      }
+      if( n > max ) {
+	n -= (max + 2);
+      }
+      print_dbg(" ,  after wrap: ");
+      print_dbg_ulong(n);
+
+      render_line( n, 0xa );
     }
-    render_line( n, 0xa );
     render_to_scroll_line(i, n == *pageSelect ? 1 : 0);
     ++i;
     ++n;
@@ -534,6 +561,10 @@ void redraw_ins_preset ( void ) {
   io_t opVal;
   s32 paramVal;
   s16 opIdx;
+
+
+  print_dbg("\r\n redraw_ins_preset() ");
+
 
   while(i<8) {
     region_fill(lineRegion, 0x0);
