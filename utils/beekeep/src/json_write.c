@@ -38,13 +38,13 @@ static json_t* net_write_json_scene(void) {
   json_object_set(o, "sceneName", json_string(sceneData->desc.sceneName)); 
   json_object_set(o, "moduleName", json_string(sceneData->desc.moduleName)); 
   p = json_object();
-  json_object_set(p, "min", json_integer(sceneData->desc.moduleVersion.maj));
-  json_object_set(p, "maj", json_integer(sceneData->desc.moduleVersion.min));
+  json_object_set(p, "maj", json_integer(sceneData->desc.moduleVersion.maj));
+  json_object_set(p, "min", json_integer(sceneData->desc.moduleVersion.min));
   json_object_set(p, "rev", json_integer(sceneData->desc.moduleVersion.rev));
   json_object_set(o, "moduleVersion", p);
   p = json_object();
-  json_object_set(p, "min", json_integer(sceneData->desc.beesVersion.maj));
-  json_object_set(p, "maj", json_integer(sceneData->desc.beesVersion.min));
+  json_object_set(p, "maj", json_integer(sceneData->desc.beesVersion.maj));
+  json_object_set(p, "min", json_integer(sceneData->desc.beesVersion.min));
   json_object_set(p, "rev", json_integer(sceneData->desc.beesVersion.rev));
   json_object_set(o, "beesVersion", p);  
   
@@ -73,7 +73,7 @@ static json_t* net_write_json_ops(void) {
     json_object_set(o, "type", json_integer(op->type));
     json_object_set(o, "name", json_string(op->opString));
     json_object_set(o, "numIns", json_integer(op->numInputs));
-    json_object_set(o, "numOuts", json_integer(op->numInputs));
+    json_object_set(o, "numOuts", json_integer(op->numOutputs));
     /// ok, operator state data is going to be weird.
     /// we could write a proper json parser for each operator type (insane.)
     /// but for now i am just going to use the operator pickling/unpickling functions,

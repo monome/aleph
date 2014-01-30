@@ -7,12 +7,17 @@
 #include "preset.h"
 #include "scene.h"
 
+#include "json.h"
+
 static void net_read_json_scene(json_t* o);
 static void net_read_json_ops(json_t* o);
 static void net_read_json_ins(json_t* o);
 static void net_read_json_outs(json_t* o);
 static void net_read_json_params(json_t* o);
 static void net_read_json_presets(json_t* o);
+
+// convert from minor version 3
+static void net_json_convert_min3(json_t* r);
 
 void net_read_json(const char* name) {
   json_t *root;
@@ -21,8 +26,20 @@ void net_read_json(const char* name) {
 
   root = json_loadf(f, 0, &err);  
   fclose(f);
+
+  json_t* scene = json_object_get(root, "scene");
+  json_t* vers = json_object_get(scene, "beesVersion");
+  int min = json_integer_value(json_object_get(vers, "min"));
+  printf("\r\n got minor version number from json: %d", min);
+  if(min == 3) {
+    //    if(sceneData->desc.moduleVersion.min == 3) {
+    printf(" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! converting from 0.3");
+    net_json_convert_min3(root);
+  }
   
   net_read_json_scene(json_object_get(root, "scene"));
+
+
   net_read_json_ops(json_object_get(root, "ops"));
   net_read_json_ins(json_object_get(root, "ins"));
   net_read_json_outs(json_object_get(root, "outs"));
@@ -80,13 +97,14 @@ static void net_read_json_ops(json_t* o) {
       json_t* state = json_object_get(p, "state");
       binCount = json_array_size(state);
       for(j=0; j<binCount; j++) {
-	bin[j] = json_integer_value(json_array_get(state, j));
+	bin[j] = (u8)(json_integer_value(json_array_get(state, j)));
       }
       src = bin;
       src = (*(op->unpickle))(op, src);
       // sanity check
-      if(binCount != (src - bin)) {
+      if(binCount != ((u32)src - (u32)bin)) {
 	printf("warning! mis-sized byte array in operator state unpickle?");
+	printf("\r\n   bin: 0x%08x ; src: 0x%08x ", (u32)bin, (u32)src);
       }
     }
   }
@@ -97,9 +115,7 @@ static void net_read_json_ins(json_t* o) {
   json_t* arr;
   int i;
   int count = json_integer_value(json_object_get(o, "count"));
-  if(net->numIns != count) {
-    printf("\r\n warning! input count does not match");
-  }
+
   arr = json_object_get(o, "data");
   for(i=0; i<count; i++) {
     p = json_array_get(arr, i);
@@ -117,9 +133,7 @@ static void net_read_json_outs(json_t* o) {
   int i;
   int v;
   int count = json_integer_value(json_object_get(o, "count"));
-  if(net->numIns != count) {
-    printf("\r\n warning! output count does not match");
-  }
+
   arr = json_object_get(o, "data");
   for(i=0; i<count; i++) {
     p = json_array_get(arr, i);
@@ -189,4 +203,89 @@ static void net_read_json_presets(json_t* o) {
       presets[i].outs[j].enabled = json_integer_value(json_object_get(q, "enabled"));
     }
   }
+}
+
+
+void net_json_convert_min3(json_t* r) {
+ 
+  // ADC has changed i/o count from [2,2] to [3,2],
+  // and likewise size of byte-arry of state data.
+
+  // there is only one ADC operator, so this isn't too bad.
+  
+  /// magic number based on what 0.3.x scenes looked like.
+  int lastAdcIn = 29;
+
+  json_t* ins = json_object_get(r, "ins");
+  json_t* insData = json_object_get(ins, "data");
+  int insCount = json_integer_value(json_object_get(ins, "count"));
+  json_integer_set(json_object_get(ins, "count"), insCount + 1);
+
+  // all we should have to do for input nodes is: 
+  // - insert a new node
+  // - fix everyone's index
+  json_t* o = json_object();
+  json_object_set(o, "idx", json_integer(lastAdcIn));
+  json_object_set(o, "name", json_string("MODE    "));
+  json_object_set(o, "opIdx", json_integer(10));
+  json_object_set(o, "opInIdx", json_integer(2));
+  json_object_set(o, "value", json_integer(0));
+  json_object_set(o, "play", json_integer(0));
+  int err  = json_array_insert(insData, lastAdcIn + 1, o );
+
+  if(err != 0) { printf(" error inserting input node in ADC op conversion."); }
+  
+  // loop over input nodes and fix idx fields
+  for(int i=0; i<NET_INS_MAX; i++) {
+    json_integer_set(json_object_get(json_array_get(insData, i), "idx"), i);
+  }
+  
+
+  /* // copy all input nodes above this operator's... */
+  /* // count down from top. src has fewer input nodes; otherwise we would lose last value. */
+  /* for(int i = NET_INS_MAX - 1; i > lastAdcIn; i--) { */
+  /*   // get json object at this index in node array */
+  /*   json_t* dst = json_array_get(insData, i); */
+  /*   json_t* src = json_array_get(insData, i - 1);     */
+  /*   if(src != NULL) { */
+  /*     if(dst == NULL) { */
+  /* 	int err; */
+  /* 	dst = json_object(); */
+  /* 	json_object_set(dst, "idx", json_integer(i)); */
+  /* 	err = json_array_insert(insData, i, dst); */
+  /* 	if(err != 0) { printf(" error inserting input node in ADC op conversion."); } */
+  /*     } */
+  /*     // shallow copy ok? */
+  /*     json_array_set(insData, src); */
+  /*     // custom-copy, leaving idx */
+  /*     /\* json_object_(dst, "name", json_object_get(src, "name")); *\/ */
+  /*     /\* json_object_set(dst, "opIdx", json_object_get(src, "opIdx")); *\/ */
+  /*     /\* json_object_set(dst, "opInIdx", json_object_get(src, "opInIdx")); *\/ */
+  /*     /\* json_object_set(dst, "value", json_object_get(src, "value")); *\/ */
+  /*     /\* json_object_set(dst, "play", json_object_get(src, "play")); *\/ */
+  /*   } */
+  /* } */
+  /* // finally, we need to fix up the values for the new input ("mode");   */
+  /* ///... FIXME */
+
+
+
+  
+  //---- -outs
+  json_t* outs = json_object_get(r, "outs");
+  json_t* outsData = json_object_get(outs, "data");
+  // loop over all output sand check targets
+  for(int i = 0; i< NET_OUTS_MAX; i++) {
+    json_t* o = json_array_get(outsData, i);
+    int t = json_integer_value(json_object_get(o, "target"));
+      if(t > lastAdcIn) {
+	json_integer_set(json_object_get(o, "target"), t + 1);
+      }
+  }
+
+  // i don't think anyone really used presets in this rev, so skipping those for now.
+
+  
+  // write the output of the converted json for a visual check.
+  json_dump_file(r, "converted.json", JSON_INDENT(4) | JSON_PRESERVE_ORDER | JSON_ESCAPE_SLASH);  
 }
