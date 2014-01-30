@@ -184,6 +184,7 @@ static json_t* net_write_json_presets(void) {
     p = json_object();
     json_object_set(p, "name", json_string( preset_name(i)) );
     l = json_array();
+
     for(j=0; j<PRESET_INODES_COUNT; j++) {
       /// 
       o = json_object();
@@ -197,6 +198,7 @@ static json_t* net_write_json_presets(void) {
     }
     json_object_set(p, "ins", l);
 
+    l = json_array();
     for(j=0; j<NET_OUTS_MAX; j++) {
       o = json_object();
       /// FIXME: shouldn't need idx here
