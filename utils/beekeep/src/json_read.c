@@ -221,6 +221,8 @@ void net_json_convert_min3(json_t* r) {
   int insCount = json_integer_value(json_object_get(ins, "count"));
   json_integer_set(json_object_get(ins, "count"), insCount + 1);
 
+  // need to fux 
+
   // all we should have to do for input nodes is: 
   // - insert a new node
   // - fix everyone's index

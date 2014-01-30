@@ -134,6 +134,7 @@ u8 files_load_dsp_name(const char* name) {
   void* fp;
   u32 size = 0;
   u8 ret;
+  char nameTry[64];
   //  ModuleVersion modVers;
 
   delay_ms(10);
@@ -141,6 +142,14 @@ u8 files_load_dsp_name(const char* name) {
   app_pause();
 
   fp = list_open_file_name(&dspList, name, "r", &size);
+
+  if(fp == NULL) {
+    //// HACK
+    // try adding ".ldr" because sometimes that happens... ugh
+    strcpy(nameTry, name);
+    strcat(nameTry, ".ldr");
+    fp = list_open_file_name(&dspList, nameTry, "r", &size);
+  }
 
   if( fp != NULL) {	  
     print_dbg("\r\n found file, loading dsp: ");
