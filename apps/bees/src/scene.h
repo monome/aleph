@@ -34,7 +34,13 @@ typedef struct _sceneDesc {
 */
 // this is only used for parsing application NVRAM space.
 //#define SCENE_PICKLE_SIZE 0x19000
-#define SCENE_PICKLE_SIZE 0x22000
+//#define SCENE_PICKLE_SIZE 0x22000
+
+// we're not using NVRAM for flash right now.
+// if/when we do use it, will have to make these limits conditional
+// right now, limiting to entire size of SRAM (silly)
+#define SCENE_PICKLE_SIZE 0x100000
+
 
 typedef struct _sceneData {
   // txt descriptor
