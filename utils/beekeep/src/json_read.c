@@ -239,7 +239,14 @@ void net_json_convert_min3(json_t* r) {
   for(int i=0; i<NET_INS_MAX; i++) {
     json_integer_set(json_object_get(json_array_get(insData, i), "idx"), i);
   }
-  
+
+  // we also have to add some dummy values to the byte array of the ADC op's state.
+  json_t* ops = json_object_get(r, "ops");
+  // 10 is the magic number of the ADC op in 0.3.x
+  json_t* adc = json_array_get(json_object_get(ops, "data"), 10);
+  // mode pickle: 2 bytes input value, zero is fine
+  json_array_append(json_object_get(adc, "state"),  json_integer(0));
+  json_array_append(json_object_get(adc, "state"),  json_integer(0));
 
   /* // copy all input nodes above this operator's... */
   /* // count down from top. src has fewer input nodes; otherwise we would lose last value. */
@@ -268,13 +275,11 @@ void net_json_convert_min3(json_t* r) {
   /* // finally, we need to fix up the values for the new input ("mode");   */
   /* ///... FIXME */
 
-
-
   
   //---- -outs
   json_t* outs = json_object_get(r, "outs");
   json_t* outsData = json_object_get(outs, "data");
-  // loop over all output sand check targets
+  // loop over all outputs and check targets
   for(int i = 0; i< NET_OUTS_MAX; i++) {
     json_t* o = json_array_get(outsData, i);
     int t = json_integer_value(json_object_get(o, "target"));
@@ -285,7 +290,6 @@ void net_json_convert_min3(json_t* r) {
 
   // i don't think anyone really used presets in this rev, so skipping those for now.
 
-  
   // write the output of the converted json for a visual check.
-  json_dump_file(r, "converted.json", JSON_INDENT(4) | JSON_PRESERVE_ORDER | JSON_ESCAPE_SLASH);  
+  json_dump_file(r, "converted.json", JSON_INDENT(4) | JSON_PRESERVE_ORDER | JSON_ESCAPE_SLASH);
 }
