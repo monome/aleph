@@ -1,0 +1,152 @@
+BEES
+
+bees is a general-purpose control application for aleph.
+
+it creates networks for processing live input from knobs or external devices, 
+and allows for some live manipulation of the current network.
+
+
+//-----------------------------------
+//--- terms
+there are several layers of data organization used in bees,
+so we must establish a consistent terminology, however silly:
+
+CONTROL:	"control voltage" value, 4 bytes
+
+MODULE: 	a DSP executable running on aleph's audio slave processor.
+
+PARAMETER:	a direct input to an audio module, with some associated metadata.
+
+INPUT:		input node in a control-processing network.
+
+OUTPUT:		an output node in a control-processing network.
+
+OPERATOR:  a unit of processing for control signals. (note*)
+	   an operator has zero or more inputs and outputs.
+
+PRESET:	  preset data can be manipulated in realish-time from within the network.
+	  a given preset stores several things:
+	  - the state of connections between output and input nodes,
+	  - the state of all nodes and parameters.
+	  - whether each of these states is excluded from future preset management.
+	  
+SCENE:	  scene data stores the actual composition of the control network,
+	  as well as the identity and state of the running audio module.
+	  scene manipulation is less suitable for live work.
+
+(*note: not meant in the computer-science or group-theory senses, sorry!)
+
+
+
+//-------------------------------
+//----- menu layout
+
+there are a fair number of pages in the bees menu system.
+most are arranged in a circular list (the 'main menu'), scrolled through by the page knob (ENC0).
+
+in the main menu list, each page maps knobs and function buttons to different functions, except:
+- ENC0 (upper left) always scrolls between pages.
+- ENC1 (upper right) always scrolls between selections on the current page.
+- SW3  (rightmost switch) always accesses extra commands for pages that need them.
+  sometimes this is in the form of alternate assignments for the other function switches,
+  in which case the listing is 'ALTx' in the table below.
+  (other times a sub-menu?)
+
+function mapping for each page in the main menu:
+
+INPUTS:
+	SW0:	STORE:		store current value in current preset
+	SW1:	INC/EXC:	toggle inclusion of this input in current preset management
+	SW2:	CLEAR:		set input to zero
+	SW3:	ALT:		momentarily enter alternate commands	
+	ALT0: 	GATHER:		go to modal page with only the outputs connected to this input
+	ALT1:	SHOW/HIDE:	toggle inclusion of this input in play-mode listing	
+	ALT2:	FILT/ALL:	show only play-enabled inputs in this list, or show all (default).	
+	ALTENC0: select preset for recall + edit
+
+	ENC2:   ---		change parameter value, slow
+	ENC3:	---		change parameter vlaue, fast
+	       
+ROUTING: 
+	SW0:	STORE:		store current routing in current preset
+	SW1:	INC/EXC:	toggle inclusion of this routing in current preset
+	SW2:	CLEAR:		disconnect
+	SW3:	ALT		
+	ALT0:	FOLLOW:		select this output's target on inputs page, and go there
+	ALT1:	SPLIT:		create a SPLIT operator and connect to its first input.
+				       if operator was already connected, 
+				       connect the split's output to its former target.
+				       select the other split output.
+	ENC2:	---	 	---
+	ENC3:	---		scroll target input
+	 
+PRESETS: 
+	SW0:	STORE:		store all nodes at this preset.
+	SW1: 	RECALL:		overwrite all preset-included nodes with preset,
+					  update inclusion for next recall.
+	SW2:	COPY/OK:	begin copy / confirm and finish copy.
+	SW3:	DEFAULT:	store current settings as default
+	ENC2:	---		scroll position in name.
+	ENC3:	---		scroll character at position.
+
+SCENES:
+	SW0:	STORE:		store current state of network to scene name.
+				      if the name has been edited, a new file will be created.
+	SW1:	RECALL:         load scene (halts network processing and may make noise).
+	SW2:	COPY/OK:	begin copy / confirm and finish copy.
+	SW3:	ALT:	
+	ALT0:   DEFAULT:        store current settings as default
+	ALT1:   ---
+	ALT2:   CLEAR/OK:	clear the current scene
+	ALT3:	---
+	ENC2:   ---		scroll position in name.
+	ENC3:	---		scroll character at position.
+
+OPERATORS:
+	SW0:	INPUTS:		select this op's inputs on ins page, and go there.
+	SW1: 	OUTPUTS:	select this op's outputs on outs page, and go there.
+	SW2:	CREATE:		add a new operator of selected type.
+	SW3:	PAGE/LIST:	toggle op-specific subpage 
+	ENC2:	---		---
+	ENC3:	---		select operator type for creation.
+
+MODULES:
+	SW0:	LOAD:		load audio module from sdcard.
+	SW1: 	DEFAULT:	write audio module to internal memory for startup.
+	SW2:	---		---
+	SW3:	---		---	
+	ENC2:	---		---	
+	ENC3:	---		---
+
+
+
+
+PLAY:	 play mode is not on the main list, and is exclusively mapped to the mode button above the knobs.
+	 in play mode, each switch and knob functions solely as an input to the control network,
+	 via the system-created SW and ENC operators.
+	 inputs and parameters with the SHOW option activated will generate UI feedback here.
+
+
+these sub-pages are accessed from within the main menu. ENC0 will scroll out of them.
+
+GATHER: like ROUTING, except only outputs that are connected to the selected input are shown. 
+
+... ?
+
+
+
+//-------------------------
+//--- notes
+
+--- storage
+
+there are always a fixed number of presets, located in RAM.
+scenes are stored on the sdcard and are limited only by the filesystem.
+one scene is stored on internal flash instead, and is loaded at startup.
+
+
+---- recall
+
+recalling a scene triggers the loading of the module named in that scene. this includes a check between the version number stored in the scene and that reported by the module; bees will issue a warning if version numbers are mismatched.
+
+after loading the hopefully-appropriate module, all parameter values are re-sent to the audio processor.

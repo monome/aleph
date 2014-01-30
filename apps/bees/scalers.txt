@@ -1,0 +1,57 @@
+>need to properly implement arbitrary parameter scaling and type managment.
+
+my current thinking is that we can afford to have a large set of parameters defined, 
+distinguished according to their algorithmic use, e.g. 
+
+typeFilterCutoff    - produces arbitrary 32-bit coefficient
+typeOscFreq - produces unit frequency in 1.32
+typeOscTune - produces small unit frequency offset in 1.31 or ratio in 4.24
+
+ideally, these can be mapped a relatively low-resolution space (12-16 bits) so they can be accessed on the avr32 by non-interpolated direct lookup.
+
+application input to the scaler would initialize or re-initialize it to appropriately tuned values, e.g.:
+
+scaler_filterCutoff.tuning = eSvf2Pole;
+scaler_oscCoarse.tuning = 12tet;
+scaler_oscCoarse.tuning = Pythagoras;
+scaler_oscCoarse.tuning = Vicentzio; 
+
+
+in addition to intelligently mapping input values
+[ e.g., a frequency scaler should be linear by octaves ]
+a scaler would be responsible for reporting human-readable values.
+so each probably consists of 2 tables (real value in whatever, human readable value in 16.16 or whatever.)
+
+a lot of work... but also kind of fun. very open to suggestions here...
+
+
+//////
+
+13/11/22 
+
+going ahead with this in exp branch.
+bees/src/scaler.h, .c
+bees/src/scalers/scaler_amp.h, .c
+bees/src/scalers/scaler_osc_freq.h, .c
+etc.
+
+for now, the idea is that tables will be loaded from sdcard at init. will see how that goes.
+it would be good to have some kind of UI to change tunings, etc arbitrarily.
+
+table size and range can be arbitrarily expected by each scaler "class."
+dsp modules still report their parameter ranges in fix16;
+although though most parameter types have a pretty fixed range (e.g. osc freq, filter cutoff),
+some do not (e.g. delay time.)
+so, sometimes the scaler will take ranges into consideration at init,
+other times it will ignore them or simply check and issue a warning.
+
+table generation will go in aleph/utils somewhere, 
+probably just using supercollider (sorry!)
+
+-ez
+
+//////////////////
+13/11/24
+
+procedural table tuning...
+e.g. "roll the big dice"

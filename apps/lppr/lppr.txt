@@ -1,0 +1,14 @@
+lppr
+
+
+bootup, remove gray screen
+param modification labels = big
+time 1/2 etc, what?
+clarify/improve rec/od/play?
+q, make better scale?
+cutoff, feedback, filter mix: too many decimal digits??
+cutoff, is seeing midi note helpful?
+all knobs, edit value too fine
+feedback, top of range messed up
+feedback, below -60db should read something smarter
+filter mix, top range messed up
