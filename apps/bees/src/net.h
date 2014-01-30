@@ -12,6 +12,8 @@
 //////  uhh it is easiest to just put these here. sorry. suggestions welcome...
 
 // maximum allocated parameters, connections, and operators
+//// FIXME: need to fix malloc(),
+//  and also stream scene data to the card rather than having a huge serial blob.
 // max operator inputs
 #define NET_INS_MAX 256
 // max operator outputs
@@ -21,7 +23,7 @@
 // max DSP parameter inputs
 #define NET_PARAMS_MAX 256
 // max presets
-#define NET_PRESETS_MAX 64
+#define NET_PRESETS_MAX 32
 
 ///////////////////////////////////////////
 
