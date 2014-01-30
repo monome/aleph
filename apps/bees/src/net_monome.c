@@ -36,8 +36,6 @@ static void monome_ring_enc_loopback(void* op, u32 edata) {
 }
 
 
-
-
 //---------------------------------
 // extern variables, initialized here.
 

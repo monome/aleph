@@ -275,7 +275,7 @@ void select_dsp(void) {
 
 // redraw all lines, based on current selection
 void redraw_dsp(void) {
-  u8 i=0;
+  u8 i=0; 
   u8 n = *pageSelect - 3;
 
   // set scroll region
