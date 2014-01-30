@@ -344,14 +344,14 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
   /// only process for play mode if we're in play mode
   if(pageIdx == ePagePlay) {
     print_dbg(" , play mode active ");
-    if(opPlay) {
+    //    if(opPlay) {
       // operators have focus, do nothing
-    } else {
+    //    } else {
       // process if play-mode-visibility is set on this input
       if(vis) {
 	play_input(inIdx);
       }
-    }
+      //    }
   }  
   
 }
