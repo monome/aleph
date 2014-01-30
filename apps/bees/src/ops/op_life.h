@@ -38,7 +38,8 @@ typedef struct op_life_struct {
   volatile io_t set;
   volatile io_t noise;
   volatile io_t rules;
-  volatile io_t* in_val[8];
+  volatile io_t focus;
+  volatile io_t* in_val[9];
   op_out_t outs[3];
 } op_life_t;
 

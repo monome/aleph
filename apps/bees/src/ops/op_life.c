@@ -14,6 +14,7 @@ static void op_life_in_y(op_life_t* life, const io_t v);
 static void op_life_in_set(op_life_t* life, const io_t v);
 static void op_life_in_noise(op_life_t* life, const io_t v);
 static void op_life_in_rules(op_life_t* life, const io_t v);
+static void op_life_in_focus(op_life_t* life, const io_t v);
 
 static void op_life_output(op_life_t* life);
 
@@ -32,7 +33,7 @@ static const u8* op_life_unpickle(op_life_t* op, const u8* src);
 
 //-------------------------------------------------
 //----- static vars
-static op_in_fn op_life_in_fn[8] = {
+static op_in_fn op_life_in_fn[9] = {
   (op_in_fn)&op_life_in_next,
   (op_in_fn)&op_life_in_xsize,
   (op_in_fn)&op_life_in_ysize,
@@ -40,10 +41,11 @@ static op_in_fn op_life_in_fn[8] = {
   (op_in_fn)&op_life_in_y,
   (op_in_fn)&op_life_in_set,
   (op_in_fn)&op_life_in_noise,
-  (op_in_fn)&op_life_in_rules
+  (op_in_fn)&op_life_in_rules,
+  (op_in_fn)&op_life_in_focus
 };
 
-static const char* op_life_instring  = "NEXT    XSIZE   YSIZE   X       Y       SET     NOISE   RULES   ";
+static const char* op_life_instring  = "NEXT    XSIZE   YSIZE   X       Y       SET     NOISE   RULES   FOCUS   ";
 static const char* op_life_outstring = "VAL     POP     DELTA   ";
 static const char* op_life_opstring  = "LIFE";
 
@@ -60,7 +62,7 @@ void op_life_init(void* mem) {
   life->monome.handler = (monome_handler_t)&op_life_handler;
   life->monome.op = life;
 
-  life->super.numInputs = 8;
+  life->super.numInputs = 9;
   life->super.numOutputs = 3;
   life->outs[0] = -1;
   life->outs[1] = -1;
@@ -87,6 +89,7 @@ void op_life_init(void* mem) {
   life->in_val[5] = &(life->set);
   life->in_val[6] = &(life->noise);
   life->in_val[7] = &(life->rules);
+  life->in_val[8] = &(life->focus);
 
   life->next = 0;
   life->xsize = 16;
@@ -96,6 +99,7 @@ void op_life_init(void* mem) {
   life->set = 0;
   life->noise = 0;
   life->rules = 0;
+  life->focus = 1;
 
   life->pop = life->lpop = 0;
 
@@ -112,6 +116,15 @@ void op_life_deinit(void* op) {
 
 //-------------------------------------------------
 //----- static function definitions
+static void op_life_in_focus(op_life_t* op, const io_t v) {
+  if((v) > 0) {
+    op->focus = OP_ONE;
+  } else {
+    op->focus = 0;;
+  }
+  net_monome_set_focus( &(op->monome), op->focus > 0);
+}
+
 static void op_life_in_next(op_life_t* life, const io_t v) {
   if(v!=0) {
     u8 i, x, y, count;
@@ -254,6 +267,9 @@ static void op_life_inc_input(op_life_t* life, const s16 idx, const io_t inc) {
     val = op_add(life->rules, inc);
     op_life_in_rules(life, val);
     break;  
+  case 8:
+    op_life_in_focus(life, inc);
+    break; 
   }
 }
 
@@ -324,6 +340,7 @@ u8* op_life_pickle(op_life_t* op, u8* dst) {
   dst = pickle_io(op->x, dst);
   dst = pickle_io(op->y, dst);
   dst = pickle_io(op->rules, dst);
+  dst = pickle_io(op->focus, dst);
   return dst;
 }
 
@@ -333,5 +350,6 @@ const u8* op_life_unpickle(op_life_t* op, const u8* src ) {
   src = unpickle_io(src, &(op->x));
   src = unpickle_io(src, &(op->y));
   src = unpickle_io(src, &(op->rules));
+  src = unpickle_io(src, &(op->focus));
   return src;
 }
