@@ -5,6 +5,16 @@
 #include "op_num.h"
 
 
+
+//////  FIXME: trying with a full quad to start with
+// width and height
+#define OP_NUM_PX_W 64
+#define OP_NUM_PX_H 32
+#define OP_NUM_GFX_BYTES ( OP_NUM_PX_W * OP_NUM_PX_H )
+// max offsets
+#define OP_NUM_X_MAX ( SCREEN_ROW_PX - OP_NUM_PX_W ) 
+#define OP_NUM_Y_MAX ( SCREEN_ROW_PX - OP_NUM_PX_H ) 
+
 //-------------------------------------------------
 //----- static vars
 
@@ -18,6 +28,7 @@ static const char* op_num_opstring = "NUM";
 static char tmpStr[16];
 // try sharing region data among instances...
 static volatile u8 regData[OP_NUM_GFX_BYTES];
+
 
 //-------------------------------------------------
 //----- static function declaration
@@ -83,20 +94,30 @@ void op_num_init(void* op) {
 
 // input val
 static void op_num_in_val(op_num_t* num, const io_t v) {
-  // draw the region!
-  
-  region_string_aa(&bigtop, "_LPPR", 40, 12, 1);
-  
+  // print value to text buffer
+  op_print(tmpBuf, num->val);
+  // render text to region
+  region_string_aa(num->reg, tmpBuf, 0, 0, 1);
 }
 
 // input x position
 static void op_num_in_x(op_num_t* num, const io_t v) {
-  num->mul = v;
-
+  if (v > OP_NUM_X_MAX) {
+    num->reg.x = OP_NUM_X_MAX; 
+  } else {		
+    num->reg.x = v;			
+  }
+  // redraw? uh oh. well it will only update on new values i guess.
 }
+
+
 // input y position
-static void op_num_in_x(op_num_t* num, const io_t v) {
-  num->mul = v;
+static void op_num_in_y(op_num_t* num, const io_t v) {
+  if (v > OP_NUM_Y_MAX) {
+    num->reg.y = OP_NUM_Y_MAX;
+  } else {		
+    num->reg.y = v;
+  }
 }
 
 //===== UI input
@@ -115,7 +136,7 @@ static void op_num_inc(op_num_t* num, const s16 idx, const io_t inc) {
     break;
   case 2: // y position
     val = op_sadd(num->mul, inc);
-    op_num_in_x(num, val);
+    op_num_in_y(num, val);
     break;
   }
 }

@@ -68,6 +68,7 @@ extern void scroll_draw(scroll* scr);
  
 // allocate and initialize a screen region
 extern void region_alloc(region* reg);
+
 /// ha
 /*  void region_free(region* reg) */
 

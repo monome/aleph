@@ -16,11 +16,6 @@
 #include "op_math.h"
 #include "types.h"
 
-// fixme: trying with a full quad to start with
-#define OP_NUM_PIX_W 64
-#define OP_NUM_PIX_H 32
-#define OP_NUM_GFX_BYTES (OP_NUM_PIX_W * OP_NUM_PIX_H)
-
 //--- op_num_t : numerical graphic operator
 typedef struct op_num_struct {
   // superclass
@@ -31,7 +26,7 @@ typedef struct op_num_struct {
   volatile io_t y;
   // pointers for external access
   volatile io_t* in_val[3];
-  // no points
+  // no outputs
   op_out_t outs[0];
   // drawing region handler
   region reg;
