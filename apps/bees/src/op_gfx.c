@@ -1,6 +1,6 @@
 #include "op_gfx.h"
 
-extern u8 opPlay = 0;
+u8 opPlay = 0;
 
 static u32 opPlayCount = 0;
 
