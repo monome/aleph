@@ -9,8 +9,6 @@
 #include "pickle.h"
 #include "op_num.h"
 
-
-
 //////  FIXME: trying with a full quad to start with
 // width and height
 #define OP_NUM_PX_W 64
@@ -33,10 +31,8 @@ static const char* op_num_opstring = "NUM";
 static char tmpStr[16];
 // try sharing region data among instances...
 static volatile u8 regData[OP_NUM_GFX_BYTES];
+//// ^^^ fuck. i think that is broken. try moving to class and allocating from op poll?
 
-// rg this is a little insane. 
-//have to have a static init function in addition to instance init?
-///static volatile u8 * pRegData, etc
 
 //-------------------------------------------------
 //----- static function declaration
@@ -157,9 +153,9 @@ void op_num_in_x(op_num_t* num, const io_t v) {
   // blank so we don't leave a trail
   region_fill(&(num->reg), 0);
   if (v > OP_NUM_X_MAX) {
-    num->reg.x = OP_NUM_X_MAX; 
+    num->x = num->reg.x = OP_NUM_X_MAX; 
   } else {		
-    num->reg.x = v;			
+    num->x = num->reg.x = v;
   }
   op_num_redraw(num);
 }
@@ -168,9 +164,9 @@ void op_num_in_x(op_num_t* num, const io_t v) {
 void op_num_in_y(op_num_t* num, const io_t v) {
   // blank so we don't leave a trail
   if (v > OP_NUM_Y_MAX) {
-    num->reg.y = OP_NUM_Y_MAX;
+    num->y = num->reg.y = OP_NUM_Y_MAX;
   } else {		
-    num->reg.y = v;
+    num->y = num->reg.y = v;
   }
   op_num_redraw(num);
 }
@@ -220,9 +216,11 @@ u8* op_num_unpickle(op_num_t* num, const u8* src) {
 // redraw with current state
 void op_num_redraw(op_num_t* num) {
   //// TEST
-  u32 i, j;
-  u8* dat = &(num->reg.data[0]);
+  /* u32 i, j; */
+  /* u8* dat = &(num->reg.data[0]); */
   region* r = &(num->reg);
+
+  if(num->focus <= 0) { return; }
 
   // print value to text buffer
   op_print(tmpStr, num->val);
@@ -236,15 +234,15 @@ void op_num_redraw(op_num_t* num) {
   // render text to region
   region_string_aa(&(num->reg), tmpStr, 0, 0, 1);
 
-  // print the damn data
-    print_dbg("\r\n");
-    for(i=0; i< OP_NUM_PX_H; i++) {
-      for(j=0; j< OP_NUM_PX_W; j++) {
-	if(*dat > 0) { print_dbg("#"); } else { print_dbg("_"); }
-	dat++;
-      }
-      print_dbg("\r\n");
-    }
+  // ascii art
+    /* print_dbg("\r\n"); */
+    /* for(i=0; i< OP_NUM_PX_H; i++) { */
+    /*   for(j=0; j< OP_NUM_PX_W; j++) { */
+    /* 	if(*dat > 0) { print_dbg("#"); } else { print_dbg("_"); } */
+    /* 	dat++; */
+    /*   } */
+    /*   print_dbg("\r\n"); */
+    /* } */
 
     // FIXME: this should NOT go here. gfx ops should inherit from op_poll and only called for a redraw every 100 ms or whatever.
     screen_draw_region(r->x, r->y, r->w, r->h, r->data);
