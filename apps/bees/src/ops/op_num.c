@@ -1,6 +1,11 @@
-#include "net_protected.h"
-#include "print_funcs.h"
+// avr32-lib
+#include "region.h"
+#include "screen.h"
 
+// bees
+#include "net_protected.h"
+#include "op_gfx.h"
+#include "print_funcs.h"
 #include "pickle.h"
 #include "op_num.h"
 
@@ -19,7 +24,7 @@
 //----- static vars
 
 //-- descriptor
-static const char* op_num_instring = "VAL     X       Y       ";
+static const char* op_num_instring = "FOCUS   VAL     X       Y       ";
 static const char* op_num_outstring = "";
 static const char* op_num_opstring = "NUM";
 
@@ -29,6 +34,10 @@ static char tmpStr[16];
 // try sharing region data among instances...
 static volatile u8 regData[OP_NUM_GFX_BYTES];
 
+// rg this is a little insane. 
+//have to have a static init function in addition to instance init?
+///static volatile u8 * pRegData, etc
+
 
 //-------------------------------------------------
 //----- static function declaration
@@ -37,6 +46,7 @@ static volatile u8 regData[OP_NUM_GFX_BYTES];
 // UI increment
 static void op_num_inc(op_num_t* num, const s16 idx, const io_t inc);
 // set inputs
+static void op_num_in_focus(op_num_t* num, const io_t v);
 static void op_num_in_val(op_num_t* num, const io_t v);
 static void op_num_in_x(op_num_t* num, const io_t x);
 static void op_num_in_y(op_num_t* num, const io_t y);
@@ -45,11 +55,16 @@ static void op_num_in_y(op_num_t* num, const io_t y);
 static u8* op_num_pickle(op_num_t* num, u8* dst);
 static u8* op_num_unpickle(op_num_t* num, const u8* src);
 
+
+//// redraw
+static void op_num_redraw(op_num_t* num);
+
 // array of input functions 
-static op_in_fn op_num_in[3] = {
+static op_in_fn op_num_in[4] = {
+  (op_in_fn)&op_num_in_focus,
   (op_in_fn)&op_num_in_val,
-  (op_in_fn)&op_num_in_x
-  (op_in_fn)&op_num_in_y
+  (op_in_fn)&op_num_in_x,
+  (op_in_fn)&op_num_in_y,
 };
 
 //----- external function definition
@@ -65,13 +80,15 @@ void op_num_init(void* op) {
   num->super.unpickle = (op_unpickle_fn) (&op_num_unpickle);
   
   // superclass val
-  num->super.numInputs = 3;
+  num->super.numInputs = 4;
   num->super.numOutputs = 0;
  
   num->super.in_val = num->in_val;
-  num->in_val[0] = &(num->val);
-  num->in_val[1] = &(num->x);
-  num->in_val[2] = &(num->y);
+  num->in_val[0] = &(num->focus);
+  num->in_val[1] = &(num->val);
+  num->in_val[2] = &(num->x);
+  num->in_val[3] = &(num->y);
+
 
   num->super.out = num->outs;
   num->super.opString = op_num_opstring;
@@ -80,44 +97,77 @@ void op_num_init(void* op) {
   num->super.type = eOpNum;
 
   // class val
+  num->focus = 0;
   num->val = 0;
   num->x = 0;
   num->y = 0;
 
-  // init region
+  // init graphics
+  /*.. this is sort of retarded, 
+  doing stuff normally accomplished in region_alloc() or in static init,
+  but doing a dumb memory hack on it to share a tmp data space between instances.
+  */  
+  num->reg.dirty = 0;
+  num->reg.x = 0;
+  num->reg.y = 0;
+  num->reg.w = OP_NUM_PX_W;
+  num->reg.h = OP_NUM_PX_H;
+  num->reg.len = OP_NUM_GFX_BYTES;
+  num->reg.data = (u8*)&regData;
+
+  region_fill(&(num->reg), 0);
+}
+
+
+/// de-initialize
+void op_num_deinit(void* op) {
+  op_num_t* num = (op_num_t*)op;
+  if(num->focus > 0) {
+    op_gfx_unfocus();
+  }
 }
 
 //-------------------------------------------------
 //----- static function definition
 
 //===== operator input
+void op_num_in_focus(op_num_t* num, const io_t v  ) {
+  if(v > 0) {
+    op_gfx_focus();
+    num->focus = 1;
+  } else {
+    op_gfx_unfocus();
+    num->focus = 0;
+  }
+}
 
 // input val
-static void op_num_in_val(op_num_t* num, const io_t v) {
-  // print value to text buffer
-  op_print(tmpBuf, num->val);
-  // render text to region
-  region_string_aa(num->reg, tmpBuf, 0, 0, 1);
+void op_num_in_val(op_num_t* num, const io_t v) {
+  num->val = v;
+  op_num_redraw(num);
 }
 
 // input x position
-static void op_num_in_x(op_num_t* num, const io_t v) {
+void op_num_in_x(op_num_t* num, const io_t v) {
+  // blank so we don't leave a trail
+  region_fill(&(num->reg), 0);
   if (v > OP_NUM_X_MAX) {
     num->reg.x = OP_NUM_X_MAX; 
   } else {		
     num->reg.x = v;			
   }
-  // redraw? uh oh. well it will only update on new values i guess.
+  op_num_redraw(num);
 }
 
-
 // input y position
-static void op_num_in_y(op_num_t* num, const io_t v) {
+void op_num_in_y(op_num_t* num, const io_t v) {
+  // blank so we don't leave a trail
   if (v > OP_NUM_Y_MAX) {
     num->reg.y = OP_NUM_Y_MAX;
   } else {		
     num->reg.y = v;
   }
+  op_num_redraw(num);
 }
 
 //===== UI input
@@ -126,16 +176,19 @@ static void op_num_in_y(op_num_t* num, const io_t v) {
 static void op_num_inc(op_num_t* num, const s16 idx, const io_t inc) {
   io_t val;
   switch(idx) {
-  case 0: // current value
-    val = op_sadd(num->mul, inc);
+  case 0: // focus
+    op_num_in_focus(num, inc);
+    break;
+  case 1: // current value
+    val = op_sadd(num->val, inc);
     op_num_in_val(num, val);
     break;
-  case 1: // x position
-    val = op_sadd(num->mul, inc);
+  case 2: // x position
+    val = op_sadd(num->x, inc);
     op_num_in_x(num, val);
     break;
-  case 2: // y position
-    val = op_sadd(num->mul, inc);
+  case 3: // y position
+    val = op_sadd(num->x, inc);
     op_num_in_y(num, val);
     break;
   }
@@ -157,4 +210,14 @@ u8* op_num_unpickle(op_num_t* num, const u8* src) {
   src = unpickle_io(src, (u32*)&(num->x));
   src = unpickle_io(src, (u32*)&(num->y));
    return (u8*)src;
+}
+
+// redraw with current state
+void op_num_redraw(op_num_t* num) {
+  // print value to text buffer
+  op_print(tmpStr, num->val);
+  // blank
+  region_fill(&(num->reg), 0);
+  // render text to region
+  region_string_aa(&(num->reg), tmpStr, 0, 0, 1);
 }

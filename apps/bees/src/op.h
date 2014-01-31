@@ -26,6 +26,7 @@ typedef enum {
   eOpFlagMonomeGrid, // op is a monome grid controller
   eOpFlagMonomeRing, // op is a monome arc controller
   eOpFlagMidiIn, // op is a midi input
+  // op is gfx?
   //...
 } op_flag_t;
 
@@ -60,6 +61,7 @@ typedef enum {
   eOpList2,
   eOpLife,
   eOpHistory,
+  eOpNum,
   numOpClasses // dummy/count 
 } op_id_t;
 
