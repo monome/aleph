@@ -1,3 +1,5 @@
+#include "print_funcs.h"
+
 #include "op_gfx.h"
 
 u8 opPlay = 0;
@@ -12,7 +14,11 @@ void op_gfx_focus(void) {
 
 // operator releases focus
 extern void op_gfx_unfocus(void) {
+  print_dbg("\r\n decrementing focus count, old value: ");
+  print_dbg_ulong(opPlayCount);
   opPlayCount--;
-  if(opPlayCount ==0) { opPlay = 0; }
+  if(opPlayCount ==0) { 
+    opPlay = 0; 
+    print_dbg("\r\n , unset opPlay flag. ");
+  }
 }
-
