@@ -38,10 +38,8 @@ static volatile u8 regData[OP_NUM_GFX_BYTES];
 //have to have a static init function in addition to instance init?
 ///static volatile u8 * pRegData, etc
 
-
 //-------------------------------------------------
 //----- static function declaration
-
 
 // UI increment
 static void op_num_inc(op_num_t* num, const s16 idx, const io_t inc);
@@ -89,7 +87,6 @@ void op_num_init(void* op) {
   num->in_val[2] = &(num->x);
   num->in_val[3] = &(num->y);
 
-
   num->super.out = num->outs;
   num->super.opString = op_num_opstring;
   num->super.inString = op_num_instring;
@@ -113,7 +110,7 @@ void op_num_init(void* op) {
   num->reg.w = OP_NUM_PX_W;
   num->reg.h = OP_NUM_PX_H;
   num->reg.len = OP_NUM_GFX_BYTES;
-  num->reg.data = (u8*)&regData;
+  num->reg.data = (u8*) regData;
 
   region_fill(&(num->reg), 0);
 }
@@ -133,11 +130,19 @@ void op_num_deinit(void* op) {
 //===== operator input
 void op_num_in_focus(op_num_t* num, const io_t v  ) {
   if(v > 0) {
-    op_gfx_focus();
-    num->focus = 1;
-  } else {
-    op_gfx_unfocus();
-    num->focus = 0;
+    if(num->focus > 0) {
+      ;;
+    } else {
+      op_gfx_focus();
+      num->focus = 1;
+    }
+  } else { 
+    if(num->focus > 0) {
+      op_gfx_unfocus();
+      num->focus = 0;
+    } else {
+      ;;
+    }
   }
 }
 
@@ -214,10 +219,33 @@ u8* op_num_unpickle(op_num_t* num, const u8* src) {
 
 // redraw with current state
 void op_num_redraw(op_num_t* num) {
+  //// TEST
+  u32 i, j;
+  u8* dat = &(num->reg.data[0]);
+  region* r = &(num->reg);
+
   // print value to text buffer
   op_print(tmpStr, num->val);
+
+  print_dbg("\r\n op_num_redraw , ");
+  print_dbg(tmpStr);
+
   // blank
   region_fill(&(num->reg), 0);
+
   // render text to region
   region_string_aa(&(num->reg), tmpStr, 0, 0, 1);
+
+  // print the damn data
+    print_dbg("\r\n");
+    for(i=0; i< OP_NUM_PX_H; i++) {
+      for(j=0; j< OP_NUM_PX_W; j++) {
+	if(*dat > 0) { print_dbg("#"); } else { print_dbg("_"); }
+	dat++;
+      }
+      print_dbg("\r\n");
+    }
+
+    // FIXME: this should NOT go here. gfx ops should inherit from op_poll and only called for a redraw every 100 ms or whatever.
+    screen_draw_region(r->x, r->y, r->w, r->h, r->data);
 }

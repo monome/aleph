@@ -8,6 +8,9 @@ static u32 opPlayCount = 0;
 
 // operator declares focus
 void op_gfx_focus(void) {
+  print_dbg("\r\n incrementing focus count, old value: ");
+  print_dbg_ulong(opPlayCount);
+
   opPlayCount++;
   opPlay = 1;
 }
