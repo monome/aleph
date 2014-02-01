@@ -99,7 +99,10 @@ extern void delayN_set_write(delayN* dl, u8 write) {
 
 // set read head rate
 extern void delayN_set_rate(delayN* dl, fix16 rate) {
-  ///...
+    ///...
+  
+
+
 }
 
 // set read pos in seconds

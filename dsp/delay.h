@@ -41,8 +41,10 @@ extern void delay_set_loop_samp(delayLine* dl, u32 samp);
 // set delay time in seconds / samples
 extern void delay_set_delay_sec(delayLine* dl, fix16 sec); 
 extern void delay_set_delay_samp(delayLine* dl, u32 samp); 
+
 // set read head rate
-extern void delay_set_rate(delayLine* dl, fix16 rate);
+// extern void delay_set_rate(delayLine* dl, fix16 rate);
+
 // set erase level
 extern void delay_set_pre(delayLine* dl, fract32 pre);
 // set write flag
@@ -62,5 +64,9 @@ extern void delay_set_run_read(delayLine* dl, u8 val);
 extern void delay_set_run_write(delayLine* dl, u8 val);
 
 
+// set read-head rate multiplier
+extern void delay_set_mul(delayLine* dl, u32 val);
+// set read-head rate divider
+extern void delay_set_div(delayLine* dl, u32 val);
 
 #endif // h guard
