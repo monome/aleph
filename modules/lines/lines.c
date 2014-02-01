@@ -99,6 +99,7 @@ fract32 out_svf[NLINES] = { 0, 0 };
 
 //-- parameter integrators
 filter_1p_lo svfCutSlew[2];
+filter_1p_lo svfRqSlew[2];
 
 // 10v dac values (u16, but use fract32 and audio integrators, for now)
 fract32 cvVal[4];
@@ -342,9 +343,12 @@ void module_process_frame(void) {
     // process delay line
     tmpDel = delay_next( &(lines[i]), in_del[i]);	    
     // process filter
-    // check integrator and set cutoff if needed
+    // check integrators for filter params
     if( !(svfCutSlew[i].sync) ) {
       filter_svf_set_coeff( &(svf[i]), filter_1p_lo_next(&(svfCutSlew[i])) );
+    }
+    if( !(svfRqSlew[i].sync) ) {
+      filter_svf_set_rq( &(svf[i]), filter_1p_lo_next(&(svfRqSlew[i])) );
     }
     tmpSvf = filter_svf_next( &(svf[i]), tmpDel);  
     // mix
@@ -352,15 +356,9 @@ void module_process_frame(void) {
     tmpDel = add_fr1x32(tmpDel, mult_fr1x32x32(tmpSvf, mix_fwet[i]) );
 
     out_del[i] = tmpDel;
-    // hard patching always works...
-    //      out_del[i] = out_svf[i];
 
   } // end lines loop 
-  
-    /* out_svf[0] = filter_svf_next(&(svf[0]), noise_next()); */
-    /* out_del[0] = out_svf[0]; */
-    /* out_del[1] = 0; */
-
+ 
     // mix outputs to DACs
   mix_outputs();
 

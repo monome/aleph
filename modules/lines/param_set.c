@@ -46,7 +46,6 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_rDiv0 :
     delay_set_div(&(lines[0]), v >> 16);
     break;
-
   case eParam_rMul1 :
     delay_set_mul(&(lines[1]), v >> 16);
     break;
@@ -86,14 +85,16 @@ void module_set_param(u32 idx, ParamValue v) {
     filter_1p_lo_in(&(svfCutSlew[1]), v);
     break;
   case eParam_rq0 :
+    //    filter_svf_set_rq(&(svf[0]), v);
     // incoming param value is 16.16
     // target is 2.30
-    //    filter_svf_set_rq(&(svf[0]), v);
-    filter_svf_set_rq(&(svf[0]), v << 14);
+    //    filter_svf_set_rq(&(svf[0]), v << 14);
+    filter_1p_lo_in(&(svfRqSlew[0]), v << 14);
     break;
   case eParam_rq1 :
     //    filter_svf_set_rq(&(svf[1]), v);
-    filter_svf_set_rq(&(svf[1]), v << 14);
+    //    filter_svf_set_rq(&(svf[1]), v << 14);
+    filter_1p_lo_in(&(svfRqSlew[1]), v << 14);
     break;
   case eParam_low0 :
     filter_svf_set_low(&(svf[0]), v);

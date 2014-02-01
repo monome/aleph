@@ -97,7 +97,7 @@
 }
 
 // set write level
- void delay_set_write(delayLine* dl, u8 write) {
+void delay_set_write(delayLine* dl, u8 write) {
   dl->write = write;
 }
 
@@ -115,7 +115,6 @@
   buffer_tapN_set_pos(&(dl->tapRd), samp);
 }
 
-
 // set write pos in seconds
  void delay_set_pos_write_sec(delayLine* dl, fix16 sec) {
   u32 samp = sec_to_frames_trunc(sec);
@@ -125,7 +124,6 @@
  void delay_set_pos_write_samp(delayLine* dl, u32 samp) {
   buffer_tapN_set_pos(&(dl->tapWr), samp);
 }
-
 
 // set read run flag 
  void delay_set_run_read(delayLine* dl, u8 val) {
