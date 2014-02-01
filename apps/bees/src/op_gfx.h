@@ -14,10 +14,10 @@
 extern u8 opPlay;
 
 
-// operator declares focus
-extern void op_gfx_focus(void);
-// operator releases focus
-extern void op_gfx_unfocus(void);
+// operator enabled
+extern void op_gfx_enable(void);
+// operator disabled
+extern void op_gfx_disable(void);
 
 // abstract superclass for gfx operators
 /// might not even need this.

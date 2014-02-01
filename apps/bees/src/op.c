@@ -154,10 +154,10 @@ const op_desc_t op_registry[numOpClasses] = {
     .init = &op_history_init,
     .deinit = NULL    
   }, {
-    .name = "NUMBER",
-    .size = sizeof(op_num_t),
-    .init = &op_num_init,
-    .deinit = &op_num_deinit
+    .name = "BIGNUM",
+    .size = sizeof(op_bignum_t),
+    .init = &op_bignum_init,
+    .deinit = &op_bignum_deinit
   }
 
 };

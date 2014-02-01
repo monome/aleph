@@ -21,6 +21,8 @@
 #define FRACT32_MIN     ((fract32)0x80000000)    /* min value of a fract32 */
 #endif
 
+
+// FIXME these are so awful... 
 #define BIT_SIGN_32(x) ((x) & 0x80000000)
 #define BIT_INVERT_32(x) ( (s32)( ((x) ^ 0xffffffff) + 1) )
 #define BIT_ABS_32(x) (BIT_SIGN_32(x) ? BIT_INVERT_32(x) : (x))
