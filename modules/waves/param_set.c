@@ -60,20 +60,25 @@ void module_set_param(u32 idx, ParamValue v) {
 
     //// filter params:
   case eParam_cut1 :
-    filter_svf_set_coeff(&(voice[1].svf), v );
+    //    filter_svf_set_coeff(&(voice[1].svf), v );
+    filter_1p_lo_in( &(voice[1].cutSlew), v );
     break;
   case eParam_cut0 :
-    filter_svf_set_coeff(&(voice[0].svf), v );
+    //    filter_svf_set_coeff(&(voice[0].svf), v );
+    filter_1p_lo_in( &(voice[0].cutSlew), v );
     break;
   case eParam_rq1 :
     // incoming param value is 16.16
     // target is 2.30
     //    filter_svf_set_rq(&(voice[1].svf), v);
-    filter_svf_set_rq(&(voice[1].svf), v << 14);
+    //    filter_svf_set_rq(&(voice[1].svf), v << 14);
+    filter_1p_lo_in( &(voice[1].rqSlew), v << 14 );
     break;
   case eParam_rq0 :
     //    filter_svf_set_rq(&(voice[0].svf), v);
-    filter_svf_set_rq(&(voice[0].svf), v << 14);
+    //    filter_svf_set_rq(&(voice[0].svf), v << 14);
+    filter_1p_lo_in( &(voice[0].rqSlew), v << 14 );
+
     break;
   case eParam_low1 :
     filter_svf_set_low(&(voice[1].svf), v);

@@ -30,8 +30,8 @@ static inline void osc_calc_wm(osc* osc) {
   fract32 sm; // mod shape
   // fract32 sl; // shape limit given current freq
 
-
   // add modulation
+  //// FIXME: this is dumb, should be multiplied?
   sm = add_fr1x32(osc->shape, mult_fr1x32x32(osc->wmIn, osc->wmAmt) );
   
   //- hacky magic formula for pseudo-bandlimiting:
