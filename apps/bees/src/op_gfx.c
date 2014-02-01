@@ -20,7 +20,10 @@ extern void op_gfx_disable(void) {
   print_dbg("\r\n decrementing gfx op count, old value: ");
   print_dbg_ulong(opPlayCount);
   opPlayCount--;
-  if(opPlayCount ==0) { 
+  if(opPlayCount < 0) {
+    opPlayCount = 0;
+  }
+  if(opPlayCount == 0) { 
     opPlay = 0; 
     print_dbg("\r\n , unset opPlay flag. ");
   }

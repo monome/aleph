@@ -200,7 +200,10 @@ void op_bignum_poll_handler(void* op) {
   op_bignum_t* bignum = (op_bignum_t*)op;
   region* r = &(bignum->reg);
   if(pageIdx == ePagePlay) {
-    screen_draw_region(r->x, r->y, r->w, r->h, r->data);
+    if(r->dirty) {
+      screen_draw_region(r->x, r->y, r->w, r->h, r->data);
+      r->dirty = 0;
+    }
   }
 }
 
@@ -236,6 +239,8 @@ static void op_bignum_inc(op_bignum_t* bignum, const s16 idx, const io_t inc) {
 // serialization
 u8* op_bignum_pickle(op_bignum_t* bignum, u8* dst) {
   // store val variables
+  dst = pickle_io(bignum->enable, dst);
+  dst = pickle_io(bignum->period, dst);
   dst = pickle_io(bignum->val, dst);
   dst = pickle_io(bignum->x, dst);
   dst = pickle_io(bignum->y, dst);
@@ -244,6 +249,11 @@ u8* op_bignum_pickle(op_bignum_t* bignum, u8* dst) {
 
 u8* op_bignum_unpickle(op_bignum_t* bignum, const u8* src) {
   // retreive val  variables
+  //////////////
+  //// FIXME: i think this is wrong... need to re-set the input value for reregistration? 
+  src = unpickle_io(src, (u32*)&(bignum->enable));
+  //////////////
+  src = unpickle_io(src, (u32*)&(bignum->period));
   src = unpickle_io(src, (u32*)&(bignum->val));
   src = unpickle_io(src, (u32*)&(bignum->x));
   src = unpickle_io(src, (u32*)&(bignum->y));

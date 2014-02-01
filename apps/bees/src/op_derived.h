@@ -32,6 +32,7 @@
 #include "ops/op_split.h"
 #include "ops/op_sub.h"
 #include "ops/op_random.h"
+#include "ops/op_screen.h"
 #include "ops/op_sw.h"
 #include "ops/op_thresh.h"
 #include "ops/op_timer.h"

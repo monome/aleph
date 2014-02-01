@@ -62,6 +62,7 @@ typedef enum {
   eOpLife,
   eOpHistory,
   eOpBignum,
+  eOpScreen,
   numOpClasses // dummy/count 
 } op_id_t;
 

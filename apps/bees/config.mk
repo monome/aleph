@@ -54,6 +54,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_mul.c \
 	$(APP_DIR)/src/ops/op_monome_grid_raw.c \
 	$(APP_DIR)/src/ops/op_preset.c \
+	$(APP_DIR)/src/ops/op_screen.c \
 	$(APP_DIR)/src/ops/op_split.c \
 	$(APP_DIR)/src/ops/op_sub.c \
 	$(APP_DIR)/src/ops/op_sw.c \
