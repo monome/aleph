@@ -41,14 +41,11 @@ fract32 fade_lin_calc(fadeLin* fade) {
   return ret;
 }
 
-
-
-
 //---------------
 //--- equal-power crossfade
 //static fract32 fade_ep_calc(fadeEP* fade);
 
-// setting any of the inputs returns the crossfaded value.
+// setting any of the inputs returns the crossfaded value. 
 fract32 fade_ep_x(fadeEP* fade, fract32 v) {
   fade->x = v;
   return fade_ep_calc(fade);

@@ -41,17 +41,17 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_rMul0 :
 
-    delay_set_mul(&(lines[0]), v);
+    delay_set_mul(&(lines[0]), v >> 16);
     break;
   case eParam_rDiv0 :
-    delay_set_div(&(lines[0]), v);
+    delay_set_div(&(lines[0]), v >> 16);
     break;
 
   case eParam_rMul1 :
-    delay_set_mul(&(lines[1]), v);
+    delay_set_mul(&(lines[1]), v >> 16);
     break;
   case eParam_rDiv1 :
-    delay_set_div(&(lines[1]), v);
+    delay_set_div(&(lines[1]), v >> 16);
     break;
 
   case eParam_write0 :

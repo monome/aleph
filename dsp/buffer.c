@@ -143,7 +143,8 @@ fract32 buffer_tapN_read(bufferTapN *tap) {
   fract32 a, b;
   fix16 tmp;
 
-#if 1
+  // hmm...
+#if 0
   if(tap->divCount == 0) {
     return tap->buf->data[tap->idx];
   } else { // interpolate during phase-division
@@ -182,7 +183,7 @@ void buffer_tapN_add(bufferTapN *tap, fract32 val) {
 // increment position of a tap
 void buffer_tapN_next(bufferTapN *tap) {
   tap->divCount++;
-  if(tap->divCount == tap->div) {
+  if(tap->divCount >= tap->div) {
     tap->divCount = 0;
     tap->idx += tap->inc;
     while(tap->idx > (tap->loop - 1)) {
@@ -199,6 +200,8 @@ void buffer_tapN_set_inc(bufferTapN *tap, u32 inc) {
 // set rate divisor
 void buffer_tapN_set_div(bufferTapN *tap, u32 div) {
   tap->div = div;
+  // reset divcount? ok 
+  tap->divCount = 0;
 }
 
 // set rate divisor
