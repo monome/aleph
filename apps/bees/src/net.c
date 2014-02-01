@@ -29,6 +29,7 @@
 #include "net_protected.h"
 #include "op.h" 
 #include "op_derived.h"
+#include "op_gfx.h"
 #include "pages.h"
 #include "param.h"
 #include "play.h"
@@ -113,11 +114,11 @@ static void add_sys_ops(void) {
 
 static u8* onode_pickle(onode_t* out, u8* dst) {
   // operator output index
-  dst = pickle_32((u32)(out->opOutIdx), dst);
+  //  dst = pickle_32((u32)(out->opOutIdx), dst);
   // target
   dst = pickle_32((u32)(out->target), dst);
   // parent op's index in net list
-  dst = pickle_32((u32)(out->opIdx), dst);
+  //  dst = pickle_32((u32)(out->opIdx), dst);
   // preset inclusion flag ; cast to 4 bytes for alignment
   //  dst = pickle_32((u32)(out->preset), dst);
   return dst;
@@ -126,16 +127,17 @@ static u8* onode_pickle(onode_t* out, u8* dst) {
 static const u8* onode_unpickle(const u8* src, onode_t* out) {
   u32 v32;
 
-  // operator output index
-  src = unpickle_32(src, &v32);
-  out->opOutIdx = (u8)v32;
+  /* // operator output index */
+  /* src = unpickle_32(src, &v32); */
+  /* out->opOutIdx = (u8)v32; */
+
   // output target
   src = unpickle_32(src, &v32);
   out->target = (s16)v32;
 
-  // index of parent op
-  src = unpickle_32(src, &v32);
-  out->opIdx = (s32)v32;
+  /* // index of parent op */
+  /* src = unpickle_32(src, &v32); */
+  /* out->opIdx = (s32)v32; */
 
   // preset flag: 32 bits for alignment
   //  src = unpickle_32(src, &v32);
@@ -342,10 +344,16 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
 
   /// only process for play mode if we're in play mode
   if(pageIdx == ePagePlay) {
-    print_dbg(" , play mode active ");
-    // only process if play-mode-visibility is set
-    if(vis) {
-      play_input(inIdx);
+    print_dbg(" , play mode ");
+    if(opPlay) {
+      //      operators have focus, do nothing
+      print_dbg(" , op focus mode");
+    } else {
+      // process if play-mode-visibility is set on this input
+      if(vis) {
+	print_dbg(" , input enabled");
+	play_input(inIdx);
+      }
     }
   }  
   

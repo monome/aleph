@@ -36,19 +36,6 @@
 //-------------------------------------------
 //-- extern vars (here)
 
-#ifndef MIN
-#define MIN 0
-#endif
-#ifndef MAJ
-#define MAJ 0
-#endif
-#ifndef REV
-#define REV 0
-#endif
-#ifndef VERSIONSTRING
-#define VERSIONSTRING "none"
-#endif
-
 // maj = 1byte, min = 1byte, rev = 2byte
 //const u32 beesVersion = (MAJ << 24) | (MIN << 16) | (REV << 8);
 const AppVersion beesVersion = { .min = MIN , .maj = MAJ , .rev = REV };

@@ -9,7 +9,6 @@
 ///=================
 ///===== static
 
-
 // increment scroll line
 static void scroll_inc_line(scroll* scr) {
   s32 byteoff = scr->byteOff + scr->lineBytes;
@@ -58,7 +57,7 @@ void region_alloc(region* reg) {
 void region_string(
 		   region* reg,	 // region
 		   const char* str,// string
-		   u8 x, u8 y, 	 // offset
+		   u8 x, u8 y, 	 // offset within region
 		   u8 a, u8 b, 	 // colors
 		   u8 sz)  // size levels (dimensions multiplied by 2**sz)
 {

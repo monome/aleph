@@ -34,6 +34,9 @@ void op_is_init(void* mem) {
   is->super.numInputs = 4;
   is->super.numOutputs = 4;
   is->outs[0] = -1;
+  is->outs[1] = -1;
+  is->outs[2] = -1;
+  is->outs[3] = -1;
 
   is->super.inc_fn = (op_inc_fn)op_is_inc_input;
   is->super.in_fn = op_is_in_fn;

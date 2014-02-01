@@ -11,7 +11,6 @@
 #include "render.h"
 #include "scene.h"
 
-
 //------------------------------
 // static vars
 
@@ -31,7 +30,7 @@ static s8 cursor = 0;
 
 // kludge:
 // constant pointer to this page's selection
-static s16* const pageSelect = &(pages[ePageDsp].select);
+static s16* const pageSelect = &(pages[ePageScenes].select);
 
 //-------------------------
 //---- static funcs
@@ -153,6 +152,7 @@ void handle_key_0(s32 val) {
     render_update();
     region_fill(headRegion, 0x0);
 
+
     files_store_scene_name(sceneData->desc.sceneName, 1);
 
     print_dbg("\r\n stored scene, back to handler");
@@ -162,7 +162,8 @@ void handle_key_0(s32 val) {
     render_update();
 
     // refresh
-    redraw_lines();
+    //    redraw_lines();
+    redraw_scenes();
   }
   show_foot();
 }
@@ -362,7 +363,6 @@ void redraw_scenes(void) {
   // set scroll region
   // FIXME: should be separate function i guess
   render_set_scroll(&centerScroll);
-
 
   while(i<8) {
     render_line( n, 0xa );

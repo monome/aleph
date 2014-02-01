@@ -24,8 +24,8 @@ static const u8* op_bits_unpickle(op_bits_t* op, const u8* src);
 
 //-------------------------------------------------
 //---- static vars
-static const char* op_bits_instring = "INDEX   I0      I1      I2      I3      I4      I5      I6      I7      ";
-static const char* op_bits_outstring = "VAL     O0      O1      O2      O3      O4      O5      O6      O7      ";
+static const char* op_bits_instring = "IN   I0      I1      I2      I3      I4      I5      I6      I7      ";
+static const char* op_bits_outstring = "OUT     O0      O1      O2      O3      O4      O5      O6      O7      ";
 static const char* op_bits_opstring = "BITS";
 
 static op_in_fn op_bits_in_fn[9] = {
@@ -47,6 +47,14 @@ void op_bits_init(void* mem) {
   bits->super.numInputs = 9;
   bits->super.numOutputs = 9;
   bits->outs[0] = -1;
+  bits->outs[1] = -1;
+  bits->outs[2] = -1;
+  bits->outs[3] = -1;
+  bits->outs[4] = -1;
+  bits->outs[5] = -1;
+  bits->outs[6] = -1;
+  bits->outs[7] = -1;
+  bits->outs[8] = -1;
 
   bits->super.inc_fn = (op_inc_fn)op_bits_inc_input;
   bits->super.in_fn = op_bits_in_fn;

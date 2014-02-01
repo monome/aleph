@@ -28,7 +28,7 @@ typedef struct op_life_struct {
   op_t super;
   op_monome_t monome; 
 
-  volatile u16 pop, lpop, apop;
+  volatile u16 pop, lpop;
 
   volatile io_t next;
   volatile io_t xsize;
@@ -38,8 +38,9 @@ typedef struct op_life_struct {
   volatile io_t set;
   volatile io_t noise;
   volatile io_t rules;
-  volatile io_t* in_val[8];
-  op_out_t outs[6];
+  volatile io_t focus;
+  volatile io_t* in_val[9];
+  op_out_t outs[3];
 } op_life_t;
 
 void op_life_init(void* life);

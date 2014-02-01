@@ -14,13 +14,14 @@ static void op_life_in_y(op_life_t* life, const io_t v);
 static void op_life_in_set(op_life_t* life, const io_t v);
 static void op_life_in_noise(op_life_t* life, const io_t v);
 static void op_life_in_rules(op_life_t* life, const io_t v);
+static void op_life_in_focus(op_life_t* life, const io_t v);
 
 static void op_life_output(op_life_t* life);
 
 // life
 static void life_change(u8,u8);
 static void life_init(void);
-static u8 neighbors(u8,u8);
+static u8 neighbors(u8,u8,u16);
 
 // monome event handler
 static void op_life_handler(op_monome_t* op_monome, u32 data);
@@ -32,7 +33,7 @@ static const u8* op_life_unpickle(op_life_t* op, const u8* src);
 
 //-------------------------------------------------
 //----- static vars
-static op_in_fn op_life_in_fn[8] = {
+static op_in_fn op_life_in_fn[9] = {
   (op_in_fn)&op_life_in_next,
   (op_in_fn)&op_life_in_xsize,
   (op_in_fn)&op_life_in_ysize,
@@ -40,11 +41,12 @@ static op_in_fn op_life_in_fn[8] = {
   (op_in_fn)&op_life_in_y,
   (op_in_fn)&op_life_in_set,
   (op_in_fn)&op_life_in_noise,
-  (op_in_fn)&op_life_in_rules
+  (op_in_fn)&op_life_in_rules,
+  (op_in_fn)&op_life_in_focus
 };
 
-static const char* op_life_instring  = "NEXT    XSIZE   YSIZE   X       Y       SET     NOISE   RULES   ";
-static const char* op_life_outstring = "VAL     POP     DELTA   AVG     XD      YD      ";
+static const char* op_life_instring  = "NEXT    XSIZE   YSIZE   X       Y       SET     NOISE   RULES   FOCUS   ";
+static const char* op_life_outstring = "VAL     POP     DELTA   ";
 static const char* op_life_opstring  = "LIFE";
 
 
@@ -60,9 +62,11 @@ void op_life_init(void* mem) {
   life->monome.handler = (monome_handler_t)&op_life_handler;
   life->monome.op = life;
 
-  life->super.numInputs = 8;
-  life->super.numOutputs = 6;
+  life->super.numInputs = 9;
+  life->super.numOutputs = 3;
   life->outs[0] = -1;
+  life->outs[1] = -1;
+  life->outs[2] = -1;
 
   life->super.inc_fn = (op_inc_fn)op_life_inc_input;
   life->super.in_fn = op_life_in_fn;
@@ -85,6 +89,7 @@ void op_life_init(void* mem) {
   life->in_val[5] = &(life->set);
   life->in_val[6] = &(life->noise);
   life->in_val[7] = &(life->rules);
+  life->in_val[8] = &(life->focus);
 
   life->next = 0;
   life->xsize = 16;
@@ -94,8 +99,9 @@ void op_life_init(void* mem) {
   life->set = 0;
   life->noise = 0;
   life->rules = 0;
+  life->focus = 1;
 
-  life->pop = life->lpop = life->apop = 0;
+  life->pop = life->lpop = 0;
 
   life_init();
 
@@ -110,14 +116,23 @@ void op_life_deinit(void* op) {
 
 //-------------------------------------------------
 //----- static function definitions
+static void op_life_in_focus(op_life_t* op, const io_t v) {
+  if((v) > 0) {
+    op->focus = OP_ONE;
+  } else {
+    op->focus = 0;;
+  }
+  net_monome_set_focus( &(op->monome), op->focus > 0);
+}
+
 static void op_life_in_next(op_life_t* life, const io_t v) {
   if(v!=0) {
     u8 i, x, y, count;
     u8 *p = monomeLedBuffer;
 
-    for(x=0;x<8;x++)
+    for(x=0;x<life->xsize;x++)
     {
-      for(y=0;y<8;y++)
+      for(y=0;y<life->ysize;y++)
       {
         i = x+(y<<4);
         if(lifenext[i]==1)
@@ -134,12 +149,12 @@ static void op_life_in_next(op_life_t* life, const io_t v) {
       }
     }
 
-    for(x=0; x < 8; x++)
+    for(x=0; x < life->xsize; x++)
     { 
-      for(y=0; y < 8; y++) 
+      for(y=0; y < life->ysize; y++) 
       { 
         i = x+(y<<4);
-        count = neighbors(x, y);
+        count = neighbors(x, y, life->xsize * life->ysize);
 
         if (count == 3 && lifenow[i] == 0 && life->rules != 2) 
           lifenext[i]=1;
@@ -150,10 +165,9 @@ static void op_life_in_next(op_life_t* life, const io_t v) {
 
     // FIXME: OPTIMIZE
     monome_set_quadrant_flag(0);
-    // if(life->xsize>8) monome_set_quadrant_flag(1);
-    // if(life->ysize>8) { monome_set_quadrant_flag(2); monome_set_quadrant_flag(2); }
 
-    // net_activate(life->outs[0], life->val, life);
+    if(life->xsize>8) monome_set_quadrant_flag(1);
+    if(life->ysize>8) { monome_set_quadrant_flag(2); monome_set_quadrant_flag(3); }
 
     op_life_output(life);
   }
@@ -173,12 +187,16 @@ static void op_life_in_x(op_life_t* life, const io_t v) {
   if(v < 0) life->x = 0;
   else if(v > life->xsize) life->x = life->xsize;
   else life->x = v;
+
+  net_activate(life->outs[0], lifenow[life->x + (life->y << 4)], life);
 }
 
 static void op_life_in_y(op_life_t* life, const io_t v) {
   if(v < 0) life->y = 0;
   else if(v > life->ysize) life->y = life->ysize;
   else life->y = v;
+
+  net_activate(life->outs[0], lifenow[life->x + (life->y << 4)], life);
 }
 
 static void op_life_in_set(op_life_t* life, const io_t v) {
@@ -190,6 +208,8 @@ static void op_life_in_set(op_life_t* life, const io_t v) {
 
   p[i]=lifenow[i];
   monome_calc_quadrant_flag(life->x, life->y);
+
+  op_life_output(life);
 }
 
 static void op_life_in_noise(op_life_t* life, const io_t v) {
@@ -247,6 +267,9 @@ static void op_life_inc_input(op_life_t* life, const s16 idx, const io_t inc) {
     val = op_add(life->rules, inc);
     op_life_in_rules(life, val);
     break;  
+  case 8:
+    op_life_in_focus(life, inc);
+    break; 
   }
 }
 
@@ -259,11 +282,6 @@ static void op_life_output(op_life_t* life) {
   for(u16 i=0;i<256;i++) life->pop += lifenow[i];
   net_activate(life->outs[1], life->pop, life);
   net_activate(life->outs[2], (life->pop - life->lpop), life);
-  life->apop -= life->apop / 8;
-  life->apop += life->pop * 8;
-  net_activate(life->outs[3], life->apop / 64, life);
-
-
 }
 
 
@@ -284,39 +302,54 @@ static void life_change(u8 x,u8 y) {
   monome_calc_quadrant_flag(x, y);
 }
 
-static u8 neighbors(u8 x, u8 y)
+static u8 neighbors(u8 x, u8 y, u16 s)
 {
-  return lifenow[((x + 1) % 8) + ((y)<<4)] + 
-    lifenow[(x) + (((y + 1) % 8)<<4)] + 
-    lifenow[((x + 8 - 1) % 8) + ((y)<<4)] + 
-    lifenow[(x) + (((y + 8 - 1) % 8)<<4)] + 
-    lifenow[((x + 1) % 8) + (((y + 1) % 8)<<4)] + 
-    lifenow[((x + 8 - 1) % 8) + (((y + 1) % 8)<<4)] + 
-    lifenow[((x + 8 - 1) % 8) + (((y + 8 - 1) % 8)<<4)] + 
-    lifenow[((x + 1) % 8) + (((y + 8 - 1) % 8)<<4)]; 
+  if(s==64)
+    return lifenow[((x + 1) % 8) + ((y)<<4)] + 
+      lifenow[(x) + (((y + 1) % 8)<<4)] + 
+      lifenow[((x + 8 - 1) % 8) + ((y)<<4)] + 
+      lifenow[(x) + (((y + 8 - 1) % 8)<<4)] + 
+      lifenow[((x + 1) % 8) + (((y + 1) % 8)<<4)] + 
+      lifenow[((x + 8 - 1) % 8) + (((y + 1) % 8)<<4)] + 
+      lifenow[((x + 8 - 1) % 8) + (((y + 8 - 1) % 8)<<4)] + 
+      lifenow[((x + 1) % 8) + (((y + 8 - 1) % 8)<<4)];
+  else if(s==256)
+    return lifenow[((x + 1) % 16) + ((y)<<4)] + 
+      lifenow[(x) + (((y + 1) % 16)<<4)] + 
+      lifenow[((x + 16 - 1) % 16) + ((y)<<4)] + 
+      lifenow[(x) + (((y + 16 - 1) % 16)<<4)] + 
+      lifenow[((x + 1) % 16) + (((y + 1) % 16)<<4)] + 
+      lifenow[((x + 16 - 1) % 16) + (((y + 1) % 16)<<4)] + 
+      lifenow[((x + 16 - 1) % 16) + (((y + 16 - 1) % 16)<<4)] + 
+      lifenow[((x + 1) % 16) + (((y + 16 - 1) % 16)<<4)];
+  else
+    return lifenow[((x + 1) % 16) + ((y)<<4)] + 
+      lifenow[(x) + (((y + 1) % 8)<<4)] + 
+      lifenow[((x + 16 - 1) % 16) + ((y)<<4)] + 
+      lifenow[(x) + (((y + 8 - 1) % 8)<<4)] + 
+      lifenow[((x + 1) % 16) + (((y + 1) % 8)<<4)] + 
+      lifenow[((x + 16 - 1) % 16) + (((y + 1) % 8)<<4)] + 
+      lifenow[((x + 16 - 1) % 16) + (((y + 8 - 1) % 8)<<4)] + 
+      lifenow[((x + 1) % 16) + (((y + 8 - 1) % 8)<<4)];
 }
 
 // pickle / unpickle
 u8* op_life_pickle(op_life_t* op, u8* dst) {
-  dst = pickle_io(op->next, dst);
   dst = pickle_io(op->xsize, dst);
   dst = pickle_io(op->ysize, dst);
   dst = pickle_io(op->x, dst);
   dst = pickle_io(op->y, dst);
-  dst = pickle_io(op->set, dst);
-  dst = pickle_io(op->noise, dst);
   dst = pickle_io(op->rules, dst);
+  dst = pickle_io(op->focus, dst);
   return dst;
 }
 
 const u8* op_life_unpickle(op_life_t* op, const u8* src ) {
-  src = unpickle_io(src, &(op->next));
   src = unpickle_io(src, &(op->xsize));
   src = unpickle_io(src, &(op->ysize));
   src = unpickle_io(src, &(op->x));
   src = unpickle_io(src, &(op->y));
-  src = unpickle_io(src, &(op->set));
-  src = unpickle_io(src, &(op->noise));
   src = unpickle_io(src, &(op->rules));
+  src = unpickle_io(src, &(op->focus));
   return src;
 }

@@ -148,6 +148,16 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_life_t),
     .init = &op_life_init,
     .deinit = NULL    
+  }, {
+    .name = "HISTORY",
+    .size = sizeof(op_history_t),
+    .init = &op_history_init,
+    .deinit = NULL    
+  }, {
+    .name = "NUMBER",
+    .size = sizeof(op_num_t),
+    .init = &op_num_init,
+    .deinit = &op_num_deinit
   }
 
 };

@@ -19,7 +19,7 @@
 typedef struct _presetIn {
   io_t value;
   // FIXME: why do we need to store idx?
-  s16 idx;
+  //  s16 idx;
   u8 enabled;
 } presetIn_t;
 
@@ -28,7 +28,7 @@ typedef struct _presetIn {
 typedef struct _presetOut {
   s16 target;
   // why do we need to store idx?
-  s16 outIdx;
+  //  s16 outIdx;
   u8 enabled;
 } presetOut_t;
 

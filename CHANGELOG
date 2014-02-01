@@ -3,8 +3,21 @@ bees	0.4.0  ! breaks scene compatbility !
 - presets now store all inputs, play flag
 
 
-=================================
-140128
+----------------
+bees	0.4.1 
+- hopefully fix scroll behavoir on scenes/dsp pages
+- minor gfx tweaks
+
+----------------
+bees	0.4.0  ! breaks scene compatbility !
+- presets now store all inputs, play flag
+- max count of operators / ins / presets increased
+- op ADC renamed CV-IN
+- op CV-IN enable input no longer acts like a toggle
+- op CV-IN mode input added, set to one for trigger input which outputs only on transition
+- new op: HISTORY
+- op LIFE fixed, outputs reduced
+- op GRID added count output
 
 ----------------
 bees	0.3.8
