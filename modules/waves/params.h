@@ -91,11 +91,6 @@ enum params {
   eParamDry1Slew,
   eParamWet1Slew,
 
-  /* eParamIoAmp0, */
-  /* eParamIoAmp1,  */
-  /* eParamIoAmp2, */
-  /* eParamIoAmp3, */
-
   // smoothing parameter for ALL mix values!
   eParamMixSlew,
 
@@ -167,7 +162,7 @@ enum params {
   eParamFmDel0,
   eParamFmDel1,
 
-  eParamBl1,
+   eParamBl1,
   eParamBl0,
 
   eParamWm10,

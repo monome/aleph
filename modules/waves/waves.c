@@ -169,22 +169,7 @@ static inline void param_setup(u32 id, ParamValue v) {
 
 static void mix_outputs(void) {
   fract32 mul;
-  fract32 oscs;
-
-  /// crap, we are running out of CPU.
-  /// need to optimize; use 16bit mults, block processing, etc.
-  /// for now, skip the output mixing matrix. DAMN!
-  /* oscs  = add_fr1x32(voice[0].out, voice[1].out); */
-  /* out[0] = add_fr1x32(oscs, mult_fr1x32x32(in[0], mix_adc_dac[0][0] ) ); */
-  /* out[1] = add_fr1x32(oscs, mult_fr1x32x32(in[1], mix_adc_dac[1][1] ) ); */
-  /* out[2] = add_fr1x32(oscs, mult_fr1x32x32(in[2], mix_adc_dac[2][2] ) ); */
-  /* out[3] = add_fr1x32(oscs, mult_fr1x32x32(in[3], mix_adc_dac[3][3] ) ); */
-  /* return; */
-
-//////////////
-/////////
-////// not happening:
-
+  //fract32 oscs;
   
   //-- out 0
   out[0] = 0;
@@ -198,11 +183,10 @@ static void mix_outputs(void) {
   out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[0], mul)); 
   mul = mix_adc_dac[1][0];
   out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[1], mul)); 
-  /// TEST: skip for cpu... 
-  /* mul = mix_adc_dac[2][0]; */
-  /* out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[2], mul));  */
-  /* mul = mix_adc_dac[3][0]; */
-  /* out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[3], mul));  */
+  mul = mix_adc_dac[2][0];
+  out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[2], mul));
+  mul = mix_adc_dac[3][0];
+  out[0] = add_fr1x32(out[0], mult_fr1x32x32(in[3], mul));
 
   //-- out 1
   out[1] = 0;
@@ -216,15 +200,16 @@ static void mix_outputs(void) {
   out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[0], mul)); 
   mul = mix_adc_dac[1][1];
   out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[1], mul)); 
-  /// TEST: skip for cpu...
-  /* mul = mix_adc_dac[2][1]; */
-  /* out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[2], mul));  */
-  /* mul = mix_adc_dac[3][1]; */
-  /* out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[3], mul));  */
+  mul = mix_adc_dac[2][1];
+  out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[2], mul));
+  mul = mix_adc_dac[3][1];
+  out[1] = add_fr1x32(out[1], mult_fr1x32x32(in[3], mul));
 
 
   //////////////////
   /// TEST: skip outs 3+4, see where we run out of CPU...
+  out[2] = out[0];
+  out[3] = out[1];
   return;
   /////////////
   ////////////
@@ -297,10 +282,10 @@ static void calc_frame(void) {
 
   /// FIXME: later, more voices, mod matrix, arbitrary mod delay.
   /// for now, simple direct mod feedback routing and 1-frame delay.
-  voice[0].pmIn = voice[1].oscOut << 1;
-  voice[0].wmIn = voice[1].oscOut << 1;
-  voice[1].pmIn = voice[0].oscOut << 1;
-  voice[1].wmIn = voice[0].oscOut << 1;
+  voice[0].pmIn = voice[1].oscOut;
+  //  voice[0].wmIn = voice[1].oscOut << 1;
+  voice[1].pmIn = voice[0].oscOut;
+  //  voice[1].wmIn = voice[0].oscOut << 1;
   
   // mix outputs using matrix
     mix_outputs();
@@ -391,9 +376,9 @@ void module_init(void) {
     osc_init( &(voice[i].osc), &wavtab, SAMPLERATE );
     filter_svf_init( &(voice[i].svf) );
     voice[i].amp = tmp;
-    filter_1p_lo_init(&(voice[i].ampSlew), tmp);
-    filter_1p_lo_init(&(voice[i].cutSlew), tmp);
-    filter_1p_lo_init(&(voice[i].rqSlew), tmp);
+    filter_1p_lo_init(&(voice[i].ampSlew), 0xf);
+    filter_1p_lo_init(&(voice[i].cutSlew), 0xf);
+    filter_1p_lo_init(&(voice[i].rqSlew), 0xf);
   }
 
   //  oscAmp1 = oscAmp0 = INT32_MAX >> 2;
