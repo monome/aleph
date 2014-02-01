@@ -1,8 +1,12 @@
 /*
-  delayline.c
+  delay.c
   aleph - audio
 
   implement delay line using buffer and tap objects
+
+  // FIXME: this is uninterpolated. should be delayN or whatever?
+
+  // FIXME: this has a crossfade mechanism. should be delayFade or whatever?
   
  */
 
@@ -15,6 +19,7 @@
   buffer_init(&(dl->buffer), data, frames);
   buffer_tapN_init(&(dl->tapRd), &(dl->buffer));
   buffer_tapN_init(&(dl->tapWr), &(dl->buffer));
+
   dl->tapWr.idx = 0;
   dl->tapRd.idx = 0;
   dl->tapWr.loop = frames;
@@ -134,11 +139,11 @@
 
 // set read-head rate multiplier
 void delay_set_mul(delayLine* dl, u32 val) {
+  // different terms, dumb...
   buffer_tapN_set_inc( &(dl->tapRd), val );
 }
 
 // set read-head rate divider
 void delay_set_div(delayLine* dl, u32 val) {
-
   buffer_tapN_set_div( &(dl->tapRd), val );
 }

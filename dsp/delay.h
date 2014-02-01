@@ -2,7 +2,9 @@
 delay.h
 aleph-audio
 
-delay line object interface
+delay line object interface/
+
+FIXME: delay is noninterpolated for now! there is a separate delayN class but we're not using it. should add buffer interpolation and then fix everything appropriately.
 
  */
 #ifndef _ALEPH_LINES_DELAYLINE_H_
@@ -63,6 +65,8 @@ extern void delay_set_run_read(delayLine* dl, u8 val);
 // set write run flag
 extern void delay_set_run_write(delayLine* dl, u8 val);
 
+///// FIXME: would be more ideal of course to have arbitrary rate settings.
+///// these really belong to the non-interpolated delay variant.
 
 // set read-head rate multiplier
 extern void delay_set_mul(delayLine* dl, u32 val);
