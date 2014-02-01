@@ -87,7 +87,7 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_rq0 :
     //    filter_svf_set_rq(&(svf[0]), v);
     // incoming param value is 16.16
-    // target is 2.30
+    // target is 2.30xs
     //    filter_svf_set_rq(&(svf[0]), v << 14);
     filter_1p_lo_in(&(svfRqSlew[0]), v << 14);
     break;
@@ -256,6 +256,13 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParamCut1Slew :
     filter_1p_lo_set_slew(&(svfCutSlew[1]), v);
+    break;
+
+  case eParamRq0Slew :
+    filter_1p_lo_set_slew(&(svfRqSlew[0]), v);
+    break;
+  case eParamRq1Slew :
+    filter_1p_lo_set_slew(&(svfRqSlew[1]), v);
     break;
 
     // -- cv output
