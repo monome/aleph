@@ -12,6 +12,7 @@ module_obj = lines.o \
 	$(audio)/buffer.o \
 	$(audio)/conversion.o \
 	$(audio)/delay.o \
+	$(audio)/filter_1p.o \
 	$(audio)/filter_svf.o \
 	$(audio)/noise.o \
 	$(audio)/table.o \

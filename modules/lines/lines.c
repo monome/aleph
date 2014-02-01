@@ -17,12 +17,14 @@
 
 
 #include "bfin_core.h"
+#include "dac.h"
 #include "fract_math.h"
 #include <fract2float_conv.h>
 
 // audio
 #include "buffer.h"
 #include "filter_svf.h"
+#include "filter_1p.h"
 #include "delay.h"
 #include "module.h"
 ////test
@@ -95,7 +97,13 @@ fract32 in_del[NLINES] = { 0, 0 };
 fract32 out_del[NLINES] = { 0, 0 };
 fract32 out_svf[NLINES] = { 0, 0 };
 
+//-- parameter integrators
+filter_1p_lo svfCutSlew[2];
 
+// 10v dac values (u16, but use fract32 and audio integrators, for now)
+fract32 cvVal[4];
+filter_1p_lo cvSlew[4];
+u8 cvChan = 0;
 
 ///////////////
 ////////////////
@@ -334,6 +342,10 @@ void module_process_frame(void) {
     // process delay line
     tmpDel = delay_next( &(lines[i]), in_del[i]);	    
     // process filter
+    // check integrator and set cutoff if needed
+    if( !(svfCutSlew[i].sync) ) {
+      filter_svf_set_coeff( &(svf[i]), filter_1p_lo_next(&(svfCutSlew[i])) );
+    }
     tmpSvf = filter_svf_next( &(svf[i]), tmpDel);  
     // mix
     tmpDel = mult_fr1x32x32( tmpDel, mix_fdry[i] );
@@ -351,6 +363,16 @@ void module_process_frame(void) {
 
     // mix outputs to DACs
   mix_outputs();
+
+  /// do CV output
+  if( !(cvSlew[cvChan].sync) ) { 
+    cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
+    dac_update(cvChan, cvVal[cvChan]);
+  }
+ 
+  if(++cvChan == 4) {
+    cvChan = 0;
+  }
 }
 
 // parameter set function

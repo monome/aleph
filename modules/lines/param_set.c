@@ -80,10 +80,12 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
     // filter params
   case eParam_freq0 :
-    filter_svf_set_coeff(&(svf[0]), v );
+    //    filter_svf_set_coeff(&(svf[0]), v );
+    filter_1p_lo_in(&(svfCutSlew[0]), v);
     break;
   case eParam_freq1 :
-    filter_svf_set_coeff(&(svf[1]), v );
+    //    filter_svf_set_coeff(&(svf[1]), v );
+    filter_1p_lo_in(&(svfCutSlew[1]), v);
     break;
   case eParam_rq0 :
     // incoming param value is 16.16
@@ -249,11 +251,49 @@ void module_set_param(u32 idx, ParamValue v) {
     mix_del_dac[1][3] = v;
     break;
 
+    // param integrators
+  case eParamCut0Slew :
+    filter_1p_lo_set_slew(&(svfCutSlew[0]), v);
+    break;
+  case eParamCut1Slew :
+    filter_1p_lo_set_slew(&(svfCutSlew[1]), v);
+    break;
+
+    // -- cv output
+    // cv values
+  case eParam_cvVal0 :
+    filter_1p_lo_in(&(cvSlew[0]), (v >> ( PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
+    //cv_update(0, v >> (PARAM_CV_RADIX - 1));
+    break;
+  case eParam_cvVal1 :
+    filter_1p_lo_in(&(cvSlew[1]), (v >> (PARAM_DAC_RADIX - 1)) & DAC_VALUE_MASK);
+    //cv_update(1, v >> (PARAM_CV_RADIX - 1));
+    break;
+  case eParam_cvVal2 :
+    filter_1p_lo_in(&(cvSlew[2]), (v >> (PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
+    //cv_update(2, v >> (PARAM_CV_RADIX - 1));
+    break;
+  case eParam_cvVal3 :
+    filter_1p_lo_in(&(cvSlew[3]), (v >> (PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
+    //cv_update(3, v >> (PARAM_CV_RADIX - 1));
+    break;
+    // cv slew
+  case eParam_cvSlew0 :
+    filter_1p_lo_set_slew(&(cvSlew[0]), v);
+    break;
+  case eParam_cvSlew1 :
+    filter_1p_lo_set_slew(&(cvSlew[1]), v);
+    break;
+  case eParam_cvSlew2 :
+    filter_1p_lo_set_slew(&(cvSlew[2]), v);
+    break;
+  case eParam_cvSlew3 :
+    filter_1p_lo_set_slew(&(cvSlew[3]), v);
+    break;
+
   default:
     break;
   }
 }
 
 // EOF
-
-
