@@ -1,31 +1,59 @@
-// this is its own file for pure convenience.
+// this is its own file for pure convenience....
+
+// check crossfade status of target
+static void check_fade_rd(u8 id) {
+  if(lpFadeRd[id].sync) {
+    // not fading right now, so pick different target and start crossfade
+    fadeTargetRd[id] ^= 1;
+    filter_1p_lo_in(&(lpFadeRd[id]), fadeTargetRd[id]);
+  }
+}
+
+
+static void check_fade_wr(u8 id) {
+  if(lpFadeWr[id].sync) {
+    // not fading right now, so pick different target and start crossfade
+    fadeTargetWr[id] ^= 1;
+    filter_1p_lo_in(&(lpFadeWr[id]), fadeTargetWr[id]);
+  }
+}  
+
+
 
 void module_set_param(u32 idx, ParamValue v) {
   switch(idx) {
     // delay line params
   case eParam_delay0 :
-    delayFadeN_set_delay_sec(&(lines[0]), v, 0);
+    check_fade_rd(0);
+    delayFadeN_set_delay_sec(&(lines[0]), v, fadeTargetRd[0]);
     break;
   case eParam_delay1 :
-    delayFadeN_set_delay_sec(&(lines[1]), v, 0);
+    check_fade_rd(1);
+    delayFadeN_set_delay_sec(&(lines[1]), v, fadeTargetRd[1]);
     break;
   case eParam_loop0 :
     delayFadeN_set_loop_sec(&(lines[0]), v, 0);
+    delayFadeN_set_loop_sec(&(lines[0]), v, 1);
     break;
   case eParam_loop1 :
     delayFadeN_set_loop_sec(&(lines[1]), v , 0);
+    delayFadeN_set_loop_sec(&(lines[1]), v , 1);
     break;
   case eParam_pos_write0 :
-    delayFadeN_set_pos_write_sec(&(lines[0]), v, 0);
+    check_fade_wr(0);
+    delayFadeN_set_pos_write_sec(&(lines[0]), v, fadeTargetWr[0]);
     break;
   case eParam_pos_write1 :
-    delayFadeN_set_pos_write_sec(&(lines[1]), v, 0 );
+    check_fade_wr(1);
+    delayFadeN_set_pos_write_sec(&(lines[1]), v, fadeTargetWr[1] );
     break;
   case eParam_pos_read0 :
-    delayFadeN_set_pos_read_sec(&(lines[0]), v, 0);
+    check_fade_rd(0);
+    delayFadeN_set_pos_read_sec(&(lines[0]), v, fadeTargetRd[0]);
     break;
   case eParam_pos_read1 :
-    delayFadeN_set_pos_read_sec(&(lines[1]), v, 0);
+    check_fade_rd(1);
+    delayFadeN_set_pos_read_sec(&(lines[1]), v, fadeTargetRd[1]);
     break;
   case eParam_run_write0 :
     delayFadeN_set_run_write(&(lines[0]), v);
@@ -40,18 +68,21 @@ void module_set_param(u32 idx, ParamValue v) {
     delayFadeN_set_run_read(&(lines[1]), v);
     break;
   case eParam_rMul0 :
-    delayFadeN_set_mul(&(lines[0]), v >> 16, 0);
+    check_fade_rd(0);
+    delayFadeN_set_mul(&(lines[0]), v >> 16, fadeTargetRd[0]);
     break;
   case eParam_rDiv0 :
-    delayFadeN_set_div(&(lines[0]), v >> 16, 0);
+    check_fade_rd(0);
+    delayFadeN_set_div(&(lines[0]), v >> 16, fadeTargetRd[0]);
     break;
   case eParam_rMul1 :
-    delayFadeN_set_mul(&(lines[1]), v >> 16 , 0);
+    check_fade_rd(1);
+    delayFadeN_set_mul(&(lines[1]), v >> 16 , fadeTargetRd[1]);
     break;
   case eParam_rDiv1 :
-    delayFadeN_set_div(&(lines[1]), v >> 16 , 0);
+    check_fade_rd(1);
+    delayFadeN_set_div(&(lines[1]), v >> 16 , fadeTargetRd[1]);
     break;
-
   case eParam_write0 :
     delayFadeN_set_write(&(lines[0]), v > 0);
     break;

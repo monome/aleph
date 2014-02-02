@@ -101,6 +101,14 @@ fract32 out_svf[NLINES] = { 0, 0 };
 filter_1p_lo svfCutSlew[2];
 filter_1p_lo svfRqSlew[2];
 
+//--- crossfade stuff
+/// which tap we are fading towards...
+u8 fadeTargetRd[2] = { 0, 0 };
+u8 fadeTargetWr[2] = { 0, 0 };
+// crossfade integrators
+filter_1p_lo lpFadeRd[2];
+filter_1p_lo lpFadeWr[2];
+
 // 10v dac values (u16, but use fract32 and audio integrators, for now)
 fract32 cvVal[4];
 filter_1p_lo cvSlew[4];
@@ -258,7 +266,13 @@ void module_init(void) {
   for(i=0; i<NLINES; i++) {
     delayFadeN_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);
     filter_svf_init(&(svf[i]));
-    
+
+
+    filter_1p_lo_init(&(svfCutSlew[i]), 0x3fffffff);
+    filter_1p_lo_init(&(svfRqSlew[i]), 0x3fffffff);
+    filter_1p_lo_init(&(lpFadeRd[i]), 0);
+    filter_1p_lo_init(&(lpFadeWr[i]), 0);
+  
     /* filter_svf_set_rq(&(svf[i]), 0x1000); */
     /* filter_svf_set_low(&(svf[i]), 0x4000); */
     
@@ -340,9 +354,11 @@ void module_process_frame(void) {
   mix_del_inputs();
 
   for(i=0; i<NLINES; i++) {
+    // process fade integrator
+
     // process delay line
     tmpDel = delayFadeN_next( &(lines[i]), in_del[i]);	    
-    // process filter
+    // process filters
     // check integrators for filter params
     if( !(svfCutSlew[i].sync) ) {
       filter_svf_set_coeff( &(svf[i]), filter_1p_lo_next(&(svfCutSlew[i])) );

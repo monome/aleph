@@ -78,6 +78,10 @@ extern void delayFadeN_set_mul(delayFadeN* dl, u32 val , u8 id );
 // set read-head rate divider
 extern void delayFadeN_set_div(delayFadeN* dl, u32 val , u8 id );
 
+// set erase level
+extern void delayFadeN_set_pre(delayFadeN* dl, fract32 pre);
+// set write level
+extern void delayFadeN_set_write(delayFadeN* dl, u8 write);
 
 
 #endif // h guard

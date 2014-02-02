@@ -125,3 +125,15 @@ extern void delayN_set_run_read(delayN* dl, u8 val) {
 extern void delayN_set_run_write(delayN* dl, u8 val) {
   dl->runWr = val;
 }
+
+// set read-head rate multiplier
+void delayN_set_mul(delayN* dl, u32 val, u8 id) {
+  // different terms, dumb...
+  buffer_tapN_set_inc( &(dl->tapRd[id]), val );
+
+}
+
+// set read-head rate divider
+void delayN_set_div(delayN* dl, u32 val, u8 id) {
+  buffer_tapN_set_div( &(dl->tapRd[id]), val );
+}
