@@ -43,7 +43,7 @@
 #define FIX16_FRACT_TRUNC(x) (shl_fr1x32( (x), 16))
 #define FIX16_FRACT(x) FIX16_FRACT_TRUNC(x)
 //#define FRACT_FIX16(x) ( BIT_SIGN_32(x) ? ((x)>>15) | 0xffff0000 : (x)>>15 )
-#define FRACT_FIX16(x) shr_fr1x32( (x), 16)
+#define FRACT_FIX16(x) shr_fr1x32( (x), 15)
 
 
 #define fix16_add(x, y) add_fr1x32( (x), (y) )

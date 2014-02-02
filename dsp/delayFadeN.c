@@ -48,8 +48,8 @@ extern void delayFadeN_init(delayFadeN* dl, fract32* data, u32 frames) {
 
 extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
   fract32 readVal;
-  fract32 pan[2];
-  fract32 valWr[2];
+  fract32 pan[2] = { 0, 0 };
+  fract32 valWr[2] = { 0, 0 };
   // get read value first.
   // so, setting loop == delayFadeNtime gives sensible results (???)
   //  readVal = buffer_tapN_read( &(dl->tapRd) );
@@ -67,14 +67,16 @@ extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
   readVal = buffer_tapN_read( &(dl->tapRd[0]) );
 
   // get mix amounts for crossfaded write heads
-  //  pan_coeff( &(pan[0]), &(pan[1]), dl->fadeWr );
+  /// WTF???
+  pan_coeff( &(pan[0]), &(pan[1]), dl->fadeWr );
   
+  
+  //  valWr[0] = mult_fr1x32x32(in, pan[0]);
+  valWr[1] = mult_fr1x32x32(in, pan[1]);
+
   /// TEST:
   valWr[0] = in;
   //  valWr[1] = in;
-  
-  //  valWr[0] = mult_fr1x32x32(in, pan[0]);
-  //  valWr[1] = mult_fr1x32x32(in, pan[1]);
 
 
   // figure out how to write/add/mix
@@ -82,7 +84,7 @@ extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
     if(dl->write) {
       // write and replace
       buffer_tapN_write(&(dl->tapWr[0]), valWr[0]);
-      //      buffer_tapN_write(&(dl->tapWr[1]), valWr[1]);
+      buffer_tapN_write(&(dl->tapWr[1]), valWr[1]);
     }
   } else if(dl->preLevel < 0) { // consider <0 to be == 1
     if(dl->write) {

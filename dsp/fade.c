@@ -8,9 +8,9 @@
 #define FADE_SINE_BUF_SIZE 1024
 #define FADE_SINE_BUF_SIZE_FIX (1024 << 16)
 
-static fract32 sineTab[FADE_SINE_BUF_SIZE] = 
+static const fract32 sineTab[FADE_SINE_BUF_SIZE] = {
 #include "halfsine_1024.inc"
-  ;
+}  ;
 
 
 //---------------
