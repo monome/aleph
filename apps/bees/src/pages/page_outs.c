@@ -140,12 +140,18 @@ static void render_line(s16 idx, u8 fg) {
 
 // edit the current seleciton
 static void select_edit(s32 inc) {
+  s16 tmptmp;
   //  print_dbg("\r\n page_outs: select_edit");
   // enter target-select mode
   if(targetSelect == 0) {
     //    print_dbg(" , set targetSelect mode");
     targetSelect = 1;
-    tmpTarget = net_get_target(*pageSelect);
+    /// only change tmp target selection if connected
+    /// thus, unconnected outputs hould default in editor to last connection made.
+    tmptmp = net_get_target(*pageSelect);
+    if(tmptmp > -1) {
+      tmpTarget = tmptmp;
+    }
   }
   /* print_dbg("\r\n tmpTarget: "); */
   /* print_dbg_ulong(tmpTarget); */
