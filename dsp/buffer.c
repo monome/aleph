@@ -140,11 +140,12 @@ void buffer_tap_sync(bufferTap* tap, bufferTap* target, fix16 offset) {
 
 // read
 fract32 buffer_tapN_read(bufferTapN *tap) {
-  fract32 a, b;
-  fix16 tmp;
 
   // hmm...
 #if 0
+  fract32 a, b;
+  fix16 tmp;
+
   if(tap->divCount == 0) {
     return tap->buf->data[tap->idx];
   } else { // interpolate during phase-division
