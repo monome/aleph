@@ -4,75 +4,75 @@ void module_set_param(u32 idx, ParamValue v) {
   switch(idx) {
     // delay line params
   case eParam_delay0 :
-    delay_set_delay_sec(&(lines[0]), v);
+    delayFadeN_set_delay_sec(&(lines[0]), v);
     break;
   case eParam_delay1 :
-    delay_set_delay_sec(&(lines[1]), v);
+    delayFadeN_set_delay_sec(&(lines[1]), v);
     break;
   case eParam_loop0 :
-    delay_set_loop_sec(&(lines[0]), v);
+    delayFadeN_set_loop_sec(&(lines[0]), v);
     break;
   case eParam_loop1 :
-    delay_set_loop_sec(&(lines[1]), v);
+    delayFadeN_set_loop_sec(&(lines[1]), v);
     break;
   case eParam_pos_write0 :
-    delay_set_pos_write_sec(&(lines[0]), v);
+    delayFadeN_set_pos_write_sec(&(lines[0]), v);
     break;
   case eParam_pos_write1 :
-    delay_set_pos_write_sec(&(lines[1]), v);
+    delayFadeN_set_pos_write_sec(&(lines[1]), v);
     break;
   case eParam_pos_read0 :
-    delay_set_pos_read_sec(&(lines[0]), v);
+    delayFadeN_set_pos_read_sec(&(lines[0]), v);
     break;
   case eParam_pos_read1 :
-    delay_set_pos_read_sec(&(lines[1]), v);
+    delayFadeN_set_pos_read_sec(&(lines[1]), v);
     break;
   case eParam_run_write0 :
-    delay_set_run_write(&(lines[0]), v);
+    delayFadeN_set_run_write(&(lines[0]), v);
     break;
   case eParam_run_write1 :
-    delay_set_run_write(&(lines[1]), v);
+    delayFadeN_set_run_write(&(lines[1]), v);
     break;
   case eParam_run_read0 :
-    delay_set_run_read(&(lines[0]), v);
+    delayFadeN_set_run_read(&(lines[0]), v);
     break;
   case eParam_run_read1 :
-    delay_set_run_read(&(lines[1]), v);
+    delayFadeN_set_run_read(&(lines[1]), v);
     break;
   case eParam_rMul0 :
 
-    delay_set_mul(&(lines[0]), v >> 16);
+    delayFadeN_set_mul(&(lines[0]), v >> 16);
     break;
   case eParam_rDiv0 :
-    delay_set_div(&(lines[0]), v >> 16);
+    delayFadeN_set_div(&(lines[0]), v >> 16);
     break;
   case eParam_rMul1 :
-    delay_set_mul(&(lines[1]), v >> 16);
+    delayFadeN_set_mul(&(lines[1]), v >> 16);
     break;
   case eParam_rDiv1 :
-    delay_set_div(&(lines[1]), v >> 16);
+    delayFadeN_set_div(&(lines[1]), v >> 16);
     break;
 
   case eParam_write0 :
-    delay_set_write(&(lines[0]), v > 0);
+    delayFadeN_set_write(&(lines[0]), v > 0);
     break;
   case eParam_write1 :
-    delay_set_write(&(lines[1]), v > 0);
+    delayFadeN_set_write(&(lines[1]), v > 0);
     break;
   case eParam_pre0 :
     if(v == FR32_MAX) {
       // negative == full
-      delay_set_pre(&(lines[0]), -1);
+      delayFadeN_set_pre(&(lines[0]), -1);
     } else {
-      delay_set_pre(&(lines[0]), v);
+      delayFadeN_set_pre(&(lines[0]), v);
     }
     break;
   case eParam_pre1 :
     if(v == FR32_MAX) {
       // negative == full
-      delay_set_pre(&(lines[1]), -1);
+      delayFadeN_set_pre(&(lines[1]), -1);
     } else {
-      delay_set_pre(&(lines[1]), v);
+      delayFadeN_set_pre(&(lines[1]), v);
     }
     break;
     // filter params

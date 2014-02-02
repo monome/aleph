@@ -79,7 +79,6 @@ static u32 tapDeltaMs[8][2];
 // actual delay ms
 static u32 delayMs[2];
 
-
 // process timing on key press and return interval
 static void tap_time(u8 num, u8 val) {
   u32 ret;
@@ -517,4 +516,5 @@ void ctl_set_loop_pos(u8 idx, u8 mul) {
 // set pre level
 void ctl_set_pre(u8 idx, fract32 val) {
   //...
+  // not calling this right now
 }

@@ -35,6 +35,8 @@ extern void filter_1p_lo_in(filter_1p_lo* f, fract32 val);
 // get next filtered value
 extern fract32 filter_1p_lo_next(filter_1p_lo* f);
 
+
+
 ///---- highpass
 
 /*
@@ -49,5 +51,8 @@ extern void filter_1p_hi_in(filter_1p_hi* f, fract32 val);
 // get next filtered value
 extern fract32 filter_1p_hi_next(filter_1p_hi* f);
 */
+
+
+
 
 #endif

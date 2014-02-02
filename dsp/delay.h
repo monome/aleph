@@ -65,12 +65,7 @@ extern void delay_set_run_read(delayLine* dl, u8 val);
 // set write run flag
 extern void delay_set_run_write(delayLine* dl, u8 val);
 
-///// FIXME: would be more ideal of course to have arbitrary rate settings.
-///// these really belong to the non-interpolated delay variant.
-
-// set read-head rate multiplier
-extern void delay_set_mul(delayLine* dl, u32 val);
-// set read-head rate divider
-extern void delay_set_div(delayLine* dl, u32 val);
+// set read-head rate
+extern void delay_set_rate(delayLine* dl, u32 val);
 
 #endif // h guard

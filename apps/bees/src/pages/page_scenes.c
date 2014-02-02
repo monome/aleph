@@ -67,6 +67,8 @@ static void render_line(s16 idx, u8 fg) {
   if( (idx >= 0) && (idx < files_get_scene_count()) ) {
     clearln();
     appendln((const char*)files_get_scene_name(idx));
+    // stick a null character at the end...
+    lineBuf[SCENE_NAME_LEN - 1] = '\0';
     font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
   }
 }

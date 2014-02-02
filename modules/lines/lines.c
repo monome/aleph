@@ -25,7 +25,7 @@
 #include "buffer.h"
 #include "filter_svf.h"
 #include "filter_1p.h"
-#include "delay.h"
+#include "delayFadeN.h"
 #include "module.h"
 ////test
 #include "noise.h"
@@ -66,7 +66,7 @@ moduleData* gModuleData;
 linesData* pLinesData;
 
 // delay lines (each has buffer descriptor and read/write taps)
-delayLine lines[NLINES];
+delayFadeN lines[NLINES];
 
 // state variable filters
 filter_svf svf[NLINES];
@@ -256,7 +256,7 @@ void module_init(void) {
   fill_param_desc();
   
   for(i=0; i<NLINES; i++) {
-    delay_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);
+    delayFadeN_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);
     filter_svf_init(&(svf[i]));
     
     /* filter_svf_set_rq(&(svf[i]), 0x1000); */
@@ -341,7 +341,7 @@ void module_process_frame(void) {
 
   for(i=0; i<NLINES; i++) {
     // process delay line
-    tmpDel = delay_next( &(lines[i]), in_del[i]);	    
+    tmpDel = delayFadeN_next( &(lines[i]), in_del[i]);	    
     // process filter
     // check integrators for filter params
     if( !(svfCutSlew[i].sync) ) {

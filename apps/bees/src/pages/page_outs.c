@@ -543,17 +543,22 @@ void redraw_outs_preset (void) {
   s16 target;
   s16 targetOpIdx = -1;
   s16 srcOpIdx; 
-  s32 preSel = preset_get_select();
+  //  s32 preSel = preset_get_select();
 
   print_dbg("\r\n redraw_outs_preset()");
 
+  //ppfffaaaggh
+  /*
   while(i<8) {
     region_fill(lineRegion, 0x0);
     if(idx >= net_num_outs() ) { return; }
 
-    enabled = preset_out_enabled(preSel, idx);
+    //    enabled = preset_out_enabled(preSel, idx);
+    //??
+    enabled = preset_get_selected()->outs[idx].enabled;
+
     if(enabled) {
-      // if it's enabled, show the preset's target (including if blank)
+      // if it's enabled, show the preset's target (including if no target/disconnection)
       target = preset_get_selected()->outs[idx].target;
       srcOpIdx = net_out_op_idx(idx);
       targetOpIdx = net_in_op_idx(target);
@@ -617,5 +622,6 @@ void redraw_outs_preset (void) {
     ++i;
     ++idx;
   }
+  */
   draw_preset_name();
 }

@@ -135,13 +135,3 @@ void delay_set_write(delayLine* dl, u8 write) {
   dl->runWr = val;
 }
 
-// set read-head rate multiplier
-void delay_set_mul(delayLine* dl, u32 val) {
-  // different terms, dumb...
-  buffer_tapN_set_inc( &(dl->tapRd), val );
-}
-
-// set read-head rate divider
-void delay_set_div(delayLine* dl, u32 val) {
-  buffer_tapN_set_div( &(dl->tapRd), val );
-}
