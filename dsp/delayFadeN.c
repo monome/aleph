@@ -36,15 +36,15 @@ extern void delayFadeN_init(delayFadeN* dl, fract32* data, u32 frames) {
   dl->preLevel = 0;
   dl->write = 1;
 
-dl->fadeRd = 
+  dl->fadeRd = 0;
+  dl->fadeWr = 0;
   
   
 }
 
 extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
   fract32 readVal;
-  fract32 valWr[0];
-  fract32 valWr[1];
+  fract32 valWr[2];
   // get read value first.
   // so, setting loop == delayFadeNtime gives sensible results (???)
   //  readVal = buffer_tapN_read( &(dl->tapRd) );
@@ -96,27 +96,30 @@ extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
 }
 
 // set loop endpoint in seconds
-extern void delayFadeN_set_loop_sec(delayFadeN* dl, fix16 sec) {
+extern void delayFadeN_set_loop_sec(delayFadeN* dl, fix16 sec, u8 id) {
   u32 samps = sec_to_frames_trunc(sec);
-  buffer_tapN_set_loop(&(dl->tapRd), samps - 1);
-  buffer_tapN_set_loop(&(dl->tapWr), samps - 1);
+  buffer_tapN_set_loop(&(dl->tapRd[id]), samps - 1);
+  buffer_tapN_set_loop(&(dl->tapWr[id]), samps - 1);
+
 }
 
 // set loop endpoint in samples
-extern void delayFadeN_set_loop_samp(delayFadeN* dl, u32 samps) {
-  dl->tapRd.loop = samps - 1;
-  dl->tapWr.loop = samps - 1;
+extern void delayFadeN_set_loop_samp(delayFadeN* dl, u32 samps, u8 id) {
+  dl->tapRd[id].loop = samps - 1;
+  dl->tapWr[id].loop = samps - 1;
+
 }
 
 // set delayFadeN in seconds
-extern void delayFadeN_set_delay_sec(delayFadeN* dl, fix16 sec) {
+extern void delayFadeN_set_delay_sec(delayFadeN* dl, fix16 sec, u8 id) {
   u32 samp = sec_to_frames_trunc(sec);
-  buffer_tapN_sync(&(dl->tapRd), &(dl->tapWr), samp);
+  // FIXME
+  buffer_tapN_sync(&(dl->tapRd[id]), &(dl->tapWr[id]), samp);
 }
 
 // set delayFadeN in samples
-extern void delayFadeN_set_delay_samp(delayFadeN* dl, u32 samp) {
-  buffer_tapN_sync(&(dl->tapRd), &(dl->tapWr), samp);
+extern void delayFadeN_set_delay_samp(delayFadeN* dl, u32 samp, u8 id) {
+  buffer_tapN_sync(&(dl->tapRd[id]), &(dl->tapWr[id]), samp);
 }
 
 // set erase level
@@ -135,23 +138,23 @@ extern void delayFadeN_set_rate(delayFadeN* dl, fix16 rate) {
 }
 
 // set read pos in seconds
-extern void delayFadeN_set_pos_read_sec(delayFadeN* dl, fix16 sec) {
+extern void delayFadeN_set_pos_read_sec(delayFadeN* dl, fix16 sec, u8 id) {
   u32 samp = sec_to_frames_trunc(sec);
-  buffer_tapN_set_pos(&(dl->tapRd), samp);
+  buffer_tapN_set_pos(&(dl->tapRd[id]), samp);
 }
 
-extern void delayFadeN_set_pos_read_samp(delayFadeN* dl, u32 samp) {
-  buffer_tapN_set_pos(&(dl->tapRd), samp);
+extern void delayFadeN_set_pos_read_samp(delayFadeN* dl, u32 samp, u8 id) {
+  buffer_tapN_set_pos(&(dl->tapRd[id]), samp);
 }
 
 // set write pos in seconds
-extern void delayFadeN_set_pos_write_sec(delayFadeN* dl, fix16 sec) {
+extern void delayFadeN_set_pos_write_sec(delayFadeN* dl, fix16 sec, u8 id) {
   u32 samp = sec_to_frames_trunc(sec);
-  buffer_tapN_set_pos(&(dl->tapWr), samp);
+  buffer_tapN_set_pos(&(dl->tapWr[id]), samp);
 }
 
-extern void delayFadeN_set_pos_write_samp(delayFadeN* dl, u32 samp) {
-  buffer_tapN_set_pos(&(dl->tapWr), samp);
+extern void delayFadeN_set_pos_write_samp(delayFadeN* dl, u32 samp, u8 id) {
+  buffer_tapN_set_pos(&(dl->tapWr[id]), samp);
 }
 
 // set read run flag 
@@ -165,13 +168,13 @@ extern void delayFadeN_set_run_write(delayFadeN* dl, u8 val) {
 }
 
 // set read-head rate multiplier
-void delayFadeN_set_mul(delayFadeN* dl, u32 val) {
+void delayFadeN_set_mul(delayFadeN* dl, u32 val, u8 id) {
   // different terms, dumb...
-  buffer_tapN_set_inc( &(dl->tapRd), val );
+  buffer_tapN_set_inc( &(dl->tapRd[id]), val );
 
 }
 
 // set read-head rate divider
-void delayFadeN_set_div(delayFadeN* dl, u32 val) {
-  buffer_tapN_set_div( &(dl->tapRd), val );
+void delayFadeN_set_div(delayFadeN* dl, u32 val, u8 id) {
+  buffer_tapN_set_div( &(dl->tapRd[id]), val );
 }

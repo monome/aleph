@@ -48,13 +48,13 @@ extern void delayFadeN_init(delayFadeN* dl, fract32* bufData, u32 frames);
 // get next value given input
 extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in);
 // set loop endpoint in seconds / samples
-extern void delayFadeN_set_loop_sec(delayFadeN* dl, fix16 sec);
-extern void delayFadeN_set_loop_samp(delayFadeN* dl, u32 samp);
+extern void delayFadeN_set_loop_sec(delayFadeN* dl, fix16 sec , u8 id );
+extern void delayFadeN_set_loop_samp(delayFadeN* dl, u32 samp , u8 id );
 // set delayFadeN time in seconds / samples
-extern void delayFadeN_set_delay_sec(delayFadeN* dl, fix16 sec); 
-extern void delayFadeN_set_delay_samp(delayFadeN* dl, u32 samp); 
+extern void delayFadeN_set_delay_sec(delayFadeN* dl, fix16 sec, u8 id );
+extern void delayFadeN_set_delay_samp(delayFadeN* dl, u32 samp, u8 id ); 
 // set read head rate
-extern void delayFadeN_set_rate(delayFadeN* dl, fix16 rate);
+//extern void delayFadeN_set_rate(delayFadeN* dl, fix16 rate , u8 id );
 // set erase level
 extern void delayFadeN_set_pre(delayFadeN* dl, fract32 pre);
 // set write flag
@@ -62,11 +62,11 @@ extern void delayFadeN_set_write(delayFadeN* dl, u8 write);
 
 
 // set read pos in seconds / samples
-extern void delayFadeN_set_pos_read_sec(delayFadeN* dl, fix16 sec);
-extern void delayFadeN_set_pos_read_samp(delayFadeN* dl, u32 samp);
+extern void delayFadeN_set_pos_read_sec(delayFadeN* dl, fix16 sec , u8 id );
+extern void delayFadeN_set_pos_read_samp(delayFadeN* dl, u32 samp , u8 id );
 // set write pos in seconds / samples
-extern void delayFadeN_set_pos_write_sec(delayFadeN* dl, fix16 sec);
-extern void delayFadeN_set_pos_write_samp(delayFadeN* dl, u32 samp);
+extern void delayFadeN_set_pos_write_sec(delayFadeN* dl, fix16 sec , u8 id );
+extern void delayFadeN_set_pos_write_samp(delayFadeN* dl, u32 samp , u8 id );
 
 // set read run flag
 extern void delayFadeN_set_run_read(delayFadeN* dl, u8 val);
@@ -74,9 +74,9 @@ extern void delayFadeN_set_run_read(delayFadeN* dl, u8 val);
 extern void delayFadeN_set_run_write(delayFadeN* dl, u8 val);
 
 // set read-head rate multiplier
-extern void delayFadeN_set_mul(delayFadeN* dl, u32 val);
+extern void delayFadeN_set_mul(delayFadeN* dl, u32 val , u8 id );
 // set read-head rate divider
-extern void delayFadeN_set_div(delayFadeN* dl, u32 val);
+extern void delayFadeN_set_div(delayFadeN* dl, u32 val , u8 id );
 
 
 

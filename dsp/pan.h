@@ -1,6 +1,8 @@
 #ifndef _ALEPH_DSP_PAN_H_
 #define _ALEPH_DSP_PAN_H_
 
+#include "types.h"
+
 // return balanced sum of two inputs 
 // given pan coefficient in [0,1]
 inline fract32 pan_mix(fract32 inX, fract32 inY, fract32 pan);

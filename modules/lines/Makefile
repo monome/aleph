@@ -16,6 +16,7 @@ module_obj = lines.o \
 	$(audio)/filter_1p.o \
 	$(audio)/filter_svf.o \
 	$(audio)/noise.o \
+	$(audio)/pan.o \
 	$(audio)/table.o \
 	$(bfin)/libfixmath/fix32.o \
 	$(bfin)/libfixmath/fix16.o \
