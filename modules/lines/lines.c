@@ -355,6 +355,8 @@ void module_process_frame(void) {
 
   for(i=0; i<NLINES; i++) {
     // process fade integrator
+    lines[i].fadeWr = filter_1p_lo_next(&(lpFadeWr[i]));
+    lines[i].fadeRd = filter_1p_lo_next(&(lpFadeRd[i]));
 
     // process delay line
     tmpDel = delayFadeN_next( &(lines[i]), in_del[i]);	    

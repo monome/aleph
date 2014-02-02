@@ -54,13 +54,13 @@ extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
   // so, setting loop == delayFadeNtime gives sensible results (???)
   //  readVal = buffer_tapN_read( &(dl->tapRd) );
   /// balanced mix given current pan
-  /*
+  
   readVal = pan_mix( buffer_tapN_read( &(dl->tapRd[0]) ) ,
 		     buffer_tapN_read( &(dl->tapRd[1]) ) ,
 		     //		     filter_1p_lo_next( &(dl->lpRdPan) )
 		     dl->fadeRd
 		     );
-  */
+  
 
 
   // TEST:
@@ -68,16 +68,14 @@ extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
 
   // get mix amounts for crossfaded write heads
   /// WTF???
-  pan_coeff( &(pan[0]), &(pan[1]), dl->fadeWr );
+  //  pan_coeff( &(pan[0]), &(pan[1]), dl->fadeWr );
   
-  
-  //  valWr[0] = mult_fr1x32x32(in, pan[0]);
+  valWr[0] = mult_fr1x32x32(in, pan[0]);
   valWr[1] = mult_fr1x32x32(in, pan[1]);
 
   /// TEST:
   valWr[0] = in;
-  //  valWr[1] = in;
-
+  valWr[1] = in;
 
   // figure out how to write/add/mix
   if(dl->preLevel == 0) {
@@ -90,26 +88,26 @@ extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
     if(dl->write) {
       // overdub
       buffer_tapN_add(&(dl->tapWr[0]), valWr[0]);
-      //      buffer_tapN_add(&(dl->tapWr[1]), valWr[1]);
+      buffer_tapN_add(&(dl->tapWr[1]), valWr[1]);
     }
   } else { // prelevel is non-zero, non-full
     if(dl->write) {
       // write mix
       buffer_tapN_mix(&(dl->tapWr[0]), valWr[0], dl->preLevel);
-      //      buffer_tapN_mix(&(dl->tapWr[1]), valWr[1], dl->preLevel);
+      buffer_tapN_mix(&(dl->tapWr[1]), valWr[1], dl->preLevel);
     }
   }
 
   // advance the read phasors
   if(dl->runRd) {
     buffer_tapN_next( &(dl->tapRd[0]) );
-    //    buffer_tapN_next( &(dl->tapRd[1]) );
+    buffer_tapN_next( &(dl->tapRd[1]) );
   }
 
   // advance the write phasors
   if(dl->runWr) {
     buffer_tapN_next( &(dl->tapWr[0]) );
-    //    buffer_tapN_next( &(dl->tapWr[1]) );
+    buffer_tapN_next( &(dl->tapWr[1]) );
   }
   
   return readVal;

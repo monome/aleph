@@ -5,7 +5,7 @@ static void check_fade_rd(u8 id) {
   if(lpFadeRd[id].sync) {
     // not fading right now, so pick different target and start crossfade
     fadeTargetRd[id] ^= 1;
-    filter_1p_lo_in(&(lpFadeRd[id]), fadeTargetRd[id]);
+    filter_1p_lo_in(&(lpFadeRd[id]), (fract32)((u32)(fadeTargetRd[id]) << 31) - 1);
   }
 }
 
@@ -14,7 +14,7 @@ static void check_fade_wr(u8 id) {
   if(lpFadeWr[id].sync) {
     // not fading right now, so pick different target and start crossfade
     fadeTargetWr[id] ^= 1;
-    filter_1p_lo_in(&(lpFadeWr[id]), fadeTargetWr[id]);
+    filter_1p_lo_in(&(lpFadeWr[id]), (fract32)((u32)(fadeTargetWr[id]) << 31) - 1);
   }
 }  
 
@@ -326,6 +326,18 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_cvSlew3 :
     filter_1p_lo_set_slew(&(cvSlew[3]), v);
     break;
+
+    // fade times
+  case eParamFade0 :
+    filter_1p_lo_set_slew(&(lpFadeRd[0]), v);
+    filter_1p_lo_set_slew(&(lpFadeWr[0]), v);
+    break;
+  case eParamFade1 :
+    filter_1p_lo_set_slew(&(lpFadeRd[1]), v);
+    filter_1p_lo_set_slew(&(lpFadeWr[1]), v);
+    break;
+
+
 
   default:
     break;

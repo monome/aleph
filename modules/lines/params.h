@@ -16,17 +16,18 @@
 #define PARAM_RATE_RADIX 3
 
 
-#define PARAM_FADE_MIN 0x400 // 1/64
-#define PARAM_FADE_MAX 0x80000 // 8
-#define PARAM_FADE_RADIX 3
 
 /* #define RATIO_MIN 0x4000     // 1/4 */
 /* #define RATIO_MAX 0x40000    // 4 */
 /* #define RATIO_RADIX 3 */
 
-#define SMOOTH_FREQ_MIN 0x2000 // 1/8
-#define SMOOTH_FREQ_MAX 0x400000 // 64
+#define SMOOTH_FREQ_MIN 0x2000 // 1/8s
+#define SMOOTH_FREQ_MAX 0x400000 // 64s
 #define SMOOTH_FREQ_RADIX 7
+
+#define PARAM_FADE_MIN SMOOTH_FREQ_MIN //0x400 // 1/64 
+#define PARAM_FADE_MAX SMOOTH_FREQ_MAX // 0x80000 // 8 
+#define PARAM_FADE_RADIX SMOOTH_FREQ_RADIX // 3 
 
 // svf cutoff
 #define PARAM_CUT_MAX     0x7fffffff
@@ -48,7 +49,7 @@
 // enumerate parameters
 enum params {
 
-  // xfade time.. TODO, heh
+  // xfade time
   eParamFade0,
   eParamFade1,
 
