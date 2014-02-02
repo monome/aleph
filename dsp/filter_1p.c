@@ -70,9 +70,7 @@ void filter_1p_lo_in(filter_1p_lo* f, fract32 val) {
 // get next filtered value
 fract32 filter_1p_lo_next(filter_1p_lo* f) {
   
-  if(f->sync) {
-    ;;
-  } else {
+  if( !(f->sync) ) {
     f->y = add_fr1x32( f->x,
 		       mult_fr1x32x32(f->c,
 				      sub_fr1x32(f->y, f->x)

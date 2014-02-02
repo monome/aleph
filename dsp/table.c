@@ -38,7 +38,7 @@ fract32 table_lookup_idx(fract32* tab, u32 size, fix16 idx) {
 }
 
 // lookup given normalized index in [-1, 1]
-fract32 table_lookup_fract(fract32* tab, u32 size, fract32 phase) {
+fract32 table_lookup_fract_bi(fract32* tab, u32 size, fract32 phase) {
   fix16 idx;
   if (idx < 0) {
     idx = (phase + 0x40000000) >> 1;
@@ -47,6 +47,8 @@ fract32 table_lookup_fract(fract32* tab, u32 size, fract32 phase) {
   } 
   return table_lookup_idx(tab, size, idx);
 }
+
+
 /////////////////////
 
 

@@ -9,14 +9,15 @@ static void check_fade_rd(u8 id) {
   }
 }
 
-
+/*
 static void check_fade_wr(u8 id) {
   if(lpFadeWr[id].sync) {
     // not fading right now, so pick different target and start crossfade
     fadeTargetWr[id] ^= 1;
     filter_1p_lo_in(&(lpFadeWr[id]), (fract32)((u32)(fadeTargetWr[id]) << 31) - 1);
   }
-}  
+} 
+*/ 
 
 
 
@@ -40,11 +41,11 @@ void module_set_param(u32 idx, ParamValue v) {
     delayFadeN_set_loop_sec(&(lines[1]), v , 1);
     break;
   case eParam_pos_write0 :
-    check_fade_wr(0);
+    // check_fade_wr(0);
     delayFadeN_set_pos_write_sec(&(lines[0]), v, fadeTargetWr[0]);
     break;
   case eParam_pos_write1 :
-    check_fade_wr(1);
+    // check_fade_wr(1);
     delayFadeN_set_pos_write_sec(&(lines[1]), v, fadeTargetWr[1] );
     break;
   case eParam_pos_read0 :
@@ -84,9 +85,11 @@ void module_set_param(u32 idx, ParamValue v) {
     delayFadeN_set_div(&(lines[1]), v >> 16 , fadeTargetRd[1]);
     break;
   case eParam_write0 :
+    /// FIXME: need write level...
     delayFadeN_set_write(&(lines[0]), v > 0);
     break;
   case eParam_write1 :
+    /// FIXME: need write level...
     delayFadeN_set_write(&(lines[1]), v > 0);
     break;
   case eParam_pre0 :

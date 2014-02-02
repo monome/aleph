@@ -50,51 +50,52 @@ extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
   fract32 readVal;
   fract32 pan[2] = { 0, 0 };
   fract32 valWr[2] = { 0, 0 };
+
   // get read value first.
-  // so, setting loop == delayFadeNtime gives sensible results (???)
+  // so, setting loop == delayFadeNtime gives "sensible" results...
+
   //  readVal = buffer_tapN_read( &(dl->tapRd) );
-  /// balanced mix given current pan
-  
+  /// balanced mix given current pan  
   readVal = pan_mix( buffer_tapN_read( &(dl->tapRd[0]) ) ,
 		     buffer_tapN_read( &(dl->tapRd[1]) ) ,
 		     //		     filter_1p_lo_next( &(dl->lpRdPan) )
 		     dl->fadeRd
 		     );
-  
-
-
-  // TEST:
-  readVal = buffer_tapN_read( &(dl->tapRd[0]) );
+  // TEST: reread with no pan
+  //  readVal = buffer_tapN_read( &(dl->tapRd[0]) );
 
   // get mix amounts for crossfaded write heads
-  /// WTF???
-  //  pan_coeff( &(pan[0]), &(pan[1]), dl->fadeWr );
-  
-  valWr[0] = mult_fr1x32x32(in, pan[0]);
-  valWr[1] = mult_fr1x32x32(in, pan[1]);
+  pan_coeff( &(pan[0]), &(pan[1]), dl->fadeWr );
 
-  /// TEST:
+  //  valWr[0] = mult_fr1x32x32(in, pan[0]);
+  //  valWr[1] = mult_fr1x32x32(in, pan[1]);
+
+  /// FIXME: use single write head for now.
+  /// need to make them toggle run/stop depending on fade level.
   valWr[0] = in;
-  valWr[1] = in;
+  
 
   // figure out how to write/add/mix
   if(dl->preLevel == 0) {
     if(dl->write) {
       // write and replace
       buffer_tapN_write(&(dl->tapWr[0]), valWr[0]);
-      buffer_tapN_write(&(dl->tapWr[1]), valWr[1]);
+      // FIXME
+      //      buffer_tapN_write(&(dl->tapWr[1]), valWr[1]);
     }
   } else if(dl->preLevel < 0) { // consider <0 to be == 1
     if(dl->write) {
       // overdub
       buffer_tapN_add(&(dl->tapWr[0]), valWr[0]);
-      buffer_tapN_add(&(dl->tapWr[1]), valWr[1]);
+      // FIXME
+      //      buffer_tapN_add(&(dl->tapWr[1]), valWr[1]);
     }
   } else { // prelevel is non-zero, non-full
     if(dl->write) {
       // write mix
       buffer_tapN_mix(&(dl->tapWr[0]), valWr[0], dl->preLevel);
-      buffer_tapN_mix(&(dl->tapWr[1]), valWr[1], dl->preLevel);
+      // FIXME
+      //      buffer_tapN_mix(&(dl->tapWr[1]), valWr[1], dl->preLevel);
     }
   }
 
@@ -107,7 +108,8 @@ extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
   // advance the write phasors
   if(dl->runWr) {
     buffer_tapN_next( &(dl->tapWr[0]) );
-    buffer_tapN_next( &(dl->tapWr[1]) );
+    /// FIXME
+    //    buffer_tapN_next( &(dl->tapWr[1]) );
   }
   
   return readVal;
@@ -131,7 +133,8 @@ extern void delayFadeN_set_loop_samp(delayFadeN* dl, u32 samps, u8 id) {
 // set delayFadeN in seconds
 extern void delayFadeN_set_delay_sec(delayFadeN* dl, fix16 sec, u8 id) {
   u32 samp = sec_to_frames_trunc(sec);
-  // FIXME
+  // FIXME (why?)
+  // -- something fucks up with i think delay > looptime... infinite wrap or something
   buffer_tapN_sync(&(dl->tapRd[id]), &(dl->tapWr[id]), samp);
 }
 
