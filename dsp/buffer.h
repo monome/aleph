@@ -164,6 +164,9 @@ extern void buffer_tapN_sync(bufferTapN* tap, bufferTapN* target, u32 samps);
 // set tap position directly
 extern void buffer_tapN_set_pos(bufferTapN* tap, u32 samp);
 
+// copy all params
+extern void buffer_tapN_copy( bufferTapN* src, bufferTapN* dst );
+
 //---------------------------
 //---- crossfade
 

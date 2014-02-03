@@ -187,7 +187,7 @@ void buffer_tapN_next(bufferTapN *tap) {
   if(tap->divCount >= tap->div) {
     tap->divCount = 0;
     tap->idx += tap->inc;
-    while(tap->idx > (tap->loop - 1)) {
+    while(tap->idx >= tap->loop) {
       tap->idx -= tap->loop;
     }
   }
@@ -225,9 +225,11 @@ void buffer_tapN_init(bufferTapN * tap, audioBuffer* buf) {
 // useful for delays
 void buffer_tapN_sync(bufferTapN* tap, bufferTapN* target, u32 samps) {
   if(target->idx >= samps) {
-    tap->idx = target->idx - samps;
+    // tap->idx = target->idx - samps;
+    buffer_tapN_set_pos(tap, target->idx - samps );
   } else {
-    tap->idx = (target->idx + tap->loop) - samps;
+    //    tap->idx = (target->idx + tap->loop) - samps;
+    buffer_tapN_set_pos(tap, (target->idx + tap->loop) - samps );
   }
 }
 
@@ -237,6 +239,16 @@ void buffer_tapN_set_pos(bufferTapN* tap, u32 samps) {
     samps -= tap->loop;
   }
   tap->idx = samps;
+}
+
+
+// copy all params
+void buffer_tapN_copy( bufferTapN* src, bufferTapN* dst ) {
+  dst->loop = src->loop;
+  dst->idx = src->idx;
+  dst->inc = src->inc;
+  dst->div = src->div;
+  dst->divCount = src->divCount;
 }
 
 

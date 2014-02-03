@@ -2,10 +2,15 @@
 
 // check crossfade status of target
 static void check_fade_rd(u8 id) {
+  u8 newTarget, oldTarget = fadeTargetRd[id];
   if(lpFadeRd[id].sync) {
     // not fading right now, so pick different target and start crossfade
-    fadeTargetRd[id] ^= 1;
-    filter_1p_lo_in(&(lpFadeRd[id]), (fract32)((u32)(fadeTargetRd[id]) << 31) - 1);
+    newTarget =  oldTarget ^ 1;
+    // copy all tap parameters to target
+    buffer_tapN_copy( &(lines[id].tapRd[oldTarget]) ,  &(lines[id].tapRd[newTarget]) );
+    // start the fade
+    filter_1p_lo_in(&(lpFadeRd[id]), (fract32)((u32)(newTarget) << 31) - 1);
+    fadeTargetRd[id] = newTarget;
   }
 }
 
