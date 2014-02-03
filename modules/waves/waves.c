@@ -428,6 +428,7 @@ void module_init(void) {
   param_setup(  eParamWm01, 	0 );
   param_setup(  eParamBl1,  	0 );
   param_setup(  eParamBl0,  	0 );
+
   param_setup(  eParam_cut1,	PARAM_CUT_DEFAULT);
   param_setup(  eParam_rq1,	PARAM_RQ_DEFAULT);
   param_setup(  eParam_low1,       PARAM_AMP_6 );
@@ -444,6 +445,7 @@ void module_init(void) {
   param_setup(  eParam_notch0,	0 );
   param_setup(  eParam_fwet0,	PARAM_AMP_6 );
   param_setup(  eParam_fdry0,	PARAM_AMP_6 );
+
   param_setup(  eParamHz1Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamHz0Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamPm10Slew, 	PARAM_SLEW_DEFAULT );
@@ -454,6 +456,12 @@ void module_init(void) {
   param_setup(  eParamWave0Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamAmp1Slew, 	PARAM_SLEW_DEFAULT );
   param_setup(  eParamAmp0Slew, PARAM_SLEW_DEFAULT );
+ 
+  param_setup(  eParamCut0Slew, PARAM_SLEW_DEFAULT );
+  param_setup(  eParamCut1Slew, PARAM_SLEW_DEFAULT );
+  param_setup(  eParamRq0Slew, PARAM_SLEW_DEFAULT );
+  param_setup(  eParamRq1Slew, PARAM_SLEW_DEFAULT );
+
   param_setup(  eParam_adc0_dac0, 	FRACT32_MAX );
   param_setup(  eParam_adc1_dac1,  	FRACT32_MAX );
   param_setup(  eParam_adc2_dac2, 	FRACT32_MAX );

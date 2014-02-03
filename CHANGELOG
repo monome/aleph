@@ -1,9 +1,18 @@
+----------------
+waves	0.2.1
+- enable filter smoothing parameters
+- cleanup some intial param values
 
+----------------
+lines	0.1.1
+- enable fade parameters (only affecting read pos / delay)
+- enable filter smoothing parameters	
+- cleanup some intial param values
 
 ----------------
 bees	0.4.1 
 - hopefully fix scroll behavoir on scenes/dsp pages
-- minor gfx tweaks
+- minor gfx/UI tweaks
 
 ----------------
 bees	0.4.0  ! breaks scene compatbility !

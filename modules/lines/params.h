@@ -28,7 +28,7 @@
 /// FIXME: 
 // right now, "fade" is the increment rate of a linear ramp.
 // not very intuitve
-#define PARAM_FADE_MIN 0x20000    // ~3.41s
+#define PARAM_FADE_MIN 0x20000    // ~3.41s.
 #define PARAM_FADE_MAX 0x20000000 // < 1ms  
 #define PARAM_FADE_RADIX 16
 // fixme: what a stupid hack
@@ -50,6 +50,11 @@
 // max time in seconds, 16.16
 #define PARAM_SECONDS_MAX 0x003c0000
 #define PARAM_SECONDS_RADIX 7
+
+
+/// smoother default
+// about 1ms?
+#define PARAM_SLEW_DEFAULT  0x76000000
 
 // enumerate parameters
 enum params {

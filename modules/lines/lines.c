@@ -336,6 +336,32 @@ void module_init(void) {
   param_setup( 	eParam_adc3_dac2,		PARAM_AMP_12 );
   param_setup( 	eParam_adc3_dac3,		PARAM_AMP_12 );
 
+
+  param_setup(  eParam_freq1,	PARAM_CUT_DEFAULT);
+  param_setup(  eParam_rq1,	PARAM_RQ_DEFAULT);
+  param_setup(  eParam_low1,       PARAM_AMP_6 );
+  param_setup(  eParam_high1,	0 );
+  param_setup(  eParam_band1,	0 );
+  param_setup(  eParam_notch1,	0 );
+  param_setup(  eParam_fwet1,	PARAM_AMP_6 );
+  param_setup(  eParam_fdry1,	PARAM_AMP_6 );
+
+  param_setup(  eParam_freq0, 	PARAM_CUT_DEFAULT );
+  param_setup(  eParam_rq0, 	PARAM_RQ_DEFAULT );
+  param_setup(  eParam_low0,	FRACT32_MAX >> 1 );
+  param_setup(  eParam_high0,	0 );
+  param_setup(  eParam_band0,	0 );
+  param_setup(  eParam_notch0,	0 );
+  param_setup(  eParam_fwet0,	PARAM_AMP_6 );
+  param_setup(  eParam_fdry0,	PARAM_AMP_6 );
+
+
+  param_setup(  eParamCut0Slew, PARAM_SLEW_DEFAULT );
+  param_setup(  eParamCut1Slew, PARAM_SLEW_DEFAULT );
+  param_setup(  eParamRq0Slew, PARAM_SLEW_DEFAULT );
+  param_setup(  eParamRq1Slew, PARAM_SLEW_DEFAULT );
+
+
 }
 
 // de-init
