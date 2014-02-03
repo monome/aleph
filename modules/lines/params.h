@@ -25,9 +25,14 @@
 #define SMOOTH_FREQ_MAX 0x400000 // 64s
 #define SMOOTH_FREQ_RADIX 7
 
-#define PARAM_FADE_MIN SMOOTH_FREQ_MIN //0x400 // 1/64 
-#define PARAM_FADE_MAX SMOOTH_FREQ_MAX // 0x80000 // 8 
-#define PARAM_FADE_RADIX SMOOTH_FREQ_RADIX // 3 
+/// FIXME: 
+// right now, "fade" is the increment rate of a linear ramp.
+// not very intuitve
+#define PARAM_FADE_MIN 0x20000    // ~3.41s
+#define PARAM_FADE_MAX 0x20000000 // < 1ms  
+#define PARAM_FADE_RADIX 16
+// fixme: what a stupid hack
+#define PARAM_FADE_ADD 0x20000
 
 // svf cutoff
 #define PARAM_CUT_MAX     0x7fffffff

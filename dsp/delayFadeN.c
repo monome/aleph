@@ -135,12 +135,16 @@ extern void delayFadeN_set_delay_sec(delayFadeN* dl, fix16 sec, u8 id) {
   u32 samp = sec_to_frames_trunc(sec);
   // FIXME (why?)
   // -- something fucks up with i think delay > looptime... infinite wrap or something
-  buffer_tapN_sync(&(dl->tapRd[id]), &(dl->tapWr[id]), samp);
+  //  buffer_tapN_sync(&(dl->tapRd[id]), &(dl->tapWr[id]), samp);
+  //// FIXME: only one write head for now
+  buffer_tapN_sync(&(dl->tapRd[id]), &(dl->tapWr[0]), samp);
 }
 
 // set delayFadeN in samples
 extern void delayFadeN_set_delay_samp(delayFadeN* dl, u32 samp, u8 id) {
-  buffer_tapN_sync(&(dl->tapRd[id]), &(dl->tapWr[id]), samp);
+  //  buffer_tapN_sync(&(dl->tapRd[id]), &(dl->tapWr[id]), samp);
+  //// FIXME: only one write head for now
+  buffer_tapN_sync(&(dl->tapRd[id]), &(dl->tapWr[0]), samp);
 }
 
 // set erase level

@@ -13,6 +13,7 @@ module_obj = lines.o \
 	$(audio)/conversion.o \
 	$(audio)/delayFadeN.o \
 	$(audio)/filter_1p.o \
+	$(audio)/filter_ramp.o \
 	$(audio)/filter_svf.o \
 	$(audio)/noise.o \
 	$(audio)/pan.o \

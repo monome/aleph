@@ -25,6 +25,8 @@
 #include "buffer.h"
 #include "filter_svf.h"
 #include "filter_1p.h"
+#include "filter_ramp.h"
+
 #include "delayFadeN.h"
 #include "module.h"
 ////test
@@ -106,8 +108,10 @@ filter_1p_lo svfRqSlew[2];
 u8 fadeTargetRd[2] = { 0, 0 };
 u8 fadeTargetWr[2] = { 0, 0 };
 // crossfade integrators
-filter_1p_lo lpFadeRd[2];
-filter_1p_lo lpFadeWr[2];
+/* filter_1p_lo lpFadeRd[2]; */
+/* filter_1p_lo lpFadeWr[2]; */
+filter_ramp_tog lpFadeRd[2];
+filter_ramp_tog lpFadeWr[2];
 
 // 10v dac values (u16, but use fract32 and audio integrators, for now)
 fract32 cvVal[4];
@@ -270,8 +274,9 @@ void module_init(void) {
 
     filter_1p_lo_init(&(svfCutSlew[i]), 0x3fffffff);
     filter_1p_lo_init(&(svfRqSlew[i]), 0x3fffffff);
-    filter_1p_lo_init(&(lpFadeRd[i]), 0);
-    filter_1p_lo_init(&(lpFadeWr[i]), 0);
+
+    filter_ramp_tog_init(&(lpFadeRd[i]), 0);
+    filter_ramp_tog_init(&(lpFadeWr[i]), 0);
   
     /* filter_svf_set_rq(&(svf[i]), 0x1000); */
     /* filter_svf_set_low(&(svf[i]), 0x4000); */
@@ -355,8 +360,8 @@ void module_process_frame(void) {
 
   for(i=0; i<NLINES; i++) {
     // process fade integrator
-    lines[i].fadeWr = filter_1p_lo_next(&(lpFadeWr[i]));
-    lines[i].fadeRd = filter_1p_lo_next(&(lpFadeRd[i]));
+    //    lines[i].fadeWr = filter_ramp_tog_next(&(lpFadeWr[i]));
+    lines[i].fadeRd = filter_ramp_tog_next(&(lpFadeRd[i]));
 
     // process delay line
     tmpDel = delayFadeN_next( &(lines[i]), in_del[i]);	    

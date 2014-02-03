@@ -9,7 +9,7 @@ static void check_fade_rd(u8 id) {
     // copy all tap parameters to target
     buffer_tapN_copy( &(lines[id].tapRd[oldTarget]) ,  &(lines[id].tapRd[newTarget]) );
     // start the fade
-    filter_1p_lo_in(&(lpFadeRd[id]), (fract32)((u32)(newTarget) << 31) - 1);
+    filter_ramp_tog_in(&(lpFadeRd[id]), newTarget);
     fadeTargetRd[id] = newTarget;
   }
 }
@@ -23,8 +23,6 @@ static void check_fade_wr(u8 id) {
   }
 } 
 */ 
-
-
 
 void module_set_param(u32 idx, ParamValue v) {
   switch(idx) {
@@ -336,13 +334,14 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
     // fade times
+    // FIXME: range hack is real dumb
   case eParamFade0 :
-    filter_1p_lo_set_slew(&(lpFadeRd[0]), v);
-    filter_1p_lo_set_slew(&(lpFadeWr[0]), v);
+    filter_ramp_tog_set_inc(&(lpFadeRd[0]), v + PARAM_FADE_ADD );
+    filter_ramp_tog_set_inc(&(lpFadeWr[0]), v + PARAM_FADE_ADD);
     break;
   case eParamFade1 :
-    filter_1p_lo_set_slew(&(lpFadeRd[1]), v);
-    filter_1p_lo_set_slew(&(lpFadeWr[1]), v);
+    filter_ramp_tog_set_inc(&(lpFadeRd[1]), v + PARAM_FADE_ADD);
+    filter_ramp_tog_set_inc(&(lpFadeWr[1]), v + PARAM_FADE_ADD);
     break;
 
 
