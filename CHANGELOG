@@ -8,6 +8,7 @@ lines	0.1.1
 - enable crossfade parameters (linear, only affecting read pos / delay)
 - enable filter smoothing parameters	
 - cleanup some intial param values
+- fix crash bug when delay > loop
 
 ----------------
 bees	0.4.1 
