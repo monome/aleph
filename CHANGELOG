@@ -1,9 +1,18 @@
+----------------
+waves	0.2.1
+- enable filter smoothing parameters
+- cleanup some intial param values
 
+----------------
+lines	0.1.1
+- enable crossfade parameters (linear, only affecting read pos / delay)
+- enable filter smoothing parameters	
+- cleanup some intial param values
 
 ----------------
 bees	0.4.1 
 - hopefully fix scroll behavoir on scenes/dsp pages
-- minor gfx tweaks
+- minor gfx/UI tweaks (including glitched scene names)
 
 ----------------
 bees	0.4.0  ! breaks scene compatbility !
@@ -18,7 +27,7 @@ bees	0.4.0  ! breaks scene compatbility !
 
 ----------------
 bees	0.3.8
-- add new ops: bits, is, life, list2, logic, mod
+- add new ops: BITS, IS, LIFE, LIST2, LOGIC, MOD
 - fix some refresh bugs
 
 ----------------

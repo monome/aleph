@@ -29,6 +29,7 @@
 #include "net_protected.h"
 #include "op.h" 
 #include "op_derived.h"
+#include "op_gfx.h"
 #include "pages.h"
 #include "param.h"
 #include "play.h"
@@ -343,12 +344,14 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
 
   /// only process for play mode if we're in play mode
   if(pageIdx == ePagePlay) {
-    print_dbg(" , play mode active ");
-    /* if(opPlay) { */
-    /*   // operators have focus, do nothing */
-    /* } else { */
+    print_dbg(" , play mode ");
+    if(opPlay) {
+      //      operators have focus, do nothing
+      print_dbg(" , op focus mode");
+    } else {
       // process if play-mode-visibility is set on this input
       if(vis) {
+	print_dbg(" , input enabled");
 	play_input(inIdx);
       }
       //    }

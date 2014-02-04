@@ -41,10 +41,10 @@ extern void delayN_set_loop_samp(delayN* dl, u32 samp);
 extern void delayN_set_delayN_sec(delayN* dl, fix16 sec); 
 extern void delayN_set_delayN_samp(delayN* dl, u32 samp); 
 // set read head rate
-extern void delayN_set_rate(delayN* dl, fix16 rate);
+//extern void delayN_set_rate(delayN* dl, fix16 rate);
 // set erase level
 extern void delayN_set_pre(delayN* dl, fract32 pre);
-// set write flag
+// set write level
 extern void delayN_set_write(delayN* dl, u8 write);
 
 
@@ -60,6 +60,10 @@ extern void delayN_set_run_read(delayN* dl, u8 val);
 // set write run flag
 extern void delayN_set_run_write(delayN* dl, u8 val);
 
+// set read-head rate multiplier
+extern void delayFadeN_set_mul(delayFadeN* dl, u32 val , u8 id );
+// set read-head rate divider
+extern void delayFadeN_set_div(delayFadeN* dl, u32 val , u8 id );
 
 
 #endif // h guard

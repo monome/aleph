@@ -24,6 +24,7 @@ CSRCS += \
 	$(APP_DIR)/src/net_monome.c \
 	$(APP_DIR)/src/net_poll.c \
 	$(APP_DIR)/src/op.c \
+	$(APP_DIR)/src/op_gfx.c \
 	$(APP_DIR)/src/op_math.c \
 	$(APP_DIR)/src/param.c \
 	$(APP_DIR)/src/pages.c \
@@ -37,15 +38,23 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_add.c \
 	$(APP_DIR)/src/ops/op_accum.c \
 	$(APP_DIR)/src/ops/op_adc.c \
+	$(APP_DIR)/src/ops/op_bignum.c \
+	$(APP_DIR)/src/ops/op_bits.c \
 	$(APP_DIR)/src/ops/op_div.c \
 	$(APP_DIR)/src/ops/op_enc.c \
 	$(APP_DIR)/src/ops/op_gate.c \
+	$(APP_DIR)/src/ops/op_history.c \
+	$(APP_DIR)/src/ops/op_is.c \
+	$(APP_DIR)/src/ops/op_life.c \
+	$(APP_DIR)/src/ops/op_list2.c \
 	$(APP_DIR)/src/ops/op_list8.c \
+	$(APP_DIR)/src/ops/op_logic.c \
 	$(APP_DIR)/src/ops/op_metro.c \
 	$(APP_DIR)/src/ops/op_midi_note.c \
 	$(APP_DIR)/src/ops/op_mul.c \
 	$(APP_DIR)/src/ops/op_monome_grid_raw.c \
 	$(APP_DIR)/src/ops/op_preset.c \
+	$(APP_DIR)/src/ops/op_screen.c \
 	$(APP_DIR)/src/ops/op_split.c \
 	$(APP_DIR)/src/ops/op_sub.c \
 	$(APP_DIR)/src/ops/op_sw.c \
@@ -54,12 +63,6 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_tog.c \
 	$(APP_DIR)/src/ops/op_random.c \
 	$(APP_DIR)/src/ops/op_mod.c \
-	$(APP_DIR)/src/ops/op_bits.c \
-	$(APP_DIR)/src/ops/op_is.c \
-	$(APP_DIR)/src/ops/op_logic.c \
-	$(APP_DIR)/src/ops/op_list2.c \
-	$(APP_DIR)/src/ops/op_life.c \
-	$(APP_DIR)/src/ops/op_history.c \
 	$(APP_DIR)/src/pages/page_dsp.c \
 	$(APP_DIR)/src/pages/page_gathered.c \
 	$(APP_DIR)/src/pages/page_ins.c \

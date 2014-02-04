@@ -1,8 +1,12 @@
 /*
-  delayline.c
+  delay.c
   aleph - audio
 
   implement delay line using buffer and tap objects
+
+  // FIXME: this is uninterpolated. should be delayN or whatever?
+
+  // FIXME: this has a crossfade mechanism. should be delayFade or whatever?
   
  */
 
@@ -11,10 +15,11 @@
 
 
 // initialize with pointer to audio buffer
-extern void delay_init(delayLine* dl, fract32* data, u32 frames) {
+ void delay_init(delayLine* dl, fract32* data, u32 frames) {
   buffer_init(&(dl->buffer), data, frames);
   buffer_tapN_init(&(dl->tapRd), &(dl->buffer));
   buffer_tapN_init(&(dl->tapWr), &(dl->buffer));
+
   dl->tapWr.idx = 0;
   dl->tapRd.idx = 0;
   dl->tapWr.loop = frames;
@@ -24,7 +29,7 @@ extern void delay_init(delayLine* dl, fract32* data, u32 frames) {
   dl->write = 1;
 }
 
-extern fract32 delay_next(delayLine* dl, fract32 in) {
+ fract32 delay_next(delayLine* dl, fract32 in) {
   fract32 readVal;
 
   // get read value first.
@@ -63,71 +68,70 @@ extern fract32 delay_next(delayLine* dl, fract32 in) {
 }
 
 // set loop endpoint in seconds
-extern void delay_set_loop_sec(delayLine* dl, fix16 sec) {
+ void delay_set_loop_sec(delayLine* dl, fix16 sec) {
   u32 samps = sec_to_frames_trunc(sec);
   buffer_tapN_set_loop(&(dl->tapRd), samps - 1);
   buffer_tapN_set_loop(&(dl->tapWr), samps - 1);
 }
 
 // set loop endpoint in samples
-extern void delay_set_loop_samp(delayLine* dl, u32 samps) {
+ void delay_set_loop_samp(delayLine* dl, u32 samps) {
   dl->tapRd.loop = samps - 1;
   dl->tapWr.loop = samps - 1;
 }
 
 // set delay in seconds
-extern void delay_set_delay_sec(delayLine* dl, fix16 sec) {
+ void delay_set_delay_sec(delayLine* dl, fix16 sec) {
   u32 samp = sec_to_frames_trunc(sec);
   buffer_tapN_sync(&(dl->tapRd), &(dl->tapWr), samp);
 }
 
 // set delay in samples
-extern void delay_set_delay_samp(delayLine* dl, u32 samp) {
+ void delay_set_delay_samp(delayLine* dl, u32 samp) {
   buffer_tapN_sync(&(dl->tapRd), &(dl->tapWr), samp);
 }
 
 // set erase level
-extern void delay_set_pre(delayLine* dl, fract32 pre) {
+ void delay_set_pre(delayLine* dl, fract32 pre) {
   dl->preLevel = pre;
 }
 
 // set write level
-extern void delay_set_write(delayLine* dl, u8 write) {
+void delay_set_write(delayLine* dl, u8 write) {
   dl->write = write;
 }
 
 // set read head rate
-extern void delay_set_rate(delayLine* dl, fix16 rate) {
-  ///...
-}
+/*  void delay_set_rate(delayLine* dl, fix16 rate) { */
+/*   ///... */
+/* } */
 
 // set read pos in seconds
-extern void delay_set_pos_read_sec(delayLine* dl, fix16 sec) {
+ void delay_set_pos_read_sec(delayLine* dl, fix16 sec) {
   u32 samp = sec_to_frames_trunc(sec);
   buffer_tapN_set_pos(&(dl->tapRd), samp);
 }
-extern void delay_set_pos_read_samp(delayLine* dl, u32 samp) {
+ void delay_set_pos_read_samp(delayLine* dl, u32 samp) {
   buffer_tapN_set_pos(&(dl->tapRd), samp);
 }
-
 
 // set write pos in seconds
-extern void delay_set_pos_write_sec(delayLine* dl, fix16 sec) {
+ void delay_set_pos_write_sec(delayLine* dl, fix16 sec) {
   u32 samp = sec_to_frames_trunc(sec);
   buffer_tapN_set_pos(&(dl->tapWr), samp);
 }
 
-extern void delay_set_pos_write_samp(delayLine* dl, u32 samp) {
+ void delay_set_pos_write_samp(delayLine* dl, u32 samp) {
   buffer_tapN_set_pos(&(dl->tapWr), samp);
 }
 
-
 // set read run flag 
-extern void delay_set_run_read(delayLine* dl, u8 val) {
+ void delay_set_run_read(delayLine* dl, u8 val) {
   dl->runRd = val;
 }
 
 // set write run flag
-extern void delay_set_run_write(delayLine* dl, u8 val) {
+ void delay_set_run_write(delayLine* dl, u8 val) {
   dl->runWr = val;
 }
+

@@ -140,10 +140,12 @@ void buffer_tap_sync(bufferTap* tap, bufferTap* target, fix16 offset) {
 
 // read
 fract32 buffer_tapN_read(bufferTapN *tap) {
+
+  // hmm...
+#if 0
   fract32 a, b;
   fix16 tmp;
 
-#if 1
   if(tap->divCount == 0) {
     return tap->buf->data[tap->idx];
   } else { // interpolate during phase-division
@@ -182,10 +184,10 @@ void buffer_tapN_add(bufferTapN *tap, fract32 val) {
 // increment position of a tap
 void buffer_tapN_next(bufferTapN *tap) {
   tap->divCount++;
-  if(tap->divCount == tap->div) {
+  if(tap->divCount >= tap->div) {
     tap->divCount = 0;
     tap->idx += tap->inc;
-    while(tap->idx > (tap->loop - 1)) {
+    while(tap->idx >= tap->loop) {
       tap->idx -= tap->loop;
     }
   }
@@ -199,6 +201,8 @@ void buffer_tapN_set_inc(bufferTapN *tap, u32 inc) {
 // set rate divisor
 void buffer_tapN_set_div(bufferTapN *tap, u32 div) {
   tap->div = div;
+  // reset divcount? ok 
+  tap->divCount = 0;
 }
 
 // set rate divisor
@@ -221,9 +225,11 @@ void buffer_tapN_init(bufferTapN * tap, audioBuffer* buf) {
 // useful for delays
 void buffer_tapN_sync(bufferTapN* tap, bufferTapN* target, u32 samps) {
   if(target->idx >= samps) {
-    tap->idx = target->idx - samps;
+    // tap->idx = target->idx - samps;
+    buffer_tapN_set_pos(tap, target->idx - samps );
   } else {
-    tap->idx = (target->idx + tap->loop) - samps;
+    //    tap->idx = (target->idx + tap->loop) - samps;
+    buffer_tapN_set_pos(tap, (target->idx + tap->loop) - samps );
   }
 }
 
@@ -235,20 +241,56 @@ void buffer_tapN_set_pos(bufferTapN* tap, u32 samps) {
   tap->idx = samps;
 }
 
-//---------------------------
-//---- crossfade
 
-// initialize crossfader
-void buffer_xfadeN_init(bufferXfadeN* fade, audioBuffer* buf) {
-  //...
+// copy all params
+void buffer_tapN_copy( bufferTapN* src, bufferTapN* dst ) {
+  dst->loop = src->loop;
+  dst->idx = src->idx;
+  dst->inc = src->inc;
+  dst->div = src->div;
+  dst->divCount = src->divCount;
 }
 
-// set new position, initiating fade
-void buffer_xfadeN_set_pos(bufferXfadeN* fade, u32 samps) {
-  //...
-}
 
-// get next value
-void buffer_xfadeN_next(bufferXfadeN* fade) {
-  // ...
-}
+
+//// interpolated writes with two different tap positions...
+
+
+/* // write (overwrites old contents) */
+/* void buffer_tapN_write_fade(bufferTapN *tapA, bufferTapN *tapB, fract32 val, fract32 pos) {  */
+/*   //  tap->buf->data[tap->idx] = val; */
+  
+/* } */
+
+/* //  arbitrary mix of old buffer contents with new */
+/* void buffer_tapN_mix_fade(bufferTapN *tapA, bufferTapN *tapB, fract32 val, fract32 preLevel, fract32 pos) {  */
+/*   tap->buf->data[tap->idx] =  */
+/*     add_fr1x32(  mult_fr1x32x32(tap->buf->data[tap->idx], preLevel), val ); */
+/* } */
+
+
+/* // interpolated addition of input to buffer contents */
+/* void buffer_tapN_add_fade(bufferTapN *tapA, bufferTapN *tapB, fract32 val, fract32 pos) {  */
+/*     tap->buf->data[tap->idx] = add_fr1x32(  tap->buf->data[tap->idx], val ); */
+/* } */
+
+
+
+
+/* //--------------------------- */
+/* //---- crossfade */
+
+/* // initialize crossfader */
+/* void buffer_xfadeN_init(bufferXfadeN* fade, audioBuffer* buf) { */
+/*   //... */
+/* } */
+
+/* // set new position, initiating fade */
+/* void buffer_xfadeN_set_pos(bufferXfadeN* fade, u32 samps) { */
+/*   //... */
+/* } */
+
+/* // get next value */
+/* void buffer_xfadeN_next(bufferXfadeN* fade) { */
+/*   // ... */
+/* } */

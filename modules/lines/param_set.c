@@ -1,99 +1,136 @@
-// this is its own file for pure convenience.
+// this is its own file for pure convenience....
+
+// check crossfade status of target
+static void check_fade_rd(u8 id) {
+  u8 newTarget, oldTarget = fadeTargetRd[id];
+  if(lpFadeRd[id].sync) {
+    // not fading right now, so pick different target and start crossfade
+    newTarget =  oldTarget ^ 1;
+    // copy all tap parameters to target
+    buffer_tapN_copy( &(lines[id].tapRd[oldTarget]) ,  &(lines[id].tapRd[newTarget]) );
+    // start the fade
+    filter_ramp_tog_in(&(lpFadeRd[id]), newTarget);
+    fadeTargetRd[id] = newTarget;
+  }
+}
+
+/*
+static void check_fade_wr(u8 id) {
+  if(lpFadeWr[id].sync) {
+    // not fading right now, so pick different target and start crossfade
+    fadeTargetWr[id] ^= 1;
+    filter_1p_lo_in(&(lpFadeWr[id]), (fract32)((u32)(fadeTargetWr[id]) << 31) - 1);
+  }
+} 
+*/ 
 
 void module_set_param(u32 idx, ParamValue v) {
   switch(idx) {
     // delay line params
   case eParam_delay0 :
-    delay_set_delay_sec(&(lines[0]), v);
+    check_fade_rd(0);
+    delayFadeN_set_delay_sec(&(lines[0]), v, fadeTargetRd[0]);
     break;
   case eParam_delay1 :
-    delay_set_delay_sec(&(lines[1]), v);
+    check_fade_rd(1);
+    delayFadeN_set_delay_sec(&(lines[1]), v, fadeTargetRd[1]);
     break;
   case eParam_loop0 :
-    delay_set_loop_sec(&(lines[0]), v);
+    delayFadeN_set_loop_sec(&(lines[0]), v, 0);
+    delayFadeN_set_loop_sec(&(lines[0]), v, 1);
     break;
   case eParam_loop1 :
-    delay_set_loop_sec(&(lines[1]), v);
+    delayFadeN_set_loop_sec(&(lines[1]), v , 0);
+    delayFadeN_set_loop_sec(&(lines[1]), v , 1);
     break;
   case eParam_pos_write0 :
-    delay_set_pos_write_sec(&(lines[0]), v);
+    // check_fade_wr(0);
+    delayFadeN_set_pos_write_sec(&(lines[0]), v, fadeTargetWr[0]);
     break;
   case eParam_pos_write1 :
-    delay_set_pos_write_sec(&(lines[1]), v);
+    // check_fade_wr(1);
+    delayFadeN_set_pos_write_sec(&(lines[1]), v, fadeTargetWr[1] );
     break;
   case eParam_pos_read0 :
-    delay_set_pos_read_sec(&(lines[0]), v);
+    check_fade_rd(0);
+    delayFadeN_set_pos_read_sec(&(lines[0]), v, fadeTargetRd[0]);
     break;
   case eParam_pos_read1 :
-    delay_set_pos_read_sec(&(lines[1]), v);
+    check_fade_rd(1);
+    delayFadeN_set_pos_read_sec(&(lines[1]), v, fadeTargetRd[1]);
     break;
   case eParam_run_write0 :
-    delay_set_run_write(&(lines[0]), v);
+    delayFadeN_set_run_write(&(lines[0]), v);
     break;
   case eParam_run_write1 :
-    delay_set_run_write(&(lines[1]), v);
+    delayFadeN_set_run_write(&(lines[1]), v);
     break;
   case eParam_run_read0 :
-    delay_set_run_read(&(lines[0]), v);
+    delayFadeN_set_run_read(&(lines[0]), v);
     break;
   case eParam_run_read1 :
-    delay_set_run_read(&(lines[1]), v);
+    delayFadeN_set_run_read(&(lines[1]), v);
     break;
   case eParam_rMul0 :
-    /// FIXME
-    //    delay_set_rate(&(lines[0]), v.fix);
+    check_fade_rd(0);
+    delayFadeN_set_mul(&(lines[0]), v >> 16, fadeTargetRd[0]);
     break;
   case eParam_rDiv0 :
-    /// FIXME
-    //    delay_set_rate(&(lines[0]), v.fix);
+    check_fade_rd(0);
+    delayFadeN_set_div(&(lines[0]), v >> 16, fadeTargetRd[0]);
     break;
-
   case eParam_rMul1 :
-    /// FIXME
-    //    delay_set_rate(&(lines[1]), v.fix);
+    check_fade_rd(1);
+    delayFadeN_set_mul(&(lines[1]), v >> 16 , fadeTargetRd[1]);
     break;
   case eParam_rDiv1 :
-    /// FIXME
-    //    delay_set_rate(&(lines[1]), v.fix);
+    check_fade_rd(1);
+    delayFadeN_set_div(&(lines[1]), v >> 16 , fadeTargetRd[1]);
     break;
   case eParam_write0 :
-    delay_set_write(&(lines[0]), v > 0);
+    /// FIXME: need write level...
+    delayFadeN_set_write(&(lines[0]), v > 0);
     break;
   case eParam_write1 :
-    delay_set_write(&(lines[1]), v > 0);
+    /// FIXME: need write level...
+    delayFadeN_set_write(&(lines[1]), v > 0);
     break;
   case eParam_pre0 :
     if(v == FR32_MAX) {
       // negative == full
-      delay_set_pre(&(lines[0]), -1);
+      delayFadeN_set_pre(&(lines[0]), -1);
     } else {
-      delay_set_pre(&(lines[0]), v);
+      delayFadeN_set_pre(&(lines[0]), v);
     }
     break;
   case eParam_pre1 :
     if(v == FR32_MAX) {
       // negative == full
-      delay_set_pre(&(lines[1]), -1);
+      delayFadeN_set_pre(&(lines[1]), -1);
     } else {
-      delay_set_pre(&(lines[1]), v);
+      delayFadeN_set_pre(&(lines[1]), v);
     }
     break;
     // filter params
   case eParam_freq0 :
-    filter_svf_set_coeff(&(svf[0]), v );
+    //    filter_svf_set_coeff(&(svf[0]), v );
+    filter_1p_lo_in(&(svfCutSlew[0]), v);
     break;
   case eParam_freq1 :
-    filter_svf_set_coeff(&(svf[1]), v );
+    //    filter_svf_set_coeff(&(svf[1]), v );
+    filter_1p_lo_in(&(svfCutSlew[1]), v);
     break;
   case eParam_rq0 :
-    // incoming param value is 16.16
-    // target is 2.30
     //    filter_svf_set_rq(&(svf[0]), v);
-    filter_svf_set_rq(&(svf[0]), v << 14);
+    // incoming param value is 16.16
+    // target is 2.30xs
+    //    filter_svf_set_rq(&(svf[0]), v << 14);
+    filter_1p_lo_in(&(svfRqSlew[0]), v << 14);
     break;
   case eParam_rq1 :
     //    filter_svf_set_rq(&(svf[1]), v);
-    filter_svf_set_rq(&(svf[1]), v << 14);
+    //    filter_svf_set_rq(&(svf[1]), v << 14);
+    filter_1p_lo_in(&(svfRqSlew[1]), v << 14);
     break;
   case eParam_low0 :
     filter_svf_set_low(&(svf[0]), v);
@@ -249,11 +286,69 @@ void module_set_param(u32 idx, ParamValue v) {
     mix_del_dac[1][3] = v;
     break;
 
+    // param integrators
+  case eParamCut0Slew :
+    filter_1p_lo_set_slew(&(svfCutSlew[0]), v);
+    break;
+  case eParamCut1Slew :
+    filter_1p_lo_set_slew(&(svfCutSlew[1]), v);
+    break;
+
+  case eParamRq0Slew :
+    filter_1p_lo_set_slew(&(svfRqSlew[0]), v);
+    break;
+  case eParamRq1Slew :
+    filter_1p_lo_set_slew(&(svfRqSlew[1]), v);
+    break;
+
+    // -- cv output
+    // cv values
+  case eParam_cvVal0 :
+    filter_1p_lo_in(&(cvSlew[0]), (v >> ( PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
+    //cv_update(0, v >> (PARAM_CV_RADIX - 1));
+    break;
+  case eParam_cvVal1 :
+    filter_1p_lo_in(&(cvSlew[1]), (v >> (PARAM_DAC_RADIX - 1)) & DAC_VALUE_MASK);
+    //cv_update(1, v >> (PARAM_CV_RADIX - 1));
+    break;
+  case eParam_cvVal2 :
+    filter_1p_lo_in(&(cvSlew[2]), (v >> (PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
+    //cv_update(2, v >> (PARAM_CV_RADIX - 1));
+    break;
+  case eParam_cvVal3 :
+    filter_1p_lo_in(&(cvSlew[3]), (v >> (PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
+    //cv_update(3, v >> (PARAM_CV_RADIX - 1));
+    break;
+    // cv slew
+  case eParam_cvSlew0 :
+    filter_1p_lo_set_slew(&(cvSlew[0]), v);
+    break;
+  case eParam_cvSlew1 :
+    filter_1p_lo_set_slew(&(cvSlew[1]), v);
+    break;
+  case eParam_cvSlew2 :
+    filter_1p_lo_set_slew(&(cvSlew[2]), v);
+    break;
+  case eParam_cvSlew3 :
+    filter_1p_lo_set_slew(&(cvSlew[3]), v);
+    break;
+
+    // fade times
+    // FIXME: range hack is real dumb
+  case eParamFade0 :
+    filter_ramp_tog_set_inc(&(lpFadeRd[0]), v + PARAM_FADE_ADD );
+    filter_ramp_tog_set_inc(&(lpFadeWr[0]), v + PARAM_FADE_ADD);
+    break;
+  case eParamFade1 :
+    filter_ramp_tog_set_inc(&(lpFadeRd[1]), v + PARAM_FADE_ADD);
+    filter_ramp_tog_set_inc(&(lpFadeWr[1]), v + PARAM_FADE_ADD);
+    break;
+
+
+
   default:
     break;
   }
 }
 
 // EOF
-
-

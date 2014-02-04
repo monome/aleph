@@ -14,12 +14,15 @@
 /// assume all oscs have the same samplerate
 /// phase increment at 1hz:
 static fix16 ips;
+
+#ifdef OSC_SHAPE_LIMIT
 /// phase increment limits
 static fix16 incMin;
 static fix16 incMax;
 static u32 incRange;
 // multiplier to map w-> max shape
 static u32 shapeLimMul;
+#endif
 
 //------------------
 //---- static functions
@@ -30,8 +33,8 @@ static inline void osc_calc_wm(osc* osc) {
   fract32 sm; // mod shape
   // fract32 sl; // shape limit given current freq
 
-
   // add modulation
+  //// FIXME: this is dumb, should be multiplied?
   sm = add_fr1x32(osc->shape, mult_fr1x32x32(osc->wmIn, osc->wmAmt) );
   
   //- hacky magic formula for pseudo-bandlimiting:
@@ -49,6 +52,7 @@ static inline void osc_calc_wm(osc* osc) {
   /*   sm = dsp_lerp32(sm, sl, osc->bandLim); */
   /* } */
 
+  /*
   // ok, time for serious bullshit!
   sm = sub_fr1x32(sm, 
 		  mult_fr1x32x32( (fract32)(fix16_sub(osc->inc, incMin) * shapeLimMul),
@@ -57,6 +61,7 @@ static inline void osc_calc_wm(osc* osc) {
 		  );
   if(sm < 0) { sm = 0; }
   osc->shapeMod = sm;
+  */
 }
 
 // calculate phase incremnet
@@ -123,10 +128,12 @@ void osc_init(osc* osc, wavtab_t tab, u32 sr) {
 
   ips = fix16_from_float( (f32)WAVE_TAB_SIZE / (f32)sr );
 
+#ifdef OSC_SHAPE_LIMIT
   incMin = fix16_mul(ips, OSC_HZ_MIN);
   incMax = fix16_mul(ips, OSC_HZ_MAX);
   incRange = (u32)incMax - (u32)incMin;
   shapeLimMul = 0x7fffffff / incRange;
+#endif
 
   filter_1p_lo_init( &(osc->lpInc) , FIX16_ONE);
   filter_1p_lo_init( &(osc->lpShape) , FIX16_ONE);
@@ -197,11 +204,13 @@ fract32 osc_next(osc* osc) {
   osc->inc = filter_1p_lo_next( &(osc->lpInc) );
   osc->shape = filter_1p_lo_next( &(osc->lpShape) );
   osc->pmAmt = filter_1p_lo_next( &(osc->lpPm) );
-  osc->wmAmt = filter_1p_lo_next( &(osc->lpWm) );
+  //  osc->wmAmt = filter_1p_lo_next( &(osc->lpWm) );
   
 
   // calculate waveshape modulation + bandlimiting
-  osc_calc_wm(osc);
+  //  osc_calc_wm(osc);
+  // doesn't sound great yet anyways
+  osc->shapeMod = osc->shape;
 
   // calculate phase modulation
   osc_calc_pm(osc);

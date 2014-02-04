@@ -182,15 +182,15 @@ void timers_set_adc_period(u32 period) {
   adcPollTimer.ticks = period;
 }
 
-// set metro callback
-void timers_set_metro(softTimer_t* timer, u32 period, void* obj) {
-  print_dbg("\r\n set metro timer, period: ");
+// set custom callback
+void timers_set_custom(softTimer_t* timer, u32 period, void* obj) {
+  print_dbg("\r\n set custom timer, period: ");
   print_dbg_ulong(period);
   timer_add(timer, period, &app_custom_event_callback, obj );
 }
 
 
 // unset metro callback
-void timers_unset_metro(softTimer_t* timer) {
+void timers_unset_custom(softTimer_t* timer) {
   timer_remove(timer);
 }

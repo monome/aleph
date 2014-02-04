@@ -17,13 +17,17 @@
 
 
 #include "bfin_core.h"
+#include "dac.h"
 #include "fract_math.h"
 #include <fract2float_conv.h>
 
 // audio
 #include "buffer.h"
 #include "filter_svf.h"
-#include "delay.h"
+#include "filter_1p.h"
+#include "filter_ramp.h"
+
+#include "delayFadeN.h"
 #include "module.h"
 ////test
 #include "noise.h"
@@ -64,7 +68,7 @@ moduleData* gModuleData;
 linesData* pLinesData;
 
 // delay lines (each has buffer descriptor and read/write taps)
-delayLine lines[NLINES];
+delayFadeN lines[NLINES];
 
 // state variable filters
 filter_svf svf[NLINES];
@@ -95,7 +99,24 @@ fract32 in_del[NLINES] = { 0, 0 };
 fract32 out_del[NLINES] = { 0, 0 };
 fract32 out_svf[NLINES] = { 0, 0 };
 
+//-- parameter integrators
+filter_1p_lo svfCutSlew[2];
+filter_1p_lo svfRqSlew[2];
 
+//--- crossfade stuff
+/// which tap we are fading towards...
+u8 fadeTargetRd[2] = { 0, 0 };
+u8 fadeTargetWr[2] = { 0, 0 };
+// crossfade integrators
+/* filter_1p_lo lpFadeRd[2]; */
+/* filter_1p_lo lpFadeWr[2]; */
+filter_ramp_tog lpFadeRd[2];
+filter_ramp_tog lpFadeWr[2];
+
+// 10v dac values (u16, but use fract32 and audio integrators, for now)
+fract32 cvVal[4];
+filter_1p_lo cvSlew[4];
+u8 cvChan = 0;
 
 ///////////////
 ////////////////
@@ -247,9 +268,16 @@ void module_init(void) {
   fill_param_desc();
   
   for(i=0; i<NLINES; i++) {
-    delay_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);
+    delayFadeN_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);
     filter_svf_init(&(svf[i]));
-    
+
+
+    filter_1p_lo_init(&(svfCutSlew[i]), 0x3fffffff);
+    filter_1p_lo_init(&(svfRqSlew[i]), 0x3fffffff);
+
+    filter_ramp_tog_init(&(lpFadeRd[i]), 0);
+    filter_ramp_tog_init(&(lpFadeWr[i]), 0);
+  
     /* filter_svf_set_rq(&(svf[i]), 0x1000); */
     /* filter_svf_set_low(&(svf[i]), 0x4000); */
     
@@ -308,6 +336,32 @@ void module_init(void) {
   param_setup( 	eParam_adc3_dac2,		PARAM_AMP_12 );
   param_setup( 	eParam_adc3_dac3,		PARAM_AMP_12 );
 
+
+  param_setup(  eParam_freq1,	PARAM_CUT_DEFAULT);
+  param_setup(  eParam_rq1,	PARAM_RQ_DEFAULT);
+  param_setup(  eParam_low1,       PARAM_AMP_6 );
+  param_setup(  eParam_high1,	0 );
+  param_setup(  eParam_band1,	0 );
+  param_setup(  eParam_notch1,	0 );
+  param_setup(  eParam_fwet1,	PARAM_AMP_6 );
+  param_setup(  eParam_fdry1,	PARAM_AMP_6 );
+
+  param_setup(  eParam_freq0, 	PARAM_CUT_DEFAULT );
+  param_setup(  eParam_rq0, 	PARAM_RQ_DEFAULT );
+  param_setup(  eParam_low0,	FRACT32_MAX >> 1 );
+  param_setup(  eParam_high0,	0 );
+  param_setup(  eParam_band0,	0 );
+  param_setup(  eParam_notch0,	0 );
+  param_setup(  eParam_fwet0,	PARAM_AMP_6 );
+  param_setup(  eParam_fdry0,	PARAM_AMP_6 );
+
+
+  param_setup(  eParamCut0Slew, PARAM_SLEW_DEFAULT );
+  param_setup(  eParamCut1Slew, PARAM_SLEW_DEFAULT );
+  param_setup(  eParamRq0Slew, PARAM_SLEW_DEFAULT );
+  param_setup(  eParamRq1Slew, PARAM_SLEW_DEFAULT );
+
+
 }
 
 // de-init
@@ -331,26 +385,41 @@ void module_process_frame(void) {
   mix_del_inputs();
 
   for(i=0; i<NLINES; i++) {
+    // process fade integrator
+    //    lines[i].fadeWr = filter_ramp_tog_next(&(lpFadeWr[i]));
+    lines[i].fadeRd = filter_ramp_tog_next(&(lpFadeRd[i]));
+
     // process delay line
-    tmpDel = delay_next( &(lines[i]), in_del[i]);	    
-    // process filter
+    tmpDel = delayFadeN_next( &(lines[i]), in_del[i]);	    
+    // process filters
+    // check integrators for filter params
+    if( !(svfCutSlew[i].sync) ) {
+      filter_svf_set_coeff( &(svf[i]), filter_1p_lo_next(&(svfCutSlew[i])) );
+    }
+    if( !(svfRqSlew[i].sync) ) {
+      filter_svf_set_rq( &(svf[i]), filter_1p_lo_next(&(svfRqSlew[i])) );
+    }
     tmpSvf = filter_svf_next( &(svf[i]), tmpDel);  
     // mix
     tmpDel = mult_fr1x32x32( tmpDel, mix_fdry[i] );
     tmpDel = add_fr1x32(tmpDel, mult_fr1x32x32(tmpSvf, mix_fwet[i]) );
 
     out_del[i] = tmpDel;
-    // hard patching always works...
-    //      out_del[i] = out_svf[i];
 
   } // end lines loop 
-  
-    /* out_svf[0] = filter_svf_next(&(svf[0]), noise_next()); */
-    /* out_del[0] = out_svf[0]; */
-    /* out_del[1] = 0; */
-
+ 
     // mix outputs to DACs
   mix_outputs();
+
+  /// do CV output
+  if( !(cvSlew[cvChan].sync) ) { 
+    cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
+    dac_update(cvChan, cvVal[cvChan]);
+  }
+ 
+  if(++cvChan == 4) {
+    cvChan = 0;
+  }
 }
 
 // parameter set function

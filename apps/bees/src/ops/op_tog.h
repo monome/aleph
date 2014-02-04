@@ -19,7 +19,4 @@ typedef struct op_tog_struct {
 
 extern void op_tog_init(void* tog);
 
-// handle input from system 
-extern void op_tog_sys_input(op_tog_t* tog, u8 val);
-
 #endif // header guard

@@ -2,7 +2,7 @@
    bees
    aleph
    
-   render functions common to pages.
+   render functions common to all the menu pages.
 
  */
 

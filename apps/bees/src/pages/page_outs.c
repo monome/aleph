@@ -140,12 +140,18 @@ static void render_line(s16 idx, u8 fg) {
 
 // edit the current seleciton
 static void select_edit(s32 inc) {
+  s16 tmptmp;
   //  print_dbg("\r\n page_outs: select_edit");
   // enter target-select mode
   if(targetSelect == 0) {
     //    print_dbg(" , set targetSelect mode");
     targetSelect = 1;
-    tmpTarget = net_get_target(*pageSelect);
+    /// only change tmp target selection if connected
+    /// thus, unconnected outputs hould default in editor to last connection made.
+    tmptmp = net_get_target(*pageSelect);
+    if(tmptmp > -1) {
+      tmpTarget = tmptmp;
+    }
   }
   /* print_dbg("\r\n tmpTarget: "); */
   /* print_dbg_ulong(tmpTarget); */
@@ -543,17 +549,22 @@ void redraw_outs_preset (void) {
   s16 target;
   s16 targetOpIdx = -1;
   s16 srcOpIdx; 
-  s32 preSel = preset_get_select();
+  //  s32 preSel = preset_get_select();
 
   print_dbg("\r\n redraw_outs_preset()");
 
+  //ppfffaaaggh
+  /*
   while(i<8) {
     region_fill(lineRegion, 0x0);
     if(idx >= net_num_outs() ) { return; }
 
-    enabled = preset_out_enabled(preSel, idx);
+    //    enabled = preset_out_enabled(preSel, idx);
+    //??
+    enabled = preset_get_selected()->outs[idx].enabled;
+
     if(enabled) {
-      // if it's enabled, show the preset's target (including if blank)
+      // if it's enabled, show the preset's target (including if no target/disconnection)
       target = preset_get_selected()->outs[idx].target;
       srcOpIdx = net_out_op_idx(idx);
       targetOpIdx = net_in_op_idx(target);
@@ -617,5 +628,6 @@ void redraw_outs_preset (void) {
     ++i;
     ++idx;
   }
+  */
   draw_preset_name();
 }
