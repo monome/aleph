@@ -48,9 +48,14 @@
 #define PARAM_AMP_12 (FRACT32_MAX >> 2)
 
 // max time in seconds, 16.16
+// 256 seconds, minus 1 bit
+// #define PARAM_SECONDS_MAX 0xffffff
+// #define PARAM_SECONDS_RADIX 9
+
+// max time in seconds, 16.16
+//// revert until shit gets figured out
 #define PARAM_SECONDS_MAX 0x003c0000
 #define PARAM_SECONDS_RADIX 7
-
 
 /// smoother default
 // about 1ms?

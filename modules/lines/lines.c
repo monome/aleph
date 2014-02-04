@@ -44,12 +44,11 @@ u32 dbgCount = 0;
 
 // total SDRAM is 64M
 // each line 60ish seconds for now
-//#define LINES_BUF_FRAMES 0x2bf200
+#define LINES_BUF_FRAMES 0x2bf200
 // try...
 //#define LINES_BUF_FRAMES 0x600000
 //#define LINES_BUF_FRAMES 0x1000000
-
-#define LINES_BUF_FRAMES 0xbb8000 // 256 seconds @ 48k
+//#define LINES_BUF_FRAMES 0xbb8000 // 256 seconds @ 48k
 #define NLINES 2
 
 
