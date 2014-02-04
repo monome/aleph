@@ -10,10 +10,16 @@ lines	0.1.1
 - cleanup some intial param values
 - fix crash bug when delay > loop
 
+
+----------------
+bees	0.4.2
+- minor gfx/UI tweaks (including glitched scene names)
+
+
 ----------------
 bees	0.4.1 
 - hopefully fix scroll behavoir on scenes/dsp pages
-- minor gfx/UI tweaks (including glitched scene names)
+- minor gfx tweaks
 
 ----------------
 bees	0.4.0  ! breaks scene compatbility !
