@@ -15,7 +15,12 @@
 #define STRBUF_LEN 0x400000
 char strbuf[STRBUF_LEN];
 
-extern void net_write_json(const char* name);
-extern void net_read_json(const char* name);
+
+
+// "raw" style: full representation of memory contents
+extern void net_write_json_raw(const char* name);
+extern void net_read_json_raw(const char* name);
+
+
 
 #endif
