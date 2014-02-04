@@ -44,7 +44,12 @@ u32 dbgCount = 0;
 
 // total SDRAM is 64M
 // each line 60ish seconds for now
-#define LINES_BUF_FRAMES 0x2bf200
+//#define LINES_BUF_FRAMES 0x2bf200
+// try...
+//#define LINES_BUF_FRAMES 0x600000
+//#define LINES_BUF_FRAMES 0x1000000
+
+#define LINES_BUF_FRAMES 0xbb8000 // 256 seconds @ 48k
 #define NLINES 2
 
 
@@ -281,9 +286,10 @@ void module_init(void) {
     /* filter_svf_set_rq(&(svf[i]), 0x1000); */
     /* filter_svf_set_low(&(svf[i]), 0x4000); */
     
-    for(j=0; j<LINES_BUF_FRAMES; j++) {
-      pLinesData->audioBuffer[i][j] = 0;
-    }
+    /* for(j=0; j<LINES_BUF_FRAMES; j++) { */
+    /*   pLinesData->audioBuffer[i][j] = 0; */
+    /* } */
+    memset(pLinesData->audioBuffer[i], 0, LINES_BUF_FRAMES * 4);
   }
 
   /// setup params with intial values
