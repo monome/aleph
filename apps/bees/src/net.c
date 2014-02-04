@@ -354,7 +354,7 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
 	print_dbg(" , input enabled");
 	play_input(inIdx);
       }
-      //    }
+    }
   }  
   
 }
