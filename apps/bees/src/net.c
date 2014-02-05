@@ -455,9 +455,12 @@ s16 net_add_op(op_id_t opId) {
 	    presets[j].outs[i].target = tar;
 	  }
 	}
-      }
+      } // preset loop
+    } // outs loop
 
-    }
+
+    /// FIXME: shift preset param data up as well.
+
   }
 
   ++(net->numOps);
@@ -509,6 +512,10 @@ s16 net_pop_op(void) {
 
   net->opPoolOffset -= op_registry[op->type].size;
   net->numOps -= 1;
+
+  // FIXME: shift preset param data and connections to params, 
+  // since they share an indexing list with inputs and we just changed it.
+
 
   app_resume();
   return 0;

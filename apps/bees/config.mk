@@ -40,6 +40,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_adc.c \
 	$(APP_DIR)/src/ops/op_bignum.c \
 	$(APP_DIR)/src/ops/op_bits.c \
+	$(APP_DIR)/src/ops/op_delay.c \
 	$(APP_DIR)/src/ops/op_div.c \
 	$(APP_DIR)/src/ops/op_enc.c \
 	$(APP_DIR)/src/ops/op_gate.c \
@@ -56,12 +57,14 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_preset.c \
 	$(APP_DIR)/src/ops/op_screen.c \
 	$(APP_DIR)/src/ops/op_split.c \
+	$(APP_DIR)/src/ops/op_split4.c \
 	$(APP_DIR)/src/ops/op_sub.c \
 	$(APP_DIR)/src/ops/op_sw.c \
 	$(APP_DIR)/src/ops/op_timer.c \
 	$(APP_DIR)/src/ops/op_thresh.c \
 	$(APP_DIR)/src/ops/op_tog.c \
 	$(APP_DIR)/src/ops/op_random.c \
+	$(APP_DIR)/src/ops/op_route.c \
 	$(APP_DIR)/src/ops/op_mod.c \
 	$(APP_DIR)/src/pages/page_dsp.c \
 	$(APP_DIR)/src/pages/page_gathered.c \
