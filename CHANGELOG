@@ -1,3 +1,7 @@
+----------------
+bees	0.4.3
+- fix preset-node-indexing bug on op creation / deletion
+
 
 ----------------
 lines	0.1.2
