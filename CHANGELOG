@@ -1,4 +1,8 @@
 ----------------
+bees	0.4.2 
+- new ops: delay, route, split4
+
+----------------
 waves	0.2.1
 - enable filter smoothing parameters
 - cleanup some intial param values

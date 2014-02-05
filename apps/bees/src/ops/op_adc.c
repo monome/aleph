@@ -87,7 +87,7 @@ void op_adc_init(void* op) {
   adc->val[1] = 0;
   adc->val[2] = 0;
   adc->val[3] = 0;
-  adc->period = op_from_int(20);
+  adc->period = op_from_int(50);
   adc->enable = 0;
   adc->mode = 0;
 
