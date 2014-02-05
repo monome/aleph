@@ -19,7 +19,7 @@ static void net_read_json_presets(json_t* o);
 // convert from minor version 3
 static void net_json_convert_min3(json_t* r);
 
-void net_read_json(const char* name) {
+void net_read_json_raw(const char* name) {
   json_t *root;
   json_error_t err;
   FILE* f = fopen(name, "r");

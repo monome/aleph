@@ -60,13 +60,13 @@ int main(int argc, char* argv[]) {
     files_load_scene_name(filename);
     net_print();
     strcat(filename, ".json");
-    net_write_json(filename);
+    net_write_json_raw(filename);
     return 0;
   }
 
   if(strcmp(ext, ".json") == 0) {
     printf(" \r\n file type is .json, converting to .scn \r\n");
-    net_read_json(filename);
+    net_read_json_raw(filename);
     strcat(filename, ".scn");
     files_store_scene_name(filename);
     return 0;
