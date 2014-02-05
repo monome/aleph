@@ -63,6 +63,9 @@ typedef enum {
   eOpHistory,
   eOpBignum,
   eOpScreen,
+  eOpSplit4,
+  eOpDelay,
+  eOpRoute,
   numOpClasses // dummy/count 
 } op_id_t;
 

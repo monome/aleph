@@ -27,12 +27,13 @@ static scroll centerScroll;
 static s16* const pageSelect = &(pages[ePageOps].select);
 
 // const array of user-creatable operator types
-#define NUM_USER_OP_TYPES 24
+#define NUM_USER_OP_TYPES 27
 static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAccum,
   eOpAdd,
   eOpBignum,
   eOpBits,
+  eOpDelay,
   eOpDiv,
   eOpGate,
   eOpMonomeGridRaw, // "grid"
@@ -47,12 +48,14 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpMod,
   eOpMul,
   eOpRandom,
+  eOpRoute,
   eOpScreen,
   eOpSub,
   eOpTog,
   eOpThresh,
   eOpTimer,
   eOpSplit, // "Y"
+  eOpSplit4 // "Y4"
 };
 
 // current selected new operator type
