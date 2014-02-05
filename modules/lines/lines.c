@@ -111,6 +111,7 @@ filter_1p_lo svfRqSlew[2];
 /// which tap we are fading towards...
 u8 fadeTargetRd[2] = { 0, 0 };
 u8 fadeTargetWr[2] = { 0, 0 };
+
 // crossfade integrators
 /* filter_1p_lo lpFadeRd[2]; */
 /* filter_1p_lo lpFadeWr[2]; */
@@ -291,6 +292,9 @@ void module_init(void) {
   }
 
   /// setup params with intial values
+
+  param_setup( eParamFade0 , 0x100000 );
+  param_setup( eParamFade1 , 0x100000 );
 
   param_setup( 	eParam_loop0,		PARAM_SECONDS_MAX );
   param_setup( 	eParam_rMul0,		0x10000 );
