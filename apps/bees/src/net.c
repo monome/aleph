@@ -362,7 +362,8 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
 // attempt to allocate a new operator from the static memory pool, return index
 s16 net_add_op(op_id_t opId) {
   u16 ins, outs;
-  u8 i, j;
+  int i, j;
+  int idxOld, idxNew;
   op_t* op;
   s32 numInsSave = net->numIns;
   s32 numOutsSave = net->numOuts;
@@ -459,8 +460,27 @@ s16 net_add_op(op_id_t opId) {
     } // outs loop
 
 
-    /// FIXME: shift preset param data up as well.
-
+    
+    for(i=0; i<NET_PRESETS_MAX; i++) {
+      // shift parameter nodes in preset data
+      for(j=net->numParams - 1; j>=0; j--) {
+	// this was the old param index
+	idxOld = j + numInsSave;
+	// copy to new param index
+	idxNew = idxOld + ins;
+	if(idxNew >= PRESET_INODES_COUNT) {
+	  print_dbg("\r\n out of preset input nodes in new op creation! ");
+	  continue;
+	} else {
+	  presets[i].ins[idxNew].value = presets[i].ins[idxOld].value;
+	  presets[i].ins[idxNew].enabled = presets[i].ins[idxOld].enabled;
+	  // clear the old data. it may correspond to new operator inputs.
+	  presets[i].ins[idxOld].enabled = 0;
+	  presets[i].ins[idxOld].value = 0;
+	}
+      }
+    }
+    
   }
 
   ++(net->numOps);
