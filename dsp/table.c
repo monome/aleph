@@ -38,7 +38,7 @@ fract32 table_lookup_idx(fract32* tab, u32 size, fix16 idx) {
   return add_fr1x32(a, mult_fr1x32x32(f, sub_fr1x32(b, a)));
 }
 
-// trying more optimized version...
+// (slightly) more optimized version...
 fract32 table_lookup_idx_mask(fract32* tab, u32 mask, fix16 idx) {
   // packed arguments
   u32 ia = idx >> 16;

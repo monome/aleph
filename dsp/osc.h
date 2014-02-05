@@ -26,7 +26,7 @@
 // rshift from shape variable to get table index
 #define WAVE_TAB_RSHIFT 29
 // mask to get interpolation constant
-#define WAVE_TAB_MASK 0x1fffffff
+#define WAVE_SHAPE_MASK 0x1fffffff
 // lshift after mask to get multiplier 
 #define WAVE_TAB_LSHIFT 2
 

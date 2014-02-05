@@ -1,4 +1,4 @@
-# paths are relatviet to toplevel ASF
+# paths are relative to toplevel ASF
 # avr32 core directory
 ALEPH_AVR32 = ../../utils/avr32_blank
 # aleph common directory
@@ -29,7 +29,18 @@ TARGET = aleph-$(APP).elf
 include $(ALEPH_AVR32)/core.mk
 
 # List of C source files.
-CSRCS += 
+CSRCS += \
+	$(APP_DIR)/src/jansson/dump.c \
+	$(APP_DIR)/src/jansson/error.c \
+	$(APP_DIR)/src/jansson/hashtable.c \
+	$(APP_DIR)/src/jansson/load.c \
+	$(APP_DIR)/src/jansson/memory.c \
+	$(APP_DIR)/src/jansson/pack_unpack.c \
+	$(APP_DIR)/src/jansson/strbuffer.c \
+	$(APP_DIR)/src/jansson/strconv.c \
+	$(APP_DIR)/src/jansson/utf.c \
+	$(APP_DIR)/src/jansson/value.c
+
 # CSRCS += \
 #	$(APP_DIR)/src/app_lppr.c \
 #	$(APP_DIR)/src/app_timers.c \
@@ -46,7 +57,8 @@ ASSRCS +=
 INC_PATH += \
 	$(APP_DIR)	           \
 	$(APP_DIR)/src \
-	$(APP_DIR)/conf
+	$(APP_DIR)/conf \
+	$(APP_DIR)/src/jansson \
 
 # Additional search paths for libraries.
 LIB_PATH = 
