@@ -1,0 +1,191 @@
+{
+    "title" : "bees scene",
+    "description" : "describes structure of scene data in the BEES application for monome:aleph"
+}
+
+{ 
+    "$schema" : "http://json-schema.org/schema#"
+}
+
+{ 
+    "definitions" : {
+	"paramDescriptor" : { 
+	    "type" : "object" ,
+	    "properties" : {
+		"name" : { "type" : "string" },
+		"class" : { "type" : "integer" },
+		"min" : { "type" : "integer" },
+
+		"max" : { "type" : "integer" },
+	    }
+	}
+	"opInputDescriptor" : {
+	    "type" : "object" ,
+	    "properties" : {
+		"inIdx" : { "type" : "integer" },
+		"inName" : { "type" : "string" },
+	    }
+	} ,
+
+	"opOutputDescriptor" : {
+	    "type" : "object" ,
+	    "properties" : {
+		"opIdx" : { "type" : "integer" },
+		"opOutIdx" : { "type" : "integer" },
+		"opName" : { "type" : "string" },
+		"outName" : { "type" : "string" },
+	    }
+	} , 
+	"opOutputData" : {
+	    "anyOf" : [
+		{ "type" : "array",
+		  "items" : [
+		    { "type" : "integer" }, // op index
+		    { "$ref": "#/definitions/opInputDescriptor" },
+		  ]
+		},
+		{ "$ref": "#/definitions/paramDescriptor" },
+		{ "type" : "integer" } // raw index in global params+inputs list
+	    }
+	}
+    }
+}
+
+
+// top-level scene object!
+{
+    "type" : "object",
+    "properties" : {
+	"sceneName" : { "type" : "string" },
+	"moduleName" : { "type" : "string" },
+	"moduleVersion" : { 
+	    "type" : "object", 
+	    "properties" : {
+		"major" : { "type" : "integer" },
+		"minor" : { "type" : "integer" },,
+		"revision" : { "type" : "integer" }
+	    }
+	},
+	"beesVersion" : { 
+	    "type" : "object", 
+	    "properties" : {
+		"major" : { "type" : "integer" },
+		"minor" : { "type" : "integer" },,
+		"revision" : { "type" : "integer" }
+	    }
+	}
+	"ops" : { 
+	    "type" : "object"
+	    "properties" : {
+		"class" : { "type" : "integer" },
+		"name" : { "type" : "string" },
+		"ins" : { 
+		    "type" : "array", 
+		    "items" : {
+			"type" : "object",
+			"properties" : {
+			    "name" : { "type" : "string" },
+			    "value" : { "type" : "integer" },
+			}
+		    }
+		},
+		"outs" : { 
+		    "type" : "array", 
+		    "items" : {
+			"type" : "object"
+			"properties" : {
+			    "name" : { "type" : "string" },
+			    "target" : { 
+				"$ref" : "#/definitions/opOutputData"
+			    },
+			}
+		    }
+		}
+	    }
+	},
+	"presets" : {
+	    "type" : "array",
+	    "items" : {
+		"type" : "object",
+		"properties" : {
+		    "inputs" : {
+			"type": "array" ,
+			"items" : "anyOf" : [
+			    // param desc + value
+			    { 
+				"type" : "object",
+				"properties" : {
+				    "desc" : { "$ref" : "#/definitions/paramDescriptor" },
+				    "value" : { "type" : "integer" }
+				}
+			    }
+			    // op index + input desc + value
+			    { 
+				"type" : "object",
+				"properties" : {
+				    "opIdx" : { "type" : "integer" },
+				    "desc" : { "$ref" : "#/definitions/opInputDescriptor" },
+				    "value" : { "type" : "integer" }
+				}
+			    }	    
+			    // raw index + value
+			    {
+				"type" : "object",
+				"properties" : {
+				    "index" : { "type" : "integer" },
+				    "value" : { "type" : "integer" }
+				}
+			    }
+			]
+		    }, 
+		    "outputs" : {
+			"type": "array" ,
+			"items" : {
+			    "type" : "object",
+			    "properties" : {
+				"src" : "anyOf" : [
+				    // op index + output descriptor
+				    { "type" : "object",
+				      "propertoes" : {
+					  "opIdx" : { "type" : "integer" },
+					  "desc" : { "$ref" : "#/definitions/opOutputDescriptor" },
+				      }
+				    }
+				    // raw index in global outputs array
+				    { "type" : "integer" },
+				],
+				"dst" : "anyOf" : [
+				    // param desc + value
+				    { 
+					"type" : "object",
+					"properties" : {
+					    "desc" : { "$ref" : "#/definitions/paramDescriptor" },
+					    "value" : { "type" : "integer" }
+					}
+				    }
+				    // op index + input desc + value
+				    { 
+					"type" : "object",
+					"properties" : {
+					    "opIdx" : { "type" : "integer" },
+					    "desc" : { "$ref" : "#/definitions/opInputDescriptor" },
+					    "value" : { "type" : "integer" }
+					}
+				    }	    
+				    // raw index + value
+				    {
+					"type" : "object",
+					"properties" : {
+					    "index" : { "type" : "integer" },
+					    "value" : { "type" : "integer" }
+					}
+				    }
+				]
+			    }
+			}
+		    }
+		}
+	    }
+	}
+    }
+}
