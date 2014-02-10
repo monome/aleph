@@ -497,7 +497,11 @@ s16 net_pop_op(void) {
 
   app_pause();
   // bail if system op
-  if(net_op_flag (opIdx, eOpFlagSys)) { return 1; }
+  if(net_op_flag (opIdx, eOpFlagSys)) { 
+    app_resume();
+    return 1; 
+  }
+  
   // de-init
   op_deinit(op);
   ins = op->numInputs;
