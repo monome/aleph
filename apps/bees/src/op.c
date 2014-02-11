@@ -154,10 +154,30 @@ const op_desc_t op_registry[numOpClasses] = {
     .init = &op_history_init,
     .deinit = NULL    
   }, {
-    .name = "NUMBER",
-    .size = sizeof(op_num_t),
-    .init = &op_num_init,
-    .deinit = &op_num_deinit
+    .name = "BIGNUM",
+    .size = sizeof(op_bignum_t),
+    .init = &op_bignum_init,
+    .deinit = &op_bignum_deinit
+    }, {
+    .name = "SCREEN",
+    .size = sizeof(op_screen_t),
+    .init = &op_screen_init,
+    .deinit = &op_screen_deinit
+  }, {
+    .name = "SPLIT4",
+    .size = sizeof(op_split4_t),
+    .init = &op_split4_init,
+    .deinit = NULL
+  }, {
+    .name = "DELAY",
+    .size = sizeof(op_delay_t),
+    .init = &op_delay_init,
+    .deinit = NULL
+  }, {
+    .name = "ROUTE",
+    .size = sizeof(op_route_t),
+    .init = &op_route_init,
+    .deinit = NULL
   }
 
 };

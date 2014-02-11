@@ -75,17 +75,17 @@ static void op_logic_in_a(op_logic_t* logic, const io_t v) {
   if(logic->edge) {
     i = logic->v_and;
     logic->v_and = (logic->a && logic->b) ^ logic->invert;
-    if(i == logic->v_and)
+    if(i != logic->v_and)
       net_activate(logic->outs[0], logic->v_and, logic);
 
     i = logic->v_or;
     logic->v_or = (logic->a || logic->b) ^ logic->invert;
-    if(i == logic->v_or)
+    if(i != logic->v_or)
       net_activate(logic->outs[1], logic->v_or, logic);
 
     i = logic->v_xor;
     logic->v_xor = (logic->a ^ logic->b) ^ logic->invert;
-    if(i == logic->v_xor)
+    if(i != logic->v_xor)
       net_activate(logic->outs[2], logic->v_xor, logic);
   } 
   else {

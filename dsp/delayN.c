@@ -2,7 +2,7 @@
   delayN.c
   aleph - audio
 
-  implement delay line using buffer and tap objects
+  implement delay line using buffer and tap objects. non-interpolated version.
   
  */
 
@@ -97,11 +97,6 @@ extern void delayN_set_write(delayN* dl, u8 write) {
   dl->write = write;
 }
 
-// set read head rate
-extern void delayN_set_rate(delayN* dl, fix16 rate) {
-  ///...
-}
-
 // set read pos in seconds
 extern void delayN_set_pos_read_sec(delayN* dl, fix16 sec) {
   u32 samp = sec_to_frames_trunc(sec);
@@ -121,7 +116,6 @@ extern void delayN_set_pos_write_samp(delayN* dl, u32 samp) {
   buffer_tapN_set_pos(&(dl->tapWr), samp);
 }
 
-
 // set read run flag 
 extern void delayN_set_run_read(delayN* dl, u8 val) {
   dl->runRd = val;
@@ -130,4 +124,16 @@ extern void delayN_set_run_read(delayN* dl, u8 val) {
 // set write run flag
 extern void delayN_set_run_write(delayN* dl, u8 val) {
   dl->runWr = val;
+}
+
+// set read-head rate multiplier
+void delayN_set_mul(delayN* dl, u32 val, u8 id) {
+  // different terms, dumb...
+  buffer_tapN_set_inc( &(dl->tapRd[id]), val );
+
+}
+
+// set read-head rate divider
+void delayN_set_div(delayN* dl, u32 val, u8 id) {
+  buffer_tapN_set_div( &(dl->tapRd[id]), val );
 }

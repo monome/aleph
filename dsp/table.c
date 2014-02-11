@@ -22,6 +22,7 @@ typedef union { f32 fl; fract32 fr; } fu;
 
 ////////////////////
 // lookup given real index in 16.16
+
 fract32 table_lookup_idx(fract32* tab, u32 size, fix16 idx) {
   fract32 a, b, f;
   u32 ia, ib;
@@ -33,20 +34,37 @@ fract32 table_lookup_idx(fract32* tab, u32 size, fix16 idx) {
   a = tab[ia];
   b = tab[ib];
   f = (fract32)( (idx << 15) & 0x7fffffff );
-  /// is this correct...
+  /// is this correct... yep
   return add_fr1x32(a, mult_fr1x32x32(f, sub_fr1x32(b, a)));
 }
 
-// lookup given normalized index in [-1, 1]
-fract32 table_lookup_fract(fract32* tab, u32 size, fract32 phase) {
-  fix16 idx;
-  if (idx < 0) {
-    idx = (phase + 0x40000000) >> 1;
-  } else {
-    idx  = (phase >> 1) + 0x3fffffff;
-  } 
-  return table_lookup_idx(tab, size, idx);
+// (slightly) more optimized version...
+fract32 table_lookup_idx_mask(fract32* tab, u32 mask, fix16 idx) {
+  // packed arguments
+  u32 ia = idx >> 16;
+  fract32 x = tab[ia];
+  // truncate arguments to 16 bits
+  return add_fr1x32(x, 
+		    mult_fr1x32(  
+				trunc_fr1x32(sub_fr1x32(tab[(ia + 1) & mask], x)), 
+				(idx & 0xffff) >> 1
+				  )
+		    );  
 }
+
+
+// lookup given normalized index in [-1, 1]
+/* fract32 table_lookup_fract(fract32* tab, u32 size, fract32 phase) { */
+/*   fix16 idx; */
+/*   if (idx < 0) { */
+/*     idx = (phase + 0x40000000) >> 1; */
+/*   } else { */
+/*     idx  = (phase >> 1) + 0x3fffffff; */
+/*   }  */
+/*   return table_lookup_idx(tab, size, idx); */
+/* } */
+
+
 /////////////////////
 
 

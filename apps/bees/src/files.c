@@ -30,8 +30,9 @@
 // ---- directory list class
 // params
 #define DIR_LIST_MAX_NUM 64
-#define DIR_LIST_NAME_LEN 32
-#define DIR_LIST_NAME_BUF_SIZE 1024 // len * num
+#define DIR_LIST_NAME_LEN 64
+#define DIR_LIST_NAME_LEN_1 63
+#define DIR_LIST_NAME_BUF_SIZE 4096 // len * num
 
 #define DSP_PATH     "/mod/"
 #define SCENES_PATH  "/data/bees/scenes/"
@@ -277,6 +278,21 @@ u8 files_get_dsp_count(void) {
 
 // return filename for scene given index in list
 const volatile char* files_get_scene_name(u8 idx) {
+  /// DEBUG
+  /* char buf[SCENE_NAME_LEN]; */
+  /* u8 j; */
+  /* strncpy( buf, list_get_name(&sceneList, idx), SCENE_NAME_LEN ); */
+  /* print_dbg("\r\n name: \r\n"); */
+  /* print_dbg(buf); */
+  /* print_dbg("\r\n name as byte array: \r\n"); */
+  /* for(j=0; j<SCENE_NAME_LEN; j++) { */
+  /*   print_dbg( " 0x"); */
+  /*   print_dbg_hex(buf[j]); */
+  /*   print_dbg( " " ); */
+  /*   if(!(j%8)) { print_dbg("\r\n"); }  */
+  /* } */
+  /* print_dbg("\r\n"); */
+
   return list_get_name(&sceneList, idx);
 }
 
@@ -486,6 +502,12 @@ const char* list_get_name(dirList_t* list, u8 idx) {
 void list_scan(dirList_t* list, const char* path) {
   FL_DIR dirstat; 
   struct fs_dir_ent dirent;
+  int i;
+
+  // clear out the buffers...
+  for(i=0; i<DIR_LIST_NAME_BUF_SIZE; ++i) {
+    list->nameBuf[i] = '\0';
+  }
 
   list->num = 0;
   strcpy(list->path, path);
@@ -493,7 +515,8 @@ void list_scan(dirList_t* list, const char* path) {
   if( fl_opendir(path, &dirstat) ) {      
     while (fl_readdir(&dirstat, &dirent) == 0) {
       if( !(dirent.is_dir) ) {
-	strcpy((char*)(list->nameBuf + (list->num * DIR_LIST_NAME_LEN)), dirent.filename);
+	strncpy((char*)(list->nameBuf + (list->num * DIR_LIST_NAME_LEN)), dirent.filename, DIR_LIST_NAME_LEN_1);
+	*(list->nameBuf + (list->num * DIR_LIST_NAME_LEN) + DIR_LIST_NAME_LEN_1) = '\0';
 	print_dbg("\r\n added file: ");
 	print_dbg(dirent.filename);
 	print_dbg(" , count: ");
@@ -505,8 +528,24 @@ void list_scan(dirList_t* list, const char* path) {
   print_dbg("\r\n scanned list at path: ");
   print_dbg(list->path);
   print_dbg(" , contents : \r\n");
-  print_dbg((const char*)list->nameBuf);
-  print_dbg("\r\n");
+
+\
+  /* for(i=0; i<list->num; i++) { */
+  /*   char buf[32]; */
+  /*   u8 j; */
+  /*   strncpy( buf, list_get_name(list, i), 32 ); */
+
+  /*   print_dbg(buf); */
+
+  /*   for(j=0; j<32; j++) { */
+  /*     print_dbg( " 0x"); */
+  /*     print_dbg_hex(buf[j]); */
+  /*     print_dbg( " " ); */
+  /*     if(!(j%8)) { print_dbg("\r\n"); } */
+  /*   } */
+  /*   print_dbg("\r\n"); */
+  /* } */
+  /* print_dbg("\r\n"); */
 }
 
 // search for a given filename in a listed directory. set size by pointer

@@ -77,7 +77,7 @@ void op_metro_init(void* op) {
   // type
   metro->super.type = eOpMetro;
   /// state
-  metro->period = op_from_int(20);
+  metro->period = op_from_int(125);
   metro->enable = 0;
   metro->value = OP_ONE;
   // timer (unlinked)
@@ -190,7 +190,7 @@ static inline void op_metro_set_timer(op_metro_t* metro) {
   //  timer_add(&(metro->timer), op_to_int(metro->period), &op_metro_callback, (void*)metro);
   /* timer_add(&(metro->timer), op_to_int(metro->period), &app_custom_event_callback, metro); */
 
-  timers_set_metro(&(metro->timer), op_to_int(metro->period), &(metro->op_poll) );
+  timers_set_custom(&(metro->timer), op_to_int(metro->period), &(metro->op_poll) );
   
   //  print_dbg("\r\n op_metro add timer, return value: ");
   //  print_dbg(ret ? "1" : "0");
@@ -198,7 +198,7 @@ static inline void op_metro_set_timer(op_metro_t* metro) {
 
 static inline void op_metro_unset_timer(op_metro_t* metro) {
   timer_remove(&(metro->timer));
-  timers_unset_metro(&(metro->timer));
+  timers_unset_custom(&(metro->timer));
 
   //  print_dbg("\r\n op_metro remove timer, return value: ");
   //  print_dbg(ret ? "1" : "0");

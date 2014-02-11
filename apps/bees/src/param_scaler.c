@@ -43,6 +43,7 @@ static const char scalerDataPath[eParamNumTypes][32] = {
   "", 	//  eParamTypeFix,
   "scaler_amp_val.dat", 	//  eParamTypeAmp,
   "scaler_integrator_val.dat", 	//  eParamTypeIntegrator,
+  /// FIXME: how do we let people customize this... rrg
   "scaler_note_12tet_val.dat", 	//  eParamTypeNote,
   "scaler_svf_fc_val.dat", 	//  eParamTypeSvfFreq,
 };

@@ -93,14 +93,14 @@ void serial_process() {
     // check for null, indicating complete packet
     else if(c == 0 && escape == 0) {
       if(serial_buffer[0] >= eComNumCommands) {		// check for garbage command
-	print_dbg("bad serial command.");
-	serial_write_pos++;
+      	print_dbg("bad serial command.");
+      	serial_write_pos++;
       } else {
-	serial_decode = serialFuncs[serial_buffer[serial_read_pos]];			// first byte is index
-	(*serial_decode)(serial_read_pos);			// do the thing according to command index
-	serial_write_pos++;
-	if(serial_write_pos == SERIAL_BUFFER_SIZE) serial_write_pos = 0;	// wrap
-	serial_read_pos = serial_write_pos;			// start of next packet
+      	serial_decode = serialFuncs[serial_buffer[serial_read_pos]];			// first byte is index
+      	(*serial_decode)(serial_read_pos);			// do the thing according to command index
+      	serial_write_pos++;
+      	if(serial_write_pos == SERIAL_BUFFER_SIZE) serial_write_pos = 0;	// wrap
+      	serial_read_pos = serial_write_pos;			// start of next packet
       }
       // normal data copy
     } else {

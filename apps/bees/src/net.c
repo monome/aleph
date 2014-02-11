@@ -362,7 +362,8 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
 // attempt to allocate a new operator from the static memory pool, return index
 s16 net_add_op(op_id_t opId) {
   u16 ins, outs;
-  u8 i, j;
+  int i, j;
+  int idxOld, idxNew;
   op_t* op;
   s32 numInsSave = net->numIns;
   s32 numOutsSave = net->numOuts;
@@ -455,9 +456,29 @@ s16 net_add_op(op_id_t opId) {
 	    presets[j].outs[i].target = tar;
 	  }
 	}
+      } // preset loop
+    } // outs loop
+    
+    for(i=0; i<NET_PRESETS_MAX; i++) {
+      // shift parameter nodes in preset data
+      for(j=net->numParams - 1; j>=0; j--) {
+	// this was the old param index
+	idxOld = j + numInsSave;
+	// copy to new param index
+	idxNew = idxOld + ins;
+	if(idxNew >= PRESET_INODES_COUNT) {
+	  print_dbg("\r\n out of preset input nodes in new op creation! ");
+	  continue;
+	} else {
+	  presets[i].ins[idxNew].value = presets[i].ins[idxOld].value;
+	  presets[i].ins[idxNew].enabled = presets[i].ins[idxOld].enabled;
+	  // clear the old data. it may correspond to new operator inputs.
+	  presets[i].ins[idxOld].enabled = 0;
+	  presets[i].ins[idxOld].value = 0;
+	}
       }
-
     }
+    
   }
 
   ++(net->numOps);
@@ -468,17 +489,25 @@ s16 net_add_op(op_id_t opId) {
 s16 net_pop_op(void) {
   const s16 opIdx = net->numOps - 1;
   op_t* op = net->ops[opIdx];
-  int i=0;
+  int i, j;
   int x, y;
+  int ins;
+  int numInsSave = net->numIns;
+  int idxOld, idxNew;
 
   app_pause();
   // bail if system op
-  if(net_op_flag (opIdx, eOpFlagSys)) { return 1; }
+  if(net_op_flag (opIdx, eOpFlagSys)) { 
+    app_resume();
+    return 1; 
+  }
+  
   // de-init
   op_deinit(op);
+  ins = op->numInputs;
   // store the global index of the first input
   x = net_op_in_idx(opIdx, 0);
-  y = x + op->numInputs;
+  y = x + ins;
 
   // check if anything connects here
   for(i=0; i<net->numOuts; i++) {
@@ -487,7 +516,7 @@ s16 net_pop_op(void) {
       if( net->outs[i].target < y) {
 	net_disconnect(i);
       } else {
-	//	net->outs[i].target -= op->numInputs;
+	/// this should take care of both param and op input targets.
 	net_connect(i, net->outs[i].target - op->numInputs); 
       }
     }
@@ -509,6 +538,26 @@ s16 net_pop_op(void) {
 
   net->opPoolOffset -= op_registry[op->type].size;
   net->numOps -= 1;
+
+  // FIXME: shift preset param data and connections to params, 
+  // since they share an indexing list with inputs and we just changed it.
+
+  for(i=0; i<NET_PRESETS_MAX; ++i) {
+    // shift parameter nodes in preset data
+    for(j=0; j<net->numParams; ++j) {
+      // this was the old param index
+      idxOld = j + numInsSave;
+      // copy to new param index
+      idxNew = idxOld - ins;
+      presets[i].ins[idxNew].value = presets[i].ins[idxOld].value;
+      presets[i].ins[idxNew].enabled = presets[i].ins[idxOld].enabled;
+      // clear the old data.
+      presets[i].ins[idxOld].enabled = 0;
+      presets[i].ins[idxOld].value = 0;
+    }
+
+  }
+
 
   app_resume();
   return 0;

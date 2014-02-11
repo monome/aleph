@@ -27,11 +27,13 @@ static scroll centerScroll;
 static s16* const pageSelect = &(pages[ePageOps].select);
 
 // const array of user-creatable operator types
-#define NUM_USER_OP_TYPES 23
+#define NUM_USER_OP_TYPES 27
 static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAccum,
   eOpAdd,
+  eOpBignum,
   eOpBits,
+  eOpDelay,
   eOpDiv,
   eOpGate,
   eOpMonomeGridRaw, // "grid"
@@ -45,13 +47,15 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpMidiNote,
   eOpMod,
   eOpMul,
-  eOpNum,
   eOpRandom,
+  eOpRoute,
+  eOpScreen,
   eOpSub,
   eOpTog,
   eOpThresh,
   eOpTimer,
   eOpSplit, // "Y"
+  eOpSplit4 // "Y4"
 };
 
 // current selected new operator type
@@ -237,6 +241,8 @@ void handle_key_0(s32 val) {
     print_dbg_ulong( net_op_in_idx(*pageSelect, 0));
     // go to inputs page
     set_page(ePageIns);
+    // reset keypress 
+    keyPressed = 255;
     redraw_ins();
   }
   show_foot();
@@ -258,8 +264,9 @@ void handle_key_1(s32 val) {
 
     // go to outputs page
     set_page(ePageOuts);
+    // reset keypress
+    keyPressed = 255;
     print_dbg("\r\n performed select-page");
-    // 
     redraw_outs();
     print_dbg("\r\n performed redraw");
   }

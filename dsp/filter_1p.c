@@ -22,7 +22,7 @@
 
 // global temp variable, compute at init
 // inverse of samplerate as float
-static float fSrInv;
+//static float fSrInv;
 
 //-----------------------
 //---- static functions
@@ -44,17 +44,17 @@ void filter_1p_lo_init(filter_1p_lo* f, fract32 in) {
   f->y = in;
   f->x = in;
   f->sync = 1;
-  fSrInv = 1.f / (float)SAMPLERATE;
+  //  fSrInv = 1.f / (float)SAMPLERATE;
   f->c = 0;
 }
 
 // set cutoff frequency in hz
 //// warning: this is very slow!
-void filter_1p_lo_set_hz(filter_1p_lo* f, fix16 hz) {
-  f32 fc =  (float) exp(-2.0 * M_PI * (double)(fix16_to_float(hz)) * fSrInv ); // / (float)(f->sr) );
-  //  printf("\r1p slewicient: %f\n", fc);
-  f->c = float_to_fr32(fc);
-}
+/* void filter_1p_lo_set_hz(filter_1p_lo* f, fix16 hz) { */
+/*   f32 fc =  (float) exp(-2.0 * M_PI * (double)(fix16_to_float(hz)) * fSrInv ); // / (float)(f->sr) ); */
+/*   //  printf("\r1p slewicient: %f\n", fc); */
+/*   f->c = float_to_fr32(fc); */
+/* } */
 
 // set integrator coefficient directly
 void filter_1p_lo_set_slew(filter_1p_lo* f, fract32 slew) {
@@ -70,9 +70,7 @@ void filter_1p_lo_in(filter_1p_lo* f, fract32 val) {
 // get next filtered value
 fract32 filter_1p_lo_next(filter_1p_lo* f) {
   
-  if(f->sync) {
-    ;;
-  } else {
+  if( !(f->sync) ) {
     f->y = add_fr1x32( f->x,
 		       mult_fr1x32x32(f->c,
 				      sub_fr1x32(f->y, f->x)

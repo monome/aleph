@@ -16,6 +16,7 @@ void sec_to_frames_fract(fix16* time, fix32* samps) {
 }
 
 u32 sec_to_frames_trunc(fix16 sec) {
+  // FIXME: using float...
   return (u32)((float)SAMPLERATE * fix16_to_float(sec));
   /*
   u32 res;

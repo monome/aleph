@@ -72,22 +72,22 @@ static void op_is_in_a(op_is_t* is, const io_t v) {
   if(is->edge) {
     i = is->eq;
     is->eq = (is->a == is->b);
-    if(i == is->eq)
+    if(i != is->eq)
       net_activate(is->outs[0], is->eq, is);
 
     i = is->ne;
     is->ne = (is->a != is->b);
-    if(i == is->ne)
+    if(i != is->ne)
       net_activate(is->outs[1], is->ne, is);
 
     i = is->gt;
     is->gt = (is->a > is->b);
-    if(i == is->gt)
+    if(i != is->gt)
       net_activate(is->outs[2], is->gt, is);
 
     i = is->lt;
     is->lt = (is->a < is->b);
-    if(i == is->lt)
+    if(i != is->lt)
       net_activate(is->outs[3], is->lt, is);
   } 
   else {

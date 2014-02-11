@@ -15,7 +15,16 @@
 #define STRBUF_LEN 0x400000
 char strbuf[STRBUF_LEN];
 
-extern void net_write_json(const char* name);
-extern void net_read_json(const char* name);
+// "raw" format - basically a full dump of network RAM
+extern void net_write_json_raw(const char* name);
+extern void net_read_json_raw(const char* name);
+
+// "max" format - scene as max patcher
+extern void net_write_json_max(const char* name);
+extern void net_read_json_max(const char* name);
+
+// "native" format - condensed, hierarchal representation
+extern void net_write_json_max(const char* name);
+extern void net_read_json_max(const char* name);
 
 #endif

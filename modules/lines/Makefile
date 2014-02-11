@@ -11,9 +11,12 @@ module_obj = lines.o \
 	params.o \
 	$(audio)/buffer.o \
 	$(audio)/conversion.o \
-	$(audio)/delay.o \
+	$(audio)/delayFadeN.o \
+	$(audio)/filter_1p.o \
+	$(audio)/filter_ramp.o \
 	$(audio)/filter_svf.o \
 	$(audio)/noise.o \
+	$(audio)/pan.o \
 	$(audio)/table.o \
 	$(bfin)/libfixmath/fix32.o \
 	$(bfin)/libfixmath/fix16.o \
