@@ -43,7 +43,7 @@ void op_midi_note_init(void* mem) {
 
   // superclass functions
   //--- op
-  op->super.inc_fn = (op_inc_fn)op_midi_note_inc_fn;
+  //  op->super.inc_fn = (op_inc_fn)op_midi_note_inc_fn;
   op->super.in_fn = op_midi_note_in_fn;
   op->super.pickle = (op_pickle_fn) (&op_midi_note_pickle);
   op->super.unpickle = (op_unpickle_fn) (&op_midi_note_unpickle);
@@ -163,16 +163,16 @@ static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
 }
 
 
-/// increment param value from UI:
-void op_midi_note_inc_fn(op_midi_note_t* op, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0: // channel
-    val = op_sadd(op->chanIo, inc); 
-    op_midi_note_in_chan(op, val);
-    break;
-  }
-}
+/* /// increment param value from UI: */
+/* void op_midi_note_inc_fn(op_midi_note_t* op, const s16 idx, const io_t inc) { */
+/*   io_t val; */
+/*   switch(idx) { */
+/*   case 0: // channel */
+/*     val = op_sadd(op->chanIo, inc);  */
+/*     op_midi_note_in_chan(op, val); */
+/*     break; */
+/*   } */
+/* } */
 
 // pickle / unpickle
 u8* op_midi_note_pickle(op_midi_note_t* mnote, u8* dst) {

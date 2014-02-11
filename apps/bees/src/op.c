@@ -270,3 +270,12 @@ void op_set_in_val(op_t* op, s16 idx, io_t val) {
 /* const u8* op_unpickle(op_t* op, const u8* src) { */
 /*     return (*(op->unpickle))(op, src); */
 /* } */
+
+
+
+// increment input valueo
+void op_inc_in_val(op_t* op, const s16 idx, const io_t inc) {
+  io_t val;
+  val = op_sadd( *(op->in_val[idx]), inc); 
+  (*(op->in_fn[idx]))(op, val);  
+}
