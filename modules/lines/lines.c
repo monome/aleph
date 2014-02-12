@@ -266,11 +266,11 @@ void module_init(void) {
   
   gModuleData = &(pLinesData->super);
   strcpy(gModuleData->name, "aleph-lines");
-  gModuleData->paramDesc = (ParamDesc*)pLinesData->mParamDesc;
+  //  gModuleData->paramDesc = (ParamDesc*)pLinesData->mParamDesc;
   gModuleData->paramData = (ParamData*)pLinesData->mParamData;
   gModuleData->numParams = eParamNumParams;
 
-  fill_param_desc();
+  //  fill_param_desc();
   
   for(i=0; i<NLINES; i++) {
     delayFadeN_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);

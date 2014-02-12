@@ -1,6 +1,8 @@
 #ifndef _ALEPH_LINES_PARAMS_H_
 #define _ALEPH_LINES_PARAMS_H_
 
+#include "param_common.h"
+
 #define PARAM_HZ_MIN OSC_FREQ_MIN
 #define PARAM_HZ_MAX OSC_FREQ_MIN
 #define PARAM_HZ_DEFAULT (OSC_FREQ_MIN * 16)
@@ -192,7 +194,7 @@ enum params {
 };  
 
 
-extern void fill_param_desc(void);
+extern void fill_param_desc(ParamDesc* desc);
 
 #endif // header guard 
 // EOF
