@@ -525,8 +525,6 @@ void redraw_ins(void) {
   print_dbg("\r\n redraw_ins() ");
 
   while(i<8) {
-    print_dbg("\r\n input page redraw, n: ");
-    print_dbg_ulong(n);
 
     if(n == -1) {
       // draw a blank line
@@ -541,8 +539,6 @@ void redraw_ins(void) {
       if( n > max ) {
 	n -= (max + 2);
       }
-      print_dbg(" ,  after wrap: ");
-      print_dbg_ulong(n);
 
       render_line( n, 0xa );
     }

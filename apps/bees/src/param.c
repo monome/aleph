@@ -121,13 +121,14 @@ u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
     ++dst;
   }
   // store type
-  *dst = pdesc->type;
-  ++dst;
+  // pad for alignment
+  // store radix (pad for alignment)
+  dst = pickle_32((u32)(pdesc->type), dst);
   // store min
   dst = pickle_32(pdesc->min, dst);
   // store max
   dst = pickle_32(pdesc->max, dst);
-  // store radix (waste space for alignment)
+  // store radix (pad for alignment)
   dst = pickle_32((u32)(pdesc->radix), dst);
 
   return dst;
@@ -144,6 +145,7 @@ const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
     pdesc->label[i] = *src;
     ++src;
   }
+
   print_dbg(" , label: ");
   print_dbg(pdesc->label);
 
@@ -170,6 +172,7 @@ const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
   // padfor alignment
   src = unpickle_32(src, &val);
   pdesc->radix = (u8)val;
+
   print_dbg(" , radix: ");
   print_dbg_ulong(pdesc->radix);
 

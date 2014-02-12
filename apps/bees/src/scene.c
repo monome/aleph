@@ -74,8 +74,8 @@ void scene_write_buf(void) {
   char test[SCENE_NAME_LEN] = "                ";
   u32 bytes = 0;
   u8* newDst = NULL;
-    int i;
-
+  int i;
+    
   ///// print paramameters
   //  u32 i;
 
@@ -115,8 +115,6 @@ void scene_write_buf(void) {
     dst++;
     bytes++;
   }
-
-  
 
   //// TEST
 for(i=0; i<MODULE_NAME_LEN; i++) {
@@ -399,5 +397,15 @@ void scene_query_module(void) {
   print_dbg_ulong(moduleVersion->min);
   print_dbg(".");
   print_dbg_ulong(moduleVersion->rev);
-
 }
+
+
+/* void scene_print_buf(void) { */
+/*   int i; */
+/*   for(i=0; i<sizeof(sceneDesc_t); ++i) { */
+/*     //    print_dbg_hex(sceneData-> */
+/*   } */
+/*   for(i=0; i<SCENE_PICKLE_SIZE; ++i) { */
+/*     //    sceneData */
+/*   } */
+/* } */

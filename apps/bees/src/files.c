@@ -384,14 +384,32 @@ void files_store_scene_name(const char* name, u8 ext) {
 
   // fill the scene RAM buffer from current state of system
   scene_write_buf(); 
+  print_dbg("\r\n filled scene binary buffer");
+
   // open FP for writing
   fp = fl_fopen(namebuf, "wb");
+  print_dbg("\r\n opened file for binary write at 0x");
+  print_dbg_hex((u32)fp);
+
   pScene = (u8*)sceneData;
+  print_dbg("\r\n writing data from scene buffer at 0x");
+  print_dbg_hex((u32)pScene);
+  print_dbg(", size : ");
+  print_dbg_hex(sizeof(sceneData_t));
+  
+
+  // dump the scene data to debug output...
+
   fl_fwrite((const void*)pScene, sizeof(sceneData_t), 1, fp);
   fl_fclose(fp);
+
+  print_dbg("\r\n ... finished writing, closed file pointer");
+
   // rescan
   list_scan(&sceneList, SCENES_PATH);
   delay_ms(10);
+
+  print_dbg("\r\n re-scanned scene file list and waited.");
 
   app_resume();
 }
@@ -630,7 +648,6 @@ extern u8 files_load_desc(const char* name) {
   // unpacked descriptor
   ParamDesc desc;
   int i;
-  s32 val;
   u8 ret = 0;
 
   app_pause();
@@ -671,6 +688,10 @@ extern u8 files_load_desc(const char* name) {
       ret = 1;
     }
   }
+  fl_fclose(fp);
   app_resume();
   return ret;
 }
+
+
+

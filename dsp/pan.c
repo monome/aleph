@@ -9,9 +9,11 @@
 #define PAN_SINE_BUF_SIZE_FIX (1024 << 16)
 #define PAN_SINE_BUF_MAX16 (1024 * FIX16_ONE - 1)
 
+/*
 static fract32 sineTab[PAN_SINE_BUF_SIZE] = {
 #include "halfsine_1024.inc"
 };
+*/
 
 
 //------------------------------
@@ -46,6 +48,7 @@ fract32 pan_bal_mix(fract32 inX, fract32 inY, fract32 pan) {
   fract32 ymul = table_lookup_idx(sineTab, PAN_SINE_BUF_MASK, yIdx);
   return add_fr1x32( mult_fr1x32x32(inX, xmul), mult_fr1x32x32(inY, ymul) ); 
   */
+  return 0;
 }
 
 void pan_bal_coeff(fract32* a, fract32* b, fract32 pan) {

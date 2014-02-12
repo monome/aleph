@@ -542,6 +542,8 @@ void redraw_outs(void) {
 // redraw based on provisional preset seleciton
 void redraw_outs_preset (void) {
   //  s32 max = net_num_outs() - 1;
+
+  /*
   u8 i=0;
   u8 idx = *pageSelect - 3;
   u8 fg;
@@ -549,6 +551,8 @@ void redraw_outs_preset (void) {
   s16 target;
   s16 targetOpIdx = -1;
   s16 srcOpIdx; 
+  */
+
   //  s32 preSel = preset_get_select();
 
   print_dbg("\r\n redraw_outs_preset()");
