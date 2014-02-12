@@ -162,7 +162,9 @@ void handle_key_0(s32 val) {
 
     scene_query_module();
 
-    net_report_params();
+    //// FIXME: use .dsc, file_load_dsp calls directly
+    //    net_report_params();
+    
 
     bfin_enable();
 
@@ -191,12 +193,16 @@ void handle_key_1(s32 val) {
 #endif  
 }
 
+
+///????
 void handle_key_2(s32 val) {
+  /*
   if(check_key(2)) {
     bfin_disable();
-    net_report_params();
+    //    net_report_params();
     bfin_enable();
   }
+  */
 }
 
 void handle_key_3(s32 val) {

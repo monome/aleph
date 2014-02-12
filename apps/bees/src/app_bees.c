@@ -104,13 +104,13 @@ u8 app_launch(u8 firstrun) {
     files_load_dsp_name(DEFAULT_LDR);
     
     render_boot("waiting for DSP init...");
-    print_dbg("\r\n DSP booted, waiting to query params...");
-    print_dbg(" requesting param report");
+    //    print_dbg("\r\n DSP booted, waiting to query params...");
+    //    print_dbg(" requesting param report");
     bfin_wait_ready();
 
     //    print_dbg(" requesting param report...");
-    render_boot("requesting DSP parameterss");
-    net_report_params();
+    //    render_boot("requesting DSP parameterss");
+    //    net_report_params();
 
     //    print_dbg("\r\n enable DSP audio...");
     render_boot("enabling audio");
@@ -160,13 +160,6 @@ u8 app_launch(u8 firstrun) {
   render_boot("initializing gfx");
   print_dbg("\r\n pages_init...");
   pages_init();
-
-  /* redraw_dsp(); */
-  /* redraw_ins(); */
-  /* redraw_outs(); */
-  /* redraw_ops(); */
-  /* redraw_presets(); */
-  /* redraw_scenes(); */
 
   print_dbg("\r\n play_init...");
   play_init();

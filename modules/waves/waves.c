@@ -351,6 +351,7 @@ static void calc_frame(void) {
 //----- external functions
 
 void module_init(void) {
+  int i;
 
   // init module/param descriptor
   // intialize local data at start of SDRAM
@@ -361,11 +362,10 @@ void module_init(void) {
   gModuleData->paramData = data->mParamData;
   gModuleData->numParams = eParamNumParams;
 
-  // fill param values with minima as default
-  for(i=0; i<eParamNumParams; ++i) {
-    gModuleData->paramData[i].value = gModuleData->paramDesc[i].min;
-  }
-
+  /* // fill param values with minima as default */
+  /* for(i=0; i<eParamNumParams; ++i) { */
+  /*   gModuleData->paramData[i].value = gModuleData->paramDesc[i].min; */
+  /* } */
 
   for(i=0; i<WAVES_NVOICES; i++) {
     fract32 tmp = FRACT32_MAX >> 2;

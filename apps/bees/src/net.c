@@ -977,6 +977,7 @@ u8 net_get_in_play(u32 inIdx) {
 
 // add a new parameter
 void net_add_param(u32 idx, const ParamDesc * pdesc) {
+  s32 val;
   // copy descriptor, hm
   memcpy( &(net->params[net->numParams].desc), (const void*)pdesc, sizeof(ParamDesc) );
 
@@ -992,7 +993,14 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
 
   //  net->params[net->numParams].preset = 0; 
   net->numParams += 1;
-  
+
+  // query initial value
+  val = bfin_get_param(idx);
+
+  net->params[net->numParams - 1].data.value = 
+    scaler_get_in( &(net->params[net->numParams - 1].scaler), val);
+
+  net->params[net->numParams - 1].data.changed = 0; 
 }
 
 // clear existing parameters
@@ -1019,88 +1027,93 @@ void net_retrigger_inputs(void) {
   netActive = 1;
 }
 
-// query the blackfin for parameter list and populate pnodes
-u8 net_report_params(void) {
-  volatile char buf[64];
-  volatile ParamDesc pdesc;
-  volatile u32 numParams;
-  s32 val;
-  u8 i;
+
+///////////////
+///////////////
+/// moving param descriptor offline
+#if 0
+/* // query the blackfin for parameter list and populate pnodes */
+/* u8 net_report_params(void) { */
+/*   volatile char buf[64]; */
+/*   volatile ParamDesc pdesc; */
+/*   volatile u32 numParams; */
+/*   s32 val; */
+/*   u8 i; */
  
-  bfin_get_num_params(&numParams);
+/*   bfin_get_num_params(&numParams); */
   
-  print_dbg("\r\nnumparams: ");
-  print_dbg_ulong(numParams);
+/*   print_dbg("\r\nnumparams: "); */
+/*   print_dbg_ulong(numParams); */
 
-  if(numParams == 255) {
-    print_dbg("\r\n report_params fail (255)");
-    return 0;
-  }
+/*   if(numParams == 255) { */
+/*     print_dbg("\r\n report_params fail (255)"); */
+/*     return 0; */
+/*   } */
   
-  if(numParams > 0) {
+/*   if(numParams > 0) { */
 
-    net_clear_params();
+/*     net_clear_params(); */
 
-    for(i=0; i<numParams; i++) {
+/*     for(i=0; i<numParams; i++) { */
 
       
-      ///////
-      ///////
-      // TODO: offline param descriptor
-      bfin_get_param_desc(i, &pdesc);
-      ///////
-      /////
+/*       /////// */
+/*       /////// */
+/*       // TODO: offline param descriptor */
+/*       //      bfin_get_param_desc(i, &pdesc); */
+/*       ///////  */
+/*       ///// */
 
 
-      print_dbg("\r\n received descriptor for param, index : ");
-      print_dbg_ulong(i);
-      print_dbg(" , label : ");
-      print_dbg((const char* )pdesc.label);
+/*       print_dbg("\r\n received descriptor for param, index : "); */
+/*       print_dbg_ulong(i); */
+/*       print_dbg(" , label : "); */
+/*       print_dbg((const char* )pdesc.label); */
 
-      print_dbg(" ; \t initial value: 0x");
-      val = bfin_get_param(i);
-      print_dbg_hex(val);
+/*       print_dbg(" ; \t initial value: 0x"); */
+/*       val = bfin_get_param(i); */
+/*       print_dbg_hex(val); */
 
-      net_add_param(i, (const ParamDesc*)&pdesc);
-      print_dbg("\r\n finished adding parameter.");
+/*       net_add_param(i, (const ParamDesc*)&pdesc); */
+/*       print_dbg("\r\n finished adding parameter."); */
 
-      //      net->params[net->numParams - 1].data.value = val; 
-      //// use reverse-lookup method from scaler      
-      net->params[net->numParams - 1].data.value = 
-	scaler_get_in( &(net->params[net->numParams - 1].scaler), val);
+/*       //      net->params[net->numParams - 1].data.value = val;  */
+/*       //// use reverse-lookup method from scaler       */
+/*       net->params[net->numParams - 1].data.value =  */
+/* 	scaler_get_in( &(net->params[net->numParams - 1].scaler), val); */
 
-      net->params[net->numParams - 1].data.changed = 0; 
+/*       net->params[net->numParams - 1].data.changed = 0;  */
 
-    }
-  } else {
-    print_dbg("\r\n bfin: no parameters reported");
-    return 0;
-  }
+/*     } */
+/*   } else { */
+/*     print_dbg("\r\n bfin: no parameters reported"); */
+/*     return 0; */
+/*   } */
   
-  delay_ms(100);
+/*   delay_ms(100); */
 
-  print_dbg("\r\n checking module label ");
-  bfin_get_module_name(buf);
+/*   print_dbg("\r\n checking module label "); */
+/*   bfin_get_module_name(buf); */
 
-  delay_ms(10);
+/*   delay_ms(10); */
 
-  print_dbg("\r\n bfin module name: ");
-  print_dbg((const char*)buf);
+/*   print_dbg("\r\n bfin module name: "); */
+/*   print_dbg((const char*)buf); */
 
 
-  //  if(numParams > 0 && numParams != 255) {
-    /// test bfin_get_param on initial values
-    //    print_dbg("\r\n reporting inital param values: ");
-    //    for(i=0; i<numParams; ++i) {
-    //  print_dbg("\r\n 0x");
-  //      val = bfin_get_param(i);
-  //      print_dbg_hex(val);
-      //    }
-      //  }
-  return (u8)numParams;
+/*   //  if(numParams > 0 && numParams != 255) { */
+/*     /// test bfin_get_param on initial values */
+/*     //    print_dbg("\r\n reporting inital param values: "); */
+/*     //    for(i=0; i<numParams; ++i) { */
+/*     //  print_dbg("\r\n 0x"); */
+/*   //      val = bfin_get_param(i); */
+/*   //      print_dbg_hex(val); */
+/*       //    } */
+/*       //  } */
+/*   return (u8)numParams; */
 
-}
-
+/* } */
+#endif
 
 // pickle the network!
 u8* net_pickle(u8* dst) {

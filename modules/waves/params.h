@@ -2,6 +2,8 @@
 #ifndef _ALEPH_MODULE_WAVES_PARAMS_H_
 #define _ALEPH_MODULE_WAVES_PARAMS_H_
 
+#include "param_common.h"
+
 //---------- defines
 // ranges and radix
 // ranges are in 16.16
@@ -187,6 +189,6 @@ enum params {
 };
 
 
-extern void fill_param_desc(void);
+extern void fill_param_desc(ParamDesc* desc);
 
 #endif // h guard

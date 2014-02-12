@@ -1,3 +1,7 @@
+// aleph/common
+#include "param_common.h"
+
+// bfin_lib
 #include "bfin_core.h"
 #include "control.h"
 #include "gpio.h"
@@ -29,7 +33,7 @@ static void spi_set_param(u32 idx, ParamValue pv) {
 // deal with new data in the spi rx ringbuffer
 // return byte to load for next MISO
 u8 spi_process(u8 rx) {
-  static ParamValueCommon pval;
+  static ParamValueSwap pval;
   switch(byte) {
     /// caveman style case statement
   case eCom :

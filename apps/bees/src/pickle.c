@@ -1,13 +1,15 @@
+/*
+  pickle.c
+
+  basically a little utility to enforce endianness across platforms.
+
+ */
+
+
 #include "print_funcs.h"
 
 #include "types.h"
 #include "pickle.h"
-
-//#if ARCH_AVR32
-// avr32 is big-endian
-//// FIXME: should probably byteswap,
-///  so that other systems can more easily parse the resultant blobs?
-/// nah, doesn't really matter.
  
 // 32-bit store to bytestream
 // return updated stream pointer

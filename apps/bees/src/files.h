@@ -61,4 +61,8 @@ extern u8 files_get_scaler_count(void);
 // return 1 on success, 0 on failure
 extern u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize);
 
+//----- param descriptors
+// search for named .dsc file and load into network param desc memory
+extern u8 files_load_desc(const char* name);
+
 #endif // header guard 

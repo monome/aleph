@@ -15,6 +15,7 @@
 
 // aleph-common 
 #include "module_common.h"
+
 // aleph-avr32
 #include "app.h"
 #include "bfin.h"
@@ -24,7 +25,9 @@
 
 /// bees
 #include "files.h"
+#include "net_protected.h"
 #include "pages.h"
+#include "param.h"
 #include "scene.h"
 
 // ---- directory list class
@@ -39,7 +42,7 @@
 #define SCALERS_PATH  "/data/bees/scalers/"
 
 // endinanness
-// #define SCALER_LE
+// #define SCALER_LE 1
 
 //  stupid datatype with fixed number of fixed-length filenames
 // storing this for speed when UI asks us for a lot of strings
@@ -103,6 +106,25 @@ static void strip_space(char* str, u8 len) {
     else { break; }
   }
 }
+
+
+// strip extension from the end of a string
+static void strip_ext(char* str) {
+  int i;
+  int dotpos = -1;
+  i = strlen(str);
+  while(i > 0) {
+    --i;
+    if(str[i] == '.') {
+      dotpos = i;
+      break;
+    }
+  } 
+  if(dotpos >= 0) {
+    str[dotpos] = '\0';
+  }
+}
+
 
 //---------------------------
 //------------- extern defs
@@ -180,6 +202,9 @@ u8 files_load_dsp_name(const char* name) {
 
       print_dbg("\r\n sceneData->moduleName : ");
       print_dbg(name);
+      
+      print_dbg("\r\n loading parameter descriptor file...");
+      ret = files_load_desc(name);
 
       ret = 1;
     } else {
@@ -190,6 +215,7 @@ u8 files_load_dsp_name(const char* name) {
     print_dbg("\r\n error: fp was null in files_load_dsp_name \r\n");
     ret = 0;
   }
+
   app_resume();
   return ret;
 }
@@ -529,7 +555,6 @@ void list_scan(dirList_t* list, const char* path) {
   print_dbg(list->path);
   print_dbg(" , contents : \r\n");
 
-\
   /* for(i=0; i<list->num; i++) { */
   /*   char buf[32]; */
   /*   u8 j; */
@@ -591,4 +616,61 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
     fp = NULL;
   }
   return fp;
+}
+
+// search for named .dsc file and load into network param desc memory
+extern u8 files_load_desc(const char* name) {
+  char path[64] = DSP_PATH;
+  void * fp;
+  int nparams = -1;
+  // word buffer for 4-byte unpickling
+  u8 nbuf[4];
+  // buffer for binary blob of single descriptor
+  u8 dbuf[PARAM_DESC_PICKLE_BYTES];
+  // unpacked descriptor
+  ParamDesc desc;
+  int i;
+  s32 val;
+  u8 ret = 0;
+
+  app_pause();
+
+  strcat(path, name);
+  strip_ext(path);
+  strcat(path, ".dsc");
+
+  fp = fl_fopen(path, "r");
+  if(fp == NULL) {
+    print_dbg("\r\n error opening .dsc file, path: ");
+    print_dbg(path);
+    ret = 1;
+  } else {
+
+    // get number of parameters
+    fake_fread(nbuf, 4, fp);
+    unpickle_32(nbuf, (u32*)&nparams); 
+
+    /// loop over params
+    if(nparams > 0) {
+      net_clear_params();
+      //    net->numParams = nparams;
+
+      for(i=0; i<nparams; i++) {
+	//  FIXME: a little gross,
+	// to be interleaving network and file manipulation like this...
+	///....
+	// read into desc buffer
+	fake_fread(dbuf, PARAM_DESC_PICKLE_BYTES, fp);
+	// unpickle directly into network descriptor memory
+	pdesc_unpickle( &desc, dbuf );
+	// copy descriptor to network and increment count
+	net_add_param(i, (const ParamDesc*)(&desc));      
+      }
+    } else {
+      print_dbg("\r\n error: crazy parameter count from descriptor file.");
+      ret = 1;
+    }
+  }
+  app_resume();
+  return ret;
 }

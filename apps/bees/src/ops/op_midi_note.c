@@ -20,7 +20,7 @@ static const char* op_midi_note_opstring = "MIDINOTE";
 //---- input functions
 
 //// network inputs: 
-static void op_midi_note_inc_fn(op_midi_note_t* grid, const s16 idx, const io_t inc);
+//static void op_midi_note_inc_fn(op_midi_note_t* grid, const s16 idx, const io_t inc);
 static void op_midi_note_in_chan(op_midi_note_t* grid, const io_t val);
 
 // pickles

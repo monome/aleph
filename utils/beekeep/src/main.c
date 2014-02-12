@@ -34,7 +34,7 @@ void scan_ext(void) {
       break;
     }
   }
-  if(dotpos > 0) {
+  if(dotpos >= 0) {
     strncpy(ext, filename + dotpos, len - i + 1);
   }
 

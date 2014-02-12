@@ -136,46 +136,42 @@ u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
 const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
   u32 val;
   u8 i;
+
+  print_dbg("\r\n unpickling param descriptor: ");
+
   // store label string
   for(i=0; i<PARAM_LABEL_LEN; ++i) {
     pdesc->label[i] = *src;
     ++src;
   }
-
   print_dbg(" , label: ");
   print_dbg(pdesc->label);
 
   // store type
-  pdesc->type = *src;
-  ++src;
-
+  // pad for alignment
+  src = unpickle_32(src, &val);
+  pdesc->type = (u8)val;
   print_dbg(" , type: ");
   print_dbg_ulong(pdesc->type);
-
   
   // min
   src = unpickle_32(src, &val);
   pdesc->min = val;
+  print_dbg(" , min: ");
+  print_dbg_hex(pdesc->min);
 
-  // print_dbg("\r\n unpickled param min: ");
-  // print_dbg_hex(pdesc->min);
   // max
   src = unpickle_32(src, &val);
   pdesc->max = val;
-
   print_dbg(" , max: ");
   print_dbg_ulong(pdesc->max);
 
   // store radix
-  src = unpickle_32(src, &val);
-  pdesc->radix = val;
-
-  print_dbg(" , radix: ");
-  print_dbg_ulong(pdesc->radix);
-
-  // radix (waste space for alignment)
+  // padfor alignment
   src = unpickle_32(src, &val);
   pdesc->radix = (u8)val;
+  print_dbg(" , radix: ");
+  print_dbg_ulong(pdesc->radix);
 
   return src;
 }
