@@ -18,6 +18,10 @@ use usb cable and minicom/kermit to connect to aleph device port and get debug m
 
 currently using baudrate 500000 and a device spelled something like /dev/ttyACM0. [**] 
 
+hints: 
+sudo stty -F /dev/ttyACM0 500000
+minicom -s
+(serial port setup; then 'E' for bps; then 'a' until you see 500000; then 'f' OFF )
 
 
 [*] for the "green sandwich" proto, mode switch is broken, bootloader toggle is SW4.
