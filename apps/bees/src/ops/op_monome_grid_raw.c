@@ -18,7 +18,6 @@ static const char* op_mgrid_raw_opstring = "GRID";
 //---- input functions
 
 //// network inputs: 
-static void op_mgrid_raw_inc_fn(op_mgrid_raw_t* grid, const s16 idx, const io_t inc);
 static void op_mgrid_raw_in_focus(op_mgrid_raw_t* grid, const io_t val);
 static void op_mgrid_raw_in_tog(op_mgrid_raw_t* grid, const io_t val);
 static void op_mgrid_raw_in_mono(op_mgrid_raw_t* grid, const io_t val);
@@ -45,7 +44,6 @@ void op_mgrid_raw_init(void* mem) {
 
   // superclass functions
   //--- op
-  op->super.inc_fn = (op_inc_fn)op_mgrid_raw_inc_fn;
   op->super.in_fn = op_mgrid_raw_in_fn;
   op->super.pickle = (op_pickle_fn) (&op_mgrid_raw_pickle);
   op->super.unpickle = (op_unpickle_fn) (&op_mgrid_raw_unpickle);
@@ -184,20 +182,6 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
 }
 
 
-/// increment param value from UI:
-void op_mgrid_raw_inc_fn(op_mgrid_raw_t* op, const s16 idx, const io_t inc) {
-  switch(idx) {
-  case 0: // focus
-    op_mgrid_raw_in_focus(op, inc);
-    break;
-  case 1: // toggle mode
-    op_mgrid_raw_in_tog(op, inc);
-    break;
-  case 2: // mono mode
-    op_mgrid_raw_in_mono(op, inc);
-    break;
-  }
-}
 
 // pickle / unpickle
 u8* op_mgrid_raw_pickle(op_mgrid_raw_t* mgrid, u8* dst) {

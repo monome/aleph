@@ -3,7 +3,6 @@
 
 //-------------------------------------------------
 //----- static function declaration
-static void op_logic_inc_input(op_logic_t* logic, const s16 idx, const io_t inc);
 static void op_logic_in_a(op_logic_t* logic, const io_t v);
 static void op_logic_in_b(op_logic_t* logic, const io_t v);
 static void op_logic_in_btrig(op_logic_t* logic, const io_t v);
@@ -39,7 +38,6 @@ void op_logic_init(void* mem) {
   logic->outs[1] = -1;
   logic->outs[2] = -1;
 
-  logic->super.inc_fn = (op_inc_fn)op_logic_inc_input;
   logic->super.in_fn = op_logic_in_fn;
   logic->super.pickle = (op_pickle_fn) (&op_logic_pickle);
   logic->super.unpickle = (op_unpickle_fn) (&op_logic_unpickle);
@@ -134,29 +132,6 @@ static void op_logic_in_invert(op_logic_t* logic, const io_t v) {
   } else { logic->invert = 0; }
 }
 
-//===== UI input
-static void op_logic_inc_input(op_logic_t* logic, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0:  // a
-    val = op_add(logic->a, inc);
-    op_logic_in_a(logic, val);
-    break; 
-  case 1:  // b
-    val = op_add(logic->b, inc);
-    op_logic_in_b(logic, val);
-    break;
-  case 2:  // trig
-    op_logic_in_btrig(logic, inc);
-    break;
-  case 3:  // edge
-    op_logic_in_edge(logic, inc);
-    break;
-  case 4:  // invert
-    op_logic_in_invert(logic, inc);
-    break;
-  }
-}
 
 // pickle / unpickle
 u8* op_logic_pickle(op_logic_t* op, u8* dst) {

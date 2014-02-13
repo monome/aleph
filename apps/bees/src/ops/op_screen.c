@@ -32,8 +32,6 @@ static const char* op_screen_opstring = "SCREEN";
 //-------------------------------------------------
 //----- static function declaration
 
-// UI increment
-static void op_screen_inc(op_screen_t* screen, const s16 idx, const io_t inc);
 // set inputs
 static void op_screen_in_enable(op_screen_t* screen, const io_t v);
 static void op_screen_in_period(op_screen_t* screen, const io_t v);
@@ -73,7 +71,6 @@ void op_screen_init(void* op) {
   op_screen_t* screen = (op_screen_t*)op;
 
   // superclass functions
-  screen->super.inc_fn = (op_inc_fn)&op_screen_inc;
   screen->super.in_fn = op_screen_in;
   screen->super.pickle = (op_pickle_fn) (&op_screen_pickle);
   screen->super.unpickle = (op_unpickle_fn) (&op_screen_unpickle);
@@ -212,38 +209,6 @@ void op_screen_poll_handler(void* op) {
       screen_draw_region(0, 0, r->w, r->h, r->data);
       r->dirty = 0;
     }
-  }
-}
-
-//===== UI input
-
-// increment
-static void op_screen_inc(op_screen_t* screen, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0: // enable
-    op_screen_in_enable(screen, inc);
-    break;
-  case 1: // period
-    val = op_sadd(screen->period, inc);
-    op_screen_in_period(screen, val);
-    break;
-  case 2: // current value
-    val = op_sadd(screen->val, inc);
-    op_screen_in_val(screen, val);
-    break;
-  case 3: // fill with color
-    val = op_sadd(screen->fill, inc);
-    op_screen_in_fill(screen, val);
-    break;
-  case 4: // x position
-    val = op_sadd(screen->x, inc);
-    op_screen_in_x(screen, val);
-    break;
-  case 5: // y position
-    val = op_sadd(screen->x, inc);
-    op_screen_in_y(screen, val);
-    break;
   }
 }
 
