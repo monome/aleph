@@ -6,7 +6,6 @@
 static void op_gate_in_value(op_gate_t* gate, const io_t v);
 static void op_gate_in_gate(op_gate_t* gate, const io_t v);
 static void op_gate_in_store(op_gate_t* gate, const io_t v);
-static void op_gate_inc_input(op_gate_t* gate, const s16 idx, const io_t inc);
 
 //-------------------------------------------------
 //----- static vars
@@ -27,7 +26,6 @@ void op_gate_init(void* mem) {
   gate->super.numInputs = 3;
   gate->super.numOutputs = 1;
   gate->outs[0] = -1;
-  gate->super.inc_fn = (op_inc_fn)op_gate_inc_input;
   gate->super.in_fn = op_gate_in_fn;
   gate->super.in_val = gate->in_val;
   gate->super.out = gate->outs;
@@ -61,20 +59,4 @@ static void op_gate_in_gate(op_gate_t* gate, const io_t v) {
 static void op_gate_in_store(op_gate_t* gate, const io_t v) {
   //  gate->store = (*v != 0);
   if(v > 0) { gate->store = 1; } else { gate->store = 0; }
-}
-
-static void op_gate_inc_input(op_gate_t* gate, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0:  // value
-    val = op_add(gate->val, inc);
-    op_gate_in_value(gate, val);
-    break; 
-  case 1:  // gate
-    op_gate_in_gate(gate, inc);
-    break;
-  case 2:  // storage mode
-    op_gate_in_store(gate, inc);
-    break;
-  }
 }

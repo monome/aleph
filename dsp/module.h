@@ -26,7 +26,7 @@
 //---- module descriptor
 typedef struct _moduleData {
   char name[MODULE_NAME_LEN];
-  ParamDesc* paramDesc;
+  //  ParamDesc* paramDesc;
   // FIXME: not really using this global parameter data.
   // but we probably will if we want a bfin control rate or FIFO. 
   // so for now it is just here, burning resources.

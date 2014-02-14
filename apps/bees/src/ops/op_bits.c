@@ -13,8 +13,6 @@ static void op_bits_in_i5(op_bits_t* bits, const io_t v);
 static void op_bits_in_i6(op_bits_t* bits, const io_t v);
 static void op_bits_in_i7(op_bits_t* bits, const io_t v);
 
-static void op_bits_inc_input(op_bits_t* mul, const s16 idx, const io_t inc);
-
 // output on input from inputs
 static void op_bits_output(op_bits_t* bits);
 
@@ -56,7 +54,6 @@ void op_bits_init(void* mem) {
   bits->outs[7] = -1;
   bits->outs[8] = -1;
 
-  bits->super.inc_fn = (op_inc_fn)op_bits_inc_input;
   bits->super.in_fn = op_bits_in_fn;
   bits->super.in_val = bits->in_val;
   bits->super.pickle = (op_pickle_fn) (&op_bits_pickle);
@@ -159,50 +156,6 @@ static void op_bits_output(op_bits_t* bits) {
   net_activate(bits->outs[0], val, bits);
 }
 
-
-
-//===== UI input
-static void op_bits_inc_input(op_bits_t* bits, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0:  // index
-    val = op_sadd(bits->index, inc);
-    op_bits_in_index(bits, val);
-    break; 
-  case 1:
-    val = op_sadd(bits->i0, inc);
-    op_bits_in_i0(bits, val);
-    break;
-  case 2:
-    val = op_sadd(bits->i1, inc);
-    op_bits_in_i1(bits, val);
-    break;
-  case 3:
-    val = op_sadd(bits->i2, inc);
-    op_bits_in_i2(bits, val);
-    break;
-  case 4:
-    val = op_sadd(bits->i3, inc);
-    op_bits_in_i3(bits, val);
-    break;
-  case 5:
-    val = op_sadd(bits->i4, inc);
-    op_bits_in_i4(bits, val);
-    break;
-  case 6:
-    val = op_sadd(bits->i5, inc);
-    op_bits_in_i5(bits, val);
-    break;
-  case 7:
-    val = op_sadd(bits->i6, inc);
-    op_bits_in_i6(bits, val);
-    break;
-  case 8:
-    val = op_sadd(bits->i7, inc);
-    op_bits_in_i7(bits, val);
-    break;
-  }
-}
 
 
 // pickle / unpickle

@@ -34,13 +34,10 @@
 /// lines
 #include "params.h"
 
+#define TEST 0
+
 //-----------------------
 //------ static variables
-#if ARCH_LINUX
-static FILE* dbgFile;
-u8 dbgFlag = 0;
-u32 dbgCount = 0;
-#endif
 
 // total SDRAM is 64M
 // each line 60ish seconds for now
@@ -55,7 +52,7 @@ u32 dbgCount = 0;
 // data structure of external memory
 typedef struct _linesData {
   ModuleData super;
-  ParamDesc mParamDesc[eParamNumParams];
+  //  ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
   fract32 audioBuffer[NLINES][LINES_BUF_FRAMES];
 } linesData;
@@ -256,13 +253,7 @@ void module_init(void) {
   u8 i;
   u32 j;
   // init module/param descriptor
-#ifdef ARCH_BFIN 
   pLinesData = (linesData*)SDRAM_ADDRESS;
-#else
-  pLinesData = (linesData*)malloc(sizeof(linesData));
-  // debug file
-  //  dbgFile = fopen( "tape_dbg.txt", "w");
-#endif
   
   gModuleData = &(pLinesData->super);
   strcpy(gModuleData->name, "aleph-lines");
@@ -276,7 +267,6 @@ void module_init(void) {
     delayFadeN_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);
     filter_svf_init(&(svf[i]));
 
-
     filter_1p_lo_init(&(svfCutSlew[i]), 0x3fffffff);
     filter_1p_lo_init(&(svfRqSlew[i]), 0x3fffffff);
 
@@ -286,12 +276,36 @@ void module_init(void) {
     /* filter_svf_set_rq(&(svf[i]), 0x1000); */
     /* filter_svf_set_low(&(svf[i]), 0x4000); */
     
+
+
+
+
+
+#if 1 
+    //// WTF??
+    //// uh... this is hanging the module, or something
+    //// at least, it takes a long time.
+    /// so just zero the beginning/end.
+    /// the write head will get the rest in short order,
+    /// ... unless, of course, we set the pos directly on scene recall... 
+    for(j=(LINES_BUF_FRAMES - 50000); j<(LINES_BUF_FRAMES); ++j) {
+      pLinesData->audioBuffer[i][j] = 0;
+    }
+    for(j=0; j<(50000); ++j)  {
+      pLinesData->audioBuffer[i][j] = 0;
+    }
+#else
     for(j=0; j<LINES_BUF_FRAMES; j++) {
       pLinesData->audioBuffer[i][j] = 0;
     }
+#endif
   }
 
   /// setup params with intial values
+
+#if TEST
+#else
+
 
   param_setup( eParamFade0 , 0x100000 );
   param_setup( eParamFade1 , 0x100000 );
@@ -368,7 +382,7 @@ void module_init(void) {
   param_setup(  eParamCut1Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamRq0Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamRq1Slew, PARAM_SLEW_DEFAULT );
-
+#endif
 
 }
 
@@ -392,6 +406,9 @@ void module_process_frame(void) {
   // mix inputs to delay lines
   mix_del_inputs();
 
+  /// TEST
+#if TEST
+#else
   for(i=0; i<NLINES; i++) {
     // process fade integrator
     //    lines[i].fadeWr = filter_ramp_tog_next(&(lpFadeWr[i]));
@@ -415,11 +432,20 @@ void module_process_frame(void) {
     out_del[i] = tmpDel;
 
   } // end lines loop 
- 
-    // mix outputs to DACs
-  mix_outputs();
+#endif
 
+  // mix outputs to DACs
+  /// TEST
+#if TEST
+  out[0] = in[0];
+  out[1] = in[1];
+  out[2] = in[2];
+  out[3] = in[3];
+
+#else
+  mix_outputs();
   /// do CV output
+  
   if( !(cvSlew[cvChan].sync) ) { 
     cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
     dac_update(cvChan, cvVal[cvChan]);
@@ -428,6 +454,7 @@ void module_process_frame(void) {
   if(++cvChan == 4) {
     cvChan = 0;
   }
+#endif
 }
 
 // parameter set function

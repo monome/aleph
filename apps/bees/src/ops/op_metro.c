@@ -19,7 +19,6 @@ static const char* op_metro_opstring	= "METRO";
 
 //-------------------------------------------------
 //----- static function declaration
-static void op_metro_inc_fn	(op_metro_t* metro, const s16 idx, const io_t inc);
 static void op_metro_in_enable	(op_metro_t* metro, const io_t v);
 static void op_metro_in_period	(op_metro_t* metro, const io_t v);
 static void op_metro_in_value	(op_metro_t* metro, const io_t v);
@@ -56,8 +55,6 @@ void op_metro_init(void* op) {
   // polled operator superclass
   metro->op_poll.handler = (poll_handler_t)(&op_metro_poll_handler);
   metro->op_poll.op = metro;
-  // ui increment function
-  metro->super.inc_fn = (op_inc_fn)op_metro_inc_fn;
   metro->super.in_fn = op_metro_in_fn;
   // input value array
   metro->super.in_val = metro->in_val;
@@ -139,32 +136,6 @@ void op_metro_poll_handler(void* op) {
   net_activate(metro->outs[0], metro->value, &(metro->super));
 }
 
-// ===== UI input
-
-// increment
-static void op_metro_inc_fn(op_metro_t* metro, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0: // enable (toggle)
-    //if(metro->enable) {
-    if(inc < 0) {
-      val = 0;
-      op_metro_in_enable(metro, val);
-    } else {
-      val = OP_ONE;
-      op_metro_in_enable(metro, val);
-    }
-    break;
-  case 1: // period
-    val = op_sadd(metro->period, inc);
-    op_metro_in_period(metro, val);
-    break;
-  case 2: // value
-    val = op_sadd(metro->value, inc);
-    op_metro_in_value(metro, val);
-    break;
-  }
-}
 
 //===== pickles
 

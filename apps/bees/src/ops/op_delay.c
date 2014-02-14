@@ -19,7 +19,6 @@ static const char* op_delay_opstring	= "DELAY";
 
 //-------------------------------------------------
 //----- static function declaration
-static void op_delay_inc_fn	(op_delay_t* delay, const s16 idx, const io_t inc);
 static void op_delay_in_val	(op_delay_t* delay, const io_t v);
 static void op_delay_in_time	(op_delay_t* delay, const io_t v);
 static void op_delay_in_clear	(op_delay_t* delay, const io_t v);
@@ -56,8 +55,6 @@ void op_delay_init(void* op) {
   // polled operator superclass
   delay->op_poll.handler = (poll_handler_t)(&op_delay_poll_handler);
   delay->op_poll.op = delay;
-  // ui increment function
-  delay->super.inc_fn = (op_inc_fn)op_delay_inc_fn;
   delay->super.in_fn = op_delay_in_fn;
   // input value array
   delay->super.in_val = delay->in_val;
@@ -125,24 +122,6 @@ void op_delay_poll_handler(void* op) {
   net_activate(delay->outs[0], delay->val, &(delay->super));
 }
 
-// ===== UI input
-
-// increment
-static void op_delay_inc_fn(op_delay_t* delay, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0: // val
-    // no ui  
-    break;
-  case 1: // time
-    val = op_sadd(delay->ms, inc);
-    op_delay_in_time(delay, val);
-    break;
-  case 2: // clear
-    op_delay_in_clear(delay, inc);
-    break;
-  }
-}
 
 //===== pickles
 
