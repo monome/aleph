@@ -80,34 +80,6 @@ _stext:
   // Call the startup customization function.
   call    _init_startup
   
-  // Load initialized external EXTRAM data having a global lifetime from the
-  // data_extram LMA.
-  lda.w   r0, _data_extram
-  lda.w   r1, _edata_extram
-  cp      r0, r1
-  brhs    idata_extram_load_loop_end
-  lda.w   r2, _data_extram_lma
-idata_extram_load_loop:
-  ld.d    r4, r2++
-  st.d    r0++, r4
-  cp      r0, r1
-  brlo    idata_extram_load_loop
-idata_extram_load_loop_end:
-
-  // Clear uninitialized external EXTRAM data having a global lifetime in the
-  // blank static storage section.
-  lda.w   r0, __bss_extram_start
-  lda.w   r1, _bss_extram_end
-  cp      r0, r1
-  brhs    udata_extram_clear_loop_end
-  mov     r2, 0
-  mov     r3, 0
-udata_extram_clear_loop:
-  st.d    r0++, r2
-  cp      r0, r1
-  brlo    udata_extram_clear_loop
-udata_extram_clear_loop_end:
-
   // Load initialized data having a global lifetime from the data LMA.
   lda.w   r0, _data
   lda.w   r1, _edata

@@ -2,8 +2,8 @@
    avr32
    aleph
 
-   a hacky sort of interface to explicitly allocate regions of SRAM
-   like malloc() without the free() !
+   custom interface to allocate regions of SRAM
+   now just calls into malloc/free.
 */
 
 //// test
@@ -11,7 +11,6 @@
 
 // asf
 #include "print_funcs.h"
-#include "smc.h"
 
 // aleph
 #include "screen.h"
@@ -19,63 +18,32 @@
 #include "memory.h"
 
 
-//  SRAM base address
-#define SRAM              ((void *)AVR32_EBI_CS1_ADDRESS)
-// SRAM size.
-#define SRAM_SIZE         (1 << smc_get_cs_size(1))
-
-
-// pointers to heap-ish
-static heap_t pHeapStart;
-static heap_t  pHeapEnd;
-static u32 heapOffset = 0;
-// bytes in sram hardware
-static u32 heapSize;
-
-
 // setup heap-ish
 void init_mem(void) {
-  heapSize = SRAM_SIZE;
-  pHeapStart = (heap_t)SRAM;
-  pHeapEnd = (heap_t)((u32)pHeapStart + heapSize);
-  heapOffset = 0;
-
-  print_dbg("\r\n SRAM size: 0x");
-  print_dbg_hex(heapSize);
-
+  // this space left intentionally empty 
 }
 
 // allocate and return pointer
 heap_t alloc_mem(u32 bytes) {
-  //  print_dbg("\r\n allocating memory, bytes: 0x");
-  //  print_dbg_hex(bytes);
-
-  //  print_dbg("\r\n location: 0x");
-  //  print_dbg_hex(heapOffset);
-
-  heap_t ret = pHeapStart + heapOffset;
-
-  u32 tmp = heapOffset + bytes;
-  u8 mtmp = tmp % 4;
+  void* mem_ptr;
 
   print_dbg("\r\n >>> alloc_mem(), requested bytes: 0x");
   print_dbg_hex(bytes);
-  print_dbg(" , location: 0x");
-  print_dbg_hex((u32)ret);
 
-  // align to 4 bytes
-  if ( mtmp != 0) {
-    tmp += ( 4 - mtmp );
+  mem_ptr = malloc(bytes);
+  if (mem_ptr == 0) {
+     print_dbg("\r\n memory allocation failed!");
   }
-  if (tmp < heapSize) {
-    heapOffset = tmp;
-  } else {
-    print_dbg("\r\n memory allocation failed!");
-    ret = (heap_t)ALLOC_FAIL;
-  }
+
   print_dbg("\r\n memory allocation result: 0x");
-  print_dbg_hex((u32)ret);
-  return ret;
+  print_dbg_hex((u32)mem_ptr);
+
+  return (heap_t)mem_ptr;
+}
+
+void free_mem(heap_t mem_ptr)
+{
+	free((void *)mem_ptr);
 }
 
 // memory test routine
@@ -119,3 +87,84 @@ void sram_test(u32 numBytes, u32 offset) {
   /* print_dbg_ulong(noErrors); */
   /* print_dbg(" corrupted word(s)       \r\n"); */
 }
+
+
+
+// Number of dynamic allocation to perform
+#define EXTSDRAM_EXAMPLE_NB_MALLOC      4
+
+// The dynamically allocated buffer size.
+#define EXTSDRAM_EXAMPLE_MALLOC_SIZE    128
+
+// The pattern written to the dynamically allocated buffer.
+#define EXTSDRAM_EXAMPLE_PATTERN        0xCAFEBABE
+
+// The size of the huge buffer.
+#define EXTSDRAM_EXAMPLE_HUGEBUFF_SIZE  16385
+
+// malloc() tests
+void test_malloc( void )
+{
+
+  //##################################################
+  //## II. Dynamic allocation in external SDRAM tests.
+  //##################################################
+  int *pBuf;          // Pointer on malloc'ed buffer
+  int *pTempo;        // Temporary pointer
+  int i,j;            // counters.
+  int iTempoValue;    // Temporary value
+  U8  u8NbErrors = 0; // Number of read/write errors
+  int *au32StoreMallocPtr[EXTSDRAM_EXAMPLE_NB_MALLOC];
+
+  for(i=0; i<EXTSDRAM_EXAMPLE_NB_MALLOC; i++)
+  {
+    // II.1 Malloc a buffer of EXTSDRAM_EXAMPLE_MALLOC_SIZE int.
+    pBuf = (int *)malloc(EXTSDRAM_EXAMPLE_MALLOC_SIZE*sizeof(int));
+    au32StoreMallocPtr[i] = pBuf;
+    if (pBuf)
+    {   // Malloc succeeded.
+      // Print the address of the allocated buffer to USART1.
+      print_dbg("\r\nMalloc OK at address: 0x");
+      print_dbg_hex((int) pBuf);
+
+      // II.2 Fill this buffer with a pattern.
+      print_dbg("\r\nWriting the pattern 0x");
+      print_dbg_hex(EXTSDRAM_EXAMPLE_PATTERN);
+      print_dbg(" to the dynamically allocated buffer...");
+      pTempo = pBuf;
+      j = EXTSDRAM_EXAMPLE_MALLOC_SIZE;
+      while(j--)
+        *pTempo++ = EXTSDRAM_EXAMPLE_PATTERN;
+
+      // II.3 Check that the pattern was correctly written.
+      print_dbg("\r\nChecking...");
+      u8NbErrors = 0;
+      pTempo--;
+      while(pTempo >= pBuf)
+      {
+        iTempoValue = *pTempo--;
+        if(EXTSDRAM_EXAMPLE_PATTERN != iTempoValue)
+        {
+          u8NbErrors++;
+          print_dbg("\r\nInvalid value read: 0x");
+          print_dbg_hex(iTempoValue);
+        }
+      }
+      print_dbg("\r\nNumber of read/write errors: ");
+      print_dbg_ulong(u8NbErrors);
+      print_dbg("\r\n");
+    }
+    else
+    {   // Should never happen!
+      print_dbg("\r\nMalloc failed\r\n");
+    }
+  }
+  // II.4 Free the previously allocated buffers.
+  for(i=0; i<EXTSDRAM_EXAMPLE_NB_MALLOC; i++)
+  {
+    pBuf = au32StoreMallocPtr[i];
+    if(NULL != pBuf)
+      free(pBuf);
+  }
+}
+

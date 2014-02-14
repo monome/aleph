@@ -205,9 +205,9 @@ static inline void assign_main_event_handlers(void) {
 //=================================================
 //==== definitons
 
-// top-level peripheral init
-static void init_avr32(void) {
-  volatile avr32_tc_t *tc = APP_TC;
+// low-level init called by startup_uc3.S assembly.  So we can init
+// the static mem ctlr before C runtime starts up and use external SDRAM for the heap.
+int _init_startup(void) {
   // clocks
   // setup clocks
   sysclk_init();
@@ -219,13 +219,30 @@ static void init_avr32(void) {
 
   /// interrupts
   irq_initialize_vectors();
-  // disable all interrupts for now
-  cpu_irq_disable();
 
   // serial usb
   init_ftdi_usart();
+
+  print_dbg(" ++++++++++++++++ Initializing SMC / SDRAM\r\n ");
+
   // external sram
   smc_init(FHSB_HZ);
+
+  // fixme: test malloc for SDRAM paranoia
+  test_malloc();
+
+  // init will continue below after app main() is called from the C runtime.
+  return 0;
+}
+
+
+// top-level peripheral init
+static void init_avr32(void) {
+  volatile avr32_tc_t *tc = APP_TC;
+  
+  // disable all interrupts for now
+  cpu_irq_disable();
+
   // initialize spi1: OLED, ADC, SD/MMC
   init_spi1();
   // initialize PDCA controller
