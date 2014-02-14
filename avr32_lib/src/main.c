@@ -228,9 +228,6 @@ int _init_startup(void) {
   // external sram
   smc_init(FHSB_HZ);
 
-  // fixme: test malloc for SDRAM paranoia
-  test_malloc();
-
   // init will continue below after app main() is called from the C runtime.
   return 0;
 }
@@ -240,6 +237,9 @@ int _init_startup(void) {
 static void init_avr32(void) {
   volatile avr32_tc_t *tc = APP_TC;
   
+ // fixme: test malloc for SDRAM paranoia
+  test_malloc();
+
   // disable all interrupts for now
   cpu_irq_disable();
 
