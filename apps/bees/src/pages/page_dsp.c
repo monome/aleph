@@ -192,11 +192,14 @@ void handle_key_1(s32 val) {
 }
 
 void handle_key_2(s32 val) {
+  ;;
+  /*
   if(check_key(2)) {
     bfin_disable();
     net_report_params();
     bfin_enable();
   }
+  */
 }
 
 void handle_key_3(s32 val) {
