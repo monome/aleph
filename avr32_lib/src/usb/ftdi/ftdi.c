@@ -78,7 +78,6 @@ static void ftdi_tx_done(
 void ftdi_write(u8* data, u32 bytes) {
   txBusy = 1;
   if(!uhi_ftdi_out_run(data, bytes, &ftdi_tx_done)) {
-
     print_dbg("\r\n error requesting ftdi output pipe");
   }
 }

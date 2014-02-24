@@ -133,10 +133,10 @@ uhc_enum_status_t uhi_midi_install(uhc_device_t* dev) {
       case USB_EP_TYPE_BULK:
        	print_dbg("\r\n allocating bulk endpoint ( ");
 	if (((usb_ep_desc_t*)ptr_iface)->bEndpointAddress & USB_EP_DIR_IN) {
-	  /* print_dbg(" input )"); */
-	  /* print_dbg("\r\n ( previous input : 0x"); */
-	  /* print_dbg_hex((u32)uhi_midi_dev.ep_in); */
-	  /* if(uhi_midi_dev.ep_in != 0) { print_dbg("\r\n reallocating midi input endpoint"); } */
+	  print_dbg(" input )");
+	  print_dbg("\r\n ( previous input : 0x");
+	  print_dbg_hex((u32)uhi_midi_dev.ep_in);
+	  if(uhi_midi_dev.ep_in != 0) { print_dbg("\r\n reallocating midi input endpoint"); }
 	  uhi_midi_dev.ep_in = ((usb_ep_desc_t*)ptr_iface)->bEndpointAddress;
 	} else {
 	  print_dbg(" output )");
@@ -210,6 +210,12 @@ bool uhi_midi_in_run(uint8_t * buf, iram_size_t buf_size,
 
 bool uhi_midi_out_run(uint8_t * buf, iram_size_t buf_size,
 		      uhd_callback_trans_t callback) {
+
+  print_dbg("\r\n attempting to run midi output endpoint. dev address: 0x");
+  print_dbg_hex((u32) (uhi_midi_dev.dev->address) );
+  print_dbg("endpoint number: ");
+  print_dbg_ulong((u32) (uhi_midi_dev.ep_out) );
+  
   return uhd_ep_run(uhi_midi_dev.dev->address,
 		    uhi_midi_dev.ep_out, true, buf, buf_size,
 		    UHI_MIDI_TIMEOUT, callback);

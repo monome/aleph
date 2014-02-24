@@ -87,6 +87,12 @@ void serial_process() {
 
   //buffer, try to grab more than one byte if available
   while(usart_read_char(FTDI_USART,&c) == USART_SUCCESS) {
+
+    //////////////////
+    //// TEST: loopback
+    print_dbg_char(c);
+    ///////////////////
+
     // DONE: implement proper framing, ie: http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
     // code 27 is escape
     if(c == 27 && escape == 0) escape = 1;

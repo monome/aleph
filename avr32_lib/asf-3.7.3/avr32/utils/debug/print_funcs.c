@@ -48,11 +48,11 @@
 #include "usart.h"
 #include "print_funcs.h"
 
-#define USART_BEGIN_DBG_TX   usart_putchar(DBG_USART,1)
-#define USART_END_DBG_TX   usart_putchar(DBG_USART,0)
+// #define USART_BEGIN_DBG_TX   usart_putchar(DBG_USART,1)
+// #define USART_END_DBG_TX   usart_putchar(DBG_USART,0)
 
-// #define USART_BEGIN_DBG_TX ;
-// #define USART_END_DBG_TX ;
+#define USART_BEGIN_DBG_TX ;
+#define USART_END_DBG_TX ;
 
 //! ASCII representation of hexadecimal digits.
 static const char HEX_DIGITS[16] = "0123456789ABCDEF";
@@ -93,31 +93,57 @@ void init_dbg_rs232_ex(unsigned long baudrate, long pba_hz)
 #if RELEASEBUILD==1
 
 
+/* void print_dbg(const char *str) { ;; } */
 
-void print_dbg(const char *str) { ;; }
+/* void print_dbg_char(int c) { ;; } */
+/* void print_dbg_ulong(unsigned long n) { ;; } */
 
-void print_dbg_char(int c) { ;; }
-void print_dbg_ulong(unsigned long n) { ;; }
+/* void print_dbg_char_hex(unsigned char n) { ;; } */
 
-void print_dbg_char_hex(unsigned char n) { ;; }
+/* void print_dbg_short_hex(unsigned short n) { ;; } */
 
-void print_dbg_short_hex(unsigned short n) { ;; }
+/* void print_dbg_hex(unsigned long n) { ;; } */
 
-void print_dbg_hex(unsigned long n) { ;; }
+/* void print(volatile avr32_usart_t *usart, const char *str) { ;; } */
 
-void print(volatile avr32_usart_t *usart, const char *str) { ;; }
+/* void print_char(volatile avr32_usart_t *usart, int c) { ;; } */
 
-void print_char(volatile avr32_usart_t *usart, int c) { ;; }
+/* void print_ulong(volatile avr32_usart_t *usart, unsigned long n) { ;; } */
 
-void print_ulong(volatile avr32_usart_t *usart, unsigned long n) { ;; }
+/* void print_char_hex(volatile avr32_usart_t *usart, unsigned char n) { ;; } */
 
-void print_char_hex(volatile avr32_usart_t *usart, unsigned char n) { ;; }
+/* void print_short_hex(volatile avr32_usart_t *usart, unsigned short n) { ;; } */
 
-void print_short_hex(volatile avr32_usart_t *usart, unsigned short n) { ;; }
+/* void print_hex(volatile avr32_usart_t *usart, unsigned long n) { ;; } */
 
-void print_hex(volatile avr32_usart_t *usart, unsigned long n) { ;; }
+/* void print_byte_array(u8* data, u32 size, u32 linebreak) { ;; } */
 
-void print_byte_array(u8* data, u32 size, u32 linebreak) { ;; }
+#define  print_dbg(blahblah) ;;
+
+#define  print_dbg_char(blahblah) ;;
+
+#define  print_dbg_ulong(blahblah) ;;
+
+#define  print_dbg_char_hex(blahblah) ;;
+
+#define  print_dbg_short_hex(blahblah) ;;
+
+#define  print_dbg_hex(blahblah) ;;
+
+#define  print(blah, blah) ;;
+
+#define  print_char(blah, blah) ;;
+
+#define  print_ulong(blah, blah) ;;
+
+#define  print_char_hex(blah, blah) ;;
+
+#define  print_short_hex(blah, blah) ;;
+
+#define  print_hex(blah, blah) ;;
+
+#define  print_byte_array(blah, blah, blah) ;;
+
 
 
 #else
