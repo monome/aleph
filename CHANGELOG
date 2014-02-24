@@ -3,6 +3,8 @@ bees	0.5.0  ! breaks module compatibility !
 - move param descriptors offline, associated .dsc with .ldr
 - fix hang when attempting to delete system ops	  
 - eliminate class-specific increment functions for operators
+- new ops: MIDICC, MIDIPITCH, MIDITOUCH, NOTEOUT, CCOUT, PITCHOUT
+- SRAM linked to heap
 
 ----------------
 lines	0.2.0

@@ -21,17 +21,17 @@ static const char* op_midi_note_opstring = "MIDINOTE";
 
 //// network inputs: 
 //static void op_midi_note_inc_fn(op_midi_note_t* grid, const s16 idx, const io_t inc);
-static void op_midi_note_in_chan(op_midi_note_t* grid, const io_t val);
+static void op_midi_note_in_chan(op_midi_note_t* mnote, const io_t val);
 
 // pickles
-static u8* op_midi_note_pickle(op_midi_note_t* enc, u8* dst);
+static u8* op_midi_note_pickle(op_midi_note_t* mnote, u8* dst);
 static const u8* op_midi_note_unpickle(op_midi_note_t* mnote, const u8* src);
 
 /// midi event handler
 static void op_midi_note_handler(op_midi_t* op_midi, u32 data);
 
 // input func pointer array
-static op_in_fn op_midi_note_in_fn[3] = {
+static op_in_fn op_midi_note_in_fn[1] = {
   (op_in_fn)&op_midi_note_in_chan,
 };
 
@@ -119,21 +119,12 @@ static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
     } else {
       // note on
       ch = (data & 0x0f000000) >> 24;
-      /* print_dbg("\r\n midi got channel: "); */
-      /* print_dbg_hex((u32)ch); */
       if(ch == op->chan) {
 	// matches our channel, so perform it
 	num = (data & 0xff0000) >> 16;
 	vel = (data & 0xff00) >> 8;
 	net_activate(op->outs[0], op_from_int(num), op);
 	net_activate(op->outs[1], op_from_int(vel), op);
-
-
-      print_dbg("\r\n op_midi note on ; num: ");
-      print_dbg_ulong(num);
-      print_dbg(" ; vel: ");
-      print_dbg_ulong(vel);
-
       }
     }
   } else if (com == 0x80) {

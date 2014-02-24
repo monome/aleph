@@ -18,6 +18,8 @@ typedef struct op_midi_note_struct {
   // channel, input value(negative == all channels)
   volatile io_t chanIo;
   /// actual channel number
+  // this is stored separately as 8b value,
+  // i don't think there's a good reason for this, but whatever
   s8 chan;
 } op_midi_note_t;
 

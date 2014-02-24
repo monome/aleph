@@ -863,7 +863,9 @@ io_t net_inc_in_value(s32 inIdx, io_t inc) {
   } else {
     op = net->ops[net->ins[inIdx].opIdx];
 
-    (*(op->inc_fn))(op, net->ins[inIdx].opInIdx, inc);
+    //    (*(op->inc_fn))(op, net->ins[inIdx].opInIdx, inc);
+    op_inc_in_val(op, net->ins[inIdx].opInIdx, inc);
+    
 
     print_dbg(" , result: ");
     print_dbg_hex( net_get_in_value(inIdx));

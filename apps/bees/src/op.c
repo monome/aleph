@@ -178,8 +178,26 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_route_t),
     .init = &op_route_init,
     .deinit = NULL
+  }, {
+    .name = "MIDICC",
+    .size = sizeof(op_midi_cc_t),
+    .init = &op_midi_cc_init,
+    .deinit = NULL
+  },
+  /*
+  {
+    .name = "MIDIPITCH",
+    .size = sizeof(op_midi_bend_t),
+    .init = &op_route_init,
+    .deinit = NULL
+  }, 
+  {
+    .name = "MIDITOUCH",
+    .size = sizeof(op_midi_touch_t),
+    .init = &op_route_init,
+    .deinit = NULL
   }
-
+  */
 };
 
 
@@ -273,9 +291,17 @@ void op_set_in_val(op_t* op, s16 idx, io_t val) {
 
 
 
-// increment input valueo
+// increment input value
 void op_inc_in_val(op_t* op, const s16 idx, const io_t inc) {
-  io_t val;
-  val = op_sadd( *(op->in_val[idx]), inc); 
-  (*(op->in_fn[idx]))(op, val);  
+  print_dbg("\r\n op_inc_in_val, ");
+  print_dbg(" op @ 0x");
+  print_dbg_hex((u32)op);
+  print_dbg(" old : 0x");
+  print_dbg_hex((u32)op_get_in_val(op, idx));
+  print_dbg(" inc : 0x");
+  print_dbg_hex((u32)inc);
+  print_dbg(" new : 0x");
+  print_dbg_hex( (u32)op_sadd( op_get_in_val(op, idx), inc) );
+    
+  op_set_in_val( op, idx, op_sadd( op_get_in_val(op, idx), inc) );
 }
