@@ -207,6 +207,7 @@ static inline void assign_main_event_handlers(void) {
 
 // low-level init called by startup_uc3.S assembly.  So we can init
 // the static mem ctlr before C runtime starts up and use external SDRAM for the heap.
+int _init_startup(void);
 int _init_startup(void) {
   // clocks
   // setup clocks

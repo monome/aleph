@@ -182,7 +182,7 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "MIDICC",
     .size = sizeof(op_midi_cc_t),
     .init = &op_midi_cc_init,
-    .deinit = NULL
+    .deinit = op_midi_cc_deinit
   },
   /*
   {
@@ -198,6 +198,12 @@ const op_desc_t op_registry[numOpClasses] = {
     .deinit = NULL
   }
   */
+ {
+    .name = "MOUT_NOTE",
+    .size = sizeof(op_midi_out_note_t),
+    .init = &op_midi_out_note_init,
+    .deinit = NULL
+  },
 };
 
 

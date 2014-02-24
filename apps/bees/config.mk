@@ -52,6 +52,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_logic.c \
 	$(APP_DIR)/src/ops/op_metro.c \
 	$(APP_DIR)/src/ops/op_midi_cc.c \
+	$(APP_DIR)/src/ops/op_midi_out_note.c \
 	$(APP_DIR)/src/ops/op_midi_note.c \
 	$(APP_DIR)/src/ops/op_mul.c \
 	$(APP_DIR)/src/ops/op_monome_grid_raw.c \

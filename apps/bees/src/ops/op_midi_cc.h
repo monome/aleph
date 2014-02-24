@@ -3,7 +3,7 @@
 
 #include "net_midi.h"
 
-//--- op_midi_cc_t : it is a midi control change operator, woo
+//--- op_midi_cc_t : it is a midi control change operator, yep
 
 
 typedef struct op_midi_cc_struct {

@@ -120,63 +120,7 @@ static void midi_parse(void) {
     //    print_dbg_hex(packet.data);
     event_post(&ev);
   }
-  //  print_dbg("\r\n");
-  //  print_dbg("\r\n");
 }
-
-/*   for(i=0; i<rxBytes; ++i) { */
-/*     b = *src; */
-/*     //    print_dbg("\r\n midi_parse, byte: "); */
-/*     //    print_dbg_hex((u32)b); */
-/*     if(b & 0x80) { */
-/*       // this is a status byte, start a new packet */
-/*       dst = packetStart; */
-/*       if(packOk) { */
-/* 	// send the previous packet */
-/* 	print_dbg("\r\n sending MIDI packet: "); */
-/* 	print_dbg_char_hex((ev.data & 0xff000000) >> 24); */
-/* 	print_dbg(" "); */
-/* 	print_dbg_char_hex((ev.data & 0xff0000) >> 16); */
-/* 	print_dbg(" "); */
-/* 	print_dbg_char_hex((ev.data & 0xff00) >> 8); */
-/* 	print_dbg(" "); */
-/* 	print_dbg_char_hex(ev.data & 0xff); */
-/* 	print_dbg(" "); */
-/* 	event_post(&ev); */
-/* 	// don't want to send again at the end of the loop */
-/* 	packOk = 0; */
-/*       } else { */
-/* 	// maybe this packet is only a status byte */
-/* 	packOk = 1; */
-/*       } */
-/*       // store status byte */
-/*       *dst = b; */
-/*     } else { */
-/*       if(++dst > packetEnd) { */
-/* 	// exceeded packet size, don't write, don't send */
-/* 	packOk = 0; */
-/*       } else { */
-/* 	// store data byte, or whatever */
-/* 	*dst = b; */
-/* 	packOk = 1; */
-/*       }  */
-/*     } */
-/*     ++src; */
-/*   } */
-/*   if(packOk) { */
-/*     // send the previous packet */
-/*     print_dbg("\r\n sending MIDI packet: "); */
-/*     print_dbg_char_hex(ev.data & 0xff); */
-/*     print_dbg(" "); */
-/*     print_dbg_char_hex((ev.data & 0xff00) >> 8); */
-/*     print_dbg(" "); */
-/*     print_dbg_char_hex((ev.data & 0xff0000) >> 16); */
-/*     print_dbg(" "); */
-/*     print_dbg_char_hex((ev.data & 0xff000000) >> 24); */
-/*     print_dbg(" "); */
-/*     event_post(&ev); */
-/*   } */
-/* } */
 
 // callback for the non-blocking asynchronous read.
 static void midi_rx_done( usb_add_t add,
@@ -207,7 +151,13 @@ static void midi_tx_done( usb_add_t add,
 			  uhd_trans_status_t stat,
 			  iram_size_t nb) {
 
-  //...
+  txBusy = false;
+  /* print_dbg("\r\n ftdi tx transfer callback. status: 0x"); */
+  /* print_dbg_hex((u32)status); */
+  if (stat != UHD_TRANS_NOERROR) {
+    print_dbg("\r\n midi tx error");
+    return;
+  }
 }
 
 //-----------------------------------------
@@ -225,9 +175,10 @@ extern void midi_read(void) {
 
 // write to MIDI device
 extern void midi_write(u8* data, u32 bytes) {
+  print_dbg("\r\n midi_write...");
+  txBusy = true;
   if (!uhi_midi_out_run(data, bytes, &midi_tx_done)) {
-    txBusy = true;
-    //    print_dbg("\r\n midi tx endpoint error");
+    print_dbg("\r\n midi tx endpoint error");
   }
   return;
 }

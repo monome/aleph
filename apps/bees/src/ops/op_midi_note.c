@@ -127,7 +127,7 @@ static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
 	net_activate(op->outs[1], op_from_int(vel), op);
       }
     }
-  } else if (com == 0x80) {
+  } else if (com == 0x8) {
     // note off
     if(op->chan == -1) {
       num = (data & 0xff0000) >> 16;
