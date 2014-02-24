@@ -66,14 +66,16 @@ void op_preset_init(void* mem) {
 //===== operator input
 
 // input read index
-static void op_preset_in_read(op_preset_t* preset, const io_t v) {
-  int idx = op_to_int(v);
-  preset->read = v;
-  // recall given preset
-  print_dbg("\r\n recalling preset from operator, idx: ");
-  print_dbg_ulong(idx);
-  if(idx >=0 && idx < NET_PRESETS_MAX) { 
-    preset_recall( idx );
+static void op_preset_in_read(op_preset_t* preset, const io_t val) {
+  // bounds checks : set, don't perform
+  const io_t v = op_to_int(val);
+  if(v < 0) { 
+    preset->read = 0; 
+  } else if (v > (NET_PRESETS_MAX - 1)) { 
+    preset->read = op_from_int( NET_PRESETS_MAX - 1); 
+  }  else { 
+    preset->read = v; 
+    preset_recall( v );
   }
 }
 
