@@ -4,11 +4,11 @@
 #include "op.h"
 
 /*
-  note: the ordering of output nodes in the op spec,
+  note: the ordering of output nodes in the op spec
   is significant for order of execution.
-  here, awkwardly putting velocity before note number,
-  because we want it to be set first.
 
+  need to decide on optimal triggering behavior.
+  velocity-triggered for now.
  */
 
 //--- op_midi_out_note_t : midi note output
@@ -21,10 +21,10 @@ typedef struct op_midi_out_note_struct {
   op_out_t outs[0];
   // output channel (-1 == all channels)
   volatile io_t chan;
-  // output velocity
-  volatile io_t vel;
   // output note num
   volatile io_t num;
+  // output velocity
+  volatile io_t vel;
 } op_midi_out_note_t;
 
 // init

@@ -9,9 +9,9 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_midi_out_note_instring =  "CHAN    NUM     ";
+static const char* op_midi_out_note_instring =  "CHAN    NUM     VEL     ";
 static const char* op_midi_out_note_outstring = "";
-static const char* op_midi_out_note_opstring = "MIDIOUT_NOTE";
+static const char* op_midi_out_note_opstring = "MOUT_N";
 
 //-------------------------------------------------
 //----- static function declaration
@@ -33,8 +33,8 @@ static inline void midi_out_note_send_packet( op_midi_out_note_t* mout );
 // input func pointer array
 static op_in_fn op_midi_out_note_in_fn[3] = {
   (op_in_fn)&op_midi_out_note_in_chan,
+  (op_in_fn)&op_midi_out_note_in_num,
   (op_in_fn)&op_midi_out_note_in_vel,
-  (op_in_fn)&op_midi_out_note_in_num
 };
 
 //-------------------------------------------------
@@ -92,22 +92,25 @@ static void op_midi_out_note_in_chan(op_midi_out_note_t* op, const io_t v) {
 }
 
 
-static void op_midi_out_note_in_vel(op_midi_out_note_t* op, const io_t v) {
-  // FIXME:: these checks should use io_t specific macros
-  if(v < 0) { op->vel = 0; }
-  else if (v > 127) { op->vel = 127; }
-  else { op->vel = v; }
-}
-
 static void op_midi_out_note_in_num(op_midi_out_note_t* op, const io_t v) {
   // FIXME:: these checks should use io_t specific macros
   if(v < 0) { op->num = 0; }
   else if (v > 127) { op->num = 127; }
   else { 
     op->num = v;
+  }
+}
+
+static void op_midi_out_note_in_vel(op_midi_out_note_t* op, const io_t v) {
+  // FIXME:: these checks should use io_t specific macros
+  if(v < 0) { op->vel = 0; }
+  else if (v > 127) { op->vel = 127; }
+  else { 
+    op->vel = v; 
     midi_out_note_send_packet(op);
   }
 }
+
 
 
 /*

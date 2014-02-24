@@ -155,7 +155,7 @@ static void midi_tx_done( usb_add_t add,
   /* print_dbg("\r\n ftdi tx transfer callback. status: 0x"); */
   /* print_dbg_hex((u32)status); */
   if (stat != UHD_TRANS_NOERROR) {
-    print_dbg("\r\n midi tx error");
+    print_dbg("\r\n midi tx error (in callback)");
     return;
   }
 }
