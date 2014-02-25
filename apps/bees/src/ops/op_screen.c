@@ -253,5 +253,5 @@ static inline void op_screen_set_timer(op_screen_t* screen) {
 
 static inline void op_screen_unset_timer(op_screen_t* screen) {
   timer_remove(&(screen->timer));
-  timers_unset_custom(&(screen->timer));
+  //  timers_unset_custom(&(screen->timer));
 }

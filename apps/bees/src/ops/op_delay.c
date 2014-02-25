@@ -117,8 +117,6 @@ void op_delay_in_clear (op_delay_t* delay, const io_t v) {
 void op_delay_poll_handler(void* op) {
   op_delay_t* delay = (op_delay_t*)op;
   op_delay_unset_timer(delay);
-  //  print_dbg("\r\n op_delay timer callback, value: 0x");
-  //  print_dbg_hex((u32)(delay->value));
   net_activate(delay->outs[0], delay->val, &(delay->super));
 }
 
@@ -137,19 +135,14 @@ const u8* op_delay_unpickle(op_delay_t* delay, const u8* src) {
 
 // timer manipulation
 static inline void op_delay_set_timer(op_delay_t* delay) {
-  //  timer_add(&(delay->timer), op_to_int(delay->period), &op_delay_callback, (void*)delay);
-  /* timer_add(&(delay->timer), op_to_int(delay->period), &app_custom_event_callback, delay); */
-
+  print_dbg("\r\n op_delay set timer, start ");
   timers_set_custom(&(delay->timer), op_to_int(delay->ms), &(delay->op_poll) );
   
-  //  print_dbg("\r\n op_delay add timer, return value: ");
-  //  print_dbg(ret ? "1" : "0");
+  print_dbg("\r\n op_delay set timer, done");
 }
 
 static inline void op_delay_unset_timer(op_delay_t* delay) {
+  print_dbg("\r\n op_delay_unset_timer, start ");
   timer_remove(&(delay->timer));
-  timers_unset_custom(&(delay->timer));
-
-  //  print_dbg("\r\n op_delay remove timer, return value: ");
-  //  print_dbg(ret ? "1" : "0");
+  print_dbg("\r\n op_delay_unset_timer, done ");
 }

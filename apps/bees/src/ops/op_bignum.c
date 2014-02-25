@@ -274,5 +274,5 @@ static inline void op_bignum_set_timer(op_bignum_t* bignum) {
 
 static inline void op_bignum_unset_timer(op_bignum_t* bignum) {
   timer_remove(&(bignum->timer));
-  timers_unset_custom(&(bignum->timer));
+  //  timers_unset_custom(&(bignum->timer));
 }

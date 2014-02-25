@@ -86,7 +86,7 @@ void serial_process() {
   int c;
 
   //buffer, try to grab more than one byte if available
-  while(usart_read_char(FTDI_USART,&c) == USART_SUCCESS) {
+  while(usart_read_char(AVR8_USART,&c) == USART_SUCCESS) {
 
     //////////////////
     //// TEST: loopback

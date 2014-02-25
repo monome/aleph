@@ -21,8 +21,14 @@
 #include "uhi_midi.h"
 
 #define UHI_MIDI_PRINT_DBG 0
-
 #define UHI_MIDI_TIMEOUT 20000
+
+// looks like we need to get class-specific endpoint descriptors,
+//  to ask them about virtual cable index and stuff like that.
+
+#define UHI_FTDI_TIMEOUT 20000
+//...
+#define MIDI_EP_OUT_DESC_REQ_TYPE ( (USB_REQ_DIR_IN) | (USB_REQ_TYPE_STANDARD) | (USB_REQ_RECIP_DEVICE) )
 
 //----- data types
 // device data structure
@@ -187,6 +193,9 @@ void uhi_midi_enable(uhc_device_t* dev) {
   /* 		   1, 0xff,  */
   /* 		   NULL); */
   
+
+  
+
   //  UHI_MIDI_CHANGE(dev, true);
   midi_change(dev, true);  
   print_dbg("\r\n finished uhi_midi_enable");

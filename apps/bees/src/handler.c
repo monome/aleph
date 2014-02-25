@@ -168,6 +168,7 @@ void assign_bees_event_handlers(void) {
   /// FIXME:
   //// better naming for customized application events
   app_event_handlers[ kEventAppCustom ]	= &net_poll_handler ;
+
   // system-defined:
   app_event_handlers[ kEventAdc0 ]	= &handle_Adc0 ;
   app_event_handlers[ kEventAdc1 ]	= &handle_Adc1 ;

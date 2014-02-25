@@ -16,9 +16,9 @@
 // store timers in a simple one-way linked list.
 // FIXME: remove() would be faster with two-way list.
 // top of list
-softTimer_t* top = NULL;
+static volatile softTimer_t* top = NULL;
 // size of list
-u32 num = 0;
+static volatile u32 num = 0;
 
 //------------------------------
 //--- extern functions
@@ -37,7 +37,7 @@ u8 timer_add( softTimer_t* t, u32 ticks, timer_callback_t callback, void* obj) {
     // disable timer interrupts
     cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
 
-    // this timer is unset
+    // top timer is unset
     if ( top == NULL ) {
       if (num == 0) {
 	// timer list is empty, so make this the top of the list
@@ -70,15 +70,23 @@ u8 timer_add( softTimer_t* t, u32 ticks, timer_callback_t callback, void* obj) {
 // find and remove a timer from the processing list
 // return 1 if removed, 0 if not found
 u8 timer_remove( softTimer_t* t) {
-  softTimer_t* cur = top;
-  softTimer_t* last = NULL;
+  volatile softTimer_t* cur = top;
+  volatile softTimer_t* last = NULL;
   u32 i;
   u8 ret = 0;
+
+  // disable timer interrupts
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
+
   // search for the timer in the linked list
+  print_dbg("\r\n unsetting timer, search start");
   for(i=0; i<num; ++i) {
     if(cur == t) {
       // found it...
+      print_dbg("\r\n unsetting timer, found at idx: ");
+      print_dbg_ulong(i);
+      print_dbg(", address: 0x");
+      print_dbg_hex((u32)cur);
       if(last == NULL) {
 	// target timer is probably at the top.
 	if(top != t) { // sanity check
@@ -86,6 +94,8 @@ u8 timer_remove( softTimer_t* t) {
 	  ret = 0; break;
 	}
 	if(t->next == t) {
+	  
+	  print_dbg(", timer is top element and last element.");
 	  // target timer is the top element, and also the last.
 	  // empty the list, unlink, get out
 	  top = NULL;
@@ -93,6 +103,7 @@ u8 timer_remove( softTimer_t* t) {
 	  num = 0;
 	  ret = 1; break;
 	} else {
+	  print_dbg(", timer is top element, not last element.");
 	  // target is top element, and there are more in the list.
 	  // make the next element into the top, unlink, get out
 	  top = t->next;
@@ -100,7 +111,7 @@ u8 timer_remove( softTimer_t* t) {
 	  --num;
 	  ret = 1; break;
 	}
-      } else {
+      } else { // last != NULL
 	// target timer is not at the top.
 	if(last->next != t) { // sanity check
 	  print_dbg("\r\n warning! timer list is insane; link mismatch.");
@@ -108,7 +119,14 @@ u8 timer_remove( softTimer_t* t) {
 	}
 	// made it here, so everything is sane, and this is not the top timer.
 	// unlink and report success
-	last->next = t->next;
+	
+	print_dbg(", timer is not the top element; next element address: 0x");
+	print_dbg_hex((u32)(t->next));
+	print_dbg(", last element address: 0x");
+	print_dbg_hex((u32)(last->next));
+	if(last != NULL) {
+	  last->next = t->next;
+	}
 	t->next = NULL;
 	--num;
       }
@@ -125,7 +143,7 @@ u8 timer_remove( softTimer_t* t) {
 // process the timer list, presumably from TC interrupt
 void process_timers( void ) {
   u32 i;
-  softTimer_t* t = top;
+  volatile softTimer_t* t = top;
   for(i = 0; i<num; ++i) {
     --(t->ticksRemain);
     if(t->ticksRemain == 0) {

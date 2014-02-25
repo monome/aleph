@@ -63,7 +63,7 @@ typedef enum {
   // kEventSerialAppCustom,
 
 
-  // a sneaky little event type for app cutsomization
+  // a sneaky little event type for app timer cutsomization
   kEventAppCustom,
   //// better?
   // kEventAppTimer
