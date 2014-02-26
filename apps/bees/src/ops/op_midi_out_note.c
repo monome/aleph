@@ -69,7 +69,7 @@ void op_midi_out_note_init(void* mem) {
   op->in_val[1] = &(op->num);
   op->in_val[2] = &(op->vel);
 
-  op->chan = op_from_int(-1);
+  op->chan = OP_ONE;
   op->num = 0;
   op->vel = 0;
 
@@ -152,6 +152,7 @@ static void op_midi_out_note_handler(op_midi_t* op_midi, u32 data) {
 inline void midi_out_note_send_packet( op_midi_out_note_t* mout ) {
   u8 pack[3];
   if(mout->vel == 0) {
+    // note on/off
     pack[0] = 0x80;
   } else {
     pack[0] = 0x90;
@@ -159,6 +160,13 @@ inline void midi_out_note_send_packet( op_midi_out_note_t* mout ) {
   pack[0] |= (u8)(mout->chan & 0x0f);
   pack[1] = (u8)(mout->num);
   pack[2] = (u8)(mout->vel);
+
+  print_dbg("\r\n midi_out_note_send_packet; data: ");
+  print_dbg_char_hex(pack[0]);    print_dbg(" ");
+  print_dbg_char_hex(pack[1]);    print_dbg(" ");
+  print_dbg_char_hex(pack[2]);    print_dbg(" ");
+
+
   
   midi_write(pack, 3);
 

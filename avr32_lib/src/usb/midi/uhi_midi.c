@@ -248,21 +248,47 @@ void uhi_midi_uninstall(uhc_device_t* dev) {
 
 bool uhi_midi_in_run(uint8_t * buf, iram_size_t buf_size,
 		     uhd_callback_trans_t callback) {
-  return uhd_ep_run(uhi_midi_dev.dev->address,
-		    uhi_midi_dev.ep_in, false, buf, buf_size,
-		    UHI_MIDI_TIMEOUT, callback);
+
+  print_dbg("\r\n attempting to run midi input endpoint ; dev address: 0x");
+  print_dbg_hex((u32) (uhi_midi_dev.dev->address) );
+  print_dbg(" , endpoint number: ");
+  print_dbg_ulong((u32) (uhi_midi_dev.ep_in) );
+  
+
+  return uhd_ep_run(
+		    uhi_midi_dev.dev->address,
+		    uhi_midi_dev.ep_in, 
+		    //		    false,  // shortpacket...
+		    //// TEST:
+		    true, 
+		    buf, buf_size,
+		    UHI_MIDI_TIMEOUT, 
+		    callback);
 }
 
 bool uhi_midi_out_run(uint8_t * buf, iram_size_t buf_size,
 		      uhd_callback_trans_t callback) {
+  /*
+    from uhd.h
 
-  print_dbg("\r\n attempting to run midi output endpoint. dev address: 0x");
+    * \warning About \a b_shortpacket, for OUT endpoint it means that
+    * a short packet or a Zero Length Packet must be sent to the USB line
+    * to properly close the usb transfer at the end of the data transfer.
+    * For Bulk and Interrupt IN endpoint, it will automatically stop the transfer
+    * at the end of the data transfer (received short packet).
+    *
+   */
+  print_dbg("\r\n attempting to run midi output endpoint ; dev address: 0x");
   print_dbg_hex((u32) (uhi_midi_dev.dev->address) );
-  print_dbg("endpoint number: ");
+  print_dbg(" , endpoint number: ");
   print_dbg_ulong((u32) (uhi_midi_dev.ep_out) );
   
-  return uhd_ep_run(uhi_midi_dev.dev->address,
-		    uhi_midi_dev.ep_out, true, buf, buf_size,
-		    UHI_MIDI_TIMEOUT, callback);
+  return uhd_ep_run(
+		    uhi_midi_dev.dev->address,
+		    uhi_midi_dev.ep_out, 
+		    true, // automatic shortpacket for buf < wlen
+		    buf, buf_size,
+		    UHI_MIDI_TIMEOUT, 
+		    callback);
 }
 

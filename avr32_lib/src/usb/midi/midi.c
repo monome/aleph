@@ -130,7 +130,7 @@ static void midi_rx_done( usb_add_t add,
 			  uhd_trans_status_t stat,
 			  iram_size_t nb) {
   int i;
- 
+  rxBusy = 0;
   if(nb > 0) {
     print_dbg("\r\n midi rx; status: 0x");
     print_dbg_hex((u32)stat);
@@ -141,8 +141,7 @@ static void midi_rx_done( usb_add_t add,
       print_dbg_char_hex(rxBuf[i]);
       print_dbg(" ");
     }
-    // the first byte is weird..
-    
+    // ignoring 1st byte, virtual cable select
     rxBytes = nb - 1;
     midi_parse();
   } 
@@ -177,8 +176,8 @@ extern void midi_read(void) {
 }
 
 // write to MIDI device
-extern void midi_write(u8* data, u32 bytes) {
-  static u8* pbuf = &(txBuf[1]);
+extern void midi_write(const u8* data, u32 bytes) {
+  u8* pbuf = &(txBuf[1]);
   int i;
  
   // copy to buffer 
@@ -186,13 +185,22 @@ extern void midi_write(u8* data, u32 bytes) {
     *pbuf++ = data[i];
   }
 
-  // would set virtual cable index here...
+  // high nib of 1st byte = virtual cable, leaving 0
+  // low nib = 4b com code, duplicated from status byte
   txBuf[0] = (u8) (data[0] >> 4); 
+  /// try cable idx 1
+  txBuf[0] |= 0x10;
  
+  print_dbg("\r\n midi tx; data: ");
+  for(i=0; i<(bytes+1); i++) {
+    print_dbg_char_hex(txBuf[i]);
+    print_dbg(" ");
+  }
+
 
   print_dbg("\r\n midi_write...");
   txBusy = true;
-  if (!uhi_midi_out_run(txBuf, bytes, &midi_tx_done)) {
+  if (!uhi_midi_out_run(txBuf, bytes+1, &midi_tx_done)) {
     // hm, every uhd enpoint run always returns unspecified error...
     //    print_dbg("\r\n midi tx endpoint error");
   }

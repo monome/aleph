@@ -10,7 +10,7 @@ extern u8 midiConnect;
 extern void midi_read(void);
 
 // write to MIDI device
-extern void midi_write(u8* data, u32 bytes);
+extern void midi_write(const u8* data, u32 bytes);
 
 // MIDI device was plugged or unplugged
 extern void midi_change(uhc_device_t* dev, u8 plug);
