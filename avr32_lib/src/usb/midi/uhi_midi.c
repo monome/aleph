@@ -21,7 +21,7 @@
 #include "usb_protocol_midi.h"
 #include "uhi_midi.h"
 
-#define UHI_MIDI_PRINT_DBG 0
+#define UHI_MIDI_PRINT_DBG 1
 #define UHI_MIDI_TIMEOUT 20000
 
 // looks like we need to get class-specific endpoint descriptors,
@@ -171,6 +171,7 @@ uhc_enum_status_t uhi_midi_install(uhc_device_t* dev) {
       if (!iface_supported) {
 	break;
       }
+
       if (!uhd_ep_alloc(dev->address, (usb_ep_desc_t*)ptr_iface)) {
 	print_dbg("\r\n endpoint allocation failed");
 	return UHC_ENUM_HARDWARE_LIMIT;
@@ -189,6 +190,8 @@ uhc_enum_status_t uhi_midi_install(uhc_device_t* dev) {
 	}
 	break;
       default:
+	print_dbg("\r\n midi install weirdness: allocated endpoint, not recognizing type.");
+	
 	;; // ignore endpoint (shouldn't get here)
 	break;
       }

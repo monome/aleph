@@ -118,31 +118,31 @@ void init_dbg_rs232_ex(unsigned long baudrate, long pba_hz)
 
 /* void print_byte_array(u8* data, u32 size, u32 linebreak) { ;; } */
 
-#define  print_dbg(blahblah) ;;
+#define  print_dbg(blahblah) (;;)
 
-#define  print_dbg_char(blahblah) ;;
+#define  print_dbg_char(blahblah) (;;)
 
-#define  print_dbg_ulong(blahblah) ;;
+#define  print_dbg_ulong(blahblah) (;;)
 
-#define  print_dbg_char_hex(blahblah) ;;
+#define  print_dbg_char_hex(blahblah) (;;)
 
-#define  print_dbg_short_hex(blahblah) ;;
+#define  print_dbg_short_hex(blahblah) (;;)
 
-#define  print_dbg_hex(blahblah) ;;
+#define  print_dbg_hex(blahblah) (;;)
 
-#define  print(blah, blah) ;;
+#define  print(blah, bleh) (;;)
 
-#define  print_char(blah, blah) ;;
+#define  print_char(blah, bleh) (;;)
 
-#define  print_ulong(blah, blah) ;;
+#define  print_ulong(blah, bleh) (;;)
 
-#define  print_char_hex(blah, blah) ;;
+#define  print_char_hex(blah, bleh) (;;)
 
-#define  print_short_hex(blah, blah) ;;
+#define  print_short_hex(blah, bleh) (;;)
 
-#define  print_hex(blah, blah) ;;
+#define  print_hex(blah, bleh) (;;)
 
-#define  print_byte_array(blah, blah, blah) ;;
+#define  print_byte_array(blah, bleh, blrg) (;;)
 
 
 
