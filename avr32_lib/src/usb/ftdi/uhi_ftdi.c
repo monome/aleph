@@ -54,14 +54,11 @@ static uhi_ftdi_dev_t uhi_ftdi_dev = {
   .dev = NULL,
 };
 
-// manufacturer string descriptor
-//usb_str_desc_t manufacturer_desc;
+// manufacturer string 
 char manufacturer_string[FTDI_STRING_MAX_LEN];
-// product string descriptor
-//usb_str_desc_t product_desc;
+// product string 
 char product_string[FTDI_STRING_MAX_LEN];
-// serial number string descriptor
-//usb_str_desc_t serial_desc;
+// serial number string 
 char serial_string[FTDI_STRING_MAX_LEN];
 
 // control read-busy flag
@@ -244,12 +241,14 @@ static u8 send_ctl_request(u8 reqtype, u8 reqnum,
   req.wValue = (val);
   req.wIndex = (index);
   req.wLength = (size);
-  return uhd_setup_request(uhi_ftdi_dev.dev->address,
-		    &req,
-		    data,
-		    size,
-		    NULL, //&ctl_req_run,
-		    callbackEnd); //&ctl_req_end);		    
+  return uhd_setup_request(
+			   uhi_ftdi_dev.dev->address,
+			   &req,
+			   data,
+			   size,
+			   NULL,
+			   callbackEnd
+			   );
 }
 
 // to be called when control read is complete
@@ -311,6 +310,7 @@ void ftdi_get_strings(char** pManufacturer, char** pProduct, char** pSerial) {
 			/*idx*/
 			FTDI_STRING_DESC_LANGID,
 			/*val*/
+			// ??
 			(USB_DT_STRING << 8) | uhi_ftdi_dev.dev->dev_desc.iProduct,
 			// end-transfer callback
 			&ctl_req_end )
@@ -347,6 +347,7 @@ void ftdi_get_strings(char** pManufacturer, char** pProduct, char** pSerial) {
   }
   // wait for transfer end
   while(ctlReadBusy) { ;; }
+
   //  print_dbg("\r\n requested all string descriptors.");
   *pManufacturer = manufacturer_string + FTDI_STRING_DESC_OFFSET;
   *pProduct = product_string + FTDI_STRING_DESC_OFFSET;

@@ -67,10 +67,7 @@ static u8* const packetEnd = &(packet.buf[3]);
 static void midi_parse(void) {
   // current byte data
   u8 b; 
-  //// FIXME:
-  /// for some reason, the UHC is getting an extra byte at the beginning
-  /// this byte has the upper nibble of the real first byte,
-  ///  echoed in its lower nibble.... weird
+  // skip the first byte ( CABLE | COM )
   u8* src = rxBuf + 1;
   // temp pointer to packet
   u8* dst = packetStart;
@@ -188,7 +185,9 @@ extern void midi_write(u8* data, u32 bytes) {
   for(i=0; i<bytes; ++i){
     *pbuf++ = data[i];
   }
-  txBuf[0] = (u8) (data[0] << 4); 
+
+  // would set virtual cable index here...
+  txBuf[0] = (u8) (data[0] >> 4); 
  
 
   print_dbg("\r\n midi_write...");

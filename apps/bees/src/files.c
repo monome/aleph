@@ -351,6 +351,7 @@ u8 files_load_scene_name(const char* name) {
     print_dbg("\r\n error: fp was null in files_load_scene_name \r\n");
     ret = 0;
   } 
+
   app_resume();
   return ret;
 }
@@ -681,7 +682,8 @@ extern u8 files_load_desc(const char* name) {
 	// unpickle directly into network descriptor memory
 	pdesc_unpickle( &desc, dbuf );
 	// copy descriptor to network and increment count
-	net_add_param(i, (const ParamDesc*)(&desc));      
+	net_add_param(i, (const ParamDesc*)(&desc));     
+ 
       }
     } else {
       print_dbg("\r\n error: crazy parameter count from descriptor file.");

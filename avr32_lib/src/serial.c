@@ -91,6 +91,7 @@ void serial_process() {
     //////////////////
     //// TEST: loopback
     print_dbg_char(c);
+    print_dbg(" ");
     ///////////////////
 
     // DONE: implement proper framing, ie: http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
@@ -137,7 +138,7 @@ void serial_param_info(s32 data) {
 
   /////
   /* FIXME: 
-   need to move this to bees, or move params out of bees, or something...
+     need to move this to bees, or move params out of bees, or something..
    */
   //  bfin_get_param_desc(idx, &p);
 
