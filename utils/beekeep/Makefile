@@ -43,7 +43,9 @@ src += \
 	$(bees)/src/ops/op_list8.c \
 	$(bees)/src/ops/op_logic.c \
 	$(bees)/src/ops/op_metro.c \
+	$(bees)/src/ops/op_midi_cc.c \
 	$(bees)/src/ops/op_midi_note.c \
+	$(bees)/src/ops/op_midi_out_note.c \
 	$(bees)/src/ops/op_mul.c \
 	$(bees)/src/ops/op_monome_grid_raw.c \
 	$(bees)/src/ops/op_preset.c \

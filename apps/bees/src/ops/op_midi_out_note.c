@@ -28,7 +28,7 @@ static u8* op_midi_out_note_pickle(op_midi_out_note_t* mout, u8* dst);
 static const u8* op_midi_out_note_unpickle(op_midi_out_note_t* mout, const u8* src);
 
 // build and send a midi serial packet
-static inline void midi_out_note_send_packet( op_midi_out_note_t* mout );
+static void op_midi_out_note_send_packet( op_midi_out_note_t* mout );
 
 // input func pointer array
 static op_in_fn op_midi_out_note_in_fn[3] = {
@@ -107,11 +107,9 @@ static void op_midi_out_note_in_vel(op_midi_out_note_t* op, const io_t v) {
   else if (v > 127) { op->vel = 127; }
   else { 
     op->vel = v; 
-    midi_out_note_send_packet(op);
+    op_midi_out_note_send_packet(op);
   }
 }
-
-
 
 /*
 static void op_midi_out_note_handler(op_midi_t* op_midi, u32 data) {
@@ -149,7 +147,7 @@ static void op_midi_out_note_handler(op_midi_t* op_midi, u32 data) {
 
 
 // build and send a midi serial packet
-inline void midi_out_note_send_packet( op_midi_out_note_t* mout ) {
+void op_midi_out_note_send_packet( op_midi_out_note_t* mout ) {
   u8 pack[3];
   if(mout->vel == 0) {
     // note on/off
@@ -166,8 +164,6 @@ inline void midi_out_note_send_packet( op_midi_out_note_t* mout ) {
   print_dbg_char_hex(pack[1]);    print_dbg(" ");
   print_dbg_char_hex(pack[2]);    print_dbg(" ");
 
-
-  
   midi_write(pack, 3);
 
 }

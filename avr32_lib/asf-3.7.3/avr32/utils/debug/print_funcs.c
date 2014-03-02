@@ -92,59 +92,7 @@ void init_dbg_rs232_ex(unsigned long baudrate, long pba_hz)
 
 #if RELEASEBUILD==1
 
-
-/* void print_dbg(const char *str) { ;; } */
-
-/* void print_dbg_char(int c) { ;; } */
-/* void print_dbg_ulong(unsigned long n) { ;; } */
-
-/* void print_dbg_char_hex(unsigned char n) { ;; } */
-
-/* void print_dbg_short_hex(unsigned short n) { ;; } */
-
-/* void print_dbg_hex(unsigned long n) { ;; } */
-
-/* void print(volatile avr32_usart_t *usart, const char *str) { ;; } */
-
-/* void print_char(volatile avr32_usart_t *usart, int c) { ;; } */
-
-/* void print_ulong(volatile avr32_usart_t *usart, unsigned long n) { ;; } */
-
-/* void print_char_hex(volatile avr32_usart_t *usart, unsigned char n) { ;; } */
-
-/* void print_short_hex(volatile avr32_usart_t *usart, unsigned short n) { ;; } */
-
-/* void print_hex(volatile avr32_usart_t *usart, unsigned long n) { ;; } */
-
-/* void print_byte_array(u8* data, u32 size, u32 linebreak) { ;; } */
-
-#define  print_dbg(blahblah) (;;)
-
-#define  print_dbg_char(blahblah) (;;)
-
-#define  print_dbg_ulong(blahblah) (;;)
-
-#define  print_dbg_char_hex(blahblah) (;;)
-
-#define  print_dbg_short_hex(blahblah) (;;)
-
-#define  print_dbg_hex(blahblah) (;;)
-
-#define  print(blah, bleh) (;;)
-
-#define  print_char(blah, bleh) (;;)
-
-#define  print_ulong(blah, bleh) (;;)
-
-#define  print_char_hex(blah, bleh) (;;)
-
-#define  print_short_hex(blah, bleh) (;;)
-
-#define  print_hex(blah, bleh) (;;)
-
-#define  print_byte_array(blah, bleh, blrg) (;;)
-
-
+/// print_dbg funcs are #defined as noops in header
 
 #else
 
@@ -199,6 +147,44 @@ void print_dbg_hex(unsigned long n)
   print_hex(DBG_USART, n);
   USART_END_DBG_TX;
 }
+
+void print_byte_array (u8* data, u32 size, u32 linebreak) {
+  u32 i, j;
+  u32 b, boff;
+  u32 addr = (u32)data;
+  print_dbg("\r\n");
+  print_dbg_hex(addr);
+  if(linebreak > 0) {
+    print_dbg(": \r\n" ); 
+  } else {
+    print_dbg(" : " ); 
+  }
+  j = 0;
+  while(j<size) {
+    b = 0;
+    boff = 24;
+    for(i=0; i<4; i++) {
+      //      if(i == 2) { print_dbg(" "); }
+      b |= ( *(u8*)addr ) << boff;
+      addr++;
+      boff -= 8;
+    }
+    print_dbg_hex(b);
+    print_dbg(" ");
+    j += 4;
+    if( (linebreak > 0) && ((j % linebreak) == 0) ) { print_dbg("\r\n"); }
+  }
+}
+
+void print_unicode_string(char* str, u32 len) {
+  u32 i; // byte index
+  print_dbg("\r\n");
+  for(i=0; i<len; i++) {
+    print_dbg_char(str[i]);
+  }
+}
+
+#endif // debug build
 
 
 void print(volatile avr32_usart_t *usart, const char *str)
@@ -286,40 +272,3 @@ void print_hex(volatile avr32_usart_t *usart, unsigned long n)
   print(usart, tmp);
 }
 
-
-void print_byte_array (u8* data, u32 size, u32 linebreak) {
-  u32 i, j;
-  u32 b, boff;
-  u32 addr = (u32)data;
-  print_dbg("\r\n");
-  print_dbg_hex(addr);
-  if(linebreak > 0) {
-    print_dbg(": \r\n" ); 
-  } else {
-    print_dbg(" : " ); 
-  }
-  j = 0;
-  while(j<size) {
-    b = 0;
-    boff = 24;
-    for(i=0; i<4; i++) {
-      //      if(i == 2) { print_dbg(" "); }
-      b |= ( *(u8*)addr ) << boff;
-      addr++;
-      boff -= 8;
-    }
-    print_dbg_hex(b);
-    print_dbg(" ");
-    j += 4;
-    if( (linebreak > 0) && ((j % linebreak) == 0) ) { print_dbg("\r\n"); }
-  }
-}
-
-void print_unicode_string(char* str, u32 len) {
-  u32 i; // byte index
-  print_dbg("\r\n");
-  for(i=0; i<len; i++) {
-    print_dbg_char(str[i]);
-  }
-}
-#endif
