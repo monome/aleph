@@ -1,60 +1,18 @@
 {
     "title" : "bees scene",
-    "description" : "describes structure of scene data in the BEES application for monome:aleph"
-}
-
-{ 
+    "description" : "minimal structure of scene data in BEES application for monome:aleph"
     "$schema" : "http://json-schema.org/schema#"
-}
 
-{ 
-    "definitions" : {
-	"paramDescriptor" : { 
-	    "type" : "object" ,
-	    "properties" : {
-		"name" : { "type" : "string" },
-		"class" : { "type" : "integer" },
-		"min" : { "type" : "integer" },
-
-		"max" : { "type" : "integer" },
-	    }
-	}
-	"opInputDescriptor" : {
-	    "type" : "object" ,
-	    "properties" : {
-		"inIdx" : { "type" : "integer" },
-		"inName" : { "type" : "string" },
-	    }
-	} ,
-
-	"opOutputDescriptor" : {
-	    "type" : "object" ,
-	    "properties" : {
-		"opIdx" : { "type" : "integer" },
-		"opOutIdx" : { "type" : "integer" },
-		"opName" : { "type" : "string" },
-		"outName" : { "type" : "string" },
-	    }
-	} , 
-	"opOutputData" : {
-	    "anyOf" : [
-		{ "type" : "array",
-		  "items" : [
-		    { "type" : "integer" }, // op index
-		    { "$ref": "#/definitions/opInputDescriptor" },
-		  ]
-		},
-		{ "$ref": "#/definitions/paramDescriptor" },
-		{ "type" : "integer" } // raw index in global params+inputs list
-	    }
-	}
-    }
-}
-
-
-// top-level scene object!
-{
     "type" : "object",
+
+    
+    "required": [ 
+	"sceneName",
+	"moduleName",
+	"ops",
+	"params"
+    ],
+
     "properties" : {
 	"sceneName" : { "type" : "string" },
 	"moduleName" : { "type" : "string" },
@@ -66,6 +24,7 @@
 		"revision" : { "type" : "integer" }
 	    }
 	},
+
 	"beesVersion" : { 
 	    "type" : "object", 
 	    "properties" : {
@@ -73,119 +32,169 @@
 		"minor" : { "type" : "integer" },,
 		"revision" : { "type" : "integer" }
 	    }
-	}
+	},
+
 	"ops" : { 
-	    "type" : "object"
-	    "properties" : {
-		"class" : { "type" : "integer" },
-		"name" : { "type" : "string" },
-		"ins" : { 
-		    "type" : "array", 
-		    "items" : {
-			"type" : "object",
-			"properties" : {
-			    "name" : { "type" : "string" },
-			    "value" : { "type" : "integer" },
-			}
+	    "type" : "array", 
+	    "items" : {
+		"type" : "object"
+		"properties" : {
+		    "class" : { "type" : "integer" },
+		    "name" : { "type" : "string" },
+		    "ins" : { 
+			"type" : "array", 
+			"items" : { "$ref" : "#/definitions/opInput" }
 		    }
-		},
-		"outs" : { 
-		    "type" : "array", 
-		    "items" : {
-			"type" : "object"
-			"properties" : {
-			    "name" : { "type" : "string" },
-			    "target" : { 
-				"$ref" : "#/definitions/opOutputData"
-			    },
+		    "outs" : { 
+			"type" : "array", 
+			"items" : {
+			    "$ref" : "#/definitions/opOutput" 
 			}
 		    }
 		}
 	    }
 	},
-	"presets" : {
-	    "type" : "array",
-	    "items" : {
+
+	"params" : { 
+	    "type" : "array", 
+	    "items" : { "$ref" : "#/definitions/paramDescriptor" }
+	}	
+
+	"presets" : { 
+	    "type" : "array", 
+	    "items" : { 
+		"oneOf" : [
+		    { "$ref" : "#/definitions/presetInput" },
+		    { "$ref" : "#/definitions/presetOutput" },
+		    { "$ref" : "#/definitions/presetParam" },
+		]
+	    }
+	}	
+
+    },
+
+    "definitions" : {
+	"opInput" : { 
+	    "type" : "object",
+	    "properties" : {
+		"name" : { "type" : "string" },
+		"value" : { "type" : "integer" },
+	    }
+	},
+
+	"opOutput" : { 
+	    "type" : "object",
+	    "properties" : {
+		"name" : { "type" : "string" },
+		"target" : { "$ref": "#/definitions/outputTarget" }
+	    }
+	},
+
+
+	"paramDescriptor" : { 
+	    "type" : "object",
+	    "properties" : {
+		"name" : { "type" : "string" },
+		"class" : { "type" : "integer" },
+		"min" : { "type" : "integer" },
+		"max" : { "type" : "integer" },
+		"radix" : { "type" : "integer" },
+	    }
+	},
+	
+	"outputTarget" : { 
+	    "type" : "object",
+	    "properties" : {
+		"oneOf" : [
+		    { 
+			"paramName" : { "type" : "string" } 
+		    },
+
+		    { 
+			"paramIdx" : { "type" : "integer" } 
+			"paramName" : { "type" : "string" } 
+		    },
+
+		    { 
+			"inIdx" : { "type" : "integer" },
+		    },
+
+		    { 
+			"opIdx" : { "type" : "integer" },
+			"opInIdx" : { "type" : "integer" },
+		    },
+
+		    { 
+			"opIdx" : { "type" : "integer" },
+			"opName" : { "type" : "string" },
+			"opInIdx" : { "type" : "integer" },
+			"opInName" : { "type" : "string" },
+		    },
+		]
+	    },
+
+	    "presetInput" : {
 		"type" : "object",
 		"properties" : {
-		    "inputs" : {
-			"type": "array" ,
-			"items" : "anyOf" : [
-			    // param desc + value
-			    { 
-				"type" : "object",
-				"properties" : {
-				    "desc" : { "$ref" : "#/definitions/paramDescriptor" },
-				    "value" : { "type" : "integer" }
-				}
-			    }
-			    // op index + input desc + value
-			    { 
-				"type" : "object",
-				"properties" : {
-				    "opIdx" : { "type" : "integer" },
-				    "desc" : { "$ref" : "#/definitions/opInputDescriptor" },
-				    "value" : { "type" : "integer" }
-				}
-			    }	    
-			    // raw index + value
-			    {
-				"type" : "object",
-				"properties" : {
-				    "index" : { "type" : "integer" },
-				    "value" : { "type" : "integer" }
-				}
-			    }
-			]
-		    }, 
-		    "outputs" : {
-			"type": "array" ,
-			"items" : {
-			    "type" : "object",
-			    "properties" : {
-				"src" : "anyOf" : [
-				    // op index + output descriptor
-				    { "type" : "object",
-				      "propertoes" : {
-					  "opIdx" : { "type" : "integer" },
-					  "desc" : { "$ref" : "#/definitions/opOutputDescriptor" },
-				      }
-				    }
-				    // raw index in global outputs array
-				    { "type" : "integer" },
-				],
-				"dst" : "anyOf" : [
-				    // param desc + value
-				    { 
-					"type" : "object",
-					"properties" : {
-					    "desc" : { "$ref" : "#/definitions/paramDescriptor" },
-					    "value" : { "type" : "integer" }
-					}
-				    }
-				    // op index + input desc + value
-				    { 
-					"type" : "object",
-					"properties" : {
-					    "opIdx" : { "type" : "integer" },
-					    "desc" : { "$ref" : "#/definitions/opInputDescriptor" },
-					    "value" : { "type" : "integer" }
-					}
-				    }	    
-				    // raw index + value
-				    {
-					"type" : "object",
-					"properties" : {
-					    "index" : { "type" : "integer" },
-					    "value" : { "type" : "integer" }
-					}
-				    }
-				]
-			    }
-			}
+		    "oneOf" : [
+			{
+			    "inIdx" : { "type" : "integer" },
+			    "value" : { "type" : "integer" },
+			},
+
+			{ 
+			    "opIdx" : { "type" : "integer" },
+			    "opInIdx" : { "type" : "integer" },
+			    "value" : { "type" : "integer" },
+			},
+			
+			{ 
+			    "opIdx" : { "type" : "integer" },
+			    "opName" : { "type" : "string" },
+			    "opInIdx" : { "type" : "integer" },
+			    "opInName" : { "type" : "string" },
+			    "value" : { "type" : "integer" },
+			},
+		    ]
+		}
+	    },
+
+	    "presetOutput" : {
+		"type" : "object",
+		"properties" : {
+		    "oneOf" : [
+			{ 
+			    "opIdx" : { "type" : "string" },
+			    "outIdx" : { "type" : "integer" },
+			    "target" :  { "$ref" : "#/definitions/outputTarget" }
+			},
 		    }
 		}
+	    },
+			
+	    "presetParam" : {
+		"type" : "object",
+		"properties" : {
+		    "oneOf" : [
+			{ 
+			    "paramName" : { "type" : "string" },
+			    "value" : { "type" : "integer" },
+			},
+
+			{ 
+			    "paramIdx" : { "type" : "integer" },
+			    "value" : { "type" : "integer" },
+			},
+
+			{ 
+			    "paramIdx" : { "type" : "integer" },
+			    "paramName" : { "type" : "string" },
+			    "value" : { "type" : "integer" },
+			}
+		    ]
+		}
 	    }
-	}
+	}	
     }
+
 }
