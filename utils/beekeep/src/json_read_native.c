@@ -34,8 +34,12 @@ void net_read_json_native(const char* name) {
   json_t* scene = json_object_get(root, "scene");
   net_read_json_scene(scene);
 
-  net_read_json_ops(json_object_get(root, "operators"));
+
+  // clear out extant user ops / params
+  net_deinit();
+  // params before ops, so target assignment can work
   net_read_json_params(json_object_get(root, "params"));
+  net_read_json_ops(json_object_get(root, "operators"));
   net_read_json_presets(json_object_get(root, "presets"));
 }
 
@@ -51,7 +55,7 @@ static void net_read_json_scene(json_t* o) {
   sceneData->desc.moduleVersion.rev = json_integer_value(json_object_get(p, "rev"));
   // bees version
   p = json_object_get(o, "beesVersion");
-  sceneData->desc.beesVersion.maj = json_integer_value(json_object_get(p, "maj"));
+ sceneData->desc.beesVersion.maj = json_integer_value(json_object_get(p, "maj"));
   sceneData->desc.beesVersion.min = json_integer_value(json_object_get(p, "min"));
   sceneData->desc.beesVersion.rev = json_integer_value(json_object_get(p, "rev"));
  
@@ -68,60 +72,23 @@ static void net_read_json_ops(json_t* o) {
   op_t* op;
   int opIdx, opInIdx, inIdx;
 
-  // clear out any extant user ops in the network
-  net_deinit();
-
   for( i=0; i<count; i++) {
     json_t* p = json_array_get(o, i);
     json_t* q;
     json_t* r;
-    json_t* s;
     id = (op_id_t)json_integer_value(json_object_get(p, "class"));
     // add operator of indicated type
     net_add_op(id);
     op = net->ops[net->numOps - 1];
 
-    /// set inputs and outputs
+    /// set inputs
     q = json_object_get(p, "ins");
     for(j=0; j< op->numInputs; j++) {
       r = json_array_get(q, j);
       op_set_in_val(op, j, json_integer_value(json_object_get(r, "value")));
     }
 
-    q = json_object_get(p, "outs");
-    for(j=0; j< op->numOutputs; j++) {
-      r = json_object_get(json_array_get(q, j), "target");
-      // switch on target representations...
-      //...
-      s = json_object_get(r, "inIdx");      
-      if (s != NULL) {
-	// target is raw input idx
-	inIdx =json_integer_value(s);
-	if(inIdx > -1) {
-	  net_connect(net_op_out_idx(i, j), inIdx);
-	}
-      }
-      //...
-      s = json_object_get(r, "paramName");
-      if(s != NULL) {
-	// target is param name
-	net_connect(
-		    net_op_out_idx(i,j),
-		    search_param(json_string_value(s))
-		    );
-      }
-      //...
-      s = json_object_get(r, "opIdx");
-      if(s != NULL) {
-	// target is op and input idx
-	opIdx = json_integer_value(json_object_get(r, "opIdx") );
-	opInIdx = json_integer_value(json_object_get(r, "opInIdx") );
-	inIdx = net_op_in_idx(opIdx, inIdx);
-	net_connect(net_op_out_idx(i, j), inIdx);
-      }
-    }
-
-
+    // unpickle state
     if(op->unpickle != NULL) {
       json_t* state = json_object_get(p, "state");
       binCount = json_array_size(state);
@@ -136,10 +103,66 @@ static void net_read_json_ops(json_t* o) {
   	printf("\r\n   bin: 0x%08x ; src: 0x%08x ", (unsigned int)bin, (unsigned int)src);
       }
     }
-
-
   }
 
+  // perform another loop for outputs, now that all ops have been created
+  for( i=0; i<count; i++) {
+    json_t* p = json_array_get(o, i);
+    json_t* q;
+    json_t* r;
+    json_t* s;
+
+    q = json_object_get(p, "outs");
+    for(j=0; j< op->numOutputs; j++) {
+      r = json_object_get(json_array_get(q, j), "target");
+
+      printf("\r\n parsing operator target at op idx %d, out idx %d", 
+	     net->numOps -1, j);
+      // switch on target representations...
+      //...
+      s = json_object_get(r, "inIdx");      
+      printf(", checking input idx...");
+      if (s != NULL) {
+	// target is raw input idx
+	inIdx =json_integer_value(s);
+	if(inIdx == -1) { 
+	  printf(", no target");
+	} else {
+	  printf(" , target is raw input index: %d", inIdx);
+	}
+	if(inIdx > -1) {
+	  net_connect(net_op_out_idx(i, j), inIdx);
+	}
+	continue;
+      }
+      //...
+      s = json_object_get(r, "paramName");
+      printf(", checking param name...");
+      if(s != NULL) {
+	// target is param name
+	printf(" , target is parameter name: %s", json_string_value(s));
+	net_connect(
+		    net_op_out_idx(i,j),
+		    search_param(json_string_value(s))
+		    );
+	continue;
+      }
+      //...
+      s = json_object_get(r, "opIdx");
+      printf(", checking op idx...");
+      if(s != NULL) {
+	// target is op and input idx
+	opIdx = json_integer_value(json_object_get(r, "opIdx") );
+	opInIdx = json_integer_value(json_object_get(r, "opInIdx") );
+	inIdx = net_op_in_idx(opIdx, opInIdx);
+
+	printf(" , target is op input; raw index: %d", inIdx);
+
+	net_connect(net_op_out_idx(i, j), inIdx);
+	continue;
+      }
+    }
+  }
 }
 
 static void net_read_json_params(json_t* o) {
@@ -223,6 +246,7 @@ static void net_read_json_presets(json_t* o) {
        */
 
       // input node preset entry
+      ///////////////////
       r = json_object_get(q, "inIdx");
       if(r != NULL) {
 	/// this is an input node with raw index
@@ -232,6 +256,7 @@ static void net_read_json_presets(json_t* o) {
 	presets[i].ins[inIdx].enabled = 1;
 	continue;
       }
+      ////////////////////
       r = json_object_get(q, "opInName");
       if(r != NULL) {
 	/// this is an input node with input name and op idx
@@ -262,7 +287,7 @@ static void net_read_json_presets(json_t* o) {
 	presets[i].ins[inIdx].enabled = 1;
 	continue;
       }
-
+      //////////////////
       r = json_object_get(q, "opOutName");
       if(r != NULL) {
 	/// this is an output node with output name and op idx
@@ -278,12 +303,12 @@ static void net_read_json_presets(json_t* o) {
 	  strcpy(name, json_string_value(s) );
 	  inIdx = search_param(name);
 	} else {
-	  // op input target
+	  // op input target (or so we assume...)
 	  s = json_object_get(r, "opIdx");
 	  opIdx = json_integer_value(s);
 	  s = json_object_get(r, "opInName");
 	  strcpy(name, json_string_value(s) );
-	  inIdx = search_op_input(opIdx, name);
+	  inIdx = net_op_in_idx(opIdx, search_op_input(opIdx, name));
 	}
 	if(inIdx == -1) { printf("error parsing target in preset %d", i); continue; }
 	printf("\r\n assigning preset output value, preset %d, output %d, target %d",
@@ -292,6 +317,7 @@ static void net_read_json_presets(json_t* o) {
 	presets[i].outs[outIdx].enabled = 1;
 	continue;
       }
+      //////////
       r = json_object_get(q, "paramName");
       if(r != NULL) {
 	/// this is a param entry

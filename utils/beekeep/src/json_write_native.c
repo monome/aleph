@@ -32,10 +32,10 @@ void net_write_json_native(const char* name) {
 
   json_object_set(root, "scene", net_write_json_scene());
   json_object_set(root, "operators", net_write_json_ops());
+  json_object_set(root, "params", net_write_json_params());
   /// ins and outs are stored hierarchichally in the ops list.
   //  json_object_set(root, "ins", net_write_json_ins());
   //  json_object_set(root, "outs", net_write_json_outs());
-  json_object_set(root, "params", net_write_json_params());
   json_object_set(root, "presets", net_write_json_presets());
 
   json_dump_file(root, name, JSON_INDENT(4) | JSON_PRESERVE_ORDER | JSON_ESCAPE_SLASH);  
@@ -117,7 +117,7 @@ static json_t* net_write_json_ops(void) {
 	int inOpIdx = net_in_op_idx(target);
 	if(inOpIdx < 0) {
 	  // target is param, short descriptor with param name
-	  json_object_set( q, "paramName,", json_string( net_in_name(target) ) );
+	  json_object_set( q, "paramName", json_string( net_in_name(target) ) );
 	} else {
 	  // target is op input, long descriptor
 	  json_object_set( q, "opIdx", json_integer( inOpIdx ) );
