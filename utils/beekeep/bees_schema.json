@@ -187,7 +187,7 @@
 			{ 
 			    "opIdx" : { "type" : "integer" },
 			    "opName" : { "type" : "string" },
-			    "outName" : { "type" : "string" },
+			    "opOutName" : { "type" : "string" },
 			    "target" :  { "$ref" : "#/definitions/target" }
 			},
 		    }

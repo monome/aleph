@@ -4,6 +4,7 @@
 
 #include "op.h"
 #include "net_protected.h"
+#include "param.h"
 #include "preset.h"
 #include "scene.h"
 
@@ -11,13 +12,16 @@
 
 static void net_read_json_scene(json_t* o);
 static void net_read_json_ops(json_t* o);
-static void net_read_json_ins(json_t* o);
-static void net_read_json_outs(json_t* o);
 static void net_read_json_params(json_t* o);
 static void net_read_json_presets(json_t* o);
 
-// convert from minor version 3
-static void net_json_convert_min3(json_t* r);
+// search for input idx, given op id and input name
+static int search_op_input(int opIdx, const char* name);
+// search for output idx, given op id and input name
+static int search_op_output(int opIdx, const char* name);
+// search for param idx, given name
+static int search_param(const char* name);
+
 
 void net_read_json_native(const char* name) {
   json_t *root;
@@ -26,23 +30,8 @@ void net_read_json_native(const char* name) {
 
   root = json_loadf(f, 0, &err);
   fclose(f);
-
-  /* json_t* scene = json_object_get(root, "scene"); */
-  /* json_t* vers = json_object_get(scene, "beesVersion"); */
-  /* int min = json_integer_value(json_object_get(vers, "min")); */
-  /* printf("\r\n got minor version number from json: %d", min); */
-  /* if(min == 3) { */
-  /*   //    if(sceneData->desc.moduleVersion.min == 3) { */
-  /*   printf(" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! converting from 0.3"); */
-  /*   net_json_convert_min3(root); */
-  /* } */
-  
   net_read_json_scene(json_object_get(root, "scene"));
-
-
   net_read_json_ops(json_object_get(root, "ops"));
-  //  net_read_json_ins(json_object_get(root, "ins"));
-  //  net_read_json_outs(json_object_get(root, "outs"));
   net_read_json_params(json_object_get(root, "params"));
   net_read_json_presets(json_object_get(root, "presets"));
 }
@@ -75,7 +64,6 @@ static void net_read_json_ops(json_t* o) {
   int id;
   op_t* op;
   
-  
   // clear out any extant user ops in the network
   net_deinit();
 
@@ -96,52 +84,17 @@ static void net_read_json_ops(json_t* o) {
       src = bin;
       src = (*(op->unpickle))(op, src);
       // sanity check
-      if(binCount != ((u32)src - (u32)bin)) {
+      if(binCount != ((size_t)src - (size_t)bin)) {
   	printf("warning! mis-sized byte array in operator state unpickle?");
-  	printf("\r\n   bin: 0x%08x ; src: 0x%08x ", (u32)bin, (u32)src);
+  	printf("\r\n   bin: 0x%08x ; src: 0x%08x ", (unsigned int)bin, (unsigned int)src);
       }
     }
+
+    /// set inputs and outputs!
+    //...
+
   }
 }
-
-/* static void net_read_json_ins(json_t* o) { */
-/*   /\* json_t* p; *\/ */
-/*   /\* json_t* arr; *\/ */
-/*   /\* int i; *\/ */
-/*   /\* int count = json_integer_value(json_object_get(o, "count")); *\/ */
-
-/*   /\* arr = json_object_get(o, "data"); *\/ */
-/*   /\* for(i=0; i<count; i++) { *\/ */
-/*   /\*   p = json_array_get(arr, i); *\/ */
-/*   /\*   // should only need the play flag, since input list was populated from op creation,  *\/ */
-/*   /\*   // and values should be part of op pickle. *\/ */
-/*   /\*   net->ins[i].play = (u8)json_integer_value(json_object_get(p, "play")); *\/ */
-/*   /\*   // however, let's sanity-check the other fields... *\/ */
-/*   /\*   ///...... (yeah right) *\/ */
-/*   /\* } *\/ */
-/* } */
-
-/* static void net_read_json_outs(json_t* o) { */
-/*   /\* json_t* p; *\/ */
-/*   /\* json_t* arr; *\/ */
-/*   /\* int i; *\/ */
-/*   /\* int v; *\/ */
-/*   /\* int count = json_integer_value(json_object_get(o, "count")); *\/ */
-
-/*   /\* arr = json_object_get(o, "data"); *\/ */
-/*   /\* for(i=0; i<count; i++) { *\/ */
-/*   /\*   p = json_array_get(arr, i); *\/ */
-/*   /\* // output target *\/ */
-/*   /\*   v = json_integer_value(json_object_get(p, "target")); *\/ */
-/*   /\*   net->outs[i].target = (s16)v; *\/ */
-
-/*   /\*   // shouldn't really need to set these...  *\/ */
-/*   /\*   v = json_integer_value(json_object_get(p, "opIdx")); *\/ */
-/*   /\*   net->outs[i].opIdx = (u8)v; *\/ */
-/*   /\*   v = json_integer_value(json_object_get(p, "opOutIdx")); *\/ */
-/*   /\*   net->outs[i].opOutIdx = (s32)v; *\/ */
-/*   /\* } *\/ */
-/* } */
 
 static void net_read_json_params(json_t* o) {
   int i;
@@ -169,177 +122,168 @@ static void net_read_json_presets(json_t* o) {
   int count = json_array_size( o );
   int n;
   int i, j;
+  char* p;
   // sanity check
   if( count != NET_PRESETS_MAX) {
     printf(" \n warning! preset array size in json does not match network preset count.\n");
-
   }
+
+  // empty out extant preset data
+  for(i=0; i<NET_PRESETS_MAX; i++) {
+
+    // empty name
+    for(j=0; j<PRESET_NAME_LEN; j++) {
+      presets[i].name[j] = '\0';
+    }
+
+    //    p = presets[i].name;
+    //    p = atoi_idx(p, i);
+    //    *p = '_';
+
+    // empty inputs
+    for(j=0; j<PRESET_INODES_COUNT; ++j) {
+      presets[i].ins[j].value = 0;
+      presets[i].ins[j].enabled = 0;
+    }
+    // empty outputs
+    for(j=0; j<NET_OUTS_MAX; ++j) {
+      presets[i].outs[j].target = -1;
+      presets[i].outs[j].enabled = 0;
+    }
+  }
+
   for(i=0; i<count; ++i) {
     json_t* p = json_array_get(o, i);
     json_t* arr = json_object_get(p, "entries");
     strcpy(presets[i].name, json_string_value(json_object_get(p, "name")));
     n = json_array_size(arr);
+
     for(j=0; j<n; ++j) {
       json_t* q = json_array_get(arr, j);
       json_t* r;
+      json_t* s;
+      int opIdx;
+      int opInIdx, inIdx;
+      int opOutIdx, outIdx;
+      char name[32];
       /*
 	ok... here we need to do some parsing stuff,
         because there are a number of possible formats for preset entries.
 
-	initially, let's just parse the format assuming we generated it from beekeep:json_write_native()
+	initially, let's just assume the format used in beekeep:json_write_native()
+	
        */
 
       // input node preset entry
       r = json_object_get(q, "inIdx");
       if(r != NULL) {
 	/// this is an input node with raw input
-	/// parse it...
+	// set value
+	inIdx = json_integer_value(r);
+	presets[i].ins[inIdx].value = json_integer_value(json_object_get(q, "value"));
+	presets[i].ins[inIdx].enabled = 1;
 	continue;
       }
       r = json_object_get(q, "opInName");
       if(r != NULL) {
 	/// this is an input node with input name and op idx
-	/// parse it...
+	r = json_object_get(q, "opIdx");
+	if(r == NULL) { 
+	  printf("error parsing preset entry (input), preset no. %d", i);
+	  continue;
+	}
+	opIdx = json_integer_value(r);
+	r = json_object_get(q, "opInName");
+	if(r == NULL) { 
+	  printf("error parsing preset entry (input), preset no. %d", i);
+	  continue;
+	}
+	strcpy(name, json_string_value(r) );
+	opInIdx = search_op_input(opIdx, name);
+	if(opInIdx == -1) { 
+	  printf("error parsing preset entry (input), preset no. %d", i);
+	  continue;
+	}
+	// set value
+	r = json_object_get(q, "value");
+	inIdx = net_op_in_idx(opIdx, opInIdx);
+	presets[i].ins[inIdx].value = json_integer_value(r);
 	continue;
       }
 
       r = json_object_get(q, "opOutName");
       if(r != NULL) {
-	/// this is an iytoyt node with output name and op idx
-	/// parse it...
+	/// this is an output node with output name and op idx
+	strcpy(name, json_string_value(r) );
+	opIdx = json_integer_value( json_object_get(q, "opIdx") );
+	opOutIdx = search_op_output(opIdx, name);
+	outIdx = net_op_out_idx(opIdx, opOutIdx);
+	// get target data...
+	r = json_object_get(q, "target");
+	s = json_object_get(r, "paramName");
+	if(s != NULL) {
+	  // param target
+	  strcpy(name, json_string_value(s) );
+	  inIdx = search_param(name);
+	} else {
+	  // op input target
+	  s = json_object_get(r, "opIdx");
+	  opIdx = json_integer_value(s);
+	  s = json_object_get(r, "opInName");
+	  strcpy(name, json_string_value(s) );
+	  inIdx = search_op_input(opIdx, name);
+	}
+	if(inIdx == -1) { printf("error parsing target in preset %d", i); continue; }
+	presets[i].outs[outIdx].target = inIdx;
+	presets[i].outs[outIdx].enabled = 1;
 	continue;
       }
       r = json_object_get(q, "paramName");
       if(r != NULL) {
-	/// this is a param entru
-	/// parse it...
+	/// this is a param entry
+	strcpy(name, json_string_value(r));
+	inIdx = search_param(name);
+	r = json_object_get(q, "value");
+	presets[i].ins[inIdx].value = json_integer_value(r);
+	presets[i].ins[inIdx].enabled = 1;
 	continue;
       }
     }
   }
-
-
-  /* json_t* pres; // toplevel array of presets */
-  /* json_t* arr; // temp array of ins/outs per preset */
-  /* json_t* p; // tmp */
-  /* json_t* q; // tmp */
-  /* int i, j; */
-  /* int count = json_integer_value(json_object_get(o, "count")); */
-  /* int n; // tmp */
-  /* pres = json_object_get(o, "data"); */
-  /* for(i=0; i<count; i++) { */
-  /*   p = json_array_get(pres, i); */
-  /*   strcpy(presets[i].name, json_string_value(json_object_get(p, "name"))); */
-  /*   /// ins */
-  /*   arr = json_object_get(p, "ins"); */
-  /*   n = json_array_size(arr); */
-  /*   for(j=0; j<n; j++) { */
-  /*     /// FIXME: shouldn't need idx here */
-  /*     q = json_array_get(arr, j); */
-  /*     //      presets[i].ins[j].idx = json_integer_value(json_object_get(q, "idx")); */
-  /*     presets[i].ins[j].value = json_integer_value(json_object_get(q, "value")); */
-  /*     presets[i].ins[j].enabled = json_integer_value(json_object_get(q, "enabled")); */
-  /*   } */
-  /*   /// outs */
-  /*   arr = json_object_get(p, "outs"); */
-  /*   n = json_array_size(arr); */
-  /*   for(j=0; j<n; j++) { */
-  /*     /// FIXME: shouldn't need idx here */
-  /*     q = json_array_get(arr, j); */
-  /*     //      presets[i].outs[j].outIdx = json_integer_value(json_object_get(q, "idx")); */
-  /*     presets[i].outs[j].target = json_integer_value(json_object_get(q, "target")); */
-  /*     presets[i].outs[j].enabled = json_integer_value(json_object_get(q, "enabled")); */
-  /*   } */
-  /* } */
 }
 
+// search for input idx, given op id and input name
+int search_op_input(int opIdx, const char* name) {
+  int i;
+  op_t* op = net->ops[opIdx];
+  for(i=0; i < op->numInputs; ++i) {
+    if(strcmp(op_in_name(op, i), name) == 0) {
+      return i;
+    }
+  }
+  return -1;
+}
 
-void net_json_convert_min3(json_t* r) {
- 
-  /* // ADC has changed i/o count from [2,2] to [3,2], */
-  /* // and likewise size of byte-arry of state data. */
+// search for output idx, given op id and input name
+int search_op_output(int opIdx, const char* name) {
+  int i;
+  op_t* op = net->ops[opIdx];
+  for(i=0; i < op->numOutputs; ++i) {
+    if(strcmp(op_out_name(op, i), name) == 0) {
+      return i;
+    }
+  }
+  return -1;
+}
 
-  /* // there is only one ADC operator, so this isn't too bad. */
-  
-  /* /// magic number based on what 0.3.x scenes looked like. */
-  /* int lastAdcIn = 29; */
-
-  /* json_t* ins = json_object_get(r, "ins"); */
-  /* json_t* insData = json_object_get(ins, "data"); */
-  /* int insCount = json_integer_value(json_object_get(ins, "count")); */
-  /* json_integer_set(json_object_get(ins, "count"), insCount + 1); */
-
-  /* // need to fux  */
-
-  /* // all we should have to do for input nodes is:  */
-  /* // - insert a new node */
-  /* // - fix everyone's index */
-  /* json_t* o = json_object(); */
-  /* json_object_set(o, "idx", json_integer(lastAdcIn)); */
-  /* json_object_set(o, "name", json_string("MODE    ")); */
-  /* json_object_set(o, "opIdx", json_integer(10)); */
-  /* json_object_set(o, "opInIdx", json_integer(2)); */
-  /* json_object_set(o, "value", json_integer(0)); */
-  /* json_object_set(o, "play", json_integer(0)); */
-  /* int err  = json_array_insert(insData, lastAdcIn + 1, o ); */
-
-  /* if(err != 0) { printf(" error inserting input node in ADC op conversion."); } */
-  
-  /* // loop over input nodes and fix idx fields */
-  /* for(int i=0; i<NET_INS_MAX; i++) { */
-  /*   json_integer_set(json_object_get(json_array_get(insData, i), "idx"), i); */
-  /* } */
-
-  /* // we also have to add some dummy values to the byte array of the ADC op's state. */
-  /* json_t* ops = json_object_get(r, "ops"); */
-  /* // 10 is the magic number of the ADC op in 0.3.x */
-  /* json_t* adc = json_array_get(json_object_get(ops, "data"), 10); */
-  /* // mode pickle: 2 bytes input value, zero is fine */
-  /* json_array_append(json_object_get(adc, "state"),  json_integer(0)); */
-  /* json_array_append(json_object_get(adc, "state"),  json_integer(0)); */
-
-  /* /\* // copy all input nodes above this operator's... *\/ */
-  /* /\* // count down from top. src has fewer input nodes; otherwise we would lose last value. *\/ */
-  /* /\* for(int i = NET_INS_MAX - 1; i > lastAdcIn; i--) { *\/ */
-  /* /\*   // get json object at this index in node array *\/ */
-  /* /\*   json_t* dst = json_array_get(insData, i); *\/ */
-  /* /\*   json_t* src = json_array_get(insData, i - 1);     *\/ */
-  /* /\*   if(src != NULL) { *\/ */
-  /* /\*     if(dst == NULL) { *\/ */
-  /* /\* 	int err; *\/ */
-  /* /\* 	dst = json_object(); *\/ */
-  /* /\* 	json_object_set(dst, "idx", json_integer(i)); *\/ */
-  /* /\* 	err = json_array_insert(insData, i, dst); *\/ */
-  /* /\* 	if(err != 0) { printf(" error inserting input node in ADC op conversion."); } *\/ */
-  /* /\*     } *\/ */
-  /* /\*     // shallow copy ok? *\/ */
-  /* /\*     json_array_set(insData, src); *\/ */
-  /* /\*     // custom-copy, leaving idx *\/ */
-  /* /\*     /\\* json_object_(dst, "name", json_object_get(src, "name")); *\\/ *\/ */
-  /* /\*     /\\* json_object_set(dst, "opIdx", json_object_get(src, "opIdx")); *\\/ *\/ */
-  /* /\*     /\\* json_object_set(dst, "opInIdx", json_object_get(src, "opInIdx")); *\\/ *\/ */
-  /* /\*     /\\* json_object_set(dst, "value", json_object_get(src, "value")); *\\/ *\/ */
-  /* /\*     /\\* json_object_set(dst, "play", json_object_get(src, "play")); *\\/ *\/ */
-  /* /\*   } *\/ */
-  /* /\* } *\/ */
-  /* /\* // finally, we need to fix up the values for the new input ("mode");   *\/ */
-  /* /\* ///... FIXME *\/ */
-
-  
-  /* //---- -outs */
-  /* json_t* outs = json_object_get(r, "outs"); */
-  /* json_t* outsData = json_object_get(outs, "data"); */
-  /* // loop over all outputs and check targets */
-  /* for(int i = 0; i< NET_OUTS_MAX; i++) { */
-  /*   json_t* o = json_array_get(outsData, i); */
-  /*   int t = json_integer_value(json_object_get(o, "target")); */
-  /*     if(t > lastAdcIn) { */
-  /* 	json_integer_set(json_object_get(o, "target"), t + 1); */
-  /*     } */
-  /* } */
-
-  /* // i don't think anyone really used presets in this rev, so skipping those for now. */
-
-  /* // write the output of the converted json for a visual check. */
-  /* json_dump_file(r, "converted.json", JSON_INDENT(4) | JSON_PRESERVE_ORDER | JSON_ESCAPE_SLASH); */
+// search for param idx (in inputs list), given name
+static int search_param(const char* name) {
+  int i;
+  for(i=0; i < net_num_params(); ++i) {
+    if( strcmp( get_param_name(i), name) == 0) {
+      // offset into global input list
+      return i + net->numIns;
+    }
+  }
+  return -1;
 }
