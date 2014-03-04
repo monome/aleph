@@ -13,8 +13,8 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_metro_instring	= "ENABLE  PERIOD  VAL     ";
-static const char* op_metro_outstring	= "TICK    ";
+static const char* op_metro_instring	= "ENABLE\0 PERIOD\0 VAL\0    ";
+static const char* op_metro_outstring	= "TICK\0   ";
 static const char* op_metro_opstring	= "METRO";
 
 //-------------------------------------------------

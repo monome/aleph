@@ -11,8 +11,8 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_timer_instring = "EVENT   ";
-static const char* op_timer_outstring = "TIME    ";
+static const char* op_timer_instring = "EVENT\0  ";
+static const char* op_timer_outstring = "TIME\0   ";
 static const char* op_timer_opstring = "TIMER";
 
 //-------------------------------------------------

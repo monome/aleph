@@ -6,8 +6,8 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_thresh_instring =  "IN      LIM     ";
-static const char* op_thresh_outstring = "LO      HI      ";
+static const char* op_thresh_instring =  "IN\0     LIM\0    ";
+static const char* op_thresh_outstring = "LO\0     HI\0     ";
 static const char* op_thresh_opstring =  "THRESH";
 
 //-------------------------------------------------

@@ -13,8 +13,8 @@ static const u8* op_sub_unpickle(op_sub_t* op, const u8* src);
 
 //-------------------------------------------------
 //---- static vars
-static const char* op_sub_instring = "A       B       B_TRIG  ";
-static const char* op_sub_outstring = "DIF     ";
+static const char* op_sub_instring = "A\0      B\0      TRIG\0   ";
+static const char* op_sub_outstring = "DIF\0    ";
 static const char* op_sub_opstring = "SUB";
 
 static op_in_fn op_sub_in_fn[3] = {

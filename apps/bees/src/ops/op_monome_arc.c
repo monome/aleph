@@ -8,8 +8,8 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_marc_instring = "FOCUS   ";
-static const char* op_marc_outstring = "NUM     DELTA   ";
+static const char* op_marc_instring = "FOCUS\0  ";
+static const char* op_marc_outstring = "NUM\0    DELTA\0  ";
 static const char* op_marc_opstring = "ARC";
 
 //-------------------------------------------------

@@ -17,17 +17,9 @@
 //----- static vars
 
 //-- descriptor
-static const char* op_screen_instring = "ENABLE  PERIOD  VAL     FILL    X       Y       ";
+static const char* op_screen_instring = "ENABLE\0 PERIOD\0 VAL\0    FILL\0   X\0      Y\0      ";
 static const char* op_screen_outstring = "";
 static const char* op_screen_opstring = "SCREEN";
-
-//-- temp
-// string buffer for number->text rendering
-//static char tmpStr[16];
-// try sharing region data among instances...
-//static volatile u8 regData[OP_SCREEN_GFX_BYTES];
-//// ^^^ fuck. i think that is broken. try moving to class structure and allocating from op poll?
-
 
 //-------------------------------------------------
 //----- static function declaration
@@ -253,5 +245,4 @@ static inline void op_screen_set_timer(op_screen_t* screen) {
 
 static inline void op_screen_unset_timer(op_screen_t* screen) {
   timer_remove(&(screen->timer));
-  //  timers_unset_custom(&(screen->timer));
 }

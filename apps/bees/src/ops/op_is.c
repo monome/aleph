@@ -22,8 +22,8 @@ static op_in_fn op_is_in_fn[4] = {
   (op_in_fn)&op_is_in_edge
 };
 
-static const char* op_is_instring  = "A       B       B_TRIG  EDGE    ";
-static const char* op_is_outstring = "EQ      NE      GT      LT      ";
+static const char* op_is_instring  = "A\0      B\0      TRIG\0   EDGE\0   ";
+static const char* op_is_outstring = "EQ\0     NE\0     GT\0     LT\0     ";
 static const char* op_is_opstring  = "IS";
 
 //-------------------------------------------------

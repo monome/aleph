@@ -13,8 +13,8 @@ static const u8* op_add_unpickle(op_add_t* op, const u8* src);
 
 //-------------------------------------------------
 //---- static vars
-static const char* op_add_instring = "A       B       B_TRIG  ";
-static const char* op_add_outstring = "SUM     ";
+static const char* op_add_instring = "A\0      B\0      TRIG\0   ";
+static const char* op_add_outstring = "SUM\0    ";
 static const char* op_add_opstring = "ADD";
 
 static op_in_fn op_add_in_fn[3] = {

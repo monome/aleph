@@ -14,8 +14,8 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_adc_instring	= "ENABLE  PERIOD  MODE    ";
-static const char* op_adc_outstring	= "VAL0    VAL1    VAL2    VAL3    ";
+static const char* op_adc_instring	= "ENABLE\0 PERIOD\0 MODE\0   ";
+static const char* op_adc_outstring	= "VAL0\0   VAL1\0   VAL2\0   VAL3\0   ";
 static const char* op_adc_opstring	= "CV-IN";
 
 //-------------------------------------------------

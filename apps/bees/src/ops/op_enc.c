@@ -22,8 +22,8 @@ static const u8* op_enc_unpickle(op_enc_t* enc, const u8* src);
 
 //-------------------------------------------------
 //----- static vars
-static const char* op_enc_instring  = "MIN     MAX     STEP    WRAP    ";
-static const char* op_enc_outstring = "VAL     WRAP    ";
+static const char* op_enc_instring  = "MIN\0    MAX\0    STEP\0   WRAP\0   ";
+static const char* op_enc_outstring = "VAL\0    WRAP\0   ";
 static const char* op_enc_opstring  = "ENC";
 static void op_enc_perform(op_enc_t* enc);
 

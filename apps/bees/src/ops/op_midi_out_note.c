@@ -9,7 +9,7 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_midi_out_note_instring =  "CHAN    NUM     VEL     ";
+static const char* op_midi_out_note_instring =  "CHAN\0   NUM\0    VEL\0    ";
 static const char* op_midi_out_note_outstring = "";
 static const char* op_midi_out_note_opstring = "MOUT_N";
 

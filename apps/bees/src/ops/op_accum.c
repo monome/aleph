@@ -6,8 +6,8 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_accum_instring =  "INC     VAL     MIN     MAX     WRAP    ";
-static const char* op_accum_outstring = "VAL     WRAP    ";
+static const char* op_accum_instring =  "INC\0    VAL\0    MIN\0    MAX\0    WRAP\0   ";
+static const char* op_accum_outstring = "VAL\0    WRAP\0   ";
 static const char* op_accum_opstring =  "ACCUM";
 
 //-------------------------------------------------

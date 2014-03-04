@@ -24,8 +24,8 @@ static op_in_fn op_logic_in_fn[5] = {
   (op_in_fn)&op_logic_in_invert
 };
 
-static const char* op_logic_instring  = "A       B       B_TRIG  EDGE    INVERT  ";
-static const char* op_logic_outstring = "AND     OR      XOR     ";
+static const char* op_logic_instring  = "A\0      B\0      TRIG\0   EDGE\0   INVERT\0 ";
+static const char* op_logic_outstring = "AND\0    OR\0     XOR\0    ";
 static const char* op_logic_opstring  = "LOGIC";
 
 //-------------------------------------------------

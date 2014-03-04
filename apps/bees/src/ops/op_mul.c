@@ -20,8 +20,8 @@ static op_in_fn op_mul_in_fn[3] = {
   (op_in_fn)&op_mul_in_btrig
 };
 
-static const char* op_mul_instring  = "A       B       B_TRIG  ";
-static const char* op_mul_outstring = "VAL     ";
+static const char* op_mul_instring  = "A\0      B\0      TRIG\0   ";
+static const char* op_mul_outstring = "VAL\0    ";
 static const char* op_mul_opstring  = "MUL";
 
 //-------------------------------------------------

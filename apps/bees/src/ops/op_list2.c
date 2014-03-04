@@ -13,8 +13,8 @@ static const u8* op_list2_unpickle(op_list2_t* op, const u8* src);
 
 //-------------------------------------------------
 //---- static vars
-static const char* op_list2_instring = "INDEX   I0      I1      ";
-static const char* op_list2_outstring = "VAL     ";
+static const char* op_list2_instring = "INDEX\0  I0\0     I1\0     ";
+static const char* op_list2_outstring = "VAL\0    ";
 static const char* op_list2_opstring = "LIST2";
 
 static op_in_fn op_list2_in_fn[3] = {

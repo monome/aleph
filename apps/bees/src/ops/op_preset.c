@@ -6,7 +6,7 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_preset_instring = "READ    WRITE   ";
+static const char* op_preset_instring = "READ\0   WRITE\0  ";
 //static const char* op_preset_outstring = "IDX     ";
 static const char* op_preset_outstring = "";
 static const char* op_preset_opstring = "PRESET";

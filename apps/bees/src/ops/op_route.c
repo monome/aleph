@@ -6,8 +6,8 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_route_instring =  "VAL     TO      ";
-static const char* op_route_outstring = "O0      O1      O2      O3      ";
+static const char* op_route_instring =  "VAL\0    TO\0     ";
+static const char* op_route_outstring = "O0\0     O1\0     O2\0     O3\0     ";
 static const char* op_route_opstring = "ROUTE";
 
 //-------------------------------------------------

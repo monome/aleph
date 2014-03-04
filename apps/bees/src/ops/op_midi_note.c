@@ -10,8 +10,8 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_midi_note_instring = "CHAN    ";
-static const char* op_midi_note_outstring = "NUM     VEL     ";
+static const char* op_midi_note_instring = "CHAN\0   ";
+static const char* op_midi_note_outstring = "NUM\0    VEL\0    ";
 static const char* op_midi_note_opstring = "MIDINOTE";
 
 //-------------------------------------------------

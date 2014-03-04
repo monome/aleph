@@ -8,8 +8,8 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_mgrid_raw_instring = "FOCUS   TOG     MONO    ";
-static const char* op_mgrid_raw_outstring = "COL     ROW     VAL     ";
+static const char* op_mgrid_raw_instring = "FOCUS\0  TOG\0    MONO\0   ";
+static const char* op_mgrid_raw_outstring = "COL\0    ROW\0    VAL\0    ";
 static const char* op_mgrid_raw_opstring = "GRID";
 
 //-------------------------------------------------

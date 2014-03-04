@@ -44,8 +44,8 @@ static op_in_fn op_life_in_fn[9] = {
   (op_in_fn)&op_life_in_focus
 };
 
-static const char* op_life_instring  = "NEXT    XSIZE   YSIZE   X       Y       SET     NOISE   RULES   FOCUS   ";
-static const char* op_life_outstring = "VAL     POP     DELTA   ";
+static const char* op_life_instring  = "NEXT\0   XSIZE\0  YSIZE\0  X\0      Y\0      SET\0    NOISE\0  RULES\0  FOCUS\0  ";
+static const char* op_life_outstring = "VAL\0    POP\0    DELTA\0  ";
 static const char* op_life_opstring  = "LIFE";
 
 

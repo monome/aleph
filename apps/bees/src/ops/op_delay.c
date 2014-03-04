@@ -13,8 +13,8 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_delay_instring	= "VAL     TIME    CLEAR   ";
-static const char* op_delay_outstring	= "VAL     ";
+static const char* op_delay_instring	= "VAL\0    TIME\0   CLEAR\0  ";
+static const char* op_delay_outstring	= "VAL\0    ";
 static const char* op_delay_opstring	= "DELAY";
 
 //-------------------------------------------------

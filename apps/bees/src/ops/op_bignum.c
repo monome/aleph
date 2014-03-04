@@ -17,7 +17,7 @@
 //----- static vars
 
 //-- descriptor
-static const char* op_bignum_instring = "ENABLE  PERIOD  VAL     X       Y       ";
+static const char* op_bignum_instring = "ENABLE\0 PERIOD\0 VAL\0    X\0      Y\0      ";
 static const char* op_bignum_outstring = "";
 static const char* op_bignum_opstring = "BIGNUM";
 

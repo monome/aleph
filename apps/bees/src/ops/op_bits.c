@@ -22,8 +22,8 @@ static const u8* op_bits_unpickle(op_bits_t* op, const u8* src);
 
 //-------------------------------------------------
 //---- static vars
-static const char* op_bits_instring = "IN      I0      I1      I2      I3      I4      I5      I6      I7      ";
-static const char* op_bits_outstring = "OUT     O0      O1      O2      O3      O4      O5      O6      O7      ";
+static const char* op_bits_instring = "IN\0     I0\0     I1\0     I2\0     I3\0     I4\0     I5\0     I6\0     I7\0     ";
+static const char* op_bits_outstring = "OUT\0    O0\0     O1\0     O2\0     O3\0     O4\0     O5\0     O6\0     O7\0     ";
 static const char* op_bits_opstring = "BITS";
 
 static op_in_fn op_bits_in_fn[9] = {

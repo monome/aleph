@@ -9,8 +9,8 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_midi_cc_instring =  "CHAN    NUM     ";
-static const char* op_midi_cc_outstring = "VAL     ";
+static const char* op_midi_cc_instring =  "CHAN\0   NUM\0    ";
+static const char* op_midi_cc_outstring = "VAL\0    ";
 static const char* op_midi_cc_opstring = "MIDICC";
 
 //-------------------------------------------------

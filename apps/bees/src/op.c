@@ -217,6 +217,7 @@ static const u8 outStringChars = 8;
 
 // initialize operator at memory
 s16 op_init(op_t* op, op_id_t opId) {
+  //  int i;
   // no flags by default
   op->flags = 0x00000000;
   // set function pointers to NULL
@@ -224,6 +225,16 @@ s16 op_init(op_t* op, op_id_t opId) {
   op->unpickle = NULL;
   // run class init function
   (*(op_registry[opId].init))(op);
+
+  // zap spaces in names...
+  // ugh, better to keep them constant i guess.
+  /* for(i=0; i< (inStringChars * op->numIns); ++i) { */
+  /*   if(op->inString[i] == ' ') { op->inString[i] = '\0'; } */
+  /* } */
+  /* for(i=0; i< (outStringChars * op->numOuts); ++i) { */
+  /*   if(op->outString[i] == ' ') { op->outString[i] = '\0'; } */
+  /* } */
+
   return 0;
 }
 
@@ -242,14 +253,18 @@ s16 op_deinit(op_t* op) {
 
 
 const char* op_in_name(op_t* op, const u8 idx) {
-  static char str[16];
-  u8 i;
-  // str = (op->inString + (inStringChars * idx));
-  for(i=0; i<inStringChars; i++) {
-    str[i] = *(op->inString + (inStringChars * idx) + i);
-  }
-  str[inStringChars] = '\0';
-  return str;
+  /* static char str[16]; */
+  /* u8 i; */
+  /* // str = (op->inString + (inStringChars * idx)); */
+  /* for(i=0; i<inStringChars; i++) { */
+  /*   str[i] = *(op->inString + (inStringChars * idx) + i); */
+  /* } */
+  /* str[inStringChars] = '\0'; */
+  /* return str; */
+  /// names now have spaces zapped to nulls.
+  // so we can safely return direct pointer to name string
+  return (op->inString + (inStringChars * idx));
+  
 }
 
 const char* op_out_name(op_t* op, const u8 idx) {

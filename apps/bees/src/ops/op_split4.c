@@ -6,8 +6,8 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_split4_instring = "X       ";
-static const char* op_split4_outstring = "A       B       C       D       ";
+static const char* op_split4_instring = "X\0      ";
+static const char* op_split4_outstring = "A\0      B\0      C\0      D\0      ";
 static const char* op_split4_opstring = "Y4";
 
 //-------------------------------------------------

@@ -6,8 +6,8 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_sw_instring = "TOG     MUL     ";
-static const char* op_sw_outstring = "VAL     ";
+static const char* op_sw_instring = "TOG\0    MUL\0    ";
+static const char* op_sw_outstring = "VAL\0    ";
 static const char* op_sw_opstring = "SW";
 
 //-------------------------------------------------
