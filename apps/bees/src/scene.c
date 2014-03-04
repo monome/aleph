@@ -247,12 +247,14 @@ void scene_read_buf(void) {
   print_dbg(".");
   print_dbg_ulong(moduleVersion.rev);
 
+#ifdef BEEKEEP
+#else
   // store in scene data
   sceneData->desc.moduleVersion.maj = moduleVersion.maj;
   sceneData->desc.moduleVersion.min = moduleVersion.min;
   sceneData->desc.moduleVersion.rev = moduleVersion.rev;
   strcpy(sceneData->desc.moduleName, (const char*)moduleName);
-
+#endif
 
 #endif
 

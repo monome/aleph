@@ -30,8 +30,11 @@ void net_read_json_native(const char* name) {
 
   root = json_loadf(f, 0, &err);
   fclose(f);
-  net_read_json_scene(json_object_get(root, "scene"));
-  net_read_json_ops(json_object_get(root, "ops"));
+
+  json_t* scene = json_object_get(root, "scene");
+  net_read_json_scene(scene);
+
+  net_read_json_ops(json_object_get(root, "operators"));
   net_read_json_params(json_object_get(root, "params"));
   net_read_json_presets(json_object_get(root, "presets"));
 }
@@ -74,26 +77,9 @@ static void net_read_json_ops(json_t* o) {
     json_t* r;
     json_t* s;
     id = (op_id_t)json_integer_value(json_object_get(p, "class"));
-    id = (op_id_t)json_integer_value(json_object_get(p, "type"));
     // add operator of indicated type
     net_add_op(id);
-
-    // unpickle the state, if needed
     op = net->ops[net->numOps - 1];
-    if(op->unpickle != NULL) {
-      json_t* state = json_object_get(p, "state");
-      binCount = json_array_size(state);
-      for(j=0; j<binCount; j++) {
-  	bin[j] = (u8)(json_integer_value(json_array_get(state, j)));
-      }
-      src = bin;
-      src = (*(op->unpickle))(op, src);
-      // sanity check
-      if(binCount != ((size_t)src - (size_t)bin)) {
-  	printf("warning! mis-sized byte array in operator state unpickle?");
-  	printf("\r\n   bin: 0x%08x ; src: 0x%08x ", (unsigned int)bin, (unsigned int)src);
-      }
-    }
 
     /// set inputs and outputs
     q = json_object_get(p, "ins");
@@ -134,7 +120,26 @@ static void net_read_json_ops(json_t* o) {
 	net_connect(net_op_out_idx(i, j), inIdx);
       }
     }
+
+
+    if(op->unpickle != NULL) {
+      json_t* state = json_object_get(p, "state");
+      binCount = json_array_size(state);
+      for(j=0; j<binCount; j++) {
+  	bin[j] = (u8)(json_integer_value(json_array_get(state, j)));
+      }
+      src = bin;
+      src = (*(op->unpickle))(op, src);
+      // sanity check
+      if(binCount != ((size_t)src - (size_t)bin)) {
+  	printf("warning! mis-sized byte array in operator state unpickle?");
+  	printf("\r\n   bin: 0x%08x ; src: 0x%08x ", (unsigned int)bin, (unsigned int)src);
+      }
+    }
+
+
   }
+
 }
 
 static void net_read_json_params(json_t* o) {
@@ -142,10 +147,10 @@ static void net_read_json_params(json_t* o) {
   int v;
   pnode_t* param;
   int count = json_array_size( o );
-  json_t* arr;
+  //  json_t* arr;
 
   net->numParams = count;
-  arr = json_object_get(o, "data");
+  //  arr = json_object_get(o, "data");
   for(i=0; i<count; i++) {
     json_t* p = json_array_get(o, i);
     param = &(net->params[i]);
@@ -155,7 +160,7 @@ static void net_read_json_params(json_t* o) {
     param->desc.min = json_integer_value(json_object_get(p, "min"));
     param->desc.max = json_integer_value(json_object_get(p, "max"));
     param->desc.radix = json_integer_value(json_object_get(p, "radix"));
-    strcpy(param->desc.label, json_string_value(json_object_get(p, "label")));
+    strcpy(param->desc.label, json_string_value(json_object_get(p, "name")));
   }
 }
 
@@ -164,6 +169,15 @@ static void net_read_json_presets(json_t* o) {
   int n;
   int i, j;
   char* p;
+
+  json_t* r;
+  json_t* s;
+  int opIdx;
+  int opInIdx, inIdx;
+  int opOutIdx, outIdx;
+  char name[32];
+
+
   // sanity check
   if( count != NET_PRESETS_MAX) {
     printf(" \n warning! preset array size in json does not match network preset count.\n");
@@ -193,14 +207,13 @@ static void net_read_json_presets(json_t* o) {
     strcpy(presets[i].name, json_string_value(json_object_get(p, "name")));
     n = json_array_size(arr);
 
+    print_dbg("\r\n processing preset name: %s , %d entries", presets[i].name, n);
+
     for(j=0; j<n; ++j) {
       json_t* q = json_array_get(arr, j);
-      json_t* r;
-      json_t* s;
-      int opIdx;
-      int opInIdx, inIdx;
-      int opOutIdx, outIdx;
-      char name[32];
+      printf("\r\n processing preset %s , entry %d, contents: %s", 
+	     presets[i].name, j, json_dumps(q, 0));
+      
       /*
 	ok... here we need to do some parsing stuff,
         because there are a number of possible formats for preset entries.
@@ -212,7 +225,7 @@ static void net_read_json_presets(json_t* o) {
       // input node preset entry
       r = json_object_get(q, "inIdx");
       if(r != NULL) {
-	/// this is an input node with raw input
+	/// this is an input node with raw index
 	// set value
 	inIdx = json_integer_value(r);
 	presets[i].ins[inIdx].value = json_integer_value(json_object_get(q, "value"));
@@ -242,7 +255,11 @@ static void net_read_json_presets(json_t* o) {
 	// set value
 	r = json_object_get(q, "value");
 	inIdx = net_op_in_idx(opIdx, opInIdx);
-	presets[i].ins[inIdx].value = json_integer_value(r);
+	printf("\r\n assigning preset input value, preset %d, input %d, value %d",
+	       i, inIdx, json_integer_value(r));
+
+	presets[i].ins[inIdx].value = (io_t)(json_integer_value(r));
+	presets[i].ins[inIdx].enabled = 1;
 	continue;
       }
 
@@ -269,6 +286,8 @@ static void net_read_json_presets(json_t* o) {
 	  inIdx = search_op_input(opIdx, name);
 	}
 	if(inIdx == -1) { printf("error parsing target in preset %d", i); continue; }
+	printf("\r\n assigning preset output value, preset %d, output %d, target %d",
+	       i, outIdx, inIdx);
 	presets[i].outs[outIdx].target = inIdx;
 	presets[i].outs[outIdx].enabled = 1;
 	continue;
@@ -279,6 +298,8 @@ static void net_read_json_presets(json_t* o) {
 	strcpy(name, json_string_value(r));
 	inIdx = search_param(name);
 	r = json_object_get(q, "value");
+	printf("\r\n assigning preset param value, preset %d, input %d, value %d",
+	       i, inIdx, json_integer_value(r));
 	presets[i].ins[inIdx].value = json_integer_value(r);
 	presets[i].ins[inIdx].enabled = 1;
 	continue;

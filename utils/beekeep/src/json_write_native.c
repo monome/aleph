@@ -47,6 +47,8 @@ static json_t* net_write_json_scene(void) {
   json_t* p;
 
   json_object_set(o, "sceneName", json_string(sceneData->desc.sceneName));
+  /// WTF?
+  printf("\r\n module name: %s \r\n ", sceneData->desc.moduleName);
   json_object_set(o, "moduleName", json_string(sceneData->desc.moduleName));
   p = json_object();
   json_object_set(p, "maj", json_integer(sceneData->desc.moduleVersion.maj));
@@ -203,7 +205,7 @@ static json_t* net_write_json_presets(void) {
 	} else {
 	  // parameter
 	  int pId = j - net->numIns;
-	  json_object_set( o, "paramName,", json_string ( get_param_name(pId) ) ) ;
+	  json_object_set( o, "paramName", json_string ( get_param_name(pId) ) ) ;
 	  json_object_set( o, "value", json_integer( get_param_value(pId) ) ) ;
 	}
 	json_array_append(l, o);	
