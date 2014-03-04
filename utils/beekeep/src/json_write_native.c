@@ -12,6 +12,7 @@
 
 #include "op.h"
 #include "net_protected.h"
+#include "param.h"
 #include "preset.h"
 #include "scene.h"
 
@@ -24,13 +25,13 @@ static json_t* net_write_json_params(void);
 static json_t* net_write_json_presets(void);
 
 
-void net_write_json_raw(const char* name) {
+void net_write_json_native(const char* name) {
   json_t *root;
 
   root = json_object();
 
   json_object_set(root, "scene", net_write_json_scene());
-  json_object_set(root, "ops", net_write_json_ops());
+  json_object_set(root, "operators", net_write_json_ops());
   /// ins and outs are stored hierarchichally in the ops list.
   //  json_object_set(root, "ins", net_write_json_ins());
   //  json_object_set(root, "outs", net_write_json_outs());
@@ -67,6 +68,7 @@ static json_t* net_write_json_ops(void) {
   // binary blob for operator state
   // a large but arbitrary maximum size!
   u8 bin[0x10000];
+  u8* dst;
   int binCount;
 
   for(i=0; i<net->numOps; ++i) {
@@ -84,16 +86,16 @@ static json_t* net_write_json_ops(void) {
     json_object_set(o, "class", json_integer(op->type));
     json_object_set(o, "name", json_string(op->opString));
     // write inputs
-    for(j=0; j<op->numIns; ++j) {
+    for(j=0; j< (op->numInputs); ++j) {
       // index in global input array
       int inIdx = net_op_in_idx(i, j);
-      p = json_ibject();
+      p = json_object();
       json_object_set(p, "name", json_string( net_in_name(inIdx) ) );
       json_object_set(p, "value", json_integer(net_get_in_value(inIdx)) );
       json_array_append(ins, p);
     }
     // write outputs
-    for(j=0; j<op->numOuts; ++j) {
+    for(j=0; j<op->numOutputs; ++j) {
       // index in global input array
       int outIdx = net_op_out_idx(i, j);
       // target index
@@ -105,15 +107,14 @@ static json_t* net_write_json_ops(void) {
       json_object_set(p, "name", json_string( net_out_name(outIdx) ) );
       // target object
       if(target == -1) {
-	// no target, short descriptor
-	json_object_set(q, "inIdx", json_integer( target ) );
-	json_object_set(q, "inName", json_string( "none" ) );
+	json_object_set(q, "inIdx", json_integer( -1 ) );
       } else {
 	// has target, long descriptor
-	json_object_set( q, "inIdx", json_integer( target ) );
-	json_object_set( q, "inName", json_string( net_gin_name(target) ) );
 	json_object_set( q, "opIdx", json_integer( net_in_op_idx(target) ) );
 	json_object_set( q, "opName", json_string( net_op_name(net_in_op_idx(target)) ) );
+	json_object_set( q, "opInIdx", json_integer( net->ins[target].opInIdx ) );
+	json_object_set( q, "opInName", json_string( net_in_name(target) ) );
+
       }
       json_object_set(p, "target", q);
       json_array_append(outs, p);
@@ -126,52 +127,19 @@ static json_t* net_write_json_ops(void) {
     } else {
       dst = bin;
       dst = (*(op->pickle))(op, dst);
-      binCount = (u32)dst - (u32)(bin);
+      binCount = (size_t)dst - (size_t)(bin);
     }
     for(j=0; j<binCount; j++) {
       json_array_append(state, json_integer(bin[j]));
     }
+    json_object_set(o, "ins", ins);
+    json_object_set(o, "outs", outs);
     json_object_set(o, "state", state);
     json_array_append(ops, o);
   }
   return ops;
 }
 
-/* static json_t* net_write_json_ins(void) { */
-/*   json_t* ins = json_array(); */
-/*   json_t* o; */
-/*   int i; */
-
-/*   for(i=0; i<net->numIns; i++) { */
-/*     o = json_object(); */
-/*     json_object_set(o, "name", json_string(net_in_name(i))); */
-/*     json_object_set(o, "value", json_integer(net_get_in_value(i))); */
-/*     json_object_set(o, "play", json_boolean(net_get_in_play(i))); */
-/*     json_array_append(ins, o); */
-/*   } */
-/*   return ins; */
-/* } */
-
-/* static json_t* net_write_json_outs(void) { */
-/*   /\* json_t* outs = json_object(); *\/ */
-/*   /\* json_t* l = json_array(); *\/ */
-/*   /\* json_t* o; *\/ */
-/*   /\* int i; *\/ */
-/*   /\* json_object_set(outs, "count", json_integer(net->numOuts)); *\/ */
-
-/*   /\* for(i=0; i<net->numOuts; i++) { *\/ */
-/*   /\*   o = json_object(); *\/ */
-/*   /\*   json_object_set(o, "idx", json_integer(i)); *\/ */
-/*   /\*   json_object_set(o, "opIdx", json_integer(net->outs[i].opIdx)); *\/ */
-/*   /\*   json_object_set(o, "opOutIdx", json_integer(net->outs[i].opOutIdx)); *\/ */
-/*   /\*   json_object_set(o, "name", json_string(net_out_name(i))); *\/ */
-/*   /\*   json_object_set(o, "target", json_integer(net_get_target(i))); *\/ */
-/*   /\*   json_array_append(l, o); *\/ */
-/*   /\* } *\/ */
-/*   /\* json_object_set(outs, "data", l); *\/ */
-
-/*   /\* return outs; *\/ */
-/* } */
 
 static json_t* net_write_json_params(void) {
   json_t *params = json_array();
@@ -182,67 +150,89 @@ static json_t* net_write_json_params(void) {
   
   for(i=0; i<net->numParams; i++) {
     o = json_object();
-    json_object_set(o, "idx", json_integer(i));
-    json_object_set(o, "label", json_string(net->params[i].desc.label));
-    json_object_set(o, "type", json_integer(net->params[i].desc.type));
+    json_object_set(o, "name", json_string(net->params[i].desc.label));
+    json_object_set(o, "class", json_integer(net->params[i].desc.type));
     json_object_set(o, "min", json_integer(net->params[i].desc.min));
     json_object_set(o, "max", json_integer(net->params[i].desc.max));
-
+    json_object_set(o, "radix", json_integer(net->params[i].desc.radix));
     json_object_set(o, "value", json_integer(net->params[i].data.value));
     /// FIXME: this dumb indexing. play flag not stored correctly...
     json_object_set(o, "play", json_boolean(net_get_in_play(i + net->numIns)));
-    json_array_append(l, o);
+    json_array_append(params, o);
   }
-  json_object_set(params, "data", l);
 
   return params;
 }
 
 static json_t* net_write_json_presets(void) {
-  /* json_t* pres = json_object(); */
-  /* json_t* ins; */
-  /* json_t* outs; */
-  /* json_t* l; */
-  /* json_t* m; */
-  /* json_t* o; */
-  /* json_t* p; */
-  /* int i, j; */
+  json_t* pres = json_array();
+  int i, j;
 
-  /* json_object_set(pres, "count", json_integer(NET_PRESETS_MAX)); */
-  /* m = json_array(); */
+  for(i=0; i<NET_PRESETS_MAX; i++) {
+    // object for this preset
+    json_t* pre = json_object();
+    // array for this preset's entries
+    json_t* l = json_array();
+    // tmp
+    json_t* o;
+    json_t* p;
 
-  /* for(i=0; i<NET_PRESETS_MAX; i++) { */
-  /*   p = json_object(); */
-  /*   json_object_set(p, "name", json_string( preset_name(i)) ); */
-  /*   l = json_array(); */
+    json_object_set( pre, "name", json_string( preset_name(i)) );
+    
+    // loop over nodes.
+    // only create entries for enabled nodes.
+    for(j=0; j<PRESET_INODES_COUNT; j++) {
+      if(presets[i].ins[j].enabled) {
+	o = json_object();
+	if(j < net->numIns) {
+	  // op input 
+	  // cheating and using net handle directly...
+	  json_object_set( o, "opIdx", json_integer( net->ins[j].opIdx ) );
+	  json_object_set( o, "opName", json_string( net_op_name(net->ins[j].opIdx) ) );
+	  json_object_set( o, "opInName", json_string( net_in_name(j) ) );
+	  json_object_set( o, "value", json_integer( presets->ins[j].value ) );
+	} else {
+	  // parameter
+	  int pId = j - net->numIns;
+	  json_object_set( o, "paramName,", json_string ( get_param_name(pId) ) ) ;
+	  json_object_set( o, "value", json_integer( get_param_value(pId) ) ) ;
+	}
+	json_array_append(l, o);	
+      }
+    }
 
-  /*   for(j=0; j<PRESET_INODES_COUNT; j++) { */
-  /*     ///  */
-  /*     o = json_object(); */
-  /*     json_object_set(o, "enabled", json_integer( presets[i].ins[j].enabled )); */
-  /*     /// FIXME: shouldn't need idx here */
-  /*     //      json_object_set(o, "idx", json_integer( presets[i].ins[j].idx )); */
-  /*     /// store for readibility anyhow */
-  /*     json_object_set(o,"idx", json_integer( j )); */
-  /*     json_object_set(o, "value", json_integer( presets[i].ins[j].value )); */
-  /*     json_array_append(l, o); */
-  /*   } */
-  /*   json_object_set(p, "ins", l); */
+    for(j=0; j<NET_OUTS_MAX; j++) {
+      if(presets[i].outs[j].enabled) {
+	int target;
+	o = json_object();
+	p = json_object();
 
-  /*   l = json_array(); */
-  /*   for(j=0; j<NET_OUTS_MAX; j++) { */
-  /*     o = json_object(); */
-  /*     /// FIXME: shouldn't need idx here */
-  /*     //      json_object_set(o, "idx", json_integer( presets[i].outs[j].outIdx )); */
-  /*     /// store for readibility anyhow */
-  /*     json_object_set(o,"idx", json_integer( j )); */
-  /*     json_object_set(o, "target", json_integer( presets[i].outs[j].target )); */
-  /*     json_object_set(o, "enabled", json_integer( presets[i].outs[j].enabled )); */
-  /*     json_array_append(l, o); */
-  /*   } */
-  /*   json_object_set(pres, "outs", l); */
-  /*   json_array_append(m, p); */
-  /* } */
-  /* json_object_set(pres, "data", m); */
-  /* return pres; */
+	target = presets[i].outs[j].target;
+	if(target < 0) {
+	  // disconnect
+	  json_object_set(p, "inIdx", json_integer( -1 ) );
+	} else {
+	  if(target >= net->numIns) {
+	    // parameter target
+	    json_object_set( p, "paramName", json_string( get_param_name(target - net->numIns) ) ) ;
+	  } else {
+	    // op input target
+	    json_object_set( p, "opIdx", json_integer( net->ins[target].opIdx ) ) ;
+	    json_object_set( p, "opName", json_string( net_op_name(net->ins[target].opIdx) ) );
+	    json_object_set( p, "opInName", json_string( net_in_name(target) ) );
+	  }
+	  json_object_set( o, "opIdx", json_integer( net_out_op_idx(j) ) );
+	  json_object_set( o, "opName", json_string( net_op_name(net_out_op_idx(j) ) ) );
+	  json_object_set( o, "opOutName", json_string( net_out_name(j) );,
+	  json_object_set( o, "target", p);
+	  json_array_append( l, o ); 
+	}
+      }    
+    }
+    
+    json_object_set(pre, "entries", l);
+    json_array_append(pres, pre);
+
+  }
+  return pres; 
 }

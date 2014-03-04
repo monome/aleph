@@ -9,7 +9,7 @@
     "required": [ 
 	"sceneName",
 	"moduleName",
-	"ops",
+	"operators",
 	"params"
     ],
 
@@ -34,7 +34,7 @@
 	    }
 	},
 
-	"ops" : { 
+	"operators" : { 
 	    "type" : "array", 
 	    "items" : {
 		"type" : "object"
@@ -43,12 +43,12 @@
 		    "name" : { "type" : "string" },
 		    "ins" : { 
 			"type" : "array", 
-			"items" : { "$ref" : "#/definitions/opInput" }
+			"items" : { "$ref" : "#/definitions/input" }
 		    }
 		    "outs" : { 
 			"type" : "array", 
 			"items" : {
-			    "$ref" : "#/definitions/opOutput" 
+			    "$ref" : "#/definitions/output" 
 			}
 		    }
 		}
@@ -57,24 +57,36 @@
 
 	"params" : { 
 	    "type" : "array", 
-	    "items" : { "$ref" : "#/definitions/paramDescriptor" }
+	    "items" : { "$ref" : "#/definitions/parameter" }
 	}	
 
 	"presets" : { 
 	    "type" : "array", 
-	    "items" : { 
-		"oneOf" : [
-		    { "$ref" : "#/definitions/presetInput" },
-		    { "$ref" : "#/definitions/presetOutput" },
-		    { "$ref" : "#/definitions/presetParam" },
-		]
+	    "items" : {
+		"type" : "object", 
+		"properties" : {
+		    "name" : { 
+			"type" : "string" 
+		    },
+		    "entries" : { 
+			"type": "array",
+			"items" : { 
+			    "type":
+			    "oneOf" : [
+				{ "$ref" : "#/definitions/presetInput" },
+				{ "$ref" : "#/definitions/presetOutput" },
+				{ "$ref" : "#/definitions/presetParam" },
+			    ]
+			}
+		    }
+		}
 	    }
 	}	
 
     },
 
     "definitions" : {
-	"opInput" : { 
+	"input" : { 
 	    "type" : "object",
 	    "properties" : {
 		"name" : { "type" : "string" },
@@ -82,16 +94,16 @@
 	    }
 	},
 
-	"opOutput" : { 
+	"output" : { 
 	    "type" : "object",
 	    "properties" : {
 		"name" : { "type" : "string" },
-		"target" : { "$ref": "#/definitions/outputTarget" }
+		"target" : { "$ref": "#/definitions/target" }
 	    }
 	},
 
 
-	"paramDescriptor" : { 
+	"parameter" : { 
 	    "type" : "object",
 	    "properties" : {
 		"name" : { "type" : "string" },
@@ -99,10 +111,12 @@
 		"min" : { "type" : "integer" },
 		"max" : { "type" : "integer" },
 		"radix" : { "type" : "integer" },
+		"value" : { "type" : "integer" },
+		"play" : { "type" : "boolean" },
 	    }
 	},
 	
-	"outputTarget" : { 
+	"target" : { 
 	    "type" : "object",
 	    "properties" : {
 		"oneOf" : [
@@ -127,7 +141,6 @@
 		    { 
 			"opIdx" : { "type" : "integer" },
 			"opName" : { "type" : "string" },
-			"opInIdx" : { "type" : "integer" },
 			"opInName" : { "type" : "string" },
 		    },
 		]
@@ -151,7 +164,6 @@
 			{ 
 			    "opIdx" : { "type" : "integer" },
 			    "opName" : { "type" : "string" },
-			    "opInIdx" : { "type" : "integer" },
 			    "opInName" : { "type" : "string" },
 			    "value" : { "type" : "integer" },
 			},
@@ -164,9 +176,19 @@
 		"properties" : {
 		    "oneOf" : [
 			{ 
-			    "opIdx" : { "type" : "string" },
+			    "opIdx" : { "type" : "integer" },
+			    "opOutIdx" : { "type" : "integer" },
+			    "target" :  { "$ref" : "#/definitions/target" }
+			},
+			{ 
 			    "outIdx" : { "type" : "integer" },
-			    "target" :  { "$ref" : "#/definitions/outputTarget" }
+			    "target" :  { "$ref" : "#/definitions/target" }
+			},
+			{ 
+			    "opIdx" : { "type" : "integer" },
+			    "opName" : { "type" : "string" },
+			    "outName" : { "type" : "string" },
+			    "target" :  { "$ref" : "#/definitions/target" }
 			},
 		    }
 		}

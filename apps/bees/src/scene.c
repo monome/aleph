@@ -296,9 +296,15 @@ void scene_read_buf(void) {
   //  if(net->numParams != paramsReported) {
   //    print_dbg("\r\n !!!!!! WARNING ! param count from scene does not match reported count from DSP");
   //    render_boot("warning: param count mismatch!");
-    //  } else {
-    net_send_params();
-    //  }
+  //  } else {
+
+#ifdef BEEKEEP
+#else
+  net_send_params();
+#endif
+
+  //  }
+
   print_dbg("\r\n sent new parameter values");
 
   delay_ms(5);
