@@ -108,7 +108,7 @@
 	    "type" : "object",
 	    "properties" : {
 		"name" : { "type" : "string" },
-		"class" : { "type" : "integer" },
+		"type" : { "type" : "integer" },
 		"min" : { "type" : "integer" },
 		"max" : { "type" : "integer" },
 		"radix" : { "type" : "integer" },

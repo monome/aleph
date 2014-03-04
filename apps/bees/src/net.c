@@ -961,7 +961,11 @@ u8 net_toggle_in_play(u32 inIdx) {
 
 // set play inclusion for input
 void net_set_in_play(u32 inIdx, u8 val) {
-  net->ins[inIdx].play = val;
+  if(inIdx < net->numIns) {
+    net->ins[inIdx].play = val;
+  } else {
+    net->params[inIdx - net->numIns].play = val;
+  }
 }
 
 // get play inclusion for input

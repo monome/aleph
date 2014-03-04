@@ -112,12 +112,13 @@ static void net_read_json_ops(json_t* o) {
     json_t* r;
     json_t* s;
 
+    op = net->ops[i];
     q = json_object_get(p, "outs");
     for(j=0; j< op->numOutputs; j++) {
       r = json_object_get(json_array_get(q, j), "target");
 
       printf("\r\n parsing operator target at op idx %d, out idx %d", 
-	     net->numOps -1, j);
+	     i, j);
       // switch on target representations...
       //...
       s = json_object_get(r, "inIdx");      
@@ -184,6 +185,9 @@ static void net_read_json_params(json_t* o) {
     param->desc.max = json_integer_value(json_object_get(p, "max"));
     param->desc.radix = json_integer_value(json_object_get(p, "radix"));
     strcpy(param->desc.label, json_string_value(json_object_get(p, "name")));
+    //ahh... inputs aren't set up yet here. 
+    //    net_set_in_play(i + net->numIns, json_integer_value(json_object_get(p, "play") ) );
+    net->params[i].play = json_is_true(json_object_get(p, "play") );
   }
 }
 
@@ -230,7 +234,7 @@ static void net_read_json_presets(json_t* o) {
     strcpy(presets[i].name, json_string_value(json_object_get(p, "name")));
     n = json_array_size(arr);
 
-    print_dbg("\r\n processing preset name: %s , %d entries", presets[i].name, n);
+    printf("\r\n processing preset name: %s , %d entries", presets[i].name, n);
 
     for(j=0; j<n; ++j) {
       json_t* q = json_array_get(arr, j);

@@ -162,7 +162,7 @@ static json_t* net_write_json_params(void) {
   for(i=0; i<net->numParams; i++) {
     o = json_object();
     json_object_set(o, "name", json_string(net->params[i].desc.label));
-    json_object_set(o, "class", json_integer(net->params[i].desc.type));
+    json_object_set(o, "type", json_integer(net->params[i].desc.type));
     json_object_set(o, "min", json_integer(net->params[i].desc.min));
     json_object_set(o, "max", json_integer(net->params[i].desc.max));
     json_object_set(o, "radix", json_integer(net->params[i].desc.radix));
