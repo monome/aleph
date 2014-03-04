@@ -20,12 +20,12 @@ static void net_read_json_presets(json_t* o);
 static void net_json_convert_min3(json_t* r);
 
 void net_read_json_native(const char* name) {
-  /* json_t *root; */
-  /* json_error_t err; */
-  /* FILE* f = fopen(name, "r"); */
+  json_t *root;
+  json_error_t err;
+  FILE* f = fopen(name, "r");
 
-  /* root = json_loadf(f, 0, &err);   */
-  /* fclose(f); */
+  root = json_loadf(f, 0, &err);
+  fclose(f);
 
   /* json_t* scene = json_object_get(root, "scene"); */
   /* json_t* vers = json_object_get(scene, "beesVersion"); */
@@ -37,140 +37,188 @@ void net_read_json_native(const char* name) {
   /*   net_json_convert_min3(root); */
   /* } */
   
-  /* net_read_json_scene(json_object_get(root, "scene")); */
+  net_read_json_scene(json_object_get(root, "scene"));
 
 
-  /* net_read_json_ops(json_object_get(root, "ops")); */
-  /* net_read_json_ins(json_object_get(root, "ins")); */
-  /* net_read_json_outs(json_object_get(root, "outs")); */
-  /* net_read_json_params(json_object_get(root, "params")); */
-  /* net_read_json_presets(json_object_get(root, "presets")); */
+  net_read_json_ops(json_object_get(root, "ops"));
+  //  net_read_json_ins(json_object_get(root, "ins"));
+  //  net_read_json_outs(json_object_get(root, "outs"));
+  net_read_json_params(json_object_get(root, "params"));
+  net_read_json_presets(json_object_get(root, "presets"));
 }
 
 
 static void net_read_json_scene(json_t* o) {
-  /* json_t* p; */
-  /* strcpy(sceneData->desc.sceneName, json_string_value(json_object_get(o, "sceneName"))); */
-  /* strcpy(sceneData->desc.moduleName, json_string_value(json_object_get(o, "moduleName"))); */
-  /* // module version */
-  /* p = json_object_get(o, "moduleVersion"); */
-  /* sceneData->desc.moduleVersion.maj = json_integer_value(json_object_get(p, "maj")); */
-  /* sceneData->desc.moduleVersion.min = json_integer_value(json_object_get(p, "min")); */
-  /* sceneData->desc.moduleVersion.rev = json_integer_value(json_object_get(p, "rev")); */
-  /* // bees version */
-  /* p = json_object_get(o, "beesVersion"); */
-  /* sceneData->desc.beesVersion.maj = json_integer_value(json_object_get(p, "maj")); */
-  /* sceneData->desc.beesVersion.min = json_integer_value(json_object_get(p, "min")); */
-  /* sceneData->desc.beesVersion.rev = json_integer_value(json_object_get(p, "rev")); */
+  json_t* p;
+  strcpy(sceneData->desc.sceneName, json_string_value(json_object_get(o, "sceneName")));
+  strcpy(sceneData->desc.moduleName, json_string_value(json_object_get(o, "moduleName")));
+  // module version
+  p = json_object_get(o, "moduleVersion");
+  sceneData->desc.moduleVersion.maj = json_integer_value(json_object_get(p, "maj"));
+  sceneData->desc.moduleVersion.min = json_integer_value(json_object_get(p, "min"));
+  sceneData->desc.moduleVersion.rev = json_integer_value(json_object_get(p, "rev"));
+  // bees version
+  p = json_object_get(o, "beesVersion");
+  sceneData->desc.beesVersion.maj = json_integer_value(json_object_get(p, "maj"));
+  sceneData->desc.beesVersion.min = json_integer_value(json_object_get(p, "min"));
+  sceneData->desc.beesVersion.rev = json_integer_value(json_object_get(p, "rev"));
  
 }
 
 static void net_read_json_ops(json_t* o) { 
-  /* int count = json_integer_value(json_object_get(o, "count")); */
-  /* int i, j; */
-  /* json_t* arr = json_object_get(o, "data"); */
-  /* op_id_t id; */
-  /* op_t* op; */
-  /* json_t* p; */
-  /* /// binary state data.. */
-  /* u8* src; */
-  /* u8 bin[0x10000]; */
-  /* int binCount; */
+  int count = json_array_size(o);
+  /// binary state data..
+  u8* src;
+  u8 bin[0x10000];
+  int binCount;
+  int i, j;
+  int id;
+  op_t* op;
+  
+  
+  // clear out any extant user ops in the network
+  net_deinit();
 
-  /* // sanity check */
-  /* if(count != json_array_size(arr)) { */
-  /*   printf("\r\n warning, mismatched count / size in ops list ( %d / %d )", count, (int)json_array_size(arr)); */
-  /* } */
-
-  /* // clear out any extant user ops in the network */
-  /* net_deinit(); */
-
-  /* for( i=0; i<count; i++) { */
-  /*   p = json_array_get(arr, i); */
-  /*   id = (op_id_t)json_integer_value(json_object_get(p, "type")); */
-  /*   // add operator of indicated type */
-  /*   net_add_op(id); */
-  /*   // unpickle the state, if needed */
-  /*   op = net->ops[net->numOps - 1]; */
-    
-  /*   if(op->unpickle != NULL) { */
-  /*     json_t* state = json_object_get(p, "state"); */
-  /*     binCount = json_array_size(state); */
-  /*     for(j=0; j<binCount; j++) { */
-  /* 	bin[j] = (u8)(json_integer_value(json_array_get(state, j))); */
-  /*     } */
-  /*     src = bin; */
-  /*     src = (*(op->unpickle))(op, src); */
-  /*     // sanity check */
-  /*     if(binCount != ((u32)src - (u32)bin)) { */
-  /* 	printf("warning! mis-sized byte array in operator state unpickle?"); */
-  /* 	printf("\r\n   bin: 0x%08x ; src: 0x%08x ", (u32)bin, (u32)src); */
-  /*     } */
-  /*   } */
-  /* } */
+  for( i=0; i<count; i++) {
+    json_t* p = json_array_get(o, i);
+    id = (op_id_t)json_integer_value(json_object_get(p, "class"));
+    id = (op_id_t)json_integer_value(json_object_get(p, "type"));
+    // add operator of indicated type
+    net_add_op(id);
+    // unpickle the state, if needed
+    op = net->ops[net->numOps - 1];
+    if(op->unpickle != NULL) {
+      json_t* state = json_object_get(p, "state");
+      binCount = json_array_size(state);
+      for(j=0; j<binCount; j++) {
+  	bin[j] = (u8)(json_integer_value(json_array_get(state, j)));
+      }
+      src = bin;
+      src = (*(op->unpickle))(op, src);
+      // sanity check
+      if(binCount != ((u32)src - (u32)bin)) {
+  	printf("warning! mis-sized byte array in operator state unpickle?");
+  	printf("\r\n   bin: 0x%08x ; src: 0x%08x ", (u32)bin, (u32)src);
+      }
+    }
+  }
 }
 
-static void net_read_json_ins(json_t* o) {
-  /* json_t* p; */
-  /* json_t* arr; */
-  /* int i; */
-  /* int count = json_integer_value(json_object_get(o, "count")); */
+/* static void net_read_json_ins(json_t* o) { */
+/*   /\* json_t* p; *\/ */
+/*   /\* json_t* arr; *\/ */
+/*   /\* int i; *\/ */
+/*   /\* int count = json_integer_value(json_object_get(o, "count")); *\/ */
 
-  /* arr = json_object_get(o, "data"); */
-  /* for(i=0; i<count; i++) { */
-  /*   p = json_array_get(arr, i); */
-  /*   // should only need the play flag, since input list was populated from op creation,  */
-  /*   // and values should be part of op pickle. */
-  /*   net->ins[i].play = (u8)json_integer_value(json_object_get(p, "play")); */
-  /*   // however, let's sanity-check the other fields... */
-  /*   ///...... (yeah right) */
-  /* } */
-}
+/*   /\* arr = json_object_get(o, "data"); *\/ */
+/*   /\* for(i=0; i<count; i++) { *\/ */
+/*   /\*   p = json_array_get(arr, i); *\/ */
+/*   /\*   // should only need the play flag, since input list was populated from op creation,  *\/ */
+/*   /\*   // and values should be part of op pickle. *\/ */
+/*   /\*   net->ins[i].play = (u8)json_integer_value(json_object_get(p, "play")); *\/ */
+/*   /\*   // however, let's sanity-check the other fields... *\/ */
+/*   /\*   ///...... (yeah right) *\/ */
+/*   /\* } *\/ */
+/* } */
 
-static void net_read_json_outs(json_t* o) {
-  /* json_t* p; */
-  /* json_t* arr; */
-  /* int i; */
-  /* int v; */
-  /* int count = json_integer_value(json_object_get(o, "count")); */
+/* static void net_read_json_outs(json_t* o) { */
+/*   /\* json_t* p; *\/ */
+/*   /\* json_t* arr; *\/ */
+/*   /\* int i; *\/ */
+/*   /\* int v; *\/ */
+/*   /\* int count = json_integer_value(json_object_get(o, "count")); *\/ */
 
-  /* arr = json_object_get(o, "data"); */
-  /* for(i=0; i<count; i++) { */
-  /*   p = json_array_get(arr, i); */
-  /* // output target */
-  /*   v = json_integer_value(json_object_get(p, "target")); */
-  /*   net->outs[i].target = (s16)v; */
+/*   /\* arr = json_object_get(o, "data"); *\/ */
+/*   /\* for(i=0; i<count; i++) { *\/ */
+/*   /\*   p = json_array_get(arr, i); *\/ */
+/*   /\* // output target *\/ */
+/*   /\*   v = json_integer_value(json_object_get(p, "target")); *\/ */
+/*   /\*   net->outs[i].target = (s16)v; *\/ */
 
-  /*   // shouldn't really need to set these...  */
-  /*   v = json_integer_value(json_object_get(p, "opIdx")); */
-  /*   net->outs[i].opIdx = (u8)v; */
-  /*   v = json_integer_value(json_object_get(p, "opOutIdx")); */
-  /*   net->outs[i].opOutIdx = (s32)v; */
-  /* } */
-}
+/*   /\*   // shouldn't really need to set these...  *\/ */
+/*   /\*   v = json_integer_value(json_object_get(p, "opIdx")); *\/ */
+/*   /\*   net->outs[i].opIdx = (u8)v; *\/ */
+/*   /\*   v = json_integer_value(json_object_get(p, "opOutIdx")); *\/ */
+/*   /\*   net->outs[i].opOutIdx = (s32)v; *\/ */
+/*   /\* } *\/ */
+/* } */
 
 static void net_read_json_params(json_t* o) {
-  /* json_t* p; */
-  /* json_t* arr; */
-  /* int i; */
-  /* int v; */
-  /* pnode_t* param; */
-  /* int count = json_integer_value(json_object_get(o, "count")); */
-  /* net->numParams = count; */
-  /* arr = json_object_get(o, "data"); */
-  /* for(i=0; i<count; i++) { */
-  /*   p = json_array_get(arr, i); */
-  /*   param = &(net->params[i]); */
-  /*   param->idx = json_integer_value(json_object_get(p, "idx")); */
-  /*   param->data.value = json_integer_value(json_object_get(p, "value")); */
-  /*   param->desc.type = json_integer_value(json_object_get(p, "type")); */
-  /*   param->desc.min = json_integer_value(json_object_get(p, "min")); */
-  /*   param->desc.max = json_integer_value(json_object_get(p, "max")); */
-  /*   strcpy(param->desc.label, json_string_value(json_object_get(p, "label"))); */
-  /* } */
+  int i;
+  int v;
+  pnode_t* param;
+  int count = json_array_size( o );
+  json_t* arr;
+
+  net->numParams = count;
+  arr = json_object_get(o, "data");
+  for(i=0; i<count; i++) {
+    json_t* p = json_array_get(o, i);
+    param = &(net->params[i]);
+    param->idx = json_integer_value(json_object_get(p, "idx"));
+    param->data.value = json_integer_value(json_object_get(p, "value"));
+    param->desc.type = json_integer_value(json_object_get(p, "type"));
+    param->desc.min = json_integer_value(json_object_get(p, "min"));
+    param->desc.max = json_integer_value(json_object_get(p, "max"));
+    param->desc.radix = json_integer_value(json_object_get(p, "radix"));
+    strcpy(param->desc.label, json_string_value(json_object_get(p, "label")));
+  }
 }
 
 static void net_read_json_presets(json_t* o) {
+  int count = json_array_size( o );
+  int n;
+  int i, j;
+  // sanity check
+  if( count != NET_PRESETS_MAX) {
+    printf(" \n warning! preset array size in json does not match network preset count.\n");
+
+  }
+  for(i=0; i<count; ++i) {
+    json_t* p = json_array_get(o, i);
+    json_t* arr = json_object_get(p, "entries");
+    strcpy(presets[i].name, json_string_value(json_object_get(p, "name")));
+    n = json_array_size(arr);
+    for(j=0; j<n; ++j) {
+      json_t* q = json_array_get(arr, j);
+      json_t* r;
+      /*
+	ok... here we need to do some parsing stuff,
+        because there are a number of possible formats for preset entries.
+
+	initially, let's just parse the format assuming we generated it from beekeep:json_write_native()
+       */
+
+      // input node preset entry
+      r = json_object_get(q, "inIdx");
+      if(r != NULL) {
+	/// this is an input node with raw input
+	/// parse it...
+	continue;
+      }
+      r = json_object_get(q, "opInName");
+      if(r != NULL) {
+	/// this is an input node with input name and op idx
+	/// parse it...
+	continue;
+      }
+
+      r = json_object_get(q, "opOutName");
+      if(r != NULL) {
+	/// this is an iytoyt node with output name and op idx
+	/// parse it...
+	continue;
+      }
+      r = json_object_get(q, "paramName");
+      if(r != NULL) {
+	/// this is a param entru
+	/// parse it...
+	continue;
+      }
+    }
+  }
+
+
   /* json_t* pres; // toplevel array of presets */
   /* json_t* arr; // temp array of ins/outs per preset */
   /* json_t* p; // tmp */

@@ -223,7 +223,7 @@ static json_t* net_write_json_presets(void) {
 	  }
 	  json_object_set( o, "opIdx", json_integer( net_out_op_idx(j) ) );
 	  json_object_set( o, "opName", json_string( net_op_name(net_out_op_idx(j) ) ) );
-	  json_object_set( o, "opOutName", json_string( net_out_name(j) );,
+	  json_object_set( o, "opOutName", json_string( net_out_name(j) ) );
 	  json_object_set( o, "target", p);
 	  json_array_append( l, o ); 
 	}
