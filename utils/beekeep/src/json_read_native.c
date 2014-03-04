@@ -63,16 +63,21 @@ static void net_read_json_ops(json_t* o) {
   int i, j;
   int id;
   op_t* op;
-  
+  int opIdx, opInIdx, inIdx;
+
   // clear out any extant user ops in the network
   net_deinit();
 
   for( i=0; i<count; i++) {
     json_t* p = json_array_get(o, i);
+    json_t* q;
+    json_t* r;
+    json_t* s;
     id = (op_id_t)json_integer_value(json_object_get(p, "class"));
     id = (op_id_t)json_integer_value(json_object_get(p, "type"));
     // add operator of indicated type
     net_add_op(id);
+
     // unpickle the state, if needed
     op = net->ops[net->numOps - 1];
     if(op->unpickle != NULL) {
@@ -90,9 +95,45 @@ static void net_read_json_ops(json_t* o) {
       }
     }
 
-    /// set inputs and outputs!
-    //...
+    /// set inputs and outputs
+    q = json_object_get(p, "ins");
+    for(j=0; j< op->numInputs; j++) {
+      r = json_array_get(q, j);
+      op_set_in_val(op, j, json_integer_value(json_object_get(r, "value")));
+    }
 
+    q = json_object_get(p, "outs");
+    for(j=0; j< op->numOutputs; j++) {
+      r = json_object_get(json_array_get(q, j), "target");
+      // switch on target representations...
+      //...
+      s = json_object_get(r, "inIdx");      
+      if (s != NULL) {
+	// target is raw input idx
+	inIdx =json_integer_value(s);
+	if(inIdx > -1) {
+	  net_connect(net_op_out_idx(i, j), inIdx);
+	}
+      }
+      //...
+      s = json_object_get(r, "paramName");
+      if(s != NULL) {
+	// target is param name
+	net_connect(
+		    net_op_out_idx(i,j),
+		    search_param(json_string_value(s))
+		    );
+      }
+      //...
+      s = json_object_get(r, "opIdx");
+      if(s != NULL) {
+	// target is op and input idx
+	opIdx = json_integer_value(json_object_get(r, "opIdx") );
+	opInIdx = json_integer_value(json_object_get(r, "opInIdx") );
+	inIdx = net_op_in_idx(opIdx, inIdx);
+	net_connect(net_op_out_idx(i, j), inIdx);
+      }
+    }
   }
 }
 
@@ -130,16 +171,10 @@ static void net_read_json_presets(json_t* o) {
 
   // empty out extant preset data
   for(i=0; i<NET_PRESETS_MAX; i++) {
-
     // empty name
     for(j=0; j<PRESET_NAME_LEN; j++) {
       presets[i].name[j] = '\0';
     }
-
-    //    p = presets[i].name;
-    //    p = atoi_idx(p, i);
-    //    *p = '_';
-
     // empty inputs
     for(j=0; j<PRESET_INODES_COUNT; ++j) {
       presets[i].ins[j].value = 0;

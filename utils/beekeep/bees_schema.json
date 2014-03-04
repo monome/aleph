@@ -39,6 +39,7 @@
 	    "items" : {
 		"type" : "object"
 		"properties" : {
+		    "index" : { "type" : "integer" },
 		    "class" : { "type" : "integer" },
 		    "name" : { "type" : "string" },
 		    "ins" : { 

@@ -83,6 +83,7 @@ static json_t* net_write_json_ops(void) {
     json_t* state = json_array();
 
     o = json_object();
+    json_object_set(o, "index", json_integer(i));
     json_object_set(o, "class", json_integer(op->type));
     json_object_set(o, "name", json_string(op->opString));
     // write inputs
@@ -107,13 +108,21 @@ static json_t* net_write_json_ops(void) {
       json_object_set(p, "name", json_string( net_out_name(outIdx) ) );
       // target object
       if(target == -1) {
+	// no target, short descriptor with index
 	json_object_set(q, "inIdx", json_integer( -1 ) );
       } else {
-	// has target, long descriptor
-	json_object_set( q, "opIdx", json_integer( net_in_op_idx(target) ) );
-	json_object_set( q, "opName", json_string( net_op_name(net_in_op_idx(target)) ) );
-	json_object_set( q, "opInIdx", json_integer( net->ins[target].opInIdx ) );
-	json_object_set( q, "opInName", json_string( net_in_name(target) ) );
+	// has target
+	int inOpIdx = net_in_op_idx(target);
+	if(inOpIdx < 0) {
+	  // target is param, short descriptor with param name
+	  json_object_set( q, "paramName,", json_string( net_in_name(target) ) );
+	} else {
+	  // target is op input, long descriptor
+	  json_object_set( q, "opIdx", json_integer( inOpIdx ) );
+	  json_object_set( q, "opName", json_string( net_op_name(net_in_op_idx(target)) ) );
+	  json_object_set( q, "opInIdx", json_integer( net->ins[target].opInIdx ) );
+	  json_object_set( q, "opInName", json_string( net_in_name(target) ) );
+	}
 
       }
       json_object_set(p, "target", q);
