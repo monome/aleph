@@ -200,12 +200,12 @@ static json_t* net_write_json_presets(void) {
 	  json_object_set( o, "opIdx", json_integer( net->ins[j].opIdx ) );
 	  json_object_set( o, "opName", json_string( net_op_name(net->ins[j].opIdx) ) );
 	  json_object_set( o, "opInName", json_string( net_in_name(j) ) );
-	  json_object_set( o, "value", json_integer( presets[i]->ins[j].value ) );
+	  json_object_set( o, "value", json_integer( presets[i].ins[j].value ) );
 	} else {
 	  // parameter
 	  int pId = j - net->numIns;
 	  json_object_set( o, "paramName", json_string ( get_param_name(pId) ) ) ; 
-	  json_object_set( o, "value", json_integer( presets[i]->ins[j].value ) );
+	  json_object_set( o, "value", json_integer( presets[i].ins[j].value ) );
 	}
 	json_array_append(l, o);	
       }

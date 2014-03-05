@@ -196,7 +196,7 @@ void scene_read_buf(void) {
   // param count reported from dsp
   //  u32 paramsReported;
   //// TEST
-  volatile char moduleName[32];
+  char moduleName[MODULE_NAME_LEN];
   ModuleVersion moduleVersion;
   ////
 
@@ -219,16 +219,13 @@ void scene_read_buf(void) {
   src = unpickle_16(src, &(sceneData->desc.beesVersion.rev));
 
  // read module name
-  for(i=0; i<SCENE_NAME_LEN; i++) {
-    sceneData->desc.moduleName[i] = *src;
+  // target is temp module name buffer, so we can run a comparison 
+  for(i=0; i<MODULE_NAME_LEN; i++) {
+    moduleName[i] = *src;
     src++;
   }
-
   print_dbg("\r\n unpickled module name: ");
-  print_dbg(sceneData->desc.moduleName);
-
-  render_boot("loading DSP module:");
-  render_boot(sceneData->desc.moduleName);
+  print_dbg(moduleName);
 
    // read module version
   sceneData->desc.moduleVersion.min = *src;
@@ -245,49 +242,60 @@ void scene_read_buf(void) {
   print_dbg_ulong(sceneData->desc.moduleVersion.rev);
 
 
-  ///// load the DSP now!
-  render_boot("loading module from sdcard");
+  
+  if(strcmp(moduleName, sceneData->desc.moduleName) == 0) {
+    print_dbg("\r\n requested module name is already loaded; skip DSP reboot.");
+    // skip DSP load
+    /// FIXME: should check module version too
+  } else {
+    //    strcpy(sceneData->desc.moduleName, moduleName);
+    
+    render_boot("loading DSP module:");
+    render_boot(sceneData->desc.moduleName);
 
-  print_dbg("\r\n loading module from card, filename: ");
-  print_dbg(sceneData->desc.moduleName);
+    ///// load the DSP now!  
+    render_boot("loading module from sdcard");
+    print_dbg("\r\n loading module from card, filename: ");
+    print_dbg(sceneData->desc.moduleName);
 
-  files_load_dsp_name(sceneData->desc.moduleName);
+    files_load_dsp_name(sceneData->desc.moduleName);
 
-
-  render_boot("waiting for module init");
-  print_dbg("\r\n waiting for DSP init...");
-  bfin_wait_ready();
+    render_boot("waiting for module init");
+    print_dbg("\r\n waiting for DSP init...");
+    bfin_wait_ready();
 
 #if RELEASEBUILD==1
 #else
   
-  // query module name / version
-  //// FIXME: currently nothing happens with this.
-  print_dbg("\r\n querying module name...");
-  bfin_get_module_name(moduleName);
-  print_dbg("\r\n querying module version...");
-  bfin_get_module_version(&moduleVersion);
+    // query module name / version
+    //// FIXME: currently nothing happens with this.
+    print_dbg("\r\n querying module name...");
+    bfin_get_module_name(moduleName);
+    print_dbg("\r\n querying module version...");
+    bfin_get_module_version(&moduleVersion);
 
-  print_dbg("\r\n received module name: ");
-  print_dbg((char*)moduleName);
+    print_dbg("\r\n received module name: ");
+    print_dbg((char*)moduleName);
 
-  print_dbg("\r\n received module version: ");
-  print_dbg_ulong(moduleVersion.maj);
-  print_dbg(".");
-  print_dbg_ulong(moduleVersion.min);
-  print_dbg(".");
-  print_dbg_ulong(moduleVersion.rev);
+    print_dbg("\r\n received module version: ");
+    print_dbg_ulong(moduleVersion.maj);
+    print_dbg(".");
+    print_dbg_ulong(moduleVersion.min);
+    print_dbg(".");
+    print_dbg_ulong(moduleVersion.rev);
 
 #ifdef BEEKEEP
 #else
-  // store in scene data
-  sceneData->desc.moduleVersion.maj = moduleVersion.maj;
-  sceneData->desc.moduleVersion.min = moduleVersion.min;
-  sceneData->desc.moduleVersion.rev = moduleVersion.rev;
-  strcpy(sceneData->desc.moduleName, (const char*)moduleName);
+    // store in scene data
+    sceneData->desc.moduleVersion.maj = moduleVersion.maj;
+    sceneData->desc.moduleVersion.min = moduleVersion.min;
+    sceneData->desc.moduleVersion.rev = moduleVersion.rev;
+    strcpy(sceneData->desc.moduleName, (const char*)moduleName);
 #endif
 
 #endif
+
+  } // load-module case
 
   app_pause();
 
