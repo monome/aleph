@@ -278,7 +278,7 @@ static void net_read_json_presets(json_t* o) {
 	strcpy(name, json_string_value(r) );
 	opInIdx = search_op_input(opIdx, name);
 	if(opInIdx == -1) { 
-	  printf("error parsing preset entry (input), preset no. %d", i);
+	  printf("error parsing preset (input), preset no. %d - couldn't find named input", i);
 	  continue;
 	}
 	// set value

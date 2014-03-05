@@ -10,7 +10,7 @@
 
  serialization: it is up in the air whether ot ultimately store the entire preset RAM or to choose elements conditionally. certainly the latter if we switch to JSON.
 
-parameters / inputs: presets make no distincation between DSP paraemters and op inputs. the input node list is flattemed, with idx corresponding to the idx as requested from operator (total count is sum of op inputs and reported params.) this stuff should generally be cleaned up throughout the codebase, functionally separating the parameter and input node lists and maybe putting them on separate menus too.
+parameters / inputs: presets make no distincation between DSP paraemters and op inputs. the input node list is flattened, with idx corresponding to the idx as requested from operator (total count is sum of op inputs and reported params.) this stuff should generally be cleaned up throughout the codebase, functionally separating the parameter and input node lists and maybe putting them on separate menus too.
 
 
  */
