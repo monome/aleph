@@ -994,7 +994,10 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
   ////////////
   print_dbg("\r\n finished initializing param scaler.");
 
-  net->params[net->numParams].idx = idx; 
+  //// TEST: don't
+  //  net->params[net->numParams].idx = idx; 
+  /////
+
   net->params[net->numParams].play = 1;
 
   //  net->params[net->numParams].preset = 0; 

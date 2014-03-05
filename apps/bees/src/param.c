@@ -61,7 +61,12 @@ u8* param_pickle(pnode_t* pnode, u8* dst) {
   u32 val;
   /// wasting some space to preserve 4-byte alignment
   // store idx
-  dst = pickle_32((u32)pnode->idx, dst);
+
+
+  //// TEST: don't
+  //  dst = pickle_32((u32)pnode->idx, dst);
+  ////
+
 
   // print_dbg("\r\n pickling param node, value: 0x");
   // print_dbg_hex(pnode->data.value.asUint);
@@ -80,15 +85,19 @@ u8* param_pickle(pnode_t* pnode, u8* dst) {
 
 const u8* param_unpickle(pnode_t* pnode, const u8* src) {
   u32 val;
-  // load idx-
+  // load idx
   src = unpickle_32(src, &val);
 
   // print_dbg("\r\n unpickled param index: ");
   // print_dbg_ulong(val);
 
-  pnode->idx = (u8)val;
-  // load value
-  
+
+  ///// test: don't
+  //  pnode->idx = (u8)val;
+  ////
+
+
+  // load value  
   src = unpickle_32(src, &val);
   pnode->data.value = (ParamValue)val;
 
@@ -114,7 +123,7 @@ const u8* param_unpickle(pnode_t* pnode, const u8* src) {
 // pickle/unpickle for param descriptors 
 // (struct definition in param_common.h
 u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
-  u8 i;
+  u32 i;
   // store label string
   for(i=0; i<PARAM_LABEL_LEN; ++i) {
     *dst = pdesc->label[i];
@@ -122,7 +131,7 @@ u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
   }
   // store type
   // pad for alignment
-  // store radix (pad for alignment)
+  // store type (pad for alignment)
   dst = pickle_32((u32)(pdesc->type), dst);
   // store min
   dst = pickle_32(pdesc->min, dst);
@@ -136,7 +145,7 @@ u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
 
 const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
   u32 val;
-  u8 i;
+  u32 i;
 
   print_dbg("\r\n unpickling param descriptor: ");
 
@@ -169,7 +178,7 @@ const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
   print_dbg_ulong(pdesc->max);
 
   // store radix
-  // padfor alignment
+  // pad for alignment
   src = unpickle_32(src, &val);
   pdesc->radix = (u8)val;
 

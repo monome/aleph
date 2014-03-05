@@ -107,6 +107,7 @@
 	"parameter" : { 
 	    "type" : "object",
 	    "properties" : {
+		"index" : { "type" : "string" },
 		"name" : { "type" : "string" },
 		"type" : { "type" : "integer" },
 		"min" : { "type" : "integer" },
