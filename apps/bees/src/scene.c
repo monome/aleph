@@ -52,10 +52,39 @@ sceneData_t* sceneData;
 
 void scene_init(void) {
   u32 i;
+  u8* dst;
+
   sceneData = (sceneData_t*)alloc_mem( sizeof(sceneData_t) );
   sceneData->desc.beesVersion.maj = beesVersion.maj;
   sceneData->desc.beesVersion.min = beesVersion.min;
   sceneData->desc.beesVersion.rev = beesVersion.rev;
+
+
+  ///////////
+  ///////
+  // TEST (?)
+  // slow initialization of serialized scene data
+  dst = (u8*)(sceneData->pickle);
+  for(i=0; i<SCENE_PICKLE_SIZE; ++i) {
+    switch( (i&3) ) {
+    case 0:
+      *dst = 0xde;
+      break;
+    case 1:
+      *dst = 0xad;
+      break;
+    case 2:
+      *dst = 0xbe;
+      break;
+    case 3:
+      *dst = 0xef;
+      break;
+    }
+    dst++;
+  }
+  ///////////
+  ////////
+
   for(i=0; i<SCENE_NAME_LEN; i++) {
     (sceneData->desc.sceneName)[i] = '\0';
   }
@@ -63,6 +92,8 @@ void scene_init(void) {
     (sceneData->desc.moduleName)[i] = '\0';
   }
   strcpy(sceneData->desc.sceneName, "_"); 
+
+
 }
 
 void scene_deinit(void) {
@@ -260,9 +291,11 @@ void scene_read_buf(void) {
 
   app_pause();
 
+  /// don't have to do this b/c net_unpickle will deinit anyways
+  /*
   print_dbg("\r\n clearing operator list...");
   net_clear_user_ops();
-
+  */
 
   //// FIXME: use .dsc
   /*

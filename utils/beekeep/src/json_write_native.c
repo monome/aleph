@@ -207,7 +207,8 @@ static json_t* net_write_json_presets(void) {
 	  // parameter
 	  int pId = j - net->numIns;
 	  json_object_set( o, "paramName", json_string ( get_param_name(pId) ) ) ;
-	  json_object_set( o, "value", json_integer( get_param_value(pId) ) ) ;
+	  //	  json_object_set( o, "value", json_integer( get_param_value(pId) ) ) ;
+	  json_object_set( o, "value", json_integer( presets->ins[j].value ) );
 	}
 	json_array_append(l, o);	
       }

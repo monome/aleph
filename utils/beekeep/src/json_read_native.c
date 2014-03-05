@@ -178,7 +178,7 @@ static void net_read_json_params(json_t* o) {
   for(i=0; i<count; i++) {
     json_t* p = json_array_get(o, i);
     param = &(net->params[i]);
-    param->idx = json_integer_value(json_object_get(p, "idx"));
+    //    param->idx = json_integer_value(json_object_get(p, "idx"));
     param->data.value = json_integer_value(json_object_get(p, "value"));
     param->desc.type = json_integer_value(json_object_get(p, "type"));
     param->desc.min = json_integer_value(json_object_get(p, "min"));

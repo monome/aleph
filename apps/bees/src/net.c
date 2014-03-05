@@ -273,6 +273,7 @@ void net_deinit(void) {
 
 // clear ops and i/o
 void net_clear_user_ops(void) {
+  /// no...
   net_deinit();
   add_sys_ops();
 }
@@ -1130,8 +1131,8 @@ u8* net_pickle(u8* dst) {
   op_t* op;
   u32 val = 0;
 
-  // store count of operators
-  // (use 4 bytes for alignment)
+  // write count of operators
+  // ( 4 bytes for alignment)
   dst = pickle_32((u32)(net->numOps), dst);
 
   // loop over operators
@@ -1146,10 +1147,8 @@ u8* net_pickle(u8* dst) {
   }
 
   // write input nodes
-  //  for(i=0; i < (net->numIns + net->numParams); ++i) {
-  /// FIXME: doing params is breaking stuff, somehow...!! arg
-
 #if 1
+  //// all nodes, even unused
   for(i=0; i < (NET_INS_MAX); ++i) {
     dst = inode_pickle(&(net->ins[i]), dst);
   }
@@ -1159,17 +1158,18 @@ u8* net_pickle(u8* dst) {
     dst = onode_pickle(&(net->outs[i]), dst);
   }
 #else
-  for(i=0; i < (net->numIns); ++i) {
-    dst = inode_pickle(&(net->ins[i]), dst);
-  }
+  /* for(i=0; i < (net->numIns); ++i) { */
+  /*   dst = inode_pickle(&(net->ins[i]), dst); */
+  /* } */
 
-  // write output nodes
-  for(i=0; i < net->numOuts; ++i) {
-    dst = onode_pickle(&(net->outs[i]), dst);
-  }
+  /* // write output nodes */
+  /* for(i=0; i < net->numOuts; ++i) { */
+  /*   dst = onode_pickle(&(net->outs[i]), dst); */
+  /* } */
 #endif
 
   // write count of parameters
+  // 4 bytes for alignment
   val = (u32)(net->numParams);
   dst = pickle_32(val, dst);
 
