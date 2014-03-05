@@ -64,7 +64,9 @@ u8* param_pickle(pnode_t* pnode, u8* dst) {
 
 
   //// TEST: don't
-  //  dst = pickle_32((u32)pnode->idx, dst);
+  //dst = pickle_32((u32)pnode->idx, dst);
+  //// TEST: keep as dummy for compatibility
+  dst = pickle_32(0, dst);
   ////
 
 
@@ -85,14 +87,15 @@ u8* param_pickle(pnode_t* pnode, u8* dst) {
 
 const u8* param_unpickle(pnode_t* pnode, const u8* src) {
   u32 val;
-  // load idx
+  // load idx 
+  // TEST: keep as dummy for compatibility
   src = unpickle_32(src, &val);
 
   // print_dbg("\r\n unpickled param index: ");
   // print_dbg_ulong(val);
 
 
-  ///// test: don't
+  ///// TEST: don't
   //  pnode->idx = (u8)val;
   ////
 
