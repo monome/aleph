@@ -20,7 +20,7 @@
 	    "type" : "object", 
 	    "properties" : {
 		"major" : { "type" : "integer" },
-		"minor" : { "type" : "integer" },,
+		"minor" : { "type" : "integer" },
 		"revision" : { "type" : "integer" }
 	    }
 	},
@@ -29,7 +29,7 @@
 	    "type" : "object", 
 	    "properties" : {
 		"major" : { "type" : "integer" },
-		"minor" : { "type" : "integer" },,
+		"minor" : { "type" : "integer" },
 		"revision" : { "type" : "integer" }
 	    }
 	},
@@ -127,7 +127,7 @@
 		    },
 
 		    { 
-			"paramIdx" : { "type" : "integer" } 
+			"paramIdx" : { "type" : "integer" }, 
 			"paramName" : { "type" : "string" } 
 		    },
 
