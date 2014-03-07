@@ -66,6 +66,7 @@ typedef enum {
   eOpSplit4,
   eOpDelay,
   eOpRoute,
+  eOpList16,
   numOpClasses // dummy/count 
 } op_id_t;
 

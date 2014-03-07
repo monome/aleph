@@ -23,6 +23,7 @@
 #include "ops/op_life.h"
 #include "ops/op_list2.h"
 #include "ops/op_list8.h"
+#include "ops/op_list16.h"
 #include "ops/op_logic.h"
 #include "ops/op_metro.h"
 #include "ops/op_midi_note.h"

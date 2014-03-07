@@ -178,6 +178,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_route_t),
     .init = &op_route_init,
     .deinit = NULL
+  }, {
+    .name = "LIST16",
+    .size = sizeof(op_list16_t),
+    .init = &op_list16_init,
+    .deinit = NULL    
   }
 
 };
