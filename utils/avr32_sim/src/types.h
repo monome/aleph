@@ -1,3 +1,16 @@
+typedef unsigned char bool;
+
+#ifndef true
+#define true 1
+#endif
+
+#ifndef false
+#define false 1
+#endif
+
+#ifndef NULL
+#define NULL 0
+#endif
 #ifndef _ALEPH_TYPES_H_
 #define _ALEPH_TYPES_H_
 
@@ -8,11 +21,6 @@
 #else
 
 #endif
-
-#ifndef NULL
-#define NULL 0
-#endif
-
 //---- basic numerical datatypes
 
 typedef int8_t       s8 ;  //!< 8-bit signed integer.
@@ -41,6 +49,5 @@ typedef f64 F64;  //!< 64-bit floating-point number.
 typedef int32_t fix16;
 typedef int32_t  fract32;
 
-typedef unsigned char bool;
 
 #endif // header guard

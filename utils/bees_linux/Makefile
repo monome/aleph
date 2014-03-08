@@ -134,6 +134,12 @@ inc = 	$(bees) \
 	$(sim)/src/usb/mouse \
 	$(sim)/src/usb/hub \
 
+#includes and source from asf directory -eugh
+
+inc += $(sim)/asf-3.7.3/avr32/drivers/gpio
+inc += $(sim)/asf-3.7.3/avr32/drivers/flashc
+src += $(sim)/asf-3.7.3/avr32/drivers/flashc/flashc.c
+src += $(sim)/asf-3.7.3/avr32/drivers/gpio/gpio.c
 
 ifdef BUILD_DIR
 	build-dir       := $(dir $(BUILD_DIR))$(if $(notdir $(BUILD_DIR)),$(notdir $(BUILD_DIR))/)
