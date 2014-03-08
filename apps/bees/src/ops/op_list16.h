@@ -1,5 +1,5 @@
-#ifndef _op_list16_H_
-#define _op_list16_H_
+#ifndef _OP_LIST16_H_
+#define _OP_LIST16_H_
 
 #include "types.h"
 #include "op.h"

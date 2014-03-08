@@ -29,9 +29,9 @@ static const u8* op_list16_unpickle(op_list16_t* op, const u8* src);
 
 //-------------------------------------------------
 //---- static vars
-static const char* op_list16_instring = "INDEX   I0      I1      I2      I3      I4      I5      I6      I7      I8      I9      I10      I11      I12      I13      I14      I15       ";
+static const char* op_list16_instring = "INDEX   I0      I1      I2      I3      I4      I5      I6      I7      I8      I9      I10     I11     I12     I13     I14     I15     ";
 static const char* op_list16_outstring = "VAL     ";
-static const char* op_list16_opstring = "list16";
+static const char* op_list16_opstring = "LIST16";
 
 static op_in_fn op_list16_in_fn[17] = {
   (op_in_fn)&op_list16_in_index,
@@ -71,7 +71,7 @@ void op_list16_init(void* mem) {
   list16->super.opString = op_list16_opstring;
   list16->super.inString = op_list16_instring;
   list16->super.outString = op_list16_outstring;
-  list16->super.type = eOplist16;  
+  list16->super.type = eOpList16;  
 
   list16->in_val[0] = &(list16->index);
   list16->in_val[1] = &(list16->i0);
