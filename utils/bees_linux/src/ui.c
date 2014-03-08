@@ -2,6 +2,8 @@
 //gcc doesn't seem to like function declarations without definitions
 //so here is some stuff that does nothing, as probably is happening with avr controller
 
+#include "types.h"
+
 void ui_init(void) {
     return;
 }

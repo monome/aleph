@@ -11,8 +11,7 @@ typedef unsigned char bool;
 #ifndef NULL
 #define NULL 0
 #endif
-#ifndef _ALEPH_TYPES_H_
-#define _ALEPH_TYPES_H_
+
 
 #include <stdint.h>
 
@@ -49,5 +48,6 @@ typedef f64 F64;  //!< 64-bit floating-point number.
 typedef int32_t fix16;
 typedef int32_t  fract32;
 
+#define size_t u32;
 
-#endif // header guard
+

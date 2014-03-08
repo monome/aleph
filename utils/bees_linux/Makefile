@@ -1,6 +1,7 @@
 name = beekeep
 
 bees = ../../apps/bees
+beekeep =  ../beekeep
 sim = ../avr32_sim
 
 
@@ -82,12 +83,14 @@ src += \
 #	src/handler.c \
 #	src/main.c	
 
+#	$(bees)/src/files.c \
 # "real" sources
 src += 	$(bees)/src/app_bees.c \
 	$(bees)/src/flash_bees.c \
-	$(bees)/src/files.c \
-	$(bees)/src/handler.c \
+	$(beekeep)/src/handler.c \
 	$(bees)/src/main.c	\
+	$(beekeep)/src/files.c \
+    src/ui.c
 
 
 # srcs from simulator
