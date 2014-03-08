@@ -1,0 +1,9 @@
+'beekeep' is a command-line bees emulator.
+
+to build, you need to install the Jansson json-c library from http://www.digip.org/jansson/
+
+beekeep reads and writes network states as JSON and can convert between json and .scn.
+
+it also builds directly against the current bees sources, so it can function as a .scn converter between versuions of bees if necessary.
+
+further functinonality is attendant on more implementation of the avr32_sim layer.
