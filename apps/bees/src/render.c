@@ -215,7 +215,6 @@ void render_set_scroll(scroll* scr) {
 
 // append to line buffer
  inline void appendln(const char* str) {
-     return;
   //  print_dbg("\n\r line buffer start: ");
   //  print_dbg_hex(pline);
   while((*str != 0) && (pline <= pLineEnd)) {
@@ -364,7 +363,6 @@ void render_to_scroll_bottom(void) {
 // render tmp region to arbitrary line of scroll region, with highlight flag
 // no update is performed
 void render_to_scroll_line(u8 n, u8 hl) {
-  return;
   u8* src;
   u8* dst;
   u8* dstMax;

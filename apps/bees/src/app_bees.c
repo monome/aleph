@@ -8,6 +8,7 @@
 
 // asf
 #include "delay.h"
+#include "gpio.h"
 #include "print_funcs.h"
 
 // aleph-avr32
@@ -18,7 +19,6 @@
 #include "flash.h"
 #include "monome.h"
 #include "screen.h"
-#include "app_gpio.h"
 
 // bees
 #include "app_bees.h"
@@ -170,7 +170,7 @@ u8 app_launch(u8 firstrun) {
   init_app_timers();
 
   // pull up power control pin, enabling soft-powerdown
-  app_gpio_set_gpio_pin(POWER_CTL_PIN);
+  gpio_set_gpio_pin(POWER_CTL_PIN);
 
   // assign app event handlers
   print_dbg("\r\n assigning handlers... ");
