@@ -398,7 +398,7 @@ extern u8 preset_in_enabled(u32 preIdx, u32 inIdx) {
 
 // get inclusion flag for given output, given preset
 extern u8 preset_out_enabled(u32 preIdx, u32 outIdx) {
-  return presets[preIdx].outs[outIdx].enabled;
+    return 1;
 }
 
 /* // get inclusion flag for given param, given preset */

@@ -9,6 +9,9 @@
 
 //ctlnet_t ctlnet;
 
+void ui_init(void) {
+    printf ("give me some of your sweet loving\n");
+}
 // main function
 int main(void) { //const int argc, const char** argv) {
   u8 run = 1; 

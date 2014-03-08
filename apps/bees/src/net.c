@@ -450,8 +450,9 @@ s16 net_add_op(op_id_t opId) {
 
       /// do the same in all presets!
       for(j=0; j<NET_PRESETS_MAX; j++) {
+
 	if(preset_out_enabled(j, i)) {
-	  s16 tar = presets[j].outs[i].target;
+	  s16 tar = 1;
 	  if(tar >= numInsSave) {
 	    tar = tar + ins;
 	    presets[j].outs[i].target = tar;
@@ -926,12 +927,14 @@ u8 net_get_in_preset(u32 id) {
   /*   id -= net->numIns;  */
   /*   return preset_get_selected()->params[id].enabled; */
   /* } else { */
+    return 1;
     return preset_get_selected()->ins[id].enabled;
     //  }
 }
 
 // get preset inclusion for output
 u8 net_get_out_preset(u32 id) {
+    return 1;
   //  return net->outs[id].preset;
   return preset_get_selected()->outs[id].enabled;
 }
