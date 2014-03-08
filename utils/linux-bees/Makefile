@@ -1,4 +1,4 @@
-name = beekeep
+name = linux-bees
 
 bees = ../../apps/bees
 beekeep =  ../beekeep
