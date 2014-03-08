@@ -184,6 +184,11 @@ io_t scaler_get_in(ParamScaler* sc, s32 value) {
     print_dbg("\r\n getting input value for scaler. ");
     print_dbg(" param type from desc: ");
     print_dbg_ulong(sc->desc->type);
+    print_dbg(", input: ");
+    print_dbg_hex(value);
+    print_dbg(", output: ");
+    print_dbg_hex(val);
+
     return val;
   } else {
     return 0;
