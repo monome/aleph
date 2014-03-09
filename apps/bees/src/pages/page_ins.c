@@ -131,11 +131,8 @@ static void select_scroll(s32 dir) {
   s16 oldSel;
   int i;
 
-  //  if(dir < 0) {
-  /// SCROLL DOWN
   // wrap with blank line
   newSel = *pageSelect + dir;
-  //    if(*pageSelect == -1) {
   if (newSel < -1) { 
     newSel += (max + 2);
   } 
@@ -143,8 +140,8 @@ static void select_scroll(s32 dir) {
     newSel -= (max + 1);
   }
 
-  print_dbg("\r\n scrolled selection, new idx: ");
-  print_dbg_ulong(*pageSelect);
+  //  print_dbg("\r\n scrolled selection on inputs page, new idx: ");
+  //  print_dbg_ulong(*pageSelect);
 
   oldSel = *pageSelect;
   *pageSelect = newSel; 
@@ -164,8 +161,8 @@ static void select_scroll(s32 dir) {
 	if(newIdx > max) {
 	  newIdx = newIdx - (max+2);
 	}
-	print_dbg(" , rendering new line for idx: ");
-	print_dbg_ulong(newIdx);
+	/* print_dbg(" , rendering new line for idx: "); */
+	/* print_dbg_ulong(newIdx); */
 	render_line(newIdx, 0xa);
       }
       // render tmp region to bottom of scroll
@@ -184,8 +181,8 @@ static void select_scroll(s32 dir) {
 	if(newIdx < -1) {
 	newIdx = newIdx + max + 2;
 	}
-	print_dbg(" , rendering new line for idx: ");
-	print_dbg_ulong(newIdx);
+	/* print_dbg(" , rendering new line for idx: "); */
+	/* print_dbg_ulong(newIdx); */
 	render_line(newIdx, 0xa);
       }
       // render tmp region to top of scroll

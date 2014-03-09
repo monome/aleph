@@ -183,75 +183,146 @@ static void select_edit(s32 inc) {
   //  }
 }
 
+#if 1 
+
+
 // scroll the current selection
 static void select_scroll(s32 dir) {
   const s32 max = net_num_outs() - 1;
   // index for new content
   s16 newIdx;
   s16 newSel;
-  // new flags
+  s16 oldSel;
+  int i;
 
-  targetSelect = 0;
-  
-  if(dir < 0) {
-    /// SCROLL DOWN
-    // if selection is already zero, do nothing 
-    if(*pageSelect == 0) {
-      //      print_dbg("\r\n reached min selection in inputs scroll. ");
-      return;
+  // wrap with blank line
+  newSel = *pageSelect + dir;
+  if (newSel < -1) { 
+    newSel += (max + 2);
+  } 
+  if(newSel > max) {
+    newSel -= (max + 1);
+  }
+
+  oldSel = *pageSelect;
+  *pageSelect = newSel;
+
+  // remove highlight from old center
+  render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
+
+  if(dir > 0) { 
+    // add content at bottom
+    for(i=0; i<dir; ++i) {
+      newIdx = oldSel + SCROLL_LINES_BELOW + i;
+      if(newIdx == (max + 1)) {
+	region_fill(lineRegion, 0);
+      } else {
+	if(newIdx > max) {
+	  newIdx = newIdx - (max+2);
+	}
+	/* print_dbg(" , rendering new line for idx: "); */
+	/* print_dbg_ulong(newIdx); */
+	render_line(newIdx, 0xa);
+      }
+      // render tmp region to bottom of scroll
+      // (this also updates scroll byte offset) 
+      render_to_scroll_bottom();
+      // add highlight to new center
     }
-    // remove highlight from old center
-    render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
-    // decrement selection
-    newSel = *pageSelect - 1;
-    ///// these bounds checks shouldn't really be needed here...
-    //    if(newSel < 0) { newSel = 0; }
-    //    if(newSel > max ) { newSel = max; }
-    *pageSelect = newSel;    
-    newIdx = newSel - SCROLL_LINES_BELOW;
-    if(newIdx < 0) { 
-      // empty row
-      region_fill(lineRegion, 0);
-    } else {
-      render_line(newIdx, 0xa);
-    }
-    // render tmp region to bottom of scroll
-    // (this also updates scroll byte offset) 
-    render_to_scroll_top();
-    // add highlight to new center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
-
   } else {
-    // SCROLL UP
-    // if selection is already max, do nothing 
-    if(*pageSelect == max) {
-      //      print_dbg("\r\n reached max selection in inputs scroll. ");
-      return;
+    // add content at top
+    for(i=0; i>dir; --i) {
+      newIdx = oldSel - SCROLL_LINES_ABOVE + i;
+      if(newIdx == -1) {
+	region_fill(lineRegion, 0);
+      } else {
+	if(newIdx < -1) {
+	newIdx = newIdx + max + 2;
+	}
+	/* print_dbg(" , rendering new line for idx: "); */
+	/* print_dbg_ulong(newIdx); */
+	render_line(newIdx, 0xa);
+      }
+      // render tmp region to top of scroll
+      // (this also updates scroll byte offset) 
+      render_to_scroll_top();
     }
-    // remove highlight from old center
-    render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
-    // increment selection
-    newSel = *pageSelect + 1;
-    ///// these bounds checks shouldn't really be needed here...
-    //    if(newSel < 0) { newSel = 0; }
-    //    if(newSel > max ) { newSel = max; }
-    /////
-    *pageSelect = newSel;    
-    // add new content at bottom of screen
-    newIdx = newSel + SCROLL_LINES_ABOVE;
-    if(newIdx > max) { 
-      // empty row
-      region_fill(lineRegion, 0);
-    } else {
-      render_line(newIdx, 0xa);
-    }
-    // render tmp region to bottom of scroll
-    // (this also updates scroll byte offset) 
-    render_to_scroll_bottom();
     // add highlight to new center
-    render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
+    render_scroll_apply_hl(SCROLL_CENTER_LINE, 1); 
   }
 }
+
+#else 
+/* // scroll the current selection */
+/* static void select_scroll(s32 dir) { */
+/*   const s32 max = net_num_outs() - 1; */
+/*   // index for new content */
+/*   s16 newIdx; */
+/*   s16 newSel; */
+
+/*   targetSelect = 0; */
+  
+/*   if(dir < 0) { */
+/*     /// SCROLL DOWN */
+/*     // if selection is already zero, do nothing  */
+/*     if(*pageSelect == 0) { */
+/*       //      print_dbg("\r\n reached min selection in inputs scroll. "); */
+/*       return; */
+/*     } */
+/*     // remove highlight from old center */
+/*     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0); */
+/*     // decrement selection */
+/*     newSel = *pageSelect - 1; */
+/*     ///// these bounds checks shouldn't really be needed here... */
+/*     //    if(newSel < 0) { newSel = 0; } */
+/*     //    if(newSel > max ) { newSel = max; } */
+/*     *pageSelect = newSel;     */
+/*     newIdx = newSel - SCROLL_LINES_BELOW; */
+/*     if(newIdx < 0) {  */
+/*       // empty row */
+/*       region_fill(lineRegion, 0); */
+/*     } else { */
+/*       render_line(newIdx, 0xa); */
+/*     } */
+/*     // render tmp region to bottom of scroll */
+/*     // (this also updates scroll byte offset)  */
+/*     render_to_scroll_top(); */
+/*     // add highlight to new center */
+/*     render_scroll_apply_hl(SCROLL_CENTER_LINE, 1); */
+
+/*   } else { */
+/*     // SCROLL UP */
+/*     // if selection is already max, do nothing  */
+/*     if(*pageSelect == max) { */
+/*       //      print_dbg("\r\n reached max selection in inputs scroll. "); */
+/*       return; */
+/*     } */
+/*     // remove highlight from old center */
+/*     render_scroll_apply_hl(SCROLL_CENTER_LINE, 0); */
+/*     // increment selection */
+/*     newSel = *pageSelect + 1; */
+/*     ///// these bounds checks shouldn't really be needed here... */
+/*     //    if(newSel < 0) { newSel = 0; } */
+/*     //    if(newSel > max ) { newSel = max; } */
+/*     ///// */
+/*     *pageSelect = newSel;     */
+/*     // add new content at bottom of screen */
+/*     newIdx = newSel + SCROLL_LINES_ABOVE; */
+/*     if(newIdx > max) {  */
+/*       // empty row */
+/*       region_fill(lineRegion, 0); */
+/*     } else { */
+/*       render_line(newIdx, 0xa); */
+/*     } */
+/*     // render tmp region to bottom of scroll */
+/*     // (this also updates scroll byte offset)  */
+/*     render_to_scroll_bottom(); */
+/*     // add highlight to new center */
+/*     render_scroll_apply_hl(SCROLL_CENTER_LINE, 1); */
+/*   } */
+/* } */
+#endif
 
 // display the function key labels according to current state
 static void show_foot0(void) {
@@ -471,12 +542,23 @@ void handle_enc_0(s32 val) {
 }
 
 void handle_enc_1(s32 val) {
+  if(altMode) {
+    inPresetSelect = 1;
+    if(val > 0) {
+      preset_inc_select(1);
+    } else {
+      preset_inc_select(-1);
+    }
+    // refresh line data
+    redraw_outs_preset();
+  } else {
 
-  if(targetSelect) {
-    targetSelect = 0;
-    redraw_outs();
+  /* if(targetSelect) { */
+  /*   targetSelect = 0; */
+  /*   redraw_outs(); */
+  /* } */
+   ;;  // nothing to do ... kind of weird/dumb
   }
-  ;;  // nothing to do
 }
 
 void handle_enc_2(s32 val) {  
@@ -492,28 +574,42 @@ void handle_enc_2(s32 val) {
   }
 }
 
+/* void handle_enc_3(s32 val) { */
+
+/*   //  print_dbg("\r\n outs page: handling encoder 3"); */
+/*   if(targetSelect) { */
+/*     targetSelect = 0; */
+/*     redraw_outs(); */
+/*   } */
+
+/*   if(altMode) { */
+/*     inPresetSelect = 1; */
+/*     if(val > 0) { */
+/*       preset_inc_select(1); */
+/*     } else { */
+/*       preset_inc_select(-1); */
+/*     } */
+/*     // refresh line data */
+/*     redraw_outs_preset(); */
+/*   } else { */
+/*     // scroll selection */
+/*     select_scroll(val); */
+/*   } */
+/* } */
+
+
+
 void handle_enc_3(s32 val) {
-
-  //  print_dbg("\r\n outs page: handling encoder 3");
-  if(targetSelect) {
-    targetSelect = 0;
-    redraw_outs();
-  }
-
   if(altMode) {
-    inPresetSelect = 1;
-    if(val > 0) {
-      preset_inc_select(1);
-    } else {
-      preset_inc_select(-1);
-    }
-    // refresh line data
-    redraw_outs_preset();
+    // alt: page selection			
+    select_scroll(val > 0 ? 7 : -7);
+    //    redraw_ins();
   } else {
     // scroll selection
-    select_scroll(val);
+    select_scroll(val > 0 ? 1 : -1);
   }
 }
+
 
 // redraw all lines, based on current selection
 void redraw_outs(void) {
