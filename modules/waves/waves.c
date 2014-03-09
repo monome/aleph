@@ -13,7 +13,7 @@
 // audio lib
 #include "filter_1p.h"
 #include "filter_svf.h"
-#include "osc.h"
+#include "osc_waves.h"
 #include "table.h"
 #include "conversion.h"
 // bfin

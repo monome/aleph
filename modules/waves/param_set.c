@@ -52,10 +52,10 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParamBl1 :
-    osc_set_bl( &(voice[1].osc), BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
+    //    osc_set_bl( &(voice[1].osc), BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
     break;
   case eParamBl0 :
-    osc_set_bl( &(voice[0].osc), BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
+    //    osc_set_bl( &(voice[0].osc), BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
     break;
 
     //// filter params:
@@ -125,31 +125,33 @@ void module_set_param(u32 idx, ParamValue v) {
     ///// slewers
 
   case eParamHz1Slew:
-    filter_1p_lo_set_slew( &(voice[1].osc.lpInc), v); 
+    //    filter_1p_lo_set_slew( &(voice[1].osc.lpInc), v); 
+    voice[1].osc.incSlew.c = v;
     break;
   case eParamHz0Slew:
-    filter_1p_lo_set_slew( &(voice[0].osc.lpInc), v); 
+    //    filter_1p_lo_set_slew( &(voice[0].osc.lpInc), v); 
+    voice[0].osc.incSlew.c = v;
     break;
 
   case eParamPm01Slew:
-    filter_1p_lo_set_slew( &(voice[1].osc.lpPm), v); 
+    //    filter_1p_lo_set_slew( &(voice[1].osc.lpPm), v); 
     break;
   case eParamPm10Slew:
-    filter_1p_lo_set_slew( &(voice[0].osc.lpPm), v); 
+    //    filter_1p_lo_set_slew( &(voice[0].osc.lpPm), v); 
     break;
 
   case eParamWm01Slew:
-    filter_1p_lo_set_slew( &(voice[1].osc.lpWm), v); 
+    //    filter_1p_lo_set_slew( &(voice[1].osc.lpWm), v); 
     break;
   case eParamWm10Slew:
-    filter_1p_lo_set_slew( &(voice[0].osc.lpWm), v); 
+    //    filter_1p_lo_set_slew( &(voice[0].osc.lpWm), v); 
     break;
 
   case eParamWave1Slew:
-    filter_1p_lo_set_slew( &(voice[1].osc.lpShape), v); 
+    //    filter_1p_lo_set_slew( &(voice[1].osc.lpShape), v); 
     break;
   case eParamWave0Slew:
-    filter_1p_lo_set_slew( &(voice[0].osc.lpShape), v); 
+    //    filter_1p_lo_set_slew( &(voice[0].osc.lpShape), v); 
     break;
   case eParamAmp1Slew:
     filter_1p_lo_set_slew( &(voice[1].ampSlew), v);

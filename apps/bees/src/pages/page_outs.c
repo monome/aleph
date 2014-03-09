@@ -160,12 +160,19 @@ static void select_edit(s32 inc) {
     /* print_dbg(" , value: "); */
     /* print_dbg_ulong(tmpTarget); */
     // increment tmpTarget
-    ++tmpTarget;
-    if(tmpTarget == net_num_ins()) {
-      //      print_dbg(" , tmpTarget at max");
-      // scroll past all inputs : disconnect and wrap
-      tmpTarget = -1;
-    } 
+    tmpTarget += inc;
+    if(tmpTarget >= net_num_ins() ) {
+      tmpTarget -= (net_num_ins() + 1);
+    }
+    if(tmpTrarget < -1) {
+      tmpTarget += (net_num_ins() + 1;  
+    }
+    /* ++tmpTarget; */
+    /* if(tmpTarget == net_num_ins()) { */
+    /*   //      print_dbg(" , tmpTarget at max"); */
+    /*   // scroll past all inputs : disconnect and wrap */
+    /*   tmpTarget = -1; */
+    /* }  */
   } else {
     --tmpTarget;
     if (tmpTarget == -2) {
