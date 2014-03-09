@@ -128,7 +128,7 @@ beeslinux_src += $(src)\
     $(bees)/src/app_bees.c \
 	$(bees)/src/flash_bees.c \
 	src/files.c \
-	src/handler.c \
+	$(bees)/src/handler.c \
 	$(bees)/src/main.c \
     $(sim)/asf-3.7.3/avr32/drivers/flashc/flashc.c \
     $(sim)/asf-3.7.3/avr32/drivers/gpio/gpio.c
@@ -154,7 +154,8 @@ beekeep_inc = $(inc)
 
 beeslinux_inc = $(inc)\
     $(sim)/asf-3.7.3/avr32/drivers/gpio \
-    $(sim)/asf-3.7.3/avr32/drivers/flashc
+    $(sim)/asf-3.7.3/avr32/drivers/flashc \
+    $(sim)/conf
 
 ifdef BUILD_DIR
 	build-dir       := $(dir $(BUILD_DIR))$(if $(notdir $(BUILD_DIR)),$(notdir $(BUILD_DIR))/)
