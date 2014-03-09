@@ -104,7 +104,8 @@ src += \
 	$(sim)/src/usb/ftdi/ftdi.c \
 	$(sim)/src/fonts/ume_tgo5_18.c \
 	$(sim)/src/fix.c \
-	$(sim)/src/libfixmath/fix16.c
+	$(sim)/src/libfixmath/fix16.c \
+	$(sim)/src/fat_io_lib/fat_filelib.c
 
 # "fake" sources
 beekeep_src += $(src)	\
@@ -127,7 +128,7 @@ beekeep_src += src/json_read_raw.c \
 beeslinux_src += $(src)\
     $(bees)/src/app_bees.c \
 	$(bees)/src/flash_bees.c \
-	src/files.c \
+	$(bees)/src/files.c \
 	$(bees)/src/handler.c \
 	$(bees)/src/main.c \
     $(sim)/asf-3.7.3/avr32/drivers/flashc/flashc.c \
@@ -140,7 +141,7 @@ beeslinux_src += src/ui.c
 #includes
 inc = 	$(bees) \
 	$(bees)/src \
-	$(bees)/../../common \
+	$(sim)/common \
 	$(sim) \
 	$(sim)/src \
 	$(sim)/src/usb \
@@ -155,6 +156,7 @@ beekeep_inc = $(inc)
 beeslinux_inc = $(inc)\
     $(sim)/asf-3.7.3/avr32/drivers/gpio \
     $(sim)/asf-3.7.3/avr32/drivers/flashc \
+	$(sim)/src/fat_io_lib \
     $(sim)/conf
 
 ifdef BUILD_DIR
