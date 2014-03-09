@@ -1,3 +1,0 @@
-attempting to augment the avr32_sim layer by compiling and running more and more of the bees code.
-
-this will serve as a tracer to find which parts of the avr32 layer must be spoofed in order to run bees under linux.
