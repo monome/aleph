@@ -201,7 +201,7 @@ static void select_scroll(s32 dir) {
     newSel += (max + 2);
   } 
   if(newSel > max) {
-    newSel -= (max + 1);
+    newSel -= (max + 2);
   }
 
   oldSel = *pageSelect;
@@ -213,7 +213,7 @@ static void select_scroll(s32 dir) {
   if(dir > 0) { 
     // add content at bottom
     for(i=0; i<dir; ++i) {
-      newIdx = oldSel + SCROLL_LINES_BELOW + i;
+      newIdx = oldSel + SCROLL_LINES_BELOW + i + 2;
       if(newIdx == (max + 1)) {
 	region_fill(lineRegion, 0);
       } else {
@@ -238,7 +238,7 @@ static void select_scroll(s32 dir) {
 	region_fill(lineRegion, 0);
       } else {
 	if(newIdx < -1) {
-	newIdx = newIdx + max + 2;
+	  newIdx = newIdx + max + 2;
 	}
 	/* print_dbg(" , rendering new line for idx: "); */
 	/* print_dbg_ulong(newIdx); */
@@ -538,7 +538,9 @@ void handle_key_3(s32 val) {
 // encoder handlers
 void handle_enc_0(s32 val) {   
   // edit selection / target
-  select_edit(val);
+  if(pageSelect != -1) {
+    select_edit(val);
+  }
 }
 
 void handle_enc_1(s32 val) {
