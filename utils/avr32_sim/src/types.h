@@ -1,18 +1,28 @@
-#ifndef _ALEPH_TYPES_H_
-#define _ALEPH_TYPES_H_
+#ifndef _ALEPH_SIM_TYPES_H_
+#define _ALEPH_SIM_TYPES_H_
 
 #include <stdint.h>
+#include "fat_filelib.h"
 
 #ifdef ARCH_AVR32
 #include "compiler.h"
 #else
+#endif
 
+#ifndef true
+#define true 1
 #endif
 
 #ifndef NULL
 #define NULL 0
 #endif
 
+#ifndef POWER_CTL_PIN
+#define POWER_CTL_PIN 0
+#endif
+
+
+typedef uint8_t      uint8;  //!< 8-bit unsigned integer.
 //---- basic numerical datatypes
 
 typedef int8_t       s8 ;  //!< 8-bit signed integer.

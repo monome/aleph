@@ -9,7 +9,7 @@
 // asf
 //#include "delay.h"
 #include "print_funcs.h"
-#include <string.h>
+//#include <string.h>
 // aleph
 #include "app.h"
 #include "events.h"

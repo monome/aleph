@@ -1,12 +1,12 @@
-name = beekeep
+default: all
 
 bees = ../../apps/bees
 sim = ../avr32_sim
 
-
 include $(bees)/version.mk
 version = $(maj).$(min).$(rev)
-target = $(name)-$(version)
+beekeep_target = beekeep-$(version)
+beeslinux_target = beeslinux-$(version)
 
 # bees sources
 src += \
@@ -75,22 +75,6 @@ src += \
 	$(bees)/src/scalers/scaler_note.c \
 	$(bees)/src/scalers/scaler_svf_fc.c
 
-# "fake" sources
-src += 	src/app_beekeep.c \
-	src/flash_beekeep.c \
-	src/files.c \
-	src/handler.c \
-	src/main.c	
-
-# new sources
-src += src/json_read_raw.c \
-	src/json_write_raw.c \
-	src/json_read_max.c \
-	src/json_write_max.c \
-	src/json_read_native.c \
-	src/json_write_native.c \
-
-
 # srcs from simulator
 src += \
 	$(sim)/src/adc.c \
@@ -120,12 +104,44 @@ src += \
 	$(sim)/src/usb/ftdi/ftdi.c \
 	$(sim)/src/fonts/ume_tgo5_18.c \
 	$(sim)/src/fix.c \
-	$(sim)/src/libfixmath/fix16.c
+	$(sim)/src/libfixmath/fix16.c \
+	$(sim)/src/fat_io_lib/fat_filelib.c
+
+# "fake" sources
+beekeep_src += $(src)	\
+    src/app_beekeep.c \
+	src/flash_beekeep.c \
+	src/files.c \
+	src/handler.c \
+	src/main.c
+
+# new sources
+beekeep_src += src/json_read_raw.c \
+	src/json_write_raw.c \
+	src/json_read_max.c \
+	src/json_write_max.c \
+	src/json_read_native.c \
+	src/json_write_native.c \
+
+
+# "non-fake" sources
+beeslinux_src += $(src)\
+    $(bees)/src/app_bees.c \
+	$(bees)/src/flash_bees.c \
+	$(bees)/src/files.c \
+	$(bees)/src/handler.c \
+	$(bees)/src/main.c \
+    $(sim)/asf-3.7.3/avr32/drivers/flashc/flashc.c \
+    $(sim)/asf-3.7.3/avr32/drivers/gpio/gpio.c
+
+# "missing" functions from main.c in bees
+beeslinux_src += src/ui.c
+
 
 #includes
 inc = 	$(bees) \
 	$(bees)/src \
-	$(bees)/../../common \
+	$(sim)/common \
 	$(sim) \
 	$(sim)/src \
 	$(sim)/src/usb \
@@ -135,6 +151,13 @@ inc = 	$(bees) \
 	$(sim)/src/usb/mouse \
 	$(sim)/src/usb/hub \
 
+beekeep_inc = $(inc)
+
+beeslinux_inc = $(inc)\
+    $(sim)/asf-3.7.3/avr32/drivers/gpio \
+    $(sim)/asf-3.7.3/avr32/drivers/flashc \
+	$(sim)/src/fat_io_lib \
+    $(sim)/conf
 
 ifdef BUILD_DIR
 	build-dir       := $(dir $(BUILD_DIR))$(if $(notdir $(BUILD_DIR)),$(notdir $(BUILD_DIR))/)
@@ -142,21 +165,47 @@ else
 	build-dir        =
 endif
 
-obj = $(addprefix $(build-dir), $(addsuffix .o,$(basename $(src))))
-
-cflags += $(foreach path,$(inc),-I$(path))
 cflags += -std=gnu99
 cflags += -D BEEKEEP=1
-$(build-dir)%.o: %.c 
-	echo $(cflags)
+
+beekeep_obj = $(addprefix $(build-dir), $(addsuffix .o,$(basename $(beekeep_src))))
+
+beekeep_cflags += $(cflags)
+beekeep_cflags += $(foreach beekeep_path,$(beekeep_inc),-I$(beekeep_path))
+
+$(build-dir)%.o: %.c
+	echo $(beekeep_cflags)
 	$(Q)test -d $(dir $@) || mkdir -p $(dir $@)
-	gcc $(cflags) -g -c $< -o $@
+	gcc $(beekeep_cflags) -g -c $< -o $@
 
-target: $(obj)	
-	echo $(obj)
-	gcc $(obj) -g $(cflags) -o $(target) -ljansson
+$(beekeep_target): $(beekeep_obj)
+	echo $(beekeep_obj)
+	gcc $(beekeep_obj) -g $(beekeep_cflags) -o $(beekeep_target) -ljansson
 
-all: beekeep
+beekeep: $(beekeep_target)
+beeslinux: $(beeslinux_target)
+all: beekeep beeslinux
+clean: beekeep_clean beeslinux_clean
 
-clean:
-	rm $(obj)
+beekeep_clean:
+	rm $(beekeep_obj)
+
+
+
+
+beeslinux_obj = $(addprefix $(build-dir), $(addsuffix .o,$(basename $(beeslinux_src))))
+
+beeslinux_cflags += $(cflags)
+beeslinux_cflags += $(foreach beeslinux_path,$(beeslinux_inc),-I$(beeslinux_path))
+
+$(build-dir)%.o: %.c
+	echo $(beeslinux_cflags)
+	$(Q)test -d $(dir $@) || mkdir -p $(dir $@)
+	gcc $(beeslinux_cflags) -g -c $< -o $@
+
+$(beeslinux_target): $(beeslinux_obj)
+	echo $(beeslinux_obj)
+	gcc $(beeslinux_obj) -g $(beeslinux_cflags) -o $(beeslinux_target)
+
+beeslinux_clean:
+	rm $(beeslinux_obj)
