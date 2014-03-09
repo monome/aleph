@@ -58,7 +58,6 @@ void app_init(void) {
   print_dbg("\r\n preset_init...");  
   presets_init();
 
-
   print_dbg("\r\n net_init... ");
   net_init();
 

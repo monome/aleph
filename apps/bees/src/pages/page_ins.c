@@ -108,6 +108,10 @@ static void render_line(s16 idx, u8 fg) {
 
 // edit the current seleciton
 static void select_edit(s32 inc) {
+
+  print_dbg("\r\n editing ins page selection, idx: ");
+  print_dbg_ulong(*pageSelect);
+
   if(*pageSelect != -1) {
     // increment input value
     net_inc_in_value(*pageSelect, inc);
@@ -124,74 +128,72 @@ static void select_scroll(s32 dir) {
   // index for new content
   s16 newIdx;
   s16 newSel;
+  s16 oldSel;
+  int i;
 
-  if(dir < 0) {
-    /// SCROLL DOWN
-    // wrap with blank line
-    if(*pageSelect == -1) {
-      newSel = max;
-    } else {
-      // decrement selection
-      newSel = *pageSelect - 1;
-      //      print_dbg("\r\n scroll down to new selection on ins page: ");
-      //      print_dbg_ulong(newSel);
-    }
-    *pageSelect = newSel;
-    // remove highlight from old center
-    render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
+  //  if(dir < 0) {
+  /// SCROLL DOWN
+  // wrap with blank line
+  newSel = *pageSelect + dir;
+  //    if(*pageSelect == -1) {
+  if (newSel < -1) { 
+    newSel += (max + 2);
+  } 
+  if(newSel > max) {
+    newSel -= (max + 1);
+  }
 
-    // update 'zeroed' flag
-    zeroed = (net_get_in_value(*pageSelect) == 0);
+  print_dbg("\r\n scrolled selection, new idx: ");
+  print_dbg_ulong(*pageSelect);
 
-    // add new content at top
-    newIdx = newSel - SCROLL_LINES_BELOW;
-    if(newIdx == -1) {
-      region_fill(lineRegion, 0);
-    } else {
-      if(newIdx < -1) {
-	newIdx = newIdx + max + 2;
+  oldSel = *pageSelect;
+  *pageSelect = newSel; 
+  // remove highlight from old center
+  render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
+
+  // update 'zeroed' flag
+  zeroed = (net_get_in_value(*pageSelect) == 0);
+
+  if(dir > 0) { 
+    // add content at bottom
+    for(i=0; i<dir; ++i) {
+      newIdx = oldSel + SCROLL_LINES_BELOW + i;
+      if(newIdx == (max + 1)) {
+	region_fill(lineRegion, 0);
+      } else {
+	if(newIdx > max) {
+	  newIdx = newIdx - (max+2);
+	}
+	print_dbg(" , rendering new line for idx: ");
+	print_dbg_ulong(newIdx);
+	render_line(newIdx, 0xa);
       }
-      render_line(newIdx, 0xa);
+      // render tmp region to bottom of scroll
+      // (this also updates scroll byte offset) 
+      render_to_scroll_bottom();
+      // add highlight to new center
     }
-    // render tmp region to bottom of scroll
-    // (this also updates scroll byte offset) 
-    render_to_scroll_top();
-    // add highlight to new center
     render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
-
   } else {
-    // SCROLL UP
-    // wrap with a blank line
-    if(*pageSelect == max) {
-      newSel = -1;
-    }  else {
-      // increment selection
-      newSel = *pageSelect + 1;
-    }
-    //    print_dbg("\r\n scroll up to new selection on ins page: ");
-    //    print_dbg_ulong(newSel);
-    
-    *pageSelect = newSel;    
-    // remove highlight from old center
-    render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
-    // add new content at bottom of screen
-    newIdx = newSel + SCROLL_LINES_ABOVE;
-
-    if(newIdx == (max + 1)) {
-      region_fill(lineRegion, 0);
-    } else {
-      if(newIdx > max) {
-	newIdx = newIdx - (max+2);
+    // add content at top
+    for(i=0; i>dir; --i) {
+      newIdx = oldSel - SCROLL_LINES_ABOVE + i;
+      if(newIdx == -1) {
+	region_fill(lineRegion, 0);
+      } else {
+	if(newIdx < -1) {
+	newIdx = newIdx + max + 2;
+	}
+	print_dbg(" , rendering new line for idx: ");
+	print_dbg_ulong(newIdx);
+	render_line(newIdx, 0xa);
       }
-      render_line(newIdx, 0xa);
+      // render tmp region to top of scroll
+      // (this also updates scroll byte offset) 
+      render_to_scroll_top();
     }
-
-
-    // render tmp region to bottom of scroll
-    // (this also updates scroll byte offset) 
-    render_to_scroll_bottom();
     // add highlight to new center
-    render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
+    render_scroll_apply_hl(SCROLL_CENTER_LINE, 1); 
   }
 }
 
@@ -480,8 +482,21 @@ void handle_enc_0(s32 val) {
 }
 
 void handle_enc_1(s32 val) {
+  if(altMode) {
+    // alt:scroll preset
+  inPresetSelect = 1;
+    if(val > 0) {
+      preset_inc_select(1);
+    } else {
+      preset_inc_select(-1);
+    }
+    // refresh line data
+    //    redraw_ins_preset((u8)preset_get_select());
+    redraw_ins_preset();
+  } else {
   // change parameter value, unaccelerated
   select_edit(scale_knob_value_small(val));
+  }
 }
 
 void handle_enc_2(s32 val) {
@@ -493,24 +508,18 @@ void handle_enc_2(s32 val) {
   }
 }
 
+
+
 void handle_enc_3(s32 val) {
-  // alt: scroll preset
   if(altMode) {
-    inPresetSelect = 1;
-    if(val > 0) {
-      preset_inc_select(1);
-    } else {
-      preset_inc_select(-1);
-    }
-    // refresh line data
-    //    redraw_ins_preset((u8)preset_get_select());
-    redraw_ins_preset();
+    // alt: page selection			
+    select_scroll(val > 0 ? 7 : -7);
+    //    redraw_ins();
   } else {
     // scroll selection
-    select_scroll(val);
+    select_scroll(val > 0 ? 1 : -1);
   }
 }
-
 // redraw all lines, force selection
 void redraw_ins(void) {
   u8 i=0;
@@ -582,11 +591,8 @@ void redraw_ins_preset ( void ) {
 	if(enabled) {
 	  paramVal = preset_get_selected()->ins[n].value;
 	  net_get_param_value_string_conversion(lineBuf, net_param_idx(n), paramVal);
-	  //	  print_dbg("\r\n 0x");
-	  //	  print_dbg_hex(paramVal);
 	} else {
 	  net_get_param_value_string(lineBuf, n);
-	  //	  print_dbg("\r\n ... ");
 	}
 	font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, 0xf, 0);
       } else {
