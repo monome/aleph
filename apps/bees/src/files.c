@@ -334,12 +334,25 @@ u8 files_load_scene_name(const char* name) {
   u32 size = 0;
   u8 ret = 0;
 
+    //// ahhhhh, i see.. 
+    /// this is overwriting the descriptor in sceneData as well as the serialized blob.
+    /// woud be fine, except it fucks up the comparison later.
+    /// for now, let's do this ugly-ass workaround.
+
+  char oldModuleName[MODULE_NAME_LEN];
+  /// store extant module name
+  strncpy(oldModuleName, sceneData->desc.moduleName, MODULE_NAME_LEN);
+
   app_pause();
 
   fp = list_open_file_name(&sceneList, name, "r", &size);
 
   if( fp != NULL) {	  
     fake_fread((volatile u8*)sceneData, sizeof(sceneData_t), fp);
+    
+    /// copy old name back to descriptor field... dumb dumb dumb.
+    strncpy(sceneData->desc.moduleName, oldModuleName, MODULE_NAME_LEN);
+    
     fl_fclose(fp);
     scene_read_buf();
 
@@ -657,9 +670,12 @@ extern u8 files_load_desc(const char* name) {
   strip_ext(path);
   strcat(path, ".dsc");
 
+  print_dbg("\r\n  opening .dsc file at path: ");
+  print_dbg(path);
+
   fp = fl_fopen(path, "r");
   if(fp == NULL) {
-    print_dbg("\r\n error opening .dsc file, path: ");
+    print_dbg("... error opening .dsc file.");
     print_dbg(path);
     ret = 1;
   } else {

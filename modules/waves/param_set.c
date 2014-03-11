@@ -72,7 +72,7 @@ void module_set_param(u32 idx, ParamValue v) {
     // target is 2.30
     //    filter_svf_set_rq(&(voice[1].svf), v);
     //    filter_svf_set_rq(&(voice[1].svf), v << 14);
-    filter_1p_lo_in( &(voice[1].rqSlew), v << 14 );
+    filter_1p_lo_in( &(voice[1].rqSlew), v << 14 ); 
     break;
   case eParam_rq0 :
     //    filter_svf_set_rq(&(voice[0].svf), v);
@@ -135,16 +135,20 @@ void module_set_param(u32 idx, ParamValue v) {
 
   case eParamPm01Slew:
     //    filter_1p_lo_set_slew( &(voice[1].osc.lpPm), v); 
+    voice[1].osc.pmSlew.c = trunc_fr1x32(v);
     break;
   case eParamPm10Slew:
     //    filter_1p_lo_set_slew( &(voice[0].osc.lpPm), v); 
+    voice[0].osc.pmSlew.c = trunc_fr1x32(v);
     break;
 
   case eParamWm01Slew:
     //    filter_1p_lo_set_slew( &(voice[1].osc.lpWm), v); 
+    voice[1].osc.wmSlew.c = trunc_fr1x32(v);
     break;
   case eParamWm10Slew:
     //    filter_1p_lo_set_slew( &(voice[0].osc.lpWm), v); 
+    voice[0].osc.wmSlew.c = trunc_fr1x32(v);
     break;
 
   case eParamWave1Slew:

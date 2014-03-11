@@ -145,9 +145,13 @@ u8 app_launch(u8 firstrun) {
     //    bfin_enable();
     
     print_dbg("\r\n reading default scene... ");
-    render_boot("reading  scene from flash");
+    render_boot("reading default scene");
 
     /// this also attempts to load associated .ldr
+
+    print_dbg("\r\n loading default scene. current module name from sceneData: ");
+    print_dbg(sceneData->desc.moduleName);
+
     scene_read_default();
 
     delay_ms(2); 

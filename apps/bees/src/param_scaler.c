@@ -146,6 +146,7 @@ scaler_inc_fn scaler_inc_pr[eParamNumTypes] = {
 // initialize a scaler
 void scaler_init(ParamScaler* sc, const ParamDesc* desc) {
   // store pointer to constant descriptor data
+  //// ???? this seems wrong somehow. 
   sc->desc = desc;
   if(scaler_init_pr[desc->type] != NULL) {
     (*(scaler_init_pr[desc->type]))(sc);
@@ -198,6 +199,13 @@ io_t scaler_get_in(ParamScaler* sc, s32 value) {
 // increment input
 extern s32 scaler_inc(ParamScaler* sc, io_t * pin, io_t inc ) {
   scaler_inc_fn fn =  scaler_inc_pr[sc->desc->type];
+  print_dbg("\r\n incrementing scaler at address 0x");
+  print_dbg_hex((u32)sc);
+  print_dbg(" ; type: ");
+  print_dbg_ulong((u32)sc->desc->type);
+  print_dbg(" ; inc function pointer: 0x");
+  print_dbg_hex((u32)fn);
+
   //  s32 sInc = (s32)inc;
   
   /* if(inc > 0x7fff) { */
@@ -206,6 +214,7 @@ extern s32 scaler_inc(ParamScaler* sc, io_t * pin, io_t inc ) {
   if( fn != NULL) {
     return (*fn)(sc, pin, inc);
   } else {
+    print_dbg("\r\n error, null scaler increment");
     return 0;
   }
 }

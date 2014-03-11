@@ -27,8 +27,10 @@ static u8 initFlag = 0;
 //---- extern funcs
 
 s32 scaler_note_val(void* scaler, io_t in) {
-  /* print_dbg("\r\n requesting note_scaler value for input: 0x"); */
-  /* print_dbg_hex((u32)in); */
+  print_dbg("\r\n requesting note_scaler value for input: 0x"); 
+  print_dbg_hex((u32)in);
+  print_dbg(" ; result: 0x");
+  print_dbg_hex(tabVal[(u16)((u16)in >> inRshift)] );
   //  u16 uin = BIT_ABS_16((s16)in);
   if(in < 0) { in = 0; }
   return tabVal[(u16)((u16)in >> inRshift)];

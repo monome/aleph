@@ -88,9 +88,10 @@ void scene_init(void) {
   for(i=0; i<SCENE_NAME_LEN; i++) {
     (sceneData->desc.sceneName)[i] = '\0';
   }
-  for(i=0; i<MODULE_NAME_LEN; i++) {
-    (sceneData->desc.moduleName)[i] = '\0';
-  }
+  /* for(i=0; i<MODULE_NAME_LEN; i++) { */
+  /*   (sceneData->desc.moduleName)[i] = '\0'; */
+  /* } */
+  strcpy(sceneData->desc.moduleName, "DEADBEEF");
   strcpy(sceneData->desc.sceneName, "_"); 
 
 
@@ -241,15 +242,17 @@ void scene_read_buf(void) {
   print_dbg(".");
   print_dbg_ulong(sceneData->desc.moduleVersion.rev);
 
-
   
+  print_dbg("\r\n checking against module name from scene data: ");
+  print_dbg(sceneData->desc.moduleName);
+
   if(strcmp(moduleName, sceneData->desc.moduleName) == 0) {
     print_dbg("\r\n requested module name is already loaded; skip DSP reboot.");
     // skip DSP load
     /// FIXME: should check module version too
+
   } else {
-    //    strcpy(sceneData->desc.moduleName, moduleName);
-    
+    strcpy(sceneData->desc.moduleName, moduleName);
     render_boot("loading DSP module:");
     render_boot(sceneData->desc.moduleName);
 
@@ -268,7 +271,6 @@ void scene_read_buf(void) {
 #else
   
     // query module name / version
-    //// FIXME: currently nothing happens with this.
     print_dbg("\r\n querying module name...");
     bfin_get_module_name(moduleName);
     print_dbg("\r\n querying module version...");

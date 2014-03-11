@@ -164,8 +164,8 @@ static void select_edit(s32 inc) {
     if(tmpTarget >= net_num_ins() ) {
       tmpTarget -= (net_num_ins() + 1);
     }
-    if(tmpTrarget < -1) {
-      tmpTarget += (net_num_ins() + 1;  
+    if(tmpTarget < -1) {
+      tmpTarget += net_num_ins() + 1;
     }
     /* ++tmpTarget; */
     /* if(tmpTarget == net_num_ins()) { */
@@ -545,7 +545,7 @@ void handle_key_3(s32 val) {
 // encoder handlers
 void handle_enc_0(s32 val) {   
   // edit selection / target
-  if(pageSelect != -1) {
+  if(*pageSelect != -1) {
     select_edit(val);
   }
 }
