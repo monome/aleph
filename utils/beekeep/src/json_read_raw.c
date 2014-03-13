@@ -47,6 +47,8 @@ void net_read_json_raw(const char* name) {
   net_read_json_presets(json_object_get(root, "presets"));
 }
 
+//-------------------
+// ---- static define
 
 static void net_read_json_scene(json_t* o) {
   json_t* p;
