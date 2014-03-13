@@ -1,0 +1,14 @@
+Various licenses cover different parts of this source code.
+
+Please see:
+
+/apps/LICENSE.TXT
+/avr32_lib/LICENSE.TXT
+/avr32_lib/asf_license.txt
+/modules/UNLICENSE.TXT
+/dsp/UNLICENSE.TXT
+/bfin_lib/UNLICENSE.TXT
+/utils/avr32_boot/LICENSE.TXT
+/utils/avr8/LUFA/License.txt
+
+contact info@monome.org with questions.

@@ -100,7 +100,6 @@ aleph/apps :
 aleph/apps/bees:
 	this is our main control routing/management application.
 
-
 aleph/common : 
 	routines that both the dsp and the controller need to agree on.
 	this includes the SPI protocol and fixed-point math routines.
@@ -161,8 +160,7 @@ now you have 2 files similar to:
 avr32-gnu-toolchain-3.4.2.435-linux.any.x86.tar.gz
 atmel-headers-6.1.3.1475.zip
 
-
-GET 32 BIT
+GET 32 BIT.
 
 extracting the toolchain archive gives you something like 
 avr32-gnu-toolchain-linux_x86/
@@ -188,9 +186,8 @@ echo "PATH="\$PATH:~/avr32-gnu-toolchain/bin" >> ~/.bashrc
 PATH=$PATH:~/avr32-gnu-toolchain/bin
 
 cd atmel-headers-6.1.3.1475
-cp avr/ ~/avr32-gnu-toolchain/include/ -R
-cp avr32/ ~/avr32-gnu-toolchain/include/ -R
-
+cp avr/ ~/avr32-gnu-toolchain/avr32/include -R
+cp avr32/ ~/avr32-gnu-toolchain/avr32/include/ -R
 
 you should now be able to run 'make' from aleph/apps/bees and produce aleph-bees.hex. yeah!
 let me know if there are problems: emb@catfact.net

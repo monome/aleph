@@ -42,6 +42,7 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpLife,
   eOpList2,
   eOpList8,
+  eOpList16,
   eOpLogic,
   eOpMetro,
   eOpMidiCC,
@@ -53,6 +54,7 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpRoute,
   eOpScreen,
   eOpSub,
+  eOpTog,
   eOpThresh,
   eOpTimer,
   eOpTog,
@@ -269,6 +271,7 @@ void handle_key_1(s32 val) {
     // reset keypress
     keyPressed = 255;
     print_dbg("\r\n performed select-page");
+    // 
     redraw_outs();
     print_dbg("\r\n performed redraw");
   }

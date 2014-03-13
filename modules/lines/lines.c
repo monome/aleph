@@ -38,6 +38,11 @@
 
 //-----------------------
 //------ static variables
+#if ARCH_LINUX
+static FILE* dbgFile;
+u8 dbgFlag = 0;
+u32 dbgCount = 0;
+#endif
 
 // total SDRAM is 64M
 // each line 60ish seconds for now
@@ -253,7 +258,13 @@ void module_init(void) {
   u8 i;
   u32 j;
   // init module/param descriptor
+#ifdef ARCH_BFIN 
   pLinesData = (linesData*)SDRAM_ADDRESS;
+#else
+  pLinesData = (linesData*)malloc(sizeof(linesData));
+  // debug file
+  //  dbgFile = fopen( "tape_dbg.txt", "w");
+#endif
   
   gModuleData = &(pLinesData->super);
   strcpy(gModuleData->name, "aleph-lines");
@@ -266,6 +277,7 @@ void module_init(void) {
   for(i=0; i<NLINES; i++) {
     delayFadeN_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);
     filter_svf_init(&(svf[i]));
+
 
     filter_1p_lo_init(&(svfCutSlew[i]), 0x3fffffff);
     filter_1p_lo_init(&(svfRqSlew[i]), 0x3fffffff);
@@ -444,6 +456,7 @@ void module_process_frame(void) {
 
 #else
   mix_outputs();
+
   /// do CV output
   
   if( !(cvSlew[cvChan].sync) ) { 
