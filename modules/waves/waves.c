@@ -110,7 +110,7 @@ static fract16 mix_adc_dac[4][4] = { { 0, 0, 0, 0 },
 static fract16 mix_osc_dac[2][4] = { { 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
 
 // each osc -> PM inputs
-static fract16 mix_pm[2][2] = { {0, 0}, {0, 0} };
+// static fract16 mix_pm[2][2] = { {0, 0}, {0, 0} };
 
 // 10v dac values (u16, but use fract32 and audio integrators for now)
 static fract32 cvVal[4];
@@ -152,7 +152,7 @@ static inline void mix_adc (void) {
   for(i=0; i < 4; i++) {    
     pout = out;
     for(j=0; j < 4; j++) {
-      *pout = add_fr1x32(*pout, mult_fr1x32(trunc_fr1x32(*pin), *mix) );
+      //      *pout = add_fr1x32(*pout, mult_fr1x32(trunc_fr1x32(*pin), *mix) );
       pout++;
       mix++;
     }
@@ -168,6 +168,7 @@ static void calc_frame(void) {
 
 
   for(i=0; i<WAVES_NVOICES; i++) {
+
     //    v = &(voice[i]);
     // oscillator class includes hz and mod integrators
     v->oscOut = shr_fr1x32( osc_next( &(v->osc) ), 2);
@@ -175,14 +176,22 @@ static void calc_frame(void) {
     osc_pm_in( &(v->osc), v->pmIn );
     // shape mod with fixed 1-frame delay
     osc_wm_in( &(v->osc), v->wmIn );
-    // process filter integrators and set 
+
+    // set filter params
+    slew32_calc(v->cutSlew);
+    slew32_calc(v->rqSlew);
     filter_svf_set_coeff( &(v->svf), v->cutSlew.y );
     filter_svf_set_rq( &(v->svf), v->rqSlew.y );
+
     // process filter
     v->svfOut = filter_svf_next( &(v->svf), shr_fr1x32(v->oscOut, 1) );
+
     // process amp smoother
-    v->amp  = filter_1p_lo_next( &(v->ampSlew) );
+    slew32_calc(v->ampSlew);
+    v->amp = v->ampSlew.y;
+
     // mix to output bus
+    /// FIXME: use 16b mults
     voiceOut[i] = mult_fr1x32x32(v->amp,
 			    add_fr1x32(mult_fr1x32x32( v->oscOut, v->fDry),
 				       mult_fr1x32x32( v->svfOut, v->fWet)

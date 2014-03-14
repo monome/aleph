@@ -110,7 +110,7 @@ enum params {
 
   // i/o mix
 
-  /*
+  
   eParam_adc0_dac0,		
   eParam_adc0_dac1,		
   eParam_adc0_dac2,		
@@ -130,7 +130,7 @@ enum params {
   eParam_adc3_dac1,		
   eParam_adc3_dac2,		
   eParam_adc3_dac3,		
-  */
+ 
 
   // cv
   eParam_cvSlew3,
