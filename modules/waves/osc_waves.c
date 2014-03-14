@@ -30,7 +30,6 @@ static u32 shapeLimMul;
 
 // convert fix16 frequency to normalized fract32 phase increment
 static inline fract32 freq_to_phase(fix16 freq) {
-
   return add_fr1x32(
 		    // int part
 		    (fract32)( ((int)(freq >> 16) * (int)(WAVE_IPS_NORM) ) ),
@@ -42,33 +41,29 @@ static inline fract32 freq_to_phase(fix16 freq) {
   
 // calculate modulated and bandlimited waveshape
 static inline void osc_calc_wm(osc* osc) {
-  fract32 sm; // mod shape
-  // fract32 sl; // shape limit given current freq
+  // FIXME: not using right now
 
-  // add modulation
-  //// FIXME: this is dumb, should be multiplied?
-  sm = add_fr1x32(osc->shape, mult_fr1x32x32(osc->wmIn, osc->wmAmt) );
-  // 
-  /* pseudo - bandlimiting: shape limited by inverse ratio to frequency
-     sm = sub_fr1x32(sm, 
-     mult_fr1x32x32( (fract32)(fix16_sub(osc->inc, incMin) * shapeLimMul),
-     osc->bandLim 
-     )
-     );
-  */
-  if(sm < 0) { sm = 0; }
-  //  osc->shapeMod = sm;
-  
+  /* fract32 sm; // mod shape */
+  /* // fract32 sl; // shape limit given current freq */
+
+  /* // add modulation */
+  /* //// FIXME: this is dumb, should be multiplied? */
+  /* sm = add_fr1x32(osc->shape, mult_fr1x32x32(osc->wmIn, osc->wmAmt) ); */
+  /* //  */
+  /* /\* pseudo - bandlimiting: shape limited by inverse ratio to frequency */
+  /*    sm = sub_fr1x32(sm,  */
+  /*    mult_fr1x32x32( (fract32)(fix16_sub(osc->inc, incMin) * shapeLimMul), */
+  /*    osc->bandLim  */
+  /*    ) */
+  /*    ); */
+  /* *\/ */
+  /* if(sm < 0) { sm = 0; } */
+  /* //  osc->shapeMod = sm; */
 }
 
 // calculate phase incremnet
 static inline void osc_calc_inc( osc* osc) {
-  //  filter_1p_lo_in( &(osc->lpInc), fix16_mul(osc->ratio, fix16_mul(osc->hz, ips)) )
-  //  osc->incSlew.x = fix16_mul(osc->ratio, fix16_mul(osc->hz, ips) );
-  osc->incSlew.x = freq_to_phase( fix16_mul(osc->ratio, osc->hz) );
-  /// TEST:
-  //  osc->inc = fix16_mul(osc->ratio, fix16_mul(osc->hz, ips));
- 
+  osc->incSlew.x = freq_to_phase( fix16_mul(osc->ratio, osc->hz) ); 
 }
 
 // calculate phase
@@ -76,23 +71,7 @@ static inline void osc_calc_pm(osc* osc) {
   // non-saturated add, allow overflow, zap sign
   osc->phaseMod = (int)(osc->phase) + (int)(mult_fr1x32(trunc_fr1x32(osc->pmIn), osc->pmAmt));
   osc->phaseMod &= 0x7fffffff;
-  /*
-  osc->idxMod = fix16_add( osc->idx, 
-			   fix16_mul( FRACT_FIX16( mult_fr1x32x32( osc->pmIn, 
-								   osc->pmAmt ) ),
-				      WAVE_TAB_MAX16
-				      ) );
-  
-  // wrap negative
-  while (BIT_SIGN_32(osc->idxMod)) {
-    osc->idxMod = fix16_add(osc->idxMod, WAVE_TAB_MAX16);
-  }
 
-  // wrap positive
-  while(osc->idxMod > WAVE_TAB_MAX16) { 
-    osc->idxMod = fix16_sub(osc->idxMod, WAVE_TAB_MAX16); 
-  }
-  */
 }
 
 // lookup 
@@ -195,12 +174,6 @@ void osc_init(osc* osc, wavtab_t tab, u32 sr) {
   /* incRange = (u32)incMax - (u32)incMin; */
   /* shapeLimMul = 0x7fffffff / incRange; */
 #endif
-
-  /* filter_1p_lo_init( &(osc->lpInc) , FIX16_ONE); */
-  /* filter_1p_lo_init( &(osc->lpShape) , FIX16_ONE); */
-  /* filter_1p_lo_init( &(osc->lpPm) , FIX16_ONE); */
-  /* filter_1p_lo_init( &(osc->lpWm) , FIX16_ONE); */
-
   slew_init(osc->incSlew, 0, 0, 0 );
   slew_init(osc->shapeSlew, 0, 0, 0 );
   slew_init(osc->pmSlew, 0, 0, 0 );
@@ -212,10 +185,7 @@ void osc_init(osc* osc, wavtab_t tab, u32 sr) {
   osc->hz = FIX16_ONE;
   osc->shape = 0;
   //  osc->shapeMod = 0;
-  /* osc->idx = 0; */
-  /* osc->idxMod = 0; */
 
-  //  osc->bandLim = FR32_MAX >> 2;
   osc->pmAmt = 0;
   osc->wmAmt = 0;
 
@@ -259,7 +229,6 @@ void osc_wm_in(osc* osc, fract32 val) {
   osc->wmIn = val;
 }
 
-
 // set bandlimiting
 /* void osc_set_bl(osc* osc, fract32 bl) { */
 /*   osc->bandLim = bl; */
@@ -269,12 +238,6 @@ void osc_wm_in(osc* osc, fract32 val) {
 fract32 osc_next(osc* osc) {
 
   /// update param smoothers
-    
-  //  osc->inc = filter_1p_lo_next( &(osc->lpInc) );
-  //  osc->shape = filter_1p_lo_next( &(osc->lpShape) );
-  //  osc->pmAmt = filter_1p_lo_next( &(osc->lpPm) );
-  //  osc->wmAmt = filter_1p_lo_next( &(osc->lpWm) );
-  
   slew16_calc ( osc->pmSlew );
   slew16_calc ( osc->wmSlew );
   slew16_calc ( osc->shapeSlew );
@@ -286,9 +249,12 @@ fract32 osc_next(osc* osc) {
   osc->pmAmt = osc->pmSlew.y;
   osc->wmAmt = osc->wmSlew.y;
 
+  /// FIXME:
+  // shape mod doesn't sound awesome right now anyways
+  // add mix points, then think about it
+
   // calculate waveshape modulation + bandlimiting
   //  osc_calc_wm(osc);
-  // eh, doesn't sound great anyways
   //  osc->shapeMod = osc->shape << 16;
 
   // calculate phase modulation
