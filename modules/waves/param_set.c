@@ -1,6 +1,10 @@
 // set param values.
 // this is a separate file for convenience only.
 
+static inline fract16 param_to_fr16( ParamValue v) {
+  return (fract16)((v & 0xffff) >> 1);
+}
+
 void module_set_param(u32 idx, ParamValue v) {
   switch(idx) {
 
@@ -19,26 +23,26 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParamWave1:
-    osc_set_shape( &(voice[1].osc), BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
+    osc_set_shape( &(voice[1].osc),  param_to_fr16(v) );
     break;
   case eParamWave0:
-    osc_set_shape( &(voice[0].osc), BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
+    osc_set_shape( &(voice[0].osc),  param_to_fr16(v) );
     break;
 
     // FIXME: this is assuming simple fixed x-modulation with 2 voices.
     /// should have a matrix of modulation mix points.
   case eParamPm10:
-    osc_set_pm ( &(voice[0].osc), BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
+    osc_set_pm ( &(voice[0].osc), param_to_fr16(v) );
     break;
   case eParamPm01:
-    osc_set_pm ( &(voice[1].osc), BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
+    osc_set_pm ( &(voice[1].osc), param_to_fr16(v) );
     break;
 
   case eParamWm10:
-    osc_set_wm ( &(voice[0].osc), BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
+    osc_set_wm ( &(voice[0].osc), param_to_fr16(v) );
     break;
   case eParamWm01:
-    osc_set_wm ( &(voice[1].osc), BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
+    osc_set_wm ( &(voice[1].osc), param_to_fr16(v) );
     break;
 
   case eParamAmp1:
@@ -52,10 +56,10 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParamBl1 :
-    //    osc_set_bl( &(voice[1].osc), BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
+    //    osc_set_bl( &(voice[1].osc), param_to_fr16(v) );
     break;
   case eParamBl0 :
-    //    osc_set_bl( &(voice[0].osc), BIT_ABS_32(FIX16_FRACT_TRUNC(v)) );
+    //    osc_set_bl( &(voice[0].osc), param_to_fr16(v) );
     break;
 
     //// filter params:

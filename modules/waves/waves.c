@@ -89,7 +89,7 @@ static wavesData * data;
 
 /// FIXME: wavetables are statically linked constants for now.
 /// would like to have them in SDRAM and allow arbitrary asynchronous load.
-static const fract32 wavtab[WAVE_TAB_NUM][WAVE_TAB_SIZE] = { 
+static const fract32 wavtab[WAVE_SHAPE_NUM][WAVE_TAB_SIZE] = { 
 #include "wavtab_data_inc.c" 
 };
 
@@ -286,7 +286,7 @@ static void calc_frame(void) {
   //  voice[1].wmIn = voice[0].oscOut << 1;
   
   // mix outputs using matrix
-    mix_outputs();
+  mix_outputs();
   
   
 
