@@ -23,6 +23,7 @@
 // bah?
 #define PARAM_DAC_MAX 0x7fffffff
 #define PARAM_DAC_RADIX 16
+#define PARAM_DAC_SHIFT (PARAM_DAC_RADIX) - 1
 
 #define RATIO_MIN 0x4000     // 1/4
 #define RATIO_MAX 0x40000    // 4

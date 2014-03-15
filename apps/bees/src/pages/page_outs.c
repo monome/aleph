@@ -147,7 +147,7 @@ static void select_edit(s32 inc) {
     //    print_dbg(" , set targetSelect mode");
     targetSelect = 1;
     /// only change tmp target selection if connected
-    /// thus, unconnected outputs hould default in editor to last connection made.
+    /// thus, unconnected outputs should default in editor to last connection made.
     tmptmp = net_get_target(*pageSelect);
     if(tmptmp > -1) {
       tmpTarget = tmptmp;
@@ -155,7 +155,7 @@ static void select_edit(s32 inc) {
   }
   /* print_dbg("\r\n tmpTarget: "); */
   /* print_dbg_ulong(tmpTarget); */
-  if(inc > 0) {
+  //  if(inc > 0) {
     /* print_dbg(" , inc tmpTarget"); */
     /* print_dbg(" , value: "); */
     /* print_dbg_ulong(tmpTarget); */
@@ -165,7 +165,7 @@ static void select_edit(s32 inc) {
       tmpTarget -= (net_num_ins() + 1);
     }
     if(tmpTarget < -1) {
-      tmpTarget += net_num_ins() + 1;
+      tmpTarget += (net_num_ins() + 1);
     }
     /* ++tmpTarget; */
     /* if(tmpTarget == net_num_ins()) { */
@@ -173,14 +173,14 @@ static void select_edit(s32 inc) {
     /*   // scroll past all inputs : disconnect and wrap */
     /*   tmpTarget = -1; */
     /* }  */
-  } else {
-    --tmpTarget;
-    if (tmpTarget == -2) {
-      //      print_dbg(" , tmpTarget at min");
-      //  scrolled down from disconnect: connect and wrap
-      tmpTarget = net_num_ins() - 1;
-    }
-  }    
+  /* } else { */
+  /*   --tmpTarget; */
+  /*   if (tmpTarget == -2) { */
+  /*     //      print_dbg(" , tmpTarget at min"); */
+  /*     //  scrolled down from disconnect: connect and wrap */
+  /*     tmpTarget = net_num_ins() - 1; */
+  /*   } */
+    /* } */
   
   // render to tmp buffer
   render_line(*pageSelect, 0xf);
@@ -546,7 +546,19 @@ void handle_key_3(s32 val) {
 void handle_enc_0(s32 val) {   
   // edit selection / target
   if(*pageSelect != -1) {
-    select_edit(val);
+    if(val > 0) {
+      if(altMode) {
+	select_edit(7);
+      } else {
+	select_edit(1);
+      }
+    }
+  } else {
+    if(altMode) {
+      select_edit(-7);
+    } else {
+      select_edit(-1);
+    }
   }
 }
 

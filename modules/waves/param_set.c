@@ -77,7 +77,7 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_rq0 :
     //    filter_1p_lo_in( &(voice[0].rqSlew), v << 14 );
-    voice[0].rqSlew.x = v;
+    voice[1].rqSlew.x = v;
 
     break;
   case eParam_low1 :
@@ -175,29 +175,30 @@ void module_set_param(u32 idx, ParamValue v) {
 
     // cv values
   case eParam_cvVal0 :
-    filter_1p_lo_in(&(cvSlew[0]), (v >> ( PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
+    //    filter_1p_lo_in(&(cvSlew[0]), (v >> ( PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
+    cvSlew[0].x = (v >> (PARAM_DAC_SHIFT))  & DAC_VALUE_MASK;
     break;
   case eParam_cvVal1 :
-    filter_1p_lo_in(&(cvSlew[1]), (v >> (PARAM_DAC_RADIX - 1)) & DAC_VALUE_MASK);
+    cvSlew[1].x = (v >> (PARAM_DAC_SHIFT)) & DAC_VALUE_MASK;
     break;
   case eParam_cvVal2 :
-    filter_1p_lo_in(&(cvSlew[2]), (v >> (PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
+    cvSlew[2].x = (v >> (PARAM_DAC_SHIFT))  & DAC_VALUE_MASK;
     break;
   case eParam_cvVal3 :
-    filter_1p_lo_in(&(cvSlew[3]), (v >> (PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
+    cvSlew[3].x = (v >> (PARAM_DAC_SHIFT))  & DAC_VALUE_MASK;
     break;
 
   case eParam_cvSlew0 :
-    filter_1p_lo_set_slew(&(cvSlew[0]), v);
+    cvSlew[0].c = v;
     break;
   case eParam_cvSlew1 :
-    filter_1p_lo_set_slew(&(cvSlew[1]), v);
+    cvSlew[1].c = v;
     break;
   case eParam_cvSlew2 :
-    filter_1p_lo_set_slew(&(cvSlew[2]), v);
+    cvSlew[2].c = v;
     break;
   case eParam_cvSlew3 :
-    filter_1p_lo_set_slew(&(cvSlew[3]), v);
+    cvSlew[3].c = v;
     break;
 
    // i/o mix:

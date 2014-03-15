@@ -49,7 +49,6 @@ aleph-$(module_name): bfin_lib_target $(module_obj)
 
 clean: bfin_lib_clean
 	rm $(module_obj)
-	rm aleph-$(module_name)-$(maj).$(min).$(rev).ldr
 	rm aleph-$(module_name).ldr 
 	rm aleph-$(module_name)
 

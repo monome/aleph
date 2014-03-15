@@ -11,7 +11,7 @@
 // aleph-common
 #include "fix.h"
 // audio lib
-#include "filter_1p.h"
+// #include "filter_1p.h"
 #include "conversion.h"
 // bfin
 #include "bfin_core.h"
@@ -113,9 +113,10 @@ static fract16 mix_osc_dac[2][4] = { { 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
 // static fract16 mix_pm[2][2] = { {0, 0}, {0, 0} };
 
 // 10v dac values (u16, but use fract32 and audio integrators for now)
-static fract32 cvVal[4];
-static filter_1p_lo cvSlew[4];
-static u8 cvChan = 0;
+// static fract32 cvVal[4];
+//static filter_1p_lo cvSlew[4];
+static Slew32 cvSlew[4];
+static u32 cvChan = 0;
 
 //----------------------
 //----- static function declaration
@@ -152,6 +153,7 @@ static inline void mix_adc (void) {
   for(i=0; i < 4; i++) {    
     pout = out;
     for(j=0; j < 4; j++) {
+      /// can't quite handle it...
       //      *pout = add_fr1x32(*pout, mult_fr1x32(trunc_fr1x32(*pin), *mix) );
       pout++;
       mix++;
@@ -242,10 +244,14 @@ void module_init(void) {
   }
 
   // dac
-  filter_1p_lo_init( &(cvSlew[0]), 0xf );
-  filter_1p_lo_init( &(cvSlew[1]), 0xf );
-  filter_1p_lo_init( &(cvSlew[2]), 0xf );
-  filter_1p_lo_init( &(cvSlew[3]), 0xf );
+  //  filter_1p_lo_init( &(cvSlew[0]), 0xf );
+  //  filter_1p_lo_init( &(cvSlew[1]), 0xf );
+  //  filter_1p_lo_init( &(cvSlew[2]), 0xf );
+  //  filter_1p_lo_init( &(cvSlew[3]), 0xf );
+  slew_init(cvSlew[0] , 0, 0, 0 );
+  slew_init(cvSlew[1] , 0, 0, 0 );
+  slew_init(cvSlew[2] , 0, 0, 0 );
+  slew_init(cvSlew[3] , 0, 0, 0 );
 
   // set parameters to defaults
   param_setup(  eParamHz1, 	220 << 16 );
@@ -338,20 +344,36 @@ extern u32 module_get_num_params(void) {
 
 // frame callback
 void module_process_frame(void) {
-
-  calc_frame();
-
+  volatile u32 delay;
+  //  calc_frame();
 
   // DAC outputs.. kind of dumb
-  if(cvSlew[cvChan].sync) { ;; } else {
-    cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
-    dac_update(cvChan, cvVal[cvChan]);
-  }
+  //  if(cvSlew[cvChan].sync) { ;; } else {
+  //    cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
+  //  dac_update(cvChan, cvVal[cvChan]);
+
+  // we could shift to fract16 at a cost of only 1b resolution
+  //  slew32_calc(cvSlew[cvChan]);
+  //  dac_update(cvChan, cvSlew[cvChan].y );
+  /// TEST
+  //  dac_update(cvChan, cvSlew[cvChan].x );
+  // TEST
+  /// hm, single channel works... rrrrggg
+  //   dac_update(0, cvSlew[0].x );
+
+  if( (cvChan == 0) || (cvChan == 3) ) {
+     dac_update(cvChan, cvSlew[cvChan].x );
+   }
+
+
+  //  cvChan = (cvChan + 1) & 0x0000003;  
+  // test... 
+  //  cvChan = (cvChan + 1) & 0x0000001;  
+  cvChan++;
+  if(cvChan > 3) { cvChan = 0; }
+
  
-  if(++cvChan == 4) {
-    cvChan = 0;
-  }
-  
 }
 
+// lazy inclusion... sorry
 #include "param_set.c"

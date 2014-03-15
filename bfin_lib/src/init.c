@@ -70,59 +70,11 @@ void init_1939(void) {
   //// reset codec
   *pFIO_FLAG_D &= CODEC_RESET_MASK;
   del = 100; while(del--) { ;; } 
-  //  del = 1000; while(del--) { ;; } 
   *pFIO_FLAG_D |= (0xffff ^ CODEC_RESET_MASK);
   del = 10000; while(del--) { ;; } 
   /// using the codec in standalone now, dont need SPI config
   return;
 
-  /* //// TESTING: */
-  /* /// wait for the codec to reset */
-  /* /// from the datasheet, this could take an absolute maximum of (4096 / 6.9Mhz)s (?) */
-  /* /// we are using BF clock = 513 MHz, so: */
-  /* del = 308000; while(del--) { ;; }  */
-
-  /* //  set PF4 as slave select */
-  /* *pSPI_FLG = 0xFF10; */
-
-  /* // Set baud rate SCK = HCLK/(2*SPIBAUD) SCK = 2MHz */
-  /* *pSPI_BAUD = 16; */
-
-  /* // setup SPI: */
-  /* /// master, non-DMA mode, 8b transfers, MSB first, */
-  /* /// TX on buffer write, clock rising edge: */
-
-  /* //// this would give us the waveform we want but puts CS under hardware control */
-  /* //  *pSPI_CTL = MSTR | TIMOD_BUF_TX; */
-
-  /* /// SPI controller can't do 24-bits transfers-- */
-  /* /// workaround: 8-bit transfers and manual slave select */
-  /* // ( see http://ez.analog.com/thread/1248 */
-  /* //  SS from software : */
-  /* *pSPI_CTL = MSTR | CPHA | CPOL | TIMOD_BUF_TX; */
-
-  /* // enable SPI */
-  /* *pSPI_CTL = (*pSPI_CTL | SPE); */
-
-  /* ssync(); */
-  /* // loop over registers */
-  /* for(i=0; i<CODEC_1939_NUM_REGS; i++) { */
-  /*   // select slave */
-  /*   //    *pFIO_FLAG_D &= CODEC_SS_MASK; */
-
-  /*   // bring SS low (PF4) */
-  /*   *pSPI_FLG = 0xef10; */
-
-  /*   // send command byte */
-  /*   spi_send_byte(CODEC_CMD_BYTE); */
-  /*   // send register byte */
-  /*   spi_send_byte(codec1939TxRegs[i][0]); */
-  /*   /// send dta byte */
-  /*   spi_send_byte(codec1939TxRegs[i][1]); */
-    
-  /*   // bring SS high (PF4) */
-  /*   *pSPI_FLG = 0xff10; */
-  /*   } */
 } // init_1939
 
 
@@ -171,49 +123,31 @@ void init_sport0(void)
   *pSPORT0_TCR2 = SLEN_24 | TXSE | TSFSE;
 }
 
-// CONFIGURE sport1  [ to drive 3x AD5684 from DT1PRI ]
+// CONFIGURE sport1  [ drive 1x AD5686 from DTSEC ]
 void init_sport1(void) {
-  u32 config;
+  //  u32 config;
 
-  //----- note: edge selection is for *driving* the pins, sampled opposite
+  //// note: driving with rising edge means data is sampled on falling edge
   //// TFS/clk driven w/ rising edge : TCKFE  = 0
-  //// early frame sync              : LATFS  = 0
-  //// TFS active high               : LTFS   = 0
-  //// data-dependent TFS            : DITFS  = 0
+  //// no late frame sync               : LATFS  = 0
+  //// TFS active low               : LTFS   = 0
+  //// data-dependent TFS           : DITFS  = 0
   //// internal clock                : ITCLK  = 1
   //// internal TFS                  : ITFS   = 1
   //// frame sync required           : TFSR  = 1
   //// no companding                 : TDTYPE = 00
   //// MSB first                     : TLSBIT = 0  
   *pSPORT1_TCR1 = ITCLK | ITFS | TFSR;
+
+  // test: continuous transmit 
+  //  *pSPORT1_TCR1 = ITCLK | ITFS | TFSR | DITFS;
   
-
-  //----- note: edge selection is for *driving* the pins, sampled opposite
-  //// TFS/clk driven w/ rising edge : TCKFE  = 0
-  //// late frame sync              : LATFS  = 1
-  //// TFS active low               : LTFS   = 1
-  //// data-dependent TFS            : DITFS  = 0
-  //// internal clock                : ITCLK  = 1
-  //// internal TFS                  : ITFS   = 1
-  //// frame sync required           : TFSR  = 1
-  //// no companding                 : TDTYPE = 00
-  //// MSB first                     : TLSBIT = 0  
-  // *pSPORT1_TCR1 = ITCLK | ITFS | TFSR | LTFS | LATFS;
-  
-
-
-  //===== TEST: data-independent TFS
-  //  *pSPORT1_TCR1 = ITCLK | ITFS | DITFS;
- 
   //// normal mode             : TSFSE = 0
   //// secondary side enabled : TXSE  = 1
   ///// 24-bit word length
-  //     *pSPORT1_TCR2 = 23 | TXSE ;
+  //    *pSPORT1_TCR2 = 23 | TXSE ;
   //// 25-bit cause DACs need an extra cycle to recover, ugggh
-  *pSPORT1_TCR2 = 24 | TXSE ;
-
-  /// TEST: 32-bit word length
-  //  *pSPORT1_TCR2 = slen_32;
+    *pSPORT1_TCR2 = 24 | TXSE ;
 
   // clock division: we want ~10Mhz, core clock is 108Mhz
   // tclk = sclk / ( 2 x (div + 1)
@@ -223,24 +157,7 @@ void init_sport1(void) {
   /// this works fine in the triangle test
   *pSPORT1_TCLKDIV = 1;
 
-  // ???
-  //  *pSPORT1_TCLKDIV = 2;
-  //  *pSPORT1_TCLKDIV = 10;
-
-  //// slower:
-  //  *pSPORT1_TCLKDIV = 100;
-  //// slowest:
-  //  *pSPORT1_TCLKDIV = 0xffff;
-
-  // we want frame syncs every 24 clocks,
-  // FS period = clk period * (TFSDIV + 1)
-  //// need an extra bit at the end for the DAC, grr
-  //    *pSPORT1_TFSDIV = 23;
-	
-  //// daisychain x2:
-  //  *pSPORT1_TFSDIV = 48;
-    
-  config = *pSPORT1_TCR1;
+  //  config = *pSPORT1_TCR1;
    
   /// enable sport1
   ////// do this later for DMA
@@ -291,7 +208,8 @@ void init_DMA(void) {
   // Start address of data buffer
   *pDMA4_START_ADDR = (void *)(&cvTxBuf);
   // DMA inner loop count
-  *pDMA4_X_COUNT = 1;
+  /// primary tx data is dummy!
+  *pDMA4_X_COUNT = 2;
   // Inner loop address increment
   *pDMA4_X_MODIFY = 4;
 
@@ -304,7 +222,7 @@ void enable_DMA_sport0(void) {
   *pDMA2_CONFIG	= (*pDMA2_CONFIG | DMAEN);
   *pDMA1_CONFIG	= (*pDMA1_CONFIG | DMAEN);
   
-  // enable Sport0 TX and RX
+  // enable sport0 TX and RX
   *pSPORT0_TCR1 	= (*pSPORT0_TCR1 | TSPEN);
   *pSPORT0_RCR1 	= (*pSPORT0_RCR1 | RSPEN);
 }
@@ -330,6 +248,7 @@ void init_flags(void) {
   *pFIO_DIR |= CODEC_RESET_UNMASK;
   *pFIO_DIR |= CODEC_RESET_UNMASK;
   *pFIO_DIR |= DAC_RESET_UNMASK;
+  *pFIO_DIR |= DAC_LDAC_UNMASK;
   *pFIO_DIR |= READY_UNMASK;
   *pFIO_DIR |= LED3_UNMASK;
   *pFIO_DIR |= LED4_UNMASK;
@@ -361,7 +280,7 @@ void init_interrupts(void) {
   // spi rx           -> ID3 = IVG10
 
   // assign ISRs to interrupt vectors:
-  //// ok, this ISR will serve both sports...
+  //// ok, this ISR will serve both sports if enabled..
   *pEVT9 = sport0_rx_isr;
   *pEVT10 = spi_rx_isr;
 
