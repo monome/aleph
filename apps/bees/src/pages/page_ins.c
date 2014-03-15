@@ -396,13 +396,10 @@ void handle_key_0(s32 val) {
     if(check_key(0)) {
       // store in preset
       net_set_in_preset(*pageSelect, 1);
-      //      inPreset = 1;
       preset_store_in(preset_get_select(), *pageSelect);
       // redraw selected line
       render_line(*pageSelect, 0xf);
       render_to_scroll_line(SCROLL_CENTER_LINE, 1);
-	//      render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
-      // TODO: store directly in scene?
     }
   }
   show_foot();
@@ -413,7 +410,6 @@ void handle_key_1(s32 val) {
     if(altMode) {
       if(check_key(1)) {
 	// show / hide on play screen
-	//	inPlay = net_toggle_in_play(*pageSelect);
 	net_toggle_in_play(*pageSelect);
 	// render to tmp buffer
 	render_line(*pageSelect, 0xf);
@@ -425,7 +421,6 @@ void handle_key_1(s32 val) {
 	// show preset name in head region
 	draw_preset_name();
 	// include / exclude in preset
-	//	inPreset = net_toggle_in_preset(*pageSelect);
 	net_toggle_in_preset(*pageSelect);
 	// render to tmp buffer
 	render_line(*pageSelect, 0xf);
@@ -495,7 +490,6 @@ void handle_enc_1(s32 val) {
       preset_inc_select(-1);
     }
     // refresh line data
-    //    redraw_ins_preset((u8)preset_get_select());
     redraw_ins_preset();
   } else {
   // change parameter value, unaccelerated

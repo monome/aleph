@@ -67,10 +67,10 @@ typedef enum {
   eOpDelay,
   eOpRoute,
   eOpMidiCC,
+  eOpMidiOutNote,
   eOpList16,
   //  eOpMidiBend,
   //  eOpMidiTouch,
-  eOpMidiOutNote,
   numOpClasses // dummy/count 
 } op_id_t;
 

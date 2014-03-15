@@ -62,7 +62,7 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
 };
 
 // current selected new operator type
-static op_id_t newOpType = 0;
+static op_id_t newOpType = eOpAccum;
 
 //==========================================
 //===== static function declarations
