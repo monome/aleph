@@ -341,28 +341,18 @@ extern u32 module_get_num_params(void) {
 // frame callback
 void module_process_frame(void) {
   volatile u32 delay;
+
   calc_frame();
 
-  // DAC outputs.. kind of dumb
-  //  if(cvSlew[cvChan].sync) { ;; } else {
-  //    cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
-  //  dac_update(cvChan, cvVal[cvChan]);
-
   // we could shift to fract16 at a cost of only 1b resolution
-  //  slew32_calc(cvSlew[cvChan]);
-  //  dac_update(cvChan, cvSlew[cvChan].y );
-  /// TEST
-  //  dac_update(cvChan, cvSlew[cvChan].x );
+  slew32_calc(cvSlew[cvChan]);
   // TEST
-  /// hm, single channel works... rrrrggg
+  /// hm, single channel works with no glitch... rrrrggg
   //   dac_update(0, cvSlew[0].x );
+  
+  dac_update(cvChan, cvSlew[cvChan].y );
 
-  //  if( (cvChan == 0) || (cvChan == 3) ) {
-  dac_update(cvChan, cvSlew[cvChan].x );
-     //   }
-
-  cvChan++;
-  if(cvChan > 3) { cvChan = 0; }
+  cvChan = (cvChan + 1) & 3;
 }
 
 // lazy inclusion... sorry

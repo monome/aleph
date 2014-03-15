@@ -552,14 +552,14 @@ void handle_enc_0(s32 val) {
       } else {
 	select_edit(1);
       }
-    }
-  } else {
+    } else {
     if(altMode) {
       select_edit(-7);
     } else {
       select_edit(-1);
     }
   }
+  } 
 }
 
 void handle_enc_1(s32 val) {
