@@ -348,7 +348,9 @@ u8 files_load_scene_name(const char* name) {
   fp = list_open_file_name(&sceneList, name, "r", &size);
 
   if( fp != NULL) {	  
+    print_dbg("\r\n reading binary into sceneData serialized data buffer...");
     fake_fread((volatile u8*)sceneData, sizeof(sceneData_t), fp);
+    print_dbg(" done.");
     
     /// copy old name back to descriptor field... dumb dumb dumb.
     strncpy(sceneData->desc.moduleName, oldModuleName, MODULE_NAME_LEN);
