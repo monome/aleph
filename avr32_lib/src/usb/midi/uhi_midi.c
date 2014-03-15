@@ -25,7 +25,7 @@
 #define UHI_MIDI_TIMEOUT 20000
 
 // looks like we need to get class-specific endpoint descriptors,
-//  to ask them about virtual cable index and stuff like that.
+//  to ask them about virtual cable index and stuff like that??
 
 #define UHI_FTDI_TIMEOUT 20000
 //...
@@ -294,4 +294,3 @@ bool uhi_midi_out_run(uint8_t * buf, iram_size_t buf_size,
 		    UHI_MIDI_TIMEOUT, 
 		    callback);
 }
-
