@@ -341,7 +341,7 @@ extern u32 module_get_num_params(void) {
 // frame callback
 void module_process_frame(void) {
   volatile u32 delay;
-  //  calc_frame();
+  calc_frame();
 
   // DAC outputs.. kind of dumb
   //  if(cvSlew[cvChan].sync) { ;; } else {
@@ -357,14 +357,10 @@ void module_process_frame(void) {
   /// hm, single channel works... rrrrggg
   //   dac_update(0, cvSlew[0].x );
 
-  if( (cvChan == 0) || (cvChan == 3) ) {
+  //  if( (cvChan == 0) || (cvChan == 3) ) {
      dac_update(cvChan, cvSlew[cvChan].x );
-   }
+     //   }
 
-
-  //  cvChan = (cvChan + 1) & 0x0000003;  
-  // test... 
-  //  cvChan = (cvChan + 1) & 0x0000001;  
   cvChan++;
   if(cvChan > 3) { cvChan = 0; }
 

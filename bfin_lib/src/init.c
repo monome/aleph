@@ -125,11 +125,13 @@ void init_sport0(void)
 
 // CONFIGURE sport1  [ drive 1x AD5686 from DTSEC ]
 void init_sport1(void) {
-  //  u32 config;
 
+  /*
   //// note: driving with rising edge means data is sampled on falling edge
   //// TFS/clk driven w/ rising edge : TCKFE  = 0
   //// no late frame sync               : LATFS  = 0
+  
+
   //// TFS active low               : LTFS   = 0
   //// data-dependent TFS           : DITFS  = 0
   //// internal clock                : ITCLK  = 1
@@ -148,24 +150,25 @@ void init_sport1(void) {
   //    *pSPORT1_TCR2 = 23 | TXSE ;
   //// 25-bit cause DACs need an extra cycle to recover, ugggh
     *pSPORT1_TCR2 = 24 | TXSE ;
+*/
+  ///////
+  ///////
+  // test: late frame sync, 24b word
+  *pSPORT1_TCR1 = ITCLK | ITFS | TFSR | LATFS ;
+  *pSPORT1_TCR2 = 23 | TXSE;
+   ////
+  ////
 
-  // clock division: we want ~10Mhz, core clock is 108Mhz
+
+ // clock division: we want ~10Mhz, core clock is 108Mhz
   // tclk = sclk / ( 2 x (div + 1)
   //  *pSPORT1_TCLKDIV = 5;
   /// DAC datasheet indicates we can go up to 50Mhz
   // here's 27 Mhz?
   /// this works fine in the triangle test
+ 
   *pSPORT1_TCLKDIV = 1;
 
-  //  config = *pSPORT1_TCR1;
-   
-  /// enable sport1
-  ////// do this later for DMA
-  ///    *pSPORT1_TCR1 |= TSPEN;
-
-  /// receive configuration: don't care?
-  //  *pSPORT1_RCR1 = RFSR | RCKFE;
-  //  *pSPORT1_RCR2 = SLEN_24 | RXSE | RSFSE;
 }
 
 

@@ -45,6 +45,7 @@ void dac_update(u8 ch, u16 val) {
   // lshift cause we are spoofing last frame for timing...
   // first, dummy write to primary data
   cvTxBuf[0] = 0; 
-  cvTxBuf[1] = buf << 1;
+  //  cvTxBuf[1] = buf << 1;
+  cvTxBuf[1] = buf;
   
 }
