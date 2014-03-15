@@ -358,11 +358,11 @@ void module_process_frame(void) {
   //   dac_update(0, cvSlew[0].x );
 
   //  if( (cvChan == 0) || (cvChan == 3) ) {
-  //     dac_update(cvChan, cvSlew[cvChan].x );
+  dac_update(cvChan, cvSlew[cvChan].x );
      //   }
 
-     //  cvChan++;
-     //  if(cvChan > 3) { cvChan = 0; }
+  cvChan++;
+  if(cvChan > 3) { cvChan = 0; }
 }
 
 // lazy inclusion... sorry

@@ -40,12 +40,9 @@ void dac_update(u8 ch, u16 val) {
   buf |= ((1 << ch) << DAC_ADDR_LSHIFT);
   //  buf |= val;
   buf |= (val & DAC_VALUE_MASK);
-
-
-  // lshift cause we are spoofing last frame for timing...
+  // lshift cause we are spoofing last frame for timing... rrg
   // first, dummy write to primary data
-  cvTxBuf[0] = 0; 
+  //  cvTxBuf[0] = 0; 
   //  cvTxBuf[1] = buf << 1;
-  cvTxBuf[1] = buf;
-  
+  cvTxBuf[1] = buf;  
 }
