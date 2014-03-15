@@ -73,11 +73,11 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_rq1 :
     //    filter_1p_lo_in( &(voice[1].rqSlew), v << 14 ); 
-    voice[1].rqSlew.x = v;
+    voice[1].rqSlew.x = v << 14;
     break;
   case eParam_rq0 :
     //    filter_1p_lo_in( &(voice[0].rqSlew), v << 14 );
-    voice[1].rqSlew.x = v;
+    voice[0].rqSlew.x = v << 14;
 
     break;
   case eParam_low1 :

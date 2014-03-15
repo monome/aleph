@@ -476,9 +476,8 @@ void handle_key_3(s32 val) {
 void handle_enc_0(s32 val) {
   // change parameter value, accelerated
   if(*pageSelect != -1) {
-    // lets speed this up shall we
-    //... not too much
-    select_edit( (scale_knob_value(val)  * 8 ) );
+    //    select_edit( (scale_knob_value(val) ) );
+    select_edit( (scale_knob_value_fast(val) ) );
   }
 }
 
