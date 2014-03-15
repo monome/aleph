@@ -184,26 +184,18 @@ const op_desc_t op_registry[numOpClasses] = {
     .init = &op_midi_cc_init,
     .deinit = op_midi_cc_deinit
   },
-  /*
-  {
-    .name = "MIDIPITCH",
-    .size = sizeof(op_midi_bend_t),
-    .init = &op_route_init,
-    .deinit = NULL
-  }, 
-  {
-    .name = "MIDITOUCH",
-    .size = sizeof(op_midi_touch_t),
-    .init = &op_route_init,
-    .deinit = NULL
-  }
-  */
  {
     .name = "MOUT_NOTE",
     .size = sizeof(op_midi_out_note_t),
     .init = &op_midi_out_note_init,
     .deinit = NULL
-  },
+ }, {
+    .name = "LIST16",
+    .size = sizeof(op_list16_t),
+    .init = &op_list16_init,
+    .deinit = NULL    
+  }
+
 };
 
 

@@ -67,6 +67,7 @@ typedef enum {
   eOpDelay,
   eOpRoute,
   eOpMidiCC,
+  eOpList16,
   //  eOpMidiBend,
   //  eOpMidiTouch,
   eOpMidiOutNote,

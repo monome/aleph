@@ -480,7 +480,7 @@ void handle_key_3(s32 val) {
 
 void handle_enc_0(s32 val) {
   // change parameter value, accelerated
-  if(pageSelect != -1) {
+  if(*pageSelect != -1) {
     select_edit(scale_knob_value(val));
   }
 }
@@ -499,7 +499,7 @@ void handle_enc_1(s32 val) {
     redraw_ins_preset();
   } else {
   // change parameter value, unaccelerated
-    if(pageSelect != -1) {      
+    if(*pageSelect != -1) {      
       select_edit(scale_knob_value_small(val));
     }
   }
