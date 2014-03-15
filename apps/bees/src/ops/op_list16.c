@@ -21,7 +21,7 @@ static void op_list16_in_i13(op_list16_t* add, const io_t v);
 static void op_list16_in_i14(op_list16_t* add, const io_t v);
 static void op_list16_in_i15(op_list16_t* add, const io_t v);
 
-static void op_list16_inc_input(op_list16_t* mul, const s16 idx, const io_t inc);
+//static void op_list16_inc_input(op_list16_t* mul, const s16 idx, const io_t inc);
 
 // pickle / unpickle
 static u8* op_list16_pickle(op_list16_t* op, u8* dst);
@@ -29,8 +29,8 @@ static const u8* op_list16_unpickle(op_list16_t* op, const u8* src);
 
 //-------------------------------------------------
 //---- static vars
-static const char* op_list16_instring = "INDEX\0  I0\0     I1\0     I2\0     I3\0     I4\0     I5\0     I6\0     I7\0     I8\0     I9\0     I10\0    I11\0    I12\0    I13\0    I14\0    I15\0    ";
-static const char* op_list16_outstring = "VAL\0    ";
+static const char* op_list16_instring = "INDEX   I0      I1      I2      I3      I4      I5      I6      I7      I8      I9      I10     I11     I12     I13     I14     I15     ";
+static const char* op_list16_outstring = "VAL     ";
 static const char* op_list16_opstring = "LIST16";
 
 static op_in_fn op_list16_in_fn[17] = {
@@ -61,7 +61,6 @@ void op_list16_init(void* mem) {
   list16->super.numOutputs = 1;
   list16->outs[0] = -1;
 
-  list16->super.inc_fn = (op_inc_fn)op_list16_inc_input;
   list16->super.in_fn = op_list16_in_fn;
   list16->super.in_val = list16->in_val;
   list16->super.pickle = (op_pickle_fn) (&op_list16_pickle);
@@ -119,56 +118,8 @@ static void op_list16_in_index(op_list16_t* list16, const io_t val) {
   if(v>15) v = 15;
   list16->index = v;
 
-  switch(v) {
-    case 0:
-      list16->val = list16->i0;
-      break;
-    case 1:
-      list16->val = list16->i1;
-      break;
-    case 2:
-      list16->val = list16->i2;
-      break;
-    case 3:
-      list16->val = list16->i3;
-      break;
-    case 4:
-      list16->val = list16->i4;
-      break;
-    case 5:
-      list16->val = list16->i5;
-      break;
-    case 6:
-      list16->val = list16->i6;
-      break;
-    case 7:
-      list16->val = list16->i7;
-      break;
-    case 8:
-      list16->val = list16->i8;
-      break;
-    case 9:
-      list16->val = list16->i9;
-      break;
-    case 10:
-      list16->val = list16->i10;
-      break;
-    case 11:
-      list16->val = list16->i11;
-      break;
-    case 12:
-      list16->val = list16->i12;
-      break;
-    case 13:
-      list16->val = list16->i13;
-      break;
-    case 14:
-      list16->val = list16->i14;
-      break;
-    case 15:
-      list16->val = list16->i15;
-      break;
-  }
+  // hack based on input layout. 
+  list16->val = *(list16->in_val[v + 1]);
 
   net_activate(list16->outs[0], list16->val, list16);
 }
@@ -239,13 +190,14 @@ static void op_list16_in_i15(op_list16_t* list16, const io_t val) {
 
 
 //===== UI input
+/*
 static void op_list16_inc_input(op_list16_t* list16, const s16 idx, const io_t inc) {
   io_t val;
   switch(idx) {
   case 0:  // index
     val = op_sadd(list16->index, inc);
     if(val<0) val = 0;
-    if(val>7) val = 15;
+    if(val>15) val = 15;
     op_list16_in_index(list16, val);
     break; 
   case 1:
@@ -314,7 +266,7 @@ static void op_list16_inc_input(op_list16_t* list16, const s16 idx, const io_t i
     break;         
   }
 }
-
+*/
 
 // pickle / unpickle
 u8* op_list16_pickle(op_list16_t* op, u8* dst) {
