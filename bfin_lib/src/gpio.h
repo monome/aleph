@@ -22,7 +22,6 @@
 #define DAC_LDAC_LO	 *pFIO_FLAG_D &= DAC_LDAC_MASK
 #define DAC_LDAC_HI  	 *pFIO_FLAG_D |= DAC_LDAC_UNMASK
 
-
 // "ready" pin - pf12
 // set high when able to receive param changes
 // e.g. init finished, frame finished

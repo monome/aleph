@@ -29,8 +29,8 @@ static const u8* op_list16_unpickle(op_list16_t* op, const u8* src);
 
 //-------------------------------------------------
 //---- static vars
-static const char* op_list16_instring = "INDEX   I0      I1      I2      I3      I4      I5      I6      I7      I8      I9      I10     I11     I12     I13     I14     I15     ";
-static const char* op_list16_outstring = "VAL     ";
+static const char* op_list16_instring = "INDEX\0  I0\0     I1\0     I2\0     I3\0     I4\0     I5\0     I6\0     I7\0     I8\0     I9\0     I10\0    I11\0    I12\0    I13\0    I14\0    I15\0    ";
+static const char* op_list16_outstring = "VAL\0    ";
 static const char* op_list16_opstring = "LIST16";
 
 static op_in_fn op_list16_in_fn[17] = {
@@ -118,8 +118,7 @@ static void op_list16_in_index(op_list16_t* list16, const io_t val) {
   if(v>15) v = 15;
   list16->index = v;
 
-  // hack based on input layout. 
-  list16->val = *(list16->in_val[v + 1]);
+  list16->val = *(list16->in_val[v+1]);
 
   net_activate(list16->outs[0], list16->val, list16);
 }

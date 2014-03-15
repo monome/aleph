@@ -244,10 +244,6 @@ void module_init(void) {
   }
 
   // dac
-  //  filter_1p_lo_init( &(cvSlew[0]), 0xf );
-  //  filter_1p_lo_init( &(cvSlew[1]), 0xf );
-  //  filter_1p_lo_init( &(cvSlew[2]), 0xf );
-  //  filter_1p_lo_init( &(cvSlew[3]), 0xf );
   slew_init(cvSlew[0] , 0, 0, 0 );
   slew_init(cvSlew[1] , 0, 0, 0 );
   slew_init(cvSlew[2] , 0, 0, 0 );
