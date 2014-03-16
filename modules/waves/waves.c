@@ -340,8 +340,7 @@ extern u32 module_get_num_params(void) {
 
 // frame callback
 void module_process_frame(void) {
-  volatile u32 delay;
-
+  //  volatile u32 delay;
   calc_frame();
 
   // we could shift to fract16 at a cost of only 1b resolution
@@ -351,7 +350,7 @@ void module_process_frame(void) {
   //   dac_update(0, cvSlew[0].x );
   
   dac_update(cvChan, cvSlew[cvChan].y );
-
+     
   cvChan = (cvChan + 1) & 3;
 }
 

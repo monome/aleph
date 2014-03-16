@@ -203,7 +203,7 @@ void init_DMA(void) {
   *pDMA1_X_MODIFY = 4;
   
   // Set up DMA2 to transmit
-  // Map DMA2 to Sport0 TX
+  // Map DMA2 to Sport0 TX2 
   *pDMA2_PERIPHERAL_MAP = 0x2000;
   
   // Configure DMA2

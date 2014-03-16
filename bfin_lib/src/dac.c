@@ -32,7 +32,7 @@ void init_dac(void) {
 
 // update via DMA
 void dac_update(int ch, u16 val) {
-  const u32 buf = dacWrite | dacChanAddr[ch] | (u32)val;
+  const u32 buf = dacWrite | dacChanAddr[ch] | (u32)val; 
   cvTxBuf[0] = 0x00000000;
   cvTxBuf[1] = buf;
 }
