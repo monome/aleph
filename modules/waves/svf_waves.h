@@ -26,11 +26,16 @@ typedef struct _filter_svf {
   fract32 notch;
   
   // output mix
-  fract16 lowMix;
-  fract16 highMix;
-  fract16 bandMix;
-  fract16 notchMix;
-  fract16 peakMix;
+
+  /// seems like these are rarely used really
+  //  fract16 lowMix;
+  //  fract16 highMix;
+  //  fract16 bandMix;
+  //  fract16 notchMix;
+  //  fract16 peakMix;
+
+  // use a single mode for output  :/
+  fract32* mode;
   
   // kinda retarded, but use rshift for rq values >=1
   u8 rqShift;
@@ -49,12 +54,8 @@ extern void filter_svf_set_coeff    ( filter_svf* f, fract32 coeff );
 
 // set RQ (reciprocal of q: resonance/bandwidth)
 extern void filter_svf_set_rq ( filter_svf* f, fract32 rq );
-// set output mixes
-extern void filter_svf_set_low   ( filter_svf* f, fract16 mix );
-extern void filter_svf_set_high  ( filter_svf* f, fract16 mix );
-extern void filter_svf_set_band  ( filter_svf* f, fract16 mix );
-extern void filter_svf_set_notch ( filter_svf* f, fract16 mix  );
-extern void filter_svf_set_peak ( filter_svf* f, fract16 mix );
+// set output mode
+extern void filter_svf_set_mode   ( filter_svf* f, int mode );
 // get next value (with input)
 extern fract32 filter_svf_next( filter_svf* f, fract32 in );
 

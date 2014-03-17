@@ -8,11 +8,7 @@
 // ranges and radix
 // ranges are in 16.16
 // radix should be minimal bits to accommodate entire integer range.
-
-//// these are defined in the oscillator dsp unit.
-/* #define OSC_FREQ_MIN 0x040000      // 4 hz */
-/* #define OSC_FREQ_MAX 0x40000000    // 16384 hz */
-/* #define OSC_FREQ_RADIX 15 */
+// note that this includes an obligatory sign bit, even if min >= 0
 
 #define PARAM_HZ_MIN OSC_FREQ_MIN
 #define PARAM_HZ_MAX OSC_FREQ_MAX
@@ -45,9 +41,8 @@
 
 // fm delay
 #define PARAM_FM_DEL_MIN 0
-#define PARAM_FM_DEL_MAX 1023
-#define PARAM_FM_DEL_DEFAULT 8
-#define PARAM_FM_DEL_RADIX 11
+#define PARAM_FM_DEL_MAX 0x1000
+#define PARAM_FM_DEL_DEFAULT 0xff
 
 #define PARAM_AMP_6 (FRACT32_MAX >> 1)
 #define PARAM_AMP_12 (FRACT32_MAX >> 2)
@@ -56,16 +51,19 @@
 // about 1ms?
 #define PARAM_SLEW_DEFAULT  0x76000000
 
+// mode index in 16.16
+#define PARAM_MODE_MIN 0
+#define PARAM_MODE_MAX 0x30000
+#define PARAM_MODE_RADIX 3
+
+
 // base-frequency limits in fix16
 #define OSC_HZ_MIN 0x00010000      // 1 hz
 #define OSC_HZ_MAX 0x40000000    // 16384 hz
 #define OSC_HZ_RADIX 15
 
+
 #define NUM_PARAMS eParamNumParams
-
-
-
-
 
 // parameters
 enum params {
@@ -144,20 +142,14 @@ enum params {
   // filter 1
   eParam_cut1,		
   eParam_rq1,		
-  eParam_low1,		
-  eParam_high1,		
-  eParam_band1,		
-  eParam_notch1,	
+  eParam_mode1,
   eParam_fwet1,		
   eParam_fdry1,		
 
   // filter 0
   eParam_cut0,
   eParam_rq0,
-  eParam_low0,		
-  eParam_high0,		
-  eParam_band0,		
-  eParam_notch0,	
+  eParam_mode0,
   eParam_fwet0,		
   eParam_fdry0,		
 

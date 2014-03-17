@@ -118,29 +118,29 @@ void fill_param_desc(ParamDesc* desc) {
   desc[eParam_rq1].max = PARAM_RQ_MAX;
   desc[eParam_rq1].radix = 2;
   
-  strcpy(desc[eParam_low1].label, "low1");
-  desc[eParam_low1].type = eParamTypeAmp; 
-  desc[eParam_low1].min = 0x00000000; 
-  desc[eParam_low1].max = FR32_MAX;
-  desc[eParam_low1].radix = 0;
+  /* strcpy(desc[eParam_low1].label, "low1"); */
+  /* desc[eParam_low1].type = eParamTypeAmp;  */
+  /* desc[eParam_low1].min = 0x00000000;  */
+  /* desc[eParam_low1].max = FR32_MAX; */
+  /* desc[eParam_low1].radix = 0; */
 
-  strcpy(desc[eParam_high1].label, "high1");
-  desc[eParam_high1].type = eParamTypeAmp; 
-  desc[eParam_high1].min = 0x00000000; 
-  desc[eParam_high1].max = FR32_MAX;
-  desc[eParam_high1].radix = 0;
+  /* strcpy(desc[eParam_high1].label, "high1"); */
+  /* desc[eParam_high1].type = eParamTypeAmp;  */
+  /* desc[eParam_high1].min = 0x00000000;  */
+  /* desc[eParam_high1].max = FR32_MAX; */
+  /* desc[eParam_high1].radix = 0; */
 
-  strcpy(desc[eParam_band1].label, "band1");
-  desc[eParam_band1].type = eParamTypeAmp; 
-  desc[eParam_band1].min = 0x00000000; 
-  desc[eParam_band1].max = FR32_MAX;
-  desc[eParam_band1].radix = 0;
+  /* strcpy(desc[eParam_band1].label, "band1"); */
+  /* desc[eParam_band1].type = eParamTypeAmp;  */
+  /* desc[eParam_band1].min = 0x00000000;  */
+  /* desc[eParam_band1].max = FR32_MAX; */
+  /* desc[eParam_band1].radix = 0; */
 
-  strcpy(desc[eParam_notch1].label, "notch1");
-  desc[eParam_notch1].type = eParamTypeAmp; 
-  desc[eParam_notch1].min = 0x00000000; 
-  desc[eParam_notch1].max = FR32_MAX;
-  desc[eParam_notch1].radix = 0;
+  /* strcpy(desc[eParam_notch1].label, "notch1"); */
+  /* desc[eParam_notch1].type = eParamTypeAmp;  */
+  /* desc[eParam_notch1].min = 0x00000000;  */
+  /* desc[eParam_notch1].max = FR32_MAX; */
+  /* desc[eParam_notch1].radix = 0; */
 
   strcpy(desc[eParam_fwet1].label, "fwet1");
   desc[eParam_fwet1].type = eParamTypeAmp; 
@@ -168,29 +168,41 @@ void fill_param_desc(ParamDesc* desc) {
   desc[eParam_rq0].max = PARAM_RQ_MAX;
   desc[eParam_rq0].radix = 2;
   
-  strcpy(desc[eParam_low0].label, "low0");
-  desc[eParam_low0].type = eParamTypeAmp; 
-  desc[eParam_low0].min = 0x00000000; 
-  desc[eParam_low0].max = FR32_MAX;
-  desc[eParam_low0].radix = 1;
+  /* strcpy(desc[eParam_low0].label, "low0"); */
+  /* desc[eParam_low0].type = eParamTypeAmp;  */
+  /* desc[eParam_low0].min = 0x00000000;  */
+  /* desc[eParam_low0].max = FR32_MAX; */
+  /* desc[eParam_low0].radix = 1; */
 
-  strcpy(desc[eParam_high0].label, "high0");
-  desc[eParam_high0].type = eParamTypeAmp; 
-  desc[eParam_high0].min = 0x00000000; 
-  desc[eParam_high0].max = FR32_MAX;
-  desc[eParam_high0].radix = 1;
+  /* strcpy(desc[eParam_high0].label, "high0"); */
+  /* desc[eParam_high0].type = eParamTypeAmp;  */
+  /* desc[eParam_high0].min = 0x00000000;  */
+  /* desc[eParam_high0].max = FR32_MAX; */
+  /* desc[eParam_high0].radix = 1; */
 
-  strcpy(desc[eParam_band0].label, "band0");
-  desc[eParam_band0].type = eParamTypeAmp; 
-  desc[eParam_band0].min = 0x00000000; 
-  desc[eParam_band0].max = FR32_MAX;
-  desc[eParam_band0].radix = 1;
+  /* strcpy(desc[eParam_band0].label, "band0"); */
+  /* desc[eParam_band0].type = eParamTypeAmp;  */
+  /* desc[eParam_band0].min = 0x00000000;  */
+  /* desc[eParam_band0].max = FR32_MAX; */
+  /* desc[eParam_band0].radix = 1; */
 
-  strcpy(desc[eParam_notch0].label, "notch0");
-  desc[eParam_notch0].type = eParamTypeAmp; 
-  desc[eParam_notch0].min = 0x00000000; 
-  desc[eParam_notch0].max = FR32_MAX;
-  desc[eParam_notch0].radix = 1;
+  /* strcpy(desc[eParam_notch0].label, "notch0"); */
+  /* desc[eParam_notch0].type = eParamTypeAmp;  */
+  /* desc[eParam_notch0].min = 0x00000000;  */
+  /* desc[eParam_notch0].max = FR32_MAX; */
+  /* desc[eParam_notch0].radix = 1; */
+
+  strcpy(desc[eParam_mode0].label, "mode0");
+  desc[eParam_mode0].type = eParamTypeFix; 
+  desc[eParam_mode0].min = PARAM_MODE_MIN; 
+  desc[eParam_mode0].max = PARAM_MODE_MAX; 
+  desc[eParam_mode0].radix = PARAM_MODE_RADIX;
+
+  strcpy(desc[eParam_mode1].label, "mode1");
+  desc[eParam_mode1].type = eParamTypeFix; 
+  desc[eParam_mode1].min = PARAM_MODE_MIN; 
+  desc[eParam_mode1].max = PARAM_MODE_MAX; 
+  desc[eParam_mode1].radix = PARAM_MODE_RADIX;
 
   strcpy(desc[eParam_fwet0].label, "fwet0");
   desc[eParam_fwet0].type = eParamTypeAmp; 

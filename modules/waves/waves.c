@@ -31,8 +31,8 @@
 
 #define WAVES_NVOICES 2
 
-#define WAVES_PM_DEL_SAMPS 1024
-#define WAVES_PM_DEL_SAMPS_1 1023
+#define WAVES_PM_DEL_SAMPS 0x10000
+#define WAVES_PM_DEL_SAMPS_1 0xffff
 
 //-------- data types
 
@@ -44,6 +44,8 @@
 typedef struct _wavesData {
   ModuleData super;
   ParamData mParamData[eParamNumParams];
+  // PM delay buffers
+  fract32* pmDelBuf[WAVES_NVOICES][WAVES_PM_DEL_SAMPS];
 } wavesData;
 
 
@@ -82,7 +84,8 @@ typedef struct _waveVoice {
   fract32 wmIn;
 
   // PM delay buffer
-  fract32 pmDelBuf[WAVES_PM_DEL_SAMPS];
+  //  fract32 pmDelBuf[WAVES_PM_DEL_SAMPS];
+  fract32* pmDelBuf;
   // PM delay write index
   u32 pmDelWrIdx;
   // PM delay read index
@@ -355,18 +358,15 @@ void module_init(void) {
 
   param_setup(  eParam_cut1,	PARAM_CUT_DEFAULT);
   param_setup(  eParam_rq1,	PARAM_RQ_DEFAULT);
-  param_setup(  eParam_low1,       PARAM_AMP_6 );
-  param_setup(  eParam_high1,	0 );
-  param_setup(  eParam_band1,	0 );
-  param_setup(  eParam_notch1,	0 );
+  param_setup(  eParam_mode1,	0);
+
   param_setup(  eParam_fwet1,	PARAM_AMP_6 );
   param_setup(  eParam_fdry1,	PARAM_AMP_6 );
+
   param_setup(  eParam_cut0, 	PARAM_CUT_DEFAULT );
   param_setup(  eParam_rq0, 	PARAM_RQ_DEFAULT );
-  param_setup(  eParam_low0,	FRACT32_MAX >> 1 );
-  param_setup(  eParam_high0,	0 );
-  param_setup(  eParam_band0,	0 );
-  param_setup(  eParam_notch0,	0 );
+  param_setup(  eParam_mode0,	0);
+
   param_setup(  eParam_fwet0,	PARAM_AMP_6 );
   param_setup(  eParam_fdry0,	PARAM_AMP_6 );
 

@@ -94,30 +94,38 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_rq0 :
     voice[0].rqSlew.x = v << 14;
     break;
-  case eParam_low1 :
-    filter_svf_set_low(&(voice[1].svf), trunc_fr1x32(v));
+  /* case eParam_low1 : */
+  /*   filter_svf_set_low(&(voice[1].svf), trunc_fr1x32(v)); */
+  /*   break; */
+  /* case eParam_low0 : */
+  /*   filter_svf_set_low(&(voice[0].svf), trunc_fr1x32(v)); */
+  /*   break; */
+  /* case eParam_high1 : */
+  /*   filter_svf_set_high(&(voice[1].svf), trunc_fr1x32(v)); */
+  /*   break; */
+  /* case eParam_high0 : */
+  /*   filter_svf_set_high(&(voice[0].svf), trunc_fr1x32(v)); */
+  /*   break; */
+  /* case eParam_band1 : */
+  /*   filter_svf_set_band(&(voice[1].svf), trunc_fr1x32(v)); */
+  /*   break; */
+  /* case eParam_band0 : */
+  /*   filter_svf_set_band(&(voice[0].svf), trunc_fr1x32(v)); */
+  /*   break; */
+  /* case eParam_notch1 : */
+  /*   filter_svf_set_notch(&(voice[1].svf), trunc_fr1x32(v)); */
+  /*   break; */
+  /* case eParam_notch0 : */
+  /*   filter_svf_set_notch(&(voice[0].svf), trunc_fr1x32(v)); */
+  /*   break; */
+
+  case eParam_mode0: 
+    filter_svf_set_mode(  &(voice[0].svf), v >> 16 );
     break;
-  case eParam_low0 :
-    filter_svf_set_low(&(voice[0].svf), trunc_fr1x32(v));
+  case eParam_mode1:
+    filter_svf_set_mode(  &(voice[1].svf), v >> 16 );
     break;
-  case eParam_high1 :
-    filter_svf_set_high(&(voice[1].svf), trunc_fr1x32(v));
-    break;
-  case eParam_high0 :
-    filter_svf_set_high(&(voice[0].svf), trunc_fr1x32(v));
-    break;
-  case eParam_band1 :
-    filter_svf_set_band(&(voice[1].svf), trunc_fr1x32(v));
-    break;
-  case eParam_band0 :
-    filter_svf_set_band(&(voice[0].svf), trunc_fr1x32(v));
-    break;
-  case eParam_notch1 :
-    filter_svf_set_notch(&(voice[1].svf), trunc_fr1x32(v));
-    break;
-  case eParam_notch0 :
-    filter_svf_set_notch(&(voice[0].svf), trunc_fr1x32(v));
-    break;
+
 
     // filter balance
   case eParam_fwet0 :
