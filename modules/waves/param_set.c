@@ -12,7 +12,14 @@ static inline fract16 param_fract_to_slew16( ParamValue v) {
   return trunc_fr1x32(v) & 0x7ffe;
 }
 
-
+// set adc_dac patch point
+static inline void param_set_adc_patch(int i, int o, ParamValue v) {
+  if(v > 0) { 
+    patch_adc_dac[i][o] = &(out[o]);
+  } else {
+    patch_adc_dac[i][o] = &trash;
+  }
+}
 
 void module_set_param(u32 idx, ParamValue v) {
   switch(idx) {
@@ -211,52 +218,52 @@ void module_set_param(u32 idx, ParamValue v) {
 
    // i/o mix:
   case eParam_adc0_dac0 :
-    mix_adc_dac[0][0] = trunc_fr1x32(v);
+    param_set_adc_patch(0, 0, v);
     break;
   case eParam_adc0_dac1 :
-    mix_adc_dac[0][1] = trunc_fr1x32(v);
+    param_set_adc_patch(0, 1, v);
     break;
   case eParam_adc0_dac2 :
-    mix_adc_dac[0][2] = trunc_fr1x32(v);
+    param_set_adc_patch(0, 2, v);
     break;
   case eParam_adc0_dac3 :
-    mix_adc_dac[0][3] = trunc_fr1x32(v);
+    param_set_adc_patch(0, 3, v);
     break;
   case eParam_adc1_dac0 :
-    mix_adc_dac[1][0] = trunc_fr1x32(v);
+    param_set_adc_patch(1, 0, v);
     break;
   case eParam_adc1_dac1 :
-    mix_adc_dac[1][1] = trunc_fr1x32(v);
+    param_set_adc_patch(1, 1, v);
     break;
   case eParam_adc1_dac2 :
-    mix_adc_dac[1][2] = trunc_fr1x32(v);
+    param_set_adc_patch(1, 2, v);
     break;
   case eParam_adc1_dac3 :
-    mix_adc_dac[1][3] = trunc_fr1x32(v);
+    param_set_adc_patch(1, 3, v);
     break;
   case eParam_adc2_dac0 :
-    mix_adc_dac[2][0] = trunc_fr1x32(v);
+    param_set_adc_patch(2, 0, v);
     break;
   case eParam_adc2_dac1 :
-    mix_adc_dac[2][1] = trunc_fr1x32(v);
+    param_set_adc_patch(2, 1, v);
     break;
   case eParam_adc2_dac2 :
-    mix_adc_dac[2][2] = trunc_fr1x32(v);
+    param_set_adc_patch(2, 2, v);
     break;
   case eParam_adc2_dac3 :
-    mix_adc_dac[2][3] = trunc_fr1x32(v);
+    param_set_adc_patch(2, 3, v);
     break;
   case eParam_adc3_dac0 :
-    mix_adc_dac[3][0] = trunc_fr1x32(v);
+    param_set_adc_patch(3, 0, v);
     break;
   case eParam_adc3_dac1 :
-    mix_adc_dac[3][1] = trunc_fr1x32(v);
+    param_set_adc_patch(3, 1, v);
     break;
   case eParam_adc3_dac2 :
-    mix_adc_dac[3][2] = trunc_fr1x32(v);
+    param_set_adc_patch(3, 2, v);
     break;
   case eParam_adc3_dac3 :
-    mix_adc_dac[3][3] = trunc_fr1x32(v);
+    param_set_adc_patch(3, 3, v);
     break;
 
     // osc mix:

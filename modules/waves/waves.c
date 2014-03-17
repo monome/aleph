@@ -104,12 +104,18 @@ static const fract32 wavtab[WAVE_SHAPE_NUM][WAVE_TAB_SIZE] = {
 // additional busses
 static fract32 voiceOut[WAVES_NVOICES] = { 0, 0, };
 
-/// mixes
-// each input -> each output
-static fract16 mix_adc_dac[4][4] = { { 0, 0, 0, 0 },
-			      { 0, 0, 0, 0 },
-			      { 0, 0, 0, 0 },
-			      { 0, 0, 0, 0 } };
+/* /// mixes */
+/* // each input -> each output */
+/* static fract16 mix_adc_dac[4][4] = { { 0, 0, 0, 0 }, */
+/* 			      { 0, 0, 0, 0 }, */
+/* 			      { 0, 0, 0, 0 }, */
+/* 			      { 0, 0, 0, 0 } }; */
+
+// adc_dac connections are not mix points, but patch points.
+// implemented as array of pointers
+// set pointer to trash if unconnected
+static fract32 trash;
+static volatile fract32* patch_adc_dac[4][4];
 
 
 // each osc -> each output
@@ -152,6 +158,7 @@ static inline void mix_voice (void) {
 }
 
 static inline void mix_adc (void) {
+#if WAVES_MIX_ADC_DAC
   int i, j;
   fract32* pout;
   fract32* pin = in;
@@ -166,6 +173,19 @@ static inline void mix_adc (void) {
     }
     pin++;
   }
+#else
+  /// can't mix, use pointers for patch points right now
+  int i, j;
+  volatile fract32** pout = &(patch_adc_dac[0][0]);
+  fract32* pin = in;
+  for(i=0; i < 4; i++) {    
+    for(j=0; j < 4; j++) {
+      **pout = add_fr1x32(**pout, *pin);
+      pout++;
+    }
+    pin++;
+  }
+#endif
 }
 
 
@@ -234,16 +254,15 @@ static void calc_frame(void) {
   // mix the outputs
   mix_voice();
   
-  //  mix_adc();
-
-  
+  // apply adc via patch pointers
+  mix_adc();
 }
 
 //----------------------
 //----- external functions
 
 void module_init(void) {
-  int i;
+  int i, j;
 
   // init module/param descriptor
   // intialize local data at start of SDRAM
@@ -265,8 +284,12 @@ void module_init(void) {
 
     slew_init((voice[i].wetSlew), 0, 0, 0 );
     slew_init((voice[i].drySlew), 0, 0, 0 );
+  }
 
-
+  for(i=0; i<4; i++) {
+    for(j=0; j<4; j++) {
+      patch_adc_dac[i][j] = &trash;
+    }
   }
 
   // dac
