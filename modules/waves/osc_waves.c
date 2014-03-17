@@ -76,13 +76,15 @@ static inline void osc_calc_pm(osc* osc) {
 
 // lookup 
 static inline fract32 osc_lookup(osc* osc) {
+
+
   // index of wavetables and interpolation weights for shape
   //// FIXME: could calculate and store these only when waveshape changes
   /// probalby not a huge difference, especially if WM enabled
   //  u32 waveIdxA = osc->shapeMod >> (WAVE_SHAPE_IDX_SHIFT);
   /// no shape modulation for now...
   u32 waveIdxA = osc->shape >> (WAVE_SHAPE_IDX_SHIFT);
-  u32 waveIdxB = waveIdxA + 1;
+  u32 waveIdxB = waveIdxA + 1; // no bounds check
   //  fract16 waveMulB = (osc->shapeMod & (WAVE_SHAPE_MASK)) << (WAVE_SHAPE_MUL_SHIFT);
   fract16 waveMulB = (osc->shape & (WAVE_SHAPE_MASK)) << (WAVE_SHAPE_MUL_SHIFT);
   fract16 waveMulA = sub_fr1x16(0x7fff, waveMulB); 

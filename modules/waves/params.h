@@ -42,12 +42,12 @@
 #define PARAM_RQ_MAX 0x0000ffff
 #define PARAM_RQ_DEFAULT 0x0000FFF0
 
+
 // fm delay
 #define PARAM_FM_DEL_MIN 0
 #define PARAM_FM_DEL_MAX 0x10000
 #define PARAM_FM_DEL_DEFAULT 0x00010
 #define PARAM_FM_DEL_RADIX 1
-
 
 #define PARAM_AMP_6 (FRACT32_MAX >> 1)
 #define PARAM_AMP_12 (FRACT32_MAX >> 2)
@@ -56,7 +56,15 @@
 // about 1ms?
 #define PARAM_SLEW_DEFAULT  0x76000000
 
+// base-frequency limits in fix16
+#define OSC_HZ_MIN 0x00010000      // 1 hz
+#define OSC_HZ_MAX 0x40000000    // 16384 hz
+#define OSC_HZ_RADIX 15
+
 #define NUM_PARAMS eParamNumParams
+
+
+
 
 
 // parameters
@@ -65,53 +73,32 @@ enum params {
   /// smoothers have to be processed first!
   eParamAmp0Slew,
   eParamAmp1Slew,
+
   eParamHz0Slew,
   eParamHz1Slew,
+
   eParamWave0Slew,
   eParamWave1Slew,
+
   eParamPm10Slew,
   eParamPm01Slew,
+
   eParamWm10Slew,
   eParamWm01Slew,
 
   eParamCut0Slew,
-  eParamRq0Slew,
-  eParamLow0Slew,
-  eParamHigh0Slew,
-  eParamBand0Slew,
-  eParamNotch0Slew,
-
   eParamCut1Slew,
+
+  eParamRq0Slew,
   eParamRq1Slew,
-  eParamLow1Slew,
-  eParamHigh1Slew,
-  eParamBand1Slew,
-  eParamNotch1Slew,
 
   eParamDry0Slew,
-  eParamWet0Slew,
-
   eParamDry1Slew,
+
+  eParamWet0Slew,
   eParamWet1Slew,
 
-  // smoothing parameter for ALL mix values!
-  eParamMixSlew,
-
-  /// osc out mix
-  eParam_osc0_dac0,
-  eParam_osc0_dac1,
-  eParam_osc0_dac2,
-  eParam_osc0_dac3,
-
-  
-  eParam_osc1_dac0,
-  eParam_osc1_dac1,
-  eParam_osc1_dac2,
-  eParam_osc1_dac3,
-
-  // i/o mix
-
-  
+  // i/o patch points 
   eParam_adc0_dac0,		
   eParam_adc0_dac1,		
   eParam_adc0_dac2,		
@@ -131,8 +118,18 @@ enum params {
   eParam_adc3_dac1,		
   eParam_adc3_dac2,		
   eParam_adc3_dac3,		
- 
 
+  /// osc out mix
+  eParam_osc0_dac0,
+  eParam_osc0_dac1,
+  eParam_osc0_dac2,
+  eParam_osc0_dac3,
+
+  eParam_osc1_dac0,
+  eParam_osc1_dac1,
+  eParam_osc1_dac2,
+  eParam_osc1_dac3,
+ 
   // cv
   eParam_cvSlew3,
   eParam_cvSlew2,
@@ -169,8 +166,8 @@ enum params {
   eParamFmDel0,
   eParamFmDel1,
 
-   eParamBl1,
-  eParamBl0,
+  /* eParamBl1, */
+  /* eParamBl0, */
 
   eParamWm10,
   eParamWm01,

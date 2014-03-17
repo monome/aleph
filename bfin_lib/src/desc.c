@@ -2,9 +2,9 @@
 
   desc.c
 
-small utility to build the paramater descriptor data for a module.
 
-this sourcefile builds a small linux program to wrute param descriptor binary for a given module.
+this sourcefile builds a small linux program 
+to write param descriptor binary for a given module.
 
 compile with 
 -D NAME="waves" 
@@ -29,8 +29,9 @@ compile with
 
 //----------------
 //--- static vars
-//ModuleData data;
+
 ParamDesc desc[eParamNumParams];
+
 char str[64] = "aleph-";
 
 // big ol buffer (1meg)
@@ -39,7 +40,6 @@ char buf[MAXBYTES];
 
 //--------------------
 //---- static func
-//void fill_param_desc(void);
 
 ////////////////////////////////x
 //// FIXME:
@@ -50,6 +50,10 @@ char buf[MAXBYTES];
 // (struct definition in param_common.h
 u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
   u8 i;
+
+
+  printf("\r\n pickling descriptor; name: %s,\ttype: %d, min: 0x%08x, max:0x%08x, radix:%d",
+	 pdesc->label, pdesc->type, pdesc->min, pdesc->max, pdesc->radix );
   // store label string
   for(i=0; i<PARAM_LABEL_LEN; ++i) {
     *dst = pdesc->label[i];

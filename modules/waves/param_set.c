@@ -1,10 +1,18 @@
 // set param values.
 // this is a separate file for convenience only.
 
-// convert fractional 16.16 value to fr16
-static inline fract16 param_to_fr16( ParamValue v) {
+// convert fractional 16.16 value in [0,1) to fr16
+static inline fract16 param_unit_to_fr16( ParamValue v) {
   return (fract16)((v & 0xffff) >> 1);
 }
+
+
+// convert fract32 to fr16 and discard 0x7fff
+static inline fract16 param_fract_to_slew16( ParamValue v) {
+  return trunc_fr1x32(v) & 0x7ffe;
+}
+
+
 
 void module_set_param(u32 idx, ParamValue v) {
   switch(idx) {
@@ -24,61 +32,48 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParamWave1:
-    osc_set_shape( &(voice[1].osc),  param_to_fr16(v) );
+    osc_set_shape( &(voice[1].osc),  param_unit_to_fr16(v) );
     break;
   case eParamWave0:
-    osc_set_shape( &(voice[0].osc),  param_to_fr16(v) );
+    osc_set_shape( &(voice[0].osc),  param_unit_to_fr16(v) );
     break;
 
     // FIXME: this is assuming simple fixed x-modulation with 2 voices.
-    /// should have a matrix of modulation mix points.
+    /// should have a matrix of modulation mix points?
   case eParamPm10:
-    osc_set_pm ( &(voice[0].osc), param_to_fr16(v) );
+    osc_set_pm ( &(voice[0].osc), param_unit_to_fr16(v) );
     break;
   case eParamPm01:
-    osc_set_pm ( &(voice[1].osc), param_to_fr16(v) );
+    osc_set_pm ( &(voice[1].osc), param_unit_to_fr16(v) );
     break;
 
   case eParamWm10:
-    osc_set_wm ( &(voice[0].osc), param_to_fr16(v) );
+    osc_set_wm ( &(voice[0].osc), param_unit_to_fr16(v) );
     break;
   case eParamWm01:
-    osc_set_wm ( &(voice[1].osc), param_to_fr16(v) );
+    osc_set_wm ( &(voice[1].osc), param_unit_to_fr16(v) );
     break;
 
   case eParamAmp1:
-    //    filter_1p_lo_in(&(voice[1].ampSlew), v);
     voice[1].ampSlew.x = v;
     break;
   case eParamAmp0:
-    //    filter_1p_lo_in(&(voice[0].ampSlew), v);
     voice[0].ampSlew.x = v;
     break;
 
-  /* case eParamBl1 : */
-  /*   //    osc_set_bl( &(voice[1].osc), param_to_fr16(v) ); */
-  /*   break; */
-  /* case eParamBl0 : */
-  /*   //    osc_set_bl( &(voice[0].osc), param_to_fr16(v) ); */
-  /*   break; */
 
     //// filter params:
   case eParam_cut1 :
-    //    filter_1p_lo_in( &(voice[1].cutSlew), v );
     voice[1].cutSlew.x = v;
     break;
   case eParam_cut0 :
-    //    filter_1p_lo_in( &(voice[0].cutSlew), v );
     voice[0].cutSlew.x = v;
     break;
   case eParam_rq1 :
-    //    filter_1p_lo_in( &(voice[1].rqSlew), v << 14 ); 
     voice[1].rqSlew.x = v << 14;
     break;
   case eParam_rq0 :
-    //    filter_1p_lo_in( &(voice[0].rqSlew), v << 14 );
     voice[0].rqSlew.x = v << 14;
-
     break;
   case eParam_low1 :
     filter_svf_set_low(&(voice[1].svf), trunc_fr1x32(v));
@@ -107,19 +102,19 @@ void module_set_param(u32 idx, ParamValue v) {
 
     // filter balance
   case eParam_fwet0 :
-    voice[0].fWet = v;
+    voice[0].wetSlew.x = trunc_fr1x32(v);
     break;
 
   case eParam_fwet1 :
-    voice[1].fWet = v;
+    voice[1].wetSlew.x = trunc_fr1x32(v);
     break;
 
   case eParam_fdry0 :
-    voice[0].fDry = v;
+    voice[0].drySlew.x = trunc_fr1x32(v);
     break;
 
   case eParam_fdry1 :
-    voice[1].fDry = v;
+    voice[1].drySlew.x = trunc_fr1x32(v);
     break;
 
     //----- slew parameters
@@ -133,17 +128,17 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParamPm01Slew:
-    voice[1].osc.pmSlew.c = trunc_fr1x32(v);
+    voice[1].osc.pmSlew.c = param_fract_to_slew16(v);
     break;
   case eParamPm10Slew:
-    voice[0].osc.pmSlew.c = trunc_fr1x32(v);
+    voice[0].osc.pmSlew.c = param_fract_to_slew16(v);
     break;
 
   case eParamWm01Slew:
-    voice[1].osc.wmSlew.c = trunc_fr1x32(v);
+    voice[1].osc.wmSlew.c = param_fract_to_slew16(v);
     break;
   case eParamWm10Slew:
-    voice[0].osc.wmSlew.c = trunc_fr1x32(v);
+    voice[0].osc.wmSlew.c = param_fract_to_slew16(v);
     break;
 
   case eParamWave1Slew:
@@ -159,7 +154,6 @@ void module_set_param(u32 idx, ParamValue v) {
 
     // other param slew
   case eParamCut0Slew :
-    //    filter_1p_lo_set_slew(&(voice[0].cutSlew), v);
     voice[0].cutSlew.c = v;
     break;
   case eParamCut1Slew :
@@ -173,9 +167,23 @@ void module_set_param(u32 idx, ParamValue v) {
     voice[1].rqSlew.c = v;
     break;
 
+  case eParamWet0Slew :
+    voice[0].wetSlew.c = param_fract_to_slew16(v);
+    break;
+  case eParamWet1Slew :
+    voice[1].wetSlew.c = param_fract_to_slew16(v);
+    break;
+
+  case eParamDry0Slew :
+    voice[0].drySlew.c = param_fract_to_slew16(v);
+    break;
+  case eParamDry1Slew :
+    voice[1].rqSlew.c = param_fract_to_slew16(v) ;
+    break;
+
+
     // cv values
   case eParam_cvVal0 :
-    //    filter_1p_lo_in(&(cvSlew[0]), (v >> ( PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
     cvSlew[0].x = (v >> (PARAM_DAC_SHIFT)) & DAC_VALUE_MASK;
     break;
   case eParam_cvVal1 :

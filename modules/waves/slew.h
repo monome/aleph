@@ -1,6 +1,9 @@
 #ifndef _ALEPH_WAVES_SLEW_H_
 #define _ALEPH_WAVES_SLEW_H_
 
+/// this is a hack...
+/// descriptor utility ends up including this, which is dumb.
+#if ARCH_BFIN==1 
 #include <fract_math.h>
 
 typedef struct {
@@ -34,4 +37,6 @@ typedef struct {
 				   sub_fr1x16((sl).y, (sl).x)	\
 				   ));				
       
-#endif
+#endif // blackfin architecture
+
+#endif // h guard

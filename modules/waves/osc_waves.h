@@ -12,11 +12,6 @@
 #include "fix.h"
 #include "slew.h"
 
-// base-frequency limits in fix16
-#define OSC_HZ_MIN 0x00010000      // 1 hz
-#define OSC_HZ_MAX 0x40000000    // 16384 hz
-#define OSC_HZ_RADIX 15
-
 //---- expected parameters for wavetable data
 // how many wavetables
 #define WAVE_SHAPE_NUM 5

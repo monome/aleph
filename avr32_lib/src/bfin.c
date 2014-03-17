@@ -361,7 +361,7 @@ void bfin_wait_ready(void) {
   while( !gpio_get_pin_value(BFIN_READY_PIN) ) { 
     print_dbg("\r\n wait bfin_ready ");
   }
-    print_dbg("... waited");
+  print_dbg("... waited");
 }
 
 // get parameter value

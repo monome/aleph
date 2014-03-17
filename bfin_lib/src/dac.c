@@ -5,7 +5,7 @@
 // AD5686R 16-bit quad DAC
 
 static const u32 dacWrite = 0x300000;
-static const dacChanAddr[4] = { 0x10000, 0x20000, 0x40000, 0x80000 };
+static const u32 dacChanAddr[4] = { 0x10000, 0x20000, 0x40000, 0x80000 };
 
 //====================
 //=== global variables , initialized here
