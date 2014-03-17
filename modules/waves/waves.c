@@ -31,8 +31,8 @@
 
 #define WAVES_NVOICES 2
 
-#define WAVES_PM_DEL_SAMPS 0x10000
-#define WAVES_PM_DEL_SAMPS_1 0xffff
+#define WAVES_PM_DEL_SAMPS 0x400
+#define WAVES_PM_DEL_SAMPS_1 0x3ff
 
 //-------- data types
 
@@ -45,7 +45,7 @@ typedef struct _wavesData {
   ModuleData super;
   ParamData mParamData[eParamNumParams];
   // PM delay buffers
-  fract32* pmDelBuf[WAVES_NVOICES][WAVES_PM_DEL_SAMPS];
+  //  fract32 pmDelBuf[WAVES_NVOICES][WAVES_PM_DEL_SAMPS];
 } wavesData;
 
 
@@ -84,8 +84,8 @@ typedef struct _waveVoice {
   fract32 wmIn;
 
   // PM delay buffer
-  //  fract32 pmDelBuf[WAVES_PM_DEL_SAMPS];
-  fract32* pmDelBuf;
+  fract32 pmDelBuf[WAVES_PM_DEL_SAMPS];
+  //  fract32* pmDelBuf;
   // PM delay write index
   u32 pmDelWrIdx;
   // PM delay read index
@@ -116,25 +116,12 @@ static const fract32 wavtab[WAVE_SHAPE_NUM][WAVE_TAB_SIZE] = {
 // additional busses
 static fract32 voiceOut[WAVES_NVOICES] = { 0, 0, };
 
-/* /// mixes */
-/* // each input -> each output */
-/* static fract16 mix_adc_dac[4][4] = { { 0, 0, 0, 0 }, */
-/* 			      { 0, 0, 0, 0 }, */
-/* 			      { 0, 0, 0, 0 }, */
-/* 			      { 0, 0, 0, 0 } }; */
 
-// adc_dac connections are not mix points, but patch points.
-// implemented as array of pointers
-// set pointer to trash if unconnected
+// FIXME: (?)
+// using patch points instead of mix points 
 static fract32 trash;
 static volatile fract32* patch_adc_dac[4][4];
-
-
-// each osc -> each output
-static fract16 mix_osc_dac[2][4] = { { 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
-
-// each osc -> PM inputs
-// static fract16 mix_pm[2][2] = { {0, 0}, {0, 0} };
+static volatile fract32* patch_osc_dac[2][4];
 
 // 10v dac values (u16, but use fract32 and audio integrators for now)
 // static fract32 cvVal[4];
@@ -155,38 +142,19 @@ static inline void param_setup(u32 id, ParamValue v) {
 
 static inline void mix_voice (void) {
   int i, j;
-  fract32* pout;
+  volatile fract32** pout = &(patch_osc_dac[0][0]);
   fract32* pin = voiceOut;
-  fract16* mix = (fract16*)mix_osc_dac;
   for(i=0; i < 2; i++) {    
-    pout = out;
     for(j=0; j < 4; j++) {
-      *pout = add_fr1x32(*pout, mult_fr1x32(trunc_fr1x32(*pin), *mix) );
+      **pout = add_fr1x32(**pout, *pin);
       pout++;
-      mix++;
     }
     pin++;
   }
 }
 
 static inline void mix_adc (void) {
-#if WAVES_MIX_ADC_DAC
-  int i, j;
-  fract32* pout;
-  fract32* pin = in;
-  fract16* mix = (fract16*)mix_adc_dac;
-  for(i=0; i < 4; i++) {    
-    pout = out;
-    for(j=0; j < 4; j++) {
-      /// can't quite handle it...
-      //      *pout = add_fr1x32(*pout, mult_fr1x32(trunc_fr1x32(*pin), *mix) );
-      pout++;
-      mix++;
-    }
-    pin++;
-  }
-#else
-  /// can't mix, use pointers for patch points right now
+  /// can't handle the mix! use pointers for patch points right now
   int i, j;
   volatile fract32** pout = &(patch_adc_dac[0][0]);
   fract32* pin = in;
@@ -197,7 +165,6 @@ static inline void mix_adc (void) {
     }
     pin++;
   }
-#endif
 }
 
 
@@ -212,9 +179,9 @@ static void calc_frame(void) {
     //    v = &(voice[i]);
     // oscillator class includes hz and mod integrators
     v->oscOut = shr_fr1x32( osc_next( &(v->osc) ), 2);
-    // phase mod with fixed 1-frame delay
+
+    // /set modulation - FIXME this is redundant...
     osc_pm_in( &(v->osc), v->pmIn );
-    // shape mod with fixed 1-frame delay
     osc_wm_in( &(v->osc), v->wmIn );
 
     // set filter params
@@ -251,8 +218,9 @@ static void calc_frame(void) {
     v->pmDelWrIdx = (v->pmDelWrIdx + 1) & WAVES_PM_DEL_SAMPS_1;
     v->pmDelRdIdx = (v->pmDelRdIdx + 1) & WAVES_PM_DEL_SAMPS_1;
     // set pm input from delay
-    v->pmIn = v->pmDelBuf[v->pmDelRdIdx];
-    
+    v->pmIn = v->pmDelBuf[v->pmDelRdIdx];    
+    // no tricky modulation routing here!
+    v->wmIn = v->pmDelBuf[v->pmDelRdIdx];    
     // advance pointers
     vout++;
     v++;
@@ -268,10 +236,10 @@ static void calc_frame(void) {
   // zero the outputs
   out[0] = out[1] = out[2] = out[3] = 0;
   
-  // mix the outputs
+  // patch filtered oscs outputs
   mix_voice();
   
-  // apply adc via patch pointers
+  // oatch adc
   mix_adc();
 }
 
@@ -295,6 +263,7 @@ void module_init(void) {
     osc_init( &(voice[i].osc), &wavtab, SAMPLERATE );
     filter_svf_init( &(voice[i].svf) );
     voice[i].amp = tmp;
+
     slew_init((voice[i].ampSlew), 0, 0, 0 );
     slew_init((voice[i].cutSlew), 0, 0, 0 );
     slew_init((voice[i].rqSlew), 0, 0, 0 );
@@ -304,11 +273,19 @@ void module_init(void) {
 
     voice[i].pmDelWrIdx = 0;
     voice[i].pmDelRdIdx = 0;
+
+    //    voice[i].pmDelBuf = data->pmDelBuf[i];
   }
 
   for(i=0; i<4; i++) {
     for(j=0; j<4; j++) {
       patch_adc_dac[i][j] = &trash;
+    }
+  }
+
+  for(i=0; i<2; i++) {
+    for(j=0; j<4; j++) {
+      patch_osc_dac[i][j] = &trash;
     }
   }
 
@@ -371,19 +348,19 @@ void module_init(void) {
   param_setup(  eParam_fdry0,	PARAM_AMP_6 );
 
 
-  param_setup(  eParam_adc0_dac0, 	FRACT32_MAX );
-  param_setup(  eParam_adc1_dac1,  	FRACT32_MAX );
-  param_setup(  eParam_adc2_dac2, 	FRACT32_MAX );
-  param_setup(  eParam_adc3_dac3, 	FRACT32_MAX );
+  param_setup(  eParam_adc0_dac0, 	1 );
+  param_setup(  eParam_adc1_dac1,  	1 );
+  param_setup(  eParam_adc2_dac2, 	1 );
+  param_setup(  eParam_adc3_dac3, 	1 );
 
-  param_setup(  eParam_osc0_dac0, 	FRACT32_MAX );
-  param_setup(  eParam_osc0_dac1,  	FRACT32_MAX );
-  param_setup(  eParam_osc0_dac2, 	FRACT32_MAX );
-  param_setup(  eParam_osc0_dac3, 	FRACT32_MAX );
-  param_setup(  eParam_osc1_dac0, 	FRACT32_MAX );
-  param_setup(  eParam_osc1_dac1,  	FRACT32_MAX );
-  param_setup(  eParam_osc1_dac2, 	FRACT32_MAX );
-  param_setup(  eParam_osc1_dac3, 	FRACT32_MAX );
+  param_setup(  eParam_osc0_dac0, 	1 );
+  param_setup(  eParam_osc0_dac1,  	1 );
+  param_setup(  eParam_osc0_dac2, 	1 );
+  param_setup(  eParam_osc0_dac3, 	1 );
+  param_setup(  eParam_osc1_dac0, 	1 );
+  param_setup(  eParam_osc1_dac1,  	1 );
+  param_setup(  eParam_osc1_dac2, 	1 );
+  param_setup(  eParam_osc1_dac3, 	1 );
 
   param_setup(  eParam_cvVal0, 	FRACT32_MAX >> 1 );
   param_setup(  eParam_cvVal1, 	FRACT32_MAX >> 1 );

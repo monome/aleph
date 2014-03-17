@@ -41,24 +41,20 @@ static inline fract32 freq_to_phase(fix16 freq) {
   
 // calculate modulated and bandlimited waveshape
 static inline void osc_calc_wm(osc* osc) {
-  // FIXME: not using right now
-
-  /* fract32 sm; // mod shape */
-  /* // fract32 sl; // shape limit given current freq */
-
-  /* // add modulation */
-  /* //// FIXME: this is dumb, should be multiplied? */
-  /* sm = add_fr1x32(osc->shape, mult_fr1x32x32(osc->wmIn, osc->wmAmt) ); */
-  /* //  */
-  /* /\* pseudo - bandlimiting: shape limited by inverse ratio to frequency */
-  /*    sm = sub_fr1x32(sm,  */
-  /*    mult_fr1x32x32( (fract32)(fix16_sub(osc->inc, incMin) * shapeLimMul), */
-  /*    osc->bandLim  */
-  /*    ) */
-  /*    ); */
-  /* *\/ */
-  /* if(sm < 0) { sm = 0; } */
-  /* //  osc->shapeMod = sm; */
+  // FIXME: attempt better bandlimiting again
+#if 1 // ???
+  osc->shapeMod = abs_fr1x16(
+			     add_fr1x16(
+					osc->shape, 
+					mult_fr1x16(
+						    trunc_fr1x32(osc->wmIn), 
+						    osc->wmAmt
+						    ) 
+					)
+			     );
+#else
+  osc->shapeMod = osc->shape;
+#endif
 }
 
 // calculate phase incremnet
@@ -76,22 +72,15 @@ static inline void osc_calc_pm(osc* osc) {
 
 // lookup 
 static inline fract32 osc_lookup(osc* osc) {
-
-
   // index of wavetables and interpolation weights for shape
-  //// FIXME: could calculate and store these only when waveshape changes
-  /// probalby not a huge difference, especially if WM enabled
-  //  u32 waveIdxA = osc->shapeMod >> (WAVE_SHAPE_IDX_SHIFT);
-  /// no shape modulation for now...
-  u32 waveIdxA = osc->shape >> (WAVE_SHAPE_IDX_SHIFT);
-  u32 waveIdxB = waveIdxA + 1; // no bounds check
-  //  fract16 waveMulB = (osc->shapeMod & (WAVE_SHAPE_MASK)) << (WAVE_SHAPE_MUL_SHIFT);
-  fract16 waveMulB = (osc->shape & (WAVE_SHAPE_MASK)) << (WAVE_SHAPE_MUL_SHIFT);
+  u32 waveIdxA = osc->shapeMod >> (WAVE_SHAPE_IDX_SHIFT);
+  u32 waveIdxB = waveIdxA + 1; // no bounds check !
+  fract16 waveMulB = (osc->shapeMod & (WAVE_SHAPE_MASK)) << (WAVE_SHAPE_MUL_SHIFT);
   fract16 waveMulA = sub_fr1x16(0x7fff, waveMulB); 
 
   //  signal index and interpolation weights for both wavetables
   u32 signalIdxA = osc->phaseMod >> WAVE_IDX_SHIFT; 
-  u32 signalIdxB = (signalIdxA + 1) & WAVE_TAB_SIZE_1;
+  u32 signalIdxB = (signalIdxA + 1) & WAVE_TAB_SIZE_1; // need the check here
   fract16 signalMulB = (fract16)((osc->phaseMod & (WAVE_IDX_MASK)) >> (WAVE_IDX_MUL_SHIFT));
   fract16 signalMulA = sub_fr1x16(0x7fff, signalMulB); 
   
@@ -256,7 +245,7 @@ fract32 osc_next(osc* osc) {
   // add mix points, then think about it
 
   // calculate waveshape modulation + bandlimiting
-  //  osc_calc_wm(osc);
+  osc_calc_wm(osc);
   //  osc->shapeMod = osc->shape << 16;
 
   // calculate phase modulation

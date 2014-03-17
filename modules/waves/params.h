@@ -41,8 +41,9 @@
 
 // fm delay
 #define PARAM_FM_DEL_MIN 0
-#define PARAM_FM_DEL_MAX 0x1000
+#define PARAM_FM_DEL_MAX 0xffff
 #define PARAM_FM_DEL_DEFAULT 0xff
+#define PARAM_FM_DEL_RADIX 1
 
 #define PARAM_AMP_6 (FRACT32_MAX >> 1)
 #define PARAM_AMP_12 (FRACT32_MAX >> 2)

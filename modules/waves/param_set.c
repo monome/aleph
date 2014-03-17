@@ -21,8 +21,17 @@ static inline void param_set_adc_patch(int i, int o, ParamValue v) {
   }
 }
 
+static inline void param_set_osc_patch(int i, int o, ParamValue v) {
+  if(v > 0) { 
+    patch_osc_dac[i][o] = &(out[o]);
+  } else {
+    patch_osc_dac[i][o] = &trash;
+  }
+}
+
+  // set delay time in samples
 static inline void param_set_pm_del(int i, ParamValue v) { 
-  voice[i].pmDelRdIdx = (voice[i].pmDelWrIdx - v) & WAVES_PM_DEL_SAMPS_1;
+  voice[i].pmDelRdIdx = (voice[i].pmDelWrIdx - (v>>6)) & WAVES_PM_DEL_SAMPS_1;
 } 
 
 void module_set_param(u32 idx, ParamValue v) {
@@ -49,8 +58,6 @@ void module_set_param(u32 idx, ParamValue v) {
     osc_set_shape( &(voice[0].osc),  param_unit_to_fr16(v) );
     break;
 
-    // FIXME: this is assuming simple fixed x-modulation with 2 voices.
-    /// should have a matrix of modulation mix points?
   case eParamPm10:
     osc_set_pm ( &(voice[0].osc), param_unit_to_fr16(v) );
     break;
@@ -59,11 +66,10 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParamFmDel0:
-
+    param_set_pm_del(0, v); 
     break;
-
   case eParamFmDel1:
-      voice[1].pmDelRdIdx = (voice[1].pmDelWrIdx - v) & WAVES_PM_DEL_SAMPS_1;
+    param_set_pm_del(1, v); 
     break;
 
   case eParamWm10:
@@ -288,28 +294,28 @@ void module_set_param(u32 idx, ParamValue v) {
 
     // osc mix:
   case eParam_osc0_dac0 :
-    mix_osc_dac[0][0] = trunc_fr1x32(v);
+    param_set_osc_patch( 0 , 0, v);
     break;
   case eParam_osc0_dac1 :
-    mix_osc_dac[0][1] = trunc_fr1x32(v);
+    param_set_osc_patch( 0 , 1, v );
     break;
   case eParam_osc0_dac2 :
-    mix_osc_dac[0][2] = trunc_fr1x32(v);
+    param_set_osc_patch( 0 , 2, v);
     break;
   case eParam_osc0_dac3 :
-    mix_osc_dac[0][3] = trunc_fr1x32(v);
+    param_set_osc_patch( 0 , 3, v);
     break;
   case eParam_osc1_dac0 :
-    mix_osc_dac[1][0] = trunc_fr1x32(v);
+    param_set_osc_patch( 1 , 0, v);
     break;
   case eParam_osc1_dac1 :
-    mix_osc_dac[1][1] = trunc_fr1x32(v);
+    param_set_osc_patch ( 1 , 1, v);
     break;
   case eParam_osc1_dac2 :
-    mix_osc_dac[1][2] = trunc_fr1x32(v);
+    param_set_osc_patch( 1 , 2, v);
     break;
   case eParam_osc1_dac3 :
-    mix_osc_dac[1][3] = trunc_fr1x32(v);
+    param_set_osc_patch ( 1 , 3, v);
     break;
 
   default:

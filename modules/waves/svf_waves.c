@@ -20,7 +20,7 @@
 //===== static functions
 
 static fract32 filter_svf_calc_frame( filter_svf* f, fract32 in) { 
-  fract32 out;
+  //  fract32 out;
   f->low = add_fr1x32(f->low, 
 		      mult_fr1x32x32(f->freq, f->band));
 
@@ -35,7 +35,7 @@ static fract32 filter_svf_calc_frame( filter_svf* f, fract32 in) {
   f->band = add_fr1x32(f->band, 
 		       mult_fr1x32x32(f->freq, f->high) );
 
-  f->notch = add_fr1x32(f->low, f->high);
+  //  f->notch = add_fr1x32(f->low, f->high);
 
   //  return out;
   return *(f->mode);

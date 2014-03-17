@@ -76,20 +76,14 @@ typedef struct _osc {
 
   // normalized waveshape
   fract16 shape;
-  // smoothed and normalized waveshape
-  //  fract32 shapeSmooth;
-  // modulated and bandlimited waveshape
-  //   fract32 shapeMod;
+  // modulated waveshape
+  fract16 shapeMod;
 
   /// store last modulation input values for recalculation
-  fract32 pmIn, wmIn;
+  fract32 pmIn;
+  fract32 wmIn;
 
   /// 1pole filters for smoothing phase increment, shape, modulation params
-  /* filter_1p_lo lpInc; */
-  /* filter_1p_lo lpShape; */
-  /* filter_1p_lo lpPm; */
-  /* filter_1p_lo lpWm; */
-
   Slew16 pmSlew;
   Slew16 wmSlew;
   Slew16 shapeSlew;
