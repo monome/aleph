@@ -31,6 +31,9 @@
 
 #define WAVES_NVOICES 2
 
+#define WAVES_PM_DEL_SAMPS 1024
+#define WAVES_PM_DEL_SAMPS_1 1023
+
 //-------- data types
 
 
@@ -74,10 +77,16 @@ typedef struct _waveVoice {
 
   // PM input
   fract32 pmIn;
+
   // shape mod input
   fract32 wmIn;
 
   // PM delay buffer
+  fract32 pmDelBuf[WAVES_PM_DEL_SAMPS];
+  // PM delay write index
+  u32 pmDelWrIdx;
+  // PM delay read index
+  u32 pmDelRdIdx;
 
 } wavesVoice;
 
@@ -235,22 +244,27 @@ static void calc_frame(void) {
 				 );
 
     
-
-    // bah
-    //    *vout = v->svfOut;
-
+    // advance phase del indices
+    v->pmDelWrIdx = (v->pmDelWrIdx + 1) & WAVES_PM_DEL_SAMPS_1;
+    v->pmDelRdIdx = (v->pmDelRdIdx + 1) & WAVES_PM_DEL_SAMPS_1;
+    // set pm input from delay
+    v->pmIn = v->pmDelBuf[v->pmDelRdIdx];
+    
     // advance pointers
     vout++;
     v++;
   } // end voice loop
 
   // // simple cross-patch modulation
-  voice[0].pmIn = voice[1].oscOut;
-  voice[1].pmIn = voice[0].oscOut;
+  // add delay, before filter
+  voice[0].pmDelBuf[voice[0].pmDelWrIdx] = voice[1].oscOut;
+  voice[1].pmDelBuf[voice[1].pmDelWrIdx] = voice[0].oscOut;
+  /* voice[0].pmIn = voice[1].oscOut; */
+  /* voice[1].pmIn = voice[0].oscOut; */
 
   // zero the outputs
   out[0] = out[1] = out[2] = out[3] = 0;
-
+  
   // mix the outputs
   mix_voice();
   
@@ -284,6 +298,9 @@ void module_init(void) {
 
     slew_init((voice[i].wetSlew), 0, 0, 0 );
     slew_init((voice[i].drySlew), 0, 0, 0 );
+
+    voice[i].pmDelWrIdx = 0;
+    voice[i].pmDelRdIdx = 0;
   }
 
   for(i=0; i<4; i++) {

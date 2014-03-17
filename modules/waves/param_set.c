@@ -21,6 +21,10 @@ static inline void param_set_adc_patch(int i, int o, ParamValue v) {
   }
 }
 
+static inline void param_set_pm_del(int i, ParamValue v) { 
+  voice[i].pmDelRdIdx = (voice[i].pmDelWrIdx - v) & WAVES_PM_DEL_SAMPS_1;
+} 
+
 void module_set_param(u32 idx, ParamValue v) {
   switch(idx) {
 
@@ -52,6 +56,14 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParamPm01:
     osc_set_pm ( &(voice[1].osc), param_unit_to_fr16(v) );
+    break;
+
+  case eParamFmDel0:
+
+    break;
+
+  case eParamFmDel1:
+      voice[1].pmDelRdIdx = (voice[1].pmDelWrIdx - v) & WAVES_PM_DEL_SAMPS_1;
     break;
 
   case eParamWm10:

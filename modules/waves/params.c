@@ -363,6 +363,7 @@ void fill_param_desc(ParamDesc* desc) {
   desc[eParam_osc1_dac3].radix = 1;
 
 
+  // i/o patch points
   strcpy(desc[eParam_adc0_dac0].label, "adc0_dac0");
   desc[eParam_adc0_dac0].type = eParamTypeBool; 
   desc[eParam_adc0_dac0].min = 0x00000000; 
