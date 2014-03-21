@@ -18,6 +18,7 @@ src += \
 	$(bees)/src/op.c \
 	$(bees)/src/op_gfx.c \
 	$(bees)/src/op_math.c \
+	$(bees)/src/ops/op_list16.c \
 	$(bees)/src/param.c \
 	$(bees)/src/pages.c \
 	$(bees)/src/pickle.c \
