@@ -5,6 +5,12 @@ bees	0.5.0  ! breaks module compatibility !
 - eliminate class-specific increment functions for operators
 - new ops: MIDICC, MIDIPITCH, MIDITOUCH, NOTEOUT, CCOUT, PITCHOUT
 - SRAM linked to heap
+- many UI tweaks
+
+
+----------------
+waves	0.4.0
+- reduced parameter count and scope, all params implemented
 
 ----------------
 lines	0.2.0
@@ -13,6 +19,10 @@ lines	0.2.0
 ----------------
 waves	0.3.0
 - move param descriptors offline, associated .dsc with .ldr
+
+----------------
+bees	0.4.4
+- wait for sdcard on boot
 
 ----------------
 bees	0.4.3
