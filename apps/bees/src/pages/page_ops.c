@@ -53,12 +53,12 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpRandom,
   eOpRoute,
   eOpScreen,
+  eOpSplit, // "Y" , but only in connection graph
+  eOpSplit4, // "Y4"
   eOpSub,
   eOpThresh,
   eOpTimer,
   eOpTog,
-  eOpSplit, // "Y"
-  eOpSplit4 // "Y4"
 };
 
 // current selected new operator type
