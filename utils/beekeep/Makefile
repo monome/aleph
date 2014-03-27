@@ -3,7 +3,6 @@ name = beekeep
 bees = ../../apps/bees
 sim = ../avr32_sim
 
-
 include $(bees)/version.mk
 version = $(maj).$(min).$(rev)
 target = $(name)-$(version)
@@ -151,10 +150,9 @@ obj = $(addprefix $(build-dir), $(addsuffix .o,$(basename $(src))))
 cflags += $(foreach path,$(inc),-I$(path))
 cflags += -std=gnu99
 cflags += -D BEEKEEP=1
-cflags += $(shell /usr/bin/python3.2-config --cflags)
 
 lflags += -ljansson
-lflags += $(shell /usr/bin/python3.2-config --ldflags|sed -e s/"-Xlinker -export-dynamic"//)
+include python_version.mk
 
 $(build-dir)%.o: %.c 
 	echo $(cflags)
