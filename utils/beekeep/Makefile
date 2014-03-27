@@ -151,10 +151,14 @@ obj = $(addprefix $(build-dir), $(addsuffix .o,$(basename $(src))))
 cflags += $(foreach path,$(inc),-I$(path))
 cflags += -std=gnu99
 cflags += -D BEEKEEP=1
-cflags += $(shell /usr/bin/python3.1-config --cflags)
+#cflags += $(shell /usr/bin/python3.2-config --cflags)
+#cflags += -I/usr/include/python3.2mu -I/usr/include/python3.2mu -DNDEBUG -g -fwrapv -O2 -Wall -Wstrict-prototypes -g -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -Werror=format-security
+cflags += -I/usr/include/python3.2mu -I/usr/include/python3.2mu -DNDEBUG -g -fwrapv -O2 -Wall -Wstrict-prototypes -g --param=ssp-buffer-size=4 -Wformat -Wformat-security -Werror=format-security
 
 lflags += -ljansson
-lflags += $(shell /usr/bin/python3.1-config --ldflags)
+#lflags += $(shell /usr/bin/python3.2-config --ldflags)
+#lflags += -L/usr/lib/python3.2/config-3.2mu -lpthread -ldl -lutil -lm -lpython3.2mu -Xlinker -export-dynamic -Wl,-O1 -Wl,-Bsymbolic-functions
+lflags += -L/usr/lib/python3.2/config-3.2mu -lpthread -ldl -lutil -lm -lpython3.2mu -Wl,-O1 -Wl,-Bsymbolic-functions
 
 $(build-dir)%.o: %.c 
 	echo $(cflags)
