@@ -6,9 +6,9 @@ b = Buffer.alloc(s, n, 1);
 0.25.wait;
 // print
 p = { 
-	b.getToFloatArray(wait:0.25, action:{|a|
+	b.getToFloatArray(wait:0.25, action:{|a, j|
 
-		//		{ a.plot }.defer;
+		{ a.plot(j.asString) }.defer;
 
 		a.do({ |x, i|
 			"0x".post;
