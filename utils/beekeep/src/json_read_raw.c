@@ -19,7 +19,7 @@ static void net_read_json_presets(json_t* o);
 // convert from minor version 3
 static void net_json_convert_min3(json_t* r);
 
-void net_read_json(const char* name) {
+void net_read_json_raw(const char* name) {
   json_t *root;
   json_error_t err;
   FILE* f = fopen(name, "r");
@@ -47,8 +47,6 @@ void net_read_json(const char* name) {
   net_read_json_presets(json_object_get(root, "presets"));
 }
 
-//-------------------
-// ---- static define
 
 static void net_read_json_scene(json_t* o) {
   json_t* p;
@@ -163,7 +161,7 @@ static void net_read_json_params(json_t* o) {
   for(i=0; i<count; i++) {
     p = json_array_get(arr, i);
     param = &(net->params[i]);
-    param->idx = json_integer_value(json_object_get(p, "idx"));
+    //    param->idx = json_integer_value(json_object_get(p, "idx"));
     param->data.value = json_integer_value(json_object_get(p, "value"));
     param->desc.type = json_integer_value(json_object_get(p, "type"));
     param->desc.min = json_integer_value(json_object_get(p, "min"));

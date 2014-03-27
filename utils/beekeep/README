@@ -4,33 +4,6 @@ to build, you need to install the Jansson json-c library from http://www.digip.o
 
 beekeep reads and writes network states as JSON and can convert between json and .scn.
 
-it also builds directly against the current bees sources, so it can function as a .scn converter between versions of bees if necessary. more on this below...
+it also builds directly against the current bees sources, so it can function as a .scn converter between versuions of bees if necessary.
 
 further functinonality is attendant on more implementation of the avr32_sim layer.
-
-
-VERSIONS
-
-it is definitely clunky and inconvenient, but you can use beekeep to convert a scene that was made in an ond version of BEES, to work under new verdion of BEES.
-
-what you have to do is roll back the bees sources to the version that produced the scene file, then clean and build beekeep, then run it on the .scn to produce .json. 
-
-then, checkout current sources again, rebuild beekeep, and run it on the .json to produce .scn.
-
-the use of version tags (which we will definitely be maintaining for each public release of BEES) makes this easier.
-
-for example, as of this writing the latest public release is bees-0.4.3, and the dev branch is on 0.5.0. if i want to convert a published scene to the latest version, from the dev branch:
-
-cd aleph/utils/beekeep
-git checkout master (or, e.g.: git checkout bees-0.4.3)
-make clean && make -k
-./beekeep scene.scn
-
-... should produce scene.scn.json , which is a hopefully version-agnostic representation (assuming we've nailed down the json schema!)
-then:
-
-git checkout dev
-make clean && make -k 
-./beekeep scene.scn.json 
-
-... should produce scene.scn.json.scn , compatible with latest bees version.

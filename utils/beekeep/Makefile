@@ -9,7 +9,8 @@ version = $(maj).$(min).$(rev)
 target = $(name)-$(version)
 
 # bees sources
-src += 	$(bees)/src/app_timers.c \
+src += \
+	$(bees)/src/app_timers.c \
 	$(bees)/src/net.c \
 	$(bees)/src/net_midi.c \
 	$(bees)/src/net_monome.c \
@@ -43,7 +44,6 @@ src += 	$(bees)/src/app_timers.c \
 	$(bees)/src/ops/op_logic.c \
 	$(bees)/src/ops/op_metro.c \
 	$(bees)/src/ops/op_midi_note.c \
-	$(bees)/src/ops/op_mod.c \
 	$(bees)/src/ops/op_mul.c \
 	$(bees)/src/ops/op_monome_grid_raw.c \
 	$(bees)/src/ops/op_preset.c \
@@ -57,6 +57,7 @@ src += 	$(bees)/src/app_timers.c \
 	$(bees)/src/ops/op_tog.c \
 	$(bees)/src/ops/op_random.c \
 	$(bees)/src/ops/op_route.c \
+	$(bees)/src/ops/op_mod.c \
 	$(bees)/src/pages/page_dsp.c \
 	$(bees)/src/pages/page_gathered.c \
 	$(bees)/src/pages/page_ins.c \
@@ -72,7 +73,6 @@ src += 	$(bees)/src/app_timers.c \
 	$(bees)/src/scalers/scaler_note.c \
 	$(bees)/src/scalers/scaler_svf_fc.c
 
-
 # "fake" sources
 src += 	src/app_beekeep.c \
 	src/flash_beekeep.c \
@@ -84,7 +84,9 @@ src += 	src/app_beekeep.c \
 src += src/json_read_raw.c \
 	src/json_write_raw.c \
 	src/json_read_max.c \
-	src/json_write_max.c
+	src/json_write_max.c \
+	src/json_read_native.c \
+	src/json_write_native.c \
 
 
 # srcs from simulator
@@ -142,7 +144,7 @@ obj = $(addprefix $(build-dir), $(addsuffix .o,$(basename $(src))))
 
 cflags += $(foreach path,$(inc),-I$(path))
 cflags += -std=gnu99
-
+cflags += -D BEEKEEP=1
 $(build-dir)%.o: %.c 
 	echo $(cflags)
 	$(Q)test -d $(dir $@) || mkdir -p $(dir $@)

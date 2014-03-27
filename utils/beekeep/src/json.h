@@ -23,4 +23,8 @@ extern void net_read_json_raw(const char* name);
 extern void net_write_json_max(const char* name);
 extern void net_read_json_max(const char* name);
 
+// "native" format - condensed, hierarchal representation
+extern void net_write_json_max(const char* name);
+extern void net_read_json_max(const char* name);
+
 #endif
