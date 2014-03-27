@@ -151,10 +151,10 @@ obj = $(addprefix $(build-dir), $(addsuffix .o,$(basename $(src))))
 cflags += $(foreach path,$(inc),-I$(path))
 cflags += -std=gnu99
 cflags += -D BEEKEEP=1
-cflags += $(shell /usr/bin/python2.6-config --cflags)
+cflags += $(shell /usr/bin/python3.1-config --cflags)
 
 lflags += -ljansson
-lflags += $(shell /usr/bin/python2.6-config --ldflags)
+lflags += $(shell /usr/bin/python3.1-config --ldflags)
 
 $(build-dir)%.o: %.c 
 	echo $(cflags)

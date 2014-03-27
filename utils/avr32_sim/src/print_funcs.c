@@ -2,8 +2,8 @@
 
 #include "print_funcs.h"
  
-void print_dbg(const char *str) {
-  printf(str);
+void print_dbg(const char* str) {
+  printf("%s",str);
 }
 
 void print_dbg_char(int c) { ;; }
