@@ -194,6 +194,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_list16_t),
     .init = &op_list16_init,
     .deinit = NULL    
+  }, {
+    .name = "STEP",
+    .size = sizeof(op_step_t),
+    .init = &op_step_init,
+    .deinit = NULL    
   }
 
 };
