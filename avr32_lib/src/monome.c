@@ -289,7 +289,7 @@ void monome_grid_refresh(void) {
   }
   // check quad 1
   if( monomeFrameDirty & 0b0010 ) {
-    if ( mdesc.cols > 8 ) {
+    if ( mdesc.cols > 7 ) {
       while( busy ) { busy = ftdi_tx_busy(); }
       (*monome_grid_map)(8, 0, monomeLedBuffer + 8);
       monomeFrameDirty &= 0b1101;
@@ -298,7 +298,7 @@ void monome_grid_refresh(void) {
   }
   // check quad 2
   if( monomeFrameDirty &  0b0100 ) { 
-    if( mdesc.rows > 8 ) {
+    if( mdesc.rows > 7 ) {
       while( busy ) { busy = ftdi_tx_busy(); }
       (*monome_grid_map)(0, 8, monomeLedBuffer + 128);
       monomeFrameDirty &= 0b1011;
@@ -307,7 +307,7 @@ void monome_grid_refresh(void) {
   }
   // check quad 3
   if( monomeFrameDirty & 0b1000 ) {
-    if( (mdesc.rows > 8) && (mdesc.cols > 8) )  {
+    if( (mdesc.rows > 7) && (mdesc.cols > 7) )  {
       while( busy ) { busy = ftdi_tx_busy(); }
       (*monome_grid_map)(8, 8, monomeLedBuffer + 136);
       monomeFrameDirty &= 0b0111;
@@ -518,8 +518,8 @@ static void setup_series(u8 cols, u8 rows) {
   print_dbg("\r\n setup series device");
   mdesc.protocol = eProtocolSeries;
   mdesc.device = eDeviceGrid;
-  mdesc.cols = 8;
-  mdesc.rows = 8;
+  mdesc.cols = cols;
+  mdesc.rows = rows;
   mdesc.tilt = 1;
   set_funcs();
   monome_connect_write_event();
@@ -817,7 +817,10 @@ static void grid_map_series(u8 x, u8 y, const u8* data) {
   // command (upper nibble)
   txBuf[0] = 0x80;
   // quadrant index (lower nibble, 0-3)
-  txBuf[0] |= ( (x > 8) | ((y > 8) << 1) );
+  txBuf[0] |= ( (x > 7) | ((y > 7) << 1) );
+
+  // print_dbg("\n\r series map: ");
+  // print_dbg_hex(txBuf[0]);
 
   // pointer to tx data
   ptx = txBuf + 1;
@@ -830,6 +833,9 @@ static void grid_map_series(u8 x, u8 y, const u8* data) {
       *ptx |= ((*data > 0) << j);
       ++data;
     }
+    // print_dbg(" ");   
+    // print_dbg_hex(*ptx);
+
     data += MONOME_QUAD_LEDS; // skip the rest of the row to get back in target quad
     ++ptx;
   }

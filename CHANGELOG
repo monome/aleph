@@ -6,6 +6,7 @@ bees	0.5.0  ! breaks module compatibility !
 - new ops: MIDICC, MIDIPITCH, MIDITOUCH, NOTEOUT, CCOUT, PITCHOUT, STEP
 - SRAM linked to heap
 - many UI tweaks
+- fixed series monome grids larger than 8x8
 
 
 ----------------
