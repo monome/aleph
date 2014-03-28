@@ -93,7 +93,8 @@ static void op_mgrid_raw_in_focus(op_mgrid_raw_t* op, const io_t v) {
   if((v) > 0) {
     op->focus = OP_ONE;
   } else {
-    op->focus = 0;;
+    op->focus = 0;
+    net_monome_clear_grid();
   }
   net_monome_set_focus( &(op->monome), op->focus > 0);
 }
