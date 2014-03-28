@@ -1,4 +1,4 @@
-// asf
+i// asf
 #include "print_funcs.h"
 // bees
 #include "net_protected.h"
@@ -93,7 +93,8 @@ static void op_mgrid_raw_in_focus(op_mgrid_raw_t* op, const io_t v) {
   if((v) > 0) {
     op->focus = OP_ONE;
   } else {
-    op->focus = 0;;
+    if(op->focus>0) { net_monome_grid_clear(); }
+    op->focus = 0;
   }
   net_monome_set_focus( &(op->monome), op->focus > 0);
 }
