@@ -18,7 +18,7 @@ typedef struct op_step_struct {
   op_out_t outs[6];
   // internal:
   s8 s_start, s_end, s_length, s_now, s_cut;
-  u8 steps[4][8];
+  u8 steps[4][16];
 } op_step_t;
 
 // init
