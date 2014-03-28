@@ -27,7 +27,7 @@ static scroll centerScroll;
 static s16* const pageSelect = &(pages[ePageOps].select);
 
 // const array of user-creatable operator types
-#define NUM_USER_OP_TYPES 30
+#define NUM_USER_OP_TYPES 31
 static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAccum,
   eOpAdd,
@@ -55,6 +55,7 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpScreen,
   eOpSplit, // "Y" , but only in connection graph
   eOpSplit4, // "Y4"
+  eOpStep,
   eOpSub,
   eOpThresh,
   eOpTimer,
