@@ -9,7 +9,7 @@
 
 //---- descriptor strings
 static const char* op_step_instring = "FOCUS\0  SIZE\0   STEP\0   ";
-static const char* op_step_outstring ="A\0      B\0      C\0      D\0      MONO\0   POS\0    ";
+static const char* op_step_outstring ="A\0      B\0      C\0      D\0      MONO1\0  POS1\0   MONO2\0  POS2\0   ";
 static const char* op_step_opstring = "STEP";
 
 //-------------------------------------------------
@@ -59,7 +59,7 @@ void op_step_init(void* mem) {
   op->super.flags |= (1 << eOpFlagMonomeGrid);
 
   op->super.numInputs = 3;
-  op->super.numOutputs = 6;
+  op->super.numOutputs = 8;
 
   op->super.in_val = op->in_val;
   op->super.out = op->outs;
@@ -76,12 +76,20 @@ void op_step_init(void* mem) {
   op->outs[3] = -1;
   op->outs[4] = -1;
   op->outs[5] = -1;
+  op->outs[5] = -1;
+  op->outs[5] = -1;
 
   op->s_start = 0;
   op->s_end = 7;
   op->s_length = 7;
   op->s_now = 0;
   op->s_cut = 0;
+
+  op->s_start2 = 0;
+  op->s_end2 = 7;
+  op->s_length2 = 7;
+  op->s_now2 = 0;
+  op->s_cut2 = 0;
 
   op->size = 8;
 
@@ -90,8 +98,10 @@ void op_step_init(void* mem) {
 
   // init monome drawing, maybe should clear first
   monomeLedBuffer[monome_xy_idx(0, 0)] = 1;
+  monomeLedBuffer[monome_xy_idx(0, 2)] = 1;
   for(i=0;i<8;i++) {
     monomeLedBuffer[monome_xy_idx(i, 1)] = 1;
+    monomeLedBuffer[monome_xy_idx(i, 3)] = 1;
   }
   monome_set_quadrant_flag(0);
 
@@ -147,8 +157,33 @@ static void op_step_in_step(op_step_t* op, const io_t v) {
     monome_set_quadrant_flag(0);
     monome_set_quadrant_flag(1);
   }
+
+  if(op->s_cut2 == 0) {
+    monomeLedBuffer[monome_xy_idx(op->s_now2, 2)] = 0;
+
+    if(v > 0) {
+      for(i=0;i<v;i++) {
+        if(op->s_now2 == op->s_end2) op->s_now2 = op->s_start2;
+        else {
+          op->s_now2++;
+          if(op->s_now2 == op->size) op->s_now2 = 0;
+        }
+      }
+    } else {
+      for(i=v;i<0;i++) {
+        if(op->s_now2 == op->s_start2) op->s_now2 = op->s_end2;
+        else if(op->s_now2 == 0) op->s_now2 = op->size - 1;
+        else op->s_now2--;
+      }
+    }
+
+    monomeLedBuffer[monome_xy_idx(op->s_now2, 2)] = 1;
+    monome_set_quadrant_flag(0);
+    monome_set_quadrant_flag(1);
+  }
   
   op->s_cut = 0;
+  op->s_cut2 = 0;
 
   net_activate(op->outs[0], op->steps[0][op->s_now], op);
   net_activate(op->outs[1], op->steps[1][op->s_now], op);
@@ -156,9 +191,12 @@ static void op_step_in_step(op_step_t* op, const io_t v) {
   net_activate(op->outs[3], op->steps[3][op->s_now], op);
 
   i = (op->steps[0][op->s_now]) + (op->steps[1][op->s_now] << 1) + (op->steps[2][op->s_now] << 2) + (op->steps[3][op->s_now] << 3);
-
   net_activate(op->outs[4], i, op);
   net_activate(op->outs[5], op->s_now, op);
+
+  i = (op->steps[0][op->s_now2]) + (op->steps[1][op->s_now2] << 1) + (op->steps[2][op->s_now2] << 2) + (op->steps[3][op->s_now2] << 3);
+  net_activate(op->outs[6], i, op);
+  net_activate(op->outs[7], op->s_now2, op);
 }
 
 static void op_step_handler(op_monome_t* op_monome, u32 edata) {
@@ -170,7 +208,7 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
 
   monome_grid_key_parse_event_data(edata, &x, &y, &z);
 
-  // only care about key-ups
+  // only care about key-downs
   if(z) {
     // row 0 = postion cut, set start point
     if(y==0) {
@@ -216,6 +254,55 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
 
       monome_set_quadrant_flag(0);
       if(op->size>8) monome_set_quadrant_flag(1);
+
+    // set loop start 2
+    } else if(y==2) {
+      op->s_start2 = x;
+      monomeLedBuffer[monome_xy_idx(op->s_now2, 2)] = 0;
+      op->s_now2 = x;
+      monomeLedBuffer[monome_xy_idx(op->s_now2, 2)] = 1;
+
+      op->s_end2 = op->s_start2 + op->s_length2;
+      if(op->s_end2 > (op->size-1)) op->s_end2 -= op->size;
+
+      if(op->s_end2 >= op->s_start2)
+        for(i=0;i<op->size;i++) {
+          monomeLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 && i <= op->s_end2);
+        }
+      else {
+        for(i=0;i<op->size;i++) {
+          monomeLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 || i <= op->s_end2);
+        }
+      }
+
+      monome_set_quadrant_flag(0);
+      if(op->size>8) monome_set_quadrant_flag(1);
+
+
+      op->s_cut2 = 1;
+
+    // row 3 = change loop point 2
+    } else if(y==3) {
+      op->s_end2 = x;
+      op->s_length2 = op->s_end2 - op->s_start2;
+      if(op->s_length2 < 0) op->s_length2 += op->size;
+
+      if(op->s_end2 >= op->s_start2)
+        for(i=0;i<op->size;i++) {
+          monomeLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 && i <= op->s_end2);
+        }
+      else {
+        for(i=0;i<op->size;i++) {
+          monomeLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 || i <= op->s_end2);
+        }
+      }
+
+      monome_set_quadrant_flag(0);
+      if(op->size>8) monome_set_quadrant_flag(1);
+
+
+
+
 
     // rows 4-7: set steps
     } else if(y>3 && y<8) {

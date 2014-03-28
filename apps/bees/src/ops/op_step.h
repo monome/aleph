@@ -15,9 +15,10 @@ typedef struct op_step_struct {
   volatile io_t size;
   volatile io_t* in_val[3];
   // outputs: a,b,c,d
-  op_out_t outs[6];
+  op_out_t outs[8];
   // internal:
   s8 s_start, s_end, s_length, s_now, s_cut;
+  s8 s_start2, s_end2, s_length2, s_now2, s_cut2;
   u8 steps[4][16];
 } op_step_t;
 
