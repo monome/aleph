@@ -10,7 +10,7 @@
 
  serialization: it is up in the air whether ot ultimately store the entire preset RAM or to choose elements conditionally. certainly the latter if we switch to JSON.
 
-parameters / inputs: presets make no distincation between DSP paraemters and op inputs. the input node list is flattened, with idx corresponding to the idx as requested from operator (total count is sum of op inputs and reported params.) this stuff should generally be cleaned up throughout the codebase, functionally separating the parameter and input node lists and maybe putting them on separate menus too.
+parameters / inputs: presets make no distincation between DSP paraemters and op inputs. the input node list is flattened, with idx corresponding to the idx as requested from operator (total count is sum of op inputs and reported params.) this stuff should generally be cleaned up throughout the codebase, functionally separating the parameter and input node lists and maybe putting them on separate UI menus too.
 
 
  */
@@ -74,42 +74,13 @@ static inline char* atoi_idx(char* dst, u16 val) {
 //---- extern funcs
 // initialize
 void presets_init(void) {
-  u32 i, j;
-  char* p;
+  u32 i;
+  //  char* p;
 
   presets = (preset_t*)alloc_mem(NET_PRESETS_MAX * sizeof(preset_t));
   
   for(i=0; i<NET_PRESETS_MAX; i++) {
-
-    // empty name
-    for(j=0; j<PRESET_NAME_LEN; j++) {
-      presets[i].name[j] = '\0';
-    }
-
-    p = presets[i].name;
-    p = atoi_idx(p, i);
-    *p = '_';
-
-    // empty inputs
-    //    for(j=0; j<NET_INS_MAX; ++j) {
-    for(j=0; j<PRESET_INODES_COUNT; ++j) {
-      //      presets[i].ins[j].idx = -1;
-      presets[i].ins[j].value = 0;
-      presets[i].ins[j].enabled = 0;
-    }
-    // empty outputs
-    for(j=0; j<NET_OUTS_MAX; ++j) {
-      presets[i].outs[j].target = -1;
-      //      presets[i].outs[j].outIdx = -1;
-      presets[i].outs[j].enabled = 0;
-    }
-
-    // empty params
-    /* for(j=0; j<NET_PARAMS_MAX; ++j) { */
-    /*   presets[i].params[j].idx = -1; */
-    /*   presets[i].params[j].value = 0; */
-    /*   presets[i].params[j].enabled = 0; */
-    /* }  */
+    preset_clear(i);
   }
 }
 
@@ -189,6 +160,9 @@ void preset_recall(u32 preIdx) {
     }
   }
 
+
+    /// NOTE: parameter values are included in the inputs list. 
+    /// this sucks for various reasons, and should change.
   /* print_dbg("\r\n preset_recall PARAMS"); */
   /* // params */
   /* for(i=0; i<net_num_params(); ++i) { */
@@ -289,7 +263,7 @@ const u8* presets_unpickle(const u8* src) {
 
       ///////////////
       /////////////////
-      /// NOTE: not storing idx for now.
+      /// NOTE: not storing idx in binary for now.
       /// this could change if we switch to conditional storage
       /* src = unpickle_32(src, &v32); */
       /* presets[i].ins[j].idx = v32; */
@@ -321,7 +295,7 @@ const u8* presets_unpickle(const u8* src) {
 
       ///////////////
       /////////////////
-      /// NOTE: not storing idx for now.
+      /// NOTE: not storing idx in binary for now.
       /// this could change if we switch to conditional storage
 
       /* src = unpickle_32(src, &v32); */
@@ -339,6 +313,9 @@ const u8* presets_unpickle(const u8* src) {
       /* print_dbg_ulong(v32); */
 
     }
+
+    /// NOTE: parameter values are included in the inputs list. 
+    /// this sucks for various reasons, and should change.
     // unpickle params
     /* for(j=0; j<NET_PARAMS_MAX; j++) { */
     /*   // waste some space for 4-byte alignment */
@@ -395,16 +372,47 @@ void preset_inc_select(s32 inc) {
 }
 
 // get inclusion flag for given input, given preset
-extern u8 preset_in_enabled(u32 preIdx, u32 inIdx) {
+ u8 preset_in_enabled(u32 preIdx, u32 inIdx) {
   return presets[preIdx].ins[inIdx].enabled;
 }
 
 // get inclusion flag for given output, given preset
-extern u8 preset_out_enabled(u32 preIdx, u32 outIdx) {
+ u8 preset_out_enabled(u32 preIdx, u32 outIdx) {
   return presets[preIdx].outs[outIdx].enabled;
 }
 
-/* // get inclusion flag for given param, given preset */
-/* extern u8 preset_param_enabled(u32 preIdx, u32 idx) { */
-/*   return presets[preIdx].params[idx].enabled; */
-/* } */
+// clear preset
+void preset_clear(int i) {
+  int j;
+  char* p;
+    // empty name
+    for(j=0; j<PRESET_NAME_LEN; j++) {
+      presets[i].name[j] = '\0';
+    }
+
+    p = presets[i].name;
+    p = atoi_idx(p, i);
+    *p = '_';
+
+    // empty inputs
+    //    for(j=0; j<NET_INS_MAX; ++j) {
+    for(j=0; j<PRESET_INODES_COUNT; ++j) {
+      presets[i].ins[j].value = 0;
+      presets[i].ins[j].enabled = 0;
+    }
+    // empty outputs
+    for(j=0; j<NET_OUTS_MAX; ++j) {
+      presets[i].outs[j].target = -1;
+      presets[i].outs[j].enabled = 0;
+    }
+
+
+    /// NOTE: parameter values are included in the inputs list. 
+    /// this sucks for various reasons, and should change.
+    // empty params
+    /* for(j=0; j<NET_PARAMS_MAX; ++j) { */
+    /*   presets[i].params[j].idx = -1; */
+    /*   presets[i].params[j].value = 0; */
+    /*   presets[i].params[j].enabled = 0; */
+    /* }  */
+}

@@ -149,7 +149,7 @@ static void redraw_lines(void) {
 
 // store
 void handle_key_0(s32 val) {
-  if(val == 0) { return; }
+  if(val == 1) { return; }
   if(check_key(0)) {
     preset_store(*pageSelect);
   }
@@ -167,6 +167,11 @@ void handle_key_1(s32 val) {
 
 // copy / clear / confirm
 void handle_key_2(s32 val) {
+  if(inClear) {
+    preset_clear(*pageSelect);
+  } else {
+    inClear = 1;
+  }
 }
 
 // alt
