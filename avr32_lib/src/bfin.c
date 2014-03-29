@@ -44,7 +44,7 @@ void bfin_wait(void) {
   //  print_dbg_ulong(gpio_get_pin_value(BFIN_HWAIT_PIN));
     while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { 
       ;;
-      print_dbg("\r\n HWAIT asserted..."); 
+      //      print_dbg("\r\n HWAIT asserted..."); 
 	    //            delay_ms(1);
     }
     delay_us(50);
@@ -359,9 +359,9 @@ void bfin_end_transfer(void) {
 void bfin_wait_ready(void) {
   // use ready pin
   while( !gpio_get_pin_value(BFIN_READY_PIN) ) { 
-    print_dbg("\r\n wait bfin_ready ");
+    ;;    //    print_dbg("\r\n wait bfin_ready ");
   }
-  print_dbg("... waited");
+  //  print_dbg("... waited");
 }
 
 // get parameter value

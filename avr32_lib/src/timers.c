@@ -131,6 +131,7 @@ u8 timer_remove( softTimer_t* t) {
 	--num;
       }
     }
+    	print_dbg(", advance search... ");
     // made it here, so we didn't find it; advance the search.
     last = cur;
     cur = cur->next;
