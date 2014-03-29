@@ -52,6 +52,6 @@ extern void net_monome_set_focus(op_monome_t* grid, u8 focus);
 extern void net_monome_set_attributes( /* ...???... */void);
 
 // clear LEDs on grid
-extern void net_monome_clear_grid(void);
+extern void net_monome_grid_clear(void);
 
 #endif // h guard

@@ -91,7 +91,7 @@ extern void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
 }
 
 // clear LEDs on grid
-extern void net_monome_clear_grid(void) {
+extern void net_monome_grid_clear(void) {
   int i;
   for(i=0; i<MONOME_MAX_LED_BYTES; ++i) {
     monomeLedBuffer[i] = 0;
