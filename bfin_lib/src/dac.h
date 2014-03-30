@@ -10,6 +10,6 @@
 #define DAC_VALUE_MASK 0xffff
 
 extern void init_dac(void);
-extern void dac_update(int ch, u16 val);
+extern void dac_update(u8 ch, u16 val);
 
 #endif // h guard

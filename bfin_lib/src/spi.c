@@ -148,161 +148,161 @@ u8 spi_process(u8 rx) {
 
     //---- get param descriptor
 #if 0
-  case eParamDescIdx :
-    byte = eParamDescLabel0;
-    idx = rx;
-    return gModuleData->paramDesc[idx].label[0]; // load label 
-    break;
-    // label
-  case eParamDescLabel0 :
-    byte = eParamDescLabel1;
-    return gModuleData->paramDesc[idx].label[1]; // load label 
-    break;
-  case eParamDescLabel1 :
-    byte = eParamDescLabel2;
-    return gModuleData->paramDesc[idx].label[2]; // load label 
-    break;
-  case eParamDescLabel2 :
-    byte = eParamDescLabel3;
-    return gModuleData->paramDesc[idx].label[3]; // load label 
-    break;
-  case eParamDescLabel3 :
-    byte = eParamDescLabel4;
-    return gModuleData->paramDesc[idx].label[4]; // load label 
-    break;
-  case eParamDescLabel4 :
-    byte = eParamDescLabel5;
-    return gModuleData->paramDesc[idx].label[5]; // load label 
-    break;
-  case eParamDescLabel5 :
-    byte = eParamDescLabel6;
-    return gModuleData->paramDesc[idx].label[6]; // load label 
-    break;
-  case eParamDescLabel6 :
-    byte = eParamDescLabel7;
-    return gModuleData->paramDesc[idx].label[7]; // load label 
-    break;
-  case eParamDescLabel7 :
-    byte = eParamDescLabel8;
-    return gModuleData->paramDesc[idx].label[8]; // load label 
-    break;
-  case eParamDescLabel8 :
-    byte = eParamDescLabel9;
-    return gModuleData->paramDesc[idx].label[9]; // load label 
-    break;
-  case eParamDescLabel9 :
-    byte = eParamDescLabel10;
-    return gModuleData->paramDesc[idx].label[10]; // load label 
-    break;
-  case eParamDescLabel10 :
-    byte = eParamDescLabel11;
-    return gModuleData->paramDesc[idx].label[11]; // load label 
-    break;
-  case eParamDescLabel11 :
-    byte = eParamDescLabel12;
-    return gModuleData->paramDesc[idx].label[12]; // load label 
-    break;
-  case eParamDescLabel12 :
-    byte = eParamDescLabel13;
-    return gModuleData->paramDesc[idx].label[13]; // load label 
-    break;
-  case eParamDescLabel13 :
-    byte = eParamDescLabel14;
-    return gModuleData->paramDesc[idx].label[14]; // load label 
-    break;
-  case eParamDescLabel14 :
-    byte = eParamDescLabel15;
-    return gModuleData->paramDesc[idx].label[15]; // load label 
-    break;
-  case eParamDescLabel15 :
-    //    byte = eParamDescUnit0;
-    byte = eParamDescType;
-    //    return gModuleData->paramDesc[idx].unit[0]; // load label 
-    return gModuleData->paramDesc[idx].type;
-    break;
-    // unit
-    /*
-    // don't need with new type system... didn't really need anyways
+  /* case eParamDescIdx : */
+  /*   byte = eParamDescLabel0; */
+  /*   idx = rx; */
+  /*   return gModuleData->paramDesc[idx].label[0]; // load label  */
+  /*   break; */
+  /*   // label */
+  /* case eParamDescLabel0 : */
+  /*   byte = eParamDescLabel1; */
+  /*   return gModuleData->paramDesc[idx].label[1]; // load label  */
+  /*   break; */
+  /* case eParamDescLabel1 : */
+  /*   byte = eParamDescLabel2; */
+  /*   return gModuleData->paramDesc[idx].label[2]; // load label  */
+  /*   break; */
+  /* case eParamDescLabel2 : */
+  /*   byte = eParamDescLabel3; */
+  /*   return gModuleData->paramDesc[idx].label[3]; // load label  */
+  /*   break; */
+  /* case eParamDescLabel3 : */
+  /*   byte = eParamDescLabel4; */
+  /*   return gModuleData->paramDesc[idx].label[4]; // load label  */
+  /*   break; */
+  /* case eParamDescLabel4 : */
+  /*   byte = eParamDescLabel5; */
+  /*   return gModuleData->paramDesc[idx].label[5]; // load label  */
+  /*   break; */
+  /* case eParamDescLabel5 : */
+  /*   byte = eParamDescLabel6; */
+  /*   return gModuleData->paramDesc[idx].label[6]; // load label  */
+  /*   break; */
+  /* case eParamDescLabel6 : */
+  /*   byte = eParamDescLabel7; */
+  /*   return gModuleData->paramDesc[idx].label[7]; // load label  */
+  /*   break; */
+  /* case eParamDescLabel7 : */
+  /*   byte = eParamDescLabel8; */
+  /*   return gModuleData->paramDesc[idx].label[8]; // load label  */
+  /*   break; */
+  /* case eParamDescLabel8 : */
+  /*   byte = eParamDescLabel9; */
+  /*   return gModuleData->paramDesc[idx].label[9]; // load label  */
+  /*   break; */
+  /* case eParamDescLabel9 : */
+  /*   byte = eParamDescLabel10; */
+  /*   return gModuleData->paramDesc[idx].label[10]; // load label  */
+  /*   break; */
+  /* case eParamDescLabel10 : */
+  /*   byte = eParamDescLabel11; */
+  /*   return gModuleData->paramDesc[idx].label[11]; // load label  */
+  /*   break; */
+  /* case eParamDescLabel11 : */
+  /*   byte = eParamDescLabel12; */
+  /*   return gModuleData->paramDesc[idx].label[12]; // load label  */
+  /*   break; */
+  /* case eParamDescLabel12 : */
+  /*   byte = eParamDescLabel13; */
+  /*   return gModuleData->paramDesc[idx].label[13]; // load label  */
+  /*   break; */
+  /* case eParamDescLabel13 : */
+  /*   byte = eParamDescLabel14; */
+  /*   return gModuleData->paramDesc[idx].label[14]; // load label  */
+  /*   break; */
+  /* case eParamDescLabel14 : */
+  /*   byte = eParamDescLabel15; */
+  /*   return gModuleData->paramDesc[idx].label[15]; // load label  */
+  /*   break; */
+  /* case eParamDescLabel15 : */
+  /*   //    byte = eParamDescUnit0; */
+  /*   byte = eParamDescType; */
+  /*   //    return gModuleData->paramDesc[idx].unit[0]; // load label  */
+  /*   return gModuleData->paramDesc[idx].type; */
+  /*   break; */
+  /*   // unit */
+  /*   /\* */
+  /*   // don't need with new type system... didn't really need anyways */
 
-    case eParamDescUnit0 :
-    byte = eParamDescUnit1;
-    return gModuleData->paramDesc[idx].unit[1]; // load unit
-    break;
-    case eParamDescUnit1 :
-    byte = eParamDescUnit2;
-    return gModuleData->paramDesc[idx].unit[2]; // load unit
-    break;
-    case eParamDescUnit2 :
-    byte = eParamDescUnit3;
-    return gModuleData->paramDesc[idx].unit[3]; // load unit
-    break;
-    case eParamDescUnit3 :
-    byte = eParamDescUnit4;
-    return gModuleData->paramDesc[idx].unit[4]; // load unit
-    break;
-    case eParamDescUnit4 :
-    byte = eParamDescUnit5;
-    return gModuleData->paramDesc[idx].unit[5]; // load unit
-    break;
-    case eParamDescUnit5 :
-    byte = eParamDescUnit6;
-    return gModuleData->paramDesc[idx].unit[6]; // load unit
-    break;
-    case eParamDescUnit6 :
-    byte = eParamDescUnit7;
-    return gModuleData->paramDesc[idx].unit[7]; // load unit
-    break;
-    case eParamDescUnit7 :
-    byte = eParamDescType;
-    return gModuleData->paramDesc[idx].type; // load type
-    break;
-    */
-    // type
-  case eParamDescType :
-    byte = eParamDescMin0;
-    pval.asInt = gModuleData->paramDesc[idx].min;
-    return pval.asByte[3]; // min, high byte
-    break;
-    // min  // === byteswap for BE on avr32
-  case eParamDescMin0 :
-    byte = eParamDescMin1;
-    return pval.asByte[2];
-    break;
-  case eParamDescMin1 :
-    byte = eParamDescMin2;
-    return pval.asByte[1];
-    break;
-  case eParamDescMin2 :
-    byte = eParamDescMin3;
-    return pval.asByte[0]; // min, low byte
-    break;
-  case eParamDescMin3 :
-    byte = eParamDescMax0;
-    pval.asInt = gModuleData->paramDesc[idx].max;
-    return pval.asByte[3]; // max, high byte
-    break;
-    // max  // === byteswap for BE on avr32
-  case eParamDescMax0 :
-    byte = eParamDescMax1;
-    return pval.asByte[2];
-    break;
-  case eParamDescMax1 :
-    byte = eParamDescMax2;
-    return pval.asByte[1];
-    break;
-  case eParamDescMax2 :
-    byte = eParamDescMax3;
-    return pval.asByte[0]; // max, low byte
-    break;
-  case eParamDescMax3 :
-    byte = eParamDescRadix;
-    return gModuleData->paramDesc[idx].radix;
-    break;
-    // radix
-  case eParamDescRadix :
-    byte = eCom; // reset
-    return 0; // dont care
-    break;
+  /*   case eParamDescUnit0 : */
+  /*   byte = eParamDescUnit1; */
+  /*   return gModuleData->paramDesc[idx].unit[1]; // load unit */
+  /*   break; */
+  /*   case eParamDescUnit1 : */
+  /*   byte = eParamDescUnit2; */
+  /*   return gModuleData->paramDesc[idx].unit[2]; // load unit */
+  /*   break; */
+  /*   case eParamDescUnit2 : */
+  /*   byte = eParamDescUnit3; */
+  /*   return gModuleData->paramDesc[idx].unit[3]; // load unit */
+  /*   break; */
+  /*   case eParamDescUnit3 : */
+  /*   byte = eParamDescUnit4; */
+  /*   return gModuleData->paramDesc[idx].unit[4]; // load unit */
+  /*   break; */
+  /*   case eParamDescUnit4 : */
+  /*   byte = eParamDescUnit5; */
+  /*   return gModuleData->paramDesc[idx].unit[5]; // load unit */
+  /*   break; */
+  /*   case eParamDescUnit5 : */
+  /*   byte = eParamDescUnit6; */
+  /*   return gModuleData->paramDesc[idx].unit[6]; // load unit */
+  /*   break; */
+  /*   case eParamDescUnit6 : */
+  /*   byte = eParamDescUnit7; */
+  /*   return gModuleData->paramDesc[idx].unit[7]; // load unit */
+  /*   break; */
+  /*   case eParamDescUnit7 : */
+  /*   byte = eParamDescType; */
+  /*   return gModuleData->paramDesc[idx].type; // load type */
+  /*   break; */
+  /*   *\/ */
+  /*   // type */
+  /* case eParamDescType : */
+  /*   byte = eParamDescMin0; */
+  /*   pval.asInt = gModuleData->paramDesc[idx].min; */
+  /*   return pval.asByte[3]; // min, high byte */
+  /*   break; */
+  /*   // min  // === byteswap for BE on avr32 */
+  /* case eParamDescMin0 : */
+  /*   byte = eParamDescMin1; */
+  /*   return pval.asByte[2]; */
+  /*   break; */
+  /* case eParamDescMin1 : */
+  /*   byte = eParamDescMin2; */
+  /*   return pval.asByte[1]; */
+  /*   break; */
+  /* case eParamDescMin2 : */
+  /*   byte = eParamDescMin3; */
+  /*   return pval.asByte[0]; // min, low byte */
+  /*   break; */
+  /* case eParamDescMin3 : */
+  /*   byte = eParamDescMax0; */
+  /*   pval.asInt = gModuleData->paramDesc[idx].max; */
+  /*   return pval.asByte[3]; // max, high byte */
+  /*   break; */
+  /*   // max  // === byteswap for BE on avr32 */
+  /* case eParamDescMax0 : */
+  /*   byte = eParamDescMax1; */
+  /*   return pval.asByte[2]; */
+  /*   break; */
+  /* case eParamDescMax1 : */
+  /*   byte = eParamDescMax2; */
+  /*   return pval.asByte[1]; */
+  /*   break; */
+  /* case eParamDescMax2 : */
+  /*   byte = eParamDescMax3; */
+  /*   return pval.asByte[0]; // max, low byte */
+  /*   break; */
+  /* case eParamDescMax3 : */
+  /*   byte = eParamDescRadix; */
+  /*   return gModuleData->paramDesc[idx].radix; */
+  /*   break; */
+  /*   // radix */
+  /* case eParamDescRadix : */
+  /*   byte = eCom; // reset */
+  /*   return 0; // dont care */
+  /*   break; */
 #endif
 
 

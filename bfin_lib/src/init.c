@@ -125,7 +125,26 @@ void init_sport0(void)
 
 // CONFIGURE sport1  [ drive 1x AD5686 from DTSEC ]
 void init_sport1(void) {
+  /// test: reverting...
 
+  //----- note: edge selection is for *driving* the pins, sampled opposite
+  //// TFS/clk driven w/ rising edge : TCKFE  = 0
+  //// early frame sync              : LATFS  = 0
+  //// TFS active high               : LTFS   = 0
+  //// data-dependent TFS            : DITFS  = 0
+  //// internal clock                : ITCLK  = 1
+  //// internal TFS                  : ITFS   = 1
+  //// frame sync required           : TFSR  = 1
+  //// no companding                 : TDTYPE = 00
+  //// MSB first                     : TLSBIT = 0  
+  *pSPORT1_TCR1 = ITCLK | ITFS | TFSR;
+ 
+  //// normal mode             : TSFSE = 0
+  //// secondary side enabled : TXSE  = 1
+  ///// 24-bit word length
+  //     *pSPORT1_TCR2 = 23 | TXSE ;
+  //// 25-bit cause DACs need an extra cycle to recover, ugggh
+  *pSPORT1_TCR2 = 24 | TXSE ;
 
   // clock division: we want ~10Mhz, core clock is 108Mhz
   // tclk = sclk / ( 2 x (div + 1)
@@ -133,55 +152,64 @@ void init_sport1(void) {
   /// DAC datasheet indicates we can go up to 50Mhz
   // here's 27 Mhz?
   /// this works fine in the triangle test
-  //  *pSPORT1_TCLKDIV = 1;
-  // but... i dunno
-  *pSPORT1_TCLKDIV = 3;
-  /// trying this...
-  /// whoa! it kind of works.
-  /// now we can get the same glitchy behavior with LATFS. great
-  *pSPORT1_TFSDIV = 31;
-  
-  //// note: driving with rising edge means data is sampled on falling edge
-  //// TFS/clk driven w/ rising edge : TCKFE  = 0
-  //// no late frame sync               : LATFS  = 0
-  
-#if 0
-  //// TFS active low               : LTFS   = 0
-  //// data-dependent TFS           : DITFS  = 0
-  //// internal clock                : ITCLK  = 1
-  //// internal TFS                  : ITFS   = 1
-  //// frame sync required           : TFSR  = 1
-  //// no companding                 : TDTYPE = 00
-  //// MSB first                     : TLSBIT = 0  
-  *pSPORT1_TCR1 = ITCLK | ITFS | TFSR;
+  *pSPORT1_TCLKDIV = 1;
 
-  // test: continuous transmit 
-  //  *pSPORT1_TCR1 = ITCLK | ITFS | TFSR | DITFS;
-  
-  //// normal mode             : TSFSE = 0
-  //// secondary side enabled : TXSE  = 1
-  ///// 24-bit word length
-  //    *pSPORT1_TCR2 = 23 | TXSE ;
-  //// 25-bit cause DACs need an extra cycle to recover, ugggh
-  *pSPORT1_TCR2 = 24 | TXSE ;
 
-#else
-  ///////
-  ///////
-  // test: late frame sync
-  //  *pSPORT1_TCR1 = ITCLK | ITFS | TFSR | LATFS ;
-  // active high
-  /// i really think this seems like the right setting... but it's not happy.
-  // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-  *pSPORT1_TCR1 = ITCLK | ITFS | TFSR | LATFS | LTFS;
-  // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  // invert clock drive mode
-  //  *pSPORT1_TCR1 = TCKFE | LATFS | LTFS | TFSR | ITFS | ITCLK;
-  // , 24b word
-  *pSPORT1_TCR2 = 23 | TXSE;
-  ////
-  ////
-#endif
+/*   // clock division: we want ~10Mhz, core clock is 108Mhz */
+/*   // tclk = sclk / ( 2 x (div + 1) */
+/*   //  *pSPORT1_TCLKDIV = 5; */
+/*   /// DAC datasheet indicates we can go up to 50Mhz */
+/*   // here's 27 Mhz? */
+/*   /// this works fine in the triangle test */
+/*   //  *pSPORT1_TCLKDIV = 1; */
+/*   // but... i dunno */
+/*   *pSPORT1_TCLKDIV = 3; */
+/*   /// trying this... */
+/*   /// whoa! it kind of works. */
+/*   /// now we can get the same glitchy behavior with LATFS. great */
+/*   *pSPORT1_TFSDIV = 31; */
+  
+/*   //// note: driving with rising edge means data is sampled on falling edge */
+/*   //// TFS/clk driven w/ rising edge : TCKFE  = 0 */
+/*   //// no late frame sync               : LATFS  = 0 */
+  
+/* #if 0 */
+/*   //// TFS active low               : LTFS   = 0 */
+/*   //// data-dependent TFS           : DITFS  = 0 */
+/*   //// internal clock                : ITCLK  = 1 */
+/*   //// internal TFS                  : ITFS   = 1 */
+/*   //// frame sync required           : TFSR  = 1 */
+/*   //// no companding                 : TDTYPE = 00 */
+/*   //// MSB first                     : TLSBIT = 0   */
+/*   *pSPORT1_TCR1 = ITCLK | ITFS | TFSR; */
+
+/*   // test: continuous transmit  */
+/*   //  *pSPORT1_TCR1 = ITCLK | ITFS | TFSR | DITFS; */
+  
+/*   //// normal mode             : TSFSE = 0 */
+/*   //// secondary side enabled : TXSE  = 1 */
+/*   ///// 24-bit word length */
+/*   //    *pSPORT1_TCR2 = 23 | TXSE ; */
+/*   //// 25-bit cause DACs need an extra cycle to recover, ugggh */
+/*   *pSPORT1_TCR2 = 24 | TXSE ; */
+
+/* #else */
+/*   /////// */
+/*   /////// */
+/*   // test: late frame sync */
+/*   //  *pSPORT1_TCR1 = ITCLK | ITFS | TFSR | LATFS ; */
+/*   // active high */
+/*   /// i really think this seems like the right setting... but it's not happy? */
+/*   // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv */
+/*   *pSPORT1_TCR1 = ITCLK | ITFS | TFSR | LATFS | LTFS; */
+/*   // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
+/*   // invert clock drive mode */
+/*   //  *pSPORT1_TCR1 = TCKFE | LATFS | LTFS | TFSR | ITFS | ITCLK; */
+/*   // , 24b word */
+/*   *pSPORT1_TCR2 = 23 | TXSE; */
+/*   //// */
+/*   //// */
+/* #endif */
 
 }
 
@@ -226,7 +254,7 @@ void init_DMA(void) {
   *pDMA4_START_ADDR = (void *)(&cvTxBuf);
   // DMA inner loop count
   /// primary tx data is dummy!
-  *pDMA4_X_COUNT = 2;
+  *pDMA4_X_COUNT = 1;
   // Inner loop address increment
   *pDMA4_X_MODIFY = 4;
 

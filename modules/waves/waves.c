@@ -8,10 +8,11 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+
 // aleph-common
 #include "fix.h"
 // audio lib
-// #include "filter_1p.h"
+#include "filter_1p.h"
 #include "conversion.h"
 // bfin
 #include "bfin_core.h"
@@ -126,8 +127,14 @@ static volatile fract32* patch_osc_dac[2][4];
 // 10v dac values (u16, but use fract32 and audio integrators for now)
 // static fract32 cvVal[4];
 //static filter_1p_lo cvSlew[4];
-static Slew32 cvSlew[4];
-static u32 cvChan = 0;
+/* static Slew32 cvSlew[4]; */
+/* static u32 cvChan = 0; */
+
+
+static fract32 cvVal[4];
+static filter_1p_lo cvSlew[4];
+static u8 cvChan = 0;
+
 
 //----------------------
 //----- static function declaration
@@ -141,6 +148,7 @@ static inline void param_setup(u32 id, ParamValue v) {
 }
 
 static inline void mix_voice (void) {
+  /// can't handle the mix! use pointers for patch points right now
   int i, j;
   volatile fract32** pout = &(patch_osc_dac[0][0]);
   fract32* pin = voiceOut;
@@ -290,10 +298,17 @@ void module_init(void) {
   }
 
   // dac
-  slew_init(cvSlew[0] , 0, 0, 0 );
-  slew_init(cvSlew[1] , 0, 0, 0 );
-  slew_init(cvSlew[2] , 0, 0, 0 );
-  slew_init(cvSlew[3] , 0, 0, 0 );
+  /* slew_init(cvSlew[0] , 0, 0, 0 ); */
+  /* slew_init(cvSlew[1] , 0, 0, 0 ); */
+  /* slew_init(cvSlew[2] , 0, 0, 0 ); */
+  /* slew_init(cvSlew[3] , 0, 0, 0 ); */
+
+  // dac
+  filter_1p_lo_init( &(cvSlew[0]), 0xf );
+  filter_1p_lo_init( &(cvSlew[1]), 0xf );
+  filter_1p_lo_init( &(cvSlew[2]), 0xf );
+  filter_1p_lo_init( &(cvSlew[3]), 0xf );
+
 
 
   // set parameters to defaults
@@ -388,17 +403,43 @@ extern u32 module_get_num_params(void) {
 // frame callback
 void module_process_frame(void) {
   //  volatile u32 delay;
-  calc_frame();
+
+
+  /// TEST; nothing
+  //  calc_frame();
 
   // we could shift to fract16 at a cost of only 1b resolution
+
+  /*
+
   slew32_calc(cvSlew[cvChan]);
-  // TEST
-  /// hm, single channel works with no glitch... rrrrggg
-  //   dac_update(0, cvSlew[0].x );
+
+  if( !(slew32_sync(cvSlew[cvChan])) ) { 
+    dac_update(cvChan, cvSlew[cvChan].y );
+  }
+
+  */
+
+
+
+
+
+  if(cvSlew[cvChan].sync) { ;; } else {
+    cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
+    dac_update(cvChan, cvVal[cvChan]);
+  }
+ 
+  if(++cvChan == 4) {
+    cvChan = 0;
+  }
   
-  dac_update(cvChan, cvSlew[cvChan].y );
+  /* dac_update(cvChan, cvSlew[cvChan].x); */
+
+
      
-  cvChan = (cvChan + 1) & 3;
+  /* cvChan++; */
+  /* if(cvChan == 4) { cvChan = 0; } */
+  //  cvChan = (cvChan + 1) & 3;
 }
 
 // lazy inclusion... sorry
