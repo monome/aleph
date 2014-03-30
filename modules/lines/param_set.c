@@ -1,13 +1,10 @@
 // this is its own file for pure convenience....
 
 // check crossfade status of target
-static void check_fade_rd(u8 id) {
-  /// DEBUG: 
-  // do nothing, target is always zero.
-  // target-switching is doing something weird on module init, scene recall, or something.
-  
-  
+static u8 check_fade_rd(u8 id) {
   u8 newTarget, oldTarget = fadeTargetRd[id];
+  u8 ret;
+
   if(lpFadeRd[id].sync) {
     // not fading right now, so pick different target and start crossfade
     newTarget =  oldTarget ^ 1;
@@ -16,8 +13,11 @@ static void check_fade_rd(u8 id) {
     // start the fade
     filter_ramp_tog_in(&(lpFadeRd[id]), newTarget);
     fadeTargetRd[id] = newTarget;
+    return 1;
+  } else {
+    // fade is in progress.
+    return !fadeIgnore;
   }
-  
 }
 
 /*
@@ -34,12 +34,14 @@ void module_set_param(u32 idx, ParamValue v) {
   switch(idx) {
     // delay line params
   case eParam_delay0 :
-    check_fade_rd(0);
-    delayFadeN_set_delay_sec(&(lines[0]), v,  fadeTargetRd[0]);
+    if( check_fade_rd(0) ) { 
+      delayFadeN_set_delay_sec(&(lines[0]), v,  fadeTargetRd[0]);
+    }
     break;
   case eParam_delay1 :
-    check_fade_rd(1);
-    delayFadeN_set_delay_sec(&(lines[1]), v,  fadeTargetRd[1]);
+    if(check_fade_rd(1)) {
+      delayFadeN_set_delay_sec(&(lines[1]), v,  fadeTargetRd[1]);
+    }
     break;
   case eParam_loop0 :
     delayFadeN_set_loop_sec(&(lines[0]), v, 0);
@@ -58,12 +60,14 @@ void module_set_param(u32 idx, ParamValue v) {
     delayFadeN_set_pos_write_sec(&(lines[1]), v,  fadeTargetWr[1] );
     break;
   case eParam_pos_read0 :
-    check_fade_rd(0);
-    delayFadeN_set_pos_read_sec(&(lines[0]), v,  fadeTargetRd[0]);
+    if (check_fade_rd(0) ) {
+      delayFadeN_set_pos_read_sec(&(lines[0]), v,  fadeTargetRd[0]);
+    }
     break;
   case eParam_pos_read1 :
-    check_fade_rd(1);
-    delayFadeN_set_pos_read_sec(&(lines[1]), v,  fadeTargetRd[1]);
+    if( check_fade_rd(1) ) {
+      delayFadeN_set_pos_read_sec(&(lines[1]), v,  fadeTargetRd[1]);
+    }
     break;
   case eParam_run_write0 :
     delayFadeN_set_run_write(&(lines[0]), v);
@@ -78,20 +82,24 @@ void module_set_param(u32 idx, ParamValue v) {
     delayFadeN_set_run_read(&(lines[1]), v);
     break;
   case eParam_rMul0 :
-    check_fade_rd(0);
-    delayFadeN_set_mul(&(lines[0]), v >> 16,  fadeTargetRd[0]);
+    if( check_fade_rd(0) ) {
+      delayFadeN_set_mul(&(lines[0]), v >> 16,  fadeTargetRd[0]);
+    }
     break;
   case eParam_rDiv0 :
-    check_fade_rd(0);
-    delayFadeN_set_div(&(lines[0]), v >> 16,  fadeTargetRd[0]);
+    if (check_fade_rd(0) ) {
+      delayFadeN_set_div(&(lines[0]), v >> 16,  fadeTargetRd[0]);
+    }
     break;
   case eParam_rMul1 :
-    check_fade_rd(1);
-    delayFadeN_set_mul(&(lines[1]), v >> 16 ,  fadeTargetRd[1]);
+    if (check_fade_rd(1) ) {
+      delayFadeN_set_mul(&(lines[1]), v >> 16 ,  fadeTargetRd[1]);
+    }
     break;
   case eParam_rDiv1 :
-    check_fade_rd(1);
-    delayFadeN_set_div(&(lines[1]), v >> 16 ,  fadeTargetRd[1]);
+    if (check_fade_rd(1)) {
+      delayFadeN_set_div(&(lines[1]), v >> 16 ,  fadeTargetRd[1]);
+    }
     break;
   case eParam_write0 :
     /// FIXME: need write level...
@@ -340,14 +348,14 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
     // fade times
-    // FIXME: range hack is real dumb
+    // FIXME: value is raw ramp increment per sample
   case eParamFade0 :
-    filter_ramp_tog_set_inc(&(lpFadeRd[0]), v + PARAM_FADE_ADD );
-    filter_ramp_tog_set_inc(&(lpFadeWr[0]), v + PARAM_FADE_ADD);
+    filter_ramp_tog_set_inc(&(lpFadeRd[0]), v );
+    filter_ramp_tog_set_inc(&(lpFadeWr[0]), v );
     break;
   case eParamFade1 :
-    filter_ramp_tog_set_inc(&(lpFadeRd[1]), v + PARAM_FADE_ADD);
-    filter_ramp_tog_set_inc(&(lpFadeWr[1]), v + PARAM_FADE_ADD);
+    filter_ramp_tog_set_inc(&(lpFadeRd[1]), v );
+    filter_ramp_tog_set_inc(&(lpFadeWr[1]), v);
     break;
 
 

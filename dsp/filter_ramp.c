@@ -73,10 +73,6 @@ void filter_ramp_tog_init(filter_ramp_tog* f, fract32 in) {
   f->inc = 1;
 }
 
-// set integrator coefficient directly
-/* void filter_ramp_tog_set_slew(filter_ramp_tog* f, fract32 slew) { */
-/*   f->inc = slew; */
-/* } */
 
 void filter_ramp_tog_set_inc(filter_ramp_tog* f, fract32 inc) {
   f->inc = abs_fr1x32( inc );
@@ -99,7 +95,6 @@ void filter_ramp_tog_in(filter_ramp_tog* f, fract32 val) {
     } else {
       f->sinc = negate_fr1x32( f->inc );
     }
-
   }
   //  u8 neg = !pos;
 

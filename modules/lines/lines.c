@@ -121,6 +121,9 @@ filter_1p_lo cvSlew[4];
 u8 cvChan = 0;
 
 ///////////////
+// try this out
+/// if set, param changes triggering fade will be ignored if a fade is in progress.
+static const u8 fadeIgnore = 1;
 ////////////////
 
 // initial param set
@@ -252,17 +255,15 @@ static void mix_outputs(void) {
 void module_init(void) {
   u8 i;
   u32 j;
-  // init module/param descriptor
+  // init module/params
   pLinesData = (linesData*)SDRAM_ADDRESS;
   
   gModuleData = &(pLinesData->super);
   strcpy(gModuleData->name, "aleph-lines");
-  //  gModuleData->paramDesc = (ParamDesc*)pLinesData->mParamDesc;
+
   gModuleData->paramData = (ParamData*)pLinesData->mParamData;
   gModuleData->numParams = eParamNumParams;
 
-  //  fill_param_desc();
-  
   for(i=0; i<NLINES; i++) {
     delayFadeN_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);
     filter_svf_init(&(svf[i]));
@@ -273,15 +274,7 @@ void module_init(void) {
     filter_ramp_tog_init(&(lpFadeRd[i]), 0);
     filter_ramp_tog_init(&(lpFadeWr[i]), 0);
   
-    /* filter_svf_set_rq(&(svf[i]), 0x1000); */
-    /* filter_svf_set_low(&(svf[i]), 0x4000); */
-    
-
-
-
-
-
-#if 1 
+#if 0
     //// WTF??
     //// uh... this is hanging the module, or something
     //// at least, it takes a long time.
@@ -295,17 +288,14 @@ void module_init(void) {
       pLinesData->audioBuffer[i][j] = 0;
     }
 #else
-    for(j=0; j<LINES_BUF_FRAMES; j++) {
+    // we really need to zero everything to avoid horrible noise at boot...
+    for(j=0; j<LINES_BUF_FRAMES; ++j) {
       pLinesData->audioBuffer[i][j] = 0;
     }
 #endif
   }
 
   /// setup params with intial values
-
-#if TEST
-#else
-
 
   param_setup( eParamFade0 , 0x100000 );
   param_setup( eParamFade1 , 0x100000 );
@@ -377,12 +367,10 @@ void module_init(void) {
   param_setup(  eParam_fwet0,	PARAM_AMP_6 );
   param_setup(  eParam_fdry0,	PARAM_AMP_6 );
 
-
   param_setup(  eParamCut0Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamCut1Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamRq0Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamRq1Slew, PARAM_SLEW_DEFAULT );
-#endif
 
 }
 
@@ -407,8 +395,7 @@ void module_process_frame(void) {
   mix_del_inputs();
 
   /// TEST
-#if TEST
-#else
+
   for(i=0; i<NLINES; i++) {
     // process fade integrator
     //    lines[i].fadeWr = filter_ramp_tog_next(&(lpFadeWr[i]));
@@ -432,17 +419,14 @@ void module_process_frame(void) {
     out_del[i] = tmpDel;
 
   } // end lines loop 
-#endif
 
   // mix outputs to DACs
   /// TEST
-#if TEST
+
   out[0] = in[0];
   out[1] = in[1];
   out[2] = in[2];
   out[3] = in[3];
-
-#else
   mix_outputs();
   /// do CV output
   
@@ -454,7 +438,6 @@ void module_process_frame(void) {
   if(++cvChan == 4) {
     cvChan = 0;
   }
-#endif
 }
 
 // parameter set function
