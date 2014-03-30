@@ -31,11 +31,12 @@ void scaler_fix_init(void* scaler) {
 }
 
 s32 scaler_fix_val(void* scaler, io_t in) {
-  // normalize
+  // normalize to 32b
   s32 norm = in << (32 - IO_BITS);
 
   // apply radix to put us in the correct range
   u8 r = ((ParamScaler*)scaler)->desc->radix;
+  ////.... ? ah
   if(r < (32 - IO_BITS)) {
     norm >>= (32 - IO_BITS - r);
   }
