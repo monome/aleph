@@ -1,13 +1,11 @@
 ----------------
 bees	0.5.0  ! breaks module compatibility !
-- move param descriptors offline, associated .dsc with .ldr
-- fix hang when attempting to delete system ops	  
-- eliminate class-specific increment functions for operators
-- new ops: MIDICC, MIDIPITCH, MIDITOUCH, NOTEOUT, CCOUT, PITCHOUT, STEP
-- SRAM linked to heap
+- new ops: LIST16, MIDICC, NOTEOUT, STEP
 - many UI tweaks
 - fixed series monome grids larger than 8x8
-
+- move param descriptors offline, associated .dsc with .ldr
+- fix hang on delete-system-op
+- SRAM linked to heap
 
 ----------------
 waves	0.4.0
@@ -16,6 +14,7 @@ waves	0.4.0
 ----------------
 lines	0.2.0
 - move param descriptors offline, associated .dsc with .ldr
+- tweak fade behavior
 
 ----------------
 waves	0.3.0
