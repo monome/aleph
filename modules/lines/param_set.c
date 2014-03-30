@@ -340,6 +340,7 @@ void module_set_param(u32 idx, ParamValue v) {
     filter_1p_lo_in(&(cvSlew[3]), (v >> (PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
     //cv_update(3, v >> (PARAM_CV_RADIX - 1));
     break;
+
     // cv slew
   case eParam_cvSlew0 :
     filter_1p_lo_set_slew(&(cvSlew[0]), v);

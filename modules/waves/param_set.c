@@ -215,18 +215,36 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
 
+  /*   // cv values */
+  /* case eParam_cvVal0 : */
+  /*   cvSlew[0].x = (v >> (PARAM_DAC_SHIFT)) & DAC_VALUE_MASK; */
+  /*   break; */
+  /* case eParam_cvVal1 : */
+  /*   cvSlew[1].x = (v >> (PARAM_DAC_SHIFT)) & DAC_VALUE_MASK; */
+  /*   break; */
+  /* case eParam_cvVal2 : */
+  /*   cvSlew[2].x = (v >> (PARAM_DAC_SHIFT)) & DAC_VALUE_MASK; */
+  /*   break; */
+  /* case eParam_cvVal3 : */
+  /*   cvSlew[3].x = (v >> (PARAM_DAC_SHIFT)) & DAC_VALUE_MASK; */
+  /*   break; */
+
     // cv values
   case eParam_cvVal0 :
-    cvSlew[0].x = (v >> (PARAM_DAC_SHIFT)) & DAC_VALUE_MASK;
+    filter_1p_lo_in(&(cvSlew[0]), (v >> ( PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
+    //cv_update(0, v >> (PARAM_CV_RADIX - 1));
     break;
   case eParam_cvVal1 :
-    cvSlew[1].x = (v >> (PARAM_DAC_SHIFT)) & DAC_VALUE_MASK;
+    filter_1p_lo_in(&(cvSlew[1]), (v >> (PARAM_DAC_RADIX - 1)) & DAC_VALUE_MASK);
+    //cv_update(1, v >> (PARAM_CV_RADIX - 1));
     break;
   case eParam_cvVal2 :
-    cvSlew[2].x = (v >> (PARAM_DAC_SHIFT)) & DAC_VALUE_MASK;
+    filter_1p_lo_in(&(cvSlew[2]), (v >> (PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
+    //cv_update(2, v >> (PARAM_CV_RADIX - 1));
     break;
   case eParam_cvVal3 :
-    cvSlew[3].x = (v >> (PARAM_DAC_SHIFT)) & DAC_VALUE_MASK;
+    filter_1p_lo_in(&(cvSlew[3]), (v >> (PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
+    //cv_update(3, v >> (PARAM_CV_RADIX - 1));
     break;
 
   case eParam_cvSlew0 :

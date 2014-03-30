@@ -131,7 +131,7 @@ static volatile fract32* patch_osc_dac[2][4];
 /* static u32 cvChan = 0; */
 
 
-static fract32 cvVal[4];
+static volatile fract32 cvVal[4];
 static filter_1p_lo cvSlew[4];
 static u8 cvChan = 0;
 
@@ -402,11 +402,8 @@ extern u32 module_get_num_params(void) {
 
 // frame callback
 void module_process_frame(void) {
-  //  volatile u32 delay;
 
-
-  /// TEST; nothing
-  //  calc_frame();
+  calc_frame();
 
   // we could shift to fract16 at a cost of only 1b resolution
 
@@ -421,9 +418,7 @@ void module_process_frame(void) {
   */
 
 
-
-
-
+  // something really weird going on, reverting
   if(cvSlew[cvChan].sync) { ;; } else {
     cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
     dac_update(cvChan, cvVal[cvChan]);

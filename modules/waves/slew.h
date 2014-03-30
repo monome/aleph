@@ -39,7 +39,7 @@ typedef struct {
 				   sub_fr1x16((sl).y, (sl).x)	\
 				   ));				
 
-#define slew16_sync( sl ) ( sl.x == sl.y )
+#define slew16_sync( sl ) ( (sl).x == (sl).y )
       
 #endif // blackfin architecture
 

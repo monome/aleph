@@ -274,12 +274,19 @@ void module_init(void) {
     filter_ramp_tog_init(&(lpFadeRd[i]), 0);
     filter_ramp_tog_init(&(lpFadeWr[i]), 0);
 
-    // we really need to zero everything to avoid horrible noise at boot...
-    for(j=0; j<LINES_BUF_FRAMES; ++j) {
-      pLinesData->audioBuffer[i][j] = 0;
-    }
+    /* // we really need to zero everything to avoid horrible noise at boot... */
+    /* for(j=0; j<LINES_BUF_FRAMES; ++j) { */
+    /*   pLinesData->audioBuffer[i][j] = 0; */
+    /* } */
 
+    //    memset(pLinesData->audioBuffer[i], 0, LINES_BUF_FRAMES * 4);
   }
+
+  // dac
+  filter_1p_lo_init( &(cvSlew[0]), 0xf );
+  filter_1p_lo_init( &(cvSlew[1]), 0xf );
+  filter_1p_lo_init( &(cvSlew[2]), 0xf );
+  filter_1p_lo_init( &(cvSlew[3]), 0xf );
 
   /// setup params with intial values
 
@@ -416,7 +423,7 @@ void module_process_frame(void) {
   mix_outputs();
 
   /// do CV output
-  if( !(cvSlew[cvChan].sync) ) { 
+  if( cvSlew[cvChan].sync ) { ;; } else { 
     cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
     dac_update(cvChan, cvVal[cvChan]);
   }
