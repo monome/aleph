@@ -54,7 +54,7 @@ typedef struct _linesData {
   ModuleData super;
   //  ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
-  fract32 audioBuffer[NLINES][LINES_BUF_FRAMES];
+  volatile fract32 audioBuffer[NLINES][LINES_BUF_FRAMES];
 } linesData;
 
 //-------------------------
@@ -280,6 +280,13 @@ void module_init(void) {
     /* } */
 
     //    memset(pLinesData->audioBuffer[i], 0, LINES_BUF_FRAMES * 4);
+
+    // however, it is causing crashes or hangs here, for some damn reason.
+
+    // at least zero the end of the buffer
+    /* for(j=LINES_BUF_FRAMES - 100000; j <LINES_BUF_FRAMES; ++j) { */
+    /*   pLinesData->audioBuffer[i][j] = 0x00000000;  */
+    /* } */
   }
 
   // dac
@@ -364,6 +371,17 @@ void module_init(void) {
   param_setup(  eParamCut1Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamRq0Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamRq1Slew, PARAM_SLEW_DEFAULT );
+
+
+  param_setup(  eParam_cvSlew0, PARAM_SLEW_DEFAULT );
+  param_setup(  eParam_cvSlew1, PARAM_SLEW_DEFAULT );
+  param_setup(  eParam_cvSlew2, PARAM_SLEW_DEFAULT );
+  param_setup(  eParam_cvSlew3, PARAM_SLEW_DEFAULT );
+
+  param_setup(  eParam_cvVal0, PARAM_CV_VAL_DEFAULT );
+  param_setup(  eParam_cvVal1, PARAM_CV_VAL_DEFAULT );
+  param_setup(  eParam_cvVal2, PARAM_CV_VAL_DEFAULT );
+  param_setup(  eParam_cvVal3, PARAM_CV_VAL_DEFAULT );
 
 }
 

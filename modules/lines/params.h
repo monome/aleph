@@ -53,7 +53,12 @@
 
 /// smoother default
 // about 1ms?
-#define PARAM_SLEW_DEFAULT  0x76000000
+//#define PARAM_SLEW_DEFAULT  0x77000000
+/// ehh, try longer
+#define PARAM_SLEW_DEFAULT 0x77000000
+
+// cv output
+#define PARAM_CV_VAL_DEFAULT PARAM_AMP_6
 
 // enumerate parameters
 enum params {

@@ -14,7 +14,7 @@
 #include "pan.h"
 
 // initialize with pointer to audio buffer
-extern void delayFadeN_init(delayFadeN* dl, fract32* data, u32 frames) {
+extern void delayFadeN_init(delayFadeN* dl, volatile fract32* data, u32 frames) {
   buffer_init(&(dl->buffer), data, frames);
   
   buffer_tapN_init(&(dl->tapRd[1]), &(dl->buffer));

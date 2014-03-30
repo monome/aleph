@@ -44,7 +44,7 @@ typedef struct _delayFadeN {
 } delayFadeN;
 
 // initialize with pointer to audio buffer data
-extern void delayFadeN_init(delayFadeN* dl, fract32* bufData, u32 frames);
+extern void delayFadeN_init(delayFadeN* dl, volatile fract32* bufData, u32 frames);
 // get next value given input
 extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in);
 // set loop endpoint in seconds / samples
