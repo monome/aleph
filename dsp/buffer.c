@@ -169,14 +169,14 @@ void buffer_tapN_write(bufferTapN *tap, fract32 val) {
   tap->buf->data[tap->idx] = val;
 }
 
-//  arbitrary mix of old buffer contents with new
+//  mul and add old buffer contents to new
 void buffer_tapN_mix(bufferTapN *tap, fract32 val, fract32 preLevel) { 
   tap->buf->data[tap->idx] = 
     add_fr1x32(  mult_fr1x32x32(tap->buf->data[tap->idx], preLevel), val );
 }
 
 
-// interpolated addition of input to buffer contents
+// addition of input to buffer contents
 void buffer_tapN_add(bufferTapN *tap, fract32 val) { 
     tap->buf->data[tap->idx] = add_fr1x32(  tap->buf->data[tap->idx], val );
 }

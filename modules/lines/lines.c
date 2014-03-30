@@ -284,7 +284,7 @@ void module_init(void) {
     // however, it is causing crashes or hangs here, for some damn reason.
 
     // at least zero the end of the buffer
-    /* for(j=LINES_BUF_FRAMES - 100000; j <LINES_BUF_FRAMES; ++j) { */
+    /* for(j=LINES_BUF_FRAMES - 100000; j < LINES_BUF_FRAMES - 1; ++j) { */
     /*   pLinesData->audioBuffer[i][j] = 0x00000000;  */
     /* } */
   }
