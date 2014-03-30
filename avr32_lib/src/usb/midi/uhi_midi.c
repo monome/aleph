@@ -64,41 +64,42 @@ static uhi_midi_dev_t uhi_midi_dev = {
 /* 			uint16_t payload_trans); */
 
 // read cable index
-static void midi_get_cable(u8 descId, u8* cableIdx, u8* cableCount) { 
-  // send a setup request for the selected descriptor.
-  // descriptor type 
-  /*
-    Table B-12: MIDI Adapter Class-specific Bulk OUT Endpoint Descriptor
-    Offset
-    Field
-    Size Value
-    Description
 
-    0  bLength		 1 	0x05 	Size of this descriptor, in bytes.
-    1  bDescriptorType	 1 	0x25 	CS_ENDPOINT descriptor
-    2  bDescriptorSubtype 1 	0x01 	MS_GENERAL subtype.
-    3  bNumEmbMIDIJack 	 1 	0x01 	Number of embedded MIDI IN Jacks.
-    4  BaAssocJackID(1)	 1 	0x01 	ID of the Embedded MIDI IN Jack
+/* static void midi_get_cable(u8 descId, u8* cableIdx, u8* cableCount) {  */
+/*   // send a setup request for the selected descriptor. */
+/*   // descriptor type  */
+/*   /\* */
+/*     Table B-12: MIDI Adapter Class-specific Bulk OUT Endpoint Descriptor */
+/*     Offset */
+/*     Field */
+/*     Size Value */
+/*     Description */
 
-    // bulk IN endpoint desc is similar with DescriptorType = 0x05
-    */
+/*     0  bLength		 1 	0x05 	Size of this descriptor, in bytes. */
+/*     1  bDescriptorType	 1 	0x25 	CS_ENDPOINT descriptor */
+/*     2  bDescriptorSubtype 1 	0x01 	MS_GENERAL subtype. */
+/*     3  bNumEmbMIDIJack 	 1 	0x01 	Number of embedded MIDI IN Jacks. */
+/*     4  BaAssocJackID(1)	 1 	0x01 	ID of the Embedded MIDI IN Jack */
 
-    usb_setup_req_t req;
+/*     // bulk IN endpoint desc is similar with DescriptorType = 0x05 */
+/*     *\/ */
 
-  /* req.bmRequestType = MIDI_EP_DESC_REQ_TYPE; */
-  /* req.bRequest = reqnum; */
-  /* req.wValue = (val); */
-  /* req.wIndex = (index); */
-  /* req.wLength = (size); */
-  /* return uhd_setup_request( */
-  /* 			   uhi_ftdi_dev.dev->address, */
-  /* 			   &req, */
-  /* 			   data, */
-  /* 			   size, */
-  /* 			   NULL, // no callback on run */
+/*   //    usb_setup_req_t req; */
+
+/*   /\* req.bmRequestType = MIDI_EP_DESC_REQ_TYPE; *\/ */
+/*   /\* req.bRequest = reqnum; *\/ */
+/*   /\* req.wValue = (val); *\/ */
+/*   /\* req.wIndex = (index); *\/ */
+/*   /\* req.wLength = (size); *\/ */
+/*   /\* return uhd_setup_request( *\/ */
+/*   /\* 			   uhi_ftdi_dev.dev->address, *\/ */
+/*   /\* 			   &req, *\/ */
+/*   /\* 			   data, *\/ */
+/*   /\* 			   size, *\/ */
+/*   /\* 			   NULL, // no callback on run *\/ */
 			   
-  /* 			   ); */
-}
+/*   /\* 			   ); *\/ */
+/* } */
 
 
 //----- external (UHC) functions

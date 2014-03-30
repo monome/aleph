@@ -113,7 +113,7 @@ void module_set_param(u32 idx, ParamValue v) {
     delayFadeN_set_write(&(lines[0]), v > 0);
     break;
   case eParam_write1 :
-    /// FIXME: need write level...
+    /// FIXME: need write level...gs
     delayFadeN_set_write(&(lines[1]), v > 0);
     break;
   case eParam_pre0 :
@@ -364,8 +364,6 @@ void module_set_param(u32 idx, ParamValue v) {
     filter_ramp_tog_set_inc(&(lpFadeRd[1]), v );
     //    filter_ramp_tog_set_inc(&(lpFadeWr[1]), v);
     break;
-
-
 
   default:
     break;
