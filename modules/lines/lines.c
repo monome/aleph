@@ -273,26 +273,12 @@ void module_init(void) {
 
     filter_ramp_tog_init(&(lpFadeRd[i]), 0);
     filter_ramp_tog_init(&(lpFadeWr[i]), 0);
-  
-#if 0
-    //// WTF??
-    //// uh... this is hanging the module, or something
-    //// at least, it takes a long time.
-    /// so just zero the beginning/end.
-    /// the write head will get the rest in short order,
-    /// ... unless, of course, we set the pos directly on scene recall... 
-    for(j=(LINES_BUF_FRAMES - 50000); j<(LINES_BUF_FRAMES); ++j) {
-      pLinesData->audioBuffer[i][j] = 0;
-    }
-    for(j=0; j<(50000); ++j)  {
-      pLinesData->audioBuffer[i][j] = 0;
-    }
-#else
+
     // we really need to zero everything to avoid horrible noise at boot...
     for(j=0; j<LINES_BUF_FRAMES; ++j) {
       pLinesData->audioBuffer[i][j] = 0;
     }
-#endif
+
   }
 
   /// setup params with intial values
@@ -422,14 +408,14 @@ void module_process_frame(void) {
 
   // mix outputs to DACs
   /// TEST
-
-  out[0] = in[0];
-  out[1] = in[1];
-  out[2] = in[2];
-  out[3] = in[3];
+  /* out[0] = in[0]; */
+  /* out[1] = in[1]; */
+  /* out[2] = in[2]; */
+  /* out[3] = in[3]; */
+  out[0] = out[1] = out[2] = out[3] = 0x00000000;
   mix_outputs();
+
   /// do CV output
-  
   if( !(cvSlew[cvChan].sync) ) { 
     cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
     dac_update(cvChan, cvVal[cvChan]);

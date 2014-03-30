@@ -3,7 +3,7 @@
 // check crossfade status of target
 static u8 check_fade_rd(u8 id) {
   u8 newTarget, oldTarget = fadeTargetRd[id];
-  u8 ret;
+  //  u8 ret;
 
   if(lpFadeRd[id].sync) {
     // not fading right now, so pick different target and start crossfade
@@ -82,24 +82,31 @@ void module_set_param(u32 idx, ParamValue v) {
     delayFadeN_set_run_read(&(lines[1]), v);
     break;
   case eParam_rMul0 :
-    if( check_fade_rd(0) ) {
-      delayFadeN_set_mul(&(lines[0]), v >> 16,  fadeTargetRd[0]);
-    }
+    //    if( 
+    check_fade_rd(0);
+    delayFadeN_set_mul(&(lines[0]), v >> 16,  fadeTargetRd[0]);
+    //    }
     break;
   case eParam_rDiv0 :
-    if (check_fade_rd(0) ) {
-      delayFadeN_set_div(&(lines[0]), v >> 16,  fadeTargetRd[0]);
-    }
+    //    if (
+    check_fade_rd(0) ;
+    //	) {
+    delayFadeN_set_div(&(lines[0]), v >> 16,  fadeTargetRd[0]);
+    //    }
     break;
   case eParam_rMul1 :
-    if (check_fade_rd(1) ) {
-      delayFadeN_set_mul(&(lines[1]), v >> 16 ,  fadeTargetRd[1]);
-    }
+    //    if (
+    check_fade_rd(1) ;
+    //) {
+    delayFadeN_set_mul(&(lines[1]), v >> 16 ,  fadeTargetRd[1]);
+    //    }
     break;
   case eParam_rDiv1 :
-    if (check_fade_rd(1)) {
-      delayFadeN_set_div(&(lines[1]), v >> 16 ,  fadeTargetRd[1]);
-    }
+    //    if (
+    check_fade_rd(1) ;
+	  //) {
+    delayFadeN_set_div(&(lines[1]), v >> 16 ,  fadeTargetRd[1]);
+	//    }
     break;
   case eParam_write0 :
     /// FIXME: need write level...
@@ -348,14 +355,14 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
     // fade times
-    // FIXME: value is raw ramp increment per sample
+    // FIXME: value is raw ramp increment per sample...
   case eParamFade0 :
     filter_ramp_tog_set_inc(&(lpFadeRd[0]), v );
-    filter_ramp_tog_set_inc(&(lpFadeWr[0]), v );
+    //    filter_ramp_tog_set_inc(&(lpFadeWr[0]), v );
     break;
   case eParamFade1 :
     filter_ramp_tog_set_inc(&(lpFadeRd[1]), v );
-    filter_ramp_tog_set_inc(&(lpFadeWr[1]), v);
+    //    filter_ramp_tog_set_inc(&(lpFadeWr[1]), v);
     break;
 
 
