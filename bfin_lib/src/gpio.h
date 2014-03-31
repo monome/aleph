@@ -1,3 +1,7 @@
+#define __DEFINED_SSYNC
+#define __DEFINED_CSYNC
+#include <cdefBF533.h>
+
 #ifndef _ALEPH_BFIN_GPIO_H_
 #define _ALEPH_BFIN_GPIO_H_
 
