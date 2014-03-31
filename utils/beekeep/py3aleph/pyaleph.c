@@ -57,7 +57,7 @@ static struct PyModuleDef pyalephCmodule = {
 int python_gui (void) {
 
     //Fire up the python interpreter, including path to pyaleph.py
-    setenv("PYTHONPATH", "pyaleph", 0);
+    setenv("PYTHONPATH", "py3aleph", 0);
 	PyImport_AppendInittab("pyalephC", PyInit_pyalephC);
     Py_Initialize();
 

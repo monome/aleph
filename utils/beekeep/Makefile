@@ -7,6 +7,9 @@ include $(bees)/version.mk
 version = $(maj).$(min).$(rev)
 target = $(name)-$(version)
 
+#copy the approriate python version file here for your distro
+include python_version.mk
+
 # bees sources
 src += \
 	$(bees)/src/app_timers.c \
@@ -90,7 +93,7 @@ src += src/json_read_raw.c \
 	src/json_write_max.c \
 	src/json_read_native.c \
 	src/json_write_native.c \
-    pyaleph/pyaleph.c \
+    $(pyaleph)/pyaleph.c \
 
 
 # srcs from simulator
@@ -136,7 +139,7 @@ inc = 	$(bees) \
 	$(sim)/src/usb/hid \
 	$(sim)/src/usb/mouse \
 	$(sim)/src/usb/hub \
-    pyaleph
+    $(pyaleph)
 
 
 ifdef BUILD_DIR
@@ -152,7 +155,6 @@ cflags += -std=gnu99
 cflags += -D BEEKEEP=1
 
 lflags += -ljansson
-include python_version.mk
 
 $(build-dir)%.o: %.c 
 	echo $(cflags)
@@ -166,4 +168,4 @@ target: $(obj)
 all: beekeep
 
 clean:
-	rm $(obj) pyaleph/pyaleph.pyc
+	rm $(obj) $(pyaleph)/pyaleph.pyc
