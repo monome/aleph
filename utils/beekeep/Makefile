@@ -53,6 +53,7 @@ src += \
 	$(bees)/src/ops/op_screen.c \
 	$(bees)/src/ops/op_split.c \
 	$(bees)/src/ops/op_split4.c \
+	$(bees)/src/ops/op_step.c \
 	$(bees)/src/ops/op_sub.c \
 	$(bees)/src/ops/op_sw.c \
 	$(bees)/src/ops/op_timer.c \
