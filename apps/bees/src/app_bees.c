@@ -174,4 +174,3 @@ u8 app_launch(u8 firstrun) {
 
   return 1;
 }
-y
