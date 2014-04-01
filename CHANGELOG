@@ -1,4 +1,16 @@
 ----------------
+waves	0.4.1
+- cv dac fixes
+
+----------------
+lines	0.2.1
+- cv dac fixes
+
+----------------
+bees	0.5.1
+- fix/stability soft timer processing in avr32_lib
+
+----------------
 bees	0.5.0  ! breaks module compatibility !
 - new ops: LIST16, MIDICC, NOTEOUT, STEP
 - many UI tweaks
