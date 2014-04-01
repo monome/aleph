@@ -76,8 +76,8 @@ void op_step_init(void* mem) {
   op->outs[3] = -1;
   op->outs[4] = -1;
   op->outs[5] = -1;
-  op->outs[5] = -1;
-  op->outs[5] = -1;
+  op->outs[6] = -1;
+  op->outs[7] = -1;
 
   op->s_start = 0;
   op->s_end = 7;
