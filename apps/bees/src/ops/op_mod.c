@@ -3,7 +3,6 @@
 
 //-------------------------------------------------
 //----- static function declaration
-static void op_mod_inc_input(op_mod_t* mod, const s16 idx, const io_t inc);
 static void op_mod_in_a(op_mod_t* mod, const io_t v);
 static void op_mod_in_b(op_mod_t* mod, const io_t v);
 static void op_mod_in_btrig(op_mod_t* mod, const io_t v);
@@ -21,8 +20,8 @@ static op_in_fn op_mod_in_fn[3] = {
   (op_in_fn)&op_mod_in_btrig
 };
 
-static const char* op_mod_instring  = "A       B       B_TRIG  ";
-static const char* op_mod_outstring = "VAL     ";
+static const char* op_mod_instring  = "A\0      B\0      TRIG\0   ";
+static const char* op_mod_outstring = "VAL\0    ";
 static const char* op_mod_opstring  = "MOD";
 
 //-------------------------------------------------
@@ -33,7 +32,6 @@ void op_mod_init(void* mem) {
   mod->super.numOutputs = 1;
   mod->outs[0] = -1;
 
-  mod->super.inc_fn = (op_inc_fn)op_mod_inc_input;
   mod->super.in_fn = op_mod_in_fn;
   mod->super.pickle = (op_pickle_fn) (&op_mod_pickle);
   mod->super.unpickle = (op_unpickle_fn) (&op_mod_unpickle);
@@ -79,24 +77,6 @@ static void op_mod_in_b(op_mod_t* mod, const io_t v) {
 static void op_mod_in_btrig(op_mod_t* mod, const io_t v) {
   //printf("mod at %d received BTRIG %d\n", (int)mod, (int)*v);
   if(v > 0) { mod->btrig = OP_ONE; } else { mod->btrig = 0; }
-}
-
-//===== UI input
-static void op_mod_inc_input(op_mod_t* mod, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0:  // a
-    val = op_add(mod->a, inc);
-    op_mod_in_a(mod, val);
-    break; 
-  case 1:  // b
-    val = op_add(mod->b, inc);
-    op_mod_in_b(mod, val);
-    break;
-  case 2:  // trig
-    op_mod_in_btrig(mod, inc);
-    break;
-  }
 }
 
 // pickle / unpickle

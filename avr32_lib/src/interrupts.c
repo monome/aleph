@@ -244,8 +244,6 @@ static void irq_port1_line3(void) {
 __attribute__((__interrupt__))
 static void irq_usart(void) {
   serial_process();
-  // usart_write_char(FTDI_USART,c);
-  // print_dbg("\r\nusb cable change.");
   gpio_toggle_pin(LED_MODE_PIN);
 }
 

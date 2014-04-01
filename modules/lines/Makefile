@@ -8,7 +8,6 @@ version = $(maj).$(min).$(rev)
 ldr_name = aleph-$(module_name)-$(version).ldr
 
 module_obj = lines.o \
-	params.o \
 	$(audio)/buffer.o \
 	$(audio)/conversion.o \
 	$(audio)/delayFadeN.o \
@@ -33,6 +32,17 @@ CFLAGS += -g
 
 include version.mk
 
+desc_src = \
+	$(bfin_lib_srcdir)desc.c \
+	$(bfin_lib_srcdir)pickle.c \
+	params.c
+
+desc:
+	gcc $(desc_src) \
+	$(INC) \
+	-D NAME=\"$(module_name)\" \
+	-o $(module_name)_desc_build
+
 $(module_obj): %.o : %.c	
 	$(CC) $(CFLAGS) -c -o $@ $< $(LDFLAGS)
 
@@ -50,10 +60,12 @@ clean: bfin_lib_clean
 	rm aleph-$(module_name)
 
 deploy: aleph-$(module_name).ldr
+	make desc
+	./$(module_name)_desc_build
 	cp aleph-$(module_name).ldr aleph-$(module_name)-$(maj).$(min).$(rev).ldr
 	cp aleph-$(module_name).ldr ../../release/
 	cp aleph-$(module_name)-$(maj).$(min).$(rev).ldr ../../release/
-
+	cp $(module_name)_desc_build ../../release/
 
 .PHONY: clean
 	deploy

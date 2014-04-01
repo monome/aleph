@@ -143,8 +143,7 @@ AVR32
 -----
 
 for mac:
-https://github.com/jsnyder/avr32-toolchain
-
+https://github.com/droparea/avr32-toolchain
 
 for linux:
 

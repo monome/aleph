@@ -273,6 +273,7 @@ void net_deinit(void) {
 
 // clear ops and i/o
 void net_clear_user_ops(void) {
+  /// no...
   net_deinit();
   add_sys_ops();
 }
@@ -497,7 +498,11 @@ s16 net_pop_op(void) {
 
   app_pause();
   // bail if system op
-  if(net_op_flag (opIdx, eOpFlagSys)) { return 1; }
+  if(net_op_flag (opIdx, eOpFlagSys)) { 
+    app_resume();
+    return 1; 
+  }
+  
   // de-init
   op_deinit(op);
   ins = op->numInputs;
@@ -859,7 +864,9 @@ io_t net_inc_in_value(s32 inIdx, io_t inc) {
   } else {
     op = net->ops[net->ins[inIdx].opIdx];
 
-    (*(op->inc_fn))(op, net->ins[inIdx].opInIdx, inc);
+    //    (*(op->inc_fn))(op, net->ins[inIdx].opInIdx, inc);
+    op_inc_in_val(op, net->ins[inIdx].opInIdx, inc);
+    
 
     print_dbg(" , result: ");
     print_dbg_hex( net_get_in_value(inIdx));
@@ -955,7 +962,11 @@ u8 net_toggle_in_play(u32 inIdx) {
 
 // set play inclusion for input
 void net_set_in_play(u32 inIdx, u8 val) {
-  net->ins[inIdx].play = val;
+  if(inIdx < net->numIns) {
+    net->ins[inIdx].play = val;
+  } else {
+    net->params[inIdx - net->numIns].play = val;
+  }
 }
 
 // get play inclusion for input
@@ -973,6 +984,7 @@ u8 net_get_in_play(u32 inIdx) {
 
 // add a new parameter
 void net_add_param(u32 idx, const ParamDesc * pdesc) {
+  s32 val;
   // copy descriptor, hm
   memcpy( &(net->params[net->numParams].desc), (const void*)pdesc, sizeof(ParamDesc) );
 
@@ -983,12 +995,22 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
   ////////////
   print_dbg("\r\n finished initializing param scaler.");
 
-  net->params[net->numParams].idx = idx; 
+  //// TEST: don't
+  //  net->params[net->numParams].idx = idx; 
+  /////
+
   net->params[net->numParams].play = 1;
 
   //  net->params[net->numParams].preset = 0; 
   net->numParams += 1;
-  
+
+  // query initial value
+  val = bfin_get_param(idx);
+
+  net->params[net->numParams - 1].data.value = 
+    scaler_get_in( &(net->params[net->numParams - 1].scaler), val);
+
+  net->params[net->numParams - 1].data.changed = 0; 
 }
 
 // clear existing parameters
@@ -1015,88 +1037,93 @@ void net_retrigger_inputs(void) {
   netActive = 1;
 }
 
-// query the blackfin for parameter list and populate pnodes
-u8 net_report_params(void) {
-  volatile char buf[64];
-  volatile ParamDesc pdesc;
-  volatile u32 numParams;
-  s32 val;
-  u8 i;
+
+///////////////
+///////////////
+/// moving param descriptor offline
+#if 0
+/* // query the blackfin for parameter list and populate pnodes */
+/* u8 net_report_params(void) { */
+/*   volatile char buf[64]; */
+/*   volatile ParamDesc pdesc; */
+/*   volatile u32 numParams; */
+/*   s32 val; */
+/*   u8 i; */
  
-  bfin_get_num_params(&numParams);
+/*   bfin_get_num_params(&numParams); */
   
-  print_dbg("\r\nnumparams: ");
-  print_dbg_ulong(numParams);
+/*   print_dbg("\r\nnumparams: "); */
+/*   print_dbg_ulong(numParams); */
 
-  if(numParams == 255) {
-    print_dbg("\r\n report_params fail (255)");
-    return 0;
-  }
+/*   if(numParams == 255) { */
+/*     print_dbg("\r\n report_params fail (255)"); */
+/*     return 0; */
+/*   } */
   
-  if(numParams > 0) {
+/*   if(numParams > 0) { */
 
-    net_clear_params();
+/*     net_clear_params(); */
 
-    for(i=0; i<numParams; i++) {
+/*     for(i=0; i<numParams; i++) { */
 
       
-      ///////
-      ///////
-      // TODO: offline param descriptor
-      bfin_get_param_desc(i, &pdesc);
-      ///////
-      /////
+/*       /////// */
+/*       /////// */
+/*       // TODO: offline param descriptor */
+/*       //      bfin_get_param_desc(i, &pdesc); */
+/*       ///////  */
+/*       ///// */
 
 
-      print_dbg("\r\n received descriptor for param, index : ");
-      print_dbg_ulong(i);
-      print_dbg(" , label : ");
-      print_dbg((const char* )pdesc.label);
+/*       print_dbg("\r\n received descriptor for param, index : "); */
+/*       print_dbg_ulong(i); */
+/*       print_dbg(" , label : "); */
+/*       print_dbg((const char* )pdesc.label); */
 
-      print_dbg(" ; \t initial value: 0x");
-      val = bfin_get_param(i);
-      print_dbg_hex(val);
+/*       print_dbg(" ; \t initial value: 0x"); */
+/*       val = bfin_get_param(i); */
+/*       print_dbg_hex(val); */
 
-      net_add_param(i, (const ParamDesc*)&pdesc);
-      print_dbg("\r\n finished adding parameter.");
+/*       net_add_param(i, (const ParamDesc*)&pdesc); */
+/*       print_dbg("\r\n finished adding parameter."); */
 
-      //      net->params[net->numParams - 1].data.value = val; 
-      //// use reverse-lookup method from scaler      
-      net->params[net->numParams - 1].data.value = 
-	scaler_get_in( &(net->params[net->numParams - 1].scaler), val);
+/*       //      net->params[net->numParams - 1].data.value = val;  */
+/*       //// use reverse-lookup method from scaler       */
+/*       net->params[net->numParams - 1].data.value =  */
+/* 	scaler_get_in( &(net->params[net->numParams - 1].scaler), val); */
 
-      net->params[net->numParams - 1].data.changed = 0; 
+/*       net->params[net->numParams - 1].data.changed = 0;  */
 
-    }
-  } else {
-    print_dbg("\r\n bfin: no parameters reported");
-    return 0;
-  }
+/*     } */
+/*   } else { */
+/*     print_dbg("\r\n bfin: no parameters reported"); */
+/*     return 0; */
+/*   } */
   
-  delay_ms(100);
+/*   delay_ms(100); */
 
-  print_dbg("\r\n checking module label ");
-  bfin_get_module_name(buf);
+/*   print_dbg("\r\n checking module label "); */
+/*   bfin_get_module_name(buf); */
 
-  delay_ms(10);
+/*   delay_ms(10); */
 
-  print_dbg("\r\n bfin module name: ");
-  print_dbg((const char*)buf);
+/*   print_dbg("\r\n bfin module name: "); */
+/*   print_dbg((const char*)buf); */
 
 
-  //  if(numParams > 0 && numParams != 255) {
-    /// test bfin_get_param on initial values
-    //    print_dbg("\r\n reporting inital param values: ");
-    //    for(i=0; i<numParams; ++i) {
-    //  print_dbg("\r\n 0x");
-  //      val = bfin_get_param(i);
-  //      print_dbg_hex(val);
-      //    }
-      //  }
-  return (u8)numParams;
+/*   //  if(numParams > 0 && numParams != 255) { */
+/*     /// test bfin_get_param on initial values */
+/*     //    print_dbg("\r\n reporting inital param values: "); */
+/*     //    for(i=0; i<numParams; ++i) { */
+/*     //  print_dbg("\r\n 0x"); */
+/*   //      val = bfin_get_param(i); */
+/*   //      print_dbg_hex(val); */
+/*       //    } */
+/*       //  } */
+/*   return (u8)numParams; */
 
-}
-
+/* } */
+#endif
 
 // pickle the network!
 u8* net_pickle(u8* dst) {
@@ -1104,8 +1131,8 @@ u8* net_pickle(u8* dst) {
   op_t* op;
   u32 val = 0;
 
-  // store count of operators
-  // (use 4 bytes for alignment)
+  // write count of operators
+  // ( 4 bytes for alignment)
   dst = pickle_32((u32)(net->numOps), dst);
 
   // loop over operators
@@ -1120,10 +1147,8 @@ u8* net_pickle(u8* dst) {
   }
 
   // write input nodes
-  //  for(i=0; i < (net->numIns + net->numParams); ++i) {
-  /// FIXME: doing params is breaking stuff, somehow...!! arg
-
 #if 1
+  //// all nodes, even unused
   for(i=0; i < (NET_INS_MAX); ++i) {
     dst = inode_pickle(&(net->ins[i]), dst);
   }
@@ -1133,17 +1158,18 @@ u8* net_pickle(u8* dst) {
     dst = onode_pickle(&(net->outs[i]), dst);
   }
 #else
-  for(i=0; i < (net->numIns); ++i) {
-    dst = inode_pickle(&(net->ins[i]), dst);
-  }
+  /* for(i=0; i < (net->numIns); ++i) { */
+  /*   dst = inode_pickle(&(net->ins[i]), dst); */
+  /* } */
 
-  // write output nodes
-  for(i=0; i < net->numOuts; ++i) {
-    dst = onode_pickle(&(net->outs[i]), dst);
-  }
+  /* // write output nodes */
+  /* for(i=0; i < net->numOuts; ++i) { */
+  /*   dst = onode_pickle(&(net->outs[i]), dst); */
+  /* } */
 #endif
 
   // write count of parameters
+  // 4 bytes for alignment
   val = (u32)(net->numParams);
   dst = pickle_32(val, dst);
 

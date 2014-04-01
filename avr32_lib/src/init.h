@@ -22,7 +22,7 @@ extern void init_local_pdca(void);
 // initialize spi1 (oled / adc / sdcard)
 extern void init_spi1 (void);
 // initialize application timer
-extern void init_tc (volatile avr32_tc_t *tc);
+extern void init_tc (void);
 // intialize two-wire interface
 extern void init_twi(void);
 // initialize SPI and GPIO for sdcard

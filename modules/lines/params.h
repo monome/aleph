@@ -1,13 +1,13 @@
 #ifndef _ALEPH_LINES_PARAMS_H_
 #define _ALEPH_LINES_PARAMS_H_
 
+#include "param_common.h"
+
 #define PARAM_HZ_MIN OSC_FREQ_MIN
 #define PARAM_HZ_MAX OSC_FREQ_MIN
 #define PARAM_HZ_DEFAULT (OSC_FREQ_MIN * 16)
 
 #define PARAM_DAC_MIN 0
-//#define PARAM_DAC_MAX (10 << 16)
-// bah?
 #define PARAM_DAC_MAX 0x7fffffff
 #define PARAM_DAC_RADIX 16
 
@@ -15,24 +15,18 @@
 #define PARAM_RATE_MAX 0x80000 // 8
 #define PARAM_RATE_RADIX 3
 
-
-
-/* #define RATIO_MIN 0x4000     // 1/4 */
-/* #define RATIO_MAX 0x40000    // 4 */
-/* #define RATIO_RADIX 3 */
-
 #define SMOOTH_FREQ_MIN 0x2000 // 1/8s
 #define SMOOTH_FREQ_MAX 0x400000 // 64s
 #define SMOOTH_FREQ_RADIX 7
 
 /// FIXME: 
-// right now, "fade" is the increment rate of a linear ramp.
-// not very intuitve
-#define PARAM_FADE_MIN 0x20000    // ~3.41s.
-#define PARAM_FADE_MAX 0x20000000 // < 1ms  
-#define PARAM_FADE_RADIX 16
-// fixme: what a stupid hack
-#define PARAM_FADE_ADD 0x20000
+// right now, "fade" is the raw increment of a linear ramp from 0 to 0x7fffffff.
+// not very intuitive,
+// for 1s, inc = 0x7fffffff / 48k
+// let's say max = 8s and min = 1ms
+#define PARAM_FADE_MIN  0x2000 		// ~4s
+#define PARAM_FADE_MAX  0x2000000 	// ~1ms
+#define PARAM_FADE_RADIX 12 
 
 // svf cutoff
 #define PARAM_CUT_MAX     0x7fffffff
@@ -59,7 +53,12 @@
 
 /// smoother default
 // about 1ms?
-#define PARAM_SLEW_DEFAULT  0x76000000
+//#define PARAM_SLEW_DEFAULT  0x77000000
+/// ehh, try longer
+#define PARAM_SLEW_DEFAULT 0x77000000
+
+// cv output
+#define PARAM_CV_VAL_DEFAULT PARAM_AMP_6
 
 // enumerate parameters
 enum params {
@@ -192,7 +191,7 @@ enum params {
 };  
 
 
-extern void fill_param_desc(void);
+extern void fill_param_desc(ParamDesc* desc);
 
 #endif // header guard 
 // EOF

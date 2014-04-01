@@ -170,7 +170,8 @@ extern void net_retrigger_inputs(void);
 extern u32 net_gather(s32 iIdx, u32(*outs)[NET_OUTS_MAX]);
 
 // query the blackfin for parameter list and populate pnodes
-extern u8 net_report_params(void);
+/// this is now populated from offline descriptor file
+// extern u8 net_report_params(void);
 
 // pickle the network!
 // return incremented pointer to dst

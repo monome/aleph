@@ -36,9 +36,9 @@ extern bool uhi_midi_in_run(uint8_t * buf, iram_size_t buf_size,
 extern bool uhi_midi_out_run(uint8_t * buf, iram_size_t buf_size,
 		uhd_callback_trans_t callback);
 
-// get string descriptions
-//extern void midi_get_strings(char** pManufacturer, char** pProduct, char** pSerial);
 
-
+// get virtual cable id
+/* extern u8 midi_get_cable_in(void); */
+/* extern u8 midi_get_cable_out(void); */
 
 #endif // h guard

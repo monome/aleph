@@ -3,7 +3,6 @@
 
 //-------------------------------------------------
 //----- static function declaration
-static void op_history_inc_input(op_history_t* history, const s16 idx, const io_t inc);
 static void op_history_in_in(op_history_t* history, const io_t v);
 
 // pickle / unpickle
@@ -17,8 +16,8 @@ static op_in_fn op_history_in_fn[1] = {
   (op_in_fn)&op_history_in_in
 };
 
-static const char* op_history_instring  = "IN      ";
-static const char* op_history_outstring = "AVG     O0      O1      O2      O3      O4      O5      O6      O7      ";
+static const char* op_history_instring  = "IN\0     ";
+static const char* op_history_outstring = "AVG\0    O0\0     O1\0     O2\0     O3\0     O4\0     O5\0     O6\0     O7\0     ";
 static const char* op_history_opstring  = "HISTORY";
 
 //-------------------------------------------------
@@ -37,7 +36,6 @@ void op_history_init(void* mem) {
   history->outs[7] = -1;
   history->outs[8] = -1;
 
-  history->super.inc_fn = (op_inc_fn)op_history_inc_input;
   history->super.in_fn = op_history_in_fn;
   history->super.pickle = (op_pickle_fn) (&op_history_pickle);
   history->super.unpickle = (op_unpickle_fn) (&op_history_unpickle);
@@ -85,17 +83,6 @@ static void op_history_in_in(op_history_t* history, const io_t v) {
   net_activate(history->outs[8], history->val[7], history);
 }
 
-
-//===== UI input
-static void op_history_inc_input(op_history_t* history, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0:
-    val = op_add(history->in, inc);
-    op_history_in_in(history, val);
-    break;
-  }
-}
 
 // pickle / unpickle
 u8* op_history_pickle(op_history_t* op, u8* dst) {

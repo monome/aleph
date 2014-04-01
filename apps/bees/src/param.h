@@ -20,6 +20,11 @@ this is to avoid some annoying issues of inclusion order.
 #include "net_protected.h"
 #include "op_math.h"
 
+// this should be syncronized with pdesc_pickle/unpickle!
+// FIXME: also, it should be word-aligned...
+// label, type, min, max, radix
+#define PARAM_DESC_PICKLE_BYTES (PARAM_LABEL_LEN + 4 + 4 + 4 + 4)
+
 // get value for param at given idx
 extern io_t get_param_value(u32 idx);
 // get preset flag for param at given idx

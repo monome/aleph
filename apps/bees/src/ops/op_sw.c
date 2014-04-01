@@ -6,16 +6,14 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_sw_instring = "TOG     MUL     ";
-static const char* op_sw_outstring = "VAL     ";
+static const char* op_sw_instring = "TOG\0    MUL\0    ";
+static const char* op_sw_outstring = "VAL\0    ";
 static const char* op_sw_opstring = "SW";
 
 //-------------------------------------------------
 //----- static function declaration
 
 
-// UI increment
-static void op_sw_inc(op_sw_t* sw, const s16 idx, const io_t inc);
 // set inputs
 //static void op_sw_in_state(op_sw_t* sw, const io_t v);
 static void op_sw_in_tog(op_sw_t* sw, const io_t v);
@@ -38,7 +36,6 @@ void op_sw_init(void* op) {
   op_sw_t* sw = (op_sw_t*)op;
 
   // superclass functions
-  sw->super.inc_fn = (op_inc_fn)&op_sw_inc;
   sw->super.in_fn = op_sw_in;
   sw->super.pickle = (op_pickle_fn) (&op_sw_pickle);
   sw->super.unpickle = (op_unpickle_fn) (&op_sw_unpickle);
@@ -66,49 +63,6 @@ void op_sw_init(void* op) {
   sw->tog = 0;
 }
 
-//-------------------------------------------------
-//----- static function definition
-
-//===== operator input
-
-/* // input state */
-/* static void op_sw_in_state(op_sw_t* sw, const io_t v) { */
-/*   //  print_dbg("\r\n\r\n op_sw_in_state, current state: 0x"); */
-/*   //  print_dbg_hex((u32)(sw->state)); */
-/*   //  print_dbg(", input: 0x"); */
-/*   //  print_dbg_hex((u32)(v)); */
-
-/*   if (sw->tog) { */
-/*     // toggle mode, sw state toggles on positive input */
-/*     if ( (v) > 0) { */
-
-/*       if ((sw->state) == 0) {  */
-/* 	//	print_dbg("\r\n op_sw (toggle), state was == 0, setting to mul : 0x"); */
-/* 	//	print_dbg_hex((u32)(sw->mul)); */
-/* 	sw->state = sw->mul; */
-/*       } else { */
-/* 	//	print_dbg("\r\n op_sw (toggle), state was !=0, setting to 0 "); */
-/* 	sw->state = 0;  */
-/*       } */
-/*       //      print_dbg("\r\n output: 0x"); */
-/*       //      print_dbg_hex((u32)(sw->state)); */
-    
-/*       net_activate(sw->outs[0], sw->state, sw); */
-/*     }  */
-/*   } else { */
-/*     // momentary mode, sw value takes input */
-/*     //    print_dbg("\r\n op_sw (momentary), old state: 0x"); */
-/*     //    print_dbg_hex((u32)(sw->state)); */
-
-/*     if((v) > 0) { sw->state = sw->mul; } else { sw->state = 0; } */
-
-/*     //    print_dbg(", new state: 0x"); */
-/*     //    print_dbg_hex((u32)(sw->state)); */
-
-/*     net_activate(sw->outs[0], sw->state, sw); */
-/*   } */
-/* } */
-
 // input toggle mode
 static void op_sw_in_tog(op_sw_t* sw, const io_t v) {
   //  print_dbg("\r\n op_sw_in_mul");
@@ -123,26 +77,6 @@ static void op_sw_in_mul(op_sw_t* sw, const io_t v) {
   if (sw->state > 0) {
     sw->state = (v);
     net_activate(sw->outs[0], sw->state, sw);
-  }
-}
-
-//===== UI input
-
-// increment
-static void op_sw_inc(op_sw_t* sw, const s16 idx, const io_t inc) {
-  io_t val;
-  //  print_dbg("\r\n op_sw_inc");
-  switch(idx) {
-  /* case 0: // current value */
-  /*   op_sw_in_state(sw, inc); */
-  /*   break; */
-  case 0: // toggle mode
-    op_sw_in_tog(sw, inc);
-    break;
-  case 1: // multiplier
-    val = op_sadd(sw->mul, inc);
-    op_sw_in_mul(sw, val);
-    break;
   }
 }
 

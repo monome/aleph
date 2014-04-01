@@ -21,7 +21,7 @@ typedef struct _audioBuffer {
   // duration in seconds 
   fix16 dur;
   // pointer to data
-  fract32 *data;
+  volatile fract32 *data;
 } audioBuffer;
 
 

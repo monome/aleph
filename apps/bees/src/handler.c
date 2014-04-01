@@ -168,6 +168,7 @@ void assign_bees_event_handlers(void) {
   /// FIXME:
   //// better naming for customized application events
   app_event_handlers[ kEventAppCustom ]	= &net_poll_handler ;
+
   // system-defined:
   app_event_handlers[ kEventAdc0 ]	= &handle_Adc0 ;
   app_event_handlers[ kEventAdc1 ]	= &handle_Adc1 ;
@@ -247,7 +248,6 @@ io_t scale_knob_value(io_t val) {
   /* print_dbg_hex(val); */
   /* print_dbg(", abs: 0x"); */
   /* print_dbg_hex(vabs); */
-
   ret = knobScale[vabs - 1];
   if(val < 0) {
     ret = BIT_NEG_ABS_16(ret);
@@ -257,6 +257,64 @@ io_t scale_knob_value(io_t val) {
 
   return ret;
 }
+
+
+// fast!
+io_t scale_knob_value_fast(io_t val) {
+  static const u32 kNumKnobScales_1 = 23;
+  static const u32 knobScale[24] = {
+    ///--- linear segments:
+    // slope = 10
+    0x00000008, // 1
+    0x00000010, // 2
+    0x00000020, // 3
+    0x00000030, // 4
+    0x00000040, // 5
+    0x00000050, // 6
+    0x00000060, // 7
+    0x00000070, // 8
+    0x00000080, // 9
+    // slope = 0x100
+    0x00000200 ,  // 10
+    0x00000300 , // 11
+    0x00000400 , // 12
+    0x00000500 , // 13
+    0x00000600 , // 14
+    0x00000700 , // 15
+    0x00000800 , // 16
+    // slope == 0x1000
+    0x00001000 , // 17
+    0x00002000 , // 18
+    0x00003000 , // 19
+    0x00004000 , // 20
+    0x00005000 , // 21
+    0x00006000 , // 22
+    0x00007000 , // 23
+    0x00008000 , // 24
+  };
+
+  s16 vabs = BIT_ABS_16(val);
+  s16 ret = val;
+
+  if(vabs > kNumKnobScales_1) {
+    vabs = kNumKnobScales_1;
+  }
+  /* print_dbg("\r\n knob scaling, input: 0x"); */
+  /* print_dbg_hex(val); */
+  /* print_dbg(", abs: 0x"); */
+  /* print_dbg_hex(vabs); */
+  ret = knobScale[vabs - 1];
+  if(val < 0) {
+    ret = BIT_NEG_ABS_16(ret);
+  }
+  //  print_dbg(", result: 0x");
+  //  print_dbg_hex(ret);
+
+  return ret;
+}
+
+
+
 #endif
 
 #if IO_BITS == 32

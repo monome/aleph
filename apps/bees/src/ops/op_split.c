@@ -6,16 +6,14 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_split_instring = "X       ";
-static const char* op_split_outstring = "A       B       ";
+static const char* op_split_instring = "X\0      ";
+static const char* op_split_outstring = "A\0      B\0      ";
 static const char* op_split_opstring = "Y";
 
 //-------------------------------------------------
 //----- static function declaration
 
 
-// UI increment
-static void op_split_inc(op_split_t* split, const s16 idx, const io_t inc);
 // set inputs
 static void op_split_in_val(op_split_t* split, const io_t v);
 // pickle / unpickle
@@ -34,7 +32,6 @@ void op_split_init(void* op) {
   op_split_t* split = (op_split_t*)op;
 
   // superclass functions
-  split->super.inc_fn = (op_inc_fn)&op_split_inc;
   split->super.in_fn = op_split_in;
   split->super.pickle = (op_pickle_fn) (&op_split_pickle);
   split->super.unpickle = (op_unpickle_fn) (&op_split_unpickle);
@@ -70,13 +67,6 @@ static void op_split_in_val(op_split_t* split, const io_t v) {
   net_activate(split->outs[1], split->val, split);
 }
 
-//===== UI input
-
-// increment
-static void op_split_inc(op_split_t* split, const s16 idx, const io_t inc) {
-  // no UI
-  ;;
-}
 
 // serialization
 u8* op_split_pickle(op_split_t* split, u8* dst) {

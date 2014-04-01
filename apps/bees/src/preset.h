@@ -18,7 +18,7 @@
 // minimal storage for input
 typedef struct _presetIn {
   io_t value;
-  // FIXME: why do we need to store idx?
+  // FIXME: we would need to store idx for conditional inclusion in scene binary.
   //  s16 idx;
   u8 enabled;
 } presetIn_t;
@@ -27,7 +27,7 @@ typedef struct _presetIn {
 // minimal storage for output
 typedef struct _presetOut {
   s16 target;
-  // why do we need to store idx?
+  // FIXME: we would need to store idx for conditional inclusion in scene binary.
   //  s16 outIdx;
   u8 enabled;
 } presetOut_t;
@@ -89,23 +89,11 @@ extern void preset_inc_select(s32 inc);
 extern u8 preset_in_enabled(u32 preIdx, u32 inIdx);
 // get inclusion flag for given output, given preset
 extern u8 preset_out_enabled(u32 preIdx, u32 inIdx);
-// get inclusion flag for given param, given preset
-//extern u8 preset_param_enabled(u32 preIdx, u32 inIdx);
 
-//---- set
-// get inclusion flag for given input, given preset
-/* extern u8 preset_set_in_enabled(u32 preIdx, u32 inIdx); */
-/* // get inclusion flag for given output, given preset */
-/* extern u8 preset_set_out_enabled(u32 preIdx, u32 inIdx); */
-/* // get inclusion flag for given param, given preset */
-/* extern u8 preset_set_param_enabled(u32 preIdx, u32 inIdx); */
+// clear a given preset
+extern void preset_clear(int idx);
 
-/* //---- inc */
-/* // get inclusion flag for given input, given preset */
-/* extern u8 preset_inc_in_enabled(u32 preIdx, u32 inIdx); */
-/* // get inclusion flag for given output, given preset */
-/* extern u8 preset_inc_out_enabled(u32 preIdx, u32 inIdx); */
-/* // get inclusion flag for given param, given preset */
-/* extern u8 preset_inc_param_enabled(u32 preIdx, u32 inIdx); */
+
+
 
 #endif

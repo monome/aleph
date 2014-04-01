@@ -96,16 +96,16 @@ static inline fract32 osc_lookup(osc* osc) {
   u32 idxA = osc->shapeMod >> WAVE_TAB_RSHIFT;
   u32 idxB = idxA + 1;
   
-  fract32 mul = (osc->shapeMod & WAVE_TAB_MASK) << WAVE_TAB_LSHIFT;
+  fract32 mul = (osc->shapeMod & WAVE_SHAPE_MASK) << WAVE_TAB_LSHIFT;
   fract32 mulInv = sub_fr1x32(FR32_MAX, mul);
   
   return add_fr1x32( 
-		    mult_fr1x32x32(table_lookup_idx( (fract32*)(*(osc->tab))[idxA], 
-						     WAVE_TAB_SIZE, 
+		    mult_fr1x32x32(table_lookup_idx_mask( (fract32*)(*(osc->tab))[idxA], 
+						     WAVE_TAB_SIZE_1, 
 						     osc->idxMod
 						     ), mulInv ),
-		    mult_fr1x32x32(table_lookup_idx( (fract32*)(*(osc->tab))[idxB],
-						     WAVE_TAB_SIZE,
+		    mult_fr1x32x32(table_lookup_idx_mask( (fract32*)(*(osc->tab))[idxB],
+						     WAVE_TAB_SIZE_1,
 						     osc->idxMod 
 						     ), mul 
 				   ) );

@@ -293,7 +293,7 @@ void uhd_ep_free(usb_add_t add, usb_ep_t endp);
  * \param add           USB address of endpoint
  * \param endp          Endpoint number
  * \param b_shortpacket Enabled automatic short packet
- * \param buf           Buffer on Internal RAM to send or fill.
+ * \param buf           Buffer on Internal RAM to send or fill
  *                      It must be align, then use COMPILER_WORD_ALIGNED.
  * \param buf_size      Buffer size to send or fill
  * \param timeout       Transfer timeout (ms)

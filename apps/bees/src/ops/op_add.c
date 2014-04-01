@@ -6,7 +6,6 @@
 static void op_add_in_a(op_add_t* add, const io_t v);
 static void op_add_in_b(op_add_t* add, const io_t v);
 static void op_add_in_btrig(op_add_t* add, const io_t v);
-static void op_add_inc_input(op_add_t* mul, const s16 idx, const io_t inc);
 
 // pickle / unpickle
 static u8* op_add_pickle(op_add_t* op, u8* dst);
@@ -14,8 +13,8 @@ static const u8* op_add_unpickle(op_add_t* op, const u8* src);
 
 //-------------------------------------------------
 //---- static vars
-static const char* op_add_instring = "A       B       B_TRIG  ";
-static const char* op_add_outstring = "SUM     ";
+static const char* op_add_instring = "A\0      B\0      TRIG\0   ";
+static const char* op_add_outstring = "SUM\0    ";
 static const char* op_add_opstring = "ADD";
 
 static op_in_fn op_add_in_fn[3] = {
@@ -32,7 +31,6 @@ void op_add_init(void* mem) {
   add->super.numOutputs = 1;
   add->outs[0] = -1;
 
-  add->super.inc_fn = (op_inc_fn)op_add_inc_input;
   add->super.in_fn = op_add_in_fn;
   add->super.in_val = add->in_val;
   add->super.pickle = (op_pickle_fn) (&op_add_pickle);
@@ -73,24 +71,6 @@ static void op_add_in_b(op_add_t* add, const io_t v) {
 
 static void op_add_in_btrig(op_add_t* add, const io_t v) {
   if(v > 0) { add->btrig = OP_ONE; } else { add->btrig = 0; }
-}
-
-//===== UI input
-static void op_add_inc_input(op_add_t* add, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0:  // a
-    val = op_sadd(add->a, inc);
-    op_add_in_a(add, val);
-    break; 
-  case 1:  // b
-    val = op_sadd(add->b, inc);
-    op_add_in_b(add, val);
-    break;
-  case 2:  // trig
-    op_add_in_btrig(add, inc);
-    break;
-  }
 }
 
 

@@ -66,6 +66,12 @@ typedef enum {
   eOpSplit4,
   eOpDelay,
   eOpRoute,
+  eOpMidiCC,
+  eOpMidiOutNote,
+  eOpList16,
+  eOpStep,
+  //  eOpMidiBend,
+  //  eOpMidiTouch,
   numOpClasses // dummy/count 
 } op_id_t;
 
@@ -150,8 +156,10 @@ extern const char* op_in_name(op_t* op, const u8 idx);
 extern const char* op_out_name(op_t* op, const u8 idx);
 // get input value
 extern io_t op_get_in_val(op_t* op, s16 idx);
-// set input valueo
+// set input value
 extern void op_set_in_val(op_t* op, s16 idx, const io_t val);
+// increment input value
+extern void op_inc_in_val(op_t* op, const s16 idx, const io_t inc);
 
 // pickle
 extern u8* op_pickle(op_t* op, u8* dst);

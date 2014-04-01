@@ -3,7 +3,6 @@
 
 //-------------------------------------------------
 //----- static function declaration
-static void op_div_inc_input(op_div_t* div, const s16 idx, const io_t inc);
 static void op_div_in_a(op_div_t* div, const io_t v);
 static void op_div_in_b(op_div_t* div, const io_t v);
 static void op_div_in_btrig(op_div_t* div, const io_t v);
@@ -21,8 +20,8 @@ static op_in_fn op_div_in_fn[3] = {
   (op_in_fn)&op_div_in_btrig
 };
 
-static const char* op_div_instring  = "A       B       B_TRIG  ";
-static const char* op_div_outstring = "VAL     ";
+static const char* op_div_instring  = "A\0      B\0      TRIG\0   ";
+static const char* op_div_outstring = "VAL\0    ";
 static const char* op_div_opstring  = "DIV";
 
 //-------------------------------------------------
@@ -33,7 +32,6 @@ void op_div_init(void* mem) {
   div->super.numOutputs = 1;
   div->outs[0] = -1;
 
-  div->super.inc_fn = (op_inc_fn)op_div_inc_input;
   div->super.in_fn = op_div_in_fn;
   div->super.pickle = (op_pickle_fn) (&op_div_pickle);
   div->super.unpickle = (op_unpickle_fn) (&op_div_unpickle);
@@ -81,23 +79,6 @@ static void op_div_in_btrig(op_div_t* div, const io_t v) {
   if(v > 0) { div->btrig = OP_ONE; } else { div->btrig = 0; }
 }
 
-//===== UI input
-static void op_div_inc_input(op_div_t* div, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0:  // a
-    val = op_add(div->a, inc);
-    op_div_in_a(div, val);
-    break; 
-  case 1:  // b
-    val = op_add(div->b, inc);
-    op_div_in_b(div, val);
-    break;
-  case 2:  // trig
-    op_div_in_btrig(div, inc);
-    break;
-  }
-}
 
 // pickle / unpickle
 u8* op_div_pickle(op_div_t* op, u8* dst) {

@@ -6,16 +6,13 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_thresh_instring =  "IN      LIM     ";
-static const char* op_thresh_outstring = "LO      HI      ";
+static const char* op_thresh_instring =  "IN\0     LIM\0    ";
+static const char* op_thresh_outstring = "LO\0     HI\0     ";
 static const char* op_thresh_opstring =  "THRESH";
 
 //-------------------------------------------------
 //----- static function declaration
 
-
-// UI increment
-static void op_thresh_inc(op_thresh_t* thresh, const s16 idx, const io_t inc);
 // set inputs
 static void op_thresh_in_state(op_thresh_t* thresh, const io_t v);
 static void op_thresh_in_lim(op_thresh_t* thresh, const io_t );
@@ -36,7 +33,6 @@ void op_thresh_init(void* op) {
   op_thresh_t* thresh = (op_thresh_t*)op;
 
   // superclass functions
-  thresh->super.inc_fn = (op_inc_fn)&op_thresh_inc;
   thresh->super.in_fn = op_thresh_in;
   thresh->super.pickle = (op_pickle_fn) (&op_thresh_pickle);
   thresh->super.unpickle = (op_unpickle_fn) (&op_thresh_unpickle);
@@ -88,24 +84,6 @@ static void op_thresh_in_lim(op_thresh_t* thresh, const io_t v) {
   thresh->lim = v;
   op_thresh_update(thresh);
 
-}
-
-//===== UI input
-
-// increment
-static void op_thresh_inc(op_thresh_t* thresh, const s16 idx, const io_t inc) {
-  io_t val;
-  //  print_dbg("\r\n op_thresh_inc");
-  switch(idx) {
-  case 0: // state
-    val = op_sadd(thresh->state, inc);
-    op_thresh_in_state(thresh, val);
-    break;
-  case 1: // threshold
-    val = op_sadd(thresh->lim, inc);
-    op_thresh_in_lim(thresh, val);
-    break;
-  }
 }
 
 

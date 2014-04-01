@@ -31,6 +31,17 @@ static op_midi_list_t ml = {
 
 // push an op to the top of the list
 void net_midi_list_push(op_midi_t* op) {
+  /// sanity check: loop over list to make sure op isn't already in it.
+  int i;
+  op_midi_t* p = ml.top;
+  for(i=0; i<ml.num; ++i) {
+    if(op == p) {
+      // already in list, so bail
+      return;
+    }
+    p = p->next;
+  }
+  ////
   if(ml.num == 0) {
     ml.top = op;
     op->prev = op;

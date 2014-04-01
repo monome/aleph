@@ -5,7 +5,6 @@
 
 //-------------------------------------------------
 //----- static function declaration
-static void op_life_inc_input(op_life_t* life, const s16 idx, const io_t inc);
 static void op_life_in_next(op_life_t* life, const io_t v);
 static void op_life_in_xsize(op_life_t* life, const io_t v);
 static void op_life_in_ysize(op_life_t* life, const io_t v);
@@ -45,8 +44,8 @@ static op_in_fn op_life_in_fn[9] = {
   (op_in_fn)&op_life_in_focus
 };
 
-static const char* op_life_instring  = "NEXT    XSIZE   YSIZE   X       Y       SET     NOISE   RULES   FOCUS   ";
-static const char* op_life_outstring = "VAL     POP     DELTA   ";
+static const char* op_life_instring  = "NEXT\0   XSIZE\0  YSIZE\0  X\0      Y\0      SET\0    NOISE\0  RULES\0  FOCUS\0  ";
+static const char* op_life_outstring = "VAL\0    POP\0    DELTA\0  ";
 static const char* op_life_opstring  = "LIFE";
 
 
@@ -68,7 +67,6 @@ void op_life_init(void* mem) {
   life->outs[1] = -1;
   life->outs[2] = -1;
 
-  life->super.inc_fn = (op_inc_fn)op_life_inc_input;
   life->super.in_fn = op_life_in_fn;
   life->super.pickle = (op_pickle_fn) (&op_life_pickle);
   life->super.unpickle = (op_unpickle_fn) (&op_life_unpickle);
@@ -229,48 +227,6 @@ static void op_life_handler(op_monome_t* op_monome, u32 edata) {
   monome_grid_key_parse_event_data(edata, &x, &y, &z);
 
   if(z) life_change(x,y);
-}
-
-
-//===== UI input
-static void op_life_inc_input(op_life_t* life, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0:
-    op_life_in_next(life, inc);
-    break; 
-  case 1:
-    val = op_add(life->xsize, inc);
-    op_life_in_xsize(life, val);
-    break;
-  case 2:
-    val = op_add(life->ysize, inc);
-    op_life_in_ysize(life, val);
-    break;
-  case 3:
-    val = op_add(life->x, inc);
-    op_life_in_x(life, val);
-    break;  
-  case 4:
-    val = op_add(life->y, inc);
-    op_life_in_y(life, val);
-    break;  
-  case 5:
-    val = op_add(life->set, inc);
-    op_life_in_set(life, val);
-    break;  
-  case 6:
-    val = op_add(life->noise, inc);
-    op_life_in_noise(life, val);
-    break;  
-  case 7:
-    val = op_add(life->rules, inc);
-    op_life_in_rules(life, val);
-    break;  
-  case 8:
-    op_life_in_focus(life, inc);
-    break; 
-  }
 }
 
 

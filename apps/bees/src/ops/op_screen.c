@@ -17,23 +17,13 @@
 //----- static vars
 
 //-- descriptor
-static const char* op_screen_instring = "ENABLE  PERIOD  VAL     FILL    X       Y       ";
+static const char* op_screen_instring = "ENABLE\0 PERIOD\0 VAL\0    FILL\0   X\0      Y\0      ";
 static const char* op_screen_outstring = "";
 static const char* op_screen_opstring = "SCREEN";
-
-//-- temp
-// string buffer for number->text rendering
-//static char tmpStr[16];
-// try sharing region data among instances...
-//static volatile u8 regData[OP_SCREEN_GFX_BYTES];
-//// ^^^ fuck. i think that is broken. try moving to class structure and allocating from op poll?
-
 
 //-------------------------------------------------
 //----- static function declaration
 
-// UI increment
-static void op_screen_inc(op_screen_t* screen, const s16 idx, const io_t inc);
 // set inputs
 static void op_screen_in_enable(op_screen_t* screen, const io_t v);
 static void op_screen_in_period(op_screen_t* screen, const io_t v);
@@ -73,7 +63,6 @@ void op_screen_init(void* op) {
   op_screen_t* screen = (op_screen_t*)op;
 
   // superclass functions
-  screen->super.inc_fn = (op_inc_fn)&op_screen_inc;
   screen->super.in_fn = op_screen_in;
   screen->super.pickle = (op_pickle_fn) (&op_screen_pickle);
   screen->super.unpickle = (op_unpickle_fn) (&op_screen_unpickle);
@@ -215,38 +204,6 @@ void op_screen_poll_handler(void* op) {
   }
 }
 
-//===== UI input
-
-// increment
-static void op_screen_inc(op_screen_t* screen, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0: // enable
-    op_screen_in_enable(screen, inc);
-    break;
-  case 1: // period
-    val = op_sadd(screen->period, inc);
-    op_screen_in_period(screen, val);
-    break;
-  case 2: // current value
-    val = op_sadd(screen->val, inc);
-    op_screen_in_val(screen, val);
-    break;
-  case 3: // fill with color
-    val = op_sadd(screen->fill, inc);
-    op_screen_in_fill(screen, val);
-    break;
-  case 4: // x position
-    val = op_sadd(screen->x, inc);
-    op_screen_in_x(screen, val);
-    break;
-  case 5: // y position
-    val = op_sadd(screen->x, inc);
-    op_screen_in_y(screen, val);
-    break;
-  }
-}
-
 
 // serialization
 u8* op_screen_pickle(op_screen_t* screen, u8* dst) {
@@ -288,5 +245,4 @@ static inline void op_screen_set_timer(op_screen_t* screen) {
 
 static inline void op_screen_unset_timer(op_screen_t* screen) {
   timer_remove(&(screen->timer));
-  timers_unset_custom(&(screen->timer));
 }

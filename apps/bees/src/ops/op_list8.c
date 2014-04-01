@@ -13,16 +13,14 @@ static void op_list8_in_i5(op_list8_t* add, const io_t v);
 static void op_list8_in_i6(op_list8_t* add, const io_t v);
 static void op_list8_in_i7(op_list8_t* add, const io_t v);
 
-static void op_list8_inc_input(op_list8_t* mul, const s16 idx, const io_t inc);
-
 // pickle / unpickle
 static u8* op_list8_pickle(op_list8_t* op, u8* dst);
 static const u8* op_list8_unpickle(op_list8_t* op, const u8* src);
 
 //-------------------------------------------------
 //---- static vars
-static const char* op_list8_instring = "INDEX   I0      I1      I2      I3      I4      I5      I6      I7      ";
-static const char* op_list8_outstring = "VAL     ";
+static const char* op_list8_instring = "INDEX\0  I0\0     I1\0     I2\0     I3\0     I4\0     I5\0     I6\0     I7\0     ";
+static const char* op_list8_outstring = "VAL\0    ";
 static const char* op_list8_opstring = "LIST8";
 
 static op_in_fn op_list8_in_fn[9] = {
@@ -45,7 +43,6 @@ void op_list8_init(void* mem) {
   list8->super.numOutputs = 1;
   list8->outs[0] = -1;
 
-  list8->super.inc_fn = (op_inc_fn)op_list8_inc_input;
   list8->super.in_fn = op_list8_in_fn;
   list8->super.in_val = list8->in_val;
   list8->super.pickle = (op_pickle_fn) (&op_list8_pickle);
@@ -147,52 +144,6 @@ static void op_list8_in_i6(op_list8_t* list8, const io_t val) {
 
 static void op_list8_in_i7(op_list8_t* list8, const io_t val) {
   list8->i7 = val;
-}
-
-
-//===== UI input
-static void op_list8_inc_input(op_list8_t* list8, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0:  // index
-    val = op_sadd(list8->index, inc);
-    if(val<0) val = 0;
-    if(val>7) val = 7;
-    op_list8_in_index(list8, val);
-    break; 
-  case 1:
-    val = op_sadd(list8->i0, inc);
-    op_list8_in_i0(list8, val);
-    break;
-  case 2:
-    val = op_sadd(list8->i1, inc);
-    op_list8_in_i1(list8, val);
-    break;
-  case 3:
-    val = op_sadd(list8->i2, inc);
-    op_list8_in_i2(list8, val);
-    break;
-  case 4:
-    val = op_sadd(list8->i3, inc);
-    op_list8_in_i3(list8, val);
-    break;
-  case 5:
-    val = op_sadd(list8->i4, inc);
-    op_list8_in_i4(list8, val);
-    break;
-  case 6:
-    val = op_sadd(list8->i5, inc);
-    op_list8_in_i5(list8, val);
-    break;
-  case 7:
-    val = op_sadd(list8->i6, inc);
-    op_list8_in_i6(list8, val);
-    break;
-  case 8:
-    val = op_sadd(list8->i7, inc);
-    op_list8_in_i7(list8, val);
-    break;
-  }
 }
 
 

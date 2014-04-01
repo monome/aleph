@@ -45,7 +45,7 @@ void bfin_wait(void) {
   //  print_dbg_ulong(gpio_get_pin_value(BFIN_HWAIT_PIN));
     while (gpio_get_pin_value(BFIN_HWAIT_PIN) > 0) { 
       ;;
-      print_dbg("\r\n HWAIT asserted..."); 
+      //      print_dbg("\r\n HWAIT asserted..."); 
 	    //            delay_ms(1);
     }
     delay_us(50);
@@ -93,7 +93,7 @@ void bfin_load_buf(void) {
 //void bfin_set_param(u8 idx, f32 x ) {
 void bfin_set_param(u8 idx, fix16_t x ) {
   //static u32 ticks = 0;
-  ParamValueCommon pval;
+  ParamValueSwap pval;
   pval.asInt = (s32)x;
 
   print_dbg("\r\n bfin_set_param, idx: ");
@@ -171,8 +171,16 @@ void bfin_get_num_params(volatile u32* num) {
 
 }
 
+
+
+/// moving param descriptor offline
+#if 1
+//void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
+  //...
+//}
+#else 
 void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
-  ParamValueCommon pval;
+  ParamValueSwap pval;
   u16 x; // u16 for spi_read()
   u8 i;
 
@@ -238,6 +246,8 @@ void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc) {
 
   app_resume();
 }
+#endif
+
 
 // get module name
 void bfin_get_module_name(volatile char* buf) {
@@ -350,13 +360,14 @@ void bfin_end_transfer(void) {
 void bfin_wait_ready(void) {
   // use ready pin
   while( !gpio_get_pin_value(BFIN_READY_PIN) ) { 
-    //    print_dbg("\r\n waiting on bfin ready pin... ");
+    ;;    //    print_dbg("\r\n wait bfin_ready ");
   }
+  //  print_dbg("... waited");
 }
 
 // get parameter value
 s32 bfin_get_param(u8 idx) {
-  ParamValueCommon pval;
+  ParamValueSwap pval;
   u16 x;
   
   app_pause();

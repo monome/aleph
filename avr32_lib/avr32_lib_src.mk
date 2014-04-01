@@ -68,8 +68,12 @@ CSRCS += \
 # List of assembler source files.
 ASSRCS += \
        avr32/drivers/intc/exception.S                     \
-       avr32/utils/startup/startup_uc3.S                     \
+	   $(ALEPH_AVR32)/startup/startup.S 				  \
        avr32/utils/startup/trampoline_uc3.S
+
+#standard startup
+#       avr32/utils/startup/startup_uc3.S                     \
+
 # customization, if needed (e.g. for heap linking)...                      
 #	$(ALEPH_AVR32)/startup/startup.S \
 #	$(ALEPH_AVR32)/startup/trampoline.S

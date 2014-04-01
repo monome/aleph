@@ -8,7 +8,6 @@
 #define _ALEPH_BFIN_CORE_H_ 
 
 #include <sys/exception.h>
-#include <cdefBF533.h>
 #include <fract.h>
 #include <fract_typedef.h>
 #include "types.h"

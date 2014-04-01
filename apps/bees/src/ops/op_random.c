@@ -6,7 +6,6 @@
 static void op_random_in_min(op_random_t* min, const io_t v);
 static void op_random_in_max(op_random_t* max, const io_t v);
 static void op_random_in_trig(op_random_t* trig, const io_t v);
-static void op_random_inc_input(op_random_t* mul, const s16 idx, const io_t inc);
 
 // pickle / unpickle
 static u8* op_random_pickle(op_random_t* op, u8* dst);
@@ -14,7 +13,7 @@ static const u8* op_random_unpickle(op_random_t* op, const u8* src);
 
 //-------------------------------------------------
 //---- static vars
-static const char* op_random_instring = "MIN     MAX     TRIG    ";
+static const char* op_random_instring = "MIN\0    MAX\0    TRIG\0   ";
 static const char* op_random_outstring = "VAL     ";
 static const char* op_random_opstring = "RANDOM";
 
@@ -32,7 +31,6 @@ void op_random_init(void* mem) {
   random->super.numOutputs = 1;
   random->outs[0] = -1;
 
-  random->super.inc_fn = (op_inc_fn)op_random_inc_input;
   random->super.in_fn = op_random_in_fn;
   random->super.in_val = random->in_val;
   random->super.pickle = (op_pickle_fn) (&op_random_pickle);
@@ -76,24 +74,6 @@ static void op_random_in_trig(op_random_t* random, const io_t v) {
   random->val = (random->val % ((random->max - random->min) + 1)) + random->min;
   net_activate(random->outs[0], random->val, random);
   // if(v > 0) { random->trig = OP_ONE; } else { random->trig = 0; }
-}
-
-//===== UI input
-static void op_random_inc_input(op_random_t* random, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0:  // a
-    val = op_sadd(random->min, inc);
-    op_random_in_min(random, val);
-    break; 
-  case 1:  // b
-    val = op_sadd(random->max, inc);
-    op_random_in_max(random, val);
-    break;
-  case 2:  // trig
-    op_random_in_trig(random, inc);
-    break;
-  }
 }
 
 

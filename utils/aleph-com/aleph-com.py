@@ -74,7 +74,7 @@ st.start()
 c.connect(('0.0.0.0', 12010))
 
 try :
-  ser = serial.Serial(path,500000)
+  ser = serial.Serial(path,115200)
   print "\nconnected to %s" % (path) 
 
   incoming_bytes = []

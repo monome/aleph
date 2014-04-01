@@ -32,6 +32,53 @@ lines	0.1.2
 - revert to 1min times (still working on it)
 
 ----------------
+waves	0.4.1
+- cv dac fixes
+
+----------------
+lines	0.2.1
+- cv dac fixes
+
+----------------
+bees	0.5.1
+- fix/stability soft timer processing in avr32_lib
+
+----------------
+bees	0.5.0  ! breaks module compatibility !
+- new ops: LIST16, MIDICC, NOTEOUT, STEP
+- many UI tweaks
+- fixed series monome grids larger than 8x8
+- move param descriptors offline, associated .dsc with .ldr
+- fix hang on delete-system-op
+- SRAM linked to heap
+
+----------------
+waves	0.4.0
+- reduced parameter count and scope, all params implemented
+
+----------------
+lines	0.2.0
+- move param descriptors offline, associated .dsc with .ldr
+- tweak fade behavior
+
+----------------
+waves	0.3.0
+- move param descriptors offline, associated .dsc with .ldr
+
+----------------
+bees	0.4.4
+- wait for sdcard on boot
+
+----------------
+bees	0.4.3
+- fix preset-node-indexing bug on op creation / deletion
+
+----------------
+lines	0.1.2
+- fade init is more proper
+- revert to 1min times (still working on it)
+
+----------------
 bees	0.4.2 
 - new ops: delay, route, split4
 

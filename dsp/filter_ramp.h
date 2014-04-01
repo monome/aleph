@@ -22,7 +22,7 @@ typedef struct _filter_ramp {
   u8 sync;   // flag if target and filtered values are equal
   u8 dec;   // flag if we are decreasing (sign bit of increment would do as well)
   // align
-  u8 dum[2];
+  u8 dum;
 } filter_ramp;
 
 
@@ -46,7 +46,7 @@ typedef struct _filter_ramp_tog {
   fract32 y; // filtered value
   u8 sync;   // flag if done ramping
   // align
-  u8 dum[3];
+  u8 dum[2];
 } filter_ramp_tog;
 
 

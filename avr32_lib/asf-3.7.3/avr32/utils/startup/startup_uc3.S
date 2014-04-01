@@ -53,7 +53,6 @@
   // This must be linked @ 0x80000000 if it is to be run upon reset.
   .section  .reset, "ax", @progbits
 
-
   .global _start
   .type _start, @function
 _start:
@@ -78,6 +77,9 @@ _stext:
 
   // Enable the exception processing.
   csrf    AVR32_SR_EM_OFFSET
+
+  // Call the startup customization function.
+  call    _init_startup
 
   // Load initialized data having a global lifetime from the data LMA.
   lda.w   r0, _data

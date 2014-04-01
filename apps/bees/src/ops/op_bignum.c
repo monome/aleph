@@ -17,7 +17,7 @@
 //----- static vars
 
 //-- descriptor
-static const char* op_bignum_instring = "ENABLE  PERIOD  VAL     X       Y       ";
+static const char* op_bignum_instring = "ENABLE\0 PERIOD\0 VAL\0    X\0      Y\0      ";
 static const char* op_bignum_outstring = "";
 static const char* op_bignum_opstring = "BIGNUM";
 
@@ -32,8 +32,6 @@ static char tmpStr[16];
 //-------------------------------------------------
 //----- static function declaration
 
-// UI increment
-static void op_bignum_inc(op_bignum_t* bignum, const s16 idx, const io_t inc);
 // set inputs
 static void op_bignum_in_enable(op_bignum_t* bignum, const io_t v);
 static void op_bignum_in_period(op_bignum_t* bignum, const io_t v);
@@ -72,7 +70,6 @@ void op_bignum_init(void* op) {
   op_bignum_t* bignum = (op_bignum_t*)op;
 
   // superclass functions
-  bignum->super.inc_fn = (op_inc_fn)&op_bignum_inc;
   bignum->super.in_fn = op_bignum_in;
   bignum->super.pickle = (op_pickle_fn) (&op_bignum_pickle);
   bignum->super.unpickle = (op_unpickle_fn) (&op_bignum_unpickle);
@@ -207,34 +204,6 @@ void op_bignum_poll_handler(void* op) {
   }
 }
 
-//===== UI input
-
-// increment
-static void op_bignum_inc(op_bignum_t* bignum, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0: // enable
-    op_bignum_in_enable(bignum, inc);
-    break;
-  case 1: // period
-    val = op_sadd(bignum->period, inc);
-    op_bignum_in_period(bignum, val);
-    break;
-  case 2: // current value
-    val = op_sadd(bignum->val, inc);
-    op_bignum_in_val(bignum, val);
-    break;
-  case 3: // x position
-    val = op_sadd(bignum->x, inc);
-    op_bignum_in_x(bignum, val);
-    break;
-  case 4: // y position
-    val = op_sadd(bignum->x, inc);
-    op_bignum_in_y(bignum, val);
-    break;
-  }
-}
-
 
 // serialization
 u8* op_bignum_pickle(op_bignum_t* bignum, u8* dst) {
@@ -305,5 +274,5 @@ static inline void op_bignum_set_timer(op_bignum_t* bignum) {
 
 static inline void op_bignum_unset_timer(op_bignum_t* bignum) {
   timer_remove(&(bignum->timer));
-  timers_unset_custom(&(bignum->timer));
+  //  timers_unset_custom(&(bignum->timer));
 }

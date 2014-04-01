@@ -33,7 +33,9 @@ typedef enum {
   eParamTypeNote,
   // frequency coefficient for SVF
   eParamTypeSvfFreq,
-  //...?
+  // linear signed fract32
+  // controller values will be quantized to 16b 
+  eParamTypeFract,
   eParamNumTypes
 } ParamType;
 
@@ -42,7 +44,7 @@ typedef union __attribute__((__packed__)) {
   s32 asInt;
   u32 asUint;
   u8 asByte[4];
-} ParamValueCommon;
+} ParamValueSwap;
 
 // parameter descriptor
 typedef struct __attribute__((__packed__)) ParamDescStruct {

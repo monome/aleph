@@ -73,10 +73,6 @@ void filter_ramp_tog_init(filter_ramp_tog* f, fract32 in) {
   f->inc = 1;
 }
 
-// set integrator coefficient directly
-/* void filter_ramp_tog_set_slew(filter_ramp_tog* f, fract32 slew) { */
-/*   f->inc = slew; */
-/* } */
 
 void filter_ramp_tog_set_inc(filter_ramp_tog* f, fract32 inc) {
   f->inc = abs_fr1x32( inc );
@@ -99,34 +95,16 @@ void filter_ramp_tog_in(filter_ramp_tog* f, fract32 val) {
     } else {
       f->sinc = negate_fr1x32( f->inc );
     }
-
   }
-  //  u8 neg = !pos;
-
-  /* f->sync = (f->x == f->y); */
-  /* // invert sign if decreasing */
-  /* //  f->sinc = f->sync ? 0 : (fract32)(((u32)(f->inc - neg) ^ (neg << 32)) - 1); */
-  /* if(f->sync) {  */
-  /*   f->sinc = 0; */
-  /* } else { */
-  /*   if(pos) { */
-  /*     f->sinc = f->inc; */
-  /*   } else { */
-  /*     f->sinc = BIT_INVERT_32(f->inc); */
-  /*   } */
-  /* } */
-
 }
  
 // get next filtered value
 fract32 filter_ramp_tog_next(filter_ramp_tog* f) {
   // gcc intrinsics are saturating  
   f->y = add_fr1x32(f->y, f->sinc);
-  if(f->y < 0) { f->y = 0; }
+  if(f->y < 0) { f->y = 0; }   /// fixme: slow
   f->sync = (f->x == f->y);
   f->sinc = f->sync ? 0 : f->sinc;
-  //  f->sinc &= ( (u32)(!(f->sync)) << 31) - (f->sync);
-  //  f->sinc = f->sync ? 0 : (fract32)(((u32)(f->inc - neg) ^ (neg << 32)) - 1);
   return f->y;
 
   

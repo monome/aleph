@@ -11,16 +11,14 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_timer_instring = "EVENT   ";
-static const char* op_timer_outstring = "TIME    ";
+static const char* op_timer_instring = "EVENT\0  ";
+static const char* op_timer_outstring = "TIME\0   ";
 static const char* op_timer_opstring = "TIMER";
 
 //-------------------------------------------------
 //----- static function declaration
 
 
-// UI increment
-static void op_timer_inc(op_timer_t* timer, const s16 idx, const io_t inc);
 // set inputs
 static void op_timer_in_event(op_timer_t* timer, const io_t v);
 // pickle / unpickle
@@ -42,7 +40,6 @@ void op_timer_init(void* op) {
   op_timer_t* timer = (op_timer_t*)op;
 
   // superclass functions
-  timer->super.inc_fn = (op_inc_fn)&op_timer_inc;
   timer->super.in_fn = op_timer_in;
   timer->super.pickle = (op_pickle_fn) (&op_timer_pickle);
   timer->super.unpickle = (op_unpickle_fn) (&op_timer_unpickle);
@@ -95,15 +92,6 @@ static void op_timer_in_event(op_timer_t* timer, const io_t v) {
   /// reported intervals will be fast by a ratio of 1.024,
   /// in the example above.
   net_activate(timer->outs[0], timer->interval, timer);   
-}
-
-//===== UI input
-
-// increment
-static void op_timer_inc(op_timer_t* timer, const s16 idx, const io_t inc) {
-  //  io_t val;
-  // no useful UI
-  ;;
 }
 
 

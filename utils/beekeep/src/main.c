@@ -148,7 +148,12 @@ int main (int argc, char **argv)
     return 1;
   }
   int run=1;
-  if (sflag)
+  if (sflag && !gflag) {
     while (run)
         run=ui_loop();
+    return 0;
+  }
+  else if (gflag) {
+    python_gui();
+  }
 }

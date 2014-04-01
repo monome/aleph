@@ -14,7 +14,7 @@
 #include "pan.h"
 
 // initialize with pointer to audio buffer
-extern void delayFadeN_init(delayFadeN* dl, fract32* data, u32 frames) {
+extern void delayFadeN_init(delayFadeN* dl, volatile fract32* data, u32 frames) {
   buffer_init(&(dl->buffer), data, frames);
   
   buffer_tapN_init(&(dl->tapRd[1]), &(dl->buffer));
@@ -56,16 +56,13 @@ extern fract32 delayFadeN_next(delayFadeN* dl, fract32 in) {
 
   //  readVal = buffer_tapN_read( &(dl->tapRd) );
   /// balanced mix given current pan  
-  readVal = pan_mix( buffer_tapN_read( &(dl->tapRd[0]) ) ,
+  readVal = pan_lin_mix( buffer_tapN_read( &(dl->tapRd[0]) ) ,
 		     buffer_tapN_read( &(dl->tapRd[1]) ) ,
-		     //		     filter_1p_lo_next( &(dl->lpRdPan) )
 		     dl->fadeRd
 		     );
-  // TEST: reread with no pan
-  //  readVal = buffer_tapN_read( &(dl->tapRd[0]) );
 
   // get mix amounts for crossfaded write heads
-  pan_coeff( &(pan[0]), &(pan[1]), dl->fadeWr );
+  ///  pan_lin_coeff( &(pan[0]), &(pan[1]), dl->fadeWr );
 
   //  valWr[0] = mult_fr1x32x32(in, pan[0]);
   //  valWr[1] = mult_fr1x32x32(in, pan[1]);

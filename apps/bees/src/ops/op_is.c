@@ -3,7 +3,6 @@
 
 //-------------------------------------------------
 //----- static function declaration
-static void op_is_inc_input(op_is_t* is, const s16 idx, const io_t inc);
 static void op_is_in_a(op_is_t* is, const io_t v);
 static void op_is_in_b(op_is_t* is, const io_t v);
 static void op_is_in_btrig(op_is_t* is, const io_t v);
@@ -23,8 +22,8 @@ static op_in_fn op_is_in_fn[4] = {
   (op_in_fn)&op_is_in_edge
 };
 
-static const char* op_is_instring  = "A       B       B_TRIG  EDGE    ";
-static const char* op_is_outstring = "EQ      NE      GT      LT      ";
+static const char* op_is_instring  = "A\0      B\0      TRIG\0   EDGE\0   ";
+static const char* op_is_outstring = "EQ\0     NE\0     GT\0     LT\0     ";
 static const char* op_is_opstring  = "IS";
 
 //-------------------------------------------------
@@ -38,7 +37,6 @@ void op_is_init(void* mem) {
   is->outs[2] = -1;
   is->outs[3] = -1;
 
-  is->super.inc_fn = (op_inc_fn)op_is_inc_input;
   is->super.in_fn = op_is_in_fn;
   is->super.pickle = (op_pickle_fn) (&op_is_pickle);
   is->super.unpickle = (op_unpickle_fn) (&op_is_unpickle);
@@ -128,26 +126,6 @@ static void op_is_in_edge(op_is_t* is, const io_t v) {
   if(v > 0) { is->edge = OP_ONE; } else { is->edge = 0; }
 }
 
-//===== UI input
-static void op_is_inc_input(op_is_t* is, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0:  // a
-    val = op_add(is->a, inc);
-    op_is_in_a(is, val);
-    break; 
-  case 1:  // b
-    val = op_add(is->b, inc);
-    op_is_in_b(is, val);
-    break;
-  case 2:  // trig
-    op_is_in_btrig(is, inc);
-    break;
-  case 3:  // edge
-    op_is_in_edge(is, inc);
-    break;
-  }
-}
 
 // pickle / unpickle
 u8* op_is_pickle(op_is_t* op, u8* dst) {

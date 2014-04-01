@@ -3,10 +3,12 @@ name = beekeep
 bees = ../../apps/bees
 sim = ../avr32_sim
 
-
 include $(bees)/version.mk
 version = $(maj).$(min).$(rev)
 target = $(name)-$(version)
+
+#copy the approriate python version file here for your distro
+include python_version.mk
 
 # bees sources
 src += \
@@ -18,6 +20,7 @@ src += \
 	$(bees)/src/op.c \
 	$(bees)/src/op_gfx.c \
 	$(bees)/src/op_math.c \
+	$(bees)/src/ops/op_list16.c \
 	$(bees)/src/param.c \
 	$(bees)/src/pages.c \
 	$(bees)/src/pickle.c \
@@ -43,13 +46,22 @@ src += \
 	$(bees)/src/ops/op_list8.c \
 	$(bees)/src/ops/op_logic.c \
 	$(bees)/src/ops/op_metro.c \
+	$(bees)/src/ops/op_midi_cc.c \
 	$(bees)/src/ops/op_midi_note.c \
+<<<<<<< HEAD
+=======
+	$(bees)/src/ops/op_midi_out_note.c \
+>>>>>>> dev
 	$(bees)/src/ops/op_mul.c \
 	$(bees)/src/ops/op_monome_grid_raw.c \
 	$(bees)/src/ops/op_preset.c \
 	$(bees)/src/ops/op_screen.c \
 	$(bees)/src/ops/op_split.c \
 	$(bees)/src/ops/op_split4.c \
+<<<<<<< HEAD
+=======
+	$(bees)/src/ops/op_step.c \
+>>>>>>> dev
 	$(bees)/src/ops/op_sub.c \
 	$(bees)/src/ops/op_sw.c \
 	$(bees)/src/ops/op_timer.c \
@@ -78,7 +90,7 @@ src += 	src/app_beekeep.c \
 	src/flash_beekeep.c \
 	src/files.c \
 	src/handler.c \
-	src/main.c	
+	src/main.c
 
 # new sources
 src += src/json_read_raw.c \
@@ -87,6 +99,10 @@ src += src/json_read_raw.c \
 	src/json_write_max.c \
 	src/json_read_native.c \
 	src/json_write_native.c \
+<<<<<<< HEAD
+=======
+    $(pyaleph)/pyaleph.c \
+>>>>>>> dev
 
 
 # srcs from simulator
@@ -132,6 +148,7 @@ inc = 	$(bees) \
 	$(sim)/src/usb/hid \
 	$(sim)/src/usb/mouse \
 	$(sim)/src/usb/hub \
+    $(pyaleph)
 
 
 ifdef BUILD_DIR
@@ -145,6 +162,12 @@ obj = $(addprefix $(build-dir), $(addsuffix .o,$(basename $(src))))
 cflags += $(foreach path,$(inc),-I$(path))
 cflags += -std=gnu99
 cflags += -D BEEKEEP=1
+<<<<<<< HEAD
+=======
+
+lflags += -ljansson
+
+>>>>>>> dev
 $(build-dir)%.o: %.c 
 	echo $(cflags)
 	$(Q)test -d $(dir $@) || mkdir -p $(dir $@)
@@ -152,9 +175,13 @@ $(build-dir)%.o: %.c
 
 target: $(obj)	
 	echo $(obj)
-	gcc $(obj) -g $(cflags) -o $(target) -ljansson
+	gcc $(obj) -g $(cflags) -o $(target) $(lflags)
 
 all: beekeep
 
 clean:
+<<<<<<< HEAD
 	rm $(obj)
+=======
+	rm $(obj) $(pyaleph)/pyaleph.pyc
+>>>>>>> dev

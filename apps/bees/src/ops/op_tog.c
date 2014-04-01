@@ -6,16 +6,14 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_tog_instring = "STATE   MUL     ";
-static const char* op_tog_outstring = "VAL     ";
+static const char* op_tog_instring = "STATE\0  MUL\0    ";
+static const char* op_tog_outstring = "VAL\0    ";
 static const char* op_tog_opstring = "TOG";
 
 //-------------------------------------------------
 //----- static function declaration
 
 
-// UI increment
-static void op_tog_inc(op_tog_t* tog, const s16 idx, const io_t inc);
 // set inputs
 static void op_tog_in_state(op_tog_t* tog, const io_t v);
 static void op_tog_in_mul(op_tog_t* tog, const io_t );
@@ -36,7 +34,6 @@ void op_tog_init(void* op) {
   op_tog_t* tog = (op_tog_t*)op;
 
   // superclass functions
-  tog->super.inc_fn = (op_inc_fn)&op_tog_inc;
   tog->super.in_fn = op_tog_in;
   tog->super.pickle = (op_pickle_fn) (&op_tog_pickle);
   tog->super.unpickle = (op_unpickle_fn) (&op_tog_unpickle);
@@ -84,22 +81,6 @@ static void op_tog_in_mul(op_tog_t* tog, const io_t v) {
   if (tog->state > 0) {
     tog->state = (v);
     net_activate(tog->outs[0], tog->state, tog);
-  }
-}
-
-//===== UI input
-
-// increment
-static void op_tog_inc(op_tog_t* tog, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0: // current value
-    op_tog_in_state(tog, inc);
-    break;
-  case 1: // multiplier
-    val = op_sadd(tog->mul, inc);
-    op_tog_in_mul(tog, val);
-    break;
   }
 }
 

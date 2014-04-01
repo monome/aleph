@@ -35,7 +35,6 @@ CFLAGS += -Wall -mcpu=$(CPU) $(INC)
 # CFLAGS += -02
 CFLAGS += -03
 
-
 LDFLAGS += -mcpu=$(CPU)
 # LDRFLAGS += --initcode $(bfin_lib_objdir)init.o
 LDRFLAGS += --bits 16 --dma 8

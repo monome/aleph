@@ -23,18 +23,9 @@ volatile u8 processAudio = 0;
 
 // sport0 receive interrupt (audio input from codec)
 void sport0_rx_isr() {
-  //  static u32 dma4count = 0;
-
-  // tick the control rate
-  //  ctl_next_frame();
-
-
 
   /// inform the world that we're busy processing an audio frame
   READY_LO;
-
-
-
 
   if(!processAudio) { 
     READY_HI;
@@ -72,11 +63,6 @@ void sport0_rx_isr() {
   /* iTxBuf[1] = iRxBuf[1]; */
   /* iTxBuf[2] = iRxBuf[2]; */
   /* iTxBuf[3] = iRxBuf[3]; */
-
-  //  BUSY_LO;
-
-
-  //  LED3_SET;
 
   READY_HI;
   /// if this interrupt came from DMA1, clear it and continue(W1C)

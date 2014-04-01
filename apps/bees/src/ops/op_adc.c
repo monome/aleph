@@ -14,20 +14,15 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_adc_instring	= "ENABLE  PERIOD  MODE    ";
-static const char* op_adc_outstring	= "VAL0    VAL1    VAL2    VAL3    ";
+static const char* op_adc_instring	= "ENABLE\0 PERIOD\0 MODE\0   ";
+static const char* op_adc_outstring	= "VAL0\0   VAL1\0   VAL2\0   VAL3\0   ";
 static const char* op_adc_opstring	= "CV-IN";
 
 //-------------------------------------------------
 //----- static function declaration
-static void op_adc_inc_fn	(op_adc_t* adc, const s16 idx, const io_t inc);
 static void op_adc_in_enable	(op_adc_t* adc, const io_t v);
 static void op_adc_in_period  (op_adc_t* adc, const io_t v);
 static void op_adc_in_mode	(op_adc_t* adc, const io_t v);
-/* static void op_adc_in_val0	(op_adc_t* adc, const io_t v); */
-/* static void op_adc_in_val1	(op_adc_t* adc, const io_t v); */
-/* static void op_adc_in_val2	(op_adc_t* adc, const io_t v); */
-/* static void op_adc_in_val3	(op_adc_t* adc, const io_t v); */
 
 // pickles
 static u8* op_adc_pickle(op_adc_t* adc, u8* dst);
@@ -37,10 +32,6 @@ static op_in_fn op_adc_in_fn[3] = {
   (op_in_fn)&op_adc_in_enable,
   (op_in_fn)&op_adc_in_period,
   (op_in_fn)&op_adc_in_mode
-  /* (op_in_fn)&op_adc_in_val0, */
-  /* (op_in_fn)&op_adc_in_val1, */
-  /* (op_in_fn)&op_adc_in_val2, */
-  /* (op_in_fn)&op_adc_in_val3, */
 };
 
 // pickles
@@ -60,8 +51,7 @@ void op_adc_init(void* op) {
   adc->outs[1] = -1;
   adc->outs[2] = -1;
   adc->outs[3] = -1;
-  // ui increment function
-  adc->super.inc_fn = (op_inc_fn)op_adc_inc_fn;
+
   adc->super.in_fn = op_adc_in_fn;
   // input value array
   adc->super.in_val = adc->in_val;
@@ -145,78 +135,6 @@ void op_adc_in_mode (op_adc_t* adc, const io_t v) {
 }
 
 
-/* // input value */
-/* static void op_adc_in_val0(op_adc_t* adc, const io_t v) { */
-/*   // simply passes value to output */
-/*   adc->val0 = v; */
-/*   //  print_dbg("\r\n adc op output, channel 0, value: 0x"); */
-/*   //  print_dbg_hex(adc->val0); */
-/*   net_activate(adc->outs[0], adc->val0, &(adc->super)); */
-/* } */
-
-/* // input value */
-/* static void op_adc_in_val1(op_adc_t* adc, const io_t v) { */
-/*   // simply passes value to output */
-/*   adc->val1 = v; */
-/*   //  print_dbg("\r\n adc op output, channel 1, value: 0x"); */
-/*   //  print_dbg_hex(adc->val1); */
-/*   net_activate(adc->outs[1], adc->val1, &(adc->super)); */
-/* } */
-
-/* // input value */
-/* static void op_adc_in_val2(op_adc_t* adc, const io_t v) { */
-/*   // simply passes value to output */
-/*   adc->val2 = v; */
-/*   //  print_dbg("\r\n adc op output, channel 2, value: 0x"); */
-/*   //  print_dbg_hex(adc->val2); */
-/*   net_activate(adc->outs[2], adc->val2, &(adc->super)); */
-/* } */
-
-/* // input value */
-/* static void op_adc_in_val3(op_adc_t* adc, const io_t v) { */
-/*   // simply passes value to output */
-/*   adc->val3 = v; */
-/*   //  print_dbg("\r\n adc op output, channel 3, value: 0x"); */
-/*   //  print_dbg_hex(adc->val3); */
-/*   net_activate(adc->outs[3], adc->val3, &(adc->super)); */
-/* } */
-
-// ===== UI input
-
-// increment
-static void op_adc_inc_fn(op_adc_t* adc, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0: 
-    val = inc + adc->enable;
-    op_adc_in_enable(adc, val);
-    break;
-  case 1: // period
-    val = op_sadd(adc->period, inc);
-    op_adc_in_period(adc, val);
-    break;
-  case 2: 
-    val = inc + adc->mode;
-    op_adc_in_mode(adc, val);
-    break;
-  /* case 2: // val0 */
-  /*   val = op_sadd(adc->val0, inc); */
-  /*   op_adc_in_val0(adc, val); */
-  /*   break; */
-  /* case 3: // val1 */
-  /*   val = op_sadd(adc->val1, inc); */
-  /*   op_adc_in_val1(adc, val); */
-  /*   break; */
-  /* case 4: // val2 */
-  /*   val = op_sadd(adc->val2, inc); */
-  /*   op_adc_in_val2(adc, val); */
-  /*   break; */
-  /* case 5: // val3 */
-  /*   val = op_sadd(adc->val3, inc); */
-  /*   op_adc_in_val3(adc, val); */
-  /*   break; */
-  }
-}
 
 //===== pickles
 

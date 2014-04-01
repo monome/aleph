@@ -6,16 +6,14 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_route_instring =  "VAL     TO      ";
-static const char* op_route_outstring = "O0      O1      O2      O3      ";
+static const char* op_route_instring =  "VAL\0    TO\0     ";
+static const char* op_route_outstring = "O0\0     O1\0     O2\0     O3\0     ";
 static const char* op_route_opstring = "ROUTE";
 
 //-------------------------------------------------
 //----- static function declaration
 
 
-// UI increment
-static void op_route_inc(op_route_t* route, const s16 idx, const io_t inc);
 // set inputs
 static void op_route_in_val(op_route_t* route, const io_t v);
 static void op_route_in_to(op_route_t* route, const io_t v);
@@ -36,7 +34,6 @@ void op_route_init(void* op) {
   op_route_t* route = (op_route_t*)op;
 
   // superclass functions
-  route->super.inc_fn = (op_inc_fn)&op_route_inc;
   route->super.in_fn = op_route_in;
   route->super.pickle = (op_pickle_fn) (&op_route_pickle);
   route->super.unpickle = (op_unpickle_fn) (&op_route_unpickle);
@@ -83,20 +80,6 @@ static void op_route_in_to(op_route_t* route, const io_t v) {
   route->to = val;
 }
 
-//===== UI input
-
-// increment
-static void op_route_inc(op_route_t* route, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  case 0: 
-    break;
-  case 1: // multiplier
-    val = op_sadd(route->to, inc);
-    op_route_in_to(route, val);
-    break;
-  }
-}
 
 // serialization
 u8* op_route_pickle(op_route_t* route, u8* dst) {

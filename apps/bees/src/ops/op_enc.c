@@ -8,7 +8,6 @@
 
 //-------------------------------------------------
 //----- static function declarations
-static void op_enc_inc_input ( op_enc_t* enc, const s16 idx, const io_t inc);
 static void op_enc_perform   ( op_enc_t* enc) ;
 static void op_enc_in_wrap   ( op_enc_t* enc, const io_t v);
 static void op_enc_in_max    ( op_enc_t* enc, const io_t v);
@@ -23,8 +22,8 @@ static const u8* op_enc_unpickle(op_enc_t* enc, const u8* src);
 
 //-------------------------------------------------
 //----- static vars
-static const char* op_enc_instring  = "MIN     MAX     STEP    WRAP    ";
-static const char* op_enc_outstring = "VAL     WRAP    ";
+static const char* op_enc_instring  = "MIN\0    MAX\0    STEP\0   WRAP\0   ";
+static const char* op_enc_outstring = "VAL\0    WRAP\0   ";
 static const char* op_enc_opstring  = "ENC";
 static void op_enc_perform(op_enc_t* enc);
 
@@ -44,7 +43,6 @@ void op_enc_init(void* mem) {
   op_enc_t* enc = (op_enc_t*)mem;
 
   // superclass functions
-  enc->super.inc_fn = (op_inc_fn)(&op_enc_inc_input);
   enc->super.in_fn = op_enc_in_fn;
   enc->super.pickle = (op_pickle_fn) (&op_enc_pickle);
   enc->super.unpickle = (op_unpickle_fn) (&op_enc_unpickle);
@@ -198,30 +196,6 @@ static void op_enc_perform(op_enc_t* enc) {
   }
 }
 
-//===== UI input
-static void op_enc_inc_input(op_enc_t* enc, const s16 idx, const io_t inc) {
-  io_t val;
-  switch(idx) {
-  /* case 0:  // move */
-  /*   op_enc_in_move(enc, inc); */
-  /*   break;  */
-  case 0:  // min
-    val = op_sadd(enc->min, inc);
-    op_enc_in_min(enc, val);
-    break;
-  case 1:  // max
-    val = op_sadd(enc->max, inc);
-    op_enc_in_max(enc, val);
-    break;
-  case 2: // step
-    val = op_sadd(enc->step, inc);
-    op_enc_in_step(enc, val);
-    break;
-  case 3: // wrap mode
-    op_enc_in_wrap(enc, inc);
-    break;
-  }
-}
 
 // pickles
 u8* op_enc_pickle(op_enc_t* enc, u8* dst) {

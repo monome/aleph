@@ -6,16 +6,14 @@
 
 //-------------------------------------------------
 //----- descriptor
-static const char* op_accum_instring =  "INC     VAL     MIN     MAX     WRAP    ";
-static const char* op_accum_outstring = "VAL     WRAP    ";
+static const char* op_accum_instring =  "INC\0    VAL\0    MIN\0    MAX\0    WRAP\0   ";
+static const char* op_accum_outstring = "VAL\0    WRAP\0   ";
 static const char* op_accum_opstring =  "ACCUM";
 
 //-------------------------------------------------
 //----- static function declaration
 
 
-// UI increment
-static void op_accum_inc(op_accum_t* accum, const s16 idx, const io_t inc);
 // set inputs
 static void op_accum_in_inc(op_accum_t* accum, const io_t v);
 static void op_accum_in_val(op_accum_t* accum, const io_t v);
@@ -44,7 +42,6 @@ void op_accum_init(void* op) {
   op_accum_t* accum = (op_accum_t*)op;
 
   // superclass functions
-  accum->super.inc_fn = (op_inc_fn)&op_accum_inc;
   accum->super.in_fn = op_accum_in;
   accum->super.pickle = (op_pickle_fn) (&op_accum_pickle);
   accum->super.unpickle = (op_unpickle_fn) (&op_accum_unpickle);
@@ -118,35 +115,6 @@ static void op_accum_in_wrap(op_accum_t* accum, const io_t v) {
   if(v > 0) { accum->wrap = OP_ONE; } else { accum->wrap = 0; }
 }
 
-//===== UI input
-
-// increment
-static void op_accum_inc(op_accum_t* accum, const s16 idx, const io_t inc) {
-  io_t val;
-  //  print_dbg("\r\n op_accum_inc");
-  switch(idx) {
-  case 0: // increment
-    /// no UI input?
-    break;
-  case 1: // set value
-    val = op_sadd(accum->val, inc);
-    op_accum_in_val(accum, val);
-    break;
-  case 2: // min
-    val = op_sadd(accum->min, inc);
-    op_accum_in_min(accum, val);
-    break;
-  case 3: // max
-    val = op_sadd(accum->max, inc);
-    op_accum_in_max(accum, val);
-    break;
-  case 4: // wrap
-    op_accum_in_wrap(accum, inc);
-
-    break;
-
-  }
-}
 
 // wrap and output
 void op_accum_wrap_out(op_accum_t* accum) {

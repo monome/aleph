@@ -15,15 +15,24 @@
 #include "uhc.h"
 // aleph
 #include "conf_usb_host.h"
-// #include "global.h"
+#include "types.h"
+
 #include "midi.h"
 #include "usb_protocol_midi.h"
 #include "uhi_midi.h"
 
-#define UHI_MIDI_PRINT_DBG 0
-
+#define UHI_MIDI_PRINT_DBG 1
 #define UHI_MIDI_TIMEOUT 20000
 
+// looks like we need to get class-specific endpoint descriptors,
+//  to ask them about virtual cable index and stuff like that??
+
+#define UHI_FTDI_TIMEOUT 20000
+//...
+#define MIDI_EP_DESC_REQ_TYPE ( (USB_REQ_DIR_IN) | (USB_REQ_TYPE_STANDARD) | (USB_REQ_RECIP_DEVICE) )
+
+
+#define MIDI_EP_OUT_DESC_REQ
 //----- data types
 // device data structure
 typedef struct {
@@ -53,6 +62,45 @@ static uhi_midi_dev_t uhi_midi_dev = {
 /* 			usb_add_t add, */
 /* 			uhd_trans_status_t status, */
 /* 			uint16_t payload_trans); */
+
+// read cable index
+
+/* static void midi_get_cable(u8 descId, u8* cableIdx, u8* cableCount) {  */
+/*   // send a setup request for the selected descriptor. */
+/*   // descriptor type  */
+/*   /\* */
+/*     Table B-12: MIDI Adapter Class-specific Bulk OUT Endpoint Descriptor */
+/*     Offset */
+/*     Field */
+/*     Size Value */
+/*     Description */
+
+/*     0  bLength		 1 	0x05 	Size of this descriptor, in bytes. */
+/*     1  bDescriptorType	 1 	0x25 	CS_ENDPOINT descriptor */
+/*     2  bDescriptorSubtype 1 	0x01 	MS_GENERAL subtype. */
+/*     3  bNumEmbMIDIJack 	 1 	0x01 	Number of embedded MIDI IN Jacks. */
+/*     4  BaAssocJackID(1)	 1 	0x01 	ID of the Embedded MIDI IN Jack */
+
+/*     // bulk IN endpoint desc is similar with DescriptorType = 0x05 */
+/*     *\/ */
+
+/*   //    usb_setup_req_t req; */
+
+/*   /\* req.bmRequestType = MIDI_EP_DESC_REQ_TYPE; *\/ */
+/*   /\* req.bRequest = reqnum; *\/ */
+/*   /\* req.wValue = (val); *\/ */
+/*   /\* req.wIndex = (index); *\/ */
+/*   /\* req.wLength = (size); *\/ */
+/*   /\* return uhd_setup_request( *\/ */
+/*   /\* 			   uhi_ftdi_dev.dev->address, *\/ */
+/*   /\* 			   &req, *\/ */
+/*   /\* 			   data, *\/ */
+/*   /\* 			   size, *\/ */
+/*   /\* 			   NULL, // no callback on run *\/ */
+			   
+/*   /\* 			   ); *\/ */
+/* } */
+
 
 //----- external (UHC) functions
 uhc_enum_status_t uhi_midi_install(uhc_device_t* dev) {
@@ -124,6 +172,7 @@ uhc_enum_status_t uhi_midi_install(uhc_device_t* dev) {
       if (!iface_supported) {
 	break;
       }
+
       if (!uhd_ep_alloc(dev->address, (usb_ep_desc_t*)ptr_iface)) {
 	print_dbg("\r\n endpoint allocation failed");
 	return UHC_ENUM_HARDWARE_LIMIT;
@@ -133,20 +182,17 @@ uhc_enum_status_t uhi_midi_install(uhc_device_t* dev) {
       case USB_EP_TYPE_BULK:
        	print_dbg("\r\n allocating bulk endpoint ( ");
 	if (((usb_ep_desc_t*)ptr_iface)->bEndpointAddress & USB_EP_DIR_IN) {
-	  /* print_dbg(" input )"); */
-	  /* print_dbg("\r\n ( previous input : 0x"); */
-	  /* print_dbg_hex((u32)uhi_midi_dev.ep_in); */
-	  /* if(uhi_midi_dev.ep_in != 0) { print_dbg("\r\n reallocating midi input endpoint"); } */
+	  print_dbg(" input )");
 	  uhi_midi_dev.ep_in = ((usb_ep_desc_t*)ptr_iface)->bEndpointAddress;
+
 	} else {
 	  print_dbg(" output )");
-	  print_dbg("\r\n ( previous output : 0x");
-	  print_dbg_hex((u32)uhi_midi_dev.ep_out);
-	  if(uhi_midi_dev.ep_out != 0) { print_dbg("\r\n reallocating midi output endpoint"); }
 	  uhi_midi_dev.ep_out = ((usb_ep_desc_t*)ptr_iface)->bEndpointAddress;
 	}
 	break;
       default:
+	print_dbg("\r\n midi install weirdness: allocated endpoint, not recognizing type.");
+	
 	;; // ignore endpoint (shouldn't get here)
 	break;
       }
@@ -187,6 +233,9 @@ void uhi_midi_enable(uhc_device_t* dev) {
   /* 		   1, 0xff,  */
   /* 		   NULL); */
   
+
+  
+
   //  UHI_MIDI_CHANGE(dev, true);
   midi_change(dev, true);  
   print_dbg("\r\n finished uhi_midi_enable");
@@ -203,14 +252,46 @@ void uhi_midi_uninstall(uhc_device_t* dev) {
 
 bool uhi_midi_in_run(uint8_t * buf, iram_size_t buf_size,
 		     uhd_callback_trans_t callback) {
-  return uhd_ep_run(uhi_midi_dev.dev->address,
-		    uhi_midi_dev.ep_in, false, buf, buf_size,
-		    UHI_MIDI_TIMEOUT, callback);
+
+  print_dbg("\r\n attempting to run midi input endpoint ; dev address: 0x");
+  print_dbg_hex((u32) (uhi_midi_dev.dev->address) );
+  print_dbg(" , endpoint number: ");
+  print_dbg_ulong((u32) (uhi_midi_dev.ep_in) );
+  
+
+  return uhd_ep_run(
+		    uhi_midi_dev.dev->address,
+		    uhi_midi_dev.ep_in, 
+		    //		    false,  // shortpacket...
+		    //// TEST:
+		    true, 
+		    buf, buf_size,
+		    UHI_MIDI_TIMEOUT, 
+		    callback);
 }
 
 bool uhi_midi_out_run(uint8_t * buf, iram_size_t buf_size,
 		      uhd_callback_trans_t callback) {
-  return uhd_ep_run(uhi_midi_dev.dev->address,
-		    uhi_midi_dev.ep_out, true, buf, buf_size,
-		    UHI_MIDI_TIMEOUT, callback);
+  /*
+    from uhd.h
+
+    * \warning About \a b_shortpacket, for OUT endpoint it means that
+    * a short packet or a Zero Length Packet must be sent to the USB line
+    * to properly close the usb transfer at the end of the data transfer.
+    * For Bulk and Interrupt IN endpoint, it will automatically stop the transfer
+    * at the end of the data transfer (received short packet).
+    *
+   */
+  print_dbg("\r\n attempting to run midi output endpoint ; dev address: 0x");
+  print_dbg_hex((u32) (uhi_midi_dev.dev->address) );
+  print_dbg(" , endpoint number: ");
+  print_dbg_ulong((u32) (uhi_midi_dev.ep_out) );
+  
+  return uhd_ep_run(
+		    uhi_midi_dev.dev->address,
+		    uhi_midi_dev.ep_out, 
+		    true, // automatic shortpacket for buf < wlen
+		    buf, buf_size,
+		    UHI_MIDI_TIMEOUT, 
+		    callback);
 }

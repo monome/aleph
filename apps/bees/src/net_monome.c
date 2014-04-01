@@ -90,6 +90,20 @@ extern void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
   }
 }
 
+// clear LEDs on grid
+extern void net_monome_grid_clear(void) {
+  int i;
+  for(i=0; i<MONOME_MAX_LED_BYTES; ++i) {
+    monomeLedBuffer[i] = 0;
+  }
+    monome_set_quadrant_flag(0);
+    monome_set_quadrant_flag(1);
+    monome_set_quadrant_flag(2);
+    monome_set_quadrant_flag(3);
+    monome_grid_refresh();
+}
+
+
 // set operator attributes from connected grid device .. ??
 extern void net_monome_set_attributes() {
   //... TODO

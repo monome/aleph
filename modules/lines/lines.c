@@ -34,13 +34,10 @@
 /// lines
 #include "params.h"
 
+#define TEST 0
+
 //-----------------------
 //------ static variables
-#if ARCH_LINUX
-static FILE* dbgFile;
-u8 dbgFlag = 0;
-u32 dbgCount = 0;
-#endif
 
 // total SDRAM is 64M
 // each line 60ish seconds for now
@@ -54,15 +51,15 @@ u32 dbgCount = 0;
 
 // data structure of external memory
 typedef struct _linesData {
-  moduleData super;
-  ParamDesc mParamDesc[eParamNumParams];
+  ModuleData super;
+  //  ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
-  fract32 audioBuffer[NLINES][LINES_BUF_FRAMES];
+  volatile fract32 audioBuffer[NLINES][LINES_BUF_FRAMES];
 } linesData;
 
 //-------------------------
 //----- extern vars (initialized here)
-moduleData* gModuleData; 
+ModuleData* gModuleData; 
 
 
 //-----------------------
@@ -124,6 +121,9 @@ filter_1p_lo cvSlew[4];
 u8 cvChan = 0;
 
 ///////////////
+// try this out
+/// if set, param changes triggering fade will be ignored if a fade is in progress.
+static const u8 fadeIgnore = 1;
 ////////////////
 
 // initial param set
@@ -255,42 +255,45 @@ static void mix_outputs(void) {
 void module_init(void) {
   u8 i;
   u32 j;
-  // init module/param descriptor
-#ifdef ARCH_BFIN 
+  // init module/params
   pLinesData = (linesData*)SDRAM_ADDRESS;
-#else
-  pLinesData = (linesData*)malloc(sizeof(linesData));
-  // debug file
-  //  dbgFile = fopen( "tape_dbg.txt", "w");
-#endif
   
   gModuleData = &(pLinesData->super);
   strcpy(gModuleData->name, "aleph-lines");
-  gModuleData->paramDesc = (ParamDesc*)pLinesData->mParamDesc;
+
   gModuleData->paramData = (ParamData*)pLinesData->mParamData;
   gModuleData->numParams = eParamNumParams;
 
-  fill_param_desc();
-  
   for(i=0; i<NLINES; i++) {
     delayFadeN_init(&(lines[i]), pLinesData->audioBuffer[i], LINES_BUF_FRAMES);
     filter_svf_init(&(svf[i]));
-
 
     filter_1p_lo_init(&(svfCutSlew[i]), 0x3fffffff);
     filter_1p_lo_init(&(svfRqSlew[i]), 0x3fffffff);
 
     filter_ramp_tog_init(&(lpFadeRd[i]), 0);
     filter_ramp_tog_init(&(lpFadeWr[i]), 0);
-  
-    /* filter_svf_set_rq(&(svf[i]), 0x1000); */
-    /* filter_svf_set_low(&(svf[i]), 0x4000); */
-    
-    /* for(j=0; j<LINES_BUF_FRAMES; j++) { */
+
+    /* // we really need to zero everything to avoid horrible noise at boot... */
+    /* for(j=0; j<LINES_BUF_FRAMES; ++j) { */
     /*   pLinesData->audioBuffer[i][j] = 0; */
     /* } */
-    memset(pLinesData->audioBuffer[i], 0, LINES_BUF_FRAMES * 4);
+
+    //    memset(pLinesData->audioBuffer[i], 0, LINES_BUF_FRAMES * 4);
+
+    // however, it is causing crashes or hangs here, for some damn reason.
+
+    // at least zero the end of the buffer
+    /* for(j=LINES_BUF_FRAMES - 100000; j < LINES_BUF_FRAMES - 1; ++j) { */
+    /*   pLinesData->audioBuffer[i][j] = 0x00000000;  */
+    /* } */
   }
+
+  // dac
+  filter_1p_lo_init( &(cvSlew[0]), 0xf );
+  filter_1p_lo_init( &(cvSlew[1]), 0xf );
+  filter_1p_lo_init( &(cvSlew[2]), 0xf );
+  filter_1p_lo_init( &(cvSlew[3]), 0xf );
 
   /// setup params with intial values
 
@@ -364,12 +367,21 @@ void module_init(void) {
   param_setup(  eParam_fwet0,	PARAM_AMP_6 );
   param_setup(  eParam_fdry0,	PARAM_AMP_6 );
 
-
   param_setup(  eParamCut0Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamCut1Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamRq0Slew, PARAM_SLEW_DEFAULT );
   param_setup(  eParamRq1Slew, PARAM_SLEW_DEFAULT );
 
+
+  param_setup(  eParam_cvSlew0, PARAM_SLEW_DEFAULT );
+  param_setup(  eParam_cvSlew1, PARAM_SLEW_DEFAULT );
+  param_setup(  eParam_cvSlew2, PARAM_SLEW_DEFAULT );
+  param_setup(  eParam_cvSlew3, PARAM_SLEW_DEFAULT );
+
+  param_setup(  eParam_cvVal0, PARAM_CV_VAL_DEFAULT );
+  param_setup(  eParam_cvVal1, PARAM_CV_VAL_DEFAULT );
+  param_setup(  eParam_cvVal2, PARAM_CV_VAL_DEFAULT );
+  param_setup(  eParam_cvVal3, PARAM_CV_VAL_DEFAULT );
 
 }
 
@@ -392,6 +404,8 @@ void module_process_frame(void) {
 
   // mix inputs to delay lines
   mix_del_inputs();
+
+  /// TEST
 
   for(i=0; i<NLINES; i++) {
     // process fade integrator
@@ -416,12 +430,18 @@ void module_process_frame(void) {
     out_del[i] = tmpDel;
 
   } // end lines loop 
- 
-    // mix outputs to DACs
+
+  // mix outputs to DACs
+  /// TEST
+  /* out[0] = in[0]; */
+  /* out[1] = in[1]; */
+  /* out[2] = in[2]; */
+  /* out[3] = in[3]; */
+  out[0] = out[1] = out[2] = out[3] = 0x00000000;
   mix_outputs();
 
   /// do CV output
-  if( !(cvSlew[cvChan].sync) ) { 
+  if( cvSlew[cvChan].sync ) { ;; } else { 
     cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
     dac_update(cvChan, cvVal[cvChan]);
   }

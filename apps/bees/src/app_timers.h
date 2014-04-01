@@ -39,6 +39,10 @@ extern void timers_unset_adc(void);
 extern void timers_set_adc_period(u32 period);
 
 // set metro timer
+// arguments: 
+// - pointer to timer data,
+// - period in ticks
+// - pointer to polled operator class data
 extern void timers_set_custom(softTimer_t* timer, u32 period, void* obj);
 
 // unset metro timer

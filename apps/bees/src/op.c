@@ -178,6 +178,27 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_route_t),
     .init = &op_route_init,
     .deinit = NULL
+  }, {
+    .name = "MIDICC",
+    .size = sizeof(op_midi_cc_t),
+    .init = &op_midi_cc_init,
+    .deinit = op_midi_cc_deinit
+  },
+ {
+    .name = "MOUT_NOTE",
+    .size = sizeof(op_midi_out_note_t),
+    .init = &op_midi_out_note_init,
+    .deinit = NULL
+ }, {
+    .name = "LIST16",
+    .size = sizeof(op_list16_t),
+    .init = &op_list16_init,
+    .deinit = NULL    
+  }, {
+    .name = "STEP",
+    .size = sizeof(op_step_t),
+    .init = &op_step_init,
+    .deinit = NULL    
   }
 
 };
@@ -193,6 +214,7 @@ static const u8 outStringChars = 8;
 
 // initialize operator at memory
 s16 op_init(op_t* op, op_id_t opId) {
+  //  int i;
   // no flags by default
   op->flags = 0x00000000;
   // set function pointers to NULL
@@ -200,6 +222,16 @@ s16 op_init(op_t* op, op_id_t opId) {
   op->unpickle = NULL;
   // run class init function
   (*(op_registry[opId].init))(op);
+
+  // zap spaces in names...
+  // ugh, better to keep them constant i guess.
+  /* for(i=0; i< (inStringChars * op->numIns); ++i) { */
+  /*   if(op->inString[i] == ' ') { op->inString[i] = '\0'; } */
+  /* } */
+  /* for(i=0; i< (outStringChars * op->numOuts); ++i) { */
+  /*   if(op->outString[i] == ' ') { op->outString[i] = '\0'; } */
+  /* } */
+
   return 0;
 }
 
@@ -218,14 +250,18 @@ s16 op_deinit(op_t* op) {
 
 
 const char* op_in_name(op_t* op, const u8 idx) {
-  static char str[16];
-  u8 i;
-  // str = (op->inString + (inStringChars * idx));
-  for(i=0; i<inStringChars; i++) {
-    str[i] = *(op->inString + (inStringChars * idx) + i);
-  }
-  str[inStringChars] = '\0';
-  return str;
+  /* static char str[16]; */
+  /* u8 i; */
+  /* // str = (op->inString + (inStringChars * idx)); */
+  /* for(i=0; i<inStringChars; i++) { */
+  /*   str[i] = *(op->inString + (inStringChars * idx) + i); */
+  /* } */
+  /* str[inStringChars] = '\0'; */
+  /* return str; */
+  /// names now have spaces zapped to nulls.
+  // so we can safely return direct pointer to name string
+  return (op->inString + (inStringChars * idx));
+  
 }
 
 const char* op_out_name(op_t* op, const u8 idx) {
@@ -270,3 +306,20 @@ void op_set_in_val(op_t* op, s16 idx, io_t val) {
 /* const u8* op_unpickle(op_t* op, const u8* src) { */
 /*     return (*(op->unpickle))(op, src); */
 /* } */
+
+
+
+// increment input value
+void op_inc_in_val(op_t* op, const s16 idx, const io_t inc) {
+  print_dbg("\r\n op_inc_in_val, ");
+  print_dbg(" op @ 0x");
+  print_dbg_hex((u32)op);
+  print_dbg(" old : 0x");
+  print_dbg_hex((u32)op_get_in_val(op, idx));
+  print_dbg(" inc : 0x");
+  print_dbg_hex((u32)inc);
+  print_dbg(" new : 0x");
+  print_dbg_hex( (u32)op_sadd( op_get_in_val(op, idx), inc) );
+    
+  op_set_in_val( op, idx, op_sadd( op_get_in_val(op, idx), inc) );
+}

@@ -93,7 +93,7 @@ static void init_avr32(void) {
 ////main function
 int main (void) {
   u8 tx = 50;
-  u8 rx = 0;
+  //  u8 rx = 0;
   // set up avr32 hardware and peripherals
   init_avr32();
 

@@ -63,8 +63,8 @@ ENTRY(_start)
 MEMORY
 {
   FLASH (rxai!w) : ORIGIN = 0x80008000, LENGTH = 0x00078000
-
   INTRAM (wxa!ri) : ORIGIN = 0x00000004, LENGTH = 0x0000FFFC
+  SDRAM (wxa!ri) : ORIGIN = 0xD0000000, LENGTH = 0x04000000
   USERPAGE : ORIGIN = 0x80800000, LENGTH = 0x00000200
 }
 
@@ -74,24 +74,21 @@ PHDRS
   INTRAM_ALIGN PT_NULL;
   INTRAM_AT_FLASH PT_LOAD;
   INTRAM PT_NULL;
+  SDRAM_AT_FLASH PT_LOAD;
+  SDRAM PT_NULL;
   FLASH_NVRAM PT_LOAD;
   USERPAGE PT_LOAD;
 }
 
 SECTIONS
 {
-  /* If this heap size is selected, all the INTRAM space from the end of the
-     data area to the beginning of the stack will be allocated for the heap. */
-  __max_heap_size__ = -1;
-
-  /* Use a default heap size if heap size was not defined. */
-  __heap_size__ = DEFINED(__heap_size__) ? __heap_size__ : __max_heap_size__;
+   /* Use a default heap size if heap size was not defined. */
+  __heap_size__ = DEFINED(__heap_size__) ? __heap_size__ : LENGTH(SDRAM);
 
   /* Use a default stack size if stack size was not defined. */
   __stack_size__ = DEFINED(__stack_size__) ? __stack_size__ : 4K;
 
   /* Use a default flash NVRAM size if flash NVRAM size was not defined. */
-/*  __flash_nvram_size__ = DEFINED(__flash_nvram_size__) ? __flash_nvram_size__ : 4K; */
   __flash_nvram_size__ = DEFINED(__flash_nvram_size__) ? __flash_nvram_size__ : 256K;
 
   /* Read-only sections, merged into text segment: */
@@ -229,18 +226,20 @@ SECTIONS
        .bss section disappears because there are no input sections.  */
     . = ALIGN(8);
   } >INTRAM AT>INTRAM :INTRAM
+
   . = ALIGN(8);
   _end = .;
   PROVIDE (end = .);
-  __heap_start__ = ALIGN(8);
-  .heap           :
-  {
-    *(.heap)
-    . = (__heap_size__ == __max_heap_size__) ?
-        ORIGIN(INTRAM) + LENGTH(INTRAM) - __stack_size__ - ABSOLUTE(.) :
-        __heap_size__;
-  } >INTRAM AT>INTRAM :INTRAM
-  __heap_end__ = .;
+
+  .heap :
+    {
+       __heap_start__ = .;
+      *(.heap)
+      . = __heap_size__;
+      __heap_end__ = .;
+    } >SDRAM AT>SDRAM :SDRAM
+
+
   /* Stabs debugging sections.  */
   .stab          0 : { *(.stab) }
   .stabstr       0 : { *(.stabstr) }

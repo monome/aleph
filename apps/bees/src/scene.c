@@ -52,17 +52,49 @@ sceneData_t* sceneData;
 
 void scene_init(void) {
   u32 i;
+  u8* dst;
+
   sceneData = (sceneData_t*)alloc_mem( sizeof(sceneData_t) );
   sceneData->desc.beesVersion.maj = beesVersion.maj;
   sceneData->desc.beesVersion.min = beesVersion.min;
   sceneData->desc.beesVersion.rev = beesVersion.rev;
+
+
+  ///////////
+  ///////
+  // TEST (?)
+  // slow initialization of serialized scene data
+  dst = (u8*)(sceneData->pickle);
+  for(i=0; i<SCENE_PICKLE_SIZE; ++i) {
+    switch( (i&3) ) {
+    case 0:
+      *dst = 0xde;
+      break;
+    case 1:
+      *dst = 0xad;
+      break;
+    case 2:
+      *dst = 0xbe;
+      break;
+    case 3:
+      *dst = 0xef;
+      break;
+    }
+    dst++;
+  }
+  ///////////
+  ////////
+
   for(i=0; i<SCENE_NAME_LEN; i++) {
     (sceneData->desc.sceneName)[i] = '\0';
   }
-  for(i=0; i<MODULE_NAME_LEN; i++) {
-    (sceneData->desc.moduleName)[i] = '\0';
-  }
+  /* for(i=0; i<MODULE_NAME_LEN; i++) { */
+  /*   (sceneData->desc.moduleName)[i] = '\0'; */
+  /* } */
+  strcpy(sceneData->desc.moduleName, "DEADBEEF");
   strcpy(sceneData->desc.sceneName, "_"); 
+
+
 }
 
 void scene_deinit(void) {
@@ -74,8 +106,8 @@ void scene_write_buf(void) {
   char test[SCENE_NAME_LEN] = "                ";
   u32 bytes = 0;
   u8* newDst = NULL;
-    int i;
-
+  int i;
+    
   ///// print paramameters
   //  u32 i;
 
@@ -115,8 +147,6 @@ void scene_write_buf(void) {
     dst++;
     bytes++;
   }
-
-  
 
   //// TEST
 for(i=0; i<MODULE_NAME_LEN; i++) {
@@ -165,9 +195,9 @@ void scene_read_buf(void) {
   const u8* src = (u8*)&(sceneData->pickle);
   int i;
   // param count reported from dsp
-  u32 paramsReported;
+  //  u32 paramsReported;
   //// TEST
-  volatile char moduleName[32];
+  char moduleName[MODULE_NAME_LEN];
   ModuleVersion moduleVersion;
   ////
 
@@ -190,16 +220,13 @@ void scene_read_buf(void) {
   src = unpickle_16(src, &(sceneData->desc.beesVersion.rev));
 
  // read module name
-  for(i=0; i<SCENE_NAME_LEN; i++) {
-    sceneData->desc.moduleName[i] = *src;
+  // target is temp module name buffer, so we can run a comparison 
+  for(i=0; i<MODULE_NAME_LEN; i++) {
+    moduleName[i] = *src;
     src++;
   }
-
   print_dbg("\r\n unpickled module name: ");
-  print_dbg(sceneData->desc.moduleName);
-
-  render_boot("loading DSP module:");
-  render_boot(sceneData->desc.moduleName);
+  print_dbg(moduleName);
 
    // read module version
   sceneData->desc.moduleVersion.min = *src;
@@ -215,56 +242,76 @@ void scene_read_buf(void) {
   print_dbg(".");
   print_dbg_ulong(sceneData->desc.moduleVersion.rev);
 
-
-  ///// load the DSP now!
-  render_boot("loading module from sdcard");
-
-  print_dbg("\r\n loading module from card, filename: ");
+  
+  print_dbg("\r\n checking against module name from scene data: ");
   print_dbg(sceneData->desc.moduleName);
 
-  files_load_dsp_name(sceneData->desc.moduleName);
+  if(strcmp(moduleName, sceneData->desc.moduleName) == 0) {
+    print_dbg("\r\n requested module name is already loaded; skip DSP reboot.");
+    // skip DSP load
+    /// FIXME: should check module version too
 
+  } else {
+    strcpy(sceneData->desc.moduleName, moduleName);
+    render_boot("loading DSP module:");
+    render_boot(sceneData->desc.moduleName);
 
-  render_boot("waiting for module init");
-  print_dbg("\r\n waiting for DSP init...");
-  bfin_wait_ready();
+    ///// load the DSP now!  
+    render_boot("loading module from sdcard");
+    print_dbg("\r\n loading module from card, filename: ");
+    print_dbg(sceneData->desc.moduleName);
+
+    files_load_dsp_name(sceneData->desc.moduleName);
+
+    render_boot("waiting for module init");
+    print_dbg("\r\n waiting for DSP init...");
+    bfin_wait_ready();
 
 #if RELEASEBUILD==1
 #else
   
-  // query module name / version
-  //// FIXME: currently nothing happens with this.
-  print_dbg("\r\n querying module name...");
-  bfin_get_module_name(moduleName);
-  print_dbg("\r\n querying module version...");
-  bfin_get_module_version(&moduleVersion);
+    // query module name / version
+    print_dbg("\r\n querying module name...");
+    bfin_get_module_name(moduleName);
+    print_dbg("\r\n querying module version...");
+    bfin_get_module_version(&moduleVersion);
 
-  print_dbg("\r\n received module name: ");
-  print_dbg((char*)moduleName);
+    print_dbg("\r\n received module name: ");
+    print_dbg((char*)moduleName);
 
-  print_dbg("\r\n received module version: ");
-  print_dbg_ulong(moduleVersion.maj);
-  print_dbg(".");
-  print_dbg_ulong(moduleVersion.min);
-  print_dbg(".");
-  print_dbg_ulong(moduleVersion.rev);
+    print_dbg("\r\n received module version: ");
+    print_dbg_ulong(moduleVersion.maj);
+    print_dbg(".");
+    print_dbg_ulong(moduleVersion.min);
+    print_dbg(".");
+    print_dbg_ulong(moduleVersion.rev);
 
-  // store in scene data
-  sceneData->desc.moduleVersion.maj = moduleVersion.maj;
-  sceneData->desc.moduleVersion.min = moduleVersion.min;
-  sceneData->desc.moduleVersion.rev = moduleVersion.rev;
-  strcpy(sceneData->desc.moduleName, (const char*)moduleName);
-
+#ifdef BEEKEEP
+#else
+    // store in scene data
+    sceneData->desc.moduleVersion.maj = moduleVersion.maj;
+    sceneData->desc.moduleVersion.min = moduleVersion.min;
+    sceneData->desc.moduleVersion.rev = moduleVersion.rev;
+    strcpy(sceneData->desc.moduleName, (const char*)moduleName);
+#endif
 
 #endif
 
+  } // load-module case
+
   app_pause();
 
+  /// don't have to do this b/c net_unpickle will deinit anyways
+  /*
   print_dbg("\r\n clearing operator list...");
   net_clear_user_ops();
+  */
 
+  //// FIXME: use .dsc
+  /*
   print_dbg("\r\n reporting DSP parameters...");
   paramsReported = net_report_params();
+  */
 
   /// FIXME:
   /// check the module version and warn if different!
@@ -291,12 +338,18 @@ void scene_read_buf(void) {
 
   bfin_wait_ready();
   // update bfin parameters
-  if(net->numParams != paramsReported) {
-    print_dbg("\r\n !!!!!! WARNING ! param count from scene does not match reported count from DSP");
-    render_boot("warning: param count mismatch!");
-  } else {
-    net_send_params();
-  }
+  //  if(net->numParams != paramsReported) {
+  //    print_dbg("\r\n !!!!!! WARNING ! param count from scene does not match reported count from DSP");
+  //    render_boot("warning: param count mismatch!");
+  //  } else {
+
+#ifdef BEEKEEP
+#else
+  net_send_params();
+#endif
+
+  //  }
+
   print_dbg("\r\n sent new parameter values");
 
   delay_ms(5);
@@ -395,5 +448,15 @@ void scene_query_module(void) {
   print_dbg_ulong(moduleVersion->min);
   print_dbg(".");
   print_dbg_ulong(moduleVersion->rev);
-
 }
+
+
+/* void scene_print_buf(void) { */
+/*   int i; */
+/*   for(i=0; i<sizeof(sceneDesc_t); ++i) { */
+/*     //    print_dbg_hex(sceneData-> */
+/*   } */
+/*   for(i=0; i<SCENE_PICKLE_SIZE; ++i) { */
+/*     //    sceneData */
+/*   } */
+/* } */

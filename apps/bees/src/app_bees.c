@@ -45,6 +45,9 @@ const AppVersion beesVersion = { .min = MIN , .maj = MAJ , .rev = REV };
 //--- static vars
 static char versionString[12] = VERSIONSTRING;
 
+#define DEFAULT_LDR "aleph-waves.ldr"
+#define DEFAULT_DSC "aleph-waves.dsc"
+
 // this is called during hardware initialization.
 // allocate memory.
 void app_init(void) {
@@ -100,14 +103,19 @@ u8 app_launch(u8 firstrun) {
     flash_init_scaler_data();
 
     print_dbg("\r\n first run, try and load default DSP");
-    render_boot("launching default DSP...");
+    render_boot("launching default DSP");
 
-    files_load_dsp_name("aleph-waves.ldr");
+    //// startup using default DSP name
+    files_load_dsp_name(DEFAULT_LDR);
     
     render_boot("waiting for DSP init...");
-    print_dbg("\r\n DSP booted, waiting to query params...");
-    print_dbg(" requesting param report...");
+    //    print_dbg("\r\n DSP booted, waiting to query params...");
+    //    print_dbg(" requesting param report");
     bfin_wait_ready();
+
+    //    print_dbg(" requesting param report...");
+    //    render_boot("requesting DSP parameterss");
+    //    net_report_params();
 
     //    print_dbg("\r\n enable DSP audio...");
     render_boot("enabling audio");
@@ -125,6 +133,10 @@ u8 app_launch(u8 firstrun) {
     render_boot("reading default scene");
 
     /// this also attempts to load associated .ldr
+
+    print_dbg("\r\n loading default scene. current module name from sceneData: ");
+    print_dbg(sceneData->desc.moduleName);
+
     scene_read_default();
 
     delay_ms(2); 
@@ -134,24 +146,24 @@ u8 app_launch(u8 firstrun) {
    }
 
   // init pages (fill graphics buffers)
+  render_boot("initializing gfx");
   print_dbg("\r\n pages_init...");
   pages_init();
-
 
   print_dbg("\r\n play_init...");
   play_init();
 
   // enable timers
   print_dbg("\r\n enable app timers...");
-  render_boot("enabling app timers...");
+  render_boot("enabling app timers");
   init_app_timers();
 
   // pull up power control pin, enabling soft-powerdown
   gpio_set_gpio_pin(POWER_CTL_PIN);
 
   // assign app event handlers
-  print_dbg("\r\n assigning handlers ");
-  render_boot("assigning UI handlers...");
+  print_dbg("\r\n assigning handlers... ");
+  render_boot("assigning UI handlers");
   assign_bees_event_handlers();
 
   // update page rendering and handlers...
@@ -162,3 +174,4 @@ u8 app_launch(u8 firstrun) {
 
   return 1;
 }
+y

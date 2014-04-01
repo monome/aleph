@@ -22,10 +22,8 @@ right now, there are 3 steps to this process:
     
 3)  compile and run xpm_convert.c
     using the data from step 1) and metadata from step 2), 
-    this produces a single source file with all requested glyph,
+    this produces a single source file with all requested glyphs,
     in ready-to-use format for the avr32 application build.
-    
-    
 
 
 * note:

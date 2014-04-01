@@ -40,8 +40,13 @@
  
 // lookup given 16.16 index in [0, size-1]
 extern fract32 table_lookup_idx(fract32* tab, u32 size, fix16 idx);
+
+// assume size is 2^N and use bitmask for faster wrapping
+extern fract32 table_lookup_idx_mask(fract32* tab, u32 mask, fix16 idx);
+
+
 // lookup given normalized index in [-1, 1]
-extern fract32 table_lookup_fract(fract32* tab, u32 size, fract32 phase);
+// extern fract32 table_lookup_fract(fract32* tab, u32 size, fract32 phase);
 
 // fill a table of given size with harmonics up to given order
 // also given: decay coefficient, normalization flag

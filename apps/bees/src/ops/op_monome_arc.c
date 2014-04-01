@@ -8,8 +8,8 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_marc_instring = "FOCUS   ";
-static const char* op_marc_outstring = "NUM     DELTA   ";
+static const char* op_marc_instring = "FOCUS\0  ";
+static const char* op_marc_outstring = "NUM\0    DELTA\0  ";
 static const char* op_marc_opstring = "ARC";
 
 //-------------------------------------------------
@@ -18,7 +18,6 @@ static const char* op_marc_opstring = "ARC";
 //---- input functions
 
 //// network inputs: 
-static void op_marc_inc_fn(op_marc_t* grid, const s16 idx, const io_t inc);
 static void op_marc_in_focus(op_marc_t* grid, const io_t val);
 
 // pickles
@@ -179,21 +178,6 @@ static void op_marc_handler(op_monome_t* op_monome, u32 edata) {
   op->lastPos = pos;
 }
 
-
-/// increment param value from UI:
-void op_marc_inc_fn(op_marc_t* op, const s16 idx, const io_t inc) {
-  switch(idx) {
-  case 0: // focus
-    op_marc_in_focus(op, inc);
-    break;
-  case 1: // toggle mode
-    op_marc_in_tog(op, inc);
-    break;
-  case 2: // mono mode
-    op_marc_in_mono(op, inc);
-    break;
-  }
-}
 
 // pickle / unpickle
 u8* op_marc_pickle(op_marc_t* mgrid, u8* dst) {
