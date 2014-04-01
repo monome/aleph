@@ -34,26 +34,26 @@ static event_t e;
 
 //------ timers
 // refresh screen
-static softTimer_t screenTimer = { .next = NULL };
+static softTimer_t screenTimer = { .next = NULL, .prev = NULL };
 
 // poll encoders
-static softTimer_t encTimer = { .next = NULL };
+static softTimer_t encTimer = { .next = NULL, .prev = NULL };
 
 // poll monome device 
-static softTimer_t monomePollTimer = { .next = NULL };
+static softTimer_t monomePollTimer = { .next = NULL, .prev = NULL };
 
 // refresh monome device 
-static softTimer_t monomeRefreshTimer  = { .next = NULL };
+static softTimer_t monomeRefreshTimer  = { .next = NULL, .prev = NULL };
 
 // poll midi device 
-static softTimer_t midiPollTimer = { .next = NULL };
+static softTimer_t midiPollTimer = { .next = NULL, .prev = NULL };
 
 // refresh midi device 
 /// TODO:
 // static softTimer_t midiRefreshTimer;
 
 // poll adc 
-static softTimer_t adcPollTimer = { .next = NULL };
+static softTimer_t adcPollTimer = { .next = NULL, .prev = NULL };
 
 
 //--------------------------
@@ -185,7 +185,7 @@ void timers_set_adc_period(u32 period) {
 
 // set custom callback
 // the callback is simply resonsible for pushing timer interrupts back into the event queue.
-// this is to keep network processing out of the IRQ itself...
+// this is to keep network processing out of the timer IRQ itself...
 void timers_set_custom(softTimer_t* timer, u32 period, void* obj) {
   print_dbg("\r\n set custom timer, period: ");
   print_dbg_ulong(period);

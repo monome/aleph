@@ -51,7 +51,9 @@ void init_gpio(void) {
 }
 
 // initialize application timer
-extern void init_tc (volatile avr32_tc_t *tc) {
+extern void init_tc (void) {
+  volatile avr32_tc_t *tc = APP_TC;
+
   // waveform options
   static const tc_waveform_opt_t waveform_opt = {
     .channel  = APP_TC_CHANNEL,  // channel

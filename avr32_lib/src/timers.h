@@ -24,13 +24,10 @@ typedef volatile struct _softTimer {
   u32 ticks;
   // callback function pointer
   timer_callback_t callback;   	
-  // pointer to next timer in linked list
-  // this should be initialized to NULL
-  // FIXME? guess we should store a pointer to the last element too,
-  /// it would make searching a little faster/cleaner
+  // links
   volatile struct _softTimer* next;
+  volatile struct _softTimer* prev;
   // arbitrary argument to differentiate different callers
-  // using the same callback
   void* caller;
 } softTimer_t;
 
@@ -47,5 +44,8 @@ u8 timer_add( softTimer_t* timer, u32 ticks, timer_callback_t callback, void* ca
 u8 timer_remove( softTimer_t* timer );
 // process the timer list; call this on each tick.
 void process_timers( void );
+
+// clear the list
+extern void timers_clear(void) ;
 
 #endif // header guard

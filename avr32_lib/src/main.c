@@ -85,23 +85,11 @@ static void check_events(void);
 // check startup status and possibly launch the application
 static void check_startup(void);
 
+// dummies
+static void dummy_handler(s32 data) { ;; }
+//static void dummy_render(void) { ;; }
+
 // core event handlers
-static void handler_Adc0(s32 data) { ;; }
-static void handler_Adc1(s32 data) { ;; }
-static void handler_Adc2(s32 data) { ;; }
-static void handler_Adc3(s32 data) { ;; }
-static void handler_Encoder0(s32 data) { ;; } 
-static void handler_Encoder1(s32 data) { ;; } 
-static void handler_Encoder2(s32 data) { ;; } 
-static void handler_Encoder3(s32 data) { ;; } 
-static void handler_Switch0(s32 data) { check_startup(); }
-static void handler_Switch1(s32 data) { check_startup(); }
-static void handler_Switch2(s32 data) { check_startup(); }
-static void handler_Switch3(s32 data) { check_startup(); }
-static void handler_Switch4(s32 data) { ;; }
-static void handler_Switch5(s32 data) { ;; }
-static void handler_Switch6(s32 data) { ;; }
-static void handler_Switch7(s32 data) { ;; }
 static void handler_FtdiConnect(s32 data) {
   ftdi_setup();
 }
@@ -114,12 +102,11 @@ static void handler_FtdiDisconnect(s32 data) {
 static void handler_MonomeConnect(s32 data) {
   // this just stores a flag to re-send connection event to app
   if(!launch) {
-    print_dbg("\r\n got monome device connection, saving flag for app launch");
+    // print_dbg("\r\n got monome device connection, saving flag for app launch");
     monomeConnect = 1;
   }
 }
 
-static void handler_MonomeDisconnect(s32 data) { ;; }
 static void handler_MonomePoll(s32 data) {
   monome_read_serial();
 }
@@ -128,17 +115,11 @@ static void handler_MonomeRefresh(s32 data) {
   // FIXME: arc?
 }
 
-static void handler_MonomeGridKey(s32 data) { ;; }
-static void handler_MonomeGridTilt(s32 data) { ;; }
-static void handler_MonomeRingEnc(s32 data) { ;; }
-static void handler_MonomeRingKey(s32 data) { ;; }
 static void handler_MidiConnect(s32 data) { 
   if(!launch) {
     midiConnect = 1;
   }
 }
-static void handler_MidiDisconnect(s32 data) { ;; }
-static void handler_MidiPacket(s32 data) { ;; }
 static void handler_MidiRefresh(s32 data) {
   // TODO
 }
@@ -147,53 +128,71 @@ static void handler_HidConnect(s32 data) {
     hidConnect = 1;
   }
 }
-static void handler_HidDisconnect(s32 data) { ;; }
-static void handler_HidByte(s32 data) { ;; }
 
-static void handler_SerialParamNum(s32 data) { serial_param_num(data); }
-static void handler_SerialParamInfo(s32 data) { serial_param_info(data); }
-static void handler_SerialParamGet(s32 data) { serial_param_get(data); }
-static void handler_SerialParamSet(s32 data) { serial_param_set(data); }
+/// these are causing crashes for me at startup btw, 
+/// whenever serial port is connected to anything (e.g. during debug.)
+/// i think these should be app-defined unless there are compelling reasons to handle serial immediately at startup.
+/// params won't be loaded at start so that is certianly gonna fail, for one thing.
+static void handler_SerialParamNum(s32 data) { 
+  //  serial_param_num(data);
+}
+
+static void handler_SerialParamInfo(s32 data) { 
+  //  serial_param_info(data);
+}
+
+static void handler_SerialParamGet(s32 data) { 
+  //  serial_param_get(data);
+}
+
+static void handler_SerialParamSet(s32 data) { 
+  //  serial_param_set(data);
+}
 
 static void handler_AppCustom(s32 data) { ;; }
 
 /// explicitly assign default event handlers.
 /// this way the order of the event types enum doesn't matter.
 static inline void assign_main_event_handlers(void) {
-  app_event_handlers[ kEventAdc0]	= &handler_Adc0 ;
-  app_event_handlers[ kEventAdc1 ]	= &handler_Adc1 ;
-  app_event_handlers[ kEventAdc2 ]	= &handler_Adc2 ;
-  app_event_handlers[ kEventAdc3 ]	= &handler_Adc3 ;
-  app_event_handlers[ kEventEncoder0 ]	= &handler_Encoder0 ;
-  app_event_handlers[ kEventEncoder1 ]	= &handler_Encoder1 ;
-  app_event_handlers[ kEventEncoder2 ]	= &handler_Encoder2 ;
-  app_event_handlers[ kEventEncoder3 ]	= &handler_Encoder3 ;
-  app_event_handlers[ kEventSwitch0 ]	= &handler_Switch0 ;
-  app_event_handlers[ kEventSwitch1 ]	= &handler_Switch1 ;
-  app_event_handlers[ kEventSwitch2 ]	= &handler_Switch2 ;
-  app_event_handlers[ kEventSwitch3 ]	= &handler_Switch3 ;
-  app_event_handlers[ kEventSwitch4 ]	= &handler_Switch4 ;
-  app_event_handlers[ kEventSwitch5 ]	= &handler_Switch5 ;
-  app_event_handlers[ kEventSwitch6 ]	= &handler_Switch6 ;
-  app_event_handlers[ kEventSwitch7 ]	= &handler_Switch7 ;
+  app_event_handlers[ kEventAdc0]	= &dummy_handler ;
+  app_event_handlers[ kEventAdc1 ]	= &dummy_handler ;
+  app_event_handlers[ kEventAdc2 ]	= &dummy_handler ;
+  app_event_handlers[ kEventAdc3 ]	= &dummy_handler ;
+  app_event_handlers[ kEventEncoder0 ]	= &dummy_handler ;
+  app_event_handlers[ kEventEncoder1 ]	= &dummy_handler ;
+  app_event_handlers[ kEventEncoder2 ]	= &dummy_handler ;
+  app_event_handlers[ kEventEncoder3 ]	= &dummy_handler ;
+  app_event_handlers[ kEventSwitch0 ]	= &dummy_handler ;
+  app_event_handlers[ kEventSwitch1 ]	= &dummy_handler ;
+  app_event_handlers[ kEventSwitch2 ]	= &dummy_handler ;
+  app_event_handlers[ kEventSwitch3 ]	= &dummy_handler ;
+  app_event_handlers[ kEventSwitch4 ]	= &dummy_handler ;
+  app_event_handlers[ kEventSwitch5 ]	= &dummy_handler ;
+  app_event_handlers[ kEventSwitch6 ]	= &dummy_handler ;
+  app_event_handlers[ kEventSwitch7 ]	= &dummy_handler ;
   app_event_handlers[ kEventFtdiConnect ]	= &handler_FtdiConnect ;
   app_event_handlers[ kEventFtdiDisconnect ]	= &handler_FtdiDisconnect ;
   app_event_handlers[ kEventMonomeConnect ]	= &handler_MonomeConnect ;
-  app_event_handlers[ kEventMonomeDisconnect ]	= &handler_MonomeDisconnect ;
+  app_event_handlers[ kEventMonomeDisconnect ]	= &dummy_handler ;
   app_event_handlers[ kEventMonomePoll ]	= &handler_MonomePoll ;
   app_event_handlers[ kEventMonomeRefresh ]	= &handler_MonomeRefresh ;
-  app_event_handlers[ kEventMonomeGridKey ]	= &handler_MonomeGridKey ;
-  app_event_handlers[ kEventMonomeGridTilt ]	= &handler_MonomeGridTilt ;
-  app_event_handlers[ kEventMonomeRingEnc ]	= &handler_MonomeRingEnc ;
-  app_event_handlers[ kEventMonomeRingKey ]	= &handler_MonomeRingKey ;
+  app_event_handlers[ kEventMonomeGridKey ]	= &dummy_handler ;
+  app_event_handlers[ kEventMonomeGridTilt ]	= &dummy_handler ;
+  app_event_handlers[ kEventMonomeRingEnc ]	= &dummy_handler ;
+  app_event_handlers[ kEventMonomeRingKey ]	= &dummy_handler ;
   app_event_handlers[ kEventMidiConnect ]	= &handler_MidiConnect ;
-  app_event_handlers[ kEventMidiDisconnect ]	= &handler_MidiDisconnect ;
-  app_event_handlers[ kEventMidiPacket ]	= &handler_MidiPacket ;
+  app_event_handlers[ kEventMidiDisconnect ]	= &dummy_handler ;
+  app_event_handlers[ kEventMidiPacket ]	= &dummy_handler ;
   app_event_handlers[ kEventMidiRefresh ]	= &handler_MidiRefresh ;
   app_event_handlers[ kEventHidConnect ]	= &handler_HidConnect ;
-  app_event_handlers[ kEventHidDisconnect ]	= &handler_HidDisconnect ;
-  app_event_handlers[ kEventHidByte ]	= &handler_HidByte ;
+  app_event_handlers[ kEventHidDisconnect ]	= &dummy_handler ;
+  app_event_handlers[ kEventHidByte ]	= &dummy_handler ;
 
+
+  /// how about designate a single serial com handler and have app specific parsing, 
+  // at least for now? 
+  // param descriptors are not in the lib code,
+  // so best to handle parameter scaling/setting through the app.
   app_event_handlers[ kEventSerialParamNum ] = &handler_SerialParamNum ;
   app_event_handlers[ kEventSerialParamInfo ] = &handler_SerialParamInfo ;
   app_event_handlers[ kEventSerialParamGet ] = &handler_SerialParamGet ;
@@ -236,7 +235,6 @@ int _init_startup(void) {
 
 // top-level peripheral init
 static void init_avr32(void) {
-  volatile avr32_tc_t *tc = APP_TC;
   
  // fixme: test malloc for SDRAM paranoia
   test_malloc();
@@ -251,7 +249,7 @@ static void init_avr32(void) {
   // initialize blackfin resources
   init_bfin_resources();
   // initialize application timer
-  init_tc(tc);
+  init_tc();
   // initialize other GPIO
   init_gpio();
   // register interrupts
@@ -291,6 +289,7 @@ static void init_ctl(void) {
 
   // enable interrupts
   cpu_irq_enable();
+  print_dbg("\r\n enabled interrupts");
 }
 
 // launch application
@@ -319,7 +318,7 @@ void check_startup(void) {
 	event_post(&e);
       } 
       if(monomeConnect) {
-	print_dbg("\r\n posting MonomeConnect event after app launch");
+	// print_dbg("\r\n posting MonomeConnect event after app launch");
 	e.type = kEventMonomeConnect;
 	event_post(&e);
       } 
@@ -376,8 +375,8 @@ int main (void) {
 
   // initialize flash
   firstrun = init_flash();
-  print_dbg("r\n init flash, firstrun: ");
-  print_dbg_ulong(firstrun);
+  // print_dbg("r\n init flash, firstrun: ");
+  // print_dbg_ulong(firstrun);
 
   // check sw2 and force firstrun if held
   if(gpio_get_pin_value(SW2_PIN)) {
@@ -387,6 +386,10 @@ int main (void) {
 
   // assign default event handlers
   assign_main_event_handlers();
+  // assign default screen render
+  //  app_render_screen = &(dummy_render);
+  print_dbg("\r\n assigned default/dummy event handlers");
+  
 
   print_dbg("\r\n starting event loop.\r\n");
 
