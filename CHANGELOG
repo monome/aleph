@@ -1,3 +1,8 @@
+
+----------------
+bees	0.5.2
+- fix op_step init bug
+
 ----------------
 waves	0.4.1
 - cv dac fixes
@@ -8,10 +13,10 @@ lines	0.2.1
 
 ----------------
 bees	0.5.1
-- fix/stability soft timer processing in avr32_lib
+- fix avr32 timer management crashes
 
 ----------------
-bees	0.5.0  ! breaks module compatibility !
+bees	0.5.0  ! breaks module/scene compatibility !
 - new ops: LIST16, MIDICC, NOTEOUT, STEP
 - many UI tweaks
 - fixed series monome grids larger than 8x8
