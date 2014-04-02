@@ -1,36 +1,3 @@
----------------- 
-bees	0.5.0  ! breaks scene compatibility !
-- move param descriptors offline, associated .dsc with .ldr
-- fix hang when attempting to delete system ops	  
-- eliminate class-specific increment functions for operators
-- new ops: MIDICC, MIDIPITCH, MIDITOUCH, NOTEOUT, CCOUT, PITCHOUT
-- SRAM linked to heap
-- many UI tweaks
-
-----------------
-waves	0.4.0 ! breaks module compatibility !
-- reduced parameter count and scope, all params implemented
-
-----------------
-lines	0.2.0 ! breaks module compatibility !
-- move param descriptors offline, associated .dsc with .ldr
-
-----------------
-waves	0.3.0 ! breaks module compatibility !
-- move param descriptors offline, associated .dsc with .ldr
-
-----------------
-bees	0.4.4
-- wait for sdcard on boot
-
-bees	0.4.3
-- fix preset-node-indexing bug on op creation / deletion
-
-----------------
-lines	0.1.2
-- fade init is more proper
-- revert to 1min times (still working on it)
-
 ----------------
 waves	0.4.1
 - cv dac fixes
@@ -94,16 +61,10 @@ lines	0.1.1
 - cleanup some intial param values
 - fix crash bug when delay > loop
 
-
-----------------
-bees	0.4.2
-- minor gfx/UI tweaks (including glitched scene names)
-
-
 ----------------
 bees	0.4.1 
 - hopefully fix scroll behavoir on scenes/dsp pages
-- minor gfx tweaks
+- minor gfx/UI tweaks (including glitched scene names)
 
 ----------------
 bees	0.4.0  ! breaks scene compatbility !
