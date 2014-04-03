@@ -33,9 +33,11 @@ typedef enum {
   eParamTypeNote,
   // frequency coefficient for SVF
   eParamTypeSvfFreq,
-  // linear signed fract32
+  // generic signed fract32
   // controller values will be quantized to 16b 
   eParamTypeFract,
+  // generic 16b signed integer
+  eParamTypeShort,   
   eParamNumTypes
 } ParamType;
 
