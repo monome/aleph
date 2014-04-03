@@ -68,6 +68,8 @@ enum params {
   eParamFade1,
 
   /// smoothers have to be processed first!
+  ////////////////////////////////
+  //// FIXME: not using these
   eParamCut0Slew,
   eParamRq0Slew,
   eParamLow0Slew,
@@ -81,6 +83,7 @@ enum params {
   eParamHigh1Slew,
   eParamBand1Slew,
   eParamNotch1Slew,
+  //////////////////
 
   eParamDry0Slew,
   eParamWet0Slew,
@@ -89,7 +92,10 @@ enum params {
   eParamWet1Slew,
 
   // smoothing parameter for ALL mix values!
+  ////////////////////////////////
+  //// FIXME: not using this
   eParamMixSlew,
+  ////////////////////////
 
   // delay input mix
   eParam_adc0_del0,		
