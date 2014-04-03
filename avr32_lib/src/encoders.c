@@ -67,4 +67,6 @@ void process_enc( const U8 idx) {
   
 void set_enc_thresh( const u8 idx, const u8 v ) {
   enc[idx].thresh = v;
+  // clear the value so we don't trigger spurious event on next poll!
+  enc[idx].val = 0;
 }
