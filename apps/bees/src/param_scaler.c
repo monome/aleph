@@ -43,8 +43,7 @@ static const char scalerDataPath[eParamNumTypes][32] = {
   "", 	//  eParamTypeFix,
   "scaler_amp_val.dat", 	//  eParamTypeAmp,
   "scaler_integrator_val.dat", 	//  eParamTypeIntegrator,
-  /// FIXME: how do we let people customize this... rrg
-  "scaler_note_12tet_val.dat", 	//  eParamTypeNote,
+  "scaler_note_val.dat", 	//  eParamTypeNote,
   "scaler_svf_fc_val.dat", 	//  eParamTypeSvfFreq,
 };
 
@@ -206,11 +205,6 @@ extern s32 scaler_inc(ParamScaler* sc, io_t * pin, io_t inc ) {
   print_dbg(" ; inc function pointer: 0x");
   print_dbg_hex((u32)fn);
 
-  //  s32 sInc = (s32)inc;
-  
-  /* if(inc > 0x7fff) { */
-  /*   //    sInc =  */
-  /* } */
   if( fn != NULL) {
     return (*fn)(sc, pin, inc);
   } else {
@@ -255,7 +249,6 @@ const s32* scaler_get_nv_data(ParamType p) {
   //  print_dbg("\r\n param_scaler:scaler_get_nv_data, result: 0x");
   //  print_dbg_hex((u32)((s32*)scalerBytes + scaler_get_data_offset(p)));
   return (s32*)scalerBytes + scaler_get_data_offset(p);
-  //  return (s32*) &(((beesFlashData*)flash_app_data() )->scalerBytes) + scaler_get_data_offset(p);
 }
 
 const s32* scaler_get_nv_rep(ParamType p) {
@@ -263,5 +256,4 @@ const s32* scaler_get_nv_rep(ParamType p) {
   //  print_dbg("\r\n param_scaler:scaler_get_nv_rep, result: 0x");
   //  print_dbg_hex((u32)((s32*)scalerBytes + scaler_get_rep_offset(p)));
   return (s32*)scalerBytes + scaler_get_rep_offset(p);
-  //  return (s32*) &(((beesFlashData*)flash_app_data() )->scalerBytes) + scaler_get_rep_offset(p);
 }

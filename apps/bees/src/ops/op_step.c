@@ -302,17 +302,12 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
       if(op->size>8) monome_set_quadrant_flag(1);
 
 
-
-
-
     // rows 4-7: set steps
     } else if(y>3 && y<8) {
       op->steps[y-4][x] ^= 1;
       monomeLedBuffer[monome_xy_idx(x, y)] = op->steps[y-4][x];
       monome_calc_quadrant_flag(x, y);
     }
-
-
   }
 }
 
@@ -322,12 +317,21 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
 u8* op_step_pickle(op_step_t* mgrid, u8* dst) {
   dst = pickle_io(mgrid->focus, dst);
   dst = pickle_io(mgrid->size, dst);
+  /// no state...???
   return dst;
 }
 
 const u8* op_step_unpickle(op_step_t* mgrid, const u8* src) {
   src = unpickle_io(src, (u32*)&(mgrid->focus));
   src = unpickle_io(src, (u32*)&(mgrid->size));
+  /*
+    probably shouldn't call this here...
+   if we assume that network monome device focus is null during unpickling,
+   it will be ok.  that assumption should hold true, but if it doesn't, 
+   or if we change something and forget to update this,
+   the result is both and hard to track (dereferencing a garbage pointer.)
+   we should just explicitly check for focused grid ops after scene recall, last one wins...
+  */
   net_monome_set_focus( &(mgrid->monome), mgrid->focus > 0);
   return src;
 }

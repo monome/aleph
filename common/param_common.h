@@ -27,7 +27,7 @@ typedef enum {
   eParamTypeFix,
   // amplitude (0-1)
   eParamTypeAmp,
-  // integrator time/coefficient
+  // 32b integrator time/coefficient
   eParamTypeIntegrator,
   // note number -> hz
   eParamTypeNote,
@@ -38,6 +38,9 @@ typedef enum {
   eParamTypeFract,
   // generic 16b signed integer
   eParamTypeShort,   
+  // 16b integrator time/coefficient
+  eParamTypeIntegratorShort,  
+
   eParamNumTypes
 } ParamType;
 

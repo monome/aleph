@@ -1,6 +1,10 @@
 // note scaling table
 // 12-tone equal temperament, with microtunes
 
+// NOTE: this script generates both generic "note" scaling (hz only)
+// and *also* the table of raw SVF coefficients, which shares representation data.
+// this is a little lazy...
+
 // 10-bit linear input gives 7 microtunes, costs 4k
 n = 2**10;
 
@@ -67,7 +71,7 @@ f = f * ~base;
 f.do({ |x, j|
 	(" " ++ j ++ " : " ++ x ++ " hz : " ++ x.cpsmidi).post; 
 	if( (x.cpsmidi - (x.cpsmidi.floor )) < 0.0001, {
-		"     <<<<---------------------------"
+		"     <<<<---------------------------" // this is a semitone
 	}, { ""
 	}).postln;
 });

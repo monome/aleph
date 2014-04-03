@@ -1,3 +1,12 @@
+----------------
+bees	0.5.3
+- fix spurious encoder events on play mode switch
+- use generic filename for note scaler data, to encourage customization
+- add some param types: 16b integrator, 16b int, 32b fract
+
+----------------
+waves	0.4.2
+- fix for waveshape slew processing
 
 ----------------
 bees	0.5.2

@@ -67,7 +67,7 @@ extern void net_monome_init(void) {
 
 // set focus
 extern void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
-  print_dbg("\r\n setting monome device focu, op pointer: 0x");
+  print_dbg("\r\n setting monome device focus, op pointer: 0x");
   print_dbg_hex((u32)op_monome);
   print_dbg(" , value: ");
   print_dbg_ulong(focus);
