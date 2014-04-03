@@ -1,5 +1,6 @@
 #include <string.h>
 #include "module.h"
+#include "dsyn.h"
 #include "param_common.h"
 #include "params.h" 
 
@@ -36,7 +37,7 @@ static const char* paramStrings[] = {
 };
 
 
-void fill_param_desc(void) {
+void fill_param_desc(ParamDesc* desc) {
   u32 i, j, k;
   char buf[32] = "";
   const char * numstrs[] = { "0", "1", "2", "3" };
@@ -48,11 +49,10 @@ void fill_param_desc(void) {
     /// ... print to string
       strcpy(buf, paramStrings[j]);
       strcat(buf, numstrs[i]);
-      strcpy(gModuleData->paramDesc[k].label, buf);
-      strcpy(gModuleData->paramDesc[k].unit, "");
-      gModuleData->paramDesc[k].type = eParamTypeFract;
-      gModuleData->paramDesc[k].min = 0;
-      gModuleData->paramDesc[k].max = FR32_MAX;
+      strcpy(desc[k].label, buf);
+      desc[k].type = eParamTypeFract;
+      desc[k].min = 0;
+      desc[k].max = FR32_MAX;
       k++;
     }
   }
