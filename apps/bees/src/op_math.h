@@ -15,6 +15,10 @@
 
 typedef s16 io_t;
 #define IO_BITS 16
+// shift amount between IO type and 32b
+#define IO_SHIFT_32 (32 - IO_BITS)
+// shift amount between IO type and 16b
+#define IO_SHIFT_16 (16 - IO_BITS)
 
 //--- pickling
 #define pickle_io(src, dst) pickle_16((u16)src, dst);

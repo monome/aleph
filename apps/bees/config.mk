@@ -81,6 +81,7 @@ CSRCS += \
 	$(APP_DIR)/src/scalers/scaler_amp.c \
 	$(APP_DIR)/src/scalers/scaler_bool.c \
 	$(APP_DIR)/src/scalers/scaler_fix.c \
+	$(APP_DIR)/src/scalers/scaler_fract.c \
 	$(APP_DIR)/src/scalers/scaler_integrator.c \
 	$(APP_DIR)/src/scalers/scaler_note.c \
 	$(APP_DIR)/src/scalers/scaler_svf_fc.c
