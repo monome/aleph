@@ -175,8 +175,10 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParamWave1Slew:
+    voice[1].osc.shapeSlew.c = param_fract_to_slew16(v);
     break;
   case eParamWave0Slew:
+    voice[0].osc.shapeSlew.c = param_fract_to_slew16(v);
     break;
   case eParamAmp1Slew:
     voice[1].ampSlew.c = v;
