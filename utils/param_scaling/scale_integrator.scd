@@ -102,7 +102,7 @@ r.do({ |x| ~rf.putInt32(x) });
 
 
 // value
-~vf = File.open(File.getcwd ++ "/scaler_integrator_val_short.dat", "wb");
+~vf = File.open(File.getcwd ++ "/scaler_integrator_short_val.dat", "wb");
 // write size
 ~vf.putInt32(n);
 // write data
@@ -110,7 +110,7 @@ v.do({ |x| ~vf.putInt32(x) });
 ~vf.close;
 
 // representation
-~rf = File.open(File.getcwd ++ "/scaler_integrator_rep_short.dat", "wb");
+~rf = File.open(File.getcwd ++ "/scaler_integrator_short_rep.dat", "wb");
 // write size
 ~rf.putInt32(n);
 // write data
