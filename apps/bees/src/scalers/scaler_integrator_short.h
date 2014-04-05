@@ -1,7 +1,6 @@
 /* scaler for 1-pole 16b integrator, decay time
 
  */
-
 #ifndef _ALEPH_BEES_SCALER_INTEGRATOR_SHORT_H_
 #define _ALEPH_BEES_SCALER_INTEGRATOR_SHORT_H_
 
@@ -17,4 +16,4 @@ extern void scaler_integrator_short_str(char* dst, void* scaler, io_t in);
 extern io_t scaler_integrator_short_in(void* scaler, s32 val);
 extern s32 scaler_integrator_short_inc(void* sc, io_t *pin, io_t inc );
 
-#
+#endif // h guard

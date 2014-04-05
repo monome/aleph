@@ -62,7 +62,7 @@ void scaler_integrator_short_init(void* scaler) {
   print_dbg(sc->desc->label);
 
   // check descriptor
-  if( sc->desc->type != eParamTypeIntegrator_Short) {
+  if( sc->desc->type != eParamTypeIntegratorShort) {
     print_dbg("\r\n !!! warning: wrong param type for integrator_short scaler");
     print_dbg(" ; this param has type: ");
     print_dbg_ulong(sc->desc->type);
@@ -73,10 +73,8 @@ void scaler_integrator_short_init(void* scaler) {
     ;;
   } else {
     initFlag = 1;
-
     // assign
-    tabVal = scaler_get_nv_data(eParamTypeIntegrator_Short);
-    //    tabRep = scaler_get_nv_rep(eParamTypeIntegrator_Short);
+    tabVal = scaler_get_nv_data(eParamTypeIntegratorShort);
   }
 
   sc->inMin = 0;
@@ -125,19 +123,6 @@ io_t scaler_integrator_short_in(void* scaler, s32 x) {
 // increment input by pointer, return value
 s32 scaler_integrator_short_inc(void* scaler, io_t* pin, io_t inc ) {
   ParamScaler* sc = (ParamScaler*)scaler;
-  // this speeds up the knob a great deal.
-#if 0
-  s32 sinc;
-  // scale up to smallest significant abscissa:
-  // check for 16b overflow
-  sinc = (s32)inc << inRshift;
-  if(sinc > 0x3fff) { 
-    inc = (io_t)0x3fff;
-  } 
-  else if (sinc < (s32)0xffffc000) { 
-    inc = (io_t)0xc000;
-  }
-#endif
 
   // use saturation
   *pin = op_sadd(*pin, inc);
@@ -146,6 +131,6 @@ s32 scaler_integrator_short_inc(void* scaler, io_t* pin, io_t inc ) {
   if(*pin > sc->inMax) { *pin = sc->inMax; }
 
   // scale and return.
-  // ignoring ranges in descriptor at least for now.... :\
+  // ignoring ranges in descriptor at least for now.... :S
   return scaler_integrator_short_val(sc, *pin);
 }
