@@ -29,16 +29,27 @@
 /// custom
 #include "params.h"
 
+
+// total SDRAM is 64M
+// each line 60ish seconds for now
+#define LINES_BUF_FRAMES 0x2bf200
+// try...
+//#define LINES_BUF_FRAMES 0x600000
+//#define LINES_BUF_FRAMES 0x1000000
+//#define LINES_BUF_FRAMES 0xbb8000 // 256 seconds @ 48k
+#define NLINES 2
+
 // data structure of external memory
-typedef struct _linesData {
-  moduleData super;
-  ParamDesc mParamDesc[eParamNumParams];
+typedef struct _dacsData {
+  ModuleData super;
+  //ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
+//  volatile fract32 audioBuffer[NLINES][LINES_BUF_FRAMES];
 } dacsData;
 
 //-------------------------
 //----- extern vars (initialized here)
-moduleData* gModuleData; 
+ModuleData* gModuleData;
 //-----------------------
 //------ static variables
 
@@ -60,7 +71,7 @@ void module_init(void) {
   gModuleData = &(pDacsData->super);
   strcpy(gModuleData->name, "aleph-dacs");
 
-  gModuleData->paramDesc = (ParamDesc*)pDacsData->mParamDesc;
+  //gModuleData->paramDesc = (ParamDesc*)pDacsData->mParamDesc;
   gModuleData->paramData = (ParamData*)pDacsData->mParamData;
   gModuleData->numParams = eParamNumParams;
 
@@ -69,7 +80,7 @@ void module_init(void) {
   filter_1p_lo_init( &(dacSlew[2]), 0 );
   filter_1p_lo_init( &(dacSlew[3]), 0 );
 
-  fill_param_desc();
+  //fill_param_desc();
 }
 
 // de-init
