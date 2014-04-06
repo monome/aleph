@@ -10,7 +10,7 @@ ldr_name = aleph-$(module_name)-$(version).ldr
 module_obj = dacs.o \
 	$(audio)/buffer.o \
 	$(audio)/conversion.o \
-	$(audio)/delayFade.o \
+	$(audio)/delayFadeN.o \
 	$(audio)/filter_1p.o \
 	$(audio)/filter_ramp.o \
 	$(audio)/filter_svf.o \
