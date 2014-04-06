@@ -10,8 +10,8 @@
 
 static void set_param_gate(drumsynVoice* vp, s32 val) {
   if(val > 0) { 
+    // re-seed noise generator to known value so "notes" are consistent
     lcprng_reset(&(vp->rngH), 0xDEADFACE);
-    //    lcprng_reset(&(vp->rngL), 0xDADABEEF);
     env_exp_set_gate( &(vp->envAmp)	, 0xff );
     env_exp_set_gate( &(vp->envFreq)	, 0xff );
     env_exp_set_gate( &(vp->envRq)	, 0xff );

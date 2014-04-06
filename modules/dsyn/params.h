@@ -2,8 +2,33 @@
 #define _ALEPH_DRUMSYN_PARAMS_H_
 
 // ranges
+// svf cutoff
+#define PARAM_CUT_MIN     0
+#define PARAM_CUT_MAX     0x7fffffff
+#define PARAM_CUT_DEFAULT 0x43D0A8EC
+#define PARAM_CUT_RADIX 1 // doesn't matter
+
+// slew
+#define PARAM_SLEW_MIN 0x2000 // 1/8s
+#define PARAM_SLEW_MAX 0x400000 // 64s
+#define PARAM_SLEW_RADIX 7
+
+// sustain duration
+#define PARAM_DUR_MIN 0x0 // 1/8s
+#define PARAM_DUR_MAX 480000 // 10s (why not)
+#define PARAM_DUR_RADIX 16 // doesn't actually matter
+
+// rq
 #define PARAM_RQ_MIN 0x00000000
-#define PARAM_RQ_MAX 0x1fffffff
+#define PARAM_RQ_MAX 0x0000ffff
+#define PARAM_RQ_DEFAULT 0x0000FFF0
+#define PARAM_RQ_RADIX 2
+
+// amp
+#define PARAM_AMP_0 (FRACT32_MAX)
+#define PARAM_AMP_6 (FRACT32_MAX >> 1)
+#define PARAM_AMP_12 (FRACT32_MAX >> 2)
+
 
 // number of parameters per voice
 // can use as offset hack from param 0

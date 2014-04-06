@@ -24,7 +24,7 @@ void fill_param_desc(ParamDesc* desc) {
   desc[eParam_rMul0].max = 0x00080000; 
   desc[eParam_rMul0].radix = 32;
 
-  // rate divider
+  // rate divider 
   strcpy(desc[eParam_rDiv0].label, "rDiv0");
   desc[eParam_rDiv0].type = eParamTypeFix; 
   desc[eParam_rDiv0].min = 0x00010000; 
