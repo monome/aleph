@@ -1,6 +1,8 @@
 #ifndef _ALEPH_DACS_PARAMS_H_
 #define _ALEPH_DACS_PARAMS_H_
 
+#include "param_common.h"
+
 #define OSC_FREQ_MIN (4 << 16)
 #define OSC_FREQ_MAX (8192 << 16)
 #define OSC_FREQ_RADIX 8
@@ -23,9 +25,9 @@ enum params {
   eParam_slew2,
   eParam_slew3,
   eParamNumParams
-};  
+};
 
-extern void fill_param_desc(ParamDesc *desc);
+extern void fill_param_desc(ParamDesc* desc);
 
 #endif // header guard 
 // EOF
