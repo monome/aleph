@@ -29,8 +29,11 @@
 #include "scalers/scaler_amp.h"
 #include "scalers/scaler_bool.h"
 #include "scalers/scaler_fix.h"
+#include "scalers/scaler_fract.h"
 #include "scalers/scaler_integrator.h"
+#include "scalers/scaler_integrator_short.h"
 #include "scalers/scaler_note.h"
+#include "scalers/scaler_short.h"
 #include "scalers/scaler_svf_fc.h"
 
 //----------------------
@@ -38,9 +41,12 @@
 #define PARAM_SCALER_DATA_SIZE (PARAM_SCALER_AMP_DATA_SIZE	\
 				+ PARAM_SCALER_BOOL_DATA_SIZE	\
 				+ PARAM_SCALER_FIX_DATA_SIZE	\
+				+ PARAM_SCALER_FRACT_DATA_SIZE	\
 				+ PARAM_SCALER_INTEGRATOR_DATA_SIZE	\
+				+ PARAM_SCALER_INTEGRATOR_SHORT_DATA_SIZE	\
 				+ PARAM_SCALER_NOTE_DATA_SIZE		\
-				+ PARAM_SCALER_SVF_FC_DATA_SIZE ) \
+				+ PARAM_SCALER_SHORT_DATA_SIZE \
+				+ PARAM_SCALER_SVF_FC_DATA_SIZE )
 // + ...
 
 //---------------------

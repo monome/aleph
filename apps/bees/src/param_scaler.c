@@ -16,7 +16,7 @@
 #include "param_scaler.h"
 #include "types.h"
 
-// array of data bytes required per param type
+// array of words required for param val per param type
 static u32 scalerDataWords[eParamNumTypes] = {
   0, 	//  eParamTypeBool,
   0, 	//  eParamTypeFix,
@@ -24,9 +24,13 @@ static u32 scalerDataWords[eParamNumTypes] = {
   1024, 	//  eParamTypeIntegrator,
   1024, 	//  eParamTypeNote,
   1024, 	//  eParamTypeSvfFreq,
+  0,//  eParamTypeFract,
+  0, // eParamTypeShort,   
+  0, // eParamTypeIntegratorShort,  
+
 };
 
-// array of representation bytes required per param type
+// array of words required for param rep per param type
 static u32 scalerRepWords[eParamNumTypes] = {
   0, 	//  eParamTypeBool,
   0, 	//  eParamTypeFix,
@@ -35,6 +39,10 @@ static u32 scalerRepWords[eParamNumTypes] = {
   0, 	//  eParamTypeIntegrator,
   0, 	//  eParamTypeNote,
   0, 	//  eParamTypeSvfFreq,
+  0,//  eParamTypeFract,
+  0, // eParamTypeShort,   
+  0, // eParamTypeIntegratorShort,  
+
 };
 
 // array of data paths per param type
@@ -45,6 +53,10 @@ static const char scalerDataPath[eParamNumTypes][32] = {
   "scaler_integrator_val.dat", 	//  eParamTypeIntegrator,
   "scaler_note_val.dat", 	//  eParamTypeNote,
   "scaler_svf_fc_val.dat", 	//  eParamTypeSvfFreq,
+  "",//  eParamTypeFract,
+  "", // eParamTypeShort,   
+  "", // eParamTypeIntegratorShort,  
+
 };
 
 // array of representation paths per param type
@@ -56,6 +68,10 @@ static const char scalerRepPath[eParamNumTypes][32] = {
   "", 	//  eParamTypeIntegrator,
   "", 	//  eParamTypeNote,
   "", 	//  eParamTypeSvfFreq,
+  "",//  eParamTypeFract,
+  "", // eParamTypeShort,   
+  "", // eParamTypeIntegratorShort,  
+
 };
 
 // pretty wack, sorry:
@@ -67,6 +83,10 @@ static const u32 scalerDataOffset[eParamNumTypes] = {
     1024, 	//  eParamTypeIntegrator,
     2048, 	//  eParamTypeNote,
     3072, 	//  eParamTypeSvfFreq,
+  0,//  eParamTypeFract,
+  0, // eParamTypeShort,   
+  0, // eParamTypeIntegratorShort,  
+
 };
 // put rep data after value data, just easier to check visually
 static const u32 scalerRepOffset[eParamNumTypes] = {
@@ -77,6 +97,10 @@ static const u32 scalerRepOffset[eParamNumTypes] = {
   0, 	//  eParamTypeIntegrator,
   0, 	//  eParamTypeNote,
   0, 	//  eParamTypeSvfFreq,
+  0,//  eParamTypeFract,
+  0, // eParamTypeShort,   
+  0, // eParamTypeIntegratorShort,  
+
 };
 
 // array of pointers to initialization functions.
@@ -88,6 +112,10 @@ scaler_init_fn scaler_init_pr[eParamNumTypes] = {
   &scaler_integrator_init,
   &scaler_note_init,
   &scaler_svf_fc_init,
+  scaler_fract_init,//  eParamTypeFract,
+  scaler_short_init, // eParamTypeShort,   
+  scaler_integrator_short_init, // eParamTypeIntegratorShort,  
+
 };
 
 /// FIXME: 
@@ -105,6 +133,10 @@ scaler_get_value_fn scaler_get_val_pr[eParamNumTypes] = {
   &scaler_integrator_val,
   &scaler_note_val,
   &scaler_svf_fc_val,
+  scaler_fract_val,//  eParamTypeFract,
+  scaler_short_val, // eParamTypeShort,   
+  scaler_integrator_short_val, // eParamTypeIntegratorShort,  
+
 };
 
 // array of pointers to get_str functions.
@@ -115,6 +147,10 @@ scaler_get_str_fn scaler_get_str_pr[eParamNumTypes] = {
   &scaler_integrator_str,
   &scaler_note_str,
   &scaler_svf_fc_str,
+  scaler_fract_str,//  eParamTypeFract,
+  scaler_short_str, // eParamTypeShort,   
+  scaler_integrator_short_str, // eParamTypeIntegratorShort,  
+
 };
 
 
@@ -126,6 +162,9 @@ scaler_get_in_fn scaler_get_in_pr[eParamNumTypes] = {
   &scaler_integrator_in,
   &scaler_note_in,
   &scaler_svf_fc_in,
+  scaler_fract_in,//  eParamTypeFract,
+  scaler_short_in, // eParamTypeShort,   
+  scaler_integrator_short_in, // eParamTypeIntegratorShort,  
 };
 
 // array of pointers to inc functions.
@@ -136,6 +175,10 @@ scaler_inc_fn scaler_inc_pr[eParamNumTypes] = {
   &scaler_integrator_inc,
   &scaler_note_inc,
   &scaler_svf_fc_inc,
+  scaler_fract_inc,//  eParamTypeFract,
+  scaler_short_inc, // eParamTypeShort,   
+  scaler_integrator_short_inc, // eParamTypeIntegratorShort,  
+
 };
 
 

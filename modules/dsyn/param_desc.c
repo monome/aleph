@@ -46,7 +46,7 @@ static ParamDesc voiceParamDescData[] = {
   },
   { .label = "FreqSusDur", .type = eParamTypeShort,
     .min = PARAM_DUR_MIN, .max = PARAM_DUR_MAX, .radix = PARAM_DUR_RADIX
-  },
+  }, 
 
   // rq env
   { .label = "RqOn", .type = eParamTypeFix,
@@ -89,13 +89,15 @@ void fill_param_desc(ParamDesc* desc) {
   const char * numstrs[] = { "0", "1", "2", "3" };
   ParamDesc* descData;
 
-   for(i=0; i<DRUMSYN_NVOICES; i++) { 
-     for(j=0; j < PARAM_VOICE_NPARAMS; j++) { 
-       descData = &(voiceParamDescData[j]);
-       memcpy( desc, descData, sizeof(ParamDesc) );
-       strcat(desc->label, numstrs[i]);
-     }
-   }
+  k = 0;
+  for(i=0; i<DRUMSYN_NVOICES; i++) { 
+    for(j=0; j < PARAM_VOICE_NPARAMS; j++) { 
+      descData = &(voiceParamDescData[j]);
+      memcpy( &(desc[k]), descData, sizeof(ParamDesc) );
+      strcat(desc[k].label, numstrs[i]);
+      ++k;
+    }
+  }
 }
 
 /* static const char* paramStrings[] = { */
