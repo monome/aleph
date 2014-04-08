@@ -5,13 +5,23 @@
 // svf cutoff
 #define PARAM_CUT_MIN     0
 #define PARAM_CUT_MAX     0x7fffffff
-#define PARAM_CUT_DEFAULT 0x43D0A8EC
+#define PARAM_CUT_DEFAULT 0x1D6C8566 // about 3.5k
 #define PARAM_CUT_RADIX 1 // doesn't matter
 
 // slew
+//// ugh wait... is this right?? these are representation values, not raw coefficients. 
+//// apparently they're not being used, or all slews would be tiny.
 #define PARAM_SLEW_MIN 0x2000 // 1/8s
 #define PARAM_SLEW_MAX 0x400000 // 64s
 #define PARAM_SLEW_RADIX 7
+
+// default values
+// ~0.001 seconds
+#define PARAM_SLEW_1MS 		0x745502CD
+// ~0.1 seconds
+#define PARAM_SLEW_100MS 	0x7FE09E54
+// ~1 second
+#define PARAM_SLEW_1S		0x7FFCDCEC
 
 // sustain duration
 #define PARAM_DUR_MIN 0x0 // 1/8s
@@ -25,9 +35,9 @@
 #define PARAM_RQ_RADIX 2
 
 // amp
-#define PARAM_AMP_0 (FRACT32_MAX)
-#define PARAM_AMP_6 (FRACT32_MAX >> 1)
-#define PARAM_AMP_12 (FRACT32_MAX >> 2)
+#define PARAM_AMP_0 (0x7fffffff)
+#define PARAM_AMP_6 (PARAM_AMP_0 >> 1)
+#define PARAM_AMP_12 (PARAM_AMP_0 >> 2)
 
 
 // number of parameters per voice
@@ -161,6 +171,10 @@ enum Params {
 
   eParamNumParams	//
 };
+
+
+// set default values
+extern void params_default(void);
 
 #endif // header guard 
 // EOF

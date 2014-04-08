@@ -195,6 +195,9 @@ void module_init(void) {
     drumsyn_voice_init(voices[i]);
   }
 
+  // setup params with default values
+  params_default();
+
 }
 
 void module_deinit(void) {

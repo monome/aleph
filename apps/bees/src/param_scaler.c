@@ -136,7 +136,6 @@ scaler_get_value_fn scaler_get_val_pr[eParamNumTypes] = {
   scaler_fract_val,//  eParamTypeFract,
   scaler_short_val, // eParamTypeShort,   
   scaler_integrator_short_val, // eParamTypeIntegratorShort,  
-
 };
 
 // array of pointers to get_str functions.
@@ -150,7 +149,6 @@ scaler_get_str_fn scaler_get_str_pr[eParamNumTypes] = {
   scaler_fract_str,//  eParamTypeFract,
   scaler_short_str, // eParamTypeShort,   
   scaler_integrator_short_str, // eParamTypeIntegratorShort,  
-
 };
 
 
@@ -186,10 +184,10 @@ scaler_inc_fn scaler_inc_pr[eParamNumTypes] = {
 //---- extern functions
 
 // initialize a scaler
-void scaler_init(ParamScaler* sc, const ParamDesc* desc) {
+void scaler_init(ParamScaler* sc, const ParamDesc* const desc) {
   // store pointer to constant descriptor data
   //// ???? this seems wrong somehow. 
-  sc->desc = desc;
+  sc->desc = (const ParamDesc*)desc;
   if(scaler_init_pr[desc->type] != NULL) {
     (*(scaler_init_pr[desc->type]))(sc);
   }
@@ -266,7 +264,7 @@ u32 scaler_get_rep_bytes(ParamType p) {
   return scalerRepWords[p] * 4;
 }
 
-//--- data initializatoin stuff
+//--- data initialization stuff
 // get pathname for data file (if any)
 const char* scaler_get_data_path(ParamType p) {
   return scalerDataPath[p];

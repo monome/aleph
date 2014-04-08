@@ -16,7 +16,6 @@ void scaler_short_init(void* scaler) {
 
   // print_dbg("\r\n initializing short scaler for param, label: ");
   // print_dbg(sc->desc->label);
-
   sc->inMin = scaler_short_in(scaler, sc->desc->min);
   sc->inMax = scaler_short_in(scaler, sc->desc->max);
 
@@ -28,7 +27,6 @@ s32 scaler_short_val(void* scaler, io_t in) {
 
 void scaler_short_str(char* dst, void* scaler, io_t in) {
   print_fix16(dst, in << 16);
-  
 }
 
 // get IO input value based on expected output

@@ -113,7 +113,7 @@ v.do({ |x| ~vf.putInt32(x) });
 //~cf.plot;
 
 ~cfv = ~cf.collect({ |x| (x * 0x7fffffff).asInteger });
-~cfv.do({ |x| x.postln; });
+~cfv.do({ |x, i| [f[i], x.asHexString].postln; });
 // value
 ~cfvf = File.open(File.getcwd ++ "/scaler_svf_fc_val.dat", "wb");
 // write size

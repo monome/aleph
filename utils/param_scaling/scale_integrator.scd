@@ -62,6 +62,12 @@ i = Array.series(n);
 		y = (xint << 16) | (0xffff & ((xfr * 0x10000).floor.asInteger));
 	});
 	r.do({ arg y; y.asHexString.postln; });
+	
+	// print float value and data 
+	n.do({ |i| 
+		[ f[i], v[i].asHexString ].postln;
+	});
+	
 };
 
 ~compute.value;
