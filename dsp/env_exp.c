@@ -61,6 +61,7 @@ fract32 env_exp_next(env_exp* env) {
 
 // set gate
 void env_exp_set_gate(env_exp* env, u8 g) {
+  /// ... this ignores retriggers. maybe a desirable option.
   /* if(g == env->gate) { */
   /*   return; */
   /* } */
@@ -68,8 +69,8 @@ void env_exp_set_gate(env_exp* env, u8 g) {
   if( g > 0 ) {
     if (env->trig) {
       state_atk_reset(env);
-      //    } else { 
-      //      state_atk(env); 
+    } else { 
+      state_atk(env); 
     }
   } else {
     state_rel(env);
@@ -305,6 +306,3 @@ static void state_off(env_exp* env) {
   env->stateFP = &next_off;
   env->state = envStateOff;
 }
-
-
-

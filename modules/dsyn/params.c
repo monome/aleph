@@ -149,13 +149,13 @@ static void module_set_voice_param(u8 vid, u32 idx, ParamValue v) {
 
     // rq env
   case eParamRqAtkSlew0 :
-    env_exp_set_atk_slew( &(voices[vid]->envRq), v<<14);
+    env_exp_set_atk_slew( &(voices[vid]->envRq), v);
     break;
   case eParamRqDecSlew0 :
-    env_exp_set_dec_slew( &(voices[vid]->envRq), v<<14);
+    env_exp_set_dec_slew( &(voices[vid]->envRq), v);
     break;
   case eParamRqRelSlew0 :
-    env_exp_set_rel_slew( &(voices[vid]->envRq), v<<14);
+    env_exp_set_rel_slew( &(voices[vid]->envRq), v);
     break;
   case eParamRqSusDur0 :
     env_exp_set_sus_dur( &(voices[vid]->envRq), v);
@@ -167,13 +167,13 @@ static void module_set_voice_param(u8 vid, u32 idx, ParamValue v) {
     env_exp_set_off( &(voices[vid]->envRq), v << 14);
     break;
   case eParamRqOn0 :
-    env_exp_set_on( &(voices[vid]->envRq), v);
+    env_exp_set_on( &(voices[vid]->envRq), v << 14);
     if(voices[vid]->rqEnv == 0) {
-      filter_svf_set_rq(&(voices[vid]->svf), v);
+      filter_svf_set_rq(&(voices[vid]->svf), v << 14);
     }
     break;
   case eParamRqSus0 :
-    env_exp_set_sus( &(voices[vid]->envRq), v);
+    env_exp_set_sus( &(voices[vid]->envRq), v << 14);
     break;
 
   case eParamLow0 :	       

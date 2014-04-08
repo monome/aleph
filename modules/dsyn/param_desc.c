@@ -26,10 +26,10 @@ static ParamDesc voiceParamDescData[] = {
     .min = PARAM_DUR_MIN, .max = PARAM_DUR_MAX, .radix = PARAM_DUR_RADIX
   },
   // cutoff env
-  { .label = "FreqOn", .type = eParamTypeSvfFreq,
+  { .label = "FreqOff", .type = eParamTypeSvfFreq,
     .min = PARAM_CUT_MIN, .max = PARAM_CUT_MAX, .radix = PARAM_CUT_RADIX
   },
-  { .label = "FreqOff", .type = eParamTypeSvfFreq,
+  { .label = "FreqOn", .type = eParamTypeSvfFreq,
     .min = PARAM_CUT_MIN, .max = PARAM_CUT_MAX, .radix = PARAM_CUT_RADIX
   },
   { .label = "FreqSus", .type = eParamTypeSvfFreq,
@@ -49,10 +49,10 @@ static ParamDesc voiceParamDescData[] = {
   }, 
 
   // rq env
-  { .label = "RqOn", .type = eParamTypeFix,
+  { .label = "RqOff", .type = eParamTypeFix,
     .min = PARAM_RQ_MIN, .max = PARAM_RQ_MAX, .radix = PARAM_RQ_RADIX
   },
-  { .label = "RqOff", .type = eParamTypeFix,
+  { .label = "RqOn", .type = eParamTypeFix,
     .min = PARAM_RQ_MIN, .max = PARAM_RQ_MAX, .radix = PARAM_RQ_RADIX
   },
   { .label = "RqSus", .type = eParamTypeFix,

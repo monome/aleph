@@ -138,7 +138,6 @@ enum Params {
   eParamFreqEnv2,	// 85
   eParamRqEnv,		// 86
 
-
   eParamGate3,		// 87
   eParamTrig3,		// 88
   eParamAmp3,		// 89
