@@ -68,8 +68,8 @@ void env_exp_set_gate(env_exp* env, u8 g) {
   if( g > 0 ) {
     if (env->trig) {
       state_atk_reset(env);
-    } else { 
-      state_atk(env); 
+      //    } else { 
+      //      state_atk(env); 
     }
   } else {
     state_rel(env);

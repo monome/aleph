@@ -30,7 +30,7 @@
 
 // svf cutoff
 #define PARAM_CUT_MAX     0x7fffffff
-#define PARAM_CUT_DEFAULT 0x43D0A8EC
+#define PARAM_CUT_DEFAULT 0x43D0A8EC // ~8k
 
 // rq
 #define PARAM_RQ_MIN 0x00000000

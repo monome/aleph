@@ -5,7 +5,7 @@
 // svf cutoff
 #define PARAM_CUT_MIN     0
 #define PARAM_CUT_MAX     0x7fffffff
-#define PARAM_CUT_DEFAULT 0x1D6C8566 // about 3.5k
+#define PARAM_CUT_DEFAULT 0x43D0A8EC // ~8k
 #define PARAM_CUT_RADIX 1 // doesn't matter
 
 // slew

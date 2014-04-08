@@ -21,24 +21,24 @@ typedef s32 ParamValue;
 /// these differentiate  the actual, numerical use case for the parameter.
 // add as needed, sync with param scaler definitions
 typedef enum {
-  // boolean
+  // 0 boolean
   eParamTypeBool,
-  /// fixed-point linear (radix is stored separately)
+  // 1 fixed-point linear (radix is stored separately)
   eParamTypeFix,
-  // amplitude (0-1)
+  // 2 amplitude (0-1)
   eParamTypeAmp,
-  // 32b integrator time/coefficient
+  // 3 32b integrator time/coefficient
   eParamTypeIntegrator,
-  // note number -> hz
+  // 4 note number -> hz
   eParamTypeNote,
-  // frequency coefficient for SVF
+  // 5 frequency coefficient for SVF
   eParamTypeSvfFreq,
-  // generic signed fract32
+  // 6 generic signed fract32
   // controller values will be quantized to 16b 
   eParamTypeFract,
-  // generic 16b signed integer
+  // 7 generic 16b signed integer
   eParamTypeShort,   
-  // 16b integrator time/coefficient
+  // 8 16b integrator time/coefficient
   eParamTypeIntegratorShort,  
 
   eParamNumTypes
