@@ -24,6 +24,10 @@ enum params {
   eParam_slew1,
   eParam_slew2,
   eParam_slew3,
+  eParam_pan0,
+  eParam_pan1,
+  eParam_pan2,
+  eParam_pan3,
   eParamNumParams
 };
 

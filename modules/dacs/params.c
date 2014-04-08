@@ -53,6 +53,31 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_slew3].min = 0x00000000; 
   desc[eParam_slew3].max = 0x7fffffff;
   desc[eParam_slew3].radix = 32;
+
+  strcpy(desc[eParam_pan0].label, "pan0");
+  desc[eParam_pan0].type = eParamTypeFix; 
+  desc[eParam_pan0].min = 0x00000000; 
+  desc[eParam_pan0].max = 0x7fffffff;
+  desc[eParam_pan0].radix = 16;
+
+  strcpy(desc[eParam_pan1].label, "pan1");
+  desc[eParam_pan1].type = eParamTypeFix; 
+  desc[eParam_pan1].min = 0x00000000; 
+  desc[eParam_pan1].max = 0x7fffffff;
+  desc[eParam_pan1].radix = 16;
+
+  strcpy(desc[eParam_pan2].label, "pan2");
+  desc[eParam_pan2].type = eParamTypeFix; 
+  desc[eParam_pan2].min = 0x00000000; 
+  desc[eParam_pan2].max = 0x7fffffff;
+  desc[eParam_pan2].radix = 16;
+
+  strcpy(desc[eParam_pan3].label, "pan3");
+  desc[eParam_pan3].type = eParamTypeFix; 
+  desc[eParam_pan3].min = 0x00000000; 
+  desc[eParam_pan3].max = 0x7fffffff;
+  desc[eParam_pan3].radix = 16;
+
 }
 
 // EOF

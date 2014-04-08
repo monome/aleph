@@ -54,6 +54,8 @@ clean: bfin_lib_clean
 	rm $(module_obj)
 	rm aleph-$(module_name).ldr 
 	rm aleph-$(module_name)
+	rm aleph-dacs.dsc
+	rm dacs_desc_build
 
 deploy: aleph-$(module_name).ldr
 	make desc

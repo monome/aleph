@@ -107,36 +107,55 @@ u32 module_get_num_params(void) {
 //static u8 dacChan = 0;
 /// 
 
-void module_process_frame(void) { 
-  //  u8 i;
-  
-  //  for(i=0; i<4; ++i) {
-    //    if(dacSlew[i].sync) { continue; }
-    //    dacVal[i] = filter_1p_lo_next(&(dacSlew[i]));
-    //    dac_update(i, dacVal[i] & DAC_VALUE_MASK);
+ParamValue pan[4];
+#define PAN_MAX 2147483647
+#define PAN_CENTER 0
 
-    /* if(dacDirty[dacChan]) { */
-    /*   dac_update(dacChan, dacVal[dacChan]); */
-    /*   dacDirty[dacChan] = 0; */
-    /* } */
+void module_process_frame(void) {
 
-  
+  //Update one of the CV outputs
   if(dacSlew[dacChan].sync) { ;; } else {
     dacVal[dacChan] = filter_1p_lo_next(&(dacSlew[dacChan]));
     dac_update(dacChan, shr_fr1x32(dacVal[dacChan], 15) & DAC_VALUE_MASK);
   }
- 
+
+  //Queue up the next CV output for processing next audio frame
   if(++dacChan == 4) {
     dacChan = 0;
   }
-  
-  out[0] = in[0];
-  out[1] = in[1];
-  out[2] = in[2];
-  out[3] = in[3];
-  
-    //  } 
+
+  //Transfer audio from inputs to outputs
+  //out[0] = in[0];
+  //out[1] = in[1];
+  //out[2] = in[2];
+  //out[3] = in[3];
+
+  out[0] = 0;
+  out[1] = 0;
+  out[2] = 0;
+  out[3] = 0;
+
+
+  mix_panned_mono(in[0], &(out[1]), &(out[0]), pan[0]);
+  mix_panned_mono(in[1], &(out[1]), &(out[0]), pan[1]);
+  mix_panned_mono(in[2], &(out[1]), &(out[0]), pan[2]);
+  mix_panned_mono(in[3], &(out[1]), &(out[0]), pan[3]);
 }
+void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, s32 pan) ;
+void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, s32 pan) {
+    fract32 pan_factor;
+
+    //pan_factor = (fract32)pan;
+    //*out_left += mult_fr1x32x32(in_mono,pan_factor); //debug
+
+    pan_factor = (fract32) ( pan );
+    *out_left += mult_fr1x32x32(in_mono, pan_factor);
+
+    pan_factor = (fract32) ( PAN_MAX - pan );
+    *out_right += mult_fr1x32x32(in_mono, pan_factor);
+
+}
+
 
 // parameter set function
 void module_set_param(u32 idx, ParamValue v) {
@@ -148,7 +167,6 @@ void module_set_param(u32 idx, ParamValue v) {
    //     dac_update(0, v >> (PARAM_DAC_RADIX - 1));
     break;
   case eParam_dac1 :
-    filter_1p_lo_in(&(dacSlew[1]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
     //dac_update(1, v >> (PARAM_DAC_RADIX - 1));
     break;
   case eParam_dac2 :
@@ -170,6 +188,19 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_slew3 :
     filter_1p_lo_set_slew(&(dacSlew[3]), v);
+    break;
+  case eParam_pan0 :
+    //filter_1p_lo_set_slew(&(pan[0]), v);
+    pan[0] = v;
+    break;
+  case eParam_pan1 :
+    pan[1] = v;
+    break;
+  case eParam_pan2 :
+    pan[2] = v;
+    break;
+  case eParam_pan3 :
+    pan[3] = v;
     break;
   default:
     break;
