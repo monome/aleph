@@ -1,4 +1,3 @@
-
 module_name = dsyn
 
 audio = ../../dsp

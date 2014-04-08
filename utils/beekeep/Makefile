@@ -75,8 +75,11 @@ src += \
 	$(bees)/src/scalers/scaler_amp.c \
 	$(bees)/src/scalers/scaler_bool.c \
 	$(bees)/src/scalers/scaler_fix.c \
+	$(bees)/src/scalers/scaler_fract.c \
 	$(bees)/src/scalers/scaler_integrator.c \
+	$(bees)/src/scalers/scaler_integrator_short.c \
 	$(bees)/src/scalers/scaler_note.c \
+	$(bees)/src/scalers/scaler_short.c \
 	$(bees)/src/scalers/scaler_svf_fc.c
 
 # "fake" sources
