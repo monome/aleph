@@ -59,8 +59,8 @@ extern void net_monome_grid_clear(void);
 
 
 // connect
-extern void net_monome_grid_connect(void);
+extern void net_monome_connect(void);
 // disconnect
-extern void net_monome_grid_disconnect(void);
+extern void net_monome_disconnect(void);
 
 #endif // h guard

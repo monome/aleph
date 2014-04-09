@@ -8,7 +8,10 @@
    manages operator focus
 */
 
+/// assf
 #include "print_funcs.h"
+/// bees
+#include "app_timers.h"
 #include "net_monome.h"
 
 // device-connected flag
@@ -38,7 +41,6 @@ static void monome_ring_enc_loopback(void* op, u32 edata) {
     monomeFrameDirty |= (1<<n);
   }
 }
-
 
 //---------------------------------
 // extern variables, initialized here.
@@ -97,7 +99,7 @@ op_monome_t* monomeOpFocus = NULL;
 // clear LEDs on grid
  void net_monome_grid_clear(void) {
   int i;
-  if(monmeConnect) {
+  if(monomeConnect) {
     for(i=0; i<MONOME_MAX_LED_BYTES; ++i) {
       monomeLedBuffer[i] = 0;
     }
@@ -115,7 +117,7 @@ op_monome_t* monomeOpFocus = NULL;
   //... TODO
 }
 
-void net_monome_grid_connect(void) {
+void net_monome_connect(void) {
   if(monomeConnect != 1) {
     /// FIXME: shld do checks for null handlers here, 
     //// and not when calling the handler
@@ -124,7 +126,7 @@ void net_monome_grid_connect(void) {
   }
 }
 // disconnect
-void net_monome_grid_disconnect(void) {
+void net_monome_disconnect(void) {
   if(monomeConnect != 0) {
     /// FIXME: shld probably do checks for null handlers here, 
     //// and not when calling the handler
