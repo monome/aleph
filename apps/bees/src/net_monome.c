@@ -11,6 +11,10 @@
 #include "print_funcs.h"
 #include "net_monome.h"
 
+// device-connected flag
+//// FIXME: in future, multiple devices.
+bool monomeConnect = 0;
+
 
 // dummy handler
 static void dummyHandler(void* op, u32 edata) { return; }
@@ -45,7 +49,7 @@ static void monome_ring_enc_loopback(void* op, u32 edata) {
 // but of course we would like to implement hub support
 // and allow for multiple devices in the future.
 
-// this would means that multiple operators might be mapped
+// this would means that multiple operators would be mapped
 // arbitrarily to different sources! oy...
 
 monome_handler_t monome_grid_key_handler = &monome_grid_key_loopback;
@@ -61,12 +65,12 @@ op_monome_t* monomeOpFocus = NULL;
 //--------------------------
 //---- extern functions
 // init
-extern void net_monome_init(void) {
+ void net_monome_init(void) {
   //...
 }
 
 // set focus
-extern void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
+ void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
   print_dbg("\r\n setting monome device focus, op pointer: 0x");
   print_dbg_hex((u32)op_monome);
   print_dbg(" , value: ");
@@ -91,20 +95,40 @@ extern void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
 }
 
 // clear LEDs on grid
-extern void net_monome_grid_clear(void) {
+ void net_monome_grid_clear(void) {
   int i;
-  for(i=0; i<MONOME_MAX_LED_BYTES; ++i) {
-    monomeLedBuffer[i] = 0;
-  }
+  if(monmeConnect) {
+    for(i=0; i<MONOME_MAX_LED_BYTES; ++i) {
+      monomeLedBuffer[i] = 0;
+    }
     monome_set_quadrant_flag(0);
     monome_set_quadrant_flag(1);
     monome_set_quadrant_flag(2);
     monome_set_quadrant_flag(3);
     monome_grid_refresh();
-}
+  }
+ }
 
 
 // set operator attributes from connected grid device .. ??
-extern void net_monome_set_attributes() {
+ void net_monome_set_attributes() {
   //... TODO
+}
+
+void net_monome_grid_connect(void) {
+  if(monomeConnect != 1) {
+    /// FIXME: shld do checks for null handlers here, 
+    //// and not when calling the handler
+    monomeConnect = 1;
+    timers_set_monome();
+  }
+}
+// disconnect
+void net_monome_grid_disconnect(void) {
+  if(monomeConnect != 0) {
+    /// FIXME: shld probably do checks for null handlers here, 
+    //// and not when calling the handler
+    monomeConnect = 1;
+    timers_set_monome();
+  } 
 }

@@ -104,11 +104,13 @@ static void handle_Switch7(s32 data) {
 
 static void handle_MonomeConnect(s32 data) { 
   print_dbg("\r\n received MonomeConnect event in BEES");
-  timers_set_monome();
+  net_monome_connect();
+  // timers_set_monome();
 }
 
 static void handle_MonomeDisconnect(s32 data) { 
-  timers_unset_monome();
+  net_monome_disconnect();
+  //  timers_unset_monome();
 }
 
 static void handle_MonomeGridKey(s32 data) { 
