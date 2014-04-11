@@ -107,9 +107,19 @@ u32 module_get_num_params(void) {
 //static u8 dacChan = 0;
 /// 
 
-ParamValue pan[4];
 #define PAN_MAX 2147483647
-#define PAN_CENTER 0
+
+ParamValue auxL[4];
+ParamValue auxR[4];
+ParamValue pan[4];
+ParamValue fader[4];
+//ParamValue eq_hi[4];
+//ParamValue eq_mid[4];
+//ParamValue eq_lo[4];
+
+void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
+
+void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
 void module_process_frame(void) {
 
@@ -136,23 +146,39 @@ void module_process_frame(void) {
   out[3] = 0;
 
 
-  mix_panned_mono(in[0], &(out[1]), &(out[0]), pan[0]);
-  mix_panned_mono(in[1], &(out[1]), &(out[0]), pan[1]);
-  mix_panned_mono(in[2], &(out[1]), &(out[0]), pan[2]);
-  mix_panned_mono(in[3], &(out[1]), &(out[0]), pan[3]);
+  mix_panned_mono(in[0], &(out[1]), &(out[0]), pan[0], fader[0]);
+  mix_panned_mono(in[1], &(out[1]), &(out[0]), pan[1], fader[1]);
+  mix_panned_mono(in[2], &(out[1]), &(out[0]), pan[2], fader[2]);
+  mix_panned_mono(in[3], &(out[1]), &(out[0]), pan[3], fader[3]);
+
+  mix_aux_mono(in[0], &(out[2]), &(out[3]), auxL[0], auxR[0]);
+  mix_aux_mono(in[1], &(out[2]), &(out[3]), auxL[1], auxR[1]);
+  mix_aux_mono(in[2], &(out[2]), &(out[3]), auxL[2], auxR[2]);
+  mix_aux_mono(in[3], &(out[2]), &(out[3]), auxL[3], auxR[3]);
 }
-void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, s32 pan) ;
-void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, s32 pan) {
-    fract32 pan_factor;
+
+void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue left_value, ParamValue right_value) {
+
+    *out_right += mult_fr1x32x32(in_mono, right_value);
+
+    *out_left += mult_fr1x32x32(in_mono, left_value);
+
+}
+
+
+void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) {
+    fract32 pan_factor, post_fader;
 
     //pan_factor = (fract32)pan;
     //*out_left += mult_fr1x32x32(in_mono,pan_factor); //debug
 
     pan_factor = (fract32) ( pan );
-    *out_left += mult_fr1x32x32(in_mono, pan_factor);
+    post_fader = mult_fr1x32x32(pan_factor, fader);
+    *out_left += mult_fr1x32x32(in_mono, post_fader);
 
     pan_factor = (fract32) ( PAN_MAX - pan );
-    *out_right += mult_fr1x32x32(in_mono, pan_factor);
+    post_fader = mult_fr1x32x32(pan_factor, fader);
+    *out_right += mult_fr1x32x32(in_mono, post_fader);
 
 }
 
@@ -189,18 +215,53 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_slew3 :
     filter_1p_lo_set_slew(&(dacSlew[3]), v);
     break;
+  case eParam_auxL0 :
+    auxL[0] = v;
+    break;
+  case eParam_auxR0 :
+    auxR[0] = v;
+    break;
   case eParam_pan0 :
-    //filter_1p_lo_set_slew(&(pan[0]), v);
     pan[0] = v;
+    break;
+  case eParam_fader0 :
+    fader[0] = v;
+    break;
+  case eParam_auxL1 :
+    auxL[1] = v;
+    break;
+  case eParam_auxR1 :
+    auxR[1] = v;
     break;
   case eParam_pan1 :
     pan[1] = v;
     break;
+  case eParam_fader1 :
+    fader[1] = v;
+    break;
+  case eParam_auxL2 :
+    auxL[2] = v;
+    break;
+  case eParam_auxR2 :
+    auxR[2] = v;
+    break;
   case eParam_pan2 :
     pan[2] = v;
     break;
+  case eParam_fader2 :
+    fader[2] = v;
+    break;
+  case eParam_auxL3 :
+    auxL[3] = v;
+    break;
+  case eParam_auxR3 :
+    auxR[3] = v;
+    break;
   case eParam_pan3 :
     pan[3] = v;
+    break;
+  case eParam_fader3 :
+    fader[3] = v;
     break;
   default:
     break;
