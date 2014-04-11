@@ -212,7 +212,8 @@ clean-files             :=
 clean-dirs              :=
 
 clean-files             += $(wildcard $(target) $(project).map)
-clean-files             += $(wildcard $(project)-$(version).hex $(project).hex $(project).bin)
+# no!
+# clean-files             += $(wildcard $(project)-$(version).hex $(project).hex $(project).bin)
 clean-files             += $(wildcard $(project).lss $(project).sym)
 clean-files             += $(wildcard $(build))
 

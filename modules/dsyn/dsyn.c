@@ -74,13 +74,13 @@ static fract32 noise_next(drumsynVoice* voice);
 // get next noise-generator value
 fract32 noise_next(drumsynVoice* voice) {
   //  return lcprng_next(&(voice->rngL)) | ( lcprng_next(&(voice->rngH)) << 14 );
-  /*
+  
   return filter_2p_hi_next(&(voice->hipass), 
 			   lcprng_next(&(voice->rngL))
 			   | ( lcprng_next(&(voice->rngH)) << 15 ));
-  */
-  // don't really need both lcprngs i think
-  return filter_2p_hi_next(&voice->hipass, lcprng_next(&(voice->rngH)) << 15 );
+  
+  // don't really need both lcprngs ?
+  //  return filter_2p_hi_next(&voice->hipass, lcprng_next(&(voice->rngH)) << 15 );
 }
 
 // initialize voice
@@ -91,10 +91,11 @@ void drumsyn_voice_init(void* mem) {
   // noise
 
   // RNG
-  lcprng_reset(&(voice->rngH), 0xDEADFACE);
-  lcprng_reset(&(voice->rngL), 0xDADABEEF);
+  // any seed will do if !=0
+  lcprng_reset(&(voice->rngH), 0xfadedace);
+  lcprng_reset(&(voice->rngL), 0xdadabeef);
 
-  // hipass
+  // hipass for noise
   filter_2p_hi_init(&(voice->hipass));
 
   // envelopes
