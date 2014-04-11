@@ -109,6 +109,11 @@ u32 module_get_num_params(void) {
 
 #define PAN_MAX 2147483647
 
+ParamValue auxLTarget[4];
+ParamValue auxRTarget[4];
+ParamValue panTarget[4];
+ParamValue faderTarget[4];
+
 ParamValue auxL[4];
 ParamValue auxR[4];
 ParamValue pan[4];
@@ -145,6 +150,14 @@ void module_process_frame(void) {
   out[2] = 0;
   out[3] = 0;
 
+  u8 i;
+  //hacky slew!!!
+  for (i=0;i<4;i++) {
+      auxL[i] = auxLTarget[i]/100*1+auxL[i]/100*99;
+      auxR[i] = auxRTarget[i]/100*1+auxR[i]/100*99;
+      pan[i] = panTarget[i]/100*1+pan[i]/100*99;
+      fader[i] = faderTarget[i]/100*1+fader[i]/100*99;
+  }
 
   mix_panned_mono(in[0], &(out[1]), &(out[0]), pan[0], fader[0]);
   mix_panned_mono(in[1], &(out[1]), &(out[0]), pan[1], fader[1]);
@@ -216,52 +229,52 @@ void module_set_param(u32 idx, ParamValue v) {
     filter_1p_lo_set_slew(&(dacSlew[3]), v);
     break;
   case eParam_auxL0 :
-    auxL[0] = v;
+    auxLTarget[0] = v;
     break;
   case eParam_auxR0 :
-    auxR[0] = v;
+    auxRTarget[0] = v;
     break;
   case eParam_pan0 :
-    pan[0] = v;
+    panTarget[0] = v;
     break;
   case eParam_fader0 :
-    fader[0] = v;
+    faderTarget[0] = v;
     break;
   case eParam_auxL1 :
-    auxL[1] = v;
+    auxLTarget[1] = v;
     break;
   case eParam_auxR1 :
-    auxR[1] = v;
+    auxRTarget[1] = v;
     break;
   case eParam_pan1 :
-    pan[1] = v;
+    panTarget[1] = v;
     break;
   case eParam_fader1 :
-    fader[1] = v;
+    faderTarget[1] = v;
     break;
   case eParam_auxL2 :
-    auxL[2] = v;
+    auxLTarget[2] = v;
     break;
   case eParam_auxR2 :
-    auxR[2] = v;
+    auxRTarget[2] = v;
     break;
   case eParam_pan2 :
-    pan[2] = v;
+    panTarget[2] = v;
     break;
   case eParam_fader2 :
-    fader[2] = v;
+    faderTarget[2] = v;
     break;
   case eParam_auxL3 :
-    auxL[3] = v;
+    auxLTarget[3] = v;
     break;
   case eParam_auxR3 :
-    auxR[3] = v;
+    auxRTarget[3] = v;
     break;
   case eParam_pan3 :
-    pan[3] = v;
+    panTarget[3] = v;
     break;
   case eParam_fader3 :
-    fader[3] = v;
+    faderTarget[3] = v;
     break;
   default:
     break;
