@@ -5,6 +5,11 @@
 #include "module.h"
 #include "params.h" 
 
+#define PAN_TYPE eParamTypeFix
+#define PAN_MIN 0x00000000
+#define PAN_MAX 0x7FFFFFFF
+#define PAN_RADIX 16
+
 extern void fill_param_desc(ParamDesc* desc) {
   strcpy(desc[eParam_dac0].label, "dac0");
   desc[eParam_dac0].type = eParamTypeFix; 
@@ -55,100 +60,100 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_slew3].radix = 32;
 
   strcpy(desc[eParam_auxL0].label, "auxL0");
-  desc[eParam_auxL0].type = eParamTypeFix; 
+  desc[eParam_auxL0].type = eParamTypeAmp; 
   desc[eParam_auxL0].min = 0x00000000; 
-  desc[eParam_auxL0].max = 0x7fffffff;
-  desc[eParam_auxL0].radix = 16;
+  desc[eParam_auxL0].max = FR32_MAX;
+  desc[eParam_auxL0].radix = 1;
 
   strcpy(desc[eParam_auxR0].label, "auxR0");
-  desc[eParam_auxR0].type = eParamTypeFix; 
+  desc[eParam_auxR0].type = eParamTypeAmp; 
   desc[eParam_auxR0].min = 0x00000000; 
-  desc[eParam_auxR0].max = 0x7fffffff;
-  desc[eParam_auxR0].radix = 16;
+  desc[eParam_auxR0].max = FR32_MAX;
+  desc[eParam_auxR0].radix = 1;
 
   strcpy(desc[eParam_pan0].label, "pan0");
-  desc[eParam_pan0].type = eParamTypeFix; 
-  desc[eParam_pan0].min = 0x00000000; 
-  desc[eParam_pan0].max = 0x7fffffff;
-  desc[eParam_pan0].radix = 16;
+  desc[eParam_pan0].type = PAN_TYPE; 
+  desc[eParam_pan0].min = PAN_MIN; 
+  desc[eParam_pan0].max = PAN_MAX;
+  desc[eParam_pan0].radix = PAN_RADIX;
 
   strcpy(desc[eParam_fader0].label, "fader0");
-  desc[eParam_fader0].type = eParamTypeFix; 
+  desc[eParam_fader0].type = eParamTypeAmp; 
   desc[eParam_fader0].min = 0x00000000; 
-  desc[eParam_fader0].max = 0x7fffffff;
-  desc[eParam_fader0].radix = 16;
+  desc[eParam_fader0].max = FR32_MAX;
+  desc[eParam_fader0].radix = 1;
 
   strcpy(desc[eParam_auxL1].label, "auxL1");
-  desc[eParam_auxL1].type = eParamTypeFix; 
+  desc[eParam_auxL1].type = eParamTypeAmp; 
   desc[eParam_auxL1].min = 0x00000000; 
-  desc[eParam_auxL1].max = 0x7fffffff;
-  desc[eParam_auxL1].radix = 16;
+  desc[eParam_auxL1].max = FR32_MAX;
+  desc[eParam_auxL1].radix = 1;
 
   strcpy(desc[eParam_auxR1].label, "auxR1");
-  desc[eParam_auxR1].type = eParamTypeFix; 
+  desc[eParam_auxR1].type = eParamTypeAmp; 
   desc[eParam_auxR1].min = 0x00000000; 
-  desc[eParam_auxR1].max = 0x7fffffff;
-  desc[eParam_auxR1].radix = 16;
+  desc[eParam_auxR1].max = FR32_MAX;
+  desc[eParam_auxR1].radix = 1;
 
   strcpy(desc[eParam_pan1].label, "pan1");
-  desc[eParam_pan1].type = eParamTypeFix; 
-  desc[eParam_pan1].min = 0x00000000; 
-  desc[eParam_pan1].max = 0x7fffffff;
-  desc[eParam_pan1].radix = 16;
+  desc[eParam_pan1].type = PAN_TYPE; 
+  desc[eParam_pan1].min = PAN_MIN; 
+  desc[eParam_pan1].max = PAN_MAX;
+  desc[eParam_pan1].radix = PAN_RADIX;
 
   strcpy(desc[eParam_fader1].label, "fader1");
-  desc[eParam_fader1].type = eParamTypeFix; 
+  desc[eParam_fader1].type = eParamTypeAmp; 
   desc[eParam_fader1].min = 0x00000000; 
-  desc[eParam_fader1].max = 0x7fffffff;
-  desc[eParam_fader1].radix = 16;
+  desc[eParam_fader1].max = FR32_MAX;
+  desc[eParam_fader1].radix = 1;
 
   strcpy(desc[eParam_auxL2].label, "auxL2");
-  desc[eParam_auxL2].type = eParamTypeFix; 
+  desc[eParam_auxL2].type = eParamTypeAmp; 
   desc[eParam_auxL2].min = 0x00000000; 
-  desc[eParam_auxL2].max = 0x7fffffff;
-  desc[eParam_auxL2].radix = 16;
+  desc[eParam_auxL2].max = FR32_MAX;
+  desc[eParam_auxL2].radix = 1;
 
   strcpy(desc[eParam_auxR2].label, "auxR2");
-  desc[eParam_auxR2].type = eParamTypeFix; 
+  desc[eParam_auxR2].type = eParamTypeAmp; 
   desc[eParam_auxR2].min = 0x00000000; 
-  desc[eParam_auxR2].max = 0x7fffffff;
-  desc[eParam_auxR2].radix = 16;
+  desc[eParam_auxR2].max = FR32_MAX;
+  desc[eParam_auxR2].radix = 1;
 
   strcpy(desc[eParam_pan2].label, "pan2");
-  desc[eParam_pan2].type = eParamTypeFix; 
-  desc[eParam_pan2].min = 0x00000000; 
-  desc[eParam_pan2].max = 0x7fffffff;
-  desc[eParam_pan2].radix = 16;
+  desc[eParam_pan2].type = PAN_TYPE; 
+  desc[eParam_pan2].min = PAN_MIN; 
+  desc[eParam_pan2].max = PAN_MAX;
+  desc[eParam_pan2].radix = PAN_RADIX;
 
   strcpy(desc[eParam_fader2].label, "fader2");
-  desc[eParam_fader2].type = eParamTypeFix; 
+  desc[eParam_fader2].type = eParamTypeAmp; 
   desc[eParam_fader2].min = 0x00000000; 
-  desc[eParam_fader2].max = 0x7fffffff;
-  desc[eParam_fader2].radix = 16;
+  desc[eParam_fader2].max = FR32_MAX;
+  desc[eParam_fader2].radix = 1;
 
   strcpy(desc[eParam_auxL3].label, "auxL3");
-  desc[eParam_auxL3].type = eParamTypeFix; 
+  desc[eParam_auxL3].type = eParamTypeAmp; 
   desc[eParam_auxL3].min = 0x00000000; 
-  desc[eParam_auxL3].max = 0x7fffffff;
-  desc[eParam_auxL3].radix = 16;
+  desc[eParam_auxL3].max = FR32_MAX;
+  desc[eParam_auxL3].radix = 1;
 
   strcpy(desc[eParam_auxR3].label, "auxR3");
-  desc[eParam_auxR3].type = eParamTypeFix; 
+  desc[eParam_auxR3].type = eParamTypeAmp; 
   desc[eParam_auxR3].min = 0x00000000; 
-  desc[eParam_auxR3].max = 0x7fffffff;
-  desc[eParam_auxR3].radix = 16;
+  desc[eParam_auxR3].max = FR32_MAX;
+  desc[eParam_auxR3].radix = 1;
 
   strcpy(desc[eParam_pan3].label, "pan3");
-  desc[eParam_pan3].type = eParamTypeFix; 
-  desc[eParam_pan3].min = 0x00000000; 
-  desc[eParam_pan3].max = 0x7fffffff;
-  desc[eParam_pan3].radix = 16;
+  desc[eParam_pan3].type = PAN_TYPE; 
+  desc[eParam_pan3].min = PAN_MIN; 
+  desc[eParam_pan3].max = PAN_MAX;
+  desc[eParam_pan3].radix = PAN_RADIX;
 
   strcpy(desc[eParam_fader3].label, "fader3");
-  desc[eParam_fader3].type = eParamTypeFix; 
+  desc[eParam_fader3].type = eParamTypeAmp; 
   desc[eParam_fader3].min = 0x00000000; 
-  desc[eParam_fader3].max = 0x7fffffff;
-  desc[eParam_fader3].radix = 16;
+  desc[eParam_fader3].max = FR32_MAX;
+  desc[eParam_fader3].radix = 1;
 
 }
 
