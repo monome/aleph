@@ -415,10 +415,18 @@ void module_process_frame(void) {
   */
   // FIXME: not sure why the macroized slew isn't working here.
   // something to do with access modifiers and the compiler?
-  if(cvSlew[cvChan].sync) { ;; } else {
-    cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
-    cv_update(cvChan, cvVal[cvChan]);
+  // process the current channel
+  // do nothing if the value is stable
+  if( filter_1p_sync( &(cvSlew[cvChan]) ) ) {
+    ;;
+  } else {
+    // update the slew filter and store the value
+      cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
+      // send the value to the cv driver
+      cv_update( cvChan, cvVal[cvChan] );
   }
+
+  // update the channel to be processed
   if(++cvChan == 4) {
     cvChan = 0;
   }

@@ -23,7 +23,7 @@
 // global variables
 #include "bfin_core.h"
 // cv output driver
-#include "dac.h"
+#include "cv.h"
 // gpio pin numbers
 #include "gpio.h"
 
@@ -58,7 +58,7 @@ typedef struct _mixData {
 // required by the aleph-bfin library!
 ModuleData* gModuleData;
 
-//-----------------------
+//-----------------------bfin_lib/src/
 //------ static variables
 
 /* 
@@ -68,7 +68,7 @@ ModuleData* gModuleData;
    a) modules have variable param count
    b) in an extreme case, might need to locate param data in SDRAM
       ( until recently, SDRAM contained full param descriptors.)
-*/,
+*/
 static ModuleData super;
 static ParamData mParamData[eParamNumParams];
 
@@ -133,16 +133,16 @@ void module_init(void) {
   param_setup(eParam_cv2, 0 );
   param_setup(eParam_cv3, 0 );
 
-  // set amp to 1/4 (-12db)
-  param_setup(eParam_amp, 0 );
-  param_setup(eParam_cv1, 0 );
-  param_setup(eParam_cv2, 0 );
-  param_setup(eParam_cv3, 0 );
+  // set amp to 1/4 (-12db) with right-shift intrinsic
+  param_setup(eParam_adc0, PARAM_AMP_MAX >> 2 );
+  param_setup(eParam_adc1, PARAM_AMP_MAX >> 2 );
+  param_setup(eParam_adc2, PARAM_AMP_MAX >> 2 );
+  param_setup(eParam_adc3, PARAM_AMP_MAX >> 2 );
 
-  param_setup(eParam_cvSlew0, PARAM_SLEW_DEFAULT);
-  param_setup(eParam_cvSlew1, PARAM_SLEW_DEFAULT);
-  param_setup(eParam_cvSlew2, PARAM_SLEW_DEFAULT);
-  param_setup(eParam_cvSlew3, PARAM_SLEW_DEFAULT);
+  param_setup(eParam_adcSlew0, PARAM_SLEW_DEFAULT);
+  param_setup(eParam_adcSlew1, PARAM_SLEW_DEFAULT);
+  param_setup(eParam_adcSlew2, PARAM_SLEW_DEFAULT);
+  param_setup(eParam_adcSlew3, PARAM_SLEW_DEFAULT);
 
 
 }
@@ -236,16 +236,16 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
     // input attenuation values
-  case eParam_in0 :
+  case eParam_adc0 :
     filter_1p_lo_in( &(adcSlew[0]), v );
     break;
-  case eParam_in1 :
+  case eParam_adc1 :
     filter_1p_lo_in( &(adcSlew[1]), v );
     break;
-  case eParam_in2 :
+  case eParam_adc2 :
     filter_1p_lo_in( &(adcSlew[2]), v );
     break;
-  case eParam_in3 :
+  case eParam_adc3 :
     filter_1p_lo_in( &(adcSlew[3]), v );
 
     // input attenuation slew values
