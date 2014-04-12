@@ -1,12 +1,12 @@
 #include "print_funcs.h"
 
-#include "aleph_board.h"
 #include "usart.h"
+#include "serial.h"
 
 #include "bfin.h"
 #include "events.h"
 #include "event_types.h"
-#include "serial.h"
+#include "ser.h"
 
 // SERIAL DESCRIPTION:
 // escape character is 27 (ESC)
@@ -15,7 +15,7 @@
 
 //----------------------------
 //----- extern vatrs
-volatile u8 serial_buffer[SERIAL_BUFFER_SIZE];
+// volatile u8 serial_buffer[SERIAL_BUFFER_SIZE];
 
 
 //----------------------------
@@ -31,10 +31,10 @@ volatile u8 serial_buffer[SERIAL_BUFFER_SIZE];
 //   eComNumCommands
 // } eSerialCommands;
 
-// volatile u16 serial_read_pos = 0;
-static u16 serial_write_pos = 0;
+static u16 serial_read_pos = 0;
+// static u16 serial_write_pos = 0;
 // static u8 escape = 0;
-static event_t e;
+// static event_t e;
 
 //--------------------------------
 //---- static funcs
@@ -54,57 +54,26 @@ static event_t e;
 //   &com_set_param
 // };
 
-void serial_send_start(u8 index) {
-  usart_putchar(DBG_USART,index);
-}
 
-void serial_send_byte(u8 data) {
-  // FIXME this is slow
-  if(data == 0 || data == 27 || data == 31) {
-    usart_putchar(DBG_USART,27);
-  }
-  usart_putchar(DBG_USART,data);
-}
-
-void serial_send_long(u32 data) {
-  serial_send_byte((u8)data);
-  serial_send_byte((u8)data>>8);
-  serial_send_byte((u8)data>>16);
-  serial_send_byte((u8)data>>24);
-}
-
-void serial_send_separator(void) {
-  usart_putchar(DBG_USART,31);
-}
-
-void serial_send_end(void) {
-  usart_putchar(DBG_USART,0);
-}
-
-void serial_store() {
+void serial_process(s32 data) {
   // process_serial_t serial_decode = &serial_decode_dummy;
-  int c;
+  u16 c = (u16)data;
 
-  //buffer, try to grab more than one byte if available
-  while(usart_read_char(AVR8_USART,&c) == USART_SUCCESS) {
-
-      // TEST LIB LOOPBACK
-      usart_putchar(DBG_USART,c);
-
-      serial_buffer[serial_write_pos] = c;
-      serial_write_pos++;
-      if(serial_write_pos == SERIAL_BUFFER_SIZE) serial_write_pos = 0;
-  }
-  e.type = kEventSerial;
-  e.data = serial_write_pos;
-  event_post(&e);
-
-/*    //////////////////
+  while(serial_read_pos != c) {
+    //////////////////
     //// TEST: loopback
-    // print_dbg_char(c);
-    // print_dbg(" ");
-    // ///////////////////
+    // print_dbg_char(serial_buffer[serial_read_pos]);
+    serial_read_pos++;
+    if(serial_read_pos == SERIAL_BUFFER_SIZE) serial_read_pos = 0;
+  }
 
+  // testing///
+  // serial_send_start(2);
+  // serial_send_byte(10);
+  // serial_send_end();
+
+    // ///////////////////
+/*
     // DONE: implement proper framing, ie: http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
     // code 27 is escape
     if(c == 27 && escape == 0) escape = 1;

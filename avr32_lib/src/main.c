@@ -129,27 +129,10 @@ static void handler_HidConnect(s32 data) {
   }
 }
 
-/// these are causing crashes for me at startup btw, 
-/// whenever serial port is connected to anything (e.g. during debug.)
-/// i think these should be app-defined unless there are compelling reasons to handle serial immediately at startup.
-/// params won't be loaded at start so that is certianly gonna fail, for one thing.
-static void handler_SerialParamNum(s32 data) { 
-  //  serial_param_num(data);
+// to be app defined
+static void handler_Serial(s32 data) { 
+    ;;
 }
-
-static void handler_SerialParamInfo(s32 data) { 
-  //  serial_param_info(data);
-}
-
-static void handler_SerialParamGet(s32 data) { 
-  //  serial_param_get(data);
-}
-
-static void handler_SerialParamSet(s32 data) { 
-  //  serial_param_set(data);
-}
-
-static void handler_AppCustom(s32 data) { ;; }
 
 /// explicitly assign default event handlers.
 /// this way the order of the event types enum doesn't matter.
@@ -188,17 +171,7 @@ static inline void assign_main_event_handlers(void) {
   app_event_handlers[ kEventHidDisconnect ]	= &dummy_handler ;
   app_event_handlers[ kEventHidByte ]	= &dummy_handler ;
 
-
-  /// how about designate a single serial com handler and have app specific parsing, 
-  // at least for now? 
-  // param descriptors are not in the lib code,
-  // so best to handle parameter scaling/setting through the app.
-  app_event_handlers[ kEventSerialParamNum ] = &handler_SerialParamNum ;
-  app_event_handlers[ kEventSerialParamInfo ] = &handler_SerialParamInfo ;
-  app_event_handlers[ kEventSerialParamGet ] = &handler_SerialParamGet ;
-  app_event_handlers[ kEventSerialParamSet ] = &handler_SerialParamSet ;
-
-  app_event_handlers[ kEventAppCustom ]	= &handler_AppCustom ;
+  app_event_handlers[ kEventSerial ] = &handler_Serial;
 }
 
 //=================================================
