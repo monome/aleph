@@ -13,6 +13,14 @@
 #define PARAM_DAC_MAX 0x7fffffff
 #define PARAM_DAC_RADIX 16
 
+#define PARAM_AMP_0 (FRACT32_MAX)
+#define PARAM_AMP_6 (FRACT32_MAX >> 1)
+#define PARAM_AMP_12 (FRACT32_MAX >> 2)
+
+#define PARAM_SLEW_DEFAULT 0x77000000
+
+// cv output
+#define PARAM_CV_VAL_DEFAULT PARAM_AMP_6
 
 // enumerate parameters
 enum params {

@@ -39,6 +39,26 @@
 //#define LINES_BUF_FRAMES 0xbb8000 // 256 seconds @ 48k
 #define NLINES 2
 
+
+ParamValue auxL[4];
+ParamValue auxR[4];
+ParamValue auxLTarget[4];
+ParamValue auxRTarget[4];
+#define AUX_DEFAULT PARAM_AMP_0
+
+ParamValue pan[4];
+ParamValue panTarget[4];
+#define PAN_MAX 2147483647
+#define PAN_DEFAULT PAN_MAX/2
+
+ParamValue fader[4];
+ParamValue faderTarget[4];
+#define FADER_DEFAULT PARAM_AMP_0
+
+//ParamValue eq_hi[4];
+//ParamValue eq_mid[4];
+//ParamValue eq_lo[4];
+
 // data structure of external memory
 typedef struct _dacsData {
   ModuleData super;
@@ -64,6 +84,11 @@ static u8 dacChan = 0;
 //----------------------
 //----- external functions
 
+static inline void param_setup(u32 id, ParamValue v) ;
+static inline void param_setup(u32 id, ParamValue v) {
+  gModuleData->paramData[id].value = v;
+  module_set_param(id, v);
+}
 void module_init(void) {
   // init module/param descriptor
   pDacsData = (dacsData*)SDRAM_ADDRESS;
@@ -80,7 +105,35 @@ void module_init(void) {
   filter_1p_lo_init( &(dacSlew[2]), 0 );
   filter_1p_lo_init( &(dacSlew[3]), 0 );
 
-  //fill_param_desc();
+  param_setup(  eParam_slew0, PARAM_SLEW_DEFAULT );
+  param_setup(  eParam_slew1, PARAM_SLEW_DEFAULT );
+  param_setup(  eParam_slew2, PARAM_SLEW_DEFAULT );
+  param_setup(  eParam_slew3, PARAM_SLEW_DEFAULT );
+
+  param_setup(  eParam_dac0, PARAM_CV_VAL_DEFAULT );
+  param_setup(  eParam_dac1, PARAM_CV_VAL_DEFAULT );
+  param_setup(  eParam_dac2, PARAM_CV_VAL_DEFAULT );
+  param_setup(  eParam_dac3, PARAM_CV_VAL_DEFAULT );
+
+  param_setup( 	eParam_auxL0,		AUX_DEFAULT );
+  param_setup( 	eParam_auxR0,		AUX_DEFAULT );
+  param_setup( 	eParam_pan0,		PAN_DEFAULT );
+  param_setup( 	eParam_fader0,		FADER_DEFAULT );
+
+  param_setup( 	eParam_auxL1,		AUX_DEFAULT );
+  param_setup( 	eParam_auxR1,		AUX_DEFAULT );
+  param_setup( 	eParam_pan1,		PAN_DEFAULT );
+  param_setup( 	eParam_fader1,		FADER_DEFAULT );
+
+  param_setup( 	eParam_auxL2,		AUX_DEFAULT );
+  param_setup( 	eParam_auxR2,		AUX_DEFAULT );
+  param_setup( 	eParam_pan2,		PAN_DEFAULT );
+  param_setup( 	eParam_fader2,		FADER_DEFAULT );
+
+  param_setup( 	eParam_auxL3,		AUX_DEFAULT );
+  param_setup( 	eParam_auxR3,		AUX_DEFAULT );
+  param_setup( 	eParam_pan3,		PAN_DEFAULT );
+  param_setup( 	eParam_fader3,		FADER_DEFAULT );
 }
 
 // de-init
@@ -106,21 +159,6 @@ u32 module_get_num_params(void) {
 */
 //static u8 dacChan = 0;
 /// 
-
-#define PAN_MAX 2147483647
-
-ParamValue auxLTarget[4];
-ParamValue auxRTarget[4];
-ParamValue panTarget[4];
-ParamValue faderTarget[4];
-
-ParamValue auxL[4];
-ParamValue auxR[4];
-ParamValue pan[4];
-ParamValue fader[4];
-//ParamValue eq_hi[4];
-//ParamValue eq_mid[4];
-//ParamValue eq_lo[4];
 
 void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
