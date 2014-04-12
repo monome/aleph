@@ -36,6 +36,7 @@
 #include "pages.h"
 #include "render.h"
 #include "scene.h"
+#include "ser.h"
 
 ///-------------------------------------
 ///---- static event handlers
@@ -160,6 +161,10 @@ static void handle_HidByte(s32 data) {
   // TODO: update ops
 }
 
+static void handle_Serial(s32 data) {
+  serial_process(data);
+}
+
 //-------------------------------------
 //---- extern
 
@@ -193,6 +198,8 @@ void assign_bees_event_handlers(void) {
   app_event_handlers[ kEventHidConnect ]	= &handle_HidConnect ;
   app_event_handlers[ kEventHidDisconnect ]	= &handle_HidDisconnect ;
   app_event_handlers[ kEventHidByte ]	= &handle_HidByte ;
+
+  app_event_handlers[ kEventSerial ] = &handle_Serial ;
 }
 
 //------------------------

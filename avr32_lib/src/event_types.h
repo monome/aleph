@@ -49,28 +49,14 @@ typedef enum {
   kEventHidDisconnect,
   kEventHidByte,
 
-
-// TODO:
-  // uart from computer
-  //--- main handlers
-  // kEventSerialDebugFlag,
-  // kEventSerialCaptureFlag,
-  kEventSerialParamNum,
-  kEventSerialParamInfo,
-  kEventSerialParamSet,
-  kEventSerialParamGet,
-  //---- app handler
-  // kEventSerialAppCustom,
-
-
-  // a sneaky little event type for app timer cutsomization
-  kEventAppCustom,
+  /// incoming serial from computer (usb)
+  kEventSerial,
   //// better?
   // kEventAppTimer
   // kEventApp...
   // kEventApp...,
   // ??
-  
+  kEventAppCustom,
   /// dummy/count
   kNumEventTypes,
 } etype;
