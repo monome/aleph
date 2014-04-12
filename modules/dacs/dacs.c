@@ -25,6 +25,7 @@
 // audio
 #include "filter_1p.h"
 #include "module.h"
+#include "delayFadeN.h"
 
 /// custom
 #include "params.h"
@@ -37,8 +38,9 @@
 //#define LINES_BUF_FRAMES 0x600000
 //#define LINES_BUF_FRAMES 0x1000000
 //#define LINES_BUF_FRAMES 0xbb8000 // 256 seconds @ 48k
-#define NLINES 2
+#define NLINES 1
 
+delayFadeN lines[NLINES];
 
 ParamValue auxL[4];
 ParamValue auxR[4];
@@ -55,6 +57,9 @@ ParamValue fader[4];
 ParamValue faderTarget[4];
 #define FADER_DEFAULT PARAM_AMP_0
 
+ParamValue effect[4];
+ParamValue effectTarget[4];
+#define EFFECT_DEFAULT PARAM_AMP_0
 //ParamValue eq_hi[4];
 //ParamValue eq_mid[4];
 //ParamValue eq_lo[4];
@@ -64,7 +69,7 @@ typedef struct _dacsData {
   ModuleData super;
   //ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
-//  volatile fract32 audioBuffer[NLINES][LINES_BUF_FRAMES];
+  volatile fract32 audioBuffer[1][LINES_BUF_FRAMES];
 } dacsData;
 
 //-------------------------
@@ -90,15 +95,17 @@ static inline void param_setup(u32 id, ParamValue v) {
   module_set_param(id, v);
 }
 void module_init(void) {
+
+
   // init module/param descriptor
   pDacsData = (dacsData*)SDRAM_ADDRESS;
 
   gModuleData = &(pDacsData->super);
   strcpy(gModuleData->name, "aleph-dacs");
 
-  //gModuleData->paramDesc = (ParamDesc*)pDacsData->mParamDesc;
   gModuleData->paramData = (ParamData*)pDacsData->mParamData;
   gModuleData->numParams = eParamNumParams;
+
 
   filter_1p_lo_init( &(dacSlew[0]), 0 );
   filter_1p_lo_init( &(dacSlew[1]), 0 );
@@ -119,26 +126,38 @@ void module_init(void) {
   param_setup( 	eParam_auxR0,		AUX_DEFAULT );
   param_setup( 	eParam_pan0,		PAN_DEFAULT );
   param_setup( 	eParam_fader0,		FADER_DEFAULT );
+  param_setup( 	eParam_effect0,		EFFECT_DEFAULT );
 
   param_setup( 	eParam_auxL1,		AUX_DEFAULT );
   param_setup( 	eParam_auxR1,		AUX_DEFAULT );
   param_setup( 	eParam_pan1,		PAN_DEFAULT );
   param_setup( 	eParam_fader1,		FADER_DEFAULT );
+  param_setup( 	eParam_effect1,		EFFECT_DEFAULT );
 
   param_setup( 	eParam_auxL2,		AUX_DEFAULT );
   param_setup( 	eParam_auxR2,		AUX_DEFAULT );
   param_setup( 	eParam_pan2,		PAN_DEFAULT );
   param_setup( 	eParam_fader2,		FADER_DEFAULT );
+  param_setup( 	eParam_effect2,		EFFECT_DEFAULT );
 
   param_setup( 	eParam_auxL3,		AUX_DEFAULT );
   param_setup( 	eParam_auxR3,		AUX_DEFAULT );
   param_setup( 	eParam_pan3,		PAN_DEFAULT );
   param_setup( 	eParam_fader3,		FADER_DEFAULT );
+  param_setup( 	eParam_effect3,		EFFECT_DEFAULT );
+
+
+  delayFadeN_init(&(lines[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
+  param_setup( 	eParam_delay0,		0x4000 );
+  delayFadeN_set_loop_sec(&(lines[0]), 10, 0);
+  delayFadeN_set_run_write(&(lines[0]), 1);
+  delayFadeN_set_run_read(&(lines[0]), 1);
+  delayFadeN_set_write(&(lines[0]), FR32_MAX);
+  delayFadeN_set_pre(&(lines[0]), FR32_MAX);
 }
 
 // de-init
 void module_deinit(void) {
-  ;;
 }
 
 // get number of parameters
@@ -158,7 +177,7 @@ u32 module_get_num_params(void) {
    - dac_update writes to 4x16 volatile buffer
 */
 //static u8 dacChan = 0;
-/// 
+///
 
 void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
@@ -177,12 +196,7 @@ void module_process_frame(void) {
     dacChan = 0;
   }
 
-  //Transfer audio from inputs to outputs
-  //out[0] = in[0];
-  //out[1] = in[1];
-  //out[2] = in[2];
-  //out[3] = in[3];
-
+  //Zero the audio dacs, before mixing
   out[0] = 0;
   out[1] = 0;
   out[2] = 0;
@@ -195,6 +209,7 @@ void module_process_frame(void) {
       auxR[i] = auxRTarget[i]/100*1+auxR[i]/100*99;
       pan[i] = panTarget[i]/100*1+pan[i]/100*99;
       fader[i] = faderTarget[i]/100*1+fader[i]/100*99;
+      effect[i] = effectTarget[i]/100*1+effect[i]/100*99;
   }
 
   mix_panned_mono(in[0], &(out[1]), &(out[0]), pan[0], fader[0]);
@@ -206,6 +221,15 @@ void module_process_frame(void) {
   mix_aux_mono(in[1], &(out[2]), &(out[3]), auxL[1], auxR[1]);
   mix_aux_mono(in[2], &(out[2]), &(out[3]), auxL[2], auxR[2]);
   mix_aux_mono(in[3], &(out[2]), &(out[3]), auxL[3], auxR[3]);
+
+  //define delay input & output
+  fract32 delayOutput = 0, delayInput = 0;
+
+  //mix adcs to delay inputs
+  delayInput = in[0]*effect[0] + in[1]*effect[1] + in[2]*effect[2] + in[3]*effect[3] ;
+
+  delayOutput = delayFadeN_next( &(lines[0]), delayInput);
+  mix_panned_mono(delayOutput, &(out[1]), &(out[0]),PAN_DEFAULT ,FADER_DEFAULT );
 }
 
 void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue left_value, ParamValue right_value) {
@@ -313,6 +337,9 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_fader3 :
     faderTarget[3] = v;
+    break;
+  case eParam_delay0 :
+    delayFadeN_set_delay_samp(&(lines[0]), v, 0);
     break;
   default:
     break;

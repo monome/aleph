@@ -37,21 +37,27 @@ enum params {
   eParam_auxR0,
   eParam_pan0,
   eParam_fader0,
+  eParam_effect0,
 
   eParam_auxL1,
   eParam_auxR1,
   eParam_pan1,
   eParam_fader1,
+  eParam_effect1,
 
   eParam_auxL2,
   eParam_auxR2,
   eParam_pan2,
   eParam_fader2,
+  eParam_effect2,
 
   eParam_auxL3,
   eParam_auxR3,
   eParam_pan3,
   eParam_fader3,
+  eParam_effect3,
+
+  eParam_delay0,
 
   eParamNumParams
 };

@@ -61,7 +61,6 @@ deploy: aleph-$(module_name).ldr
 	make desc
 	./$(module_name)_desc_build
 	cp aleph-$(module_name).ldr aleph-$(module_name)-$(maj).$(min).$(rev).ldr
-	cp aleph-$(module_name).dsc aleph-$(module_name)-$(maj).$(min).$(rev).dsc
 
 .PHONY: clean
 	deploy
