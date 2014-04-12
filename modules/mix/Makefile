@@ -2,6 +2,7 @@
 # change this to your module name
 module_name = mix
 
+# paths to aleph repository sources
 audio = ../../dsp
 bfin = ../../bfin_lib/src
 
@@ -18,9 +19,11 @@ module_obj = mix.o \
 
 all: aleph-$(module_name).ldr
 
+# this gets the core configuration and sources
 include ../../bfin_lib/bfin_lib.mk
 
 CFLAGS += -D ARCH_BFIN=1
+# diagnose gcc errors
 # CFLAGS += --verbose
 
 desc_src = \

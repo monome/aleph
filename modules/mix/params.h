@@ -6,8 +6,11 @@
 // define some constants here for the param descriptor code
 // here, all the parameter ranges are pretty simple.
 #define PARAM_AMP_MAX 	0x7fffffff
-#define PARAM_CV_MAX 	0x7fffffff
+#define bPARAM_CV_MAX 	0x7fffffff
 #define PARAM_SLEW_MAX 	0x7fffffff
+
+// something pretty fast, but noticeable
+#define PARAM_SLEW_DEFAULT 	0x7ffecccc
 
 // enumerate parameters
 // the order defined here must be matched in the descriptor !
@@ -17,21 +20,21 @@ enum params {
   eParam_cvSlew1,
   eParam_cvSlew2,
   eParam_cvSlew3,
+  // adc multiplier slew
+  eparam_adcSlew0,
+  eparam_adcSlew1,
+  eparam_adcSlew2,
+  eparam_adcSlew3,
   // cv values
   eParam_cv0,
   eParam_cv1,
   eParam_cv2,
   eParam_cv3,
-  // input slew
-  eParam_inSlew0,
-  eParam_inSlew1,
-  eParam_inSlew2,
-  eParam_inSlew3,
-  // input values
-  eParam_in0,
-  eParam_in1,
-  eParam_in2,
-  eParam_in3,
+  // adc multiplier values
+  eparam_adc0,
+  eparam_adc1,
+  eparam_adc2,
+  eparam_adc3,
 
   eParamNumParams
 };

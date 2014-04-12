@@ -16,7 +16,7 @@
 #include "conversion.h"
 // bfin
 #include "bfin_core.h"
-#include "dac.h"
+#include "cv.h"
 #include "fract_math.h"
 #include <fract2float_conv.h>
 
@@ -124,7 +124,7 @@ static fract32 trash;
 static volatile fract32* patch_adc_dac[4][4];
 static volatile fract32* patch_osc_dac[2][4];
 
-// 10v dac values (u16, but use fract32 and audio integrators for now)
+// 10v cv values (u16, but use fract32 and audio integrators for now)
 // static fract32 cvVal[4];
 //static filter_1p_lo cvSlew[4];
 /* static Slew32 cvSlew[4]; */
@@ -297,13 +297,13 @@ void module_init(void) {
     }
   }
 
-  // dac
+  // cv
   /* slew_init(cvSlew[0] , 0, 0, 0 ); */
   /* slew_init(cvSlew[1] , 0, 0, 0 ); */
   /* slew_init(cvSlew[2] , 0, 0, 0 ); */
   /* slew_init(cvSlew[3] , 0, 0, 0 ); */
 
-  // dac
+  // cv
   filter_1p_lo_init( &(cvSlew[0]), 0xf );
   filter_1p_lo_init( &(cvSlew[1]), 0xf );
   filter_1p_lo_init( &(cvSlew[2]), 0xf );
@@ -408,33 +408,20 @@ void module_process_frame(void) {
   // we could shift to fract16 at a cost of only 1b resolution
 
   /*
-
   slew32_calc(cvSlew[cvChan]);
-
   if( !(slew32_sync(cvSlew[cvChan])) ) { 
-    dac_update(cvChan, cvSlew[cvChan].y );
+    cv_update(cvChan, cvSlew[cvChan].y );
   }
-
   */
-
-
-  // something really weird going on, reverting
+  // FIXME: not sure why the macroized slew isn't working here.
+  // something to do with access modifiers and the compiler?
   if(cvSlew[cvChan].sync) { ;; } else {
     cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
-    dac_update(cvChan, cvVal[cvChan]);
+    cv_update(cvChan, cvVal[cvChan]);
   }
- 
   if(++cvChan == 4) {
     cvChan = 0;
   }
-  
-  /* dac_update(cvChan, cvSlew[cvChan].x); */
-
-
-     
-  /* cvChan++; */
-  /* if(cvChan == 4) { cvChan = 0; } */
-  //  cvChan = (cvChan + 1) & 3;
 }
 
 // lazy inclusion... sorry
