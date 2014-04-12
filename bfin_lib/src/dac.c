@@ -33,16 +33,16 @@ void init_dac(void) {
 
 
 // update via DMA
-void dac_update(u8 ch, u16 val) {
+void dac_update(u8 ch, fract32 val) {
   u32 buf;
   buf = 0;
   buf |= (DAC_COM_WRITE << DAC_COM_LSHIFT);
   buf |= ((1 << ch) << DAC_ADDR_LSHIFT);
-  //  buf |= val;
-  buf |= (val & DAC_VALUE_MASK);
+  // shift from fract32
+  buf |= (val >> 15 ) & 0xffff;
+  // extra bit for weird FS timing kludge (need 25 clocks)
   cvTxBuf = buf << 1;
 }
-
 
 
 /* #include "bfin_core.h" */

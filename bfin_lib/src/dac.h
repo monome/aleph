@@ -9,7 +9,10 @@
 
 #define DAC_VALUE_MASK 0xffff
 
+// initialize CV dax
 extern void init_dac(void);
-extern void dac_update(u8 ch, u16 val);
+// update given CV channel. 
+// input is assumed to be in [0, 0x7fffffff]
+extern void dac_update(u8 ch, fract32 val);
 
 #endif // h guard

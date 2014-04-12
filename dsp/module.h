@@ -26,10 +26,6 @@
 //---- module descriptor
 typedef struct _moduleData {
   char name[MODULE_NAME_LEN];
-  //  ParamDesc* paramDesc;
-  // FIXME: not really using this global parameter data.
-  // but we probably will if we want a bfin control rate or FIFO. 
-  // so for now it is just here, burning resources.
   ParamData* paramData; 
   u16 numParams;
 } ModuleData;
@@ -58,8 +54,3 @@ extern u32 module_get_num_params(void);
 
 
 #endif // header guard
-
-
-
-
- 
