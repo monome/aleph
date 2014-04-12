@@ -139,10 +139,16 @@ void module_init(void) {
   param_setup(eParam_adc2, PARAM_AMP_MAX >> 2 );
   param_setup(eParam_adc3, PARAM_AMP_MAX >> 2 );
 
+  // set slew defaults. the value is pretty arbitrary
   param_setup(eParam_adcSlew0, PARAM_SLEW_DEFAULT);
   param_setup(eParam_adcSlew1, PARAM_SLEW_DEFAULT);
   param_setup(eParam_adcSlew2, PARAM_SLEW_DEFAULT);
   param_setup(eParam_adcSlew3, PARAM_SLEW_DEFAULT);
+  param_setup(eParam_cvSlew0, PARAM_SLEW_DEFAULT);
+  param_setup(eParam_cvSlew1, PARAM_SLEW_DEFAULT);
+  param_setup(eParam_cvSlew2, PARAM_SLEW_DEFAULT);
+  param_setup(eParam_cvSlew3, PARAM_SLEW_DEFAULT);
+
 
 
 }
