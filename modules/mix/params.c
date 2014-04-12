@@ -16,7 +16,7 @@
 // this function
 extern void fill_param_desc(ParamDesc* desc) {
   
-  // obviously, these could be done in other ways (maybe more readable, maybe not!)
+  // obviously, these could be done in other ways ( easier to read/edit maybe. )
   // but neither code space nor speed is a big deal here.
   // this code can also be script-generated easily enough.
 
@@ -77,31 +77,31 @@ extern void fill_param_desc(ParamDesc* desc) {
 
 
   /// CV values have param type "Fixed" (for now!)
-  // they range from 0 to 32k, the full range of bees values.
+  // they range from 0 to 32k, the full range of bees values, integers only
 
   strcpy(desc[eParam_cv0].label, "cv0");
   desc[eParam_cv0].type = eParamTypeFix; 
   desc[eParam_cv0].min = 0x00000000; 
   desc[eParam_cv0].max = PARAM_CV_MAX ;
-  desc[eParam_cv0].radix = 16; // doesn't matter
+  desc[eParam_cv0].radix = 16; // full-scale 16.16
 
   strcpy(desc[eParam_cv1].label, "cv1");
   desc[eParam_cv1].type = eParamTypeFix; 
   desc[eParam_cv1].min = 0x00000000; 
   desc[eParam_cv1].max = PARAM_CV_MAX ;
-  desc[eParam_cv1].radix = 16; // doesn't matter
+  desc[eParam_cv1].radix = 16; // full-scale 16.16
 
   strcpy(desc[eParam_cv2].label, "cv2");
   desc[eParam_cv2].type = eParamTypeFix; 
   desc[eParam_cv2].min = 0x00000000; 
   desc[eParam_cv2].max = PARAM_CV_MAX ;
-  desc[eParam_cv2].radix = 16; // doesn't matter
+  desc[eParam_cv2].radix = 16; // full-scale 16.16
 
   strcpy(desc[eParam_cv3].label, "cv3");
   desc[eParam_cv3].type = eParamTypeFix; 
   desc[eParam_cv3].min = 0x00000000; 
   desc[eParam_cv3].max = PARAM_CV_MAX ;
-  desc[eParam_cv3].radix = 16; // doesn't matter
+  desc[eParam_cv3].radix = 16; // full-scale 16.16
 
 
   /// slew values have param type "Integrator"
