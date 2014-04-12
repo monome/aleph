@@ -26,25 +26,25 @@ extern void fill_param_desc(ParamDesc* desc) {
   strcpy(desc[eParam_in0].label, "in0");
   desc[eParam_in0].type = eParamTypeAmp; 
   desc[eParam_in0].min = 0x00000000; 
-  desc[eParam_in0].max = PARAM_AMP_0;
+  desc[eParam_in0].max = PARAM_AMP_MAX;
   desc[eParam_in0].radix = 16; // doesn't matter
 
   strcpy(desc[eParam_in1].label, "in1");
   desc[eParam_in1].type = eParamTypeAmp; 
   desc[eParam_in1].min = 0x00000000; 
-  desc[eParam_in1].max = PARAM_AMP_0;
+  desc[eParam_in1].max = PARAM_AMP_MAX;
   desc[eParam_in1].radix = 16; // doesn't matter
 
   strcpy(desc[eParam_in2].label, "in2");
   desc[eParam_in2].type = eParamTypeAmp; 
   desc[eParam_in2].min = 0x00000000; 
-  desc[eParam_in2].max = PARAM_AMP_0;
+  desc[eParam_in2].max = PARAM_AMP_MAX;
   desc[eParam_in2].radix = 16; // doesn't matter
 
   strcpy(desc[eParam_in3].label, "in3");
   desc[eParam_in3].type = eParamTypeAmp; 
   desc[eParam_in3].min = 0x00000000; 
-  desc[eParam_in3].max = PARAM_AMP_0;
+  desc[eParam_in3].max = PARAM_AMP_MAX;
   desc[eParam_in3].radix = 16; // doesn't matter
 
   /// slew values have param type "Integrator"
@@ -76,12 +76,11 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_inSlew3].radix = 16; // doesn't matter
 
 
-  /// CV values have param type "Fract" (for now!)
-  // they range from 0 to the full positive value of fract32
-  /// and will be displayed as [0, 0.9999] by bees
+  /// CV values have param type "Fixed" (for now!)
+  // they range from 0 to 32k, the full range of bees values.
 
   strcpy(desc[eParam_cv0].label, "cv0");
-  desc[eParam_cv0].type = eParamTypeFract; 
+  desc[eParam_cv0].type = eParamTypeFix; 
   desc[eParam_cv0].min = 0x00000000; 
   desc[eParam_cv0].max = PARAM_CV_MAX ;
   desc[eParam_cv0].radix = 16; // doesn't matter
