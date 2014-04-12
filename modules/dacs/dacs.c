@@ -39,6 +39,7 @@
 //#define LINES_BUF_FRAMES 0x1000000
 //#define LINES_BUF_FRAMES 0xbb8000 // 256 seconds @ 48k
 #define NLINES 1
+#define PARAM_SECONDS_MAX 0x003c0000
 
 delayFadeN lines[NLINES];
 
@@ -149,11 +150,16 @@ void module_init(void) {
 
   delayFadeN_init(&(lines[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
   param_setup( 	eParam_delay0,		0x4000 );
+
   delayFadeN_set_loop_sec(&(lines[0]), 10, 0);
   delayFadeN_set_run_write(&(lines[0]), 1);
   delayFadeN_set_run_read(&(lines[0]), 1);
-  delayFadeN_set_write(&(lines[0]), FR32_MAX);
-  delayFadeN_set_pre(&(lines[0]), FR32_MAX);
+  delayFadeN_set_write(&(lines[0]), 1);
+  delayFadeN_set_pre(&(lines[0]), -1);
+  delayFadeN_set_mul(&(lines[0]), 1,  0);
+  delayFadeN_set_div(&(lines[0]), 1,  0);
+  delayFadeN_set_pos_write_sec(&(lines[0]), 0,  0);
+  delayFadeN_set_pos_read_sec(&(lines[0]), 0,  0);
 }
 
 // de-init
@@ -226,7 +232,7 @@ void module_process_frame(void) {
   fract32 delayOutput = 0, delayInput = 0;
 
   //mix adcs to delay inputs
-  delayInput = in[0]*effect[0] + in[1]*effect[1] + in[2]*effect[2] + in[3]*effect[3] ;
+  delayInput = mult_fr1x32x32(in[3],effect[3]) + mult_fr1x32x32(in[2],effect[2]) + mult_fr1x32x32(in[1],effect[1]) + mult_fr1x32x32(in[0],effect[0]) ;
 
   delayOutput = delayFadeN_next( &(lines[0]), delayInput);
   mix_panned_mono(delayOutput, &(out[1]), &(out[0]),PAN_DEFAULT ,FADER_DEFAULT );
@@ -302,6 +308,9 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_fader0 :
     faderTarget[0] = v;
     break;
+  case eParam_effect0 :
+    effectTarget[0] = v;
+    break;
   case eParam_auxL1 :
     auxLTarget[1] = v;
     break;
@@ -313,6 +322,9 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_fader1 :
     faderTarget[1] = v;
+    break;
+  case eParam_effect1 :
+    effectTarget[1] = v;
     break;
   case eParam_auxL2 :
     auxLTarget[2] = v;
@@ -326,6 +338,9 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_fader2 :
     faderTarget[2] = v;
     break;
+  case eParam_effect2 :
+    effectTarget[2] = v;
+    break;
   case eParam_auxL3 :
     auxLTarget[3] = v;
     break;
@@ -338,8 +353,11 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_fader3 :
     faderTarget[3] = v;
     break;
+  case eParam_effect3 :
+    effectTarget[3] = v;
+    break;
   case eParam_delay0 :
-    delayFadeN_set_delay_samp(&(lines[0]), v, 0);
+    delayFadeN_set_delay_sec(&(lines[0]), v, 0);
     break;
   default:
     break;
