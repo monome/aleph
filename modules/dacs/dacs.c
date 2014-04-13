@@ -193,6 +193,7 @@ void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamV
 
 void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
+u16 tickle = 0;
 void module_process_frame(void) {
 
   //Update one of the CV outputs
@@ -220,8 +221,10 @@ void module_process_frame(void) {
       pan[i] = panTarget[i]/100*1+pan[i]/100*99;
       fader[i] = faderTarget[i]/100*1+fader[i]/100*99;
       effect[i] = effectTarget[i]/100*1+effect[i]/100*99;
+  }
+  if(tickle++%10 == 0){
       ParamValue delaySlew , roundDelayTime;
-      delaySlew = 60000;
+      delaySlew = 10000;
       roundDelayTime = 0;
       if(delayTimeTarget > delayTime) {
 
@@ -232,7 +235,6 @@ void module_process_frame(void) {
       }
       delayTime = (delayTimeTarget*1 + delayTime*(delaySlew-1) +roundDelayTime)/delaySlew ;
   }
-
   mix_panned_mono(in[0], &(out[1]), &(out[0]), pan[0], fader[0]);
   mix_panned_mono(in[1], &(out[1]), &(out[0]), pan[1], fader[1]);
   mix_panned_mono(in[2], &(out[1]), &(out[0]), pan[2], fader[2]);
