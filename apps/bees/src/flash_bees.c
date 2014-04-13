@@ -148,5 +148,3 @@ void flash_init_scaler_data(void) {
 void flash_bees_init(void) {
   scalerBuf = (s32*)alloc_mem(scalerMaxValues * 4);
 }
-
-// write scaler data 
