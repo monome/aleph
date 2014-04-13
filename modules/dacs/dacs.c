@@ -259,16 +259,16 @@ void module_process_frame(void) {
   //mix adcs to delay inputs
   delayInput = mult_fr1x32x32(in[3],effect[3]) + mult_fr1x32x32(in[2],effect[2]) + mult_fr1x32x32(in[1],effect[1]) + mult_fr1x32x32(in[0],effect[0]) ;
 
-  delayInput += mult_fr1x32x32(delayOutput,feedback);
+  delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
   delayOutput = delayFadeN_next( &(lines[0]), delayInput);
   mix_panned_mono(delayOutput, &(out[1]), &(out[0]),PAN_DEFAULT ,FADER_DEFAULT );
 }
 
 void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue left_value, ParamValue right_value) {
 
-    *out_right += mult_fr1x32x32(in_mono, right_value);
+    *out_right = add_fr1x32(*out_right,mult_fr1x32x32(in_mono, right_value));
 
-    *out_left += mult_fr1x32x32(in_mono, left_value);
+    *out_left = add_fr1x32(*out_left,mult_fr1x32x32(in_mono, left_value));
 
 }
 
@@ -281,11 +281,11 @@ void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, Par
 
     pan_factor = (fract32) ( pan );
     post_fader = mult_fr1x32x32(pan_factor, fader);
-    *out_left += mult_fr1x32x32(in_mono, post_fader);
+    *out_left = add_fr1x32(*out_left, mult_fr1x32x32(in_mono, post_fader));
 
     pan_factor = (fract32) ( PAN_MAX - pan );
     post_fader = mult_fr1x32x32(pan_factor, fader);
-    *out_right += mult_fr1x32x32(in_mono, post_fader);
+    *out_right = add_fr1x32(*out_right, mult_fr1x32x32(in_mono, post_fader));
 
 }
 
