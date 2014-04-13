@@ -208,6 +208,11 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_delay0].radix = DELAY_RADIX;
 
 
+  strcpy(desc[eParam_feedback0].label, "feedback0");
+  desc[eParam_feedback0].type = EFFECT_TYPE;
+  desc[eParam_feedback0].min = EFFECT_MIN;
+  desc[eParam_feedback0].max = EFFECT_MAX;
+  desc[eParam_feedback0].radix = EFFECT_RADIX;
 
 }
 

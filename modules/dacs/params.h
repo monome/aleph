@@ -58,6 +58,7 @@ enum params {
   eParam_effect3,
 
   eParam_delay0,
+  eParam_feedback0,
 
   eParamNumParams
 };

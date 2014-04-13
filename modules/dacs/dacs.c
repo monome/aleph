@@ -68,6 +68,9 @@ ParamValue effectTarget[4];
 ParamValue delayTime=0;
 ParamValue delayTimeTarget=0;
 
+ParamValue feedback=0;
+ParamValue feedbackTarget=0;
+
 // data structure of external memory
 typedef struct _dacsData {
   ModuleData super;
@@ -153,6 +156,7 @@ void module_init(void) {
 
   delayFadeN_init(&(lines[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
   param_setup( 	eParam_delay0,		0x4000 );
+  param_setup( 	eParam_feedback0,		FADER_DEFAULT );
 
   delayFadeN_set_loop_sec(&(lines[0]), 30000, 0);
   delayFadeN_set_loop_sec(&(lines[0]), 30000, 1);
@@ -194,6 +198,7 @@ void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamV
 void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
 u16 tickle = 0;
+fract32 delayOutput = 0, delayInput = 0;
 void module_process_frame(void) {
 
   //Update one of the CV outputs
@@ -222,7 +227,8 @@ void module_process_frame(void) {
       fader[i] = faderTarget[i]/100*1+fader[i]/100*99;
       effect[i] = effectTarget[i]/100*1+effect[i]/100*99;
   }
-  if(tickle++%10 == 0){
+  feedback = feedbackTarget/100*1+feedback/100*99;
+  if(tickle++%100 == 0){
       ParamValue delaySlew , roundDelayTime;
       delaySlew = 10000;
       roundDelayTime = 0;
@@ -249,11 +255,11 @@ void module_process_frame(void) {
 
   delayFadeN_set_delay_samp(&(lines[0]), delayTime, 0);
   //define delay input & output
-  fract32 delayOutput = 0, delayInput = 0;
 
   //mix adcs to delay inputs
   delayInput = mult_fr1x32x32(in[3],effect[3]) + mult_fr1x32x32(in[2],effect[2]) + mult_fr1x32x32(in[1],effect[1]) + mult_fr1x32x32(in[0],effect[0]) ;
 
+  delayInput += mult_fr1x32x32(delayOutput,feedback);
   delayOutput = delayFadeN_next( &(lines[0]), delayInput);
   mix_panned_mono(delayOutput, &(out[1]), &(out[0]),PAN_DEFAULT ,FADER_DEFAULT );
 }
@@ -375,6 +381,9 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_effect3 :
     effectTarget[3] = v;
+    break;
+  case eParam_feedback0 :
+    feedbackTarget = v;
     break;
   case eParam_delay0 :
     delayTimeTarget = v;
