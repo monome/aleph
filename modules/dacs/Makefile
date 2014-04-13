@@ -54,12 +54,13 @@ clean: bfin_lib_clean
 	rm $(module_obj)
 	rm aleph-$(module_name).ldr 
 	rm aleph-$(module_name)
+	rm aleph-dacs.dsc
+	rm dacs_desc_build
 
 deploy: aleph-$(module_name).ldr
 	make desc
 	./$(module_name)_desc_build
 	cp aleph-$(module_name).ldr aleph-$(module_name)-$(maj).$(min).$(rev).ldr
-	cp aleph-$(module_name).dsc aleph-$(module_name)-$(maj).$(min).$(rev).dsc
 
 .PHONY: clean
 	deploy

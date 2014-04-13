@@ -25,6 +25,7 @@
 // audio
 #include "filter_1p.h"
 #include "module.h"
+#include "delayFadeN.h"
 
 /// custom
 #include "params.h"
@@ -37,14 +38,45 @@
 //#define LINES_BUF_FRAMES 0x600000
 //#define LINES_BUF_FRAMES 0x1000000
 //#define LINES_BUF_FRAMES 0xbb8000 // 256 seconds @ 48k
-#define NLINES 2
+#define NLINES 1
+#define PARAM_SECONDS_MAX 0x003c0000
+
+delayFadeN lines[NLINES];
+
+ParamValue auxL[4];
+ParamValue auxR[4];
+ParamValue auxLTarget[4];
+ParamValue auxRTarget[4];
+#define AUX_DEFAULT PARAM_AMP_0
+
+ParamValue pan[4];
+ParamValue panTarget[4];
+#define PAN_MAX 2147483647
+#define PAN_DEFAULT PAN_MAX/2
+
+ParamValue fader[4];
+ParamValue faderTarget[4];
+#define FADER_DEFAULT PARAM_AMP_0
+
+ParamValue effect[4];
+ParamValue effectTarget[4];
+#define EFFECT_DEFAULT PARAM_AMP_0
+//ParamValue eq_hi[4];
+//ParamValue eq_mid[4];
+//ParamValue eq_lo[4];
+
+ParamValue delayTime=0;
+ParamValue delayTimeTarget=0;
+
+ParamValue feedback=0;
+ParamValue feedbackTarget=0;
 
 // data structure of external memory
 typedef struct _dacsData {
   ModuleData super;
   //ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
-//  volatile fract32 audioBuffer[NLINES][LINES_BUF_FRAMES];
+  volatile fract32 audioBuffer[1][LINES_BUF_FRAMES];
 } dacsData;
 
 //-------------------------
@@ -64,28 +96,82 @@ static u8 dacChan = 0;
 //----------------------
 //----- external functions
 
+static inline void param_setup(u32 id, ParamValue v) ;
+static inline void param_setup(u32 id, ParamValue v) {
+  gModuleData->paramData[id].value = v;
+  module_set_param(id, v);
+}
 void module_init(void) {
+
+
   // init module/param descriptor
   pDacsData = (dacsData*)SDRAM_ADDRESS;
 
   gModuleData = &(pDacsData->super);
   strcpy(gModuleData->name, "aleph-dacs");
 
-  //gModuleData->paramDesc = (ParamDesc*)pDacsData->mParamDesc;
   gModuleData->paramData = (ParamData*)pDacsData->mParamData;
   gModuleData->numParams = eParamNumParams;
+
 
   filter_1p_lo_init( &(dacSlew[0]), 0 );
   filter_1p_lo_init( &(dacSlew[1]), 0 );
   filter_1p_lo_init( &(dacSlew[2]), 0 );
   filter_1p_lo_init( &(dacSlew[3]), 0 );
 
-  //fill_param_desc();
+  param_setup(  eParam_slew0, PARAM_SLEW_DEFAULT );
+  param_setup(  eParam_slew1, PARAM_SLEW_DEFAULT );
+  param_setup(  eParam_slew2, PARAM_SLEW_DEFAULT );
+  param_setup(  eParam_slew3, PARAM_SLEW_DEFAULT );
+
+  param_setup(  eParam_dac0, PARAM_CV_VAL_DEFAULT );
+  param_setup(  eParam_dac1, PARAM_CV_VAL_DEFAULT );
+  param_setup(  eParam_dac2, PARAM_CV_VAL_DEFAULT );
+  param_setup(  eParam_dac3, PARAM_CV_VAL_DEFAULT );
+
+  param_setup( 	eParam_auxL0,		AUX_DEFAULT );
+  param_setup( 	eParam_auxR0,		AUX_DEFAULT );
+  param_setup( 	eParam_pan0,		PAN_DEFAULT );
+  param_setup( 	eParam_fader0,		FADER_DEFAULT );
+  param_setup( 	eParam_effect0,		EFFECT_DEFAULT );
+
+  param_setup( 	eParam_auxL1,		AUX_DEFAULT );
+  param_setup( 	eParam_auxR1,		AUX_DEFAULT );
+  param_setup( 	eParam_pan1,		PAN_DEFAULT );
+  param_setup( 	eParam_fader1,		FADER_DEFAULT );
+  param_setup( 	eParam_effect1,		EFFECT_DEFAULT );
+
+  param_setup( 	eParam_auxL2,		AUX_DEFAULT );
+  param_setup( 	eParam_auxR2,		AUX_DEFAULT );
+  param_setup( 	eParam_pan2,		PAN_DEFAULT );
+  param_setup( 	eParam_fader2,		FADER_DEFAULT );
+  param_setup( 	eParam_effect2,		EFFECT_DEFAULT );
+
+  param_setup( 	eParam_auxL3,		AUX_DEFAULT );
+  param_setup( 	eParam_auxR3,		AUX_DEFAULT );
+  param_setup( 	eParam_pan3,		PAN_DEFAULT );
+  param_setup( 	eParam_fader3,		FADER_DEFAULT );
+  param_setup( 	eParam_effect3,		EFFECT_DEFAULT );
+
+
+  delayFadeN_init(&(lines[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
+  param_setup( 	eParam_delay0,		0x4000 );
+  param_setup( 	eParam_feedback0,		FADER_DEFAULT );
+
+  delayFadeN_set_loop_sec(&(lines[0]), 30000, 0);
+  delayFadeN_set_loop_sec(&(lines[0]), 30000, 1);
+  delayFadeN_set_run_write(&(lines[0]), 1);
+  delayFadeN_set_run_read(&(lines[0]), 1);
+  delayFadeN_set_write(&(lines[0]), 1);
+  delayFadeN_set_pre(&(lines[0]), 0);
+  delayFadeN_set_mul(&(lines[0]), 1,  0);
+  delayFadeN_set_div(&(lines[0]), 1,  0);
+  delayFadeN_set_pos_write_sec(&(lines[0]), 0,  0);
+  delayFadeN_set_pos_read_sec(&(lines[0]), 0,  0);
 }
 
 // de-init
 void module_deinit(void) {
-  ;;
 }
 
 // get number of parameters
@@ -105,38 +191,104 @@ u32 module_get_num_params(void) {
    - dac_update writes to 4x16 volatile buffer
 */
 //static u8 dacChan = 0;
-/// 
+///
 
-void module_process_frame(void) { 
-  //  u8 i;
-  
-  //  for(i=0; i<4; ++i) {
-    //    if(dacSlew[i].sync) { continue; }
-    //    dacVal[i] = filter_1p_lo_next(&(dacSlew[i]));
-    //    dac_update(i, dacVal[i] & DAC_VALUE_MASK);
+void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
-    /* if(dacDirty[dacChan]) { */
-    /*   dac_update(dacChan, dacVal[dacChan]); */
-    /*   dacDirty[dacChan] = 0; */
-    /* } */
+void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
-  
+u16 tickle = 0;
+fract32 delayOutput = 0, delayInput = 0;
+void module_process_frame(void) {
+
+  //Update one of the CV outputs
   if(dacSlew[dacChan].sync) { ;; } else {
     dacVal[dacChan] = filter_1p_lo_next(&(dacSlew[dacChan]));
     dac_update(dacChan, shr_fr1x32(dacVal[dacChan], 15) & DAC_VALUE_MASK);
   }
- 
+
+  //Queue up the next CV output for processing next audio frame
   if(++dacChan == 4) {
     dacChan = 0;
   }
-  
-  out[0] = in[0];
-  out[1] = in[1];
-  out[2] = in[2];
-  out[3] = in[3];
-  
-    //  } 
+
+  //Zero the audio dacs, before mixing
+  out[0] = 0;
+  out[1] = 0;
+  out[2] = 0;
+  out[3] = 0;
+
+  u8 i;
+  //hacky slew!!!
+  for (i=0;i<4;i++) {
+      auxL[i] = auxLTarget[i]/100*1+auxL[i]/100*99;
+      auxR[i] = auxRTarget[i]/100*1+auxR[i]/100*99;
+      pan[i] = panTarget[i]/100*1+pan[i]/100*99;
+      fader[i] = faderTarget[i]/100*1+fader[i]/100*99;
+      effect[i] = effectTarget[i]/100*1+effect[i]/100*99;
+  }
+  feedback = feedbackTarget/100*1+feedback/100*99;
+  if(tickle++%100 == 0){
+      ParamValue delaySlew , roundDelayTime;
+      delaySlew = 10000;
+      roundDelayTime = 0;
+      if(delayTimeTarget > delayTime) {
+
+            roundDelayTime = delaySlew;
+      }
+      else if (delayTime > delayTimeTarget) {
+          roundDelayTime = -delaySlew;
+      }
+      delayTime = (delayTimeTarget*1 + delayTime*(delaySlew-1) +roundDelayTime)/delaySlew ;
+  }
+  mix_panned_mono(in[0], &(out[1]), &(out[0]), pan[0], fader[0]);
+  mix_panned_mono(in[1], &(out[1]), &(out[0]), pan[1], fader[1]);
+  mix_panned_mono(in[2], &(out[1]), &(out[0]), pan[2], fader[2]);
+  mix_panned_mono(in[3], &(out[1]), &(out[0]), pan[3], fader[3]);
+
+  mix_aux_mono(in[0], &(out[2]), &(out[3]), auxL[0], auxR[0]);
+  mix_aux_mono(in[1], &(out[2]), &(out[3]), auxL[1], auxR[1]);
+  mix_aux_mono(in[2], &(out[2]), &(out[3]), auxL[2], auxR[2]);
+  mix_aux_mono(in[3], &(out[2]), &(out[3]), auxL[3], auxR[3]);
+
+  //update delay time
+
+  delayFadeN_set_delay_samp(&(lines[0]), delayTime, 0);
+  //define delay input & output
+
+  //mix adcs to delay inputs
+  delayInput = mult_fr1x32x32(in[3],effect[3]) + mult_fr1x32x32(in[2],effect[2]) + mult_fr1x32x32(in[1],effect[1]) + mult_fr1x32x32(in[0],effect[0]) ;
+
+  delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
+  delayOutput = delayFadeN_next( &(lines[0]), delayInput);
+  mix_panned_mono(delayOutput, &(out[1]), &(out[0]),PAN_DEFAULT ,FADER_DEFAULT );
 }
+
+void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue left_value, ParamValue right_value) {
+
+    *out_right = add_fr1x32(*out_right,mult_fr1x32x32(in_mono, right_value));
+
+    *out_left = add_fr1x32(*out_left,mult_fr1x32x32(in_mono, left_value));
+
+}
+
+
+void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) {
+    fract32 pan_factor, post_fader;
+
+    //pan_factor = (fract32)pan;
+    //*out_left += mult_fr1x32x32(in_mono,pan_factor); //debug
+
+    pan_factor = (fract32) ( pan );
+    post_fader = mult_fr1x32x32(pan_factor, fader);
+    *out_left = add_fr1x32(*out_left, mult_fr1x32x32(in_mono, post_fader));
+
+    pan_factor = (fract32) ( PAN_MAX - pan );
+    post_fader = mult_fr1x32x32(pan_factor, fader);
+    *out_right = add_fr1x32(*out_right, mult_fr1x32x32(in_mono, post_fader));
+
+}
+
 
 // parameter set function
 void module_set_param(u32 idx, ParamValue v) {
@@ -148,7 +300,6 @@ void module_set_param(u32 idx, ParamValue v) {
    //     dac_update(0, v >> (PARAM_DAC_RADIX - 1));
     break;
   case eParam_dac1 :
-    filter_1p_lo_in(&(dacSlew[1]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
     //dac_update(1, v >> (PARAM_DAC_RADIX - 1));
     break;
   case eParam_dac2 :
@@ -170,6 +321,72 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_slew3 :
     filter_1p_lo_set_slew(&(dacSlew[3]), v);
+    break;
+  case eParam_auxL0 :
+    auxLTarget[0] = v;
+    break;
+  case eParam_auxR0 :
+    auxRTarget[0] = v;
+    break;
+  case eParam_pan0 :
+    panTarget[0] = v;
+    break;
+  case eParam_fader0 :
+    faderTarget[0] = v;
+    break;
+  case eParam_effect0 :
+    effectTarget[0] = v;
+    break;
+  case eParam_auxL1 :
+    auxLTarget[1] = v;
+    break;
+  case eParam_auxR1 :
+    auxRTarget[1] = v;
+    break;
+  case eParam_pan1 :
+    panTarget[1] = v;
+    break;
+  case eParam_fader1 :
+    faderTarget[1] = v;
+    break;
+  case eParam_effect1 :
+    effectTarget[1] = v;
+    break;
+  case eParam_auxL2 :
+    auxLTarget[2] = v;
+    break;
+  case eParam_auxR2 :
+    auxRTarget[2] = v;
+    break;
+  case eParam_pan2 :
+    panTarget[2] = v;
+    break;
+  case eParam_fader2 :
+    faderTarget[2] = v;
+    break;
+  case eParam_effect2 :
+    effectTarget[2] = v;
+    break;
+  case eParam_auxL3 :
+    auxLTarget[3] = v;
+    break;
+  case eParam_auxR3 :
+    auxRTarget[3] = v;
+    break;
+  case eParam_pan3 :
+    panTarget[3] = v;
+    break;
+  case eParam_fader3 :
+    faderTarget[3] = v;
+    break;
+  case eParam_effect3 :
+    effectTarget[3] = v;
+    break;
+  case eParam_feedback0 :
+    feedbackTarget = v;
+    break;
+  case eParam_delay0 :
+    delayTimeTarget = v;
     break;
   default:
     break;
