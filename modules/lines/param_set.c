@@ -34,7 +34,7 @@ void module_set_param(u32 idx, ParamValue v) {
   switch(idx) {
     // delay line params
   case eParam_delay0 :
-    if( check_fade_rd(0) ) { 
+    if( check_fade_rd(0) ) {
       delayFadeN_set_delay_sec(&(lines[0]), v,  fadeTargetRd[0]);
     }
     break;

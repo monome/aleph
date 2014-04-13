@@ -10,10 +10,22 @@
 #define EFFECT_MAX FR32_MAX
 #define EFFECT_RADIX 1
 
+/*
+//In bees this looks like 0-62 (with decimal places)
+//In module this comes out as 0x00000000 - 0x00007FFF
+#define DELAY_TYPE eParamTypeIntegrator
+#define DELAY_MIN 0x00000000
+#define DELAY_MAX 0x7FFFFFFF
+#define DELAY_RADIX 1
+*/
+
+#define PARAM_SECONDS_MAX 0x003c0000
+#define PARAM_SECONDS_RADIX 7
+
 #define DELAY_TYPE eParamTypeFix
 #define DELAY_MIN 0x00000000
 #define DELAY_MAX 0x7FFFFFFF
-#define DELAY_RADIX 16
+#define DELAY_RADIX 0
 
 #define PAN_TYPE eParamTypeFix
 #define PAN_MIN 0x00000000

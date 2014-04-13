@@ -65,6 +65,9 @@ ParamValue effectTarget[4];
 //ParamValue eq_mid[4];
 //ParamValue eq_lo[4];
 
+ParamValue delayTime=0;
+ParamValue delayTimeTarget=0;
+
 // data structure of external memory
 typedef struct _dacsData {
   ModuleData super;
@@ -151,11 +154,12 @@ void module_init(void) {
   delayFadeN_init(&(lines[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
   param_setup( 	eParam_delay0,		0x4000 );
 
-  delayFadeN_set_loop_sec(&(lines[0]), 10, 0);
+  delayFadeN_set_loop_sec(&(lines[0]), 30000, 0);
+  delayFadeN_set_loop_sec(&(lines[0]), 30000, 1);
   delayFadeN_set_run_write(&(lines[0]), 1);
   delayFadeN_set_run_read(&(lines[0]), 1);
   delayFadeN_set_write(&(lines[0]), 1);
-  delayFadeN_set_pre(&(lines[0]), -1);
+  delayFadeN_set_pre(&(lines[0]), 0);
   delayFadeN_set_mul(&(lines[0]), 1,  0);
   delayFadeN_set_div(&(lines[0]), 1,  0);
   delayFadeN_set_pos_write_sec(&(lines[0]), 0,  0);
@@ -216,6 +220,17 @@ void module_process_frame(void) {
       pan[i] = panTarget[i]/100*1+pan[i]/100*99;
       fader[i] = faderTarget[i]/100*1+fader[i]/100*99;
       effect[i] = effectTarget[i]/100*1+effect[i]/100*99;
+      ParamValue delaySlew , roundDelayTime;
+      delaySlew = 60000;
+      roundDelayTime = 0;
+      if(delayTimeTarget > delayTime) {
+
+            roundDelayTime = delaySlew;
+      }
+      else if (delayTime > delayTimeTarget) {
+          roundDelayTime = -delaySlew;
+      }
+      delayTime = (delayTimeTarget*1 + delayTime*(delaySlew-1) +roundDelayTime)/delaySlew ;
   }
 
   mix_panned_mono(in[0], &(out[1]), &(out[0]), pan[0], fader[0]);
@@ -228,6 +243,9 @@ void module_process_frame(void) {
   mix_aux_mono(in[2], &(out[2]), &(out[3]), auxL[2], auxR[2]);
   mix_aux_mono(in[3], &(out[2]), &(out[3]), auxL[3], auxR[3]);
 
+  //update delay time
+
+  delayFadeN_set_delay_samp(&(lines[0]), delayTime, 0);
   //define delay input & output
   fract32 delayOutput = 0, delayInput = 0;
 
@@ -357,7 +375,7 @@ void module_set_param(u32 idx, ParamValue v) {
     effectTarget[3] = v;
     break;
   case eParam_delay0 :
-    delayFadeN_set_delay_sec(&(lines[0]), v, 0);
+    delayTimeTarget = v;
     break;
   default:
     break;
