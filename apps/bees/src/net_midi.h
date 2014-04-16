@@ -37,7 +37,7 @@ typedef struct _op_midi {
 //extern void net_midi_list_add(op_midi_t* op);
 extern void net_midi_list_push(op_midi_t* op);
 // delete op pointer at current position, return next pointer in list
-extern op_midi_t* net_midi_list_remove(op_midi_t* op);
+extern void net_midi_list_remove(op_midi_t* op);
 // handle incoming midi packet
 extern void net_handle_midi_packet(u32 data);
 

@@ -58,9 +58,23 @@ void net_hid_list_push(op_hid_t* op) {
 
 
 // remove an operator
-op_hid_t* net_hid_list_remove(op_hid_t* op) {
-  ///... todo, i guess
-  return hl.top;
+void net_hid_list_remove(op_hid_t* op) {
+    // FIXME: should sanity-check that op is actually in the list
+  if(hl.num == 1) {
+    hl.top = NULL;
+    hl.num = 0;
+  } else {
+    if(op->prev == NULL || op->next == NULL) {
+      print_dbg("\r\n error unlinking hid operator");
+      return;
+    }
+    op->prev->next = op->next;
+    op->next->prev = op->prev;
+    op->next = NULL;
+    op->prev = NULL;
+    hl.num -= 1;
+  }
+
 }
 
 // handle incoming hid packet
