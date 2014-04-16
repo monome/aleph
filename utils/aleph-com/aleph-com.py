@@ -4,6 +4,8 @@ import serial
 import sys
 
 path = sys.argv[1]
+# baud = 115200
+baud = 57600
 print path
 #'/dev/tty.usbmodemfd111'
 # path = '/dev/ttyACM0'
@@ -76,7 +78,7 @@ st.start()
 c.connect(('0.0.0.0', 12010))
 
 try :
-  ser = serial.Serial(path,115200)
+  ser = serial.Serial(path,baud)
   print "\nconnected to %s" % (path) 
 
   while 1:

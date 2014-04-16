@@ -198,6 +198,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "STEP",
     .size = sizeof(op_step_t),
     .init = &op_step_init,
+    .deinit = &op_step_deinit   
+  }, {
+    .name = "ROUTE8",
+    .size = sizeof(op_route8_t),
+    .init = &op_route8_init,
     .deinit = NULL    
   }
 

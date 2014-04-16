@@ -70,6 +70,7 @@ typedef enum {
   eOpMidiOutNote,
   eOpList16,
   eOpStep,
+  eOpRoute8,
   //  eOpMidiBend,
   //  eOpMidiTouch,
   numOpClasses // dummy/count 

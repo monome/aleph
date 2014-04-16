@@ -38,6 +38,7 @@
 #include "ops/op_sub.h"
 #include "ops/op_random.h"
 #include "ops/op_route.h"
+#include "ops/op_route8.h"
 #include "ops/op_screen.h"
 #include "ops/op_step.h"
 #include "ops/op_sw.h"

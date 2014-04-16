@@ -1,4 +1,4 @@
-/* conf_aleph.h
+n/* conf_aleph.h
    aleph-avr32
 
    device-specific hardware defines for aleph-avr32

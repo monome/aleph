@@ -89,7 +89,8 @@ void serial_store() {
   while(usart_read_char(AVR8_USART,&c) == USART_SUCCESS) {
 
       // TEST LIB LOOPBACK
-      usart_putchar(DBG_USART,c);
+      // usart_putchar(DBG_USART,c);
+      // print_dbg_char(c);
 
       serial_buffer[serial_write_pos] = c;
       serial_write_pos++;

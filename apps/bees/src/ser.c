@@ -62,7 +62,7 @@ void serial_process(s32 data) {
   while(serial_read_pos != c) {
     //////////////////
     //// TEST: loopback
-    // print_dbg_char(serial_buffer[serial_read_pos]);
+    print_dbg_char(serial_buffer[serial_read_pos]);
     serial_read_pos++;
     if(serial_read_pos == SERIAL_BUFFER_SIZE) serial_read_pos = 0;
   }
