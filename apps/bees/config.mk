@@ -69,6 +69,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_tog.c \
 	$(APP_DIR)/src/ops/op_random.c \
 	$(APP_DIR)/src/ops/op_route.c \
+	$(APP_DIR)/src/ops/op_route8.c \
 	$(APP_DIR)/src/ops/op_mod.c \
 	$(APP_DIR)/src/ops/op_step.c \
 	$(APP_DIR)/src/pages/page_dsp.c \

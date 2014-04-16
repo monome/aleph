@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define SERIAL_BUFFER_SIZE		1024
+#define SERIAL_BUFFER_SIZE		64
 
 // typedef void(*process_serial_t)(u16);
 
