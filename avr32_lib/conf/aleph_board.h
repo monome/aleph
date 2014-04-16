@@ -1,4 +1,4 @@
-n/* conf_aleph.h
+/* conf_aleph.h
    aleph-avr32
 
    device-specific hardware defines for aleph-avr32
@@ -62,7 +62,6 @@ n/* conf_aleph.h
 #define AVR8_USART_TX_PIN        AVR32_USART0_TXD_0_0_PIN
 #define AVR8_USART_TX_FUNCTION   AVR32_USART0_TXD_0_0_FUNCTION
 // #define AVR8_USART_BAUDRATE      230400
-// #define AVR8_USART_BAUDRATE      115200
 #define AVR8_USART_BAUDRATE      57600
 // #define AVR8_USART_BAUDRATE      500000
 

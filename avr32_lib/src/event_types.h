@@ -47,7 +47,7 @@ typedef enum {
   /// HID class
   kEventHidConnect,
   kEventHidDisconnect,
-  kEventHidByte,
+  kEventHidPacket,
 
   /// incoming serial from computer (usb)
   kEventSerial,

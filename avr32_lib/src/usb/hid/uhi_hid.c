@@ -55,16 +55,6 @@
 #include "hid.h"
 #include "uhi_hid.h"
 
-#ifdef USB_HOST_HUB_SUPPORT
-# error USB HUB support is not implemented on UHI gamepad
-#endif
-
-// events
-/* #define UHI_HID_BTN        0 */
-/* #define UHI_HID_MOV_X      1 */
-/* #define UHI_HID_MOV_Y      2 */
-/* #define UHI_HID_MOV_SCROLL 3 */
-
 // device data structure
 typedef struct {
   uhc_device_t *dev;
@@ -181,9 +171,7 @@ void uhi_hid_enable(uhc_device_t* dev) {
   if (uhi_hid_dev.dev != dev) {
     return;  // No interface to enable
   }
-
-  // Init value
-  //uhi_hid_dev.report_btn_prev = 0;
+  // kick off the sequence of waiting for interrupts on IN endpoint
   uhi_hid_start_trans_report(dev->address);
   UHI_HID_CHANGE(dev, true);
 }
@@ -227,11 +215,11 @@ static void uhi_hid_report_reception(
   UNUSED(ep);
 
   if ((status != UHD_TRANS_NOERROR) || (nb_transfered < 4)) {
-    return; // HID gamepad transfer aborted
+    return; // HID transfer aborted
   }
 
   /*
-  print_dbg("\r\n gamepad_report: ");
+  print_dbg("\r\n hid_report_reception: ");
   for (i=0; i<uhi_hid_dev.report_size; i++) {
     print_dbg(" ");
     print_dbg_hex((unsigned long int) uhi_hid_dev.report[i]);

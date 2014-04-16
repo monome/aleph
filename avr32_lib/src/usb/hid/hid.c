@@ -24,7 +24,7 @@ void hid_parse_frame(u8* data, u8 size) {
   for(i=0; i<size; i++) {
     if(data[i] != frame[i]) {
       frame[i] = data[i];
-      ev.type = kEventHidByte;
+      ev.type = kEventHidPacket;
       ev.data = frame[i];
       ev.data |= (i << 8);
       event_post(&ev);
@@ -32,7 +32,7 @@ void hid_parse_frame(u8* data, u8 size) {
   }
 }
 
-// get the frame data and size
+// get the frame data 
 const u8* hid_get_frame(void) {
   return (const u8*)frame;
 }

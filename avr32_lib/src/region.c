@@ -203,7 +203,7 @@ extern void scroll_draw(scroll* scr) {
 // draw region to screen
 extern void region_draw(region* r) {
   if(r->dirty) {
-1    screen_draw_region(r->x, r->y, r->w, r->h, r->data);
+    screen_draw_region(r->x, r->y, r->w, r->h, r->data);
     r->dirty = 0;
   }
 }
