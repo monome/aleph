@@ -26,7 +26,7 @@ static void hid_set_byte_flag(u32* data, u8 byte, u8 val) {
 }
 
 // test dirty flag for given byte in packet
-u8 hid_get_byte_flag(s32 data, u8 byte) {
+u8 hid_get_byte_flag(u32 data, u8 byte) {
   return (data & (1 << byte)) > 0;
 }
 
@@ -36,7 +36,7 @@ void hid_parse_frame(u8* data, u8 size) {
   // one event per frame changed.
   // event data is bitfield indicating bytes changed.
   for(i=0; i<size; i++) {
-    hid_set_byte_flag( &(ev.data), i, data[i] != frame[i] );
+    hid_set_byte_flag( (u32*)&(ev.data), i, data[i] != frame[i] );
   }
   event_post(&ev);
 

@@ -9,7 +9,7 @@
 // application handler can look up the relevant bytes in the frame data directly.
 
 // test dirty flag for given byte in packet
-extern u8 hid_get_byte_flag(u32 data);
+extern u8 hid_get_byte_flag(u32 data, u8 byte);
 
 // parse frame and spawn events
 extern void hid_parse_frame(u8* data, u8 size);

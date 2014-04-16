@@ -36,7 +36,7 @@ typedef struct _op_hid {
 //extern void net_hid_list_add(op_hid_t* op);
 extern void net_hid_list_push(op_hid_t* op);
 // delete op pointer at current position, return next pointer in list
-extern op_hid_t* net_hid_list_remove(op_hid_t* op);
+extern void net_hid_list_remove(op_hid_t* op);
 // handle incoming hid packet
 extern void net_handle_hid_packet(u32 data);
 
