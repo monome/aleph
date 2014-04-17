@@ -27,6 +27,11 @@
   //dl->tapWr.loop = frames;
   //dl->tapRd.loop = frames;
 
+  fix32 single_speed;
+  single_speed.i = 1;
+  single_speed.fr = 0;
+  delay_set_rate(&(dl->tapRd), single_speed);
+  delay_set_rate(&(dl->tapWr), single_speed);
   dl->preLevel = 0;
   dl->write = 1;
 }
@@ -40,7 +45,9 @@ fract32 delay_next(delayLine* dl, fract32 in) {
 
 
   buffer_tap_write(&(dl->tapWr), in);
-//For now the write head always writes
+//For now the write head always writes over any contents...
+
+//so this is commented
 /*
   // figure out what to write
   if(dl->preLevel == 0) {
@@ -82,7 +89,7 @@ fract32 delay_next(delayLine* dl, fract32 in) {
 }
 
 // set loop endpoint in samples
- void delay_set_loop_samp(delayLine* dl, u32 samps) {
+ void delay_set_loop_samp(delayLine* dl, s32 samps) {
   dl->tapRd.loop = samps;
   dl->tapWr.loop = samps;
 }
@@ -90,18 +97,27 @@ fract32 delay_next(delayLine* dl, fract32 in) {
 // set delay in seconds
  void delay_set_delay_sec(delayLine* dl, fix16 sec) {
   u32 samp = sec_to_frames_trunc(sec);
-  buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), samp);
+  fix32 time ;
+  time.i = samp;
+  time.fr = 0;
+  buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), time);
 }
 
- void delay_set_delay_24_8(delayLine* dl, u32 subsamples) {
+void delay_set_delay_24_8(delayLine* dl, s32 subsamples) {
   //this sets a fractional delay in samples/256
-  u32 samples = subsamples >> 4;
+  s32 samples = subsamples >> 4;
   subsamples = subsamples & 0x000000FF;
-  buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), samples);
+  fix32 time ;
+  time.i = samples;
+  time.fr = subsamples*0xFF;
+  buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), time);
 }
 // set delay in samples
- void delay_set_delay_samp(delayLine* dl, fix32 samp) {
-  buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), samp.i);
+ void delay_set_delay_samp(delayLine* dl, s32 samp) {
+  fix32 time;
+  time.i = samp;
+  time.fr = 0;
+  buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), time);
 }
 
 // set erase level
@@ -114,10 +130,10 @@ void delay_set_write(delayLine* dl, u8 write) {
   dl->write = write;
 }
 
-// set read head rate
-/*  void delay_set_rate(delayLine* dl, fix16 rate) { */
-/*   ///... */
-/* } */
+// set tap rate
+void delay_set_rate(bufferTap* tap, fix32 rate) {
+    tap->inc = rate;
+}
 
 // set read pos in seconds
  void delay_set_pos_read_sec(delayLine* dl, fix16 sec) {

@@ -114,7 +114,7 @@ extern void buffer_tap_set_loop(bufferTap* tap, u32 loop);
 
 // synchronize one tap with another at a given offset in seconds.
 // useful for delays
-extern void buffer_tap_sync(bufferTap* tap, bufferTap* target, u32 samples);
+extern void buffer_tap_sync(bufferTap* tap, bufferTap* target, fix32 samples);
  
 // set tap position directly
 extern void buffer_tap_set_pos(bufferTap* tap, fix16 secs);

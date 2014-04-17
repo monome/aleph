@@ -132,13 +132,13 @@ void buffer_tap_set_pos(bufferTap* tap, fix16 secs) {
 
 // synchronize one tap with another at a given offset in seconds.
 // useful for delays
-void buffer_tap_sync(bufferTap* tap, bufferTap* target, u32 samps) {
-  if(target->idx.i >= samps) {
+void buffer_tap_sync(bufferTap* tap, bufferTap* target, fix32 samps) {
+  if(target->idx.i >= samps.i) {
     // tap->idx = target->idx - samps;
-    buffer_tap_set_pos(tap, target->idx.i - samps );
+    buffer_tap_set_pos(tap, target->idx.i - samps.i );
   } else {
     //    tap->idx = (target->idx + tap->loop) - samps;
-    buffer_tap_set_pos(tap, (target->idx.i + tap->loop) - samps );
+    buffer_tap_set_pos(tap, (target->idx.i + tap->loop) - samps.i );
   }
 }
 
