@@ -56,10 +56,10 @@ extern void delay_set_write(delayLine* dl, u8 write);
 
 // set read pos in seconds / samples
 extern void delay_set_pos_read_sec(delayLine* dl, fix16 sec);
-extern void delay_set_pos_read_samp(delayLine* dl, u32 samp);
+//extern void delay_set_pos_read_samp(delayLine* dl, s32 samp);
 // set write pos in seconds / samples
-extern void delay_set_pos_write_sec(delayLine* dl, fix16 sec);
-extern void delay_set_pos_write_samp(delayLine* dl, u32 samp);
+//extern void delay_set_pos_write_sec(delayLine* dl, fix16 sec);
+extern void delay_set_pos_write_samp(delayLine* dl, s32 samp);
 
 // set read run flag
 extern void delay_set_run_read(delayLine* dl, u8 val);

@@ -147,7 +147,7 @@ void delay_set_rate(bufferTap* tap, fix32 rate) {
   buffer_tap_set_pos(&(dl->tapRd), samp);
 }
 */
- void delay_set_pos_read_samp(delayLine* dl, u32 samp) {
+ void delay_set_pos_read_samp(delayLine* dl, s32 samp) {
   fix32 samples;
   samples.i = samp;
   samples.fr = 0;
@@ -162,11 +162,14 @@ void delay_set_rate(bufferTap* tap, fix32 rate) {
 }
 */
 
- void delay_set_pos_write_samp(delayLine* dl, u32 samp) {
-  buffer_tapN_set_pos(&(dl->tapWr), samp);
+ void delay_set_pos_write_samp(delayLine* dl, s32 samp) {
+  fix32 samples;
+  samples.i = samp;
+  samples.fr = 0;
+  buffer_tap_set_pos(&(dl->tapWr), samples);
 }
 
-// set read run flag 
+// set read run flag
  void delay_set_run_read(delayLine* dl, u8 val) {
   dl->runRd = val;
 }
