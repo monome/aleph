@@ -105,8 +105,8 @@ fract32 delay_next(delayLine* dl, fract32 in) {
 
 void delay_set_delay_24_8(delayLine* dl, s32 subsamples) {
   //this sets a fractional delay in samples/256
-  s32 samples = subsamples >> 4;
-  subsamples = subsamples & 0x000000FF;
+  s32 samples = subsamples / 256;
+  subsamples = subsamples % 256 ;
   fix32 time ;
   time.i = samples;
   time.fr = subsamples*0xFF;
