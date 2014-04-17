@@ -17,8 +17,8 @@
 // initialize with pointer to audio buffer
  void delay_init(delayLine* dl, fract32* data, u32 frames) {
   buffer_init(&(dl->buffer), data, frames);
-  buffer_tapN_init(&(dl->tapRd), &(dl->buffer));
-  buffer_tapN_init(&(dl->tapWr), &(dl->buffer));
+  buffer_tap_init(&(dl->tapRd), &(dl->buffer));
+  buffer_tap_init(&(dl->tapWr), &(dl->buffer));
 
   dl->tapWr.idx = 0;
   dl->tapRd.idx = 0;
@@ -34,34 +34,34 @@
 
   // get read value first.
   // so, setting loop == delaytime gives sensible results (???)
-  readVal = buffer_tapN_read( &(dl->tapRd) );
+  readVal = buffer_tap_read( &(dl->tapRd) );
 
   // figure out what to write
   if(dl->preLevel == 0) {
     if(dl->write) {
       // write and replace
-      buffer_tapN_write(&(dl->tapWr), in);
+      buffer_tap_write(&(dl->tapWr), in);
     }
   } else if(dl->preLevel < 0) { // consider <0 to be == 1
     if(dl->write) {
       // overdub
-      buffer_tapN_add(&(dl->tapWr), in);
+      buffer_tap_add(&(dl->tapWr), in);
     }
   } else { // prelevel is non-zero, non-full
     if(dl->write) {
       // write mix
-      buffer_tapN_mix(&(dl->tapWr), in, dl->preLevel);
+      buffer_tap_mix(&(dl->tapWr), in, dl->preLevel);
     }
   }
 
   // advance the read phasor 
   if(dl->runRd) {
-    buffer_tapN_next( &(dl->tapRd) );
+    buffer_tap_next( &(dl->tapRd) );
   }
 
   // advance the write phasor
   if(dl->runWr) {
-    buffer_tapN_next( &(dl->tapWr) );
+    buffer_tap_next( &(dl->tapWr) );
   }
   
   return readVal;
@@ -70,8 +70,8 @@
 // set loop endpoint in seconds
  void delay_set_loop_sec(delayLine* dl, fix16 sec) {
   u32 samps = sec_to_frames_trunc(sec);
-  buffer_tapN_set_loop(&(dl->tapRd), samps - 1);
-  buffer_tapN_set_loop(&(dl->tapWr), samps - 1);
+  buffer_tap_set_loop(&(dl->tapRd), samps - 1);
+  buffer_tap_set_loop(&(dl->tapWr), samps - 1);
 }
 
 // set loop endpoint in samples
@@ -109,16 +109,16 @@ void delay_set_write(delayLine* dl, u8 write) {
 // set read pos in seconds
  void delay_set_pos_read_sec(delayLine* dl, fix16 sec) {
   u32 samp = sec_to_frames_trunc(sec);
-  buffer_tapN_set_pos(&(dl->tapRd), samp);
+  buffer_tap_set_pos(&(dl->tapRd), samp);
 }
  void delay_set_pos_read_samp(delayLine* dl, u32 samp) {
-  buffer_tapN_set_pos(&(dl->tapRd), samp);
+  buffer_tap_set_pos(&(dl->tapRd), samp);
 }
 
 // set write pos in seconds
  void delay_set_pos_write_sec(delayLine* dl, fix16 sec) {
   u32 samp = sec_to_frames_trunc(sec);
-  buffer_tapN_set_pos(&(dl->tapWr), samp);
+  buffer_tap_set_pos(&(dl->tapWr), samp);
 }
 
  void delay_set_pos_write_samp(delayLine* dl, u32 samp) {

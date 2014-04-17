@@ -110,11 +110,11 @@ extern void buffer_tap_set_rate(bufferTap *tap, fix16 rate);
 extern void buffer_tap_set_buf(bufferTap* tap, audioBuffer* buf);
 
 // set loop endpoint in seconds
-extern void buffer_tap_set_loop(bufferTap* tap, fix16 sec);
+extern void buffer_tap_set_loop(bufferTap* tap, u32 loop);
 
 // synchronize one tap with another at a given offset in seconds.
 // useful for delays
-extern void buffer_tap_sync(bufferTap* tap, bufferTap* target, fix16 offset);
+extern void buffer_tap_sync(bufferTap* tap, bufferTap* target, u32 samples);
  
 // set tap position directly
 extern void buffer_tap_set_pos(bufferTap* tap, fix16 secs);

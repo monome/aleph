@@ -40,6 +40,10 @@ void buffer_init(audioBuffer *buf, fract32 *data, u32 frames) {
   /* }   */
 }
 
+void buffer_tap_set_loop(bufferTap *tap, u32 loop) {
+  while(loop > (tap->buf->frames - 1)) {loop -= tap->buf->frames; }
+  tap->loop = loop;
+}
 // intialize index data with buffer
 void buffer_tap_init(bufferTap * tap, audioBuffer* buf) {
   tap->buf = buf;
@@ -128,12 +132,12 @@ void buffer_tap_set_pos(bufferTap* tap, fix16 secs) {
 // synchronize one tap with another at a given offset in seconds.
 // useful for delays
 void buffer_tap_sync(bufferTap* tap, bufferTap* target, u32 samps) {
-  if(target->idx >= samps) {
+  if(target->idx.i >= samps) {
     // tap->idx = target->idx - samps;
-    buffer_tapN_set_pos(tap, target->idx - samps );
+    buffer_tap_set_pos(tap, target->idx.i - samps );
   } else {
     //    tap->idx = (target->idx + tap->loop) - samps;
-    buffer_tapN_set_pos(tap, (target->idx + tap->loop) - samps );
+    buffer_tap_set_pos(tap, (target->idx.i + tap->loop) - samps );
   }
 }
 
