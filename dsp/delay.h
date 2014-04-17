@@ -17,12 +17,9 @@ FIXME: delay is noninterpolated for now! there is a separate delayN class but we
 typedef struct _delayLine {
   //-- audio buffer class
   audioBuffer buffer;
-  //-- read and write taps (non-interpolated)
-  /// FIXME: make these interpolated of course
+
   bufferTap tapRd;
   bufferTap tapWr;
-  // flag to synchronize read tap with write tap
-  u8 sync;
   // flag to toggle writing of new data
   u8 write;
   // level of existing data to mix with new data
@@ -55,8 +52,8 @@ extern void delay_set_write(delayLine* dl, u8 write);
 
 
 // set read pos in seconds / samples
-extern void delay_set_pos_read_sec(delayLine* dl, fix16 sec);
-//extern void delay_set_pos_read_samp(delayLine* dl, s32 samp);
+//extern void delay_set_pos_read_sec(delayLine* dl, fix16 sec);
+extern void delay_set_pos_read_samp(delayLine* dl, s32 samp);
 // set write pos in seconds / samples
 //extern void delay_set_pos_write_sec(delayLine* dl, fix16 sec);
 extern void delay_set_pos_write_samp(delayLine* dl, s32 samp);

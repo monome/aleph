@@ -15,17 +15,17 @@
 
 
 // initialize with pointer to audio buffer
- void delay_init(delayLine* dl, fract32* data, u32 frames) {
+void delay_init(delayLine* dl, fract32* data, u32 frames) {
   buffer_init(&(dl->buffer), data, frames);
   buffer_tap_init(&(dl->tapRd), &(dl->buffer));
   buffer_tap_init(&(dl->tapWr), &(dl->buffer));
 
-  //dl->tapWr.idx.fr = 0;
-  //dl->tapRd.idx.fr = 0;
-  //dl->tapWr.idx.i = 0;
-  //dl->tapRd.idx.i = 0;
-  //dl->tapWr.loop = frames;
-  //dl->tapRd.loop = frames;
+  dl->tapWr.idx.fr = 0;
+  dl->tapRd.idx.fr = 0;
+  dl->tapWr.idx.i = 0;
+  dl->tapRd.idx.i = 0;
+  dl->tapWr.loop = frames;
+  dl->tapRd.loop = frames;
 
   fix32 single_speed;
   single_speed.i = 1;
@@ -34,7 +34,6 @@
   delay_set_rate(&(dl->tapWr), single_speed);
   dl->preLevel = 0;
   dl->write = 1;
-  dl->sync = 1;
 }
 
 fract32 delay_next(delayLine* dl, fract32 in) {
@@ -70,14 +69,14 @@ fract32 delay_next(delayLine* dl, fract32 in) {
   */
 
   // advance the read phasor
-  if(dl->runRd) {
+  //if(dl->runRd) {
     buffer_tap_next( &(dl->tapRd) );
-  }
+  //}
 
   // advance the write phasor
-  if(dl->runWr) {
+  //if(dl->runWr) {
     buffer_tap_next( &(dl->tapWr) );
-  }
+  //}
 
   return readVal;
 }

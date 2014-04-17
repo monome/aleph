@@ -33,7 +33,8 @@
 
 // total SDRAM is 64M
 // each line 24 bit address
-#define LINES_BUF_FRAMES 0xFFFFFF
+#define LINES_BUF_FRAMES 0x2bf200
+//#define LINES_BUF_FRAMES 0xFFFFFF
 // try...
 //#define LINES_BUF_FRAMES 0x600000
 //#define LINES_BUF_FRAMES 0x1000000
@@ -156,16 +157,14 @@ void module_init(void) {
 
   delay_init(&(lines[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
   param_setup( 	eParam_delay0,		0 );
-  //param_setup( 	eParam_feedback0,		FADER_DEFAULT );
+  param_setup( 	eParam_feedback0,		FADER_DEFAULT );
   param_setup( 	eParam_feedback0,		0 );
 
-  delay_set_loop_samp(&(lines[0]), 0x7FFFFF);
+  delay_set_loop_samp(&(lines[0]), LINES_BUF_FRAMES/2);
   delay_set_run_write(&(lines[0]), 1);
   delay_set_run_read(&(lines[0]), 1);
-  delay_set_write(&(lines[0]), 1);
-  delay_set_pre(&(lines[0]), 0);
-  delay_set_pos_write_samp(&(lines[0]), 0);
-  delay_set_pos_read_samp(&(lines[0]), 0);
+  //delay_set_pos_write_samp(&(lines[0]), 0);
+  //delay_set_pos_read_samp(&(lines[0]), 0);
 }
 
 // de-init
@@ -257,8 +256,13 @@ void module_process_frame(void) {
   //mix adcs to delay inputs
   delayInput = mult_fr1x32x32(in[3],effect[3]) + mult_fr1x32x32(in[2],effect[2]) + mult_fr1x32x32(in[1],effect[1]) + mult_fr1x32x32(in[0],effect[0]) ;
 
-  delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
+  //delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
+  //disable feedback till we're working
+
   delayOutput = delay_next( &(lines[0]), delayInput);
+
+
+
   mix_panned_mono(delayOutput, &(out[1]), &(out[0]),PAN_DEFAULT ,FADER_DEFAULT );
 }
 
@@ -385,6 +389,8 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_delay0 :
     delayTimeTarget = v;
+    delay_set_pos_write_samp(&(lines[0]), 0);
+    delay_set_pos_read_samp(&(lines[0]), 0);
     break;
   default:
     break;

@@ -70,6 +70,8 @@ fract32 buffer_tap_read(bufferTap *tap) {
 
 // interpolated write (overwrites old contents)
 void buffer_tap_write(bufferTap *tap, fract32 val) { 
+  tap->buf->data[tap->idx.i] = val;
+  return;
   static s32 idxB;
   static fract32 a, b;  
   a = mult_fr1x32x32(val, sub_fr1x32(FR32_MAX, tap->idx.fr));
@@ -81,6 +83,7 @@ void buffer_tap_write(bufferTap *tap, fract32 val) {
   tap->buf->data[idxB] = b;  
 }
 
+/*
 // interpolated arbitrary mix of old buffer contents with new
 void buffer_tap_mix(bufferTap *tap, fract32 val, fract32 preLevel) { 
   static s32 idxB;
@@ -94,28 +97,34 @@ static fract32 a, b;
   tap->buf->data[tap->idx.i] = add_fr1x32(b, mult_fr1x32x32(tap->buf->data[idxB], preLevel));
   tap->buf->data[idxB] = b;  
 }
+*/
 
 
+/*
 // interpolated addition of input to buffer contents
 void buffer_tap_add(bufferTap *tap, fract32 val) { 
-  /* static s32 idxB; */
-  /* static fract32 a, b;   */
-  /* a = mult_fr1x32x32(val, sub_fr1x32(FR32_MAX, tap->idx.fr)); */
-  /* b = mult_fr1x32x32(val, tap->idx.fr); */
-  /* idxB = tap->idx.i + 1; */
-  /* while(idxB >= tap->loop) { idxB -= tap->loop; } */
-  /* // we can assume idxA is already wrapped */
-  /* tap->buf->data[tap->idx.i] = add_fr1x32(a, mult_fr1x32x32(tap->buf->data[tap->idx.i], preLevel)); */
-  /* tap->buf->data[tap->idx.i] = add_fr1x32(b, mult_fr1x32x32(tap->buf->data[idxB], preLevel)); */
-  /* tap->buf->data[idxB] = b;   */
-}
+   static s32 idxB; 
+   static fract32 a, b;   
+   a = mult_fr1x32x32(val, sub_fr1x32(FR32_MAX, tap->idx.fr)); 
+   b = mult_fr1x32x32(val, tap->idx.fr); 
+   idxB = tap->idx.i + 1; 
+   while(idxB >= tap->loop) { idxB -= tap->loop; } 
+   // we can assume idxA is already wrapped 
+   tap->buf->data[tap->idx.i] = add_fr1x32(a, mult_fr1x32x32(tap->buf->data[tap->idx.i], preLevel)); 
+   tap->buf->data[tap->idx.i] = add_fr1x32(b, mult_fr1x32x32(tap->buf->data[idxB], preLevel)); 
+   tap->buf->data[idxB] = b;   
+}*/
 
 
 // increment position of a tap
 void buffer_tap_next(bufferTap *tap) {
-  add_fix32(&(tap->idx), &(tap->inc));
-  fix32_wrap_range(&(tap->idx), tap->loop );
+    //tap->idx.i += tap->inc.i;
+    tap->idx.i += 1;
+    if (tap->idx.i > tap->loop) {
+        tap->idx.i = 0;
+    }
 }
+
 
 // set rate (per-sample increment)
 void buffer_tap_set_rate(bufferTap *tap, fix16 rate) {

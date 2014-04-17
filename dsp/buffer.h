@@ -18,8 +18,6 @@
 typedef struct _audioBuffer {
   // count of frames
   u32 frames;
-  // duration in seconds 
-  fix16 dur;
   // pointer to data
   volatile fract32 *data;
 } audioBuffer;
@@ -36,7 +34,7 @@ typedef struct _bufferTap {
   u32 loop;
   // current index
   fix32 idx;
-  // phase increment 
+  // phase increment
   fix32 inc;
 } bufferTap;
 
