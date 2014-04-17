@@ -20,12 +20,12 @@
   buffer_tap_init(&(dl->tapRd), &(dl->buffer));
   buffer_tap_init(&(dl->tapWr), &(dl->buffer));
 
-  dl->tapWr.idx.fr = 0;
-  dl->tapRd.idx.fr = 0;
-  dl->tapWr.idx.i = 0;
-  dl->tapRd.idx.i = 0;
-  dl->tapWr.loop = frames;
-  dl->tapRd.loop = frames;
+  //dl->tapWr.idx.fr = 0;
+  //dl->tapRd.idx.fr = 0;
+  //dl->tapWr.idx.i = 0;
+  //dl->tapRd.idx.i = 0;
+  //dl->tapWr.loop = frames;
+  //dl->tapRd.loop = frames;
 
   dl->preLevel = 0;
   dl->write = 1;
