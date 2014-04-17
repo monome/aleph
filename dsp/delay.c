@@ -83,12 +83,12 @@
 // set delay in seconds
  void delay_set_delay_sec(delayLine* dl, fix16 sec) {
   u32 samp = sec_to_frames_trunc(sec);
-  buffer_tapN_sync(&(dl->tapRd), &(dl->tapWr), samp);
+  buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), samp);
 }
 
 // set delay in samples
  void delay_set_delay_samp(delayLine* dl, u32 samp) {
-  buffer_tapN_sync(&(dl->tapRd), &(dl->tapWr), samp);
+  buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), samp);
 }
 
 // set erase level

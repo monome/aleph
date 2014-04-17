@@ -25,7 +25,7 @@
 // audio
 #include "filter_1p.h"
 #include "module.h"
-#include "delayFadeN.h"
+#include "delay.h"
 
 /// custom
 #include "params.h"
@@ -41,7 +41,7 @@
 #define NLINES 1
 #define PARAM_SECONDS_MAX 0x003c0000
 
-delayFadeN lines[NLINES];
+delayLine lines[NLINES];
 
 ParamValue auxL[4];
 ParamValue auxR[4];
@@ -154,20 +154,20 @@ void module_init(void) {
   param_setup( 	eParam_effect3,		EFFECT_DEFAULT );
 
 
-  delayFadeN_init(&(lines[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
+  delay_init(&(lines[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
   param_setup( 	eParam_delay0,		0x4000 );
   param_setup( 	eParam_feedback0,		FADER_DEFAULT );
 
-  delayFadeN_set_loop_sec(&(lines[0]), 30000, 0);
-  delayFadeN_set_loop_sec(&(lines[0]), 30000, 1);
-  delayFadeN_set_run_write(&(lines[0]), 1);
-  delayFadeN_set_run_read(&(lines[0]), 1);
-  delayFadeN_set_write(&(lines[0]), 1);
-  delayFadeN_set_pre(&(lines[0]), 0);
-  delayFadeN_set_mul(&(lines[0]), 1,  0);
-  delayFadeN_set_div(&(lines[0]), 1,  0);
-  delayFadeN_set_pos_write_sec(&(lines[0]), 0,  0);
-  delayFadeN_set_pos_read_sec(&(lines[0]), 0,  0);
+  delay_set_loop_sec(&(lines[0]), 30000);
+  delay_set_loop_sec(&(lines[0]), 30000);
+  delay_set_run_write(&(lines[0]), 1);
+  delay_set_run_read(&(lines[0]), 1);
+  delay_set_write(&(lines[0]), 1);
+  delay_set_pre(&(lines[0]), 0);
+  //delay_set_mul(&(lines[0]), 1,  0);
+  //delay_set_div(&(lines[0]), 1,  0);
+  delay_set_pos_write_sec(&(lines[0]), 0);
+  delay_set_pos_read_sec(&(lines[0]), 0);
 }
 
 // de-init
@@ -253,14 +253,14 @@ void module_process_frame(void) {
 
   //update delay time
 
-  delayFadeN_set_delay_samp(&(lines[0]), delayTime, 0);
+  delay_set_delay_samp(&(lines[0]), delayTime);
   //define delay input & output
 
   //mix adcs to delay inputs
   delayInput = mult_fr1x32x32(in[3],effect[3]) + mult_fr1x32x32(in[2],effect[2]) + mult_fr1x32x32(in[1],effect[1]) + mult_fr1x32x32(in[0],effect[0]) ;
 
   delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
-  delayOutput = delayFadeN_next( &(lines[0]), delayInput);
+  delayOutput = delay_next( &(lines[0]), delayInput);
   mix_panned_mono(delayOutput, &(out[1]), &(out[0]),PAN_DEFAULT ,FADER_DEFAULT );
 }
 
