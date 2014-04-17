@@ -56,6 +56,7 @@ void buffer_tap_init(bufferTap * tap, audioBuffer* buf) {
 
 // interpolated read
 fract32 buffer_tap_read(bufferTap *tap) {
+  return tap->buf->data[tap->idx.i];
   static s32 idxB;
   static fract32 a, b;
   idxB = tap->idx.i + 1;
@@ -83,7 +84,7 @@ void buffer_tap_write(bufferTap *tap, fract32 val) {
 // interpolated arbitrary mix of old buffer contents with new
 void buffer_tap_mix(bufferTap *tap, fract32 val, fract32 preLevel) { 
   static s32 idxB;
-  static fract32 a, b;  
+static fract32 a, b;  
   a = mult_fr1x32x32(val, sub_fr1x32(FR32_MAX, tap->idx.fr));
   b = mult_fr1x32x32(val, tap->idx.fr);
   idxB = tap->idx.i + 1;

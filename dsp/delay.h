@@ -19,8 +19,8 @@ typedef struct _delayLine {
   audioBuffer buffer;
   //-- read and write taps (non-interpolated)
   /// FIXME: make these interpolated of course
-  bufferTapN tapRd;
-  bufferTapN tapWr;
+  bufferTap tapRd;
+  bufferTap tapWr;
   // flag to synchronize read tap with write tap
   u8 sync;
   // flag to toggle writing of new data
@@ -42,7 +42,8 @@ extern void delay_set_loop_sec(delayLine* dl, fix16 sec);
 extern void delay_set_loop_samp(delayLine* dl, u32 samp);
 // set delay time in seconds / samples
 extern void delay_set_delay_sec(delayLine* dl, fix16 sec); 
-extern void delay_set_delay_samp(delayLine* dl, u32 samp); 
+extern void delay_set_delay_24_8(delayLine* dl, u32 subsamples); 
+extern void delay_set_delay_samp(delayLine* dl, fix32 samp); 
 
 // set read head rate
 // extern void delay_set_rate(delayLine* dl, fix16 rate);

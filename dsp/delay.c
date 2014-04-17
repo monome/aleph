@@ -20,8 +20,10 @@
   buffer_tap_init(&(dl->tapRd), &(dl->buffer));
   buffer_tap_init(&(dl->tapWr), &(dl->buffer));
 
-  dl->tapWr.idx = 0;
-  dl->tapRd.idx = 0;
+  dl->tapWr.idx.fr = 0;
+  dl->tapRd.idx.fr = 0;
+  dl->tapWr.idx.i = 0;
+  dl->tapRd.idx.i = 0;
   dl->tapWr.loop = frames;
   dl->tapRd.loop = frames;
 
@@ -29,13 +31,17 @@
   dl->write = 1;
 }
 
- fract32 delay_next(delayLine* dl, fract32 in) {
+fract32 delay_next(delayLine* dl, fract32 in) {
   fract32 readVal;
 
   // get read value first.
   // so, setting loop == delaytime gives sensible results (???)
   readVal = buffer_tap_read( &(dl->tapRd) );
 
+
+  buffer_tap_write(&(dl->tapWr), in);
+//For now the write head always writes
+/*
   // figure out what to write
   if(dl->preLevel == 0) {
     if(dl->write) {
@@ -53,8 +59,9 @@
       buffer_tap_mix(&(dl->tapWr), in, dl->preLevel);
     }
   }
+  */
 
-  // advance the read phasor 
+  // advance the read phasor
   if(dl->runRd) {
     buffer_tap_next( &(dl->tapRd) );
   }
@@ -63,7 +70,7 @@
   if(dl->runWr) {
     buffer_tap_next( &(dl->tapWr) );
   }
-  
+
   return readVal;
 }
 
@@ -76,8 +83,8 @@
 
 // set loop endpoint in samples
  void delay_set_loop_samp(delayLine* dl, u32 samps) {
-  dl->tapRd.loop = samps - 1;
-  dl->tapWr.loop = samps - 1;
+  dl->tapRd.loop = samps;
+  dl->tapWr.loop = samps;
 }
 
 // set delay in seconds
@@ -86,9 +93,15 @@
   buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), samp);
 }
 
+ void delay_set_delay_24_8(delayLine* dl, u32 subsamples) {
+  //this sets a fractional delay in samples/256
+  u32 samples = subsamples >> 4;
+  subsamples = subsamples & 0x000000FF;
+  buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), samples);
+}
 // set delay in samples
- void delay_set_delay_samp(delayLine* dl, u32 samp) {
-  buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), samp);
+ void delay_set_delay_samp(delayLine* dl, fix32 samp) {
+  buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), samp.i);
 }
 
 // set erase level
