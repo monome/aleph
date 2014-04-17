@@ -204,6 +204,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_route8_t),
     .init = &op_route8_init,
     .deinit = NULL    
+  }, {
+    .name = "CASCADES",
+    .size = sizeof(op_cascades_t),
+    .init = &op_cascades_init,
+    .deinit = &op_cascades_deinit   
   }
 
 };

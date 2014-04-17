@@ -304,7 +304,7 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
 
     // rows 4-7: set steps
     } else if(y>3 && y<8) {
-      op->steps[y-4][x] ^= 1;
+      op->steps[y-4][x] ^= 15;
       monomeLedBuffer[monome_xy_idx(x, y)] = op->steps[y-4][x] * 15;
       monome_calc_quadrant_flag(x, y);
     }

@@ -136,7 +136,7 @@ static void op_life_in_next(op_life_t* life, const io_t v) {
         if(lifenext[i]==1)
         {
           lifenow[i]=1;
-          p[i]=1;
+          p[i]=15;
         }
         else if(lifenext[i]==-1)
         {
@@ -204,7 +204,7 @@ static void op_life_in_set(op_life_t* life, const io_t v) {
   if(v == 0) lifenow[i] = 0;
   else lifenow[i] = 1;
 
-  p[i]=lifenow[i];
+  p[i]=lifenow[i] * 15;
   monome_calc_quadrant_flag(life->x, life->y);
 
   op_life_output(life);
@@ -254,7 +254,7 @@ static void life_change(u8 x,u8 y) {
   u8 *p = monomeLedBuffer;
   u8 i = x+(y<<4);
   lifenow[i] ^= 1;
-  p[i]=lifenow[i];
+  p[i]=lifenow[i] * 15;
   monome_calc_quadrant_flag(x, y);
 }
 
