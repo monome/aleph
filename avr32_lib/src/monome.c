@@ -128,7 +128,7 @@ static void grid_map_mext(u8 x, u8 y, const u8* data);
 /// TODO: varibright
 //static void grid_map_level_40h(u8 x, u8 val);
 //static void grid_map_level_series(u8 x, u8 y, u8* data);
-//static void grid_map_level_mext(u8 x, u8 y, const u8* data);
+// static void grid_map_level_mext(u8 x, u8 y, const u8* data);
 
 //static void ring_set_mext(u8 n, u8 rho, u8 val);
 static void ring_map_mext(u8 n, u8* data);
@@ -754,12 +754,15 @@ static void read_serial_mext(void) {
 // . note that our input data is one byte per led!!
 // this will hopefully help optimize operator routines,
 // which cannot be called less often than refresh/tx, and are therefore prioritized.
+////////////////////////////////////////////////
+// HACKED to always do var-bright update
+////////////////////////////////////////////////
 static void grid_map_mext( u8 x, u8 y, const u8* data ) {
   //  static u8 tx[11] = { 0x14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   static u8* ptx;
   static u8 i, j;
 
-  txBuf[0] = 0x14;
+  txBuf[0] = 0x1A;  
   txBuf[1] = x;
   txBuf[2] = y;
   
@@ -767,16 +770,20 @@ static void grid_map_mext( u8 x, u8 y, const u8* data ) {
   
   // copy and convert
   for(i=0; i<MONOME_QUAD_LEDS; i++) {
-    *ptx = 0;
-    for(j=0; j<MONOME_QUAD_LEDS; j++) {
+    // *ptx = 0;
+    for(j=0; j<4; j++) {
       // binary value of data byte to bitfield of tx byte
-      *ptx |= ((*data > 0) << j);
+      // *ptx |= ((*data > 0) << j);
+      *ptx = (*data) << 4;
       data++;
+      *ptx |= *data;
+      data++;
+      ptx++;
     }
     data += MONOME_QUAD_LEDS; // skip the rest of the row to get back in target quad
-    ptx++;
+    // ptx++;
   }
-  ftdi_write(txBuf, MONOME_QUAD_LEDS + 3);
+  ftdi_write(txBuf, 32 + 3);
 }
 
 
