@@ -34,6 +34,7 @@
   delay_set_rate(&(dl->tapWr), single_speed);
   dl->preLevel = 0;
   dl->write = 1;
+  dl->sync = 1;
 }
 
 fract32 delay_next(delayLine* dl, fract32 in) {
@@ -94,6 +95,7 @@ fract32 delay_next(delayLine* dl, fract32 in) {
   dl->tapWr.loop = samps;
 }
 
+/*
 // set delay in seconds
  void delay_set_delay_sec(delayLine* dl, fix16 sec) {
   u32 samp = sec_to_frames_trunc(sec);
@@ -102,6 +104,7 @@ fract32 delay_next(delayLine* dl, fract32 in) {
   time.fr = 0;
   buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), time);
 }
+*/
 
 void delay_set_delay_24_8(delayLine* dl, s32 subsamples) {
   //this sets a fractional delay in samples/256
@@ -110,8 +113,8 @@ void delay_set_delay_24_8(delayLine* dl, s32 subsamples) {
   //time.fr = subsamples*0x7FFFFF;
   time.fr = subsamples%256;
 
-  time.i = subsamples;
-  time.fr = 0;
+  //time.i = subsamples;
+  //time.fr = 0;
   buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), time);
 }
 // set delay in samples

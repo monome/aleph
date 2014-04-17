@@ -159,13 +159,11 @@ void module_init(void) {
   //param_setup( 	eParam_feedback0,		FADER_DEFAULT );
   param_setup( 	eParam_feedback0,		0 );
 
-  //delay_set_loop_samp(&(lines[0]), 0x7FFFFF);
+  delay_set_loop_samp(&(lines[0]), 0x7FFFFF);
   delay_set_run_write(&(lines[0]), 1);
   delay_set_run_read(&(lines[0]), 1);
   delay_set_write(&(lines[0]), 1);
   delay_set_pre(&(lines[0]), 0);
-  //delay_set_mul(&(lines[0]), 1,  0);
-  //delay_set_div(&(lines[0]), 1,  0);
   delay_set_pos_write_samp(&(lines[0]), 0);
   delay_set_pos_read_samp(&(lines[0]), 0);
 }
@@ -191,7 +189,7 @@ u32 module_get_num_params(void) {
    - dac_update writes to 4x16 volatile buffer
 */
 //static u8 dacChan = 0;
-///
+//
 
 void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
