@@ -105,27 +105,27 @@ fract32 delay_next(delayLine* dl, fract32 in) {
   time.fr = 0;
   buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), time);
 }
-*/
 
-/*
-void delay_set_delay_24_8(delayLine* dl, s32 subsamples) {
+void delay_set_delay_24_8(delayLine* dl, u32 subsamples) {
   //this sets a fractional delay in samples/256
   fix32 time;
-  time.i = subsamples/256;
+  time.i = subsamples;
   //time.fr = subsamples*0x7FFFFF;
-  time.fr = subsamples%256;
+  //time.fr = subsamples%256;
 
   //time.i = subsamples;
   //time.fr = 0;
   buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), time);
 }
+*/
 // set delay in samples
- void delay_set_delay_samp(delayLine* dl, s32 samp) {
+ void delay_set_delay_samp(delayLine* dl, u32 samp) {
   fix32 time;
   time.i = samp;
-  time.fr = 0;
+  //time.fr = 0;
   buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), time);
 }
+/*
 
 // set erase level
  void delay_set_pre(delayLine* dl, fract32 pre) {

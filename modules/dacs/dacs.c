@@ -251,6 +251,7 @@ void module_process_frame(void) {
   //update delay time
 
   //delay_set_delay_24_8(&(lines[0]), delayTimeTarget);
+  delay_set_delay_samp(&(lines[0]), delayTimeTarget);
   //define delay input & output
 
   //mix adcs to delay inputs
@@ -389,8 +390,6 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_delay0 :
     delayTimeTarget = v;
-    delay_set_pos_write_samp(&(lines[0]), 0);
-    delay_set_pos_read_samp(&(lines[0]), 0);
     break;
   default:
     break;

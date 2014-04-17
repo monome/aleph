@@ -155,22 +155,22 @@ void buffer_tap_set_pos(bufferTap* tap, fix32 samples) {
 
 // synchronize one tap with another at a given offset in seconds.
 // useful for delays
-/*
 void buffer_tap_sync(bufferTap* tap, bufferTap* target, fix32 samps) {
+  tap->idx.i=target->idx.i-samps.i;
+  return;
   fix32 samps_diff;
   if(target->idx.i >= samps.i) {
     // tap->idx = target->idx - samps;
     samps_diff.i = target->idx.i - samps.i ;
-    samps_diff.fr = 0;
+    //samps_diff.fr = 0;
   } else {
     //    tap->idx = (target->idx + tap->loop) - samps;
-    samps_diff.i = (target->idx.i + tap->loop) - samps.i;
-    samps_diff.fr = 0;
+    samps_diff.i = (target->idx.i + tap->buf->frames) - samps.i;
+    //samps_diff.fr = 0;
     buffer_tap_set_pos(tap, samps_diff);
 
   }
 }
-*/
 
 //---- non-interpolated
 
