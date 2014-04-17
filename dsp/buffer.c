@@ -40,23 +40,35 @@ void buffer_init(audioBuffer *buf, fract32 *data, u32 frames) {
   /* }   */
 }
 
+/*
 void buffer_tap_set_loop(bufferTap *tap, u32 loop) {
   while(loop > (tap->buf->frames - 1)) {loop -= tap->buf->frames; }
   tap->loop = loop;
 }
+*/
 // intialize index data with buffer
 void buffer_tap_init(bufferTap * tap, audioBuffer* buf) {
   tap->buf = buf;
-  tap->loop = buf->frames;
-  tap->inc.i = 1;
-  tap->inc.fr = 0;
   tap->idx.i = 0;
-  tap->idx.fr = 0;
+  //tap->idx.fr = 0;
+
+  //disabled for now - tap loop == buffer loop
+  //tap->loop = buf->frames;
+
+  //disabled for now until we have single speed taps working
+  //tap->inc.i = 1;
+  //tap->inc.fr = 0;
+  //tap->idx.i = 0;
+  //tap->idx.fr = 0;
 }
 
 // interpolated read
 fract32 buffer_tap_read(bufferTap *tap) {
+  //uninterpolated for now
   return tap->buf->data[tap->idx.i];
+
+
+/*
   static s32 idxB;
   static fract32 a, b;
   idxB = tap->idx.i + 1;
@@ -66,12 +78,13 @@ fract32 buffer_tap_read(bufferTap *tap) {
   b = tap->buf->data[idxB];
   // apply interpolation from fractional index
   return add_fr1x32(a, mult_fr1x32x32(tap->idx.fr, sub_fr1x32(b, a)));
+  */
 }
 
 // interpolated write (overwrites old contents)
 void buffer_tap_write(bufferTap *tap, fract32 val) { 
   tap->buf->data[tap->idx.i] = val;
-  return;
+  /*
   static s32 idxB;
   static fract32 a, b;  
   a = mult_fr1x32x32(val, sub_fr1x32(FR32_MAX, tap->idx.fr));
@@ -81,6 +94,7 @@ void buffer_tap_write(bufferTap *tap, fract32 val) {
   // we can assume idxA is already wrapped
   tap->buf->data[tap->idx.i] = a;
   tap->buf->data[idxB] = b;  
+  */
 }
 
 /*
@@ -119,8 +133,8 @@ void buffer_tap_add(bufferTap *tap, fract32 val) {
 // increment position of a tap
 void buffer_tap_next(bufferTap *tap) {
     //tap->idx.i += tap->inc.i;
-    tap->idx.i += 1;
-    if (tap->idx.i > tap->loop) {
+    tap->idx.i ++;
+    if (tap->idx.i >= tap->buf->frames) {
         tap->idx.i = 0;
     }
 }
@@ -141,6 +155,7 @@ void buffer_tap_set_pos(bufferTap* tap, fix32 samples) {
 
 // synchronize one tap with another at a given offset in seconds.
 // useful for delays
+/*
 void buffer_tap_sync(bufferTap* tap, bufferTap* target, fix32 samps) {
   fix32 samps_diff;
   if(target->idx.i >= samps.i) {
@@ -155,7 +170,7 @@ void buffer_tap_sync(bufferTap* tap, bufferTap* target, fix32 samps) {
 
   }
 }
-
+*/
 
 //---- non-interpolated
 

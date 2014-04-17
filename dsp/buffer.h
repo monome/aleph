@@ -30,53 +30,13 @@ typedef struct _audioBuffer {
 typedef struct _bufferTap {
   // pointer to buf
   audioBuffer* buf;
-  // index to loop at (upper bound)
-  u32 loop;
   // current index
   fix32 idx;
   // phase increment
-  fix32 inc;
+  // disabled for now until we have single speed taps working
+  //fix32 inc;
 } bufferTap;
 
-
-// ---- bufferTapN
-// class for creating a "tap" or "head."
- // stores position/rate within a buffer.
-// non-interpolated.
-typedef struct _bufferTapN {
-  // pointer to buf
-  audioBuffer* buf;
-  // index to loop at (upper bound)
-  u32 loop;
-  // current index
-  u32 idx;
-  // phase increment 
-  u32 inc;
-  // rate divisor
-  u32 div;
-  // current divisor count
-  u32 divCount;
-} bufferTapN;
-
-//---- bufferXfadeN
-// class for cross-fading between two non-interpolated read taps in a buffer
-typedef struct _bufferXfadeN {
-  // two read tapstap
-  bufferTapN read[2];
-  // fade status
-  /// 0 = tap 0 only
-  /// 1 = tap 1 only
-  /// 2 = both taps
-  u8 satus;
-  // fade levels
-  u16 fadeLevel[2];
-  // fade positions
-  u16 fadePos[2];
-} bufferXfadeN;
-
-
-//------------------------------------
-//----- external functions
 
 // initialize a (mono) audio buffer at pre-allocated memory.
 // provide 2nd pointer for data,
@@ -120,6 +80,45 @@ extern void buffer_tap_set_pos(bufferTap* tap, fix32 samples);
 //--------------------------------------------------------
 //---------------------------------------------------------
 //---- non-interpolated taps
+
+// ---- bufferTapN
+// class for creating a "tap" or "head."
+ // stores position/rate within a buffer.
+// non-interpolated.
+typedef struct _bufferTapN {
+  // pointer to buf
+  audioBuffer* buf;
+  // index to loop at (upper bound)
+  u32 loop;
+  // current index
+  u32 idx;
+  // phase increment
+  u32 inc;
+  // rate divisor
+  u32 div;
+  // current divisor count
+  u32 divCount;
+} bufferTapN;
+
+//---- bufferXfadeN
+// class for cross-fading between two non-interpolated read taps in a buffer
+typedef struct _bufferXfadeN {
+  // two read tapstap
+  bufferTapN read[2];
+  // fade status
+  /// 0 = tap 0 only
+  /// 1 = tap 1 only
+  /// 2 = both taps
+  u8 satus;
+  // fade levels
+  u16 fadeLevel[2];
+  // fade positions
+  u16 fadePos[2];
+} bufferXfadeN;
+
+
+//------------------------------------
+//----- external functions
 
 // intialize
 extern void buffer_tapN_init(bufferTapN* tap, audioBuffer* buf);

@@ -160,9 +160,9 @@ void module_init(void) {
   param_setup( 	eParam_feedback0,		FADER_DEFAULT );
   param_setup( 	eParam_feedback0,		0 );
 
-  delay_set_loop_samp(&(lines[0]), LINES_BUF_FRAMES/2);
-  delay_set_run_write(&(lines[0]), 1);
-  delay_set_run_read(&(lines[0]), 1);
+  //delay_set_loop_samp(&(lines[0]), LINES_BUF_FRAMES/2);
+  //delay_set_run_write(&(lines[0]), 1);
+  //delay_set_run_read(&(lines[0]), 1);
   //delay_set_pos_write_samp(&(lines[0]), 0);
   //delay_set_pos_read_samp(&(lines[0]), 0);
 }

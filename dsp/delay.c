@@ -20,13 +20,8 @@ void delay_init(delayLine* dl, fract32* data, u32 frames) {
   buffer_tap_init(&(dl->tapRd), &(dl->buffer));
   buffer_tap_init(&(dl->tapWr), &(dl->buffer));
 
-  dl->tapWr.idx.fr = 0;
-  dl->tapRd.idx.fr = 0;
-  dl->tapWr.idx.i = 0;
-  dl->tapRd.idx.i = 0;
-  dl->tapWr.loop = frames;
-  dl->tapRd.loop = frames;
 
+  /*
   fix32 single_speed;
   single_speed.i = 1;
   single_speed.fr = 0;
@@ -34,9 +29,20 @@ void delay_init(delayLine* dl, fract32* data, u32 frames) {
   delay_set_rate(&(dl->tapWr), single_speed);
   dl->preLevel = 0;
   dl->write = 1;
+  */
 }
 
 fract32 delay_next(delayLine* dl, fract32 in) {
+  //If you return in, we have a delay of zero length - works!
+  //return in;
+
+
+  // advance the write phasor
+  //if(dl->runWr) {
+    buffer_tap_next( &(dl->tapWr) );
+  //}
+  buffer_tap_write(&(dl->tapWr), in);
+
   fract32 readVal;
 
   // get read value first.
@@ -44,7 +50,11 @@ fract32 delay_next(delayLine* dl, fract32 in) {
   readVal = buffer_tap_read( &(dl->tapRd) );
 
 
-  buffer_tap_write(&(dl->tapWr), in);
+  // advance the read phasor
+  //if(dl->runRd) {
+    buffer_tap_next( &(dl->tapRd) );
+  //}
+
 //For now the write head always writes over any contents...
 
 //so this is commented
@@ -68,19 +78,10 @@ fract32 delay_next(delayLine* dl, fract32 in) {
   }
   */
 
-  // advance the read phasor
-  //if(dl->runRd) {
-    buffer_tap_next( &(dl->tapRd) );
-  //}
-
-  // advance the write phasor
-  //if(dl->runWr) {
-    buffer_tap_next( &(dl->tapWr) );
-  //}
-
   return readVal;
 }
 
+/*
 // set loop endpoint in seconds
  void delay_set_loop_sec(delayLine* dl, fix16 sec) {
   u32 samps = sec_to_frames_trunc(sec);
@@ -93,6 +94,7 @@ fract32 delay_next(delayLine* dl, fract32 in) {
   dl->tapRd.loop = samps;
   dl->tapWr.loop = samps;
 }
+*/
 
 /*
 // set delay in seconds
@@ -105,6 +107,7 @@ fract32 delay_next(delayLine* dl, fract32 in) {
 }
 */
 
+/*
 void delay_set_delay_24_8(delayLine* dl, s32 subsamples) {
   //this sets a fractional delay in samples/256
   fix32 time;
@@ -139,20 +142,18 @@ void delay_set_rate(bufferTap* tap, fix32 rate) {
     tap->inc = rate;
 }
 
-/*
 // set read pos in seconds
  void delay_set_pos_read_sec(delayLine* dl, fix16 sec) {
   u32 samp = sec_to_frames_trunc(sec);
   buffer_tap_set_pos(&(dl->tapRd), samp);
 }
 */
- void delay_set_pos_read_samp(delayLine* dl, s32 samp) {
+ void delay_set_pos_read_samp(delayLine* dl, u32 samp) {
   fix32 samples;
   samples.i = samp;
-  samples.fr = 0;
+  //samples.fr = 0;
   buffer_tap_set_pos(&(dl->tapRd), samples);
 }
-
 /*
 // set write pos in seconds
  void delay_set_pos_write_sec(delayLine* dl, fix16 sec) {
@@ -161,13 +162,13 @@ void delay_set_rate(bufferTap* tap, fix32 rate) {
 }
 */
 
- void delay_set_pos_write_samp(delayLine* dl, s32 samp) {
+ void delay_set_pos_write_samp(delayLine* dl, u32 samp) {
   fix32 samples;
   samples.i = samp;
-  samples.fr = 0;
+  //samples.fr = 0;
   buffer_tap_set_pos(&(dl->tapWr), samples);
 }
-
+/*
 // set read run flag
  void delay_set_run_read(delayLine* dl, u8 val) {
   dl->runRd = val;
@@ -176,5 +177,4 @@ void delay_set_rate(bufferTap* tap, fix32 rate) {
 // set write run flag
  void delay_set_run_write(delayLine* dl, u8 val) {
   dl->runWr = val;
-}
-
+}*/
