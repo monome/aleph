@@ -126,14 +126,16 @@ void buffer_tap_next(bufferTap *tap) {
 }
 
 
+/*
 // set rate (per-sample increment)
 void buffer_tap_set_rate(bufferTap *tap, fix16 rate) {
    fix16_to_fix32(&rate, &(tap->inc));
 }
+*/
 
 // set tap position directly
 void buffer_tap_set_pos(bufferTap* tap, fix32 samples) {
-  fix32_wrap_range(&samples, tap->loop);
+  //fix32_wrap_range(&samples, tap->loop);
   tap->idx = samples;
 }
 
