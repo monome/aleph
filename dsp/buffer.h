@@ -117,7 +117,7 @@ extern void buffer_tap_set_loop(bufferTap* tap, u32 loop);
 extern void buffer_tap_sync(bufferTap* tap, bufferTap* target, fix32 samples);
  
 // set tap position directly
-extern void buffer_tap_set_pos(bufferTap* tap, fix16 secs);
+extern void buffer_tap_set_pos(bufferTap* tap, fix32 samples);
 
 //--------------------------------------------------------
 //---------------------------------------------------------

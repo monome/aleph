@@ -123,22 +123,25 @@ void buffer_tap_set_rate(bufferTap *tap, fix16 rate) {
 }
 
 // set tap position directly
-void buffer_tap_set_pos(bufferTap* tap, fix16 secs) {
-  fix32 samps;
-  sec_to_frames_fract(&secs, &samps);
-  fix32_wrap_range(&samps, tap->loop);
-  tap->idx = samps;
+void buffer_tap_set_pos(bufferTap* tap, fix32 samples) {
+  fix32_wrap_range(&samples, tap->loop);
+  tap->idx = samples;
 }
 
 // synchronize one tap with another at a given offset in seconds.
 // useful for delays
 void buffer_tap_sync(bufferTap* tap, bufferTap* target, fix32 samps) {
+  fix32 samps_diff;
   if(target->idx.i >= samps.i) {
     // tap->idx = target->idx - samps;
-    buffer_tap_set_pos(tap, target->idx.i - samps.i );
+    samps_diff.i = target->idx.i - samps.i ;
+    samps_diff.fr = 0;
   } else {
     //    tap->idx = (target->idx + tap->loop) - samps;
-    buffer_tap_set_pos(tap, (target->idx.i + tap->loop) - samps.i );
+    samps_diff.i = (target->idx.i + tap->loop) - samps.i;
+    samps_diff.fr = 0;
+    buffer_tap_set_pos(tap, samps_diff);
+
   }
 }
 
