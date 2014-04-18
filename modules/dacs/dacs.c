@@ -251,9 +251,8 @@ void module_process_frame(void) {
 
   //update delay time
 
-  //delay_set_delay_24_8(&(lines[0]), delayTimeTarget);
-  //delay_set_delay_samp(&(lines[0]), delayTimeTarget/256);
-  delay_set_delay_samp(&(lines[0]), delayTimeTarget);
+  delay_set_delay_24_8(&(lines[0]), delayTimeTarget*256);
+  //delay_set_delay_samp(&(lines[0]), delayTimeTarget);
   //define delay input & output
 
   //mix adcs to delay inputs

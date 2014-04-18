@@ -101,21 +101,15 @@ fract32 delay_next(delayLine* dl, fract32 in) {
   buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), time);
 }
 
-void delay_set_delay_24_8(delayLine* dl, u32 subsamples) {
-  //this sets a fractional delay in samples/256
-  fix32 time;
-  time.i = subsamples;
-  //time.fr = subsamples*0x7FFFFF;
-  //time.fr = subsamples%256;
-
-  //time.i = subsamples;
-  //time.fr = 0;
-  buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), time);
-}
 */
+void delay_set_delay_24_8(delayLine* dl, s32 subsamples) {
+  //this sets a fractional delay in samples/256
+  bufferTap24_8_syncN(&(dl->tapRd), &(dl->tapWr), subsamples);
+}
 // set delay in samples
- void delay_set_delay_samp(delayLine* dl, s32 samp) {
-  bufferTap24_8_syncN(&(dl->tapRd), &(dl->tapWr), samp);
+ void delay_set_delay_samp(delayLine* dl, s32 samples) {
+  s32 subsamples = samples * 256;
+  bufferTap24_8_syncN(&(dl->tapRd), &(dl->tapWr), subsamples);
 }
 /*
 
