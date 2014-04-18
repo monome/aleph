@@ -138,7 +138,6 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
          if(pos != op->lastPos) {
            monomeLedBuffer[op->lastPos] = 0;
        }
-	// FIXME: should add macros in op_math.h for io_t conversion
        net_activate(op->outs[0], op_from_int(x), op);
        net_activate(op->outs[1], op_from_int(y), op);
        net_activate(op->outs[2], op_from_int(val), op);
