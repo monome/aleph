@@ -69,9 +69,12 @@ const u8 glyph[8][8] = {{0,0,0,0,0,0,0,0},         // o
        {0,126,126,102,102,126,126,0}};  // [] return
 
 
-u32 a = 0x19660d;
-u32 c = 0x3c6ef35f;
-u32 x = 1234567;  // seed
+u32 a1 = 0x19660d;
+u32 c1 = 0x3c6ef35f;
+u32 x1 = 1234567;  // seed
+u32 a2 = 0x19660d;
+u32 c2 = 0x3c6ef35f;
+u32 x2 = 7654321;  // seed
 
 
 
@@ -216,6 +219,7 @@ static void op_cascades_trigger(u8 n) {
       
       print_dbg("\r\n op_cascades >>>>>>>>>>>>>>>>>>>> RANDOM: ");
       print_dbg_hex(points[rule_dests[n]]);
+      // print_dbg_hex(rnd() % 11);
 
       positions[rule_dests[n]] = points[rule_dests[n]];
     }
@@ -375,8 +379,9 @@ static void op_cascades_redraw() {
 
 
 static u32 rnd() {
-  x = x * c + a;
-  return x;
+  x1 = x1 * c1 + a1;
+  x2 = x2 * c2 + a2;
+  return (x1>>16) | (x2>>16);
 }
 
 
