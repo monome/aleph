@@ -165,6 +165,7 @@ void module_init(void) {
   //delay_set_run_read(&(lines[0]), 1);
   //delay_set_pos_write_samp(&(lines[0]), 0);
   //delay_set_pos_read_samp(&(lines[0]), 0);
+  //delay_set_delay_samp(&(lines[0]), delayTimeTarget/256);
 }
 
 // de-init
@@ -251,6 +252,7 @@ void module_process_frame(void) {
   //update delay time
 
   //delay_set_delay_24_8(&(lines[0]), delayTimeTarget);
+  //delay_set_delay_samp(&(lines[0]), delayTimeTarget/256);
   delay_set_delay_samp(&(lines[0]), delayTimeTarget);
   //define delay input & output
 

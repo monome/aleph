@@ -16,7 +16,7 @@
 
 typedef struct _fix32 {
   u32 i;
-  //fract32 fr;
+  fract32 fr;
 } fix32;
 
 

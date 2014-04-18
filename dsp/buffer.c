@@ -311,8 +311,43 @@ void buffer_tapN_copy( bufferTapN* src, bufferTapN* dst ) {
 /* } */
 
 
+extern void bufferTap24_8_init(bufferTap24_8* tap, audioBuffer* buf){
+  tap->buf = buf;
+  tap->idx = 0;
 
+  //disabled for now - tap loop == buffer loop
+  tap->loop = buf->frames * 256;
 
+  //One sample per frame should be +256 each time
+  tap->inc = 256;
+  //tap starts at 0
+  tap->idx = 0;
+}
+
+extern void bufferTap24_8_next(bufferTap24_8* tap){
+    tap->idx = (tap->inc+tap->idx) % tap->loop;
+}
+
+extern fract32 bufferTap24_8_read(bufferTap24_8* tap){
+  //uninterpolated for now
+  return tap->buf->data[tap->idx / 256];
+}
+
+extern void bufferTap24_8_set_rate(bufferTap24_8* tap, s32 inc) {
+    tap->inc = inc;
+}
+
+extern void bufferTap24_8_set_loop(bufferTap24_8* tap, s32 loop){
+    tap->loop = loop;
+}
+
+extern void bufferTap24_8_syncN(bufferTap24_8* tap, bufferTapN* target, s32 offset) {
+    tap->idx = ( 256 * (target->idx - offset ) ) % tap->loop;
+}
+
+extern void bufferTap24_8_set_pos(bufferTap24_8* tap, s32 idx) {
+    tap->idx = idx;
+}
 /* //--------------------------- */
 /* //---- crossfade */
 

@@ -164,6 +164,57 @@ extern void buffer_tapN_set_pos(bufferTapN* tap, u32 samp);
 // copy all params
 extern void buffer_tapN_copy( bufferTapN* src, bufferTapN* dst );
 
+
+// ---- bufferTap24_8
+// class for creating a "tap" or "head."
+ // stores position/rate within a buffer.
+// supports interpolated read/write.
+typedef struct _bufferTap24_8 {
+  // pointer to buf
+  audioBuffer* buf;
+  // current index
+  s32 idx;
+  // phase increment
+  s32 inc;
+
+  // loop position
+  s32 loop;
+} bufferTap24_8;
+
+
+// intialize tap
+extern void bufferTap24_8_init(bufferTap24_8* tap, audioBuffer* buf);
+
+// increment the index in a tap
+extern void bufferTap24_8_next(bufferTap24_8* tap);
+
+// interpolated read
+extern fract32 bufferTap24_8_read(bufferTap24_8* tap);
+
+// interpolated write (erases old contents)
+//extern void buffer24_8_tap_write(BufferTap24_8* tap, fract32 val);
+
+// interpolated mix (old + new, arbitrary)
+//extern void buffer24_8_tap_mix(BufferTap24_8* tap, fract32 val, fract32 preLevel);
+
+// interpolated add (new + old (unchanged)
+//extern void buffer24_8_tap_add(BufferTap24_8* tap, fract32 val);
+
+// set rate
+extern void bufferTap24_8_set_rate(bufferTap24_8 *tap, s32 inc);
+
+// set a different buffer (resets position)
+//extern void buffer24_8_tap_set_buf(BufferTap24_8* tap, audioBuffer* buf);
+
+// set loop point in subsamples
+extern void bufferTap24_8_set_loop(bufferTap24_8* tap, s32 loop);
+
+// synchronize 24.8 interp tap with an non-interpolated tap at a given offset in subsamples.
+extern void bufferTap24_8_syncN(bufferTap24_8* tap, bufferTapN* target, s32 offset);
+
+// set 24.8 interp tap position directly in subsamples
+extern void bufferTap24_8_set_pos(bufferTap24_8* tap, s32 idx);
+
 //---------------------------
 //---- crossfade
 

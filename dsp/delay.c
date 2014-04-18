@@ -4,10 +4,8 @@
 
   implement delay line using buffer and tap objects
 
-  // FIXME: this is uninterpolated. should be delayN or whatever?
+  single uninterpolated write head, single 24.8 interpolated read head
 
-  // FIXME: this has a crossfade mechanism. should be delayFade or whatever?
-  
  */
 
 #include "conversion.h"
@@ -17,8 +15,8 @@
 // initialize with pointer to audio buffer
 void delay_init(delayLine* dl, fract32* data, u32 frames) {
   buffer_init(&(dl->buffer), data, frames);
-  buffer_tap_init(&(dl->tapRd), &(dl->buffer));
-  buffer_tap_init(&(dl->tapWr), &(dl->buffer));
+  buffer_tapN_init(&(dl->tapWr), &(dl->buffer));
+  bufferTap24_8_init(&(dl->tapRd), &(dl->buffer));
 
 
   /*
@@ -36,23 +34,20 @@ fract32 delay_next(delayLine* dl, fract32 in) {
   //If you return in, we have a delay of zero length - works!
   //return in;
 
+  buffer_tapN_write(&(dl->tapWr), in);
+
+  fract32 readVal;
+  readVal = bufferTap24_8_read( &(dl->tapRd) );
+
 
   // advance the write phasor
   //if(dl->runWr) {
-    buffer_tap_next( &(dl->tapWr) );
+    buffer_tapN_next( &(dl->tapWr) );
   //}
-  buffer_tap_write(&(dl->tapWr), in);
-
-  fract32 readVal;
-
-  // get read value first.
-  // so, setting loop == delaytime gives sensible results (???)
-  readVal = buffer_tap_read( &(dl->tapRd) );
-
 
   // advance the read phasor
   //if(dl->runRd) {
-    buffer_tap_next( &(dl->tapRd) );
+    bufferTap24_8_next( &(dl->tapRd) );
   //}
 
 //For now the write head always writes over any contents...
@@ -119,11 +114,8 @@ void delay_set_delay_24_8(delayLine* dl, u32 subsamples) {
 }
 */
 // set delay in samples
- void delay_set_delay_samp(delayLine* dl, u32 samp) {
-  fix32 time;
-  time.i = samp;
-  //time.fr = 0;
-  buffer_tap_sync(&(dl->tapRd), &(dl->tapWr), time);
+ void delay_set_delay_samp(delayLine* dl, s32 samp) {
+  bufferTap24_8_syncN(&(dl->tapRd), &(dl->tapWr), samp);
 }
 /*
 
@@ -147,14 +139,9 @@ void delay_set_rate(bufferTap* tap, fix32 rate) {
   u32 samp = sec_to_frames_trunc(sec);
   buffer_tap_set_pos(&(dl->tapRd), samp);
 }
-*/
- void delay_set_pos_read_samp(delayLine* dl, u32 samp) {
-  fix32 samples;
-  samples.i = samp;
-  //samples.fr = 0;
+ void delay_set_pos_read_samp(delayLine* dl, u32 samples) {
   buffer_tap_set_pos(&(dl->tapRd), samples);
 }
-/*
 // set write pos in seconds
  void delay_set_pos_write_sec(delayLine* dl, fix16 sec) {
   u32 samp = sec_to_frames_trunc(sec);
@@ -162,11 +149,11 @@ void delay_set_rate(bufferTap* tap, fix32 rate) {
 }
 */
 
- void delay_set_pos_write_samp(delayLine* dl, u32 samp) {
-  fix32 samples;
-  samples.i = samp;
-  //samples.fr = 0;
-  buffer_tap_set_pos(&(dl->tapWr), samples);
+void delay_set_pos_write_samp(delayLine* dl, u32 samp) {
+  buffer_tapN_set_pos(&(dl->tapWr), samp);
+}
+void delay_set_pos_read_samp(delayLine* dl, u32 samp) {
+  bufferTap24_8_set_pos(&(dl->tapRd), samp*256);
 }
 /*
 // set read run flag
