@@ -25,15 +25,16 @@
 // audio
 #include "filter_1p.h"
 #include "module.h"
-#include "delayFadeN.h"
+#include "delay.h"
 
 /// custom
 #include "params.h"
 
 
 // total SDRAM is 64M
-// each line 60ish seconds for now
-#define LINES_BUF_FRAMES 0x2bf200
+// each line 24 bit address
+#define LINES_BUF_FRAMES 0x7FFF
+//#define LINES_BUF_FRAMES 0xFFFFFF
 // try...
 //#define LINES_BUF_FRAMES 0x600000
 //#define LINES_BUF_FRAMES 0x1000000
@@ -41,7 +42,7 @@
 #define NLINES 1
 #define PARAM_SECONDS_MAX 0x003c0000
 
-delayFadeN lines[NLINES];
+delayLine lines[NLINES];
 
 ParamValue auxL[4];
 ParamValue auxR[4];
@@ -67,6 +68,7 @@ ParamValue effectTarget[4];
 
 ParamValue delayTime=0;
 ParamValue delayTimeTarget=0;
+static filter_1p_lo delayTimeSlew;
 
 ParamValue feedback=0;
 ParamValue feedbackTarget=0;
@@ -154,20 +156,20 @@ void module_init(void) {
   param_setup( 	eParam_effect3,		EFFECT_DEFAULT );
 
 
-  delayFadeN_init(&(lines[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
-  param_setup( 	eParam_delay0,		0x4000 );
-  param_setup( 	eParam_feedback0,		FADER_DEFAULT );
+  delay_init(&(lines[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
 
-  delayFadeN_set_loop_sec(&(lines[0]), 30000, 0);
-  delayFadeN_set_loop_sec(&(lines[0]), 30000, 1);
-  delayFadeN_set_run_write(&(lines[0]), 1);
-  delayFadeN_set_run_read(&(lines[0]), 1);
-  delayFadeN_set_write(&(lines[0]), 1);
-  delayFadeN_set_pre(&(lines[0]), 0);
-  delayFadeN_set_mul(&(lines[0]), 1,  0);
-  delayFadeN_set_div(&(lines[0]), 1,  0);
-  delayFadeN_set_pos_write_sec(&(lines[0]), 0,  0);
-  delayFadeN_set_pos_read_sec(&(lines[0]), 0,  0);
+  filter_1p_lo_init( &delayTimeSlew, 0 );
+
+  param_setup( 	eParam_delay0,		0 );
+  param_setup( 	eParam_feedback0,		FADER_DEFAULT );
+  param_setup( 	eParam_feedback0,		0 );
+
+  //delay_set_loop_samp(&(lines[0]), LINES_BUF_FRAMES/2);
+  //delay_set_run_write(&(lines[0]), 1);
+  //delay_set_run_read(&(lines[0]), 1);
+  //delay_set_pos_write_samp(&(lines[0]), 0);
+  //delay_set_pos_read_samp(&(lines[0]), 0);
+  //delay_set_delay_samp(&(lines[0]), delayTimeTarget/256);
 }
 
 // de-init
@@ -191,13 +193,12 @@ u32 module_get_num_params(void) {
    - dac_update writes to 4x16 volatile buffer
 */
 //static u8 dacChan = 0;
-///
+//
 
 void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
 void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
-u16 tickle = 0;
 fract32 delayOutput = 0, delayInput = 0;
 void module_process_frame(void) {
 
@@ -228,19 +229,15 @@ void module_process_frame(void) {
       effect[i] = effectTarget[i]/100*1+effect[i]/100*99;
   }
   feedback = feedbackTarget/100*1+feedback/100*99;
-  if(tickle++%100 == 0){
-      ParamValue delaySlew , roundDelayTime;
-      delaySlew = 10000;
-      roundDelayTime = 0;
-      if(delayTimeTarget > delayTime) {
+  //delayTime = delayTimeTarget/256*1+delayTime/256*99;
+  if(delayTimeSlew.sync) { ;; } else {
+    delayTime = filter_1p_lo_next(&delayTimeSlew);
 
-            roundDelayTime = delaySlew;
-      }
-      else if (delayTime > delayTimeTarget) {
-          roundDelayTime = -delaySlew;
-      }
-      delayTime = (delayTimeTarget*1 + delayTime*(delaySlew-1) +roundDelayTime)/delaySlew ;
+    //update delay time
+    delay_set_delay_24_8(&(lines[0]), delayTime);
+    //delay_set_delay_samp(&(lines[0]), delayTimeTarget);
   }
+
   mix_panned_mono(in[0], &(out[1]), &(out[0]), pan[0], fader[0]);
   mix_panned_mono(in[1], &(out[1]), &(out[0]), pan[1], fader[1]);
   mix_panned_mono(in[2], &(out[1]), &(out[0]), pan[2], fader[2]);
@@ -251,16 +248,20 @@ void module_process_frame(void) {
   mix_aux_mono(in[2], &(out[2]), &(out[3]), auxL[2], auxR[2]);
   mix_aux_mono(in[3], &(out[2]), &(out[3]), auxL[3], auxR[3]);
 
-  //update delay time
-
-  delayFadeN_set_delay_samp(&(lines[0]), delayTime, 0);
   //define delay input & output
 
   //mix adcs to delay inputs
-  delayInput = mult_fr1x32x32(in[3],effect[3]) + mult_fr1x32x32(in[2],effect[2]) + mult_fr1x32x32(in[1],effect[1]) + mult_fr1x32x32(in[0],effect[0]) ;
+  delayInput = mult_fr1x32x32(in[3],effect[3]) ;
+  delayInput = add_fr1x32(delayInput, mult_fr1x32x32(in[2],effect[2]));
+  delayInput = add_fr1x32(delayInput, mult_fr1x32x32(in[1],effect[1]));
+  delayInput = add_fr1x32(delayInput, mult_fr1x32x32(in[0],effect[0]));
 
   delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
-  delayOutput = delayFadeN_next( &(lines[0]), delayInput);
+
+  delayOutput = delay_next( &(lines[0]), delayInput);
+
+
+
   mix_panned_mono(delayOutput, &(out[1]), &(out[0]),PAN_DEFAULT ,FADER_DEFAULT );
 }
 
@@ -386,8 +387,11 @@ void module_set_param(u32 idx, ParamValue v) {
     feedbackTarget = v;
     break;
   case eParam_delay0 :
-    delayTimeTarget = v;
+    //delayTimeTarget = v;
+    filter_1p_lo_in(&delayTimeSlew, v);
     break;
+  case eParam_delay0Slew :
+    filter_1p_lo_set_slew(&delayTimeSlew, v);
   default:
     break;
   }
