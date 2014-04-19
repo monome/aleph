@@ -25,7 +25,7 @@
 #define DELAY_TYPE eParamTypeFix
 #define DELAY_MIN 0x00000000
 #define DELAY_MAX 0x7FFFFFFF
-#define DELAY_RADIX 0
+#define DELAY_RADIX 8
 
 #define PAN_TYPE eParamTypeFix
 #define PAN_MIN 0x00000000
