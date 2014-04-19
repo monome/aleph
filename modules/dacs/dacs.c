@@ -68,6 +68,7 @@ ParamValue effectTarget[4];
 
 ParamValue delayTime=0;
 ParamValue delayTimeTarget=0;
+static filter_1p_lo delayTimeSlew;
 
 ParamValue feedback=0;
 ParamValue feedbackTarget=0;
@@ -156,6 +157,9 @@ void module_init(void) {
 
 
   delay_init(&(lines[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
+
+  filter_1p_lo_init( &delayTimeSlew, 0 );
+
   param_setup( 	eParam_delay0,		0 );
   param_setup( 	eParam_feedback0,		FADER_DEFAULT );
   param_setup( 	eParam_feedback0,		0 );
@@ -195,7 +199,6 @@ void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamV
 
 void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
-u16 tickle = 0;
 fract32 delayOutput = 0, delayInput = 0;
 void module_process_frame(void) {
 
@@ -226,7 +229,15 @@ void module_process_frame(void) {
       effect[i] = effectTarget[i]/100*1+effect[i]/100*99;
   }
   feedback = feedbackTarget/100*1+feedback/100*99;
-  delayTime = delayTimeTarget/256*1+feedback/256*255;
+  //delayTime = delayTimeTarget/256*1+delayTime/256*99;
+  if(delayTimeSlew.sync) { ;; } else {
+    delayTime = filter_1p_lo_next(&delayTimeSlew);
+
+    //update delay time
+    delay_set_delay_24_8(&(lines[0]), delayTime);
+    //delay_set_delay_samp(&(lines[0]), delayTimeTarget);
+  }
+
   mix_panned_mono(in[0], &(out[1]), &(out[0]), pan[0], fader[0]);
   mix_panned_mono(in[1], &(out[1]), &(out[0]), pan[1], fader[1]);
   mix_panned_mono(in[2], &(out[1]), &(out[0]), pan[2], fader[2]);
@@ -237,17 +248,12 @@ void module_process_frame(void) {
   mix_aux_mono(in[2], &(out[2]), &(out[3]), auxL[2], auxR[2]);
   mix_aux_mono(in[3], &(out[2]), &(out[3]), auxL[3], auxR[3]);
 
-  //update delay time
-
-  delay_set_delay_24_8(&(lines[0]), delayTimeTarget);
-  //delay_set_delay_samp(&(lines[0]), delayTimeTarget);
   //define delay input & output
 
   //mix adcs to delay inputs
   delayInput = mult_fr1x32x32(in[3],effect[3]) + mult_fr1x32x32(in[2],effect[2]) + mult_fr1x32x32(in[1],effect[1]) + mult_fr1x32x32(in[0],effect[0]) ;
 
-  //delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
-  //disable feedback till we're working
+  delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
 
   delayOutput = delay_next( &(lines[0]), delayInput);
 
@@ -304,6 +310,7 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_slew0 :
    filter_1p_lo_set_slew(&(dacSlew[0]), v);
+   filter_1p_lo_set_slew(&delayTimeSlew, v);
     break;
   case eParam_slew1 :
     filter_1p_lo_set_slew(&(dacSlew[1]), v);
@@ -378,7 +385,8 @@ void module_set_param(u32 idx, ParamValue v) {
     feedbackTarget = v;
     break;
   case eParam_delay0 :
-    delayTimeTarget = v;
+    //delayTimeTarget = v;
+     filter_1p_lo_in(&delayTimeSlew, v);
     break;
   default:
     break;
