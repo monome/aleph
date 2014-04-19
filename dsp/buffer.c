@@ -342,7 +342,7 @@ extern void bufferTap24_8_set_loop(bufferTap24_8* tap, s32 loop){
 }
 
 extern void bufferTap24_8_syncN(bufferTap24_8* tap, bufferTapN* target, s32 offset_subsamples) {
-    tap->idx = ( (256 * target->idx - offset_subsamples ) ) % tap->loop;
+    tap->idx = ( (256 * target->idx - offset_subsamples ) + tap->loop ) % tap->loop;
 }
 
 extern void bufferTap24_8_set_pos(bufferTap24_8* tap, s32 idx) {
