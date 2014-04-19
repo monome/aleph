@@ -310,7 +310,6 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_slew0 :
    filter_1p_lo_set_slew(&(dacSlew[0]), v);
-   filter_1p_lo_set_slew(&delayTimeSlew, v);
     break;
   case eParam_slew1 :
     filter_1p_lo_set_slew(&(dacSlew[1]), v);
@@ -388,6 +387,8 @@ void module_set_param(u32 idx, ParamValue v) {
     //delayTimeTarget = v;
      filter_1p_lo_in(&delayTimeSlew, v);
     break;
+  case eParam_delay0Slew :
+   filter_1p_lo_set_slew(&delayTimeSlew, v);
   default:
     break;
   }

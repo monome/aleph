@@ -4,34 +4,6 @@
 #include <string.h>
 #include "module.h"
 #include "params.h" 
-
-#define EFFECT_TYPE eParamTypeAmp
-#define EFFECT_MIN 0x00000000
-#define EFFECT_MAX FR32_MAX
-#define EFFECT_RADIX 1
-
-/*
-//In bees this looks like 0-62 (with decimal places)
-//In module this comes out as 0x00000000 - 0x00007FFF
-#define DELAY_TYPE eParamTypeIntegrator
-#define DELAY_MIN 0x00000000
-#define DELAY_MAX 0x7FFFFFFF
-#define DELAY_RADIX 1
-*/
-
-#define PARAM_SECONDS_MAX 0x003c0000
-#define PARAM_SECONDS_RADIX 7
-
-#define DELAY_TYPE eParamTypeFix
-#define DELAY_MIN 0x00000000
-#define DELAY_MAX 0x7FFFFFFF
-#define DELAY_RADIX 8
-
-#define PAN_TYPE eParamTypeFix
-#define PAN_MIN 0x00000000
-#define PAN_MAX 0x7FFFFFFF
-#define PAN_RADIX 16
-
 extern void fill_param_desc(ParamDesc* desc) {
   strcpy(desc[eParam_dac0].label, "dac0");
   desc[eParam_dac0].type = eParamTypeFix; 
@@ -207,6 +179,11 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_delay0].max = DELAY_MAX;
   desc[eParam_delay0].radix = DELAY_RADIX;
 
+  strcpy(desc[eParam_delay0Slew].label, "slew1");
+  desc[eParam_delay0Slew].type = eParamTypeIntegrator; 
+  desc[eParam_delay0Slew].min = 0x00000000; 
+  desc[eParam_delay0Slew].max = 0x7fffffff;
+  desc[eParam_delay0Slew].radix = 32;
 
   strcpy(desc[eParam_feedback0].label, "feedback0");
   desc[eParam_feedback0].type = EFFECT_TYPE;
