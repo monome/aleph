@@ -251,7 +251,10 @@ void module_process_frame(void) {
   //define delay input & output
 
   //mix adcs to delay inputs
-  delayInput = mult_fr1x32x32(in[3],effect[3]) + mult_fr1x32x32(in[2],effect[2]) + mult_fr1x32x32(in[1],effect[1]) + mult_fr1x32x32(in[0],effect[0]) ;
+  delayInput = mult_fr1x32x32(in[3],effect[3]) ;
+  delayInput = add_fr1x32(delayInput, mult_fr1x32x32(in[2],effect[2]));
+  delayInput = add_fr1x32(delayInput, mult_fr1x32x32(in[1],effect[1]));
+  delayInput = add_fr1x32(delayInput, mult_fr1x32x32(in[0],effect[0]));
 
   delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
 
@@ -385,10 +388,10 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_delay0 :
     //delayTimeTarget = v;
-     filter_1p_lo_in(&delayTimeSlew, v);
+    filter_1p_lo_in(&delayTimeSlew, v);
     break;
   case eParam_delay0Slew :
-   filter_1p_lo_set_slew(&delayTimeSlew, v);
+    filter_1p_lo_set_slew(&delayTimeSlew, v);
   default:
     break;
   }
