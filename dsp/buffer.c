@@ -352,6 +352,8 @@ extern fract32 bufferTap24_8_read_from(bufferTap24_8* tap, s32 idx){
 }
 
 extern fract32 bufferTap24_8_read_antialias(bufferTap24_8* tap){
+    //FIXME this should happen at the *end* of this subroutine.
+    //Proably this isn't working after all, just taking an average of one
     tap->idx_last = tap->idx;
     s32 idx = tap->idx;
     s32 idx_last = tap->idx_last;
