@@ -362,8 +362,10 @@ extern fract32 bufferTap24_8_read_antialias(bufferTap24_8* tap){
         num_points = 1;
     fract32 weight = FR32_MAX / num_points;
     fract32 result = 0;
-    while (idx > idx_last) {
+    while (num_points > 0) {
         result = add_fr1x32( result, mult_fr1x32x32( weight, bufferTap24_8_read_from(tap, idx) ) );
+        idx -= 256;
+        num_points --;
     }
     return result;
 
