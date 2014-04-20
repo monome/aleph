@@ -32,8 +32,8 @@
 
 
 // total SDRAM is 64M
-// each line 24 bit address
-#define LINES_BUF_FRAMES 0x7FFF
+// each line 16 bit address
+#define LINES_BUF_FRAMES 0x10000
 //#define LINES_BUF_FRAMES 0xFFFFFF
 // try...
 //#define LINES_BUF_FRAMES 0x600000
@@ -52,7 +52,6 @@ ParamValue auxRTarget[4];
 
 ParamValue pan[4];
 ParamValue panTarget[4];
-#define PAN_MAX 2147483647
 #define PAN_DEFAULT PAN_MAX/2
 
 ParamValue fader[4];
@@ -78,7 +77,7 @@ typedef struct _dacsData {
   ModuleData super;
   //ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
-  volatile fract32 audioBuffer[1][LINES_BUF_FRAMES];
+  volatile fract32 audioBuffer[NLINES][LINES_BUF_FRAMES];
 } dacsData;
 
 //-------------------------
