@@ -172,6 +172,8 @@ extern void buffer_tapN_copy( bufferTapN* src, bufferTapN* dst );
 typedef struct _bufferTap24_8 {
   // pointer to buf
   audioBuffer* buf;
+  // last index
+  s32 idx_last;
   // current index
   s32 idx;
   // phase increment
@@ -190,6 +192,12 @@ extern void bufferTap24_8_next(bufferTap24_8* tap);
 
 // interpolated read
 extern fract32 bufferTap24_8_read(bufferTap24_8* tap);
+
+// interpolated read from arbitrary position
+extern fract32 bufferTap24_8_read_from(bufferTap24_8* tap, s32 idx);
+
+// antialiased interpolated read
+extern fract32 bufferTap24_8_read_antialias(bufferTap24_8* tap);
 
 // interpolated write (erases old contents)
 //extern void buffer24_8_tap_write(BufferTap24_8* tap, fract32 val);
