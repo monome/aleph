@@ -18,7 +18,7 @@ typedef struct _delayLine {
   //-- audio buffer class
   audioBuffer buffer;
 
-  bufferTap24_8 tapRd;
+  echoTap24_8 tapRd;
   bufferTapN tapWr;
   // flag to toggle writing of new data
   //u8 write;

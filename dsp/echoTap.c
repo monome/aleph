@@ -2,11 +2,10 @@
 
 // intialize tap
 extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
-  tap->tapWr = tap;
+  tap->tapWr = tapWr;
   tap->echo = 0;
   tap->idx_last = tapWr->idx;
 
-  //disabled for now - tap loop == buffer loop
   tap->echoMax = 256 * 1000;
 
   //If inc == 0 doesn't move relative to write head we have a straight echo
@@ -19,10 +18,12 @@ extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
 // increment the index in an echo
 extern void echoTap24_8_next(echoTap24_8* tap){
     tap->echo = tap->echo + tap->inc;
-    if (tap->echo<0)
+    if (tap->echo<0){
         tap->echo = tap->echoMax;
-    else if (tap->echo tap->echoMax)
+    }
+    else if (tap->echo > tap->echoMax){
         tap->echo = 0;
+    }
 }
 
 // interpolated read
@@ -32,7 +33,7 @@ extern fract32 echoTap24_8_read(echoTap24_8* echoTap){
     //loop and idx are the absolute position in subsamples of the desired read point
 
     //for now just return uninterpolated.  Will make no difference for harmonic pitch
-    return echoTap->tapWr->buf[idx / 256];
+    return echoTap->tapWr->buf->data[idx / 256];
 }
 /*
 // interpolated read from arbitrary position

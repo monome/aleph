@@ -16,7 +16,7 @@
 void delay_init(delayLine* dl, fract32* data, u32 frames) {
   buffer_init(&(dl->buffer), data, frames);
   buffer_tapN_init(&(dl->tapWr), &(dl->buffer));
-  bufferTap24_8_init(&(dl->tapRd), &(dl->buffer));
+  echoTap24_8_init(&(dl->tapRd), &(dl->tapWr));
 
 
   /*
@@ -37,7 +37,7 @@ fract32 delay_next(delayLine* dl, fract32 in) {
   buffer_tapN_write(&(dl->tapWr), in);
 
   fract32 readVal;
-  readVal = bufferTap24_8_read_antialias( &(dl->tapRd) );
+  readVal = echoTap24_8_read( &(dl->tapRd) );
 
 
   // advance the write phasor
@@ -47,7 +47,7 @@ fract32 delay_next(delayLine* dl, fract32 in) {
 
   // advance the read phasor
   //if(dl->runRd) {
-    bufferTap24_8_next( &(dl->tapRd) );
+    echoTap24_8_next( &(dl->tapRd) );
   //}
 
 //For now the write head always writes over any contents...
@@ -103,13 +103,11 @@ fract32 delay_next(delayLine* dl, fract32 in) {
 
 */
 void delay_set_delay_24_8(delayLine* dl, s32 subsamples) {
-  //this sets a fractional delay in samples/256
-  bufferTap24_8_syncN(&(dl->tapRd), &(dl->tapWr), subsamples);
+  echoTap24_8_set_pos(&(dl->tapRd),subsamples);
 }
 // set delay in samples
  void delay_set_delay_samp(delayLine* dl, s32 samples) {
-  s32 subsamples = samples * 256;
-  bufferTap24_8_syncN(&(dl->tapRd), &(dl->tapWr), subsamples);
+  echoTap24_8_set_pos(&(dl->tapRd),samples * 256);
 }
 /*
 
@@ -145,9 +143,6 @@ void delay_set_rate(bufferTap* tap, fix32 rate) {
 
 void delay_set_pos_write_samp(delayLine* dl, u32 samp) {
   buffer_tapN_set_pos(&(dl->tapWr), samp);
-}
-void delay_set_pos_read_samp(delayLine* dl, u32 samp) {
-  bufferTap24_8_set_pos(&(dl->tapRd), samp*256);
 }
 /*
 // set read run flag

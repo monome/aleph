@@ -8,6 +8,12 @@
 
 */
 
+#ifndef _ALEPH_ECHOTAP_H_
+#define _ALEPH_ECHOTAP_H_
+#include "fix.h"
+#include "fix32.h"
+#include "types.h"
+#include "buffer.h"
 // ---- echoTap24_8
 // Data structure for an 'echo tap'
 // echo is position relative to write tap
@@ -26,10 +32,10 @@ typedef struct _echoTap24_8 {
   // loop position
   //s32 echoWrap;
   s32 echoMax;
-} echoTap;
+} echoTap24_8;
 
 // intialize tap
-extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tap);
+extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr);
 
 // increment the index in an echo
 extern void echoTap24_8_next(echoTap24_8* tap);
@@ -48,3 +54,5 @@ extern void echoTap24_8_set_rate(echoTap24_8 *tap, s32 inc);
 
 // set 24.8 interp tap position directly in subsamples
 extern void echoTap24_8_set_pos(echoTap24_8* tap, s32 echo);
+
+#endif // h guard
