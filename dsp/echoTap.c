@@ -3,7 +3,7 @@
 // intialize tap
 extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
   tap->tapWr = tapWr;
-  tap->echo = 0;
+  tap->echo = 256*500;
   tap->idx_last = tapWr->idx;
 
   tap->echoMax = 256 * 1000;
@@ -12,11 +12,13 @@ extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
   //If inc < 0 pitch shifts up
   //If 256>inc >0 pitch shifts down
   //If inc > 256 weird reversed pitch shift thing
-  tap->inc = 0;
+  echoTap24_8_set_rate(tap, 256);
 }
 
 // increment the index in an echo
 extern void echoTap24_8_next(echoTap24_8* tap){
+    //for now don't move the echo tap
+
     tap->echo = tap->echo + tap->inc;
     if (tap->echo<0){
         tap->echo = tap->echoMax;
@@ -29,7 +31,7 @@ extern void echoTap24_8_next(echoTap24_8* tap){
 // interpolated read
 extern fract32 echoTap24_8_read(echoTap24_8* echoTap){
     s32 loop = echoTap->tapWr->loop * 256;
-    s32 idx = (echoTap->tapWr->idx + loop - echoTap->echo) % loop;
+    s32 idx = (echoTap->tapWr->idx * 256 + loop - echoTap->echo) % loop;
     //loop and idx are the absolute position in subsamples of the desired read point
 
     //for now just return uninterpolated.  Will make no difference for harmonic pitch

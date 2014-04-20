@@ -159,7 +159,7 @@ void module_init(void) {
 
   filter_1p_lo_init( &delayTimeSlew, 0 );
 
-  param_setup( 	eParam_delay0,		0 );
+  //param_setup( 	eParam_delay0,		0 );
   param_setup( 	eParam_feedback0,		FADER_DEFAULT );
   param_setup( 	eParam_feedback0,		0 );
 
@@ -233,8 +233,9 @@ void module_process_frame(void) {
     delayTime = filter_1p_lo_next(&delayTimeSlew);
 
     //update delay time
-    delay_set_delay_24_8(&(lines[0]), delayTime);
+    //delay_set_delay_24_8(&(lines[0]), delayTime);
     //delay_set_delay_samp(&(lines[0]), delayTimeTarget);
+    //delay_set_rate(&(lines[0]), delayTimeTarget / 100);
   }
 
   mix_panned_mono(in[0], &(out[1]), &(out[0]), pan[0], fader[0]);
@@ -387,7 +388,8 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_delay0 :
     //delayTimeTarget = v;
-    filter_1p_lo_in(&delayTimeSlew, v);
+    //filter_1p_lo_in(&delayTimeSlew, v);
+    delay_set_rate(&(lines[0]), v/50);
     break;
   case eParam_delay0Slew :
     filter_1p_lo_set_slew(&delayTimeSlew, v);
