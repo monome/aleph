@@ -10,7 +10,7 @@
 #define PARAM_DAC_MIN 0
 //#define PARAM_DAC_MAX (10 << 16)
 // bah
-#define PARAM_DAC_MAX 0x7fffffff
+#define PARAM_DAC_MAX FR32_MAX
 #define PARAM_DAC_RADIX 16
 
 #define PARAM_AMP_0 (FRACT32_MAX)
@@ -42,12 +42,12 @@
 
 #define DELAY_TYPE eParamTypeFix
 #define DELAY_MIN 0x00000000
-#define DELAY_MAX 0x7FFFFFFF
+#define DELAY_MAX FR32_MAX
 #define DELAY_RADIX 8
 
 #define PAN_TYPE eParamTypeFix
 #define PAN_MIN 0x00000000
-#define PAN_MAX 0x7FFFFFFF
+#define PAN_MAX FR32_MAX
 #define PAN_RADIX 16
 
 // enumerate parameters

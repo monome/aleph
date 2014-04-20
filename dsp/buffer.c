@@ -332,8 +332,10 @@ extern fract32 bufferTap24_8_read(bufferTap24_8* tap){
   //uninterpolated for now
 
   //return tap->buf->data[tap->idx / 256];
-  fract32 samp1 = tap->buf->data[tap->idx / 256];
-  fract32 samp2 = tap->buf->data[tap->idx / 256 + 1];
+  u32 samp1_index = (tap->idx + tap->loop) % tap->loop;
+  u32 samp2_index = (tap->idx + 256 + tap->loop) % tap->loop;
+  fract32 samp1 = tap->buf->data[samp1_index / 256];
+  fract32 samp2 = tap->buf->data[samp2_index / 256];
   fract32 inter_sample = FR32_MAX/256 * (tap->idx % 256);
   return pan_lin_mix(samp1, samp2, inter_sample) ;
 }
