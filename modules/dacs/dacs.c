@@ -33,7 +33,7 @@
 
 // total SDRAM is 64M
 // each line 24 bit address
-#define LINES_BUF_FRAMES 0x800000
+#define LINES_BUF_FRAMES 0x8000
 //#define LINES_BUF_FRAMES 0xFFFFFF
 // try...
 //#define LINES_BUF_FRAMES 0x600000

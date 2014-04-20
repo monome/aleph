@@ -325,14 +325,14 @@ extern void bufferTap24_8_init(bufferTap24_8* tap, audioBuffer* buf){
 }
 
 extern void bufferTap24_8_next(bufferTap24_8* tap){
-    tap->idx = (tap->inc+tap->idx) % tap->loop;
+    tap->idx = (tap->inc + tap->idx + tap->loop) % tap->loop;
 }
 
 extern fract32 bufferTap24_8_read(bufferTap24_8* tap){
   //uninterpolated for now
 
   //return tap->buf->data[tap->idx / 256];
-  u32 samp1_index = (tap->idx + tap->loop) % tap->loop;
+  u32 samp1_index = tap->idx;
   u32 samp2_index = (tap->idx + 256 + tap->loop) % tap->loop;
   fract32 samp1 = tap->buf->data[samp1_index / 256];
   fract32 samp2 = tap->buf->data[samp2_index / 256];
