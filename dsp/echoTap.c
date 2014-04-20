@@ -6,7 +6,7 @@ extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
   tap->echo = 256*500;
   tap->idx_last = tapWr->idx;
 
-  tap->echoMax = 256 * 1000;
+  tap->echoMax = 256 * 3000;
 
   //If inc == 0 doesn't move relative to write head we have a straight echo
   //If inc < 0 pitch shifts up
