@@ -25,7 +25,7 @@
 // audio
 #include "filter_1p.h"
 #include "module.h"
-#include "delay.h"
+#include "pitch_shift.h"
 
 /// custom
 #include "params.h"

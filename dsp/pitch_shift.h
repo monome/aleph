@@ -12,6 +12,7 @@ delay line object interface/
 
 #include "buffer.h"
 #include "types.h"
+#include "echoTap.h"
 
 // delay line data structure
 typedef struct _delayLine {
@@ -19,6 +20,7 @@ typedef struct _delayLine {
   audioBuffer buffer;
 
   echoTap24_8 tapRd;
+  echoTap24_8 tapRd1;
   bufferTapN tapWr;
   // flag to toggle writing of new data
   //u8 write;
