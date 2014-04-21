@@ -73,7 +73,7 @@ extern void echoTap24_8_set_rate(echoTap24_8 *tap, s32 inc){
 
 // set 24.8 interp tap position directly in subsamples
 extern void echoTap24_8_set_echoMax(echoTap24_8* tap, s32 echoMax){
-    tap->echoMax = echoMax;
+    tap->echoMax = echoMax*256;
 }
 
 // set 24.8 interp tap position directly in subsamples
