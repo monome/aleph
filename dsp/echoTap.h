@@ -55,6 +55,9 @@ extern fract32 echoTap24_8_read_antialias(echoTap24_8* tap);
 extern void echoTap24_8_set_rate(echoTap24_8 *tap, s32 inc);
 
 // set 24.8 interp tap position directly in subsamples
+extern void echoTap24_8_set_echoMax(echoTap24_8* tap, s32 echoMax);
+
+// set 24.8 interp tap position directly in subsamples
 extern void echoTap24_8_set_pos(echoTap24_8* tap, s32 echo);
 
 #endif // h guard

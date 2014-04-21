@@ -37,6 +37,16 @@ void delay_init(delayLine* dl, fract32* data, u32 frames) {
   echoTap24_8_set_pos(&(dl->tapRd7),256 * 280);
   echoTap24_8_set_pos(&(dl->tapRd8),256 * 400);
   echoTap24_8_set_pos(&(dl->tapRd9),256 * 840);
+  echoTap24_8_set_echoMax(&(dl->tapRd),dl->tapRd.echo*2);
+  echoTap24_8_set_echoMax(&(dl->tapRd1),dl->tapRd1.echo*2);
+  echoTap24_8_set_echoMax(&(dl->tapRd2),dl->tapRd2.echo*2);
+  echoTap24_8_set_echoMax(&(dl->tapRd3),dl->tapRd3.echo*2);
+  echoTap24_8_set_echoMax(&(dl->tapRd4),dl->tapRd4.echo*2);
+  echoTap24_8_set_echoMax(&(dl->tapRd5),dl->tapRd5.echo*2);
+  echoTap24_8_set_echoMax(&(dl->tapRd6),dl->tapRd6.echo*2);
+  echoTap24_8_set_echoMax(&(dl->tapRd7),dl->tapRd7.echo*2);
+  echoTap24_8_set_echoMax(&(dl->tapRd8),dl->tapRd8.echo*2);
+  echoTap24_8_set_echoMax(&(dl->tapRd9),dl->tapRd9.echo*2);
 
   /*
   fix32 single_speed;
@@ -143,6 +153,15 @@ fract32 delay_next(delayLine* dl, fract32 in) {
 */
 void delay_set_rate(delayLine* dl, s32 subsamples) {
   echoTap24_8_set_rate(&(dl->tapRd), subsamples);
+  echoTap24_8_set_rate(&(dl->tapRd1), subsamples);
+  echoTap24_8_set_rate(&(dl->tapRd2), subsamples);
+  echoTap24_8_set_rate(&(dl->tapRd3), subsamples);
+  echoTap24_8_set_rate(&(dl->tapRd4), subsamples);
+  echoTap24_8_set_rate(&(dl->tapRd5), subsamples);
+  echoTap24_8_set_rate(&(dl->tapRd6), subsamples);
+  echoTap24_8_set_rate(&(dl->tapRd7), subsamples);
+  echoTap24_8_set_rate(&(dl->tapRd8), subsamples);
+  echoTap24_8_set_rate(&(dl->tapRd9), subsamples);
 }
 void delay_set_delay_24_8(delayLine* dl, s32 subsamples) {
   echoTap24_8_set_pos(&(dl->tapRd),subsamples);
