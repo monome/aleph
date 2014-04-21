@@ -22,6 +22,13 @@ typedef struct _delayLine {
   echoTap24_8 tapRd;
   echoTap24_8 tapRd1;
   echoTap24_8 tapRd2;
+  echoTap24_8 tapRd3;
+  echoTap24_8 tapRd4;
+  echoTap24_8 tapRd5;
+  echoTap24_8 tapRd6;
+  echoTap24_8 tapRd7;
+  echoTap24_8 tapRd8;
+  echoTap24_8 tapRd9;
   bufferTapN tapWr;
   // flag to toggle writing of new data
   //u8 write;

@@ -19,10 +19,24 @@ void delay_init(delayLine* dl, fract32* data, u32 frames) {
   echoTap24_8_init(&(dl->tapRd), &(dl->tapWr));
   echoTap24_8_init(&(dl->tapRd1), &(dl->tapWr));
   echoTap24_8_init(&(dl->tapRd2), &(dl->tapWr));
+  echoTap24_8_init(&(dl->tapRd3), &(dl->tapWr));
+  echoTap24_8_init(&(dl->tapRd4), &(dl->tapWr));
+  echoTap24_8_init(&(dl->tapRd5), &(dl->tapWr));
+  echoTap24_8_init(&(dl->tapRd6), &(dl->tapWr));
+  echoTap24_8_init(&(dl->tapRd7), &(dl->tapWr));
+  echoTap24_8_init(&(dl->tapRd8), &(dl->tapWr));
+  echoTap24_8_init(&(dl->tapRd9), &(dl->tapWr));
 
-  echoTap24_8_set_pos(&(dl->tapRd),256 * 500);
-  echoTap24_8_set_pos(&(dl->tapRd1),256 * 0);
-  echoTap24_8_set_pos(&(dl->tapRd2),256 * 250);
+  echoTap24_8_set_pos(&(dl->tapRd),256 * 990);
+  echoTap24_8_set_pos(&(dl->tapRd1),256 * 10);
+  echoTap24_8_set_pos(&(dl->tapRd2),256 * 80);
+  echoTap24_8_set_pos(&(dl->tapRd3),256 * 500);
+  echoTap24_8_set_pos(&(dl->tapRd4),256 * 800);
+  echoTap24_8_set_pos(&(dl->tapRd5),256 * 780);
+  echoTap24_8_set_pos(&(dl->tapRd6),256 * 590);
+  echoTap24_8_set_pos(&(dl->tapRd7),256 * 280);
+  echoTap24_8_set_pos(&(dl->tapRd8),256 * 400);
+  echoTap24_8_set_pos(&(dl->tapRd9),256 * 840);
 
   /*
   fix32 single_speed;
@@ -43,9 +57,17 @@ fract32 delay_next(delayLine* dl, fract32 in) {
 
   fract32 readVal;
   //readVal = echoTap24_8_read( &(dl->tapRd) );
-  readVal = echoTap24_8_read( &(dl->tapRd) )/2;
-  readVal += echoTap24_8_read( &(dl->tapRd1) )/2;
-  readVal += echoTap24_8_read( &(dl->tapRd2) )/2;
+  fract32 mix_factor = FR32_MAX;
+  readVal = mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd) ),mix_factor);
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd1) ),mix_factor));
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd2) ),mix_factor));
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd3) ),mix_factor));
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd4) ),mix_factor));
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd5) ),mix_factor));
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd6) ),mix_factor));
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd7) ),mix_factor));
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd8) ),mix_factor));
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd9) ),mix_factor));
 
 
   // advance the write phasor
@@ -58,6 +80,13 @@ fract32 delay_next(delayLine* dl, fract32 in) {
     echoTap24_8_next( &(dl->tapRd) );
     echoTap24_8_next( &(dl->tapRd1) );
     echoTap24_8_next( &(dl->tapRd2) );
+    echoTap24_8_next( &(dl->tapRd3) );
+    echoTap24_8_next( &(dl->tapRd4) );
+    echoTap24_8_next( &(dl->tapRd5) );
+    echoTap24_8_next( &(dl->tapRd6) );
+    echoTap24_8_next( &(dl->tapRd7) );
+    echoTap24_8_next( &(dl->tapRd8) );
+    echoTap24_8_next( &(dl->tapRd9) );
   //}
 
 //For now the write head always writes over any contents...
