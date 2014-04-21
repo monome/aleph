@@ -32,6 +32,8 @@ typedef struct _echoTap24_8 {
   // loop position
   //s32 echoWrap;
   s32 echoMax;
+  //check for zero crossing
+  u8 zero_crossing;
 } echoTap24_8;
 
 // intialize tap
@@ -39,9 +41,6 @@ extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr);
 
 // increment the index in an echo
 extern void echoTap24_8_next(echoTap24_8* tap);
-
-//Check for zero crossing
-extern u8 echoTap24_8_check_zero_crossing(echoTap24_8* echoTap);
 
 // interpolated read
 extern fract32 echoTap24_8_read(echoTap24_8* tap);
