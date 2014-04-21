@@ -34,6 +34,9 @@ typedef struct _echoTap24_8 {
   s32 echoMax;
   //check for zero crossing
   u8 zero_crossing;
+
+  //We want to fade grains so need to hold amp
+  fract32 amplitude;
 } echoTap24_8;
 
 // intialize tap

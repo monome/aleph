@@ -1,6 +1,6 @@
 #include "echoTap.h"
 
-#define SHORTEST_HALF_WAVE 250
+#define SHORTEST_HALF_WAVE 256
 #define LONGEST_DELAY 1500
 // intialize tap
 extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
@@ -9,6 +9,7 @@ extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
   tap->idx_last = tapWr->idx;
 
   tap->echoMax = 256 * LONGEST_DELAY;
+  tap->amplitude = FR32_MAX;
 
   //If inc == 0 doesn't move relative to write head we have a straight echo
   //If inc < 0 pitch shifts up
@@ -17,28 +18,35 @@ extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
   echoTap24_8_set_rate(tap, 256);
 }
 
+#define RAMP_UP  0x7FFF8
 // increment the index in an echo
 extern void echoTap24_8_next(echoTap24_8* tap){
 
     u8 zero_crossing = tap->zero_crossing;
     tap->echo = tap->echo + tap->inc;
-    if (tap->echo<0 || (tap-> echo < SHORTEST_HALF_WAVE * 256 && zero_crossing )){
-    //if (tap->echo<0 ){
-        //tap->echo = tap->echoMax;
-        tap->echo = 0;
-        if(tap->inc <0)
-            tap->inc = 512 - tap->inc;
+    if (tap->echo<0  && tap->inc <0){
+        tap->inc = 512 - tap->inc;
+        tap->echo += tap->inc;
     }
-    else if (tap->echo > tap->echoMax ||(tap->echo > tap->echoMax - 256 * SHORTEST_HALF_WAVE && zero_crossing)){
-    //else if (tap->echo > tap->echoMax ){
-        //tap->echo = 0;
-        if(tap->inc > 0)
-            tap->inc = 512 - tap->inc;
+    //FIXME Something fucked here - fudge factor on echoMax
+    //Doesn't fully unfuck...
+    //if (tap->echo > tap->echoMax*2 && tap->inc > 0){
+    if (tap->echo > tap->echoMax*2 && tap->inc > 0){
+        tap->inc = 512 - tap->inc;
+        //tap->amplitude = 0;
+        tap->echo += tap->inc;
     }
+    s32 center = (tap->echoMax+1)/2;
+    s32 dist_from_center =  tap->echo - center;
+    s32 scaling_factor = FR32_MAX/center-0xFFF;
+    tap->amplitude = dist_from_center * scaling_factor;
+    tap->amplitude = mult_fr1x32x32(tap->amplitude, tap->amplitude);
+    //tap->amplitude = FR32_MAX;
+
 }
 
-// interpolated read
 #define SIGN_BIT 0x80000000
+// interpolated read
 extern fract32 echoTap24_8_read(echoTap24_8* echoTap){
     s32 loop = echoTap->tapWr->loop * 256;
     s32 idx = (echoTap->tapWr->idx * 256 + loop - echoTap->echo) % loop;
@@ -55,7 +63,8 @@ extern fract32 echoTap24_8_read(echoTap24_8* echoTap){
     u8 samp1_sign = samp1 & SIGN_BIT;
     u8 samp2_sign = samp2 & SIGN_BIT;
     echoTap->zero_crossing = (samp1_sign != samp2_sign);
-    return pan_lin_mix(samp1, samp2, inter_sample) ;
+    return mult_fr1x32x32(echoTap->amplitude, pan_lin_mix(samp1, samp2, inter_sample) );
+    //return negate_fr1x32(pan_lin_mix(samp1, samp2, inter_sample) );
 }
 /*
 // interpolated read from arbitrary position
