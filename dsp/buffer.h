@@ -196,8 +196,8 @@ extern fract32 bufferTap24_8_read(bufferTap24_8* tap);
 // interpolated read from arbitrary position
 extern fract32 bufferTap24_8_read_from(bufferTap24_8* tap, s32 idx);
 
-// antialiased interpolated read
-extern fract32 bufferTap24_8_read_antialias(bufferTap24_8* tap);
+// antialiased interpolated read BROKEN
+//extern fract32 bufferTap24_8_read_antialias(bufferTap24_8* tap);
 
 // interpolated write (erases old contents)
 //extern void buffer24_8_tap_write(BufferTap24_8* tap, fract32 val);
