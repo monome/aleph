@@ -38,6 +38,7 @@ extern void echoTap24_8_next(echoTap24_8* tap){
     }
     s32 center = (tap->echoMax+1)/2;
     s32 dist_from_center =  tap->echo - center;
+    //FIXME Why the fudge factor??
     s32 scaling_factor = FR32_MAX/center-0xFFF;
     tap->amplitude = dist_from_center * scaling_factor;
     tap->amplitude = mult_fr1x32x32(tap->amplitude, tap->amplitude);
