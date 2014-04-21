@@ -18,11 +18,11 @@ void delay_init(delayLine* dl, fract32* data, u32 frames) {
   buffer_tapN_init(&(dl->tapWr), &(dl->buffer));
   echoTap24_8_init(&(dl->tapRd), &(dl->tapWr));
   echoTap24_8_init(&(dl->tapRd1), &(dl->tapWr));
-  //echoTap24_8_init(&(dl->tapRd2), &(dl->tapWr));
+  echoTap24_8_init(&(dl->tapRd2), &(dl->tapWr));
 
   echoTap24_8_set_pos(&(dl->tapRd),256 * 500);
   echoTap24_8_set_pos(&(dl->tapRd1),256 * 0);
-  //echoTap24_8_set_pos(&(dl->tapRd2),256 * 1000);
+  echoTap24_8_set_pos(&(dl->tapRd2),256 * 250);
 
   /*
   fix32 single_speed;
@@ -45,7 +45,7 @@ fract32 delay_next(delayLine* dl, fract32 in) {
   //readVal = echoTap24_8_read( &(dl->tapRd) );
   readVal = echoTap24_8_read( &(dl->tapRd) )/2;
   readVal += echoTap24_8_read( &(dl->tapRd1) )/2;
-  //readVal += echoTap24_8_read( &(dl->tapRd2) )/3;
+  readVal += echoTap24_8_read( &(dl->tapRd2) )/2;
 
 
   // advance the write phasor
@@ -57,7 +57,7 @@ fract32 delay_next(delayLine* dl, fract32 in) {
   //if(dl->runRd) {
     echoTap24_8_next( &(dl->tapRd) );
     echoTap24_8_next( &(dl->tapRd1) );
-    //echoTap24_8_next( &(dl->tapRd2) );
+    echoTap24_8_next( &(dl->tapRd2) );
   //}
 
 //For now the write head always writes over any contents...
