@@ -1,15 +1,16 @@
+#include <stdlib.h>
 #include "echoTap.h"
+#include "pan.h"
 
-#define SHORTEST_HALF_WAVE 256
-#define LONGEST_DELAY 1500
 // intialize tap
 extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
   tap->tapWr = tapWr;
-  tap->echo = 256*500;
+  tap->echoTime = 256*500;
   tap->idx_last = tapWr->idx;
 
-  tap->echoMax = 256 * LONGEST_DELAY;
-  tap->amplitude = FR32_MAX;
+  tap->echoMin = 0;
+  tap->echoMax = 256 * tapWr->loop;
+  tap->grain_shape = GRAIN_TOPHAT;
 
   //If inc == 0 doesn't move relative to write head we have a straight echo
   //If inc < 0 pitch shifts up
@@ -18,42 +19,61 @@ extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
   echoTap24_8_set_rate(tap, 256);
 }
 
-#define RAMP_UP  0x7FFF8
-// increment the index in an echo
 extern void echoTap24_8_next(echoTap24_8* tap){
-
-    u8 zero_crossing = tap->zero_crossing;
-    tap->echo = tap->echo + tap->inc;
-    if (tap->echo<0  && tap->inc <0){
-        tap->inc = 512 - tap->inc;
-        tap->echo += tap->inc;
+    if(tap->echoTime < tap->echoMax && tap->echoTime > tap->echoMin )
+        tap->echoTime += tap->inc;
+}
+extern fract32 echoTap24_8_envelope(echoTap24_8 *tap){
+    fract32 amplitude;
+    s32 center, dist_from_center, scale_factor;
+    switch(tap->grain_shape) {
+        case GRAIN_TOPHAT:
+            amplitude = FR32_MAX;
+            break;
+        case GRAIN_TRIANGLE:
+            center = (tap->echoMin + tap->echoMax) / 2;
+            dist_from_center = abs(tap->echoTime - center);
+            scale_factor = FR32_MAX/(tap->echoMax - center);
+            amplitude = dist_from_center * scale_factor;
+            amplitude =  sub_fr1x32 (FR32_MAX, amplitude);
+            break;
+        case GRAIN_LUMP:
+            center = (tap->echoMin + tap->echoMax) / 2;
+            dist_from_center = abs(tap->echoTime - center);
+            scale_factor = FR32_MAX/(tap->echoMax - center);
+            amplitude = dist_from_center * scale_factor;
+            amplitude = mult_fr1x32x32(amplitude, amplitude);
+            amplitude =  sub_fr1x32 (FR32_MAX, amplitude);
+        case GRAIN_FATLUMP:
+            center = (tap->echoMin + tap->echoMax) / 2;
+            dist_from_center = abs(tap->echoTime - center);
+            scale_factor = FR32_MAX/(tap->echoMax - center);
+            amplitude = dist_from_center * scale_factor;
+            amplitude = mult_fr1x32x32(amplitude, amplitude);
+            amplitude = mult_fr1x32x32(amplitude, amplitude);
+            amplitude =  sub_fr1x32 (FR32_MAX, amplitude);
+        case GRAIN_OBESELUMP:
+            center = (tap->echoMin + tap->echoMax) / 2;
+            dist_from_center = abs(tap->echoTime - center);
+            scale_factor = FR32_MAX/(tap->echoMax - center);
+            amplitude = dist_from_center * scale_factor;
+            amplitude = mult_fr1x32x32(amplitude, amplitude);
+            amplitude = mult_fr1x32x32(amplitude, amplitude);
+            amplitude = mult_fr1x32x32(amplitude, amplitude);
+            amplitude =  sub_fr1x32 (FR32_MAX, amplitude);
+        default:
+            amplitude = FR32_MAX;
+            break;
     }
-    //FIXME Something fucked here - fudge factor on echoMax
-    //Doesn't fully unfuck...
-    //if (tap->echo > tap->echoMax*2 && tap->inc > 0){
-    if (tap->echo > tap->echoMax*2 && tap->inc > 0){
-        tap->inc = 512 - tap->inc;
-        //tap->amplitude = 0;
-        tap->echo += tap->inc;
-    }
-    s32 center = (tap->echoMax+1)/2;
-    s32 dist_from_center =  tap->echo - center;
-    //FIXME Why the fudge factor??
-    s32 scaling_factor = FR32_MAX/center-0xFFF;
-    tap->amplitude = dist_from_center * scaling_factor;
-    tap->amplitude = mult_fr1x32x32(tap->amplitude, tap->amplitude);
-    //tap->amplitude = FR32_MAX;
-
+    return amplitude;
 }
 
-#define SIGN_BIT 0x80000000
 // interpolated read
 extern fract32 echoTap24_8_read(echoTap24_8* echoTap){
     s32 loop = echoTap->tapWr->loop * 256;
-    s32 idx = (echoTap->tapWr->idx * 256 + loop - echoTap->echo) % loop;
+    s32 idx = (echoTap->tapWr->idx * 256 + loop - echoTap->echoTime) % loop;
     //loop and idx are the absolute position in subsamples of the desired read point
 
-    //for now just return uninterpolated.  Will make no difference for harmonic pitch
     //return echoTap->tapWr->buf->data[idx / 256];
     u32 samp1_index = idx;
     u32 samp2_index = (idx + 256) % loop;
@@ -61,10 +81,10 @@ extern fract32 echoTap24_8_read(echoTap24_8* echoTap){
     fract32 samp1 = echoTap->tapWr->buf->data[samp1_index / 256];
     fract32 samp2 = echoTap->tapWr->buf->data[samp2_index / 256];
     fract32 inter_sample = FR32_MAX/256 * (idx % 256);
-    u8 samp1_sign = samp1 & SIGN_BIT;
-    u8 samp2_sign = samp2 & SIGN_BIT;
+    u8 samp1_sign = abs(samp1) / samp1;
+    u8 samp2_sign = abs(samp2) / samp2;
     echoTap->zero_crossing = (samp1_sign != samp2_sign);
-    return mult_fr1x32x32(echoTap->amplitude, pan_lin_mix(samp1, samp2, inter_sample) );
+    return mult_fr1x32x32(echoTap24_8_envelope(&(echoTap)), pan_lin_mix(samp1, samp2, inter_sample) );
     //return negate_fr1x32(pan_lin_mix(samp1, samp2, inter_sample) );
 }
 /*
@@ -87,6 +107,6 @@ extern void echoTap24_8_set_echoMax(echoTap24_8* tap, s32 echoMax){
 }
 
 // set 24.8 interp tap position directly in subsamples
-extern void echoTap24_8_set_pos(echoTap24_8* tap, s32 echo){
-    tap->echo = echo;
+extern void echoTap24_8_set_pos(echoTap24_8* tap, s32 echoTime){
+    tap->echoTime = echoTime;
 }
