@@ -28,11 +28,7 @@ typedef struct _echoTap24_8 {
   // last position read from (for antialiasing)
   s32 idx_last;
 
-  // FIXME this parameter should be called
-  // playback_speed and should dictate the
-  // speed relative to the tape.
-  // phase increment
-  s32 inc;
+  s32 playback_speed;
   // loop position
   //s32 echoWrap;
   s32 echoMax;
@@ -76,17 +72,5 @@ extern void echoTap24_8_next(echoTap24_8* tap);
 
 // interpolated read
 extern fract32 echoTap24_8_read(echoTap24_8* tap);
-
-// interpolated read from arbitrary position
-extern fract32 echoTap24_8_read_from(echoTap24_8* tap, s32 idx);
-
-// antialiased interpolated read
-extern fract32 echoTap24_8_read_antialias(echoTap24_8* tap);
-
-// set rate
-extern void echoTap24_8_set_rate(echoTap24_8 *tap, s32 inc);
-
-//We want to fade grains so need to hold amp
-extern fract32 echoTap24_8_envelope(echoTap24_8 *tap);
 
 #endif // h guard

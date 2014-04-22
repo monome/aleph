@@ -49,8 +49,8 @@ fract32 delay_next(delayLine* dl, fract32 in) {
 }
 
 void delay_set_rate(delayLine* dl, s32 subsamples) {
-  echoTap24_8_set_rate(&(dl->tapRd0), subsamples+5);
-  echoTap24_8_set_rate(&(dl->tapRd1), subsamples+4);
+  dl->tapRd0.playback_speed = subsamples;
+  dl->tapRd1.playback_speed = subsamples;
 }
 void delay_set_pos_write_samp(delayLine* dl, u32 samp) {
   buffer_tapN_set_pos(&(dl->tapWr), samp);
