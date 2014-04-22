@@ -27,6 +27,10 @@ typedef struct _echoTap24_8 {
   s32 echoTime;
   // last position read from (for antialiasing)
   s32 idx_last;
+
+  // FIXME this parameter should be called
+  // playback_speed and should dictate the
+  // speed relative to the tape.
   // phase increment
   s32 inc;
   // loop position
@@ -37,21 +41,32 @@ typedef struct _echoTap24_8 {
   u8 zero_crossing;
 
   //This flag is used to set the type of grain envelope
-  u8 grain_shape;
+  u8 shape;
 
-  //This flag defines the end behaviour
-  u8 halting;
+  //This flag sets the boundary behaviour
+  //e.g wrap, oneshot or bounce
+  u8 edge;
 } echoTap24_8;
 
-//tophat is FR32_MAX between echoMax and echoMin, 0 elsewhere
-#define GRAIN_TOPHAT 0
+//if oneshot, then stop when grain hits a boundary
+#define EDGE_ONESHOT 0
+//if bounce, then flip the read head play direction when grain hits boundary
+#define EDGE_BOUNCE 1
+//if wrap, then go back to the opposite boundary
+#define EDGE_WRAP 2
 
+
+//tophat is FR32_MAX between echoMax and echoMin, 0 elsewhere
+#define SHAPE_TOPHAT 0
 //triangle is linear ramp up to FR32_MAX from echoMin to center,
 //back down to zero from center to echoMax
-#define GRAIN_TRIANGLE 1
-#define GRAIN_LUMP 2
-#define GRAIN_FATLUMP 3
-#define GRAIN_OBESELUMP 4
+#define SHAPE_TRIANGLE 1
+//grain_lump is 1 - (abs(x)) for -1 < x > 1
+#define SHAPE_LUMP 2
+//grain fatlump is 1 - x^2 for -1 < x < 1
+#define SHAPE_FATLUMP 3
+//grain obeselump is 1 - x^3 for -1 < x <1
+#define SHAPE_OBESELUMP 4
 
 // intialize tap
 extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr);
@@ -73,11 +88,5 @@ extern void echoTap24_8_set_rate(echoTap24_8 *tap, s32 inc);
 
 //We want to fade grains so need to hold amp
 extern fract32 echoTap24_8_envelope(echoTap24_8 *tap);
-
-// set 24.8 interp tap position directly in subsamples
-extern void echoTap24_8_set_echoMax(echoTap24_8* tap, s32 echoMax);
-
-// set 24.8 interp tap position directly in subsamples
-extern void echoTap24_8_set_pos(echoTap24_8* tap, s32 echo);
 
 #endif // h guard

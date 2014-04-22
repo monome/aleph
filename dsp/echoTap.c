@@ -5,18 +5,18 @@
 // intialize tap
 extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
   tap->tapWr = tapWr;
-  tap->echoTime = 256*500;
   tap->idx_last = tapWr->idx;
 
   tap->echoMin = 0;
   tap->echoMax = 256 * tapWr->loop;
+  tap->echoTime = (tap->echoMax + tap->echoMin + 1 )/2;
   tap->grain_shape = GRAIN_TOPHAT;
 
   //If inc == 0 doesn't move relative to write head we have a straight echo
   //If inc < 0 pitch shifts up
   //If 256>inc >0 pitch shifts down
   //If inc > 256 weird reversed pitch shift thing
-  echoTap24_8_set_rate(tap, 256);
+  echoTap24_8_set_rate(tap, 0);
 }
 
 extern void echoTap24_8_next(echoTap24_8* tap){
@@ -28,7 +28,6 @@ extern fract32 echoTap24_8_envelope(echoTap24_8 *tap){
     s32 center, dist_from_center, scale_factor;
     switch(tap->grain_shape) {
         case GRAIN_TOPHAT:
-            amplitude = FR32_MAX;
             break;
         case GRAIN_TRIANGLE:
             center = (tap->echoMin + tap->echoMax) / 2;
@@ -39,7 +38,6 @@ extern fract32 echoTap24_8_envelope(echoTap24_8 *tap){
             break;
         case GRAIN_LUMP:
             center = (tap->echoMin + tap->echoMax) / 2;
-            dist_from_center = abs(tap->echoTime - center);
             scale_factor = FR32_MAX/(tap->echoMax - center);
             amplitude = dist_from_center * scale_factor;
             amplitude = mult_fr1x32x32(amplitude, amplitude);
@@ -98,15 +96,10 @@ extern fract32 echoTap24_8_read_antialias(echoTap24_8* tap){
 */
 // set rate - inputs
 extern void echoTap24_8_set_rate(echoTap24_8 *tap, s32 inc){
-    tap->inc = 256-inc;
+    tap->inc = inc;
 }
 
-// set 24.8 interp tap position directly in subsamples
-extern void echoTap24_8_set_echoMax(echoTap24_8* tap, s32 echoMax){
-    tap->echoMax = echoMax*256;
-}
-
-// set 24.8 interp tap position directly in subsamples
+// set echo time directly in subsamples
 extern void echoTap24_8_set_pos(echoTap24_8* tap, s32 echoTime){
     tap->echoTime = echoTime;
 }
