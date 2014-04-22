@@ -12,16 +12,14 @@ extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
   tap->echoTime = (tap->echoMax + tap->echoMin + 1 )/2;
   tap->shape = SHAPE_TOPHAT;
 
-  //If inc == 0 doesn't move relative to write head we have a straight echo
-  //If inc < 0 pitch shifts up
-  //If 256>inc >0 pitch shifts down
-  //If inc > 256 weird reversed pitch shift thing
+  //256 subsamples / sample = 1x in real time
   tap->playback_speed = 256;
 }
 
 extern void echoTap24_8_next(echoTap24_8* tap){
     if(tap->echoTime < tap->echoMax && tap->echoTime > tap->echoMin )
         tap->echoTime += tap->tapWr->inc*256 - tap->playback_speed;
+        //FIXME fill in these functions
         switch (tap->edge) {
             case EDGE_ONESHOT:
                 break;
@@ -78,9 +76,7 @@ extern fract32 echoTap24_8_envelope(echoTap24_8 *tap){
 extern fract32 echoTap24_8_read(echoTap24_8* echoTap){
     s32 loop = echoTap->tapWr->loop * 256;
     s32 idx = (echoTap->tapWr->idx * 256 + loop - echoTap->echoTime) % loop;
-    //loop and idx are the absolute position in subsamples of the desired read point
 
-    //return echoTap->tapWr->buf->data[idx / 256];
     u32 samp1_index = idx;
     u32 samp2_index = (idx + 256) % loop;
 
@@ -91,7 +87,6 @@ extern fract32 echoTap24_8_read(echoTap24_8* echoTap){
     u8 samp2_sign = abs(samp2) / samp2;
     echoTap->zero_crossing = (samp1_sign != samp2_sign);
     return mult_fr1x32x32(echoTap24_8_envelope(&(echoTap)), pan_lin_mix(samp1, samp2, inter_sample) );
-    //return negate_fr1x32(pan_lin_mix(samp1, samp2, inter_sample) );
 }
 
 // set echo time directly in subsamples
