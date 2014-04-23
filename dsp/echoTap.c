@@ -8,7 +8,7 @@ extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
   tap->idx_last = tapWr->idx;
 
   tap->echoMin = 0;
-  tap->echoMax = 256 * tapWr->loop;
+  tap->echoMax = 256 * tapWr->loop / 2;
   tap->echoTime = (tap->echoMax + tap->echoMin + 1 )/2;
   tap->shape = SHAPE_TOPHAT;
   tap->edge = EDGE_WRAP;
@@ -47,7 +47,9 @@ extern fract32 echoTap24_8_envelope(echoTap24_8 *tap){
     fract32 amplitude;
     s32 center, dist_from_center, scale_factor;
     switch(tap->shape) {
+        //FIXME add SHAPE_FADESHORT, SHAPE_FADEMEDIUM, SHAPE_FADELONG
         case SHAPE_TOPHAT:
+            amplitude = FR32_MAX;
             break;
         case SHAPE_TRIANGLE:
             center = (tap->echoMin + tap->echoMax) / 2;

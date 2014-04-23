@@ -63,6 +63,12 @@ typedef struct _echoTap24_8 {
 #define SHAPE_FATLUMP 3
 //grain obeselump is 1 - x^3 for -1 < x <1
 #define SHAPE_OBESELUMP 4
+//shape fadeshort is FR32_MAX until the edges, then slopes down
+#define SHAPE_FADESHORT 5
+//shape fadeshort is FR32_MAX until the edges, then slopes down a bit slower
+#define SHAPE_FADEMEDIUM 6
+//shape fadeshort is FR32_MAX until the edges, then slopes down even slower
+#define SHAPE_FADELONG 7
 
 // intialize tap
 extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr);
