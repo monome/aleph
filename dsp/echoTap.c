@@ -11,18 +11,18 @@ extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
   tap->echoMax = 256 * tapWr->loop / 2;
   tap->echoTime = (tap->echoMax + tap->echoMin + 1 )/2;
   tap->shape = SHAPE_TOPHAT;
-  tap->edge = EDGE_WRAP;
+  tap->edge_behaviour = EDGE_WRAP;
 
-  //256 subsamples / sample = 1x in real time
+  //256 subsamples = 1x in real time
   tap->playback_speed = 256;
 }
 
 extern void echoTap24_8_next(echoTap24_8* tap){
-    if(tap->echoTime < tap->echoMax && tap->echoTime > tap->echoMin )
+    if(tap->echoTime <= tap->echoMax && tap->echoTime >= tap->echoMin )
         tap->echoTime += tap->tapWr->inc*256 - tap->playback_speed;
     else {
     s32 echoRange;
-        switch (tap->edge) {
+        switch (tap->edge_behaviour) {
             case EDGE_ONESHOT:
                 tap->playback_speed = 0;
                 break;
@@ -45,37 +45,28 @@ extern void echoTap24_8_next(echoTap24_8* tap){
 }
 extern fract32 echoTap24_8_envelope(echoTap24_8 *tap){
     fract32 amplitude;
-    s32 center, dist_from_center, scale_factor;
+    s32 center = (tap->echoMin + tap->echoMax+1) / 2;
+    s32 dist_from_center = abs(tap->echoTime - center);
+    fract32 scale_factor = FR32_MAX / ((tap->echoMax - tap->echoMin + 1 )/2);
     switch(tap->shape) {
         //FIXME add SHAPE_FADESHORT, SHAPE_FADEMEDIUM, SHAPE_FADELONG
         case SHAPE_TOPHAT:
             amplitude = FR32_MAX;
             break;
         case SHAPE_TRIANGLE:
-            center = (tap->echoMin + tap->echoMax) / 2;
-            dist_from_center = abs(tap->echoTime - center);
-            scale_factor = FR32_MAX/(tap->echoMax - center);
             amplitude = dist_from_center * scale_factor;
             amplitude =  sub_fr1x32 (FR32_MAX, amplitude);
             break;
         case SHAPE_LUMP:
-            center = (tap->echoMin + tap->echoMax) / 2;
-            scale_factor = FR32_MAX/(tap->echoMax - center);
             amplitude = dist_from_center * scale_factor;
             amplitude = mult_fr1x32x32(amplitude, amplitude);
             amplitude =  sub_fr1x32 (FR32_MAX, amplitude);
         case SHAPE_FATLUMP:
-            center = (tap->echoMin + tap->echoMax) / 2;
-            dist_from_center = abs(tap->echoTime - center);
-            scale_factor = FR32_MAX/(tap->echoMax - center);
             amplitude = dist_from_center * scale_factor;
             amplitude = mult_fr1x32x32(amplitude, amplitude);
             amplitude = mult_fr1x32x32(amplitude, amplitude);
             amplitude =  sub_fr1x32 (FR32_MAX, amplitude);
         case SHAPE_OBESELUMP:
-            center = (tap->echoMin + tap->echoMax) / 2;
-            dist_from_center = abs(tap->echoTime - center);
-            scale_factor = FR32_MAX/(tap->echoMax - center);
             amplitude = dist_from_center * scale_factor;
             amplitude = mult_fr1x32x32(amplitude, amplitude);
             amplitude = mult_fr1x32x32(amplitude, amplitude);
@@ -85,6 +76,8 @@ extern fract32 echoTap24_8_envelope(echoTap24_8 *tap){
             amplitude = FR32_MAX;
             break;
     }
+    if (amplitude <0)
+        amplitude = 0;
     return amplitude;
 }
 
@@ -93,11 +86,11 @@ extern fract32 echoTap24_8_read(echoTap24_8* echoTap){
     s32 loop = echoTap->tapWr->loop * 256;
     s32 idx = (echoTap->tapWr->idx * 256 + loop - echoTap->echoTime) % loop;
 
-    u32 samp1_index = idx;
-    u32 samp2_index = (idx + 256) % loop;
+    u32 samp1_index = idx / 256;
+    u32 samp2_index = ( (idx + 256) % loop ) / 256 ;
 
-    fract32 samp1 = echoTap->tapWr->buf->data[samp1_index / 256];
-    fract32 samp2 = echoTap->tapWr->buf->data[samp2_index / 256];
+    fract32 samp1 = echoTap->tapWr->buf->data[samp1_index ];
+    fract32 samp2 = echoTap->tapWr->buf->data[samp2_index ];
     fract32 inter_sample = FR32_MAX/256 * (idx % 256);
     u8 samp1_sign = abs(samp1) / samp1;
     u8 samp2_sign = abs(samp2) / samp2;

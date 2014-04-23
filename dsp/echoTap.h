@@ -41,7 +41,7 @@ typedef struct _echoTap24_8 {
 
   //This flag sets the boundary behaviour
   //e.g wrap, oneshot or bounce
-  u8 edge;
+  u8 edge_behaviour;
 } echoTap24_8;
 
 //if oneshot, then stop when grain hits a boundary
