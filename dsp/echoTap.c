@@ -11,6 +11,7 @@ extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
   tap->echoMax = 256 * tapWr->loop;
   tap->echoTime = (tap->echoMax + tap->echoMin + 1 )/2;
   tap->shape = SHAPE_TOPHAT;
+  tap->edge = EDGE_WRAP;
 
   //256 subsamples / sample = 1x in real time
   tap->playback_speed = 256;
@@ -19,15 +20,28 @@ extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
 extern void echoTap24_8_next(echoTap24_8* tap){
     if(tap->echoTime < tap->echoMax && tap->echoTime > tap->echoMin )
         tap->echoTime += tap->tapWr->inc*256 - tap->playback_speed;
-        //FIXME fill in these functions
+    else {
+    s32 echoRange;
         switch (tap->edge) {
             case EDGE_ONESHOT:
-                break;
-            case EDGE_BOUNCE:
+                tap->playback_speed = 0;
                 break;
             case EDGE_WRAP:
+                echoRange = tap->echoMax - tap->echoMin;
+                tap->echoTime = abs (tap->echoTime - tap->echoMin + echoRange) % echoRange;
+                tap->echoTime += tap->echoMin;
+                break;
+            case EDGE_BOUNCE:
+                if(tap->echoTime < tap->echoMin) {
+                    tap->playback_speed = abs(tap->playback_speed) * -1 ;
+                }
+                else if (tap->echoTime > tap->echoMax) {
+                    tap->playback_speed = abs(tap->playback_speed) ;
+                }
+                tap->echoTime += tap->tapWr->inc*256 - tap->playback_speed;
                 break;
         }
+    }
 }
 extern fract32 echoTap24_8_envelope(echoTap24_8 *tap){
     fract32 amplitude;
