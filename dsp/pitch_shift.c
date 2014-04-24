@@ -19,6 +19,9 @@ void delay_init(delayLine* dl, fract32* data, u32 frames) {
 
   echoTap24_8_init(&(dl->tapRd0), &(dl->tapWr));
   //echoTap24_8_init(&(dl->tapRd1), &(dl->tapWr));
+  //dl->tapRd0.edge_behaviour = EDGE_BOUNCE;
+  dl->tapRd0.edge_behaviour = EDGE_WRAP;
+  dl->tapRd0.echoMax = 256 * 5000;
 
 }
 
