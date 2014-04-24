@@ -79,4 +79,5 @@ extern void echoTap24_8_next(echoTap24_8* tap);
 // interpolated read
 extern fract32 echoTap24_8_read(echoTap24_8* tap);
 
+s32 echoTap24_8_envelope(echoTap24_8 *tap);
 #endif // h guard
