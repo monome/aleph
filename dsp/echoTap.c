@@ -53,36 +53,34 @@ s32 echoTap24_8_envelope(echoTap24_8 *tap){
     s32 scale_factor = FR32_MAX / max_dist_from_center;
     s32 amplitude;
 
-    switch(tap->shape) {
         //FIXME add SHAPE_FADESHORT, SHAPE_FADEMEDIUM, SHAPE_FADELONG
-        case SHAPE_TOPHAT:
-            amplitude = FR32_MAX;
-            break;
-        case SHAPE_TRIANGLE:
-            amplitude = dist_from_center * scale_factor;
-            amplitude = FR32_MAX - amplitude;
-            break;
-        case SHAPE_LUMP:
-            amplitude = dist_from_center * scale_factor;
-            amplitude = mult_fr1x32x32(amplitude, amplitude);
-            amplitude = FR32_MAX - amplitude;
-            break;
-        case SHAPE_FATLUMP:
-            amplitude = dist_from_center * scale_factor;
-            amplitude = mult_fr1x32x32(amplitude, amplitude);
-            amplitude = mult_fr1x32x32(amplitude, amplitude);
-            amplitude = FR32_MAX - amplitude;
-            break;
-        case SHAPE_OBESELUMP:
-            amplitude = dist_from_center * scale_factor;
-            amplitude = mult_fr1x32x32(amplitude, amplitude);
-            amplitude = mult_fr1x32x32(amplitude, amplitude);
-            amplitude = mult_fr1x32x32(amplitude, amplitude);
-            amplitude = FR32_MAX - amplitude;
-            break;
-        default:
-            amplitude = FR32_MAX;
-            break;
+    if( tap->shape ==SHAPE_TOPHAT) {
+        amplitude = FR32_MAX;
+    }
+    else if( tap->shape ==SHAPE_TRIANGLE) {
+        amplitude = dist_from_center * scale_factor;
+        amplitude = FR32_MAX - amplitude;
+    }
+    else if( tap->shape ==SHAPE_LUMP) {
+        amplitude = dist_from_center * scale_factor;
+        amplitude = mult_fr1x32x32(amplitude, amplitude);
+        amplitude = FR32_MAX - amplitude;
+    }
+    else if( tap->shape ==SHAPE_FATLUMP) {
+        amplitude = dist_from_center * scale_factor;
+        amplitude = mult_fr1x32x32(amplitude, amplitude);
+        amplitude = mult_fr1x32x32(amplitude, amplitude);
+        amplitude = FR32_MAX - amplitude;
+    }
+    else if( tap->shape ==SHAPE_OBESELUMP) {
+        amplitude = dist_from_center * scale_factor;
+        amplitude = mult_fr1x32x32(amplitude, amplitude);
+        amplitude = mult_fr1x32x32(amplitude, amplitude);
+        amplitude = mult_fr1x32x32(amplitude, amplitude);
+        amplitude = FR32_MAX - amplitude;
+    }
+    else {
+        amplitude = FR32_MAX;
     }
     return amplitude ;
 }
@@ -103,7 +101,7 @@ extern fract32 echoTap24_8_read(echoTap24_8* echoTap){
     echoTap->zero_crossing = (samp1_sign != samp2_sign);
 
     fract32 pre_fader = pan_lin_mix(samp1, samp2, inter_sample)   ;
-    s32 fader = echoTap24_8_envelope(&echoTap);
+    s32 fader = echoTap24_8_envelope(echoTap);
     fract32 post_fader = mult_fr1x32x32 ( pre_fader, fader);
     return post_fader;
 }
