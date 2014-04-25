@@ -37,7 +37,7 @@ fract32 delay_next(delayLine* dl, fract32 in) {
   buffer_tapN_write(&(dl->tapWr), in);
 
   fract32 readVal;
-  readVal = bufferTap24_8_read_antialias( &(dl->tapRd) );
+  readVal = bufferTap24_8_read( &(dl->tapRd) );
 
 
   // advance the write phasor

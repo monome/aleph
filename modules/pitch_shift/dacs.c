@@ -25,7 +25,7 @@
 // audio
 #include "filter_1p.h"
 #include "module.h"
-#include "delay.h"
+#include "pitch_shift.h"
 
 /// custom
 #include "params.h"
@@ -389,7 +389,7 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_delay0 :
     //delayTimeTarget = v;
     //filter_1p_lo_in(&delayTimeSlew, v);
-    delay_set_rate(&(lines[0]), v/50);
+    delay_set_rate(&(lines[0]), v/64);
     break;
   case eParam_delay0Slew :
     filter_1p_lo_set_slew(&delayTimeSlew, v);

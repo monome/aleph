@@ -350,11 +350,11 @@ extern fract32 bufferTap24_8_read_from(bufferTap24_8* tap, s32 idx){
   fract32 inter_sample = FR32_MAX/256 * (idx % 256);
   return pan_lin_mix(samp1, samp2, inter_sample) ;
 }
-
+/*
 extern fract32 bufferTap24_8_read_antialias(bufferTap24_8* tap){
     //FIXME this should happen at the *end* of this subroutine.
     //Proably this isn't working after all, just taking an average of one
-    tap->idx_last = tap->idx;
+    //Doesn't work
     s32 idx = tap->idx;
     s32 idx_last = tap->idx_last;
     if (idx_last > idx)
@@ -369,10 +369,11 @@ extern fract32 bufferTap24_8_read_antialias(bufferTap24_8* tap){
         idx -= 256;
         num_points --;
     }
+    tap->idx_last = tap->idx;
     return result;
 
 }
-
+*/
 extern void bufferTap24_8_set_loop(bufferTap24_8* tap, s32 loop){
     tap->loop = loop;
 }
