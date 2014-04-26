@@ -79,6 +79,13 @@ s32 echoTap24_8_envelope(echoTap24_8 *tap){
         amplitude = mult_fr1x32x32(amplitude, amplitude);
         amplitude = FR32_MAX - amplitude;
     }
+    else if (tap->shape == SHAPE_HALFWAVE) {
+        s32 x_1 = dist_from_center * scale_factor;
+        s32 x_2 = mult_fr1x32x32(x_1, x_1);
+        s32 x_4 = mult_fr1x32x32(x_2, x_2);
+        amplitude = (FR32_MAX - x_2) - x_2/4;
+        amplitude = amplitude + x_4/4;
+    }
     else {
         amplitude = FR32_MAX;
     }

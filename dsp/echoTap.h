@@ -69,6 +69,8 @@ typedef struct _echoTap24_8 {
 #define SHAPE_FADEMEDIUM 6
 //shape fadeshort is FR32_MAX until the edges, then slopes down even slower
 #define SHAPE_FADELONG 7
+//shape fadeshort is FR32_MAX until the edges, then slopes down even slower
+#define SHAPE_HALFWAVE 8
 
 // intialize tap
 extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr);

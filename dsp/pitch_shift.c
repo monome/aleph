@@ -10,6 +10,7 @@
 
 #include "conversion.h"
 #include "pitch_shift.h"
+#include <stdlib.h>
 
 
 // initialize with pointer to audio buffer
@@ -19,17 +20,17 @@ void delay_init(delayLine* dl, fract32* data, u32 frames) {
 
   echoTap24_8_init(&(dl->tapRd0), &(dl->tapWr));
   dl->tapRd0.edge_behaviour = EDGE_WRAP;
-  dl->tapRd0.shape = SHAPE_FATLUMP;
+  dl->tapRd0.shape = SHAPE_HALFWAVE;
   dl->tapRd0.echoMin = 0;
-  dl->tapRd0.echoMax = 256 * 1000;
+  dl->tapRd0.echoMax = 256 * 2000;
   dl->tapRd0.echoTime = 0;
 
   echoTap24_8_init(&(dl->tapRd1), &(dl->tapWr));
   dl->tapRd1.edge_behaviour = EDGE_WRAP;
-  dl->tapRd1.shape = SHAPE_FATLUMP;
+  dl->tapRd1.shape = SHAPE_HALFWAVE;
   dl->tapRd0.echoMin = 0;
-  dl->tapRd1.echoMax = 256 * 1000;
-  dl->tapRd1.echoTime= 256 * 2500;
+  dl->tapRd1.echoMax = 256 * 2000;
+  dl->tapRd1.echoTime= 256 * 1000;
 
 }
 
@@ -62,6 +63,7 @@ fract32 delay_next(delayLine* dl, fract32 in) {
 void delay_set_rate(delayLine* dl, s32 subsamples) {
   dl->tapRd0.playback_speed = subsamples;
   dl->tapRd1.playback_speed = subsamples;
+  s32 scan_speed = abs (dl->tapRd0.playback_speed - 256);
 }
 void delay_set_pos_write_samp(delayLine* dl, u32 samp) {
   buffer_tapN_set_pos(&(dl->tapWr), samp);
