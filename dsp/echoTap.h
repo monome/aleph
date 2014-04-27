@@ -63,23 +63,23 @@ typedef struct _echoTap24_8 {
 #define SHAPE_FATLUMP 3
 //grain obeselump is 1 - x^3 for -1 < x <1
 #define SHAPE_OBESELUMP 4
-//shape fadeshort is FR32_MAX until the edges, then slopes down
-#define SHAPE_FADESHORT 5
-//shape fadeshort is FR32_MAX until the edges, then slopes down a bit slower
-#define SHAPE_FADEMEDIUM 6
 //shape fadeshort is FR32_MAX until the edges, then slopes down even slower
-#define SHAPE_FADELONG 7
-//shape fadeshort is FR32_MAX until the edges, then slopes down even slower
-#define SHAPE_HALFWAVE 8
+#define SHAPE_HALFWAVE 5
 
+
+// fixed grain envelope shapes
+s32 echoTap24_8_envelope(echoTap24_8 *tap);
 // intialize tap
 extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr);
 
 // increment the index in an echo
 extern void echoTap24_8_next(echoTap24_8* tap);
 
+// antialiased read
+extern fract32 echoTap24_8_read_antialias(echoTap24_8* echoTap);
+
 // interpolated read
-extern fract32 echoTap24_8_read(echoTap24_8* tap);
+extern fract32 echoTap24_8_read_interp(echoTap24_8* tap);
 
 s32 echoTap24_8_envelope(echoTap24_8 *tap);
 #endif // h guard

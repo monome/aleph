@@ -42,8 +42,8 @@ fract32 delay_next(delayLine* dl, fract32 in) {
 
   fract32 readVal;
   fract32 mix_factor = FR32_MAX;
-  readVal = mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd0) ),mix_factor);
-  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd1) ),mix_factor));
+  readVal = mult_fr1x32x32(echoTap24_8_read_interp( &(dl->tapRd0) ),mix_factor);
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read_antialias( &(dl->tapRd1) ),mix_factor));
 
   buffer_tapN_next( &(dl->tapWr) );
 
