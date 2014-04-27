@@ -140,6 +140,8 @@ static inline void monome_ring_enc_write_event( u8 n, u8 val);
 static inline void monome_ring_key_write_event( u8 n, u8 val);
 
 
+
+
 //---------------------------------
 //----- static variables
 
@@ -478,6 +480,9 @@ void monome_led_toggle(u8 x, u8 y) {
   monome_calc_quadrant_flag(x, y);  
 }
 
+
+u8 monome_size_x(void) { return mdesc.cols; }
+u8 monome_size_y(void) {  return mdesc.rows; }
 
 //=============================================
 //------ static function definitions

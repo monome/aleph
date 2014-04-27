@@ -120,7 +120,7 @@ void op_cascades_init(void* mem) {
   op->outs[6] = -1;
   op->outs[7] = -1;
 
-  op->size = 8;
+  op->size = monome_size_x();
 
   op->focus = OP_ONE;
   net_monome_set_focus(&(op->monome), 1);
@@ -214,7 +214,6 @@ static void op_cascades_trigger(u8 n) {
       positions[rule_dests[n]] = points[rule_dests[n]];
     }
     else if(rules[n] == 5) {  // rnd
-      // FIXME::: THIS IS ALWAYS GIVING 6,7,6,7,6,7,6,7
       points[rule_dests[n]] = rnd() % XSIZE;
       
       print_dbg("\r\n op_cascades >>>>>>>>>>>>>>>>>>>> RANDOM: ");
@@ -397,6 +396,7 @@ u8* op_cascades_pickle(op_cascades_t* mgrid, u8* dst) {
 
 const u8* op_cascades_unpickle(op_cascades_t* mgrid, const u8* src) {
   src = unpickle_io(src, (u32*)&(mgrid->focus));
+  // FIXME should probably auto-detect grid size here::::
   src = unpickle_io(src, (u32*)&(mgrid->size));
   /*
     probably shouldn't call this here...

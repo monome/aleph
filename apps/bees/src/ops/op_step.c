@@ -91,7 +91,7 @@ void op_step_init(void* mem) {
   op->s_now2 = 0;
   op->s_cut2 = 0;
 
-  op->size = 8;
+  op->size = monome_size_x();
 
   op->focus = OP_ONE;
   net_monome_set_focus(&(op->monome), 1);
@@ -99,7 +99,7 @@ void op_step_init(void* mem) {
   // init monome drawing, maybe should clear first
   monomeLedBuffer[monome_xy_idx(0, 0)] = 15;
   monomeLedBuffer[monome_xy_idx(0, 2)] = 15;
-  for(i=0;i<8;i++) {
+  for(i=0;i<op->size;i++) {
     monomeLedBuffer[monome_xy_idx(i, 1)] = 15;
     monomeLedBuffer[monome_xy_idx(i, 3)] = 15;
   }
