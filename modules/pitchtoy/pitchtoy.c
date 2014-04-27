@@ -42,7 +42,7 @@
 #define NLINES 1
 #define PARAM_SECONDS_MAX 0x003c0000
 
-delayLine lines[NLINES];
+pitchShift lines[NLINES];
 
 ParamValue auxL[4];
 ParamValue auxR[4];
@@ -155,7 +155,7 @@ void module_init(void) {
   param_setup( 	eParam_effect3,		EFFECT_DEFAULT );
 
 
-  delay_init(&(lines[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
+  pitchShift_init(&(lines[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
 
   filter_1p_lo_init( &delayTimeSlew, 0 );
 
@@ -235,7 +235,7 @@ void module_process_frame(void) {
     //update delay time
     //delay_set_delay_24_8(&(lines[0]), delayTime);
     //delay_set_delay_samp(&(lines[0]), delayTimeTarget);
-    //delay_set_rate(&(lines[0]), delayTimeTarget / 100);
+    //pitchShift_set_pitchFactor24_8(&(lines[0]), delayTimeTarget / 100);
   }
 
   mix_panned_mono(in[0], &(out[1]), &(out[0]), pan[0], fader[0]);
@@ -258,7 +258,7 @@ void module_process_frame(void) {
 
   delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
 
-  delayOutput = delay_next( &(lines[0]), delayInput);
+  delayOutput = pitchShift_next( &(lines[0]), delayInput);
 
 
 
@@ -389,7 +389,7 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_delay0 :
     //delayTimeTarget = v;
     //filter_1p_lo_in(&delayTimeSlew, v);
-    delay_set_rate(&(lines[0]), v/256);
+    pitchShift_set_pitchFactor24_8(&(lines[0]), v/256);
     break;
   case eParam_delay0Slew :
     filter_1p_lo_set_slew(&delayTimeSlew, v);

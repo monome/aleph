@@ -14,7 +14,7 @@
 
 
 // initialize with pointer to audio buffer
-void delay_init(delayLine* dl, fract32* data, u32 frames) {
+void pitchShift_init(pitchShift* dl, fract32* data, u32 frames) {
   buffer_init(&(dl->buffer), data, frames);
   buffer_tapN_init(&(dl->tapWr), &(dl->buffer));
 
@@ -34,7 +34,7 @@ void delay_init(delayLine* dl, fract32* data, u32 frames) {
 
 }
 
-fract32 delay_next(delayLine* dl, fract32 in) {
+fract32 pitchShift_next(pitchShift* dl, fract32 in) {
   //DEBUG uncomment this line to check plumbing this far...
   //return in;
 
@@ -54,17 +54,18 @@ fract32 delay_next(delayLine* dl, fract32 in) {
   //FIXME so the pitch shift-specific logic should go here
   // basically when one read head passes the halfway point
   // kick the other one
+
+  //FIXME at the moment this pitchshift is set out with
+  //just two read heads with half-wave envelopes.
+  //running in quadrature (amplitude sum always == 1)
   echoTap24_8_next( &(dl->tapRd0) );
   echoTap24_8_next( &(dl->tapRd1) );
 
   return readVal;
 }
 
-void delay_set_rate(delayLine* dl, s32 subsamples) {
+void pitchShift_set_pitchFactor24_8(pitchShift* dl, s32 subsamples) {
   dl->tapRd0.playback_speed = subsamples;
   dl->tapRd1.playback_speed = subsamples;
   s32 scan_speed = abs (dl->tapRd0.playback_speed - 256);
-}
-void delay_set_pos_write_samp(delayLine* dl, u32 samp) {
-  buffer_tapN_set_pos(&(dl->tapWr), samp);
 }
