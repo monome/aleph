@@ -173,7 +173,7 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_effect3].max = EFFECT_MAX;
   desc[eParam_effect3].radix = EFFECT_RADIX;
 
-  strcpy(desc[eParam_delay0].label, "delay0");
+  strcpy(desc[eParam_delay0].label, "pitchshift");
   desc[eParam_delay0].type = DELAY_TYPE;
   desc[eParam_delay0].min = DELAY_MIN;
   desc[eParam_delay0].max = DELAY_MAX;
