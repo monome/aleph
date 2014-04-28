@@ -87,23 +87,20 @@ enum params {
 
   eParam_pitchshift0,
   eParam_pitchshift0Slew,
-  eParam_pitchshift0feedback,
 
   eParam_pitchshift1,
   eParam_pitchshift1Slew,
-  eParam_pitchshift1feedback,
 
   eParam_pitchshift2,
   eParam_pitchshift2Slew,
-  eParam_pitchshift2feedback,
 
   eParam_pitchshift3,
   eParam_pitchshift3Slew,
-  eParam_pitchshift3feedback,
 
   eParam_pitchshift4,
   eParam_pitchshift4Slew,
-  eParam_pitchshift4feedback,
+
+  eParam_feedback,
 
   eParamNumParams
 };
