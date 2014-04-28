@@ -185,6 +185,12 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_pitchshift0slew].max = 0x7fffffff;
   desc[eParam_pitchshift0slew].radix = 32;
 
+  strcpy(desc[eParam_pitchshift0fader].label, "return0");
+  desc[eParam_pitchshift0fader].type = eParamTypeAmp; 
+  desc[eParam_pitchshift0fader].min = 0x00000000; 
+  desc[eParam_pitchshift0fader].max = FR32_MAX;
+  desc[eParam_pitchshift0fader].radix = 1;
+
   strcpy(desc[eParam_pitchshift1].label, "pitchshift1");
   desc[eParam_pitchshift1].type = PITCHSHIFT_TYPE;
   desc[eParam_pitchshift1].min = PITCHSHIFT_MIN;
@@ -196,6 +202,12 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_pitchshift1slew].min = 0x00000000; 
   desc[eParam_pitchshift1slew].max = 0x7fffffff;
   desc[eParam_pitchshift1slew].radix = 32;
+
+  strcpy(desc[eParam_pitchshift1fader].label, "return1");
+  desc[eParam_pitchshift1fader].type = eParamTypeAmp; 
+  desc[eParam_pitchshift1fader].min = 0x00000000; 
+  desc[eParam_pitchshift1fader].max = FR32_MAX;
+  desc[eParam_pitchshift1fader].radix = 1;
 
   strcpy(desc[eParam_pitchshift2].label, "pitchshift2");
   desc[eParam_pitchshift2].type = PITCHSHIFT_TYPE;
@@ -209,6 +221,12 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_pitchshift2slew].max = 0x7fffffff;
   desc[eParam_pitchshift2slew].radix = 32;
 
+  strcpy(desc[eParam_pitchshift2fader].label, "return2");
+  desc[eParam_pitchshift2fader].type = eParamTypeAmp; 
+  desc[eParam_pitchshift2fader].min = 0x00000000; 
+  desc[eParam_pitchshift2fader].max = FR32_MAX;
+  desc[eParam_pitchshift2fader].radix = 1;
+
   strcpy(desc[eParam_pitchshift3].label, "pitchshift3");
   desc[eParam_pitchshift3].type = PITCHSHIFT_TYPE;
   desc[eParam_pitchshift3].min = PITCHSHIFT_MIN;
@@ -220,6 +238,12 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_pitchshift3slew].min = 0x00000000; 
   desc[eParam_pitchshift3slew].max = 0x7fffffff;
   desc[eParam_pitchshift3slew].radix = 32;
+
+  strcpy(desc[eParam_pitchshift3fader].label, "return3");
+  desc[eParam_pitchshift3fader].type = eParamTypeAmp; 
+  desc[eParam_pitchshift3fader].min = 0x00000000; 
+  desc[eParam_pitchshift3fader].max = FR32_MAX;
+  desc[eParam_pitchshift3fader].radix = 1;
 
 }
 

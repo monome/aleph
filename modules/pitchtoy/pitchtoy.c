@@ -64,6 +64,7 @@ ParamValue effectTarget[4];
 //ParamValue eq_hi[4];
 //ParamValue eq_mid[4];
 //ParamValue eq_lo[4];
+ParamValue pitchshiftFaders[NGRAINS];
 
 ParamValue pitchFactor[NGRAINS] = {0,0,0,0};
 ParamValue pitchFactorTarget[NGRAINS] = {0,0,0,0};
@@ -170,6 +171,10 @@ void module_init(void) {
   param_setup( 	eParam_feedback,		FADER_DEFAULT );
   param_setup( 	eParam_feedback,		0 );
 
+  param_setup( 	eParam_pitchshift0fader, FADER_DEFAULT );
+  param_setup( 	eParam_pitchshift1fader, FADER_DEFAULT );
+  param_setup( 	eParam_pitchshift2fader, FADER_DEFAULT );
+  param_setup( 	eParam_pitchshift3fader, FADER_DEFAULT );
   //delay_set_loop_samp(&(lines[0]), LINES_BUF_FRAMES/2);
   //delay_set_run_write(&(lines[0]), 1);
   //delay_set_run_read(&(lines[0]), 1);
@@ -265,10 +270,11 @@ void module_process_frame(void) {
 
   delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
 
-  delayOutput = pitchShift_next( &(grains[0]), delayInput);
-  delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[1]), delayInput));
-  delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[2]), delayInput));
-  delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[3]), delayInput));
+ParamValue pitchshiftFaders[NGRAINS];
+  delayOutput = mult_fr1x32x32(pitchshiftFaders[0], pitchShift_next( &(grains[0]), delayInput));
+  delayOutput = add_fr1x32(delayOutput, mult_fr1x32x32(pitchshiftFaders[1], pitchShift_next( &(grains[1]), delayInput)));
+  delayOutput = add_fr1x32(delayOutput, mult_fr1x32x32(pitchshiftFaders[2], pitchShift_next( &(grains[2]), delayInput)));
+  delayOutput = add_fr1x32(delayOutput, mult_fr1x32x32(pitchshiftFaders[3], pitchShift_next( &(grains[3]), delayInput)));
 
 
 
@@ -396,6 +402,7 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_feedback :
     feedbackTarget = v;
     break;
+
   case eParam_pitchshift0 :
     //filter_1p_lo_in(&delayTimeSlew, v);
     pitchShift_set_pitchFactor24_8(&(grains[0]), v/256);
@@ -403,20 +410,47 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_pitchshift0slew :
     filter_1p_lo_set_slew(&(pitchFactorSlew[0]), v);
     //filter_1p_lo_in(&delayTimeSlew, v);
+    break;
+  case eParam_pitchshift0fader:
+    pitchshiftFaders[0] = v;
+    break;
+
+  case eParam_pitchshift1 :
+    //filter_1p_lo_in(&delayTimeSlew, v);
     pitchShift_set_pitchFactor24_8(&(grains[1]), v/256);
     break;
   case eParam_pitchshift1slew :
     filter_1p_lo_set_slew(&(pitchFactorSlew[1]), v);
+    //filter_1p_lo_in(&delayTimeSlew, v);
+    break;
+  case eParam_pitchshift1fader:
+    pitchshiftFaders[1] = v;
+    break;
+
+  case eParam_pitchshift2 :
     //filter_1p_lo_in(&delayTimeSlew, v);
     pitchShift_set_pitchFactor24_8(&(grains[2]), v/256);
     break;
   case eParam_pitchshift2slew :
     filter_1p_lo_set_slew(&(pitchFactorSlew[2]), v);
     //filter_1p_lo_in(&delayTimeSlew, v);
+    break;
+  case eParam_pitchshift2fader:
+    pitchshiftFaders[2] = v;
+    break;
+
+  case eParam_pitchshift3 :
+    //filter_1p_lo_in(&delayTimeSlew, v);
     pitchShift_set_pitchFactor24_8(&(grains[3]), v/256);
     break;
   case eParam_pitchshift3slew :
     filter_1p_lo_set_slew(&(pitchFactorSlew[3]), v);
+    //filter_1p_lo_in(&delayTimeSlew, v);
+    break;
+  case eParam_pitchshift3fader:
+    pitchshiftFaders[3] = v;
+    break;
+
   default:
     break;
   }
