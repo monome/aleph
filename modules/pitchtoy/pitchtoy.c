@@ -42,7 +42,7 @@
 #define NLINES 1
 #define PARAM_SECONDS_MAX 0x003c0000
 
-pitchShift harmonics[NLINES];
+pitchShift grains[NLINES];
 
 ParamValue auxL[4];
 ParamValue auxR[4];
@@ -73,12 +73,12 @@ ParamValue feedback=0;
 ParamValue feedbackTarget=0;
 
 // data structure of external memory
-typedef struct _dacsData {
+typedef struct _pitchtoyData {
   ModuleData super;
   //ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
   volatile fract32 audioBuffer[NLINES][LINES_BUF_FRAMES];
-} dacsData;
+} pitchtoyData;
 
 //-------------------------
 //----- extern vars (initialized here)
@@ -87,7 +87,7 @@ ModuleData* gModuleData;
 //------ static variables
 
 // pointer to all external memory
-dacsData* pDacsData;
+pitchtoyData* pDacsData;
 
 // dac values (u16, but use fract32 and audio integrators)
 static fract32 dacVal[4];
@@ -106,10 +106,10 @@ void module_init(void) {
 
 
   // init module/param descriptor
-  pDacsData = (dacsData*)SDRAM_ADDRESS;
+  pDacsData = (pitchtoyData*)SDRAM_ADDRESS;
 
   gModuleData = &(pDacsData->super);
-  strcpy(gModuleData->name, "aleph-dacs");
+  strcpy(gModuleData->name, "aleph-pitchtoy");
 
   gModuleData->paramData = (ParamData*)pDacsData->mParamData;
   gModuleData->numParams = eParamNumParams;
@@ -155,7 +155,11 @@ void module_init(void) {
   param_setup( 	eParam_effect3,		EFFECT_DEFAULT );
 
 
-  pitchShift_init(&(harmonics[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[1]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[2]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[3]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[4]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
 
   filter_1p_lo_init( &(pitchFactorSlew[0]), 0 );
   filter_1p_lo_init( &(pitchFactorSlew[1]), 0 );
@@ -262,7 +266,7 @@ void module_process_frame(void) {
 
   delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
 
-  delayOutput = pitchShift_next( &(harmonics[0]), delayInput);
+  delayOutput = pitchShift_next( &(grains[0]), delayInput);
 
 
 
@@ -393,7 +397,7 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_pitchshift0 :
     //delayTimeTarget = v;
     //filter_1p_lo_in(&delayTimeSlew, v);
-    pitchShift_set_pitchFactor24_8(&(harmonics[0]), v/256);
+    pitchShift_set_pitchFactor24_8(&(grains[0]), v/256);
     break;
   case eParam_pitchshift0Slew :
     filter_1p_lo_set_slew(&(pitchFactorSlew[0]), v);
