@@ -40,10 +40,10 @@
 #define PARAM_SECONDS_MAX 0x003c0000
 #define PARAM_SECONDS_RADIX 7
 
-#define DELAY_TYPE eParamTypeFix
-#define DELAY_MIN 0x00000000
-#define DELAY_MAX FR32_MAX
-#define DELAY_RADIX 8
+#define PITCHSHIFT_TYPE eParamTypeFix
+#define PITCHSHIFT_MIN 0x00000000
+#define PITCHSHIFT_MAX FR32_MAX
+#define PITCHSHIFT_RADIX 8
 
 #define PAN_TYPE eParamTypeFix
 #define PAN_MIN 0x00000000
@@ -85,9 +85,25 @@ enum params {
   eParam_fader3,
   eParam_effect3,
 
-  eParam_delay0,
-  eParam_delay0Slew,
-  eParam_feedback0,
+  eParam_pitchshift0,
+  eParam_pitchshift0Slew,
+  eParam_pitchshift0feedback,
+
+  eParam_pitchshift1,
+  eParam_pitchshift1Slew,
+  eParam_pitchshift1feedback,
+
+  eParam_pitchshift2,
+  eParam_pitchshift2Slew,
+  eParam_pitchshift2feedback,
+
+  eParam_pitchshift3,
+  eParam_pitchshift3Slew,
+  eParam_pitchshift3feedback,
+
+  eParam_pitchshift4,
+  eParam_pitchshift4Slew,
+  eParam_pitchshift4feedback,
 
   eParamNumParams
 };

@@ -159,9 +159,9 @@ void module_init(void) {
 
   filter_1p_lo_init( &delayTimeSlew, 0 );
 
-  //param_setup( 	eParam_delay0,		0 );
-  param_setup( 	eParam_feedback0,		FADER_DEFAULT );
-  param_setup( 	eParam_feedback0,		0 );
+  //param_setup( 	eParam_pitchshift0,		0 );
+  param_setup( 	eParam_pitchshift0feedback,		FADER_DEFAULT );
+  param_setup( 	eParam_pitchshift0feedback,		0 );
 
   //delay_set_loop_samp(&(lines[0]), LINES_BUF_FRAMES/2);
   //delay_set_run_write(&(lines[0]), 1);
@@ -383,15 +383,15 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_effect3 :
     effectTarget[3] = v;
     break;
-  case eParam_feedback0 :
+  case eParam_pitchshift0feedback :
     feedbackTarget = v;
     break;
-  case eParam_delay0 :
+  case eParam_pitchshift0 :
     //delayTimeTarget = v;
     //filter_1p_lo_in(&delayTimeSlew, v);
     pitchShift_set_pitchFactor24_8(&(lines[0]), v/256);
     break;
-  case eParam_delay0Slew :
+  case eParam_pitchshift0Slew :
     filter_1p_lo_set_slew(&delayTimeSlew, v);
   default:
     break;

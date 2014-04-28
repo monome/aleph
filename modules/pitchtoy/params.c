@@ -173,23 +173,95 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_effect3].max = EFFECT_MAX;
   desc[eParam_effect3].radix = EFFECT_RADIX;
 
-  strcpy(desc[eParam_delay0].label, "pitchshift");
-  desc[eParam_delay0].type = DELAY_TYPE;
-  desc[eParam_delay0].min = DELAY_MIN;
-  desc[eParam_delay0].max = DELAY_MAX;
-  desc[eParam_delay0].radix = DELAY_RADIX;
+  strcpy(desc[eParam_pitchshift0].label, "pitchshift0");
+  desc[eParam_pitchshift0].type = PITCHSHIFT_TYPE;
+  desc[eParam_pitchshift0].min = PITCHSHIFT_MIN;
+  desc[eParam_pitchshift0].max = PITCHSHIFT_MAX;
+  desc[eParam_pitchshift0].radix = PITCHSHIFT_RADIX;
 
-  strcpy(desc[eParam_delay0Slew].label, "slew1");
-  desc[eParam_delay0Slew].type = eParamTypeIntegrator; 
-  desc[eParam_delay0Slew].min = 0x00000000; 
-  desc[eParam_delay0Slew].max = 0x7fffffff;
-  desc[eParam_delay0Slew].radix = 32;
+  strcpy(desc[eParam_pitchshift0Slew].label, "slew0");
+  desc[eParam_pitchshift0Slew].type = eParamTypeIntegrator;
+  desc[eParam_pitchshift0Slew].min = 0x00000000;
+  desc[eParam_pitchshift0Slew].max = 0x7fffffff;
+  desc[eParam_pitchshift0Slew].radix = 32;
 
-  strcpy(desc[eParam_feedback0].label, "feedback0");
-  desc[eParam_feedback0].type = EFFECT_TYPE;
-  desc[eParam_feedback0].min = EFFECT_MIN;
-  desc[eParam_feedback0].max = EFFECT_MAX;
-  desc[eParam_feedback0].radix = EFFECT_RADIX;
+  strcpy(desc[eParam_pitchshift0feedback].label, "feedback0");
+  desc[eParam_pitchshift0feedback].type = EFFECT_TYPE;
+  desc[eParam_pitchshift0feedback].min = EFFECT_MIN;
+  desc[eParam_pitchshift0feedback].max = EFFECT_MAX;
+  desc[eParam_pitchshift0feedback].radix = EFFECT_RADIX;
+
+  strcpy(desc[eParam_pitchshift1].label, "pitchshift1");
+  desc[eParam_pitchshift1].type = PITCHSHIFT_TYPE;
+  desc[eParam_pitchshift1].min = PITCHSHIFT_MIN;
+  desc[eParam_pitchshift1].max = PITCHSHIFT_MAX;
+  desc[eParam_pitchshift1].radix = PITCHSHIFT_RADIX;
+
+  strcpy(desc[eParam_pitchshift1Slew].label, "slew1");
+  desc[eParam_pitchshift1Slew].type = eParamTypeIntegrator; 
+  desc[eParam_pitchshift1Slew].min = 0x00000000; 
+  desc[eParam_pitchshift1Slew].max = 0x7fffffff;
+  desc[eParam_pitchshift1Slew].radix = 32;
+
+  strcpy(desc[eParam_pitchshift1feedback].label, "feedback1");
+  desc[eParam_pitchshift1feedback].type = EFFECT_TYPE;
+  desc[eParam_pitchshift1feedback].min = EFFECT_MIN;
+  desc[eParam_pitchshift1feedback].max = EFFECT_MAX;
+  desc[eParam_pitchshift1feedback].radix = EFFECT_RADIX;
+
+  strcpy(desc[eParam_pitchshift2].label, "pitchshift2");
+  desc[eParam_pitchshift2].type = PITCHSHIFT_TYPE;
+  desc[eParam_pitchshift2].min = PITCHSHIFT_MIN;
+  desc[eParam_pitchshift2].max = PITCHSHIFT_MAX;
+  desc[eParam_pitchshift2].radix = PITCHSHIFT_RADIX;
+
+  strcpy(desc[eParam_pitchshift2Slew].label, "slew2");
+  desc[eParam_pitchshift2Slew].type = eParamTypeIntegrator; 
+  desc[eParam_pitchshift2Slew].min = 0x00000000; 
+  desc[eParam_pitchshift2Slew].max = 0x7fffffff;
+  desc[eParam_pitchshift2Slew].radix = 32;
+
+  strcpy(desc[eParam_pitchshift2feedback].label, "feedback2");
+  desc[eParam_pitchshift2feedback].type = EFFECT_TYPE;
+  desc[eParam_pitchshift2feedback].min = EFFECT_MIN;
+  desc[eParam_pitchshift2feedback].max = EFFECT_MAX;
+  desc[eParam_pitchshift2feedback].radix = EFFECT_RADIX;
+
+  strcpy(desc[eParam_pitchshift3].label, "pitchshift3");
+  desc[eParam_pitchshift3].type = PITCHSHIFT_TYPE;
+  desc[eParam_pitchshift3].min = PITCHSHIFT_MIN;
+  desc[eParam_pitchshift3].max = PITCHSHIFT_MAX;
+  desc[eParam_pitchshift3].radix = PITCHSHIFT_RADIX;
+
+  strcpy(desc[eParam_pitchshift3Slew].label, "slew3");
+  desc[eParam_pitchshift3Slew].type = eParamTypeIntegrator; 
+  desc[eParam_pitchshift3Slew].min = 0x00000000; 
+  desc[eParam_pitchshift3Slew].max = 0x7fffffff;
+  desc[eParam_pitchshift3Slew].radix = 32;
+
+  strcpy(desc[eParam_pitchshift3feedback].label, "feedback3");
+  desc[eParam_pitchshift3feedback].type = EFFECT_TYPE;
+  desc[eParam_pitchshift3feedback].min = EFFECT_MIN;
+  desc[eParam_pitchshift3feedback].max = EFFECT_MAX;
+  desc[eParam_pitchshift3feedback].radix = EFFECT_RADIX;
+
+  strcpy(desc[eParam_pitchshift4].label, "pitchshift4");
+  desc[eParam_pitchshift4].type = PITCHSHIFT_TYPE;
+  desc[eParam_pitchshift4].min = PITCHSHIFT_MIN;
+  desc[eParam_pitchshift4].max = PITCHSHIFT_MAX;
+  desc[eParam_pitchshift4].radix = PITCHSHIFT_RADIX;
+
+  strcpy(desc[eParam_pitchshift4Slew].label, "slew4");
+  desc[eParam_pitchshift4Slew].type = eParamTypeIntegrator; 
+  desc[eParam_pitchshift4Slew].min = 0x00000000; 
+  desc[eParam_pitchshift4Slew].max = 0x7fffffff;
+  desc[eParam_pitchshift4Slew].radix = 32;
+
+  strcpy(desc[eParam_pitchshift4feedback].label, "feedback4");
+  desc[eParam_pitchshift4feedback].type = EFFECT_TYPE;
+  desc[eParam_pitchshift4feedback].min = EFFECT_MIN;
+  desc[eParam_pitchshift4feedback].max = EFFECT_MAX;
+  desc[eParam_pitchshift4feedback].radix = EFFECT_RADIX;
 
 }
 
