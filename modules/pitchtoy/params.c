@@ -245,6 +245,11 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_pitchshift3fader].max = FR32_MAX;
   desc[eParam_pitchshift3fader].radix = 1;
 
+  strcpy(desc[eParam_feedback].label, "feedback");
+  desc[eParam_feedback].type = eParamTypeAmp; 
+  desc[eParam_feedback].min = 0x00000000; 
+  desc[eParam_feedback].max = FR32_MAX;
+  desc[eParam_feedback].radix = 1;
 }
 
 // EOF
