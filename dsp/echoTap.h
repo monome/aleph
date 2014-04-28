@@ -45,7 +45,7 @@ typedef struct _echoTap24_8 {
 } echoTap24_8;
 
 //the maximum number of samples to use for antialiased read
-#define MAX_ANTIALIAS 5
+#define MAX_ANTIALIAS 3
 
 //if oneshot, then stop when grain hits a boundary
 #define EDGE_ONESHOT 0

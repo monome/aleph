@@ -271,10 +271,14 @@ void module_process_frame(void) {
   delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
 
 ParamValue pitchshiftFaders[NGRAINS];
-  delayOutput = mult_fr1x32x32(pitchshiftFaders[0], pitchShift_next( &(grains[0]), delayInput));
-  delayOutput = add_fr1x32(delayOutput, mult_fr1x32x32(pitchshiftFaders[1], pitchShift_next( &(grains[1]), delayInput)));
-  delayOutput = add_fr1x32(delayOutput, mult_fr1x32x32(pitchshiftFaders[2], pitchShift_next( &(grains[2]), delayInput)));
-  delayOutput = add_fr1x32(delayOutput, mult_fr1x32x32(pitchshiftFaders[3], pitchShift_next( &(grains[3]), delayInput)));
+  delayOutput = pitchShift_next( &(grains[0]), delayInput);
+  delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[1]), delayInput));
+  delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[2]), delayInput));
+  //delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[3]), delayInput));
+  //delayOutput = mult_fr1x32x32(pitchshiftFaders[0], pitchShift_next( &(grains[0]), delayInput));
+  //delayOutput = add_fr1x32(delayOutput, mult_fr1x32x32(pitchshiftFaders[1], pitchShift_next( &(grains[1]), delayInput)));
+  //delayOutput = add_fr1x32(delayOutput, mult_fr1x32x32(pitchshiftFaders[2], pitchShift_next( &(grains[2]), delayInput)));
+  //delayOutput = add_fr1x32(delayOutput, mult_fr1x32x32(pitchshiftFaders[3], pitchShift_next( &(grains[3]), delayInput)));
 
 
 
