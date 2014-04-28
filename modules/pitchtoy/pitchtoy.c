@@ -39,10 +39,10 @@
 //#define LINES_BUF_FRAMES 0x600000
 //#define LINES_BUF_FRAMES 0x1000000
 //#define LINES_BUF_FRAMES 0xbb8000 // 256 seconds @ 48k
-#define NLINES 1
+#define NGRAINS 4
 #define PARAM_SECONDS_MAX 0x003c0000
 
-pitchShift grains[NLINES];
+pitchShift grains[NGRAINS];
 
 ParamValue auxL[4];
 ParamValue auxR[4];
@@ -65,9 +65,9 @@ ParamValue effectTarget[4];
 //ParamValue eq_mid[4];
 //ParamValue eq_lo[4];
 
-ParamValue pitchFactor[5] = {0,0,0,0,0};
-ParamValue pitchFactorTarget[5] = {0,0,0,0,0};
-static filter_1p_lo pitchFactorSlew[5] ;
+ParamValue pitchFactor[NGRAINS] = {0,0,0,0};
+ParamValue pitchFactorTarget[NGRAINS] = {0,0,0,0};
+static filter_1p_lo pitchFactorSlew[NGRAINS] ;
 
 ParamValue feedback=0;
 ParamValue feedbackTarget=0;
@@ -77,7 +77,7 @@ typedef struct _pitchtoyData {
   ModuleData super;
   //ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
-  volatile fract32 audioBuffer[NLINES][LINES_BUF_FRAMES];
+  volatile fract32 audioBuffer[NGRAINS][LINES_BUF_FRAMES];
 } pitchtoyData;
 
 //-------------------------
@@ -87,7 +87,7 @@ ModuleData* gModuleData;
 //------ static variables
 
 // pointer to all external memory
-pitchtoyData* pDacsData;
+pitchtoyData* pPitchtoyData;
 
 // dac values (u16, but use fract32 and audio integrators)
 static fract32 dacVal[4];
@@ -106,12 +106,12 @@ void module_init(void) {
 
 
   // init module/param descriptor
-  pDacsData = (pitchtoyData*)SDRAM_ADDRESS;
+  pPitchtoyData = (pitchtoyData*)SDRAM_ADDRESS;
 
-  gModuleData = &(pDacsData->super);
+  gModuleData = &(pPitchtoyData->super);
   strcpy(gModuleData->name, "aleph-pitchtoy");
 
-  gModuleData->paramData = (ParamData*)pDacsData->mParamData;
+  gModuleData->paramData = (ParamData*)pPitchtoyData->mParamData;
   gModuleData->numParams = eParamNumParams;
 
 
@@ -155,11 +155,10 @@ void module_init(void) {
   param_setup( 	eParam_effect3,		EFFECT_DEFAULT );
 
 
-  pitchShift_init(&(grains[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
-  pitchShift_init(&(grains[1]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
-  pitchShift_init(&(grains[2]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
-  pitchShift_init(&(grains[3]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
-  pitchShift_init(&(grains[4]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[0]), pPitchtoyData->audioBuffer[0], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[1]), pPitchtoyData->audioBuffer[1], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[2]), pPitchtoyData->audioBuffer[2], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[3]), pPitchtoyData->audioBuffer[3], LINES_BUF_FRAMES);
 
   filter_1p_lo_init( &(pitchFactorSlew[0]), 0 );
   filter_1p_lo_init( &(pitchFactorSlew[1]), 0 );
@@ -267,6 +266,9 @@ void module_process_frame(void) {
   delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
 
   delayOutput = pitchShift_next( &(grains[0]), delayInput);
+  delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[1]), delayInput));
+  delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[2]), delayInput));
+  delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[3]), delayInput));
 
 
 
@@ -395,12 +397,26 @@ void module_set_param(u32 idx, ParamValue v) {
     feedbackTarget = v;
     break;
   case eParam_pitchshift0 :
-    //delayTimeTarget = v;
     //filter_1p_lo_in(&delayTimeSlew, v);
     pitchShift_set_pitchFactor24_8(&(grains[0]), v/256);
     break;
   case eParam_pitchshift0Slew :
     filter_1p_lo_set_slew(&(pitchFactorSlew[0]), v);
+    //filter_1p_lo_in(&delayTimeSlew, v);
+    pitchShift_set_pitchFactor24_8(&(grains[1]), v/256);
+    break;
+  case eParam_pitchshift1Slew :
+    filter_1p_lo_set_slew(&(pitchFactorSlew[1]), v);
+    //filter_1p_lo_in(&delayTimeSlew, v);
+    pitchShift_set_pitchFactor24_8(&(grains[2]), v/256);
+    break;
+  case eParam_pitchshift2Slew :
+    filter_1p_lo_set_slew(&(pitchFactorSlew[2]), v);
+    //filter_1p_lo_in(&delayTimeSlew, v);
+    pitchShift_set_pitchFactor24_8(&(grains[3]), v/256);
+    break;
+  case eParam_pitchshift3Slew :
+    filter_1p_lo_set_slew(&(pitchFactorSlew[3]), v);
   default:
     break;
   }

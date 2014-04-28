@@ -221,23 +221,6 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_pitchshift3Slew].max = 0x7fffffff;
   desc[eParam_pitchshift3Slew].radix = 32;
 
-  strcpy(desc[eParam_pitchshift4].label, "pitchshift4");
-  desc[eParam_pitchshift4].type = PITCHSHIFT_TYPE;
-  desc[eParam_pitchshift4].min = PITCHSHIFT_MIN;
-  desc[eParam_pitchshift4].max = PITCHSHIFT_MAX;
-  desc[eParam_pitchshift4].radix = PITCHSHIFT_RADIX;
-
-  strcpy(desc[eParam_pitchshift4Slew].label, "slew4");
-  desc[eParam_pitchshift4Slew].type = eParamTypeIntegrator; 
-  desc[eParam_pitchshift4Slew].min = 0x00000000; 
-  desc[eParam_pitchshift4Slew].max = 0x7fffffff;
-  desc[eParam_pitchshift4Slew].radix = 32;
-
-  strcpy(desc[eParam_feedback].label, "feedback");
-  desc[eParam_feedback].type = EFFECT_TYPE;
-  desc[eParam_feedback].min = EFFECT_MIN;
-  desc[eParam_feedback].max = EFFECT_MAX;
-  desc[eParam_feedback].radix = EFFECT_RADIX;
 }
 
 // EOF

@@ -97,9 +97,6 @@ enum params {
   eParam_pitchshift3,
   eParam_pitchshift3Slew,
 
-  eParam_pitchshift4,
-  eParam_pitchshift4Slew,
-
   eParam_feedback,
 
   eParamNumParams
