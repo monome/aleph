@@ -97,8 +97,8 @@ extern fract32 echoTap24_8_read_antialias(echoTap24_8* echoTap){
     if( num_samples < 2 ) {
         return echoTap24_8_read_interp(echoTap);
     }
-    else if( num_samples >5 ) {
-        num_samples = 5;
+    else if( num_samples >MAX_ANTIALIAS ) {
+        num_samples = MAX_ANTIALIAS+1;
     }
 
     s32 mix_factor = FR32_MAX / num_samples;

@@ -44,6 +44,9 @@ typedef struct _echoTap24_8 {
   u8 edge_behaviour;
 } echoTap24_8;
 
+//the maximum number of samples to use for antialiased read
+#define MAX_ANTIALIAS 5
+
 //if oneshot, then stop when grain hits a boundary
 #define EDGE_ONESHOT 0
 //if bounce, then flip the read head play direction when grain hits boundary
