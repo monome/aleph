@@ -400,22 +400,22 @@ void module_set_param(u32 idx, ParamValue v) {
     //filter_1p_lo_in(&delayTimeSlew, v);
     pitchShift_set_pitchFactor24_8(&(grains[0]), v/256);
     break;
-  case eParam_pitchshift0Slew :
+  case eParam_pitchshift0slew :
     filter_1p_lo_set_slew(&(pitchFactorSlew[0]), v);
     //filter_1p_lo_in(&delayTimeSlew, v);
     pitchShift_set_pitchFactor24_8(&(grains[1]), v/256);
     break;
-  case eParam_pitchshift1Slew :
+  case eParam_pitchshift1slew :
     filter_1p_lo_set_slew(&(pitchFactorSlew[1]), v);
     //filter_1p_lo_in(&delayTimeSlew, v);
     pitchShift_set_pitchFactor24_8(&(grains[2]), v/256);
     break;
-  case eParam_pitchshift2Slew :
+  case eParam_pitchshift2slew :
     filter_1p_lo_set_slew(&(pitchFactorSlew[2]), v);
     //filter_1p_lo_in(&delayTimeSlew, v);
     pitchShift_set_pitchFactor24_8(&(grains[3]), v/256);
     break;
-  case eParam_pitchshift3Slew :
+  case eParam_pitchshift3slew :
     filter_1p_lo_set_slew(&(pitchFactorSlew[3]), v);
   default:
     break;

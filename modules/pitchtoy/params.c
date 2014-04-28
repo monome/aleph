@@ -179,11 +179,11 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_pitchshift0].max = PITCHSHIFT_MAX;
   desc[eParam_pitchshift0].radix = PITCHSHIFT_RADIX;
 
-  strcpy(desc[eParam_pitchshift0Slew].label, "slew0");
-  desc[eParam_pitchshift0Slew].type = eParamTypeIntegrator;
-  desc[eParam_pitchshift0Slew].min = 0x00000000;
-  desc[eParam_pitchshift0Slew].max = 0x7fffffff;
-  desc[eParam_pitchshift0Slew].radix = 32;
+  strcpy(desc[eParam_pitchshift0slew].label, "slew0");
+  desc[eParam_pitchshift0slew].type = eParamTypeIntegrator;
+  desc[eParam_pitchshift0slew].min = 0x00000000;
+  desc[eParam_pitchshift0slew].max = 0x7fffffff;
+  desc[eParam_pitchshift0slew].radix = 32;
 
   strcpy(desc[eParam_pitchshift1].label, "pitchshift1");
   desc[eParam_pitchshift1].type = PITCHSHIFT_TYPE;
@@ -191,11 +191,11 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_pitchshift1].max = PITCHSHIFT_MAX;
   desc[eParam_pitchshift1].radix = PITCHSHIFT_RADIX;
 
-  strcpy(desc[eParam_pitchshift1Slew].label, "slew1");
-  desc[eParam_pitchshift1Slew].type = eParamTypeIntegrator; 
-  desc[eParam_pitchshift1Slew].min = 0x00000000; 
-  desc[eParam_pitchshift1Slew].max = 0x7fffffff;
-  desc[eParam_pitchshift1Slew].radix = 32;
+  strcpy(desc[eParam_pitchshift1slew].label, "slew1");
+  desc[eParam_pitchshift1slew].type = eParamTypeIntegrator; 
+  desc[eParam_pitchshift1slew].min = 0x00000000; 
+  desc[eParam_pitchshift1slew].max = 0x7fffffff;
+  desc[eParam_pitchshift1slew].radix = 32;
 
   strcpy(desc[eParam_pitchshift2].label, "pitchshift2");
   desc[eParam_pitchshift2].type = PITCHSHIFT_TYPE;
@@ -203,11 +203,11 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_pitchshift2].max = PITCHSHIFT_MAX;
   desc[eParam_pitchshift2].radix = PITCHSHIFT_RADIX;
 
-  strcpy(desc[eParam_pitchshift2Slew].label, "slew2");
-  desc[eParam_pitchshift2Slew].type = eParamTypeIntegrator; 
-  desc[eParam_pitchshift2Slew].min = 0x00000000; 
-  desc[eParam_pitchshift2Slew].max = 0x7fffffff;
-  desc[eParam_pitchshift2Slew].radix = 32;
+  strcpy(desc[eParam_pitchshift2slew].label, "slew2");
+  desc[eParam_pitchshift2slew].type = eParamTypeIntegrator; 
+  desc[eParam_pitchshift2slew].min = 0x00000000; 
+  desc[eParam_pitchshift2slew].max = 0x7fffffff;
+  desc[eParam_pitchshift2slew].radix = 32;
 
   strcpy(desc[eParam_pitchshift3].label, "pitchshift3");
   desc[eParam_pitchshift3].type = PITCHSHIFT_TYPE;
@@ -215,11 +215,11 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_pitchshift3].max = PITCHSHIFT_MAX;
   desc[eParam_pitchshift3].radix = PITCHSHIFT_RADIX;
 
-  strcpy(desc[eParam_pitchshift3Slew].label, "slew3");
-  desc[eParam_pitchshift3Slew].type = eParamTypeIntegrator; 
-  desc[eParam_pitchshift3Slew].min = 0x00000000; 
-  desc[eParam_pitchshift3Slew].max = 0x7fffffff;
-  desc[eParam_pitchshift3Slew].radix = 32;
+  strcpy(desc[eParam_pitchshift3slew].label, "slew3");
+  desc[eParam_pitchshift3slew].type = eParamTypeIntegrator; 
+  desc[eParam_pitchshift3slew].min = 0x00000000; 
+  desc[eParam_pitchshift3slew].max = 0x7fffffff;
+  desc[eParam_pitchshift3slew].radix = 32;
 
 }
 
