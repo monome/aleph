@@ -1,0 +1,152 @@
+tracker.scn / prgm 0.0.7
+INPUTS          OPERATORS       OUTPUTS         ->      INPUTS              I/O
+                000.ENC         ENC/VAL                 049.ROUTE/VAL                    
+                001.ENC         ENC/VAL                 050.ROUTE/VAL                   
+                002.ENC         ENC/VAL                 051.ROUTE/VAL                    
+                003.ENC         ENC/VAL                 052.ROUTE/VAL                    
+                004.SW          SW/VAL                  020.ACCUM/INC
+                005.SW          SW/VAL                  020.ACCUM/INC
+                006.SW          SW/VAL                  
+                007.SW
+                008.SW
+                009.SW
+                010.CV-IN       CV-IN/VAL0              048.SPLIT4/VAL
+                011.PRESET
+                012.SPLIT2      SPLIT2/A                                    000.osc0_f
+                                SPLIT2/B                013.SPLIT/VAL
+                013.SPLIT4      SPLIT4/A                023.GATE/VAL
+                                SPLIT4/B                027.GATE/VAL
+                                SPLIT4/C                031.GATE/VAL
+                                SPLIT4/D                035.GATE/VAL
+                014.SPLIT2      SPLIT2/A                                    001.osc1_f
+                                SPLIT2/B                015.SPLIT4/VAL
+                015.SPLIT4      SPLIT4/A                024.GATE/VAL
+                                SPLIT4/B                028.GATE/VAL
+                                SPLIT4/C                032.GATE/VAL
+                                SPLIT4/D                036.GATE/VAL
+                016.SPLIT2      SPLIT2/A                                    002.osc2_f
+                                SPLIT2/B                017.SPLIT4/VAL
+                017.SPLIT4      SPLIT4/A                025.GATE/VAL
+                                SPLIT4/B                029.GATE/VAL
+                                SPLIT4/C                033.GATE/VAL
+                                SPLIT4/D                037.GATE/VAL
+                018.SPLIT2      SPLIT2/A                                    003.osc3_f
+                                SPLIT2/B                019.SPLIT4/VAL
+                019.SPLIT4      SPLIT4/A                026.GATE/VAL
+                                SPLIT4/B                030.GATE/VAL
+                                SPLIT4/C                034.GATE/VAL
+                                SPLIT4/D                038.GATE/VAL
+004-005.SW/VAL  020.ACCUM       ACCUM/VAL               047.Y/VAL
+                021.LIST8       LIST8/VAL               022.BITS/IN
+                022.BITS        BITS/O1                 039.Y/VAL
+                                BITS/O2                 040.Y/VAL
+                                BITS/O3                 041.Y/VAL
+                                BITS/O4                 042.Y/VAL
+                023.GATE        GATE/GATED              043.LIST8/I0
+                024.GATE        GATE/GATED              044.LIST8/I0
+                025.GATE        GATE/GATED              045.LIST8/I0
+                026.GATE        GATE/GATED              046.LIST8/I0
+                027.GATE        GATE/GATED              043.LIST8/I1
+                028.GATE        GATE/GATED              044.LIST8/I1
+                029.GATE        GATE/GATED              045.LIST8/I1
+                030.GATE        GATE/GATED              046.LIST8/I1
+                031.GATE        GATE/GATED              043.LIST8/I2
+                032.GATE        GATE/GATED              044.LIST8/I2
+                033.GATE        GATE/GATED              045.LIST8/I2
+                034.GATE        GATE/GATED              046.LIST8/I2
+                035.GATE        GATE/GATED              043.LIST8/I3
+                036.GATE        GATE/GATED              044.LIST8/I3
+                037.GATE        GATE/GATED              045.LIST8/I3
+                038.GATE        GATE/GATED              046.LIST8/I3
+022.BITS/O1     039.SPLIT4      SPLIT4/A                023.GATE/GATE
+                                SPLIT4/B                024.GATE/GATE
+                                SPLIT4/C                025.GATE/GATE
+                                SPLIT4/D                026.GATE/GATE
+022.BITS/O2     040.SPLIT4      SPLIT4/A                027.GATE/GATE
+                                SPLIT4/B                028.GATE/GATE
+                                SPLIT4/C                029.GATE/GATE
+                                SPLIT4/D                030.GATE/GATE
+022.BITS/O3     041.SPLIT4      SPLIT4/A                031.GATE/GATE
+                                SPLIT4/B                032.GATE/GATE
+                                SPLIT4/C                033.GATE/GATE
+                                SPLIT4/D                034.GATE/GATE
+022.BITS/O4     042.SPLIT4      SPLIT4/A                035.GATE/GATE
+                                SPLIT4/B                036.GATE/GATE
+                                SPLIT4/C                037.GATE/GATE
+                                SPLIT4/D                038.GATE/GATE
+066.Y/A         043.LIST8/IND   LIST8/VAL                                   000.osc1_f
+015.GATE/GATED  043.LIST8/I0    
+                043.LIST8/I1      
+                043.LIST8/I2
+                043.LIST8/I3      
+                044.LIST8/IND   LIST8/VAL                                   001.osc1_f
+                044.LIST8/I0    
+                044.LIST8/I1      
+                044.LIST8/I2
+                044.LIST8/I3      
+                045.LIST8/IND   LIST8/VAL                                   002.osc2_f
+                045.LIST8/I0    
+                045.LIST8/I1      
+                045.LIST8/I2
+                045.LIST8/I3      
+                046.LIST8/IND   LIST8/VAL                                   003.osc3_f
+                046.LIST8/I0    
+                046.LIST8/I1      
+                046.LIST8/I2
+                046.LIST8/I3      
+020.ACCUM/VAL   047.SPLIT2      SPLIT/A                 021.LIST8/IND
+                                SPLIT/B                 048.SPLIT4/VAL
+                048.SPLIT4      SPLIT/A                 043.LIST8/IND    
+                                SPLIT/B                 044.LIST8/IND    
+                                SPLIT/C                 045.LIST8/IND
+                                SPLIT/D                 046.LIST8/IND
+                049.ROUTE       ROUTE/0                 012.SPLIT2/VAL
+                                ROUTE/1                 053.TOG/STATE
+                                ROUTE/2
+                050.ROUTE       ROUTE/0                 014.SPLIT2/VAL
+                                ROUTE/1                 056.TOG/STATE
+                                ROUTE/2
+                051.ROUTE       ROUTE/0                 016.SPLIT2/VAL
+                                ROUTE/1                 059.TOG/STATE
+                                ROUTE/2
+                052.ROUTE       ROUTE/0                 018.SPLIT2/VAL
+                                ROUTE/1                 062.TOG/STATE
+                                ROUTE/2
+                053.TOG         TOG/VAL                 054.ACCUM/INC
+                054.ACCUM       ACCUM/VAL               011.PRESET/READ?
+                055.ACCUM       ACCUM/VAL               012.SPLIT2/VAL
+                056.TOG         TOG/VAL                 057.ACCUM/INC
+                057.ACCUM       ACCUM/VAL               011.PRESET/READ?
+                058.ACCUM       ACCUM/VAL               014.SPLIT2/VAL
+                059.TOG         TOG/VAL                 060.ACCUM/INC
+                060.ACCUM       ACCUM/VAL               011.PRESET/READ?
+                061.ACCUM       ACCUM/VAL               016.SPLIT2/VAL
+                062.TOG         TOG/VAL                 063.ACCUM/INC
+                063.ACCUM       ACCUM/VAL               011.PRESET/READ?
+                064.ACCUM       ACCUM/VAL               018.SPLIT2/VAL     
+                065.MIDINOTE    MIDINOTE/NUM            066.SUB/A
+                066.SUB         SUB/DIF                 048.SPLIT4/VAL
+                                
+SETTINGS
+000-003.ENC/STEP    1
+004.SW/TOG          0
+004.SW/MUL          -1
+005.SW/TOG          0
+005.SW/MUL          1
+010.CV-IN/ENABLE    0
+010.CV-IN/PERIOD    10
+010.CV-IN/MODE      1
+020.ACCUM/MIN       0
+020.ACCUM/MAX       3
+021.LIST8           I0  129 10000001
+                    I1  130 10000010
+                    I2  132 10000100
+                    I3  136 10001000
+053.TOG/MUL         1
+054.ACCUM/MAX       32
+054.ACCUM/WRAP      1
+055.ACCUM/VAL       PRESET VALUES STORED HERE?!
+065.MIDINOTE/CHAN   -1  all channels
+066.SUB/B           60  C3 -> I0
+066.SUB/B_TRIG      1
+
