@@ -1,6 +1,5 @@
-
-#ifndef _ALEPH_MODULE_MONO_PARAMS_H_
-#define _ALEPH_MODULE_MONO_PARAMS_H_
+#ifndef _ALEPH_MODULE_PRGM_PARAMS_H_
+#define _ALEPH_MODULE_PRGM_PARAMS_H_
 
 #include "param_common.h"
 
@@ -9,9 +8,13 @@
 //#define RATIO_MIN 0x2000 // 1/8
 //#define RATIO_MAX 0x80000 // 8
 
-#define OSC_FREQ_MIN 0x040000      // 4 hz */
-#define OSC_FREQ_MAX 0x40000000    // 16384 hz */
-#define OSC_FREQ_RADIX 15           //default 15
+#define OSC_HZ_MIN 0x00010000      // 1 hz
+#define OSC_HZ_MAX 0x40000000    // 16384 hz
+#define OSC_HZ_RADIX 15
+
+//#define OSC_FREQ_MIN 0x040000      // 4 hz */
+//#define OSC_FREQ_MAX 0x40000000    // 16384 hz */
+//#define OSC_FREQ_RADIX 15           //default 15
 
 #define RATIO_MIN 0x2000     // 1/8
 #define RATIO_MAX 0x80000    // 8
@@ -25,6 +28,10 @@
 #define SMOOTH_FREQ_MAX 0x400000 // 64
 #define SMOOTH_FREQ_RADIX 7     //default 7
 
+#define PARAM_AMP_6 (FRACT32_MAX >> 1)
+#define PARAM_AMP_12 (FRACT32_MAX >> 2)
+#define PARAM_SLEW_DEFAULT  0x76000000
+
 
 enum params {
     eParamFreq0,
@@ -32,10 +39,10 @@ enum params {
     eParamFreq2,
     eParamFreq3,
     
-    eParamWave0,
-    eParamWave1,
-    eParamWave2,
-    eParamWave3,
+//    eParamWave0,
+//    eParamWave1,
+//    eParamWave2,
+//    eParamWave3,
     
     eParamAmp0,
     eParamAmp1,
@@ -46,7 +53,8 @@ enum params {
     eParamIoAmp1, 
     eParamIoAmp2,
     eParamIoAmp3,
-    
+
+/*
     eParamFreq0Slew,
     eParamFreq1Slew,
     eParamFreq2Slew,
@@ -61,6 +69,7 @@ enum params {
     eParamAmp1Slew,
     eParamAmp2Slew,
     eParamAmp3Slew,
+*/
     
     eParamNumParams
 };

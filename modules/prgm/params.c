@@ -5,28 +5,29 @@
 void fill_param_desc(ParamDesc *desc) {
     strcpy(desc[eParamFreq0].label, "osc0_f");
     desc[eParamFreq0].type = eParamTypeNote;
-    desc[eParamFreq0].min = OSC_FREQ_MIN;
-    desc[eParamFreq0].max = OSC_FREQ_MAX;
-    desc[eParamFreq0].radix = OSC_FREQ_RADIX;
+    desc[eParamFreq0].min = OSC_HZ_MIN;
+    desc[eParamFreq0].max = OSC_HZ_MAX;
+    desc[eParamFreq0].radix = OSC_HZ_RADIX;
 
     strcpy(desc[eParamFreq1].label, "osc1_f");
     desc[eParamFreq1].type = eParamTypeNote;
-    desc[eParamFreq1].min = OSC_FREQ_MIN;
-    desc[eParamFreq1].max = OSC_FREQ_MAX;
-    desc[eParamFreq1].radix = OSC_FREQ_RADIX;
+    desc[eParamFreq1].min = OSC_HZ_MIN;
+    desc[eParamFreq1].max = OSC_HZ_MAX;
+    desc[eParamFreq1].radix = OSC_HZ_RADIX;
 
     strcpy(desc[eParamFreq2].label, "osc2_f");
     desc[eParamFreq2].type = eParamTypeNote;
-    desc[eParamFreq2].min = OSC_FREQ_MIN;
-    desc[eParamFreq2].max = OSC_FREQ_MAX;
-    desc[eParamFreq2].radix = OSC_FREQ_RADIX;
+    desc[eParamFreq2].min = OSC_HZ_MIN;
+    desc[eParamFreq2].max = OSC_HZ_MAX;
+    desc[eParamFreq2].radix = OSC_HZ_RADIX;
 
     strcpy(desc[eParamFreq3].label, "osc3_f");
     desc[eParamFreq3].type = eParamTypeNote;
-    desc[eParamFreq3].min = OSC_FREQ_MIN;
-    desc[eParamFreq3].max = OSC_FREQ_MAX;
-    desc[eParamFreq3].radix = OSC_FREQ_RADIX;
-        
+    desc[eParamFreq3].min = OSC_HZ_MIN;
+    desc[eParamFreq3].max = OSC_HZ_MAX;
+    desc[eParamFreq3].radix = OSC_HZ_RADIX;
+
+/*
     strcpy(desc[eParamWave0].label, "osc0_wf");
     desc[eParamWave0].type = eParamTypeFix;
     desc[eParamWave0].min = 0;
@@ -50,7 +51,8 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamWave3].min = 0;
     desc[eParamWave3].max = FR32_MAX;
     desc[eParamWave3].radix = 1;
-  
+*/
+
     strcpy(desc[eParamAmp0].label, "osc0_amp");
     desc[eParamAmp0].type = eParamTypeAmp;
     desc[eParamAmp0].min = 0;
@@ -98,7 +100,8 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamIoAmp3].min = 0;
     desc[eParamIoAmp3].max = FR32_MAX >> 1;
     desc[eParamIoAmp3].radix = 32;
-  
+
+/*
     strcpy(desc[eParamFreq0Slew].label, "osc0_fslew");
     desc[eParamFreq0Slew].type = eParamTypeIntegrator;
     desc[eParamFreq0Slew].min = SMOOTH_FREQ_MIN;
@@ -170,4 +173,5 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamAmp3Slew].min = SMOOTH_FREQ_MIN;
     desc[eParamAmp3Slew].max = SMOOTH_FREQ_MAX;
     desc[eParamAmp3Slew].radix = SMOOTH_FREQ_RADIX;
+*/
 }

@@ -54,3 +54,4 @@ deploy: aleph-$(module_name).ldr
 	cp aleph-$(module_name).ldr aleph-$(module_name)-$(maj).$(min).$(rev).ldr
 
 .PHONY: clean
+	deploy
