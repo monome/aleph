@@ -1,19 +1,27 @@
-/*PS for variable duty cycle pulse wave, this may be useful:
+//ADD pulse 50%
+/*
+ open in PD
+ s.boot
+ select all
+ cmd+return
+ copy output to wavtab_data_inc.c
+ 
+ PS for variable duty cycle pulse wave, this may be useful:
+ 
+ d = duty cycle ratio (0-1)
+ 
+ a = amplitude of nth harmonic = 2 / (pi * n) * sin(n * pi * d)
+ 
+ (so square wave is a special case; d = 0.5 so the sine term is zero for even harmonics.)
+ 
+ sum as many harmonics as you like to achieve desired richness / risk of aliasing.
+ */
 
-d = duty cycle ratio (0-1)
-
-a = amplitude of nth harmonic = 2 / (pi * n) * sin(n * pi * d)
-
-(so square wave is a special case; d = 0.5 so the sine term is zero for even harmonics.)
-
-sum as many harmonics as you like to achieve desired richness / risk of aliasing.
-*/
 
 
 Routine {
 
-
-n = 1024;
+n = 4096;
 b = Buffer.alloc(s, n, 1);
 0.25.wait;
 // print
@@ -38,46 +46,5 @@ b.sine1([1], asWavetable:false);
 p.value;
 " } , ".postln;
 "".postln;
-
-// pulse 50
-//postln(" // 50: pulse : ");
-//postln(" { ");
-
-
-// some odd harmonics
-postln(" // 1: odd : ");
-postln(" { ");
-b.sine1([1, 0, 1/3, 0, 1/5], asWavetable:false);
-0.25.wait;
-p.value;
-"} , ".postln;
-"".postln;
-
-// some even harmonics
-postln(" // 2: even : ");
-postln(" { ");
-b.sine1([1, 1/2, 0, 1/4, 0, 1/6], asWavetable:false);
-0.25.wait;
-p.value;
-"} , ".postln;
-"".postln;
-
-// even + odd
-postln(" // 3: even + odd, order 7 : ");
-postln(" { ");
-b.sine1([1, 1/2, 1/3, 1/4, 1/5, 1/6, 1/7], asWavetable:false);
-0.25.wait;
-p.value;
-"} , ".postln;
-
-// higher order
-postln(" // 3: even + odd, order 11 : ");
-postln(" { ");
-b.sine1([1, 1/2, 1/3, 1/4, 1/5, 1/6, 1/7, 1/8, 1/9, 1/10, 1/11], asWavetable:false);
-0.25.wait;
-p.value;
-"} , ".postln;
-
-
 
 }.play;

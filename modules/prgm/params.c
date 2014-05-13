@@ -26,6 +26,30 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamFreq3].min = OSC_HZ_MIN;
     desc[eParamFreq3].max = OSC_HZ_MAX;
     desc[eParamFreq3].radix = OSC_HZ_RADIX;
+    
+    strcpy(desc[eParamTune0].label, "osc0_tune");
+    desc[eParamTune0].type = eParamTypeFix;
+    desc[eParamTune0].min = RATIO_MIN;
+    desc[eParamTune0].max = RATIO_MAX;
+    desc[eParamTune0].radix = RATIO_RADIX;
+
+    strcpy(desc[eParamTune1].label, "osc1_tune");
+    desc[eParamTune1].type = eParamTypeFix;
+    desc[eParamTune1].min = RATIO_MIN;
+    desc[eParamTune1].max = RATIO_MAX;
+    desc[eParamTune1].radix = RATIO_RADIX;
+
+    strcpy(desc[eParamTune2].label, "osc2_tune");
+    desc[eParamTune2].type = eParamTypeFix;
+    desc[eParamTune2].min = RATIO_MIN;
+    desc[eParamTune2].max = RATIO_MAX;
+    desc[eParamTune2].radix = RATIO_RADIX;
+
+    strcpy(desc[eParamTune3].label, "osc3_tune");
+    desc[eParamTune3].type = eParamTypeFix;
+    desc[eParamTune3].min = RATIO_MIN;
+    desc[eParamTune3].max = RATIO_MAX;
+    desc[eParamTune3].radix = RATIO_RADIX;
 
 /*
     strcpy(desc[eParamWave0].label, "osc0_wf");

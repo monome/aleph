@@ -10,15 +10,15 @@
 
 #define OSC_HZ_MIN 0x00010000      // 1 hz
 #define OSC_HZ_MAX 0x40000000    // 16384 hz
-#define OSC_HZ_RADIX 15
+#define OSC_HZ_RADIX 1
 
 //#define OSC_FREQ_MIN 0x040000      // 4 hz */
 //#define OSC_FREQ_MAX 0x40000000    // 16384 hz */
 //#define OSC_FREQ_RADIX 15           //default 15
 
-#define RATIO_MIN 0x2000     // 1/8
-#define RATIO_MAX 0x80000    // 8
-#define RATIO_RADIX 4
+#define RATIO_MIN 0x2000     //default 1/8 -> change to 1/64
+#define RATIO_MAX 0x80000    //default 8 -> change to 10
+#define RATIO_RADIX 1 //default 4
 
 //#define ENV_DUR_MIN 0x0040   // 1/1024
 //#define ENV_DUR_MAX 0x100000 // 32
@@ -39,6 +39,11 @@ enum params {
     eParamFreq2,
     eParamFreq3,
     
+    eParamTune0,
+    eParamTune1,
+    eParamTune2,
+    eParamTune3,
+        
 //    eParamWave0,
 //    eParamWave1,
 //    eParamWave2,
