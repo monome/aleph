@@ -12,6 +12,7 @@
 #include "ops/op_add.h"
 #include "ops/op_accum.h"
 #include "ops/op_adc.h"
+#include "ops/op_bars.h"
 #include "ops/op_bignum.h"
 #include "ops/op_bits.h"
 #include "ops/op_cascades.h"

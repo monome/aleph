@@ -18,7 +18,7 @@ static op_in_fn op_history_in_fn[1] = {
 
 static const char* op_history_instring  = "IN\0     ";
 static const char* op_history_outstring = "AVG\0    O0\0     O1\0     O2\0     O3\0     O4\0     O5\0     O6\0     O7\0     ";
-static const char* op_history_opstring  = "HISTORY";
+static const char* op_history_opstring  = "HIST";
 
 //-------------------------------------------------
 //----- external function definitions
