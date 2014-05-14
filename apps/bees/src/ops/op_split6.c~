@@ -7,8 +7,8 @@ include "net_protected.h"
 //-------------------------------------------------
 //----- descriptor
 static const char* op_split6_instring = "X\0      ";
-static const char* op_split6_outstring = "A\0      B\0      C\0      D\0	E\0	f\0      ";
-static const char* op_split6_opstring = "Y4";
+static const char* op_split6_outstring = "A\0      B\0      C\0      D\0	E\0	F\0      ";
+static const char* op_split6_opstring = "Y6";
 
 //-------------------------------------------------
 //----- static function declaration
@@ -53,7 +53,7 @@ void op_split6_init(void* op) {
   split6->super.opString = op_split6_opstring;
   split6->super.inString = op_split6_instring;
   split6->super.outString = op_split6_outstring;
-  split6->super.type = eOpsplit6;
+  split6->super.type = eOpSplit6;
 
   // class state
   split6->val = 0;
