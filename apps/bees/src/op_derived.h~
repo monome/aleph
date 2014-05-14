@@ -36,7 +36,6 @@
 #include "ops/op_preset.h"
 #include "ops/op_split.h"
 #include "ops/op_split4.h"
-#include "ops/op_split6.h"
 #include "ops/op_sub.h"
 #include "ops/op_random.h"
 #include "ops/op_route.h"
