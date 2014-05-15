@@ -31,6 +31,7 @@ static s16* const pageSelect = &(pages[ePageOps].select);
 static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAccum,
   eOpAdd,
+  eOpBars,
   eOpBignum,
   eOpBits,
   eOpCascades,

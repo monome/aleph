@@ -73,11 +73,11 @@ typedef enum {
   eOpRoute8,
   eOpCascades,
   eOpSplit6,
-  //  eOpMidiBend,
-  //  eOpMidiTouch,
-  numOpClasses // dummy/count 
+  eOpBars,
+  // eOpMidiBend,
+  // eOpMidiTouch,
+  numOpClasses // dummy/count
 } op_id_t;
-
 
 //--- function types
 
