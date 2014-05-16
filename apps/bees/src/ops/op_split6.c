@@ -7,7 +7,7 @@
 //-------------------------------------------------
 //----- descriptor
 static const char* op_split6_instring = "X\0      ";
-static const char* op_split6_outstring = "A\0      B\0      C\0      D\0	E\0	F\0      ";
+static const char* op_split6_outstring = "A\0      B\0      C\0      D\0      E\0      F\0	 ";
 static const char* op_split6_opstring = "Y6";
 
 //-------------------------------------------------
