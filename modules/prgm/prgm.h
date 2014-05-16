@@ -35,8 +35,8 @@
 
 //sync trig parameters
 extern u8 state;
-#define STATE ON 1
-#define STATE OFF 0
+#define ON 1
+#define OFF 0
 
 #define N_OSCILLATORS 4
 
@@ -46,18 +46,15 @@ typedef struct _prgmOscillator *PrgmOscillatorpointer;
 
 typedef struct _prgmOscillator {
     fract32 frameVal;           //oscillator output
-//    fract32 osc;                //remove?!
-//    wavtab_t val;               //remove?!
     fix16 freq;                 //frequency in hz, fract32?!
     fract32 wave;               //waveform
-    fix16 ratio;                  //remove...
     fix16 idx;                  //phase as fractional index
     fix16 idxMod;               //pm
     fix16 inc;                  //index increment
     Slew32 incSlew;
     fract32 invAmp;             //inversion amount, use?!
     fix16 invPhase;             //inversion phase, use?!
-//    fract32 amp;                //remove?!
+    fract32 amp;                
 //    Slew16 shapeSlew;
 } prgmOscillator;
 

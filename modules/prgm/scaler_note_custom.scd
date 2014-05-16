@@ -2,7 +2,7 @@
 //output file: scaler_note_just_val.dat
 
 //importing ratios as text file
-~jf = CSVFileReader.read("/Aleph/aleph-dev/modules/prgm/custom_data.txt");
+~jf = CSVFileReader.read("/Applications/SuperCollider/scale_custom.txt");
 
 //size of array 1024, 16 octaves of 64 just ratios
 n = 2**10;
@@ -15,7 +15,7 @@ i = ~jf.collect ({ |j| j.asFloat });
 f = i.slice(nil, (0..1023));
 
 //setting base frequency in Hz
-~base = 190;
+~base = 65.407;
 ~base.postln;
 
 //multiplying ratios with base frequency

@@ -60,14 +60,14 @@ PrgmOscillatorpointer init(void);
 
 static void init_parameters(void *osc);
 
-static void idx_reset(s32 val);
+//static s32 idx_reset(s32 val);
 
 static void oscillator_set_freq(prgmOscillator *oscillator, fix16 freq);
 
-static void oscillator_set_tune(prgmOscillator *oscillator, fix16 ratio); //remove this
+//static void oscillator_set_tune(prgmOscillator *oscillator, fix16 ratio); //remove this
 
 // set modulated phase
-extern void blosc_set_pm(blOsc* osc, fract32 pm);  //IN PROGRESS!
+//extern void blosc_set_pm(blOsc* osc, fract32 pm);  //IN PROGRESS!
 
 static fract32 oscillator_lookup(prgmOscillator *oscillator);
 
@@ -90,7 +90,7 @@ static inline fract32 freq_to_phase(fix16 f) {
 
 
 static inline void oscillator_calc_inc(prgmOscillator *oscillator) {
-    oscillator->incSlew.x = freq_to_phase(fix16_mul(oscillator->ratio, oscillator->freq));  //remove ratio
+    oscillator->incSlew.x = freq_to_phase(fix16_mul(ips, oscillator->freq));
 }
 
 
@@ -109,19 +109,13 @@ void init_parameters(void *osc) {
     oscillator->idx = 0;
     oscillator->inc = fix16_mul(oscillator->freq, ips);
     oscillator->wave = 0;
-
-//CLEANUP
-//    oscillator->phase = 0;
-    oscillator->ratio = FIX16_ONE;  //remove
-    //    oscillator->tab = tab;    
-    //    oscillator->amp = INT32_MAX >> 4;
-    //    oscillator->freq = fix16_from_int(95); removed from NEW
+    oscillator->amp = INT32_MAX >> 4;
 }
 
 
-static void idx_reset(s32 val) {
-    return val;
-}
+//s32 idx_reset(s32 val) {
+//    return val;
+//}
 
 
 void oscillator_set_freq(prgmOscillator *oscillator, fix16 freq) {
@@ -133,7 +127,7 @@ void oscillator_set_freq(prgmOscillator *oscillator, fix16 freq) {
 }
 
 
-/*
+
 fract32 oscillator_lookup(prgmOscillator *oscillator) {
 #if 1
     u32 idxA = oscillator->wave >> WAVE_TAB_RSHIFT;
@@ -149,9 +143,9 @@ fract32 oscillator_lookup(prgmOscillator *oscillator) {
                       mult_fr1x32x32(table_lookup_idx((fract32*)wavtab[idxB], WAVE_TAB_SIZE, oscillator->idx), mul)
                      );
 }
-*/
 
 
+/*
 fract32 oscillator_lookup(prgmOscillator *oscillator) {     //W SYNC TRIG
 #if 1
     u32 idxA = oscillator->wave >> WAVE_TAB_RSHIFT;
@@ -164,7 +158,7 @@ fract32 oscillator_lookup(prgmOscillator *oscillator) {     //W SYNC TRIG
     
     state = OFF;
     
-    if (idx_reset() == 0) {
+    if (idx_reset(v) == 0) {
         state = OFF;
         
         return add_fr1x32(
@@ -183,6 +177,7 @@ fract32 oscillator_lookup(prgmOscillator *oscillator) {     //W SYNC TRIG
         );
     }
 }
+*/
 /*
  static void set_param_trig(drumsynVoice* vp, s32 val) {
  u8 b = (val > 0);
@@ -204,12 +199,6 @@ fract32 oscillator_lookup(prgmOscillator *oscillator) {     //W SYNC TRIG
  }
  }
  */
-
-
-void oscillator_set_tune(prgmOscillator *oscillator, fix16 ratio) {
-    oscillator->ratio = ratio;
-    oscillator_calc_inc(oscillator);
-}
 
 
 fract32 oscillator_next(prgmOscillator *oscillator) {
@@ -306,66 +295,6 @@ void module_init(void) {
     ioAmp2 = FR32_MAX;
     ioAmp3 = FR32_MAX;
 
-/*
-    gModuleData->paramData[eParamFreq0].value = freq0;
-    gModuleData->paramData[eParamFreq1].value = freq1;
-    gModuleData->paramData[eParamFreq2].value = freq2;
-    gModuleData->paramData[eParamFreq3].value = freq3;
-
-    gModuleData->paramData[eParamAmp0].value = amp0;
-    gModuleData->paramData[eParamAmp1].value = amp1;
-    gModuleData->paramData[eParamAmp2].value = amp2;
-    gModuleData->paramData[eParamAmp3].value = amp3;
-
-    gModuleData->paramData[eParamIoAmp0].value = ioAmp0;
-    gModuleData->paramData[eParamIoAmp1].value = ioAmp1;
-    gModuleData->paramData[eParamIoAmp2].value = ioAmp2;
-    gModuleData->paramData[eParamIoAmp3].value = ioAmp3;
-
-    freq0Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
-    filter_1p_lo_init(freq0Lp, freq0);
-    freq1Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
-    filter_1p_lo_init(freq1Lp, freq1);
-    freq2Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
-    filter_1p_lo_init(freq2Lp, freq2);
-    freq3Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
-    filter_1p_lo_init(freq3Lp, freq3);
-
-    wave0Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
-    filter_1p_lo_init(wave0Lp, wave0);
-    wave1Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
-    filter_1p_lo_init(wave1Lp, wave1);
-    wave2Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
-    filter_1p_lo_init(wave2Lp, wave2);
-    wave3Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
-    filter_1p_lo_init(wave3Lp, wave3);
-
-    amp0Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
-    filter_1p_lo_init(amp0Lp, amp0);
-    amp1Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
-    filter_1p_lo_init(amp1Lp, amp1);
-    amp2Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
-    filter_1p_lo_init(amp2Lp, amp2);
-    amp3Lp = (filter_1p_lo*)malloc(sizeof(filter_1p_lo));
-    filter_1p_lo_init(amp2Lp, amp3);
-*/
-  
-/*    
-    param_setup(eParamFreq0Slew, PARAM_SLEW_DEFAULT);
-    param_setup(eParamFreq1Slew, PARAM_SLEW_DEFAULT);
-    param_setup(eParamFreq2Slew, PARAM_SLEW_DEFAULT);
-    param_setup(eParamFreq3Slew, PARAM_SLEW_DEFAULT);
-    
-    param_setup(eParamWave0Slew, PARAM_SLEW_DEFAULT);
-    param_setup(eParamWave1Slew, PARAM_SLEW_DEFAULT);
-    param_setup(eParamWave2Slew, PARAM_SLEW_DEFAULT);
-    param_setup(eParamWave3Slew, PARAM_SLEW_DEFAULT);
-
-    param_setup(eParamAmp0Slew, PARAM_SLEW_DEFAULT);
-    param_setup(eParamAmp1Slew, PARAM_SLEW_DEFAULT);
-    param_setup(eParamAmp2Slew, PARAM_SLEW_DEFAULT);
-    param_setup(eParamAmp3Slew, PARAM_SLEW_DEFAULT);
-*/
     param_setup(eParamFreq0, 220 << 16);
     param_setup(eParamFreq1, 220 << 16);
     param_setup(eParamFreq2, 220 << 16);
@@ -376,11 +305,8 @@ void module_init(void) {
 //    param_setup(eParamWave2, 0);
 //    param_setup(eParamWave3, 0);
     
-    param_setup(eParamTune0, FIX16_ONE);
-    param_setup(eParamTune1, FIX16_ONE);
-    param_setup(eParamTune2, FIX16_ONE);
-    param_setup(eParamTune3, FIX16_ONE);
-    
+//    param_setup(eParamIdxReset, 0);
+        
     param_setup(eParamAmp0, PARAM_AMP_6);
     param_setup(eParamAmp1, PARAM_AMP_6);
     param_setup(eParamAmp2, PARAM_AMP_6);
@@ -421,19 +347,6 @@ void module_set_param(u32 idx, ParamValue v) {
             oscillator_set_freq(oscillator[3], v);
             break;
             
-//remove tune
-        case eParamTune0:
-            oscillator_set_tune(oscillator[0], v);
-            break;
-        case eParamTune1:
-            oscillator_set_tune(oscillator[1], v);
-            break;
-        case eParamTune2:
-            oscillator_set_tune(oscillator[2], v);
-            break;
-        case eParamTune3:
-            oscillator_set_tune(oscillator[3], v);
-            break;
 /*
         case eParamWave0:
             filter_1p_lo_in(wave0Lp, BIT_ABS_32(FIX16_FRACT_TRUNC(v)));
@@ -449,9 +362,11 @@ void module_set_param(u32 idx, ParamValue v) {
             break;
 */
 
-        case eParamIdxReset:
-            idx_reset(v);
-            break;
+//        case eParamIdxReset:
+//            idx_reset(v);
+//            break;
+
+/*
         case eParamIdxMod0:
             //function(&(oscillator[0]->idxMod), v);
             break;
@@ -464,6 +379,7 @@ void module_set_param(u32 idx, ParamValue v) {
         case eParamIdxMod3:
             //function(&(oscillator[0]->idxMod), v);
             break;
+*/
 
         case eParamAmp0:
             filter_1p_lo_in(&(oscillator[0]->amp), v);
