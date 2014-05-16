@@ -15,6 +15,28 @@
  (so square wave is a special case; d = 0.5 so the sine term is zero for even harmonics.)
  
  sum as many harmonics as you like to achieve desired richness / risk of aliasing.
+
+(
+SynthDef("pulse", {
+	var osc1, osc2, peg, duty;
+	
+	// pitch envelope
+	peg = XLine.kr(3050, 50, 3);
+	
+	// make a normal sawtooth
+	osc1 = Saw.ar(peg).range(-1,1); // a sawtooth wave
+	
+	// duty = 0..period where (period*0.5) = 50% duty cycle
+	// modulate duty with a sine wave
+	duty = (1/peg) * SinOsc.kr(0.23).range(0.1,0.9);
+	
+	// invert original sawtooth and delay it
+	osc2 = DelayC.ar(neg(osc1), 1, duty);
+	
+	Out.ar([0,1], osc1 + osc2); // add the two saws together
+	}).send(s);
+)
+
  */
 
 

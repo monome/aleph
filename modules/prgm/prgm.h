@@ -33,27 +33,32 @@
 #define WAVE_IDX_MUL_SHIFT (WAVE_IDX_SHIFT) - 15
 #define WAVE_IPS_NORM 0xae3c
 
+//sync trig parameters
+extern u8 state;
+#define STATE ON 1
+#define STATE OFF 0
+
 #define N_OSCILLATORS 4
 
-
-typedef const fract32 (*wavtab_t) [WAVE_SHAPE_NUM][WAVE_TAB_SIZE]; //new
+typedef const fract32 (*wavtab_t) [WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
 
 typedef struct _prgmOscillator *PrgmOscillatorpointer;
 
 typedef struct _prgmOscillator {
-    fract32 frameVal;
-    fract32 osc; //not used in new, same as frameVal?! output
-    wavtab_t val; //new
-    fix16 freq; //frequency in hz
-    fix16 ratio;
-    fract32 phase; //new
-    fix16 idx; //not used in new, same as phase?!
-    fix16 inc;
-    fract32 wave; //not used in new, same as shape?!
-    fract32 shape; //new
-    fract32 amp;
+    fract32 frameVal;           //oscillator output
+//    fract32 osc;                //remove?!
+//    wavtab_t val;               //remove?!
+    fix16 freq;                 //frequency in hz, fract32?!
+    fract32 wave;               //waveform
+    fix16 ratio;                  //remove...
+    fix16 idx;                  //phase as fractional index
+    fix16 idxMod;               //pm
+    fix16 inc;                  //index increment
     Slew32 incSlew;
-    //    Slew16 shapeSlew;
+    fract32 invAmp;             //inversion amount, use?!
+    fix16 invPhase;             //inversion phase, use?!
+//    fract32 amp;                //remove?!
+//    Slew16 shapeSlew;
 } prgmOscillator;
 
 #endif

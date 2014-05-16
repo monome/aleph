@@ -38,7 +38,8 @@ enum params {
     eParamFreq1,
     eParamFreq2,
     eParamFreq3,
-    
+
+//remove tune
     eParamTune0,
     eParamTune1,
     eParamTune2,
@@ -48,6 +49,12 @@ enum params {
 //    eParamWave1,
 //    eParamWave2,
 //    eParamWave3,
+    
+    eParamIdxReset,
+    eParamIdxMod0,
+    eParamIdxMod1,
+    eParamIdxMod2,
+    eParamIdxMod3,
     
     eParamAmp0,
     eParamAmp1,

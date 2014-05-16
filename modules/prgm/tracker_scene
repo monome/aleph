@@ -10,7 +10,7 @@ INPUTS          OPERATORS       OUTPUTS         ->      INPUTS              I/O
                 007.SW
                 008.SW
                 009.SW
-                010.CV-IN       CV-IN/VAL0              048.SPLIT4/VAL
+                010.CV-IN       CV-IN/VAL0              xxx.IS
                 011.PRESET
                 012.SPLIT2      SPLIT2/A                                    000.osc0_f
                                 SPLIT2/B                013.SPLIT/VAL
@@ -126,6 +126,7 @@ INPUTS          OPERATORS       OUTPUTS         ->      INPUTS              I/O
                 064.ACCUM       ACCUM/VAL               018.SPLIT2/VAL     
                 065.MIDINOTE    MIDINOTE/NUM            066.SUB/A
                 066.SUB         SUB/DIF                 048.SPLIT4/VAL
+                xxx.IS                                  020.ACCUM/INC
                                 
 SETTINGS
 000-003.ENC/STEP    1
@@ -133,9 +134,9 @@ SETTINGS
 004.SW/MUL          -1
 005.SW/TOG          0
 005.SW/MUL          1
-010.CV-IN/ENABLE    0
-010.CV-IN/PERIOD    10
-010.CV-IN/MODE      1
+010.CV-IN/ENABLE    1
+010.CV-IN/PERIOD    1
+010.CV-IN/MODE      0
 020.ACCUM/MIN       0
 020.ACCUM/MAX       3
 021.LIST8           I0  129 10000001

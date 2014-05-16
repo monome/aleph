@@ -1,0 +1,13 @@
+for just frequency and other customs scales..
+
+place these files in the same  directory; scaler_data.c, scaler_data.txt, scaler_note_custom.scd
+
+edit scaler_data.c, compile it (gcc scaler_data.c) and run it (./a.out), it outputs a fresh 'scaler_data.txt'; you can change the size of the array and the number of octaves, just as long as the total number of values is 1024
+
+open the scd-script scaler_note_custom.scd in superCollider; don't forget to set the base frequency you want!
+
+get the output file scaler_note_custom_val.dat from SC's current working directory, probably Applications/SuperCollider/
+
+rename the .dat-file to scaler_note_12tet_val.dat and copy to the scalers/ directory on the sd-card
+
+reboot bees and go!

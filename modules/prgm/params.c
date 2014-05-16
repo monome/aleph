@@ -27,6 +27,7 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamFreq3].max = OSC_HZ_MAX;
     desc[eParamFreq3].radix = OSC_HZ_RADIX;
     
+//remove tune
     strcpy(desc[eParamTune0].label, "osc0_tune");
     desc[eParamTune0].type = eParamTypeFix;
     desc[eParamTune0].min = RATIO_MIN;
@@ -77,6 +78,36 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamWave3].radix = 1;
 */
 
+    strcpy(desc[eParamIdxReset].label, "sync_trig");
+    desc[eParamAmp0].type = eParamTypeBool;
+    desc[eParamAmp0].min = 0;
+    desc[eParamAmp0].max = 1;
+    desc[eParamAmp0].radix = 2;
+    
+    strcpy(desc[eParamIdxMod0].label, "osc0_pm");
+//    desc[eParamAmp0].type = eParamTypeAmp;
+//    desc[eParamAmp0].min = 0;
+//    desc[eParamAmp0].max = FR32_MAX >> 1;
+//    desc[eParamAmp0].radix = 32;
+    
+    strcpy(desc[eParamIdxMod1].label, "osc1_pm");
+//    desc[eParamAmp0].type = eParamTypeAmp;
+//    desc[eParamAmp0].min = 0;
+//    desc[eParamAmp0].max = FR32_MAX >> 1;
+//    desc[eParamAmp0].radix = 32;
+    
+    strcpy(desc[eParamIdxMod2].label, "osc2_pm");
+//    desc[eParamAmp0].type = eParamTypeAmp;
+//    desc[eParamAmp0].min = 0;
+//    desc[eParamAmp0].max = FR32_MAX >> 1;
+//    desc[eParamAmp0].radix = 32;
+    
+    strcpy(desc[eParamidxMod3].label, "osc3_pm");
+//    desc[eParamAmp0].type = eParamTypeAmp;
+//    desc[eParamAmp0].min = 0;
+//    desc[eParamAmp0].max = FR32_MAX >> 1;
+//    desc[eParamAmp0].radix = 32;
+    
     strcpy(desc[eParamAmp0].label, "osc0_amp");
     desc[eParamAmp0].type = eParamTypeAmp;
     desc[eParamAmp0].min = 0;
