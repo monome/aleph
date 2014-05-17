@@ -8,22 +8,19 @@
 #include "slew.h"
 
 
-//symbolic constants, macro substitutions
-#define WAVE_TAB_NUM 5
+//oscillator symbolic constants, macro substitutions
+#define WAVE_TAB_NUM 5  //remove
+#define WAVE_TAB_MAX16 (WAVE_TAB_SIZE * FIX16_ONE - 1)  //remove
+#define WAVE_TAB_RSHIFT 29  //remove
+#define WAVE_TAB_MASK 0x1fffffff    //remove
+#define WAVE_TAB_LSHIFT 2   //remove
 
 #define WAVE_SHAPE_NUM 5
 #define WAVE_SHAPE_BITS 3
 
 #define WAVE_TAB_SIZE 1024
-
 #define WAVE_TAB_BITS 10
-
 #define WAVE_TAB_SIZE_1 (WAVE_TAB_SIZE - 1)
-
-#define WAVE_TAB_MAX16 (WAVE_TAB_SIZE * FIX16_ONE - 1)
-#define WAVE_TAB_RSHIFT 29
-#define WAVE_TAB_MASK 0x1fffffff
-#define WAVE_TAB_LSHIFT 2
 
 #define WAVE_SHAPE_IDX_SHIFT 16 - (WAVE_SHAPE_BITS)
 #define WAVE_SHAPE_MASK (1 << (WAVE_SHAPE_IDX_SHIFT)) - 1
@@ -33,12 +30,12 @@
 #define WAVE_IDX_MUL_SHIFT (WAVE_IDX_SHIFT) - 15
 #define WAVE_IPS_NORM 0xae3c
 
-//sync trig parameters
+#define N_OSCILLATORS 4
+
+//sync trig symbolic constants
 extern u8 state;
 #define ON 1
 #define OFF 0
-
-#define N_OSCILLATORS 4
 
 typedef const fract32 (*wavtab_t) [WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
 
@@ -46,16 +43,21 @@ typedef struct _prgmOscillator *PrgmOscillatorpointer;
 
 typedef struct _prgmOscillator {
     fract32 frameVal;           //oscillator output
+    wavtab_t tab;
     fix16 freq;                 //frequency in hz, fract32?!
-    fract32 wave;               //waveform
-    fix16 idx;                  //phase as fractional index
-    fix16 idxMod;               //pm
+    fract16 wave;               //waveform
+    fract32 phase;
     fix16 inc;                  //index increment
     Slew32 incSlew;
-    fract32 invAmp;             //inversion amount, use?!
-    fix16 invPhase;             //inversion phase, use?!
+    Slew16 shapeSlew;
+    
+//    fract32 phaseMod;
+//    fract32 pmAmount;
+//    fract32 pmIn;
+        
+    fix16 idx;                  //phase as fractional index
+//    fix16 idxMod;               //pm
     fract32 amp;                
-//    Slew16 shapeSlew;
 } prgmOscillator;
 
 #endif

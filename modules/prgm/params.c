@@ -27,7 +27,6 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamFreq3].max = OSC_HZ_MAX;
     desc[eParamFreq3].radix = OSC_HZ_RADIX;
     
-/*
     strcpy(desc[eParamWave0].label, "osc0_wf");
     desc[eParamWave0].type = eParamTypeFix;
     desc[eParamWave0].min = 0;
@@ -51,7 +50,6 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamWave3].min = 0;
     desc[eParamWave3].max = FR32_MAX;
     desc[eParamWave3].radix = 1;
-*/
 
 //    strcpy(desc[eParamIdxReset].label, "sync_trig");
 //    desc[eParamIdxReset].type = eParamTypeBool;

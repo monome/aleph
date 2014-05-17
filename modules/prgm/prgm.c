@@ -13,6 +13,7 @@
 
 //audiolib
 #include "filter_1p.h"
+#include "interpolate.h"
 #include "table.h"
 #include "conversion.h"
 
@@ -38,12 +39,12 @@ prgmOscillator *oscillator[N_OSCILLATORS];
 
 static prgmData *data;
 
-static const fract32 wavtab[WAVE_TAB_NUM][WAVE_TAB_SIZE] = { 
+static const fract32 wavtab[WAVE_SHAPE_NUM][WAVE_TAB_SIZE] = { 
 #include "wavtab_data_inc.c" 
 };
 
 static u32      sr;     //sample rate
-static fix16    ips;    //index change per sample
+//static fix16    ips;    //index change per sample
 
 static fract32 ioAmp0;
 static fract32 ioAmp1;
@@ -58,13 +59,13 @@ static inline void oscillator_calc_inc(prgmOscillator *oscillator);
 
 PrgmOscillatorpointer init(void);
 
-static void init_parameters(void *osc);
+static void init_parameters(prgmOscillator *oscillator, wavtab_t tab, u32 sr);
 
 //static s32 idx_reset(s32 val);
 
 static void oscillator_set_freq(prgmOscillator *oscillator, fix16 freq);
 
-//static void oscillator_set_tune(prgmOscillator *oscillator, fix16 ratio); //remove this
+static void oscillator_set_shape(prgmOscillator *oscillator, fract16 wave);
 
 // set modulated phase
 //extern void blosc_set_pm(blOsc* osc, fract32 pm);  //IN PROGRESS!
@@ -90,7 +91,10 @@ static inline fract32 freq_to_phase(fix16 f) {
 
 
 static inline void oscillator_calc_inc(prgmOscillator *oscillator) {
-    oscillator->incSlew.x = freq_to_phase(fix16_mul(ips, oscillator->freq));
+    oscillator->incSlew.x = freq_to_phase(fix16_mul(FIX16_ONE, oscillator->freq));
+//    oscillator->inc = freq_to_phase(oscillator->freq);
+//    osc->incSlew.x = freq_to_phase(fix16_mul(osc->ratio, osc->hz));
+//    oscillator->incSlew.x = freq_to_phase(fix16_mul(ips, oscillator->freq));
 }
 
 
@@ -99,35 +103,65 @@ PrgmOscillatorpointer init(void) {
 }
 
     
-void init_parameters(void *osc) {
+void init_parameters(prgmOscillator *osc, wavtab_t tab, u32 sr) {
     prgmOscillator *oscillator = (prgmOscillator*)osc;
-
-    slew_init(oscillator->incSlew, 0, 0, 0 );
+    
+    oscillator->tab = tab;
+    slew_init(oscillator->incSlew, 0, 0, 0);
+    slew_init(osc->shapeSlew, 0, 0, 0 );
     
     oscillator->frameVal = 0;
-    oscillator->freq = FIX16_ONE;
+    oscillator->phase = 0;
     oscillator->idx = 0;
-    oscillator->inc = fix16_mul(oscillator->freq, ips);
+    oscillator->freq = FIX16_ONE;
     oscillator->wave = 0;
+//    oscillator->inc = fix16_mul(oscillator->freq, ips);
     oscillator->amp = INT32_MAX >> 4;
 }
+//extern void osc_init(osc* osc, wavtab_t tab, u32 sr);
 
 
 //s32 idx_reset(s32 val) {
 //    return val;
 //}
+/*
+ static void set_param_trig(drumsynVoice* vp, s32 val) {
+ u8 b = (val > 0);
+ env_exp_set_trig( &(vp->envAmp)	, b );
+ env_exp_set_trig( &(vp->envFreq)	, b );
+ env_exp_set_trig( &(vp->envRq)	, b );
+ }
+ 
+ extern void env_exp_set_trig(env_exp* env, u8 gate);
+ 
+ void env_exp_set_trig(env_exp* env, u8 trig) {
+ env->trig = trig;
+ if(env->state == envStateSus) {
+ if(trig) {
+ env->stateFP =  &next_sus_trig1;
+ } else {
+ env->stateFP = &next_sus_trig0;
+ }
+ }
+ }
+ */
+
+
+void oscillator_set_shape(prgmOscillator *oscillator, fract16 wave) {
+    oscillator->shapeSlew.x = wave;
+}
 
 
 void oscillator_set_freq(prgmOscillator *oscillator, fix16 freq) {
-    if(freq < OSC_HZ_MIN) freq = OSC_HZ_MIN;
-    if(freq > OSC_HZ_MAX) freq = OSC_HZ_MAX;
+//    if(freq < OSC_HZ_MIN) freq = OSC_HZ_MIN;
+//    if(freq > OSC_HZ_MAX) freq = OSC_HZ_MAX;
     oscillator->freq = freq;
     oscillator_calc_inc(oscillator);
     //    filter_1p_lo_in(&(oscillator->freq));
 }
+//extern void osc_set_hz(osc* osc, fix16 hz);
 
-
-
+/*
 fract32 oscillator_lookup(prgmOscillator *oscillator) {
 #if 1
     u32 idxA = oscillator->wave >> WAVE_TAB_RSHIFT;
@@ -143,8 +177,7 @@ fract32 oscillator_lookup(prgmOscillator *oscillator) {
                       mult_fr1x32x32(table_lookup_idx((fract32*)wavtab[idxB], WAVE_TAB_SIZE, oscillator->idx), mul)
                      );
 }
-
-
+*/
 /*
 fract32 oscillator_lookup(prgmOscillator *oscillator) {     //W SYNC TRIG
 #if 1
@@ -178,32 +211,75 @@ fract32 oscillator_lookup(prgmOscillator *oscillator) {     //W SYNC TRIG
     }
 }
 */
-/*
- static void set_param_trig(drumsynVoice* vp, s32 val) {
- u8 b = (val > 0);
- env_exp_set_trig( &(vp->envAmp)	, b );
- env_exp_set_trig( &(vp->envFreq)	, b );
- env_exp_set_trig( &(vp->envRq)	, b );
- }
- 
- extern void env_exp_set_trig(env_exp* env, u8 gate);
- 
- void env_exp_set_trig(env_exp* env, u8 trig) {
- env->trig = trig;
- if(env->state == envStateSus) {
- if(trig) {
- env->stateFP =  &next_sus_trig1;
- } else {
- env->stateFP = &next_sus_trig0;
- }
- }
- }
- */
+
+static inline fract16 param_unit_to_fr16(ParamValue v) {
+    return (fract16)((v & 0xffff) >> 1);
+}
+
+
+static inline fract32 oscillator_lookup(prgmOscillator *oscillator) {
+    u32 waveIdxA = oscillator->wave >> (WAVE_SHAPE_IDX_SHIFT);
+    u32 waveIdxB = waveIdxA + 1;
+
+    fract16 waveMulB = (oscillator->wave & (WAVE_SHAPE_MASK)) << (WAVE_SHAPE_MUL_SHIFT);
+    fract16 waveMulA = sub_fr1x16(0x7fff, waveMulB);
+        
+    u32 signalIdxA = oscillator->phase >> WAVE_IDX_SHIFT; 
+    u32 signalIdxB = (signalIdxA + 1) & WAVE_TAB_SIZE_1;
+    fract16 signalMulB = (fract16)((oscillator->phase & (WAVE_IDX_MASK)) >> (WAVE_IDX_MUL_SHIFT));
+    fract16 signalMulA = sub_fr1x16(0x7fff, signalMulB);     
+    
+    return add_fr1x32(
+                      // table A
+                      mult_fr1x32(
+                                  trunc_fr1x32(
+                                               add_fr1x32(
+                                                          // signal A, scaled
+                                                          mult_fr1x32( 
+                                                                      trunc_fr1x32( (*(oscillator->tab))[waveIdxA][signalIdxA] ),
+                                                                      signalMulA 
+                                                                      ),
+                                                          // signal B, scaled
+                                                          mult_fr1x32( 
+                                                                      trunc_fr1x32( (*(oscillator->tab))[waveIdxA][signalIdxB] ),
+                                                                      signalMulB
+                                                                      )
+                                                          )
+                                               ),
+                                  waveMulA
+                                  ),
+                      // table B
+                      mult_fr1x32(
+                                  trunc_fr1x32(
+                                               add_fr1x32(
+                                                          // signal A, scaled
+                                                          mult_fr1x32( 
+                                                                      trunc_fr1x32( (*(oscillator->tab))[waveIdxB][signalIdxA] ),
+                                                                      signalMulA 
+                                                                      ),
+                                                          // signal B, scaled
+                                                          mult_fr1x32( 
+                                                                      trunc_fr1x32( (*(oscillator->tab))[waveIdxB][signalIdxB] ),
+                                                                      signalMulB
+                                                                      )
+                                                          )
+                                               ),
+                                  waveMulB
+                                  )
+                      );
+}
 
 
 fract32 oscillator_next(prgmOscillator *oscillator) {
-    slew32_calc(oscillator->incSlew);
+//    slew32_calc(oscillator->incSlew);
+    
+    slew16_calc (oscillator->shapeSlew);
+    slew32_calc (oscillator->incSlew);
+    
     oscillator->inc = oscillator->incSlew.y;
+    oscillator->wave = oscillator->shapeSlew.y;
+    
+    oscillator_advance(oscillator);    
     
     return oscillator_lookup(oscillator);
 }
@@ -247,10 +323,12 @@ extern void blosc_get_next(blOsc* osc) {
 
 
 void oscillator_advance(prgmOscillator *oscillator) {
-    oscillator->idx = fix16_add(oscillator->idx, oscillator->inc);
-    while(oscillator->idx > WAVE_TAB_MAX16) {
-    oscillator->idx = fix16_sub(oscillator->idx, WAVE_TAB_MAX16);
-    }
+//    oscillator->idx = fix16_add(oscillator->idx, oscillator->inc);
+//    while(oscillator->idx > WAVE_TAB_MAX16) {
+//    oscillator->idx = fix16_sub(oscillator->idx, WAVE_TAB_MAX16);
+//    }
+
+    oscillator->phase = (((int)oscillator->phase) + ((int)(oscillator->inc)) ) & 0x7fffffff;
 }
 
 
@@ -260,10 +338,10 @@ static void calc_frame(void) {
     oscillator[2]->frameVal = shr_fr1x32(oscillator_next(oscillator[2]), 1);
     oscillator[3]->frameVal = shr_fr1x32(oscillator_next(oscillator[3]), 1);
     
-    oscillator_advance(oscillator[0]);
-    oscillator_advance(oscillator[1]);
-    oscillator_advance(oscillator[2]);
-    oscillator_advance(oscillator[3]);
+//    oscillator_advance(oscillator[0]);
+//    oscillator_advance(oscillator[1]);
+//    oscillator_advance(oscillator[2]);
+//    oscillator_advance(oscillator[3]);
 }
 
 
@@ -283,11 +361,11 @@ void module_init(void) {
     gModuleData->numParams = eParamNumParams;
     
     sr = SAMPLERATE;
-    ips = fix16_from_float((f32)WAVE_TAB_SIZE / (f32)sr);
+//    ips = fix16_from_float((f32)WAVE_TAB_SIZE / (f32)sr);
 
     for(i=0; i<N_OSCILLATORS; i++) {
         oscillator[i] = init();
-        init_parameters(oscillator[i]);
+        init_parameters(oscillator[i], &wavtab, SAMPLERATE);
     }
     
     ioAmp0 = FR32_MAX;
@@ -300,10 +378,10 @@ void module_init(void) {
     param_setup(eParamFreq2, 220 << 16);
     param_setup(eParamFreq3, 220 << 16);
 
-//    param_setup(eParamWave0, 0);
-//    param_setup(eParamWave1, 0);
-//    param_setup(eParamWave2, 0);
-//    param_setup(eParamWave3, 0);
+    param_setup(eParamWave0, 0);
+    param_setup(eParamWave1, 0);
+    param_setup(eParamWave2, 0);
+    param_setup(eParamWave3, 0);
     
 //    param_setup(eParamIdxReset, 0);
         
@@ -347,20 +425,18 @@ void module_set_param(u32 idx, ParamValue v) {
             oscillator_set_freq(oscillator[3], v);
             break;
             
-/*
         case eParamWave0:
-            filter_1p_lo_in(wave0Lp, BIT_ABS_32(FIX16_FRACT_TRUNC(v)));
+            oscillator_set_shape(oscillator[0], param_unit_to_fr16(v));
             break;
         case eParamWave1:
-            filter_1p_lo_in(wave1Lp, BIT_ABS_32(FIX16_FRACT_TRUNC(v)));
+            oscillator_set_shape(oscillator[1], param_unit_to_fr16(v));
             break;
         case eParamWave2:
-            filter_1p_lo_in(wave2Lp, BIT_ABS_32(FIX16_FRACT_TRUNC(v)));
+            oscillator_set_shape(oscillator[2], param_unit_to_fr16(v));
             break;
         case eParamWave3:
-            filter_1p_lo_in(wave3Lp, BIT_ABS_32(FIX16_FRACT_TRUNC(v)));
+            oscillator_set_shape(oscillator[3], param_unit_to_fr16(v));
             break;
-*/
 
 //        case eParamIdxReset:
 //            idx_reset(v);

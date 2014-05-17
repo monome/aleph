@@ -10,7 +10,7 @@
 
 #define OSC_HZ_MIN 0x00010000      // 1 hz
 #define OSC_HZ_MAX 0x40000000    // 16384 hz
-#define OSC_HZ_RADIX 1
+#define OSC_HZ_RADIX 15
 
 //#define OSC_FREQ_MIN 0x040000      // 4 hz */
 //#define OSC_FREQ_MAX 0x40000000    // 16384 hz */
@@ -39,10 +39,10 @@ enum params {
     eParamFreq2,
     eParamFreq3,
         
-//    eParamWave0,
-//    eParamWave1,
-//    eParamWave2,
-//    eParamWave3,
+    eParamWave0,
+    eParamWave1,
+    eParamWave2,
+    eParamWave3,
     
 //    eParamIdxReset,
     
