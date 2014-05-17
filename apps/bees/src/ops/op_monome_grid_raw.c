@@ -9,7 +9,7 @@
 
 //---- descriptor strings
 static const char* op_mgrid_raw_instring = "FOCUS\0  TOG\0    MONO\0   ";
-static const char* op_mgrid_raw_outstring = "COL\0    ROW\0    VAL\0    ";
+static const char* op_mgrid_raw_outstring = "COL\0    ROW\0    VAL\0    POS\0    ";
 static const char* op_mgrid_raw_opstring = "GRID";
 
 //-------------------------------------------------
@@ -58,7 +58,7 @@ void op_mgrid_raw_init(void* mem) {
   op->super.flags |= (1 << eOpFlagMonomeGrid);
 
   op->super.numInputs = 3;
-  op->super.numOutputs = 3;
+  op->super.numOutputs = 4;
 
   op->super.in_val = op->in_val;
   op->super.out = op->outs;
@@ -73,6 +73,7 @@ void op_mgrid_raw_init(void* mem) {
   op->outs[0] = -1;
   op->outs[1] = -1;
   op->outs[2] = -1;
+  op->outs[3] = -1;
 
   op->lastPos = 0;
   op->focus = OP_ONE;
@@ -139,6 +140,7 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
        net_activate(op->outs[0], op_from_int(x), op);
        net_activate(op->outs[1], op_from_int(y), op);
        net_activate(op->outs[2], op_from_int(val), op);
+       net_activate(op->outs[3], op_from_int((x + 1) + (y * 8)), op); //need to change output to correct
 	// refresh flag for current quadrant
        monome_calc_quadrant_flag(x, y);
 	// refresh flag for previous quadrant
@@ -152,6 +154,7 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
       net_activate(op->outs[0], op_from_int(x), op);
       net_activate(op->outs[1], op_from_int(y), op);
       net_activate(op->outs[2], op_from_int(val), op);
+       net_activate(op->outs[3], op_from_int((x + 1) + (y * 8)), op);//need to change output to correct
       // refresh flag for current quadrant
       monome_calc_quadrant_flag(x, y);
       // refresh flag for previous quadrant
@@ -166,6 +169,7 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
          net_activate(op->outs[0], op_from_int(x), op);
          net_activate(op->outs[1], op_from_int(y), op);
          net_activate(op->outs[2], op_from_int(val), op);
+         net_activate(op->outs[3], op_from_int((x + 1) + (y * 8)), op);//need to change output to correct
 	// refresh flag for current quadrant
          monome_calc_quadrant_flag(x, y);
      }
@@ -175,6 +179,7 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
       net_activate(op->outs[0], op_from_int(x), op);
       net_activate(op->outs[1], op_from_int(y), op);
       net_activate(op->outs[2], op_from_int(val), op);
+      net_activate(op->outs[3], op_from_int((x + 1) + (y * 8)), op);//need to change output to correct
       // refresh flag for current quadrant
       monome_calc_quadrant_flag(x, y);
   }
