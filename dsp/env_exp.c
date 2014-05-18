@@ -121,19 +121,19 @@ void env_exp_set_sus(env_exp* env, fract32 v) {
 }
 
 
-// set attack integrator coefficient
+// set attack lpegrator coefficient
 void env_exp_set_atk_slew(env_exp* env, fract32 c) {
   filter_1p_lo_set_slew(&(env->lpAtk), c);
 }
 
 
-// set decay integrator coefficient
+// set decay lpegrator coefficient
 void env_exp_set_dec_slew(env_exp* env, fract32 c) {
   filter_1p_lo_set_slew(&(env->lpDec), c);
 }
 
 
-// set release integrator coeff
+// set release lpegrator coeff
 void env_exp_set_rel_slew(env_exp* env, fract32 c) {
   filter_1p_lo_set_slew(&(env->lpRel), c);
 }
