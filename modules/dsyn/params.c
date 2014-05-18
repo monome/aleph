@@ -7,10 +7,6 @@
 #include "params.h" 
 
 
-// these really shouldn't matter as long as nonzero
-#define LCPRNG_SEED_A 0xdadabeef
-#define LCPRNG_SEED_B 0xfadeface
-
 // initial param set
 static inline void param_setup(u32 id, ParamValue v) {
   gModuleData->paramData[id].value = v;
@@ -21,8 +17,7 @@ static inline void param_setup(u32 id, ParamValue v) {
 static void set_param_gate(drumsynVoice* vp, s32 val) {
   if(val > 0) { 
     // re-seed noise generator to known value so "notes" are consistent
-    lcprng_reset(&(vp->rngH), LCPRNG_SEED_A);
-    lcprng_reset(&(vp->rngL), LCPRNG_SEED_B);
+    lcprng_reset(&(vp->rngH), 0xDEADFACE);
     env_exp_set_gate( &(vp->envAmp)	, 0xff );
     env_exp_set_gate( &(vp->envFreq)	, 0xff );
     env_exp_set_gate( &(vp->envRq)	, 0xff );
