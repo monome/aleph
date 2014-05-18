@@ -28,7 +28,7 @@ void add_fix32(fix32* a, fix32* b) {
 				    b->fr),
 			 FR32_MAX);
       ti -= 1; // carry (negative)
-      
+
     }
   }
   // yet another comparison and carry for negative fr

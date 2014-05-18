@@ -140,6 +140,8 @@ static inline void monome_ring_enc_write_event( u8 n, u8 val);
 static inline void monome_ring_key_write_event( u8 n, u8 val);
 
 
+
+
 //---------------------------------
 //----- static variables
 
@@ -479,6 +481,9 @@ void monome_led_toggle(u8 x, u8 y) {
 }
 
 
+u8 monome_size_x(void) { return mdesc.cols; }
+u8 monome_size_y(void) {  return mdesc.rows; }
+
 //=============================================
 //------ static function definitions
 
@@ -655,13 +660,13 @@ static void read_serial_series(void) {
   u8* prx = ftdi_rx_buf();
   u8 i;
   rxBytes = ftdi_rx_bytes();
-  print_dbg("\r\n read_serial_series, byte count: ");
-  print_dbg_ulong(rxBytes);
-  print_dbg(" ; data : [ 0x");
-  print_dbg_hex(prx[0]);
-  print_dbg(" , 0x");
-  print_dbg_hex(prx[1]);
-  print_dbg(" ]");
+  // print_dbg("\r\n read_serial_series, byte count: ");
+  // print_dbg_ulong(rxBytes);
+  // print_dbg(" ; data : [ 0x");
+  // print_dbg_hex(prx[0]);
+  // print_dbg(" , 0x");
+  // print_dbg_hex(prx[1]);
+  // print_dbg(" ]");
   i = 0;
   while(i < rxBytes) {
     // FIXME: can we expect other event types? (besides press/lift)

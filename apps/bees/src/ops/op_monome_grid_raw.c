@@ -127,14 +127,11 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
   // flat position into led buffer
   pos = monome_xy_idx(x, y);
 
-  // MOD for variable bright
-  z = z * 15;
-
   if(op->mono) {
     if(op->tog > 0) { // mono, toggle
       if(z > 0) {        // ignore lift
          val = ( monomeLedBuffer[pos] == 0 );
-         monomeLedBuffer[pos] = val;
+         monomeLedBuffer[pos] = val * 15;
          if(pos != op->lastPos) {
            monomeLedBuffer[op->lastPos] = 0;
        }
@@ -149,7 +146,7 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
    }
     } else { // mono, momentary
       val = z;
-      monomeLedBuffer[pos] =  val;
+      monomeLedBuffer[pos] =  val * 15;
       monomeLedBuffer[op->lastPos] = 0;
       net_activate(op->outs[0], op_from_int(x), op);
       net_activate(op->outs[1], op_from_int(y), op);
@@ -164,7 +161,7 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
     if(op->tog > 0) { // poly, toggle
       if(z > 0) {      /// ignore lift
          val = ( monomeLedBuffer[pos] == 0 );
-         monomeLedBuffer[pos] = val;
+         monomeLedBuffer[pos] = val * 15;
          net_activate(op->outs[0], op_from_int(x), op);
          net_activate(op->outs[1], op_from_int(y), op);
          net_activate(op->outs[2], op_from_int(val), op);
@@ -173,7 +170,7 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
      }
     } else {   // poly, momentary
       val = z;
-      monomeLedBuffer[pos] = val;
+      monomeLedBuffer[pos] = val * 15;
       net_activate(op->outs[0], op_from_int(x), op);
       net_activate(op->outs[1], op_from_int(y), op);
       net_activate(op->outs[2], op_from_int(val), op);

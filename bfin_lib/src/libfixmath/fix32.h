@@ -15,22 +15,22 @@
 
 
 typedef struct _fix32 {
-  s32 i;
+  u32 i;
   fract32 fr;
 } fix32;
 
 
 
 // add b to a with over/underflow protection
-extern void add_fix32(fix32* a, fix32* b);
+//extern void add_fix32(fix32* a, fix32* b);
 
 // subtract
-extern void sub_fix32(fix32* a, fix32* b);
+//extern void sub_fix32(fix32* a, fix32* b);
 
 // convert fix16 to fix32
-extern void fix16_to_fix32(fix16* in, fix32* out);
+//extern void fix16_to_fix32(fix16* in, fix32* out);
 
 // wrap a 32.32 value to a positive integer range
-extern void fix32_wrap_range(fix32* a, u32 upperBound);
+//extern void fix32_wrap_range(fix32* a, u32 upperBound);
 
 #endif // h guard

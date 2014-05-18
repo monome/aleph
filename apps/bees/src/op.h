@@ -72,6 +72,8 @@ typedef enum {
   eOpList16,
   eOpStep,
   eOpRoute8,
+  eOpCascades,
+  eOpBars,
   eOpHid8,  // 8-bit HID field
   eOpHid16, // 16-bit HID
   //  eOpMidiBend,

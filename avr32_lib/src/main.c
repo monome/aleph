@@ -357,6 +357,11 @@ int main (void) {
     print_dbg("r\n sw2 down -> force firstrun ");
   }
 
+  if(gpio_get_pin_value(SW0_PIN)) {
+    firstrun = 1;
+    print_dbg("r\n sw0 down -> force firstrun ");
+  }
+
   // assign default event handlers
   assign_main_event_handlers();
   // assign default screen render
