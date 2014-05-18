@@ -1,6 +1,6 @@
 /* module_custom.h
    
-   some consants should be both customized for each module,
+   some constants should be both customized for each module,
    and preprocessed for efficiency.
    here is where such things live.
 

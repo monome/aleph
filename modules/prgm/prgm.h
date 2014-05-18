@@ -7,14 +7,7 @@
 #include "fix.h"
 #include "slew.h"
 
-
 //oscillator symbolic constants, macro substitutions
-#define WAVE_TAB_NUM 5  //remove
-#define WAVE_TAB_MAX16 (WAVE_TAB_SIZE * FIX16_ONE - 1)  //remove
-#define WAVE_TAB_RSHIFT 29  //remove
-#define WAVE_TAB_MASK 0x1fffffff    //remove
-#define WAVE_TAB_LSHIFT 2   //remove
-
 #define WAVE_SHAPE_NUM 5
 #define WAVE_SHAPE_BITS 3
 
@@ -33,9 +26,9 @@
 #define N_OSCILLATORS 4
 
 //sync trig symbolic constants
-extern u8 state;
-#define ON 1
-#define OFF 0
+//extern u8 state;
+//#define ON 1
+//#define OFF 0
 
 typedef const fract32 (*wavtab_t) [WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
 
