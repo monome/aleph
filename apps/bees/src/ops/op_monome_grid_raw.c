@@ -154,7 +154,7 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
       net_activate(op->outs[0], op_from_int(x), op);
       net_activate(op->outs[1], op_from_int(y), op);
       net_activate(op->outs[2], op_from_int(val), op);
-       net_activate(op->outs[3], op_from_int((x + 1) + (y * 8)), op);//need to change output to correct
+      net_activate(op->outs[3], op_from_int((x + 1) + (y * 8)), op);//need to change output to correct
       // refresh flag for current quadrant
       monome_calc_quadrant_flag(x, y);
       // refresh flag for previous quadrant
