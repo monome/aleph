@@ -209,12 +209,16 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_cascades_t),
     .init = &op_cascades_init,
     .deinit = &op_cascades_deinit   
-  }, {
+  },
+  /// missing from git...
+  /*
+  {
     .name = "BARS",
     .size = sizeof(op_bars_t),
     .init = &op_bars_init,
     .deinit = &op_bars_deinit   
-  }
+    },
+  */
 
 };
 
