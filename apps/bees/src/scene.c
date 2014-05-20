@@ -242,7 +242,6 @@ void scene_read_buf(void) {
   print_dbg(".");
   print_dbg_ulong(sceneData->desc.moduleVersion.rev);
 
-  
   print_dbg("\r\n checking against module name from scene data: ");
   print_dbg(sceneData->desc.moduleName);
 
@@ -271,6 +270,9 @@ void scene_read_buf(void) {
 #else
   
     // query module name / version
+
+    render_boot("querying module");
+
     print_dbg("\r\n querying module name...");
     bfin_get_module_name(moduleName);
     print_dbg("\r\n querying module version...");
@@ -289,6 +291,8 @@ void scene_read_buf(void) {
 #ifdef BEEKEEP
 #else
     // store in scene data
+    render_boot("storing module version");
+
     sceneData->desc.moduleVersion.maj = moduleVersion.maj;
     sceneData->desc.moduleVersion.min = moduleVersion.min;
     sceneData->desc.moduleVersion.rev = moduleVersion.rev;
@@ -298,7 +302,6 @@ void scene_read_buf(void) {
 #endif
 
   } // load-module case
-
   app_pause();
 
   /// don't have to do this b/c net_unpickle will deinit anyways
@@ -318,13 +321,16 @@ void scene_read_buf(void) {
   // there could also be a check here for mismatched parameter list.
 
   // unpickle network 
+  render_boot("reading network");
   print_dbg("\r\n unpickling network for scene recall...");
   src = net_unpickle(src);
     
   // unpickle presets
+  render_boot("reading presets");
   print_dbg("\r\n unpickling presets for scene recall...");
   src = presets_unpickle(src);
-  
+
+  render_boot("scene data stored in RAM");
   print_dbg("\r\n copied stored network and presets to RAM ");
 
   /* for(i=0; i<net->numParams; i++) { */
@@ -336,6 +342,7 @@ void scene_read_buf(void) {
   /*   print_dbg_hex((u32)net->params[i].data.value); */
   /* } */
 
+  render_boot("waiting for DSP");
   bfin_wait_ready();
   // update bfin parameters
   //  if(net->numParams != paramsReported) {
@@ -345,6 +352,7 @@ void scene_read_buf(void) {
 
 #ifdef BEEKEEP
 #else
+  render_boot("sending param values");
   net_send_params();
 #endif
 
@@ -354,7 +362,8 @@ void scene_read_buf(void) {
 
   delay_ms(5);
 
-  // enable audio processing
+
+  render_boot("enabling audio");  // enable audio processing
   bfin_enable();
   
   app_resume();
@@ -440,7 +449,6 @@ void scene_query_module(void) {
 
   print_dbg("\r\n received module name: ");
   print_dbg((char*)moduleName);
-
 
   print_dbg("\r\n received module version: ");
   print_dbg_ulong(moduleVersion->maj);

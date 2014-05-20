@@ -14,7 +14,9 @@
 #include "conversion.h"
 #include "env.h"
 #include "filter_svf.h"
-#include "noise.h"
+//#include "noise.h"
+#include "noise_dsyn.h"
+
 // bfin
 #ifdef ARCH_BFIN
 #include "bfin_core.h"
@@ -67,12 +69,12 @@ static fract32 frameVal;
 //-----------------------------
 //----- static functions
 
-static void drumsyn_voice_init(void* mem);
-static fract32 drumsyn_voice_next(drumsynVoice* voice);
-static fract32 noise_next(drumsynVoice* voice);
+static void drumsyn_voice_init(void* mem, int i);
+static fract32 drumsyn_voice_next(drumsynVoice* voice, int i);
+static fract32 noise_next(drumsynVoice* voice, int i);
 
 // get next noise-generator value
-fract32 noise_next(drumsynVoice* voice) {
+fract32 noise_next(drumsynVoice* voice, int i) {
   //  return lcprng_next(&(voice->rngL)) | ( lcprng_next(&(voice->rngH)) << 14 );
   /*
   return filter_2p_hi_next(&(voice->hipass), 
@@ -80,21 +82,28 @@ fract32 noise_next(drumsynVoice* voice) {
 			   | ( lcprng_next(&(voice->rngH)) << 15 ));
   */
   // don't really need both lcprngs i think
+  // (wrong)
+  
   //  return filter_2p_hi_next(&voice->hipass, lcprng_next(&(voice->rngH)) << 15 );
-  /// wrong...
+  ///// ???
+  //  return filter_2p_hi_next(&voice->hipass, lcprng_next(&(voice->rngH)) );
+  //  return filter_2p_hi_next(&voice->hipass, dsyn_noise_next(i) );
+  return dsyn_noise_next(i);
+  // return lcprng_next(&(voice->rngH));
 }
 
 // initialize voice
-void drumsyn_voice_init(void* mem) {
+void drumsyn_voice_init(void* mem, int i) {
   drumsynVoice* voice = (drumsynVoice*)mem;
   // svf
   filter_svf_init(&(voice->svf));
   // noise
 
   // RNG
-  lcprng_reset(&(voice->rngH), 0xDEADFACE);
-  lcprng_reset(&(voice->rngL), 0xDADABEEF);
-
+  //  lcprng_reset(&(voice->rngH), 0xDEADFACE);
+  //  lcprng_reset(&(voice->rngL), 0xDADiABEEF);
+  dsyn_noise_reset(i);
+		   
   // hipass
   filter_2p_hi_init(&(voice->hipass));
 
@@ -130,7 +139,7 @@ void drumsyn_voice_deinit(drumsynVoice* voice) {
 }
 
 // next value of voice
-fract32 drumsyn_voice_next(drumsynVoice* voice) {
+fract32 drumsyn_voice_next(drumsynVoice* voice, int i) {
   filter_svf* f = &(voice->svf);
   fract32 amp, freq, rq;
 
@@ -147,9 +156,11 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
   }
 
   if(voice->svfPre) {
-    return shl_fr1x32(mult_fr1x32x32( amp, filter_svf_next(f, noise_next(voice) )) , 1);
+    return shr_fr1x32(mult_fr1x32x32( amp, filter_svf_next(f, noise_next(voice, i) )) , 1);
+    //    return mult_fr1x32x32( amp, filter_svf_next(f, shr_fr1x32(noise_next(voice, i), 1) ) );
   } else {
-    return shl_fr1x32(filter_svf_next(f, mult_fr1x32x32( amp, noise_next(voice) )) , 1);
+    return shr_fr1x32(filter_svf_next(f, mult_fr1x32x32( amp, noise_next(voice, i) )) , 1);
+    //    return filter_svf_next(f, mult_fr1x32x32( amp, shl_fr1x32(noise_next(voice, i), 1) ) );
   }
 }
 
@@ -158,15 +169,15 @@ fract32 drumsyn_voice_next(drumsynVoice* voice) {
 // frame calculation
 static void calc_frame(void) {
   fract32 dum;
-  frameVal = shr_fr1x32(drumsyn_voice_next(voices[0]), 1);
+  frameVal = shr_fr1x32(drumsyn_voice_next(voices[0], 0), 1);
 
-  dum = drumsyn_voice_next(voices[1]);
+  dum = drumsyn_voice_next(voices[1], 1);
   frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
 
-  dum = drumsyn_voice_next(voices[2]);
+  dum = drumsyn_voice_next(voices[2], 2);
   frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
 
-  dum = drumsyn_voice_next(voices[3]);
+  dum = drumsyn_voice_next(voices[3], 3);
   frameVal = add_fr1x32(frameVal, shr_fr1x32(dum, 1) );
 }
 
@@ -186,14 +197,14 @@ void module_init(void) {
   dbgFile = fopen( "drums_dbg.txt", "w");
 #endif
   gModuleData = &(data->super);
-  strcpy(gModuleData->name, "aleph-drumsyn");
+  strcpy(gModuleData->name, "aleph-dsyn");
 
   gModuleData->paramData = data->mParamData;
   gModuleData->numParams = eParamNumParams;
 
   for(i=0; i<DRUMSYN_NVOICES; i++) {
     voices[i] = (drumsynVoice*)malloc(sizeof(drumsynVoice));
-    drumsyn_voice_init(voices[i]);
+    drumsyn_voice_init(voices[i], i);
   }
 
   // setup params with default values

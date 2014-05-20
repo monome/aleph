@@ -1,3 +1,4 @@
+
 module_name = dsyn
 
 audio = ../../dsp
@@ -8,13 +9,13 @@ version = $(maj).$(min).$(rev)
 ldr_name = aleph-$(module_name)-$(version).ldr
 
 module_obj = dsyn.o \
+	noise_dsyn.o \
 	params.o \
 	$(audio)/conversion.o \
 	$(audio_dir)/env_exp.o \
 	$(audio_dir)/filter_1p.o \
 	$(audio_dir)/filter_2p.o \
 	$(audio_dir)/filter_svf.o \
-	$(audio_dir)/noise.o \
 	$(bfin_lib_srcdir)/libfixmath/fix32.o \
 	$(bfin_lib_srcdir)/libfixmath/fix16.o \
 	$(bfin_lib_srcdir)/libfixmath/fix16_sqrt.o
