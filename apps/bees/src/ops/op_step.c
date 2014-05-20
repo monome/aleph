@@ -91,17 +91,17 @@ void op_step_init(void* mem) {
   op->s_now2 = 0;
   op->s_cut2 = 0;
 
-  op->size = 8;
+  op->size = monome_size_x();
 
   op->focus = OP_ONE;
   net_monome_set_focus(&(op->monome), 1);
 
   // init monome drawing, maybe should clear first
-  monomeLedBuffer[monome_xy_idx(0, 0)] = 1;
-  monomeLedBuffer[monome_xy_idx(0, 2)] = 1;
-  for(i=0;i<8;i++) {
-    monomeLedBuffer[monome_xy_idx(i, 1)] = 1;
-    monomeLedBuffer[monome_xy_idx(i, 3)] = 1;
+  monomeLedBuffer[monome_xy_idx(0, 0)] = 15;
+  monomeLedBuffer[monome_xy_idx(0, 2)] = 15;
+  for(i=0;i<op->size;i++) {
+    monomeLedBuffer[monome_xy_idx(i, 1)] = 15;
+    monomeLedBuffer[monome_xy_idx(i, 3)] = 15;
   }
   monome_set_quadrant_flag(0);
 
@@ -154,7 +154,7 @@ static void op_step_in_step(op_step_t* op, const io_t v) {
       }
     }
 
-    monomeLedBuffer[monome_xy_idx(op->s_now, 0)] = 1;
+    monomeLedBuffer[monome_xy_idx(op->s_now, 0)] = 15;
     monome_set_quadrant_flag(0);
     monome_set_quadrant_flag(1);
   }
@@ -178,7 +178,7 @@ static void op_step_in_step(op_step_t* op, const io_t v) {
       }
     }
 
-    monomeLedBuffer[monome_xy_idx(op->s_now2, 2)] = 1;
+    monomeLedBuffer[monome_xy_idx(op->s_now2, 2)] = 15;
     monome_set_quadrant_flag(0);
     monome_set_quadrant_flag(1);
   }
@@ -216,18 +216,18 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
       op->s_start = x;
       monomeLedBuffer[monome_xy_idx(op->s_now, 0)] = 0;
       op->s_now = x;
-      monomeLedBuffer[monome_xy_idx(op->s_now, 0)] = 1;
+      monomeLedBuffer[monome_xy_idx(op->s_now, 0)] = 15;
 
       op->s_end = op->s_start + op->s_length;
       if(op->s_end > (op->size-1)) op->s_end -= op->size;
 
       if(op->s_end >= op->s_start)
         for(i=0;i<op->size;i++) {
-          monomeLedBuffer[monome_xy_idx(i, 1)] = (i >= op->s_start && i <= op->s_end);
+          monomeLedBuffer[monome_xy_idx(i, 1)] = (i >= op->s_start && i <= op->s_end) * 15;
         }
       else {
         for(i=0;i<op->size;i++) {
-          monomeLedBuffer[monome_xy_idx(i, 1)] = (i >= op->s_start || i <= op->s_end);
+          monomeLedBuffer[monome_xy_idx(i, 1)] = (i >= op->s_start || i <= op->s_end) * 15;
         }
       }
 
@@ -245,11 +245,11 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
 
       if(op->s_end >= op->s_start)
         for(i=0;i<op->size;i++) {
-          monomeLedBuffer[monome_xy_idx(i, 1)] = (i >= op->s_start && i <= op->s_end);
+          monomeLedBuffer[monome_xy_idx(i, 1)] = (i >= op->s_start && i <= op->s_end) * 15;
         }
       else {
         for(i=0;i<op->size;i++) {
-          monomeLedBuffer[monome_xy_idx(i, 1)] = (i >= op->s_start || i <= op->s_end);
+          monomeLedBuffer[monome_xy_idx(i, 1)] = (i >= op->s_start || i <= op->s_end) * 15;
         }
       }
 
@@ -261,18 +261,18 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
       op->s_start2 = x;
       monomeLedBuffer[monome_xy_idx(op->s_now2, 2)] = 0;
       op->s_now2 = x;
-      monomeLedBuffer[monome_xy_idx(op->s_now2, 2)] = 1;
+      monomeLedBuffer[monome_xy_idx(op->s_now2, 2)] = 15;
 
       op->s_end2 = op->s_start2 + op->s_length2;
       if(op->s_end2 > (op->size-1)) op->s_end2 -= op->size;
 
       if(op->s_end2 >= op->s_start2)
         for(i=0;i<op->size;i++) {
-          monomeLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 && i <= op->s_end2);
+          monomeLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 && i <= op->s_end2) * 15;
         }
       else {
         for(i=0;i<op->size;i++) {
-          monomeLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 || i <= op->s_end2);
+          monomeLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 || i <= op->s_end2) * 15;
         }
       }
 
@@ -290,11 +290,11 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
 
       if(op->s_end2 >= op->s_start2)
         for(i=0;i<op->size;i++) {
-          monomeLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 && i <= op->s_end2);
+          monomeLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 && i <= op->s_end2) * 15;
         }
       else {
         for(i=0;i<op->size;i++) {
-          monomeLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 || i <= op->s_end2);
+          monomeLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 || i <= op->s_end2) * 15;
         }
       }
 
@@ -302,17 +302,12 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
       if(op->size>8) monome_set_quadrant_flag(1);
 
 
-
-
-
     // rows 4-7: set steps
     } else if(y>3 && y<8) {
-      op->steps[y-4][x] ^= 1;
-      monomeLedBuffer[monome_xy_idx(x, y)] = op->steps[y-4][x];
+      op->steps[y-4][x] ^= 15;
+      monomeLedBuffer[monome_xy_idx(x, y)] = op->steps[y-4][x] * 15;
       monome_calc_quadrant_flag(x, y);
     }
-
-
   }
 }
 
@@ -322,12 +317,21 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
 u8* op_step_pickle(op_step_t* mgrid, u8* dst) {
   dst = pickle_io(mgrid->focus, dst);
   dst = pickle_io(mgrid->size, dst);
+  /// no state...???
   return dst;
 }
 
 const u8* op_step_unpickle(op_step_t* mgrid, const u8* src) {
   src = unpickle_io(src, (u32*)&(mgrid->focus));
   src = unpickle_io(src, (u32*)&(mgrid->size));
+  /*
+    probably shouldn't call this here...
+   if we assume that network monome device focus is null during unpickling,
+   it will be ok.  that assumption should hold true, but if it doesn't, 
+   or if we change something and forget to update this,
+   the result is both and hard to track (dereferencing a garbage pointer.)
+   we should just explicitly check for focused grid ops after scene recall, last one wins...
+  */
   net_monome_set_focus( &(mgrid->monome), mgrid->focus > 0);
   return src;
 }

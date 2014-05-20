@@ -90,8 +90,8 @@ void op_life_init(void* mem) {
   life->in_val[8] = &(life->focus);
 
   life->next = 0;
-  life->xsize = 16;
-  life->ysize = 16;
+  life->xsize = monome_size_x();
+  life->ysize = monome_size_y();
   life->x = 0;
   life->y = 0;
   life->set = 0;
@@ -136,7 +136,7 @@ static void op_life_in_next(op_life_t* life, const io_t v) {
         if(lifenext[i]==1)
         {
           lifenow[i]=1;
-          p[i]=1;
+          p[i]=15;
         }
         else if(lifenext[i]==-1)
         {
@@ -204,7 +204,7 @@ static void op_life_in_set(op_life_t* life, const io_t v) {
   if(v == 0) lifenow[i] = 0;
   else lifenow[i] = 1;
 
-  p[i]=lifenow[i];
+  p[i]=lifenow[i] * 15;
   monome_calc_quadrant_flag(life->x, life->y);
 
   op_life_output(life);
@@ -254,7 +254,7 @@ static void life_change(u8 x,u8 y) {
   u8 *p = monomeLedBuffer;
   u8 i = x+(y<<4);
   lifenow[i] ^= 1;
-  p[i]=lifenow[i];
+  p[i]=lifenow[i] * 15;
   monome_calc_quadrant_flag(x, y);
 }
 

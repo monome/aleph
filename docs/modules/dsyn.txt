@@ -1,0 +1,93 @@
+======= dsyn =======
+
+dsyn is a 4-voice "percussion" synthesizer.
+
+it is a fairly raw and preliminary state. suggestions,  modifications, and extensions are encouraged.
+
+==== architecture ====
+
+all voices are identical. each one simply consists of a noise generator and a state variable filter. separate exponential ADSR envelopes control amplitude, filter cutoff frequency, and filter resonance. the envelopes are triggered/gated together, but have otherwise separate timing parameters. 
+
+amplitude envelopes are always zeroed during the "off" state. otherwise, all state values for evnvelopes (peak value, sustain value, and "off") are arbitrary.
+
+envelope timing is determined by "slew" parameters. these are given in units of time for -40dB convergence of expnonential integrators. in other words, every envelope section has an expoential curve, and the next section is applied when the value is deemed to have converged. this results in a pretty "fast" shape. 
+
+note that sustain section durations are given in samples. this might change/
+
+
+==== parameters ====
+
+each voice has 29 parameters:
+
+- "Gate" : \\
+type: Boolean \\
+if trig == 0, setting gate > 0 opens all envelopes and gate <=0 closes them. sustain durations are ignored.
+if trig == 1, setting gate > 0 initiates 1-shot envelopes, with sustain duration applied. setting gate <=  0 is ignored.
+
+- "Trig" : \\
+type: Boolean \\
+sets the trigger mode as described above.
+
+- Amp : \\
+type: Amplitude \\
+set the peak value of the amplitude envelope (end of attack section / beginning of decay.) unit is decibels.
+
+- AmpSus : \\
+type: Amplitude \\
+set the sustain value of the amplitude envelope. unit is decibels.
+
+- AmpAtkSlew : \\
+- AmpDecSlew : \\
+- AmpRelSlew : \\
+type: Integrator \\
+slew parameters for attack, decay, and release secions of amplitude envelope. unit is seconds for (theoretical) -40dB convergence.
+
+- AmpSusDur : \\
+type: Short \\
+set duration of sustain section. unit is samples.
+
+- FreOff : \\
+type: SvfFreq \\
+cutoff frequency for filter in the filter envelope's "off" state. unit is Hz.
+
+- FreqOn : \\
+type: SvfFreq \\
+peak value of filter cutoff envelope. unit is hz. if the "FreqEnv" parameter is zero, this sets the filter cutoff directly.
+
+- FreSus : \\
+type: SvfFreq \\
+sustain level for filter cutoff envelope. unit is hz.
+
+- FreqAtkSlew : \\
+- FreqDecSlew : \\
+- FreqRelSlew : \\
+- FreqSusDur : \\
+envelope timing parameters, same as amplitude envelope.
+
+- RqOff : \\
+- RqOn : \\
+- FreSus : \\
+- RqAtkSlew : \\
+- RqDecSlew : \\
+- RqRelSlew : \\
+- RqSusDur : \\
+parameters for resonance envelope. these behave exactly like the frequency envelope, except output values are linear in [0,1), and are Fixed type. RQ stands for "reciprocal of Q," so 0.99 is minimal resonance, and 0 is maximum resonance, which should sound pretty much like a sine wave.   
+
+- Low : \\
+- High : \\
+- Band : \\
+- Notch : \\
+type: Amplitude \\
+levels for each output mode of the state variable filter. unit is dB. note that mixing arbitrary modes can have weird effects on phase, which is sometimes good, and sometimes not.
+
+- SvfPre : \\
+type: Boolean \\
+this toggles the routing of the state variable filter with respect to the amplitude envelope. if SvfPre == 0, the filter is applied first, followed by the amp envelope. it SvfPre > 0, the filter is applied last, which allows for different "ringing" effects.
+
+- FreqEnv : \\
+type: Boolean \\
+this toggles the filter cutoff envelope on and off. if FreqEnv == 0, the FreqOn value is applied directly to the filter cutoff.
+
+- RqEnv : \\
+type: Boolean \\
+this toggles the filter resonance envelope on and off. if RqEnv == 0, the RqOn value is applied directly to the filter resonance.

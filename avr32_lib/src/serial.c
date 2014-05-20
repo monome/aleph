@@ -21,38 +21,38 @@ volatile u8 serial_buffer[SERIAL_BUFFER_SIZE];
 //----------------------------
 //-- static vars / types
 
-typedef enum {
-  eComNull,
-  eComSetDebug,
-  eComReqNumParams,
-  eComReqParamInfo,
-  eComGetParamVal,
-  eComSetParamVal,
-  eComNumCommands
-} eSerialCommands;
+// typedef enum {
+//   eComNull,
+//   eComSetDebug,
+//   eComReqNumParams,
+//   eComReqParamInfo,
+//   eComGetParamVal,
+//   eComSetParamVal,
+//   eComNumCommands
+// } eSerialCommands;
 
-static u16 serial_read_pos = 0;
+// volatile u16 serial_read_pos = 0;
 static u16 serial_write_pos = 0;
-static u8 escape = 0;
+// static u8 escape = 0;
 static event_t e;
 
 //--------------------------------
 //---- static funcs
-static void com_req_num_params(u16);
-static void com_req_param_info(u16);
-static void com_get_param(u16);
-static void com_set_param(u16);
+// static void com_req_num_params(u16);
+// static void com_req_param_info(u16);
+// static void com_get_param(u16);
+// static void com_set_param(u16);
 
-static void serial_decode_dummy(u16 pos) { return; }
+// static void serial_decode_dummy(u16 pos) { return; }
 
-static const process_serial_t serialFuncs[eComNumCommands] = {
-  &serial_decode_dummy,
-  &serial_decode_dummy,
-  &com_req_num_params,
-  &com_req_param_info,
-  &com_get_param,
-  &com_set_param
-};
+// static const process_serial_t serialFuncs[eComNumCommands] = {
+//   &serial_decode_dummy,
+//   &serial_decode_dummy,
+//   &com_req_num_params,
+//   &com_req_param_info,
+//   &com_get_param,
+//   &com_set_param
+// };
 
 void serial_send_start(u8 index) {
   usart_putchar(DBG_USART,index);
@@ -81,18 +81,30 @@ void serial_send_end(void) {
   usart_putchar(DBG_USART,0);
 }
 
-void serial_process() {
-  process_serial_t serial_decode = &serial_decode_dummy;
+void serial_store() {
+  // process_serial_t serial_decode = &serial_decode_dummy;
   int c;
 
   //buffer, try to grab more than one byte if available
   while(usart_read_char(AVR8_USART,&c) == USART_SUCCESS) {
 
-    //////////////////
+      // TEST LIB LOOPBACK
+      // usart_putchar(DBG_USART,c);
+      // print_dbg_char(c);
+
+      serial_buffer[serial_write_pos] = c;
+      serial_write_pos++;
+      if(serial_write_pos == SERIAL_BUFFER_SIZE) serial_write_pos = 0;
+  }
+  e.type = kEventSerial;
+  e.data = serial_write_pos;
+  event_post(&e);
+
+/*    //////////////////
     //// TEST: loopback
-    print_dbg_char(c);
-    print_dbg(" ");
-    ///////////////////
+    // print_dbg_char(c);
+    // print_dbg(" ");
+    // ///////////////////
 
     // DONE: implement proper framing, ie: http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
     // code 27 is escape
@@ -116,9 +128,11 @@ void serial_process() {
       if(serial_write_pos == SERIAL_BUFFER_SIZE) serial_write_pos = 0;
       escape = 0;
     }
-  }
+  }*/
 }
 
+
+/*
 // from handler
 void serial_param_num(s32 data) {
   u32 num;
@@ -137,9 +151,6 @@ void serial_param_info(s32 data) {
   u8 c = 1, n = 0;
 
   /////
-  /* FIXME: 
-     need to move this to bees, or move params out of bees, or something..
-   */
   //  bfin_get_param_desc(idx, &p);
 
 
@@ -231,4 +242,4 @@ void com_set_param(u16 pos) {
   e.data = pos; 
   event_post(&e);
 }
-
+*/

@@ -52,38 +52,38 @@ typedef enum {
   //---- get param descriptor
   /// param descriptors in aleph-module.dsc
 #if 0
-  eParamDescIdx,
-  // label
-  eParamDescLabel0,
-  eParamDescLabel1,
-  eParamDescLabel2,
-  eParamDescLabel3,
-  eParamDescLabel4,
-  eParamDescLabel5,
-  eParamDescLabel6,
-  eParamDescLabel7,
-  eParamDescLabel8,
-  eParamDescLabel9,
-  eParamDescLabel10,
-  eParamDescLabel11,
-  eParamDescLabel12,
-  eParamDescLabel13,
-  eParamDescLabel14,
-  eParamDescLabel15,
-  // type
-  eParamDescType,
-  // min
-  eParamDescMin0,
-  eParamDescMin1,
-  eParamDescMin2,
-  eParamDescMin3,
-  // max
-  eParamDescMax0,
-  eParamDescMax1,
-  eParamDescMax2,
-  eParamDescMax3,
-  // radix
-  eParamDescRadix,
+  /* eParamDescIdx, */
+  /* // label */
+  /* eParamDescLabel0, */
+  /* eParamDescLabel1, */
+  /* eParamDescLabel2, */
+  /* eParamDescLabel3, */
+  /* eParamDescLabel4, */
+  /* eParamDescLabel5, */
+  /* eParamDescLabel6, */
+  /* eParamDescLabel7, */
+  /* eParamDescLabel8, */
+  /* eParamDescLabel9, */
+  /* eParamDescLabel10, */
+  /* eParamDescLabel11, */
+  /* eParamDescLabel12, */
+  /* eParamDescLabel13, */
+  /* eParamDescLabel14, */
+  /* eParamDescLabel15, */
+  /* // type */
+  /* eParamDescType, */
+  /* // min */
+  /* eParamDescMin0, */
+  /* eParamDescMin1, */
+  /* eParamDescMin2, */
+  /* eParamDescMin3, */
+  /* // max */
+  /* eParamDescMax0, */
+  /* eParamDescMax1, */
+  /* eParamDescMax2, */
+  /* eParamDescMax3, */
+  /* // radix */
+  /* eParamDescRadix, */
 #endif
   // get module name
   eGetModuleName,
@@ -113,16 +113,16 @@ typedef enum {
   eModuleName22,
   eModuleName23,
 #if 0 // include these in offline desc
-  //---- added:
-  //---- buffer stuff
-  /// get number of buffers
-  eNumBuffersVal,
-  //-- get buffer descriptor
-  eBufferDescIdx,
-  eBufferDescChannels,
-  eBufferDescFrames,
-  //-- send buffer data
-  eSendBufferData,
+  /* //---- added: */
+  /* //---- buffer stuff */
+  /* /// get number of buffers */
+  /* eNumBuffersVal, */
+  /* //-- get buffer descriptor */
+  /* eBufferDescIdx, */
+  /* eBufferDescChannels, */
+  /* eBufferDescFrames, */
+  /* //-- send buffer data */
+  /* eSendBufferData, */
 #endif
 
   // module version

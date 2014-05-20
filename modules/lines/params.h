@@ -30,7 +30,7 @@
 
 // svf cutoff
 #define PARAM_CUT_MAX     0x7fffffff
-#define PARAM_CUT_DEFAULT 0x43D0A8EC
+#define PARAM_CUT_DEFAULT 0x43D0A8EC // ~8k
 
 // rq
 #define PARAM_RQ_MIN 0x00000000
@@ -68,6 +68,8 @@ enum params {
   eParamFade1,
 
   /// smoothers have to be processed first!
+  ////////////////////////////////
+  //// FIXME: not using these
   eParamCut0Slew,
   eParamRq0Slew,
   eParamLow0Slew,
@@ -81,6 +83,7 @@ enum params {
   eParamHigh1Slew,
   eParamBand1Slew,
   eParamNotch1Slew,
+  //////////////////
 
   eParamDry0Slew,
   eParamWet0Slew,
@@ -89,7 +92,10 @@ enum params {
   eParamWet1Slew,
 
   // smoothing parameter for ALL mix values!
+  ////////////////////////////////
+  //// FIXME: not using this
   eParamMixSlew,
+  ////////////////////////
 
   // delay input mix
   eParam_adc0_del0,		

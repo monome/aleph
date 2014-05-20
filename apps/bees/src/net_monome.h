@@ -37,7 +37,10 @@ typedef struct _op_monome {
 extern monome_handler_t monome_grid_key_handler;
 extern monome_handler_t monome_grid_key_handler;
 extern monome_handler_t monome_ring_enc_handler;
-op_monome_t* monomeOpFocus;
+extern op_monome_t* monomeOpFocus;
+
+// device-connected flag
+extern bool monomeConnect;
 
 //------------------------
 //----- functions
@@ -53,5 +56,11 @@ extern void net_monome_set_attributes( /* ...???... */void);
 
 // clear LEDs on grid
 extern void net_monome_grid_clear(void);
+
+
+// connect
+extern void net_monome_connect(void);
+// disconnect
+extern void net_monome_disconnect(void);
 
 #endif // h guard

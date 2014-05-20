@@ -169,8 +169,8 @@ u8 app_launch(u8 firstrun) {
   // update page rendering and handlers...
   pages_reselect();
 
-  // start in play mode 
-  pages_toggle_play();
+  // start in play mode if not firstrun 
+  if(!firstrun) pages_toggle_play();
 
   return 1;
 }

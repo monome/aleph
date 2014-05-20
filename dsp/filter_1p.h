@@ -17,7 +17,7 @@ typedef struct _filter_1p_lo {
   fract32 c; // integration coefficient
   fract32 x; // target value
   fract32 y; // filtered value
-  u8 sync;   // flag if target and filtered values are equal
+  //  u8 sync;   // flag if target and filtered values are equal
 } filter_1p_lo;
 
 
@@ -34,8 +34,8 @@ void filter_1p_lo_set_slew(filter_1p_lo* f, fract32 slew);
 extern void filter_1p_lo_in(filter_1p_lo* f, fract32 val);
 // get next filtered value
 extern fract32 filter_1p_lo_next(filter_1p_lo* f);
-
-
+// compare target/value
+extern u8 filter_1p_sync(filter_1p_lo* f);
 
 ///---- highpass
 

@@ -85,8 +85,7 @@ void filter_2p_hi_init(filter_2p_hi* f) {
   f->y = 0;
   f->x = 0;
   rho = (1.0 / (double)SAMPLERATE) * M_TWOPI;
-
-  filter_2p_hi_calc_coeffs(30.f, 10.f, &(f->a), &(f->b), &(f->g));
+  filter_2p_hi_calc_coeffs(10.f, 1.4142135623730951f, &(f->a), &(f->b), &(f->g));
 }
 
 // get next filtered value
@@ -132,6 +131,7 @@ void filter_2p_hi_set_gamma(filter_2p_hi* f, fract32 g) {
   f->g = g;
 }
 
+// calculate coefficients given cutoff in hz and damping factor
 void filter_2p_hi_calc_coeffs(float hz, float d, fract32* a, fract32* b, fract32* g  ) {
   const float theta = hz * rho;
   const float tmp = 0.5f * d * sinf(theta);

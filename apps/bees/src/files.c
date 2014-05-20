@@ -88,13 +88,19 @@ static void fake_fseek(void* fp, u32 loc) {
 */
 
 // fread: no size arg
-static void fake_fread(volatile u8* dst, u32 size, void* fp) {
+static void fake_fread(volatile u8* dst, u32 len, void* fp) {
   u32 n = 0;
-  while(n < size) {
+#if 0
+  // this seems to fail with files over a certain size, or something.
+  //  weird because fl_fgetc is just a call to fl_fread with size=1, data=1.
+  fl_fread(&dst, 1, len, fp);
+#else
+  while(n < len) {
     *dst = fl_fgetc(fp);
     n++;
     dst++;
   }
+#endif
 }
 
 // strip space from the end of a string

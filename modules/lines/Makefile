@@ -27,10 +27,7 @@ all: aleph-$(module_name).ldr
 include ../../bfin_lib/bfin_lib.mk
 
 CFLAGS += -D ARCH_BFIN=1
-CFLAGS += -g
-#CFLAGS += --verbose
-
-include version.mk
+# CFLAGS += --verbose
 
 desc_src = \
 	$(bfin_lib_srcdir)desc.c \
@@ -55,7 +52,6 @@ aleph-$(module_name): bfin_lib_target $(module_obj)
 
 clean: bfin_lib_clean
 	rm $(module_obj)
-	rm aleph-$(module_name)-$(maj).$(min).$(rev).ldr
 	rm aleph-$(module_name).ldr 
 	rm aleph-$(module_name)
 
@@ -63,9 +59,6 @@ deploy: aleph-$(module_name).ldr
 	make desc
 	./$(module_name)_desc_build
 	cp aleph-$(module_name).ldr aleph-$(module_name)-$(maj).$(min).$(rev).ldr
-	cp aleph-$(module_name).ldr ../../release/
-	cp aleph-$(module_name)-$(maj).$(min).$(rev).ldr ../../release/
-	cp $(module_name)_desc_build ../../release/
 
 .PHONY: clean
 	deploy

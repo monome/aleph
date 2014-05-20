@@ -198,8 +198,27 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "STEP",
     .size = sizeof(op_step_t),
     .init = &op_step_init,
+    .deinit = &op_step_deinit   
+  }, {
+    .name = "ROUTE8",
+    .size = sizeof(op_route8_t),
+    .init = &op_route8_init,
     .deinit = NULL    
-  }
+  }, {
+    .name = "MP",   // CASCADES
+    .size = sizeof(op_cascades_t),
+    .init = &op_cascades_init,
+    .deinit = &op_cascades_deinit   
+  },
+  /// missing from git...
+  /*
+  {
+    .name = "BARS",
+    .size = sizeof(op_bars_t),
+    .init = &op_bars_init,
+    .deinit = &op_bars_deinit   
+    },
+  */
 
 };
 

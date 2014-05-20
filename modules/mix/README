@@ -1,0 +1,69 @@
+aleph-mix
+
+this is a simple "template" module that does very little. 
+
+it has 16 parameters:
+
+- amplitude for each input channel
+- slew time for each amplide
+- cv output value for each cv channel
+- slew time for each slew output value.
+
+each input is scaled and summed to a mono output bus. the output bus is copied to all outputs.
+
+
+CUSTOMIZATION
+
+the intent of course is for this module to be copied and customized. 
+
+--- sources here:
+
+aleph-mix.lds
+	linker script. don't need to touch unless you want a different memory layout.
+
+Makefile:
+	customize this with your module name and extra sources.
+
+mix.c
+	primary source file.	
+	defines initialization, frame processing, control change processing.
+
+module_custom.h
+	required inclusion, shouldn't have to change or do anything
+			
+param.h
+	declares the module's custom parameter list. 
+
+params.c
+	fills parameter descriptors. 
+	used by the descriptor helper program, not by the actual module program.
+	needed for aleph-bees to recognize parameter types and ranges.
+
+--- sources elsewhere:
+
+aleph/dsp/filter_1p.h
+aleph/dsp/filter_1p.c
+	a simple 1-pole filter class, useful for parameter smoothing.
+	included here as an example of how to import/use classes from aleph/dsp.
+	of course, you may also want to make your own "unit generators,"
+	consider adding them to the lib!
+
+aleph/dsp/module.h
+	this declares the top-level metadata structure for an aleph DSP module. 
+	every module must define these data and functions. 
+
+aleph/bfin_lib/src/init.c
+aleph/bfin_lib/src/isr.c
+aleph/bfin_lib/src/main.c
+aleph/bfin_lib/src/spi.c
+	low-level routines, including main() and interrupt handlers. 
+	the SPI protocol is fixed (in aleph/common/protocol.h),	
+	anything else is fair game for improvement and extension.
+	for example, block processing would have to be added at this level.
+	
+	WARNING: you can fry your blackfin by changing bfin_lib sources.
+		 in particular, do not mess with clock settings in init.c!
+		 unless you really know what you are doing!
+
+
+please consider sharing your work on github! @catfact, @tehn , @monome

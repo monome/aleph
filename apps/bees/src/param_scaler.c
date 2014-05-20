@@ -16,7 +16,7 @@
 #include "param_scaler.h"
 #include "types.h"
 
-// array of data bytes required per param type
+// array of words required for param val per param type
 static u32 scalerDataWords[eParamNumTypes] = {
   0, 	//  eParamTypeBool,
   0, 	//  eParamTypeFix,
@@ -24,9 +24,13 @@ static u32 scalerDataWords[eParamNumTypes] = {
   1024, 	//  eParamTypeIntegrator,
   1024, 	//  eParamTypeNote,
   1024, 	//  eParamTypeSvfFreq,
+  0,//  eParamTypeFract,
+  0, // eParamTypeShort,   
+  0, // eParamTypeIntegratorShort,  
+
 };
 
-// array of representation bytes required per param type
+// array of words required for param rep per param type
 static u32 scalerRepWords[eParamNumTypes] = {
   0, 	//  eParamTypeBool,
   0, 	//  eParamTypeFix,
@@ -35,6 +39,10 @@ static u32 scalerRepWords[eParamNumTypes] = {
   0, 	//  eParamTypeIntegrator,
   0, 	//  eParamTypeNote,
   0, 	//  eParamTypeSvfFreq,
+  0,//  eParamTypeFract,
+  0, // eParamTypeShort,   
+  0, // eParamTypeIntegratorShort,  
+
 };
 
 // array of data paths per param type
@@ -43,9 +51,12 @@ static const char scalerDataPath[eParamNumTypes][32] = {
   "", 	//  eParamTypeFix,
   "scaler_amp_val.dat", 	//  eParamTypeAmp,
   "scaler_integrator_val.dat", 	//  eParamTypeIntegrator,
-  /// FIXME: how do we let people customize this... rrg
-  "scaler_note_12tet_val.dat", 	//  eParamTypeNote,
+  "scaler_note_val.dat", 	//  eParamTypeNote,
   "scaler_svf_fc_val.dat", 	//  eParamTypeSvfFreq,
+  "",//  eParamTypeFract,
+  "", // eParamTypeShort,   
+  "", // eParamTypeIntegratorShort,  
+
 };
 
 // array of representation paths per param type
@@ -57,6 +68,10 @@ static const char scalerRepPath[eParamNumTypes][32] = {
   "", 	//  eParamTypeIntegrator,
   "", 	//  eParamTypeNote,
   "", 	//  eParamTypeSvfFreq,
+  "",//  eParamTypeFract,
+  "", // eParamTypeShort,   
+  "", // eParamTypeIntegratorShort,  
+
 };
 
 // pretty wack, sorry:
@@ -68,6 +83,10 @@ static const u32 scalerDataOffset[eParamNumTypes] = {
     1024, 	//  eParamTypeIntegrator,
     2048, 	//  eParamTypeNote,
     3072, 	//  eParamTypeSvfFreq,
+  0,//  eParamTypeFract,
+  0, // eParamTypeShort,   
+  0, // eParamTypeIntegratorShort,  
+
 };
 // put rep data after value data, just easier to check visually
 static const u32 scalerRepOffset[eParamNumTypes] = {
@@ -78,6 +97,10 @@ static const u32 scalerRepOffset[eParamNumTypes] = {
   0, 	//  eParamTypeIntegrator,
   0, 	//  eParamTypeNote,
   0, 	//  eParamTypeSvfFreq,
+  0,//  eParamTypeFract,
+  0, // eParamTypeShort,   
+  0, // eParamTypeIntegratorShort,  
+
 };
 
 // array of pointers to initialization functions.
@@ -89,6 +112,10 @@ scaler_init_fn scaler_init_pr[eParamNumTypes] = {
   &scaler_integrator_init,
   &scaler_note_init,
   &scaler_svf_fc_init,
+  scaler_fract_init,//  eParamTypeFract,
+  scaler_short_init, // eParamTypeShort,   
+  scaler_integrator_short_init, // eParamTypeIntegratorShort,  
+
 };
 
 /// FIXME: 
@@ -106,6 +133,9 @@ scaler_get_value_fn scaler_get_val_pr[eParamNumTypes] = {
   &scaler_integrator_val,
   &scaler_note_val,
   &scaler_svf_fc_val,
+  scaler_fract_val,//  eParamTypeFract,
+  scaler_short_val, // eParamTypeShort,   
+  scaler_integrator_short_val, // eParamTypeIntegratorShort,  
 };
 
 // array of pointers to get_str functions.
@@ -116,6 +146,9 @@ scaler_get_str_fn scaler_get_str_pr[eParamNumTypes] = {
   &scaler_integrator_str,
   &scaler_note_str,
   &scaler_svf_fc_str,
+  scaler_fract_str,//  eParamTypeFract,
+  scaler_short_str, // eParamTypeShort,   
+  scaler_integrator_short_str, // eParamTypeIntegratorShort,  
 };
 
 
@@ -127,6 +160,9 @@ scaler_get_in_fn scaler_get_in_pr[eParamNumTypes] = {
   &scaler_integrator_in,
   &scaler_note_in,
   &scaler_svf_fc_in,
+  scaler_fract_in,//  eParamTypeFract,
+  scaler_short_in, // eParamTypeShort,   
+  scaler_integrator_short_in, // eParamTypeIntegratorShort,  
 };
 
 // array of pointers to inc functions.
@@ -137,6 +173,10 @@ scaler_inc_fn scaler_inc_pr[eParamNumTypes] = {
   &scaler_integrator_inc,
   &scaler_note_inc,
   &scaler_svf_fc_inc,
+  scaler_fract_inc,//  eParamTypeFract,
+  scaler_short_inc, // eParamTypeShort,   
+  scaler_integrator_short_inc, // eParamTypeIntegratorShort,  
+
 };
 
 
@@ -144,10 +184,10 @@ scaler_inc_fn scaler_inc_pr[eParamNumTypes] = {
 //---- extern functions
 
 // initialize a scaler
-void scaler_init(ParamScaler* sc, const ParamDesc* desc) {
+void scaler_init(ParamScaler* sc, const ParamDesc* const desc) {
   // store pointer to constant descriptor data
   //// ???? this seems wrong somehow. 
-  sc->desc = desc;
+  sc->desc = (const ParamDesc*)desc;
   if(scaler_init_pr[desc->type] != NULL) {
     (*(scaler_init_pr[desc->type]))(sc);
   }
@@ -185,9 +225,9 @@ io_t scaler_get_in(ParamScaler* sc, s32 value) {
     print_dbg("\r\n getting input value for scaler. ");
     print_dbg(" param type from desc: ");
     print_dbg_ulong(sc->desc->type);
-    print_dbg(", input: ");
+    print_dbg(", default DSP value: 0x");
     print_dbg_hex(value);
-    print_dbg(", output: ");
+    print_dbg(", setting input node: 0x");
     print_dbg_hex(val);
 
     return val;
@@ -206,11 +246,6 @@ extern s32 scaler_inc(ParamScaler* sc, io_t * pin, io_t inc ) {
   print_dbg(" ; inc function pointer: 0x");
   print_dbg_hex((u32)fn);
 
-  //  s32 sInc = (s32)inc;
-  
-  /* if(inc > 0x7fff) { */
-  /*   //    sInc =  */
-  /* } */
   if( fn != NULL) {
     return (*fn)(sc, pin, inc);
   } else {
@@ -229,7 +264,7 @@ u32 scaler_get_rep_bytes(ParamType p) {
   return scalerRepWords[p] * 4;
 }
 
-//--- data initializatoin stuff
+//--- data initialization stuff
 // get pathname for data file (if any)
 const char* scaler_get_data_path(ParamType p) {
   return scalerDataPath[p];
@@ -255,7 +290,6 @@ const s32* scaler_get_nv_data(ParamType p) {
   //  print_dbg("\r\n param_scaler:scaler_get_nv_data, result: 0x");
   //  print_dbg_hex((u32)((s32*)scalerBytes + scaler_get_data_offset(p)));
   return (s32*)scalerBytes + scaler_get_data_offset(p);
-  //  return (s32*) &(((beesFlashData*)flash_app_data() )->scalerBytes) + scaler_get_data_offset(p);
 }
 
 const s32* scaler_get_nv_rep(ParamType p) {
@@ -263,5 +297,4 @@ const s32* scaler_get_nv_rep(ParamType p) {
   //  print_dbg("\r\n param_scaler:scaler_get_nv_rep, result: 0x");
   //  print_dbg_hex((u32)((s32*)scalerBytes + scaler_get_rep_offset(p)));
   return (s32*)scalerBytes + scaler_get_rep_offset(p);
-  //  return (s32*) &(((beesFlashData*)flash_app_data() )->scalerBytes) + scaler_get_rep_offset(p);
 }

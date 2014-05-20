@@ -1,3 +1,36 @@
+----------------
+dsyn	0.0.1
+- many sound quality improvements
+
+---------------
+bees	0.5.4
+- new op: mp (meadowsphysics) grid based tangled cascade counter
+- new op: bars, screen operator with four horizontal bar params
+- default edit screen is SCENES
+- autodetection of grid size added
+
+---------------
+avr32-lib
+- SW0 on boot now is clean boot
+
+---------------
+dsyn	0.0.1
+- noise is noisier
+
+---------------
+dsyn	0.0.0
+- initial release
+
+----------------
+bees	0.5.3
+- fix spurious encoder events on play mode switch
+- use generic filename for note scaler data, to encourage customization
+- add some param types: 16b integrator, 16b int, 32b fract
+- fix crash when toggling focus on grid ops, no grid attached
+
+----------------
+waves	0.4.2
+- fix for waveshape slew processing
 
 ----------------
 bees	0.5.2

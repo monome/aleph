@@ -11,10 +11,10 @@ audio_dir = $(bfin_lib_dir)/../dsp
 module_dir = ./
 
 bfin_lib_src = control.c \
-	dac.c \
-	main.c \
+	cv.c \
 	init.c \
 	isr.c \
+	main.c \
 	spi.c \
 	util.c
 

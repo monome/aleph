@@ -43,8 +43,6 @@ static inline u8 fr32_compare(fract32 a, fract32 b) {
 void filter_1p_lo_init(filter_1p_lo* f, fract32 in) {
   f->y = in;
   f->x = in;
-  f->sync = 1;
-  //  fSrInv = 1.f / (float)SAMPLERATE;
   f->c = 0;
 }
 
@@ -64,24 +62,33 @@ void filter_1p_lo_set_slew(filter_1p_lo* f, fract32 slew) {
 // set target value 
 void filter_1p_lo_in(filter_1p_lo* f, fract32 val) {
   f->x = val;
-  f->sync = (val == f->y);
 }
  
 // get next filtered value
 fract32 filter_1p_lo_next(filter_1p_lo* f) {
-  
-  if( !(f->sync) ) {
-    f->y = add_fr1x32( f->x,
-		       mult_fr1x32x32(f->c,
-				      sub_fr1x32(f->y, f->x)
-				      ));
-    if(fr32_compare(f->x, f->y)) {
-      f->y = f->x;
-      f->sync = 1;
-    }
-  }
+  f->y = add_fr1x32( f->x,
+		     mult_fr1x32x32(f->c,
+				    sub_fr1x32(f->y, f->x)
+				    ));
   return f->y;
 }
 
 
 
+// compare target/value
+extern u8 filter_1p_sync(filter_1p_lo* f) {
+  // early return if equal
+  if(f->x == f->y) { 
+    return 1; 
+  } 
+  else {
+    if ( fr32_compare(f->x, f->y) ) {
+      f->y = f->x;
+      // return 0, but next query will be true
+      return 0;
+    } else {
+      // still converging
+      return 0;
+    }
+  }
+}

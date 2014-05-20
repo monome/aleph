@@ -243,8 +243,8 @@ static void irq_port1_line3(void) {
 // interrupt handler for uart
 __attribute__((__interrupt__))
 static void irq_usart(void) {
-  serial_process();
-  gpio_toggle_pin(LED_MODE_PIN);
+  serial_store();
+  // gpio_toggle_pin(LED_MODE_PIN);
 }
 
 //-----------------------------

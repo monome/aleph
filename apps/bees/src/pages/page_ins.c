@@ -140,12 +140,12 @@ static void select_scroll(s32 dir) {
     newSel -= (max + 2);
   }
 
-  print_dbg("\r\n scrolled selection on inputs page, old sel: ");
-  print_dbg_ulong(*pageSelect);
-  print_dbg(" ,  dir: ");
-  print_dbg_hex(dir);
-  print_dbg(" , new idx: ");
-  print_dbg_ulong(newSel);
+  //  print_dbg("\r\n scrolled selection on inputs page, old sel: ");
+  //  print_dbg_ulong(*pageSelect);
+  //  print_dbg(" ,  dir: ");
+  //  print_dbg_hex(dir);
+  //  print_dbg(" , new idx: ");
+  //  print_dbg_ulong(newSel);
 
   oldSel = *pageSelect;
   *pageSelect = newSel; 
@@ -166,8 +166,8 @@ static void select_scroll(s32 dir) {
 	if(newIdx > max) {
 	  newIdx = newIdx - (max+2);
 	}
-	print_dbg(" , rendering new line for idx: ");
-	print_dbg_ulong(newIdx);
+	//	print_dbg(" , rendering new line for idx: ");
+	//	print_dbg_ulong(newIdx);
 	render_line(newIdx, 0xa);
       }
       // render tmp region to bottom of scroll
@@ -186,8 +186,8 @@ static void select_scroll(s32 dir) {
 	if(newIdx < -1) {
 	newIdx = newIdx + max + 2;
 	}
-	print_dbg(" , rendering new line for idx: ");
-	print_dbg_ulong(newIdx);
+	//	print_dbg(" , rendering new line for idx: ");
+	//	print_dbg_ulong(newIdx);
 	render_line(newIdx, 0xa);
       }
       // render tmp region to top of scroll
@@ -626,6 +626,6 @@ void redraw_ins_preset ( void ) {
     ++i;
     ++n;
   }
-  print_dbg("\r\n\r\n");
+  //  print_dbg("\r\n\r\n");
   draw_preset_name();
 }

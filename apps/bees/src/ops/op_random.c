@@ -15,7 +15,7 @@ static const u8* op_random_unpickle(op_random_t* op, const u8* src);
 //---- static vars
 static const char* op_random_instring = "MIN\0    MAX\0    TRIG\0   ";
 static const char* op_random_outstring = "VAL     ";
-static const char* op_random_opstring = "RANDOM";
+static const char* op_random_opstring = "RAND";
 
 static op_in_fn op_random_in_fn[3] = {
   (op_in_fn)&op_random_in_min,

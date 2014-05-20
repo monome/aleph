@@ -226,6 +226,12 @@ u8* op_screen_unpickle(op_screen_t* screen, const u8* src) {
   src = unpickle_io(src, (u32*)&(screen->x));
   src = unpickle_io(src, (u32*)&(screen->y));
    return (u8*)src;
+
+  if(screen->enable==1) {
+      op_gfx_enable();
+      op_screen_set_timer(screen);
+      op_screen_redraw(screen);
+  }
 }
 
 // redraw with current state

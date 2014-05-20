@@ -12,19 +12,19 @@
 #define CODEC_RESET_LO	   *pFIO_FLAG_D &= CODEC_RESET_MASK
 #define CODEC_RESET_HI     *pFIO_FLAG_D |= CODEC_RESET_UNMASK
 
-// dac reset 
-#define DAC_RESET_PIN	 6
-#define DAC_RESET_UNMASK (1 << DAC_RESET_PIN)
-#define DAC_RESET_MASK   (0xffff ^ DAC_RESET_UNMASK)
-#define DAC_RESET_LO	 *pFIO_FLAG_D &= DAC_RESET_MASK
-#define DAC_RESET_HI  	 *pFIO_FLAG_D |= DAC_RESET_UNMASK
+// cv dac reset 
+#define CV_DAC_RESET_PIN	 6
+#define CV_DAC_RESET_UNMASK 	(1 << CV_DAC_RESET_PIN)
+#define CV_DAC_RESET_MASK   	(0xffff ^ CV_DAC_RESET_UNMASK)
+#define CV_DAC_RESET_LO	 	*pFIO_FLAG_D &= CV_DAC_RESET_MASK
+#define CV_DAC_RESET_HI		*pFIO_FLAG_D |= CV_DAC_RESET_UNMASK
 
 // dac LDAC
-#define DAC_LDAC_PIN	 7
-#define DAC_LDAC_UNMASK (1 << DAC_LDAC_PIN)
-#define DAC_LDAC_MASK   (0xffff ^ DAC_LDAC_UNMASK)
-#define DAC_LDAC_LO	 *pFIO_FLAG_D &= DAC_LDAC_MASK
-#define DAC_LDAC_HI  	 *pFIO_FLAG_D |= DAC_LDAC_UNMASK
+#define CV_DAC_LDAC_PIN	 	7
+#define CV_DAC_LDAC_UNMASK 	(1 << CV_DAC_LDAC_PIN)
+#define CV_DAC_LDAC_MASK   	(0xffff ^ CV_DAC_LDAC_UNMASK)
+#define CV_DAC_LDAC_LO	 	*pFIO_FLAG_D &= CV_DAC_LDAC_MASK
+#define CV_DAC_LDAC_HI		*pFIO_FLAG_D |= CV_DAC_LDAC_UNMASK
 
 // "ready" pin - pf12
 // set high when able to receive param changes

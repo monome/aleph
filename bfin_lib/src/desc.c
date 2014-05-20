@@ -48,12 +48,13 @@ char buf[MAXBYTES];
 
 // pickle/unpickle for param descriptors 
 // (struct definition in param_common.h
+/// hackish
+static u32 idesc = 0;
 u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
-  u8 i;
+  u32 i;
 
-
-  printf("\r\n pickling descriptor; name: %s,\ttype: %d, min: 0x%08x, max:0x%08x, radix:%d",
-	 pdesc->label, pdesc->type, pdesc->min, pdesc->max, pdesc->radix );
+  printf("\r\n pickling descriptor; index: %d, name: %s,\ttype: %d, min: 0x%08x, max:0x%08x, radix:%d",
+	 idesc, pdesc->label, pdesc->type, pdesc->min, pdesc->max, pdesc->radix );
   // store label string
   for(i=0; i<PARAM_LABEL_LEN; ++i) {
     *dst = pdesc->label[i];
@@ -69,7 +70,7 @@ u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
   // store radix
   // pad for alignment
   dst = pickle_32((u32)(pdesc->radix), dst);
-
+  ++idesc;
   return dst;
 }
 

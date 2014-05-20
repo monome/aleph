@@ -4,6 +4,8 @@ import serial
 import sys
 
 path = sys.argv[1]
+# baud = 115200
+baud = 57600
 print path
 #'/dev/tty.usbmodemfd111'
 # path = '/dev/ttyACM0'
@@ -33,7 +35,9 @@ def aleph_handler(addr, tags, data, source):
   global output
   output = []
   print "\n\033[92m### osc: %s %s\033[0m" % (addr,data)
-  if addr == "/aleph/param/num":
+  if addr == "/aleph/print":
+    output.append(data[0])
+  elif addr == "/aleph/param/num":
     output.append(2)
     output.append(0)
   elif addr == "/aleph/param/info":
@@ -74,8 +78,12 @@ st.start()
 c.connect(('0.0.0.0', 12010))
 
 try :
-  ser = serial.Serial(path,115200)
+  ser = serial.Serial(path,baud)
   print "\nconnected to %s" % (path) 
+
+  while 1:
+    while ser.inWaiting():
+      sys.stdout.write(ser.read())
 
   incoming_bytes = []
 
@@ -84,6 +92,7 @@ try :
     pos = 0
     while ser.inWaiting():
       i = ord(ser.read())
+      # print "incoming: " + str(i)
       if(i==27 and escape ==0): escape = 1
       elif(i==0 and escape ==0):
         n=0

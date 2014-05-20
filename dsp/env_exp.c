@@ -61,6 +61,7 @@ fract32 env_exp_next(env_exp* env) {
 
 // set gate
 void env_exp_set_gate(env_exp* env, u8 g) {
+  /// ... this ignores retriggers. maybe a desirable option.
   /* if(g == env->gate) { */
   /*   return; */
   /* } */
@@ -151,7 +152,8 @@ void env_exp_set_sus_dur(env_exp* env, u32 samps) {
 static fract32 next_atk(env_exp* env) {
   fract32 val;
   val = filter_1p_lo_next( &(env->lpAtk) );
-  if( (env->lpAtk).sync) { 
+  //  if( (env->lpAtk).sync) { 
+  if( filter_1p_sync( &(env->lpAtk) ) ) {
     state_dec(env);
   }
   return val;
@@ -161,7 +163,8 @@ static fract32 next_atk(env_exp* env) {
 static fract32 next_dec(env_exp* env) {
   fract32 val;
   val = filter_1p_lo_next( &(env->lpDec) );
-  if( (env->lpDec).sync) { 
+  //  if( (env->lpDec).sync) { 
+  if( filter_1p_sync( &(env->lpDec) ) ) {
     state_sus(env);
   }
   return val;
@@ -187,7 +190,8 @@ static fract32 next_sus_trig1(env_exp* env) {
 static fract32 next_rel(env_exp* env) {
   fract32 val;
   val = filter_1p_lo_next( &(env->lpRel) );
-  if( (env->lpRel).sync) { 
+  //  if( (env->lpRel).sync) { 
+  if( filter_1p_sync( &(env->lpRel) ) ) {
     state_off(env);
   }
   return val;
@@ -207,19 +211,19 @@ static void state_atk(env_exp* env) {
   case envStateOff : // expected
     // hard-reset attack integrator to off value
     env->lpAtk.y = env->valOff;
-    env->lpAtk.sync = 0;
+    //    env->lpAtk.sync = 0;
     filter_1p_lo_in(&(env->lpAtk), env->valOn);
     break;
   case envStateDec : 
     // hard-reset attack integrator to decay integrator value
     env->lpAtk.y = env->lpDec.y;
-    env->lpAtk.sync = 0;
+    //    env->lpAtk.sync = 0;
     filter_1p_lo_in(&(env->lpAtk), env->valOn);    
     break;
   case envStateRel : 
     // hard-reset attack integrator to release integrator value
     env->lpAtk.y = env->lpRel.y;
-    env->lpAtk.sync = 0;
+    //    env->lpAtk.sync = 0;
     filter_1p_lo_in(&(env->lpAtk), env->valOn);    
     break;
   case envStateAtk : 
@@ -237,7 +241,7 @@ static void state_atk(env_exp* env) {
 static void state_atk_reset(env_exp* env) {
   // reset to off value
   env->lpAtk.y = env->valOff;
-  env->lpAtk.sync = 0;
+  //  env->lpAtk.sync = 0;
   filter_1p_lo_in(&(env->lpAtk), env->valOn);
   env->stateFP = &next_atk;
   env->state = envStateAtk;
@@ -248,7 +252,7 @@ static void state_atk_reset(env_exp* env) {
 static void state_dec(env_exp* env) {
   // can only enter from attack state
   env->lpDec.y = env->valOn;
-  env->lpDec.sync = 0;
+  //  env->lpDec.sync = 0;
   filter_1p_lo_in(&(env->lpDec), env->valSus);
   env->stateFP = &next_dec;
   env->state = envStateDec;
@@ -273,19 +277,19 @@ static void state_rel(env_exp* env) {
   case envStateSus : // expected
     // hard-reset release integrator to sustain value
     env->lpRel.y = env->valSus;
-    env->lpRel.sync = 0;
+    //    env->lpRel.sync = 0;
     filter_1p_lo_in(&(env->lpRel), env->valOff);    
     break;
   case envStateAtk : 
     // hard-reset release integrator to attack integrator value
     env->lpRel.y = env->lpAtk.y;
-    env->lpRel.sync = 0;
+    //    env->lpRel.sync = 0;
     filter_1p_lo_in(&(env->lpRel), env->valOff);    
     break;
   case envStateDec : 
     // hard-reset release integrator to decay integrator value
     env->lpRel.y = env->lpDec.y;
-    env->lpRel.sync = 0;
+    //    env->lpRel.sync = 0;
     filter_1p_lo_in(&(env->lpRel), env->valOff);    
     break;
   case envStateOff : 
@@ -305,6 +309,3 @@ static void state_off(env_exp* env) {
   env->stateFP = &next_off;
   env->state = envStateOff;
 }
-
-
-
