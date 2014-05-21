@@ -65,7 +65,8 @@ extern void scroll_region_back(scroll* scr, region* reg);
 
 // draw scroll to screen
 extern void scroll_draw(scroll* scr);
- 
+
+
 // allocate and initialize a screen region
 extern void region_alloc(region* reg);
 
@@ -97,6 +98,11 @@ extern void region_fill_part(region* reg, u32 start, u32 len, u8 color );
 
 // hilight a region with given color and threshold
 extern void region_hl(region* reg, u8 c, u8 thresh);
+
+// draw region to screen
+extern void region_draw(region* reg);
+ 
+
 
 
 #endif // h guard

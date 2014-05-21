@@ -6,8 +6,11 @@
 // initialize to reasonable values
 extern void lcprng_reset(lcprng* o, u32 seed) {
   // from "numerical recipes"
-  o->a = 0x19660d;
-  o->c = 0x3c6ef35f;
+  //  o->a = 0x19660d;
+  //  o->c = 0x3c6ef35f;
+  // try these...
+  o->c = 1664525 ;
+  o->a = 1013904223 ;
   o->x = seed;
 }
 
@@ -28,5 +31,5 @@ extern void lcprng_set_x(lcprng* o, s32 v) {
 extern s32 lcprng_next(lcprng* o) {
   // allow overflow 
   o->x = o->x * o->c + o->a;
-  return o->x;
+  return (s32) o->x;
 }

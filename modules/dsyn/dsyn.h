@@ -7,7 +7,7 @@
 #include "noise.h"
 
 /// testing
-#define DRUMSYN_NOENV 1
+// #define DRUMSYN_NOENV 1
 
 #define DRUMSYN_NVOICES 4
 

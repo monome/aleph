@@ -1,15 +1,12 @@
 #include <string.h>
 #include "dsyn.h"
+#include "noise_dsyn.h"
 //#include "env_int.h"
 #include "env_exp.h"
 #include "filter_1p.h"
 #include "module.h"
 #include "params.h" 
 
-
-// these really shouldn't matter as long as nonzero
-#define LCPRNG_SEED_A 0xdadabeef
-#define LCPRNG_SEED_B 0xfadeface
 
 // initial param set
 static inline void param_setup(u32 id, ParamValue v) {
@@ -18,11 +15,11 @@ static inline void param_setup(u32 id, ParamValue v) {
 }
 
 
-static void set_param_gate(drumsynVoice* vp, s32 val) {
+static void set_param_gate(drumsynVoice* vp, int i, s32 val) {
   if(val > 0) { 
     // re-seed noise generator to known value so "notes" are consistent
-    lcprng_reset(&(vp->rngH), LCPRNG_SEED_A);
-    lcprng_reset(&(vp->rngL), LCPRNG_SEED_B);
+    //    lcprng_reset(&(vp->rngH), 0xDEADFACE);
+    dsyn_noise_reset(i);
     env_exp_set_gate( &(vp->envAmp)	, 0xff );
     env_exp_set_gate( &(vp->envFreq)	, 0xff );
     env_exp_set_gate( &(vp->envRq)	, 0xff );
@@ -91,7 +88,7 @@ static void module_set_voice_param(u8 vid, u32 idx, ParamValue v) {
   switch(idx) {
 
   case eParamGate0 : // 1bit gate
-    set_param_gate(voices[vid], v);
+    set_param_gate(voices[vid], vid, v);
     break;
 
   case eParamTrig0 : // 1bit trig

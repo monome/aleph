@@ -80,7 +80,7 @@ void op_midi_cc_init(void* mem) {
 // de-init
 void op_midi_cc_deinit(void* op) {
   // remove from list
-  net_midi_list_remove((op_midi_t*)op);
+  net_midi_list_remove( &(((op_midi_note_t*)op)->midi) );
 }
 
 //-------------------------------------------------

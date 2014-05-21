@@ -1,5 +1,5 @@
 bfin_lib_src = control.c \
-	dac.c \
+	cv.c \
 	main.c \
 	init.c \
 	isr.c \

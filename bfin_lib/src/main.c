@@ -4,7 +4,7 @@
 // aleph
 #include "bfin_core.h"
 #include "control.h"
-#include "dac.h"
+#include "cv.h"
 #include "gpio.h"
 #include "init.h"
 #include "module.h"
@@ -32,7 +32,7 @@ int main(void) {
   //  init_flash();  
 
   /// initialize the CV dac (reset) 
-  init_dac();
+  init_cv();
 
   // intialize the sport0 for audio rx/tx
   init_sport0();

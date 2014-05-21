@@ -169,7 +169,7 @@ static inline void assign_main_event_handlers(void) {
   app_event_handlers[ kEventMidiRefresh ]	= &handler_MidiRefresh ;
   app_event_handlers[ kEventHidConnect ]	= &handler_HidConnect ;
   app_event_handlers[ kEventHidDisconnect ]	= &dummy_handler ;
-  app_event_handlers[ kEventHidByte ]	= &dummy_handler ;
+  app_event_handlers[ kEventHidPacket ]	= &dummy_handler ;
 
   app_event_handlers[ kEventSerial ] = &handler_Serial;
 }

@@ -20,6 +20,7 @@ CSRCS += \
 	$(APP_DIR)/src/flash_bees.c \
 	$(APP_DIR)/src/handler.c \
 	$(APP_DIR)/src/net.c \
+	$(APP_DIR)/src/net_hid.c \
 	$(APP_DIR)/src/net_midi.c \
 	$(APP_DIR)/src/net_monome.c \
 	$(APP_DIR)/src/net_poll.c \
@@ -39,7 +40,6 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_add.c \
 	$(APP_DIR)/src/ops/op_accum.c \
 	$(APP_DIR)/src/ops/op_adc.c \
-	$(APP_DIR)/src/ops/op_bars.c \
 	$(APP_DIR)/src/ops/op_bignum.c \
 	$(APP_DIR)/src/ops/op_bits.c \
 	$(APP_DIR)/src/ops/op_cascades.c \
@@ -47,6 +47,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_div.c \
 	$(APP_DIR)/src/ops/op_enc.c \
 	$(APP_DIR)/src/ops/op_gate.c \
+	$(APP_DIR)/src/ops/op_hid8.c \
 	$(APP_DIR)/src/ops/op_history.c \
 	$(APP_DIR)/src/ops/op_is.c \
 	$(APP_DIR)/src/ops/op_life.c \

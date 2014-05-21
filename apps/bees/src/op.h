@@ -26,6 +26,7 @@ typedef enum {
   eOpFlagMonomeGrid, // op is a monome grid controller
   eOpFlagMonomeRing, // op is a monome arc controller
   eOpFlagMidiIn, // op is a midi input
+  eOpFlagHid, // op is HID receiver
   // op is gfx?
   //...
 } op_flag_t;
@@ -74,9 +75,16 @@ typedef enum {
   eOpCascades,
   eOpSplit6,
   eOpBars,
-  // eOpMidiBend,
-  // eOpMidiTouch,
+  eOpMidiBend,
+  eOpMidiTouch,
   numOpClasses // dummy/count
+=======
+  eOpHid8,  // 8-bit HID field
+  eOpHid16, // 16-bit HID
+  //  eOpMidiBend,
+  //  eOpMidiTouch,
+  numOpClasses // dummy/count 
+>>>>>>> upstream/dev
 } op_id_t;
 
 //--- function types
