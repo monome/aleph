@@ -209,12 +209,6 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_cascades_t),
     .init = &op_cascades_init,
     .deinit = &op_cascades_deinit   
-<<<<<<< HEAD
-  }, {
-    .name = "BARS",
-    .size = sizeof(op_bars_t),
-    .init = &op_bars_init,
-    .deinit = &op_bars_deinit
   }, {
     .name = "SPLIT6",
     .size = sizeof(op_split6_t),
@@ -222,10 +216,17 @@ const op_desc_t op_registry[numOpClasses] = {
     .deinit = NULL
   } 
 
+  /// missing from git...
+  /*
+{
+.name = "BARS",
+.size = sizeof(op_bars_t),
+.init = &op_bars_init,
+.deinit = &op_bars_deinit
+},
+*/
 
->>>>>>> upstream/dev
 };
-
 
 // input and output strings are all the same length, concatenated
 // lazy
