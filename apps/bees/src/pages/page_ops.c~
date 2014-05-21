@@ -58,7 +58,7 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpScreen,
   eOpSplit, // "Y" , but only in connection graph
   eOpSplit4, // "Y4"
-  eOpSplit6, // "Y6"
+  eOpSplit6,
   eOpStep,
   eOpSub,
   eOpThresh,
