@@ -78,7 +78,7 @@ typedef enum {
   eOpHid16, // 16-bit HID
   // eOpMidiBend,
   // eOpMidiTouch,
-  numOpClasses // dummy/count   
+  numOpClasses, // dummy/count   
   eOpSplit6,
 } op_id_t;
 
