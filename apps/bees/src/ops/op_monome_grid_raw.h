@@ -14,9 +14,8 @@ typedef struct op_mgrid_raw_struct {
   volatile io_t focus;
   volatile io_t tog;
   volatile io_t mono;
-  volatile io_t size;
-  volatile io_t* in_val[4];
-  // outputs: x , y, z (POS)
+  volatile io_t* in_val[3];
+  // outputs: x , y, z
   op_out_t outs[4];
   // internal:
   u32 lastPos;

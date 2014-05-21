@@ -8,7 +8,7 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_mgrid_raw_instring = "FOCUS\0  TOG\0    MONO\0    SIZE\0   ";
+static const char* op_mgrid_raw_instring = "FOCUS\0  TOG\0    MONO\0   ";
 static const char* op_mgrid_raw_outstring = "COL\0    ROW\0    VAL\0    POS\0   ";
 static const char* op_mgrid_raw_opstring = "GRID";
 
@@ -21,7 +21,6 @@ static const char* op_mgrid_raw_opstring = "GRID";
 static void op_mgrid_raw_in_focus(op_mgrid_raw_t* grid, const io_t val);
 static void op_mgrid_raw_in_tog(op_mgrid_raw_t* grid, const io_t val);
 static void op_mgrid_raw_in_mono(op_mgrid_raw_t* grid, const io_t val);
-static void op_mgrid_raw_in_size(op_mgrid_raw_t* grid, const io_t val);
 
 // pickles
 static u8* op_mgrid_raw_pickle(op_mgrid_raw_t* enc, u8* dst);
@@ -58,7 +57,7 @@ void op_mgrid_raw_init(void* mem) {
   op->super.type = eOpMonomeGridRaw;
   op->super.flags |= (1 << eOpFlagMonomeGrid);
 
-  op->super.numInputs = 4;
+  op->super.numInputs = 3;
   op->super.numOutputs = 4;
 
   op->super.in_val = op->in_val;
@@ -71,13 +70,10 @@ void op_mgrid_raw_init(void* mem) {
   op->in_val[0] = &(op->focus);
   op->in_val[1] = &(op->tog);  
   op->in_val[2] = &(op->mono);
-  op->in_val[3] = &(op->size); 
   op->outs[0] = -1;
   op->outs[1] = -1;
   op->outs[2] = -1;
   op->outs[3] = -1;
-
-  op->size = monome_size_x();
 
   op->lastPos = 0;
   op->focus = OP_ONE;
@@ -104,11 +100,6 @@ static void op_mgrid_raw_in_focus(op_mgrid_raw_t* op, const io_t v) {
 net_monome_set_focus( &(op->monome), op->focus > 0);
 }
 
-static void op_mgrid_raw_in_size(op_mgrid_raw_t* op, const io_t v) {
-  if(v < 9) op->size = 8;
-  else op->size = 16;
-}
-
 static void op_mgrid_raw_in_tog(op_mgrid_raw_t* op, const io_t v) {
   op->tog  = (v > 0) ? OP_ONE : 0;
 }
@@ -116,6 +107,7 @@ static void op_mgrid_raw_in_tog(op_mgrid_raw_t* op, const io_t v) {
 static void op_mgrid_raw_in_mono(op_mgrid_raw_t* op, const io_t v) {
   op->mono  = (v > 0) ? OP_ONE : 0;
 }
+
 
 static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
   static u8 x, y, z;
@@ -148,7 +140,7 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
        net_activate(op->outs[0], op_from_int(x), op);
        net_activate(op->outs[1], op_from_int(y), op);
        net_activate(op->outs[2], op_from_int(val), op);
-       net_activate(op->outs[3], op_from_int((x + 1) + (y * op->size)), op);
+       net_activate(op->outs[3], op_from_int((x + 1) + (y * monome_size_x())), op);
 	// refresh flag for current quadrant
        monome_calc_quadrant_flag(x, y);
 	// refresh flag for previous quadrant
@@ -162,7 +154,7 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
       net_activate(op->outs[0], op_from_int(x), op);
       net_activate(op->outs[1], op_from_int(y), op);
       net_activate(op->outs[2], op_from_int(val), op);
-      net_activate(op->outs[3], op_from_int((x + 1) + (y * op->size)), op);
+      net_activate(op->outs[3], op_from_int((x + 1) + (y * monome_size_x())), op);
       // refresh flag for current quadrant
       monome_calc_quadrant_flag(x, y);
       // refresh flag for previous quadrant
@@ -177,7 +169,7 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
          net_activate(op->outs[0], op_from_int(x), op);
          net_activate(op->outs[1], op_from_int(y), op);
          net_activate(op->outs[2], op_from_int(val), op);
-         net_activate(op->outs[3], op_from_int((x + 1) + (y * op->size)), op);//need to change output to correct
+         net_activate(op->outs[3], op_from_int((x + 1) + (y * monome_size_x())), op);//need to change output to correct
 	// refresh flag for current quadrant
          monome_calc_quadrant_flag(x, y);
      }
@@ -187,7 +179,7 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
       net_activate(op->outs[0], op_from_int(x), op);
       net_activate(op->outs[1], op_from_int(y), op);
       net_activate(op->outs[2], op_from_int(val), op);
-      net_activate(op->outs[3], op_from_int((x + 1) + (y * op->size)), op);//need to change output to correct
+      net_activate(op->outs[3], op_from_int((x + 1) + (y * monome_size_x())), op);//need to change output to correct
       // refresh flag for current quadrant
       monome_calc_quadrant_flag(x, y);
   }

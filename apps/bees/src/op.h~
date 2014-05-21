@@ -73,13 +73,13 @@ typedef enum {
   eOpStep,
   eOpRoute8,
   eOpCascades,
+  eOpSplit6,
   eOpBars,
   eOpHid8, // 8-bit HID field
   eOpHid16, // 16-bit HID
   // eOpMidiBend,
   // eOpMidiTouch,
-  numOpClasses // dummy/count   
-  eOpSplit6,
+  numOpClasses, // dummy/count   
 } op_id_t;
 
 //--- function types
