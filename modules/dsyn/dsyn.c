@@ -232,10 +232,11 @@ void module_process_frame(void) {
   calc_frame();
 
   /// mono   :(
-  out[0] = (frameVal);
-  out[1] = (frameVal);
-  out[2] = (frameVal);
-  out[3] = (frameVal);
+  // pass each input channel
+  out[0] = add_fr1x32(in[0], (frameVal));
+  out[1] = add_fr1x32(in[1], (frameVal));
+  out[2] = add_fr1x32(in[2], (frameVal));
+  out[3] = add_fr1x32(in[3], (frameVal));
 }
 
 #else //  non-bfin
