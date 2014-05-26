@@ -92,7 +92,7 @@ static void handle_Switch5(s32 data) {
   // power down
   ///// wait longer for the sdcard...
   //  delay_ms(100);
-  delay_ms(2000);
+  delay_ms(2000); 
 
   render_boot("goodbye");
 
