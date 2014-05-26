@@ -79,18 +79,23 @@ static void handle_Switch5(s32 data) {
   render_boot("");
   render_boot("");
   render_boot("");
-  render_boot("");
-  render_boot("");
-  render_boot("");
-  render_boot("powering down");
+  render_boot("begin shutdown");
+  render_boot("writing default scene");
+
 
   // skip flash write if MODE is down
   if(!gpio_get_pin_value(SW_MODE_PIN)) {
     scene_write_default();
   }
+  render_boot("waiting for sdcard");
 
   // power down
-  delay_ms(100);
+  ///// wait longer for the sdcard...
+  //  delay_ms(100);
+  delay_ms(2000);
+
+  render_boot("goodbye");
+
   gpio_clr_gpio_pin(POWER_CTL_PIN);
 }
 

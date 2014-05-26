@@ -111,30 +111,30 @@ extern void init_tc (void) {
 // initialize usb USART
 void init_ftdi_usart (void) {
   // GPIO map for USART.
-  static const gpio_map_t AVR8_USART_GPIO_MAP = {
-    { AVR8_USART_RX_PIN, AVR8_USART_RX_FUNCTION },
-    { AVR8_USART_TX_PIN, AVR8_USART_TX_FUNCTION }
+  static const gpio_map_t DEV_USART_GPIO_MAP = {
+    { DEV_USART_RX_PIN, DEV_USART_RX_FUNCTION },
+    { DEV_USART_TX_PIN, DEV_USART_TX_FUNCTION }
   };
   
   // Options for USART.
-  static const usart_options_t AVR8_USART_OPTIONS = {
-    .baudrate = AVR8_USART_BAUDRATE,
+  static const usart_options_t DEV_USART_OPTIONS = {
+    .baudrate = DEV_USART_BAUDRATE,
     .charlength = 8,
     .paritytype = USART_NO_PARITY,
     .stopbits = USART_1_STOPBIT,
     .channelmode = USART_NORMAL_CHMODE
   };
 
-  // Set up GPIO for AVR8_USART
-  gpio_enable_module(AVR8_USART_GPIO_MAP,
-                     sizeof(AVR8_USART_GPIO_MAP) / sizeof(AVR8_USART_GPIO_MAP[0]));
+  // Set up GPIO for DEV_USART
+  gpio_enable_module(DEV_USART_GPIO_MAP,
+                     sizeof(DEV_USART_GPIO_MAP) / sizeof(DEV_USART_GPIO_MAP[0]));
 
   // Initialize in RS232 mode.
-  usart_init_rs232(AVR8_USART, &AVR8_USART_OPTIONS, FPBA_HZ);
+  usart_init_rs232(DEV_USART, &DEV_USART_OPTIONS, FPBA_HZ);
 
   // atmel example actually sets this after registering the interrupt handler.
   // not sure this matters.
-  AVR8_USART->ier = AVR32_USART_IER_RXRDY_MASK;
+  DEV_USART->ier = AVR32_USART_IER_RXRDY_MASK;
 }
 
 // initialize spi1: OLED, ADC, SD/MMC

@@ -210,8 +210,7 @@ const op_desc_t op_registry[numOpClasses] = {
     .init = &op_cascades_init,
     .deinit = &op_cascades_deinit   
   },
-  /// missing from git...
-  /*
+  /* 5/25/2014 : still missing from git
   {
     .name = "BARS",
     .size = sizeof(op_bars_t),
@@ -219,9 +218,14 @@ const op_desc_t op_registry[numOpClasses] = {
     .deinit = &op_bars_deinit   
     },
   */
-
+  {
+    .name = "SER",
+    .size = sizeof(op_serial_t),
+    .init = &op_serial_init,
+    .deinit = &op_serial_deinit   
+  },
+ 
 };
-
 
 // input and output strings are all the same length, concatenated
 // lazy

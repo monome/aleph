@@ -13,6 +13,7 @@ include ../../avr32_lib/avr32_lib_src.mk
 
 
 # add C source files from application
+# please keep this alphabetized... 
 CSRCS += \
 	$(APP_DIR)/src/app_bees.c \
 	$(APP_DIR)/src/app_timers.c \
@@ -59,22 +60,23 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_midi_cc.c \
 	$(APP_DIR)/src/ops/op_midi_out_note.c \
 	$(APP_DIR)/src/ops/op_midi_note.c \
+	$(APP_DIR)/src/ops/op_mod.c \
 	$(APP_DIR)/src/ops/op_mul.c \
 	$(APP_DIR)/src/ops/op_monome_grid_raw.c \
 	$(APP_DIR)/src/ops/op_preset.c \
-	$(APP_DIR)/src/ops/op_screen.c \
-	$(APP_DIR)/src/ops/op_split.c \
-	$(APP_DIR)/src/ops/op_split4.c \
-	$(APP_DIR)/src/ops/op_sub.c \
-	$(APP_DIR)/src/ops/op_sw.c \
-	$(APP_DIR)/src/ops/op_timer.c \
-	$(APP_DIR)/src/ops/op_thresh.c \
-	$(APP_DIR)/src/ops/op_tog.c \
 	$(APP_DIR)/src/ops/op_random.c \
 	$(APP_DIR)/src/ops/op_route.c \
 	$(APP_DIR)/src/ops/op_route8.c \
-	$(APP_DIR)/src/ops/op_mod.c \
+	$(APP_DIR)/src/ops/op_screen.c \
+	$(APP_DIR)/src/ops/op_serial.c \
+	$(APP_DIR)/src/ops/op_split.c \
+	$(APP_DIR)/src/ops/op_split4.c \
+	$(APP_DIR)/src/ops/op_sub.c \
 	$(APP_DIR)/src/ops/op_step.c \
+	$(APP_DIR)/src/ops/op_sw.c \
+	$(APP_DIR)/src/ops/op_thresh.c \
+	$(APP_DIR)/src/ops/op_timer.c \
+	$(APP_DIR)/src/ops/op_tog.c \
 	$(APP_DIR)/src/pages/page_dsp.c \
 	$(APP_DIR)/src/pages/page_gathered.c \
 	$(APP_DIR)/src/pages/page_ins.c \

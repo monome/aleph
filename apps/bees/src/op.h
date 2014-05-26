@@ -76,6 +76,7 @@ typedef enum {
   eOpBars,
   eOpHid8,  // 8-bit HID field
   eOpHid16, // 16-bit HID
+  eOpSerial,
   //  eOpMidiBend,
   //  eOpMidiTouch,
   numOpClasses // dummy/count 
