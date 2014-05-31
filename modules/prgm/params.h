@@ -11,10 +11,6 @@
 #define RATIO_MAX 0x80000    //default 8 -> change to 10
 #define RATIO_RADIX 1 //default 4
 
-#define SMOOTH_FREQ_MIN 0x2000 // 1/8
-#define SMOOTH_FREQ_MAX 0x400000 // 64
-#define SMOOTH_FREQ_RADIX 7     //default 7
-
 #define PARAM_AMP_6 (FRACT32_MAX >> 1)
 #define PARAM_AMP_12 (FRACT32_MAX >> 2)
 #define PARAM_SLEW_DEFAULT  0x76000000
@@ -25,20 +21,19 @@ enum params {
     eParamFreq1,
     eParamFreq2,
     eParamFreq3,
-        
+    
+    eParamFreqFine0,
+    eParamFreqFine1,
+    eParamFreqFine2,
+    eParamFreqFine3,
+
     eParamWave0,
     eParamWave1,
     eParamWave2,
     eParamWave3,
     
-//    eParamIdxReset,
+    eParamSyncTrig,
     
-//    eParamIdxMod0,
-//    eParamIdxMod1,
-//    eParamIdxMod2,
-//    eParamIdxMod3,
-
-
     eParamAmp0,
     eParamAmp1,
     eParamAmp2,

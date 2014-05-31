@@ -25,10 +25,11 @@
 
 #define N_OSCILLATORS 4
 
-//sync trig symbolic constants
-//extern u8 state;
-//#define ON 1
-//#define OFF 0
+//sync trig variables, symbolic constants
+#define ON 1
+#define OFF 0
+s32 synctrig;
+u8 state;
 
 typedef const fract32 (*wavtab_t) [WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
 
@@ -37,19 +38,17 @@ typedef struct _prgmOscillator *PrgmOscillatorpointer;
 typedef struct _prgmOscillator {
     fract32 frameVal;           //oscillator output
     wavtab_t tab;
-    fix16 freq;                 //frequency in hz, fract32?!
-    fract16 wave;               //waveform
+    fix16 f;                    //scale
+    fix16 ff;                   //fine
+    
     fract32 phase;
+
     fix16 inc;                  //index increment
+    fract16 wave;               //waveform
+    
     Slew32 incSlew;
     Slew16 shapeSlew;
-    
-//    fract32 phaseMod;
-//    fract32 pmAmount;
-//    fract32 pmIn;
-        
-    fix16 idx;                  //phase as fractional index
-//    fix16 idxMod;               //pm
+            
     fract32 amp;                
 } prgmOscillator;
 

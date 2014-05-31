@@ -1,22 +1,13 @@
-for just frequency and customs scales..
+tracker 0.1.5 info
 
-place these files in the directory Applications/SuperCollider; scale_custom.c, scale_custom.txt, scaler_note_custom.scd
-
-edit the file scale_custom.c, compile it (gcc scale_custom.c) and run it (./a.out), it outputs a fresh 'scale_custom.txt'; you can change the size of the array and the number of octaves, just as long as the total number of values is 1024
-
-open the file scaler_note_custom.scd in SuperCollider; don't forget to set the base frequency you want!
-
-pick up the output file scaler_note_custom_val.dat from SC's current working directory, probably Applications/SuperCollider/
-
-rename the .dat-file to scaler_note_12tet_val.dat and copy to the scalers/ directory on the sd-card
-
-reboot bees and go!
-
-
-
-tracker info..
 oscillators 1-4 are sent to outputs 1-4, note that 3 and 4 are direct out, watch out for high levels!
 
+inputs
+osc_f           scaled pitch
+osc_ff          fine pitch, patch to cv input for vibrato
+osc_wm          waveform
+sync_trig       sync trig, all oscillators
+(amp            bypassed)
 
 
 //Test2
