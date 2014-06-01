@@ -17,15 +17,15 @@ static const u8* op_serial_unpickle(op_serial_t* op, const u8* src);
 
 
 // transmit buffer
-static char txbuf[4] = { '0','0','\n','\0' };
+//static char txbuf[4] = { '0','0','\0','\0' };
 // transmit function
 static inline void op_serial_tx(op_serial_t* op) {
   // FIXME: hardcoded conversion of inputs to 2 bytes for now
-  txbuf[0] = (char)op_from_int(op->a);
-  txbuf[1] = (char)op_from_int(op->b);
-  txbuf[2] = '\n';
-  txbuf[3] = '\0';
-  usart_write_line(DEV_USART, txbuf);
+  /* txbuf[0] = (char)op_from_int(op->a); */
+  /* txbuf[1] = (char)op_from_int(op->b);   */
+  /* usart_write_line(DEV_USART, txbuf); */
+  usart_putchar( DEV_USART, (char)op_from_int(op->a) );
+  usart_putchar( DEV_USART, (char)op_from_int(op->b) );
 }
 
 //-------------------------------------------------

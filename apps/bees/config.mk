@@ -41,6 +41,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_add.c \
 	$(APP_DIR)/src/ops/op_accum.c \
 	$(APP_DIR)/src/ops/op_adc.c \
+	$(APP_DIR)/src/ops/op_bars.c \
 	$(APP_DIR)/src/ops/op_bignum.c \
 	$(APP_DIR)/src/ops/op_bits.c \
 	$(APP_DIR)/src/ops/op_cascades.c \

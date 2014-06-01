@@ -210,16 +210,15 @@ const op_desc_t op_registry[numOpClasses] = {
     .init = &op_cascades_init,
     .deinit = &op_cascades_deinit   
   },
-  /* 5/25/2014 : still missing from git
   {
     .name = "BARS",
     .size = sizeof(op_bars_t),
     .init = &op_bars_init,
     .deinit = &op_bars_deinit   
-    },
-  */
+  },
+  
   {
-    .name = "SER",
+    .name = "SERIAL",
     .size = sizeof(op_serial_t),
     .init = &op_serial_init,
     .deinit = &op_serial_deinit   
