@@ -1,6 +1,7 @@
 ----------------
 bees    0.5.5
 - fix: op_step displays step input correctly
+- fix: op_bars
 
 ----------------
 dsyn	0.0.1
