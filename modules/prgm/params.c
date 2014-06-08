@@ -50,13 +50,31 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamFreqFine3].min = 0x00000000;
     desc[eParamFreqFine3].max = FR32_MAX;
     desc[eParamFreqFine3].radix = 15;
-/*
-    strcpy(desc[eParamModInput].label, "mod_input");
-    desc[eParamModInput].type = eParamTypeFix;
-    desc[eParamModInput].min = 0x00000000;
-    desc[eParamModInput].max = FR32_MAX;
-    desc[eParamModInput].radix = 16;
-*/
+    
+    strcpy(desc[eParamFFAmount0].label, "osc0_ffamount");
+    desc[eParamFFAmount0].type = eParamTypeFix;
+    desc[eParamFFAmount0].min = 0;
+    desc[eParamFFAmount0].max = FR32_MAX;
+    desc[eParamFFAmount0].radix = 1;
+
+    strcpy(desc[eParamFFAmount1].label, "osc1_ffamount");
+    desc[eParamFFAmount1].type = eParamTypeFix;
+    desc[eParamFFAmount1].min = 0;
+    desc[eParamFFAmount1].max = FR32_MAX;
+    desc[eParamFFAmount1].radix = 1;
+
+    strcpy(desc[eParamFFAmount2].label, "osc2_ffamount");
+    desc[eParamFFAmount2].type = eParamTypeFix;
+    desc[eParamFFAmount2].min = 0;
+    desc[eParamFFAmount2].max = FR32_MAX;
+    desc[eParamFFAmount2].radix = 1;
+
+    strcpy(desc[eParamFFAmount3].label, "osc3_ffamount");
+    desc[eParamFFAmount3].type = eParamTypeFix;
+    desc[eParamFFAmount3].min = 0;
+    desc[eParamFFAmount3].max = FR32_MAX;
+    desc[eParamFFAmount3].radix = 1;
+
     strcpy(desc[eParamWave0].label, "osc0_wf");
     desc[eParamWave0].type = eParamTypeFix;
     desc[eParamWave0].min = 0;
@@ -86,6 +104,30 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamSyncTrig].min = 0;
     desc[eParamSyncTrig].max = 1;
     desc[eParamSyncTrig].radix = 2;
+    
+    strcpy(desc[eParamTripPoint0].label, "osc0_trip");
+    desc[eParamTripPoint0].type = eParamTypeFix;
+    desc[eParamTripPoint0].min = 0;
+    desc[eParamTripPoint0].max = FR32_MAX;
+    desc[eParamTripPoint0].radix = 1;
+
+    strcpy(desc[eParamTripPoint1].label, "osc1_trip");
+    desc[eParamTripPoint1].type = eParamTypeFix;
+    desc[eParamTripPoint1].min = 0;
+    desc[eParamTripPoint1].max = FR32_MAX;
+    desc[eParamTripPoint1].radix = 1;
+
+    strcpy(desc[eParamTripPoint2].label, "osc2_trip");
+    desc[eParamTripPoint2].type = eParamTypeFix;
+    desc[eParamTripPoint2].min = 0;
+    desc[eParamTripPoint2].max = FR32_MAX;
+    desc[eParamTripPoint2].radix = 1;
+
+    strcpy(desc[eParamTripPoint3].label, "osc3_trip");
+    desc[eParamTripPoint3].type = eParamTypeFix;
+    desc[eParamTripPoint3].min = 0;
+    desc[eParamTripPoint3].max = FR32_MAX;
+    desc[eParamTripPoint3].radix = 1;
 
     strcpy(desc[eParamAmp0].label, "osc0_amp");
     desc[eParamAmp0].type = eParamTypeAmp;

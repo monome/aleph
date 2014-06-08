@@ -1,30 +1,7 @@
 //prgm.c
 //aleph-bfin
 
-//standard libraries
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
-
-//aleph-common
-#include "fix.h"
-#include "slew.h"
-#include "types.h"
-
-//audiolib
-#include "interpolate.h"
-#include "table.h"
-#include "conversion.h"
-
-//bfin
-#include "bfin_core.h"
-#include "fract_math.h"
-#include <fract2float_conv.h>
-
-#include "module.h"
-#include "params.h"
 #include "prgm.h"
-
 
 //data types
 typedef struct _prgmData {
@@ -57,6 +34,7 @@ static void init_parameters(prgmOscillator *oscillator, wavtab_t tab, u32 sr);
 
 static void oscillator_set_f(prgmOscillator *oscillator, fix16 f);
 static void oscillator_set_ff(prgmOscillator *oscillator, fix16 ff);
+static void oscillator_set_ffamount(prgmOscillator *oscillator, fix16 ffAmount);
 
 static void oscillator_set_shape(prgmOscillator *oscillator, fract16 wave);
 
@@ -71,6 +49,7 @@ static void calc_frame(void);
 //sync trig
 static void oscillator_sync_in(ParamValue v);
 static void prgm_sync_trig(void);
+static void oscillator_set_trippoint(prgmOscillator *oscillator, fix16 tripPoint);
 
 
 //static functions
@@ -85,7 +64,6 @@ fract32 freq_to_phase(fix16 freq) {
 
 
 void oscillator_calc_inc(prgmOscillator *oscillator) {
-//    oscillator->incSlew.x = freq_to_phase(fix16_mul(FIX16_ONE, oscillator->freq));
     oscillator->incSlew.x = freq_to_phase(fix16_mul(FIX16_ONE, (fix16_add(oscillator->f, oscillator->ff))));
 }
 
@@ -104,8 +82,10 @@ void init_parameters(prgmOscillator *osc, wavtab_t tab, u32 sr) {
     
     oscillator->frameVal = 0;
     oscillator->phase = 0;
+    oscillator->tripPoint = 0;
     oscillator->f = FIX16_ONE;
     oscillator->ff = 0;
+    oscillator->ffAmount = 0;
     oscillator->wave = 0;
     oscillator->amp = INT32_MAX >> 4;
 }
@@ -123,8 +103,13 @@ void oscillator_set_f(prgmOscillator *oscillator, fix16 f) {
 
 
 void oscillator_set_ff(prgmOscillator *oscillator, fix16 ff) {
-    oscillator->ff = ff;
+    oscillator->ff = fix16_mul(ff, oscillator->ffAmount);
     oscillator_calc_inc(oscillator);
+}
+
+
+void oscillator_set_ffamount(prgmOscillator *oscillator, fix16 ffAmount) {
+    oscillator->ffAmount = ffAmount;
 }
 
 
@@ -139,13 +124,21 @@ void prgm_sync_trig(void) {
     
     else if(state == OFF) {
         state = ON;
-    oscillator[0]->phase = oscillator[1]->phase = oscillator[2]->phase = oscillator[3]->phase &= 0x7fffffff;
+        oscillator[0]->phase = oscillator[0]->tripPoint;
+        oscillator[1]->phase = oscillator[1]->tripPoint;
+        oscillator[2]->phase = oscillator[2]->tripPoint;
+        oscillator[3]->phase = oscillator[3]->tripPoint;
     }
     
     else if(state == ON)
         ;
 }
 
+
+void oscillator_set_trippoint(prgmOscillator *oscillator, fix16 tripPoint) {
+    oscillator->tripPoint = oscillator->phase + fix16_mul(oscillator->inc, tripPoint);
+}
+                           
 
 static inline fract16 param_unit_to_fr16(ParamValue v) {
     return (fract16)((v & 0xffff) >> 1);
@@ -211,17 +204,17 @@ fract32 oscillator_next(prgmOscillator *oscillator) {
     
     oscillator->inc = oscillator->incSlew.y;
     oscillator->wave = oscillator->shapeSlew.y;
-    
-    prgm_sync_trig();
-    
+
     oscillator_advance(oscillator);
-        
+
+    prgm_sync_trig();
+            
     return oscillator_lookup(oscillator);
 }
 
 
-void oscillator_advance(prgmOscillator *oscillator) {    
-    oscillator->phase = (((int)oscillator->phase) + ((int)(oscillator->inc)) ) & 0x7fffffff;
+void oscillator_advance(prgmOscillator *oscillator) {
+    oscillator->phase = (((int)oscillator->phase) + ((int)(oscillator->inc))) & 0x7fffffff;
 }
 
 
@@ -267,12 +260,22 @@ void module_init(void) {
     param_setup(eParamFreqFine2, 0 << 16);
     param_setup(eParamFreqFine3, 0 << 16);
     
+    param_setup(eParamFFAmount0, 0);
+    param_setup(eParamFFAmount1, 0);
+    param_setup(eParamFFAmount2, 0);
+    param_setup(eParamFFAmount3, 0);
+
     param_setup(eParamWave0, 0);
     param_setup(eParamWave1, 0);
     param_setup(eParamWave2, 0);
     param_setup(eParamWave3, 0);
     
     param_setup(eParamSyncTrig, 0);
+    
+    param_setup(eParamTripPoint0, 0);
+    param_setup(eParamTripPoint1, 0);
+    param_setup(eParamTripPoint2, 0);
+    param_setup(eParamTripPoint3, 0);
             
     param_setup(eParamAmp0, PARAM_AMP_6);
     param_setup(eParamAmp1, PARAM_AMP_6);
@@ -315,18 +318,31 @@ void module_set_param(u32 idx, ParamValue v) {
             break;
             
         case eParamFreqFine0:
-            oscillator_set_ff(oscillator[0], v); //shr_fr1x32(v, 15));
+            oscillator_set_ff(oscillator[0], v);
             break;
         case eParamFreqFine1:
-            oscillator_set_ff(oscillator[1], v); //shr_fr1x32(v, 15));
+            oscillator_set_ff(oscillator[1], v);
             break;
         case eParamFreqFine2:
-            oscillator_set_ff(oscillator[2], v); //shr_fr1x32(v, 15));
+            oscillator_set_ff(oscillator[2], v);
             break;
         case eParamFreqFine3:
-            oscillator_set_ff(oscillator[3], v); //shr_fr1x32(v, 15));
+            oscillator_set_ff(oscillator[3], v);
             break;
 
+        case eParamFFAmount0:
+            oscillator_set_ffamount(oscillator[0], v);
+            break;
+        case eParamFFAmount1:
+            oscillator_set_ffamount(oscillator[1], v);
+            break;
+        case eParamFFAmount2:
+            oscillator_set_ffamount(oscillator[2], v);
+            break;
+        case eParamFFAmount3:
+            oscillator_set_ffamount(oscillator[3], v);
+            break;
+                        
         case eParamWave0:
             oscillator_set_shape(oscillator[0], param_unit_to_fr16(v));
             break;
@@ -344,6 +360,19 @@ void module_set_param(u32 idx, ParamValue v) {
             oscillator_sync_in(v);
             break;
 
+        case eParamTripPoint0:
+            oscillator_set_trippoint(oscillator[0], v);
+            break;
+        case eParamTripPoint1:
+            oscillator_set_trippoint(oscillator[1], v);
+            break;
+        case eParamTripPoint2:
+            oscillator_set_trippoint(oscillator[2], v);
+            break;
+        case eParamTripPoint3:
+            oscillator_set_trippoint(oscillator[3], v);
+            break;
+            
         case eParamAmp0:
             oscillator[0]->amp = (v);
             break;
