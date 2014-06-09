@@ -5,9 +5,10 @@ oscillators 1-4 are sent to outputs 1-4, note that 3 and 4 are direct out, watch
 inputs
 osc_f           scaled pitch
 osc_ff          fine pitch, patch to cv input for vibrato/pitch bend
-osc_ffamount	fine pitch attenuator
+osc_ffamount	  fine pitch attenuator
 osc_wf          waveform
 sync_trig       sync trig, all oscillators
+osc_trip        sync trip point
 (osc_amp        bypassed)
 
 
