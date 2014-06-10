@@ -124,10 +124,6 @@ void prgm_sync_trig(void) {
     
     else if(state == OFF) {
         state = ON;
-<<<<<<< HEAD
-=======
-        
->>>>>>> 264f24e965541214697fe2b7cf06c857eed24a30
         oscillator[0]->phase = oscillator[0]->tripPoint;
         oscillator[1]->phase = oscillator[1]->tripPoint;
         oscillator[2]->phase = oscillator[2]->tripPoint;
