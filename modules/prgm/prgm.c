@@ -124,10 +124,10 @@ void prgm_sync_trig(void) {
     
     else if(state == OFF) {
         state = ON;
-        oscillator[0]->phase = 0;
-        oscillator[1]->phase = 0;
-        oscillator[2]->phase = 0;
-        oscillator[3]->phase = 0;
+        oscillator[0]->phase = oscillator[0]->tripPoint;
+        oscillator[1]->phase = oscillator[1]->tripPoint;
+        oscillator[2]->phase = oscillator[2]->tripPoint;
+        oscillator[3]->phase = oscillator[3]->tripPoint;
     }
     
     else if(state == ON)
@@ -136,12 +136,17 @@ void prgm_sync_trig(void) {
 
 
 void oscillator_set_trippoint(prgmOscillator *oscillator, fix16 tripPoint) {
-    oscillator->tripPoint = oscillator->phase + fix16_mul(oscillator->inc, tripPoint);
+    oscillator->tripPoint = ((int)oscillator->inc) * ((int)tripPoint) & 0x7fffffff;
 }
                            
 
 static inline fract16 param_unit_to_fr16(ParamValue v) {
     return (fract16)((v & 0xffff) >> 1);
+}
+
+
+static inline fract16 param_unit_to_fr32(ParamValue v) {
+    return (fract16)((v & 0xffffffff) >> 1);
 }
 
 
@@ -361,16 +366,16 @@ void module_set_param(u32 idx, ParamValue v) {
             break;
 
         case eParamTripPoint0:
-            oscillator_set_trippoint(oscillator[0], v);
+            oscillator_set_trippoint(oscillator[0], v); //param_unit_to_fr32(v));
             break;
         case eParamTripPoint1:
-            oscillator_set_trippoint(oscillator[1], v);
+            oscillator_set_trippoint(oscillator[1], v); //param_unit_to_fr32(v));
             break;
         case eParamTripPoint2:
-            oscillator_set_trippoint(oscillator[2], v);
+            oscillator_set_trippoint(oscillator[2], v); //param_unit_to_fr32(v));
             break;
         case eParamTripPoint3:
-            oscillator_set_trippoint(oscillator[3], v);
+            oscillator_set_trippoint(oscillator[3], v); //param_unit_to_fr32(v));
             break;
             
         case eParamAmp0:
