@@ -19,6 +19,7 @@ static const fract32 wavtab[WAVE_SHAPE_NUM][WAVE_TAB_SIZE] = {
 #include "wavtab_data_inc.c" 
 };
 
+
 //fixed variables
 static u32 sr;
 
@@ -49,7 +50,7 @@ static void calc_frame(void);
 //sync trig
 static void oscillator_sync_in(ParamValue v);
 static void prgm_sync_trig(void);
-static void oscillator_set_trippoint(prgmOscillator *oscillator, fix16 tripPoint);
+static void oscillator_set_trippoint(prgmOscillator *oscillator, fract32 trip);
 
 
 //static functions
@@ -82,7 +83,8 @@ void init_parameters(prgmOscillator *osc, wavtab_t tab, u32 sr) {
     
     oscillator->frameVal = 0;
     oscillator->phase = 0;
-    oscillator->tripPoint = 0;
+    oscillator->trip = 0;
+    oscillator->tripPoint = &(oscillator->phase);   //assigns the address of phase to tripPoint
     oscillator->f = FIX16_ONE;
     oscillator->ff = 0;
     oscillator->ffAmount = 0;
@@ -124,10 +126,18 @@ void prgm_sync_trig(void) {
     
     else if(state == OFF) {
         state = ON;
-        oscillator[0]->phase = oscillator[0]->tripPoint;
-        oscillator[1]->phase = oscillator[1]->tripPoint;
-        oscillator[2]->phase = oscillator[2]->tripPoint;
-        oscillator[3]->phase = oscillator[3]->tripPoint;
+        
+        *oscillator[0]->tripPoint &= 0x80000000;
+        *oscillator[0]->tripPoint = add_fr1x32((int)oscillator[0]->trip, 0x80000000) & 0x7fffffff;
+        
+        *oscillator[1]->tripPoint &= 0x80000000;
+        *oscillator[1]->tripPoint = add_fr1x32((int)oscillator[1]->trip, 0x80000000) & 0x7fffffff;
+
+        *oscillator[2]->tripPoint &= 0x80000000;
+        *oscillator[2]->tripPoint = add_fr1x32((int)oscillator[2]->trip, 0x80000000) & 0x7fffffff;
+
+        *oscillator[3]->tripPoint &= 0x80000000;
+        *oscillator[3]->tripPoint = add_fr1x32((int)oscillator[3]->trip, 0x80000000) & 0x7fffffff;
     }
     
     else if(state == ON)
@@ -135,18 +145,18 @@ void prgm_sync_trig(void) {
 }
 
 
-void oscillator_set_trippoint(prgmOscillator *oscillator, fix16 tripPoint) {
-    oscillator->tripPoint = ((int)oscillator->inc) * ((int)tripPoint) & 0x7fffffff;
+void oscillator_set_trippoint(prgmOscillator *oscillator, fract32 trip) {
+    oscillator->trip = trip;
 }
-                           
+
 
 static inline fract16 param_unit_to_fr16(ParamValue v) {
     return (fract16)((v & 0xffff) >> 1);
 }
 
 
-static inline fract16 param_unit_to_fr32(ParamValue v) {
-    return (fract16)((v & 0xffffffff) >> 1);
+static inline fract32 param_unit_to_fr32(ParamValue v) {
+    return fr16_to_fr32((fract16)((v & 0xffff) >> 1));
 }
 
 
@@ -366,16 +376,16 @@ void module_set_param(u32 idx, ParamValue v) {
             break;
 
         case eParamTripPoint0:
-            oscillator_set_trippoint(oscillator[0], v); //param_unit_to_fr32(v));
+            oscillator_set_trippoint(oscillator[0], param_unit_to_fr32(v));
             break;
         case eParamTripPoint1:
-            oscillator_set_trippoint(oscillator[1], v); //param_unit_to_fr32(v));
+            oscillator_set_trippoint(oscillator[1], param_unit_to_fr32(v));
             break;
         case eParamTripPoint2:
-            oscillator_set_trippoint(oscillator[2], v); //param_unit_to_fr32(v));
+            oscillator_set_trippoint(oscillator[2], param_unit_to_fr32(v));
             break;
         case eParamTripPoint3:
-            oscillator_set_trippoint(oscillator[3], v); //param_unit_to_fr32(v));
+            oscillator_set_trippoint(oscillator[3], param_unit_to_fr32(v));
             break;
             
         case eParamAmp0:

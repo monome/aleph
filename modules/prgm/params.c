@@ -108,25 +108,25 @@ void fill_param_desc(ParamDesc *desc) {
     strcpy(desc[eParamTripPoint0].label, "osc0_trip");
     desc[eParamTripPoint0].type = eParamTypeFix;
     desc[eParamTripPoint0].min = 0;
-    desc[eParamTripPoint0].max = FIX16_ONE;
+    desc[eParamTripPoint0].max = FR32_MAX;
     desc[eParamTripPoint0].radix = 1;
 
     strcpy(desc[eParamTripPoint1].label, "osc1_trip");
     desc[eParamTripPoint1].type = eParamTypeFix;
     desc[eParamTripPoint1].min = 0;
-    desc[eParamTripPoint1].max = FIX16_ONE;
+    desc[eParamTripPoint1].max = FR32_MAX;
     desc[eParamTripPoint1].radix = 1;
 
     strcpy(desc[eParamTripPoint2].label, "osc2_trip");
     desc[eParamTripPoint2].type = eParamTypeFix;
     desc[eParamTripPoint2].min = 0;
-    desc[eParamTripPoint2].max = FIX16_ONE;
+    desc[eParamTripPoint2].max = FR32_MAX;
     desc[eParamTripPoint2].radix = 1;
 
     strcpy(desc[eParamTripPoint3].label, "osc3_trip");
     desc[eParamTripPoint3].type = eParamTypeFix;
     desc[eParamTripPoint3].min = 0;
-    desc[eParamTripPoint3].max = FIX16_ONE;
+    desc[eParamTripPoint3].max = FR32_MAX;
     desc[eParamTripPoint3].radix = 1;
 
     strcpy(desc[eParamAmp0].label, "osc0_amp");

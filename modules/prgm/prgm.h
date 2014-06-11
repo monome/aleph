@@ -45,18 +45,15 @@
 
 #define N_OSCILLATORS 4
 
-//fix16 min = 0x80000000
-//fix16 max = 0x7fffffff
-
 //sync trig variables, symbolic constants
 #define ON 1
 #define OFF 0
 s32 synctrig;
 u8 state;
 
-typedef const fract32 (*wavtab_t) [WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
-
 typedef struct _prgmOscillator *PrgmOscillatorpointer;
+
+typedef const fract32 (*wavtab_t) [WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
 
 typedef struct _prgmOscillator {
     fract32 frameVal;           //oscillator output
@@ -65,8 +62,9 @@ typedef struct _prgmOscillator {
     fix16 ff;                   //fine
     fract32 ffAmount;           //fine amount
     
-    fract32 phase;              
-    fix16 tripPoint;            //trip point for sync_trig
+    fract32 phase;
+    fract32 trip;               //trip input
+    fract32 *tripPoint;         //pointer to phase
 
     fix16 inc;                  //index increment
     fract16 wave;               //waveform
