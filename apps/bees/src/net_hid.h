@@ -9,7 +9,6 @@
 #ifndef _ALEPH_BEES_NET_HID_H_
 #define _ALEPH_BEES_NET_HID_H_
 
-
 #include "types.h"
 
 //-----------------------
@@ -26,7 +25,6 @@ typedef struct _op_hid {
   // pointers to adjacent list elements
   struct _op_hid* next;
   struct _op_hid* prev;
-
 } op_hid_t;
 
 //-------------------------

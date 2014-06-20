@@ -49,7 +49,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_div.c \
 	$(APP_DIR)/src/ops/op_enc.c \
 	$(APP_DIR)/src/ops/op_gate.c \
-	$(APP_DIR)/src/ops/op_hid8.c \
+	$(APP_DIR)/src/ops/op_hid_word.c \
 	$(APP_DIR)/src/ops/op_history.c \
 	$(APP_DIR)/src/ops/op_is.c \
 	$(APP_DIR)/src/ops/op_life.c \
