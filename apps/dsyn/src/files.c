@@ -199,8 +199,6 @@ void files_read_params(void) {
       for(k=0; k<8; k++) {
 	str[k] = fl_fgetc(fp);
       }
-      //      print_dbg("\r\n read param: 0x");
-      //      print_dbg(str);
       val = hex_ascii_to_uint(str);
       // set the parameter
       ctl_voice_param(i, j, val);
@@ -208,8 +206,6 @@ void files_read_params(void) {
       // ignore everything in between
       while(1) {
 	ch = fl_fgetc(fp);
-	//	print_dbg(" ... 0x");
-	//	print_dbg_hex((u32)ch);
 	if(ch == DELIM_TOKEN) { break; }
 	if(ch == EOF) { eof = 1; break; }
 	///???

@@ -98,16 +98,16 @@ static s8 lastPageIdx = 0;
   */
 
 
-  pageIdx = ePageIns;
+  pageIdx = ePageScenes;
   set_page(pageIdx);
 
   redraw_dsp();
   redraw_outs();
   redraw_ops();
   redraw_presets();
-  redraw_scenes();
-  //... last
   redraw_ins();
+    //... last
+ redraw_scenes();
 
 }
 

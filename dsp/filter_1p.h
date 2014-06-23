@@ -17,7 +17,7 @@ typedef struct _filter_1p_lo {
   fract32 c; // integration coefficient
   fract32 x; // target value
   fract32 y; // filtered value
-  u8 sync;   // flag if target and filtered values are equal
+  //  u8 sync;   // flag if target and filtered values are equal
 } filter_1p_lo;
 
 

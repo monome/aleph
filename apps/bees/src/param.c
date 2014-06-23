@@ -47,11 +47,12 @@ void set_param_value(u32 idx, io_t val) {
   /* print_dbg(" , scaled: 0x"); */
   /* print_dbg_hex(scaled); */
     
-  // netowrk data holds linear input value
+  // network data holds linear input value
   net->params[idx].data.value = val;
+  // "changed" flag isn't really used but keep it updated for now
   net->params[idx].data.changed = 1;
 
-  // scale
+  // set scaled
   ctl_param_change(idx, scaled );
 }
 
@@ -98,9 +99,6 @@ const u8* param_unpickle(pnode_t* pnode, const u8* src) {
   ///// TEST: don't
   //  pnode->idx = (u8)val;
   ////
-
-
-
   // load value  
   src = unpickle_32(src, &val);
   pnode->data.value = (ParamValue)val;

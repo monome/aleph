@@ -27,6 +27,8 @@ io_t scaler_bool_in(void* scaler, s32 val) {
 
 // increment input by pointer, return value
 s32 scaler_bool_inc(void* sc, io_t* pin, io_t inc ) {
-  *pin = op_sadd(*pin, inc);
-  return (*pin > 0);
+  /* *pin = op_sadd(*pin, inc); */
+  /* return (*pin > 0); */
+  *pin = (inc > 0);
+  return *pin;
 }

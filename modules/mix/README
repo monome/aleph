@@ -59,10 +59,11 @@ aleph/bfin_lib/src/spi.c
 	low-level routines, including main() and interrupt handlers. 
 	the SPI protocol is fixed (in aleph/common/protocol.h),	
 	anything else is fair game for improvement and extension.
+	for example, block processing would have to be added at this level.
 	
 	WARNING: you can fry your blackfin by changing bfin_lib sources.
 		 in particular, do not mess with clock settings in init.c!
 		 unless you really know what you are doing!
 
 
-please share on github!
+please consider sharing your work on github! @catfact, @tehn , @monome

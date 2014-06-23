@@ -15,7 +15,7 @@
 //---- descriptor strings
 static const char* op_cascades_instring = "FOCUS\0  SIZE\0   STEP\0   ";
 static const char* op_cascades_outstring ="OUT0\0   OUT1\0   OUT2\0   OUT3\0   OUT4\0   OUT5\0   OUT6\0   OUT7\0   ";
-static const char* op_cascades_opstring = "CASCADES";
+static const char* op_cascades_opstring = "MP";
 
 //-------------------------------------------------
 //----- static function declaration

@@ -33,4 +33,24 @@ extern void lcprng_set_x(lcprng* o, s32 v);
 // compute next
 extern s32 lcprng_next(lcprng* o);
 
+//===========================
+// white noise: unsigned 32b xorshift + MLCG
+typedef struct _noise_white {
+  
+} noise_white;
+
+// brown noise
+// white plus random step
+typedef struct _noise_brown {
+  
+} noise_brown;
+
+
+// pink noise
+// white plus -3db / octave lowpass...
+typedef struct _noise_pink {
+  
+} noise_pink;
+
+
 #endif

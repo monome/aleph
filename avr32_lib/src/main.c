@@ -169,7 +169,7 @@ static inline void assign_main_event_handlers(void) {
   app_event_handlers[ kEventMidiRefresh ]	= &handler_MidiRefresh ;
   app_event_handlers[ kEventHidConnect ]	= &handler_HidConnect ;
   app_event_handlers[ kEventHidDisconnect ]	= &dummy_handler ;
-  app_event_handlers[ kEventHidByte ]	= &dummy_handler ;
+  app_event_handlers[ kEventHidPacket ]	= &dummy_handler ;
 
   app_event_handlers[ kEventSerial ] = &handler_Serial;
 }
@@ -355,6 +355,11 @@ int main (void) {
   if(gpio_get_pin_value(SW2_PIN)) {
     firstrun = 1;
     print_dbg("r\n sw2 down -> force firstrun ");
+  }
+
+  if(gpio_get_pin_value(SW0_PIN)) {
+    firstrun = 1;
+    print_dbg("r\n sw0 down -> force firstrun ");
   }
 
   // assign default event handlers

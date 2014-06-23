@@ -23,57 +23,57 @@ extern void fill_param_desc(ParamDesc* desc) {
   /// input values have param type "Amp"
   // they range from 0 to the full positive value of fract32
   /// and will be displayed as dB by bees.
-  strcpy(desc[eParam_in0].label, "in0");
-  desc[eParam_in0].type = eParamTypeAmp; 
-  desc[eParam_in0].min = 0x00000000; 
-  desc[eParam_in0].max = PARAM_AMP_MAX;
-  desc[eParam_in0].radix = 16; // doesn't matter
+  strcpy(desc[eParam_adc0].label, "adc0");
+  desc[eParam_adc0].type = eParamTypeAmp; 
+  desc[eParam_adc0].min = 0x00000000; 
+  desc[eParam_adc0].max = PARAM_AMP_MAX;
+  desc[eParam_adc0].radix = 16; // doesn't matter
 
-  strcpy(desc[eParam_in1].label, "in1");
-  desc[eParam_in1].type = eParamTypeAmp; 
-  desc[eParam_in1].min = 0x00000000; 
-  desc[eParam_in1].max = PARAM_AMP_MAX;
-  desc[eParam_in1].radix = 16; // doesn't matter
+  strcpy(desc[eParam_adc1].label, "adc1");
+  desc[eParam_adc1].type = eParamTypeAmp; 
+  desc[eParam_adc1].min = 0x00000000; 
+  desc[eParam_adc1].max = PARAM_AMP_MAX;
+  desc[eParam_adc1].radix = 16; // doesn't matter
 
-  strcpy(desc[eParam_in2].label, "in2");
-  desc[eParam_in2].type = eParamTypeAmp; 
-  desc[eParam_in2].min = 0x00000000; 
-  desc[eParam_in2].max = PARAM_AMP_MAX;
-  desc[eParam_in2].radix = 16; // doesn't matter
+  strcpy(desc[eParam_adc2].label, "adc2");
+  desc[eParam_adc2].type = eParamTypeAmp; 
+  desc[eParam_adc2].min = 0x00000000; 
+  desc[eParam_adc2].max = PARAM_AMP_MAX;
+  desc[eParam_adc2].radix = 16; // doesn't matter
 
-  strcpy(desc[eParam_in3].label, "in3");
-  desc[eParam_in3].type = eParamTypeAmp; 
-  desc[eParam_in3].min = 0x00000000; 
-  desc[eParam_in3].max = PARAM_AMP_MAX;
-  desc[eParam_in3].radix = 16; // doesn't matter
+  strcpy(desc[eParam_adc3].label, "adc3");
+  desc[eParam_adc3].type = eParamTypeAmp; 
+  desc[eParam_adc3].min = 0x00000000; 
+  desc[eParam_adc3].max = PARAM_AMP_MAX;
+  desc[eParam_adc3].radix = 16; // doesn't matter
 
   /// slew values have param type "Integrator"
   // they range from 0 to the full positive value of fract32
   /// and will be displayed as seconds-to-convergence by bees.
 
-  strcpy(desc[eParam_inSlew0].label, "inSlew0");
-  desc[eParam_inSlew0].type = eParamTypeIntegrator; 
-  desc[eParam_inSlew0].min = 0x00000000; 
-  desc[eParam_inSlew0].max = PARAM_SLEW_MAX;
-  desc[eParam_inSlew0].radix = 16; // doesn't matter
+  strcpy(desc[eParam_adcSlew0].label, "adcSlew0");
+  desc[eParam_adcSlew0].type = eParamTypeIntegrator; 
+  desc[eParam_adcSlew0].min = 0x00000000; 
+  desc[eParam_adcSlew0].max = PARAM_SLEW_MAX;
+  desc[eParam_adcSlew0].radix = 16; // doesn't matter
 
-  strcpy(desc[eParam_inSlew1].label, "inSlew1");
-  desc[eParam_inSlew1].type = eParamTypeIntegrator; 
-  desc[eParam_inSlew1].min = 0x00000000; 
-  desc[eParam_inSlew1].max = PARAM_SLEW_MAX;
-  desc[eParam_inSlew1].radix = 16; // doesn't matter
+  strcpy(desc[eParam_adcSlew1].label, "adcSlew1");
+  desc[eParam_adcSlew1].type = eParamTypeIntegrator; 
+  desc[eParam_adcSlew1].min = 0x00000000; 
+  desc[eParam_adcSlew1].max = PARAM_SLEW_MAX;
+  desc[eParam_adcSlew1].radix = 16; // doesn't matter
 
-  strcpy(desc[eParam_inSlew2].label, "inSlew2");
-  desc[eParam_inSlew2].type = eParamTypeIntegrator; 
-  desc[eParam_inSlew2].min = 0x00000000; 
-  desc[eParam_inSlew2].max = PARAM_SLEW_MAX; 
-  desc[eParam_inSlew2].radix = 16; // doesn't matter
+  strcpy(desc[eParam_adcSlew2].label, "adcSlew2");
+  desc[eParam_adcSlew2].type = eParamTypeIntegrator; 
+  desc[eParam_adcSlew2].min = 0x00000000; 
+  desc[eParam_adcSlew2].max = PARAM_SLEW_MAX; 
+  desc[eParam_adcSlew2].radix = 16; // doesn't matter
 
-  strcpy(desc[eParam_inSlew3].label, "inSlew3");
-  desc[eParam_inSlew3].type = eParamTypeIntegrator; 
-  desc[eParam_inSlew3].min = 0x00000000; 
-  desc[eParam_inSlew3].max = PARAM_SLEW_MAX;
-  desc[eParam_inSlew3].radix = 16; // doesn't matter
+  strcpy(desc[eParam_adcSlew3].label, "adcSlew3");
+  desc[eParam_adcSlew3].type = eParamTypeIntegrator; 
+  desc[eParam_adcSlew3].min = 0x00000000; 
+  desc[eParam_adcSlew3].max = PARAM_SLEW_MAX;
+  desc[eParam_adcSlew3].radix = 16; // doesn't matter
 
 
   /// CV values have param type "Fixed" (for now!)

@@ -11,7 +11,7 @@
 // list structure
 typedef struct _op_midi_list {
   op_midi_t* top;
-  op_midi_t* cur;
+  //  op_midi_t* cur;
   u32 num;
 } op_midi_list_t;
 
@@ -22,7 +22,7 @@ typedef struct _op_midi_list {
 // list of midi operators
 static op_midi_list_t ml = {
   .top = NULL,
-  .cur = NULL,
+  //  .cur = NULL,
   .num = 0
 };
 
@@ -58,9 +58,22 @@ void net_midi_list_push(op_midi_t* op) {
 
 
 // remove an operator
-op_midi_t* net_midi_list_remove(op_midi_t* op) {
-  ///... todo, i guess
-  return ml.top;
+void net_midi_list_remove(op_midi_t* op) {
+  // FIXME: should sanity-check that op is actually in the list
+  if(ml.num == 1) {
+    ml.top = NULL;
+    ml.num = 0;
+  } else {
+    if(op->prev == NULL || op->next == NULL) {
+      print_dbg("\r\n error unlinking midi operator");
+      return;
+    }
+    op->prev->next = op->next;
+    op->next->prev = op->prev;
+    op->next = NULL;
+    op->prev = NULL;
+    ml.num -= 1;
+  }
 }
 
 // handle incoming midi packet
