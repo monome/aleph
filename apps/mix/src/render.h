@@ -8,7 +8,7 @@ extern void render_init(void);
 // update
 extern void render_update(void);
 
-2// render amplitude
+// render amplitude
 extern void render_amp(u8 ch);
 
 // render mute

@@ -209,21 +209,18 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_cascades_t),
     .init = &op_cascades_init,
     .deinit = &op_cascades_deinit   
-  },
-  {
+  }, {
     .name = "BARS",
     .size = sizeof(op_bars_t),
     .init = &op_bars_init,
     .deinit = &op_bars_deinit   
   },
-  
   {
     .name = "SERIAL",
     .size = sizeof(op_serial_t),
     .init = &op_serial_init,
     .deinit = &op_serial_deinit   
   },
- 
 };
 
 // input and output strings are all the same length, concatenated

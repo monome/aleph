@@ -35,7 +35,6 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpBars,
   eOpBignum,
   eOpBits,
-  eOpCascades,
   eOpDelay,
   eOpDiv,
   eOpGate,
@@ -48,6 +47,7 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpList16,
   eOpLogic,
   eOpMetro,
+  eOpCascades, // "mp"
   eOpMidiCC,
   eOpMidiNote,
   eOpMidiOutNote,
