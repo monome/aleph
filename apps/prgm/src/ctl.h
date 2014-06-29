@@ -43,10 +43,4 @@ enum params {
     eParamNumParams
 };
 
-volatile s32 ParamVal[25]; 
-
-//extern const u32 ctl_get_param(u32 pid);
-
-extern void ctl_eParamFreq0(u32 pid, fract32 val);
-
 #endif // h guard

@@ -5,7 +5,8 @@
 #define _ALEPH_APP_DSYN_HANDLER_H_
 
 #include "app.h"
+#include "types.h"
 
-extern void prgm_assign_event_handlers(void);
+extern void assign_prgm_event_handlers(void);
 
 #endif 

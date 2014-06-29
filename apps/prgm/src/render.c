@@ -12,7 +12,7 @@
 
 //avr32-lib
 #include "app.h"
-#include "memory.h"
+#include "memory.h" //REMOVE HERE?!
 #include "screen.h"
 
 //prgm
@@ -43,13 +43,12 @@ static region headRegion_prgm = {.w=128, .h=8, .x = 0, .y = 0};
 //initialization, called by app_init()
 void render_init(void) {
     //BOOT
-    region_alloc((region*)(&bootScrollRegion)); //declared in memory.h
+    region_alloc((region*)(&bootScrollRegion)); //declared in region.h, calls mem_alloc() declared in memory.h
     scroll_init(&bootScroll, &bootScrollRegion);
     
     //PRGM
     region_alloc((region*)(&headRegion_prgm));
 }
-
 
 //flashscreen, called by app_launch()
 void render_startup(void) {
@@ -57,7 +56,6 @@ void render_startup(void) {
     region_fill(&headRegion_prgm, 0);
     region_string(&headRegion_prgm, "PRGM beta by Test2", 0, 0, 0xf, 0, 0); //region, string, offset x, offset y, color a, color b, size
 }
-
 
 void render_update(void) {
   app_pause();
