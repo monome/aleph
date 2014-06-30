@@ -21,6 +21,7 @@
 #include "render.h"
 
 #define DSP_PATH "/mod/aleph-prgm.ldr"
+#define DSC_PATH "/mod/aleph-prgm.dsc"
 
 // fread: no size arg
 static void fake_fread(volatile u8 *dst, u32 len, void *fp) {
@@ -37,8 +38,8 @@ static void fake_fread(volatile u8 *dst, u32 len, void *fp) {
 }
 
 // search for specified dsp file and load it
-u8 files_load_dsp_name(void) {
-    void* fp;
+u8 files_load_dsp(void) {
+    void *fp;
     u32 size = 0;
     u8 ret;
     
@@ -63,7 +64,7 @@ u8 files_load_dsp_name(void) {
             bfin_load_buf();
             
             print_dbg("\r\n finished load");
-            print_dbg("\r\n loading parameter descriptor file...");
+//            print_dbg("\r\n loading parameter descriptor file...");
 //            ret = files_load_desc(name);
             
             ret = 1;
@@ -80,17 +81,38 @@ u8 files_load_dsp_name(void) {
     return ret;
 }
 
+
+/*
+// set initial parameters
+void ctl_init_params(void) {
+    // dacs at 0
+    ctl_param_change(eParam_dac0, 0);
+    ctl_param_change(eParam_dac1, 0);
+    ctl_param_change(eParam_dac2, 0);
+    ctl_param_change(eParam_dac3, 0);
+    /// slew at ???
+    //// work on inputs standardization
+    ctl_param_change(eParam_slew0, 0x7fff0000);
+    ctl_param_change(eParam_slew1, 0x7fff0000);
+    ctl_param_change(eParam_slew2, 0x7fff0000);
+    ctl_param_change(eParam_slew3, 0x7fff0000);
+    
+}
+*/
+
+
 /*
 // search for named .dsc file and load into network param desc memory
-extern u8 files_load_desc(const char *name) {
+u8 files_load_dsp_parameters(void) {
     char path[64] = DSP_PATH;
-    void * fp;
+    void *fp;
     int nparams = -1;
     // word buffer for 4-byte unpickling
     u8 nbuf[4];
     // buffer for binary blob of single descriptor
     u8 dbuf[PARAM_DESC_PICKLE_BYTES];
     // unpacked descriptor
+
     ParamDesc desc;
     int i;
     u8 ret = 0;

@@ -8,6 +8,9 @@
 #include "bfin.h"
 #include "control.h"
 
+#include "app.h"
+#include "types.h"
+
 //prgm
 #include "handler.h"
 #include "render.h"
@@ -22,7 +25,9 @@ static void ctrl_parameter(u32 pid, fract32 val);
 void handle_encoder_0(s32 val) {
     print_dbg("\r\n encoder moving...");
     print_dbg_ulong(val);
-    ctrl_parameter(0, val);
+    static s32 Freq;
+    Freq += val * 0x00010000;
+    ctrl_parameter(eParamFreq0, (u32)Freq);
 }
 
 void ctrl_parameter(u32 pid, fract32 val) {
@@ -30,7 +35,8 @@ void ctrl_parameter(u32 pid, fract32 val) {
     print_dbg_ulong(pid);
     print_dbg("\r\n parameter value...");
     print_dbg_ulong(val);
-    ctl_param_change(eParamFreq0 + pid, val); //defined in control.h
+    ctl_param_change(pid, val); //defined in control.h
+    
 }
 
 
@@ -38,10 +44,10 @@ void ctrl_parameter(u32 pid, fract32 val) {
 void assign_prgm_event_handlers(void) {
     
 //    app_event_handlers[ kEventAppCustom ]	= &net_poll_handler ;
-    app_event_handlers[ kEventEncoder0 ] = &handle_encoder_0 ;
+//    app_event_handlers[ kEventEncoder0 ] = &handle_encoder_0 ;
 //    app_event_handlers[ kEventEncoder1 ] = &handler_Encoder1 ;
 //    app_event_handlers[ kEventEncoder2 ] = &handler_Encoder2 ;
-//    app_event_handlers[ kEventEncoder3 ] = &handler_Encoder3 ;
+    app_event_handlers[ kEventEncoder3 ] = &handle_encoder_0 ;
 //    app_event_handlers[ kEventSwitch0 ]	= &handler_Switch0 ;
 //    app_event_handlers[ kEventSwitch1 ]	= &handler_Switch1 ;
 //    app_event_handlers[ kEventSwitch2 ]	= &handler_Switch2 ;

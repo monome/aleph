@@ -17,6 +17,7 @@
 #include "files.h"
 #include "flash_prgm.h"
 #include "handler.h"
+#include "ctl.h"
 #include "render.h"
 #include "encoders.h"
 
@@ -36,7 +37,7 @@ if(firstrun) {
     print_dbg("\r\n flash_prgm_init...");    
     flash_prgm_init();
     
-    files_load_dsp_name();
+    files_load_dsp();
 
     render_boot("loading prgm...");
     bfin_wait_ready();
@@ -49,10 +50,16 @@ if(firstrun) {
     }
 
     render_boot("launching UI...");
-        
+
+//    app_pause();
+    
+    ctl_report_parameters();
+    
+//    app_resume();
+    
     //encoder sensitivity
-    set_enc_thresh(3, 16);
-    delay_ms(20);
+//    set_enc_thresh(0, 16);
+//    delay_ms(20);
     
     //timers
     init_app_timers();

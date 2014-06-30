@@ -8,7 +8,9 @@
 #define DEFAULT_DSC "/mod/aleph-prgm.dsc"
 
 // load aleph-prgm.ldr, return 1 on success, 0 on failure
-extern u8 files_load_dsp_name(void);
+extern u8 files_load_dsp(void);
+
+//extern u8 files_load_dsp_parameters(void) {
  
 #endif 
 

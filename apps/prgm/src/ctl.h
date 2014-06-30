@@ -1,13 +1,14 @@
 //prgm
 //aleph-avr32
 
-#ifndef _ALEPH_APP_MIX_CTL_H_
-#define _ALEPH_APP_MIX_CTL_H_
+#ifndef _ALEPH_APP_PRGM_CTL_H_
+#define _ALEPH_APP_PRGM_CTL_H_
 
 #include "types.h"
 
 //prgm parameters
-enum params {
+
+typedef enum params {
     eParamFreq0,
     eParamFreq1,
     eParamFreq2,
@@ -41,6 +42,8 @@ enum params {
     eParamAmp3,
     
     eParamNumParams
-};
+} eParam;
+
+u8 ctl_report_parameters(void);
 
 #endif // h guard
