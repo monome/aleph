@@ -1,8 +1,8 @@
 //prgm
 //aleph-avr32
 
-#ifndef _APP_PRGM_EVENT_TYPES_H_
-#define _APP_PRGM_EVENT_TYPES_H_
+#ifndef _ALEPH_APP_PRGM_EVENT_TYPES_H_
+#define _ALEPH_APP_PRGM_EVENT_TYPES_H_
 
 #include "event_types.h"
 

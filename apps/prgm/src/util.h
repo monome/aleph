@@ -17,6 +17,9 @@
 
 #include "types.h"
 
+///// print formatted string
+extern void parameter_print(char* buf, u16 x);
+
 // convert milliseconds to samples
 #define MS_TO_SAMPS(x) ((x) * 48)
 

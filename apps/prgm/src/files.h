@@ -1,8 +1,8 @@
 //prgm
 //aleph-avr32
 
-#ifndef _ALEPH_AVR32_APP_MIX_FILES_H_
-#define _ALEPH_AVR32_APP_MIX_FILES_H_
+#ifndef _ALEPH_APP_PRGM_FILES_H_
+#define _ALEPH_APP_PRGM_FILES_H_
 
 #define DEFAULT_LDR "/mod/aleph-prgm.ldr"
 #define DEFAULT_DSC "/mod/aleph-prgm.dsc"

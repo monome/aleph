@@ -1,7 +1,11 @@
 //prgm
 //aleph-avr32
 
+#include "fix.h"
 #include "util.h"
+
+// print
+void parameter_print(char* buf, u16 x) { itoa_whole((s32)(x), (buf), 6); }
 
 static char hexCharLc[16] = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' };
 static char hexCharUc[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' };

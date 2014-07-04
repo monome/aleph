@@ -1,5 +1,5 @@
-#ifndef _ALEPH_AVR32_APP_TIMERS_H_
-#define _ALEPH_AVR32_APP_TIMERS_H_
+#ifndef _ALEPH_APP_PRGM_TIMERS_H_
+#define _ALEPH_APP_PRGM_TIMERS_H_
 
 #include "timers.h"
 #include "types.h"

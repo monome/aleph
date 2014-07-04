@@ -18,6 +18,7 @@
 
 
 //static functions
+/*
 static void handle_encoder_0(s32 val);
 
 static void ctrl_parameter(u32 pid, fract32 val);
@@ -38,7 +39,7 @@ void ctrl_parameter(u32 pid, fract32 val) {
     ctl_param_change(pid, val); //defined in control.h
     
 }
-
+*/
 
 //external functions
 void assign_prgm_event_handlers(void) {
@@ -47,7 +48,7 @@ void assign_prgm_event_handlers(void) {
 //    app_event_handlers[ kEventEncoder0 ] = &handle_encoder_0 ;
 //    app_event_handlers[ kEventEncoder1 ] = &handler_Encoder1 ;
 //    app_event_handlers[ kEventEncoder2 ] = &handler_Encoder2 ;
-    app_event_handlers[ kEventEncoder3 ] = &handle_encoder_0 ;
+//    app_event_handlers[ kEventEncoder3 ] = &handle_encoder_0 ;
 //    app_event_handlers[ kEventSwitch0 ]	= &handler_Switch0 ;
 //    app_event_handlers[ kEventSwitch1 ]	= &handler_Switch1 ;
 //    app_event_handlers[ kEventSwitch2 ]	= &handler_Switch2 ;

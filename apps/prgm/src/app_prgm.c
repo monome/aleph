@@ -15,7 +15,8 @@
 //prgm
 #include "app_timers.h"
 #include "files.h"
-#include "flash_prgm.h"
+#include "pages.h"
+//#include "flash_prgm.h"
 #include "handler.h"
 #include "ctl.h"
 #include "render.h"
@@ -32,45 +33,30 @@ void app_init(void) {
 u8 app_launch(u8 firstrun) {
 if(firstrun) {
     print_dbg("\r\n app_launch firstrun...");    
-    render_boot("run...");
 
-    print_dbg("\r\n flash_prgm_init...");    
-    flash_prgm_init();
-    
     files_load_dsp();
 
-    render_boot("loading prgm...");
     bfin_wait_ready();
-    
-    render_boot("enabling blackfin...");
+
     bfin_enable();
-        
+            
 } else {
     print_dbg("\r\n app_launch NOT firstrun!...");      
     }
 
-    render_boot("launching UI...");
+    print_dbg("\r\n pages_init...");
+    pages_init();
 
-//    app_pause();
+    print_dbg("\r\n init_app_timers...");
+    init_app_timers();
+
+    print_dbg("\r\n prgm_event_handlers...");
+    assign_prgm_event_handlers();
     
     ctl_report_parameters();
     
-//    app_resume();
-    
-    //encoder sensitivity
-//    set_enc_thresh(0, 16);
-//    delay_ms(20);
-    
-    //timers
-    init_app_timers();
-
-    //screen
-    print_dbg("\r\n render_startup...");
     render_startup();
-    
-    //set app event handlers
-    assign_prgm_event_handlers();
+
     print_dbg("\r\n return 1...");
-    
     return 1;
 }

@@ -74,12 +74,12 @@ static void app_custom_event_callback(void* obj) {
 }
 
 // screen refresh callback
-static void screen_timer_callback(void* obj) {  
+static void screen_timer_callback(void *obj) {  
     render_update();
 }
 
 // encoder accumulator polling callback
-static void enc_timer_callback(void* obj) {
+static void enc_timer_callback(void *obj) {
     static s16 val, valAbs;
     u8 i;
     
