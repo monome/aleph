@@ -1,0 +1,35 @@
+PRGM/TRACKER beta 0.0.0 for Aleph
+
+install/filecopy to SD-CARD (ALEPH):
+aleph-prgm.hex -> ALEPH/app/
+aleph-prgm.ldr -> ALEPH/mod/
+aleph-prgm.dsc -> ALEPH/mod/
+
+REBOOT with aleph-prgm.hex
+
+CONTROLS
+enc4                page select
+
+page PRGM
+encoders            select waveform (a dual wavetable)*
+encoders + enc0     phase trip point*
+encoders + enc1     blend wavetable A|B*
+encoders + enc2     *
+encoders + enc3     *
+
+page TRACKER
+encoders            scaled* pitch
+encoders + enc0     phase trip point*
+encoders + enc1     *
+encoders + enc2     *
+encoders + enc3     *
+
+cv-in0              sync trig*
+cv-in1              *
+cv-in2              *
+cv-in3              *
+
+cv-outs             scaled* pitch
+
+
+*not implemented/additional stuff will be added
