@@ -10,16 +10,16 @@
 char numstrbuf[NUMSTRBUF_LEN];
 
 extern void render_init(void);
-
+extern void render_boot(const char *str);
 extern void render_startup(void);
 
 extern void render_update(void);
 
-extern void render_boot(const char *str);
-
+//PRGM
 extern void render_prgm(void);
-extern void render_freq(void);
 
+//TRACKER
 extern void render_tracker(void);
+extern void render_freq(void);
 
 #endif // h guard

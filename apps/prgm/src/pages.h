@@ -1,10 +1,4 @@
-//
-//  pages.h
-//  main
-//
-//  Created by Staffan Jansson on 7/1/14.
-//  Copyright (c) 2014 __MyCompanyName__. All rights reserved.
-//
+//pages.h
 
 #ifndef _ALEPH_APP_PRGM_PAGES_H_
 #define _ALEPH_APP_PRGM_PAGES_H_

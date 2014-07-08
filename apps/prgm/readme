@@ -17,12 +17,12 @@ encoders + enc1     blend wavetable A|B*
 encoders + enc2     *
 encoders + enc3     *
 
-page TRACKER
+page TRACKER (8 steps)
 encoders            scaled* pitch
 encoders + enc0     phase trip point*
 encoders + enc1     *
 encoders + enc2     *
-encoders + enc3     *
+enc3                step + 1
 
 cv-in0              sync trig*
 cv-in1              *

@@ -16,7 +16,6 @@
 #include "app_timers.h"
 #include "files.h"
 #include "pages.h"
-//#include "flash_prgm.h"
 #include "handler.h"
 #include "ctl.h"
 #include "render.h"
@@ -25,8 +24,6 @@
 
 //hardware initialization, memory allocation
 void app_init(void) {
-    print_dbg("\r\n app_init...");
-    print_dbg("\r\n render_init...");
     render_init();
 }
 
@@ -37,26 +34,26 @@ if(firstrun) {
     files_load_dsp();
 
     bfin_wait_ready();
-
-    bfin_enable();
             
 } else {
-    print_dbg("\r\n app_launch NOT firstrun!...");      
+    print_dbg("\r\n app_launch NOT firstrun...");
+    files_load_dsp();
+
+    bfin_wait_ready();
     }
 
-    print_dbg("\r\n pages_init...");
-    pages_init();
+    ctl_report_parameters();
 
-    print_dbg("\r\n init_app_timers...");
+    pages_init();
+    
+    bfin_enable();
+
     init_app_timers();
 
-    print_dbg("\r\n prgm_event_handlers...");
-    assign_prgm_event_handlers();
-    
-    ctl_report_parameters();
-    
     render_startup();
-
+    
+    assign_prgm_event_handlers();
+        
     print_dbg("\r\n return 1...");
     return 1;
 }

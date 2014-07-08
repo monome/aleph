@@ -81,25 +81,37 @@ u8 files_load_dsp(void) {
     return ret;
 }
 
-
 /*
-// set initial parameters
-void ctl_init_params(void) {
-    // dacs at 0
-    ctl_param_change(eParam_dac0, 0);
-    ctl_param_change(eParam_dac1, 0);
-    ctl_param_change(eParam_dac2, 0);
-    ctl_param_change(eParam_dac3, 0);
-    /// slew at ???
-    //// work on inputs standardization
-    ctl_param_change(eParam_slew0, 0x7fff0000);
-    ctl_param_change(eParam_slew1, 0x7fff0000);
-    ctl_param_change(eParam_slew2, 0x7fff0000);
-    ctl_param_change(eParam_slew3, 0x7fff0000);
+u8 files_load_wavetable(const char* name) {
+    void *fp;
+    u32 size = 0;
+    u8 ret = 0;
     
-}
+app_pause();
+ 
+ fp = list_open_file_name(&sceneList, name, "r", &size);
+ 
+ if( fp != NULL) {	  
+ print_dbg("\r\n reading binary into sceneData serialized data buffer...");
+ fake_fread((volatile u8*)sceneData, sizeof(sceneData_t), fp);
+ print_dbg(" done.");
+  
+ fl_fclose(fp);
+ scene_read_buf();
+ 
+ // try and load dsp module indicated by scene descriptor
+ //// DUDE! NO!!! scene does this. when did this happen!
+ //// probably snuck in in some merge.
+ //    ret = files_load_dsp_name(sceneData->desc.moduleName);
+ } else {
+ print_dbg("\r\n error: fp was null in files_load_scene_name \r\n");
+ ret = 0;
+ } 
+ 
+ app_resume();
+ return ret;
+ }
 */
-
 
 /*
 // search for named .dsc file and load into network param desc memory
@@ -160,50 +172,6 @@ u8 files_load_dsp_parameters(void) {
         }
     }
     fl_fclose(fp);
-    app_resume();
-    return ret;
-}
-*/
-
-/*
-u8 files_load_scene_name(const char* name) {
-    void* fp;
-    u32 size = 0;
-    u8 ret = 0;
-    
-    //// ahhhhh, i see.. 
-    /// this is overwriting the descriptor in sceneData as well as the serialized blob.
-    /// woud be fine, except it fucks up the comparison later.
-    /// for now, let's do this ugly-ass workaround.
-    
-    char oldModuleName[MODULE_NAME_LEN];
-    /// store extant module name
-    strncpy(oldModuleName, sceneData->desc.moduleName, MODULE_NAME_LEN);
-    
-    app_pause();
-    
-    fp = list_open_file_name(&sceneList, name, "r", &size);
-    
-    if( fp != NULL) {	  
-        print_dbg("\r\n reading binary into sceneData serialized data buffer...");
-        fake_fread((volatile u8*)sceneData, sizeof(sceneData_t), fp);
-        print_dbg(" done.");
-        
-        /// copy old name back to descriptor field... dumb dumb dumb.
-        strncpy(sceneData->desc.moduleName, oldModuleName, MODULE_NAME_LEN);
-        
-        fl_fclose(fp);
-        scene_read_buf();
-        
-        // try and load dsp module indicated by scene descriptor
-        //// DUDE! NO!!! scene does this. when did this happen!
-        //// probably snuck in in some merge.
-        //    ret = files_load_dsp_name(sceneData->desc.moduleName);
-    } else {
-        print_dbg("\r\n error: fp was null in files_load_scene_name \r\n");
-        ret = 0;
-    } 
-    
     app_resume();
     return ret;
 }

@@ -1,16 +1,4 @@
-//prgm
-//aleph-avr32
-
-/*
-  util.h
-
-  stupid global helper functions.
-
-  FIXME: name this more desciptively, or somehting.
-  hex-string processing routines in particular should 
-  live somewhere else.
-
- */
+//util.h
 
 #ifndef _ALEPH_AVR32_APP_MIX_UTIL_H_
 #define _ALEPH_AVR32_APP_MIX_UTIL_H_

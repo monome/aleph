@@ -9,7 +9,7 @@
 // application-sepecific event types
 
 /* typedef enum { */
-/*   // trigger advnacement to the next sequencer stage */
+/*   // trigger advancement to the next sequencer stage */
 /*   kEventSeqNext = kNumSysEvents + 1, */
 /*   kNumAppEvents */
   

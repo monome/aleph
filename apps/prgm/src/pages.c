@@ -1,16 +1,4 @@
-//
-//  pages.c
-//  main
-//
-//  Created by Staffan Jansson on 7/1/14.
-//  Copyright (c) 2014 __MyCompanyName__. All rights reserved.
-//
-
-/*
- pages.c
- bees
- aleph
- */
+//pages.c
 
 #ifdef ARCH_AVR32
 #include "print_funcs.h"

@@ -16,6 +16,15 @@
 #include "render.h"
 #include "ctl.h"
 
+static void handle_Switch6(s32 data) {
+    // footswitch 1
+    //op_sw_sys_input(opSysSw[4], data > 0);
+}
+
+static void handle_Switch7(s32 data) { 
+    // footswitch 2
+    //op_sw_sys_input(opSysSw[5], data > 0);
+} 
 
 //static functions
 /*
@@ -55,6 +64,6 @@ void assign_prgm_event_handlers(void) {
 //    app_event_handlers[ kEventSwitch3 ]	= &handler_Switch3 ;
 //    app_event_handlers[ kEventSwitch4 ]	= &handler_Switch4 ; //mode switch
 //    app_event_handlers[ kEventSwitch5 ]	= &handler_Switch5 ; //power switch
-//    app_event_handlers[ kEventSwitch6 ]	= &handler_Switch6 ; //my left foot
-//    app_event_handlers[ kEventSwitch7 ]	= &handler_Switch7 ; //the other foot
+    app_event_handlers[ kEventSwitch6 ]	= &handle_Switch6 ; //sequencer step
+    app_event_handlers[ kEventSwitch7 ]	= &handle_Switch7 ; //sequencer restart at 1
 }
