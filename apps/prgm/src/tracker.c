@@ -1,8 +1,8 @@
 //tracker.c
 
 // asf
+#include "gpio.h"
 #include "print_funcs.h"
-//#include "app_event_types.h"
 
 // common
 #include "fix.h"
@@ -71,6 +71,8 @@ static void handle_encoder_0(s32 val);
 static void handle_encoder_1(s32 val);
 static void handle_encoder_2(s32 val);
 static void handle_encoder_3(s32 val);
+static void handle_key_0(s32 val);
+static void handle_key_1(s32 val);
 static void handle_key_3(s32 val);
 static void handle_key_4(s32 val);
 static inline u8 check_touch(etype et);
@@ -131,6 +133,15 @@ void handle_encoder_3(s32 val) {
     }
 }
 
+void handle_key_0(s32 val) {
+    //nothing
+}
+
+void handle_key_1(s32 val) {
+    //nothing
+}
+
+
 void handle_key_3(s32 val) {
     s32 tmp0;
     s32 tmp1;
@@ -140,6 +151,7 @@ void handle_key_3(s32 val) {
     if(val == 0) { return; }
     
     else if (counter < N_STEPS - 1) {
+        gpio_clr_gpio_pin(LED_MODE_PIN);
         tmp0 = Freq0;
         tmp1 = Freq1;
         tmp2 = Freq2;
@@ -168,9 +180,11 @@ void handle_key_3(s32 val) {
         print_fix16(renderFreq3, Freq3);        
         
         render_freq();
+        gpio_set_gpio_pin(LED_MODE_PIN);
     }
     
     else if (counter < N_STEPS) {
+        gpio_clr_gpio_pin(LED_MODE_PIN);
         tmp0 = Freq0;
         tmp1 = Freq1;
         tmp2 = Freq2;
@@ -199,38 +213,9 @@ void handle_key_3(s32 val) {
         print_fix16(renderFreq3, Freq3);
 
         render_freq();
+        gpio_set_gpio_pin(LED_MODE_PIN);
     }
 }
-
-/*
-void handle_key_3(s32 val) {
-    print_dbg_ulong(counter);
-    s32 tmp;
-    if(val == 0) { return; }
-
-    else if (counter < N_STEPS - 1) {
-        tmp = Freq0;
-        step[counter]->osc_f = tmp;
-        counter++;
-        Freq0 = step[counter]->osc_f;
-        ctl_param_change(eParamFreq0, Freq0);
-        print_fix16(renderFreq0, Freq0);
-        render_freq();
-        print_dbg_ulong(counter);
-    }
-    
-    else if (counter < N_STEPS) {
-        tmp = Freq0;
-        step[counter]->osc_f = tmp;
-        counter = 0;
-        Freq0 = step[counter]->osc_f;
-        ctl_param_change(eParamFreq0, Freq0);
-        print_fix16(renderFreq0, Freq0);
-        render_freq();
-        print_dbg_ulong(counter);
-    }
-}
-*/
 
 void handle_key_4(s32 val) {
     if(val == 0) { return; }
@@ -249,8 +234,8 @@ void select_tracker(void) {
     app_event_handlers[ kEventEncoder1 ]	= &handle_encoder_2 ;
     app_event_handlers[ kEventEncoder2 ]	= &handle_encoder_1 ;
     app_event_handlers[ kEventEncoder3 ]	= &handle_encoder_0 ;
-    //    app_event_handlers[ kEventSwitch0 ]	= &handle_key_0 ;
-    //    app_event_handlers[ kEventSwitch1 ]	= &handle_key_1 ;
+    app_event_handlers[ kEventSwitch0 ]	= &handle_key_0 ;
+    app_event_handlers[ kEventSwitch1 ]	= &handle_key_1 ;
     //    app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
     app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ;
     app_event_handlers[ kEventSwitch4 ]	= &handle_key_4 ;

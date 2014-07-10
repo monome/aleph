@@ -16,6 +16,22 @@
 #include "render.h"
 #include "ctl.h"
 
+static void handle_Adc0(s32 data) { 
+//    op_adc_sys_input(opSysAdc, 0, data);
+}
+
+static void handle_Adc1(s32 data) { 
+//    op_adc_sys_input(opSysAdc, 1, data);
+}
+
+static void handle_Adc2(s32 data) { 
+//    op_adc_sys_input(opSysAdc, 2, data);
+}
+
+static void handle_Adc3(s32 data) { 
+//    op_adc_sys_input(opSysAdc, 3, data);
+}
+
 static void handle_Switch6(s32 data) {
     // footswitch 1
     //op_sw_sys_input(opSysSw[4], data > 0);
@@ -54,6 +70,11 @@ void ctrl_parameter(u32 pid, fract32 val) {
 void assign_prgm_event_handlers(void) {
     
 //    app_event_handlers[ kEventAppCustom ]	= &net_poll_handler ;
+    app_event_handlers[ kEventAdc0 ] = &handle_Adc0 ;
+    app_event_handlers[ kEventAdc1 ] = &handle_Adc1 ;
+    app_event_handlers[ kEventAdc2 ] = &handle_Adc2 ;
+    app_event_handlers[ kEventAdc3 ] = &handle_Adc3 ;
+
 //    app_event_handlers[ kEventEncoder0 ] = &handle_encoder_0 ;
 //    app_event_handlers[ kEventEncoder1 ] = &handler_Encoder1 ;
 //    app_event_handlers[ kEventEncoder2 ] = &handler_Encoder2 ;

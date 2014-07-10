@@ -4,6 +4,35 @@
 #include "fix.h"
 #include "util.h"
 
+
+
+
+// float to fr32
+/*
+s32 float_to_fr32(float x) {
+    if(x > 0.f) {
+        return (s32)((double)x * (double)0x7fffffff);
+    } else {
+        return (s32)((double)(x * -1.f) * (double)0x80000000);
+    }
+}
+*/
+fract32 float_to_fr32(f32 x) {
+    if(x < 0.f) {
+        if(x < -1.f) {
+            return INT_MIN;
+        } else { 
+            return (fract32)( ( (f64)(INT_MAX) + 1 ) * (f64)x);
+        }
+    } else {
+        if(x > 1.f) {
+            return INT_MAX;
+        } else {
+            return (fract32)((f64)INT_MAX * (f64)x);
+        }
+    }
+}
+
 // print
 void parameter_print(char* buf, u16 x) { itoa_whole((s32)(x), (buf), 6); }
 

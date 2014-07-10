@@ -12,8 +12,8 @@ enc4                page select
 
 page PRGM
 encoders            select waveform (a dual wavetable)*
-encoders + enc0     phase trip point*
-encoders + enc1     blend wavetable A|B*
+encoders + enc0     phase trip point
+encoders + enc1     blend wavetable A|B
 encoders + enc2     *
 encoders + enc3     *
 

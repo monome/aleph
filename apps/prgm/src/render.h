@@ -17,6 +17,8 @@ extern void render_update(void);
 
 //PRGM
 extern void render_prgm(void);
+extern void render_phase(void);
+extern void render_blend(void);
 
 //TRACKER
 extern void render_tracker(void);

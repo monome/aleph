@@ -4,6 +4,11 @@
 #define _ALEPH_AVR32_APP_MIX_UTIL_H_
 
 #include "types.h"
+#include <limits.h>
+
+// convert float to fract32
+//extern s32 float_to_fr32(float x);
+extern fract32 float_to_fr32(f32 x);
 
 ///// print formatted string
 extern void parameter_print(char* buf, u16 x);
@@ -24,5 +29,7 @@ void uint_to_hex_ascii(char* dst, u32 src);
 
 // convert ascii hex string to uint
 u32 hex_ascii_to_uint(char* str);
+
+
 
 #endif // h guard

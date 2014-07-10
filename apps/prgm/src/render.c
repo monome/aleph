@@ -25,11 +25,11 @@
 #include "ctl.h"
 
 
+//regions
 static region bootScrollRegion = {.w = 128, .h = 64, .x = 0, .y = 0};
 
 static scroll bootScroll;
 
-//regions
 static const u8 numRegions = 4;
 
 static region prgm[4] = {
@@ -39,7 +39,6 @@ static region prgm[4] = {
     {.w=64, .h=32, .x = 64, .y = 32}
 };
 
-//array of pointers to prgm regions
 static region *prgmRegions[] = {
     &(prgm[0]),
     &(prgm[1]),
@@ -47,7 +46,6 @@ static region *prgmRegions[] = {
     &(prgm[3]),
 };
 
-//static region tracker = {.w=128, .h=64, .x = 0, .y = 0};
 static region tracker[4] = {
     {.w=64, .h=32, .x = 0, .y = 0},
     {.w=64, .h=32, .x = 64, .y = 0},
@@ -55,13 +53,13 @@ static region tracker[4] = {
     {.w=64, .h=32, .x = 64, .y = 32}
 };
 
-//array of pointers to prgm regions
 static region *trackerRegions[] = {
     &(tracker[0]),
     &(tracker[1]),
     &(tracker[2]),
     &(tracker[3]),
 };
+
 
 //initialization, called by app_init()
 void render_init(void) {
@@ -73,7 +71,6 @@ void render_init(void) {
         region_alloc((region*)(prgmRegions[i]));
     }    
 
-//    region_alloc((region*)(&tracker));
     for(i = 0; i<numRegions; i++) {
         region_alloc((region*)(trackerRegions[i]));
     }    
@@ -94,6 +91,18 @@ void render_startup (void) {
     print_fix16(renderFreq2, Freq2);
     print_fix16(renderFreq3, Freq3);
     render_tracker();
+    
+    Phase0 = Phase1 = Phase2 = Phase3 = 0;
+    print_fix16(renderPhase0, Phase0);
+    print_fix16(renderPhase1, Phase1);
+    print_fix16(renderPhase2, Phase2);
+    print_fix16(renderPhase3, Phase3);
+    
+    Blend0 = Blend1 = Blend2 = Blend3 = 0;
+    print_fix16(renderBlend0, Blend0);
+    print_fix16(renderBlend1, Blend1);
+    print_fix16(renderBlend2, Blend2);
+    print_fix16(renderBlend3, Blend3);
 }
 
 void render_update(void) {
@@ -122,13 +131,6 @@ void render_update(void) {
         }
     }
 
-/*
-    r = &tracker;
-    if(r->dirty) {
-        screen_draw_region(r->x, r->y, r->w, r->h, r->data);
-            r->dirty = 0;
-        }
-*/    
     app_resume();
 }
 
@@ -138,20 +140,31 @@ void render_prgm(void) {
     for(i = 0; i<numRegions; i++) {
         region_fill(&prgm[i], 0x0);
     }
-//    region_string(&prgm[0], renderFreq0, 0, 0, 0xf, 0, 0);
-//    region_string(&prgm[1], renderFreq1, 0, 0, 0xf, 0, 0);
-//    region_string(&prgm[2], renderFreq2, 0, 0, 0xf, 0, 0);
-//    region_string(&prgm[3], renderFreq3, 0, 0, 0xf, 0, 0);
+    /* region, string, offset x, offset y, color a, color b, size */
+    region_string(&prgm[0], renderPhase0, 0, 8, 0xf, 0, 0);
+    region_string(&prgm[1], renderPhase1, 0, 8, 0xf, 0, 0);
+    region_string(&prgm[2], renderPhase2, 0, 8, 0xf, 0, 0);
+    region_string(&prgm[3], renderPhase3, 0, 8, 0xf, 0, 0);
+    
+    region_string(&prgm[0], renderBlend0, 0, 16, 0xf, 0, 0);
+    region_string(&prgm[1], renderBlend1, 0, 16, 0xf, 0, 0);
+    region_string(&prgm[2], renderBlend2, 0, 16, 0xf, 0, 0);
+    region_string(&prgm[3], renderBlend3, 0, 16, 0xf, 0, 0);    
 }
 
-/*
-void render_freq(void) {
-    region_string(&prgm[0], renderFreq0, 0, 0, 0xf, 0, 0);
-    region_string(&prgm[1], renderFreq1, 0, 0, 0xf, 0, 0);
-    region_string(&prgm[2], renderFreq2, 0, 0, 0xf, 0, 0);
-    region_string(&prgm[3], renderFreq3, 0, 0, 0xf, 0, 0);
+void render_phase(void) {
+    region_string(&prgm[0], renderPhase0, 0, 8, 0xf, 0, 0);
+    region_string(&prgm[1], renderPhase1, 0, 8, 0xf, 0, 0);
+    region_string(&prgm[2], renderPhase2, 0, 8, 0xf, 0, 0);
+    region_string(&prgm[3], renderPhase3, 0, 8, 0xf, 0, 0);
 }
-*/
+
+void render_blend(void) {
+    region_string(&prgm[0], renderBlend0, 0, 16, 0xf, 0, 0);
+    region_string(&prgm[1], renderBlend1, 0, 16, 0xf, 0, 0);
+    region_string(&prgm[2], renderBlend2, 0, 16, 0xf, 0, 0);
+    region_string(&prgm[3], renderBlend3, 0, 16, 0xf, 0, 0);
+}
 
 //draw tracker page
 void render_tracker(void) {
@@ -164,13 +177,9 @@ void render_tracker(void) {
     region_string(&tracker[1], renderFreq1, 0, 0, 0xf, 0, 0);
     region_string(&tracker[2], renderFreq2, 0, 0, 0xf, 0, 0);
     region_string(&tracker[3], renderFreq3, 0, 0, 0xf, 0, 0);
-
-//    region_fill(&tracker, 0x0);
-//    region_string(&tracker, renderFreq0, 0, 0, 0xf, 0, 0);
 }
 
 void render_freq(void) {
-//    region_string(&tracker, renderFreq0, 0, 0, 0xf, 0, 0);
     region_string(&tracker[0], renderFreq0, 0, 0, 0xf, 0, 0);
     region_string(&tracker[1], renderFreq1, 0, 0, 0xf, 0, 0);
     region_string(&tracker[2], renderFreq2, 0, 0, 0xf, 0, 0);
