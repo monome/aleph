@@ -134,7 +134,12 @@ void handle_encoder_3(s32 val) {
 }
 
 void handle_key_0(s32 val) {
-    //nothing
+    if(val == 0) { return; }
+    
+    else {
+        ctl_param_change(eParamSyncTrig, 1);
+        ctl_param_change(eParamSyncTrig, 0);
+    }
 }
 
 void handle_key_1(s32 val) {

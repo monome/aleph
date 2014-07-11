@@ -36,6 +36,8 @@ static void handle_switch_0(s32 data);
 
 static void handle_switch_1(s32 data);
 
+static void handle_switch_3(s32 data);
+
 static void handle_switch_4(s32 val);
 
 static void handle_encoder_0(s32 val);
@@ -73,6 +75,10 @@ void handle_switch_0(s32 data) {
 
 void handle_switch_1(s32 data) {
     handle_sw(2, data > 0);
+}
+
+void handle_switch_3(s32 data) {
+    //nothing
 }
 
 void handle_encoder_0(s32 val) {
@@ -232,7 +238,7 @@ void select_prgm(void) {
     app_event_handlers[ kEventSwitch0 ]     = &handle_switch_0 ;
     app_event_handlers[ kEventSwitch1 ]     = &handle_switch_1 ;
 //    app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
-//    app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ;
+    app_event_handlers[ kEventSwitch3 ]     = &handle_switch_3 ;
     app_event_handlers[ kEventSwitch4 ]     = &handle_switch_4 ;
     
 }

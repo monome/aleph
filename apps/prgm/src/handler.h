@@ -6,4 +6,12 @@
 
 extern void assign_prgm_event_handlers(void);
 
+extern void adc_init(void);
+
+//sync trig
+#define ON 1
+#define OFF 0
+//s32 synctrig;
+u8 state;
+
 #endif 

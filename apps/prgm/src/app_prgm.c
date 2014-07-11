@@ -49,6 +49,8 @@ if(firstrun) {
     bfin_enable();
 
     init_app_timers();
+    
+    adc_init();
 
     render_startup();
     

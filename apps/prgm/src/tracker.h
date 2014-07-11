@@ -3,7 +3,7 @@
 #ifndef _ALEPH_APP_PRGM_TRACKER_H_
 #define _ALEPH_APP_PRGM_TRACKER_H_
 
-#define N_STEPS 8
+#define N_STEPS 4
 
 s32 Freq0;
 s32 Freq1;
