@@ -5,33 +5,34 @@
 
 //data types
 typedef struct _prgmData {
-  ModuleData super;
-  ParamData mParamData[eParamNumParams];
+    ModuleData super;
+    ParamData mParamData[eParamNumParams];
+    WavtabData mWavtabData;
 } prgmData;
 
 ModuleData *gModuleData;
 
-prgmOscillator *oscillator[N_OSCILLATORS];
-
 static prgmData *data;
 
-static const fract32 wavtab[WAVE_SHAPE_NUM][WAVE_TAB_SIZE] = { 
-#include "wavtab_data_inc.c" 
+prgmOscillator *oscillator[N_OSCILLATORS];
+
+
+//static variables
+static const fract32 mWavtabData[WAVE_SHAPE_NUM][WAVE_TAB_SIZE] = { 
+#include "wavtab1024_wf0.c"
 };
 
-
-//fixed variables
 static u32 sr;
 
 
-//static function declaration
+//static function declarations
 static inline fract32 freq_to_phase(fix16 freq);
 
 static inline void oscillator_calc_inc(prgmOscillator *oscillator);
 
 //init
 PrgmOscillatorpointer init(void);
-static void init_parameters(prgmOscillator *oscillator, wavtab_t tab, u32 sr);
+static void init_parameters(prgmOscillator *oscillator, WavtabData tab, u32 sr);
 
 static void oscillator_set_f(prgmOscillator *oscillator, fix16 f);
 static void oscillator_set_ff(prgmOscillator *oscillator, fix16 ff);
@@ -73,18 +74,19 @@ PrgmOscillatorpointer init(void) {
     return(PrgmOscillatorpointer)malloc(sizeof(prgmOscillator));    
 }
 
-    
-void init_parameters(prgmOscillator *osc, wavtab_t tab, u32 sr) {
+
+void init_parameters(prgmOscillator *osc, WavtabData tab, u32 sr) {
     prgmOscillator *oscillator = (prgmOscillator*)osc;
     
     oscillator->tab = tab;
     slew_init(oscillator->incSlew, 0, 0, 0);
+    slew_init(oscillator->ffSlew, 0, 0, 0);
     slew_init(oscillator->shapeSlew, 0, 0, 0);
     
     oscillator->frameVal = 0;
     oscillator->phase = 0;
     oscillator->trip = 0;
-    oscillator->tripPoint = &(oscillator->phase);   //assigns the address of phase to tripPoint
+    oscillator->tripPoint = &(oscillator->phase);
     oscillator->f = FIX16_ONE;
     oscillator->ff = 0;
     oscillator->ffAmount = 0;
@@ -104,14 +106,18 @@ void oscillator_set_f(prgmOscillator *oscillator, fix16 f) {
 }
 
 
+//017 TEST ffslew
 void oscillator_set_ff(prgmOscillator *oscillator, fix16 ff) {
-    oscillator->ff = fix16_mul(ff, oscillator->ffAmount);
+    oscillator->ffSlew.x = fix16_mul(ff, oscillator->ffAmount);
     oscillator_calc_inc(oscillator);
+    
+//FM: cos(angle += (incr + change))
 }
 
 
+//017 TEST 1v/oct scaling
 void oscillator_set_ffamount(prgmOscillator *oscillator, fix16 ffAmount) {
-    oscillator->ffAmount = ffAmount;
+    oscillator->ffAmount = (ffAmount * 16) / 15;  //scaled to 1v/oct
 }
 
 
@@ -126,16 +132,16 @@ void prgm_sync_trig(void) {
     
     else if(state == OFF) {
         state = ON;
-        
+    
         *oscillator[0]->tripPoint &= 0x80000000;
         *oscillator[0]->tripPoint = add_fr1x32((int)oscillator[0]->trip, 0x80000000) & 0x7fffffff;
         
         *oscillator[1]->tripPoint &= 0x80000000;
         *oscillator[1]->tripPoint = add_fr1x32((int)oscillator[1]->trip, 0x80000000) & 0x7fffffff;
-
+        
         *oscillator[2]->tripPoint &= 0x80000000;
         *oscillator[2]->tripPoint = add_fr1x32((int)oscillator[2]->trip, 0x80000000) & 0x7fffffff;
-
+        
         *oscillator[3]->tripPoint &= 0x80000000;
         *oscillator[3]->tripPoint = add_fr1x32((int)oscillator[3]->trip, 0x80000000) & 0x7fffffff;
     }
@@ -161,12 +167,13 @@ static inline fract32 param_unit_to_fr32(ParamValue v) {
 
 
 static inline fract32 oscillator_lookup(prgmOscillator *oscillator) {
+
     u32 waveIdxA = oscillator->wave >> (WAVE_SHAPE_IDX_SHIFT);
     u32 waveIdxB = waveIdxA + 1;
 
-    fract16 waveMulB = (oscillator->wave & (WAVE_SHAPE_MASK)) << (WAVE_SHAPE_MUL_SHIFT);
+    fract16 waveMulB = oscillator->wave;
     fract16 waveMulA = sub_fr1x16(0x7fff, waveMulB);
-        
+
     u32 signalIdxA = oscillator->phase >> WAVE_IDX_SHIFT; 
     u32 signalIdxB = (signalIdxA + 1) & WAVE_TAB_SIZE_1;
     fract16 signalMulB = (fract16)((oscillator->phase & (WAVE_IDX_MASK)) >> (WAVE_IDX_MUL_SHIFT));
@@ -213,17 +220,20 @@ static inline fract32 oscillator_lookup(prgmOscillator *oscillator) {
 }
 
 
+//017 TEST ffslew
 fract32 oscillator_next(prgmOscillator *oscillator) {                           
     slew16_calc (oscillator->shapeSlew);
+    slew32_calc (oscillator->ffSlew);
     slew32_calc (oscillator->incSlew);
     
     oscillator->inc = oscillator->incSlew.y;
+    oscillator->ff = oscillator->ffSlew.y;
     oscillator->wave = oscillator->shapeSlew.y;
 
     oscillator_advance(oscillator);
 
     prgm_sync_trig();
-            
+
     return oscillator_lookup(oscillator);
 }
 
@@ -233,12 +243,24 @@ void oscillator_advance(prgmOscillator *oscillator) {
 }
 
 
+//017 TEST...
+/*
+static void oscillator_amp (void) {
+buffer
+delay
+feedback
+phase invert
+*/
+
+
 static void calc_frame(void) {
     oscillator[0]->frameVal = shr_fr1x32(oscillator_next(oscillator[0]), 1);
     oscillator[1]->frameVal = shr_fr1x32(oscillator_next(oscillator[1]), 1);
     oscillator[2]->frameVal = shr_fr1x32(oscillator_next(oscillator[2]), 1);
     oscillator[3]->frameVal = shr_fr1x32(oscillator_next(oscillator[3]), 1);
-    
+
+//017 TEST...
+//    mix_adc();
 //    out[0] = add_fr1x32((shr_fr1x32(oscillator_next(oscillator[0]), 1)), 0x7fffffff);
 }
 
@@ -257,12 +279,13 @@ void module_init(void) {
     strcpy(gModuleData->name, "aleph-prgm");
     gModuleData->paramData = data->mParamData;
     gModuleData->numParams = eParamNumParams;
+    gModuleData->wavtabData = data->mWavtabData;
     
     sr = SAMPLERATE;
 
     for(i=0; i<N_OSCILLATORS; i++) {
         oscillator[i] = init();
-        init_parameters(oscillator[i], &wavtab, SAMPLERATE);
+        init_parameters(oscillator[i], &mWavtabData, SAMPLERATE);
     }
     
     param_setup(eParamFreq0, 220 << 16);
@@ -270,10 +293,10 @@ void module_init(void) {
     param_setup(eParamFreq2, 220 << 16);
     param_setup(eParamFreq3, 220 << 16);
 
-    param_setup(eParamFreqFine0, 0 << 16);
-    param_setup(eParamFreqFine1, 0 << 16);
-    param_setup(eParamFreqFine2, 0 << 16);
-    param_setup(eParamFreqFine3, 0 << 16);
+    param_setup(eParamFreqFine0, 0);
+    param_setup(eParamFreqFine1, 0);
+    param_setup(eParamFreqFine2, 0);
+    param_setup(eParamFreqFine3, 0);
     
     param_setup(eParamFFAmount0, 0);
     param_setup(eParamFFAmount1, 0);

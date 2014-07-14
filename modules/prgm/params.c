@@ -8,6 +8,7 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamFreq0].min = OSC_HZ_MIN;
     desc[eParamFreq0].max = OSC_HZ_MAX;
     desc[eParamFreq0].radix = OSC_HZ_RADIX;
+    //radix: 1 = signed fract (1.32), 16 = 16.16, 32 = signed int
 
     strcpy(desc[eParamFreq1].label, "osc1_f");
     desc[eParamFreq1].type = eParamTypeNote;
@@ -28,28 +29,28 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamFreq3].radix = OSC_HZ_RADIX;
 
     strcpy(desc[eParamFreqFine0].label, "osc0_ff");
-    desc[eParamFreqFine0].type = eParamTypeFix;
+    desc[eParamFreqFine0].type = eParamTypeNote;
     desc[eParamFreqFine0].min = 0x00000000;
-    desc[eParamFreqFine0].max = FR32_MAX;
-    desc[eParamFreqFine0].radix = 15;
+    desc[eParamFreqFine0].max = CV_VOCT_MAX;
+    desc[eParamFreqFine0].radix = CV_VOCT_RADIX;
     
     strcpy(desc[eParamFreqFine1].label, "osc1_ff");
-    desc[eParamFreqFine1].type = eParamTypeFix;
+    desc[eParamFreqFine1].type = eParamTypeNote;
     desc[eParamFreqFine1].min = 0x00000000;
-    desc[eParamFreqFine1].max = FR32_MAX;
-    desc[eParamFreqFine1].radix = 15;
+    desc[eParamFreqFine1].max = CV_VOCT_MAX;
+    desc[eParamFreqFine1].radix = CV_VOCT_RADIX;
 
     strcpy(desc[eParamFreqFine2].label, "osc2_ff");
-    desc[eParamFreqFine2].type = eParamTypeFix;
+    desc[eParamFreqFine2].type = eParamTypeNote;
     desc[eParamFreqFine2].min = 0x00000000;
-    desc[eParamFreqFine2].max = FR32_MAX;
-    desc[eParamFreqFine2].radix = 15;
+    desc[eParamFreqFine2].max = CV_VOCT_MAX;
+    desc[eParamFreqFine2].radix = CV_VOCT_RADIX;
 
     strcpy(desc[eParamFreqFine3].label, "osc3_ff");
-    desc[eParamFreqFine3].type = eParamTypeFix;
+    desc[eParamFreqFine3].type = eParamTypeNote;
     desc[eParamFreqFine3].min = 0x00000000;
-    desc[eParamFreqFine3].max = FR32_MAX;
-    desc[eParamFreqFine3].radix = 15;
+    desc[eParamFreqFine3].max = CV_VOCT_MAX;
+    desc[eParamFreqFine3].radix = CV_VOCT_RADIX;
     
     strcpy(desc[eParamFFAmount0].label, "osc0_ffamount");
     desc[eParamFFAmount0].type = eParamTypeFix;
@@ -59,7 +60,7 @@ void fill_param_desc(ParamDesc *desc) {
 
     strcpy(desc[eParamFFAmount1].label, "osc1_ffamount");
     desc[eParamFFAmount1].type = eParamTypeFix;
-    desc[eParamFFAmount1].min = 0;
+    desc[eParamFFAmount1].min = 0; 
     desc[eParamFFAmount1].max = FR32_MAX;
     desc[eParamFFAmount1].radix = 1;
 

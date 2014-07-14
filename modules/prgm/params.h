@@ -3,18 +3,18 @@
 
 #include "param_common.h"
 
-#define OSC_HZ_MIN 0x00010000      // 1 hz
-#define OSC_HZ_MAX 0x40000000    // 16384 hz
+#define OSC_HZ_MIN 0x00010000           //1 hz
+#define OSC_HZ_MAX 0x40000000           //16384 hz
 #define OSC_HZ_RADIX 15
 
-//#define RATIO_MIN 0x2000     //default 1/8 -> change to 1/64
-//#define RATIO_MAX 0x80000    //default 8 -> change to 10
-//#define RATIO_RADIX 1 //default 4
+//017 TEST
+//#define CV_VOCT_MAX 0x78000000        //10 octaves at 1v/octave
+#define CV_VOCT_MAX FR32_MAX            //10 octaves at 1v/octave
+#define CV_VOCT_RADIX 16
 
 #define PARAM_AMP_6 (FRACT32_MAX >> 1)
 #define PARAM_AMP_12 (FRACT32_MAX >> 2)
-#define PARAM_SLEW_DEFAULT  0x76000000
-
+#define PARAM_SLEW_DEFAULT 0x76000000
 
 enum params {
     eParamFreq0,

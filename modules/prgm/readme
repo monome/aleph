@@ -1,16 +1,15 @@
-tracker 0.1.5 info
+tracker/prgm 0.1.7 info
 
 oscillators 1-4 are sent to outputs 1-4, note that 3 and 4 are direct out, watch out for high levels!
 
 inputs
 osc_f           scaled pitch
-osc_ff          fine pitch, patch to cv input for vibrato/pitch bend
+osc_ff          fine pitch, 1v/oct (beta)
 osc_ffamount	fine pitch attenuator
 osc_wf          waveform
-sync_trig       sync trig, patch to cv input for synced oscillators
+sync_trig       sync trig
 osc_trip        sync trip point
 (osc_amp        bypassed)
 
 
-//Test2
-https://soundcloud.com/epla
+sound examples @ https://soundcloud.com/epla
