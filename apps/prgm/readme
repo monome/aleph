@@ -7,29 +7,30 @@ aleph-prgm.dsc -> ALEPH/mod/
 
 REBOOT with aleph-prgm.hex
 
-CONTROLS
-enc4                page select
+
+GLOBAL controls + I/O
+sw4                 page select
+
+outputs1-4          oscillator1-4
+                    outputs 3&4 are direct out, watch out for high levels!
+                    
+cv-in0              sync trig
+
+                    
 
 page PRGM
-encoders            select waveform (a dual wavetable)*
-encoders + enc0     phase trip point
-encoders + enc1     blend wavetable A|B
-encoders + enc2     *
-encoders + enc3     *
-
-page TRACKER (8 steps)
-encoders            scaled* pitch
-encoders + enc0     phase trip point*
-encoders + enc1     *
-encoders + enc2     *
-enc3                step + 1
-
-cv-in0              sync trig*
-cv-in1              *
-cv-in2              *
-cv-in3              *
-
-cv-outs             scaled* pitch
+encoders            *
+encoders + sw0      phase trip point
+encoders + sw1      blend wavetable A|B
 
 
-*not implemented/additional stuff will be added
+
+page TRACKER (4 steps, can be set to longer..)
+encoders            pitch*
+sw0                 sync trig
+sw3                 step+1
+
+
+
+
+*more stuff will be added

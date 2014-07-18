@@ -1,5 +1,5 @@
-//prgm
-//aleph-avr32
+//files.h
+//aleph-prgm-avr32
 
 #ifndef _ALEPH_APP_PRGM_FILES_H_
 #define _ALEPH_APP_PRGM_FILES_H_

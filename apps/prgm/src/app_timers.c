@@ -1,5 +1,7 @@
-/* app_timers.c
- 
+//app_timers.c
+//aleph-prgm-avr32
+
+ /*
  this is where callbacks are declared for all application-specific software timers.
  these callbacks are performed from the TC interrupt service routine.
  therefore, they should be kept small.

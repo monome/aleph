@@ -1,3 +1,6 @@
+//app_timers.h
+//aleph-prgm-avr32
+
 #ifndef _ALEPH_APP_PRGM_TIMERS_H_
 #define _ALEPH_APP_PRGM_TIMERS_H_
 

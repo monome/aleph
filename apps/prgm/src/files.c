@@ -1,5 +1,5 @@
-//prgm
-//aleph-avr32
+//files.c
+//aleph-prgm-avr32
 
 // std
 #include <stdlib.h>

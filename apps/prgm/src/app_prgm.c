@@ -1,5 +1,5 @@
-//prgm
-//aleph-avr32
+//app_prgm.c
+//aleph-prgm-avr32
 
 // asf
 #include "delay.h"

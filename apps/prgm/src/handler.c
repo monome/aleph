@@ -1,5 +1,7 @@
-//prgm
-//aleph-avr32
+//handler.c
+//aleph-prgm-avr32
+
+//RENAME TO global.c
 
 //asf
 #include "print_funcs.h"
@@ -18,22 +20,15 @@
 #include "ctl.h"
 
 
-//external functions
-void adc_init() { //called by app_launch()
-    timers_set_adc(10);
-}
-
+//static functions
+//static void handle_AppCustom(s32 data) {
+//    seq_advance();
+//}
 
 //static functions
 static void handle_Adc0(s32 data);
-static void handle_Switch6(s32 data);
-
-/*
-void handle_Adc0(s32 data) {
-    synctrig = data;
-    ctl_param_change(eParamSyncTrig, synctrig);
-}
-*/
+//static void handle_switch_6(s32 data);
+//static void handle_switch_7(s32 data);
 
 void handle_Adc0(s32 data) {
     if(data == 0)
@@ -50,72 +45,28 @@ void handle_Adc0(s32 data) {
         ;
 }
 
-/*
-static void handle_Adc1(s32 data) { 
-    //nothing
-}
+//MAKE THESE GLOBAL!
+//void handle_switch_6(s32 data) {
+    //step +1
+//}
 
-static void handle_Adc2(s32 data) { 
-//    op_adc_sys_input(opSysAdc, 2, data);
-}
-
-static void handle_Adc3(s32 data) { 
-//    op_adc_sys_input(opSysAdc, 3, data);
-}
-*/
-
-void handle_Switch6(s32 data) {
-    //nothing
-}
-
-/*
-static void handle_Switch7(s32 data) { 
-    // footswitch 2
-    //op_sw_sys_input(opSysSw[5], data > 0);
-} 
-
-//static functions
-static void handle_encoder_0(s32 val);
-
-static void ctrl_parameter(u32 pid, fract32 val);
-
-void handle_encoder_0(s32 val) {
-    print_dbg("\r\n encoder moving...");
-    print_dbg_ulong(val);
-    static s32 Freq;
-    Freq += val * 0x00010000;
-    ctrl_parameter(eParamFreq0, (u32)Freq);
-}
-
-void ctrl_parameter(u32 pid, fract32 val) {
-    print_dbg("\r\n parameter id...");
-    print_dbg_ulong(pid);
-    print_dbg("\r\n parameter value...");
-    print_dbg_ulong(val);
-    ctl_param_change(pid, val); //defined in control.h
-    
-}
-*/
+//void handle_switch_7(s32 data) {
+    //return to 1
+//}
 
 //external functions
+void adc_init() { //called by app_launch()
+    timers_set_adc(10);
+}
+
 void assign_prgm_event_handlers(void) {
-    
-//    app_event_handlers[ kEventAppCustom ]	= &net_poll_handler ;
-    app_event_handlers[ kEventAdc0 ] = &handle_Adc0 ;
+
+    app_event_handlers[ kEventAdc0 ] = &handle_Adc0 ; //sync trig
 //    app_event_handlers[ kEventAdc1 ] = &handle_Adc1 ;
 //    app_event_handlers[ kEventAdc2 ] = &handle_Adc2 ;
 //    app_event_handlers[ kEventAdc3 ] = &handle_Adc3 ;
-
-//    app_event_handlers[ kEventEncoder0 ] = &handle_encoder_0 ;
-//    app_event_handlers[ kEventEncoder1 ] = &handler_Encoder1 ;
-//    app_event_handlers[ kEventEncoder2 ] = &handler_Encoder2 ;
-//    app_event_handlers[ kEventEncoder3 ] = &handle_encoder_0 ;
-//    app_event_handlers[ kEventSwitch0 ]	= &handler_Switch0 ;
-//    app_event_handlers[ kEventSwitch1 ]	= &handler_Switch1 ;
-//    app_event_handlers[ kEventSwitch2 ]	= &handler_Switch2 ;
-//    app_event_handlers[ kEventSwitch3 ]	= &handler_Switch3 ;
-//    app_event_handlers[ kEventSwitch4 ]	= &handler_Switch4 ; //mode switch
-//    app_event_handlers[ kEventSwitch5 ]	= &handler_Switch5 ; //power switch
-    app_event_handlers[ kEventSwitch6 ]	= &handle_Switch6 ;
-//    app_event_handlers[ kEventSwitch7 ]	= &handle_Switch7 ; //sequencer restart at 1
+//    app_event_handlers[ kEventSwitch5 ]	= &handle_switch_5 ; //power switch
+//    app_event_handlers[ kEventSwitch6 ]	= &handle_switch_6 ; //sequencer +1
+//    app_event_handlers[ kEventSwitch7 ]	= &handle_switch_7 ; //sequencer restart at 1
+//    app_event_handlers[ kEventAppCustom ]	= &net_poll_handler ;
 }

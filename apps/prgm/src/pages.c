@@ -1,4 +1,7 @@
 //pages.c
+//aleph-prgm-avr32
+
+//CLEAN UP not used stuff..
 
 #ifdef ARCH_AVR32
 #include "print_funcs.h"
@@ -38,11 +41,6 @@ s8 pageIdx;
 u8 keyPressed = 255;
 
 //static variables
-
-// saved idx of last non-play page
-//static s8 lastPageIdx = 0;
-
-//-----------------------------------
 //----- external function definitions
 
 // init
@@ -54,10 +52,6 @@ void pages_init(void) {
     print_dbg("\r\n set page prgm");
     pageIdx = ePagePrgm;
     set_page(pageIdx);
-
-//    print_dbg("\r\n redram page prgm");
-//    redraw_prgm();
-//    redraw_tracker();
 }
 
 // de-init

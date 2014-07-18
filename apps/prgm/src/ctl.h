@@ -1,5 +1,7 @@
-//prgm
-//aleph-avr32
+//ctl.h
+//aleph-prgm-avr32
+
+//RENAME to parameters.h or something..
 
 
 #ifndef _ALEPH_APP_PRGM_CTL_H_
@@ -24,6 +26,11 @@ typedef enum params {
     eParamFFAmount1,
     eParamFFAmount2,
     eParamFFAmount3,
+    
+    eParamTab0,
+    eParamTab1,
+    eParamTab2,
+    eParamTab3,
     
     eParamWave0,
     eParamWave1,

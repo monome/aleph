@@ -1,5 +1,5 @@
-//prgm
-//aleph-avr32
+//ctl.c
+//aleph-prgm-avr32
 
 #include <string.h>
 

@@ -1,6 +1,5 @@
-//prgm
-//aleph-avr32
 //render.c
+//aleph-prgm-avr32
 
 //--- std headers
 #include <string.h>
@@ -92,6 +91,12 @@ void render_startup (void) {
     print_fix16(renderFreq3, Freq3);
     render_tracker();
     
+    Wave0 = Wave1 = Wave2 = Wave3 = 0;
+    print_fix16(renderWave0, Wave0);
+    print_fix16(renderWave1, Wave1);
+    print_fix16(renderWave2, Wave2);
+    print_fix16(renderWave3, Wave3);
+    
     Phase0 = Phase1 = Phase2 = Phase3 = 0;
     print_fix16(renderPhase0, Phase0);
     print_fix16(renderPhase1, Phase1);
@@ -141,6 +146,11 @@ void render_prgm(void) {
         region_fill(&prgm[i], 0x0);
     }
     /* region, string, offset x, offset y, color a, color b, size */
+    region_string(&prgm[0], renderWave0, 0, 0, 0xf, 0, 0);
+    region_string(&prgm[1], renderWave1, 0, 0, 0xf, 0, 0);
+    region_string(&prgm[2], renderWave2, 0, 0, 0xf, 0, 0);
+    region_string(&prgm[3], renderWave3, 0, 0, 0xf, 0, 0);
+
     region_string(&prgm[0], renderPhase0, 0, 8, 0xf, 0, 0);
     region_string(&prgm[1], renderPhase1, 0, 8, 0xf, 0, 0);
     region_string(&prgm[2], renderPhase2, 0, 8, 0xf, 0, 0);
@@ -150,6 +160,13 @@ void render_prgm(void) {
     region_string(&prgm[1], renderBlend1, 0, 16, 0xf, 0, 0);
     region_string(&prgm[2], renderBlend2, 0, 16, 0xf, 0, 0);
     region_string(&prgm[3], renderBlend3, 0, 16, 0xf, 0, 0);    
+}
+
+void render_wave(void) {
+    region_string(&prgm[0], renderWave0, 0, 0, 0xf, 0, 0);
+    region_string(&prgm[1], renderWave1, 0, 0, 0xf, 0, 0);
+    region_string(&prgm[2], renderWave2, 0, 0, 0xf, 0, 0);
+    region_string(&prgm[3], renderWave3, 0, 0, 0xf, 0, 0);
 }
 
 void render_phase(void) {

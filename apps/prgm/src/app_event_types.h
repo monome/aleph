@@ -1,5 +1,5 @@
-//prgm
-//aleph-avr32
+//app_event_types.h
+//aleph-prgm-avr32
 
 #ifndef _ALEPH_APP_PRGM_EVENT_TYPES_H_
 #define _ALEPH_APP_PRGM_EVENT_TYPES_H_

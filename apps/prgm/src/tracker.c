@@ -1,4 +1,5 @@
 //tracker.c
+//aleph-prgm-avr32
 
 // asf
 #include "gpio.h"
@@ -73,8 +74,9 @@ static void handle_encoder_2(s32 val);
 static void handle_encoder_3(s32 val);
 static void handle_key_0(s32 val);
 static void handle_key_1(s32 val);
-static void handle_key_3(s32 val);
+//static void handle_key_3(s32 val);
 static void handle_key_4(s32 val);
+static void handle_switch_3_6(s32 val);
 static inline u8 check_touch(etype et);
 
 //handler variables
@@ -146,8 +148,8 @@ void handle_key_1(s32 val) {
     //nothing
 }
 
-
-void handle_key_3(s32 val) {
+//MAKE THIS GLOBAL!
+void handle_switch_3_6(s32 val) {
     s32 tmp0;
     s32 tmp1;
     s32 tmp2;
@@ -235,13 +237,14 @@ void handle_key_4(s32 val) {
 //handler functions (external)
 void select_tracker(void) {
 //assign tracker handlers
-    app_event_handlers[ kEventEncoder0 ]	= &handle_encoder_3 ;
-    app_event_handlers[ kEventEncoder1 ]	= &handle_encoder_2 ;
-    app_event_handlers[ kEventEncoder2 ]	= &handle_encoder_1 ;
-    app_event_handlers[ kEventEncoder3 ]	= &handle_encoder_0 ;
-    app_event_handlers[ kEventSwitch0 ]	= &handle_key_0 ;
-    app_event_handlers[ kEventSwitch1 ]	= &handle_key_1 ;
+    app_event_handlers[ kEventEncoder0 ] = &handle_encoder_3 ;
+    app_event_handlers[ kEventEncoder1 ] = &handle_encoder_2 ;
+    app_event_handlers[ kEventEncoder2 ] = &handle_encoder_1 ;
+    app_event_handlers[ kEventEncoder3 ] = &handle_encoder_0 ;
+    app_event_handlers[ kEventSwitch0 ] = &handle_key_0 ;
+    app_event_handlers[ kEventSwitch1 ] = &handle_key_1 ;
     //    app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
-    app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ;
-    app_event_handlers[ kEventSwitch4 ]	= &handle_key_4 ;
+    app_event_handlers[ kEventSwitch3 ] = &handle_switch_3_6 ;
+    app_event_handlers[ kEventSwitch4 ] = &handle_key_4 ;
+    app_event_handlers[ kEventSwitch6 ] = &handle_switch_3_6 ;
 }

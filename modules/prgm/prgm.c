@@ -7,20 +7,95 @@
 typedef struct _prgmData {
     ModuleData super;
     ParamData mParamData[eParamNumParams];
-    WavtabData mWavtabData;
+    Wavtabs mWavtabs;
 } prgmData;
 
 ModuleData *gModuleData;
 
-static prgmData *data;
-
 prgmOscillator *oscillator[N_OSCILLATORS];
 
+static prgmData *data;
 
 //static variables
-static const fract32 mWavtabData[WAVE_SHAPE_NUM][WAVE_TAB_SIZE] = { 
-#include "wavtab1024_wf0.c"
+static fract32 wavtabA[WAVE_SHAPE_NUM][WAVE_TAB_SIZE] = {
+#include "wavtab512_wf0.c"
 };
+
+static fract32 wavtabB[WAVE_SHAPE_NUM][WAVE_TAB_SIZE] = {
+#include "wavtab512_wf1.c"
+};
+
+static fract32 wavtab0[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
+static fract32 wavtab1[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
+static fract32 wavtab2[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
+static fract32 wavtab3[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
+
+static void fill_wavetable(fract32 to[WAVE_SHAPE_NUM][WAVE_TAB_SIZE], fract32 from[WAVE_SHAPE_NUM][WAVE_TAB_SIZE]) {
+    int i;
+    
+    i = 0;
+    while (i < WAVE_TAB_SIZE) {
+        to[0][i] = from[0][i];
+        i++;
+    }
+    i = 0;
+    while (i < WAVE_TAB_SIZE) {
+        to[1][i] = from[1][i];
+        i++;
+    }
+}
+
+static void oscillator_set_wave0(prgmOscillator *oscillator, ParamValue v) {
+    if (v < 1) {
+        fill_wavetable(wavtab0, wavtabA);
+        oscillator->tab = &wavtab0;
+    }
+    else if (v > 1) { 
+        fill_wavetable(wavtab0, wavtabB);
+        oscillator->tab = &wavtab0;
+    }
+    else
+        ;
+}
+
+static void oscillator_set_wave1(prgmOscillator *oscillator, ParamValue v) {
+    if (v < 1) {
+        fill_wavetable(wavtab1, wavtabA);
+        oscillator->tab = &wavtab1;
+    }
+    else if (v > 1) { 
+        fill_wavetable(wavtab1, wavtabB);
+        oscillator->tab = &wavtab1;
+    }
+    else
+        ;
+}
+
+static void oscillator_set_wave2(prgmOscillator *oscillator, ParamValue v) {
+    if (v < 1) {
+        fill_wavetable(wavtab2, wavtabA);
+        oscillator->tab = &wavtab2;
+    }
+    else if (v > 1) { 
+        fill_wavetable(wavtab2, wavtabB);
+        oscillator->tab = &wavtab2;
+    }
+    else
+        ;
+}
+
+static void oscillator_set_wave3(prgmOscillator *oscillator, ParamValue v) {
+    if (v < 1) {
+        fill_wavetable(wavtab3, wavtabA);
+        oscillator->tab = &wavtab3;
+    }
+    else if (v > 1) { 
+        fill_wavetable(wavtab3, wavtabB);
+        oscillator->tab = &wavtab3;
+    }
+    else
+        ;
+}
 
 static u32 sr;
 
@@ -279,14 +354,20 @@ void module_init(void) {
     strcpy(gModuleData->name, "aleph-prgm");
     gModuleData->paramData = data->mParamData;
     gModuleData->numParams = eParamNumParams;
-    gModuleData->wavtabData = data->mWavtabData;
+    gModuleData->wavtabs = data->mWavtabs;
+    data->mWavtabs.wavtab0 = &wavtab0;
+    data->mWavtabs.wavtab1 = &wavtab1;
+    data->mWavtabs.wavtab2 = &wavtab2;
+    data->mWavtabs.wavtab3 = &wavtab3;
     
     sr = SAMPLERATE;
 
-    for(i=0; i<N_OSCILLATORS; i++) {
-        oscillator[i] = init();
-        init_parameters(oscillator[i], &mWavtabData, SAMPLERATE);
-    }
+    for(i=0; i<N_OSCILLATORS; i++) { oscillator[i] = init(); }
+    
+    init_parameters(oscillator[0], &wavtab0, SAMPLERATE);
+    init_parameters(oscillator[1], &wavtab1, SAMPLERATE);
+    init_parameters(oscillator[2], &wavtab2, SAMPLERATE);
+    init_parameters(oscillator[3], &wavtab3, SAMPLERATE);
     
     param_setup(eParamFreq0, 220 << 16);
     param_setup(eParamFreq1, 220 << 16);
@@ -302,6 +383,11 @@ void module_init(void) {
     param_setup(eParamFFAmount1, 0);
     param_setup(eParamFFAmount2, 0);
     param_setup(eParamFFAmount3, 0);
+    
+    param_setup(eParamTab0, 0);
+    param_setup(eParamTab1, 0);
+    param_setup(eParamTab2, 0);
+    param_setup(eParamTab3, 0);
 
     param_setup(eParamWave0, 0);
     param_setup(eParamWave1, 0);
@@ -381,7 +467,20 @@ void module_set_param(u32 idx, ParamValue v) {
             oscillator_set_ffamount(oscillator[3], v);
             break;
                         
-        case eParamWave0:
+        case eParamTab0: //RENAME TO eParamWave...
+            oscillator_set_wave0(oscillator[0], v);
+            break;
+        case eParamTab1:
+            oscillator_set_wave1(oscillator[1], v);
+            break;
+        case eParamTab2:
+            oscillator_set_wave2(oscillator[2], v);
+            break;
+        case eParamTab3:
+            oscillator_set_wave3(oscillator[3], v);
+            break; 
+
+        case eParamWave0: //RENAME TO eParamBlend...
             oscillator_set_shape(oscillator[0], param_unit_to_fr16(v));
             break;
         case eParamWave1:

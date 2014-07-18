@@ -14,7 +14,7 @@
 
 #define PARAM_AMP_6 (FRACT32_MAX >> 1)
 #define PARAM_AMP_12 (FRACT32_MAX >> 2)
-#define PARAM_SLEW_DEFAULT 0x76000000
+#define PARAM_SLEW_DEFAULT  0x76000000
 
 enum params {
     eParamFreq0,
@@ -31,6 +31,11 @@ enum params {
     eParamFFAmount1,
     eParamFFAmount2,
     eParamFFAmount3,
+
+    eParamTab0,
+    eParamTab1,
+    eParamTab2,
+    eParamTab3,
     
     eParamWave0,
     eParamWave1,

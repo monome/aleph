@@ -1,4 +1,5 @@
-// prgm.c
+//prgm.c
+//aleph-prgm-avr32
 
 // asf
 #include "print_funcs.h"
@@ -9,27 +10,22 @@
 // common
 #include "fix.h"
 
-//#include "fract32_emu.h"
-
 // avr32
 #include "region.h"
-#include "app.h"
-#include "bfin.h"
+#include "app.h" //remove
+#include "bfin.h" //remove
 #include "control.h"
 
 //prgm
+#include "prgm.h"
+#include "ctl.h"
+#include "render.h"
 #include "handler.h"
 #include "pages.h"
-#include "render.h"
-#include "ctl.h"
-#include "util.h"
-#include "prgm.h"
+#include "util.h" //remove
+
 
 //static functions
-//static void handle_AppCustom(s32 data) {
-//    seq_advance();
-//}
-
 static inline void handle_sw(u8 id, u8 b);
 
 static void handle_switch_0(s32 data);
@@ -82,15 +78,24 @@ void handle_switch_3(s32 data) {
 }
 
 void handle_encoder_0(s32 val) {
-//    static event_t e;
-    
     switch (state_sw) {
         case 0:
+            check_touch(kEventEncoder3);
+                if (touchedThis) {
+                    Wave0 += val;
+                    if (Wave0 < 1) Wave0 = 0;
+                    if (Wave0 > 1) Wave0 = 2;
+                    ctl_param_change(eParamTab0, Wave0);
+                    print_fix16(renderWave0, Wave0);
+                    render_wave();
+                }
             break;
+            
         case 1:
             check_touch(kEventEncoder3);
                 if (touchedThis) {
-                    Phase0 += val * 64;
+                    Phase0 += val * 128;
+                    if (Phase0 < 0) Phase0 = 0;
                     ctl_param_change(eParamTripPoint0, Phase0 & 0xffff);
                     print_fix16(renderPhase0, Phase0);
                     render_phase();
@@ -100,7 +105,8 @@ void handle_encoder_0(s32 val) {
         case 2:
             check_touch(kEventEncoder3);
                 if (touchedThis) {
-                    Blend0 += val * 64;
+                    Blend0 += val * 128;
+                    if (Blend0 < 0) Blend0 = 0;
                     ctl_param_change(eParamWave0, Blend0 & 0xffff);
                     print_fix16(renderBlend0, Blend0);
                     render_blend();
@@ -113,11 +119,22 @@ void handle_encoder_0(s32 val) {
 void handle_encoder_1(s32 val) {
     switch (state_sw) {
         case 0:
+            check_touch(kEventEncoder2);
+            if (touchedThis) {
+                Wave1 += val;
+                if (Wave1 < 1) Wave1 = 0;
+                if (Wave1 > 1) Wave1 = 2;
+                ctl_param_change(eParamTab1, Wave1);
+                print_fix16(renderWave1, Wave1);
+                render_wave();
+            }
             break;
+            
         case 1:
             check_touch(kEventEncoder2);
             if (touchedThis) {
-                Phase1 += val * 64;
+                Phase1 += val * 128;
+                if (Phase1 < 0) Phase1 = 0;
                 ctl_param_change(eParamTripPoint1, Phase1 & 0xffff);
                 print_fix16(renderPhase1, Phase1);
                 render_phase();
@@ -127,7 +144,8 @@ void handle_encoder_1(s32 val) {
         case 2:
             check_touch(kEventEncoder2);
             if (touchedThis) {
-                Blend1 += val * 64;
+                Blend1 += val * 128;
+                if (Blend1 < 0) Blend1 = 0;
                 ctl_param_change(eParamWave1, Blend1 & 0xffff);
                 print_fix16(renderBlend1, Blend1);
                 render_blend();
@@ -140,11 +158,22 @@ void handle_encoder_1(s32 val) {
 void handle_encoder_2(s32 val) {
     switch (state_sw) {
         case 0:
+            check_touch(kEventEncoder1);
+            if (touchedThis) {
+                Wave2 += val;
+                if (Wave2 < 1) Wave2 = 0;
+                if (Wave2 > 1) Wave2 = 2;
+                ctl_param_change(eParamTab2, Wave2);
+                print_fix16(renderWave2, Wave2);
+                render_wave();
+            }
             break;
+            
         case 1:
             check_touch(kEventEncoder1);
             if (touchedThis) {
-                Phase2 += val * 64;
+                Phase2 += val * 128;
+                if (Phase2 < 0) Phase2 = 0;
                 ctl_param_change(eParamTripPoint2, Phase2 & 0xffff);
                 print_fix16(renderPhase2, Phase2);
                 render_phase();
@@ -154,7 +183,8 @@ void handle_encoder_2(s32 val) {
         case 2:
             check_touch(kEventEncoder1);
             if (touchedThis) {
-                Blend2 += val * 64;
+                Blend2 += val * 128;
+                if (Blend2 < 0) Blend2 = 0;
                 ctl_param_change(eParamWave2, Blend2 & 0xffff);
                 print_fix16(renderBlend2, Blend2);
                 render_blend();
@@ -167,11 +197,22 @@ void handle_encoder_2(s32 val) {
 void handle_encoder_3(s32 val) {
     switch (state_sw) {
         case 0:
+            check_touch(kEventEncoder0);
+            if (touchedThis) {
+                Wave3 += val;
+                if (Wave3 < 1) Wave3 = 0;
+                if (Wave3 > 1) Wave3 = 2;
+                ctl_param_change(eParamTab3, Wave3);
+                print_fix16(renderWave3, Wave3);
+                render_wave();
+            }
             break;
+            
         case 1:
             check_touch(kEventEncoder0);
             if (touchedThis) {
-                Phase3 += val * 64;
+                Phase3 += val * 128;
+                if (Phase3 < 0) Phase3 = 0;
                 ctl_param_change(eParamTripPoint3, Phase3 & 0xffff);
                 print_fix16(renderPhase3, Phase3);
                 render_phase();
@@ -181,7 +222,8 @@ void handle_encoder_3(s32 val) {
         case 2:
             check_touch(kEventEncoder0);
             if (touchedThis) {
-                Blend3 += val * 64;
+                Blend3 += val * 128;
+                if (Blend3 < 0) Blend3 = 0;
                 ctl_param_change(eParamWave3, Blend3 & 0xffff);
                 print_fix16(renderBlend3, Blend3);
                 render_blend();
@@ -190,35 +232,6 @@ void handle_encoder_3(s32 val) {
             break;
     }
 }
-
-/*
- void handle_key_3(s32 val) {
- s32 tmp;
- if(val == 0) { return; }
- 
- else if (counter < N_STEPS - 1) {
- tmp = Freq0;
- step[counter]->osc_f = tmp;
- counter++;
- Freq0 = step[counter]->osc_f;
- ctl_param_change(eParamFreq0, Freq0);
- print_fix16(renderFreq0, Freq0);
- render_freq();
- }
-*/
-//#define FR32_MAX      0x7fffffff
-//#define FR32_MIN      0x80000000
-
-//static inline fract16 param_unit_to_fr16(ParamValue v);
-//static inline fract32 param_unit_to_fr32(ParamValue v);
-
-//static inline fract16 param_unit_to_fr16(ParamValue v) {
-//    return (fract16)((v & 0xffff) >> 1);
-//}
-
-//static inline fract32 param_unit_to_fr32(ParamValue v) {
-//    return fr16_to_fr32((fract16)((v & 0xffff) >> 1));
-//}
 
 void handle_switch_4(s32 val) {
     if(val == 0) { return; }

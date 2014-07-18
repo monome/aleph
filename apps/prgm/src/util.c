@@ -1,5 +1,5 @@
-//prgm
-//aleph-avr32
+//util.c
+//aleph-prgm-avr32
 
 #include "fix.h"
 #include "util.h"

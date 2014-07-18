@@ -76,6 +76,30 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamFFAmount3].max = FR32_MAX;
     desc[eParamFFAmount3].radix = 1;
 
+    strcpy(desc[eParamTab0].label, "osc0_tab");
+    desc[eParamTab0].type = eParamTypeFix;
+    desc[eParamTab0].min = 0;
+    desc[eParamTab0].max = 2;
+    desc[eParamTab0].radix = 0;
+
+    strcpy(desc[eParamTab1].label, "osc1_tab");
+    desc[eParamTab1].type = eParamTypeFix;
+    desc[eParamTab1].min = 0;
+    desc[eParamTab1].max = 2;
+    desc[eParamTab1].radix = 0;
+
+    strcpy(desc[eParamTab2].label, "osc2_tab");
+    desc[eParamTab2].type = eParamTypeFix;
+    desc[eParamTab2].min = 0;
+    desc[eParamTab2].max = 2;
+    desc[eParamTab2].radix = 0;
+
+    strcpy(desc[eParamTab3].label, "osc3_tab");
+    desc[eParamTab3].type = eParamTypeFix;
+    desc[eParamTab3].min = 0;
+    desc[eParamTab3].max = 2;
+    desc[eParamTab3].radix = 0;
+    
     strcpy(desc[eParamWave0].label, "osc0_wf");
     desc[eParamWave0].type = eParamTypeFix;
     desc[eParamWave0].min = 0;

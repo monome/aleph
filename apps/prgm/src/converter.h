@@ -1,3 +1,6 @@
+//converter.h
+//aleph-prgm-avr32
+
 #ifndef _ALEPH_APP_PRGM_CONVERTER_H_
 #define _ALEPH_APP_PRGM_CONVERTER_H_
 

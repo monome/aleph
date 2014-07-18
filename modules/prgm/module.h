@@ -29,7 +29,7 @@ typedef struct _moduleData {
     char name[MODULE_NAME_LEN];
     ParamData *paramData; 
     u16 numParams;
-    WavtabData wavtabData;
+    Wavtabs wavtabs;
 } ModuleData;
 
 //---------
