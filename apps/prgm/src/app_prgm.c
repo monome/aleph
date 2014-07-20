@@ -14,17 +14,19 @@
 
 //prgm
 #include "app_timers.h"
-#include "files.h"
+#include "files.h" //wavetables_init, files_load_dsp
 #include "pages.h"
-#include "handler.h"
+#include "handler.h" //adc_init
 #include "ctl.h"
-#include "render.h"
+#include "render.h" 
 #include "encoders.h"
 
 
 //hardware initialization, memory allocation
 void app_init(void) {
-    render_init();
+    wavetables_init();
+
+    render_init(); //includes tracker_init()
 }
 
 u8 app_launch(u8 firstrun) {
@@ -41,7 +43,6 @@ if(firstrun) {
 
     bfin_wait_ready();
     }
-
     ctl_report_parameters();
 
     pages_init();
@@ -51,11 +52,11 @@ if(firstrun) {
     init_app_timers();
     
     adc_init();
-
+    
     render_startup();
     
     assign_prgm_event_handlers();
-        
+                    
     print_dbg("\r\n return 1...");
     return 1;
 }

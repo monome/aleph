@@ -49,7 +49,7 @@ void pages_init(void) {
     
     print_dbg("\r\n pages init");
 
-    print_dbg("\r\n set page prgm");
+    print_dbg("\r\n set page PRGM");
     pageIdx = ePagePrgm;
     set_page(pageIdx);
 }

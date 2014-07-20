@@ -12,7 +12,7 @@
 // aleph-avr32
 #include "app.h"
 #include "bfin.h"
-#include "filesystem.h"
+#include "filesystem.h" //includes fat_filelib.h
 #include "flash.h"
 #include "memory.h"
 
@@ -20,24 +20,81 @@
 #include "files.h"
 #include "render.h"
 
-#define DSP_PATH "/mod/aleph-prgm.ldr"
-#define DSC_PATH "/mod/aleph-prgm.dsc"
 
-// fread: no size arg
-static void fake_fread(volatile u8 *dst, u32 len, void *fp) {
-    u32 n = 0;
-#if 0
-    fl_fread(&dst, 1, len, fp);
-#else
-    while(n < len) {
-        *dst = fl_fgetc(fp);
-        n++;
-        dst++;
+typedef struct _dirList {
+    char path[MAX_PATH];
+    volatile char nameBuf[DIR_LIST_NAME_BUF_SIZE];
+    u32 num;
+} dirList_t;
+
+static dirList_t tabList;
+typedef wave *wavePointer;
+
+
+//static function declarations
+static wavePointer init(void);
+static void fake_fread(volatile u8 *dst, u32 len, void *fp);
+
+
+//external functions
+void wavetables_init(void) {
+    FL_DIR dirstat;
+    struct fs_dir_ent dirent; //see fat_access.h
+    
+    int i = 0;
+    tabList.num = 0;
+    
+    strcpy(tabList.path, TAB_PATH);
+    
+    if (fl_opendir(tabList.path, &dirstat))
+    {        
+        while (fl_readdir(&dirstat, &dirent) == 0)
+        {
+            if (!(dirent.is_dir))
+            {
+                wavetables[i] = init();
+                strcpy(tabList.path, TAB_PATH);
+                **wavetables[i] = strcat(tabList.path, dirent.filename);
+                print_dbg("\r\n wavetable path: ");
+                print_dbg(**wavetables[i]);
+                tabList.num++;
+                i++;
+            }
+        }
+        //fl_closedir(&dirstat);
     }
-#endif
 }
 
-// search for specified dsp file and load it
+
+void files_load_wavetable(void) {
+    void *fp = **wavetables[0];
+    print_dbg("\r\n wavetable path: ");
+    print_dbg(fp);
+    volatile u8 *tbuf = 0; //WHAT SIZE, HOW TO DEFINE?
+    u32 size = 0;
+    u8 ret = 0;
+
+app_pause();
+    //open file
+    fl_fopen(fp, "r");
+    
+    if (fp != NULL)
+    {
+        size = ((FL_FILE*)(fp))->filelength;
+        fake_fread(tbuf, size, fp);
+        fl_fclose(fp);
+        
+//        bfin_load_wavetable(); //DO I NEED TO TAILOR A FUNCTION TO TRANSFER A WAVETABLE?
+        
+    }
+    else
+    {
+        ret = 0;
+    }
+    app_resume();
+}
+
+
 u8 files_load_dsp(void) {
     void *fp;
     u32 size = 0;
@@ -49,7 +106,7 @@ u8 files_load_dsp(void) {
     
     fp = fl_fopen(DSP_PATH, "r");
     print_dbg("\r\n found file...");
-        
+    
     if(fp != NULL) {
         size = ((FL_FILE*)(fp))->filelength;
         print_dbg("\r\n found file, loading dsp: ");
@@ -60,12 +117,12 @@ u8 files_load_dsp(void) {
         
         if(bfinLdrSize > 0) {
             print_dbg("\r\n loading bfin from buf");
-
+            
             bfin_load_buf();
             
             print_dbg("\r\n finished load");
-//            print_dbg("\r\n loading parameter descriptor file...");
-//            ret = files_load_desc(name);
+            //            print_dbg("\r\n loading parameter descriptor file...");
+            //            ret = files_load_desc(name);
             
             ret = 1;
         } else {
@@ -81,98 +138,22 @@ u8 files_load_dsp(void) {
     return ret;
 }
 
-/*
-u8 files_load_wavetable(const char* name) {
-    void *fp;
-    u32 size = 0;
-    u8 ret = 0;
-    
-app_pause();
- 
- fp = list_open_file_name(&sceneList, name, "r", &size);
- 
- if( fp != NULL) {	  
- print_dbg("\r\n reading binary into sceneData serialized data buffer...");
- fake_fread((volatile u8*)sceneData, sizeof(sceneData_t), fp);
- print_dbg(" done.");
-  
- fl_fclose(fp);
- scene_read_buf();
- 
- // try and load dsp module indicated by scene descriptor
- //// DUDE! NO!!! scene does this. when did this happen!
- //// probably snuck in in some merge.
- //    ret = files_load_dsp_name(sceneData->desc.moduleName);
- } else {
- print_dbg("\r\n error: fp was null in files_load_scene_name \r\n");
- ret = 0;
- } 
- 
- app_resume();
- return ret;
- }
-*/
 
-/*
-// search for named .dsc file and load into network param desc memory
-u8 files_load_dsp_parameters(void) {
-    char path[64] = DSP_PATH;
-    void *fp;
-    int nparams = -1;
-    // word buffer for 4-byte unpickling
-    u8 nbuf[4];
-    // buffer for binary blob of single descriptor
-    u8 dbuf[PARAM_DESC_PICKLE_BYTES];
-    // unpacked descriptor
-
-    ParamDesc desc;
-    int i;
-    u8 ret = 0;
-    
-    app_pause();
-    
-    strcat(path, name);
-    strip_ext(path);
-    strcat(path, ".dsc");
-    
-    print_dbg("\r\n  opening .dsc file at path: ");
-    print_dbg(path);
-    
-    fp = fl_fopen(path, "r");
-    if(fp == NULL) {
-        print_dbg("... error opening .dsc file.");
-        print_dbg(path);
-        ret = 1;
-    } else {
-        
-        // get number of parameters
-        fake_fread(nbuf, 4, fp);
-        unpickle_32(nbuf, (u32*)&nparams); 
-        
-        /// loop over params
-        if(nparams > 0) {
-            net_clear_params();
-            //    net->numParams = nparams;
-            
-            for(i=0; i<nparams; i++) {
-                //  FIXME: a little gross,
-                // to be interleaving network and file manipulation like this...
-                ///....
-                // read into desc buffer
-                fake_fread(dbuf, PARAM_DESC_PICKLE_BYTES, fp);
-                // unpickle directly into network descriptor memory
-                pdesc_unpickle( &desc, dbuf );
-                // copy descriptor to network and increment count
-                net_add_param(i, (const ParamDesc*)(&desc));     
-                
-            }
-        } else {
-            print_dbg("\r\n error: crazy parameter count from descriptor file.");
-            ret = 1;
-        }
-    }
-    fl_fclose(fp);
-    app_resume();
-    return ret;
+//static functions
+wavePointer init(void) { //return pointer to chunk of memory to hold one wavetable file path
+    return(wavePointer)alloc_mem(sizeof(wave));
 }
-*/
+
+
+void fake_fread(volatile u8 *dst, u32 len, void *fp) { //fread: no size arg
+    u32 n = 0;
+#if 0
+    fl_fread(&dst, 1, len, fp);
+#else
+    while(n < len) {
+        *dst = fl_fgetc(fp);
+        n++;
+        dst++;
+    }
+#endif
+}

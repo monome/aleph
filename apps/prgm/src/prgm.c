@@ -82,12 +82,8 @@ void handle_encoder_0(s32 val) {
         case 0:
             check_touch(kEventEncoder3);
                 if (touchedThis) {
-                    Wave0 += val;
-                    if (Wave0 < 1) Wave0 = 0;
-                    if (Wave0 > 1) Wave0 = 2;
-                    ctl_param_change(eParamTab0, Wave0);
-                    print_fix16(renderWave0, Wave0);
-                    render_wave();
+//                    files_load_wavetable(val); WELL... THIS IS THE IDEA!
+//                    render_wave();
                 }
             break;
             

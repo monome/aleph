@@ -16,10 +16,12 @@ outputs1-4          oscillator1-4
                     
 cv-in0              sync trig
 
+foot1               step+1
+
                     
 
 page PRGM
-encoders            *
+encoders            waveform select
 encoders + sw0      phase trip point
 encoders + sw1      blend wavetable A|B
 
@@ -29,7 +31,6 @@ page TRACKER (4 steps, can be set to longer..)
 encoders            pitch*
 sw0                 sync trig
 sw3                 step+1
-
 
 
 
