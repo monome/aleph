@@ -34,7 +34,7 @@ static void handle_switch_1(s32 data);
 
 static void handle_switch_3(s32 data);
 
-static void handle_switch_4(s32 val);
+static void handle_switch_4(s32 data);
 
 static void handle_encoder_0(s32 val);
 
@@ -47,6 +47,7 @@ static void handle_encoder_3(s32 val);
 
 static etype touched = kNumEventTypes;
 static u8 touchedThis = 0;
+static u8 state_sw;
 
 static inline u8 check_touch(etype et) {
     if(touched != et) {
@@ -84,6 +85,12 @@ void handle_encoder_0(s32 val) {
                 if (touchedThis) {
 //                    files_load_wavetable(val); WELL... THIS IS THE IDEA!
 //                    render_wave();
+                    Wave0 += val;
+                    if (Wave0 < 1) Wave0 = 0;
+                    if (Wave0 > 1) Wave0 = 2;
+                    ctl_param_change(eParamTab0, Wave0);
+                    print_fix16(renderWave0, Wave0);
+                    render_wave();
                 }
             break;
             
@@ -107,6 +114,8 @@ void handle_encoder_0(s32 val) {
                     print_fix16(renderBlend0, Blend0);
                     render_blend();
                 }
+            break;
+            
         default:
             break;
     }
@@ -146,6 +155,8 @@ void handle_encoder_1(s32 val) {
                 print_fix16(renderBlend1, Blend1);
                 render_blend();
             }
+            break;
+            
         default:
             break;
     }
@@ -185,6 +196,8 @@ void handle_encoder_2(s32 val) {
                 print_fix16(renderBlend2, Blend2);
                 render_blend();
             }
+            break;
+            
         default:
             break;
     }
@@ -224,13 +237,15 @@ void handle_encoder_3(s32 val) {
                 print_fix16(renderBlend3, Blend3);
                 render_blend();
             }
+            break;
+            
         default:
             break;
     }
 }
 
-void handle_switch_4(s32 val) {
-    if(val == 0) { return; }
+void handle_switch_4(s32 data) {
+    if(data == 0) { return; }
     
     else {
         set_page(ePageTracker);
@@ -249,5 +264,4 @@ void select_prgm(void) {
 //    app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
     app_event_handlers[ kEventSwitch3 ]     = &handle_switch_3 ;
     app_event_handlers[ kEventSwitch4 ]     = &handle_switch_4 ;
-    
 }

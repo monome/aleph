@@ -27,7 +27,7 @@
 
 //static functions
 static void handle_Adc0(s32 data);
-//static void handle_switch_6(s32 data);
+static void handle_switch_6(s32 data);
 //static void handle_switch_7(s32 data);
 
 void handle_Adc0(s32 data) {
@@ -45,14 +45,13 @@ void handle_Adc0(s32 data) {
         ;
 }
 
-//MAKE THESE GLOBAL!
-//void handle_switch_6(s32 data) {
-    //step +1
-//}
+void handle_switch_6(s32 data) {
+    step_advance(data);
+}
 
-//void handle_switch_7(s32 data) {
-    //return to 1
-//}
+void handle_switch_7(s32 data) {
+    step_advance_t(data);
+}
 
 //external functions
 void adc_init() { //called by app_launch()
@@ -66,7 +65,7 @@ void assign_prgm_event_handlers(void) {
 //    app_event_handlers[ kEventAdc2 ] = &handle_Adc2 ;
 //    app_event_handlers[ kEventAdc3 ] = &handle_Adc3 ;
 //    app_event_handlers[ kEventSwitch5 ]	= &handle_switch_5 ; //power switch
-//    app_event_handlers[ kEventSwitch6 ]	= &handle_switch_6 ; //sequencer +1
+    app_event_handlers[ kEventSwitch6 ] = &handle_switch_6 ; //sequencer +1
 //    app_event_handlers[ kEventSwitch7 ]	= &handle_switch_7 ; //sequencer restart at 1
 //    app_event_handlers[ kEventAppCustom ]	= &net_poll_handler ;
 }

@@ -23,6 +23,7 @@ extern void render_blend(void);
 //TRACKER
 extern void render_tracker(void);
 extern void render_freq(void);
+extern void render_transpose(void);
 
 #endif
 

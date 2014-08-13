@@ -20,15 +20,19 @@
 #include "ctl.h"
 #include "render.h" 
 #include "encoders.h"
+#include "scale.h" //scale_init
 
 
-//hardware initialization, memory allocation
+//hardware init, all memory allocations go here
 void app_init(void) {
     wavetables_init();
+    
+    scale_init();
 
     render_init(); //includes tracker_init()
 }
 
+//dsp init
 u8 app_launch(u8 firstrun) {
 if(firstrun) {
     print_dbg("\r\n app_launch firstrun...");    
@@ -56,7 +60,7 @@ if(firstrun) {
     render_startup();
     
     assign_prgm_event_handlers();
-                    
+    
     print_dbg("\r\n return 1...");
     return 1;
 }

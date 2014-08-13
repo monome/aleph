@@ -17,10 +17,10 @@ typedef enum params {
     eParamFreq2,
     eParamFreq3,
     
-    eParamFreqFine0,
-    eParamFreqFine1,
-    eParamFreqFine2,
-    eParamFreqFine3,
+    eParamTranspose0,
+    eParamTranspose1,
+    eParamTranspose2,
+    eParamTranspose3,
     
     eParamFFAmount0,
     eParamFFAmount1,
@@ -48,6 +48,16 @@ typedef enum params {
     eParamAmp1,
     eParamAmp2,
     eParamAmp3,
+    
+    eParamCVfreq0,
+    eParamCVfreq1,
+    eParamCVfreq2,
+    eParamCVfreq3,
+    
+    eParamCVtranspose0,
+    eParamCVtranspose1,
+    eParamCVtranspose2,
+    eParamCVtranspose3,
     
     eParamNumParams
 } eParam;

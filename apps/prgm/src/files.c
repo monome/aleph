@@ -36,6 +36,26 @@ static wavePointer init(void);
 static void fake_fread(volatile u8 *dst, u32 len, void *fp);
 
 
+//static functions
+wavePointer init(void) { //return pointer to chunk of memory to hold one wavetable file path
+    return(wavePointer)alloc_mem(sizeof(wave));
+}
+
+
+void fake_fread(volatile u8 *dst, u32 len, void *fp) { //fread: no size arg
+    u32 n = 0;
+#if 0
+    fl_fread(&dst, 1, len, fp);
+#else
+    while(n < len) {
+        *dst = fl_fgetc(fp);
+        n++;
+        dst++;
+    }
+#endif
+}
+
+
 //external functions
 void wavetables_init(void) {
     FL_DIR dirstat;
@@ -136,24 +156,4 @@ u8 files_load_dsp(void) {
     
     app_resume();
     return ret;
-}
-
-
-//static functions
-wavePointer init(void) { //return pointer to chunk of memory to hold one wavetable file path
-    return(wavePointer)alloc_mem(sizeof(wave));
-}
-
-
-void fake_fread(volatile u8 *dst, u32 len, void *fp) { //fread: no size arg
-    u32 n = 0;
-#if 0
-    fl_fread(&dst, 1, len, fp);
-#else
-    while(n < len) {
-        *dst = fl_fgetc(fp);
-        n++;
-        dst++;
-    }
-#endif
 }

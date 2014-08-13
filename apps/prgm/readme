@@ -1,4 +1,4 @@
-PRGM/TRACKER beta 0.0.0 for Aleph
+PRGM/TRACKER beta 0.0.1 for Aleph
 
 install/filecopy to SD-CARD (ALEPH):
 aleph-prgm.hex -> ALEPH/app/
@@ -8,17 +8,24 @@ aleph-prgm.dsc -> ALEPH/mod/
 REBOOT with aleph-prgm.hex
 
 
-GLOBAL controls + I/O
+
+GLOBAL controls
 sw4                 page select
 
-outputs1-4          oscillator1-4
-                    outputs 3&4 are direct out, watch out for high levels!
-                    
-cv-in0              sync trig
 
-foot1               step+1
+I/O
+audio outputs 0-3   oscillator 1-4 - outputs 3&4 are direct out, watch out for high levels!
+foot1               sequence step+1
+foot2               transpose step+1
+cv input 0          sync trig
+cv outputs 0-3      scaled pitch, 1v/oct
 
-                    
+
+page TRACKER (4 steps, can be set to longer..)
+encoders            scaled pitch
+sw0                 sequence step+1
+sw1                 transpose step+1
+sw2 + enc0-3        transpose pitch
 
 page PRGM
 encoders            waveform select
@@ -26,12 +33,4 @@ encoders + sw0      phase trip point
 encoders + sw1      blend wavetable A|B
 
 
-
-page TRACKER (4 steps, can be set to longer..)
-encoders            pitch*
-sw0                 sync trig
-sw3                 step+1
-
-
-
-*more stuff will be added
+sound examples @ https://soundcloud.com/epla

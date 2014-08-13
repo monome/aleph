@@ -14,6 +14,7 @@
 #include "memory.h"
 #include "region.h"
 #include "screen.h"
+#include "control.h"
 
 //prgm
 #include "pages.h"
@@ -22,7 +23,7 @@
 #include "prgm.h"
 #include "tracker.h"
 #include "ctl.h"
-
+#include "scale.h"
 
 //regions
 static region bootScrollRegion = {.w = 128, .h = 64, .x = 0, .y = 0};
@@ -84,11 +85,34 @@ void render_boot(const char* str) {
 void render_startup (void) {
     screen_clear();
     set_page(ePageTracker);
-    Freq0 = Freq1 = Freq2 = Freq3 = 220 * 0x00010000;
-    print_fix16(renderFreq0, Freq0);
+    
+    Transpose0 = transpose_lookup(0) * 0x00010000;
+    ctl_param_change(eParamTranspose0, Transpose0);
+    Transpose1 = transpose_lookup(0) * 0x00010000;
+    ctl_param_change(eParamTranspose1, Transpose1);
+    Transpose2 = transpose_lookup(0) * 0x00010000;
+    ctl_param_change(eParamTranspose2, Transpose2);
+    Transpose3 = transpose_lookup(0) * 0x00010000;
+    ctl_param_change(eParamTranspose3, Transpose3);
+    Freq0 = note_lookup(0) * 0x00010000;
+    ctl_param_change(eParamFreq0, Freq0);
+    Freq1 = note_lookup(0) * 0x00010000;
+    ctl_param_change(eParamFreq1, Freq1);
+    Freq2 = note_lookup(0) * 0x00010000;
+    ctl_param_change(eParamFreq2, Freq2);
+    Freq3 = note_lookup(0) * 0x00010000;
+    ctl_param_change(eParamFreq3, Freq3);
+
+    print_fix16(renderFreq0, fix16_mul(Freq0, Transpose0));
     print_fix16(renderFreq1, Freq1);
     print_fix16(renderFreq2, Freq2);
     print_fix16(renderFreq3, Freq3);
+
+    print_fix16(renderTranspose0, Transpose0);
+    print_fix16(renderTranspose1, Transpose1);
+    print_fix16(renderTranspose2, Transpose2);
+    print_fix16(renderTranspose3, Transpose3);
+
     render_tracker();
     
     Wave0 = Wave1 = Wave2 = Wave3 = 0;
@@ -194,6 +218,11 @@ void render_tracker(void) {
     region_string(&tracker[1], renderFreq1, 0, 0, 0xf, 0, 0);
     region_string(&tracker[2], renderFreq2, 0, 0, 0xf, 0, 0);
     region_string(&tracker[3], renderFreq3, 0, 0, 0xf, 0, 0);
+    
+    region_string(&tracker[0], renderTranspose0, 0, 8, 0xf, 0, 0);
+    region_string(&tracker[1], renderTranspose1, 0, 8, 0xf, 0, 0);
+    region_string(&tracker[2], renderTranspose2, 0, 8, 0xf, 0, 0);
+    region_string(&tracker[3], renderTranspose3, 0, 8, 0xf, 0, 0);
 }
 
 void render_freq(void) {
@@ -201,4 +230,11 @@ void render_freq(void) {
     region_string(&tracker[1], renderFreq1, 0, 0, 0xf, 0, 0);
     region_string(&tracker[2], renderFreq2, 0, 0, 0xf, 0, 0);
     region_string(&tracker[3], renderFreq3, 0, 0, 0xf, 0, 0);    
+}
+
+void render_transpose(void) {
+    region_string(&tracker[0], renderTranspose0, 0, 8, 0xf, 0, 0);
+    region_string(&tracker[1], renderTranspose1, 0, 8, 0xf, 0, 0);
+    region_string(&tracker[2], renderTranspose2, 0, 8, 0xf, 0, 0);
+    region_string(&tracker[3], renderTranspose3, 0, 8, 0xf, 0, 0);
 }

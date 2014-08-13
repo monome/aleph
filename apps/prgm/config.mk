@@ -16,14 +16,14 @@ CSRCS += \
 	$(APP_DIR)/src/app_prgm.c \
 	$(APP_DIR)/src/app_timers.c \
 	$(APP_DIR)/src/files.c \
-	$(APP_DIR)/src/converter.c \
 	$(APP_DIR)/src/handler.c \
 	$(APP_DIR)/src/ctl.c \
 	$(APP_DIR)/src/render.c \
 	$(APP_DIR)/src/util.c \
 	$(APP_DIR)/src/pages.c \
 	$(APP_DIR)/src/prgm.c \
-	$(APP_DIR)/src/tracker.c            
+	$(APP_DIR)/src/tracker.c \
+    $(APP_DIR)/src/scale.c
 
 # List of assembler source files.
 ASSRCS +=

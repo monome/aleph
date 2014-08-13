@@ -9,7 +9,7 @@ s32 Wave1;
 s32 Wave2;
 s32 Wave3;
 
-s32 Phase0; //convert to arrays, phase[4], blend[4] etc..
+s32 Phase0; //convert to arrays, phase[4], blend[4] etc.. OR use a struct for all
 s32 Phase1;
 s32 Phase2;
 s32 Phase3;
@@ -34,6 +34,6 @@ char renderBlend1[16];
 char renderBlend2[16];
 char renderBlend3[16];
 
-u8 state_sw;
+//u8 state_sw;
 
 #endif 
