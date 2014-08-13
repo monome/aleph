@@ -28,29 +28,29 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamFreq3].max = OSC_HZ_MAX;
     desc[eParamFreq3].radix = OSC_HZ_RADIX;
 
-    strcpy(desc[eParamFreqFine0].label, "osc0_ff");
-    desc[eParamFreqFine0].type = eParamTypeNote;
-    desc[eParamFreqFine0].min = 0x00000000;
-    desc[eParamFreqFine0].max = CV_VOCT_MAX;
-    desc[eParamFreqFine0].radix = CV_VOCT_RADIX;
+    strcpy(desc[eParamTranspose0].label, "osc0_t");
+    desc[eParamTranspose0].type = eParamTypeNote;
+    desc[eParamTranspose0].min = 0;
+    desc[eParamTranspose0].max = OSC_HZ_MAX;
+    desc[eParamTranspose0].radix = OSC_HZ_RADIX;
     
-    strcpy(desc[eParamFreqFine1].label, "osc1_ff");
-    desc[eParamFreqFine1].type = eParamTypeNote;
-    desc[eParamFreqFine1].min = 0x00000000;
-    desc[eParamFreqFine1].max = CV_VOCT_MAX;
-    desc[eParamFreqFine1].radix = CV_VOCT_RADIX;
+    strcpy(desc[eParamTranspose1].label, "osc1_t");
+    desc[eParamTranspose1].type = eParamTypeNote;
+    desc[eParamTranspose1].min = 0;
+    desc[eParamTranspose1].max = OSC_HZ_MAX;
+    desc[eParamTranspose1].radix = OSC_HZ_RADIX;
 
-    strcpy(desc[eParamFreqFine2].label, "osc2_ff");
-    desc[eParamFreqFine2].type = eParamTypeNote;
-    desc[eParamFreqFine2].min = 0x00000000;
-    desc[eParamFreqFine2].max = CV_VOCT_MAX;
-    desc[eParamFreqFine2].radix = CV_VOCT_RADIX;
+    strcpy(desc[eParamTranspose2].label, "osc2_t");
+    desc[eParamTranspose2].type = eParamTypeNote;
+    desc[eParamTranspose2].min = 0;
+    desc[eParamTranspose2].max = OSC_HZ_MAX;
+    desc[eParamTranspose2].radix = OSC_HZ_RADIX;
 
-    strcpy(desc[eParamFreqFine3].label, "osc3_ff");
-    desc[eParamFreqFine3].type = eParamTypeNote;
-    desc[eParamFreqFine3].min = 0x00000000;
-    desc[eParamFreqFine3].max = CV_VOCT_MAX;
-    desc[eParamFreqFine3].radix = CV_VOCT_RADIX;
+    strcpy(desc[eParamTranspose3].label, "osc3_t");
+    desc[eParamTranspose3].type = eParamTypeNote;
+    desc[eParamTranspose3].min = 0;
+    desc[eParamTranspose3].max = OSC_HZ_MAX;
+    desc[eParamTranspose3].radix = OSC_HZ_RADIX;
     
     strcpy(desc[eParamFFAmount0].label, "osc0_ffamount");
     desc[eParamFFAmount0].type = eParamTypeFix;
@@ -177,4 +177,52 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamAmp3].min = 0;
     desc[eParamAmp3].max = FR32_MAX >> 1;
     desc[eParamAmp3].radix = 32;
+
+    strcpy(desc[eParamCVfreq0].label, "cv0_f");
+    desc[eParamCVfreq0].type = eParamTypeFix;
+    desc[eParamCVfreq0].min = 0x00000000;
+    desc[eParamCVfreq0].max = PARAM_DAC_MAX;
+    desc[eParamCVfreq0].radix = PARAM_DAC_RADIX;
+
+    strcpy(desc[eParamCVfreq1].label, "cv1_f");
+    desc[eParamCVfreq1].type = eParamTypeFix;
+    desc[eParamCVfreq1].min = 0x00000000;
+    desc[eParamCVfreq1].max = PARAM_DAC_MAX;
+    desc[eParamCVfreq1].radix = PARAM_DAC_RADIX;
+
+    strcpy(desc[eParamCVfreq2].label, "cv2_f");
+    desc[eParamCVfreq2].type = eParamTypeFix;
+    desc[eParamCVfreq2].min = 0x00000000;
+    desc[eParamCVfreq2].max = PARAM_DAC_MAX;
+    desc[eParamCVfreq2].radix = PARAM_DAC_RADIX;
+
+    strcpy(desc[eParamCVfreq3].label, "cv3_f");
+    desc[eParamCVfreq3].type = eParamTypeFix;
+    desc[eParamCVfreq3].min = 0x00000000;
+    desc[eParamCVfreq3].max = PARAM_DAC_MAX;
+    desc[eParamCVfreq3].radix = PARAM_DAC_RADIX;
+    
+    strcpy(desc[eParamCVtranspose0].label, "cv0_t");
+    desc[eParamCVtranspose0].type = eParamTypeFix;
+    desc[eParamCVtranspose0].min = 0x00000000;
+    desc[eParamCVtranspose0].max = PARAM_DAC_MAX;
+    desc[eParamCVtranspose0].radix = PARAM_DAC_RADIX;
+
+    strcpy(desc[eParamCVtranspose1].label, "cv1_t");
+    desc[eParamCVtranspose1].type = eParamTypeFix;
+    desc[eParamCVtranspose1].min = 0x00000000;
+    desc[eParamCVtranspose1].max = PARAM_DAC_MAX;
+    desc[eParamCVtranspose1].radix = PARAM_DAC_RADIX;
+
+    strcpy(desc[eParamCVtranspose2].label, "cv2_t");
+    desc[eParamCVtranspose2].type = eParamTypeFix;
+    desc[eParamCVtranspose2].min = 0x00000000;
+    desc[eParamCVtranspose2].max = PARAM_DAC_MAX;
+    desc[eParamCVtranspose2].radix = PARAM_DAC_RADIX;
+
+    strcpy(desc[eParamCVtranspose3].label, "cv3_t");
+    desc[eParamCVtranspose3].type = eParamTypeFix;
+    desc[eParamCVtranspose3].min = 0x00000000;
+    desc[eParamCVtranspose3].max = PARAM_DAC_MAX;
+    desc[eParamCVtranspose3].radix = PARAM_DAC_RADIX;
 }

@@ -13,8 +13,10 @@ typedef struct _prgmData {
 ModuleData *gModuleData;
 
 prgmOscillator *oscillator[N_OSCILLATORS];
+prgmCvChannel *cvchannel[N_CVOUTPUTS];
 
 static prgmData *data;
+u8 cvChan = 0;
 
 //static variables
 static fract32 wavtabA[WAVE_SHAPE_NUM][WAVE_TAB_SIZE] = {
@@ -104,13 +106,16 @@ static u32 sr;
 static inline fract32 freq_to_phase(fix16 freq);
 
 static inline void oscillator_calc_inc(prgmOscillator *oscillator);
+static inline void cv_calc_inc(prgmCvChannel *cvchannel);
 
 //init
 PrgmOscillatorpointer init(void);
+PrgmCvChannelpointer init_channel(void);
 static void init_parameters(prgmOscillator *oscillator, WavtabData tab, u32 sr);
+static void init_cv_parameters(prgmCvChannel *cvchannel);
 
 static void oscillator_set_f(prgmOscillator *oscillator, fix16 f);
-static void oscillator_set_ff(prgmOscillator *oscillator, fix16 ff);
+static void oscillator_set_t(prgmOscillator *oscillator, fix16 t);
 static void oscillator_set_ffamount(prgmOscillator *oscillator, fix16 ffAmount);
 
 static void oscillator_set_shape(prgmOscillator *oscillator, fract16 wave);
@@ -122,6 +127,9 @@ static fract32 oscillator_next(prgmOscillator *oscillator);
 static void oscillator_advance(prgmOscillator *oscillator);
 
 static void calc_frame(void);
+
+static void cv_set_f(prgmCvChannel *cvchannel, fract32 f);
+static void cv_set_t(prgmCvChannel *cvchannel, fract32 t);
 
 //sync trig
 static void oscillator_sync_in(ParamValue v);
@@ -141,12 +149,30 @@ fract32 freq_to_phase(fix16 freq) {
 
 
 void oscillator_calc_inc(prgmOscillator *oscillator) {
-    oscillator->incSlew.x = freq_to_phase(fix16_mul(FIX16_ONE, (fix16_add(oscillator->f, oscillator->ff))));
+    oscillator->incSlew.x = freq_to_phase(fix16_mul(FIX16_ONE, (fix16_mul(oscillator->f, oscillator->t))));
+//    oscillator->incSlew.x = freq_to_phase(fix16_mul(FIX16_ONE, oscillator->f));
+}
+
+
+void cv_calc_inc(prgmCvChannel *cvchannel) {
+    filter_1p_lo_in(&(cvchannel->cvSlew), fix16_mul(FIX16_ONE, (fix16_mul(cvchannel->f, cvchannel->t))));
+    
+    if(filter_1p_sync(&(cvchannel->cvSlew))) {
+        ;;
+    } else {
+        cvchannel->cvVal = filter_1p_lo_next(&(cvchannel->cvSlew));
+        cv_update(cvChan, cvchannel->cvVal);
+    }
 }
 
 
 PrgmOscillatorpointer init(void) {
-    return(PrgmOscillatorpointer)malloc(sizeof(prgmOscillator));    
+    return(PrgmOscillatorpointer)malloc(sizeof(prgmOscillator));
+}
+
+
+PrgmCvChannelpointer init_channel(void) {
+    return(PrgmCvChannelpointer)malloc(sizeof(prgmCvChannel));
 }
 
 
@@ -155,7 +181,6 @@ void init_parameters(prgmOscillator *osc, WavtabData tab, u32 sr) {
     
     oscillator->tab = tab;
     slew_init(oscillator->incSlew, 0, 0, 0);
-    slew_init(oscillator->ffSlew, 0, 0, 0);
     slew_init(oscillator->shapeSlew, 0, 0, 0);
     
     oscillator->frameVal = 0;
@@ -163,10 +188,20 @@ void init_parameters(prgmOscillator *osc, WavtabData tab, u32 sr) {
     oscillator->trip = 0;
     oscillator->tripPoint = &(oscillator->phase);
     oscillator->f = FIX16_ONE;
-    oscillator->ff = 0;
+    oscillator->t = 0;
     oscillator->ffAmount = 0;
     oscillator->wave = 0;
     oscillator->amp = INT32_MAX >> 4;
+}
+
+
+void init_cv_parameters(prgmCvChannel *cv) {
+    prgmCvChannel *cvchannel = (prgmCvChannel*)cv;
+
+    cvchannel->cvVal = 0;
+    cvchannel->f = 0;
+    cvchannel->t = 0;
+    filter_1p_lo_in(&(cvchannel->cvSlew), 0xf);
 }
 
 
@@ -181,19 +216,17 @@ void oscillator_set_f(prgmOscillator *oscillator, fix16 f) {
 }
 
 
-//017 TEST ffslew
-void oscillator_set_ff(prgmOscillator *oscillator, fix16 ff) {
-    oscillator->ffSlew.x = fix16_mul(ff, oscillator->ffAmount);
+void oscillator_set_t(prgmOscillator *oscillator, fix16 t) {
+    oscillator->t = t;
     oscillator_calc_inc(oscillator);
-    
-//FM: cos(angle += (incr + change))
 }
 
 
-//017 TEST 1v/oct scaling
 void oscillator_set_ffamount(prgmOscillator *oscillator, fix16 ffAmount) {
-    oscillator->ffAmount = (ffAmount * 16) / 15;  //scaled to 1v/oct
+    oscillator->ffAmount = ffAmount;
 }
+//017 TEST 1v/oct scaling
+//    oscillator->ffAmount = (ffAmount * 16) / 15;  //scaled to 1v/oct
 
 
 void oscillator_sync_in(ParamValue v) {
@@ -231,6 +264,18 @@ void oscillator_set_trippoint(prgmOscillator *oscillator, fract32 trip) {
 }
 
 
+void cv_set_f(prgmCvChannel *cvchannel, fix16 f) {
+    cvchannel->f = f;
+    cv_calc_inc(cvchannel);
+}
+
+
+void cv_set_t(prgmCvChannel *cvchannel, fix16 t) {
+    cvchannel->t = t;
+    cv_calc_inc(cvchannel);
+}
+
+
 static inline fract16 param_unit_to_fr16(ParamValue v) {
     return (fract16)((v & 0xffff) >> 1);
 }
@@ -242,7 +287,6 @@ static inline fract32 param_unit_to_fr32(ParamValue v) {
 
 
 static inline fract32 oscillator_lookup(prgmOscillator *oscillator) {
-
     u32 waveIdxA = oscillator->wave >> (WAVE_SHAPE_IDX_SHIFT);
     u32 waveIdxB = waveIdxA + 1;
 
@@ -295,14 +339,11 @@ static inline fract32 oscillator_lookup(prgmOscillator *oscillator) {
 }
 
 
-//017 TEST ffslew
-fract32 oscillator_next(prgmOscillator *oscillator) {                           
+fract32 oscillator_next(prgmOscillator *oscillator) {
     slew16_calc (oscillator->shapeSlew);
-    slew32_calc (oscillator->ffSlew);
     slew32_calc (oscillator->incSlew);
     
     oscillator->inc = oscillator->incSlew.y;
-    oscillator->ff = oscillator->ffSlew.y;
     oscillator->wave = oscillator->shapeSlew.y;
 
     oscillator_advance(oscillator);
@@ -363,21 +404,27 @@ void module_init(void) {
     sr = SAMPLERATE;
 
     for(i=0; i<N_OSCILLATORS; i++) { oscillator[i] = init(); }
+    for(i=0; i<N_CVOUTPUTS; i++) { cvchannel[i] = init_channel(); }
     
     init_parameters(oscillator[0], &wavtab0, SAMPLERATE);
     init_parameters(oscillator[1], &wavtab1, SAMPLERATE);
     init_parameters(oscillator[2], &wavtab2, SAMPLERATE);
     init_parameters(oscillator[3], &wavtab3, SAMPLERATE);
     
+    init_cv_parameters(cvchannel[0]);
+    init_cv_parameters(cvchannel[1]);
+    init_cv_parameters(cvchannel[2]);
+    init_cv_parameters(cvchannel[3]);
+    
     param_setup(eParamFreq0, 220 << 16);
     param_setup(eParamFreq1, 220 << 16);
     param_setup(eParamFreq2, 220 << 16);
     param_setup(eParamFreq3, 220 << 16);
 
-    param_setup(eParamFreqFine0, 0);
-    param_setup(eParamFreqFine1, 0);
-    param_setup(eParamFreqFine2, 0);
-    param_setup(eParamFreqFine3, 0);
+    param_setup(eParamTranspose0, 0);
+    param_setup(eParamTranspose1, 0);
+    param_setup(eParamTranspose2, 0);
+    param_setup(eParamTranspose3, 0);
     
     param_setup(eParamFFAmount0, 0);
     param_setup(eParamFFAmount1, 0);
@@ -405,6 +452,16 @@ void module_init(void) {
     param_setup(eParamAmp1, PARAM_AMP_6);
     param_setup(eParamAmp2, PARAM_AMP_6);
     param_setup(eParamAmp3, PARAM_AMP_6);
+    
+    param_setup(eParamCVfreq0, PARAM_AMP_6);
+    param_setup(eParamCVfreq1, PARAM_AMP_6);
+    param_setup(eParamCVfreq2, PARAM_AMP_6);
+    param_setup(eParamCVfreq3, PARAM_AMP_6);
+
+    param_setup(eParamCVtranspose0, PARAM_AMP_6);
+    param_setup(eParamCVtranspose1, PARAM_AMP_6);
+    param_setup(eParamCVtranspose2, PARAM_AMP_6);
+    param_setup(eParamCVtranspose3, PARAM_AMP_6);
 }
 
 
@@ -417,7 +474,7 @@ extern u32 module_get_num_params(void) {
 
 
 void module_process_frame(void) {
-  calc_frame();
+    calc_frame();
     
     out[0] = add_fr1x32(oscillator[0]->frameVal, 0x7fffffff);
     out[1] = add_fr1x32(oscillator[1]->frameVal, 0x7fffffff);
@@ -441,17 +498,17 @@ void module_set_param(u32 idx, ParamValue v) {
             oscillator_set_f(oscillator[3], v);
             break;
             
-        case eParamFreqFine0:
-            oscillator_set_ff(oscillator[0], v);
+        case eParamTranspose0:
+            oscillator_set_t(oscillator[0], v);
             break;
-        case eParamFreqFine1:
-            oscillator_set_ff(oscillator[1], v);
+        case eParamTranspose1:
+            oscillator_set_t(oscillator[1], v);
             break;
-        case eParamFreqFine2:
-            oscillator_set_ff(oscillator[2], v);
+        case eParamTranspose2:
+            oscillator_set_t(oscillator[2], v);
             break;
-        case eParamFreqFine3:
-            oscillator_set_ff(oscillator[3], v);
+        case eParamTranspose3:
+            oscillator_set_t(oscillator[3], v);
             break;
 
         case eParamFFAmount0:
@@ -522,8 +579,43 @@ void module_set_param(u32 idx, ParamValue v) {
         case eParamAmp3:
             oscillator[3]->amp = (v);
             break;
+            
+        case eParamCVfreq0:
+            cv_set_f(cvchannel[0], v);
+            cvChan = 0;
+            break;
+        case eParamCVfreq1:
+            cv_set_f(cvchannel[1], v);
+            cvChan = 1;
+            break;
+        case eParamCVfreq2:
+            cv_set_f(cvchannel[2], v);
+            cvChan = 2;
+            break;
+        case eParamCVfreq3:
+            cv_set_f(cvchannel[3], v);
+            cvChan = 3;
+            break;
+            
+        case eParamCVtranspose0:
+            cv_set_t(cvchannel[0], v);
+            cvChan = 0;
+            break;
+        case eParamCVtranspose1:
+            cv_set_t(cvchannel[1], v);
+            cvChan = 1;
+            break;
+        case eParamCVtranspose2:
+            cv_set_t(cvchannel[2], v);
+            cvChan = 2;
+            break;
+        case eParamCVtranspose3:
+            cv_set_t(cvchannel[3], v);
+            cvChan = 3;
+            break;
 
         default:
             break;
     }
 }
+

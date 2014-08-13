@@ -12,6 +12,11 @@
 #define CV_VOCT_MAX FR32_MAX            //10 octaves at 1v/octave
 #define CV_VOCT_RADIX 16
 
+#define PARAM_DAC_MIN 0
+#define PARAM_DAC_MAX 0x7fffffff
+#define PARAM_DAC_RADIX 16
+#define PARAM_DAC_SHIFT (PARAM_DAC_RADIX) - 1
+
 #define PARAM_AMP_6 (FRACT32_MAX >> 1)
 #define PARAM_AMP_12 (FRACT32_MAX >> 2)
 #define PARAM_SLEW_DEFAULT  0x76000000
@@ -22,10 +27,10 @@ enum params {
     eParamFreq2,
     eParamFreq3,
     
-    eParamFreqFine0,
-    eParamFreqFine1,
-    eParamFreqFine2,
-    eParamFreqFine3,
+    eParamTranspose0,
+    eParamTranspose1,
+    eParamTranspose2,
+    eParamTranspose3,
 
     eParamFFAmount0,
     eParamFFAmount1,
@@ -53,6 +58,16 @@ enum params {
     eParamAmp1,
     eParamAmp2,
     eParamAmp3,
+    
+    eParamCVfreq0,
+    eParamCVfreq1,
+    eParamCVfreq2,
+    eParamCVfreq3,
+    
+    eParamCVtranspose0,
+    eParamCVtranspose1,
+    eParamCVtranspose2,
+    eParamCVtranspose3,
     
     eParamNumParams
 };

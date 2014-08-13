@@ -2,7 +2,7 @@ tracker/prgm 0.1.7 info
 
 oscillators 1-4 are sent to outputs 1-4, note that 3 and 4 are direct out, watch out for high levels!
 
-inputs
+input parameters
 osc_f           scaled pitch
 osc_ff          fine pitch, 1v/oct (beta)
 osc_ffamount	fine pitch attenuator
