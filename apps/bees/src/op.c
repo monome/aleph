@@ -215,9 +215,13 @@ const op_desc_t op_registry[numOpClasses] = {
     .init = &op_bars_init,
     .deinit = &op_bars_deinit   
   },
-
+  {
+    .name = "SERIAL",
+    .size = sizeof(op_serial_t),
+    .init = &op_serial_init,
+    .deinit = &op_serial_deinit   
+  },
 };
-
 
 // input and output strings are all the same length, concatenated
 // lazy

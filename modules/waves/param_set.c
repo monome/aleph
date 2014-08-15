@@ -31,7 +31,7 @@ static inline void param_set_osc_patch(int i, int o, ParamValue v) {
 
   // set delay time in samples
 static inline void param_set_pm_del(int i, ParamValue v) { 
-  voice[i].pmDelRdIdx = (voice[i].pmDelWrIdx - (v>>6)) & WAVES_PM_DEL_SAMPS_1;
+  voice[i].modDelRdIdx = (voice[i].modDelWrIdx - (v>>6)) & WAVES_PM_DEL_SAMPS_1;
 } 
 
 void module_set_param(u32 idx, ParamValue v) {

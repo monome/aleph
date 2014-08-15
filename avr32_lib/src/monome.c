@@ -76,6 +76,7 @@ grid_map_t monome_grid_map;
 grid_level_map_t monome_grid_level_map;
 ring_map_t monome_ring_map;
 refresh_t monome_refresh;
+
 //-----------------------------------------
 //----- static variables
 

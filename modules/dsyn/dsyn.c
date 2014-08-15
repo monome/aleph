@@ -229,13 +229,21 @@ extern u32 module_get_num_params(void) {
 // frame callback
 #ifdef ARCH_BFIN 
 void module_process_frame(void) {
+  // sum input pairs to output pairs
+  fract32 sum01 = add_fr1x32(in[0], in[1]);
+  fract32 sum23 = add_fr1x32(in[2], in[3]);
+
+  // dsyn output is mono :(  
+  // calculate frameVal
   calc_frame();
 
-  /// mono   :(
-  out[0] = (frameVal);
-  out[1] = (frameVal);
-  out[2] = (frameVal);
-  out[3] = (frameVal);
+  sum01 = add_fr1x32(sum01, frameVal);
+  sum23 = add_fr1x32(sum23, frameVal);
+
+  out[0] = sum01;
+  out[1] = sum01;
+  out[2] = sum23;
+  out[3] = sum23;
 }
 
 #else //  non-bfin

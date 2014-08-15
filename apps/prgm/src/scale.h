@@ -4,9 +4,7 @@
 #include "types.h"
 
 #define SCALE_NOTE_SIZE 1024
-#define SCALE_RATIO_SIZE 12
-#define SCALE_TUNE_SIZE 11
-
+#define SCALE_RATIO_SIZE 48
 
 //init scale
 extern void scale_init(void);

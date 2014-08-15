@@ -34,6 +34,4 @@ char renderBlend1[16];
 char renderBlend2[16];
 char renderBlend3[16];
 
-//u8 state_sw;
-
 #endif 

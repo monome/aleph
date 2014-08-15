@@ -36,6 +36,7 @@
 #include "ops/op_monome_grid_raw.h"
 #include "ops/op_mul.h"
 #include "ops/op_preset.h"
+#include "ops/op_serial.h"
 #include "ops/op_split.h"
 #include "ops/op_split4.h"
 #include "ops/op_sub.h"

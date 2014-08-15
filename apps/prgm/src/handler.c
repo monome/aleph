@@ -28,7 +28,7 @@
 //static functions
 static void handle_Adc0(s32 data);
 static void handle_switch_6(s32 data);
-//static void handle_switch_7(s32 data);
+static void handle_switch_7(s32 data);
 
 void handle_Adc0(s32 data) {
     if(data == 0)
@@ -65,7 +65,7 @@ void assign_prgm_event_handlers(void) {
 //    app_event_handlers[ kEventAdc2 ] = &handle_Adc2 ;
 //    app_event_handlers[ kEventAdc3 ] = &handle_Adc3 ;
 //    app_event_handlers[ kEventSwitch5 ]	= &handle_switch_5 ; //power switch
-    app_event_handlers[ kEventSwitch6 ] = &handle_switch_6 ; //sequencer +1
-//    app_event_handlers[ kEventSwitch7 ]	= &handle_switch_7 ; //sequencer restart at 1
+    app_event_handlers[ kEventSwitch6 ] = &handle_switch_6 ; //sequence +1
+    app_event_handlers[ kEventSwitch7 ]	= &handle_switch_7 ; //transpose +1
 //    app_event_handlers[ kEventAppCustom ]	= &net_poll_handler ;
 }

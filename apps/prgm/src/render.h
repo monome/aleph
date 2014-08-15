@@ -7,6 +7,15 @@
 #define STRBUF_LEN 16
 #define NUMSTRBUF_LEN 10
 
+//note: 12 (1), 411 (152)| just: 12 (1), 256 (95)
+//RENDER STARTUP
+#define RATIO_VAL_INIT 12
+#define FREQ_VAL_INIT 411
+
+//TRACKER STEPS
+#define INIT_F 152 * 0x00010000
+#define INIT_T 1 * 0x00010000
+
 char numstrbuf[NUMSTRBUF_LEN];
 
 extern void render_init(void);
@@ -24,6 +33,7 @@ extern void render_blend(void);
 extern void render_tracker(void);
 extern void render_freq(void);
 extern void render_transpose(void);
+extern void render_counters(void);
 
 #endif
 

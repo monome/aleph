@@ -92,11 +92,11 @@ void op_mgrid_raw_deinit(void* op) {
 static void op_mgrid_raw_in_focus(op_mgrid_raw_t* op, const io_t v) {
   if((v) > 0) {
     op->focus = OP_ONE;
-} else {
+  } else {
     if(op->focus > 0) { net_monome_grid_clear(); }
     op->focus = 0;
-}
-net_monome_set_focus( &(op->monome), op->focus > 0);
+  }
+  net_monome_set_focus( &(op->monome), op->focus > 0);
 }
 
 static void op_mgrid_raw_in_tog(op_mgrid_raw_t* op, const io_t v) {
@@ -130,20 +130,20 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
   if(op->mono) {
     if(op->tog > 0) { // mono, toggle
       if(z > 0) {        // ignore lift
-         val = ( monomeLedBuffer[pos] == 0 );
-         monomeLedBuffer[pos] = val * 15;
-         if(pos != op->lastPos) {
-           monomeLedBuffer[op->lastPos] = 0;
-       }
-       net_activate(op->outs[0], op_from_int(x), op);
-       net_activate(op->outs[1], op_from_int(y), op);
-       net_activate(op->outs[2], op_from_int(val), op);
+	val = ( monomeLedBuffer[pos] == 0 );
+	monomeLedBuffer[pos] = val * 15;
+	if(pos != op->lastPos) {
+	  monomeLedBuffer[op->lastPos] = 0;
+	}
+	net_activate(op->outs[0], op_from_int(x), op);
+	net_activate(op->outs[1], op_from_int(y), op);
+	net_activate(op->outs[2], op_from_int(val), op);
 	// refresh flag for current quadrant
-       monome_calc_quadrant_flag(x, y);
+	monome_calc_quadrant_flag(x, y);
 	// refresh flag for previous quadrant
-       monome_idx_xy(op->lastPos, &x, &y);
-       monome_calc_quadrant_flag(x, y);
-   }
+	monome_idx_xy(op->lastPos, &x, &y);
+	monome_calc_quadrant_flag(x, y);
+      }
     } else { // mono, momentary
       val = z;
       monomeLedBuffer[pos] =  val * 15;
@@ -156,18 +156,18 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
       // refresh flag for previous quadrant
       monome_idx_xy(op->lastPos, &x, &y);
       monome_calc_quadrant_flag(x, y);  
-  }
-} else {
+    }
+  } else {
     if(op->tog > 0) { // poly, toggle
       if(z > 0) {      /// ignore lift
-         val = ( monomeLedBuffer[pos] == 0 );
-         monomeLedBuffer[pos] = val * 15;
-         net_activate(op->outs[0], op_from_int(x), op);
-         net_activate(op->outs[1], op_from_int(y), op);
-         net_activate(op->outs[2], op_from_int(val), op);
+	val = ( monomeLedBuffer[pos] == 0 );
+	monomeLedBuffer[pos] = val * 15;
+	net_activate(op->outs[0], op_from_int(x), op);
+	net_activate(op->outs[1], op_from_int(y), op);
+	net_activate(op->outs[2], op_from_int(val), op);
 	// refresh flag for current quadrant
-         monome_calc_quadrant_flag(x, y);
-     }
+	monome_calc_quadrant_flag(x, y);
+      }
     } else {   // poly, momentary
       val = z;
       monomeLedBuffer[pos] = val * 15;
@@ -176,9 +176,9 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
       net_activate(op->outs[2], op_from_int(val), op);
       // refresh flag for current quadrant
       monome_calc_quadrant_flag(x, y);
+    }
   }
-}
-op->lastPos = pos;
+  op->lastPos = pos;
 }
 
 
