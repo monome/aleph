@@ -4,12 +4,18 @@ oscillators 1-4 are sent to outputs 1-4, note that 3 and 4 are direct out, watch
 
 input parameters
 osc_f           scaled pitch
-osc_ff          fine pitch, 1v/oct (beta)
-osc_ffamount	fine pitch attenuator
+osc_t           transposed pitch
+(osc_ffamount	fine pitch attenuator)
 osc_wf          waveform
 sync_trig       sync trig
 osc_trip        sync trip point
-(osc_amp        bypassed)
+(osc_amp         amp)
+cv_f            scaled cv
+cv_t            transposed cv
+
+note!
+osc pitch = osc_f * osc_t
+cv pitch = cv_f * cv_t
 
 
 sound examples @ https://soundcloud.com/epla

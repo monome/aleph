@@ -150,7 +150,6 @@ fract32 freq_to_phase(fix16 freq) {
 
 void oscillator_calc_inc(prgmOscillator *oscillator) {
     oscillator->incSlew.x = freq_to_phase(fix16_mul(FIX16_ONE, (fix16_mul(oscillator->f, oscillator->t))));
-//    oscillator->incSlew.x = freq_to_phase(fix16_mul(FIX16_ONE, oscillator->f));
 }
 
 
@@ -187,8 +186,8 @@ void init_parameters(prgmOscillator *osc, WavtabData tab, u32 sr) {
     oscillator->phase = 0;
     oscillator->trip = 0;
     oscillator->tripPoint = &(oscillator->phase);
-    oscillator->f = FIX16_ONE;
-    oscillator->t = 0;
+    oscillator->f = 0; //FIX16_ONE;
+    oscillator->t = 0; //FIX16_ONE;
     oscillator->ffAmount = 0;
     oscillator->wave = 0;
     oscillator->amp = INT32_MAX >> 4;
@@ -225,8 +224,6 @@ void oscillator_set_t(prgmOscillator *oscillator, fix16 t) {
 void oscillator_set_ffamount(prgmOscillator *oscillator, fix16 ffAmount) {
     oscillator->ffAmount = ffAmount;
 }
-//017 TEST 1v/oct scaling
-//    oscillator->ffAmount = (ffAmount * 16) / 15;  //scaled to 1v/oct
 
 
 void oscillator_sync_in(ParamValue v) {
@@ -359,25 +356,11 @@ void oscillator_advance(prgmOscillator *oscillator) {
 }
 
 
-//017 TEST...
-/*
-static void oscillator_amp (void) {
-buffer
-delay
-feedback
-phase invert
-*/
-
-
 static void calc_frame(void) {
     oscillator[0]->frameVal = shr_fr1x32(oscillator_next(oscillator[0]), 1);
     oscillator[1]->frameVal = shr_fr1x32(oscillator_next(oscillator[1]), 1);
     oscillator[2]->frameVal = shr_fr1x32(oscillator_next(oscillator[2]), 1);
     oscillator[3]->frameVal = shr_fr1x32(oscillator_next(oscillator[3]), 1);
-
-//017 TEST...
-//    mix_adc();
-//    out[0] = add_fr1x32((shr_fr1x32(oscillator_next(oscillator[0]), 1)), 0x7fffffff);
 }
 
 
@@ -416,15 +399,15 @@ void module_init(void) {
     init_cv_parameters(cvchannel[2]);
     init_cv_parameters(cvchannel[3]);
     
-    param_setup(eParamFreq0, 220 << 16);
-    param_setup(eParamFreq1, 220 << 16);
-    param_setup(eParamFreq2, 220 << 16);
-    param_setup(eParamFreq3, 220 << 16);
+    param_setup(eParamFreq0, 152 << 16);
+    param_setup(eParamFreq1, 152 << 16);
+    param_setup(eParamFreq2, 152 << 16);
+    param_setup(eParamFreq3, 152 << 16);
 
-    param_setup(eParamTranspose0, 0);
-    param_setup(eParamTranspose1, 0);
-    param_setup(eParamTranspose2, 0);
-    param_setup(eParamTranspose3, 0);
+    param_setup(eParamTranspose0, 1 << 16);
+    param_setup(eParamTranspose1, 1 << 16);
+    param_setup(eParamTranspose2, 1 << 16);
+    param_setup(eParamTranspose3, 1 << 16);
     
     param_setup(eParamFFAmount0, 0);
     param_setup(eParamFFAmount1, 0);
