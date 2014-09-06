@@ -7,100 +7,22 @@
 typedef struct _prgmData {
     ModuleData super;
     ParamData mParamData[eParamNumParams];
-    Wavtabs mWavtabs;
+    BufferData mBufferData[WAVE_BUF_SIZE];
+    BufferTap mBufferTap[WAVE_BUF_SIZE];
+    fract32 wave[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
 } prgmData;
 
 ModuleData *gModuleData;
 
+//pointer to SDRAM
+prgmData *data;
+
 prgmOscillator *oscillator[N_OSCILLATORS];
 prgmCvChannel *cvchannel[N_CVOUTPUTS];
 
-static prgmData *data;
 u8 cvChan = 0;
 
-//static variables
-static fract32 wavtabA[WAVE_SHAPE_NUM][WAVE_TAB_SIZE] = {
-#include "wavtab512_wf0.c"
-};
-
-static fract32 wavtabB[WAVE_SHAPE_NUM][WAVE_TAB_SIZE] = {
-#include "wavtab512_wf1.c"
-};
-
-static fract32 wavtab0[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
-static fract32 wavtab1[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
-static fract32 wavtab2[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
-static fract32 wavtab3[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
-
-static void fill_wavetable(fract32 to[WAVE_SHAPE_NUM][WAVE_TAB_SIZE], fract32 from[WAVE_SHAPE_NUM][WAVE_TAB_SIZE]) {
-    int i;
-    
-    i = 0;
-    while (i < WAVE_TAB_SIZE) {
-        to[0][i] = from[0][i];
-        i++;
-    }
-    i = 0;
-    while (i < WAVE_TAB_SIZE) {
-        to[1][i] = from[1][i];
-        i++;
-    }
-}
-
-static void oscillator_set_wave0(prgmOscillator *oscillator, ParamValue v) {
-    if (v < 1) {
-        fill_wavetable(wavtab0, wavtabA);
-        oscillator->tab = &wavtab0;
-    }
-    else if (v > 1) { 
-        fill_wavetable(wavtab0, wavtabB);
-        oscillator->tab = &wavtab0;
-    }
-    else
-        ;
-}
-
-static void oscillator_set_wave1(prgmOscillator *oscillator, ParamValue v) {
-    if (v < 1) {
-        fill_wavetable(wavtab1, wavtabA);
-        oscillator->tab = &wavtab1;
-    }
-    else if (v > 1) { 
-        fill_wavetable(wavtab1, wavtabB);
-        oscillator->tab = &wavtab1;
-    }
-    else
-        ;
-}
-
-static void oscillator_set_wave2(prgmOscillator *oscillator, ParamValue v) {
-    if (v < 1) {
-        fill_wavetable(wavtab2, wavtabA);
-        oscillator->tab = &wavtab2;
-    }
-    else if (v > 1) { 
-        fill_wavetable(wavtab2, wavtabB);
-        oscillator->tab = &wavtab2;
-    }
-    else
-        ;
-}
-
-static void oscillator_set_wave3(prgmOscillator *oscillator, ParamValue v) {
-    if (v < 1) {
-        fill_wavetable(wavtab3, wavtabA);
-        oscillator->tab = &wavtab3;
-    }
-    else if (v > 1) { 
-        fill_wavetable(wavtab3, wavtabB);
-        oscillator->tab = &wavtab3;
-    }
-    else
-        ;
-}
-
 static u32 sr;
-
 
 //static function declarations
 static inline fract32 freq_to_phase(fix16 freq);
@@ -108,16 +30,15 @@ static inline fract32 freq_to_phase(fix16 freq);
 static inline void oscillator_calc_inc(prgmOscillator *oscillator);
 static inline void cv_calc_inc(prgmCvChannel *cvchannel);
 
-//init
 PrgmOscillatorpointer init(void);
 PrgmCvChannelpointer init_channel(void);
-static void init_parameters(prgmOscillator *oscillator, WavtabData tab, u32 sr);
+static void init_parameters(prgmOscillator *oscillator, wave tab, u32 sr);
 static void init_cv_parameters(prgmCvChannel *cvchannel);
 
 static void oscillator_set_f(prgmOscillator *oscillator, fix16 f);
 static void oscillator_set_t(prgmOscillator *oscillator, fix16 t);
-static void oscillator_set_ffamount(prgmOscillator *oscillator, fix16 ffAmount);
 
+static void oscillator_set_wave(prgmOscillator *oscillator, s32 dummy);
 static void oscillator_set_shape(prgmOscillator *oscillator, fract16 wave);
 
 static fract32 oscillator_lookup(prgmOscillator *oscillator);
@@ -175,7 +96,7 @@ PrgmCvChannelpointer init_channel(void) {
 }
 
 
-void init_parameters(prgmOscillator *osc, WavtabData tab, u32 sr) {
+void init_parameters(prgmOscillator *osc, wave tab, u32 sr) {
     prgmOscillator *oscillator = (prgmOscillator*)osc;
     
     oscillator->tab = tab;
@@ -186,11 +107,10 @@ void init_parameters(prgmOscillator *osc, WavtabData tab, u32 sr) {
     oscillator->phase = 0;
     oscillator->trip = 0;
     oscillator->tripPoint = &(oscillator->phase);
-    oscillator->f = 0; //FIX16_ONE;
-    oscillator->t = 0; //FIX16_ONE;
-    oscillator->ffAmount = 0;
+    oscillator->f = 0;
+    oscillator->t = 0;
     oscillator->wave = 0;
-    oscillator->amp = INT32_MAX >> 4;
+    oscillator->amp = INT32_MAX >> 4; //TEST!!!
 }
 
 
@@ -202,6 +122,69 @@ void init_cv_parameters(prgmCvChannel *cv) {
     cvchannel->t = 0;
     filter_1p_lo_in(&(cvchannel->cvSlew), 0xf);
 }
+
+
+void init_buffer(BufferData *buf, fract32 *data, u32 count) {
+    buf->bufdata = data;
+    buf->bufcount = count;
+}
+
+
+void init_buffer_tap(BufferTap *tap, BufferData *buf) {
+    tap->buf = buf;
+    tap->bufpos = 0;
+}
+
+
+void buffer_tap_set_pos(BufferTap *tap, u32 pos) {
+    tap->bufpos = pos;
+}
+
+
+void buffer_tap_write(BufferTap *tap, fract32 data) {
+    tap->buf->bufdata[tap->bufpos] = data;
+}
+
+
+fract32 buffer_tap_read(BufferTap *tap) {
+//    s32 tmp = tap->buf->bufdata[tap->bufpos];
+//    fract16 tmp16 = (fract16)((tmp) & 0xffff) >> 1;
+//    fract32 tmp32 = fr16_to_fr32((fract16)((tmp16 & 0xffff) >> 1));
+//    return tmp32;
+    return tap->buf->bufdata[tap->bufpos];
+}
+
+
+void buffer_tap_next(BufferTap *tap) {
+    tap->bufpos++;
+    if (tap->bufpos >= tap->buf->bufcount) {
+        tap->bufpos = 0; //0x80000000 & 0x7fffffff;
+    }
+}
+
+
+void oscillator_set_wave(prgmOscillator *oscillator, s32 dummy) {
+    switch(dummy) {
+        case 0:
+            module_load_wavetable(data->mBufferData, data->mBufferTap);
+//            oscillator->tab = &data->wave;
+            break;
+/*
+        case 1:
+            oscillator->tab = data->wave1;
+            break;
+        case 2:
+            oscillator->tab = data->wave2;
+            break;
+        case 3:
+            oscillator->tab = data->wave3;
+            break;
+*/
+        default:
+            break;
+    }
+}
+
 
 
 void oscillator_set_shape(prgmOscillator *oscillator, fract16 wave) {
@@ -218,11 +201,6 @@ void oscillator_set_f(prgmOscillator *oscillator, fix16 f) {
 void oscillator_set_t(prgmOscillator *oscillator, fix16 t) {
     oscillator->t = t;
     oscillator_calc_inc(oscillator);
-}
-
-
-void oscillator_set_ffamount(prgmOscillator *oscillator, fix16 ffAmount) {
-    oscillator->ffAmount = ffAmount;
 }
 
 
@@ -378,21 +356,25 @@ void module_init(void) {
     strcpy(gModuleData->name, "aleph-prgm");
     gModuleData->paramData = data->mParamData;
     gModuleData->numParams = eParamNumParams;
-    gModuleData->wavtabs = data->mWavtabs;
-    data->mWavtabs.wavtab0 = &wavtab0;
-    data->mWavtabs.wavtab1 = &wavtab1;
-    data->mWavtabs.wavtab2 = &wavtab2;
-    data->mWavtabs.wavtab3 = &wavtab3;
+    gModuleData->bufferData = data->mBufferData;
+    gModuleData->bufferTap = data->mBufferTap;
     
     sr = SAMPLERATE;
 
+    init_buffer(data->mBufferData, data->mBufferData[i].bufdata, WAVE_BUF_SIZE);
+    init_buffer_tap(data->mBufferTap, data->mBufferData);
+    
+    data->mBufferData[i].bufdata = 0;
+    
+    buffer_tap_set_pos(data->mBufferTap, 0);
+        
     for(i=0; i<N_OSCILLATORS; i++) { oscillator[i] = init(); }
     for(i=0; i<N_CVOUTPUTS; i++) { cvchannel[i] = init_channel(); }
     
-    init_parameters(oscillator[0], &wavtab0, SAMPLERATE);
-    init_parameters(oscillator[1], &wavtab1, SAMPLERATE);
-    init_parameters(oscillator[2], &wavtab2, SAMPLERATE);
-    init_parameters(oscillator[3], &wavtab3, SAMPLERATE);
+    init_parameters(oscillator[0], &data->wave, SAMPLERATE);
+    init_parameters(oscillator[1], &data->wave, SAMPLERATE);
+    init_parameters(oscillator[2], &data->wave, SAMPLERATE);
+    init_parameters(oscillator[3], &data->wave, SAMPLERATE);
     
     init_cv_parameters(cvchannel[0]);
     init_cv_parameters(cvchannel[1]);
@@ -408,12 +390,7 @@ void module_init(void) {
     param_setup(eParamTranspose1, 1 << 16);
     param_setup(eParamTranspose2, 1 << 16);
     param_setup(eParamTranspose3, 1 << 16);
-    
-    param_setup(eParamFFAmount0, 0);
-    param_setup(eParamFFAmount1, 0);
-    param_setup(eParamFFAmount2, 0);
-    param_setup(eParamFFAmount3, 0);
-    
+        
     param_setup(eParamTab0, 0);
     param_setup(eParamTab1, 0);
     param_setup(eParamTab2, 0);
@@ -493,31 +470,18 @@ void module_set_param(u32 idx, ParamValue v) {
         case eParamTranspose3:
             oscillator_set_t(oscillator[3], v);
             break;
-
-        case eParamFFAmount0:
-            oscillator_set_ffamount(oscillator[0], v);
-            break;
-        case eParamFFAmount1:
-            oscillator_set_ffamount(oscillator[1], v);
-            break;
-        case eParamFFAmount2:
-            oscillator_set_ffamount(oscillator[2], v);
-            break;
-        case eParamFFAmount3:
-            oscillator_set_ffamount(oscillator[3], v);
-            break;
-                        
+            
         case eParamTab0: //RENAME TO eParamWave...
-            oscillator_set_wave0(oscillator[0], v);
+            oscillator_set_wave(oscillator[0], v);
             break;
         case eParamTab1:
-            oscillator_set_wave1(oscillator[1], v);
+            oscillator_set_wave(oscillator[1], v);
             break;
         case eParamTab2:
-            oscillator_set_wave2(oscillator[2], v);
+            oscillator_set_wave(oscillator[2], v);
             break;
         case eParamTab3:
-            oscillator_set_wave3(oscillator[3], v);
+            oscillator_set_wave(oscillator[3], v);
             break; 
 
         case eParamWave0: //RENAME TO eParamBlend...
@@ -602,3 +566,22 @@ void module_set_param(u32 idx, ParamValue v) {
     }
 }
 
+
+void module_set_wave(fract32 frame) {
+    buffer_tap_write(data->mBufferTap, frame);
+    buffer_tap_next(data->mBufferTap);
+}
+
+
+void module_load_wavetable(BufferData *buf, BufferTap *tap) {
+    buffer_tap_set_pos(data->mBufferTap, 0);
+    
+    if (data->mBufferTap->bufpos < 512) {
+        data->wave[0][data->mBufferTap->bufpos] = buffer_tap_read(data->mBufferTap);
+        buffer_tap_next(data->mBufferTap);
+    }
+    else if (data->mBufferTap->bufpos < 1024) {
+        data->wave[1][data->mBufferTap->bufpos] = buffer_tap_read(data->mBufferTap);
+        buffer_tap_next(data->mBufferTap);
+    }
+}

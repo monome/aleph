@@ -5,7 +5,6 @@ oscillators 1-4 are sent to outputs 1-4, note that 3 and 4 are direct out, watch
 input parameters
 osc_f           scaled pitch
 osc_t           transposed pitch
-(osc_ffamount	fine pitch attenuator)
 osc_wf          waveform
 sync_trig       sync trig
 osc_trip        sync trip point

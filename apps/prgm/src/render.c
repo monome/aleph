@@ -55,13 +55,6 @@ static region tracker[6] = {
     {.w=64, .h=8, .x = 64, .y = 48}
 };
 
-//static region tracker[4] = {
-//    {.w=64, .h=32, .x = 0, .y = 0},
-//    {.w=64, .h=32, .x = 64, .y = 0},
-//    {.w=64, .h=32, .x = 0, .y = 32},
-//    {.w=64, .h=32, .x = 64, .y = 32}
-//};
-
 static region *trackerRegions[] = {
     &(tracker[0]),
     &(tracker[1]),
@@ -70,14 +63,6 @@ static region *trackerRegions[] = {
     &(tracker[4]),
     &(tracker[5]),
 };
-
-//static region *trackerRegions[] = {
-//    &(tracker[0]),
-//    &(tracker[1]),
-//    &(tracker[2]),
-//    &(tracker[3]),
-//};
-
 
 //initialization, called by app_init()
 void render_init(void) {

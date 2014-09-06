@@ -17,13 +17,13 @@ I/O
 audio outputs 0-3   oscillator 1-4 - outputs 3&4 are direct out, watch out for high levels!
 foot1               sequence step+1
 foot2               transpose step+1
-cv input 0          sync trig
+cv input0           sync trig
 cv outputs 0-3      scaled pitch, 1v/oct
 
 
-page TRACKER (4 steps, can be set to longer..)
+page TRACKER
 encoders            scaled pitch
-sw0 + enc0-3        transpose pitch
+sw0 + encoders 0-3  transpose pitch
 sw1                 sequence step+1
 sw2                 transpose step+1
 sw3 + enc2          sequence length 1-16

@@ -61,8 +61,8 @@ void adc_init() { //called by app_launch()
 void assign_prgm_event_handlers(void) {
 
     app_event_handlers[ kEventAdc0 ] = &handle_Adc0 ; //sync trig
-//    app_event_handlers[ kEventAdc1 ] = &handle_Adc1 ;
-//    app_event_handlers[ kEventAdc2 ] = &handle_Adc2 ;
+//    app_event_handlers[ kEventAdc1 ] = &handle_Adc1 ; //sequencer +1
+//    app_event_handlers[ kEventAdc2 ] = &handle_Adc2 ; //transpose +1
 //    app_event_handlers[ kEventAdc3 ] = &handle_Adc3 ;
 //    app_event_handlers[ kEventSwitch5 ]	= &handle_switch_5 ; //power switch
     app_event_handlers[ kEventSwitch6 ] = &handle_switch_6 ; //sequence +1

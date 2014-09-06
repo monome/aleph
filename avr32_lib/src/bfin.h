@@ -15,10 +15,18 @@
 
 // blackfin HWAIT status
 // extern volatile U8 hwait;
+//RAM buffer for wavetables
+volatile u8 *bfinWaveData;
+
+//size of wavetable
+volatile u32 bfinWaveSize;
 
 // 64k is max size of blackfin ldr file
 //#define BFIN_LDR_MAX_BYTES 0x10000 
 //// actually, the ldr itself can be bigger than the bfin's sram...??
+//0x10000 65536
+//0x12000 73728
+//0x30000 196608
 #define BFIN_LDR_MAX_BYTES 0x12000
 
 // wait for busy pin to clear
@@ -63,5 +71,13 @@ extern void bfin_wait_ready(void);
 // get param value
 extern s32 bfin_get_param(u8 idx);
 
+
+//wavetable SPI transfer from volatile buffer
+extern void bfin_set_wave(void);
+
+//transfer wavetable to bfin
+void bfin_start_transfer_wave(void);
+void bfin_transfer_wavebyte(u8 data);
+void bfin_end_transfer_wave(void);
 
 #endif // header guard

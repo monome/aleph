@@ -23,6 +23,7 @@
 #include "handler.h"
 #include "pages.h"
 #include "util.h" //remove
+#include "files.h"
 
 
 //static functions
@@ -73,7 +74,8 @@ void handle_switch_2(s32 data) {
 }
 
 void handle_switch_3(s32 data) {
-    //nothing
+    ctl_param_change(eParamTab0, 0);
+    print_dbg("\r\n finished loading wavetable... ");
 }
 
 void handle_encoder_0(s32 val) {
@@ -81,12 +83,16 @@ void handle_encoder_0(s32 val) {
         case 0:
             check_touch(kEventEncoder3);
                 if (touchedThis) {
-//                    files_load_wavetable(val); WELL... THIS IS THE IDEA!
-//                    render_wave();
                     Wave0 += val;
-                    if (Wave0 < 1) Wave0 = 0;
-                    if (Wave0 > 1) Wave0 = 2;
-                    ctl_param_change(eParamTab0, Wave0);
+                    if (Wave0 < 0) Wave0 = 0;
+                    if (Wave0 > numwaves - 1) Wave0 = numwaves - 1;
+
+                    files_load_wavetable(Wave0);
+                    print_dbg("\r\n finished files_load_wavetable... ");
+                    
+                    ctl_wavetable_change();
+                    print_dbg("\r\n finished bfin transfer... ");
+                    
                     print_fix16(renderWave0, Wave0);
                     render_wave();
                 }

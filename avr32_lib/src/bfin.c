@@ -15,6 +15,7 @@
 // aleph/common
 #include "module_common.h"
 #include "param_common.h"
+#include "buffer_common.h"
 #include "protocol.h"
 
 // aleph/avr32
@@ -35,6 +36,7 @@ static void bfin_start_transfer(void);
 static void bfin_end_transfer(void); 
 static void bfin_transfer_byte(u8 data);
 
+u64 bytecount;
 //---------------------------------------
 //--- external function definition
 
@@ -88,6 +90,83 @@ void bfin_load_buf(void) {
  
   app_resume();
 }
+
+
+void bfin_set_wave(void) {
+    app_pause();
+    
+//    print_dbg("\r\n\r\n .ldr buffer for: ");
+//    for (i=0; i<bfinWaveSize; i++) {
+//    print_dbg("\r\n 0x");
+//    print_dbg_hex(bfinWaveData[i]);
+//    }
+    
+//    bfin_start_transfer_wave();
+    print_dbg("\r\n starting wavebyte transfer... ");
+
+    for(bytecount=0; bytecount<bfinWaveSize;) {
+        bfin_transfer_wavebyte(bfinWaveData[bytecount]);
+    }
+    
+//    bfin_end_transfer_wave();
+    print_dbg("\r\n finished wavebyte transfer... ");
+    
+    app_resume();
+}
+
+
+void bfin_start_transfer_wave(void) {
+    //command
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, MSG_SET_WAVETABLE);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+}
+
+void bfin_transfer_wavebyte(u8 data) {
+    FrameSwap frame;
+    frame.asFract32 = (fract32)data;
+    
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, MSG_SET_WAVETABLE);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, frame.asByte[0]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    bytecount++;
+    
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, frame.asByte[1]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    bytecount++;
+    
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, frame.asByte[2]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    bytecount++;
+    
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, frame.asByte[3]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    bytecount++;
+
+//    bfin_wait();
+//    spi_write(BFIN_SPI, data);
+}
+
+void bfin_end_transfer_wave(void) {
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+}
+
 
 //void bfin_set_param(u8 idx, f32 x ) {
 void bfin_set_param(u8 idx, fix16_t x ) {

@@ -23,10 +23,10 @@ static f32 transpose[SCALE_RATIO_SIZE] = {
 //external functions
 void scale_init (void) {
     noteBuf = (f32*)alloc_mem(SCALE_NOTE_SIZE * (sizeof(f32)));
-    noteBuf = &note[0]; //try to set a better startup value
+    noteBuf = &note[0];
 
     transposeBuf = (f32*)alloc_mem(SCALE_RATIO_SIZE * (sizeof(f32)));
-    transposeBuf = &transpose[0]; //try to set a better startup value
+    transposeBuf = &transpose[0];
 }
 
 f32 note_lookup(s32 val) {

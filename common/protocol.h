@@ -13,13 +13,15 @@
 
 #include "module_common.h"
 #include "param_common.h"
+#include "buffer_common.h"
 #include "types.h"
 
 //// command bytes
 #define MSG_SET_PARAM_COM           0 
 #define MSG_GET_PARAM_COM           1
 #define MSG_GET_NUM_PARAMS_COM      2
-#define MSG_GET_PARAM_DESC_COM      3 // not using, but leave reserved
+#define MSG_SET_WAVETABLE           3
+//#define MSG_GET_PARAM_DESC_COM      3 // not using, but leave reserved
 #define MSG_GET_MODULE_NAME_COM     4
 // get 4-byte version packet
 #define MSG_GET_MODULE_VERSION_COM  5
@@ -49,9 +51,16 @@ typedef enum {
   eGetParamData3,
   //---- get num params
   eNumParamsVal,
-  //---- get param descriptor
-  /// param descriptors in aleph-module.dsc
+    
+//ADDED HERE!
+    eSetWavetableByte0,
+    eSetWavetableByte1,
+    eSetWavetableByte2,
+    eSetWavetableByte3,
+
 #if 0
+    //---- get param descriptor
+  /// param descriptors in aleph-module.dsc
   /* eParamDescIdx, */
   /* // label */
   /* eParamDescLabel0, */
@@ -130,8 +139,7 @@ typedef enum {
   eModuleVersionMin,
   eModuleVersionRev0,
   eModuleVersionRev1,
-
-  
+    
   eNumSpiBytes
 } eSpiByte;
 

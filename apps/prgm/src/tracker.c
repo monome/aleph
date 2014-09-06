@@ -171,11 +171,7 @@ void handle_encoder_0(s32 val) {
                     if (Freq0tmp < 0) Freq0tmp = 0;
                     Freq0 = note_lookup(Freq0tmp) * 0x00010000;
                     set_step(counter);
-                    print_dbg("\r\n eParamFreq0: ");
-                    print_dbg_ulong(eParamFreq0);
                     ctl_param_change(eParamFreq0, Freq0);
-                    print_dbg("\r\n eParamCVfreq0: ");
-                    print_dbg_ulong(eParamCVfreq0);
                     ctl_param_change(eParamCVfreq0, Freq0);
                     print_fix16(renderFreq0, fix16_mul(Freq0, Transpose0));
                     render_freq();
@@ -190,11 +186,7 @@ void handle_encoder_0(s32 val) {
                     if (transpose_lookup(Transpose0tmp) == 0) { Transpose0 = 2 * 0x00010000; Transpose0tmp -= val; }
                     Transpose0 = transpose_lookup(Transpose0tmp) * 0x00010000;
                     set_step_t(counter_t);
-                    print_dbg("\r\n eParamTranspose0: ");
-                    print_dbg_ulong(eParamTranspose0);
                     ctl_param_change(eParamTranspose0, Transpose0);
-                    print_dbg("\r\n eParamCVtranspose0: ");
-                    print_dbg_ulong(eParamCVtranspose0);
                     ctl_param_change(eParamCVtranspose0, Transpose0);
                     print_fix16(renderTranspose0, Transpose0);
                     print_fix16(renderFreq0, fix16_mul(Freq0, Transpose0));
@@ -301,10 +293,10 @@ void handle_encoder_2(s32 val) {
                 ctl_param_change(eParamFreq2, Freq2);
                 ctl_param_change(eParamFreq3, Freq3);
                 
-                ctl_param_change(eParamCVfreq0, Freq0);
-                ctl_param_change(eParamCVfreq1, Freq1);
-                ctl_param_change(eParamCVfreq2, Freq2);
-                ctl_param_change(eParamCVfreq3, Freq3);
+//                ctl_param_change(eParamCVfreq0, Freq0);
+//                ctl_param_change(eParamCVfreq1, Freq1);
+//                ctl_param_change(eParamCVfreq2, Freq2);
+//                ctl_param_change(eParamCVfreq3, Freq3);
                 
                 print_fix16(renderFreq0, fix16_mul(Freq0, Transpose0));
                 print_fix16(renderFreq1, fix16_mul(Freq1, Transpose1));
@@ -379,10 +371,10 @@ void handle_encoder_3(s32 val) {
                 ctl_param_change(eParamFreq2, Freq2);
                 ctl_param_change(eParamFreq3, Freq3);
                 
-                ctl_param_change(eParamCVtranspose0, Transpose0);
-                ctl_param_change(eParamCVtranspose1, Transpose1);
-                ctl_param_change(eParamCVtranspose2, Transpose2);
-                ctl_param_change(eParamCVtranspose3, Transpose3);
+//                ctl_param_change(eParamCVtranspose0, Transpose0);
+//                ctl_param_change(eParamCVtranspose1, Transpose1);
+//                ctl_param_change(eParamCVtranspose2, Transpose2);
+//                ctl_param_change(eParamCVtranspose3, Transpose3);
                 
                 print_fix16(renderTranspose0, Transpose0);
                 print_fix16(renderTranspose1, Transpose1);
@@ -443,10 +435,10 @@ void step_advance(s32 val) {
         ctl_param_change(eParamFreq2, Freq2);
         ctl_param_change(eParamFreq3, Freq3);
         
-        ctl_param_change(eParamCVfreq0, Freq0);
-        ctl_param_change(eParamCVfreq1, Freq1);
-        ctl_param_change(eParamCVfreq2, Freq2);
-        ctl_param_change(eParamCVfreq3, Freq3);
+//        ctl_param_change(eParamCVfreq0, Freq0);
+//        ctl_param_change(eParamCVfreq1, Freq1);
+//        ctl_param_change(eParamCVfreq2, Freq2);
+//        ctl_param_change(eParamCVfreq3, Freq3);
 
         print_fix16(renderFreq0, fix16_mul(Freq0, Transpose0));
         print_fix16(renderFreq1, fix16_mul(Freq1, Transpose1));
@@ -488,10 +480,10 @@ void step_advance(s32 val) {
         ctl_param_change(eParamFreq2, Freq2);
         ctl_param_change(eParamFreq3, Freq3);
         
-        ctl_param_change(eParamCVfreq0, Freq0);
-        ctl_param_change(eParamCVfreq1, Freq1);
-        ctl_param_change(eParamCVfreq2, Freq2);
-        ctl_param_change(eParamCVfreq3, Freq3);
+//        ctl_param_change(eParamCVfreq0, Freq0);
+//        ctl_param_change(eParamCVfreq1, Freq1);
+//        ctl_param_change(eParamCVfreq2, Freq2);
+//        ctl_param_change(eParamCVfreq3, Freq3);
         
         print_fix16(renderFreq0, fix16_mul(Freq0, Transpose0));
         print_fix16(renderFreq1, fix16_mul(Freq1, Transpose1));
@@ -547,10 +539,10 @@ void step_advance_t(s32 val) {
         ctl_param_change(eParamCVtranspose2, Transpose2);
         ctl_param_change(eParamCVtranspose3, Transpose3);
         
-        print_fix16(renderTranspose0, Transpose0);
-        print_fix16(renderTranspose1, Transpose1);
-        print_fix16(renderTranspose2, Transpose2);
-        print_fix16(renderTranspose3, Transpose3);
+//        print_fix16(renderTranspose0, Transpose0);
+//        print_fix16(renderTranspose1, Transpose1);
+//        print_fix16(renderTranspose2, Transpose2);
+//        print_fix16(renderTranspose3, Transpose3);
         
         print_fix16(renderFreq0, fix16_mul(Freq0, Transpose0));
         print_fix16(renderFreq1, fix16_mul(Freq1, Transpose1));
@@ -592,10 +584,10 @@ void step_advance_t(s32 val) {
         ctl_param_change(eParamFreq2, Freq2);
         ctl_param_change(eParamFreq3, Freq3);
         
-        ctl_param_change(eParamCVtranspose0, Transpose0);
-        ctl_param_change(eParamCVtranspose1, Transpose1);
-        ctl_param_change(eParamCVtranspose2, Transpose2);
-        ctl_param_change(eParamCVtranspose3, Transpose3);
+//        ctl_param_change(eParamCVtranspose0, Transpose0);
+//        ctl_param_change(eParamCVtranspose1, Transpose1);
+//        ctl_param_change(eParamCVtranspose2, Transpose2);
+//        ctl_param_change(eParamCVtranspose3, Transpose3);
         
         print_fix16(renderTranspose0, Transpose0);
         print_fix16(renderTranspose1, Transpose1);

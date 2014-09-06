@@ -21,12 +21,7 @@ typedef enum params {
     eParamTranspose1,
     eParamTranspose2,
     eParamTranspose3,
-    
-    eParamFFAmount0,
-    eParamFFAmount1,
-    eParamFFAmount2,
-    eParamFFAmount3,
-    
+        
     eParamTab0,
     eParamTab1,
     eParamTab2,

@@ -28,20 +28,12 @@ typedef struct _dirList {
 } dirList_t;
 
 static dirList_t tabList;
-typedef wave *wavePointer;
-
 
 //static function declarations
-static wavePointer init(void);
 static void fake_fread(volatile u8 *dst, u32 len, void *fp);
-
+static char *wave_filepath(s32 n);
 
 //static functions
-wavePointer init(void) { //return pointer to chunk of memory to hold one wavetable file path
-    return(wavePointer)alloc_mem(sizeof(wave));
-}
-
-
 void fake_fread(volatile u8 *dst, u32 len, void *fp) { //fread: no size arg
     u32 n = 0;
 #if 0
@@ -56,13 +48,19 @@ void fake_fread(volatile u8 *dst, u32 len, void *fp) { //fread: no size arg
 }
 
 
+char *wave_filepath(s32 n) {
+    return (n < 0 || n > numwaves) ? waves[0] : waves[n];
+}
+
+
 //external functions
 void wavetables_init(void) {
     FL_DIR dirstat;
     struct fs_dir_ent dirent; //see fat_access.h
     
-    int i = 0;
+    s32 i = 0;
     tabList.num = 0;
+    numwaves = 0;
     
     strcpy(tabList.path, TAB_PATH);
     
@@ -72,44 +70,50 @@ void wavetables_init(void) {
         {
             if (!(dirent.is_dir))
             {
-                wavetables[i] = init();
+                waves[i] = (char*)alloc_mem(MAX_PATH * (sizeof(char*)));
                 strcpy(tabList.path, TAB_PATH);
-                **wavetables[i] = strcat(tabList.path, dirent.filename);
-                print_dbg("\r\n wavetable path: ");
-                print_dbg(**wavetables[i]);
+                strcat(tabList.path, dirent.filename);
+                strcpy(waves[i], tabList.path);
+                print_dbg("\r\n waves[i]: ");
+                print_dbg(waves[i]);
                 tabList.num++;
                 i++;
+                numwaves++;
             }
         }
         //fl_closedir(&dirstat);
     }
+    bfinWaveData = alloc_mem(BFIN_WAVE_MAX_BYTES);
+    for(i=0; i<numwaves; i++) { bfinWaveData[i] = 0; }
+    bfinWaveSize = 0;
 }
 
 
-void files_load_wavetable(void) {
-    void *fp = **wavetables[0];
-    print_dbg("\r\n wavetable path: ");
-    print_dbg(fp);
-    volatile u8 *tbuf = 0; //WHAT SIZE, HOW TO DEFINE?
+void files_load_wavetable(s32 idx) {
+    void *fp;
     u32 size = 0;
-    u8 ret = 0;
-
-app_pause();
-    //open file
-    fl_fopen(fp, "r");
     
-    if (fp != NULL)
-    {
-        size = ((FL_FILE*)(fp))->filelength;
-        fake_fread(tbuf, size, fp);
-        fl_fclose(fp);
+    app_pause();
+    
+    if (idx < numwaves) {
+        fp = fl_fopen(wave_filepath(idx), "r");
+        print_dbg("\r\n wave_filepath(idx) ");
+        print_dbg(wave_filepath(idx));
         
-//        bfin_load_wavetable(); //DO I NEED TO TAILOR A FUNCTION TO TRANSFER A WAVETABLE?
-        
+        if (fp != NULL)
+        {
+            size = ((FL_FILE*)(fp))->filelength;
+            fake_fread(bfinWaveData, size, fp);
+            fl_fclose(fp);
+            bfinWaveSize = size;
+            print_dbg("\r\n bfinWaveSize ");
+            print_dbg_ulong(bfinWaveSize);
+        }
+        else ;
     }
     else
     {
-        ret = 0;
+        print_dbg("\r\n idx out of bounds");
     }
     app_resume();
 }

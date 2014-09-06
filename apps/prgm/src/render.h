@@ -7,12 +7,10 @@
 #define STRBUF_LEN 16
 #define NUMSTRBUF_LEN 10
 
-//note: 12 (1), 411 (152)| just: 12 (1), 256 (95)
-//RENDER STARTUP
+//init values, render
+#define FREQ_VAL_INIT 264 //note: 411 (152)| just: 264 (152)
 #define RATIO_VAL_INIT 12
-#define FREQ_VAL_INIT 411
-
-//TRACKER STEPS
+//init values, tracker
 #define INIT_F 152 * 0x00010000
 #define INIT_T 1 * 0x00010000
 

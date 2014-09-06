@@ -4,8 +4,8 @@
 #ifndef _ALEPH_APP_PRGM_TRACKER_H_
 #define _ALEPH_APP_PRGM_TRACKER_H_
 
-#define F_STEPS_MAX 16
-#define T_STEPS_MAX 12
+#define F_STEPS_MAX 1
+#define T_STEPS_MAX 1
 
 char renderCounter[16];
 char renderCounter_t[16];
@@ -56,6 +56,5 @@ typedef struct _tstep {
 } tstep;
 
 extern void tracker_init(void);
-//extern void counter_init (void);
 
 #endif

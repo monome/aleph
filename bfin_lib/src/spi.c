@@ -1,6 +1,3 @@
-// aleph/common
-#include "param_common.h"
-
 // bfin_lib
 #include "bfin_core.h"
 #include "control.h"
@@ -20,6 +17,8 @@ static u8 com;
 // current param index
 static u8 idx;
 
+fract32 frametmp;
+
 //------ static functions
 static void spi_set_param(u32 idx, ParamValue pv) {
   //  module_set_param(idx, pv);
@@ -29,11 +28,19 @@ static void spi_set_param(u32 idx, ParamValue pv) {
   module_set_param(idx, pv);
 }
 
+static void spi_stream_to_wavebuf(fract32 frame) {
+    gModuleData->bufferData->bufdata = &frame;
+    module_set_wave(frame);
+}
+
+
 //------- function definitions
 // deal with new data in the spi rx ringbuffer
 // return byte to load for next MISO
 u8 spi_process(u8 rx) {
   static ParamValueSwap pval;
+  static FrameSwap frame;
+
   switch(byte) {
     /// caveman style case statement
   case eCom :
@@ -49,11 +56,17 @@ u8 spi_process(u8 rx) {
       byte = eNumParamsVal;
       return gModuleData->numParams; // load num params
       break;
-      /*
+            
+//ADDED HERE!
+    case MSG_SET_WAVETABLE:
+            byte = eSetWavetableByte0;
+            break;
+
+/*
     case MSG_GET_PARAM_DESC_COM:
       byte = eParamDescIdx;
       break;
-      */
+*/
     case MSG_GET_MODULE_NAME_COM:
       byte = eModuleName0;
       return gModuleData->name[0];
@@ -72,6 +85,7 @@ u8 spi_process(u8 rx) {
       processAudio = 0;
       return processAudio;
       break;
+            
     default:
       break;
     }
@@ -109,8 +123,7 @@ u8 spi_process(u8 rx) {
     byte = eCom; //reset
     return 0; // don't care
     break;
-
-
+    
     //---- get param
   case eGetParamIdx :
     idx = rx; // set index
@@ -145,6 +158,28 @@ u8 spi_process(u8 rx) {
     byte = eCom; //reset
     return 0; // don't care 
     break;
+
+      case eSetWavetableByte0:
+          byte = eSetWavetableByte1;
+          frame.asByte[3] = rx;
+          return 0;
+          break;
+      case eSetWavetableByte1:
+          byte = eSetWavetableByte2;
+          frame.asByte[2] = rx;
+          return 0;
+          break;
+      case eSetWavetableByte2:
+          byte = eSetWavetableByte3;
+          frame.asByte[1] = rx;
+          return 0;
+          break;
+      case eSetWavetableByte3:
+          frame.asByte[0] = rx;
+          spi_stream_to_wavebuf(frame.asFract32);
+          byte = eCom;
+          return 0;
+          break;
 
     //---- get param descriptor
 #if 0
@@ -426,10 +461,10 @@ u8 spi_process(u8 rx) {
     byte = eCom; // reset
     return 0;    // don't care
     break;
-
-  default:
-    byte = eCom; // reset
-    return 0;
-    break;
-  }
+          
+      default:
+          byte = eCom; //reset
+          return 0;
+          break;
+    }
 }
