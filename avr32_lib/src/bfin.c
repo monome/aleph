@@ -5,6 +5,9 @@
    follow protocol at aleph/common/protocol.h
 */
 
+#include <stdlib.h>
+#include <string.h>
+
 //ASF
 #include "compiler.h"
 #include "delay.h"
@@ -36,7 +39,8 @@ static void bfin_start_transfer(void);
 static void bfin_end_transfer(void); 
 static void bfin_transfer_byte(u8 data);
 
-u64 bytecount;
+//u64 bytecount;
+
 //---------------------------------------
 //--- external function definition
 
@@ -92,79 +96,35 @@ void bfin_load_buf(void) {
 }
 
 
-void bfin_set_wave(void) {
+void bfin_load_wavbuf(void) {
+    u64 bytecount;
+
     app_pause();
+    print_dbg("\r\n starting wave transfer... ");
     
-//    print_dbg("\r\n\r\n .ldr buffer for: ");
-//    for (i=0; i<bfinWaveSize; i++) {
-//    print_dbg("\r\n 0x");
-//    print_dbg_hex(bfinWaveData[i]);
-//    }
+    gpio_set_gpio_pin(BFIN_RESET_PIN);
+    delay_ms(1);
+    gpio_clr_gpio_pin(BFIN_RESET_PIN);
+    delay_ms(1);
+    gpio_set_gpio_pin(BFIN_RESET_PIN);
+    delay_ms(1);
     
-//    bfin_start_transfer_wave();
-    print_dbg("\r\n starting wavebyte transfer... ");
-
-    for(bytecount=0; bytecount<bfinWaveSize;) {
-        bfin_transfer_wavebyte(bfinWaveData[bytecount]);
+    for(bytecount=0; bytecount < bfinWaveSize; bytecount++) {
+        bfin_wait();
+        spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        spi_write(BFIN_SPI, MSG_SET_WAVETABLE);
+        spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        
+        bfin_wait();
+        spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        spi_write(BFIN_SPI, bfinWaveData[bytecount]);
+        spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        
+//        print_dbg_hex(bfinWaveData[bytecount]);
     }
-    
-//    bfin_end_transfer_wave();
-    print_dbg("\r\n finished wavebyte transfer... ");
-    
+
+    print_dbg("\r\n finished wave transfer... ");
     app_resume();
-}
-
-
-void bfin_start_transfer_wave(void) {
-    //command
-    bfin_wait();
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, MSG_SET_WAVETABLE);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    
-    bfin_wait();
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-}
-
-void bfin_transfer_wavebyte(u8 data) {
-    FrameSwap frame;
-    frame.asFract32 = (fract32)data;
-    
-    bfin_wait();
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, MSG_SET_WAVETABLE);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    
-    bfin_wait();
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, frame.asByte[0]);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    bytecount++;
-    
-    bfin_wait();
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, frame.asByte[1]);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    bytecount++;
-    
-    bfin_wait();
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, frame.asByte[2]);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    bytecount++;
-    
-    bfin_wait();
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, frame.asByte[3]);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    bytecount++;
-
-//    bfin_wait();
-//    spi_write(BFIN_SPI, data);
-}
-
-void bfin_end_transfer_wave(void) {
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 }
 
 

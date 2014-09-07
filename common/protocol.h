@@ -53,10 +53,7 @@ typedef enum {
   eNumParamsVal,
     
 //ADDED HERE!
-    eSetWavetableByte0,
-    eSetWavetableByte1,
-    eSetWavetableByte2,
-    eSetWavetableByte3,
+    eWavetableByte,
 
 #if 0
     //---- get param descriptor

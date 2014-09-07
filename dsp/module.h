@@ -52,9 +52,6 @@ extern void module_set_param(u32 idx, ParamValue val);
 extern u32 module_get_num_params(void);
 
 // set wave
-extern void module_set_wave(s32 frame);
-
-// load wavetable
-extern void module_load_wavetable(BufferData *buf, BufferTap *tap);
+extern void module_set_wavbyte(void);
 
 #endif // header guard

@@ -17,41 +17,24 @@
 //buffer descriptor
 typedef struct __attribute__((__packed__)) BufferDataStruct {
     //data count
-    u32 bufcount;
+    u64 bytecount;
     //pointer to data
-    fract32 *bufdata;
+    volatile u8 *wavbyte;
 } BufferData;
 
 typedef struct __attribute__((__packed__)) BufferTapStruct {
     //current position
-    u32 bufpos;
+    u64 bufpos;
     //pointer to buffer
     BufferData *buf;
 } BufferTap;
 
-//union type for byteswapping
-typedef union __attribute__((__packed__)) {
-    fract32 asFract32;
-    u8 asByte[4];
-} FrameSwap;
-
-//fract32 bufdata;
-
-extern void init_buffer(BufferData *buf, fract32 *data, u32 count);
+extern void init_buffer(BufferData *buf, volatile u8 *wavbyte, u64 count);
 extern void init_buffer_tap(BufferTap *tap, BufferData *buf);
 extern void buffer_tap_next(BufferTap *tap);
-extern void buffer_tap_set_pos(BufferTap *tap, u32 pos);
-extern fract32 buffer_tap_read(BufferTap *tap);
-extern void buffer_tap_write(BufferTap *tap, fract32 data);
-
-//extern void init_buffer(BufferData *buf, volatile fract32 *data, u32 frames);
-//extern void init_buffer_tap(BufferTap *tap, BufferData *buf);
-//extern void buffer_tap_next(BufferTap *tap);
-//extern void buffer_tap_set_pos(BufferTap *tap, fix32 samples);
-//extern fract32 buffer_tap_read(BufferTap *tap);
-//extern void buffer_tap_write(BufferTap *tap, fract32 val);
-
-//typedef fract32 (*WavtabData)[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
+extern void buffer_tap_set_pos(BufferTap *tap, u64 pos);
+extern u8 buffer_tap_read(BufferTap *tap);
+extern void buffer_tap_write(BufferTap *tap, u8 wavbyte);
 
 #endif // header guard
 

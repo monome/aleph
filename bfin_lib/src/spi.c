@@ -17,8 +17,6 @@ static u8 com;
 // current param index
 static u8 idx;
 
-fract32 frametmp;
-
 //------ static functions
 static void spi_set_param(u32 idx, ParamValue pv) {
   //  module_set_param(idx, pv);
@@ -28,18 +26,12 @@ static void spi_set_param(u32 idx, ParamValue pv) {
   module_set_param(idx, pv);
 }
 
-static void spi_stream_to_wavebuf(fract32 frame) {
-    gModuleData->bufferData->bufdata = &frame;
-    module_set_wave(frame);
-}
-
 
 //------- function definitions
 // deal with new data in the spi rx ringbuffer
 // return byte to load for next MISO
 u8 spi_process(u8 rx) {
   static ParamValueSwap pval;
-  static FrameSwap frame;
 
   switch(byte) {
     /// caveman style case statement
@@ -59,7 +51,9 @@ u8 spi_process(u8 rx) {
             
 //ADDED HERE!
     case MSG_SET_WAVETABLE:
-            byte = eSetWavetableByte0;
+            byte = eWavetableByte;
+            //return gModuleData->bufferData->bufdata;
+//            module_set_wave(rx);
             break;
 
 /*
@@ -159,7 +153,14 @@ u8 spi_process(u8 rx) {
     return 0; // don't care 
     break;
 
-      case eSetWavetableByte0:
+      case eWavetableByte:
+          gModuleData->bufferData->wavbyte = &rx;
+          module_set_wavbyte();
+          byte = eCom; //reset
+          return 0; // don't care
+          break;
+
+/*
           byte = eSetWavetableByte1;
           frame.asByte[3] = rx;
           return 0;
@@ -176,11 +177,12 @@ u8 spi_process(u8 rx) {
           break;
       case eSetWavetableByte3:
           frame.asByte[0] = rx;
+          frame.asFract32 = (fract32)atoi(frame.asByte);
           spi_stream_to_wavebuf(frame.asFract32);
           byte = eCom;
           return 0;
           break;
-
+*/
     //---- get param descriptor
 #if 0
   /* case eParamDescIdx : */

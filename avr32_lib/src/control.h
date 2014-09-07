@@ -27,4 +27,6 @@
 /// FIXME: uh will this work for params < 0 ?
 extern u8 ctl_param_change(u32 param, u32 value);
 
+extern u8 ctl_wavetable_change(void);
+
 #endif // h guard

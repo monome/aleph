@@ -71,13 +71,7 @@ extern void bfin_wait_ready(void);
 // get param value
 extern s32 bfin_get_param(u8 idx);
 
-
-//wavetable SPI transfer from volatile buffer
-extern void bfin_set_wave(void);
-
 //transfer wavetable to bfin
-void bfin_start_transfer_wave(void);
-void bfin_transfer_wavebyte(u8 data);
-void bfin_end_transfer_wave(void);
+extern void bfin_load_wavbuf(void);
 
 #endif // header guard

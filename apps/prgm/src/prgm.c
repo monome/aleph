@@ -4,6 +4,7 @@
 // asf
 #include "print_funcs.h"
 
+#include "delay.h"
 #include "events.h"
 #include "event_types.h"
 
@@ -11,9 +12,9 @@
 #include "fix.h"
 
 // avr32
+#include "bfin.h"
 #include "region.h"
 #include "app.h" //remove
-#include "bfin.h" //remove
 #include "control.h"
 
 //prgm
@@ -24,7 +25,6 @@
 #include "pages.h"
 #include "util.h" //remove
 #include "files.h"
-
 
 //static functions
 static inline void handle_sw(u8 id, u8 b);
@@ -75,7 +75,6 @@ void handle_switch_2(s32 data) {
 
 void handle_switch_3(s32 data) {
     ctl_param_change(eParamTab0, 0);
-    print_dbg("\r\n finished loading wavetable... ");
 }
 
 void handle_encoder_0(s32 val) {
@@ -92,6 +91,8 @@ void handle_encoder_0(s32 val) {
                     
                     ctl_wavetable_change();
                     print_dbg("\r\n finished bfin transfer... ");
+                    
+//                    ctl_param_change(eParamTab0, 0);
                     
                     print_fix16(renderWave0, Wave0);
                     render_wave();

@@ -9,7 +9,7 @@ typedef struct _prgmData {
     ParamData mParamData[eParamNumParams];
     BufferData mBufferData[WAVE_BUF_SIZE];
     BufferTap mBufferTap[WAVE_BUF_SIZE];
-    fract32 wave[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
+    volatile fract32 wave[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
 } prgmData;
 
 ModuleData *gModuleData;
@@ -124,9 +124,9 @@ void init_cv_parameters(prgmCvChannel *cv) {
 }
 
 
-void init_buffer(BufferData *buf, fract32 *data, u32 count) {
-    buf->bufdata = data;
-    buf->bufcount = count;
+void init_buffer(BufferData *buf, volatile u8 *wavbyte, u64 count) {
+    buf->wavbyte = wavbyte;
+    buf->bytecount = count;
 }
 
 
@@ -136,55 +136,62 @@ void init_buffer_tap(BufferTap *tap, BufferData *buf) {
 }
 
 
-void buffer_tap_set_pos(BufferTap *tap, u32 pos) {
+void buffer_tap_set_pos(BufferTap *tap, u64 pos) {
     tap->bufpos = pos;
 }
 
 
-void buffer_tap_write(BufferTap *tap, fract32 data) {
-    tap->buf->bufdata[tap->bufpos] = data;
+void buffer_tap_write(BufferTap *tap, u8 wavbyte) {
+    tap->buf->wavbyte[tap->bufpos] = wavbyte;
 }
 
 
-fract32 buffer_tap_read(BufferTap *tap) {
-//    s32 tmp = tap->buf->bufdata[tap->bufpos];
-//    fract16 tmp16 = (fract16)((tmp) & 0xffff) >> 1;
-//    fract32 tmp32 = fr16_to_fr32((fract16)((tmp16 & 0xffff) >> 1));
-//    return tmp32;
-    return tap->buf->bufdata[tap->bufpos];
+u8 buffer_tap_read(BufferTap *tap) {
+    return tap->buf->wavbyte[tap->bufpos];
 }
 
 
 void buffer_tap_next(BufferTap *tap) {
     tap->bufpos++;
-    if (tap->bufpos >= tap->buf->bufcount) {
-        tap->bufpos = 0; //0x80000000 & 0x7fffffff;
+    if (tap->bufpos >= tap->buf->bytecount) {
+        tap->bufpos = 0;
     }
 }
 
+
+void bin_to_strhex(unsigned char *bin, unsigned int binsz, char **result)
+{
+    char          hex_str[]= "0123456789abcdef";
+    unsigned int  i;
+    
+    *result = (char *)malloc(binsz * 2 + 1);
+    (*result)[binsz * 2] = 0;
+    
+    if (!binsz)
+        return;
+    
+    for (i = 0; i < binsz; i++)
+    {
+        (*result)[i * 2 + 0] = hex_str[bin[i] >> 4  ];
+        (*result)[i * 2 + 1] = hex_str[bin[i] & 0x0F];
+    }
+}
+
+data->wave[0][i] = bin_to_strhex((unsigned char *)buf, sizeof(buf), &result);
+free(result);
 
 void oscillator_set_wave(prgmOscillator *oscillator, s32 dummy) {
-    switch(dummy) {
-        case 0:
-            module_load_wavetable(data->mBufferData, data->mBufferTap);
-//            oscillator->tab = &data->wave;
-            break;
-/*
-        case 1:
-            oscillator->tab = data->wave1;
-            break;
-        case 2:
-            oscillator->tab = data->wave2;
-            break;
-        case 3:
-            oscillator->tab = data->wave3;
-            break;
-*/
-        default:
-            break;
-    }
-}
+    u64 i;
+    char buf[] = {0,1,10,11};
+    char *result;
+    
+    i = 0;
+    
+    
 
+
+
+}
 
 
 void oscillator_set_shape(prgmOscillator *oscillator, fract16 wave) {
@@ -361,10 +368,11 @@ void module_init(void) {
     
     sr = SAMPLERATE;
 
-    init_buffer(data->mBufferData, data->mBufferData[i].bufdata, WAVE_BUF_SIZE);
+    i = 0;
+    init_buffer(data->mBufferData, data->mBufferData[i].wavbyte, WAVE_BUF_SIZE);
     init_buffer_tap(data->mBufferTap, data->mBufferData);
     
-    data->mBufferData[i].bufdata = 0;
+    data->mBufferData[i].wavbyte = 0;
     
     buffer_tap_set_pos(data->mBufferTap, 0);
         
@@ -567,21 +575,7 @@ void module_set_param(u32 idx, ParamValue v) {
 }
 
 
-void module_set_wave(fract32 frame) {
-    buffer_tap_write(data->mBufferTap, frame);
+void module_set_wavbyte(void) {
+    buffer_tap_write(data->mBufferTap, *gModuleData->bufferData->wavbyte);
     buffer_tap_next(data->mBufferTap);
-}
-
-
-void module_load_wavetable(BufferData *buf, BufferTap *tap) {
-    buffer_tap_set_pos(data->mBufferTap, 0);
-    
-    if (data->mBufferTap->bufpos < 512) {
-        data->wave[0][data->mBufferTap->bufpos] = buffer_tap_read(data->mBufferTap);
-        buffer_tap_next(data->mBufferTap);
-    }
-    else if (data->mBufferTap->bufpos < 1024) {
-        data->wave[1][data->mBufferTap->bufpos] = buffer_tap_read(data->mBufferTap);
-        buffer_tap_next(data->mBufferTap);
-    }
 }

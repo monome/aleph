@@ -8,6 +8,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 //aleph-common
 #include "fix.h"
@@ -35,8 +36,7 @@
 
 #define WAVE_SHAPE_NUM 2
 #define WAVE_TAB_SIZE 512
-#define WAVE_BUF_SIZE 1024
-//#define WAVE_BUF_SIZE 0x2bf20
+#define WAVE_BUF_SIZE 0x10000
 
 //max characters in wavetable name
 #define WAVTAB_LABEL_LEN 8
@@ -64,7 +64,7 @@
 s32 synctrig;
 u8 state;
 
-typedef fract32 (*wave)[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
+typedef volatile fract32 (*wave)[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
 typedef struct _prgmOscillator *PrgmOscillatorpointer;
 typedef struct _prgmCvChannel *PrgmCvChannelpointer;
 

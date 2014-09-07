@@ -95,10 +95,9 @@ void files_load_wavetable(s32 idx) {
     
     app_pause();
     
-    if (idx < numwaves) {
-        fp = fl_fopen(wave_filepath(idx), "r");
-        print_dbg("\r\n wave_filepath(idx) ");
-        print_dbg(wave_filepath(idx));
+    fp = fl_fopen(wave_filepath(idx), "r");
+    print_dbg("\r\n wave_filepath(idx) ");
+    print_dbg(wave_filepath(idx));
         
         if (fp != NULL)
         {
@@ -109,12 +108,11 @@ void files_load_wavetable(s32 idx) {
             print_dbg("\r\n bfinWaveSize ");
             print_dbg_ulong(bfinWaveSize);
         }
-        else ;
-    }
-    else
-    {
+
+        else
+        {
         print_dbg("\r\n idx out of bounds");
-    }
+        }
     app_resume();
 }
 
