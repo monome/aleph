@@ -74,7 +74,7 @@ void handle_switch_2(s32 data) {
 }
 
 void handle_switch_3(s32 data) {
-    ctl_param_change(eParamTab0, 0);
+    //nothing
 }
 
 void handle_encoder_0(s32 val) {
@@ -91,8 +91,6 @@ void handle_encoder_0(s32 val) {
                     
                     ctl_wavetable_change();
                     print_dbg("\r\n finished bfin transfer... ");
-                    
-//                    ctl_param_change(eParamTab0, 0);
                     
                     print_fix16(renderWave0, Wave0);
                     render_wave();

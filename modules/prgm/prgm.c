@@ -7,9 +7,7 @@
 typedef struct _prgmData {
     ModuleData super;
     ParamData mParamData[eParamNumParams];
-    BufferData mBufferData[WAVE_BUF_SIZE];
-    BufferTap mBufferTap[WAVE_BUF_SIZE];
-    volatile fract32 wave[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
+    fract32 wavetable[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
 } prgmData;
 
 ModuleData *gModuleData;
@@ -21,6 +19,7 @@ prgmOscillator *oscillator[N_OSCILLATORS];
 prgmCvChannel *cvchannel[N_CVOUTPUTS];
 
 u8 cvChan = 0;
+u8 bytecount;
 
 static u32 sr;
 
@@ -32,13 +31,14 @@ static inline void cv_calc_inc(prgmCvChannel *cvchannel);
 
 PrgmOscillatorpointer init(void);
 PrgmCvChannelpointer init_channel(void);
+void init_buffer(void);
 static void init_parameters(prgmOscillator *oscillator, wave tab, u32 sr);
 static void init_cv_parameters(prgmCvChannel *cvchannel);
+void init_buffer_parameters(prgmWaveBuffer wf);
 
 static void oscillator_set_f(prgmOscillator *oscillator, fix16 f);
 static void oscillator_set_t(prgmOscillator *oscillator, fix16 t);
 
-static void oscillator_set_wave(prgmOscillator *oscillator, s32 dummy);
 static void oscillator_set_shape(prgmOscillator *oscillator, fract16 wave);
 
 static fract32 oscillator_lookup(prgmOscillator *oscillator);
@@ -96,6 +96,12 @@ PrgmCvChannelpointer init_channel(void) {
 }
 
 
+void init_buffer(void) {
+    wavBuf = (prgmWaveBuffer*)malloc(BUFFER_SIZE * (sizeof(prgmWaveBuffer)));
+    wavBuf = &wavebuffer[0];
+}
+
+
 void init_parameters(prgmOscillator *osc, wave tab, u32 sr) {
     prgmOscillator *oscillator = (prgmOscillator*)osc;
     
@@ -110,7 +116,7 @@ void init_parameters(prgmOscillator *osc, wave tab, u32 sr) {
     oscillator->f = 0;
     oscillator->t = 0;
     oscillator->wave = 0;
-    oscillator->amp = INT32_MAX >> 4; //TEST!!!
+    oscillator->amp = INT32_MAX >> 4; //TEST >> 1
 }
 
 
@@ -124,73 +130,12 @@ void init_cv_parameters(prgmCvChannel *cv) {
 }
 
 
-void init_buffer(BufferData *buf, volatile u8 *wavbyte, u64 count) {
-    buf->wavbyte = wavbyte;
-    buf->bytecount = count;
-}
-
-
-void init_buffer_tap(BufferTap *tap, BufferData *buf) {
-    tap->buf = buf;
-    tap->bufpos = 0;
-}
-
-
-void buffer_tap_set_pos(BufferTap *tap, u64 pos) {
-    tap->bufpos = pos;
-}
-
-
-void buffer_tap_write(BufferTap *tap, u8 wavbyte) {
-    tap->buf->wavbyte[tap->bufpos] = wavbyte;
-}
-
-
-u8 buffer_tap_read(BufferTap *tap) {
-    return tap->buf->wavbyte[tap->bufpos];
-}
-
-
-void buffer_tap_next(BufferTap *tap) {
-    tap->bufpos++;
-    if (tap->bufpos >= tap->buf->bytecount) {
-        tap->bufpos = 0;
-    }
-}
-
-
-void bin_to_strhex(unsigned char *bin, unsigned int binsz, char **result)
-{
-    char          hex_str[]= "0123456789abcdef";
-    unsigned int  i;
-    
-    *result = (char *)malloc(binsz * 2 + 1);
-    (*result)[binsz * 2] = 0;
-    
-    if (!binsz)
-        return;
-    
-    for (i = 0; i < binsz; i++)
-    {
-        (*result)[i * 2 + 0] = hex_str[bin[i] >> 4  ];
-        (*result)[i * 2 + 1] = hex_str[bin[i] & 0x0F];
-    }
-}
-
-data->wave[0][i] = bin_to_strhex((unsigned char *)buf, sizeof(buf), &result);
-free(result);
-
-void oscillator_set_wave(prgmOscillator *oscillator, s32 dummy) {
-    u64 i;
-    char buf[] = {0,1,10,11};
-    char *result;
-    
-    i = 0;
-    
-    
-
-
-
+void init_buffer_parameters(prgmWaveBuffer wb) {
+    wb.dirty = 0;
+    wb.bpos = 0;
+    wb.spos = 0;
+    wb.tpos = 0;
+    wb.wav = 0;
 }
 
 
@@ -357,37 +302,33 @@ static inline void param_setup(u32 id, ParamValue v) {
 
 //external functions
 void module_init(void) {
-    u8 i;
+    u32 i;
     data = (prgmData*)SDRAM_ADDRESS;
     gModuleData = &(data->super);
     strcpy(gModuleData->name, "aleph-prgm");
     gModuleData->paramData = data->mParamData;
     gModuleData->numParams = eParamNumParams;
-    gModuleData->bufferData = data->mBufferData;
-    gModuleData->bufferTap = data->mBufferTap;
-    
-    sr = SAMPLERATE;
 
-    i = 0;
-    init_buffer(data->mBufferData, data->mBufferData[i].wavbyte, WAVE_BUF_SIZE);
-    init_buffer_tap(data->mBufferTap, data->mBufferData);
+    sr = SAMPLERATE;
     
-    data->mBufferData[i].wavbyte = 0;
-    
-    buffer_tap_set_pos(data->mBufferTap, 0);
-        
     for(i=0; i<N_OSCILLATORS; i++) { oscillator[i] = init(); }
     for(i=0; i<N_CVOUTPUTS; i++) { cvchannel[i] = init_channel(); }
+    init_buffer();
     
-    init_parameters(oscillator[0], &data->wave, SAMPLERATE);
-    init_parameters(oscillator[1], &data->wave, SAMPLERATE);
-    init_parameters(oscillator[2], &data->wave, SAMPLERATE);
-    init_parameters(oscillator[3], &data->wave, SAMPLERATE);
+    init_parameters(oscillator[0], &data->wavetable, SAMPLERATE);
+    init_parameters(oscillator[1], &data->wavetable, SAMPLERATE);
+    init_parameters(oscillator[2], &data->wavetable, SAMPLERATE);
+    init_parameters(oscillator[3], &data->wavetable, SAMPLERATE);
     
     init_cv_parameters(cvchannel[0]);
     init_cv_parameters(cvchannel[1]);
     init_cv_parameters(cvchannel[2]);
     init_cv_parameters(cvchannel[3]);
+    
+    for(i=0; i<BUFFER_SIZE; i++)
+    {
+        init_buffer_parameters(wavebuffer[i]);
+    }
     
     param_setup(eParamFreq0, 152 << 16);
     param_setup(eParamFreq1, 152 << 16);
@@ -480,16 +421,16 @@ void module_set_param(u32 idx, ParamValue v) {
             break;
             
         case eParamTab0: //RENAME TO eParamWave...
-            oscillator_set_wave(oscillator[0], v);
+//            oscillator_set_wave(oscillator[0], v);
             break;
         case eParamTab1:
-            oscillator_set_wave(oscillator[1], v);
+//            oscillator_set_wave(oscillator[1], v);
             break;
         case eParamTab2:
-            oscillator_set_wave(oscillator[2], v);
+//            oscillator_set_wave(oscillator[2], v);
             break;
         case eParamTab3:
-            oscillator_set_wave(oscillator[3], v);
+//            oscillator_set_wave(oscillator[3], v);
             break; 
 
         case eParamWave0: //RENAME TO eParamBlend...
@@ -575,7 +516,6 @@ void module_set_param(u32 idx, ParamValue v) {
 }
 
 
-void module_set_wavbyte(void) {
-    buffer_tap_write(data->mBufferTap, *gModuleData->bufferData->wavbyte);
-    buffer_tap_next(data->mBufferTap);
+void module_load_wavetable(u8 spos, s32 tpos, fract32 wav) {
+    data->wavetable[spos][tpos] = wav;
 }

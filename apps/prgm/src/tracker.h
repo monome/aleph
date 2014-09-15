@@ -4,8 +4,8 @@
 #ifndef _ALEPH_APP_PRGM_TRACKER_H_
 #define _ALEPH_APP_PRGM_TRACKER_H_
 
-#define F_STEPS_MAX 1
-#define T_STEPS_MAX 1
+#define F_STEPS_MAX 4
+#define T_STEPS_MAX 4
 
 char renderCounter[16];
 char renderCounter_t[16];

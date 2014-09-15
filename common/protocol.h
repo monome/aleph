@@ -20,8 +20,7 @@
 #define MSG_SET_PARAM_COM           0 
 #define MSG_GET_PARAM_COM           1
 #define MSG_GET_NUM_PARAMS_COM      2
-#define MSG_SET_WAVETABLE           3
-//#define MSG_GET_PARAM_DESC_COM      3 // not using, but leave reserved
+#define MSG_GET_PARAM_DESC_COM      3 // using as "MSG_SET_WAVETABLE" not using, but leave reserved
 #define MSG_GET_MODULE_NAME_COM     4
 // get 4-byte version packet
 #define MSG_GET_MODULE_VERSION_COM  5
@@ -52,8 +51,11 @@ typedef enum {
   //---- get num params
   eNumParamsVal,
     
-//ADDED HERE!
+    eWavetablePos,
     eWavetableByte,
+    
+//ADDED HERE!
+//    eWavetableByte,
 
 #if 0
     //---- get param descriptor

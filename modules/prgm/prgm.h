@@ -34,10 +34,6 @@
 #include "module.h"
 #include "params.h"
 
-#define WAVE_SHAPE_NUM 2
-#define WAVE_TAB_SIZE 512
-#define WAVE_BUF_SIZE 0x10000
-
 //max characters in wavetable name
 #define WAVTAB_LABEL_LEN 8
 
@@ -64,9 +60,10 @@
 s32 synctrig;
 u8 state;
 
-typedef volatile fract32 (*wave)[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
 typedef struct _prgmOscillator *PrgmOscillatorpointer;
 typedef struct _prgmCvChannel *PrgmCvChannelpointer;
+
+typedef fract32 (*wave)[WAVE_SHAPE_NUM][WAVE_TAB_SIZE];
 
 typedef struct _prgmOscillator {
     fract32 frameVal;           //oscillator output
@@ -93,5 +90,6 @@ typedef struct _prgmCvChannel {
     fix16 t;                    //transposed
     filter_1p_lo cvSlew;
 } prgmCvChannel;
+
 
 #endif

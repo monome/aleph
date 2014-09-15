@@ -14,27 +14,28 @@
 #include "fix32.h"
 #include "types.h"
 
+#define WAVE_SHAPE_NUM 2
+#define WAVE_TAB_SIZE 512
+#define BUFFER_SIZE 32
+#define BUFFER_SIZE_1 31
+
 //buffer descriptor
-typedef struct __attribute__((__packed__)) BufferDataStruct {
-    //data count
-    u64 bytecount;
-    //pointer to data
-    volatile u8 *wavbyte;
-} BufferData;
+typedef struct __attribute__((__packed__)) _prgmWaveBuffer {
+    //dirty flag
+    u8 dirty;
+    //buffer position
+    u8 bpos;
+    //waveshape position
+    u8 spos;
+    //wavetable position
+    s32 tpos;
+    //value in fract32
+    fract32 wav;
+} prgmWaveBuffer;
 
-typedef struct __attribute__((__packed__)) BufferTapStruct {
-    //current position
-    u64 bufpos;
-    //pointer to buffer
-    BufferData *buf;
-} BufferTap;
-
-extern void init_buffer(BufferData *buf, volatile u8 *wavbyte, u64 count);
-extern void init_buffer_tap(BufferTap *tap, BufferData *buf);
-extern void buffer_tap_next(BufferTap *tap);
-extern void buffer_tap_set_pos(BufferTap *tap, u64 pos);
-extern u8 buffer_tap_read(BufferTap *tap);
-extern void buffer_tap_write(BufferTap *tap, u8 wavbyte);
+prgmWaveBuffer *wavBuf;
+//ordered set of wavetable values
+prgmWaveBuffer wavebuffer[BUFFER_SIZE];
 
 #endif // header guard
 

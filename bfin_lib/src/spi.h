@@ -2,6 +2,7 @@
 #define _ALEPH_BFIN_SPI_H_
 
 #include "param_common.h"
+#include "buffer_common.h"
 #include "types.h"
 
 /* //----- defines */

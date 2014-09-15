@@ -8,8 +8,6 @@
 #include "util.h"
 #include "spi.h"
 
-//----- static variables
-
 // byte to process
 static eSpiByte byte = eCom;
 // current command
@@ -17,13 +15,68 @@ static u8 com;
 // current param index
 static u8 idx;
 
-//------ static functions
 static void spi_set_param(u32 idx, ParamValue pv) {
-  //  module_set_param(idx, pv);
-  //  LED4_TOGGLE;
-  // ctl_param_change(idx, pv.u);
   gModuleData->paramData[idx].value = pv;
   module_set_param(idx, pv);
+}
+
+static void spi_set_pos(u8 num);
+static void spi_set_byte(u8 val);
+
+//count of receive bytes
+static s32 byteCount;
+//byte position
+static u8 bytepos;
+//waveshape position
+static u8 shapepos;
+//wavetable position
+static s32 tabpos;
+
+void spi_set_pos(u8 num) {
+    if(num == 0) {
+        byteCount = num;
+
+        bytepos = 0;
+        shapepos = 0;
+        tabpos = 0;
+    }
+    else if(tabpos < 2048) {
+        byteCount = num;
+        shapepos = 0;
+    }
+    else if(tabpos < 4096) {
+        byteCount = num;
+        shapepos = 1;
+    }
+    else
+        bytepos = 0;
+}
+
+void spi_set_byte(u8 wavbyte) {
+    if(bytepos == 0) {
+        tabpos = byteCount/4;
+        wavebuffer[tabpos].spos = shapepos;
+        wavebuffer[tabpos].tpos = tabpos;
+        wavebuffer[tabpos].wav = wavbyte;
+        bytepos = 1;
+    }
+    
+    else if(bytepos == 1) {
+        wavebuffer[tabpos].wav += (fract32)wavbyte << 8;
+        bytepos = 2;
+    }
+    
+    else if(bytepos == 2) {
+        wavebuffer[tabpos].wav += (fract32)wavbyte << 16;
+        bytepos = 3;
+    }
+    
+    else if(bytepos == 3) {
+        wavebuffer[tabpos].wav += (fract32)wavbyte << 24;
+        bytepos = 0;
+        
+        module_load_wavetable(wavebuffer[tabpos].spos, wavebuffer[tabpos].tpos, wavebuffer[tabpos].wav);
+    }
 }
 
 
@@ -48,19 +101,11 @@ u8 spi_process(u8 rx) {
       byte = eNumParamsVal;
       return gModuleData->numParams; // load num params
       break;
-            
-//ADDED HERE!
-    case MSG_SET_WAVETABLE:
-            byte = eWavetableByte;
-            //return gModuleData->bufferData->bufdata;
-//            module_set_wave(rx);
-            break;
 
-/*
     case MSG_GET_PARAM_DESC_COM:
-      byte = eParamDescIdx;
+      byte = eWavetablePos;
       break;
-*/
+
     case MSG_GET_MODULE_NAME_COM:
       byte = eModuleName0;
       return gModuleData->name[0];
@@ -79,6 +124,10 @@ u8 spi_process(u8 rx) {
       processAudio = 0;
       return processAudio;
       break;
+            
+//    case MSG_SET_WAVETABLE:
+//        byte = eWavetableByte;
+//        break;
             
     default:
       break;
@@ -152,37 +201,19 @@ u8 spi_process(u8 rx) {
     byte = eCom; //reset
     return 0; // don't care 
     break;
+          
+      case eWavetablePos:
+          spi_set_pos(rx);
+          byte = eWavetableByte;
+          return 0; // dont care
+          break;
 
       case eWavetableByte:
-          gModuleData->bufferData->wavbyte = &rx;
-          module_set_wavbyte();
+          spi_set_byte(rx);
           byte = eCom; //reset
           return 0; // don't care
           break;
 
-/*
-          byte = eSetWavetableByte1;
-          frame.asByte[3] = rx;
-          return 0;
-          break;
-      case eSetWavetableByte1:
-          byte = eSetWavetableByte2;
-          frame.asByte[2] = rx;
-          return 0;
-          break;
-      case eSetWavetableByte2:
-          byte = eSetWavetableByte3;
-          frame.asByte[1] = rx;
-          return 0;
-          break;
-      case eSetWavetableByte3:
-          frame.asByte[0] = rx;
-          frame.asFract32 = (fract32)atoi(frame.asByte);
-          spi_stream_to_wavebuf(frame.asFract32);
-          byte = eCom;
-          return 0;
-          break;
-*/
     //---- get param descriptor
 #if 0
   /* case eParamDescIdx : */

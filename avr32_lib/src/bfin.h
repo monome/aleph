@@ -25,9 +25,10 @@ volatile u32 bfinWaveSize;
 //#define BFIN_LDR_MAX_BYTES 0x10000 
 //// actually, the ldr itself can be bigger than the bfin's sram...??
 //0x10000 65536
-//0x12000 73728
-//0x30000 196608
+//APP_FLASH_BYTES set in flash.h, APP + LDR + WAVE = 0x40000
 #define BFIN_LDR_MAX_BYTES 0x12000
+#define BFIN_WAVE_MAX_BYTES 0x10000
+
 
 // wait for busy pin to clear
 void bfin_wait(void);

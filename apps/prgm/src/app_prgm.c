@@ -25,11 +25,13 @@
 
 //hardware init, all memory allocations go here
 void app_init(void) {
-    wavetables_init();
+    wavefiles_init();
     
     scale_init();
 
     render_init(); //includes tracker_init()
+
+    wavebuffer_init();
 }
 
 //dsp init
@@ -40,14 +42,15 @@ if(firstrun) {
     files_load_dsp();
 
     bfin_wait_ready();
-            
+    
 } else {
     print_dbg("\r\n app_launch NOT firstrun...");
     files_load_dsp();
 
     bfin_wait_ready();
-    }
-    ctl_report_parameters();
+}
+    
+//    ctl_report_parameters();
 
     pages_init();
     

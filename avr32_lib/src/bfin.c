@@ -98,6 +98,11 @@ void bfin_load_buf(void) {
 
 void bfin_load_wavbuf(void) {
     u64 bytecount;
+    
+//    if(bfinWaveSize > BFIN_WAVE_MAX_BYTES) {
+//        print_dbg("\r\n bfin load error: size : ");
+//        print_dbg_hex(bfinWaveSize);
+//    }
 
     app_pause();
     print_dbg("\r\n starting wave transfer... ");
@@ -112,7 +117,12 @@ void bfin_load_wavbuf(void) {
     for(bytecount=0; bytecount < bfinWaveSize; bytecount++) {
         bfin_wait();
         spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-        spi_write(BFIN_SPI, MSG_SET_WAVETABLE);
+        spi_write(BFIN_SPI, MSG_GET_PARAM_DESC_COM);
+        spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        
+        bfin_wait();
+        spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        spi_write(BFIN_SPI, bytecount);
         spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
         
         bfin_wait();
@@ -120,10 +130,10 @@ void bfin_load_wavbuf(void) {
         spi_write(BFIN_SPI, bfinWaveData[bytecount]);
         spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
         
+//        print_dbg("\r\n");
 //        print_dbg_hex(bfinWaveData[bytecount]);
     }
 
-    print_dbg("\r\n finished wave transfer... ");
     app_resume();
 }
 

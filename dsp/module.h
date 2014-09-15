@@ -25,8 +25,6 @@ typedef struct _moduleData {
     char name[MODULE_NAME_LEN];
     ParamData *paramData; 
     u16 numParams;
-    BufferData *bufferData;
-    BufferTap *bufferTap;
 } ModuleData;
 
 //---------
@@ -39,6 +37,7 @@ extern u8 dbgFlag;
 //-------- function prototypes 
 // init
 extern void module_init(void);
+
 // de-init
 extern void module_deinit(void);
 
@@ -52,6 +51,6 @@ extern void module_set_param(u32 idx, ParamValue val);
 extern u32 module_get_num_params(void);
 
 // set wave
-extern void module_set_wavbyte(void);
+extern void module_load_wavetable(u8 spos, s32 tpos, fract32 wav);
 
 #endif // header guard

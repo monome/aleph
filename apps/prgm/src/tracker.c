@@ -534,15 +534,15 @@ void step_advance_t(s32 val) {
         ctl_param_change(eParamFreq2, Freq2);
         ctl_param_change(eParamFreq3, Freq3);
         
-        ctl_param_change(eParamCVtranspose0, Transpose0);
-        ctl_param_change(eParamCVtranspose1, Transpose1);
-        ctl_param_change(eParamCVtranspose2, Transpose2);
-        ctl_param_change(eParamCVtranspose3, Transpose3);
+//        ctl_param_change(eParamCVtranspose0, Transpose0);
+//        ctl_param_change(eParamCVtranspose1, Transpose1);
+//        ctl_param_change(eParamCVtranspose2, Transpose2);
+//        ctl_param_change(eParamCVtranspose3, Transpose3);
         
-//        print_fix16(renderTranspose0, Transpose0);
-//        print_fix16(renderTranspose1, Transpose1);
-//        print_fix16(renderTranspose2, Transpose2);
-//        print_fix16(renderTranspose3, Transpose3);
+        print_fix16(renderTranspose0, Transpose0);
+        print_fix16(renderTranspose1, Transpose1);
+        print_fix16(renderTranspose2, Transpose2);
+        print_fix16(renderTranspose3, Transpose3);
         
         print_fix16(renderFreq0, fix16_mul(Freq0, Transpose0));
         print_fix16(renderFreq1, fix16_mul(Freq1, Transpose1));

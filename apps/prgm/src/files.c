@@ -29,9 +29,11 @@ typedef struct _dirList {
 
 static dirList_t tabList;
 
+
 //static function declarations
 static void fake_fread(volatile u8 *dst, u32 len, void *fp);
 static char *wave_filepath(s32 n);
+
 
 //static functions
 void fake_fread(volatile u8 *dst, u32 len, void *fp) { //fread: no size arg
@@ -54,7 +56,7 @@ char *wave_filepath(s32 n) {
 
 
 //external functions
-void wavetables_init(void) {
+void wavefiles_init(void) {
     FL_DIR dirstat;
     struct fs_dir_ent dirent; //see fat_access.h
     
@@ -83,8 +85,14 @@ void wavetables_init(void) {
         }
         //fl_closedir(&dirstat);
     }
+}
+
+
+void wavebuffer_init(void) {
+    u64 i;
+    
     bfinWaveData = alloc_mem(BFIN_WAVE_MAX_BYTES);
-    for(i=0; i<numwaves; i++) { bfinWaveData[i] = 0; }
+    for(i=0; i<BFIN_WAVE_MAX_BYTES; i++) { bfinWaveData[i] = 0; }
     bfinWaveSize = 0;
 }
 
@@ -107,6 +115,9 @@ void files_load_wavetable(s32 idx) {
             bfinWaveSize = size;
             print_dbg("\r\n bfinWaveSize ");
             print_dbg_ulong(bfinWaveSize);
+            
+//            bfin_load_wavbuf();
+//            print_dbg("\r\n bfin_load_wavbuf finished... ");
         }
 
         else
@@ -127,11 +138,10 @@ u8 files_load_dsp(void) {
     app_pause();
     
     fp = fl_fopen(DSP_PATH, "r");
-    print_dbg("\r\n found file...");
     
     if(fp != NULL) {
         size = ((FL_FILE*)(fp))->filelength;
-        print_dbg("\r\n found file, loading dsp: ");
+        print_dbg("\r\n found file, loading dsp... ");
         fake_fread(bfinLdrData, size, fp);
         
         fl_fclose(fp);

@@ -4,14 +4,6 @@
 #ifndef _ALEPH_APP_PRGM_FILES_H_
 #define _ALEPH_APP_PRGM_FILES_H_
 
-//#include "types.h" ?!?
-//#include <types.h> ?!?
-
-//#define DEFAULT_LDR "/mod/aleph-prgm.ldr"
-//#define DEFAULT_DSC "/mod/aleph-prgm.dsc"
-
-#define BFIN_WAVE_MAX_BYTES 0x10000
-
 #define DSP_PATH "/mod/aleph-prgm.ldr"
 #define DSC_PATH "/mod/aleph-prgm.dsc"
 #define TAB_PATH "/data/prgm/wavetables/"
@@ -30,7 +22,10 @@ char *waves[MAX_TABLES];
 s32 numwaves;
 
 //initialize list of wavetable files
-extern void wavetables_init(void);
+extern void wavefiles_init(void);
+
+//initialize buffer for wavetable data
+extern void wavebuffer_init(void);
 
 //load next wavetable file to temporary buffer
 extern void files_load_wavetable(s32 idx);
