@@ -16,8 +16,8 @@ typedef struct op_serial_struct {
   op_out_t outs[];
 } op_serial_t;
 
-void op_serial_init(void* op);
-void op_serial_deinit(void* op);
+extern void op_serial_init(void* op);
+extern void op_serial_deinit(void* op);
 
 
 #endif // header guard

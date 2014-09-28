@@ -91,7 +91,10 @@ void op_step_init(void* mem) {
   op->s_now2 = 0;
   op->s_cut2 = 0;
 
+#ifdef BEEKEEP
+#else
   op->size = monome_size_x();
+#endif
 
   op->focus = OP_ONE;
   net_monome_set_focus(&(op->monome), 1);

@@ -11,6 +11,8 @@ target = $(name)-$(version)
 include python_version.mk
 
 # bees sources
+# fixme: move some of these to sim sources
+# instead of switching on BEEKEEP in the production code
 src += \
 	$(bees)/src/app_timers.c \
 	$(bees)/src/net.c \
@@ -33,8 +35,10 @@ src += \
 	$(bees)/src/ops/op_add.c \
 	$(bees)/src/ops/op_accum.c \
 	$(bees)/src/ops/op_adc.c \
+	$(bees)/src/ops/op_bars.c \
 	$(bees)/src/ops/op_bignum.c \
 	$(bees)/src/ops/op_bits.c \
+	$(bees)/src/ops/op_cascades.c \
 	$(bees)/src/ops/op_delay.c \
 	$(bees)/src/ops/op_div.c \
 	$(bees)/src/ops/op_enc.c \
@@ -53,6 +57,7 @@ src += \
 	$(bees)/src/ops/op_monome_grid_raw.c \
 	$(bees)/src/ops/op_preset.c \
 	$(bees)/src/ops/op_screen.c \
+	$(bees)/src/ops/op_serial.c \
 	$(bees)/src/ops/op_split.c \
 	$(bees)/src/ops/op_split4.c \
 	$(bees)/src/ops/op_step.c \
@@ -63,6 +68,7 @@ src += \
 	$(bees)/src/ops/op_tog.c \
 	$(bees)/src/ops/op_random.c \
 	$(bees)/src/ops/op_route.c \
+	$(bees)/src/ops/op_route8.c \
 	$(bees)/src/ops/op_mod.c \
 	$(bees)/src/pages/page_dsp.c \
 	$(bees)/src/pages/page_gathered.c \
@@ -171,4 +177,5 @@ target: $(obj)
 all: beekeep
 
 clean:
-	rm $(obj) $(pyaleph)/pyaleph.pyc
+	rm $(obj)
+#	rm $(pyaleph)/pyaleph.pyc
