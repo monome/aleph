@@ -8,7 +8,7 @@ version = $(maj).$(min).$(rev)
 target = $(name)-$(version)
 
 #copy the approriate python version file here for your distro
-include python_version.mk
+include beekeep_py.mk
 
 # bees sources
 # fixme: move some of these to sim sources
@@ -102,7 +102,6 @@ src += src/json_read_raw.c \
 	src/json_write_max.c \
 	src/json_read_native.c \
 	src/json_write_native.c \
-	$(pyaleph)/pyaleph.c \
 	src/net_py.c
 
 
@@ -179,4 +178,3 @@ all: beekeep
 
 clean:
 	rm $(obj)
-#	rm $(pyaleph)/pyaleph.pyc
