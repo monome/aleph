@@ -102,7 +102,8 @@ src += src/json_read_raw.c \
 	src/json_write_max.c \
 	src/json_read_native.c \
 	src/json_write_native.c \
-    $(pyaleph)/pyaleph.c \
+	$(pyaleph)/pyaleph.c \
+	src/net_py.c
 
 
 # srcs from simulator
