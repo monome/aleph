@@ -106,7 +106,6 @@ INC_PATH += \
 	$(APP_DIR)/../../common \
 	$(APP_DIR)/../../../avr32-toolchain-linux/include
 
-
 # Additional search paths for libraries.
 LIB_PATH += 
 

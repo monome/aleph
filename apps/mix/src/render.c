@@ -7,7 +7,7 @@
 
   draws amplitude values and mute flags.
 
- */
+*/
 
 //--- std headers
 #include <string.h>
@@ -23,8 +23,10 @@
 #include "region.h"
 // screen refresh function
 #include "screen.h"
-//
-#include "util.h"
+
+//--- mix application headers
+#include "ctl.h"
+
 
 // local
 #include "render.h"
@@ -35,23 +37,23 @@
 #define NUMSTRBUF_LEN 17
 #define HEXSTRBUF_LEN 9
 
-static char numstrbuf[NUMSTRBUF_LEN];
-static char hexstrbuf[HEXSTRBUF_LEN] = "12345678";
+//static char numstrbuf[NUMSTRBUF_LEN];
+//static char hexstrbuf[HEXSTRBUF_LEN] = "12345678";
 
 /* 
    the screen-drawing routines in avr32_lib provide "region" object
    a simple 16-bit pixel buffer with width, height, x/y offset, and dirty flag.
    there are also methods for basic fill and text rendering into regions.
- */
+*/
 
 // a region above of the screen for showing text label
 static region regLabel = { 
-.w = 128, .h = 24, .x = 0,  .y = 0
+  .w = 128, .h = 24, .x = 0,  .y = 0
 };
 
 // a region below of the screen for showing numerical data
 static region regData = { 
-.w = 128, .h = 24, .x = 0,  .y = 24
+  .w = 128, .h = 24, .x = 0,  .y = 24
 };
 
 // a region for each mute button
@@ -72,7 +74,7 @@ static region regMute[4] = {
 
 // initialze renderer
 void render_init(void) {
-  u32 i;
+  //  u32 i;
   // allocate memory for each region
   region_alloc(&regData);
   region_alloc(&regLabel);
@@ -103,8 +105,8 @@ void render_startup(void) {
 
 // update dirty regions
 void render_update(void) {
-  region* r;  
-  u8 i;
+  //  region* r;  
+  //  u8 i;
   app_pause();
 
   // physically update the screen with each region's data (if changed)
@@ -120,7 +122,7 @@ void render_update(void) {
 
 // render amplitude
 void render_amp(u8 ch) {
-  static const char[4][] nums = { "0", "1", "2", "3" };
+  static const char nums[4][1] = { "0", "1", "2", "3" };
   // text buffer
   char buf[16] = "";
 
@@ -138,13 +140,13 @@ void render_amp(u8 ch) {
   // render to buffer
   region_string_aa( &regData, buf , 0, 0, 0);
 
-  // glitch it up...
-  // clear buffer again
-  memset(buf, 16, '\0');
-  // print again, in hex
-  uint_to_hex_ascii(buf, val);
-  // render again, to same region, small, inverted and offset
-  region_string( &regData, buf , 0, 64, 1);
+  /* // glitch it up... */
+  /* // clear buffer again */
+  /* memset(buf, 16, '\0'); */
+  /* // print again, in hex */
+  /* uint_to_hex_ascii(buf, val); */
+  /* // render again, to same region, small, inverted and offset */
+  /* region_string( &regData, buf , 0, 64, 1); */
 
 }
 

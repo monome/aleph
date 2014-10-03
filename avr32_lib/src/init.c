@@ -11,7 +11,7 @@
 
 #include "compiler.h"
 #include "conf_sd_mmc_spi.h"
-#include "util.h"
+//#include "util.h"
 #include "gpio.h"
 #include "pdca.h"
 #include "power_clocks_lib.h"

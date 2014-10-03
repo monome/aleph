@@ -25,7 +25,7 @@
 #include "global.h"
 #include "interrupts.h"
 #include "types.h"
-#include "util.h"
+//#include "util.h"
 #include "bfin.h"
 
 //--------------------------------------
