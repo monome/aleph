@@ -205,6 +205,7 @@ void op_bars_poll_handler(void* op) {
       r->dirty = 0;
     }
   }
+  else r->dirty = 1;
 }
 
 

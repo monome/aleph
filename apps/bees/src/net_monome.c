@@ -68,7 +68,7 @@ op_monome_t* monomeOpFocus = NULL;
 //---- extern functions
 // init
  void net_monome_init(void) {
-  //...
+  monomeOpFocus = NULL;
 }
 
 // set focus

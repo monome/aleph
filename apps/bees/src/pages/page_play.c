@@ -108,8 +108,8 @@ void init_page_play(void) {
 void select_play(void) {
   play_enable_render();
   // other regions are static in top-level render, with global handles
-  region_fill(headRegion, 0x0);
-  font_string_region_clip(headRegion, "PLAY", 0, 0, 0xf, 0x1);
+  // region_fill(headRegion, 0x0);
+  // font_string_region_clip(headRegion, "PLAY", 0, 0, 0xf, 0x1);
   // assign handlers
   app_event_handlers[ kEventEncoder0 ]	= &handle_enc_0 ;
   app_event_handlers[ kEventEncoder1 ]	= &handle_enc_1 ;
