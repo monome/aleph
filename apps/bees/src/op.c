@@ -221,6 +221,12 @@ const op_desc_t op_registry[numOpClasses] = {
     .init = &op_serial_init,
     .deinit = &op_serial_deinit   
   },
+  {
+    .name = "HID",
+    .size = sizeof(op_hid_word_t),
+    .init = &op_hid_word_init,
+    .deinit = &op_hid_word_deinit   
+  },
 };
 
 // input and output strings are all the same length, concatenated

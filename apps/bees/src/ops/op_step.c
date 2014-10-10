@@ -103,8 +103,8 @@ void op_step_init(void* mem) {
   op->size = monome_size_x();
 #endif
 
-  op->focus = OP_ONE;
-  net_monome_set_focus(&(op->monome), 1);
+  op->focus = 0; //OP_ONE;
+  //net_monome_set_focus(&(op->monome), 1);
 
   // init monome drawing, maybe should clear first
   monomeLedBuffer[monome_xy_idx(0, 0)] = 15;
