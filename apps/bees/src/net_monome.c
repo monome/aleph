@@ -78,7 +78,7 @@ op_monome_t* monomeOpFocus = NULL;
   print_dbg(" , value: ");
   print_dbg_ulong(focus);
 
-  if(focus > 0) {
+  if(focus > 0 && monomeConnect) {
     if(monomeOpFocus != NULL ){
       /// stealing focus, inform the previous holder
       monomeOpFocus->focus = 0;
@@ -88,11 +88,9 @@ op_monome_t* monomeOpFocus = NULL;
     op_monome->focus = 1;
   } else {
     // release focus if we had it, otherwise do nothing
-    if( monomeOpFocus == op_monome) {
       monome_grid_key_handler = (monome_handler_t)&dummyHandler;
       monomeOpFocus = NULL;
       op_monome->focus = 0;
-    }
   }
 }
 
@@ -127,10 +125,7 @@ void net_monome_connect(void) {
 }
 // disconnect
 void net_monome_disconnect(void) {
-  if(monomeConnect != 0) {
-    /// FIXME: shld probably do checks for null handlers here, 
-    //// and not when calling the handler
-    monomeConnect = 1;
-    timers_set_monome();
-  } 
+    monomeOpFocus = NULL;
+    monome_grid_key_handler = (monome_handler_t)&dummyHandler;
+    timers_unset_monome();
 }

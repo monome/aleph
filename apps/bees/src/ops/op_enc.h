@@ -12,7 +12,6 @@ typedef struct op_enc_struct {
   volatile io_t step;
   volatile io_t min;
   volatile io_t max;
-  volatile io_t wrap;
   volatile io_t * in_val[4];
   op_out_t outs[2];
   /// non-exposed state:

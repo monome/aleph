@@ -120,6 +120,8 @@ void op_cascades_init(void* mem) {
   op->outs[6] = -1;
   op->outs[7] = -1;
 
+  edit_row = key_count = mode = prev_mode = 0;
+
   op->size = monome_size_x();
 
   op->focus = OP_ONE;
