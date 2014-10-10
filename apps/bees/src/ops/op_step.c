@@ -91,7 +91,6 @@ void op_step_init(void* mem) {
   op->s_now2 = 0;
   op->s_cut2 = 0;
 
-
   for(i=0;i<16;i++) {
     op->steps[0][i] = 0;
     op->steps[1][i] = 0;
