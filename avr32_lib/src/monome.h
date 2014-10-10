@@ -1,13 +1,5 @@
-/*
-  monome.h
-  aleph-avr32
-  
-  monome single-device interface declarations
-
- */
-
-#ifndef _ALEPH_MONOME_INTERFACE_H_
-#define _ALEPH_MONOME_INTERFACE_H_
+#ifndef _MONOME_H_
+#define _MONOME_H_
 
 #include "events.h"
 #include "ftdi.h"
@@ -199,5 +191,6 @@ extern u32 monome_xy_idx(u8 x, u8 y);
 
 extern u8 monome_size_x(void);
 extern u8 monome_size_y(void);
+extern u8 monome_is_vari(void);
 
 #endif // h guard

@@ -202,6 +202,7 @@ void op_bignum_poll_handler(void* op) {
       r->dirty = 0;
     }
   }
+  else r->dirty = 1;
 }
 
 
