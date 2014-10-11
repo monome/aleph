@@ -53,13 +53,15 @@ static PyObject* /* s16 */ bees_pop_op(/* void */ PyObject* self, PyObject* args
 
 // remove an arbitrary operator
 // FIXME: not tested really... use at your own risk!
-static PyObject* /* void */ bees_remove_op(/* const u32 idx */ PyObject* self, PyObject* args) {
-  int a;
-  if (!PyArg_ParseTuple(args, "i", &a))
-    return NULL;
-  net_remove_op(a);
-  Py_RETURN_NONE;
-}
+
+/* static PyObject* /\* void *\/ bees_remove_op(/\* const u32 idx *\/ PyObject* self, PyObject* args) { */
+/*   int a; */
+/*   if (!PyArg_ParseTuple(args, "i", &a)) */
+/*     return NULL; */
+/*   net_remove_op(a); */
+/*   Py_RETURN_NONE; */
+/* } */
+
 
 /* // activate an input node with some input data */
 /* static PyObject* /\* void *\/ bees_activate(/\* s16 inIdx, const io_t val, void* srcOp *\/ PyObject* self, PyObject* args) { */
@@ -451,50 +453,50 @@ static PyObject* /* void */ bees_disconnect_params(/* void */ PyObject* self, Py
 
 // method table
 static PyMethodDef PyAlephCMethods[] = {
-  { "net_init", net_init, METH_VARARGS, "net_init"},
-  { "net_deinit", net_deinit, METH_VARARGS, "net_deinit"},
-  { "net_init_inode", net_init_inode, METH_VARARGS, "net_init_inode"},
-  { "net_init_onode", net_init_onode, METH_VARARGS, "net_init_onode"},
-  { "net_add_op", net_add_op, METH_VARARGS, "net_add_op"},
-  { "net_pop_op", net_pop_op, METH_VARARGS, "net_pop_op"},
-  { "net_remove_op", net_remove_op, METH_VARARGS, "net_remove_op"},
-  { "net_activate", net_activate, METH_VARARGS, "net_activate"},
-  { "net_num_ops", net_num_ops, METH_VARARGS, "net_num_ops"},
-  { "net_num_ins", net_num_ins, METH_VARARGS, "net_num_ins"},
-  { "net_num_outs", net_num_outs, METH_VARARGS, "net_num_outs"},
-  { "net_param_idx", net_param_idx, METH_VARARGS, "net_param_idx"},
-  { "net_num_params", net_num_params, METH_VARARGS, "net_num_params"},
-  { "net_op_name", net_op_name, METH_VARARGS, "net_op_name"},
-  { "net_in_name", net_in_name, METH_VARARGS, "net_in_name"},
-  { "net_out_name", net_out_name, METH_VARARGS, "net_out_name"},
-  { "net_in_op_idx", net_in_op_idx, METH_VARARGS, "net_in_op_idx"},
-  { "net_out_op_idx", net_out_op_idx, METH_VARARGS, "net_out_op_idx"},
-  { "net_op_in_idx", net_op_in_idx, METH_VARARGS, "net_op_in_idx"},
-  { "net_op_out_idx", net_op_out_idx, METH_VARARGS, "net_op_out_idx"},
-  { "net_get_target", net_get_target, METH_VARARGS, "net_get_target"},
-  { "net_in_connected", net_in_connected, METH_VARARGS, "net_in_connected"},
-  { "net_op_flag", net_op_flag, METH_VARARGS, "net_op_flag"},
-  { "net_get_in_value", net_get_in_value, METH_VARARGS, "net_get_in_value"},
-  { "net_inc_in_value", net_inc_in_value, METH_VARARGS, "net_inc_in_value"},
-  { "net_connect", net_connect, METH_VARARGS, "net_connect"},
-  { "net_disconnect", net_disconnect, METH_VARARGS, "net_disconnect"},
-  { "net_toggle_in_preset", net_toggle_in_preset, METH_VARARGS, "net_toggle_in_preset"},
-  { "net_toggle_out_preset", net_toggle_out_preset, METH_VARARGS, "net_toggle_out_preset"},
-  { "net_set_in_preset", net_set_in_preset, METH_VARARGS, "net_set_in_preset"},
-  { "net_set_out_preset", net_set_out_preset, METH_VARARGS, "net_set_out_preset"},
-  { "net_get_in_preset", net_get_in_preset, METH_VARARGS, "net_get_in_preset"},
-  { "net_get_out_preset", net_get_out_preset, METH_VARARGS, "net_get_out_preset"},
-  { "net_toggle_in_play", net_toggle_in_play, METH_VARARGS, "net_toggle_in_play"},
-  { "net_get_in_play", net_get_in_play, METH_VARARGS, "net_get_in_play"},
-  //  { "net_add_param", net_add_param, METH_VARARGS, "net_add_param"},
-  { "net_clear_params", net_clear_params, METH_VARARGS, "net_clear_params"},
-  //  { "net_send_params", net_send_params, METH_VARARGS, "net_send_params"},
-  { "net_get_param_value_string", net_get_param_value_string, METH_VARARGS, "net_get_param_value_string"},
-  { "net_retrigger_inputs", net_retrigger_inputs, METH_VARARGS, "net_retrigger_inputs"},
-  { "net_gather", net_gather, METH_VARARGS, "net_gather"},
-  { "net_clear_user_ops", net_clear_user_ops, METH_VARARGS, "net_clear_user_ops"},
-  { "net_disconnect_params", net_disconnect_params, METH_VARARGS, "net_disconnect_params"},
-  //  { "net_split_out", net_split_out, METH_VARARGS, "net_split_out"},
+  { "bees_init", bees_init, METH_VARARGS, "bees_init"},
+  { "bees_deinit", bees_deinit, METH_VARARGS, "bees_deinit"},
+  { "bees_init_inode", bees_init_inode, METH_VARARGS, "bees_init_inode"},
+  { "bees_init_onode", bees_init_onode, METH_VARARGS, "bees_init_onode"},
+  { "bees_add_op", bees_add_op, METH_VARARGS, "bees_add_op"},
+  { "bees_pop_op", bees_pop_op, METH_VARARGS, "bees_pop_op"},
+  //  { "bees_remove_op", bees_remove_op, METH_VARARGS, "bees_remove_op"},
+  //  { "bees_activate", bees_activate, METH_VARARGS, "bees_activate"},
+  { "bees_num_ops", bees_num_ops, METH_VARARGS, "bees_num_ops"},
+  { "bees_num_ins", bees_num_ins, METH_VARARGS, "bees_num_ins"},
+  { "bees_num_outs", bees_num_outs, METH_VARARGS, "bees_num_outs"},
+  { "bees_param_idx", bees_param_idx, METH_VARARGS, "bees_param_idx"},
+  { "bees_num_params", bees_num_params, METH_VARARGS, "bees_num_params"},
+  { "bees_op_name", bees_op_name, METH_VARARGS, "bees_op_name"},
+  { "bees_in_name", bees_in_name, METH_VARARGS, "bees_in_name"},
+  { "bees_out_name", bees_out_name, METH_VARARGS, "bees_out_name"},
+  { "bees_in_op_idx", bees_in_op_idx, METH_VARARGS, "bees_in_op_idx"},
+  { "bees_out_op_idx", bees_out_op_idx, METH_VARARGS, "bees_out_op_idx"},
+  { "bees_op_in_idx", bees_op_in_idx, METH_VARARGS, "bees_op_in_idx"},
+  { "bees_op_out_idx", bees_op_out_idx, METH_VARARGS, "bees_op_out_idx"},
+  { "bees_get_target", bees_get_target, METH_VARARGS, "bees_get_target"},
+  { "bees_in_connected", bees_in_connected, METH_VARARGS, "bees_in_connected"},
+  { "bees_op_flag", bees_op_flag, METH_VARARGS, "bees_op_flag"},
+  { "bees_get_in_value", bees_get_in_value, METH_VARARGS, "bees_get_in_value"},
+  { "bees_inc_in_value", bees_inc_in_value, METH_VARARGS, "bees_inc_in_value"},
+  { "bees_connect", bees_connect, METH_VARARGS, "bees_connect"},
+  { "bees_disconnect", bees_disconnect, METH_VARARGS, "bees_disconnect"},
+  { "bees_toggle_in_preset", bees_toggle_in_preset, METH_VARARGS, "bees_toggle_in_preset"},
+  { "bees_toggle_out_preset", bees_toggle_out_preset, METH_VARARGS, "bees_toggle_out_preset"},
+  { "bees_set_in_preset", bees_set_in_preset, METH_VARARGS, "bees_set_in_preset"},
+  { "bees_set_out_preset", bees_set_out_preset, METH_VARARGS, "bees_set_out_preset"},
+  { "bees_get_in_preset", bees_get_in_preset, METH_VARARGS, "bees_get_in_preset"},
+  { "bees_get_out_preset", bees_get_out_preset, METH_VARARGS, "bees_get_out_preset"},
+  { "bees_toggle_in_play", bees_toggle_in_play, METH_VARARGS, "bees_toggle_in_play"},
+  { "bees_get_in_play", bees_get_in_play, METH_VARARGS, "bees_get_in_play"},
+  //  { "bees_add_param", bees_add_param, METH_VARARGS, "bees_add_param"},
+  { "bees_clear_params", bees_clear_params, METH_VARARGS, "bees_clear_params"},
+  //  { "bees_send_params", bees_send_params, METH_VARARGS, "bees_send_params"},
+  { "bees_get_param_value_string", bees_get_param_value_string, METH_VARARGS, "bees_get_param_value_string"},
+  //  { "bees_retrigger_inputs", bees_retrigger_inputs, METH_VARARGS, "bees_retrigger_inputs"},
+  //  { "bees_gather", bees_gather, METH_VARARGS, "bees_gather"},
+  { "bees_clear_user_ops", bees_clear_user_ops, METH_VARARGS, "bees_clear_user_ops"},
+  { "bees_disconnect_params", bees_disconnect_params, METH_VARARGS, "bees_disconnect_params"},
+  //  { "bees_split_out", bees_split_out, METH_VARARGS, "bees_split_out"},
 };
 
 
