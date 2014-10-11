@@ -122,7 +122,10 @@ void op_cascades_init(void* mem) {
 
   edit_row = key_count = mode = prev_mode = 0;
 
+#ifdef BEEKEEP
+#else
   op->size = monome_size_x();
+#endif
 
   op->focus = OP_ONE;
   net_monome_set_focus(&(op->monome), 1);

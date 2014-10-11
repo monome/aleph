@@ -39,14 +39,14 @@
 //--- custom app headers
 #include "app_timers.h"
 #include "ctl.h"
-#include "files.h"
-#include "inputs.h"
+//#include "files.h"
+//#include "inputs.h"
 #include "render.h"
-#include "util.h"
 
+//#include "util.h"
 //--- these are actually just copied from BEES
-#include "scalers/scaler_amp.h"
-#include "scalers/scaler_integrator.h"
+// #include "scalers/scaler_amp.h"
+// #include "scalers/scaler_integrator.h"
 
 //-----------------
 //---- static variables
@@ -55,7 +55,8 @@
 static s32 adc[4];
 // mute flags
 static bool mute[4];
-
+// current amp values
+static bool ampVal[4] = { 0, 0, 0, 0 };
 
 //-------------------------
 //---- extern function definitions
@@ -69,11 +70,12 @@ void ctl_set_amp(u32 ch, s32 val) {
     ;; 
   } else {
     // a dumb hack for param idx using first adc param as offset
-    ctl_param_change(eParam_adc0 + ch);
+    ampVal[ch] = val;
+    ctl_param_change(eParam_adc0 + ch, val);
   }
 
   // let's just echo it to the cv output, regardless of mute status
-  ctl_param_change(eParam_cv0 + ch);
+  ctl_param_change(eParam_cv0 + ch, val);
 
   // draw the amplitude change
   render_amp(ch); 
@@ -83,21 +85,13 @@ void ctl_set_amp(u32 ch, s32 val) {
 void ctl_set_mute(u32 ch, s32 val) {
   ch &= 3;
   // set the flag
-  mute[ch] = (val > 0);
-  // draw the flag
-  render_mute(ch);
-}
-
-// toggle mute flag for a channel
-void ctl_tog_mute(u32 ch, s32 val) {
-  ch &= 3;
-  // toggle the flag
-  if(mute[ch]) {
-    mute[ch] = 0;
-  } else {
+  if(val > 0) {
     mute[ch] = 1;
+    ctl_param_change(eParam_adc0 + ch, 0);
+  } else {
+    mute[ch] = 0;
+    ctl_param_change(eParam_adc0 + ch, ampVal[ch]);
   }
-  // draw the flag
   render_mute(ch);
 }
 

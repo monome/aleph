@@ -7,9 +7,9 @@
 // std
 //#include <stdio.h>
 // asf
-#ifdef ARCH_AVR32
+//#ifdef ARCH_AVR32
 #include "print_funcs.h"
-#endif
+//#endif
 // aleph
 #include "net.h"
 #include "op.h"
@@ -215,9 +215,19 @@ const op_desc_t op_registry[numOpClasses] = {
     .init = &op_bars_init,
     .deinit = &op_bars_deinit   
   },
-
+  {
+    .name = "SERIAL",
+    .size = sizeof(op_serial_t),
+    .init = &op_serial_init,
+    .deinit = &op_serial_deinit   
+  },
+  {
+    .name = "HID",
+    .size = sizeof(op_hid_word_t),
+    .init = &op_hid_word_init,
+    .deinit = &op_hid_word_deinit   
+  },
 };
-
 
 // input and output strings are all the same length, concatenated
 // lazy
@@ -253,10 +263,9 @@ s16 op_init(op_t* op, op_id_t opId) {
 // de-initialize operator
 s16 op_deinit(op_t* op) {
   op_class_deinit f = op_registry[op->type].deinit;
-  
   if(f != NULL) {
-    print_dbg("\r\n de-initializing operator at address 0x");
-    print_dbg_hex((u32)op);
+    /* print_dbg("\r\n de-initializing operator at address 0x"); */
+    /* print_dbg_hex((u32)op); */
     (*f)(op);
   }
   return 0;
@@ -326,15 +335,14 @@ void op_set_in_val(op_t* op, s16 idx, io_t val) {
 
 // increment input value
 void op_inc_in_val(op_t* op, const s16 idx, const io_t inc) {
-  print_dbg("\r\n op_inc_in_val, ");
-  print_dbg(" op @ 0x");
-  print_dbg_hex((u32)op);
-  print_dbg(" old : 0x");
-  print_dbg_hex((u32)op_get_in_val(op, idx));
-  print_dbg(" inc : 0x");
-  print_dbg_hex((u32)inc);
-  print_dbg(" new : 0x");
-  print_dbg_hex( (u32)op_sadd( op_get_in_val(op, idx), inc) );
-    
+  /* print_dbg("\r\n op_inc_in_val, "); */
+  /* print_dbg(" op @ 0x"); */
+  /* print_dbg_hex((u32)op); */
+  /* print_dbg(" old : 0x"); */
+  /* print_dbg_hex((u32)op_get_in_val(op, idx)); */
+  /* print_dbg(" inc : 0x"); */
+  /* print_dbg_hex((u32)inc); */
+  /* print_dbg(" new : 0x"); */
+  /* print_dbg_hex( (u32)op_sadd( op_get_in_val(op, idx), inc) ); */    
   op_set_in_val( op, idx, op_sadd( op_get_in_val(op, idx), inc) );
 }

@@ -10,8 +10,6 @@
 #include "events.h"
 #include "hid.h"
 
-#define HID_FRAME_MAX_BYTES 8
-
 static u8 frame[HID_FRAME_MAX_BYTES];
 static event_t ev = { .type = kEventHidPacket };
 

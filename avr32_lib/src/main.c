@@ -32,7 +32,7 @@
 #include "screen.h"
 #include "simple_string.h"
 #include "types.h"
-#include "util.h"
+//#include "util.h"
 // avr32
 #include "aleph_board.h"
 #include "adc.h"

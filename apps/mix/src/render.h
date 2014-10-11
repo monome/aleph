@@ -8,11 +8,13 @@ extern void render_init(void);
 // update
 extern void render_update(void);
 
-2// render amplitude
+// render amplitude
 extern void render_amp(u8 ch);
 
 // render mute
 extern void render_mute(u8 ch);
 
+// startup state
+extern void render_startup(void);
 
 #endif // h guard

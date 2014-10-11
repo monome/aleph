@@ -101,7 +101,7 @@ static void op_midi_cc_in_num(op_midi_cc_t* op, const io_t v) {
   else { op->num = v; }
 }
 
-
+// midi event handler
 static void op_midi_cc_handler(op_midi_t* op_midi, u32 data) {
   static u8 com;
   static io_t ch, num, val;

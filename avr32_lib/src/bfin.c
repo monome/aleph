@@ -26,7 +26,7 @@
 #include "interrupts.h"
 #include "screen.h"
 #include "types.h"
-#include "util.h"
+//#include "util.h"
 #include "bfin.h"
 
 //--------------------------------------
