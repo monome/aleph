@@ -163,7 +163,7 @@ extern void net_get_param_value_string_conversion(char* dst, u32 idx, s32 val);
 
 
 // retrigger all inputs
-extern void net_retrigger_inputs(void);
+extern void net_retrigger_ins(void);
 
 // populate an array with indices of all connected outputs for a given index
 // returns count of connections
@@ -192,7 +192,12 @@ extern void net_disconnect_params(void);
 // otherwise connect out1 of split to old target and return out2
 extern s16 net_split_out(s16 outIdx);
 
+// report whether given input is DSP param
+//  extern bool net_in_is_dsp(s16 inIdx);
+
 /// test/dbg
 void net_print(void);
 
 #endif // header guard
+
+

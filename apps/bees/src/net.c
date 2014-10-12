@@ -1028,7 +1028,7 @@ void net_send_params(void) {
 }
 
 // retrigger all inputs
-void net_retrigger_inputs(void) {
+void net_retrigger_ins(void) {
   u32 i;
   netActive = 0;
   for(i=0; i<net->numIns; i++) {
@@ -1370,6 +1370,11 @@ s16 net_split_out(s16 outIdx) {
   } else {
     // had target; reroute
     split = net_add_op(eOpSplit);
+    // fix for github issue #219
+    // get the target again, because maybe it was a DSP param
+    // (if it was, its index will have shifted. 
+    // patch and presets have been updated, but local var has not.)
+    target =   net->outs[outIdx].target;
     if(split < 0) {
       // failed to add, do nothing
       return outIdx; 
@@ -1382,7 +1387,12 @@ s16 net_split_out(s16 outIdx) {
   }
 }
 
-///////////////
+/* // report whether given input is DSP param */
+/* bool net_in_is_dsp(s16 inIdx) { */
+/*   return (inIdx >= net->numIns); */
+/* } */
+
+/////////////// 
 // test / dbg
 #if 1
 void net_print(void) {
