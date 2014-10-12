@@ -563,6 +563,10 @@ void handle_enc_0(s32 val) {
 }
 
 void handle_enc_1(s32 val) {
+  if(targetSelect) {
+    targetSelect = 0;
+    redraw_outs();
+  }
   if(altMode) {
     inPresetSelect = 1;
     if(val > 0) {
@@ -621,6 +625,10 @@ void handle_enc_2(s32 val) {
 
 
 void handle_enc_3(s32 val) {
+  if(targetSelect) {
+    targetSelect = 0;
+    redraw_outs();
+  }
   if(altMode) {
     // alt: page selection			
     select_scroll(val > 0 ? 7 : -7);
