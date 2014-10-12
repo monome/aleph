@@ -21,6 +21,7 @@
 #include "ops/op_enc.h"
 #include "ops/op_gate.h"
 //#include "ops/op_hid8.h"
+#include "ops/op_hid_word.h"
 #include "ops/op_history.h"
 #include "ops/op_is.h"
 #include "ops/op_life.h"
