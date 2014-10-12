@@ -1,4 +1,13 @@
 ----------------
+bees    0.6.0
+
+- fix target shift bug when splitting DSP conenctions
+- small display fixes and tweaks
+- add ops: SERIAL (output from aleph), HID (input from aleph)
+- monome driver fixes (???)
+- sequencer op fixes (???)
+
+----------------
 bees    0.5.5
 - fix: op_step displays step input correctly
 - fix: op_bars
