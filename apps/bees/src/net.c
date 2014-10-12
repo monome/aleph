@@ -37,8 +37,13 @@
 #include "util.h"
 
 
+//=========================================
+//===== constants
+
+
 // define for serialization debugging
 // #define PRINT_PICKLE 1
+
 
 //=========================================
 //===== variables
@@ -64,6 +69,18 @@ static const char emptystring[] = "            ";
 
 //===============================================
 //========= static functions
+
+
+/// stupid hack function to identify switch input
+/// returns switch index in [0, numSwitches-1]
+/// oterhwise negative
+static inline int in_get_switch_index(s16 in) { 
+  if(in > 3 && in < 10) {
+    return in - 4;
+  } else {
+    return -1;
+  }
+}
 
 // create all system operators
 static void add_sys_ops(void);
@@ -716,11 +733,38 @@ s16 net_param_idx(u16 inIdx) {
 
 // get string for operator at given idx
 const char* net_op_name(const s16 idx) {
+  int sw;
   if (idx < 0) {
     return (const char*)emptystring;
   }
-
-  return net->ops[idx]->opString;
+  /// dirty hack for switch labels
+  sw = in_get_switch_index(idx);
+  if (sw >=0  ) {
+    switch(sw) { 
+    case 0:
+      return "SW1";
+      break;
+    case 1:
+      return "SW2";
+      break;
+    case 2:
+      return "SW3";
+      break;
+    case 3:
+      return "SW4";
+      break;
+    case 4:
+      return "FS1";
+      break;
+    case 5:
+      return "FS2";
+      break;
+    default:
+      return "!!!";
+    }
+  } else { 
+    return net->ops[idx]->opString;
+  }
 }
 
 // get name for input at given idx
@@ -736,7 +780,6 @@ const char* net_in_name(u16 idx) {
       return net->params[idx].desc.label;
     }
   } else {
-    // op input
     return op_in_name(net->ops[net->ins[idx].opIdx], net->ins[idx].opInIdx);
   }
 }
