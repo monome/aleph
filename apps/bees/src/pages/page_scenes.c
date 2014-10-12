@@ -343,6 +343,7 @@ void select_scenes(void) {
   // other regions are static in top-level render, with global handles
   region_fill(headRegion, 0x0);
   font_string_region_clip(headRegion, "SCENES", 0, 0, 0xf, 0x1);
+  show_foot();
   // assign handlers
   //  print_dbg("\r\n assign page handlers.....");
   app_event_handlers[ kEventEncoder0 ]	= &handle_enc_0 ;
