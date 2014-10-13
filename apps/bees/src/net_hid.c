@@ -95,4 +95,8 @@ void net_handle_hid_packet() { //u32 data) {
 		     //		     hid_get_frame_size() );
     op = op->next;
   }
+
+  // clear the dirty fields
+  hid_clear_frame_dirty();
+
 }

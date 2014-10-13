@@ -35,20 +35,25 @@ u8 hid_get_byte_flag(u8 byte) {
 // parse frame and spawn events
 void hid_parse_frame(u8* data, u8 sz) {
   u8 b;
+  u8* pFrame = (u8*)frame;
   // one event per frame changed.
   // event data is bitfield indicating bytes changed.
   //  dirty = 0x00000000;
   size = sz;
   for(b=0; b<size; b++) {
-    //    hid_set_byte_flag( (u32*)&(ev.data), i, data[i] != frame[i] );
-    if(*data) {
+    if(*data |= *pFrame) {
       dirty |= (1 << b);
     } else {
       dirty &= 0xffffffff ^ (1 << b);
     }
-    frame[b] = *data;
+    
+    *pFrame = *data;
     data++;
+    pFrame++;
   }
+
+  /// test: 
+  //  dirty = 0xffffffff;
 
   /// let the application poll
   //  event_post(&ev);
@@ -77,6 +82,11 @@ extern void hid_change(uhc_device_t* dev, u8 plug) {
   }
   // posting an event so the main loop can respond
   event_post(&e); 
+}
+
+// clear the bitfield of dirty bytes
+extern void hid_clear_frame_dirty(void) {
+  dirty = 0x00000000;
 }
 
 //... ASF style choice??? :S

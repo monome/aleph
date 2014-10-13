@@ -220,15 +220,12 @@ static void uhi_hid_report_reception(
   if ((status != UHD_TRANS_NOERROR) || (nb_transfered < 4)) {
     return; // HID transfer aborted
   }
-
-  //print_dbg("\r\n hid_report_reception: ");
-  //  print_dbg("\r\n HID rx: 0x");
-  //  print_dbg_hex(uhi_hid_dev.report_size);
-  //  print_dbg(" B");
-  //  for (i=0; i<uhi_hid_dev.report_size; i++) {
-  //    print_dbg(" ");
-  //    print_dbg_hex((unsigned long int) uhi_hid_dev.report[i]);
-  //  }
+  
+  /* print_dbg("\r\n hid_report_reception: "); */
+  /* print_dbg("\r\n HID rx: 0x"); */
+  /* print_dbg_hex(uhi_hid_dev.report_size); */
+  /* print_dbg(" B"); */
+  /* print_byte_array(uhi_hid_dev.report, uhi_hid_dev.report_size, 1); */
 
   hid_parse_frame(uhi_hid_dev.report, uhi_hid_dev.report_size);
 

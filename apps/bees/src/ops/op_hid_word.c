@@ -127,9 +127,9 @@ static void op_hid_word_handler(op_hid_t* op_hid) {
     if(op->size > 0) {
       /// i have no idea if this is "correct" endianness... 
       /// is that device-specific too?
-      val = (frame[byte] << 8 ) | frame[(byte + 1) & HID_FRAME_IDX_MASK];
+      val = (io_t)((frame[byte] << 8 ) | frame[(byte + 1) & HID_FRAME_IDX_MASK]);
     } else {
-      val = frame[byte];
+      val = (io_t)frame[byte];
     }
     net_activate(op->outs[0], val, op);
   }
