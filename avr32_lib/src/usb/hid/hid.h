@@ -29,7 +29,8 @@
 extern void hid_change(uhc_device_t* dev, u8 plug);
 
 // test dirty flag for given byte in packet
-extern u8 hid_get_byte_flag(u32 dirty, u8 byte);
+//extern u8 hid_get_byte_flag(u32 dirty, u8 byte);
+extern u8 hid_get_byte_flag(u8 byte);
 
 // parse frame and spawn events
 extern void hid_parse_frame(u8* frame, u8 size);

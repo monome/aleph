@@ -27,8 +27,9 @@ static u8 size;
 /* } */
 
 // test dirty flag for given byte in packet
-u8 hid_get_byte_flag(u32 data, u8 byte) {
-  return (data & (1 << byte)) > 0;
+//u8 hid_get_byte_flag(u32 data, u8 byte) {
+u8 hid_get_byte_flag(u8 byte) {
+  return (dirty & (1 << byte)) > 0;
 }
 
 // parse frame and spawn events

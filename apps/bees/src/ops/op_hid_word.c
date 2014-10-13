@@ -116,22 +116,18 @@ static void op_hid_word_in_size(op_hid_word_t* op, const io_t v) {
 static void op_hid_word_handler(op_hid_t* op_hid) {
   op_hid_word_t* op = (op_hid_word_t*)(op_hid->sub);
   const u8* frame;
-  const u32 dirty;
+  //  const u32 dirty;
   const u8 byte = op_to_int(op->byte);
   io_t val;
   // event data is a bitfield indicating which bytes have changed.
   // check bitfield for our byte index
-  if(hid_get_byte_flag(dirty, byte)) {
+  if(hid_get_byte_flag(byte)) {
     // we actually want to discard voaltile here i think
     frame = (const u8*)hid_get_frame_data();
-    switch(op_from_int(op->size)) {
-    case 1:
-      val = frame[byte];
-      break;
-    case 2:
-    default:
+    if(op->size) {
       val = (frame[byte] << 8 ) | frame[(byte + 1) & HID_FRAME_IDX_MASK];
-      break;
+    } else {
+      val = frame[byte];
     }
     net_activate(op->outs[0], val, op);
   }

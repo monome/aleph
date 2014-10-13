@@ -214,7 +214,6 @@ static void uhi_hid_report_reception(
 					   uhd_trans_status_t status,
 					   iram_size_t nb_transfered)
 {
-  int i;
 
   UNUSED(ep);
 
