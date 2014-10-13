@@ -325,20 +325,16 @@ void module_set_param(u32 idx, ParamValue v) {
     // -- cv output
     // cv values
   case eParam_cvVal0 :
-    filter_1p_lo_in(&(cvSlew[0]), (v >> ( PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
-    //cv_update(0, v >> (PARAM_CV_RADIX - 1));
+    filter_1p_lo_in(&(cvSlew[0]), v) ;
     break;
   case eParam_cvVal1 :
-    filter_1p_lo_in(&(cvSlew[1]), (v >> (PARAM_DAC_RADIX - 1)) & DAC_VALUE_MASK);
-    //cv_update(1, v >> (PARAM_CV_RADIX - 1));
+    filter_1p_lo_in(&(cvSlew[1]), v) ;
     break;
   case eParam_cvVal2 :
-    filter_1p_lo_in(&(cvSlew[2]), (v >> (PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
-    //cv_update(2, v >> (PARAM_CV_RADIX - 1));
+    filter_1p_lo_in(&(cvSlew[2]), v) ;
     break;
   case eParam_cvVal3 :
-    filter_1p_lo_in(&(cvSlew[3]), (v >> (PARAM_DAC_RADIX - 1))  & DAC_VALUE_MASK);
-    //cv_update(3, v >> (PARAM_CV_RADIX - 1));
+    filter_1p_lo_in(&(cvSlew[3]), v) ;
     break;
 
     // cv slew

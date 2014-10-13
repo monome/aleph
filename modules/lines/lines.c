@@ -17,7 +17,7 @@
 
 
 #include "bfin_core.h"
-#include "dac.h"
+#include "cv.h"
 #include "fract_math.h"
 #include <fract2float_conv.h>
 
@@ -416,10 +416,11 @@ void module_process_frame(void) {
     tmpDel = delayFadeN_next( &(lines[i]), in_del[i]);	    
     // process filters
     // check integrators for filter params
-    if( !(svfCutSlew[i].sync) ) {
+
+    if( filter_1p_sync(&(svfCutSlew[i])) ) {
       filter_svf_set_coeff( &(svf[i]), filter_1p_lo_next(&(svfCutSlew[i])) );
     }
-    if( !(svfRqSlew[i].sync) ) {
+    if( filter_1p_sync(&(svfRqSlew[i])) ) { 
       filter_svf_set_rq( &(svf[i]), filter_1p_lo_next(&(svfRqSlew[i])) );
     }
     tmpSvf = filter_svf_next( &(svf[i]), tmpDel);  
@@ -441,11 +442,11 @@ void module_process_frame(void) {
   mix_outputs();
 
   /// do CV output
-  if( cvSlew[cvChan].sync ) { ;; } else { 
+  if( filter_1p_sync(&(cvSlew[cvChan])) ) { ;; } else {
     cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
-    dac_update(cvChan, cvVal[cvChan]);
+    cv_update(cvChan, cvVal[cvChan]);
   }
- 
+  
   if(++cvChan == 4) {
     cvChan = 0;
   }
