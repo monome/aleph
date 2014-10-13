@@ -67,7 +67,7 @@ static dirList_t scalerList;
 //---- static functions
 
 // populate list with filenames and count
-static void list_scan(dirList_t* list, const char* path);
+static void list_scan(dirList_t* list, const char* path, const char* ext);
 // get name at idx
 static const char* list_get_name(dirList_t* list, u8 idx);
 // get read file pointer if found (caller must close)
@@ -113,9 +113,43 @@ static void strip_space(char* str, u8 len) {
   }
 }
 
+//---------------------------
+//------------- extern defs
+
+// check for externsion
+bool check_ext(char* str, const char* extB ) {
+  int i;
+  int dotpos = -1;
+  char* extA = NULL;
+  //  int extLenA, extLenB, extLen;
+  bool res;
+  //  lenB = strlen(extB);
+ 
+  i = strlen(str);
+  while(i > 0) {
+    --i;
+    if(str[i] == '.') {
+      dotpos = i;
+      extA = str + i;
+      break;
+    }
+  } 
+  if(i < 0) { 
+    // no extension
+    return 0;
+  } else {
+    //    extLenA = strlen(extA);
+    //    if(extLenA != extLenB) { 
+    //      return 0;
+    //    } else {
+      res = strcmp(extA, extB);
+      if(res == 0) { return 1; } else { return 0; }
+      //      if(res
+  }
+}
 
 // strip extension from the end of a string
-static void strip_ext(char* str) {
+void strip_ext(char* str) {
   int i;
   int dotpos = -1;
   i = strlen(str);
@@ -131,16 +165,12 @@ static void strip_ext(char* str) {
   }
 }
 
-
-//---------------------------
-//------------- extern defs
-
 void files_init(void) {
   // scan directories
   print_dbg("\r\n BEES file_init, scanning directories..");
-  list_scan(&dspList, DSP_PATH);
-  list_scan(&sceneList, SCENES_PATH);
-  list_scan(&scalerList, SCALERS_PATH);
+  list_scan(&dspList, DSP_PATH, ".ldr");
+  list_scan(&sceneList, SCENES_PATH, ".scn");
+  list_scan(&scalerList, SCALERS_PATH, ".dat");
 }
 
 
@@ -228,7 +258,7 @@ u8 files_load_dsp_name(const char* name) {
 
 
 // store .ldr as default in internal flash, given index
-#if 0
+#if 0 // we're not doing this right now, everything on sdcard... not great
 void files_store_default_dsp(u8 idx) {
   files_store_default_dsp_name((const char*)files_get_dsp_name(idx));
   /* const char* name; */
@@ -428,7 +458,7 @@ void files_store_scene_name(const char* name, u8 ext) {
   print_dbg("\r\n ... finished writing, closed file pointer");
 
   // rescan
-  list_scan(&sceneList, SCENES_PATH);
+  list_scan(&sceneList, SCENES_PATH, ".scn");
   delay_ms(10);
 
   print_dbg("\r\n re-scanned scene file list and waited.");
@@ -565,7 +595,7 @@ const char* list_get_name(dirList_t* list, u8 idx) {
   return (const char*) ( list->nameBuf + (idx * DIR_LIST_NAME_LEN) );
 }
 
-void list_scan(dirList_t* list, const char* path) {
+void list_scan(dirList_t* list, const char* path, const char* ext) {
   FL_DIR dirstat; 
   struct fs_dir_ent dirent;
   int i;
@@ -581,16 +611,21 @@ void list_scan(dirList_t* list, const char* path) {
   if( fl_opendir(path, &dirstat) ) {      
     while (fl_readdir(&dirstat, &dirent) == 0) {
       if( !(dirent.is_dir) ) {
-	strncpy((char*)(list->nameBuf + (list->num * DIR_LIST_NAME_LEN)), dirent.filename, DIR_LIST_NAME_LEN_1);
-	*(list->nameBuf + (list->num * DIR_LIST_NAME_LEN) + DIR_LIST_NAME_LEN_1) = '\0';
-	print_dbg("\r\n added file: ");
-	print_dbg(dirent.filename);
-	print_dbg(" , count: ");
-	print_dbg_ulong(list->num);
-	list->num += 1;
+
+	if(check_ext(dirent.filename, ext)) {
+	  strncpy((char*)(list->nameBuf + (list->num * DIR_LIST_NAME_LEN)),
+		  dirent.filename, DIR_LIST_NAME_LEN_1);
+	  *(list->nameBuf + (list->num * DIR_LIST_NAME_LEN) + DIR_LIST_NAME_LEN_1) = '\0';
+	  print_dbg("\r\n added file: ");
+	  print_dbg(dirent.filename);
+	  print_dbg(" , count: ");
+	  print_dbg_ulong(list->num);
+	  list->num += 1;
+	}
       }
     }
   }
+
   print_dbg("\r\n scanned list at path: ");
   print_dbg(list->path);
   print_dbg(" , contents : \r\n");
