@@ -5,6 +5,7 @@
   callbacks for HID gamepad
 */
 
+#include "print_funcs.h"
 
 #include "compiler.h"
 #include "events.h"
@@ -40,17 +41,22 @@ void hid_parse_frame(u8* data, u8 sz) {
   // event data is bitfield indicating bytes changed.
   //  dirty = 0x00000000;
   size = sz;
+  print_dbg("\r\n parsing frame: ");
   for(b=0; b<size; b++) {
-    if(*data |= *pFrame) {
+    if(*data != *pFrame) {
+      //      print_dbg("1");
       dirty |= (1 << b);
     } else {
+      //      print_dbg("0");
       dirty &= 0xffffffff ^ (1 << b);
     }
-    
     *pFrame = *data;
     data++;
     pFrame++;
   }
+
+  //  print_dbg(" : ");
+  //  print_dbg_hex(dirty);
 
   /// test: 
   //  dirty = 0xffffffff;
