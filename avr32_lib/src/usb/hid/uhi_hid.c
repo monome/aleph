@@ -121,11 +121,11 @@ uhc_enum_status_t uhi_hid_install(uhc_device_t* dev) {
       print_dbg("\r\n\r\n");
 #endif
 
-      if ((ptr_iface->bInterfaceClass   == HID_CLASS)
-	  && (ptr_iface->bInterfaceProtocol == HID_PROTOCOL_GENERIC) ) {
-	/////
-	//// FIXME:
-	/// generic HID... assuming this is a gamepad for now!
+      /* if ((ptr_iface->bInterfaceClass   == HID_CLASS) */
+      /* 	  && (ptr_iface->bInterfaceProtocol == HID_PROTOCOL_GENERIC) ) { */
+      
+      /// try looking at all HID classes... mostly to test if our system is sane
+      if ((ptr_iface->bInterfaceClass   == HID_CLASS)) {
 	// Start allocation endpoint(s)
 	print_dbg("\r\n HID device: detected interface");
 	b_iface_supported = true;

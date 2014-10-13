@@ -46,7 +46,6 @@ void op_hid_word_init(void* mem) {
 
   // superclass functions
   //--- op
-  //  op->super.inc_fn = (op_inc_fn)op_hid_word_inc_fn;
   op->super.in_fn = op_hid_word_in_fn;
   op->super.pickle = (op_pickle_fn) (&op_hid_word_pickle);
   op->super.unpickle = (op_unpickle_fn) (&op_hid_word_unpickle);
@@ -71,6 +70,7 @@ void op_hid_word_init(void* mem) {
   op->super.outString = op_hid_word_outstring;
 
   op->in_val[0] = &(op->byte);
+  op->in_val[1] = &(op->size);
   op->outs[0] = -1;
 
   op->byte = op_from_int(0);
@@ -106,7 +106,7 @@ static void op_hid_word_in_byte(op_hid_word_t* op, const io_t v) {
 // 0 means single width, 1 means double width
 static void op_hid_word_in_size(op_hid_word_t* op, const io_t v) {
   if(v > 0) {
-    op->size = 1;
+    op->size = OP_ONE;
   } else {
     op->size = 0;
   }
@@ -124,7 +124,9 @@ static void op_hid_word_handler(op_hid_t* op_hid) {
   if(hid_get_byte_flag(byte)) {
     // we actually want to discard voaltile here i think
     frame = (const u8*)hid_get_frame_data();
-    if(op->size) {
+    if(op->size > 0) {
+      /// i have no idea if this is "correct" endianness... 
+      /// is that device-specific too?
       val = (frame[byte] << 8 ) | frame[(byte + 1) & HID_FRAME_IDX_MASK];
     } else {
       val = frame[byte];
