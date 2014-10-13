@@ -72,13 +72,14 @@ static const char emptystring[] = "            ";
 
 
 /// stupid hack function to identify switch input
-/// returns switch index in [0, numSwitches-1]
-/// oterhwise negative
+/// returns switch index in [1, numSwitches]
+/// otherwise 0
+/// FIXME: obviously this is magic # bs
 static inline int in_get_switch_index(s16 in) { 
   if(in > 3 && in < 10) {
-    return in - 4;
+    return in - 3;
   } else {
-    return -1;
+    return 0;
   }
 }
 
@@ -733,37 +734,34 @@ s16 net_param_idx(u16 inIdx) {
 
 // get string for operator at given idx
 const char* net_op_name(const s16 idx) {
-  int sw;
+  //  int sw;
   if (idx < 0) {
     return (const char*)emptystring;
   }
   /// dirty hack for switch labels
-  sw = in_get_switch_index(idx);
-  if (sw >=0  ) {
-    switch(sw) { 
-    case 0:
-      return "SW1";
-      break;
-    case 1:
-      return "SW2";
-      break;
-    case 2:
-      return "SW3";
-      break;
-    case 3:
-      return "SW4";
-      break;
-    case 4:
-      return "FS1";
-      break;
-    case 5:
-      return "FS2";
-      break;
-    default:
-      return "!!!";
-    }
-  } else { 
+  switch(in_get_switch_index(idx)) {
+  case 0:
     return net->ops[idx]->opString;
+  case 1:
+    return "SW1";
+    break;
+  case 2:
+    return "SW2";
+    break;
+  case 3:
+    return "SW3";
+    break;
+  case 4:
+    return "SW4";
+    break;
+  case 5:
+    return "FS1";
+    break;
+  case 6:
+    return "FS2";
+    break;
+  default:
+    return "!!!";
   }
 }
 

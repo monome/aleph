@@ -83,7 +83,7 @@ static void fake_fseek(void* fp, u32 loc) {
   while(n < loc) {
     dum = fl_fgetc(fp);
     n++;
-  }
+ }
 }
 */
 
