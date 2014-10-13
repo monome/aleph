@@ -12,7 +12,7 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_hid_word_instring =  "BYTE\0   ";
+static const char* op_hid_word_instring =  "BYTE\0   SIZE\0   ";
 static const char* op_hid_word_outstring = "VAL\0    ";
 static const char* op_hid_word_opstring = "HID";
 
@@ -30,7 +30,7 @@ static u8* op_hid_word_pickle(op_hid_word_t* h8, u8* dst);
 static const u8* op_hid_word_unpickle(op_hid_word_t* h8, const u8* src);
 
 /// hid event handler
-static void op_hid_word_handler(op_hid_t* op_hid, u32 data);
+static void op_hid_word_handler(op_hid_t* op_hid);
 
 // input func pointer array
 static op_in_fn op_hid_word_in_fn[2] = {
@@ -93,8 +93,8 @@ void op_hid_word_deinit(void* op) {
 
 // byte select
 static void op_hid_word_in_byte(op_hid_word_t* op, const io_t v) {
-  if(v > HID_FRAME_MASK) {
-    op->byte = HID_FRAME_MASK;
+  if(v > HID_FRAME_IDX_MASK) {
+    op->byte = HID_FRAME_IDX_MASK;
   } else if (v < 0) { 
     op->byte = 0;
   } else {
@@ -113,23 +113,24 @@ static void op_hid_word_in_size(op_hid_word_t* op, const io_t v) {
 }
 
 // HID frame handler
-static void op_hid_word_handler(op_hid_t* op_hid, u32 data) {
+static void op_hid_word_handler(op_hid_t* op_hid) {
   op_hid_word_t* op = (op_hid_word_t*)(op_hid->sub);
   const u8* frame;
+  const u32 dirty;
   const u8 byte = op_to_int(op->byte);
   io_t val;
   // event data is a bitfield indicating which bytes have changed.
   // check bitfield for our byte index
-  if(hid_get_byte_flag(data, byte)) {
-    // get corresponding data from the HID frame
-    frame = hid_get_frame_data();
+  if(hid_get_byte_flag(dirty, byte)) {
+    // we actually want to discard voaltile here i think
+    frame = (const u8*)hid_get_frame_data();
     switch(op_from_int(op->size)) {
     case 1:
       val = frame[byte];
       break;
     case 2:
     default:
-      val = (frame[byte] << 8 ) | frame[(byte + 1) & HID_FRAME_MASK];
+      val = (frame[byte] << 8 ) | frame[(byte + 1) & HID_FRAME_IDX_MASK];
       break;
     }
     net_activate(op->outs[0], val, op);

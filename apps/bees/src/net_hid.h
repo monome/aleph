@@ -13,7 +13,7 @@
 
 //-----------------------
 //---- types
-typedef void(*hid_handler_t)(void* op, u32 event);
+typedef void(*hid_handler_t)(void* op);
 
 // abstract superclass for hid operators
 // has event handler and focus flag
@@ -36,6 +36,6 @@ extern void net_hid_list_push(op_hid_t* op);
 // delete op pointer at current position, return next pointer in list
 extern void net_hid_list_remove(op_hid_t* op);
 // handle incoming hid packet
-extern void net_handle_hid_packet(u32 data);
+extern void net_handle_hid_packet(void); //u32 data);
 
 #endif // h guard

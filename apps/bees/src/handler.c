@@ -156,16 +156,16 @@ static void handle_MidiPacket(s32 data) {
 }
 
 static void handle_HidConnect(s32 data) {
-  // nothing to do... ?
+  timers_set_hid();
 }
 
 static void handle_HidDisconnect(s32 data) {
-  // nothing to do... ?
+  timers_unset_hid();
 }
 
 static void handle_HidPacket(s32 data) {
   // update HID op list
-  net_handle_hid_packet(data);
+  net_handle_hid_packet();
 }
 
 static void handle_Serial(s32 data) {

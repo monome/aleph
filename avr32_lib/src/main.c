@@ -121,7 +121,7 @@ static void handler_MidiConnect(s32 data) {
   }
 }
 static void handler_MidiRefresh(s32 data) {
-  // TODO
+  // TODO ??
 }
 static void handler_HidConnect(s32 data) { 
   if(!launch) {

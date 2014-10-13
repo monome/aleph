@@ -27,7 +27,7 @@ static scroll centerScroll;
 static s16* const pageSelect = &(pages[ePageOps].select);
 
 // const array of user-creatable operator types
-#define NUM_USER_OP_TYPES 35
+#define NUM_USER_OP_TYPES 36
 // this order is arbitrary, no need to synchronize with class enum
 static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAccum,
@@ -39,6 +39,7 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpDiv,
   eOpGate,
   eOpMonomeGridRaw, // "grid"
+  eOpHid,
   eOpHistory,
   eOpIs,
   eOpLife,

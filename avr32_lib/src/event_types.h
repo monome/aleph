@@ -48,7 +48,6 @@ typedef enum {
   kEventHidConnect,
   kEventHidDisconnect,
   kEventHidPacket,
-
   /// incoming serial from computer (usb)
   kEventSerial,
   //// better?

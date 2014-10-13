@@ -18,12 +18,15 @@
 #include "events.h"
 #include "midi.h"
 #include "monome.h"
-#include "net_poll.h"
+
 #include "timers.h"
 
 // bees
 #include "ops/op_metro.h"
+
 #include "app_timers.h"
+#include "net_hid.h"
+#include "net_poll.h"
 #include "render.h"
 
 //---------------------------
@@ -54,6 +57,9 @@ static softTimer_t midiPollTimer = { .next = NULL, .prev = NULL };
 
 // poll adc 
 static softTimer_t adcPollTimer = { .next = NULL, .prev = NULL };
+
+// poll hid
+static softTimer_t hidPollTimer = { .next = NULL, .prev = NULL };
 
 
 //--------------------------
@@ -126,6 +132,15 @@ static void monome_refresh_timer_callback(void* obj) {
   //  }
 }
 
+// hid polling callback
+static void hid_poll_timer_callback(void* obj) {
+  // asynchronous, non-blocking read
+  // UHC callback spawns appropriate events
+  //  hid_read();
+  // hm...
+  net_handle_hid_packet();
+}
+
 //----------------------------
 //---- external functions
 
@@ -151,6 +166,7 @@ void timers_unset_monome(void) {
 // midi : start polling
 void timers_set_midi(void) {
   print_dbg("\r\n setting midi timers");
+  /// FIXME: where should default periods be defined...
   timer_add( &midiPollTimer, 20, &midi_poll_timer_callback, NULL );
   // TODO:
   //  timer_add(&midiRefreshTimer, eMidiRefreshTimerTag, 50,  &midi_refresh_timer_callback, NULL, 1);
@@ -180,6 +196,24 @@ void timers_unset_adc(void) {
 // change period of adc polling timer
 void timers_set_adc_period(u32 period) {
   adcPollTimer.ticks = period;
+}
+
+
+// hid : start polling
+void timers_set_hid(void) {
+  print_dbg("\r\n setting hid timers"); 
+  timer_add(&hidPollTimer, 20, &hid_poll_timer_callback, NULL );
+}
+
+// hid : stop polling
+void timers_unset_hid(void) {
+  print_dbg("\r\n unsetting hid timers");
+  timer_remove( &hidPollTimer );
+} 
+
+// change period of hid polling timer
+void timers_set_hid_period(u32 period) {
+  hidPollTimer.ticks = period;
 }
 
 
