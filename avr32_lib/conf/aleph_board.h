@@ -61,9 +61,10 @@
 #define DEV_USART_RX_FUNCTION   AVR32_USART0_RXD_0_0_FUNCTION
 #define DEV_USART_TX_PIN        AVR32_USART0_TXD_0_0_PIN
 #define DEV_USART_TX_FUNCTION   AVR32_USART0_TXD_0_0_FUNCTION
-// #define DEV_USART_BAUDRATE      230400
+/// define this from your application config
+#ifndef DEV_USART_BAUDRATE
 #define DEV_USART_BAUDRATE      57600
-// #define DEV_USART_BAUDRATE      500000
+#endif
 
 /// compatibility with ASF print funcs
 #define DBG_USART              DEV_USART

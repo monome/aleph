@@ -6,6 +6,9 @@
 # app name
 APP = bees
 
+# baudrate! can override in make invocation
+BAUD=115200
+
 # boilerplate avr32 configuration
 include ../../avr32_lib/avr32_lib_config.mk
 # boilerplate avr32 sources
@@ -117,6 +120,9 @@ ARFLAGS +=
 
 # Extra flags to use when assembling.
 ASFLAGS += 
+
+#extra flags to C preprocessor
+CPPFLAGS += -DDEV_USART_BAUDRATE=$(BAUD)
 
 # extra flags for compiling
 # CFLAGS += --verbose
