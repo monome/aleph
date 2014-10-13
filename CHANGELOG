@@ -4,8 +4,10 @@ bees    0.6.0
 - fix target shift bug when splitting DSP conenctions
 - small display fixes and tweaks
 - add ops: SERIAL (output from aleph), HID (input from aleph)
-- monome driver fixes (???)
-- sequencer op fixes (???)
+- change: ENC now has VAL input (set value) and DELTA output
+- monome driver: fix device size detection, add vari-bright implmementation
+- fix: op_step initialization
+- fix: display op redrawing
 
 ----------------
 bees    0.5.5
