@@ -44,8 +44,8 @@ const AppVersion beesVersion = { .min = MIN , .maj = MAJ , .rev = REV };
 //--- static vars
 static char versionString[12] = VERSIONSTRING;
 
-#define DEFAULT_LDR "aleph-waves.ldr"
-#define DEFAULT_DSC "aleph-waves.dsc"
+#define DEFAULT_LDR "waves.ldr"
+#define DEFAULT_DSC "waves.dsc"
 
 // this is called during hardware initialization.
 // allocate memory.

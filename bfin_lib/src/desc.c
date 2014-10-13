@@ -32,7 +32,8 @@ compile with
 
 ParamDesc desc[eParamNumParams];
 
-char str[64] = "aleph-";
+//char str[64] = "aleph-";
+char str[64] = "";
 
 // big ol buffer (1meg)
 #define MAXBYTES 0x100000
@@ -83,7 +84,6 @@ int main() {
   int i, j;
   // write pointer
   u8* pwr;
-
 
   //  data.paramDesc = desc;
   strcat(str, NAME);
