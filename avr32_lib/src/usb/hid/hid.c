@@ -11,21 +11,31 @@
 #include "events.h"
 #include "hid.h"
 
-static u8 frame[HID_FRAME_MAX_BYTES];
-static u32 dirty;
-static u8 size;
+static u8 frame[HID_FRAME_MAX_BYTES] = { 
+  0x00,   0x00,   0x00,   0x00, 
+  0x00,   0x00,   0x00,   0x00, 
+  0x00,   0x00,   0x00,   0x00, 
+  0x00,   0x00,   0x00,   0x00, 
+  0x00,   0x00,   0x00,   0x00, 
+  0x00,   0x00,   0x00,   0x00, 
+  0x00,   0x00,   0x00,   0x00, 
+  0x00,   0x00,   0x00,   0x00, 
+};
+
+static u32 dirty = 0xffffffff;
+static u8 size = HID_FRAME_MAX_BYTES;
 
 // app polls
 // static event_t ev = { .type = kEventHidPacket };
 
 // set/unset dirty flag for given byte in frame
-/* static inline void hid_set_byte_flag(u32* data, u8 byte, u8 val) { */
-/*   if(val) { */
-/*     (*data) |= (1 << byte); */
-/*   } else { */
-/*     (*data) &= 0xffffffff ^ (1 << byte); */
-/*   } */
-/* } */
+static inline void hid_set_byte_flag(u8 byte, u8 val) {
+  if(val) {
+    dirty |= (1 << byte);
+  } else {
+    dirty &= 0xffffffff ^ (1 << byte);
+  }
+}
 
 // test dirty flag for given byte in packet
 //u8 hid_get_byte_flag(u32 data, u8 byte) {
@@ -41,15 +51,9 @@ void hid_parse_frame(u8* data, u8 sz) {
   // event data is bitfield indicating bytes changed.
   //  dirty = 0x00000000;
   size = sz;
-  print_dbg("\r\n parsing frame: ");
+  //  print_dbg("\r\n parsing frame: ");
   for(b=0; b<size; b++) {
-    if(*data != *pFrame) {
-      //      print_dbg("1");
-      dirty |= (1 << b);
-    } else {
-      //      print_dbg("0");
-      dirty &= 0xffffffff ^ (1 << b);
-    }
+    hid_set_byte_flag(b, (*pFrame) != (*data));
     *pFrame = *data;
     data++;
     pFrame++;
@@ -71,7 +75,9 @@ const volatile u8* hid_get_frame_data(void) {
 }
 
 const volatile u8 hid_get_frame_size(void) {
+  // eh...
   return HID_FRAME_MAX_BYTES;
+  //  return (const volatile u8)size;
 }
 
 const volatile u32 hid_get_frame_dirty(void) {

@@ -115,21 +115,25 @@ static void op_hid_word_in_size(op_hid_word_t* op, const io_t v) {
 // HID frame handler
 static void op_hid_word_handler(op_hid_t* op_hid) {
   op_hid_word_t* op = (op_hid_word_t*)(op_hid->sub);
-  const u8* frame;
+  const s8* frame;
   //  const u32 dirty;
   const u8 byte = op_to_int(op->byte);
   io_t val;
   // event data is a bitfield indicating which bytes have changed.
   // check bitfield for our byte index
   if(hid_get_byte_flag(byte)) {
-    // we actually want to discard voaltile here i think
-    frame = (const u8*)hid_get_frame_data();
+    // yes, we actually want to discard volatile here and cast to signed
+    frame = (const s8*)hid_get_frame_data();
     if(op->size > 0) {
       /// i have no idea if this is "correct" endianness... 
       /// is that device-specific too?
-      val = (io_t)((frame[byte] << 8 ) | frame[(byte + 1) & HID_FRAME_IDX_MASK]);
+      val = ( ((io_t)(frame[byte])) << 8 ) | (io_t)( frame[(byte + 1) & HID_FRAME_IDX_MASK] );
     } else {
-      val = (io_t)frame[byte];
+      /* print_dbg("\r\n op_hid_word: 0x");  */
+      /* print_dbg_hex( (int) frame[byte] ); */
+      /* print_dbg(" ; 0x");  */
+      /* print_dbg_hex( (int) ((io_t) (frame[byte])) ); */
+      val = (io_t)(frame[byte]);
     }
     net_activate(op->outs[0], val, op);
   }
