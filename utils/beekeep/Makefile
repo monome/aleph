@@ -98,11 +98,7 @@ src += 	src/app_beekeep.c \
 	src/main.c
 
 # new sources
-src += src/json_read_raw.c \
-	src/json_write_raw.c \
-	src/json_read_max.c \
-	src/json_write_max.c \
-	src/json_read_native.c \
+src += 	src/json_read_native.c \
 	src/json_write_native.c \
 	src/net_py.c
 
