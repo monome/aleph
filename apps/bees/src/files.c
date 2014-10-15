@@ -31,11 +31,13 @@
 #include "scene.h"
 
 // ---- directory list class
-// params
+// params 
 #define DIR_LIST_MAX_NUM 64
 #define DIR_LIST_NAME_LEN 64
 #define DIR_LIST_NAME_LEN_1 63
 #define DIR_LIST_NAME_BUF_SIZE 4096 // len * num
+#define DIR_LIST_PATH_LEN 64
+#define DIR_LIST_EXT_LEN 8
 
 #define DSP_PATH     "/mod/"
 #define SCENES_PATH  "/data/bees/scenes/"
@@ -44,10 +46,11 @@
 // endinanness
 // #define SCALER_LE 1
 
-//  stupid datatype with fixed number of fixed-length filenames
+// stupid datatype with fixed number of fixed-length filenames
 // storing this for speed when UI asks us for a lot of strings
 typedef struct _dirList {
-  char path[64];
+  char path[DIR_LIST_PATH_LEN];
+  char ext[DIR_LIST_EXT_LEN];
   volatile char nameBuf[DIR_LIST_NAME_BUF_SIZE];
   u32 num;
 } dirList_t;
@@ -67,7 +70,7 @@ static dirList_t scalerList;
 //---- static functions
 
 // populate list with filenames and count
-static void list_scan(dirList_t* list, const char* path, const char* ext);
+static void list_fill(dirList_t* list, const char* path, const char* ext);
 // get name at idx
 static const char* list_get_name(dirList_t* list, u8 idx);
 // get read file pointer if found (caller must close)
@@ -87,7 +90,7 @@ static void fake_fseek(void* fp, u32 loc) {
 }
 */
 
-// fread: no size arg
+// fread: no size arg, always byte
 static void fake_fread(volatile u8* dst, u32 len, void* fp) {
   u32 n = 0;
 #if 0
@@ -121,9 +124,7 @@ bool check_ext(char* str, const char* extB ) {
   int i;
   int dotpos = -1;
   char* extA = NULL;
-  //  int extLenA, extLenB, extLen;
   bool res;
-  //  lenB = strlen(extB);
  
   i = strlen(str);
   while(i > 0) {
@@ -138,13 +139,8 @@ bool check_ext(char* str, const char* extB ) {
     // no extension
     return 0;
   } else {
-    //    extLenA = strlen(extA);
-    //    if(extLenA != extLenB) { 
-    //      return 0;
-    //    } else {
-      res = strcmp(extA, extB);
-      if(res == 0) { return 1; } else { return 0; }
-      //      if(res
+    res = strcmp(extA, extB);
+    if(res == 0) { return 1; } else { return 0; }
   }
 }
 
@@ -168,9 +164,9 @@ void strip_ext(char* str) {
 void files_init(void) {
   // scan directories
   print_dbg("\r\n BEES file_init, scanning directories..");
-  list_scan(&dspList, DSP_PATH, ".ldr");
-  list_scan(&sceneList, SCENES_PATH, ".scn");
-  list_scan(&scalerList, SCALERS_PATH, ".dat");
+  list_fill(&dspList, DSP_PATH, ".ldr");
+  list_fill(&sceneList, SCENES_PATH, ".scn");
+  list_fill(&scalerList, SCALERS_PATH, ".dat");
 }
 
 
@@ -201,17 +197,14 @@ u8 files_load_dsp_name(const char* name) {
 
   app_pause();
 
-  fp = list_open_file_name(&dspList, name, "r", &size);
-
-  if(fp == NULL) {
-    //// HACK
-    // try adding ".ldr" because sometimes that happens... ugh
-    strcpy(nameTry, name);
-    strcat(nameTry, ".ldr");
-    fp = list_open_file_name(&dspList, nameTry, "r", &size);
-  }
-
-  if( fp != NULL) {	  
+  strcpy(nameTry, name);
+  strcat(nameTry, ".ldr");
+  fp = list_open_file_name(&dspList, nameTry, "r", &size);
+  
+  if( fp == NULL) {
+    print_dbg("\r\n failed to fine DSP file, name: ");
+    print_dbg(nameTry);
+  } else {
 
     print_dbg("\r\n found file, loading dsp: ");
     print_dbg(name);
@@ -235,11 +228,10 @@ u8 files_load_dsp_name(const char* name) {
       /////////////////
       /// FIXME: filename and reported modulename should be decoupled
       /// bees should search for aleph-module-x.y.z.ldr
-      /// but try aleph-module*.ldr on failure
+      /// but try aleph-module*.ldr on failure, etc
       ////
       /// query name and version to the scene data
       //      scene_query_module();
-      /// now set it to the actual filename because we are dumb
       scene_set_module_name(name);
       ///////////////////////////
 
@@ -449,13 +441,11 @@ void files_store_scene_name(const char* name, u8 ext) {
   print_dbg_hex((u32)fp);
 
   pScene = (u8*)sceneData;
+
   print_dbg("\r\n writing data from scene buffer at 0x");
   print_dbg_hex((u32)pScene);
   print_dbg(", size : ");
-  print_dbg_hex(sizeof(sceneData_t));
-  
-
-  // dump the scene data to debug output...
+  print_dbg_hex(sizeof(sceneData_t));  
 
   fl_fwrite((const void*)pScene, sizeof(sceneData_t), 1, fp);
   fl_fclose(fp);
@@ -463,14 +453,13 @@ void files_store_scene_name(const char* name, u8 ext) {
   print_dbg("\r\n ... finished writing, closed file pointer");
 
   // rescan
-  list_scan(&sceneList, SCENES_PATH, ".scn");
+  list_fill(&sceneList, SCENES_PATH, ".scn");
   delay_ms(10);
 
   print_dbg("\r\n re-scanned scene file list and waited.");
 
   app_resume();
 }
-
 
 // return count of scene files
 u8 files_get_scene_count(void) {
@@ -494,9 +483,6 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
   u32 i;
   union { u32 u; s32 s; u8 b[4]; } swap;
   u8 ret = 0;
-  //// test
-  //s32* p = dst;
-  ///
 
   app_pause();
   fp = list_open_file_name(&scalerList, name, "r", &size);
@@ -600,7 +586,7 @@ const char* list_get_name(dirList_t* list, u8 idx) {
   return (const char*) ( list->nameBuf + (idx * DIR_LIST_NAME_LEN) );
 }
 
-void list_scan(dirList_t* list, const char* path, const char* ext) {
+void list_fill(dirList_t* list, const char* path, const char* ext) {
   FL_DIR dirstat; 
   struct fs_dir_ent dirent;
   int i;
@@ -612,12 +598,17 @@ void list_scan(dirList_t* list, const char* path, const char* ext) {
 
   list->num = 0;
   strcpy(list->path, path);
+  strcpy(list->ext, ext);
 
   if( fl_opendir(path, &dirstat) ) {      
     while (fl_readdir(&dirstat, &dirent) == 0) {
       if( !(dirent.is_dir) ) {
 
 	if(check_ext(dirent.filename, ext)) {
+	  ////////////////////////////////////
+	  /// strip the extension before storing
+	  strip_ext(dirent.filename);
+	  /////////////////////////
 	  strncpy((char*)(list->nameBuf + (list->num * DIR_LIST_NAME_LEN)),
 		  dirent.filename, DIR_LIST_NAME_LEN_1);
 	  *(list->nameBuf + (list->num * DIR_LIST_NAME_LEN) + DIR_LIST_NAME_LEN_1) = '\0';
@@ -631,9 +622,10 @@ void list_scan(dirList_t* list, const char* path, const char* ext) {
     }
   }
 
-  print_dbg("\r\n scanned list at path: ");
+  //// debug prints
+  print_dbg("\r\n filled file list from path: ");
   print_dbg(list->path);
-  print_dbg(" , contents : \r\n");
+  /* print_dbg(" , contents : \r\n"); */
 
   /* for(i=0; i<list->num; i++) { */
   /*   char buf[32]; */
@@ -659,6 +651,7 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   struct fs_dir_ent dirent;
   char path[64];
   void* fp;
+  char nameTry[DIR_LIST_NAME_LEN];
 
   print_dbg("\r\n *list_open_file_name: "); 
   print_dbg(path); 
@@ -667,8 +660,9 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   print_dbg(" request: ");
   print_dbg(name);
 
-
   strcpy(path, list->path);
+  strcpy(nameTry, name);
+  strncat(nameTry, 
 
   if(fl_opendir(path, &dirstat)) {
     
@@ -676,7 +670,7 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
       print_dbg("\r\n ... checking against "); 
       print_dbg(dirent.filename);
 
-      if (strcmp(dirent.filename, name) == 0) {
+      if (strcmp(dirent.filename, nameTry) == 0) {
 	strncat(path, dirent.filename, 58);
 	
 	print_dbg("\r\n ... found, opening at:  "); 
@@ -758,6 +752,3 @@ extern u8 files_load_desc(const char* name) {
   app_resume();
   return ret;
 }
-
-
-
