@@ -26,8 +26,7 @@
 //--- -aleph-avr32 headers
 // includes pause/resume
 #include "app.h"
-// control change functions. 
-// (as of now, just a thin wrapper around blackfin spi comm layer.)
+// control change functions
 #include "control.h"
 
 //---- aleph/common headers
@@ -39,68 +38,112 @@
 //--- custom app headers
 #include "app_timers.h"
 #include "ctl.h"
-//#include "files.h"
-//#include "inputs.h"
 #include "render.h"
 
 //#include "util.h"
-//--- these are actually just copied from BEES
-// #include "scalers/scaler_amp.h"
-// #include "scalers/scaler_integrator.h"
 
 //-----------------
 //---- static variables
 
-// raw values for adc multiplier parameters
-static s32 adc[4];
 // mute flags
 static bool mute[4];
-// current amp values
-static bool ampVal[4] = { 0, 0, 0, 0 };
+
+// linear control values for channel levels 
+static s32 level[4];
+
+// amplitude value after scaling, linear
+// format is fract32 (blackfin native):
+// [0x80000000, 0xffffffff] == [-1, 1)
+static s32 ampLin[4];
+
+// amplitude value after scaling, in decibels
+// format is 16.16:
+// 16b signed integer + 16b unsigned fract
+static s32 ampDb[4];
+
+// adc parameter indices
+// keeping them here is clean and maintainable,
+// at the cost of a little code space.
+static const ampParamId[] = { eParam_adc0, 
+			    eParam_adc1, 
+			    eParam_adc2, 
+			    eParam_adc3 };
+
+//---------------------------------
+//---- static function declarations
+
+// set amplitude for a channel
+static void ctl_set_amp(u32 ch, s32 val);
+// set mute toggle for a channel
+static void ctl_set_mute(u32 ch, s32 val);
+// apply scaling to linear level control for one channel
+static void ctl_scale_level(u32 ch);
+
 
 //-------------------------
 //---- extern function definitions
 
-// set amplitude for a channel
-void ctl_set_amp(u32 ch, s32 val) {
-  // limit
+// get amplitude for a channel
+s32 ctl_get_amp_db(u32 ch) {
+  return ampDb[ch];
+}
+
+// get mute flag for a channel
+s32 ctl_get_mute(u32 ch) {
+  return mute[ch]; 
+}
+
+// toggle mute flag for a channel
+void ctl_toggle_mute(u32 ch) {
   ch &= 3;
-  // check the mute flag
+  ctl_set_mute(ch, mute[ch]^1);
+}
+
+
+//-----------------------------------
+//--- static function definitions
+
+
+// SET amplitude for a channel
+static void ctl_set_amp(u32 ch, s32 val) {
   if(mute[ch]) {
-    ;; 
+    ;; // already muted, do nothing
   } else {
-    // a dumb hack for param idx using first adc param as offset
     ampVal[ch] = val;
-    ctl_param_change(eParam_adc0 + ch, val);
+    // send the linear amplitude as a param change to the DSP
+    ctl_param_change(ampParamId[ch], val);
   }
-
-  // let's just echo it to the cv output, regardless of mute status
-  ctl_param_change(eParam_cv0 + ch, val);
-
-  // draw the amplitude change
-  render_amp(ch); 
+  // redraw
+  render_chan(ch); 
 }
 
 // set mute flag for a channel
-void ctl_set_mute(u32 ch, s32 val) {
-  ch &= 3;
-  // set the flag
+static void ctl_set_mute(u32 ch, s32 val) {
   if(val > 0) {
     mute[ch] = 1;
-    ctl_param_change(eParam_adc0 + ch, 0);
+    // send zero to the DSP
+    ctl_param_change(ampParamId[ch], 0);
   } else {
     mute[ch] = 0;
-    ctl_param_change(eParam_adc0 + ch, ampVal[ch]);
+    // send the linear amplitude as a param change to the DSP
+    ctl_param_change(ampParamId[ch], ampLin[ch]);
   }
-  render_mute(ch);
+  // redraw
+  render_chan(ch);
 }
 
-// get amplitude for a channel
-s32 ctl_get_amp(u32 ch) {
-  return adc[ch & 3];
+// helper: fixed-point linear interpolation.
+// this accepts a full-scale signed integer control argument,
+// and returns an interpolated table lookup result.
+// it's not particularly fast, just demonstrating the concepts..
+static s32 ctl_interp(s32* table, u32 bits, u32 idx) {
+  // this will be a bitmask applied to table index
+  const u32 mask = 1 << 
+  // the endpoints of our interpolation
 }
 
-// get mute toggle for a channel
-s32 ctl_get_mute(u32 ch) {
-  return mute[ch & 3];
+// apply scaling to linear level control for one channel
+static void ctl_scale_level(u32 ch) {
+  ampDb[ch] = 0;;
+  ampDb[ch] = 0;;
 }

@@ -14,8 +14,8 @@
 
 //-------------------------------------------------
 //----- static function declaration
-static void op_serial_in_a(op_serial_t* is, const io_t v);
-static void op_serial_in_b(op_serial_t* is, const io_t v);
+static void op_serial_in_a(op_serial_t* io, const io_t v);
+static void op_serial_in_b(op_serial_t* io, const io_t v);
 
 
 // pickle / unpickle
@@ -31,9 +31,6 @@ static inline void op_serial_tx(op_serial_t* op) {
   /* txbuf[0] = (char)op_from_int(op->a); */
   /* txbuf[1] = (char)op_from_int(op->b);   */
   /* usart_write_line(DEV_USART, txbuf); */
-
-
-
 #ifdef BEEKEEP
 #else
   usart_putchar( DEV_USART, (char)op_from_int(op->a) );

@@ -194,6 +194,7 @@ u8 files_load_dsp_name(const char* name) {
   u32 size = 0;
   u8 ret;
   char nameTry[64];
+  volatile u8* bfinLdrData = NULL;
   //  ModuleVersion modVers;
 
   delay_ms(10);
@@ -211,18 +212,24 @@ u8 files_load_dsp_name(const char* name) {
   }
 
   if( fp != NULL) {	  
+
     print_dbg("\r\n found file, loading dsp: ");
     print_dbg(name);
-    fake_fread(bfinLdrData, size, fp);
 
-    fl_fclose(fp);
-    bfinLdrSize = size;
-
-    if(bfinLdrSize > 0) {
+    if(size > 0) {
       print_dbg("\r\n loading bfin from buf");
+
+      // allocate a RAM buffer
+      bfinLdrData = alloc_mem(size);
+      fake_fread(bfinLdrData, size, fp);
+      fl_fclose(fp);
+
       // reboot the dsp with new firmware in RAM
-      bfin_load_buf();
+      bfin_load_buf((const u8*)bfinLdrData, size);
       print_dbg("\r\n finished load");
+      // free the buffer!
+      free_mem(bfinLdrData);
+
       // write module name in global scene data
 
       /////////////////
@@ -370,10 +377,10 @@ u8 files_load_scene_name(const char* name) {
   u32 size = 0;
   u8 ret = 0;
 
-    //// ahhhhh, i see.. 
-    /// this is overwriting the descriptor in sceneData as well as the serialized blob.
-    /// woud be fine, except it fucks up the comparison later.
-    /// for now, let's do this ugly-ass workaround.
+  //// ahhhhh, i see.. 
+  /// this is overwriting the descriptor in sceneData as well as the serialized blob.
+  /// woud be fine, except it fucks up the comparison later.
+  /// for now, let's do this ugly-ass workaround.
 
   char oldModuleName[MODULE_NAME_LEN];
   /// store extant module name
@@ -392,12 +399,10 @@ u8 files_load_scene_name(const char* name) {
     strncpy(sceneData->desc.moduleName, oldModuleName, MODULE_NAME_LEN);
     
     fl_fclose(fp);
+
+    // unpack buffer, rebuild network, reboot DSP
     scene_read_buf();
 
-    // try and load dsp module indicated by scene descriptor
-    //// DUDE! NO!!! scene does this. when did this happen!
-    //// probably snuck in in some merge.
-    //    ret = files_load_dsp_name(sceneData->desc.moduleName);
   } else {
     print_dbg("\r\n error: fp was null in files_load_scene_name \r\n");
     ret = 0;
