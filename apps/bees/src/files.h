@@ -49,7 +49,7 @@ extern u8 files_load_scene_path(const char* name);
 // store scene by index
 extern void files_store_scene(u8 idx);
 // store scene by filename
-extern void files_store_scene_name(const char* name, u8 ext);
+extern void files_store_scene_name(const char* name /*, u8 ext */);
 
 
 //----- scalers
@@ -69,6 +69,6 @@ extern u8 files_load_desc(const char* name);
 extern bool check_ext(char* str, const char* ext );
 
 // strip extension from the end of a string
-extern void strip_ext(char* str);
+extern bool strip_ext(char* str);
 
 #endif // header guard 

@@ -39,7 +39,7 @@
 #define DEFAULT_SCENE_NAME "default"
 /// FIXME: this is retarded, 
 // but sometimes the name needs to have extension and sometimes not.
-#define DEFAULT_SCENE_NAME_EXT "default.scn"
+// #define DEFAULT_SCENE_NAME_EXT "default.scn"
 
 //-----------------------------
 // ---- extern data
@@ -377,7 +377,8 @@ void scene_write_default(void) {
   render_boot("writing default scene");
   print_dbg("\r\n writing default scene to card... ");
 
-  files_store_scene_name(DEFAULT_SCENE_NAME_EXT, 0);
+  //  files_store_scene_name(DEFAULT_SCENE_NAME_EXT, 0);
+  files_store_scene_name(DEFAULT_SCENE_NAME);
 
   //  app_resume();
 
@@ -417,7 +418,8 @@ void scene_read_default(void) {
   /* print_dbg("\r\n reading default scene from flash... "); */
   /* flash_read_scene(); */
   print_dbg("\r\n reading default scene from card... ");
-  files_load_scene_name(DEFAULT_SCENE_NAME_EXT);
+  //  files_load_scene_name(DEFAULT_SCENE_NAME_EXT);
+  files_load_scene_name(DEFAULT_SCENE_NAME);
   
   print_dbg("\r\n finished reading ");  
   app_resume();
@@ -457,14 +459,3 @@ void scene_query_module(void) {
   print_dbg(".");
   print_dbg_ulong(moduleVersion->rev);
 }
-
-
-/* void scene_print_buf(void) { */
-/*   int i; */
-/*   for(i=0; i<sizeof(sceneDesc_t); ++i) { */
-/*     //    print_dbg_hex(sceneData-> */
-/*   } */
-/*   for(i=0; i<SCENE_PICKLE_SIZE; ++i) { */
-/*     //    sceneData */
-/*   } */
-/* } */
