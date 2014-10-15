@@ -43,7 +43,7 @@ OPTIMIZATION = -O3
 
 # preprocessor definitions
 CPPFLAGS = \
-       -D BOARD=USER_BOARD -D ARCH_AVR32=1 -D UHD_ENABLE
+       -D BOARD=USER_BOARD -D ARCH_AVR32=1 -D UHD_ENABLE -DDEV_USART_BAUDRATE=$(BAUD)
 
 # Extra flags to use when linking
 #####

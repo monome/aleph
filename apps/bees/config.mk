@@ -121,9 +121,6 @@ ARFLAGS +=
 # Extra flags to use when assembling.
 ASFLAGS += 
 
-#extra flags to C preprocessor
-CPPFLAGS += -DDEV_USART_BAUDRATE=$(BAUD)
-
 # extra flags for compiling
 # CFLAGS += --verbose
 
