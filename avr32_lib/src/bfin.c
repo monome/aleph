@@ -77,11 +77,10 @@ void bfin_set_param(u8 idx, fix16_t x ) {
   ParamValueSwap pval;
   pval.asInt = (s32)x;
 
-  print_dbg("\r\n bfin_set_param, idx: ");
-  print_dbg_ulong(idx);
-
-    print_dbg(",\t val: 0x");
-    print_dbg_hex((u32)x);
+  //  print_dbg("\r\n bfin_set_param, idx: ");
+  //  print_dbg_ulong(idx);
+  //  print_dbg(",\t val: 0x");
+  //  print_dbg_hex((u32)x);
   
   /*
     print_dbg(", \t elapsed ms: ");

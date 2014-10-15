@@ -3,9 +3,7 @@
   
   aleph-mix
 
-  rendering definitions for mixing module.
-
-  draws amplitude values and mute flags.
+  definitions for rendering graphics.
 
 */
 
@@ -24,24 +22,15 @@
 // screen refresh function
 #include "screen.h"
 
-//--- mix application headers
+//--- application headers
 #include "ctl.h"
-
-
-// local
 #include "render.h"
+
 //-------------------------------------------------
 //----- -static variables
 
-// temp buffers
-#define NUMSTRBUF_LEN 17
-#define HEXSTRBUF_LEN 9
-
-//static char numstrbuf[NUMSTRBUF_LEN];
-//static char hexstrbuf[HEXSTRBUF_LEN] = "12345678";
-
 /* 
-   the screen-drawing routines in avr32_lib provide "region" object
+   the screen-drawing routines in avr32_lib provide the "region" object
    a simple 16-bit pixel buffer with width, height, x/y offset, and dirty flag.
    there are also methods for basic fill and text rendering into regions.
 */
@@ -64,48 +53,34 @@ static region regChan[] = {
 
 // initialze renderer
 void render_init(void) {
-  //  u32 i;
   // allocate memory for each region
-  region_alloc(&regData);
-  region_alloc(&regLabel);
-  region_alloc( &(regMute[0]) );
-  region_alloc( &(regMute[1]) );
-  region_alloc( &(regMute[2]) );
-  region_alloc( &(regMute[3]) );
+  region_alloc(&regChan[0]);
+  region_alloc(&regChan[1]);
+  region_alloc(&regChan[2]);
+  region_alloc(&regChan[3]);
 }
 
 // fill with initial graphics
 void render_startup(void) {
-  region_fill(&regLabel, 0);
-  region_string(&regLabel, "MIX", 40, 12, 0xf, 0x0, 2);
-  region_fill(&regData, 0x5);
-  region_fill(&(regMute[0]), 0x0);
-  region_fill(&(regMute[1]), 0x0);
-  region_fill(&(regMute[2]), 0x0);
-  region_fill(&(regMute[3]), 0x0);
-  
-  // physically update the screen with each region's data
-  region_draw(&regData);
-  region_draw(&regLabel);
-  region_draw( &(regMute[0]) );
-  region_draw( &(regMute[1]) );
-  region_draw( &(regMute[2]) );
-  region_draw( &(regMute[3]) );
+  u32 i;
+  for(i=0; i<4; i++) { 
+    // fill the graphics buffer (with black)
+    region_fill(&(regChan[i]), 0x0);
+    // physically render the region data to the screen
+    region_draw(&(regChan[i]));
+  }
 }
 
 // update dirty regions
+// (this will be called from an application timer)
 void render_update(void) {
-  //  region* r;  
-  //  u8 i;
   app_pause();
 
   // physically update the screen with each region's data (if changed)
-  region_draw(&regData);
-  region_draw(&regLabel);
-  region_draw( &(regMute[0]) );
-  region_draw( &(regMute[1]) );
-  region_draw( &(regMute[2]) );
-  region_draw( &(regMute[3]) );
+  region_draw( &(regChan[0]) );
+  region_draw( &(regChan[1]) );
+  region_draw( &(regChan[2]) );
+  region_draw( &(regChan[3]) );
 
   app_resume();
 }
@@ -163,12 +138,7 @@ void render_chan(u8 ch) {
   // write label in small font
   region_string(reg, num[ch], 0, 0, 0xf, 1, 0);
 
-// render mute
-void render_mute(u8 ch) {
-  // fill with black or white depending on mute status (marks changed)
-  if(ctl_get_mute(ch)) { 
-    region_fill( &(regMute[ch]), 0xf);
-  } else {
-    region_fill( &(regMute[ch]), 0);
-  }
+  // the render functions set the region's dirty flag,
+  // so there's nothing left to do now,
+  // except wait for the screen refresh timer to trigger a redraw.
 }
