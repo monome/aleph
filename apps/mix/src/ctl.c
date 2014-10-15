@@ -145,8 +145,8 @@ extern void ctl_inc_level(u32 ch, s32 inc) {
   scale_level(l, &ampLin[ch], &ampDb[ch]);
   ctl_set_amp(ch);
   level[ch] = l;
-  //  print_dbg("\r\n changed level control: 0x");
-  //  print_dbg_hex(l);
+  print_dbg("\r\n changed level control: 0x");
+  print_dbg_hex(l);
 }
 
 //-----------------------------------

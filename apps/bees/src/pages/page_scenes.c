@@ -36,10 +36,10 @@ static s16* const pageSelect = &(pages[ePageScenes].select);
 //---- static funcs
 
 // handler declarations
-static void handle_enc_0(s32 val);
-static void handle_enc_1(s32 val);
-static void handle_enc_2(s32 val);
 static void handle_enc_3(s32 val);
+static void handle_enc_2(s32 val);
+static void handle_enc_1(s32 val);
+static void handle_enc_0(s32 val);
 static void handle_key_0(s32 val);
 static void handle_key_1(s32 val);
 static void handle_key_2(s32 val);
@@ -205,7 +205,7 @@ void handle_key_3(s32 val) {
 }
 
 // scroll character value at cursor position2 in scene name
-void handle_enc_0(s32 val) {
+void handle_enc_3(s32 val) {
   if(val > 0) {
     edit_string_inc_char(sceneData->desc.sceneName, cursor);
   } else {
@@ -217,7 +217,7 @@ void handle_enc_0(s32 val) {
 }
 
 // scroll cursor position in current scene name
-void handle_enc_1(s32 val) {
+void handle_enc_2(s32 val) {
   if(val > 0) {
     ++cursor;
     if (cursor >= SCENE_NAME_LEN) {
@@ -237,7 +237,7 @@ void handle_enc_1(s32 val) {
 
 
 // enc 0 : scroll page
-void handle_enc_2(s32 val) {
+void handle_enc_1(s32 val) {
    if(val > 0) {
     set_page(ePageDsp);
   } else {
@@ -246,7 +246,7 @@ void handle_enc_2(s32 val) {
 }
 
 // enc 1 : scroll selection
-void handle_enc_3(s32 val) {
+void handle_enc_0(s32 val) {
   select_scroll(val);
 }
 

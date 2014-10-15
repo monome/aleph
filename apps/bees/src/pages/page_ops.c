@@ -27,7 +27,7 @@ static scroll centerScroll;
 static s16* const pageSelect = &(pages[ePageOps].select);
 
 // const array of user-creatable operator types
-#define NUM_USER_OP_TYPES 36
+#define NUM_USER_OP_TYPES 37
 // this order is arbitrary, no need to synchronize with class enum
 static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAccum,
@@ -66,6 +66,7 @@ static const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpThresh,
   eOpTimer,
   eOpTog,
+  eOpWW
 };
 
 // current selected new operator type
@@ -75,10 +76,10 @@ static op_id_t newOpType = eOpAccum;
 //===== static function declarations
 
 // handler declarations
-static void handle_enc_0(s32 val);
-static void handle_enc_1(s32 val);
-static void handle_enc_2(s32 val);
 static void handle_enc_3(s32 val);
+static void handle_enc_2(s32 val);
+static void handle_enc_1(s32 val);
+static void handle_enc_0(s32 val);
 static void handle_key_0(s32 val);
 static void handle_key_1(s32 val);
 static void handle_key_2(s32 val);
@@ -313,7 +314,7 @@ void handle_key_3(s32 val) {
   show_foot();
 }
 
-void handle_enc_0(s32 val) {
+void handle_enc_3(s32 val) {
   // select new operator type
   if(val > 0) {
     newOpType++;
@@ -329,11 +330,11 @@ void handle_enc_0(s32 val) {
   render_op_type();
 }
 
-void handle_enc_1(s32 val) {
+void handle_enc_2(s32 val) {
   // nothing
 }
 
-void handle_enc_2(s32 val) {
+void handle_enc_1(s32 val) {
   // scroll page
   if(val > 0) {
     set_page(ePageIns);
@@ -342,7 +343,7 @@ void handle_enc_2(s32 val) {
   }
 }
 
-void handle_enc_3(s32 val) {
+void handle_enc_0(s32 val) {
   // scroll selection
   select_scroll(val);
 }

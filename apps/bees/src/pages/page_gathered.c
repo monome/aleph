@@ -16,10 +16,10 @@ u32 numGathered;
 
 
 // handler declarations
-static void handle_enc_0(s32 val);
-static void handle_enc_1(s32 val);
-static void handle_enc_2(s32 val);
 static void handle_enc_3(s32 val);
+static void handle_enc_2(s32 val);
+static void handle_enc_1(s32 val);
+static void handle_enc_0(s32 val);
 static void handle_key_0(s32 val);
 static void handle_key_1(s32 val);
 static void handle_key_2(s32 val);
@@ -39,17 +39,17 @@ void handle_key_3(s32 val) {
 }
 
 // enc 0 : scroll page
-void handle_enc_0(s32 val) {
+void handle_enc_3(s32 val) {
 }
 
 // enc 1 : scroll selection
-void handle_enc_1(s32 val) {
-}
-
 void handle_enc_2(s32 val) {
 }
 
-void handle_enc_3(s32 val) {
+void handle_enc_1(s32 val) {
+}
+
+void handle_enc_0(s32 val) {
 }
 
 

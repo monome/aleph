@@ -8,6 +8,7 @@ bees    0.6.0
 - monome driver: fix device size detection, add vari-bright implmementation
 - fix: op_step initialization
 - fix: display op redrawing
+- add op: WW (white whale, for grids)
 
 ----------------
 bees    0.5.5

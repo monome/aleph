@@ -81,6 +81,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_thresh.c \
 	$(APP_DIR)/src/ops/op_timer.c \
 	$(APP_DIR)/src/ops/op_tog.c \
+	$(APP_DIR)/src/ops/op_ww.c \
 	$(APP_DIR)/src/pages/page_dsp.c \
 	$(APP_DIR)/src/pages/page_gathered.c \
 	$(APP_DIR)/src/pages/page_ins.c \

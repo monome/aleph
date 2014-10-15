@@ -227,6 +227,12 @@ const op_desc_t op_registry[numOpClasses] = {
     .init = &op_hid_word_init,
     .deinit = &op_hid_word_deinit   
   },
+  {
+    .name = "WW",
+    .size = sizeof(op_ww_t),
+    .init = &op_ww_init,
+    .deinit = &op_ww_deinit   
+  },
 };
 
 // input and output strings are all the same length, concatenated

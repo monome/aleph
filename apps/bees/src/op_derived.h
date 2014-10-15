@@ -51,6 +51,7 @@
 #include "ops/op_thresh.h"
 #include "ops/op_timer.h"
 #include "ops/op_tog.h"
+#include "ops/op_ww.h"
 
 // let's keep this list alphabetical so we can easily see whether something is included.
  
