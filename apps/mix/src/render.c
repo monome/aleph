@@ -46,22 +46,12 @@
    there are also methods for basic fill and text rendering into regions.
 */
 
-// a region above of the screen for showing text label
-static region regLabel = { 
-  .w = 128, .h = 24, .x = 0,  .y = 0
-};
-
-// a region below of the screen for showing numerical data
-static region regData = { 
-  .w = 128, .h = 24, .x = 0,  .y = 24
-};
-
-// a region for each mute button
-static region regMute[4] = { 
-  { .w = 32, .h = 16, .x = 0,  .y = 48 },
-  { .w = 128, .h = 24, .x = 32,  .y = 24 },
-  { .w = 128, .h = 24, .x = 64,  .y = 24 },
-  { .w = 128, .h = 24, .x = 96,  .y = 24 },
+// one drawing region for each channel
+static region regChan[] = { 
+  { .w=62, .h=30, .x=0,  .y=0  },
+  { .w=62, .h=30, .x=64, .y=0  },
+  { .w=62, .h=30, .x=0,  .y=32 },
+  { .w=62, .h=30, .x=64, .y=32 },
 };
 
 //-------------------------
@@ -121,34 +111,57 @@ void render_update(void) {
 }
 
 // render amplitude
-void render_amp(u8 ch) {
-  static const char nums[4][1] = { "0", "1", "2", "3" };
+void render_chan(u8 ch) {
+  // tmp decibel value
+  s32 db;
+  // tmp position for left-justify
+  int pos=0;
+  // stupid way to show channel numbers
+  static const char num[4][3] = { "1.", "2.", "3.", "4." };
   // text buffer
-  char buf[16] = "";
+  static char buf[32];
+  // point at the appropriate region
+  region* reg = &(regChan[ch]);
 
-  strcat(buf, "ADC ch ");
-  strcat(buf, nums[ch & 3]);
-  // render text to label region (large)
-  region_string_aa( &regLabel, buf , 0, 0, 0);
-  // clear buffer
-  memset(buf, 16, '\0');
+  // clear the region
+  region_fill(reg, 1);
 
-  // print value in 16.16
-  // shift it to show only the fractional part (amplitude is 0-1)
-  // 15 bits because top part is signed, bottom part unsigned
-  print_fix16(buf, ctl_get_amp(ch) >> 15);
-  // render to buffer
-  region_string_aa( &regData, buf , 0, 0, 0);
+  // build decibel value string
+  memset(buf, 32, '\0');
+  db = ctl_get_amp_db(ch);
+  if(db < 0xffbf0000) {
+  // print "-inf" if very small
+    memcpy(buf, "-inf\0", 5);
+  } else {
+    // otherwise print the value
+    print_fix16(buf, db);
+  }
 
-  /* // glitch it up... */
-  /* // clear buffer again */
-  /* memset(buf, 16, '\0'); */
-  /* // print again, in hex */
-  /* uint_to_hex_ascii(buf, val); */
-  /* // render again, to same region, small, inverted and offset */
-  /* region_string( &regData, buf , 0, 64, 1); */
+#if 0
+  // use the small system font, or...
+  region_string( reg, buf, 0, 6, 0xf, 0, 0);
+#else
+  // ... use the large anti-aliased font.
+  // this means we have to truncate the string to make it fit.
+  // write an early termination symbol to lose some decimal points:
+  buf[9] = '\0';
+  // let's also apply an offset that skips leading spaces:
+  while(buf[pos] == ' ' && pos < 31) { pos++; }
+  if (pos == 31) { pos = 0; }
+  region_string_aa( reg, buf + pos, 5, 5, 1);
+#endif
 
-}
+  // if channel is muted,
+  // highlight background, limit the foreground, 
+  // write a big inverted M
+  if(ctl_get_mute(ch)) {
+    region_hl(reg, 2, 2);
+    region_max(reg, 6);
+    region_string_aa( reg, "M", 50, 5, 0);
+  }
+
+  // write label in small font
+  region_string(reg, num[ch], 0, 0, 0xf, 1, 0);
 
 // render mute
 void render_mute(u8 ch) {
