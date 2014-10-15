@@ -34,7 +34,6 @@
 static void bfin_start_transfer(void);
 static void bfin_end_transfer(void); 
 static void bfin_transfer_byte(u8 data);
-static u32 ldrCurrentByte = 0;
 
 //---------------------------------------
 //--- external function definition
@@ -52,18 +51,37 @@ void bfin_wait(void) {
 }
 
 // load bfin executable from the RAM buffer
-void bfin_load_buf(const u8* data, const u32 size) {
-  u64 i; 
+void bfin_load_buf(void) {
+  u64 i; /// byte index in .ldr
+
+  /////
+  //// TEST: print contents of buffer
+  /* print_dbg("\r\n\r\n .ldr buffer for: "); */
+  /* contents(i=0; i<bfinLdrSize; i++) { */
+  /*   print_dbg("\r\n 0x"); */
+  /*   print_dbg_hex(bfinLdrData[i]); */
+  /* } */
+  /* print_dbg("\r\n\r\n"); */
+  ////
+  /////////
+
+  ////////////
+  //// tESTING don't check
+#if 0
+  if(bfinLdrSize > BFIN_LDR_MAX_BYTES) {
+    print_dbg("\r\n bfin load error: size : "); print_dbg_hex(bfinLdrSize);
+    return;
+  }
+#endif
+  ///////////////
+  ////////////////
 
   app_pause();
 
-  ldrCurrentByte = 0;
   bfin_start_transfer();
 
-  for(i=0; i<size; i++) {
-    //    bfin_transfer_byte(bfinLdrData[i]);
-    bfin_transfer_byte(data[ldrCurrentByte]);
-    ldrCurrentByte++;
+  for(i=0; i<bfinLdrSize; i++) {
+    bfin_transfer_byte(bfinLdrData[i]);
   }
 
   bfin_end_transfer();

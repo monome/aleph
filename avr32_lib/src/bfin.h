@@ -21,16 +21,11 @@
 //// actually, the ldr itself can be bigger than the bfin's sram...??
 #define BFIN_LDR_MAX_BYTES 0x12000
 
-/* // RAM buffer for blackfin firmware (.ldr) */
-/* extern volatile u8 *bfinLdrData; */
-/* // size of current bfin firmware */
-/* extern volatile u32 bfinLdrSize; */
-
 // wait for busy pin to clear
 void bfin_wait(void);
 
 // load bfin from RAM buffer
-void bfin_load_buf(const u8* data, const u32 size);
+void bfin_load_buf(void);
 
 // set a parameter
 void bfin_set_param(U8 idx, fix16_t val);

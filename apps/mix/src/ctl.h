@@ -54,17 +54,11 @@ extern void ctl_set_amp(u32 ch, s32 val);
 // set mute toggle for a channel
 extern void ctl_set_mute(u32 ch, s32 val);
 
-// increment a level control (e.g. by encoder)
-extern void ctl_inc_level(u32 ch, s32 inc);
-
 // get amplitude for a channel
-extern s32 ctl_get_amp_db(u32 ch);
-
+extern s32 ctl_get_amp(u32 ch);
 // get mute toggle for a channel
 extern s32 ctl_get_mute(u32 ch);
 
-// toggle mute flag for a channel
-void ctl_toggle_mute(u32 ch);
 
 #endif // h guard
 

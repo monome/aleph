@@ -13,20 +13,24 @@
 #include "bfin.h"
 #include "types.h"
 
-// uncomment to re-add this...
-/// #define DEFAULT_LDR_FLASH 1
-
 // bytes available for application-specific storage
 // (increase as needed)
 #define APP_FLASH_BYTES 0x28000 
+
 /// 64K of blackfin executable storage in flash
 //// actually, the ldr itself can be bigger than the SRAM.
-// #define LDR_FLASH_BYTES BFIN_LDR_MAX_BYTES
+#define LDR_FLASH_BYTES BFIN_LDR_MAX_BYTES
 // length of .ldr string identifier in flash
 #define LDR_FLASH_STRING_LEN 64
 
+
 //------------------------
 // extern variables
+
+// RAM buffer for blackfin firmware (.ldr)
+extern volatile u8 *bfinLdrData;
+// size of bfin firmware
+extern volatile u32 bfinLdrSize;
 
 //---------------------------------
 // extern functions
@@ -45,6 +49,9 @@ extern u8 flash_read_firstrun(void);
 extern void flash_write_firstrun(void);
 // clear firstrun status (FALSE)
 extern void flash_clear_firstrun(void);
+
+// TODO:
+// extern const char* flash_get_dsp_name(void);
 
 // switch to intel-hex format...
 // parse a hex record and write the contents to flash if appropriate

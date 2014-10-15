@@ -51,21 +51,10 @@ static void handle_Adc3(s32 data) {
   //... no ADC
 }
 
-static void handle_Switch0(s32 data) { 
-  ctl_toggle_mute(0);
-}
-
-static void handle_Switch1(s32 data) { 
-  ctl_toggle_mute(1);
-}
-
-static void handle_Switch2(s32 data) { 
-  ctl_toggle_mute(2);
-}
-
-static void handle_Switch3(s32 data) { 
-  ctl_toggle_mute(3);
-}
+////////////////
+// function key and encoder handles are page-specific
+/// ....
+//////////
 
 static void handle_Switch4(s32 data) { 
   // mode switch
@@ -74,8 +63,8 @@ static void handle_Switch4(s32 data) {
 
 static void handle_Switch5(s32 data) { 
   /// power switch
-  // we are powering down, save current settings
-  //...
+  // ... here is where the state should be saved.
+  /// power down
   delay_ms(100);
   gpio_clr_gpio_pin(POWER_CTL_PIN);
 }
@@ -89,12 +78,10 @@ static void handle_Switch7(s32 data) {
 } 
 
 static void handle_MonomeConnect(s32 data) { 
-  // if we were using a grid...
   // timers_set_monome();
 }
 
 static void handle_MonomeDisconnect(s32 data) { 
-  // if we were using a grid...
   //  timers_unset_monome();
 }
 
