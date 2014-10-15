@@ -91,6 +91,7 @@ src += \
 
 # "fake" sources
 src += 	src/app_beekeep.c \
+	src/editor.c \
 	src/flash_beekeep.c \
 	src/files.c \
 	src/handler.c \
@@ -166,12 +167,16 @@ cflags += -D BEEKEEP=1
 
 lflags += -ljansson
 
+cflags += $(shell pkg-config --cflags gtk+-3.0)
+lflags += $(shell pkg-config --libs gtk+-3.0)
+
+
 $(build-dir)%.o: %.c 
 	$(Q)test -d $(dir $@) || mkdir -p $(dir $@)
 	gcc $(cflags) -g -c $< -o $@
 
 target: $(obj)	
-	gcc $(obj) -g $(cflags) -o $(target) $(lflags)
+	gcc $(obj) -g -o $(target) $(cflags) $(lflags)
 
 all: beekeep
 
