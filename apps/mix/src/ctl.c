@@ -67,9 +67,9 @@ static s32 ampDb[4];
 // at the cost of a little code space.
 static const int ampParamId[] = { eParam_adc0, 
 			    eParam_adc1, 
-			    eParam_adc2, 
+			    eParam_adc2,
 			    eParam_adc3 };
-
+ 
 //---------------------------------
 //---- static function declarations
 
@@ -81,6 +81,35 @@ static void ctl_set_mute(u32 ch, bool val);
 
 //-------------------------
 //---- extern function definitions
+
+// set the initial state
+void ctl_init(void) {
+  int i;
+  // set inputs to defaults
+  for(i=0; i<4; i++) {
+    level[i] = maxLevelInput;
+    scale_level(maxLevelInput, &ampLin[i], &ampDb[i]);
+    ctl_set_amp(i);
+  }
+  // set other parameters to fixed values
+  // adc multiplier slew
+  // this integrator value is very fast, but enough to prevent clicks
+  ctl_param_change(  eParam_adcSlew0, 0x7fe00000);
+  ctl_param_change(  eParam_adcSlew1, 0x7fe00000);
+  ctl_param_change(  eParam_adcSlew2, 0x7fe00000);
+  ctl_param_change(  eParam_adcSlew3, 0x7fe00000);
+  // cv slew
+  ctl_param_change(  eParam_cvSlew0, 0);
+  ctl_param_change(  eParam_cvSlew1, 0);
+  ctl_param_change(  eParam_cvSlew2, 0);
+  ctl_param_change(  eParam_cvSlew3, 0);
+  // cv values
+  ctl_param_change(  eParam_cv0, 0);
+  ctl_param_change(  eParam_cv1, 0);
+  ctl_param_change(  eParam_cv2, 0);
+  ctl_param_change(  eParam_cv3, 0);
+
+}
 
 // get amplitude for a channel 
 // (e.g. for rendering)
@@ -104,15 +133,20 @@ void ctl_toggle_mute(u32 ch) {
 // increment a level control 
 // (e.g. from encoder handler)
 extern void ctl_inc_level(u32 ch, s32 inc) {
+  s32 l;
   ch &= 3;
-  s32 l = level[ch] + inc;
+  // clamp increment to prevent overflow
+  if(inc < -65000) { inc = -65000; print_dbg("\r\n !! clamp inc low");  }
+  if(inc > 65000) { inc = 65000; print_dbg("\r\n !! clamp inc high"); }
+  l = level[ch] + inc;
+  // clamp addition result 
   if(l < minLevelInput) { l = minLevelInput; }
   if(l > maxLevelInput) { l = maxLevelInput; }
   scale_level(l, &ampLin[ch], &ampDb[ch]);
   ctl_set_amp(ch);
   level[ch] = l;
-  print_dbg("\r\n changed level control: 0x");
-  print_dbg_hex(l);
+  //  print_dbg("\r\n changed level control: 0x");
+  //  print_dbg_hex(l);
 }
 
 //-----------------------------------
@@ -127,8 +161,8 @@ static void ctl_set_amp(u32 ch) {
     // send the linear amplitude as a param change to the DSP
     ctl_param_change(ampParamId[ch], ampLin[ch]);
   }
-  // redraw
-  //  render_chan(ch); 
+  // update graphics
+  render_chan(ch); 
 }
 
 // set mute flag for a channel
@@ -142,6 +176,6 @@ static void ctl_set_mute(u32 ch, bool val) {
     // send the linear amplitude as a param change to the DSP
     ctl_param_change(ampParamId[ch], ampLin[ch]);
   }
-  // redraw
-  //  render_chan(ch);
+  // update graphics
+  render_chan(ch);
 }

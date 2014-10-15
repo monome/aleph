@@ -33,9 +33,28 @@
 #include "handler.h"
 #include "render.h"
 
+
+//--------------------------------------
+//--- knob acceleration
+static s32 knob_accel(s32 inc) { 
+  // map accumulated controller movement to a bigger range
+  // otherwise scrolling would take forever
+  s32 incAbs = inc < 0 ? inc * -1 : inc;
+  if(incAbs == 1) { 
+    print_dbg("\r\n >");
+    return inc;
+  }
+  if(incAbs < 6) {
+    print_dbg("\r\n >>>");
+    return inc << 2;
+  } 
+  print_dbg("\r\n >>>>>>>>");
+  return inc << 6;
+
+}
+
 ///-------------------------------------
 ///---- event handlers
-
 
 // switch handlers
 static void handle_Switch0(s32 data) { 
@@ -67,15 +86,15 @@ static void handle_Switch5(s32 data) {
 
 // encoder handlers
 static void handle_Encoder0(s32 data) { 
-  ctl_inc_level(0, data);
+  ctl_inc_level(0, knob_accel(data));
 }
 
 static void handle_Encoder1(s32 data) { 
-  ctl_inc_level(1, data);
+  ctl_inc_level(1, knob_accel(data));
 }
 
 static void handle_Encoder2(s32 data) { 
-  ctl_inc_level(2, data);
+  ctl_inc_level(2, knob_accel(data));
 }
 
 static void handle_Encoder3(s32 data) { 

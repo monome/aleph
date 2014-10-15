@@ -31,7 +31,6 @@ enum params {
   eParam_adcSlew2,
   eParam_adcSlew3,
   // cv values
-
   eParam_cv0,
   eParam_cv1,
   eParam_cv2,
@@ -48,6 +47,9 @@ enum params {
 
 //---------------------------
 //---- -external functions
+
+// set initial values
+extern void ctl_init(void);
 
 // increment a level control (e.g. by encoder)
 extern void ctl_inc_level(u32 ch, s32 inc);

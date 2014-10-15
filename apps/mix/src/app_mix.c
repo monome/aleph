@@ -4,7 +4,7 @@
   aleph/app/mix
 
   required app-specific implementation of avr32_lib/src/app.h
-  [ */
+*/
 
 // asf
 #include "delay.h"
@@ -35,7 +35,7 @@ static const u32 ldrSize =
 // use for memory allocation..
 void app_init(void) {
   print_dbg("\r\n mix; app_init...");  
-  //  render_init();
+  render_init();
 }
 
 // this is called from the event queue to start the app 
@@ -43,8 +43,8 @@ void app_init(void) {
 u8 app_launch(u8 firstrun) {
   print_dbg("\r\n mix; app_launch, firstrun: ");
   print_dbg_ulong(firstrun);
-  //=============================
 
+  //=============================
   /* load the DSP module!
      
      in this app, the .ldr file is included directly,
@@ -54,13 +54,12 @@ u8 app_launch(u8 firstrun) {
   print_dbg_hex(ldrSize);
 
   bfin_load_buf(ldrData, ldrSize);
-
-  //==========================
   bfin_wait_ready();
 
-  // set encoder sensitivity
-  set_enc_thresh(3, 16);
-  delay_ms(20);
+  // extra few ms...
+  delay_ms(10);
+
+  //==========================
 
   // enable audio
   bfin_enable();
@@ -72,9 +71,11 @@ u8 app_launch(u8 firstrun) {
   render_startup();
   render_update();
 
+  // set hardcoded default values 
+  ctl_init();
+
   if(firstrun) { 
     // first run since module was flashed.
-    // set hardcoded default values.
   } else {
     // this wasn't the first run, so try and load last saved settings
     //... TODO...
@@ -87,5 +88,4 @@ u8 app_launch(u8 firstrun) {
   // if this was the first run, 
   // main() should now write the firstrun pattern to flash and reboot.
   return 1;
-
 }
