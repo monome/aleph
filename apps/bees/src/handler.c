@@ -80,22 +80,18 @@ static void handle_Switch5(s32 data) {
   render_boot("");
   render_boot("");
   render_boot("begin shutdown");
-  render_boot("writing default scene");
-
 
   // skip flash write if MODE is down
-  if(!gpio_get_pin_value(SW_MODE_PIN)) {
+  if(gpio_get_pin_value(SW_MODE_PIN)) {
+    ;;
+  } else {
+    render_boot("writing default scene");
     scene_write_default();
+    render_boot("waiting for sdcard");
+    delay_ms(2000); 
   }
-  render_boot("waiting for sdcard");
-
-  // power down
-  ///// wait longer for the sdcard...
-  //  delay_ms(100);
-  delay_ms(2000); 
-
+  delay_ms(10);
   render_boot("goodbye");
-
   gpio_clr_gpio_pin(POWER_CTL_PIN);
 }
 
@@ -274,7 +270,6 @@ io_t scale_knob_value(io_t val) {
   return ret;
 }
 
-
 // fast!
 io_t scale_knob_value_fast(io_t val) {
   static const u32 kNumKnobScales_1 = 23;
@@ -330,101 +325,9 @@ io_t scale_knob_value_fast(io_t val) {
 }
 
 
+#else
+
+#error "IO bitdepth not supported"
 
 #endif
 
-#if IO_BITS == 32
-/* // full-scale */
-/* s32 scale_knob_value(s32 val) { */
-/*   static const u32 kNumKnobScales_1 = 23; */
-/*   static const u32 knobScale[24] = { */
-/*     ///--- 3 linear segments: */
-/*     // slope = 1 */
-/*     0x00000001, // 1 */
-/*     0x00000002, // 2 */
-/*     // slope = 0x10 */
-/*     0x00000030, // 3 */
-/*     0x00000030, // 4 */
-/*     0x00000040, // 5 */
-/*     0x00000050, // 6 */
-/*     0x00000060, // 7 */
-/*     0x00000070, // 8 */
-/*     0x00000080, // 9 */
-/*     0x00000090 ,  // 10 */
-/*     0x000000a0 , // 11 */
-/*     0x000000b0 , // 12 */
-/*     // slope = 0x100 */
-/*     0x00000c00 , // 13 */
-/*     0x00000d00 , // 14 */
-/*     0x00000e00 , // 15 */
-/*     0x00000f00 , // 16 */
-/*     0x00001000 , // 17 */
-/*     0x00001100 , // 18 */
-/*     0x00001200 , // 19 */
-/*     0x00001300 , // 20 */
-/*     0x00001400 , // 21 */
-/*     0x00001500 , // 22 */
-/*     // ultra fast */
-/*     0x10000000 , // 23 */
-/*     0x20000000 , // 24 */
-/*   }; */
-/*   s32 vabs = BIT_ABS(val); */
-/*   s32 ret = val; */
-
-/*   if(vabs > kNumKnobScales_1) { */
-/*     vabs = kNumKnobScales_1; */
-/*   } */
-/*   ret = knobScale[vabs - 1]; */
-/*   if(val < 0) { */
-/*     ret = BIT_NEG_ABS(ret); */
-/*   } */
-/*   return ret; */
-/* } */
-
-/* // lower slope */
-/* s32 scale_knob_value_small(s32 val) { */
-/*   static const u32 kNumKnobScales_1 = 23; */
-/*   static const u32 knobScale[24] = { */
-/*     ///--- 3 linear segments: */
-/*     // slope = 1 */
-/*     0x00000001, // 1 */
-/*     0x00000002, // 2 */
-/*     // slope = 0x10 */
-/*     0x00000030, // 3 */
-/*     0x00000030, // 4 */
-/*     0x00000040, // 5 */
-/*     0x00000050, // 6 */
-/*     0x00000060, // 7 */
-/*     0x00000070, // 8 */
-/*     0x00000080, // 9 */
-/*     0x00000090 ,  // 10 */
-/*     0x000000a0 , // 11 */
-/*     0x000000b0 , // 12 */
-/*     0x000000c0 , // 13 */
-/*     0x000000d0 , // 14 */
-/*     0x000000e0 , // 15 */
-/*     0x000000f0 , // 16 */
-/*     // slope == 0x100 */
-/*     0x00000100 , // 17 */
-/*     0x00000200 , // 18 */
-/*     0x00000300 , // 19 */
-/*     0x00000400 , // 20 */
-/*     0x00000500 , // 21 */
-/*     0x00000600 , // 22 */
-/*     0x00000700 , // 23 */
-/*     0x00000800 , // 24 */
-/*   }; */
-
-/*   s32 vabs = BIT_ABS(val); */
-/*   s32 ret = val; */
-
-/*   if(vabs > kNumKnobScales_1) { */
-/*     vabs = kNumKnobScales_1; */
-/*   } */
-/*   ret = knobScale[vabs - 1]; */
-/*   if(val < 0) { */
-/*     ret = BIT_NEG_ABS(ret); */
-/*   } */
-/*   return ret; */
-/* } */
-#endif
