@@ -99,6 +99,11 @@ void ctl_toggle_mute(u32 ch) {
   ctl_set_mute(ch, mute[ch]^1);
 }
 
+// increment a level control (e.g. by encoder)
+extern void ctl_inc_level(u32 ch, s32 inc) {
+  
+}
+
 
 //-----------------------------------
 //--- static function definitions
@@ -132,8 +137,3 @@ static void ctl_set_mute(u32 ch, s32 val) {
   render_chan(ch);
 }
 
-// apply scaling to linear level control for one channel
-static void ctl_scale_level(u32 ch) {
-  ampDb[ch] = 0;;
-  ampDb[ch] = 0;;
-}

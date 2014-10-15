@@ -51,6 +51,7 @@ enum params {
 
 // set amplitude for a channel
 extern void ctl_set_amp(u32 ch, s32 val);
+
 // set mute toggle for a channel
 extern void ctl_set_mute(u32 ch, s32 val);
 
