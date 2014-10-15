@@ -76,6 +76,7 @@ typedef enum {
   eOpBars,
   eOpSerial,
   eOpHid,  
+  eOpWW,  
   //  eOpMidiBend,
   //  eOpMidiTouch,
   numOpClasses // dummy/count 
