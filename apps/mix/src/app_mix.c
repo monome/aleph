@@ -12,21 +12,17 @@
 #include "print_funcs.h"
 #include "sd_mmc_spi.h"
 
-// aleph-avr32
+// avr32_lib
 #include "app.h"
 #include "bfin.h"
-//#include "events.h"
-//#include "event_types.h"
-//#include "encoders.h"
-//#include "flash.h"
-//#include "screen.h"
+#include "encoders.h"
 
-//#include "files.h"
+//--- app-specific
+#include "app_timers.h"
 #include "ctl.h"
 #include "handler.h"
 #include "render.h"
 
-#if 1
 static const u8 ldrData[] = { 
 #include "aleph-mix.ldr.inc"
 };
@@ -34,7 +30,6 @@ static const u8 ldrData[] = {
 static const u32 ldrSize = 
 #include "aleph-mix.ldr_size.inc"
   ;
-#endif
 
 // this is called during hardware initialization.
 // use for memory allocation..
@@ -58,11 +53,9 @@ u8 app_launch(u8 firstrun) {
   print_dbg("\r\n mix; LDR size: 0x");
   print_dbg_hex(ldrSize);
 
-  //  bfin_load_buf(ldrData, ldrSize);
+  bfin_load_buf(ldrData, ldrSize);
 
   //==========================
-
-# if 0
   bfin_wait_ready();
 
   // set encoder sensitivity
@@ -89,8 +82,6 @@ u8 app_launch(u8 firstrun) {
 
   // set app event handlers
   assign_event_handlers();
-  return 1;
-#endif
 
   // tell the main loop that we launched successfully.
   // if this was the first run, 

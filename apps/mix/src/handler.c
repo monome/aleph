@@ -39,26 +39,29 @@
 
 // switch handlers
 static void handle_Switch0(s32 data) { 
-  ctl_toggle_mute(0);
+  if(data > 0) ctl_toggle_mute(0);
 }
 
 static void handle_Switch1(s32 data) { 
-  ctl_toggle_mute(1);
+  if(data > 0) ctl_toggle_mute(1);
 }
 
 static void handle_Switch2(s32 data) { 
-  ctl_toggle_mute(2);
+  if(data > 0) ctl_toggle_mute(2);
 }
 
 static void handle_Switch3(s32 data) { 
-  ctl_toggle_mute(3);
+  if(data > 0) ctl_toggle_mute(3);
 }
 
 
 // power switch handler
+// note: if this isn't assigned, the power switch won't work!
 static void handle_Switch5(s32 data) { 
   //TODO: ... save current settings... 
   delay_ms(100);
+  // this pin is physically connected to the power system.
+  // bringing it low causes immediate shutdown
   gpio_clr_gpio_pin(POWER_CTL_PIN);
 }
 
@@ -94,6 +97,7 @@ void assign_event_handlers(void) {
   app_event_handlers[kEventSwitch3] = &handle_Switch3 ;
 
   // power switch
+  // note: if this isn't assigned, the power switch won't work!
   app_event_handlers[ kEventSwitch5 ]	= &handle_Switch5 ;
 
   // encoders

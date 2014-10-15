@@ -41,9 +41,9 @@
 // one drawing region for each channel
 static region regChan[] = { 
   { .w=64, .h=32, .x=0,  .y=0  },
-  { .w=64, .h=32, .x=32, .y=0  },
+  { .w=64, .h=32, .x=64, .y=0  },
   { .w=64, .h=32, .x=0,  .y=32 },
-  { .w=64, .h=32, .x=32, .y=32 },
+  { .w=64, .h=32, .x=64, .y=32 },
 };
 
 //-------------------------
@@ -121,8 +121,11 @@ void render_chan(u8 ch) {
   memset(buf, 32, '\0');
   print_fix16(buf, ctl_get_amp_db(ch));
 
-  // render the decibel value with big AA font
-  region_string_aa( reg, buf, 0, 0, bg > 0);
+  // render the decibel value...
+  /// with big AA font?
+  //  region_string_aa( reg, buf, 0, 0, bg > 0);
+  // no, there's no room: use the small system font
+  region_string( reg, buf, 0, 20, fg, bg, 0);
 
   // the render functions set the region's dirty flag,
   // so there's nothing left to do now,

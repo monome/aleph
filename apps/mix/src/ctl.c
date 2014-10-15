@@ -107,12 +107,13 @@ extern void ctl_inc_level(u32 ch, s32 inc) {
   ch &= 3;
   s32 l = level[ch] + inc;
   if(l < minLevelInput) { l = minLevelInput; }
-  if(l < maxLevelInput) { l = maxLevelInput; }
+  if(l > maxLevelInput) { l = maxLevelInput; }
   scale_level(l, &ampLin[ch], &ampDb[ch]);
   ctl_set_amp(ch);
   level[ch] = l;
+  print_dbg("\r\n changed level control: 0x");
+  print_dbg_hex(l);
 }
-
 
 //-----------------------------------
 //--- static function definitions
@@ -127,7 +128,7 @@ static void ctl_set_amp(u32 ch) {
     ctl_param_change(ampParamId[ch], ampLin[ch]);
   }
   // redraw
-  render_chan(ch); 
+  //  render_chan(ch); 
 }
 
 // set mute flag for a channel
@@ -142,5 +143,5 @@ static void ctl_set_mute(u32 ch, bool val) {
     ctl_param_change(ampParamId[ch], ampLin[ch]);
   }
   // redraw
-  render_chan(ch);
+  //  render_chan(ch);
 }
