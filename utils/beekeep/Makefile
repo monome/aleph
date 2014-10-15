@@ -22,7 +22,6 @@ src += \
 	$(bees)/src/op.c \
 	$(bees)/src/op_gfx.c \
 	$(bees)/src/op_math.c \
-	$(bees)/src/ops/op_list16.c \
 	$(bees)/src/param.c \
 	$(bees)/src/pages.c \
 	$(bees)/src/pickle.c \
@@ -43,11 +42,13 @@ src += \
 	$(bees)/src/ops/op_div.c \
 	$(bees)/src/ops/op_enc.c \
 	$(bees)/src/ops/op_gate.c \
+	$(bees)/src/ops/op_hid_word.c \
 	$(bees)/src/ops/op_history.c \
 	$(bees)/src/ops/op_is.c \
 	$(bees)/src/ops/op_life.c \
 	$(bees)/src/ops/op_list2.c \
 	$(bees)/src/ops/op_list8.c \
+	$(bees)/src/ops/op_list16.c \
 	$(bees)/src/ops/op_logic.c \
 	$(bees)/src/ops/op_metro.c \
 	$(bees)/src/ops/op_midi_cc.c \
@@ -166,12 +167,10 @@ cflags += -D BEEKEEP=1
 lflags += -ljansson
 
 $(build-dir)%.o: %.c 
-	echo $(cflags)
 	$(Q)test -d $(dir $@) || mkdir -p $(dir $@)
 	gcc $(cflags) -g -c $< -o $@
 
 target: $(obj)	
-	echo $(obj)
 	gcc $(obj) -g $(cflags) -o $(target) $(lflags)
 
 all: beekeep

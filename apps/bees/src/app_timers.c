@@ -118,7 +118,10 @@ static void midi_poll_timer_callback(void* obj) {
 static void monome_poll_timer_callback(void* obj) {
   // asynchronous, non-blocking read
   // UHC callback spawns appropriate events
+#if BEEKEEP
+#else
   ftdi_read();
+#endif
 }
 
 // monome refresh callback
@@ -134,11 +137,10 @@ static void monome_refresh_timer_callback(void* obj) {
 
 // hid polling callback
 static void hid_poll_timer_callback(void* obj) {
-  // asynchronous, non-blocking read
-  // UHC callback spawns appropriate events
-  //  hid_read();
-  // hm...
+#if BEEKEEP
+#else
   net_handle_hid_packet();
+#endif
 }
 
 //----------------------------

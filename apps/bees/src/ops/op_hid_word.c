@@ -76,13 +76,19 @@ void op_hid_word_init(void* mem) {
   op->byte = op_from_int(0);
   op->size = op_from_int(1);
 
+#if BEEKEEP
+#else
   net_hid_list_push(&(op->hid));
+#endif
 }
 
 // de-init
 void op_hid_word_deinit(void* op) {
+#if BEEKEEP
+#else
   // remove from list
   net_hid_list_remove( &( ((op_hid_word_t*)op)->hid) );
+#endif
 }
 
 //-------------------------------------------------
@@ -93,6 +99,8 @@ void op_hid_word_deinit(void* op) {
 
 // byte select
 static void op_hid_word_in_byte(op_hid_word_t* op, const io_t v) {
+#if BEEKEEP
+#else
   if(v > HID_FRAME_IDX_MASK) {
     op->byte = HID_FRAME_IDX_MASK;
   } else if (v < 0) { 
@@ -100,6 +108,7 @@ static void op_hid_word_in_byte(op_hid_word_t* op, const io_t v) {
   } else {
     op->byte = v;
   }
+#endif
 }
 
 // size select
@@ -114,6 +123,8 @@ static void op_hid_word_in_size(op_hid_word_t* op, const io_t v) {
 
 // HID frame handler
 static void op_hid_word_handler(op_hid_t* op_hid) {
+#if BEEKEEP
+#else
   op_hid_word_t* op = (op_hid_word_t*)(op_hid->sub);
   const s8* frame;
   //  const u32 dirty;
@@ -137,6 +148,7 @@ static void op_hid_word_handler(op_hid_t* op_hid) {
     }
     net_activate(op->outs[0], val, op);
   }
+#endif
 }
 
 // pickle / unpickle
