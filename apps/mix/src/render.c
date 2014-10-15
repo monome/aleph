@@ -92,7 +92,7 @@ void render_chan(u8 ch) {
   // tmp position for left-justify
   int pos=0;
   // stupid way to show channel numbers
-  static const char num[4][3] = { "1.", "2.", "3.", "4." };
+  static const char num[4][3] = { "0.", "1.", "2.", "3." };
   // text buffer
   static char buf[32];
   // point at the appropriate region
@@ -104,11 +104,12 @@ void render_chan(u8 ch) {
   // build decibel value string
   memset(buf, 32, '\0');
   db = ctl_get_amp_db(ch);
-  if(db < 0xffbf0000) {
-  // print "-inf" if very small
+  // print "-inf" if very small,
+  // otherwise print the value
+  // make sure this is a signed comparison
+  if(db < (s32)0xffbf0000) {
     memcpy(buf, "-inf\0", 5);
   } else {
-    // otherwise print the value
     print_fix16(buf, db);
   }
 
@@ -118,11 +119,12 @@ void render_chan(u8 ch) {
 #else
   // ... use the large anti-aliased font.
   // this means we have to truncate the string to make it fit.
-  // write an early termination symbol to lose some decimal points:
+  // write an early termination symbol to lose some decimal points..
   buf[9] = '\0';
-  // let's also apply an offset that skips leading spaces:
+  // ...and skip leading spaces:
   while(buf[pos] == ' ' && pos < 31) { pos++; }
   if (pos == 31) { pos = 0; }
+  // render an anti-aliased string to the region.
   region_string_aa( reg, buf + pos, 5, 5, 1);
 #endif
 
