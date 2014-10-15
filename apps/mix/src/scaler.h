@@ -12,12 +12,12 @@
 #include "types.h"
 
 // define input ranges for our level control.
-extern const u32 minLevel = 0;
-extern const u32 maxLevel = 0xffff;
+extern const u32 minLevelInput;
+extern const u32 maxLevelInput;
 
 // lookup a level control value.
 // return both linear and decibel representations, by pointer
-extern void lookup_level(s32 val, s32* resAmp, s32* resDb):
+extern void scale_level(s32 val, s32* resAmp, s32* resDb);
 
 
 #endif

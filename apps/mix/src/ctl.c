@@ -39,6 +39,7 @@
 #include "app_timers.h"
 #include "ctl.h"
 #include "render.h"
+#include "scaler.h"
 
 //#include "util.h"
 
@@ -64,7 +65,7 @@ static s32 ampDb[4];
 // adc parameter indices
 // keeping them here is clean and maintainable,
 // at the cost of a little code space.
-static const ampParamId[] = { eParam_adc0, 
+static const int ampParamId[] = { eParam_adc0, 
 			    eParam_adc1, 
 			    eParam_adc2, 
 			    eParam_adc3 };
@@ -73,35 +74,43 @@ static const ampParamId[] = { eParam_adc0,
 //---- static function declarations
 
 // set amplitude for a channel
-static void ctl_set_amp(u32 ch, s32 val);
-// set mute toggle for a channel
-static void ctl_set_mute(u32 ch, s32 val);
-// apply scaling to linear level control for one channel
-static void ctl_scale_level(u32 ch);
+static void ctl_set_amp(u32 ch);
 
+// set mute for a channel
+static void ctl_set_mute(u32 ch, bool val);
 
 //-------------------------
 //---- extern function definitions
 
-// get amplitude for a channel
+// get amplitude for a channel 
+// (e.g. for rendering)
 s32 ctl_get_amp_db(u32 ch) {
   return ampDb[ch];
 }
 
-// get mute flag for a channel
+// get mute flag for a channel 
+// (e.g. for rendering)
 s32 ctl_get_mute(u32 ch) {
   return mute[ch]; 
 }
 
-// toggle mute flag for a channel
+// toggle mute flag for a channel 
+// (e.g. from switch handler)
 void ctl_toggle_mute(u32 ch) {
   ch &= 3;
   ctl_set_mute(ch, mute[ch]^1);
 }
 
-// increment a level control (e.g. by encoder)
+// increment a level control 
+// (e.g. from encoder handler)
 extern void ctl_inc_level(u32 ch, s32 inc) {
-  
+  ch &= 3;
+  s32 l = level[ch] + inc;
+  if(l < minLevelInput) { l = minLevelInput; }
+  if(l < maxLevelInput) { l = maxLevelInput; }
+  scale_level(l, &ampLin[ch], &ampDb[ch]);
+  ctl_set_amp(ch);
+  level[ch] = l;
 }
 
 
@@ -110,21 +119,20 @@ extern void ctl_inc_level(u32 ch, s32 inc) {
 
 
 // SET amplitude for a channel
-static void ctl_set_amp(u32 ch, s32 val) {
+static void ctl_set_amp(u32 ch) {
   if(mute[ch]) {
     ;; // already muted, do nothing
   } else {
-    ampVal[ch] = val;
     // send the linear amplitude as a param change to the DSP
-    ctl_param_change(ampParamId[ch], val);
+    ctl_param_change(ampParamId[ch], ampLin[ch]);
   }
   // redraw
   render_chan(ch); 
 }
 
 // set mute flag for a channel
-static void ctl_set_mute(u32 ch, s32 val) {
-  if(val > 0) {
+static void ctl_set_mute(u32 ch, bool val) {
+  if(val) {
     mute[ch] = 1;
     // send zero to the DSP
     ctl_param_change(ampParamId[ch], 0);
@@ -136,4 +144,3 @@ static void ctl_set_mute(u32 ch, s32 val) {
   // redraw
   render_chan(ch);
 }
-

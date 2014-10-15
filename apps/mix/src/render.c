@@ -24,21 +24,13 @@
 // screen refresh function
 #include "screen.h"
 
-//--- mix application headers
+//--- application headers
 #include "ctl.h"
-
-
-// local
 #include "render.h"
+
 //-------------------------------------------------
 //----- -static variables
 
-// temp buffers
-// #define NUMSTRBUF_LEN 17
-// #define HEXSTRBUF_LEN 9
-
-// static char numstrbuf[NUMSTRBUF_LEN];
-// static char hexstrbuf[HEXSTRBUF_LEN] = "12345678";
 
 /* 
    the screen-drawing routines in avr32_lib provide "region" object
@@ -46,26 +38,8 @@
    there are also methods for basic fill and text rendering into regions.
 */
 
-/* // a region above of the screen for showing text label */
-/* static region regLabel = {  */
-/*   .w = 128, .h = 24, .x = 0,  .y = 0 */
-/* }; */
-
-// a region below the screen for showing numerical data
-/* static region regData = {  */
-/*   .w = 128, .h = 24, .x = 0,  .y = 24 */
-/* }; */
-
-/* // a region for each mute button */
-/* static region regMute[4] = {  */
-/*   { .w = 32, .h = 16, .x = 0,  .y = 48 }, */
-/*   { .w = 128, .h = 24, .x = 32,  .y = 24 }, */
-/*   { .w = 128, .h = 24, .x = 64,  .y = 24 }, */
-/*   { .w = 128, .h = 24, .x = 96,  .y = 24 }, */
-/* }; */
-
 // one drawing region for each channel
-static region regChan = { 
+static region regChan[] = { 
   { .w=64, .h=32, .x=0,  .y=0  },
   { .w=64, .h=32, .x=32, .y=0  },
   { .w=64, .h=32, .x=0,  .y=32 },
@@ -96,7 +70,7 @@ void render_startup(void) {
     // fill the graphics buffer (with black)
     region_fill(&(regChan[i]), 0x0);
     // physically render the region data to the screen
-    region_draw(&(regChan[i]), 0x0);
+    region_draw(&(regChan[i]));
   }
 }
 
@@ -114,64 +88,43 @@ void render_update(void) {
   app_resume();
 }
 
-
-static const char* print_db(amp) {
-}
-
-
-
-
-
 // render amplitude
 void render_chan(u8 ch) {
-  static const char nums[4][1] = { "0", "1", "2", "3" };
+  // colors
+  char fg, bg;
+  // stupid way to show channel numbers
+  static const char num[4][2] = { "0\0", "1\0", "2\0", "3\0" };
+  // text buffer
   static char buf[32];
+
+  // set some colors based on mute flag status
+  // colors are 4-bit values
+  if(ctl_get_mute(ch)) {
+    fg = 10;
+    bg = 7;
+  } else {
+    fg = 15;
+    bg = 0;
+  }
+
+  // point at the appropriate region
   region* reg = &(regChan[ch]);
-  // clear the region
-  region_fill(reg, 0x0);
-  // write label in top left
-  region_string(reg, num[ch]);
-  // build string
+
+  // fill the region with the chosen background
+  region_fill(reg, bg);
+
+  // write label in top left 
+  // (make it always bright white, ignoring foreground)
+  region_string(reg, num[ch], 0, 0, 0xf, bg, 0);
+
+  // build decibel value string
   memset(buf, 32, '\0');
- 
+  print_fix16(buf, ctl_get_amp_db(ch));
 
+  // render the decibel value with big AA font
+  region_string_aa( reg, buf, 0, 0, bg > 0);
 
-  /* static const char nums[4][1] = { "0", "1", "2", "3" }; */
-  /* // text buffer */
-  /* char buf[16] = ""; */
-
-  /* strcat(buf, "ADC ch "); */
-  /* strcat(buf, nums[ch & 3]); */
-  /* // render text to label region (large) */
-  /* region_string_aa( &regLabel, buf , 0, 0, 0); */
-  /* // clear buffer */
-  /* memset(buf, 16, '\0'); */
-
-  /* // print value in 16.16 */
-  /* // shift it to show only the fractional part (amplitude is 0-1) */
-  /* // 15 bits because top part is signed, bottom part unsigned */
-  /* print_fix16(buf, ctl_get_amp(ch) >> 15); */
-  /* // render to buffer */
-  /* region_string_aa( &regData, buf , 0, 0, 0); */
-
-  /* /\* // glitch it up... *\/ */
-  /* /\* // clear buffer again *\/ */
-  /* /\* memset(buf, 16, '\0'); *\/ */
-  /* /\* // print again, in hex *\/ */
-  /* /\* uint_to_hex_ascii(buf, val); *\/ */
-  /* /\* // render again, to same region, small, inverted and offset *\/ */
-  /* /\* region_string( &regData, buf , 0, 64, 1); *\/ */
-
+  // the render functions set the region's dirty flag,
+  // so there's nothing left to do now,
+  // except wait for the screen refresh timer to trigger a redraw.
 }
-
-// render mute
-void render_mute(u8 ch) {
-  /* // fill with black or white depending on mute status (marks changed) */
-  /* if(ctl_get_mute(ch)) {  */
-  /*   region_fill( &(regMute[ch]), 0xf); */
-  /* } else { */
-  /*   region_fill( &(regMute[ch]), 0); */
-  /* } */
-}
-
-

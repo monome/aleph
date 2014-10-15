@@ -13,16 +13,16 @@
 #define INTERP_MASK ((1 << (INTERP_SHIFT)) -1)
 
 // level input range
-const u32 minLevelInputt = 0;
+const u32 minLevelInput = 0;
 const u32 maxLevelInput = 0x7fff;
 
 // table for linear amplitude (fract32)
 static const s32 ampTableLinear[512] = {
-#include "amp_table_linear.inc";
+#include "amp_table_linear.inc"
 };
 // table for decibels (16.16)
 static const s32 ampTableDb[512] = {
-#include "amp_table_db.inc";
+#include "amp_table_db.inc"
 };
 
 //--- ctl_interp
@@ -32,7 +32,7 @@ static const s32 ampTableDb[512] = {
 // (this is neither optimally fast nor optimally clean, 
 // but it illustrates the concept.)
 
-static s32 scaler_lerp(s32* tab, u32 input) {
+static s32 scaler_lerp(const s32* tab, u32 input) {
   // index
   const u32 idx = input >> INTERP_SHIFT;
   const u32 idx1 = (idx+1) & TABLE_MASK;
@@ -62,7 +62,7 @@ static s32 scaler_lerp(s32* tab, u32 input) {
 // if signed input made more sense (e.g. pan controls),
 // we could deal with this differently.)
 
-void lookup_level(s32 val, s32* resAmp, s32* resDb) {
+void scale_level(s32 val, s32* resAmp, s32* resDb) {
   *resAmp = scaler_lerp(ampTableLinear, (u32)val);
   *resDb = scaler_lerp(ampTableDb, (u32)val);
 }

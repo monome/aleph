@@ -1,10 +1,10 @@
 /*
-  app_bees.c
-  aleph-avr32
-  bees
+  app_mix.c
 
-  required app-specific implementation of avr32/src/app.h
-[ */
+  aleph/app/mix
+
+  required app-specific implementation of avr32_lib/src/app.h
+  [ */
 
 // asf
 #include "delay.h"
@@ -14,47 +14,55 @@
 
 // aleph-avr32
 #include "app.h"
-#include "app_timers.h"
 #include "bfin.h"
-#include "screen.h"
-#include "encoders.h"
-#include "events.h"
-#include "event_types.h"
-#include "flash.h"
-#include "monome.h"
+//#include "events.h"
+//#include "event_types.h"
+//#include "encoders.h"
+//#include "flash.h"
+//#include "screen.h"
 
 //#include "files.h"
-#include "handler.h"
 #include "ctl.h"
-
+#include "handler.h"
 #include "render.h"
+
+#if 1
+static const u8 ldrData[] = { 
+#include "aleph-mix.ldr.inc"
+};
+
+static const u32 ldrSize = 
+#include "aleph-mix.ldr_size.inc"
+  ;
+#endif
 
 // this is called during hardware initialization.
 // use for memory allocation..
 void app_init(void) {
-  render_init();
+  print_dbg("\r\n mix; app_init...");  
+  //  render_init();
 }
 
 // this is called from the event queue to start the app 
 // return >0 if there is an error doing firstrun init
 u8 app_launch(u8 firstrun) {
-
-  render_boot("waiting for bfin init...      ");
-  render_update();
-
-
+  print_dbg("\r\n mix; app_launch, firstrun: ");
+  print_dbg_ulong(firstrun);
   //=============================
 
-  /* load the DSP module here.
-     the avr32 library maintains a designated static RAM buffer for this.
-     it's completely wasteful here, since we have the .ldr in flash.
-     we'll use this interface for now,
-     but it would be more efficient to use our own copy of bfin.c,
-     and modify the relevant routines
+  /* load the DSP module!
+     
+     in this app, the .ldr file is included directly,
+     as a static const array of bytes.
   */
+  print_dbg("\r\n mix; LDR size: 0x");
+  print_dbg_hex(ldrSize);
+
+  //  bfin_load_buf(ldrData, ldrSize);
 
   //==========================
 
+# if 0
   bfin_wait_ready();
 
   // set encoder sensitivity
@@ -76,11 +84,17 @@ u8 app_launch(u8 firstrun) {
     // set hardcoded default values.
   } else {
     // this wasn't the first run, so try and load last saved settings
-    //...
+    //... TODO...
   }
 
   // set app event handlers
   assign_event_handlers();
-
   return 1;
+#endif
+
+  // tell the main loop that we launched successfully.
+  // if this was the first run, 
+  // main() should now write the firstrun pattern to flash and reboot.
+  return 1;
+
 }
