@@ -38,17 +38,17 @@
 //--- knob acceleration
 static s32 knob_accel(s32 inc) { 
   // map accumulated controller movement to a bigger range
-  // otherwise scrolling would take forever
+  // otherwise scrolling would take forever...
   s32 incAbs = inc < 0 ? inc * -1 : inc;
   if(incAbs == 1) { 
-    print_dbg("\r\n >");
+    //    print_dbg("\r\n >");
     return inc;
   }
   if(incAbs < 6) {
-    print_dbg("\r\n >>>");
+    //    print_dbg("\r\n >>");
     return inc << 2;
   } 
-  print_dbg("\r\n >>>>>>>>");
+  //  print_dbg("\r\n >>>>>>");
   return inc << 6;
 
 }
