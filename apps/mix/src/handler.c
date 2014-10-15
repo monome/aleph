@@ -98,7 +98,7 @@ static void handle_Encoder2(s32 data) {
 }
 
 static void handle_Encoder3(s32 data) { 
-  ctl_inc_level(3, data);
+  ctl_inc_level(3, knob_accel(data));
 }
 
 

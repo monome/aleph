@@ -23,6 +23,7 @@
 #include "handler.h"
 #include "render.h"
 
+// byte array holding the blackfin LDR data.
 static const u8 ldrData[] = { 
 #include "aleph-mix.ldr.inc"
 };
@@ -32,7 +33,7 @@ static const u32 ldrSize =
   ;
 
 // this is called during hardware initialization.
-// use for memory allocation..
+// allocate memory here.
 void app_init(void) {
   print_dbg("\r\n mix; app_init...");  
   render_init();
@@ -58,7 +59,6 @@ u8 app_launch(u8 firstrun) {
 
   // extra few ms...
   delay_ms(10);
-
   //==========================
 
   // enable audio
