@@ -59,7 +59,6 @@ void app_init(void) {
   print_dbg("\r\n net_init... ");
   net_init();
 
-
   print_dbg("\r\n scene_init...");
   scene_init();
 
@@ -174,7 +173,7 @@ u8 app_launch(u8 firstrun) {
   init_app_timers();
 
   // pull up power control pin, enabling soft-powerdown
-  gpio_set_gpio_pin(POWER_CTL_PIN);
+  //  gpio_set_gpio_pin(POWER_CTL_PIN);
 
   // assign app event handlers
   print_dbg("\r\n assigning handlers... ");
