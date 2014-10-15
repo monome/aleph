@@ -92,7 +92,7 @@ void render_chan(u8 ch) {
   // tmp position for left-justify
   int pos=0;
   // stupid way to show channel numbers
-  static const char num[4][3] = { "1.", "2.", "3.", "4." };
+  static const char num[4][3] = { "0.", "1.", "2.", "3." };
   // text buffer
   static char buf[32];
   // point at the appropriate region
