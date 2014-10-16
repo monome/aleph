@@ -13,9 +13,9 @@
 #include "getopt.h"
 
 #include "app.h"
-#include "editor.h"
 #include "jansson.h"
 #include "json.h"
+#include "ui.h"
 
 
 void scan_ext(char* filename, char* ext) {
@@ -51,7 +51,7 @@ int main (int argc, char **argv)
 
   gtk_init (&argc, &argv);
 
-  editor_init();
+  ui_init();
 
   gtk_main ();
 }

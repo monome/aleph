@@ -92,11 +92,11 @@ src += \
 
 # "fake" sources
 src += 	src/app_beekeep.c \
-	src/editor.c \
 	src/flash_beekeep.c \
 	src/files.c \
 	src/handler.c \
-	src/main.c
+	src/main.c \
+	src/ui.c
 
 # new sources
 src += 	src/json_read_native.c \
