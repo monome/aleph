@@ -302,11 +302,17 @@ static void op_ww_in_focus(op_ww_t* op, const io_t v) {
   // print_dbg("\r\n// monome connect /////////////////"); 
   keycount_pos = 0;
   key_count = 0;
+#if BEEKEEP
+#else
   SIZE = monome_size_x();
+#endif
   LENGTH = SIZE - 1;
   // print_dbg("\r monome size: ");
   // print_dbg_ulong(SIZE);
+#if BEEKEEP
+#else
   VARI = monome_is_vari();
+#endif
   // print_dbg("\r monome vari: ");
   // print_dbg_ulong(VARI);
 
