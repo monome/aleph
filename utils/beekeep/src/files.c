@@ -299,12 +299,12 @@ u8 files_load_scene_name(const char* name) {
 
 // store scene to sdcard at idx
 void files_store_scene(u8 idx) {
-  files_store_scene_name((const char*)files_get_scene_name(idx), 0);
+  files_store_scene_name((const char*)files_get_scene_name(idx));
 }
 
 
 // store scene to sdcard at name
-void files_store_scene_name(const char* name, u8 ext) {
+void files_store_scene_name(const char* name) {
   FILE* f = fopen(name, "w");
   scene_write_buf();
   fwrite((const void*)sceneData, sizeof(sceneData_t), 1, f);
@@ -519,4 +519,5 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   /*   fp = NULL; */
   /* } */
   /* return fp; */
+  return NULL;
 }

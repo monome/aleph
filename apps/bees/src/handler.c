@@ -256,10 +256,6 @@ io_t scale_knob_value(io_t val) {
   if(vabs > kNumKnobScales_1) {
     vabs = kNumKnobScales_1;
   }
-  /* print_dbg("\r\n knob scaling, input: 0x"); */
-  /* print_dbg_hex(val); */
-  /* print_dbg(", abs: 0x"); */
-  /* print_dbg_hex(vabs); */
   ret = knobScale[vabs - 1];
   if(val < 0) {
     ret = BIT_NEG_ABS_16(ret);
@@ -310,17 +306,10 @@ io_t scale_knob_value_fast(io_t val) {
   if(vabs > kNumKnobScales_1) {
     vabs = kNumKnobScales_1;
   }
-  /* print_dbg("\r\n knob scaling, input: 0x"); */
-  /* print_dbg_hex(val); */
-  /* print_dbg(", abs: 0x"); */
-  /* print_dbg_hex(vabs); */
   ret = knobScale[vabs - 1];
   if(val < 0) {
     ret = BIT_NEG_ABS_16(ret);
   }
-  //  print_dbg(", result: 0x");
-  //  print_dbg_hex(ret);
-
   return ret;
 }
 

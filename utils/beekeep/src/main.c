@@ -49,26 +49,10 @@ int main (int argc, char **argv)
   app_init();
   app_launch(1);
 
-  if(strcmp(ext, ".scn") == 0) {
-    files_load_scene_name(filename);
-    net_print();
-    strcat(filename, ".json");
-    printf(" \r\n file type is .scn, converting to .json \r\n");
-    net_write_json_native(filename);
-  }
-  else if(strcmp(ext, ".json") == 0) {
-    net_read_json_native(filename);
-    strcat(filename, ".scn");
-    printf(" \r\n file type is .json, converting to .scn \r\n");
-    files_store_scene_name(filename);
-  }
-  else {
-    printf(" unrecognized file type, exiting \r\n");
-    return 1;
-  }
-  
   gtk_init (&argc, &argv);
-  editor_init();
-  gtk_main ();
 
+  editor_init();
+
+  gtk_main ();
 }
+

@@ -71,6 +71,7 @@ src += \
 	$(bees)/src/ops/op_route.c \
 	$(bees)/src/ops/op_route8.c \
 	$(bees)/src/ops/op_mod.c \
+	$(bees)/src/ops/op_ww.c \
 	$(bees)/src/pages/page_dsp.c \
 	$(bees)/src/pages/page_gathered.c \
 	$(bees)/src/pages/page_ins.c \
