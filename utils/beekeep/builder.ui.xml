@@ -1,0 +1,54 @@
+<interface>
+  <object id="window" class="GtkWindow">
+    <property name="visible">True</property>
+    <property name="title">beekeep</property>
+    <property name="border-width">10</property>
+    <child>
+      <object id="layout" class="GtkLayout">
+        <property name="visible">t</property>
+	<child>
+	  <object id="outScroll" class="GtkScrolledWindow">
+            <property name="visible">t</property>
+	    <child>	      
+              <object id="outList" class="GtkListBox">
+		<property name="visible">t</property>
+              </object>
+              <packing>
+		<property name="left-attach">0</property>
+		<property name="top-attach">0</property>
+              </packing>
+	    </child>
+	  </object>	  
+	</child>
+	<child>
+	  <object id="inScroll" class="GtkScrolledWindow">
+            <property name="visible">t</property>
+	    <child>	      
+              <object id="inList" class="GtkListBox">
+		<property name="visible">t</property>
+              </object>
+              <packing>
+		<property name="left-attach">0</property>
+		<property name="top-attach">0</property>
+              </packing>
+	    </child>
+	  </object>	  
+	</child>
+	<child>
+ 	  <object id="opScroll" class="GtkScrolledWindow">
+            <property name="visible">t</property>
+	    <child>	      
+              <object id="opList" class="GtkListBox">
+		<property name="visible">t</property>
+              </object>
+              <packing>
+		<property name="left-attach">0</property>
+		<property name="top-attach">0</property>
+              </packing>
+	    </child>
+	  </object>	  
+	</child>
+      </object>
+    </child>
+  </object>
+</interface>

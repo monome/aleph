@@ -7,22 +7,22 @@
 
 //--------------------
 //--- selections
-static void select_out( GtkListBox *box, gpointer data ) {
-  GtkListBoxRow* row = gtk_list_box_get_selected_row(box);
+static void select_out( GObject *box, gpointer data ) {
+  //  GtkListBoxRow* row = gtk_list_box_get_selected_row(GTK_LIST_BOX(box));
   g_print ("select output; ");
   //  g_print("row object: 0x%08x \n", (unsigned int)row);
   //... do more stuff
 }
 
-static void select_in( GtkListBox *box, gpointer data ) {
-  GtkListBoxRow* row = gtk_list_box_get_selected_row(box);
+static void select_in( GObject *box, gpointer data ) {
+  //  GtkListBoxRow* row = gtk_list_box_get_selected_row(GTK_LIST_BOX(box));
   g_print ("select input; ");
   //  g_print("row object: 0x%08x \n", (unsigned int)row);
   //... do more stuff
 }
 
-static void select_op( GtkListBox *box, gpointer data ) {
-  GtkListBoxRow* row = gtk_list_box_get_selected_row(box);
+static void select_op( GObject *box, gpointer data ) {
+  //  GtkListBoxRow* row = gtk_list_box_get_selected_row(GTK_LIST_BOX(box));
   g_print ("select operator; ");
   //  g_print("row object: 0x%08x \n", (unsigned int)row);
   //... do more stuff
@@ -30,7 +30,7 @@ static void select_op( GtkListBox *box, gpointer data ) {
 
 //--------------------------------
 //--- fill listboxes
-static void fill_outs(GtkListBox *box) {
+static void fill_outs(GObject *box) {
   
   GtkWidget *row;
   GtkWidget *label;
@@ -45,11 +45,11 @@ static void fill_outs(GtkListBox *box) {
     row = gtk_list_box_row_new();
     label = gtk_label_new(str);
     gtk_container_add(GTK_CONTAINER(row), label);
-    gtk_list_box_insert(box, row, 0);    
+    gtk_list_box_insert(GTK_LIST_BOX(box), row, 0);    
   }
 }
 
-static void fill_ins(GtkListBox *box) {
+static void fill_ins(GObject *box) {
   
   GtkWidget *row;
   GtkWidget *label;
@@ -64,11 +64,11 @@ static void fill_ins(GtkListBox *box) {
     row = gtk_list_box_row_new();
     label = gtk_label_new(str);
     gtk_container_add(GTK_CONTAINER(row), label);
-    gtk_list_box_insert(box, row, 0);    
+    gtk_list_box_insert(GTK_LIST_BOX(box), row, 0);    
   }
 }
 
-static void fill_ops(GtkListBox *box) {  
+static void fill_ops(GObject *box) {  
   GtkWidget *row;
   GtkWidget *label;
   char str[64];
@@ -80,77 +80,48 @@ static void fill_ops(GtkListBox *box) {
     row = gtk_list_box_row_new();
     label = gtk_label_new(str);
     gtk_container_add(GTK_CONTAINER(row), label);
-    gtk_list_box_insert(box, row, 0);    
+    gtk_list_box_insert(GTK_LIST_BOX(box), row, 0);    
   }
 }
 
 //------------------------
 //---- init, build, connect
 void ui_init(void) {
-  //  GtkBuilder *builder;
-  //  GObject *window;
-  //  GObject *list;
+  GtkBuilder *builder;
+  GObject *window;
+  GObject *list;
+  GObject *scroll;
 
-  GtkWidget *window;
-  GtkWidget *scrolled;
-  GtkWidget *layout;
+  /* Construct a GtkBuilder instance and load our UI description */
+  builder = gtk_builder_new ();
+  gtk_builder_add_from_file (builder, "builder.ui.xml", NULL);
 
-  GtkWidget *outList;
-  GtkWidget *inList;
-  GtkWidget *opList;
-
-
-  //---  window
-  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (window), "bees editor");
-  gtk_window_set_default_size(GTK_WINDOW(window), 300, 400);
-  //  gtk_container_set_border_width (GTK_CONTAINER (window), 0);
-  //  g_signal_connect (window, "delete-event", G_CALLBACK (delete_handler), NULL);
+  /* Connect signal handlers to the constructed widgets. */
+  window = gtk_builder_get_object (builder, "window");
   g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 
-  //--- layout 
-  layout = gtk_layout_new(NULL, NULL);
-  gtk_container_add(GTK_CONTAINER(window), layout);
+  list = gtk_builder_get_object (builder, "outList");
+  //  printf("\r\n list pointer: 0x%08x", (int)list);
+  fill_outs(list);
+  g_signal_connect (list, "row-selected", G_CALLBACK (select_out), NULL);
+  scroll = gtk_builder_get_object (builder, "outScroll");
+  gtk_scrolled_window_set_min_content_height(GTK_SCROLLED_WINDOW(scroll), 280);
+  gtk_scrolled_window_set_min_content_width(GTK_SCROLLED_WINDOW(scroll), 280);
 
-  // create scrolling window
-  scrolled = gtk_scrolled_window_new (NULL, NULL);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled),
-				  GTK_POLICY_AUTOMATIC, 
-				  GTK_POLICY_AUTOMATIC);
+  list = gtk_builder_get_object (builder, "inList");
+  //  printf("\r\n list pointer: 0x%08x", (int)list);
+  fill_ins(list);
+  g_signal_connect (list, "row-selected", G_CALLBACK (select_in), NULL);
+  scroll = gtk_builder_get_object (builder, "inScroll");
+  gtk_scrolled_window_set_min_content_height(GTK_SCROLLED_WINDOW(scroll), 280);
+  gtk_scrolled_window_set_min_content_width(GTK_SCROLLED_WINDOW(scroll), 280);
 
-  gtk_scrolled_window_set_min_content_height(GTK_SCROLLED_WINDOW(scrolled), 280);
-  gtk_scrolled_window_set_min_content_width(GTK_SCROLLED_WINDOW(scrolled), 280);
-  gtk_container_add(GTK_CONTAINER(layout), scrolled);
+  list = gtk_builder_get_object (builder, "opList");
+  //  printf("\r\n list pointer: 0x%08x", (int)list);
+  fill_ops(list);
+  g_signal_connect (list, "row-selected", G_CALLBACK (select_op), NULL);
+  scroll = gtk_builder_get_object (builder, "opScroll");
+  gtk_scrolled_window_set_min_content_height(GTK_SCROLLED_WINDOW(scroll), 280);
+  gtk_scrolled_window_set_min_content_width(GTK_SCROLLED_WINDOW(scroll), 280);
 
-
-  // create lists
-  outList = gtk_list_box_new ();
-  g_signal_connect (outList, "row-selected", G_CALLBACK(select_out), NULL);
-  fill_outs(GTK_LIST_BOX(outList));
-  gtk_container_add( GTK_CONTAINER(scrolled), outList );
-  gtk_widget_show (outList);
-
-
-  /// show everything
-  gtk_widget_show_all(window);
-
-  /* /\* Construct a GtkBuilder instance and load our UI description *\/ */
-  /* builder = gtk_builder_new (); */
-  /* gtk_builder_add_from_file (builder, "builder.ui", NULL); */
-
-  /* /\* Connect signal handlers to the constructed widgets. *\/ */
-  /* window = gtk_builder_get_object (builder, "window"); */
-  /* g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL); */
-
-  /* list = gtk_builder_get_object (builder, "outList"); */
-  /* fill_outs(list); */
-  /* g_signal_connect (list, "row-selected", G_CALLBACK (select_out), NULL); */
-
-  /* list = gtk_builder_get_object (builder, "inList"); */
-  /* fill_ins(list); */
-  /* g_signal_connect (list, "row-selected", G_CALLBACK (select_in), NULL); */
-
-  /* list = gtk_builder_get_object (builder, "opList"); */
-  /* fill_ops(list); */
-  /* g_signal_connect (list, "row-selected", G_CALLBACK (select_op), NULL); */
 }
