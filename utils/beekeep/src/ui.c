@@ -94,13 +94,13 @@ void ui_init(void) {
 
   /* Construct a GtkBuilder instance and load our UI description */
   builder = gtk_builder_new ();
-  gtk_builder_add_from_file (builder, "builder.ui.xml", NULL);
+  gtk_builder_add_from_file (builder, "builder_glade.ui", NULL);
 
   /* Connect signal handlers to the constructed widgets. */
   window = gtk_builder_get_object (builder, "window");
   g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 
-  list = gtk_builder_get_object (builder, "outList");
+  list = gtk_builder_get_object (builder, "outListBox");
   //  printf("\r\n list pointer: 0x%08x", (int)list);
   fill_outs(list);
   g_signal_connect (list, "row-selected", G_CALLBACK (select_out), NULL);
@@ -108,7 +108,8 @@ void ui_init(void) {
   gtk_scrolled_window_set_min_content_height(GTK_SCROLLED_WINDOW(scroll), 280);
   gtk_scrolled_window_set_min_content_width(GTK_SCROLLED_WINDOW(scroll), 280);
 
-  list = gtk_builder_get_object (builder, "inList");
+  /*
+  list = gtk_builder_get_object (builder, "inListBox");
   //  printf("\r\n list pointer: 0x%08x", (int)list);
   fill_ins(list);
   g_signal_connect (list, "row-selected", G_CALLBACK (select_in), NULL);
@@ -116,12 +117,13 @@ void ui_init(void) {
   gtk_scrolled_window_set_min_content_height(GTK_SCROLLED_WINDOW(scroll), 280);
   gtk_scrolled_window_set_min_content_width(GTK_SCROLLED_WINDOW(scroll), 280);
 
-  list = gtk_builder_get_object (builder, "opList");
+  list = gtk_builder_get_object (builder, "opListBox");
   //  printf("\r\n list pointer: 0x%08x", (int)list);
   fill_ops(list);
   g_signal_connect (list, "row-selected", G_CALLBACK (select_op), NULL);
   scroll = gtk_builder_get_object (builder, "opScroll");
   gtk_scrolled_window_set_min_content_height(GTK_SCROLLED_WINDOW(scroll), 280);
   gtk_scrolled_window_set_min_content_width(GTK_SCROLLED_WINDOW(scroll), 280);
+  */
 
 }

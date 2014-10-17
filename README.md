@@ -166,6 +166,7 @@ no, i have no idea why atmel chose to do it this way!
 
 here is an example of the whole process:
 
+
 ```
 cd ~/Downloads
 
