@@ -1,10 +1,7 @@
-aleph.
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# aleph
 
 
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:::: quick start
+## quick start
 
 is there an sdcard in it? there should be... then try:
 
@@ -16,12 +13,14 @@ is there an sdcard in it? there should be... then try:
 
 use usb cable and minicom/kermit to connect to aleph device port and get debug messages. 
 
-currently using baudrate 500000 and a device spelled something like /dev/ttyACM0. [**] 
+currently using baudrate 115200 and a device spelled something like /dev/ttyACM0. [**] 
 
 hints: 
-sudo stty -F /dev/ttyACM0 500000
+```
+sudo stty -F /dev/ttyACM0 115200
 minicom -s
-(serial port setup; then 'E' for bps; then 'a' until you see 500000; then 'f' OFF )
+```
+(serial port setup; then 'E' for bps; then 'a' until you see 11500; then 'f' OFF )
 
 
 [*] for the "green sandwich" proto, mode switch is broken, bootloader toggle is SW4.
@@ -30,11 +29,10 @@ minicom -s
 [**] for the "green sandwich" proto, the device is called /dev/ttyUSBx on linux, looks like FTDI,
 and you may need to lower the baudrate.
 
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:::: device description
 
-----------------------------
------- hardware:
+## device description
+
+### hardware:
 
 aleph contains two processors:
 
@@ -58,8 +56,7 @@ the controller has a custom bootloader, which runs when a certain key combinatio
 this bootloader is capable of flashing the internal memory with a new executable binary (.elf)
 
 
-----------------------------------
----- software:
+### software:
 
 aleph will ship with a controller application called BEES. 
 this is a relatively large and complex program designed to be as general-purpose as possible. 
@@ -79,90 +76,84 @@ the different audio modules are similarly simple,
 building on both a hardware-specific firmware layer and a library of abstract fixed-point audio processors.
 
 
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:::: code directory structure
+## code directory structure
 
------------------------
----- controller :
+### controller
 
-aleph/avr32_lib/src
+`aleph/avr32_lib/src`
 	contains default low-level routines specific to the Aleph hardware.
 	application authors can use these sources, or replace them with their own as desired.
 
-aleph/avr32_lib/asf-x.x.x :
+`aleph/avr32_lib/asf-x.x.x`
 	a copy of the Atmel Software Framework.	
 	this contains low-level drivers and utilies provided by Atmel, lightly modified by us.
 
-aleph/apps : 
+`aleph/apps` 
 	contains a number of project directories which define actual functionality for the controller.
 	each directory should contain app-specific sources and Makefile.
 
-aleph/apps/bees:
+`aleph/apps/bees`
 	this is our main control routing/management application.
 
-aleph/common : 
+`aleph/common`
 	routines that both the dsp and the controller need to agree on.
 	this includes the SPI protocol and fixed-point math routines.
 
 aleph/utils/avr32_boot  : 
 	avr32 bootloader and hardware test program.
 
----------------------
----- dsp :
+### DSP
 
-aleph/bfin_lib/src:	
+`aleph/bfin_lib/src`	
 	low-level sources for audio programs.
 	these routines interact with the blackfin hardware directly, 
 	and should be changed only with great care to avoid damaging the proces
 
-aleph/modules :
+`aleph/modules`
 	contains a number of project directories for specific audio modules.
 	
-aleph/dsp : 
+`aleph/dsp`
 	common audio functions implemented in 32-bit fixed-point,
 	(envelopes, filters, buffers, oscillators, etc);
 	these should be freely added to as needed by new modules.	
 	currently there is no rigid class structure to these things, but we could impose one.
 
-aleph/dsp/null : 
+`aleph/dsp/null`
 	a clunky little portaudio-based audio wrapper, 
 	suitable for preliminary development of new audio modules.
 
 
 
-development setup
-----------------
-
+# development setup
 
 clone git repository: 
-git clone https://github.com/tehn/aleph.git
+`git clone https://github.com/tehn/aleph.git`
 
 
-------------------
-AVR32
------
+
+## AVR32
 
 for mac:
-https://github.com/droparea/avr32-toolchain
+[https://github.com/droparea/avr32-toolchain]
 
 for linux:
 
 get the toolchain and header files from atmel.com.
 
 currently the page is here, (but it could move)
-http://www.atmel.com/tools/ATMELAVRTOOLCHAINFORLINUX.aspx
+[http://www.atmel.com/tools/ATMELAVRTOOLCHAINFORLINUX.aspx]
 you will need to sign up / login.
 
 get the appopriate toolchain release for your architecture, and the latest headers,
 now you have 2 files similar to:
 
-avr32-gnu-toolchain-3.4.2.435-linux.any.x86.tar.gz
-atmel-headers-6.1.3.1475.zip
+`avr32-gnu-toolchain-3.4.2.435-linux.any.x86.tar.gz`
+`atmel-headers-6.1.3.1475.zip`
 
 GET 32 BIT.
 
 extracting the toolchain archive gives you something like 
-avr32-gnu-toolchain-linux_x86/
+`avr32-gnu-toolchain-linux_x86/`
 
 move/rename this directory however you like and make sure the binaries are in your $PATH
 
@@ -174,7 +165,7 @@ no, i have no idea why atmel chose to do it this way!
 
 here is an example of the whole process:
 
-
+```
 cd ~/Downloads
 
 tar -xzf avr32-gnu-toolchain-3.4.2.435-linux.any.x86.tar.gz
@@ -187,31 +178,32 @@ PATH=$PATH:~/avr32-gnu-toolchain/bin
 cd atmel-headers-6.1.3.1475
 cp avr/ ~/avr32-gnu-toolchain/avr32/include -R
 cp avr32/ ~/avr32-gnu-toolchain/avr32/include/ -R
+```
 
 you should now be able to run 'make' from aleph/apps/bees and produce aleph-bees.hex. yeah!
-let me know if there are problems: emb@catfact.net
+let me know if there are problems: [emb@catfact.net]
 
 
---------------
-BLACKFIN
------
+## BLACKFIN
 
 general instructions are here:
-http://blackfin.uclinux.org/doku.php?id=toolchain:installing
+[ http://blackfin.uclinux.org/doku.php?id=toolchain:installing ]
 
 we are only building standalone binaries (no uclinux), so only the bfin-elf-gcc toolchain is needed. 
 
 get the most recent stable release for your architecture (2012-RC2 as of this writing), unpack it and add the binaries to your path. 
 
 example: 
-visit: http://sourceforge.net/projects/adi-toolchain/files/2012R2/2012R2-RC2/i386/blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2/download
+visit: [ http://sourceforge.net/projects/adi-toolchain/files/2012R2/2012R2-RC2/i386/blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2/download
 
-:> cd ~/Downloads [or wherever]
-:> su [probably]
-:> mv blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2 /
-:> cd /
-:> tar -xjvf blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2
-:> export PATH=$PATH:/opt/uClinux/bfin-elf/bin
+```
+cd ~/Downloads [or wherever]
+su [probably]
+mv blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2 /
+cd /
+tar -xjvf blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2
+export PATH=$PATH:/opt/uClinux/bfin-elf/bin
+```
 
 the toolchain will be extracted to ./opt/uClinux by default.
 of course you can use a different location if you like.
