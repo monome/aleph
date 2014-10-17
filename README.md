@@ -1,5 +1,6 @@
 # aleph
 
+[ monome.org/docs/aleph ]
 
 ## quick start
 
@@ -165,6 +166,7 @@ no, i have no idea why atmel chose to do it this way!
 
 here is an example of the whole process:
 
+
 ```
 cd ~/Downloads
 
@@ -172,7 +174,6 @@ tar -xzf avr32-gnu-toolchain-3.4.2.435-linux.any.x86.tar.gz
 unzip atmel-headers-6.1.3.1475.zip
 
 mv avr32-gnu-toolchain-linux_x86 ~/avr32-gnu-toolchain
-echo "PATH="\$PATH:~/avr32-gnu-toolchain/bin" >> ~/.bashrc
 PATH=$PATH:~/avr32-gnu-toolchain/bin
 
 cd atmel-headers-6.1.3.1475
@@ -180,9 +181,7 @@ cp avr/ ~/avr32-gnu-toolchain/avr32/include -R
 cp avr32/ ~/avr32-gnu-toolchain/avr32/include/ -R
 ```
 
-you should now be able to run 'make' from aleph/apps/bees and produce aleph-bees.hex. yeah!
-let me know if there are problems: [emb@catfact.net]
-
+you should now be able to run 'make' from aleph/apps/bees and produce aleph-bees.hex.
 
 ## BLACKFIN
 
