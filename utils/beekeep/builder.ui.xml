@@ -1,52 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- beekeep editor GUI layout -->
 <interface>
-  <object id="window" class="GtkWindow">
+  <requires lib="gtk+" version="3.10"/>
+  <object class="GtkWindow" id="window">
     <property name="visible">True</property>
     <property name="title">beekeep</property>
     <property name="border-width">10</property>
     <child>
-      <object id="layout" class="GtkLayout">
-        <property name="visible">t</property>
+      <object class="GtkGrid" id="grid">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+	<!-- label -->
 	<child>
-	  <object id="outScroll" class="GtkScrolledWindow">
-            <property name="visible">t</property>
-	    <child>	      
-              <object id="outList" class="GtkListBox">
-		<property name="visible">t</property>
-              </object>
-              <packing>
-		<property name="left-attach">0</property>
-		<property name="top-attach">0</property>
-              </packing>
-	    </child>
-	  </object>	  
+          <object class="GtkLabel" id="label">
+            <property name="name">h</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">yeah</property>
+          </object>
+	  <packing>
+            <property name="left_attach">0</property>
+            <property name="top_attach">0</property>
+            <property name="width">100</property>
+            <property name="height">100</property>
+          </packing>
 	</child>
+	<!-- outputs list box -->
 	<child>
-	  <object id="inScroll" class="GtkScrolledWindow">
-            <property name="visible">t</property>
-	    <child>	      
-              <object id="inList" class="GtkListBox">
-		<property name="visible">t</property>
-              </object>
-              <packing>
-		<property name="left-attach">0</property>
-		<property name="top-attach">0</property>
-              </packing>
-	    </child>
-	  </object>	  
-	</child>
-	<child>
- 	  <object id="opScroll" class="GtkScrolledWindow">
-            <property name="visible">t</property>
-	    <child>	      
-              <object id="opList" class="GtkListBox">
-		<property name="visible">t</property>
-              </object>
-              <packing>
-		<property name="left-attach">0</property>
-		<property name="top-attach">0</property>
-              </packing>
-	    </child>
-	  </object>	  
+          <object class="GtkListBox" id="listOuts" >
+	    <property name="visible">t</property>
+          </object>
+          <packing>
+	    <property name="left-attach">0</property>
+	    <property name="top-attach">0</property>
+            <property name="width">100</property>
+            <property name="height">100</property>
+          </packing>
 	</child>
       </object>
     </child>

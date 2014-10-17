@@ -161,6 +161,7 @@ obj = $(addprefix $(build-dir), $(addsuffix .o,$(basename $(src))))
 cflags += $(foreach path,$(inc),-I$(path))
 cflags += -std=gnu99
 cflags += -D BEEKEEP=1
+cflags += -g -O0
 
 lflags += -ljansson
 

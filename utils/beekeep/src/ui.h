@@ -34,9 +34,9 @@ typedef struct _OpItem {
 
 
 // methods
-extern InItem* 	 input_item_new	( GtkContainer* parent );
-extern OutItem*  output_item_ne	( GtkContainer* parent );
-extern OpItem* 	 op_item_new	( GtkContainer* parent );
+extern InItem* 	 input_item_new	 ( GtkContainer* parent );
+extern OutItem*  output_item_new ( GtkContainer* parent );
+extern OpItem* 	 op_item_new	 ( GtkContainer* parent );
 
 // intialize
 extern void ui_init(void);
