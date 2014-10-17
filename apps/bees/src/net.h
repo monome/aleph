@@ -69,7 +69,7 @@ extern u16 net_num_ins(void);
 // get current count of outputs
 extern u16 net_num_outs(void);
 
-// get param index given index
+// get param index given global index
 extern s16 net_param_idx(u16 inIdx);
 
 // get num params (subset of inputs)

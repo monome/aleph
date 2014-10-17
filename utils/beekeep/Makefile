@@ -96,12 +96,12 @@ src += 	src/app_beekeep.c \
 	src/files.c \
 	src/handler.c \
 	src/main.c \
-	src/ui.c
 
 # new sources
-src += 	src/json_read_native.c \
+src += 	src/dot.c \
+	src/json_read_native.c \
 	src/json_write_native.c \
-	src/net_py.c
+	src/ui.c
 
 
 # srcs from simulator

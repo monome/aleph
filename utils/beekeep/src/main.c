@@ -12,8 +12,11 @@
 #include <gtk/gtk.h>
 #include "getopt.h"
 
+#include "files.h"
+#include "net_protected.h"
+
 #include "app.h"
-#include "jansson.h"
+#include "dot.h"
 #include "json.h"
 #include "ui.h"
 
@@ -42,6 +45,7 @@ int main (int argc, char **argv)
 {
   char filename[32];
   char ext[16];
+  void* fp;
 
   strcpy(filename, argv[1]);
   scan_ext(filename, ext);
@@ -50,9 +54,16 @@ int main (int argc, char **argv)
   app_launch(1);
 
   gtk_init (&argc, &argv);
-
   ui_init();
-
   gtk_main ();
+
+
+  // try writing graphviz format
+  strip_ext(filename);
+  strcat(filename, ".gv");
+  fp = fopen(filename, "w");
+  net_write_dot(fp);
+  fclose(fp);
+
 }
 
