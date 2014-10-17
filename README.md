@@ -166,7 +166,6 @@ no, i have no idea why atmel chose to do it this way!
 
 here is an example of the whole process:
 
-
 ```
 cd ~/Downloads
 
@@ -196,8 +195,8 @@ example:
 visit: [ http://sourceforge.net/projects/adi-toolchain/files/2012R2/2012R2-RC2/i386/blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2/download
 
 ```
-cd ~/Downloads [or wherever]
-su [probably]
+cd ~/Downloads
+su
 mv blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2 /
 cd /
 tar -xjvf blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2
