@@ -134,6 +134,7 @@ void op_screen_in_enable(op_screen_t* screen, const io_t v  ) {
       op_gfx_enable();
       screen->enable = 1;
       op_screen_set_timer(screen);
+      op_screen_redraw(screen);
     }
   } else { 
     if(screen->enable > 0) {
@@ -202,6 +203,7 @@ void op_screen_poll_handler(void* op) {
       r->dirty = 0;
     }
   }
+  else r->dirty = 1;
 }
 
 

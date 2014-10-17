@@ -40,7 +40,7 @@ void op_route8_init(void* op) {
   
   // superclass state
   route->super.numInputs = 2;
-  route->super.numOutputs = 4;
+  route->super.numOutputs = 8;
   route->outs[0] = -1;
   route->outs[1] = -1;
   route->outs[2] = -1;

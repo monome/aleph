@@ -139,6 +139,7 @@ void op_bignum_in_enable(op_bignum_t* bignum, const io_t v  ) {
       op_gfx_enable();
       bignum->enable = 1;
       op_bignum_set_timer(bignum);
+      op_bignum_redraw(bignum);
     }
   } else { 
     if(bignum->enable > 0) {

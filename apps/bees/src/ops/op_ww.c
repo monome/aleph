@@ -6,11 +6,6 @@
 #include "net_poll.h"
 #include "op_ww.h"
 
-// LED intensity levels
-#define L2 15
-#define L1 9
-#define L0 5
-
 //-------------------------------------------------
 //----- static variables
 
@@ -161,6 +156,9 @@ static re_t re;
 
 static u8 dirty;
 
+static u8 tr[4];
+static u16 param;
+
 
 
 
@@ -223,10 +221,7 @@ void op_ww_init(void* mem) {
 
 
 
-  op->focus = OP_ONE;
-  net_monome_set_focus(&(op->monome), 1);
-
-
+  op->focus = 0;
 
   re = &ww_refresh;
 
@@ -277,7 +272,8 @@ void op_ww_init(void* mem) {
 
 
 
-
+  net_monome_set_focus( &(op->monome), op->focus > 0);
+  
   // init monome drawing
   op_ww_redraw();
 
@@ -302,7 +298,7 @@ static void op_ww_in_focus(op_ww_t* op, const io_t v) {
     op->focus = 0;
   }
 
-    u8 i1;
+  u8 i1;
   // print_dbg("\r\n// monome connect /////////////////"); 
   keycount_pos = 0;
   key_count = 0;
@@ -479,26 +475,26 @@ static void op_ww_in_clock(op_ww_t* op, const io_t v) {
       }
       
       if(w.wp[pattern].tr_mode == 0) {
-        if(triggered & 0x1 && w.tr_mute[0]) net_activate(op->outs[0], 1, op);
-        if(triggered & 0x2 && w.tr_mute[1]) net_activate(op->outs[1], 1, op);
-        if(triggered & 0x4 && w.tr_mute[2]) net_activate(op->outs[2], 1, op);
-        if(triggered & 0x8 && w.tr_mute[3]) net_activate(op->outs[3], 1, op);
+        if(triggered & 0x1 && w.tr_mute[0]) tr[0] = 1;
+        if(triggered & 0x2 && w.tr_mute[1]) tr[1] = 1;
+        if(triggered & 0x4 && w.tr_mute[2]) tr[2] = 1;
+        if(triggered & 0x8 && w.tr_mute[3]) tr[3] = 1;
       } else {
         if(w.tr_mute[0]) {
-          if(triggered & 0x1) net_activate(op->outs[0], 1, op);
-          else net_activate(op->outs[0], 0, op);
+          if(triggered & 0x1) tr[0] = 1;
+          else tr[0] = 0;
         }
         if(w.tr_mute[1]) {
-          if(triggered & 0x2) net_activate(op->outs[1], 1, op);
-          else net_activate(op->outs[1], 0, op);
+          if(triggered & 0x2) tr[1] = 1;
+          else tr[1] = 0;
         }
         if(w.tr_mute[2]) {
-          if(triggered & 0x4) net_activate(op->outs[2], 1, op);
-          else net_activate(op->outs[2], 0, op);
+          if(triggered & 0x4) tr[2] = 1;
+          else tr[2] = 0;
         }
         if(w.tr_mute[3]) {
-          if(triggered & 0x8) net_activate(op->outs[3], 1, op);
-          else net_activate(op->outs[3], 0, op);
+          if(triggered & 0x8) tr[3] = 1;
+          else tr[3] = 0;
         }
 
       }
@@ -547,21 +543,25 @@ static void op_ww_in_clock(op_ww_t* op, const io_t v) {
         cv1 = w.wp[pattern].cv_values[cv_chosen[1]];      
       }
     }
-
-
-    net_activate(op->outs[4], cv0, op);
-    net_activate(op->outs[5], cv1, op);
  
   }
   else {
     if(w.wp[pattern].tr_mode == 0) {
-      net_activate(op->outs[0], 0, op);
-      net_activate(op->outs[1], 0, op);
-      net_activate(op->outs[2], 0, op);
-      net_activate(op->outs[3], 0, op);
+      tr[0] = 0;
+      tr[1] = 0;
+      tr[2] = 0;
+      tr[3] = 0;
     }
   }
 
+
+
+  if(tr[0] != op->outs[0]) net_activate(op->outs[0], tr[0], op);
+  if(tr[1] != op->outs[1]) net_activate(op->outs[1], tr[1], op);
+  if(tr[2] != op->outs[2]) net_activate(op->outs[2], tr[2], op);
+  if(tr[3] != op->outs[3]) net_activate(op->outs[3], tr[3], op);
+  if(cv0 != op->outs[4]) net_activate(op->outs[4], cv0, op);
+  if(cv1 != op->outs[5]) net_activate(op->outs[5], cv1, op);
   // print_dbg("\r\n pos: ");
   // print_dbg_ulong(pos);
 
@@ -571,6 +571,8 @@ static void op_ww_in_param(op_ww_t* op, const io_t v) {
   if(v < 0) op->param = 0;
   else if(v > 4095) op->param = 4095;
   else op->param = v;
+
+  param = op->param;
 
   u8 i;
 
@@ -607,61 +609,60 @@ static void op_ww_in_param(op_ww_t* op, const io_t v) {
 
 // poll event handler
 static void op_ww_poll_handler(void* op) {
-  // op_ww_t* ww = (op_ww_t*)op;
-
   static u16 i1,x,n1;
+  op_ww_t* ww = (op_ww_t*)op;
+  if(ww->focus != 0) {
 
-  for(i1=0;i1<key_count;i1++) {
-    if(key_times[held_keys[i1]])
-    if(--key_times[held_keys[i1]]==0) {
-      if(edit_mode != mSeries) {
-        // preset copy
-        if(held_keys[i1] / 16 == 2) {
-          x = held_keys[i1] % 16;
-          for(n1=0;n1<16;n1++) {
-            w.wp[x].steps[n1] = w.wp[pattern].steps[n1];
-            w.wp[x].step_probs[n1] = w.wp[pattern].step_probs[n1];
-            w.wp[x].cv_values[n1] = w.wp[pattern].cv_values[n1];
-            w.wp[x].cv_steps[0][n1] = w.wp[pattern].cv_steps[0][n1];
-            w.wp[x].cv_curves[0][n1] = w.wp[pattern].cv_curves[0][n1];
-            w.wp[x].cv_probs[0][n1] = w.wp[pattern].cv_probs[0][n1];
-            w.wp[x].cv_steps[1][n1] = w.wp[pattern].cv_steps[1][n1];
-            w.wp[x].cv_curves[1][n1] = w.wp[pattern].cv_curves[1][n1];
-            w.wp[x].cv_probs[1][n1] = w.wp[pattern].cv_probs[1][n1];
+    for(i1=0;i1<key_count;i1++) {
+      if(key_times[held_keys[i1]])
+      if(--key_times[held_keys[i1]]==0) {
+        if(edit_mode != mSeries) {
+          // preset copy
+          if(held_keys[i1] / 16 == 2) {
+            x = held_keys[i1] % 16;
+            for(n1=0;n1<16;n1++) {
+              w.wp[x].steps[n1] = w.wp[pattern].steps[n1];
+              w.wp[x].step_probs[n1] = w.wp[pattern].step_probs[n1];
+              w.wp[x].cv_values[n1] = w.wp[pattern].cv_values[n1];
+              w.wp[x].cv_steps[0][n1] = w.wp[pattern].cv_steps[0][n1];
+              w.wp[x].cv_curves[0][n1] = w.wp[pattern].cv_curves[0][n1];
+              w.wp[x].cv_probs[0][n1] = w.wp[pattern].cv_probs[0][n1];
+              w.wp[x].cv_steps[1][n1] = w.wp[pattern].cv_steps[1][n1];
+              w.wp[x].cv_curves[1][n1] = w.wp[pattern].cv_curves[1][n1];
+              w.wp[x].cv_probs[1][n1] = w.wp[pattern].cv_probs[1][n1];
+            }
+
+            w.wp[x].cv_mode[0] = w.wp[pattern].cv_mode[0];
+            w.wp[x].cv_mode[1] = w.wp[pattern].cv_mode[1];
+
+            w.wp[x].loop_start = w.wp[pattern].loop_start;
+            w.wp[x].loop_end = w.wp[pattern].loop_end;
+            w.wp[x].loop_len = w.wp[pattern].loop_len;
+            w.wp[x].loop_dir = w.wp[pattern].loop_dir;
+
+            pattern = x;
+            next_pattern = x;
+            dirty++;
+
+            // print_dbg("\r\n saved pattern: ");
+            // print_dbg_ulong(x);
           }
-
-          w.wp[x].cv_mode[0] = w.wp[pattern].cv_mode[0];
-          w.wp[x].cv_mode[1] = w.wp[pattern].cv_mode[1];
-
-          w.wp[x].loop_start = w.wp[pattern].loop_start;
-          w.wp[x].loop_end = w.wp[pattern].loop_end;
-          w.wp[x].loop_len = w.wp[pattern].loop_len;
-          w.wp[x].loop_dir = w.wp[pattern].loop_dir;
-
-          pattern = x;
-          next_pattern = x;
-          dirty++;
-
-          // print_dbg("\r\n saved pattern: ");
-          // print_dbg_ulong(x);
         }
+
+        // print_dbg("\rlong press: "); 
+        // print_dbg_ulong(held_keys[i1]);
       }
-
-      // print_dbg("\rlong press: "); 
-      // print_dbg_ulong(held_keys[i1]);
     }
+    
+    if(dirty) op_ww_redraw();
+
+    dirty = 0;
   }
-  
-  if(dirty) op_ww_redraw();
-
-  dirty = 0;
-
 }
 
 
 // process monome key input
 static void op_ww_handler(op_monome_t* op_monome, u32 edata) {
-  op_ww_t* op = (op_ww_t*)op_monome;
   u8 x, y, z, index, i1, found, count;
   s16 delta;
   monome_grid_key_parse_event_data(edata, &x, &y, &z);
@@ -925,7 +926,7 @@ static void op_ww_handler(op_monome_t* op_monome, u32 edata) {
         else if(y == 7) {
           if(key_alt && z) {
             param_dest = &w.wp[pattern].cv_curves[edit_cv_ch][pos];
-            w.wp[pattern].cv_curves[edit_cv_ch][pos] = op->param;
+            w.wp[pattern].cv_curves[edit_cv_ch][pos] = param;
             param_accept = 1;
             live_in = 1;
           }
@@ -935,7 +936,7 @@ static void op_ww_handler(op_monome_t* op_monome, u32 edata) {
           else {
             param_accept = z;
             param_dest = &w.wp[pattern].cv_curves[edit_cv_ch][x];
-            if(z) w.wp[pattern].cv_curves[edit_cv_ch][x] = op->param;
+            if(z) w.wp[pattern].cv_curves[edit_cv_ch][x] = param;
           }
           dirty++;
         }
