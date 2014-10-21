@@ -53,10 +53,16 @@ int main (int argc, char **argv)
   app_init();
   app_launch(1);
 
+  if(strcmp(ext, ".scn") == 0) {
+    files_load_scene_name(filename);
+  }
+  else if(strcmp(ext, ".json") == 0) {
+    net_read_json_native(filename);
+  }
+
   gtk_init (&argc, &argv);
   ui_init();
   gtk_main ();
-
 
   // try writing graphviz format
   strip_ext(filename);

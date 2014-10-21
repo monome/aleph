@@ -101,8 +101,8 @@ src += 	src/app_beekeep.c \
 src += 	src/dot.c \
 	src/json_read_native.c \
 	src/json_write_native.c \
-	src/ui.c
-
+	src/ui.c \
+	src/ui_lists.c
 
 # srcs from simulator
 src += \

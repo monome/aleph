@@ -1,27 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 #include <gtk/gtk.h>
 
 #include "net_protected.h"
+
 #include "ui.h"
+#include "ui_lists.h"
+
+//----------------------------------
+//--- static data
+
 
 //----------------------------
-//---- "classes"
-
-// just a ScrolledWindow with a ListBox in it
-typedef struct _ScrollBox { 
-  GtkScrolledWindow* scroll;
-  GtkListBox* list;
-} ScrollBox;
-
-// fill function type
-typedef void (*list_fill_fn) (GtkListBox* list);
-
-// selection handler type
-typedef void (*list_select_fn)( GtkListBox *box, gpointer data );
-
-//----------------------------
-//--- "methods"
+//--- static functions
 
 // make a scrollable box
 static void scroll_box_new( ScrollBox* scrollbox, 
@@ -33,6 +26,7 @@ static void scroll_box_new( ScrollBox* scrollbox,
   
   GtkWidget* scroll;
   GtkWidget* list;
+
   scroll = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW(scroll),
 				   GTK_POLICY_AUTOMATIC, 
@@ -40,8 +34,7 @@ static void scroll_box_new( ScrollBox* scrollbox,
 
   gtk_scrolled_window_set_min_content_height(GTK_SCROLLED_WINDOW(scroll), 280);
   gtk_scrolled_window_set_min_content_width(GTK_SCROLLED_WINDOW(scroll), 280);
-  //  gtk_container_add(GTK_CONTAINER(parent), scroll);
-  // ech, assume parent is a grid
+  // assume parent is a grid
   gtk_grid_attach(GTK_GRID(parent), scroll, x, y, w, h);
 
   list = gtk_list_box_new ();
@@ -54,16 +47,35 @@ static void scroll_box_new( ScrollBox* scrollbox,
 
   scrollbox->scroll = GTK_SCROLLED_WINDOW(scroll);
   scrollbox->list = GTK_LIST_BOX(list);
-
 }
+
+// destroyer-iterator
+static void destroy_iter(GtkWidget* wgt, gpointer data) {
+  gtk_widget_destroy(wgt);
+}
+
+// remove all list elements
+static void scroll_box_clear( ScrollBox* scrollbox ) {
+  gtk_container_foreach(GTK_CONTAINER(scrollbox), &(destroy_iter), NULL);
+}
+
+// silly index conversion.
+// by default, ListBoxes seem to display the oldest child at the bottom.
+// not sure how to change this behavior, 
+// so invert the indexing when necessary
+/* static int list_invert_id(int idx, int num) { */
+/*   return (num - 1) - idx; */
+/* } */
 
 //--------------------
 //--- selections
+
 static void select_out( GtkListBox *box, gpointer data ) {
   // gotta be a better way to get this
-  printf("\r\n selected output; row index: %d", 
-	 gtk_list_box_row_get_index(gtk_list_box_get_selected_row(box)) );
-  //... 
+  int id = gtk_list_box_row_get_index(gtk_list_box_get_selected_row(box));
+  //  id = list_invert_id(id, net->numOuts);
+  outSelect = id;
+  //  scroll_box_clear(
 }
 
 static void select_in( GtkListBox *box, gpointer data ) {
@@ -74,61 +86,24 @@ static void select_op( GtkListBox *box, gpointer data ) {
   //... 
 }
 
-//--------------------------------
-//--- fill listboxes
-static void fill_outs(GtkListBox *box) {
-  
-  GtkWidget *row;
-  GtkWidget *label;
-  char str[64];
-  int i, n;
-  
-  n = net->numOuts;
-  for(i=0; i<n; i++) {
-    snprintf(str, 64, "%s.%d.%s", 
-	     net_op_name(net_out_op_idx(i)),
-	     i, net_out_name(i) );
-    row = gtk_list_box_row_new();
-    label = gtk_label_new(str);
-    gtk_container_add(GTK_CONTAINER(row), label);
-    gtk_list_box_insert(box, row, 0);    
-  }
+static void select_param( GtkListBox *box, gpointer data ) {
+  //... 
 }
 
-static void fill_ins(GtkListBox *box) {
-  
-  GtkWidget *row;
-  GtkWidget *label;
-  char str[64];
-  int i, n;
-  
-  n = net->numIns;
-  for(i=0; i<n; i++) {
-    snprintf(str, 64, "%s.%d.%s", 
-	     net_op_name(net_in_op_idx(i)),
-	     i, net_in_name(i) );
-    row = gtk_list_box_row_new();
-    label = gtk_label_new(str);
-    gtk_container_add(GTK_CONTAINER(row), label);
-    gtk_list_box_insert(box, row, 0);    
-  }
-}
+//------------------------
+//---- variables
 
-static void fill_ops(GtkListBox *box) {  
-  GtkWidget *row;
-  GtkWidget *label;
-  char str[64];
-  int i, n;
-  
-  n = net->numOps;
-  for(i=0; i<n; i++) {
-    snprintf(str, 64, "%s", net_op_name(i) );
-    row = gtk_list_box_row_new();
-    label = gtk_label_new(str);
-    gtk_container_add(GTK_CONTAINER(row), label);
-    gtk_list_box_insert(box, row, 0);    
-  }
-}
+ ScrollBox boxOuts;
+ ScrollBox boxIns;
+ ScrollBox boxOps;
+ ScrollBox boxParams;
+
+// selected indexes
+// negative == no selection
+ int opSelect = -1;
+ int outSelect = -1;
+ int inSelect = -1;
+
 
 //------------------------
 //---- init, build, connect
@@ -136,10 +111,7 @@ void ui_init(void) {
 
   GtkWidget *window;
   GtkWidget *grid;
-
-  ScrollBox boxOuts;
-  ScrollBox boxIns;
-  ScrollBox boxOps;
+  GtkWidget *label;
 
   //---  window
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -149,20 +121,28 @@ void ui_init(void) {
   //  g_signal_connect (window, "delete-event", G_CALLBACK (delete_handler), NULL);
   g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 
-  /* //--- layout  */
-  /* layout = gtk_layout_new(NULL, NULL); */
-  /* gtk_container_add(GTK_CONTAINER(window), layout); */
-
   //--- grid 
   grid = gtk_grid_new();
+  gtk_grid_set_column_spacing (GTK_GRID(grid), 2);
+  gtk_grid_set_row_spacing (GTK_GRID(grid), 2);
   gtk_container_add(GTK_CONTAINER(window), grid);
 
+  //  labels
+  label = gtk_label_new("OUTPUTS");
+  gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 1, 1);
+  label = gtk_label_new("INPUTS");
+  gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 1, 1);
+  label = gtk_label_new("OPERATORS");
+  gtk_grid_attach(GTK_GRID(grid), label, 2, 0, 1, 1);
+  label = gtk_label_new("PARAMETERS");
+  gtk_grid_attach(GTK_GRID(grid), label, 3, 0, 1, 1);
+
   //--- scrolling list things 
-  scroll_box_new( &boxOuts, grid, &fill_outs, &select_out, 0, 0, 1, 3);
-  scroll_box_new( &boxIns, grid, &fill_ins, &select_in, 1, 0, 1, 3 );
-  scroll_box_new( &boxOps, grid, &fill_ops, &select_op, 2, 0, 1, 3 );
+  scroll_box_new( &boxOps, grid, &fill_ops, &select_op, 	0, 1, 1, 3 );
+  scroll_box_new( &boxOuts, grid, &fill_outs, &select_out, 	1, 1, 1, 3);
+  scroll_box_new( &boxIns, grid, &fill_ins, &select_in, 	2, 1, 1, 3 );
+  scroll_box_new( &boxParams, grid, &fill_params, &select_param, 3, 1, 1, 3 );
 
   /// show everything
   gtk_widget_show_all(window);
-
 }
