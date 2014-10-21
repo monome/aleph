@@ -6,7 +6,6 @@ io_t op_add(io_t a, io_t b) { return ((a) + (b)); }
 io_t op_sub(io_t a, io_t b) { return ((a) - (b)); }
 io_t op_mul(io_t a, io_t b) { return ((a) * (b)); }
 io_t op_div(io_t a, io_t b) { return ((a) / (b)); }
-//io_t op_exp(io_t a, io_t b) { return (pow(a, b); } 
 
 /// saturating add
 io_t op_sadd(io_t a, io_t b) {
@@ -58,7 +57,3 @@ io_t op_absint(io_t a)
 // print
 void op_print(char* buf, io_t x) { itoa_whole((s32)(x), (buf), 6); }
 
-//Print Character
-void op_printchar(char* buf, char* p) { itoa_whole((s32)(p), (p), 6);}
-//void op_printchar(char* buf, char* p) { itoa_whole((s32)(p), (buf), 6);}
-//extern void op_printchar(char* buf, char);
