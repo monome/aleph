@@ -35,6 +35,11 @@ extern int outSelect;
 extern int inSelect;
 
 extern op_id_t newOpSelect;
+//--------------------------------
+//---- functions
+// clear a scrollbox
+extern void scroll_box_clear( ScrollBox* scrollbox );
+
 
 /* // class for entry in inputs list */
 /* typedef struct _ItemIn {  */

@@ -18,6 +18,49 @@
 #include "param.h"
 #include "play.h"
 
+// user-creatable operator types
+// this order is arbitrary, no need to synchronize with class enum
+const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
+  eOpAccum,
+  eOpAdd,
+  eOpBars,
+  eOpBignum,
+  eOpBits,
+  eOpDelay,
+  eOpDiv,
+  eOpGate,
+  eOpMonomeGridRaw, // "grid"
+  eOpHid,
+  eOpHistory,
+  eOpIs,
+  eOpLife,
+  eOpList2,
+  eOpList8,
+  eOpList16,
+  eOpLogic,
+  eOpMetro,
+  eOpCascades, // "mp"
+  eOpMidiCC,
+  eOpMidiNote,
+  eOpMidiOutNote,
+  eOpMod,
+  eOpMul,
+  eOpRandom,
+  eOpRoute,
+  eOpRoute8,
+  eOpScreen,
+  eOpSerial,
+  eOpSplit, // "Y" , but only in connection graph
+  eOpSplit4, // "Y4"
+  eOpStep,
+  eOpSub,
+  eOpThresh,
+  eOpTimer,
+  eOpTog,
+  eOpWW
+};
+
+
 // operator class registry
 ////// WARNING:
 // must be laid out identically to eOpId enum in op.h!
@@ -235,48 +278,6 @@ const op_desc_t op_registry[numOpClasses] = {
   },
 };
 
-// const array of user-creatable operator types
-// this order is arbitrary, no need to synchronize with class enum
-const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
-  eOpAccum,
-  eOpAdd,
-  eOpBars,
-  eOpBignum,
-  eOpBits,
-  eOpDelay,
-  eOpDiv,
-  eOpGate,
-  eOpMonomeGridRaw, // "grid"
-  eOpHid,
-  eOpHistory,
-  eOpIs,
-  eOpLife,
-  eOpList2,
-  eOpList8,
-  eOpList16,
-  eOpLogic,
-  eOpMetro,
-  eOpCascades, // "mp"
-  eOpMidiCC,
-  eOpMidiNote,
-  eOpMidiOutNote,
-  eOpMod,
-  eOpMul,
-  eOpRandom,
-  eOpRoute,
-  eOpRoute8,
-  eOpScreen,
-  eOpSerial,
-  eOpSplit, // "Y" , but only in connection graph
-  eOpSplit4, // "Y4"
-  eOpStep,
-  eOpSub,
-  eOpThresh,
-  eOpTimer,
-  eOpTog,
-  eOpWW
-};
-
 
 // input and output strings are all the same length, concatenated
 // lazy
@@ -298,6 +299,8 @@ s16 op_init(op_t* op, op_id_t opId) {
   (*(op_registry[opId].init))(op);
   return 0;
 }
+
+// this is the order of operators as presented to the user 
 
 // de-initialize operator
 s16 op_deinit(op_t* op) {

@@ -6,6 +6,7 @@
 
 extern void ui_select_op(int id) {
   newOpSelect = (op_id_t)id;
+  printf("\r\n selected operator type: %s", op_registry[newOpSelect].name);
 }
 
 extern void ui_select_out(int id) {

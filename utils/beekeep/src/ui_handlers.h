@@ -33,6 +33,7 @@ extern void ui_destroy_op(void);
 
 // handle scene name
 extern void ui_scene_name(const char* txt);
+
 // handle new-op selection
 extern void ui_select_op(int id);
 
