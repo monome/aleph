@@ -235,6 +235,50 @@ const op_desc_t op_registry[numOpClasses] = {
   },
 };
 
+
+// const array of user-creatable operator types
+// this order is arbitrary, no need to synchronize with class enum
+const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
+  eOpAccum,
+  eOpAdd,
+  eOpBars,
+  eOpBignum,
+  eOpBits,
+  eOpDelay,
+  eOpDiv,
+  eOpGate,
+  eOpMonomeGridRaw, // "grid"
+  eOpHid,
+  eOpHistory,
+  eOpIs,
+  eOpLife,
+  eOpList2,
+  eOpList8,
+  eOpList16,
+  eOpLogic,
+  eOpMetro,
+  eOpCascades, // "mp"
+  eOpMidiCC,
+  eOpMidiNote,
+  eOpMidiOutNote,
+  eOpMod,
+  eOpMul,
+  eOpRandom,
+  eOpRoute,
+  eOpRoute8,
+  eOpScreen,
+  eOpSerial,
+  eOpSplit, // "Y" , but only in connection graph
+  eOpSplit4, // "Y4"
+  eOpStep,
+  eOpSub,
+  eOpThresh,
+  eOpTimer,
+  eOpTog,
+  eOpWW
+};
+
+
 // input and output strings are all the same length, concatenated
 // lazy
 static const u8 inStringChars = 8;

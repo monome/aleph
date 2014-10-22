@@ -19,6 +19,9 @@
 // max outputs in a single operator
 #define OP_OUTS_MAX 32
 
+// count of user-creatable op types
+#define NUM_USER_OP_TYPES 37
+
 //---- flags enum; 
 typedef enum {
   eOpFlagSys,  // op is system-owned
@@ -81,7 +84,6 @@ typedef enum {
   //  eOpMidiTouch,
   numOpClasses // dummy/count 
 } op_id_t;
-
 
 //--- function types
 
@@ -149,6 +151,9 @@ typedef struct op_desc_struct {
 
 // operator class registry
 extern const op_desc_t op_registry[numOpClasses];
+
+// user-creatable operator types
+extern const op_id_t userOpTypes[NUM_USER_OP_TYPES];
 
 //-----------------------------------
 //---- public functions
