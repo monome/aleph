@@ -235,7 +235,6 @@ const op_desc_t op_registry[numOpClasses] = {
   },
 };
 
-
 // const array of user-creatable operator types
 // this order is arbitrary, no need to synchronize with class enum
 const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
@@ -297,16 +296,6 @@ s16 op_init(op_t* op, op_id_t opId) {
   op->unpickle = NULL;
   // run class init function
   (*(op_registry[opId].init))(op);
-
-  // zap spaces in names...
-  // ugh, better to keep them constant i guess.
-  /* for(i=0; i< (inStringChars * op->numIns); ++i) { */
-  /*   if(op->inString[i] == ' ') { op->inString[i] = '\0'; } */
-  /* } */
-  /* for(i=0; i< (outStringChars * op->numOuts); ++i) { */
-  /*   if(op->outString[i] == ' ') { op->outString[i] = '\0'; } */
-  /* } */
-
   return 0;
 }
 
@@ -325,18 +314,9 @@ s16 op_deinit(op_t* op) {
 
 
 const char* op_in_name(op_t* op, const u8 idx) {
-  /* static char str[16]; */
-  /* u8 i; */
-  /* // str = (op->inString + (inStringChars * idx)); */
-  /* for(i=0; i<inStringChars; i++) { */
-  /*   str[i] = *(op->inString + (inStringChars * idx) + i); */
-  /* } */
-  /* str[inStringChars] = '\0'; */
-  /* return str; */
   /// names now have spaces zapped to nulls.
   // so we can safely return direct pointer to name string
-  return (op->inString + (inStringChars * idx));
-  
+  return (op->inString + (inStringChars * idx));  
 }
 
 const char* op_out_name(op_t* op, const u8 idx) {
@@ -356,33 +336,8 @@ io_t op_get_in_val(op_t* op, s16 idx) {
 
 // set input value
 void op_set_in_val(op_t* op, s16 idx, io_t val) {
-  //  volatile io_t * const pIn = (op->in_val[idx]);
-  //  *pIn = val;
-  //  (*(op->in_fn[idx]))(op, pIn);  
-
-  //  print_dbg("\r\n setting op input, value: 0x");
-  //  print_dbg_hex(val);
-
   (*(op->in_fn[idx]))(op, val);  
-
-  // TODO: check for play flag and stuff.. ?
-  // or, do this in activation
-  //  play_input(idx);
 }
-
-/// err... user is calling subclass directly, whatever
-
-// pickle
-/* u8* op_pickle(op_t* op, u8* dst) { */
-/*   return (*(op->pickle))(op, dst); */
-/* } */
-
-// unpickle
-/* const u8* op_unpickle(op_t* op, const u8* src) { */
-/*     return (*(op->unpickle))(op, src); */
-/* } */
-
-
 
 // increment input value
 void op_inc_in_val(op_t* op, const s16 idx, const io_t inc) {
