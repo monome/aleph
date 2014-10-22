@@ -3,6 +3,8 @@
 
 #include <gtk/gtk.h>
 
+#include "op.h"
+
 //----------------------------
 //--- types
 
@@ -32,7 +34,7 @@ extern int opSelect;
 extern int outSelect;
 extern int inSelect;
 
-
+extern op_id_t newOpSelect;
 
 /* // class for entry in inputs list */
 /* typedef struct _ItemIn {  */

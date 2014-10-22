@@ -102,7 +102,9 @@ src += 	src/dot.c \
 	src/json_read_native.c \
 	src/json_write_native.c \
 	src/ui.c \
-	src/ui_lists.c
+	src/ui_handlers.c \
+	src/ui_lists.c \
+	src/ui_op_menu.c
 
 # srcs from simulator
 src += \

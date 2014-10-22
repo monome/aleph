@@ -2,11 +2,10 @@
 #include "ui_handlers.h"
 #include "ui_op_menu.h"
 
-// hm, not sure this is necessary... oh well
-
 static void op_menu_select( GtkWidget* widget, gpointer data ) {
-  op_id_t id = *((op_id_t*)data);
-  ui_select_op(id);
+  op_id_t* pOpId = (op_id_t*)data;
+  ui_select_op(*pOpId);
+  printf("\r\n op selection: %s", op_registry[*pOpId].name);
 }
 
 //GtkWidget* create_op_menu(GtkContainer* parent) {
@@ -23,11 +22,15 @@ GtkWidget* create_op_menu(void) {
     id = userOpTypes[i];
     name = op_registry[id].name;
     child = gtk_menu_item_new_with_label(name);
-    gtk_menu_attach(GTK_MENU(menu), child, 0, 1, 0, 1);
+    gtk_menu_attach(GTK_MENU(menu), child, 0, 1, i+1, i+2);
+    //////////////////
+    // huh, have to do this here.
+    gtk_widget_show(child);
+    //////////////////
     g_signal_connect( child, 
 		      "activate", 
 		      G_CALLBACK(op_menu_select), 
-		      GINT_TO_POINTER(i) );
+		      (gpointer)&(userOpTypes[i]) );
   }
   return menu;
 }
