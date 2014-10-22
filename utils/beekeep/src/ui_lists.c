@@ -1,35 +1,80 @@
+// stdlib
 #include <string.h>
 
+// bees
 #include "net_protected.h"
+// beekeep
+#include "ui_handlers.h"
 #include "ui_lists.h"
+
+//------------------
+//--- callbacks
+
+static void select_out( GtkListBox *box, gpointer data ) {
+  // gotta be a better way to get this
+  int id;
+  GtkListBoxRow* row;
+  row = gtk_list_box_get_selected_row(box);
+  id = gtk_list_box_row_get_index(row);
+  ui_select_out(id);
+}
+
+
+static void select_in( GtkListBox *box, gpointer data ) {
+  int id;
+  GtkListBoxRow* row;
+  row = gtk_list_box_get_selected_row(box);
+  id = gtk_list_box_row_get_index(row);
+  ui_select_in(id);
+}
+
+static void select_op( GtkListBox *box, gpointer data ) {
+  int id;
+  GtkListBoxRow* row;
+  row = gtk_list_box_get_selected_row(box);
+  id = gtk_list_box_row_get_index(row);
+  ui_select_op(id);
+}
+
+static void select_param( GtkListBox *box, gpointer data ) {
+  int id;
+  GtkListBoxRow* row;
+  row = gtk_list_box_get_selected_row(box);
+  id = gtk_list_box_row_get_index(row);
+  ui_select_param(id);
+}
 
 //--------------------------------
 //--- fill listboxes
 
-void fill_ops(GtkListBox *box) {  
+void fill_ops(GtkListBox *list) {  
   GtkWidget *row;
   GtkWidget *label;
   char str[64];
   int i, n;
   
-  n = net_num_ops();
+  g_signal_connect (list, "row-selected", G_CALLBACK(select_op), NULL);
 
+  n = net_num_ops();
+ 
   for(i=0; i<n; i++) {
     snprintf(str, 64, "%d.%s", i, net_op_name(i) );
     row = gtk_list_box_row_new();
     label = gtk_label_new(str);
     gtk_container_add(GTK_CONTAINER(row), label);
-    gtk_list_box_insert(box, row, -1);    
+    gtk_container_add(GTK_CONTAINER(list), row);    
   }
 }
 
-void fill_outs(GtkListBox *box) {
+void fill_outs(GtkListBox *list) {
   GtkWidget *row;
   GtkWidget *label;
   GtkWidget *grid;
   char str[64];
   int i, n;
   int t;
+
+  g_signal_connect (list, "row-selected", G_CALLBACK(select_out), NULL);
 
   n = net->numOuts;
 
@@ -66,16 +111,18 @@ void fill_outs(GtkListBox *box) {
       gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
       gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 1, 1);
     }
-
-    gtk_list_box_insert(box, row, -1);    
+    //    gtk_container_add(GTK_CONTAINER(row), label);    
+    gtk_container_add(GTK_CONTAINER(list), row);    
   }
 }
 
-void fill_ins(GtkListBox *box) {
+void fill_ins(GtkListBox *list) {
   GtkWidget *row;
   GtkWidget *label;
   char str[64];
   int i, n;
+
+  g_signal_connect (list, "row-selected", G_CALLBACK(select_in), NULL);
 
   n = net->numIns;
 
@@ -88,16 +135,17 @@ void fill_ins(GtkListBox *box) {
 
     gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
     gtk_container_add(GTK_CONTAINER(row), label);
-    gtk_list_box_insert(box, row, -1);    
+    gtk_container_add(GTK_CONTAINER(list), row);    
   }
 }
 
-void fill_params(GtkListBox *box) {  
+void fill_params(GtkListBox *list) {  
   GtkWidget *row;
   GtkWidget *label;
   char str[64];
   int i, n;
 
+  g_signal_connect (list, "row-selected", G_CALLBACK(select_param), NULL);
   n = net->numParams;
 
   for(i=0; i<n; i++) {
@@ -105,6 +153,6 @@ void fill_params(GtkListBox *box) {
     row = gtk_list_box_row_new();
     label = gtk_label_new(str);
     gtk_container_add(GTK_CONTAINER(row), label);
-    gtk_list_box_insert(box, row, -1);    
+    gtk_container_add(GTK_CONTAINER(list), row);    
   }
 }
