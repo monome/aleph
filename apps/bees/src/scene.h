@@ -85,5 +85,8 @@ extern void scene_set_module_name(const char* name);
 
 // query module name and version
 extern void scene_query_module(void);
+
+// get name
+extern const char* scene_get_name(void);
  
 #endif

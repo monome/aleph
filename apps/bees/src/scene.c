@@ -459,3 +459,8 @@ void scene_query_module(void) {
   print_dbg(".");
   print_dbg_ulong(moduleVersion->rev);
 }
+
+// get name
+const char* scene_get_name(void) { 
+  return sceneData->desc.sceneName;
+}
