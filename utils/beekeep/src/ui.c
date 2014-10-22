@@ -1,12 +1,18 @@
+// stdlib
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+// gtk
 #include <gtk/gtk.h>
 
+/// bees
 #include "net_protected.h"
+#include "scene.h"
 
+// beekeep
 #include "ui.h"
+#include "ui_handlers.h"
 #include "ui_lists.h"
 
 //----------------------------------
@@ -55,7 +61,7 @@ static void destroy_iter(GtkWidget* wgt, gpointer data) {
 }
 
 // remove all list elements
-static void scroll_box_clear( ScrollBox* scrollbox ) {
+void scroll_box_clear( ScrollBox* scrollbox ) {
   gtk_container_foreach(GTK_CONTAINER(scrollbox), &(destroy_iter), NULL);
 }
 
@@ -73,21 +79,22 @@ static void scroll_box_clear( ScrollBox* scrollbox ) {
 static void select_out( GtkListBox *box, gpointer data ) {
   // gotta be a better way to get this
   int id = gtk_list_box_row_get_index(gtk_list_box_get_selected_row(box));
-  //  id = list_invert_id(id, net->numOuts);
-  outSelect = id;
-  //  scroll_box_clear(
+  ui_select_out(id);
 }
 
 static void select_in( GtkListBox *box, gpointer data ) {
-  //... 
+  int id = gtk_list_box_row_get_index(gtk_list_box_get_selected_row(box));
+  ui_select_in(id);
 }
 
 static void select_op( GtkListBox *box, gpointer data ) {
-  //... 
+  int id = gtk_list_box_row_get_index(gtk_list_box_get_selected_row(box));
+  ui_select_op(id);
 }
 
 static void select_param( GtkListBox *box, gpointer data ) {
-  //... 
+  int id = gtk_list_box_row_get_index(gtk_list_box_get_selected_row(box));
+  ui_select_param(id);
 }
 
 //------------------------
@@ -112,6 +119,7 @@ void ui_init(void) {
   GtkWidget *window;
   GtkWidget *grid;
   GtkWidget *label;
+  GtkWidget *wdg; // temp
 
   //---  window
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -121,27 +129,40 @@ void ui_init(void) {
   //  g_signal_connect (window, "delete-event", G_CALLBACK (delete_handler), NULL);
   g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 
-  //--- grid 
+  // grid layout
   grid = gtk_grid_new();
   gtk_grid_set_column_spacing (GTK_GRID(grid), 2);
   gtk_grid_set_row_spacing (GTK_GRID(grid), 2);
   gtk_container_add(GTK_CONTAINER(window), grid);
 
-  //  labels
-  label = gtk_label_new("OUTPUTS");
-  gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 1, 1);
-  label = gtk_label_new("INPUTS");
-  gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 1, 1);
-  label = gtk_label_new("OPERATORS");
-  gtk_grid_attach(GTK_GRID(grid), label, 2, 0, 1, 1);
-  label = gtk_label_new("PARAMETERS");
-  gtk_grid_attach(GTK_GRID(grid), label, 3, 0, 1, 1);
+  // scene name
+  wdg = gtk_entry_new();
+  gtk_entry_set_text( GTK_ENTRY(wdg), scene_get_name() );
+  gtk_grid_attach( GTK_GRID(grid), wdg, 0, 0, 1, 1 );
 
-  //--- scrolling list things 
-  scroll_box_new( &boxOps, grid, &fill_ops, &select_op, 	0, 1, 1, 3 );
-  scroll_box_new( &boxOuts, grid, &fill_outs, &select_out, 	1, 1, 1, 3);
-  scroll_box_new( &boxIns, grid, &fill_ins, &select_in, 	2, 1, 1, 3 );
-  scroll_box_new( &boxParams, grid, &fill_params, &select_param, 3, 1, 1, 3 );
+  // export
+
+  // clear
+
+  // select module
+
+  // new op menu
+
+  //  list labels
+  label = gtk_label_new("OPERATORS");
+  gtk_grid_attach(GTK_GRID(grid), label, 0, 1, 1, 1);
+  label = gtk_label_new("OUTPUTS");
+  gtk_grid_attach(GTK_GRID(grid), label, 1, 1, 1, 1);
+  label = gtk_label_new("INPUTS");
+  gtk_grid_attach(GTK_GRID(grid), label, 2, 1, 1, 1);
+  label = gtk_label_new("PARAMETERS");
+  gtk_grid_attach(GTK_GRID(grid), label, 3, 1, 1, 1);
+
+  //--- create scrolling list things 
+  scroll_box_new( &boxOps, grid, &fill_ops, &select_op, 	0, 2, 1, 3 );
+  scroll_box_new( &boxOuts, grid, &fill_outs, &select_out, 	1, 2, 1, 3);
+  scroll_box_new( &boxIns, grid, &fill_ins, &select_in, 	2, 2, 1, 3 );
+  scroll_box_new( &boxParams, grid, &fill_params, &select_param, 3, 2, 1, 3 );
 
   /// show everything
   gtk_widget_show_all(window);

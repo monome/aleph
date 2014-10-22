@@ -32,6 +32,10 @@ extern int opSelect;
 extern int outSelect;
 extern int inSelect;
 
+//--------------------------------
+//---- functions
+// clear a scrollbox
+extern void scroll_box_clear( ScrollBox* scrollbox );
 
 
 /* // class for entry in inputs list */

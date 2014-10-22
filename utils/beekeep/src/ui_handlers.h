@@ -3,14 +3,38 @@
 
 #include "ui.h"
 
-ui_handle_list_op_select(int id);
-ui_handle_list_out_select(int id);
-ui_handle_list_in_select(int id);
-ui_handle_list_in_param_select(int id);
-ui_handle_list_in_preset_select(int id);
+// list selection handlers
+extern void ui_select_op(int id);
+extern void ui_select_out(int id);
+extern void ui_select_in(int id);
+extern void ui_select_param(int id);
+extern void ui_select_preset(int id);
 
-ui_handle_list_in_value(int id);
-ui_handle_list_param_value(int id);
+//--- value handlers
+extern void ui_in_value(int id);
+extern void ui_param_value(int id);
 
+//--- button handlers
+
+// preset inclusion
+extern void ui_in_preset_button(int id);
+extern void ui_out_preset_button(int id);
+// export/load
+extern void ui_export_scn(const char* name);
+extern void ui_export_json(const char* name);
+extern void ui_import_scn(const char* name);
+extern void ui_import_json(const char* name);
+
+// create/destroy operator
+extern void ui_create_op(void);
+extern void ui_destroy_op(void);
+
+//--- other
+
+// handle scene name
+extern void ui_scene_name(const char* txt);
+
+// handle new-op selection
+extern void ui_select_op(int id);
 
 #endif
