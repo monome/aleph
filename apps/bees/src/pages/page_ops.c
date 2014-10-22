@@ -25,6 +25,7 @@ static scroll centerScroll;
 //--- page-specific state variables
 
 static s16* const pageSelect = &(pages[ePageOps].select);
+
 // current selected new operator type
 static op_id_t newOpType = eOpAccum;
 
