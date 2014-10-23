@@ -78,6 +78,8 @@ op_monome_t* monomeOpFocus = NULL;
   print_dbg(" , value: ");
   print_dbg_ulong(focus);
 
+  //// FIXME: differentiate on device type (grid/arc)
+
   if(focus > 0 && monomeConnect) {
     if(monomeOpFocus != NULL ){
       /// stealing focus, inform the previous holder
@@ -116,13 +118,13 @@ op_monome_t* monomeOpFocus = NULL;
 }
 
 void net_monome_connect(void) {
+  //// FIXME: store device type (grid/arc)
   if(monomeConnect != 1) {
-    /// FIXME: shld do checks for null handlers here, 
-    //// and not when calling the handler
     monomeConnect = 1;
     timers_set_monome();
   }
 }
+
 // disconnect
 void net_monome_disconnect(void) {
     monomeOpFocus = NULL;

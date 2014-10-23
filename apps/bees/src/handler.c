@@ -107,6 +107,10 @@ static void handle_Switch7(s32 data) {
 
 static void handle_MonomeConnect(s32 data) { 
   print_dbg("\r\n received MonomeConnect event in BEES");
+  //////////
+  /// FIXME: check connection type (in the data)
+  /// and call grid/arc connection as appropriate
+  /////
   net_monome_connect();
   // timers_set_monome();
 }
@@ -172,7 +176,7 @@ static void handle_Serial(s32 data) {
 //---- extern
 
 /// explicitly assign these...
-/// this way the order of the event types enum doesn't matter.
+./// this way the order of the event types enum doesn't matter.
 void assign_bees_event_handlers(void) {
   /// app-specific:
   /// FIXME:
