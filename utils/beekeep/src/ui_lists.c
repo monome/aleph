@@ -63,6 +63,8 @@ void fill_ops(GtkListBox *list) {
     label = gtk_label_new(str);
     gtk_container_add(GTK_CONTAINER(row), label);
     gtk_container_add(GTK_CONTAINER(list), row);    
+    // hm
+    gtk_widget_show_all(row);
   }
 }
 

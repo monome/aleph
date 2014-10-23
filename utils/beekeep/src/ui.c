@@ -17,9 +17,28 @@
 #include "ui_op_menu.h"
 
 //----------------------------------
-//--- variables
+//--- extern variables
 
-op_id_t newOpSelect = 0;
+// scrollboxes
+ScrollBox boxOuts;
+ScrollBox boxIns;
+ScrollBox boxOps;
+ScrollBox boxParams;
+ScrollBox boxPresets;
+
+// new-op label
+GtkWidget* newOpLabel;
+// connect/disconect input button
+GtkWidget* connectInpuBut;
+// connect/disconnect param button
+GtkWidget* connectParamBut;
+// selections
+int opSelect = -1;
+int outSelect = -1;
+int inSelect = -1;
+int paramSelect = -1;
+int presetSelect = -1;
+op_id_t newOpSelect = -1;
 
 //----------------------------
 //--- static functions
@@ -63,30 +82,24 @@ static void destroy_iter(GtkWidget* wgt, gpointer data) {
 
 // remove all list elements
 void scroll_box_clear( ScrollBox* scrollbox ) {
-  gtk_container_foreach(GTK_CONTAINER(scrollbox), &(destroy_iter), NULL);
+  gtk_list_box_select_row(scrollbox->list, NULL);
+  gtk_container_foreach(GTK_CONTAINER(scrollbox->list), &(destroy_iter), NULL);
 }
 
 //--------------------
 //--- callbacks
 
-static void scene_name_entry( GtkEntry *entry, gpointer data) {
+static void scene_name_entry_callback( GtkEntry *entry, gpointer data) {
   scene_set_name(gtk_entry_get_text(entry));
 }
 
-//------------------------
-//---- variables
+static void create_op_but_callback( GtkWidget* but, gpointer data) {
+  ui_create_op();
+}
 
- ScrollBox boxOuts;
- ScrollBox boxIns;
- ScrollBox boxOps;
- ScrollBox boxParams;
-
-// selected indexes
-// negative == no selection
- int opSelect = -1;
- int outSelect = -1;
- int inSelect = -1;
-
+static void delete_op_but_callback( GtkWidget* but, gpointer data) {
+  ui_delete_op();
+}
 
 //------------------------
 //---- init, build, connect
@@ -117,14 +130,17 @@ void ui_init(void) {
   wgt = gtk_entry_new();
   gtk_entry_set_text( GTK_ENTRY(wgt), scene_get_name() );
   gtk_grid_attach( GTK_GRID(grid), wgt, 0, 0, 4, 4 );
-  g_signal_connect( wgt, "activate", G_CALLBACK(scene_name_entry), NULL);
+  g_signal_connect( wgt, "activate", G_CALLBACK(scene_name_entry_callback), NULL);
 
-  // export button
+  // export .scn button
+
+  // export .json button
+
+  // export .gv button
   
   // clear button
 
   // select module button (file dialog?)
-
 
   //  list labels
   label = gtk_label_new("OPERATORS");
@@ -137,27 +153,42 @@ void ui_init(void) {
   gtk_grid_attach(GTK_GRID(grid), label, 12, 4, 4, 1);
 
   //--- create scrolling list things 
-  scroll_box_new( &boxOps, grid, &fill_ops, /* &select_op,  */	0, 8, 4, 24 );
-  scroll_box_new( &boxOuts, grid, &fill_outs, /* &select_out, */ 	4, 8, 4, 24 );
-  scroll_box_new( &boxIns, grid, &fill_ins, /* &select_in, */ 	8, 8, 4, 24 );
-  scroll_box_new( &boxParams, grid, &fill_params, /* &select_param, */ 12, 8, 4, 24 );
-  //  scroll_box_new( &boxPresets, grid, &fill_presets, &select_presets, 12, 8, 4, 24 );
+  scroll_box_new( &boxOps, grid, &fill_ops,		0, 8, 4, 24 );
+  scroll_box_new( &boxOuts, grid, &fill_outs, 		4, 8, 4, 24 );
+  scroll_box_new( &boxIns, grid, &fill_ins,  		8, 8, 4, 24 );
+  scroll_box_new( &boxParams, grid, &fill_params,	12, 8, 4, 24 );
+  /* TODO
+  scroll_box_new( &boxPresets, grid, &fill_presets, 	12, 8, 4, 24 );
+  */
+
+  // new op label
+  newOpLabel = gtk_label_new("    ");
+  gtk_grid_attach( GTK_GRID(grid), newOpLabel, 0, 32, 1, 1 );
 
   // new op menu
   opMenu = create_op_menu();
   wgt = gtk_menu_button_new();
   gtk_menu_button_set_popup( GTK_MENU_BUTTON(wgt), opMenu );
-  gtk_grid_attach( GTK_GRID(grid), wgt, 0, 32, 1, 1 );
+  gtk_grid_attach( GTK_GRID(grid), wgt, 1, 32, 1, 1 );
 
-  // new op label
   // create op button
+  wgt = gtk_button_new_with_label("CREATE");
+  g_signal_connect(wgt, "clicked", G_CALLBACK(create_op_but_callback), NULL);
+  gtk_grid_attach( GTK_GRID(grid), wgt, 2, 32, 1, 1 );
+  
   // delete op button
+  wgt = gtk_button_new_with_label("DELETE");
+  g_signal_connect(wgt, "clicked", G_CALLBACK(delete_op_but_callback), NULL);
+  gtk_grid_attach( GTK_GRID(grid), wgt, 3, 32, 1, 1 );
 
   // toggle-connect-to-input button
-       
-  // toggle-connect-to-preset button
+  
+  // toggle-connect-to-param button
 
-  // stor
+  // store-output-in-preset button
+
+  // store-input-in-preset button
+
 
   /// show everything
   gtk_widget_show_all(window);

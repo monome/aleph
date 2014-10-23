@@ -29,22 +29,28 @@ extern ScrollBox boxOps;
 extern ScrollBox boxParams;
 extern ScrollBox boxPresets;
 // new-op label
+extern GtkWidget* newOpLabel;
+// connect/disconect input button
+extern GtkWidget* connectInpuBut;
+// connect/disconnect param button
+extern GtkWidget* connectParamBut;
 
-
-
-// selected indexes
+// selections
 // negative == no selection
 extern int opSelect;
 extern int outSelect;
 extern int inSelect;
-
+extern int paramSelect;
+extern int presetSelect;
 extern op_id_t newOpSelect;
+
 //--------------------------------
 //---- functions
 // clear a scrollbox
 extern void scroll_box_clear( ScrollBox* scrollbox );
 
 
+/// need this later, maybe....
 /* // class for entry in inputs list */
 /* typedef struct _ItemIn {  */
 /*   // ListBoxRow container */

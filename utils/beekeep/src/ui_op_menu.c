@@ -4,7 +4,7 @@
 
 static void op_menu_select( GtkWidget* widget, gpointer data ) {
   op_id_t* pOpId = (op_id_t*)data;
-  ui_select_op(*pOpId);
+  ui_select_new_op(*pOpId);
   printf("\r\n op selection: %s", op_registry[*pOpId].name);
 }
 

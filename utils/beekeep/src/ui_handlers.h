@@ -27,14 +27,14 @@ extern void ui_import_json(const char* name);
 
 // create/destroy operator
 extern void ui_create_op(void);
-extern void ui_destroy_op(void);
+extern void ui_delete_op(void);
 
 //--- other
 
 // handle scene name
 extern void ui_scene_name(const char* txt);
 
-// handle new-op selection
-extern void ui_select_op(int id);
+// handle new-op-type selection
+extern void ui_select_new_op(int id);
 
 #endif
