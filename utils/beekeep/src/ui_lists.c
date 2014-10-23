@@ -111,6 +111,7 @@ void fill_outs(GtkListBox *list) {
       gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
       gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 1, 1);
     }
+    /// already added to grid layout
     //    gtk_container_add(GTK_CONTAINER(row), label);    
     gtk_container_add(GTK_CONTAINER(list), row);    
   }

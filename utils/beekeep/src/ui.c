@@ -96,8 +96,9 @@ void ui_init(void) {
   GtkWidget *grid;
   GtkWidget *label;
   GtkWidget *opMenu;
-  GtkWidget *wdg; // temp
-
+  GtkWidget *wgt; // temp
+  //  GtkWidget *child; // temp
+  
   //---  window
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (window), "bees editor");
@@ -113,10 +114,10 @@ void ui_init(void) {
   gtk_container_add(GTK_CONTAINER(window), grid);
 
   // scene name
-  wdg = gtk_entry_new();
-  gtk_entry_set_text( GTK_ENTRY(wdg), scene_get_name() );
-  gtk_grid_attach( GTK_GRID(grid), wdg, 0, 0, 4, 4 );
-  g_signal_connect( wdg, "activate", G_CALLBACK(scene_name_entry), NULL);
+  wgt = gtk_entry_new();
+  gtk_entry_set_text( GTK_ENTRY(wgt), scene_get_name() );
+  gtk_grid_attach( GTK_GRID(grid), wgt, 0, 0, 4, 4 );
+  g_signal_connect( wgt, "activate", G_CALLBACK(scene_name_entry), NULL);
 
   // export button
   
@@ -144,9 +145,9 @@ void ui_init(void) {
 
   // new op menu
   opMenu = create_op_menu();
-  wdg = gtk_menu_button_new();
-  gtk_menu_button_set_popup( GTK_MENU_BUTTON(wdg), opMenu );
-  gtk_grid_attach( GTK_GRID(grid), wdg, 0, 32, 1, 1 );
+  wgt = gtk_menu_button_new();
+  gtk_menu_button_set_popup( GTK_MENU_BUTTON(wgt), opMenu );
+  gtk_grid_attach( GTK_GRID(grid), wgt, 0, 32, 1, 1 );
 
   // new op label
   // create op button

@@ -50,11 +50,23 @@ extern void ui_select_param(int id) {
 extern void ui_select_preset(int id) {
 }
 
+extern void ui_out_preset(int id) {
+}
+
+extern void ui_in_preset(int id) {
+}
+
 extern void ui_in_value(int id) {
+}
+
+extern void ui_param_preset(int id) {
 }
 
 extern void ui_param_value(int id) {
 }
 
-extern void ui_in_button(int id) {
+extern void ui_create_op(void) {
+}
+
+extern void ui_delete_op(void) {
 }

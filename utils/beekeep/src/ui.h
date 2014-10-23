@@ -27,6 +27,10 @@ extern ScrollBox boxOuts;
 extern ScrollBox boxIns;
 extern ScrollBox boxOps;
 extern ScrollBox boxParams;
+extern ScrollBox boxPresets;
+// new-op label
+
+
 
 // selected indexes
 // negative == no selection
