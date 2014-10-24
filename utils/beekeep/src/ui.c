@@ -102,11 +102,11 @@ static void delete_op_but_callback( GtkWidget* but, gpointer data) {
 }
 
 static void connect_in_but_callback( GtkWidget* but, gpointer data) {
-  ui_connect_in(inSelect);
+  ui_connect_in();
 }
 
 static void connect_param_but_callback( GtkWidget* but, gpointer data) {
-  ui_connect_param(paramSelect);
+  ui_connect_param();
 }
 
 //------------------------
@@ -124,8 +124,11 @@ void ui_init(void) {
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (window), "bees editor");
   //  gtk_window_set_default_size(GTK_WINDOW(window), 300, 400);
-  /// need this?
+  //////////////////
+  /// FIXME: need to set a delete handler and do some cleanup.
+  /// as it stands, getting core dump from null pointers on window close.
   //  g_signal_connect (window, "delete-event", G_CALLBACK (delete_handler), NULL);
+  ///////////////////////
   g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 
   // grid layout
@@ -194,12 +197,14 @@ void ui_init(void) {
   gtk_grid_attach( GTK_GRID(grid), wgt, 3, 32, 1, 1 );
 
   // toggle-connect-to-input button
+  //  connectInputBut = gtk_toggle_button_new_with_label("CONNECT");
   connectInputBut = gtk_button_new_with_label("CONNECT");
   g_signal_connect(connectInputBut, "clicked", 
 		   G_CALLBACK(connect_in_but_callback), NULL);
-  gtk_grid_attach( GTK_GRID(grid), connectInputBut, 12, 32, 1, 1 );
+  gtk_grid_attach( GTK_GRID(grid), connectInputBut, 8, 32, 1, 1 );
   
   // toggle-connect-to-param button
+  //  connectParamBut = gtk_toggle_button_new_with_label("CONNECT");
   connectParamBut = gtk_button_new_with_label("CONNECT");
   g_signal_connect(connectParamBut, "clicked", 
 		   G_CALLBACK(connect_param_but_callback), NULL);
@@ -212,4 +217,24 @@ void ui_init(void) {
 
   /// show everything
   gtk_widget_show_all(window);
+}
+
+
+void refresh_connect_input_but(void) {
+#if 0
+  gboolean c = (net_get_target(outSelect) == inSelect);
+  // ah... this triggers the button's action... crud
+  /// for now, just making these regular buttons.
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(connectInputBut), c);
+  gtk_widget_show(connectInputBut);
+#endif
+}
+
+
+void refresh_connect_param_but(void) {
+#if 0
+  gboolean c = (net_get_target(outSelect) == (paramSelect + net->numIns));
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(connectParamBut), c);
+  gtk_widget_show(connectParamBut);
+#endif
 }

@@ -15,7 +15,8 @@ extern void fill_params(GtkListBox *box);
 // extern void fill_presets(GtkListBox *box); 
 
 // refresh entries
-extern void refresh_row_ops(int id);
+// nothing to do?
+//extern void refresh_row_ops(int id);
 extern void refresh_row_outs(int id);
 extern void refresh_row_ins(int id);
 extern void refresh_row_params(int id);

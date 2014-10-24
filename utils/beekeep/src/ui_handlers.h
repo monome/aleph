@@ -11,17 +11,19 @@ extern void ui_select_param(int id);
 extern void ui_select_preset(int id);
 
 //--- value handlers
+/* TODO
 extern void ui_in_value(int id);
 extern void ui_param_value(int id);
+*/
 
 //--- button handlers
 // connections (toggle)
-extern void ui_connect_in(int id);
-extern void ui_connect_param(int id);
+extern void ui_connect_in(void);
+extern void ui_connect_param(void);
 
 // preset inclusion (toggle)
-extern void ui_preset_in(int id);
-extern void ui_preset_out(int id);
+extern void ui_preset_in(void);
+extern void ui_preset_out(void);
 
 // export/load
 extern void ui_export_scn(const char* name);

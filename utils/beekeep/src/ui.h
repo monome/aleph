@@ -46,47 +46,13 @@ extern op_id_t newOpSelect;
 
 //--------------------------------
 //---- functions
+
 // clear a scrollbox
 extern void scroll_box_clear( ScrollBox* scrollbox );
 
-
-/// need this later, maybe...?
-/* // class for entry in inputs list */
-/* typedef struct _ItemIn {  */
-/*   // ListBoxRow container */
-/*   GtkWidget *row; */
-/*   // text labell */
-/*   GtkWidget *label; */
-/*   // button for preset invlusion */
-/*   GtkWidget *button; */
-/* } ItemIn; */
-
-
-/* // class for entry in outputs list */
-/* typedef struct _ItemOut {  */
-/*   // ListBoxRow container */
-/*   GtkWidget *row; */
-/*   // text labell */
-/*   GtkWidget *label; */
-/*   // button for preset invlusion */
-/*   GtkWidget *button; */
-/* } ItemOut; */
-
-/* // class for entry in ops list */
-/* typedef struct _ItemOp {  */
-/*   // top-level ListBoxRow container */
-/*   GtkWidget *row; */
-/*   // text label */
-/*   GtkWidget *label; */
-/*   // button for preset inclusion */
-/*   GtkWidget *button; */
-/* } ItemOp; */
-
-
-// methods
-/* extern itemOut* input_item_new	 ( GtkContainer* parent ); */
-/* extern itemIn*  output_item_new ( GtkContainer* parent ); */
-/* extern itemOp* 	 op_item_new	 ( GtkContainer* parent ); */
+// refresh toggle buttons
+extern void refresh_connect_input_but(void);
+extern void refresh_connect_param_but(void);
 
 // intialize
 extern void ui_init(void);
