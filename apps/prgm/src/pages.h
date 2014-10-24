@@ -32,8 +32,9 @@ typedef enum {
 
 // top-level state
 typedef enum {
-    ePagePrgm,
-    ePageTracker,
+    ePageLevel,
+    ePageEnv
+//    ePagePattern,
 } ePage;
 
 // function pointers for input handling on a given page
@@ -58,8 +59,9 @@ typedef struct page_struct {
     s8 encSens[4];
 } page_t;
 
-extern void render_prgm(void);
-extern void render_tracker(void);
+extern void render_level(void);
+extern void render_env(void);
+//extern void render_pattern(void);
 
 //-----------------------
 //--- extern variables
@@ -78,12 +80,14 @@ extern u8 altMode;
 
 //external functions
 //page select
-extern void select_prgm(void);
-extern void select_tracker(void);
+extern void select_level(void);
+extern void select_env(void);
+//extern void select_pattern(void);
 
 //page redraw
-extern void redraw_prgm(void);
-extern void redraw_tracker(void);
+extern void redraw_level(void);
+extern void redraw_env(void);
+//extern void redraw_pattern(void);
 
 //----- public functions
 // init all pages
@@ -96,7 +100,5 @@ extern void pages_reselect(void);
 extern void set_page(ePage n);
 // check key against last pressed
 extern u8 check_key(u8 key);
-// toggle play mode
-//extern u8 pages_toggle_play(void);
 
 #endif  // h guard

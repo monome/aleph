@@ -1,20 +1,15 @@
-tracker/prgm 0.1.7 info
-
-oscillators 1-4 are sent to outputs 1-4, note that 3 and 4 are direct out, watch out for high levels!
+tracker/prgm 0.1.8 info
 
 input parameters
-osc_f           scaled pitch
-osc_t           transposed pitch
-osc_wf          waveform
-sync_trig       sync trig
-osc_trip        sync trip point
-(osc_amp         amp)
-cv_f            scaled cv
-cv_t            transposed cv
+cv_f            cv free
+cv_t            cv transposed
+curve_time      envelope duration
+curve           envelope shape/algorithm
+curve_dest      envelope destination value
+curve_trig      envelope trig
 
-note!
-osc pitch = osc_f * osc_t
-cv pitch = cv_f * cv_t
+note! envelope source value is cv_f * cv_t
+
 
 
 sound examples @ https://soundcloud.com/epla

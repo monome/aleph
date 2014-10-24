@@ -12,47 +12,35 @@
 //prgm parameters
 
 typedef enum params {
-    eParamFreq0,
-    eParamFreq1,
-    eParamFreq2,
-    eParamFreq3,
+    eParamFree0,
+    eParamFree1,
+    eParamFree2,
+    eParamFree3,
     
-    eParamTranspose0,
-    eParamTranspose1,
-    eParamTranspose2,
-    eParamTranspose3,
-        
-    eParamTab0,
-    eParamTab1,
-    eParamTab2,
-    eParamTab3,
+    eParamTransposed0,
+    eParamTransposed1,
+    eParamTransposed2,
+    eParamTransposed3,
     
-    eParamWave0,
-    eParamWave1,
-    eParamWave2,
-    eParamWave3,
+    eParamCurveTime0,
+    eParamCurveTime1,
+    eParamCurveTime2,
+    eParamCurveTime3,
     
-    eParamSyncTrig,
+    eParamCurve0,
+    eParamCurve1,
+    eParamCurve2,
+    eParamCurve3,
     
-    eParamTripPoint0,
-    eParamTripPoint1,
-    eParamTripPoint2,
-    eParamTripPoint3,
+    eParamCurveDest0,
+    eParamCurveDest1,
+    eParamCurveDest2,
+    eParamCurveDest3,
     
-    eParamAmp0,
-    eParamAmp1,
-    eParamAmp2,
-    eParamAmp3,
-    
-    eParamCVfreq0,
-    eParamCVfreq1,
-    eParamCVfreq2,
-    eParamCVfreq3,
-    
-    eParamCVtranspose0,
-    eParamCVtranspose1,
-    eParamCVtranspose2,
-    eParamCVtranspose3,
+    eParamCurveTrig0,
+    eParamCurveTrig1,
+    eParamCurveTrig2,
+    eParamCurveTrig3,
     
     eParamNumParams
 } eParam;

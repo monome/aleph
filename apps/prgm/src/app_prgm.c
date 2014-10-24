@@ -22,16 +22,11 @@
 #include "encoders.h"
 #include "scale.h" //scale_init
 
-
 //hardware init, all memory allocations go here
 void app_init(void) {
-    wavefiles_init();
-    
     scale_init();
 
     render_init(); //includes tracker_init()
-
-    wavebuffer_init();
 }
 
 //dsp init
@@ -49,9 +44,6 @@ if(firstrun) {
 
     bfin_wait_ready();
 }
-    
-//    ctl_report_parameters();
-
     pages_init();
     
     bfin_enable();

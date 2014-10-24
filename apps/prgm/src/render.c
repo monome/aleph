@@ -18,10 +18,12 @@
 
 //prgm
 #include "pages.h"
+#include "page_level.h"
+#include "page_env.h"
+
 #include "render.h" //includes region.h
+//#include "handler.h"
 #include "util.h"
-#include "prgm.h"
-#include "tracker.h"
 #include "scale.h"
 
 //regions
@@ -29,55 +31,73 @@ static region bootScrollRegion = {.w = 128, .h = 64, .x = 0, .y = 0};
 
 static scroll bootScroll;
 
-static const u8 numRegions = 4;
-static const u8 numRegions_t = 6;
+static const u8 numRegions_lvl = 6;
+static const u8 numRegions_env = 4;
+//static const u8 numRegions_pat = 4;
 
-static region prgm[4] = {
+static region level[6] = {
+    {.w=64, .h=24, .x = 0, .y = 0},
+    {.w=64, .h=24, .x = 64, .y = 0},
+    {.w=64, .h=24, .x = 0, .y = 24},
+    {.w=64, .h=24, .x = 64, .y = 24},
+    {.w=64, .h=16, .x = 0, .y = 48},
+    {.w=64, .h=16, .x = 64, .y = 48}
+};
+
+static region *levelRegions[] = {
+    &(level[0]),
+    &(level[1]),
+    &(level[2]),
+    &(level[3]),
+    &(level[4]),
+    &(level[5]),
+};
+
+static region env[4] = {
     {.w=64, .h=32, .x = 0, .y = 0},
     {.w=64, .h=32, .x = 64, .y = 0},
     {.w=64, .h=32, .x = 0, .y = 32},
     {.w=64, .h=32, .x = 64, .y = 32}
 };
 
-static region *prgmRegions[] = {
-    &(prgm[0]),
-    &(prgm[1]),
-    &(prgm[2]),
-    &(prgm[3]),
+static region *envRegions[] = {
+    &(env[0]),
+    &(env[1]),
+    &(env[2]),
+    &(env[3]),
+};
+/*
+static region pattern[4] = {
+    {.w=64, .h=32, .x = 0, .y = 0},
+    {.w=64, .h=32, .x = 64, .y = 0},
+    {.w=64, .h=32, .x = 0, .y = 32},
+    {.w=64, .h=32, .x = 64, .y = 32}
 };
 
-static region tracker[6] = {
-    {.w=64, .h=24, .x = 0, .y = 0},
-    {.w=64, .h=24, .x = 64, .y = 0},
-    {.w=64, .h=24, .x = 0, .y = 24},
-    {.w=64, .h=24, .x = 64, .y = 24},
-    {.w=64, .h=8, .x = 0, .y = 48},
-    {.w=64, .h=8, .x = 64, .y = 48}
+static region *patternRegions[] = {
+    &(pattern[0]),
+    &(pattern[1]),
+    &(pattern[2]),
+    &(pattern[3]),
 };
-
-static region *trackerRegions[] = {
-    &(tracker[0]),
-    &(tracker[1]),
-    &(tracker[2]),
-    &(tracker[3]),
-    &(tracker[4]),
-    &(tracker[5]),
-};
-
+*/
 //initialization, called by app_init()
 void render_init(void) {
     region_alloc((region*)(&bootScrollRegion)); //BOOT: declared in region.h, calls mem_alloc() declared in memory.h
     scroll_init(&bootScroll, &bootScrollRegion); //BOOT
 
     u32 i;
-    for(i = 0; i<numRegions; i++) {
-        region_alloc((region*)(prgmRegions[i]));
-    }    
-
-    for(i = 0; i<numRegions_t; i++) {
-        region_alloc((region*)(trackerRegions[i]));
-    }    
-    
+    for(i = 0; i<numRegions_lvl; i++) {
+        region_alloc((region*)(levelRegions[i]));
+    }
+    for(i = 0; i<numRegions_env; i++) {
+        region_alloc((region*)(envRegions[i]));
+    }
+/*
+    for(i = 0; i<numRegions_pat; i++) {
+        region_alloc((region*)(patternRegions[i]));
+    }
+*/
     tracker_init();
 }
 
@@ -87,52 +107,47 @@ void render_boot(const char* str) {
 
 void render_startup (void) {
     screen_clear();
-    set_page(ePageTracker);
+    set_page(ePageLevel);
     
-    Transpose0tmp = Transpose1tmp = Transpose2tmp = Transpose3tmp = RATIO_VAL_INIT;
-    Transpose0 = transpose_lookup(Transpose0tmp) * 0x00010000;
-    Transpose1 = transpose_lookup(Transpose1tmp) * 0x00010000;
-    Transpose2 = transpose_lookup(Transpose2tmp) * 0x00010000;
-    Transpose3 = transpose_lookup(Transpose3tmp) * 0x00010000;
+    Transposed0tmp = Transposed1tmp = Transposed2tmp = Transposed3tmp = TRANSPOSED_VAL_INIT;
+    Transposed0 = transpose_lookup(Transposed0tmp) * 0x00010000;
+    Transposed1 = transpose_lookup(Transposed1tmp) * 0x00010000;
+    Transposed2 = transpose_lookup(Transposed2tmp) * 0x00010000;
+    Transposed3 = transpose_lookup(Transposed3tmp) * 0x00010000;
 
-    Freq0tmp = Freq1tmp = Freq2tmp = Freq3tmp = FREQ_VAL_INIT;
-    Freq0 = note_lookup(Freq0tmp) * 0x00010000;
-    Freq1 = note_lookup(Freq1tmp) * 0x00010000;
-    Freq2 = note_lookup(Freq2tmp) * 0x00010000;
-    Freq3 = note_lookup(Freq3tmp) * 0x00010000;
+    Free0 = Free1 = Free2 = Free3 = INIT_F;
         
-    print_fix16(renderFreq0, fix16_mul(Freq0, Transpose0));
-    print_fix16(renderFreq1, fix16_mul(Freq1, Transpose1));
-    print_fix16(renderFreq2, fix16_mul(Freq2, Transpose2));
-    print_fix16(renderFreq3, fix16_mul(Freq3, Transpose3));
+    print_fix16(renderFree0, fix16_mul(Free0, Transposed0));
+    print_fix16(renderFree1, fix16_mul(Free1, Transposed1));
+    print_fix16(renderFree2, fix16_mul(Free2, Transposed2));
+    print_fix16(renderFree3, fix16_mul(Free3, Transposed3));
 
-    print_fix16(renderTranspose0, Transpose0);
-    print_fix16(renderTranspose1, Transpose1);
-    print_fix16(renderTranspose2, Transpose2);
-    print_fix16(renderTranspose3, Transpose3);
+    print_fix16(renderTransposed0, Transposed0);
+    print_fix16(renderTransposed1, Transposed1);
+    print_fix16(renderTransposed2, Transposed2);
+    print_fix16(renderTransposed3, Transposed3);
 
     print_fix16(renderCounter, 1 * 0x00010000);
-    print_fix16(renderCounter_t, 1 * 0x00010000);
     
-    render_tracker();
+    render_level();
     
-    Wave0 = Wave1 = Wave2 = Wave3 = 0;
-    print_fix16(renderWave0, Wave0);
-    print_fix16(renderWave1, Wave1);
-    print_fix16(renderWave2, Wave2);
-    print_fix16(renderWave3, Wave3);
+    Time0 = Time1 = Time2 = Time3 = 0;
+    print_fix16(renderTime0, Time0);
+    print_fix16(renderTime1, Time1);
+    print_fix16(renderTime2, Time2);
+    print_fix16(renderTime3, Time3);
+
+    Curve0 = Curve1 = Curve2 = Curve3 = 0;
+    print_fix16(renderCurve0, Curve0);
+    print_fix16(renderCurve1, Curve1);
+    print_fix16(renderCurve2, Curve2);
+    print_fix16(renderCurve3, Curve3);
     
-    Phase0 = Phase1 = Phase2 = Phase3 = 0;
-    print_fix16(renderPhase0, Phase0);
-    print_fix16(renderPhase1, Phase1);
-    print_fix16(renderPhase2, Phase2);
-    print_fix16(renderPhase3, Phase3);
-    
-    Blend0 = Blend1 = Blend2 = Blend3 = 0;
-    print_fix16(renderBlend0, Blend0);
-    print_fix16(renderBlend1, Blend1);
-    print_fix16(renderBlend2, Blend2);
-    print_fix16(renderBlend3, Blend3);
+    Destination0 = Destination1 = Destination2 = Destination3 = 0;
+    print_fix16(renderDest0, Destination0);
+    print_fix16(renderDest1, Destination1);
+    print_fix16(renderDest2, Destination2);
+    print_fix16(renderDest3, Destination3);
 }
 
 void render_update(void) {
@@ -145,110 +160,120 @@ void render_update(void) {
         scroll_draw(&bootScroll);
     }
     
-    for(i = 0; i<numRegions; i++) {
-        r = prgmRegions[i]; 
+    for(i = 0; i<numRegions_lvl; i++) {
+        r = levelRegions[i];
         if(r->dirty) {
             screen_draw_region(r->x, r->y, r->w, r->h, r->data);
             r->dirty = 0;
         }
     }
     
-    for(i = 0; i<numRegions_t; i++) {
-        r = trackerRegions[i]; 
+    for(i = 0; i<numRegions_env; i++) {
+        r = envRegions[i];
         if(r->dirty) {
             screen_draw_region(r->x, r->y, r->w, r->h, r->data);
             r->dirty = 0;
         }
     }
-
+/*
+    for(i = 0; i<numRegions_pat; i++) {
+        r = patternRegions[i];
+        if(r->dirty) {
+            screen_draw_region(r->x, r->y, r->w, r->h, r->data);
+            r->dirty = 0;
+        }
+    }
+*/
     app_resume();
 }
 
-//draw prgm page
-void render_prgm(void) {
+//draw level page
+void render_level(void) {
     u8 i;
-    for(i = 0; i<numRegions; i++) {
-        region_fill(&prgm[i], 0x0);
+    for(i = 0; i<numRegions_lvl; i++) {
+        region_fill(&level[i], 0x0);
     }
     /* region, string, offset x, offset y, color a, color b, size */
-    region_string(&prgm[0], renderWave0, 0, 0, 0xf, 0, 0);
-    region_string(&prgm[1], renderWave1, 0, 0, 0xf, 0, 0);
-    region_string(&prgm[2], renderWave2, 0, 0, 0xf, 0, 0);
-    region_string(&prgm[3], renderWave3, 0, 0, 0xf, 0, 0);
-
-    region_string(&prgm[0], renderPhase0, 0, 8, 0xf, 0, 0);
-    region_string(&prgm[1], renderPhase1, 0, 8, 0xf, 0, 0);
-    region_string(&prgm[2], renderPhase2, 0, 8, 0xf, 0, 0);
-    region_string(&prgm[3], renderPhase3, 0, 8, 0xf, 0, 0);
+    region_string(&level[0], renderFree0, 0, 0, 0xf, 0, 0);
+    region_string(&level[1], renderFree1, 0, 0, 0xf, 0, 0);
+    region_string(&level[2], renderFree2, 0, 0, 0xf, 0, 0);
+    region_string(&level[3], renderFree3, 0, 0, 0xf, 0, 0);
     
-    region_string(&prgm[0], renderBlend0, 0, 16, 0xf, 0, 0);
-    region_string(&prgm[1], renderBlend1, 0, 16, 0xf, 0, 0);
-    region_string(&prgm[2], renderBlend2, 0, 16, 0xf, 0, 0);
-    region_string(&prgm[3], renderBlend3, 0, 16, 0xf, 0, 0);    
+    region_string(&level[0], renderTransposed0, 0, 8, 0xf, 0, 0);
+    region_string(&level[1], renderTransposed1, 0, 8, 0xf, 0, 0);
+    region_string(&level[2], renderTransposed2, 0, 8, 0xf, 0, 0);
+    region_string(&level[3], renderTransposed3, 0, 8, 0xf, 0, 0);
+
+    region_string(&level[4], renderCounter, 0, 0, 0xf, 0, 0);
 }
 
-void render_wave(void) {
-    region_string(&prgm[0], renderWave0, 0, 0, 0xf, 0, 0);
-    region_string(&prgm[1], renderWave1, 0, 0, 0xf, 0, 0);
-    region_string(&prgm[2], renderWave2, 0, 0, 0xf, 0, 0);
-    region_string(&prgm[3], renderWave3, 0, 0, 0xf, 0, 0);
+void render_free(void) {
+    region_string(&level[0], renderFree0, 0, 0, 0xf, 0, 0);
+    region_string(&level[1], renderFree1, 0, 0, 0xf, 0, 0);
+    region_string(&level[2], renderFree2, 0, 0, 0xf, 0, 0);
+    region_string(&level[3], renderFree3, 0, 0, 0xf, 0, 0);
 }
 
-void render_phase(void) {
-    region_string(&prgm[0], renderPhase0, 0, 8, 0xf, 0, 0);
-    region_string(&prgm[1], renderPhase1, 0, 8, 0xf, 0, 0);
-    region_string(&prgm[2], renderPhase2, 0, 8, 0xf, 0, 0);
-    region_string(&prgm[3], renderPhase3, 0, 8, 0xf, 0, 0);
-}
-
-void render_blend(void) {
-    region_string(&prgm[0], renderBlend0, 0, 16, 0xf, 0, 0);
-    region_string(&prgm[1], renderBlend1, 0, 16, 0xf, 0, 0);
-    region_string(&prgm[2], renderBlend2, 0, 16, 0xf, 0, 0);
-    region_string(&prgm[3], renderBlend3, 0, 16, 0xf, 0, 0);
-}
-
-//draw tracker page
-void render_tracker(void) {
-    u8 i;
-    for(i = 0; i<numRegions_t; i++) {
-        region_fill(&tracker[i], 0x0);
-    }
-
-    region_string(&tracker[0], renderFreq0, 0, 0, 0xf, 0, 0);
-    region_string(&tracker[1], renderFreq1, 0, 0, 0xf, 0, 0);
-    region_string(&tracker[2], renderFreq2, 0, 0, 0xf, 0, 0);
-    region_string(&tracker[3], renderFreq3, 0, 0, 0xf, 0, 0);
+void render_transposed(void) {
+    region_string(&level[0], renderFree0, 0, 0, 0xf, 0, 0);
+    region_string(&level[1], renderFree1, 0, 0, 0xf, 0, 0);
+    region_string(&level[2], renderFree2, 0, 0, 0xf, 0, 0);
+    region_string(&level[3], renderFree3, 0, 0, 0xf, 0, 0);
     
-    region_string(&tracker[0], renderTranspose0, 0, 8, 0xf, 0, 0);
-    region_string(&tracker[1], renderTranspose1, 0, 8, 0xf, 0, 0);
-    region_string(&tracker[2], renderTranspose2, 0, 8, 0xf, 0, 0);
-    region_string(&tracker[3], renderTranspose3, 0, 8, 0xf, 0, 0);
-
-    region_string(&tracker[4], renderCounter, 0, 0, 0xf, 0, 0);
-    region_string(&tracker[5], renderCounter_t, 0, 0, 0xf, 0, 0);
-}
-
-void render_freq(void) {
-    region_string(&tracker[0], renderFreq0, 0, 0, 0xf, 0, 0);
-    region_string(&tracker[1], renderFreq1, 0, 0, 0xf, 0, 0);
-    region_string(&tracker[2], renderFreq2, 0, 0, 0xf, 0, 0);
-    region_string(&tracker[3], renderFreq3, 0, 0, 0xf, 0, 0);    
-}
-
-void render_transpose(void) {
-    region_string(&tracker[0], renderFreq0, 0, 0, 0xf, 0, 0);
-    region_string(&tracker[1], renderFreq1, 0, 0, 0xf, 0, 0);
-    region_string(&tracker[2], renderFreq2, 0, 0, 0xf, 0, 0);
-    region_string(&tracker[3], renderFreq3, 0, 0, 0xf, 0, 0);
-    
-    region_string(&tracker[0], renderTranspose0, 0, 8, 0xf, 0, 0);
-    region_string(&tracker[1], renderTranspose1, 0, 8, 0xf, 0, 0);
-    region_string(&tracker[2], renderTranspose2, 0, 8, 0xf, 0, 0);
-    region_string(&tracker[3], renderTranspose3, 0, 8, 0xf, 0, 0);
+    region_string(&level[0], renderTransposed0, 0, 8, 0xf, 0, 0);
+    region_string(&level[1], renderTransposed1, 0, 8, 0xf, 0, 0);
+    region_string(&level[2], renderTransposed2, 0, 8, 0xf, 0, 0);
+    region_string(&level[3], renderTransposed3, 0, 8, 0xf, 0, 0);
 }
 
 void render_counters(void) {
-    region_string(&tracker[4], renderCounter, 0, 0, 0xf, 0, 0);
-    region_string(&tracker[5], renderCounter_t, 0, 0, 0xf, 0, 0);
+    region_string(&level[4], renderCounter, 0, 0, 0xf, 0, 0);
+}
+
+//draw env page
+void render_env(void) {
+    u8 i;
+    for(i = 0; i<numRegions_env; i++) {
+        region_fill(&env[i], 0x0);
+    }
+    region_string(&env[0], renderTime0, 0, 0, 0xf, 0, 0);
+    region_string(&env[1], renderTime1, 0, 0, 0xf, 0, 0);
+    region_string(&env[2], renderTime2, 0, 0, 0xf, 0, 0);
+    region_string(&env[3], renderTime3, 0, 0, 0xf, 0, 0);
+    
+    region_string(&env[0], renderCurve0, 0, 8, 0xf, 0, 0);
+    region_string(&env[1], renderCurve1, 0, 8, 0xf, 0, 0);
+    region_string(&env[2], renderCurve2, 0, 8, 0xf, 0, 0);
+    region_string(&env[3], renderCurve3, 0, 8, 0xf, 0, 0);
+    
+    region_string(&env[0], renderDest0, 0, 16, 0xf, 0, 0);
+    region_string(&env[1], renderDest1, 0, 16, 0xf, 0, 0);
+    region_string(&env[2], renderDest2, 0, 16, 0xf, 0, 0);
+    region_string(&env[3], renderDest3, 0, 16, 0xf, 0, 0);
+    
+    region_string(&env[0], renderFree0, 0, 24, 0x7, 0, 0);
+    region_string(&env[1], renderFree1, 0, 24, 0x7, 0, 0);
+    region_string(&env[2], renderFree2, 0, 24, 0x7, 0, 0);
+    region_string(&env[3], renderFree3, 0, 24, 0x7, 0, 0);
+}
+
+void render_time(void) {
+    region_string(&env[0], renderTime0, 0, 0, 0xf, 0, 0);
+    region_string(&env[1], renderTime1, 0, 0, 0xf, 0, 0);
+    region_string(&env[2], renderTime2, 0, 0, 0xf, 0, 0);
+    region_string(&env[3], renderTime3, 0, 0, 0xf, 0, 0);
+}
+
+void render_curve(void) {
+    region_string(&env[0], renderCurve0, 0, 8, 0xf, 0, 0);
+    region_string(&env[1], renderCurve1, 0, 8, 0xf, 0, 0);
+    region_string(&env[2], renderCurve2, 0, 8, 0xf, 0, 0);
+    region_string(&env[3], renderCurve3, 0, 8, 0xf, 0, 0);
+}
+
+void render_dest(void) {
+    region_string(&env[0], renderDest0, 0, 16, 0xf, 0, 0);
+    region_string(&env[1], renderDest1, 0, 16, 0xf, 0, 0);
+    region_string(&env[2], renderDest2, 0, 16, 0xf, 0, 0);
+    region_string(&env[3], renderDest3, 0, 16, 0xf, 0, 0);
 }

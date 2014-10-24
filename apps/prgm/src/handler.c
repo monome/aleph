@@ -9,6 +9,7 @@
 // avr32
 #include "bfin.h"
 #include "control.h"
+#include "ctl.h"
 
 #include "app.h"
 #include "app_timers.h"
@@ -17,55 +18,26 @@
 //prgm
 #include "handler.h"
 #include "render.h"
-#include "ctl.h"
 
-
-//static functions
-//static void handle_AppCustom(s32 data) {
-//    seq_advance();
-//}
-
-//static functions
+//static function declarations
 static void handle_Adc0(s32 data);
-static void handle_switch_6(s32 data);
-static void handle_switch_7(s32 data);
-
-void handle_Adc0(s32 data) {
-    if(data == 0)
-        state = OFF;
-    
-    else if(state == OFF) {
-        state = ON;
-        
-        ctl_param_change(eParamSyncTrig, 1);
-        ctl_param_change(eParamSyncTrig, 0);
-    }
-    
-    else if(state == ON)
-        ;
-}
-
-void handle_switch_6(s32 data) {
-    step_advance(data);
-}
-
-void handle_switch_7(s32 data) {
-    step_advance_t(data);
-}
 
 //external functions
-void adc_init() { //called by app_launch()
-    timers_set_adc(10);
+//init adc timers, called by app_launch()
+void adc_init(void) {
+    timers_set_adc(50);
+}
+
+//static functions
+static void handle_Adc0(s32 data) {
+//    step_advance();
 }
 
 void assign_prgm_event_handlers(void) {
-
-    app_event_handlers[ kEventAdc0 ] = &handle_Adc0 ; //sync trig
+    app_event_handlers[ kEventAdc0 ] = &handle_Adc0 ; //trig
 //    app_event_handlers[ kEventAdc1 ] = &handle_Adc1 ; //sequencer +1
 //    app_event_handlers[ kEventAdc2 ] = &handle_Adc2 ; //transpose +1
 //    app_event_handlers[ kEventAdc3 ] = &handle_Adc3 ;
 //    app_event_handlers[ kEventSwitch5 ]	= &handle_switch_5 ; //power switch
-    app_event_handlers[ kEventSwitch6 ] = &handle_switch_6 ; //sequence +1
-    app_event_handlers[ kEventSwitch7 ]	= &handle_switch_7 ; //transpose +1
-//    app_event_handlers[ kEventAppCustom ]	= &net_poll_handler ;
+//    app_event_handlers[ kEventSwitch6 ] = &handle_switch_6 ; //sequence +1
 }

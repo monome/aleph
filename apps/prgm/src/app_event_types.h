@@ -6,13 +6,14 @@
 
 #include "event_types.h"
 
-// application-sepecific event types
-
-/* typedef enum { */
-/*   // trigger advancement to the next sequencer stage */
-/*   kEventSeqNext = kNumSysEvents + 1, */
-/*   kNumAppEvents */
-  
-/* } eApptype; */
+//typedef enum {
+//    kEventAppCustom,
+//    kEventPrgm0,
+//    kEventPrgm1,
+//    kEventPrgm2,
+//    kEventPrgm3,
+    
+//    kNumAppEvents,
+//} eApptype;
 
 #endif

@@ -23,14 +23,22 @@
 
 // page structures - synchronize with ePage enum in pages.h
 page_t pages[NUM_PAGES] = {
-    { .name = "PRGM",
-        .select_fn = &select_prgm, // select function
+    
+    { .name = "LEVEL",
+        .select_fn = &select_level, // select function
         .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
     },
-    { .name = "TRACKER",
-        .select_fn = &select_tracker, // select function
-        .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
+    
+    { .name = "ENV",
+        .select_fn = &select_env, // select function
+        .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens
+    },
+/*
+    { .name = "PATTERN",
+        .select_fn = &select_pattern, // select function
+        .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens
     }
+*/
 };
 
 // pointer to current page
@@ -50,7 +58,7 @@ void pages_init(void) {
     print_dbg("\r\n pages init");
 
     print_dbg("\r\n set page PRGM");
-    pageIdx = ePagePrgm;
+    pageIdx = ePageLevel;
     set_page(pageIdx);
 }
 
@@ -65,17 +73,10 @@ void pages_reselect(void) {
 
 // set current page
 void set_page(ePage n) {
-//    u8 i;
     pageIdx = n;
     
     curPage = &(pages[pageIdx]);
     curPage->select_fn();
-/*
-    for(i=0; i<4; i++) {
-        set_enc_thresh(i, curPage->encSens[i]);
-    }
-*/
-    print_dbg("\r\n ...done setting page.");
 }
 
 u8 check_key(u8 key) {
