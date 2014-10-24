@@ -29,7 +29,7 @@ ScrollBox boxPresets;
 // new-op label
 GtkWidget* newOpLabel;
 // connect/disconect input button
-GtkWidget* connectInpuBut;
+GtkWidget* connectInputBut;
 // connect/disconnect param button
 GtkWidget* connectParamBut;
 // selections
@@ -101,6 +101,14 @@ static void delete_op_but_callback( GtkWidget* but, gpointer data) {
   ui_delete_op();
 }
 
+static void connect_in_but_callback( GtkWidget* but, gpointer data) {
+  ui_connect_in(inSelect);
+}
+
+static void connect_param_but_callback( GtkWidget* but, gpointer data) {
+  ui_connect_param(paramSelect);
+}
+
 //------------------------
 //---- init, build, connect
 void ui_init(void) {
@@ -126,10 +134,14 @@ void ui_init(void) {
   gtk_grid_set_row_spacing (GTK_GRID(grid), 2);
   gtk_container_add(GTK_CONTAINER(window), grid);
 
+  // scene name label
+  wgt = gtk_label_new("SCENE:");
+  gtk_grid_attach( GTK_GRID(grid), wgt, 0, 0, 1, 1 );
+
   // scene name
   wgt = gtk_entry_new();
   gtk_entry_set_text( GTK_ENTRY(wgt), scene_get_name() );
-  gtk_grid_attach( GTK_GRID(grid), wgt, 0, 0, 4, 4 );
+  gtk_grid_attach( GTK_GRID(grid), wgt, 1, 0, 4, 1 );
   g_signal_connect( wgt, "activate", G_CALLBACK(scene_name_entry_callback), NULL);
 
   // export .scn button
@@ -182,8 +194,16 @@ void ui_init(void) {
   gtk_grid_attach( GTK_GRID(grid), wgt, 3, 32, 1, 1 );
 
   // toggle-connect-to-input button
+  connectInputBut = gtk_button_new_with_label("CONNECT");
+  g_signal_connect(connectInputBut, "clicked", 
+		   G_CALLBACK(connect_in_but_callback), NULL);
+  gtk_grid_attach( GTK_GRID(grid), connectInputBut, 12, 32, 1, 1 );
   
   // toggle-connect-to-param button
+  connectParamBut = gtk_button_new_with_label("CONNECT");
+  g_signal_connect(connectParamBut, "clicked", 
+		   G_CALLBACK(connect_param_but_callback), NULL);
+  gtk_grid_attach( GTK_GRID(grid), connectParamBut, 12, 32, 1, 1 );
 
   // store-output-in-preset button
 

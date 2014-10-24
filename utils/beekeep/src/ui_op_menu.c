@@ -14,6 +14,11 @@ GtkWidget* create_op_menu(void) {
   GtkWidget* child;
   int i;
   op_id_t id;
+
+
+
+
+
   const char* name;
 
   menu = gtk_menu_new();

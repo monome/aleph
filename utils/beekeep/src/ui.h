@@ -31,7 +31,7 @@ extern ScrollBox boxPresets;
 // new-op label
 extern GtkWidget* newOpLabel;
 // connect/disconect input button
-extern GtkWidget* connectInpuBut;
+extern GtkWidget* connectInputBut;
 // connect/disconnect param button
 extern GtkWidget* connectParamBut;
 
@@ -50,7 +50,7 @@ extern op_id_t newOpSelect;
 extern void scroll_box_clear( ScrollBox* scrollbox );
 
 
-/// need this later, maybe....
+/// need this later, maybe...?
 /* // class for entry in inputs list */
 /* typedef struct _ItemIn {  */
 /*   // ListBoxRow container */

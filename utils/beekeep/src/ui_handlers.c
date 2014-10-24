@@ -6,8 +6,11 @@
 #include "ui_handlers.h"
 #include "ui_lists.h"
 
+//================================
+//==== selection handlers
+
 // select new opeator type
-extern void ui_select_new_op(int id) {
+ void ui_select_new_op(int id) {
   newOpSelect = (op_id_t)id;
   //  printf("\r\n selected operator type: %s", op_registry[newOpSelect].name);
   // update new-op label
@@ -15,13 +18,13 @@ extern void ui_select_new_op(int id) {
 }
 
 // select existing operator
-extern void ui_select_op(int id) {
+ void ui_select_op(int id) {
   opSelect = id;
   // ... select inputs/outputs? or wait for hotkey?
 }
 
 
-extern void ui_select_out(int id) {
+ void ui_select_out(int id) {
   // scroll to connected input, if exists
   GtkListBoxRow* row;
   GtkListBox* list;
@@ -50,62 +53,70 @@ extern void ui_select_out(int id) {
   }
 }
 
-extern void ui_select_in(int id) {
+ void ui_select_in(int id) {
   inSelect = id;
   //... ?
 }
 
-extern void ui_select_param(int id) {
+ void ui_select_param(int id) {
   paramSelect = id; 
   //... ?
 }
 
-extern void ui_select_preset(int id) {
+ void ui_select_preset(int id) {
   presetSelect = id;
   //... ?
 }
 
-extern void ui_out_preset(int id) {
+//==================================
+//==== editing handlers
+
+void ui_connect_in(int id) {
+}
+
+void ui_connect_param(int id) {
+}
+
+ void ui_preset_in(int id) {
   //...
 }
 
-extern void ui_in_preset(int id) {
+ void ui_preset_out(int id) {
   //...
 }
 
-extern void ui_in_value(int id) {
+ void ui_in_value(int id) {
   //...
 }
 
-extern void ui_param_preset(int id) {
+ void ui_param_preset(int id) {
   //...
 }
 
-extern void ui_param_value(int id) {
+ void ui_param_value(int id) {
   //...
 }
 
-extern void ui_create_op(void) {
+ void ui_create_op(void) {
   scroll_box_clear(&boxOps);
-  scroll_box_clear(&boxIns);
   scroll_box_clear(&boxOuts);
+  scroll_box_clear(&boxIns);
 
   net_add_op(newOpSelect);
 
-  fill_ops(boxOps.list);
-  fill_outs(boxOuts.list);
-  fill_ins(boxIns.list);
+  fill_ops(GTK_LIST_BOX(boxOps.list));
+  fill_outs(GTK_LIST_BOX(boxOuts.list));
+  fill_ins(GTK_LIST_BOX(boxIns.list));
 }
 
-extern void ui_delete_op(void) {
+ void ui_delete_op(void) {
   scroll_box_clear(&boxOps);
-  scroll_box_clear(&boxIns);
   scroll_box_clear(&boxOuts);
+  scroll_box_clear(&boxIns);
 
   net_pop_op();
 
-  fill_ops(boxOps.list);
-  fill_outs(boxOuts.list);
-  fill_ins(boxIns.list);
-
+  fill_ops(GTK_LIST_BOX(boxOps.list));
+  fill_outs(GTK_LIST_BOX(boxOuts.list));
+  fill_ins(GTK_LIST_BOX(boxIns.list));
 }
