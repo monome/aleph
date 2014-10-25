@@ -106,11 +106,11 @@ static void select_preset_callback( GtkListBox *box, gpointer data ) {
 }
 
 static void spin_in_callback( GtkSpinButton *but, gpointer data ) {
-  int id;
-  //  GtkListBoxRow* row;
-  //  row = gtk_list_box_get_selected_row(box);
-  //  id = gtk_list_box_row_get_index(row);
-  //  ui_select_preset(id);
+  //  int id = *((int*)data);
+  int val = gtk_spin_button_get_value_as_int(but);
+  //  printf("\r\n setting input node from spinbox; id: %d; val: 0x%08x", id, val);
+  printf("\r\n setting input node from spinbox; id: ???; val: 0x%08x", val);
+  //  net_activate(id, val, NULL);
 }
 
 
@@ -175,9 +175,10 @@ void fill_outs(GtkListBox *list) {
   n = net->numOuts;
 
   for(i=0; i<n; i++) {
-    snprintf(str, LABEL_BUF_SIZE, "%s.%d.%s", 
+    snprintf(str, LABEL_BUF_SIZE, "%d.%s.%s", 
+	     net_out_op_idx(i), 
 	     net_op_name(net_out_op_idx(i)),
-	     i, net_out_name(i) );
+	     net_out_name(i) );
 
     row = gtk_list_box_row_new();
     rowOuts[i].row = row;
@@ -230,9 +231,10 @@ void fill_ins(GtkListBox *list) {
   n = net->numIns;
 
   for(i=0; i<n; i++) {
-    snprintf(str, LABEL_BUF_SIZE, "%s.%d.%s", 
+    snprintf(str, LABEL_BUF_SIZE, "%d.%s.%s", 
+	     net_in_op_idx(i),
 	     net_op_name(net_in_op_idx(i)),
-	     i, net_in_name(i) );
+	     net_in_name(i) );
 
     row = gtk_list_box_row_new();
     grid = gtk_grid_new();

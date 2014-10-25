@@ -60,8 +60,8 @@ static void scroll_box_new( ScrollBox* scrollbox,
 				  GTK_POLICY_AUTOMATIC,
 				  GTK_POLICY_AUTOMATIC);
 
-  gtk_scrolled_window_set_min_content_height(GTK_SCROLLED_WINDOW(scroll), 666);
-  gtk_scrolled_window_set_min_content_width(GTK_SCROLLED_WINDOW(scroll), 255);
+  //  gtk_scrolled_window_set_min_content_height(GTK_SCROLLED_WINDOW(scroll), 666);
+  //  gtk_scrolled_window_set_min_content_width(GTK_SCROLLED_WINDOW(scroll), 255);
 
   gtk_grid_attach(GTK_GRID(parent), scroll, x, y, w, h);
 
@@ -149,8 +149,8 @@ void ui_init(void) {
 
   // grid layout
   grid = gtk_grid_new();
-  gtk_grid_set_column_spacing (GTK_GRID(grid), 2);
-  gtk_grid_set_row_spacing (GTK_GRID(grid), 2);
+  gtk_grid_set_column_spacing (GTK_GRID(grid), 40);
+  gtk_grid_set_row_spacing (GTK_GRID(grid), 20);
   gtk_container_add(GTK_CONTAINER(window), grid);
 
   // scene name label
@@ -186,22 +186,22 @@ void ui_init(void) {
 
   //  list labels
   label = gtk_label_new("OPERATORS");
-  gtk_grid_attach(GTK_GRID(grid), label, 0, 4, 4, 1);
+  gtk_grid_attach(GTK_GRID(grid), label, 0, 4, 2, 1);
   label = gtk_label_new("OUTPUTS");
-  gtk_grid_attach(GTK_GRID(grid), label, 4, 4, 4, 1);
+  gtk_grid_attach(GTK_GRID(grid), label, 2, 4, 4, 1);
   label = gtk_label_new("INPUTS");
-  gtk_grid_attach(GTK_GRID(grid), label, 8, 4, 4, 1);
+  gtk_grid_attach(GTK_GRID(grid), label, 6, 4, 4, 1);
   label = gtk_label_new("PARAMETERS");
-  gtk_grid_attach(GTK_GRID(grid), label, 12, 4, 4, 1);
+  gtk_grid_attach(GTK_GRID(grid), label, 10, 4, 4, 1);
   label = gtk_label_new("PRESETS");
-  gtk_grid_attach(GTK_GRID(grid), label, 16, 4, 4, 1);
+  gtk_grid_attach(GTK_GRID(grid), label, 14, 4, 4, 1);
 
   //--- create scrolling list things 
-  scroll_box_new( &boxOps, grid, &fill_ops,		0, 8, 4, 24 );
-  scroll_box_new( &boxOuts, grid, &fill_outs, 		4, 8, 4, 24 );
-  scroll_box_new( &boxIns, grid, &fill_ins,  		8, 8, 4, 24 );
-  scroll_box_new( &boxParams, grid, &fill_params,	12, 8, 4, 24 );
-  scroll_box_new( &boxPresets, grid, &fill_presets, 	16, 8, 4, 24 );
+  scroll_box_new( &boxOps, grid, &fill_ops,		0, 8, 2, 24 );
+  scroll_box_new( &boxOuts, grid, &fill_outs, 		2, 8, 4, 24 );
+  scroll_box_new( &boxIns, grid, &fill_ins,  		6, 8, 4, 24 );
+  scroll_box_new( &boxParams, grid, &fill_params,	10, 8, 4, 24 );
+  scroll_box_new( &boxPresets, grid, &fill_presets, 	14, 8, 4, 24 );
 
 
   // new op label
