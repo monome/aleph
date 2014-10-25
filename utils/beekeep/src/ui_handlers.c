@@ -64,8 +64,8 @@ static void refresh_in_row_for_target(int t) {
   printf("\r\n old target: %d", tLast);
   outSelect = id;
   t = net_get_target(id);
-  refresh_in_row_for_target(t);
   refresh_in_row_for_target(tLast);
+  refresh_in_row_for_target(t);
   refresh_connect_input_but();
   refresh_connect_param_but();
 }

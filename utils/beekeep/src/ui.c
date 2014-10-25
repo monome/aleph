@@ -190,19 +190,18 @@ void ui_init(void) {
   label = gtk_label_new("OUTPUTS");
   gtk_grid_attach(GTK_GRID(grid), label, 2, 4, 4, 1);
   label = gtk_label_new("INPUTS");
-  gtk_grid_attach(GTK_GRID(grid), label, 6, 4, 4, 1);
+  gtk_grid_attach(GTK_GRID(grid), label, 6, 4, 5, 1);
   label = gtk_label_new("PARAMETERS");
-  gtk_grid_attach(GTK_GRID(grid), label, 10, 4, 4, 1);
+  gtk_grid_attach(GTK_GRID(grid), label, 11, 4, 4, 1);
   label = gtk_label_new("PRESETS");
-  gtk_grid_attach(GTK_GRID(grid), label, 14, 4, 4, 1);
+  gtk_grid_attach(GTK_GRID(grid), label, 15, 4, 4, 1);
 
   //--- create scrolling list things 
   scroll_box_new( &boxOps, grid, &fill_ops,		0, 8, 2, 24 );
   scroll_box_new( &boxOuts, grid, &fill_outs, 		2, 8, 4, 24 );
-  scroll_box_new( &boxIns, grid, &fill_ins,  		6, 8, 4, 24 );
-  scroll_box_new( &boxParams, grid, &fill_params,	10, 8, 4, 24 );
-  scroll_box_new( &boxPresets, grid, &fill_presets, 	14, 8, 4, 24 );
-
+  scroll_box_new( &boxIns, grid, &fill_ins,  		6, 8, 5, 24 );
+  scroll_box_new( &boxParams, grid, &fill_params,	11, 8, 4, 24 );
+  scroll_box_new( &boxPresets, grid, &fill_presets, 	15, 8, 4, 24 );
 
   // new op label
   newOpLabel = gtk_label_new("    ");
@@ -229,14 +228,14 @@ void ui_init(void) {
     connectInputBut = gtk_button_new_with_label("CONNECT");
   g_signal_connect(connectInputBut, "clicked", 
 		   G_CALLBACK(connect_in_but_callback), NULL);
-  gtk_grid_attach( GTK_GRID(grid), connectInputBut, 8, 32, 1, 1 );
+  gtk_grid_attach( GTK_GRID(grid), connectInputBut, 6, 32, 1, 1 );
   
   // toggle-connect-to-param button
   //  connectParamBut = gtk_toggle_button_new_with_label("CONNECT");
   connectParamBut = gtk_button_new_with_label("CONNECT");
   g_signal_connect(connectParamBut, "clicked", 
 		   G_CALLBACK(connect_param_but_callback), NULL);
-  gtk_grid_attach( GTK_GRID(grid), connectParamBut, 12, 32, 1, 1 );
+  gtk_grid_attach( GTK_GRID(grid), connectParamBut, 10, 32, 1, 1 );
 
   // store-output-in-preset button
 

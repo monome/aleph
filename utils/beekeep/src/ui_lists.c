@@ -107,9 +107,10 @@ static void select_preset_callback( GtkListBox *box, gpointer data ) {
 
 static void spin_in_callback( GtkSpinButton *but, gpointer data ) {
   //  int id = *((int*)data);
+  int id = GPOINTER_TO_INT(data);
   int val = gtk_spin_button_get_value_as_int(but);
-  //  printf("\r\n setting input node from spinbox; id: %d; val: 0x%08x", id, val);
-  printf("\r\n setting input node from spinbox; id: ???; val: 0x%08x", val);
+  printf("\r\n setting input node from spinbox; id: %d; val: 0x%08x", id, val);
+  //  printf("\r\n setting input node from spinbox; id: ???; val: 0x%08x", val);
   //  net_activate(id, val, NULL);
 }
 
@@ -196,7 +197,7 @@ void fill_outs(GtkListBox *list) {
     t = net_get_target(i);
     label = gtk_label_new("");
     rowOuts[i].labelTarget = label;
-    gtk_label_set_max_width_chars(GTK_LABEL(label), 24);
+    gtk_label_set_max_width_chars(GTK_LABEL(label), 16);
     gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
     gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 1, 1);
 
@@ -259,7 +260,7 @@ void fill_ins(GtkListBox *list) {
     label = gtk_label_new(str);
     rowIns[i].labelName = label;
     gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
-    gtk_label_set_width_chars(GTK_LABEL(label), 16);
+    gtk_label_set_width_chars(GTK_LABEL(label), 18);
     gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 1, 1);
 
     // spinbutton for value entry

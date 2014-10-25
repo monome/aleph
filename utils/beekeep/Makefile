@@ -8,7 +8,7 @@ version = $(maj).$(min).$(rev)
 target = $(name)-$(version)
 
 #copy the approriate python version file here for your distro
-include beekeep_py.mk
+#include beekeep_py.mk
 
 # bees sources
 # fixme: move some of these to sim sources
