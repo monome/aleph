@@ -19,33 +19,18 @@
 #include "dot.h"
 #include "json.h"
 #include "ui.h"
-
-
-void scan_ext(char* filename, char* ext) {
-  int len;
-  int i;
-  int dotpos = -1;
-
-  len = strlen(filename);
-  // search for '.' backwards from end
-  i = len;
-  while(i > 0) {
-    --i;
-    if(filename[i] == '.') {
-      dotpos = i;
-      break;
-    }
-  }
-  if(dotpos >= 0) {
-    strncpy(ext, filename + dotpos, len - i + 1);
-  }
-}
+#include "ui_files.h"
 
 int main (int argc, char **argv)
 {
   char filename[32];
   char ext[16];
   void* fp;
+
+  if(argc < 2) {
+    printf("\r\n beekeep: filename argument required; exiting\r\n\r\n");
+    return 1;
+  }
 
   strcpy(filename, argv[1]);
   scan_ext(filename, ext);
@@ -63,13 +48,5 @@ int main (int argc, char **argv)
   gtk_init (&argc, &argv);
   ui_init();
   gtk_main ();
-
-  // try writing graphviz format
-  strip_ext(filename);
-  strcat(filename, ".gv");
-  fp = fopen(filename, "w");
-  net_write_dot(fp);
-  fclose(fp);
-
 }
 

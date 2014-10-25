@@ -1,13 +1,15 @@
 #include <stdio.h>
 
 #include "net_protected.h"
+#include "param.h"
 #include "dot.h"
 
 // write graphviz format to open filepointer
 void net_write_dot(void* fp) {
-  int i, j;
+  int i, j, k;
   int nId = 0; // node index
   int eId = 0; // edge index
+  int t; // target
 
   fprintf(fp,
 	  "digraph g { 				\r\n"
@@ -39,8 +41,8 @@ void net_write_dot(void* fp) {
       if(j < ((op->numInputs) - 1)) { 
 	fprintf(fp, " | ");
       }
-
     }
+
     if(op->numOutputs > 0) { 
       fprintf(fp, " | ");
     }
@@ -69,9 +71,15 @@ void net_write_dot(void* fp) {
   // make a node for each DSP param?
   // or one giant node with tons of records??
   /// or a subgraph?
+  /// try one node/param for starters
   for(i=0; i<net_num_params(); i++ ) {
-    
-    //    nId++;
+    fprintf(fp, "\r\n"
+	    "\"node%d\" [\r\n"
+	    " label = \"<f0> %d.%s \"\r\n"
+	    "shape = \"record\" \r\n ];",
+	    nId, i, get_param_name(i)
+	    );
+    nId++;
   }
 
   fprintf(fp, "\r\n");
@@ -79,19 +87,29 @@ void net_write_dot(void* fp) {
   fprintf(fp, "\r\n");
 
 
-    /// loop over outputs and draw connections...
+  /// loop over outputs and draw connections...
   for(i=0; i<net->numOuts; i++) {
-    if(net_get_target(i) > -1) {
-      //      if(
+    t = net_get_target(i); 
+    if( t > -1) {
+      if( t < net->numIns) {
+	///// op input..
+	// op index == node index
+	j = net_in_op_idx(t);
+	k = net->ins[t].opInIdx;
+	
+      } else {
+	//// param...
+	// param index == (node index - num ops)
+      }
     }
-      eId++;
+    eId++;
   }
 
 
   
-    /// presets... ??
+  /// presets...??
 
 
-    // close the graph
+  // close the graph
   fprintf(fp, "\r\n}");
-  }
+}

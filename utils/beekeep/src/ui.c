@@ -12,6 +12,7 @@
 
 // beekeep
 #include "ui.h"
+#include "ui_files.h"
 #include "ui_handlers.h"
 #include "ui_lists.h"
 #include "ui_op_menu.h"
@@ -109,6 +110,21 @@ static void connect_param_but_callback( GtkWidget* but, gpointer data) {
   ui_connect_param();
 }
 
+static void write_scn_but_callback( GtkWidget* but, gpointer data) {
+  write_scn();
+}
+
+static void write_json_but_callback( GtkWidget* but, gpointer data) {
+  write_json();
+}
+
+/* not really useful yet
+static void write_gv_but_callback( GtkWidget* but, gpointer data) {
+  write_gv();
+}
+*/
+
+
 //------------------------
 //---- init, build, connect
 void ui_init(void) {
@@ -148,11 +164,22 @@ void ui_init(void) {
   g_signal_connect( wgt, "activate", G_CALLBACK(scene_name_entry_callback), NULL);
 
   // export .scn button
+  wgt = gtk_button_new_with_label("write .scn");
+  gtk_grid_attach( GTK_GRID(grid), wgt, 5, 0, 1, 1 );
+  g_signal_connect( wgt, "clicked", G_CALLBACK(write_scn_but_callback), NULL);
 
   // export .json button
+  wgt = gtk_button_new_with_label("write .json");
+  gtk_grid_attach( GTK_GRID(grid), wgt, 6, 0, 1, 1 );
+  g_signal_connect( wgt, "clicked", G_CALLBACK(write_json_but_callback), NULL);
 
   // export .gv button
-  
+  /* not really useful yet
+  wgt = gtk_button_new_with_label("write .gv");
+  gtk_grid_attach( GTK_GRID(grid), wgt, 7, 0, 1, 1 );
+  g_signal_connect( wgt, "clicked", G_CALLBACK(write_gv_but_callback), NULL);
+  */
+
   // clear button
 
   // select module button (file dialog?)
@@ -166,15 +193,16 @@ void ui_init(void) {
   gtk_grid_attach(GTK_GRID(grid), label, 8, 4, 4, 1);
   label = gtk_label_new("PARAMETERS");
   gtk_grid_attach(GTK_GRID(grid), label, 12, 4, 4, 1);
+  label = gtk_label_new("PRESETS");
+  gtk_grid_attach(GTK_GRID(grid), label, 16, 4, 4, 1);
 
   //--- create scrolling list things 
   scroll_box_new( &boxOps, grid, &fill_ops,		0, 8, 4, 24 );
   scroll_box_new( &boxOuts, grid, &fill_outs, 		4, 8, 4, 24 );
   scroll_box_new( &boxIns, grid, &fill_ins,  		8, 8, 4, 24 );
   scroll_box_new( &boxParams, grid, &fill_params,	12, 8, 4, 24 );
-  /* TODO
-  scroll_box_new( &boxPresets, grid, &fill_presets, 	12, 8, 4, 24 );
-  */
+  scroll_box_new( &boxPresets, grid, &fill_presets, 	16, 8, 4, 24 );
+
 
   // new op label
   newOpLabel = gtk_label_new("    ");
@@ -198,7 +226,7 @@ void ui_init(void) {
 
   // toggle-connect-to-input button
   //  connectInputBut = gtk_toggle_button_new_with_label("CONNECT");
-  connectInputBut = gtk_button_new_with_label("CONNECT");
+    connectInputBut = gtk_button_new_with_label("CONNECT");
   g_signal_connect(connectInputBut, "clicked", 
 		   G_CALLBACK(connect_in_but_callback), NULL);
   gtk_grid_attach( GTK_GRID(grid), connectInputBut, 8, 32, 1, 1 );
@@ -222,10 +250,16 @@ void ui_init(void) {
 
 void refresh_connect_input_but(void) {
 #if 0
-  gboolean c = (net_get_target(outSelect) == inSelect);
-  // ah... this triggers the button's action... crud
-  /// for now, just making these regular buttons.
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(connectInputBut), c);
+  gboolean c = (net_get_target(outSelect) == (paramSelect + net->numIns));
+  GValue v;
+  g_value_init(&v,  G_TYPE_BOOLEAN );
+  g_value_set_boolean(&v, c);
+  //// it would be nice if we could do this without emitting a signal...
+  //  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(connectParamBut), c);
+  ///.. and this doesn't seem to work:
+  g_object_set_property((GObject*)connectInputBut, 
+			"active", 
+			(const GValue*)&v);
   gtk_widget_show(connectInputBut);
 #endif
 }
@@ -234,7 +268,14 @@ void refresh_connect_input_but(void) {
 void refresh_connect_param_but(void) {
 #if 0
   gboolean c = (net_get_target(outSelect) == (paramSelect + net->numIns));
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(connectParamBut), c);
+  GValue v;
+  g_value_init(&v,  G_TYPE_BOOLEAN );
+  g_value_set_boolean(&v, c);
+  //  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(connectParamBut), c);
+  g_object_set_property((GObject*)connectParamBut, 
+			"active", 
+			(const GValue*)&v);
+
   gtk_widget_show(connectParamBut);
 #endif
 }

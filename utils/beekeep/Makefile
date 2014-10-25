@@ -28,7 +28,6 @@ src += \
 	$(bees)/src/play.c \
 	$(bees)/src/preset.c \
 	$(bees)/src/render.c \
-	$(bees)/src/param_scaler.c \
 	$(bees)/src/scene.c \
 	$(bees)/src/util.c \
 	$(bees)/src/ops/op_add.c \
@@ -96,12 +95,14 @@ src += 	src/app_beekeep.c \
 	src/files.c \
 	src/handler.c \
 	src/main.c \
+	src/param_scaler.c
 
 # new sources
 src += 	src/dot.c \
 	src/json_read_native.c \
 	src/json_write_native.c \
 	src/ui.c \
+	src/ui_files.c \
 	src/ui_handlers.c \
 	src/ui_lists.c \
 	src/ui_op_menu.c

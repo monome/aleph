@@ -11,8 +11,7 @@ extern void fill_ops(GtkListBox *box);
 extern void fill_outs(GtkListBox *box);
 extern void fill_ins(GtkListBox *box);
 extern void fill_params(GtkListBox *box); 
-// TODO
-// extern void fill_presets(GtkListBox *box); 
+extern void fill_presets(GtkListBox *box); 
 
 // refresh entries
 // nothing to do?
