@@ -176,7 +176,7 @@ static void handle_Serial(s32 data) {
 //---- extern
 
 /// explicitly assign these...
-./// this way the order of the event types enum doesn't matter.
+/// this way the order of the event types enum doesn't matter.
 void assign_bees_event_handlers(void) {
   /// app-specific:
   /// FIXME:

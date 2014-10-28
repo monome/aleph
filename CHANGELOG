@@ -9,6 +9,8 @@ bees    0.6.0
 - fix: op_step initialization
 - fix: display op redrawing
 - add op: WW (white whale, for grids)
+- change: DIV now has R (remainder) output
+- update: MP refresh optimized
 
 ----------------
 bees    0.5.5

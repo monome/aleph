@@ -346,9 +346,9 @@ static void op_cascades_redraw() {
     monomeLedBuffer[edit_row * 16 + 1] = L1;
 
     for(i1=0;i1<8;i1++) {
-        if((trig_dests[edit_row] & (1<<i1)) != 0) {
-        for(i2=2;i2<16;i2++)
-        monomeLedBuffer[i1*16 + i2] = L2;
+      if((trig_dests[edit_row] & (1<<i1)) != 0) {
+        for(i2=0;i2<=points[i1];i2++)
+          monomeLedBuffer[i1*16 + i2] = L2;
       }
       monomeLedBuffer[i1*16 + positions[i1]] = L0;
     }
@@ -358,13 +358,14 @@ static void op_cascades_redraw() {
     monomeLedBuffer[edit_row * 16] = L1;
     monomeLedBuffer[edit_row * 16 + 1] = L1;
 
-    for(i1=2;i1<6;i1++) monomeLedBuffer[rule_dests[edit_row] * 16 + i1] = L2;
+    for(i1=2;i1<7;i1++)
+      monomeLedBuffer[rule_dests[edit_row] * 16 + i1] = L2;
 
-    for(i1=6;i1<16;i1++) monomeLedBuffer[rules[edit_row] * 16 + i1] = L0;
+    for(i1=8;i1<16;i1++)
+      monomeLedBuffer[rules[edit_row] * 16 + i1] = L0;
 
-    for(i1=0;i1<8;i1++) {
+    for(i1=0;i1<8;i1++) 
       monomeLedBuffer[i1*16 + positions[i1]] = L0;
-    }
 
     for(i1=0;i1<8;i1++) {
       i3 = glyph[rules[edit_row]][i1];
