@@ -35,7 +35,6 @@ typedef struct _op_monome {
 //----- variables
 
 extern monome_handler_t monome_grid_key_handler;
-extern monome_handler_t monome_grid_key_handler;
 extern monome_handler_t monome_ring_enc_handler;
 extern op_monome_t* monomeOpFocus;
 
@@ -56,7 +55,6 @@ extern void net_monome_set_attributes( /* ...???... */void);
 
 // clear LEDs on grid
 extern void net_monome_grid_clear(void);
-
 
 // connect
 extern void net_monome_connect(void);

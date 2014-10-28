@@ -5,14 +5,13 @@
 // init
 extern void render_init(void);
 
+// startup state
+extern void render_startup(void);
+
+// render a channel
+extern void render_chan(u8 ch);
+
 // update
 extern void render_update(void);
-
-2// render amplitude
-extern void render_amp(u8 ch);
-
-// render mute
-extern void render_mute(u8 ch);
-
 
 #endif // h guard

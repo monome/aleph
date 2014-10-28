@@ -67,18 +67,20 @@ op_monome_t* monomeOpFocus = NULL;
 //--------------------------
 //---- extern functions
 // init
- void net_monome_init(void) {
-  //...
+void net_monome_init(void) {
+  monomeOpFocus = NULL;
 }
 
 // set focus
- void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
+void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
   print_dbg("\r\n setting monome device focus, op pointer: 0x");
   print_dbg_hex((u32)op_monome);
   print_dbg(" , value: ");
   print_dbg_ulong(focus);
 
-  if(focus > 0) {
+  //// FIXME: differentiate on device type (grid/arc)
+
+  if(focus > 0 && monomeConnect) {
     if(monomeOpFocus != NULL ){
       /// stealing focus, inform the previous holder
       monomeOpFocus->focus = 0;
@@ -88,16 +90,14 @@ op_monome_t* monomeOpFocus = NULL;
     op_monome->focus = 1;
   } else {
     // release focus if we had it, otherwise do nothing
-    if( monomeOpFocus == op_monome) {
-      monome_grid_key_handler = (monome_handler_t)&dummyHandler;
-      monomeOpFocus = NULL;
-      op_monome->focus = 0;
-    }
+    monome_grid_key_handler = (monome_handler_t)&dummyHandler;
+    monomeOpFocus = NULL;
+    op_monome->focus = 0;
   }
 }
 
 // clear LEDs on grid
- void net_monome_grid_clear(void) {
+void net_monome_grid_clear(void) {
   int i;
   if(monomeConnect) {
     for(i=0; i<MONOME_MAX_LED_BYTES; ++i) {
@@ -109,28 +109,25 @@ op_monome_t* monomeOpFocus = NULL;
     monome_set_quadrant_flag(3);
     monome_grid_refresh();
   }
- }
+}
 
 
 // set operator attributes from connected grid device .. ??
- void net_monome_set_attributes() {
+void net_monome_set_attributes() {
   //... TODO
 }
 
 void net_monome_connect(void) {
+  //// FIXME: store device type (grid/arc)
   if(monomeConnect != 1) {
-    /// FIXME: shld do checks for null handlers here, 
-    //// and not when calling the handler
     monomeConnect = 1;
     timers_set_monome();
   }
 }
+
 // disconnect
 void net_monome_disconnect(void) {
-  if(monomeConnect != 0) {
-    /// FIXME: shld probably do checks for null handlers here, 
-    //// and not when calling the handler
-    monomeConnect = 1;
-    timers_set_monome();
-  } 
+  monomeOpFocus = NULL;
+  monome_grid_key_handler = (monome_handler_t)&dummyHandler;
+  timers_unset_monome();
 }

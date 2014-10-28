@@ -44,10 +44,10 @@ static s16* const pageSelect = &(pages[ePageIns].select);
 //---- static declarations
 
 // handlers
-static void handle_enc_0(s32 val);
-static void handle_enc_1(s32 val);
-static void handle_enc_2(s32 val);
 static void handle_enc_3(s32 val);
+static void handle_enc_2(s32 val);
+static void handle_enc_1(s32 val);
+static void handle_enc_0(s32 val);
 static void handle_key_0(s32 val);
 static void handle_key_1(s32 val);
 static void handle_key_2(s32 val);
@@ -365,6 +365,7 @@ void select_ins(void) {
   // other regions are static in top-level render, with global handles
   region_fill(headRegion, 0x0);
   font_string_region_clip(headRegion, "INPUTS", 0, 0, 0xf, 0x1);
+  show_foot();
   // assign handlers
   app_event_handlers[ kEventEncoder0 ]	= &handle_enc_0 ;
   app_event_handlers[ kEventEncoder1 ]	= &handle_enc_1 ;
@@ -473,7 +474,7 @@ void handle_key_3(s32 val) {
   show_foot();
 }
 
-void handle_enc_0(s32 val) {
+void handle_enc_3(s32 val) {
   // change parameter value, accelerated
   if(*pageSelect != -1) {
     //    select_edit( (scale_knob_value(val) ) );
@@ -481,7 +482,7 @@ void handle_enc_0(s32 val) {
   }
 }
 
-void handle_enc_1(s32 val) {
+void handle_enc_2(s32 val) {
   if(altMode) {
     // alt:scroll preset
   inPresetSelect = 1;
@@ -500,7 +501,7 @@ void handle_enc_1(s32 val) {
   }
 }
 
-void handle_enc_2(s32 val) {
+void handle_enc_1(s32 val) {
   // scroll page
   if(val > 0) {
     set_page(ePageOuts);
@@ -511,7 +512,7 @@ void handle_enc_2(s32 val) {
 
 
 
-void handle_enc_3(s32 val) {
+void handle_enc_0(s32 val) {
   if(altMode) {
     // alt: page selection			
     select_scroll(val > 0 ? 7 : -7);

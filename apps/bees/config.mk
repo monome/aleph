@@ -6,6 +6,9 @@
 # app name
 APP = bees
 
+# baudrate! can override in make invocation
+BAUD=115200
+
 # boilerplate avr32 configuration
 include ../../avr32_lib/avr32_lib_config.mk
 # boilerplate avr32 sources
@@ -13,6 +16,7 @@ include ../../avr32_lib/avr32_lib_src.mk
 
 
 # add C source files from application
+# please keep this alphabetized... 
 CSRCS += \
 	$(APP_DIR)/src/app_bees.c \
 	$(APP_DIR)/src/app_timers.c \
@@ -48,7 +52,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_div.c \
 	$(APP_DIR)/src/ops/op_enc.c \
 	$(APP_DIR)/src/ops/op_gate.c \
-	$(APP_DIR)/src/ops/op_hid8.c \
+	$(APP_DIR)/src/ops/op_hid_word.c \
 	$(APP_DIR)/src/ops/op_history.c \
 	$(APP_DIR)/src/ops/op_is.c \
 	$(APP_DIR)/src/ops/op_life.c \
@@ -60,22 +64,24 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_midi_cc.c \
 	$(APP_DIR)/src/ops/op_midi_out_note.c \
 	$(APP_DIR)/src/ops/op_midi_note.c \
+	$(APP_DIR)/src/ops/op_mod.c \
 	$(APP_DIR)/src/ops/op_mul.c \
 	$(APP_DIR)/src/ops/op_monome_grid_raw.c \
 	$(APP_DIR)/src/ops/op_preset.c \
-	$(APP_DIR)/src/ops/op_screen.c \
-	$(APP_DIR)/src/ops/op_split.c \
-	$(APP_DIR)/src/ops/op_split4.c \
-	$(APP_DIR)/src/ops/op_sub.c \
-	$(APP_DIR)/src/ops/op_sw.c \
-	$(APP_DIR)/src/ops/op_timer.c \
-	$(APP_DIR)/src/ops/op_thresh.c \
-	$(APP_DIR)/src/ops/op_tog.c \
 	$(APP_DIR)/src/ops/op_random.c \
 	$(APP_DIR)/src/ops/op_route.c \
 	$(APP_DIR)/src/ops/op_route8.c \
-	$(APP_DIR)/src/ops/op_mod.c \
+	$(APP_DIR)/src/ops/op_screen.c \
+	$(APP_DIR)/src/ops/op_serial.c \
+	$(APP_DIR)/src/ops/op_split.c \
+	$(APP_DIR)/src/ops/op_split4.c \
+	$(APP_DIR)/src/ops/op_sub.c \
 	$(APP_DIR)/src/ops/op_step.c \
+	$(APP_DIR)/src/ops/op_sw.c \
+	$(APP_DIR)/src/ops/op_thresh.c \
+	$(APP_DIR)/src/ops/op_timer.c \
+	$(APP_DIR)/src/ops/op_tog.c \
+	$(APP_DIR)/src/ops/op_ww.c \
 	$(APP_DIR)/src/pages/page_dsp.c \
 	$(APP_DIR)/src/pages/page_gathered.c \
 	$(APP_DIR)/src/pages/page_ins.c \
@@ -101,8 +107,8 @@ ASSRCS +=
 INC_PATH += \
 	$(APP_DIR)	           \
 	$(APP_DIR)/src \
-	$(APP_DIR)/../../common # ughh blergg
-
+	$(APP_DIR)/../../common \
+	$(APP_DIR)/../../../avr32-toolchain-linux/include
 
 # Additional search paths for libraries.
 LIB_PATH += 

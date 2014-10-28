@@ -86,7 +86,7 @@ void serial_store() {
   int c;
 
   //buffer, try to grab more than one byte if available
-  while(usart_read_char(AVR8_USART,&c) == USART_SUCCESS) {
+  while(usart_read_char(DEV_USART,&c) == USART_SUCCESS) {
 
       // TEST LIB LOOPBACK
       // usart_putchar(DBG_USART,c);

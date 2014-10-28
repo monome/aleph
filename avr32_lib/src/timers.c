@@ -87,7 +87,6 @@ u8 timer_remove( softTimer_t* t) {
   // disable timer interrupts
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
 
-
   // not linked
   if( (t->next == NULL) || (t->prev == NULL)) { return 0; }
 
@@ -128,24 +127,24 @@ u8 timer_remove( softTimer_t* t) {
 
 // clear the list
 //// ???? ???
- void timers_clear(void) {
-   int i;
-   volatile softTimer_t* pt;
-   if(head != NULL) {
-     // print_dbg("\r\n clearing timer list, size: ");
-     // print_dbg_ulong(num);
+void timers_clear(void) {
+  int i;
+  volatile softTimer_t* pt;
+  if(head != NULL) {
+    // print_dbg("\r\n clearing timer list, size: ");
+    // print_dbg_ulong(num);
 
-     pt = head;
-     // ??? will it work ???
-     for(i=0; i<num; ++i) {       
-       pt->prev = NULL;
-       pt = pt->next;
-       pt->prev->next = NULL;
-     }	 
-   }
-   head = NULL;
-   tail = NULL;
-   num = 0;
+    pt = head;
+    // ??? will it work ???
+    for(i=0; i<num; ++i) {       
+      pt->prev = NULL;
+      pt = pt->next;
+      pt->prev->next = NULL;
+    }	 
+  }
+  head = NULL;
+  tail = NULL;
+  num = 0;
 }
 
 // process the timer list, presumably from TC interrupt

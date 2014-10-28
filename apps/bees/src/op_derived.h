@@ -20,7 +20,8 @@
 #include "ops/op_div.h"
 #include "ops/op_enc.h"
 #include "ops/op_gate.h"
-#include "ops/op_hid8.h"
+//#include "ops/op_hid8.h"
+#include "ops/op_hid_word.h"
 #include "ops/op_history.h"
 #include "ops/op_is.h"
 #include "ops/op_life.h"
@@ -36,6 +37,7 @@
 #include "ops/op_monome_grid_raw.h"
 #include "ops/op_mul.h"
 #include "ops/op_preset.h"
+#include "ops/op_serial.h"
 #include "ops/op_split.h"
 #include "ops/op_split4.h"
 #include "ops/op_sub.h"
@@ -43,11 +45,13 @@
 #include "ops/op_route.h"
 #include "ops/op_route8.h"
 #include "ops/op_screen.h"
+#include "ops/op_serial.h"
 #include "ops/op_step.h"
 #include "ops/op_sw.h"
 #include "ops/op_thresh.h"
 #include "ops/op_timer.h"
 #include "ops/op_tog.h"
+#include "ops/op_ww.h"
 
 // let's keep this list alphabetical so we can easily see whether something is included.
  

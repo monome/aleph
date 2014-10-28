@@ -103,6 +103,52 @@ static void strip_space(char* str, u8 len) {
 //---------------------------
 //------------- extern defs
 
+// check for externsion
+bool check_ext(char* str, const char* extB ) {
+  int i;
+  //  int dotpos = -1;
+  char* extA = NULL;
+  bool res;
+ 
+  i = strlen(str);
+  while(i > 0) {
+    --i;
+    if(str[i] == '.') {
+      //      dotpos = i;
+      extA = str + i;
+      break;
+    }
+  } 
+  if(i < 0) { 
+    // no extension
+    return 0;
+  } else {
+    res = strcmp(extA, extB);
+    if(res == 0) { return 1; } else { return 0; }
+  }
+}
+
+// strip extension from the end of a string
+// return 1 if found, 0 if not
+bool strip_ext(char* str) {
+  int i;
+  int dotpos = -1;
+  i = strlen(str);
+  while(i > 0) {
+    --i;
+    if(str[i] == '.') {
+      dotpos = i;
+      break;
+    }
+  } 
+  if(dotpos >= 0) {
+    str[dotpos] = '\0';
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
 void files_init(void) {
   // scan directories
   print_dbg("\r\n BEES file_init, scanning directories..");
@@ -168,6 +214,7 @@ u8 files_load_dsp_name(const char* name) {
   /* } */
   /* app_resume(); */
   /* return ret; */
+  return 0;
 }
 
 
@@ -294,17 +341,18 @@ u8 files_load_scene_name(const char* name) {
   /* }  */
   /* app_resume(); */
   /* return ret; */
+  return 0;
 }
 
 
 // store scene to sdcard at idx
 void files_store_scene(u8 idx) {
-  files_store_scene_name((const char*)files_get_scene_name(idx), 0);
+  files_store_scene_name((const char*)files_get_scene_name(idx));
 }
 
 
 // store scene to sdcard at name
-void files_store_scene_name(const char* name, u8 ext) {
+void files_store_scene_name(const char* name) {
   FILE* f = fopen(name, "w");
   scene_write_buf();
   fwrite((const void*)sceneData, sizeof(sceneData_t), 1, f);
@@ -352,6 +400,7 @@ const volatile char* files_get_scaler_name(u8 idx) {
 // return 1 on success, 0 on failure
 u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
 #if 1
+  return 0;
 #else
   void* fp;
   u32 size = 0;
@@ -519,4 +568,5 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   /*   fp = NULL; */
   /* } */
   /* return fp; */
+  return NULL;
 }

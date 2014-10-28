@@ -24,7 +24,10 @@ typedef const struct {
   u32 firstRun;                // check for initialization
   u32 ldrSize;                 // size of stored LDR
   char ldrString[LDR_FLASH_STRING_LEN];
+  //hm...
+#if DEFAULT_LDR_FLASH
   u8 ldrData[LDR_FLASH_BYTES]; // LDR data
+#endif
   // app-specific nonvolatile storage
   u8 appData[APP_FLASH_BYTES];
 } nvram_data_t;
@@ -65,6 +68,7 @@ u8 init_flash() {
 #else
   bfinLdrData = alloc_mem(BFIN_LDR_MAX_BYTES * 4);
 #endif
+
   for(i=0; i<BFIN_LDR_MAX_BYTES; i++) { bfinLdrData[i] = 0; }
 
   if(flash_nvram_data.firstRun != FIRSTRUN_MAGIC) {
@@ -80,29 +84,17 @@ u8 init_flash() {
   }
 }
 
-// read default blackfin 
+#if DEFAULT_LDR_FLASH
+// read default LDR
 void flash_read_ldr(void) {
   bfinLdrSize = flash_nvram_data.ldrSize;
   print_dbg("\r\n read ldrSize from flash: ");
   print_dbg_ulong(bfinLdrSize);
   memcpy((void*)bfinLdrData, (void*)flash_nvram_data.ldrData, bfinLdrSize); 
-
-    // TEST: print module data in RAM
-#if 0
-    for(u32 i = 0; i<bfinLdrSize; i += 4) {
-      if((i % 16) == 0) {
-	print_dbg("\r\n");
-      }
-      print_dbg(" 0x");
-      print_dbg_hex(*((u32*)(bfinLdrData + i)));
-    }
-#endif
-
-  
   //  print_flash((u32)flash_nvram_data.ldrData, bfinLdrSize);
 }
 
-// write default blackfin
+// write default LDR
 void flash_write_ldr(void) {
   //  flashc_memset32((void*)&(flash_nvram_data.ldrSize), bfinLdrSize, 4, true);
   //  flashc_memcpy((void*)&(flash_nvram_data.ldrData), (const void*)bfinLdrData, bfinLdrSize, true);
@@ -127,6 +119,7 @@ void flash_write_ldr(void) {
   rem = bfinLdrSize - (nPages * 0x200);
   flashc_memcpy((void*)pDst, (const void*)pSrc, rem, true);
 }
+#endif
 
 // read firstrun status
 u8 flash_read_firstrun(void) {

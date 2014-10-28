@@ -17,7 +17,7 @@
 
 // aleph-bfin
 #include "bfin_core.h"
-#include "dac.h"
+#include "cv.h"
 #include "gpio.h"
 #include "fract_math.h"
 #include <fract2float_conv.h>
@@ -90,9 +90,9 @@ ModuleData* gModuleData;
 dacsData* pDacsData;
 
 // dac values (u16, but use fract32 and audio integrators)
-static fract32 dacVal[4];
-static filter_1p_lo dacSlew[4];
-static u8 dacChan = 0;
+static fract32 cvVal[4];
+static filter_1p_lo cvSlew[4];
+static u8 cvChan = 0;
 
 //----------------------
 //----- external functions
@@ -115,10 +115,10 @@ void module_init(void) {
   gModuleData->numParams = eParamNumParams;
 
 
-  filter_1p_lo_init( &(dacSlew[0]), 0 );
-  filter_1p_lo_init( &(dacSlew[1]), 0 );
-  filter_1p_lo_init( &(dacSlew[2]), 0 );
-  filter_1p_lo_init( &(dacSlew[3]), 0 );
+  filter_1p_lo_init( &(cvSlew[0]), 0 );
+  filter_1p_lo_init( &(cvSlew[1]), 0 );
+  filter_1p_lo_init( &(cvSlew[2]), 0 );
+  filter_1p_lo_init( &(cvSlew[3]), 0 );
 
   param_setup(  eParam_slew0, PARAM_SLEW_DEFAULT );
   param_setup(  eParam_slew1, PARAM_SLEW_DEFAULT );
@@ -155,6 +155,9 @@ void module_init(void) {
   param_setup( 	eParam_effect3,		EFFECT_DEFAULT );
 
 
+  // ?? i don't know what's going on here,
+  /// but for one thing it is trying to use an array member as a pointer.
+  /// expect horriblw things... (EB)
   delay_init(&(lines[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
 
   filter_1p_lo_init( &delayTimeSlew, 0 );
@@ -191,7 +194,7 @@ u32 module_get_num_params(void) {
    - last thing audio ISR does is call the first DAC channel to be loaded
    - dac_update writes to 4x16 volatile buffer
 */
-//static u8 dacChan = 0;
+//static u8 cvChan = 0;
 //
 
 void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
@@ -202,14 +205,17 @@ fract32 delayOutput = 0, delayInput = 0;
 void module_process_frame(void) {
 
   //Update one of the CV outputs
-  if(dacSlew[dacChan].sync) { ;; } else {
-    dacVal[dacChan] = filter_1p_lo_next(&(dacSlew[dacChan]));
-    dac_update(dacChan, shr_fr1x32(dacVal[dacChan], 15) & DAC_VALUE_MASK);
+  //  if(cvSlew[cvChan].sync) { ;; } else {
+  if(filter_1p_sync(&(cvSlew[cvChan]))) { ;; } else {
+    cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
+    // i simplified and renamed the CV driver. 
+    // now just give it fract32 and the driver scales to the right bit-depth/alignement.
+    cv_update(cvChan, cvVal[cvChan]); //shr_fr1x32(cvVal[cvChan], 15) & CV_VALUE_MASK);
   }
 
   //Queue up the next CV output for processing next audio frame
-  if(++dacChan == 4) {
-    dacChan = 0;
+  if(++cvChan == 4) {
+    cvChan = 0;
   }
 
   //Zero the audio dacs, before mixing
@@ -229,7 +235,8 @@ void module_process_frame(void) {
   }
   feedback = feedbackTarget/100*1+feedback/100*99;
   //delayTime = delayTimeTarget/256*1+delayTime/256*99;
-  if(delayTimeSlew.sync) { ;; } else {
+  //  if(delayTimeSlew.sync) { ;; } else {
+  if(filter_1p_sync(&delayTimeSlew)) { ;; } else {
     delayTime = filter_1p_lo_next(&delayTimeSlew);
 
     //update delay time
@@ -296,31 +303,31 @@ void module_set_param(u32 idx, ParamValue v) {
   switch(idx) {
     // dac values
   case eParam_dac0 :
-   filter_1p_lo_in(&(dacSlew[0]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
+   filter_1p_lo_in(&(cvSlew[0]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
    //     dac_update(0, v >> (PARAM_DAC_RADIX - 1));
     break;
   case eParam_dac1 :
     //dac_update(1, v >> (PARAM_DAC_RADIX - 1));
     break;
   case eParam_dac2 :
-    filter_1p_lo_in(&(dacSlew[2]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
+    filter_1p_lo_in(&(cvSlew[2]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
     //dac_update(2, v >> (PARAM_DAC_RADIX - 1));
     break;
   case eParam_dac3 :
-     filter_1p_lo_in(&(dacSlew[3]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
+     filter_1p_lo_in(&(cvSlew[3]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
      //   dac_update(3, v >> (PARAM_DAC_RADIX - 1));
     break;
   case eParam_slew0 :
-   filter_1p_lo_set_slew(&(dacSlew[0]), v);
+   filter_1p_lo_set_slew(&(cvSlew[0]), v);
     break;
   case eParam_slew1 :
-    filter_1p_lo_set_slew(&(dacSlew[1]), v);
+    filter_1p_lo_set_slew(&(cvSlew[1]), v);
     break;
   case eParam_slew2 :
-    filter_1p_lo_set_slew(&(dacSlew[2]), v);
+    filter_1p_lo_set_slew(&(cvSlew[2]), v);
     break;
   case eParam_slew3 :
-    filter_1p_lo_set_slew(&(dacSlew[3]), v);
+    filter_1p_lo_set_slew(&(cvSlew[3]), v);
     break;
   case eParam_auxL0 :
     auxLTarget[0] = v;

@@ -90,8 +90,13 @@ void op_life_init(void* mem) {
   life->in_val[8] = &(life->focus);
 
   life->next = 0;
+  //??? FIXME
+#ifdef BEEKEEP
+#else
   life->xsize = monome_size_x();
   life->ysize = monome_size_y();
+#endif
+
   life->x = 0;
   life->y = 0;
   life->set = 0;

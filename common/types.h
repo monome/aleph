@@ -40,4 +40,8 @@ typedef f64 F64;  //!< 64-bit floating-point number.
 typedef int32_t fix16;
 typedef int32_t  fract32;
 
+#ifdef BEEKEEP
+typedef unsigned char bool;
+#endif
+
 #endif // header guard

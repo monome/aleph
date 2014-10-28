@@ -166,15 +166,15 @@ static void irq_port0_line3(void) {
 __attribute__((__interrupt__))
 static void irq_port1_line0(void) {
   // print_dbg("\r\b\interrupt on PB00-PB07.");
-  // ENC0_0
-  if(gpio_get_pin_interrupt_flag(ENC0_S0_PIN)) {
-    process_enc(0);
-    gpio_clear_pin_interrupt_flag(ENC0_S0_PIN);
+  // ENC3_0
+  if(gpio_get_pin_interrupt_flag(ENC3_S0_PIN)) {
+    process_enc(3);
+    gpio_clear_pin_interrupt_flag(ENC3_S0_PIN);
   }  
-  // ENC0_1
-  if(gpio_get_pin_interrupt_flag(ENC0_S1_PIN)) {
-    process_enc(0);
-    gpio_clear_pin_interrupt_flag(ENC0_S1_PIN);
+  // ENC3_1
+  if(gpio_get_pin_interrupt_flag(ENC3_S1_PIN)) {
+    process_enc(3);
+    gpio_clear_pin_interrupt_flag(ENC3_S1_PIN);
   }
   // ENC1_0
   if(gpio_get_pin_interrupt_flag(ENC1_S0_PIN)) {
@@ -202,15 +202,15 @@ static void irq_port1_line0(void) {
 __attribute__((__interrupt__))
 static void irq_port1_line1(void) {
   //    print_dbg("\r\b\interrupt on PB08-PB15.");
-  // ENC3_0
-  if(gpio_get_pin_interrupt_flag(ENC3_S0_PIN)) {
-    process_enc(3);
-    gpio_clear_pin_interrupt_flag(ENC3_S0_PIN);
+  // ENC0_0
+  if(gpio_get_pin_interrupt_flag(ENC0_S0_PIN)) {
+    process_enc(0);
+    gpio_clear_pin_interrupt_flag(ENC0_S0_PIN);
   }  
-  // ENC3_1
-  if(gpio_get_pin_interrupt_flag(ENC3_S1_PIN)) {
-    process_enc(3);
-    gpio_clear_pin_interrupt_flag(ENC3_S1_PIN);
+  // ENC0_1
+  if(gpio_get_pin_interrupt_flag(ENC0_S1_PIN)) {
+    process_enc(0);
+    gpio_clear_pin_interrupt_flag(ENC0_S1_PIN);
   }
 
 }

@@ -91,10 +91,20 @@ void op_step_init(void* mem) {
   op->s_now2 = 0;
   op->s_cut2 = 0;
 
-  op->size = monome_size_x();
+  for(i=0;i<16;i++) {
+    op->steps[0][i] = 0;
+    op->steps[1][i] = 0;
+    op->steps[2][i] = 0;
+    op->steps[3][i] = 0;
+  }
 
-  op->focus = OP_ONE;
-  net_monome_set_focus(&(op->monome), 1);
+#ifdef BEEKEEP
+#else
+  op->size = monome_size_x();
+#endif
+
+  op->focus = 0; //OP_ONE;
+  //net_monome_set_focus(&(op->monome), 1);
 
   // init monome drawing, maybe should clear first
   monomeLedBuffer[monome_xy_idx(0, 0)] = 15;

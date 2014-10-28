@@ -8,9 +8,11 @@ version = $(maj).$(min).$(rev)
 target = $(name)-$(version)
 
 #copy the approriate python version file here for your distro
-include python_version.mk
+#include beekeep_py.mk
 
 # bees sources
+# fixme: move some of these to sim sources
+# instead of switching on BEEKEEP in the production code
 src += \
 	$(bees)/src/app_timers.c \
 	$(bees)/src/net.c \
@@ -20,30 +22,32 @@ src += \
 	$(bees)/src/op.c \
 	$(bees)/src/op_gfx.c \
 	$(bees)/src/op_math.c \
-	$(bees)/src/ops/op_list16.c \
 	$(bees)/src/param.c \
 	$(bees)/src/pages.c \
 	$(bees)/src/pickle.c \
 	$(bees)/src/play.c \
 	$(bees)/src/preset.c \
 	$(bees)/src/render.c \
-	$(bees)/src/param_scaler.c \
 	$(bees)/src/scene.c \
 	$(bees)/src/util.c \
 	$(bees)/src/ops/op_add.c \
 	$(bees)/src/ops/op_accum.c \
 	$(bees)/src/ops/op_adc.c \
+	$(bees)/src/ops/op_bars.c \
 	$(bees)/src/ops/op_bignum.c \
 	$(bees)/src/ops/op_bits.c \
+	$(bees)/src/ops/op_cascades.c \
 	$(bees)/src/ops/op_delay.c \
 	$(bees)/src/ops/op_div.c \
 	$(bees)/src/ops/op_enc.c \
 	$(bees)/src/ops/op_gate.c \
+	$(bees)/src/ops/op_hid_word.c \
 	$(bees)/src/ops/op_history.c \
 	$(bees)/src/ops/op_is.c \
 	$(bees)/src/ops/op_life.c \
 	$(bees)/src/ops/op_list2.c \
 	$(bees)/src/ops/op_list8.c \
+	$(bees)/src/ops/op_list16.c \
 	$(bees)/src/ops/op_logic.c \
 	$(bees)/src/ops/op_metro.c \
 	$(bees)/src/ops/op_midi_cc.c \
@@ -56,6 +60,7 @@ src += \
 	$(bees)/src/ops/op_monome_grid_raw.c \
 	$(bees)/src/ops/op_preset.c \
 	$(bees)/src/ops/op_screen.c \
+	$(bees)/src/ops/op_serial.c \
 	$(bees)/src/ops/op_split.c \
 	$(bees)/src/ops/op_split4.c \
 <<<<<<< HEAD
@@ -69,7 +74,9 @@ src += \
 	$(bees)/src/ops/op_tog.c \
 	$(bees)/src/ops/op_random.c \
 	$(bees)/src/ops/op_route.c \
+	$(bees)/src/ops/op_route8.c \
 	$(bees)/src/ops/op_mod.c \
+	$(bees)/src/ops/op_ww.c \
 	$(bees)/src/pages/page_dsp.c \
 	$(bees)/src/pages/page_gathered.c \
 	$(bees)/src/pages/page_ins.c \
@@ -93,20 +100,18 @@ src += 	src/app_beekeep.c \
 	src/flash_beekeep.c \
 	src/files.c \
 	src/handler.c \
-	src/main.c
+	src/main.c \
+	src/param_scaler.c
 
 # new sources
-src += src/json_read_raw.c \
-	src/json_write_raw.c \
-	src/json_read_max.c \
-	src/json_write_max.c \
+src += 	src/dot.c \
 	src/json_read_native.c \
 	src/json_write_native.c \
-<<<<<<< HEAD
-=======
-    $(pyaleph)/pyaleph.c \
->>>>>>> dev
-
+	src/ui.c \
+	src/ui_files.c \
+	src/ui_handlers.c \
+	src/ui_lists.c \
+	src/ui_op_menu.c
 
 # srcs from simulator
 src += \
@@ -165,26 +170,22 @@ obj = $(addprefix $(build-dir), $(addsuffix .o,$(basename $(src))))
 cflags += $(foreach path,$(inc),-I$(path))
 cflags += -std=gnu99
 cflags += -D BEEKEEP=1
-<<<<<<< HEAD
-=======
+cflags += -g -O0
 
 lflags += -ljansson
 
->>>>>>> dev
+cflags += $(shell pkg-config --cflags gtk+-3.0)
+lflags += $(shell pkg-config --libs gtk+-3.0)
+
+
 $(build-dir)%.o: %.c 
-	echo $(cflags)
 	$(Q)test -d $(dir $@) || mkdir -p $(dir $@)
 	gcc $(cflags) -g -c $< -o $@
 
 target: $(obj)	
-	echo $(obj)
-	gcc $(obj) -g $(cflags) -o $(target) $(lflags)
+	gcc $(obj) -g -o $(target) $(cflags) $(lflags)
 
 all: beekeep
 
 clean:
-<<<<<<< HEAD
 	rm $(obj)
-=======
-	rm $(obj) $(pyaleph)/pyaleph.pyc
->>>>>>> dev

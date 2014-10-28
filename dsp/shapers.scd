@@ -50,4 +50,5 @@ y = a.collect({ |k| x.collect({ |z|
 	//	v = v * (1.0 / ((k + 1.0 ) / 2.0 ));
 }) });
 
-y.do({ |q, j| q.plot ("a : " ++ a[j]); });
+//y.do({ |q, j| q.plot ("a : " ++ a[j]); });
+y.plot;

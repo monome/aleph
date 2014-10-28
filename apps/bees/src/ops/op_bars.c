@@ -138,6 +138,7 @@ void op_bars_in_enable(op_bars_t* bars, const io_t v  ) {
       op_gfx_enable();
       bars->enable = 1;
       op_bars_set_timer(bars);
+      op_bars_redraw(bars);
     }
   } else { 
     if(bars->enable > 0) {
@@ -205,6 +206,7 @@ void op_bars_poll_handler(void* op) {
       r->dirty = 0;
     }
   }
+  else r->dirty = 1;
 }
 
 

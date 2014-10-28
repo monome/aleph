@@ -62,14 +62,15 @@
 /* #define UHI_HID_MOUSE_EVENT_BTN_MIDDLE(b_state)  hid_mouse_btn_middle(b_state) */
 /* #define UHI_HID_MOUSE_EVENT_MOUVE(x,y,scroll)    hid_mouse_move(x,y,scroll) */
 
-// generic HID functions
-#define UHI_HID_CHANGE(dev,b_plug)
 
 // ftdi functions
 #define UHI_FTDI_CHANGE(dev, b_plug) ftdi_change(dev, b_plug)
 
 // midi functions
 #define UHI_MIDI_CHANGE(dev, b_plug) midi_change(dev, b_plug)
+
+// hid functions
+#define UHI_HID_CHANGE(dev, b_plug) hid_change(dev, b_plug)
 
 
 #include "uhi_ftdi.h"

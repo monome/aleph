@@ -32,7 +32,7 @@
 #include "screen.h"
 #include "simple_string.h"
 #include "types.h"
-#include "util.h"
+//#include "util.h"
 // avr32
 #include "aleph_board.h"
 #include "adc.h"
@@ -121,7 +121,7 @@ static void handler_MidiConnect(s32 data) {
   }
 }
 static void handler_MidiRefresh(s32 data) {
-  // TODO
+  // TODO ??
 }
 static void handler_HidConnect(s32 data) { 
   if(!launch) {
@@ -281,6 +281,13 @@ void check_startup(void) {
     delay_ms(10);
 
     if(launch) {
+
+      //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      // you must do this, or the aleph will powercycle forever !!
+      //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      // pull up power control pin, enabling soft-powerdown
+      gpio_set_gpio_pin(POWER_CTL_PIN);
+
       if(firstrun) {
 	// successfully launched on firstrun, so write magic number to flash
 	flash_write_firstrun();

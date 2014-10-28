@@ -46,7 +46,7 @@ typedef struct _wavesData {
   ModuleData super;
   ParamData mParamData[eParamNumParams];
   // PM delay buffers
-  //  fract32 pmDelBuf[WAVES_NVOICES][WAVES_PM_DEL_SAMPS];
+  //  fract32 modDelBuf[WAVES_NVOICES][WAVES_PM_DEL_SAMPS];
 } wavesData;
 
 
@@ -85,12 +85,12 @@ typedef struct _waveVoice {
   fract32 wmIn;
 
   // PM delay buffer
-  fract32 pmDelBuf[WAVES_PM_DEL_SAMPS];
-  //  fract32* pmDelBuf;
+  fract32 modDelBuf[WAVES_PM_DEL_SAMPS];
+  //  fract32* modDelBuf;
   // PM delay write index
-  u32 pmDelWrIdx;
+  u32 modDelWrIdx;
   // PM delay read index
-  u32 pmDelRdIdx;
+  u32 modDelRdIdx;
 
 } wavesVoice;
 
@@ -183,8 +183,6 @@ static void calc_frame(void) {
   fract32* vout = voiceOut;
 
   for(i=0; i<WAVES_NVOICES; i++) {
-
-    //    v = &(voice[i]);
     // oscillator class includes hz and mod integrators
     v->oscOut = shr_fr1x32( osc_next( &(v->osc) ), 2);
 
@@ -223,12 +221,12 @@ static void calc_frame(void) {
 
     
     // advance phase del indices
-    v->pmDelWrIdx = (v->pmDelWrIdx + 1) & WAVES_PM_DEL_SAMPS_1;
-    v->pmDelRdIdx = (v->pmDelRdIdx + 1) & WAVES_PM_DEL_SAMPS_1;
+    v->modDelWrIdx = (v->modDelWrIdx + 1) & WAVES_PM_DEL_SAMPS_1;
+    v->modDelRdIdx = (v->modDelRdIdx + 1) & WAVES_PM_DEL_SAMPS_1;
     // set pm input from delay
-    v->pmIn = v->pmDelBuf[v->pmDelRdIdx];    
+    v->pmIn = v->modDelBuf[v->modDelRdIdx];    
     // no tricky modulation routing here!
-    v->wmIn = v->pmDelBuf[v->pmDelRdIdx];    
+    v->wmIn = v->modDelBuf[v->modDelRdIdx];    
     // advance pointers
     vout++;
     v++;
@@ -236,8 +234,8 @@ static void calc_frame(void) {
 
   // // simple cross-patch modulation
   // add delay, before filter
-  voice[0].pmDelBuf[voice[0].pmDelWrIdx] = voice[1].oscOut;
-  voice[1].pmDelBuf[voice[1].pmDelWrIdx] = voice[0].oscOut;
+  voice[0].modDelBuf[voice[0].modDelWrIdx] = voice[1].oscOut;
+  voice[1].modDelBuf[voice[1].modDelWrIdx] = voice[0].oscOut;
   /* voice[0].pmIn = voice[1].oscOut; */
   /* voice[1].pmIn = voice[0].oscOut; */
 
@@ -247,7 +245,7 @@ static void calc_frame(void) {
   // patch filtered oscs outputs
   mix_voice();
   
-  // oatch adc
+  // patch adc
   mix_adc();
 }
 
@@ -279,10 +277,10 @@ void module_init(void) {
     slew_init((voice[i].wetSlew), 0, 0, 0 );
     slew_init((voice[i].drySlew), 0, 0, 0 );
 
-    voice[i].pmDelWrIdx = 0;
-    voice[i].pmDelRdIdx = 0;
+    voice[i].modDelWrIdx = 0;
+    voice[i].modDelRdIdx = 0;
 
-    //    voice[i].pmDelBuf = data->pmDelBuf[i];
+    //    voice[i].modDelBuf = data->modDelBuf[i];
   }
 
   for(i=0; i<4; i++) {
