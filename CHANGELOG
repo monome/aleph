@@ -9,10 +9,10 @@ bees    0.6.0
 - fix: op_step initialization
 - fix: display op redrawing
 - add op: WW (white whale, for grids)
-- change: DIV now has R (remainder) output
 - update: MP refresh optimized
 - add op: FADE (cross fade between inputs)
 - added op building overview: README_OP_GUIDE.txt
+- added op: DIVR has remainder
 
 ----------------
 bees    0.5.5
