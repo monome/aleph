@@ -28,6 +28,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpBits,
   eOpDelay,
   eOpDiv,
+  eOpFade,
   eOpGate,
   eOpMonomeGridRaw, // "grid"
   eOpHid,
@@ -275,6 +276,12 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_ww_t),
     .init = &op_ww_init,
     .deinit = &op_ww_deinit   
+  },
+  {
+    .name = "FADE",
+    .size = sizeof(op_fade_t),
+    .init = &op_fade_init,
+    .deinit = NULL  
   },
 };
 

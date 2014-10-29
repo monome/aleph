@@ -11,6 +11,8 @@ bees    0.6.0
 - add op: WW (white whale, for grids)
 - change: DIV now has R (remainder) output
 - update: MP refresh optimized
+- add op: FADE (cross fade between inputs)
+- added op building overview: README_OP_GUIDE.txt
 
 ----------------
 bees    0.5.5

@@ -20,7 +20,7 @@
 #define OP_OUTS_MAX 32
 
 // const array of user-creatable operator types
-#define NUM_USER_OP_TYPES 37
+#define NUM_USER_OP_TYPES 38
 
 //---- flags enum; 
 typedef enum {
@@ -79,7 +79,8 @@ typedef enum {
   eOpBars,
   eOpSerial,
   eOpHid,  
-  eOpWW,  
+  eOpWW,
+  eOpFade,
   //  eOpMidiBend,
   //  eOpMidiTouch,
   numOpClasses // dummy/count 
