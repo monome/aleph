@@ -40,6 +40,7 @@ src += \
 	$(bees)/src/ops/op_delay.c \
 	$(bees)/src/ops/op_div.c \
 	$(bees)/src/ops/op_enc.c \
+	$(bees)/src/ops/op_fade.c \
 	$(bees)/src/ops/op_gate.c \
 	$(bees)/src/ops/op_hid_word.c \
 	$(bees)/src/ops/op_history.c \
@@ -55,6 +56,7 @@ src += \
 	$(bees)/src/ops/op_midi_out_note.c \
 	$(bees)/src/ops/op_mul.c \
 	$(bees)/src/ops/op_monome_grid_raw.c \
+	$(bees)/src/ops/op_monome_arc.c \
 	$(bees)/src/ops/op_preset.c \
 	$(bees)/src/ops/op_screen.c \
 	$(bees)/src/ops/op_serial.c \
