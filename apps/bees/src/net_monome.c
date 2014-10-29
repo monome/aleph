@@ -37,6 +37,7 @@ static void monome_ring_enc_loopback(void* op, u32 edata) {
   s8 val;
   monome_ring_enc_parse_event_data(edata, &n, &val);
   if(val > 0) {
+    // FIXME: not sure if this is useful?
     monomeLedBuffer[val + (n<<6)] = 15;
     monomeFrameDirty |= (1<<n);
   }

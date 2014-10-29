@@ -153,14 +153,16 @@ extern void monome_ring_key_parse_event_data(u32 data, u8* n, u8* val);
   these are top-level functions to set or toggle a single led.
   apps can use these, or directly manipulate led/dirty buffers.
   there's no great speed difference so use whichever suits the situation.
-  TODO: make cleaner interfaces for direct manipulation. 
-  apps shouldn't have to e.g. manage frame-dirty flags 
- */
-// top-level led/set function
-// extern void monome_led_set(u8 x, u8 y, u8 val);
+*/
+// grid led/set function
+extern void monome_grid_led_set(u8 x, u8 y, u8 val);
 
-// top-level led/toggle function
-// extern void monome_led_toggle(u8 x, u8 y);
+// grid led/toggle function
+extern void monome_grid_led_toggle(u8 x, u8 y);
+
+// arc led/set function
+extern void monome_arc_led_set(u8 enc, u8 ring, u8 val);
+
 
 /// TODO: add these row functions,
 /// and abstract some of the stuff in e.g. dsyn/grid.c

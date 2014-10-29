@@ -23,6 +23,7 @@
 const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAccum,
   eOpAdd,
+  eOpMonomeArc, // "arc"
   eOpBars,
   eOpBignum,
   eOpBits,
@@ -276,6 +277,12 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_ww_t),
     .init = &op_ww_init,
     .deinit = &op_ww_deinit   
+  },
+  {
+    .name = "ARC",
+    .size = sizeof(op_marc_t),
+    .init = &op_marc_init,
+    .deinit = NULL
   },
   {
     .name = "FADE",

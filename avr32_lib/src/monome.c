@@ -468,20 +468,24 @@ u32 monome_xy_idx(u8 x, u8 y) {
   return x | (y << 4);
 }
 
-// top-level led/set function
-/*
-void monome_led_set(u8 x, u8 y, u8 z) {
+// grid led/set function
+void monome_grid_led_set(u8 x, u8 y, u8 z) {
   monomeLedBuffer[monome_xy_idx(x, y)] = z;
   monome_calc_quadrant_flag(x, y);
 }
 
-// top-level led/toggle function
-void monome_led_toggle(u8 x, u8 y) {
+// grid led/toggle function
+void monome_grid_led_toggle(u8 x, u8 y) {
   monomeLedBuffer[monome_xy_idx(x,y)] ^= 0xff;
   monome_calc_quadrant_flag(x, y);  
 }
-*/
 
+// arc led/set function
+///// FIXME??? totally untested
+void monome_arc_led_set(u8 enc, u8 ring, u8 val) {
+  monomeLedBuffer[ring + (enc << 6)] = val;
+  monomeFrameDirty |= (1 << enc);
+}
 
 u8 monome_size_x(void) { return mdesc.cols; }
 u8 monome_size_y(void) {  return mdesc.rows; }

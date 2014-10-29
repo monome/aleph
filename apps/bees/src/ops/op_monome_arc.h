@@ -16,10 +16,12 @@ typedef struct op_marc_struct {
   volatile io_t loop;
   // set ring number
   volatile io_t ring;
-  // set ring value
+  // set update position
+  volatile io_t pos;
+  // set update value
   volatile io_t val;
   // input pointer array
-  volatile io_t* in_val[4];
+  volatile io_t* in_val[5];
   op_out_t outs[2];
   // internal
   u8 mRing;
