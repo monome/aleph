@@ -281,7 +281,7 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "FADE",
     .size = sizeof(op_fade_t),
     .init = &op_fade_init,
-    .deinit = NULL  
+    .deinit = NULL
   },
 };
 

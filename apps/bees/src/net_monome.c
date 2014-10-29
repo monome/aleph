@@ -73,7 +73,9 @@ void net_monome_init(void) {
 
 // set focus
 void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
-  print_dbg("\r\n setting monome device focus, op pointer: 0x");
+  eMonomeDevice dev = monome_dev_type();
+
+  print_dbg("\r\n setting monome grid focus, op pointer: 0x");
   print_dbg_hex((u32)op_monome);
   print_dbg(" , value: ");
   print_dbg_ulong(focus);
@@ -85,12 +87,19 @@ void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
       /// stealing focus, inform the previous holder
       monomeOpFocus->focus = 0;
     }
-    monome_grid_key_handler = op_monome->handler;
+    if(dev == eDeviceGrid) {
+      monome_grid_key_handler = op_monome->handler;
+    } else if(dev == eDeviceArc) {
+      monome_ring_enc_handler = op_monome->handler;
+    }
     monomeOpFocus = op_monome;
     op_monome->focus = 1;
   } else {
-    // release focus if we had it, otherwise do nothing
-    monome_grid_key_handler = (monome_handler_t)&dummyHandler;
+    if(dev == eDeviceGrid) {
+      monome_grid_key_handler = (monome_handler_t)&dummyHandler;
+    } else if(dev == eDeviceArc) {
+      monome_ring_enc_handler = (monome_handler_t)&dummyHandler;
+    }
     monomeOpFocus = NULL;
     op_monome->focus = 0;
   }
@@ -111,17 +120,19 @@ void net_monome_grid_clear(void) {
   }
 }
 
-
 // set operator attributes from connected grid device .. ??
 void net_monome_set_attributes() {
   //... TODO
 }
 
 void net_monome_connect(void) {
-  //// FIXME: store device type (grid/arc)
+  
   if(monomeConnect != 1) {
     monomeConnect = 1;
     timers_set_monome();
+  } else {
+    // already connected... oops?
+    print_dbg("\r\n net_monome_connect without disconnect? oops");
   }
 }
 

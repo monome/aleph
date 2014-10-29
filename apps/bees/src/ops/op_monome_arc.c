@@ -104,24 +104,18 @@ static void op_marc_in_mono(op_marc_t* op, const io_t v) {
 }
 
 static void op_marc_handler(op_monome_t* op_monome, u32 edata) {
-  static u8 x, y, z;
+  static u8 n, v;
   static u32 pos;
   static u8 val;
 
   op_marc_t* op = (op_marc_t*)(op_monome->op);
 
-
-  monome_grid_key_parse_event_data(edata, &x, &y, &z);
-
-  /* print_dbg("\r\n op_marc_handler received event; x: 0x"); */
-  /* print_dbg_hex(x); */
-  /* print_dbg("; y: 0x"); */
-  /* print_dbg_hex(y); */
-  /* print_dbg("; z: 0x"); */
-  /* print_dbg_hex(z); */
-
-  // flat position into led buffer
-  pos = monome_xy_idx(x, y);
+  monome_ring_enc_parse_event_data(eData, &n, &v);
+  
+  print_dbg("\r\n op_marc_handler received event; n: 0x");
+  print_dbg_hex(n);
+  print_dbg("; v: 0x");
+  print_dbg_hex(v);
 
   if(op->mono) {
     if(op->tog > 0) { // mono, toggle
@@ -131,7 +125,6 @@ static void op_marc_handler(op_monome_t* op_monome, u32 edata) {
 	if(pos != op->lastPos) {
 	  monomeLedBuffer[op->lastPos] = 0;
 	}
-	// FIXME: should add macros in op_math.h for io_t conversion
 	net_activate(op->outs[0], op_from_int(x), op);
 	net_activate(op->outs[1], op_from_int(y), op);
 	net_activate(op->outs[2], op_from_int(val), op);
