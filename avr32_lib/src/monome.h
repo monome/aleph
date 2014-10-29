@@ -157,9 +157,10 @@ extern void monome_ring_key_parse_event_data(u32 data, u8* n, u8* val);
   apps shouldn't have to e.g. manage frame-dirty flags 
  */
 // top-level led/set function
-extern void monome_led_set(u8 x, u8 y, u8 val);
+// extern void monome_led_set(u8 x, u8 y, u8 val);
+
 // top-level led/toggle function
-extern void monome_led_toggle(u8 x, u8 y);
+// extern void monome_led_toggle(u8 x, u8 y);
 
 /// TODO: add these row functions,
 /// and abstract some of the stuff in e.g. dsyn/grid.c
@@ -175,8 +176,8 @@ extern void monome_led_toggle(u8 x, u8 y);
   dirty-flag maintenance functions.
   a bitfield is used to signal updates to each of the 8x8 frames in a monome.
   apps can set the bitfield 
-  FIXME: better off without this.
-  add row/col/frame functions that deal with ditry flags internally.
+  FIXME: really, better off without this.
+  add row/col/frame functions that deal with dirty flags internally.
  */
 
 // set quadrant dirty flag from (x,y)

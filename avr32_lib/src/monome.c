@@ -318,7 +318,7 @@ void monome_arc_refresh(void) {
   u8 busy = ftdi_tx_busy();
   u8 i;
 
-  for(i=0;i<mdesc.encs;i++) {
+  for(i=0; i<mdesc.encs; i++) {
     if(monomeFrameDirty & (1<<i)) {
       //      if(i==1) print_dbg("\r\nsecond");
       while(busy) { busy = ftdi_tx_busy(); }
@@ -469,6 +469,7 @@ u32 monome_xy_idx(u8 x, u8 y) {
 }
 
 // top-level led/set function
+/*
 void monome_led_set(u8 x, u8 y, u8 z) {
   monomeLedBuffer[monome_xy_idx(x, y)] = z;
   monome_calc_quadrant_flag(x, y);
@@ -479,6 +480,7 @@ void monome_led_toggle(u8 x, u8 y) {
   monomeLedBuffer[monome_xy_idx(x,y)] ^= 0xff;
   monome_calc_quadrant_flag(x, y);  
 }
+*/
 
 
 u8 monome_size_x(void) { return mdesc.cols; }
