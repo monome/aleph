@@ -43,4 +43,7 @@ extern void ui_scene_name(const char* txt);
 // handle new-op-type selection
 extern void ui_select_new_op(int id);
 
+// handle input value change
+extern void ui_set_input(int id, int val);
+
 #endif
