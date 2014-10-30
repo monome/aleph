@@ -83,7 +83,7 @@ void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
 
   //// FIXME: differentiate on device type (grid/arc)
 
-  if(focus > 0 && monomeConnect) {
+  if(focus > 0 /*&& monomeConnect*/) {
     if(monomeOpFocus != NULL ){
       /// stealing focus, inform the previous holder
       monomeOpFocus->focus = 0;
@@ -133,12 +133,13 @@ void net_monome_connect(void) {
     timers_set_monome();
   } else {
     // already connected... oops?
-    print_dbg("\r\n net_monome_connect without disconnect? oops");
+    print_dbg("\r\n net_monome_connect, already connected? oops");
   }
 }
 
 // disconnect
 void net_monome_disconnect(void) {
+  monomeConnect = 0;
   monomeOpFocus = NULL;
   monome_grid_key_handler = (monome_handler_t)&dummyHandler;
   timers_unset_monome();
