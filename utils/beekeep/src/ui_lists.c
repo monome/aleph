@@ -351,7 +351,6 @@ void fill_presets(GtkListBox *list) {
   gtk_widget_show_all(GTK_WIDGET(list));
 }
 
-
 //---- refresh/rebuild individual rows
 
 // nothing to do?

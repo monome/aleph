@@ -47,9 +47,15 @@ op_id_t newOpSelect = -1;
 // make a scrollable box
 static void scroll_box_new( ScrollBox* scrollbox, 
 			    GtkWidget* parent, // must be GtkGrid*
-			    list_fill_fn fill,
-			    //			    list_select_fn select,
-			    int x, int y, int w, int h)
+			    //			    GtkWidget* sibling,
+			    //			    GtkPositionType side,
+			    gint w,
+			    gint h,
+			    list_fill_fn fill
+			    )
+//			    list_select_fn select,
+//			    int x, int y, int w, int h)
+
 {
   
   GtkWidget* scroll;
@@ -63,7 +69,23 @@ static void scroll_box_new( ScrollBox* scrollbox,
   //  gtk_scrolled_window_set_min_content_height(GTK_SCROLLED_WINDOW(scroll), 666);
   //  gtk_scrolled_window_set_min_content_width(GTK_SCROLLED_WINDOW(scroll), 255);
 
-  gtk_grid_attach(GTK_GRID(parent), scroll, x, y, w, h);
+  //  gtk_grid_attach(GTK_GRID(parent), scroll, x, y, w, h);
+  /* if(sibling == NULL) { */
+  /*   printf("\r\n attaching new ScrollBox to null sibling"); */
+  /*   gtk_grid_attach_next_to(GTK_GRID(parent),  */
+  /* 			    scroll,  */
+  /* 			    sibling, */
+  /* 			    side, w, h); */
+  /* } else { */
+    /* printf("\r\n attaching new ScrollBox to sibling: 0x%08x", (int)sibling); */
+    /* printf("\r\n new scroll object: 0x%08x", (int)scroll); */
+    gtk_grid_attach_next_to(GTK_GRID(parent), 
+			    scroll, 
+			    //			    GTK_WIDGET(sibling),
+			    NULL,
+			    GTK_POS_RIGHT,
+			    w, h);
+    //  }
 
   list = gtk_list_box_new ();
 
@@ -122,9 +144,9 @@ static void write_json_but_callback( GtkWidget* but, gpointer data) {
 }
 
 /* not really useful yet
-static void write_gv_but_callback( GtkWidget* but, gpointer data) {
-  write_gv();
-}
+   static void write_gv_but_callback( GtkWidget* but, gpointer data) {
+   write_gv();
+   }
 */
 
 
@@ -156,6 +178,8 @@ void ui_init(void) {
   gtk_grid_set_row_spacing (GTK_GRID(grid), 20);
   gtk_container_add(GTK_CONTAINER(window), grid);
 
+
+#if 0
   // scene name label
   wgt = gtk_label_new("SCENE:");
   gtk_grid_attach( GTK_GRID(grid), wgt, 0, 0, 1, 1 );
@@ -178,9 +202,9 @@ void ui_init(void) {
 
   // export .gv button
   /* not really useful yet
-  wgt = gtk_button_new_with_label("write .gv");
-  gtk_grid_attach( GTK_GRID(grid), wgt, 7, 0, 1, 1 );
-  g_signal_connect( wgt, "clicked", G_CALLBACK(write_gv_but_callback), NULL);
+     wgt = gtk_button_new_with_label("write .gv");
+     gtk_grid_attach( GTK_GRID(grid), wgt, 7, 0, 1, 1 );
+     g_signal_connect( wgt, "clicked", G_CALLBACK(write_gv_but_callback), NULL);
   */
 
   // clear button
@@ -198,13 +222,24 @@ void ui_init(void) {
   gtk_grid_attach(GTK_GRID(grid), label, 11, 4, 5, 1);
   label = gtk_label_new("PRESETS");
   gtk_grid_attach(GTK_GRID(grid), label, 15, 4, 4, 1);
+#endif
 
   //--- create scrolling list things 
-  scroll_box_new( &boxOps, grid, &fill_ops,		0,  8, 2, 24 );
-  scroll_box_new( &boxOuts, grid, &fill_outs, 		2,  8, 4, 24 );
-  scroll_box_new( &boxIns, grid, &fill_ins,  		6,  8, 5, 24 );
-  scroll_box_new( &boxParams, grid, &fill_params,	11, 8, 9, 24 ); //???
-  scroll_box_new( &boxPresets, grid, &fill_presets, 	20, 8, 4, 24 );
+  /*
+    scroll_box_new( &boxOps, grid, &fill_ops,		0,  8, 2, 24 );
+    scroll_box_new( &boxOuts, grid, &fill_outs, 		2,  8, 4, 24 );
+    scroll_box_new( &boxIns, grid, &fill_ins,  		6,  8, 5, 24 );
+    scroll_box_new( &boxParams, grid, &fill_params,	11, 8, 9, 24 ); //???
+    scroll_box_new( &boxPresets, grid, &fill_presets, 	20, 8, 4, 24 );
+  */
+
+  scroll_box_new( &boxOps, 	grid, 2, 24, &fill_ops );
+  scroll_box_new( &boxOuts, 	grid, 4, 24, &fill_outs );
+  scroll_box_new( &boxIns, 	grid, 5, 24, &fill_ins );
+  scroll_box_new( &boxParams, 	grid, 6, 24, &fill_params ); 
+  scroll_box_new( &boxPresets, 	grid, 2, 24, &fill_presets );
+
+
   //  scroll_box_new( &boxPresets, grid, &fill_presets, 	16, 8, 4, 24 );
 
   // new op label
@@ -268,8 +303,8 @@ void refresh_connect_input_but(void) {
 				   NULL);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(connectInputBut), c);
   g_signal_handlers_unblock_by_func( connectInputBut, 
-				   G_CALLBACK(connect_in_but_callback), 
-				   NULL);
+				     G_CALLBACK(connect_in_but_callback), 
+				     NULL);
 #endif
 
 
