@@ -223,6 +223,11 @@ u8* op_bignum_unpickle(op_bignum_t* bignum, const u8* src) {
   //////////////
   //// FIXME: i think this is wrong... need to re-set the input value for reregistration? 
   src = unpickle_io(src, (u32*)&(bignum->enable));
+  if(bignum->enable) {
+    op_bignum_set_timer(bignum);
+    op_bignum_redraw(bignum);
+    op_gfx_enable();
+  }
   //////////////
   src = unpickle_io(src, (u32*)&(bignum->period));
   src = unpickle_io(src, (u32*)&(bignum->val));

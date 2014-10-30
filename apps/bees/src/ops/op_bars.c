@@ -234,9 +234,9 @@ u8* op_bars_unpickle(op_bars_t* bars, const u8* src) {
   src = unpickle_io(src, (u32*)&(bars->d));
 
   if(bars->enable == 1) {
+      op_bars_redraw(bars);
       op_gfx_enable();
       op_bars_set_timer(bars);
-      op_bars_redraw(bars);
   }
    return (u8*)src;
 }
