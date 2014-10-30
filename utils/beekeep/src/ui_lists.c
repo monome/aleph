@@ -60,11 +60,9 @@ RowParams rowParams[NET_INS_MAX];
 //--- callbacks
 
 static void select_out_callback( GtkListBox *box, gpointer data ) {
-  // gotta be a better way to get this
   int id;
   GtkListBoxRow* row;
   row = gtk_list_box_get_selected_row(box);
-  //  printf("\r\n selected row in outs list: 0x%08x", row);
   id = gtk_list_box_row_get_index(row);
   ui_select_out(id);
 }
@@ -74,7 +72,6 @@ static void select_in_callback( GtkListBox *box, gpointer data ) {
   int id;
   GtkListBoxRow* row;
   row = gtk_list_box_get_selected_row(box);
-  //  printf("\r\n selected row in ins list: 0x%08x", row);
   id = gtk_list_box_row_get_index(row);
   ui_select_in(id);
 }
@@ -83,7 +80,6 @@ static void select_op_callback( GtkListBox *box, gpointer data ) {
   int id;
   GtkListBoxRow* row;
   row = gtk_list_box_get_selected_row(box);
-  //  printf("\r\n selected row in ops list: 0x%08x", row);
   id = gtk_list_box_row_get_index(row);
   ui_select_op(id);
 }
@@ -92,7 +88,6 @@ static void select_param_callback( GtkListBox *box, gpointer data ) {
   int id;
   GtkListBoxRow* row;
   row = gtk_list_box_get_selected_row(box);
-  //  printf("\r\n selected row in params list: 0x%08x", row);
   id = gtk_list_box_row_get_index(row);
   ui_select_param(id);
 }
@@ -110,8 +105,7 @@ static void spin_in_callback( GtkSpinButton *but, gpointer data ) {
   int id = GPOINTER_TO_INT(data);
   int val = gtk_spin_button_get_value_as_int(but);
   printf("\r\n setting input node from spinbox; id: %d; val: 0x%08x", id, val);
-  //  printf("\r\n setting input node from spinbox; id: ???; val: 0x%08x", val);
-  //  net_activate(id, val, NULL);
+  ui_set_input(id, val);
 }
 
 
@@ -265,6 +259,7 @@ void fill_ins(GtkListBox *list) {
 
     // spinbutton for value entry
     spin = create_spin_button(net_get_in_value(i));
+    rowIns[i].spinValue = spin;
     gtk_grid_attach(GTK_GRID(grid), spin, 4, 0, 1, 1);
     g_signal_connect (spin, "value_changed", G_CALLBACK(spin_in_callback), GINT_TO_POINTER(i));
     
@@ -330,7 +325,6 @@ void refresh_row_outs(int id) {
   char str[LABEL_BUF_SIZE];
   int t;
 
-
   if(id < 0 || id >= net->numOuts) { return; }
 
   row = rowOuts[id].row;
@@ -358,26 +352,41 @@ void refresh_row_outs(int id) {
 void refresh_row_ins(int id) {
   GtkWidget *row;
   GtkWidget *label;
-
+  GtkWidget *spin;
   int t;
+  int val;
 
   if(id < 0 || id >= net->numIns) { return; }
   
   row = rowIns[id].row;
   label = rowIns[id].labelConnected;
+  spin = rowIns[id].spinValue;
 
   // refresh the connection label  
-  t = net_get_target(outSelect);
-  if(t == id) {
-    gtk_label_set_text(GTK_LABEL(label), " -> ");
-  } else { 
-    gtk_label_set_text(GTK_LABEL(label), "    ");
+  if(outSelect >= 0) {
+    t = net_get_target(outSelect);
+    if(t == id) {
+      gtk_label_set_text(GTK_LABEL(label), " -> ");
+    } else { 
+      gtk_label_set_text(GTK_LABEL(label), "    ");
+    }
   }
 
+  // set value...
+  val = net_get_in_value(id);
+  //#endif
+  ///////////////
+  /// block
+  //  g_signal_handlers_block_by_func(spin, G_CALLBACK(spin_in_callback), NULL);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), (gdouble)val);
+  // unblock
+  ///  g_signal_handlers_unblock_by_func(spin, G_CALLBACK(spin_in_callback), NULL);
+  //////////////
   gtk_widget_show_all(row);
 }
 
 void refresh_row_params(int id) {
     if(id < 0 || id >= net->numParams) { return; }
+    //... ?
 }
 

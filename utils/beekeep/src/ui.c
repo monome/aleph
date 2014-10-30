@@ -224,15 +224,15 @@ void ui_init(void) {
   gtk_grid_attach( GTK_GRID(grid), wgt, 3, 32, 1, 1 );
 
   // toggle-connect-to-input button
-  //  connectInputBut = gtk_toggle_button_new_with_label("CONNECT");
-    connectInputBut = gtk_button_new_with_label("CONNECT");
+  connectInputBut = gtk_toggle_button_new_with_label("CONNECT");
+  //connectInputBut = gtk_button_new_with_label("CONNECT");
   g_signal_connect(connectInputBut, "clicked", 
 		   G_CALLBACK(connect_in_but_callback), NULL);
   gtk_grid_attach( GTK_GRID(grid), connectInputBut, 6, 32, 1, 1 );
   
   // toggle-connect-to-param button
-  //  connectParamBut = gtk_toggle_button_new_with_label("CONNECT");
-  connectParamBut = gtk_button_new_with_label("CONNECT");
+  connectParamBut = gtk_toggle_button_new_with_label("CONNECT");
+  //connectParamBut = gtk_button_new_with_label("CONNECT");
   g_signal_connect(connectParamBut, "clicked", 
 		   G_CALLBACK(connect_param_but_callback), NULL);
   gtk_grid_attach( GTK_GRID(grid), connectParamBut, 10, 32, 1, 1 );
@@ -241,40 +241,37 @@ void ui_init(void) {
 
   // store-input-in-preset button
 
-
   /// show everything
   gtk_widget_show_all(window);
 }
 
 
 void refresh_connect_input_but(void) {
+  // still can't get this to work... 
+  // setting the "active" property triggers the callback, no matter what...
 #if 0
-  gboolean c = (net_get_target(outSelect) == (paramSelect + net->numIns));
-  GValue v;
-  g_value_init(&v,  G_TYPE_BOOLEAN );
-  g_value_set_boolean(&v, c);
-  //// it would be nice if we could do this without emitting a signal...
-  //  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(connectParamBut), c);
-  ///.. and this doesn't seem to work:
-  g_object_set_property((GObject*)connectInputBut, 
-			"active", 
-			(const GValue*)&v);
+  gboolean c;
+  c = (net_get_target(outSelect) == inSelect);
+  printf("\r\n refresh input connection button; value: %d", (int)c);
+  printf("\t selections: out: %d; in: %d", outSelect, inSelect);
+  g_object_set(connectInputBut,"active", c, NULL);
   gtk_widget_show(connectInputBut);
+#else
+  //  gboolean c;
+  //  c = (net_get_target(outSelect) == inSelect);
+  //  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON_BUT, c);
 #endif
+
+
+
 }
 
 
 void refresh_connect_param_but(void) {
 #if 0
   gboolean c = (net_get_target(outSelect) == (paramSelect + net->numIns));
-  GValue v;
-  g_value_init(&v,  G_TYPE_BOOLEAN );
-  g_value_set_boolean(&v, c);
-  //  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(connectParamBut), c);
-  g_object_set_property((GObject*)connectParamBut, 
-			"active", 
-			(const GValue*)&v);
-
+  printf("\r\n refresh param connection button; value: %d", (int)c);
+  g_object_set(connectParamBut,"active", c, NULL);
   gtk_widget_show(connectParamBut);
 #endif
 }

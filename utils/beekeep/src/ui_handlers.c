@@ -59,13 +59,17 @@ static void refresh_in_row_for_target(int t) {
   if(outSelect >=0 ) { 
     tLast = net_get_target(outSelect);
   } else {
-    tLast = 0;
+    tLast = -1;
   }
   printf("\r\n old target: %d", tLast);
   outSelect = id;
   t = net_get_target(id);
-  refresh_in_row_for_target(tLast);
   refresh_in_row_for_target(t);
+
+  if(tLast >=0) {
+    refresh_in_row_for_target(tLast);
+  }
+
   refresh_connect_input_but();
   refresh_connect_param_but();
 }
@@ -78,6 +82,7 @@ static void refresh_in_row_for_target(int t) {
 
  void ui_select_param(int id) {
   paramSelect = id; 
+  refresh_connect_param_but();
   //... ?
 }
 
@@ -169,4 +174,12 @@ void ui_param_value() {
   fill_ops(GTK_LIST_BOX(boxOps.list));
   fill_outs(GTK_LIST_BOX(boxOuts.list));
   fill_ins(GTK_LIST_BOX(boxIns.list));
+}
+
+// handle input value change
+void ui_set_input(int id, int val) {
+  //  net_set_active(0);
+  net_set_in_value(id, val);
+  //  net_set_active(1);
+  refresh_row_ins(id);
 }

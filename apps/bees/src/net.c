@@ -1450,3 +1450,7 @@ void net_print(void) {
 #endif
 
 
+// set active
+void net_set_active(bool v) {
+  netActive = v;
+}
