@@ -183,3 +183,10 @@ void ui_set_input(int id, int val) {
   //  net_set_active(1);
   refresh_row_ins(id);
 }
+
+
+// handle param value change
+void ui_set_param(int id, int val) {
+  net_set_in_value(id + net->numParams, val);
+  refresh_row_params(id);
+}

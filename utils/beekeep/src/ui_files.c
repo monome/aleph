@@ -47,7 +47,8 @@ void write_scn(void) {
   memset(str, '\0', 64);
   strncpy( str, scene_get_name() , 64);
   strip_space(str, 64);
-  strcat(str, ".json");
+  strcat(str, ".scn");
+  printf("\r\n writing .scn binary; name: %s", str);
   files_store_scene_name(str);
 }
 

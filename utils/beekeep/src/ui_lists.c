@@ -109,14 +109,17 @@ static void spin_in_callback( GtkSpinButton *but, gpointer data ) {
 }
 
 
+static void spin_param_callback( GtkSpinButton *but, gpointer data ) {
+  //  int id = *((int*)data);
+  int id = GPOINTER_TO_INT(data);
+  int val = gtk_spin_button_get_value_as_int(but);
+  printf("\r\n setting param from spinbox; id: %d; val: 0x%08x", id, val);
+  ui_set_param(id, val);
+}
+
+
 //----------------------------------
 //--- helpers
-
-/* gint grab_int_value (GtkSpinButton *button, */
-/* 		     gpointer       data) */
-/* { */
-/*   return gtk_spin_button_get_value_as_int (button); */
-/* } */
 
 GtkWidget* create_spin_button(int val) {
   GtkWidget *button;
@@ -148,7 +151,6 @@ void fill_ops(GtkListBox *list) {
     gtk_container_add(GTK_CONTAINER(row), grid);
     label = gtk_label_new(str);
     gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 1, 1);
-    //    gtk_container_add(GTK_CONTAINER(row), label);
     gtk_container_add(GTK_CONTAINER(list), row);    
     rowOps[i].row = row;
     rowOps[i].labelName = label;
@@ -270,7 +272,9 @@ void fill_ins(GtkListBox *list) {
 
 void fill_params(GtkListBox *list) {  
   GtkWidget *row;
+  GtkWidget *grid;
   GtkWidget *label;
+  GtkWidget *spin;
   char str[LABEL_BUF_SIZE];
   int i, n;
 
@@ -278,12 +282,47 @@ void fill_params(GtkListBox *list) {
   n = net->numParams;
 
   for(i=0; i<n; i++) {
+    // build name string
     snprintf(str, LABEL_BUF_SIZE, "%d.%s", i, net_in_name(i + net->numIns) );
+
+    // row and grid containers
     row = gtk_list_box_row_new();
-    label = gtk_label_new(str);
+    grid = gtk_grid_new();
+    gtk_container_add(GTK_CONTAINER(row), grid);
     rowParams[i].row = row;
+    rowParams[i].grid = grid;
+
+    // label for connection arrow
+    label = gtk_label_new("");
+    rowParams[i].labelConnected = label;
+    gtk_label_set_width_chars(GTK_LABEL(label), 4);
+    gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
+    gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 1, 1);
+    
+    if(outSelect != -1) {
+      if(net_get_target(outSelect) == (i + net->numIns)) {
+	gtk_label_set_text(GTK_LABEL(label), " -> ");
+      }
+    }
+
+    // label for name
+    label = gtk_label_new(str);
     rowParams[i].labelName = label; 
-    gtk_container_add(GTK_CONTAINER(row), label);
+    gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
+    gtk_label_set_width_chars(GTK_LABEL(label), 18);
+    gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 1, 1);
+
+    // spinbutton for value entry
+    spin = create_spin_button(net_get_in_value(i));
+    rowParams[i].spinValue = spin;
+    gtk_grid_attach(GTK_GRID(grid), spin, 4, 0, 1, 1);
+    g_signal_connect (spin, "value_changed", G_CALLBACK(spin_param_callback), GINT_TO_POINTER(i));
+    
+    /// TODO: param representation label
+
+    /// TODO: preset inclusion toggle
+
+    
     gtk_container_add(GTK_CONTAINER(list), row);    
   }
   gtk_widget_show_all(GTK_WIDGET(list));
@@ -376,7 +415,7 @@ void refresh_row_ins(int id) {
   val = net_get_in_value(id);
   //#endif
   ///////////////
-  /// block
+  /// block /// don't even need it? amazing (and rather inconsistent)
   //  g_signal_handlers_block_by_func(spin, G_CALLBACK(spin_in_callback), NULL);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), (gdouble)val);
   // unblock
@@ -386,7 +425,29 @@ void refresh_row_ins(int id) {
 }
 
 void refresh_row_params(int id) {
-    if(id < 0 || id >= net->numParams) { return; }
-    //... ?
-}
+  GtkWidget *row;
+  GtkWidget *label;
+  GtkWidget *spin;
+  int t;
+  int val;
+  if(id < 0 || id >= net->numParams) { return; }
+  
+  row = rowParams[id].row;
+  label = rowParams[id].labelConnected;
+  spin = rowParams[id].spinValue;
 
+  // refresh the connection label  
+  if(outSelect >= 0) {
+    t = net_get_target(outSelect) - net->numIns;
+    if(t == id) {
+      gtk_label_set_text(GTK_LABEL(label), " -> ");
+    } else { 
+      gtk_label_set_text(GTK_LABEL(label), "    ");
+    }
+  }
+
+  //// TODO: param rep label
+  // val = net_get_in_value(id);
+  //  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), (gdouble)val);
+  //  gtk_widget_show_all(row);
+}

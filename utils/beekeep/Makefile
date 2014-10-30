@@ -39,6 +39,7 @@ src += \
 	$(bees)/src/ops/op_cascades.c \
 	$(bees)/src/ops/op_delay.c \
 	$(bees)/src/ops/op_div.c \
+	$(bees)/src/ops/op_divr.c \
 	$(bees)/src/ops/op_enc.c \
 	$(bees)/src/ops/op_fade.c \
 	$(bees)/src/ops/op_gate.c \

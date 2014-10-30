@@ -91,7 +91,10 @@ void scroll_box_clear( ScrollBox* scrollbox ) {
 //--- callbacks
 
 static void scene_name_entry_callback( GtkEntry *entry, gpointer data) {
-  scene_set_name(gtk_entry_get_text(entry));
+  const char* str;
+  str = gtk_entry_get_text(entry);
+  printf("\r\n setting scene name from widget: %s", str);
+  scene_set_name(str);
 }
 
 static void create_op_but_callback( GtkWidget* but, gpointer data) {
@@ -149,7 +152,7 @@ void ui_init(void) {
 
   // grid layout
   grid = gtk_grid_new();
-  gtk_grid_set_column_spacing (GTK_GRID(grid), 40);
+  gtk_grid_set_column_spacing (GTK_GRID(grid), 35);
   gtk_grid_set_row_spacing (GTK_GRID(grid), 20);
   gtk_container_add(GTK_CONTAINER(window), grid);
 
@@ -192,16 +195,17 @@ void ui_init(void) {
   label = gtk_label_new("INPUTS");
   gtk_grid_attach(GTK_GRID(grid), label, 6, 4, 5, 1);
   label = gtk_label_new("PARAMETERS");
-  gtk_grid_attach(GTK_GRID(grid), label, 11, 4, 4, 1);
+  gtk_grid_attach(GTK_GRID(grid), label, 11, 4, 5, 1);
   label = gtk_label_new("PRESETS");
   gtk_grid_attach(GTK_GRID(grid), label, 15, 4, 4, 1);
 
   //--- create scrolling list things 
-  scroll_box_new( &boxOps, grid, &fill_ops,		0, 8, 2, 24 );
-  scroll_box_new( &boxOuts, grid, &fill_outs, 		2, 8, 4, 24 );
-  scroll_box_new( &boxIns, grid, &fill_ins,  		6, 8, 5, 24 );
-  scroll_box_new( &boxParams, grid, &fill_params,	11, 8, 4, 24 );
-  scroll_box_new( &boxPresets, grid, &fill_presets, 	15, 8, 4, 24 );
+  scroll_box_new( &boxOps, grid, &fill_ops,		0,  8, 2, 24 );
+  scroll_box_new( &boxOuts, grid, &fill_outs, 		2,  8, 4, 24 );
+  scroll_box_new( &boxIns, grid, &fill_ins,  		6,  8, 5, 24 );
+  scroll_box_new( &boxParams, grid, &fill_params,	11, 8, 9, 24 ); //???
+  scroll_box_new( &boxPresets, grid, &fill_presets, 	20, 8, 4, 24 );
+  //  scroll_box_new( &boxPresets, grid, &fill_presets, 	16, 8, 4, 24 );
 
   // new op label
   newOpLabel = gtk_label_new("    ");
@@ -257,9 +261,15 @@ void refresh_connect_input_but(void) {
   g_object_set(connectInputBut,"active", c, NULL);
   gtk_widget_show(connectInputBut);
 #else
-  //  gboolean c;
-  //  c = (net_get_target(outSelect) == inSelect);
-  //  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON_BUT, c);
+  gboolean c;
+  c = (net_get_target(outSelect) == inSelect);
+  g_signal_handlers_block_by_func( connectInputBut, 
+				   G_CALLBACK(connect_in_but_callback), 
+				   NULL);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(connectInputBut), c);
+  g_signal_handlers_unblock_by_func( connectInputBut, 
+				   G_CALLBACK(connect_in_but_callback), 
+				   NULL);
 #endif
 
 

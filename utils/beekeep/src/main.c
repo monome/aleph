@@ -27,6 +27,8 @@ int main (int argc, char **argv)
   char ext[16];
   void* fp;
 
+  setbuf(stdout, NULL);
+
   if(argc < 2) {
     printf("\r\n beekeep: filename argument required; exiting\r\n\r\n");
     return 1;
@@ -49,4 +51,3 @@ int main (int argc, char **argv)
   ui_init();
   gtk_main ();
 }
-
