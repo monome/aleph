@@ -21,7 +21,7 @@ static op_in_fn op_div_in_fn[3] = {
 };
 
 static const char* op_div_instring  = "A\0      B\0      TRIG\0   ";
-static const char* op_div_outstring = "VAL\0    R\0      ";
+static const char* op_div_outstring = "VAL\0    ";
 static const char* op_div_opstring  = "DIV";
 
 //-------------------------------------------------
@@ -29,9 +29,8 @@ static const char* op_div_opstring  = "DIV";
 void op_div_init(void* mem) {
   op_div_t* div = (op_div_t*)mem;
   div->super.numInputs = 3;
-  div->super.numOutputs = 2;
+  div->super.numOutputs = 1;
   div->outs[0] = -1;
-  div->outs[1] = -1;
 
   div->super.in_fn = op_div_in_fn;
   div->super.pickle = (op_pickle_fn) (&op_div_pickle);
@@ -59,9 +58,7 @@ static void op_div_in_a(op_div_t* div, const io_t v) {
   // printf("div at %d received A %d\n", (int)div, (int)*v);
   div->a = v;
   div->val = op_div(div->a, div->b);
-  div->r = div->a % div->b;
   net_activate(div->outs[0], div->val, div);
-  net_activate(div->outs[1], div->r, div);
 }
 
 // set operand B
@@ -71,10 +68,8 @@ static void op_div_in_b(op_div_t* div, const io_t v) {
     div->b = v;
   }
   div->val = op_div(div->a, div->b);
-  div->r = div->a % div->b;
   if(div->btrig) {
     net_activate(div->outs[0], div->val, div);
-    net_activate(div->outs[1], div->r, div);
   }
 }
 

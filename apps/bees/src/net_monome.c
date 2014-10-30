@@ -55,8 +55,8 @@ static void monome_ring_enc_loopback(void* op, u32 edata) {
 // this would means that multiple operators would be mapped
 // arbitrarily to different sources! oy...
 
-monome_handler_t monome_grid_key_handler = &monome_grid_key_loopback;
-monome_handler_t monome_ring_enc_handler = &monome_ring_enc_loopback;
+monome_handler_t monome_grid_key_handler = &dummyHandler; //&monome_grid_key_loopback;
+monome_handler_t monome_ring_enc_handler = &dummyHandler; //&monome_ring_enc_loopback;
 op_monome_t* monomeOpFocus = NULL;
 
 /// TODO: tilt and key press should be decoupled from grid/ring??? yeah probly. 

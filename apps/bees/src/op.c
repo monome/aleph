@@ -29,6 +29,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpBits,
   eOpDelay,
   eOpDiv,
+  eOpDivr,
   eOpFade,
   eOpGate,
   eOpMonomeGridRaw, // "grid"
@@ -288,6 +289,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "FADE",
     .size = sizeof(op_fade_t),
     .init = &op_fade_init,
+    .deinit = NULL
+  },  {
+    .name = "DIVR",
+    .size = sizeof(op_divr_t),
+    .init = &op_divr_init,
     .deinit = NULL
   },
 };

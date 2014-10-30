@@ -50,6 +50,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_cascades.c \
 	$(APP_DIR)/src/ops/op_delay.c \
 	$(APP_DIR)/src/ops/op_div.c \
+	$(APP_DIR)/src/ops/op_divr.c \
 	$(APP_DIR)/src/ops/op_enc.c \
 	$(APP_DIR)/src/ops/op_fade.c \
 	$(APP_DIR)/src/ops/op_gate.c \

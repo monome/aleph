@@ -18,6 +18,7 @@
 #include "ops/op_cascades.h"
 #include "ops/op_delay.h"
 #include "ops/op_div.h"
+#include "ops/op_divr.h"
 #include "ops/op_enc.h"
 #include "ops/op_fade.h"
 #include "ops/op_gate.h"

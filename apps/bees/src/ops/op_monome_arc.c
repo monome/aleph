@@ -9,7 +9,7 @@
 
 //---- descriptor strings
 static const char* op_marc_instring =  "FOCUS\0  LOOP\0   RING\0   POS\0    VAL\0    ";
-static const char* op_marc_outstring = "NUM\0    DELTA\0  ";
+static const char* op_marc_outstring = "NUM\0    DELTA\0  VAL\0    ";
 static const char* op_marc_opstring =  "ARC";
 
 //-------------------------------------------------
@@ -62,7 +62,7 @@ void op_marc_init(void* mem) {
   op->super.flags |= (1 << eOpFlagMonomeRing);
 
   op->super.numInputs = 5;
-  op->super.numOutputs = 2;
+  op->super.numOutputs = 3;
 
   op->super.in_val = op->in_val;
   op->super.out = op->outs;
@@ -79,6 +79,16 @@ void op_marc_init(void* mem) {
   op->outs[1] = -1;
 
   op->focus = OP_ONE;
+  op->loop = 1;
+  op->ring = 0;
+  op->pos = 0;
+  op->val = 0;
+
+  op->vals[0] = 0;
+  op->vals[1] = 0;
+  op->vals[2] = 0;
+  op->vals[3] = 0;
+
   net_monome_set_focus(&(op->monome), 1);
 }
 
@@ -108,23 +118,32 @@ static void op_marc_in_loop(op_marc_t* op, const io_t v) {
 
 // set ring number for next update
 static void op_marc_in_ring(op_marc_t* op, const io_t v) {
-  op->ring = (u8)v;
+  if(v<0) op->ring = 0;
+  else if(v>3) op->ring = 3;
+  else op->ring = (u8)v;
 }
 
 // set ring position for next update
 static void op_marc_in_pos(op_marc_t* op, const io_t v) {
-  op->pos = (u8)v;
+  if(v<0) op->pos = 0;
+  else if(v>63) op->pos = 63;
+  else op->pos = (u8)v;
 }
 
 // set value and perform update
 static void op_marc_in_val(op_marc_t* op, const io_t v) {
-  monome_arc_led_set(op->ring, op->pos, (u8)v);
+  if(v<0) op->val = 0;
+  else if(v>15) op->val = 15;
+  else op->val = (u8)v;
+
+  monome_arc_led_set(op->ring, op->pos, op->val);
 }
 
 
 static void op_marc_handler(op_monome_t* op_monome, u32 data) {
   u8 n;
   s8 v;
+  s16 a;
   
   op_marc_t* op = (op_marc_t*)(op_monome->op);
 
@@ -135,15 +154,19 @@ static void op_marc_handler(op_monome_t* op_monome, u32 data) {
   print_dbg("; v: 0x");
   print_dbg_hex(v);
 
-  if(op->loop) {
-    /// FIXME: 
-    // of course needs more state variables for this...
-    // keep an internal position accumulator or whatevs
-    //     monome_arc_led_set(n, somePosition, someValue);
-  }
-
   net_activate(op->outs[0], (io_t)n, op);
   net_activate(op->outs[1], (io_t)v, op);
+
+    if(op->loop) {
+    a = op->vals[n] + v;
+    if(a<0) a=0;
+    else if(a>255) a=255;
+
+    monome_arc_led_set(n, op->vals[n]/4, 0);
+    op->vals[n] = a;
+    monome_arc_led_set(n, op->vals[n]/4, 15);
+    net_activate(op->outs[2], (io_t)op->vals[n], op);
+  }
 }
 
 
