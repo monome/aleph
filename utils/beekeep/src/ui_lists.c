@@ -47,6 +47,14 @@ typedef struct _RowParams {
 } RowParams;
 
 
+typedef struct _RowPresets {
+  GtkWidget* row;
+  GtkWidget* grid;
+  GtkWidget* entryName;
+} RowPresets;
+
+
+
 //------------------------
 //---- variables
 
@@ -55,6 +63,7 @@ RowOps 	rowOps[NET_OUTS_MAX];
 RowOuts rowOuts[NET_OUTS_MAX];
 RowIns rowIns[NET_INS_MAX];
 RowParams rowParams[NET_INS_MAX];
+RowPresets rowPresets[NET_PRESETS_MAX];
 
 //------------------
 //--- callbacks
@@ -101,7 +110,6 @@ static void select_preset_callback( GtkListBox *box, gpointer data ) {
 }
 
 static void spin_in_callback( GtkSpinButton *but, gpointer data ) {
-  //  int id = *((int*)data);
   int id = GPOINTER_TO_INT(data);
   int val = gtk_spin_button_get_value_as_int(but);
   printf("\r\n setting input node from spinbox; id: %d; val: 0x%08x", id, val);
@@ -110,13 +118,20 @@ static void spin_in_callback( GtkSpinButton *but, gpointer data ) {
 
 
 static void spin_param_callback( GtkSpinButton *but, gpointer data ) {
-  //  int id = *((int*)data);
   int id = GPOINTER_TO_INT(data);
   int val = gtk_spin_button_get_value_as_int(but);
   printf("\r\n setting param from spinbox; id: %d; val: 0x%08x", id, val);
   ui_set_param(id, val);
 }
 
+
+static void preset_name_entry_callback( GtkEntry *entry, gpointer data) {
+  int id = GPOINTER_TO_INT(data);
+  const char* str;
+  str = gtk_entry_get_text(entry);
+  printf("\r\n setting preset name from widget; id: %d ; new name: %s", id, str);
+  strncpy(preset_name(id), str, PRESET_NAME_LEN);
+}
 
 //----------------------------------
 //--- helpers
@@ -331,26 +346,37 @@ void fill_params(GtkListBox *list) {
 
 void fill_presets(GtkListBox *list) {  
   GtkWidget *row;
-  GtkWidget *label;
-  char str[LABEL_BUF_SIZE];
+  GtkWidget *entry;
+  GtkWidget* grid;
+
+  char* str;
   int i, n;
 
-  g_signal_connect (list, "row-selected", G_CALLBACK(select_param_callback), NULL);
+  g_signal_connect (list, "row-selected", G_CALLBACK(select_preset_callback), NULL);
+
   n = NET_PRESETS_MAX;
 
   for(i=0; i<n; i++) {
-    //    snprintf(str, LABEL_BUF_SIZE, "%d.%s", i, net_in_name(i + net->numIns) );
-    snprintf(str, LABEL_BUF_SIZE, "%s", preset_name(i));
     row = gtk_list_box_row_new();
-    label = gtk_label_new(str);
-    rowParams[i].row = row;
-    rowParams[i].labelName = label; 
-    gtk_container_add(GTK_CONTAINER(row), label);
+    grid = gtk_grid_new();
+    gtk_container_add(GTK_CONTAINER(row), grid);
+    rowPresets[i].grid = grid;
+
+    str = preset_name(i);
+
+    entry = gtk_entry_new();
+    gtk_entry_set_text( GTK_ENTRY(entry), str );
+    gtk_grid_attach(GTK_GRID(grid), entry, 0, 0, 4, 1);
+    g_signal_connect( entry, "activate", 
+		      G_CALLBACK(preset_name_entry_callback), GINT_TO_POINTER(i));
+
+    rowPresets[i].row = row;
+    rowPresets[i].grid = grid;
+    rowPresets[i].entryName = entry; 
     gtk_container_add(GTK_CONTAINER(list), row);    
   }
   gtk_widget_show_all(GTK_WIDGET(list));
 }
-
 
 //---- refresh/rebuild individual rows
 
