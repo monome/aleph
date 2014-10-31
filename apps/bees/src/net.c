@@ -407,7 +407,8 @@ s16 net_add_op(op_id_t opId) {
   print_dbg(" ; allocating... ");
   op = (op_t*)((u8*)net->opPool + net->opPoolOffset);
   // use the class ID to initialize a new object in scratch
-
+  print_dbg(" ; op address: 0x");
+  print_dbg_hex((u32)op);
   print_dbg(" ;  initializing... ");
   op_init(op, opId);
 

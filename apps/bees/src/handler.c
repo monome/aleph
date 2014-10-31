@@ -121,6 +121,12 @@ static void handle_MonomeGridKey(s32 data) {
   /// of course, first we need USB hub support.
   
   print_dbg("\r\n monome grid key event in BEES.");
+  print_dbg("\r\n monomeOpFocus: 0x");
+  print_dbg_hex((u32)monomeOpFocus);
+  print_dbg("; monomeOpFocus->op: 0x");
+  print_dbg_hex((u32)(monomeOpFocus->op));
+  print_dbg("; monome_grid_key_handler: 0x");
+  print_dbg_hex((u32)(monome_grid_key_handler));
 
   (*monome_grid_key_handler)(monomeOpFocus, data);
 }

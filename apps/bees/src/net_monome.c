@@ -2,7 +2,7 @@
    bees
    aleph
 
-   monome driver <-> operator glue layer
+   monome d\river <-> operator glue layer
 
    keeps pointers to handler functions,
    manages operator focus
@@ -23,25 +23,25 @@ bool monomeConnect = 0;
 static void dummyHandler(void* op, u32 edata) { return; }
 
 // use led state buffer and dirty flags
-static void monome_grid_key_loopback(void* op, u32 edata) {
-  u8 x, y, z;
-  /// FIXME: this stuff should really be abstracted
-  monome_grid_key_parse_event_data(edata, &x, &y, &z);
-  monomeLedBuffer[x | (y << 4)] = z;
-  monome_calc_quadrant_flag(x, y);
-}
+/* static void monome_grid_key_loopback(void* op, u32 edata) { */
+/*   u8 x, y, z; */
+/*   /// FIXME: this stuff should really be abstracted */
+/*   monome_grid_key_parse_event_data(edata, &x, &y, &z); */
+/*   monomeLedBuffer[x | (y << 4)] = z; */
+/*   monome_calc_quadrant_flag(x, y); */
+/* } */
 
-// use led state buffer and dirty flags
-static void monome_ring_enc_loopback(void* op, u32 edata) {
-  u8 n;
-  s8 val;
-  monome_ring_enc_parse_event_data(edata, &n, &val);
-  if(val > 0) {
-    // FIXME: not sure if this is useful?
-    monomeLedBuffer[val + (n<<6)] = 15;
-    monomeFrameDirty |= (1<<n);
-  }
-}
+/* // use led state buffer and dirty flags */
+/* static void monome_ring_enc_loopback(void* op, u32 edata) { */
+/*   u8 n; */
+/*   s8 val; */
+/*   monome_ring_enc_parse_event_data(edata, &n, &val); */
+/*   if(val > 0) { */
+/*     // FIXME: not sure if this is useful? */
+/*     monomeLedBuffer[val + (n<<6)] = 15; */
+/*     monomeFrameDirty |= (1<<n); */
+/*   } */
+/* } */
 
 //---------------------------------
 // extern variables, initialized here.
@@ -68,9 +68,14 @@ op_monome_t* monomeOpFocus = NULL;
 //--------------------------
 //---- extern functions
 // init
-void net_monome_init(void) {
-  monomeOpFocus = NULL;
-}
+/* void net_monome_init(void) { */
+/*   //// ok, this is never called... */
+/*   int i; */
+/*   for(i=0; i<100; i++) { */
+/*     print_dbg("\r\n !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); */
+/*   } */
+/*   monomeOpFocus = NULL; */
+/* } */
 
 // set focus
 void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
@@ -83,14 +88,26 @@ void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
 
   //// FIXME: differentiate on device type (grid/arc)
 
-  if(focus > 0 /*&& monomeConnect*/) {
-    if(monomeOpFocus != NULL ){
+  if(focus > 0) {
+    // aha... set_focus is getting called twice in a row on scene load
+    /// (once on _init, once in _unpickle.)
+      // we don't want the second call to *unset* focus!
+    //    if(monomeOpFocus != NULL ) {
+    if((monomeOpFocus != NULL) && (monomeOpFocus != op_monome)) {
       /// stealing focus, inform the previous holder
       monomeOpFocus->focus = 0;
     }
     if(dev == eDeviceGrid) {
+      print_dbg("\r\n setting grid_key handler");
       monome_grid_key_handler = op_monome->handler;
     } else if(dev == eDeviceArc) {
+      print_dbg("\r\n setting ring_enc handler");
+      monome_ring_enc_handler = op_monome->handler;
+    } else {
+      print_dbg("\r\n warning! requested focus, but no handler was set. "
+		" bad device type maybe?");
+      // this is kind of bad, but just set both grid and arc handlers by default.
+      monome_grid_key_handler = op_monome->handler;
       monome_ring_enc_handler = op_monome->handler;
     }
     monomeOpFocus = op_monome;
@@ -100,6 +117,8 @@ void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
       monome_grid_key_handler = (monome_handler_t)&dummyHandler;
     } else if(dev == eDeviceArc) {
       monome_ring_enc_handler = (monome_handler_t)&dummyHandler;
+    } else {
+      ;;
     }
     monomeOpFocus = NULL;
     op_monome->focus = 0;
@@ -127,7 +146,6 @@ void net_monome_set_attributes() {
 }
 
 void net_monome_connect(void) {
-  
   if(monomeConnect != 1) {
     monomeConnect = 1;
     timers_set_monome();
@@ -139,8 +157,9 @@ void net_monome_connect(void) {
 
 // disconnect
 void net_monome_disconnect(void) {
+  print_dbg("\r\n net_monome_disconnect");
   monomeConnect = 0;
-  monomeOpFocus = NULL;
-  monome_grid_key_handler = (monome_handler_t)&dummyHandler;
+  //  monomeOpFocus = NULL;
+  //  monome_grid_key_handler = (monome_handler_t)&dummyHandler;
   timers_unset_monome();
 }
