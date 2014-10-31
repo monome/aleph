@@ -106,6 +106,8 @@ void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
     } else {
       print_dbg("\r\n warning! requested focus, but no handler was set. "
 		" bad device type maybe?");
+      // aha... this is ending up here on default scene load. 
+      // maybe just a really gruesome delay in the monome comms, needs work 
       // this is kind of bad, but just set both grid and arc handlers by default.
       monome_grid_key_handler = op_monome->handler;
       monome_ring_enc_handler = op_monome->handler;
