@@ -10,7 +10,8 @@
 
 // just a ScrolledWindow with a ListBox in it
 typedef struct _ScrollBox { 
-  GtkScrolledWindow* scroll;
+  //  GtkScrolledWindow* scroll;
+  GtkWidget* scroll;
   GtkListBox* list;
 } ScrollBox;
 

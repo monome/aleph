@@ -61,7 +61,7 @@ static void refresh_in_row_for_target(int t) {
   } else {
     tLast = -1;
   }
-  printf("\r\n old target: %d", tLast);
+  //  printf("\r\n old target: %d", tLast);
   outSelect = id;
   t = net_get_target(id);
   refresh_in_row_for_target(t);
@@ -88,7 +88,7 @@ static void refresh_in_row_for_target(int t) {
 
  void ui_select_preset(int id) {
   presetSelect = id;
-  //... ?
+  printf("\r\n selecting preset (TODO!) ; id: %d", id);
 }
 
 //==================================
@@ -187,6 +187,9 @@ void ui_set_input(int id, int val) {
 
 // handle param value change
 void ui_set_param(int id, int val) {
-  net_set_in_value(id + net->numParams, val);
+
+  printf("\r\n setting param %d to val 0x%08x ... "
+	     " need to implement scaling or this will crash.",  id, val);
+  //  net_set_in_value(id + net->numParams, val);
   refresh_row_params(id);
 }
