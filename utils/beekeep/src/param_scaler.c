@@ -5,6 +5,10 @@
 
 */
 
+// std
+////// later...
+// #include <stdarg.h>
+
 // asf
 #include "print_funcs.h"
 
@@ -15,6 +19,44 @@
 #include "flash_bees.h"
 #include "param_scaler.h"
 #include "types.h"
+
+
+//------ scaler data
+// including default scaler data as const byte arrays.
+const u8 scaler_amp_rep_data[] = {
+  #include "scaler_amp_rep.dat.inc"
+};
+
+const u8 scaler_amp_val_data[] = {
+  #include "scaler_amp_val.dat.inc"
+};
+
+const u8 scaler_integrator_rep_data[] = {
+  #include "scaler_integrator_rep.dat.inc"
+};
+
+const u8 scaler_integrator_val_data[] = {
+  #include "scaler_integrator_val.dat.inc"
+};
+
+const u8 scaler_integrator_short_rep_data[] = {
+  #include "scaler_integrator_short_rep.dat.inc"
+};
+
+const u8 scaler_integrator_short_val_data[] = {
+  #include "scaler_integrator_short_val.dat.inc"
+};
+
+const u8 scaler_note_val_data[] = {
+  #include "scaler_note_val.dat.inc"
+};
+
+const u8 scaler_svf_fc_val_data[] = {
+  #include "scaler_svf_fc_val.dat.inc"
+};
+
+//-------
+
 
 // array of words required for param val per param type
 static u32 scalerDataWords[eParamNumTypes] = {
