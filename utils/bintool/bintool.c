@@ -60,10 +60,15 @@ int main(int argc, char** argv) {
     while(fread(&ch, 1, 1, rf) == 1) {
       if(byteCount % 4 == 3) {
 	/// swap and print
-	fprintf(wf_data, "0x%.2X,\n", (int)b[3]);
-	fprintf(wf_data, "0x%.2X,\n", (int)b[2]);
-	fprintf(wf_data, "0x%.2X,\n", (int)b[1]);
-	fprintf(wf_data, "0x%.2X,\n", (int)b[0]);
+	/* fprintf(wf_data, "0x%.2X,\n", (int)b[3]); */
+	/* fprintf(wf_data, "0x%.2X,\n", (int)b[2]); */
+	/* fprintf(wf_data, "0x%.2X,\n", (int)b[1]); */
+	/* fprintf(wf_data, "0x%.2X,\n", (int)b[0]); */
+	fprintf(wf_data, "0x%.2X,\n", (unsigned)(unsigned char)b[3]);
+	fprintf(wf_data, "0x%.2X,\n", (unsigned)(unsigned char)b[2]);
+	fprintf(wf_data, "0x%.2X,\n", (unsigned)(unsigned char)b[1]);
+	fprintf(wf_data, "0x%.2X,\n", (unsigned)(unsigned char)b[0]);
+
       }
       b[byteCount % 4] = ch;
       byteCount++;
