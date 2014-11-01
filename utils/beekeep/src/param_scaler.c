@@ -362,12 +362,6 @@ const s32* scaler_get_nv_rep(ParamType p) {
   /* case  eParamTypeNote : */
   /*   return (s32*)scaler_note_rep_data; */
   /*   break; */
-  /* case  eParamTypeSvfFreq : */
-  /*   return (s32*)scaler_svf_fc_rep_data; */
-  /*   break; */
-  case  eParamTypeIntegratorShort :
-    return (s32*)scaler_integrator_short_rep_data;
-    break;
   default:
     return NULL;
   }

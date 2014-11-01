@@ -22,6 +22,7 @@
 
 /// bees
 #include "files.h"
+#include "param.h"
 #include "scene.h"
 
 // ---- directory list class
@@ -70,14 +71,14 @@ static void* list_open_file_name(dirList_t* list, const char* name, const char* 
 //// FIXME: dumb and slow seek/read functions because the real ones are broken
 //// fseek: no offset arg, assume its the first seek since file was opened 
 /* // not used
-static void fake_fseek(void* fp, u32 loc) {
-  u32 n = 0;
-  u8 dum;
-  while(n < loc) {
-    dum = fl_fgetc(fp);
-    n++;
-  }
-}
+   static void fake_fseek(void* fp, u32 loc) {
+   u32 n = 0;
+   u8 dum;
+   while(n < loc) {
+   dum = fl_fgetc(fp);
+   n++;
+   }
+   }
 */
 
 // fread: no size arg
@@ -174,121 +175,44 @@ u8 files_load_dsp(u8 idx) {
 
 // search for specified dsp file and load it
 u8 files_load_dsp_name(const char* name) {
-  /* void* fp; */
-  /* u32 size = 0; */
-  /* u8 ret; */
-  /* //  ModuleVersion modVers; */
+  // don't need .ldr, but we do need .dsc...
+  char descname[64];
+  u8 nbuf[4];
+  // buffer for binary blob of single descriptor
+  u8 dbuf[PARAM_DESC_PICKLE_BYTES];
+  // unpacked descriptor
+  ParamDesc desc;
+  u32 nparams;
+  u8 ret = 0;
+  FILE* fp;
+  int i;
 
-  /* delay_ms(10); */
+  strncpy(descname, name, 64);
+  strcat(descname, ".dsc");
 
-  /* app_pause(); */
+  fp = fopen(descname, "r");
 
-  /* fp = list_open_file_name(&dspList, name, "r", &size); */
-
-  /* if( fp != NULL) {	   */
-  /*   print_dbg("\r\n found file, loading dsp "); */
-  /*   print_dbg(name); */
-  /*   fake_fread(bfinLdrData, size, fp); */
-
-  /*   fl_fclose(fp); */
-  /*   bfinLdrSize = size; */
-
-  /*   if(bfinLdrSize > 0) { */
-  /*     print_dbg("\r\n loading bfin from buf"); */
-  /*     // reboot the dsp with new firmware in RAM */
-  /*     bfin_load_buf(); */
-  /*     print_dbg("\r\n finished load"); */
-  /*     // write module name in global scene data */
-  /*     scene_set_module_name(name); */
-  /*     // get moduleversion to scene data */
-  /*     bfin_get_module_version(&(sceneData->desc.moduleVersion)); */
-
-  /*     ret = 1; */
-  /*   } else { */
-  /*     print_dbg("\r\n bfin ldr size was <=0, aborting"); */
-  /*     ret = 0; */
-  /*   } */
-  /* } else { */
-  /*   print_dbg("\r\n error: fp was null in files_load_dsp_name \r\n"); */
-  /*   ret = 0; */
-  /* } */
-  /* app_resume(); */
-  /* return ret; */
-  return 0;
-}
-
-
-// store .ldr as default in internal flash, given index
-#if 0
-void files_store_default_dsp(u8 idx) {
-  files_store_default_dsp_name((const char*)files_get_dsp_name(idx));
-  /* const char* name; */
-  /* void* fp;	   */
-  /* u32 size; */
-
-  /* app_pause(); */
-
-  /* name = (const char*)files_get_dsp_name(idx); */
-  /* fp = list_open_file_name(&dspList, name, "r", &size); */
-
-  /* if( fp != NULL) { */
-  /*   print_dbg("\r\n writing default DSP..."); */
-  /*   bfinLdrSize = size; */
-  /*   fl_fread((void*)bfinLdrData, 1, size, fp); */
-  /*   flash_write_ldr(); */
-  /*   fl_fclose(fp); */
-  /*   print_dbg("finished writing LDR to flash"); */
-    
-  /* } else { */
-  /*   print_dbg("\r\n error: fp was null in files_store_default_dsp \r\n"); */
-  /* } */
-
-  /* app_resume(); */
-}
-#endif
-
-/*
-// store .ldr as default in internal flash, given name
-void files_store_default_dsp_name(const char* name) {
-  //  const char* name;
-  void* fp;	  
-  u32 size;
-
-  app_pause();
-
-  //  name = (const char*)files_get_dsp_name(idx);
-  fp = list_open_file_name(&dspList, name, "r", &size);
-
-  if( fp != NULL) {
-    print_dbg("\r\n writing default DSP...");
-    bfinLdrSize = size;
-    print_dbg(" , size: ");
-    print_dbg_ulong(size);
-    //    fl_fread((void*)bfinLdrData, 1, size, fp);
-    fake_fread((void*)bfinLdrData, size, fp);
-
-    // TEST: print module data
-#if 0
-    for(u32 i = 0; i<size; i += 4) {
- if((i % 16) == 0) {
-	print_dbg("\r\n");
-      }
-      print_dbg(" 0x");
-      print_dbg_hex(*((u32*)(bfinLdrData + i)));
+  // get count of params
+  fread(nbuf, 1, 4, fp);
+  unpickle_32(nbuf, (u32*)&nparams); 
+  /// loop over params
+  if(nparams > 0) {
+    net_clear_params();
+    for(i=0; i<nparams; i++) {
+      // read into desc buffer
+      fread(dbuf, 1, PARAM_DESC_PICKLE_BYTES, fp);
+      // unpickle directly into network descriptor memory
+      pdesc_unpickle( &desc, dbuf );
+      // copy descriptor to network and increment count
+      net_add_param(i, (const ParamDesc*)(&desc));     
     }
-#endif
-
-    flash_write_ldr();
-    fl_fclose(fp);
-    print_dbg("\r\n finished writing default LDR to flash");
-    
   } else {
-    print_dbg("\r\n error: fp was null in files_store_default_dsp \r\n");
+    ret = 1;
   }
 
-  app_resume();
+  fclose(fp);
+  return ret;
 }
-*/
 
 
 // return count of dsp files
@@ -313,12 +237,18 @@ u8 files_load_scene(u8 idx) {
 // return 1 on success, 0 on failure
 u8 files_load_scene_name(const char* name) {
   FILE* f = fopen(name, "r");
+  u8 ret;
+
   fread(sceneData, sizeof(sceneData_t), 1, f);
   fclose(f);
 
   scene_read_buf();
 
-  /* void* fp; */
+  ret = files_load_dsp_name(sceneData->desc.moduleName);
+
+  return ret;
+
+  /* void* fp; */ 
   /* u32 size = 0; */
   /* u8 ret = 0; */
 
@@ -341,7 +271,6 @@ u8 files_load_scene_name(const char* name) {
   /* }  */
   /* app_resume(); */
   /* return ret; */
-  return 0;
 }
 
 
@@ -438,15 +367,15 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
       for(i=0; i<dstSize; ++i) {
 
 #ifdef SCALER_LE
-    swap.b[3] = fl_fgetc(fp);
-    swap.b[2] = fl_fgetc(fp);
-    swap.b[1] = fl_fgetc(fp);
-    swap.b[0] = fl_fgetc(fp);
+	swap.b[3] = fl_fgetc(fp);
+	swap.b[2] = fl_fgetc(fp);
+	swap.b[1] = fl_fgetc(fp);
+	swap.b[0] = fl_fgetc(fp);
 #else
-    swap.b[0] = fl_fgetc(fp);
-    swap.b[1] = fl_fgetc(fp);
-    swap.b[2] = fl_fgetc(fp);
-    swap.b[3] = fl_fgetc(fp);
+	swap.b[0] = fl_fgetc(fp);
+	swap.b[1] = fl_fgetc(fp);
+	swap.b[2] = fl_fgetc(fp);
+	swap.b[3] = fl_fgetc(fp);
 #endif
 	*dst++ = swap.s;
       }
@@ -454,15 +383,15 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
       print_dbg("\r\n warning: requested scaler data is < target, padding");
       for(i=0; i<size; ++i) {
 #ifdef SCALER_LE
-    swap.b[3] = fl_fgetc(fp);
-    swap.b[2] = fl_fgetc(fp);
-    swap.b[1] = fl_fgetc(fp);
-    swap.b[0] = fl_fgetc(fp);
+	swap.b[3] = fl_fgetc(fp);
+	swap.b[2] = fl_fgetc(fp);
+	swap.b[1] = fl_fgetc(fp);
+	swap.b[0] = fl_fgetc(fp);
 #else
-    swap.b[0] = fl_fgetc(fp);
-    swap.b[1] = fl_fgetc(fp);
-    swap.b[2] = fl_fgetc(fp);
-    swap.b[3] = fl_fgetc(fp);
+	swap.b[0] = fl_fgetc(fp);
+	swap.b[1] = fl_fgetc(fp);
+	swap.b[2] = fl_fgetc(fp);
+	swap.b[3] = fl_fgetc(fp);
 #endif
 	*dst++ = swap.s;
       }
@@ -474,15 +403,15 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
     } else {
       for(i=0; i<size; ++i) {
 #ifdef SCALER_LE
-    swap.b[3] = fl_fgetc(fp);
-    swap.b[2] = fl_fgetc(fp);
-    swap.b[1] = fl_fgetc(fp);
-    swap.b[0] = fl_fgetc(fp);
+	swap.b[3] = fl_fgetc(fp);
+	swap.b[2] = fl_fgetc(fp);
+	swap.b[1] = fl_fgetc(fp);
+	swap.b[0] = fl_fgetc(fp);
 #else
-    swap.b[0] = fl_fgetc(fp);
-    swap.b[1] = fl_fgetc(fp);
-    swap.b[2] = fl_fgetc(fp);
-    swap.b[3] = fl_fgetc(fp);
+	swap.b[0] = fl_fgetc(fp);
+	swap.b[1] = fl_fgetc(fp);
+	swap.b[2] = fl_fgetc(fp);
+	swap.b[3] = fl_fgetc(fp);
 #endif
 	*dst++ = swap.s;
       }
