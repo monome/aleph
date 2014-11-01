@@ -9,8 +9,16 @@
 #define L1 9
 #define L0 5
 
+
+
 //-------------------------------------------------
 //----- static variables
+
+/////////////////
+/// FIXME:
+static io_t dummy = 0;
+///////////////
+
 
 //---- descriptor strings
 static const char* op_cascades_instring = "FOCUS\0  SIZE\0   STEP\0   ";
@@ -111,6 +119,11 @@ void op_cascades_init(void* mem) {
 
   op->in_val[0] = &(op->focus);
   op->in_val[1] = &(op->size);  
+  ///////////////////
+  // FIXME
+  op->in_val[2] = &dummy;  
+  ////////////////////
+
   op->outs[0] = -1;
   op->outs[1] = -1;
   op->outs[2] = -1;
