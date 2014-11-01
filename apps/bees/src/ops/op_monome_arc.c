@@ -46,6 +46,7 @@ void op_marc_init(void* mem) {
   //  print_dbg("\r\n op_marc_init ");
   op_marc_t* op = (op_marc_t*)mem;
 
+
   // superclass functions
   //--- op
   op->super.in_fn = op_marc_in_fn;
@@ -74,7 +75,9 @@ void op_marc_init(void* mem) {
   op->in_val[0] = &(op->focus);
   op->in_val[1] = &(op->loop);  
   op->in_val[2] = &(op->ring);
-  op->in_val[2] = &(op->val);
+  op->in_val[3] = &(op->pos);
+  op->in_val[4] = &(op->val);
+
   op->outs[0] = -1;
   op->outs[1] = -1;
 
@@ -83,6 +86,7 @@ void op_marc_init(void* mem) {
   op->ring = 0;
   op->pos = 0;
   op->val = 0;
+
 
   op->vals[0] = 0;
   op->vals[1] = 0;
