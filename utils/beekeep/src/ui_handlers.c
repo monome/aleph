@@ -191,6 +191,6 @@ void ui_set_param(int id, int val) {
   printf("\r\n setting param %d to val 0x%08x ... "
 	 //	     " need to implement scaling or this will crash.",  id, val);
 	 , id, val);
-  net_set_in_value(id + net->numParams, val);
+  net_set_in_value(id + net->numIns, val);
   refresh_row_params(id);
 }

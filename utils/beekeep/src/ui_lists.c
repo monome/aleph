@@ -328,15 +328,32 @@ void fill_params(GtkListBox *list) {
     gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 1, 1);
 
     // spinbutton for value entry
-    spin = create_spin_button(net_get_in_value(i));
+    spin = create_spin_button(net_get_in_value(i + net->numIns));
     rowParams[i].spinValue = spin;
     gtk_grid_attach(GTK_GRID(grid), spin, 4, 0, 1, 1);
     g_signal_connect (spin, "value_changed", G_CALLBACK(spin_param_callback), GINT_TO_POINTER(i));
     
-    /// TODO: param representation label
+    // label for name
+    //    param_get_string(str, i + net->numIns);
+    //// FIXME: again, this is terribly confusing. 
+    //// some functions take the param index and some the input node index.
+    /// this one is that latter.
+    memset(str, '\0', LABEL_BUF_SIZE);
+    net_get_param_value_string(str, i + net->numIns);
+    //    printf("\r\n param value label: %s", str);
+    label = gtk_label_new(str);
+    rowParams[i].labelValue = label; 
+    gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
+    gtk_label_set_width_chars(GTK_LABEL(label), 18);
+    gtk_grid_attach(GTK_GRID(grid), label, 5, 0, 1, 1);
+    
+    ////////////////
+    //// test: set param (is it corrupted?)
+    
+    //////////////
+
 
     /// TODO: preset inclusion toggle
-
     
     gtk_container_add(GTK_CONTAINER(list), row);    
   }
@@ -454,6 +471,7 @@ void refresh_row_params(int id) {
   GtkWidget *row;
   GtkWidget *label;
   GtkWidget *spin;
+  char str[LABEL_BUF_SIZE];
   int t;
   int val;
   if(id < 0 || id >= net->numParams) { return; }
@@ -472,8 +490,14 @@ void refresh_row_params(int id) {
     }
   }
 
-  //// TODO: param rep label
-  // val = net_get_in_value(id);
+  // refresh value label
+  label = rowParams[id].labelValue;
+  net_get_param_value_string(str, id + net->numIns);
+  gtk_label_set_text(GTK_LABEL(label), str);
+
+  gtk_widget_show_all(row);
+
+  //  val = net_get_in_value(id);
   //  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), (gdouble)val);
   //  gtk_widget_show_all(row);
 }

@@ -195,8 +195,10 @@ u8 files_load_dsp_name(const char* name) {
   // get count of params
   fread(nbuf, 1, 4, fp);
   unpickle_32(nbuf, (u32*)&nparams); 
+
   /// loop over params
   if(nparams > 0) {
+    printf("\r\n loading param descriptor; count: %d", nparams);
     net_clear_params();
     for(i=0; i<nparams; i++) {
       // read into desc buffer
@@ -247,30 +249,6 @@ u8 files_load_scene_name(const char* name) {
   ret = files_load_dsp_name(sceneData->desc.moduleName);
 
   return ret;
-
-  /* void* fp; */ 
-  /* u32 size = 0; */
-  /* u8 ret = 0; */
-
-  /* app_pause(); */
-
-  /* fp = list_open_file_name(&sceneList, name, "r", &size); */
-
-  /* if( fp != NULL) {	   */
-  /*   fake_fread((volatile u8*)sceneData, sizeof(sceneData_t), fp); */
-  /*   fl_fclose(fp); */
-  /*   scene_read_buf(); */
-
-  /*   // try and load dsp module indicated by scene descriptor */
-  /*   //// DUDE! NO!!! scene does this. when did this happen! */
-  /*   //// probably snuck in in some merge. */
-  /*   //    ret = files_load_dsp_name(sceneData->desc.moduleName); */
-  /* } else { */
-  /*   print_dbg("\r\n error: fp was null in files_load_scene_name \r\n"); */
-  /*   ret = 0; */
-  /* }  */
-  /* app_resume(); */
-  /* return ret; */
 }
 
 
@@ -286,28 +264,6 @@ void files_store_scene_name(const char* name) {
   scene_write_buf();
   fwrite((const void*)sceneData, sizeof(sceneData_t), 1, f);
   fclose(f);
-
-  /* //u32 i; */
-  /* void* fp; */
-  /* char namebuf[64] = SCENES_PATH; */
-  /* u8* pScene; */
-
-  /* app_pause(); */
-
-  /* strcat(namebuf, name); */
-  /* strip_space(namebuf, 32); */
-  /* // fill the scene RAM buffer from current state of system */
-  /* scene_write_buf();  */
-  /* // open FP for writing */
-  /* fp = fl_fopen(namebuf, "wb"); */
-  /* pScene = (u8*)sceneData; */
-  /* fl_fwrite((const void*)pScene, sizeof(sceneData_t), 1, fp); */
-  /* fl_fclose(fp); */
-  /* // rescan */
-  /* list_scan(&sceneList, SCENES_PATH); */
-  /* delay_ms(10); */
-
-  /* app_resume(); */
 }
 
 

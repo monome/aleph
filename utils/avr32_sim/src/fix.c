@@ -32,7 +32,7 @@ static const unsigned int places[FIX_DIG_LO] = {
 
 // print 16.16
 void print_fix16(char* buf , fix16_t x) {
-#if 1
+#if 0
 #else
   static char * p;
   // char sign;
@@ -91,7 +91,7 @@ void print_fix16(char* buf , fix16_t x) {
 }
 // format whole part, right justified
 void itoa_whole(int val, char* buf, int len) {
-#if 1
+#if 0
 #else
   static char* p;
 
@@ -133,7 +133,7 @@ void itoa_whole(int val, char* buf, int len) {
 }
 
 void itoa_fract(int val, char* buf) {
-#if 1
+#if 0
 #else  
   static char* p;
   int i;
@@ -157,7 +157,7 @@ void itoa_fract(int val, char* buf) {
 /////////
 /////////////
 /// FIXME
-#if 1
+#if 0
 // format whole part, left justified, no length argument (!)
 int itoa_whole_lj(int val, char* buf) {
   static char* p;

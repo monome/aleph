@@ -1360,6 +1360,9 @@ void net_get_param_value_string(char* dst, u32 idx) {
 		  &(net->params[idx].scaler), 
 		  net->params[idx].data.value
 		  );
+/* #if BEEKEEP */
+/*   printf("\r\n scaler_get_str result: %s", dst); */
+/* #endif */
 }
 
 
