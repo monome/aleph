@@ -485,7 +485,7 @@ void handle_enc_3(s32 val) {
 void handle_enc_2(s32 val) {
   if(altMode) {
     // alt:scroll preset
-  inPresetSelect = 1;
+    inPresetSelect = 1;
     if(val > 0) {
       preset_inc_select(1);
     } else {
@@ -494,7 +494,7 @@ void handle_enc_2(s32 val) {
     // refresh line data
     redraw_ins_preset();
   } else {
-  // change parameter value, unaccelerated
+    // change parameter value, unaccelerated
     if(*pageSelect != -1) {      
       select_edit(scale_knob_value_small(val));
     }
@@ -510,8 +510,6 @@ void handle_enc_1(s32 val) {
   }
 }
 
-
-
 void handle_enc_0(s32 val) {
   if(altMode) {
     // alt: page selection			
@@ -522,6 +520,7 @@ void handle_enc_0(s32 val) {
     select_scroll(val > 0 ? 1 : -1);
   }
 }
+
 // redraw all lines, force selection
 void redraw_ins(void) {
   u8 i=0;

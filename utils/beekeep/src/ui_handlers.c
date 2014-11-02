@@ -1,6 +1,8 @@
 // bees
 #include "net_protected.h"
 #include "op.h"
+#include "preset.h"
+
 // beekeep
 #include "ui.h"
 #include "ui_handlers.h"
@@ -104,7 +106,7 @@ static void refresh_in_row_for_target(int t) {
 
   fill_outs(GTK_LIST_BOX(boxOuts.list));
   fill_ins(GTK_LIST_BOX(boxIns.list));
-  fill_ins(GTK_LIST_BOX(boxParams.list));
+  fill_params(GTK_LIST_BOX(boxParams.list));
 }
 
 //==================================
@@ -146,13 +148,13 @@ void ui_connect_param(void) {
   refresh_row_outs(outSelect);
 }
 
-void ui_preset_in(void) {
-  //...
-}
+/* void ui_preset_in(void) { */
+/*   //... */
+/* } */
 
-void ui_preset_out(void) {
-  //...
-}
+/* void ui_preset_out(void) { */
+/*   //... */
+/* } */
 
  void ui_create_op(void) {
   scroll_box_clear(&boxOps);
@@ -200,20 +202,34 @@ void ui_set_param(int id, int val) {
 
 // toggle preset inclusion for input
 void ui_toggle_preset_input(int id) {
-  printf("\r\n toggle preset input"); 
+  printf("\r\n toggle preset input, id %d", id);
+  net_toggle_in_preset(id);
+  printf(" ; result: %d", preset_in_enabled(preset_get_select(), id));
 }
 
-// store input value in preset
+// store input value in selected preset
 void ui_store_preset_input(int id) {
-  printf("\r\n store preset input"); 
+  printf("\r\n store input value in preset, id %d", id);
+  net_set_in_preset(id, 1);
+  preset_store_in(preset_get_select(), id);
+  if(id < net->numIns) {
+    refresh_row_ins(id);
+  } else {
+    refresh_row_params(id - net->numIns);
+  }
 }
 
 // toggle preset inclusion for output
 void ui_toggle_preset_output(int id) {
-  printf("\r\n toggle preset output"); 
+  printf("\r\n toggle preset output, id %d", id);
+  net_toggle_out_preset(id);
+  printf(" ; result: %d", preset_out_enabled(preset_get_select(), id));
 }
 
-// store output value in preset
+// store output target in selected preset
 void ui_store_preset_output(int id) {
-  printf("\r\n store preset output"); 
+  printf("\r\n store output target in preset, id %d", id); 
+  net_set_out_preset(id, 1);
+  preset_store_out(preset_get_select(), id);
+  refresh_row_outs(id);
 }

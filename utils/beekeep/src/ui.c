@@ -225,9 +225,11 @@ void ui_init(void) {
      g_signal_connect( wgt, "clicked", G_CALLBACK(write_gv_but_callback), NULL);
   */
 
-  // clear button
+  // scene-clear button
+  //...
 
   // select module button (file dialog?)
+  //...
 
   //--- buttons and labels below lists
   // new op label
@@ -267,10 +269,6 @@ void ui_init(void) {
 		   G_CALLBACK(connect_param_but_callback), NULL);
   gtk_grid_attach_next_to( GTK_GRID(grid), connectParamBut, 
 			   boxParams.scroll, GTK_POS_BOTTOM, 1, 1 );
-
-  // store-output-in-preset button
-
-  // store-input-in-preset button
 
   /// show everything
   gtk_widget_show_all(window);

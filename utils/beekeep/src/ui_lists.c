@@ -172,8 +172,16 @@ GtkWidget* create_spin_button(int val) {
   return button;
 }
 
-
-
+// set state of toggle with callback as argument (.... :S )
+typedef void (*toggle_callback)( GtkWidget *tog, gpointer data);
+static void set_toggle_state(GtkToggleButton* tog, 
+			     gboolean state, 
+			     toggle_callback fn) 
+{
+  g_signal_handlers_block_by_func( tog, G_CALLBACK(fn), NULL);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(tog), state);
+  g_signal_handlers_unblock_by_func( tog, G_CALLBACK(fn), NULL);
+}
 
 //--------------------------------
 //--- fill listboxes
@@ -245,6 +253,11 @@ void fill_outs(GtkListBox *list) {
 		     GINT_TO_POINTER(i + net->numIns));
     gtk_grid_attach_next_to( GTK_GRID(grid), tog, NULL, GTK_POS_RIGHT, 1, 1 );
     rowOuts[i].togglePreset = tog;
+
+    // preset include state
+    set_toggle_state( GTK_TOGGLE_BUTTON(rowOuts[i].togglePreset) ,
+		     preset_out_enabled(preset_get_select(), i),
+		     &preset_toggle_output_callback);
 
     // store-preset button
     but = gtk_button_new_with_label("S");
@@ -341,19 +354,20 @@ void fill_ins(GtkListBox *list) {
     tog = gtk_toggle_button_new_with_label("I");
     g_signal_connect(tog, "clicked", 
 		     G_CALLBACK(preset_toggle_input_callback), 
-		     // use the same callback for op ins and params.
-		     // so data passed to callback should be flat inode index.
 		     GINT_TO_POINTER(i));
     gtk_grid_attach_next_to( GTK_GRID(grid), tog, NULL, GTK_POS_RIGHT, 1, 1 );
     rowIns[i].togglePreset = tog;
+    // toggle state
+    set_toggle_state(GTK_TOGGLE_BUTTON(rowIns[i].togglePreset),
+		     preset_in_enabled(preset_get_select(), i),
+		     &preset_toggle_input_callback);
+
 
     // store-preset button
     but = gtk_button_new_with_label("S");
     g_signal_connect(but, "clicked", 
 		     G_CALLBACK(preset_store_input_callback), 
-		     // use the same callback for op ins and params.
-		     // so data passed to callback should be flat inode index.
-		     GINT_TO_POINTER(i + net->numIns));
+		     GINT_TO_POINTER(i));
     gtk_grid_attach_next_to( GTK_GRID(grid), but, NULL, GTK_POS_RIGHT, 1, 1 );
     rowIns[i].storePreset = but;
     
@@ -435,6 +449,11 @@ void fill_params(GtkListBox *list) {
 		     GINT_TO_POINTER(i + net->numIns));
     gtk_grid_attach_next_to( GTK_GRID(grid), tog, NULL, GTK_POS_RIGHT, 1, 1 );
     rowParams[i].togglePreset = tog;
+
+    // toggle state
+    set_toggle_state(GTK_TOGGLE_BUTTON(rowParams[i].togglePreset),
+		     preset_in_enabled(preset_get_select(), i + net->numIns),
+		     &preset_toggle_input_callback);
 
     // store-preset button
     but = gtk_button_new_with_label("S");
@@ -519,6 +538,12 @@ void refresh_row_outs(int id) {
     }
   }
   gtk_label_set_text(GTK_LABEL(label), str);
+
+  // refresh preset include toggle
+  set_toggle_state(GTK_TOGGLE_BUTTON(rowOuts[id].togglePreset),
+		   preset_out_enabled(preset_get_select(), id),
+		   &preset_toggle_output_callback);
+
   gtk_widget_show_all(row);
 }
 
@@ -547,14 +572,15 @@ void refresh_row_ins(int id) {
 
   // set value...
   val = net_get_in_value(id);
-  //#endif
-  ///////////////
-  /// block /// don't even need it? amazing (and rather inconsistent)
-  //  g_signal_handlers_block_by_func(spin, G_CALLBACK(spin_in_callback), NULL);
+  /// this doesn't trigger a signal, strangely...
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), (gdouble)val);
-  // unblock
-  ///  g_signal_handlers_unblock_by_func(spin, G_CALLBACK(spin_in_callback), NULL);
-  //////////////
+
+  // refresh preset include toggle
+  set_toggle_state(GTK_TOGGLE_BUTTON(rowIns[id].togglePreset),
+		   preset_in_enabled(preset_get_select(), id),
+		   &preset_toggle_input_callback);
+
+
   gtk_widget_show_all(row);
 }
 
@@ -588,6 +614,12 @@ void refresh_row_params(int id) {
 
   gtk_widget_show_all(row);
 
+  // refresh preset include toggle
+  set_toggle_state(GTK_TOGGLE_BUTTON(rowParams[id].togglePreset),
+		   preset_in_enabled(preset_get_select(), id + net->numIns),
+		   &preset_toggle_input_callback);
+
+  //...??
   //  val = net_get_in_value(id);
   //  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), (gdouble)val);
   //  gtk_widget_show_all(row);
