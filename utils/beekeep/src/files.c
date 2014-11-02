@@ -213,6 +213,8 @@ u8 files_load_dsp_name(const char* name) {
   }
 
   fclose(fp);
+
+  scene_set_module_name(name);
   return ret;
 }
 

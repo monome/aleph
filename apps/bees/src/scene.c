@@ -464,3 +464,8 @@ void scene_query_module(void) {
 const char* scene_get_name(void) {
   return sceneData->desc.sceneName;
 }
+
+// get module name
+const char* scene_get_module_name(void) {
+  return sceneData->desc.moduleName;
+}

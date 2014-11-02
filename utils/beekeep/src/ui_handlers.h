@@ -55,4 +55,7 @@ extern void ui_toggle_preset_output(int id);
 // store output value in preset
 extern void ui_store_preset_output(int id);
 
+// set module by name
+extern void ui_set_module(const char* name);
+
 #endif

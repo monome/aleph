@@ -103,6 +103,13 @@ static void scene_name_entry_callback( GtkEntry *entry, gpointer data) {
   scene_set_name(str);
 }
 
+static void module_name_entry_callback( GtkEntry *entry, gpointer data) {
+  const char* str;
+  str = gtk_entry_get_text(entry);
+  ui_set_module(str);
+}
+
+
 static void create_op_but_callback( GtkWidget* but, gpointer data) {
   ui_create_op();
 }
@@ -228,8 +235,17 @@ void ui_init(void) {
   // scene-clear button
   //...
 
-  // select module button (file dialog?)
-  //...
+  // module name label:
+  
+  // scene name label
+  wgt = gtk_label_new("MODULE:");
+  gtk_grid_attach_next_to( GTK_GRID(grid), wgt, xgt, GTK_POS_RIGHT, 1, 1);
+
+  // module name entry
+  xgt = gtk_entry_new();
+  gtk_entry_set_text( GTK_ENTRY(xgt),  scene_get_module_name());
+  gtk_grid_attach_next_to( GTK_GRID(grid), xgt, wgt, GTK_POS_RIGHT, 2, 1);
+  g_signal_connect( xgt, "activate", G_CALLBACK(module_name_entry_callback), NULL);
 
   //--- buttons and labels below lists
   // new op label

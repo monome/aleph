@@ -97,8 +97,8 @@ static void refresh_in_row_for_target(int t) {
   printf(" ; refreshing...");
 
   /// FIXME: this is pretty slow..
-  /// probably better to refresh child widget states,
-  /// than to reubild the whole show.
+  /// better to refresh child widget states,
+  /// than to rebuild the whole show.
 
   scroll_box_clear(&boxOuts);
   scroll_box_clear(&boxIns);
@@ -232,4 +232,20 @@ void ui_store_preset_output(int id) {
   net_set_out_preset(id, 1);
   preset_store_out(preset_get_select(), id);
   refresh_row_outs(id);
+}
+
+// set module by name
+void ui_set_module(const char* name) {
+  printf("\r\n set module: %s", name);
+
+  scroll_box_clear(&boxOuts);
+  scroll_box_clear(&boxIns);
+  scroll_box_clear(&boxParams);
+
+  files_load_dsp_name(name);
+
+  fill_outs(GTK_LIST_BOX(boxOuts.list));
+  fill_ins(GTK_LIST_BOX(boxIns.list));
+  fill_params(GTK_LIST_BOX(boxParams.list));
+  
 }
