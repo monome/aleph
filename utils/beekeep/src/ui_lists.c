@@ -25,6 +25,8 @@ typedef struct _RowOuts {
   GtkWidget* grid;
   GtkWidget* labelName;
   GtkWidget* labelTarget;
+  GtkWidget* togglePreset;
+  GtkWidget* storePreset;
 } RowOuts;
 
 typedef struct _RowIns {
@@ -34,8 +36,10 @@ typedef struct _RowIns {
   GtkWidget* labelName;
   GtkWidget* spinValue;
   GtkWidget* togglePreset;
+  GtkWidget* storePreset;
 } RowIns;
 
+  GtkWidget* storePreset;
 typedef struct _RowParams {
   GtkWidget* row;
   GtkWidget* grid;
@@ -44,6 +48,7 @@ typedef struct _RowParams {
   GtkWidget* spinValue;
   GtkWidget* labelValue;
   GtkWidget* togglePreset;
+  GtkWidget* storePreset;
 } RowParams;
 
 
@@ -133,6 +138,29 @@ static void preset_name_entry_callback( GtkEntry *entry, gpointer data) {
   strncpy(preset_name(id), str, PRESET_NAME_LEN);
 }
 
+static void preset_toggle_input_callback( GtkWidget *tog, gpointer data) {
+  int id = GPOINTER_TO_INT(data);
+  ui_toggle_preset_input(id);
+}
+
+static void preset_store_input_callback( GtkWidget *but, gpointer data) {
+  int id = GPOINTER_TO_INT(data);
+  ui_store_preset_input(id);
+}
+
+static void preset_toggle_output_callback( GtkWidget *tog, gpointer data) {
+  int id = GPOINTER_TO_INT(data);
+  ui_toggle_preset_output(id);
+}
+
+static void preset_store_output_callback( GtkWidget *but, gpointer data) {
+  int id = GPOINTER_TO_INT(data);
+  ui_store_preset_output(id);
+}
+
+
+
+
 //----------------------------------
 //--- helpers
 
@@ -143,6 +171,8 @@ GtkWidget* create_spin_button(int val) {
   button = gtk_spin_button_new (adjustment, 1.0, 0);
   return button;
 }
+
+
 
 
 //--------------------------------
@@ -165,7 +195,7 @@ void fill_ops(GtkListBox *list) {
     grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(row), grid);
     label = gtk_label_new(str);
-    gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 1, 1);
+    gtk_grid_attach_next_to(GTK_GRID(grid), label, NULL, GTK_POS_RIGHT, 1, 1);
     gtk_container_add(GTK_CONTAINER(list), row);    
     rowOps[i].row = row;
     rowOps[i].labelName = label;
@@ -177,7 +207,8 @@ void fill_outs(GtkListBox *list) {
   GtkWidget *row;
   GtkWidget *label;
   GtkWidget* grid;
-
+  GtkWidget* tog;
+  GtkWidget* but;
   char str[LABEL_BUF_SIZE];
   int i, n;
   int t;
@@ -203,14 +234,36 @@ void fill_outs(GtkListBox *list) {
     rowOuts[i].labelName = label;
     gtk_label_set_width_chars(GTK_LABEL(label), 16);
     gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
-    gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 1, 1);
+    gtk_grid_attach_next_to(GTK_GRID(grid), label, NULL, GTK_POS_RIGHT, 1, 1);
+
+    ///  preset_inclusion toggle
+    tog = gtk_toggle_button_new_with_label("I");
+    g_signal_connect(tog, "clicked", 
+		     G_CALLBACK(preset_toggle_output_callback), 
+		     // use the same callback for op ins and params.
+		     // so data passed to callback should be flat inode index.
+		     GINT_TO_POINTER(i + net->numIns));
+    gtk_grid_attach_next_to( GTK_GRID(grid), tog, NULL, GTK_POS_RIGHT, 1, 1 );
+    rowOuts[i].togglePreset = tog;
+
+    // store-preset button
+    but = gtk_button_new_with_label("S");
+    g_signal_connect(but, "clicked", 
+		     G_CALLBACK(preset_store_output_callback), 
+		     // use the same callback for op ins and params.
+		     // so data passed to callback should be flat inode index.
+		     GINT_TO_POINTER(i + net->numIns));
+    gtk_grid_attach_next_to( GTK_GRID(grid), but, NULL, GTK_POS_RIGHT, 1, 1 );
+    rowOuts[i].storePreset = but;
+
+    // target label
     
     t = net_get_target(i);
     label = gtk_label_new("");
     rowOuts[i].labelTarget = label;
     gtk_label_set_max_width_chars(GTK_LABEL(label), 16);
     gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
-    gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 1, 1);
+    gtk_grid_attach_next_to(GTK_GRID(grid), label, NULL, GTK_POS_RIGHT, 1, 1);
 
     if(t > -1) {
       memset(str, '\0', LABEL_BUF_SIZE);
@@ -226,6 +279,7 @@ void fill_outs(GtkListBox *list) {
       }
       gtk_label_set_text(GTK_LABEL(label), str);
     }
+
     gtk_container_add(GTK_CONTAINER(list), row);    
   }
   gtk_widget_show_all(GTK_WIDGET(list));
@@ -236,6 +290,8 @@ void fill_ins(GtkListBox *list) {
   GtkWidget *label;
   GtkWidget *grid;
   GtkWidget *spin;
+  GtkWidget *tog;
+  GtkWidget *but;
   char str[LABEL_BUF_SIZE];
   int i, n;
 
@@ -259,7 +315,7 @@ void fill_ins(GtkListBox *list) {
     rowIns[i].labelConnected = label;
     gtk_label_set_width_chars(GTK_LABEL(label), 4);
     gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
-    gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 1, 1);
+    gtk_grid_attach_next_to(GTK_GRID(grid), label, NULL, GTK_POS_RIGHT, 1, 1);
 
     if(outSelect != -1) {
       if(net_get_target(outSelect) == i) {
@@ -272,13 +328,34 @@ void fill_ins(GtkListBox *list) {
     rowIns[i].labelName = label;
     gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
     gtk_label_set_width_chars(GTK_LABEL(label), 18);
-    gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 1, 1);
+    gtk_grid_attach_next_to(GTK_GRID(grid), label, NULL, GTK_POS_RIGHT, 1, 1);
 
     // spinbutton for value entry
     spin = create_spin_button(net_get_in_value(i));
     rowIns[i].spinValue = spin;
-    gtk_grid_attach(GTK_GRID(grid), spin, 4, 0, 1, 1);
+    gtk_grid_attach_next_to(GTK_GRID(grid), spin, NULL, GTK_POS_RIGHT, 1, 1);
     g_signal_connect (spin, "value_changed", G_CALLBACK(spin_in_callback), GINT_TO_POINTER(i));
+
+
+    ///  preset_inclusion toggle
+    tog = gtk_toggle_button_new_with_label("I");
+    g_signal_connect(tog, "clicked", 
+		     G_CALLBACK(preset_toggle_input_callback), 
+		     // use the same callback for op ins and params.
+		     // so data passed to callback should be flat inode index.
+		     GINT_TO_POINTER(i));
+    gtk_grid_attach_next_to( GTK_GRID(grid), tog, NULL, GTK_POS_RIGHT, 1, 1 );
+    rowIns[i].togglePreset = tog;
+
+    // store-preset button
+    but = gtk_button_new_with_label("S");
+    g_signal_connect(but, "clicked", 
+		     G_CALLBACK(preset_store_input_callback), 
+		     // use the same callback for op ins and params.
+		     // so data passed to callback should be flat inode index.
+		     GINT_TO_POINTER(i + net->numIns));
+    gtk_grid_attach_next_to( GTK_GRID(grid), but, NULL, GTK_POS_RIGHT, 1, 1 );
+    rowIns[i].storePreset = but;
     
     gtk_container_add(GTK_CONTAINER(list), row);    
   }
@@ -290,6 +367,8 @@ void fill_params(GtkListBox *list) {
   GtkWidget *grid;
   GtkWidget *label;
   GtkWidget *spin;
+  GtkWidget* tog;
+  GtkWidget* but;
   char str[LABEL_BUF_SIZE];
   int i, n;
 
@@ -312,7 +391,7 @@ void fill_params(GtkListBox *list) {
     rowParams[i].labelConnected = label;
     gtk_label_set_width_chars(GTK_LABEL(label), 4);
     gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
-    gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 1, 1);
+    gtk_grid_attach_next_to(GTK_GRID(grid), label, NULL, GTK_POS_RIGHT, 1, 1);
     
     if(outSelect != -1) {
       if(net_get_target(outSelect) == (i + net->numIns)) {
@@ -325,36 +404,48 @@ void fill_params(GtkListBox *list) {
     rowParams[i].labelName = label; 
     gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
     gtk_label_set_width_chars(GTK_LABEL(label), 18);
-    gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 1, 1);
+    gtk_grid_attach_next_to(GTK_GRID(grid), label, NULL, GTK_POS_RIGHT, 1, 1);
 
     // spinbutton for value entry
     spin = create_spin_button(net_get_in_value(i + net->numIns));
     rowParams[i].spinValue = spin;
-    gtk_grid_attach(GTK_GRID(grid), spin, 4, 0, 1, 1);
+    gtk_grid_attach_next_to(GTK_GRID(grid), spin, NULL, GTK_POS_RIGHT, 1, 1);
     g_signal_connect (spin, "value_changed", G_CALLBACK(spin_param_callback), GINT_TO_POINTER(i));
     
     // label for name
     //    param_get_string(str, i + net->numIns);
     //// FIXME: again, this is terribly confusing. 
     //// some functions take the param index and some the input node index.
-    /// this one is that latter.
+    /// this one is the latter.
     memset(str, '\0', LABEL_BUF_SIZE);
     net_get_param_value_string(str, i + net->numIns);
     //    printf("\r\n param value label: %s", str);
     label = gtk_label_new(str);
     rowParams[i].labelValue = label; 
     gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
-    gtk_label_set_width_chars(GTK_LABEL(label), 18);
-    gtk_grid_attach(GTK_GRID(grid), label, 5, 0, 1, 1);
+    gtk_label_set_width_chars(GTK_LABEL(label), 12);
+    gtk_grid_attach_next_to(GTK_GRID(grid), label, NULL, GTK_POS_RIGHT, 1, 1);
     
-    ////////////////
-    //// test: set param (is it corrupted?)
-    
-    //////////////
+    ///  preset_inclusion toggle
+    tog = gtk_toggle_button_new_with_label("I");
+    g_signal_connect(tog, "clicked", 
+		     G_CALLBACK(preset_toggle_input_callback), 
+		     // use the same callback for op ins and params.
+		     // so data passed to callback should be flat inode index.
+		     GINT_TO_POINTER(i + net->numIns));
+    gtk_grid_attach_next_to( GTK_GRID(grid), tog, NULL, GTK_POS_RIGHT, 1, 1 );
+    rowParams[i].togglePreset = tog;
 
+    // store-preset button
+    but = gtk_button_new_with_label("S");
+    g_signal_connect(but, "clicked", 
+		     G_CALLBACK(preset_store_input_callback), 
+		     // use the same callback for op ins and params.
+		     // so data passed to callback should be flat inode index.
+		     GINT_TO_POINTER(i + net->numIns));
+    gtk_grid_attach_next_to( GTK_GRID(grid), but, NULL, GTK_POS_RIGHT, 1, 1 );
+    rowParams[i].storePreset = but;
 
-    /// TODO: preset inclusion toggle
-    
     gtk_container_add(GTK_CONTAINER(list), row);    
   }
   gtk_widget_show_all(GTK_WIDGET(list));
@@ -383,7 +474,7 @@ void fill_presets(GtkListBox *list) {
 
     entry = gtk_entry_new();
     gtk_entry_set_text( GTK_ENTRY(entry), str );
-    gtk_grid_attach(GTK_GRID(grid), entry, 0, 0, 4, 1);
+    gtk_grid_attach_next_to(GTK_GRID(grid), entry, NULL, GTK_POS_RIGHT, 4, 1);
     g_signal_connect( entry, "activate", 
 		      G_CALLBACK(preset_name_entry_callback), GINT_TO_POINTER(i));
 

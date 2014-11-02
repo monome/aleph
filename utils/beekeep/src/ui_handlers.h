@@ -37,13 +37,22 @@ extern void ui_delete_op(void);
 
 //--- other
 
-// handle scene name
+// scene name
 extern void ui_scene_name(const char* txt);
-// handle new-op-type selection
+// new-op-type selection
 extern void ui_select_new_op(int id);
-// handle input value change
+// input value change
 extern void ui_set_input(int id, int val);
-// handle param value change
+// param value change
 extern void ui_set_param(int id, int val);
+
+// toggle preset inclusion for input
+extern void ui_toggle_preset_input(int id);
+// store input value in preset
+extern void ui_store_preset_input(int id);
+// toggle preset inclusion for output
+extern void ui_toggle_preset_output(int id);
+// store output value in preset
+extern void ui_store_preset_output(int id);
 
 #endif

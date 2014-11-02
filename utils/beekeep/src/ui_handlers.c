@@ -194,3 +194,24 @@ void ui_set_param(int id, int val) {
   net_set_in_value(id + net->numIns, val);
   refresh_row_params(id);
 }
+
+
+// toggle preset inclusion for input
+void ui_toggle_preset_input(int id) {
+  printf("\r\n toggle preset input"); 
+}
+
+// store input value in preset
+void ui_store_preset_input(int id) {
+  printf("\r\n store preset input"); 
+}
+
+// toggle preset inclusion for output
+void ui_toggle_preset_output(int id) {
+  printf("\r\n toggle preset output"); 
+}
+
+// store output value in preset
+void ui_store_preset_output(int id) {
+  printf("\r\n store preset output"); 
+}

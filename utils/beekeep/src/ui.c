@@ -161,22 +161,21 @@ void ui_init(void) {
   //// argg
   //  gtk_grid_set_column_spacing (GTK_GRID(grid), 35);
   //  gtk_grid_set_row_spacing (GTK_GRID(grid), 20);
-
   //// blrrrhg
   gtk_grid_set_column_homogeneous(GTK_GRID(grid), TRUE);
-  gtk_container_add(GTK_CONTAINER(window), grid);
 
+  gtk_container_add(GTK_CONTAINER(window), grid);
 
   //--- create scrolling list things 
 
-  scroll_box_new( &boxOps, 	grid, 2, 24, &fill_ops );
+  scroll_box_new( &boxOps, 	grid, 1, 24, &fill_ops );
   scroll_box_new( &boxOuts, 	grid, 4, 24, &fill_outs );
   scroll_box_new( &boxIns, 	grid, 4, 24, &fill_ins );
   scroll_box_new( &boxParams, 	grid, 5, 24, &fill_params ); 
-  scroll_box_new( &boxPresets, 	grid, 4, 24, &fill_presets );
+  scroll_box_new( &boxPresets, 	grid, 3, 24, &fill_presets );
 
   //--- list labels
-  labelOps = gtk_label_new("OPERATORS");
+  labelOps = gtk_label_new("OPS");
   gtk_grid_attach_next_to(GTK_GRID(grid), labelOps, 
 			  boxOps.scroll, GTK_POS_TOP, 2, 1);
 
@@ -279,17 +278,6 @@ void ui_init(void) {
 
 
 void refresh_connect_input_but(void) {
-  // still can't get this to work... 
-  // setting the "active" property triggers the callback, no matter what...
-/* #if 0 */
-/*   gboolean c; */
-/*   c = (net_get_target(outSelect) == inSelect); */
-/*   printf("\r\n refresh input connection button; value: %d", (int)c); */
-/*   printf("\t selections: out: %d; in: %d", outSelect, inSelect); */
-/*   g_object_set(connectInputBut,"active", c, NULL); */
-/*   gtk_widget_show(connectInputBut); */
-/* #else */
-
   /// okay, the workaround is blocking/unblocking the signal.
   gboolean c;
   if(outSelect == -1) { 
@@ -304,17 +292,10 @@ void refresh_connect_input_but(void) {
   g_signal_handlers_unblock_by_func( connectInputBut, 
 				     G_CALLBACK(connect_in_but_callback), 
 				     NULL);
-  //#endif
 }
 
 
 void refresh_connect_param_but(void) {
-/* #if 0 */
-/*   gboolean c = (net_get_target(outSelect) == (paramSelect + net->numIns)); */
-/*   printf("\r\n refresh param connection button; value: %d", (int)c); */
-/*   g_object_set(connectParamBut,"active", c, NULL); */
-/*   gtk_widget_show(connectParamBut); */
-/* #else */
   /// okay, the workaround is blocking/unblocking the signal.
   gboolean c;
   int t;
@@ -331,5 +312,4 @@ void refresh_connect_param_but(void) {
   g_signal_handlers_unblock_by_func( connectParamBut, 
 				     G_CALLBACK(connect_param_but_callback), 
 				     NULL);
-  //#endif
 }
