@@ -292,7 +292,11 @@ void refresh_connect_input_but(void) {
 
   /// okay, the workaround is blocking/unblocking the signal.
   gboolean c;
-  c = (net_get_target(outSelect) == inSelect && inSelect != -1);
+  if(outSelect == -1) { 
+    c = FALSE;
+  } else {
+    c = (net_get_target(outSelect) == inSelect && inSelect != -1);
+  }
   g_signal_handlers_block_by_func( connectInputBut, 
 				   G_CALLBACK(connect_in_but_callback), 
 				   NULL);
@@ -313,8 +317,13 @@ void refresh_connect_param_but(void) {
 /* #else */
   /// okay, the workaround is blocking/unblocking the signal.
   gboolean c;
-  int t = net_get_target(outSelect);
-  c = (t == (paramSelect + net->numIns) && t != -1);
+  int t;
+  if(outSelect == -1) { 
+    c = FALSE;
+  } else {
+    t = net_get_target(outSelect);
+    c = (t == (paramSelect + net->numIns) && t != -1);
+  }
   g_signal_handlers_block_by_func( connectParamBut, 
 				   G_CALLBACK(connect_param_but_callback), 
 				   NULL);
