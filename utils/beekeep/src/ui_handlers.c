@@ -88,7 +88,23 @@ static void refresh_in_row_for_target(int t) {
 
  void ui_select_preset(int id) {
   presetSelect = id;
-  printf("\r\n selecting preset (TODO!) ; id: %d", id);
+  printf("\r\n selecting preset ; id: %d", id);
+  preset_set_select(id);
+  printf(" ; recalling...");
+  preset_recall((u32)id);
+  printf(" ; refreshing...");
+
+  /// FIXME: this is pretty slow..
+  /// probably better to refresh child widget states,
+  /// than to reubild the whole show.
+
+  scroll_box_clear(&boxOuts);
+  scroll_box_clear(&boxIns);
+  scroll_box_clear(&boxParams);
+
+  fill_outs(GTK_LIST_BOX(boxOuts.list));
+  fill_ins(GTK_LIST_BOX(boxIns.list));
+  fill_ins(GTK_LIST_BOX(boxParams.list));
 }
 
 //==================================
@@ -137,20 +153,6 @@ void ui_preset_in(void) {
 void ui_preset_out(void) {
   //...
 }
-
-/* TODO
-void ui_in_value() {
-  //...
-}
-
-void ui_param_preset() {
-  //...
-}
-
-void ui_param_value() {
-  //...
-}
-*/
 
  void ui_create_op(void) {
   scroll_box_clear(&boxOps);
