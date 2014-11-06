@@ -2,14 +2,6 @@
 
 ### major:
 
-- add preset stuff: 
-  - inclusion/storage button for i/o list entries, 
-  - preset selection and refresh mechanism.
-
-- add param scaling data and param display label
-
-- add module selection dialog
-
 - add scene selection dialog (i guess)
 
 ### minor:
