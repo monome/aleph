@@ -19,6 +19,7 @@ this should result in two files:
 
 use the results in a C program something like this:
 
+```
 static const unsigned long int ldrSize = 
 #include "aleph-mix.ldr_size.inc"
 ;
@@ -26,3 +27,4 @@ static const unsigned long int ldrSize =
 static const unsigned char ldrData[] = { 
 #include "aleph-mix.ldr.inc"
 };
+```
