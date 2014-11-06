@@ -1,10 +1,6 @@
 # aleph
 
-<<<<<<< variant A
-[ monome.org/docs/aleph ]
->>>>>>> variant B
 [ http://www.monome.org/docs/aleph ]
-======= end
 
 ## quick start
 
