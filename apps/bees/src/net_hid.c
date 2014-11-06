@@ -1,6 +1,6 @@
 // asf
 #include "print_funcs.h"
-
+#include "hid.h"
 // bees
 #include "net_hid.h"
 
@@ -78,13 +78,25 @@ void net_hid_list_remove(op_hid_t* op) {
 }
 
 // handle incoming hid packet
-void net_handle_hid_packet(u32 data) {
+void net_handle_hid_packet() { //u32 data) {
   u32 i;
   op_hid_t* op = hl.top;
   //  print_dbg("\r\n net_handle_hid_packet, num ops: ");
   // print_dbg_ulong(hl.num);
+  //  print_dbg("\r\n bees: hid handler. ");
+  //  print_dbg(" ; dirty: 0x");
+  //  print_dbg_hex(hid_get_frame_dirty());
+  //  print_dbg_hex(data)
+  
   for(i=0; i < hl.num; ++i) {
-    (*(op->handler))(op, data);
+    (*(op->handler))(op);
+		     //		     hid_get_frame_data(), 
+		     //		     hid_get_frame_dirty(),
+		     //		     hid_get_frame_size() );
     op = op->next;
   }
+
+  // clear the dirty fields
+  hid_clear_frame_dirty();
+
 }

@@ -37,10 +37,10 @@
 /* static s16 enc3_idx; */
 
 // handler declarations
-static void handle_enc_0(s32 val);
-static void handle_enc_1(s32 val);
-static void handle_enc_2(s32 val);
 static void handle_enc_3(s32 val);
+static void handle_enc_2(s32 val);
+static void handle_enc_1(s32 val);
+static void handle_enc_0(s32 val);
 static void handle_key_0(s32 val);
 static void handle_key_1(s32 val);
 static void handle_key_2(s32 val);
@@ -73,26 +73,26 @@ void handle_key_3(s32 val) {
 }
 
 
-void handle_enc_0(s32 val) {
+void handle_enc_3(s32 val) {
   //  print_dbg("\r\n play handler, enc 0, op address: 0x");
   //  print_dbg_hex((u32)opSysEnc[0]);
 // FIXME: this is a hack to make the operators work with the correct numbers
   op_enc_sys_input(opSysEnc[3], (s8)val);
 }
 
-void handle_enc_1(s32 val) {
+void handle_enc_2(s32 val) {
   //  print_dbg("\r\n play handler, enc 1, op address: 0x");
   //  print_dbg_hex((u32)opSysEnc[1]);
    op_enc_sys_input(opSysEnc[1], (s8)val);
 }
 
-void handle_enc_2(s32 val) {
+void handle_enc_1(s32 val) {
   //  print_dbg("\r\n play handler, enc 2, op address: 0x");
   //  print_dbg_hex((u32)opSysEnc[2]);
    op_enc_sys_input(opSysEnc[2], (s8)val);
 }
 
-void handle_enc_3(s32 val) {
+void handle_enc_0(s32 val) {
   // FIXME: this is a hack to make the operators work with the correct numbers
    op_enc_sys_input(opSysEnc[0], (s8)val);
 }
@@ -106,10 +106,17 @@ void init_page_play(void) {
 
 // select 
 void select_play(void) {
-  play_enable_render();
+  
   // other regions are static in top-level render, with global handles
-  // region_fill(headRegion, 0x0);
-  // font_string_region_clip(headRegion, "PLAY", 0, 0, 0xf, 0x1);
+  region_fill(footRegion[0], 0x0);
+  region_fill(footRegion[1], 0x0);
+  region_fill(footRegion[2], 0x0);
+  region_fill(footRegion[3], 0x0);
+  region_fill(headRegion, 0x0);
+
+  play_enable_render();
+  
+  //  font_string_region_clip(headRegion, "PLAY", 0, 0, 0xf, 0x1);
   // assign handlers
   app_event_handlers[ kEventEncoder0 ]	= &handle_enc_0 ;
   app_event_handlers[ kEventEncoder1 ]	= &handle_enc_1 ;

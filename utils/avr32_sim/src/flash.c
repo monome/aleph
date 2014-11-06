@@ -32,7 +32,7 @@ typedef const struct {
 //----------------------------------------
 // ---- static vars
 // NVRAM data structure located in the flash array.
-__attribute__((__section__(".flash_nvram")))
+//__attribute__((__section__(".flash_nvram")))
 nvram_data_t flash_nvram_data;
 
 //--------------------------------

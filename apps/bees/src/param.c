@@ -39,13 +39,17 @@ const char* get_param_name(u32 idx) {
 //-- see also net_set_in_value()
 // return sign of clamping operation, if clamped
 void set_param_value(u32 idx, io_t val) {
-  s32 scaled = scaler_get_value( &(net->params[idx].scaler), val);
-  /* print_dbg("\r\n set_param_value, index: "); */
-  /* print_dbg_ulong(idx); */
-  /* print_dbg(" , value: 0x"); */
-  /* print_dbg_hex(val); */
-  /* print_dbg(" , scaled: 0x"); */
-  /* print_dbg_hex(scaled); */
+  s32 scaled;
+
+  print_dbg("\r\n set_param_value, index: ");
+  print_dbg_ulong(idx);
+  print_dbg(" , value: 0x");
+  print_dbg_hex(val);
+
+  scaled = scaler_get_value( &(net->params[idx].scaler), val);
+
+  print_dbg(" , scaled: 0x");
+  print_dbg_hex(scaled);
     
   // network data holds linear input value
   net->params[idx].data.value = val;

@@ -18,11 +18,6 @@
 
 // a little under -120db
 #define FR32_COMP_THRESH 0x800
-//#define FR32_COMP_THRESH_NEG 0xfffffffe
-
-// global temp variable, compute at init
-// inverse of samplerate as float
-//static float fSrInv;
 
 //-----------------------
 //---- static functions
@@ -47,7 +42,9 @@ void filter_1p_lo_init(filter_1p_lo* f, fract32 in) {
 }
 
 // set cutoff frequency in hz
-//// warning: this is very slow!
+/// warning: this is very slow!
+/// in fact, just don't use it on blackfin if it can be avoided.
+/// preferably, send precalculated values directly.
 /* void filter_1p_lo_set_hz(filter_1p_lo* f, fix16 hz) { */
 /*   f32 fc =  (float) exp(-2.0 * M_PI * (double)(fix16_to_float(hz)) * fSrInv ); // / (float)(f->sr) ); */
 /*   //  printf("\r1p slewicient: %f\n", fc); */

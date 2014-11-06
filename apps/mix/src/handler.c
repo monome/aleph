@@ -1,16 +1,18 @@
 /*
   handler.c
-  bees
+  
+  aleph/app/mix
 
   app-specific UI event handlers.
   
   app.c defines a global array of function pointers to handle system events.
   main.c defines its own handlers, most of which don't do anything.
   some events (e.g. ftdiConnect, monomePoll) call pretty low-level driver stuff,
-  and there shouldn't be any need for bees or other applications to customize them.
+  and there shouldn't be any need for applications to customize them.
 
   handlers that do need to be customized go here.
-  define static functions and then populate the global array with pointers to these functions.
+  define static functions,
+  and then populate the global array with pointers to these functions.
   this step should happen in e.g. app_launch().
 
 */
@@ -25,109 +27,80 @@
 #include "app.h"
 #include "event_types.h"
 
-// bees
+// custom app sources
 #include "app_timers.h"
-//#include "files.h"
+#include "ctl.h"
 #include "handler.h"
 #include "render.h"
 
+
+//--------------------------------------
+//--- knob acceleration
+static s32 knob_accel(s32 inc) { 
+  // map accumulated controller movement to a bigger range
+  // otherwise scrolling would take forever...
+  s32 incAbs = inc < 0 ? inc * -1 : inc;
+  if(incAbs == 1) { 
+    //    print_dbg("\r\n >");
+    return inc;
+  }
+  if(incAbs < 6) {
+    //    print_dbg("\r\n >>");
+    return inc << 2;
+  } 
+  //  print_dbg("\r\n >>>>>>");
+  return inc << 6;
+
+}
+
 ///-------------------------------------
-///---- static event handlers
+///---- event handlers
 
-
-static void handle_Adc0(s32 data) { 
-  //... no ADC
+// switch handlers
+static void handle_Switch0(s32 data) { 
+  if(data > 0) ctl_toggle_mute(0);
 }
 
-static void handle_Adc1(s32 data) { 
-  //... no ADC
+static void handle_Switch1(s32 data) { 
+  if(data > 0) ctl_toggle_mute(1);
 }
 
-static void handle_Adc2(s32 data) { 
-  //... no ADC
+static void handle_Switch2(s32 data) { 
+  if(data > 0) ctl_toggle_mute(2);
 }
 
-static void handle_Adc3(s32 data) { 
-  //... no ADC
+static void handle_Switch3(s32 data) { 
+  if(data > 0) ctl_toggle_mute(3);
 }
 
-////////////////
-// function key and encoder handles are page-specific
-/// ....
-//////////
 
-static void handle_Switch4(s32 data) { 
-  // mode switch
-  //... 
-}
-
+// power switch handler
+// note: if this isn't assigned, the power switch won't work!
 static void handle_Switch5(s32 data) { 
-  /// power switch
-  // ... here is where the state should be saved.
-  /// power down
+  //TODO: ... save current settings... 
   delay_ms(100);
+  // this pin is physically connected to the power system.
+  // bringing it low causes immediate shutdown
   gpio_clr_gpio_pin(POWER_CTL_PIN);
 }
 
-static void handle_Switch6(s32 data) {
-  // footswitch 1
+// encoder handlers
+static void handle_Encoder0(s32 data) { 
+  ctl_inc_level(0, knob_accel(data));
 }
 
-static void handle_Switch7(s32 data) { 
-  // footswitch 2
-} 
-
-static void handle_MonomeConnect(s32 data) { 
-  // timers_set_monome();
+static void handle_Encoder1(s32 data) { 
+  ctl_inc_level(1, knob_accel(data));
 }
 
-static void handle_MonomeDisconnect(s32 data) { 
-  //  timers_unset_monome();
+static void handle_Encoder2(s32 data) { 
+  ctl_inc_level(2, knob_accel(data));
 }
 
-static void handle_MonomeGridKey(s32 data) { 
-  //...
+static void handle_Encoder3(s32 data) { 
+  ctl_inc_level(3, knob_accel(data));
 }
 
-static void handle_MonomeGridTilt(s32 data) { 
-  //...
-}
-
-static void handle_MonomeRingEnc(s32 data) {
-  //...
-}
-
-static void handle_MonomeRingKey(s32 data) { 
-  //...
-}
-
-static void handle_MidiConnect(s32 data) {
-  //  timers_set_midi();
-}
-
-static void handle_MidiDisconnect(s32 data) { 
-  //  timers_unset_midi();
-}
-
-static void handle_MidiPacket(s32 data) {
-  //...
-}
-
-static void handle_HidConnect(s32 data) {
-  //...
-}
-
-static void handle_HidDisconnect(s32 data) {
-  //...
-}
-
-static void handle_HidPacket(s32 data) {
-  //...
-}
-
-static void handle_Serial(s32 data) {
-  //  serial_process(data);
-}
 
 //-------------------------------------
 //---- extern
@@ -135,31 +108,38 @@ static void handle_Serial(s32 data) {
 /// explicitly assign these...
 /// this way the order of the event types enum doesn't matter.
 void assign_event_handlers(void) {
-  /// if you need to spawn events in the app to be deferred to main loop..
-  //  app_event_handlers[ kEventAppCustom ]  = ...
 
-  // system-defined:
-  app_event_handlers[ kEventAdc0 ]	= &handle_Adc0 ;
-  app_event_handlers[ kEventAdc1 ]	= &handle_Adc1 ;
-  app_event_handlers[ kEventAdc2 ]	= &handle_Adc2 ;
-  app_event_handlers[ kEventAdc3 ]	= &handle_Adc3 ;
-  // power/mode/footswitches here, fn switches in page handlers
-  app_event_handlers[ kEventSwitch4 ]	= &handle_Switch4 ;
+  // function switches
+  app_event_handlers[kEventSwitch0] = &handle_Switch0 ;
+  app_event_handlers[kEventSwitch1] = &handle_Switch1 ;
+  app_event_handlers[kEventSwitch2] = &handle_Switch2 ;
+  app_event_handlers[kEventSwitch3] = &handle_Switch3 ;
+
+  // power switch
+  // note: if this isn't assigned, the power switch won't work!
   app_event_handlers[ kEventSwitch5 ]	= &handle_Switch5 ;
-  app_event_handlers[ kEventSwitch6 ]	= &handle_Switch6 ;
-  app_event_handlers[ kEventSwitch7 ]	= &handle_Switch7 ;
-  app_event_handlers[ kEventMonomeConnect ]	= &handle_MonomeConnect ;
-  app_event_handlers[ kEventMonomeDisconnect ]	= &handle_MonomeDisconnect ;
-  app_event_handlers[ kEventMonomeGridKey ]	= &handle_MonomeGridKey ;
-  app_event_handlers[ kEventMonomeGridTilt ]	= &handle_MonomeGridTilt ;
-  app_event_handlers[ kEventMonomeRingEnc ]	= &handle_MonomeRingEnc ;
-  app_event_handlers[ kEventMonomeRingKey ]	= &handle_MonomeRingKey ;
-  app_event_handlers[ kEventMidiConnect ]	= &handle_MidiConnect ;
-  app_event_handlers[ kEventMidiDisconnect ]	= &handle_MidiDisconnect ;
-  app_event_handlers[ kEventMidiPacket ]	= &handle_MidiPacket ;
-  app_event_handlers[ kEventHidConnect ]	= &handle_HidConnect ;
-  app_event_handlers[ kEventHidDisconnect ]	= &handle_HidDisconnect ;
-  app_event_handlers[ kEventHidPacket ]	= &handle_HidPacket ;
 
-  app_event_handlers[ kEventSerial ] = &handle_Serial ;
+  // encoders
+  app_event_handlers[kEventEncoder0 ] = &handle_Encoder0 ;
+  app_event_handlers[kEventEncoder1 ] = &handle_Encoder1 ;
+  app_event_handlers[kEventEncoder2 ] = &handle_Encoder2 ;
+  app_event_handlers[kEventEncoder3 ] = &handle_Encoder3 ;
+
+  /*
+  add more event handlers here as desired.
+
+  event types are listed in aleph/avr32_lib/src/event_types.h
+
+  most of them are pretty obvious.
+
+  a notable exception is 'kEventAppCustom' :
+  this event type is not generated by any of the peripheral interrupt handlers.
+  instead, it is intended to be generated by the app itself.
+
+  a typical case would be if the app sets a timer.
+  timer handlers are called from an IRQ, 
+  so any heavy processing trigered by them should be deferred to the main loop.
+  such a handler should post a kEventAppCustom event.
+
+  */
 }

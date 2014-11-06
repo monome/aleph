@@ -115,6 +115,16 @@ void region_hl(region* reg, u8 c, u8 thresh) {
   reg->dirty = 1;
 }
 
+// limit the value in a region (dimming it)
+void region_max(region* reg, u8 max) {
+  u32 i;
+  for(i=0; i<reg->len; i++) {
+    if ( reg->data[i] > max) { reg->data[i] = max; }
+  }
+  reg->dirty = 1;
+}
+
+
 ///---- scrolling stuff
 
 // initialize a text scroller at memory

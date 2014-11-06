@@ -29,10 +29,10 @@ static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
 static scroll centerScroll;
 
 // handler declarations
-static void handle_enc_0(s32 val);
-static void handle_enc_1(s32 val);
-static void handle_enc_2(s32 val);
 static void handle_enc_3(s32 val);
+static void handle_enc_2(s32 val);
+static void handle_enc_1(s32 val);
+static void handle_enc_0(s32 val);
 static void handle_key_0(s32 val);
 static void handle_key_1(s32 val);
 static void handle_key_2(s32 val);
@@ -164,8 +164,7 @@ void handle_key_0(s32 val) {
 
     //// FIXME: use .dsc, file_load_dsp calls directly
     //    net_report_params();
-    
-
+   
     bfin_enable();
 
     redraw_ins();
@@ -182,12 +181,10 @@ void handle_key_1(s32 val) {
   if(val == 0) { return; }
   if(check_key(1)) {
     // render status to head region  
-    notify("writing...");
+    //    notify("writing...");
     // write module as default 
     //    files_store_default_dsp(*pageSelect);
-
-
-    notify("done writing.");
+    //    notify("done writing.");
   }
   show_foot();
 #endif  
@@ -211,16 +208,16 @@ void handle_key_3(s32 val) {
 }
 
 // enc 0 : scroll page
-void handle_enc_0(s32 val) {
+void handle_enc_3(s32 val) {
   // nothing
 }
 
 // enc 1 : scroll selection
-void handle_enc_1(s32 val) {
+void handle_enc_2(s32 val) {
   // nothing
 }
 
-void handle_enc_2(s32 val) {
+void handle_enc_1(s32 val) {
   // scroll page
   if(val > 0) {
     set_page(ePageOps);
@@ -229,7 +226,7 @@ void handle_enc_2(s32 val) {
   }
 }
 
-void handle_enc_3(s32 val) {
+void handle_enc_0(s32 val) {
   select_scroll(val);
 }
 
@@ -268,6 +265,7 @@ void select_dsp(void) {
   // other regions are static in top-level render, with global handles
   region_fill(headRegion, 0x0);
   font_string_region_clip(headRegion, "MODULES", 0, 0, 0xf, 0x1);
+  show_foot();
   // assign handlers
   app_event_handlers[ kEventEncoder0 ]	= &handle_enc_0 ;
   app_event_handlers[ kEventEncoder1 ]	= &handle_enc_1 ;

@@ -70,7 +70,7 @@ static u8 launch = 0;
 // flags for device connection events.
 // need to re-send after app launch.
 static u8 ftdiConnect = 0;
-static u8 monomeConnect = 0;
+static u8 monomeConnectMain = 0;
 static u8 hidConnect = 0;
 static u8 midiConnect = 0;
 
@@ -103,13 +103,14 @@ static void handler_MonomeConnect(s32 data) {
   // this just stores a flag to re-send connection event to app
   if(!launch) {
     // print_dbg("\r\n got monome device connection, saving flag for app launch");
-    monomeConnect = 1;
+    monomeConnectMain = 1;
   }
 }
 
 static void handler_MonomePoll(s32 data) {
   monome_read_serial();
 }
+
 static void handler_MonomeRefresh(s32 data) {
   (*monome_refresh)();
   // FIXME: arc?
@@ -120,9 +121,11 @@ static void handler_MidiConnect(s32 data) {
     midiConnect = 1;
   }
 }
+
 static void handler_MidiRefresh(s32 data) {
-  // TODO
+  // TODO ??
 }
+
 static void handler_HidConnect(s32 data) { 
   if(!launch) {
     hidConnect = 1;
@@ -281,6 +284,13 @@ void check_startup(void) {
     delay_ms(10);
 
     if(launch) {
+
+      //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      // you must do this, or the aleph will powercycle forever !!
+      //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      // pull up power control pin, enabling soft-powerdown
+      gpio_set_gpio_pin(POWER_CTL_PIN);
+
       if(firstrun) {
 	// successfully launched on firstrun, so write magic number to flash
 	flash_write_firstrun();
@@ -290,7 +300,7 @@ void check_startup(void) {
 	e.type = kEventFtdiConnect;
 	event_post(&e);
       } 
-      if(monomeConnect) {
+      if(monomeConnectMain) {
 	// print_dbg("\r\n posting MonomeConnect event after app launch");
 	e.type = kEventMonomeConnect;
 	event_post(&e);

@@ -63,9 +63,10 @@ void scaler_note_init(void* scaler) {
     tabVal = scaler_get_nv_data(eParamTypeNote);
   }
 
-  sc->inMin = 0;
-  sc->inMax = (tabSize - 1) << inRshift;
-
+  if(scaler != NULL) {
+    sc->inMin = 0;
+    sc->inMax = (tabSize - 1) << inRshift;
+  }
   //// FIXME: add tuning functions (???)
   //  sc->tune = NULL;
   //  sc->numTune = 0;  

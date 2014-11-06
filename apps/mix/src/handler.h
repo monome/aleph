@@ -7,8 +7,4 @@
 // assign ui handlers  
 extern void assign_event_handlers(void);
 
-/* extern io_t scale_knob_value(io_t val); */
-/* extern io_t scale_knob_value_fast(io_t val); */
-/* extern io_t scale_knob_value_small(io_t val); */
-
 #endif 

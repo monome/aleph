@@ -6,6 +6,9 @@
 # app name
 APP = bees
 
+# baudrate! can override in make invocation
+BAUD=115200
+
 # boilerplate avr32 configuration
 include ../../avr32_lib/avr32_lib_config.mk
 # boilerplate avr32 sources
@@ -47,7 +50,9 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_cascades.c \
 	$(APP_DIR)/src/ops/op_delay.c \
 	$(APP_DIR)/src/ops/op_div.c \
+	$(APP_DIR)/src/ops/op_divr.c \
 	$(APP_DIR)/src/ops/op_enc.c \
+	$(APP_DIR)/src/ops/op_fade.c \
 	$(APP_DIR)/src/ops/op_gate.c \
 	$(APP_DIR)/src/ops/op_hid_word.c \
 	$(APP_DIR)/src/ops/op_history.c \
@@ -63,6 +68,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_midi_note.c \
 	$(APP_DIR)/src/ops/op_mod.c \
 	$(APP_DIR)/src/ops/op_mul.c \
+	$(APP_DIR)/src/ops/op_monome_arc.c \
 	$(APP_DIR)/src/ops/op_monome_grid_raw.c \
 	$(APP_DIR)/src/ops/op_preset.c \
 	$(APP_DIR)/src/ops/op_random.c \
@@ -78,6 +84,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_thresh.c \
 	$(APP_DIR)/src/ops/op_timer.c \
 	$(APP_DIR)/src/ops/op_tog.c \
+	$(APP_DIR)/src/ops/op_ww.c \
 	$(APP_DIR)/src/pages/page_dsp.c \
 	$(APP_DIR)/src/pages/page_gathered.c \
 	$(APP_DIR)/src/pages/page_ins.c \

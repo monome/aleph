@@ -21,7 +21,7 @@
 #include "usb_protocol_midi.h"
 #include "uhi_midi.h"
 
-#define UHI_MIDI_PRINT_DBG 1
+#define UHI_MIDI_PRINT_DBG 0
 #define UHI_MIDI_TIMEOUT 20000
 
 // looks like we need to get class-specific endpoint descriptors,

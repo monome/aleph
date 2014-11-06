@@ -1,6 +1,10 @@
 # aleph
 
+<<<<<<< variant A
 [ monome.org/docs/aleph ]
+>>>>>>> variant B
+[ http://www.monome.org/docs/aleph ]
+======= end
 
 ## quick start
 
@@ -193,11 +197,11 @@ we are only building standalone binaries (no uclinux), so only the bfin-elf-gcc 
 get the most recent stable release for your architecture (2012-RC2 as of this writing), unpack it and add the binaries to your path. 
 
 example: 
-visit: [ http://sourceforge.net/projects/adi-toolchain/files/2012R2/2012R2-RC2/i386/blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2/download
+visit: [ http://sourceforge.net/projects/adi-toolchain/files/2012R2/2012R2-RC2/i386/blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2/download ]
 
 ```
-cd ~/Downloads [or wherever]
-su [probably]
+cd ~/Downloads
+su
 mv blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2 /
 cd /
 tar -xjvf blackfin-toolchain-elf-gcc-4.3-2012R2-RC2.i386.tar.bz2

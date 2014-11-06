@@ -33,7 +33,7 @@
 // ...
 
 //===================================
-//==== external functionsx
+//==== external functions
 
 // initialize non-peripheral GPIO
 void init_gpio(void) {  
@@ -96,10 +96,16 @@ extern void init_tc (void) {
   // we want it to overflow and generate an interrupt every 1 ms
   // so (1 / fPBA / 128) * RC = 0.001
   // so RC = fPBA / 128 / 1000
+  
+  // undoing the kludge because whtever problem was necessitating it seems gone now.
   //  tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 128000));
-  ///// FIXME: kludge because the timing is slow somehow... 
+
+  /// this gives me most accurate results with current testing proto..
+  tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 126336));
+
+  ///// FIXME: kludge because the timing is slow somehow... ?
   ///// this constant is experimentally determined...
-  tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 149707));
+  //  tc_write_rc(tc, APP_TC_CHANNEL, (FPBA_HZ / 149707));
 
   // configure the timer interrupt
   tc_configure_interrupts(tc, APP_TC_CHANNEL, &tc_interrupt);

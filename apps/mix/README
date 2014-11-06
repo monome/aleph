@@ -1,0 +1,65 @@
+README: app/mix
+
+
+Introduction
+
+This is a very basic application for the Aleph hardware to demonstrate development for the control system which runs on the AVR32. DSP on the Aleph runs on the Blackfin BF533, which the AVR32 communicates with via SPI.
+
+Most use of the Aleph to this point has used Bees, which is a flexible/routable/extensible environment written for the AVR32. This application takes the place of Bees.
+
+
+Setup
+
+Clone git repository: git clone https://github.com/tehn/aleph.git
+
+Toolchain:
+
+Mac: https://services.droparea.de/blog/avr32-toolchain-for-mac-os-x
+Linux: http://www.atmel.com/tools/ATMELAVRTOOLCHAINFORLINUX.aspx (get 32bit)
+Windows: http://atmel.com (get AVR Stuio)
+
+
+
+Overview
+
+The code is extensively commented. Here's a guide to the files:
+
+
+config.mk
+
+Makefile for this application.
+
+
+src/app_mix.c
+
+Main program file. app_init() and app_launch() are here, called from the AVR32 framework on startup.
+
+Here the DSP program is loaded via SPI. In this example the DSP is included in the code as a binary (as src/aleph-mix.ldr.inc) but DSP can be loaded via a file on the SD card (see Bees for how this works).
+
+The event handlers are assigned at assign_event_handlers() and then app_launch() finishes, returning to the main loop. The AVR32 framework main loop simply checks the event hander continuously, so your program code fundamentally lives in these handlers, which is in the following file.
+
+
+src/handler.c
+
+Here are located the handlers themselves i.e. handler_Switch2() etc, and the event assignment function assign_event_handlers() which was called from src/app_mix.c
+
+Handler functions receive a single signed 32 bit argument. For switches this is 0 or 1 (on/off) and for encoders it is the delta rotation. In this case the handlers are calling ctl_xxx functions from src/ctl.c which send parameter changes to the DSP.
+
+
+src/ctl.c
+
+This file contains data strutures and functions to change parameters of the DSP program.
+
+Used here are scaler lookups defined in src/scaler.c for interpolation and db conversion.
+
+Also this is where screen rendering is called, functions defined in src/render.c
+
+
+
+Lastly, src/app_timers.c contains software timers used for screen refresh and encoder data collection. Initialization is called from app_launch() and callbacks are set up.
+
+
+
+
+
+

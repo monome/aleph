@@ -18,9 +18,10 @@
 #include "ops/op_cascades.h"
 #include "ops/op_delay.h"
 #include "ops/op_div.h"
+#include "ops/op_divr.h"
 #include "ops/op_enc.h"
+#include "ops/op_fade.h"
 #include "ops/op_gate.h"
-//#include "ops/op_hid8.h"
 #include "ops/op_hid_word.h"
 #include "ops/op_history.h"
 #include "ops/op_is.h"
@@ -34,6 +35,7 @@
 #include "ops/op_midi_note.h"
 #include "ops/op_midi_out_note.h"
 #include "ops/op_mod.h"
+#include "ops/op_monome_arc.h"
 #include "ops/op_monome_grid_raw.h"
 #include "ops/op_mul.h"
 #include "ops/op_preset.h"
@@ -51,6 +53,7 @@
 #include "ops/op_thresh.h"
 #include "ops/op_timer.h"
 #include "ops/op_tog.h"
+#include "ops/op_ww.h"
 
 // let's keep this list alphabetical so we can easily see whether something is included.
  

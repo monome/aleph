@@ -61,9 +61,10 @@
 #define DEV_USART_RX_FUNCTION   AVR32_USART0_RXD_0_0_FUNCTION
 #define DEV_USART_TX_PIN        AVR32_USART0_TXD_0_0_PIN
 #define DEV_USART_TX_FUNCTION   AVR32_USART0_TXD_0_0_FUNCTION
-// #define DEV_USART_BAUDRATE      230400
+/// define this from your application config
+#ifndef DEV_USART_BAUDRATE
 #define DEV_USART_BAUDRATE      57600
-// #define DEV_USART_BAUDRATE      500000
+#endif
 
 /// compatibility with ASF print funcs
 #define DBG_USART              DEV_USART
@@ -142,14 +143,17 @@
 #define BFIN_REQUEST_PIN    AVR32_PIN_PB21
 
 // encoders
-#define ENC0_S0_PIN		AVR32_PIN_PB02
-#define ENC0_S1_PIN		AVR32_PIN_PB03
-#define ENC1_S0_PIN		AVR32_PIN_PB04
-#define ENC1_S1_PIN		AVR32_PIN_PB05
-#define ENC2_S0_PIN		AVR32_PIN_PB06
-#define ENC2_S1_PIN		AVR32_PIN_PB07
-#define ENC3_S0_PIN		AVR32_PIN_PB08
-#define ENC3_S1_PIN		AVR32_PIN_PB09
+// beware that the ISR code makes some assumpmtions
+// bout which encoders are on which I/O ports.
+// so if you change this, verify that the irq handler setup still works.
+#define ENC3_S0_PIN		AVR32_PIN_PB02
+#define ENC3_S1_PIN		AVR32_PIN_PB03
+#define ENC2_S0_PIN		AVR32_PIN_PB04
+#define ENC2_S1_PIN		AVR32_PIN_PB05
+#define ENC1_S0_PIN		AVR32_PIN_PB06
+#define ENC1_S1_PIN		AVR32_PIN_PB07
+#define ENC0_S0_PIN		AVR32_PIN_PB08
+#define ENC0_S1_PIN		AVR32_PIN_PB09
 
 // switches
 // fn switches

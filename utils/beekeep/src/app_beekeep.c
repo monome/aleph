@@ -84,7 +84,7 @@ u8 app_launch(u8 firstrun) {
   print_dbg("\r\n launching app with firstrun: ");
   print_dbg_ulong(firstrun);
 
-  return;
+  return 1;
 
   /* //  net_print(); */
   

@@ -12,7 +12,7 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_hid_word_instring =  "BYTE\0   ";
+static const char* op_hid_word_instring =  "BYTE\0   SIZE\0   ";
 static const char* op_hid_word_outstring = "VAL\0    ";
 static const char* op_hid_word_opstring = "HID";
 
@@ -30,7 +30,7 @@ static u8* op_hid_word_pickle(op_hid_word_t* h8, u8* dst);
 static const u8* op_hid_word_unpickle(op_hid_word_t* h8, const u8* src);
 
 /// hid event handler
-static void op_hid_word_handler(op_hid_t* op_hid, u32 data);
+static void op_hid_word_handler(op_hid_t* op_hid);
 
 // input func pointer array
 static op_in_fn op_hid_word_in_fn[2] = {
@@ -46,7 +46,6 @@ void op_hid_word_init(void* mem) {
 
   // superclass functions
   //--- op
-  //  op->super.inc_fn = (op_inc_fn)op_hid_word_inc_fn;
   op->super.in_fn = op_hid_word_in_fn;
   op->super.pickle = (op_pickle_fn) (&op_hid_word_pickle);
   op->super.unpickle = (op_unpickle_fn) (&op_hid_word_unpickle);
@@ -71,6 +70,7 @@ void op_hid_word_init(void* mem) {
   op->super.outString = op_hid_word_outstring;
 
   op->in_val[0] = &(op->byte);
+  op->in_val[1] = &(op->size);
   op->outs[0] = -1;
 
   op->byte = op_from_int(0);
@@ -84,6 +84,8 @@ void op_hid_word_init(void* mem) {
 
 // de-init
 void op_hid_word_deinit(void* op) {
+#if BEEKEEP
+#else
   // remove from list
 #if BEEKEEP
 #else
@@ -101,8 +103,8 @@ void op_hid_word_deinit(void* op) {
 static void op_hid_word_in_byte(op_hid_word_t* op, const io_t v) {
 #if BEEKEEP
 #else
-  if(v > HID_FRAME_MASK) {
-    op->byte = HID_FRAME_MASK;
+  if(v > HID_FRAME_IDX_MASK) {
+    op->byte = HID_FRAME_IDX_MASK;
   } else if (v < 0) { 
     op->byte = 0;
   } else {
@@ -115,33 +117,36 @@ static void op_hid_word_in_byte(op_hid_word_t* op, const io_t v) {
 // 0 means single width, 1 means double width
 static void op_hid_word_in_size(op_hid_word_t* op, const io_t v) {
   if(v > 0) {
-    op->size = 1;
+    op->size = OP_ONE;
   } else {
     op->size = 0;
   }
 }
 
 // HID frame handler
-static void op_hid_word_handler(op_hid_t* op_hid, u32 data) {
+static void op_hid_word_handler(op_hid_t* op_hid) {
 #if BEEKEEP
-#else 
+#else
   op_hid_word_t* op = (op_hid_word_t*)(op_hid->sub);
-  const u8* frame;
+  const s8* frame;
+  //  const u32 dirty;
   const u8 byte = op_to_int(op->byte);
   io_t val;
   // event data is a bitfield indicating which bytes have changed.
   // check bitfield for our byte index
-  if(hid_get_byte_flag(data, byte)) {
-    // get corresponding data from the HID frame
-    frame = hid_get_frame_data();
-    switch(op_from_int(op->size)) {
-    case 1:
-      val = frame[byte];
-      break;
-    case 2:
-    default:
-      val = (frame[byte] << 8 ) | frame[(byte + 1) & HID_FRAME_MASK];
-      break;
+  if(hid_get_byte_flag(byte)) {
+    // yes, we actually want to discard volatile here and cast to signed
+    frame = (const s8*)hid_get_frame_data();
+    if(op->size > 0) {
+      /// i have no idea if this is "correct" endianness... 
+      /// is that device-specific too?
+      val = ( ((io_t)(frame[byte])) << 8 ) | (io_t)( frame[(byte + 1) & HID_FRAME_IDX_MASK] );
+    } else {
+      /* print_dbg("\r\n op_hid_word: 0x");  */
+      /* print_dbg_hex( (int) frame[byte] ); */
+      /* print_dbg(" ; 0x");  */
+      /* print_dbg_hex( (int) ((io_t) (frame[byte])) ); */
+      val = (io_t)(frame[byte]);
     }
     net_activate(op->outs[0], val, op);
   }
