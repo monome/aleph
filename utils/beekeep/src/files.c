@@ -188,6 +188,7 @@ u8 files_load_dsp_name(const char* name) {
   int i;
 
   strncpy(descname, name, 64);
+  strip_ext(descname);
   strcat(descname, ".dsc");
 
   fp = fopen(descname, "r");
