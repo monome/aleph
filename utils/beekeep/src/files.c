@@ -192,6 +192,13 @@ u8 files_load_dsp_name(const char* name) {
   strcat(descname, ".dsc");
 
   fp = fopen(descname, "r");
+  
+  if(fp == NULL) {
+    printf("\r\n module descriptor not found...");
+    ret = 1;
+    return ret;
+  }
+  
 
   // get count of params
   fread(nbuf, 1, 4, fp);
