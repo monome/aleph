@@ -26,25 +26,34 @@ int main (int argc, char **argv)
   char filename[32];
   char ext[16];
   void* fp;
+  bool sceneArg = 0;
 
   setbuf(stdout, NULL);
 
   if(argc < 2) {
-    printf("\r\n beekeep: filename argument required; exiting\r\n\r\n");
-    return 1;
+    //    printf("\r\n beekeep: filename argument required; exiting\r\n\r\n");
+    //    return 1;
+    // start with blank scene
+  } else {
+    sceneArg = 1;
   }
 
-  strcpy(filename, argv[1]);
-  scan_ext(filename, ext);
+
+  if(sceneArg) {
+    strcpy(filename, argv[1]);
+    scan_ext(filename, ext);
+  }
 
   app_init();
   app_launch(1);
 
-  if(strcmp(ext, ".scn") == 0) {
-    files_load_scene_name(filename);
-  }
-  else if(strcmp(ext, ".json") == 0) {
-    net_read_json_native(filename);
+  if(sceneArg) {
+    if(strcmp(ext, ".scn") == 0) {
+      files_load_scene_name(filename);
+    }
+    else if(strcmp(ext, ".json") == 0) {
+      net_read_json_native(filename);
+    }
   }
 
   gtk_init (&argc, &argv);
