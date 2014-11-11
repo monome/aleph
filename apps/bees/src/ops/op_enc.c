@@ -81,13 +81,6 @@ static void op_enc_in_step(op_enc_t* enc, const io_t v) {
   enc->step = v;
   // op_enc_perform(enc);
 }
-
-// move
-/* static void op_enc_in_move(op_enc_t* enc, const io_t v) { */
-/*   enc->val = op_add(enc->val, op_mul(enc->step, op_from_int(v))); */
-/*   op_enc_perform(enc); */
-/* } */
-
 // max
 static void op_enc_in_min(op_enc_t* enc, const io_t v) {
   /// fixme: for now, i am banning this kind of pathological shit:
