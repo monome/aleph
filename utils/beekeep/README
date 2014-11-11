@@ -8,6 +8,4 @@ beekeep reads and writes network states as JSON and can convert between json and
 
 it also builds directly against the current bees sources, so it can function as a .scn converter between versions of bees if necessary.
 
-further functinonality is attendant on more implementation of the avr32_sim layer.
-
-beekeep has a python gui 'frontpanel' sim which replicates the controls on the aleph.  Requires python 3.  Different linker options required for python 3.1 and python 3.2 so copy either python_version3.1.mk to python_version.mk or python_version3.2.mk according to which version is installed on your distro
+further functionality is attendant on more implementation of the avr32_sim layer.

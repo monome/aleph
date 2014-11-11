@@ -199,7 +199,6 @@ u8 files_load_dsp_name(const char* name) {
     return ret;
   }
   
-
   // get count of params
   fread(nbuf, 1, 4, fp);
   unpickle_32(nbuf, (u32*)&nparams); 
