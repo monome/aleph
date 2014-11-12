@@ -113,8 +113,11 @@ static void refresh_in_row_for_target(int t) {
 //==== editing handlers
 
 void ui_connect_in(void) {
-  // store the old target for refresh
-  int t = net_get_target(outSelect);
+
+  int t;
+  if(outSelect < 0) { return; } 
+
+  t = net_get_target(outSelect);
   if(t == inSelect) {
     // was connected, disconnect
     net_disconnect(outSelect);
@@ -132,7 +135,9 @@ void ui_connect_in(void) {
 
 void ui_connect_param(void) {
    // store the old target for refresh
-  int t = net_get_target(outSelect);
+  int t;
+  if(outSelect < 0) { return; } 
+  t = net_get_target(outSelect);
   if(t == (paramSelect + net->numIns)) {
     // was connected here, disconnect
     net_disconnect(outSelect);
