@@ -20,6 +20,7 @@ CSRCS += \
 	$(APP_DIR)/src/ctl.c \
 	$(APP_DIR)/src/render.c \
 	$(APP_DIR)/src/util.c \
+	$(APP_DIR)/src/tracker.c \
 	$(APP_DIR)/src/pages.c \
 	$(APP_DIR)/src/page_level.c \
 	$(APP_DIR)/src/page_env.c \

@@ -53,29 +53,29 @@ static softTimer_t midiPollTimer = { .next = NULL, .prev = NULL };
 
 //adc polling callback
 static void adc_poll_timer_callback(void* obj) {
-//event_t e;
+//    adc_poll();
+    adc_convert(&adc);
     
-adc_convert(&adc);
+    u16 i = adc[0];
+    
+    if (!i)
+        state = OFF;
 
-    if (adc[0] < 10)
-//    if (!adc[0])
-        {
-            state = OFF;
-            e.type = kEventAdc0;
-            e.data = state;
-            event_post(&e);
-        }
-    
     else if(state == OFF)
         {
             state = ON;
+            
             e.type = kEventAdc0;
-            e.data = state;
+            e.data = ON;
+            event_post(&e);
+            
+            e.type = kEventAdc0;
+            e.data = OFF;
             event_post(&e);
         }
     
     else if(state == ON)
-        ;
+        ;;
 }
 
 //encoder polling callback

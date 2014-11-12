@@ -12,12 +12,15 @@
 #include "types.h"
 #include "fract_math.h"
 
+#define FR32_MAX 0x7fffffff
+#define FR32_MIN 0x80000000
+
 //trig
 #define ON 1
 #define OFF 0
 u8 state_t;                         //trig state
 
-#define N_CURVES 4                  //number of curve algorithms
+#define N_CURVES 6                  //number of curve algorithms
 
 typedef struct _env_tcd {
     fract32 val;                    //interpolated value
@@ -48,7 +51,7 @@ extern void env_tcd_set_curve(env_tcd *env, u8 curve);
 extern void env_tcd_set_dest(env_tcd *env, fract32 dest);
 
 //set trig
-extern void env_tcd_set_trig(env_tcd *env, u8 trig);
+extern void env_tcd_set_trig(env_tcd *env, u16 trig);
 
 //get next value
 extern fract32 env_tcd_next(env_tcd *env);

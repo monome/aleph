@@ -1,60 +1,78 @@
-//tracker.h
-//aleph-prgm-avr32
+//
+//  tracker.h
+//  aleph
+//
+//  Created by Staffan Jansson on 25/10/14.
+//
 
-#ifndef _ALEPH_APP_PRGM_TRACKER_H_
-#define _ALEPH_APP_PRGM_TRACKER_H_
+#ifndef aleph_tracker_h
+#define aleph_tracker_h
 
-#define F_STEPS_MAX 4
-#define T_STEPS_MAX 4
+//mode led ctrl
+#include "gpio.h"
+#include "aleph_board.h"
+
+//memory allocation
+#include "memory.h"
+
+//other stuff
+#include "types.h"
+#include "control.h"
+#include "ctl.h"
+#include "pages.h"
+#include "render.h"
+#include "page_level.h"
+#include "page_env.h"
+#include "scale.h"
+
+#define SQ_LEN 3                            //sequence length
+#define N_SQ 4                              //number of tracks
+#define N_CURVES 5                          //number of curves in env_tcd
 
 char renderCounter[16];
-char renderCounter_t[16];
 
-s32 Freq0tmp;
-s32 Freq1tmp;
-s32 Freq2tmp;
-s32 Freq3tmp;
-s32 Freq0;
-s32 Freq1;
-s32 Freq2;
-s32 Freq3;
-char renderFreq0[16];
-char renderFreq1[16];
-char renderFreq2[16];
-char renderFreq3[16];
+u8 counter;
+u8 length;
 
-s32 Transpose0tmp;
-s32 Transpose1tmp;
-s32 Transpose2tmp;
-s32 Transpose3tmp;
-s32 Transpose0;
-s32 Transpose1;
-s32 Transpose2;
-s32 Transpose3;
-char renderTranspose0[16];
-char renderTranspose1[16];
-char renderTranspose2[16];
-char renderTranspose3[16];
+typedef struct _track {
+    s32 f0;
+    s32 f1;
+    s32 f2;
+    s32 f3;
+    
+    s32 t0;
+    s32 t1;
+    s32 t2;
+    s32 t3;
+    
+    s32 ct0;
+    s32 ct1;
+    s32 ct2;
+    s32 ct3;
+    
+    s32 c0;
+    s32 c1;
+    s32 c2;
+    s32 c3;
+    
+    s32 d0;
+    s32 d1;
+    s32 d2;
+    s32 d3;
+    
+    s32 tg0;
+    s32 tg1;
+    s32 tg2;
+    s32 tg3;
+} track;
 
-typedef struct _fstep *Steppointer_f;
-typedef struct _tstep *Steppointer_t;
+typedef struct _track *trackptr;
 
-typedef struct _fstep {
-    Steppointer_f next;
-    s32 osc0_f;
-    s32 osc1_f;
-    s32 osc2_f;
-    s32 osc3_f;
-} fstep;
+track *prgmtrack[SQ_LEN];
 
-typedef struct _tstep {
-    Steppointer_t next;
-    s32 osc0_t;
-    s32 osc1_t;
-    s32 osc2_t;
-    s32 osc3_t;
-} tstep;
-
+//extern function declarations
 extern void tracker_init(void);
+extern void edit(void);
+extern void play(s32 trig);
 
 #endif

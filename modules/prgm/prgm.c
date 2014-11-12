@@ -33,7 +33,8 @@ void init_cv_parameters(prgmCvChannel *cv) {
     cv->f = 0;
     cv->t = 0;
     filter_1p_lo_init(&(cv->fSlew), 0xf);
-    filter_1p_lo_set_slew(&(cv->fSlew), 0x77000000); //TEST!!!
+    //  encoder source response, env->source = env->f * env->t
+    filter_1p_lo_set_slew(&(cv->fSlew), 0x77ffffff); //TEST!!!
     env_tcd_init(&(cv->envAmp));
 }
 
@@ -88,6 +89,7 @@ void module_process_frame(void) {
             }
             else
             {
+                //  output envelope and update dac
                 cvVal[cvChn] = env_tcd_next(&(cvchannel[cvChn]->envAmp));
                 cv_update(cvChn, cvVal[cvChn]);
             }
@@ -95,10 +97,12 @@ void module_process_frame(void) {
         
         else
         {
+            //  output encoder and update dac
             cvVal[cvChn] = filter_1p_lo_next(&(cvchannel[cvChn]->fSlew));
             cv_update(cvChn, cvVal[cvChn]);
         }
     
+    //  cycle cv channels, only one channel is calculated per frame
     if(++cvChn == 4) { cvChn = 0; }
 }
 

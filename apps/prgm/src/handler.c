@@ -18,19 +18,20 @@
 //prgm
 #include "handler.h"
 #include "render.h"
+#include "tracker.h"
 
 //static function declarations
-static void handle_Adc0(s32 data);
+void handle_Adc0(s32 trig);
 
 //external functions
 //init adc timers, called by app_launch()
 void adc_init(void) {
-    timers_set_adc(50);
+    timers_set_adc(10);
 }
 
 //static functions
-static void handle_Adc0(s32 data) {
-//    step_advance();
+void handle_Adc0(s32 trig) {
+    play(trig);
 }
 
 void assign_prgm_event_handlers(void) {

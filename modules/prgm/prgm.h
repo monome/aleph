@@ -35,10 +35,6 @@ typedef struct _prgmCvChannel {
     
     //curve
     env_tcd envAmp;
-    
-    //    env_tcd *first;             //first curve
-    //    env_tcd *next;              //next curve
-    //    env_tcd *last;              //last curve
 } prgmCvChannel;
 
 #endif
