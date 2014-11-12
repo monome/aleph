@@ -169,10 +169,10 @@ cflags += -std=gnu99
 cflags += -D BEEKEEP=1
 cflags += -g -O0
 
-lflags += -ljansson
+lflags += -Bstatic -ljansson
 
 cflags += $(shell pkg-config --cflags gtk+-3.0)
-lflags += $(shell pkg-config --libs gtk+-3.0)
+lflags += -Bdynamic $(shell pkg-config --libs gtk+-3.0)
 
 
 $(build-dir)%.o: %.c 
