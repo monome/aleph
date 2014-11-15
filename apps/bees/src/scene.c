@@ -91,9 +91,8 @@ void scene_init(void) {
   /* for(i=0; i<MODULE_NAME_LEN; i++) { */
   /*   (sceneData->desc.moduleName)[i] = '\0'; */
   /* } */
-  strcpy(sceneData->desc.moduleName, "DEADBEEF");
-  strcpy(sceneData->desc.sceneName, "_"); 
-
+  strcpy(sceneData->desc.moduleName, "NONE");
+  strcpy(sceneData->desc.sceneName, "_");
 
 }
 
