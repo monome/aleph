@@ -154,7 +154,7 @@ void ui_init(void) {
   
   //---  window
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (window), "bees editor");
+  gtk_window_set_title (GTK_WINDOW (window), "beekeep");
   gtk_window_set_default_size(GTK_WINDOW(window), 1200, 800);
   //////////////////
   /// FIXME: need to set a delete handler and do some cleanup.
@@ -177,12 +177,12 @@ void ui_init(void) {
 
   scroll_box_new( &boxOps, 	grid, 1, 24, &fill_ops );
   scroll_box_new( &boxOuts, 	grid, 4, 24, &fill_outs );
-  scroll_box_new( &boxIns, 	grid, 4, 24, &fill_ins );
+  scroll_box_new( &boxIns, 	grid, 5, 24, &fill_ins );
   scroll_box_new( &boxParams, 	grid, 5, 24, &fill_params ); 
   scroll_box_new( &boxPresets, 	grid, 3, 24, &fill_presets );
 
   //--- list labels
-  labelOps = gtk_label_new("OPS");
+  labelOps = gtk_label_new("OPERATORS");
   gtk_grid_attach_next_to(GTK_GRID(grid), labelOps, 
 			  boxOps.scroll, GTK_POS_TOP, 2, 1);
 
