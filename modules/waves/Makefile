@@ -15,7 +15,6 @@ module_obj = waves.o  \
 	$(bfin_lib_srcdir)/libfixmath/fix32.o \
 	$(bfin_lib_srcdir)/libfixmath/fix16.o
 
-
 all: $(module_name).ldr
 
 include ../../bfin_lib/bfin_lib.mk
