@@ -197,7 +197,7 @@ u8 files_load_dsp_name(const char* name) {
   fp = fopen(descname, "r");
   
   if(fp == NULL) {
-    printf("\r\n module descriptor not found...");
+    printf("\r\n module descriptor not found; path: %s", descname);
     ret = 1;
     return ret;
   }
@@ -250,14 +250,27 @@ u8 files_load_scene(u8 idx) {
 // search for specified scene file and load it
 // return 1 on success, 0 on failure
 u8 files_load_scene_name(const char* name) {
-  FILE* f = fopen(name, "r");
-  u8 ret;
 
+  char path[64] = "";
+  FILE* f;
+  u8 ret = 1;
+  
+//  strcpy(path, workingDir);
+  strcat(path, name);
+  printf("\r\n attempting to open scene file; path: %s", path);
+  
+  
+  f = fopen(path, "r");
+  if(f == NULL) {
+	  printf("\r\n couldn't find scene file; path: %s", path);
+	  return 0;
+  }
   fread(sceneData, sizeof(sceneData_t), 1, f);
   fclose(f);
 
   scene_read_buf();
 
+  printf("\r\n loaded scene buffer, search DSP:");
   ret = files_load_dsp_name(sceneData->desc.moduleName);
 
   return ret;

@@ -54,6 +54,8 @@ int main (int argc, char **argv)
 	strip_filename(path, 64);
 	strcpy(workingDir, path);
   }
+  
+  printf("\r\n working directory now: %s", workingDir);
 
   gtk_init (&argc, &argv);
   ui_init();
