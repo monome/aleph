@@ -4,14 +4,24 @@
 #ifndef _ALEPH_APP_PRGM_TRACKER_H_
 #define _ALEPH_APP_PRGM_TRACKER_H_
 
-char renderFree0[16];
-char renderFree1[16];
-char renderFree2[16];
-char renderFree3[16];
+// asf
+#include "gpio.h"
+#include "print_funcs.h"
 
-char renderTransposed0[16];
-char renderTransposed1[16];
-char renderTransposed2[16];
-char renderTransposed3[16];
+// common
+#include "fix.h"
+
+// avr32
+#include "region.h"
+#include "app.h"
+#include "control.h"
+#include "memory.h"
+
+//prgm
+#include "pages.h"
+#include "render.h"
+#include "ctl.h"
+#include "scale.h"
+#include "tracker.h"
 
 #endif

@@ -7,15 +7,20 @@
 typedef struct _prgmData {
     ModuleData super;
     ParamData mParamData[eParamNumParams];
+    volatile fract32 cvBuffer[N_CVOUTPUTS][PRGM_BUF_FRAMES];
 } prgmData;
 
 ModuleData *gModuleData;
 
-//pointer to SDRAM
+//pointer to SDRAM (all external memory)
 prgmData *data;
 
+//buffers
+cvBuffer prgmBuf[N_CVOUTPUTS];
+
+//cv outputs
 prgmCvChannel *cvchannel[N_CVOUTPUTS];
-static volatile fract32 cvVal[N_CVOUTPUTS];
+static fract32 cvVal[N_CVOUTPUTS]; //volatile?!
 static u8 cvChn = 0;
 
 static PrgmCvChannelpointer init_channel(void);
@@ -23,17 +28,28 @@ static void init_cv_parameters(prgmCvChannel *cvchannel);
 static void cv_set_f(prgmCvChannel *cvchannel, ParamValue f);
 static void cv_set_t(prgmCvChannel *cvchannel, ParamValue t);
 
+//frame process
+static void set_flag(prgmCvChannel *cvchannel, ParamValue flag);
+static fract32 (*get_processptr(u8 n))();
+static void set_process(prgmCvChannel *cvchannel, u8 n);
+static fract32 frame_next(prgmCvChannel *cvchannel);
+static fract32 process_cv(prgmCvChannel *cvchannel);
+static fract32 process_audio(prgmCvChannel *cvchannel);
+    
 
+//static function definitions
 PrgmCvChannelpointer init_channel(void) {
     return(PrgmCvChannelpointer)malloc(sizeof(prgmCvChannel));
 }
 
-
 void init_cv_parameters(prgmCvChannel *cv) {
+    cv->process = 0;
+    cv->flag = 0;
+
     cv->f = 0;
     cv->t = 0;
     filter_1p_lo_init(&(cv->fSlew), 0xf);
-    //  encoder source response, env->source = env->f * env->t
+    //  encoder source response
     filter_1p_lo_set_slew(&(cv->fSlew), 0x77ffffff); //TEST!!!
     env_tcd_init(&(cv->envAmp));
 }
@@ -46,6 +62,11 @@ void cv_set_f(prgmCvChannel *cvchannel, ParamValue f) {
 
 void cv_set_t(prgmCvChannel *cvchannel, ParamValue t) {
     cvchannel->t = t;
+}
+
+
+void set_flag(prgmCvChannel *cvchannel, ParamValue flag) {
+    cvchannel->flag = flag;
 }
 
 
@@ -63,8 +84,15 @@ void module_init(void) {
     strcpy(gModuleData->name, "aleph-prgm");
     gModuleData->paramData = data->mParamData;
     gModuleData->numParams = eParamNumParams;
-
-    for(i=0; i<N_CVOUTPUTS; i++) { cvchannel[i] = init_channel(); init_cv_parameters(cvchannel[i]); }
+    
+    for(i=0; i<N_CVOUTPUTS; i++)
+    {
+        cvchannel[i] = init_channel();
+        init_cv_parameters(cvchannel[i]);
+        buffer_init(&(prgmBuf[i]), data->cvBuffer[i], PRGM_BUF_FRAMES);
+        buffer_head_init(&(cvchannel[i])->envAmp.head, &(prgmBuf[i]));
+    }
+    
     for(i=0; i<module_get_num_params(); i++) { param_setup(i, 0); }
 }
 
@@ -77,33 +105,109 @@ extern u32 module_get_num_params(void) {
 }
 
 
-void module_process_frame(void) {
-    filter_1p_lo_in(&(cvchannel[cvChn]->fSlew), fix16_mul(cvchannel[cvChn]->f, cvchannel[cvChn]->t));
-    cvchannel[cvChn]->envAmp.source = fix16_mul(cvchannel[cvChn]->f, cvchannel[cvChn]->t);
+fract32 (*get_processptr(u8 n))() {
+    static fract32 (*process[])() =
+    {
+        process_cv,
+        process_audio,
+    };
     
-    if(filter_1p_sync(&(cvchannel[cvChn]->fSlew)))
+    return (n < 1 || n > 1) ? *process[0] : *process[1];
+}
+
+
+void set_process(prgmCvChannel *cvchannel, u8 n) {
+    cvchannel->process = get_processptr(n);
+}
+
+
+fract32 frame_next(prgmCvChannel *cvchannel) {
+    return cvchannel->process(cvchannel);
+}
+
+
+void module_process_frame(void) {
+    for(cvChn=0;cvChn<4;cvChn++)
+    {
+        if(!cvchannel[cvChn]->flag)
         {
-            if(cvchannel[cvChn]->envAmp.state == OFF)
-            {
-                ;;
-            }
-            else
-            {
-                //  output envelope and update dac
-                cvVal[cvChn] = env_tcd_next(&(cvchannel[cvChn]->envAmp));
-                cv_update(cvChn, cvVal[cvChn]);
-            }
-        }
-        
-        else
-        {
-            //  output encoder and update dac
-            cvVal[cvChn] = filter_1p_lo_next(&(cvchannel[cvChn]->fSlew));
+            cvVal[cvChn] = frame_next(cvchannel[cvChn]);
             cv_update(cvChn, cvVal[cvChn]);
         }
+        else if(cvchannel[cvChn]->flag)
+        {
+            out[cvChn] = frame_next(cvchannel[cvChn]);
+        }
+    }
+}
+
+/*
+ void module_process_frame(void) {
+ for(cvChn=0;cvChn<4;cvChn++)
+ {
+ //  env->source = env->f * env->t
+ filter_1p_lo_in(&(cvchannel[cvChn]->fSlew), fix16_mul(cvchannel[cvChn]->f, cvchannel[cvChn]->t));
+ cvchannel[cvChn]->envAmp.source = fix16_mul(cvchannel[cvChn]->f, cvchannel[cvChn]->t);
+ 
+ if(filter_1p_sync(&(cvchannel[cvChn]->fSlew)))
+ {
+ if(cvchannel[cvChn]->envAmp.state == OFF)
+ {
+ ;;
+ }
+ else
+ {
+ cvVal[cvChn] = env_tcd_next(&(cvchannel[cvChn]->envAmp));
+ cv_update(cvChn, cvVal[cvChn]);
+ }
+ }
+ 
+ else
+ {
+ //  output encoder and update dac
+ cvVal[cvChn] = filter_1p_lo_next(&(cvchannel[cvChn]->fSlew));
+ cv_update(cvChn, cvVal[cvChn]);
+ }
+ }
+ }
+ */
+
+
+fract32 process_cv(prgmCvChannel *cvchannel) {
+    filter_1p_lo_in(&(cvchannel->fSlew), fix16_mul(cvchannel->f, cvchannel->t));
+    cvchannel->envAmp.source = fix16_mul(cvchannel->f, cvchannel->t);
     
-    //  cycle cv channels, only one channel is calculated per frame
-    if(++cvChn == 4) { cvChn = 0; }
+    if(filter_1p_sync(&(cvchannel->fSlew)))
+    {
+        if(cvchannel->envAmp.state == OFF)
+        {
+            ;;
+        }
+        else
+        {
+            //  output curve
+            return env_tcd_next(&(cvchannel->envAmp));
+        }
+    }
+    
+    else
+    {
+        //  output encoder
+        return filter_1p_lo_next(&(cvchannel->fSlew));
+    }
+    return 0;
+}
+
+
+fract32 process_audio(prgmCvChannel *cvchannel) {
+    if(cvchannel->envAmp.state == OFF)
+    {
+        return 0;
+    }
+    else
+    {
+        return env_tcd_next(&(cvchannel->envAmp));
+    }
 }
 
 
@@ -185,6 +289,23 @@ void module_set_param(u32 idx, ParamValue v) {
             break;
         case eParamCurveTrig3:
             env_tcd_set_trig(&(cvchannel[3]->envAmp), v);
+            break;
+            
+        case eParamFlag0:
+            set_flag(cvchannel[0], v);
+            set_process(cvchannel[0], v);
+            break;
+        case eParamFlag1:
+            set_flag(cvchannel[1], v);
+            set_process(cvchannel[1], v);
+            break;
+        case eParamFlag2:
+            set_flag(cvchannel[2], v);
+            set_process(cvchannel[2], v);
+            break;
+        case eParamFlag3:
+            set_flag(cvchannel[3], v);
+            set_process(cvchannel[3], v);
             break;
             
         default:

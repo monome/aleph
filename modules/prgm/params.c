@@ -146,4 +146,28 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamCurveTrig3].min = 0;
     desc[eParamCurveTrig3].max = 1;
     desc[eParamCurveTrig3].radix = BOOL_RADIX;
+    
+    strcpy(desc[eParamFlag0].label, "curve0_flag");
+    desc[eParamFlag0].type = eParamTypeBool;
+    desc[eParamFlag0].min = 0;
+    desc[eParamFlag0].max = 1;
+    desc[eParamFlag0].radix = BOOL_RADIX;
+    
+    strcpy(desc[eParamFlag1].label, "curve1_flag");
+    desc[eParamFlag1].type = eParamTypeBool;
+    desc[eParamFlag1].min = 0;
+    desc[eParamFlag1].max = 1;
+    desc[eParamFlag1].radix = BOOL_RADIX;
+
+    strcpy(desc[eParamFlag2].label, "curve2_flag");
+    desc[eParamFlag2].type = eParamTypeBool;
+    desc[eParamFlag2].min = 0;
+    desc[eParamFlag2].max = 1;
+    desc[eParamFlag2].radix = BOOL_RADIX;
+
+    strcpy(desc[eParamFlag3].label, "curve3_flag");
+    desc[eParamFlag3].type = eParamTypeBool;
+    desc[eParamFlag3].min = 0;
+    desc[eParamFlag3].max = 1;
+    desc[eParamFlag3].radix = BOOL_RADIX;
 }

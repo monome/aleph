@@ -11,19 +11,21 @@
 
 #include "types.h"
 #include "fract_math.h"
+#include "env_tcd_buffer.h"
+#include "bfin_core.h"
 
 #define FR32_MAX 0x7fffffff
 #define FR32_MIN 0x80000000
-
-//trig
 #define ON 1
 #define OFF 0
-u8 state_t;                         //trig state
 
-#define N_CURVES 6                  //number of curve algorithms
+//number of curves
+#define N_CURVES 10                 //number of curve algorithms
 
 typedef struct _env_tcd {
     fract32 val;                    //interpolated value
+
+    bufferHead head;                //play&record head for sample based curves
     
     fract32 source;                 //level at start of curve
     
@@ -33,7 +35,7 @@ typedef struct _env_tcd {
     fract32 (*curve)(void *);       //pointer to curve algorithm
 
     fract32 dest;                   //level at end of curve
-
+    
     u8 trig;                        //sync trig
     u8 state;                       //state ON/OFF
 } env_tcd;

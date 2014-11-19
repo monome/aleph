@@ -13,21 +13,21 @@ GLOBAL controls
 sw4                 page select
 
 I/O
-cv input0           step +1
+cv input0           play step +1
 cv out0-3           cv!
 
 page TRACKER
 encoders            level fine
 sw0 + encoders      level coarse
 sw1 + encoders      level transpose (scaled)
-sw3                 edit step + 1
+sw3                 edit step +1
 
 page ENVELOPE
 encoders            time
 encoders + sw0      curve
 encoders + sw1      destination
 encoders + sw2      trig
-sw3                 edit step + 1
+sw3                 edit step +1
 
 
 

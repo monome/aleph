@@ -10,21 +10,28 @@
 
 //static function declarations
 static fract32 (*env_tcd_get_curveptr(u8 n))();
-static fract32 env_tcd_zero(env_tcd *env);
+static fract32 env_tcd_off(env_tcd *env);
 static fract32 env_tcd_bypass(env_tcd *env);
+static fract32 env_tcd_trig(env_tcd *env);
 static fract32 env_tcd_gate(env_tcd *env);
+static fract32 env_tcd_play_beta(env_tcd *env);
+static fract32 env_tcd_loop_beta(env_tcd *env);
 static fract32 env_tcd_lin_beta(env_tcd *env);
-static fract32 env_tcd_noise(env_tcd *env);
+static fract32 env_tcd_noise_beta(env_tcd *env);
+static fract32 env_tcd_rec0_beta(env_tcd *env);
+static fract32 env_tcd_rec1_beta(env_tcd *env);
+
+//pending...
 static fract32 env_tcd_wav_beta(env_tcd *env);
 
 //extern function definitions
 void env_tcd_init(env_tcd *env) {
     env->val = 0;
     env->source = 0;
-    env->time = 0; //1s
+    env->time = 0;
     env->countTime = 0;
     env->curve = 0;
-    env->dest = 0; //10v
+    env->dest = 0;
     env->trig = 0;
     env->state = OFF;
 }
@@ -35,17 +42,21 @@ void env_tcd_set_time(env_tcd *env, u32 time) {
     env->time = time;
 }
 
-
+//ADD #ifdefine based on flag!!!
 //return pointer to curve algorithm
 fract32 (*env_tcd_get_curveptr(u8 n))() {
     static fract32 (*curves[])() =
     {
-        env_tcd_zero,
+        env_tcd_off,
         env_tcd_bypass,
+        env_tcd_trig,
         env_tcd_gate,
+        env_tcd_play_beta,
+        env_tcd_loop_beta,
         env_tcd_lin_beta,
-        env_tcd_noise,
-        env_tcd_wav_beta,
+        env_tcd_noise_beta,
+        env_tcd_rec0_beta,
+        env_tcd_rec1_beta,
     };
     
     return (n < 1 || n > N_CURVES) ? *curves[0] : *curves[n];
@@ -84,15 +95,10 @@ void env_tcd_set_trig(env_tcd *env, u16 trig) {
 
 
 //static function definitions
-//curve: zero
-fract32 env_tcd_zero(env_tcd *env) {
-    if (env->state == ON)
-    {
-        env->state = OFF; return 0;
-    }
-    
-    else
-        return 0;
+//curve: off
+fract32 env_tcd_off(env_tcd *env) {
+    if (env->state == ON) { env->state = OFF; return 0; }
+    else return 0;
 }
 
 //curve: bypass
@@ -104,6 +110,18 @@ fract32 env_tcd_bypass(env_tcd *env) {
     
     else
         return env->source;
+}
+
+//curve: trig
+fract32 env_tcd_trig(env_tcd *env) {
+    if (env->state == ON)
+    {
+        if(env->countTime < 0x0000003f) { env->countTime++; return 0x3fffffff; }
+        else { env->state = OFF; return 0; }
+    }
+    
+    else
+        return 0;
 }
 
 //curve: gate
@@ -118,46 +136,113 @@ fract32 env_tcd_gate(env_tcd *env) {
         return env->source;
 }
 
-//curve: lin_beta
-fract32 env_tcd_lin_beta(env_tcd *env) {
-    if (env->source > env->dest && env->state == ON)
+//curve: cv_play_beta
+fract32 env_tcd_play_beta(env_tcd *env) {
+    if (env->state == ON && (!env->countTime))
     {
         env->countTime++;
-            
-        if (env->countTime < env->time)
+        buffer_head_pos(&(env->head), 0);
+        return buffer_head_play(&(env->head));
+    }
+    else if (env->state == ON && env->countTime < env->time)
+    {
+        env->countTime++;
+        buffer_head_next(&(env->head));
+        return buffer_head_play(&(env->head));
+    }
+    else
+    {
+        env->state = OFF;
+        return 0;
+    }
+}
+
+//curve: cv_loop_beta
+fract32 env_tcd_loop_beta(env_tcd *env) {
+    if (env->state == ON)
+    {
+        if (!env->countTime)
         {
-            env->dest = sub_fr1x32(env->source, mult_fr1x32x32(0x7fff, sub_fr1x32(env->source, env->dest)));
-            return env->dest;
+            env->countTime++;
+            buffer_head_pos(&(env->head), 0);
+            return buffer_head_play(&(env->head));
+        }
+        else if (env->countTime < env->time)
+        {
+            env->countTime++;
+            buffer_head_next(&(env->head));
+            return buffer_head_play(&(env->head));
         }
         else
         {
-            env->state = OFF;
-            return env->dest;
+            env->countTime = 0;
+            env->countTime++;
+            buffer_head_pos(&(env->head), 0);
+            return buffer_head_play(&(env->head));
         }
     }
-    else if (env->source < env->dest && env->state == ON)
+    else
+    {
+        env->state = OFF;
+        return 0;
+    }
+}
+
+//curve: audio_rec_beta
+fract32 env_tcd_rec0_beta(env_tcd *env) {
+    if (env->state == ON && (!env->countTime))
     {
         env->countTime++;
-            
-        if (env->countTime < env->time)
-        {
-            env->dest = add_fr1x32(env->source, mult_fr1x32x32(0x7fff, sub_fr1x32(env->dest, env->source)));
-            return env->dest;
-        }
-        else
-        {
-            env->state = OFF;
-            return env->dest;
-        }
+        fract32 tmp = add_fr1x32(tmp, mult_fr1x32x32(in[0], (FRACT32_MAX >> 10)));
+        buffer_head_pos(&(env->head), 0);
+        buffer_head_rec(&(env->head), tmp);
+        return tmp;
     }
-    else return env->dest;
+    else if (env->state == ON && env->countTime < env->time)
+    {
+        env->countTime++;
+        fract32 tmp = add_fr1x32(tmp, mult_fr1x32x32(in[0], (FRACT32_MAX >> 10)));
+        buffer_head_next(&(env->head));
+        buffer_head_rec(&(env->head), tmp);
+        return tmp;
+    }
+    else
+    {
+        env->state = OFF;
+        return 0;
+    }
+}
+
+//curve: audio_rec_beta
+fract32 env_tcd_rec1_beta(env_tcd *env) {
+    if (env->state == ON && (!env->countTime))
+    {
+        env->countTime++;
+        fract32 tmp = add_fr1x32(tmp, mult_fr1x32x32(in[1], (FRACT32_MAX >> 10)));
+        buffer_head_pos(&(env->head), 0);
+        buffer_head_rec(&(env->head), tmp);
+        return tmp;
+    }
+    else if (env->state == ON && env->countTime < env->time)
+    {
+        env->countTime++;
+        fract32 tmp = add_fr1x32(tmp, mult_fr1x32x32(in[1], (FRACT32_MAX >> 10)));
+        buffer_head_next(&(env->head));
+        buffer_head_rec(&(env->head), tmp);
+        return tmp;
+    }
+    else
+    {
+        env->state = OFF;
+        return 0;
+    }
 }
 
 //curve: noise
-s32 env_tcd_noise(env_tcd *env) {
+s32 env_tcd_noise_beta(env_tcd *env) {
     if (env->state == ON)
     {
-        if(env->countTime < env->time)
+        if (env->countTime < env->time)
         {
             env->countTime++;
             //  allow overflow
@@ -173,6 +258,67 @@ s32 env_tcd_noise(env_tcd *env) {
     else
         return 0;
 }
+
+//curve: lin_beta
+fract32 env_tcd_lin_beta(env_tcd *env) {
+    if (env->source > env->dest && env->state == ON)
+    {
+        env->countTime++;
+        
+        if (env->countTime < env->time)
+        {
+            env->dest = sub_fr1x32(env->source, mult_fr1x32x32(0x7fff, sub_fr1x32(env->source, env->dest)));
+            return env->dest;
+        }
+        else
+        {
+            env->state = OFF;
+            return env->dest;
+        }
+    }
+    else if (env->source < env->dest && env->state == ON)
+    {
+        env->countTime++;
+        
+        if (env->countTime < env->time)
+        {
+            env->dest = add_fr1x32(env->source, mult_fr1x32x32(0x7fff, sub_fr1x32(env->dest, env->source)));
+            return env->dest;
+        }
+        else
+        {
+            env->state = OFF;
+            return env->dest;
+        }
+    }
+    else return env->dest;
+}
+/*
+ if (env->val == 0)
+ {
+ env->val = env->source;
+ return env->val;
+ }
+ else if (env->val > env->dest)
+ {
+ env->val = sub_fr1x32(env->val, 0x7ffff);
+ return env->val;
+ }
+ else
+ {
+ env->val = 0;
+ env->countTime = env->time;
+ return env->dest;
+ }
+ 
+ }
+ else { env->state = OFF; return env->dest; }
+ }
+ 
+ else
+ return env->dest;
+ }
+ */
 
 //curve: wav_beta
 fract32 env_tcd_wav_beta(env_tcd *env) {
@@ -192,109 +338,3 @@ fract32 env_tcd_wav_beta(env_tcd *env) {
     else
         return env->val;
 }
-
-/*
- UNDER CONSTRUCTION...
- 
- for (env->val = 0; *env->source != NULL; env->source++) {
- env->val = *env->source + 31 * env->val;
- return env->val % FR32_MAX;
-
- 
- //curve: noise_beta
-
- 
- //add u8 switch
- //curve: pulse_beta
- fract32 env_tcd_pulse_beta(env_tcd *env) {
- if (env->val == 0)
- {
- if(env->countTime < env->time)
- {
- env->countTime++;
- return env->dest;
- }
- else { env->countTime = 0; env->val = 1; return env->dest; }
- }
- else if (env->val == 1)
- {
- if(env->countTime < env->time)
- {
- env->countTime++;
- return env->source;
- }
- else { env->countTime = 0; env->val = 0; return env->source; }
- }
- else return env->source;
- }
-
- 
-if (accum->wrap) { // wrapping...
-    // if value needs wrapping, output the applied difference
-    while (accum->val > accum->max) {
-        dif = op_sub(accum->min, accum->max) - 1;
-        wrap = op_add(wrap, dif);
-        accum->val = op_add(accum->val, dif);
-    }
-    while (accum->val < accum->min) {
-        dif = op_sub(accum->max, accum->min) + 1;
-        wrap = op_add(wrap, dif);
-        accum->val = op_add(accum->val, dif);
-    }
-    
-    
-    
-    fract32 env_tcd_ramp_beta(env_tcd *env) {
-        if (env->state == ON)
-        {
-            env->countTime++;
-            if (env->source > env->dest) {
-                env->val = sub_fr1x32(env->source, env->dest);
-                return env->val;
-            }
-            if (env->source < env->dest) {
-                env->val = sub_fr1x32(env->dest, env->source);
-                return env->val;
-            }
-        }
-        else
-            
-            
-            } else { // saturating...
-                if (accum->val > accum->max) {
-                    wrap = dif = op_sub(accum->val, accum->max);
-                    accum->val = accum->max;
-                }
-                if (accum->val < accum->min) {
-                    wrap = dif = op_sub(accum->val , accum->min);
-                    accum->val = accum->min;
-                }
-            }
-    
-    
-    
-    if (env->val == 0)
-    {
-        env->val = env->source;
-        return env->val;
-    }
-    else if (env->val > env->dest)
-    {
-        env->val = sub_fr1x32(env->val, 0x7ffff);
-        return env->val;
-    }
-    else
-    {
-        env->val = 0;
-        env->countTime = env->time;
-        return env->dest;
-    }
-    
-}
-else { env->state = OFF; return env->dest; }
-}
-
-else
-return env->dest;
-}
-*/

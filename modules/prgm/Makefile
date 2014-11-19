@@ -10,6 +10,7 @@ ldr_name = aleph-$(module_name)-$(version).ldr
 module_obj = prgm.o  \
 	params.o \
 	env_tcd.o \
+	env_tcd_buffer.o \
 	$(audio_dir)/filter_1p.o \
 	$(audio_dir)/table.o \
 	$(audio_dir)/conversion.o \

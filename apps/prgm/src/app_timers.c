@@ -57,8 +57,9 @@ static void adc_poll_timer_callback(void* obj) {
     adc_convert(&adc);
     
     u16 i = adc[0];
-    
-    if (!i)
+
+    if (i < 1)
+//    if (!i)
         state = OFF;
 
     else if(state == OFF)
@@ -75,7 +76,7 @@ static void adc_poll_timer_callback(void* obj) {
         }
     
     else if(state == ON)
-        ;;
+        ;
 }
 
 //encoder polling callback
@@ -86,7 +87,6 @@ static void enc_timer_callback(void* obj) {
     for(i=0; i<NUM_ENC; i++) {
         val = enc[i].val;
         valAbs = (val & 0x8000 ? (val ^ 0xffff) + 1 : val);
-
         if(valAbs > enc[i].thresh) {
             e.type = enc[i].event;
             e.data = val;

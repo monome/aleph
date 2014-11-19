@@ -16,15 +16,17 @@ extern void render_update(void);
 
 //page LEVEL
 extern void render_tracker(void);
-extern void render_free(void);
-extern void render_transposed(void);
-extern void render_counters(void);
+extern void render_source(void);
+extern void render_dest(void);
+extern void render_param(void);
+extern void render_countlev(void);
 
 //page ENV
-extern void render_time(void);
-extern void render_curve(void);
-extern void render_dest(void);
 extern void render_trig(void);
+extern void render_time(void);
+extern void render_curvename(u8 chan, s32 mode);
+extern void render_curve(u8 step);
+extern void render_countenv(void);
 
 #endif
 

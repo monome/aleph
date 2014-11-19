@@ -11,6 +11,9 @@
 #include "memory.h"
 #include "print_funcs.h"
 
+//buffer for wav data (wav curve)
+//static s32 wavbuf;
+
 //file directory
 typedef struct _dirList {
     char path[MAX_PATH];
@@ -68,4 +71,40 @@ u8 files_load_dsp(void) {
     
     app_resume();
     return ret;
+}
+
+u8 files_load_wav(void) {
+/*
+    u8 status;
+    u32 i;
+    u32 size = 0;
+    
+    app_pause();
+    
+    //  open wav file
+    void* fp = fl_fopen(WAV_PATH);
+    print_dbg("\r\n found file...");
+    
+    size = ((FL_FILE*)(fp))->filelength;
+    print_dbg("\r\n file size in bytes...");
+    print_dbg_ulong(size);
+
+    for
+    //  send begin transfer command to bfin
+    //size argument?!
+    bfin_start_wavtransfer(void);
+    
+    for (i=0; i<size; i+=4)
+    {
+        
+    //  read to buffer
+    dsp_read(&wavbuf, 4, fp);
+    
+    //  send buffer transfer command to bfin
+    bfin_transfer_wavbytes(wavbuf);
+    }
+    
+    app_resume();
+*/
+    return 0;
 }

@@ -41,7 +41,12 @@ typedef enum params {
     eParamCurveTrig1,
     eParamCurveTrig2,
     eParamCurveTrig3,
-    
+
+    eParamFlag0,
+    eParamFlag1,
+    eParamFlag2,
+    eParamFlag3,
+
     eParamNumParams
 } eParam;
 

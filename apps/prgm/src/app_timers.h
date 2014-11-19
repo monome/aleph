@@ -11,7 +11,7 @@
 #define ON 1
 #define OFF 0
 u16 adc[4];
-s16 state;
+u8 state;
 
 // create application timers
 extern void init_app_timers(void);
