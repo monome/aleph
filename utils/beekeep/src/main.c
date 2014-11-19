@@ -23,7 +23,7 @@
 
 int main (int argc, char **argv)
 {
-  char path[32];
+  char path[64];
   char ext[16];
   void* fp;
   bool arg = 0;
@@ -51,7 +51,7 @@ int main (int argc, char **argv)
     else if(strcmp(ext, ".json") == 0) {
       net_read_json_native(path);
     }
-	strip_filename(path);
+	strip_filename(path, 64);
 	strcpy(workingDir, path);
   }
 
