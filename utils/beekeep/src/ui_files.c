@@ -12,7 +12,7 @@
 #include "ui_files.h"
 
 // working directory
-extern char workingDir[64] = "";
+char workingDir[64] = "";
 
 // strip space from the end of a string
 static void strip_space(char* str, u8 len) {
@@ -81,7 +81,7 @@ void write_json(void) {
   strcat(str, ".json");
   printf("\r\n writing %s...", str);
   net_write_json_native(str);
-  printf("\r\n done.", str);
+  printf("\r\n done.");
 }
 
 void write_gv(void) {
