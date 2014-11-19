@@ -25,6 +25,9 @@
 #include "param.h"
 #include "scene.h"
 
+// beekeep
+#include "ui_files.h"
+
 // ---- directory list class
 // params
 #define DIR_LIST_MAX_NUM 64
@@ -176,7 +179,7 @@ u8 files_load_dsp(u8 idx) {
 // search for specified dsp file and load it
 u8 files_load_dsp_name(const char* name) {
   // don't need .ldr, but we do need .dsc...
-  char descname[64];
+  char descname[128];
   u8 nbuf[4];
   // buffer for binary blob of single descriptor
   u8 dbuf[PARAM_DESC_PICKLE_BYTES];
@@ -186,8 +189,8 @@ u8 files_load_dsp_name(const char* name) {
   u8 ret = 0;
   FILE* fp;
   int i;
-
-  strncpy(descname, name, 64);
+  strcpy(descname, workingDir);
+  strcat(descname, name);
   strip_ext(descname);
   strcat(descname, ".dsc");
 
