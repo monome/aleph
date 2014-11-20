@@ -25,6 +25,9 @@
 #include "param.h"
 #include "scene.h"
 
+// beekeep
+#include "ui_files.h"
+
 // ---- directory list class
 // params
 #define DIR_LIST_MAX_NUM 64
@@ -176,7 +179,7 @@ u8 files_load_dsp(u8 idx) {
 // search for specified dsp file and load it
 u8 files_load_dsp_name(const char* name) {
   // don't need .ldr, but we do need .dsc...
-  char descname[64];
+  char descname[128];
   u8 nbuf[4];
   // buffer for binary blob of single descriptor
   u8 dbuf[PARAM_DESC_PICKLE_BYTES];
@@ -186,15 +189,15 @@ u8 files_load_dsp_name(const char* name) {
   u8 ret = 0;
   FILE* fp;
   int i;
-
-  strncpy(descname, name, 64);
+  strcpy(descname, workingDir);
+  strcat(descname, name);
   strip_ext(descname);
   strcat(descname, ".dsc");
 
   fp = fopen(descname, "r");
   
   if(fp == NULL) {
-    printf("\r\n module descriptor not found...");
+    printf("\r\n module descriptor not found; path: %s", descname);
     ret = 1;
     return ret;
   }
@@ -247,14 +250,27 @@ u8 files_load_scene(u8 idx) {
 // search for specified scene file and load it
 // return 1 on success, 0 on failure
 u8 files_load_scene_name(const char* name) {
-  FILE* f = fopen(name, "r");
-  u8 ret;
 
+  char path[64] = "";
+  FILE* f;
+  u8 ret = 1;
+  
+//  strcpy(path, workingDir);
+  strcat(path, name);
+  printf("\r\n attempting to open scene file; path: %s", path);
+  
+  
+  f = fopen(path, "r");
+  if(f == NULL) {
+	  printf("\r\n couldn't find scene file; path: %s", path);
+	  return 0;
+  }
   fread(sceneData, sizeof(sceneData_t), 1, f);
   fclose(f);
 
   scene_read_buf();
 
+  printf("\r\n loaded scene buffer, search DSP:");
   ret = files_load_dsp_name(sceneData->desc.moduleName);
 
   return ret;

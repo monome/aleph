@@ -7,6 +7,7 @@
 #include <gtk/gtk.h>
 
 /// bees
+#include "files.h"
 #include "net_protected.h"
 #include "scene.h"
 
@@ -33,6 +34,7 @@ GtkWidget* newOpLabel;
 GtkWidget* connectInputBut;
 // connect/disconnect param button
 GtkWidget* connectParamBut;
+
 // selections
 int opSelect = -1;
 int outSelect = -1;
@@ -40,6 +42,10 @@ int inSelect = -1;
 int paramSelect = -1;
 int presetSelect = -1;
 op_id_t newOpSelect = -1;
+
+//--------------------------------
+// static variables
+static GtkWidget *window;
 
 //----------------------------
 //--- static functions
@@ -96,6 +102,51 @@ void scroll_box_clear( ScrollBox* scrollbox ) {
 //--------------------
 //--- callbacks
 
+static void scene_select_button_callback(GtkWidget* but, gpointer data) {
+	GtkWidget *dialog;
+	GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+	gint res;
+	int ret;
+//	char ext[8];
+
+	dialog = gtk_file_chooser_dialog_new ("Open File",
+	                                      GTK_WINDOW(window),
+	                                      action,
+	                                      "Cancel",
+	                                      GTK_RESPONSE_CANCEL,
+	                                      "Open",
+	                                      GTK_RESPONSE_ACCEPT,
+	                                      NULL);
+
+	res = gtk_dialog_run (GTK_DIALOG (dialog));
+	if (res == GTK_RESPONSE_ACCEPT) {
+	    char *filename;
+	    GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
+	    filename = gtk_file_chooser_get_filename (chooser);
+		ret = files_load_scene_name(filename);
+		
+//		if(ret) {
+		printf("\r\n clearing lists... ");
+			// rebuild all the lists
+			scroll_box_clear(&boxOps);
+		    scroll_box_clear(&boxOuts);
+		    scroll_box_clear(&boxIns);
+		    scroll_box_clear(&boxParams);
+		    scroll_box_clear(&boxPresets);
+			
+
+			printf("\r\n filling lists... ");
+		    fill_ops(GTK_LIST_BOX(boxOps.list));
+		    fill_outs(GTK_LIST_BOX(boxOuts.list));
+		    fill_ins(GTK_LIST_BOX(boxIns.list));
+		    fill_params(GTK_LIST_BOX(boxParams.list));
+		    fill_presets(GTK_LIST_BOX(boxPresets.list));
+//		}
+	    g_free (filename);
+	  }
+	gtk_widget_destroy (dialog);
+}
+
 static void scene_name_entry_callback( GtkEntry *entry, gpointer data) {
   const char* str;
   str = gtk_entry_get_text(entry);
@@ -145,7 +196,6 @@ static void write_json_but_callback( GtkWidget* but, gpointer data) {
 //---- init, build, connect
 void ui_init(void) {
 
-  GtkWidget *window;
   GtkWidget *grid;
   GtkWidget *labelOps; // need to store this one
   GtkWidget *label;
@@ -154,7 +204,7 @@ void ui_init(void) {
   
   //---  window
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (window), "bees editor");
+  gtk_window_set_title (GTK_WINDOW (window), "beekeep");
   gtk_window_set_default_size(GTK_WINDOW(window), 1200, 800);
   //////////////////
   /// FIXME: need to set a delete handler and do some cleanup.
@@ -177,16 +227,20 @@ void ui_init(void) {
 
   scroll_box_new( &boxOps, 	grid, 1, 24, &fill_ops );
   scroll_box_new( &boxOuts, 	grid, 4, 24, &fill_outs );
-  scroll_box_new( &boxIns, 	grid, 4, 24, &fill_ins );
+  scroll_box_new( &boxIns, 	grid, 5, 24, &fill_ins );
   scroll_box_new( &boxParams, 	grid, 5, 24, &fill_params ); 
-  scroll_box_new( &boxPresets, 	grid, 3, 24, &fill_presets );
+  scroll_box_new( &boxPresets, 	grid, 2, 24, &fill_presets );
 
   //--- list labels
-  labelOps = gtk_label_new("OPS");
+  labelOps = gtk_label_new("OPERATORS");
+
+    gtk_misc_set_alignment(GTK_MISC(labelOps), 0.f, 0.f);	
   gtk_grid_attach_next_to(GTK_GRID(grid), labelOps, 
 			  boxOps.scroll, GTK_POS_TOP, 2, 1);
+			  
 
   label = gtk_label_new("OUTPUTS");
+    gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
   gtk_grid_attach_next_to(GTK_GRID(grid), label, 
 			  boxOuts.scroll, GTK_POS_TOP, 2, 1);
 
@@ -196,18 +250,26 @@ void ui_init(void) {
 
 
   label = gtk_label_new("PARAMETERS");
+    gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
   gtk_grid_attach_next_to(GTK_GRID(grid), label, 
 			  boxParams.scroll, GTK_POS_TOP, 2, 1);
 
   label = gtk_label_new("PRESETS");
+    gtk_misc_set_alignment(GTK_MISC(label), 0.f, 0.f);
   gtk_grid_attach_next_to(GTK_GRID(grid), label, 
 			  boxPresets.scroll, GTK_POS_TOP, 2, 1);
 
 
   //--- button / labels / entries in top row
+  // scene select button
+  xgt = gtk_button_new_with_label("open");
+
+  gtk_grid_attach_next_to( GTK_GRID(grid), xgt, labelOps, GTK_POS_TOP, 1, 1);
+  g_signal_connect( xgt, "clicked", G_CALLBACK(scene_select_button_callback), NULL);
+	  
   // scene name label
   wgt = gtk_label_new("SCENE:");
-  gtk_grid_attach_next_to( GTK_GRID(grid), wgt, labelOps, GTK_POS_TOP, 1, 1);
+  gtk_grid_attach_next_to( GTK_GRID(grid), wgt, xgt, GTK_POS_RIGHT, 1, 1);
 
   // scene name
   xgt = gtk_entry_new();
