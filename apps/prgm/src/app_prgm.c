@@ -14,13 +14,13 @@
 
 //prgm
 #include "app_timers.h"
-#include "files.h" //files_load_dsp
+#include "files.h"              //files_load_dsp
 #include "pages.h"
-#include "handler.h" //adc_init
+#include "handler.h"            //adc_init
 #include "ctl.h"
-#include "render.h" //prgm_init
+#include "render.h"             //prgm_init
 #include "encoders.h"
-#include "scale.h" //scale_init
+#include "scale.h"              //scale_init
 #include "tracker.h"
 
 //hardware init, all memory allocations go here

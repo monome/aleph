@@ -3,78 +3,57 @@
 #include "params.h" 
 
 void fill_param_desc(ParamDesc *desc) {
-    strcpy(desc[eParamFree0].label, "cv0_f");
-    desc[eParamFree0].type = eParamTypeFix;
-    desc[eParamFree0].min = 0x00000000;
-    desc[eParamFree0].max = FR32_MAX;
-    desc[eParamFree0].radix = FIX_RADIX;
-
-    strcpy(desc[eParamFree1].label, "cv1_f");
-    desc[eParamFree1].type = eParamTypeFix;
-    desc[eParamFree1].min = 0x00000000;
-    desc[eParamFree1].max = FR32_MAX;
-    desc[eParamFree1].radix = FIX_RADIX;
-
-    strcpy(desc[eParamFree2].label, "cv2_f");
-    desc[eParamFree2].type = eParamTypeFix;
-    desc[eParamFree2].min = 0x00000000;
-    desc[eParamFree2].max = FR32_MAX;
-    desc[eParamFree2].radix = FIX_RADIX;
-
-    strcpy(desc[eParamFree3].label, "cv3_f");
-    desc[eParamFree3].type = eParamTypeFix;
-    desc[eParamFree3].min = 0x00000000;
-    desc[eParamFree3].max = FR32_MAX;
-    desc[eParamFree3].radix = FIX_RADIX;
+    //  Trig
+    strcpy(desc[eParamTrig0].label, "trig0");
+    desc[eParamTrig0].type = eParamTypeBool;
+    desc[eParamTrig0].min = 0;
+    desc[eParamTrig0].max = 1;
+    desc[eParamTrig0].radix = BOOL_RADIX;
     
-    strcpy(desc[eParamTransposed0].label, "cv0_t");
-    desc[eParamTransposed0].type = eParamTypeFix;
-    desc[eParamTransposed0].min = 0x2000;
-    desc[eParamTransposed0].max = 0x20000;
-    desc[eParamTransposed0].radix = FIX_RADIX;
-
-    strcpy(desc[eParamTransposed1].label, "cv1_t");
-    desc[eParamTransposed1].type = eParamTypeFix;
-    desc[eParamTransposed1].min = 0x2000;
-    desc[eParamTransposed1].max = 0x20000;
-    desc[eParamTransposed1].radix = FIX_RADIX;
-
-    strcpy(desc[eParamTransposed2].label, "cv2_t");
-    desc[eParamTransposed2].type = eParamTypeFix;
-    desc[eParamTransposed2].min = 0x2000;
-    desc[eParamTransposed2].max = 0x20000;
-    desc[eParamTransposed2].radix = FIX_RADIX;
-
-    strcpy(desc[eParamTransposed3].label, "cv3_t");
-    desc[eParamTransposed3].type = eParamTypeFix;
-    desc[eParamTransposed3].min = 0x2000;
-    desc[eParamTransposed3].max = 0x20000;
-    desc[eParamTransposed3].radix = FIX_RADIX;
+    strcpy(desc[eParamTrig1].label, "trig1");
+    desc[eParamTrig1].type = eParamTypeBool;
+    desc[eParamTrig1].min = 0;
+    desc[eParamTrig1].max = 1;
+    desc[eParamTrig1].radix = BOOL_RADIX;
     
-    strcpy(desc[eParamCurveTime0].label, "curve0_time");
-    desc[eParamCurveTime0].type = eParamTypeFix;
-    desc[eParamCurveTime0].min = 0x00000000;
-    desc[eParamCurveTime0].max = FR32_MAX;
-    desc[eParamCurveTime0].radix = FIX_RADIX;
-
-    strcpy(desc[eParamCurveTime1].label, "curve1_time");
-    desc[eParamCurveTime1].type = eParamTypeFix;
-    desc[eParamCurveTime1].min = 0x00000000;
-    desc[eParamCurveTime1].max = FR32_MAX;
-    desc[eParamCurveTime1].radix = FIX_RADIX;
-
-    strcpy(desc[eParamCurveTime2].label, "curve2_time");
-    desc[eParamCurveTime2].type = eParamTypeFix;
-    desc[eParamCurveTime2].min = 0x00000000;
-    desc[eParamCurveTime2].max = FR32_MAX;
-    desc[eParamCurveTime2].radix = FIX_RADIX;
-
-    strcpy(desc[eParamCurveTime3].label, "curve3_time");
-    desc[eParamCurveTime3].type = eParamTypeFix;
-    desc[eParamCurveTime3].min = 0x00000000;
-    desc[eParamCurveTime3].max = FR32_MAX;
-    desc[eParamCurveTime3].radix = FIX_RADIX;
+    strcpy(desc[eParamTrig2].label, "trig2");
+    desc[eParamTrig2].type = eParamTypeBool;
+    desc[eParamTrig2].min = 0;
+    desc[eParamTrig2].max = 1;
+    desc[eParamTrig2].radix = BOOL_RADIX;
     
+    strcpy(desc[eParamTrig3].label, "trig3");
+    desc[eParamTrig3].type = eParamTypeBool;
+    desc[eParamTrig3].min = 0;
+    desc[eParamTrig3].max = 1;
+    desc[eParamTrig3].radix = BOOL_RADIX;
+
+    //  Flag
+    strcpy(desc[eParamFlag0].label, "flag0");
+    desc[eParamFlag0].type = eParamTypeBool;
+    desc[eParamFlag0].min = 0;
+    desc[eParamFlag0].max = 1;
+    desc[eParamFlag0].radix = BOOL_RADIX;
+    
+    strcpy(desc[eParamFlag1].label, "flag1");
+    desc[eParamFlag1].type = eParamTypeBool;
+    desc[eParamFlag1].min = 0;
+    desc[eParamFlag1].max = 1;
+    desc[eParamFlag1].radix = BOOL_RADIX;
+    
+    strcpy(desc[eParamFlag2].label, "flag2");
+    desc[eParamFlag2].type = eParamTypeBool;
+    desc[eParamFlag2].min = 0;
+    desc[eParamFlag2].max = 1;
+    desc[eParamFlag2].radix = BOOL_RADIX;
+    
+    strcpy(desc[eParamFlag3].label, "flag3");
+    desc[eParamFlag3].type = eParamTypeBool;
+    desc[eParamFlag3].min = 0;
+    desc[eParamFlag3].max = 1;
+    desc[eParamFlag3].radix = BOOL_RADIX;
+
+    //  Curve
     strcpy(desc[eParamCurve0].label, "curve0");
     desc[eParamCurve0].type = eParamTypeFix;
     desc[eParamCurve0].min = 0x00000000;
@@ -86,88 +65,141 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamCurve1].min = 0x00000000;
     desc[eParamCurve1].max = FR32_MAX;
     desc[eParamCurve1].radix = FIX_RADIX;
-
+    
     strcpy(desc[eParamCurve2].label, "curve2");
     desc[eParamCurve2].type = eParamTypeFix;
     desc[eParamCurve2].min = 0x00000000;
     desc[eParamCurve2].max = FR32_MAX;
     desc[eParamCurve2].radix = FIX_RADIX;
-
+    
     strcpy(desc[eParamCurve3].label, "curve3");
     desc[eParamCurve3].type = eParamTypeFix;
     desc[eParamCurve3].min = 0x00000000;
     desc[eParamCurve3].max = FR32_MAX;
     desc[eParamCurve3].radix = FIX_RADIX;
 
-    strcpy(desc[eParamCurveDest0].label, "curve0_dest");
-    desc[eParamCurveDest0].type = eParamTypeFix;
-    desc[eParamCurveDest0].min = 0x00000000;
-    desc[eParamCurveDest0].max = FR32_MAX;
-    desc[eParamCurveDest0].radix = FIX_RADIX;
-
-    strcpy(desc[eParamCurveDest1].label, "curve1_dest");
-    desc[eParamCurveDest1].type = eParamTypeFix;
-    desc[eParamCurveDest1].min = 0x00000000;
-    desc[eParamCurveDest1].max = FR32_MAX;
-    desc[eParamCurveDest1].radix = FIX_RADIX;
-
-    strcpy(desc[eParamCurveDest2].label, "curve2_dest");
-    desc[eParamCurveDest2].type = eParamTypeFix;
-    desc[eParamCurveDest2].min = 0x00000000;
-    desc[eParamCurveDest2].max = FR32_MAX;
-    desc[eParamCurveDest2].radix = FIX_RADIX;
-
-    strcpy(desc[eParamCurveDest3].label, "curve3_dest");
-    desc[eParamCurveDest3].type = eParamTypeFix;
-    desc[eParamCurveDest3].min = 0x00000000;
-    desc[eParamCurveDest3].max = FR32_MAX;
-    desc[eParamCurveDest3].radix = FIX_RADIX;
+    //  Time
+    strcpy(desc[eParamTime0].label, "time0");
+    desc[eParamTime0].type = eParamTypeFix;
+    desc[eParamTime0].min = 0x00000000;
+    desc[eParamTime0].max = FR32_MAX;
+    desc[eParamTime0].radix = FIX_RADIX;
     
-    strcpy(desc[eParamCurveTrig0].label, "curve0_trig");
-    desc[eParamCurveTrig0].type = eParamTypeBool;
-    desc[eParamCurveTrig0].min = 0;
-    desc[eParamCurveTrig0].max = 1;
-    desc[eParamCurveTrig0].radix = BOOL_RADIX;
-
-    strcpy(desc[eParamCurveTrig1].label, "curve1_trig");
-    desc[eParamCurveTrig1].type = eParamTypeBool;
-    desc[eParamCurveTrig1].min = 0;
-    desc[eParamCurveTrig1].max = 1;
-    desc[eParamCurveTrig1].radix = BOOL_RADIX;
-
-    strcpy(desc[eParamCurveTrig2].label, "curve2_trig");
-    desc[eParamCurveTrig2].type = eParamTypeBool;
-    desc[eParamCurveTrig2].min = 0;
-    desc[eParamCurveTrig2].max = 1;
-    desc[eParamCurveTrig2].radix = BOOL_RADIX;
-
-    strcpy(desc[eParamCurveTrig3].label, "curve3_trig");
-    desc[eParamCurveTrig3].type = eParamTypeBool;
-    desc[eParamCurveTrig3].min = 0;
-    desc[eParamCurveTrig3].max = 1;
-    desc[eParamCurveTrig3].radix = BOOL_RADIX;
+    strcpy(desc[eParamTime1].label, "time1");
+    desc[eParamTime1].type = eParamTypeFix;
+    desc[eParamTime1].min = 0x00000000;
+    desc[eParamTime1].max = FR32_MAX;
+    desc[eParamTime1].radix = FIX_RADIX;
     
-    strcpy(desc[eParamFlag0].label, "curve0_flag");
-    desc[eParamFlag0].type = eParamTypeBool;
-    desc[eParamFlag0].min = 0;
-    desc[eParamFlag0].max = 1;
-    desc[eParamFlag0].radix = BOOL_RADIX;
+    strcpy(desc[eParamTime2].label, "time2");
+    desc[eParamTime2].type = eParamTypeFix;
+    desc[eParamTime2].min = 0x00000000;
+    desc[eParamTime2].max = FR32_MAX;
+    desc[eParamTime2].radix = FIX_RADIX;
     
-    strcpy(desc[eParamFlag1].label, "curve1_flag");
-    desc[eParamFlag1].type = eParamTypeBool;
-    desc[eParamFlag1].min = 0;
-    desc[eParamFlag1].max = 1;
-    desc[eParamFlag1].radix = BOOL_RADIX;
+    strcpy(desc[eParamTime3].label, "time3");
+    desc[eParamTime3].type = eParamTypeFix;
+    desc[eParamTime3].min = 0x00000000;
+    desc[eParamTime3].max = FR32_MAX;
+    desc[eParamTime3].radix = FIX_RADIX;
+    
+    //  paramL
+    strcpy(desc[eParamL0].label, "l0");
+    desc[eParamL0].type = eParamTypeFix;
+    desc[eParamL0].min = 0x00000000;
+    desc[eParamL0].max = FR32_MAX;
+    desc[eParamL0].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamL1].label, "l1");
+    desc[eParamL1].type = eParamTypeFix;
+    desc[eParamL1].min = 0x00000000;
+    desc[eParamL1].max = FR32_MAX;
+    desc[eParamL1].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamL2].label, "l2");
+    desc[eParamL2].type = eParamTypeFix;
+    desc[eParamL2].min = 0x00000000;
+    desc[eParamL2].max = FR32_MAX;
+    desc[eParamL2].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamL3].label, "l3");
+    desc[eParamL3].type = eParamTypeFix;
+    desc[eParamL3].min = 0x00000000;
+    desc[eParamL3].max = FR32_MAX;
+    desc[eParamL3].radix = FIX_RADIX;
 
-    strcpy(desc[eParamFlag2].label, "curve2_flag");
-    desc[eParamFlag2].type = eParamTypeBool;
-    desc[eParamFlag2].min = 0;
-    desc[eParamFlag2].max = 1;
-    desc[eParamFlag2].radix = BOOL_RADIX;
+    //  paramP
+    strcpy(desc[eParamP0].label, "p0");
+    desc[eParamP0].type = eParamTypeFix;
+    desc[eParamP0].min = 0x00000000;
+    desc[eParamP0].max = FR32_MAX;
+    desc[eParamP0].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamP1].label, "p1");
+    desc[eParamP1].type = eParamTypeFix;
+    desc[eParamP1].min = 0x00000000;
+    desc[eParamP1].max = FR32_MAX;
+    desc[eParamP1].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamP2].label, "p2");
+    desc[eParamP2].type = eParamTypeFix;
+    desc[eParamP2].min = 0x00000000;
+    desc[eParamP2].max = FR32_MAX;
+    desc[eParamP2].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamP3].label, "p3");
+    desc[eParamP3].type = eParamTypeFix;
+    desc[eParamP3].min = 0x00000000;
+    desc[eParamP3].max = FR32_MAX;
+    desc[eParamP3].radix = FIX_RADIX;
 
-    strcpy(desc[eParamFlag3].label, "curve3_flag");
-    desc[eParamFlag3].type = eParamTypeBool;
-    desc[eParamFlag3].min = 0;
-    desc[eParamFlag3].max = 1;
-    desc[eParamFlag3].radix = BOOL_RADIX;
+    //  paramF
+    strcpy(desc[eParamF0].label, "f0");
+    desc[eParamF0].type = eParamTypeFix;
+    desc[eParamF0].min = 0x00000000;
+    desc[eParamF0].max = FR32_MAX;
+    desc[eParamF0].radix = FIX_RADIX;
+
+    strcpy(desc[eParamF1].label, "f1");
+    desc[eParamF1].type = eParamTypeFix;
+    desc[eParamF1].min = 0x00000000;
+    desc[eParamF1].max = FR32_MAX;
+    desc[eParamF1].radix = FIX_RADIX;
+
+    strcpy(desc[eParamF2].label, "f2");
+    desc[eParamF2].type = eParamTypeFix;
+    desc[eParamF2].min = 0x00000000;
+    desc[eParamF2].max = FR32_MAX;
+    desc[eParamF2].radix = FIX_RADIX;
+
+    strcpy(desc[eParamF3].label, "f3");
+    desc[eParamF3].type = eParamTypeFix;
+    desc[eParamF3].min = 0x00000000;
+    desc[eParamF3].max = FR32_MAX;
+    desc[eParamF3].radix = FIX_RADIX;
+    
+    //  paramX
+    strcpy(desc[eParamX0].label, "x0");
+    desc[eParamX0].type = eParamTypeFix;
+    desc[eParamX0].min = 0x00000000;
+    desc[eParamX0].max = FR32_MAX;
+    desc[eParamX0].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamX1].label, "x1");
+    desc[eParamX1].type = eParamTypeFix;
+    desc[eParamX1].min = 0x00000000;
+    desc[eParamX1].max = FR32_MAX;
+    desc[eParamX1].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamX2].label, "x2");
+    desc[eParamX2].type = eParamTypeFix;
+    desc[eParamX2].min = 0x00000000;
+    desc[eParamX2].max = FR32_MAX;
+    desc[eParamX2].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamX3].label, "x3");
+    desc[eParamX3].type = eParamTypeFix;
+    desc[eParamX3].min = 0x00000000;
+    desc[eParamX3].max = FR32_MAX;
+    desc[eParamX3].radix = FIX_RADIX;
 }

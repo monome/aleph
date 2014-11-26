@@ -1,4 +1,4 @@
-TRACKER beta 0.0.2 for Aleph
+PRGM beta 0.0.3 for Aleph
 
 install/filecopy to SD-CARD (ALEPH):
 aleph-prgm.hex -> ALEPH/app/
@@ -10,24 +10,24 @@ REBOOT with aleph-prgm.hex
 
 
 GLOBAL controls
+sw2                 play step
+sw3                 edit step+1
 sw4                 page select
 
 I/O
 cv input0           play step +1
 cv out0-3           cv!
+audio out0-3        audio!
+foot1               play step+1
+foot2               play return to 1
 
-page TRACKER
-encoders            level fine
-sw0 + encoders      level coarse
-sw1 + encoders      level transpose (scaled)
-sw3                 edit step +1
+page PARAM
+parameters
 
-page ENVELOPE
-encoders            time
-encoders + sw0      curve
-encoders + sw1      destination
-encoders + sw2      trig
-sw3                 edit step +1
+page CURVE
+encoders            trig
+encoders + sw0      curve/mode
+encoders + sw1      time
 
 
 

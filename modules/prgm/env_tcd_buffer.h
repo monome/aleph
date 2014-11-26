@@ -9,15 +9,18 @@ env_tcd_buffer.h
 #include "fix32.h"
 #include "types.h"
 
+#define INPUT_BUF_FRAMES 0xBB800 //16 seconds
+#define INPUT_BUF_FRAMES_1 (INPUT_BUF_FRAMES - 1) //16 seconds
+
 //SDRAM mono audiobuffer
-typedef struct _cvBuffer {
+typedef struct _inputBuffer {
     u32 frames;                                 //count of frames
     volatile fract32 *data;                     //pointer to data
-} cvBuffer;
+} inputBuffer;
 
 //buffer head
 typedef struct _bufferHead {
-    cvBuffer *buf;                              //pointer to cvbuffer
+    inputBuffer *buf;                           //pointer to cvbuffer
     u32 loop;                                   //index to loop
     u32 idx;                                    //current index
     u32 inc;                                    //phase increment
@@ -28,10 +31,10 @@ typedef struct _bufferHead {
 
 //extern function definitions
 //init audiobuffer at pre-allocated memory
-extern void buffer_init(cvBuffer *buf, volatile fract32 *data, u32 frames);
+extern void buffer_init(inputBuffer *buf, volatile fract32 *data, u32 frames);
 
 //init head
-extern void buffer_head_init(bufferHead *head, cvBuffer *buf);
+extern void buffer_head_init(bufferHead *head, inputBuffer *buf);
 
 //set head position
 extern void buffer_head_pos(bufferHead *head, u32 samples);

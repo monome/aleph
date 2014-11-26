@@ -58,8 +58,8 @@ static void adc_poll_timer_callback(void* obj) {
     
     u16 i = adc[0];
 
-    if (i < 1)
-//    if (!i)
+    if (i < 4)
+//if (i < 10)
         state = OFF;
 
     else if(state == OFF)

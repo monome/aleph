@@ -16,7 +16,7 @@ static void handle_encoder_1(s32 val);
 static void handle_encoder_2(s32 val);
 static void handle_encoder_3(s32 val);
 
-static s32 knob_accel(s32 inc);
+static s32 time_knob_accel(s32 inc);
 
 //handler variables
 static etype touched = kNumEventTypes; //total number as defined in event_types.h
@@ -40,8 +40,8 @@ void handle_sw(u8 id, u8 b) {
     }
 }
 
-s32 knob_accel(s32 inc) {
-    s32 incAbs = inc < 0 ? inc * -1 : inc; //if inc < 0 incAbs = (inc * -1), else incAbs = inc
+s32 time_knob_accel(s32 inc) {
+    s32 incAbs = inc < 0 ? inc * -1 : inc;
     if(incAbs == 1) {
         return inc;
     }
@@ -62,7 +62,7 @@ void handle_switch_1(s32 data) {
 void handle_switch_2(s32 data) {
     handle_sw(3, data > 0);
     
-    if(state_sw ==3) play_step(1);
+    if(state_sw == 3) play_step(1);
 }
 
 void handle_switch_3(s32 data) {
@@ -79,19 +79,19 @@ void handle_switch_3(s32 data) {
         
         if (pageIdx != ePageLevel)
         {
-            print_fix16(renderTrig0, prgmtrack[i]->tg0);
-            print_fix16(renderTrig1, prgmtrack[i]->tg1);
-            print_fix16(renderTrig2, prgmtrack[i]->tg2);
-            print_fix16(renderTrig3, prgmtrack[i]->tg3);
-
-            print_fix16(renderTime0, prgmtrack[i]->ct0);
-            print_fix16(renderTime1, prgmtrack[i]->ct1);
-            print_fix16(renderTime2, prgmtrack[i]->ct2);
-            print_fix16(renderTime3, prgmtrack[i]->ct3);
+            print_fix16(renderTrig0, track[0]->trig[i]);
+            print_fix16(renderTrig1, track[1]->trig[i]);
+            print_fix16(renderTrig2, track[2]->trig[i]);
+            print_fix16(renderTrig3, track[3]->trig[i]);
+            
+            print_fix16(renderTime0, track[0]->t[i]);
+            print_fix16(renderTime1, track[1]->t[i]);
+            print_fix16(renderTime2, track[2]->t[i]);
+            print_fix16(renderTime3, track[3]->t[i]);
             
             print_fix16(renderCounter, (i + 1) * 0x00010000);
 
-            render_curve(i);
+            render_modes(i);
             
             render_trig();
             render_time();
@@ -108,21 +108,21 @@ void handle_switch_4(s32 data) {
     {
         set_page(ePageLevel);
         u8 i = counter;
+
+        print_fix16(renderL0, track[0]->pL[i]);
+        print_fix16(renderL1, track[1]->pL[i]);
+        print_fix16(renderL2, track[2]->pL[i]);
+        print_fix16(renderL3, track[3]->pL[i]);
         
-        print_fix16(renderS0, fix16_mul(prgmtrack[i]->sf0, transpose_lookup(prgmtrack[i]->st0)));
-        print_fix16(renderS1, fix16_mul(prgmtrack[i]->sf1, transpose_lookup(prgmtrack[i]->st1)));
-        print_fix16(renderS2, fix16_mul(prgmtrack[i]->sf2, transpose_lookup(prgmtrack[i]->st2)));
-        print_fix16(renderS3, fix16_mul(prgmtrack[i]->sf3, transpose_lookup(prgmtrack[i]->st3)));
+        print_fix16(renderP0, track[0]->pP[i]);
+        print_fix16(renderP1, track[1]->pP[i]);
+        print_fix16(renderP2, track[2]->pP[i]);
+        print_fix16(renderP3, track[3]->pP[i]);
         
-        print_fix16(renderD0, prgmtrack[i]->d0);
-        print_fix16(renderD1, prgmtrack[i]->d1);
-        print_fix16(renderD2, prgmtrack[i]->d2);
-        print_fix16(renderD3, prgmtrack[i]->d3);
-        
-        print_fix16(renderP0, prgmtrack[i]->p0);
-        print_fix16(renderP1, prgmtrack[i]->p1);
-        print_fix16(renderP2, prgmtrack[i]->p2);
-        print_fix16(renderP3, prgmtrack[i]->p3);
+        print_fix16(renderF0, track[0]->pF[i]);
+        print_fix16(renderF1, track[1]->pF[i]);
+        print_fix16(renderF2, track[2]->pF[i]);
+        print_fix16(renderF3, track[3]->pF[i]);
         
         print_fix16(renderCounter, (i + 1) * 0x00010000);
         
@@ -138,11 +138,11 @@ void handle_encoder_0(s32 val) {
         case 0:
             check_touch(kEventEncoder3);
             if (touchedThis) {
-                tmp = prgmtrack[i]->tg0;
+                tmp = track[0]->trig[i];
                 tmp += val;
                 if (tmp < 0) tmp = 0;
                 if (tmp > 1) tmp = 1;
-                prgmtrack[i]->tg0 = tmp;
+                track[0]->trig[i] = tmp;
                 print_fix16(renderTrig0, tmp);
                 render_trig();
             }
@@ -151,15 +151,13 @@ void handle_encoder_0(s32 val) {
         case 1:
             check_touch(kEventEncoder3);
             if (touchedThis) {
-                tmp = prgmtrack[i]->c0;
+                tmp = modetmp0;
                 tmp += val;
-                //  cycle values
-                if (tmp < 0) tmp = N_CURVES_1;
-                if (tmp > N_CURVES_1) tmp = 0;
-                prgmtrack[i]->c0 = tmp;
-//                set_playmode(tmp);
-                ctl_param_change(eParamCurve0, tmp);
-                render_curvename(0, tmp);
+                if (tmp < 0) tmp = 0;
+                if (tmp > N_MODES_1) tmp = N_MODES_1;
+                modetmp0 = tmp;
+                set_mode(track[0], tmp);
+                render_mode(0, tmp);
                 render_trig();
                 render_time();
             }
@@ -168,17 +166,15 @@ void handle_encoder_0(s32 val) {
         case 2:
             check_touch(kEventEncoder3);
             if (touchedThis) {
-                tmp = prgmtrack[i]->ct0;
-                tmp += knob_accel(val);
+                tmp = track[0]->t[i];
+                tmp += time_knob_accel(val);
                 if (tmp < 0) tmp = 0;
-                prgmtrack[i]->ct0 = tmp;
-                ctl_param_change(eParamCurveTime0, tmp);
+                if (tmp > BUF_SIZE_1) tmp = BUF_SIZE_1;
+                track[0]->t[i] = tmp;
+                ctl_param_change(eParamTime0, tmp);
                 print_fix16(renderTime0, tmp);
                 render_time();
             }
-            break;
-
-        case 3:
             break;
 
         default:
@@ -193,11 +189,11 @@ void handle_encoder_1(s32 val) {
         case 0:
             check_touch(kEventEncoder2);
             if (touchedThis) {
-                tmp = prgmtrack[i]->tg1;
+                tmp = track[1]->trig[i];
                 tmp += val;
-                if (tmp <= 0) tmp = 0;
-                if (tmp >= 1) tmp = 1;
-                prgmtrack[i]->tg1 = tmp;
+                if (tmp < 0) tmp = 0;
+                if (tmp > 1) tmp = 1;
+                track[1]->trig[i] = tmp;
                 print_fix16(renderTrig1, tmp);
                 render_trig();
             }
@@ -206,26 +202,27 @@ void handle_encoder_1(s32 val) {
         case 1:
             check_touch(kEventEncoder2);
             if (touchedThis) {
-                tmp = prgmtrack[i]->c1;
+                tmp = modetmp1;
                 tmp += val;
-                if (tmp < 0) tmp = N_CURVES_1;
-                if (tmp > N_CURVES_1) tmp = 0;
-                prgmtrack[i]->c1 = tmp;
-                ctl_param_change(eParamCurve1, tmp);
-                render_curvename(1, tmp);
+                if (tmp < 0) tmp = 0;
+                if (tmp > N_MODES_1) tmp = N_MODES_1;
+                modetmp1 = tmp;
+                set_mode(track[1], tmp);
+                render_mode(1, tmp);
                 render_trig();
                 render_time();
             }
             break;
-
+            
         case 2:
             check_touch(kEventEncoder2);
             if (touchedThis) {
-                tmp = prgmtrack[i]->ct1;
-                tmp += knob_accel(val);
+                tmp = track[1]->t[i];
+                tmp += time_knob_accel(val);
                 if (tmp < 0) tmp = 0;
-                prgmtrack[i]->ct1 = tmp;
-                ctl_param_change(eParamCurveTime1, tmp);
+                if (tmp > BUF_SIZE_1) tmp = BUF_SIZE_1;
+                track[1]->t[i] = tmp;
+                ctl_param_change(eParamTime1, tmp);
                 print_fix16(renderTime1, tmp);
                 render_time();
             }
@@ -243,39 +240,40 @@ void handle_encoder_2(s32 val) {
         case 0:
             check_touch(kEventEncoder1);
             if (touchedThis) {
-                tmp = prgmtrack[i]->tg2;
+                tmp = track[2]->trig[i];
                 tmp += val;
-                if (tmp <= 0) tmp = 0;
-                if (tmp >= 1) tmp = 1;
-                prgmtrack[i]->tg2 = tmp;
+                if (tmp < 0) tmp = 0;
+                if (tmp > 1) tmp = 1;
+                track[2]->trig[i] = tmp;
                 print_fix16(renderTrig2, tmp);
                 render_trig();
             }
             break;
-
+            
         case 1:
             check_touch(kEventEncoder1);
             if (touchedThis) {
-                tmp = prgmtrack[i]->c2;
+                tmp = modetmp2;
                 tmp += val;
-                if (tmp < 0) tmp = N_CURVES_1;
-                if (tmp > N_CURVES_1) tmp = 0;
-                prgmtrack[i]->c2 = tmp;
-                ctl_param_change(eParamCurve2, tmp);
-                render_curvename(2, tmp);
+                if (tmp < 0) tmp = 0;
+                if (tmp > N_MODES_1) tmp = N_MODES_1;
+                modetmp2 = tmp;
+                set_mode(track[2], tmp);
+                render_mode(2, tmp);
                 render_trig();
                 render_time();
             }
             break;
-
+            
         case 2:
             check_touch(kEventEncoder1);
             if (touchedThis) {
-                tmp = prgmtrack[i]->ct2;
-                tmp += knob_accel(val);
+                tmp = track[2]->t[i];
+                tmp += time_knob_accel(val);
                 if (tmp < 0) tmp = 0;
-                prgmtrack[i]->ct2 = tmp;
-                ctl_param_change(eParamCurveTime2, tmp);
+                if (tmp > BUF_SIZE_1) tmp = BUF_SIZE_1;
+                track[2]->t[i] = tmp;
+                ctl_param_change(eParamTime2, tmp);
                 print_fix16(renderTime2, tmp);
                 render_time();
             }
@@ -293,11 +291,11 @@ void handle_encoder_3(s32 val) {
         case 0:
             check_touch(kEventEncoder0);
             if (touchedThis) {
-                tmp = prgmtrack[i]->tg3;
+                tmp = track[3]->trig[i];
                 tmp += val;
-                if (tmp <= 0) tmp = 0;
-                if (tmp >= 1) tmp = 1;
-                prgmtrack[i]->tg3 = tmp;
+                if (tmp < 0) tmp = 0;
+                if (tmp > 1) tmp = 1;
+                track[3]->trig[i] = tmp;
                 print_fix16(renderTrig3, tmp);
                 render_trig();
             }
@@ -306,13 +304,13 @@ void handle_encoder_3(s32 val) {
         case 1:
             check_touch(kEventEncoder0);
             if (touchedThis) {
-                tmp = prgmtrack[i]->c3;
+                tmp = modetmp3;
                 tmp += val;
-                if (tmp < 0) tmp = N_CURVES_1;
-                if (tmp > N_CURVES_1) tmp = 0;
-                prgmtrack[i]->c3 = tmp;
-                ctl_param_change(eParamCurve3, tmp);
-                render_curvename(3, tmp);
+                if (tmp < 0) tmp = 0;
+                if (tmp > N_MODES_1) tmp = N_MODES_1;
+                modetmp3 = tmp;
+                set_mode(track[3], tmp);
+                render_mode(3, tmp);
                 render_trig();
                 render_time();
             }
@@ -321,11 +319,12 @@ void handle_encoder_3(s32 val) {
         case 2:
             check_touch(kEventEncoder0);
             if (touchedThis) {
-                tmp = prgmtrack[i]->ct3;
-                tmp += knob_accel(val);
+                tmp = track[3]->t[i];
+                tmp += time_knob_accel(val);
                 if (tmp < 0) tmp = 0;
-                prgmtrack[i]->ct3 = tmp;
-                ctl_param_change(eParamCurveTime3, tmp);
+                if (tmp > BUF_SIZE_1) tmp = BUF_SIZE_1;
+                track[3]->t[i] = tmp;
+                ctl_param_change(eParamTime3, tmp);
                 print_fix16(renderTime3, tmp);
                 render_time();
             }

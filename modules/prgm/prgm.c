@@ -7,7 +7,7 @@
 typedef struct _prgmData {
     ModuleData super;
     ParamData mParamData[eParamNumParams];
-    volatile fract32 cvBuffer[N_CVOUTPUTS][PRGM_BUF_FRAMES];
+    volatile fract32 inputBuffer[N_TRACKS][INPUT_BUF_FRAMES];
 } prgmData;
 
 ModuleData *gModuleData;
@@ -16,57 +16,53 @@ ModuleData *gModuleData;
 prgmData *data;
 
 //buffers
-cvBuffer prgmBuf[N_CVOUTPUTS];
+inputBuffer inBuf[N_TRACKS];
+
+//tracks
+prgmTrack *track[N_TRACKS];
 
 //cv outputs
-prgmCvChannel *cvchannel[N_CVOUTPUTS];
-static fract32 cvVal[N_CVOUTPUTS]; //volatile?!
+static fract32 cvVal[N_TRACKS];
 static u8 cvChn = 0;
 
-static PrgmCvChannelpointer init_channel(void);
-static void init_cv_parameters(prgmCvChannel *cvchannel);
-static void cv_set_f(prgmCvChannel *cvchannel, ParamValue f);
-static void cv_set_t(prgmCvChannel *cvchannel, ParamValue t);
+//memory allocation
+static PrgmTrackptr init_track(void);
+static void init_track_parameters(prgmTrack *t);
 
-//frame process
-static void set_flag(prgmCvChannel *cvchannel, ParamValue flag);
+//parameters
+static void param_set_lvl(prgmTrack *t, ParamValue p);
+static void param_set_pos(prgmTrack *t, ParamValue p);
+static void param_set_frq(prgmTrack *t, ParamValue p);
+static void param_set_x(prgmTrack *t, ParamValue p);
+
+//process frame
+static void set_process(prgmTrack *t, u8 n);
 static fract32 (*get_processptr(u8 n))();
-static void set_process(prgmCvChannel *cvchannel, u8 n);
-static fract32 frame_next(prgmCvChannel *cvchannel);
-static fract32 process_cv(prgmCvChannel *cvchannel);
-static fract32 process_audio(prgmCvChannel *cvchannel);
+static fract32 p_Pos_audio(prgmTrack *t);
+static fract32 p_audio(prgmTrack *t);
+static fract32 p_off(prgmTrack *t);
+static fract32 p_cv(prgmTrack *t);
+static fract32 p_FrqSlw_cv(prgmTrack *t);
+
+
+//function definitions
+PrgmTrackptr init_track(void) {
+    return(PrgmTrackptr)malloc(sizeof(prgmTrack));
+}
+
+
+void init_track_parameters(prgmTrack *t) {
+    t->flag = 0;
+    t->process = get_processptr(0);
+
+    t->pL = 0;
+    t->pP = 0;
+    t->pF = 0;
+    filter_1p_lo_init(&(t->pFSlew), 0xf);
+    filter_1p_lo_set_slew(&(t->pFSlew), 0x77ffffff); //TEST!!!
+    t->pX = 0;
     
-
-//static function definitions
-PrgmCvChannelpointer init_channel(void) {
-    return(PrgmCvChannelpointer)malloc(sizeof(prgmCvChannel));
-}
-
-void init_cv_parameters(prgmCvChannel *cv) {
-    cv->process = 0;
-    cv->flag = 0;
-
-    cv->f = 0;
-    cv->t = 0;
-    filter_1p_lo_init(&(cv->fSlew), 0xf);
-    //  encoder source response
-    filter_1p_lo_set_slew(&(cv->fSlew), 0x77ffffff); //TEST!!!
-    env_tcd_init(&(cv->envAmp));
-}
-
-
-void cv_set_f(prgmCvChannel *cvchannel, ParamValue f) {
-    cvchannel->f = f;
-}
-
-
-void cv_set_t(prgmCvChannel *cvchannel, ParamValue t) {
-    cvchannel->t = t;
-}
-
-
-void set_flag(prgmCvChannel *cvchannel, ParamValue flag) {
-    cvchannel->flag = flag;
+    env_tcd_init(&(t->envAmp));
 }
 
 
@@ -76,7 +72,6 @@ static inline void param_setup(u32 id, ParamValue v) {
 }
 
 
-//external functions
 void module_init(void) {
     u32 i;
     data = (prgmData*)SDRAM_ADDRESS;
@@ -85,12 +80,12 @@ void module_init(void) {
     gModuleData->paramData = data->mParamData;
     gModuleData->numParams = eParamNumParams;
     
-    for(i=0; i<N_CVOUTPUTS; i++)
+    for(i=0; i<N_TRACKS; i++)
     {
-        cvchannel[i] = init_channel();
-        init_cv_parameters(cvchannel[i]);
-        buffer_init(&(prgmBuf[i]), data->cvBuffer[i], PRGM_BUF_FRAMES);
-        buffer_head_init(&(cvchannel[i])->envAmp.head, &(prgmBuf[i]));
+        track[i] = init_track();
+        init_track_parameters(track[i]);
+        buffer_init(&(inBuf[i]), data->inputBuffer[i], INPUT_BUF_FRAMES);
+        buffer_head_init(&(track[i])->envAmp.head, &(inBuf[i]));
     }
     
     for(i=0; i<module_get_num_params(); i++) { param_setup(i, 0); }
@@ -105,207 +100,225 @@ extern u32 module_get_num_params(void) {
 }
 
 
+//process frame
+//p || input parameters || custom dsp || output
+static fract32 (*process[])() =
+{
+    p_Pos_audio,                //0
+    p_audio,                    //1
+    p_off,                      //2
+    p_cv,                       //3
+    p_FrqSlw_cv,                //4
+};
+
+
 fract32 (*get_processptr(u8 n))() {
-    static fract32 (*process[])() =
-    {
-        process_cv,
-        process_audio,
-    };
-    
-    return (n < 1 || n > 1) ? *process[0] : *process[1];
+    return (n < 1 || n > 5) ? *process[0] : *process[n];
 }
 
 
-void set_process(prgmCvChannel *cvchannel, u8 n) {
-    cvchannel->process = get_processptr(n);
-}
-
-
-fract32 frame_next(prgmCvChannel *cvchannel) {
-    return cvchannel->process(cvchannel);
+void set_process(prgmTrack *t, u8 n) {
+    t->flag = n;
+    t->process = get_processptr(n);
 }
 
 
 void module_process_frame(void) {
-    for(cvChn=0;cvChn<4;cvChn++)
+    for(cvChn=0;cvChn<N_TRACKS;cvChn++)
     {
-        if(!cvchannel[cvChn]->flag)
+        if(track[cvChn]->flag < 2)
         {
-            cvVal[cvChn] = frame_next(cvchannel[cvChn]);
-            cv_update(cvChn, cvVal[cvChn]);
-        }
-        else if(cvchannel[cvChn]->flag)
-        {
-            out[cvChn] = frame_next(cvchannel[cvChn]);
-        }
-    }
-}
-
-/*
- void module_process_frame(void) {
- for(cvChn=0;cvChn<4;cvChn++)
- {
- //  env->source = env->f * env->t
- filter_1p_lo_in(&(cvchannel[cvChn]->fSlew), fix16_mul(cvchannel[cvChn]->f, cvchannel[cvChn]->t));
- cvchannel[cvChn]->envAmp.source = fix16_mul(cvchannel[cvChn]->f, cvchannel[cvChn]->t);
- 
- if(filter_1p_sync(&(cvchannel[cvChn]->fSlew)))
- {
- if(cvchannel[cvChn]->envAmp.state == OFF)
- {
- ;;
- }
- else
- {
- cvVal[cvChn] = env_tcd_next(&(cvchannel[cvChn]->envAmp));
- cv_update(cvChn, cvVal[cvChn]);
- }
- }
- 
- else
- {
- //  output encoder and update dac
- cvVal[cvChn] = filter_1p_lo_next(&(cvchannel[cvChn]->fSlew));
- cv_update(cvChn, cvVal[cvChn]);
- }
- }
- }
- */
-
-
-fract32 process_cv(prgmCvChannel *cvchannel) {
-    filter_1p_lo_in(&(cvchannel->fSlew), fix16_mul(cvchannel->f, cvchannel->t));
-    cvchannel->envAmp.source = fix16_mul(cvchannel->f, cvchannel->t);
-    
-    if(filter_1p_sync(&(cvchannel->fSlew)))
-    {
-        if(cvchannel->envAmp.state == OFF)
-        {
-            ;;
+            out[cvChn] = 0x00000000;
+            out[cvChn] = track[cvChn]->process(track[cvChn]);
         }
         else
         {
-            //  output curve
-            return env_tcd_next(&(cvchannel->envAmp));
+            cvVal[cvChn] = 0;
+//            cvVal[cvChn] = frame_next(track[cvChn]);
+            cvVal[cvChn] = track[cvChn]->process(track[cvChn]);
+            cv_update(cvChn, cvVal[cvChn]);
         }
     }
-    
-    else
-    {
-        //  output encoder
-        return filter_1p_lo_next(&(cvchannel->fSlew));
-    }
-    return 0;
 }
 
 
-fract32 process_audio(prgmCvChannel *cvchannel) {
-    if(cvchannel->envAmp.state == OFF)
+//head Position || audio
+fract32 p_Pos_audio(prgmTrack *t) {
+    env_tcd_set_pos(&(t->envAmp), t->pP);
+    if(t->envAmp.state == OFF)
     {
         return 0;
     }
     else
     {
-        return env_tcd_next(&(cvchannel->envAmp));
+        return t->envAmp.curve(&(t->envAmp));
     }
 }
 
 
+//audio
+fract32 p_audio(prgmTrack *t) {
+    if(t->envAmp.state == OFF)
+    {
+        return 0;
+    }
+    else
+    {
+        return t->envAmp.curve(&(t->envAmp));
+    }
+}
+
+
+//off
+fract32 p_off(prgmTrack *t) {
+    return 0;
+}
+
+
+//cv
+fract32 p_cv(prgmTrack *t) {
+    if(t->envAmp.state == OFF)
+    {
+        return 0;
+    }
+    else
+    {
+        return t->envAmp.curve(&(t->envAmp));
+//        return env_tcd_next(&(t->envAmp));
+    }
+}
+
+
+//Frequency with Slew || cv
+fract32 p_FrqSlw_cv(prgmTrack *t) {
+    filter_1p_lo_in(&(t->pFSlew), t->pF);
+    return filter_1p_lo_next(&(t->pFSlew));
+}
+
+
+//parameters
+void param_set_lvl(prgmTrack *t, ParamValue p) {
+    t->pL = p;
+}
+
+void param_set_pos(prgmTrack *t, ParamValue p) {
+    t->pP = p;
+}
+
+
+void param_set_frq(prgmTrack *t, ParamValue p) {
+    t->pF = p;
+}
+
+
+void param_set_x(prgmTrack *t, ParamValue p) {
+    t->pX = p;
+}
+
 void module_set_param(u32 idx, ParamValue v) {
     switch(idx) {
-        case eParamFree0:
-            cv_set_f(cvchannel[0], v);
+        case eParamTrig0:
+            env_tcd_set_trig(&(track[0]->envAmp), v);
             break;
-        case eParamFree1:
-            cv_set_f(cvchannel[1], v);
+        case eParamTrig1:
+            env_tcd_set_trig(&(track[1]->envAmp), v);
             break;
-        case eParamFree2:
-            cv_set_f(cvchannel[2], v);
+        case eParamTrig2:
+            env_tcd_set_trig(&(track[2]->envAmp), v);
             break;
-        case eParamFree3:
-            cv_set_f(cvchannel[3], v);
-            break;
-            
-        case eParamTransposed0:
-            cv_set_t(cvchannel[0], v);
-            break;
-        case eParamTransposed1:
-            cv_set_t(cvchannel[1], v);
-            break;
-        case eParamTransposed2:
-            cv_set_t(cvchannel[2], v);
-            break;
-        case eParamTransposed3:
-            cv_set_t(cvchannel[3], v);
-            break;
-            
-        case eParamCurveTime0:
-            env_tcd_set_time(&(cvchannel[0]->envAmp), v);
-            break;
-        case eParamCurveTime1:
-            env_tcd_set_time(&(cvchannel[1]->envAmp), v);
-            break;
-        case eParamCurveTime2:
-            env_tcd_set_time(&(cvchannel[2]->envAmp), v);
-            break;
-        case eParamCurveTime3:
-            env_tcd_set_time(&(cvchannel[3]->envAmp), v);
-            break;
-            
-        case eParamCurve0:
-            env_tcd_set_curve(&(cvchannel[0]->envAmp), v);
-            break;
-        case eParamCurve1:
-            env_tcd_set_curve(&(cvchannel[1]->envAmp), v);
-            break;
-        case eParamCurve2:
-            env_tcd_set_curve(&(cvchannel[2]->envAmp), v);
-            break;
-        case eParamCurve3:
-            env_tcd_set_curve(&(cvchannel[3]->envAmp), v);
+        case eParamTrig3:
+            env_tcd_set_trig(&(track[3]->envAmp), v);
             break;
 
-        case eParamCurveDest0:
-            env_tcd_set_dest(&(cvchannel[0]->envAmp), v);
-            break;
-        case eParamCurveDest1:
-            env_tcd_set_dest(&(cvchannel[1]->envAmp), v);
-            break;
-        case eParamCurveDest2:
-            env_tcd_set_dest(&(cvchannel[2]->envAmp), v);
-            break;
-        case eParamCurveDest3:
-            env_tcd_set_dest(&(cvchannel[3]->envAmp), v);
-            break;
-
-        case eParamCurveTrig0:
-            env_tcd_set_trig(&(cvchannel[0]->envAmp), v);
-            break;
-        case eParamCurveTrig1:
-            env_tcd_set_trig(&(cvchannel[1]->envAmp), v);
-            break;
-        case eParamCurveTrig2:
-            env_tcd_set_trig(&(cvchannel[2]->envAmp), v);
-            break;
-        case eParamCurveTrig3:
-            env_tcd_set_trig(&(cvchannel[3]->envAmp), v);
-            break;
-            
         case eParamFlag0:
-            set_flag(cvchannel[0], v);
-            set_process(cvchannel[0], v);
+            set_process(track[0], v);
             break;
         case eParamFlag1:
-            set_flag(cvchannel[1], v);
-            set_process(cvchannel[1], v);
+            set_process(track[1], v);
             break;
         case eParamFlag2:
-            set_flag(cvchannel[2], v);
-            set_process(cvchannel[2], v);
+            set_process(track[2], v);
             break;
         case eParamFlag3:
-            set_flag(cvchannel[3], v);
-            set_process(cvchannel[3], v);
+            set_process(track[3], v);
+            break;
+
+        case eParamCurve0:
+            env_tcd_set_curve(&(track[0]->envAmp), v);
+            break;
+        case eParamCurve1:
+            env_tcd_set_curve(&(track[1]->envAmp), v);
+            break;
+        case eParamCurve2:
+            env_tcd_set_curve(&(track[2]->envAmp), v);
+            break;
+        case eParamCurve3:
+            env_tcd_set_curve(&(track[3]->envAmp), v);
+            break;
+            
+        case eParamTime0:
+            env_tcd_set_time(&(track[0]->envAmp), v);
+            break;
+        case eParamTime1:
+            env_tcd_set_time(&(track[1]->envAmp), v);
+            break;
+        case eParamTime2:
+            env_tcd_set_time(&(track[2]->envAmp), v);
+            break;
+        case eParamTime3:
+            env_tcd_set_time(&(track[3]->envAmp), v);
+            break;
+            
+        case eParamL0:
+            param_set_lvl(track[0], v);
+            break;
+        case eParamL1:
+            param_set_lvl(track[1], v);
+            break;
+        case eParamL2:
+            param_set_lvl(track[2], v);
+            break;
+        case eParamL3:
+            param_set_lvl(track[3], v);
+            break;
+
+        case eParamP0:
+            param_set_pos(track[0], v);
+            break;
+        case eParamP1:
+            param_set_pos(track[1], v);
+            break;
+        case eParamP2:
+            param_set_pos(track[2], v);
+            break;
+        case eParamP3:
+            param_set_pos(track[3], v);
+            break;
+            
+        case eParamF0:
+            param_set_frq(track[0], v);
+            break;
+        case eParamF1:
+            param_set_frq(track[1], v);
+            break;
+        case eParamF2:
+            param_set_frq(track[2], v);
+            break;
+        case eParamF3:
+            param_set_frq(track[3], v);
+            break;
+            
+        case eParamX0:
+            param_set_x(track[0], v);
+            break;
+        case eParamX1:
+            param_set_x(track[1], v);
+            break;
+        case eParamX2:
+            param_set_x(track[2], v);
+            break;
+        case eParamX3:
+            param_set_x(track[3], v);
             break;
             
         default:

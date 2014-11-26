@@ -7,40 +7,45 @@
 #define BOOL_RADIX 2
 
 enum params {
-    eParamFree0,
-    eParamFree1,
-    eParamFree2,
-    eParamFree3,
-    
-    eParamTransposed0,
-    eParamTransposed1,
-    eParamTransposed2,
-    eParamTransposed3,
-    
-    eParamCurveTime0,
-    eParamCurveTime1,
-    eParamCurveTime2,
-    eParamCurveTime3,
+    eParamTrig0,
+    eParamTrig1,
+    eParamTrig2,
+    eParamTrig3,
+
+    eParamFlag0,
+    eParamFlag1,
+    eParamFlag2,
+    eParamFlag3,
     
     eParamCurve0,
     eParamCurve1,
     eParamCurve2,
     eParamCurve3,
-
-    eParamCurveDest0,
-    eParamCurveDest1,
-    eParamCurveDest2,
-    eParamCurveDest3,
-
-    eParamCurveTrig0,
-    eParamCurveTrig1,
-    eParamCurveTrig2,
-    eParamCurveTrig3,
     
-    eParamFlag0,
-    eParamFlag1,
-    eParamFlag2,
-    eParamFlag3,
+    eParamTime0,
+    eParamTime1,
+    eParamTime2,
+    eParamTime3,
+    
+    eParamL0,
+    eParamL1,
+    eParamL2,
+    eParamL3,
+    
+    eParamP0,
+    eParamP1,
+    eParamP2,
+    eParamP3,
+    
+    eParamF0,
+    eParamF1,
+    eParamF2,
+    eParamF3,
+    
+    eParamX0,
+    eParamX1,
+    eParamX2,
+    eParamX3,
     
     eParamNumParams
 };

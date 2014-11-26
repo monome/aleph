@@ -1,8 +1,6 @@
 //pages.c
 //aleph-prgm-avr32
 
-//CLEAN UP not used stuff..
-
 #ifdef ARCH_AVR32
 #include "print_funcs.h"
 #include "encoders.h"
@@ -33,12 +31,6 @@ page_t pages[NUM_PAGES] = {
         .select_fn = &select_env, // select function
         .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens
     },
-/*
-    { .name = "PATTERN",
-        .select_fn = &select_pattern, // select function
-        .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens
-    }
-*/
 };
 
 // pointer to current page
@@ -47,9 +39,6 @@ page_t* curPage;
 s8 pageIdx;
 // last pressed key
 u8 keyPressed = 255;
-
-//static variables
-//----- external function definitions
 
 // init
 void pages_init(void) {

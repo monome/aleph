@@ -26,25 +26,27 @@
 #include "params.h"
 
 //number of cv outputs
-#define N_CVOUTPUTS 4
+#define N_TRACKS 4
 
 //buffer size for sample based curves
-#define PRGM_BUF_FRAMES 0x2EE00 //4 seconds
+//#define PRGM_BUF_FRAMES 0x2EE00 //4 seconds
 
-typedef struct _prgmCvChannel *PrgmCvChannelpointer;
+typedef struct _prgmTrack *PrgmTrackptr;
 
-typedef struct _prgmCvChannel {
+typedef struct _prgmTrack {
     //process frame
-    fract32 (*process)(void *);         //pointer to process algorithm
     u8 flag;
+    fract32 (*process)(void *);         //pointer to process algorithm
     
     //curve
     env_tcd envAmp;
 
-    //curve source
-    fix16 f;                            //encoder - free pitch
-    filter_1p_lo fSlew;                 //encoder slew for free pitch (smooth response)
-    fix16 t;                            //encoder - transposed pitch
-} prgmCvChannel;
+    //parameters
+    fract32 pL;                         //level
+    u32 pP;                             //postion | phase | pan
+    fix16 pF;                           //frequency
+    filter_1p_lo pFSlew;                //frequency slew
+    fract32 pX;                         //x
+} prgmTrack;
 
 #endif

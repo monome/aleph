@@ -1,8 +1,6 @@
 //pages.h
 //aleph-prgm-avr32
 
-//CLEAN UP stuff..
-
 #ifndef _ALEPH_APP_PRGM_PAGES_H_
 #define _ALEPH_APP_PRGM_PAGES_H_
 
@@ -34,7 +32,6 @@ typedef enum {
 typedef enum {
     ePageLevel,
     ePageEnv
-//    ePagePattern,
 } ePage;
 
 // function pointers for input handling on a given page

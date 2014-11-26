@@ -80,28 +80,24 @@ void render_init(void) {
     }
 }
 
-void render_boot(const char* str) {
-    scroll_string_front(&bootScroll, (char*)str);
-}
-
 void render_startup (void) {
     screen_clear();
     set_page(ePageLevel);
     
-    print_fix16(renderS0, 0);
-    print_fix16(renderS1, 0);
-    print_fix16(renderS2, 0);
-    print_fix16(renderS3, 0);
-    
-    print_fix16(renderD0, 0);
-    print_fix16(renderD1, 0);
-    print_fix16(renderD2, 0);
-    print_fix16(renderD3, 0);
+    print_fix16(renderL0, 0);
+    print_fix16(renderL1, 0);
+    print_fix16(renderL2, 0);
+    print_fix16(renderL3, 0);
     
     print_fix16(renderP0, 0);
     print_fix16(renderP1, 0);
     print_fix16(renderP2, 0);
     print_fix16(renderP3, 0);
+    
+    print_fix16(renderF0, 0);
+    print_fix16(renderF1, 0);
+    print_fix16(renderF2, 0);
+    print_fix16(renderF3, 0);
 
     print_fix16(renderCounter, 1 * 0x00010000);
     
@@ -116,6 +112,10 @@ void render_startup (void) {
     print_fix16(renderTime1, 0);
     print_fix16(renderTime2, 0);
     print_fix16(renderTime3, 0);
+}
+
+void render_boot(const char* str) {
+    scroll_string_front(&bootScroll, (char*)str);
 }
 
 void render_update(void) {
@@ -154,43 +154,43 @@ void render_level(void) {
         region_fill(&level[i], 0x0);
     }
     /* region, string, offset x, offset y, color text, color background, size */
-    region_string(&level[0], renderS0, 0, 0, 0xf, 0, 0);
-    region_string(&level[1], renderS1, 0, 0, 0xf, 0, 0);
-    region_string(&level[2], renderS2, 0, 0, 0xf, 0, 0);
-    region_string(&level[3], renderS3, 0, 0, 0xf, 0, 0);
+    region_string(&level[0], renderL0, 0, 0, 0xf, 0, 0);
+    region_string(&level[1], renderL1, 0, 0, 0xf, 0, 0);
+    region_string(&level[2], renderL2, 0, 0, 0xf, 0, 0);
+    region_string(&level[3], renderL3, 0, 0, 0xf, 0, 0);
     
-    region_string(&level[0], renderD0, 0, 8, 0xf, 0, 0);
-    region_string(&level[1], renderD1, 0, 8, 0xf, 0, 0);
-    region_string(&level[2], renderD2, 0, 8, 0xf, 0, 0);
-    region_string(&level[3], renderD3, 0, 8, 0xf, 0, 0);
+    region_string(&level[0], renderP0, 0, 8, 0xf, 0, 0);
+    region_string(&level[1], renderP1, 0, 8, 0xf, 0, 0);
+    region_string(&level[2], renderP2, 0, 8, 0xf, 0, 0);
+    region_string(&level[3], renderP3, 0, 8, 0xf, 0, 0);
     
-    region_string(&level[0], renderP0, 0, 16, 0xf, 0, 0);
-    region_string(&level[1], renderP1, 0, 16, 0xf, 0, 0);
-    region_string(&level[2], renderP2, 0, 16, 0xf, 0, 0);
-    region_string(&level[3], renderP3, 0, 16, 0xf, 0, 0);
+    region_string(&level[0], renderF0, 0, 16, 0xf, 0, 0);
+    region_string(&level[1], renderF1, 0, 16, 0xf, 0, 0);
+    region_string(&level[2], renderF2, 0, 16, 0xf, 0, 0);
+    region_string(&level[3], renderF3, 0, 16, 0xf, 0, 0);
 
     region_string(&level[4], renderCounter, 0, 0, 0xf, 0, 0);
 }
 
-void render_source(void) {
-    region_string(&level[0], renderS0, 0, 0, 0xf, 0, 0);
-    region_string(&level[1], renderS1, 0, 0, 0xf, 0, 0);
-    region_string(&level[2], renderS2, 0, 0, 0xf, 0, 0);
-    region_string(&level[3], renderS3, 0, 0, 0xf, 0, 0);
+void render_row1(void) {
+    region_string(&level[0], renderL0, 0, 0, 0xf, 0, 0);
+    region_string(&level[1], renderL1, 0, 0, 0xf, 0, 0);
+    region_string(&level[2], renderL2, 0, 0, 0xf, 0, 0);
+    region_string(&level[3], renderL3, 0, 0, 0xf, 0, 0);
 }
 
-void render_dest(void) {
-    region_string(&level[0], renderD0, 0, 8, 0xf, 0, 0);
-    region_string(&level[1], renderD1, 0, 8, 0xf, 0, 0);
-    region_string(&level[2], renderD2, 0, 8, 0xf, 0, 0);
-    region_string(&level[3], renderD3, 0, 8, 0xf, 0, 0);
+void render_row2(void) {
+    region_string(&level[0], renderP0, 0, 8, 0xf, 0, 0);
+    region_string(&level[1], renderP1, 0, 8, 0xf, 0, 0);
+    region_string(&level[2], renderP2, 0, 8, 0xf, 0, 0);
+    region_string(&level[3], renderP3, 0, 8, 0xf, 0, 0);
 }
 
-void render_param(void) {
-    region_string(&level[0], renderP0, 0, 16, 0xf, 0, 0);
-    region_string(&level[1], renderP1, 0, 16, 0xf, 0, 0);
-    region_string(&level[2], renderP2, 0, 16, 0xf, 0, 0);
-    region_string(&level[3], renderP3, 0, 16, 0xf, 0, 0);
+void render_row3(void) {
+    region_string(&level[0], renderF0, 0, 16, 0xf, 0, 0);
+    region_string(&level[1], renderF1, 0, 16, 0xf, 0, 0);
+    region_string(&level[2], renderF2, 0, 16, 0xf, 0, 0);
+    region_string(&level[3], renderF3, 0, 16, 0xf, 0, 0);
 }
 
 void render_countlev(void) {
@@ -203,7 +203,7 @@ void render_env(void) {
     for(i = 0; i<numRegions_env; i++) {
         region_fill(&env[i], 0x0);
     }
-    render_curve(counter);
+    render_modes(counter);
     
     region_string(&env[0], renderTrig0, 0, 0, 0xf, 0, 0);
     region_string(&env[1], renderTrig1, 0, 0, 0xf, 0, 0);
@@ -225,31 +225,31 @@ void render_trig(void) {
     region_string(&env[3], renderTrig3, 0, 0, 0xf, 0, 0);
 }
 
-void render_curve(u8 step) {
-    render_curvename(0, prgmtrack[step]->c0);
-    render_curvename(1, prgmtrack[step]->c1);
-    render_curvename(2, prgmtrack[step]->c2);
-    render_curvename(3, prgmtrack[step]->c3);
+void render_modes(u8 i) {
+    render_mode(0, track[0]->modename[i]);
+    render_mode(1, track[1]->modename[i]);
+    render_mode(2, track[2]->modename[i]);
+    render_mode(3, track[3]->modename[i]);
 }
 
 //  MAX 8 char in a name for now..
-void render_curvename(u8 chan, s32 mode) {
+void render_mode(u8 chan, s32 name) {
     static char *nameptr[] = {
-        "OFF",
-        "BYPASS",
-        "TRIG",
-        "GATE",
-        "PLAY",
-        "LOOP",
-        "LINEAR",
-        "NOISE",
-        "recIN0",
-        "recIN1",
-        "████████"
+        "OFF",      //0
+        "HOLD",     //1
+        "TRIG",     //2
+        "GATE",     //3
+        "NOISE",    //4
+        "one",      //5
+        "loop",     //6
+        "scrub",    //7
+        "noise",    //8
+        "recin0",   //9
+        "TGrecin1"  //10
     };
     
-    region_string(&env[chan], nameptr[N_MODES], 0, 8, 0, 0, 0);
-    region_string(&env[chan], nameptr[mode], 0, 8, 0xf, 0, 0);
+    region_string(&env[chan], "████████", 0, 8, 0, 0, 0);
+    region_string(&env[chan], nameptr[name], 0, 8, 0xf, 0, 0);
 }
 
 void render_time(void) {

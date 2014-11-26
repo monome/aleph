@@ -5,278 +5,301 @@
 //  Created by Staffan Jansson on 25/10/14.
 //
 //
-//        h->data[SQ_LEN] = (Sq*)alloc_mem(sizeof(Sq));
+//
 
 #include "tracker.h"
 
 //static function declarations
-static trackptr alloc_track(void);
-static void track_init_param(track *t);
+static prgmTrackptr alloc_track(void);
+static void track_init_param(prgmTrack *t);
 
-//static function definitions
-trackptr alloc_track(void) {
-    return(trackptr)alloc_mem(sizeof(track));
+modeflag off = { .have_time = 0, .have_pL = 0, .have_pP = 0, .have_pF = 0, .pF_have_scale = 0, .have_pX = 0 };
+modeflag HOLD = { .have_time = 0, .have_pL = 0, .have_pP = 0, .have_pF = 1, .pF_have_scale = 0, .have_pX= 0 };
+//modeflag justHOLD = { .have_time = 0, .have_pL = 0, .have_pP = 0, .have_pF = 1, .pF_have_scale = 1, .have_pX= 0 };
+//modeflag slewHOLD = { .have_time = 0, .have_pL = 0, .have_pP = 0, .have_pF = 1, .pF_have_scale = 1, .have_pX= 0 };
+modeflag TRIG = { .have_time = 0, .have_pL = 0, .have_pP = 0, .have_pF = 0, .pF_have_scale = 0, .have_pX = 0 };
+modeflag GATE = { .have_time = 1, .have_pL = 0, .have_pP = 0, .have_pF = 0, .pF_have_scale = 0, .have_pX = 0 };
+modeflag NOISE = { .have_time = 1, .have_pL = 0, .have_pP = 0, .have_pF = 0, .pF_have_scale = 0, .have_pX = 1 };
+modeflag one = { .have_time = 1, .have_pL = 0, .have_pP = 1, .have_pF = 0, .pF_have_scale = 0, .have_pX = 0 };
+modeflag loop = { .have_time = 1, .have_pL = 0, .have_pP = 1, .have_pF = 0, .pF_have_scale = 0, .have_pX = 0 };
+modeflag scrub = { .have_time = 1, .have_pL = 0, .have_pP = 1, .have_pF = 0, .pF_have_scale = 0, .have_pX = 0 };
+modeflag noise = { .have_time = 1, .have_pL = 0, .have_pP = 0, .have_pF = 0, .pF_have_scale = 0, .have_pX = 1 };
+modeflag recin0 = { .have_time = 1, .have_pL = 0, .have_pP = 0, .have_pF = 0, .pF_have_scale = 0, .have_pX = 0 };
+modeflag TGrecin1 = { .have_time = 1, .have_pL = 0, .have_pP = 0, .have_pF = 0, .pF_have_scale = 0, .have_pX = 0 };
+
+prgmTrackptr alloc_track(void) {
+    return(prgmTrackptr)alloc_mem(sizeof(prgmTrack));
 }
 
-void track_init_param(track *t) {
-//    playmode = 0;
+void track_init_param(prgmTrack *t) {
+    u8 i;
+    for(i=0;i<SQ_LEN;i++)
+    {
+        t->trig[i] = 0;                 //trig | eParamTrig
+        t->m[i] = 0;                    //mode
+        t->modename[i] = 0;             //modename
+        t->f[i] = 0;                    //process flag | eParamFlag
+        t->c[i] = 0;                    //curve | eParamCurve
+        
+        //  parameters
+        t->t[i] = 0;                    //time
+        t->pL[i] = 0;                   //level
+        t->pP[i] = 0;                   //position | phase
+        t->pF[i] = 0;                   //frequency
+        t->pFs[i] = 0;                  //scaled frequency
+        t->pX[i] = 0;                   //x
+    }
     
-    t->tg0 = 0;
-    t->tg1 = 0;
-    t->tg2 = 0;
-    t->tg3 = 0;
-    
-    t->ct0 = 0;
-    t->ct1 = 0;
-    t->ct2 = 0;
-    t->ct3 = 0;
-    
-    t->c0 = 0;
-    t->c1 = 0;
-    t->c2 = 0;
-    t->c3 = 0;
-    
-    t->sf0 = 0;
-    t->sf1 = 0;
-    t->sf2 = 0;
-    t->sf3 = 0;
-
-    t->st0 = 0;
-    t->st1 = 0;
-    t->st2 = 0;
-    t->st3 = 0;
-
-    t->d0 = 0;
-    t->d1 = 0;
-    t->d2 = 0;
-    t->d3 = 0;
-    
-    t->p0 = 0;
-    t->p1 = 0;
-    t->p2 = 0;
-    t->p3 = 0;
+    //for mode switch case statement...
+    modetmp0 = 0;
+    modetmp1 = 0;
+    modetmp2 = 0;
+    modetmp3 = 0;
 }
 
-//extern function definitions
 void tracker_init(void) {
     u8 i;
     
-    for (i=0; i<SQ_LEN; i++)
+    for (i=0; i<N_SQ; i++)
     {
-        prgmtrack[i] = alloc_track();
-        track_init_param(prgmtrack[i]);
+        track[i] = alloc_track();
+        track_init_param(track[i]);
     }
 
     counter = 0;
     length = SQ_LEN;
 }
 
-//return pointer to mode function
-void (*get_modeptr(u8 n))() {
-    static void (*modes[])() =
-    {
-        mode_off,
-        mode_bypass,
-        mode_trig,
-        mode_gate,
-        mode_play,
-        mode_loop,
-        mode_lin,
-        mode_noise,
-        mode_rec0_beta,
-        mode_rec1_beta,
-    };
+void set_mode (prgmTrack *track, s32 m) {
+    u8 i = counter;
     
-    return (n < 1 || n > N_MODES) ? *modes[0] : *modes[n];
-}
+    if (m < 0) m = N_MODES_1;
+    if (m > N_MODES_1) m = 0;
+    
+    switch (m) {
+        case 0: //off
+            track->m[i] = &off;
+            track->f[i] = 2;
+            track->c[i] = 0;
+            track->modename[i] = 0;
+            break;
+            
+        case 1: //HOLD
+            track->m[i] = &HOLD;
+            track->f[i] = 4;
+            track->c[i] = 1;
+            track->modename[i] = 1;
+            break;
+            
+        case 2: //TRIG
+            track->m[i] = &TRIG;
+            track->f[i] = 3;
+            track->c[i] = 2;
+            track->modename[i] = 2;
+            break;
 
-//set mode
-void set_playmode(u8 pmode) {
-    prgmtrack[counter]->playmode = get_playmodeptr(pmode);
-}
+        case 3: //GATE
+            track->m[i] = &GATE;
+            track->f[i] = 3;
+            track->c[i] = 3;
+            track->modename[i] = 3;
+            break;
+            
+        case 4: //NOISE
+            track->m[i] = &NOISE;
+            track->f[i] = 3;
+            track->c[i] = 6;
+            track->modename[i] = 4;
+            break;
+            
+        case 5: //one
+            track->m[i] = &one;
+            track->f[i] = 0;
+            track->c[i] = 4;
+            track->modename[i] = 5;
+            break;
+            
+        case 6: //loop
+            track->m[i] = &loop;
+            track->f[i] = 0;
+            track->c[i] = 5;
+            track->modename[i] = 6;
+            break;
 
-//play
-void play(s32 trig) {
-if (trig)
-{
-    u8 i;
-    gpio_clr_gpio_pin(LED_MODE_PIN);
- 
-    counter++;
-    if (counter < length) i = counter;
-    else i = counter = 0;
- 
-    //send parameters to bfin
-    prgmtrack[counter]->playmode(void);
- 
-    //  render counters
-    if (pageIdx != ePageEnv)
-    {
-        print_fix16(renderCounter, (i + 1) * 0x00010000);
-        render_counters();
+        case 7: //scrub
+            track->m[i] = &scrub;
+            track->f[i] = 0;
+            track->c[i] = 4;
+            track->modename[i] = 7;
+            break;
+            
+        case 8: //noise
+            track->m[i] = &noise;
+            track->f[i] = 1;
+            track->c[i] = 6;
+            track->modename[i] = 8;
+            break;
+            
+        case 9: //recin0
+            track->m[i] = &recin0;
+            track->f[i] = 1;
+            track->c[i] = 7;
+            track->modename[i] = 9;
+            break;
+            
+        case 10: //tgrecin1
+            track->m[i] = &TGrecin1;
+            track->f[i] = 3;
+            track->c[i] = 8;
+            track->modename[i] = 10;
+            break;
+            
+        default:
+            break;
     }
-
-    gpio_set_gpio_pin(LED_MODE_PIN);
-}
-    else ;;
 }
 
-//modes
-//mode: off
-void mode_off(void) {
-    ctl_param_change(eParamFlag0, prgmtrack[i]->f0);
-    ctl_param_change(eParamFlag1, prgmtrack[i]->f1);
-    ctl_param_change(eParamFlag2, prgmtrack[i]->f2);
-    ctl_param_change(eParamFlag3, prgmtrack[i]->f3);
+u8 get_mode(prgmTrack *track, u8 i) {
+    if (track->m[i] == &off) return 0;
+    else if (track->m[i] == &HOLD) return 1;
+    else if (track->m[i] == &TRIG) return 2;
+    else if (track->m[i] == &GATE) return 3;
+    else if (track->m[i] == &NOISE) return 4;
+    else if (track->m[i] == &one) return 5;
+    else if (track->m[i] == &loop) return 6;
+    else if (track->m[i] == &scrub) return 7;
+    else if (track->m[i] == &noise) return 8;
+    else if (track->m[i] == &recin0) return 9;
+    else if (track->m[i] == &TGrecin1) return 10;
     
-    ctl_param_change(eParamCurve0, prgmtrack[i]->c0);
-    ctl_param_change(eParamCurve1, prgmtrack[i]->c1);
-    ctl_param_change(eParamCurve2, prgmtrack[i]->c2);
-    ctl_param_change(eParamCurve3, prgmtrack[i]->c3);
+    else return 0;
+}
+
+void play(s32 trig) {
+    if (trig)
+    {
+//        gpio_clr_gpio_pin(LED_MODE_PIN);
         
-    //  if !trig
-    if (!(prgmtrack[i]->tg0));
-    //  else if trig && not curve zero || not curve bypass
-    else ctl_param_change(eParamCurveTrig0, 1);
-    
-    if (!(prgmtrack[i]->tg1));
-    else ctl_param_change(eParamCurveTrig1, 1);
-    
-    if (!(prgmtrack[i]->tg2));
-    else ctl_param_change(eParamCurveTrig2, 1);
-    
-    if (!(prgmtrack[i]->tg3));
-    else ctl_param_change(eParamCurveTrig3, 1);
+        u8 i, n;
+        
+        //  move counter
+        counter++;
+        if (counter < length) i = counter;
+        else i = counter = 0;
+        
+        //  send parameters
+        for (n = 0; n < N_SQ; n++)
+        {
+            prgmTrack *trk = track[n];
+            
+            if (trk->trig[i])
+            {
+                ctl_param_change(eParamFlag0 + n, trk->f[i]);
+                ctl_param_change(eParamCurve0 + n, trk->c[i]);
+                
+                if (trk->m[i]->have_time) ctl_param_change(eParamTime0 + n, trk->t[i]);
+                if (trk->m[i]->have_pL) ctl_param_change(eParamL0 + n, trk->pL[i]);
+                if (trk->m[i]->have_pP) ctl_param_change(eParamP0 + n, trk->pP[i]);
+                if (trk->m[i]->have_pF)
+                {
+                    if(trk->m[i]->pF_have_scale) ctl_param_change(eParamF0 + n, trk->pFs[i]);
+                    else ctl_param_change(eParamF0 + n, trk->pF[i]);
+                }
+                if (trk->m[i]->have_pX) ctl_param_change(eParamX0 + n, trk->pX[i]);
+                
+                ctl_param_change(eParamTrig0 + n, 1);
+            }
+        }
+        
+        //  render counters
+        print_fix16(renderCounter, (i + 1) * 0x00010000);
+        if (pageIdx != ePageEnv) render_countlev();
+        else render_countenv();
+
+//        gpio_set_gpio_pin(LED_MODE_PIN);
+    }
 }
 
- 
-void play(s32 trig) {
-if (trig)
-{
-    u8 i;
-    gpio_clr_gpio_pin(LED_MODE_PIN);
-
-    counter++;
-    if (counter < length) i = counter;
-    else i = counter = 0;
-    
-    ctl_param_change(eParamFree0, prgmtrack[i]->sf0);
-    ctl_param_change(eParamFree1, prgmtrack[i]->sf1);
-    ctl_param_change(eParamFree2, prgmtrack[i]->sf2);
-    ctl_param_change(eParamFree3, prgmtrack[i]->sf3);
-    ctl_param_change(eParamTransposed0, transpose_lookup(prgmtrack[i]->st0));
-    ctl_param_change(eParamTransposed1, transpose_lookup(prgmtrack[i]->st1));
-    ctl_param_change(eParamTransposed2, transpose_lookup(prgmtrack[i]->st2));
-    ctl_param_change(eParamTransposed3, transpose_lookup(prgmtrack[i]->st3));
-    ctl_param_change(eParamCurve0, prgmtrack[i]->c0);
-    ctl_param_change(eParamCurve1, prgmtrack[i]->c1);
-    ctl_param_change(eParamCurve2, prgmtrack[i]->c2);
-    ctl_param_change(eParamCurve3, prgmtrack[i]->c3);
-    
-    //  if !trig
-    if (!(prgmtrack[i]->tg0)) ;
-    
-    //  else if trig && not curve zero || not curve bypass
-    else if ((prgmtrack[i]->tg0) && prgmtrack[i]->c0 > 1)
+void return_to_one(s32 trig) {
+    if (trig)
     {
-        ctl_param_change(eParamCurveTime0, prgmtrack[i]->ct0);
-        ctl_param_change(eParamCurveDest0, prgmtrack[i]->d0);
-        ctl_param_change(eParamCurveTrig0, 1);
+//        gpio_clr_gpio_pin(LED_MODE_PIN);
+        
+        u8 i, n;
+        
+        //  zero counter
+        i = counter = 0;
+        
+        //  send parameters
+        for (n = 0; n < N_SQ; n++)
+        {
+            prgmTrack *trk = track[n];
+            
+            if (trk->trig[i])
+            {
+                ctl_param_change(eParamFlag0 + n, trk->f[i]);
+                ctl_param_change(eParamCurve0 + n, trk->c[i]);
+                
+                if (trk->m[i]->have_time) ctl_param_change(eParamTime0 + n, trk->t[i]);
+                if (trk->m[i]->have_pL) ctl_param_change(eParamL0 + n, trk->pL[i]);
+                if (trk->m[i]->have_pP) ctl_param_change(eParamP0 + n, trk->pP[i]);
+                if (trk->m[i]->have_pF)
+                {
+                    if(trk->m[i]->pF_have_scale) ctl_param_change(eParamF0 + n, trk->pFs[i]);
+                    else ctl_param_change(eParamF0 + n, trk->pF[i]);
+                }
+                if (trk->m[i]->have_pX) ctl_param_change(eParamX0 + n, trk->pX[i]);
+                
+                ctl_param_change(eParamTrig0 + n, 1);
+            }
+        }
+        
+        //  render counters
+        print_fix16(renderCounter, (i + 1) * 0x00010000);
+        if (pageIdx != ePageEnv) render_countlev();
+        else render_countenv();
+        
+//        gpio_set_gpio_pin(LED_MODE_PIN);
     }
-    
-    if (!(prgmtrack[i]->tg1)) ;
-    else if ((prgmtrack[i]->tg1) && prgmtrack[i]->c1 > 1)
-    {
-        ctl_param_change(eParamCurveTime1, prgmtrack[i]->ct1);
-        ctl_param_change(eParamCurveDest1, prgmtrack[i]->d1);
-        ctl_param_change(eParamCurveTrig1, 1);
-    }
-
-    
-    if (!(prgmtrack[i]->tg2)) ;
-    else if ((prgmtrack[i]->tg2) && prgmtrack[i]->c2 > 1)
-    {
-        ctl_param_change(eParamCurveTime2, prgmtrack[i]->ct2);
-        ctl_param_change(eParamCurveDest2, prgmtrack[i]->d2);
-        ctl_param_change(eParamCurveTrig2, 1);
-    }
-
-    if (!(prgmtrack[i]->tg3)) ;
-    else if ((prgmtrack[i]->tg3) && prgmtrack[i]->c3 > 1)
-    {
-        ctl_param_change(eParamCurveTime3, prgmtrack[i]->ct3);
-        ctl_param_change(eParamCurveDest3, prgmtrack[i]->d3);
-        ctl_param_change(eParamCurveTrig3, 1);
-    }
-    
-    print_fix16(renderCounter, (i + 1) * 0x00010000);
-
-    //  render counters
-    if (pageIdx != ePageEnv) render_countlev();
-    else render_countenv();
-    
-    gpio_set_gpio_pin(LED_MODE_PIN);
-}
-else ;;
 }
 
 void play_step(s32 trig) {
     if (trig)
     {
-        u8 i = counter;
-        
         gpio_clr_gpio_pin(LED_MODE_PIN);
         
-        ctl_param_change(eParamFree0, prgmtrack[i]->sf0);
-        ctl_param_change(eParamFree1, prgmtrack[i]->sf1);
-        ctl_param_change(eParamFree2, prgmtrack[i]->sf2);
-        ctl_param_change(eParamFree3, prgmtrack[i]->sf3);
-        ctl_param_change(eParamTransposed0, transpose_lookup(prgmtrack[i]->st0));
-        ctl_param_change(eParamTransposed1, transpose_lookup(prgmtrack[i]->st1));
-        ctl_param_change(eParamTransposed2, transpose_lookup(prgmtrack[i]->st2));
-        ctl_param_change(eParamTransposed3, transpose_lookup(prgmtrack[i]->st3));
-        ctl_param_change(eParamCurve0, prgmtrack[i]->c0);
-        ctl_param_change(eParamCurve1, prgmtrack[i]->c1);
-        ctl_param_change(eParamCurve2, prgmtrack[i]->c2);
-        ctl_param_change(eParamCurve3, prgmtrack[i]->c3);
-        
-        //  if !trig
-        if (!(prgmtrack[i]->tg0)) ;
-        
-        //  else if trig && not curve zero || not curve bypass
-        else if ((prgmtrack[i]->tg0) && prgmtrack[i]->c0 > 1)
+        u8 i, n;
+        i = counter;
+
+        //  send parameters
+        for (n = 0; n < N_SQ; n++)
         {
-            ctl_param_change(eParamCurveTime0, prgmtrack[i]->ct0);
-            ctl_param_change(eParamCurveDest0, prgmtrack[i]->d0);
-            ctl_param_change(eParamCurveTrig0, 1);
+            prgmTrack *trk = track[n];
+            
+            if (trk->trig[i])
+            {
+                ctl_param_change(eParamFlag0 + n, trk->f[i]);
+                ctl_param_change(eParamCurve0 + n, trk->c[i]);
+                
+                if (trk->m[i]->have_time) ctl_param_change(eParamTime0 + n, trk->t[i]);
+                if (trk->m[i]->have_pL) ctl_param_change(eParamL0 + n, trk->pL[i]);
+                if (trk->m[i]->have_pP) ctl_param_change(eParamP0 + n, trk->pP[i]);
+                if (trk->m[i]->have_pF)
+                {
+                    if(trk->m[i]->pF_have_scale) ctl_param_change(eParamF0 + n, trk->pFs[i]);
+                    else ctl_param_change(eParamF0 + n, trk->pF[i]);
+                }
+                if (trk->m[i]->have_pX) ctl_param_change(eParamX0 + n, trk->pX[i]);
+                
+                ctl_param_change(eParamTrig0 + n, 1);
+            }
         }
         
-        if (!(prgmtrack[i]->tg1)) ;
-        else if ((prgmtrack[i]->tg1) && prgmtrack[i]->c1 > 1)
-        {
-            ctl_param_change(eParamCurveTime1, prgmtrack[i]->ct1);
-            ctl_param_change(eParamCurveDest1, prgmtrack[i]->d1);
-            ctl_param_change(eParamCurveTrig1, 1);
-        }
-        
-        
-        if (!(prgmtrack[i]->tg2)) ;
-        else if ((prgmtrack[i]->tg2) && prgmtrack[i]->c2 > 1)
-        {
-            ctl_param_change(eParamCurveTime2, prgmtrack[i]->ct2);
-            ctl_param_change(eParamCurveDest2, prgmtrack[i]->d2);
-            ctl_param_change(eParamCurveTrig2, 1);
-        }
-        
-        if (!(prgmtrack[i]->tg3)) ;
-        else if ((prgmtrack[i]->tg3) && prgmtrack[i]->c3 > 1)
-        {
-            ctl_param_change(eParamCurveTime3, prgmtrack[i]->ct3);
-            ctl_param_change(eParamCurveDest3, prgmtrack[i]->d3);
-            ctl_param_change(eParamCurveTrig3, 1);
-        }
+        //  render counters
+        print_fix16(renderCounter, (i + 1) * 0x00010000);
+        if (pageIdx != ePageEnv) render_countlev();
+        else render_countenv();
         
         gpio_set_gpio_pin(LED_MODE_PIN);
     }
-    else ;;
 }

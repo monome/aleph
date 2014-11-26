@@ -21,111 +21,84 @@
 #include "ctl.h"
 #include "pages.h"
 #include "render.h"
-//#include "page_level.h"
-//#include "page_env.h"
 #include "scale.h"
 
-#define SQ_LEN 8                            //sequence length
+#define SQ_LEN 16                           //sequence length
 #define N_SQ 4                              //number of tracks
-#define N_MODES 10                         //number of modes (curve -> process frame -> output)
+#define N_MODES 11                          //number of modes
 #define N_MODES_1 (N_MODES - 1)
+#define BUF_SIZE 0xBB800
+#define BUF_SIZE_1 (BUF_SIZE -1)
+
+s32 modetmp0;
+s32 modetmp1;
+s32 modetmp2;
+s32 modetmp3;
 
 char renderTrig0[16];
 char renderTrig1[16];
 char renderTrig2[16];
 char renderTrig3[16];
 
-char renderS0[16];
-char renderS1[16];
-char renderS2[16];
-char renderS3[16];
+char renderTime0[16];
+char renderTime1[16];
+char renderTime2[16];
+char renderTime3[16];
 
-char renderD0[16];
-char renderD1[16];
-char renderD2[16];
-char renderD3[16];
+char renderL0[16];
+char renderL1[16];
+char renderL2[16];
+char renderL3[16];
 
 char renderP0[16];
 char renderP1[16];
 char renderP2[16];
 char renderP3[16];
 
-char renderTime0[16];
-char renderTime1[16];
-char renderTime2[16];
-char renderTime3[16];
-
-char renderCurve0[16];
-char renderCurve1[16];
-char renderCurve2[16];
-char renderCurve3[16];
-
-char renderDest0[16];
-char renderDest1[16];
-char renderDest2[16];
-char renderDest3[16];
+char renderF0[16];
+char renderF1[16];
+char renderF2[16];
+char renderF3[16];
 
 char renderCounter[16];
 
 u8 counter;
 u8 length;
 
-typedef struct _track {
-    void (*(*mode)(void *)[]);              //array of pointers to mode
-    s32 *flag[];                            //array of pointers to mode flag
+typedef struct _modeflag {
+    u8 have_time : 1;
+    u8 have_pL : 1;
+    u8 have_pP : 1;
+    u8 have_pF : 1;
+    u8 pF_have_scale : 1;
+    u8 have_pX : 1;
+} modeflag;
+
+typedef struct _prgmTrack *prgmTrackptr;
+
+typedef struct _prgmTrack {
+    s32 trig[SQ_LEN];
+
+    modeflag *m[SQ_LEN];
+    s32 modename[SQ_LEN];
+    s32 f[SQ_LEN];
+    s32 c[SQ_LEN];
+    s32 t[SQ_LEN];
     
-    s32 *trig[];                            //trig
-    s32 *c[];                               //curve
-    s32 *t[];                               //time
-    s32 *p0[];                              //param0 (0 - FR32_MAX)
-    s32 *p1[];                              //param1 (inf - 0)
-    s32 *p2[];                              //param2 (0 - 1)
-    
-    s32 f0;                                 //mode flag
-    s32 f1;
-    s32 f2;
-    s32 f3;
+    s32 pL[SQ_LEN];                     //level
+    s32 pP[SQ_LEN];                     //position | phase | filepos | mempos
+    s32 pF[SQ_LEN];                     //frequency
+    s32 pFs[SQ_LEN];                    //scaled frequency
+    s32 pX[SQ_LEN];                     //q | slew | offset | blend
+} prgmTrack;
 
-    s32 tg0;                                //trig
-    s32 tg1;
-    s32 tg2;
-    s32 tg3;
+prgmTrack *track[N_SQ];
 
-    s32 c0;                                 //curve
-    s32 c1;
-    s32 c2;
-    s32 c3;
-
-    s32 ct0;                                //time
-    s32 ct1;
-    s32 ct2;
-    s32 ct3;
-    
-    s32 sf0;                                //param0
-    s32 sf1;
-    s32 sf2;
-    s32 sf3;
-    
-    s32 st0;                                //param1 (scaled)
-    s32 st1;
-    s32 st2;
-    s32 st3;
-    
-    s32 d0;                                 //param1
-    s32 d1;
-    s32 d2;
-    s32 d3;
-
-} track;
-
-typedef struct _track *trackptr;
-
-track *prgmtrack[SQ_LEN];
-
-//extern function declarations
 extern void tracker_init(void);
+extern void set_mode(prgmTrack *track, s32 m);
+extern u8 get_mode(prgmTrack *track, u8 i);
 extern void play(s32 trig);
+extern void return_to_one(s32 trig);
 extern void play_step(s32 trig);
-//extern void edit(void);
 
 #endif

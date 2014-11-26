@@ -1,4 +1,4 @@
-tracker/prgm 0.1.8 info
+prgm 0.0.3 readme
 
 input parameters
 cv_f            cv free
@@ -8,7 +8,6 @@ curve           envelope shape/algorithm
 curve_dest      envelope destination value
 curve_trig      envelope trig
 
-note! envelope source value is cv_f * cv_t
 
 
 

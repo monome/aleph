@@ -11,14 +11,13 @@ env_tcd_buffer.c
 
 #include "env_tcd_buffer.h"
 
-
 //extern function definitions
-void buffer_init(cvBuffer *buf, volatile fract32 *data, u32 frames) {
+void buffer_init(inputBuffer *buf, volatile fract32 *data, u32 frames) {
     buf->data = data;
     buf->frames = frames;
 }
 
-void buffer_head_init(bufferHead *head, cvBuffer *buf) {
+void buffer_head_init(bufferHead *head, inputBuffer *buf) {
     head->buf = buf;
     head->loop = buf->frames;
     head->inc = 1;
