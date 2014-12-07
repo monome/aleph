@@ -29,6 +29,7 @@ typedef struct _env_tcd {
     
     u32 countTime;                  //length counter
     u32 time;                       //length of curve
+//    u32 *time;                       //length of curve
     u32 pos;                        //position
     
     fract32 (*curve)(void *);       //pointer to curve algorithm
@@ -43,7 +44,7 @@ typedef struct _env_tcd {
 extern void env_tcd_init(env_tcd *env);
 
 //set trig
-extern void env_tcd_set_trig(env_tcd *env, u16 trig);
+extern void env_tcd_set_trig(env_tcd *env, u8 trig);
 
 //set curve type
 extern void env_tcd_set_curve(env_tcd *env, u8 curve);

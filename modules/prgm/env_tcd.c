@@ -11,14 +11,14 @@
 //static function declarations
 static fract32 (*env_tcd_get_curveptr(u8 n))();
 static fract32 env_tcd_off(env_tcd *env);
-static fract32 env_tcd_hold(env_tcd *env);
+static fract32 env_tcd_dummy(env_tcd *env);
 static fract32 env_tcd_trig(env_tcd *env);
 static fract32 env_tcd_gate(env_tcd *env);
 static fract32 env_tcd_one_beta(env_tcd *env);
 static fract32 env_tcd_loop_beta(env_tcd *env);
 static fract32 env_tcd_noise_beta(env_tcd *env);
-static fract32 env_tcd_rec0_beta(env_tcd *env);
-static fract32 env_tcd_trigrec1_beta(env_tcd *env);
+static fract32 env_tcd_rec1_beta(env_tcd *env);
+static fract32 env_tcd_trigrec2_beta(env_tcd *env);
 
 
 //extern function definitions
@@ -47,23 +47,32 @@ void env_tcd_set_pos(env_tcd *env, u32 pos) {
     env->pos = pos;
 }
 
-
-static fract32 (*curves[])() =
-{
-    env_tcd_off,            //0
-    env_tcd_hold,           //1
-    env_tcd_trig,           //2
-    env_tcd_gate,           //3
-    env_tcd_one_beta,       //4
-    env_tcd_loop_beta,      //5
-    env_tcd_noise_beta,     //6
-    env_tcd_rec0_beta,      //7
-    env_tcd_trigrec1_beta   //8
-};
-
+/*
+ env_tcd_one_beta,       //0
+ env_tcd_loop_beta,      //1
+ env_tcd_rec1_beta,      //2
+ env_tcd_trigrec2_beta,  //3
+ env_tcd_trig,           //4
+ env_tcd_gate,           //5
+ env_tcd_noise_beta,     //6
+ env_tcd_dummy           //7
+*/
 
 //return pointer to curve algorithm
 fract32 (*env_tcd_get_curveptr(u8 n))() {
+    static fract32 (*curves[])() =
+    {
+        env_tcd_off,            //0
+        env_tcd_dummy,          //1
+        env_tcd_trig,           //2
+        env_tcd_gate,           //3
+        env_tcd_one_beta,       //4
+        env_tcd_loop_beta,      //5
+        env_tcd_noise_beta,     //6
+        env_tcd_rec1_beta,      //7
+        env_tcd_trigrec2_beta   //8
+    };
+
     return (n < 1 || n > N_CURVES) ? *curves[0] : *curves[n];
 }
 
@@ -87,7 +96,7 @@ void env_tcd_set_dest(env_tcd *env, fract32 dest) {
 
 
 //set trig
-void env_tcd_set_trig(env_tcd *env, u16 trig) {
+void env_tcd_set_trig(env_tcd *env, u8 trig) {
     env->trig = trig;
 
     if(env->trig) {
@@ -106,9 +115,9 @@ fract32 env_tcd_off(env_tcd *env) {
     else return 0;
 }
 
-//curve: hold
-fract32 env_tcd_hold(env_tcd *env) {
-    return env->d;
+//curve: dummy
+fract32 env_tcd_dummy(env_tcd *env) {
+    return 0;
 }
 
 //curve: trig
@@ -216,7 +225,7 @@ s32 env_tcd_noise_beta(env_tcd *env) {
 }
 
 //curve: audio_rec_beta
-fract32 env_tcd_rec0_beta(env_tcd *env) {
+fract32 env_tcd_rec1_beta(env_tcd *env) {
     fract32 tmp;
     if (env->state == ON && (!env->countTime))
     {
@@ -245,12 +254,14 @@ fract32 env_tcd_rec0_beta(env_tcd *env) {
 }
 
 //curve: audio_rec_beta
-fract32 env_tcd_trigrec1_beta(env_tcd *env) {
+fract32 env_tcd_trigrec2_beta(env_tcd *env) {
+    fract32 tmp;
     if (env->state == ON && (!env->countTime))
     {
         env->head.loop = env->time;
         env->countTime++;
-        fract32 tmp = add_fr1x32(tmp, mult_fr1x32x32(in[1], (FRACT32_MAX >> 10)));
+        tmp = 0;
+        tmp = mult_fr1x32x32(in[1], FR32_MAX >> 2);
         buffer_head_pos(&(env->head), 0);
         buffer_head_rec(&(env->head), tmp);
         return 0x3fffffff;
@@ -258,7 +269,8 @@ fract32 env_tcd_trigrec1_beta(env_tcd *env) {
     else if (env->state == ON && env->countTime < env->time)
     {
         env->countTime++;
-        fract32 tmp = add_fr1x32(tmp, mult_fr1x32x32(in[1], (FRACT32_MAX >> 10)));
+        tmp = 0;
+        tmp = mult_fr1x32x32(in[1], FR32_MAX >> 2);
         buffer_head_next(&(env->head));
         buffer_head_rec(&(env->head), tmp);
         if (env->countTime < 0x0000003f) return 0x3fffffff;

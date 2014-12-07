@@ -11,9 +11,6 @@
 #include "memory.h"
 #include "print_funcs.h"
 
-//buffer for wav data (wav curve)
-//static s32 wavbuf;
-
 //file directory
 typedef struct _dirList {
     char path[MAX_PATH];
@@ -21,11 +18,16 @@ typedef struct _dirList {
     u32 num;
 } dirList_t;
 
-//static function declarations
-static void dsp_read(volatile u8 *dst, u32 len, void *fp);
+static dirList_t sampleList;
 
-//static functions
-void dsp_read(volatile u8 *dst, u32 len, void *fp) { //fread: no size arg
+
+//static function declarations
+static void fake_fread(volatile u8 *dst, u32 len, void *fp);
+static char *sample_filepath(s32 n);
+
+
+//static function definitions
+void fake_fread(volatile u8 *dst, u32 len, void *fp) { //fread: no size arg
     u32 n = 0;
 #if 0
     fl_fread(&dst, 1, len, fp);
@@ -38,7 +40,81 @@ void dsp_read(volatile u8 *dst, u32 len, void *fp) { //fread: no size arg
 #endif
 }
 
+char *sample_filepath(s32 n) {
+    return (n < 0 || n > numsamples) ? samples[0] : samples[n];
+}
+
+
 //external functions
+void samples_init(void) {
+    FL_DIR dirstat;
+    struct fs_dir_ent dirent; //see fat_access.h
+    
+    s32 i = 0;
+    sampleList.num = 0;
+    numsamples = 0;
+    
+    strcpy(sampleList.path, WAV_PATH);
+    
+    if (fl_opendir(sampleList.path, &dirstat))
+    {
+        while (fl_readdir(&dirstat, &dirent) == 0)
+        {
+            if (!(dirent.is_dir))
+            {
+                samples[i] = (char*)alloc_mem(MAX_PATH * (sizeof(char*)));
+                strcpy(sampleList.path, WAV_PATH);
+                strcat(sampleList.path, dirent.filename);
+                strcpy(samples[i], sampleList.path);
+                print_dbg("\r\n samples[i]: ");
+                print_dbg(samples[i]);
+                sampleList.num++;
+                i++;
+                numsamples++;
+            }
+        }
+        //fl_closedir(&dirstat);
+    }
+}
+
+void samplebuffer_init(void) {
+    u32 i;
+    
+    bfinSampleData = (u8*)alloc_mem(BFIN_SAMPLE_MAX_BYTES * sizeof(u8));
+    for(i=0; i<BFIN_SAMPLE_MAX_BYTES; i++) { bfinSampleData[i] = 0; }
+    bfinSampleSize = 0;
+}
+
+void files_load_samples(u32 idx) {
+    void *fp;
+    u32 size = 0;
+    
+    app_pause();
+    
+    fp = fl_fopen(sample_filepath(idx), "r");
+    print_dbg("\r\n sample_filepath(idx) ");
+    print_dbg(sample_filepath(idx));
+    
+    if (fp != NULL)
+    {
+        size = ((FL_FILE*)(fp))->filelength;
+        fake_fread(bfinSampleData, size, fp);
+        fl_fclose(fp);
+        bfinSampleSize = size;
+        print_dbg("\r\n bfinSampleSize ");
+        print_dbg_ulong(bfinSampleSize);
+        
+        bfin_fill_buffer(bfinSampleData, bfinSampleSize);
+        print_dbg("\r\n bfin_fill_buffer finished... ");
+    }
+    
+    else
+    {
+        print_dbg("\r\n idx out of bounds");
+    }
+    app_resume();
+}
+
 u8 files_load_dsp(void) {
     void *fp;
     u32 size = 0;
@@ -52,7 +128,7 @@ u8 files_load_dsp(void) {
     
     if(fp != NULL) {
         size = ((FL_FILE*)(fp))->filelength;
-        dsp_read(bfinLdrData, size, fp);
+        fake_fread(bfinLdrData, size, fp);
         
         fl_fclose(fp);
         bfinLdrSize = size;
@@ -71,40 +147,4 @@ u8 files_load_dsp(void) {
     
     app_resume();
     return ret;
-}
-
-u8 files_load_wav(void) {
-/*
-    u8 status;
-    u32 i;
-    u32 size = 0;
-    
-    app_pause();
-    
-    //  open wav file
-    void* fp = fl_fopen(WAV_PATH);
-    print_dbg("\r\n found file...");
-    
-    size = ((FL_FILE*)(fp))->filelength;
-    print_dbg("\r\n file size in bytes...");
-    print_dbg_ulong(size);
-
-    for
-    //  send begin transfer command to bfin
-    //size argument?!
-    bfin_start_wavtransfer(void);
-    
-    for (i=0; i<size; i+=4)
-    {
-        
-    //  read to buffer
-    dsp_read(&wavbuf, 4, fp);
-    
-    //  send buffer transfer command to bfin
-    bfin_transfer_wavbytes(wavbuf);
-    }
-    
-    app_resume();
-*/
-    return 0;
 }

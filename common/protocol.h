@@ -1,38 +1,42 @@
 /* 
    protocol.h
-   
    common
    aleph
-
    SPI procotol definitions.
-
- */
+*/
 
 #ifndef _ALEPH_COMMON_PROTOCOL_H_
 #define _ALEPH_COMMON_PROTOCOL_H_
 
 #include "module_common.h"
 #include "param_common.h"
-#include "buffer_common.h"
 #include "types.h"
 
-//// command bytes
-#define MSG_SET_PARAM_COM           0 
+//  command bytes
+#define MSG_SET_PARAM_COM           0
 #define MSG_GET_PARAM_COM           1
 #define MSG_GET_NUM_PARAMS_COM      2
-#define MSG_GET_PARAM_DESC_COM      3 // using as "MSG_SET_WAVETABLE" not using, but leave reserved
+//#define MSG_GET_PARAM_DESC_COM      3 //not using, but leave reserved
 #define MSG_GET_MODULE_NAME_COM     4
-// get 4-byte version packet
+
+//  get 4-byte version packet
 #define MSG_GET_MODULE_VERSION_COM  5
 #define MSG_ENABLE_AUDIO            6
 #define MSG_DISABLE_AUDIO           7
 
-// enumerate state-machine nodes for sending and receiving SPI.
+//  set trig, calls module_set_trig()
+#define MSG_SET_TRIG_COM            8
 
-/// WARNING!
-/// the order of this enum is assumed by state machines
-// in avr32 and aleph.
-/// do not change order without updating the logic as well!
+//  fill SDRAM buffer from avr32
+#define MSG_FILL_BUFFER_COM         9
+
+
+
+//  enumerate state-machine nodes for sending and receiving SPI.
+//  WARNING!
+//  the order of this enum is assumed by state machines
+//  in avr32 and aleph.
+//  do not change order without updating the logic as well!
 typedef enum {
   //---- command
   eCom,
@@ -51,12 +55,6 @@ typedef enum {
   //---- get num params
   eNumParamsVal,
     
-    eWavetablePos,
-    eWavetableByte,
-    
-//ADDED HERE!
-//    eWavetableByte,
-
 #if 0
     //---- get param descriptor
   /// param descriptors in aleph-module.dsc
@@ -139,7 +137,13 @@ typedef enum {
   eModuleVersionRev0,
   eModuleVersionRev1,
     
-  eNumSpiBytes
+    eBufferSize0,
+    eBufferSize1,
+    eBufferSize2,
+    eBufferSize3,
+    eBufferFill,
+    
+    eNumSpiBytes
 } eSpiByte;
 
 #endif

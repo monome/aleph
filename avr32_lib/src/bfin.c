@@ -18,14 +18,12 @@
 // aleph/common
 #include "module_common.h"
 #include "param_common.h"
-#include "buffer_common.h"
 #include "protocol.h"
 
 // aleph/avr32
 #include "aleph_board.h"
 #include "app.h"
 #include "filesystem.h"
-//#include "flash.h"
 #include "global.h"
 #include "interrupts.h"
 #include "types.h"
@@ -38,8 +36,6 @@
 static void bfin_start_transfer(void);
 static void bfin_end_transfer(void); 
 static void bfin_transfer_byte(u8 data);
-
-//u64 bytecount;
 
 //---------------------------------------
 //--- external function definition
@@ -94,49 +90,6 @@ void bfin_load_buf(void) {
  
   app_resume();
 }
-
-
-void bfin_load_wavbuf(void) {
-    u64 bytecount;
-    
-//    if(bfinWaveSize > BFIN_WAVE_MAX_BYTES) {
-//        print_dbg("\r\n bfin load error: size : ");
-//        print_dbg_hex(bfinWaveSize);
-//    }
-
-    app_pause();
-    print_dbg("\r\n starting wave transfer... ");
-    
-    gpio_set_gpio_pin(BFIN_RESET_PIN);
-    delay_ms(1);
-    gpio_clr_gpio_pin(BFIN_RESET_PIN);
-    delay_ms(1);
-    gpio_set_gpio_pin(BFIN_RESET_PIN);
-    delay_ms(1);
-    
-    for(bytecount=0; bytecount < bfinWaveSize; bytecount++) {
-        bfin_wait();
-        spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-        spi_write(BFIN_SPI, MSG_GET_PARAM_DESC_COM);
-        spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-        
-        bfin_wait();
-        spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-        spi_write(BFIN_SPI, bytecount);
-        spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-        
-        bfin_wait();
-        spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-        spi_write(BFIN_SPI, bfinWaveData[bytecount]);
-        spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-        
-//        print_dbg("\r\n");
-//        print_dbg_hex(bfinWaveData[bytecount]);
-    }
-
-    app_resume();
-}
-
 
 //void bfin_set_param(u8 idx, f32 x ) {
 void bfin_set_param(u8 idx, fix16_t x ) {
@@ -363,6 +316,35 @@ void bfin_get_module_version(ModuleVersion* vers) {
   app_resume();
 }
 
+/*
+//start wav transfer
+void bfin_start_wavtransfer(void) {
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, MSG_START_TRANSFER_COM);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+}
+
+//transfer wav as 4 byte values
+void bfin_transfer_wavbytes(s32 wav) {
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, MSG_TRANSFER_BYTE_COM);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    
+}
+*/
+/*
+ void bfin_set_prgmbyte(u8 data) {
+ spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+ spi_write(BFIN_SPI, MSG_GET_PARAM_DESC_COM);
+ spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+ 
+ spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+ spi_write(BFIN_SPI, data);
+ spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+ }
+ */
+
 
 void bfin_enable(void) {
   // enable audio processing
@@ -376,6 +358,13 @@ void bfin_disable(void) {
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, MSG_DISABLE_AUDIO);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+}
+
+void bfin_set_trig(void) {
+    //  called on trig from adc0, calls module_set_trig()
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, MSG_SET_TRIG_COM);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 }
 
 //---------------------------------------------
@@ -459,4 +448,58 @@ s32 bfin_get_param(u8 idx) {
 
   return pval.asInt;
   
+}
+
+// fill s32 audio buffer
+void bfin_fill_buffer(volatile u8 *src, u32 bytes) {
+    u32 bytecount;
+    ParamValueSwap bsize;
+    bsize.asInt = bytes;
+
+    print_dbg("\r\n spi MSG_FILL_BUFFER_COM");
+    
+//    app_pause();
+    
+    // command
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, MSG_FILL_BUFFER_COM);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    // send size
+    // val0
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, bsize.asByte[0]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+    // val1
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, bsize.asByte[1]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+    // val2
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, bsize.asByte[2]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+    // val3
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, bsize.asByte[3]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    // bytefill buffer
+    for (bytecount=0; bytecount < bytes; bytecount++)
+    {
+        spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        spi_write(BFIN_SPI, src[bytecount]);
+        spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        
+//        print_dbg("\r\n src[bytecount] ");
+//        print_dbg_ulong(src[bytecount]);
+    }
+    
+//    app_resume();
 }

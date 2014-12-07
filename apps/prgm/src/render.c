@@ -244,8 +244,8 @@ void render_mode(u8 chan, s32 name) {
         "loop",     //6
         "scrub",    //7
         "noise",    //8
-        "recin0",   //9
-        "TGrecin1"  //10
+        "recin1",   //9
+        "TGrecin2"  //10
     };
     
     region_string(&env[chan], "████████", 0, 8, 0, 0, 0);

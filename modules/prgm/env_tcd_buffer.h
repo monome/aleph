@@ -10,7 +10,7 @@ env_tcd_buffer.h
 #include "types.h"
 
 #define INPUT_BUF_FRAMES 0xBB800 //16 seconds
-#define INPUT_BUF_FRAMES_1 (INPUT_BUF_FRAMES - 1) //16 seconds
+#define SAMPLE_BUF_FRAMES 0x12000 //0xBB800 //16 seconds
 
 //SDRAM mono audiobuffer
 typedef struct _inputBuffer {
@@ -34,6 +34,7 @@ typedef struct _bufferHead {
 extern void buffer_init(inputBuffer *buf, volatile fract32 *data, u32 frames);
 
 //init head
+//extern void buffer_head_init(bufferHead *head, inputBuffer *buf);
 extern void buffer_head_init(bufferHead *head, inputBuffer *buf);
 
 //set head position

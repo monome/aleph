@@ -12,10 +12,7 @@
 //prgm parameters
 
 typedef enum params {
-    eParamTrig0,
-    eParamTrig1,
-    eParamTrig2,
-    eParamTrig3,
+    eParamTrig,
 
     eParamFlag0,
     eParamFlag1,
@@ -51,6 +48,9 @@ typedef enum params {
     eParamX1,
     eParamX2,
     eParamX3,
+    
+    eParamTest,
+    eParamCounter,
     
     eParamNumParams
 } eParam;

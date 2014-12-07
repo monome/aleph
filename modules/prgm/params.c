@@ -4,29 +4,11 @@
 
 void fill_param_desc(ParamDesc *desc) {
     //  Trig
-    strcpy(desc[eParamTrig0].label, "trig0");
-    desc[eParamTrig0].type = eParamTypeBool;
-    desc[eParamTrig0].min = 0;
-    desc[eParamTrig0].max = 1;
-    desc[eParamTrig0].radix = BOOL_RADIX;
-    
-    strcpy(desc[eParamTrig1].label, "trig1");
-    desc[eParamTrig1].type = eParamTypeBool;
-    desc[eParamTrig1].min = 0;
-    desc[eParamTrig1].max = 1;
-    desc[eParamTrig1].radix = BOOL_RADIX;
-    
-    strcpy(desc[eParamTrig2].label, "trig2");
-    desc[eParamTrig2].type = eParamTypeBool;
-    desc[eParamTrig2].min = 0;
-    desc[eParamTrig2].max = 1;
-    desc[eParamTrig2].radix = BOOL_RADIX;
-    
-    strcpy(desc[eParamTrig3].label, "trig3");
-    desc[eParamTrig3].type = eParamTypeBool;
-    desc[eParamTrig3].min = 0;
-    desc[eParamTrig3].max = 1;
-    desc[eParamTrig3].radix = BOOL_RADIX;
+    strcpy(desc[eParamTrig].label, "trig");
+    desc[eParamTrig].type = eParamTypeFix;
+    desc[eParamTrig].min = 0x00000000;
+    desc[eParamTrig].max = FR32_MAX;
+    desc[eParamTrig].radix = FIX_RADIX;
 
     //  Flag
     strcpy(desc[eParamFlag0].label, "flag0");
@@ -202,4 +184,16 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamX3].min = 0x00000000;
     desc[eParamX3].max = FR32_MAX;
     desc[eParamX3].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamTest].label, "test");
+    desc[eParamTest].type = eParamTypeFix;
+    desc[eParamTest].min = 0x00000000;
+    desc[eParamTest].max = FR32_MAX;
+    desc[eParamTest].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamCounter].label, "counter");
+    desc[eParamCounter].type = eParamTypeFix;
+    desc[eParamCounter].min = 0x00000000;
+    desc[eParamCounter].max = FR32_MAX;
+    desc[eParamCounter].radix = FIX_RADIX;
 }

@@ -1,4 +1,4 @@
-PRGM beta 0.0.3 for Aleph
+PRGM beta 0.0.4 for Aleph
 
 install/filecopy to SD-CARD (ALEPH):
 aleph-prgm.hex -> ALEPH/app/
@@ -22,13 +22,13 @@ foot1               play step+1
 foot2               play return to 1
 
 page PARAM
-parameters
+parameters/mode-based editing
 
 page CURVE
 encoders            trig
 encoders + sw0      curve/mode
 encoders + sw1      time
-
+encoder0 + sw2      play/play reverse
 
 
 sound examples @ https://soundcloud.com/epla

@@ -25,6 +25,10 @@ this is where callbacks are declared for all application-specific software timer
 #include "app_timers.h"
 #include "render.h"
 
+//trig
+#include "bfin.h"
+
+
 //---------------------------
 //---- static variables
 
@@ -53,19 +57,23 @@ static softTimer_t midiPollTimer = { .next = NULL, .prev = NULL };
 
 //adc polling callback
 static void adc_poll_timer_callback(void* obj) {
-//    adc_poll();
     adc_convert(&adc);
-    
-    u16 i = adc[0];
 
-    if (i < 4)
-//if (i < 10)
+    u16 i = adc[0];
+    
+    //  random|sporous trig filter...
+//    if (i < 4)
+
+    if (!i)
         state = OFF;
 
     else if(state == OFF)
         {
             state = ON;
             
+            //  send spi trig command to bfin (MSG_SET_TRIG_COM)
+            bfin_set_trig();
+/*
             e.type = kEventAdc0;
             e.data = ON;
             event_post(&e);
@@ -73,6 +81,7 @@ static void adc_poll_timer_callback(void* obj) {
             e.type = kEventAdc0;
             e.data = OFF;
             event_post(&e);
+ */
         }
     
     else if(state == ON)

@@ -12,7 +12,7 @@
 #include "ctl.h"
 
 #include "app.h"
-#include "app_timers.h"
+//#include "app_timers.h"
 #include "types.h"
 
 //prgm
@@ -21,20 +21,21 @@
 #include "tracker.h"
 
 //static function declarations
-static void handle_Adc0(s32 trig);
+//static void handle_Adc0(s32 trig);
 static void handle_switch_6(s32 trig);
 static void handle_switch_7(s32 trig);
 
 //external functions
 //init adc timers, called by app_launch()
-void adc_init(void) {
-    timers_set_adc(16);
-}
+//void adc_init(void) {
+//    timers_set_adc(1);
+//}
 
 //static functions
-void handle_Adc0(s32 trig) {
-    play(trig);
-}
+//void handle_Adc0(s32 trig) {
+//    if(trig) bfin_set_trig();
+//    play(trig);
+//}
 
 void handle_switch_6(s32 trig) {
     play(trig);
@@ -45,7 +46,7 @@ void handle_switch_7(s32 trig) {
 }
 
 void assign_prgm_event_handlers(void) {
-    app_event_handlers[ kEventAdc0 ] = &handle_Adc0 ; //trig
+//    app_event_handlers[ kEventAdc0 ] = &handle_Adc0 ; //trig
 //    app_event_handlers[ kEventAdc1 ] = &handle_Adc1 ;
 //    app_event_handlers[ kEventAdc2 ] = &handle_Adc2 ;
 //    app_event_handlers[ kEventAdc3 ] = &handle_Adc3 ;

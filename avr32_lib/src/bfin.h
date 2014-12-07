@@ -15,11 +15,11 @@
 
 // blackfin HWAIT status
 // extern volatile U8 hwait;
-//RAM buffer for wavetables
-volatile u8 *bfinWaveData;
+//buffer for wavetables
+u8 *bfinSampleData;
 
 //size of wavetable
-volatile u32 bfinWaveSize;
+u32 bfinSampleSize;
 
 // 64k is max size of blackfin ldr file
 //#define BFIN_LDR_MAX_BYTES 0x10000 
@@ -27,8 +27,7 @@ volatile u32 bfinWaveSize;
 //0x10000 65536
 //APP_FLASH_BYTES set in flash.h, APP + LDR + WAVE = 0x40000
 #define BFIN_LDR_MAX_BYTES 0x12000
-#define BFIN_WAVE_MAX_BYTES 0x10000
-
+#define BFIN_SAMPLE_MAX_BYTES 0x12000
 
 // wait for busy pin to clear
 void bfin_wait(void);
@@ -61,8 +60,10 @@ void bfin_get_module_version(ModuleVersion* vers);
 
 // become master on spi bus
 extern void bfin_spi_master(void);
+
 // enable audio processing
 extern void bfin_enable(void);
+
 // disable audio processing
 extern void bfin_disable(void);
 
@@ -72,7 +73,10 @@ extern void bfin_wait_ready(void);
 // get param value
 extern s32 bfin_get_param(u8 idx);
 
-//transfer wavetable to bfin
-extern void bfin_load_wavbuf(void);
+//set trig
+extern void bfin_set_trig(void);
+
+//fill buffer
+extern void bfin_fill_buffer(volatile u8 *src, u32 bytes);
 
 #endif // header guard

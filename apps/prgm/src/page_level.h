@@ -8,6 +8,8 @@
 #include "gpio.h"
 #include "print_funcs.h"
 
+#include "util.h"
+
 // common
 #include "fix.h"
 

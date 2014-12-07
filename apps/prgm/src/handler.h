@@ -6,6 +6,6 @@
 
 extern void assign_prgm_event_handlers(void);
 
-extern void adc_init(void);
+//extern void adc_init(void);
 
 #endif 

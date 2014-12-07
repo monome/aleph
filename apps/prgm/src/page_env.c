@@ -46,9 +46,12 @@ s32 time_knob_accel(s32 inc) {
         return inc;
     }
     if(incAbs < 6) {
-        return inc << 2;
+        return inc << 1; //2
     }
-    return inc << 6;
+    if(incAbs < 32) {
+        return inc << 6;
+    }
+    return inc << 9; //12
 }
 
 void handle_switch_0(s32 data) {
@@ -77,12 +80,14 @@ void handle_switch_3(s32 data) {
         if (counter < length) i = counter;
         else i = counter = 0;
         
+        ctl_param_change(eParamCounter, i);
+        
         if (pageIdx != ePageLevel)
         {
-            print_fix16(renderTrig0, track[0]->trig[i]);
-            print_fix16(renderTrig1, track[1]->trig[i]);
-            print_fix16(renderTrig2, track[2]->trig[i]);
-            print_fix16(renderTrig3, track[3]->trig[i]);
+            print_fix16(renderTrig0, trigs[i].track[0]);
+            print_fix16(renderTrig1, trigs[i].track[1]);
+            print_fix16(renderTrig2, trigs[i].track[2]);
+            print_fix16(renderTrig3, trigs[i].track[3]);
             
             print_fix16(renderTime0, track[0]->t[i]);
             print_fix16(renderTime1, track[1]->t[i]);
@@ -138,11 +143,11 @@ void handle_encoder_0(s32 val) {
         case 0:
             check_touch(kEventEncoder3);
             if (touchedThis) {
-                tmp = track[0]->trig[i];
+                tmp = trigs[i].track[0];
                 tmp += val;
                 if (tmp < 0) tmp = 0;
                 if (tmp > 1) tmp = 1;
-                track[0]->trig[i] = tmp;
+                trigs[i].track[0] = tmp;
                 print_fix16(renderTrig0, tmp);
                 render_trig();
             }
@@ -157,6 +162,8 @@ void handle_encoder_0(s32 val) {
                 if (tmp > N_MODES_1) tmp = N_MODES_1;
                 modetmp0 = tmp;
                 set_mode(track[0], tmp);
+                ctl_param_change(eParamFlag0, track[0]->f[i]);
+                ctl_param_change(eParamCurve0, track[0]->c[i]);
                 render_mode(0, tmp);
                 render_trig();
                 render_time();
@@ -176,6 +183,28 @@ void handle_encoder_0(s32 val) {
                 render_time();
             }
             break;
+            
+        case 3:
+            check_touch(kEventEncoder3);
+            if (touchedThis) {
+                tmp = 0;
+                tmp += val;
+                if (tmp < 0)
+                {
+                    play_reverse(1);
+                    print_fix16(renderCounter, (counter + 1) * 0x00010000);
+                    render_countenv();
+                }
+                else if (tmp > 0)
+                {
+                    gpio_clr_gpio_pin(LED_MODE_PIN);
+                    play(1);
+                    print_fix16(renderCounter, (counter + 1) * 0x00010000);
+                    render_countenv();
+                    gpio_set_gpio_pin(LED_MODE_PIN);
+                }
+            }
+            break;
 
         default:
             break;
@@ -189,11 +218,11 @@ void handle_encoder_1(s32 val) {
         case 0:
             check_touch(kEventEncoder2);
             if (touchedThis) {
-                tmp = track[1]->trig[i];
+                tmp = trigs[i].track[1];
                 tmp += val;
                 if (tmp < 0) tmp = 0;
                 if (tmp > 1) tmp = 1;
-                track[1]->trig[i] = tmp;
+                trigs[i].track[1] = tmp;
                 print_fix16(renderTrig1, tmp);
                 render_trig();
             }
@@ -208,6 +237,8 @@ void handle_encoder_1(s32 val) {
                 if (tmp > N_MODES_1) tmp = N_MODES_1;
                 modetmp1 = tmp;
                 set_mode(track[1], tmp);
+                ctl_param_change(eParamFlag1, track[1]->f[i]);
+                ctl_param_change(eParamCurve1, track[1]->c[i]);
                 render_mode(1, tmp);
                 render_trig();
                 render_time();
@@ -240,11 +271,11 @@ void handle_encoder_2(s32 val) {
         case 0:
             check_touch(kEventEncoder1);
             if (touchedThis) {
-                tmp = track[2]->trig[i];
+                tmp = trigs[i].track[2];
                 tmp += val;
                 if (tmp < 0) tmp = 0;
                 if (tmp > 1) tmp = 1;
-                track[2]->trig[i] = tmp;
+                trigs[i].track[2] = tmp;
                 print_fix16(renderTrig2, tmp);
                 render_trig();
             }
@@ -259,6 +290,8 @@ void handle_encoder_2(s32 val) {
                 if (tmp > N_MODES_1) tmp = N_MODES_1;
                 modetmp2 = tmp;
                 set_mode(track[2], tmp);
+                ctl_param_change(eParamFlag2, track[2]->f[i]);
+                ctl_param_change(eParamCurve2, track[2]->c[i]);
                 render_mode(2, tmp);
                 render_trig();
                 render_time();
@@ -291,11 +324,11 @@ void handle_encoder_3(s32 val) {
         case 0:
             check_touch(kEventEncoder0);
             if (touchedThis) {
-                tmp = track[3]->trig[i];
+                tmp = trigs[i].track[3];
                 tmp += val;
                 if (tmp < 0) tmp = 0;
                 if (tmp > 1) tmp = 1;
-                track[3]->trig[i] = tmp;
+                trigs[i].track[3] = tmp;
                 print_fix16(renderTrig3, tmp);
                 render_trig();
             }
@@ -310,6 +343,8 @@ void handle_encoder_3(s32 val) {
                 if (tmp > N_MODES_1) tmp = N_MODES_1;
                 modetmp3 = tmp;
                 set_mode(track[3], tmp);
+                ctl_param_change(eParamFlag3, track[3]->f[i]);
+                ctl_param_change(eParamCurve3, track[3]->c[i]);
                 render_mode(3, tmp);
                 render_trig();
                 render_time();

@@ -10,7 +10,6 @@
 
 #include "module_common.h"
 #include "param_common.h"
-#include "buffer_common.h"
 #include "types.h"
 
 #define SDRAM_ADDRESS 0x00000000
@@ -18,6 +17,7 @@
 #ifndef SAMPLERATE
   #define SAMPLERATE    48000
 #endif
+#define MODULE_BUFFER_LOCATION gModuleData->...
 
 //-----------------------
 //---- module descriptor
@@ -25,7 +25,11 @@ typedef struct _moduleData {
     char name[MODULE_NAME_LEN];
     ParamData *paramData; 
     u16 numParams;
+    s32 *sampleBuffer;
+    u32 sampleBufferSize;
+    
 } ModuleData;
+
 
 //---------
 // global pointer to module descriptor
@@ -50,7 +54,7 @@ extern void module_set_param(u32 idx, ParamValue val);
 // get number of parameters
 extern u32 module_get_num_params(void);
 
-// set wave
-extern void module_load_wavetable(u8 spos, s32 tpos, fract32 wav);
+//  set trig
+extern void module_set_trig(void);
 
 #endif // header guard

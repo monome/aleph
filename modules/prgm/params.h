@@ -7,10 +7,7 @@
 #define BOOL_RADIX 2
 
 enum params {
-    eParamTrig0,
-    eParamTrig1,
-    eParamTrig2,
-    eParamTrig3,
+    eParamTrig,
 
     eParamFlag0,
     eParamFlag1,
@@ -46,6 +43,9 @@ enum params {
     eParamX1,
     eParamX2,
     eParamX3,
+    
+    eParamTest,
+    eParamCounter,
     
     eParamNumParams
 };

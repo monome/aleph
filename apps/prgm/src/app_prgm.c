@@ -25,11 +25,15 @@
 
 //hardware init, all memory allocations go here
 void app_init(void) {
+    samples_init();
+    
     scale_init();
 
     render_init();
     
     tracker_init();
+    
+    samplebuffer_init();
 }
 
 //dsp init
@@ -37,14 +41,18 @@ u8 app_launch(u8 firstrun) {
 if(firstrun) {
     print_dbg("\r\n app_launch firstrun...");    
 
+    files_load_samples(0);
+    
     files_load_dsp();
-
+    
     bfin_wait_ready();
     
 } else {
     print_dbg("\r\n app_launch NOT firstrun...");
+    files_load_samples(0);
+    
     files_load_dsp();
-
+    
     bfin_wait_ready();
 }
     pages_init();
@@ -58,6 +66,9 @@ if(firstrun) {
     render_startup();
     
     assign_prgm_event_handlers();
+    
+//    print_dbg("\r\n sizeof prgmTrack");
+//    print_dbg_ulong(sizeof(prgmTrack));
     
     print_dbg("\r\n return 1...");
     return 1;

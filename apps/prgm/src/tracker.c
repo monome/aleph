@@ -13,6 +13,11 @@
 static prgmTrackptr alloc_track(void);
 static void track_init_param(prgmTrack *t);
 
+//set adc timers, called by app_launch()
+void adc_init(void) {
+    timers_set_adc(1);
+}
+
 modeflag off = { .have_time = 0, .have_pL = 0, .have_pP = 0, .have_pF = 0, .pF_have_scale = 0, .have_pX = 0 };
 modeflag HOLD = { .have_time = 0, .have_pL = 0, .have_pP = 0, .have_pF = 1, .pF_have_scale = 0, .have_pX= 0 };
 //modeflag justHOLD = { .have_time = 0, .have_pL = 0, .have_pP = 0, .have_pF = 1, .pF_have_scale = 1, .have_pX= 0 };
@@ -24,8 +29,8 @@ modeflag one = { .have_time = 1, .have_pL = 0, .have_pP = 1, .have_pF = 0, .pF_h
 modeflag loop = { .have_time = 1, .have_pL = 0, .have_pP = 1, .have_pF = 0, .pF_have_scale = 0, .have_pX = 0 };
 modeflag scrub = { .have_time = 1, .have_pL = 0, .have_pP = 1, .have_pF = 0, .pF_have_scale = 0, .have_pX = 0 };
 modeflag noise = { .have_time = 1, .have_pL = 0, .have_pP = 0, .have_pF = 0, .pF_have_scale = 0, .have_pX = 1 };
-modeflag recin0 = { .have_time = 1, .have_pL = 0, .have_pP = 0, .have_pF = 0, .pF_have_scale = 0, .have_pX = 0 };
-modeflag TGrecin1 = { .have_time = 1, .have_pL = 0, .have_pP = 0, .have_pF = 0, .pF_have_scale = 0, .have_pX = 0 };
+modeflag recin1 = { .have_time = 1, .have_pL = 0, .have_pP = 0, .have_pF = 0, .pF_have_scale = 0, .have_pX = 0 };
+modeflag TGrecin2 = { .have_time = 1, .have_pL = 0, .have_pP = 0, .have_pF = 0, .pF_have_scale = 0, .have_pX = 0 };
 
 prgmTrackptr alloc_track(void) {
     return(prgmTrackptr)alloc_mem(sizeof(prgmTrack));
@@ -35,7 +40,6 @@ void track_init_param(prgmTrack *t) {
     u8 i;
     for(i=0;i<SQ_LEN;i++)
     {
-        t->trig[i] = 0;                 //trig | eParamTrig
         t->m[i] = 0;                    //mode
         t->modename[i] = 0;             //modename
         t->f[i] = 0;                    //process flag | eParamFlag
@@ -49,8 +53,8 @@ void track_init_param(prgmTrack *t) {
         t->pFs[i] = 0;                  //scaled frequency
         t->pX[i] = 0;                   //x
     }
-    
-    //for mode switch case statement...
+
+    //  MUST init here! why?! for mode switch case statement...
     modetmp0 = 0;
     modetmp1 = 0;
     modetmp2 = 0;
@@ -64,10 +68,13 @@ void tracker_init(void) {
     {
         track[i] = alloc_track();
         track_init_param(track[i]);
+        trigs[i].packed = 0;            //trig | eParamTrig
     }
-
+    
     counter = 0;
     length = SQ_LEN;
+    
+    testvalptr = 0;
 }
 
 void set_mode (prgmTrack *track, s32 m) {
@@ -141,14 +148,14 @@ void set_mode (prgmTrack *track, s32 m) {
             break;
             
         case 9: //recin0
-            track->m[i] = &recin0;
+            track->m[i] = &recin1;
             track->f[i] = 1;
             track->c[i] = 7;
             track->modename[i] = 9;
             break;
             
         case 10: //tgrecin1
-            track->m[i] = &TGrecin1;
+            track->m[i] = &TGrecin2;
             track->f[i] = 3;
             track->c[i] = 8;
             track->modename[i] = 10;
@@ -169,12 +176,74 @@ u8 get_mode(prgmTrack *track, u8 i) {
     else if (track->m[i] == &loop) return 6;
     else if (track->m[i] == &scrub) return 7;
     else if (track->m[i] == &noise) return 8;
-    else if (track->m[i] == &recin0) return 9;
-    else if (track->m[i] == &TGrecin1) return 10;
+    else if (track->m[i] == &recin1) return 9;
+    else if (track->m[i] == &TGrecin2) return 10;
     
     else return 0;
 }
 
+void play(s32 trig) {
+    if (trig)
+    {
+        bfin_set_trig();
+/*
+        u8 i;
+        
+        //  update counter
+        counter++;
+        if (counter < length) i = counter;
+        else i = counter = 0;
+
+        //  send parameters
+        ctl_param_change(eParamCounter, i);
+        ctl_param_change(eParamTrig, trigs[i].packed);
+    }
+*/
+    }
+}
+
+void play_reverse(s32 trig) {
+    if (trig)
+    {
+        u8 i;
+        
+        //  update counter
+        counter--;
+        if (counter < 0) i = counter = length;
+        else if (counter > length) i = counter = length - 1;
+        else i = counter;
+        
+        //  send parameters
+        ctl_param_change(eParamCounter, i);
+        ctl_param_change(eParamTrig, trigs[i].packed);
+    }
+}
+
+void return_to_one(s32 trig) {
+    if (trig)
+    {
+        u8 i;
+        
+        //  zero counter
+        i = counter = 0;
+
+        //  send parameters
+        ctl_param_change(eParamCounter, i);
+        ctl_param_change(eParamTrig, trigs[i].packed);
+    }
+}
+
+void play_step(s32 trig) {
+    if (trig)
+    {
+        gpio_clr_gpio_pin(LED_MODE_PIN);
+        u8 i = counter;
+        ctl_param_change(eParamTrig, trigs[i].packed);
+        gpio_set_gpio_pin(LED_MODE_PIN);
+    }
+}
+
+/*
 void play(s32 trig) {
     if (trig)
     {
@@ -192,7 +261,7 @@ void play(s32 trig) {
         {
             prgmTrack *trk = track[n];
             
-            if (trk->trig[i])
+            if (trigs[i].track[n])
             {
                 ctl_param_change(eParamFlag0 + n, trk->f[i]);
                 ctl_param_change(eParamCurve0 + n, trk->c[i]);
@@ -206,10 +275,11 @@ void play(s32 trig) {
                     else ctl_param_change(eParamF0 + n, trk->pF[i]);
                 }
                 if (trk->m[i]->have_pX) ctl_param_change(eParamX0 + n, trk->pX[i]);
-                
-                ctl_param_change(eParamTrig0 + n, 1);
             }
         }
+        
+        //  send trigs
+        ctl_param_change(eParamTrig, trigs[i].packed);
         
         //  render counters
         print_fix16(renderCounter, (i + 1) * 0x00010000);
@@ -219,87 +289,4 @@ void play(s32 trig) {
 //        gpio_set_gpio_pin(LED_MODE_PIN);
     }
 }
-
-void return_to_one(s32 trig) {
-    if (trig)
-    {
-//        gpio_clr_gpio_pin(LED_MODE_PIN);
-        
-        u8 i, n;
-        
-        //  zero counter
-        i = counter = 0;
-        
-        //  send parameters
-        for (n = 0; n < N_SQ; n++)
-        {
-            prgmTrack *trk = track[n];
-            
-            if (trk->trig[i])
-            {
-                ctl_param_change(eParamFlag0 + n, trk->f[i]);
-                ctl_param_change(eParamCurve0 + n, trk->c[i]);
-                
-                if (trk->m[i]->have_time) ctl_param_change(eParamTime0 + n, trk->t[i]);
-                if (trk->m[i]->have_pL) ctl_param_change(eParamL0 + n, trk->pL[i]);
-                if (trk->m[i]->have_pP) ctl_param_change(eParamP0 + n, trk->pP[i]);
-                if (trk->m[i]->have_pF)
-                {
-                    if(trk->m[i]->pF_have_scale) ctl_param_change(eParamF0 + n, trk->pFs[i]);
-                    else ctl_param_change(eParamF0 + n, trk->pF[i]);
-                }
-                if (trk->m[i]->have_pX) ctl_param_change(eParamX0 + n, trk->pX[i]);
-                
-                ctl_param_change(eParamTrig0 + n, 1);
-            }
-        }
-        
-        //  render counters
-        print_fix16(renderCounter, (i + 1) * 0x00010000);
-        if (pageIdx != ePageEnv) render_countlev();
-        else render_countenv();
-        
-//        gpio_set_gpio_pin(LED_MODE_PIN);
-    }
-}
-
-void play_step(s32 trig) {
-    if (trig)
-    {
-        gpio_clr_gpio_pin(LED_MODE_PIN);
-        
-        u8 i, n;
-        i = counter;
-
-        //  send parameters
-        for (n = 0; n < N_SQ; n++)
-        {
-            prgmTrack *trk = track[n];
-            
-            if (trk->trig[i])
-            {
-                ctl_param_change(eParamFlag0 + n, trk->f[i]);
-                ctl_param_change(eParamCurve0 + n, trk->c[i]);
-                
-                if (trk->m[i]->have_time) ctl_param_change(eParamTime0 + n, trk->t[i]);
-                if (trk->m[i]->have_pL) ctl_param_change(eParamL0 + n, trk->pL[i]);
-                if (trk->m[i]->have_pP) ctl_param_change(eParamP0 + n, trk->pP[i]);
-                if (trk->m[i]->have_pF)
-                {
-                    if(trk->m[i]->pF_have_scale) ctl_param_change(eParamF0 + n, trk->pFs[i]);
-                    else ctl_param_change(eParamF0 + n, trk->pF[i]);
-                }
-                if (trk->m[i]->have_pX) ctl_param_change(eParamX0 + n, trk->pX[i]);
-                
-                ctl_param_change(eParamTrig0 + n, 1);
-            }
-        }
-        
-        //  render counters
-        print_fix16(renderCounter, (i + 1) * 0x00010000);
-        if (pageIdx != ePageEnv) render_countlev();
-        else render_countenv();
-        
-        gpio_set_gpio_pin(LED_MODE_PIN);
-    }
-}
+*/

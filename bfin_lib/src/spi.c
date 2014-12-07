@@ -8,213 +8,173 @@
 #include "util.h"
 #include "spi.h"
 
+
 // byte to process
 static eSpiByte byte = eCom;
 // current command
 static u8 com;
 // current param index
 static u8 idx;
+// current buffer size in s32 wordsize
+static u32 buffersize;
+// tmp word
+static ParamValueSwap word;
+// fill count
+static u32 fillcount;
+// byte count
+static u8 bytecount;
 
 static void spi_set_param(u32 idx, ParamValue pv) {
-  gModuleData->paramData[idx].value = pv;
-  module_set_param(idx, pv);
+    gModuleData->paramData[idx].value = pv;
+    module_set_param(idx, pv);
 }
 
-static void spi_set_pos(u8 num);
-static void spi_set_byte(u8 val);
-
-//count of receive bytes
-static s32 byteCount;
-//byte position
-static u8 bytepos;
-//waveshape position
-static u8 shapepos;
-//wavetable position
-static s32 tabpos;
-
-void spi_set_pos(u8 num) {
-    if(num == 0) {
-        byteCount = num;
-
-        bytepos = 0;
-        shapepos = 0;
-        tabpos = 0;
+static void spi_fill_buffer(u8 byte) {
+    if (bytecount == 0)
+    {
+        bytecount = 1;
+        word.asByte[3] = byte;
     }
-    else if(tabpos < 2048) {
-        byteCount = num;
-        shapepos = 0;
+    else if (bytecount == 1)
+    {
+        bytecount = 2;
+        word.asByte[2] = byte;
     }
-    else if(tabpos < 4096) {
-        byteCount = num;
-        shapepos = 1;
+    else if (bytecount == 2)
+    {
+        bytecount = 3;
+        word.asByte[1] = byte;
     }
-    else
-        bytepos = 0;
-}
-
-void spi_set_byte(u8 wavbyte) {
-    if(bytepos == 0) {
-        tabpos = byteCount/4;
-        wavebuffer[tabpos].spos = shapepos;
-        wavebuffer[tabpos].tpos = tabpos;
-        wavebuffer[tabpos].wav = wavbyte;
-        bytepos = 1;
-    }
-    
-    else if(bytepos == 1) {
-        wavebuffer[tabpos].wav += (fract32)wavbyte << 8;
-        bytepos = 2;
-    }
-    
-    else if(bytepos == 2) {
-        wavebuffer[tabpos].wav += (fract32)wavbyte << 16;
-        bytepos = 3;
-    }
-    
-    else if(bytepos == 3) {
-        wavebuffer[tabpos].wav += (fract32)wavbyte << 24;
-        bytepos = 0;
-        
-        module_load_wavetable(wavebuffer[tabpos].spos, wavebuffer[tabpos].tpos, wavebuffer[tabpos].wav);
+    else if (bytecount == 3)
+    {
+        bytecount = 0;
+        word.asByte[0] = byte;
+        gModuleData->sampleBuffer[fillcount] = word.asInt;
+        fillcount++;
     }
 }
-
 
 //------- function definitions
 // deal with new data in the spi rx ringbuffer
 // return byte to load for next MISO
 u8 spi_process(u8 rx) {
-  static ParamValueSwap pval;
+    static ParamValueSwap pval;
 
-  switch(byte) {
-    /// caveman style case statement
-  case eCom :
-    com = rx;
+    switch(byte) {
+    //  caveman style case statement
+        case eCom :
+            com = rx;
+            
     switch(com) {
-    case MSG_SET_PARAM_COM:
-      byte = eSetParamIdx;
-      break;
-    case MSG_GET_PARAM_COM:
-      byte = eGetParamIdx;
-      break;
-    case MSG_GET_NUM_PARAMS_COM:
-      byte = eNumParamsVal;
-      return gModuleData->numParams; // load num params
-      break;
-
-    case MSG_GET_PARAM_DESC_COM:
-      byte = eWavetablePos;
-      break;
-
-    case MSG_GET_MODULE_NAME_COM:
-      byte = eModuleName0;
-      return gModuleData->name[0];
-      break;
-
-    case MSG_GET_MODULE_VERSION_COM:
-      byte = eModuleVersionMaj;
-      return MAJ;
-      break;
-
-    case MSG_ENABLE_AUDIO:
-      processAudio = 1;
-      return processAudio;
-      break;
-    case MSG_DISABLE_AUDIO:
-      processAudio = 0;
-      return processAudio;
-      break;
+        case MSG_SET_PARAM_COM :
+            byte = eSetParamIdx;
+            break;
+        case MSG_GET_PARAM_COM :
+            byte = eGetParamIdx;
+            break;
+        case MSG_GET_NUM_PARAMS_COM :
+            byte = eNumParamsVal;
+            return gModuleData->numParams; // load num params
+            break;
+//  case MSG_GET_PARAM_DESC_COM:
+        case MSG_GET_MODULE_NAME_COM :
+            byte = eModuleName0;
+            return gModuleData->name[0];
+            break;
+        case MSG_GET_MODULE_VERSION_COM :
+            byte = eModuleVersionMaj;
+            return MAJ;
+            break;
+        case MSG_ENABLE_AUDIO :
+            processAudio = 1;
+            return processAudio;
+            break;
+        case MSG_DISABLE_AUDIO :
+            processAudio = 0;
+            return processAudio;
+            break;
+        case MSG_SET_TRIG_COM :
+            //  call module trig function
+            module_set_trig();
+            break;
+        case MSG_FILL_BUFFER_COM :
+            byte = eBufferSize0;
+            break;
             
-//    case MSG_SET_WAVETABLE:
-//        byte = eWavetableByte;
-//        break;
-            
-    default:
-      break;
+        default:
+            break;
     }
     return 0;
     break;
 
-    //---- set param
-  case eSetParamIdx :
-    idx = rx; // set index
-    byte = eSetParamData0;
-    return 0; // dont care
-    break;
-  case eSetParamData0 :
-    byte = eSetParamData1;
-    // byte-swap from BE on avr32
-    pval.asByte[3] = rx; // set paramval
-    return 0; // don't care
-    break;
-  case eSetParamData1 :
-    byte = eSetParamData2;
-    // byte-swap from BE on avr32
-    pval.asByte[2] = rx; // set paramval
-    return 0; // don't care
-    break;
-  case eSetParamData2 :
-    byte = eSetParamData3;
-    // byte-swap from BE on avr32
-    pval.asByte[1] = rx; // set paramval
-    return 0; // don't care
-    break;
-  case eSetParamData3 :
-    // byte-swap from BE on avr32
-    pval.asByte[0] = rx; // set paramval
-    spi_set_param(idx, pval.asInt);
-    byte = eCom; //reset
-    return 0; // don't care
-    break;
+        //  set param
+        case eSetParamIdx :
+            //  set index
+            idx = rx;
+            byte = eSetParamData0;
+            return 0;
+            break;
+        case eSetParamData0 :
+            byte = eSetParamData1;
+            //  byte-swap from BE on avr32
+            //  set paramval
+            pval.asByte[3] = rx;
+            return 0;
+            break;
+        case eSetParamData1 :
+            byte = eSetParamData2;
+            pval.asByte[2] = rx;
+            return 0;
+            break;
+        case eSetParamData2 :
+            byte = eSetParamData3;
+            pval.asByte[1] = rx;
+            return 0;
+            break;
+        case eSetParamData3 :
+            pval.asByte[0] = rx;
+            spi_set_param(idx, pval.asInt);
+            //  reset
+            byte = eCom;
+            return 0;
+            break;
     
-    //---- get param
-  case eGetParamIdx :
-    idx = rx; // set index
-    byte = eGetParamData0;
-    pval.asInt = gModuleData->paramData[idx].value;
-    // byte-swap from BE on avr32
-    return pval.asByte[3];
-    break;
+        //  get param
+        case eGetParamIdx :
+            //  set index
+            idx = rx;
+            byte = eGetParamData0;
+            pval.asInt = gModuleData->paramData[idx].value;
+            //  byte-swap from BE on avr32
+            return pval.asByte[3];
+            break;
 
-  case eGetParamData0 :
-    byte = eGetParamData1;
-    // byte-swap from BE on avr32
-    return pval.asByte[2];
-    break;
-  case eGetParamData1 :
-    byte = eGetParamData2;
-    // byte-swap from BE on avr32
-    return pval.asByte[1];
-    break;
-  case eGetParamData2 :
-    byte = eGetParamData3;
-    // byte-swap from BE on avr32
-    return pval.asByte[0];
-    break;
-  case eGetParamData3 :
-    byte = eCom; //reset
-    return 0; // don't care
-    break;
+        case eGetParamData0 :
+            byte = eGetParamData1;
+            return pval.asByte[2];
+            break;
+        case eGetParamData1 :
+            byte = eGetParamData2;
+            return pval.asByte[1];
+            break;
+        case eGetParamData2 :
+            byte = eGetParamData3;
+            return pval.asByte[0];
+            break;
+        case eGetParamData3 :
+            //  reset
+            byte = eCom;
+            return 0;
+            break;
 
-    //---- get num params
-  case eNumParamsVal :
-    byte = eCom; //reset
-    return 0; // don't care 
-    break;
+        //  get num params
+        case eNumParamsVal :
+            //  reset
+            byte = eCom;
+            return 0;
+            break;
           
-      case eWavetablePos:
-          spi_set_pos(rx);
-          byte = eWavetableByte;
-          return 0; // dont care
-          break;
-
-      case eWavetableByte:
-          spi_set_byte(rx);
-          byte = eCom; //reset
-          return 0; // don't care
-          break;
-
-    //---- get param descriptor
+//  get param descriptor
 #if 0
   /* case eParamDescIdx : */
   /*   byte = eParamDescLabel0; */
@@ -494,10 +454,54 @@ u8 spi_process(u8 rx) {
     byte = eCom; // reset
     return 0;    // don't care
     break;
-          
-      default:
-          byte = eCom; //reset
-          return 0;
-          break;
+            
+        case eBufferSize0 :
+            byte = eBufferSize1;
+            //  byte-swap from BE on avr32
+            //  set buffer size
+            pval.asByte[3] = rx;
+            return 0;
+            break;
+        case eBufferSize1 :
+            byte = eBufferSize2;
+            pval.asByte[2] = rx;
+            return 0;
+            break;
+        case eBufferSize2 :
+            byte = eBufferSize3;
+            pval.asByte[1] = rx;
+            return 0;
+            break;
+        case eBufferSize3 :
+            byte = eBufferFill;
+            pval.asByte[0] = rx;
+            buffersize = pval.asInt;
+            fillcount = 0;
+            bytecount = 0;
+            return 0;
+            break;
+        case eBufferFill :
+            if (fillcount < buffersize * sizeof(s32))
+            {
+                byte = eBufferFill;
+                //  byte-swap from BE on avr32
+                //  fill buffer
+                spi_fill_buffer(rx);
+                return 0;
+                break;
+            }
+            else
+            {
+                //  reset
+                byte = eCom;
+                gModuleData->sampleBufferSize = buffersize;
+                return 0;
+                break;
+            }
+            
+        default:
+            byte = eCom; //reset
+            return 0;
+            break;
     }
 }

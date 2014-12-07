@@ -80,6 +80,8 @@ void handle_switch_3(s32 data) {
         if (counter < length) i = counter;
         else i = counter = 0;
         
+        ctl_param_change(eParamCounter, i);
+        
         if (pageIdx != ePageEnv)
         {
             print_fix16(renderL0, track[0]->pL[i]);
@@ -117,10 +119,10 @@ void handle_switch_4(s32 data) {
         set_page(ePageEnv);
         u8 i = counter;
         
-        print_fix16(renderTrig0, track[0]->trig[i]);
-        print_fix16(renderTrig1, track[1]->trig[i]);
-        print_fix16(renderTrig2, track[2]->trig[i]);
-        print_fix16(renderTrig3, track[3]->trig[i]);
+        print_fix16(renderTrig0, trigs[i].track[0]);
+        print_fix16(renderTrig1, trigs[i].track[1]);
+        print_fix16(renderTrig2, trigs[i].track[2]);
+        print_fix16(renderTrig3, trigs[i].track[3]);
         
         print_fix16(renderTime0, track[0]->t[i]);
         print_fix16(renderTime1, track[1]->t[i]);
@@ -132,6 +134,12 @@ void handle_switch_4(s32 data) {
         render_env();
     }
     else ;;
+}
+
+static s32 swap_s32 (s32 val) {
+    return ((val << 24) & 0xff000000) | ((val << 8) & 0x00ff0000) | ((val >> 8) & 0x0000ff00) | ((val >> 24) & 0x000000ff);
+    
+//    return ((val&0xff)<<24)+((val&0xff00)<<8)+((val&0xff0000)>>8)+((val>>24)&0xff);
 }
 
 void handle_encoder_0(s32 val) {
@@ -157,6 +165,7 @@ void handle_encoder_0(s32 val) {
         //  one
         else if (get_mode(track[0], i) == 5)
         {
+//SPI
             tmp = track[0]->pP[i];
             tmp += knob_accel(val);
             if (tmp < 0) tmp = 0;
@@ -165,6 +174,24 @@ void handle_encoder_0(s32 val) {
             print_fix16(renderP0, tmp);
             render_row2();
         }
+
+//POINTER TO SDRAM
+/*
+            tmp = track[0]->pP[i];
+            tmp += knob_accel(val);
+            if (tmp < 0) tmp = 0;
+            track[0]->pP[i] = tmp;
+            
+            testvalptr = bfin_get_paramptr();
+            *testvalptr = tmp;
+            
+            print_dbg("\r\n *testvalptr: ");
+            print_dbg_ulong(*testvalptr);
+            
+            print_fix16(renderP0, tmp);
+            render_row2();
+        }
+ */
         //  loop
         else if (get_mode(track[0], i) == 6)
         {
@@ -181,17 +208,15 @@ void handle_encoder_0(s32 val) {
         {
             s32 t;
             tmp = track[0]->pP[i];
-            t = track[0]->t[i];
+            t = tmp + SCRUB_SIZE;
             tmp += knob_accel(val);
             t += knob_accel(val);
-            if (tmp < 0) tmp = 0;
-            if (t < tmp) t = tmp;
-            if (t < 0) t++;
+            if (tmp < 0) { tmp = 0; t = SCRUB_SIZE; }
             track[0]->pP[i] = tmp;
-            track[0]->t[i] = t;
             ctl_param_change(eParamP0, tmp);
             ctl_param_change(eParamTime0, t);
-            ctl_param_change(eParamTrig0, 1);
+//            ctl_param_change(eParamTrig, 1 >> 0xff); TEST!!!
+            ctl_param_change(eParamTrig, (1 >> 24) & 0xff);
             print_fix16(renderP0, tmp);
             render_row2();
         }
@@ -250,17 +275,14 @@ void handle_encoder_1(s32 val) {
         {
             s32 t;
             tmp = track[1]->pP[i];
-            t = track[1]->t[i];
+            t = tmp + SCRUB_SIZE;
             tmp += knob_accel(val);
             t += knob_accel(val);
-            if (tmp < 0) tmp = 0;
-            if (t < tmp) t = tmp;
-            if (t < 0) t++;
+            if (tmp < 0) { tmp = 0; t = SCRUB_SIZE; }
             track[1]->pP[i] = tmp;
-            track[1]->t[i] = t;
             ctl_param_change(eParamP1, tmp);
             ctl_param_change(eParamTime1, t);
-            ctl_param_change(eParamTrig1, 1);
+            ctl_param_change(eParamTrig, (1 >> 16) & 0xff);
             print_fix16(renderP1, tmp);
             render_row2();
         }
@@ -319,17 +341,14 @@ void handle_encoder_2(s32 val) {
         {
             s32 t;
             tmp = track[2]->pP[i];
-            t = track[2]->t[i];
+            t = tmp + SCRUB_SIZE;
             tmp += knob_accel(val);
             t += knob_accel(val);
-            if (tmp < 0) tmp = 0;
-            if (t < tmp) t = tmp;
-            if (t < 0) t++;
+            if (tmp < 0) { tmp = 0; t = SCRUB_SIZE; }
             track[2]->pP[i] = tmp;
-            track[2]->t[i] = t;
             ctl_param_change(eParamP2, tmp);
             ctl_param_change(eParamTime2, t);
-            ctl_param_change(eParamTrig2, 1);
+            ctl_param_change(eParamTrig, (1 >> 8) & 0xff);
             print_fix16(renderP2, tmp);
             render_row2();
         }
@@ -388,17 +407,14 @@ void handle_encoder_3(s32 val) {
         {
             s32 t;
             tmp = track[3]->pP[i];
-            t = track[3]->t[i];
+            t = tmp + SCRUB_SIZE;
             tmp += knob_accel(val);
             t += knob_accel(val);
-            if (tmp < 0) tmp = 0;
-            if (t < tmp) t = tmp;
-            if (t < 0) t++;
+            if (tmp < 0) { tmp = 0; t = SCRUB_SIZE; }
             track[3]->pP[i] = tmp;
-            track[3]->t[i] = t;
             ctl_param_change(eParamP3, tmp);
             ctl_param_change(eParamTime3, t);
-            ctl_param_change(eParamTrig3, 1);
+            ctl_param_change(eParamTrig, 1 & 0xff);
             print_fix16(renderP3, tmp);
             render_row2();
         }
