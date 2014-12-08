@@ -42,29 +42,31 @@ in practice, i needed to tweak the steps a little on 10.7. YMMV.
 ### using `homebrew`
 
 ##### install homebrew
-ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+`ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
 
 
 ##### install xquartz: http://xquartz.macosforge.org
 
 ##### fix permissions
-sudo chown -R $USER:admin /usr/local
+`sudo chown -R $USER:admin /usr/local`
 
-sudo chown -R $USER:admin $(brew --cache)
+`sudo chown -R $USER:admin $(brew --cache)`
 
 
 ##### install packages
-brew install ccache d-bus fontconfig freetype gettext glib gmp icu4c libffi libpng libtasn1 libtiff pkg-config xz hicolor-icon-theme gsettings-desktop-schemas gnutls atk pixman
+`brew install ccache d-bus fontconfig freetype gettext glib gmp icu4c libffi libpng libtasn1 libtiff pkg-config xz hicolor-icon-theme gsettings-desktop-schemas gnutls atk pixman`
 
 ##### (not sure this is necessary)
-brew link --overwrite gsettings-desktop-schemas
+`brew link --overwrite gsettings-desktop-schemas`
 
 ##### install gtk and dependencies
-brew install --build-from-source at-spi2-core at-spi2-atk cairo harfbuzz pango gtk+3 gtk+ librsvg gnome-icon-theme --without-x --without-x11 --with-gtk+3
+`brew install --build-from-source at-spi2-core at-spi2-atk cairo harfbuzz pango gtk+3 gtk+ librsvg gnome-icon-theme --without-x --without-x11 --with-gtk+3`
 
 ### building
 
 at this point, regardless of the build system you used, beekeep should now compile and run:
+
 `cd aleph/utils/beekeep`
 
 `make`
