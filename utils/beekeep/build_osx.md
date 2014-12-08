@@ -71,6 +71,6 @@ at this point, regardless of the build system you used, beekeep should now compi
 
 `make`
 
-`beekeep`
+`./beekeep`
 
 however, i get missing images for spinbox and popup menu widgets. more help troubleshooting this is appreciated.
