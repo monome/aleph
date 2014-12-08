@@ -14,21 +14,29 @@ in practice, i needed to tweak the steps a little on 10.7. YMMV.
 - download and run: https://git.gnome.org/browse/gtk-osx/plain/gtk-osx-build-setup.sh
 
 - add to your PATH (and .bash_profile_)
+
 	`PATH=$PATH/.local/bin``
 	
 - alias jhbuild with the correct prefic for gtk binaries:
+
 	`alias jhbuild="PATH=/Users/[username]/gtk/inst/bin:$PATH jhbuild"`
 
 - run jhbuild modules in this rather specific order:
 	`jhbuild build python`
+	
 	`jhbuild build libpng`
+	
 	`jhbuild build gobject-introspection`
+	
 	`jhbuild update meta-gtk-osx-bootstrap`
+	
 	`jhbuild update meta-gtk-osx-gtk3`
 	
 - finally, you must for some reason add some pkgconfig locations manually:
 	`PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/opt/X11/lib/pkgconfig/`
+	
 	and also, possibly:
+	
 	`PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/Users/[username]/gtk/inst/lib/pkgconfig/`
 
 ### using `homebrew`
@@ -41,6 +49,7 @@ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/
 
 ##### fix permissions
 sudo chown -R $USER:admin /usr/local
+
 sudo chown -R $USER:admin $(brew --cache)
 
 
@@ -57,7 +66,9 @@ brew install --build-from-source at-spi2-core at-spi2-atk cairo harfbuzz pango g
 
 at this point, regardless of the build system you used, beekeep should now compile and run:
 `cd aleph/utils/beekeep`
+
 `make`
+
 `beekeep`
 
 however, i get missing images for spinbox and popup menu widgets. more help troubleshooting this is appreciated.
