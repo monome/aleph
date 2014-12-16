@@ -7,8 +7,9 @@
 typedef struct _prgmData {
     ModuleData super;
     ParamData mParamData[eParamNumParams];
-//    volatile fract32 inputBuffer[N_TRACKS][INPUT_BUF_FRAMES];
+    volatile fract32 inputBuffer[MAX_SAMPLE_SIZE];
 
+    //    volatile fract32 inputBuffer[N_TRACKS][INPUT_BUF_FRAMES];
     s32 sqf[N_TRACKS][SQ_LEN];
     s32 sqc[N_TRACKS][SQ_LEN];
     s32 sqt[N_TRACKS][SQ_LEN];
@@ -17,14 +18,11 @@ typedef struct _prgmData {
 
 ModuleData *gModuleData;
 
-//pointer to SDRAM (all external memory)
+//pointers to SDRAM (all external memory)
 prgmData *data;
 
 //buffers
 inputBuffer inBuf[N_TRACKS];
-
-//sample buffer test
-inputBuffer sampleBuf;
 
 //counter
 u8 counter;
@@ -94,13 +92,13 @@ static inline void param_setup(u32 id, ParamValue v) {
 
 
 void module_init(void) {
-    u32 i, n;
     data = (prgmData*)SDRAM_ADDRESS;
     gModuleData = &(data->super);
     strcpy(gModuleData->name, "aleph-prgm");
     gModuleData->paramData = data->mParamData;
     gModuleData->numParams = eParamNumParams;
     
+    u32 i, n;
     
     for(n=0; n<N_TRACKS; n++)
     {
@@ -109,9 +107,9 @@ void module_init(void) {
 
         pattern[n] = init_sq();
     }
-
-        inputbuffer_init(&sampleBuf, gModuleData->sampleBuffer, gModuleData->sampleBufferSize);
-        buffer_head_init(&(track[0])->envAmp.head, &sampleBuf);
+    
+    buffer_init(&(inBuf[0]), data->inputBuffer, MAX_SAMPLE_SIZE);
+    buffer_head_init(&(track[0])->envAmp.head, &(inBuf[0]));
     
 //        buffer_init(&(inBuf[n]), data->inputBuffer[n], INPUT_BUF_FRAMES);
 //        buffer_head_init(&(track[n])->envAmp.head, &(inBuf[n]));
@@ -129,7 +127,7 @@ void module_init(void) {
         {
             data->sqf[n][i] = 0;
             data->sqc[n][i] = 0;
-//            data->sqt[n][i] = 0;
+            data->sqt[n][i] = 0;
         }
     }
     
@@ -138,7 +136,7 @@ void module_init(void) {
         pattern[n] = pattern[n]->s.ptr;
         
         //zero
-        pattern[n]->s.t = 0;
+//        pattern[n]->s.t = 0;
         pattern[n]->s.pP = 0;
         
         //assign
@@ -157,7 +155,7 @@ void module_deinit(void) {}
 
 
 extern u32 module_get_num_params(void) {
-  return eParamNumParams;
+    return eParamNumParams;
 }
 
 

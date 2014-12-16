@@ -65,7 +65,11 @@ void handle_switch_1(s32 data) {
 void handle_switch_2(s32 data) {
     handle_sw(3, data > 0);
     
-    if(state_sw == 3) play_step(1);
+    if(state_sw == 3)
+    {
+        files_load_samples();
+    }
+//        play_step(1);
 }
 
 void handle_switch_3(s32 data) {

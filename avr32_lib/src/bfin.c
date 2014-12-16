@@ -451,21 +451,31 @@ s32 bfin_get_param(u8 idx) {
 }
 
 // fill s32 audio buffer
-void bfin_fill_buffer(volatile u8 *src, u32 bytes) {
-    u32 bytecount;
+void bfin_fill_buffer(u8 idx, u32 samples, s32 *src) {
+//void bfin_fill_buffer(u8 idx, u32 bytes, const s32 *src) {
+    u32 i;
     ParamValueSwap bsize;
-    bsize.asInt = bytes;
+    ParamValueSwap sample;
 
     print_dbg("\r\n spi MSG_FILL_BUFFER_COM");
-    
-//    app_pause();
-    
+
+app_pause();
+        
     // command
+    bfin_wait();
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
     spi_write(BFIN_SPI, MSG_FILL_BUFFER_COM);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     
+    // send sample idx
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, idx);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
     // send size
+    bsize.asInt = samples;
+
     // val0
     bfin_wait();
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
@@ -491,15 +501,42 @@ void bfin_fill_buffer(volatile u8 *src, u32 bytes) {
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     
     // bytefill buffer
-    for (bytecount=0; bytecount < bytes; bytecount++)
+    for (i=0; i < samples; i++)
     {
+        sample.asInt = *src;
+        sample.asInt = src[i];
+//        print_dbg("\r\n s32 src: ");
+//        print_dbg_ulong(src[i]);
+        
+        // val0
+        bfin_wait();
         spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-        spi_write(BFIN_SPI, src[bytecount]);
+        spi_write(BFIN_SPI, sample.asByte[0]);
+        spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        // val1
+        bfin_wait();
+        spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        spi_write(BFIN_SPI, sample.asByte[1]);
+        spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        //val2
+        bfin_wait();
+        spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        spi_write(BFIN_SPI, sample.asByte[2]);
+        spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        //val3
+        bfin_wait();
+        spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        spi_write(BFIN_SPI, sample.asByte[3]);
         spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
         
-//        print_dbg("\r\n src[bytecount] ");
-//        print_dbg_ulong(src[bytecount]);
+        src++;
     }
     
-//    app_resume();
+    print_dbg("\r\n u8 idx: ");
+    print_dbg_ulong(idx);
+
+    print_dbg("\r\n u32 samples: ");
+    print_dbg_ulong(samples);
+
+app_resume();
 }

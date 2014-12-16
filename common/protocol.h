@@ -137,6 +137,7 @@ typedef enum {
   eModuleVersionRev0,
   eModuleVersionRev1,
     
+    eBufferIdx,
     eBufferSize0,
     eBufferSize1,
     eBufferSize2,

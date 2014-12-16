@@ -13,22 +13,25 @@
 #define MAX_PATH_1 (MAXPATH - 1)
 #define DIR_LIST_NAME_BUF_SIZE 512
 
-#define MAX_SAMPLES 32
+#define MAX_SAMPLES 8
 
-//array holding wavetable file paths
+//array holding sample file paths
 char *samples[MAX_SAMPLES];
 
-//number of files found in folder /data/prgm/samples
-s32 numsamples;
+//number of samples/files found in folder /data/prgm/samples
+u8 numSamples;
 
-//initialize list of samples
-extern void samples_init(void);
+//alloc memory for a temporary loading buffer
+extern void alloc_sample_buffer(void);
 
-//initialize buffer for samples
-extern void samplebuffer_init(void);
+//alloc memory for, and fill an array with sample file paths
+extern void alloc_sample_paths(void);
 
-//load next sample file to temporary buffer
-extern void files_load_samples(u32 idx);
+//load a sample file to temporary buffer
+extern void files_load_sample(u8 idx);
+
+//load all samples
+extern void files_load_samples(void);
 
 //load aleph-prgm.ldr, return 1 on success, 0 on failure
 extern u8 files_load_dsp(void);

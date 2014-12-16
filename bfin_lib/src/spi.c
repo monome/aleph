@@ -1,3 +1,6 @@
+//memcpy
+#include <string.h>
+
 // bfin_lib
 #include "bfin_core.h"
 #include "control.h"
@@ -8,50 +11,22 @@
 #include "util.h"
 #include "spi.h"
 
-
 // byte to process
 static eSpiByte byte = eCom;
 // current command
 static u8 com;
 // current param index
-static u8 idx;
-// current buffer size in s32 wordsize
-static u32 buffersize;
-// tmp word
-static ParamValueSwap word;
-// fill count
-static u32 fillcount;
-// byte count
-static u8 bytecount;
+static u32 idx;
+// current sample idx
+static u8 sampleidx;
+// current sample pos
+static u32 samplepos;
+// current sample len
+static u32 samplelen;
 
 static void spi_set_param(u32 idx, ParamValue pv) {
-    gModuleData->paramData[idx].value = pv;
+//    gModuleData->paramData[idx].value = pv;
     module_set_param(idx, pv);
-}
-
-static void spi_fill_buffer(u8 byte) {
-    if (bytecount == 0)
-    {
-        bytecount = 1;
-        word.asByte[3] = byte;
-    }
-    else if (bytecount == 1)
-    {
-        bytecount = 2;
-        word.asByte[2] = byte;
-    }
-    else if (bytecount == 2)
-    {
-        bytecount = 3;
-        word.asByte[1] = byte;
-    }
-    else if (bytecount == 3)
-    {
-        bytecount = 0;
-        word.asByte[0] = byte;
-        gModuleData->sampleBuffer[fillcount] = word.asInt;
-        fillcount++;
-    }
 }
 
 //------- function definitions
@@ -59,6 +34,8 @@ static void spi_fill_buffer(u8 byte) {
 // return byte to load for next MISO
 u8 spi_process(u8 rx) {
     static ParamValueSwap pval;
+    static ParamValueSwap bsize;
+    static ParamValueSwap sample;
 
     switch(byte) {
     //  caveman style case statement
@@ -98,7 +75,7 @@ u8 spi_process(u8 rx) {
             module_set_trig();
             break;
         case MSG_FILL_BUFFER_COM :
-            byte = eBufferSize0;
+            byte = eBufferIdx;
             break;
             
         default:
@@ -455,50 +432,73 @@ u8 spi_process(u8 rx) {
     return 0;    // don't care
     break;
             
+        case eBufferIdx :
+            sampleidx = rx;
+            byte = eBufferSize0;
+            return 0;
+            break;
         case eBufferSize0 :
             byte = eBufferSize1;
             //  byte-swap from BE on avr32
             //  set buffer size
-            pval.asByte[3] = rx;
+            bsize.asByte[3] = rx;
             return 0;
             break;
         case eBufferSize1 :
             byte = eBufferSize2;
-            pval.asByte[2] = rx;
+            bsize.asByte[2] = rx;
             return 0;
             break;
         case eBufferSize2 :
             byte = eBufferSize3;
-            pval.asByte[1] = rx;
+            bsize.asByte[1] = rx;
             return 0;
             break;
         case eBufferSize3 :
             byte = eBufferFill;
-            pval.asByte[0] = rx;
-            buffersize = pval.asInt;
-            fillcount = 0;
-            bytecount = 0;
+            bsize.asByte[0] = rx;
+            samplelen = 4000;
+            //            samplelen = bsize.asInt;
+
+            samplepos = 0;
             return 0;
             break;
         case eBufferFill :
-            if (fillcount < buffersize * sizeof(s32))
+            samplepos++;
+            if (samplepos < samplelen)
             {
-                byte = eBufferFill;
-                //  byte-swap from BE on avr32
-                //  fill buffer
-                spi_fill_buffer(rx);
-                return 0;
-                break;
+                switch( (samplepos&3) ) {
+                    case 1:
+                        byte = eBufferFill;
+                        sample.asByte[3] = rx;
+                        return 0;
+                        break;
+                    case 2:
+                        byte = eBufferFill;
+                        sample.asByte[2] = rx;
+                        return 0;
+                        break;
+                    case 3:
+                        byte = eBufferFill;
+                        sample.asByte[1] = rx;
+                        return 0;
+                        break;
+                    case 0:
+                        byte = eBufferFill;
+                        sample.asByte[0] = rx;
+                        out[0] = 0x00000000;
+                        out[0] = sample.asInt;
+                        return 0;
+                        break;
+                }
             }
             else
             {
-                //  reset
-                byte = eCom;
-                gModuleData->sampleBufferSize = buffersize;
+                byte = eCom; //reset
                 return 0;
                 break;
             }
-            
+
         default:
             byte = eCom; //reset
             return 0;

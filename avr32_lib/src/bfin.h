@@ -13,21 +13,23 @@
 #include "param_common.h"
 #include "types.h"
 
+#define BFIN_LDR_MAX_BYTES 0x12000
+#define BFIN_SAMPLE_MAX_BYTES 0x1bf200
+
 // blackfin HWAIT status
 // extern volatile U8 hwait;
-//buffer for wavetables
-u8 *bfinSampleData;
-
-//size of wavetable
-u32 bfinSampleSize;
-
 // 64k is max size of blackfin ldr file
-//#define BFIN_LDR_MAX_BYTES 0x10000 
+//#define BFIN_LDR_MAX_BYTES 0x10000
 //// actually, the ldr itself can be bigger than the bfin's sram...??
 //0x10000 65536
 //APP_FLASH_BYTES set in flash.h, APP + LDR + WAVE = 0x40000
-#define BFIN_LDR_MAX_BYTES 0x12000
-#define BFIN_SAMPLE_MAX_BYTES 0x12000
+
+//temporary buffer for loading samples
+//u8 *bfinSampleData;
+volatile u8 *bfinSampleData;
+
+//size of current sample in bytes
+u32 bfinSampleSize;
 
 // wait for busy pin to clear
 void bfin_wait(void);
@@ -77,6 +79,7 @@ extern s32 bfin_get_param(u8 idx);
 extern void bfin_set_trig(void);
 
 //fill buffer
-extern void bfin_fill_buffer(volatile u8 *src, u32 bytes);
+//extern void bfin_fill_buffer(u8 idx, u32 bytes, const s32 *src);
+extern void bfin_fill_buffer(u8 idx, u32 bytes, s32 *src);
 
 #endif // header guard

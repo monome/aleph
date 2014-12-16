@@ -25,32 +25,33 @@
 
 //hardware init, all memory allocations go here
 void app_init(void) {
-    samples_init();
+    alloc_sample_buffer();
+
+    alloc_sample_paths();
     
     scale_init();
 
     render_init();
     
     tracker_init();
-    
-    samplebuffer_init();
 }
 
 //dsp init
 u8 app_launch(u8 firstrun) {
 if(firstrun) {
-    print_dbg("\r\n app_launch firstrun...");    
-
-    files_load_samples(0);
+    print_dbg("\r\n app_launch firstrun...");
     
+//    files_load_samples();
+
     files_load_dsp();
     
     bfin_wait_ready();
     
 } else {
     print_dbg("\r\n app_launch NOT firstrun...");
-    files_load_samples(0);
     
+//    files_load_samples();
+
     files_load_dsp();
     
     bfin_wait_ready();

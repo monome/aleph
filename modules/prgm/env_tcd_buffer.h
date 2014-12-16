@@ -10,7 +10,7 @@ env_tcd_buffer.h
 #include "types.h"
 
 #define INPUT_BUF_FRAMES 0xBB800 //16 seconds
-#define SAMPLE_BUF_FRAMES 0x12000 //0xBB800 //16 seconds
+//#define SAMPLE_BUF 0xBB800 //16 seconds
 
 //SDRAM mono audiobuffer
 typedef struct _inputBuffer {

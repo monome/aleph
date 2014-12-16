@@ -41,18 +41,18 @@ void fake_fread(volatile u8 *dst, u32 len, void *fp) { //fread: no size arg
 }
 
 char *sample_filepath(s32 n) {
-    return (n < 0 || n > numsamples) ? samples[0] : samples[n];
+    return (n < 0 || n > numSamples) ? samples[0] : samples[n];
 }
 
 
 //external functions
-void samples_init(void) {
+void alloc_sample_paths(void) {
     FL_DIR dirstat;
     struct fs_dir_ent dirent; //see fat_access.h
     
     s32 i = 0;
     sampleList.num = 0;
-    numsamples = 0;
+    numSamples = 0;
     
     strcpy(sampleList.path, WAV_PATH);
     
@@ -70,27 +70,22 @@ void samples_init(void) {
                 print_dbg(samples[i]);
                 sampleList.num++;
                 i++;
-                numsamples++;
+                numSamples++;
             }
         }
         //fl_closedir(&dirstat);
     }
 }
 
-void samplebuffer_init(void) {
-    u32 i;
-    
+void alloc_sample_buffer(void) {
     bfinSampleData = (u8*)alloc_mem(BFIN_SAMPLE_MAX_BYTES * sizeof(u8));
-    for(i=0; i<BFIN_SAMPLE_MAX_BYTES; i++) { bfinSampleData[i] = 0; }
-    bfinSampleSize = 0;
 }
 
-void files_load_samples(u32 idx) {
+void files_load_sample(u8 idx) {
     void *fp;
     u32 size = 0;
     
-    app_pause();
-    
+app_pause();
     fp = fl_fopen(sample_filepath(idx), "r");
     print_dbg("\r\n sample_filepath(idx) ");
     print_dbg(sample_filepath(idx));
@@ -100,11 +95,13 @@ void files_load_samples(u32 idx) {
         size = ((FL_FILE*)(fp))->filelength;
         fake_fread(bfinSampleData, size, fp);
         fl_fclose(fp);
-        bfinSampleSize = size;
+        
+        bfinSampleSize = size / sizeof(s32);
         print_dbg("\r\n bfinSampleSize ");
         print_dbg_ulong(bfinSampleSize);
-        
-        bfin_fill_buffer(bfinSampleData, bfinSampleSize);
+
+//        bfin_fill_buffer(idx, bfinSampleSize, (const s32*)bfinSampleData);
+        bfin_fill_buffer(idx, bfinSampleSize, (s32*)bfinSampleData);
         print_dbg("\r\n bfin_fill_buffer finished... ");
     }
     
@@ -112,7 +109,16 @@ void files_load_samples(u32 idx) {
     {
         print_dbg("\r\n idx out of bounds");
     }
-    app_resume();
+    
+app_resume();
+}
+
+void files_load_samples(void) {
+    u32 i;
+    for (i=0; i<numSamples; i++)
+    {
+        files_load_sample(i);
+    }
 }
 
 u8 files_load_dsp(void) {

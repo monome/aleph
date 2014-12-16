@@ -28,8 +28,6 @@
 //number of cv outputs
 #define N_TRACKS 4
 #define SQ_LEN 16
-#define N_SAMPLES 32
-
 
 //pattern
 typedef u64 Align;
