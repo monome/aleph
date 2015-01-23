@@ -17,28 +17,47 @@ static eSpiByte byte = eCom;
 static u8 com;
 // current param index
 static u32 idx;
-// current sample idx
-static u8 sampleidx;
-// current sample pos
-static u32 samplepos;
-// current sample len
-static u32 samplelen;
+// current sequencer position
+static u32 step;
+
+// current sample offset
+static u8 sample_offset;
+// current sample size
+static u32 sample_size;
+// sample byte counter
+static u32 sample_byte;
+// sample s32 index counter
+static u32 sample_idx;
 
 static void spi_set_param(u32 idx, ParamValue pv) {
-//    gModuleData->paramData[idx].value = pv;
+    //    gModuleData->paramData[idx].value = pv;
     module_set_param(idx, pv);
+}
+
+static void spi_set_sqparam(u8 step, u8 idx, ParamValue pv) {
+    //    gModuleData->paramData[idx].value = pv;
+    module_set_sqparam(step, idx, pv);
+}
+
+static void spi_load_sample(u32 offset, u32 idx, s32 sample) {
+    //  gModule...
+    module_load_sample(offset, idx, sample);
 }
 
 //------- function definitions
 // deal with new data in the spi rx ringbuffer
 // return byte to load for next MISO
 u8 spi_process(u8 rx) {
+    //  variable for parameter transfer
     static ParamValueSwap pval;
+    
+    //  variables for sample transfer
+    static ParamValueSwap boffset;
     static ParamValueSwap bsize;
     static ParamValueSwap sample;
 
-    switch(byte) {
     //  caveman style case statement
+    switch(byte) {
         case eCom :
             com = rx;
             
@@ -74,10 +93,25 @@ u8 spi_process(u8 rx) {
             //  call module trig function
             module_set_trig();
             break;
-        case MSG_FILL_BUFFER_COM :
-            byte = eBufferIdx;
+        case MSG_SET_REVERSETRIG_COM :
+            //  call module reverse trig function
+            module_set_reversetrig();
             break;
-            
+        case MSG_FILL_BUFFER_COM :
+            byte = eBufferOffset0;
+            break;
+        case MSG_SET_SQPARAM_COM :
+            byte = eSetParamStep;
+            break;
+        case MSG_GET_HEADSTATUS_COM :
+            byte = eHeadState;
+//            return gModuleData->headState; // load head status
+            break;
+        case MSG_GET_HEADPOSITION_COM :
+            byte = eGetHeadPosition;
+//            return gModuleData->headPosition; // load playcounter
+            break;
+           
         default:
             break;
     }
@@ -432,9 +466,27 @@ u8 spi_process(u8 rx) {
     return 0;    // don't care
     break;
             
-        case eBufferIdx :
-            sampleidx = rx;
+        case eBufferOffset0 :
+            byte = eBufferOffset1;
+            //  byte-swap from BE on avr32
+            //  set buffer offset
+            boffset.asByte[3] = rx;
+            return 0;
+            break;
+        case eBufferOffset1 :
+            byte = eBufferOffset2;
+            boffset.asByte[2] = rx;
+            return 0;
+            break;
+        case eBufferOffset2 :
+            byte = eBufferOffset3;
+            boffset.asByte[1] = rx;
+            return 0;
+            break;
+        case eBufferOffset3 :
             byte = eBufferSize0;
+            boffset.asByte[0] = rx;
+            sample_offset = boffset.asInt;
             return 0;
             break;
         case eBufferSize0 :
@@ -455,39 +507,45 @@ u8 spi_process(u8 rx) {
             return 0;
             break;
         case eBufferSize3 :
-            byte = eBufferFill;
+            byte = eBufferSample;
             bsize.asByte[0] = rx;
-            samplelen = 4000;
-            //            samplelen = bsize.asInt;
+            sample_size = bsize.asInt;
 
-            samplepos = 0;
+            //  reset counters
+            sample_byte = 0;
+            sample_idx = 0;
             return 0;
             break;
-        case eBufferFill :
-            samplepos++;
-            if (samplepos < samplelen)
+        case eBufferSample :
+            if (sample_idx < sample_size)
             {
-                switch( (samplepos&3) ) {
-                    case 1:
-                        byte = eBufferFill;
+                switch( (sample_byte&3) ) {
+                    case 0:
+                        byte = eBufferSample;
                         sample.asByte[3] = rx;
+                        sample_byte++;
+                        return 0;
+                        break;
+                    case 1:
+                        byte = eBufferSample;
+                        sample.asByte[2] = rx;
+                        sample_byte++;
                         return 0;
                         break;
                     case 2:
-                        byte = eBufferFill;
-                        sample.asByte[2] = rx;
+                        byte = eBufferSample;
+                        sample.asByte[1] = rx;
+                        sample_byte++;
                         return 0;
                         break;
                     case 3:
-                        byte = eBufferFill;
-                        sample.asByte[1] = rx;
-                        return 0;
-                        break;
-                    case 0:
-                        byte = eBufferFill;
+                        byte = eBufferSample;
                         sample.asByte[0] = rx;
-                        out[0] = 0x00000000;
-                        out[0] = sample.asInt;
+//                        out[0] = 0x00000000;
+//                        out[0] = sample.asInt;
+                        spi_load_sample(sample_offset, sample_idx, sample.asInt);
+                        sample_byte++;
+                        sample_idx++;
                         return 0;
                         break;
                 }
@@ -498,6 +556,54 @@ u8 spi_process(u8 rx) {
                 return 0;
                 break;
             }
+
+        case eSetParamStep :
+            //  set step
+            step = rx;
+            byte = eSetParamStepIdx;
+            return 0;
+            break;
+        case eSetParamStepIdx :
+            //  set index
+            idx = rx;
+            byte = eSetParamStepData0;
+            return 0;
+            break;
+        case eSetParamStepData0 :
+            byte = eSetParamStepData1;
+            //  byte-swap from BE on avr32
+            //  set paramval
+            pval.asByte[3] = rx;
+            return 0;
+            break;
+        case eSetParamStepData1 :
+            byte = eSetParamStepData2;
+            pval.asByte[2] = rx;
+            return 0;
+            break;
+        case eSetParamStepData2 :
+            byte = eSetParamStepData3;
+            pval.asByte[1] = rx;
+            return 0;
+            break;
+        case eSetParamStepData3 :
+            pval.asByte[0] = rx;
+            spi_set_sqparam(step, idx, pval.asInt);
+            //  reset
+            byte = eCom;
+            return 0;
+            break;
+            
+        case eHeadState :
+            //  reset
+            byte = eCom;
+            return 0;
+            break;
+            
+        case eGetHeadPosition :
+            byte = eCom;
+            return 0;
+            break;
 
         default:
             byte = eCom; //reset

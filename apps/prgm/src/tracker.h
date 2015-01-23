@@ -24,6 +24,9 @@
 //adc polling rate
 #include "app_timers.h"
 
+//files
+#include "files.h"
+
 //other stuff
 #include "types.h"
 #include "control.h"
@@ -32,19 +35,29 @@
 #include "render.h"
 #include "scale.h"
 
-#define N_SQ 4                              //number of tracks
-#define SQ_LEN 16                           //sequence length
-#define N_MODES 11                          //number of modes
+#define N_TRACKS 4                          //number of tracks
+#define SQ_LEN 48                           //sequence length
+
+#define N_MODES 12                          //number of modes
 #define N_MODES_1 (N_MODES - 1)
-#define BUF_SIZE 0xBB800                    //size of the audio buffer
-#define BUF_SIZE_1 (BUF_SIZE -1)
+
+#define N_INPUTS 8                          //number of selectable physical inputs
+#define N_INPUTS_1 (N_INPUTS - 1)
+
+#define N_BUFFERS 4
+#define N_BUFFERS_1 (N_BUFFERS - 1)
+#define BUF_SIZE 0xBB800                    //recording buffer maximum size
+#define BUF_SIZE_1 (BUF_SIZE - 1)
 #define SCRUB_SIZE 0x1234                   //(time - pos) default in scrub mode
+#define FRAMES 800
 
-s32 modetmp0;
-s32 modetmp1;
-s32 modetmp2;
-s32 modetmp3;
+//counters
+char renderStepLength[16];
+char renderTempo[16];
+char renderEditPosition[16];
+char renderBufferPosition[16];
 
+//page env
 char renderTrig0[16];
 char renderTrig1[16];
 char renderTrig2[16];
@@ -55,143 +68,71 @@ char renderTime1[16];
 char renderTime2[16];
 char renderTime3[16];
 
-char renderL0[16];
-char renderL1[16];
-char renderL2[16];
-char renderL3[16];
+//page mode
+char renderPosition0[16];
+char renderPosition1[16];
+char renderPosition2[16];
+char renderPosition3[16];
 
-char renderP0[16];
-char renderP1[16];
-char renderP2[16];
-char renderP3[16];
+char renderLevel0[16];
+char renderLevel1[16];
+char renderLevel2[16];
+char renderLevel3[16];
 
-char renderF0[16];
-char renderF1[16];
-char renderF2[16];
-char renderF3[16];
+char renderFrequency0[16];
+char renderFrequency1[16];
+char renderFrequency2[16];
+char renderFrequency3[16];
 
-char renderCounter[16];
+//sequencer states
+u16 editpos;                             //edit position
+u16 length;                              //current length
 
-u8 counter;
-u8 length;
+u8 n_scale_lookup[SQ_LEN];              //note length position in lookup table
+u8 n_scale[SQ_LEN];                     //scaled note length
+u16 tempo_lookup;                        //tempo value position in lookup table
+u16 tempo;                               //tempo
+u16 measure_lookup;                      //measure value position in lookup table
+u16 measure;                             //current measure
+u8 motor;                               //motor on|off state
 
-typedef struct _modeflag {
-    u8 have_time : 1;
-    u8 have_pL : 1;
-    u8 have_pP : 1;
-    u8 have_pF : 1;
-    u8 pF_have_scale : 1;
-    u8 have_pX : 1;
-} modeflag;
+//buffer states
+u8 bufferpos;
 
+//track
 typedef struct _prgmTrack *prgmTrackptr;
 
 typedef struct _prgmTrack {
-    modeflag *m[SQ_LEN];
-    s32 modename[SQ_LEN];
-    s32 f[SQ_LEN];                      //frame process flag
-    s32 c[SQ_LEN];                      //curve
+    //mode
+    s32 m[SQ_LEN];                      //mode
     
-    s32 t[SQ_LEN];                      //time
+    //curve
+    s32 c[SQ_LEN];                      //curve
+    s32 cT[SQ_LEN];                     //curve time
+    s32 cTG[SQ_LEN];                    //curve trig state
+    
+    //frame process
+    s32 f[SQ_LEN];                      //frame process flag
+
+    //parameters
+    s32 pI[SQ_LEN];                     //physical input
+    
+    s32 pS[SQ_LEN];                     //sample
+    s32 pP[SQ_LEN];                     //position | offset | phase
+
     s32 pL[SQ_LEN];                     //level
-    s32 pP[SQ_LEN];                     //position | phase | filepos | mempos
+
     s32 pF[SQ_LEN];                     //frequency
-    s32 pFs[SQ_LEN];                    //scaled frequency
-    s32 pX[SQ_LEN];                     //q | slew | offset | blend
+    s32 pF_scale[SQ_LEN];               //scaled frequency
+    
+    s32 pX[SQ_LEN];                     //q | slew | blend | pw
 } prgmTrack;
 
-prgmTrack *track[N_SQ];
+prgmTrack *track[N_TRACKS];
 
-//trig
-union _Trig {
-    s32 packed;
-    u8 track[4];
-};
 
-typedef union _Trig Trig;
-
-Trig trigs[SQ_LEN];
-
+//external function declarations
 extern void adc_init(void);
 extern void tracker_init(void);
-extern void set_mode(prgmTrack *track, s32 m);
-extern u8 get_mode(prgmTrack *track, u8 i);
-extern void play(s32 trig);
-extern void play_reverse(s32 trig);
-extern void return_to_one(s32 trig);
-extern void play_step(s32 trig);
-
-
-//TEST
-s32 *testvalptr;
-
-//TEST
-
-////////////////////
-/*
-
-for (int k = 0; k < myGrains->size(); k++){
-    myGrains->at(k)->nextBuffer(accumBuff,frameSkip, nextFrame,k);
-
-
-void module_process_frame(void) {
-out[cvChn] = track[cvChn]->process(track[cvChn]);
-
-
-void nextBuf(fract32 *data, u32 frames, u32 offset, u8 i);
-
-
-
-void buffer_head_next(bufferHead *head) {
-    head->divCount++;
-    if(head->divCount >= head->div) {
-        head->divCount = 0;
-        head->idx += head->inc;
-        while(head->idx >= head->loop) {
-            head->idx -= head->loop;
-        }
-    }
-}
-
-
-
-
-
-
-//
-if (menuFlag == false){
-    for(int i = 0; i < grainCloud->size(); i++){
-        grainCloud->at(i)->nextBuffer(out, numFrames);
-    }
-}
-try {
-    theAudio = new MyRtAudio(1,MY_CHANNELS, MY_SRATE, &g_buffSize, MY_FORMAT,true);
-} catch (RtError & err) {
-    err.printMessage();
-    exit(1);
-}
-try
-{
-    //open audio stream/assign callback
-    theAudio->openStream(&audioCallback);
-    //get new buffer size
-    g_buffSize = theAudio->getBufferSize();
-    //start audio stream
-    theAudio->startStream();
-    //report latency
-    theAudio->reportStreamLatency();
-    
- 
-        
-        
-        
-        
-        
-        void GrainVoice::nextBuffer(double * accumBuff,unsigned int numFrames,unsigned int bufferOffset, int name)
-        {
-            
-
-
-*/
 
 #endif

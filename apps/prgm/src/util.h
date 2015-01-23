@@ -7,6 +7,9 @@
 #include "types.h"
 #include <limits.h>
 
+// byte swap s32 value
+extern s32 swap_s32 (s32 val);
+
 // convert float to fract32
 //extern s32 float_to_fr32(float x);
 extern fract32 float_to_fr32(f32 x);

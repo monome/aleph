@@ -30,7 +30,7 @@ typedef enum {
 
 // top-level state
 typedef enum {
-    ePageLevel,
+    ePageParam,
     ePageEnv
 } ePage;
 
@@ -77,7 +77,7 @@ extern u8 altMode;
 
 //external functions
 //page select
-extern void select_level(void);
+extern void select_param(void);
 extern void select_env(void);
 //extern void select_pattern(void);
 

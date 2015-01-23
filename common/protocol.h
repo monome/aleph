@@ -27,9 +27,20 @@
 //  set trig, calls module_set_trig()
 #define MSG_SET_TRIG_COM            8
 
-//  fill SDRAM buffer from avr32
-#define MSG_FILL_BUFFER_COM         9
+//  set reverse trig, calls module_set_reversetrig()
+#define MSG_SET_REVERSETRIG_COM     9
 
+//  fill SDRAM buffer from avr32
+#define MSG_FILL_BUFFER_COM         10
+
+//  set sequenced parameter value
+#define MSG_SET_SQPARAM_COM         11
+
+//  get recording head status, off | armed | on for led control
+#define MSG_GET_HEADSTATUS_COM      12
+
+//  get playhead position
+#define MSG_GET_HEADPOSITION_COM    13
 
 
 //  enumerate state-machine nodes for sending and receiving SPI.
@@ -137,13 +148,29 @@ typedef enum {
   eModuleVersionRev0,
   eModuleVersionRev1,
     
-    eBufferIdx,
+    //  fill buffer
+    eBufferOffset0,
+    eBufferOffset1,
+    eBufferOffset2,
+    eBufferOffset3,
     eBufferSize0,
     eBufferSize1,
     eBufferSize2,
     eBufferSize3,
-    eBufferFill,
+    eBufferSample,
+
+    //  set sq param value
+    eSetParamStep,
+    eSetParamStepIdx,
+    eSetParamStepData0,
+    eSetParamStepData1,
+    eSetParamStepData2,
+    eSetParamStepData3,
     
+    eHeadState,
+
+    eGetHeadPosition,
+
     eNumSpiBytes
 } eSpiByte;
 

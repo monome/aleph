@@ -5,32 +5,35 @@
 #include "delay.h"
 #include "gpio.h"
 #include "print_funcs.h"
+#include "sd_mmc_spi.h"
 
 //avr32-lib
 #include "app.h"
 #include "bfin.h"
-#include "flash.h"
-#include "screen.h"
+#include "encoders.h"
 
 //prgm
 #include "app_timers.h"
+#include "ctl.h"
+#include "handler.h"            //adc_init
+#include "render.h"             //prgm_init
+
 #include "files.h"              //files_load_dsp
 #include "pages.h"
-#include "handler.h"            //adc_init
-#include "ctl.h"
-#include "render.h"             //prgm_init
-#include "encoders.h"
 #include "scale.h"              //scale_init
 #include "tracker.h"
+#include "flash.h"
+#include "screen.h"
 
 //hardware init, all memory allocations go here
 void app_init(void) {
-    alloc_sample_buffer();
+    print_dbg("\r\n app_init...");
 
-    alloc_sample_paths();
+    samples_init();
+    print_dbg("\r\n finished samples_init()...");
     
     scale_init();
-
+    
     render_init();
     
     tracker_init();
@@ -41,25 +44,28 @@ u8 app_launch(u8 firstrun) {
 if(firstrun) {
     print_dbg("\r\n app_launch firstrun...");
     
-//    files_load_samples();
-
+    files_load_samples();
+    print_dbg("\r\n finished files_load_samples()...");
+    
     files_load_dsp();
     
     bfin_wait_ready();
+    
     
 } else {
     print_dbg("\r\n app_launch NOT firstrun...");
-    
-//    files_load_samples();
 
-    files_load_dsp();
+    files_load_samples();
+    print_dbg("\r\n finished files_load_samples()...");
     
-    bfin_wait_ready();
+    files_load_dsp();
+
+    bfin_wait_ready();    
 }
     pages_init();
     
     bfin_enable();
-
+    
     init_app_timers();
     
     adc_init();

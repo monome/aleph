@@ -22,7 +22,7 @@ CSRCS += \
 	$(APP_DIR)/src/util.c \
 	$(APP_DIR)/src/tracker.c \
 	$(APP_DIR)/src/pages.c \
-	$(APP_DIR)/src/page_level.c \
+	$(APP_DIR)/src/page_param.c \
 	$(APP_DIR)/src/page_env.c \
     $(APP_DIR)/src/scale.c
 

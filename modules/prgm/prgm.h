@@ -25,49 +25,41 @@
 #include "module.h"
 #include "params.h"
 
-//number of cv outputs
-#define N_TRACKS 4
-#define SQ_LEN 16
+#define N_TRACKS 4                      //number of tracks
+#define SQ_LEN 32                       //sequencer length
 
-//pattern
-typedef u64 Align;
 
-union sq {
-    struct {
-        union sq *ptr;
-        u32 t;                          //time
-        u32 pP;                         //position
-    } s;
-    Align forced;
-};
+//  sequencer track
+typedef struct _sqTrack {
+    s32 sqtg[SQ_LEN];
+    s32 sqf[SQ_LEN];
+    s32 sqc[SQ_LEN];
+    s32 sqt[SQ_LEN];
+    s32 sqi[SQ_LEN];
+    s32 sqp[SQ_LEN];
+    s32 sqlp[SQ_LEN];
+    s32 sql[SQ_LEN];
+    s32 sqfq[SQ_LEN];
+    
+} sqTrack;
 
-typedef union sq SQ;
-typedef union sq *SQptr;
+typedef struct _sqTrack *sqTrackptr;
 
-//        u8 trig;                //step trig
-//        u8 f;                   //frame process flag
-//        u8 c;                   //curve
-//        s32 t;                  //time
-//        s32 pL;                 //level
-//        s32 pF;                 //frequency
-//        s32 pX;                 //x
-
-//track
+//  track
 typedef struct _prgmTrack {
-    //process frame
+    //output process frame
     u8 flag;
-    fract32 (*process)(void *);         //pointer to process algorithm
+    fract32 (*process)(void *);         //pointer to output process frame
     
     //curve
     env_tcd envAmp;
-
-    //parameters
+    
+    //parameters process frame
     fract32 pL;                         //level
-//    u32 pP;                             //postion | phase | pan
-    u32 *pP;                            //pointer to position
+    u32 pP;                             //position | offset
     fix16 pF;                           //frequency
-    filter_1p_lo pFSlew;                //frequency slew
-    fract32 pX;                        //pointer to x
+
+    filter_1p_lo pSlew;                 //parameter slew
     
 } prgmTrack;
 

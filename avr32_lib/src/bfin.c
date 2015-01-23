@@ -36,6 +36,7 @@
 static void bfin_start_transfer(void);
 static void bfin_end_transfer(void); 
 static void bfin_transfer_byte(u8 data);
+static u32 ldrCurrentByte = 0;
 
 //---------------------------------------
 //--- external function definition
@@ -53,42 +54,24 @@ void bfin_wait(void) {
 }
 
 // load bfin executable from the RAM buffer
-void bfin_load_buf(void) {
-  u64 i; /// byte index in .ldr
-
-  /////
-  //// TEST: print contents of buffer
-  /* print_dbg("\r\n\r\n .ldr buffer for: "); */
-  /* contents(i=0; i<bfinLdrSize; i++) { */
-  /*   print_dbg("\r\n 0x"); */
-  /*   print_dbg_hex(bfinLdrData[i]); */
-  /* } */
-  /* print_dbg("\r\n\r\n"); */
-  ////
-  /////////
-
-  ////////////
-  //// tESTING don't check
-#if 0
-  if(bfinLdrSize > BFIN_LDR_MAX_BYTES) {
-    print_dbg("\r\n bfin load error: size : "); print_dbg_hex(bfinLdrSize);
-    return;
-  }
-#endif
-  ///////////////
-  ////////////////
-
-  app_pause();
-
-  bfin_start_transfer();
-
-  for(i=0; i<bfinLdrSize; i++) {
-    bfin_transfer_byte(bfinLdrData[i]);
-  }
-
-  bfin_end_transfer();
- 
-  app_resume();
+//void bfin_load_buf(const u8* data, const u32 size) {
+void bfin_load_buf(volatile u8* data, u32 size) {
+    u64 i;
+    
+    app_pause();
+    
+    ldrCurrentByte = 0;
+    bfin_start_transfer();
+    
+    for(i=0; i<size; i++) {
+        //    bfin_transfer_byte(bfinLdrData[i]);
+        bfin_transfer_byte(data[ldrCurrentByte]);
+        ldrCurrentByte++;
+    }
+    
+    bfin_end_transfer();
+    
+    app_resume();
 }
 
 //void bfin_set_param(u8 idx, f32 x ) {
@@ -100,8 +83,8 @@ void bfin_set_param(u8 idx, fix16_t x ) {
   print_dbg("\r\n bfin_set_param, idx: ");
   print_dbg_ulong(idx);
 
-    print_dbg(",\t val: 0x");
-    print_dbg_hex((u32)x);
+  print_dbg(",\t val: 0x");
+  print_dbg_hex((u32)x);
   
   /*
     print_dbg(", \t elapsed ms: ");
@@ -367,6 +350,65 @@ void bfin_set_trig(void) {
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 }
 
+void bfin_set_reversetrig(void) {
+    //  calls module_set_reversetrig()
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, MSG_SET_REVERSETRIG_COM);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+}
+
+u8 bfin_get_headstate(void) {
+    u16 x;
+    
+    app_pause();
+    
+    // command
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, MSG_GET_HEADSTATUS_COM);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    print_dbg("\r\n : spi_write MSG_GET_HEADSTATUS_COM");
+    
+    // read status
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, 0); //dont care
+    spi_read(BFIN_SPI, &x);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    return (u8)(x & 0xff);
+    
+    print_dbg("\r\n : spi_read headstatus: ");
+    print_dbg_ulong((u8)(x & 0xff));
+    
+    app_resume();
+    
+}
+
+u8 bfin_get_headposition(void) {
+    u16 x;
+    
+    app_pause();
+    
+    // command
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, MSG_GET_HEADPOSITION_COM);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    print_dbg("\r\n : spi_write MSG_GET_HEADPOSITION_COM");
+    
+    // read status
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, 0); //dont care
+    spi_read(BFIN_SPI, &x);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    return (u8)(x & 0xff);
+    
+    print_dbg("\r\n : spi_read headposition: ");
+    print_dbg_ulong((u8)(x & 0xff));
+    
+    app_resume();
+    
+}
+
 //---------------------------------------------
 //------ static function definition
 
@@ -451,30 +493,51 @@ s32 bfin_get_param(u8 idx) {
 }
 
 // fill s32 audio buffer
-void bfin_fill_buffer(u8 idx, u32 samples, s32 *src) {
-//void bfin_fill_buffer(u8 idx, u32 bytes, const s32 *src) {
+void bfin_fill_buffer(u32 offset, u32 size, s32 *src) {
     u32 i;
+    ParamValueSwap boffset;
     ParamValueSwap bsize;
     ParamValueSwap sample;
 
     print_dbg("\r\n spi MSG_FILL_BUFFER_COM");
 
 app_pause();
-        
+    
     // command
     bfin_wait();
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
     spi_write(BFIN_SPI, MSG_FILL_BUFFER_COM);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     
-    // send sample idx
+    // send sample offset
+    boffset.asInt = offset;
+    
+    // offset0
     bfin_wait();
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, idx);
+    spi_write(BFIN_SPI, boffset.asByte[0]);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     
-    // send size
-    bsize.asInt = samples;
+    // offset1
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, boffset.asByte[1]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+    // offset2
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, boffset.asByte[2]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+    // offset3
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, boffset.asByte[3]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    // send sample size
+    bsize.asInt = size;
 
     // val0
     bfin_wait();
@@ -501,7 +564,7 @@ app_pause();
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     
     // bytefill buffer
-    for (i=0; i < samples; i++)
+    for (i=0; i < size; i++)
     {
         sample.asInt = *src;
         sample.asInt = src[i];
@@ -529,14 +592,68 @@ app_pause();
         spi_write(BFIN_SPI, sample.asByte[3]);
         spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
         
-        src++;
+//        src++;
     }
     
-    print_dbg("\r\n u8 idx: ");
-    print_dbg_ulong(idx);
+    print_dbg("\r\n u32 offset: ");
+    print_dbg_ulong(offset);
 
-    print_dbg("\r\n u32 samples: ");
-    print_dbg_ulong(samples);
+    print_dbg("\r\n u32 size: ");
+    print_dbg_ulong(size);
 
 app_resume();
+}
+
+void bfin_set_sqparam(u8 pos, u8 idx, fix16_t x) {
+    ParamValueSwap pval;
+    pval.asInt = (s32)x;
+    
+    print_dbg("\r\n bfin_set_sqparam, idx: ");
+    print_dbg_ulong(idx);
+    
+    print_dbg(",\t val: 0x");
+    print_dbg_hex((u32)x);
+    
+    print_dbg(",\t step: ");
+    print_dbg_hex(pos);
+    
+    //  app_pause();
+    
+    // command
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, MSG_SET_SQPARAM_COM);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    //pos
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, pos);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    //idx
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, idx);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    // val0
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, pval.asByte[0]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    // val1
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, pval.asByte[1]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    //val2
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, pval.asByte[2]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    //val3
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, pval.asByte[3]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    //  app_resume();
 }

@@ -13,29 +13,25 @@
 #include "param_common.h"
 #include "types.h"
 
-#define BFIN_LDR_MAX_BYTES 0x12000
-#define BFIN_SAMPLE_MAX_BYTES 0x1bf200
-
 // blackfin HWAIT status
 // extern volatile U8 hwait;
+
 // 64k is max size of blackfin ldr file
 //#define BFIN_LDR_MAX_BYTES 0x10000
 //// actually, the ldr itself can be bigger than the bfin's sram...??
-//0x10000 65536
-//APP_FLASH_BYTES set in flash.h, APP + LDR + WAVE = 0x40000
+#define BFIN_LDR_MAX_BYTES 0x12000
 
-//temporary buffer for loading samples
-//u8 *bfinSampleData;
-volatile u8 *bfinSampleData;
-
-//size of current sample in bytes
-u32 bfinSampleSize;
+/* // RAM buffer for blackfin firmware (.ldr) */
+/* extern volatile u8 *bfinLdrData; */
+/* // size of current bfin firmware */
+/* extern volatile u32 bfinLdrSize; */
 
 // wait for busy pin to clear
 void bfin_wait(void);
 
 // load bfin from RAM buffer
-void bfin_load_buf(void);
+//void bfin_load_buf(const u8* data, const u32 size);
+void bfin_load_buf(volatile u8* data, u32 size);
 
 // set a parameter
 void bfin_set_param(U8 idx, fix16_t val);
@@ -54,6 +50,9 @@ void bfin_get_module_name(volatile char* buf);
 // get loaded module version
 void bfin_get_module_version(ModuleVersion* vers);
 
+// get recording head status
+void get_headstatus(volatile u8 *status);
+
 // clear and add params to ctl network
 //void bfin_report_params(void);
 
@@ -69,17 +68,29 @@ extern void bfin_enable(void);
 // disable audio processing
 extern void bfin_disable(void);
 
-// wait for ready status (e.g. after module init)
-extern void bfin_wait_ready(void);
-
 // get param value
 extern s32 bfin_get_param(u8 idx);
 
-//set trig
+// wait for ready status (e.g. after module init)
+extern void bfin_wait_ready(void);
+
+//PRGM
+// set trig
 extern void bfin_set_trig(void);
 
+// set reverse trig
+extern void bfin_set_reversetrig(void);
+
 //fill buffer
-//extern void bfin_fill_buffer(u8 idx, u32 bytes, const s32 *src);
-extern void bfin_fill_buffer(u8 idx, u32 bytes, s32 *src);
+extern void bfin_fill_buffer(u32 offset, u32 size, s32 *src);
+
+// set a sequenced parameter
+void bfin_set_sqparam(U8 pos, U8 idx, fix16_t val);
+
+//get buffer head state
+extern u8 bfin_get_headstate(void);
+
+//get play head position
+extern u8 bfin_get_headposition(void);
 
 #endif // header guard

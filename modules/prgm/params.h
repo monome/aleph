@@ -4,10 +4,15 @@
 #include "param_common.h"
 
 #define FIX_RADIX 16
-#define BOOL_RADIX 2
 
 enum params {
-    eParamTrig,
+
+    //  sequenced parameters
+    //0
+    eParamTrig0,
+    eParamTrig1,
+    eParamTrig2,
+    eParamTrig3,
 
     eParamFlag0,
     eParamFlag1,
@@ -24,28 +29,54 @@ enum params {
     eParamTime2,
     eParamTime3,
     
-    eParamL0,
-    eParamL1,
-    eParamL2,
-    eParamL3,
+    //16
+    eParamInput0,
+    eParamInput1,
+    eParamInput2,
+    eParamInput3,
     
-    eParamP0,
-    eParamP1,
-    eParamP2,
-    eParamP3,
+    eParamPosition0,
+    eParamPosition1,
+    eParamPosition2,
+    eParamPosition3,
     
-    eParamF0,
-    eParamF1,
-    eParamF2,
-    eParamF3,
+    eParamLoop0,
+    eParamLoop1,
+    eParamLoop2,
+    eParamLoop3,
     
-    eParamX0,
-    eParamX1,
-    eParamX2,
-    eParamX3,
+    eParamLevel0,
+    eParamLevel1,
+    eParamLevel2,
+    eParamLevel3,
     
-    eParamTest,
-    eParamCounter,
+    //32
+    eParamFrequency0,
+    eParamFrequency1,
+    eParamFrequency2,
+    eParamFrequency3,
+    
+    eParamFrames,
+
+    //  global parameters
+    //eParamSqLength,
+    
+    eParamBufferLength0,
+    eParamBufferLength1,
+    eParamBufferLength2,
+    eParamBufferLength3,
+    
+    eParamToggleBuf,
+    eParamToggleRec,
+    
+    //43
+    eParamSqCounter,
+    eParamSqLength,
+
+    eParamFrameFwd,
+    eParamFrameBwd,
+    
+    eParamToggleMotor,
     
     eParamNumParams
 };

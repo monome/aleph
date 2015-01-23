@@ -3,16 +3,14 @@
 
 #include "types.h"
 
-#define SCALE_NOTE_SIZE 1536
-#define SCALE_RATIO_SIZE 144
+#define SCALE_JUST_SIZE 4096 //1536
 
-//init scale
+//scale memory allocation
 extern void scale_init(void);
 
-//lookup and return a scaled note
-//extern f32 note_lookup(s32 val);
-
-//lookup and return a transposition ratio
-extern f32 transpose_lookup(s32 ratio);
+//lookup and return scaled values
+extern f32 just_lookup(s32 frq);
+extern f32 clockspeed_lookup(s32 frq);
+extern f32 straight_lookup(s32 frq);
 
 #endif

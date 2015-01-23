@@ -9,44 +9,41 @@ env_tcd_buffer.h
 #include "fix32.h"
 #include "types.h"
 
-#define INPUT_BUF_FRAMES 0xBB800 //16 seconds
-//#define SAMPLE_BUF 0xBB800 //16 seconds
+#define BUFFER_SIZE 0x2bf200                    //total size of SDRAM sample buffer
+#define N_OFFSETS 32                            //buffer offsets
+#define N_RECBUFFERS 4                          //recording buffers
+#define RECBUFFER_SIZE 0xBB800                  //16 seconds
+
 
 //SDRAM mono audiobuffer
-typedef struct _inputBuffer {
-    u32 frames;                                 //count of frames
+typedef struct _sampleBuffer {
     volatile fract32 *data;                     //pointer to data
-} inputBuffer;
+    u32 samples;                                //count of samples
+} sampleBuffer;
 
 //buffer head
 typedef struct _bufferHead {
-    inputBuffer *buf;                           //pointer to cvbuffer
+    sampleBuffer *buf;                          //pointer to buffer
+    u32 idx;                                    //current idx
     u32 loop;                                   //index to loop
-    u32 idx;                                    //current index
     u32 inc;                                    //phase increment
     u32 div;                                    //rate divisor
     u32 divCount;                               //current divisor count
 } bufferHead;
 
-
-//extern function definitions
-//init audiobuffer at pre-allocated memory
-extern void buffer_init(inputBuffer *buf, volatile fract32 *data, u32 frames);
+//init buffer at pre-allocated memory
+extern void buffer_init(sampleBuffer *buf, volatile fract32 *data, u32 samples);
 
 //init head
-//extern void buffer_head_init(bufferHead *head, inputBuffer *buf);
-extern void buffer_head_init(bufferHead *head, inputBuffer *buf);
+extern void buffer_head_init(bufferHead *head, sampleBuffer *buf);
 
-//set head position
-extern void buffer_head_pos(bufferHead *head, u32 samples);
-
-//increment head position
+//increment head idx
 extern void buffer_head_next(bufferHead *head);
 
-//play head (interpolated)
-extern fract32 buffer_head_play(bufferHead *head);
+//play sample at idx
+extern s32 buffer_head_play(bufferHead *head);
 
-//record head (interpolated, overwrite)
-extern void buffer_head_rec(bufferHead *head, fract32 val);
+//record sample at idx
+extern void buffer_head_record(bufferHead *head, s32 sample);
 
 #endif

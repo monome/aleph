@@ -25,8 +25,6 @@
 
 // add param change to buffer
 /// FIXME: uh will this work for params < 0 ?
-extern u8 ctl_param_change(u32 param, u32 value);
-
-extern u8 ctl_wavetable_change(void);
+extern u8 ctl_param_change(u32 step, u32 param, u32 value);
 
 #endif // h guard

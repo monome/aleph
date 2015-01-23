@@ -4,8 +4,24 @@
 #include "fix.h"
 #include "util.h"
 
+s32 swap_s32 (s32 val) {
+    //load union with u8 trigs
+    //            ctl_param_change(eParamTrig, (1 >> 24) & 0xff);
+    //            ctl_param_change(eParamTrig, (1 >> 16) & 0xff);
+    //            ctl_param_change(eParamTrig, (1 >> 8) & 0xff);
+    //            ctl_param_change(eParamTrig, 1 & 0xff);
+    
+    //byteswap union
+    return ((val << 24) & 0xff000000) | ((val << 8) & 0x00ff0000) | ((val >> 8) & 0x0000ff00) | ((val >> 24) & 0x000000ff);
+    
+    //    p = data->trig[c];
+    //    env_tcd_set_trig(&(track[0]->envAmp), (p >> 24) & 0xff);
+    //    env_tcd_set_trig(&(track[1]->envAmp), (p >> 16) & 0xff);
+    //    env_tcd_set_trig(&(track[2]->envAmp), (p >> 8) & 0xff);
+    //    env_tcd_set_trig(&(track[3]->envAmp), p & 0xff);
 
-
+    //    return ((val&0xff)<<24)+((val&0xff00)<<8)+((val&0xff0000)>>8)+((val>>24)&0xff);
+}
 
 // float to fr32
 /*

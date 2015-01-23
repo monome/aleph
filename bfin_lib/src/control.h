@@ -41,8 +41,9 @@
 
 // parameter change event type
 typedef struct _ctlEvent {
-  u8 idx;
-  ParamValue val;
+    u8 step;
+    u8 idx;
+    ParamValue val;
 } ctlEvent_t;
 
 //---------------------------------------------
@@ -59,7 +60,7 @@ typedef struct _ctlEvent {
 
 
 // add param change to buffer
-extern u8 ctl_param_change(u32 param, u32 value);
+extern u8 ctl_param_change(u32 step, u32 param, u32 value);
 // execute the last param change
 extern void ctl_perform_last_change(void);
 // attempt to execute all pending param changes

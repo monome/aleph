@@ -25,13 +25,15 @@ this is where callbacks are declared for all application-specific software timer
 #include "app_timers.h"
 #include "render.h"
 
+//mode led ctrl
+#include "gpio.h"
+#include "aleph_board.h"
+
 //trig
 #include "bfin.h"
 
 
-//---------------------------
-//---- static variables
-
+//static variables
 //EVENT
 static event_t e;
 
@@ -46,21 +48,52 @@ static softTimer_t screenTimer = { .next = NULL, .prev = NULL };
 static softTimer_t encTimer = { .next = NULL, .prev = NULL };
 
 //poll custom
-static softTimer_t customPollTimer = { .next = NULL, .prev = NULL };
+//static softTimer_t customPollTimer = { .next = NULL, .prev = NULL };
 
 // poll monome device
-static softTimer_t monomePollTimer = { .next = NULL, .prev = NULL };
+//static softTimer_t monomePollTimer = { .next = NULL, .prev = NULL };
 // refresh monome device
-static softTimer_t monomeRefreshTimer  = { .next = NULL, .prev = NULL };
+//static softTimer_t monomeRefreshTimer  = { .next = NULL, .prev = NULL };
 // poll midi device
-static softTimer_t midiPollTimer = { .next = NULL, .prev = NULL };
+//static softTimer_t midiPollTimer = { .next = NULL, .prev = NULL };
 
 //adc polling callback
-static void adc_poll_timer_callback(void* obj) {
-    adc_convert(&adc);
-
-    u16 i = adc[0];
+static void adc_poll_timer_callback(void *obj) {
+//    static const int state = 0;
+    static const int threshold = 50;
+//    static const u16 previous_value = 65000;
     
+    adc_convert(&adc);
+    u16 i = adc[0];
+    s16 diff = i - previous_value;
+
+    if (state == 0) {
+        // Wait for trig
+        
+        if (diff > threshold) {
+            // Trig found
+            e.type = kEventAdc0;
+            e.data = ON;
+            event_post(&e);
+            
+            //bfin_set_trig();
+            state = 1;
+        }
+        
+    } else {
+        // Wait for end of trig
+        
+        if (diff < -threshold) {
+            // Trig found
+            state = 0;
+        }
+
+    }
+    
+    previous_value = i;
+}
+/*
+
     //  random|sporous trig filter...
 //    if (i < 4)
 
@@ -73,7 +106,7 @@ static void adc_poll_timer_callback(void* obj) {
             
             //  send spi trig command to bfin (MSG_SET_TRIG_COM)
             bfin_set_trig();
-/*
+
             e.type = kEventAdc0;
             e.data = ON;
             event_post(&e);
@@ -81,12 +114,20 @@ static void adc_poll_timer_callback(void* obj) {
             e.type = kEventAdc0;
             e.data = OFF;
             event_post(&e);
- */
+ 
         }
     
     else if(state == ON)
         ;
 }
+*/
+
+
+//screen refresh callback
+static void screen_timer_callback(void* obj) {
+    render_update();
+}
+
 
 //encoder polling callback
 static void enc_timer_callback(void* obj) {
@@ -105,15 +146,36 @@ static void enc_timer_callback(void* obj) {
     }
 }
 
-// screen refresh callback
-static void screen_timer_callback(void* obj) {
-    render_update();
+
+//custom callback
+//static void custom_timer_callback(void *obj) {
+//    bfin_get_state();
+//}
+
+
+//get update on bfin states for playhead position and buffer recording
+static void bfin_get_state(void) {
+    
+    //  get buffer recording status from bfin
+    bfinheadstate = bfin_get_headstate();
+    
+    //  if recording is stopped by bfin timeout, clear led and foot state
+    if (!bfinheadstate)
+    {
+        gpio_set_gpio_pin(LED_MODE_PIN);
+        foot2_touched = 0;
+    }
+    
+    //get playhead position from bfin
+    bfinheadpos = bfin_get_headposition();
 }
+
 
 //external functions
 void init_app_timers(void) {
     timer_add(&screenTimer, 50, &screen_timer_callback, NULL);
     timer_add(&encTimer, 50, &enc_timer_callback, NULL);
+//    timer_add(&customPollTimer, 50, &custom_timer_callback, NULL);
 }
 
 //start adc polling

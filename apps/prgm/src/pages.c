@@ -22,8 +22,8 @@
 // page structures - synchronize with ePage enum in pages.h
 page_t pages[NUM_PAGES] = {
     
-    { .name = "LEVEL",
-        .select_fn = &select_level, // select function
+    { .name = "PARAM",
+        .select_fn = &select_param, // select function
         .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
     },
     
@@ -47,7 +47,7 @@ void pages_init(void) {
     print_dbg("\r\n pages init");
 
     print_dbg("\r\n set page PRGM");
-    pageIdx = ePageLevel;
+    pageIdx = ePageEnv;
     set_page(pageIdx);
 }
 

@@ -1,34 +1,14 @@
-PRGM beta 0.0.4 for Aleph
+PRGM beta 0.0.5 for Aleph
 
 install/filecopy to SD-CARD (ALEPH):
 aleph-prgm.hex -> ALEPH/app/
 aleph-prgm.ldr -> ALEPH/mod/
 aleph-prgm.dsc -> ALEPH/mod/
 
+place .wav-files in folder ALEPH/data/prgm/samples
+
+
 REBOOT with aleph-prgm.hex
 
-
-
-GLOBAL controls
-sw2                 play step
-sw3                 edit step+1
-sw4                 page select
-
-I/O
-cv input0           play step +1
-cv out0-3           cv!
-audio out0-3        audio!
-foot1               play step+1
-foot2               play return to 1
-
-page PARAM
-parameters/mode-based editing
-
-page CURVE
-encoders            trig
-encoders + sw0      curve/mode
-encoders + sw1      time
-encoder0 + sw2      play/play reverse
-
-
+media @ http://monome.org/docs/aleph:bees:sharing:tracker
 sound examples @ https://soundcloud.com/epla
