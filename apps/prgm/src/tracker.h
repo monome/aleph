@@ -41,8 +41,11 @@
 #define N_MODES 12                          //number of modes
 #define N_MODES_1 (N_MODES - 1)
 
-#define N_INPUTS 8                          //number of selectable physical inputs
+#define N_INPUTS 8                          //number of selectable inputs
 #define N_INPUTS_1 (N_INPUTS - 1)
+
+#define N_PHYSICAL_INPUTS 3                 //number of selectable physical inputs
+#define N_PHYSICAL_INPUTS_1 (N_INPUTS - 1)
 
 #define N_BUFFERS 4
 #define N_BUFFERS_1 (N_BUFFERS - 1)
@@ -50,6 +53,8 @@
 #define BUF_SIZE_1 (BUF_SIZE - 1)
 #define SCRUB_SIZE 0x1234                   //(time - pos) default in scrub mode
 #define FRAMES 800
+
+#define DUMMY 0                             //dummy step for global parameters
 
 //counters
 char renderStepLength[16];
@@ -121,6 +126,7 @@ typedef struct _prgmTrack {
     s32 pP[SQ_LEN];                     //position | offset | phase
 
     s32 pL[SQ_LEN];                     //level
+    s32 aux;                            //aux level
 
     s32 pF[SQ_LEN];                     //frequency
     s32 pF_scale[SQ_LEN];               //scaled frequency

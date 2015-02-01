@@ -29,6 +29,7 @@ prgmTrackptr alloc_track(void) {
 void track_init_param(prgmTrack *t) {
     u8 i;
     
+    //  sequenced parameters
     for(i=0;i<SQ_LEN;i++)
     {
         t->m[i] = 0;
@@ -44,6 +45,9 @@ void track_init_param(prgmTrack *t) {
         t->pF_scale[i] = 0;
         t->pX[i] = 0;
     }
+    
+    //  global parameters
+    t->aux = 0;
 }
 
 //init tracker: four track sequencer

@@ -16,16 +16,17 @@
 #define ARM 2
 
 //number of curves
-#define N_CURVES 9                  //number of curve algorithms
+#define N_CURVES 10                 //number of curve algorithms
 
 //number of inputs
-#define N_INPUTS 8                  //number of selectable physical inputs
+#define N_INPUTS 8                  //number of selectable inputs
 
 typedef struct _env_tcd {
     fract32 (*curve)(void *);       //pointer to curve algorithm
+    fract32 (*input)(void *);       //pointer to input | aux
     
-    fract32 *input;                 //pointer to physical inputs
     bufferHead head;                //play&record head
+    bufferHead play;                //play head
     u32 pos;                        //position within offset
     
 //    u32 countFrame;                 //step length counter
@@ -45,11 +46,11 @@ extern void env_tcd_init(env_tcd *env);
 //set trig
 extern void env_tcd_set_trig(env_tcd *env, u8 trig);
 
-//set physical input
-extern void env_tcd_set_input(env_tcd *env, u8 n);
-
 //set curve
 extern void env_tcd_set_curve(env_tcd *env, u8 curve);
+
+//set input
+extern void env_tcd_set_input(env_tcd *env, u8 n);
 
 //set start position
 extern void env_tcd_set_pos(env_tcd *env, u32 pos);
@@ -59,8 +60,5 @@ extern void env_tcd_set_loop(env_tcd *env, u32 loop);
 
 //set curve time in samples
 extern void env_tcd_set_time(env_tcd *env, u32 time);
-
-//get next value
-extern fract32 env_tcd_next(env_tcd *env);
 
 #endif

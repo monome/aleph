@@ -153,9 +153,19 @@ void handle_encoder_0(s32 val) {
             }
             break;
             
-        case 4: //set sequence length
+        case 4: //aux level
             check_touch(kEventEncoder3);
             if (touchedThis) {
+                tmp = track[0]->aux;
+                tmp += val * 4194304;
+                if (tmp < 0) tmp = 0;
+                track[0]->aux = tmp;
+                ctl_param_change(DUMMY, eParamLevel0, tmp);
+                print_fix16(renderLevel0, tmp);
+                render_aux_env(0);
+            }
+            break;
+/*
 //                s32 frames;
                 tmp = measure_lookup;
                 tmp += val; //scale lookup
@@ -217,7 +227,7 @@ void handle_encoder_0(s32 val) {
                 }
             }
             break;
-            
+*/
         default:
             break;
     }
@@ -284,9 +294,19 @@ void handle_encoder_1(s32 val) {
             }
             break;
 
-        case 4: //set tempo | tempo map
+        case 4: //aux level
             check_touch(kEventEncoder2);
             if (touchedThis) {
+                tmp = track[1]->aux;
+                tmp += val * 4194304;
+                if (tmp < 0) tmp = 0;
+                track[1]->aux = tmp;
+                ctl_param_change(DUMMY, eParamLevel1, tmp);
+                print_fix16(renderLevel1, tmp);
+                render_aux_env(1);
+            }
+            break;
+/*
 //                u8 j;
 //                s32 frames;
                 tmp = tempo_lookup;
@@ -296,18 +316,18 @@ void handle_encoder_1(s32 val) {
                 tempo_lookup = tmp;
                 tempo = clockspeed_lookup(tmp);
                 //recalculate step length to frames and update bfin
-/*
+
                 for (j=0; j<length; j++)
                 {
                     frames = n_scale[j] * tempo * FRAMES;
                     ctl_param_change(j, eParamFrames, frames);
                 }
-*/
+
                 print_fix16(renderTempo, tempo * 0x00010000);
                 render_tempo_env();
             }
             break;
-            
+*/
         default:
             break;
     }
@@ -374,9 +394,19 @@ void handle_encoder_2(s32 val) {
             }
             break;
             
-        case 4: //set step length
+        case 4: //aux level
             check_touch(kEventEncoder1);
             if (touchedThis) {
+                tmp = track[2]->aux;
+                tmp += val * 4194304;
+                if (tmp < 0) tmp = 0;
+                track[2]->aux = tmp;
+                ctl_param_change(DUMMY, eParamLevel2, tmp);
+                print_fix16(renderLevel2, tmp);
+                render_aux_env(2);
+            }
+            break;
+/*
 //                s32 frames;
                 tmp = n_scale_lookup[i];
                 tmp += val; //scale lookup
@@ -393,7 +423,7 @@ void handle_encoder_2(s32 val) {
                 //                render_counters_env();
             }
             break;
-
+*/
         default:
             break;
     }
@@ -480,9 +510,19 @@ void handle_encoder_3(s32 val) {
             }
             break;
 
-        case 4: //toggle thru recording buffers
+        case 4: //aux level
             check_touch(kEventEncoder0);
             if (touchedThis) {
+                tmp = track[3]->aux;
+                tmp += val * 4194304;
+                if (tmp < 0) tmp = 0;
+                track[3]->aux = tmp;
+                ctl_param_change(DUMMY, eParamLevel3, tmp);
+                print_fix16(renderLevel3, tmp);
+                render_aux_env(3);
+            }
+            break;
+/*
                 tmp = bufferpos;
                 tmp += val;
                 if (tmp < 0) tmp = N_BUFFERS_1;
@@ -517,7 +557,7 @@ void handle_encoder_3(s32 val) {
 //                render_bufferposition_env(tmp);
             }
             break;
-
+*/
         default:
             break;
     }
@@ -605,7 +645,7 @@ void set_mode(prgmTrack *t, s32 m, u8 offset, u8 i) {
         t->pP[i] = offset;
     }
     
-    //  recIn1
+    //  rec
     else if(m == 9)
     {
         t->m[i] = 9;
@@ -614,7 +654,7 @@ void set_mode(prgmTrack *t, s32 m, u8 offset, u8 i) {
         t->pP[i] = sample[offset]->offset;
     }
     
-    //  TGrecIn2
+    //  TRIGrec
     else if(m == 10)
     {
         t->m[i] = 10;
@@ -623,12 +663,12 @@ void set_mode(prgmTrack *t, s32 m, u8 offset, u8 i) {
         t->pP[i] = sample[offset]->offset;
     }
     
-    //  justHOLD
-    else if(m == 1)
+    //  auxmix
+    else if(m == 11)
     {
         t->m[i] = 11;
-        t->f[i] = 4;
-        t->c[i] = 1;
+        t->f[i] = 0;
+        t->c[i] = 9;
         t->pP[i] = offset;
     }
     

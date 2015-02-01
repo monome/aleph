@@ -64,3 +64,22 @@ s32 buffer_head_play(bufferHead *head) {
 void buffer_head_record(bufferHead *head, s32 sample) {
     head->buf->data[head->idx] = sample;
 }
+
+void buffer_head_sync(bufferHead *head, bufferHead *target, u32 samples) {
+    if(target->idx >= samples)
+    {
+        buffer_head_pos(head, target->idx - samples);
+    }
+    else
+    {
+        buffer_head_pos(head, (target->idx + head->loop) - samples);
+    }
+}
+
+void buffer_head_dub(bufferHead *head, fract32 s) {
+    head->buf->data[head->idx] = add_fr1x32(head->buf->data[head->idx], s);
+}
+
+void buffer_head_mix(bufferHead *head, fract32 s, fract32 preLevel) {
+    head->buf->data[head->idx] = add_fr1x32(mult_fr1x32x32(head->buf->data[head->idx], preLevel), s);
+}

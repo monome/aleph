@@ -13,7 +13,8 @@ env_tcd_buffer.h
 #define N_OFFSETS 32                            //buffer offsets
 #define N_RECBUFFERS 4                          //recording buffers
 #define RECBUFFER_SIZE 0xBB800                  //16 seconds
-
+#define N_DELAYBUFFERS 4                        //delay buffers
+#define DELAYBUFFER_SIZE 0xB800                 //... seconds
 
 //SDRAM mono audiobuffer
 typedef struct _sampleBuffer {
@@ -40,10 +41,22 @@ extern void buffer_head_init(bufferHead *head, sampleBuffer *buf);
 //increment head idx
 extern void buffer_head_next(bufferHead *head);
 
+//set head position
+extern void buffer_head_pos(bufferHead *head, u32 pos);
+
 //play sample at idx
 extern s32 buffer_head_play(bufferHead *head);
 
 //record sample at idx
 extern void buffer_head_record(bufferHead *head, s32 sample);
+
+//sync multiple heads
+extern void buffer_head_sync(bufferHead *head, bufferHead *target, u32 samples);
+
+//overdub
+extern void buffer_head_dub(bufferHead *head, fract32 s);
+
+//mix
+extern void buffer_head_mix(bufferHead *head, fract32 s, fract32 preLevel);
 
 #endif

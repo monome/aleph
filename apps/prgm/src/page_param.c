@@ -125,6 +125,20 @@ void handle_encoder_0(s32 val) {
                     render_track0(1);
                 }
                 
+                /*
+                 {
+                 tmp = track[0]->pF[i];
+                 tmp += val;
+                 if (tmp < 0) tmp = 0;
+                 if (tmp > 1024) tmp = 1024;
+                 track[0]->pF[i] = tmp;
+                 track[0]->pF_scale[i] = just_lookup(tmp);
+                 ctl_param_change(i - 16, eParamFrequency0, track[0]->pF_scale[i]);
+                 print_fix16(renderFrequency0, tmp);
+                 render_track0(11);
+                 }
+*/
+                
                 //TRIG
                 else if (track[0]->m[i] == 2) ;
                 
@@ -178,33 +192,29 @@ void handle_encoder_0(s32 val) {
                 else if (track[0]->m[i] == 8) ;
                 
                 //rec: track input
-                else if (track[0]->m[i] == 9) ; //set input, TODO
-                /*
-                 tmp = track[0]->pI[i];
-                 tmp += val;
-                 if (tmp < 0) tmp = 0;
-                 if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
-                 track[0]->pI[i] = tmp;
-                 ctl_param_change(i, eParamInput0, tmp);
-                 render_track0(9);
-                 */
-                
-                //TGrecin2
-                else if (track[0]->m[i] == 10) ;
-                
-                //justHOLD: scaled cv output level
-                else if (track[0]->m[i] == 11)
-                {
-                    tmp = track[0]->pF[i];
+                else if (track[0]->m[i] == 9) {
+                    tmp = track[0]->pI[i];
                     tmp += val;
                     if (tmp < 0) tmp = 0;
-                    if (tmp > 1024) tmp = 1024;
-                    track[0]->pF[i] = tmp;
-                    track[0]->pF_scale[i] = just_lookup(tmp);
-                    ctl_param_change(i - 16, eParamFrequency0, track[0]->pF_scale[i]);
-                    print_fix16(renderFrequency0, tmp);
-                    render_track0(11);
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[0]->pI[i] = tmp;
+                    ctl_param_change(i - 16, eParamInput0, tmp);
+                    render_track0(9);
                 }
+                
+                //TRIGrec: physical input
+                else if (track[0]->m[i] == 10) {
+                    tmp = track[0]->pI[i];
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_PHYSICAL_INPUTS_1) tmp = N_PHYSICAL_INPUTS_1;
+                    track[0]->pI[i] = tmp;
+                    ctl_param_change(i - 16, eParamInput0, tmp);
+                    render_track0(10);
+                }
+            
+                //aux: aux mix output
+                else if (track[0]->m[i] == 11) ;
 
                 else ;
             }
@@ -256,16 +266,26 @@ void handle_encoder_0(s32 val) {
                 //TGrecin2
                 else if (track[0]->m[i] == 10) ;
                 
-                //justHOLD:
+                //aux:
                 else if (track[0]->m[i] == 11) ;
 
                 else ;
             }
             break;
             
-        case 4: //set sequence length
+        case 4: //aux level
             check_touch(kEventEncoder3);
             if (touchedThis) {
+                tmp = track[0]->aux;
+                tmp += val * 4194304;
+                if (tmp < 0) tmp = 0;
+                track[0]->aux = tmp;
+                ctl_param_change(DUMMY, eParamLevel0, tmp);
+                print_fix16(renderLevel0, tmp);
+                render_aux_param(0);
+            }
+            break;
+/*
 //                s32 frames;
                 tmp = measure_lookup;
                 tmp += val; //scale lookup
@@ -327,7 +347,7 @@ void handle_encoder_0(s32 val) {
                 }
             }
             break;
-            
+*/
         default:
             break;
     }
@@ -416,24 +436,30 @@ void handle_encoder_1(s32 val) {
                 else if (track[1]->m[i] == 8) ;
                 
                 //rec: track input
-                else if (track[1]->m[i] == 9) ;
-                
-                //TGrecin2
-                else if (track[1]->m[i] == 10) ;
-                
-                //justHOLD: scaled cv output level
-                else if (track[1]->m[i] == 11)
-                {
-                    tmp = track[1]->pF[i];
+                else if (track[1]->m[i] == 9) {
+                    tmp = track[1]->pI[i];
                     tmp += val;
                     if (tmp < 0) tmp = 0;
-                    if (tmp > 1024) tmp = 1024;
-                    track[1]->pF[i] = tmp;
-                    track[1]->pF_scale[i] = just_lookup(tmp);
-                    ctl_param_change(i - 16, eParamFrequency1, track[1]->pF_scale[i]);
-                    print_fix16(renderFrequency1, tmp);
-                    render_track1(11);
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[1]->pI[i] = tmp;
+                    ctl_param_change(i - 16, eParamInput1, tmp);
+                    render_track1(9);
                 }
+
+                //TRIGrec: physical input
+                else if (track[1]->m[i] == 10) {
+                    tmp = track[1]->pI[i];
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_PHYSICAL_INPUTS_1) tmp = N_PHYSICAL_INPUTS_1;
+                    track[1]->pI[i] = tmp;
+                    ctl_param_change(i - 16, eParamInput1, tmp);
+                    render_track1(10);
+                }
+            
+                //aux
+                else if (track[1]->m[i] == 11) ;
+
                 else ;
             }
             break;
@@ -491,9 +517,19 @@ void handle_encoder_1(s32 val) {
             }
             break;
         
-        case 4: //set tempo | tempo map
+        case 4: //aux level
             check_touch(kEventEncoder2);
             if (touchedThis) {
+                tmp = track[1]->aux;
+                tmp += val * 4194304;
+                if (tmp < 0) tmp = 0;
+                track[1]->aux = tmp;
+                ctl_param_change(DUMMY, eParamLevel1, tmp);
+                print_fix16(renderLevel1, tmp);
+                render_aux_param(1);
+            }
+            break;
+/*
 //                u8 j;
 //                s32 frames;
                 tmp = tempo_lookup;
@@ -503,18 +539,18 @@ void handle_encoder_1(s32 val) {
                 tempo_lookup = tmp;
                 tempo = clockspeed_lookup(tmp);
                 //recalculate step length to frames and update bfin
-/*
+
                 for (j=0; j<length; j++)
                 {
                     frames = n_scale[j] * tempo * FRAMES;
                     ctl_param_change(j, eParamFrames, frames);
                 }
- */
+ 
                 print_fix16(renderTempo, tempo * 0x00010000);
                 render_tempo_env();
             }
             break;
-            
+*/
         default:
             break;
     }
@@ -609,24 +645,30 @@ void handle_encoder_2(s32 val) {
                 else if (track[2]->m[i] == 8) ;
                 
                 //rec: track input
-                else if (track[2]->m[i] == 9) ;
-                
-                //TGrecin2
-                else if (track[2]->m[i] == 10) ;
-                
-                //justHOLD: scaled cv output level
-                else if (track[2]->m[i] == 11)
-                {
-                    tmp = track[2]->pF[i];
+                else if (track[2]->m[i] == 9) {
+                    tmp = track[2]->pI[i];
                     tmp += val;
                     if (tmp < 0) tmp = 0;
-                    if (tmp > 1024) tmp = 1024;
-                    track[2]->pF[i] = tmp;
-                    track[2]->pF_scale[i] = just_lookup(tmp);
-                    ctl_param_change(i - 16, eParamFrequency2, track[2]->pF_scale[i]);
-                    print_fix16(renderFrequency2, tmp);
-                    render_track2(11);
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[2]->pI[i] = tmp;
+                    ctl_param_change(i - 16, eParamInput2, tmp);
+                    render_track2(9);
                 }
+            
+                //TGrecin2
+                else if (track[2]->m[i] == 10) {
+                    tmp = track[2]->pI[i];
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_PHYSICAL_INPUTS_1) tmp = N_PHYSICAL_INPUTS_1;
+                    track[2]->pI[i] = tmp;
+                    ctl_param_change(i - 16, eParamInput2, tmp);
+                    render_track2(10);
+                }
+            
+                //aux
+                else if (track[2]->m[i] == 11) ;
+
                 else ;
             }
             break;
@@ -684,9 +726,19 @@ void handle_encoder_2(s32 val) {
             }
             break;
             
-        case 4: //set step length
+        case 4: //aux level
             check_touch(kEventEncoder1);
             if (touchedThis) {
+                tmp = track[2]->aux;
+                tmp += val * 4194304;
+                if (tmp < 0) tmp = 0;
+                track[2]->aux = tmp;
+                ctl_param_change(DUMMY, eParamLevel2, tmp);
+                print_fix16(renderLevel2, tmp);
+                render_aux_param(2);
+            }
+            break;
+/*
 //                s32 frames;
                 tmp = n_scale_lookup[i];
                 tmp += val; //scale lookup
@@ -703,7 +755,7 @@ void handle_encoder_2(s32 val) {
                 //                render_counters_env();
             }
             break;
-            
+*/
         default:
             break;
     }
@@ -804,24 +856,30 @@ void handle_encoder_3(s32 val) {
                 else if (track[3]->m[i] == 8) ;
                 
                 //rec: track input
-                else if (track[3]->m[i] == 9) ;
-                
-                //TGrecin2
-                else if (track[3]->m[i] == 10) ;
-                
-                //justHOLD: scaled cv output level
-                else if (track[3]->m[i] == 11)
-                {
-                    tmp = track[3]->pF[i];
+                else if (track[3]->m[i] == 9) {
+                    tmp = track[3]->pI[i];
                     tmp += val;
                     if (tmp < 0) tmp = 0;
-                    if (tmp > 1024) tmp = 1024;
-                    track[3]->pF[i] = tmp;
-                    track[3]->pF_scale[i] = just_lookup(tmp);
-                    ctl_param_change(i - 16, eParamFrequency3, track[3]->pF_scale[i]);
-                    print_fix16(renderFrequency3, tmp);
-                    render_track3(11);
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[3]->pI[i] = tmp;
+                    ctl_param_change(i - 16, eParamInput3, tmp);
+                    render_track3(9);
                 }
+                
+                //TGrecin2
+                else if (track[3]->m[i] == 10) {
+                    tmp = track[3]->pI[i];
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_PHYSICAL_INPUTS_1) tmp = N_PHYSICAL_INPUTS_1;
+                    track[3]->pI[i] = tmp;
+                    ctl_param_change(i - 16, eParamInput3, tmp);
+                    render_track3(10);
+                }
+            
+                //aux
+                else if (track[3]->m[i] == 11) ;
+
                 else ;
             }
             break;
@@ -868,7 +926,7 @@ void handle_encoder_3(s32 val) {
                 
                 //rec:
                 else if (track[3]->m[i] == 9) ;
-                
+            
                 //TGrecin2
                 else if (track[3]->m[i] == 10) ;
                 
@@ -879,9 +937,19 @@ void handle_encoder_3(s32 val) {
             }
             break;
             
-        case 4: //set buffer position
+        case 4: //aux level
             check_touch(kEventEncoder0);
             if (touchedThis) {
+                tmp = track[3]->aux;
+                tmp += val * 4194304;
+                if (tmp < 0) tmp = 0;
+                track[3]->aux = tmp;
+                ctl_param_change(DUMMY, eParamLevel3, tmp);
+                print_fix16(renderLevel3, tmp);
+                render_aux_param(3);
+            }
+            break;
+/*
                 tmp = bufferpos;
                 tmp += val;
                 if (tmp < 0) tmp = N_BUFFERS_1;
@@ -916,7 +984,7 @@ void handle_encoder_3(s32 val) {
                 //                render_bufferposition_env(tmp);
             }
             break;
-            
+*/
         default:
             break;
     }

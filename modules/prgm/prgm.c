@@ -58,12 +58,12 @@ static void sqparam_set_time(u8 t, u8 s, ParamValue v);
 static void sqparam_set_input(u8 t, u8 s, ParamValue v);
 static void sqparam_set_pos(u8 t, u8 s, ParamValue v);
 static void sqparam_set_loop(u8 t, u8 s, ParamValue v);
-static void sqparam_set_level(u8 t, u8 s, ParamValue v);
-static void sqparam_set_frq(u8 t, u8 s, ParamValue v);
 
 //global parameters
+static void param_set_level(prgmTrack *t, ParamValue v);
 static void param_set_counter(ParamValue v);
 static void param_set_length(ParamValue v);
+static void sqparam_set_frq(u8 t, u8 s, ParamValue v);
 
 //events
 static void play_step(u8 c);
@@ -77,7 +77,8 @@ PrgmTrackptr init_track(void) {
 
 void init_track_parameters(prgmTrack *t) {
     t->flag = 0;
-    t->process = get_processptr(0);
+    t->process = get_processptr(5);
+//    t->process = get_processptr(0);
     
     t->pL = 0;
     t->pP = 0;
@@ -157,43 +158,6 @@ void module_init(void) {
 }
 
 
-void module_load_sample(u32 offset, u32 idx, s32 sample) {
-    u32 tmp = offset + idx;
-    data->sampleBuffer[tmp] = sample;
-}
-
-/*
- typedef struct _sample {
- s32 offset;
- s32 size;
- } Sample;
- 
- 
- typedef struct _sampleHead {
- inputBuffer *buf;                           //pointer to buffer
- int sample_idx;
- s32 idx;
- 
- //  phase...
- } sampleHead;
-
- 
- //sample play
- s32 sample_head_play(SampleHead *head) {
- u32 idx = samples[head->sample_idx].offset + head->idx;
- //  phase...
- 
- s32 d = data->sample_data[idx];
- return d;
- }
- 
- //sample head next
- void sample_head_next(SampleHead *head) {
- head->idx++;
- head->idx %= samples[head->sample_idx].size;
- }
- */
-
 void module_deinit(void) {}
 
 
@@ -224,10 +188,19 @@ void set_process(prgmTrack *t, u8 n) {
 
 
 void module_process_frame(void) {
+    fract32 tmp;
 
-    //  calculate direct modes
+    //  mix aux's
+    tmp = 0;
+    tmp = add_fr1x32(tmp, mult_fr1x32x32(out[0], track[0]->pL));
+    tmp = add_fr1x32(tmp, mult_fr1x32x32(out[1], track[1]->pL));
+    tmp = add_fr1x32(tmp, mult_fr1x32x32(out[2], track[2]->pL));
+    tmp = add_fr1x32(tmp, mult_fr1x32x32(out[3], track[3]->pL));
+    aux = tmp;
+    
     for(cvChn=0;cvChn<N_TRACKS;cvChn++)
     {
+        //  calculate audio outputs
         if(track[cvChn]->flag < 2)
         {
             out[cvChn] = 0x00000000;
@@ -235,15 +208,12 @@ void module_process_frame(void) {
         }
         else
         {
+            //  calculate cv outputs
             cvVal[cvChn] = 0;
             cvVal[cvChn] = track[cvChn]->process(track[cvChn]);
             cv_update(cvChn, cvVal[cvChn]);
         }
     }
-    
-    //  calculate aux/thru modes
-//    for(cvChn=0;cvChn<N_TRACKS;cvChn++)
-        //....
 }
 
 
@@ -289,7 +259,6 @@ fract32 p_cv(prgmTrack *t) {
     else
     {
         return t->envAmp.curve(&(t->envAmp));
-//        return env_tcd_next(&(t->envAmp));
     }
 }
 
@@ -298,6 +267,12 @@ fract32 p_cv(prgmTrack *t) {
 fract32 p_FrqSlw_cv(prgmTrack *t) {
     filter_1p_lo_in(&(t->pSlew), t->pF);
     return filter_1p_lo_next(&(t->pSlew));
+}
+
+
+void module_load_sample(u32 offset, u32 idx, s32 sample) {
+    u32 tmp = offset + idx;
+    data->sampleBuffer[tmp] = sample;
 }
 
 
@@ -319,6 +294,7 @@ void module_set_trig(void) {
         if (sq[n]->sqtg[c])
         {
             set_process(track[n], sq[n]->sqf[c]);
+            env_tcd_set_input(&(track[n]->envAmp), sq[n]->sqi[c]);
             env_tcd_set_curve(&(track[n]->envAmp), sq[n]->sqc[c]);
             //  loop point must be set before start position
             env_tcd_set_loop(&(track[n]->envAmp), sq[n]->sqlp[c]);
@@ -347,6 +323,7 @@ void play_step(u8 c) {
         if (sq[n]->sqtg[c])
         {
             set_process(track[n], sq[n]->sqf[c]);
+            env_tcd_set_input(&(track[n]->envAmp), sq[n]->sqi[c]);
             env_tcd_set_curve(&(track[n]->envAmp), sq[n]->sqc[c]);
             //  loop point must be set before start position
             env_tcd_set_loop(&(track[n]->envAmp), sq[n]->sqlp[c]);
@@ -392,8 +369,9 @@ void sqparam_set_loop(u8 t, u8 s, ParamValue v) {
     sq[t]->sqlp[s] = v;
 }
 
-void sqparam_set_level(u8 t, u8 s, ParamValue v) {
-    sq[t]->sql[s] = v;
+//  global parameters
+void param_set_level(prgmTrack *t, ParamValue v) {
+    t->pL = v;
 }
 
 void sqparam_set_frq(u8 t, u8 s, ParamValue v) {
@@ -401,11 +379,9 @@ void sqparam_set_frq(u8 t, u8 s, ParamValue v) {
 }
 
 void sqparam_set_frames(u8 s, ParamValue v) {
-//    data->frames[s] = v;
+    //    data->frames[s] = v;
 }
 
-
-//  global parameters
 void param_set_buffer_length(sampleBuffer *buf, ParamValue v) {}
 //    buf->frames = v;
 //}
@@ -584,17 +560,18 @@ void module_set_sqparam(u32 s, u32 idx, ParamValue v) {
             sqparam_set_loop(3, s, v);
             break;
 
+        //  global parameters
         case eParamLevel0:
-            sqparam_set_level(0, s, v);
+            param_set_level(track[0], v);
             break;
         case eParamLevel1:
-            sqparam_set_level(1, s, v);
+            param_set_level(track[1], v);
             break;
         case eParamLevel2:
-            sqparam_set_level(2, s, v);
+            param_set_level(track[2], v);
             break;
         case eParamLevel3:
-            sqparam_set_level(3, s, v);
+            param_set_level(track[3], v);
             break;
             
         case eParamFrequency0:
@@ -614,7 +591,6 @@ void module_set_sqparam(u32 s, u32 idx, ParamValue v) {
             sqparam_set_frames(s, v);
             break;
             
-        //  global parameters
         case eParamBufferLength0:
 //            param_set_buffer_length(&(inBuf[0]), v);
             break;

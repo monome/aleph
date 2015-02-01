@@ -180,24 +180,24 @@ void render_modes(u8 pos) {
     render_mode(3, track[3]->m[pos]);
 }
 
-//  MAX 8 char in a name for now..
+//  MAX 12 char in a name for now..
 void render_mode(u8 track, s32 name) {
     static char *nameptr[] = {
-        "OFF",      //0
-        "HOLD",     //1
-        "TRIG",     //2
-        "GATE",     //3
-        "NOISE",    //4
-        "one",      //5
-        "loop",     //6
-        "wav",      //7
-        "noise",    //8
-        "recIn1",   //9
-        "recTGIn2", //10
-        "justHOLD"  //11
+        "OFF",              //0
+        "HOLD",             //1
+        "TRIG",             //2
+        "GATE",             //3
+        "NOISE",            //4
+        "one",              //5
+        "loop",             //6
+        "wav",              //7
+        "noise",            //8
+        "record",           //9
+        "TRIGrecord",       //10
+        "[aux master]"      //11
     };
     
-    region_string(&env[track], "████████", 0, 8, 0, 0, 0);
+    region_string(&env[track], "████████████", 0, 8, 0, 0, 0);
     region_string(&env[track], nameptr[name], 0, 8, 0xf, 0, 0);
 }
 
@@ -206,6 +206,24 @@ void render_time(void) {
     region_string(&env[1], renderTime1, 0, 16, 0xf, 0, 0);
     region_string(&env[2], renderTime2, 0, 16, 0xf, 0, 0);
     region_string(&env[3], renderTime3, 0, 16, 0xf, 0, 0);
+}
+
+void render_aux_env(u8 chn) {
+    static char *auxptr[] = {
+        "AUX 1 :",
+        "AUX 2 :",
+        "AUX 3 :",
+        "AUX 4 :"
+    };
+    
+    region_string(&env[4], "████████████", 0, 0, 0, 0, 0);
+    region_string(&env[4], auxptr[chn], 0, 0, 0xf, 0, 0);
+    
+    if(chn == 0) region_string(&env[5], renderLevel0, 0, 0, 0xf, 0, 0);
+    else if(chn == 1) region_string(&env[5], renderLevel1, 0, 0, 0xf, 0, 0);
+    else if(chn == 2) region_string(&env[5], renderLevel2, 0, 0, 0xf, 0, 0);
+    else if(chn == 3) region_string(&env[5], renderLevel3, 0, 0, 0xf, 0, 0);
+    else ;
 }
 
 void render_steplength_env(u8 pos) {
@@ -219,7 +237,7 @@ void render_steplength_env(u8 pos) {
         "ALIGN"
     };
     
-    region_string(&env[4], "████████", 0, 0, 0, 0, 0);
+    region_string(&env[4], "████████████", 0, 0, 0, 0, 0);
     region_string(&env[4], lengthptr[n_scale_lookup[pos]], 0, 0, 0xf, 0, 0);
 }
 
@@ -233,7 +251,7 @@ void render_measure_env(u8 pos) {
         "32 : 32"
     };
     
-    region_string(&env[4], "████████", 0, 0, 0, 0, 0);
+    region_string(&env[4], "████████████", 0, 0, 0, 0, 0);
     region_string(&env[4], measureptr[pos], 0, 0, 0xf, 0, 0);
 }
 
@@ -245,7 +263,7 @@ void render_bufferposition_env(u8 pos) {
         "track 4"
     };
     
-    region_string(&env[5], "████████", 0, 0, 0, 0, 0);
+    region_string(&env[5], "████████████", 0, 0, 0, 0, 0);
     region_string(&env[5], bufferptr[pos], 0, 0, 0xf, 0, 0);
 }
 
@@ -337,22 +355,19 @@ void render_track0(u8 mode) {
 
         //rec
         case 9:
-//render_input(0, track[0]->pI[editpos]); TODO
-            region_string(&param[0], renderDummy, 0, 0, 0x1, 0, 0);
+            render_input(0, track[0]->pI[editpos]);
             region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
             break;
             
-        //TGrecin2
+        //TRIGrec
         case 10:
-//render_input(0, track[0]->pI[editpos]); TODO
-            region_string(&param[0], renderDummy, 0, 0, 0x1, 0, 0);
+            render_input(0, track[0]->pI[editpos]);
             region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
             break;
-                        
-        //justHOLD
+            
+        //aux
         case 11:
-            print_fix16(renderFrequency0, track[0]->pF_scale[editpos]);
-            region_string(&param[0], renderFrequency0, 0, 0, 0xf, 0, 0);
+            region_string(&param[0], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
             break;
 
@@ -423,20 +438,19 @@ void render_track1(u8 mode) {
             
             //rec
         case 9:
-            region_string(&param[1], renderDummy, 0, 0, 0x1, 0, 0);
+            render_input(1, track[1]->pI[editpos]);
             region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
             break;
             
-            //TGrecin2
+            //TRIGrec
         case 10:
-            region_string(&param[1], renderDummy, 0, 0, 0x1, 0, 0);
+            render_input(1, track[1]->pI[editpos]);
             region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
             break;
             
-            //justHOLD
+            //aux
         case 11:
-            print_fix16(renderFrequency1, track[1]->pF_scale[editpos]);
-            region_string(&param[1], renderFrequency1, 0, 0, 0xf, 0, 0);
+            region_string(&param[1], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
             break;
             
@@ -507,20 +521,19 @@ void render_track2(u8 mode) {
             
             //rec
         case 9:
-            region_string(&param[2], renderDummy, 0, 0, 0x1, 0, 0);
+            render_input(2, track[2]->pI[editpos]);
             region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
             break;
             
-            //TGrecin2
+            //TRIGrec
         case 10:
-            region_string(&param[2], renderDummy, 0, 0, 0x1, 0, 0);
+            render_input(2, track[2]->pI[editpos]);
             region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
             break;
             
-            //justHOLD
+            //aux
         case 11:
-            print_fix16(renderFrequency2, track[2]->pF_scale[editpos]);
-            region_string(&param[2], renderFrequency2, 0, 0, 0xf, 0, 0);
+            region_string(&param[2], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
             break;
             
@@ -589,22 +602,21 @@ void render_track3(u8 mode) {
             region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
             break;
             
-            //recIn1
+            //rec
         case 9:
-            region_string(&param[3], renderDummy, 0, 0, 0x1, 0, 0);
+            render_input(3, track[3]->pI[editpos]);
             region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
             break;
             
-            //recTGIn2
+            //TRIGrec
         case 10:
-            region_string(&param[3], renderDummy, 0, 0, 0x1, 0, 0);
+            render_input(3, track[3]->pI[editpos]);
             region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
             break;
             
-            //justHOLD
+            //aux
         case 11:
-            print_fix16(renderFrequency3, track[3]->pF_scale[editpos]);
-            region_string(&param[3], renderFrequency3, 0, 0, 0xf, 0, 0);
+            region_string(&param[3], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
             break;
             
@@ -613,27 +625,43 @@ void render_track3(u8 mode) {
     }
 }
 
-//  MAX 8 char in a name for now..
 void render_sample(u8 track, s32 sample) {
-    region_string(&param[track], "████████", 0, 0, 0, 0, 0);
+    region_string(&param[track], "████████████", 0, 0, 0, 0, 0);
     region_string(&param[track], sample_name[sample-4], 0, 0, 0xf, 0, 0);
 }
 
-//  MAX 8 char in a name for now..
 void render_input(u8 track, s32 input) {
     static char *inputptr[] = {
-        "In 1",     //0
-        "In 2",     //1
-        "In 3",     //2
-        "In 4",     //3
-        "Out 1",    //4
-        "Out 2",    //5
-        "Out 3",    //6
-        "Out 4",    //7
+        "In 1",
+        "In 2",
+        "In 1+2",
+        "Aux",
+        "Out 1",
+        "Out 2",
+        "Out 3",
+        "Out 4"
     };
     
-    region_string(&param[track], "████████", 0, 0, 0, 0, 0);
+    region_string(&param[track], "████████████", 0, 0, 0, 0, 0);
     region_string(&param[track], inputptr[input], 0, 0, 0xf, 0, 0);
+}
+
+void render_aux_param(u8 chn) {
+    static char *auxptr[] = {
+        "AUX TRK 1 :",
+        "AUX TRK 2 :",
+        "AUX TRK 3 :",
+        "AUX TRK 4 :"
+    };
+    
+    region_string(&param[4], "████████████", 0, 0, 0, 0, 0);
+    region_string(&param[4], auxptr[chn], 0, 0, 0xf, 0, 0);
+    
+    if(chn == 0) region_string(&param[5], renderLevel0, 0, 0, 0xf, 0, 0);
+    else if(chn == 1) region_string(&param[5], renderLevel1, 0, 0, 0xf, 0, 0);
+    else if(chn == 2) region_string(&param[5], renderLevel2, 0, 0, 0xf, 0, 0);
+    else if(chn == 3) region_string(&param[5], renderLevel3, 0, 0, 0xf, 0, 0);
+    else ;
 }
 
 void render_steplength_param(u8 pos) {
@@ -648,7 +676,7 @@ void render_steplength_param(u8 pos) {
         "ALIGN"
     };
     
-    region_string(&param[4], "████████", 0, 0, 0, 0, 0);
+    region_string(&param[4], "████████████", 0, 0, 0, 0, 0);
     region_string(&param[4], lengthptr[n_scale_lookup[pos]], 0, 0, 0xf, 0, 0);
 }
 
@@ -662,7 +690,7 @@ void render_measure_param(u8 pos) {
         "32 : 32"
     };
     
-    region_string(&param[4], "████████", 0, 0, 0, 0, 0);
+    region_string(&param[4], "████████████", 0, 0, 0, 0, 0);
     region_string(&param[4], measureptr[pos], 0, 0, 0xf, 0, 0);
 }
 
@@ -674,7 +702,7 @@ void render_bufferposition_param(u8 pos) {
         "track 4"
     };
     
-    region_string(&param[5], "████████", 0, 0, 0, 0, 0);
+    region_string(&param[5], "████████████", 0, 0, 0, 0, 0);
     region_string(&param[5], bufferptr[pos], 0, 0, 0xf, 0, 0);
 }
 

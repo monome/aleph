@@ -51,16 +51,15 @@ if(firstrun) {
     
     bfin_wait_ready();
     
-    
 } else {
     print_dbg("\r\n app_launch NOT firstrun...");
-
+    
     files_load_samples();
     print_dbg("\r\n finished files_load_samples()...");
     
     files_load_dsp();
 
-    bfin_wait_ready();    
+    bfin_wait_ready();
 }
     pages_init();
     

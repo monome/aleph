@@ -11,12 +11,11 @@
 
 //--------- global variables (initialized here)
 // 4 channels of input from codec
-//fract32 in0, in1, in2, in3;
 fract32 in[4] = { 0, 0, 0, 0 };
 // 4 channels of output to ad1836
-//fract32 out0, out1, out2, out3;
 fract32 out[4] = { 0, 0, 0, 0 };
-
+// aux mix
+fract32 aux = 0;
 
 // audio processing flag
 volatile u8 processAudio = 0;
@@ -35,7 +34,7 @@ void sport0_rx_isr() {
   }
 
   // copy input data from dma input buffer 
-  // shift left fr21om 24-bit
+  // shift left from 24-bit
   in[0] = ( iRxBuf[INTERNAL_ADC_L0] << 8 ) & 0xffffff00;
   in[1] = ( iRxBuf[INTERNAL_ADC_R0] << 8 ) & 0xffffff00;
   in[2] = ( iRxBuf[INTERNAL_ADC_L1] << 8 ) & 0xffffff00;
@@ -47,7 +46,7 @@ void sport0_rx_isr() {
   iTxBuf[INTERNAL_DAC_R0] = out[1] >> 8;
   iTxBuf[INTERNAL_DAC_L1] = out[2] >> 8;
   iTxBuf[INTERNAL_DAC_R1] = out[3] >> 8;
-
+    
   // module-defined frame processing function
 
   module_process_frame();  

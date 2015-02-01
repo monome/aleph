@@ -4,7 +4,7 @@
 
 //static function declarations
 static fract32 (*env_tcd_get_curveptr(u8 n))();
-static fract32 (*env_tcd_get_inputptr(u8 n));
+static fract32 (*env_tcd_get_inputptr(u8 n))();
 
 static fract32 env_tcd_off(env_tcd *env);
 static fract32 env_tcd_dummy(env_tcd *env);
@@ -14,13 +14,24 @@ static fract32 env_tcd_one(env_tcd *env);
 static fract32 env_tcd_loop(env_tcd *env);
 static fract32 env_tcd_noise(env_tcd *env);
 static fract32 env_tcd_rec(env_tcd *env);
-static fract32 env_tcd_trigrec2(env_tcd *env);
+static fract32 env_tcd_trigrec(env_tcd *env);
+static fract32 env_tcd_auxmix(env_tcd *env);
+
+static fract32 env_tcd_in0(void);
+static fract32 env_tcd_in1(void);
+static fract32 env_tcd_in0_1(void);
+static fract32 env_tcd_aux(void);
+static fract32 env_tcd_out0(void);
+static fract32 env_tcd_out1(void);
+static fract32 env_tcd_out2(void);
+static fract32 env_tcd_out3(void);
 
 
 //function definitions
 void env_tcd_init(env_tcd *env) {
     env->curve = env_tcd_get_curveptr(0);
     env->input = env_tcd_get_inputptr(0);
+
     //  env->head is handled in module_init()
     env->pos = 0;
 
@@ -43,12 +54,12 @@ static fract32 (*env_tcd_get_curveptr(u8 n))() {
         env_tcd_dummy,          //1
         env_tcd_trig,           //2
         env_tcd_gate,           //3
-        //hold
         env_tcd_one,            //4
         env_tcd_loop,           //5
         env_tcd_noise,          //6
         env_tcd_rec,            //7
-        env_tcd_trigrec2,       //8 trigrec
+        env_tcd_trigrec,        //8
+        env_tcd_auxmix,         //9
     };
 
     return (n < 1 || n > N_CURVES) ? *curves[0] : *curves[n];
@@ -61,39 +72,27 @@ void env_tcd_set_curve(env_tcd *env, u8 n) {
 }
 
 
-//get next value
-fract32 env_tcd_next(env_tcd *env) {
-    return env->curve(env);
-}
-
-
 //return pointer to physical input
-static fract32 (*env_tcd_get_inputptr(u8 n)) {
-    static fract32 (*input[]) =
+fract32 (*env_tcd_get_inputptr(u8 n))() {
+    static fract32 (*inputs[])() =
     {
-        &in[0],
-        &in[1],
-        &in[2],
-        &in[3],
-        &out[0],
-        &out[1],
-        &out[2],
-        &out[3],
+        env_tcd_in0,            //input 1
+        env_tcd_in1,            //input 2
+        env_tcd_in0_1,          //input 1 & 2 mix
+        env_tcd_aux,            //aux mix
+        env_tcd_out0,           //output 1
+        env_tcd_out1,           //output 2
+        env_tcd_out2,           //output 3
+        env_tcd_out3,           //output 4
     };
     
-    return (n < 1 || n > 8) ? input[0] : input[n];
+    return (n < 1 || n > N_INPUTS) ? *inputs[0] : *inputs[n];
 }
 
 
-//set physical input
+//set input
 void env_tcd_set_input(env_tcd *env, u8 n) {
     env->input = env_tcd_get_inputptr(n);
-}
-
-
-//get next input value
-fract32 env_tcd_input_next(env_tcd *env) {
-    return *(env->input);
 }
 
 
@@ -180,7 +179,7 @@ fract32 env_tcd_gate(env_tcd *env) {
         return 0;
 }
 
-//curve: one_beta
+//curve: one
 fract32 env_tcd_one(env_tcd *env) {
     if (env->state == ON && (!env->countTime))
     {
@@ -201,7 +200,7 @@ fract32 env_tcd_one(env_tcd *env) {
     }
 }
 
-//curve: loop_beta
+//curve: loop
 fract32 env_tcd_loop(env_tcd *env) {
     if (env->state == ON)
     {
@@ -253,16 +252,14 @@ s32 env_tcd_noise(env_tcd *env) {
         return 0;
 }
 
-//curve: audio_rec_beta
+//curve: record audio, input monitoring
 fract32 env_tcd_rec(env_tcd *env) {
     fract32 tmp;
     if (env->state == ON && (!env->countTime))
     {
         env->countTime++;
         tmp = 0;
-        tmp = ( iRxBuf[INTERNAL_ADC_L0] << 8 ) & 0xffffff00;
-//        tmp = mult_fr1x32x32(env_tcd_input_next(env), FR32_MAX >> 2);
-//        tmp = in[0];
+        tmp = env->input(env);
         buffer_head_pos(&(env->head), env->pos);
         buffer_head_record(&(env->head), tmp);
         return tmp;
@@ -271,8 +268,7 @@ fract32 env_tcd_rec(env_tcd *env) {
     {
         env->countTime++;
         tmp = 0;
-        tmp = ( iRxBuf[INTERNAL_ADC_L0] << 8 ) & 0xffffff00;
-//        tmp = mult_fr1x32x32(env_tcd_input_next(env), FR32_MAX >> 2);
+        tmp = env->input(env);
         buffer_head_next(&(env->head));
         buffer_head_record(&(env->head), tmp);
         return tmp;
@@ -284,14 +280,14 @@ fract32 env_tcd_rec(env_tcd *env) {
     }
 }
 
-//curve: audio_rec_beta
-fract32 env_tcd_trigrec2(env_tcd *env) {
+//curve: record audio, output cv TRIG
+fract32 env_tcd_trigrec(env_tcd *env) {
     fract32 tmp;
     if (env->state == ON && (!env->countTime))
     {
         env->countTime++;
         tmp = 0;
-        tmp = ( iRxBuf[INTERNAL_ADC_R0] << 8 ) & 0xffffff00;
+        tmp = env->input(env);
         buffer_head_pos(&(env->head), env->pos);
         buffer_head_record(&(env->head), tmp);
         return 0x3fffffff;
@@ -300,7 +296,7 @@ fract32 env_tcd_trigrec2(env_tcd *env) {
     {
         env->countTime++;
         tmp = 0;
-        tmp = ( iRxBuf[INTERNAL_ADC_R0] << 8 ) & 0xffffff00;
+        tmp = env->input(env);
         buffer_head_next(&(env->head));
         buffer_head_record(&(env->head), tmp);
         if (env->countTime < 0x0000003f) return 0x3fffffff;
@@ -313,33 +309,82 @@ fract32 env_tcd_trigrec2(env_tcd *env) {
     }
 }
 
-/*
+//curve: aux mix
+fract32 env_tcd_auxmix(env_tcd *env) {
+    return aux;
+}
+
 //curve: delay
-fract32 env_tcd_delay_beta(env_tcd *env) {
+/*
+fract32 env_tcd_delay(env_tcd *env) {
     fract32 tmp;
-    if (env->state == ON && (!env->countTime))
+    
+    tmp = buffer_head_play(&(env->play));
+    if(env->val == 0)
     {
-        env->head.loop = env->time;
-        env->countTime++;
-        tmp = 0;
-        tmp = mult_fr1x32x32(env->input, FR32_MAX >> 16);
-        buffer_head_pos(&(env->head), 0);
-        buffer_head_rec(&(env->head), tmp);
-        return tmp;
+        //  write and replace
+        buffer_head_record(&(env->head), env->input(env));
     }
-    else if (env->state == ON && env->countTime < env->time)
+    else if(env->val < 0)
     {
-        env->countTime++;
-        tmp = 0;
-        tmp = mult_fr1x32x32(env->input, FR32_MAX >> 16);
-        buffer_head_next(&(env->head));
-        buffer_head_rec(&(env->head), tmp);
-        return tmp;
+        //  overdub
+        buffer_head_dub(&(env->head), env->input(env));
     }
     else
     {
-        env->state = OFF;
-        return 0;
+        //  record mix
+        buffer_head_mix(&(env->head), env->input(env), env->val);
     }
+        
+    //advance the phasors
+    buffer_head_next(&(env->play));
+    buffer_head_next(&(env->head));
+    return tmp;
 }
 */
+
+//input: physical input 1
+fract32 env_tcd_in0(void) {
+    return in[0];
+}
+
+//input: physical input 2
+fract32 env_tcd_in1(void) {
+    return in[1];
+}
+
+//input: physical inputs 1&2 mix
+fract32 env_tcd_in0_1(void) {
+    fract32 tmp;
+    
+    tmp = 0;
+    tmp = add_fr1x32(tmp, in[0]);
+    tmp = add_fr1x32(tmp, in[1]);
+    
+    return tmp;
+}
+
+//input: aux mix
+fract32 env_tcd_aux(void) {
+    return aux;
+}
+
+//input: track 1 output
+fract32 env_tcd_out0(void) {
+    return out[0];
+}
+
+//input: track 2 output
+fract32 env_tcd_out1(void) {
+    return out[1];
+}
+
+//input: track 3 output
+fract32 env_tcd_out2(void) {
+    return out[2];
+}
+
+//input: track 4 output
+fract32 env_tcd_out3(void) {
+    return out[3];
+}

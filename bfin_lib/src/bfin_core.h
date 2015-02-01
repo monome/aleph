@@ -27,6 +27,7 @@
 // per-channel audio i/o
 extern fract32 in[4];
 extern fract32 out[4];
+extern fract32 aux;
 
 // ctl change 
 
