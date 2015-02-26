@@ -21,11 +21,9 @@ static u32 idx;
 static u32 step;
 
 // current sample offset
-static u8 sample_offset;
+static u32 sample_offset;
 // current sample size
 static u32 sample_size;
-// sample byte counter
-static u32 sample_byte;
 // sample s32 index counter
 static u32 sample_idx;
 
@@ -39,9 +37,9 @@ static void spi_set_sqparam(u8 step, u8 idx, ParamValue pv) {
     module_set_sqparam(step, idx, pv);
 }
 
-static void spi_load_sample(u32 offset, u32 idx, s32 sample) {
+static void spi_load_sample(s32 sample) {
     //  gModule...
-    module_load_sample(offset, idx, sample);
+    module_load_sample(sample);
 }
 
 //------- function definitions
@@ -93,12 +91,11 @@ u8 spi_process(u8 rx) {
             //  call module trig function
             module_set_trig();
             break;
-        case MSG_SET_REVERSETRIG_COM :
-            //  call module reverse trig function
-            module_set_reversetrig();
-            break;
-        case MSG_FILL_BUFFER_COM :
+        case MSG_NEW_SAMPLE_COM :
             byte = eBufferOffset0;
+            break;
+        case MSG_TRANSFER_SAMPLE_COM :
+            byte = eBufferSample0;
             break;
         case MSG_SET_SQPARAM_COM :
             byte = eSetParamStep;
@@ -507,55 +504,40 @@ u8 spi_process(u8 rx) {
             return 0;
             break;
         case eBufferSize3 :
-            byte = eBufferSample;
             bsize.asByte[0] = rx;
             sample_size = bsize.asInt;
 
-            //  reset counters
-            sample_byte = 0;
+            //  reset counter
             sample_idx = 0;
+            
+            byte = eCom; // reset
             return 0;
             break;
-        case eBufferSample :
-            if (sample_idx < sample_size)
-            {
-                switch( (sample_byte&3) ) {
-                    case 0:
-                        byte = eBufferSample;
-                        sample.asByte[3] = rx;
-                        sample_byte++;
-                        return 0;
-                        break;
-                    case 1:
-                        byte = eBufferSample;
-                        sample.asByte[2] = rx;
-                        sample_byte++;
-                        return 0;
-                        break;
-                    case 2:
-                        byte = eBufferSample;
-                        sample.asByte[1] = rx;
-                        sample_byte++;
-                        return 0;
-                        break;
-                    case 3:
-                        byte = eBufferSample;
-                        sample.asByte[0] = rx;
-//                        out[0] = 0x00000000;
-//                        out[0] = sample.asInt;
-                        spi_load_sample(sample_offset, sample_idx, sample.asInt);
-                        sample_byte++;
-                        sample_idx++;
-                        return 0;
-                        break;
-                }
-            }
-            else
-            {
-                byte = eCom; //reset
-                return 0;
-                break;
-            }
+            
+        case eBufferSample0 :
+            byte = eBufferSample1;
+            //  byte-swap from BE on avr32
+            sample.asByte[3] = rx;
+            return 0;
+            break;
+        case eBufferSample1 :
+            byte = eBufferSample2;
+            sample.asByte[2] = rx;
+            return 0;
+            break;
+        case eBufferSample2 :
+            byte = eBufferSample3;
+            sample.asByte[2] = rx;
+            return 0;
+            break;
+        case eBufferSample3 :
+            sample.asByte[2] = rx;
+            spi_load_sample(sample.asInt);
+//            sample_idx++;
+
+            byte = eCom;
+            return 0;
+            break;
 
         case eSetParamStep :
             //  set step

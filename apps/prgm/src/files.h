@@ -1,7 +1,24 @@
 //files.h
 //aleph-prgm-avr32
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "types.h"
+#include "delay.h"
+
+#include "events.h"
+#include "event_types.h"
+//#include "aleph_board.h"
+#include "control.h"
+#include "ctl.h"
+
+#include "app.h"
+#include "filesystem.h" //includes fat_filelib.h
+#include "flash.h"
+#include "memory.h"
+#include "print_funcs.h"
+
 
 #ifndef _ALEPH_APP_PRGM_FILES_H_
 #define _ALEPH_APP_PRGM_FILES_H_
@@ -14,11 +31,15 @@
 #define MAX_PATH_1 (MAXPATH - 1)
 #define DIR_LIST_NAME_BUF_SIZE 512
 
-#define N_SAMPLES 32
-#define SAMPLE_SIZE 0xBB800                 //16 seconds
+#define N_BUFFERS 8
+#define N_SAMPLES 40
 
+#define REC_SIZE 0xBB800                    //recording buffer maximum size (16 seconds)
+#define AUX_SIZE 0x2EE00                    //aux buffer maximum size (4 seconds)
 
 //sample
+//sample file format: mono headerless pcm16 signed big endian
+//sample rate: 96kHz
 typedef struct _prgmSample *prgmSampleptr;
 
 typedef struct _prgmSample {
@@ -37,6 +58,9 @@ char *sample_name[N_SAMPLES];
 
 //number of samples loaded: /data/prgm/samples
 u8 n_samples;
+u8 smpl;
+u32 idx8;
+u32 idx32;
 
 //init samples
 extern void samples_init(void);
@@ -45,7 +69,7 @@ extern void samples_init(void);
 extern u8 files_load_dsp(void);
 
 //load samples, return 1 on success, 0 on failure
-extern void files_load_samples(void);
+extern void files_load_sample(u8 n);
 
 #endif 
 

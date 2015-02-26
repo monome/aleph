@@ -18,6 +18,8 @@ static void handle_encoder_2(s32 val);
 static void handle_encoder_3(s32 val);
 
 static s32 knob_accel(s32 inc);
+static s32 knob_deccel(s32 inc);
+
 
 //handler variables
 static etype touched = kNumEventTypes; //total number of module parameters as defined in ctl.h
@@ -48,9 +50,12 @@ s32 knob_accel(s32 inc) {
         return inc;
     }
     if(incAbs < 6) {
-        return inc << 2;
+        return inc << 1;
     }
-    return inc << 6;
+    if(incAbs < 32) {
+        return inc << 6;
+    }
+    return inc << 9;
 }
 
 void handle_switch_0(s32 data) {
@@ -137,7 +142,7 @@ void handle_encoder_0(s32 val) {
                  print_fix16(renderFrequency0, tmp);
                  render_track0(11);
                  }
-*/
+                */
                 
                 //TRIG
                 else if (track[0]->m[i] == 2) ;
@@ -157,7 +162,6 @@ void handle_encoder_0(s32 val) {
                     if (tmp > sample[1]->offset) tmp = sample[1]->offset;
                     track[0]->pP[i] = tmp;
                     ctl_param_change(i - 16, eParamPosition0, tmp);
-                    ctl_param_change(i - 16, eParamLoop0, sample[1]->offset);
                     render_track0(5);
                 }
                 
@@ -170,7 +174,6 @@ void handle_encoder_0(s32 val) {
                     if (tmp > sample[1]->offset) tmp = sample[1]->offset;
                     track[0]->pP[i] = tmp;
                     ctl_param_change(i - 16, eParamPosition0, tmp);
-                    ctl_param_change(i - 16, eParamLoop0, sample[1]->offset);
                     render_track0(6);
                 }
                 
@@ -183,39 +186,87 @@ void handle_encoder_0(s32 val) {
                     if (tmp > n_samples - 1) tmp = n_samples - 1;
                     track[0]->pS[i] = tmp;
                     track[0]->pP[i] = sample[tmp]->offset;
+                    track[0]->pLP[i] = sample[tmp]->size - 1;
                     ctl_param_change(i - 16, eParamPosition0, track[0]->pP[i]);
-                    ctl_param_change(i - 16, eParamLoop0, sample[tmp + 1]->offset);
+                    ctl_param_change(i - 16, eParamLoop0, track[0]->pLP[i]);
+                    //  set step length equal to sample length for now... TEST!!!!!!
+                    //ctl_param_change(i - 16, eParamTime0, track[0]->pLP[i]);
                     render_track0(7);
                 }
                 
                 //noise
                 else if (track[0]->m[i] == 8) ;
                 
-                //rec: track input
+                //rec: input A
                 else if (track[0]->m[i] == 9) {
-                    tmp = track[0]->pI[i];
-                    tmp += val;
+                    tmp = track[0]->inA;
+                    tmp += knob_accel(val); //TEST!!!
                     if (tmp < 0) tmp = 0;
                     if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
-                    track[0]->pI[i] = tmp;
-                    ctl_param_change(i - 16, eParamInput0, tmp);
+                    track[0]->inA = tmp;
+                    ctl_param_change(i - 16, eParamInputA0, tmp);
                     render_track0(9);
                 }
                 
-                //TRIGrec: physical input
+                //TRIGrec: physical input A
                 else if (track[0]->m[i] == 10) {
-                    tmp = track[0]->pI[i];
+                    tmp = track[0]->inA;
                     tmp += val;
                     if (tmp < 0) tmp = 0;
                     if (tmp > N_PHYSICAL_INPUTS_1) tmp = N_PHYSICAL_INPUTS_1;
-                    track[0]->pI[i] = tmp;
-                    ctl_param_change(i - 16, eParamInput0, tmp);
+                    track[0]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA0, tmp);
                     render_track0(10);
                 }
             
-                //aux: aux mix output
+                //[aux master]
                 else if (track[0]->m[i] == 11) ;
-
+                
+                //[insert mix]: input A
+                else if (track[0]->m[i] == 12) {
+                    tmp = track[0]->inA;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[0]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA0, tmp);
+                    render_track0(12);
+                }
+                
+                //[delay]: input A
+                else if (track[0]->m[i] == 13) {
+                    tmp = track[0]->inA;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[0]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA0, tmp);
+                    render_track0(13);
+                }
+                
+                //[diffuse]: input A
+                else if (track[0]->m[i] == 14) {
+                    tmp = track[0]->inA;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[0]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA0, tmp);
+                    render_track0(14);
+                }
+                
+                //<GLOBAL>: sq length
+                else if (track[0]->m[i] == 15)
+                {
+                    tmp = length;
+                    tmp += val;
+                    if (tmp < 1 + 16) tmp = 1 + 16;
+                    if (tmp > SQ_LEN) tmp = SQ_LEN;
+                    length = tmp;
+                    ctl_param_change(DUMMY, eParamSqLength, length - 16);
+                    render_track0(15);
+                }
+                
                 else ;
             }
             break;
@@ -260,14 +311,122 @@ void handle_encoder_0(s32 val) {
                 //noise
                 else if (track[0]->m[i] == 8) ;
                 
-                //rec:
+                //rec
                 else if (track[0]->m[i] == 9) ;
 
-                //TGrecin2
+                //TRIGrec
                 else if (track[0]->m[i] == 10) ;
                 
-                //aux:
+                //[aux master]
                 else if (track[0]->m[i] == 11) ;
+                
+                //[insert mix]: input B
+                else if (track[0]->m[i] == 12) {
+                    tmp = track[0]->inB;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[0]->inB = tmp;
+                    ctl_param_change(DUMMY, eParamInputB0, tmp);
+                    render_track0(12);
+                }
+                
+                //[delay]: loop
+                else if (track[0]->m[i] == 13)
+                {
+                    tmp = track[0]->pLP[i];
+                    tmp += knob_accel(val);
+                    //  a zero loop time will freeze the dsp...
+                    if (tmp < 1) tmp = 256;
+                    if (tmp > AUX_SIZE_1) tmp = AUX_SIZE_1;
+                    track[0]->pLP[i] = tmp;
+                    ctl_param_change(i - 16, eParamLoop0, tmp);
+                    render_track0(13);
+                }
+                
+                //[diffuse]: time
+                else if (track[0]->m[i] == 14) {
+                    tmp = track[0]->pLP[i];
+                    tmp += knob_accel(val);
+                    //  a zero loop time will freeze the dsp...
+                    if (tmp < 1) tmp = 256;
+                    if (tmp > AUX_SIZE_1) tmp = AUX_SIZE_1;
+                    track[0]->pLP[i] = tmp;
+                    ctl_param_change(i - 16, eParamLoop0, tmp);
+                    render_track0(14);
+                }
+
+                else ;
+            }
+            break;
+            
+        case 3: //mode parameter 3
+            check_touch(kEventEncoder3);
+            if (touchedThis) {
+                
+                //off
+                if (track[0]->m[i] == 0) ;
+                
+                //HOLD:
+                else if (track[0]->m[i] == 1) ;
+                
+                //TRIG
+                else if (track[0]->m[i] == 2) ;
+                
+                //GATE
+                else if (track[0]->m[i] == 3) ;
+                
+                //NOISE
+                else if (track[0]->m[i] == 4) ;
+                
+                //one:
+                else if (track[0]->m[i] == 5) ;
+                
+                //loop
+                else if (track[0]->m[i] == 6) ;
+                
+                //wav
+                else if (track[0]->m[i] == 7) ;
+                
+                //noise
+                else if (track[0]->m[i] == 8) ;
+                
+                //rec
+                else if (track[0]->m[i] == 9) ;
+                
+                //TRIGrec
+                else if (track[0]->m[i] == 10) ;
+                
+                //[aux master]
+                else if (track[0]->m[i] == 11) ;
+                
+                //[insert mix]: mix
+                else if (track[0]->m[i] == 12) {
+                    tmp = track[0]->mix;
+                    tmp += val * 4194304;
+                    if (tmp < 0) tmp = 0;
+                    track[0]->mix = tmp;
+                    ctl_param_change(DUMMY, eParamMix0, tmp);
+                    render_track0(12);
+                }
+                
+                //[delay]: mix
+                else if (track[0]->m[i] == 13) {
+                    tmp = track[0]->mix;
+                    tmp += val * 4194304;
+                    track[0]->mix = tmp;
+                    ctl_param_change(DUMMY, eParamMix0, tmp);
+                    render_track0(13);
+                }
+                
+                //[diffuse]: mix
+                else if (track[0]->m[i] == 14) {
+                    tmp = track[0]->mix;
+                    tmp += val * 4194304;
+                    track[0]->mix = tmp;
+                    ctl_param_change(DUMMY, eParamMix0, tmp);
+                    render_track0(14);
+                }
 
                 else ;
             }
@@ -361,7 +520,15 @@ void handle_encoder_1(s32 val) {
         case 0: //motor on: nudge playhead slower | faster*
             check_touch(kEventEncoder2);
             if (touchedThis) {
-                //bump playhead position +/- 32k samples
+                static event_t e;
+
+                if (val)
+                {
+                    //  trig found
+                    e.type = kEventAdc0;
+                    e.data = 1;
+                    event_post(&e);
+                }
             }
             break;
             
@@ -401,7 +568,6 @@ void handle_encoder_1(s32 val) {
                     if (tmp > sample[2]->offset) tmp = sample[2]->offset;
                     track[1]->pP[i] = tmp;
                     ctl_param_change(i - 16, eParamPosition1, tmp);
-                    ctl_param_change(i - 16, eParamLoop1, sample[2]->offset);
                     render_track1(5);
                 }
                 
@@ -414,7 +580,6 @@ void handle_encoder_1(s32 val) {
                     if (tmp > sample[2]->offset) tmp = sample[2]->offset;
                     track[1]->pP[i] = tmp;
                     ctl_param_change(i - 16, eParamPosition1, tmp);
-                    ctl_param_change(i - 16, eParamLoop1, sample[2]->offset);
                     render_track1(6);
                 }
                 
@@ -427,38 +592,84 @@ void handle_encoder_1(s32 val) {
                     if (tmp > n_samples - 1) tmp = n_samples - 1;
                     track[1]->pS[i] = tmp;
                     track[1]->pP[i] = sample[tmp]->offset;
+                    track[1]->pLP[i] = sample[tmp]->size - 1;
                     ctl_param_change(i - 16, eParamPosition1, track[1]->pP[i]);
-                    ctl_param_change(i - 16, eParamLoop1, sample[tmp + 1]->offset);
+                    ctl_param_change(i - 16, eParamLoop1, track[1]->pLP[i]);
                     render_track1(7);
                 }
                 
                 //noise
                 else if (track[1]->m[i] == 8) ;
                 
-                //rec: track input
+                //rec: input A
                 else if (track[1]->m[i] == 9) {
-                    tmp = track[1]->pI[i];
+                    tmp = track[1]->inA;
                     tmp += val;
                     if (tmp < 0) tmp = 0;
                     if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
-                    track[1]->pI[i] = tmp;
-                    ctl_param_change(i - 16, eParamInput1, tmp);
+                    track[1]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA1, tmp);
                     render_track1(9);
                 }
 
-                //TRIGrec: physical input
+                //TRIGrec: physical input A
                 else if (track[1]->m[i] == 10) {
-                    tmp = track[1]->pI[i];
+                    tmp = track[1]->inA;
                     tmp += val;
                     if (tmp < 0) tmp = 0;
                     if (tmp > N_PHYSICAL_INPUTS_1) tmp = N_PHYSICAL_INPUTS_1;
-                    track[1]->pI[i] = tmp;
-                    ctl_param_change(i - 16, eParamInput1, tmp);
+                    track[1]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA1, tmp);
                     render_track1(10);
                 }
             
-                //aux
+                //[aux master]
                 else if (track[1]->m[i] == 11) ;
+                
+                //[insert mix]: input A
+                else if (track[1]->m[i] == 12) {
+                    tmp = track[1]->inA;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[1]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA1, tmp);
+                    render_track1(12);
+                }
+                
+                //[delay]: input A
+                else if (track[1]->m[i] == 13) {
+                    tmp = track[1]->inA;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[1]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA1, tmp);
+                    render_track1(13);
+                }
+                
+                //[diffuse]: input A
+                else if (track[1]->m[i] == 14) {
+                    tmp = track[1]->inA;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[1]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA1, tmp);
+                    render_track1(14);
+                }
+                
+                //<GLOBAL>: sq length
+                else if (track[1]->m[i] == 15)
+                {
+                    tmp = length;
+                    tmp += val;
+                    if (tmp < 1 + 16) tmp = 1 + 16;
+                    if (tmp > SQ_LEN) tmp = SQ_LEN;
+                    length = tmp;
+                    ctl_param_change(DUMMY, eParamSqLength, length - 16);
+                    render_track1(15);
+                }
 
                 else ;
             }
@@ -504,15 +715,122 @@ void handle_encoder_1(s32 val) {
                 //noise
                 else if (track[1]->m[i] == 8) ;
                 
-                //rec:
+                //rec
                 else if (track[1]->m[i] == 9) ;
                 
                 //TGrecin2
                 else if (track[1]->m[i] == 10) ;
-                
-                //justHOLD:
+
+                //[aux master]
                 else if (track[1]->m[i] == 11) ;
                 
+                //[insert mix]: input B
+                else if (track[1]->m[i] == 12) {
+                    tmp = track[1]->inB;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[1]->inB = tmp;
+                    ctl_param_change(i - 16, eParamInputB1, tmp);
+                    render_track1(12);
+                }
+                
+                //[delay]: loop
+                else if (track[1]->m[i] == 13) {
+                    tmp = track[1]->pLP[i];
+                    tmp += knob_accel(val);
+                    //  a zero loop time will freeze the dsp...
+                    if (tmp < 1) tmp = 256;
+                    if (tmp > AUX_SIZE_1) tmp = AUX_SIZE_1;
+                    track[1]->pLP[i] = tmp;
+                    ctl_param_change(i - 16, eParamLoop1, tmp);
+                    render_track1(13);
+                }
+                
+                //[diffuse]: time
+                else if (track[1]->m[i] == 14) {
+                    tmp = track[1]->pLP[i];
+                    tmp += knob_accel(val);
+                    //  a zero loop time will freeze the dsp...
+                    if (tmp < 1) tmp = 256;
+                    if (tmp > AUX_SIZE_1) tmp = AUX_SIZE_1;
+                    track[1]->pLP[i] = tmp;
+                    ctl_param_change(i - 16, eParamLoop1, tmp);
+                    render_track1(14);
+                }
+                
+                else ;
+            }
+            break;
+            
+        case 3: //mode parameter 3
+            check_touch(kEventEncoder2);
+            if (touchedThis) {
+                
+                //off
+                if (track[1]->m[i] == 0) ;
+                
+                //HOLD:
+                else if (track[1]->m[i] == 1) ;
+                
+                //TRIG
+                else if (track[1]->m[i] == 2) ;
+                
+                //GATE
+                else if (track[1]->m[i] == 3) ;
+                
+                //NOISE
+                else if (track[1]->m[i] == 4) ;
+                
+                //one:
+                else if (track[1]->m[i] == 5) ;
+                
+                //loop
+                else if (track[1]->m[i] == 6) ;
+                
+                //wav
+                else if (track[1]->m[i] == 7) ;
+                
+                //noise
+                else if (track[1]->m[i] == 8) ;
+                
+                //rec
+                else if (track[1]->m[i] == 9) ;
+                
+                //TRIGrec
+                else if (track[1]->m[i] == 10) ;
+                
+                //[aux master]
+                else if (track[1]->m[i] == 11) ;
+                
+                //[insert mix]: mix
+                else if (track[1]->m[i] == 12) {
+                    tmp = track[1]->mix;
+                    tmp += val * 4194304;
+                    if (tmp < 0) tmp = 0;
+                    track[1]->mix = tmp;
+                    ctl_param_change(DUMMY, eParamMix1, tmp);
+                    render_track1(12);
+                }
+                
+                //[delay]: mix
+                else if (track[1]->m[i] == 13) {
+                    tmp = track[1]->mix;
+                    tmp += val * 4194304;
+                    track[1]->mix = tmp;
+                    ctl_param_change(DUMMY, eParamMix1, tmp);
+                    render_track1(13);
+                }
+                
+                //[diffuse]: mix
+                else if (track[1]->m[i] == 14) {
+                    tmp = track[1]->mix;
+                    tmp += val * 4194304;
+                    track[1]->mix = tmp;
+                    ctl_param_change(DUMMY, eParamMix1, tmp);
+                    render_track1(14);
+                }
+
                 else ;
             }
             break;
@@ -610,7 +928,6 @@ void handle_encoder_2(s32 val) {
                     if (tmp > sample[3]->offset) tmp = sample[3]->offset;
                     track[2]->pP[i] = tmp;
                     ctl_param_change(i - 16, eParamPosition2, tmp);
-                    ctl_param_change(i - 16, eParamLoop2, sample[3]->offset);
                     render_track2(5);
                 }
                 
@@ -623,7 +940,6 @@ void handle_encoder_2(s32 val) {
                     if (tmp > sample[3]->offset) tmp = sample[3]->offset;
                     track[2]->pP[i] = tmp;
                     ctl_param_change(i - 16, eParamPosition2, tmp);
-                    ctl_param_change(i - 16, eParamLoop2, sample[3]->offset);
                     render_track2(6);
                 }
                 
@@ -636,38 +952,84 @@ void handle_encoder_2(s32 val) {
                     if (tmp > n_samples - 1) tmp = n_samples - 1;
                     track[2]->pS[i] = tmp;
                     track[2]->pP[i] = sample[tmp]->offset;
+                    track[2]->pLP[i] = sample[tmp]->size - 1;
                     ctl_param_change(i - 16, eParamPosition2, track[2]->pP[i]);
-                    ctl_param_change(i - 16, eParamLoop2, sample[tmp + 1]->offset);
+                    ctl_param_change(i - 16, eParamLoop2, track[2]->pLP[i]);
                     render_track2(7);
                 }
                 
                 //noise
                 else if (track[2]->m[i] == 8) ;
                 
-                //rec: track input
+                //rec: input A
                 else if (track[2]->m[i] == 9) {
-                    tmp = track[2]->pI[i];
+                    tmp = track[2]->inA;
                     tmp += val;
                     if (tmp < 0) tmp = 0;
                     if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
-                    track[2]->pI[i] = tmp;
-                    ctl_param_change(i - 16, eParamInput2, tmp);
+                    track[2]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA2, tmp);
                     render_track2(9);
                 }
             
-                //TGrecin2
+                //TRIGrec: physical input A 
                 else if (track[2]->m[i] == 10) {
-                    tmp = track[2]->pI[i];
+                    tmp = track[2]->inA;
                     tmp += val;
                     if (tmp < 0) tmp = 0;
                     if (tmp > N_PHYSICAL_INPUTS_1) tmp = N_PHYSICAL_INPUTS_1;
-                    track[2]->pI[i] = tmp;
-                    ctl_param_change(i - 16, eParamInput2, tmp);
+                    track[2]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA2, tmp);
                     render_track2(10);
                 }
             
-                //aux
+                //[aux master]
                 else if (track[2]->m[i] == 11) ;
+                
+                //[insert mix]: input A
+                else if (track[2]->m[i] == 12) {
+                    tmp = track[2]->inA;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[2]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA2, tmp);
+                    render_track2(12);
+                }
+                
+                //[delay]: input A
+                else if (track[2]->m[i] == 13) {
+                    tmp = track[2]->inA;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[2]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA2, tmp);
+                    render_track2(13);
+                }
+                
+                //[diffuse]: input A
+                else if (track[2]->m[i] == 14) {
+                    tmp = track[2]->inA;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[2]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA2, tmp);
+                    render_track2(14);
+                }
+                
+                //<GLOBAL>: sq length
+                else if (track[2]->m[i] == 15)
+                {
+                    tmp = length;
+                    tmp += val;
+                    if (tmp < 1 + 16) tmp = 1 + 16;
+                    if (tmp > SQ_LEN) tmp = SQ_LEN;
+                    length = tmp;
+                    ctl_param_change(DUMMY, eParamSqLength, length - 16);
+                    render_track2(15);
+                }
 
                 else ;
             }
@@ -713,15 +1075,122 @@ void handle_encoder_2(s32 val) {
                 //noise
                 else if (track[2]->m[i] == 8) ;
                 
-                //rec:
+                //rec
                 else if (track[2]->m[i] == 9) ;
                 
-                //TGrecin2
+                //TRIGrec
                 else if (track[2]->m[i] == 10) ;
                 
-                //justHOLD:
+                //[aux master]
                 else if (track[2]->m[i] == 11) ;
                 
+                //[insert mix]: input B
+                else if (track[2]->m[i] == 12) {
+                    tmp = track[2]->inB;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[2]->inB = tmp;
+                    ctl_param_change(DUMMY, eParamInputB2, tmp);
+                    render_track2(12);
+                }
+                
+                //[delay]: loop
+                else if (track[2]->m[i] == 13) {
+                    tmp = track[2]->pLP[i];
+                    tmp += knob_accel(val);
+                    //  a zero loop time will freeze the dsp...
+                    if (tmp < 1) tmp = 256;
+                    if (tmp > AUX_SIZE_1) tmp = AUX_SIZE_1;
+                    track[2]->pLP[i] = tmp;
+                    ctl_param_change(i - 16, eParamLoop2, tmp);
+                    render_track2(13);
+                }
+                
+                //[diffuse]: time
+                else if (track[2]->m[i] == 14) {
+                    tmp = track[2]->pLP[i];
+                    tmp += knob_accel(val);
+                    //  a zero loop time will freeze the dsp...
+                    if (tmp < 1) tmp = 256;
+                    if (tmp > AUX_SIZE_1) tmp = AUX_SIZE_1;
+                    track[2]->pLP[i] = tmp;
+                    ctl_param_change(i - 16, eParamLoop2, tmp);
+                    render_track2(14);
+                }
+
+                else ;
+            }
+            break;
+            
+        case 3: //mode parameter 3
+            check_touch(kEventEncoder1);
+            if (touchedThis) {
+                
+                //off
+                if (track[2]->m[i] == 0) ;
+                
+                //HOLD:
+                else if (track[2]->m[i] == 1) ;
+                
+                //TRIG
+                else if (track[2]->m[i] == 2) ;
+                
+                //GATE
+                else if (track[2]->m[i] == 3) ;
+                
+                //NOISE
+                else if (track[2]->m[i] == 4) ;
+                
+                //one:
+                else if (track[2]->m[i] == 5) ;
+                
+                //loop
+                else if (track[2]->m[i] == 6) ;
+                
+                //wav
+                else if (track[2]->m[i] == 7) ;
+                
+                //noise
+                else if (track[2]->m[i] == 8) ;
+                
+                //rec
+                else if (track[2]->m[i] == 9) ;
+                
+                //TRIGrec
+                else if (track[2]->m[i] == 10) ;
+                
+                //[aux master]
+                else if (track[2]->m[i] == 11) ;
+                
+                //[insert mix]: mix
+                else if (track[2]->m[i] == 12) {
+                    tmp = track[2]->mix;
+                    tmp += val * 4194304;
+                    if (tmp < 0) tmp = 0;
+                    track[2]->mix = tmp;
+                    ctl_param_change(DUMMY, eParamMix2, tmp);
+                    render_track2(12);
+                }
+                
+                //[delay]: mix
+                else if (track[2]->m[i] == 13) {
+                    tmp = track[2]->mix;
+                    tmp += val * 4194304;
+                    track[2]->mix = tmp;
+                    ctl_param_change(DUMMY, eParamMix2, tmp);
+                    render_track2(13);
+                }
+                
+                //[diffuse]: mix
+                else if (track[2]->m[i] == 14) {
+                    tmp = track[2]->mix;
+                    tmp += val * 4194304;
+                    track[2]->mix = tmp;
+                    ctl_param_change(DUMMY, eParamMix2, tmp);
+                    render_track2(14);
+                }
+
                 else ;
             }
             break;
@@ -821,7 +1290,6 @@ void handle_encoder_3(s32 val) {
                     if (tmp > sample[4]->offset) tmp = sample[4]->offset;
                     track[3]->pP[i] = tmp;
                     ctl_param_change(i - 16, eParamPosition3, tmp);
-                    ctl_param_change(i - 16, eParamLoop3, sample[4]->offset);
                     render_track3(5);
                 }
                 
@@ -834,7 +1302,6 @@ void handle_encoder_3(s32 val) {
                     if (tmp > sample[4]->offset) tmp = sample[4]->offset;
                     track[3]->pP[i] = tmp;
                     ctl_param_change(i - 16, eParamPosition3, tmp);
-                    ctl_param_change(i - 16, eParamLoop3, sample[4]->offset);
                     render_track3(6);
                 }
                 
@@ -847,38 +1314,84 @@ void handle_encoder_3(s32 val) {
                     if (tmp > n_samples - 1) tmp = n_samples - 1;
                     track[3]->pS[i] = tmp;
                     track[3]->pP[i] = sample[tmp]->offset;
+                    track[3]->pLP[i] = sample[tmp]->size - 1;
                     ctl_param_change(i - 16, eParamPosition3, track[3]->pP[i]);
-                    ctl_param_change(i - 16, eParamLoop3, sample[tmp + 1]->offset);
+                    ctl_param_change(i - 16, eParamLoop3, track[3]->pLP[i]);
                     render_track3(7);
                 }
                 
                 //noise
                 else if (track[3]->m[i] == 8) ;
                 
-                //rec: track input
+                //rec: input A
                 else if (track[3]->m[i] == 9) {
-                    tmp = track[3]->pI[i];
+                    tmp = track[3]->inA;
                     tmp += val;
                     if (tmp < 0) tmp = 0;
                     if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
-                    track[3]->pI[i] = tmp;
-                    ctl_param_change(i - 16, eParamInput3, tmp);
+                    track[3]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA3, tmp);
                     render_track3(9);
                 }
                 
-                //TGrecin2
+                //TRIGrec: physical input A
                 else if (track[3]->m[i] == 10) {
-                    tmp = track[3]->pI[i];
+                    tmp = track[3]->inA;
                     tmp += val;
                     if (tmp < 0) tmp = 0;
                     if (tmp > N_PHYSICAL_INPUTS_1) tmp = N_PHYSICAL_INPUTS_1;
-                    track[3]->pI[i] = tmp;
-                    ctl_param_change(i - 16, eParamInput3, tmp);
+                    track[3]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA3, tmp);
                     render_track3(10);
                 }
             
-                //aux
+                //[aux master]
                 else if (track[3]->m[i] == 11) ;
+                
+                //[insert mix]: input A
+                else if (track[3]->m[i] == 12) {
+                    tmp = track[3]->inA;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[3]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA3, tmp);
+                    render_track3(12);
+                }
+                
+                //[delay]: input A
+                else if (track[3]->m[i] == 13) {
+                    tmp = track[3]->inA;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[3]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA3, tmp);
+                    render_track3(13);
+                }
+                
+                //[diffuse]: input A
+                else if (track[3]->m[i] == 14) {
+                    tmp = track[3]->inA;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[3]->inA = tmp;
+                    ctl_param_change(DUMMY, eParamInputA3, tmp);
+                    render_track3(14);
+                }
+                
+                //<GLOBAL>: sq length
+                else if (track[3]->m[i] == 15)
+                {
+                    tmp = length;
+                    tmp += val;
+                    if (tmp < 1 + 16) tmp = 1 + 16;
+                    if (tmp > SQ_LEN) tmp = SQ_LEN;
+                    length = tmp;
+                    ctl_param_change(DUMMY, eParamSqLength, length - 16);
+                    render_track3(15);
+                }
 
                 else ;
             }
@@ -924,19 +1437,126 @@ void handle_encoder_3(s32 val) {
                 //noise
                 else if (track[3]->m[i] == 8) ;
                 
-                //rec:
+                //rec
                 else if (track[3]->m[i] == 9) ;
             
-                //TGrecin2
+                //TRIGrec
                 else if (track[3]->m[i] == 10) ;
                 
-                //justHOLD:
+                //[aux master]
                 else if (track[3]->m[i] == 11) ;
+                
+                //[insert mix]: input B
+                else if (track[3]->m[i] == 12) {
+                    tmp = track[3]->inB;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                    track[3]->inB = tmp;
+                    ctl_param_change(DUMMY, eParamInputB3, tmp);
+                    render_track3(12);
+                }
+                
+                //[delay]: loop
+                else if (track[3]->m[i] == 13) {
+                    tmp = track[3]->pLP[i];
+                    tmp += knob_accel(val);
+                    //  a zero loop time will freeze the dsp...
+                    if (tmp < 1) tmp = 256;
+                    if (tmp > AUX_SIZE_1) tmp = AUX_SIZE_1;
+                    track[3]->pLP[i] = tmp;
+                    ctl_param_change(i - 16, eParamLoop3, tmp);
+                    render_track3(13);
+                }
+                
+                //[diffuse]: time
+                else if (track[3]->m[i] == 14) {
+                    tmp = track[3]->pLP[i];
+                    tmp += knob_accel(val);
+                    //  a zero loop time will freeze the dsp...
+                    if (tmp < 1) tmp = 256;
+                    if (tmp > AUX_SIZE_1) tmp = AUX_SIZE_1;
+                    track[3]->pLP[i] = tmp;
+                    ctl_param_change(i - 16, eParamLoop3, tmp);
+                    render_track3(14);
+                }
                 
                 else ;
             }
             break;
             
+        case 3: //mode parameter 3
+            check_touch(kEventEncoder0);
+            if (touchedThis) {
+                
+                //off
+                if (track[3]->m[i] == 0) ;
+                
+                //HOLD:
+                else if (track[3]->m[i] == 1) ;
+                
+                //TRIG
+                else if (track[3]->m[i] == 2) ;
+                
+                //GATE
+                else if (track[3]->m[i] == 3) ;
+                
+                //NOISE
+                else if (track[3]->m[i] == 4) ;
+                
+                //one:
+                else if (track[3]->m[i] == 5) ;
+                
+                //loop
+                else if (track[3]->m[i] == 6) ;
+                
+                //wav
+                else if (track[3]->m[i] == 7) ;
+                
+                //noise
+                else if (track[3]->m[i] == 8) ;
+                
+                //rec
+                else if (track[3]->m[i] == 9) ;
+                
+                //TRIGrec
+                else if (track[3]->m[i] == 10) ;
+                
+                //[aux master]
+                else if (track[3]->m[i] == 11) ;
+                
+                //[insert mix]: mix
+                else if (track[3]->m[i] == 12) {
+                    tmp = track[3]->mix;
+                    tmp += knob_accel(val);
+                    if (tmp < 0) tmp = 0;
+                    track[3]->mix = tmp;
+                    ctl_param_change(DUMMY, eParamMix3, tmp);
+                    render_track3(12);
+                }
+                
+                //[delay]: mix
+                else if (track[3]->m[i] == 13) {
+                    tmp = track[3]->mix;
+                    tmp += val * 4194304;
+                    track[3]->mix = tmp;
+                    ctl_param_change(DUMMY, eParamMix3, tmp);
+                    render_track3(13);
+                }
+                
+                //[diffuse]: mix
+                else if (track[3]->m[i] == 14) {
+                    tmp = track[3]->mix;
+                    tmp += val * 4194304;
+                    track[3]->mix = tmp;
+                    ctl_param_change(DUMMY, eParamMix3, tmp);
+                    render_track3(14);
+                }
+                
+                else ;
+            }
+            break;    
+        
         case 4: //aux level
             check_touch(kEventEncoder0);
             if (touchedThis) {

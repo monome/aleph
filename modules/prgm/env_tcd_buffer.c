@@ -17,18 +17,12 @@ void buffer_init(sampleBuffer *buf, volatile fract32 *data, u32 samples) {
 
 void buffer_head_init(bufferHead *head, sampleBuffer *buf) {
     head->buf = buf;
+    head->offset = 0;
     head->idx = 0;
     head->loop = 0;
     head->inc = 1;
     head->div = 1;
     head->divCount = 0;
-}
-
-void buffer_head_pos(bufferHead *head, u32 pos) {
-    while(pos > head->loop) {
-        pos -= head->loop;
-    }
-    head->idx = pos;
 }
 
 void buffer_head_next(bufferHead *head) {
@@ -37,49 +31,52 @@ void buffer_head_next(bufferHead *head) {
     if(head->divCount >= head->div) {
         head->divCount = 0;
         head->idx += head->inc;
-        while(head->idx >= head->loop) {
+        while(head->idx >= head->offset + head->loop) {
             head->idx -= head->loop;
         }
     }
 }
 
-/*
-void buffer_head_prev(bufferHead *head) {
-    head->divCount++;
-    //    head->idx %= head->loop;
-    if(head->divCount >= head->div) {
-        head->divCount = 0;
-        head->idx += head->inc;
-        while(head->idx >= head->loop) {
-            head->idx -= head->loop;
-        }
+void buffer_head_pos(bufferHead *head, u32 pos) {
+    while(pos > head->offset + head->loop) {
+        pos -= head->loop;
     }
+    head->idx = pos;
 }
-*/
 
 s32 buffer_head_play(bufferHead *head) {
     return head->buf->data[head->idx];
 }
 
-void buffer_head_record(bufferHead *head, s32 sample) {
+void buffer_head_rec(bufferHead *head, s32 sample) {
     head->buf->data[head->idx] = sample;
 }
 
-void buffer_head_sync(bufferHead *head, bufferHead *target, u32 samples) {
-    if(target->idx >= samples)
-    {
-        buffer_head_pos(head, target->idx - samples);
-    }
-    else
-    {
-        buffer_head_pos(head, (target->idx + head->loop) - samples);
-    }
+void buffer_head_mix(bufferHead *head, fract32 sample, fract32 preLevel) {
+    head->buf->data[head->idx] = add_fr1x32(mult_fr1x32x32(head->buf->data[head->idx], preLevel), sample);
 }
 
-void buffer_head_dub(bufferHead *head, fract32 s) {
-    head->buf->data[head->idx] = add_fr1x32(head->buf->data[head->idx], s);
+void buffer_head_invmix(bufferHead *head, fract32 sample, fract32 preLevel) {
+    head->buf->data[head->idx] = add_fr1x32(mult_fr1x32x32(head->buf->data[head->idx], preLevel), negate_fr1x32(sample));
 }
 
-void buffer_head_mix(bufferHead *head, fract32 s, fract32 preLevel) {
-    head->buf->data[head->idx] = add_fr1x32(mult_fr1x32x32(head->buf->data[head->idx], preLevel), s);
+void buffer_head_dub(bufferHead *head, fract32 sample) {
+    head->buf->data[head->idx] = add_fr1x32(head->buf->data[head->idx], sample);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

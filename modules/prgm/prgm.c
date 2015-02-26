@@ -20,6 +20,7 @@ prgmData *data;
 
 //audio buffer
 sampleBuffer onchipbuffer[N_TRACKS];
+u32 offset;
 
 //sequencer
 sqTrack *sq[N_TRACKS];
@@ -44,23 +45,28 @@ static void init_sq_parameters(sqTrack *t);
 //process frame
 static void set_process(prgmTrack *t, u8 n);
 static fract32 (*get_processptr(u8 n))();
-static fract32 p_Pos_audio(prgmTrack *t);
-static fract32 p_audio(prgmTrack *t);
-static fract32 p_off(prgmTrack *t);
-static fract32 p_cv(prgmTrack *t);
-static fract32 p_FrqSlw_cv(prgmTrack *t);
+static fract32 pf_off(prgmTrack *t);
+static fract32 pf_audio(prgmTrack *t);
+static fract32 pf_loop(prgmTrack *t);
+static fract32 pf_aux_mixloop(prgmTrack *t);
+static fract32 pf_aux_mix(prgmTrack *t);
+static fract32 pf_aux_frq(prgmTrack *t);
+static fract32 pf_cv(prgmTrack *t);
+static fract32 pf_frq(prgmTrack *t);
 
 //sequenced parameters
 static void sqparam_set_trig(u8 t, u8 s, ParamValue v);
 static void sqparam_set_flag(u8 t, u8 s, ParamValue v);
 static void sqparam_set_curve(u8 t, u8 s, ParamValue v);
 static void sqparam_set_time(u8 t, u8 s, ParamValue v);
-static void sqparam_set_input(u8 t, u8 s, ParamValue v);
 static void sqparam_set_pos(u8 t, u8 s, ParamValue v);
 static void sqparam_set_loop(u8 t, u8 s, ParamValue v);
 
 //global parameters
 static void param_set_level(prgmTrack *t, ParamValue v);
+static void param_set_inputA(prgmTrack *t, ParamValue v);
+static void param_set_inputB(prgmTrack *t, ParamValue v);
+static void param_set_mix(prgmTrack *t, ParamValue v);
 static void param_set_counter(ParamValue v);
 static void param_set_length(ParamValue v);
 static void sqparam_set_frq(u8 t, u8 s, ParamValue v);
@@ -77,14 +83,15 @@ PrgmTrackptr init_track(void) {
 
 void init_track_parameters(prgmTrack *t) {
     t->flag = 0;
-    t->process = get_processptr(5);
-//    t->process = get_processptr(0);
-    
+    t->process = get_processptr(0);
+
+    t->pF = 0;
+    t->pM = 0;
     t->pL = 0;
     t->pP = 0;
-    t->pF = 0;
+    t->pLP = 0;
     filter_1p_lo_init(&(t->pSlew), 0xf);
-    filter_1p_lo_set_slew(&(t->pSlew), 0x77ffffff); //TEST!!!
+    filter_1p_lo_set_slew(&(t->pSlew), 0x7cffffff); //TEST!!!
     
     env_tcd_init(&(t->envAmp));
 }
@@ -103,9 +110,7 @@ void init_sq_parameters(sqTrack *t) {
         t->sqf[i] = 0;
         t->sqc[i] = 0;
         t->sqt[i] = 0;
-        t->sqi[i] = 0;
         t->sqp[i] = 0;
-        t->sql[i] = 0;
         t->sqfq[i] = 0;
     }
 }
@@ -143,7 +148,10 @@ void module_init(void) {
     //  init track playheads
     for(n=0; n<N_TRACKS; n++)
     {
-        buffer_head_init(&(track[n])->envAmp.head, &(onchipbuffer[n]));
+        for(i=0; i<N_HEADS; i++)
+        {
+            buffer_head_init(&(track[n])->envAmp.head[i], &(onchipbuffer[n]));
+        }
     }
     
     //  zero buffer
@@ -152,6 +160,7 @@ void module_init(void) {
     //  init static variables
     counter = 0;
     length = SQ_LEN;
+//    offset = 0;
     
     //  init parameters
     for(i=0; i<module_get_num_params(); i++) param_setup(i, 0);
@@ -166,18 +175,27 @@ extern u32 module_get_num_params(void) {
 }
 
 
+void module_load_sample(s32 sample) {
+//    u32 tmp = offset + idx;
+//    data->sampleBuffer[offset] = sample;
+}
+
+
 //process frame
 fract32 (*get_processptr(u8 n))() {
     static fract32 (*process[])() =
     {
-        p_Pos_audio,                //0
-        p_audio,                    //1
-        p_off,                      //2
-        p_cv,                       //3
-        p_FrqSlw_cv,                //4
+        pf_off,                         //0
+        pf_audio,                       //1
+        pf_loop,                        //2
+        pf_aux_mixloop,                 //3
+        pf_aux_mix,                     //4
+        pf_aux_frq,                     //5
+        pf_cv,                          //6
+        pf_frq,                         //7
     };
 
-    return (n < 1 || n > 5) ? *process[0] : *process[n];
+    return (n < 1 || n > 8) ? *process[0] : *process[n];
 }
 
 
@@ -191,8 +209,10 @@ void module_process_frame(void) {
     fract32 tmp;
 
     //  mix aux's
-    tmp = 0;
-    tmp = add_fr1x32(tmp, mult_fr1x32x32(out[0], track[0]->pL));
+//    tmp = 0;
+//    tmp = add_fr1x32(tmp, mult_fr1x32x32(out[0], track[0]->pL));
+    //TEST THIS!!!
+    tmp = mult_fr1x32x32(out[0], track[0]->pL);
     tmp = add_fr1x32(tmp, mult_fr1x32x32(out[1], track[1]->pL));
     tmp = add_fr1x32(tmp, mult_fr1x32x32(out[2], track[2]->pL));
     tmp = add_fr1x32(tmp, mult_fr1x32x32(out[3], track[3]->pL));
@@ -201,7 +221,7 @@ void module_process_frame(void) {
     for(cvChn=0;cvChn<N_TRACKS;cvChn++)
     {
         //  calculate audio outputs
-        if(track[cvChn]->flag < 2)
+        if(track[cvChn]->flag < 6)
         {
             out[cvChn] = 0x00000000;
             out[cvChn] = track[cvChn]->process(track[cvChn]);
@@ -217,41 +237,14 @@ void module_process_frame(void) {
 }
 
 
-//process 0: audio with position control
-fract32 p_Pos_audio(prgmTrack *t) {
-//    env_tcd_set_pos(&(t->envAmp), t->pP);
-    if(t->envAmp.state == OFF)
-    {
-        return 0;
-    }
-    else
-    {
-        return t->envAmp.curve(&(t->envAmp));
-    }
-}
-
-
-//process 1: audio
-fract32 p_audio(prgmTrack *t) {
-    if(t->envAmp.state == OFF)
-    {
-        return 0;
-    }
-    else
-    {
-        return t->envAmp.curve(&(t->envAmp));
-    }
-}
-
-
-//process 2: off
-fract32 p_off(prgmTrack *t) {
+//process 0: off | audio
+fract32 pf_off(prgmTrack *t) {
     return 0;
 }
 
 
-//process 3: cv
-fract32 p_cv(prgmTrack *t) {
+//process 1: none | audio
+fract32 pf_audio(prgmTrack *t) {
     if(t->envAmp.state == OFF)
     {
         return 0;
@@ -263,16 +256,85 @@ fract32 p_cv(prgmTrack *t) {
 }
 
 
-//process 4: cv with slewed frequency control
-fract32 p_FrqSlw_cv(prgmTrack *t) {
-    filter_1p_lo_in(&(t->pSlew), t->pF);
-    return filter_1p_lo_next(&(t->pSlew));
+//process 2: loop | audio
+fract32 pf_loop(prgmTrack *t) {
+    env_tcd_set_loop(&(t->envAmp), t->pLP);
+    if(t->envAmp.state == OFF)
+    {
+        return 0;
+    }
+    else
+    {
+        return t->envAmp.curve(&(t->envAmp));
+    }
 }
 
 
-void module_load_sample(u32 offset, u32 idx, s32 sample) {
-    u32 tmp = offset + idx;
-    data->sampleBuffer[tmp] = sample;
+//process 3: mix+loop | aux
+fract32 pf_aux_mixloop(prgmTrack *t) {
+    env_tcd_set_mix(&(t->envAmp), t->pM);
+    env_tcd_set_loop(&(t->envAmp), t->pLP);
+    if(t->envAmp.state == OFF)
+    {
+        return 0;
+    }
+    else
+    {
+        return t->envAmp.curve(&(t->envAmp));
+    }
+}
+
+
+//process 4: mix | aux
+fract32 pf_aux_mix(prgmTrack *t) {
+    env_tcd_set_mix(&(t->envAmp), t->pM);
+    if(t->envAmp.state == OFF)
+    {
+        return 0;
+    }
+    else
+    {
+        return t->envAmp.curve(&(t->envAmp));
+    }
+}
+
+
+//process 5: frequency | aux
+fract32 pf_aux_frq(prgmTrack *t) {
+    filter_1p_lo_in(&(t->pSlew), t->pF);
+    
+    if(filter_1p_sync(&(t->pSlew)))
+    {
+        //output curve
+//        bandlimit_set_f(&(t->envAmp.bpf), t->pF);
+        return t->envAmp.curve(&(t->envAmp));
+    }    
+    else
+    {
+        //output encoder
+//        bandlimit_set_f(&(t->envAmp.bpf), filter_1p_lo_next(&(t->pSlew)));
+        return t->envAmp.curve(&(t->envAmp));
+    }
+}
+
+
+//process 6: none | cv
+fract32 pf_cv(prgmTrack *t) {
+    if(t->envAmp.state == OFF)
+    {
+        return 0;
+    }
+    else
+    {
+        return t->envAmp.curve(&(t->envAmp));
+    }
+}
+
+
+//process 7: frequency | cv
+fract32 pf_frq(prgmTrack *t) {
+    filter_1p_lo_in(&(t->pSlew), t->pF);
+    return filter_1p_lo_next(&(t->pSlew));
 }
 
 
@@ -294,11 +356,10 @@ void module_set_trig(void) {
         if (sq[n]->sqtg[c])
         {
             set_process(track[n], sq[n]->sqf[c]);
-            env_tcd_set_input(&(track[n]->envAmp), sq[n]->sqi[c]);
             env_tcd_set_curve(&(track[n]->envAmp), sq[n]->sqc[c]);
-            //  loop point must be set before start position
+            //  loop point before start position?!? or the other way around?!?
             env_tcd_set_loop(&(track[n]->envAmp), sq[n]->sqlp[c]);
-            env_tcd_set_pos(&(track[n]->envAmp), sq[n]->sqp[c]);
+            env_tcd_set_offset(&(track[n]->envAmp), sq[n]->sqp[c]);
             env_tcd_set_time(&(track[n]->envAmp), sq[n]->sqt[c]);
         }
     }
@@ -323,11 +384,10 @@ void play_step(u8 c) {
         if (sq[n]->sqtg[c])
         {
             set_process(track[n], sq[n]->sqf[c]);
-            env_tcd_set_input(&(track[n]->envAmp), sq[n]->sqi[c]);
             env_tcd_set_curve(&(track[n]->envAmp), sq[n]->sqc[c]);
             //  loop point must be set before start position
             env_tcd_set_loop(&(track[n]->envAmp), sq[n]->sqlp[c]);
-            env_tcd_set_pos(&(track[n]->envAmp), sq[n]->sqp[c]);
+            env_tcd_set_offset(&(track[n]->envAmp), sq[n]->sqp[c]);
             env_tcd_set_time(&(track[n]->envAmp), sq[n]->sqt[c]);
         }
     }
@@ -357,29 +417,50 @@ void sqparam_set_time(u8 t, u8 s, ParamValue v) {
     sq[t]->sqt[s] = v;
 }
 
-void sqparam_set_input(u8 t, u8 s, ParamValue v) {
-    sq[t]->sqi[s] = v;
+void sqparam_set_frq(u8 t, u8 s, ParamValue v) {
+    //  set sequenced value
+    sq[t]->sqfq[s] = v;
+    //  allow process frame re-calculation
+    track[t]->pF = v;
 }
 
 void sqparam_set_pos(u8 t, u8 s, ParamValue v) {
+    //  set sequenced value
     sq[t]->sqp[s] = v;
+    //  allow process frame re-calculation
+//    track[t]->pP = v;
 }
 
 void sqparam_set_loop(u8 t, u8 s, ParamValue v) {
+    //  set sequenced value
     sq[t]->sqlp[s] = v;
+    //  allow process frame re-calculation
+    track[t]->pLP = v;
 }
 
 //  global parameters
+void param_set_inputA(prgmTrack *t, ParamValue v) {
+    env_tcd_set_inputA(&(t->envAmp), v);
+}
+
+void param_set_inputB(prgmTrack *t, ParamValue v) {
+    env_tcd_set_inputB(&(t->envAmp), v);
+}
+
+void param_set_mix(prgmTrack *t, ParamValue v) {
+    t->pM = v;
+}
+
 void param_set_level(prgmTrack *t, ParamValue v) {
     t->pL = v;
 }
 
-void sqparam_set_frq(u8 t, u8 s, ParamValue v) {
-    sq[t]->sqfq[s] = v;
+void param_set_offset(ParamValue v) {
+    offset = v;
 }
 
-void sqparam_set_frames(u8 s, ParamValue v) {
-    //    data->frames[s] = v;
+void param_set_sample(ParamValue v) {
+    data->sampleBuffer[offset] = v;
 }
 
 void param_set_buffer_length(sampleBuffer *buf, ParamValue v) {}
@@ -521,19 +602,6 @@ void module_set_sqparam(u32 s, u32 idx, ParamValue v) {
             sqparam_set_time(3, s, v);
             break;
             
-        case eParamInput0:
-            sqparam_set_input(0, s, v);
-            break;
-        case eParamInput1:
-            sqparam_set_input(1, s, v);
-            break;
-        case eParamInput2:
-            sqparam_set_input(2, s, v);
-            break;
-        case eParamInput3:
-            sqparam_set_input(3, s, v);
-            break;
-            
         case eParamPosition0:
             sqparam_set_pos(0, s, v);
             break;
@@ -561,6 +629,45 @@ void module_set_sqparam(u32 s, u32 idx, ParamValue v) {
             break;
 
         //  global parameters
+        case eParamInputA0:
+            param_set_inputA(track[0], v);
+            break;
+        case eParamInputA1:
+            param_set_inputA(track[1], v);
+            break;
+        case eParamInputA2:
+            param_set_inputA(track[2], v);
+            break;
+        case eParamInputA3:
+            param_set_inputA(track[3], v);
+            break;
+
+        case eParamInputB0:
+            param_set_inputB(track[0], v);
+            break;
+        case eParamInputB1:
+            param_set_inputB(track[1], v);
+            break;
+        case eParamInputB2:
+            param_set_inputB(track[2], v);
+            break;
+        case eParamInputB3:
+            param_set_inputB(track[3], v);
+            break;
+            
+        case eParamMix0:
+            param_set_mix(track[0], v);
+            break;
+        case eParamMix1:
+            param_set_mix(track[1], v);
+            break;
+        case eParamMix2:
+            param_set_mix(track[2], v);
+            break;
+        case eParamMix3:
+            param_set_mix(track[3], v);
+            break;
+            
         case eParamLevel0:
             param_set_level(track[0], v);
             break;
@@ -587,10 +694,14 @@ void module_set_sqparam(u32 s, u32 idx, ParamValue v) {
             sqparam_set_frq(3, s, v);
             break;
             
-        case eParamFrames:
-            sqparam_set_frames(s, v);
+        case eParamOffset:
+            param_set_offset(v);
             break;
-            
+
+        case eParamSample:
+            param_set_sample(v);
+            break;
+
         case eParamBufferLength0:
 //            param_set_buffer_length(&(inBuf[0]), v);
             break;

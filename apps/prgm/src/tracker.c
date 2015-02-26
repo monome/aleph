@@ -14,12 +14,6 @@
 static prgmTrackptr alloc_track(void);
 static void track_init_param(prgmTrack *t);
 
-//function definitions
-//set adc timers, called by app_launch()
-void adc_init(void) {
-    timers_set_adc(1);
-}
-
 //allocate one chunk of memory for each track
 prgmTrackptr alloc_track(void) {
     return(prgmTrackptr)alloc_mem(sizeof(prgmTrack));
@@ -37,16 +31,18 @@ void track_init_param(prgmTrack *t) {
         t->cT[i] = 0;
         t->cTG[i] = 0;
         t->f[i] = 0;
-        t->pI[i] = 0;
-        t->pS[i] = 4;
+        t->pS[i] = 8;
         t->pP[i] = 0;
-        t->pL[i] = 0;
+        t->pLP[i] = 256;
         t->pF[i] = 0;
         t->pF_scale[i] = 0;
         t->pX[i] = 0;
     }
     
     //  global parameters
+    t->inA = 0;
+    t->inB = 0;
+    t->mix = 0;
     t->aux = 0;
 }
 
@@ -66,8 +62,8 @@ void tracker_init(void) {
         n_scale[i] = 0;
     }
 
-    bfinheadstate = 0;
-    bfinheadpos = 0;
+//    bfinheadstate = 0;
+//    bfinheadpos = 0;
     motor = 0;
 
     editpos = 16;
@@ -79,6 +75,6 @@ void tracker_init(void) {
     measure_lookup = 0;
     measure = 0;
 
-    foot1_touched = 0;
-    foot2_touched = 0;
+//    foot1_touched = 0;
+//    foot2_touched = 0;
 }

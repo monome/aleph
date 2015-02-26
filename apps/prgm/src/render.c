@@ -105,7 +105,7 @@ void render_startup (void) {
     print_fix16(renderTime2, 0);
     print_fix16(renderTime3, 0);
 
-    print_fix16(renderEditPosition, 1 * 0x00010000);
+    print_fix16(renderEditPosition, 1 * FIX16_ONE);
     render_env();
 }
 
@@ -180,6 +180,31 @@ void render_modes(u8 pos) {
     render_mode(3, track[3]->m[pos]);
 }
 
+/*
+ off
+ TRIG
+ GATE
+ TCD
+ SHIFT
+ impulse
+ noise
+ wav
+ loop
+ rec
+ TRIGrec
+ [insert mix]
+ [delay]
+ [diffuse]
+ "[diffuse->bp]"
+ [1bp]
+ [3bp]
+ "[bp->fbloop]"
+ "[fb(loop->bp)]"
+ [aux buffer]
+ "[aux lohi]"
+ [aux master]
+*/
+
 //  MAX 12 char in a name for now..
 void render_mode(u8 track, s32 name) {
     static char *nameptr[] = {
@@ -192,9 +217,13 @@ void render_mode(u8 track, s32 name) {
         "loop",             //6
         "wav",              //7
         "noise",            //8
-        "record",           //9
-        "TRIGrecord",       //10
-        "[aux master]"      //11
+        "rec",              //9
+        "TRIGrec",          //10
+        "[aux master]",     //11
+        "[insert mix]",     //12
+        "[delay]",          //13
+        "[diffuse]",        //14
+        "<GLOBAL>"          //15
     };
     
     region_string(&env[track], "████████████", 0, 8, 0, 0, 0);
@@ -299,6 +328,7 @@ void render_track0(u8 mode) {
         case 0:
             region_string(&param[0], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
         //HOLD
@@ -306,24 +336,28 @@ void render_track0(u8 mode) {
             print_fix16(renderFrequency0, track[0]->pF[editpos]);
             region_string(&param[0], renderFrequency0, 0, 0, 0xf, 0, 0);
             region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
         //TRIG
         case 2:
             region_string(&param[0], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
         //GATE
         case 3:
             region_string(&param[0], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
             break;
         
         //NOISE
         case 4:
             region_string(&param[0], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
         //one
@@ -331,6 +365,7 @@ void render_track0(u8 mode) {
             print_fix16(renderPosition0, track[0]->pP[editpos]);
             region_string(&param[0], renderPosition0, 0, 0, 0xf, 0, 0);
             region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
             break;
 
         //loop
@@ -338,6 +373,7 @@ void render_track0(u8 mode) {
             print_fix16(renderPosition0, track[0]->pP[editpos]);
             region_string(&param[0], renderPosition0, 0, 0, 0xf, 0, 0);
             region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
         //wav
@@ -345,30 +381,69 @@ void render_track0(u8 mode) {
             render_sample(0, track[0]->pS[editpos]);
             print_fix16(renderPosition0, track[0]->pP[editpos]);
             region_string(&param[0], renderPosition0, 0, 8, 0xf, 0, 0);
+            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
             break;
 
         //noise
         case 8:
             region_string(&param[0], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
             break;
 
         //rec
         case 9:
-            render_input(0, track[0]->pI[editpos]);
+            render_inputA(0, track[0]->inA);
             region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
         //TRIGrec
         case 10:
-            render_input(0, track[0]->pI[editpos]);
+            render_inputA(0, track[0]->inA);
             region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
-        //aux
+        //[aux master]
         case 11:
             region_string(&param[0], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
+            break;
+            
+        //[insert mix]
+        case 12:
+            render_inputA(0, track[0]->inA);
+            render_inputB(0, track[0]->inB);
+            print_fix16(renderMix0, track[0]->mix);
+            region_string(&param[0], renderMix0, 0, 16, 0xf, 0, 0);
+            break;
+            
+        //[delay]
+        case 13:
+            render_inputA(0, track[0]->inA);
+            print_fix16(renderLoop0, track[0]->pLP[editpos]);
+            region_string(&param[0], renderLoop0, 0, 8, 0xf, 0, 0);
+            print_fix16(renderMix0, track[0]->mix);
+            region_string(&param[0], renderMix0, 0, 16, 0xf, 0, 0);
+            break;
+        
+        //[diffuse]
+        case 14:
+            render_inputA(0, track[0]->inA);
+            print_fix16(renderLoop0, track[0]->pLP[editpos]);
+            region_string(&param[0], renderLoop0, 0, 8, 0xf, 0, 0);
+            print_fix16(renderMix0, track[0]->mix);
+            region_string(&param[0], renderMix0, 0, 16, 0xf, 0, 0);
+            break;
+            
+        //<GLOBAL>
+        case 15:
+            print_fix16(renderLength, (length - 16) * FIX16_ONE);
+            region_string(&param[0], renderLength, 0, 0, 0xf, 0, 0);
+            region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
             break;
 
         default:
@@ -382,6 +457,7 @@ void render_track1(u8 mode) {
         case 0:
             region_string(&param[1], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
             break;
 
             //HOLD
@@ -389,24 +465,28 @@ void render_track1(u8 mode) {
             print_fix16(renderFrequency1, track[1]->pF[editpos]);
             region_string(&param[1], renderFrequency1, 0, 0, 0xf, 0, 0);
             region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //TRIG
         case 2:
             region_string(&param[1], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //GATE
         case 3:
             region_string(&param[1], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //NOISE
         case 4:
             region_string(&param[1], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //one
@@ -414,6 +494,7 @@ void render_track1(u8 mode) {
             print_fix16(renderPosition1, track[1]->pP[editpos]);
             region_string(&param[1], renderPosition1, 0, 0, 0xf, 0, 0);
             region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //loop
@@ -421,6 +502,7 @@ void render_track1(u8 mode) {
             print_fix16(renderPosition1, track[1]->pP[editpos]);
             region_string(&param[1], renderPosition1, 0, 0, 0xf, 0, 0);
             region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //wav
@@ -428,30 +510,69 @@ void render_track1(u8 mode) {
             render_sample(1, track[1]->pS[editpos]);
             print_fix16(renderPosition1, track[1]->pP[editpos]);
             region_string(&param[1], renderPosition1, 0, 8, 0xf, 0, 0);
+            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //noise
         case 8:
             region_string(&param[1], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //rec
         case 9:
-            render_input(1, track[1]->pI[editpos]);
+            render_inputA(1, track[1]->inA);
             region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //TRIGrec
         case 10:
-            render_input(1, track[1]->pI[editpos]);
+            render_inputA(1, track[1]->inA);
             region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
-            //aux
+            //[aux master]
         case 11:
             region_string(&param[1], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
+            break;
+            
+            //[insert mix]
+        case 12:
+            render_inputA(1, track[1]->inA);
+            render_inputB(1, track[1]->inB);
+            print_fix16(renderMix1, track[1]->mix);
+            region_string(&param[1], renderMix1, 0, 16, 0xf, 0, 0);
+            break;
+            
+            //[delay]
+        case 13:
+            render_inputA(1, track[1]->inA);
+            print_fix16(renderLoop1, track[1]->pLP[editpos]);
+            region_string(&param[1], renderLoop1, 0, 8, 0xf, 0, 0);
+            print_fix16(renderMix1, track[1]->mix);
+            region_string(&param[1], renderMix1, 0, 16, 0xf, 0, 0);
+            break;
+            
+            //[diffuse]
+        case 14:
+            render_inputA(1, track[1]->inA);
+            print_fix16(renderLoop1, track[1]->pLP[editpos]);
+            region_string(&param[1], renderLoop1, 0, 8, 0xf, 0, 0);
+            print_fix16(renderMix1, track[1]->mix);
+            region_string(&param[1], renderMix1, 0, 16, 0xf, 0, 0);
+            break;
+            
+            //<GLOBAL>
+        case 15:
+            print_fix16(renderLength, (length - 16) * FIX16_ONE);
+            region_string(&param[1], renderLength, 0, 0, 0xf, 0, 0);
+            region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
         default:
@@ -465,6 +586,7 @@ void render_track2(u8 mode) {
         case 0:
             region_string(&param[2], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //HOLD
@@ -472,24 +594,28 @@ void render_track2(u8 mode) {
             print_fix16(renderFrequency2, track[2]->pF[editpos]);
             region_string(&param[2], renderFrequency2, 0, 0, 0xf, 0, 0);
             region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //TRIG
         case 2:
             region_string(&param[2], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //GATE
         case 3:
             region_string(&param[2], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //NOISE
         case 4:
             region_string(&param[2], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //one
@@ -497,6 +623,7 @@ void render_track2(u8 mode) {
             print_fix16(renderPosition2, track[2]->pP[editpos]);
             region_string(&param[2], renderPosition2, 0, 0, 0xf, 0, 0);
             region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //loop
@@ -504,6 +631,7 @@ void render_track2(u8 mode) {
             print_fix16(renderPosition2, track[2]->pP[editpos]);
             region_string(&param[2], renderPosition2, 0, 0, 0xf, 0, 0);
             region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //wav
@@ -511,32 +639,71 @@ void render_track2(u8 mode) {
             render_sample(2, track[2]->pS[editpos]);
             print_fix16(renderPosition2, track[2]->pP[editpos]);
             region_string(&param[2], renderPosition2, 0, 8, 0xf, 0, 0);
+            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //noise
         case 8:
             region_string(&param[2], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //rec
         case 9:
-            render_input(2, track[2]->pI[editpos]);
+            render_inputA(2, track[2]->inA);
             region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //TRIGrec
         case 10:
-            render_input(2, track[2]->pI[editpos]);
+            render_inputA(2, track[2]->inA);
             region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
-            //aux
+            //[aux master]
         case 11:
             region_string(&param[2], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
+            //[insert mix]
+        case 12:
+            render_inputA(2, track[2]->inA);
+            render_inputB(2, track[2]->inB);
+            print_fix16(renderMix2, track[2]->mix);
+            region_string(&param[2], renderMix2, 0, 16, 0xf, 0, 0);
+            break;
+            
+            //[delay]
+        case 13:
+            render_inputA(2, track[2]->inA);
+            print_fix16(renderLoop2, track[2]->pLP[editpos]);
+            region_string(&param[2], renderLoop2, 0, 8, 0xf, 0, 0);
+            print_fix16(renderMix2, track[2]->mix);
+            region_string(&param[2], renderMix2, 0, 16, 0xf, 0, 0);
+            break;
+            
+            //[diffuse]
+        case 14:
+            render_inputA(2, track[2]->inA);
+            print_fix16(renderLoop2, track[2]->pLP[editpos]);
+            region_string(&param[2], renderLoop2, 0, 8, 0xf, 0, 0);
+            print_fix16(renderMix2, track[2]->mix);
+            region_string(&param[2], renderMix2, 0, 16, 0xf, 0, 0);
+            break;
+            
+            //<GLOBAL>
+        case 15:
+            print_fix16(renderLength, (length - 16) * FIX16_ONE);
+            region_string(&param[2], renderLength, 0, 0, 0xf, 0, 0);
+            region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
+            break;
+
         default:
             break;
     }
@@ -548,6 +715,7 @@ void render_track3(u8 mode) {
         case 0:
             region_string(&param[3], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //HOLD
@@ -555,24 +723,28 @@ void render_track3(u8 mode) {
             print_fix16(renderFrequency3, track[3]->pF[editpos]);
             region_string(&param[3], renderFrequency3, 0, 0, 0xf, 0, 0);
             region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //TRIG
         case 2:
             region_string(&param[3], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //GATE
         case 3:
             region_string(&param[3], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //NOISE
         case 4:
             region_string(&param[3], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //one
@@ -580,6 +752,7 @@ void render_track3(u8 mode) {
             print_fix16(renderPosition3, track[3]->pP[editpos]);
             region_string(&param[3], renderPosition3, 0, 0, 0xf, 0, 0);
             region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //loop
@@ -587,6 +760,7 @@ void render_track3(u8 mode) {
             print_fix16(renderPosition3, track[3]->pP[editpos]);
             region_string(&param[3], renderPosition3, 0, 0, 0xf, 0, 0);
             region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //wav
@@ -594,32 +768,71 @@ void render_track3(u8 mode) {
             render_sample(3, track[3]->pS[editpos]);
             print_fix16(renderPosition3, track[3]->pP[editpos]);
             region_string(&param[3], renderPosition3, 0, 8, 0xf, 0, 0);
+            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //noise
         case 8:
             region_string(&param[3], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //rec
         case 9:
-            render_input(3, track[3]->pI[editpos]);
+            render_inputA(3, track[3]->inA);
             region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
             //TRIGrec
         case 10:
-            render_input(3, track[3]->pI[editpos]);
+            render_inputA(3, track[3]->inA);
             region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
-            //aux
+            //[aux master]
         case 11:
             region_string(&param[3], renderDummy, 0, 0, 0x1, 0, 0);
             region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
             break;
             
+            //[insert mix]
+        case 12:
+            render_inputA(3, track[3]->inA);
+            render_inputB(3, track[3]->inB);
+            print_fix16(renderMix3, track[3]->mix);
+            region_string(&param[3], renderMix3, 0, 16, 0xf, 0, 0);
+            break;
+            
+            //[delay]
+        case 13:
+            render_inputA(3, track[3]->inA);
+            print_fix16(renderLoop3, track[3]->pLP[editpos]);
+            region_string(&param[3], renderLoop3, 0, 8, 0xf, 0, 0);
+            print_fix16(renderMix3, track[3]->mix);
+            region_string(&param[3], renderMix3, 0, 16, 0xf, 0, 0);
+            break;
+            
+            //[diffuse]
+        case 14:
+            render_inputA(3, track[3]->inA);
+            print_fix16(renderLoop3, track[3]->pLP[editpos]);
+            region_string(&param[3], renderLoop3, 0, 8, 0xf, 0, 0);
+            print_fix16(renderMix3, track[3]->mix);
+            region_string(&param[3], renderMix3, 0, 16, 0xf, 0, 0);
+            break;
+            
+            //<GLOBAL>
+        case 15:
+            print_fix16(renderLength, (length - 16) * FIX16_ONE);
+            region_string(&param[3], renderLength, 0, 0, 0xf, 0, 0);
+            region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
+            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
+            break;
+
         default:
             break;
     }
@@ -627,23 +840,75 @@ void render_track3(u8 mode) {
 
 void render_sample(u8 track, s32 sample) {
     region_string(&param[track], "████████████", 0, 0, 0, 0, 0);
-    region_string(&param[track], sample_name[sample-4], 0, 0, 0xf, 0, 0);
+    region_string(&param[track], sample_name[sample-8], 0, 0, 0xf, 0, 0);
 }
 
-void render_input(u8 track, s32 input) {
+void render_inputA(u8 track, s32 input) {
     static char *inputptr[] = {
         "In 1",
         "In 2",
         "In 1+2",
-        "Aux",
         "Out 1",
+        "Out 1 -6dB",
+        "Out 1 -12dB",
+        "Out 1 REV",
+        "Out 1 REV -6dB",
         "Out 2",
+        "Out 2 -6dB",
+        "Out 2 -12dB",
+        "Out 2 REV",
+        "Out 2 REV -6dB",
         "Out 3",
-        "Out 4"
+        "Out 3 -6dB",
+        "Out 3 -12dB",
+        "Out 3 REV",
+        "Out 3 REV -6dB",
+        "Out 4",
+        "Out 4 -6dB",
+        "Out 4 -12dB",
+        "Out 4 REV",
+        "Out 4 REV -6dB",
+        "Aux",
+        "Aux REV",
+        "OFF"
     };
     
     region_string(&param[track], "████████████", 0, 0, 0, 0, 0);
     region_string(&param[track], inputptr[input], 0, 0, 0xf, 0, 0);
+}
+
+void render_inputB(u8 track, s32 input) {
+    static char *inputptr[] = {
+        "In 1",
+        "In 2",
+        "In 1+2",
+        "Out 1",
+        "Out 1 -6dB",
+        "Out 1 -12dB",
+        "Out 1 REV",
+        "Out 1 REV -6dB",
+        "Out 2",
+        "Out 2 -6dB",
+        "Out 2 -12dB",
+        "Out 2 REV",
+        "Out 2 REV -6dB",
+        "Out 3",
+        "Out 3 -6dB",
+        "Out 3 -12dB",
+        "Out 3 REV",
+        "Out 3 REV -6dB",
+        "Out 4",
+        "Out 4 -6dB",
+        "Out 4 -12dB",
+        "Out 4 REV",
+        "Out 4 REV -6dB",
+        "Aux",
+        "Aux REV",
+        "OFF"
+    };
+    
+    region_string(&param[track], "████████████", 0, 8, 0, 0, 0);
+    region_string(&param[track], inputptr[input], 0, 8, 0xf, 0, 0);
 }
 
 void render_aux_param(u8 chn) {

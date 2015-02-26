@@ -61,6 +61,6 @@ extern void module_set_trig(void);
 extern void module_set_reversetrig(void);
 
 // fill buffer with sample at offset
-void module_load_sample(u32 offset, u32 idx, s32 sample);
+void module_load_sample(s32 sample);
 
 #endif // header guard

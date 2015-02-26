@@ -34,7 +34,7 @@ static const etype adctypes[4] = {
 };
 
 // perform a conversion on all 4 channels
-static void adc_convert(U16 (*dst)[4]) {
+void adc_convert(U16 (*dst)[4]) {
   U16 cmd, val;
 
   // data into AD7923 is a left-justified 12-bit value in a 16-bit word

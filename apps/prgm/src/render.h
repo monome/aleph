@@ -20,7 +20,8 @@ extern void render_track0(u8 mode);
 extern void render_track1(u8 mode);
 extern void render_track2(u8 mode);
 extern void render_track3(u8 mode);
-extern void render_input(u8 track, s32 name);
+extern void render_inputA(u8 track, s32 name);
+extern void render_inputB(u8 track, s32 name);
 extern void render_sample(u8 track, s32 sample);
 
 extern void render_aux_param(u8 track);

@@ -61,3 +61,21 @@ f32 clockspeed_lookup(s32 val) {
 f32 straight_lookup(s32 val) {
     return straight[val];
 }
+
+/*
+//table lookup given 16.16 index in [0, size-1]
+fract32 table_lookup_idx(fract32 *tab, u32 size, fix16 idx) {
+    fract32 a, b, f;
+    u32 ia, ib;
+    
+    // integer part
+    ia = idx >> 16;
+    while(ia > (size - 1)) { ia -= (size); }
+    ib = ia + 1;
+    while(ib > (size - 1)) { ib -= (size); }
+    a = tab[ia];
+    b = tab[ib];
+    f = (fract32)( (idx << 15) & 0x7fffffff );
+    return add_fr1x32(a, mult_fr1x32x32(f, sub_fr1x32(b, a)));
+}
+*/

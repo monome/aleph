@@ -1,13 +1,27 @@
 //ctl.h
 //aleph-prgm-avr32
 
-//RENAME to parameters.h or something..
-
-
 #ifndef _ALEPH_APP_PRGM_CTL_H_
 #define _ALEPH_APP_PRGM_CTL_H_
 
+#include <string.h>
+
+//asf
+#include "delay.h"
+#include "print_funcs.h"
+
+//avr32
+#include "app.h"
+#include "bfin.h"
+#include "control.h"
+#include "interrupts.h"
+
+//common
+#include "fix.h"
 #include "types.h"
+#include "param_common.h"
+
+#define DSP_NAME "aleph-prgm"
 
 //prgm parameters
 
@@ -33,11 +47,6 @@ typedef enum params {
     eParamTime2,
     eParamTime3,
     
-    eParamInput0,
-    eParamInput1,
-    eParamInput2,
-    eParamInput3,
-    
     eParamPosition0,
     eParamPosition1,
     eParamPosition2,
@@ -47,7 +56,23 @@ typedef enum params {
     eParamLoop1,
     eParamLoop2,
     eParamLoop3,
+
+    //  global parameters
+    eParamInputA0,
+    eParamInputA1,
+    eParamInputA2,
+    eParamInputA3,
     
+    eParamInputB0,
+    eParamInputB1,
+    eParamInputB2,
+    eParamInputB3,
+    
+    eParamMix0,
+    eParamMix1,
+    eParamMix2,
+    eParamMix3,
+
     eParamLevel0,
     eParamLevel1,
     eParamLevel2,
@@ -58,9 +83,9 @@ typedef enum params {
     eParamFrequency2,
     eParamFrequency3,
     
-    eParamFrames,
+    eParamOffset,
+    eParamSample,
     
-    //  global parameters
     eParamBufferLength0,
     eParamBufferLength1,
     eParamBufferLength2,

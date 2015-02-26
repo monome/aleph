@@ -103,32 +103,7 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamTime3].min = 0;
     desc[eParamTime3].max = FR32_MAX;
     desc[eParamTime3].radix = FIX_RADIX;
-    
-    //  Input
-    strcpy(desc[eParamInput0].label, "input0");
-    desc[eParamInput0].type = eParamTypeFix;
-    desc[eParamInput0].min = 0;
-    desc[eParamInput0].max = FR32_MAX;
-    desc[eParamInput0].radix = FIX_RADIX;
-
-    strcpy(desc[eParamInput1].label, "input1");
-    desc[eParamInput1].type = eParamTypeFix;
-    desc[eParamInput1].min = 0;
-    desc[eParamInput1].max = FR32_MAX;
-    desc[eParamInput1].radix = FIX_RADIX;
-
-    strcpy(desc[eParamInput2].label, "input2");
-    desc[eParamInput2].type = eParamTypeFix;
-    desc[eParamInput2].min = 0;
-    desc[eParamInput2].max = FR32_MAX;
-    desc[eParamInput2].radix = FIX_RADIX;
-
-    strcpy(desc[eParamInput3].label, "input3");
-    desc[eParamInput3].type = eParamTypeFix;
-    desc[eParamInput3].min = 0;
-    desc[eParamInput3].max = FR32_MAX;
-    desc[eParamInput3].radix = FIX_RADIX;
-    
+        
     //  Position
     strcpy(desc[eParamPosition0].label, "position0");
     desc[eParamPosition0].type = eParamTypeFix;
@@ -178,6 +153,81 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamLoop3].min = 0;
     desc[eParamLoop3].max = FR32_MAX;
     desc[eParamLoop3].radix = FIX_RADIX;
+
+    //  Input A
+    strcpy(desc[eParamInputA0].label, "inputA0");
+    desc[eParamInputA0].type = eParamTypeFix;
+    desc[eParamInputA0].min = 0;
+    desc[eParamInputA0].max = FR32_MAX;
+    desc[eParamInputA0].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamInputA1].label, "inputA1");
+    desc[eParamInputA1].type = eParamTypeFix;
+    desc[eParamInputA1].min = 0;
+    desc[eParamInputA1].max = FR32_MAX;
+    desc[eParamInputA1].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamInputA2].label, "inputA2");
+    desc[eParamInputA2].type = eParamTypeFix;
+    desc[eParamInputA2].min = 0;
+    desc[eParamInputA2].max = FR32_MAX;
+    desc[eParamInputA2].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamInputA3].label, "inputA3");
+    desc[eParamInputA3].type = eParamTypeFix;
+    desc[eParamInputA3].min = 0;
+    desc[eParamInputA3].max = FR32_MAX;
+    desc[eParamInputA3].radix = FIX_RADIX;
+
+    //  Input B
+    strcpy(desc[eParamInputB0].label, "inputB0");
+    desc[eParamInputB0].type = eParamTypeFix;
+    desc[eParamInputB0].min = 0;
+    desc[eParamInputB0].max = FR32_MAX;
+    desc[eParamInputB0].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamInputB1].label, "inputB1");
+    desc[eParamInputB1].type = eParamTypeFix;
+    desc[eParamInputB1].min = 0;
+    desc[eParamInputB1].max = FR32_MAX;
+    desc[eParamInputB1].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamInputB2].label, "inputB2");
+    desc[eParamInputB2].type = eParamTypeFix;
+    desc[eParamInputB2].min = 0;
+    desc[eParamInputB2].max = FR32_MAX;
+    desc[eParamInputB2].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamInputB3].label, "inputB3");
+    desc[eParamInputB3].type = eParamTypeFix;
+    desc[eParamInputB3].min = 0;
+    desc[eParamInputB3].max = FR32_MAX;
+    desc[eParamInputB3].radix = FIX_RADIX;
+
+    //  Mix
+    strcpy(desc[eParamMix0].label, "mix0");
+    desc[eParamMix0].type = eParamTypeFix;
+    desc[eParamMix0].min = 0;
+    desc[eParamMix0].max = FR32_MAX;
+    desc[eParamMix0].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamMix1].label, "mix1");
+    desc[eParamMix1].type = eParamTypeFix;
+    desc[eParamMix1].min = 0;
+    desc[eParamMix1].max = FR32_MAX;
+    desc[eParamMix1].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamMix2].label, "mix2");
+    desc[eParamMix2].type = eParamTypeFix;
+    desc[eParamMix2].min = 0;
+    desc[eParamMix2].max = FR32_MAX;
+    desc[eParamMix2].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamMix3].label, "mix3");
+    desc[eParamMix3].type = eParamTypeFix;
+    desc[eParamMix3].min = 0;
+    desc[eParamMix3].max = FR32_MAX;
+    desc[eParamMix3].radix = FIX_RADIX;
 
     //  Level
     strcpy(desc[eParamLevel0].label, "level0");
@@ -229,12 +279,19 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamFrequency3].max = FR32_MAX;
     desc[eParamFrequency3].radix = FIX_RADIX;
 
-    //  Frames
-    strcpy(desc[eParamFrames].label, "frames");
-    desc[eParamFrames].type = eParamTypeFix;
-    desc[eParamFrames].min = 0;
-    desc[eParamFrames].max = FR32_MAX;
-    desc[eParamFrames].radix = FIX_RADIX;
+    //  Offset
+    strcpy(desc[eParamOffset].label, "offset");
+    desc[eParamOffset].type = eParamTypeFix;
+    desc[eParamOffset].min = 0;
+    desc[eParamOffset].max = FR32_MAX;
+    desc[eParamOffset].radix = FIX_RADIX;
+    
+    //  Sample
+    strcpy(desc[eParamSample].label, "sample");
+    desc[eParamSample].type = eParamTypeFix;
+    desc[eParamSample].min = 0;
+    desc[eParamSample].max = FR32_MAX;
+    desc[eParamSample].radix = FIX_RADIX;
 
     //  Buffer Length
     strcpy(desc[eParamBufferLength0].label, "length0");

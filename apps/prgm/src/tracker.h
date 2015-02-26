@@ -22,7 +22,7 @@
 #include "bfin.h"
 
 //adc polling rate
-#include "app_timers.h"
+//#include "app_timers.h"
 
 //files
 #include "files.h"
@@ -38,25 +38,27 @@
 #define N_TRACKS 4                          //number of tracks
 #define SQ_LEN 48                           //sequence length
 
-#define N_MODES 12                          //number of modes
+#define N_MODES 16                          //number of modes
 #define N_MODES_1 (N_MODES - 1)
 
-#define N_INPUTS 8                          //number of selectable inputs
+#define N_INPUTS 26                         //number of selectable inputs
 #define N_INPUTS_1 (N_INPUTS - 1)
 
-#define N_PHYSICAL_INPUTS 3                 //number of selectable physical inputs
+#define N_PHYSICAL_INPUTS 4                 //number of selectable physical inputs
 #define N_PHYSICAL_INPUTS_1 (N_INPUTS - 1)
 
-#define N_BUFFERS 4
 #define N_BUFFERS_1 (N_BUFFERS - 1)
-#define BUF_SIZE 0xBB800                    //recording buffer maximum size
-#define BUF_SIZE_1 (BUF_SIZE - 1)
-#define SCRUB_SIZE 0x1234                   //(time - pos) default in scrub mode
-#define FRAMES 800
+#define REC_SIZE_1 (REC_SIZE - 1)
+#define AUX_SIZE_1 (AUX_SIZE - 1)
+
+//#define SCRUB_SIZE 0x1234                   //(time - pos) default in scrub mode
+//#define FRAMES 800
 
 #define DUMMY 0                             //dummy step for global parameters
 
 //counters
+char renderLength[16];
+
 char renderStepLength[16];
 char renderTempo[16];
 char renderEditPosition[16];
@@ -78,6 +80,16 @@ char renderPosition0[16];
 char renderPosition1[16];
 char renderPosition2[16];
 char renderPosition3[16];
+
+char renderLoop0[16];
+char renderLoop1[16];
+char renderLoop2[16];
+char renderLoop3[16];
+
+char renderMix0[16];
+char renderMix1[16];
+char renderMix2[16];
+char renderMix3[16];
 
 char renderLevel0[16];
 char renderLevel1[16];
@@ -119,26 +131,27 @@ typedef struct _prgmTrack {
     //frame process
     s32 f[SQ_LEN];                      //frame process flag
 
-    //parameters
-    s32 pI[SQ_LEN];                     //physical input
-    
+    //sequenced parameters
     s32 pS[SQ_LEN];                     //sample
     s32 pP[SQ_LEN];                     //position | offset | phase
-
-    s32 pL[SQ_LEN];                     //level
-    s32 aux;                            //aux level
-
+    s32 pLP[SQ_LEN];                    //loop point
+    
     s32 pF[SQ_LEN];                     //frequency
     s32 pF_scale[SQ_LEN];               //scaled frequency
-    
     s32 pX[SQ_LEN];                     //q | slew | blend | pw
+
+    //global parameters
+    s32 inA;                            //input A
+    s32 inB;                            //input B
+    s32 mix;                            //mix level
+    s32 aux;                            //aux level
+    
 } prgmTrack;
 
 prgmTrack *track[N_TRACKS];
 
 
 //external function declarations
-extern void adc_init(void);
 extern void tracker_init(void);
 
 #endif

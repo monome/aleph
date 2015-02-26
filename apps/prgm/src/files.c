@@ -1,16 +1,6 @@
 //files.c
 #include "files.h"
 
-#include <stdlib.h>
-#include <string.h>
-
-#include "app.h"
-#include "delay.h"
-#include "filesystem.h" //includes fat_filelib.h
-#include "flash.h"
-#include "memory.h"
-#include "print_funcs.h"
-
 //file directory
 typedef struct _dirList {
     char path[MAX_PATH];
@@ -20,21 +10,14 @@ typedef struct _dirList {
 
 static dirList_t sampleList;
 
-
-//temporary buffer for sample transfer over spi
-u8 *bfinSampleData;
-u32 bfinSampleOffset;
-u32 bfinSampleSize;
-
 //static function declarations
 //memory allocation
 static void init_sample_paths(void);
-static void alloc_sample_buffer(void);
+//static void alloc_sample_buffer(void);
 static prgmSampleptr alloc_sample(void);
 static void init_sample_param(prgmSample *s, u8 num);
 
 //file handling
-static void files_load_sample(u8 idx);
 static void fake_fread(volatile u8 *dst, u32 len, void *fp);
 static char *sample_filepath(s32 n);
 static bool strip_extension(char *str);
@@ -46,7 +29,6 @@ extern void samples_init(void) {
     
     //  init variables
     n_samples = 0;
-    bfinSampleOffset = 0;
     bfinSampleSize = 0;
     
     //  init array of sample data
@@ -57,47 +39,68 @@ extern void samples_init(void) {
     }
     print_dbg("\r\n finished alloc_sample() and init_sample_param() ");
 
-    //  set sample data for recording buffers
+    //  setup recording buffers
     sample[0]->offset = 0;
-    sample[0]->size = SAMPLE_SIZE;
+    sample[0]->size = REC_SIZE;
     n_samples++;
     
     sample[1]->offset = sample[0]->offset + sample[0]->size;
-    sample[1]->size = SAMPLE_SIZE;
+    sample[1]->size = REC_SIZE;
     n_samples++;
     
     sample[2]->offset = sample[1]->offset + sample[1]->size;
-    sample[2]->size = SAMPLE_SIZE;
+    sample[2]->size = REC_SIZE;
     n_samples++;
     
     sample[3]->offset = sample[2]->offset + sample[2]->size;
-    sample[3]->size = SAMPLE_SIZE;
+    sample[3]->size = REC_SIZE;
     n_samples++;
     
+    //  setup aux buffers
     sample[4]->offset = sample[3]->offset + sample[3]->size;
+    sample[4]->size = AUX_SIZE;
+    n_samples++;
     
-    //  init wav file paths and sample loading buffer
+    sample[5]->offset = sample[4]->offset + sample[4]->size;
+    sample[5]->size = AUX_SIZE;
+    n_samples++;
+
+    sample[6]->offset = sample[5]->offset + sample[5]->size;
+    sample[6]->size = AUX_SIZE;
+    n_samples++;
+
+    sample[7]->offset = sample[6]->offset + sample[6]->size;
+    sample[7]->size = AUX_SIZE;
+    n_samples++;
+
+    //  setup sample buffers offset start
+    sample[8]->offset = sample[7]->offset + sample[7]->size;
+
+    //  init wav file paths
     init_sample_paths();
     print_dbg("\r\n finished init_sample_paths() ");
-    alloc_sample_buffer();
-    print_dbg("\r\n finished alloc_sample_buffer() ");
+//    alloc_sample_buffer();
+//    print_dbg("\r\n finished alloc_sample_buffer() ");
 }
 
 
 //static function definitions
+/*
 void alloc_sample_buffer(void) {
     u32 i;
     
     //  allocate memory
-    bfinSampleData = (u8*)alloc_mem(SAMPLE_SIZE * sizeof(u8));
+    bfinSampleData = (u8*)alloc_mem(AUX_SIZE * sizeof(u8));
     
     //  zero data
-    for (i=0; i<SAMPLE_SIZE; i++) bfinSampleData[i] = 0;
+    for (i=0; i<AUX_SIZE; i++) bfinSampleData[i] = 0;
 }
+*/
 
 prgmSampleptr alloc_sample(void) {
     return(prgmSampleptr)alloc_mem(sizeof(prgmSample));
 }
+
 
 void init_sample_param(prgmSample *s, u8 num) {
     s->num = num;
@@ -124,9 +127,11 @@ void init_sample_paths(void) {
                 sample_name[i] = (char*)alloc_mem(MAX_NAME * (sizeof(char*)));
                 strcpy(sampleList.path, WAV_PATH);
                 strcat(sampleList.path, dirent.filename);
+                
                 //  copy name for on-screen sample select and remove extension
                 strcpy(sample_name[i], dirent.filename);
                 strip_extension(sample_name[i]);
+                
                 //  copy file path
                 strcpy(sample_path[i], sampleList.path);
                 print_dbg("\r\n sample_path[i]: ");
@@ -157,77 +162,39 @@ void files_load_sample(u8 n) {
     
     delay_ms(10);
     
-    fp = fl_fopen(sample_filepath(n-4), "r");
+    fp = fl_fopen(sample_filepath(n-8), "r");
     print_dbg("\r\n sample_filepath(n) ");
-    print_dbg(sample_filepath(n-4));
+    print_dbg(sample_filepath(n-8));
     
     size = ((FL_FILE*)(fp))->filelength;
     
     if (fp != NULL)
     {
+        //  allocate a temporary RAM buffer
+        bfinSampleData = (u8*)alloc_mem(size);
         fake_fread(bfinSampleData, size, fp);
         fl_fclose(fp);
         
-        bfinSampleSize = size / sizeof(s32);
-        print_dbg("\r\n bfinSampleSize ");
-        print_dbg_ulong(bfinSampleSize);
+        sample[n]->size = size / sizeof(s32);
+        sample[n+1]->offset = sample[n]->offset + sample[n]->size;
         
-        print_dbg("\r\n sample[n-1]->num ");
-        print_dbg_ulong(sample[n-1]->num);
-        print_dbg("\r\n sample[n-1]->offset ");
-        print_dbg_ulong(sample[n-1]->offset);
-        print_dbg("\r\n sample[n-1]->size ");
-        print_dbg_ulong(sample[n-1]->size);
+        bfinSampleSize = size;
+
+//        bfin_new_sample(sample[n]->offset, sample[n]->size);
+//        ctl_param_change(0, eParamOffset, sample[n]->offset);
+//        ctl_param_change(0, eParamSize, sample[n]->size);
         
-        if (sample[n]->num == n)
-        {
-            print_dbg("\r\n aligned to sample array! ");
-            print_dbg("\r\n sample[n]->num ");
-            print_dbg_ulong(sample[n]->num);
-            
-            print_dbg("\r\n sample[n]->offset ");
-            print_dbg_ulong(sample[n]->offset);
-
-            sample[n]->size = bfinSampleSize;
-            print_dbg("\r\n sample[n]->size ");
-            print_dbg_ulong(sample[n]->size);
-
-            sample[n+1]->offset = sample[n]->offset + sample[n]->size;
-            print_dbg("\r\n sample[n+1]->num ");
-            print_dbg_ulong(sample[n+1]->num);
-            print_dbg("\r\n sample[n+1]->offset ");
-            print_dbg_ulong(sample[n+1]->offset);
-            print_dbg("\r\n sample[n+1]->size ");
-            print_dbg_ulong(sample[n+1]->size);
-        }
-        else print_dbg("\r\n can not align to sample array!");
+        print_dbg("\r\n sample[n]->num ");
+        print_dbg_ulong(sample[n]->num);
+        
+        print_dbg("\r\n sample[n]->offset ");
+        print_dbg_ulong(sample[n]->offset);
+        
+        print_dbg("\r\n sample[n]->size ");
+        print_dbg_ulong(sample[n]->size);
+        
     }
     else print_dbg("\r\n file contains no data");
-}
-
-void files_load_samples(void) {
-    u8 n;
-//    static event_t e;
-//app_pause();
-
-    for (n=4; n<n_samples; n++)
-    {
-        //  load sample
-        files_load_sample(n);
-        
-        //  transfer sample
-        bfin_fill_buffer(sample[n]->offset, sample[n]->size, (s32*)bfinSampleData);
-        print_dbg("\r\n bfin_fill_buffer finished... ");
-        
-        //  wait for spi process to finish
-        delay_ms(50);
- 
-        //  post event for sample transfer
- //       e.type = kEventAppCustom;
- //       e.data = (s32)i;
- //       event_post(&e);
-    }
-//app_resume();
 }
 
 u8 files_load_dsp(void) {

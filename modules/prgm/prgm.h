@@ -35,10 +35,8 @@ typedef struct _sqTrack {
     s32 sqf[SQ_LEN];
     s32 sqc[SQ_LEN];
     s32 sqt[SQ_LEN];
-    s32 sqi[SQ_LEN];
     s32 sqp[SQ_LEN];
     s32 sqlp[SQ_LEN];
-    s32 sql[SQ_LEN];
     s32 sqfq[SQ_LEN];
     
 } sqTrack;
@@ -55,10 +53,12 @@ typedef struct _prgmTrack {
     env_tcd envAmp;
     
     //parameters process frame
+    fix16 pF;                           //frequency
+    fract32 pM;                         //mix
     fract32 pL;                         //level
     u32 pP;                             //position | offset
-    fix16 pF;                           //frequency
-
+    u32 pLP;                            //loop point
+    
     filter_1p_lo pSlew;                 //parameter slew
     
 } prgmTrack;

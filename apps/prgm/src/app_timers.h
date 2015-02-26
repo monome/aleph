@@ -23,11 +23,13 @@ u8 foot2_touched;
 u8 bfinheadstate;
 u8 bfinheadpos;
 
-
 // create application timers
+extern void init_sample_timer(void);
+extern void deinit_sample_timer(void);
 extern void init_app_timers(void);
 
 // start adc polling timer
+extern void adc_init(void);
 extern void timers_set_adc(u32 period);
 
 // stop adc polling timer

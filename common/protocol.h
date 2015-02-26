@@ -27,11 +27,11 @@
 //  set trig, calls module_set_trig()
 #define MSG_SET_TRIG_COM            8
 
-//  set reverse trig, calls module_set_reversetrig()
-#define MSG_SET_REVERSETRIG_COM     9
+//  send sample offset and size
+#define MSG_NEW_SAMPLE_COM          9
 
-//  fill SDRAM buffer from avr32
-#define MSG_FILL_BUFFER_COM         10
+//  transfer single s32 sample value from avr32
+#define MSG_TRANSFER_SAMPLE_COM     10
 
 //  set sequenced parameter value
 #define MSG_SET_SQPARAM_COM         11
@@ -148,7 +148,7 @@ typedef enum {
   eModuleVersionRev0,
   eModuleVersionRev1,
     
-    //  fill buffer
+    //  new sample
     eBufferOffset0,
     eBufferOffset1,
     eBufferOffset2,
@@ -157,7 +157,12 @@ typedef enum {
     eBufferSize1,
     eBufferSize2,
     eBufferSize3,
-    eBufferSample,
+    
+    //  transfer sample value
+    eBufferSample0,
+    eBufferSample1,
+    eBufferSample2,
+    eBufferSample3,
 
     //  set sq param value
     eSetParamStep,

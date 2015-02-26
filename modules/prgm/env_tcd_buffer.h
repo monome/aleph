@@ -9,12 +9,7 @@ env_tcd_buffer.h
 #include "fix32.h"
 #include "types.h"
 
-#define BUFFER_SIZE 0x2bf200                    //total size of SDRAM sample buffer
-#define N_OFFSETS 32                            //buffer offsets
-#define N_RECBUFFERS 4                          //recording buffers
-#define RECBUFFER_SIZE 0xBB800                  //16 seconds
-#define N_DELAYBUFFERS 4                        //delay buffers
-#define DELAYBUFFER_SIZE 0xB800                 //... seconds
+#define BUFFER_SIZE 0x01e84800                  //total size of SDRAM sample buffer (0x07ffffff)
 
 //SDRAM mono audiobuffer
 typedef struct _sampleBuffer {
@@ -25,12 +20,14 @@ typedef struct _sampleBuffer {
 //buffer head
 typedef struct _bufferHead {
     sampleBuffer *buf;                          //pointer to buffer
+    u32 offset;                                 //offset within buffer
     u32 idx;                                    //current idx
     u32 loop;                                   //index to loop
     u32 inc;                                    //phase increment
     u32 div;                                    //rate divisor
     u32 divCount;                               //current divisor count
 } bufferHead;
+
 
 //init buffer at pre-allocated memory
 extern void buffer_init(sampleBuffer *buf, volatile fract32 *data, u32 samples);
@@ -48,15 +45,15 @@ extern void buffer_head_pos(bufferHead *head, u32 pos);
 extern s32 buffer_head_play(bufferHead *head);
 
 //record sample at idx
-extern void buffer_head_record(bufferHead *head, s32 sample);
-
-//sync multiple heads
-extern void buffer_head_sync(bufferHead *head, bufferHead *target, u32 samples);
+extern void buffer_head_rec(bufferHead *head, s32 sample);
 
 //overdub
 extern void buffer_head_dub(bufferHead *head, fract32 s);
 
 //mix
 extern void buffer_head_mix(bufferHead *head, fract32 s, fract32 preLevel);
+
+//mix
+extern void buffer_head_invmix(bufferHead *head, fract32 s, fract32 preLevel);
 
 #endif

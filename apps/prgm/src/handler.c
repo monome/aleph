@@ -13,7 +13,7 @@
 #include "ctl.h"
 
 #include "app.h"
-//#include "app_timers.h"
+#include "app_timers.h"
 #include "types.h"
 
 //prgm
@@ -23,18 +23,22 @@
 
 //static function declarations
 static void handle_Adc0(s32 trig);
-static void handle_switch_6(s32 trig);
-static void handle_switch_7(s32 trig);
+//static void handle_switch_6(s32 trig);
+//static void handle_switch_7(s32 trig);
 
 //external functions
-//init adc timers, called by app_launch()
-//void adc_init(void) {
-//    timers_set_adc(1);
-//}
+//set adc timers, called by app_launch()
+void adc_init(void) {
+    timers_set_adc(1);
+}
 
 //static functions
 void handle_Adc0(s32 trig) {
-    if(trig) bfin_set_trig();
+    if(trig)
+    {
+//        bfin_wait_ready();
+        bfin_set_trig();
+    }
     
     //  recording state 'arm': flash led on step trig
 /*
@@ -55,13 +59,15 @@ static void handle_switch_5(s32 data) {
         ;;
     }
 
-    delay_ms(100);
+    delay_ms(10);
+    render_boot("ghost in the machine...");
 
     // this pin is physically connected to the power system.
     // bringing it low causes immediate shutdown
     gpio_clr_gpio_pin(POWER_CTL_PIN);
 }
 
+/*
 void handle_switch_6(s32 trig) {
     
     //  if trig, foot not touched
@@ -168,20 +174,15 @@ void handle_switch_7(s32 trig) {
         }
     }
 }
-
-static void handle_custom(s32 data) {
-//    bfin_fill_buffer(data, bfinSampleSize, (s32*)bfinSampleData);
-    print_dbg("\r\n bfin_fill_buffer finished... ");
-}
-
-
+*/
+ 
 void assign_prgm_event_handlers(void) {
     app_event_handlers[ kEventAdc0 ] = &handle_Adc0 ; //trig
 //    app_event_handlers[ kEventAdc1 ] = &handle_Adc1 ;
 //    app_event_handlers[ kEventAdc2 ] = &handle_Adc2 ;
 //    app_event_handlers[ kEventAdc3 ] = &handle_Adc3 ;
     app_event_handlers[ kEventSwitch5 ]	= &handle_switch_5 ; //power switch
-    app_event_handlers[ kEventSwitch6 ] = &handle_switch_6 ; //foot1
-    app_event_handlers[ kEventSwitch7 ] = &handle_switch_7 ; //foot2
-    app_event_handlers[ kEventAppCustom ] = &handle_custom ; //sample transfer
+//    app_event_handlers[ kEventSwitch6 ] = &handle_switch_6 ; //foot1
+//    app_event_handlers[ kEventSwitch7 ] = &handle_switch_7 ; //foot2
+//    app_event_handlers[ kEventAppCustom ] = &handle_custom ;
 }

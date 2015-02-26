@@ -29,12 +29,6 @@ enum params {
     eParamTime2,
     eParamTime3,
     
-    //16
-    eParamInput0,
-    eParamInput1,
-    eParamInput2,
-    eParamInput3,
-    
     eParamPosition0,
     eParamPosition1,
     eParamPosition2,
@@ -44,22 +38,35 @@ enum params {
     eParamLoop1,
     eParamLoop2,
     eParamLoop3,
+
+    //  global parameters
+    eParamInputA0,
+    eParamInputA1,
+    eParamInputA2,
+    eParamInputA3,
+
+    eParamInputB0,
+    eParamInputB1,
+    eParamInputB2,
+    eParamInputB3,
+    
+    eParamMix0,
+    eParamMix1,
+    eParamMix2,
+    eParamMix3,
     
     eParamLevel0,
     eParamLevel1,
     eParamLevel2,
     eParamLevel3,
     
-    //32
     eParamFrequency0,
     eParamFrequency1,
     eParamFrequency2,
     eParamFrequency3,
     
-    eParamFrames,
-
-    //  global parameters
-    //eParamSqLength,
+    eParamOffset,
+    eParamSample,
     
     eParamBufferLength0,
     eParamBufferLength1,
@@ -69,7 +76,6 @@ enum params {
     eParamToggleBuf,
     eParamToggleRec,
     
-    //43
     eParamSqCounter,
     eParamSqLength,
 

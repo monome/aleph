@@ -24,6 +24,8 @@ this is where callbacks are declared for all application-specific software timer
 #include "adc.h"
 #include "app_timers.h"
 #include "render.h"
+#include "ctl.h"
+#include "files.h"
 
 //mode led ctrl
 #include "gpio.h"
@@ -31,7 +33,6 @@ this is where callbacks are declared for all application-specific software timer
 
 //trig
 #include "bfin.h"
-
 
 //static variables
 //EVENT
@@ -48,7 +49,7 @@ static softTimer_t screenTimer = { .next = NULL, .prev = NULL };
 static softTimer_t encTimer = { .next = NULL, .prev = NULL };
 
 //poll custom
-//static softTimer_t customPollTimer = { .next = NULL, .prev = NULL };
+static softTimer_t customPollTimer = { .next = NULL, .prev = NULL };
 
 // poll monome device
 //static softTimer_t monomePollTimer = { .next = NULL, .prev = NULL };
@@ -59,14 +60,14 @@ static softTimer_t encTimer = { .next = NULL, .prev = NULL };
 
 //adc polling callback
 static void adc_poll_timer_callback(void *obj) {
-//    static const int state = 0;
+    //    static const int state = 0;
     static const int threshold = 50;
-//    static const u16 previous_value = 65000;
+    //    static const u16 previous_value = 65000;
     
     adc_convert(&adc);
     u16 i = adc[0];
     s16 diff = i - previous_value;
-
+    
     if (state == 0) {
         // Wait for trig
         
@@ -87,40 +88,11 @@ static void adc_poll_timer_callback(void *obj) {
             // Trig found
             state = 0;
         }
-
+        
     }
     
     previous_value = i;
 }
-/*
-
-    //  random|sporous trig filter...
-//    if (i < 4)
-
-    if (!i)
-        state = OFF;
-
-    else if(state == OFF)
-        {
-            state = ON;
-            
-            //  send spi trig command to bfin (MSG_SET_TRIG_COM)
-            bfin_set_trig();
-
-            e.type = kEventAdc0;
-            e.data = ON;
-            event_post(&e);
-            
-            e.type = kEventAdc0;
-            e.data = OFF;
-            event_post(&e);
- 
-        }
-    
-    else if(state == ON)
-        ;
-}
-*/
 
 
 //screen refresh callback
@@ -148,9 +120,29 @@ static void enc_timer_callback(void* obj) {
 
 
 //custom callback
-//static void custom_timer_callback(void *obj) {
-//    bfin_get_state();
-//}
+static void custom_timer_callback(void *obj) {
+    ParamValueSwap s;
+    
+    if (idx8 < bfinSampleSize)
+    {
+        ctl_param_change(0, eParamOffset, sample[smpl]->offset + idx32);
+        
+        s.asByte[0] = bfinSampleData[idx8];
+        s.asByte[1] = bfinSampleData[idx8 + 1];
+        s.asByte[2] = bfinSampleData[idx8 + 2];
+        s.asByte[3] = bfinSampleData[idx8 + 3];
+        
+        ctl_param_change(0, eParamSample, s.asInt);
+        
+//        e.type = kEventAppCustom;
+//        e.data = s.asInt;
+//        event_post(&e);
+        
+        idx8 += 4;
+        idx32++;
+    }
+    else ;
+}
 
 
 //get update on bfin states for playhead position and buffer recording
@@ -172,10 +164,20 @@ static void bfin_get_state(void) {
 
 
 //external functions
+void init_sample_timer(void) {
+    timer_add(&customPollTimer, 1, &custom_timer_callback, NULL);
+    idx8 = 0;
+    idx32 = 0;
+}
+
+void deinit_sample_timer(void) {
+    customPollTimer.ticks = 50000;
+//    timer_remove(&customPollTimer);
+}
+
 void init_app_timers(void) {
     timer_add(&screenTimer, 50, &screen_timer_callback, NULL);
     timer_add(&encTimer, 50, &enc_timer_callback, NULL);
-//    timer_add(&customPollTimer, 50, &custom_timer_callback, NULL);
 }
 
 //start adc polling

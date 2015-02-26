@@ -26,7 +26,7 @@
 #include "screen.h"
 
 //hardware init, all memory allocations go here
-void app_init(void) {
+void app_init(void) {    
     print_dbg("\r\n app_init...");
 
     samples_init();
@@ -44,9 +44,6 @@ u8 app_launch(u8 firstrun) {
 if(firstrun) {
     print_dbg("\r\n app_launch firstrun...");
     
-    files_load_samples();
-    print_dbg("\r\n finished files_load_samples()...");
-    
     files_load_dsp();
     
     bfin_wait_ready();
@@ -54,16 +51,34 @@ if(firstrun) {
 } else {
     print_dbg("\r\n app_launch NOT firstrun...");
     
-    files_load_samples();
-    print_dbg("\r\n finished files_load_samples()...");
-    
     files_load_dsp();
 
     bfin_wait_ready();
+    
 }
     pages_init();
-    
+
     bfin_enable();
+    
+    init_sample_timer();
+    
+    for (smpl = 8; smpl < n_samples; smpl++)
+    {
+        files_load_sample(smpl);
+        
+        //  wait for transfer to finish...
+        delay_ms(8000);
+        if (sample[smpl]->size > 4000) delay_ms(8000);
+        if (sample[smpl]->size > 16000) delay_ms(8000);
+        
+        free_mem(bfinSampleData);
+
+        bfinSampleSize = 0;
+        idx8 = 0;
+        idx32 = 0;
+    }
+    
+    deinit_sample_timer();
     
     init_app_timers();
     
@@ -72,7 +87,7 @@ if(firstrun) {
     render_startup();
     
     assign_prgm_event_handlers();
-    
+        
 //    print_dbg("\r\n sizeof prgmTrack");
 //    print_dbg_ulong(sizeof(prgmTrack));
     

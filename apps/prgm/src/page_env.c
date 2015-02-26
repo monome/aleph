@@ -48,12 +48,12 @@ s32 time_knob_accel(s32 inc) {
         return inc;
     }
     if(incAbs < 6) {
-        return inc << 1; //2
+        return inc << 1;
     }
     if(incAbs < 32) {
         return inc << 6;
     }
-    return inc << 9; //12
+    return inc << 9;
 }
 
 void handle_switch_0(s32 data) {
@@ -127,12 +127,15 @@ void handle_encoder_0(s32 val) {
                 set_mode(track[0], tmp, 0, i);
                 if (tmp == 5) set_mode(track[0], tmp, 0, i);
                 if (tmp == 6) set_mode(track[0], tmp, 0, i);
-                if (tmp == 7) set_mode(track[0], tmp, 4, i);
+                if (tmp == 7) set_mode(track[0], tmp, 8, i);
                 if (tmp == 9) set_mode(track[0], tmp, 0, i);
                 if (tmp == 10) set_mode(track[0], tmp, 0, i);
+                if (tmp == 13) set_mode(track[0], tmp, 4, i);
+                if (tmp == 14) set_mode(track[0], tmp, 4, i);
                 ctl_param_change(i - 16, eParamFlag0, track[0]->f[i]);
                 ctl_param_change(i - 16, eParamCurve0, track[0]->c[i]);
                 ctl_param_change(i - 16, eParamPosition0, track[0]->pP[i]);
+                ctl_param_change(i - 16, eParamLoop0, track[0]->pLP[i]);
                 render_mode(0, tmp);
                 render_trig(); //re-render to cleanup after render_mode()
                 render_time(); //re-render to cleanup after render_mode()
@@ -145,7 +148,7 @@ void handle_encoder_0(s32 val) {
                 tmp = track[0]->cT[i];
                 tmp += time_knob_accel(val);
                 if (tmp < 0) tmp = 0;
-                if (tmp > BUF_SIZE_1) tmp = BUF_SIZE_1;
+                if (tmp > REC_SIZE_1) tmp = REC_SIZE_1;
                 track[0]->cT[i] = tmp;
                 ctl_param_change(i - 16, eParamTime0, tmp);
                 print_fix16(renderTime0, tmp);
@@ -240,7 +243,15 @@ void handle_encoder_1(s32 val) {
         case 0: //motor on: nudge playhead slower | faster*
             check_touch(kEventEncoder2);
             if (touchedThis) {
-                //bump playhead position +/- 32k samples
+                static event_t e;
+                
+                if (val)
+                {
+                    //  trig found
+                    e.type = kEventAdc0;
+                    e.data = 1;
+                    event_post(&e);
+                }
             }
             break;
             
@@ -268,12 +279,15 @@ void handle_encoder_1(s32 val) {
                 set_mode(track[1], tmp, 0, i);
                 if (tmp == 5) set_mode(track[1], tmp, 1, i);
                 if (tmp == 6) set_mode(track[1], tmp, 1, i);
-                if (tmp == 7) set_mode(track[1], tmp, 4, i);
+                if (tmp == 7) set_mode(track[1], tmp, 8, i);
                 if (tmp == 9) set_mode(track[1], tmp, 1, i);
                 if (tmp == 10) set_mode(track[1], tmp, 1, i);
+                if (tmp == 13) set_mode(track[1], tmp, 5, i);
+                if (tmp == 14) set_mode(track[1], tmp, 5, i);
                 ctl_param_change(i - 16, eParamFlag1, track[1]->f[i]);
                 ctl_param_change(i - 16, eParamCurve1, track[1]->c[i]);
                 ctl_param_change(i - 16, eParamPosition1, track[1]->pP[i]);
+                ctl_param_change(i - 16, eParamLoop1, track[1]->pLP[i]);
                 render_mode(1, tmp);
                 render_trig(); //re-render to cleanup after render_mode()
                 render_time(); //re-render to cleanup after render_mode()
@@ -286,7 +300,7 @@ void handle_encoder_1(s32 val) {
                 tmp = track[1]->cT[i];
                 tmp += time_knob_accel(val);
                 if (tmp < 0) tmp = 0;
-                if (tmp > BUF_SIZE_1) tmp = BUF_SIZE_1;
+                if (tmp > REC_SIZE_1) tmp = REC_SIZE_1;
                 track[1]->cT[i] = tmp;
                 ctl_param_change(i - 16, eParamTime1, tmp);
                 print_fix16(renderTime1, tmp);
@@ -368,12 +382,15 @@ void handle_encoder_2(s32 val) {
                 set_mode(track[2], tmp, 0, i);
                 if (tmp == 5) set_mode(track[2], tmp, 2, i);
                 if (tmp == 6) set_mode(track[2], tmp, 2, i);
-                if (tmp == 7) set_mode(track[2], tmp, 4, i);
+                if (tmp == 7) set_mode(track[2], tmp, 8, i);
                 if (tmp == 9) set_mode(track[2], tmp, 2, i);
                 if (tmp == 10) set_mode(track[2], tmp, 2, i);
+                if (tmp == 13) set_mode(track[2], tmp, 6, i);
+                if (tmp == 14) set_mode(track[2], tmp, 6, i);
                 ctl_param_change(i - 16, eParamFlag2, track[2]->f[i]);
                 ctl_param_change(i - 16, eParamCurve2, track[2]->c[i]);
                 ctl_param_change(i - 16, eParamPosition2, track[2]->pP[i]);
+                ctl_param_change(i - 16, eParamLoop2, track[2]->pLP[i]);
                 render_mode(2, tmp);
                 render_trig(); //re-render to cleanup after render_mode()
                 render_time(); //re-render to cleanup after render_mode()
@@ -386,7 +403,7 @@ void handle_encoder_2(s32 val) {
                 tmp = track[2]->cT[i];
                 tmp += time_knob_accel(val);
                 if (tmp < 0) tmp = 0;
-                if (tmp > BUF_SIZE_1) tmp = BUF_SIZE_1;
+                if (tmp > REC_SIZE_1) tmp = REC_SIZE_1;
                 track[2]->cT[i] = tmp;
                 ctl_param_change(i - 16, eParamTime2, tmp);
                 print_fix16(renderTime2, tmp);
@@ -484,12 +501,15 @@ void handle_encoder_3(s32 val) {
                 set_mode(track[3], tmp, 0, i);
                 if (tmp == 5) set_mode(track[3], tmp, 3, i);
                 if (tmp == 6) set_mode(track[3], tmp, 3, i);
-                if (tmp == 7) set_mode(track[3], tmp, 4, i);
+                if (tmp == 7) set_mode(track[3], tmp, 8, i);
                 if (tmp == 9) set_mode(track[3], tmp, 3, i);
                 if (tmp == 10) set_mode(track[3], tmp, 3, i);
+                if (tmp == 13) set_mode(track[3], tmp, 7, i);
+                if (tmp == 14) set_mode(track[3], tmp, 7, i);
                 ctl_param_change(i - 16, eParamFlag3, track[3]->f[i]);
                 ctl_param_change(i - 16, eParamCurve3, track[3]->c[i]);
                 ctl_param_change(i - 16, eParamPosition3, track[3]->pP[i]);
+                ctl_param_change(i - 16, eParamLoop3, track[3]->pLP[i]);
                 render_mode(3, tmp);
                 render_trig(); //re-render to cleanup after render_mode()
                 render_time(); //re-render to cleanup after render_mode()
@@ -502,7 +522,7 @@ void handle_encoder_3(s32 val) {
                 tmp = track[3]->cT[i];
                 tmp += time_knob_accel(val);
                 if (tmp < 0) tmp = 0;
-                if (tmp > BUF_SIZE_1) tmp = BUF_SIZE_1;
+                if (tmp > REC_SIZE_1) tmp = REC_SIZE_1;
                 track[3]->cT[i] = tmp;
                 ctl_param_change(i - 16, eParamTime3, tmp);
                 print_fix16(renderTime3, tmp);
@@ -568,7 +588,7 @@ void set_mode(prgmTrack *t, s32 m, u8 offset, u8 i) {
     if(m == 0)
     {
         t->m[i] = 0;
-        t->f[i] = 2;
+        t->f[i] = 0;
         t->c[i] = 0;
         t->pP[i] = offset;
     }
@@ -577,7 +597,7 @@ void set_mode(prgmTrack *t, s32 m, u8 offset, u8 i) {
     else if(m == 1)
     {
         t->m[i] = 1;
-        t->f[i] = 4;
+        t->f[i] = 7;
         t->c[i] = 1;
         t->pP[i] = offset;
     }
@@ -586,7 +606,7 @@ void set_mode(prgmTrack *t, s32 m, u8 offset, u8 i) {
     else if(m == 2)
     {
         t->m[i] = 2;
-        t->f[i] = 3;
+        t->f[i] = 6;
         t->c[i] = 2;
         t->pP[i] = offset;
     }
@@ -595,7 +615,7 @@ void set_mode(prgmTrack *t, s32 m, u8 offset, u8 i) {
     else if(m == 3)
     {
         t->m[i] = 3;
-        t->f[i] = 3;
+        t->f[i] = 6;
         t->c[i] = 3;
         t->pP[i] = offset;
     }
@@ -604,7 +624,7 @@ void set_mode(prgmTrack *t, s32 m, u8 offset, u8 i) {
     else if(m == 4)
     {
         t->m[i] = 4;
-        t->f[i] = 3;
+        t->f[i] = 6;
         t->c[i] = 6;
         t->pP[i] = offset;
     }
@@ -613,27 +633,30 @@ void set_mode(prgmTrack *t, s32 m, u8 offset, u8 i) {
     else if(m == 5)
     {
         t->m[i] = 5;
-        t->f[i] = 0;
+        t->f[i] = 2;
         t->c[i] = 4;
         t->pP[i] = sample[offset]->offset;
+        t->pLP[i] = sample[offset]->size;
     }
     
     //  loop
     else if(m == 6)
     {
         t->m[i] = 6;
-        t->f[i] = 0;
+        t->f[i] = 2;
         t->c[i] = 5;
         t->pP[i] = sample[offset]->offset;
+        t->pLP[i] = sample[offset]->size;
     }
     
     //  wav
     else if(m == 7)
     {
         t->m[i] = 7;
-        t->f[i] = 0;
+        t->f[i] = 2;
         t->c[i] = 4;
         t->pP[i] = sample[offset]->offset;
+        t->pLP[i] = sample[offset]->size;
     }
     
     //  noise
@@ -652,23 +675,63 @@ void set_mode(prgmTrack *t, s32 m, u8 offset, u8 i) {
         t->f[i] = 1;
         t->c[i] = 7;
         t->pP[i] = sample[offset]->offset;
+        t->pLP[i] = sample[offset]->size;
     }
     
     //  TRIGrec
     else if(m == 10)
     {
         t->m[i] = 10;
-        t->f[i] = 3;
+        t->f[i] = 6;
         t->c[i] = 8;
         t->pP[i] = sample[offset]->offset;
+        t->pLP[i] = sample[offset]->size;
     }
     
-    //  auxmix
+    //  [aux master]
     else if(m == 11)
     {
         t->m[i] = 11;
-        t->f[i] = 0;
+        t->f[i] = 1;
         t->c[i] = 9;
+        t->pP[i] = offset;
+    }
+    
+    //  [insert mix]
+    else if(m == 12)
+    {
+        t->m[i] = 12;
+        t->f[i] = 4;
+        t->c[i] = 10;
+        t->pP[i] = offset;
+    }
+
+    //  [delay]
+    else if(m == 13)
+    {
+        t->m[i] = 13;
+        t->f[i] = 3;
+        t->c[i] = 11;
+        t->pP[i] = sample[offset]->offset;
+        t->pLP[i] = sample[offset]->size;
+    }
+    
+    //  [diffuse]
+    else if(m == 14)
+    {
+        t->m[i] = 14;
+        t->f[i] = 3;
+        t->c[i] = 12;
+        t->pP[i] = sample[offset]->offset;
+        t->pLP[i] = sample[offset]->size;
+    }
+    
+    //  <GLOBAL>
+    else if(m == 15)
+    {
+        t->m[i] = 15;
+        t->f[i] = 0;
+        t->c[i] = 0;
         t->pP[i] = offset;
     }
     

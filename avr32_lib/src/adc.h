@@ -9,5 +9,8 @@ extern void init_adc(void);
 // perform conversion, check for changes, and post events
 extern void adc_poll(void);
 
+//adc convert
+extern void adc_convert(U16 (*dst)[4]);
+
 #endif
 

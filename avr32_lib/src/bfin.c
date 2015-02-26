@@ -350,13 +350,6 @@ void bfin_set_trig(void) {
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 }
 
-void bfin_set_reversetrig(void) {
-    //  calls module_set_reversetrig()
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, MSG_SET_REVERSETRIG_COM);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-}
-
 u8 bfin_get_headstate(void) {
     u16 x;
     
@@ -492,122 +485,11 @@ s32 bfin_get_param(u8 idx) {
   
 }
 
-// fill s32 audio buffer
-void bfin_fill_buffer(u32 offset, u32 size, s32 *src) {
-    u32 i;
-    ParamValueSwap boffset;
-    ParamValueSwap bsize;
-    ParamValueSwap sample;
-
-    print_dbg("\r\n spi MSG_FILL_BUFFER_COM");
-
-app_pause();
-    
-    // command
-    bfin_wait();
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, MSG_FILL_BUFFER_COM);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    
-    // send sample offset
-    boffset.asInt = offset;
-    
-    // offset0
-    bfin_wait();
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, boffset.asByte[0]);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    
-    // offset1
-    bfin_wait();
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, boffset.asByte[1]);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-
-    // offset2
-    bfin_wait();
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, boffset.asByte[2]);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-
-    // offset3
-    bfin_wait();
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, boffset.asByte[3]);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    
-    // send sample size
-    bsize.asInt = size;
-
-    // val0
-    bfin_wait();
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, bsize.asByte[0]);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-
-    // val1
-    bfin_wait();
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, bsize.asByte[1]);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-
-    // val2
-    bfin_wait();
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, bsize.asByte[2]);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-
-    // val3
-    bfin_wait();
-    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, bsize.asByte[3]);
-    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    
-    // bytefill buffer
-    for (i=0; i < size; i++)
-    {
-        sample.asInt = *src;
-        sample.asInt = src[i];
-//        print_dbg("\r\n s32 src: ");
-//        print_dbg_ulong(src[i]);
-        
-        // val0
-        bfin_wait();
-        spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-        spi_write(BFIN_SPI, sample.asByte[0]);
-        spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-        // val1
-        bfin_wait();
-        spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-        spi_write(BFIN_SPI, sample.asByte[1]);
-        spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-        //val2
-        bfin_wait();
-        spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-        spi_write(BFIN_SPI, sample.asByte[2]);
-        spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-        //val3
-        bfin_wait();
-        spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-        spi_write(BFIN_SPI, sample.asByte[3]);
-        spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-        
-//        src++;
-    }
-    
-    print_dbg("\r\n u32 offset: ");
-    print_dbg_ulong(offset);
-
-    print_dbg("\r\n u32 size: ");
-    print_dbg_ulong(size);
-
-app_resume();
-}
-
 void bfin_set_sqparam(u8 pos, u8 idx, fix16_t x) {
     ParamValueSwap pval;
     pval.asInt = (s32)x;
-    
+
+/*
     print_dbg("\r\n bfin_set_sqparam, idx: ");
     print_dbg_ulong(idx);
     
@@ -616,7 +498,8 @@ void bfin_set_sqparam(u8 pos, u8 idx, fix16_t x) {
     
     print_dbg(",\t step: ");
     print_dbg_hex(pos);
-    
+*/    
+ 
     //  app_pause();
     
     // command
@@ -656,4 +539,120 @@ void bfin_set_sqparam(u8 pos, u8 idx, fix16_t x) {
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
     
     //  app_resume();
+}
+
+void bfin_new_sample(u32 offset, u32 size) {
+    ParamValueSwap boffset;
+    ParamValueSwap bsize;
+    
+//    print_dbg("\r\n spi MSG_NEW_SAMPLE_COM");
+app_pause();
+
+    // command
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, MSG_NEW_SAMPLE_COM);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    // send sample offset
+    boffset.asInt = offset;
+    
+    // offset0
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, boffset.asByte[0]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    // offset1
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, boffset.asByte[1]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    // offset2
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, boffset.asByte[2]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    // offset3
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, boffset.asByte[3]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    // send sample size
+    bsize.asInt = size;
+    
+    // val0
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, bsize.asByte[0]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    // val1
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, bsize.asByte[1]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    // val2
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, bsize.asByte[2]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    // val3
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, bsize.asByte[3]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+app_resume();
+
+    print_dbg("\r\n u32 offset: ");
+    print_dbg_ulong(offset);
+    
+    print_dbg("\r\n u32 size: ");
+    print_dbg_ulong(size);
+}
+
+void bfin_sample(s32 val) {
+    ParamValueSwap sample;
+    
+//    print_dbg("\r\n spi MSG_TRANSFER_SAMPLE_COM");
+    
+    // command
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, MSG_TRANSFER_SAMPLE_COM);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+        
+    sample.asInt = val;
+//    print_dbg("\r\n s32 val: ");
+//    print_dbg_ulong(val);
+    
+    // val0
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, sample.asByte[0]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    // val1
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, sample.asByte[1]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    //val2
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, sample.asByte[2]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    
+    //val3
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, sample.asByte[3]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 }
