@@ -23,8 +23,10 @@
 #define MSG_GET_MODULE_NAME_COM     4
 // get 4-byte version packet
 #define MSG_GET_MODULE_VERSION_COM  5
-#define MSG_ENABLE_AUDIO            6
+#define MSG_ENABLE_AUDIO           6
 #define MSG_DISABLE_AUDIO           7
+// fill buffer
+#define MSG_FILL_BUFFER_COM	    8
 
 // enumerate state-machine nodes for sending and receiving SPI.
 
@@ -51,40 +53,6 @@ typedef enum {
   eNumParamsVal,
   //---- get param descriptor
   /// param descriptors in aleph-module.dsc
-#if 0
-  /* eParamDescIdx, */
-  /* // label */
-  /* eParamDescLabel0, */
-  /* eParamDescLabel1, */
-  /* eParamDescLabel2, */
-  /* eParamDescLabel3, */
-  /* eParamDescLabel4, */
-  /* eParamDescLabel5, */
-  /* eParamDescLabel6, */
-  /* eParamDescLabel7, */
-  /* eParamDescLabel8, */
-  /* eParamDescLabel9, */
-  /* eParamDescLabel10, */
-  /* eParamDescLabel11, */
-  /* eParamDescLabel12, */
-  /* eParamDescLabel13, */
-  /* eParamDescLabel14, */
-  /* eParamDescLabel15, */
-  /* // type */
-  /* eParamDescType, */
-  /* // min */
-  /* eParamDescMin0, */
-  /* eParamDescMin1, */
-  /* eParamDescMin2, */
-  /* eParamDescMin3, */
-  /* // max */
-  /* eParamDescMax0, */
-  /* eParamDescMax1, */
-  /* eParamDescMax2, */
-  /* eParamDescMax3, */
-  /* // radix */
-  /* eParamDescRadix, */
-#endif
   // get module name
   eGetModuleName,
   // module name bytes
@@ -112,18 +80,6 @@ typedef enum {
   eModuleName21,
   eModuleName22,
   eModuleName23,
-#if 0 // include these in offline desc
-  /* //---- added: */
-  /* //---- buffer stuff */
-  /* /// get number of buffers */
-  /* eNumBuffersVal, */
-  /* //-- get buffer descriptor */
-  /* eBufferDescIdx, */
-  /* eBufferDescChannels, */
-  /* eBufferDescFrames, */
-  /* //-- send buffer data */
-  /* eSendBufferData, */
-#endif
 
   // module version
   eModuleVersionMaj,
@@ -131,6 +87,12 @@ typedef enum {
   eModuleVersionRev0,
   eModuleVersionRev1,
 
+  // buffer 
+  eBufferNumBytes0,
+  eBufferNumBytes1,
+  eBufferNumBytes2,
+  eBufferNumBytes3,
+  eBufferNumData,
   
   eNumSpiBytes
 } eSpiByte;

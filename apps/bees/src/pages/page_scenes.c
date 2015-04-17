@@ -259,7 +259,6 @@ static void show_foot0(void) {
   }
   region_fill(footRegion[0], fill);
   font_string_region_clip(footRegion[0], "STORE", 0, 0, 0xf, fill);
-  
 }
 
 static void show_foot1(void) {

@@ -218,7 +218,6 @@ void handle_enc_2(s32 val) {
   
 }
 
-
 // enc 0 : scroll page
 void handle_enc_1(s32 val) {
    if(val > 0) {
@@ -240,8 +239,7 @@ static void show_foot0(void) {
     fill = 0x5;
   }
   region_fill(footRegion[0], fill);
-  font_string_region_clip(footRegion[0], "STORE", 0, 0, 0xf, fill);
-  
+  font_string_region_clip(footRegion[0], "STORE", 0, 0, 0xf, fill);  
 }
 
 static void show_foot1(void) {
