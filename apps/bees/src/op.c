@@ -27,6 +27,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpBars,
   eOpBignum,
   eOpBits,
+  eOpChange,
   eOpDelay,
   eOpDiv,
   eOpDivr,
@@ -86,22 +87,22 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_add_t) ,
     .init = &op_add_init,
     .deinit = NULL
-  } , {
+  }, {
     .name = "MUL",
     .size = sizeof(op_mul_t) ,
     .init = &op_mul_init,
     .deinit = NULL
-  } , {
+  }, {
     .name = "GATE",
     .size = sizeof(op_gate_t), 
     .init = &op_gate_init,
     .deinit = NULL
-  } , {
+  }, {
     .name = "GRID",
     .size = sizeof(op_mgrid_raw_t),
     .init = &op_mgrid_raw_init,
     .deinit = &op_mgrid_raw_deinit
-  } , {
+  }, {
     .name = "MIDINOTE",
     .size = sizeof(op_midi_note_t),
     .init = &op_midi_note_init,
@@ -206,7 +207,7 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_bignum_t),
     .init = &op_bignum_init,
     .deinit = &op_bignum_deinit
-    }, {
+  }, {
     .name = "SCREEN",
     .size = sizeof(op_screen_t),
     .init = &op_screen_init,
@@ -261,50 +262,50 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_bars_t),
     .init = &op_bars_init,
     .deinit = &op_bars_deinit   
-  },
-  {
+  }, {
     .name = "SERIAL",
     .size = sizeof(op_serial_t),
     .init = &op_serial_init,
     .deinit = &op_serial_deinit   
-  },
-  {
+  }, {
     .name = "HID",
     .size = sizeof(op_hid_word_t),
     .init = &op_hid_word_init,
     .deinit = &op_hid_word_deinit   
-  },
-  {
+  }, {
     .name = "WW",
     .size = sizeof(op_ww_t),
     .init = &op_ww_init,
     .deinit = &op_ww_deinit   
-  },
-  {
+  }, {
     .name = "ARC",
     .size = sizeof(op_marc_t),
     .init = &op_marc_init,
     .deinit = &op_marc_deinit
-  },
-  {
+  }, {
     .name = "FADE",
     .size = sizeof(op_fade_t),
     .init = &op_fade_init,
     .deinit = NULL
-  },  {
+  }, {
     .name = "DIVR",
     .size = sizeof(op_divr_t),
     .init = &op_divr_init,
     .deinit = NULL
-  },  {
+  }, {
     .name = "SHL",
     .size = sizeof(op_shl_t),
     .init = &op_shl_init,
     .deinit = NULL
-  },  {
+  }, {
     .name = "SHR",
     .size = sizeof(op_shr_t),
     .init = &op_shr_init,
+    .deinit = NULL
+  }, {
+    .name = "CHANGE",
+    .size = sizeof(op_change_t),
+    .init = &op_change_init,
     .deinit = NULL
   },
 };
