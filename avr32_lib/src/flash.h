@@ -2,7 +2,6 @@
    aleph-avr32
 
    internal flash read/write
-
 */
 
 
@@ -31,6 +30,12 @@
 extern volatile u8 *bfinLdrData;
 // size of bfin firmware
 extern volatile u32 bfinLdrSize;
+
+// RAM buffer for sample transfer
+volatile u8 *bfinSampleData;
+u32 bfinSampleSize;
+u32 bfinMemCheck;
+
 
 //---------------------------------
 // extern functions

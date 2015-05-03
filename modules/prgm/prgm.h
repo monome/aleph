@@ -13,7 +13,7 @@
 #include "types.h"
 
 //audiolib cv-outputs
-#include "cv.h"
+//#include "cv.h"
 #include "filter_1p.h"
 
 //audiolib env
@@ -25,44 +25,66 @@
 #include "module.h"
 #include "params.h"
 
-#define N_TRACKS 4                      //number of tracks
-#define SQ_LEN 32                       //sequencer length
+#define N_TRACKS 8                      //number of tracks
+#define SQ_LEN 128                      //sequencer length
+#define N_DIROUTS 11                    //number of selectable direct outputs
+#define DEFAULT_LEVEL 0x2fffffff
 
 
-//  sequencer track
-typedef struct _sqTrack {
-    s32 sqtg[SQ_LEN];
-    s32 sqf[SQ_LEN];
-    s32 sqc[SQ_LEN];
-    s32 sqt[SQ_LEN];
-    s32 sqp[SQ_LEN];
-    s32 sqlp[SQ_LEN];
-    s32 sqfq[SQ_LEN];
-    
-} sqTrack;
+//  sequencer
+typedef struct _prgmSq {
+    u8 tg[SQ_LEN];                      //trig
+    u32 a[SQ_LEN];                      //offset a
+    u32 b[SQ_LEN];                      //offset b
+    fract32 l[SQ_LEN];                  //output level
+} prgmSq;
 
-typedef struct _sqTrack *sqTrackptr;
+typedef struct _prgmSq *PrgmSqptr;
+
 
 //  track
 typedef struct _prgmTrack {
     //output process frame
     u8 flag;
     fract32 (*process)(void *);         //pointer to output process frame
+    env_tcd envAmp;                     //dsp process
+    fract32 output;                     //track output level
+    u32 uP;                             //process u32 parameters
+    fract32 sP;                         
     
-    //curve
-    env_tcd envAmp;
+    //mix parameters
+    fract32 mix;                        //mix group level
+    fract32 panL;                       //mix group pan
+    fract32 panR;    
+    fract32 aux1;                       //aux send level
+    fract32 aux2;                       
     
-    //parameters process frame
-    fix16 pF;                           //frequency
-    fract32 pM;                         //mix
-    fract32 pL;                         //level
-    u32 pP;                             //position | offset
-    u32 pLP;                            //loop point
+    //sequencer parameters    
+    u16 len;                             //track length
+    u16 c;                               //track counter
     
     filter_1p_lo pSlew;                 //parameter slew
-    
 } prgmTrack;
 
 typedef struct _prgmTrack *PrgmTrackptr;
+
+
+//  mix
+typedef struct _prgmMaster {
+    fract32 (*output3)(void *);         //pointer to direct output 3
+    fract32 (*output4)(void *);         //pointer to direct output 4
+        
+    fract32 output;                     //master output level
+    
+    fract32 aux1panL;                   //aux1 pan
+    fract32 aux1panR;
+    
+    fract32 aux2panL;                   //aux2 pan
+    fract32 aux2panR;
+    
+} prgmMaster;
+
+typedef struct _prgmMaster *PrgmMasterptr;
+
 
 #endif

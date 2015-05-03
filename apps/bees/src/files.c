@@ -31,11 +31,13 @@
 #include "scene.h"
 
 // ---- directory list class
-// params
+// params 
 #define DIR_LIST_MAX_NUM 64
 #define DIR_LIST_NAME_LEN 64
 #define DIR_LIST_NAME_LEN_1 63
 #define DIR_LIST_NAME_BUF_SIZE 4096 // len * num
+#define DIR_LIST_PATH_LEN 64
+#define DIR_LIST_EXT_LEN 8
 
 #define DSP_PATH     "/mod/"
 #define SCENES_PATH  "/data/bees/scenes/"
@@ -44,10 +46,11 @@
 // endinanness
 // #define SCALER_LE 1
 
-//  stupid datatype with fixed number of fixed-length filenames
+// stupid datatype with fixed number of fixed-length filenames
 // storing this for speed when UI asks us for a lot of strings
 typedef struct _dirList {
-  char path[64];
+  char path[DIR_LIST_PATH_LEN];
+  char ext[DIR_LIST_EXT_LEN];
   volatile char nameBuf[DIR_LIST_NAME_BUF_SIZE];
   u32 num;
 } dirList_t;
@@ -67,32 +70,20 @@ static dirList_t scalerList;
 //---- static functions
 
 // populate list with filenames and count
-static void list_scan(dirList_t* list, const char* path);
+static void list_fill(dirList_t* list, const char* path, const char* ext);
 // get name at idx
 static const char* list_get_name(dirList_t* list, u8 idx);
 // get read file pointer if found (caller must close)
 // set size by pointer
 static void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u32* size);
 
-//// FIXME: dumb and slow seek/read functions because the real ones are broken
-//// fseek: no offset arg, assume its the first seek since file was opened 
-/* // not used
-static void fake_fseek(void* fp, u32 loc) {
-  u32 n = 0;
-  u8 dum;
-  while(n < loc) {
-    dum = fl_fgetc(fp);
-    n++;
-  }
-}
-*/
 
-// fread: no size arg
+// fake fread: no size arg, always byte
 static void fake_fread(volatile u8* dst, u32 len, void* fp) {
   u32 n = 0;
 #if 0
   // this seems to fail with files over a certain size, or something.
-  //  weird because fl_fgetc is just a call to fl_fread with size=1, data=1.
+  // weird because fl_fgetc is just a call to fl_fread with size=1, data=1.
   fl_fread(&dst, 1, len, fp);
 #else
   while(n < len) {
@@ -113,9 +104,37 @@ static void strip_space(char* str, u8 len) {
   }
 }
 
+//---------------------------
+//------------- extern defs
+
+// check for externsion
+bool check_ext(char* str, const char* extB ) {
+  int i;
+  int dotpos = -1;
+  char* extA = NULL;
+  bool res;
+ 
+  i = strlen(str);
+  while(i > 0) {
+    --i;
+    if(str[i] == '.') {
+      dotpos = i;
+      extA = str + i;
+      break;
+    }
+  } 
+  if(i < 0) { 
+    // no extension
+    return 0;
+  } else {
+    res = strcmp(extA, extB);
+    if(res == 0) { return 1; } else { return 0; }
+  }
+}
 
 // strip extension from the end of a string
-static void strip_ext(char* str) {
+// return 1 if found, 0 if not
+bool strip_ext(char* str) {
   int i;
   int dotpos = -1;
   i = strlen(str);
@@ -128,19 +147,17 @@ static void strip_ext(char* str) {
   } 
   if(dotpos >= 0) {
     str[dotpos] = '\0';
+    return 1;
+  } else {
+    return 0;
   }
 }
 
-
-//---------------------------
-//------------- extern defs
-
 void files_init(void) {
   // scan directories
-  print_dbg("\r\n BEES file_init, scanning directories..");
-  list_scan(&dspList, DSP_PATH);
-  list_scan(&sceneList, SCENES_PATH);
-  list_scan(&scalerList, SCALERS_PATH);
+  list_fill(&dspList, DSP_PATH, ".ldr");
+  list_fill(&sceneList, SCENES_PATH, ".scn");
+  list_fill(&scalerList, SCALERS_PATH, ".dat");
 }
 
 
@@ -163,141 +180,54 @@ u8 files_load_dsp_name(const char* name) {
   void* fp;
   u32 size = 0;
   u8 ret;
-  char nameTry[64];
-  //  ModuleVersion modVers;
+  //  char nameTry[DIR_LIST_NAME_LEN];
+  volatile u8* bfinLdrData = NULL;
 
   delay_ms(10);
-
   app_pause();
 
   fp = list_open_file_name(&dspList, name, "r", &size);
 
-  if(fp == NULL) {
-    //// HACK
-    // try adding ".ldr" because sometimes that happens... ugh
-    strcpy(nameTry, name);
-    strcat(nameTry, ".ldr");
-    fp = list_open_file_name(&dspList, nameTry, "r", &size);
-  }
+  if (fp != NULL) {
 
-  if( fp != NULL) {	  
-    print_dbg("\r\n found file, loading dsp: ");
-    print_dbg(name);
-    fake_fread(bfinLdrData, size, fp);
+    if(size > 0) {
 
-    fl_fclose(fp);
-    bfinLdrSize = size;
+      // allocate a RAM buffer
+      bfinLdrData = alloc_mem(size);
+      fake_fread(bfinLdrData, size, fp);
+      fl_fclose(fp);
 
-    if(bfinLdrSize > 0) {
-      print_dbg("\r\n loading bfin from buf");
       // reboot the dsp with new firmware in RAM
-      bfin_load_buf();
-      print_dbg("\r\n finished load");
+      bfin_load_buf((const u8*)bfinLdrData, size);
+      // free the buffer!
+      free_mem(bfinLdrData);
+
       // write module name in global scene data
 
       /////////////////
       /// FIXME: filename and reported modulename should be decoupled
       /// bees should search for aleph-module-x.y.z.ldr
-      /// but try aleph-module*.ldr on failure
+      /// but try aleph-module*.ldr on failure, etc
       ////
       /// query name and version to the scene data
       //      scene_query_module();
-      /// now set it to the actual filename because we are dumb
       scene_set_module_name(name);
       ///////////////////////////
 
-      print_dbg("\r\n sceneData->moduleName : ");
-      print_dbg(name);
       
-      print_dbg("\r\n loading parameter descriptor file...");
       ret = files_load_desc(name);
-
+      //???
       ret = 1;
     } else {
-      print_dbg("\r\n bfin ldr size was <=0, aborting");
       ret = 0;
     }
   } else {
-    print_dbg("\r\n error: fp was null in files_load_dsp_name \r\n");
     ret = 0;
   }
 
   app_resume();
   return ret;
 }
-
-
-// store .ldr as default in internal flash, given index
-#if 0
-void files_store_default_dsp(u8 idx) {
-  files_store_default_dsp_name((const char*)files_get_dsp_name(idx));
-  /* const char* name; */
-  /* void* fp;	   */
-  /* u32 size; */
-
-  /* app_pause(); */
-
-  /* name = (const char*)files_get_dsp_name(idx); */
-  /* fp = list_open_file_name(&dspList, name, "r", &size); */
-
-  /* if( fp != NULL) { */
-  /*   print_dbg("\r\n writing default DSP..."); */
-  /*   bfinLdrSize = size; */
-  /*   fl_fread((void*)bfinLdrData, 1, size, fp); */
-  /*   flash_write_ldr(); */
-  /*   fl_fclose(fp); */
-  /*   print_dbg("finished writing LDR to flash"); */
-    
-  /* } else { */
-  /*   print_dbg("\r\n error: fp was null in files_store_default_dsp \r\n"); */
-  /* } */
-
-  /* app_resume(); */
-}
-#endif
-
-/*
-// store .ldr as default in internal flash, given name
-void files_store_default_dsp_name(const char* name) {
-  //  const char* name;
-  void* fp;	  
-  u32 size;
-
-  app_pause();
-
-  //  name = (const char*)files_get_dsp_name(idx);
-  fp = list_open_file_name(&dspList, name, "r", &size);
-
-  if( fp != NULL) {
-    print_dbg("\r\n writing default DSP...");
-    bfinLdrSize = size;
-    print_dbg(" , size: ");
-    print_dbg_ulong(size);
-    //    fl_fread((void*)bfinLdrData, 1, size, fp);
-    fake_fread((void*)bfinLdrData, size, fp);
-
-    // TEST: print module data
-#if 0
-    for(u32 i = 0; i<size; i += 4) {
- if((i % 16) == 0) {
-	print_dbg("\r\n");
-      }
-      print_dbg(" 0x");
-      print_dbg_hex(*((u32*)(bfinLdrData + i)));
-    }
-#endif
-
-    flash_write_ldr();
-    fl_fclose(fp);
-    print_dbg("\r\n finished writing default LDR to flash");
-    
-  } else {
-    print_dbg("\r\n error: fp was null in files_store_default_dsp \r\n");
-  }
-
-  app_resume();
-}
-*/
 
 
 // return count of dsp files
@@ -310,21 +240,6 @@ u8 files_get_dsp_count(void) {
 
 // return filename for scene given index in list
 const volatile char* files_get_scene_name(u8 idx) {
-  /// DEBUG
-  /* char buf[SCENE_NAME_LEN]; */
-  /* u8 j; */
-  /* strncpy( buf, list_get_name(&sceneList, idx), SCENE_NAME_LEN ); */
-  /* print_dbg("\r\n name: \r\n"); */
-  /* print_dbg(buf); */
-  /* print_dbg("\r\n name as byte array: \r\n"); */
-  /* for(j=0; j<SCENE_NAME_LEN; j++) { */
-  /*   print_dbg( " 0x"); */
-  /*   print_dbg_hex(buf[j]); */
-  /*   print_dbg( " " ); */
-  /*   if(!(j%8)) { print_dbg("\r\n"); }  */
-  /* } */
-  /* print_dbg("\r\n"); */
-
   return list_get_name(&sceneList, idx);
 }
 
@@ -340,13 +255,8 @@ u8 files_load_scene_name(const char* name) {
   u32 size = 0;
   u8 ret = 0;
 
-    //// ahhhhh, i see.. 
-    /// this is overwriting the descriptor in sceneData as well as the serialized blob.
-    /// woud be fine, except it fucks up the comparison later.
-    /// for now, let's do this ugly-ass workaround.
-
+  // store the old module name
   char oldModuleName[MODULE_NAME_LEN];
-  /// store extant module name
   strncpy(oldModuleName, sceneData->desc.moduleName, MODULE_NAME_LEN);
 
   app_pause();
@@ -354,25 +264,15 @@ u8 files_load_scene_name(const char* name) {
   fp = list_open_file_name(&sceneList, name, "r", &size);
 
   if( fp != NULL) {	  
-    print_dbg("\r\n reading binary into sceneData serialized data buffer...");
     fake_fread((volatile u8*)sceneData, sizeof(sceneData_t), fp);
-    print_dbg(" done.");
-    
-    /// copy old name back to descriptor field... dumb dumb dumb.
+    /// copy old name back to descriptor field... dirty.
     strncpy(sceneData->desc.moduleName, oldModuleName, MODULE_NAME_LEN);
-    
     fl_fclose(fp);
+    // unpack buffer, rebuild network, reboot DSP
     scene_read_buf();
-
-    // try and load dsp module indicated by scene descriptor
-    //// DUDE! NO!!! scene does this. when did this happen!
-    //// probably snuck in in some merge.
-    //    ret = files_load_dsp_name(sceneData->desc.moduleName);
   } else {
-    print_dbg("\r\n error: fp was null in files_load_scene_name \r\n");
     ret = 0;
   } 
-
   app_resume();
   return ret;
 }
@@ -380,12 +280,12 @@ u8 files_load_scene_name(const char* name) {
 
 // store scene to sdcard at idx
 void files_store_scene(u8 idx) {
-  files_store_scene_name((const char*)files_get_scene_name(idx), 0);
+  //  files_store_scene_name((const char*)files_get_scene_name(idx), 0);
+  files_store_scene_name((const char*)files_get_scene_name(idx));
 }
 
-
 // store scene to sdcard at name
-void files_store_scene_name(const char* name, u8 ext) {
+void files_store_scene_name(const char* name/*, u8 ext*/) {
   //u32 i;
   void* fp;
   char namebuf[64] = SCENES_PATH;
@@ -394,48 +294,34 @@ void files_store_scene_name(const char* name, u8 ext) {
   app_pause();
 
   strcat(namebuf, name);
-
-  if(ext) {
+  strip_ext(namebuf);
+  //  if(ext) {
     // weird..
     strip_space(namebuf, 32);
     strcat(namebuf, ".scn");
-  }
+    //  }
 
-  print_dbg("\r\n opening scene file for writing: ");
-  print_dbg(namebuf);
 
   // fill the scene RAM buffer from current state of system
   scene_write_buf(); 
-  print_dbg("\r\n filled scene binary buffer");
 
   // open FP for writing
   fp = fl_fopen(namebuf, "wb");
-  print_dbg("\r\n opened file for binary write at 0x");
-  print_dbg_hex((u32)fp);
 
   pScene = (u8*)sceneData;
-  print_dbg("\r\n writing data from scene buffer at 0x");
-  print_dbg_hex((u32)pScene);
-  print_dbg(", size : ");
-  print_dbg_hex(sizeof(sceneData_t));
-  
 
-  // dump the scene data to debug output...
 
   fl_fwrite((const void*)pScene, sizeof(sceneData_t), 1, fp);
   fl_fclose(fp);
 
-  print_dbg("\r\n ... finished writing, closed file pointer");
 
   // rescan
-  list_scan(&sceneList, SCENES_PATH);
+  list_fill(&sceneList, SCENES_PATH, ".scn");
   delay_ms(10);
 
-  print_dbg("\r\n re-scanned scene file list and waited.");
 
   app_resume();
 }
-
 
 // return count of scene files
 u8 files_get_scene_count(void) {
@@ -459,16 +345,11 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
   u32 i;
   union { u32 u; s32 s; u8 b[4]; } swap;
   u8 ret = 0;
-  //// test
-  //s32* p = dst;
-  ///
 
   app_pause();
   fp = list_open_file_name(&scalerList, name, "r", &size);
   if( fp != NULL) {	  
 
-    print_dbg("\r\n scaler file pointer: 0x");
-    print_dbg_hex((u32)fp);
 #ifdef SCALER_LE
     swap.b[3] = fl_fgetc(fp);
     swap.b[2] = fl_fgetc(fp);
@@ -482,11 +363,8 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
 #endif
     size = swap.u;
 
-    print_dbg("\r\n read size (words): 0x");
-    print_dbg_ulong(size);
 
     if(size > dstSize) {
-      print_dbg("\r\n warning: requested scaler data is > target, truncating");
       for(i=0; i<dstSize; ++i) {
 
 #ifdef SCALER_LE
@@ -503,7 +381,6 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
 	*dst++ = swap.s;
       }
     } else if (size < dstSize) {
-      print_dbg("\r\n warning: requested scaler data is < target, padding");
       for(i=0; i<size; ++i) {
 #ifdef SCALER_LE
     swap.b[3] = fl_fgetc(fp);
@@ -542,15 +419,12 @@ u8 files_load_scaler_name(const char* name, s32* dst, u32 dstSize) {
     fl_fclose(fp);
     ret = 1;
   } else {
-    print_dbg("\r\n error: fp was null in files_load_scaler_name \r\n");
     ret = 0;
   } 
 
-  print_dbg("\r\n finished loading scaler file (?)");
 
   ///// TEST: verify
   /* for(i=0; i<size; i++) { */
-  /*   print_dbg(" 0x"); print_dbg_hex(p[i]); if((i%4)==0) { print_dbg("\r\n"); } */
   /* } */
 
   app_resume();
@@ -565,7 +439,7 @@ const char* list_get_name(dirList_t* list, u8 idx) {
   return (const char*) ( list->nameBuf + (idx * DIR_LIST_NAME_LEN) );
 }
 
-void list_scan(dirList_t* list, const char* path) {
+void list_fill(dirList_t* list, const char* path, const char* ext) {
   FL_DIR dirstat; 
   struct fs_dir_ent dirent;
   int i;
@@ -577,40 +451,25 @@ void list_scan(dirList_t* list, const char* path) {
 
   list->num = 0;
   strcpy(list->path, path);
+  strcpy(list->ext, ext);
 
   if( fl_opendir(path, &dirstat) ) {      
     while (fl_readdir(&dirstat, &dirent) == 0) {
       if( !(dirent.is_dir) ) {
-	strncpy((char*)(list->nameBuf + (list->num * DIR_LIST_NAME_LEN)), dirent.filename, DIR_LIST_NAME_LEN_1);
-	*(list->nameBuf + (list->num * DIR_LIST_NAME_LEN) + DIR_LIST_NAME_LEN_1) = '\0';
-	print_dbg("\r\n added file: ");
-	print_dbg(dirent.filename);
-	print_dbg(" , count: ");
-	print_dbg_ulong(list->num);
-	list->num += 1;
+
+	if(check_ext(dirent.filename, ext)) {
+	  ////////////////////////////////////
+	  /// strip the extension before storing
+	  strip_ext(dirent.filename);
+	  /////////////////////////
+	  strncpy((char*)(list->nameBuf + (list->num * DIR_LIST_NAME_LEN)),
+		  dirent.filename, DIR_LIST_NAME_LEN_1);
+	  *(list->nameBuf + (list->num * DIR_LIST_NAME_LEN) + DIR_LIST_NAME_LEN_1) = '\0';
+	  list->num += 1;
+	}
       }
     }
   }
-  print_dbg("\r\n scanned list at path: ");
-  print_dbg(list->path);
-  print_dbg(" , contents : \r\n");
-
-  /* for(i=0; i<list->num; i++) { */
-  /*   char buf[32]; */
-  /*   u8 j; */
-  /*   strncpy( buf, list_get_name(list, i), 32 ); */
-
-  /*   print_dbg(buf); */
-
-  /*   for(j=0; j<32; j++) { */
-  /*     print_dbg( " 0x"); */
-  /*     print_dbg_hex(buf[j]); */
-  /*     print_dbg( " " ); */
-  /*     if(!(j%8)) { print_dbg("\r\n"); } */
-  /*   } */
-  /*   print_dbg("\r\n"); */
-  /* } */
-  /* print_dbg("\r\n"); */
 }
 
 // search for a given filename in a listed directory. set size by pointer
@@ -619,28 +478,22 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
   struct fs_dir_ent dirent;
   char path[64];
   void* fp;
-
-  print_dbg("\r\n *list_open_file_name: "); 
-  print_dbg(path); 
-  print_dbg(" at ");
-  print_dbg(list->path);
-  print_dbg(" request: ");
-  print_dbg(name);
+  char nameTry[DIR_LIST_NAME_LEN];
 
 
+  // strip any .extension and add our own
   strcpy(path, list->path);
+  strncpy(nameTry, name, DIR_LIST_NAME_LEN);
+  strip_ext(nameTry);
+  strncat(nameTry, list->ext, DIR_LIST_NAME_LEN);
 
   if(fl_opendir(path, &dirstat)) {
     
     while (fl_readdir(&dirstat, &dirent) == 0) {
-      print_dbg("\r\n ... checking against "); 
-      print_dbg(dirent.filename);
 
-      if (strcmp(dirent.filename, name) == 0) {
+      if (strcmp(dirent.filename, nameTry) == 0) {
 	strncat(path, dirent.filename, 58);
 	
-	print_dbg("\r\n ... found, opening at:  "); 
-	print_dbg(path);
       
 	fp = fl_fopen(path, mode);
 	*size = dirent.size;
@@ -651,7 +504,6 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
       }
     } // end loop
   } else { // dir error
-    print_dbg("\r\n directory error.");
     *size = 0;
     fp = NULL;
   }
@@ -678,13 +530,9 @@ extern u8 files_load_desc(const char* name) {
   strip_ext(path);
   strcat(path, ".dsc");
 
-  print_dbg("\r\n  opening .dsc file at path: ");
-  print_dbg(path);
 
   fp = fl_fopen(path, "r");
   if(fp == NULL) {
-    print_dbg("... error opening .dsc file.");
-    print_dbg(path);
     ret = 1;
   } else {
 
@@ -710,7 +558,6 @@ extern u8 files_load_desc(const char* name) {
  
       }
     } else {
-      print_dbg("\r\n error: crazy parameter count from descriptor file.");
       ret = 1;
     }
   }
@@ -718,6 +565,3 @@ extern u8 files_load_desc(const char* name) {
   app_resume();
   return ret;
 }
-
-
-

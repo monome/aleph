@@ -20,10 +20,8 @@
 //#define BFIN_LDR_MAX_BYTES 0x10000
 //// actually, the ldr itself can be bigger than the bfin's sram...??
 #define BFIN_LDR_MAX_BYTES 0x12000
-
-//temporary buffer for sample transfer over spi
-u8 *bfinSampleData;
-u32 bfinSampleSize;
+//  32MB of SDRAM memory for aux buffers, envelopes and samples
+#define BFIN_SAMPLES_MAX_BYTES 0x1e84800
 
 // wait for busy pin to clear
 void bfin_wait(void);
@@ -75,7 +73,7 @@ extern void bfin_wait_ready(void);
 
 //PRGM
 // set trig
-extern void bfin_set_trig(void);
+extern void bfin_set_event(void);
 
 //new sample
 extern void bfin_new_sample(u32 offset, u32 size);
@@ -84,7 +82,7 @@ extern void bfin_new_sample(u32 offset, u32 size);
 extern void bfin_sample(s32 val);
 
 // set a sequenced parameter
-void bfin_set_sqparam(U8 pos, U8 idx, fix16_t val);
+extern void bfin_set_sqparam(u32 pos, u8 idx, fix16_t val);
 
 //get buffer head state
 extern u8 bfin_get_headstate(void);

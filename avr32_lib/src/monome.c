@@ -1,19 +1,8 @@
-/*
-  monome.c
-  aleph-avr32
-
-  monome device driver
-
-*/
-
-// asf
 #include "delay.h"
 #include "print_funcs.h"
 #include <string.h>
-// aleph
-#include "app.h"
+
 #include "events.h"
-#include "event_types.h"
 #include "ftdi.h"
 #include "monome.h"
 
@@ -29,6 +18,8 @@
 // tx buffer length
 #define MONOME_TX_BUF_LEN 72
 
+// level above which an LED must be set to be displayed on mono-brightness grid
+#define VB_CUTOFF 7
 //------- typedefs
 
 //--- descriptor types
@@ -50,6 +41,7 @@ typedef struct e_monomeDesc {
   u8 rows;  // number of rows
   u8 encs; // number of encoders
   u8 tilt;  // has tilt (??)  
+  u8 vari; // is variable brightness, true/false
 } monomeDesc;
 
 
@@ -134,7 +126,6 @@ static void grid_map_mext(u8 x, u8 y, const u8* data);
 //static void ring_set_mext(u8 n, u8 rho, u8 val);
 static void ring_map_mext(u8 n, u8* data);
 
-//static void connect_write_event(void);
 static inline void monome_grid_key_write_event( u8 x, u8 y, u8 val);
 static inline void monome_grid_adc_write_event( u8 n, u16 val);
 static inline void monome_ring_enc_write_event( u8 n, u8 val);
@@ -262,7 +253,7 @@ u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr) {
     }
     if( strncmp(buf, "m128-", 5) == 0 ) {
       // series 128
-      setup_series(8, 16);
+      setup_series(16, 8);
       return 1;
     }
     if( strncmp(buf, "m256-", 5) == 0 ) {
@@ -327,9 +318,9 @@ void monome_arc_refresh(void) {
   u8 busy = ftdi_tx_busy();
   u8 i;
 
-  for(i=0;i<mdesc.encs;i++) {
+  for(i=0; i<mdesc.encs; i++) {
     if(monomeFrameDirty & (1<<i)) {
-      if(i==1) print_dbg("\r\nsecond");
+      //      if(i==1) print_dbg("\r\nsecond");
       while(busy) { busy = ftdi_tx_busy(); }
       (*monome_ring_map)(i, monomeLedBuffer + (i<<6));
       monomeFrameDirty &= ~(1<<i);
@@ -344,22 +335,29 @@ void monome_arc_refresh(void) {
 //---- convert to/from event data
 // connect
 static inline void monome_connect_write_event(void) {
-  u8* data = (u8*)(&(ev.data));
+  //  u8* data = (u8*)(&(ev.data));
   
-  print_dbg("\r\n posting monome connection event. ");
-  print_dbg(" device type: ");
-  print_dbg_ulong(mdesc.device);
-  print_dbg(" cols : ");
-  print_dbg_ulong(mdesc.cols);
-  print_dbg(" rows: ");
-  print_dbg_ulong(mdesc.rows);
+  // print_dbg("\r\n posting monome connection event. ");
+  // print_dbg(" device type: ");
+  // print_dbg_ulong(mdesc.device);
+  // print_dbg(" cols : ");
+  // print_dbg_ulong(mdesc.cols);
+  // print_dbg(" rows: ");
+  // print_dbg_ulong(mdesc.rows);
+  
+  ev.type = kEventMonomeConnect;
+  ev.type = kEventMonomeConnect;
 
-  ev.type = kEventMonomeConnect;
-  ev.type = kEventMonomeConnect;
-  *data++ = (u8)(mdesc.device); 	// device (8bits)
-  *data++ = mdesc.cols;		// width / count
-  *data++ = mdesc.rows;		// height / resolution
-  //  *data = 0; 		// unused
+  // not really necessary now,
+  // app can use the read accessors for desc fields. 
+
+  /*
+  *data++ = (u8)(mdesc.device);   // device (8bits)
+  *data++ = mdesc.cols;   // width / count
+  *data++ = mdesc.rows;   // height / resolution
+  */
+
+  //  *data = 0;    // unused
   event_post(&ev);
 }
 
@@ -427,6 +425,7 @@ void monome_ring_enc_parse_event_data(u32 data, u8* n, s8* val) {
 static inline void monome_ring_key_write_event( u8 n, u8 val) {
   // TODO
 }
+
 void monome_ring_key_parse_event_data(u32 data, u8* n, u8* val) {
   // TODO
 }
@@ -469,29 +468,38 @@ u32 monome_xy_idx(u8 x, u8 y) {
   return x | (y << 4);
 }
 
-// top-level led/set function
-void monome_led_set(u8 x, u8 y, u8 z) {
+// grid led/set function
+void monome_grid_led_set(u8 x, u8 y, u8 z) {
   monomeLedBuffer[monome_xy_idx(x, y)] = z;
   monome_calc_quadrant_flag(x, y);
 }
 
-// top-level led/toggle function
-void monome_led_toggle(u8 x, u8 y) {
+// grid led/toggle function
+void monome_grid_led_toggle(u8 x, u8 y) {
   monomeLedBuffer[monome_xy_idx(x,y)] ^= 0xff;
   monome_calc_quadrant_flag(x, y);  
 }
 
+// arc led/set function
+///// FIXME??? totally untested
+void monome_arc_led_set(u8 enc, u8 ring, u8 val) {
+  monomeLedBuffer[ring + (enc << 6)] = val;
+  monomeFrameDirty |= (1 << enc);
+}
 
 u8 monome_size_x(void) { return mdesc.cols; }
 u8 monome_size_y(void) {  return mdesc.rows; }
+u8 monome_is_vari(void) {  return mdesc.vari; }
+
+eMonomeDevice monome_dev_type(void) { return mdesc.device; }
 
 //=============================================
 //------ static function definitions
 
 // set function pointers
 static inline void set_funcs(void) {
-  print_dbg("\r\n setting monome functions, protocol idx: ");
-  print_dbg_ulong(mdesc.protocol);
+  // print_dbg("\r\n setting monome functions, protocol idx: ");
+  // print_dbg_ulong(mdesc.protocol);
   monome_read_serial = readSerialFuncs[mdesc.protocol];
   monome_grid_map = gridMapFuncs[mdesc.protocol];
   monome_grid_level_map = gridMapFuncs[mdesc.protocol];
@@ -510,22 +518,24 @@ static inline void set_funcs(void) {
 
 // setup 40h-protocol device
 static void setup_40h(u8 cols, u8 rows) {
-  print_dbg("\r\n setup 40h device");
+  // print_dbg("\r\n setup 40h device");
   mdesc.protocol = eProtocol40h;
   mdesc.device = eDeviceGrid;
   mdesc.cols = 8;
   mdesc.rows = 8;
+  mdesc.vari = 0;
   set_funcs();
   monome_connect_write_event();
 }
 
 // setup series device
 static void setup_series(u8 cols, u8 rows) {
-  print_dbg("\r\n setup series device");
+  // print_dbg("\r\n setup series device");
   mdesc.protocol = eProtocolSeries;
   mdesc.device = eDeviceGrid;
   mdesc.cols = cols;
   mdesc.rows = rows;
+  mdesc.vari = 0;
   mdesc.tilt = 1;
   set_funcs();
   monome_connect_write_event();
@@ -539,12 +549,17 @@ static u8 setup_mext(void) {
   u8 w = 0;
   u8 busy;
 
-  print_dbg("\r\n setup mext device");
+  // print_dbg("\r\n setup mext device");
   mdesc.protocol = eProtocolMext;
 
+  mdesc.vari = 1;
+
+  rxBytes = 0;
+
+  while(rxBytes != 6) {
   // FIXME: fuck these delays
   delay_ms(1);
-  ftdi_write(&w, 1);	// query  
+  ftdi_write(&w, 1);  // query  
 
   delay_ms(1);
   ftdi_read();
@@ -552,22 +567,31 @@ static u8 setup_mext(void) {
   delay_ms(1);
   busy = 1;
 
-  print_dbg("\r\n setup request ftdi read; waiting...");
+  // print_dbg("\r\n setup request ftdi read; waiting...");
 
   //  while(ftdi_rx_busy()) {;;}
   while(busy) {
     busy = ftdi_rx_busy();
-    print_dbg("\r\n waiting for transfer complete; busy flag: ");
-    print_dbg_ulong(busy);
+    // print_dbg("\r\n waiting for transfer complete; busy flag: ");
+    // print_dbg_ulong(busy);
     
   }
   rxBytes = ftdi_rx_bytes();
 
-  print_dbg(" done waiting. bytes read: ");
-  print_dbg_ulong(rxBytes);
+  // print_dbg(" done waiting. bytes read: ");
+  // print_dbg_ulong(rxBytes);
 
   if(rxBytes != 6 ){
-    print_dbg("\r\n got unexpected byte count in response to mext setup request; ");
+    print_dbg("\r\n got unexpected byte count in response to mext setup request;\r\n");
+    print_dbg_ulong(*prx);
+    
+    for(;rxBytes != 0; rxBytes--) {
+      print_dbg_ulong(*(++prx));
+      print_dbg(" ");
+    }
+
+    // return 0;
+    }
   }
   
   prx = ftdi_rx_buf();
@@ -576,23 +600,23 @@ static u8 setup_mext(void) {
     mdesc.device = eDeviceGrid;
     prx++;
     if(*prx == 1) {
-      print_dbg("\r\n monome 64");
+      // print_dbg("\r\n monome 64");
       mdesc.rows = 8;
       mdesc.cols = 8;
     }
     else if(*prx == 2) {
-      print_dbg("\r\n monome 128");
+      // print_dbg("\r\n monome 128");
       mdesc.rows = 8;
       mdesc.cols = 16;
     }
     else if(*prx == 4) {
-      print_dbg("\r\n monome 256");
+      // print_dbg("\r\n monome 256");
       mdesc.rows = 16; 
       mdesc.cols = 16;
     }
     else {
       return 0; // bail
-    }		
+    }   
     mdesc.tilt = 1;
   }
   else if(*prx == 5) {
@@ -606,11 +630,34 @@ static u8 setup_mext(void) {
     print_dbg_hex(*(++prx));
     return 0; // bail
   }
-  set_funcs();
 
+  // get id
+  w = 1;
+  delay_ms(1);
+  ftdi_write(&w, 1);
+  delay_ms(1);
+  ftdi_read();
+  delay_ms(1);
+  busy = 1;
+  while(busy) {
+    busy = ftdi_rx_busy();
+  }
+  rxBytes = ftdi_rx_bytes();
+  prx = ftdi_rx_buf();
+  if(*(prx+2) == 'k')
+      mdesc.vari = 0;
+  // print_dbg("\r\ndone waiting. bytes read: ");
+  // print_dbg_ulong(rxBytes);
+  // print_dbg("\r\ndata: ");
+  // print_dbg_char(*prx);
+  //   for(;rxBytes != 0; rxBytes--) {
+  //     print_dbg_char(*(++prx));
+  //   }
+
+  set_funcs();
   monome_connect_write_event();
   //  monomeConnect = 1;
-  print_dbg("\r\n connected monome device, mext protocol");
+  // print_dbg("\r\n connected monome device, mext protocol");
   //  test_draw();
   return 1;
 }
@@ -676,13 +723,13 @@ static void read_serial_series(void) {
     /* print_dbg("; y : 0x"); */
     /* print_dbg_hex(prx[1] & 0xf); */
     /* print_dbg(" ; z : 0x"); */
-    /* print_dbg_hex(	 ((prx[0] & 0xf0) == 0) ); */
+    /* print_dbg_hex(  ((prx[0] & 0xf0) == 0) ); */
     
     // process consecutive pairs of bytes
     monome_grid_key_write_event( ((prx[1] & 0xf0) >> 4) ,
-				 prx[1] & 0xf,
-				 ((prx[0] & 0xf0) == 0)
-				 );
+         prx[1] & 0xf,
+         ((prx[0] & 0xf0) == 0)
+         );
     i += 2;
     prx += 2;
   }
@@ -700,37 +747,37 @@ static void read_serial_mext(void) {
     nbp = 0;
     prx = ftdi_rx_buf();
     while(nbp < rxBytes) {
-      com = (u8)(*(prx++));    
+      com = (u8)(*(prx++));
       nbp++;
       switch(com) {
       case 0x20: // grid key up
-	monome_grid_key_write_event( *prx, *(prx+1), 0);
-	nbp += 2;
-	prx += 2;
-	break;
+        monome_grid_key_write_event( *prx, *(prx+1), 0);
+        nbp += 2;
+        prx += 2;
+        break;
       case 0x21: // grid key down
-	monome_grid_key_write_event( *prx, *(prx+1), 1);
-	nbp += 2;
-	prx += 2;
-	break;
-	case 0x50: // ring delta
-	monome_ring_enc_write_event( *prx, *(prx+1));
-	nbp += 2;
-	prx += 2;
-	break;
+        monome_grid_key_write_event( *prx, *(prx+1), 1);
+        nbp += 2;
+        prx += 2;
+        break;
+      case 0x50: // ring delta
+        monome_ring_enc_write_event( *prx, *(prx+1));
+        nbp += 2;
+        prx += 2;
+        break;
       case 0x51 : // ring key up
-	monome_ring_key_write_event( *prx++, 0);
-	prx++;
-	break;
+        monome_ring_key_write_event( *prx++, 0);
+        prx++;
+        break;
       case 0x52 : // ring key down
-	monome_ring_key_write_event( *prx++, 1);
-	nbp++;
-	break;
-	/// TODO: more commands... 
-      default:
-	return;
+        monome_ring_key_write_event( *prx++, 1);
+        nbp++;
+        break;
+        /// TODO: more commands... 
+            default:
+        return;
       }
-    }	
+    } 
   }
 }
 
@@ -843,7 +890,7 @@ static void grid_map_series(u8 x, u8 y, const u8* data) {
     *ptx = 0;
     for(j=0; j<MONOME_QUAD_LEDS; j++) {
       // binary value of data byte to bitfield of tx byte
-      *ptx |= ((*data > 0) << j);
+      *ptx |= ((*data > VB_CUTOFF) << j);
       ++data;
     }
     // print_dbg(" ");   
@@ -883,12 +930,12 @@ static void ring_map_mext(u8 n, u8* data) {
 
 static void set_intense_series(u8 v) {
 /*
-message id:	(10) intensity
-bytes:		1
-format:		iiiibbbb
-			i (message id) = 10
-			b (brightness) = 0-15 (4 bits)
-encode:		byte 0 = ((id) << 4) | b = 160 + b
+message id: (10) intensity
+bytes:    1
+format:   iiiibbbb
+      i (message id) = 10
+      b (brightness) = 0-15 (4 bits)
+encode:   byte 0 = ((id) << 4) | b = 160 + b
 */
   txBuf[0] = 0xa0;
   txBuf[0] |= (v & 0x0f);

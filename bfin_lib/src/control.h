@@ -41,7 +41,7 @@
 
 // parameter change event type
 typedef struct _ctlEvent {
-    u8 step;
+    u32 step;
     u8 idx;
     ParamValue val;
 } ctlEvent_t;

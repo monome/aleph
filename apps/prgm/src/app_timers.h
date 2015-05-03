@@ -7,21 +7,31 @@
 #include "timers.h"
 #include "types.h"
 
-//adc variables and trig states
-#define ARM 2
-#define ON 1
-#define OFF 0
-u16 adc[4];
-u8 state;
-u16 previous_value;
+//asf
+#include "print_funcs.h"
 
-//foot control states
-u8 foot1_touched;
-u8 foot2_touched;
+//aleph-avr32
+#include "control.h"
+#include "encoders.h"
+#include "events.h"
+#include "midi.h"
+#include "flash.h"
 
-//bfin reported states from custom_callback()
-u8 bfinheadstate;
-u8 bfinheadpos;
+//prgm and customized library
+#include "adc.h"
+#include "app_timers.h"
+#include "render.h"
+#include "ctl.h"
+#include "files.h"
+#include "tracker.h"
+#include "generator.h"
+
+//mode led ctrl
+#include "gpio.h"
+#include "aleph_board.h"
+
+//trig
+#include "bfin.h"
 
 // create application timers
 extern void init_sample_timer(void);

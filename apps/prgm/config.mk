@@ -15,16 +15,18 @@ include ../../avr32_lib/avr32_lib_src.mk
 CSRCS += \
 	$(APP_DIR)/src/app_prgm.c \
 	$(APP_DIR)/src/app_timers.c \
+	$(APP_DIR)/src/ctl.c \
 	$(APP_DIR)/src/files.c \
 	$(APP_DIR)/src/handler.c \
-	$(APP_DIR)/src/ctl.c \
-	$(APP_DIR)/src/render.c \
-	$(APP_DIR)/src/util.c \
-	$(APP_DIR)/src/tracker.c \
+	$(APP_DIR)/src/page_trk.c \
+	$(APP_DIR)/src/page_mix.c \
+	$(APP_DIR)/src/page_seq.c \
+	$(APP_DIR)/src/page_gen.c \
 	$(APP_DIR)/src/pages.c \
-	$(APP_DIR)/src/page_param.c \
-	$(APP_DIR)/src/page_env.c \
-    $(APP_DIR)/src/scale.c
+	$(APP_DIR)/src/render.c \
+	$(APP_DIR)/src/tracker.c \
+	$(APP_DIR)/src/generator.c \
+    $(APP_DIR)/src/util.c
 
 # List of assembler source files.
 ASSRCS +=

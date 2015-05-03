@@ -343,10 +343,10 @@ void bfin_disable(void) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 }
 
-void bfin_set_trig(void) {
-    //  called on trig from adc0, calls module_set_trig()
+void bfin_set_event(void) {
+    //  called on trig from adc0, calls module_set_event()
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, MSG_SET_TRIG_COM);
+    spi_write(BFIN_SPI, MSG_SET_EVENT_COM);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 }
 
@@ -485,7 +485,9 @@ s32 bfin_get_param(u8 idx) {
   
 }
 
-void bfin_set_sqparam(u8 pos, u8 idx, fix16_t x) {
+void bfin_set_sqparam(u32 pos, u8 idx, fix16_t x) {
+    ParamValueSwap ppos;
+    ppos.asInt = (u32)pos;
     ParamValueSwap pval;
     pval.asInt = (s32)x;
 
@@ -498,7 +500,7 @@ void bfin_set_sqparam(u8 pos, u8 idx, fix16_t x) {
     
     print_dbg(",\t step: ");
     print_dbg_hex(pos);
-*/    
+*/ 
  
     //  app_pause();
     
@@ -507,12 +509,27 @@ void bfin_set_sqparam(u8 pos, u8 idx, fix16_t x) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
     spi_write(BFIN_SPI, MSG_SET_SQPARAM_COM);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    //pos
+    // pos0
     bfin_wait();
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, pos);
+    spi_write(BFIN_SPI, ppos.asByte[0]);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    //idx
+    // pos1
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, ppos.asByte[1]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    // pos2
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, ppos.asByte[2]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    // pos3
+    bfin_wait();
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, ppos.asByte[3]);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    // idx
     bfin_wait();
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
     spi_write(BFIN_SPI, idx);

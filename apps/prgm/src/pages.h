@@ -12,7 +12,8 @@
 //-- define
 
 // number of pages (including modal pages)
-#define NUM_PAGES 2
+#define NUM_PAGES 4
+u8 trkpage;
 
 // enum of key handlers per menu page
 typedef enum {
@@ -30,8 +31,10 @@ typedef enum {
 
 // top-level state
 typedef enum {
-    ePageParam,
-    ePageEnv
+    ePageTrk,
+    ePageMix,
+    ePageSeq,
+    ePageGen
 } ePage;
 
 // function pointers for input handling on a given page
@@ -56,9 +59,10 @@ typedef struct page_struct {
     s8 encSens[4];
 } page_t;
 
-extern void render_level(void);
-extern void render_env(void);
-//extern void render_pattern(void);
+extern void render_trk(void);
+extern void render_mix(void);
+extern void render_seq(void);
+extern void render_gen(void);
 
 //-----------------------
 //--- extern variables
@@ -77,14 +81,16 @@ extern u8 altMode;
 
 //external functions
 //page select
-extern void select_param(void);
-extern void select_env(void);
-//extern void select_pattern(void);
+extern void select_trk(void);
+extern void select_mix(void);
+extern void select_seq(void);
+extern void select_gen(void);
 
 //page redraw
-extern void redraw_level(void);
-extern void redraw_env(void);
-//extern void redraw_pattern(void);
+extern void redraw_trk(void);
+extern void redraw_mix(void);
+extern void redraw_seq(void);
+extern void redraw_gen(void);
 
 //----- public functions
 // init all pages

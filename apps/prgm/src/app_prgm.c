@@ -15,13 +15,13 @@
 //prgm
 #include "app_timers.h"
 #include "ctl.h"
-#include "handler.h"            //adc_init
-#include "render.h"             //prgm_init
+#include "handler.h"
+#include "render.h"
 
-#include "files.h"              //files_load_dsp
+#include "files.h"              
 #include "pages.h"
-#include "scale.h"              //scale_init
 #include "tracker.h"
+#include "generator.h"
 #include "flash.h"
 #include "screen.h"
 
@@ -29,14 +29,16 @@
 void app_init(void) {    
     print_dbg("\r\n app_init...");
 
+//    wavetables_init();
+
     samples_init();
     print_dbg("\r\n finished samples_init()...");
-    
-    scale_init();
-    
+
     render_init();
     
     tracker_init();
+        
+//    gen_init();
 }
 
 //dsp init
@@ -58,27 +60,26 @@ if(firstrun) {
 }
     pages_init();
 
-    bfin_enable();
-    
+    bfin_disable();
+
     init_sample_timer();
     
-    for (smpl = 8; smpl < n_samples; smpl++)
-    {
-        files_load_sample(smpl);
-        
-        //  wait for transfer to finish...
-        delay_ms(8000);
-        if (sample[smpl]->size > 4000) delay_ms(8000);
-        if (sample[smpl]->size > 16000) delay_ms(8000);
-        
-        free_mem(bfinSampleData);
-
-        bfinSampleSize = 0;
-        idx8 = 0;
-        idx32 = 0;
-    }
+    print_dbg("\r\n n_samples ");
+    print_dbg_ulong(n_samples);
     
+    render_boot("loading samples...");
+    
+    for (smpl = N_BUFFERS + 1; smpl < n_samples; smpl++)
+    {
+        render_boot(sample_path[smpl-9]);
+        files_load_sample(smpl);
+        delay_ms(10);
+        free_mem(bfinSampleData);
+    }
+
     deinit_sample_timer();
+    
+    bfin_enable();
     
     init_app_timers();
     
@@ -87,10 +88,8 @@ if(firstrun) {
     render_startup();
     
     assign_prgm_event_handlers();
-        
-//    print_dbg("\r\n sizeof prgmTrack");
-//    print_dbg_ulong(sizeof(prgmTrack));
-    
+            
     print_dbg("\r\n return 1...");
+    
     return 1;
 }

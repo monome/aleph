@@ -7,9 +7,10 @@
 #include "types.h"
 #include "delay.h"
 
+#include "bfin.h"
+
 #include "events.h"
 #include "event_types.h"
-//#include "aleph_board.h"
 #include "control.h"
 #include "ctl.h"
 
@@ -31,30 +32,35 @@
 #define MAX_PATH_1 (MAXPATH - 1)
 #define DIR_LIST_NAME_BUF_SIZE 512
 
-#define N_BUFFERS 8
-#define N_SAMPLES 40
+#define N_BUFFERS 8                     //number of audio buffers
+#define N_TABLES 0                      //number of wavetables
+#define N_SAMPLES 128                   //number of samples
+#define N_OFFSETS (N_BUFFERS + N_TABLES + N_SAMPLES)
 
-#define REC_SIZE 0xBB800                    //recording buffer maximum size (16 seconds)
-#define AUX_SIZE 0x2EE00                    //aux buffer maximum size (4 seconds)
+#define REC_SIZE 0xBB800                //recording buffer maximum size (16 seconds)
+#define AUX_SIZE 0x2EE00                //aux buffer maximum size (4 seconds)
+#define ENV_SIZE 1024                   //max size per envelope (1024 bytes)
+#define SAMPLE_SIZE 0x7D000             //max size per sample (512KB)
+#define SAMPLES_SIZE BFIN_SAMPLES_MAX_BYTES
+
+#define BFIN_BUFFER_SIZE ((AUX_SIZE * 8) + SAMPLES_SIZE) //max size for all offsets (0x01e84800 bytes?)
 
 //sample
-//sample file format: mono headerless pcm16 signed big endian
-//sample rate: 96kHz
 typedef struct _prgmSample *prgmSampleptr;
 
 typedef struct _prgmSample {
     u32 num;
     u32 offset;
-    u32 size;
+    u32 loop;
 } prgmSample;
 
-prgmSample *sample[N_SAMPLES];
+prgmSample *sample[N_OFFSETS];
 
 //array holding sample file paths
-char *sample_path[N_SAMPLES];
+char *sample_path[N_OFFSETS];
 
 //array holding sample names
-char *sample_name[N_SAMPLES];
+char *sample_name[N_OFFSETS];
 
 //number of samples loaded: /data/prgm/samples
 u8 n_samples;
@@ -64,6 +70,7 @@ u32 idx32;
 
 //init samples
 extern void samples_init(void);
+//extern void wavetables_init(void);
 
 //load aleph-prgm.ldr, return 1 on success, 0 on failure
 extern u8 files_load_dsp(void);

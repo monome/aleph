@@ -6,19 +6,26 @@
 #include "op_math.h"
 #include "types.h"
 
-//--- op_monome_grid_raw : monome grid as a simple bank of switches 
+//--- op_monome_arc
 typedef struct op_marc_struct {
   op_t super;
   op_monome_t monome;
-  // inputs: toggle mode, focus
+  // focus toggle
   volatile io_t focus;
-  volatile io_t tog;
-  volatile io_t mono;
-  volatile io_t* in_val[3];
-  // outputs: x , y, z
+  // loopback toggle
+  volatile io_t loop;
+  // set ring number
+  volatile io_t ring;
+  // set update position
+  volatile io_t pos;
+  // set update value
+  volatile io_t val;
+  // input pointer array
+  volatile io_t* in_val[5];
   op_out_t outs[3];
-  // internal:
-  u32 lastPos;
+  // internal
+  u8 mRing;
+  u8 vals[4];
 } op_marc_t;
 
 // init

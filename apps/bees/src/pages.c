@@ -33,32 +33,33 @@
 page_t pages[NUM_PAGES] = {
   { .name = "INS",
     .select_fn = &select_ins, // select function
-    .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
+    //    .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
+    .encSens = { ENC_THRESH_LISTSCROLL, ENC_THRESH_PAGESCROLL,  0, 0,}, // encoder sens 
   },
   { .name = "OUTS",
     .select_fn = &select_outs, // select function
-    .encSens = { 8, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
+    .encSens = { ENC_THRESH_LISTSCROLL, ENC_THRESH_PAGESCROLL,  0, 8, }, // encoder sens 
   },
   { .name = "PRESETS",
     .select_fn = &select_presets, // select function
-    .encSens = { 8, 8, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
+    .encSens = { ENC_THRESH_LISTSCROLL, ENC_THRESH_PAGESCROLL,  8, 8, }, // encoder sens 
   },
   { .name = "OPS",
     .select_fn = &select_ops, // select function
-    .encSens = {12, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
+    .encSens = { ENC_THRESH_LISTSCROLL, ENC_THRESH_PAGESCROLL,  0, 12, }, // encoder sens 
   },
   { .name = "SCENES",
     .select_fn = &select_scenes, // select function
-    .encSens = { 8, 8, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
+    .encSens = { ENC_THRESH_LISTSCROLL, ENC_THRESH_PAGESCROLL,  8, 8, }, // encoder sens 
   },
   { .name = "DSP",
     .select_fn = &select_dsp, // select function
-    .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
+    .encSens = { ENC_THRESH_LISTSCROLL, ENC_THRESH_PAGESCROLL,  0, 0, }, // encoder sens 
   },
   // modal:
   { .name = "GATHERED", 
-    .select_fn = &select_gathered, // select function
-    .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
+    .select_fn = &select_gathered , // select function
+    .encSens = { ENC_THRESH_LISTSCROLL, ENC_THRESH_PAGESCROLL,  0, 0, }, // encoder sens 
   },
   { .name = "PLAY",
     .select_fn = &select_play, // select function

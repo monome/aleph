@@ -99,6 +99,9 @@ extern void region_fill_part(region* reg, u32 start, u32 len, u8 color );
 // hilight a region with given color and threshold
 extern void region_hl(region* reg, u8 c, u8 thresh);
 
+// limit the value in a region (dimming it)
+extern void region_max(region* reg, u8 max);
+
 // draw region to screen
 extern void region_draw(region* reg);
  

@@ -8,9 +8,9 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_marc_instring = "FOCUS\0  ";
-static const char* op_marc_outstring = "NUM\0    DELTA\0  ";
-static const char* op_marc_opstring = "ARC";
+static const char* op_marc_instring =  "FOCUS\0  LOOP\0   RING\0   POS\0    VAL\0    ";
+static const char* op_marc_outstring = "NUM\0    DELTA\0  VAL\0    ";
+static const char* op_marc_opstring =  "ARC";
 
 //-------------------------------------------------
 //----- static function declaration
@@ -19,6 +19,10 @@ static const char* op_marc_opstring = "ARC";
 
 //// network inputs: 
 static void op_marc_in_focus(op_marc_t* grid, const io_t val);
+static void op_marc_in_loop(op_marc_t* grid, const io_t val);
+static void op_marc_in_ring(op_marc_t* grid, const io_t val);
+static void op_marc_in_pos(op_marc_t* grid, const io_t val);
+static void op_marc_in_val(op_marc_t* grid, const io_t val);
 
 // pickles
 static u8* op_marc_pickle(op_marc_t* enc, u8* dst);
@@ -28,8 +32,12 @@ static const u8* op_marc_unpickle(op_marc_t* enc, const u8* src);
 static void op_marc_handler(op_monome_t* op_monome, u32 data);
 
 // input func pointer array
-static op_in_fn op_marc_in_fn[1] = {
-  (op_in_fn)&op_marc_in_focus
+static op_in_fn op_marc_in_fn[5] = {
+  (op_in_fn)&op_marc_in_focus,
+  (op_in_fn)&op_marc_in_loop,
+  (op_in_fn)&op_marc_in_ring,
+  (op_in_fn)&op_marc_in_pos,
+  (op_in_fn)&op_marc_in_val,
 };
 
 //-------------------------------------------------
@@ -38,9 +46,9 @@ void op_marc_init(void* mem) {
   //  print_dbg("\r\n op_marc_init ");
   op_marc_t* op = (op_marc_t*)mem;
 
+
   // superclass functions
   //--- op
-  op->super.inc_fn = (op_inc_fn)op_marc_inc_fn;
   op->super.in_fn = op_marc_in_fn;
   op->super.pickle = (op_pickle_fn) (&op_marc_pickle);
   op->super.unpickle = (op_unpickle_fn) (&op_marc_unpickle);
@@ -51,10 +59,10 @@ void op_marc_init(void* mem) {
 
   // superclass state
 
-  op->super.type = eOpMonomeGridRaw;
-  op->super.flags |= (1 << eOpFlagMonomeGrid);
+  op->super.type = eOpMonomeArc;
+  op->super.flags |= (1 << eOpFlagMonomeRing);
 
-  op->super.numInputs = 3;
+  op->super.numInputs = 5;
   op->super.numOutputs = 3;
 
   op->super.in_val = op->in_val;
@@ -65,14 +73,26 @@ void op_marc_init(void* mem) {
   op->super.outString = op_marc_outstring;
 
   op->in_val[0] = &(op->focus);
-  op->in_val[1] = &(op->tog);  
-  op->in_val[2] = &(op->mono);
+  op->in_val[1] = &(op->loop);  
+  op->in_val[2] = &(op->ring);
+  op->in_val[3] = &(op->pos);
+  op->in_val[4] = &(op->val);
+
   op->outs[0] = -1;
   op->outs[1] = -1;
-  op->outs[2] = -1;
 
-  op->lastPos = 0;
   op->focus = OP_ONE;
+  op->loop = 1;
+  op->ring = 0;
+  op->pos = 0;
+  op->val = 0;
+
+
+  op->vals[0] = 0;
+  op->vals[1] = 0;
+  op->vals[2] = 0;
+  op->vals[3] = 0;
+
   net_monome_set_focus(&(op->monome), 1);
 }
 
@@ -90,107 +110,80 @@ static void op_marc_in_focus(op_marc_t* op, const io_t v) {
   if((v) > 0) {
     op->focus = OP_ONE;
   } else {
-    op->focus = 0;;
+    op->focus = 0;
   }
   net_monome_set_focus( &(op->monome), op->focus > 0);
 }
 
-static void op_marc_in_tog(op_marc_t* op, const io_t v) {
-  op->tog  = (v > 0) ? OP_ONE : 0;
+// set loopback flag
+static void op_marc_in_loop(op_marc_t* op, const io_t v) {
+  op->loop  = (v > 0) ? OP_ONE : 0;
 }
 
-static void op_marc_in_mono(op_marc_t* op, const io_t v) {
-  op->mono  = (v > 0) ? OP_ONE : 0;
+// set ring number for next update
+static void op_marc_in_ring(op_marc_t* op, const io_t v) {
+  if(v<0) op->ring = 0;
+  else if(v>3) op->ring = 3;
+  else op->ring = (u8)v;
 }
 
-static void op_marc_handler(op_monome_t* op_monome, u32 edata) {
-  static u8 x, y, z;
-  static u32 pos;
-  static u8 val;
+// set ring position for next update
+static void op_marc_in_pos(op_marc_t* op, const io_t v) {
+  if(v<0) op->pos = 0;
+  else if(v>63) op->pos = 63;
+  else op->pos = (u8)v;
+}
 
+// set value and perform update
+static void op_marc_in_val(op_marc_t* op, const io_t v) {
+  if(v<0) op->val = 0;
+  else if(v>15) op->val = 15;
+  else op->val = (u8)v;
+
+  monome_arc_led_set(op->ring, op->pos, op->val);
+}
+
+
+static void op_marc_handler(op_monome_t* op_monome, u32 data) {
+  u8 n;
+  s8 v;
+  s16 a;
+  
   op_marc_t* op = (op_marc_t*)(op_monome->op);
 
+  monome_ring_enc_parse_event_data(data, &n, &v);
+  
+  print_dbg("\r\n op_marc_handler received event; n: 0x");
+  print_dbg_hex(n);
+  print_dbg("; v: 0x");
+  print_dbg_hex(v);
 
-  monome_grid_key_parse_event_data(edata, &x, &y, &z);
+  net_activate(op->outs[0], (io_t)n, op);
+  net_activate(op->outs[1], (io_t)v, op);
 
-  /* print_dbg("\r\n op_marc_handler received event; x: 0x"); */
-  /* print_dbg_hex(x); */
-  /* print_dbg("; y: 0x"); */
-  /* print_dbg_hex(y); */
-  /* print_dbg("; z: 0x"); */
-  /* print_dbg_hex(z); */
+    if(op->loop) {
+    a = op->vals[n] + v;
+    if(a<0) a=0;
+    else if(a>255) a=255;
 
-  // flat position into led buffer
-  pos = monome_xy_idx(x, y);
-
-  if(op->mono) {
-    if(op->tog > 0) { // mono, toggle
-      if(z > 0) {        // ignore lift
-	val = ( monomeLedBuffer[pos] == 0 );
-	monomeLedBuffer[pos] = val;
-	if(pos != op->lastPos) {
-	  monomeLedBuffer[op->lastPos] = 0;
-	}
-	// FIXME: should add macros in op_math.h for io_t conversion
-	net_activate(op->outs[0], op_from_int(x), op);
-	net_activate(op->outs[1], op_from_int(y), op);
-	net_activate(op->outs[2], op_from_int(val), op);
-	// refresh flag for current quadrant
-	monome_calc_quadrant_flag(x, y);
-	// refresh flag for previous quadrant
-	monome_idx_xy(op->lastPos, &x, &y);
-	monome_calc_quadrant_flag(x, y);
-      }
-    } else { // mono, momentary
-      val = z;
-      monomeLedBuffer[pos] =  val;
-      monomeLedBuffer[op->lastPos] = 0;
-      net_activate(op->outs[0], op_from_int(x), op);
-      net_activate(op->outs[1], op_from_int(y), op);
-      net_activate(op->outs[2], op_from_int(val), op);
-      // refresh flag for current quadrant
-      monome_calc_quadrant_flag(x, y);
-      // refresh flag for previous quadrant
-      monome_idx_xy(op->lastPos, &x, &y);
-      monome_calc_quadrant_flag(x, y);  
-    }
-  } else {
-    if(op->tog > 0) { // poly, toggle
-      if(z > 0) {      /// ignore lift
-	val = ( monomeLedBuffer[pos] == 0 );
-	monomeLedBuffer[pos] = val;
-	net_activate(op->outs[0], op_from_int(x), op);
-	net_activate(op->outs[1], op_from_int(y), op);
-	net_activate(op->outs[2], op_from_int(val), op);
-	// refresh flag for current quadrant
-	monome_calc_quadrant_flag(x, y);
-      }
-    } else {   // poly, momentary
-      val = z;
-      monomeLedBuffer[pos] = val;
-      net_activate(op->outs[0], op_from_int(x), op);
-      net_activate(op->outs[1], op_from_int(y), op);
-      net_activate(op->outs[2], op_from_int(val), op);
-      // refresh flag for current quadrant
-      monome_calc_quadrant_flag(x, y);
-    }
+    monome_arc_led_set(n, op->vals[n]/4, 0);
+    op->vals[n] = a;
+    monome_arc_led_set(n, op->vals[n]/4, 15);
+    net_activate(op->outs[2], (io_t)op->vals[n], op);
   }
-  op->lastPos = pos;
 }
 
 
 // pickle / unpickle
-u8* op_marc_pickle(op_marc_t* mgrid, u8* dst) {
-  dst = pickle_io(mgrid->focus, dst);
-  dst = pickle_io(mgrid->tog, dst);
-  dst = pickle_io(mgrid->mono, dst);
+u8* op_marc_pickle(op_marc_t* marc, u8* dst) {
+  dst = pickle_io(marc->focus, dst);
+  dst = pickle_io(marc->loop, dst);
   return dst;
 }
 
-const u8* op_marc_unpickle(op_marc_t* mgrid, const u8* src) {
-  src = unpickle_io(src, (u32*)&(mgrid->focus));
-  src = unpickle_io(src, (u32*)&(mgrid->tog));
-  src = unpickle_io(src, (u32*)&(mgrid->mono));
-  net_monome_set_focus( &(mgrid->monome), mgrid->focus > 0);
+const u8* op_marc_unpickle(op_marc_t* marc, const u8* src) {
+  src = unpickle_io(src, (u32*)&(marc->focus));
+  src = unpickle_io(src, (u32*)&(marc->loop));
+  net_monome_set_focus( &(marc->monome), marc->focus > 0);
   return src;
 }

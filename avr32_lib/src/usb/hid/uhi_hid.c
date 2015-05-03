@@ -121,12 +121,13 @@ uhc_enum_status_t uhi_hid_install(uhc_device_t* dev) {
       print_dbg("\r\n\r\n");
 #endif
 
-      if ((ptr_iface->bInterfaceClass   == HID_CLASS)
-	  && (ptr_iface->bInterfaceProtocol == HID_PROTOCOL_GENERIC) ) {
-	/////
-	//// FIXME:
-	/// generic HID... assuming this is a gamepad for now!
+      /* if ((ptr_iface->bInterfaceClass   == HID_CLASS) */
+      /* 	  && (ptr_iface->bInterfaceProtocol == HID_PROTOCOL_GENERIC) ) { */
+      
+      /// try looking at all HID classes... mostly to test if our system is sane
+      if ((ptr_iface->bInterfaceClass   == HID_CLASS)) {
 	// Start allocation endpoint(s)
+	print_dbg("\r\n HID device: detected interface");
 	b_iface_supported = true;
       } else {
 	// Stop allocation endpoint(s)
@@ -142,6 +143,7 @@ uhc_enum_status_t uhi_hid_install(uhc_device_t* dev) {
       if (!uhd_ep_alloc(dev->address, (usb_ep_desc_t*)ptr_iface)) {
 	return UHC_ENUM_HARDWARE_LIMIT; // Endpoint allocation fail
       }
+      print_dbg("\r\n HID device: allocated endpoint");
       Assert(((usb_ep_desc_t*)ptr_iface)->bEndpointAddress & USB_EP_DIR_IN);
       uhi_hid_dev.ep_in = ((usb_ep_desc_t*)ptr_iface)->bEndpointAddress;
       uhi_hid_dev.report_size =
@@ -172,6 +174,7 @@ void uhi_hid_enable(uhc_device_t* dev) {
     return;  // No interface to enable
   }
   // kick off the sequence of waiting for interrupts on IN endpoint
+  print_dbg("\r\n HID device: beginning interrupt wait sequence");
   uhi_hid_start_trans_report(dev->address);
   UHI_HID_CHANGE(dev, true);
 }
@@ -193,6 +196,7 @@ void uhi_hid_uninstall(uhc_device_t* dev) {
  */
 static void uhi_hid_start_trans_report(usb_add_t add) {
   // Start transfer on interrupt endpoint IN
+  //  print_dbg("\r\n HID device: running endpoint");
   uhd_ep_run(add, uhi_hid_dev.ep_in, true, uhi_hid_dev.report,
 	     uhi_hid_dev.report_size, 0, uhi_hid_report_reception);
 }
@@ -210,7 +214,6 @@ static void uhi_hid_report_reception(
 					   uhd_trans_status_t status,
 					   iram_size_t nb_transfered)
 {
-  //  int i;
 
   UNUSED(ep);
 
@@ -218,13 +221,11 @@ static void uhi_hid_report_reception(
     return; // HID transfer aborted
   }
 
-  /*
-  print_dbg("\r\n hid_report_reception: ");
-  for (i=0; i<uhi_hid_dev.report_size; i++) {
-    print_dbg(" ");
-    print_dbg_hex((unsigned long int) uhi_hid_dev.report[i]);
-  }
-  */
+  /* print_dbg("\r\n hid_report_reception: "); */
+  /* print_dbg("\r\n HID rx: 0x"); */
+  /* print_dbg_hex(uhi_hid_dev.report_size); */
+  /* print_dbg(" B"); */
+  /* print_byte_array(uhi_hid_dev.report, uhi_hid_dev.report_size, 1); */
 
   hid_parse_frame(uhi_hid_dev.report, uhi_hid_dev.report_size);
 

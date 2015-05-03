@@ -36,10 +36,10 @@ static s16* const pageSelect = &(pages[ePageScenes].select);
 //---- static funcs
 
 // handler declarations
-static void handle_enc_0(s32 val);
-static void handle_enc_1(s32 val);
-static void handle_enc_2(s32 val);
 static void handle_enc_3(s32 val);
+static void handle_enc_2(s32 val);
+static void handle_enc_1(s32 val);
+static void handle_enc_0(s32 val);
 static void handle_key_0(s32 val);
 static void handle_key_1(s32 val);
 static void handle_key_2(s32 val);
@@ -155,7 +155,8 @@ void handle_key_0(s32 val) {
     region_fill(headRegion, 0x0);
 
 
-    files_store_scene_name(sceneData->desc.sceneName, 1);
+    //    files_store_scene_name(sceneData->desc.sceneName, 1);
+    files_store_scene_name(sceneData->desc.sceneName);
 
     print_dbg("\r\n stored scene, back to handler");
     
@@ -205,7 +206,7 @@ void handle_key_3(s32 val) {
 }
 
 // scroll character value at cursor position2 in scene name
-void handle_enc_0(s32 val) {
+void handle_enc_3(s32 val) {
   if(val > 0) {
     edit_string_inc_char(sceneData->desc.sceneName, cursor);
   } else {
@@ -217,7 +218,7 @@ void handle_enc_0(s32 val) {
 }
 
 // scroll cursor position in current scene name
-void handle_enc_1(s32 val) {
+void handle_enc_2(s32 val) {
   if(val > 0) {
     ++cursor;
     if (cursor >= SCENE_NAME_LEN) {
@@ -237,7 +238,7 @@ void handle_enc_1(s32 val) {
 
 
 // enc 0 : scroll page
-void handle_enc_2(s32 val) {
+void handle_enc_1(s32 val) {
    if(val > 0) {
     set_page(ePageDsp);
   } else {
@@ -246,7 +247,7 @@ void handle_enc_2(s32 val) {
 }
 
 // enc 1 : scroll selection
-void handle_enc_3(s32 val) {
+void handle_enc_0(s32 val) {
   select_scroll(val);
 }
 
@@ -343,6 +344,7 @@ void select_scenes(void) {
   // other regions are static in top-level render, with global handles
   region_fill(headRegion, 0x0);
   font_string_region_clip(headRegion, "SCENES", 0, 0, 0xf, 0x1);
+  show_foot();
   // assign handlers
   //  print_dbg("\r\n assign page handlers.....");
   app_event_handlers[ kEventEncoder0 ]	= &handle_enc_0 ;

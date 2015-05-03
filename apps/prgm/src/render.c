@@ -1,118 +1,179 @@
 //render.c
 //aleph-prgm-avr32
+/* region, string, offset x, offset y, color text, color background, size */
 
-//--- std headers
-#include <string.h>
-
-//debug
-#include "print_funcs.h"
-
-//avr32-lib
-#include "fix.h"
-#include "app.h"
-#include "font.h"
-#include "memory.h"
-#include "region.h"
-#include "screen.h"
-#include "control.h"
-
-//prgm
-#include "tracker.h"
-#include "pages.h"
-#include "page_param.h"
-#include "page_env.h"
-
-#include "render.h" //includes region.h
-#include "util.h"
-#include "scale.h"
-
-static char renderDummy[16];
+#include "render.h"
 
 //regions
 static region bootScrollRegion = {.w = 128, .h = 64, .x = 0, .y = 0};
-
 static scroll bootScroll;
 
-static const u8 numRegions_env = 6;
-static const u8 numRegions_param = 6;
+static region lineRegion = {.w=128, .h=8, .x = 0, .y = 0};
 
-static region env[6] = {
-    {.w=64, .h=24, .x = 0, .y = 0},     //track 1
-    {.w=64, .h=24, .x = 64, .y = 0},    //track 2
-    {.w=64, .h=24, .x = 0, .y = 24},    //track 3
-    {.w=64, .h=24, .x = 64, .y = 24},   //track 4
+static region sequencerRegion = {.w = 128, .h = 56, .x = 0, .y = 0};
+static scroll seqScroll;
+
+static const u8 numRegions_trk = 12;
+static const u8 numRegions_mix = 6;
+static const u8 numRegions_seq = 4;
+static const u8 numRegions_gen = 12;
+
+static region trk[12] = {
+    {.w=32, .h=8, .x = 64, .y = 56},    //0 track
+    {.w=32, .h=8, .x = 96, .y = 56},    //1 mode | mute
     
-    {.w=64, .h=8, .x = 0, .y = 48},     //step length, measure, tempo, buffer position
-    {.w=64, .h=8, .x = 64, .y = 48},    //edit position
+    {.w=64, .h=24, .x = 0, .y = 0},     //2 input
+    {.w=64, .h=8, .x = 64, .y = 0},     //3 input level
+    {.w=64, .h=8, .x = 64, .y = 8},     //4 aux 1 level
+    {.w=64, .h=8, .x = 64, .y = 16},    //5 aux 2 level
+    {.w=64, .h=40, .x = 0, .y = 24},    //6 mix pan
+    {.w=64, .h=32, .x = 64, .y = 24},   //7 mix level
+
+    {.w=64, .h=8, .x = 0, .y = 32},     //8 param 1 name
+    {.w=64, .h=8, .x = 64, .y = 32},    //9 param 1 value
+    {.w=64, .h=8, .x = 0, .y = 40},     //10 param 2 name
+    {.w=64, .h=8, .x = 64, .y = 40},    //11 param 2 value
 };
 
-static region *envRegions[] = {
-    &(env[0]),
-    &(env[1]),
-    &(env[2]),
-    &(env[3]),
-    &(env[4]),
-    &(env[5]),
+static region *trkRegions[] = {
+    &(trk[0]),
+    &(trk[1]),
+    &(trk[2]),
+    &(trk[3]),
+    &(trk[4]),
+    &(trk[5]),
+    &(trk[6]),
+    &(trk[7]),
+    &(trk[8]),
+    &(trk[9]),
+    &(trk[10]),
+    &(trk[11]),
 };
 
-static region param[6] = {
-    {.w=64, .h=24, .x = 0, .y = 0},     //track 1
-    {.w=64, .h=24, .x = 64, .y = 0},    //track 2
-    {.w=64, .h=24, .x = 0, .y = 24},    //track 3
-    {.w=64, .h=24, .x = 64, .y = 24},   //track 4
+static region mix[6] = {
+    {.w=64, .h=8, .x = 0, .y = 0},      //0 aux 1 pan
+    {.w=64, .h=56, .x = 0, .y = 8},     //1 aux 2 pan
     
-    {.w=64, .h=8, .x = 0, .y = 48},     //step length, measure, tempo, buffer position
-    {.w=64, .h=8, .x = 64, .y = 48},    //edit position
+    {.w=64, .h=8, .x = 64, .y = 0},     //2 direct output 1
+    {.w=64, .h=8, .x = 64, .y = 8},     //3 direct output 2
+    {.w=64, .h=40, .x = 64, .y = 16},   //4 mix level
+    
+    {.w=64, .h=8, .x = 64, .y = 56},    //5 app version
 };
 
-static region *paramRegions[] = {
-    &(param[0]),
-    &(param[1]),
-    &(param[2]),
-    &(param[3]),
-    &(param[4]),
-    &(param[5]),
+static region *mixRegions[] = {
+    &(mix[0]),
+    &(mix[1]),
+    &(mix[2]),
+    &(mix[3]),
+    &(mix[4]),    
+    &(mix[5]),    
+};
+
+static region seq[4] = {
+    {.w=32, .h=8, .x = 64, .y = 56},    //0 track
+    {.w=16, .h=8, .x = 96, .y = 56},    //1 measure
+    {.w=16, .h=8, .x = 112, .y = 56},   //2 length
+    {.w=32, .h=8, .x = 96, .y = 56},    //3 mute
+};
+
+static region *seqRegions[] = {
+    &(seq[0]),
+    &(seq[1]),
+    &(seq[2]),
+    &(seq[3]),
+};
+
+static region gn[12] = {
+    {.w=64, .h=8, .x = 0, .y = 0},      //0 gen
+    {.w=64, .h=8, .x = 64, .y = 0},     //1 gen type
+    {.w=64, .h=8, .x = 0, .y = 8},      //2 lo
+    {.w=64, .h=8, .x = 64, .y = 8},     //3 hi
+    {.w=64, .h=8, .x = 0, .y = 16},     //4 rate
+    {.w=64, .h=8, .x = 64, .y = 16},    //5 att
+    {.w=64, .h=8, .x = 0, .y = 24},     //6 dens
+    {.w=64, .h=8, .x = 64, .y = 24},    //7 dur
+    {.w=64, .h=16, .x = 0, .y = 32},    //8 destination
+    {.w=64, .h=16, .x = 64, .y = 32},   //9 value
+    
+    {.w=64, .h=8, .x = 0, .y = 48},     //10 track
+    {.w=64, .h=8, .x = 64, .y = 48},    //11 step
+};
+
+static region *genRegions[12] = {
+    &(gn[0]),
+    &(gn[1]),
+    &(gn[2]),
+    &(gn[3]),
+    &(gn[4]),
+    &(gn[5]),
+    &(gn[6]),
+    &(gn[7]),
+    &(gn[8]),
+    &(gn[9]),
+    &(gn[10]),
+    &(gn[11]),
 };
 
 //initialization, called by app_init()
 void render_init(void) {
     region_alloc((region*)(&bootScrollRegion)); //BOOT: declared in region.h, calls mem_alloc() declared in memory.h
     scroll_init(&bootScroll, &bootScrollRegion);
+    
+    region_alloc((region*)(&lineRegion));
+    
+    region_alloc((region*)(&sequencerRegion));
+    scroll_init(&seqScroll, &sequencerRegion);
 
     u32 i;
-    for(i = 0; i<numRegions_param; i++) {
-        region_alloc((region*)(paramRegions[i]));
+    for(i = 0; i<numRegions_trk; i++) {
+        region_alloc((region*)(trkRegions[i]));
     }
-    for(i = 0; i<numRegions_env; i++) {
-        region_alloc((region*)(envRegions[i]));
+    for(i = 0; i<numRegions_mix; i++) {
+        region_alloc((region*)(mixRegions[i]));
+    }
+    for(i = 0; i<numRegions_seq; i++) {
+        region_alloc((region*)(seqRegions[i]));
+    }
+    for(i = 0; i<numRegions_gen; i++) {
+        region_alloc((region*)(genRegions[i]));
     }
 }
 
 void render_startup (void) {
+    trkpage = 0;
     screen_clear();
-    set_page(ePageEnv);
-    
-    //init with page env, fill parameters with startup values
-    print_fix16(renderDummy, 0);
-    
-    print_fix16(renderTrig0, 0);
-    print_fix16(renderTrig1, 0);
-    print_fix16(renderTrig2, 0);
-    print_fix16(renderTrig3, 0);
-    
-    print_fix16(renderTime0, 0);
-    print_fix16(renderTime1, 0);
-    print_fix16(renderTime2, 0);
-    print_fix16(renderTime3, 0);
-
-    print_fix16(renderEditPosition, 1 * FIX16_ONE);
-    render_env();
+    set_page(ePageMix);
+    render_mix();
 }
 
+void region_update(region *r) {
+    if(r->dirty) {
+        screen_draw_region(r->x, r->y, r->w, r->h, r->data);
+        r->dirty = 0;
+    }
+}
+
+extern void render_boot(const char *str) {
+    int i;
+    u8 *p = bootScroll.reg->data;
+    //  first kind of dim the old stuff in the scroll region
+    for(i=0; i<bootScroll.reg->len; i++)
+    {
+        if(*p > 0x4)
+        {
+            *p = 0x4;
+        }
+        p++;
+    }
+    scroll_string_front(&bootScroll, (char*)str);
+    region_update(bootScroll.reg);
+}
+/*
 void render_boot(const char* str) {
     scroll_string_front(&bootScroll, (char*)str);
 }
-
+*/
 void render_update(void) {
     region *r;
     u8 i;
@@ -123,860 +184,635 @@ void render_update(void) {
         scroll_draw(&bootScroll);
     }
     
-    for(i = 0; i<numRegions_param; i++) {
-        r = paramRegions[i];
+    if(seqScroll.reg->dirty) {
+        scroll_draw(&seqScroll);
+    }
+
+    for(i = 0; i<numRegions_trk; i++) {
+        r = trkRegions[i];
         if(r->dirty) {
             screen_draw_region(r->x, r->y, r->w, r->h, r->data);
             r->dirty = 0;
         }
     }
     
-    for(i = 0; i<numRegions_env; i++) {
-        r = envRegions[i];
+    for(i = 0; i<numRegions_mix; i++) {
+        r = mixRegions[i];
         if(r->dirty) {
             screen_draw_region(r->x, r->y, r->w, r->h, r->data);
             r->dirty = 0;
         }
     }
-
+    
+    for(i = 0; i<numRegions_seq; i++) {
+        r = seqRegions[i];
+        if(r->dirty) {
+            screen_draw_region(r->x, r->y, r->w, r->h, r->data);
+            r->dirty = 0;
+        }
+    }
+    
+    for(i = 0; i<numRegions_gen; i++) {
+        r = genRegions[i];
+        if(r->dirty) {
+            screen_draw_region(r->x, r->y, r->w, r->h, r->data);
+            r->dirty = 0;
+        }
+    }
+    
     app_resume();
 }
 
 
-//draw env page
-void render_env(void) {
+//draw trk page
+static void render_trk_name(u8 region, s32 name);
+static void render_trk_input(u8 region, s32 input);
+static void render_trk_mode(u8 region, s32 mode);
+static void render_trk_param(u8 track, u8 mode);
+
+void render_trk(void) {
     u8 i;
-    for(i = 0; i<numRegions_env; i++) {
-        region_fill(&env[i], 0x0);
+    for(i = 0; i<numRegions_trk; i++) {
+        region_fill(&trk[i], 0x0);
     }
-    render_modes(editpos);
+    render_track(trkpage);
+}
+
+void render_track(u8 t) {
+    render_trk_name(0, t);
     
-    /* region, string, offset x, offset y, color text, color background, size */
-    region_string(&env[0], renderTrig0, 0, 0, 0xf, 0, 0);
-    region_string(&env[1], renderTrig1, 0, 0, 0xf, 0, 0);
-    region_string(&env[2], renderTrig2, 0, 0, 0xf, 0, 0);
-    region_string(&env[3], renderTrig3, 0, 0, 0xf, 0, 0);
+    if (!track[t]->mutemix)
+    {
+        region_fill(&trk[1], 0x0);
+        render_trk_mode(1, track[t]->m);
+    }
+    if (track[t]->mutemix)
+    {
+        region_fill(&trk[1], 0x0);
+        region_string(&trk[1], "MUTE", 0, 0, 0xf, 0, 0);
+    }
+
+    render_trk_input(2, track[t]->input);
+    print_fix16(renderInputLevel[t], track[t]->inL);
+    region_string(&trk[3], renderInputLevel[t], 0, 0, 0xf, 0, 0);
     
-    region_string(&env[0], renderTime0, 0, 16, 0xf, 0, 0);
-    region_string(&env[1], renderTime1, 0, 16, 0xf, 0, 0);
-    region_string(&env[2], renderTime2, 0, 16, 0xf, 0, 0);
-    region_string(&env[3], renderTime3, 0, 16, 0xf, 0, 0);
+    print_fix16(renderAux1Level[t], track[t]->aux1);
+    region_string(&trk[4], renderAux1Level[t], 0, 0, 0xf, 0, 0);
+    print_fix16(renderAux2Level[t], track[t]->aux2);
+    region_string(&trk[5], renderAux2Level[t], 0, 0, 0xf, 0, 0);
+    
+    print_fix16(renderMixPan[t], track[t]->pan);
+    region_string(&trk[6], renderMixPan[t], 0, 0, 0xf, 0, 0);
+    
+    print_fix16(renderMixLevel[t], track[t]->mix);
+    region_string(&trk[7], renderMixLevel[t], 0, 0, 0xf, 0, 0);
 
-    render_steplength_env(editpos);
-    region_string(&env[5], renderEditPosition, 0, 0, 0xf, 0, 0);
+    render_trk_param(t, track[t]->m);
+    render_trk_param(t, track[t]->m);
 }
 
-void render_trig(void) {
-    region_string(&env[0], renderTrig0, 0, 0, 0xf, 0, 0);
-    region_string(&env[1], renderTrig1, 0, 0, 0xf, 0, 0);
-    region_string(&env[2], renderTrig2, 0, 0, 0xf, 0, 0);
-    region_string(&env[3], renderTrig3, 0, 0, 0xf, 0, 0);
+void render_trk_name(u8 region, s32 name) {
+    static char *nameptr[] = {
+        "Trk 1",
+        "Trk 2",
+        "Trk 3",
+        "Trk 4",
+        "Trk 5",
+        "Trk 6",
+        "Trk 7",
+        "Trk 8"
+    };
+    
+    region_string(&trk[region], nameptr[name], 0, 0, 0xf, 0, 0);
 }
 
-void render_modes(u8 pos) {
-    render_mode(0, track[0]->m[pos]);
-    render_mode(1, track[1]->m[pos]);
-    render_mode(2, track[2]->m[pos]);
-    render_mode(3, track[3]->m[pos]);
+void render_trk_mode(u8 region, s32 mode) {
+    static char *nameptr[] = {
+        "off",              //0
+        "trig",             //1 trig
+        "loop",             //2 loop
+        "[amp]*",           //3 [amp]
+        "[dly]",            //4 [dly]
+        "[thru]"            //5 [bp]
+    };
+    
+    region_fill(&trk[region], 0x0);
+    region_string(&trk[region], nameptr[mode], 0, 0, 0xf, 0, 0);
 }
 
-/*
- off
- TRIG
- GATE
- TCD
- SHIFT
- impulse
- noise
- wav
- loop
- rec
- TRIGrec
- [insert mix]
- [delay]
- [diffuse]
- "[diffuse->bp]"
- [1bp]
- [3bp]
- "[bp->fbloop]"
- "[fb(loop->bp)]"
- [aux buffer]
- "[aux lohi]"
- [aux master]
-*/
+void render_trk_input(u8 region, s32 input) {
+    static char *inputptr[] = {
+        "Off",
+        "In 1",
+        "In 2",
+        "In 3",
+        "In 4",
+        "Trk 1",
+        "Trk 1 REV",
+        "Trk 2",
+        "Trk 2 REV",
+        "Trk 3",
+        "Trk 3 REV",
+        "Trk 4",
+        "Trk 4 REV",
+        "Trk 5",
+        "Trk 5 REV",
+        "Trk 6",
+        "Trk 6 REV",
+        "Trk 7",
+        "Trk 7 REV",
+        "Trk 8",
+        "Trk 8 REV",
+        "Aux 1",
+        "Aux 1 REV",
+        "Aux 2",
+        "Aux 2 REV",
+        "Aux mix"
+    };
+    
+    region_fill(&trk[region], 0x0);
+    region_string(&trk[region], inputptr[input], 0, 0, 0xf, 0, 0);
+}
 
-//  MAX 12 char in a name for now..
-void render_mode(u8 track, s32 name) {
+void render_trk_param(u8 t, u8 m) {
+    region_fill(&trk[8], 0x0);
+    region_fill(&trk[9], 0x0);
+    region_fill(&trk[10], 0x0);
+    region_fill(&trk[11], 0x0);
+
+    switch (m) {
+            //Off
+        case 0:
+            break;
+            
+            //trig
+        case 1:
+            break;
+            
+            //loop
+        case 2:
+            break;
+            
+            //amp
+        case 3:
+            break;
+            
+            //dly
+        case 4:
+            region_string(&trk[8], "delay", 0, 0, 0xf, 0, 0);
+            print_fix16(renderParam1[t], track[t]->uP - sample[t]->offset);
+            region_string(&trk[9], renderParam1[t], 0, 0, 0xf, 0, 0);
+            region_string(&trk[10], "feedback", 0, 0, 0xf, 0, 0);
+            print_fix16(renderParam2[t], track[t]->sP);
+            region_string(&trk[11], renderParam2[t], 0, 0, 0xf, 0, 0);
+            break;
+            
+            //bp
+        case 5:
+            break;
+            
+            //noise
+        case 6:
+            break;
+                        
+        default:
+            break;
+    }
+}
+
+//draw mix page
+static void render_direct_output(u8 region, s32 output);
+
+void render_mix(void) {
+    u8 i;
+    for(i = 0; i<numRegions_mix; i++) {
+        region_fill(&mix[i], 0x0);
+    }
+        
+    print_fix16(renderAux1Pan, master->pan1);
+    region_string(&mix[0], renderAux1Pan, 0, 0, 0xf, 0, 0);
+
+    print_fix16(renderAux2Pan, master->pan2);
+    region_string(&mix[1], renderAux2Pan, 0, 0, 0xf, 0, 0);
+
+    render_direct_output(2, master->out3);
+    render_direct_output(3, master->out4);
+
+    print_fix16(renderMasterLevel, master->output);
+    region_string(&mix[4], renderMasterLevel, 0, 0, 0xf, 0, 0);
+    
+    region_string(&mix[5], "     [prgm 0.0.8]", 0, 0, 0x1, 0, 0);
+}
+
+void render_direct_output(u8 region, s32 output) {
+    static char *outputptr[] = {
+        "Off",
+        "Trk 1",
+        "Trk 2",
+        "Trk 3",
+        "Trk 4",
+        "Trk 5",
+        "Trk 6",
+        "Trk 7",
+        "Trk 8",
+        "Aux 1",
+        "Aux 2"
+    };
+    
+    region_string(&mix[region], outputptr[output], 0, 0, 0xf, 0, 0);
+}
+
+
+//draw seq page
+static void render_line(u8 track, s32 editpos);
+static void redraw_rows(void);
+static void render_to_scroll_line(u8 offset);
+
+static void clearln( void);
+static void appendln_idx_lj(u16 val);
+static void appendln(const char *str);
+extern void endln( void);
+
+char lineBuf[LINEBUF_LEN];
+char numBuf[NUMBUF_LEN];
+static char *pline = lineBuf;
+static char *const pLineEnd = lineBuf + LINEBUF_LEN - 1;
+
+// byte offsets for text lines
+static u32 scrollLines[7] = {
+    0,
+    1024,
+    2048,
+    3072,
+    4096,
+    5120,
+    6144
+};
+
+void render_seq_name(u8 region, s32 name);
+
+void render_seq(void) {
+    u8 i;
+    u8 t = trkpage;
+    for(i = 0; i<numRegions_seq; i++) {
+        region_fill(&seq[i], 0x0);
+    }    
+    scroll_sequence(t);
+    render_seqtrack(t);
+}
+
+void scroll_sequence(u8 t) {
+    region_fill(&sequencerRegion, 0x0);
+    redraw_rows();
+}
+
+void render_line(u8 t, s32 i) {
+    region_fill(&lineRegion, 0x0);
+    
+    if (i == editpos)
+    {
+        clearln();
+        appendln_idx_lj((u8)i + 1);
+        endln();
+        font_string_region_clip(&lineRegion, lineBuf, 0, 0, 0xf, 0);
+        
+        clearln();
+        appendln(sample_name[track[t]->s[i]-8]);
+        endln();
+        font_string_region_clip(&lineRegion, lineBuf, LINE_VAL_POS_PARAM1, 0, 0xf, 0);
+        
+        clearln();
+        print_fix16(renderTrackLevel, track[t]->outL[i]);
+        appendln(renderTrackLevel);
+        endln();
+        font_string_region_clip(&lineRegion, lineBuf, LINE_VAL_POS_PARAM2, 0, 0xf, 0);
+    }
+    else
+    {
+        clearln();
+        appendln_idx_lj((u8)i + 1);
+        endln();
+        font_string_region_clip(&lineRegion, lineBuf, 0, 0, 0x7, 0);
+        
+        clearln();
+        appendln(sample_name[track[t]->s[i]-8]);
+        endln();
+        font_string_region_clip(&lineRegion, lineBuf, LINE_VAL_POS_PARAM1, 0, 0x7, 0);
+        
+        clearln();
+        print_fix16(renderTrackLevel, track[t]->outL[i]);
+        appendln(renderTrackLevel);
+        endln();
+        font_string_region_clip(&lineRegion, lineBuf, LINE_VAL_POS_PARAM2, 0, 0x7, 0);
+    }
+}
+
+void redraw_rows(void) {
+    u8 i;
+    s32 n;
+    const s32 max = track[trkpage]->len - 1;
+    
+    for(i=0; i<7; i++)
+    {
+        n = editpos + (i - SCROLL_OFFSET);
+        if (n >= 0 && n <= max)
+        {
+            render_line(trkpage, n);
+            render_to_scroll_line(i);
+        }
+        else
+        {
+            region_fill(&lineRegion, 0x0);
+            render_to_scroll_line(i);
+        }
+    }
+}
+
+void render_to_scroll_line(u8 offset) {
+    u8 *src;
+    u8 *dst;
+    u8 *dstMax;
+    
+    // data offset in scroll
+    s32 dstOff = seqScroll.byteOff + scrollLines[offset];
+    while(dstOff >= sequencerRegion.len)
+    {
+        dstOff -= sequencerRegion.len;
+    }
+    dst = sequencerRegion.data + dstOff;
+
+    // setup copy
+    src = lineRegion.data;
+    dstMax = dst + sequencerRegion.len;
+    
+    // copy
+    while(dst < dstMax)
+    {
+        *dst = *src;
+        ++src;
+        ++dst;
+    }
+    sequencerRegion.dirty = 1;
+}
+
+// clear line buffer
+inline void clearln(void) {
+    pline = lineBuf;
+    memset(pline, ' ', LINEBUF_LEN);
+}
+
+// append int to line buffer
+inline void appendln_idx_lj(u16 val) {
+#if 0
+    pline = atoi_idx(pline, val);
+    #else
+    u16 dig = 0;
+    u16 rem = 0;
+    // 3 digits only
+    if(val > 999) { rem = 999; } else { rem = val; }
+    
+    dig = val / 100U;
+    rem -= dig * 100U;
+    *pline = '0' + dig;
+    ++pline;
+    
+    dig = rem / 10U;
+    rem -= dig * 10U;
+    *pline = '0' + dig;
+    ++pline;
+    
+    *pline = '0' + rem;
+    ++pline;
+    #endif
+}
+
+// append to line buffer
+inline void appendln(const char* str) {
+    while((*str != 0) && (pline <= pLineEnd)) {
+        *pline = *str;
+        ++pline;
+        ++str;
+    }
+}
+
+inline void endln(void) {
+    *(pline) = '\0';
+}
+
+void render_seq_name(u8 region, s32 name) {
+    static char *nameptr[] = {
+        "Trk 1",
+        "Trk 2",
+        "Trk 3",
+        "Trk 4",
+        "Trk 5",
+        "Trk 6",
+        "Trk 7",
+        "Trk 8"
+    };
+    
+    region_string(&seq[region], nameptr[name], 0, 0, 0xf, 0, 0);
+}
+
+void render_seqtrack(u8 t) {    
+    render_seq_name(0, t);
+    
+    if (!track[t]->mutetrk)
+    {
+        clearln();
+        appendln_idx_lj((u8)track[t]->msr);
+        endln();
+        font_string_region_clip(&seq[1], lineBuf, 0, 0, 0xf, 0);
+        seq[1].dirty = 1;
+        
+        clearln();
+        appendln_idx_lj((u8)track[t]->len);
+        endln();
+        font_string_region_clip(&seq[2], lineBuf, 0, 0, 0xf, 0);
+        seq[2].dirty = 1;
+    }
+    
+    if (track[t]->mutetrk)
+    {
+        region_fill(&seq[3], 0x0);
+        region_string(&seq[3], "MUTE", 0, 0, 0xf, 0, 0);
+    }
+}
+
+
+//draw gen page
+static void render_gsdestname(u8 destination);
+static void render_gsname(u8 genpos);
+static void render_dstmode(s32 mode);
+
+void render_gen(void) {
+//    region_string(&gn[0], renderGenPos, 0, 0, 0xf, 0, 0);
+//    render_gsname(gen->g[genpos]);
+    
+    region_string(&gn[2], renderEnvPhase, 0, 0, 0xf, 0, 0);
+    region_string(&gn[3], renderEnvFreq, 0, 0, 0xf, 0, 0);
+
+    region_string(&gn[4], renderEnvRate, 0, 0, 0xf, 0, 0);
+    region_string(&gn[5], renderEnvAtten, 0, 0, 0xf, 0, 0);
+
+    region_string(&gn[6], renderGenDens, 0, 0, 0xf, 0, 0);
+    region_string(&gn[7], renderGenDur, 0, 0, 0xf, 0, 0);
+    
+    render_gsdest(gen->gD[genpos]);
+
+    render_gstrackname(trackpos);    
+    region_string(&gn[11], renderEditPos, 0, 0, 0xf, 0, 0);
+}
+
+void render_gen_param(u8 p) {
+//    render_gsname(gen->g[p]);
+    region_string(&gn[2], renderEnvPhase, 0, 0, 0xf, 0, 0);
+    region_string(&gn[3], renderEnvFreq, 0, 0, 0xf, 0, 0);
+    region_string(&gn[4], renderEnvRate, 0, 0, 0xf, 0, 0);
+    region_string(&gn[5], renderEnvAtten, 0, 0, 0xf, 0, 0);
+    region_string(&gn[6], renderGenDens, 0, 0, 0xf, 0, 0);
+    region_string(&gn[7], renderGenDur, 0, 0, 0xf, 0, 0);
+}
+
+void render_gsname(u8 g) {
+    static char *genptr[] = {
+        "halfsine",
+        "gaussian", //gaussian
+        "qausi-gauss", //quasi-gauss
+        "ramp", //trapezoid
+        "tri", //triangular
+        "sinc", //sinc
+        "expodec", //expodec
+        "Rexpodec", //Rexpodec
+        "lindec",
+        "Rlindec"
+    };
+    
+    region_fill(&gn[1], 0x0);
+    region_string(&gn[1], genptr[g], 0, 0, 0xf, 0, 0);
+}
+
+void render_gstrackname(u8 t) {
+    static char *trackptr[] = {
+        "TRACK 1",
+        "TRACK 2",
+        "TRACK 3",
+        "TRACK 4",
+        "TRACK 5",
+        "TRACK 6",
+        "TRACK 7",
+        "TRACK 8"
+    };
+    
+    region_fill(&gn[10], 0x0);
+    region_string(&gn[10], trackptr[t], 0, 0, 0xf, 0, 0);
+}
+
+void render_gsdestname(u8 d) {
+    static char *dstptr[] = {
+        "TRIG",
+        "TIME",
+        "MODE",
+        "SAMPLE",
+        "OFFSET A",
+        "OFFSET B",
+        "LEVEL",
+        "FREQUENCY"
+    };
+    
+    region_fill(&gn[8], 0x0);
+    region_string(&gn[8], dstptr[d], 0, 0, 0xf, 0, 0);
+}
+
+void render_dstmode(s32 mode) {
     static char *nameptr[] = {
         "OFF",              //0
-        "HOLD",             //1
-        "TRIG",             //2
-        "GATE",             //3
-        "NOISE",            //4
-        "one",              //5
-        "loop",             //6
-        "wav",              //7
-        "noise",            //8
-        "rec",              //9
-        "TRIGrec",          //10
-        "[aux master]",     //11
-        "[insert mix]",     //12
-        "[delay]",          //13
-        "[diffuse]",        //14
-        "<GLOBAL>"          //15
+        "TRIG",             //1
+        "GATE",             //2
+        "*",                //3 TCD
+        "wav",              //4
+        "noise",            //5
+        "play",             //6
+        "rec",              //7
+        "TRIGrec",          //8
+        "*",                //9 [bp]
+        "[delay]",          //10
+        "*",                //11 [bp->fb(loop)]
+        "*",                //12 [fb(loop->bp)]
+        "*",                //13 [fb(rvb)]
+        "*",                //14 [rvb->bp]
+        "*",                //15 [3bp]
+        "[insert mix]",     //16
+        "[aux master]",     //17
+        "<LEN>",            //18
+        "*"                 //19 <EXT>
     };
     
-    region_string(&env[track], "████████████", 0, 8, 0, 0, 0);
-    region_string(&env[track], nameptr[name], 0, 8, 0xf, 0, 0);
+    region_string(&gn[9], nameptr[mode], 0, 0, 0xf, 0, 0);
 }
 
-void render_time(void) {
-    region_string(&env[0], renderTime0, 0, 16, 0xf, 0, 0);
-    region_string(&env[1], renderTime1, 0, 16, 0xf, 0, 0);
-    region_string(&env[2], renderTime2, 0, 16, 0xf, 0, 0);
-    region_string(&env[3], renderTime3, 0, 16, 0xf, 0, 0);
-}
-
-void render_aux_env(u8 chn) {
-    static char *auxptr[] = {
-        "AUX 1 :",
-        "AUX 2 :",
-        "AUX 3 :",
-        "AUX 4 :"
-    };
+void render_gsdest(u8 d) {
+    u8 t = trackpos;
+    render_gsdestname(d);
     
-    region_string(&env[4], "████████████", 0, 0, 0, 0, 0);
-    region_string(&env[4], auxptr[chn], 0, 0, 0xf, 0, 0);
+    //trig
+    if (d == 0)
+    {
+        region_fill(&gn[9], 0x0);
+//        print_fix16(renderTrig[t], track[t]->cTG[editpos]);
+        region_string(&gn[9], renderTrig[t], 0, 0, 0xf, 0, 0);
+    }
     
-    if(chn == 0) region_string(&env[5], renderLevel0, 0, 0, 0xf, 0, 0);
-    else if(chn == 1) region_string(&env[5], renderLevel1, 0, 0, 0xf, 0, 0);
-    else if(chn == 2) region_string(&env[5], renderLevel2, 0, 0, 0xf, 0, 0);
-    else if(chn == 3) region_string(&env[5], renderLevel3, 0, 0, 0xf, 0, 0);
+    //time
+    else if (d == 1)
+    {
+        region_fill(&gn[9], 0x0);
+//        print_fix16(renderTime[t], track[t]->cT[editpos]);
+        region_string(&gn[9], renderTime[t], 0, 0, 0xf, 0, 0);
+    }
+    
+    //mode
+    else if (d == 2)
+    {
+        region_fill(&gn[9], 0x0);
+        render_dstmode(track[t]->m);
+    }
+    
+    //wav
+    else if (d == 3)
+    {
+        region_fill(&gn[9], 0x0);
+        region_string(&gn[9], sample_name[track[t]->s[editpos]-8], 0, 0, 0xf, 0, 0);
+    }
+    
+    //offsetA
+    else if (d == 4)
+    {
+        region_fill(&gn[9], 0x0);
+    }
+    
+    //offsetB
+    else if (d == 5)
+    {
+        region_fill(&gn[9], 0x0);
+    }
+    
+    //level
+    else if (d == 6)
+    {
+        region_fill(&gn[9], 0x0);
+    }
+    
+    //frequency
+    else if (d == 7)
+    {
+        region_fill(&gn[9], 0x0);
+    }
+    
     else ;
 }
 
-void render_steplength_env(u8 pos) {
-    static char *lengthptr[] = {
-        "SKIP",
-        "1/32",
-        "1/16",
-        "1/8",
-        "1/4",
-        "1/2",
-        "ALIGN"
-    };
-    
-    region_string(&env[4], "████████████", 0, 0, 0, 0, 0);
-    region_string(&env[4], lengthptr[n_scale_lookup[pos]], 0, 0, 0xf, 0, 0);
+void render_gscounters(void) {
+    region_string(&gn[0], renderGenPos, 0, 0, 0xf, 0, 0);
+    region_string(&gn[11], renderEditPos, 0, 0, 0xf, 0, 0);
 }
-
-void render_measure_env(u8 pos) {
-    static char *measureptr[] = {
-        "1 : 1",
-        "2 : 2",
-        "4 : 4",
-        "8 : 8",
-        "16 : 16",
-        "32 : 32"
-    };
-    
-    region_string(&env[4], "████████████", 0, 0, 0, 0, 0);
-    region_string(&env[4], measureptr[pos], 0, 0, 0xf, 0, 0);
-}
-
-void render_bufferposition_env(u8 pos) {
-    static char *bufferptr[] = {
-        "track 1",
-        "track 2",
-        "track 3",
-        "track 4"
-    };
-    
-    region_string(&env[5], "████████████", 0, 0, 0, 0, 0);
-    region_string(&env[5], bufferptr[pos], 0, 0, 0xf, 0, 0);
-}
-
-void render_tempo_env(void) {
-    region_string(&env[4], renderTempo, 0, 0, 0xf, 0, 0);
-}
-
-void render_counters_env(void) {
-    render_steplength_env(editpos);
-    region_string(&env[5], renderEditPosition, 0, 0, 0xf, 0, 0);
-}
-
-//draw param page
-void render_param(void) {
-    u8 i;
-    for(i = 0; i<numRegions_param; i++) {
-        region_fill(&param[i], 0x0);
-    }
-    
-    render_track0(track[0]->m[editpos]);
-    render_track1(track[1]->m[editpos]);
-    render_track2(track[2]->m[editpos]);
-    render_track3(track[3]->m[editpos]);
-    
-    render_steplength_env(editpos);
-    region_string(&param[5], renderEditPosition, 0, 0, 0xf, 0, 0);
-}
-
-//render tracks based on mode
-void render_track0(u8 mode) {
-    switch (mode) {
-        //OFF
-        case 0:
-            region_string(&param[0], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-        //HOLD
-        case 1:
-            print_fix16(renderFrequency0, track[0]->pF[editpos]);
-            region_string(&param[0], renderFrequency0, 0, 0, 0xf, 0, 0);
-            region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-        //TRIG
-        case 2:
-            region_string(&param[0], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-        //GATE
-        case 3:
-            region_string(&param[0], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-        
-        //NOISE
-        case 4:
-            region_string(&param[0], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-        //one
-        case 5:
-            print_fix16(renderPosition0, track[0]->pP[editpos]);
-            region_string(&param[0], renderPosition0, 0, 0, 0xf, 0, 0);
-            region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-
-        //loop
-        case 6:
-            print_fix16(renderPosition0, track[0]->pP[editpos]);
-            region_string(&param[0], renderPosition0, 0, 0, 0xf, 0, 0);
-            region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-        //wav
-        case 7:
-            render_sample(0, track[0]->pS[editpos]);
-            print_fix16(renderPosition0, track[0]->pP[editpos]);
-            region_string(&param[0], renderPosition0, 0, 8, 0xf, 0, 0);
-            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-
-        //noise
-        case 8:
-            region_string(&param[0], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-
-        //rec
-        case 9:
-            render_inputA(0, track[0]->inA);
-            region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-        //TRIGrec
-        case 10:
-            render_inputA(0, track[0]->inA);
-            region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-        //[aux master]
-        case 11:
-            region_string(&param[0], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-        //[insert mix]
-        case 12:
-            render_inputA(0, track[0]->inA);
-            render_inputB(0, track[0]->inB);
-            print_fix16(renderMix0, track[0]->mix);
-            region_string(&param[0], renderMix0, 0, 16, 0xf, 0, 0);
-            break;
-            
-        //[delay]
-        case 13:
-            render_inputA(0, track[0]->inA);
-            print_fix16(renderLoop0, track[0]->pLP[editpos]);
-            region_string(&param[0], renderLoop0, 0, 8, 0xf, 0, 0);
-            print_fix16(renderMix0, track[0]->mix);
-            region_string(&param[0], renderMix0, 0, 16, 0xf, 0, 0);
-            break;
-        
-        //[diffuse]
-        case 14:
-            render_inputA(0, track[0]->inA);
-            print_fix16(renderLoop0, track[0]->pLP[editpos]);
-            region_string(&param[0], renderLoop0, 0, 8, 0xf, 0, 0);
-            print_fix16(renderMix0, track[0]->mix);
-            region_string(&param[0], renderMix0, 0, 16, 0xf, 0, 0);
-            break;
-            
-        //<GLOBAL>
-        case 15:
-            print_fix16(renderLength, (length - 16) * FIX16_ONE);
-            region_string(&param[0], renderLength, 0, 0, 0xf, 0, 0);
-            region_string(&param[0], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[0], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-
-        default:
-            break;
-    }
-}
-
-void render_track1(u8 mode) {
-    switch (mode) {
-            //OFF
-        case 0:
-            region_string(&param[1], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-
-            //HOLD
-        case 1:
-            print_fix16(renderFrequency1, track[1]->pF[editpos]);
-            region_string(&param[1], renderFrequency1, 0, 0, 0xf, 0, 0);
-            region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //TRIG
-        case 2:
-            region_string(&param[1], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //GATE
-        case 3:
-            region_string(&param[1], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //NOISE
-        case 4:
-            region_string(&param[1], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //one
-        case 5:
-            print_fix16(renderPosition1, track[1]->pP[editpos]);
-            region_string(&param[1], renderPosition1, 0, 0, 0xf, 0, 0);
-            region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //loop
-        case 6:
-            print_fix16(renderPosition1, track[1]->pP[editpos]);
-            region_string(&param[1], renderPosition1, 0, 0, 0xf, 0, 0);
-            region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //wav
-        case 7:
-            render_sample(1, track[1]->pS[editpos]);
-            print_fix16(renderPosition1, track[1]->pP[editpos]);
-            region_string(&param[1], renderPosition1, 0, 8, 0xf, 0, 0);
-            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //noise
-        case 8:
-            region_string(&param[1], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //rec
-        case 9:
-            render_inputA(1, track[1]->inA);
-            region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //TRIGrec
-        case 10:
-            render_inputA(1, track[1]->inA);
-            region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //[aux master]
-        case 11:
-            region_string(&param[1], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //[insert mix]
-        case 12:
-            render_inputA(1, track[1]->inA);
-            render_inputB(1, track[1]->inB);
-            print_fix16(renderMix1, track[1]->mix);
-            region_string(&param[1], renderMix1, 0, 16, 0xf, 0, 0);
-            break;
-            
-            //[delay]
-        case 13:
-            render_inputA(1, track[1]->inA);
-            print_fix16(renderLoop1, track[1]->pLP[editpos]);
-            region_string(&param[1], renderLoop1, 0, 8, 0xf, 0, 0);
-            print_fix16(renderMix1, track[1]->mix);
-            region_string(&param[1], renderMix1, 0, 16, 0xf, 0, 0);
-            break;
-            
-            //[diffuse]
-        case 14:
-            render_inputA(1, track[1]->inA);
-            print_fix16(renderLoop1, track[1]->pLP[editpos]);
-            region_string(&param[1], renderLoop1, 0, 8, 0xf, 0, 0);
-            print_fix16(renderMix1, track[1]->mix);
-            region_string(&param[1], renderMix1, 0, 16, 0xf, 0, 0);
-            break;
-            
-            //<GLOBAL>
-        case 15:
-            print_fix16(renderLength, (length - 16) * FIX16_ONE);
-            region_string(&param[1], renderLength, 0, 0, 0xf, 0, 0);
-            region_string(&param[1], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-        default:
-            break;
-    }
-}
-
-void render_track2(u8 mode) {
-    switch (mode) {
-            //OFF
-        case 0:
-            region_string(&param[2], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //HOLD
-        case 1:
-            print_fix16(renderFrequency2, track[2]->pF[editpos]);
-            region_string(&param[2], renderFrequency2, 0, 0, 0xf, 0, 0);
-            region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //TRIG
-        case 2:
-            region_string(&param[2], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //GATE
-        case 3:
-            region_string(&param[2], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //NOISE
-        case 4:
-            region_string(&param[2], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //one
-        case 5:
-            print_fix16(renderPosition2, track[2]->pP[editpos]);
-            region_string(&param[2], renderPosition2, 0, 0, 0xf, 0, 0);
-            region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //loop
-        case 6:
-            print_fix16(renderPosition2, track[2]->pP[editpos]);
-            region_string(&param[2], renderPosition2, 0, 0, 0xf, 0, 0);
-            region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //wav
-        case 7:
-            render_sample(2, track[2]->pS[editpos]);
-            print_fix16(renderPosition2, track[2]->pP[editpos]);
-            region_string(&param[2], renderPosition2, 0, 8, 0xf, 0, 0);
-            region_string(&param[1], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //noise
-        case 8:
-            region_string(&param[2], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //rec
-        case 9:
-            render_inputA(2, track[2]->inA);
-            region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //TRIGrec
-        case 10:
-            render_inputA(2, track[2]->inA);
-            region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //[aux master]
-        case 11:
-            region_string(&param[2], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //[insert mix]
-        case 12:
-            render_inputA(2, track[2]->inA);
-            render_inputB(2, track[2]->inB);
-            print_fix16(renderMix2, track[2]->mix);
-            region_string(&param[2], renderMix2, 0, 16, 0xf, 0, 0);
-            break;
-            
-            //[delay]
-        case 13:
-            render_inputA(2, track[2]->inA);
-            print_fix16(renderLoop2, track[2]->pLP[editpos]);
-            region_string(&param[2], renderLoop2, 0, 8, 0xf, 0, 0);
-            print_fix16(renderMix2, track[2]->mix);
-            region_string(&param[2], renderMix2, 0, 16, 0xf, 0, 0);
-            break;
-            
-            //[diffuse]
-        case 14:
-            render_inputA(2, track[2]->inA);
-            print_fix16(renderLoop2, track[2]->pLP[editpos]);
-            region_string(&param[2], renderLoop2, 0, 8, 0xf, 0, 0);
-            print_fix16(renderMix2, track[2]->mix);
-            region_string(&param[2], renderMix2, 0, 16, 0xf, 0, 0);
-            break;
-            
-            //<GLOBAL>
-        case 15:
-            print_fix16(renderLength, (length - 16) * FIX16_ONE);
-            region_string(&param[2], renderLength, 0, 0, 0xf, 0, 0);
-            region_string(&param[2], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[2], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-
-        default:
-            break;
-    }
-}
-
-void render_track3(u8 mode) {
-    switch (mode) {
-            //OFF
-        case 0:
-            region_string(&param[3], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //HOLD
-        case 1:
-            print_fix16(renderFrequency3, track[3]->pF[editpos]);
-            region_string(&param[3], renderFrequency3, 0, 0, 0xf, 0, 0);
-            region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //TRIG
-        case 2:
-            region_string(&param[3], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //GATE
-        case 3:
-            region_string(&param[3], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //NOISE
-        case 4:
-            region_string(&param[3], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //one
-        case 5:
-            print_fix16(renderPosition3, track[3]->pP[editpos]);
-            region_string(&param[3], renderPosition3, 0, 0, 0xf, 0, 0);
-            region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //loop
-        case 6:
-            print_fix16(renderPosition3, track[3]->pP[editpos]);
-            region_string(&param[3], renderPosition3, 0, 0, 0xf, 0, 0);
-            region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //wav
-        case 7:
-            render_sample(3, track[3]->pS[editpos]);
-            print_fix16(renderPosition3, track[3]->pP[editpos]);
-            region_string(&param[3], renderPosition3, 0, 8, 0xf, 0, 0);
-            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //noise
-        case 8:
-            region_string(&param[3], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //rec
-        case 9:
-            render_inputA(3, track[3]->inA);
-            region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //TRIGrec
-        case 10:
-            render_inputA(3, track[3]->inA);
-            region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //[aux master]
-        case 11:
-            region_string(&param[3], renderDummy, 0, 0, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-            
-            //[insert mix]
-        case 12:
-            render_inputA(3, track[3]->inA);
-            render_inputB(3, track[3]->inB);
-            print_fix16(renderMix3, track[3]->mix);
-            region_string(&param[3], renderMix3, 0, 16, 0xf, 0, 0);
-            break;
-            
-            //[delay]
-        case 13:
-            render_inputA(3, track[3]->inA);
-            print_fix16(renderLoop3, track[3]->pLP[editpos]);
-            region_string(&param[3], renderLoop3, 0, 8, 0xf, 0, 0);
-            print_fix16(renderMix3, track[3]->mix);
-            region_string(&param[3], renderMix3, 0, 16, 0xf, 0, 0);
-            break;
-            
-            //[diffuse]
-        case 14:
-            render_inputA(3, track[3]->inA);
-            print_fix16(renderLoop3, track[3]->pLP[editpos]);
-            region_string(&param[3], renderLoop3, 0, 8, 0xf, 0, 0);
-            print_fix16(renderMix3, track[3]->mix);
-            region_string(&param[3], renderMix3, 0, 16, 0xf, 0, 0);
-            break;
-            
-            //<GLOBAL>
-        case 15:
-            print_fix16(renderLength, (length - 16) * FIX16_ONE);
-            region_string(&param[3], renderLength, 0, 0, 0xf, 0, 0);
-            region_string(&param[3], renderDummy, 0, 8, 0x1, 0, 0);
-            region_string(&param[3], renderDummy, 0, 16, 0x1, 0, 0);
-            break;
-
-        default:
-            break;
-    }
-}
-
-void render_sample(u8 track, s32 sample) {
-    region_string(&param[track], "████████████", 0, 0, 0, 0, 0);
-    region_string(&param[track], sample_name[sample-8], 0, 0, 0xf, 0, 0);
-}
-
-void render_inputA(u8 track, s32 input) {
-    static char *inputptr[] = {
-        "In 1",
-        "In 2",
-        "In 1+2",
-        "Out 1",
-        "Out 1 -6dB",
-        "Out 1 -12dB",
-        "Out 1 REV",
-        "Out 1 REV -6dB",
-        "Out 2",
-        "Out 2 -6dB",
-        "Out 2 -12dB",
-        "Out 2 REV",
-        "Out 2 REV -6dB",
-        "Out 3",
-        "Out 3 -6dB",
-        "Out 3 -12dB",
-        "Out 3 REV",
-        "Out 3 REV -6dB",
-        "Out 4",
-        "Out 4 -6dB",
-        "Out 4 -12dB",
-        "Out 4 REV",
-        "Out 4 REV -6dB",
-        "Aux",
-        "Aux REV",
-        "OFF"
-    };
-    
-    region_string(&param[track], "████████████", 0, 0, 0, 0, 0);
-    region_string(&param[track], inputptr[input], 0, 0, 0xf, 0, 0);
-}
-
-void render_inputB(u8 track, s32 input) {
-    static char *inputptr[] = {
-        "In 1",
-        "In 2",
-        "In 1+2",
-        "Out 1",
-        "Out 1 -6dB",
-        "Out 1 -12dB",
-        "Out 1 REV",
-        "Out 1 REV -6dB",
-        "Out 2",
-        "Out 2 -6dB",
-        "Out 2 -12dB",
-        "Out 2 REV",
-        "Out 2 REV -6dB",
-        "Out 3",
-        "Out 3 -6dB",
-        "Out 3 -12dB",
-        "Out 3 REV",
-        "Out 3 REV -6dB",
-        "Out 4",
-        "Out 4 -6dB",
-        "Out 4 -12dB",
-        "Out 4 REV",
-        "Out 4 REV -6dB",
-        "Aux",
-        "Aux REV",
-        "OFF"
-    };
-    
-    region_string(&param[track], "████████████", 0, 8, 0, 0, 0);
-    region_string(&param[track], inputptr[input], 0, 8, 0xf, 0, 0);
-}
-
-void render_aux_param(u8 chn) {
-    static char *auxptr[] = {
-        "AUX TRK 1 :",
-        "AUX TRK 2 :",
-        "AUX TRK 3 :",
-        "AUX TRK 4 :"
-    };
-    
-    region_string(&param[4], "████████████", 0, 0, 0, 0, 0);
-    region_string(&param[4], auxptr[chn], 0, 0, 0xf, 0, 0);
-    
-    if(chn == 0) region_string(&param[5], renderLevel0, 0, 0, 0xf, 0, 0);
-    else if(chn == 1) region_string(&param[5], renderLevel1, 0, 0, 0xf, 0, 0);
-    else if(chn == 2) region_string(&param[5], renderLevel2, 0, 0, 0xf, 0, 0);
-    else if(chn == 3) region_string(&param[5], renderLevel3, 0, 0, 0xf, 0, 0);
-    else ;
-}
-
-void render_steplength_param(u8 pos) {
-    static char *lengthptr[] = {
-        "SKIP",
-        "1/32",
-        "1/16",
-        "1/8",
-        "1/4",
-        "1/2",
-        "1/32",
-        "ALIGN"
-    };
-    
-    region_string(&param[4], "████████████", 0, 0, 0, 0, 0);
-    region_string(&param[4], lengthptr[n_scale_lookup[pos]], 0, 0, 0xf, 0, 0);
-}
-
-void render_measure_param(u8 pos) {
-    static char *measureptr[] = {
-        "1 : 1",
-        "2 : 2",
-        "4 : 4",
-        "8 : 8",
-        "16 : 16",
-        "32 : 32"
-    };
-    
-    region_string(&param[4], "████████████", 0, 0, 0, 0, 0);
-    region_string(&param[4], measureptr[pos], 0, 0, 0xf, 0, 0);
-}
-
-void render_bufferposition_param(u8 pos) {
-    static char *bufferptr[] = {
-        "track 1",
-        "track 2",
-        "track 3",
-        "track 4"
-    };
-    
-    region_string(&param[5], "████████████", 0, 0, 0, 0, 0);
-    region_string(&param[5], bufferptr[pos], 0, 0, 0xf, 0, 0);
-}
-
-void render_tempo_param(void) {
-    region_string(&param[4], renderTempo, 0, 0, 0xf, 0, 0);
-}
-
-void render_counters_param(void) {
-    render_steplength_param(editpos);
-    region_string(&param[5], renderEditPosition, 0, 0, 0xf, 0, 0);
-}
-

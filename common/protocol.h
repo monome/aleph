@@ -24,8 +24,8 @@
 #define MSG_ENABLE_AUDIO            6
 #define MSG_DISABLE_AUDIO           7
 
-//  set trig, calls module_set_trig()
-#define MSG_SET_TRIG_COM            8
+//  set trig, calls module_set_event()
+#define MSG_SET_EVENT_COM            8
 
 //  send sample offset and size
 #define MSG_NEW_SAMPLE_COM          9
@@ -165,7 +165,10 @@ typedef enum {
     eBufferSample3,
 
     //  set sq param value
-    eSetParamStep,
+    eSetParamStep0,
+    eSetParamStep1,
+    eSetParamStep2,
+    eSetParamStep3,
     eSetParamStepIdx,
     eSetParamStepData0,
     eSetParamStepData1,

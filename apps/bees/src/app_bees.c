@@ -10,6 +10,7 @@
 #include "delay.h"
 #include "gpio.h"
 #include "print_funcs.h"
+#include "sd_mmc_spi.h"
 
 // aleph-avr32
 #include "app.h"
@@ -44,8 +45,8 @@ const AppVersion beesVersion = { .min = MIN , .maj = MAJ , .rev = REV };
 //--- static vars
 static char versionString[12] = VERSIONSTRING;
 
-#define DEFAULT_LDR "aleph-waves.ldr"
-#define DEFAULT_DSC "aleph-waves.dsc"
+#define DEFAULT_LDR "waves.ldr"
+#define DEFAULT_DSC "waves.dsc"
 
 // this is called during hardware initialization.
 // allocate memory.
@@ -58,7 +59,6 @@ void app_init(void) {
   // uses preset data when adding system ops...
   print_dbg("\r\n net_init... ");
   net_init();
-
 
   print_dbg("\r\n scene_init...");
   scene_init();
@@ -87,6 +87,10 @@ u8 app_launch(u8 firstrun) {
   render_boot("BEES");
   render_boot(versionString);
 
+  while (!sd_mmc_spi_mem_check()) {
+    render_boot("waiting for SD card...");
+  }
+
   if(firstrun) {
     render_boot("launching app, first run");
     print_dbg("\r\n first run, writing nonvolatile data...");
@@ -104,51 +108,23 @@ u8 app_launch(u8 firstrun) {
     files_load_dsp_name(DEFAULT_LDR);
     
     render_boot("waiting for DSP init...");
-    //    print_dbg("\r\n DSP booted, waiting to query params...");
-    //    print_dbg(" requesting param report");
     bfin_wait_ready();
-
-    //    print_dbg(" requesting param report...");
-    //    render_boot("requesting DSP parameterss");
-    //    net_report_params();
 
     //    print_dbg("\r\n enable DSP audio...");
     render_boot("enabling audio");
     bfin_enable();
-
-    //    render_boot("writing default dsp to flash...");
-    //    files_store_default_dsp_name("aleph-waves.ldr");
     
   } else {
 
     app_pause();
 
-    //    print_dbg("\r\n booting default ldr from flash... ");
-    //    render_boot("booting DSP from flash");
-    //    flash_read_ldr();
-
-    //    bfin_load_buf();    
-    //    print_dbg("\r\n DSP booted, waiting to query params...");
-    //    render_boot("waiting for DSP init...");
-
     /// blackfin should clear ready pin ASAP on boot.
     /// but give it a moment to accomplish that.
     delay_ms(2);
-    
-    //    bfin_wait_ready();
-    //    print_dbg(" requesting param report...");
-    //    render_boot("requesting DSP params");
-    //    net_report_params();
 
-    //    print_dbg("\r\n enable DSP audio...");
-    //    render_boot("enabling audio");
-    //    bfin_enable();
-    
-    print_dbg("\r\n reading default scene... ");
+    /// read the default scene from sd card
+    /// this also attempts to load associated .ldr    
     render_boot("reading default scene");
-
-    /// this also attempts to load associated .ldr
-
     print_dbg("\r\n loading default scene. current module name from sceneData: ");
     print_dbg(sceneData->desc.moduleName);
 
@@ -174,7 +150,7 @@ u8 app_launch(u8 firstrun) {
   init_app_timers();
 
   // pull up power control pin, enabling soft-powerdown
-  gpio_set_gpio_pin(POWER_CTL_PIN);
+  //  gpio_set_gpio_pin(POWER_CTL_PIN);
 
   // assign app event handlers
   print_dbg("\r\n assigning handlers... ");

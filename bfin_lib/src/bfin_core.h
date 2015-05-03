@@ -27,7 +27,10 @@
 // per-channel audio i/o
 extern fract32 in[4];
 extern fract32 out[4];
-extern fract32 aux;
+
+// prgm i/o
+extern fract32 vout[8];        //8 virtual mono channels
+extern fract32 aux[2];         //2 mono aux groups
 
 // ctl change 
 
@@ -42,3 +45,4 @@ extern volatile u32 cvTxBuf;
 extern volatile u8 processAudio;
 
 #endif // header guard
+

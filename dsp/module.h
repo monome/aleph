@@ -54,11 +54,8 @@ extern void module_set_sqparam(u32 pos, u32 idx, ParamValue val);
 // get number of parameters
 extern u32 module_get_num_params(void);
 
-// set trig
-extern void module_set_trig(void);
-
-// set reverse trig
-extern void module_set_reversetrig(void);
+// set event 1
+extern void module_set_event(void);
 
 // fill buffer with sample at offset
 void module_load_sample(s32 sample);

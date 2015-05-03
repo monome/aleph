@@ -15,7 +15,9 @@ fract32 in[4] = { 0, 0, 0, 0 };
 // 4 channels of output to ad1836
 fract32 out[4] = { 0, 0, 0, 0 };
 // aux mix
-fract32 aux = 0;
+fract32 aux[2] = { 0, 0 };
+// 8 virtual outputs
+fract32 vout[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
 // audio processing flag
 volatile u8 processAudio = 0;

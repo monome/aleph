@@ -195,7 +195,7 @@ void scaler_init(ParamScaler* sc, const ParamDesc* const desc) {
 
 // get DSP value given input
 s32 scaler_get_value(ParamScaler* sc, io_t in) {
-  print_dbg("\r\n scaler_get_value, type: ");
+  print_dbg("\r\n scaler_get_value; type: ");
   print_dbg_ulong(sc->desc->type);
 
   scaler_get_value_fn fn = scaler_get_val_pr[sc->desc->type];

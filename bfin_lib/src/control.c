@@ -42,7 +42,7 @@ extern u8 ctl_param_change(u32 step, u32 idx, u32 val) {
         // search for event with this param idx
         for(i=0; i<evCount; i++) {
             if(ctlBuf[i].idx == idx) {
-                ctlBuf[i].step = (u8)step;
+                ctlBuf[i].step = (u32)step;
                 ctlBuf[i].val = (ParamValue)val;
                 break;
             }
@@ -51,7 +51,7 @@ extern u8 ctl_param_change(u32 step, u32 idx, u32 val) {
     } else {
         // add a new event
         if(evCount < CTL_BUF_SIZE_1) {
-            ctlBuf[evCount].step = (u8)step;
+            ctlBuf[evCount].step = (u32)step;
             ctlBuf[evCount].idx = idx;
             ctlBuf[evCount].val = (ParamValue)val;
             evCount++;

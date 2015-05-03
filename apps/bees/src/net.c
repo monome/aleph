@@ -37,8 +37,13 @@
 #include "util.h"
 
 
+//=========================================
+//===== constants
+
+
 // define for serialization debugging
 // #define PRINT_PICKLE 1
+
 
 //=========================================
 //===== variables
@@ -64,6 +69,19 @@ static const char emptystring[] = "            ";
 
 //===============================================
 //========= static functions
+
+
+/// stupid hack function to identify switch input
+/// returns switch index in [1, numSwitches]
+/// otherwise 0
+/// FIXME: obviously this is magic # bs
+static inline int in_get_switch_index(s16 in) { 
+  if(in > 3 && in < 10) {
+    return in - 3;
+  } else {
+    return 0;
+  }
+}
 
 // create all system operators
 static void add_sys_ops(void);
@@ -389,7 +407,8 @@ s16 net_add_op(op_id_t opId) {
   print_dbg(" ; allocating... ");
   op = (op_t*)((u8*)net->opPool + net->opPoolOffset);
   // use the class ID to initialize a new object in scratch
-
+  print_dbg(" ; op address: 0x");
+  print_dbg_hex((u32)op);
   print_dbg(" ;  initializing... ");
   op_init(op, opId);
 
@@ -716,11 +735,35 @@ s16 net_param_idx(u16 inIdx) {
 
 // get string for operator at given idx
 const char* net_op_name(const s16 idx) {
+  //  int sw;
   if (idx < 0) {
     return (const char*)emptystring;
   }
-
-  return net->ops[idx]->opString;
+  /// dirty hack for switch labels
+  switch(in_get_switch_index(idx)) {
+  case 0:
+    return net->ops[idx]->opString;
+  case 1:
+    return "SW1";
+    break;
+  case 2:
+    return "SW2";
+    break;
+  case 3:
+    return "SW3";
+    break;
+  case 4:
+    return "SW4";
+    break;
+  case 5:
+    return "FS1";
+    break;
+  case 6:
+    return "FS2";
+    break;
+  default:
+    return "!!!";
+  }
 }
 
 // get name for input at given idx
@@ -736,7 +779,6 @@ const char* net_in_name(u16 idx) {
       return net->params[idx].desc.label;
     }
   } else {
-    // op input
     return op_in_name(net->ops[net->ins[idx].opIdx], net->ins[idx].opInIdx);
   }
 }
@@ -1028,7 +1070,7 @@ void net_send_params(void) {
 }
 
 // retrigger all inputs
-void net_retrigger_inputs(void) {
+void net_retrigger_ins(void) {
   u32 i;
   netActive = 0;
   for(i=0; i<net->numIns; i++) {
@@ -1318,6 +1360,9 @@ void net_get_param_value_string(char* dst, u32 idx) {
 		  &(net->params[idx].scaler), 
 		  net->params[idx].data.value
 		  );
+/* #if BEEKEEP */
+/*   printf("\r\n scaler_get_str result: %s", dst); */
+/* #endif */
 }
 
 
@@ -1370,6 +1415,11 @@ s16 net_split_out(s16 outIdx) {
   } else {
     // had target; reroute
     split = net_add_op(eOpSplit);
+    // fix for github issue #219
+    // get the target again, because maybe it was a DSP param
+    // (if it was, its index will have shifted. 
+    // patch and presets have been updated, but local var has not.)
+    target =   net->outs[outIdx].target;
     if(split < 0) {
       // failed to add, do nothing
       return outIdx; 
@@ -1382,7 +1432,12 @@ s16 net_split_out(s16 outIdx) {
   }
 }
 
-///////////////
+/* // report whether given input is DSP param */
+/* bool net_in_is_dsp(s16 inIdx) { */
+/*   return (inIdx >= net->numIns); */
+/* } */
+
+/////////////// 
 // test / dbg
 #if 1
 void net_print(void) {
@@ -1399,3 +1454,7 @@ void net_print(void) {
 #endif
 
 
+// set active
+void net_set_active(bool v) {
+  netActive = v;
+}

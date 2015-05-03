@@ -13,7 +13,6 @@ static dirList_t sampleList;
 //static function declarations
 //memory allocation
 static void init_sample_paths(void);
-//static void alloc_sample_buffer(void);
 static prgmSampleptr alloc_sample(void);
 static void init_sample_param(prgmSample *s, u8 num);
 
@@ -29,83 +28,84 @@ extern void samples_init(void) {
     
     //  init variables
     n_samples = 0;
+    bfinMemCheck = 0;
     bfinSampleSize = 0;
+    idx8 = 0;
+    idx32 = 0;
     
     //  init array of sample data
-    for (i=0; i<N_SAMPLES; i++)
+    for (i=0; i<N_OFFSETS; i++)
     {
         sample[i] = alloc_sample();
         init_sample_param(sample[i], i);
     }
     print_dbg("\r\n finished alloc_sample() and init_sample_param() ");
 
-    //  setup recording buffers
-    sample[0]->offset = 0;
-    sample[0]->size = REC_SIZE;
-    n_samples++;
-    
-    sample[1]->offset = sample[0]->offset + sample[0]->size;
-    sample[1]->size = REC_SIZE;
-    n_samples++;
-    
-    sample[2]->offset = sample[1]->offset + sample[1]->size;
-    sample[2]->size = REC_SIZE;
-    n_samples++;
-    
-    sample[3]->offset = sample[2]->offset + sample[2]->size;
-    sample[3]->size = REC_SIZE;
-    n_samples++;
-    
     //  setup aux buffers
-    sample[4]->offset = sample[3]->offset + sample[3]->size;
-    sample[4]->size = AUX_SIZE;
+    sample[0]->offset = 0;
+    sample[0]->loop = AUX_SIZE;
     n_samples++;
+    bfinMemCheck += AUX_SIZE;
     
-    sample[5]->offset = sample[4]->offset + sample[4]->size;
-    sample[5]->size = AUX_SIZE;
+    sample[1]->offset = sample[0]->offset + sample[0]->loop;
+    sample[1]->loop = AUX_SIZE;
     n_samples++;
-
-    sample[6]->offset = sample[5]->offset + sample[5]->size;
-    sample[6]->size = AUX_SIZE;
+    bfinMemCheck += AUX_SIZE;
+    
+    sample[2]->offset = sample[1]->offset + sample[1]->loop;
+    sample[2]->loop = AUX_SIZE;
     n_samples++;
-
-    sample[7]->offset = sample[6]->offset + sample[6]->size;
-    sample[7]->size = AUX_SIZE;
+    bfinMemCheck += AUX_SIZE;
+    
+    sample[3]->offset = sample[2]->offset + sample[2]->loop;
+    sample[3]->loop = AUX_SIZE;
     n_samples++;
+    bfinMemCheck += AUX_SIZE;
+    
+    sample[4]->offset = sample[3]->offset + sample[3]->loop;
+    sample[4]->loop = AUX_SIZE;
+    n_samples++;
+    bfinMemCheck += AUX_SIZE;
+    
+    sample[5]->offset = sample[4]->offset + sample[4]->loop;
+    sample[5]->loop = AUX_SIZE;
+    n_samples++;
+    bfinMemCheck += AUX_SIZE;
 
-    //  setup sample buffers offset start
-    sample[8]->offset = sample[7]->offset + sample[7]->size;
+    sample[6]->offset = sample[5]->offset + sample[5]->loop;
+    sample[6]->loop = AUX_SIZE;
+    n_samples++;
+    bfinMemCheck += AUX_SIZE;
+
+    sample[7]->offset = sample[6]->offset + sample[6]->loop;
+    sample[7]->loop = AUX_SIZE;
+    n_samples++;
+    bfinMemCheck += AUX_SIZE;
+    
+    //  off|default sample position
+    sample_name[0] = (char*)alloc_mem(MAX_NAME * (sizeof(char*)));
+    strcpy(sample_name[0], "-");
+    sample[8]->offset = sample[7]->offset + sample[7]->loop;
+    sample[8]->loop = 1024;
+    n_samples++;
+    bfinMemCheck += 1024;
+
+    //  samples from card from here!
+    sample[9]->offset = sample[8]->offset + sample[8]->loop;
 
     //  init wav file paths
     init_sample_paths();
     print_dbg("\r\n finished init_sample_paths() ");
-//    alloc_sample_buffer();
-//    print_dbg("\r\n finished alloc_sample_buffer() ");
 }
-
-
-//static function definitions
-/*
-void alloc_sample_buffer(void) {
-    u32 i;
-    
-    //  allocate memory
-    bfinSampleData = (u8*)alloc_mem(AUX_SIZE * sizeof(u8));
-    
-    //  zero data
-    for (i=0; i<AUX_SIZE; i++) bfinSampleData[i] = 0;
-}
-*/
 
 prgmSampleptr alloc_sample(void) {
     return(prgmSampleptr)alloc_mem(sizeof(prgmSample));
 }
 
-
 void init_sample_param(prgmSample *s, u8 num) {
     s->num = num;
     s->offset = 0;
-    s->size = 0;
+    s->loop = 0;
 }
 
 void init_sample_paths(void) {
@@ -114,23 +114,24 @@ void init_sample_paths(void) {
     
     s32 i = 0;
     sampleList.num = 0;
-    
+        
     strcpy(sampleList.path, WAV_PATH);
     
     if (fl_opendir(sampleList.path, &dirstat))
     {
-        while (fl_readdir(&dirstat, &dirent) == 0)
+        //  check samples limit
+        while (fl_readdir(&dirstat, &dirent) == 0 && n_samples < N_OFFSETS)
         {
             if (!(dirent.is_dir))
             {
                 sample_path[i] = (char*)alloc_mem(MAX_PATH * (sizeof(char*)));
-                sample_name[i] = (char*)alloc_mem(MAX_NAME * (sizeof(char*)));
+                sample_name[i+1] = (char*)alloc_mem(MAX_NAME * (sizeof(char*)));
                 strcpy(sampleList.path, WAV_PATH);
                 strcat(sampleList.path, dirent.filename);
                 
-                //  copy name for on-screen sample select and remove extension
-                strcpy(sample_name[i], dirent.filename);
-                strip_extension(sample_name[i]);
+                //  copy name for screen display and remove extension
+                strcpy(sample_name[i+1], dirent.filename);
+                strip_extension(sample_name[i+1]);
                 
                 //  copy file path
                 strcpy(sample_path[i], sampleList.path);
@@ -141,7 +142,7 @@ void init_sample_paths(void) {
                 i++;
                 print_dbg("\r\n i: ");
                 print_dbg_ulong(i);
-
+                
                 n_samples++;
                 print_dbg("\r\n n_samples: ");
                 print_dbg_ulong(n_samples);
@@ -159,14 +160,20 @@ void files_load_sample(u8 n) {
     //  pointer to file, size
     void *fp;
     u32 size = 0;
-    
+    idx32 = 0;
+    bfinSampleSize = 0;
+
     delay_ms(10);
     
-    fp = fl_fopen(sample_filepath(n-8), "r");
+    fp = fl_fopen(sample_filepath(n-9), "r");
+    print_dbg("\r\n sample[n]->num ");
+    print_dbg_ulong(sample[n]->num);
     print_dbg("\r\n sample_filepath(n) ");
-    print_dbg(sample_filepath(n-8));
+    print_dbg(sample_filepath(n-9));
     
     size = ((FL_FILE*)(fp))->filelength;
+    sample[n]->loop = size / sizeof(s32);
+    sample[n+1]->offset = sample[n]->offset + sample[n]->loop;
     
     if (fp != NULL)
     {
@@ -175,28 +182,55 @@ void files_load_sample(u8 n) {
         fake_fread(bfinSampleData, size, fp);
         fl_fclose(fp);
         
-        sample[n]->size = size / sizeof(s32);
-        sample[n+1]->offset = sample[n]->offset + sample[n]->size;
+        bfinMemCheck += sample[smpl]->loop;
         
-        bfinSampleSize = size;
-
-//        bfin_new_sample(sample[n]->offset, sample[n]->size);
-//        ctl_param_change(0, eParamOffset, sample[n]->offset);
-//        ctl_param_change(0, eParamSize, sample[n]->size);
-        
-        print_dbg("\r\n sample[n]->num ");
-        print_dbg_ulong(sample[n]->num);
-        
-        print_dbg("\r\n sample[n]->offset ");
-        print_dbg_ulong(sample[n]->offset);
-        
-        print_dbg("\r\n sample[n]->size ");
-        print_dbg_ulong(sample[n]->size);
-        
+        //  check bfin sdram buffer size limit
+        if (bfinMemCheck < BFIN_BUFFER_SIZE)
+        {
+            //  sample transfer happens in custom_timer_callback()
+            idx8 = 0;
+            bfinSampleSize = size;
+        }
+        else
+        {
+            bfinSampleSize = 0;
+            smpl = N_OFFSETS + 1;
+        }
     }
     else print_dbg("\r\n file contains no data");
 }
-
+/*
+    bfinSampleSize = size;
+    sample[n]->loop = size;
+//    sample[n]->loop = size / sizeof(s32);
+    sample[n+1]->offset = sample[n]->offset + sample[n]->loop;
+//    bfinMemCheck += sample[smpl]->loop;
+        
+    if (fp != NULL && bfinMemCheck < BFIN_BUFFER_SIZE)
+    {
+        //  allocate a temporary RAM buffer
+        bfinSampleData = alloc_mem(size);
+        fake_fread(bfinSampleData, size, fp);
+        fl_fclose(fp);
+        
+        //  wait for transfer to finish in custom_timer_callback()...
+        delay_ms(100);
+        delay_ms(sample[smpl]->loop);
+        
+        free_mem(bfinSampleData);
+        
+        bfinSampleSize = 0;
+        idx8 = 0;
+        idx32 = 0;
+    }
+    else
+    {
+        print_dbg("\r\n stopping file transfer");
+        free_mem(bfinSampleData);
+        smpl = N_OFFSETS + 1;
+    }
+}
+*/
 u8 files_load_dsp(void) {
     void *fp;
     u32 size = 0;

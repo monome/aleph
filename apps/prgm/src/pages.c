@@ -22,15 +22,26 @@
 // page structures - synchronize with ePage enum in pages.h
 page_t pages[NUM_PAGES] = {
     
-    { .name = "PARAM",
-        .select_fn = &select_param, // select function
-        .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
-    },
-    
-    { .name = "ENV",
-        .select_fn = &select_env, // select function
+    { .name = "TRK",
+        .select_fn = &select_trk, // select function
         .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens
     },
+
+    { .name = "MIX",
+        .select_fn = &select_mix, // select function
+        .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens
+    },
+    
+    { .name = "SEQ",
+        .select_fn = &select_seq, // select function
+        .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens
+    },
+    
+    { .name = "GEN",
+        .select_fn = &select_gen, // select function
+        .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
+    },
+        
 };
 
 // pointer to current page
@@ -47,7 +58,7 @@ void pages_init(void) {
     print_dbg("\r\n pages init");
 
     print_dbg("\r\n set page PRGM");
-    pageIdx = ePageEnv;
+    pageIdx = ePageMix;
     set_page(pageIdx);
 }
 

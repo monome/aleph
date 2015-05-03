@@ -12,69 +12,73 @@
 
 //static function declarations
 static prgmTrackptr alloc_track(void);
-static void track_init_param(prgmTrack *t);
+static masterTrackptr alloc_master(void);
+
 
 //allocate one chunk of memory for each track
 prgmTrackptr alloc_track(void) {
     return(prgmTrackptr)alloc_mem(sizeof(prgmTrack));
 }
 
-//init track parameters
-void track_init_param(prgmTrack *t) {
-    u8 i;
-    
-    //  sequenced parameters
-    for(i=0;i<SQ_LEN;i++)
-    {
-        t->m[i] = 0;
-        t->c[i] = 0;
-        t->cT[i] = 0;
-        t->cTG[i] = 0;
-        t->f[i] = 0;
-        t->pS[i] = 8;
-        t->pP[i] = 0;
-        t->pLP[i] = 256;
-        t->pF[i] = 0;
-        t->pF_scale[i] = 0;
-        t->pX[i] = 0;
-    }
-    
-    //  global parameters
-    t->inA = 0;
-    t->inB = 0;
-    t->mix = 0;
-    t->aux = 0;
+masterTrackptr alloc_master(void) {
+    return(masterTrackptr)alloc_mem(sizeof(masterTrack));
 }
 
-//init tracker: four track sequencer
+
+//init sequencer values
+void sq_init() {
+    u8 n;
+    u32 i;
+    prgmTrack *t;
+    
+    for(n=0;n<N_TRACKS;n++)
+    {
+        //init track
+        t = track[n];
+        
+        t->input = 0;
+        t->inL = FR32_MAX;
+        t->aux1 = 0;
+        t->aux2 = 0;
+        t->pan = 0;
+        t->mix = 0;
+        
+        t->m = 0;
+        t->mutemix = 0;
+        t->mutetrk = 0;
+        t->len = SQ_LEN;
+        t->msr = SQ_LEN / 4;
+        
+        t->uP = LOOP_MIN;
+        t->sP = 0;
+        
+        for(i=0;i<SQ_LEN;i++)
+        {
+            t->s[i] = 8;
+            t->outL[i] = DEFAULT_LEVEL;
+        }
+    }
+    
+    master->output = FR32_MAX;
+    master->pan1 = 0;
+    master->pan2 = 0;
+    master->out3 = 0;
+    master->out4 = 0;
+        
+    //  global parameters
+    editpos = 0;
+}
+
+//init tracker: four track sequencer with separate generators
 void tracker_init(void) {
     u8 i;
     
-    for (i=0; i<N_TRACKS; i++)
+    for(i=0;i<N_TRACKS;i++)
     {
         track[i] = alloc_track();
-        track_init_param(track[i]);
     }
     
-    for(i=0;i<SQ_LEN;i++)
-    {
-        n_scale_lookup[i] = 0;
-        n_scale[i] = 0;
-    }
-
-//    bfinheadstate = 0;
-//    bfinheadpos = 0;
-    motor = 0;
-
-    editpos = 16;
-    length = SQ_LEN;
-    bufferpos = 0;
+    master = alloc_master();
     
-    tempo_lookup = 0;
-    tempo = 0;
-    measure_lookup = 0;
-    measure = 0;
-
-//    foot1_touched = 0;
-//    foot2_touched = 0;
+    sq_init();
 }

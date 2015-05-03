@@ -27,131 +27,111 @@
 //files
 #include "files.h"
 
-//other stuff
+//#include "generator.h"
 #include "types.h"
 #include "control.h"
 #include "ctl.h"
 #include "pages.h"
 #include "render.h"
-#include "scale.h"
 
-#define N_TRACKS 4                          //number of tracks
-#define SQ_LEN 48                           //sequence length
+#define SQ_LEN 128                       //sequence length
 
-#define N_MODES 16                          //number of modes
+#define N_TRACKS 8                      //number of tracks
+#define N_MODES 6                       //number of track modes
+
+#define N_INPUTS 26                     //number of inputs
+#define N_PHYSICAL_INPUTS 5             //number of physical inputs
+#define N_DIROUTS 11                    //number of selectable direct outputs
+#define LOOP_MIN 32                     //minimum loop
+#define DEFAULT_LEVEL 0x2fffffff
+
+#define N_TRACKS_1 (N_TRACKS - 1)
 #define N_MODES_1 (N_MODES - 1)
-
-#define N_INPUTS 26                         //number of selectable inputs
 #define N_INPUTS_1 (N_INPUTS - 1)
-
-#define N_PHYSICAL_INPUTS 4                 //number of selectable physical inputs
-#define N_PHYSICAL_INPUTS_1 (N_INPUTS - 1)
-
+#define N_PHYSICAL_INPUTS_1 (N_PHYSICAL_INPUTS - 1)
+#define N_DIROUTS_1 (N_DIROUTS - 1)
 #define N_BUFFERS_1 (N_BUFFERS - 1)
+#define N_SAMPLES_1 (N_SAMPLES - 1)
+#define N_OFFSETS_1 (N_OFFSETS - 1)
 #define REC_SIZE_1 (REC_SIZE - 1)
 #define AUX_SIZE_1 (AUX_SIZE - 1)
 
-//#define SCRUB_SIZE 0x1234                   //(time - pos) default in scrub mode
-//#define FRAMES 800
+#define DUMMY 0                         //dummy step for global parameters
 
-#define DUMMY 0                             //dummy step for global parameters
+//sequencer parameters
+u32 editpos;                            //current edit position
+char renderEditPos[16];
 
-//counters
-char renderLength[16];
+//track parameters
+char renderInputLevel[N_TRACKS][16];
+char renderAux1Level[N_TRACKS][16];
+char renderAux2Level[N_TRACKS][16];
+char renderLength[N_TRACKS][16];
+char renderMixPan[N_TRACKS][16];
+char renderMixLevel[N_TRACKS][16];
+char renderTrackLevel[16];
+char renderParam1[N_TRACKS][16];
+char renderParam2[N_TRACKS][16];
 
-char renderStepLength[16];
-char renderTempo[16];
-char renderEditPosition[16];
-char renderBufferPosition[16];
+//master track parameters
+char renderAux1Pan[16];
+char renderAux2Pan[16];
+char renderMasterLevel[16];
 
-//page env
-char renderTrig0[16];
-char renderTrig1[16];
-char renderTrig2[16];
-char renderTrig3[16];
-
-char renderTime0[16];
-char renderTime1[16];
-char renderTime2[16];
-char renderTime3[16];
-
-//page mode
-char renderPosition0[16];
-char renderPosition1[16];
-char renderPosition2[16];
-char renderPosition3[16];
-
-char renderLoop0[16];
-char renderLoop1[16];
-char renderLoop2[16];
-char renderLoop3[16];
-
-char renderMix0[16];
-char renderMix1[16];
-char renderMix2[16];
-char renderMix3[16];
-
-char renderLevel0[16];
-char renderLevel1[16];
-char renderLevel2[16];
-char renderLevel3[16];
-
-char renderFrequency0[16];
-char renderFrequency1[16];
-char renderFrequency2[16];
-char renderFrequency3[16];
-
-//sequencer states
-u16 editpos;                             //edit position
-u16 length;                              //current length
-
-u8 n_scale_lookup[SQ_LEN];              //note length position in lookup table
-u8 n_scale[SQ_LEN];                     //scaled note length
-u16 tempo_lookup;                        //tempo value position in lookup table
-u16 tempo;                               //tempo
-u16 measure_lookup;                      //measure value position in lookup table
-u16 measure;                             //current measure
-u8 motor;                               //motor on|off state
-
-//buffer states
-u8 bufferpos;
+//sequenced parameters
+char renderTrig[N_TRACKS][16];
+char renderTime[N_TRACKS][16];
+char renderEnvDur[N_TRACKS][16];
+char renderEnvLevel[N_TRACKS][16];
 
 //track
 typedef struct _prgmTrack *prgmTrackptr;
 
 typedef struct _prgmTrack {
-    //mode
-    s32 m[SQ_LEN];                      //mode
-    
-    //curve
-    s32 c[SQ_LEN];                      //curve
-    s32 cT[SQ_LEN];                     //curve time
-    s32 cTG[SQ_LEN];                    //curve trig state
-    
-    //frame process
-    s32 f[SQ_LEN];                      //frame process flag
-
-    //sequenced parameters
-    s32 pS[SQ_LEN];                     //sample
-    s32 pP[SQ_LEN];                     //position | offset | phase
-    s32 pLP[SQ_LEN];                    //loop point
-    
-    s32 pF[SQ_LEN];                     //frequency
-    s32 pF_scale[SQ_LEN];               //scaled frequency
-    s32 pX[SQ_LEN];                     //q | slew | blend | pw
-
-    //global parameters
-    s32 inA;                            //input A
-    s32 inB;                            //input B
+    //track parameters
+    s32 input;                          //input
+    s32 inL;                            //input level
+    s32 aux1;                           //aux1 level
+    s32 aux2;                           //aux2 level
+    s32 pan;                            //mix pan
     s32 mix;                            //mix level
-    s32 aux;                            //aux level
+
+    s32 m;                              //mode
+    u8 mutemix;                         //mute mix
+    u8 mutetrk;                         //mute track
+    s32 len;                            //track length
+    s32 msr;                            //track measure
+    
+    u32 uP;                             //unsigned parameter
+    s32 sP;                             //signed parameter
+    
+    //sequenced parameters
+    s32 s[SQ_LEN];                      //sample
+    s32 outL[SQ_LEN];                   //output level
     
 } prgmTrack;
 
 prgmTrack *track[N_TRACKS];
 
 
+typedef struct _masterTrack *masterTrackptr;
+
+typedef struct _masterTrack {
+    s32 pan1;                           //aux1 pan
+    s32 pan2;                           //aux2 pan
+    
+    s32 out3;                           //direct output 3
+    s32 out4;                           //direct output 4
+
+    s32 output;                         //master output level
+    
+} masterTrack;
+
+masterTrack *master;
+
+
 //external function declarations
 extern void tracker_init(void);
+extern void sq_init(void);
 
 #endif

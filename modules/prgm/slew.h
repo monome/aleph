@@ -3,15 +3,15 @@
 
 /// this is a hack...
 /// descriptor utility ends up including this, which is dumb.
-#if ARCH_BFIN==1 
+//#if ARCH_BFIN==1
 #include <fract_math.h>
+#include "fract32_emu.c"
 
 typedef struct {
   fract32 x;
   fract32 y;
   fract32 c;
 } Slew32;
-
 
 typedef struct {
   fract16 x;
@@ -41,6 +41,6 @@ typedef struct {
 
 #define slew16_sync( sl ) ( (sl).x == (sl).y )
       
-#endif // blackfin architecture
+//#endif // blackfin architecture
 
 #endif // h guard

@@ -39,7 +39,7 @@
 #define DEFAULT_SCENE_NAME "default"
 /// FIXME: this is retarded, 
 // but sometimes the name needs to have extension and sometimes not.
-#define DEFAULT_SCENE_NAME_EXT "default.scn"
+// #define DEFAULT_SCENE_NAME_EXT "default.scn"
 
 //-----------------------------
 // ---- extern data
@@ -91,9 +91,8 @@ void scene_init(void) {
   /* for(i=0; i<MODULE_NAME_LEN; i++) { */
   /*   (sceneData->desc.moduleName)[i] = '\0'; */
   /* } */
-  strcpy(sceneData->desc.moduleName, "DEADBEEF");
-  strcpy(sceneData->desc.sceneName, "_"); 
-
+  strcpy(sceneData->desc.moduleName, "NONE");
+  strcpy(sceneData->desc.sceneName, "_");
 
 }
 
@@ -377,7 +376,8 @@ void scene_write_default(void) {
   render_boot("writing default scene");
   print_dbg("\r\n writing default scene to card... ");
 
-  files_store_scene_name(DEFAULT_SCENE_NAME_EXT, 0);
+  //  files_store_scene_name(DEFAULT_SCENE_NAME_EXT, 0);
+  files_store_scene_name(DEFAULT_SCENE_NAME);
 
   //  app_resume();
 
@@ -417,7 +417,8 @@ void scene_read_default(void) {
   /* print_dbg("\r\n reading default scene from flash... "); */
   /* flash_read_scene(); */
   print_dbg("\r\n reading default scene from card... ");
-  files_load_scene_name(DEFAULT_SCENE_NAME_EXT);
+  //  files_load_scene_name(DEFAULT_SCENE_NAME_EXT);
+  files_load_scene_name(DEFAULT_SCENE_NAME);
   
   print_dbg("\r\n finished reading ");  
   app_resume();
@@ -458,13 +459,12 @@ void scene_query_module(void) {
   print_dbg_ulong(moduleVersion->rev);
 }
 
+// get scene name
+const char* scene_get_name(void) {
+  return sceneData->desc.sceneName;
+}
 
-/* void scene_print_buf(void) { */
-/*   int i; */
-/*   for(i=0; i<sizeof(sceneDesc_t); ++i) { */
-/*     //    print_dbg_hex(sceneData-> */
-/*   } */
-/*   for(i=0; i<SCENE_PICKLE_SIZE; ++i) { */
-/*     //    sceneData */
-/*   } */
-/* } */
+// get module name
+const char* scene_get_module_name(void) {
+  return sceneData->desc.moduleName;
+}

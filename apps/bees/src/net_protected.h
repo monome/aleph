@@ -133,4 +133,7 @@ extern op_adc_t* opSysAdc;
 // preset
 extern op_preset_t* opSysPreset;
 
+// set active
+extern void net_set_active(bool v);
+
 #endif // header guard

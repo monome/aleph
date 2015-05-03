@@ -38,6 +38,15 @@ extern void timers_unset_adc(void);
 // change period of adc polling timer
 extern void timers_set_adc_period(u32 period);
 
+// start hid polling timer
+extern void timers_set_hid(void);
+
+// stop hid polling timer
+extern void timers_unset_hid(void);
+
+// change period of hid polling timer
+extern void timers_set_hid_period(u32 period);
+
 // set metro timer
 // arguments: 
 // - pointer to timer data,
