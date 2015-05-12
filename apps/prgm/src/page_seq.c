@@ -19,6 +19,7 @@ static void handle_encoder_2(s32 val);
 static void handle_encoder_3(s32 val);
 
 static void track_unmute(u8 n, u8 m);
+static s32 knob_accel(s32 inc);
 
 
 //handler variables
@@ -163,6 +164,20 @@ void handle_sw(u8 id, u8 b) {
     }
 }
 
+s32 knob_accel(s32 inc) {
+    s32 incAbs = inc < 0 ? inc * -1 : inc;
+    if(incAbs == 1) {
+        return inc;
+    }
+    if(incAbs < 8) {
+        return inc << 2;
+    }
+    if(incAbs < 32) {
+        return inc << 4;
+    }
+    return inc << 6;
+}
+
 void handle_switch_0(s32 data) {
     handle_sw(1, data > 0);
 }
@@ -173,6 +188,11 @@ void handle_switch_1(s32 data) {
 
 void handle_switch_2(s32 data) {
     handle_sw(3, data > 0);
+    
+    //open sample cut per step page
+    if(state_sw == 3)
+    {
+    }
 }
 
 void handle_switch_3(s32 data) {
@@ -219,38 +239,76 @@ void handle_encoder_0(s32 val) {
         case 0: //sample
             check_touch(kEventEncoder3);
             if (touchedThis) {
-                tmp = track[t]->s[i];
-                tmp += val;
-                if (tmp < N_BUFFERS) tmp = N_BUFFERS;
-                if (tmp > n_samples - 1) tmp = n_samples - 1;
-                track[t]->s[i] = tmp;
-                ctl_param_change(i, eParamSampleOffsetBId[t], sample[tmp + 1]->offset - 1);
-                ctl_param_change(i, eParamSampleOffsetAId[t], sample[tmp]->offset);
-                if (tmp == N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 0);
-                if (tmp != N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 1);
-                scroll_sequence(t);
+                if (track[t]->m == 1)
+                {
+                    tmp = track[t]->s[i];
+                    tmp += val;
+                    if (tmp < N_BUFFERS) tmp = N_BUFFERS;
+                    if (tmp > n_samples - 1) tmp = n_samples - 1;
+                    track[t]->s[i] = tmp;
+                    ctl_param_change(i, eParamSampleOffsetBId[t], sample[tmp + 1]->offset + (sample[tmp]->loop_cut));
+                    ctl_param_change(i, eParamSampleOffsetAId[t], sample[tmp]->offset + sample[tmp]->offset_cut);
+                    if (tmp == N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 0);
+                    if (tmp != N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 1);
+                    scroll_sequence(t);
+                    break;
+                }
+                else if (track[t]->m == 2)
+                {
+                    tmp = track[t]->s[i];
+                    tmp += val;
+                    if (tmp < N_BUFFERS) tmp = N_BUFFERS;
+                    if (tmp > n_samples - 1) tmp = n_samples - 1;
+                    track[t]->s[i] = tmp;
+                    ctl_param_change(i, eParamSampleOffsetBId[t], sample[tmp + 1]->offset + (sample[tmp]->loop_cut));
+                    ctl_param_change(i, eParamSampleOffsetAId[t], sample[tmp]->offset + sample[tmp]->offset_cut);
+                    if (tmp == N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 0);
+                    if (tmp != N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 1);
+                    scroll_sequence(t);
+                    break;
+                }
+                else if (track[t]->m == 3)
+                {
+                    tmp = track[t]->e[i];
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > 1) tmp = 1;
+                    track[t]->e[i] = tmp;
+                    if (tmp == 0) ctl_param_change(i, eParamSetTrigId[t], 0);
+                    if (tmp == 1) ctl_param_change(i, eParamSetTrigId[t], 1);
+                    scroll_sequence(t);
+                    break;
+                }
+                else ;
             }
             break;
             
-        case 1: //sample with trig
+        case 1:
             check_touch(kEventEncoder3);
             if (touchedThis) {
-                tmp = track[t]->s[i];
-                tmp += val;
-                if (tmp < N_BUFFERS) tmp = N_BUFFERS;
-                if (tmp > n_samples - 1) tmp = n_samples - 1;
-                track[t]->s[i] = tmp;
-                //  edit sequencer
-                ctl_param_change(i, eParamSampleOffsetBId[t], sample[tmp + 1]->offset - 1);
-                ctl_param_change(i, eParamSampleOffsetAId[t], sample[tmp]->offset);
-                if (tmp == N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 0);
-                if (tmp != N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 1);
-                //  playback sample
-                ctl_param_change(i, eParamOutputLevelId[t], DEFAULT_LEVEL);
-                ctl_param_change(i, eParamOffsetBId[t], sample[tmp + 1]->offset - 1);
-                ctl_param_change(i, eParamOffsetAId[t], sample[tmp]->offset);
-                ctl_param_change(DUMMY, eParamTrigId[t], DUMMY);
-                scroll_sequence(t);
+                if (track[t]->m == 1)
+                {
+                    //sample with trig...
+                    /*
+                    tmp = track[t]->s[i];
+                    tmp += val;
+                    if (tmp < N_BUFFERS) tmp = N_BUFFERS;
+                    if (tmp > n_samples - 1) tmp = n_samples - 1;
+                    track[t]->s[i] = tmp;
+                    //  edit sequencer
+                    ctl_param_change(i, eParamSampleOffsetBId[t], sample[tmp + 1]->offset + (sample[tmp]->loop_cut));
+                    ctl_param_change(i, eParamSampleOffsetAId[t], sample[tmp]->offset + sample[tmp]->offset_cut);
+                    if (tmp == N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 0);
+                    if (tmp != N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 1);
+                    //  playback sample
+                    ctl_param_change(i, eParamOutputLevelId[t], DEFAULT_LEVEL);
+                    ctl_param_change(i, eParamSampleOffsetBId[t], sample[tmp + 1]->offset + (sample[tmp]->loop_cut));
+                    ctl_param_change(i, eParamSampleOffsetAId[t], sample[tmp]->offset + sample[tmp]->offset_cut);
+                    ctl_param_change(DUMMY, eParamTrigId[t], DUMMY);
+                    scroll_sequence(t);
+                    break;
+                    */
+                }
             }
             break;
             
@@ -276,21 +334,72 @@ void handle_encoder_1(s32 val) {
     u8 t = trkpage;
     s32 i = editpos;
     switch (state_sw) {
-        case 0: //track output
+        case 0:
             check_touch(kEventEncoder2);
             if (touchedThis) {
-                tmp = track[t]->outL[i];
-                tmp += val * 4194304;
-                if (tmp < 0) tmp = 0;
-                track[t]->outL[i] = tmp;
-                ctl_param_change(i, eParamOutputLevelId[t], tmp);
-                scroll_sequence(t);
+                if (track[t]->m == 1)
+                {
+                    //  trig level
+                    tmp = track[t]->outL[i];
+                    tmp += val * 4194304;
+                    if (tmp < 0) tmp = 0;
+                    track[t]->outL[i] = tmp;
+                    ctl_param_change(i, eParamOutputLevelId[t], tmp);
+                    scroll_sequence(t);
+                    break;
+                }
+                else if (track[t]->m == 2)
+                {
+                    //  loop pitch
+                    tmp = track[t]->outL[i];
+                    tmp += knob_accel(val);
+                    if (tmp < 0) tmp = 0;
+                    track[t]->outL[i] = tmp;
+                    ctl_param_change(i, eParamOutputLevelId[t], tmp);
+                    scroll_sequence(t);
+                    break;
+                }
+                else if (track[t]->m == 3)
+                {
+                    //  envelope duration fine
+                    tmp = track[t]->outL[i];
+                    tmp += knob_accel(val);
+                    if (tmp < 0) tmp = 0;
+                    track[t]->outL[i] = tmp;
+                    ctl_param_change(i, eParamOutputLevelId[t], tmp);
+                    scroll_sequence(t);
+                    break;
+                }
+                else ;
             }
             break;
             
         case 1:
             check_touch(kEventEncoder2);
             if (touchedThis) {
+                if (track[t]->m == 2)
+                {
+                    //  loop pitch coarse
+                    tmp = track[t]->outL[i];
+                    tmp += val * 65536;
+                    if (tmp < 0) tmp = 0;
+                    track[t]->outL[i] = tmp;
+                    ctl_param_change(i, eParamOutputLevelId[t], tmp);
+                    scroll_sequence(t);
+                    break;
+                }
+                //  envelope duration coarse
+                else if (track[t]->m == 3)
+                {
+                    tmp = track[t]->outL[i];
+                    tmp += val * 65536;
+                    if (tmp < 0) tmp = 0;
+                    track[t]->outL[i] = tmp;
+                    ctl_param_change(i, eParamOutputLevelId[t], tmp);
+                    scroll_sequence(t);
+                    break;
+                }
+                else ;
             }
             break;
 
@@ -331,7 +440,7 @@ void handle_encoder_2(s32 val) {
                 scroll_sequence(t);
             }
             break;
-            
+/*
         case 1: //measure
             check_touch(kEventEncoder1);
             if (touchedThis) {
@@ -357,106 +466,247 @@ void handle_encoder_2(s32 val) {
                 else ;
             }
             break;
-            
-        case 2: //clone one -> next measure
+*/ 
+        case 1: //clone by measure
             check_touch(kEventEncoder1);
             if (touchedThis) {
                 u32 p;
+                u32 m = track[t]->msr;
+                const u32 l = track[t]->len;
+                //  remove "even loops" in case measure is longer than length
+                while (m > l) { m -= l; }
                 s32 clone_a, clone_b;
-                if (val < 0)
+                if (track[t]->m == 1 || track[t]->m == 2)
                 {
-                    clone_a = track[t]->s[i];
-                    clone_b = track[t]->outL[i];
-                    p = i;
-                    i -= track[t]->msr;
-                    if (i < 0) i = track[t]->len - (track[t]->msr - p);
-                    editpos = i;
-                    track[t]->s[i] = clone_a;
-                    ctl_param_change(i, eParamSampleOffsetBId[t], sample[clone_a + 1]->offset - 1);
-                    ctl_param_change(i, eParamSampleOffsetAId[t], sample[clone_a]->offset);
-                    track[t]->outL[i] = clone_b;
-                    ctl_param_change(i, eParamOutputLevelId[t], clone_b);
-                    if (clone_a == N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 0);
-                    if (clone_a != N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 1);
-                    scroll_sequence(t);
-                    break;
+                    if (val < 0)
+                    {
+                        clone_a = track[t]->s[i];
+                        clone_b = track[t]->outL[i];
+                        p = i;
+                        i -= m;
+                        if (i < 0) i = l - (m - p);
+                        editpos = i;
+                        track[t]->s[i] = clone_a;
+                        ctl_param_change(i, eParamSampleOffsetBId[t], sample[clone_a + 1]->offset + (sample[clone_a]->loop_cut));
+                        ctl_param_change(i, eParamSampleOffsetAId[t], sample[clone_a]->offset + sample[clone_a]->offset_cut);
+                        if (clone_a == N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 0);
+                        if (clone_a != N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 1);
+                        track[t]->outL[i] = clone_b;
+                        ctl_param_change(i, eParamOutputLevelId[t], clone_b);
+                        scroll_sequence(t);
+                        break;
+                    }
+                    else if (val > 0)
+                    {
+                        clone_a = track[t]->s[i];
+                        clone_b = track[t]->outL[i];
+                        p = i;
+                        i += m;
+                        if (i > l - 1) i = m - (l - p);
+                        editpos = i;
+                        track[t]->s[i] = clone_a;
+                        ctl_param_change(i, eParamSampleOffsetBId[t], sample[clone_a + 1]->offset + (sample[clone_a]->loop_cut));
+                        ctl_param_change(i, eParamSampleOffsetAId[t], sample[clone_a]->offset + sample[clone_a]->offset_cut);
+                        if (clone_a == N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 0);
+                        if (clone_a != N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 1);
+                        track[t]->outL[i] = clone_b;
+                        ctl_param_change(i, eParamOutputLevelId[t], clone_b);
+                        scroll_sequence(t);
+                        break;
+                    }
+                    else ;
                 }
-                else if (val > 0)
+                else if (track[t]->m == 3)
                 {
-                    clone_a = track[t]->s[i];
-                    clone_b = track[t]->outL[i];
-                    p = i;
-                    i += track[t]->msr;
-                    if (i > track[t]->len - 1) i = track[t]->msr - (track[t]->len - p);
-                    editpos = i;
-                    track[t]->s[i] = clone_a;
-                    ctl_param_change(i, eParamSampleOffsetBId[t], sample[clone_a + 1]->offset - 1);
-                    ctl_param_change(i, eParamSampleOffsetAId[t], sample[clone_a]->offset);
-                    track[t]->outL[i] = clone_b;
-                    ctl_param_change(i, eParamOutputLevelId[t], clone_b);
-                    if (clone_a == N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 0);
-                    if (clone_a != N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 1);
-                    scroll_sequence(t);
-                    break;
+                    if (val < 0)
+                    {
+                        clone_a = track[t]->e[i];
+                        clone_b = track[t]->outL[i];
+                        p = i;
+                        i -= m;
+                        if (i < 0) i = l - (m - p);
+                        editpos = i;
+                        track[t]->e[i] = clone_a;
+                        if (clone_a == 0) ctl_param_change(i, eParamSetTrigId[t], 0);
+                        if (clone_a == 1) ctl_param_change(i, eParamSetTrigId[t], 1);
+                        track[t]->outL[i] = clone_b;
+                        ctl_param_change(i, eParamOutputLevelId[t], clone_b);
+                        scroll_sequence(t);
+                        break;
+                    }
+                    else if (val > 0)
+                    {
+                        clone_a = track[t]->e[i];
+                        clone_b = track[t]->outL[i];
+                        p = i;
+                        i += m;
+                        if (i > l - 1) i = m - (l - p);
+                        editpos = i;
+                        track[t]->e[i] = clone_a;
+                        if (clone_a == 0) ctl_param_change(i, eParamSetTrigId[t], 0);
+                        if (clone_a == 1) ctl_param_change(i, eParamSetTrigId[t], 1);
+                        track[t]->outL[i] = clone_b;
+                        ctl_param_change(i, eParamOutputLevelId[t], clone_b);
+                        scroll_sequence(t);
+                        break;
+                    }
+                    else ;
                 }
                 else ;
             }
             break;
             
-        case 3: //clone all -> next measure
+        case 2: //shift by step
             check_touch(kEventEncoder1);
             if (touchedThis) {
-                u8 n = track[t]->msr;
                 u32 p;
-                s32 clone_a, clone_b;
-                if (val < 0)
+                const u32 len = track[t]->len;
+                if (track[t]->m == 1 || track[t]->m == 2)
                 {
-                    gpio_clr_gpio_pin(LED_MODE_PIN);
-                    clone_a = track[t]->s[i];
-                    clone_b = track[t]->outL[i];
-                    for (p = 0; p<n; ++p)
+                    //  shift -1
+                    if (val < 0 && len > 1)
                     {
+                        gpio_clr_gpio_pin(LED_MODE_PIN);
+                        //  copy to clone and shift
+                        for (p = len - 1; p>0; --p)
+                        {
+                            clone->c1[p - 1] = track[t]->s[p];
+                            clone->c2[p - 1] = track[t]->outL[p];
+                        }
+                        //  copy first to last
+                        clone->c1[len - 1] = track[t]->s[0];
+                        clone->c2[len - 1] = track[t]->outL[0];
+                        //  refill pattern and send parameter changes
+                        for (p = 0; p<len; p++)
+                        {
+                            s32 tmp = clone->c1[p];
+                            track[t]->s[p] = tmp;
+                            ctl_param_change(p, eParamSampleOffsetBId[t], sample[tmp + 1]->offset + (sample[tmp]->loop_cut));
+                            ctl_param_change(p, eParamSampleOffsetAId[t], sample[tmp]->offset + sample[tmp]->offset_cut);
+                            if (tmp == N_BUFFERS) ctl_param_change(p, eParamSetTrigId[t], 0);
+                            if (tmp != N_BUFFERS) ctl_param_change(p, eParamSetTrigId[t], 1);
+                            track[t]->outL[p] = clone->c2[p];
+                            ctl_param_change(p, eParamOutputLevelId[t], clone->c2[p]);
+                        }
+                        //  align editpos and render pattern
                         --i;
-                        if (i < 0) i = track[t]->len - 1;
-                        track[t]->s[i] = clone_a;
-                        ctl_param_change(i, eParamSampleOffsetBId[t], sample[clone_a + 1]->offset - 1);
-                        ctl_param_change(i, eParamSampleOffsetAId[t], sample[clone_a]->offset);
-                        track[t]->outL[i] = clone_b;
-                        ctl_param_change(i, eParamOutputLevelId[t], clone_b);
-                        if (clone_a == N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 0);
-                        if (clone_a != N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 1);
+                        if (i < 0) i = len - 1;
+                        editpos = i;
+                        scroll_sequence(t);
+                        gpio_set_gpio_pin(LED_MODE_PIN);
+                        break;
                     }
-                    editpos = i;
-                    scroll_sequence(t);
-                    gpio_set_gpio_pin(LED_MODE_PIN);
-                    break;
-                }
-                else if (val > 0)
-                {
-                    gpio_clr_gpio_pin(LED_MODE_PIN);
-                    clone_a = track[t]->s[i];
-                    clone_b = track[t]->outL[i];
-                    for (p = 0; p<n; p++)
+                    //  shift +1
+                    else if (val > 0 && len > 1)
                     {
+                        gpio_clr_gpio_pin(LED_MODE_PIN);
+                        //  copy to clone and shift
+                        for (p = 0; p<len; p++)
+                        {
+                            clone->c1[p + 1] = track[t]->s[p];
+                            clone->c2[p + 1] = track[t]->outL[p];
+                        }
+                        //  copy last to first
+                        clone->c1[0] = track[t]->s[len - 1];
+                        clone->c2[0] = track[t]->outL[len - 1];
+                        //  refill pattern and send parameter changes
+                        for (p = 0; p<len; p++)
+                        {
+                            s32 tmp = clone->c1[p];
+                            track[t]->s[p] = tmp;
+                            ctl_param_change(p, eParamSampleOffsetBId[t], sample[tmp + 1]->offset + (sample[tmp]->loop_cut));
+                            ctl_param_change(p, eParamSampleOffsetAId[t], sample[tmp]->offset + sample[tmp]->offset_cut);
+                            if (tmp == N_BUFFERS) ctl_param_change(p, eParamSetTrigId[t], 0);
+                            if (tmp != N_BUFFERS) ctl_param_change(p, eParamSetTrigId[t], 1);
+                            track[t]->outL[p] = clone->c2[p];
+                            ctl_param_change(p, eParamOutputLevelId[t], clone->c2[p]);
+                        }
+                        //  align editpos and render pattern
                         i++;
-                        if (i > track[t]->len - 1) i = 0;
-                        track[t]->s[i] = clone_a;
-                        ctl_param_change(i, eParamSampleOffsetBId[t], sample[clone_a + 1]->offset - 1);
-                        ctl_param_change(i, eParamSampleOffsetAId[t], sample[clone_a]->offset);
-                        track[t]->outL[i] = clone_b;
-                        ctl_param_change(i, eParamOutputLevelId[t], clone_b);
-                        if (clone_a == N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 0);
-                        if (clone_a != N_BUFFERS) ctl_param_change(i, eParamSetTrigId[t], 1);
+                        if (i > len - 1) i = 0;
+                        editpos = i;
+                        scroll_sequence(t);
+                        gpio_set_gpio_pin(LED_MODE_PIN);
+                        break;
                     }
-                    editpos = i;
-                    scroll_sequence(t);
-                    gpio_set_gpio_pin(LED_MODE_PIN);
-                    break;
+                    else ;
+                }
+                else if (track[t]->m == 3)
+                {
+                    //  shift -1
+                    if (val < 0 && len > 1)
+                    {
+                        gpio_clr_gpio_pin(LED_MODE_PIN);
+                        //  copy to clone and shift
+                        for (p = len - 1; p>0; --p)
+                        {
+                            clone->c1[p - 1] = track[t]->e[p];
+                            clone->c2[p - 1] = track[t]->outL[p];
+                        }
+                        //  copy first to last
+                        clone->c1[len - 1] = track[t]->e[0];
+                        clone->c2[len - 1] = track[t]->outL[0];
+                        //  refill pattern and send parameter changes
+                        for (p = 0; p<len; p++)
+                        {
+                            s32 tmp = clone->c1[p];
+                            track[t]->e[p] = tmp;
+                            if (tmp == 0) ctl_param_change(p, eParamSetTrigId[t], 0);
+                            if (tmp == 1) ctl_param_change(p, eParamSetTrigId[t], 1);
+                            track[t]->outL[p] = clone->c2[p];
+                            ctl_param_change(p, eParamOutputLevelId[t], clone->c2[p]);
+                        }
+                        //  align editpos and render pattern
+                        --i;
+                        if (i < 0) i = len - 1;
+                        editpos = i;
+                        scroll_sequence(t);
+                        gpio_set_gpio_pin(LED_MODE_PIN);
+                        break;
+                    }
+                    //  shift +1
+                    else if (val > 0 && len > 1)
+                    {
+                        gpio_clr_gpio_pin(LED_MODE_PIN);
+                        //  copy pattern to clone and shift
+                        for (p = 0; p<len; p++)
+                        {
+                            clone->c1[p + 1] = track[t]->e[p];
+                            clone->c2[p + 1] = track[t]->outL[p];
+                        }
+                        //  copy last to first
+                        clone->c1[0] = track[t]->e[len - 1];
+                        clone->c2[0] = track[t]->outL[len - 1];
+                        //  refill pattern and send parameter changes
+                        for (p = 0; p<len; ++p)
+                        {
+                            s32 tmp = clone->c1[p];
+                            track[t]->e[p] = tmp;
+                            if (tmp == 0) ctl_param_change(p, eParamSetTrigId[t], 0);
+                            if (tmp == 1) ctl_param_change(p, eParamSetTrigId[t], 1);
+                            track[t]->outL[p] = clone->c2[p];
+                            ctl_param_change(p, eParamOutputLevelId[t], clone->c2[p]);
+                        }
+                        //  align editpos and render pattern
+                        i++;
+                        if (i > len - 1) i = 0;
+                        editpos = i;
+                        scroll_sequence(t);
+                        gpio_set_gpio_pin(LED_MODE_PIN);
+                        break;
+                    }
+                    else ;
                 }
                 else ;
             }
             break;
-                        
+
+        case 3:
+            check_touch(kEventEncoder1);
+            if (touchedThis) {
+            }
+            break;
+            
         case 4:
             check_touch(kEventEncoder1);
             if (touchedThis) {
@@ -480,9 +730,7 @@ void handle_encoder_3(s32 val) {
                 tmp += val;
                 if (tmp < 0) tmp = 0;
                 if (tmp > N_TRACKS_1) tmp = N_TRACKS_1;
-//                if (i > track[t]->len - 1) i = track[t]->len - 1;
                 trkpage = tmp;
-//                editpos = i;
                 scroll_sequence(tmp);
                 render_seqtrack(tmp);
             }
@@ -550,22 +798,22 @@ void track_unmute(u8 n, u8 m) {
     //  loop
     else if(m == 2)
     {
-        ctl_param_change(DUMMY, eParamFlagId[n], 1);
+        ctl_param_change(DUMMY, eParamFlagId[n], 2);
         ctl_param_change(DUMMY, eParamCurveId[n], 2);
     }
     
     //  [amp]
     else if(m == 3)
     {
-        ctl_param_change(DUMMY, eParamFlagId[n], 0);
-        ctl_param_change(DUMMY, eParamCurveId[n], 0);
+        ctl_param_change(DUMMY, eParamFlagId[n], 2);
+        ctl_param_change(DUMMY, eParamCurveId[n], t->env);
     }
     
     //  [dly]
     else if(m == 4)
     {
         ctl_param_change(DUMMY, eParamFlagId[n], 3);
-        ctl_param_change(DUMMY, eParamCurveId[n], 4);
+        ctl_param_change(DUMMY, eParamCurveId[n], 8);
     }
     
     //  [thru]
@@ -573,7 +821,7 @@ void track_unmute(u8 n, u8 m) {
     {
         t->m = 5;
         ctl_param_change(DUMMY, eParamFlagId[n], 4);
-        ctl_param_change(DUMMY, eParamCurveId[n], 5);
+        ctl_param_change(DUMMY, eParamCurveId[n], 9);
     }
 }
 

@@ -1,13 +1,7 @@
-//
-//  page_seq.h
-//  aleph
-//
-//  Created by staffanjansson on 4/19/15.
-//
-//
+//  Created by staffanjansson on 3/21/15.
 
-#ifndef aleph_page_seq_h
-#define aleph_page_seq_h
+#ifndef _ALEPH_APP_PRGM_TRACKER_H_
+#define _ALEPH_APP_PRGM_TRACKER_H_
 
 #include "fix.h"
 #include "types.h"
@@ -20,6 +14,7 @@
 #include "render.h"
 #include "pages.h"
 
-#include "math.h"
+#include "tracker.h"
+#include "generator.h"
 
 #endif

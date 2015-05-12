@@ -12,12 +12,17 @@
 
 //static function declarations
 static prgmTrackptr alloc_track(void);
+static prgmCloneptr alloc_clone(void);
 static masterTrackptr alloc_master(void);
 
 
 //allocate one chunk of memory for each track
 prgmTrackptr alloc_track(void) {
     return(prgmTrackptr)alloc_mem(sizeof(prgmTrack));
+}
+
+prgmCloneptr alloc_clone(void) {
+    return(prgmCloneptr)alloc_mem(sizeof(prgmClone));
 }
 
 masterTrackptr alloc_master(void) {
@@ -44,6 +49,7 @@ void sq_init() {
         t->mix = 0;
         
         t->m = 0;
+        t->env = 3;
         t->mutemix = 0;
         t->mutetrk = 0;
         t->len = SQ_LEN;
@@ -55,10 +61,17 @@ void sq_init() {
         for(i=0;i<SQ_LEN;i++)
         {
             t->s[i] = 8;
-            t->outL[i] = DEFAULT_LEVEL;
+            t->e[i] = 0;
+            t->outL[i] = 0;
         }
     }
     
+    for(i=0;i<SQ_LEN;i++)
+    {
+        clone->c1[i] = 0;
+        clone->c2[i] = 0;
+    }
+
     master->output = FR32_MAX;
     master->pan1 = 0;
     master->pan2 = 0;
@@ -67,6 +80,7 @@ void sq_init() {
         
     //  global parameters
     editpos = 0;
+    samplepos = 9;
 }
 
 //init tracker: four track sequencer with separate generators
@@ -77,6 +91,8 @@ void tracker_init(void) {
     {
         track[i] = alloc_track();
     }
+    
+    clone = alloc_clone();
     
     master = alloc_master();
     

@@ -37,8 +37,8 @@ page_t pages[NUM_PAGES] = {
         .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens
     },
     
-    { .name = "GEN",
-        .select_fn = &select_gen, // select function
+    { .name = "CUT",
+        .select_fn = &select_cut, // select function
         .encSens = { 0, 0, ENC_THRESH_PAGESCROLL, ENC_THRESH_LISTSCROLL, }, // encoder sens 
     },
         

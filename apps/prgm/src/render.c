@@ -4,6 +4,8 @@
 
 #include "render.h"
 
+static void region_update(region *r);
+
 //regions
 static region bootScrollRegion = {.w = 128, .h = 64, .x = 0, .y = 0};
 static scroll bootScroll;
@@ -16,7 +18,7 @@ static scroll seqScroll;
 static const u8 numRegions_trk = 12;
 static const u8 numRegions_mix = 6;
 static const u8 numRegions_seq = 4;
-static const u8 numRegions_gen = 12;
+static const u8 numRegions_cut = 10;
 
 static region trk[12] = {
     {.w=32, .h=8, .x = 64, .y = 56},    //0 track
@@ -84,35 +86,32 @@ static region *seqRegions[] = {
     &(seq[3]),
 };
 
-static region gn[12] = {
-    {.w=64, .h=8, .x = 0, .y = 0},      //0 gen
-    {.w=64, .h=8, .x = 64, .y = 0},     //1 gen type
-    {.w=64, .h=8, .x = 0, .y = 8},      //2 lo
-    {.w=64, .h=8, .x = 64, .y = 8},     //3 hi
-    {.w=64, .h=8, .x = 0, .y = 16},     //4 rate
-    {.w=64, .h=8, .x = 64, .y = 16},    //5 att
-    {.w=64, .h=8, .x = 0, .y = 24},     //6 dens
-    {.w=64, .h=8, .x = 64, .y = 24},    //7 dur
-    {.w=64, .h=16, .x = 0, .y = 32},    //8 destination
-    {.w=64, .h=16, .x = 64, .y = 32},   //9 value
+static region cut[10] = {
+    {.w=64, .h=8, .x = 0, .y = 0},      //0 "offset"
+    {.w=64, .h=8, .x = 64, .y = 0},     //1 "loop"
+    {.w=64, .h=16, .x = 0, .y = 8},     //2 offset_cut
+    {.w=64, .h=8, .x = 64, .y = 8},     //3 loop_cut
+    {.w=64, .h=8, .x = 64, .y = 16},    //4 length
     
-    {.w=64, .h=8, .x = 0, .y = 48},     //10 track
-    {.w=64, .h=8, .x = 64, .y = 48},    //11 step
+    {.w=64, .h=8, .x = 0, .y =  24},    //5 "pos"
+    {.w=64, .h=8, .x = 64, .y = 24},    //6 sample position
+    {.w=64, .h=32, .x = 0, .y =  32},   //7 "sample"
+    {.w=64, .h=24, .x = 64, .y = 32},   //8 sample name
+    
+    {.w=64, .h=8, .x = 64, .y = 56},    //9 app version
 };
 
-static region *genRegions[12] = {
-    &(gn[0]),
-    &(gn[1]),
-    &(gn[2]),
-    &(gn[3]),
-    &(gn[4]),
-    &(gn[5]),
-    &(gn[6]),
-    &(gn[7]),
-    &(gn[8]),
-    &(gn[9]),
-    &(gn[10]),
-    &(gn[11]),
+static region *cutRegions[10] = {
+    &(cut[0]),
+    &(cut[1]),
+    &(cut[2]),
+    &(cut[3]),
+    &(cut[4]),
+    &(cut[5]),
+    &(cut[6]),
+    &(cut[7]),
+    &(cut[8]),
+    &(cut[9]),
 };
 
 //initialization, called by app_init()
@@ -135,13 +134,13 @@ void render_init(void) {
     for(i = 0; i<numRegions_seq; i++) {
         region_alloc((region*)(seqRegions[i]));
     }
-    for(i = 0; i<numRegions_gen; i++) {
-        region_alloc((region*)(genRegions[i]));
+    for(i = 0; i<numRegions_cut; i++) {
+        region_alloc((region*)(cutRegions[i]));
     }
 }
 
 void render_startup (void) {
-    trkpage = 0;
+    trkpage = N_TRACKS_1;
     screen_clear();
     set_page(ePageMix);
     render_mix();
@@ -160,20 +159,16 @@ extern void render_boot(const char *str) {
     //  first kind of dim the old stuff in the scroll region
     for(i=0; i<bootScroll.reg->len; i++)
     {
-        if(*p > 0x4)
+        if(*p > 0x1)
         {
-            *p = 0x4;
+            *p = 0x1;
         }
         p++;
     }
     scroll_string_front(&bootScroll, (char*)str);
     region_update(bootScroll.reg);
 }
-/*
-void render_boot(const char* str) {
-    scroll_string_front(&bootScroll, (char*)str);
-}
-*/
+
 void render_update(void) {
     region *r;
     u8 i;
@@ -212,8 +207,8 @@ void render_update(void) {
         }
     }
     
-    for(i = 0; i<numRegions_gen; i++) {
-        r = genRegions[i];
+    for(i = 0; i<numRegions_cut; i++) {
+        r = cutRegions[i];
         if(r->dirty) {
             screen_draw_region(r->x, r->y, r->w, r->h, r->data);
             r->dirty = 0;
@@ -229,6 +224,7 @@ static void render_trk_name(u8 region, s32 name);
 static void render_trk_input(u8 region, s32 input);
 static void render_trk_mode(u8 region, s32 mode);
 static void render_trk_param(u8 track, u8 mode);
+static void render_amp_envelope(u8 region, s32 env);
 
 void render_trk(void) {
     u8 i;
@@ -289,11 +285,11 @@ void render_trk_name(u8 region, s32 name) {
 void render_trk_mode(u8 region, s32 mode) {
     static char *nameptr[] = {
         "off",              //0
-        "trig",             //1 trig
-        "loop",             //2 loop
-        "[amp]*",           //3 [amp]
-        "[dly]",            //4 [dly]
-        "[thru]"            //5 [bp]
+        "trig",             //1
+        "loop",             //2
+        "[amp]",            //3
+        "[dly]",            //4
+        "[thru]"            //5
     };
     
     region_fill(&trk[region], 0x0);
@@ -355,6 +351,8 @@ void render_trk_param(u8 t, u8 m) {
             
             //amp
         case 3:
+            region_string(&trk[8], "envelope", 0, 0, 0xf, 0, 0);
+            render_amp_envelope(9, (track[t]->env - 3));
             break;
             
             //dly
@@ -379,6 +377,20 @@ void render_trk_param(u8 t, u8 m) {
             break;
     }
 }
+
+void render_amp_envelope(u8 region, s32 env) {
+    static char *envptr[] = {
+        "lindec",           //0
+        "expodec",          //1
+        "Rexpodec",         //2
+        "tri",              //3
+        "gauss*"            //4        
+    };
+    
+    region_fill(&trk[region], 0x0);
+    region_string(&trk[region], envptr[env], 0, 0, 0xf, 0, 0);
+}
+
 
 //draw mix page
 static void render_direct_output(u8 region, s32 output);
@@ -427,6 +439,7 @@ void render_direct_output(u8 region, s32 output) {
 static void render_line(u8 track, s32 editpos);
 static void redraw_rows(void);
 static void render_to_scroll_line(u8 offset);
+static void render_env_name(s32 name);
 
 static void clearln( void);
 static void appendln_idx_lj(u16 val);
@@ -452,13 +465,8 @@ static u32 scrollLines[7] = {
 void render_seq_name(u8 region, s32 name);
 
 void render_seq(void) {
-    u8 i;
-    u8 t = trkpage;
-    for(i = 0; i<numRegions_seq; i++) {
-        region_fill(&seq[i], 0x0);
-    }    
-    scroll_sequence(t);
-    render_seqtrack(t);
+    scroll_sequence(trkpage);
+    render_seqtrack(trkpage);
 }
 
 void scroll_sequence(u8 t) {
@@ -477,7 +485,9 @@ void render_line(u8 t, s32 i) {
         font_string_region_clip(&lineRegion, lineBuf, 0, 0, 0xf, 0);
         
         clearln();
-        appendln(sample_name[track[t]->s[i]-8]);
+        if (track[t]->m == 1) appendln(sample_name[track[t]->s[i]-8]);
+        if (track[t]->m == 2) appendln(sample_name[track[t]->s[i]-8]);
+        if (track[t]->m == 3) render_env_name(track[t]->e[i]);
         endln();
         font_string_region_clip(&lineRegion, lineBuf, LINE_VAL_POS_PARAM1, 0, 0xf, 0);
         
@@ -495,7 +505,9 @@ void render_line(u8 t, s32 i) {
         font_string_region_clip(&lineRegion, lineBuf, 0, 0, 0x7, 0);
         
         clearln();
-        appendln(sample_name[track[t]->s[i]-8]);
+        if (track[t]->m == 1) appendln(sample_name[track[t]->s[i]-8]);
+        if (track[t]->m == 2) appendln(sample_name[track[t]->s[i]-8]);
+        if (track[t]->m == 3) render_env_name(track[t]->e[i]);
         endln();
         font_string_region_clip(&lineRegion, lineBuf, LINE_VAL_POS_PARAM1, 0, 0x7, 0);
         
@@ -563,9 +575,6 @@ inline void clearln(void) {
 
 // append int to line buffer
 inline void appendln_idx_lj(u16 val) {
-#if 0
-    pline = atoi_idx(pline, val);
-    #else
     u16 dig = 0;
     u16 rem = 0;
     // 3 digits only
@@ -583,7 +592,6 @@ inline void appendln_idx_lj(u16 val) {
     
     *pline = '0' + rem;
     ++pline;
-    #endif
 }
 
 // append to line buffer
@@ -597,6 +605,15 @@ inline void appendln(const char* str) {
 
 inline void endln(void) {
     *(pline) = '\0';
+}
+
+void render_env_name(s32 name) {
+    static char *nameptr[] = {
+        "-",
+        "sync T"
+    };
+    
+    appendln(nameptr[name]);
 }
 
 void render_seq_name(u8 region, s32 name) {
@@ -624,7 +641,7 @@ void render_seqtrack(u8 t) {
         endln();
         font_string_region_clip(&seq[1], lineBuf, 0, 0, 0xf, 0);
         seq[1].dirty = 1;
-        
+
         clearln();
         appendln_idx_lj((u8)track[t]->len);
         endln();
@@ -640,179 +657,37 @@ void render_seqtrack(u8 t) {
 }
 
 
-//draw gen page
-static void render_gsdestname(u8 destination);
-static void render_gsname(u8 genpos);
-static void render_dstmode(s32 mode);
-
-void render_gen(void) {
-//    region_string(&gn[0], renderGenPos, 0, 0, 0xf, 0, 0);
-//    render_gsname(gen->g[genpos]);
+//draw cut page
+void render_cut(void) {
+    u8 i;
+    const u8 s = samplepos;
     
-    region_string(&gn[2], renderEnvPhase, 0, 0, 0xf, 0, 0);
-    region_string(&gn[3], renderEnvFreq, 0, 0, 0xf, 0, 0);
-
-    region_string(&gn[4], renderEnvRate, 0, 0, 0xf, 0, 0);
-    region_string(&gn[5], renderEnvAtten, 0, 0, 0xf, 0, 0);
-
-    region_string(&gn[6], renderGenDens, 0, 0, 0xf, 0, 0);
-    region_string(&gn[7], renderGenDur, 0, 0, 0xf, 0, 0);
-    
-    render_gsdest(gen->gD[genpos]);
-
-    render_gstrackname(trackpos);    
-    region_string(&gn[11], renderEditPos, 0, 0, 0xf, 0, 0);
-}
-
-void render_gen_param(u8 p) {
-//    render_gsname(gen->g[p]);
-    region_string(&gn[2], renderEnvPhase, 0, 0, 0xf, 0, 0);
-    region_string(&gn[3], renderEnvFreq, 0, 0, 0xf, 0, 0);
-    region_string(&gn[4], renderEnvRate, 0, 0, 0xf, 0, 0);
-    region_string(&gn[5], renderEnvAtten, 0, 0, 0xf, 0, 0);
-    region_string(&gn[6], renderGenDens, 0, 0, 0xf, 0, 0);
-    region_string(&gn[7], renderGenDur, 0, 0, 0xf, 0, 0);
-}
-
-void render_gsname(u8 g) {
-    static char *genptr[] = {
-        "halfsine",
-        "gaussian", //gaussian
-        "qausi-gauss", //quasi-gauss
-        "ramp", //trapezoid
-        "tri", //triangular
-        "sinc", //sinc
-        "expodec", //expodec
-        "Rexpodec", //Rexpodec
-        "lindec",
-        "Rlindec"
-    };
-    
-    region_fill(&gn[1], 0x0);
-    region_string(&gn[1], genptr[g], 0, 0, 0xf, 0, 0);
-}
-
-void render_gstrackname(u8 t) {
-    static char *trackptr[] = {
-        "TRACK 1",
-        "TRACK 2",
-        "TRACK 3",
-        "TRACK 4",
-        "TRACK 5",
-        "TRACK 6",
-        "TRACK 7",
-        "TRACK 8"
-    };
-    
-    region_fill(&gn[10], 0x0);
-    region_string(&gn[10], trackptr[t], 0, 0, 0xf, 0, 0);
-}
-
-void render_gsdestname(u8 d) {
-    static char *dstptr[] = {
-        "TRIG",
-        "TIME",
-        "MODE",
-        "SAMPLE",
-        "OFFSET A",
-        "OFFSET B",
-        "LEVEL",
-        "FREQUENCY"
-    };
-    
-    region_fill(&gn[8], 0x0);
-    region_string(&gn[8], dstptr[d], 0, 0, 0xf, 0, 0);
-}
-
-void render_dstmode(s32 mode) {
-    static char *nameptr[] = {
-        "OFF",              //0
-        "TRIG",             //1
-        "GATE",             //2
-        "*",                //3 TCD
-        "wav",              //4
-        "noise",            //5
-        "play",             //6
-        "rec",              //7
-        "TRIGrec",          //8
-        "*",                //9 [bp]
-        "[delay]",          //10
-        "*",                //11 [bp->fb(loop)]
-        "*",                //12 [fb(loop->bp)]
-        "*",                //13 [fb(rvb)]
-        "*",                //14 [rvb->bp]
-        "*",                //15 [3bp]
-        "[insert mix]",     //16
-        "[aux master]",     //17
-        "<LEN>",            //18
-        "*"                 //19 <EXT>
-    };
-    
-    region_string(&gn[9], nameptr[mode], 0, 0, 0xf, 0, 0);
-}
-
-void render_gsdest(u8 d) {
-    u8 t = trackpos;
-    render_gsdestname(d);
-    
-    //trig
-    if (d == 0)
-    {
-        region_fill(&gn[9], 0x0);
-//        print_fix16(renderTrig[t], track[t]->cTG[editpos]);
-        region_string(&gn[9], renderTrig[t], 0, 0, 0xf, 0, 0);
+    for(i = 0; i<numRegions_cut; i++) {
+        region_fill(&cut[i], 0x0);
     }
     
-    //time
-    else if (d == 1)
-    {
-        region_fill(&gn[9], 0x0);
-//        print_fix16(renderTime[t], track[t]->cT[editpos]);
-        region_string(&gn[9], renderTime[t], 0, 0, 0xf, 0, 0);
-    }
+    region_string(&cut[0], "offset", 0, 0, 0xf, 0, 0);    
+    region_string(&cut[1], "loop", 0, 0, 0xf, 0, 0);
     
-    //mode
-    else if (d == 2)
-    {
-        region_fill(&gn[9], 0x0);
-        render_dstmode(track[t]->m);
-    }
+    print_fix16(renderOffsetCut, sample[s]->offset_cut);
+    region_string(&cut[2], renderOffsetCut, 0, 0, 0xf, 0, 0);
     
-    //wav
-    else if (d == 3)
-    {
-        region_fill(&gn[9], 0x0);
-        region_string(&gn[9], sample_name[track[t]->s[editpos]-8], 0, 0, 0xf, 0, 0);
-    }
-    
-    //offsetA
-    else if (d == 4)
-    {
-        region_fill(&gn[9], 0x0);
-    }
-    
-    //offsetB
-    else if (d == 5)
-    {
-        region_fill(&gn[9], 0x0);
-    }
-    
-    //level
-    else if (d == 6)
-    {
-        region_fill(&gn[9], 0x0);
-    }
-    
-    //frequency
-    else if (d == 7)
-    {
-        region_fill(&gn[9], 0x0);
-    }
-    
-    else ;
-}
+    print_fix16(renderLoopCut, sample[s]->loop_cut);
+    region_string(&cut[3], renderLoopCut, 0, 0, 0xf, 0, 0);
 
-void render_gscounters(void) {
-    region_string(&gn[0], renderGenPos, 0, 0, 0xf, 0, 0);
-    region_string(&gn[11], renderEditPos, 0, 0, 0xf, 0, 0);
+    print_fix16(renderSampleLoop, (sample[s]->loop - sample[s]->offset_cut + (sample[s]->loop_cut)));
+    region_string(&cut[4], renderSampleLoop, 0, 0, 0xf, 0, 0);
+
+    region_string(&cut[5], "pos", 0, 0, 0xf, 0, 0);
+    
+    region_fill(&cut[6], 0x0);
+    clearln();
+    appendln_idx_lj((u8)(sample[s]->num-8));
+    endln();
+    font_string_region_clip(&cut[6], lineBuf, 0, 0, 0xf, 0);
+    
+    region_string(&cut[7], "sample", 0, 0, 0xf, 0, 0);
+    region_string(&cut[8], sample_name[s-8], 0, 0, 0xf, 0, 0);
+
+    region_string(&cut[9], "     [prgm 0.0.8]", 0, 0, 0x1, 0, 0);
 }

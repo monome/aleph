@@ -1,9 +1,9 @@
-//prgm.c
+//page_param.c
 //aleph-prgm-avr32
 
-#include "page_mix.h"
+#include "page_cut.h"
 
-//static functions
+//handler function declarations
 static inline void handle_sw(u8 id, u8 b);
 static void handle_switch_0(s32 data);
 static void handle_switch_1(s32 data);
@@ -11,24 +11,27 @@ static void handle_switch_2(s32 data);
 static void handle_switch_3(s32 data);
 static void handle_switch_4(s32 data);
 
+static inline u8 check_touch(etype et);
 static void handle_encoder_0(s32 val);
 static void handle_encoder_1(s32 val);
 static void handle_encoder_2(s32 val);
 static void handle_encoder_3(s32 val);
 
+static s32 knob_accel(s32 inc);
+
 
 //handler variables
-static etype touched = kNumEventTypes; //total number as defined in event_types.h
+static etype touched = kNumEventTypes;
 static u8 touchedThis = 0;
 static u8 state_sw;
 
-static inline u8 check_touch(etype et) {
+u8 check_touch(etype et) {
     if(touched != et) {
         touchedThis = 1;
         touched = et;
     }
     return touchedThis;
-}    
+}
 
 void handle_sw(u8 id, u8 b) {
     if(b) {
@@ -37,6 +40,20 @@ void handle_sw(u8 id, u8 b) {
     else if (!b) {
         state_sw = 0;
     }
+}
+
+s32 knob_accel(s32 inc) {
+    s32 incAbs = inc < 0 ? inc * -1 : inc;
+    if(incAbs < 2) {
+        return inc;
+    }
+    if(incAbs < 8) {
+        return inc << 1;
+    }
+    if(incAbs < 32) {
+        return inc << 4;
+    }
+    return inc << 8;
 }
 
 void handle_switch_0(s32 data) {
@@ -52,22 +69,15 @@ void handle_switch_2(s32 data) {
     
     if(state_sw == 3)
     {
-        set_page(ePageCut);
-        render_cut();
+        set_page(ePageMix);
+        render_mix();
+        handle_switch_0(0);
     }
-    
+    else ;;
 }
 
 void handle_switch_3(s32 data) {
     handle_sw(4, data > 0);
-    
-    if(state_sw == 4)
-    {
-        gpio_clr_gpio_pin(LED_MODE_PIN);
-        //  reset all patterns to step 1
-        ctl_param_change(DUMMY, eParamCounter, 0);
-        gpio_set_gpio_pin(LED_MODE_PIN);
-    }
 }
 
 void handle_switch_4(s32 data) {
@@ -76,28 +86,24 @@ void handle_switch_4(s32 data) {
 
 void handle_encoder_0(s32 val) {
     s32 tmp;
+    const u8 s = samplepos;
     switch (state_sw) {
         case 0:
+            //  offset cut
             check_touch(kEventEncoder3);
             if (touchedThis) {
-                tmp = master->pan1;
-                tmp += val * 4194304;
-                master->pan1 = tmp;
-                ctl_param_change(DUMMY, eParamAux1PanL, sub_fr1x32(FR32_MAX, tmp));
-                ctl_param_change(DUMMY, eParamAux1PanR, tmp);
-                render_mix();
+                tmp = sample[s]->offset_cut;
+                tmp += knob_accel(val);
+                if (tmp < 0) tmp = 0;
+                if (tmp > sample[s]->loop + (sample[s]->loop_cut) - LOOP_MIN) tmp = sample[s]->loop + (sample[s]->loop_cut) - LOOP_MIN;
+                sample[s]->offset_cut = tmp;
+                render_cut();
             }
             break;
-            
+                    
         case 1:
             check_touch(kEventEncoder3);
             if (touchedThis) {
-                tmp = master->pan2;
-                tmp += val * 4194304;
-                master->pan2 = tmp;
-                ctl_param_change(DUMMY, eParamAux2PanL, sub_fr1x32(FR32_MAX, tmp));
-                ctl_param_change(DUMMY, eParamAux2PanR, tmp);
-                render_mix();
             }
             break;
             
@@ -118,7 +124,7 @@ void handle_encoder_0(s32 val) {
             if (touchedThis) {
             }
             break;
-
+            
         default:
             break;
     }
@@ -126,29 +132,26 @@ void handle_encoder_0(s32 val) {
 
 void handle_encoder_1(s32 val) {
     s32 tmp;
+    const u8 s = samplepos;
     switch (state_sw) {
         case 0:
             check_touch(kEventEncoder2);
             if (touchedThis) {
-                tmp = master->output;
-                tmp += val * 4194304;
-                if (tmp < 0) tmp = 0;
-                master->output = tmp;
-                ctl_param_change(DUMMY, eParamMaster, tmp);
-                render_mix();
+                //  loop cut
+                tmp = sample[s]->loop_cut;
+                tmp += knob_accel(val);
+                //  sample length boundary
+                if (sample[s]->loop + (tmp) > sample[s]->loop) tmp = 0;
+                //  loop length boundary
+                if (sample[s]->loop + (tmp) < sample[s]->offset_cut + LOOP_MIN) tmp = -(sample[s]->loop - (sample[s]->offset_cut + LOOP_MIN));
+                sample[s]->loop_cut = tmp;
+                render_cut();
             }
             break;
             
         case 1:
             check_touch(kEventEncoder2);
             if (touchedThis) {
-                tmp = master->out3;
-                tmp += val;
-                if (tmp < 0) tmp = 0;
-                if (tmp > N_DIROUTS_1) tmp = N_DIROUTS_1;
-                master->out3 = tmp;
-                ctl_param_change(DUMMY, eParamDirectOut3, tmp);
-                render_mix();
             }
             break;
             
@@ -177,12 +180,13 @@ void handle_encoder_1(s32 val) {
 
 void handle_encoder_2(s32 val) {
     switch (state_sw) {
-        case 0: 
+        case 0:
+            //  offset cut
             check_touch(kEventEncoder1);
             if (touchedThis) {
             }
             break;
-
+    
         case 1:
             check_touch(kEventEncoder1);
             if (touchedThis) {
@@ -195,12 +199,6 @@ void handle_encoder_2(s32 val) {
             }
             break;
             
-        case 3:
-            check_touch(kEventEncoder1);
-            if (touchedThis) {
-            }
-            break;
-
         case 4:
             check_touch(kEventEncoder1);
             if (touchedThis) {
@@ -216,38 +214,21 @@ void handle_encoder_3(s32 val) {
     s32 tmp;
     switch (state_sw) {
         case 0:
+            //  sample position
             check_touch(kEventEncoder0);
             if (touchedThis) {
-                tmp = 0;
+                tmp = samplepos;
                 tmp += val;
-                if (tmp < 0)
-                {
-                    tmp = 0;
-                    set_page(ePageTrk);
-                    render_trk();
-                    break;
-                }
-                if (tmp > 0)
-                {
-                    tmp = 0;
-                    set_page(ePageMix);
-                    render_mix();
-                    handle_switch_0(0);
-                    break;
-                }
+                if (tmp < N_BUFFERS + 1) tmp = N_BUFFERS + 1;
+                if (tmp > n_samples - 1) tmp = n_samples - 1;
+                samplepos = tmp;
+                render_cut();
             }
             break;
             
         case 1:
             check_touch(kEventEncoder0);
             if (touchedThis) {
-                tmp = master->out4;
-                tmp += val;
-                if (tmp < 0) tmp = 0;
-                if (tmp > N_DIROUTS_1) tmp = N_DIROUTS_1;
-                master->out4 = tmp;
-                ctl_param_change(DUMMY, eParamDirectOut4, tmp);
-                render_mix();
             }
             break;
             
@@ -256,13 +237,7 @@ void handle_encoder_3(s32 val) {
             if (touchedThis) {
             }
             break;
-
-        case 3:
-            check_touch(kEventEncoder0);
-            if (touchedThis) {
-            }
-            break;
-
+            
         case 4:
             check_touch(kEventEncoder0);
             if (touchedThis) {
@@ -274,15 +249,15 @@ void handle_encoder_3(s32 val) {
     }
 }
 
-void select_mix(void) {
-//assign prgm handlers
-    app_event_handlers[ kEventEncoder0 ]	= &handle_encoder_0 ;
-    app_event_handlers[ kEventEncoder1 ]	= &handle_encoder_1 ;
-    app_event_handlers[ kEventEncoder2 ]	= &handle_encoder_2 ;
-    app_event_handlers[ kEventEncoder3 ]	= &handle_encoder_3 ;
-    app_event_handlers[ kEventSwitch0 ]     = &handle_switch_0 ;
-    app_event_handlers[ kEventSwitch1 ]     = &handle_switch_1 ;
-    app_event_handlers[ kEventSwitch2 ]     = &handle_switch_2 ;
-    app_event_handlers[ kEventSwitch3 ]     = &handle_switch_3 ;
-    app_event_handlers[ kEventSwitch4 ]     = &handle_switch_4 ;
+void select_cut(void) {
+//assign tracker handlers
+    app_event_handlers[ kEventEncoder0 ] = &handle_encoder_0 ;
+    app_event_handlers[ kEventEncoder1 ] = &handle_encoder_1 ;
+    app_event_handlers[ kEventEncoder2 ] = &handle_encoder_2 ;
+    app_event_handlers[ kEventEncoder3 ] = &handle_encoder_3 ;
+    app_event_handlers[ kEventSwitch0 ] = &handle_switch_0 ;
+    app_event_handlers[ kEventSwitch1 ] = &handle_switch_1 ;
+    app_event_handlers[ kEventSwitch2 ] = &handle_switch_2 ;
+    app_event_handlers[ kEventSwitch3 ] = &handle_switch_3 ;
+    app_event_handlers[ kEventSwitch4 ] = &handle_switch_4 ;
 }

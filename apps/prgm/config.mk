@@ -21,11 +21,10 @@ CSRCS += \
 	$(APP_DIR)/src/page_trk.c \
 	$(APP_DIR)/src/page_mix.c \
 	$(APP_DIR)/src/page_seq.c \
-	$(APP_DIR)/src/page_gen.c \
+	$(APP_DIR)/src/page_cut.c \
 	$(APP_DIR)/src/pages.c \
 	$(APP_DIR)/src/render.c \
 	$(APP_DIR)/src/tracker.c \
-	$(APP_DIR)/src/generator.c \
     $(APP_DIR)/src/util.c
 
 # List of assembler source files.

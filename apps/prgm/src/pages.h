@@ -34,7 +34,7 @@ typedef enum {
     ePageTrk,
     ePageMix,
     ePageSeq,
-    ePageGen
+    ePageCut
 } ePage;
 
 // function pointers for input handling on a given page
@@ -62,7 +62,7 @@ typedef struct page_struct {
 extern void render_trk(void);
 extern void render_mix(void);
 extern void render_seq(void);
-extern void render_gen(void);
+extern void render_cut(void);
 
 //-----------------------
 //--- extern variables
@@ -84,13 +84,13 @@ extern u8 altMode;
 extern void select_trk(void);
 extern void select_mix(void);
 extern void select_seq(void);
-extern void select_gen(void);
+extern void select_cut(void);
 
 //page redraw
 extern void redraw_trk(void);
 extern void redraw_mix(void);
 extern void redraw_seq(void);
-extern void redraw_gen(void);
+extern void redraw_cut(void);
 
 //----- public functions
 // init all pages

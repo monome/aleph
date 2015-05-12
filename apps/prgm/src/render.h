@@ -22,7 +22,7 @@
 #include "pages.h"
 #include "page_mix.h"
 #include "page_seq.h"
-#include "page_gen.h"
+#include "page_cut.h"
 
 #include "tracker.h"
 #include "generator.h"
@@ -73,16 +73,7 @@ extern void render_mixtrack(u8 region_a, u8 region_b, u8 region_c, u8 track, u8 
 extern void scroll_sequence(u8 track);
 extern void render_seqtrack(u8 track);
 
-//page GEN
-extern void render_gen_param(u8 genpos);
-
-extern void render_gstrackname(u8 track);
-extern void render_gsdest(u8 destination);
-extern void render_gscounters(void);
-
-extern void region_gstrig(u8 track);
-extern void region_gstime(u8 track);
-
+//MISC
 extern void render_sample(u8 region, s32 sample);
 
 extern void render_param(void);
@@ -106,9 +97,6 @@ extern void render_modes(u8 i);
 extern void render_aux_env(u8 track);
 extern void render_steplength_env(u8 pos);
 extern void render_counters_env(void);
-
-
-
 
 #endif
 

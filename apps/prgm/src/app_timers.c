@@ -40,37 +40,33 @@ static softTimer_t customPollTimer = { .next = NULL, .prev = NULL };
 
 //adc polling callback
 static void adc_poll_timer_callback(void *obj) {
-    //    static const int state = 0;
     static const int threshold = 50;
-    //    static const u16 previous_value = 65000;
     
     adc_convert(&adc);
     u16 i = adc[0];
     s16 diff = i - previous_value;
     
-    if (state == 0) {
-        // Wait for trig
-        
-        if (diff > threshold) {
-            // Trig found
+    if (state == 0)
+    {
+        //  wait for trig
+        if (diff > threshold)
+        {
+            //  trig found
             e.type = kEventAdc0;
             e.data = 1;
-            event_post(&e);
-            
-            //bfin_set_trig(); moved to handler.c!!!
+            event_post(&e);            
             state = 1;
         }
         
-    } else {
-        // Wait for end of trig
-        
-        if (diff < -threshold) {
-            // Trig found
+    } else
+    {
+        //  wait for end of trig        
+        if (diff < -threshold)
+        {
+            //  end of trig found
             state = 0;
         }
-        
     }
-    
     previous_value = i;
 }
 

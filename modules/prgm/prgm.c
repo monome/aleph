@@ -83,7 +83,7 @@ void init_sq_parameters(prgmSq *sq) {
         sq->tg[i] = 0;
         sq->a[i] = 0;
         sq->b[i] = 0;
-        sq->l[i] = DEFAULT_LEVEL;
+        sq->l[i] = 0;
     }
 }
 
@@ -95,7 +95,7 @@ PrgmTrackptr init_track(void) {
 void init_track_parameters(prgmTrack *t) {
     t->flag = 0;
     t->process = get_processptr(0);
-    t->output = DEFAULT_LEVEL;
+    t->output = 0;
     t->uP = 512;
     t->sP = 0;
     
@@ -314,13 +314,14 @@ fract32 pf_delay(prgmTrack *t) {
     return t->envAmp.curve(&(t->envAmp));
 }
 
-//process 3: thru
+//process 4: thru
 fract32 pf_thru(prgmTrack *t) {
     return t->envAmp.curve(&(t->envAmp));
 }
 
 void track_set_output(prgmTrack *t, fract32 out) {
     t->output = out;
+    env_tcd_set_decay(&(t->envAmp), out);
 }
 
 //direct outs

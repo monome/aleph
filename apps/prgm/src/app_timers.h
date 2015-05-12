@@ -24,7 +24,6 @@
 #include "ctl.h"
 #include "files.h"
 #include "tracker.h"
-#include "generator.h"
 
 //mode led ctrl
 #include "gpio.h"

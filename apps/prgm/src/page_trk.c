@@ -300,6 +300,8 @@ void handle_switch_4(s32 data) {
     
     if(state_sw == 5)
     {
+        //  move editpos in case outside range
+//        if (editpos > track[trkpage]->len) editpos = track[trkpage]->len;
         set_page(ePageSeq);
         render_seq();
     }
@@ -422,7 +424,6 @@ void handle_encoder_1(s32 val) {
 void handle_encoder_2(s32 val) {
     s32 tmp;
     u8 t = trkpage;
-    u32 i = editpos;
     switch (state_sw) {
         case 0: //mode parameter 1
             check_touch(kEventEncoder1);
@@ -430,7 +431,18 @@ void handle_encoder_2(s32 val) {
                 if (track[t]->m == 0) ;
                 else if (track[t]->m == 1) ;
                 else if (track[t]->m == 2) ;
-                else if (track[t]->m == 3) ;
+                //  [amp]
+                else if (track[t]->m == 3)
+                {
+                    tmp = track[t]->env;
+                    tmp += val;
+                    if (tmp < 3) tmp = 3;
+                    if (tmp > 7) tmp = 7;
+                    track[t]->env = tmp;
+                    ctl_param_change(DUMMY, eParamCurveId[t], tmp);
+                    render_track(t);                    
+                }
+                //  [dly]
                 else if (track[t]->m == 4)
                 {
                     tmp = track[t]->uP;
@@ -515,7 +527,7 @@ void handle_encoder_3(s32 val) {
                     trkpage = N_TRACKS_1;
                     set_page(ePageMix);
                     render_mix();
-                    handle_switch_3(0);
+                    handle_switch_0(0);
                     break;
                 }
             }
@@ -597,7 +609,7 @@ void set_mode(u8 n, u8 m) {
         t->s[editpos] = 8;
         ctl_param_change(editpos, eParamSampleOffsetBId[n], sample[9]->offset);
         ctl_param_change(editpos, eParamSampleOffsetAId[n], sample[8]->offset);
-        ctl_param_change(DUMMY, eParamFlagId[n], 1);
+        ctl_param_change(DUMMY, eParamFlagId[n], 2);
         ctl_param_change(DUMMY, eParamCurveId[n], 2);
         ctl_param_change(DUMMY, eParamTrigId[n], DUMMY);
     }
@@ -606,8 +618,9 @@ void set_mode(u8 n, u8 m) {
     else if(m == 3)
     {
         t->m = 3;
-        ctl_param_change(DUMMY, eParamFlagId[n], 0);
-        ctl_param_change(DUMMY, eParamCurveId[n], 0);
+        ctl_param_change(DUMMY, eParamFlagId[n], 2);
+        //  default envelope: lindec
+        ctl_param_change(DUMMY, eParamCurveId[n], 3);
     }
 
     //  [dly]
@@ -617,7 +630,7 @@ void set_mode(u8 n, u8 m) {
         ctl_param_change(DUMMY, eParamOffsetBId[n], sample[n+1]->offset);
         ctl_param_change(DUMMY, eParamOffsetAId[n], sample[n]->offset);
         ctl_param_change(DUMMY, eParamFlagId[n], 3);
-        ctl_param_change(DUMMY, eParamCurveId[n], 4);
+        ctl_param_change(DUMMY, eParamCurveId[n], 8);
         ctl_param_change(DUMMY, eParamTrigId[n], DUMMY);
     }
         
@@ -626,7 +639,7 @@ void set_mode(u8 n, u8 m) {
     {
         t->m = 5;
         ctl_param_change(DUMMY, eParamFlagId[n], 4);
-        ctl_param_change(DUMMY, eParamCurveId[n], 5);
+        ctl_param_change(DUMMY, eParamCurveId[n], 9);
     }
         
     else ;

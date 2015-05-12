@@ -9,7 +9,11 @@ static fract32 (*env_tcd_get_inputptr(u8 n))();
 static fract32 env_tcd_off(env_tcd *env);
 static fract32 env_tcd_trig(env_tcd *env);
 static fract32 env_tcd_loop(env_tcd *env);
-static fract32 env_tcd_amp(env_tcd *env);
+static fract32 env_tcd_lindec(env_tcd *env);
+static fract32 env_tcd_expodec(env_tcd *env);
+static fract32 env_tcd_Rexpodec(env_tcd *env);
+static fract32 env_tcd_tri(env_tcd *env);
+static fract32 env_tcd_gauss(env_tcd *env);
 static fract32 env_tcd_delay(env_tcd *env);
 static fract32 env_tcd_thru(env_tcd *env);
 
@@ -47,6 +51,11 @@ void env_tcd_init(env_tcd *env) {
     env->input = env_tcd_get_inputptr(0);
     env->inL = FR32_MAX;
     env->hdF = 0;
+    env->env = 0;
+    env->mu = 0;
+    env->decay = 0;
+    env->offset = 0;
+    env->inc.i = 0;
     env->trig = 0;
     env->state = 0;
 }
@@ -59,9 +68,13 @@ static fract32 (*env_tcd_get_curveptr(u8 n))() {
         env_tcd_off,            //0
         env_tcd_trig,           //1
         env_tcd_loop,           //2
-        env_tcd_amp,            //3
-        env_tcd_delay,          //4
-        env_tcd_thru,           //5
+        env_tcd_lindec,         //3
+        env_tcd_expodec,        //4
+        env_tcd_Rexpodec,       //5
+        env_tcd_tri,            //6
+        env_tcd_gauss,          //7
+        env_tcd_delay,          //8
+        env_tcd_thru,           //9
     };
 
     return (n < 1 || n > N_CURVES) ? *curves[0] : *curves[n];
@@ -148,6 +161,12 @@ void env_tcd_set_loop(env_tcd *env, u32 offset) {
 }
 
 
+//set decay
+extern void env_tcd_set_decay(env_tcd *env, s32 decay) {
+    env->decay = decay;
+}
+
+
 //trig curve
 void env_tcd_set_trig(env_tcd *env) {
     env->trig = 1;
@@ -182,28 +201,108 @@ fract32 env_tcd_trig(env_tcd *env) {
     }
 }
 
+//return add_fr1x32( a, mult_fr1x32x32( c, sub_fr1x32(b, a)));
+
 //track: wav loop
 fract32 env_tcd_loop(env_tcd *env) {
     if (env->trig)
     {
         env->trig = 0;
+        env->mu = 0;
         env->head[0].idx = env->head[0].start;
         return buffer_head_play(&(env->head[0]));
     }
     else
     {
-        env->head[0].idx += 1;
+        env->mu += env->decay;
+        env->inc.i = add_fr1x32(mult_fr1x32x32(env->head[0].start, sub_fr1x32(FR32_MAX, env->mu)), mult_fr1x32x32(env->head[0].end, env->mu));
+        env->head[0].idx = (u32)env->inc.i;
         if (env->head[0].idx >= env->head[0].end)
         {
-            env->trig = 1;
+            env->mu = 0;
+            env->head[0].idx = env->head[0].start;
         }
         return buffer_head_play(&(env->head[0]));
     }
 }
 
 //track: amp
-fract32 env_tcd_amp(env_tcd *env) {
-    return 0;
+fract32 env_tcd_lindec(env_tcd *env) {
+    if (env->trig)
+    {
+        env->trig = 0;
+        env->mu = 0;
+        return env->input(env);
+    }
+    else
+    {
+        env->mu += env->decay;
+        env->env = sub_fr1x32(FR32_MAX, env->mu);
+        return mult_fr1x32x32(mult_fr1x32x32(env->input(env), env->inL), env->env);
+    }
+}
+
+fract32 env_tcd_expodec(env_tcd *env) {
+    if (env->trig)
+    {
+        env->trig = 0;
+        env->env = FR32_MAX;
+        env->mu = 0;
+        return env->input(env);
+    }
+    else
+    {
+        env->mu += env->decay;
+        env->env = mult_fr1x32x32(env->env, sub_fr1x32(FR32_MAX, env->mu));
+        return mult_fr1x32x32(mult_fr1x32x32(env->input(env), env->inL), env->env);
+    }
+}
+
+fract32 env_tcd_Rexpodec(env_tcd *env) {
+    if (env->trig)
+    {
+        env->trig = 0;
+        env->env = 0;
+        env->mu = 0;
+        return 0;
+    }
+    else
+    {
+        env->mu += env->decay;
+        env->env = add_fr1x32(env->env, mult_fr1x32x32(FR32_MAX, negate_fr1x32(env->mu)));
+        return mult_fr1x32x32(mult_fr1x32x32(env->input(env), env->inL), env->env);
+    }
+}
+
+fract32 env_tcd_tri(env_tcd *env) {
+    if (env->trig)
+    {
+        env->trig = 0;
+        env->mu = 0;
+        return 0;
+    }
+    else
+    {
+        env->mu += env->decay;
+        env->env = abs_fr1x32(mult_fr1x32x32(FR32_MAX, negate_fr1x32(env->mu)));
+        return mult_fr1x32x32(mult_fr1x32x32(env->input(env), env->inL), env->env);
+    }
+}
+
+fract32 env_tcd_gauss(env_tcd *env) {
+    if (env->trig)
+    {
+        env->trig = 0;
+        env->env = 0;
+        env->mu = 0;
+        return 0;
+    }
+    else
+    {
+        env->mu += env->decay;
+        env->env = abs_fr1x32(add_fr1x32(env->env, mult_fr1x32x32(FR32_MAX, negate_fr1x32(env->mu))));
+        return mult_fr1x32x32(mult_fr1x32x32(env->input(env), env->inL), env->env);
+    }
 }
 
 //track: dly
@@ -238,15 +337,9 @@ fract32 env_tcd_delay(env_tcd *env) {
     }
 }
 
-//curve: thru
+//track: thru
 fract32 env_tcd_thru(env_tcd *env) {
     return mult_fr1x32x32(env->input(env), env->inL);
-}
-
-//curve: noise
-s32 env_tcd_noise(env_tcd *env) {
-    env->hdF = (u32)env->hdF * 1664525 + 1013904223;
-    return (s32) env->hdF;
 }
 
 //no input

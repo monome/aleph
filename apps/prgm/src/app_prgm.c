@@ -11,6 +11,7 @@
 #include "app.h"
 #include "bfin.h"
 #include "encoders.h"
+#include "i2c.h"
 
 //prgm
 #include "app_timers.h"
@@ -21,7 +22,6 @@
 #include "files.h"              
 #include "pages.h"
 #include "tracker.h"
-#include "generator.h"
 #include "flash.h"
 #include "screen.h"
 
@@ -84,6 +84,9 @@ if(firstrun) {
     init_app_timers();
     
     adc_init();
+    
+    //  testing i2c slave mode...
+//    i2c_init(100);
     
     render_startup();
     

@@ -106,6 +106,8 @@ void init_sample_param(prgmSample *s, u8 num) {
     s->num = num;
     s->offset = 0;
     s->loop = 0;
+    s->offset_cut = 0;
+    s->loop_cut = -1;
 }
 
 void init_sample_paths(void) {
@@ -199,38 +201,7 @@ void files_load_sample(u8 n) {
     }
     else print_dbg("\r\n file contains no data");
 }
-/*
-    bfinSampleSize = size;
-    sample[n]->loop = size;
-//    sample[n]->loop = size / sizeof(s32);
-    sample[n+1]->offset = sample[n]->offset + sample[n]->loop;
-//    bfinMemCheck += sample[smpl]->loop;
-        
-    if (fp != NULL && bfinMemCheck < BFIN_BUFFER_SIZE)
-    {
-        //  allocate a temporary RAM buffer
-        bfinSampleData = alloc_mem(size);
-        fake_fread(bfinSampleData, size, fp);
-        fl_fclose(fp);
-        
-        //  wait for transfer to finish in custom_timer_callback()...
-        delay_ms(100);
-        delay_ms(sample[smpl]->loop);
-        
-        free_mem(bfinSampleData);
-        
-        bfinSampleSize = 0;
-        idx8 = 0;
-        idx32 = 0;
-    }
-    else
-    {
-        print_dbg("\r\n stopping file transfer");
-        free_mem(bfinSampleData);
-        smpl = N_OFFSETS + 1;
-    }
-}
-*/
+
 u8 files_load_dsp(void) {
     void *fp;
     u32 size = 0;

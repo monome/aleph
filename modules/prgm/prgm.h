@@ -28,7 +28,6 @@
 #define N_TRACKS 8                      //number of tracks
 #define SQ_LEN 128                      //sequencer length
 #define N_DIROUTS 11                    //number of selectable direct outputs
-#define DEFAULT_LEVEL 0x2fffffff
 
 
 //  sequencer
@@ -60,8 +59,8 @@ typedef struct _prgmTrack {
     fract32 aux2;                       
     
     //sequencer parameters    
-    u16 len;                             //track length
-    u16 c;                               //track counter
+    u16 len;                            //track length
+    u16 c;                              //track counter
     
     filter_1p_lo pSlew;                 //parameter slew
 } prgmTrack;

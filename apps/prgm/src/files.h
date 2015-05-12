@@ -33,9 +33,8 @@
 #define DIR_LIST_NAME_BUF_SIZE 512
 
 #define N_BUFFERS 8                     //number of audio buffers
-#define N_TABLES 0                      //number of wavetables
 #define N_SAMPLES 128                   //number of samples
-#define N_OFFSETS (N_BUFFERS + N_TABLES + N_SAMPLES)
+#define N_OFFSETS (N_BUFFERS + N_SAMPLES)
 
 #define REC_SIZE 0xBB800                //recording buffer maximum size (16 seconds)
 #define AUX_SIZE 0x2EE00                //aux buffer maximum size (4 seconds)
@@ -52,6 +51,8 @@ typedef struct _prgmSample {
     u32 num;
     u32 offset;
     u32 loop;
+    s32 offset_cut;
+    s32 loop_cut;
 } prgmSample;
 
 prgmSample *sample[N_OFFSETS];
