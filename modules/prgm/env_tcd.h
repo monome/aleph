@@ -9,11 +9,29 @@
 #include "env_tcd_generator.h"
 #include "bfin_core.h"
 
-#define FR32_MAX 0x7fffffff
-#define FR32_MIN 0x80000000
+#define FR32_MAX 0x7fffffff         //2147483647
+#define FR32_MIN 0x80000000         //2147483648
+#define FR32_MAX1_2 0x3fffffff
+#define FR32_MAX1_3 0x2aaaaaaa
+#define FR32_MAX1_4 0x1fffffff
+#define FR32_MAX1_6 0x15555555
+#define FR32_MAX1_8 0x0fffffff
+#define FR32_MAX1_16 0x07ffffff
+#define FR32_MAX1_24 0x05555555
+#define FR32_MAX1_48 0x02aaaaaa
+#define FR32_MAX2_3 0x55555555
+#define FR32_MAX5_8 0x4fffffff
+#define FR32_MAX8_9 0x71c71c71
+#define FR32_MAX9_16 0x47ffffff
+#define FR32_MAX23_48 0x3d555555
+
+#define FR32_MAX3_2 0
+#define FR32_MAX5_2 0
+#define FR32_MAX9_8 0
+#define FR32_MAX11_8 0
 
 #define N_INPUTS 26                 //number of selectable inputs
-#define N_CURVES 10                 //number of curve algorithms
+#define N_CURVES 14                 //number of curve algorithms
 #define N_HEADS 2                   //number of play|record heads
 
 typedef struct _sample {
@@ -35,11 +53,19 @@ typedef struct _env_tcd {
     bufferHead head[N_HEADS];       //play|record heads
     fract32 hdF;                    //play|record feedback
     
+    fract32 decay;                  //envelope decay
+    fract32 x;
+    fract32 c0;
+    fract32 c1;
+    fract32 c2;
+    fract32 c3;
+
     fract32 env;
-    fract32 mu;
-    fract32 decay;
-    fract32 offset;
     fix32 inc;
+    fract32 mu;
+    fract32 mu2;
+    
+    //envelopes
     
     u8 trig;
     u8 state;
