@@ -14,17 +14,29 @@ void (*app_event_handlers[kNumEventTypes])(s32 data);
 
 
 // pause/resume functions
-/// note: these are not very smart; 
-// in particular, nesting multiple calls to pause/resume will not work as expected.
+
+static volatile s8 app_pause_resume_nesting = 0;
 
 void app_pause(void) {
-  //  print_dbg("\r\n ... APP PAUSED ... ");
-  cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
-  cpu_irq_disable_level(UI_IRQ_PRIORITY);
+  if(!app_pause_resume_nesting > 0) {
+    cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
+    cpu_irq_disable_level(UI_IRQ_PRIORITY);
+    //print_dbg("\r\n ... APP PAUSED ... ");
+  }
+  ++app_pause_resume_nesting;
+
+  //print_dbg("\r\n ... app_pause() nesting: ");
+  //print_dbg_hex(app_pause_resume_nesting);
 }
 
 void app_resume(void) {
-  cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
-  cpu_irq_enable_level(UI_IRQ_PRIORITY);  
-  //  print_dbg("\r\n ... APP RESUMED ... ");
+  --app_pause_resume_nesting;
+  if(app_pause_resume_nesting == 0) {
+    cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
+    cpu_irq_enable_level(UI_IRQ_PRIORITY);
+    //print_dbg("\r\n ... APP RESUMED ... ");
+  }
+
+  //print_dbg("\r\n ... app_resume() nesting: ");
+  //print_dbg_hex(app_pause_resume_nesting);
 }

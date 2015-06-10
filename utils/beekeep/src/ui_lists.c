@@ -78,6 +78,10 @@ static void select_out_callback( GtkListBox *box, gpointer data ) {
   GtkListBoxRow* row;
   row = gtk_list_box_get_selected_row(box);
   id = gtk_list_box_row_get_index(row);
+  if(id < 0) { 
+    printf("\r\n invalid output selection id");
+    return;
+  }
   ui_select_out(id);
 }
 
@@ -87,6 +91,10 @@ static void select_in_callback( GtkListBox *box, gpointer data ) {
   GtkListBoxRow* row;
   row = gtk_list_box_get_selected_row(box);
   id = gtk_list_box_row_get_index(row);
+  if(id < 0) { 
+    printf("\r\n invalid input selection id");
+    return;
+  }
   ui_select_in(id);
 }
 
@@ -95,6 +103,10 @@ static void select_op_callback( GtkListBox *box, gpointer data ) {
   GtkListBoxRow* row;
   row = gtk_list_box_get_selected_row(box);
   id = gtk_list_box_row_get_index(row);
+  if(id < 0) { 
+    printf("\r\n invalid op selection id");
+    return;
+  }
   ui_select_op(id);
 }
 
@@ -103,6 +115,10 @@ static void select_param_callback( GtkListBox *box, gpointer data ) {
   GtkListBoxRow* row;
   row = gtk_list_box_get_selected_row(box);
   id = gtk_list_box_row_get_index(row);
+  if(id < 0) { 
+    printf("\r\n invalid param selection id");
+    return;
+  }
   ui_select_param(id);
 }
 
@@ -111,6 +127,10 @@ static void select_preset_callback( GtkListBox *box, gpointer data ) {
   GtkListBoxRow* row;
   row = gtk_list_box_get_selected_row(box);
   id = gtk_list_box_row_get_index(row);
+  if(id < 0) { 
+    printf("\r\n invalid preset selection id");
+    return;
+  }
   ui_select_preset(id);
 }
 
@@ -157,8 +177,6 @@ static void preset_store_output_callback( GtkWidget *but, gpointer data) {
   int id = GPOINTER_TO_INT(data);
   ui_store_preset_output(id);
 }
-
-
 
 
 //----------------------------------

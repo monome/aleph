@@ -1,5 +1,4 @@
 /* screen.h
-   ui test
    aleph
 */
 

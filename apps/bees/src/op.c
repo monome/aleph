@@ -195,7 +195,7 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "LIFE",
     .size = sizeof(op_life_t),
     .init = &op_life_init,
-    .deinit = NULL    
+    .deinit = &op_life_deinit
   }, {
     .name = "HISTORY",
     .size = sizeof(op_history_t),
@@ -231,17 +231,16 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_midi_cc_t),
     .init = &op_midi_cc_init,
     .deinit = op_midi_cc_deinit
-  },
- {
+  }, {
     .name = "MOUT_NOTE",
     .size = sizeof(op_midi_out_note_t),
     .init = &op_midi_out_note_init,
     .deinit = NULL
- }, {
+  }, {
     .name = "LIST16",
     .size = sizeof(op_list16_t),
     .init = &op_list16_init,
-    .deinit = NULL    
+    .deinit = NULL
   }, {
     .name = "STEP",
     .size = sizeof(op_step_t),
@@ -251,7 +250,7 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "ROUTE8",
     .size = sizeof(op_route8_t),
     .init = &op_route8_init,
-    .deinit = NULL    
+    .deinit = NULL
   }, {
     .name = "MP",   // CASCADES
     .size = sizeof(op_cascades_t),
@@ -285,7 +284,7 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "ARC",
     .size = sizeof(op_marc_t),
     .init = &op_marc_init,
-    .deinit = NULL
+    .deinit = &op_marc_deinit
   },
   {
     .name = "FADE",
