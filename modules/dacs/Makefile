@@ -9,26 +9,15 @@ version = $(maj).$(min).$(rev)
 ldr_name = $(prefix)$(module_name)-$(version).ldr
 
 module_obj = dacs.o \
-	$(audio)/buffer.o \
-	$(audio)/conversion.o \
-	$(audio)/delay.o \
 	$(audio)/filter_1p.o \
-	$(audio)/filter_ramp.o \
-	$(audio)/filter_svf.o \
-	$(audio)/noise.o \
-	$(audio)/pan.o \
-	$(audio)/table.o \
-	$(bfin)/libfixmath/fix32.o \
-	$(bfin)/libfixmath/fix16.o \
-	$(bfin)/libfixmath/fix16_sqrt.o
-
 
 all: $(prefix)$(module_name).ldr
 
 include ../../bfin_lib/bfin_lib.mk
 
 CFLAGS += -D ARCH_BFIN=1
-# CFLAGS += --verbose
+CFLAGS += -Wall
+#CFLAGS += --verbose
 
 desc_src = \
 	$(bfin_lib_srcdir)desc.c \
@@ -52,11 +41,11 @@ $(prefix)$(module_name): bfin_lib_target $(module_obj)
 	-lm -lbfdsp -lbffastfp
 
 clean: bfin_lib_clean
-	rm $(module_obj)
-	rm $(prefix)$(module_name).ldr 
-	rm $(prefix)$(module_name)
-	rm $(prefix)dacs.dsc
-	rm dacs_desc_build
+	rm -f $(module_obj)
+	rm -f $(prefix)$(module_name).ldr 
+	rm -f $(prefix)$(module_name)
+	rm -f $(prefix)$(module_name).dsc
+	rm -f $(module_name)_desc_build
 
 deploy: $(prefix)$(module_name).ldr
 	make desc

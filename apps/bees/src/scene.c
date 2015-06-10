@@ -301,7 +301,6 @@ void scene_read_buf(void) {
 #endif
 
   } // load-module case
-  app_pause();
 
   /// don't have to do this b/c net_unpickle will deinit anyways
   /*
