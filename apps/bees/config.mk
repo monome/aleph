@@ -76,6 +76,8 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_route8.c \
 	$(APP_DIR)/src/ops/op_screen.c \
 	$(APP_DIR)/src/ops/op_serial.c \
+	$(APP_DIR)/src/ops/op_shl.c \
+	$(APP_DIR)/src/ops/op_shr.c \
 	$(APP_DIR)/src/ops/op_split.c \
 	$(APP_DIR)/src/ops/op_split4.c \
 	$(APP_DIR)/src/ops/op_sub.c \

@@ -40,6 +40,8 @@
 #include "ops/op_mul.h"
 #include "ops/op_preset.h"
 #include "ops/op_serial.h"
+#include "ops/op_shl.h"
+#include "ops/op_shr.h"
 #include "ops/op_split.h"
 #include "ops/op_split4.h"
 #include "ops/op_sub.h"

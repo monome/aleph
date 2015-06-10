@@ -53,6 +53,8 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpRoute8,
   eOpScreen,
   eOpSerial,
+  eOpShl,
+  eOpShr,
   eOpSplit, // "Y" , but only in connection graph
   eOpSplit4, // "Y4"
   eOpStep,
@@ -294,6 +296,16 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "DIVR",
     .size = sizeof(op_divr_t),
     .init = &op_divr_init,
+    .deinit = NULL
+  },  {
+    .name = "SHL",
+    .size = sizeof(op_shl_t),
+    .init = &op_shl_init,
+    .deinit = NULL
+  },  {
+    .name = "SHR",
+    .size = sizeof(op_shr_t),
+    .init = &op_shr_init,
     .deinit = NULL
   },
 };
