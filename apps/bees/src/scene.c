@@ -198,6 +198,7 @@ void scene_read_buf(void) {
   //// TEST
   char moduleName[MODULE_NAME_LEN];
   ModuleVersion moduleVersion;
+  u8 moduleLoadStatus;
   ////
 
    app_pause();
@@ -259,7 +260,20 @@ void scene_read_buf(void) {
     print_dbg("\r\n loading module from card, filename: ");
     print_dbg(sceneData->desc.moduleName);
 
-    files_load_dsp_name(sceneData->desc.moduleName);
+    moduleLoadStatus = files_load_dsp_name(sceneData->desc.moduleName);
+    print_dbg("\r\n file_load_dsp_name() returned ");
+    print_dbg_hex(moduleLoadStatus);
+    if(moduleLoadStatus == 0 && strncmp(moduleName, "aleph-", 6) == 0) {
+      // failed to load from SD card and the module name begins with
+      // aleph-, strip off the prefix and try again (for
+      // compatibility with older scenes).
+      print_dbg("\r\n possibly old dsp name; trying: ");
+      print_dbg(&(moduleName[6]));
+      strcpy(sceneData->desc.moduleName, &(moduleName[6]));
+
+      files_load_dsp_name(sceneData->desc.moduleName);
+      // FIXME: should probably check the return code here as well
+    }
 
     render_boot("waiting for module init");
     print_dbg("\r\n waiting for DSP init...");
