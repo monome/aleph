@@ -16,6 +16,7 @@
 #include "ops/op_bignum.h"
 #include "ops/op_bits.h"
 #include "ops/op_cascades.h"
+#include "ops/op_change.h"
 #include "ops/op_delay.h"
 #include "ops/op_div.h"
 #include "ops/op_divr.h"
