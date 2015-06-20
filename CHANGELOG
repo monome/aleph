@@ -1,4 +1,15 @@
 ----------------
+bees    0.6.1
+- added op: SHL, SHR (bit shifting)
+- added op: CHANGE (filter repeated values)
+- fix: bees dsp loading tries non-prefixed module name on load fail
+- fix: address several causes of bees scene loading lockups
+
+----------------
+lines   0.2.2
+- enabled clearing of buffers on load
+
+----------------
 bees    0.6.0
 
 - fix target shift bug when splitting DSP connections
