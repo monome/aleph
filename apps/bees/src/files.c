@@ -214,7 +214,6 @@ u8 files_load_dsp_name(const char* name) {
       scene_set_module_name(name);
       ///////////////////////////
 
-      
       ret = files_load_desc(name);
       //???
       ret = 1;
@@ -526,19 +525,37 @@ extern u8 files_load_desc(const char* name) {
 
   app_pause();
 
+  print_dbg("\r\n files_load_desc(): name = ");
+  print_dbg(name);
+
   strcat(path, name);
   strip_ext(path);
   strcat(path, ".dsc");
 
+  print_dbg("\r\n ...path = ");
+  print_dbg(path);
+
 
   fp = fl_fopen(path, "r");
   if(fp == NULL) {
+    print_dbg("\r\n file_load_desc(): fl_fopen(...) => NULL");
     ret = 1;
   } else {
 
     // get number of parameters
     fake_fread(nbuf, 4, fp);
-    unpickle_32(nbuf, (u32*)&nparams); 
+    unpickle_32(nbuf, (u32*)&nparams);
+
+    print_dbg("\r\n file_load_desc(): nparams = 0x");
+    print_dbg_hex(nparams);
+
+    // on boot the bfin is put back into spi slave mode before the
+    // module_init() is called. since net_add_param() below ultimately
+    // gets the default values from the module via spi we wait for the
+    // bfin to be ready thus ensuring that module_init() has actually
+    // had time to sets the parameter defaults.
+    print_dbg("\r\n file_load_desc(): waiting for bfin to be ready before quering parameters");
+    bfin_wait_ready();
 
     /// loop over params
     if(nparams > 0) {
