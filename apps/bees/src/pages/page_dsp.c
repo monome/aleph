@@ -160,8 +160,6 @@ void handle_key_0(s32 val) {
 
     bfin_wait_ready();
 
-    scene_query_module();
-
     //// FIXME: use .dsc, file_load_dsp calls directly
     //    net_report_params();
    
