@@ -180,7 +180,7 @@ void module_init(void) {
   dbgFile = fopen( "drums_dbg.txt", "w");
 #endif
   gModuleData = &(data->super);
-  strcpy(gModuleData->name, "aleph-dsyn");
+  strcpy(gModuleData->name, "dsyn");
 
   gModuleData->paramData = data->mParamData;
   gModuleData->numParams = eParamNumParams;
