@@ -259,7 +259,7 @@ void module_init(void) {
   pLinesData = (linesData*)SDRAM_ADDRESS;
   
   gModuleData = &(pLinesData->super);
-  strcpy(gModuleData->name, "aleph-lines");
+  strcpy(gModuleData->name, "lines");
 
   gModuleData->paramData = (ParamData*)pLinesData->mParamData;
   gModuleData->numParams = eParamNumParams;

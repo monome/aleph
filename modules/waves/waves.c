@@ -260,7 +260,7 @@ void module_init(void) {
   data = (wavesData * )SDRAM_ADDRESS;
   // initialize moduleData superclass for core routines
   gModuleData = &(data->super);
-  strcpy(gModuleData->name, "aleph-waves");
+  strcpy(gModuleData->name, "waves");
   gModuleData->paramData = data->mParamData;
   gModuleData->numParams = eParamNumParams;
 
