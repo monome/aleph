@@ -49,13 +49,15 @@ static void screen_timer_callback(void* obj) {
 }
 
 // encoder accumulator polling callback
+// the encoder class is defined in avr32_lib.
+// each encoder object has an accumulator
 static void enc_timer_callback(void* obj) {
   static s16 val, valAbs;
   u8 i;
 
   for(i=0; i<NUM_ENC; i++) {
     val = enc[i].val;
-    valAbs = (val & 0x8000 ? (val ^ 0xffff) + 1 : val);
+    valAbs = (val & 0x8000 ? (val ^ 0xffff) + 1 : val);    
     if(valAbs > enc[i].thresh) {
       e.type = enc[i].event;
       e.data = val;

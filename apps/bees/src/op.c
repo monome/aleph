@@ -7,9 +7,9 @@
 // std
 //#include <stdio.h>
 // asf
-#ifdef ARCH_AVR32
+//#ifdef ARCH_AVR32
 #include "print_funcs.h"
-#endif
+//#endif
 // aleph
 #include "net.h"
 #include "op.h"
@@ -23,11 +23,15 @@
 const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAccum,
   eOpAdd,
+  eOpMonomeArc, // "arc"
   eOpBars,
   eOpBignum,
   eOpBits,
+  eOpChange,
   eOpDelay,
   eOpDiv,
+  eOpDivr,
+  eOpFade,
   eOpGate,
   eOpMonomeGridRaw, // "grid"
   eOpHid,
@@ -50,6 +54,8 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpRoute8,
   eOpScreen,
   eOpSerial,
+  eOpShl,
+  eOpShr,
   eOpSplit, // "Y" , but only in connection graph
   eOpSplit4, // "Y4"
   eOpStep,
@@ -81,22 +87,22 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_add_t) ,
     .init = &op_add_init,
     .deinit = NULL
-  } , {
+  }, {
     .name = "MUL",
     .size = sizeof(op_mul_t) ,
     .init = &op_mul_init,
     .deinit = NULL
-  } , {
+  }, {
     .name = "GATE",
     .size = sizeof(op_gate_t), 
     .init = &op_gate_init,
     .deinit = NULL
-  } , {
+  }, {
     .name = "GRID",
     .size = sizeof(op_mgrid_raw_t),
     .init = &op_mgrid_raw_init,
     .deinit = &op_mgrid_raw_deinit
-  } , {
+  }, {
     .name = "MIDINOTE",
     .size = sizeof(op_midi_note_t),
     .init = &op_midi_note_init,
@@ -190,7 +196,7 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "LIFE",
     .size = sizeof(op_life_t),
     .init = &op_life_init,
-    .deinit = NULL    
+    .deinit = &op_life_deinit
   }, {
     .name = "HISTORY",
     .size = sizeof(op_history_t),
@@ -201,7 +207,7 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_bignum_t),
     .init = &op_bignum_init,
     .deinit = &op_bignum_deinit
-    }, {
+  }, {
     .name = "SCREEN",
     .size = sizeof(op_screen_t),
     .init = &op_screen_init,
@@ -226,17 +232,16 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_midi_cc_t),
     .init = &op_midi_cc_init,
     .deinit = op_midi_cc_deinit
-  },
- {
+  }, {
     .name = "MOUT_NOTE",
     .size = sizeof(op_midi_out_note_t),
     .init = &op_midi_out_note_init,
     .deinit = NULL
- }, {
+  }, {
     .name = "LIST16",
     .size = sizeof(op_list16_t),
     .init = &op_list16_init,
-    .deinit = NULL    
+    .deinit = NULL
   }, {
     .name = "STEP",
     .size = sizeof(op_step_t),
@@ -246,7 +251,7 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "ROUTE8",
     .size = sizeof(op_route8_t),
     .init = &op_route8_init,
-    .deinit = NULL    
+    .deinit = NULL
   }, {
     .name = "MP",   // CASCADES
     .size = sizeof(op_cascades_t),
@@ -257,24 +262,51 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_bars_t),
     .init = &op_bars_init,
     .deinit = &op_bars_deinit   
-  },
-  {
+  }, {
     .name = "SERIAL",
     .size = sizeof(op_serial_t),
     .init = &op_serial_init,
     .deinit = &op_serial_deinit   
-  },
-  {
+  }, {
     .name = "HID",
     .size = sizeof(op_hid_word_t),
     .init = &op_hid_word_init,
     .deinit = &op_hid_word_deinit   
-  },
-  {
+  }, {
     .name = "WW",
     .size = sizeof(op_ww_t),
     .init = &op_ww_init,
     .deinit = &op_ww_deinit   
+  }, {
+    .name = "ARC",
+    .size = sizeof(op_marc_t),
+    .init = &op_marc_init,
+    .deinit = &op_marc_deinit
+  }, {
+    .name = "FADE",
+    .size = sizeof(op_fade_t),
+    .init = &op_fade_init,
+    .deinit = NULL
+  }, {
+    .name = "DIVR",
+    .size = sizeof(op_divr_t),
+    .init = &op_divr_init,
+    .deinit = NULL
+  }, {
+    .name = "SHL",
+    .size = sizeof(op_shl_t),
+    .init = &op_shl_init,
+    .deinit = NULL
+  }, {
+    .name = "SHR",
+    .size = sizeof(op_shr_t),
+    .init = &op_shr_init,
+    .deinit = NULL
+  }, {
+    .name = "CHANGE",
+    .size = sizeof(op_change_t),
+    .init = &op_change_init,
+    .deinit = NULL
   },
 };
 
@@ -305,10 +337,9 @@ s16 op_init(op_t* op, op_id_t opId) {
 // de-initialize operator
 s16 op_deinit(op_t* op) {
   op_class_deinit f = op_registry[op->type].deinit;
-  
   if(f != NULL) {
-    print_dbg("\r\n de-initializing operator at address 0x");
-    print_dbg_hex((u32)op);
+    /* print_dbg("\r\n de-initializing operator at address 0x"); */
+    /* print_dbg_hex((u32)op); */
     (*f)(op);
   }
   return 0;
@@ -344,15 +375,14 @@ void op_set_in_val(op_t* op, s16 idx, io_t val) {
 
 // increment input value
 void op_inc_in_val(op_t* op, const s16 idx, const io_t inc) {
-  print_dbg("\r\n op_inc_in_val, ");
-  print_dbg(" op @ 0x");
-  print_dbg_hex((u32)op);
-  print_dbg(" old : 0x");
-  print_dbg_hex((u32)op_get_in_val(op, idx));
-  print_dbg(" inc : 0x");
-  print_dbg_hex((u32)inc);
-  print_dbg(" new : 0x");
-  print_dbg_hex( (u32)op_sadd( op_get_in_val(op, idx), inc) );
-    
+  /* print_dbg("\r\n op_inc_in_val, "); */
+  /* print_dbg(" op @ 0x"); */
+  /* print_dbg_hex((u32)op); */
+  /* print_dbg(" old : 0x"); */
+  /* print_dbg_hex((u32)op_get_in_val(op, idx)); */
+  /* print_dbg(" inc : 0x"); */
+  /* print_dbg_hex((u32)inc); */
+  /* print_dbg(" new : 0x"); */
+  /* print_dbg_hex( (u32)op_sadd( op_get_in_val(op, idx), inc) ); */    
   op_set_in_val( op, idx, op_sadd( op_get_in_val(op, idx), inc) );
 }

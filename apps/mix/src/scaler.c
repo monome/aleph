@@ -6,7 +6,7 @@
   this implements amplitude scaling functions,
   using tables and linear interpolation with integers.
 
-g */
+ */
 
 // asf
 #include "print_funcs.h"

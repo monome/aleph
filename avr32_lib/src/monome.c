@@ -126,13 +126,10 @@ static void grid_map_mext(u8 x, u8 y, const u8* data);
 //static void ring_set_mext(u8 n, u8 rho, u8 val);
 static void ring_map_mext(u8 n, u8* data);
 
-//static void connect_write_event(void);
 static inline void monome_grid_key_write_event( u8 x, u8 y, u8 val);
 static inline void monome_grid_adc_write_event( u8 n, u16 val);
 static inline void monome_ring_enc_write_event( u8 n, u8 val);
 static inline void monome_ring_key_write_event( u8 n, u8 val);
-
-
 
 
 //---------------------------------
@@ -319,9 +316,9 @@ void monome_arc_refresh(void) {
   u8 busy = ftdi_tx_busy();
   u8 i;
 
-  for(i=0;i<mdesc.encs;i++) {
+  for(i=0; i<mdesc.encs; i++) {
     if(monomeFrameDirty & (1<<i)) {
-      if(i==1) print_dbg("\r\nsecond");
+      //      if(i==1) print_dbg("\r\nsecond");
       while(busy) { busy = ftdi_tx_busy(); }
       (*monome_ring_map)(i, monomeLedBuffer + (i<<6));
       monomeFrameDirty &= ~(1<<i);
@@ -336,7 +333,7 @@ void monome_arc_refresh(void) {
 //---- convert to/from event data
 // connect
 static inline void monome_connect_write_event(void) {
-  u8* data = (u8*)(&(ev.data));
+  //  u8* data = (u8*)(&(ev.data));
   
   // print_dbg("\r\n posting monome connection event. ");
   // print_dbg(" device type: ");
@@ -345,12 +342,19 @@ static inline void monome_connect_write_event(void) {
   // print_dbg_ulong(mdesc.cols);
   // print_dbg(" rows: ");
   // print_dbg_ulong(mdesc.rows);
+  
+  ev.type = kEventMonomeConnect;
+  ev.type = kEventMonomeConnect;
 
-  ev.type = kEventMonomeConnect;
-  ev.type = kEventMonomeConnect;
+  // not really necessary now,
+  // app can use the read accessors for desc fields. 
+
+  /*
   *data++ = (u8)(mdesc.device);   // device (8bits)
   *data++ = mdesc.cols;   // width / count
   *data++ = mdesc.rows;   // height / resolution
+  */
+
   //  *data = 0;    // unused
   event_post(&ev);
 }
@@ -419,6 +423,7 @@ void monome_ring_enc_parse_event_data(u32 data, u8* n, s8* val) {
 static inline void monome_ring_key_write_event( u8 n, u8 val) {
   // TODO
 }
+
 void monome_ring_key_parse_event_data(u32 data, u8* n, u8* val) {
   // TODO
 }
@@ -461,22 +466,30 @@ u32 monome_xy_idx(u8 x, u8 y) {
   return x | (y << 4);
 }
 
-// top-level led/set function
-void monome_led_set(u8 x, u8 y, u8 z) {
+// grid led/set function
+void monome_grid_led_set(u8 x, u8 y, u8 z) {
   monomeLedBuffer[monome_xy_idx(x, y)] = z;
   monome_calc_quadrant_flag(x, y);
 }
 
-// top-level led/toggle function
-void monome_led_toggle(u8 x, u8 y) {
+// grid led/toggle function
+void monome_grid_led_toggle(u8 x, u8 y) {
   monomeLedBuffer[monome_xy_idx(x,y)] ^= 0xff;
   monome_calc_quadrant_flag(x, y);  
 }
 
+// arc led/set function
+///// FIXME??? totally untested
+void monome_arc_led_set(u8 enc, u8 ring, u8 val) {
+  monomeLedBuffer[ring + (enc << 6)] = val;
+  monomeFrameDirty |= (1 << enc);
+}
 
 u8 monome_size_x(void) { return mdesc.cols; }
 u8 monome_size_y(void) {  return mdesc.rows; }
 u8 monome_is_vari(void) {  return mdesc.vari; }
+
+eMonomeDevice monome_dev_type(void) { return mdesc.device; }
 
 //=============================================
 //------ static function definitions
@@ -638,10 +651,6 @@ static u8 setup_mext(void) {
   //   for(;rxBytes != 0; rxBytes--) {
   //     print_dbg_char(*(++prx));
   //   }
-
-
-
-
 
   set_funcs();
   monome_connect_write_event();

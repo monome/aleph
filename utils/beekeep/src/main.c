@@ -23,30 +23,41 @@
 
 int main (int argc, char **argv)
 {
-  char filename[32];
+  char path[64];
   char ext[16];
   void* fp;
+  bool arg = 0;
+
+  setbuf(stdout, NULL);
 
   if(argc < 2) {
-    printf("\r\n beekeep: filename argument required; exiting\r\n\r\n");
-    return 1;
+    // start with blank scene, use working directory
+  } else {
+    arg = 1;
   }
-
-  strcpy(filename, argv[1]);
-  scan_ext(filename, ext);
+  
+  if(arg) {
+    strcpy(path, argv[1]);
+    scan_ext(path, ext);
+  }
 
   app_init();
   app_launch(1);
 
-  if(strcmp(ext, ".scn") == 0) {
-    files_load_scene_name(filename);
+  if(arg) {
+    if(strcmp(ext, ".scn") == 0) {
+      files_load_scene_name(path);
+    }
+    else if(strcmp(ext, ".json") == 0) {
+      net_read_json_native(path);
+    }
+	strip_filename(path, 64);
+	strcpy(workingDir, path);
   }
-  else if(strcmp(ext, ".json") == 0) {
-    net_read_json_native(filename);
-  }
+  
+  printf("\r\n working directory now: %s", workingDir);
 
   gtk_init (&argc, &argv);
   ui_init();
   gtk_main ();
 }
-

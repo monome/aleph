@@ -48,9 +48,12 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_bignum.c \
 	$(APP_DIR)/src/ops/op_bits.c \
 	$(APP_DIR)/src/ops/op_cascades.c \
+	$(APP_DIR)/src/ops/op_change.c \
 	$(APP_DIR)/src/ops/op_delay.c \
 	$(APP_DIR)/src/ops/op_div.c \
+	$(APP_DIR)/src/ops/op_divr.c \
 	$(APP_DIR)/src/ops/op_enc.c \
+	$(APP_DIR)/src/ops/op_fade.c \
 	$(APP_DIR)/src/ops/op_gate.c \
 	$(APP_DIR)/src/ops/op_hid_word.c \
 	$(APP_DIR)/src/ops/op_history.c \
@@ -66,6 +69,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_midi_note.c \
 	$(APP_DIR)/src/ops/op_mod.c \
 	$(APP_DIR)/src/ops/op_mul.c \
+	$(APP_DIR)/src/ops/op_monome_arc.c \
 	$(APP_DIR)/src/ops/op_monome_grid_raw.c \
 	$(APP_DIR)/src/ops/op_preset.c \
 	$(APP_DIR)/src/ops/op_random.c \
@@ -73,6 +77,8 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_route8.c \
 	$(APP_DIR)/src/ops/op_screen.c \
 	$(APP_DIR)/src/ops/op_serial.c \
+	$(APP_DIR)/src/ops/op_shl.c \
+	$(APP_DIR)/src/ops/op_shr.c \
 	$(APP_DIR)/src/ops/op_split.c \
 	$(APP_DIR)/src/ops/op_split4.c \
 	$(APP_DIR)/src/ops/op_sub.c \

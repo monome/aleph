@@ -1,16 +1,32 @@
 ----------------
+bees    0.6.1
+- added op: SHL, SHR (bit shifting)
+- added op: CHANGE (filter repeated values)
+- fix: bees dsp loading tries non-prefixed module name on load fail
+- fix: address several causes of bees scene loading lockups
+
+----------------
+lines   0.2.2
+- enabled clearing of buffers on load
+
+----------------
 bees    0.6.0
 
-- fix target shift bug when splitting DSP conenctions
+- fix target shift bug when splitting DSP connections
 - small display fixes and tweaks
-- add ops: SERIAL (output from aleph), HID (input from aleph)
+- add ops: SERIAL (output from aleph), HID (input to aleph)
 - change: ENC now has VAL input (set value) and DELTA output
-- monome driver: fix device size detection, add vari-bright implmementation
+- monome driver: fix device size detection, add vari-bright implemementation
 - fix: op_step initialization
 - fix: display op redrawing
 - add op: WW (white whale, for grids)
-- change: DIV now has R (remainder) output
 - update: MP refresh optimized
+- add op: FADE (cross fade between inputs)
+- added op building overview: README_OP_GUIDE.txt
+- added op: DIVR has remainder
+- added op: ARC
+- added arc support
+- 1ms core timer is much more accurate
 
 ----------------
 bees    0.5.5

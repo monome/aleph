@@ -259,7 +259,7 @@ void module_init(void) {
   pLinesData = (linesData*)SDRAM_ADDRESS;
   
   gModuleData = &(pLinesData->super);
-  strcpy(gModuleData->name, "aleph-lines");
+  strcpy(gModuleData->name, "lines");
 
   gModuleData->paramData = (ParamData*)pLinesData->mParamData;
   gModuleData->numParams = eParamNumParams;
@@ -274,13 +274,13 @@ void module_init(void) {
     filter_ramp_tog_init(&(lpFadeRd[i]), 0);
     filter_ramp_tog_init(&(lpFadeWr[i]), 0);
 
-    /* // we really need to zero everything to avoid horrible noise at boot... */
+
     /* for(j=0; j<LINES_BUF_FRAMES; ++j) { */
     /*   pLinesData->audioBuffer[i][j] = 0; */
     /* } */
 
-    //    memset(pLinesData->audioBuffer[i], 0, LINES_BUF_FRAMES * 4);
-
+    // need to zero everything to avoid horrible noise at boot...
+    memset(pLinesData->audioBuffer[i], 0, LINES_BUF_FRAMES * sizeof(fract32));
     // however, it is causing crashes or hangs here, for some damn reason.
 
     // at least zero the end of the buffer

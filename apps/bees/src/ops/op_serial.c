@@ -36,8 +36,13 @@ static inline void op_serial_tx(op_serial_t* op) {
 
 #ifdef BEEKEEP
 #else
-  usart_putchar( DEV_USART, (char)op_from_int(op->a) );
-  usart_putchar( DEV_USART, (char)op_from_int(op->b) );
+  /// ok, all the bytes? really?
+  /* usart_putchar( DEV_USART, (char)op_from_int(op->a) ); */
+  /* usart_putchar( DEV_USART, (char)op_from_int(op->b) ); */
+  usart_putchar( DEV_USART, (char)((op_from_int(op->a) & 0xff00) >> 8) );
+  usart_putchar( DEV_USART, (char)((op_from_int(op->a) & 0xff)) );
+  usart_putchar( DEV_USART, (char)((op_from_int(op->b) & 0xff00) >> 8) );
+  usart_putchar( DEV_USART, (char)((op_from_int(op->b) & 0xff)) );
 #endif
 }
 

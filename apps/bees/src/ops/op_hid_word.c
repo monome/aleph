@@ -84,9 +84,9 @@ void op_hid_word_init(void* mem) {
 
 // de-init
 void op_hid_word_deinit(void* op) {
+  // remove from list
 #if BEEKEEP
 #else
-  // remove from list
   net_hid_list_remove( &( ((op_hid_word_t*)op)->hid) );
 #endif
 }

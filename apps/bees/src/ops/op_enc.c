@@ -81,13 +81,6 @@ static void op_enc_in_step(op_enc_t* enc, const io_t v) {
   enc->step = v;
   // op_enc_perform(enc);
 }
-
-// move
-/* static void op_enc_in_move(op_enc_t* enc, const io_t v) { */
-/*   enc->val = op_add(enc->val, op_mul(enc->step, op_from_int(v))); */
-/*   op_enc_perform(enc); */
-/* } */
-
 // max
 static void op_enc_in_min(op_enc_t* enc, const io_t v) {
   /// fixme: for now, i am banning this kind of pathological shit:
@@ -201,18 +194,24 @@ static void op_enc_perform(op_enc_t* enc) {
 
 // pickles
 u8* op_enc_pickle(op_enc_t* enc, u8* dst) {
+  /// if we want to maintain 0.5.x scene compatibility...
+  io_t dummy = 0;
   dst = pickle_io(enc->val, dst);
   dst = pickle_io(enc->step, dst);
   dst = pickle_io(enc->min, dst);
   dst = pickle_io(enc->max, dst);
+  dst = pickle_io(dummy, dst);
   return dst;
 }
 
 const u8* op_enc_unpickle(op_enc_t* enc, const u8* src) {
+  /// if we want to maintain 0.5.x scene compatibility...
+  io_t dummy = 0;
   src = unpickle_io(src, &(enc->val));
   src = unpickle_io(src, &(enc->step));
   src = unpickle_io(src, &(enc->min));
   src = unpickle_io(src, &(enc->max));
+  src = unpickle_io(src, &(dummy));
   return src;
 }
 

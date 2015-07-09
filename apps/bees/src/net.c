@@ -407,7 +407,8 @@ s16 net_add_op(op_id_t opId) {
   print_dbg(" ; allocating... ");
   op = (op_t*)((u8*)net->opPool + net->opPoolOffset);
   // use the class ID to initialize a new object in scratch
-
+  print_dbg(" ; op address: 0x");
+  print_dbg_hex((u32)op);
   print_dbg(" ;  initializing... ");
   op_init(op, opId);
 
@@ -1359,6 +1360,9 @@ void net_get_param_value_string(char* dst, u32 idx) {
 		  &(net->params[idx].scaler), 
 		  net->params[idx].data.value
 		  );
+/* #if BEEKEEP */
+/*   printf("\r\n scaler_get_str result: %s", dst); */
+/* #endif */
 }
 
 
@@ -1450,3 +1454,7 @@ void net_print(void) {
 #endif
 
 
+// set active
+void net_set_active(bool v) {
+  netActive = v;
+}

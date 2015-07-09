@@ -160,12 +160,9 @@ void handle_key_0(s32 val) {
 
     bfin_wait_ready();
 
-    scene_query_module();
-
     //// FIXME: use .dsc, file_load_dsp calls directly
     //    net_report_params();
-    
-
+   
     bfin_enable();
 
     redraw_ins();
@@ -182,12 +179,10 @@ void handle_key_1(s32 val) {
   if(val == 0) { return; }
   if(check_key(1)) {
     // render status to head region  
-    notify("writing...");
+    //    notify("writing...");
     // write module as default 
     //    files_store_default_dsp(*pageSelect);
-
-
-    notify("done writing.");
+    //    notify("done writing.");
   }
   show_foot();
 #endif  

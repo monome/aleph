@@ -60,6 +60,7 @@ void scaler_svf_fc_init(void* scaler) {
   // hack:
   // use the 16.16 table from hz scaler for representation.
   // make sure note scaler is also initialized.
+  //.... why doesn't this always crash??? (NULL arg)
   scaler_note_init(NULL);
 
   sc->inMin = 0;

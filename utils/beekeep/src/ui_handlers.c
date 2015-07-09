@@ -1,6 +1,8 @@
 // bees
 #include "net_protected.h"
 #include "op.h"
+#include "preset.h"
+
 // beekeep
 #include "ui.h"
 #include "ui_handlers.h"
@@ -59,13 +61,17 @@ static void refresh_in_row_for_target(int t) {
   if(outSelect >=0 ) { 
     tLast = net_get_target(outSelect);
   } else {
-    tLast = 0;
+    tLast = -1;
   }
-  printf("\r\n old target: %d", tLast);
+  //  printf("\r\n old target: %d", tLast);
   outSelect = id;
   t = net_get_target(id);
-  refresh_in_row_for_target(tLast);
   refresh_in_row_for_target(t);
+
+  if(tLast >=0) {
+    refresh_in_row_for_target(tLast);
+  }
+
   refresh_connect_input_but();
   refresh_connect_param_but();
 }
@@ -78,20 +84,40 @@ static void refresh_in_row_for_target(int t) {
 
  void ui_select_param(int id) {
   paramSelect = id; 
+  refresh_connect_param_but();
   //... ?
 }
 
  void ui_select_preset(int id) {
   presetSelect = id;
-  //... ?
+  printf("\r\n selecting preset ; id: %d", id);
+  preset_set_select(id);
+  printf(" ; recalling...");
+  preset_recall((u32)id);
+  printf(" ; refreshing...");
+
+  /// FIXME: this is pretty slow..
+  /// better to refresh child widget states,
+  /// than to rebuild the whole show.
+
+  scroll_box_clear(&boxOuts);
+  scroll_box_clear(&boxIns);
+  scroll_box_clear(&boxParams);
+
+  fill_outs(GTK_LIST_BOX(boxOuts.list));
+  fill_ins(GTK_LIST_BOX(boxIns.list));
+  fill_params(GTK_LIST_BOX(boxParams.list));
 }
 
 //==================================
 //==== editing handlers
 
 void ui_connect_in(void) {
-  // store the old target for refresh
-  int t = net_get_target(outSelect);
+
+  int t;
+  if(outSelect < 0) { return; } 
+
+  t = net_get_target(outSelect);
   if(t == inSelect) {
     // was connected, disconnect
     net_disconnect(outSelect);
@@ -109,7 +135,9 @@ void ui_connect_in(void) {
 
 void ui_connect_param(void) {
    // store the old target for refresh
-  int t = net_get_target(outSelect);
+  int t;
+  if(outSelect < 0) { return; } 
+  t = net_get_target(outSelect);
   if(t == (paramSelect + net->numIns)) {
     // was connected here, disconnect
     net_disconnect(outSelect);
@@ -125,27 +153,13 @@ void ui_connect_param(void) {
   refresh_row_outs(outSelect);
 }
 
-void ui_preset_in(void) {
-  //...
-}
+/* void ui_preset_in(void) { */
+/*   //... */
+/* } */
 
-void ui_preset_out(void) {
-  //...
-}
-
-/* TODO
-void ui_in_value() {
-  //...
-}
-
-void ui_param_preset() {
-  //...
-}
-
-void ui_param_value() {
-  //...
-}
-*/
+/* void ui_preset_out(void) { */
+/*   //... */
+/* } */
 
  void ui_create_op(void) {
   scroll_box_clear(&boxOps);
@@ -169,4 +183,74 @@ void ui_param_value() {
   fill_ops(GTK_LIST_BOX(boxOps.list));
   fill_outs(GTK_LIST_BOX(boxOuts.list));
   fill_ins(GTK_LIST_BOX(boxIns.list));
+}
+
+// handle input value change
+void ui_set_input(int id, int val) {
+  //  net_set_active(0);
+  net_set_in_value(id, val);
+  //  net_set_active(1);
+  refresh_row_ins(id);
+}
+
+
+// handle param value change
+void ui_set_param(int id, int val) {
+
+  printf("\r\n setting param %d to val 0x%08x ... "
+	 //	     " need to implement scaling or this will crash.",  id, val);
+	 , id, val);
+  net_set_in_value(id + net->numIns, val);
+  refresh_row_params(id);
+}
+
+
+// toggle preset inclusion for input
+void ui_toggle_preset_input(int id) {
+  printf("\r\n toggle preset input, id %d", id);
+  net_toggle_in_preset(id);
+  printf(" ; result: %d", preset_in_enabled(preset_get_select(), id));
+}
+
+// store input value in selected preset
+void ui_store_preset_input(int id) {
+  printf("\r\n store input value in preset, id %d", id);
+  net_set_in_preset(id, 1);
+  preset_store_in(preset_get_select(), id);
+  if(id < net->numIns) {
+    refresh_row_ins(id);
+  } else {
+    refresh_row_params(id - net->numIns);
+  }
+}
+
+// toggle preset inclusion for output
+void ui_toggle_preset_output(int id) {
+  printf("\r\n toggle preset output, id %d", id);
+  net_toggle_out_preset(id);
+  printf(" ; result: %d", preset_out_enabled(preset_get_select(), id));
+}
+
+// store output target in selected preset
+void ui_store_preset_output(int id) {
+  printf("\r\n store output target in preset, id %d", id); 
+  net_set_out_preset(id, 1);
+  preset_store_out(preset_get_select(), id);
+  refresh_row_outs(id);
+}
+
+// set module by name
+void ui_set_module(const char* name) {
+  printf("\r\n set module: %s", name);
+
+  scroll_box_clear(&boxOuts);
+  scroll_box_clear(&boxIns);
+  scroll_box_clear(&boxParams);
+
+  files_load_dsp_name(name);
+
+  fill_outs(GTK_LIST_BOX(boxOuts.list));
+  fill_ins(GTK_LIST_BOX(boxIns.list));
+  fill_params(GTK_LIST_BOX(boxParams.list));
+  
 }

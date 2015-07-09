@@ -51,7 +51,7 @@ typedef struct _mixData {
 } mixData;
 
 //-------------------------
-//----- extern vars (initialized here)
+//----- extern variables (initialized here)
 
 
 // global pointer to module descriptor.

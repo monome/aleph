@@ -5,16 +5,58 @@
 
 */
 
+// std
+////// later...
+// #include <stdarg.h>
+
 // asf
 #include "print_funcs.h"
 
 // avr32_lib
-#include "flash.h"
+//#include "flash.h"
 
 // bees
-#include "flash_bees.h"
+//#include "flash_bees.h"
 #include "param_scaler.h"
 #include "types.h"
+
+
+//------ scaler data
+// including default scaler data as const byte arrays.
+const u8 scaler_amp_rep_data[] = {
+  #include "scaler_amp_rep.dat_le.inc"
+};
+
+const u8 scaler_amp_val_data[] = {
+  #include "scaler_amp_val.dat_le.inc"
+};
+
+const u8 scaler_integrator_rep_data[] = {
+  #include "scaler_integrator_rep.dat_le.inc"
+};
+
+const u8 scaler_integrator_val_data[] = {
+  #include "scaler_integrator_val.dat_le.inc"
+};
+
+const u8 scaler_integrator_short_rep_data[] = {
+  #include "scaler_integrator_short_rep.dat_le.inc"
+};
+
+const u8 scaler_integrator_short_val_data[] = {
+  #include "scaler_integrator_short_val.dat_le.inc"
+};
+
+const u8 scaler_note_val_data[] = {
+  #include "scaler_note_val.dat_le.inc"
+};
+
+const u8 scaler_svf_fc_val_data[] = {
+  #include "scaler_svf_fc_val.dat_le.inc"
+};
+
+//-------
+
 
 // array of words required for param val per param type
 static u32 scalerDataWords[eParamNumTypes] = {
@@ -286,15 +328,41 @@ u32 scaler_get_rep_offset(ParamType p) {
 
 // get pointers to NV memory for table assignment
 const s32* scaler_get_nv_data(ParamType p) {
-  void* scalerBytes = (void*)&(((beesFlashData*)(flash_app_data()))->scalerBytes);
-  //  print_dbg("\r\n param_scaler:scaler_get_nv_data, result: 0x");
-  //  print_dbg_hex((u32)((s32*)scalerBytes + scaler_get_data_offset(p)));
-  return (s32*)scalerBytes + scaler_get_data_offset(p);
+  // hackish... ignore any param type that doesn't actually use nv data
+  switch(p) {
+  case  eParamTypeAmp :
+    return (s32*)scaler_amp_val_data;
+    break;
+  case  eParamTypeIntegrator :
+    return (s32*)scaler_integrator_val_data;
+    break;
+  case  eParamTypeNote :
+    return (s32*)scaler_note_val_data;
+    break;
+  case  eParamTypeSvfFreq :
+    return (s32*)scaler_svf_fc_val_data;
+    break;
+  case  eParamTypeIntegratorShort :
+    return (s32*)scaler_integrator_short_val_data;
+    break;
+  default:
+    return NULL;
+  }
 }
 
 const s32* scaler_get_nv_rep(ParamType p) {
-  void* scalerBytes = (void*)&(((beesFlashData*)(flash_app_data()))->scalerBytes);
-  //  print_dbg("\r\n param_scaler:scaler_get_nv_rep, result: 0x");
-  //  print_dbg_hex((u32)((s32*)scalerBytes + scaler_get_rep_offset(p)));
-  return (s32*)scalerBytes + scaler_get_rep_offset(p);
+  // hackish... ignore any param type that doesn't actually use nv data
+  switch(p) {
+  case  eParamTypeAmp :
+    return (s32*)scaler_amp_rep_data;
+    break;
+  case  eParamTypeIntegrator :
+    return (s32*)scaler_integrator_rep_data;
+    break;
+  /* case  eParamTypeNote : */
+  /*   return (s32*)scaler_note_rep_data; */
+  /*   break; */
+  default:
+    return NULL;
+  }
 }

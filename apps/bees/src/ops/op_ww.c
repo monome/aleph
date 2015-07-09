@@ -284,6 +284,7 @@ void op_ww_init(void* mem) {
 void op_ww_deinit(void* op) {
   // release focus
   net_monome_set_focus(&(((op_ww_t*)op)->monome), 0);
+  op_ww_unset_timer(op);
 }
 
 //-------------------------------------------------

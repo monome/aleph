@@ -35,8 +35,8 @@ void bfin_load_buf(const u8* data, const u32 size);
 // set a parameter
 void bfin_set_param(U8 idx, fix16_t val);
 
-// TODO: 
-// fix16_t bfin_get_param(u8 idx);
+//// UNTESTED:
+fix16_t bfin_get_param(u8 idx);
 
 // get number of parameters 
 void bfin_get_num_params(volatile u32* num);
@@ -68,5 +68,7 @@ extern void bfin_wait_ready(void);
 // get param value
 extern s32 bfin_get_param(u8 idx);
 
+// fill a buffer on the blackfin with arbitrary data
+extern void bfin_fill_buffer(const s32* src, u32 bytes);
 
 #endif // header guard

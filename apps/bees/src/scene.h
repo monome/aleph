@@ -83,10 +83,14 @@ extern void scene_set_name_char(u8 idx, char ch);
 // set module name
 extern void scene_set_module_name(const char* name);
 
+
 // query module name and version
 extern void scene_query_module(void);
 
 // get scene name
 extern const char* scene_get_name(void);
+// get module name
+extern const char* scene_get_module_name(void);
+
  
 #endif

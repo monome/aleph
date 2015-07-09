@@ -393,3 +393,16 @@ s32 bfin_get_param(u8 idx) {
   return pval.asInt;
   
 }
+
+// fill a buffer on the blackfin with arbitrary data
+void bfin_fill_buffer(const s32* src, u32 bytes) {
+  u16 x;
+
+  app_pause();
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, MSG_FILL_BUFFER_COM);
+  spi_read(BFIN_SPI, &x);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+  app_resume();
+}

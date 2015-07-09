@@ -38,9 +38,9 @@ extern fract32 filter_1p_lo_next(filter_1p_lo* f);
 extern u8 filter_1p_sync(filter_1p_lo* f);
 
 ///---- highpass
-
+// not using this anywhere right now.
 /*
-o// initialize
+// initialize
 extern void filter_1p_hi_init(filter_1p_hi* f, fract32 in);
 // set cutoff frequency in hz
 extern void filter_1p_hi_set_hz(filter_1p_hi* f, fix16 hz);

@@ -105,19 +105,13 @@ static void handle_Switch7(s32 data) {
   op_sw_sys_input(opSysSw[5], data > 0);
 } 
 
-static void handle_MonomeConnect(s32 data) { 
-  print_dbg("\r\n received MonomeConnect event in BEES");
-  //////////
-  /// FIXME: check connection type (in the data)
-  /// and call grid/arc connection as appropriate
-  /////
+static void handle_MonomeConnect(s32 data) {
   net_monome_connect();
-  // timers_set_monome();
+  print_dbg("\r\n received MonomeConnect event in BEES");
 }
 
 static void handle_MonomeDisconnect(s32 data) { 
   net_monome_disconnect();
-  //  timers_unset_monome();
 }
 
 static void handle_MonomeGridKey(s32 data) { 
@@ -127,6 +121,12 @@ static void handle_MonomeGridKey(s32 data) {
   /// of course, first we need USB hub support.
   
   print_dbg("\r\n monome grid key event in BEES.");
+  print_dbg("\r\n monomeOpFocus: 0x");
+  print_dbg_hex((u32)monomeOpFocus);
+  print_dbg("; monomeOpFocus->op: 0x");
+  print_dbg_hex((u32)(monomeOpFocus->op));
+  print_dbg("; monome_grid_key_handler: 0x");
+  print_dbg_hex((u32)(monome_grid_key_handler));
 
   (*monome_grid_key_handler)(monomeOpFocus, data);
 }

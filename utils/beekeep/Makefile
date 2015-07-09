@@ -39,7 +39,9 @@ src += \
 	$(bees)/src/ops/op_cascades.c \
 	$(bees)/src/ops/op_delay.c \
 	$(bees)/src/ops/op_div.c \
+	$(bees)/src/ops/op_divr.c \
 	$(bees)/src/ops/op_enc.c \
+	$(bees)/src/ops/op_fade.c \
 	$(bees)/src/ops/op_gate.c \
 	$(bees)/src/ops/op_hid_word.c \
 	$(bees)/src/ops/op_history.c \
@@ -52,21 +54,16 @@ src += \
 	$(bees)/src/ops/op_metro.c \
 	$(bees)/src/ops/op_midi_cc.c \
 	$(bees)/src/ops/op_midi_note.c \
-<<<<<<< HEAD
-=======
 	$(bees)/src/ops/op_midi_out_note.c \
->>>>>>> dev
 	$(bees)/src/ops/op_mul.c \
 	$(bees)/src/ops/op_monome_grid_raw.c \
+	$(bees)/src/ops/op_monome_arc.c \
 	$(bees)/src/ops/op_preset.c \
 	$(bees)/src/ops/op_screen.c \
 	$(bees)/src/ops/op_serial.c \
 	$(bees)/src/ops/op_split.c \
 	$(bees)/src/ops/op_split4.c \
-<<<<<<< HEAD
-=======
 	$(bees)/src/ops/op_step.c \
->>>>>>> dev
 	$(bees)/src/ops/op_sub.c \
 	$(bees)/src/ops/op_sw.c \
 	$(bees)/src/ops/op_timer.c \
@@ -172,10 +169,10 @@ cflags += -std=gnu99
 cflags += -D BEEKEEP=1
 cflags += -g -O0
 
-lflags += -ljansson
+lflags += -Bstatic -ljansson
 
 cflags += $(shell pkg-config --cflags gtk+-3.0)
-lflags += $(shell pkg-config --libs gtk+-3.0)
+lflags += -Bdynamic $(shell pkg-config --libs gtk+-3.0)
 
 
 $(build-dir)%.o: %.c 
