@@ -1,4 +1,8 @@
 ----------------
+lines   0.2.4
+- fix: correct svf parameter slewing
+
+----------------
 bees    0.6.2
 - fix: wait for bfin to initialize before reading parameters
 
