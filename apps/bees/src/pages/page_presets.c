@@ -66,9 +66,10 @@ static void redraw_lines(void);
 // given input index and foreground color
 static void render_line(s16 idx, u8 fg) {
   region_fill(lineRegion, 0x0);
-  if( (idx >= 0) && (idx < maxPresetIdx) ) {
+  if( (idx >= 0) && (idx <= maxPresetIdx) ) {
     clearln();
     appendln((const char*)preset_name(idx));
+    endln();
     font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
   }
 }
@@ -86,11 +87,8 @@ static void select_scroll(s32 dir) {
       return;
     }
     // remove highlight from old center
-    //    render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
-    // redraw center row without editing cursor, etc
-    render_line(*pageSelect, 0xa);
-    // copy to scroll
-    render_to_scroll_center();
+    render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
+    // decrement selection
     newSel = *pageSelect - 1;
     *pageSelect = newSel;    
     // add new content at top
@@ -167,11 +165,11 @@ void handle_key_1(s32 val) {
 
 // copy / clear / confirm
 void handle_key_2(s32 val) {
-  if(inClear) {
+  if(val == 1) { return; }
+  if(check_key(2)) {
     preset_clear(*pageSelect);
-  } else {
-    inClear = 1;
   }
+  show_foot();
 }
 
 // alt
@@ -280,6 +278,7 @@ static void show_foot3(void) {
 
 static void show_foot(void) {
   if(inClear || inCopy) {
+    // currently not used
     font_string_region_clip(footRegion[0], "-    ", 0, 0, 0xf, 0);
     font_string_region_clip(footRegion[1], "-    ", 0, 0, 0xf, 0);
     font_string_region_clip(footRegion[2], "OK!  ", 0, 0, 0xf, 0);
