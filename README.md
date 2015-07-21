@@ -26,7 +26,6 @@ minicom -s
 
 [*] for the "green sandwich" proto, mode switch is broken, bootloader toggle is SW4.
 
-
 [**] for the "green sandwich" proto, the device is called /dev/ttyUSBx on linux, looks like FTDI,
 and you may need to lower the baudrate.
 
@@ -145,13 +144,11 @@ currently the page is here, (but it could move)
 [http://www.atmel.com/tools/ATMELAVRTOOLCHAINFORLINUX.aspx]
 you will need to sign up / login.
 
-get the appopriate toolchain release for your architecture, and the latest headers,
-now you have 2 files similar to:
-
+get the 32-bit linux toolchain. ** IMPORTANT: GET 32-BIT REGARDLESS OF YOUR HOST ARCHITECTURE. **  also get the atmel headers:
 `avr32-gnu-toolchain-3.4.2.435-linux.any.x86.tar.gz`
 `atmel-headers-6.1.3.1475.zip`
 
-GET 32 BIT.
+(these are the versions we use. feel free to try something newer, paying attention to potential conflicts with ASF and avr32_lib srouces.)
 
 extracting the toolchain archive gives you something like 
 `avr32-gnu-toolchain-linux_x86/`
