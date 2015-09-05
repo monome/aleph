@@ -287,6 +287,9 @@ void net_deinit(void) {
     net_init_onode(i);
   }
 
+  // make sure to get out of op-graphics mode
+  op_gfx_disable
+
 }
 
 // clear ops and i/o
@@ -1233,6 +1236,10 @@ u8* net_unpickle(const u8* src) {
   // no system operators after this
   net_deinit();
 
+  // confusingly though, we don't call deinit() after this.
+  // system ops are in the pickled scene data along with everything else.
+  // net_deinit() should maybe be renamed.
+
 
   // get count of operators
   // (use 4 bytes for alignment)
@@ -1360,9 +1367,6 @@ void net_get_param_value_string(char* dst, u32 idx) {
 		  &(net->params[idx].scaler), 
 		  net->params[idx].data.value
 		  );
-/* #if BEEKEEP */
-/*   printf("\r\n scaler_get_str result: %s", dst); */
-/* #endif */
 }
 
 
@@ -1374,7 +1378,6 @@ void net_get_param_value_string_conversion(char* dst, u32 idx, s32 val) {
 		  val
 		  );
 }
-/// scale
 
 
 // disconnect from parameters
