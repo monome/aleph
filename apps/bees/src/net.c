@@ -288,7 +288,7 @@ void net_deinit(void) {
   }
 
   // make sure to get out of op-graphics mode
-  op_gfx_disable
+  op_gfx_disable();
 
 }
 
