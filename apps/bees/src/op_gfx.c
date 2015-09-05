@@ -28,3 +28,8 @@ extern void op_gfx_disable(void) {
     print_dbg("\r\n , unset opPlay flag. ");
   }
 }
+
+exter void op_gfx_reset(void) { 
+  opPlay = 0;
+  opPlayCount = 0;
+}
