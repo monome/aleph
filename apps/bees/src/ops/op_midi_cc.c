@@ -137,13 +137,15 @@ static void op_midi_cc_handler(op_midi_t* op_midi, u32 data) {
 // pickle / unpickle
 u8* op_midi_cc_pickle(op_midi_cc_t* mcc, u8* dst) {
   dst = pickle_io(mcc->chan, dst);
+  dst = pickle_io(mcc->num, dst);
   return dst;
 }
 
 const u8* op_midi_cc_unpickle(op_midi_cc_t* mcc, const u8* src) {
   src = unpickle_io(src, (u32*)&(mcc->chan));
   mcc->chan = op_to_int(mcc->chan);
-
+  src = unpickle_io(src, (u32*)&(mcc->num));
+  mcc->num = op_to_int(mcc->num);
 
   return src;
 }
