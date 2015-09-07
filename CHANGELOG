@@ -1,5 +1,14 @@
 
 ----------------
+bees    0.7.0   !! breaks scene compatiblity for MIDI !!
+- store CC number in the midi CC output operator.
+- input page now refreshes its values on page select or ALT button.
+
+----------------
+bees    0.6.3
+- fix initialization bugs in graphics ops (e.g. SCREEN)
+
+----------------
 bees    0.6.3
 - fix initialization bugs in graphics ops (e.g. SCREEN)
 

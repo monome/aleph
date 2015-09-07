@@ -380,6 +380,9 @@ void select_ins(void) {
   app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
   app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ;
 
+  // redraw for new values
+  redraw_ins();
+
 }
 
 //========================================================
@@ -472,9 +475,11 @@ void handle_key_3(s32 val) {
       print_dbg_ulong(preset_get_select());
       preset_recall(preset_get_select());
       inPresetSelect = 0;
-      redraw_ins();
+      //      redraw_ins();
     }
   }
+  // always redraw to refresh values
+  redraw_ins();
   show_foot();
 }
 
