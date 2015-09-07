@@ -39,7 +39,6 @@ extern void play_init(void) {
   region_fill(&scrollRegion, 0x0);
 }
 
-
 // enable rendering (play modal page was selected) 
 extern void play_enable_render(void) {
   render_set_scroll(&centerScroll);
@@ -64,8 +63,6 @@ extern void play_input(u16 idx) {
     clearln();
 
     op_print(lineBuf, net_get_in_value(idx));
-    //    itoa_int(net_get_in_value(idx), (char*)lineBuf);
-    //    print_s32((char*)lineBuf, net_get_in_value(idx));
 
     font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_SHORT, 0, 0xa, 0);
   } else {
@@ -78,10 +75,7 @@ extern void play_input(u16 idx) {
     font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
     clearln();
     
-    //    op_print(lineBuf, net_get_in_value(idx));
     net_get_param_value_string(lineBuf, idx);
-
-
     font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, 0xa, 0);
   }
    render_to_scroll_bottom();

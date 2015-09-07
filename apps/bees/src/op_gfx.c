@@ -29,7 +29,7 @@ extern void op_gfx_disable(void) {
   }
 }
 
-exter void op_gfx_reset(void) { 
+void op_gfx_reset(void) { 
   opPlay = 0;
   opPlayCount = 0;
 }

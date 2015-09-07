@@ -74,6 +74,10 @@ void select_scroll(s8 dir) {
   const s32 max = net_num_ops() - 1;
   s16 newSel;
   s16 newIdx;
+
+  // cancel actions
+  pages_reset_keypressed();
+
   if(dir < 0) {
     /// SCROLL DOWN
     // if selection is already zero, do nothing 

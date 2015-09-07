@@ -81,6 +81,9 @@ static void select_scroll(s32 dir) {
   s16 newIdx;
   s16 newSel;
 
+  // cancel actions
+  pages_reset_keypressed();
+
   if(dir < 0) {
     /// SCROLL DOWN
     if(*pageSelect == 0) {

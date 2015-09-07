@@ -131,6 +131,10 @@ static void select_scroll(s32 dir) {
   s16 oldSel;
   int i;
 
+  // cancel actions
+  pages_reset_keypressed();
+
+
   // wrap with blank line
   newSel = *pageSelect + dir;
   if (newSel < -1) { 

@@ -1,4 +1,9 @@
+
 ----------------
+bees    0.6.3
+- fix initialization bugs in graphics ops (e.g. SCREEN)
+
+	----------------
 lines   0.2.4
 - fix: correct svf parameter slewing
 

@@ -18,5 +18,6 @@ extern void op_gfx_enable(void);
 // operator disabled
 extern void op_gfx_disable(void);
 
+extern void op_gfx_reset(void);
 
 #endif

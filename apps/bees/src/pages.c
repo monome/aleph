@@ -113,7 +113,7 @@ static s8 lastPageIdx = 0;
 }
 
 // de-init
- void pages_deinit(void) {
+void pages_deinit(void) {
 }
 
 // re-select
@@ -164,4 +164,9 @@ u8 pages_toggle_play(void) {
     set_page(ePagePlay);
   }
   return ret;
+}
+
+// reset keypressed field externally to cancel any ongoing actions
+void pages_reset_keypressed(void) { 
+  keyPressed = 255;
 }

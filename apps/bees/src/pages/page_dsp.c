@@ -1,6 +1,6 @@
 /*
   page_dsp.c
- */
+*/
 
 // asf
 #include "print_funcs.h"
@@ -56,6 +56,9 @@ static void select_scroll(s32 dir) {
   // index for new content
   s16 newIdx;
   s16 newSel;
+
+  // cancel actions
+  pages_reset_keypressed();
 
   if(dir < 0) {
     /// SCROLL DOWN
@@ -126,22 +129,26 @@ static void show_foot0(void) {
   }
   region_fill(footRegion[0], fill);
   font_string_region_clip(footRegion[0], "LOAD", 0, 0, 0xf, fill);
- }
+}
 
+#if BFIN_INTERNAL_FLASH
 static void show_foot1(void) {
-  u8 fill = 0;
-  if(keyPressed == 1) {
-    fill = 0x5;
-  }
-  region_fill(footRegion[1], fill);
-  font_string_region_clip(footRegion[1], "WRITE", 0, 0, 0xf, fill);
+u8 fill = 0;
+if(keyPressed == 1) {
+fill = 0x5;
+}
+region_fill(footRegion[1], fill);
+font_string_region_clip(footRegion[1], "WRITE", 0, 0, 0xf, fill);
   
 }
+#endif
 
 
 static void show_foot(void) {
-  show_foot0();
-  show_foot1();
+show_foot0();
+#if BFIN_INTERNAL_FLASH
+show_foot1();
+#endif
 }
 
 
@@ -151,18 +158,12 @@ void handle_key_0(s32 val) {
   if(val == 0) { return; }
   if(check_key(0)) {
     notify("loading...");
-    // don't do this! let it break?
-    //    net_clear_user_ops();
-    // disconnect parameters though
+
     net_disconnect_params();
 
     files_load_dsp(*pageSelect);
 
     bfin_wait_ready();
-
-    //// FIXME: use .dsc, file_load_dsp calls directly
-    //    net_report_params();
-   
     bfin_enable();
 
     redraw_ins();
@@ -173,32 +174,22 @@ void handle_key_0(s32 val) {
   show_foot();
 }
 
-void handle_key_1(s32 val) {
-    /// FIXME:
-#if 0 // don't store DSP in flash for now
+void handle_key_1(s32 val) { 
+#if BFIN_INTERNAL_FLASH
+
   if(val == 0) { return; }
   if(check_key(1)) {
-    // render status to head region  
-    //    notify("writing...");
-    // write module as default 
-    //    files_store_default_dsp(*pageSelect);
-    //    notify("done writing.");
+    notify("writing...");
+    files_store_default_dsp(*pageSelect);
+    notify("done writing.");
   }
   show_foot();
+
 #endif  
 }
 
-
-///????
 void handle_key_2(s32 val) {
-  ;;
-  /*
-  if(check_key(2)) {
-    bfin_disable();
-    //    net_report_params();
-    bfin_enable();
-  }
-  */
+  // nothing
 }
 
 void handle_key_3(s32 val) {
@@ -273,7 +264,6 @@ void select_dsp(void) {
   app_event_handlers[ kEventSwitch1 ]	= &handle_key_1 ;
   app_event_handlers[ kEventSwitch2 ]	= &handle_key_2 ;
   app_event_handlers[ kEventSwitch3 ]	= &handle_key_3 ;
-
 }
 
 // redraw all lines, based on current selection
