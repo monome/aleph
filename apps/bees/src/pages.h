@@ -137,8 +137,10 @@ extern void set_page(ePage n);
 extern u8 check_key(u8 key);
 // toggle play mode
 extern u8 pages_toggle_play(void);
-// toggle alt mode
+
+ // toggle alt mode
 extern u8 pages_set_alt(bool val);
+
 // reset key pressed to cancel any ongoing actions
 extern void pages_reset_keypressed(void);
 

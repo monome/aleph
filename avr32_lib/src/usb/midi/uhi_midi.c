@@ -22,7 +22,7 @@
 #include "uhi_midi.h"
 
 #define UHI_MIDI_PRINT_DBG 1
-#define UHI_MIDI_TIMEOUT 5
+#define UHI_MIDI_TIMEOUT 1
 
 // looks like we need to get class-specific endpoint descriptors,
 //  to ask them about virtual cable index and stuff like that??

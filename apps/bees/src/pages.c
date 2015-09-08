@@ -213,19 +213,26 @@ void pages_reset_keypressed(void) {
 // utility for editing name
 void pages_edit_cursor(s32 val, char* buf, s8* cursor, u16 len) { 
   s8 _cursor;
+  u8 i;
   if(val > 0) { 
     _cursor = *cursor + 1;
   } else {
     _cursor = *cursor - 1;
   }
-  if(_cursor < 0) { _cursor = 1; }
+  if(_cursor < 0) { _cursor = 0; }
   if(_cursor >= len) { _cursor = len - 1; }
-  
+  *cursor = _cursor;
+
   if(altMode) { 
-    if(_cursor == 0) { 
+    if(_cursor == 0) {
       buf[_cursor] = '_';
     } else {
-      buf[_cursor] = '\0';
+      i = _cursor;
+      do{
+	  buf[i] = '\0';
+	  ++i;
+	}
+      while(i < len);
     }
   } else {
     if(buf[_cursor] == '\0') { 
@@ -235,7 +242,6 @@ void pages_edit_cursor(s32 val, char* buf, s8* cursor, u16 len) {
 	buf[_cursor] = '_';
       }
     }  
-    *cursor = _cursor;
   }
 }
 
@@ -255,7 +261,7 @@ void pages_edit_char_inc (char* str, u8 pos) {
 // scroll character down
 void pages_edit_char_dec (char* str, u8 pos) {
   u8 tmp = str[pos];
-  if(tmp == '_') { tmp = '_'; } else { --tmp; }
+  if(tmp == '\0') { tmp = '_'; } else { --tmp; }
   while(check_edit_char((char)tmp)) {
     --tmp;
     if(tmp < MIN_EDIT_CHAR) {

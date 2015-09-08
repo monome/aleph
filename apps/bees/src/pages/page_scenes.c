@@ -82,6 +82,7 @@ static void select_scroll(s32 dir) {
 
   // cancel actions
   pages_reset_keypressed();
+  cursor = 0;
 
   if(dir < 0) {
     /// SCROLL DOWN
@@ -205,10 +206,10 @@ void handle_key_2(s32 val) {
 }
 
 void handle_key_3(s32 val) {
-  altMode = (val > 0);
-  if(altMode) { 
+  if ( pages_set_alt(val)) { 
     sceneData->desc.sceneName[cursor] = '\0';
     redraw_scenes();
+    render_edit_string(headRegion, sceneData->desc.sceneName, SCENE_NAME_LEN, cursor);
   }
   show_foot();
 }

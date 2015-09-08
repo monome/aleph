@@ -77,7 +77,6 @@ extern void render_to_scroll_top(void);
 // add line region to bottom of scroll region (clipping)
 extern void render_to_scroll_bottom(void);
 
-
 // render tmp region to arbitrary line, with highlight level
 extern void render_to_scroll_line(u8 n, u8 hl);
 // fill scroll line with color

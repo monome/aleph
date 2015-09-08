@@ -424,35 +424,37 @@ void render_edit_string(region* reg, char* str, u8 len, u8 cursor) {
   //  const u32 squarePx = (FONT_CHARW+2) * FONT_CHARH;
   u32 dif;
   region_fill(reg, 0x0);
-  bool wasNull = false;
+  bool wasNull = 0;
   for(i=0; i<len; ++i) {
     if(i == cursor) {
       // hack a column fill with a space character
-
       font_glyph(' ', dst, reg->w, 0x0, 0xf);
       dst += 2; off += 2;
 
       if(str[i] == '\0') {
-	wasNull = true; 
-      } 
-      if(wasNull) {
-	font_glyph_fixed(str[i], dst, reg->w, 0x0, 0x1);
-      } else {
-	font_glyph_fixed(str[i], dst, reg->w, 0x0, 0xf);
+	wasNull = 1; 
+      }  else {
+	if(wasNull) {
+	  font_glyph_fixed(str[i], dst, reg->w, 0x0, 0x1);
+	} else {
+	  font_glyph_fixed(str[i], dst, reg->w, 0x0, 0xf);
+	}
       }
       dif = FONT_CHARW + 2;
       dst += dif;
       off += dif;
-
     } else {
+      // not the cursor
       if(str[i] == '\0') {
-	wasNull = true; 
-      }
-      if(wasNull) {
-	dif = font_glyph(str[i], dst, reg->w, 0x1, 0x0) + 1;
+	dif = font_glyph(' ', dst, reg->w, 0x1, 0x0) + 1;
+	wasNull = 1; 
       } else {
+	if(wasNull) {
+	  dif = font_glyph(str[i], dst, reg->w, 0x1, 0x0) + 1;
+	} else {
 	dif = font_glyph(str[i], dst, reg->w, 0xf, 0x0) + 1;
-      }
+	}
+    }
       dst += dif;
       off += dif;
     }

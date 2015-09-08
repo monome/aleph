@@ -34,9 +34,11 @@ src += \
 	$(bees)/src/ops/op_accum.c \
 	$(bees)/src/ops/op_adc.c \
 	$(bees)/src/ops/op_bars.c \
+	$(bees)/src/ops/op_bars8.c \
 	$(bees)/src/ops/op_bignum.c \
 	$(bees)/src/ops/op_bits.c \
 	$(bees)/src/ops/op_cascades.c \
+	$(bees)/src/ops/op_change.c \
 	$(bees)/src/ops/op_delay.c \
 	$(bees)/src/ops/op_div.c \
 	$(bees)/src/ops/op_divr.c \
@@ -54,6 +56,7 @@ src += \
 	$(bees)/src/ops/op_metro.c \
 	$(bees)/src/ops/op_midi_cc.c \
 	$(bees)/src/ops/op_midi_note.c \
+	$(bees)/src/ops/op_midi_out_cc.c \
 	$(bees)/src/ops/op_midi_out_note.c \
 	$(bees)/src/ops/op_mul.c \
 	$(bees)/src/ops/op_monome_grid_raw.c \
@@ -61,6 +64,8 @@ src += \
 	$(bees)/src/ops/op_preset.c \
 	$(bees)/src/ops/op_screen.c \
 	$(bees)/src/ops/op_serial.c \
+	$(bees)/src/ops/op_shl.c \
+	$(bees)/src/ops/op_shr.c \
 	$(bees)/src/ops/op_split.c \
 	$(bees)/src/ops/op_split4.c \
 	$(bees)/src/ops/op_step.c \
@@ -72,6 +77,7 @@ src += \
 	$(bees)/src/ops/op_random.c \
 	$(bees)/src/ops/op_route.c \
 	$(bees)/src/ops/op_route8.c \
+	$(bees)/src/ops/op_route16.c \
 	$(bees)/src/ops/op_mod.c \
 	$(bees)/src/ops/op_ww.c \
 	$(bees)/src/pages/page_dsp.c \

@@ -177,7 +177,9 @@ void op_screen_in_fill(op_screen_t* screen, const io_t v) {
 void op_screen_in_x(op_screen_t* screen, const io_t v) {
   if (v > OP_SCREEN_X_MAX) {
     screen->x = screen->reg.x = OP_SCREEN_X_MAX; 
-  } else {		
+  } else if (v < 0) {
+    screen->x = screen->reg.x = 0;
+  } else {	 	
     screen->x = screen->reg.x = v;
   }
   op_screen_redraw(screen);
@@ -187,7 +189,9 @@ void op_screen_in_x(op_screen_t* screen, const io_t v) {
 void op_screen_in_y(op_screen_t* screen, const io_t v) {
   if (v > OP_SCREEN_Y_MAX) {
     screen->y = screen->reg.y = OP_SCREEN_Y_MAX;
-  } else {		
+  } else if (v < 0) {
+    screen->y = screen->reg.y = 0;
+  } else {   	
     screen->y = screen->reg.y = v;
   }
   op_screen_redraw(screen);

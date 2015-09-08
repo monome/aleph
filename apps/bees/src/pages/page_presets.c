@@ -27,7 +27,7 @@ static u8 inClear = 0;
 // copy flag
 static u8 inCopy = 0;
 // editing cursor position
-static s8 cursor = 0;
+static s8 cursor = 4;
 // max index
 static const s32 maxPresetIdx = NET_PRESETS_MAX - 1;
 
@@ -61,6 +61,7 @@ static void render_line(s16 idx, u8 fg);
 static void select_scroll(s32 dir);
 
 static void redraw_lines(void);
+static void render_selection(void);
 
 // fill tmp region with new content
 // given input index and foreground color
@@ -83,14 +84,21 @@ static void select_scroll(s32 dir) {
 
   // cancel actions
   pages_reset_keypressed();
+  cursor = 4;
 
   if(dir < 0) {
     /// SCROLL DOWN
     if(*pageSelect == 0) {
       return;
     }
-    // remove highlight from old center
-    render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
+    /* // remove highlight from old center */
+    /* render_scroll_apply_hl(SCROLL_CENTER_LINE, 0); */
+
+    // redraw and re-render old center selection
+     /// hm, why is this wrong.. 
+    render_line(*pageSelect, 0xa);
+    render_to_scroll_line(SCROLL_CENTER_LINE, 0); 
+
     // decrement selection
     newSel = *pageSelect - 1;
     *pageSelect = newSel;    
@@ -115,7 +123,11 @@ static void select_scroll(s32 dir) {
       return;
     }
     // remove highlight from old center
-    render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
+    // render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
+    // re-render last center without cursor
+    render_line(*pageSelect, 0xa);
+    render_to_scroll_line(SCROLL_CENTER_LINE, 0); 
+    
     // increment selection
     newSel = *pageSelect + 1;
     *pageSelect = newSel;    
@@ -177,7 +189,11 @@ void handle_key_2(s32 val) {
 
 // alt
 void handle_key_3(s32 val) {
-  altMode = (val > 0);
+  if ( pages_set_alt(val)) { 
+    preset_name(*pageSelect)[cursor] = '\0';
+    redraw_presets();
+    render_selection();
+  }
   show_foot();
 }
 
@@ -191,10 +207,7 @@ void handle_enc_3(s32 val) {
   }
   print_dbg("\r\b edited preset name: ");
   print_dbg(preset_name(*pageSelect));
-
-  render_edit_string(lineRegion, preset_name(*pageSelect), PRESET_NAME_LEN, cursor);
-  render_to_scroll_line(SCROLL_CENTER_LINE, 0);
-  
+  render_selection();  
 }
 
 // scroll cursor position in current scene name
@@ -353,4 +366,10 @@ void redraw_presets(void) {
     ++i;
     ++n;
   }
+}
+
+void render_selection(void) { 
+    render_edit_string(lineRegion, preset_name(*pageSelect), PRESET_NAME_LEN, cursor);
+    render_to_scroll_line(SCROLL_CENTER_LINE, 0);
+    //   render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
 }
