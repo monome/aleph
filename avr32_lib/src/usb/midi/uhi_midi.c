@@ -70,7 +70,7 @@ static uhi_midi_dev_t uhi_midi_dev = {
 /*   // send a setup request for the selected descriptor. */
 /*   // descriptor type  */
 /*   /\* */
-/*     Table B-12: MIDI Adapter Class-specific Bulk OUT Endpoint Descriptor */
+/*     Table B-12: MIDI Adapter Class-specific Bulk IN Endpoint Descriptor */
 /*     Offset */
 /*     Field */
 /*     Size Value */
@@ -82,7 +82,7 @@ static uhi_midi_dev_t uhi_midi_dev = {
 /*     3  bNumEmbMIDIJack 	 1 	0x01 	Number of embedded MIDI IN Jacks. */
 /*     4  BaAssocJackID(1)	 1 	0x01 	ID of the Embedded MIDI IN Jack */
 
-/*     // bulk IN endpoint desc is similar with DescriptorType = 0x05 */
+/*     // bulk OUT endpoint desc is similar with DescriptorType = 0x05 */
 /*     *\/ */
 
 /*   //    usb_setup_req_t req; */
@@ -278,10 +278,10 @@ bool uhi_midi_out_run(uint8_t * buf, iram_size_t buf_size,
     *
    */
 
-  print_dbg("\r\n attempting to run midi output endpoint ; dev address: 0x");
-  print_dbg_hex((u32) (uhi_midi_dev.dev->address) );
-  print_dbg(" , endpoint number: ");
-  print_dbg_ulong((u32) (uhi_midi_dev.ep_out) );
+  /* print_dbg("\r\n attempting to run midi output endpoint ; dev address: 0x"); */
+  /* print_dbg_hex((u32) (uhi_midi_dev.dev->address) ); */
+  /* print_dbg(" , endpoint number: "); */
+  /* print_dbg_ulong((u32) (uhi_midi_dev.ep_out) ); */
   
   return uhd_ep_run(
 		    uhi_midi_dev.dev->address,

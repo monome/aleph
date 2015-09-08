@@ -155,16 +155,18 @@ static void midi_tx_done( usb_add_t add,
 			  iram_size_t nb) {
 
   txBusy = false;
-  print_dbg("\r\n midi tx transfer callback. status: 0x"); 
-  print_dbg_hex((u32)stat); 
+  /* print_dbg("\r\n midi tx transfer callback. status: 0x");  */
+  /* print_dbg_hex((u32)stat);  */
   if (stat != UHD_TRANS_NOERROR) {
     if(stat == UHD_TRANS_TIMEOUT) { 
-      print_dbg("\r\n MIDI TX did not complete before timeout");
+      print_dbg("\r\n midi tx timeout error");
     } else {
-      print_dbg("\r\n midi tx error (in callback)");
+      print_dbg("\r\n midi tx error (other)");
     }
 
-    // reschedule somehow?
+    // FIXME
+    // reschedule somehow if tx failed?
+    // schedule next in tx queue, if we had one?
 
     return;
   }
@@ -178,7 +180,6 @@ extern void midi_read(void) {
   rxBusy = true;
   if (!uhi_midi_in_run((u8*)rxBuf,
 		       MIDI_RX_BUF_SIZE, &midi_rx_done)) {
-    // hm, every uhd enpoint run always returns error...
     print_dbg("\r\n midi rx endpoint error");
   }
   return;
@@ -194,23 +195,24 @@ extern void midi_write(const u8* data, u32 bytes) {
     *pbuf++ = data[i];
   }
 
-  // high nib of 1st byte = virtual cable, leaving 0
+  // high nib of 1st byte = virtual cable index
   // low nib = 4b com code, duplicated from status byte
   txBuf[0] = (u8) (data[0] >> 4); 
   /// try cable idx 1
+  /// FIXME: we should try and determine this from descriptors.
+  /// see commented attempts at relevant requests in uhu_midi.c
   txBuf[0] |= 0x10;
  
-  print_dbg("\r\n midi tx; data: ");
-  for(i=0; i<(bytes+1); i++) {
-    print_dbg_char_hex(txBuf[i]);
-    print_dbg(" ");
-  }
+  /* print_dbg("\r\n midi tx; data: "); */
+  /* for(i=0; i<(bytes+1); i++) { */
+  /*   print_dbg_char_hex(txBuf[i]); */
+  /*   print_dbg(" "); */
+  /* } */
 
 
-  print_dbg("\r\n midi_write...");
+  //  print_dbg("\r\n midi_write..."); 
   txBusy = true;
   if (!uhi_midi_out_run(txBuf, bytes+1, &midi_tx_done)) {
-    // hm, every uhd enpoint run always returns unspecified error...
     print_dbg("\r\n midi tx endpoint error");
   }
   return;
@@ -230,7 +232,7 @@ extern void midi_change(uhc_device_t* dev, u8 plug) {
 }
 
 // main-loop setup routine for new device connection
-///  do we need to make any control requests?
+// FIXME: make control requests here (like virtual cable IDs)
 ////
 /* extern void midi_setup(void) { */
 /* } */
