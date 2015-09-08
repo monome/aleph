@@ -46,6 +46,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpCascades, // "mp"
   eOpMidiCC,
   eOpMidiNote,
+  eOpMidiOutCC,
   eOpMidiOutNote,
   eOpMod,
   eOpMul,
@@ -306,6 +307,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "CHANGE",
     .size = sizeof(op_change_t),
     .init = &op_change_init,
+    .deinit = NULL
+  }, {
+    .name = "MOUT_CC",
+    .size = sizeof(op_midi_out_cc_t),
+    .init = &op_midi_out_cc_init,
     .deinit = NULL
   },
 };

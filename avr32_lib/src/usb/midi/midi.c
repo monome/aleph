@@ -40,13 +40,13 @@ u8 midiConnect = 0;
 
 //------------------------------------
 //------ static variables
-static u8 rxBuf[MIDI_RX_BUF_SIZE];
-static u32 rxBytes = 0;
-static u8 rxBusy = 0;
-static u8 txBusy = 0;
+static volatile u8 rxBuf[MIDI_RX_BUF_SIZE];
+static volatile u32 rxBytes = 0;
+static volatile u8 rxBusy = 0;
+static volatile u8 txBusy = 0;
 
 // try using an output buffer and adding the extra nib we saw on input ... 
-static u8 txBuf[MIDI_TX_BUF_SIZE];
+static volatile u8 txBuf[MIDI_TX_BUF_SIZE];
 
 // current packet data
 //union { u8 buf[MIDI_MAX_PACKET_SIZE]; s32 data; } packet;
@@ -132,21 +132,23 @@ static void midi_rx_done( usb_add_t add,
   int i;
   rxBusy = 0;
   if(nb > 0) {
-    print_dbg("\r\n midi rx; status: 0x");
-    print_dbg_hex((u32)stat);
-    print_dbg(" ; nb: ");
-    print_dbg_ulong(nb);
-    print_dbg(" ; data: ");
-    for(i=0; i<nb; i++) {
-      print_dbg_char_hex(rxBuf[i]);
-      print_dbg(" ");
-    }
+    /* print_dbg("\r\n midi rx; status: 0x"); */
+    /* print_dbg_hex((u32)stat); */
+    /* print_dbg(" ; nb: "); */
+    /* print_dbg_ulong(nb); */
+    /* print_dbg(" ; data: "); */
+    /* for(i=0; i<nb; i++) { */
+    /*   print_dbg_char_hex(rxBuf[i]); */
+    /*   print_dbg(" "); */
+    /* } */
+
     // ignoring 1st byte, virtual cable select
     rxBytes = nb - 1;
     midi_parse();
   } 
 }
 
+// callback for async write
 static void midi_tx_done( usb_add_t add,
 			  usb_ep_t ep,
 			  uhd_trans_status_t stat,
@@ -157,6 +159,9 @@ static void midi_tx_done( usb_add_t add,
   print_dbg_hex((u32)stat); 
   if (stat != UHD_TRANS_NOERROR) {
     print_dbg("\r\n midi tx error (in callback)");
+
+    // reschedule somehow?
+
     return;
   }
 }
@@ -202,7 +207,7 @@ extern void midi_write(const u8* data, u32 bytes) {
   txBusy = true;
   if (!uhi_midi_out_run(txBuf, bytes+1, &midi_tx_done)) {
     // hm, every uhd enpoint run always returns unspecified error...
-    //    print_dbg("\r\n midi tx endpoint error");
+    print_dbg("\r\n midi tx endpoint error");
   }
   return;
 }

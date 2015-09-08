@@ -145,7 +145,6 @@ static void op_midi_out_note_handler(op_midi_t* op_midi, u32 data) {
 }
 */
 
-
 // build and send a midi serial packet
 void op_midi_out_note_send_packet( op_midi_out_note_t* mout ) {
   u8 pack[3];
