@@ -105,10 +105,9 @@ static void op_midi_out_cc_in_val(op_midi_out_cc_t* op, const io_t v) {
   // FIXME:: these checks should use io_t specific macros
   if(v < 0) { op->val = 0; }
   else if (v > 127) { op->val = 127; }
-  else { 
-    op->val = v; 
-    op_midi_out_cc_send_packet(op);
-  }
+  else { op->val = v; }
+
+  op_midi_out_cc_send_packet(op);
 }
 
 // build and send a midi serial packet

@@ -105,10 +105,9 @@ static void op_midi_out_note_in_vel(op_midi_out_note_t* op, const io_t v) {
   // FIXME:: these checks should use io_t specific macros
   if(v < 0) { op->vel = 0; }
   else if (v > 127) { op->vel = 127; }
-  else { 
-    op->vel = v; 
-    op_midi_out_note_send_packet(op);
-  }
+  else { op->vel = v; }
+
+  op_midi_out_note_send_packet(op);
 }
 
 /*

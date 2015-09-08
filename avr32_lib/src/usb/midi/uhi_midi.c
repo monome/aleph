@@ -231,8 +231,7 @@ void uhi_midi_enable(uhc_device_t* dev) {
   /* 		   NULL); */
   
 
-  
-
+ 
   //  UHI_MIDI_CHANGE(dev, true);
   midi_change(dev, true);  
   print_dbg("\r\n finished uhi_midi_enable");
