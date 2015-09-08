@@ -115,7 +115,7 @@ static void op_midi_out_cc_in_val(op_midi_out_cc_t* op, const io_t v) {
 void op_midi_out_cc_send_packet( op_midi_out_cc_t* mout ) {
   u8 pack[3];
   // control change: high nib = 1011 
-  pack[0] = 0x0;
+  pack[0] = 0xb0;
   // low nib = channel
   pack[0] |= (u8)(mout->chan & 0x0f);
   // two data bytes: number, value
@@ -134,11 +134,14 @@ void op_midi_out_cc_send_packet( op_midi_out_cc_t* mout ) {
 // pickle / unpickle
 u8* op_midi_out_cc_pickle(op_midi_out_cc_t* op, u8* dst) {
   dst = pickle_io(op->chan, dst);
+  dst = pickle_io(op->num, dst);
   return dst;
 }
 
 const u8* op_midi_out_cc_unpickle(op_midi_out_cc_t* op, const u8* src) {
   src = unpickle_io(src, (u32*)&(op->chan));
+  src = unpickle_io(src, (u32*)&(op->num));
   op->chan = op_to_int(op->chan);
+  op->num = op_to_int(op->num);
   return src;
 }
