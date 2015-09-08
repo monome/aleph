@@ -45,6 +45,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_accum.c \
 	$(APP_DIR)/src/ops/op_adc.c \
 	$(APP_DIR)/src/ops/op_bars.c \
+	$(APP_DIR)/src/ops/op_bars8.c \
 	$(APP_DIR)/src/ops/op_bignum.c \
 	$(APP_DIR)/src/ops/op_bits.c \
 	$(APP_DIR)/src/ops/op_cascades.c \
@@ -76,6 +77,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_random.c \
 	$(APP_DIR)/src/ops/op_route.c \
 	$(APP_DIR)/src/ops/op_route8.c \
+	$(APP_DIR)/src/ops/op_route16.c \
 	$(APP_DIR)/src/ops/op_screen.c \
 	$(APP_DIR)/src/ops/op_serial.c \
 	$(APP_DIR)/src/ops/op_shl.c \

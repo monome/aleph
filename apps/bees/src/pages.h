@@ -142,4 +142,11 @@ extern u8 pages_set_alt(bool val);
 // reset key pressed to cancel any ongoing actions
 extern void pages_reset_keypressed(void);
 
+// scroll cursor position in editable string
+extern void pages_edit_cursor(s32 val, char* buf, s8* cursor, u16 len);
+
+// scroll character at cursor position in editable string
+extern void pages_edit_char_inc(char* str, u8 pos);
+extern void pages_edit_char_dec(char* str, u8 pos);
+
 #endif  // h guard

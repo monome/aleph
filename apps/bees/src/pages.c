@@ -26,6 +26,11 @@
 #define ENC_THRESH_FINE 0
 #define ENC_THRESH_COARSE 4
 
+// min/max legal characters for editable strings
+#define MAX_EDIT_CHAR 122
+#define MIN_EDIT_CHAR 45
+
+
 //--------------------------
 //--------- variables
 
@@ -81,11 +86,34 @@ u8 altMode = 0;
 // saved idx of last non-play page
 static s8 lastPageIdx = 0;
 
+
+
+//---------------
+//--- static funcs
+
+/// utility to restrict characters in legal filenames
+// return 0 if ok
+static u8 check_edit_char(char c) {
+  /*
+    45 		dash
+    48-57 	nums
+    65-90	upper
+    95		underscore
+    97-122	lower
+  */
+  if(c == 45) { return 0; }
+  if(c == 95) { return 0; }
+  if( (c >= 48) && (c <= 57) ) { return 0; }
+  if( (c >= 65) && (c <= 90) ) { return 0; }
+  if( (c >= 97) && (c <= 122) ) { return 0; }
+  return 1;
+}
+
 //-----------------------------------
 //----- external function definitions
 
 // init
- void pages_init(void) {
+void pages_init(void) {
   init_page_ins();
   init_page_dsp();
   init_page_ops();  
@@ -94,7 +122,7 @@ static s8 lastPageIdx = 0;
   init_page_presets();
   init_page_scenes();
   /*
-    // TODO
+  // TODO
   init_page_gathered();
   */
 
@@ -107,8 +135,8 @@ static s8 lastPageIdx = 0;
   redraw_ops();
   redraw_presets();
   redraw_ins();
-    //... last
- redraw_scenes();
+  //... last
+  redraw_scenes();
 
 }
 
@@ -172,7 +200,7 @@ u8 pages_set_alt(bool v) {
     altMode = 1;
   } else {
     altMode = 0;
-   }
+  }
   return altMode;
 }
 
@@ -182,5 +210,59 @@ void pages_reset_keypressed(void) {
   keyPressed = 255;
 }
 
+// utility for editing name
+void pages_edit_cursor(s32 val, char* buf, s8* cursor, u16 len) { 
+  s8 _cursor;
+  if(val > 0) { 
+    _cursor = *cursor + 1;
+  } else {
+    _cursor = *cursor - 1;
+  }
+  if(_cursor < 0) { _cursor = 1; }
+  if(_cursor >= len) { _cursor = len - 1; }
+  
+  if(altMode) { 
+    if(_cursor == 0) { 
+      buf[_cursor] = '_';
+    } else {
+      buf[_cursor] = '\0';
+    }
+  } else {
+    if(buf[_cursor] == '\0') { 
+      if(_cursor > 0) { 
+	buf[_cursor] = buf[_cursor-1] ;
+      } else {
+	buf[_cursor] = '_';
+      }
+    }  
+    *cursor = _cursor;
+  }
+}
 
-// editor
+// scroll character up
+void pages_edit_char_inc (char* str, u8 pos) {
+  s32 tmp = (s32)str[pos];
+  if(tmp == '\0') { tmp = '_'; } else { ++tmp; }
+  while(check_edit_char((char)tmp)) {
+    ++tmp;
+    if(tmp > MAX_EDIT_CHAR) {
+      tmp = MAX_EDIT_CHAR;
+    }
+  }
+  str[pos] = tmp;
+}
+
+// scroll character down
+void pages_edit_char_dec (char* str, u8 pos) {
+  u8 tmp = str[pos];
+  if(tmp == '_') { tmp = '_'; } else { --tmp; }
+  while(check_edit_char((char)tmp)) {
+    --tmp;
+    if(tmp < MIN_EDIT_CHAR) {
+      tmp = MIN_EDIT_CHAR;
+    }
+  }
+  str[pos] = tmp;
+}
+
+

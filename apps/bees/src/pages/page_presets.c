@@ -185,9 +185,9 @@ void handle_key_3(s32 val) {
 void handle_enc_3(s32 val) {
   
   if(val > 0) {
-    edit_string_inc_char(preset_name(*pageSelect), cursor);
+    pages_edit_char_inc(preset_name(*pageSelect), cursor);
   } else {
-    edit_string_dec_char(preset_name(*pageSelect), cursor);
+    pages_edit_char_dec(preset_name(*pageSelect), cursor);
   }
   print_dbg("\r\b edited preset name: ");
   print_dbg(preset_name(*pageSelect));
@@ -199,22 +199,22 @@ void handle_enc_3(s32 val) {
 
 // scroll cursor position in current scene name
 void handle_enc_2(s32 val) {
-  
-  if(val > 0) {
-    ++cursor;
-    if (cursor >= PRESET_NAME_LEN) {
-      cursor = 0;
-    } 
-  } else {
-    --cursor;
-    if (cursor < 0) {
-      cursor = PRESET_NAME_LEN - 1;
-    } 
-  }
+  pages_edit_cursor(val, preset_name(*pageSelect), &cursor, PRESET_NAME_LEN);
+  /* if(val > 0) { */
+  /*   ++cursor; */
+  /*   if (cursor >= PRESET_NAME_LEN) { */
+  /*     cursor = 0; */
+  /*   }  */
+  /* } else { */
+  /*   --cursor; */
+  /*   if (cursor < 0) { */
+  /*     cursor = PRESET_NAME_LEN - 1; */
+  /*   }  */
+  /* } */
 
-  if(preset_name(*pageSelect)[cursor] == '\0') { 
-    preset_name(*pageSelect)[cursor] = '_';
-  }
+  /* if(preset_name(*pageSelect)[cursor] == '\0') {  */
+  /*   preset_name(*pageSelect)[cursor] = '_'; */
+  /* } */
   render_edit_string(lineRegion, preset_name(*pageSelect), PRESET_NAME_LEN, cursor);
   render_to_scroll_line(SCROLL_CENTER_LINE, 0);
   

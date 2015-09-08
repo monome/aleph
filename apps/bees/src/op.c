@@ -25,6 +25,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpAdd,
   eOpMonomeArc, // "arc"
   eOpBars,
+  eOpBars8,
   eOpBignum,
   eOpBits,
   eOpChange,
@@ -53,6 +54,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpRandom,
   eOpRoute,
   eOpRoute8,
+  eOpRoute16,
   eOpScreen,
   eOpSerial,
   eOpShl,
@@ -308,6 +310,16 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_change_t),
     .init = &op_change_init,
     .deinit = NULL
+  }, {
+    .name = "ROUTE16",
+    .size = sizeof(op_route16_t),
+    .init = &op_route16_init,
+    .deinit = NULL
+  }, {
+    .name = "BARS8",
+    .size = sizeof(op_bars8_t),
+    .init = &op_bars8_init,
+    .deinit = &op_bars8_deinit   
   }, {
     .name = "MOUT_CC",
     .size = sizeof(op_midi_out_cc_t),
