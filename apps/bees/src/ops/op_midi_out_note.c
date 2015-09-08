@@ -53,7 +53,7 @@ void op_midi_out_note_init(void* mem) {
   // superclass state
 
   op->super.type = eOpMidiOutNote;
-  op->super.flags |= (1 << eOpFlagMidiIn);
+  //  op->super.flags |= (1 << eOpFlagMidiIn);
 
   op->super.numInputs = 3;
   op->super.numOutputs = 0;

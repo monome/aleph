@@ -21,8 +21,10 @@
 #include "usb_protocol_midi.h"
 #include "uhi_midi.h"
 
+// define to see more stuff
 #define UHI_MIDI_PRINT_DBG 1
-#define UHI_MIDI_TIMEOUT 1
+// timeout in milliseconds
+#define UHI_MIDI_TIMEOUT 5
 
 // looks like we need to get class-specific endpoint descriptors,
 //  to ask them about virtual cable index and stuff like that??

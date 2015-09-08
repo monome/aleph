@@ -158,7 +158,11 @@ static void midi_tx_done( usb_add_t add,
   print_dbg("\r\n midi tx transfer callback. status: 0x"); 
   print_dbg_hex((u32)stat); 
   if (stat != UHD_TRANS_NOERROR) {
-    print_dbg("\r\n midi tx error (in callback)");
+    if(stat == UHD_TRANS_TIMEOUT) { 
+      print_dbg("\r\n MIDI TX did not complete before timeout");
+    } else {
+      print_dbg("\r\n midi tx error (in callback)");
+    }
 
     // reschedule somehow?
 
@@ -175,7 +179,7 @@ extern void midi_read(void) {
   if (!uhi_midi_in_run((u8*)rxBuf,
 		       MIDI_RX_BUF_SIZE, &midi_rx_done)) {
     // hm, every uhd enpoint run always returns error...
-    //    print_dbg("\r\n midi rx endpoint error");
+    print_dbg("\r\n midi rx endpoint error");
   }
   return;
 }
