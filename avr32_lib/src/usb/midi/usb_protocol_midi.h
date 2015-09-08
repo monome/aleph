@@ -9,8 +9,6 @@
 #define USB_AUDIO_IFACE_CLASS         0x01
 #define USB_MIDI_IFACE_SUBCLASS 0x03
 
-
-
 //#define FTDI_SUBCLASS      0xFF
 //#define FTDI_PROTOCOL      0xFF
 

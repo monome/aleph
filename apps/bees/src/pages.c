@@ -166,7 +166,21 @@ u8 pages_toggle_play(void) {
   return ret;
 }
 
+// toggle alt mode
+u8 pages_set_alt(bool v) {
+  if(v > 0) {
+    altMode = 1;
+  } else {
+    altMode = 0;
+   }
+  return altMode;
+}
+
+
 // reset keypressed field externally to cancel any ongoing actions
 void pages_reset_keypressed(void) { 
   keyPressed = 255;
 }
+
+
+// editor

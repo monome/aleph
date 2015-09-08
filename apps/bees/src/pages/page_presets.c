@@ -177,6 +177,8 @@ void handle_key_2(s32 val) {
 
 // alt
 void handle_key_3(s32 val) {
+  altMode = (val > 0);
+  show_foot();
 }
 
 // scroll character value at cursor positoin in scene name

@@ -40,13 +40,13 @@ u8 midiConnect = 0;
 
 //------------------------------------
 //------ static variables
-static volatile u8 rxBuf[MIDI_RX_BUF_SIZE];
+static u8 rxBuf[MIDI_RX_BUF_SIZE];
 static volatile u32 rxBytes = 0;
 static volatile u8 rxBusy = 0;
-static volatile u8 txBusy = 0;
 
 // try using an output buffer and adding the extra nib we saw on input ... 
-static volatile u8 txBuf[MIDI_TX_BUF_SIZE];
+static u8 txBuf[MIDI_TX_BUF_SIZE];
+static volatile u8 txBusy = 0;
 
 // current packet data
 //union { u8 buf[MIDI_MAX_PACKET_SIZE]; s32 data; } packet;
@@ -68,7 +68,7 @@ static void midi_parse(void) {
   // current byte data
   u8 b; 
   // skip the first byte ( CABLE | COM )
-  u8* src = rxBuf + 1;
+  volatile u8* src = rxBuf + 1;
   // temp pointer to packet
   u8* dst = packetStart;
   // flag if we have received a status byte
@@ -129,7 +129,7 @@ static void midi_rx_done( usb_add_t add,
 			  usb_ep_t ep,
 			  uhd_trans_status_t stat,
 			  iram_size_t nb) {
-  int i;
+  //  int i;
   rxBusy = 0;
   if(nb > 0) {
     /* print_dbg("\r\n midi rx; status: 0x"); */
@@ -182,7 +182,7 @@ extern void midi_read(void) {
 
 // write to MIDI device
 extern void midi_write(const u8* data, u32 bytes) {
-  u8* pbuf = &(txBuf[1]);
+  volatile u8* pbuf = &(txBuf[1]);
   int i;
  
   // copy to buffer 

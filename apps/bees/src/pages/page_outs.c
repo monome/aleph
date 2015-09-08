@@ -530,10 +530,8 @@ void handle_key_2(s32 val) {
 
 void handle_key_3(s32 val) {
   // alt mode
-  if(val > 0) {
-    altMode = 1;
-  } else {
-    altMode = 0;
+  altMode = (val > 0);
+  if(altMode) { 
     if(inPresetSelect) {
       // load selected preset
       print_dbg("\r\n recalling preset from ins page, idx:");

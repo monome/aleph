@@ -205,10 +205,14 @@ void handle_key_2(s32 val) {
 }
 
 void handle_key_3(s32 val) {
-  // alt
+  altMode = (val > 0);
+  if(altMode) { 
+    sceneData->desc.sceneName[cursor] = '\0';
+  }
+  show_foot();
 }
 
-// scroll character value at cursor position2 in scene name
+// scroll character value at cursor position in scene name
 void handle_enc_3(s32 val) {
   if(val > 0) {
     edit_string_inc_char(sceneData->desc.sceneName, cursor);
@@ -222,6 +226,7 @@ void handle_enc_3(s32 val) {
 
 // scroll cursor position in current scene name
 void handle_enc_2(s32 val) {
+
   if(val > 0) {
     ++cursor;
     if (cursor >= SCENE_NAME_LEN) {
@@ -233,8 +238,12 @@ void handle_enc_2(s32 val) {
       cursor = SCENE_NAME_LEN - 1;
     } 
   }
-  if(sceneData->desc.sceneName[cursor] == '\0') { 
-    sceneData->desc.sceneName[cursor] = '_';
+  if(altMode) { 
+    sceneData->desc.sceneName[cursor] = '\0';
+  } else {
+    if(sceneData->desc.sceneName[cursor] == '\0') { 
+      sceneData->desc.sceneName[cursor] = '_';
+    }
   }
   render_edit_string(headRegion, sceneData->desc.sceneName, SCENE_NAME_LEN, cursor);
 }

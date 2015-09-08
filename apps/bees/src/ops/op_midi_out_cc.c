@@ -115,7 +115,7 @@ static void op_midi_out_cc_in_val(op_midi_out_cc_t* op, const io_t v) {
 void op_midi_out_cc_send_packet( op_midi_out_cc_t* mout ) {
   u8 pack[3];
   // control change: high nib = 1011 
-  pack[0] = 0xb0;
+  pack[0] = 0x0;
   // low nib = channel
   pack[0] |= (u8)(mout->chan & 0x0f);
   // two data bytes: number, value
