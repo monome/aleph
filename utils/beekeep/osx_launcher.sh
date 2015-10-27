@@ -2,6 +2,7 @@
 name="`basename $0`"
 tmp="$0"
 tmp=`dirname "$tmp"`
+<<<<<<< HEAD
 tmp=`dirname "$tmp"`
 bundle=`dirname "$tmp"`
 bundle_contents="$bundle"/Contents
@@ -36,6 +37,7 @@ if /bin/expr "x$1" : '^x-psn_' > /dev/null; then
     shift 1
 fi
 
+# aleph path
 if [ -z ${ALEPH_DIR+x} ]
 	then ALEPH_DIR=$HOME/aleph
 fi

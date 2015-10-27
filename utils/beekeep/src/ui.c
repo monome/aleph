@@ -227,12 +227,13 @@ void ui_init(void) {
 
   scroll_box_new( &boxOps, 	grid, 1, 24, &fill_ops );
   scroll_box_new( &boxOuts, 	grid, 4, 24, &fill_outs );
-  scroll_box_new( &boxIns, 	grid, 4, 24, &fill_ins );
+  scroll_box_new( &boxIns, 	grid, 5, 24, &fill_ins );
   scroll_box_new( &boxParams, 	grid, 5, 24, &fill_params ); 
   scroll_box_new( &boxPresets, 	grid, 2, 24, &fill_presets );
 
   //--- list labels
   labelOps = gtk_label_new("OPERATORS");
+
     gtk_misc_set_alignment(GTK_MISC(labelOps), 0.f, 0.f);	
   gtk_grid_attach_next_to(GTK_GRID(grid), labelOps, 
 			  boxOps.scroll, GTK_POS_TOP, 2, 1);

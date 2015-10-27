@@ -47,7 +47,7 @@ typedef s16 io_t;
 // smallest incremnet
 #define OP_MIN_INC 1
 // ranges
-#define OP_MIN_VAL 0
+#define OP_MIN_VAL 0 //??
 #define OP_MAX_VAL 0x7fff
 
 #define op_from_int(x) (x)

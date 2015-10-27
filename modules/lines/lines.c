@@ -259,7 +259,7 @@ void module_init(void) {
   pLinesData = (linesData*)SDRAM_ADDRESS;
   
   gModuleData = &(pLinesData->super);
-  strcpy(gModuleData->name, "aleph-lines");
+  strcpy(gModuleData->name, "lines");
 
   gModuleData->paramData = (ParamData*)pLinesData->mParamData;
   gModuleData->numParams = eParamNumParams;
@@ -274,13 +274,13 @@ void module_init(void) {
     filter_ramp_tog_init(&(lpFadeRd[i]), 0);
     filter_ramp_tog_init(&(lpFadeWr[i]), 0);
 
-    /* // we really need to zero everything to avoid horrible noise at boot... */
+
     /* for(j=0; j<LINES_BUF_FRAMES; ++j) { */
     /*   pLinesData->audioBuffer[i][j] = 0; */
     /* } */
 
-    //    memset(pLinesData->audioBuffer[i], 0, LINES_BUF_FRAMES * 4);
-
+    // need to zero everything to avoid horrible noise at boot...
+    memset(pLinesData->audioBuffer[i], 0, LINES_BUF_FRAMES * sizeof(fract32));
     // however, it is causing crashes or hangs here, for some damn reason.
 
     // at least zero the end of the buffer
@@ -417,10 +417,10 @@ void module_process_frame(void) {
     // process filters
     // check integrators for filter params
 
-    if( filter_1p_sync(&(svfCutSlew[i])) ) {
+    if( !filter_1p_sync(&(svfCutSlew[i])) ) {
       filter_svf_set_coeff( &(svf[i]), filter_1p_lo_next(&(svfCutSlew[i])) );
     }
-    if( filter_1p_sync(&(svfRqSlew[i])) ) { 
+    if( !filter_1p_sync(&(svfRqSlew[i])) ) {
       filter_svf_set_rq( &(svf[i]), filter_1p_lo_next(&(svfRqSlew[i])) );
     }
     tmpSvf = filter_svf_next( &(svf[i]), tmpDel);  
@@ -442,7 +442,7 @@ void module_process_frame(void) {
   mix_outputs();
 
   /// do CV output
-  if( filter_1p_sync(&(cvSlew[cvChan])) ) { ;; } else {
+  if( !filter_1p_sync(&(cvSlew[cvChan])) ) {
     cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
     cv_update(cvChan, cvVal[cvChan]);
   }

@@ -485,6 +485,7 @@ s32 bfin_get_param(u8 idx) {
   
 }
 
+<<<<<<< HEAD
 void bfin_set_sqparam(u32 pos, u8 idx, fix16_t x) {
     ParamValueSwap ppos;
     ppos.asInt = (u32)pos;
@@ -672,4 +673,17 @@ void bfin_sample(s32 val) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
     spi_write(BFIN_SPI, sample.asByte[3]);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+=======
+// fill a buffer on the blackfin with arbitrary data
+void bfin_fill_buffer(const s32* src, u32 bytes) {
+  u16 x;
+
+  app_pause();
+  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+  spi_write(BFIN_SPI, MSG_FILL_BUFFER_COM);
+  spi_read(BFIN_SPI, &x);
+  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+
+  app_resume();
+>>>>>>> upstream/dev
 }

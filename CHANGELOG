@@ -1,4 +1,53 @@
 ----------------
+bees    0.7.0   !! breaks scene compatiblity for MIDI !!
+
+- new op: MIDI_OUT_CC
+- new op: BARS8
+- new op: ROUTE16
+
+- fix midi input ops not remembering their channel number
+- scrolling page selections now cancels any pending keypress actions.
+- INS page now refreshes displayed values on page selection or ALT press.
+- scrolling with ENC3 now deletes characters in scene/preset name editors.
+
+- *WARNING* scenes using MIDI input ops will need to be recreated, to take advantage of these fixes. other scenes should be fine.
+
+----------------
+bees    0.6.3
+- fix init/deinit bugs in graphics ops (e.g. SCREEN, BARS)
+
+----------------
+lines   0.2.4
+- fix: correct svf parameter slewing
+
+----------------
+bees    0.6.2
+- fix: wait for bfin to initialize before reading parameters
+
+----------------
+lines   0.2.3
+- change internal module name to match file name
+
+----------------
+waves   0.4.3
+- change internal module name to match file name
+
+----------------
+dsyn    0.0.2
+- change internal module name to match file name
+
+----------------
+bees    0.6.1
+- added op: SHL, SHR (bit shifting)
+- added op: CHANGE (filter repeated values)
+- fix: bees dsp loading tries non-prefixed module name on load fail
+- fix: address several causes of bees scene loading lockups
+
+----------------
+lines   0.2.2
+- enabled clearing of buffers on load
+
+----------------
 bees    0.6.0
 
 - fix target shift bug when splitting DSP connections
@@ -108,7 +157,7 @@ lines	0.1.2
 - revert to 1min times (still working on it)
 
 ----------------
-bees	0.4.2 
+bees	0.4.2
 - new ops: delay, route, split4
 
 ----------------
@@ -119,12 +168,12 @@ waves	0.2.1
 ----------------
 lines	0.1.1
 - enable crossfade parameters (linear, only affecting read pos / delay)
-- enable filter smoothing parameters	
+- enable filter smoothing parameters
 - cleanup some intial param values
 - fix crash bug when delay > loop
 
 ----------------
-bees	0.4.1 
+bees	0.4.1
 - hopefully fix scroll behavoir on scenes/dsp pages
 - minor gfx/UI tweaks (including glitched scene names)
 
@@ -193,14 +242,14 @@ bees	0.3.0    ! breaks scene compatbility !
 - include param radix in scene data
 - include play vis. flag in scene data
 - blackfin reports version (sort of)
-- scene stores bees + module versions (sort of) 
+- scene stores bees + module versions (sort of)
 - general scene serialization stability
 
 --------------------
 
 waves 0.2.0   ! breaks scene compatbility !
 
-- added fmDel parameters (not functional) 
+- added fmDel parameters (not functional)
 - added version reporting
 
 
@@ -213,7 +262,7 @@ bees	0.2.3
 
 - release build now actually supresses debug prints
 - fix LDR boot problems
-- fix onscreen boot messages 
+- fix onscreen boot messages
 
 ===========================================
 140115
@@ -259,7 +308,7 @@ bees	0.1.0
 - cleanup
 
 
----------------- 
+----------------
 waves	0.0.1
 - more attempts at bandlimiting. works a little but not will because operating on linear frequency.
 - delay codec reset at startup until interrupts enabled. catches some startup bugs.

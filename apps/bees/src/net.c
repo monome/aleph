@@ -131,35 +131,18 @@ static void add_sys_ops(void) {
 ///----- node pickling
 
 static u8* onode_pickle(onode_t* out, u8* dst) {
-  // operator output index
-  //  dst = pickle_32((u32)(out->opOutIdx), dst);
   // target
   dst = pickle_32((u32)(out->target), dst);
-  // parent op's index in net list
-  //  dst = pickle_32((u32)(out->opIdx), dst);
-  // preset inclusion flag ; cast to 4 bytes for alignment
-  //  dst = pickle_32((u32)(out->preset), dst);
   return dst;
 }
 
 static const u8* onode_unpickle(const u8* src, onode_t* out) {
   u32 v32;
 
-  /* // operator output index */
-  /* src = unpickle_32(src, &v32); */
-  /* out->opOutIdx = (u8)v32; */
-
   // output target
   src = unpickle_32(src, &v32);
   out->target = (s16)v32;
 
-  /* // index of parent op */
-  /* src = unpickle_32(src, &v32); */
-  /* out->opIdx = (s32)v32; */
-
-  // preset flag: 32 bits for alignment
-  //  src = unpickle_32(src, &v32);
-  //  out->preset = (u8)v32;
 
 #ifdef PRINT_PICKLE
   print_dbg(" ; opIdx: ");
@@ -175,9 +158,6 @@ static const u8* onode_unpickle(const u8* src, onode_t* out) {
 
 static u8* inode_pickle(inode_t* in, u8* dst) {
   /// don't need to pickle indices because we recreate the op list from scratch
-  // preset inclusion flag
-  //// this is a preset variable
-  //  *dst++ = in->preset;
 #ifdef PRINT_PICKLE
   print_dbg("\r\n pickling input node, op index: ");
   print_dbg_ulong(in->opIdx);
@@ -287,6 +267,9 @@ void net_deinit(void) {
     net_init_onode(i);
   }
 
+  // make sure to get out of op-graphics mode
+  op_gfx_reset();
+
 }
 
 // clear ops and i/o
@@ -314,15 +297,15 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
   s16 pIndex;
   u8 vis;
 
-  print_dbg("\r\n net_activate, input idx: ");
-  print_dbg_hex(inIdx);
-  print_dbg(" , value: ");
-  print_dbg_hex(val);
+  /* print_dbg("\r\n net_activate, input idx: "); */
+  /* print_dbg_hex(inIdx); */
+  /* print_dbg(" , value: "); */
+  /* print_dbg_hex(val); */
 
-  print_dbg(" , op index: ");
-  print_dbg_ulong(net->ins[inIdx].opIdx);
-  print_dbg(" , input idx: ");
-  print_dbg_ulong(net->ins[inIdx].opInIdx);
+  /* print_dbg(" , op index: "); */
+  /* print_dbg_ulong(net->ins[inIdx].opIdx); */
+  /* print_dbg(" , input idx: "); */
+  /* print_dbg_ulong(net->ins[inIdx].opInIdx); */
 
   if(!netActive) {
     if(op != NULL) {
@@ -339,14 +322,14 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
   }
 
   vis = net_get_in_play(inIdx);
-    print_dbg(" , play visibility flag : ");
-    print_dbg_ulong(vis);
+  /* print_dbg(" , play visibility flag : "); */
+  /* print_dbg_ulong(vis); */
 
   if(inIdx < net->numIns) {      
     // this is an op input
     pIn = &(net->ins[inIdx]);
     
-    print_dbg(" ; input node pointer: 0x"); print_dbg_hex((u32)pIn);
+    //    print_dbg(" ; input node pointer: 0x"); print_dbg_hex((u32)pIn);
 
     op_set_in_val(net->ops[pIn->opIdx],
 		  pIn->opInIdx,
@@ -357,20 +340,20 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
     //// FIXME this is horrible
     pIndex = inIdx - net->numIns;
     if (pIndex >= net->numParams) { return; }
-    print_dbg(" ; param index: 0x"); print_dbg_ulong(pIndex);
+    //    print_dbg(" ; param index: 0x"); print_dbg_ulong(pIndex);
     set_param_value(pIndex, val);
   }
 
   /// only process for play mode if we're in play mode
   if(pageIdx == ePagePlay) {
-    print_dbg(" , play mode ");
+    //    print_dbg(" , play mode ");
     if(opPlay) {
       //      operators have focus, do nothing
-      print_dbg(" , op focus mode");
+      //      print_dbg(" , op focus mode");
     } else {
       // process if play-mode-visibility is set on this input
       if(vis) {
-	print_dbg(" , input enabled");
+	//	print_dbg(" , input enabled");
 	play_input(inIdx);
       }
     }
@@ -890,91 +873,48 @@ void net_set_in_value(s32 inIdx, io_t val) {
 // can err on the side of caution vs speed
 io_t net_inc_in_value(s32 inIdx, io_t inc) {
   op_t* op;
-    
-    /* print_dbg("\r\n incrementing input in network, value: "); */
-    /* print_dbg_hex(net_get_in_value(inIdx < 0 ? 0 : (u16)inIdx)); */
-    /* print_dbg(" , increment: "); */
-    /* print_dbg_hex(inc); */
-    
+
   if(inIdx >= net->numIns) {
     // hack to get param idx
     inIdx -= net->numIns;
-    //    set_param_value(inIdx, op_sadd(get_param_value(inIdx), inc));
-    //    return get_param_value(inIdx);
     return inc_param_value(inIdx, inc);
 
   } else {
     op = net->ops[net->ins[inIdx].opIdx];
-
-    //    (*(op->inc_fn))(op, net->ins[inIdx].opInIdx, inc);
-    op_inc_in_val(op, net->ins[inIdx].opInIdx, inc);
-    
-
-    print_dbg(" , result: ");
-    print_dbg_hex( net_get_in_value(inIdx));
-
+    op_inc_in_val(op, net->ins[inIdx].opInIdx, inc);    
     return net_get_in_value(inIdx);
   }
 }
 
 // toggle preset inclusion for input
 u8 net_toggle_in_preset(u32 id) {
-  //  net->ins[id].preset ^= 1;
-  //  return net->ins[id].preset;
-  /* if(id >= net->numIns) {  */
-  /*   id -= net->numIns;  */
-    
-  /*   return preset_get_selected()->params[id].enabled ^= 1; */
-  /* } else { */
     return preset_get_selected()->ins[id].enabled ^= 1;
-    //  }
 }
 
 // toggle preset inclusion for output
 u8 net_toggle_out_preset(u32 id) {
   u8 tmp = preset_out_enabled(preset_get_select(), id) ^ 1;
-  //  net->outs[id].preset ^= 1;
-  //  return net->outs[id].preset;
-  print_dbg("\r\n toggled output-preset_enable");
-  print_dbg(", out: ");
-  print_dbg_ulong(id);
-  print_dbg(", flag: ");
-  print_dbg_ulong(tmp);
   preset_get_selected()->outs[id].enabled = tmp;
   return tmp;
 }
 
 // set preset inclusion for input
 void net_set_in_preset(u32 id, u8 val) {
-  //  net->ins[id].preset = val;
-  /* if(id >= net->numIns) {  */
-  /*   id -= net->numIns;  */
-  /*   preset_get_selected()->params[id].enabled = val; */
-  /* } else { */
     preset_get_selected()->ins[id].enabled = val;
-    //  }
 }
 
   // set preset inclusion for output
 void net_set_out_preset(u32 id, u8 val) {
-  //  net->outs[outIdx].preset = val;
   preset_get_selected()->outs[id].enabled = val;
 }
 
 // get preset inclusion for input
 u8 net_get_in_preset(u32 id) {
-  //  return net->ins[id].preset;
-  /* if(id >= net->numIns) {  */
-  /*   id -= net->numIns;  */
-  /*   return preset_get_selected()->params[id].enabled; */
-  /* } else { */
     return preset_get_selected()->ins[id].enabled;
-    //  }
 }
 
 // get preset inclusion for output
 u8 net_get_out_preset(u32 id) {
-  //  return net->outs[id].preset;
   return preset_get_selected()->outs[id].enabled;
 }
 
@@ -984,20 +924,10 @@ u8 net_toggle_in_play(u32 inIdx) {
   u32 pidx;
   if(inIdx < net->numIns) {
     net->ins[inIdx].play ^= 1;
-    print_dbg("\r\n toggle in.play, op index: ");
-    print_dbg_ulong(net->ins[inIdx].opIdx);
-    print_dbg(" , input idx: ");
-    print_dbg_ulong(net->ins[inIdx].opInIdx);
-    print_dbg(" , result: ");
-    print_dbg(net->ins[inIdx].play ? "1" : "0");
     return net->ins[inIdx].play;
   } else {
     pidx = inIdx - net->numIns;
     net->params[pidx].play ^= 1;
-    print_dbg("\r\n toggle param.play, index: ");
-    print_dbg_ulong(pidx);
-    print_dbg(" , result: ");
-    print_dbg(net->params[pidx].play ? "1" : "0");
     return net->params[pidx].play;
   }
 }
@@ -1233,6 +1163,10 @@ u8* net_unpickle(const u8* src) {
   // no system operators after this
   net_deinit();
 
+  // confusingly though, we don't call deinit() after this.
+  // system ops are in the pickled scene data along with everything else.
+  // net_deinit() should maybe be renamed.
+
 
   // get count of operators
   // (use 4 bytes for alignment)
@@ -1270,8 +1204,6 @@ u8* net_unpickle(const u8* src) {
     }
   }
 
-#if 1
-
   /// copy ALL i/o nodes, even unused!
   print_dbg("\r\n reading all input nodes ");
   
@@ -1303,29 +1235,6 @@ u8* net_unpickle(const u8* src) {
     }
   }
 
-#else 
-#error broken input node unserialization
-/* /\* #ifdef PRINT_PICKLE *\/ */
-/* /\*   print_dbg("\r\n reading input nodes, count: "); *\/ */
-/* /\*   print_dbg_ulong(net->numIns); *\/ */
-/* /\* #endif *\/ */
-  
-/*   for(i=0; i < (net->numIns); ++i) { */
-/*     src = inode_unpickle(src, &(net->ins[i])); */
-/*   } */
-
-/* /\* #ifdef PRINT_PICKLE *\/ */
-/* /\*   print_dbg("\r\n reading output nodes, count: "); *\/ */
-/* /\*   print_dbg_ulong(net->numOuts); *\/ */
-/* /\* #endif *\/ */
-
-/*   // read output nodes */
-/*   for(i=0; i < net->numOuts; ++i) { */
-/*     src = onode_unpickle(src, &(net->outs[i])); */
-/*     // reconnect so the parent operator knows what to do */
-/*     net_connect(i, net->outs[i].target); */
-/*   } */
-#endif
 
   // get count of parameters
   src = unpickle_32(src, &val);
@@ -1360,9 +1269,6 @@ void net_get_param_value_string(char* dst, u32 idx) {
 		  &(net->params[idx].scaler), 
 		  net->params[idx].data.value
 		  );
-/* #if BEEKEEP */
-/*   printf("\r\n scaler_get_str result: %s", dst); */
-/* #endif */
 }
 
 
@@ -1374,7 +1280,6 @@ void net_get_param_value_string_conversion(char* dst, u32 idx, s32 val) {
 		  val
 		  );
 }
-/// scale
 
 
 // disconnect from parameters
@@ -1431,11 +1336,6 @@ s16 net_split_out(s16 outIdx) {
     } // add ok
   }
 }
-
-/* // report whether given input is DSP param */
-/* bool net_in_is_dsp(s16 inIdx) { */
-/*   return (inIdx >= net->numIns); */
-/* } */
 
 /////////////// 
 // test / dbg

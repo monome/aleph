@@ -53,7 +53,7 @@ void op_midi_out_note_init(void* mem) {
   // superclass state
 
   op->super.type = eOpMidiOutNote;
-  op->super.flags |= (1 << eOpFlagMidiIn);
+  //  op->super.flags |= (1 << eOpFlagMidiIn);
 
   op->super.numInputs = 3;
   op->super.numOutputs = 0;
@@ -105,10 +105,9 @@ static void op_midi_out_note_in_vel(op_midi_out_note_t* op, const io_t v) {
   // FIXME:: these checks should use io_t specific macros
   if(v < 0) { op->vel = 0; }
   else if (v > 127) { op->vel = 127; }
-  else { 
-    op->vel = v; 
-    op_midi_out_note_send_packet(op);
-  }
+  else { op->vel = v; }
+
+  op_midi_out_note_send_packet(op);
 }
 
 /*
@@ -144,7 +143,6 @@ static void op_midi_out_note_handler(op_midi_t* op_midi, u32 data) {
   }
 }
 */
-
 
 // build and send a midi serial packet
 void op_midi_out_note_send_packet( op_midi_out_note_t* mout ) {

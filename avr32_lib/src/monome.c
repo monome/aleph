@@ -132,8 +132,6 @@ static inline void monome_ring_enc_write_event( u8 n, u8 val);
 static inline void monome_ring_key_write_event( u8 n, u8 val);
 
 
-
-
 //---------------------------------
 //----- static variables
 

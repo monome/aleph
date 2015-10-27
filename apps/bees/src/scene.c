@@ -198,6 +198,7 @@ void scene_read_buf(void) {
   //// TEST
   char moduleName[MODULE_NAME_LEN];
   ModuleVersion moduleVersion;
+  u8 moduleLoadStatus;
   ////
 
    app_pause();
@@ -259,7 +260,20 @@ void scene_read_buf(void) {
     print_dbg("\r\n loading module from card, filename: ");
     print_dbg(sceneData->desc.moduleName);
 
-    files_load_dsp_name(sceneData->desc.moduleName);
+    moduleLoadStatus = files_load_dsp_name(sceneData->desc.moduleName);
+    print_dbg("\r\n file_load_dsp_name() returned ");
+    print_dbg_hex(moduleLoadStatus);
+    if(moduleLoadStatus == 0 && strncmp(moduleName, "aleph-", 6) == 0) {
+      // failed to load from SD card and the module name begins with
+      // aleph-, strip off the prefix and try again (for
+      // compatibility with older scenes).
+      print_dbg("\r\n possibly old dsp name; trying: ");
+      print_dbg(&(moduleName[6]));
+      strcpy(sceneData->desc.moduleName, &(moduleName[6]));
+
+      files_load_dsp_name(sceneData->desc.moduleName);
+      // FIXME: should probably check the return code here as well
+    }
 
     render_boot("waiting for module init");
     print_dbg("\r\n waiting for DSP init...");
@@ -301,7 +315,6 @@ void scene_read_buf(void) {
 #endif
 
   } // load-module case
-  app_pause();
 
   /// don't have to do this b/c net_unpickle will deinit anyways
   /*
@@ -309,11 +322,6 @@ void scene_read_buf(void) {
   net_clear_user_ops();
   */
 
-  //// FIXME: use .dsc
-  /*
-  print_dbg("\r\n reporting DSP parameters...");
-  paramsReported = net_report_params();
-  */
 
   /// FIXME:
   /// check the module version and warn if different!
@@ -379,34 +387,9 @@ void scene_write_default(void) {
   //  files_store_scene_name(DEFAULT_SCENE_NAME_EXT, 0);
   files_store_scene_name(DEFAULT_SCENE_NAME);
 
-  //  app_resume();
-
-/* #if 0 */
-/*   s8 neq = 0; */
-/*   s8 modName[MODULE_NAME_LEN]; */
-/* #endif */
-
-/*   app_pause(); */
-  /* render_boot("writing scene to flash"); */
-
-  /* print_dbg("\r\n writing scene to flash... "); */
-/*   print_dbg("module name: "); */
-/*   print_dbg(sceneData->desc.moduleName); */
-
-/*   //  flash_write_scene(); */
-  
-
-/* # if 0 // not storing .ldr in flash for the moment! */
-/*   // write default LDR if changed  */
-/*   neq = strncmp((const char*)modName, (const char*)sceneData->desc.moduleName, MODULE_NAME_LEN); */
-/*   if(neq) { */
-/*     render_boot("writing DSP to flash"); */
-/*     print_dbg("\r\n writing default LDR from scene descriptor"); */
-/*     files_store_default_dsp_name(sceneData->desc.moduleName); */
-/*   }  */
-/* #endif     */
   delay_ms(20);
   print_dbg("\r\n finished writing default scene");
+
   app_resume();
   
 }
@@ -414,6 +397,7 @@ void scene_write_default(void) {
 // load from default
 void scene_read_default(void) {
   app_pause();
+  /// FIXME: would be nice to have this again
   /* print_dbg("\r\n reading default scene from flash... "); */
   /* flash_read_scene(); */
   print_dbg("\r\n reading default scene from card... ");

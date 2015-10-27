@@ -75,21 +75,7 @@ static fract32 noise_next(drumsynVoice* voice, int i);
 
 // get next noise-generator value
 fract32 noise_next(drumsynVoice* voice, int i) {
-  //  return lcprng_next(&(voice->rngL)) | ( lcprng_next(&(voice->rngH)) << 14 );
-  /*
-  return filter_2p_hi_next(&(voice->hipass), 
-			   lcprng_next(&(voice->rngL))
-			   | ( lcprng_next(&(voice->rngH)) << 15 ));
-  */
-  // don't really need both lcprngs i think
-  // (wrong)
-  
-  //  return filter_2p_hi_next(&voice->hipass, lcprng_next(&(voice->rngH)) << 15 );
-  ///// ???
-  //  return filter_2p_hi_next(&voice->hipass, lcprng_next(&(voice->rngH)) );
-  //  return filter_2p_hi_next(&voice->hipass, dsyn_noise_next(i) );
   return dsyn_noise_next(i);
-  // return lcprng_next(&(voice->rngH));
 }
 
 // initialize voice
@@ -97,11 +83,8 @@ void drumsyn_voice_init(void* mem, int i) {
   drumsynVoice* voice = (drumsynVoice*)mem;
   // svf
   filter_svf_init(&(voice->svf));
-  // noise
 
-  // RNG
-  //  lcprng_reset(&(voice->rngH), 0xDEADFACE);
-  //  lcprng_reset(&(voice->rngL), 0xDADiABEEF);
+  // noise
   dsyn_noise_reset(i);
 		   
   // hipass
@@ -197,7 +180,7 @@ void module_init(void) {
   dbgFile = fopen( "drums_dbg.txt", "w");
 #endif
   gModuleData = &(data->super);
-  strcpy(gModuleData->name, "aleph-dsyn");
+  strcpy(gModuleData->name, "dsyn");
 
   gModuleData->paramData = data->mParamData;
   gModuleData->numParams = eParamNumParams;
