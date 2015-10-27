@@ -17,6 +17,7 @@ static void handle_encoder_3(s32 val);
 
 static void set_mode(u8 track, u8 mode);
 static s32 knob_accel(s32 inc);
+static s32 tape_accel(s32 inc);
 
 
 //handler variables
@@ -46,6 +47,18 @@ static const int eParamFlagId[] =
     eParamFlag5,
     eParamFlag6,
     eParamFlag7,
+};
+
+static const int eParamMuteFlagId[] =
+{
+    eParamMuteFlag0,
+    eParamMuteFlag1,
+    eParamMuteFlag2,
+    eParamMuteFlag3,
+    eParamMuteFlag4,
+    eParamMuteFlag5,
+    eParamMuteFlag6,
+    eParamMuteFlag7,
 };
 
 static const int eParamCurveId[] =
@@ -156,30 +169,6 @@ static const int eParamInputLevelId[] =
     eParamInputLevel7,
 };
 
-static const int eParamMixPanLId[] =
-{
-    eParamMixPanL0,
-    eParamMixPanL1,
-    eParamMixPanL2,
-    eParamMixPanL3,
-    eParamMixPanL4,
-    eParamMixPanL5,
-    eParamMixPanL6,
-    eParamMixPanL7,
-};
-
-static const int eParamMixPanRId[] =
-{
-    eParamMixPanR0,
-    eParamMixPanR1,
-    eParamMixPanR2,
-    eParamMixPanR3,
-    eParamMixPanR4,
-    eParamMixPanR5,
-    eParamMixPanR6,
-    eParamMixPanR7,
-};
-
 static const int eParamMixLevelId[] =
 {
     eParamMixLevel0,
@@ -192,41 +181,30 @@ static const int eParamMixLevelId[] =
     eParamMixLevel7,
 };
 
-static const int eParamAux1LevelId[] =
+static const int eParamAuxLevelId[] =
 {
-    eParamAux1Level0,
-    eParamAux1Level1,
-    eParamAux1Level2,
-    eParamAux1Level3,
-    eParamAux1Level4,
-    eParamAux1Level5,
-    eParamAux1Level6,
-    eParamAux1Level7,
+    eParamAuxLevel0,
+    eParamAuxLevel1,
+    eParamAuxLevel2,
+    eParamAuxLevel3,
+    eParamAuxLevel4,
+    eParamAuxLevel5,
+    eParamAuxLevel6,
+    eParamAuxLevel7,
 };
 
-static const int eParamAux2LevelId[] =
+static const int eParamMotorId[] =
 {
-    eParamAux2Level0,
-    eParamAux2Level1,
-    eParamAux2Level2,
-    eParamAux2Level3,
-    eParamAux2Level4,
-    eParamAux2Level5,
-    eParamAux2Level6,
-    eParamAux2Level7,
+    eParamMotor0,
+    eParamMotor1,
+    eParamMotor2,
+    eParamMotor3,
+    eParamMotor4,
+    eParamMotor5,
+    eParamMotor6,
+    eParamMotor7,
 };
 
-static const int eParamLengthId[] =
-{
-    eParamLength0,
-    eParamLength1,
-    eParamLength2,
-    eParamLength3,
-    eParamLength4,
-    eParamLength5,
-    eParamLength6,
-    eParamLength7,
-};
 
 static inline u8 check_touch(etype et) {
     if(touched != et) {
@@ -250,13 +228,33 @@ s32 knob_accel(s32 inc) {
     if(incAbs == 1) {
         return inc;
     }
-    if(incAbs < 6) {
-        return inc << 1;
+    if(incAbs < 8) {
+        return inc << 2;
     }
     if(incAbs < 32) {
-        return inc << 6;
+        return inc << 4;
     }
-    return inc << 9;
+    return inc << 6;
+}
+
+s32 tape_accel(s32 inc) {
+    s32 incAbs = inc < 0 ? inc * -1 : inc;
+    if(incAbs == 1) {
+        return inc << 1;
+    }
+    if(incAbs < 4) {
+        return inc << 3;
+    }
+    if(incAbs < 16) {
+        return inc << 5;
+    }
+    if(incAbs < 36) {
+        return inc << 7;
+    }
+    if(incAbs < 64) {
+        return inc << 11;
+    }
+    return inc << 13;
 }
 
 void handle_switch_0(s32 data) {
@@ -268,7 +266,38 @@ void handle_switch_1(s32 data) {
 }
 
 void handle_switch_2(s32 data) {
+    u8 t = trkpage;
+    
     handle_sw(3, data > 0);
+    
+    //  deck TEST SEND SELECTED MESSAGE
+    if(state_sw == 3 && track[t]->m == 2)
+    {
+        //send message...
+    }
+    
+    //  tape
+    if(state_sw == 3 && track[t]->m == 3)
+    {
+        if (!track[t]->motor)
+        {
+            //  start motor
+            track[t]->motor = 1;
+            ctl_param_change(DUMMY, eParamMotorId[t], 1);
+        }
+        else
+        {
+            //  stop motor
+            track[t]->motor = 0;
+            ctl_param_change(DUMMY, eParamMotorId[t], 0);
+        }
+    }
+    
+    //  amp
+    if(state_sw == 3 && track[t]->m == 4)
+    {
+        ctl_param_change(DUMMY, eParamTrigId[t], DUMMY);
+    }
 }
 
 void handle_switch_3(s32 data) {
@@ -276,21 +305,34 @@ void handle_switch_3(s32 data) {
     
     handle_sw(4, data > 0);
     
-    if(state_sw == 4)
+    if (state_sw == 4)
     {
-        if (!track[t]->mutemix)
+        u8 i;
+
+        if (track[t]->mutemix == MIX)
         {
-            track[t]->mutemix = 1;
-            ctl_param_change(DUMMY, eParamMixLevelId[t], 0);
-            render_track(t);
+            //  mute prepare
+            prepare = 1;
+            track[t]->mutemix = PREPARE;
         }
-        
+        else if (track[t]->mutemix == MUTE)
+        {
+            //  mute prepare
+            prepare = 1;
+            track[t]->mutemix = PREPAREMUTED;
+        }
         else
         {
-            track[t]->mutemix = 0;
-            ctl_param_change(DUMMY, eParamMixLevelId[t], track[t]->mix);
-            render_track(t);
+            //  clear mute prepare
+            prepare = 0;
+            if (track[t]->mutemix == PREPARE) track[t]->mutemix = MIX;
+            if (track[t]->mutemix == PREPAREMUTED) track[t]->mutemix = MUTE;
+            for (i=0; i<N_TRACKS; i++)
+            {
+                if (track[i]->mutemix == PREPARE || track[i]->mutemix == PREPAREMUTED) prepare = 1;
+            }
         }
+        render_track(t);
     }
 }
 
@@ -309,31 +351,60 @@ void handle_switch_4(s32 data) {
 }
 
 void handle_encoder_0(s32 val) {
-    s32 tmp;
+    s32 tmp, aux;
     u8 t = trkpage;
     switch (state_sw) {
-        case 0:
+        case 0: //aux send level
             check_touch(kEventEncoder3);
             if (touchedThis) {
-                tmp = track[t]->pan;
+                tmp = track[t]->aux;
                 tmp += val * 4194304;
                 if (tmp < 0) tmp = 0;
-                track[t]->pan = tmp;
-                ctl_param_change(DUMMY, eParamMixPanLId[t], sub_fr1x32(FR32_MAX, tmp));
-                ctl_param_change(DUMMY, eParamMixPanRId[t], tmp);
+                track[t]->aux = tmp;
+                //  aux pre fader
+                if (track[t]->auxsw == 0)
+                {
+                    ctl_param_change(DUMMY, eParamAuxLevelId[t], track[t]->aux);
+                }
+                //  aux mute
+                if (track[t]->auxsw == 1)
+                {
+                    ;
+                }
+                //  aux post fader
+                if (track[t]->auxsw == 2)
+                {
+                    aux = mult_fr1x32x32(track[t]->aux, track[t]->mix);
+                    ctl_param_change(DUMMY, eParamAuxLevelId[t], aux);
+                }
                 render_track(t);
             }
             break;
             
-        case 1:
+        case 1: //aux pre|mute|post
             check_touch(kEventEncoder3);
             if (touchedThis) {
-                tmp = track[t]->input;
+                tmp = track[t]->auxsw;
                 tmp += val;
                 if (tmp < 0) tmp = 0;
-                if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
-                track[t]->input = tmp;
-                ctl_param_change(DUMMY, eParamInputId[t], tmp);
+                if (tmp > 2) tmp = 2;
+                track[t]->auxsw = tmp;
+                //  aux pre fader
+                if (tmp == 0)
+                {
+                    ctl_param_change(DUMMY, eParamAuxLevelId[t], track[t]->aux);
+                }
+                //  aux mute
+                if (tmp == 1)
+                {
+                    ctl_param_change(DUMMY, eParamAuxLevelId[t], 0);
+                }
+                //  aux post fader
+                if (tmp == 2)
+                {
+                    aux = mult_fr1x32x32(track[t]->aux, track[t]->mix);
+                    ctl_param_change(DUMMY, eParamAuxLevelId[t], aux);
+                }
                 render_track(t);
             }
             break;
@@ -362,7 +433,7 @@ void handle_encoder_0(s32 val) {
 }
 
 void handle_encoder_1(s32 val) {
-    s32 tmp;
+    s32 tmp, aux;
     u8 t = trkpage;
     switch (state_sw) {
         case 0: //mix level
@@ -372,35 +443,40 @@ void handle_encoder_1(s32 val) {
                 tmp += val * 4194304;
                 if (tmp < 0) tmp = 0;
                 track[t]->mix = tmp;
-                if (!track[t]->mutemix)
+                if (solo)
                 {
-                    ctl_param_change(DUMMY, eParamMixLevelId[t], tmp);
+                    if (track[t]->mutemix == SOLO) ctl_param_change(DUMMY, eParamMixLevelId[t], tmp);
+                }
+                if (!solo)
+                {
+                    if (track[t]->mutemix != MUTE) ctl_param_change(DUMMY, eParamMixLevelId[t], tmp);
+                }
+                //  aux post fader
+                if (track[t]->auxsw == 2)
+                {
+                    aux = mult_fr1x32x32(track[t]->aux, track[t]->mix);
+                    ctl_param_change(DUMMY, eParamAuxLevelId[t], aux);
                 }
                 render_track(t);
             }
             break;
             
-        case 1: //input level
+        case 1: //mix|group
             check_touch(kEventEncoder2);
             if (touchedThis) {
-                tmp = track[t]->inL;
-                tmp += val * 4194304;
+                tmp = track[t]->mixsw;
+                tmp += val;
                 if (tmp < 0) tmp = 0;
-                track[t]->inL = tmp;
-                ctl_param_change(DUMMY, eParamInputLevelId[t], tmp);
+                if (tmp > 5) tmp = 5;
+                track[t]->mixsw = tmp;
+                ctl_param_change(t, eParamRouteMix, tmp);
                 render_track(t);
             }
             break;
             
-        case 2: //aux 1 level
+        case 2:
             check_touch(kEventEncoder2);
             if (touchedThis) {
-                tmp = track[t]->aux1;
-                tmp += val * 4194304;
-                if (tmp < 0) tmp = 0;
-                track[t]->aux1 = tmp;
-                ctl_param_change(DUMMY, eParamAux1LevelId[t], tmp);
-                render_track(t);
             }
             break;
             
@@ -430,20 +506,110 @@ void handle_encoder_2(s32 val) {
             if (touchedThis) {
                 if (track[t]->m == 0) ;
                 else if (track[t]->m == 1) ;
-                else if (track[t]->m == 2) ;
-                //  [amp]
+                //  deck TEST MESSAGE SELECT
+                else if (track[t]->m == 2)
+                {
+                    tmp = track[t]->motor;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > 1) tmp = 1;
+                    track[t]->motor = tmp;
+                    render_track(t);
+                }            
+                //  tape
                 else if (track[t]->m == 3)
+                {
+                    tmp = track[t]->sP;
+                    tmp += tape_accel(val);
+                    //  scrub
+                    if (!track[t]->motor)
+                    {
+                        if (tmp < 0) //if (val < 0)
+                        {
+                            if (track[t]->motordir)
+                            {
+                                //  reverse playback
+                                track[t]->motordir = 0;
+                                ctl_param_change(DUMMY, eParamCurveId[t], 7);
+                                ctl_param_change(DUMMY, eParamTrigId[t], DUMMY);
+//                                ctl_param_change(DUMMY, eParamCurveId[t], 9);
+                            }
+                        }
+                        if (tmp > 0) //if (val > 0)
+                        {
+                            if (!track[t]->motordir)
+                            {
+                                //  forward playback
+                                track[t]->motordir = 1;
+                                ctl_param_change(DUMMY, eParamCurveId[t], 6);
+                                ctl_param_change(DUMMY, eParamTrigId[t], DUMMY);
+//                                ctl_param_change(DUMMY, eParamCurveId[t], 8);
+                            }
+                        }
+/*
+                        if (tmp < 0 && !track[t]->motordir)
+                        {
+                            ctl_param_change(DUMMY, eParamSignedId[t], tmp);
+//                            ctl_param_change(DUMMY, eParamSignedId[t], 0);
+                        }
+                        if (tmp < 0 && track[t]->motordir)
+                        {
+                            ctl_param_change(DUMMY, eParamSignedId[t], -tmp);
+//                            ctl_param_change(DUMMY, eParamSignedId[t], 0);
+                        }
+                        if (tmp > 0 && !track[t]->motordir)
+                        {
+                            ctl_param_change(DUMMY, eParamSignedId[t], -tmp);
+//                            ctl_param_change(DUMMY, eParamSignedId[t], 0);
+                        }
+                        if (tmp > 0 && track[t]->motordir)
+                        {
+                            ctl_param_change(DUMMY, eParamSignedId[t], tmp);
+//                            ctl_param_change(DUMMY, eParamSignedId[t], 0);
+                        }
+*/
+                    }
+                    //  playback
+                    if (track[t]->motor)
+                    {
+                        if (tmp < 0)
+                        {
+                            if (track[t]->motordir)
+                            {
+                                //  reverse playback
+                                track[t]->motordir = 0;
+                                ctl_param_change(DUMMY, eParamCurveId[t], 7);
+                                ctl_param_change(DUMMY, eParamTrigId[t], DUMMY);
+                            }
+                        }
+                        if (tmp > 0)
+                        {
+                            if (!track[t]->motordir)
+                            {
+                                //  forward playback
+                                track[t]->motordir = 1;
+                                ctl_param_change(DUMMY, eParamCurveId[t], 6);
+                                ctl_param_change(DUMMY, eParamTrigId[t], DUMMY);
+                            }
+                        }
+                    }
+                    ctl_param_change(DUMMY, eParamSignedId[t], tmp);
+                    track[t]->sP = tmp;
+                    render_track(t);
+                }
+                //  [amp]
+                else if (track[t]->m == 4)
                 {
                     tmp = track[t]->env;
                     tmp += val;
-                    if (tmp < 3) tmp = 3;
-                    if (tmp > 7) tmp = 7;
+                    if (tmp < 10) tmp = 10;
+                    if (tmp > 14) tmp = 14;
                     track[t]->env = tmp;
                     ctl_param_change(DUMMY, eParamCurveId[t], tmp);
                     render_track(t);                    
                 }
                 //  [dly]
-                else if (track[t]->m == 4)
+                else if (track[t]->m == 5)
                 {
                     tmp = track[t]->uP;
                     tmp += knob_accel(val);
@@ -453,7 +619,40 @@ void handle_encoder_2(s32 val) {
                     ctl_param_change(DUMMY, eParamUnsignedId[t], tmp);
                     render_track(t);
                 }
-                else if (track[t]->m == 5) ;
+                //  [input]
+                else if (track[t]->m == 6)
+                {
+                    tmp = track[t]->inL;
+                    tmp += val * 4194304;
+                    if (tmp < 0) tmp = 0;
+                    track[t]->inL = tmp;
+                    ctl_param_change(DUMMY, eParamInputLevelId[t], tmp);
+                    render_track(t);
+                }
+                //  CLK
+                else if (track[t]->m == 7)
+                {
+                    tmp = master->bpm;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > 12) tmp = 12;
+                    master->bpm = tmp;
+                    if (tmp == 0) ctl_param_change(DUMMY, eParamBPM, 0x1F40); //90
+                    else if (tmp == 1) ctl_param_change(DUMMY, eParamBPM, 0x1770); //120
+                    else if (tmp == 2) ctl_param_change(DUMMY, eParamBPM, 0x12C0); //150
+                    else if (tmp == 3) ctl_param_change(DUMMY, eParamBPM, 0xFA0); //180
+                    else if (tmp == 4) ctl_param_change(DUMMY, eParamBPM, 0xBB8); //240
+                    else if (tmp == 5) ctl_param_change(DUMMY, eParamBPM, 0x5DC); //480
+                    else if (tmp == 6) ctl_param_change(DUMMY, eParamBPM, 0x2EE); //960
+                    else if (tmp == 7) ctl_param_change(DUMMY, eParamBPM, 0x177); //1920
+                    else if (tmp == 8) ctl_param_change(DUMMY, eParamBPM, 0xC8); //3600
+                    else if (tmp == 9) ctl_param_change(DUMMY, eParamBPM, 0x64); //7200
+                    else if (tmp == 10) ctl_param_change(DUMMY, eParamBPM, 0x32); //14400
+                    else if (tmp == 11) ctl_param_change(DUMMY, eParamBPM, 0x19); //28800
+                    else if (tmp == 12) ctl_param_change(DUMMY, eParamBPM, 0xA); //72000
+                    else ;
+                    render_track(t);
+                }
                 else ;
             }
             break;
@@ -464,8 +663,25 @@ void handle_encoder_2(s32 val) {
                 if (track[t]->m == 0) ;
                 else if (track[t]->m == 1) ;
                 else if (track[t]->m == 2) ;
-                else if (track[t]->m == 3) ;
-                else if (track[t]->m == 4)
+                //  tape sample
+                else if (track[t]->m == 3)
+                {
+                    tmp = track[t]->s[DUMMY];
+                    tmp += val;
+                    if (tmp < N_BUFFERS) tmp = N_BUFFERS;
+                    if (tmp > n_samples - 1) tmp = n_samples - 1;
+                    track[t]->s[DUMMY] = tmp;
+                    track[t]->sP = ((sample[tmp + 1]->offset + (sample[tmp]->loop_cut)) - (sample[tmp]->offset + sample[tmp]->offset_cut));
+                    ctl_param_change(DUMMY, eParamOffsetBId[t], sample[tmp + 1]->offset + (sample[tmp]->loop_cut));
+                    ctl_param_change(DUMMY, eParamOffsetAId[t], sample[tmp]->offset + sample[tmp]->offset_cut);
+                    ctl_param_change(DUMMY, eParamSignedId[t], track[t]->sP);
+                    ctl_param_change(DUMMY, eParamTrigId[t], DUMMY);
+                    render_track(t);
+                    break;
+                }
+                else if (track[t]->m == 4) ;
+                //  [dly]
+                else if (track[t]->m == 5)
                 {
                     tmp = track[t]->sP;
                     tmp += val * 4194304;
@@ -474,7 +690,7 @@ void handle_encoder_2(s32 val) {
                     ctl_param_change(DUMMY, eParamSignedId[t], tmp);
                     render_track(t);
                 }
-                else if (track[t]->m == 5) ;
+                else if (track[t]->m == 6) ;
                 else ;
             }
             break;
@@ -482,6 +698,28 @@ void handle_encoder_2(s32 val) {
         case 2:
             check_touch(kEventEncoder1);
             if (touchedThis) {
+                if (track[t]->m == 0) ;
+                //  tape mode
+                else if (track[t]->m == 3)
+                {
+                    tmp = track[t]->cue;
+                    tmp += val;
+                    if (tmp < 0) tmp = 0;
+                    if (tmp > 1) tmp = 1;
+                    track[t]->cue = tmp;
+                    //  cue on
+                    if (tmp)
+                    {
+                        ctl_param_change(DUMMY, eParamFlagId[t], 6);
+                    }
+                    //  cue off
+                    else
+                    {
+                        ctl_param_change(DUMMY, eParamFlagId[t], 5);
+                    }
+                    render_track(t);
+                    break;
+                }
             }
             break;
             
@@ -546,14 +784,15 @@ void handle_encoder_3(s32 val) {
             }
             break;
             
-        case 2: //aux 2 level
+        case 2: //track input
             check_touch(kEventEncoder0);
-            if (touchedThis) {                
-                tmp = track[t]->aux2;
-                tmp += val * 4194304;
+            if (touchedThis) {
+                tmp = track[t]->input;
+                tmp += val;
                 if (tmp < 0) tmp = 0;
-                track[t]->aux2 = tmp;
-                ctl_param_change(DUMMY, eParamAux2LevelId[t], tmp);
+                if (tmp > N_INPUTS_1) tmp = N_INPUTS_1;
+                track[t]->input = tmp;
+                ctl_param_change(DUMMY, eParamInputId[t], tmp);
                 render_track(t);
             }
             break;
@@ -579,7 +818,7 @@ void set_mode(u8 n, u8 m) {
     prgmTrack *t = track[n];
     
     //  unmute track
-    if (t->mutetrk) t->mutetrk = 0;
+    if (t->mutetrk == MUTE) t->mutetrk = TRACK;
     
     //  set mode
     //  off
@@ -598,6 +837,8 @@ void set_mode(u8 n, u8 m) {
         ctl_param_change(editpos, eParamSampleOffsetBId[n], sample[9]->offset);
         ctl_param_change(editpos, eParamSampleOffsetAId[n], sample[8]->offset);
         ctl_param_change(DUMMY, eParamFlagId[n], 1);
+        //  default playback: trig
+        t->env = 1;
         ctl_param_change(DUMMY, eParamCurveId[n], 1);
         ctl_param_change(DUMMY, eParamTrigId[n], DUMMY);
     }
@@ -610,38 +851,68 @@ void set_mode(u8 n, u8 m) {
         ctl_param_change(editpos, eParamSampleOffsetBId[n], sample[9]->offset);
         ctl_param_change(editpos, eParamSampleOffsetAId[n], sample[8]->offset);
         ctl_param_change(DUMMY, eParamFlagId[n], 2);
-        ctl_param_change(DUMMY, eParamCurveId[n], 2);
+        //  default interpolation: linear
+        t->env = 3;
+        ctl_param_change(DUMMY, eParamCurveId[n], 3);
+        ctl_param_change(DUMMY, eParamTrigId[n], DUMMY);
+    }
+    
+    //  tape
+    else if(m == 3)
+    {
+        t->m = 3;
+        t->s[editpos] = 8;
+        ctl_param_change(DUMMY, eParamOffsetBId[n], sample[9]->offset);
+        ctl_param_change(DUMMY, eParamOffsetAId[n], sample[8]->offset);
+        //  default: motor off, tape speed 0, forward playback, cue off
+        t->motor = 0;
+        t->sP = 0;
+        t->env = 6;
+        t->cue = 0;
+        ctl_param_change(DUMMY, eParamMotorId[n], 0);
+        ctl_param_change(DUMMY, eParamSignedId[n], 0);
+        ctl_param_change(DUMMY, eParamFlagId[n], 5);
+        ctl_param_change(DUMMY, eParamCurveId[n], 6);
         ctl_param_change(DUMMY, eParamTrigId[n], DUMMY);
     }
     
     //  [amp]
-    else if(m == 3)
-    {
-        t->m = 3;
-        ctl_param_change(DUMMY, eParamFlagId[n], 2);
-        //  default envelope: lindec
-        ctl_param_change(DUMMY, eParamCurveId[n], 3);
-    }
-
-    //  [dly]
     else if(m == 4)
     {
         t->m = 4;
-        ctl_param_change(DUMMY, eParamOffsetBId[n], sample[n+1]->offset);
-        ctl_param_change(DUMMY, eParamOffsetAId[n], sample[n]->offset);
-        ctl_param_change(DUMMY, eParamFlagId[n], 3);
-        ctl_param_change(DUMMY, eParamCurveId[n], 8);
-        ctl_param_change(DUMMY, eParamTrigId[n], DUMMY);
+        ctl_param_change(DUMMY, eParamFlagId[n], 2);
+        //  default envelope: lindec
+        t->env = 10;
+        ctl_param_change(DUMMY, eParamCurveId[n], 10);
     }
-        
-    //  [thru]
+
+    //  [dly]
     else if(m == 5)
     {
         t->m = 5;
-        ctl_param_change(DUMMY, eParamFlagId[n], 4);
-        ctl_param_change(DUMMY, eParamCurveId[n], 9);
+        ctl_param_change(DUMMY, eParamOffsetBId[n], sample[n+1]->offset);
+        ctl_param_change(DUMMY, eParamOffsetAId[n], sample[n]->offset);
+        ctl_param_change(DUMMY, eParamFlagId[n], 3);
+        ctl_param_change(DUMMY, eParamCurveId[n], 15);
+        ctl_param_change(DUMMY, eParamTrigId[n], DUMMY);
     }
         
+    //  [input]
+    else if(m == 6)
+    {
+        t->m = 6;
+        ctl_param_change(DUMMY, eParamFlagId[n], 4);
+        ctl_param_change(DUMMY, eParamCurveId[n], 16);
+    }
+    
+    //  CLK
+    else if(m == 7)
+    {
+        t->m = 7;
+        ctl_param_change(DUMMY, eParamFlagId[n], 10);
+        ctl_param_change(DUMMY, eParamCurveId[n], 0);
+    }
+    
     else ;
 }
 

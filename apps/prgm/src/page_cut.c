@@ -62,18 +62,18 @@ void handle_switch_0(s32 data) {
 
 void handle_switch_1(s32 data) {
     handle_sw(2, data > 0);
-}
-
-void handle_switch_2(s32 data) {
-    handle_sw(3, data > 0);
     
-    if(state_sw == 3)
+    if(state_sw == 2)
     {
         set_page(ePageMix);
         render_mix();
         handle_switch_0(0);
     }
     else ;;
+}
+
+void handle_switch_2(s32 data) {
+    handle_sw(3, data > 0);
 }
 
 void handle_switch_3(s32 data) {

@@ -6,7 +6,6 @@
 #include "types.h"
 #include "fract_math.h"
 #include "env_tcd_buffer.h"
-#include "env_tcd_generator.h"
 #include "bfin_core.h"
 
 #define FR32_MAX 0x7fffffff         //2147483647
@@ -25,14 +24,15 @@
 #define FR32_MAX9_16 0x47ffffff
 #define FR32_MAX23_48 0x3d555555
 
-#define FR32_MAX3_2 0
-#define FR32_MAX5_2 0
-#define FR32_MAX9_8 0
-#define FR32_MAX11_8 0
+#define FR32_MAX2 0xffffffff
+#define FR32_MAX3_2 0xbfffffff
+#define FR32_MAX5_2 0x13fffffff
+#define FR32_MAX9_8 0x8fffffff
+#define FR32_MAX11_8 0xafffffff
 
-#define N_INPUTS 26                 //number of selectable inputs
-#define N_CURVES 14                 //number of curve algorithms
-#define N_HEADS 2                   //number of play|record heads
+#define N_INPUTS 21                 //number of selectable inputs
+#define N_CURVES 25                 //number of curve algorithms
+#define N_HEADS 2                   //number of play|record heads //REMOVE?
 
 typedef struct _sample {
     s32 i;
@@ -59,16 +59,11 @@ typedef struct _env_tcd {
     fract32 c1;
     fract32 c2;
     fract32 c3;
-
     fract32 env;
-    fix32 inc;
-    fract32 mu;
-    fract32 mu2;
-    
-    //envelopes
     
     u8 trig;
     u8 state;
+    u8 motor;
 } env_tcd;
 
 
@@ -94,7 +89,10 @@ extern void env_tcd_set_feedback(env_tcd *env, fract32 mix);
 extern void env_tcd_set_start(env_tcd *env, u32 offset);
 extern void env_tcd_set_loop(env_tcd *env, u32 offset);
 
-//set mu
-extern void env_tcd_set_decay(env_tcd *env, s32 decay);
+//set decay
+extern void env_tcd_set_decay(env_tcd *env, fract32 decay);
+
+//set motor
+extern void env_tcd_set_motor(env_tcd *env, u8 state);
 
 #endif

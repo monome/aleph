@@ -39,12 +39,6 @@ extern s32 buffer_head_play(bufferHead *head);
 extern void buffer_head_mix(bufferHead *head, fract32 s, fract32 preLevel);
 
 //record sample at idx
-extern void buffer_head_rec(bufferHead *head, s32 sample);
-
-//overdub
-extern void buffer_head_dub(bufferHead *head, fract32 s);
-
-//invert mix
-extern void buffer_head_invmix(bufferHead *head, fract32 s, fract32 preLevel);
+//extern void buffer_head_rec(bufferHead *head, s32 sample);
 
 #endif

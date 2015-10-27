@@ -12,6 +12,7 @@
 
 // common
 #include "fix.h"
+#include "fract32_emu.h"
 
 // avr32
 #include "bfin.h"

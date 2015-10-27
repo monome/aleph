@@ -21,16 +21,17 @@
 
 //  get 4-byte version packet
 #define MSG_GET_MODULE_VERSION_COM  5
-#define MSG_ENABLE_AUDIO           6
+#define MSG_ENABLE_AUDIO            6
 #define MSG_DISABLE_AUDIO           7
-// fill buffer
-#define MSG_FILL_BUFFER_COM	    8
 
-//  set trig, calls module_set_event()
-#define MSG_SET_EVENT_COM            8
+//  calls module_clock_in()
+#define MSG_SET_CLOCK_IN_COM        8
 
-//  send sample offset and size
-#define MSG_NEW_SAMPLE_COM          9
+//  calls module_gate_out()
+#define MSG_SET_GATE_OUT_COM        9 //NOT USED ANYMORE
+
+//send sample offset and size
+//#define MSG_NEW_SAMPLE_COM          9
 
 //  transfer single s32 sample value from avr32
 #define MSG_TRANSFER_SAMPLE_COM     10
@@ -67,7 +68,6 @@ typedef enum {
   eGetParamData3,
   //---- get num params
   eNumParamsVal,
-<<<<<<< HEAD
     
 #if 0
     //---- get param descriptor
@@ -105,10 +105,6 @@ typedef enum {
   /* // radix */
   /* eParamDescRadix, */
 #endif
-=======
-  //---- get param descriptor
-  /// param descriptors in aleph-module.dsc
->>>>>>> upstream/dev
   // get module name
   eGetModuleName,
   // module name bytes
@@ -136,6 +132,18 @@ typedef enum {
   eModuleName21,
   eModuleName22,
   eModuleName23,
+#if 0 // include these in offline desc
+  /* //---- added: */
+  /* //---- buffer stuff */
+  /* /// get number of buffers */
+  /* eNumBuffersVal, */
+  /* //-- get buffer descriptor */
+  /* eBufferDescIdx, */
+  /* eBufferDescChannels, */
+  /* eBufferDescFrames, */
+  /* //-- send buffer data */
+  /* eSendBufferData, */
+#endif
 
   // module version
   eModuleVersionMaj,
@@ -174,18 +182,7 @@ typedef enum {
 
     eGetHeadPosition,
 
-<<<<<<< HEAD
     eNumSpiBytes
-=======
-  // buffer 
-  eBufferNumBytes0,
-  eBufferNumBytes1,
-  eBufferNumBytes2,
-  eBufferNumBytes3,
-  eBufferNumData,
-  
-  eNumSpiBytes
->>>>>>> upstream/dev
 } eSpiByte;
 
 #endif

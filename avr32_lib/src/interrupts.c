@@ -73,6 +73,11 @@ static void irq_port1_line3(void);
 __attribute__((__interrupt__))
 static void irq_usart(void);
 
+//TEST!!!
+// irq for twi/i2c
+//__attribute__((__interrupt__))
+//static void irq_i2c(void);
+
 
 //---------------------------------
 //----- static function definitions
@@ -247,6 +252,15 @@ static void irq_usart(void) {
   // gpio_toggle_pin(LED_MODE_PIN);
 }
 
+/*
+__attribute__((__interrupt__))
+static void irq_i2c(void) {
+    print_dbg("\r\n slave rx: ");
+//    print_dbg_char_hex(value);
+//    gpio_toggle_pin(TWI_DATA_PIN);
+}
+*/
+
 //-----------------------------
 //---- external function definitions
 
@@ -302,4 +316,8 @@ void register_interrupts(void) {
 
   // register uart interrupt
   INTC_register_interrupt(&irq_usart, AVR32_USART0_IRQ, UI_IRQ_PRIORITY);
+  
+  //i2c TEST!!!
+  // register i2c interrupt
+//  INTC_register_interrupt(&irq_i2c, AVR32_TWI_IRQ, SYS_IRQ_PRIORITY);
 }

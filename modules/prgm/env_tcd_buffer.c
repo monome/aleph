@@ -26,18 +26,10 @@ s32 buffer_head_play(bufferHead *head) {
     return head->buf->data[head->idx];
 }
 
-void buffer_head_rec(bufferHead *head, s32 sample) {
-    head->buf->data[head->idx] = sample;
-}
-
 void buffer_head_mix(bufferHead *head, fract32 sample, fract32 preLevel) {
     head->buf->data[head->idx] = add_fr1x32(mult_fr1x32x32(head->buf->data[head->idx], preLevel), sample);
 }
 
-void buffer_head_invmix(bufferHead *head, fract32 sample, fract32 preLevel) {
-    head->buf->data[head->idx] = add_fr1x32(mult_fr1x32x32(head->buf->data[head->idx], preLevel), negate_fr1x32(sample));
-}
-
-void buffer_head_dub(bufferHead *head, fract32 sample) {
-    head->buf->data[head->idx] = add_fr1x32(head->buf->data[head->idx], sample);
-}
+//void buffer_head_rec(bufferHead *head, s32 sample) {
+//    head->buf->data[head->idx] = sample;
+//}

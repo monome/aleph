@@ -33,8 +33,8 @@ void bfin_load_buf(volatile u8* data, u32 size);
 // set a parameter
 void bfin_set_param(U8 idx, fix16_t val);
 
-//// UNTESTED:
-fix16_t bfin_get_param(u8 idx);
+// TODO: 
+// fix16_t bfin_get_param(u8 idx);
 
 // get number of parameters 
 void bfin_get_num_params(volatile u32* num);
@@ -72,8 +72,11 @@ extern s32 bfin_get_param(u8 idx);
 extern void bfin_wait_ready(void);
 
 //PRGM
-// set trig
-extern void bfin_set_event(void);
+// set clock in event
+extern void bfin_set_clock_in(void);
+
+// set gate out event
+//extern void bfin_set_gate_out(void);
 
 //new sample
 extern void bfin_new_sample(u32 offset, u32 size);
@@ -87,12 +90,7 @@ extern void bfin_set_sqparam(u32 pos, u8 idx, fix16_t val);
 //get buffer head state
 extern u8 bfin_get_headstate(void);
 
-<<<<<<< HEAD
 //get play head position
 extern u8 bfin_get_headposition(void);
-=======
-// fill a buffer on the blackfin with arbitrary data
-extern void bfin_fill_buffer(const s32* src, u32 bytes);
->>>>>>> upstream/dev
 
 #endif // header guard

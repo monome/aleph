@@ -343,13 +343,22 @@ void bfin_disable(void) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 }
 
-void bfin_set_event(void) {
-    //  called on trig from adc0, calls module_set_event()
+void bfin_set_clock_in(void) {
+    //  called on trig from adc0, calls module_clock_in()
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-    spi_write(BFIN_SPI, MSG_SET_EVENT_COM);
+    spi_write(BFIN_SPI, MSG_SET_CLOCK_IN_COM);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
 }
 
+/*
+void bfin_set_gate_out(void) {
+    //  called on trig from adc0, calls module_gate_out()
+    spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
+    spi_write(BFIN_SPI, MSG_SET_GATE_OUT_COM);
+    spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
+}
+*/
+ 
 u8 bfin_get_headstate(void) {
     u16 x;
     
@@ -485,13 +494,11 @@ s32 bfin_get_param(u8 idx) {
   
 }
 
-<<<<<<< HEAD
 void bfin_set_sqparam(u32 pos, u8 idx, fix16_t x) {
     ParamValueSwap ppos;
     ppos.asInt = (u32)pos;
     ParamValueSwap pval;
     pval.asInt = (s32)x;
-
 /*
     print_dbg("\r\n bfin_set_sqparam, idx: ");
     print_dbg_ulong(idx);
@@ -500,9 +507,8 @@ void bfin_set_sqparam(u32 pos, u8 idx, fix16_t x) {
     print_dbg_hex((u32)x);
     
     print_dbg(",\t step: ");
-    print_dbg_hex(pos);
-*/ 
- 
+    print_dbg_hex(pos); 
+*/
     //  app_pause();
     
     // command
@@ -559,6 +565,7 @@ void bfin_set_sqparam(u32 pos, u8 idx, fix16_t x) {
     //  app_resume();
 }
 
+/*
 void bfin_new_sample(u32 offset, u32 size) {
     ParamValueSwap boffset;
     ParamValueSwap bsize;
@@ -634,6 +641,7 @@ app_resume();
     print_dbg("\r\n u32 size: ");
     print_dbg_ulong(size);
 }
+*/
 
 void bfin_sample(s32 val) {
     ParamValueSwap sample;
@@ -673,17 +681,4 @@ void bfin_sample(s32 val) {
     spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
     spi_write(BFIN_SPI, sample.asByte[3]);
     spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-=======
-// fill a buffer on the blackfin with arbitrary data
-void bfin_fill_buffer(const s32* src, u32 bytes) {
-  u16 x;
-
-  app_pause();
-  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  spi_write(BFIN_SPI, MSG_FILL_BUFFER_COM);
-  spi_read(BFIN_SPI, &x);
-  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-
-  app_resume();
->>>>>>> upstream/dev
 }

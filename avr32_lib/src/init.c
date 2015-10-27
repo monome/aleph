@@ -21,6 +21,7 @@
 #include "tc.h"
 #include "uhc.h"
 #include "usart.h"
+#include "twi.h"
 // aleph
 //#include "conf_aleph.h"
 #include "aleph_board.h"
@@ -124,7 +125,7 @@ void init_ftdi_usart (void) {
   
   // Options for USART.
   static const usart_options_t DEV_USART_OPTIONS = {
-    .baudrate = DEV_USART_BAUDRATE,
+    .baudrate = 57600,
     .charlength = 8,
     .paritytype = USART_NO_PARITY,
     .stopbits = USART_1_STOPBIT,
@@ -296,7 +297,6 @@ void init_twi(void) {
   };
   gpio_enable_module(TWI_GPIO_MAP, sizeof(TWI_GPIO_MAP) / sizeof(TWI_GPIO_MAP[0]));
 }
-
 
 // initialize USB host stack
 void init_usb_host (void) {

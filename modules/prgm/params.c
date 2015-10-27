@@ -5,7 +5,7 @@
 
 
 void fill_param_desc(ParamDesc *desc) {
-//*/
+    /*
     //  Offset
     strcpy(desc[eParamOffset].label, "offset");
     desc[eParamOffset].type = eParamTypeFix;
@@ -1002,5 +1002,54 @@ void fill_param_desc(ParamDesc *desc) {
     desc[eParamCounter].min = 0;
     desc[eParamCounter].max = FR32_MAX;
     desc[eParamCounter].radix = FIX_RADIX;
-//*/
+    
+    //  Motor
+    strcpy(desc[eParamMotor0].label, "motor0");
+    desc[eParamMotor0].type = eParamTypeFix;
+    desc[eParamMotor0].min = 0;
+    desc[eParamMotor0].max = FR32_MAX;
+    desc[eParamMotor0].radix = FIX_RADIX;
+    
+    strcpy(desc[eParamMotor1].label, "motor1");
+    desc[eParamMotor1].type = eParamTypeFix;
+    desc[eParamMotor1].min = 0;
+    desc[eParamMotor1].max = FR32_MAX;
+    desc[eParamMotor1].radix = FIX_RADIX;
+
+    strcpy(desc[eParamMotor2].label, "motor2");
+    desc[eParamMotor2].type = eParamTypeFix;
+    desc[eParamMotor2].min = 0;
+    desc[eParamMotor2].max = FR32_MAX;
+    desc[eParamMotor2].radix = FIX_RADIX;
+
+    strcpy(desc[eParamMotor3].label, "motor3");
+    desc[eParamMotor3].type = eParamTypeFix;
+    desc[eParamMotor3].min = 0;
+    desc[eParamMotor3].max = FR32_MAX;
+    desc[eParamMotor3].radix = FIX_RADIX;
+
+    strcpy(desc[eParamMotor4].label, "motor4");
+    desc[eParamMotor4].type = eParamTypeFix;
+    desc[eParamMotor4].min = 0;
+    desc[eParamMotor4].max = FR32_MAX;
+    desc[eParamMotor4].radix = FIX_RADIX;
+
+    strcpy(desc[eParamMotor5].label, "motor5");
+    desc[eParamMotor5].type = eParamTypeFix;
+    desc[eParamMotor5].min = 0;
+    desc[eParamMotor5].max = FR32_MAX;
+    desc[eParamMotor5].radix = FIX_RADIX;
+
+    strcpy(desc[eParamMotor6].label, "motor6");
+    desc[eParamMotor6].type = eParamTypeFix;
+    desc[eParamMotor6].min = 0;
+    desc[eParamMotor6].max = FR32_MAX;
+    desc[eParamMotor6].radix = FIX_RADIX;
+
+    strcpy(desc[eParamMotor7].label, "motor7");
+    desc[eParamMotor7].type = eParamTypeFix;
+    desc[eParamMotor7].min = 0;
+    desc[eParamMotor7].max = FR32_MAX;
+    desc[eParamMotor7].radix = FIX_RADIX;
+     */
 }

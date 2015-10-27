@@ -86,6 +86,7 @@ void print_fix16(char* buf , fix16_t x) {
     i++; p++;
   }
 }
+
 // format whole part, right justified
 void itoa_whole(int val, char* buf, int len) {
   static char* p;

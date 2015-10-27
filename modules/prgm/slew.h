@@ -41,6 +41,4 @@ typedef struct {
 
 #define slew16_sync( sl ) ( (sl).x == (sl).y )
       
-//#endif // blackfin architecture
-
 #endif // h guard

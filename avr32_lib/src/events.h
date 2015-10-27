@@ -17,11 +17,9 @@ typedef struct {
 // init event queue
 void init_events( void );
 
-
 // check the queue for pending events
 // return 1 if found
 u8 event_next( event_t *e );
-
 
 // add event to tail of queue
 // return 1 if success

@@ -43,15 +43,19 @@ void sq_init() {
         
         t->input = 0;
         t->inL = FR32_MAX;
-        t->aux1 = 0;
-        t->aux2 = 0;
-        t->pan = 0;
+        t->auxsw = 0;
+        t->aux = 0;
+        t->mixsw = 0;
         t->mix = 0;
         
         t->m = 0;
-        t->env = 3;
-        t->mutemix = 0;
-        t->mutetrk = 0;
+        t->env = 0;
+        t->motor = 0;
+        t->motordir = 1;
+        t->mutemix = MIX;
+        t->mutetrk = TRACK;
+        t->solotrk = TRACK;
+        t->cue = 0;
         t->len = SQ_LEN;
         t->msr = SQ_LEN / 4;
         
@@ -72,15 +76,19 @@ void sq_init() {
         clone->c2[i] = 0;
     }
 
-    master->output = FR32_MAX;
-    master->pan1 = 0;
-    master->pan2 = 0;
     master->out3 = 0;
     master->out4 = 0;
-        
+    master->external = 0;
+    master->grp1 = FR32_MAX;
+    master->grp2 = FR32_MAX;
+    master->output = FR32_MAX;
+    master->bpm = 1; //120 bpm
+    
     //  global parameters
-    editpos = 0;
-    samplepos = 9;
+    master->editpos = 0;
+    master->samplepos = 9;
+    master->solo = 0;
+    master->prepare = 0;
 }
 
 //init tracker: four track sequencer with separate generators

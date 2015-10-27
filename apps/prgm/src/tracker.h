@@ -34,17 +34,16 @@
 #include "pages.h"
 #include "render.h"
 
-#define SQ_LEN 128                       //sequence length
+#define SQ_LEN 128                      //sequence length
 
 #define N_TRACKS 8                      //number of tracks
-#define N_MODES 6                       //number of track modes
+#define N_MODES 8                       //number of track modes
 
-#define N_INPUTS 26                     //number of inputs
-#define N_PHYSICAL_INPUTS 5             //number of physical inputs
-#define N_DIROUTS 11                    //number of selectable direct outputs
+#define N_INPUTS 21                     //number of inputs
+#define N_PHYSICAL_INPUTS 3             //number of physical inputs
+#define N_DIROUTS 10                    //number of selectable direct outputs
 #define LOOP_MIN 32                     //minimum loop
 #define DEFAULT_LEVEL 0x3fffffff
-//#define MAX_TUNE 65162                 //131072
 
 #define N_TRACKS_1 (N_TRACKS - 1)
 #define N_MODES_1 (N_MODES - 1)
@@ -58,14 +57,12 @@
 #define AUX_SIZE_1 (AUX_SIZE - 1)
 
 #define DUMMY 0                         //dummy step for global parameters
-
-//sequencer parameters
-u32 editpos;                            //current edit position
-char renderEditPos[16];
-
-//sample edit
-u8 samplepos;                           //current buffer position
-
+#define MUTE 0
+#define MIX 1
+#define TRACK 1
+#define SOLO 2
+#define PREPARE 3
+#define PREPAREMUTED 4
 
 //track parameters
 char renderInputLevel[N_TRACKS][16];
@@ -80,13 +77,16 @@ char renderParam2[N_TRACKS][16];
 char renderEnvelope[16];
 
 //master track parameters
-char renderAux1Pan[16];
-char renderAux2Pan[16];
+char renderGrp1Level[16];
+char renderGrp2Level[16];
 char renderMasterLevel[16];
 
-//sequenced parameters REMOVE!!!
+//sequenced parameters
+char renderEditPos[16];
+
 char renderTrig[N_TRACKS][16];
 char renderTime[N_TRACKS][16];
+
 
 //sample edit parameters
 char renderSamplePos[16];
@@ -104,15 +104,20 @@ typedef struct _prgmTrack {
     //track parameters
     s32 input;                          //input
     s32 inL;                            //input level
-    s32 aux1;                           //aux1 level
-    s32 aux2;                           //aux2 level
-    s32 pan;                            //mix pan
+    u8 auxsw;                           //aux pre | post
+    s32 aux;                            //aux send level
+    u8 mixsw;                           //mix | group
     s32 mix;                            //mix level
 
     s32 m;                              //mode
     s32 env;                            //envelope
-    u8 mutemix;                         //mute mix
-    u8 mutetrk;                         //mute track
+    u8 motor;                           //motor on/off
+    u8 motordir;                        //motor direction
+    u8 mutemix;                         //mute mix send
+    u8 muteaux;                         //mute aux send
+    u8 mutetrk;                         //mute track output
+    u8 solotrk;                         //solo track
+    u8 cue;                             //cue
     s32 msr;                            //track measure
     s32 len;                            //track length
     
@@ -143,13 +148,21 @@ prgmClone *clone;
 typedef struct _masterTrack *masterTrackptr;
 
 typedef struct _masterTrack {
-    s32 pan1;                           //aux1 pan
-    s32 pan2;                           //aux2 pan
+    s32 out3;
+    s32 out4;
+    s32 external;                       //external input level
     
-    s32 out3;                           //direct output 3
-    s32 out4;                           //direct output 4
-
+    s32 grp1;                           //group A level
+    s32 grp2;                           //group B level
     s32 output;                         //master output level
+    
+    //global parameters
+    u32 editpos;                        //current edit position
+    u8 samplepos;                       //current buffer position
+    u8 solo;                            //true if track solo is active
+    u8 prepare;                         //true if track mute prepare is active
+    
+    u32 bpm;                            //CLK mode bpm
     
 } masterTrack;
 

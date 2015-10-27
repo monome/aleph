@@ -19,49 +19,50 @@
 #include "handler.h"
 #include "render.h"
 
-#include "files.h"              
+#include "files.h"
 #include "pages.h"
 #include "tracker.h"
 #include "flash.h"
 #include "screen.h"
 
 //hardware init, all memory allocations go here
-void app_init(void) {    
+void app_init(void) {
     print_dbg("\r\n app_init...");
-
-//    wavetables_init();
-
+    
     samples_init();
     print_dbg("\r\n finished samples_init()...");
-
+    
     render_init();
     
+    //  initialize prgm data structs, set default values
     tracker_init();
-        
-//    gen_init();
+    
+    // initialize flash-management buffers
+    print_dbg("\r\n flash_prgm_init...");
+    flash_prgm_init();
 }
 
 //dsp init
 u8 app_launch(u8 firstrun) {
-if(firstrun) {
-    print_dbg("\r\n app_launch firstrun...");
-    
-    files_load_dsp();
-    
-    bfin_wait_ready();
-    
-} else {
-    print_dbg("\r\n app_launch NOT firstrun...");
-    
-    files_load_dsp();
-
-    bfin_wait_ready();
-    
-}
+    if(firstrun) {
+        print_dbg("\r\n app_launch firstrun...");
+        
+        files_load_dsp();
+        
+        bfin_wait_ready();
+        
+    } else {
+        print_dbg("\r\n app_launch NOT firstrun...");
+        
+        files_load_dsp();
+        
+        bfin_wait_ready();
+        
+    }
     pages_init();
-
+    
     bfin_disable();
-
+    
     init_sample_timer();
     
     print_dbg("\r\n n_samples ");
@@ -77,21 +78,18 @@ if(firstrun) {
         free_mem(bfinSampleData);
     }
 
-    deinit_sample_timer();
+//    init_scrub_timer();
     
     bfin_enable();
     
     init_app_timers();
     
     adc_init();
-    
-    //  testing i2c slave mode...
-//    i2c_init(100);
-    
+
     render_startup();
     
     assign_prgm_event_handlers();
-            
+    
     print_dbg("\r\n return 1...");
     
     return 1;

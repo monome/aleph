@@ -56,6 +56,18 @@ typedef enum params {
     eParamFlag6,
     eParamFlag7,
     
+    eParamMuteFlag0,
+    eParamMuteFlag1,
+    eParamMuteFlag2,
+    eParamMuteFlag3,
+    eParamMuteFlag4,
+    eParamMuteFlag5,
+    eParamMuteFlag6,
+    eParamMuteFlag7,
+    
+    eParamMute,
+    eParamUnMute,
+        
     eParamCurve0,
     eParamCurve1,
     eParamCurve2,
@@ -64,15 +76,8 @@ typedef enum params {
     eParamCurve5,
     eParamCurve6,
     eParamCurve7,
-        
-    eParamLength0,
-    eParamLength1,
-    eParamLength2,
-    eParamLength3,
-    eParamLength4,
-    eParamLength5,
-    eParamLength6,
-    eParamLength7,
+    
+    eParamLength,
         
     eParamInput0,
     eParamInput1,
@@ -155,6 +160,8 @@ typedef enum params {
     eParamOutputLevel6,
     eParamOutputLevel7,
     
+    eParamRouteMix,
+    
     eParamMixLevel0,
     eParamMixLevel1,
     eParamMixLevel2,
@@ -163,54 +170,34 @@ typedef enum params {
     eParamMixLevel5,
     eParamMixLevel6,
     eParamMixLevel7,
-    
-    eParamMixPanL0,
-    eParamMixPanL1,
-    eParamMixPanL2,
-    eParamMixPanL3,
-    eParamMixPanL4,
-    eParamMixPanL5,
-    eParamMixPanL6,
-    eParamMixPanL7,
-    
-    eParamMixPanR0,
-    eParamMixPanR1,
-    eParamMixPanR2,
-    eParamMixPanR3,
-    eParamMixPanR4,
-    eParamMixPanR5,
-    eParamMixPanR6,
-    eParamMixPanR7,
-    
-    eParamAux1Level0,
-    eParamAux1Level1,
-    eParamAux1Level2,
-    eParamAux1Level3,
-    eParamAux1Level4,
-    eParamAux1Level5,
-    eParamAux1Level6,
-    eParamAux1Level7,
-    
-    eParamAux2Level0,
-    eParamAux2Level1,
-    eParamAux2Level2,
-    eParamAux2Level3,
-    eParamAux2Level4,
-    eParamAux2Level5,
-    eParamAux2Level6,
-    eParamAux2Level7,
-    
-    eParamAux1PanL,
-    eParamAux1PanR,
-    eParamAux2PanL,
-    eParamAux2PanR,
-    
+        
+    eParamAuxLevel0,
+    eParamAuxLevel1,
+    eParamAuxLevel2,
+    eParamAuxLevel3,
+    eParamAuxLevel4,
+    eParamAuxLevel5,
+    eParamAuxLevel6,
+    eParamAuxLevel7,
+       
     eParamDirectOut3,
     eParamDirectOut4,
     
+    eParamGroup1,
+    eParamGroup2,
     eParamMaster,
     
-    eParamCounter,
+    eParamResetCounter,
+    eParamBPM,
+
+    eParamMotor0,
+    eParamMotor1,
+    eParamMotor2,
+    eParamMotor3,
+    eParamMotor4,
+    eParamMotor5,
+    eParamMotor6,
+    eParamMotor7,
     
     eParamNumParams
 } eParam;

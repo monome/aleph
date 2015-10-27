@@ -15,6 +15,7 @@
 #include "app.h"
 #include "app_timers.h"
 #include "types.h"
+#include "i2c.h"
 
 //prgm
 #include "handler.h"
@@ -25,14 +26,21 @@
 
 //static function declarations
 static void handle_Adc0(s32 trig);
+//static void handle_Adc1(s32 gate);
 static void handle_switch_5(s32 data);
 
 
 //static functions
 void handle_Adc0(s32 trig) {
-    if(trig) bfin_set_event();
+    if(trig) bfin_set_clock_in();
 }
 
+/*
+void handle_Adc1(s32 gate) {
+    if(gate) bfin_set_gate_out();
+}
+*/
+ 
 void handle_switch_5(s32 data) {
     //  check if mode switch is held
     if(gpio_get_pin_value(SW_MODE_PIN)) {
@@ -54,5 +62,6 @@ void handle_switch_5(s32 data) {
 
 void assign_prgm_event_handlers(void) {
     app_event_handlers[ kEventAdc0 ] = &handle_Adc0 ; //trig
+//    app_event_handlers[ kEventAdc1 ] = &handle_Adc1 ; //gate
     app_event_handlers[ kEventSwitch5 ]	= &handle_switch_5 ; //power switch
 }

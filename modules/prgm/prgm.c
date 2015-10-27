@@ -18,6 +18,8 @@ prgmData *data;
 
 //sequencer
 u32 counter;
+u32 substep; //TEST CLK MODE
+u32 step; //TEST CLK MODE
 
 //audio buffer
 sampleBuffer onchipbuffer[N_TRACKS];
@@ -43,13 +45,20 @@ static PrgmMasterptr init_master(void);
 static void init_master_parameters(void);
 
 //process frame
-static void set_process(prgmTrack *t, u8 n);
 static fract32 (*get_processptr(u8 n))();
 static fract32 pf_off(prgmTrack *t);
 static fract32 pf_audio(prgmTrack *t);
 static fract32 pf_amp(prgmTrack *t);
 static fract32 pf_delay(prgmTrack *t);
 static fract32 pf_thru(prgmTrack *t);
+static fract32 pf_tape(prgmTrack *t);
+static fract32 pf_cue(prgmTrack *t);
+static fract32 pf_mute(prgmTrack *t);
+static fract32 pf_holdmute(prgmTrack *t);
+static fract32 pf_unmute(prgmTrack *t);
+static fract32 pf_clock(prgmTrack *t); //TEST CLK MODE
+static void route_mix(s32 t, s32 r);
+static void track_set_output(prgmTrack *t, fract32 out);
 static void set_output3(u8 n);
 static void set_output4(u8 n);
 static fract32 out_off(void);
@@ -61,13 +70,12 @@ static fract32 out_vout4(void);
 static fract32 out_vout5(void);
 static fract32 out_vout6(void);
 static fract32 out_vout7(void);
-static fract32 out_aux0(void);
-static fract32 out_aux1(void);
+static fract32 out_aux(void);
 static fract32 (*get_outputptr(u8 n))();
 
 
 //events
-static void param_set_counter(ParamValue v);
+static void param_reset_counter(void);
 
 
 PrgmSqptr init_sq(void) {
@@ -96,20 +104,27 @@ void init_track_parameters(prgmTrack *t) {
     t->flag = 0;
     t->process = get_processptr(0);
     t->output = 0;
+
+    t->mute = 0;
+    t->hold = 0;
+    
     t->uP = 512;
     t->sP = 0;
     
+    t->to_mix = 1;
+    t->to_grp1 = 0;
+    t->to_grp2 = 0;
+    
     t->mix = 0;
-    t->panL = 0;
-    t->panR = 0;
-    t->aux1 = 0;
-    t->aux2 = 0;
+    t->aux = 0;
 
     t->len = SQ_LEN;
     t->c = 0;
     
     filter_1p_lo_init(&(t->pSlew), 0xf);
-    filter_1p_lo_set_slew(&(t->pSlew), 0x3fffffff); //TEST!!!
+    filter_1p_lo_set_slew(&(t->pSlew), 0x3f000000); //parameter slew
+    filter_1p_lo_init(&(t->mSlew), 0xf);
+    filter_1p_lo_set_slew(&(t->mSlew), 0x7f000000); //mix level slew
     
     env_tcd_init(&(t->envAmp));
 }
@@ -122,14 +137,11 @@ PrgmMasterptr init_master(void) {
 void init_master_parameters() {
     master->output3 = get_outputptr(0);
     master->output4 = get_outputptr(0);
+    master->direct = FR32_MAX;
     
+    master->grp1 = FR32_MAX;
+    master->grp2 = FR32_MAX;
     master->output = FR32_MAX;
-        
-    master->aux1panL = 0;
-    master->aux1panR = sub_fr1x32(FR32_MAX, 0);
-
-    master->aux2panL = 0;
-    master->aux2panR = sub_fr1x32(FR32_MAX, 0);
 }
 
 
@@ -166,7 +178,7 @@ void module_init(void) {
     master = init_master();
     init_master_parameters();
     
-    //  init buffer
+    //  init buffers
     for(n=0; n<N_TRACKS; n++)
     {
         buffer_init(&(onchipbuffer[n]), data->sampleBuffer, BUFFER_SIZE);
@@ -187,6 +199,8 @@ void module_init(void) {
     //  init static variables
     offset = 0;
     counter = 0;
+    substep = 0;
+    step = 0x1770; //CLK MODE TEST, 120 bpm
     
     //  init parameters
     for(i=0; i<module_get_num_params(); i++) param_setup(i, 0);
@@ -214,48 +228,39 @@ fract32 (*get_processptr(u8 n))() {
         pf_amp,                         //2
         pf_delay,                       //3
         pf_thru,                        //4
+        pf_tape,                        //5
+        pf_cue,                         //6
+        pf_mute,                        //7
+        pf_holdmute,                    //8
+        pf_unmute,                      //9
+        pf_clock,                       //10
     };
 
-    return (n < 1 || n > 5) ? *process[0] : *process[n];
-}
-
-
-void set_process(prgmTrack *t, u8 n) {
-    t->flag = n;
-    t->process = get_processptr(n);
+    return (n < 1 || n > 11) ? *process[0] : *process[n];
 }
 
 
 void module_process_frame(void) {
     u8 i;
-    fract32 tmp;
+    fract32 tmp, a, b;
     
-    //  mix aux 1
     tmp = 0x00000000;
     
+    //  mix aux
     for(i=0;i<N_TRACKS;i++)
     {
-        if (track[i]->aux1)
-            tmp = add_fr1x32(tmp, mult_fr1x32x32(vout[i], track[i]->aux1));
+        if (track[i]->aux) tmp = add_fr1x32(tmp, mult_fr1x32x32(vout[i], track[i]->aux));
         else ;
-    }    
-    aux[0] = tmp;
+    }
+    aux = tmp;
     
-    //  mix aux 2
-    tmp = 0x00000000;
-    
-    for(i=0;i<N_TRACKS;i++)
-    {
-        if (track[i]->aux2)
-            tmp = add_fr1x32(tmp, mult_fr1x32x32(vout[i], track[i]->aux2));
-        else ;
-    }    
-    aux[1] = tmp;
-
     //  process audio
+    a = b = tmp = 0x00000000;
+    
     for(i=0;i<N_TRACKS;i++)
     {
-        //  skip inactive|muted tracks
+        fract32 v = 0x00000000;
+        //  skip inactive tracks
         if(!track[i]->flag)
         {
             vout[i] = 0x00000000;
@@ -264,33 +269,43 @@ void module_process_frame(void) {
         {
             //  calculate active tracks
             vout[i] = 0x00000000;
-            vout[i] = track[i]->process(track[i]);
+            v = vout[i] = track[i]->process(track[i]);
+        }
+        //  mix
+        if(track[i]->to_mix)
+        {
+            if (filter_1p_sync(&(track[i]->mSlew))) tmp = add_fr1x32(tmp, mult_fr1x32x32(v, track[i]->mix));
+            else tmp = add_fr1x32(tmp, mult_fr1x32x32(v, filter_1p_lo_next(&(track[i]->mSlew))));
+        }
+        //  group 1
+        if(track[i]->to_grp1)
+        {
+            if (filter_1p_sync(&(track[i]->mSlew))) a = add_fr1x32(a, mult_fr1x32x32(v, track[i]->mix));
+            else a = add_fr1x32(a, mult_fr1x32x32(v, filter_1p_lo_next(&(track[i]->mSlew))));
+        }
+        //  group 2
+        if(track[i]->to_grp2)
+        {
+            if (filter_1p_sync(&(track[i]->mSlew))) b = add_fr1x32(b, mult_fr1x32x32(v, track[i]->mix));
+            else b = add_fr1x32(b, mult_fr1x32x32(v, filter_1p_lo_next(&(track[i]->mSlew))));
         }
     }
+
+    //  add groups to mix
+    tmp = add_fr1x32(tmp, mult_fr1x32x32(a, master->grp1));
+    tmp = add_fr1x32(tmp, mult_fr1x32x32(b, master->grp2));
     
-    //  mix left output
-    tmp = 0x00000000;
-    
-    for(i=0;i<N_TRACKS;i++)
-    {
-        tmp = add_fr1x32(tmp, mult_fr1x32x32(vout[i], track[i]->mix));
-    }
+    //  add external inputs to mix, output mix
+//    if (in[2]) out[0] = add_fr1x32(mult_fr1x32x32(tmp, master->output), mult_fr1x32x32(in[2], master->direct));
     out[0] = mult_fr1x32x32(tmp, master->output);
     
-    //  mix right output
-    tmp = 0x00000000;
-
-    for(i=0;i<N_TRACKS;i++)
-    {
-        tmp = add_fr1x32(tmp, mult_fr1x32x32(vout[i], track[i]->mix));
-    }
+//    if (in[3]) out[1] = add_fr1x32(mult_fr1x32x32(tmp, master->output), mult_fr1x32x32(in[3], master->direct));
     out[1] = mult_fr1x32x32(tmp, master->output);
-
-    //  route direct outputs
+    
+    //  direct output
     out[2] = master->output3(master);
     out[3] = master->output4(master);
 }
-
 
 //process 0: off
 fract32 pf_off(prgmTrack *t) {
@@ -319,9 +334,183 @@ fract32 pf_thru(prgmTrack *t) {
     return t->envAmp.curve(&(t->envAmp));
 }
 
-void track_set_output(prgmTrack *t, fract32 out) {
-    t->output = out;
-    env_tcd_set_decay(&(t->envAmp), out);
+//process 5: tape
+fract32 pf_tape(prgmTrack *t) {
+    filter_1p_lo_in(&(t->pSlew), t->sP);
+
+    if (filter_1p_sync(&(t->pSlew)))
+    {
+        env_tcd_set_decay(&(t->envAmp), t->sP);
+        return t->envAmp.curve(&(t->envAmp));
+    }
+    else
+    {
+        env_tcd_set_decay(&(t->envAmp), filter_1p_lo_next(&(t->pSlew)));
+        return t->envAmp.curve(&(t->envAmp));
+    }
+}
+
+//process 6: cue
+fract32 pf_cue(prgmTrack *t) {
+    if (!t->c) env_tcd_set_trig(&(t->envAmp));
+    
+    filter_1p_lo_in(&(t->pSlew), t->sP);
+    
+    if (filter_1p_sync(&(t->pSlew)))
+    {
+        env_tcd_set_decay(&(t->envAmp), t->sP);
+        return t->envAmp.curve(&(t->envAmp));
+    }
+    else
+    {
+        env_tcd_set_decay(&(t->envAmp), filter_1p_lo_next(&(t->pSlew)));
+        return t->envAmp.curve(&(t->envAmp));
+    }
+}
+
+//process 7: mute
+fract32 pf_mute(prgmTrack *t) {
+    fract32 tmp;
+    
+    if (t->flag == 0) tmp = 0;
+    else if (t->flag == 1)
+    {
+        tmp = t->envAmp.curve(&(t->envAmp));
+        tmp = 0;
+    }
+    else tmp = t->envAmp.curve(&(t->envAmp));
+    
+    if (t->mute)
+    {
+        t->hold = tmp;
+        t->mute = 0;
+        t->process = get_processptr(8);
+        return tmp;
+    }
+    else return 0x00000000;
+}
+
+//process 8: while muted
+fract32 pf_holdmute(prgmTrack *t) {
+    fract32 tmp;
+    
+    if (t->flag == 0) ;
+    else tmp = t->envAmp.curve(&(t->envAmp));
+
+    return t->hold;
+}
+
+//process 9: unmute
+fract32 pf_unmute(prgmTrack *t) {
+    fract32 tmp, lo, hi;
+    
+    if (t->flag == 0) tmp = 0;
+    else if (t->flag == 1)
+    {
+        tmp = t->envAmp.curve(&(t->envAmp));
+        tmp = 0;
+    }
+    else tmp = t->envAmp.curve(&(t->envAmp));
+    
+    lo = sub_fr1x32(t->hold, 0xf);
+    hi = add_fr1x32(t->hold, 0xf);
+    
+    if ((tmp >= lo || tmp <= hi) && t->mute)
+    {
+        t->mute = 0;
+        t->process = get_processptr(t->flag);
+        return tmp;
+    }
+    else return 0x00000000;
+}
+
+//process 10: TEST CLK MODE
+fract32 pf_clock(prgmTrack *t) {
+    substep += 1;
+    
+    if (substep > step - 1)
+    {
+        u8 n;
+        substep = 0;
+        
+        for (n = 0; n < N_TRACKS; n++)
+        {
+            u16 c;
+            c = track[n]->c += 1;
+            if (c > track[n]->len - 1) c = track[n]->c = 0;
+            
+            if (sq[n]->tg[c])
+            {
+                track_set_output(track[n], sq[n]->l[c]);
+                env_tcd_set_loop(&(track[n]->envAmp), sq[n]->b[c]);
+                env_tcd_set_start(&(track[n]->envAmp), sq[n]->a[c]);
+                env_tcd_set_trig(&(track[n]->envAmp));
+            }
+        }
+    }
+    else ;
+ 
+    return 0;
+}
+
+//mix routing
+static void route_mix(s32 t, s32 r) {
+    //  mix
+    if (r == 0)
+    {
+        track[t]->to_mix = 1;
+        track[t]->to_grp1 = 0;
+        track[t]->to_grp2 = 0;
+    }
+    //  group 1
+    else if (r == 1)
+    {
+        track[t]->to_mix = 0;
+        track[t]->to_grp1 = 1;
+        track[t]->to_grp2 = 0;
+    }
+    //  group 1
+    else if (r == 2)
+    {
+        track[t]->to_mix = 0;
+        track[t]->to_grp1 = 0;
+        track[t]->to_grp2 = 1;
+    }
+    //  group 1 + 2
+    else if (r == 3)
+    {
+        track[t]->to_mix = 0;
+        track[t]->to_grp1 = 1;
+        track[t]->to_grp2 = 1;
+    }
+    //  mix + group 1
+    else if (r == 4)
+    {
+        track[t]->to_mix = 1;
+        track[t]->to_grp1 = 1;
+        track[t]->to_grp2 = 0;
+    }
+    // mix + group 2
+    else if (r == 5)
+    {
+        track[t]->to_mix = 1;
+        track[t]->to_grp1 = 0;
+        track[t]->to_grp2 = 1;
+    }
+    else ;
+}
+
+//parameter routing
+void track_set_output(prgmTrack *t, fract32 out) { //rename to route_param
+    //Parameter LINK, add here!
+    //-> volume
+    //-> pitch
+    //-> decay
+    //ROUTING algorithm, for parameter and for mix group settings, bitfield?
+    
+    t->output = out; //volume
+    env_tcd_set_decay(&(t->envAmp), out); //pitch
+    //decay
 }
 
 //direct outs
@@ -337,8 +526,7 @@ fract32 (*get_outputptr(u8 n))() {
         out_vout5,
         out_vout6,
         out_vout7,
-        out_aux0,
-        out_aux1,
+        out_aux,
     };
     
     return (n < 1 || n > N_DIROUTS) ? *outputs[0] : *outputs[n];
@@ -380,12 +568,8 @@ fract32 out_vout7(void) {
     return vout[7];
 }
 
-fract32 out_aux0(void) {
-    return aux[0];
-}
-
-fract32 out_aux1(void) {
-    return aux[1];
+fract32 out_aux(void) {
+    return aux;
 }
 
 void set_output3(u8 n) {
@@ -396,9 +580,8 @@ void set_output4(u8 n) {
     master->output4 = get_outputptr(n);
 }
 
-
-//events
-void module_set_event(void) {
+//trig events
+void module_set_clock_in(void) {
     u8 n;
     u16 c;
 
@@ -417,6 +600,20 @@ void module_set_event(void) {
     }
 }
 
+//RENAME TO SET_ALT_TRIG
+void module_set_gate_out(void) {
+    u8 n;
+    
+    for (n = 0; n < N_TRACKS; n++)
+    {
+        u16 c = track[n]->c;
+        if (sq[n]->tg[c])
+        {
+            env_tcd_set_trig(&(track[n]->envAmp));
+        }
+    }
+}
+
 
 //  set parameters
 void module_set_param(u32 idx, ParamValue v) {};
@@ -429,10 +626,17 @@ void param_set_samplevalue(ParamValue v) {
     data->sampleBuffer[offset] = v;
 }
 
-void param_set_counter(ParamValue v) {
+void param_reset_counter(void) {
     u8 n;
-    u16 c;
     
+    substep = step - 1;
+
+    for (n = 0; n < N_TRACKS; n++)
+    {
+        track[n]->c = track[n]->len - 1;
+    }
+}
+/*
     for (n = 0; n < N_TRACKS; n++)
     {
         if (v > track[n]->len - 1)
@@ -445,7 +649,7 @@ void param_set_counter(ParamValue v) {
         }
         track[n]->c = c;
     }
-}
+*/
 
 void module_set_sqparam(u32 s, u32 idx, ParamValue v) {
 
@@ -509,28 +713,68 @@ void module_set_sqparam(u32 s, u32 idx, ParamValue v) {
             break;
             
         case eParamFlag0:
-            set_process(track[0], v);
+            track[0]->flag = v;
+            track[0]->process = get_processptr(v);
             break;
         case eParamFlag1:
-            set_process(track[1], v);
+            track[1]->flag = v;
+            track[1]->process = get_processptr(v);
             break;
         case eParamFlag2:
-            set_process(track[2], v);
+            track[2]->flag = v;
+            track[2]->process = get_processptr(v);
             break;
         case eParamFlag3:
-            set_process(track[3], v);
+            track[3]->flag = v;
+            track[3]->process = get_processptr(v);
             break;
         case eParamFlag4:
-            set_process(track[4], v);
+            track[4]->flag = v;
+            track[4]->process = get_processptr(v);
             break;
         case eParamFlag5:
-            set_process(track[5], v);
+            track[5]->flag = v;
+            track[5]->process = get_processptr(v);
             break;
         case eParamFlag6:
-            set_process(track[6], v);
+            track[6]->flag = v;
+            track[6]->process = get_processptr(v);
             break;
         case eParamFlag7:
-            set_process(track[7], v);
+            track[7]->flag = v;
+            track[7]->process = get_processptr(v);
+            break;
+            
+        case eParamMuteFlag0:
+            track[0]->mute = v;
+            break;
+        case eParamMuteFlag1:
+            track[1]->mute = v;
+            break;
+        case eParamMuteFlag2:
+            track[2]->mute = v;
+            break;
+        case eParamMuteFlag3:
+            track[3]->mute = v;
+            break;
+        case eParamMuteFlag4:
+            track[4]->mute = v;
+            break;
+        case eParamMuteFlag5:
+            track[5]->mute = v;
+            break;
+        case eParamMuteFlag6:
+            track[6]->mute = v;
+            break;
+        case eParamMuteFlag7:
+            track[7]->mute = v;
+            break;
+
+        case eParamMute:
+            track[v]->process = get_processptr(7);
+            break;            
+        case eParamUnMute:
+            track[v]->process = get_processptr(9);
             break;
             
         case eParamCurve0:
@@ -557,30 +801,9 @@ void module_set_sqparam(u32 s, u32 idx, ParamValue v) {
         case eParamCurve7:
             env_tcd_set_curve(&(track[7]->envAmp), v);
             break;
-            
-        case eParamLength0:
-            track[0]->len = v;
-            break;
-        case eParamLength1:
-            track[1]->len = v;
-            break;
-        case eParamLength2:
-            track[2]->len = v;
-            break;
-        case eParamLength3:
-            track[3]->len = v;
-            break;
-        case eParamLength4:
-            track[4]->len = v;
-            break;
-        case eParamLength5:
-            track[5]->len = v;
-            break;
-        case eParamLength6:
-            track[6]->len = v;
-            break;
-        case eParamLength7:
-            track[7]->len = v;
+
+        case eParamLength:
+            track[s]->len = v;
             break;
             
         case eParamInput0:
@@ -808,8 +1031,13 @@ void module_set_sqparam(u32 s, u32 idx, ParamValue v) {
             sq[7]->l[s] = v;
             break;
             
+        case eParamRouteMix:
+            route_mix(s, v);
+            break;
+            
         case eParamMixLevel0:
             track[0]->mix = v;
+            filter_1p_lo_in(&(track[0]->mSlew), v);
             break;
         case eParamMixLevel1:
             track[1]->mix = v;
@@ -833,135 +1061,83 @@ void module_set_sqparam(u32 s, u32 idx, ParamValue v) {
             track[7]->mix = v;
             break;
             
-        case eParamMixPanL0:
-            track[0]->panL = v;
+        case eParamAuxLevel0:
+            track[0]->aux = v;
             break;
-        case eParamMixPanL1:
-            track[1]->panL = v;
+        case eParamAuxLevel1:
+            track[1]->aux = v;
             break;
-        case eParamMixPanL2:
-            track[2]->panL = v;
+        case eParamAuxLevel2:
+            track[2]->aux = v;
             break;
-        case eParamMixPanL3:
-            track[3]->panL = v;
+        case eParamAuxLevel3:
+            track[3]->aux = v;
             break;
-        case eParamMixPanL4:
-            track[4]->panL = v;
+        case eParamAuxLevel4:
+            track[4]->aux = v;
             break;
-        case eParamMixPanL5:
-            track[5]->panL = v;
+        case eParamAuxLevel5:
+            track[5]->aux = v;
             break;
-        case eParamMixPanL6:
-            track[6]->panL = v;
+        case eParamAuxLevel6:
+            track[6]->aux = v;
             break;
-        case eParamMixPanL7:
-            track[7]->panL = v;
+        case eParamAuxLevel7:
+            track[7]->aux = v;
             break;
-            
-        case eParamMixPanR0:
-            track[0]->panR = v;
-            break;
-        case eParamMixPanR1:
-            track[1]->panR = v;
-            break;
-        case eParamMixPanR2:
-            track[2]->panR = v;
-            break;
-        case eParamMixPanR3:
-            track[3]->panR = v;
-            break;
-        case eParamMixPanR4:
-            track[4]->panR = v;
-            break;
-        case eParamMixPanR5:
-            track[5]->panR = v;
-            break;
-        case eParamMixPanR6:
-            track[6]->panR = v;
-            break;
-        case eParamMixPanR7:
-            track[7]->panR = v;
-            break;
-            
-        case eParamAux1Level0:
-            track[0]->aux1 = v;
-            break;
-        case eParamAux1Level1:
-            track[1]->aux1 = v;
-            break;
-        case eParamAux1Level2:
-            track[2]->aux1 = v;
-            break;
-        case eParamAux1Level3:
-            track[3]->aux1 = v;
-            break;
-        case eParamAux1Level4:
-            track[4]->aux1 = v;
-            break;
-        case eParamAux1Level5:
-            track[5]->aux1 = v;
-            break;
-        case eParamAux1Level6:
-            track[6]->aux1 = v;
-            break;
-        case eParamAux1Level7:
-            track[7]->aux1 = v;
-            break;
-            
-        case eParamAux2Level0:
-            track[0]->aux2 = v;
-            break;
-        case eParamAux2Level1:
-            track[1]->aux2 = v;
-            break;
-        case eParamAux2Level2:
-            track[2]->aux2 = v;
-            break;
-        case eParamAux2Level3:
-            track[3]->aux2 = v;
-            break;
-        case eParamAux2Level4:
-            track[4]->aux2 = v;
-            break;
-        case eParamAux2Level5:
-            track[5]->aux2 = v;
-            break;
-        case eParamAux2Level6:
-            track[6]->aux2 = v;
-            break;
-        case eParamAux2Level7:
-            track[7]->aux2 = v;
-            break;
-            
-        case eParamAux1PanL:
-            master->aux1panL = v;
-            break;
-        case eParamAux1PanR:
-            master->aux1panR = v;
-            break;
-        case eParamAux2PanL:
-            master->aux2panL = v;
-            break;
-        case eParamAux2PanR:
-            master->aux2panR = v;
-            break;
-            
+                                  
         case eParamDirectOut3:
             set_output3(v);
             break;
         case eParamDirectOut4:
             set_output4(v);
             break;
-            
+
+        case eParamGroup1:
+            master->grp1 = v;
+            break;
+        case eParamGroup2:
+            master->grp2 = v;
+            break;
         case eParamMaster:
             master->output = v;
             break;
             
-        case eParamCounter:
-            param_set_counter(v);
+        case eParamResetCounter:
+            param_reset_counter();
             break;
-                        
+        case eParamBPM:
+            step = v;
+            break;
+            
+        case eParamMotor0:
+            env_tcd_set_motor(&track[0]->envAmp, v);
+            break;
+        case eParamMotor1:
+            env_tcd_set_motor(&track[1]->envAmp, v);
+            break;
+        case eParamMotor2:
+            env_tcd_set_motor(&track[2]->envAmp, v);
+            break;
+        case eParamMotor3:
+            env_tcd_set_motor(&track[3]->envAmp, v);
+            break;
+        case eParamMotor4:
+            env_tcd_set_motor(&track[4]->envAmp, v);
+            break;
+        case eParamMotor5:
+            env_tcd_set_motor(&track[5]->envAmp, v);
+            break;
+        case eParamMotor6:
+            env_tcd_set_motor(&track[6]->envAmp, v);
+            break;
+        case eParamMotor7:
+            env_tcd_set_motor(&track[7]->envAmp, v);
+            break;
+
         default:
             break;
     }
 }
+
+//add error here to stop make deploy scroll...

@@ -27,9 +27,11 @@ typedef enum {
   kEventSwitch5, // power
   kEventSwitch6, // foot1
   kEventSwitch7, // foot2
+    
   /// connect/disconnect FTDI-based devices
   kEventFtdiConnect,
   kEventFtdiDisconnect,
+    
   /// monome protocol
   kEventMonomeConnect,
   kEventMonomeDisconnect,
@@ -39,23 +41,27 @@ typedef enum {
   kEventMonomeGridTilt,
   kEventMonomeRingEnc,
   kEventMonomeRingKey,
+    
   //// MIDI class
   kEventMidiConnect,
   kEventMidiDisconnect,
   kEventMidiPacket,
   kEventMidiRefresh,
+    
   /// HID class
   kEventHidConnect,
   kEventHidDisconnect,
   kEventHidPacket,
+    
   /// incoming serial from computer (usb)
   kEventSerial,
-  //// better?
-  // kEventAppTimer
-  // kEventApp...
-  // kEventApp...,
-  // ??
+    
+  /// i2c class
+  kEventi2c,
+
+  /// custom class
   kEventAppCustom,
+    
   /// dummy/count
   kNumEventTypes,
 } etype;

@@ -34,7 +34,7 @@
 
 // create application timers
 extern void init_sample_timer(void);
-extern void deinit_sample_timer(void);
+extern void init_scrub_timer(void);
 extern void init_app_timers(void);
 
 // start adc polling timer

@@ -47,6 +47,7 @@
 #include "ftdi.h"
 #include "global.h"
 #include "i2c.h"
+#include "twi.h"
 #include "init.h"
 #include "interrupts.h"
 #include "memory.h"
@@ -140,10 +141,10 @@ static void handler_Serial(s32 data) {
 /// explicitly assign default event handlers.
 /// this way the order of the event types enum doesn't matter.
 static inline void assign_main_event_handlers(void) {
-  app_event_handlers[ kEventAdc0]	= &dummy_handler ;
-  app_event_handlers[ kEventAdc1 ]	= &dummy_handler ;
-  app_event_handlers[ kEventAdc2 ]	= &dummy_handler ;
-  app_event_handlers[ kEventAdc3 ]	= &dummy_handler ;
+  app_event_handlers[ kEventAdc0 ]      = &dummy_handler ;
+  app_event_handlers[ kEventAdc1 ]      = &dummy_handler ;
+  app_event_handlers[ kEventAdc2 ]      = &dummy_handler ;
+  app_event_handlers[ kEventAdc3 ]      = &dummy_handler ;
   app_event_handlers[ kEventEncoder0 ]	= &dummy_handler ;
   app_event_handlers[ kEventEncoder1 ]	= &dummy_handler ;
   app_event_handlers[ kEventEncoder2 ]	= &dummy_handler ;
@@ -156,25 +157,28 @@ static inline void assign_main_event_handlers(void) {
   app_event_handlers[ kEventSwitch5 ]	= &dummy_handler ;
   app_event_handlers[ kEventSwitch6 ]	= &dummy_handler ;
   app_event_handlers[ kEventSwitch7 ]	= &dummy_handler ;
+  app_event_handlers[ kEventi2c ]       = &dummy_handler ;
   app_event_handlers[ kEventFtdiConnect ]	= &handler_FtdiConnect ;
-  app_event_handlers[ kEventFtdiDisconnect ]	= &handler_FtdiDisconnect ;
-  app_event_handlers[ kEventMonomeConnect ]	= &handler_MonomeConnect ;
-  app_event_handlers[ kEventMonomeDisconnect ]	= &dummy_handler ;
-  app_event_handlers[ kEventMonomePoll ]	= &handler_MonomePoll ;
-  app_event_handlers[ kEventMonomeRefresh ]	= &handler_MonomeRefresh ;
-  app_event_handlers[ kEventMonomeGridKey ]	= &dummy_handler ;
-  app_event_handlers[ kEventMonomeGridTilt ]	= &dummy_handler ;
-  app_event_handlers[ kEventMonomeRingEnc ]	= &dummy_handler ;
-  app_event_handlers[ kEventMonomeRingKey ]	= &dummy_handler ;
-  app_event_handlers[ kEventMidiConnect ]	= &handler_MidiConnect ;
-  app_event_handlers[ kEventMidiDisconnect ]	= &dummy_handler ;
-  app_event_handlers[ kEventMidiPacket ]	= &dummy_handler ;
-  app_event_handlers[ kEventMidiRefresh ]	= &handler_MidiRefresh ;
-  app_event_handlers[ kEventHidConnect ]	= &handler_HidConnect ;
-  app_event_handlers[ kEventHidDisconnect ]	= &dummy_handler ;
-  app_event_handlers[ kEventHidPacket ]	= &dummy_handler ;
-
-  app_event_handlers[ kEventSerial ] = &handler_Serial;
+  app_event_handlers[ kEventFtdiDisconnect ]    = &handler_FtdiDisconnect ;
+//    app_event_handlers[ kEventAppCustom ]   = &handler_AppCustom ;
+  
+//  app_event_handlers[ kEventMonomeConnect ]	= &handler_MonomeConnect ;
+//  app_event_handlers[ kEventMonomeDisconnect ]	= &dummy_handler ;
+//  app_event_handlers[ kEventMonomePoll ]	= &handler_MonomePoll ;
+//  app_event_handlers[ kEventMonomeRefresh ]	= &handler_MonomeRefresh ;
+//  app_event_handlers[ kEventMonomeGridKey ]	= &dummy_handler ;
+//  app_event_handlers[ kEventMonomeGridTilt ]	= &dummy_handler ;
+//  app_event_handlers[ kEventMonomeRingEnc ]	= &dummy_handler ;
+//  app_event_handlers[ kEventMonomeRingKey ]	= &dummy_handler ;
+//  app_event_handlers[ kEventMidiConnect ]	= &handler_MidiConnect ;
+//  app_event_handlers[ kEventMidiDisconnect ]	= &dummy_handler ;
+//  app_event_handlers[ kEventMidiPacket ]	= &dummy_handler ;
+//  app_event_handlers[ kEventMidiRefresh ]	= &handler_MidiRefresh ;
+//  app_event_handlers[ kEventHidConnect ]	= &handler_HidConnect ;
+//  app_event_handlers[ kEventHidDisconnect ]	= &dummy_handler ;
+//  app_event_handlers[ kEventHidPacket ]	= &dummy_handler ;
+//  app_event_handlers[ kEventSerial ] = &handler_Serial;
+//  app_event_handlers[ kEventSerial ] = &handler_Serial;
 }
 
 //=================================================
@@ -232,18 +236,18 @@ static void init_avr32(void) {
   register_interrupts();
   // initialize the OLED screen
   init_oled();
-  // init twi
-  init_twi();
+    // init twi
+    init_twi();
+    
+    // enable interrupts
+    cpu_irq_enable();
+    
+// usb host controller
+//  init_usb_host();
+// initialize usb class drivers
+//  init_monome();
 
-  // enable interrupts
-  cpu_irq_enable();
-
-  // usb host controller
-  init_usb_host();
-  // initialize usb class drivers
-  init_monome();
-
-  print_dbg("\r\n ++++++++++++++++ avr32 init done ");
+    print_dbg("\r\n ++++++++++++++++ avr32 init done ");
 }
 
 // init timer-related stuff.
@@ -262,7 +266,7 @@ static void init_ctl(void) {
   // send ADC config
   init_adc();
   print_dbg("\r\n init_adc");
-
+  
   // enable interrupts
   cpu_irq_enable();
   print_dbg("\r\n enabled interrupts");
@@ -330,13 +334,13 @@ void check_events(void) {
   }
 }
 
-// !!!!!!!!!!!!!
+
 // main function
 int main (void) {
 
   // set up avr32 hardware and peripherals
   init_avr32();
-
+    
   // show the startup screen
   screen_startup();  
 
@@ -374,10 +378,7 @@ int main (void) {
 
   // assign default event handlers
   assign_main_event_handlers();
-  // assign default screen render
-  //  app_render_screen = &(dummy_render);
   print_dbg("\r\n assigned default/dummy event handlers");
-  
 
   print_dbg("\r\n starting event loop.\r\n");
 

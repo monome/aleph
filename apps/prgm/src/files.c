@@ -42,7 +42,7 @@ extern void samples_init(void) {
     print_dbg("\r\n finished alloc_sample() and init_sample_param() ");
 
     //  setup aux buffers
-    sample[0]->offset = 0;
+    sample[0]->offset = 0x00000000;
     sample[0]->loop = AUX_SIZE;
     n_samples++;
     bfinMemCheck += AUX_SIZE;
