@@ -80,6 +80,10 @@ static void select_scroll(s32 dir) {
   s16 newIdx;
   s16 newSel;
 
+  // cancel actions
+  pages_reset_keypressed();
+  cursor = 0;
+
   if(dir < 0) {
     /// SCROLL DOWN
     if(*pageSelect == 0) {
@@ -202,15 +206,20 @@ void handle_key_2(s32 val) {
 }
 
 void handle_key_3(s32 val) {
-  // alt
+  if ( pages_set_alt(val)) { 
+    sceneData->desc.sceneName[cursor] = '\0';
+    redraw_scenes();
+    render_edit_string(headRegion, sceneData->desc.sceneName, SCENE_NAME_LEN, cursor);
+  }
+  show_foot();
 }
 
-// scroll character value at cursor position2 in scene name
+// scroll character value at cursor position in scene name
 void handle_enc_3(s32 val) {
   if(val > 0) {
-    edit_string_inc_char(sceneData->desc.sceneName, cursor);
+    pages_edit_char_inc(sceneData->desc.sceneName, cursor);
   } else {
-    edit_string_dec_char(sceneData->desc.sceneName, cursor);
+    pages_edit_char_dec(sceneData->desc.sceneName, cursor);
   }
   print_dbg("\r\b edited scene name: ");
   print_dbg(sceneData->desc.sceneName);
@@ -219,20 +228,29 @@ void handle_enc_3(s32 val) {
 
 // scroll cursor position in current scene name
 void handle_enc_2(s32 val) {
+  pages_edit_cursor(val, sceneData->desc.sceneName, &cursor, SCENE_NAME_LEN);
+  /*
   if(val > 0) {
     ++cursor;
     if (cursor >= SCENE_NAME_LEN) {
-      cursor = 0;
+      cursor = SCENE_NAME_LEN - 1;
     } 
   } else {
     --cursor;
     if (cursor < 0) {
-      cursor = SCENE_NAME_LEN - 1;
+      cursor = 0;
     } 
   }
-  if(sceneData->desc.sceneName[cursor] == '\0') { 
-    sceneData->desc.sceneName[cursor] = '_';
+
+  if(altMode) { 
+    sceneData->desc.sceneName[cursor] = '\0';
+  } else {
+    if(sceneData->desc.sceneName[cursor] == '\0') { 
+      sceneData->desc.sceneName[cursor] = '_';
+      // also search for other nulls? eh, could end with deleted text
+    }
   }
+  */
   render_edit_string(headRegion, sceneData->desc.sceneName, SCENE_NAME_LEN, cursor);
 }
 

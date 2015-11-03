@@ -238,7 +238,7 @@ u8* op_bars_unpickle(op_bars_t* bars, const u8* src) {
       op_gfx_enable();
       op_bars_set_timer(bars);
   }
-   return (u8*)src;
+  return (u8*)src;
 }
 
 // redraw with current state

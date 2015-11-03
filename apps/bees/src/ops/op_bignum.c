@@ -219,21 +219,21 @@ u8* op_bignum_pickle(op_bignum_t* bignum, u8* dst) {
 }
 
 u8* op_bignum_unpickle(op_bignum_t* bignum, const u8* src) {
-  // retreive val  variables
-  //////////////
-  //// FIXME: i think this is wrong... need to re-set the input value for reregistration? 
+
   src = unpickle_io(src, (u32*)&(bignum->enable));
+
+  src = unpickle_io(src, (u32*)&(bignum->period));
+  src = unpickle_io(src, (u32*)&(bignum->val));
+  src = unpickle_io(src, (u32*)&(bignum->x));
+  src = unpickle_io(src, (u32*)&(bignum->y));
+
   if(bignum->enable) {
     op_bignum_set_timer(bignum);
     op_bignum_redraw(bignum);
     op_gfx_enable();
   }
-  //////////////
-  src = unpickle_io(src, (u32*)&(bignum->period));
-  src = unpickle_io(src, (u32*)&(bignum->val));
-  src = unpickle_io(src, (u32*)&(bignum->x));
-  src = unpickle_io(src, (u32*)&(bignum->y));
-   return (u8*)src;
+  
+  return (u8*)src;
 }
 
 // redraw with current state

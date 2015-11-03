@@ -1,4 +1,25 @@
 ----------------
+bees    0.7.0   !! breaks scene compatiblity for MIDI !!
+
+- new op: MIDI_OUT_CC
+- new op: BARS8
+- new op: ROUTE16
+
+- fix midi input ops not remembering their channel number
+- MIDI_NOTE op now has 3rd output for noteoff velocity
+- WW operator now has 7th output for current position
+- scrolling page selections now cancels any pending keypress actions.
+- INS page now refreshes displayed values on page selection or ALT press.
+- scrolling with ENC3 now deletes characters in scene/preset name editors.
+- explicitly disable blackfin audio before module change
+
+*WARNING* scenes using MIDI and WW operators will need to be recreated, to take advantage of these fixes. other scenes should be fine.
+
+----------------
+bees    0.6.3
+- fix init/deinit bugs in graphics ops (e.g. SCREEN, BARS)
+
+----------------
 lines   0.2.4
 - fix: correct svf parameter slewing
 

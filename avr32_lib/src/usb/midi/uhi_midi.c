@@ -21,13 +21,14 @@
 #include "usb_protocol_midi.h"
 #include "uhi_midi.h"
 
-#define UHI_MIDI_PRINT_DBG 0
-#define UHI_MIDI_TIMEOUT 20000
+// define to see more stuff
+#define UHI_MIDI_PRINT_DBG 1
+// timeout in milliseconds
+#define UHI_MIDI_TIMEOUT 5
 
 // looks like we need to get class-specific endpoint descriptors,
 //  to ask them about virtual cable index and stuff like that??
 
-#define UHI_FTDI_TIMEOUT 20000
 //...
 #define MIDI_EP_DESC_REQ_TYPE ( (USB_REQ_DIR_IN) | (USB_REQ_TYPE_STANDARD) | (USB_REQ_RECIP_DEVICE) )
 
@@ -69,7 +70,7 @@ static uhi_midi_dev_t uhi_midi_dev = {
 /*   // send a setup request for the selected descriptor. */
 /*   // descriptor type  */
 /*   /\* */
-/*     Table B-12: MIDI Adapter Class-specific Bulk OUT Endpoint Descriptor */
+/*     Table B-12: MIDI Adapter Class-specific Bulk IN Endpoint Descriptor */
 /*     Offset */
 /*     Field */
 /*     Size Value */
@@ -81,7 +82,7 @@ static uhi_midi_dev_t uhi_midi_dev = {
 /*     3  bNumEmbMIDIJack 	 1 	0x01 	Number of embedded MIDI IN Jacks. */
 /*     4  BaAssocJackID(1)	 1 	0x01 	ID of the Embedded MIDI IN Jack */
 
-/*     // bulk IN endpoint desc is similar with DescriptorType = 0x05 */
+/*     // bulk OUT endpoint desc is similar with DescriptorType = 0x05 */
 /*     *\/ */
 
 /*   //    usb_setup_req_t req; */
@@ -105,12 +106,9 @@ static uhi_midi_dev_t uhi_midi_dev = {
 //----- external (UHC) functions
 uhc_enum_status_t uhi_midi_install(uhc_device_t* dev) {
   bool iface_supported;
-  //bool is_audio;
   uint16_t conf_desc_lgt;
-  //, vid, pid;
   usb_iface_desc_t *ptr_iface;
   
-
   if (uhi_midi_dev.dev != NULL) {
     return UHC_ENUM_SOFTWARE_LIMIT; // Device already allocated
   }
@@ -141,7 +139,6 @@ uhc_enum_status_t uhi_midi_install(uhc_device_t* dev) {
       print_dbg_hex( ptr_iface->bInterfaceProtocol );
       print_dbg("\r\n iInterface : 0x");
       print_dbg_hex( ptr_iface->iInterface );
-
       print_dbg("\r\n\r\n\r\n");
 #endif
       
@@ -234,8 +231,7 @@ void uhi_midi_enable(uhc_device_t* dev) {
   /* 		   NULL); */
   
 
-  
-
+ 
   //  UHI_MIDI_CHANGE(dev, true);
   midi_change(dev, true);  
   print_dbg("\r\n finished uhi_midi_enable");
@@ -253,12 +249,11 @@ void uhi_midi_uninstall(uhc_device_t* dev) {
 bool uhi_midi_in_run(uint8_t * buf, iram_size_t buf_size,
 		     uhd_callback_trans_t callback) {
 
-  print_dbg("\r\n attempting to run midi input endpoint ; dev address: 0x");
-  print_dbg_hex((u32) (uhi_midi_dev.dev->address) );
-  print_dbg(" , endpoint number: ");
-  print_dbg_ulong((u32) (uhi_midi_dev.ep_in) );
-  
-
+  /* print_dbg("\r\n attempting to run midi input endpoint ; dev address: 0x"); */
+  /* print_dbg_hex((u32) (uhi_midi_dev.dev->address) ); */
+  /* print_dbg(" , endpoint number: "); */
+  /* print_dbg_ulong((u32) (uhi_midi_dev.ep_in) ); */
+ 
   return uhd_ep_run(
 		    uhi_midi_dev.dev->address,
 		    uhi_midi_dev.ep_in, 
@@ -282,10 +277,11 @@ bool uhi_midi_out_run(uint8_t * buf, iram_size_t buf_size,
     * at the end of the data transfer (received short packet).
     *
    */
-  print_dbg("\r\n attempting to run midi output endpoint ; dev address: 0x");
-  print_dbg_hex((u32) (uhi_midi_dev.dev->address) );
-  print_dbg(" , endpoint number: ");
-  print_dbg_ulong((u32) (uhi_midi_dev.ep_out) );
+
+  /* print_dbg("\r\n attempting to run midi output endpoint ; dev address: 0x"); */
+  /* print_dbg_hex((u32) (uhi_midi_dev.dev->address) ); */
+  /* print_dbg(" , endpoint number: "); */
+  /* print_dbg_ulong((u32) (uhi_midi_dev.ep_out) ); */
   
   return uhd_ep_run(
 		    uhi_midi_dev.dev->address,

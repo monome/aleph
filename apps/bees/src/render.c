@@ -27,10 +27,6 @@
 // bees
 #include "render.h"
 
-// min/max legal characters for editable strings
-#define MAX_EDIT_CHAR 122
-#define MIN_EDIT_CHAR 45
-
 //---- extern vars
 region* headRegion = NULL;
 region* footRegion[4] = { NULL, NULL, NULL, NULL };
@@ -100,23 +96,6 @@ void region_update(region* r) {
   }
 }
 
-/// utility to restrict characters in legal filenames
-// return 0 if ok
-static u8 check_edit_char(char c) {
-  /*
-    45 		dash
-    48-57 	nums
-    65-90	upper
-    95		underscore
-    97-122	lower
-  */
-  if(c == 45) { return 0; }
-  if(c == 95) { return 0; }
-  if( (c >= 48) && (c <= 57) ) { return 0; }
-  if( (c >= 65) && (c <= 90) ) { return 0; }
-  if( (c >= 97) && (c <= 122) ) { return 0; }
-  return 1;
-}
 
 //-----------------------
 //---- extern functions
@@ -436,31 +415,6 @@ void render_scroll_apply_hl(u8 n, u8 hl) {
   pageScrollRegion->dirty = 1;
 }
 
-// scroll character up
-void edit_string_inc_char(char* str, u8 pos) {
-  s32 tmp = (s32)str[pos];
-  ++tmp;
-  while(check_edit_char((char)tmp)) {
-    ++tmp;
-    if(tmp > MAX_EDIT_CHAR) {
-      tmp = MAX_EDIT_CHAR;
-    }
-  }
-  str[pos] = tmp;
-}
-
-// scroll character down
-void edit_string_dec_char(char* str, u8 pos) {
-  u8 tmp = str[pos];
-  --tmp;
-  while(check_edit_char((char)tmp)) {
-    --tmp;
-    if(tmp < MIN_EDIT_CHAR) {
-      tmp = MIN_EDIT_CHAR;
-    }
-  }
-  str[pos] = tmp;
-}
 
 // draw editing string to given region, with cursor highlight
 void render_edit_string(region* reg, char* str, u8 len, u8 cursor) {
@@ -470,20 +424,37 @@ void render_edit_string(region* reg, char* str, u8 len, u8 cursor) {
   //  const u32 squarePx = (FONT_CHARW+2) * FONT_CHARH;
   u32 dif;
   region_fill(reg, 0x0);
+  bool wasNull = 0;
   for(i=0; i<len; ++i) {
-    if(str[i] == 0) { break; }
     if(i == cursor) {
-      /// fixme: net art
-      //      region_fill_part(reg, off, squarePx, 0xf);
       // hack a column fill with a space character
       font_glyph(' ', dst, reg->w, 0x0, 0xf);
       dst += 2; off += 2;
-      font_glyph_fixed(str[i], dst, reg->w, 0x0, 0xf);
+
+      if(str[i] == '\0') {
+	wasNull = 1; 
+      }  else {
+	if(wasNull) {
+	  font_glyph_fixed(str[i], dst, reg->w, 0x0, 0x1);
+	} else {
+	  font_glyph_fixed(str[i], dst, reg->w, 0x0, 0xf);
+	}
+      }
       dif = FONT_CHARW + 2;
       dst += dif;
       off += dif;
     } else {
-      dif = font_glyph(str[i], dst, reg->w, 0xf, 0x0) + 1;
+      // not the cursor
+      if(str[i] == '\0') {
+	dif = font_glyph(' ', dst, reg->w, 0x1, 0x0) + 1;
+	wasNull = 1; 
+      } else {
+	if(wasNull) {
+	  dif = font_glyph(str[i], dst, reg->w, 0x1, 0x0) + 1;
+	} else {
+	dif = font_glyph(str[i], dst, reg->w, 0xf, 0x0) + 1;
+	}
+    }
       dst += dif;
       off += dif;
     }

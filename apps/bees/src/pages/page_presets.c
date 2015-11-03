@@ -27,7 +27,7 @@ static u8 inClear = 0;
 // copy flag
 static u8 inCopy = 0;
 // editing cursor position
-static s8 cursor = 0;
+static s8 cursor = 4;
 // max index
 static const s32 maxPresetIdx = NET_PRESETS_MAX - 1;
 
@@ -61,14 +61,16 @@ static void render_line(s16 idx, u8 fg);
 static void select_scroll(s32 dir);
 
 static void redraw_lines(void);
+static void render_selection(void);
 
 // fill tmp region with new content
 // given input index and foreground color
 static void render_line(s16 idx, u8 fg) {
   region_fill(lineRegion, 0x0);
-  if( (idx >= 0) && (idx < maxPresetIdx) ) {
+  if( (idx >= 0) && (idx <= maxPresetIdx) ) {
     clearln();
     appendln((const char*)preset_name(idx));
+    endln();
     font_string_region_clip(lineRegion, lineBuf, 2, 0, fg, 0);
   }
 }
@@ -80,17 +82,24 @@ static void select_scroll(s32 dir) {
   s16 newIdx;
   s16 newSel;
 
+  // cancel actions
+  pages_reset_keypressed();
+  cursor = 4;
+
   if(dir < 0) {
     /// SCROLL DOWN
     if(*pageSelect == 0) {
       return;
     }
-    // remove highlight from old center
-    //    render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
-    // redraw center row without editing cursor, etc
+    /* // remove highlight from old center */
+    /* render_scroll_apply_hl(SCROLL_CENTER_LINE, 0); */
+
+    // redraw and re-render old center selection
+     /// hm, why is this wrong.. 
     render_line(*pageSelect, 0xa);
-    // copy to scroll
-    render_to_scroll_center();
+    render_to_scroll_line(SCROLL_CENTER_LINE, 0); 
+
+    // decrement selection
     newSel = *pageSelect - 1;
     *pageSelect = newSel;    
     // add new content at top
@@ -114,7 +123,11 @@ static void select_scroll(s32 dir) {
       return;
     }
     // remove highlight from old center
-    render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
+    // render_scroll_apply_hl(SCROLL_CENTER_LINE, 0);
+    // re-render last center without cursor
+    render_line(*pageSelect, 0xa);
+    render_to_scroll_line(SCROLL_CENTER_LINE, 0); 
+    
     // increment selection
     newSel = *pageSelect + 1;
     *pageSelect = newSel;    
@@ -167,51 +180,54 @@ void handle_key_1(s32 val) {
 
 // copy / clear / confirm
 void handle_key_2(s32 val) {
-  if(inClear) {
+  if(val == 1) { return; }
+  if(check_key(2)) {
     preset_clear(*pageSelect);
-  } else {
-    inClear = 1;
   }
+  show_foot();
 }
 
 // alt
 void handle_key_3(s32 val) {
+  if ( pages_set_alt(val)) { 
+    preset_name(*pageSelect)[cursor] = '\0';
+    redraw_presets();
+    render_selection();
+  }
+  show_foot();
 }
 
 // scroll character value at cursor positoin in scene name
 void handle_enc_3(s32 val) {
   
   if(val > 0) {
-    edit_string_inc_char(preset_name(*pageSelect), cursor);
+    pages_edit_char_inc(preset_name(*pageSelect), cursor);
   } else {
-    edit_string_dec_char(preset_name(*pageSelect), cursor);
+    pages_edit_char_dec(preset_name(*pageSelect), cursor);
   }
   print_dbg("\r\b edited preset name: ");
   print_dbg(preset_name(*pageSelect));
-
-  render_edit_string(lineRegion, preset_name(*pageSelect), PRESET_NAME_LEN, cursor);
-  render_to_scroll_line(SCROLL_CENTER_LINE, 0);
-  
+  render_selection();  
 }
 
 // scroll cursor position in current scene name
 void handle_enc_2(s32 val) {
-  
-  if(val > 0) {
-    ++cursor;
-    if (cursor >= PRESET_NAME_LEN) {
-      cursor = 0;
-    } 
-  } else {
-    --cursor;
-    if (cursor < 0) {
-      cursor = PRESET_NAME_LEN - 1;
-    } 
-  }
+  pages_edit_cursor(val, preset_name(*pageSelect), &cursor, PRESET_NAME_LEN);
+  /* if(val > 0) { */
+  /*   ++cursor; */
+  /*   if (cursor >= PRESET_NAME_LEN) { */
+  /*     cursor = 0; */
+  /*   }  */
+  /* } else { */
+  /*   --cursor; */
+  /*   if (cursor < 0) { */
+  /*     cursor = PRESET_NAME_LEN - 1; */
+  /*   }  */
+  /* } */
 
-  if(preset_name(*pageSelect)[cursor] == '\0') { 
-    preset_name(*pageSelect)[cursor] = '_';
-  }
+  /* if(preset_name(*pageSelect)[cursor] == '\0') {  */
+  /*   preset_name(*pageSelect)[cursor] = '_'; */
+  /* } */
   render_edit_string(lineRegion, preset_name(*pageSelect), PRESET_NAME_LEN, cursor);
   render_to_scroll_line(SCROLL_CENTER_LINE, 0);
   
@@ -280,6 +296,7 @@ static void show_foot3(void) {
 
 static void show_foot(void) {
   if(inClear || inCopy) {
+    // currently not used
     font_string_region_clip(footRegion[0], "-    ", 0, 0, 0xf, 0);
     font_string_region_clip(footRegion[1], "-    ", 0, 0, 0xf, 0);
     font_string_region_clip(footRegion[2], "OK!  ", 0, 0, 0xf, 0);
@@ -349,4 +366,10 @@ void redraw_presets(void) {
     ++i;
     ++n;
   }
+}
+
+void render_selection(void) { 
+    render_edit_string(lineRegion, preset_name(*pageSelect), PRESET_NAME_LEN, cursor);
+    render_to_scroll_line(SCROLL_CENTER_LINE, 0);
+    //   render_scroll_apply_hl(SCROLL_CENTER_LINE, 1);
 }

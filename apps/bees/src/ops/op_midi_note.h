@@ -13,8 +13,8 @@ typedef struct op_midi_note_struct {
   op_midi_t midi;  
   // input: channel number
   volatile io_t* in_val[1];
-  // outputs: note, velocity
-  op_out_t outs[2];
+  // outputs: note number, noteon velocity, noteoff velocity
+  op_out_t outs[3];
   // channel, input value(negative == all channels)
   volatile io_t chanIo;
   /// actual channel number

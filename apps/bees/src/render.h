@@ -77,7 +77,6 @@ extern void render_to_scroll_top(void);
 // add line region to bottom of scroll region (clipping)
 extern void render_to_scroll_bottom(void);
 
-
 // render tmp region to arbitrary line, with highlight level
 extern void render_to_scroll_line(u8 n, u8 hl);
 // fill scroll line with color
@@ -122,10 +121,6 @@ extern void endln( void);
 
 // draw editing string to given region, with cursor highlight
 extern void render_edit_string( region* reg, char* str, u8 len, u8 cursor);
-
-// scroll character at cursor position in string
-extern void edit_string_inc_char(char* str, u8 pos);
-extern void edit_string_dec_char(char* str, u8 pos);
 
 // draw preset name in header
 extern void draw_preset_name(void);

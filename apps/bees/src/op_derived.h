@@ -1,3 +1,4 @@
+
 /* op_derived.h
    bees
    aleph
@@ -13,6 +14,7 @@
 #include "ops/op_accum.h"
 #include "ops/op_adc.h"
 #include "ops/op_bars.h"
+#include "ops/op_bars8.h"
 #include "ops/op_bignum.h"
 #include "ops/op_bits.h"
 #include "ops/op_cascades.h"
@@ -34,6 +36,7 @@
 #include "ops/op_metro.h"
 #include "ops/op_midi_cc.h"
 #include "ops/op_midi_note.h"
+#include "ops/op_midi_out_cc.h"
 #include "ops/op_midi_out_note.h"
 #include "ops/op_mod.h"
 #include "ops/op_monome_arc.h"
@@ -49,6 +52,7 @@
 #include "ops/op_random.h"
 #include "ops/op_route.h"
 #include "ops/op_route8.h"
+#include "ops/op_route16.h"
 #include "ops/op_screen.h"
 #include "ops/op_serial.h"
 #include "ops/op_step.h"
