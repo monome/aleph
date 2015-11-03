@@ -11,7 +11,7 @@
 
 //---- descriptor strings
 static const char* op_midi_note_instring = "CHAN\0   ";
-static const char* op_midi_note_outstring = "NUM\0    VEL\0    ";
+static const char* op_midi_note_outstring = "NUM\0    VELON\0  VELOFF\0  ";
 static const char* op_midi_note_opstring = "MIDINOTE";
 
 //-------------------------------------------------
@@ -58,7 +58,7 @@ void op_midi_note_init(void* mem) {
   op->super.flags |= (1 << eOpFlagMidiIn);
 
   op->super.numInputs = 1;
-  op->super.numOutputs = 2;
+  op->super.numOutputs = 3;
 
   op->super.in_val = op->in_val;
   op->super.out = op->outs;
@@ -69,6 +69,7 @@ void op_midi_note_init(void* mem) {
 
   op->in_val[0] = &(op->chanIo);
   op->outs[0] = -1;
+  op->outs[1] = -1;
   op->outs[1] = -1;
 
   op->chan = -1;
@@ -92,9 +93,6 @@ static void op_midi_note_in_chan(op_midi_note_t* op, const io_t v) {
   op->chanIo = v;
   print_dbg("\r\n midi_note, setting channel from input: 0x");
   print_dbg_hex((u32)v);
-  // range is [-1, 16] in fix16... this is ugly, whatever
-  //  if(op->chanIo > 0x00100000) { op->chanIo = 0x00100000; }
-  //  if(op->chanIo < 0xffff0000) { op->chanIo = 0xffff0000; }
   op->chan = (s8)(op_to_int(op->chanIo));
   if(op->chan < -1) { op->chan = -1; }
   if(op->chan > 15) { op->chan = 15; }
@@ -111,59 +109,37 @@ static void op_midi_note_handler(op_midi_t* op_midi, u32 data) {
   // check status byte  
   com = (data & 0xf0000000) >> 28; 
   if (com == 0x9) {
-    if(op->chan < 0) {
-      num = (data & 0xff0000) >> 16;
-      vel = (data & 0xff00) >> 8;
-      net_activate(op->outs[0], op_from_int(num), op);
-      net_activate(op->outs[1], op_from_int(vel), op);
-    } else {
-      // note on
+
+    if(op->chan != -1) {
       ch = (data & 0x0f000000) >> 24;
-      if(ch == op->chan) {
-	// matches our channel, so perform it
-	num = (data & 0xff0000) >> 16;
-	vel = (data & 0xff00) >> 8;
-	net_activate(op->outs[0], op_from_int(num), op);
-	net_activate(op->outs[1], op_from_int(vel), op);
+      if(ch != op->chan) {
+	return;
       }
     }
+    
+    // got here, so channel matched, or we want all channels
+    num = (data & 0xff0000) >> 16;
+    vel = (data & 0xff00) >> 8;
+    net_activate(op->outs[0], op_from_int(num), op);
+    net_activate(op->outs[1], op_from_int(vel), op);
+    
   } else if (com == 0x8) {
     // note off
-    if(op->chan == -1) {
-      num = (data & 0xff0000) >> 16;
-      vel = (data & 0xff00) >> 8;
-      net_activate(op->outs[0], op_from_int(num), op);
-      net_activate(op->outs[1], op_from_int(vel), op);
-
-      print_dbg("\r\n op_midi note off ; num: ");
-      print_dbg_ulong(num);
-
-    } else {
+    if(op->chan != -1) {
       ch = (data & 0x0f000000) >> 24;
-      if(ch == op->chan) {
-	// matches our channel, so perform it
-	num = (data & 0xff0000) >> 16;
-	vel = (data & 0xff00) >> 8;
-	net_activate(op->outs[0], op_from_int(num), op);
-	// FIXME: should noteoff be a separate off, retain release velocity?
-	/// or, a 3rd output for on/off ?? hm
-	net_activate(op->outs[1], 0, op);
+      if(ch != op->chan) {
+	return;
       }
     }
+    // got here, so channel matched, or we want all channels
+    num = (data & 0xff0000) >> 16;
+    vel = (data & 0xff00) >> 8;
+    net_activate(op->outs[0], op_from_int(num), op);
+    net_activate(op->outs[1], 0, op);
+    net_activate(op->outs[2], op_from_int(vel), op);
   }
 }
 
-
-/* /// increment param value from UI: */
-/* void op_midi_note_inc_fn(op_midi_note_t* op, const s16 idx, const io_t inc) { */
-/*   io_t val; */
-/*   switch(idx) { */
-/*   case 0: // channel */
-/*     val = op_sadd(op->chanIo, inc);  */
-/*     op_midi_note_in_chan(op, val); */
-/*     break; */
-/*   } */
-/* } */
 
 // pickle / unpickle
 u8* op_midi_note_pickle(op_midi_note_t* mnote, u8* dst) {
