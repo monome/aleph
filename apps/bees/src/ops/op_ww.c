@@ -11,7 +11,7 @@
 
 //---- descriptor strings
 static const char* op_ww_instring = "FOCUS\0  CLOCK\0  PARAM\0 ";
-static const char* op_ww_outstring ="TR0\0    TR1\0    TR2\0    TR3\0    CVA\0    CVB\0    ";
+static const char* op_ww_outstring ="TR0\0    TR1\0    TR2\0    TR3\0    CVA\0    CVB\0    POS\0    ";
 static const char* op_ww_opstring = "WW";
 
 //-------------------------------------------------
@@ -200,7 +200,7 @@ void op_ww_init(void* mem) {
   op->super.flags |= (1 << eOpFlagMonomeGrid);
 
   op->super.numInputs = 3;
-  op->super.numOutputs = 6;
+  op->super.numOutputs = 7;
 
   op->super.in_val = op->in_val;
   op->super.out = op->outs;
@@ -218,7 +218,7 @@ void op_ww_init(void* mem) {
   op->outs[3] = -1;
   op->outs[4] = -1;
   op->outs[5] = -1;
-
+  op->outs[6] = -1;
 
 
   op->focus = 0;
@@ -571,7 +571,7 @@ static void op_ww_in_clock(op_ww_t* op, const io_t v) {
   if(cv1 != op->outs[5]) net_activate(op->outs[5], cv1, op);
   // print_dbg("\r\n pos: ");
   // print_dbg_ulong(pos);
-
+  net_activate(op->outs[6], pos, op);
 }
 
 static void op_ww_in_param(op_ww_t* op, const io_t v) {
