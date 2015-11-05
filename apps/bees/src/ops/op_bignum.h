@@ -45,7 +45,7 @@ typedef struct op_bignum_struct {
   // drawing region handler
   region reg;
   // drawing region data.
-  /// FIXME: this should probly be alloc'd/freed from heap.
+  /// FIXME: this should probly be alloc'd/freed from heap...?
   u8 regData[OP_BIGNUM_GFX_BYTES];
   // timer data
   softTimer_t timer;
