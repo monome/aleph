@@ -65,6 +65,9 @@
 //====  static variables
 // flag for firstrun
 static u8 firstrun = 0;
+// flag for clean start
+static u8 cleanstart = 0;
+
 //  flag to wait for startup button press
 static u8 launch = 0;
 // flags for device connection events.
@@ -279,7 +282,13 @@ void check_startup(void) {
     // clear the power sw interrupt? wtf?? ok
     gpio_clear_pin_interrupt_flag(SW_POWER_PIN);
     // return 1 if app completed firstrun tasks
-    launch = app_launch(firstrun);
+    if(firstrun) { 
+      launch = app_launch(eLaunchStateFirstRun);
+    } else if(cleanstart) {
+      launch = app_launch(eLaunchStateClean);
+    } else {
+      launch = app_launch(eLaunchStateNormal);
+    }
 
     delay_ms(10);
 
@@ -366,11 +375,20 @@ int main (void) {
     firstrun = 1;
     print_dbg("r\n sw2 down -> force firstrun ");
   }
-
+  // kind of weird... why both? 
   if(gpio_get_pin_value(SW0_PIN)) {
     firstrun = 1;
     print_dbg("r\n sw0 down -> force firstrun ");
   }
+
+  // add another pin check on SW1 for 'clean start'
+  // this is to tell the application to start in a known default state,
+  // without requiring flash initialization
+  if(gpio_get_pin_value(SW1_PIN)) {
+    cleanstart = 1;
+    print_dbg("r\n sw1 down -> force clean start ");
+  }
+
 
   // assign default event handlers
   assign_main_event_handlers();
