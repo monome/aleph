@@ -125,13 +125,16 @@ u8 app_launch(eLaunchState state) {
 
     /// read the default scene from sd card
     /// this also attempts to load associated .ldr    
-    render_boot("reading default scene");
-    print_dbg("\r\n loading default scene. current module name from sceneData: ");
-    print_dbg(sceneData->desc.moduleName);
 
     if(state == eLaunchStateClean) {
+      render_boot("reading clean-boot scene");
+      print_dbg("\r\n loading clean-boot scene. current module name from sceneData: ");
+      print_dbg(sceneData->desc.moduleName);
       scene_read_clean();
     } else {
+      render_boot("reading default scene");
+      print_dbg("\r\n loading default scene. current module name from sceneData: ");
+      print_dbg(sceneData->desc.moduleName);
       scene_read_default();
     }
 

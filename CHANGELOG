@@ -1,5 +1,11 @@
 ----------------
-bees    0.7.0   !! breaks scene compatiblity for MIDI !!
+bees 0.7.1
+
+- BIGNUM should now remember x/y location
+- add new boot mode: hold down SW1 to perform a "clean boot," loading "clean.scn" file. unlike SW0/SW3 "firstrun" mode, this doesn't perform any writes to flash, so is a little faster and safer as a live performance "panic button."
+
+----------------
+bees    0.7.0   !! breaks scene compatiblity for MIDI and WW!!
 
 - new op: MIDI_OUT_CC
 - new op: BARS8
