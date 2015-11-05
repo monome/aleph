@@ -75,6 +75,8 @@ extern void scene_read_buf(void);
 extern void scene_write_default(void);
 // load from default
 extern void scene_read_default(void);
+// load "clean start" scene
+extern void scene_read_clean(void);
 
 // set scene name
 extern void scene_set_name(const char* name);

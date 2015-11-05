@@ -28,7 +28,6 @@ static char tmpStr[16];
 //static volatile u8 regData[OP_BIGNUM_GFX_BYTES];
 //// ^^^ fuck. i think that is broken. try moving to class structure and allocating from op poll?
 
-
 //-------------------------------------------------
 //----- static function declaration
 
@@ -219,13 +218,15 @@ u8* op_bignum_pickle(op_bignum_t* bignum, u8* dst) {
 }
 
 u8* op_bignum_unpickle(op_bignum_t* bignum, const u8* src) {
-
+  
   src = unpickle_io(src, (u32*)&(bignum->enable));
-
   src = unpickle_io(src, (u32*)&(bignum->period));
   src = unpickle_io(src, (u32*)&(bignum->val));
   src = unpickle_io(src, (u32*)&(bignum->x));
   src = unpickle_io(src, (u32*)&(bignum->y));
+
+  bignum->reg.x = bignum->x;
+  bignum->reg.y = bignum->y;
 
   if(bignum->enable) {
     op_bignum_set_timer(bignum);
@@ -238,10 +239,6 @@ u8* op_bignum_unpickle(op_bignum_t* bignum, const u8* src) {
 
 // redraw with current state
 void op_bignum_redraw(op_bignum_t* bignum) {
-  //// TEST
-  /* u32 i, j; */
-  /* u8* dat = &(bignum->reg.data[0]); */
-  //  region* r = &(bignum->reg);
 
   if(bignum->enable <= 0) { return; }
 
@@ -257,20 +254,6 @@ void op_bignum_redraw(op_bignum_t* bignum) {
   // render text to region
   region_string_aa(&(bignum->reg), tmpStr, 0, 0, 1);
 
-  // ascii art
-    /* print_dbg("\r\n"); */
-    /* for(i=0; i< OP_BIGNUM_PX_H; i++) { */
-    /*   for(j=0; j< OP_BIGNUM_PX_W; j++) { */
-    /* 	if(*dat > 0) { print_dbg("#"); } else { print_dbg("_"); } */
-    /* 	dat++; */
-    /*   } */
-    /*   print_dbg("\r\n"); */
-    /* } */
-
-    // FIXME: this should NOT go here. 
-  //gfx ops should inherit from op_poll,
-  //  and only call for a redraw every 100 ms or whatever.
-  //    screen_draw_region(r->x, r->y, r->w, r->h, r->data);
 }
 
 
@@ -281,5 +264,4 @@ static inline void op_bignum_set_timer(op_bignum_t* bignum) {
 
 static inline void op_bignum_unset_timer(op_bignum_t* bignum) {
   timer_remove(&(bignum->timer));
-  //  timers_unset_custom(&(bignum->timer));
 }

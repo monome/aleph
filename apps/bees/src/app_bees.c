@@ -77,10 +77,11 @@ void app_init(void) {
 }
 
 // this is called from main event handler
-u8 app_launch(u8 firstrun) {
+u8 app_launch(eLaunchState state) {
 
-  print_dbg("\r\n launching app with firstrun: ");
-  print_dbg_ulong(firstrun);
+  
+  print_dbg("\r\n launching app with state: ");
+  print_dbg_ulong(state);
 
   //  net_print();
   
@@ -91,7 +92,7 @@ u8 app_launch(u8 firstrun) {
     render_boot("waiting for SD card...");
   }
 
-  if(firstrun) {
+  if(state == eLaunchStateFirstRun) {
     render_boot("launching app, first run");
     print_dbg("\r\n first run, writing nonvolatile data...");
     
@@ -124,11 +125,18 @@ u8 app_launch(u8 firstrun) {
 
     /// read the default scene from sd card
     /// this also attempts to load associated .ldr    
-    render_boot("reading default scene");
-    print_dbg("\r\n loading default scene. current module name from sceneData: ");
-    print_dbg(sceneData->desc.moduleName);
 
-    scene_read_default();
+    if(state == eLaunchStateClean) {
+      render_boot("reading clean-boot scene");
+      print_dbg("\r\n loading clean-boot scene. current module name from sceneData: ");
+      print_dbg(sceneData->desc.moduleName);
+      scene_read_clean();
+    } else {
+      render_boot("reading default scene");
+      print_dbg("\r\n loading default scene. current module name from sceneData: ");
+      print_dbg(sceneData->desc.moduleName);
+      scene_read_default();
+    }
 
     delay_ms(2); 
 
@@ -161,7 +169,7 @@ u8 app_launch(u8 firstrun) {
   pages_reselect();
 
   // start in play mode if not firstrun 
-  if(!firstrun) pages_toggle_play();
+  if(state != eLaunchStateFirstRun) pages_toggle_play();
 
   return 1;
 }

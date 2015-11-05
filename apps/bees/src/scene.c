@@ -37,6 +37,7 @@
 
 
 #define DEFAULT_SCENE_NAME "default"
+#define CLEAN_SCENE_NAME "clean"
 /// FIXME: this is retarded, 
 // but sometimes the name needs to have extension and sometimes not.
 // #define DEFAULT_SCENE_NAME_EXT "default.scn"
@@ -407,6 +408,15 @@ void scene_read_default(void) {
   print_dbg("\r\n finished reading ");  
   app_resume();
 }
+
+void scene_read_clean(void) {
+  app_pause();
+  print_dbg("\r\n reading clean-start scene from card... ");
+  files_load_scene_name(CLEAN_SCENE_NAME);
+  print_dbg("\r\n finished reading ");  
+  app_resume();
+}
+
 
 // set scene name
 void scene_set_name(const char* name) {
