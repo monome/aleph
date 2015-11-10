@@ -17,6 +17,7 @@
 // bfin
 #include "bfin_core.h"
 #include "cv.h"
+#include "gpio.h"
 #include "fract_math.h"
 #include <fract2float_conv.h>
 
@@ -339,6 +340,7 @@ void module_init(void) {
   param_setup(  eParamWave0, 	0 );
   param_setup(  eParamAmp1, 	PARAM_AMP_6 );
   param_setup(  eParamAmp0, 	PARAM_AMP_6 );
+
   param_setup(  eParamPm10, 	0 );
   param_setup(  eParamPm01, 	0 );
   param_setup(  eParamWm10, 	0 );
@@ -400,6 +402,19 @@ extern u32 module_get_num_params(void) {
 
 // frame callback
 void module_process_frame(void) {
+
+//--------
+// -- testing leds...
+static long int ledCount = 0;
+
+  if(ledCount > 6000) {
+    LED3_TOGGLE;
+    LED4_TOGGLE;
+    ledCount = 0;
+  }
+  ledCount++;
+ 
+//-------
 
   calc_frame();
 
