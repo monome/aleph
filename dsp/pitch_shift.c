@@ -99,16 +99,16 @@ fract32 pitchShift_next(pitchShift* dl, fract32 in) {
 
   fract32 readVal;
   fract32 mix_factor = FR32_MAX / 3;
-  readVal = mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd0) ),mix_factor);
-  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd1) ),mix_factor));
-  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd2) ),mix_factor));
-  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd3) ),mix_factor));
-  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd4) ),mix_factor));
-  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd5) ),mix_factor));
-  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd6) ),mix_factor));
-  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd7) ),mix_factor));
-  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd8) ),mix_factor));
-  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read( &(dl->tapRd9) ),mix_factor));
+  readVal = mult_fr1x32x32(echoTap24_8_read_interp( &(dl->tapRd0) ),mix_factor);
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read_interp( &(dl->tapRd1) ),mix_factor));
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read_interp( &(dl->tapRd2) ),mix_factor));
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read_interp( &(dl->tapRd3) ),mix_factor));
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read_interp( &(dl->tapRd4) ),mix_factor));
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read_interp( &(dl->tapRd5) ),mix_factor));
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read_interp( &(dl->tapRd6) ),mix_factor));
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read_interp( &(dl->tapRd7) ),mix_factor));
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read_interp( &(dl->tapRd8) ),mix_factor));
+  readVal = add_fr1x32(readVal, mult_fr1x32x32(echoTap24_8_read_interp( &(dl->tapRd9) ),mix_factor));
 
   buffer_tapN_next( &(dl->tapWr) );
 

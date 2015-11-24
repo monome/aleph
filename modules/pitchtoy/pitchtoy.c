@@ -17,7 +17,7 @@
 
 // aleph-bfin
 #include "bfin_core.h"
-#include "dac.h"
+//#include "dac.h"
 #include "gpio.h"
 #include "fract_math.h"
 #include <fract2float_conv.h>
@@ -94,6 +94,11 @@ pitchtoyData* pPitchtoyData;
 static fract32 dacVal[4];
 static filter_1p_lo dacSlew[4];
 static u8 dacChan = 0;
+
+
+static fract32 cvVal[4];
+static filter_1p_lo cvSlew[4];
+static u8 cvChan = 0;
 
 //----------------------
 //----- external functions
@@ -214,9 +219,9 @@ fract32 delayOutput = 0, delayInput = 0;
 void module_process_frame(void) {
 
   //Update one of the CV outputs
-  if(dacSlew[dacChan].sync) { ;; } else {
-    dacVal[dacChan] = filter_1p_lo_next(&(dacSlew[dacChan]));
-    dac_update(dacChan, shr_fr1x32(dacVal[dacChan], 15) & DAC_VALUE_MASK);
+  if(filter_1p_sync(&(cvSlew[cvChan]))) { ;; } else {
+    cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
+    cv_update(cvChan, cvVal[cvChan]);
   }
 
   //Queue up the next CV output for processing next audio frame
@@ -241,14 +246,13 @@ void module_process_frame(void) {
   }
   feedback = feedbackTarget/100*1+feedback/100*99;
   //delayTime = delayTimeTarget/256*1+delayTime/256*99;
-  if(pitchFactorSlew[0].sync) { ;; } else {
-    pitchFactor[0] = filter_1p_lo_next(&(pitchFactorSlew[0]));
+  
+  pitchFactor[0] = filter_1p_lo_next(&(pitchFactorSlew[0]));
 
     //update delay time
     //delay_set_delay_24_8(&(lines[0]), delayTime);
     //delay_set_delay_samp(&(lines[0]), delayTimeTarget);
     //pitchShift_set_pitchFactor24_8(&(lines[0]), delayTimeTarget / 100);
-  }
 
   mix_panned_mono(in[0], &(out[1]), &(out[0]), pan[0], fader[0]);
   mix_panned_mono(in[1], &(out[1]), &(out[0]), pan[1], fader[1]);
