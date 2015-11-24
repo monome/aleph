@@ -39,10 +39,10 @@
 //#define LINES_BUF_FRAMES 0x600000
 //#define LINES_BUF_FRAMES 0x1000000
 //#define LINES_BUF_FRAMES 0xbb8000 // 256 seconds @ 48k
-#define NLINES 1
+#define NGRAINS 4
 #define PARAM_SECONDS_MAX 0x003c0000
 
-delayLine lines[NLINES];
+pitchShift grains[NGRAINS];
 
 ParamValue auxL[4];
 ParamValue auxR[4];
@@ -64,21 +64,22 @@ ParamValue effectTarget[4];
 //ParamValue eq_hi[4];
 //ParamValue eq_mid[4];
 //ParamValue eq_lo[4];
+ParamValue pitchshiftFaders[NGRAINS];
 
-ParamValue delayTime=0;
-ParamValue delayTimeTarget=0;
-static filter_1p_lo delayTimeSlew;
+ParamValue pitchFactor[NGRAINS] = {0,0,0,0};
+ParamValue pitchFactorTarget[NGRAINS] = {0,0,0,0};
+static filter_1p_lo pitchFactorSlew[NGRAINS] ;
 
 ParamValue feedback=0;
 ParamValue feedbackTarget=0;
 
 // data structure of external memory
-typedef struct _dacsData {
+typedef struct _pitchtoyData {
   ModuleData super;
   //ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
-  volatile fract32 audioBuffer[NLINES][LINES_BUF_FRAMES];
-} dacsData;
+  volatile fract32 audioBuffer[NGRAINS][LINES_BUF_FRAMES];
+} pitchtoyData;
 
 //-------------------------
 //----- extern vars (initialized here)
@@ -87,7 +88,7 @@ ModuleData* gModuleData;
 //------ static variables
 
 // pointer to all external memory
-dacsData* pDacsData;
+pitchtoyData* pPitchtoyData;
 
 // dac values (u16, but use fract32 and audio integrators)
 static fract32 dacVal[4];
@@ -106,12 +107,12 @@ void module_init(void) {
 
 
   // init module/param descriptor
-  pDacsData = (dacsData*)SDRAM_ADDRESS;
+  pPitchtoyData = (pitchtoyData*)SDRAM_ADDRESS;
 
-  gModuleData = &(pDacsData->super);
-  strcpy(gModuleData->name, "aleph-dacs");
+  gModuleData = &(pPitchtoyData->super);
+  strcpy(gModuleData->name, "aleph-pitchtoy");
 
-  gModuleData->paramData = (ParamData*)pDacsData->mParamData;
+  gModuleData->paramData = (ParamData*)pPitchtoyData->mParamData;
   gModuleData->numParams = eParamNumParams;
 
 
@@ -155,14 +156,25 @@ void module_init(void) {
   param_setup( 	eParam_effect3,		EFFECT_DEFAULT );
 
 
-  delay_init(&(lines[0]), pDacsData->audioBuffer[0], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[0]), pPitchtoyData->audioBuffer[0], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[1]), pPitchtoyData->audioBuffer[1], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[2]), pPitchtoyData->audioBuffer[2], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[3]), pPitchtoyData->audioBuffer[3], LINES_BUF_FRAMES);
 
-  filter_1p_lo_init( &delayTimeSlew, 0 );
+  filter_1p_lo_init( &(pitchFactorSlew[0]), 0 );
+  filter_1p_lo_init( &(pitchFactorSlew[1]), 0 );
+  filter_1p_lo_init( &(pitchFactorSlew[2]), 0 );
+  filter_1p_lo_init( &(pitchFactorSlew[3]), 0 );
+  filter_1p_lo_init( &(pitchFactorSlew[4]), 0 );
 
-  //param_setup( 	eParam_delay0,		0 );
-  param_setup( 	eParam_feedback0,		FADER_DEFAULT );
-  param_setup( 	eParam_feedback0,		0 );
+  //param_setup( 	eParam_pitchshift0,		0 );
+  param_setup( 	eParam_feedback,		FADER_DEFAULT );
+  param_setup( 	eParam_feedback,		0 );
 
+  param_setup( 	eParam_pitchshift0fader, FADER_DEFAULT );
+  param_setup( 	eParam_pitchshift1fader, FADER_DEFAULT );
+  param_setup( 	eParam_pitchshift2fader, FADER_DEFAULT );
+  param_setup( 	eParam_pitchshift3fader, FADER_DEFAULT );
   //delay_set_loop_samp(&(lines[0]), LINES_BUF_FRAMES/2);
   //delay_set_run_write(&(lines[0]), 1);
   //delay_set_run_read(&(lines[0]), 1);
@@ -229,13 +241,13 @@ void module_process_frame(void) {
   }
   feedback = feedbackTarget/100*1+feedback/100*99;
   //delayTime = delayTimeTarget/256*1+delayTime/256*99;
-  if(delayTimeSlew.sync) { ;; } else {
-    delayTime = filter_1p_lo_next(&delayTimeSlew);
+  if(pitchFactorSlew[0].sync) { ;; } else {
+    pitchFactor[0] = filter_1p_lo_next(&(pitchFactorSlew[0]));
 
     //update delay time
     //delay_set_delay_24_8(&(lines[0]), delayTime);
     //delay_set_delay_samp(&(lines[0]), delayTimeTarget);
-    //delay_set_rate(&(lines[0]), delayTimeTarget / 100);
+    //pitchShift_set_pitchFactor24_8(&(lines[0]), delayTimeTarget / 100);
   }
 
   mix_panned_mono(in[0], &(out[1]), &(out[0]), pan[0], fader[0]);
@@ -258,7 +270,15 @@ void module_process_frame(void) {
 
   delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
 
-  delayOutput = delay_next( &(lines[0]), delayInput);
+ParamValue pitchshiftFaders[NGRAINS];
+  delayOutput = pitchShift_next( &(grains[0]), delayInput);
+  delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[1]), delayInput));
+  delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[2]), delayInput));
+  delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[3]), delayInput));
+  //delayOutput = mult_fr1x32x32(pitchshiftFaders[0], pitchShift_next( &(grains[0]), delayInput));
+  //delayOutput = add_fr1x32(delayOutput, mult_fr1x32x32(pitchshiftFaders[1], pitchShift_next( &(grains[1]), delayInput)));
+  //delayOutput = add_fr1x32(delayOutput, mult_fr1x32x32(pitchshiftFaders[2], pitchShift_next( &(grains[2]), delayInput)));
+  //delayOutput = add_fr1x32(delayOutput, mult_fr1x32x32(pitchshiftFaders[3], pitchShift_next( &(grains[3]), delayInput)));
 
 
 
@@ -383,16 +403,58 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_effect3 :
     effectTarget[3] = v;
     break;
-  case eParam_feedback0 :
+  case eParam_feedback :
     feedbackTarget = v;
     break;
-  case eParam_delay0 :
-    //delayTimeTarget = v;
+
+  case eParam_pitchshift0 :
     //filter_1p_lo_in(&delayTimeSlew, v);
-    delay_set_rate(&(lines[0]), v/64);
+    pitchShift_set_pitchFactor24_8(&(grains[0]), v/256);
     break;
-  case eParam_delay0Slew :
-    filter_1p_lo_set_slew(&delayTimeSlew, v);
+  case eParam_pitchshift0slew :
+    filter_1p_lo_set_slew(&(pitchFactorSlew[0]), v);
+    //filter_1p_lo_in(&delayTimeSlew, v);
+    break;
+  case eParam_pitchshift0fader:
+    pitchshiftFaders[0] = v;
+    break;
+
+  case eParam_pitchshift1 :
+    //filter_1p_lo_in(&delayTimeSlew, v);
+    pitchShift_set_pitchFactor24_8(&(grains[1]), v/256);
+    break;
+  case eParam_pitchshift1slew :
+    filter_1p_lo_set_slew(&(pitchFactorSlew[1]), v);
+    //filter_1p_lo_in(&delayTimeSlew, v);
+    break;
+  case eParam_pitchshift1fader:
+    pitchshiftFaders[1] = v;
+    break;
+
+  case eParam_pitchshift2 :
+    //filter_1p_lo_in(&delayTimeSlew, v);
+    pitchShift_set_pitchFactor24_8(&(grains[2]), v/256);
+    break;
+  case eParam_pitchshift2slew :
+    filter_1p_lo_set_slew(&(pitchFactorSlew[2]), v);
+    //filter_1p_lo_in(&delayTimeSlew, v);
+    break;
+  case eParam_pitchshift2fader:
+    pitchshiftFaders[2] = v;
+    break;
+
+  case eParam_pitchshift3 :
+    //filter_1p_lo_in(&delayTimeSlew, v);
+    pitchShift_set_pitchFactor24_8(&(grains[3]), v/256);
+    break;
+  case eParam_pitchshift3slew :
+    filter_1p_lo_set_slew(&(pitchFactorSlew[3]), v);
+    //filter_1p_lo_in(&delayTimeSlew, v);
+    break;
+  case eParam_pitchshift3fader:
+    pitchshiftFaders[3] = v;
+    break;
+
   default:
     break;
   }

@@ -173,24 +173,83 @@ extern void fill_param_desc(ParamDesc* desc) {
   desc[eParam_effect3].max = EFFECT_MAX;
   desc[eParam_effect3].radix = EFFECT_RADIX;
 
-  strcpy(desc[eParam_delay0].label, "delay0");
-  desc[eParam_delay0].type = DELAY_TYPE;
-  desc[eParam_delay0].min = DELAY_MIN;
-  desc[eParam_delay0].max = DELAY_MAX;
-  desc[eParam_delay0].radix = DELAY_RADIX;
+  strcpy(desc[eParam_pitchshift0].label, "pitchshift0");
+  desc[eParam_pitchshift0].type = PITCHSHIFT_TYPE;
+  desc[eParam_pitchshift0].min = PITCHSHIFT_MIN;
+  desc[eParam_pitchshift0].max = PITCHSHIFT_MAX;
+  desc[eParam_pitchshift0].radix = PITCHSHIFT_RADIX;
 
-  strcpy(desc[eParam_delay0Slew].label, "slew1");
-  desc[eParam_delay0Slew].type = eParamTypeIntegrator; 
-  desc[eParam_delay0Slew].min = 0x00000000; 
-  desc[eParam_delay0Slew].max = 0x7fffffff;
-  desc[eParam_delay0Slew].radix = 32;
+  strcpy(desc[eParam_pitchshift0slew].label, "slew0");
+  desc[eParam_pitchshift0slew].type = eParamTypeIntegrator;
+  desc[eParam_pitchshift0slew].min = 0x00000000;
+  desc[eParam_pitchshift0slew].max = 0x7fffffff;
+  desc[eParam_pitchshift0slew].radix = 32;
 
-  strcpy(desc[eParam_feedback0].label, "feedback0");
-  desc[eParam_feedback0].type = EFFECT_TYPE;
-  desc[eParam_feedback0].min = EFFECT_MIN;
-  desc[eParam_feedback0].max = EFFECT_MAX;
-  desc[eParam_feedback0].radix = EFFECT_RADIX;
+  strcpy(desc[eParam_pitchshift0fader].label, "return0");
+  desc[eParam_pitchshift0fader].type = eParamTypeAmp; 
+  desc[eParam_pitchshift0fader].min = 0x00000000; 
+  desc[eParam_pitchshift0fader].max = FR32_MAX;
+  desc[eParam_pitchshift0fader].radix = 1;
 
+  strcpy(desc[eParam_pitchshift1].label, "pitchshift1");
+  desc[eParam_pitchshift1].type = PITCHSHIFT_TYPE;
+  desc[eParam_pitchshift1].min = PITCHSHIFT_MIN;
+  desc[eParam_pitchshift1].max = PITCHSHIFT_MAX;
+  desc[eParam_pitchshift1].radix = PITCHSHIFT_RADIX;
+
+  strcpy(desc[eParam_pitchshift1slew].label, "slew1");
+  desc[eParam_pitchshift1slew].type = eParamTypeIntegrator; 
+  desc[eParam_pitchshift1slew].min = 0x00000000; 
+  desc[eParam_pitchshift1slew].max = 0x7fffffff;
+  desc[eParam_pitchshift1slew].radix = 32;
+
+  strcpy(desc[eParam_pitchshift1fader].label, "return1");
+  desc[eParam_pitchshift1fader].type = eParamTypeAmp; 
+  desc[eParam_pitchshift1fader].min = 0x00000000; 
+  desc[eParam_pitchshift1fader].max = FR32_MAX;
+  desc[eParam_pitchshift1fader].radix = 1;
+
+  strcpy(desc[eParam_pitchshift2].label, "pitchshift2");
+  desc[eParam_pitchshift2].type = PITCHSHIFT_TYPE;
+  desc[eParam_pitchshift2].min = PITCHSHIFT_MIN;
+  desc[eParam_pitchshift2].max = PITCHSHIFT_MAX;
+  desc[eParam_pitchshift2].radix = PITCHSHIFT_RADIX;
+
+  strcpy(desc[eParam_pitchshift2slew].label, "slew2");
+  desc[eParam_pitchshift2slew].type = eParamTypeIntegrator; 
+  desc[eParam_pitchshift2slew].min = 0x00000000; 
+  desc[eParam_pitchshift2slew].max = 0x7fffffff;
+  desc[eParam_pitchshift2slew].radix = 32;
+
+  strcpy(desc[eParam_pitchshift2fader].label, "return2");
+  desc[eParam_pitchshift2fader].type = eParamTypeAmp; 
+  desc[eParam_pitchshift2fader].min = 0x00000000; 
+  desc[eParam_pitchshift2fader].max = FR32_MAX;
+  desc[eParam_pitchshift2fader].radix = 1;
+
+  strcpy(desc[eParam_pitchshift3].label, "pitchshift3");
+  desc[eParam_pitchshift3].type = PITCHSHIFT_TYPE;
+  desc[eParam_pitchshift3].min = PITCHSHIFT_MIN;
+  desc[eParam_pitchshift3].max = PITCHSHIFT_MAX;
+  desc[eParam_pitchshift3].radix = PITCHSHIFT_RADIX;
+
+  strcpy(desc[eParam_pitchshift3slew].label, "slew3");
+  desc[eParam_pitchshift3slew].type = eParamTypeIntegrator; 
+  desc[eParam_pitchshift3slew].min = 0x00000000; 
+  desc[eParam_pitchshift3slew].max = 0x7fffffff;
+  desc[eParam_pitchshift3slew].radix = 32;
+
+  strcpy(desc[eParam_pitchshift3fader].label, "return3");
+  desc[eParam_pitchshift3fader].type = eParamTypeAmp; 
+  desc[eParam_pitchshift3fader].min = 0x00000000; 
+  desc[eParam_pitchshift3fader].max = FR32_MAX;
+  desc[eParam_pitchshift3fader].radix = 1;
+
+  strcpy(desc[eParam_feedback].label, "feedback");
+  desc[eParam_feedback].type = eParamTypeAmp; 
+  desc[eParam_feedback].min = 0x00000000; 
+  desc[eParam_feedback].max = FR32_MAX;
+  desc[eParam_feedback].radix = 1;
 }
 
 // EOF

@@ -10,14 +10,16 @@
 
 #include "conversion.h"
 #include "pitch_shift.h"
+#include <stdlib.h>
 
 
 // initialize with pointer to audio buffer
-void delay_init(delayLine* dl, fract32* data, u32 frames) {
+void pitchShift_init(pitchShift* dl, fract32* data, u32 frames) {
   buffer_init(&(dl->buffer), data, frames);
   buffer_tapN_init(&(dl->tapWr), &(dl->buffer));
 
   echoTap24_8_init(&(dl->tapRd0), &(dl->tapWr));
+
   dl->tapRd0.edge_behaviour = EDGE_BOUNCE;
   dl->tapRd0.shape = SHAPE_FATLUMP;
   dl->tapRd0.echoMin = 0;
@@ -89,7 +91,7 @@ void delay_init(delayLine* dl, fract32* data, u32 frames) {
 
 }
 
-fract32 delay_next(delayLine* dl, fract32 in) {
+fract32 pitchShift_next(pitchShift* dl, fract32 in) {
   //DEBUG uncomment this line to check plumbing this far...
   //return in;
 
@@ -117,6 +119,10 @@ fract32 delay_next(delayLine* dl, fract32 in) {
   //FIXME so the pitch shift-specific logic should go here
   // basically when one read head passes the halfway point
   // kick the other one
+
+  //FIXME at the moment this pitchshift is set out with
+  //just two read heads with half-wave envelopes.
+  //running in quadrature (amplitude sum always == 1)
   echoTap24_8_next( &(dl->tapRd0) );
   echoTap24_8_next( &(dl->tapRd1) );
   echoTap24_8_next( &(dl->tapRd2) );
@@ -131,18 +137,8 @@ fract32 delay_next(delayLine* dl, fract32 in) {
   return readVal;
 }
 
-void delay_set_rate(delayLine* dl, s32 subsamples) {
-  dl->tapRd0.playback_speed = subsamples + 3;
-  dl->tapRd1.playback_speed = subsamples + 2;
-  dl->tapRd2.playback_speed = subsamples + 4;
-  dl->tapRd3.playback_speed = subsamples + 1;
-  dl->tapRd4.playback_speed = subsamples + 0;
-  dl->tapRd5.playback_speed = subsamples - 2;
-  dl->tapRd6.playback_speed = subsamples - 4;
-  dl->tapRd7.playback_speed = subsamples - 3;
-  dl->tapRd8.playback_speed = subsamples - 2;
-  dl->tapRd9.playback_speed = subsamples + 3;
-}
-void delay_set_pos_write_samp(delayLine* dl, u32 samp) {
-  buffer_tapN_set_pos(&(dl->tapWr), samp);
+void pitchShift_set_pitchFactor24_8(pitchShift* dl, s32 subsamples) {
+  dl->tapRd0.playback_speed = subsamples;
+  dl->tapRd1.playback_speed = subsamples;
+  s32 scan_speed = abs (dl->tapRd0.playback_speed - 256);
 }
