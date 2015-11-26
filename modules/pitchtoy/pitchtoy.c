@@ -91,14 +91,6 @@ ModuleData* gModuleData;
 pitchtoyData* pPitchtoyData;
 
 // dac values (u16, but use fract32 and audio integrators)
-static fract32 dacVal[4];
-static filter_1p_lo dacSlew[4];
-static u8 dacChan = 0;
-
-
-static fract32 cvVal[4];
-static filter_1p_lo cvSlew[4];
-static u8 cvChan = 0;
 
 //----------------------
 //----- external functions
@@ -119,22 +111,6 @@ void module_init(void) {
 
   gModuleData->paramData = (ParamData*)pPitchtoyData->mParamData;
   gModuleData->numParams = eParamNumParams;
-
-
-  filter_1p_lo_init( &(dacSlew[0]), 0 );
-  filter_1p_lo_init( &(dacSlew[1]), 0 );
-  filter_1p_lo_init( &(dacSlew[2]), 0 );
-  filter_1p_lo_init( &(dacSlew[3]), 0 );
-
-  param_setup(  eParam_slew0, PARAM_SLEW_DEFAULT );
-  param_setup(  eParam_slew1, PARAM_SLEW_DEFAULT );
-  param_setup(  eParam_slew2, PARAM_SLEW_DEFAULT );
-  param_setup(  eParam_slew3, PARAM_SLEW_DEFAULT );
-
-  param_setup(  eParam_dac0, PARAM_CV_VAL_DEFAULT );
-  param_setup(  eParam_dac1, PARAM_CV_VAL_DEFAULT );
-  param_setup(  eParam_dac2, PARAM_CV_VAL_DEFAULT );
-  param_setup(  eParam_dac3, PARAM_CV_VAL_DEFAULT );
 
   param_setup( 	eParam_auxL0,		AUX_DEFAULT );
   param_setup( 	eParam_auxR0,		AUX_DEFAULT );
@@ -160,7 +136,6 @@ void module_init(void) {
   param_setup( 	eParam_fader3,		FADER_DEFAULT );
   param_setup( 	eParam_effect3,		EFFECT_DEFAULT );
 
-
   pitchShift_init(&(grains[0]), pPitchtoyData->audioBuffer[0], LINES_BUF_FRAMES);
   pitchShift_init(&(grains[1]), pPitchtoyData->audioBuffer[1], LINES_BUF_FRAMES);
   pitchShift_init(&(grains[2]), pPitchtoyData->audioBuffer[2], LINES_BUF_FRAMES);
@@ -180,12 +155,6 @@ void module_init(void) {
   param_setup( 	eParam_pitchshift1fader, FADER_DEFAULT );
   param_setup( 	eParam_pitchshift2fader, FADER_DEFAULT );
   param_setup( 	eParam_pitchshift3fader, FADER_DEFAULT );
-  //delay_set_loop_samp(&(lines[0]), LINES_BUF_FRAMES/2);
-  //delay_set_run_write(&(lines[0]), 1);
-  //delay_set_run_read(&(lines[0]), 1);
-  //delay_set_pos_write_samp(&(lines[0]), 0);
-  //delay_set_pos_read_samp(&(lines[0]), 0);
-  //delay_set_delay_samp(&(lines[0]), delayTimeTarget/256);
 }
 
 // de-init
@@ -197,37 +166,12 @@ u32 module_get_num_params(void) {
   return eParamNumParams;
 }
 
-
-/// fixme: don't really need these
-//static u8 dacDirty[4] = { 0, 0, 0, 0};
-//// FIXME:
-/* for now, stagger DAC channels across consecutive audio frames
-   better method might be:
-   - enable DMA tx interrupt
-   - each ISR calls the next channel to be loaded
-   - last thing audio ISR does is call the first DAC channel to be loaded
-   - dac_update writes to 4x16 volatile buffer
-*/
-//static u8 dacChan = 0;
-//
-
 void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
 void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
 fract32 delayOutput = 0, delayInput = 0;
 void module_process_frame(void) {
-
-  //Update one of the CV outputs
-  if(filter_1p_sync(&(cvSlew[cvChan]))) { ;; } else {
-    cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
-    cv_update(cvChan, cvVal[cvChan]);
-  }
-
-  //Queue up the next CV output for processing next audio frame
-  if(++dacChan == 4) {
-    dacChan = 0;
-  }
 
   //Zero the audio dacs, before mixing
   out[0] = 0;
@@ -245,14 +189,8 @@ void module_process_frame(void) {
       effect[i] = effectTarget[i]/100*1+effect[i]/100*99;
   }
   feedback = feedbackTarget/100*1+feedback/100*99;
-  //delayTime = delayTimeTarget/256*1+delayTime/256*99;
   
   pitchFactor[0] = filter_1p_lo_next(&(pitchFactorSlew[0]));
-
-    //update delay time
-    //delay_set_delay_24_8(&(lines[0]), delayTime);
-    //delay_set_delay_samp(&(lines[0]), delayTimeTarget);
-    //pitchShift_set_pitchFactor24_8(&(lines[0]), delayTimeTarget / 100);
 
   mix_panned_mono(in[0], &(out[1]), &(out[0]), pan[0], fader[0]);
   mix_panned_mono(in[1], &(out[1]), &(out[0]), pan[1], fader[1]);
@@ -274,35 +212,22 @@ void module_process_frame(void) {
 
   delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
 
-  ParamValue pitchshiftFaders[NGRAINS];
   delayOutput = pitchShift_next( &(grains[0]), delayInput);
   delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[1]), delayInput));
   delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[2]), delayInput));
   delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[3]), delayInput));
-  //delayOutput = mult_fr1x32x32(pitchshiftFaders[0], pitchShift_next( &(grains[0]), delayInput));
-  //delayOutput = add_fr1x32(delayOutput, mult_fr1x32x32(pitchshiftFaders[1], pitchShift_next( &(grains[1]), delayInput)));
-  //delayOutput = add_fr1x32(delayOutput, mult_fr1x32x32(pitchshiftFaders[2], pitchShift_next( &(grains[2]), delayInput)));
-  //delayOutput = add_fr1x32(delayOutput, mult_fr1x32x32(pitchshiftFaders[3], pitchShift_next( &(grains[3]), delayInput)));
-
-
 
   mix_panned_mono(delayOutput, &(out[1]), &(out[0]),PAN_DEFAULT ,FADER_DEFAULT );
 }
 
 void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue left_value, ParamValue right_value) {
-
     *out_right = add_fr1x32(*out_right,mult_fr1x32x32(in_mono, right_value));
-
     *out_left = add_fr1x32(*out_left,mult_fr1x32x32(in_mono, left_value));
-
 }
 
 
 void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) {
     fract32 pan_factor, post_fader;
-
-    //pan_factor = (fract32)pan;
-    //*out_left += mult_fr1x32x32(in_mono,pan_factor); //debug
 
     pan_factor = (fract32) ( pan );
     post_fader = mult_fr1x32x32(pan_factor, fader);
@@ -320,33 +245,6 @@ void module_set_param(u32 idx, ParamValue v) {
   LED4_TOGGLE;
   switch(idx) {
     // dac values
-  case eParam_dac0 :
-   filter_1p_lo_in(&(dacSlew[0]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
-   //     dac_update(0, v >> (PARAM_DAC_RADIX - 1));
-    break;
-  case eParam_dac1 :
-    //dac_update(1, v >> (PARAM_DAC_RADIX - 1));
-    break;
-  case eParam_dac2 :
-    filter_1p_lo_in(&(dacSlew[2]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
-    //dac_update(2, v >> (PARAM_DAC_RADIX - 1));
-    break;
-  case eParam_dac3 :
-     filter_1p_lo_in(&(dacSlew[3]), shr_fr1x32(v, PARAM_DAC_RADIX - 1));
-     //   dac_update(3, v >> (PARAM_DAC_RADIX - 1));
-    break;
-  case eParam_slew0 :
-   filter_1p_lo_set_slew(&(dacSlew[0]), v);
-    break;
-  case eParam_slew1 :
-    filter_1p_lo_set_slew(&(dacSlew[1]), v);
-    break;
-  case eParam_slew2 :
-    filter_1p_lo_set_slew(&(dacSlew[2]), v);
-    break;
-  case eParam_slew3 :
-    filter_1p_lo_set_slew(&(dacSlew[3]), v);
-    break;
   case eParam_auxL0 :
     auxLTarget[0] = v;
     break;
@@ -412,48 +310,40 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParam_pitchshift0 :
-    //filter_1p_lo_in(&delayTimeSlew, v);
     pitchShift_set_pitchFactor24_8(&(grains[0]), v/256);
     break;
   case eParam_pitchshift0slew :
     filter_1p_lo_set_slew(&(pitchFactorSlew[0]), v);
-    //filter_1p_lo_in(&delayTimeSlew, v);
     break;
   case eParam_pitchshift0fader:
     pitchshiftFaders[0] = v;
     break;
 
   case eParam_pitchshift1 :
-    //filter_1p_lo_in(&delayTimeSlew, v);
     pitchShift_set_pitchFactor24_8(&(grains[1]), v/256);
     break;
   case eParam_pitchshift1slew :
     filter_1p_lo_set_slew(&(pitchFactorSlew[1]), v);
-    //filter_1p_lo_in(&delayTimeSlew, v);
     break;
   case eParam_pitchshift1fader:
     pitchshiftFaders[1] = v;
     break;
 
   case eParam_pitchshift2 :
-    //filter_1p_lo_in(&delayTimeSlew, v);
     pitchShift_set_pitchFactor24_8(&(grains[2]), v/256);
     break;
   case eParam_pitchshift2slew :
     filter_1p_lo_set_slew(&(pitchFactorSlew[2]), v);
-    //filter_1p_lo_in(&delayTimeSlew, v);
     break;
   case eParam_pitchshift2fader:
     pitchshiftFaders[2] = v;
     break;
 
   case eParam_pitchshift3 :
-    //filter_1p_lo_in(&delayTimeSlew, v);
     pitchShift_set_pitchFactor24_8(&(grains[3]), v/256);
     break;
   case eParam_pitchshift3slew :
     filter_1p_lo_set_slew(&(pitchFactorSlew[3]), v);
-    //filter_1p_lo_in(&delayTimeSlew, v);
     break;
   case eParam_pitchshift3fader:
     pitchshiftFaders[3] = v;
