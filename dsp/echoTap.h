@@ -44,6 +44,9 @@ typedef struct _echoTap24_8 {
   u8 edge_behaviour;
 } echoTap24_8;
 
+//the maximum number of samples to use for antialiased read
+#define MAX_ANTIALIAS 3
+
 //if oneshot, then stop when grain hits a boundary
 #define EDGE_ONESHOT 0
 //if bounce, then flip the read head play direction when grain hits boundary
@@ -59,25 +62,23 @@ typedef struct _echoTap24_8 {
 #define SHAPE_TRIANGLE 1
 //grain_lump is 1 - (abs(x)) for -1 < x > 1
 #define SHAPE_LUMP 2
-//grain fatlump is 1 - x^2 for -1 < x < 1
-#define SHAPE_FATLUMP 3
-//grain obeselump is 1 - x^3 for -1 < x <1
-#define SHAPE_OBESELUMP 4
-//shape fadeshort is FR32_MAX until the edges, then slopes down
-#define SHAPE_FADESHORT 5
-//shape fadeshort is FR32_MAX until the edges, then slopes down a bit slower
-#define SHAPE_FADEMEDIUM 6
 //shape fadeshort is FR32_MAX until the edges, then slopes down even slower
-#define SHAPE_FADELONG 7
+#define SHAPE_HALFWAVE 3
 
+
+// fixed grain envelope shapes
+s32 echoTap24_8_envelope(echoTap24_8 *tap);
 // intialize tap
 extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr);
 
 // increment the index in an echo
 extern void echoTap24_8_next(echoTap24_8* tap);
 
+// antialiased read
+extern fract32 echoTap24_8_read_antialias(echoTap24_8* echoTap);
+
 // interpolated read
-extern fract32 echoTap24_8_read(echoTap24_8* tap);
+extern fract32 echoTap24_8_read_interp(echoTap24_8* tap);
 
 s32 echoTap24_8_envelope(echoTap24_8 *tap);
 #endif // h guard

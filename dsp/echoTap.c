@@ -43,8 +43,8 @@ extern void echoTap24_8_next(echoTap24_8* tap){
         }
     }
 }
-s32 echoTap24_8_envelope(echoTap24_8 *tap){
 
+s32 echoTap24_8_envelope(echoTap24_8 *tap){
     s32 center = (tap->echoMin + tap->echoMax+1) / 2;
     s32 dist_from_center = tap->echoTime - center;
     if ( dist_from_center < 0 )
@@ -53,7 +53,6 @@ s32 echoTap24_8_envelope(echoTap24_8 *tap){
     s32 scale_factor = FR32_MAX / max_dist_from_center;
     s32 amplitude;
 
-        //FIXME add SHAPE_FADESHORT, SHAPE_FADEMEDIUM, SHAPE_FADELONG
     if( tap->shape ==SHAPE_TOPHAT) {
         amplitude = FR32_MAX;
     }
@@ -66,18 +65,12 @@ s32 echoTap24_8_envelope(echoTap24_8 *tap){
         amplitude = mult_fr1x32x32(amplitude, amplitude);
         amplitude = FR32_MAX - amplitude;
     }
-    else if( tap->shape ==SHAPE_FATLUMP) {
-        amplitude = dist_from_center * scale_factor;
-        amplitude = mult_fr1x32x32(amplitude, amplitude);
-        amplitude = mult_fr1x32x32(amplitude, amplitude);
-        amplitude = FR32_MAX - amplitude;
-    }
-    else if( tap->shape ==SHAPE_OBESELUMP) {
-        amplitude = dist_from_center * scale_factor;
-        amplitude = mult_fr1x32x32(amplitude, amplitude);
-        amplitude = mult_fr1x32x32(amplitude, amplitude);
-        amplitude = mult_fr1x32x32(amplitude, amplitude);
-        amplitude = FR32_MAX - amplitude;
+    else if (tap->shape == SHAPE_HALFWAVE) {
+        s32 x_1 = dist_from_center * scale_factor;
+        s32 x_2 = mult_fr1x32x32(x_1, x_1);
+        s32 x_4 = mult_fr1x32x32(x_2, x_2);
+        amplitude = (FR32_MAX - x_2) - x_2/4;
+        amplitude = amplitude + x_4/4;
     }
     else {
         amplitude = FR32_MAX;
@@ -85,8 +78,32 @@ s32 echoTap24_8_envelope(echoTap24_8 *tap){
     return amplitude ;
 }
 
+// antialiased read
+extern fract32 echoTap24_8_read_antialias(echoTap24_8* echoTap){
+    s32 num_samples = (echoTap->playback_speed + 128) / 256;
+    if( num_samples < 2 ) {
+        return echoTap24_8_read_interp(echoTap);
+    }
+    else if( num_samples >= MAX_ANTIALIAS ) {
+        num_samples = MAX_ANTIALIAS;
+    }
+
+    s32 mix_factor = FR32_MAX / num_samples;
+    fract32 pre_fader = 0;
+    while(num_samples > 0) {
+        s32 loop = echoTap->tapWr->loop * 256;
+        s32 idx = (echoTap->tapWr->idx * 256 + loop - echoTap->echoTime - (num_samples -1) * 256) % loop;
+        u32 samp1_index = idx / 256;
+        fract32 samp1 = echoTap->tapWr->buf->data[samp1_index ];
+        pre_fader = add_fr1x32 ( pre_fader, mult_fr1x32x32(samp1, mix_factor) );
+        num_samples--;
+    }
+    s32 fader = echoTap24_8_envelope(echoTap);
+    fract32 post_fader = mult_fr1x32x32 ( pre_fader, fader);
+    return post_fader;
+}
 // interpolated read
-extern fract32 echoTap24_8_read(echoTap24_8* echoTap){
+extern fract32 echoTap24_8_read_interp(echoTap24_8* echoTap){
     s32 loop = echoTap->tapWr->loop * 256;
     s32 idx = (echoTap->tapWr->idx * 256 + loop - echoTap->echoTime) % loop;
 

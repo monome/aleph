@@ -1,4 +1,4 @@
-module_name = dacs
+module_name = pitchtoy
 
 audio = ../../dsp
 bfin = ../../bfin_lib/src
@@ -7,7 +7,7 @@ include version.mk
 version = $(maj).$(min).$(rev)
 ldr_name = aleph-$(module_name)-$(version).ldr
 
-module_obj = dacs.o \
+module_obj = pitchtoy.o \
 	$(audio)/buffer.o \
 	$(audio)/echoTap.o \
 	$(audio)/conversion.o \
@@ -55,8 +55,8 @@ clean: bfin_lib_clean
 	rm $(module_obj)
 	rm aleph-$(module_name).ldr 
 	rm aleph-$(module_name)
-	rm aleph-dacs.dsc
-	rm dacs_desc_build
+	rm aleph-pitchtoy.dsc
+	rm pitchtoy_desc_build
 
 deploy: aleph-$(module_name).ldr
 	make desc
