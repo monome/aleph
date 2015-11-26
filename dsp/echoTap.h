@@ -62,12 +62,8 @@ typedef struct _echoTap24_8 {
 #define SHAPE_TRIANGLE 1
 //grain_lump is 1 - (abs(x)) for -1 < x > 1
 #define SHAPE_LUMP 2
-//grain fatlump is 1 - x^2 for -1 < x < 1
-#define SHAPE_FATLUMP 3
-//grain obeselump is 1 - x^3 for -1 < x <1
-#define SHAPE_OBESELUMP 4
 //shape fadeshort is FR32_MAX until the edges, then slopes down even slower
-#define SHAPE_HALFWAVE 5
+#define SHAPE_HALFWAVE 3
 
 
 // fixed grain envelope shapes

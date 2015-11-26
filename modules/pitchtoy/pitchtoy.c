@@ -1,7 +1,7 @@
 /* dacs.c
    aleph-bfin
 
-   simplest CV output module.
+   pitchshift module with 4 'grains'
 
 */
 
@@ -274,7 +274,7 @@ void module_process_frame(void) {
 
   delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
 
-ParamValue pitchshiftFaders[NGRAINS];
+  ParamValue pitchshiftFaders[NGRAINS];
   delayOutput = pitchShift_next( &(grains[0]), delayInput);
   delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[1]), delayInput));
   delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[2]), delayInput));

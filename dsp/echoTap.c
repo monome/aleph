@@ -43,8 +43,8 @@ extern void echoTap24_8_next(echoTap24_8* tap){
         }
     }
 }
-s32 echoTap24_8_envelope(echoTap24_8 *tap){
 
+s32 echoTap24_8_envelope(echoTap24_8 *tap){
     s32 center = (tap->echoMin + tap->echoMax+1) / 2;
     s32 dist_from_center = tap->echoTime - center;
     if ( dist_from_center < 0 )
@@ -62,19 +62,6 @@ s32 echoTap24_8_envelope(echoTap24_8 *tap){
     }
     else if( tap->shape ==SHAPE_LUMP) {
         amplitude = dist_from_center * scale_factor;
-        amplitude = mult_fr1x32x32(amplitude, amplitude);
-        amplitude = FR32_MAX - amplitude;
-    }
-    else if( tap->shape ==SHAPE_FATLUMP) {
-        amplitude = dist_from_center * scale_factor;
-        amplitude = mult_fr1x32x32(amplitude, amplitude);
-        amplitude = mult_fr1x32x32(amplitude, amplitude);
-        amplitude = FR32_MAX - amplitude;
-    }
-    else if( tap->shape ==SHAPE_OBESELUMP) {
-        amplitude = dist_from_center * scale_factor;
-        amplitude = mult_fr1x32x32(amplitude, amplitude);
-        amplitude = mult_fr1x32x32(amplitude, amplitude);
         amplitude = mult_fr1x32x32(amplitude, amplitude);
         amplitude = FR32_MAX - amplitude;
     }
