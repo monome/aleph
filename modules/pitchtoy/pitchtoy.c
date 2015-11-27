@@ -64,11 +64,13 @@ ParamValue effectTarget[4];
 //ParamValue eq_hi[4];
 //ParamValue eq_mid[4];
 //ParamValue eq_lo[4];
-ParamValue pitchshiftFaders[NGRAINS];
+
+ParamValue pitchShiftFader[NGRAINS];
+ParamValue pitchShiftFaderTarget[NGRAINS];
 
 ParamValue pitchFactor[NGRAINS] = {0,0,0,0};
 ParamValue pitchFactorTarget[NGRAINS] = {0,0,0,0};
-static filter_1p_lo pitchFactorSlew[NGRAINS] ;
+/* static filter_1p_lo pitchFactorSlew[NGRAINS] ; */
 
 ParamValue feedback=0;
 ParamValue feedbackTarget=0;
@@ -102,12 +104,11 @@ static inline void param_setup(u32 id, ParamValue v) {
 }
 void module_init(void) {
 
-
   // init module/param descriptor
   pPitchtoyData = (pitchtoyData*)SDRAM_ADDRESS;
 
   gModuleData = &(pPitchtoyData->super);
-  strcpy(gModuleData->name, "aleph-pitchtoy");
+  strcpy(gModuleData->name, "pitchtoy");
 
   gModuleData->paramData = (ParamData*)pPitchtoyData->mParamData;
   gModuleData->numParams = eParamNumParams;
@@ -141,15 +142,15 @@ void module_init(void) {
   pitchShift_init(&(grains[2]), pPitchtoyData->audioBuffer[2], LINES_BUF_FRAMES);
   pitchShift_init(&(grains[3]), pPitchtoyData->audioBuffer[3], LINES_BUF_FRAMES);
 
-  filter_1p_lo_init( &(pitchFactorSlew[0]), 0 );
-  filter_1p_lo_init( &(pitchFactorSlew[1]), 0 );
-  filter_1p_lo_init( &(pitchFactorSlew[2]), 0 );
-  filter_1p_lo_init( &(pitchFactorSlew[3]), 0 );
-  filter_1p_lo_init( &(pitchFactorSlew[4]), 0 );
+  /* filter_1p_lo_init( &(pitchFactorSlew[0]), 0 ); */
+  /* filter_1p_lo_init( &(pitchFactorSlew[1]), 0 ); */
+  /* filter_1p_lo_init( &(pitchFactorSlew[2]), 0 ); */
+  /* filter_1p_lo_init( &(pitchFactorSlew[3]), 0 ); */
+  /* filter_1p_lo_init( &(pitchFactorSlew[4]), 0 ); */
 
   //param_setup( 	eParam_pitchshift0,		0 );
-  param_setup( 	eParam_feedback,		FADER_DEFAULT );
-  param_setup( 	eParam_feedback,		0 );
+  param_setup( 	eParam_feedback, FADER_DEFAULT );
+  param_setup( 	eParam_feedback, 0 );
 
   param_setup( 	eParam_pitchshift0fader, FADER_DEFAULT );
   param_setup( 	eParam_pitchshift1fader, FADER_DEFAULT );
@@ -170,53 +171,46 @@ void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamV
 
 void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
-fract32 delayOutput = 0, delayInput = 0;
+int global_slew = 0.01;
+
+#define simple_slew(x, y) x = x * global_slew + y * (1 - global_slew)
+
+#define simple_busmix(x, y, fact) x = add_fr1x32(x, mult_fr1x32x32(y, fact))
+
 void module_process_frame(void) {
 
-  //Zero the audio dacs, before mixing
+  u8 i;
+  fract32 delayOutput, delayInput;
+  //IIR slew
+  for (i=0;i<4;i++) {
+    simple_slew(auxL[i], auxLTarget[i]);
+    simple_slew(auxR[i], auxRTarget[i]);
+    simple_slew(pan[i], panTarget[i]);
+    simple_slew(fader[i], faderTarget[i]);
+    simple_slew(effect[i],effectTarget[i]);
+    simple_slew(pitchShiftFader[i], pitchShiftFaderTarget[i]);
+  }
+  simple_slew(feedbackTarget, feedback);
+  
+  //define delay input & output
+
   out[0] = 0;
   out[1] = 0;
   out[2] = 0;
   out[3] = 0;
+  delayInput = 0;
 
-  u8 i;
-  //hacky slew!!!
   for (i=0;i<4;i++) {
-      auxL[i] = auxLTarget[i]/100*1+auxL[i]/100*99;
-      auxR[i] = auxRTarget[i]/100*1+auxR[i]/100*99;
-      pan[i] = panTarget[i]/100*1+pan[i]/100*99;
-      fader[i] = faderTarget[i]/100*1+fader[i]/100*99;
-      effect[i] = effectTarget[i]/100*1+effect[i]/100*99;
+    mix_panned_mono(in[i], &(out[1]), &(out[0]), pan[i], fader[i]);
+    mix_aux_mono(in[i], &(out[2]), &(out[3]), auxL[i], auxR[i]);
+    simple_busmix(delayInput, in[i],effect[i]);
   }
-  feedback = feedbackTarget/100*1+feedback/100*99;
   
-  pitchFactor[0] = filter_1p_lo_next(&(pitchFactorSlew[0]));
-
-  mix_panned_mono(in[0], &(out[1]), &(out[0]), pan[0], fader[0]);
-  mix_panned_mono(in[1], &(out[1]), &(out[0]), pan[1], fader[1]);
-  mix_panned_mono(in[2], &(out[1]), &(out[0]), pan[2], fader[2]);
-  mix_panned_mono(in[3], &(out[1]), &(out[0]), pan[3], fader[3]);
-
-  mix_aux_mono(in[0], &(out[2]), &(out[3]), auxL[0], auxR[0]);
-  mix_aux_mono(in[1], &(out[2]), &(out[3]), auxL[1], auxR[1]);
-  mix_aux_mono(in[2], &(out[2]), &(out[3]), auxL[2], auxR[2]);
-  mix_aux_mono(in[3], &(out[2]), &(out[3]), auxL[3], auxR[3]);
-
-  //define delay input & output
-
-  //mix adcs to delay inputs
-  delayInput = mult_fr1x32x32(in[3],effect[3]) ;
-  delayInput = add_fr1x32(delayInput, mult_fr1x32x32(in[2],effect[2]));
-  delayInput = add_fr1x32(delayInput, mult_fr1x32x32(in[1],effect[1]));
-  delayInput = add_fr1x32(delayInput, mult_fr1x32x32(in[0],effect[0]));
-
-  delayInput = add_fr1x32(delayInput, mult_fr1x32x32(delayOutput,feedback));
-
-  delayOutput = pitchShift_next( &(grains[0]), delayInput);
-  delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[1]), delayInput));
-  delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[2]), delayInput));
-  delayOutput = add_fr1x32(delayOutput, pitchShift_next( &(grains[3]), delayInput));
-
+  simple_busmix (delayInput, delayOutput,feedback);
+  delayOutput = 0;
+  for (i=0;i<4;i++) {
+    simple_busmix (delayOutput, pitchShift_next(&(grains[i]), delayInput), pitchShiftFader[i]);
+  }
   mix_panned_mono(delayOutput, &(out[1]), &(out[0]),PAN_DEFAULT ,FADER_DEFAULT );
 }
 
@@ -312,41 +306,29 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_pitchshift0 :
     pitchShift_set_pitchFactor24_8(&(grains[0]), v/256);
     break;
-  case eParam_pitchshift0slew :
-    filter_1p_lo_set_slew(&(pitchFactorSlew[0]), v);
-    break;
   case eParam_pitchshift0fader:
-    pitchshiftFaders[0] = v;
+    pitchShiftFaderTarget[0] = v;
     break;
 
   case eParam_pitchshift1 :
     pitchShift_set_pitchFactor24_8(&(grains[1]), v/256);
     break;
-  case eParam_pitchshift1slew :
-    filter_1p_lo_set_slew(&(pitchFactorSlew[1]), v);
-    break;
   case eParam_pitchshift1fader:
-    pitchshiftFaders[1] = v;
+    pitchShiftFaderTarget[1] = v;
     break;
 
   case eParam_pitchshift2 :
     pitchShift_set_pitchFactor24_8(&(grains[2]), v/256);
     break;
-  case eParam_pitchshift2slew :
-    filter_1p_lo_set_slew(&(pitchFactorSlew[2]), v);
-    break;
   case eParam_pitchshift2fader:
-    pitchshiftFaders[2] = v;
+    pitchShiftFaderTarget[2] = v;
     break;
 
   case eParam_pitchshift3 :
     pitchShift_set_pitchFactor24_8(&(grains[3]), v/256);
     break;
-  case eParam_pitchshift3slew :
-    filter_1p_lo_set_slew(&(pitchFactorSlew[3]), v);
-    break;
   case eParam_pitchshift3fader:
-    pitchshiftFaders[3] = v;
+    pitchShiftFaderTarget[3] = v;
     break;
 
   default:

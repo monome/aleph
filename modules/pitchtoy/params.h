@@ -86,19 +86,19 @@ enum params {
   eParam_effect3,
 
   eParam_pitchshift0,
-  eParam_pitchshift0slew,
+  //eParam_pitchshift0slew,
   eParam_pitchshift0fader,
 
   eParam_pitchshift1,
-  eParam_pitchshift1slew,
+  //eParam_pitchshift1slew,
   eParam_pitchshift1fader,
 
   eParam_pitchshift2,
-  eParam_pitchshift2slew,
+  //eParam_pitchshift2slew,
   eParam_pitchshift2fader,
 
   eParam_pitchshift3,
-  eParam_pitchshift3slew,
+  //eParam_pitchshift3slew,
   eParam_pitchshift3fader,
 
   eParam_feedback,
