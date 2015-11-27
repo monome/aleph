@@ -173,14 +173,14 @@ void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, Par
 
 int global_slew = 0.01;
 
-#define simple_slew(x, y) x = x * global_slew + y * (1 - global_slew)
+#define simple_slew(x, y) x = y * global_slew + x * (1 - global_slew)
 
 #define simple_busmix(x, y, fact) x = add_fr1x32(x, mult_fr1x32x32(y, fact))
 
+fract32 delayOutput, delayInput;
 void module_process_frame(void) {
 
   u8 i;
-  fract32 delayOutput, delayInput;
   //IIR slew
   for (i=0;i<4;i++) {
     simple_slew(auxL[i], auxLTarget[i]);
@@ -201,7 +201,7 @@ void module_process_frame(void) {
   delayInput = 0;
 
   for (i=0;i<4;i++) {
-    mix_panned_mono(in[i], &(out[1]), &(out[0]), pan[i], fader[i]);
+    mix_panned_mono(in[i], &(out[0]), &(out[1]), pan[i], fader[i]);
     mix_aux_mono(in[i], &(out[2]), &(out[3]), auxL[i], auxR[i]);
     simple_busmix(delayInput, in[i],effect[i]);
   }
@@ -211,7 +211,7 @@ void module_process_frame(void) {
   for (i=0;i<4;i++) {
     simple_busmix (delayOutput, pitchShift_next(&(grains[i]), delayInput), pitchShiftFader[i]);
   }
-  mix_panned_mono(delayOutput, &(out[1]), &(out[0]),PAN_DEFAULT ,FADER_DEFAULT );
+  mix_panned_mono(delayOutput, &(out[0]), &(out[1]),PAN_DEFAULT ,FADER_DEFAULT );
 }
 
 void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue left_value, ParamValue right_value) {
