@@ -1,0 +1,49 @@
+* Global Grain Parameters
+** pitch-shift fade-length
+** echo-tap fade-length
+* Per-Grain Inputs
+** grain-scrubber pitch
+float 0 - 7
+** grain-scrubber scrub-time
+i16
+set grain boundary extent to scrub-time * pitch-factor
+** grain-scrubber scrub-time-indeterminism
+randomising scrub-time makes phase-modulation distortion less disturbing
+** grain-scrubber bounce-or-wrap
+bool
+does pitchshifting readhead bounce or wrap at grain boundary?
+** echo-tap base-time
+fx24x8
+allows the user to force read head to a point, e.g:
+*** set echo timsimple echo fx
+*** trigger one-shot sample
+** echo-tap play-speed
+f8x8
+For realtime FX this guy should be 1, so the echo-tap stays in sync with write head
+When a sample is loaded into the fifo this guy can take a value between 0 and 7
+** echo-tap edge-behaviour
+bool
+does echo-tap head bounce, wrap or stall at echo boundary?
+** echo-tap echo-min
+f24x8
+echo boundary nearest to write-head
+** echo-tap echo-max
+f24x8
+echo boundary furthest from write-head
+** echo-tap lfo-amp
+i16
+lfo modulates from 0 to lfo-amp samples
+** echo-tap lfo speed
+f24x8 Hz or similar
+how quickly does echotap lfo oscillate
+
+* How to implement pitchshift on top of echoTap
+** Decoupling scrubberhead from echo-tap
+
+Echotap wrap behaviour should be abstracted from the scrubberhead.
+so the scrubberhead 'requests' samples in the echoTap time coordinate
+this way if echoTap is currently wrapping e.g repeating sampler application
+the scrubberhead can continue to pitchshift without knowledge of echoTap
+internal state.
+
+Echotap 

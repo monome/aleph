@@ -41,15 +41,6 @@ extern void echoTap24_8_next(echoTap24_8* tap){
       }
       tap->echoTime += tap->tapWr->inc*256 - tap->playback_speed;
       break;
-    case EDGE_CLIP:
-      tap->echoTime += tap->tapWr->inc*256 - tap->playback_speed;
-      if ( tap->echoTime < tap->echoMin ) {
-	tap->echoTime = tap->echoMin;
-      }
-      else if (tap->echoTime > tap->echoMax) {
-	tap->echoTime = tap->echoMax;
-      }
-      break;
     }
   }
 }
