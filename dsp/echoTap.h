@@ -53,8 +53,6 @@ typedef struct _echoTap24_8 {
 #define EDGE_BOUNCE 1
 //if wrap, then go back to the opposite boundary
 #define EDGE_WRAP 2
-//if clip then just stop at the boundary
-#define EDGE_CLIP 3
 
 //tophat is FR32_MAX between echoMax and echoMin, 0 elsewhere
 #define SHAPE_TOPHAT 0
