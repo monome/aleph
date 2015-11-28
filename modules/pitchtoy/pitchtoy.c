@@ -171,9 +171,7 @@ void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamV
 
 void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
-int global_slew = 0.01;
-
-#define simple_slew(x, y) x = y * global_slew + x * (1 - global_slew)
+#define simple_slew(x, y) x = y/100 + x/100 * 99
 
 #define simple_busmix(x, y, fact) x = add_fr1x32(x, mult_fr1x32x32(y, fact))
 
@@ -205,7 +203,6 @@ void module_process_frame(void) {
     mix_aux_mono(in[i], &(out[2]), &(out[3]), auxL[i], auxR[i]);
     simple_busmix(delayInput, in[i],effect[i]);
   }
-  
   simple_busmix (delayInput, delayOutput,feedback);
   delayOutput = 0;
   for (i=0;i<4;i++) {
