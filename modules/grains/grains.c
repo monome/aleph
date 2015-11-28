@@ -76,12 +76,12 @@ ParamValue feedback=0;
 ParamValue feedbackTarget=0;
 
 // data structure of external memory
-typedef struct _pitchtoyData {
+typedef struct _grainsData {
   ModuleData super;
   //ParamDesc mParamDesc[eParamNumParams];
   ParamData mParamData[eParamNumParams];
   volatile fract32 audioBuffer[NGRAINS][LINES_BUF_FRAMES];
-} pitchtoyData;
+} grainsData;
 
 //-------------------------
 //----- extern vars (initialized here)
@@ -90,7 +90,7 @@ ModuleData* gModuleData;
 //------ static variables
 
 // pointer to all external memory
-pitchtoyData* pPitchtoyData;
+grainsData* pGrainsData;
 
 // dac values (u16, but use fract32 and audio integrators)
 
@@ -105,12 +105,12 @@ static inline void param_setup(u32 id, ParamValue v) {
 void module_init(void) {
 
   // init module/param descriptor
-  pPitchtoyData = (pitchtoyData*)SDRAM_ADDRESS;
+  pGrainsData = (grainsData*)SDRAM_ADDRESS;
 
-  gModuleData = &(pPitchtoyData->super);
-  strcpy(gModuleData->name, "pitchtoy");
+  gModuleData = &(pGrainsData->super);
+  strcpy(gModuleData->name, "grains");
 
-  gModuleData->paramData = (ParamData*)pPitchtoyData->mParamData;
+  gModuleData->paramData = (ParamData*)pGrainsData->mParamData;
   gModuleData->numParams = eParamNumParams;
 
   param_setup( 	eParam_auxL0,		AUX_DEFAULT );
@@ -137,10 +137,10 @@ void module_init(void) {
   param_setup( 	eParam_fader3,		FADER_DEFAULT );
   param_setup( 	eParam_effect3,		EFFECT_DEFAULT );
 
-  pitchShift_init(&(grains[0]), pPitchtoyData->audioBuffer[0], LINES_BUF_FRAMES);
-  pitchShift_init(&(grains[1]), pPitchtoyData->audioBuffer[1], LINES_BUF_FRAMES);
-  pitchShift_init(&(grains[2]), pPitchtoyData->audioBuffer[2], LINES_BUF_FRAMES);
-  pitchShift_init(&(grains[3]), pPitchtoyData->audioBuffer[3], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[0]), pGrainsData->audioBuffer[0], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[1]), pGrainsData->audioBuffer[1], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[2]), pGrainsData->audioBuffer[2], LINES_BUF_FRAMES);
+  pitchShift_init(&(grains[3]), pGrainsData->audioBuffer[3], LINES_BUF_FRAMES);
 
   /* filter_1p_lo_init( &(pitchFactorSlew[0]), 0 ); */
   /* filter_1p_lo_init( &(pitchFactorSlew[1]), 0 ); */

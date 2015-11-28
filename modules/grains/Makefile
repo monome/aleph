@@ -1,4 +1,4 @@
-module_name = pitchtoy
+module_name = grains
 
 audio = ../../dsp
 bfin = ../../bfin_lib/src
@@ -7,7 +7,7 @@ include version.mk
 version = $(maj).$(min).$(rev)
 ldr_name = $(module_name)-$(version).ldr
 
-module_obj = pitchtoy.o \
+module_obj = grains.o \
 	$(audio)/buffer.o \
 	$(audio)/echoTap.o \
 	$(audio)/conversion.o \
@@ -55,8 +55,8 @@ clean: bfin_lib_clean
 	rm $(module_obj)
 	rm $(module_name).ldr 
 	rm $(module_name)
-	rm pitchtoy.dsc
-	rm pitchtoy_desc_build
+	rm grains.dsc
+	rm grains_desc_build
 
 deploy: $(module_name).ldr
 	make desc
