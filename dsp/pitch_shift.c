@@ -20,14 +20,14 @@ void pitchShift_init(pitchShift* dl, fract32* data, u32 frames) {
 
   echoTap24_8_init(&(dl->tapRd0), &(dl->tapWr));
   dl->tapRd0.edge_behaviour = EDGE_WRAP;
-  dl->tapRd0.shape = SHAPE_HALFWAVE;
+  dl->tapRd0.shape = SHAPE_LUMP;
   dl->tapRd0.echoMin = 0;
   dl->tapRd0.echoMax = 256 * 1023;
   dl->tapRd0.echoTime = 0;
 
   echoTap24_8_init(&(dl->tapRd1), &(dl->tapWr));
   dl->tapRd1.edge_behaviour = EDGE_WRAP;
-  dl->tapRd1.shape = SHAPE_HALFWAVE;
+  dl->tapRd1.shape = SHAPE_LUMP;
   dl->tapRd1.echoMin = 0;
   dl->tapRd1.echoMax = 256 * 1023;
   dl->tapRd1.echoTime= 256 * 512;
