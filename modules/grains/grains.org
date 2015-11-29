@@ -22,10 +22,10 @@
     So we can flip the phase back into effect bus for flanger fx
 ** Scrub params
 *** scrubPitch_g<m> f8x8[0:7]
-*** scrubLength_g<m> i16
+*** scrubLength_g<m> i24
     set grain boundary to |scrub-time * (pitch-factor -
     echo-tap-speed)|
-*** scrubRandomise fx16
+*** scrubRandomise i24
     randomising scrub-time makes phase-modulation distortion less
     disturbing If scrub time is a constant this gives ring-mod-like
     distortion.
