@@ -11,7 +11,7 @@ module_obj = grains.o \
 	$(audio)/buffer.o \
 	$(audio)/echoTap.o \
 	$(audio)/conversion.o \
-	$(audio)/pitch_shift.o \
+	$(audio)/grain.o \
 	$(audio)/filter_1p.o \
 	$(audio)/filter_ramp.o \
 	$(audio)/filter_svf.o \

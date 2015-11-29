@@ -25,7 +25,7 @@
 // audio
 #include "filter_1p.h"
 #include "module.h"
-#include "pitch_shift.h"
+#include "grain.h"
 
 /// custom
 #include "params.h"
@@ -63,7 +63,7 @@ ParamValue effectI[4];
 ParamValue effectITarget[4];
 
 
-pitchShift grains[NGRAINS];
+grain grains[NGRAINS];
 //Grain mix params
 
 ParamValue faderG[NGRAINS];
@@ -153,7 +153,7 @@ void module_init(void) {
   param_setup (eParam_echoFadeLength,   45);
 
   param_setup (eParam_scrubPitch_g1,    256);
-  pitchShift_init(&(grains[0]), pGrainsData->audioBuffer[0], LINES_BUF_FRAMES);
+  grain_init(&(grains[0]), pGrainsData->audioBuffer[0], LINES_BUF_FRAMES);
 }
 
 // de-init
@@ -202,7 +202,7 @@ void module_process_frame(void) {
   }
   effectBus = 0;
   for (i=0;i<NGRAINS;i++) {
-    grainOut=pitchShift_next(&(grains[i]), effectBus);
+    grainOut=grain_next(&(grains[i]), effectBus);
     mix_panned_mono (grainOut, &(out[0]), &(out[1]), panG[i], faderG[i]);
     mix_aux_mono (grainOut, &(out[2]), &(out[3]), aux1G[i], aux2G[i]);
     simple_busmix (grainOut, in[i],effectI[i]);
@@ -323,7 +323,7 @@ void module_set_param(u32 idx, ParamValue v) {
     
   //grain scrubber params
   case eParam_scrubPitch_g1 :
-    pitchShift_set_pitchFactor24_8(&(grains[0]), v/256);
+    grain_set_pitchFactor24_8(&(grains[0]), v/256);
     break;
 
   case eParam_scrubLength_g1 :
