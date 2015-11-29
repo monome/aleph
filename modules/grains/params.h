@@ -23,10 +23,10 @@
 #define PARAM_CV_VAL_DEFAULT PARAM_AMP_6
 
 
-#define EFFECT_TYPE eParamTypeAmp
-#define EFFECT_MIN 0x00000000
-#define EFFECT_MAX FR32_MAX
-#define EFFECT_RADIX 1
+#define FADER_TYPE eParamTypeAmp
+#define FADER_MIN 0x00000000
+#define FADER_MAX FR32_MAX
+#define FADER_RADIX 1
 
 /*
 //In bees this looks like 0-62 (with decimal places)
@@ -40,10 +40,20 @@
 #define PARAM_SECONDS_MAX 0x003c0000
 #define PARAM_SECONDS_RADIX 7
 
-#define PITCHSHIFT_TYPE eParamTypeFix
-#define PITCHSHIFT_MIN 0x00000000
-#define PITCHSHIFT_MAX FR32_MAX
-#define PITCHSHIFT_RADIX 8
+#define TIME_24_8_TYPE eParamTypeFix
+#define TIME_24_8_MIN 0x00000000
+#define TIME_24_8_MAX (FR32_MAX >> 8)
+#define TIME_24_8_RADIX 32
+
+#define TIME_24_8_TYPE eParamTypeFix
+#define TIME_24_8_MIN 0x00000000
+#define TIME_24_8_MAX FR32_MAX
+#define TIME_24_8_RADIX 24
+
+#define SPEED_TYPE eParamTypeFix
+#define SPEED_MIN 0x00000000
+#define SPEED_MAX (FRACT32_MAX >> 16)
+#define SPEED_RADIX 32
 
 #define PAN_TYPE eParamTypeFix
 #define PAN_MIN 0x00000000
@@ -52,48 +62,67 @@
 
 // enumerate parameters
 enum params {
-  eParam_auxL0,
-  eParam_auxR0,
-  eParam_pan0,
-  eParam_fader0,
-  eParam_effect0,
+  //adc mix params
+  eParam_fader_i1,
+  eParam_pan_i1,
+  eParam_aux1_i1,
+  eParam_aux2_i1,
+  eParam_effect_i1,
 
-  eParam_auxL1,
-  eParam_auxR1,
-  eParam_pan1,
-  eParam_fader1,
-  eParam_effect1,
+  eParam_fader_i2,
+  eParam_pan_i2,
+  eParam_aux1_i2,
+  eParam_aux2_i2,
+  eParam_effect_i2,
 
-  eParam_auxL2,
-  eParam_auxR2,
-  eParam_pan2,
-  eParam_fader2,
-  eParam_effect2,
+  eParam_fader_i3,
+  eParam_pan_i3,
+  eParam_aux1_i3,
+  eParam_aux2_i3,
+  eParam_effect_i3,
 
-  eParam_auxL3,
-  eParam_auxR3,
-  eParam_pan3,
-  eParam_fader3,
-  eParam_effect3,
+  eParam_fader_i4,
+  eParam_pan_i4,
+  eParam_aux1_i4,
+  eParam_aux2_i4,
+  eParam_effect_i4,
 
-  eParam_pitchshift0,
-  eParam_pitchshift0fader,
+  //global grain params
+  eParam_scrubFadeLength,
+  eParam_echoFadeLength,
 
-  eParam_pitchshift1,
-  eParam_pitchshift1fader,
+  //grain mix params
+  eParam_fader_g1,
+  eParam_pan_g1,
+  eParam_effect_g1,
+  eParam_aux1_g1,
+  eParam_aux2_g1,
+  eParam_phase_g1, //So we can flip the phase back into effect bus for flanging fb
 
-  eParam_pitchshift2,
-  eParam_pitchshift2fader,
+  //grain scrubber params
+  eParam_scrubPitch_g1,
+  eParam_scrubLength_g1,
+  eParam_scrubRandomise_g1,
+  eParam_scrubEdgeBehaviour_g1,
 
-  eParam_pitchshift3,
-  eParam_pitchshift3fader,
-
-  eParam_feedback,
-
+  //grain echo params
+  eParam_echoTime_g1,
+  eParam_echoSpeed_g1,
+  eParam_echoEdgeBehaviour_g1,
+  eParam_echoMin_g1,
+  eParam_echoMax_g1,
+  eParam_echoLFOAmp_g1,
+  eParam_echoLFOSpeed_g1,
+  eParam_echoLFOPhase_g1,
+  
   eParamNumParams
 };
 
 extern void fill_param_desc(ParamDesc* desc);
+
+void param_desc_aux (ParamDesc* desc,int param_idx,
+		     char* desc_string, ParamType type,
+		     s32 min, s32 max, u8 radix);
 
 #endif // header guard 
 // EOF
