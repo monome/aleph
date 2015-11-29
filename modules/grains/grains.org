@@ -5,12 +5,12 @@
 *** aux0_<n>
 *** aux1_<n>
 * Global Grain Params
-*** grain-scrubber fade-length i16
+*** scrubberFadeLength i16
    (whole samples)
-*** echo-tap fade-length i16
+*** echo fade-length i16
    (whole samples)
 * Per-Grain Params
-** grain mixer parameters
+** Grain Mixer params
 *** source_g<m> i8[1:8]
     Choose grain input between ADC1-4 , DAC3-4, effect bus or mono_out
 *** fader_g<m>
@@ -20,35 +20,35 @@
 *** aux1_g<m>
 *** phase_g<m> bool
     So we can flip the phase back into effect bus for flanger fx
-** grain-scrubber head params
-*** grain-scrubber pitch f8x8[0:7]
-*** grain-scrubber scrub-time i16
+** Scrub params
+*** scrubPitch_g<m> f8x8[0:7]
+*** scrubLength_g<m> i16
     set grain boundary to |scrub-time * (pitch-factor -
     echo-tap-speed)|
-*** grain-scrubber scrub-time-indeterminism fx16
+*** scrubRandomise fx16
     randomising scrub-time makes phase-modulation distortion less
     disturbing If scrub time is a constant this gives ring-mod-like
     distortion.
-*** grain-scrubber bounce-or-wrap i8[0:1]
+*** scrubEdgeBehaviour i8[0:1]
     does pitchshifting readhead bounce or wrap at grain boundary?
-** echo-tap head params
-*** echo-tap base-time fx24x8
+** Echo params
+*** echoTime fx24x8
     allows the user to force read head to a point, e.g:
     - set echo time for simple echo fx
     - trigger one-shot sample for pre-recorded audio
-*** echo-tap play-speed f8x8
+*** echoSpeed f8x8
     For realtime FX this guy should be 1, so the echo-tap stays in
     sync with write head When a sample is loaded into the fifo this guy
     can take a value between 0 and 7
-*** echo-tap edge-behaviour i8[0:2]
+*** echoEdgeBehaviour i8[0:2]
     does echo-tap head bounce, wrap or stall at echo boundary?
-*** echo-tap echo-min f24x8
+*** echoMin f24x8
     echo boundary nearest to write-head
-*** echo-tap echo-max f24x8
+*** echoMax f24x8
     echo boundary furthest from write-head
-*** echo-tap lfo-amp i16
+*** echoLFOAmp i16
     lfo modulates from 0 to lfo-amp samples
-*** echo-tap lfo speed f8x8
+*** echoLFOSpeed f8x8
     run in Hz or similar
 * How to implement pitchshift on top of echoTap
 ** Decoupling scrubberhead from echo-tap
