@@ -43,4 +43,18 @@ void grain_set_scrubRandomise24_8(grain* dl, s32 subsamples);
 //set scrubEdgeBehaviour (24.8 time in samples)
 void grain_set_scrubEdgeBehaviour(grain* dl, u8 edgeBehaviour);
 
+void grain_set_EchoTime24_8(grain* dl, s32 subsamples);
+
+void grain_set_EchoSpeed24_8(grain* dl, s32 subsamples);
+
+void grain_set_echoEdgeBehaviour(grain* dl, u8 edgeBehaviour);
+
+void grain_set_echoMin24_8(grain* dl, s32 subsamples);
+
+void grain_set_echoMax24_8(grain* dl, s32 subsamples);
+
+void grain_set_echoLFOAmp24_8(grain* dl, s32 subsamples);
+
+void grain_set_echoLFOSpeed24_8(grain* dl, s32 subsamples);
+
 #endif // h guard
