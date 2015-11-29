@@ -55,31 +55,41 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_fader (eParam_effect_g1, "effect_g1");
 
   //Scrub Params
-  param_desc_aux(desc, eParam_scrubPitch_g1, "scrubPitch_g1",
-		 SPEED_TYPE, SPEED_MIN, SPEED_MAX,
-		 SPEED_RADIX);
-  param_desc_time_24_8 (eParam_scrubLength_g1, "scrubLength_g1");
-  param_desc_time_24_8 (eParam_scrubRandomise_g1, "scrubRandomise_g1");
+  param_desc_aux (desc, eParam_scrubPitch_g1, "scrubPitch_g1",
+		  SPEED_TYPE, SPEED_MIN, SPEED_MAX,
+		  SPEED_RADIX);
+  param_desc_aux (desc, eParam_scrubLength_g1, "scrubLength_g1",
+		  TIME_SAMPLE_TYPE, TIME_SAMPLE_MIN, TIME_SAMPLE_MAX,
+		  TIME_SAMPLE_RADIX);
+  param_desc_aux (desc, eParam_scrubRandomise_g1, "scrubRandomise_g1",
+		  TIME_SAMPLE_TYPE, TIME_SAMPLE_MIN, TIME_SAMPLE_MAX,
+		  TIME_SAMPLE_RADIX);
   param_desc_aux(desc, eParam_scrubEdgeBehaviour_g1, "scrubEdgeBehaviour_g1",
 		 eParamTypeFix, 0x00000000, 0x00000002,
 		 32);
-  param_desc_time_24_8 (eParam_echoTime_g1, "echoTime_g1");
-  param_desc_aux(desc, eParam_echoSpeed_g1, "echoSpeed_g1",
-		 SPEED_TYPE, SPEED_MIN, SPEED_MAX,
-		 SPEED_RADIX);
-  param_desc_aux(desc, eParam_scrubEdgeBehaviour_g1, "scrubEdgeBehaviour_g1",
+
+  //Echo Params
+  param_desc_aux (desc, eParam_echoTime_g1, "echoTime_g1",
+		  TIME_MS_TYPE, TIME_MS_MIN, TIME_MS_MAX,
+		  TIME_MS_RADIX);
+  param_desc_aux (desc, eParam_echoSpeed_g1, "echoSpeed_g1",
+		  SPEED_TYPE, SPEED_MIN, SPEED_MAX,
+		  SPEED_RADIX);
+  param_desc_aux(desc, eParam_echoEdgeBehaviour_g1, "echoEdgeBehaviour_g1",
 		 eParamTypeFix, 0x00000000, 0x00000002,
 		 32);
-  param_desc_time_24_8 (eParam_echoMin_g1, "echoMin_g1");
-  param_desc_time_24_8 (eParam_echoMax_g1, "echoMax_g1");
+  param_desc_aux (desc, eParam_echoMin_g1, "echoMin_g1",
+		  TIME_MS_TYPE, TIME_MS_MIN, TIME_MS_MAX,
+		  TIME_MS_RADIX);
+  param_desc_aux (desc, eParam_echoMax_g1, "echoMax_g1",
+		  TIME_MS_TYPE, TIME_MS_MIN, TIME_MS_MAX,
+		  TIME_MS_RADIX);
   param_desc_aux(desc, eParam_echoLFOAmp_g1, "echoLFOAmp_g1",
-		 SPEED_TYPE, SPEED_MIN, SPEED_MAX,
-		 SPEED_RADIX);
+		 TIME_MS_TYPE, TIME_MS_MIN, TIME_MS_MAX,
+		 TIME_MS_RADIX);
   param_desc_aux(desc, eParam_echoLFOSpeed_g1, "echoLFOSpeed_g1",
 		 SPEED_TYPE, SPEED_MIN, SPEED_MAX,
 		 SPEED_RADIX);
-
-  
 }
 
 // EOF

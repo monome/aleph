@@ -84,9 +84,6 @@ ParamValue FaderGTarget[NGRAINS];
 ParamValue effectG[NGRAINS];
 ParamValue effectGTarget[NGRAINS];
 
-ParamValue feedback=0;
-ParamValue feedbackTarget=0;
-
 // data structure of external memory
 typedef struct _grainsData {
   ModuleData super;
@@ -179,7 +176,7 @@ void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, Par
 
 #define simple_busmix(x, y, fact) x = add_fr1x32(x, mult_fr1x32x32(y, fact))
 
-fract32 delayOutput, delayInput;
+fract32 effectBus;
 void module_process_frame(void) {
 
   u8 i;
@@ -192,7 +189,6 @@ void module_process_frame(void) {
     simple_slew(effectI[i],effectITarget[i]);
     simple_slew(FaderG[i], FaderGTarget[i]);
   }
-  simple_slew(feedbackTarget, feedback);
   
   //define delay input & output
 
@@ -200,19 +196,17 @@ void module_process_frame(void) {
   out[1] = 0;
   out[2] = 0;
   out[3] = 0;
-  delayInput = 0;
+  effectBus = 0;
 
   for (i=0;i<4;i++) {
-    mix_panned_mono(in[i], &(out[0]), &(out[1]), panI[i], faderI[i]);
-    mix_aux_mono(in[i], &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
-    simple_busmix(delayInput, in[i],effectI[i]);
+    mix_panned_mono (in[i], &(out[0]), &(out[1]), panI[i], faderI[i]);
+    mix_aux_mono (in[i], &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
+    simple_busmix (effectBus, in[i],effectI[i]);
   }
-  simple_busmix (delayInput, delayOutput,feedback);
-  delayOutput = 0;
-  for (i=0;i<4;i++) {
-    simple_busmix (delayOutput, pitchShift_next(&(grains[i]), delayInput), FaderG[i]);
+  for (i=0;i<NGRAINS;i++) {
+    mix_panned_mono (in[i], &(out[0]), &(out[1]), panI[i], faderI[i]);
+    mix_aux_mono (in[i], &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
   }
-  mix_panned_mono(delayOutput, &(out[0]), &(out[1]),PAN_DEFAULT ,FADER_DEFAULT );
 }
 
 void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue left_value, ParamValue right_value) {
