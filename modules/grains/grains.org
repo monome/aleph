@@ -10,7 +10,7 @@
 *** echo fade-length i16
    (whole samples)
 * Per-Grain Params
-** Grain Mixer params
+** Grain Mix params
 *** source_g<m> i8[1:8]
     Choose grain input between ADC1-4 , DAC3-4, effect bus or mono_out
 *** fader_g<m>
