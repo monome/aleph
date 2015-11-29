@@ -1,9 +1,9 @@
 * ADC mix params
-*** fader_<n>
-*** pan_<n>
-*** effect_<n>
-*** aux0_<n>
-*** aux1_<n>
+*** fader_i<n>
+*** pan_i<n>
+*** effect_i<n>
+*** aux0_i<n>
+*** aux1_i<n>
 * Global Grain Params
 *** scrubberFadeLength i16
    (whole samples)
