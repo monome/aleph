@@ -174,6 +174,8 @@ void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, Par
 #define simple_busmix(x, y, fact) x = add_fr1x32(x, mult_fr1x32x32(y, fact))
 
 fract32 effectBus;
+fract32 grainOut;
+
 void module_process_frame(void) {
 
   u8 i;
@@ -193,16 +195,17 @@ void module_process_frame(void) {
   out[1] = 0;
   out[2] = 0;
   out[3] = 0;
-  effectBus = 0;
-
   for (i=0;i<4;i++) {
     mix_panned_mono (in[i], &(out[0]), &(out[1]), panI[i], faderI[i]);
     mix_aux_mono (in[i], &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
     simple_busmix (effectBus, in[i],effectI[i]);
   }
+  effectBus = 0;
   for (i=0;i<NGRAINS;i++) {
-    mix_panned_mono (in[i], &(out[0]), &(out[1]), panI[i], faderI[i]);
-    mix_aux_mono (in[i], &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
+    grainOut=pitchShift_next(&(grains[i]), effectBus);
+    mix_panned_mono (grainOut, &(out[0]), &(out[1]), panG[i], faderG[i]);
+    mix_aux_mono (grainOut, &(out[2]), &(out[3]), aux1G[i], aux2G[i]);
+    simple_busmix (grainOut, in[i],effectI[i]);
   }
 }
 
