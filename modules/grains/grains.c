@@ -47,39 +47,36 @@
 #define NGRAINS 1
 
 //ADC mix params
+ParamValue faderI[4];
+ParamValue faderITarget[4];
+
+ParamValue panI[4];
+ParamValue panITarget[4];
+
 ParamValue aux1I[4];
 ParamValue aux1ITarget[4];
 
 ParamValue aux2I[4];
 ParamValue aux2ITarget[4];
 
-ParamValue panI[4];
-ParamValue panITarget[4];
-
-ParamValue faderI[4];
-ParamValue faderITarget[4];
-
 ParamValue effectI[4];
 ParamValue effectITarget[4];
 
 
 pitchShift grains[NGRAINS];
-
 //Grain mix params
+
+ParamValue faderG[NGRAINS];
+ParamValue faderGTarget[NGRAINS];
+
+ParamValue panG[NGRAINS];
+ParamValue panGTarget[NGRAINS];
+
 ParamValue aux1G[NGRAINS];
 ParamValue aux1GTarget[NGRAINS];
 
 ParamValue aux2G[NGRAINS];
 ParamValue aux2GTarget[NGRAINS];
-
-ParamValue panG[NGRAINS];
-ParamValue panGTarget[NGRAINS];
-
-ParamValue faderG[NGRAINS];
-ParamValue faderGTarget[NGRAINS];
-
-ParamValue FaderG[NGRAINS];
-ParamValue FaderGTarget[NGRAINS];
 
 ParamValue effectG[NGRAINS];
 ParamValue effectGTarget[NGRAINS];
@@ -187,7 +184,7 @@ void module_process_frame(void) {
     simple_slew(panI[i], panITarget[i]);
     simple_slew(faderI[i], faderITarget[i]);
     simple_slew(effectI[i],effectITarget[i]);
-    simple_slew(FaderG[i], FaderGTarget[i]);
+    simple_slew(faderG[i], faderGTarget[i]);
   }
   
   //define delay input & output
@@ -326,19 +323,30 @@ void module_set_param(u32 idx, ParamValue v) {
     pitchShift_set_pitchFactor24_8(&(grains[0]), v/256);
     break;
 
-  /* eParam_scrubLength_g1, */
-  /* eParam_scrubRandomise_g1, */
-  /* eParam_scrubEdgeBehaviour_g1, */
+  case eParam_scrubLength_g1 :
+    break;
+  case eParam_scrubRandomise_g1 :
+    break;
+  case eParam_scrubEdgeBehaviour_g1 :
+    break;
 
-  /* //grain echo params */
-  /* eParam_echoTime_g1, */
-  /* eParam_echoSpeed_g1, */
-  /* eParam_echoEdgeBehaviour_g1, */
-  /* eParam_echoMin_g1, */
-  /* eParam_echoMax_g1, */
-  /* eParam_echoLFOAmp_g1, */
-  /* eParam_echoLFOSpeed_g1, */
-  /* eParam_echoLFOPhase_g1, */
+  //grain echo params
+  case eParam_echoTime_g1 :
+    break;
+  case eParam_echoSpeed_g1 :
+    break;
+  case eParam_echoEdgeBehaviour_g1 :
+    break;
+  case eParam_echoMin_g1 :
+    break;
+  case eParam_echoMax_g1 :
+    break;
+  case eParam_echoLFOAmp_g1 :
+    break;
+  case eParam_echoLFOSpeed_g1 :
+    break;
+  case eParam_echoLFOPhase_g1 :
+    break;
   default:
     break;
   }
