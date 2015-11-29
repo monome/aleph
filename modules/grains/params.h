@@ -52,15 +52,6 @@
 
 // enumerate parameters
 enum params {
-  eParam_dac0,
-  eParam_dac1,
-  eParam_dac2,
-  eParam_dac3,
-  eParam_slew0,
-  eParam_slew1,
-  eParam_slew2,
-  eParam_slew3,
-
   eParam_auxL0,
   eParam_auxR0,
   eParam_pan0,
@@ -86,19 +77,15 @@ enum params {
   eParam_effect3,
 
   eParam_pitchshift0,
-  //eParam_pitchshift0slew,
   eParam_pitchshift0fader,
 
   eParam_pitchshift1,
-  //eParam_pitchshift1slew,
   eParam_pitchshift1fader,
 
   eParam_pitchshift2,
-  //eParam_pitchshift2slew,
   eParam_pitchshift2fader,
 
   eParam_pitchshift3,
-  //eParam_pitchshift3slew,
   eParam_pitchshift3fader,
 
   eParam_feedback,
