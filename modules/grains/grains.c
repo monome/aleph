@@ -44,7 +44,6 @@
 #define PAN_DEFAULT PAN_MAX/2
 #define FADER_DEFAULT PARAM_AMP_0
 #define EFFECT_DEFAULT PARAM_AMP_0
-#define NGRAINS 1
 
 //ADC mix params
 ParamValue faderI[4];
@@ -62,7 +61,7 @@ ParamValue aux2ITarget[4];
 ParamValue effectI[4];
 ParamValue effectITarget[4];
 
-
+#define NGRAINS 1
 grain grains[NGRAINS];
 //Grain mix params
 
@@ -143,14 +142,14 @@ void module_init(void) {
   param_setup( 	eParam_aux2_i4,		AUX_DEFAULT );
   param_setup( 	eParam_effect_i4,	EFFECT_DEFAULT );
 
+  param_setup (eParam_scrubFadeLength,  45);
+  param_setup (eParam_echoFadeLength,   45);
+
   param_setup( 	eParam_fader_g1,	FADER_DEFAULT );
   param_setup( 	eParam_pan_g1,		PAN_DEFAULT );
   param_setup( 	eParam_aux1_g1,		AUX_DEFAULT );
   param_setup( 	eParam_aux2_g1,		AUX_DEFAULT );
   param_setup( 	eParam_effect_g1,	EFFECT_DEFAULT );
-
-  param_setup (eParam_scrubFadeLength,  45);
-  param_setup (eParam_echoFadeLength,   45);
 
   param_setup (eParam_scrubPitch_g1,    256);
   grain_init(&(grains[0]), pGrainsData->audioBuffer[0], LINES_BUF_FRAMES);
@@ -170,6 +169,8 @@ void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamV
 void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
 #define simple_slew(x, y) x = y/100 + x/100 * 99
+//#define simple_slew(x, y) x = y
+
 
 #define simple_busmix(x, y, fact) x = add_fr1x32(x, mult_fr1x32x32(y, fact))
 
@@ -181,11 +182,13 @@ void module_process_frame(void) {
   u8 i;
   //IIR slew
   for (i=0;i<4;i++) {
+    simple_slew(faderI[i], faderITarget[i]);
     simple_slew(aux1I[i], aux1ITarget[i]);
     simple_slew(aux2I[i], aux2ITarget[i]);
     simple_slew(panI[i], panITarget[i]);
-    simple_slew(faderI[i], faderITarget[i]);
     simple_slew(effectI[i],effectITarget[i]);
+  }
+  for (i=0;i<NGRAINS;i++) {
     simple_slew(faderG[i], faderGTarget[i]);
   }
   
@@ -195,11 +198,13 @@ void module_process_frame(void) {
   out[1] = 0;
   out[2] = 0;
   out[3] = 0;
+  return ;
   for (i=0;i<4;i++) {
     mix_panned_mono (in[i], &(out[0]), &(out[1]), panI[i], faderI[i]);
     mix_aux_mono (in[i], &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
     simple_busmix (effectBus, in[i],effectI[i]);
   }
+
   effectBus = 0;
   for (i=0;i<NGRAINS;i++) {
     grainOut=grain_next(&(grains[i]), effectBus);
@@ -306,19 +311,19 @@ void module_set_param(u32 idx, ParamValue v) {
 
   //grain mix params
   case eParam_fader_g1 :
-    faderITarget[0] = v;
+    faderGTarget[0] = v;
     break;
   case eParam_pan_g1 :
-    panITarget[0] = v;
+    panGTarget[0] = v;
     break;
   case eParam_aux1_g1 :
-    aux1ITarget[0] = v;
+    aux1GTarget[0] = v;
     break;
   case eParam_aux2_g1 :
-    aux2ITarget[0] = v;
+    aux2GTarget[0] = v;
     break;
   case eParam_effect_g1 :
-    effectITarget[0] = v;
+    effectGTarget[0] = v;
     break;
     
   //grain scrubber params
@@ -347,8 +352,6 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_echoLFOAmp_g1 :
     break;
   case eParam_echoLFOSpeed_g1 :
-    break;
-  case eParam_echoLFOPhase_g1 :
     break;
   default:
     break;
