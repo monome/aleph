@@ -31,6 +31,10 @@ extern void grain_init(grain* dl, fract32* bufData, u32 frames);
 // get next value given input
 extern fract32 grain_next(grain* dl, fract32 in);
 
+void  grain_set_scrubFadeLength(grain* dl, s32 subsamples) ;
+
+void  grain_set_echoFadeLength(grain* dl, s32 subsamples) ;
+
 //set scrubPitch (24.8 fraction of original frequency)
 void grain_set_scrubPitch(grain* dl, s32 subsamples);
 

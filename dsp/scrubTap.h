@@ -22,7 +22,7 @@
 // scrubWrap is where tap starts to wrap back
 // scrubReset is where scrub tap wraps back to
 typedef struct _scrubTap {
-  bufferTapN* tapWr; // pointer to write head
+  echoTap* echoTap; // pointer to echoTap
   s32 time; // delay time in subsamples (1/256 sample)
   s32 idx_last;// last position read from (for antialiasing)
 
@@ -47,7 +47,7 @@ typedef struct _scrubTap {
 // fixed grain envelope shapes
 s32 scrubTap_envelope(scrubTap *tap);
 // intialize tap
-extern void scrubTap_init(scrubTap* tap, bufferTapN* tapWr);
+extern void scrubTap_init(scrubTap* tap, echoTap* echoTap);
 
 // increment the index in an scrub
 extern void scrubTap_next(scrubTap* tap);

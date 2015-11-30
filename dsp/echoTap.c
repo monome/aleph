@@ -24,7 +24,10 @@ extern void echoTap_next(echoTap* tap){
     s32 echoRange;
     switch (tap->edgeBehaviour) {
     case EDGE_ONESHOT:
-      tap->speed = 0;
+      if(tap->time < tap->min)
+	tap->time = tap->min;
+      else
+	tap->time = tap->max;
       break;
     case EDGE_WRAP:
       echoRange = tap->max - tap->min;
@@ -41,13 +44,17 @@ extern void echoTap_next(echoTap* tap){
       }
       tap->time += tap->tapWr->inc*256 - tap->speed;
       break;
+    default ://watch out! copy-pasted from edge_wrap
+      echoRange = tap->max - tap->min;
+      tap->time = abs (tap->time - tap->min + echoRange)
+	% echoRange;
+      tap->time += tap->min;
+      break;
     }
   }
 }
 
 s32 echoTap_envelope(echoTap *tap){
-  //FIXME need to make this thing crossfade like a state machine
-  //which can either be fading out, fading in or not fading
   s32 center = (tap->min + tap->max+1) / 2;
   s32 dist_from_center = tap->time - center;
   if ( dist_from_center < 0 )
@@ -81,7 +88,7 @@ s32 echoTap_envelope(echoTap *tap){
   return amplitude ;
 }
 
-// antialiased read
+// antialiased or interpolated read depending speed
 extern fract32 echoTap_read_antialias(echoTap* echoTap){
     s32 num_samples = (echoTap->speed + 128) / 256;
     if( num_samples < 2 ) {
