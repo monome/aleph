@@ -22,6 +22,7 @@
 #include "module.h"
 #include "buffer.h"
 #include "conversion.h"
+#include "pan.h"
 //---------------------------
 //--- static
 
