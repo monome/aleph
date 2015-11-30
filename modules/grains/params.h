@@ -99,9 +99,9 @@ enum params {
   //grain mix params
   eParam_fader_g1,
   eParam_pan_g1,
-  eParam_effect_g1,
   eParam_aux1_g1,
   eParam_aux2_g1,
+  eParam_effect_g1,
   eParam_phase_g1, //So we can flip the phase back into effect bus for flanging fb
 
   //grain scrubber params
@@ -118,7 +118,6 @@ enum params {
   eParam_echoMax_g1,
   eParam_echoLFOAmp_g1,
   eParam_echoLFOSpeed_g1,
-  eParam_echoLFOPhase_g1,
   
   eParamNumParams
 };

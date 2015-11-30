@@ -54,6 +54,9 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_fader (eParam_aux1_g1, "aux1_g1");
   param_desc_fader (eParam_aux2_g1, "aux2_g1");
   param_desc_fader (eParam_effect_g1, "effect_g1");
+  param_desc_aux(desc, eParam_phase_g1, "phase_g1",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 16);
 
   //Scrub Params
   param_desc_aux (desc, eParam_scrubPitch_g1, "scrubPitch_g1",
@@ -66,8 +69,8 @@ extern void fill_param_desc(ParamDesc* desc) {
 		  TIME_SAMPLE_TYPE, TIME_SAMPLE_MIN, TIME_SAMPLE_MAX,
 		  TIME_SAMPLE_RADIX);
   param_desc_aux(desc, eParam_scrubEdgeBehaviour_g1, "scrubEdgeBehaviour_g1",
-		 eParamTypeFix, 0x00000000, 0x00000002,
-		 32);
+		 eParamTypeFix, 0x00000000, 0x00020000,
+		 16);
 
   //Echo Params
   param_desc_aux (desc, eParam_echoTime_g1, "echoTime_g1",
@@ -77,7 +80,7 @@ extern void fill_param_desc(ParamDesc* desc) {
 		  SPEED_TYPE, SPEED_MIN, SPEED_MAX,
 		  SPEED_RADIX);
   param_desc_aux(desc, eParam_echoEdgeBehaviour_g1, "echoEdgeBehaviour_g1",
-		 eParamTypeFix, 0x00000000, 0x00000002,
+		 eParamTypeFix, 0x00000000, 0x00020000,
 		 32);
   param_desc_aux (desc, eParam_echoMin_g1, "echoMin_g1",
 		  TIME_MS_TYPE, TIME_MS_MIN, TIME_MS_MAX,
