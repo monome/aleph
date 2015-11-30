@@ -192,6 +192,11 @@ void module_process_frame(void) {
   }
   for (i=0;i<NGRAINS;i++) {
     simple_slew(faderG[i], faderGTarget[i]);
+    simple_slew(aux1G[i], aux1GTarget[i]);
+    simple_slew(aux2G[i], aux2GTarget[i]);
+    simple_slew(panG[i], panGTarget[i]);
+    simple_slew(effectG[i],effectGTarget[i]);
+
   }
   
   //define delay input & output
@@ -200,18 +205,18 @@ void module_process_frame(void) {
   out[1] = 0;
   out[2] = 0;
   out[3] = 0;
+  effectBus = 0;
   for (i=0;i<4;i++) {
     mix_panned_mono (in[i], &(out[0]), &(out[1]), panI[i], faderI[i]);
     mix_aux_mono (in[i], &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
     simple_busmix (effectBus, in[i],effectI[i]);
   }
 
-  effectBus = 0;
   for (i=0;i<NGRAINS;i++) {
     grainOut=grain_next(&(grains[i]), effectBus);
     mix_panned_mono (grainOut, &(out[0]), &(out[1]), panG[i], faderG[i]);
     mix_aux_mono (grainOut, &(out[2]), &(out[3]), aux1G[i], aux2G[i]);
-    simple_busmix (grainOut, in[i],effectI[i]);
+    /* simple_busmix (grainOut, in[i],effectI[i]); */
   }
 }
 

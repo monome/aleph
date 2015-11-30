@@ -36,7 +36,6 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
 fract32 grain_next(grain* dl, fract32 in) {
   //DEBUG uncomment this line to check plumbing this far...
   //return in;
-
   buffer_tapN_write(&(dl->tapWr), in);
 
   fract32 readVal;
@@ -56,8 +55,8 @@ fract32 grain_next(grain* dl, fract32 in) {
 }
 
 void grain_set_scrubPitch(grain* dl, s32 subsamples) {
-  /* dl->scrubTap.playback_speed = subsamples; */
-  /* dl->echoTap.playback_speed = subsamples; */
+  dl->scrubTap.playback_speed = subsamples;
+  dl->echoTap.playback_speed = subsamples;
 }
 
 //set scrubLength (24.8 time in samples)
