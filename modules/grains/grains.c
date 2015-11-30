@@ -152,7 +152,9 @@ void module_init(void) {
   param_setup( 	eParam_effect_g1,	EFFECT_DEFAULT );
 
   param_setup (eParam_scrubPitch_g1,    256);
+  param_setup (eParam_echoPitch_g1,    256);
   grain_init(&(grains[0]), pGrainsData->audioBuffer[0], LINES_BUF_FRAMES);
+
 }
 
 // de-init
