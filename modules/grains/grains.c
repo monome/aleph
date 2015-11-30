@@ -80,6 +80,8 @@ ParamValue aux2GTarget[NGRAINS];
 ParamValue effectG[NGRAINS];
 ParamValue effectGTarget[NGRAINS];
 
+ParamValue phaseG[NGRAINS];
+
 // data structure of external memory
 typedef struct _grainsData {
   ModuleData super;
@@ -177,6 +179,7 @@ void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, Par
 #define simple_busmix(x, y, fact) x = add_fr1x32(x, mult_fr1x32x32(y, fact))
 
 fract32 effectBus;
+fract32 effectBusFeedback;
 fract32 grainOut;
 
 void module_process_frame(void) {
@@ -205,18 +208,18 @@ void module_process_frame(void) {
   out[1] = 0;
   out[2] = 0;
   out[3] = 0;
-  effectBus = 0;
+  effectBus = effectBusFeedback;
   for (i=0;i<4;i++) {
     mix_panned_mono (in[i], &(out[0]), &(out[1]), panI[i], faderI[i]);
     mix_aux_mono (in[i], &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
     simple_busmix (effectBus, in[i],effectI[i]);
   }
-
+  effectBusFeedback = 0;
   for (i=0;i<NGRAINS;i++) {
-    grainOut=grain_next(&(grains[i]), effectBus);
+    grainOut=phaseG[i] * grain_next(&(grains[i]), effectBus);
     mix_panned_mono (grainOut, &(out[0]), &(out[1]), panG[i], faderG[i]);
     mix_aux_mono (grainOut, &(out[2]), &(out[3]), aux1G[i], aux2G[i]);
-    /* simple_busmix (grainOut, in[i],effectI[i]); */
+    simple_busmix (effectBusFeedback, in[i], effectG[i]);
   }
 }
 
@@ -331,7 +334,12 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_effect_g1 :
     effectGTarget[0] = v;
     break;
-    
+  case eParam_phase_g1 :
+    if (v == 0)
+      phaseG[0] = -1;
+    else
+      phaseG[0] = 1;
+    break;
   //grain scrubber params
   case eParam_scrubPitch_g1 :
     grain_set_scrubPitch(&(grains[0]), v/256);
