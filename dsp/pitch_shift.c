@@ -18,14 +18,14 @@ void pitchShift_init(pitchShift* dl, fract32* data, u32 frames) {
   buffer_init(&(dl->buffer), data, frames);
   buffer_tapN_init(&(dl->tapWr), &(dl->buffer));
 
-  echoTap24_8_init(&(dl->tapRd0), &(dl->tapWr));
+  echoTap_init(&(dl->tapRd0), &(dl->tapWr));
   dl->tapRd0.edge_behaviour = EDGE_WRAP;
   dl->tapRd0.shape = SHAPE_LUMP;
   dl->tapRd0.echoMin = 0;
   dl->tapRd0.echoMax = 256 * 1023;
   dl->tapRd0.echoTime = 0;
 
-  echoTap24_8_init(&(dl->tapRd1), &(dl->tapWr));
+  echoTap_init(&(dl->tapRd1), &(dl->tapWr));
   dl->tapRd1.edge_behaviour = EDGE_WRAP;
   dl->tapRd1.shape = SHAPE_LUMP;
   dl->tapRd1.echoMin = 0;
@@ -42,10 +42,10 @@ fract32 pitchShift_next(pitchShift* dl, fract32 in) {
 
   fract32 readVal;
   fract32 mix_factor = FR32_MAX / 2;
-  readVal = mult_fr1x32x32(echoTap24_8_read_interp( &(dl->tapRd0) ),
+  readVal = mult_fr1x32x32(echoTap_read_interp( &(dl->tapRd0) ),
 			   mix_factor);
   readVal = add_fr1x32(readVal,
-		       mult_fr1x32x32(echoTap24_8_read_interp( &(dl->tapRd1) ),
+		       mult_fr1x32x32(echoTap_read_interp( &(dl->tapRd1) ),
 				      mix_factor));
 
   buffer_tapN_next( &(dl->tapWr) );
@@ -61,13 +61,13 @@ fract32 pitchShift_next(pitchShift* dl, fract32 in) {
   //FIXME at the moment this pitchshift is set out with
   //just two read heads with half-wave envelopes.
   //running in quadrature (amplitude sum always == 1)
-  echoTap24_8_next( &(dl->tapRd0) );
-  echoTap24_8_next( &(dl->tapRd1) );
+  echoTap_next( &(dl->tapRd0) );
+  echoTap_next( &(dl->tapRd1) );
 
   return readVal;
 }
 
-void pitchShift_set_pitchFactor24_8(pitchShift* dl, s32 subsamples) {
+void pitchShift_set_pitchFactor(pitchShift* dl, s32 subsamples) {
   dl->tapRd0.playback_speed = subsamples;
   dl->tapRd1.playback_speed = subsamples;
   s32 scan_speed = abs (dl->tapRd0.playback_speed - 256);

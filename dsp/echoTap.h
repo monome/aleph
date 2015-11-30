@@ -14,13 +14,13 @@
 #include "fix32.h"
 #include "types.h"
 #include "buffer.h"
-// ---- echoTap24_8
+// ---- echoTap
 // Data structure for an 'echo tap'
 // echo is position relative to write tap
 // inc is tap speed along the buffer
 // echoWrap is where tap starts to wrap back
 // echoReset is where echo tap wraps back to
-typedef struct _echoTap24_8 {
+typedef struct _echoTap {
   bufferTapN* tapWr; // pointer to write head
   s32 echoTime; // delay time in subsamples (1/256 sample)
   s32 idx_last;// last position read from (for antialiasing)
@@ -37,7 +37,7 @@ typedef struct _echoTap24_8 {
   //This flag sets the boundary behaviour
   //e.g wrap, oneshot or bounce
   u8 edge_behaviour;
-} echoTap24_8;
+} echoTap;
 
 //the maximum number of samples to use for antialiased read
 #define MAX_ANTIALIAS 3
@@ -53,18 +53,18 @@ typedef struct _echoTap24_8 {
 #define SHAPE_HALFWAVE 3 //shape fadeshort is FR32_MAX until the edges, then slopes down even slower
 
 // fixed grain envelope shapes
-s32 echoTap24_8_envelope(echoTap24_8 *tap);
+s32 echoTap_envelope(echoTap *tap);
 // intialize tap
-extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr);
+extern void echoTap_init(echoTap* tap, bufferTapN* tapWr);
 
 // increment the index in an echo
-extern void echoTap24_8_next(echoTap24_8* tap);
+extern void echoTap_next(echoTap* tap);
 
 // antialiased read
-extern fract32 echoTap24_8_read_antialias(echoTap24_8* echoTap);
+extern fract32 echoTap_read_antialias(echoTap* echoTap);
 
 // interpolated read
-extern fract32 echoTap24_8_read_interp(echoTap24_8* tap);
+extern fract32 echoTap_read_interp(echoTap* tap);
 
-s32 echoTap24_8_envelope(echoTap24_8 *tap);
+s32 echoTap_envelope(echoTap *tap);
 #endif // h guard

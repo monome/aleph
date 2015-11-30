@@ -3,7 +3,7 @@
 #include "pan.h"
 
 // intialize tap
-extern void scrubTap24_8_init(scrubTap24_8* tap, bufferTapN* tapWr){
+extern void scrubTap_init(scrubTap* tap, bufferTapN* tapWr){
   tap->tapWr = tapWr;
   tap->idx_last = tapWr->idx;
 
@@ -17,7 +17,7 @@ extern void scrubTap24_8_init(scrubTap24_8* tap, bufferTapN* tapWr){
   tap->playback_speed = 256;
 }
 
-extern void scrubTap24_8_next(scrubTap24_8* tap){
+extern void scrubTap_next(scrubTap* tap){
   if(tap->scrubTime <= tap->scrubMax && tap->scrubTime >= tap->scrubMin )
     tap->scrubTime += tap->tapWr->inc*256 - tap->playback_speed;
   else {
@@ -45,7 +45,7 @@ extern void scrubTap24_8_next(scrubTap24_8* tap){
   }
 }
 
-s32 scrubTap24_8_envelope(scrubTap24_8 *tap){
+s32 scrubTap_envelope(scrubTap *tap){
   //FIXME need to make this thing crossfade like a state machine
   //which can either be fading out, fading in or not fading
   s32 center = (tap->scrubMin + tap->scrubMax+1) / 2;
@@ -82,10 +82,10 @@ s32 scrubTap24_8_envelope(scrubTap24_8 *tap){
 }
 
 // antialiased read
-extern fract32 scrubTap24_8_read_antialias(scrubTap24_8* scrubTap){
+extern fract32 scrubTap_read_antialias(scrubTap* scrubTap){
     s32 num_samples = (scrubTap->playback_speed + 128) / 256;
     if( num_samples < 2 ) {
-        return scrubTap24_8_read_interp(scrubTap);
+        return scrubTap_read_interp(scrubTap);
     }
     else if( num_samples >= MAX_ANTIALIAS ) {
         num_samples = MAX_ANTIALIAS;
@@ -104,13 +104,13 @@ extern fract32 scrubTap24_8_read_antialias(scrubTap24_8* scrubTap){
         pre_fader = add_fr1x32 ( pre_fader, mult_fr1x32x32(samp1, mix_factor) );
         num_samples--;
     }
-    s32 fader = scrubTap24_8_envelope(scrubTap);
+    s32 fader = scrubTap_envelope(scrubTap);
     fract32 post_fader = mult_fr1x32x32 ( pre_fader, fader);
     return post_fader;
 }
 
 // interpolated read
-extern fract32 scrubTap24_8_read_interp(scrubTap24_8* scrubTap){
+extern fract32 scrubTap_read_interp(scrubTap* scrubTap){
     s32 loop = scrubTap->tapWr->loop * 256;
     s32 idx = (scrubTap->tapWr->idx * 256 + loop - scrubTap->scrubTime) % loop;
 
@@ -125,12 +125,12 @@ extern fract32 scrubTap24_8_read_interp(scrubTap24_8* scrubTap){
     scrubTap->zero_crossing = (samp1_sign != samp2_sign);
 
     fract32 pre_fader = pan_lin_mix(samp1, samp2, inter_sample)   ;
-    s32 fader = scrubTap24_8_envelope(scrubTap);
+    s32 fader = scrubTap_envelope(scrubTap);
     fract32 post_fader = mult_fr1x32x32 ( pre_fader, fader);
     return post_fader;
 }
 
 // set scrub time directly in subsamples
-extern void scrubTap24_8_set_pos(scrubTap24_8* tap, s32 scrubTime){
+extern void scrubTap_set_pos(scrubTap* tap, s32 scrubTime){
     tap->scrubTime = scrubTime;
 }

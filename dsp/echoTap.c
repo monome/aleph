@@ -3,7 +3,7 @@
 #include "pan.h"
 
 // intialize tap
-extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
+extern void echoTap_init(echoTap* tap, bufferTapN* tapWr){
   tap->tapWr = tapWr;
   tap->idx_last = tapWr->idx;
 
@@ -17,7 +17,7 @@ extern void echoTap24_8_init(echoTap24_8* tap, bufferTapN* tapWr){
   tap->playback_speed = 256;
 }
 
-extern void echoTap24_8_next(echoTap24_8* tap){
+extern void echoTap_next(echoTap* tap){
   if(tap->echoTime <= tap->echoMax && tap->echoTime >= tap->echoMin )
     tap->echoTime += tap->tapWr->inc*256 - tap->playback_speed;
   else {
@@ -45,7 +45,7 @@ extern void echoTap24_8_next(echoTap24_8* tap){
   }
 }
 
-s32 echoTap24_8_envelope(echoTap24_8 *tap){
+s32 echoTap_envelope(echoTap *tap){
   //FIXME need to make this thing crossfade like a state machine
   //which can either be fading out, fading in or not fading
   s32 center = (tap->echoMin + tap->echoMax+1) / 2;
@@ -82,10 +82,10 @@ s32 echoTap24_8_envelope(echoTap24_8 *tap){
 }
 
 // antialiased read
-extern fract32 echoTap24_8_read_antialias(echoTap24_8* echoTap){
+extern fract32 echoTap_read_antialias(echoTap* echoTap){
     s32 num_samples = (echoTap->playback_speed + 128) / 256;
     if( num_samples < 2 ) {
-        return echoTap24_8_read_interp(echoTap);
+        return echoTap_read_interp(echoTap);
     }
     else if( num_samples >= MAX_ANTIALIAS ) {
         num_samples = MAX_ANTIALIAS;
@@ -104,13 +104,13 @@ extern fract32 echoTap24_8_read_antialias(echoTap24_8* echoTap){
         pre_fader = add_fr1x32 ( pre_fader, mult_fr1x32x32(samp1, mix_factor) );
         num_samples--;
     }
-    s32 fader = echoTap24_8_envelope(echoTap);
+    s32 fader = echoTap_envelope(echoTap);
     fract32 post_fader = mult_fr1x32x32 ( pre_fader, fader);
     return post_fader;
 }
 
 // interpolated read
-extern fract32 echoTap24_8_read_interp(echoTap24_8* echoTap){
+extern fract32 echoTap_read_interp(echoTap* echoTap){
     s32 loop = echoTap->tapWr->loop * 256;
     s32 idx = (echoTap->tapWr->idx * 256 + loop - echoTap->echoTime) % loop;
 
@@ -125,12 +125,12 @@ extern fract32 echoTap24_8_read_interp(echoTap24_8* echoTap){
     echoTap->zero_crossing = (samp1_sign != samp2_sign);
 
     fract32 pre_fader = pan_lin_mix(samp1, samp2, inter_sample)   ;
-    s32 fader = echoTap24_8_envelope(echoTap);
+    s32 fader = echoTap_envelope(echoTap);
     fract32 post_fader = mult_fr1x32x32 ( pre_fader, fader);
     return post_fader;
 }
 
 // set echo time directly in subsamples
-extern void echoTap24_8_set_pos(echoTap24_8* tap, s32 echoTime){
+extern void echoTap_set_pos(echoTap* tap, s32 echoTime){
     tap->echoTime = echoTime;
 }

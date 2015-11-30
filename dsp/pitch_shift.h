@@ -19,8 +19,8 @@ typedef struct _pitchShift {
   //-- audio buffer class
   audioBuffer buffer;
 
-  echoTap24_8 tapRd0;
-  echoTap24_8 tapRd1;
+  echoTap tapRd0;
+  echoTap tapRd1;
   bufferTapN tapWr;
   // flag to toggle writing of new data
   //u8 write;
@@ -39,6 +39,6 @@ extern void pitchShift_init(pitchShift* dl, fract32* bufData, u32 frames);
 extern fract32 pitchShift_next(pitchShift* dl, fract32 in);
 
 //set pitchshift (24.8 fraction of original frequency)
-void pitchShift_set_pitchFactor24_8(pitchShift* dl, s32 subsamples) ;
+void pitchShift_set_pitchFactor(pitchShift* dl, s32 subsamples) ;
 
 #endif // h guard

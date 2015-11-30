@@ -152,7 +152,7 @@ void module_init(void) {
   param_setup( 	eParam_effect_g1,	EFFECT_DEFAULT );
 
   param_setup (eParam_scrubPitch_g1,    256);
-  param_setup (eParam_echoPitch_g1,    256);
+  param_setup (eParam_echoSpeed_g1,    256);
   grain_init(&(grains[0]), pGrainsData->audioBuffer[0], LINES_BUF_FRAMES);
 
 }
@@ -200,7 +200,6 @@ void module_process_frame(void) {
   out[1] = 0;
   out[2] = 0;
   out[3] = 0;
-  return ;
   for (i=0;i<4;i++) {
     mix_panned_mono (in[i], &(out[0]), &(out[1]), panI[i], faderI[i]);
     mix_aux_mono (in[i], &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
@@ -330,30 +329,40 @@ void module_set_param(u32 idx, ParamValue v) {
     
   //grain scrubber params
   case eParam_scrubPitch_g1 :
-    grain_set_pitchFactor24_8(&(grains[0]), v/256);
+    grain_set_scrubPitch(&(grains[0]), v/256);
     break;
 
   case eParam_scrubLength_g1 :
+    grain_set_scrubLength (&(grains[0]), v);
     break;
   case eParam_scrubRandomise_g1 :
+    grain_set_scrubRandomise (&(grains[0]), v);
     break;
   case eParam_scrubEdgeBehaviour_g1 :
+    grain_set_scrubEdgeBehaviour (&(grains[0]), v);
     break;
 
   //grain echo params
   case eParam_echoTime_g1 :
+    grain_set_echoTime(&(grains[0]),v);
     break;
   case eParam_echoSpeed_g1 :
+    grain_set_echoSpeed(&(grains[0]),v);
     break;
   case eParam_echoEdgeBehaviour_g1 :
+    grain_set_echoEdgeBehaviour(&(grains[0]),v);
     break;
   case eParam_echoMin_g1 :
+    grain_set_echoMin(&(grains[0]),v);
     break;
   case eParam_echoMax_g1 :
+    grain_set_echoMax(&(grains[0]),v);
     break;
   case eParam_echoLFOAmp_g1 :
+    grain_set_echoLFOAmp(&(grains[0]),v);
     break;
   case eParam_echoLFOSpeed_g1 :
+    grain_set_echoLFOSpeed(&(grains[0]),v);
     break;
   default:
     break;

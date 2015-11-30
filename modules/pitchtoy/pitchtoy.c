@@ -301,28 +301,28 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParam_pitchshift0 :
-    pitchShift_set_pitchFactor24_8(&(grains[0]), v/256);
+    pitchShift_set_pitchFactor(&(grains[0]), v/256);
     break;
   case eParam_pitchshift0fader:
     pitchShiftFaderTarget[0] = v;
     break;
 
   case eParam_pitchshift1 :
-    pitchShift_set_pitchFactor24_8(&(grains[1]), v/256);
+    pitchShift_set_pitchFactor(&(grains[1]), v/256);
     break;
   case eParam_pitchshift1fader:
     pitchShiftFaderTarget[1] = v;
     break;
 
   case eParam_pitchshift2 :
-    pitchShift_set_pitchFactor24_8(&(grains[2]), v/256);
+    pitchShift_set_pitchFactor(&(grains[2]), v/256);
     break;
   case eParam_pitchshift2fader:
     pitchShiftFaderTarget[2] = v;
     break;
 
   case eParam_pitchshift3 :
-    pitchShift_set_pitchFactor24_8(&(grains[3]), v/256);
+    pitchShift_set_pitchFactor(&(grains[3]), v/256);
     break;
   case eParam_pitchshift3fader:
     pitchShiftFaderTarget[3] = v;
