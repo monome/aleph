@@ -350,13 +350,13 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParam_scrubLength_g1 :
-    grain_set_scrubLength (&(grains[0]), v);
+    grain_set_scrubLength (&(grains[0]), v/256);
     break;
   case eParam_scrubRandomise_g1 :
-    grain_set_scrubRandomise (&(grains[0]), v);
+    grain_set_scrubRandomise (&(grains[0]), v/256);
     break;
   case eParam_scrubEdgeBehaviour_g1 :
-    grain_set_scrubEdgeBehaviour (&(grains[0]), v);
+    grain_set_scrubEdgeBehaviour (&(grains[0]), v/65536);
     break;
 
   //grain echo params
@@ -364,10 +364,10 @@ void module_set_param(u32 idx, ParamValue v) {
     grain_set_echoTime(&(grains[0]),v);
     break;
   case eParam_echoSpeed_g1 :
-    grain_set_echoSpeed(&(grains[0]),v);
+    grain_set_echoSpeed(&(grains[0]),v/256);
     break;
   case eParam_echoEdgeBehaviour_g1 :
-    grain_set_echoEdgeBehaviour(&(grains[0]),v);
+    grain_set_echoEdgeBehaviour(&(grains[0]),v/65536);
     break;
   case eParam_echoMin_g1 :
     grain_set_echoMin(&(grains[0]),v);
@@ -376,10 +376,10 @@ void module_set_param(u32 idx, ParamValue v) {
     grain_set_echoMax(&(grains[0]),v);
     break;
   case eParam_echoLFOAmp_g1 :
-    grain_set_echoLFOAmp(&(grains[0]),v);
+    grain_set_echoLFOAmp(&(grains[0]),v/65536);//FIXME figure out a good scaling const
     break;
   case eParam_echoLFOSpeed_g1 :
-    grain_set_echoLFOSpeed(&(grains[0]),v);
+    grain_set_echoLFOSpeed(&(grains[0]),v/256);
     break;
   default:
     break;
