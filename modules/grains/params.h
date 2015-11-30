@@ -45,7 +45,7 @@
 #define TIME_MS_MAX FR32_MAX
 #define TIME_MS_RADIX 18
 
-#define TIME_SAMPLE eParamTypeFix
+#define TIME_SAMPLE_TYPE eParamTypeFix
 #define TIME_SAMPLE_MIN 0x00000000
 #define TIME_SAMPLE_MAX FR32_MAX
 #define TIME_SAMPLE_RADIX 16
