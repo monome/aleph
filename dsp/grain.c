@@ -39,7 +39,7 @@ fract32 grain_next(grain* dl, fract32 in) {
   buffer_tapN_write(&(dl->tapWr), in);
 
   fract32 readVal;
-  fract32 mix_factor = FR32_MAX / 2;
+  fract32 mix_factor = FR32_MAX;
   
   readVal = mult_fr1x32x32(echoTap_read_interp( &(dl->scrubTap) ),
 			   mix_factor);
@@ -50,6 +50,7 @@ fract32 grain_next(grain* dl, fract32 in) {
   buffer_tapN_next( &(dl->tapWr) );
   //scrubTap always drives the echoTap
   scrubTap_next( &(dl->scrubTap) );
+  echoTap_next( &(dl->echoTap) );
 
   return readVal;
 }
