@@ -361,7 +361,7 @@ void module_set_param(u32 idx, ParamValue v) {
 
   //grain echo params
   case eParam_echoTime_g1 :
-    grain_set_echoTime(&(grains[0]),v);
+    grain_set_echoTime(&(grains[0]),v/4);
     break;
   case eParam_echoSpeed_g1 :
     grain_set_echoSpeed(&(grains[0]),v/256);
@@ -370,10 +370,10 @@ void module_set_param(u32 idx, ParamValue v) {
     grain_set_echoEdgeBehaviour(&(grains[0]),v/65536);
     break;
   case eParam_echoMin_g1 :
-    grain_set_echoMin(&(grains[0]),v);
+    grain_set_echoMin(&(grains[0]),v/4);
     break;
   case eParam_echoMax_g1 :
-    grain_set_echoMax(&(grains[0]),v);
+    grain_set_echoMax(&(grains[0]),v/4);
     break;
   case eParam_echoLFOAmp_g1 :
     grain_set_echoLFOAmp(&(grains[0]),v/65536);//FIXME figure out a good scaling const
