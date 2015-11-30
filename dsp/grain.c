@@ -54,6 +54,15 @@ fract32 grain_next(grain* dl, fract32 in) {
   return readVal;
 }
 
+
+void  grain_set_scrubFadeLength(grain* dl, s32 subsamples) {
+  dl->scrubTap.fadeLength = subsamples;
+}
+
+void  grain_set_echoFadeLength(grain* dl, s32 subsamples) {
+    dl->echoTap.fadeLength = subsamples;
+}
+
 void grain_set_scrubPitch(grain* dl, s32 subsamples) {
   dl->scrubTap.pitch = subsamples;
 }

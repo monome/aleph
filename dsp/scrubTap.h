@@ -38,6 +38,7 @@ typedef struct _scrubTap {
   //This flag sets the boundary behaviour
   //e.g wrap, oneshot or bounce
   u8 edgeBehaviour;
+  s32 fadeLength;
 } scrubTap;
 
 //the maximum number of samples to use for antialiased read
