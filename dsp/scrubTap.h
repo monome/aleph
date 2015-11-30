@@ -23,12 +23,12 @@
 // scrubReset is where scrub tap wraps back to
 typedef struct _scrubTap {
   bufferTapN* tapWr; // pointer to write head
-  s32 scrubTime; // delay time in subsamples (1/256 sample)
+  s32 time; // delay time in subsamples (1/256 sample)
   s32 idx_last;// last position read from (for antialiasing)
 
-  s32 playback_speed;
-  s32 scrubMax;
-  s32 scrubMin;
+  s32 pitch;
+  s32 length;
+  s32 randomise;// How much to randomise scrubLength
   //check for zero crossing
   u8 zero_crossing;
 
@@ -37,7 +37,7 @@ typedef struct _scrubTap {
 
   //This flag sets the boundary behaviour
   //e.g wrap, oneshot or bounce
-  u8 edge_behaviour;
+  u8 edgeBehaviour;
 } scrubTap;
 
 //the maximum number of samples to use for antialiased read

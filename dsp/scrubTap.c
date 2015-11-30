@@ -7,39 +7,35 @@ extern void scrubTap_init(scrubTap* tap, bufferTapN* tapWr){
   tap->tapWr = tapWr;
   tap->idx_last = tapWr->idx;
 
-  tap->scrubMin = 0;
-  tap->scrubMax = 256 * tapWr->loop / 2;
-  tap->scrubTime = (tap->scrubMax + tap->scrubMin + 1 )/2;
+  tap->length = 256 * tapWr->loop / 2;
+  tap->time = (tap->length  + 1 )/2;
   tap->shape = SHAPE_TOPHAT;
-  tap->edge_behaviour = EDGE_WRAP;
+  tap->edgeBehaviour = EDGE_WRAP;
 
   //256 subsamples = 1x in real time
-  tap->playback_speed = 256;
+  tap->pitch = 256;
 }
 
 extern void scrubTap_next(scrubTap* tap){
-  if(tap->scrubTime <= tap->scrubMax && tap->scrubTime >= tap->scrubMin )
-    tap->scrubTime += tap->tapWr->inc*256 - tap->playback_speed;
+  if(tap->time <= tap->length && tap->time >= 0 )
+    tap->time += tap->tapWr->inc*256 - tap->pitch;
   else {
-    s32 scrubRange;
-    switch (tap->edge_behaviour) {
+    switch (tap->edgeBehaviour) {
     case EDGE_ONESHOT:
-      tap->playback_speed = 0;
+      tap->pitch = 0;
       break;
     case EDGE_WRAP:
-      scrubRange = tap->scrubMax - tap->scrubMin;
-      tap->scrubTime = abs (tap->scrubTime - tap->scrubMin + scrubRange)
-	% scrubRange;
-      tap->scrubTime += tap->scrubMin;
+      tap->time = abs (tap->time + tap->length)
+	% tap->length;
       break;
     case EDGE_BOUNCE:
-      if(tap->scrubTime < tap->scrubMin) {
-	tap->playback_speed = abs(tap->playback_speed) * -1 ;
+      if(tap->time < 0) {
+	tap->pitch = abs(tap->pitch) * -1 ;
       }
-      else if (tap->scrubTime > tap->scrubMax) {
-	tap->playback_speed = abs(tap->playback_speed) ;
+      else if (tap->time > tap->length) {
+	tap->pitch = abs(tap->pitch) ;
       }
-      tap->scrubTime += tap->tapWr->inc*256 - tap->playback_speed;
+      tap->time += tap->tapWr->inc*256 - tap->pitch;
       break;
     }
   }
@@ -48,11 +44,11 @@ extern void scrubTap_next(scrubTap* tap){
 s32 scrubTap_envelope(scrubTap *tap){
   //FIXME need to make this thing crossfade like a state machine
   //which can either be fading out, fading in or not fading
-  s32 center = (tap->scrubMin + tap->scrubMax+1) / 2;
-  s32 dist_from_center = tap->scrubTime - center;
+  s32 center = ( tap->length + 1 ) / 2;
+  s32 dist_from_center = tap->time - center;
   if ( dist_from_center < 0 )
     dist_from_center *= -1;
-  s32 max_dist_from_center = (tap->scrubMax - tap->scrubMin +1) / 2 ;
+  s32 max_dist_from_center = (tap->length  +1) / 2 ;
   s32 scale_factor = FR32_MAX / max_dist_from_center;
   s32 amplitude;
 
@@ -83,7 +79,7 @@ s32 scrubTap_envelope(scrubTap *tap){
 
 // antialiased read
 extern fract32 scrubTap_read_antialias(scrubTap* scrubTap){
-    s32 num_samples = (scrubTap->playback_speed + 128) / 256;
+    s32 num_samples = (scrubTap->pitch + 128) / 256;
     if( num_samples < 2 ) {
         return scrubTap_read_interp(scrubTap);
     }
@@ -96,7 +92,7 @@ extern fract32 scrubTap_read_antialias(scrubTap* scrubTap){
     while(num_samples > 0) {
         s32 loop = scrubTap->tapWr->loop * 256;
         s32 idx = (scrubTap->tapWr->idx * 256 + loop
-		   - scrubTap->scrubTime
+		   - scrubTap->time
 		   - (num_samples -1) * 256)
 	  % loop;
         u32 samp1_index = idx / 256;
@@ -112,7 +108,7 @@ extern fract32 scrubTap_read_antialias(scrubTap* scrubTap){
 // interpolated read
 extern fract32 scrubTap_read_interp(scrubTap* scrubTap){
     s32 loop = scrubTap->tapWr->loop * 256;
-    s32 idx = (scrubTap->tapWr->idx * 256 + loop - scrubTap->scrubTime) % loop;
+    s32 idx = (scrubTap->tapWr->idx * 256 + loop - scrubTap->time) % loop;
 
     u32 samp1_index = idx / 256;
     u32 samp2_index = ( (idx + 256) % loop ) / 256 ;
@@ -131,6 +127,6 @@ extern fract32 scrubTap_read_interp(scrubTap* scrubTap){
 }
 
 // set scrub time directly in subsamples
-extern void scrubTap_set_pos(scrubTap* tap, s32 scrubTime){
-    tap->scrubTime = scrubTime;
+extern void scrubTap_set_pos(scrubTap* tap, s32 time){
+    tap->time = time;
 }

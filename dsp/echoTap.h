@@ -22,21 +22,22 @@
 // echoReset is where echo tap wraps back to
 typedef struct _echoTap {
   bufferTapN* tapWr; // pointer to write head
-  s32 echoTime; // delay time in subsamples (1/256 sample)
+  s32 time; // delay time in subsamples (1/256 sample)
   s32 idx_last;// last position read from (for antialiasing)
 
-  s32 playback_speed;
-  s32 echoMax;
-  s32 echoMin;
+  s32 speed;
+  s32 max;
+  s32 min;
   //check for zero crossing
   u8 zero_crossing;
 
-  //This flag is used to set the type of grain envelope
+  //This flag is used to set the type of envelope.
+  //No longer to be used for equal-power x-fades
   u8 shape;
 
   //This flag sets the boundary behaviour
   //e.g wrap, oneshot or bounce
-  u8 edge_behaviour;
+  u8 edgeBehaviour;
 } echoTap;
 
 //the maximum number of samples to use for antialiased read
@@ -46,8 +47,8 @@ typedef struct _echoTap {
 #define EDGE_BOUNCE 1 //if bounce, then flip the read head play direction when grain hits boundary
 #define  EDGE_WRAP 2 //if wrap, then go back to the opposite boundary
 
-#define SHAPE_TOPHAT 0 //tophat is FR32_MpAX between echoMax and echoMin, 0 elsewhere
-#define SHAPE_TRIANGLE 1 //triangle is linear ramp up to FR32_MAX from echoMin to center, back down to zero from center to echoMax
+#define SHAPE_TOPHAT 0 //tophat is FR32_MpAX between max and min, 0 elsewhere
+#define SHAPE_TRIANGLE 1 //triangle is linear ramp up to FR32_MAX from min to center, back down to zero from center to max
 #define SHAPE_LUMP 2 //grain_lump is 1 - (abs(x)) for -1 < x > 1
   
 #define SHAPE_HALFWAVE 3 //shape fadeshort is FR32_MAX until the edges, then slopes down even slower

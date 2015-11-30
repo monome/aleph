@@ -7,39 +7,39 @@ extern void echoTap_init(echoTap* tap, bufferTapN* tapWr){
   tap->tapWr = tapWr;
   tap->idx_last = tapWr->idx;
 
-  tap->echoMin = 0;
-  tap->echoMax = 256 * tapWr->loop / 2;
-  tap->echoTime = (tap->echoMax + tap->echoMin + 1 )/2;
+  tap->min = 0;
+  tap->max = 256 * tapWr->loop / 2;
+  tap->time = (tap->max + tap->min + 1 )/2;
   tap->shape = SHAPE_TOPHAT;
-  tap->edge_behaviour = EDGE_WRAP;
+  tap->edgeBehaviour = EDGE_WRAP;
 
   //256 subsamples = 1x in real time
-  tap->playback_speed = 256;
+  tap->speed = 256;
 }
 
 extern void echoTap_next(echoTap* tap){
-  if(tap->echoTime <= tap->echoMax && tap->echoTime >= tap->echoMin )
-    tap->echoTime += tap->tapWr->inc*256 - tap->playback_speed;
+  if(tap->time <= tap->max && tap->time >= tap->min )
+    tap->time += tap->tapWr->inc*256 - tap->speed;
   else {
     s32 echoRange;
-    switch (tap->edge_behaviour) {
+    switch (tap->edgeBehaviour) {
     case EDGE_ONESHOT:
-      tap->playback_speed = 0;
+      tap->speed = 0;
       break;
     case EDGE_WRAP:
-      echoRange = tap->echoMax - tap->echoMin;
-      tap->echoTime = abs (tap->echoTime - tap->echoMin + echoRange)
+      echoRange = tap->max - tap->min;
+      tap->time = abs (tap->time - tap->min + echoRange)
 	% echoRange;
-      tap->echoTime += tap->echoMin;
+      tap->time += tap->min;
       break;
     case EDGE_BOUNCE:
-      if(tap->echoTime < tap->echoMin) {
-	tap->playback_speed = abs(tap->playback_speed) * -1 ;
+      if(tap->time < tap->min) {
+	tap->speed = abs(tap->speed) * -1 ;
       }
-      else if (tap->echoTime > tap->echoMax) {
-	tap->playback_speed = abs(tap->playback_speed) ;
+      else if (tap->time > tap->max) {
+	tap->speed = abs(tap->speed) ;
       }
-      tap->echoTime += tap->tapWr->inc*256 - tap->playback_speed;
+      tap->time += tap->tapWr->inc*256 - tap->speed;
       break;
     }
   }
@@ -48,11 +48,11 @@ extern void echoTap_next(echoTap* tap){
 s32 echoTap_envelope(echoTap *tap){
   //FIXME need to make this thing crossfade like a state machine
   //which can either be fading out, fading in or not fading
-  s32 center = (tap->echoMin + tap->echoMax+1) / 2;
-  s32 dist_from_center = tap->echoTime - center;
+  s32 center = (tap->min + tap->max+1) / 2;
+  s32 dist_from_center = tap->time - center;
   if ( dist_from_center < 0 )
     dist_from_center *= -1;
-  s32 max_dist_from_center = (tap->echoMax - tap->echoMin +1) / 2 ;
+  s32 max_dist_from_center = (tap->max - tap->min +1) / 2 ;
   s32 scale_factor = FR32_MAX / max_dist_from_center;
   s32 amplitude;
 
@@ -83,7 +83,7 @@ s32 echoTap_envelope(echoTap *tap){
 
 // antialiased read
 extern fract32 echoTap_read_antialias(echoTap* echoTap){
-    s32 num_samples = (echoTap->playback_speed + 128) / 256;
+    s32 num_samples = (echoTap->speed + 128) / 256;
     if( num_samples < 2 ) {
         return echoTap_read_interp(echoTap);
     }
@@ -96,7 +96,7 @@ extern fract32 echoTap_read_antialias(echoTap* echoTap){
     while(num_samples > 0) {
         s32 loop = echoTap->tapWr->loop * 256;
         s32 idx = (echoTap->tapWr->idx * 256 + loop
-		   - echoTap->echoTime
+		   - echoTap->time
 		   - (num_samples -1) * 256)
 	  % loop;
         u32 samp1_index = idx / 256;
@@ -112,7 +112,7 @@ extern fract32 echoTap_read_antialias(echoTap* echoTap){
 // interpolated read
 extern fract32 echoTap_read_interp(echoTap* echoTap){
     s32 loop = echoTap->tapWr->loop * 256;
-    s32 idx = (echoTap->tapWr->idx * 256 + loop - echoTap->echoTime) % loop;
+    s32 idx = (echoTap->tapWr->idx * 256 + loop - echoTap->time) % loop;
 
     u32 samp1_index = idx / 256;
     u32 samp2_index = ( (idx + 256) % loop ) / 256 ;
@@ -131,6 +131,6 @@ extern fract32 echoTap_read_interp(echoTap* echoTap){
 }
 
 // set echo time directly in subsamples
-extern void echoTap_set_pos(echoTap* tap, s32 echoTime){
-    tap->echoTime = echoTime;
+extern void echoTap_set_pos(echoTap* tap, s32 time){
+    tap->time = time;
 }
