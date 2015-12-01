@@ -19,18 +19,18 @@ void pitchShift_init(pitchShift* dl, fract32* data, u32 frames) {
   buffer_tapN_init(&(dl->tapWr), &(dl->buffer));
 
   echoTap_init(&(dl->tapRd0), &(dl->tapWr));
-  dl->tapRd0.edge_behaviour = EDGE_WRAP;
+  dl->tapRd0.edgeBehaviour = EDGE_WRAP;
   dl->tapRd0.shape = SHAPE_LUMP;
-  dl->tapRd0.echoMin = 0;
-  dl->tapRd0.echoMax = 256 * 1023;
-  dl->tapRd0.echoTime = 0;
+  dl->tapRd0.min = 0;
+  dl->tapRd0.max = 256 * 1023;
+  dl->tapRd0.time = 0;
 
   echoTap_init(&(dl->tapRd1), &(dl->tapWr));
-  dl->tapRd1.edge_behaviour = EDGE_WRAP;
+  dl->tapRd1.edgeBehaviour = EDGE_WRAP;
   dl->tapRd1.shape = SHAPE_LUMP;
-  dl->tapRd1.echoMin = 0;
-  dl->tapRd1.echoMax = 256 * 1023;
-  dl->tapRd1.echoTime= 256 * 512;
+  dl->tapRd1.min = 0;
+  dl->tapRd1.max = 256 * 1023;
+  dl->tapRd1.time= 256 * 512;
 
 }
 
@@ -68,7 +68,6 @@ fract32 pitchShift_next(pitchShift* dl, fract32 in) {
 }
 
 void pitchShift_set_pitchFactor(pitchShift* dl, s32 subsamples) {
-  dl->tapRd0.playback_speed = subsamples;
-  dl->tapRd1.playback_speed = subsamples;
-  s32 scan_speed = abs (dl->tapRd0.playback_speed - 256);
+  dl->tapRd0.speed = subsamples;
+  dl->tapRd1.speed = subsamples;
 }
