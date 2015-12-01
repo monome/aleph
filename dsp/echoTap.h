@@ -66,7 +66,9 @@ extern void echoTap_next(echoTap* tap);
 extern fract32 echoTap_read_antialias(echoTap* echoTap);
 
 // interpolated read
-extern fract32 echoTap_read_interp(echoTap* tap);
+extern fract32 echoTap_read_interp(echoTap* tap, s32 time);
+
+extern fract32 echoTap_read_xfade(echoTap* echoTap);
 
 s32 echoTap_envelope(echoTap *tap);
 #endif // h guard

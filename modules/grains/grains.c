@@ -315,11 +315,11 @@ void module_set_param(u32 idx, ParamValue v) {
     //global grain params
   case eParam_scrubFadeLength :
     //FIXME - should apply across all grains -hmmm...
-    grain_set_scrubFadeLength(&(grains[0]), v);
+    grain_set_scrubFadeLength(&(grains[0]), v/256);
     break;
   case eParam_echoFadeLength :
     //FIXME - should apply across all grains -hmmm...
-    grain_set_echoFadeLength(&(grains[0]), v);
+    grain_set_echoFadeLength(&(grains[0]), v/256);
     break;
 
   //grain mix params

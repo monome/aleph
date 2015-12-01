@@ -42,10 +42,12 @@ fract32 pitchShift_next(pitchShift* dl, fract32 in) {
 
   fract32 readVal;
   fract32 mix_factor = FR32_MAX / 2;
-  readVal = mult_fr1x32x32(echoTap_read_interp( &(dl->tapRd0) ),
+  readVal = mult_fr1x32x32(echoTap_read_interp( &(dl->tapRd0),
+						dl->tapRd0.time) ,
 			   mix_factor);
   readVal = add_fr1x32(readVal,
-		       mult_fr1x32x32(echoTap_read_interp( &(dl->tapRd1) ),
+		       mult_fr1x32x32(echoTap_read_interp( &(dl->tapRd1),
+							   dl->tapRd1.time ),
 				      mix_factor));
 
   buffer_tapN_next( &(dl->tapWr) );

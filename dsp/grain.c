@@ -19,10 +19,10 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
 
   echoTap_init(&(dl->echoTap), &(dl->tapWr));
   dl->echoTap.edgeBehaviour = EDGE_WRAP;
-  dl->echoTap.shape = SHAPE_LUMP;
+  dl->echoTap.shape = SHAPE_TOPHAT;
   dl->echoTap.min = 0;
-  dl->echoTap.max = 256 * 1023;
-  dl->echoTap.time= 256 * 512;
+  dl->echoTap.max = 256 * frames;
+  dl->echoTap.time= 256 ;
 
   scrubTap_init(&(dl->scrubTap), &(dl->echoTap));
   dl->scrubTap.edgeBehaviour = EDGE_WRAP;
@@ -38,12 +38,11 @@ fract32 grain_next(grain* dl, fract32 in) {
   buffer_tapN_write(&(dl->tapWr), in);
 
   fract32 readVal;
-  fract32 mix_factor = FR32_MAX;
+  /* fract32 mix_factor = FR32_MAX; */
   
-  readVal = mult_fr1x32x32(scrubTap_read_interp( &(dl->scrubTap) ),
-			   mix_factor);
-  /* readVal = mult_fr1x32x32(echoTap_read_interp( &(dl->scrubTap) ), */
+  /* readVal = mult_fr1x32x32(scrubTap_read_interp( &(dl->scrubTap) ), */
   /* 			   mix_factor); */
+  readVal = echoTap_read_xfade( &(dl->echoTap));
 
   
   /* readVal = add_fr1x32(readVal, */
@@ -51,7 +50,7 @@ fract32 grain_next(grain* dl, fract32 in) {
   /* 				      mix_factor)); */
 
   buffer_tapN_next( &(dl->tapWr) );
-  scrubTap_next( &(dl->scrubTap) );
+  /* scrubTap_next( &(dl->scrubTap) ); */
   echoTap_next( &(dl->echoTap) );
 
   return readVal;

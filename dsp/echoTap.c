@@ -29,32 +29,38 @@ extern void echoTap_next(echoTap* tap){
       else
 	tap->time = tap->max;
       break;
-    case EDGE_WRAP:
-      echoRange = tap->max - tap->min;
-      tap->time = abs (tap->time - tap->min + echoRange)
-	% echoRange;
-      tap->time += tap->min;
-      break;
     case EDGE_BOUNCE:
       if(tap->time < tap->min) {
 	tap->speed = abs(tap->speed) * -1 ;
+	tap->time += tap->fadeLength;
       }
-      else if (tap->time > tap->max) {
+      else {
 	tap->speed = abs(tap->speed) ;
+	tap->time -= tap->fadeLength;
       }
       tap->time += tap->tapWr->inc*256 - tap->speed;
       break;
+    case EDGE_WRAP:
+      echoRange = tap->max - tap->min - tap->fadeLength;
+      if (tap->time >= tap->max)
+	tap->time = tap->time - echoRange;
+      else
+	tap->time = tap->time + echoRange;
+      tap->time += tap->tapWr->inc*256 - tap->speed;
+      break;
     default ://watch out! copy-pasted from edge_wrap
-      echoRange = tap->max - tap->min;
-      tap->time = abs (tap->time - tap->min + echoRange)
-	% echoRange;
-      tap->time += tap->min;
+      echoRange = tap->max - tap->min - tap->fadeLength;
+      if (tap->time >= tap->max)
+	tap->time = tap->time - echoRange;
+      else
+	tap->time = tap->time + echoRange;
+      tap->time += tap->tapWr->inc*256 - tap->speed;
       break;
     }
   }
 }
-
-s32 echoTap_envelope(echoTap *tap){
+    
+s32 echoTap_envelope(echoTap *tap) {
   s32 center = (tap->min + tap->max+1) / 2;
   s32 dist_from_center = tap->time - center;
   if ( dist_from_center < 0 )
@@ -88,38 +94,42 @@ s32 echoTap_envelope(echoTap *tap){
   return amplitude ;
 }
 
+//FIXME done too much hacking around in here for this still to work...
 // antialiased or interpolated read depending speed
-extern fract32 echoTap_read_antialias(echoTap* echoTap){
-    s32 num_samples = (echoTap->speed + 128) / 256;
-    if( num_samples < 2 ) {
-        return echoTap_read_interp(echoTap);
-    }
-    else if( num_samples >= MAX_ANTIALIAS ) {
-        num_samples = MAX_ANTIALIAS;
-    }
+/* extern fract32 echoTap_read_antialias(echoTap* echoTap){ */
+/*     s32 num_samples = (echoTap->speed + 128) / 256; */
+/*     if( num_samples < 2 ) { */
+/*       return echoTap_read_interp(echoTap, echoTap->time); */
+/*     } */
+/*     else if( num_samples >= MAX_ANTIALIAS ) { */
+/*         num_samples = MAX_ANTIALIAS; */
+/*     } */
 
-    s32 mix_factor = FR32_MAX / num_samples;
-    fract32 pre_fader = 0;
-    while(num_samples > 0) {
-        s32 loop = echoTap->tapWr->loop * 256;
-        s32 idx = (echoTap->tapWr->idx * 256 + loop
-		   - echoTap->time
-		   - (num_samples -1) * 256)
-	  % loop;
-        u32 samp1_index = idx / 256;
-        fract32 samp1 = echoTap->tapWr->buf->data[samp1_index ];
-        pre_fader = add_fr1x32 ( pre_fader, mult_fr1x32x32(samp1, mix_factor) );
-        num_samples--;
-    }
-    s32 fader = echoTap_envelope(echoTap);
-    fract32 post_fader = mult_fr1x32x32 ( pre_fader, fader);
-    return post_fader;
-}
+/*     s32 mix_factor = FR32_MAX / num_samples; */
+/*     fract32 pre_fader = 0; */
+/*     while(num_samples > 0) { */
+/*         s32 loop = echoTap->tapWr->loop * 256; */
+/*         s32 idx = (echoTap->tapWr->idx * 256 + loop */
+/* 		   - echoTap->time */
+/* 		   - (num_samples -1) * 256) */
+/* 	  % loop; */
+/*         u32 samp1_index = idx / 256; */
+/*         fract32 samp1 = echoTap->tapWr->buf->data[samp1_index ]; */
+/*         pre_fader = add_fr1x32 ( pre_fader, mult_fr1x32x32(samp1, mix_factor) ); */
+/*         num_samples--; */
+/*     } */
+/*     //Debug disable envelope for now.  comment out below to re-enable */
+/*     return  pre_fader; */
+    
+/*     s32 fader = echoTap_envelope(echoTap); */
+/*     fract32 post_fader = mult_fr1x32x32 ( pre_fader, fader); */
+/*     return post_fader; */
+/* } */
 
 // interpolated read
-extern fract32 echoTap_read_interp(echoTap* echoTap){
+extern fract32 echoTap_read_interp(echoTap* echoTap, s32 time){
     s32 loop = echoTap->tapWr->loop * 256;
-    s32 idx = (echoTap->tapWr->idx * 256 + loop - echoTap->time) % loop;
+    s32 idx = (echoTap->tapWr->idx * 256 + loop - time) % loop;
 
     u32 samp1_index = idx / 256;
     u32 samp2_index = ( (idx + 256) % loop ) / 256 ;
@@ -135,6 +145,76 @@ extern fract32 echoTap_read_interp(echoTap* echoTap){
     s32 fader = echoTap_envelope(echoTap);
     fract32 post_fader = mult_fr1x32x32 ( pre_fader, fader);
     return post_fader;
+}
+
+//#!gnuplot
+//plot cos(x*pi/2), sin(x*pi/2), 1 - x**2, 1 - (1 - x)**2
+//fades x into y as pos slides from 0 to FR32_MAX
+s32 echoTap_xFade (s32 x, s32 y, s32 pos) {
+    s32 pos_2 = mult_fr1x32x32(pos, pos);
+    s32 amp_x = (FR32_MAX - pos_2);
+    s32 pos_bar = FR32_MAX - pos;
+    s32 amp_y = FR32_MAX - mult_fr1x32x32(pos_bar, pos_bar);
+    return
+      mult_fr1x32x32(amp_x, x) +
+      mult_fr1x32x32(amp_y, y);
+}
+
+extern fract32 echoTap_read_xfade(echoTap* echoTap) {
+  s32 time = echoTap->time;
+  s32 ret = echoTap_read_interp(echoTap, time);
+  s32 tapLength = echoTap->max - echoTap->min - echoTap->fadeLength;
+  s32 fadeRatio;
+  switch (echoTap->edgeBehaviour) {
+  case EDGE_WRAP:
+    fadeRatio = 0;
+    if (time > echoTap->max - echoTap->fadeLength) {
+      fadeRatio = mult_fr1x32x32 (echoTap->max - time,
+				  FR32_MAX / echoTap->fadeLength);
+      //this guy scans from FR32_MAX -> 0
+      //as time from (echoTap->max - fadelength) to echoTap->max
+
+      //DEBUG for now x-fade with zero - should give an audible pop
+      //per transition but no really silent part
+      ret = echoTap_xFade ( echoTap_read_interp ( echoTap, 
+						  time - tapLength ),
+			    ret,
+			    fadeRatio);//Debug if xfades pop try reversing the sense of fade
+    } else if (time < echoTap->min + echoTap->fadeLength) {
+      fadeRatio = mult_fr1x32x32 (time - echoTap->min,
+				  FR32_MAX / echoTap->fadeLength);
+      //this guy scans from 0 -> FR32_MAX
+      //as time from echoTap->min to (echoTap->min + fadelength)
+
+      ret = echoTap_xFade ( ret,
+			    echoTap_read_interp ( echoTap,
+			    			  time + tapLength ),
+			    fadeRatio);//Debug if xfades pop try reversing the sense of fade
+    }
+    break;
+  case EDGE_BOUNCE:
+    if (time > echoTap->max - echoTap->fadeLength) {
+      fadeRatio = mult_fr1x32x32 (echoTap->max - time,
+				  FR32_MAX / echoTap->fadeLength);
+      ret = echoTap_xFade ( echoTap_read_interp ( echoTap,
+			    			  echoTap->max
+						  - echoTap->fadeLength
+						  + (echoTap->max - time)),
+			    ret,
+			    fadeRatio);//Debug if xfades pop try reversing the sense of fade
+    } else if (time < echoTap->min + echoTap->fadeLength) {
+      fadeRatio = mult_fr1x32x32 (time - echoTap->min,
+				  FR32_MAX / echoTap->fadeLength);
+      ret = echoTap_xFade ( ret,
+			    echoTap_read_interp ( echoTap,
+			    			  echoTap->min
+						  + echoTap->fadeLength
+						  + (echoTap->min - time)),
+			    fadeRatio);
+    }
+    break;
+  }
+  return ret;
 }
 
 // set echo time directly in subsamples
