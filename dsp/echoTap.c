@@ -160,6 +160,20 @@ s32 echoTap_xFade (s32 x, s32 y, s32 pos) {
       mult_fr1x32x32(amp_y, y);
 }
 
+s32 max_num (s32 x, s32 y) {
+  if ( x >= y)
+    x;
+  else
+    y;
+}
+
+s32 min_num (s32 x, s32 y) {
+  if ( x <= y)
+    x;
+  else
+    y;
+}
+
 extern fract32 echoTap_read_xfade(echoTap* echoTap) {
   s32 time = echoTap->time;
   s32 ret = echoTap_read_interp(echoTap, time);
@@ -169,8 +183,8 @@ extern fract32 echoTap_read_xfade(echoTap* echoTap) {
   case EDGE_WRAP:
     fadeRatio = 0;
     if (time > echoTap->max - echoTap->fadeLength) {
-      fadeRatio = mult_fr1x32x32 (echoTap->max - time,
-				  FR32_MAX / echoTap->fadeLength);
+      fadeRatio = max_num (echoTap->fadeLength, (echoTap->max - time))
+	* (FR32_MAX / echoTap->fadeLength);
       //this guy scans from FR32_MAX -> 0
       //as time from (echoTap->max - fadelength) to echoTap->max
 
@@ -181,21 +195,21 @@ extern fract32 echoTap_read_xfade(echoTap* echoTap) {
 			    ret,
 			    fadeRatio);//Debug if xfades pop try reversing the sense of fade
     } else if (time < echoTap->min + echoTap->fadeLength) {
-      fadeRatio = mult_fr1x32x32 (time - echoTap->min,
-				  FR32_MAX / echoTap->fadeLength);
+      fadeRatio =  min_num (echoTap->fadeLength, (time - echoTap->min))
+	* (FR32_MAX / echoTap->fadeLength);
       //this guy scans from 0 -> FR32_MAX
       //as time from echoTap->min to (echoTap->min + fadelength)
 
-      ret = echoTap_xFade ( ret,
-			    echoTap_read_interp ( echoTap,
+      ret = echoTap_xFade ( echoTap_read_interp ( echoTap,
 			    			  time + tapLength ),
+			    ret,
 			    fadeRatio);//Debug if xfades pop try reversing the sense of fade
     }
     break;
   case EDGE_BOUNCE:
     if (time > echoTap->max - echoTap->fadeLength) {
-      fadeRatio = mult_fr1x32x32 (echoTap->max - time,
-				  FR32_MAX / echoTap->fadeLength);
+      fadeRatio =  max_num (echoTap->fadeLength, (echoTap->max - time))
+	* (FR32_MAX / echoTap->fadeLength);
       ret = echoTap_xFade ( echoTap_read_interp ( echoTap,
 			    			  echoTap->max
 						  - echoTap->fadeLength
@@ -203,13 +217,13 @@ extern fract32 echoTap_read_xfade(echoTap* echoTap) {
 			    ret,
 			    fadeRatio);//Debug if xfades pop try reversing the sense of fade
     } else if (time < echoTap->min + echoTap->fadeLength) {
-      fadeRatio = mult_fr1x32x32 (time - echoTap->min,
-				  FR32_MAX / echoTap->fadeLength);
-      ret = echoTap_xFade ( ret,
-			    echoTap_read_interp ( echoTap,
+      fadeRatio =  min_num (echoTap->fadeLength, (time - echoTap->min ))
+	* (FR32_MAX / echoTap->fadeLength);
+      ret = echoTap_xFade ( echoTap_read_interp ( echoTap,
 			    			  echoTap->min
 						  + echoTap->fadeLength
 						  + (echoTap->min - time)),
+			    ret,
 			    fadeRatio);
     }
     break;
