@@ -152,26 +152,26 @@ extern fract32 echoTap_read_interp(echoTap* echoTap, s32 time){
 //fades x into y as pos slides from 0 to FR32_MAX
 s32 echoTap_xFade (s32 x, s32 y, s32 pos) {
     s32 pos_2 = mult_fr1x32x32(pos, pos);
-    s32 amp_x = (FR32_MAX - pos_2);
-    s32 pos_bar = FR32_MAX - pos;
-    s32 amp_y = FR32_MAX - mult_fr1x32x32(pos_bar, pos_bar);
+    s32 amp_x = sub_fr1x32(FR32_MAX,  pos_2);
+    s32 pos_bar = sub_fr1x32(FR32_MAX,  pos);
+    s32 amp_y = sub_fr1x32(FR32_MAX,  mult_fr1x32x32(pos_bar, pos_bar));
     return
-      mult_fr1x32x32(amp_x, x) +
-      mult_fr1x32x32(amp_y, y);
+      add_fr1x32(mult_fr1x32x32(amp_x, x),
+		 mult_fr1x32x32(amp_y, y));
 }
 
 s32 max_num (s32 x, s32 y) {
   if ( x >= y)
-    x;
+    return x;
   else
-    y;
+    return y;
 }
 
 s32 min_num (s32 x, s32 y) {
   if ( x <= y)
-    x;
+    return x;
   else
-    y;
+    return y;
 }
 
 extern fract32 echoTap_read_xfade(echoTap* echoTap) {
@@ -180,49 +180,56 @@ extern fract32 echoTap_read_xfade(echoTap* echoTap) {
   s32 tapLength = echoTap->max - echoTap->min - echoTap->fadeLength;
   s32 fadeRatio;
   switch (echoTap->edgeBehaviour) {
-  case EDGE_WRAP:
+  case EDGE_ONESHOT :
     fadeRatio = 0;
     if (time > echoTap->max - echoTap->fadeLength) {
-      fadeRatio = max_num (echoTap->fadeLength, (echoTap->max - time))
+      fadeRatio = min_num (echoTap->fadeLength, (echoTap->max - time))
 	* (FR32_MAX / echoTap->fadeLength);
-      //this guy scans from FR32_MAX -> 0
-      //as time from (echoTap->max - fadelength) to echoTap->max
+      ret = echoTap_xFade ( 0, ret,
+			    fadeRatio);//Debug if xfades pop try reversing the sense of fade
+    } else if (time < echoTap->min + echoTap->fadeLength) {
+      fadeRatio =  min_num (echoTap->fadeLength, (time - echoTap->min))
+	* (FR32_MAX / echoTap->fadeLength);
 
-      //DEBUG for now x-fade with zero - should give an audible pop
-      //per transition but no really silent part
-      ret = echoTap_xFade ( echoTap_read_interp ( echoTap, 
-						  time - tapLength ),
+      ret = echoTap_xFade ( 0, ret,
+			    fadeRatio);//Debug if xfades pop try reversing the sense of fade
+    }
+    break;
+  case EDGE_WRAP :
+    fadeRatio = 0;
+    if (time > echoTap->max - echoTap->fadeLength) {
+      fadeRatio = min_num (echoTap->fadeLength, (echoTap->max - time))
+	* (FR32_MAX / echoTap->fadeLength);
+      ret = echoTap_xFade ( echoTap_read_interp ( echoTap,
+			    			  time - tapLength ),
 			    ret,
 			    fadeRatio);//Debug if xfades pop try reversing the sense of fade
     } else if (time < echoTap->min + echoTap->fadeLength) {
       fadeRatio =  min_num (echoTap->fadeLength, (time - echoTap->min))
 	* (FR32_MAX / echoTap->fadeLength);
-      //this guy scans from 0 -> FR32_MAX
-      //as time from echoTap->min to (echoTap->min + fadelength)
-
       ret = echoTap_xFade ( echoTap_read_interp ( echoTap,
 			    			  time + tapLength ),
 			    ret,
 			    fadeRatio);//Debug if xfades pop try reversing the sense of fade
     }
     break;
-  case EDGE_BOUNCE:
+  case EDGE_BOUNCE :
     if (time > echoTap->max - echoTap->fadeLength) {
-      fadeRatio =  max_num (echoTap->fadeLength, (echoTap->max - time))
+      fadeRatio =  min_num (echoTap->fadeLength, (echoTap->max - time))
 	* (FR32_MAX / echoTap->fadeLength);
-      ret = echoTap_xFade ( echoTap_read_interp ( echoTap,
-			    			  echoTap->max
-						  - echoTap->fadeLength
-						  + (echoTap->max - time)),
+      ret = echoTap_xFade ( 0/* echoTap_read_interp ( echoTap, */
+			    /* 			  echoTap->max */
+			    /* 			  - echoTap->fadeLength */
+			    /* 			  + (echoTap->max - time)) */,
 			    ret,
 			    fadeRatio);//Debug if xfades pop try reversing the sense of fade
     } else if (time < echoTap->min + echoTap->fadeLength) {
       fadeRatio =  min_num (echoTap->fadeLength, (time - echoTap->min ))
 	* (FR32_MAX / echoTap->fadeLength);
-      ret = echoTap_xFade ( echoTap_read_interp ( echoTap,
-			    			  echoTap->min
-						  + echoTap->fadeLength
-						  + (echoTap->min - time)),
+      ret = echoTap_xFade ( 0/* echoTap_read_interp ( echoTap, */
+			    /* 			  echoTap->min */
+			    /* 			  + echoTap->fadeLength */
+			    /* 			  + (echoTap->min - time)) */,
 			    ret,
 			    fadeRatio);
     }
