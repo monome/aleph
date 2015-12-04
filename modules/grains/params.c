@@ -41,13 +41,6 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_fader (eParam_aux2_i4, "aux2_i4");
   param_desc_fader (eParam_effect_i4, "effect_i4");
 
-  param_desc_aux (desc, eParam_scrubFadeLength, "scrubFadeLength",
-		  TIME_SAMPLE_TYPE, TIME_SAMPLE_MIN, TIME_SAMPLE_MAX,
-		  TIME_SAMPLE_RADIX);
-  param_desc_aux (desc, eParam_echoFadeLength, "echoFadeLength",
-		  TIME_SAMPLE_TYPE, TIME_SAMPLE_MIN, TIME_SAMPLE_MAX,
-		  TIME_SAMPLE_RADIX);
-
   //Grain Mixer Params
   param_desc_fader (eParam_fader_g1, "fader_g1");
   param_desc_pan (eParam_pan_g1, "pan_g1");
@@ -65,6 +58,9 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux (desc, eParam_scrubLength_g1, "scrubLength_g1",
 		  TIME_SAMPLE_TYPE, TIME_SAMPLE_MIN, TIME_SAMPLE_MAX,
 		  TIME_SAMPLE_RADIX);
+    param_desc_aux (desc, eParam_scrubFadeLength_g1, "scrubFadeLength_g1",
+		  TIME_SAMPLE_TYPE, TIME_SAMPLE_MIN, TIME_SAMPLE_MAX,
+		  TIME_SAMPLE_RADIX);
   param_desc_aux (desc, eParam_scrubRandomise_g1, "scrubRandomise_g1",
 		  TIME_SAMPLE_TYPE, TIME_SAMPLE_MIN, TIME_SAMPLE_MAX,
 		  TIME_SAMPLE_RADIX);
@@ -73,6 +69,10 @@ extern void fill_param_desc(ParamDesc* desc) {
 		 16);
 
   //Echo Params
+  param_desc_aux (desc, eParam_echoFadeLength_g1, "echoFadeLength_g1",
+		  TIME_MS_TYPE, TIME_MS_MIN, TIME_MS_MAX,
+		  TIME_MS_RADIX);
+
   param_desc_aux (desc, eParam_echoTime_g1, "echoTime_g1",
 		  TIME_MS_TYPE, TIME_MS_MIN, TIME_MS_MAX,
 		  TIME_MS_RADIX);

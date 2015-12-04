@@ -55,15 +55,6 @@ fract32 grain_next(grain* dl, fract32 in) {
   return readVal;
 }
 
-
-void  grain_set_scrubFadeLength(grain* dl, s32 subsamples) {
-  dl->scrubTap.fadeLength = subsamples;
-}
-
-void  grain_set_echoFadeLength(grain* dl, s32 subsamples) {
-    dl->echoTap.fadeLength = subsamples;
-}
-
 void grain_set_scrubPitch(grain* dl, s32 subsamples) {
   dl->scrubTap.pitch = subsamples;
 }
@@ -73,6 +64,10 @@ void grain_set_scrubLength(grain* dl, s32 subsamples) {
   dl->scrubTap.length = subsamples;
 }
 
+void  grain_set_scrubFadeLength(grain* dl, s32 subsamples) {
+  dl->scrubTap.fadeLength = subsamples;
+}
+
 //set randomise (24.8 time in samples)
 void grain_set_scrubRandomise(grain* dl, s32 subsamples) {
   dl->scrubTap.randomise = subsamples;
@@ -80,6 +75,10 @@ void grain_set_scrubRandomise(grain* dl, s32 subsamples) {
 
 void grain_set_echoTime(grain* dl, s32 subsamples) {
   dl->echoTap.time = subsamples;
+}
+
+void  grain_set_echoFadeLength(grain* dl, s32 subsamples) {
+    dl->echoTap.fadeLength = subsamples;
 }
 
 void grain_set_echoSpeed(grain* dl, s32 subsamples) {

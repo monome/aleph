@@ -144,9 +144,6 @@ void module_init(void) {
   param_setup( 	eParam_aux2_i4,		AUX_DEFAULT );
   param_setup( 	eParam_effect_i4,	EFFECT_DEFAULT );
 
-  param_setup (eParam_scrubFadeLength,  45);
-  param_setup (eParam_echoFadeLength,   45);
-
   param_setup( 	eParam_fader_g1,	FADER_DEFAULT );
   param_setup( 	eParam_pan_g1,		PAN_DEFAULT );
   param_setup( 	eParam_aux1_g1,		AUX_DEFAULT );
@@ -155,6 +152,9 @@ void module_init(void) {
 
   param_setup (eParam_scrubPitch_g1,    256);
   param_setup (eParam_echoSpeed_g1,    256);
+  param_setup (eParam_scrubFadeLength_g1,  45);
+  param_setup (eParam_echoFadeLength_g1,   45);
+
   grain_init(&(grains[0]), pGrainsData->audioBuffer[0], LINES_BUF_FRAMES);
 
 }
@@ -345,14 +345,12 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_scrubRandomise_g1 :
     grain_set_scrubRandomise (&(grains[0]), v/256);
     break;
-  case eParam_scrubFadeLength :
-    //FIXME - should apply across all grains -hmmm...
-    grain_set_scrubFadeLength(&(grains[0]), v/4);
+  case eParam_scrubFadeLength_g1 :
+    grain_set_scrubFadeLength(&(grains[0]), v/256);
     break;
     
   //grain echo params
-  case eParam_echoFadeLength :
-    //FIXME - should apply across all grains -hmmm...
+  case eParam_echoFadeLength_g1 :
     grain_set_echoFadeLength(&(grains[0]), v/4);
     break;
   case eParam_echoTime_g1 :

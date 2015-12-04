@@ -92,10 +92,6 @@ enum params {
   eParam_aux2_i4,
   eParam_effect_i4,
 
-  //global grain params
-  eParam_scrubFadeLength,
-  eParam_echoFadeLength,
-
   //grain mix params
   eParam_fader_g1,
   eParam_pan_g1,
@@ -107,6 +103,7 @@ enum params {
   //grain scrubber params
   eParam_scrubPitch_g1,
   eParam_scrubLength_g1,
+  eParam_scrubFadeLength_g1,
   eParam_scrubRandomise_g1,
   eParam_scrubEdgeBehaviour_g1,
 
@@ -114,6 +111,7 @@ enum params {
   eParam_echoTime_g1,
   eParam_echoSpeed_g1,
   eParam_echoEdgeBehaviour_g1,
+  eParam_echoFadeLength_g1,
   eParam_echoMin_g1,
   eParam_echoMax_g1,
   eParam_echoLFOAmp_g1,
