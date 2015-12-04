@@ -374,6 +374,8 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_echoLFOSpeed_g1 :
     grain_set_echoLFOSpeed(&(grains[0]),v/256);
     break;
+  case eParam_writeEnable_g1 :
+    grain_set_writeEnable(&(grains[0]),v);
   default:
     break;
   }

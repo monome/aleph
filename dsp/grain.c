@@ -104,3 +104,10 @@ void grain_set_echoLFOAmp(grain* dl, s32 subsamples) {
 void grain_set_echoLFOSpeed(grain* dl, s32 subsamples) {
   //FIXME add this at the end once basic functionality works
 }
+
+void grain_set_writeEnable(grain* dl, s32 enable) {
+  if (enable == 0)
+    dl->tapWr.inc = 0;
+  else
+    dl->tapWr.inc = 1;
+}

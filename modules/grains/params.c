@@ -64,9 +64,6 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux (desc, eParam_scrubRandomise_g1, "scrubRandomise_g1",
 		  TIME_SAMPLE_TYPE, TIME_SAMPLE_MIN, TIME_SAMPLE_MAX,
 		  TIME_SAMPLE_RADIX);
-  param_desc_aux(desc, eParam_scrubEdgeBehaviour_g1, "scrubEdgeBehaviour_g1",
-		 eParamTypeFix, 0x00000000, 0x00020000,
-		 16);
 
   //Echo Params
   param_desc_aux (desc, eParam_echoFadeLength_g1, "echoFadeLength_g1",
@@ -94,6 +91,10 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux(desc, eParam_echoLFOSpeed_g1, "echoLFOSpeed_g1",
 		 SPEED_TYPE, SPEED_MIN, SPEED_MAX,
 		 SPEED_RADIX);
+  param_desc_aux(desc, eParam_writeEnable_g1, "eParam_writeEnable_g1",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 32);
+
 }
 
 // EOF
