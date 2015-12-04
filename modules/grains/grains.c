@@ -312,16 +312,6 @@ void module_set_param(u32 idx, ParamValue v) {
     effectITarget[3] = v;
     break;
 
-    //global grain params
-  case eParam_scrubFadeLength :
-    //FIXME - should apply across all grains -hmmm...
-    grain_set_scrubFadeLength(&(grains[0]), v/4);
-    break;
-  case eParam_echoFadeLength :
-    //FIXME - should apply across all grains -hmmm...
-    grain_set_echoFadeLength(&(grains[0]), v/4);
-    break;
-
   //grain mix params
   case eParam_fader_g1 :
     faderGTarget[0] = v;
@@ -344,22 +334,27 @@ void module_set_param(u32 idx, ParamValue v) {
     else
       phaseG[0] = 1;
     break;
-  //grain scrubber params
+
+    //grain scrubber params
   case eParam_scrubPitch_g1 :
     grain_set_scrubPitch(&(grains[0]), v/256);
     break;
-
   case eParam_scrubLength_g1 :
     grain_set_scrubLength (&(grains[0]), v/256);
     break;
   case eParam_scrubRandomise_g1 :
     grain_set_scrubRandomise (&(grains[0]), v/256);
     break;
-  case eParam_scrubEdgeBehaviour_g1 :
-    grain_set_scrubEdgeBehaviour (&(grains[0]), v/65536);
+  case eParam_scrubFadeLength :
+    //FIXME - should apply across all grains -hmmm...
+    grain_set_scrubFadeLength(&(grains[0]), v/4);
     break;
-
+    
   //grain echo params
+  case eParam_echoFadeLength :
+    //FIXME - should apply across all grains -hmmm...
+    grain_set_echoFadeLength(&(grains[0]), v/4);
+    break;
   case eParam_echoTime_g1 :
     grain_set_echoTime(&(grains[0]),v/4);
     break;

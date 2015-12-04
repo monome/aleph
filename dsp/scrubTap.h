@@ -37,7 +37,6 @@ typedef struct _scrubTap {
 
   //This flag sets the boundary behaviour
   //e.g wrap, oneshot or bounce
-  u8 edgeBehaviour;
   s32 fadeLength;
 } scrubTap;
 
@@ -52,11 +51,6 @@ extern void scrubTap_init(scrubTap* tap, echoTap* echoTap);
 // increment the index in an scrub
 extern void scrubTap_next(scrubTap* tap);
 
-// antialiased read
-extern fract32 scrubTap_read_antialias(scrubTap* scrubTap);
+extern fract32 scrubTap_read_xfade(scrubTap* scrubTap);
 
-// interpolated read
-extern fract32 scrubTap_read_interp(scrubTap* tap);
-
-s32 scrubTap_envelope(scrubTap *tap);
 #endif // h guard

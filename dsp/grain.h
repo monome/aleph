@@ -44,9 +44,6 @@ void grain_set_scrubLength(grain* dl, s32 subsamples);
 //set scrubRandomise (24.8 time in samples)
 void grain_set_scrubRandomise(grain* dl, s32 subsamples);
 
-//set scrubEdgeBehaviour (24.8 time in samples)
-void grain_set_scrubEdgeBehaviour(grain* dl, u8 edgeBehaviour);
-
 void grain_set_echoTime(grain* dl, s32 subsamples);
 
 void grain_set_echoSpeed(grain* dl, s32 subsamples);

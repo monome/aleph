@@ -25,7 +25,6 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   dl->echoTap.time= 256 ;
 
   scrubTap_init(&(dl->scrubTap), &(dl->echoTap));
-  dl->scrubTap.edgeBehaviour = EDGE_WRAP;
   dl->scrubTap.shape = SHAPE_LUMP;
   dl->scrubTap.length = 256 * 1023;
   dl->scrubTap.time = 0;
@@ -42,7 +41,7 @@ fract32 grain_next(grain* dl, fract32 in) {
   
   /* readVal = mult_fr1x32x32(scrubTap_read_interp( &(dl->scrubTap) ), */
   /* 			   mix_factor); */
-  readVal = echoTap_read_xfade( &(dl->echoTap));
+  readVal = scrubTap_read_xfade( &(dl->scrubTap));
 
   
   /* readVal = add_fr1x32(readVal, */
@@ -50,7 +49,7 @@ fract32 grain_next(grain* dl, fract32 in) {
   /* 				      mix_factor)); */
 
   buffer_tapN_next( &(dl->tapWr) );
-  /* scrubTap_next( &(dl->scrubTap) ); */
+  scrubTap_next( &(dl->scrubTap) );
   echoTap_next( &(dl->echoTap) );
 
   return readVal;
@@ -77,12 +76,6 @@ void grain_set_scrubLength(grain* dl, s32 subsamples) {
 //set randomise (24.8 time in samples)
 void grain_set_scrubRandomise(grain* dl, s32 subsamples) {
   dl->scrubTap.randomise = subsamples;
-}
-
-//set scrubedgeBehaviour (24.8 time in samples)
-void grain_set_scrubEdgeBehaviour(grain* dl, u8 edgeBehaviour) {
-  //FIXME check whether edgeBehaviour value correct radix with serial debugging...
-  dl->scrubTap.edgeBehaviour = edgeBehaviour;
 }
 
 void grain_set_echoTime(grain* dl, s32 subsamples) {

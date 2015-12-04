@@ -174,8 +174,8 @@ s32 min_num (s32 x, s32 y) {
     return y;
 }
 
-extern fract32 echoTap_read_xfade(echoTap* echoTap) {
-  s32 time = echoTap->time;
+extern fract32 echoTap_read_xfade(echoTap* echoTap, s32 offset) {
+  s32 time = echoTap->time + offset;
   s32 ret = echoTap_read_interp(echoTap, time);
   s32 tapLength = echoTap->max - echoTap->min - echoTap->fadeLength;
   s32 fadeRatio;
