@@ -46,6 +46,7 @@ fract32 grain_next(grain* dl, fract32 in) {
   /* readVal = mult_fr1x32x32(scrubTap_read_interp( &(dl->scrubTap) ), */
   /* 			   mix_factor); */
   readVal = scrubTap_read_xfade( &(dl->scrubTap));
+  readVal = echoTap_read_xfade( &(dl->echoTap), 0);
 
   
   /* readVal = add_fr1x32(readVal, */

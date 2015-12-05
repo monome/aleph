@@ -31,28 +31,27 @@ extern void echoTap_next(echoTap* tap){
       break;
     case EDGE_BOUNCE:
       if(tap->time < tap->min) {
-	tap->speed = abs(tap->speed) * -1 ;
-	tap->time += tap->fadeLength;
+	tap->speed = abs(tap->speed) * -1;
+	tap->time = tap->min;
       }
-      else {
-	tap->speed = abs(tap->speed) ;
-	tap->time -= tap->fadeLength;
+      else if (tap->time > tap->max){
+	tap->speed = abs(tap->speed) * 1 ;
+	tap->time = tap->max;
       }
-      tap->time += tap->tapWr->inc*256 - tap->speed;
       break;
     case EDGE_WRAP:
       echoRange = tap->max - tap->min - tap->fadeLength;
-      if (tap->time >= tap->max)
+      if (tap->time > tap->max)
 	tap->time = tap->time - echoRange;
-      else
+      else if (tap->time < tap->min)
 	tap->time = tap->time + echoRange;
       tap->time += tap->tapWr->inc*256 - tap->speed;
       break;
     default ://watch out! copy-pasted from edge_wrap
       echoRange = tap->max - tap->min - tap->fadeLength;
-      if (tap->time >= tap->max)
+      if (tap->time > tap->max)
 	tap->time = tap->time - echoRange;
-      else
+      else if (tap->time < tap->min)
 	tap->time = tap->time + echoRange;
       tap->time += tap->tapWr->inc*256 - tap->speed;
       break;
@@ -174,6 +173,12 @@ s32 min_num (s32 x, s32 y) {
     return y;
 }
 
+fract32 echoTap_boundToFadeRatio (echoTap* tap, s32 unbounded) {
+  return max_num(0,
+		 min_num (tap->fadeLength, unbounded))
+    * (FR32_MAX / tap->fadeLength);
+}
+
 extern fract32 echoTap_read_xfade(echoTap* echoTap, s32 offset) {
   s32 time = echoTap->time + offset;
   s32 ret = echoTap_read_interp(echoTap, time);
@@ -215,27 +220,11 @@ extern fract32 echoTap_read_xfade(echoTap* echoTap, s32 offset) {
     break;
   case EDGE_BOUNCE :
     if (time > echoTap->max - echoTap->fadeLength) {
-      fadeRatio =  min_num (echoTap->fadeLength, (echoTap->max - time))
-	* (FR32_MAX / echoTap->fadeLength);
-      ret = echoTap_xFade ( // FIXME bouncing read-head gives wonky pitches
-			       // Fading back from edges
-			   echoTap_read_interp ( echoTap,
-						 echoTap->max
-						 - echoTap->fadeLength
-						 + (echoTap->max - time)),
-			    ret,
-			    fadeRatio);//Debug if xfades pop try reversing the sense of fade
+      fadeRatio = echoTap_boundToFadeRatio (echoTap, echoTap->max - time);
+      ret = echoTap_xFade (0, ret, fadeRatio);
     } else if (time < echoTap->min + echoTap->fadeLength) {
-      fadeRatio =  min_num (echoTap->fadeLength, (time - echoTap->min ))
-	* (FR32_MAX / echoTap->fadeLength);
-      ret = echoTap_xFade ( // FIXME bouncing read-head gives wonky pitches
-			   // Fading back from edges
-			   echoTap_read_interp ( echoTap,
-						 echoTap->min
-						 + echoTap->fadeLength
-						 + (echoTap->min - time)),
-			    ret,
-			    fadeRatio);
+      fadeRatio = echoTap_boundToFadeRatio (echoTap, time - echoTap->min);
+      ret = echoTap_xFade (0, ret, fadeRatio);
     }
     break;
   }
