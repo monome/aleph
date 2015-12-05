@@ -148,7 +148,7 @@ void module_init(void) {
   param_setup( 	eParam_pan_g1,		PAN_DEFAULT );
   param_setup( 	eParam_aux1_g1,		AUX_DEFAULT );
   param_setup( 	eParam_aux2_g1,		AUX_DEFAULT );
-  param_setup( 	eParam_effect_g1,	EFFECT_DEFAULT );
+  param_setup( 	eParam_effect_g1,	0 );
   param_setup( 	eParam_phase_g1,	65536);
 
   //grain scrubber params
@@ -158,12 +158,12 @@ void module_init(void) {
   param_setup (eParam_scrubRandomise_g1, 65536 * 256 * 25);
 
   //grain echo params
-  param_setup(eParam_echoTime_g1, 1*256);
+  param_setup(eParam_echoTime_g1, 65536 * 50);
   param_setup(eParam_echoSpeed_g1, 256 * 256);
   param_setup (eParam_echoEdgeBehaviour_g1, EDGE_WRAP * 65536);
   param_setup (eParam_echoFadeLength_g1, 0);
   param_setup (eParam_echoMin_g1, 0);
-  param_setup (eParam_echoMax_g1, 1000 * 65536);
+  param_setup (eParam_echoMax_g1, 65536 * 1000);
   param_setup (eParam_echoLFOAmp_g1, 0);
   param_setup (eParam_echoLFOSpeed_g1, 0);
 

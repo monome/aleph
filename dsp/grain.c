@@ -17,18 +17,21 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   buffer_init(&(dl->buffer), data, frames);
   buffer_tapN_init(&(dl->tapWr), &(dl->buffer));
 
-  echoTap_init(&(dl->echoTap), &(dl->tapWr));
-  dl->echoTap.edgeBehaviour = EDGE_WRAP;
-  dl->echoTap.shape = SHAPE_TOPHAT;
-  dl->echoTap.min = 0;
-  dl->echoTap.max = 256 * frames;
-  dl->echoTap.time= 256 ;
-
   scrubTap_init(&(dl->scrubTap), &(dl->echoTap));
-  dl->scrubTap.shape = SHAPE_LUMP;
-  dl->scrubTap.length = 256 * 1023;
+  dl->scrubTap.pitch = 256;
+  dl->scrubTap.length = 256 * 25;
+  dl->scrubTap.fadeLength = 256 * 0;
+  dl->scrubTap.randomise = 256 * 25;
   dl->scrubTap.time = 0;
 
+  echoTap_init(&(dl->echoTap), &(dl->tapWr));
+  dl->echoTap.time = 256 * 50;
+  dl->echoTap.speed = 256;
+  dl->echoTap.edgeBehaviour = EDGE_WRAP;
+  dl->echoTap.fadeLength = 0;
+  dl->echoTap.min = 0;
+  dl->echoTap.max = 256 * 1000;
+  dl->tapWr.inc = 1;
 }
 
 fract32 grain_next(grain* dl, fract32 in) {
