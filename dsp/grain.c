@@ -20,6 +20,7 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   scrubTap_init(&(dl->scrubTap), &(dl->echoTap));
   dl->scrubTap.pitch = 256;
   dl->scrubTap.length = 256 * 25;
+  dl->scrubTap.lengthNonRandom = 256 * 25;
   dl->scrubTap.fadeLength = 256 * 0;
   dl->scrubTap.randomise = 256 * 25;
   dl->scrubTap.time = 0;
@@ -64,6 +65,7 @@ void grain_set_scrubPitch(grain* dl, s32 subsamples) {
 
 //set length (24.8 time in samples)
 void grain_set_scrubLength(grain* dl, s32 subsamples) {
+  dl->scrubTap.lengthNonRandom = subsamples;
   dl->scrubTap.length = subsamples;
 }
 

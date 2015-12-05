@@ -15,6 +15,8 @@
 #include "types.h"
 #include "buffer.h"
 #include "echoTap.h"
+#include "noise.h"
+
 // ---- scrubTap
 // Data structure for an 'scrub tap'
 // scrub is position relative to write tap
@@ -28,7 +30,11 @@ typedef struct _scrubTap {
 
   s32 pitch;
   s32 length;
+  s32 lengthNonRandom;
+  lcprng randomGenerator;
   s32 randomise;// How much to randomise scrubLength
+  s32 randomBw;//LPF of the above quantity
+
   //check for zero crossing
   u8 zero_crossing;
 
@@ -42,6 +48,8 @@ typedef struct _scrubTap {
 
 //the maximum number of samples to use for antialiased read
 #define MAX_ANTIALIAS 3
+
+extern s32 scrubTapRandom (scrubTap* tap);
 
 // fixed grain envelope shapes
 s32 scrubTap_envelope(scrubTap *tap);

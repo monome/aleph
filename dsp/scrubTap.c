@@ -2,6 +2,7 @@
 #include "echoTap.h"
 #include "scrubTap.h"
 #include "pan.h"
+#include "noise.h"
 
 // intialize tap
 extern void scrubTap_init(scrubTap* tap, echoTap* echoTap){
@@ -14,9 +15,20 @@ extern void scrubTap_init(scrubTap* tap, echoTap* echoTap){
 
   //stationary scrubtap = stationary playback
   tap->pitch = 0;
+  lcprng_reset(&(tap->randomGenerator), 0);
+  tap->randomBw = 0;
+}
+
+#define simple_slew(x, y) x = (y + x * 255) / 256
+
+extern s32 scrubTapRandom (scrubTap* tap) {
+  return simple_slew(tap->randomBw,
+		     mult_fr1x32x32 (tap->randomise,
+				     lcprng_next( &(tap->randomGenerator))));
 }
 
 extern void scrubTap_next(scrubTap* tap){
+  tap->length += scrubTapRandom(tap);
   if(tap->time <= tap->length && tap->time >= 0 )
     //We aim to have echoTap->speed control tempo &
     //scrubTap->pitch control musical pitch
