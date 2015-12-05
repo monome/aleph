@@ -41,17 +41,11 @@ fract32 grain_next(grain* dl, fract32 in) {
   buffer_tapN_write(&(dl->tapWr), in);
 
   fract32 readVal;
-  /* fract32 mix_factor = FR32_MAX; */
   
-  /* readVal = mult_fr1x32x32(scrubTap_read_interp( &(dl->scrubTap) ), */
-  /* 			   mix_factor); */
   readVal = scrubTap_read_xfade( &(dl->scrubTap));
-  readVal = echoTap_read_xfade( &(dl->echoTap), 0);
-
   
-  /* readVal = add_fr1x32(readVal, */
-  /* 		       mult_fr1x32x32(echoTap_read_interp( &(dl->echoTap) ), */
-  /* 				      mix_factor)); */
+  //DEBUG uncomment this line to check echoTap (ignoring any bugs in scrubTap)
+  /* readVal = echoTap_read_xfade( &(dl->echoTap), 0); */
 
   buffer_tapN_next( &(dl->tapWr) );
   scrubTap_next( &(dl->scrubTap) );
