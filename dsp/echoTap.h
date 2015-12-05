@@ -45,8 +45,8 @@ typedef struct _echoTap {
 #define MAX_ANTIALIAS 3
 
 #define EDGE_ONESHOT 0 //if oneshot, then stop when grain hits a boundary
-#define EDGE_BOUNCE 1 //if bounce, then flip the read head play direction when grain hits boundary
-#define  EDGE_WRAP 2 //if wrap, then go back to the opposite boundary
+#define EDGE_WRAP 1 //if wrap, then go back to the opposite boundary
+#define EDGE_BOUNCE 2 //if bounce, then flip the read head play direction when grain hits boundary
 
 #define SHAPE_TOPHAT 0 //tophat is FR32_MpAX between max and min, 0 elsewhere
 #define SHAPE_TRIANGLE 1 //triangle is linear ramp up to FR32_MAX from min to center, back down to zero from center to max

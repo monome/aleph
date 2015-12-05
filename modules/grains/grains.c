@@ -149,11 +149,25 @@ void module_init(void) {
   param_setup( 	eParam_aux1_g1,		AUX_DEFAULT );
   param_setup( 	eParam_aux2_g1,		AUX_DEFAULT );
   param_setup( 	eParam_effect_g1,	EFFECT_DEFAULT );
+  param_setup( 	eParam_phase_g1,	65536);
 
-  param_setup (eParam_scrubPitch_g1,    256);
-  param_setup (eParam_echoSpeed_g1,    256);
-  param_setup (eParam_scrubFadeLength_g1,  45);
-  param_setup (eParam_echoFadeLength_g1,   45);
+  //grain scrubber params
+  param_setup (eParam_scrubPitch_g1, 65536 * 1);
+  param_setup (eParam_scrubLength_g1, 65536 * 256 * 25);
+  param_setup (eParam_scrubFadeLength_g1, 65536 * 256 * 5);
+  param_setup (eParam_scrubRandomise_g1, 65536 * 256 * 25);
+
+  //grain echo params
+  param_setup(eParam_echoTime_g1, 1*256);
+  param_setup(eParam_echoSpeed_g1, 256 * 256);
+  param_setup (eParam_echoEdgeBehaviour_g1, EDGE_WRAP * 65536);
+  param_setup (eParam_echoFadeLength_g1, 0);
+  param_setup (eParam_echoMin_g1, 0);
+  param_setup (eParam_echoMax_g1, 1000 * 65536);
+  param_setup (eParam_echoLFOAmp_g1, 0);
+  param_setup (eParam_echoLFOSpeed_g1, 0);
+
+  param_setup (eParam_writeEnable_g1, 1 * 65536);
 
   grain_init(&(grains[0]), pGrainsData->audioBuffer[0], LINES_BUF_FRAMES);
 
@@ -199,11 +213,9 @@ void module_process_frame(void) {
     simple_slew(aux2G[i], aux2GTarget[i]);
     simple_slew(panG[i], panGTarget[i]);
     simple_slew(effectG[i],effectGTarget[i]);
-
   }
   
   //define delay input & output
-
   out[0] = 0;
   out[1] = 0;
   out[2] = 0;
@@ -219,7 +231,7 @@ void module_process_frame(void) {
     grainOut=phaseG[i] * grain_next(&(grains[i]), effectBus);
     mix_panned_mono (grainOut, &(out[0]), &(out[1]), panG[i], faderG[i]);
     mix_aux_mono (grainOut, &(out[2]), &(out[3]), aux1G[i], aux2G[i]);
-    simple_busmix (effectBusFeedback, in[i], effectG[i]);
+    simple_busmix (effectBusFeedback, grainOut, effectG[i]);
   }
 }
 
