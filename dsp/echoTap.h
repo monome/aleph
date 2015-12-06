@@ -60,6 +60,7 @@ s32 echoTap_envelope(echoTap *tap);
 extern void echoTap_init(echoTap* tap, bufferTapN* tapWr);
 
 extern s32 min_num (s32 x, s32 y);
+extern s32 max_num (s32 x, s32 y);
 
 extern s32 echoTap_xFade (s32 x, s32 y, s32 pos);
 
