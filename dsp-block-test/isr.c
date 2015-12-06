@@ -16,7 +16,7 @@ void sport0_rx_isr(void) {
   u16 i;
   // copy input for new block
   for(i=0; i<BLOCKSIZE*4; i++) { 
-    audioProcessInBuf[i] = audioRxBuf[i];
+    audioProcessInBuf[i] = audioRxBuf[i] << 8;
   }
 
   if (++ledCounterRx > 4000) {
@@ -42,7 +42,7 @@ void sport0_tx_isr(void) {
   
   // copy output from last block
   for(i=0; i<BLOCKSIZE*4; i++) {
-    audioTxBuf[i] = audioProcessOutBuf[i];
+    audioTxBuf[i] = audioProcessOutBuf[i] >> 8;
   }
 
   audioTxDone = 1;

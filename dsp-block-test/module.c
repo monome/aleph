@@ -33,5 +33,5 @@ void module_process_block(void) {
     *dst++ = *src++;
   }
   
-  //  osc_process_block(audioProcessOutBuf);
+  osc_process_block(audioProcessOutBuf);
 }
