@@ -113,8 +113,6 @@ enum params {
   eParam_echoFadeLength_g1,
   eParam_echoMin_g1,
   eParam_echoMax_g1,
-  eParam_echoLFOAmp_g1,
-  eParam_echoLFOSpeed_g1,
 
   //grain writehead params
   eParam_writeEnable_g1,

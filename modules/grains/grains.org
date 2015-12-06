@@ -46,10 +46,6 @@
     echo boundary nearest to write-head
 *** echoMax f24x8
     echo boundary furthest from write-head
-*** echoLFOAmp i16
-    lfo modulates from 0 to lfo-amp samples
-*** echoLFOSpeed f8x8
-    run in Hz or similar
 * How to implement pitchshift on top of echoTap
 ** Decoupling scrubberhead from echo-tap
    Echotap wrap behaviour should be abstracted from the scrubberhead.

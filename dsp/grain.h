@@ -54,9 +54,5 @@ void grain_set_echoMin(grain* dl, s32 subsamples);
 
 void grain_set_echoMax(grain* dl, s32 subsamples);
 
-void grain_set_echoLFOAmp(grain* dl, s32 subsamples);
-
-void grain_set_echoLFOSpeed(grain* dl, s32 subsamples);
-
 void grain_set_writeEnable(grain* dl, s32 enable);
 #endif // h guard

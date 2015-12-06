@@ -85,12 +85,6 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux (desc, eParam_echoMax_g1, "echoMax_g1",
 		  TIME_MS_TYPE, TIME_MS_MIN, TIME_MS_MAX,
 		  TIME_MS_RADIX);
-  param_desc_aux(desc, eParam_echoLFOAmp_g1, "echoLFOAmp_g1",
-		 TIME_MS_TYPE, TIME_MS_MIN, TIME_MS_MAX,
-		 TIME_MS_RADIX);
-  param_desc_aux(desc, eParam_echoLFOSpeed_g1, "echoLFOSpeed_g1",
-		 SPEED_TYPE, SPEED_MIN, SPEED_MAX,
-		 SPEED_RADIX);
   param_desc_aux(desc, eParam_writeEnable_g1, "writeEnable_g1",
 		 eParamTypeFix, 0x00000000, 0x00010000,
 		 32);

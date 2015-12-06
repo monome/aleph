@@ -164,8 +164,6 @@ void module_init(void) {
   param_setup (eParam_echoFadeLength_g1, 0);
   param_setup (eParam_echoMin_g1, 0);
   param_setup (eParam_echoMax_g1, 65536 * 1000);
-  param_setup (eParam_echoLFOAmp_g1, 0);
-  param_setup (eParam_echoLFOSpeed_g1, 0);
 
   param_setup (eParam_writeEnable_g1, 1 * 65536);
 
@@ -379,12 +377,6 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_echoMax_g1 :
     grain_set_echoMax(&(grains[0]),v/4);
-    break;
-  case eParam_echoLFOAmp_g1 :
-    grain_set_echoLFOAmp(&(grains[0]),v/65536);//FIXME figure out a good scaling const
-    break;
-  case eParam_echoLFOSpeed_g1 :
-    grain_set_echoLFOSpeed(&(grains[0]),v/256);
     break;
   case eParam_writeEnable_g1 :
     grain_set_writeEnable(&(grains[0]),v);
