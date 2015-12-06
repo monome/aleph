@@ -4,7 +4,7 @@
 #include "ccblkfn.h"
 
 #include "audio.h"
-#include "audio_process.h"
+#include "module.h"
 #include "dma.h"
 #include "gpio.h"
 #include "isr.h"
@@ -84,8 +84,6 @@ void enable_dma_sport0(void) {
 
 int main(void) { 
 
-  long long unsigned int flipCount = 0;
-
   init_clock();
   init_ebiu();
 
@@ -95,6 +93,9 @@ int main(void) {
   init_interrupts();
   init_dma();
 
+
+  module_init();
+  
   enable_dma_sport0();
 
   // reset the codec
@@ -108,7 +109,7 @@ int main(void) {
   while(1) { 
 
     if(audioTxDone && audioRxDone) {
-      process_audio_block();
+      module_process_block();
       audioTxDone = 0;
       audioRxDone = 0;
     }

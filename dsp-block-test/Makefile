@@ -4,10 +4,11 @@ OBJ_DIR=obj
 INC += -I../common
 
 _OBJ =	audio.o \
-	audio_process.o \
 	dma.o \
 	isr.o \
 	main.o \
+	module.o \
+	osc.o \
 	serial.o
 
 OBJ = $(patsubst %,$(OBJ_DIR)/%,$(_OBJ))
