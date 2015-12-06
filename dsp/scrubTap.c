@@ -19,7 +19,7 @@ extern void scrubTap_init(scrubTap* tap, echoTap* echoTap){
   tap->randomBw = 0;
 }
 
-#define simple_slew(x, y) x = (y + x * 255) / 256
+#define simple_slew(x, y) x = (y + x * 50) / 50
 
 extern s32 scrubTapRandom (scrubTap* tap) {
   return simple_slew(tap->randomBw,
@@ -40,6 +40,8 @@ extern void scrubTap_next(scrubTap* tap){
     else if (tap->time < 0)
       tap->time += tapRange;
     tap->time += tap->echoTap->speed - tap->pitch;
+    tap->length = tap->lengthNonRandom
+      + scrubTapRandom (tap);
   }
 }
 
