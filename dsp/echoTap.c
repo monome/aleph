@@ -202,13 +202,13 @@ extern fract32 echoTap_read_xfade(echoTap* echoTap, s32 offset) {
       ret = echoTap_xFade ( echoTap_read_interp ( echoTap,
 			    			  time - tapLength ),
 			    ret,
-			    fadeRatio);//Debug if xfades pop try reversing the sense of fade
+			    fadeRatio);
     } else if (time < echoTap->min + echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, time - echoTap->min);
       ret = echoTap_xFade ( echoTap_read_interp ( echoTap,
 			    			  time + tapLength ),
 			    ret,
-			    fadeRatio);//Debug if xfades pop try reversing the sense of fade
+			    fadeRatio);
     }
     break;
   case EDGE_BOUNCE :
