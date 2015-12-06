@@ -22,9 +22,9 @@ extern void scrubTap_init(scrubTap* tap, echoTap* echoTap){
 #define simple_slew(x, y) x = (y + x * 50) / 50
 
 extern s32 scrubTapRandom (scrubTap* tap) {
-  return simple_slew(tap->randomBw,
-		     mult_fr1x32x32 (tap->randomise,
-				     lcprng_next( &(tap->randomGenerator))));
+  return abs(simple_slew(tap->randomBw,
+			 mult_fr1x32x32 (tap->randomise,
+					 lcprng_next( &(tap->randomGenerator)))));
 }
 
 extern void scrubTap_next(scrubTap* tap){
