@@ -101,9 +101,9 @@ wavesVoice voice[WAVES_NVOICES];
 //-------------------------
 //----- extern vars (initialized here)
 ModuleData * gModuleData; // module data
+
 //-----------------------
 //------ static variables
-
 // pointer to local module data, initialize at top of SDRAM
 static wavesData * data;
 
@@ -117,7 +117,7 @@ static const fract32 wavtab[WAVE_SHAPE_NUM][WAVE_TAB_SIZE] = {
 
 // additional busses
 static fract32 voiceOut[WAVES_NVOICES] = { 0, 0, };
-
+par
 
 // FIXME: (?)
 // using patch points instead of mix points 

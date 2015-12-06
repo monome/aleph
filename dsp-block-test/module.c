@@ -1,9 +1,9 @@
 #include "module.h"
 #include "osc.h"
 
-/* // TEST: sawtooth */
-/* static volatile fract32 sawVal = 0; */
-/* static const fract32 sawInc = 0x02aaaaaa; // should give ~500 hz i think? */
+
+//!
+
 
 
 void module_init(void) {

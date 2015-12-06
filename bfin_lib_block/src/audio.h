@@ -19,6 +19,9 @@
 #define AUDIO_FRAME_R0 2
 #define AUDIO_FRAME_R1 3
 
+//! enable-audio flag
+extern volatile u8 processAudio;
+
 //! I/O flags
 extern volatile u8 audioRxDone;
 extern volatile u8 audioTxDone;

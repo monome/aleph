@@ -19,8 +19,15 @@
 #define WAVE_FRACT_SHIFT (WAVE_TAB_BITS - 1)
 
 
-// set phase increment
+// set phase increment directly
 extern void osc_set_phi(u32 phi);
+
+// set upper 16 bits of phase increment from fract32
+extern void osc_set_phi_upper(fract32 val);
+
+// set loewr 16 bits of phase increment from fract32
+extern void osc_set_phi_lower(fract32 val);
+
 
 // set amplitudee
 extern void osc_set_amp(fract32 amp);

@@ -1,26 +1,30 @@
-/* module.h
-   aleph-audio
-   
-   class header for audio-processing module.
+/*! 
+  module.h
+  bfin_lib
+  aleph 
+
+  static base class for audio modules.
+
  */
 
 
-#ifndef _ALEPH_AUDIO_MODULE_H_
-#define _ALEPH_AUDIO_MODULE_H_
+#ifndef _BFIN_MODULE_H_
+#define _BFIN_MODULE_H_
 
+// common
 #include "module_common.h"
 #include "param_common.h"
 #include "types.h"
+// bfin_lib_block
+#include "audio.h"
 
-//#if ARCH_BFIN
 
 #define SDRAM_ADDRESS 0x00000000
 #define SDRAM_SIZE    0x07ffffff
 #ifndef SAMPLERATE
-  #define SAMPLERATE    48000
+#define SAMPLERATE    48000
 #endif
 
-//#endif
 
 //-----------------------
 //---- module descriptor
@@ -34,23 +38,16 @@ typedef struct _moduleData {
 // global pointer to module descriptor
 extern ModuleData* gModuleData;
 
-// debug output flag
-extern u8 dbgFlag;
-
-//-------- function prototypes 
-// init
+//! initialize the module
 extern void module_init(void);
-// de-init
-extern void module_deinit(void);
-// callback
 
-extern void module_process_frame(void);
+//! process a block of samples
+extern void module_process_block(void);
 
-// set parameter  
+//! set parameter  
 extern void module_set_param(u32 idx, ParamValue val);
 
-// get number of parameters
+//! get number of parameters
 extern u32 module_get_num_params(void);
 
-
-#endif // header guard
+#endif
