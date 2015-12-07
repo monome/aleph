@@ -1,51 +1,60 @@
 * ADC mix params
-*** fader_i<n>
-*** pan_i<n>
-*** effect_i<n>
-*** aux0_i<n>
-*** aux1_i<n>
-* Global Grain Params
-*** scrubberFadeLength i16
-   (whole samples)
-*** echo fade-length i16
-   (whole samples)
-* Per-Grain Params
-** Grain Mix params
-*** source_g<m> i8[1:8]
-    Choose grain input between ADC1-4 , DAC3-4, effect bus or mono_out
-*** fader_g<m>
-*** pan_g<m>
-*** effect_g<m>
-*** aux0_g<m>
-*** aux1_g<m>
-*** phase_g<m> bool
-    So we can flip the phase back into effect bus for flanger fx
-** Scrub params
-*** scrubPitch_g<m> f8x8[0:7]
-*** scrubLength_g<m> i24
-    set grain boundary to |scrub-time * (pitch-factor -
-    echo-tap-speed)|
-*** scrubRandomise i24
-    randomising scrub-time makes phase-modulation distortion less
-    disturbing If scrub time is a constant this gives ring-mod-like
-    distortion.
-*** scrubEdgeBehaviour i8[0:1]
-    does pitchshifting readhead bounce or wrap at grain boundary?
-** Echo params
-*** echoTime fx24x8
-    allows the user to force read head to a point, e.g:
-    - set echo time for simple echo fx
-    - trigger one-shot sample for pre-recorded audio
-*** echoSpeed f8x8
-    For realtime FX this guy should be 1, so the echo-tap stays in
-    sync with write head When a sample is loaded into the fifo this guy
-    can take a value between 0 and 7
-*** echoEdgeBehaviour i8[0:2]
-    does echo-tap head bounce, wrap or stall at echo boundary?
-*** echoMin f24x8
-    echo boundary nearest to write-head
-*** echoMax f24x8
-    echo boundary furthest from write-head
+** fader_i<n>
+   Stereo fader from ADC i to DACS 1&2
+** pan_i<n>
+   Stereo pan from ADC i between DACS 1&2
+** effect_i<n>
+   Send from ADC i to effect bus
+** aux0_i<n>
+   Fader from ADC i to DAC3
+** aux1_i<n>
+   Fader from ADC i to DAC4
+* Grain Mix params
+** source_g<m> i8[1:8]
+   Choose grain input between ADC1-4 , DAC3-4, effect bus or mono_out (not implemented yet)
+** fader_g<m>
+   Stereo fader from grain i to DACS 1&2
+** pan_g<m>
+   Stereo pan from grain i between DACS 1&2
+** effect_g<m>
+   Send from grain i to effect bus
+** aux0_g<m>
+   Fader from grain i to DAC3
+** aux1_g<m>
+   Fader from grain i to DAC4
+** phase_g<m> bool
+   phase of grain i (+ve or -ve)
+* Scrub params
+** scrubPitch_g<m> f8x8[0:7]
+   speed of scrubber read tap in subsamples (1/256 sample) - bees
+   displays 1.000 at speed = 1 sample/sample
+** scrubberFadeLength i16
+   length for scrubber crossfades in subsamples (1/256 sample)
+** scrubLength_g<m> i24
+   length of scrubber read distance from echo readhead before cross-fading
+** scrubRandomise i24
+   randomising scrubLength *should* make phase-modulation distortion
+   less disturbing.
+* Echo params
+** echo fade-length i16
+   length for scrubber crossfades in ~ms (64 sample)
+** echoTime fx24x8
+   allows bees to force read head to a point, e.g:
+   - set echo time for simple echo fx
+   - trigger one-shot sample for pre-recorded audio
+** echoSpeed f8x8
+   For canonical realtime FX like this guy should be 1, so the
+   echo-tap stays in sync with write head. When a sample is loaded
+   into the fifo this guy replays the sample.  See echoEdgeBehaviour
+   for playback modes.  If you're feeling crazy unglue the echo tap
+   from writing head while write head runs by setting this value != 1
+** echoEdgeBehaviour i8[0:2]
+   set this to either 0, 1 or 2 to control does echo-tap head stall,
+   bounce or wrap at echo boundary?
+** echoMin f24x8
+   echo boundary nearest to write-head
+** echoMax f24x8
+   echo boundary furthest from write-head
 * How to implement pitchshift on top of echoTap
 ** Decoupling scrubberhead from echo-tap
    Echotap wrap behaviour should be abstracted from the scrubberhead.
@@ -54,3 +63,17 @@
    sampler application) the scrubberhead can pitchshift without
    knowledge of echoTap internal state.
 ** 
+* What is a grain?
+so a grain consists a buffer, a write head running at 1x, an 'echoTap' & a 'scrubTap'.
+
+    The write head is the same as the one in lines - I set the
+    underlying buffer to be very long.  The echoTap is like a lines
+    read head but it can run at non-integer speeds, it's time coord is
+    relative to the write head (wrapping round the underlying buffer
+    is hidden) but playback speed is relative to the underlying buffer
+    (though think there's a subtle bug in this respect with current
+    release).  The scrubTap is kind of similar to an echoTap but it's
+    time coord is relative to the echoTap, and it's time coord is much
+    finer grained than the echoTap.
+
+Well - this all makes a twisted kind of sense to me at least anyway!
