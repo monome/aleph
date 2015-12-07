@@ -55,16 +55,9 @@
    echo boundary nearest to write-head
 ** echoMax f24x8
    echo boundary furthest from write-head
-* How to implement pitchshift on top of echoTap
-** Decoupling scrubberhead from echo-tap
-   Echotap wrap behaviour should be abstracted from the scrubberhead.
-   so the scrubberhead 'requests' samples in the echoTap time
-   coordinate this way if echoTap is currently wrapping (e.g repeating
-   sampler application) the scrubberhead can pitchshift without
-   knowledge of echoTap internal state.
-** 
 * What is a grain?
-so a grain consists a buffer, a write head running at 1x, an 'echoTap' & a 'scrubTap'.
+so a grain consists a buffer, a write head running at 1x, an 'echoTap'
+& a 'scrubTap'.
 
     The write head is the same as the one in lines - I set the
     underlying buffer to be very long.  The echoTap is like a lines
@@ -77,3 +70,11 @@ so a grain consists a buffer, a write head running at 1x, an 'echoTap' & a 'scru
     finer grained than the echoTap.
 
 Well - this all makes a twisted kind of sense to me at least anyway!
+* How to implement pitchshift on top of echoTap
+** Decoupling scrubberhead from echo-tap
+   Echotap wrap behaviour should be abstracted from the scrubberhead.
+   so the scrubberhead 'requests' samples in the echoTap time
+   coordinate this way if echoTap is currently wrapping (e.g repeating
+   sampler application) the scrubberhead can pitchshift without
+   knowledge of echoTap internal state.
+
