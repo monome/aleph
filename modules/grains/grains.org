@@ -11,7 +11,7 @@
    Fader from ADC i to DAC4
 * Grain Mix params
 ** source_g<m> i8[1:8]
-   Choose grain input between ADC1-4 , DAC3-4, effect bus or mono_out (not implemented yet)
+   Choose grain input between effect bus, ADC1-4 or grain1-4 (not implemented yet)
 ** fader_g<m>
    Stereo fader from grain i to DACS 1&2
 ** pan_g<m>
