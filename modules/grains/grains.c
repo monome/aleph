@@ -151,6 +151,11 @@ void module_init(void) {
   param_setup( 	eParam_effect_g1,	0 );
   param_setup( 	eParam_phase_g1,	65536);
 
+  int i;
+  //initialise grains
+  for (i=0;i<NGRAINS; i++)
+    grain_init(&(grains[i]), pGrainsData->audioBuffer[NGRAINS], LINES_BUF_FRAMES);
+
   //grain scrubber params
   param_setup (eParam_scrubPitch_g1, 65536 * 1);
   param_setup (eParam_scrubLength_g1, 65536 * 256 * 25);
@@ -167,7 +172,6 @@ void module_init(void) {
 
   param_setup (eParam_writeEnable_g1, 1 * 65536);
 
-  grain_init(&(grains[0]), pGrainsData->audioBuffer[0], LINES_BUF_FRAMES);
 
 }
 
