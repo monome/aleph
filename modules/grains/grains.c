@@ -154,7 +154,7 @@ void module_init(void) {
   int i;
   //initialise grains
   for (i=0;i<NGRAINS; i++)
-    grain_init(&(grains[i]), pGrainsData->audioBuffer[NGRAINS], LINES_BUF_FRAMES);
+    grain_init(&(grains[i]), pGrainsData->audioBuffer[i], LINES_BUF_FRAMES);
 
   //grain scrubber params
   param_setup (eParam_scrubPitch_g1, 65536 * 1);
