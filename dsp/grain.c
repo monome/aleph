@@ -46,12 +46,13 @@ fract32 grain_next(grain* dl, fract32 in) {
   readVal = scrubTap_read_xfade( &(dl->scrubTap));
   
   //DEBUG uncomment this line to check echoTap (ignoring any bugs in scrubTap)
+
   /* readVal = echoTap_read_xfade( &(dl->echoTap), 0); */
 
   buffer_tapN_next( &(dl->tapWr) );
-  scrubTap_next( &(dl->scrubTap) );
   echoTap_next( &(dl->echoTap) );
-
+  scrubTap_next( &(dl->scrubTap) );
+  
   return readVal;
 }
 
