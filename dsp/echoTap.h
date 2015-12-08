@@ -29,7 +29,6 @@ typedef struct _echoTap {
   s32 max;
   s32 min;
   //check for zero crossing
-  u8 zero_crossing;
 
   //This flag is used to set the type of envelope.
   //No longer to be used for equal-power x-fades
@@ -62,7 +61,7 @@ extern void echoTap_init(echoTap* tap, bufferTapN* tapWr);
 extern s32 min_num (s32 x, s32 y);
 extern s32 max_num (s32 x, s32 y);
 
-extern s32 echoTap_xFade (s32 x, s32 y, s32 pos);
+extern s32 equalPower_xfade (s32 x, s32 y, s32 pos);
 
 // increment the index in an echo
 extern void echoTap_next(echoTap* tap);

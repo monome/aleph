@@ -136,9 +136,6 @@ extern fract32 echoTap_read_interp(echoTap* echoTap, s32 time){
     fract32 samp1 = echoTap->tapWr->buf->data[samp1_index ];
     fract32 samp2 = echoTap->tapWr->buf->data[samp2_index ];
     fract32 inter_sample = FR32_MAX/256 * (idx % 256);
-    u8 samp1_sign = abs(samp1) / samp1;
-    u8 samp2_sign = abs(samp2) / samp2;
-    echoTap->zero_crossing = (samp1_sign != samp2_sign);
 
     fract32 pre_fader = pan_lin_mix(samp1, samp2, inter_sample)   ;
     s32 fader = echoTap_envelope(echoTap);
@@ -149,7 +146,7 @@ extern fract32 echoTap_read_interp(echoTap* echoTap, s32 time){
 //#!gnuplot
 //plot cos(x*pi/2), sin(x*pi/2), 1 - x**2, 1 - (1 - x)**2
 //fades x into y as pos slides from 0 to FR32_MAX
-s32 echoTap_xFade (s32 x, s32 y, s32 pos) {
+s32 equalPower_xfade (s32 x, s32 y, s32 pos) {
     s32 pos_2 = mult_fr1x32x32(pos, pos);
     s32 amp_x = sub_fr1x32(FR32_MAX,  pos_2);
     s32 pos_bar = sub_fr1x32(FR32_MAX,  pos);
@@ -180,32 +177,32 @@ fract32 echoTap_boundToFadeRatio (echoTap* tap, s32 unbounded) {
 }
 
 extern fract32 echoTap_read_xfade(echoTap* echoTap, s32 offset) {
-  s32 time = echoTap->time + offset;
-  s32 ret = echoTap_read_interp(echoTap, time);
-  s32 tapLength = echoTap->max - echoTap->min - echoTap->fadeLength;
-  s32 fadeRatio;
+  s32 time, ret, tapLength, fadeRatio;
+  time = echoTap->time + offset;
+  ret = echoTap_read_interp(echoTap, time);
+  tapLength = echoTap->max - echoTap->min - echoTap->fadeLength;
   switch (echoTap->edgeBehaviour) {
   case EDGE_ONESHOT :
     if (time > echoTap->max - echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, echoTap->max - time);
-      ret = echoTap_xFade ( 0, ret,
+      ret = equalPower_xfade ( 0, ret,
 			    fadeRatio);
     } else if (time < echoTap->min + echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, time - echoTap->min);
-      ret = echoTap_xFade ( 0, ret,
+      ret = equalPower_xfade ( 0, ret,
 			    fadeRatio);
     }
     break;
   case EDGE_WRAP :
     if (time > echoTap->max - echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, echoTap->max - time);
-      ret = echoTap_xFade ( echoTap_read_interp ( echoTap,
+      ret = equalPower_xfade ( echoTap_read_interp ( echoTap,
 			    			  time - tapLength ),
 			    ret,
 			    fadeRatio);
     } else if (time < echoTap->min + echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, time - echoTap->min);
-      ret = echoTap_xFade ( echoTap_read_interp ( echoTap,
+      ret = equalPower_xfade ( echoTap_read_interp ( echoTap,
 			    			  time + tapLength ),
 			    ret,
 			    fadeRatio);
@@ -214,10 +211,10 @@ extern fract32 echoTap_read_xfade(echoTap* echoTap, s32 offset) {
   case EDGE_BOUNCE :
     if (time > echoTap->max - echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, echoTap->max - time);
-      ret = echoTap_xFade (0, ret, fadeRatio);
+      ret = equalPower_xfade (0, ret, fadeRatio);
     } else if (time < echoTap->min + echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, time - echoTap->min);
-      ret = echoTap_xFade (0, ret, fadeRatio);
+      ret = equalPower_xfade (0, ret, fadeRatio);
     }
     break;
   }

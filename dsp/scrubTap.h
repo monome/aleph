@@ -35,9 +35,6 @@ typedef struct _scrubTap {
   s32 randomise;// How much to randomise scrubLength
   s32 randomBw;//LPF of the above quantity
 
-  //check for zero crossing
-  u8 zero_crossing;
-
   //This flag is used to set the type of grain envelope
   u8 shape;
 

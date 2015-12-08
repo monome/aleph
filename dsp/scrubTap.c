@@ -28,7 +28,6 @@ extern s32 scrubTapRandom (scrubTap* tap) {
 }
 
 extern void scrubTap_next(scrubTap* tap){
-  /* tap->length += scrubTapRandom(tap); */
   s32 tapRange = tap->length - tap->fadeLength;
   if(tap->time <= tap->length && tap->time >= 0 )
     //We aim to have echoTap->speed control tempo &
@@ -52,22 +51,24 @@ fract32 scrubTap_boundToFadeRatio (scrubTap* tap, s32 unbounded) {
 }
 
 extern fract32 scrubTap_read_xfade (scrubTap* scrubTap) {
-  s32 time = scrubTap->time;
-  s32 ret = echoTap_read_xfade(scrubTap->echoTap, time);
-  s32 tapLength = scrubTap->length - scrubTap->fadeLength;
-  s32 fadeRatio;
+  
+  s32 time, tapLength, fadeRatio;
+  time = scrubTap->time;
+  tapLength = scrubTap->length - scrubTap->fadeLength;
+  fadeRatio = 0;
   if (time > tapLength) {
     fadeRatio = scrubTap_boundToFadeRatio (scrubTap, scrubTap->length - time);
-    ret = echoTap_xFade ( echoTap_read_xfade ( scrubTap->echoTap,
-					       time - tapLength ),
-			  ret,
-			  fadeRatio);
+    return equalPower_xfade ( echoTap_read_xfade ( scrubTap->echoTap,
+						   time - tapLength ),
+			      echoTap_read_xfade(scrubTap->echoTap, time),
+			      fadeRatio);
   } else if (time < scrubTap->fadeLength) {
     fadeRatio = scrubTap_boundToFadeRatio (scrubTap, time);
-    ret = echoTap_xFade ( echoTap_read_xfade ( scrubTap->echoTap,
-					       time + tapLength ),
-			  ret,
-			  fadeRatio);
+    return equalPower_xfade (echoTap_read_xfade ( scrubTap->echoTap,
+						  time + tapLength ),
+			     echoTap_read_xfade(scrubTap->echoTap, time),
+			     fadeRatio);
   }
-  return ret;
+  else
+    return echoTap_read_xfade(scrubTap->echoTap, time);
 }
