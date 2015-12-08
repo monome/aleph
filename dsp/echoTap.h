@@ -32,11 +32,11 @@ typedef struct _echoTap {
 
   //This flag is used to set the type of envelope.
   //No longer to be used for equal-power x-fades
-  u8 shape;
+  s32 shape;
 
   //This flag sets the boundary behaviour
   //e.g wrap, oneshot or bounce
-  u8 edgeBehaviour;
+  s32 edgeBehaviour;
   s32 fadeLength;
 } echoTap;
 

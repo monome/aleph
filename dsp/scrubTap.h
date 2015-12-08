@@ -36,7 +36,7 @@ typedef struct _scrubTap {
   s32 randomBw;//LPF of the above quantity
 
   //This flag is used to set the type of grain envelope
-  u8 shape;
+  s32 shape;
 
   //This flag sets the boundary behaviour
   //e.g wrap, oneshot or bounce

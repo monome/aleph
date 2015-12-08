@@ -45,9 +45,9 @@ extern void scrubTap_next(scrubTap* tap){
 }
 
 fract32 scrubTap_boundToFadeRatio (scrubTap* tap, s32 unbounded) {
-  return max_num(0,
-		 min_num (tap->fadeLength, unbounded))
-    * (FR32_MAX / tap->fadeLength);
+  return (fract32) (max_num(0,
+			    min_num (tap->fadeLength, unbounded))
+		    * (FR32_MAX / tap->fadeLength));
 }
 
 extern fract32 scrubTap_read_xfade (scrubTap* scrubTap) {
