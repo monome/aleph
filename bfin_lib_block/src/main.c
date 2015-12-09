@@ -90,7 +90,6 @@ int main(void) {
   init_interrupts();
   init_dma();
 
-
   module_init();
   
   enable_dma_sport0();
