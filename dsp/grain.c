@@ -60,9 +60,9 @@ fract32 grain_next(grain* dl, fract32 in) {
   grain_rottenSlew(dl->echoTap.max, dl->echoMaxTarget, dl->echoMaxCountdown);
   grain_rottenSlew(dl->echoTap.min, dl->echoMinTarget, dl->echoMinCountdown);
 
-  /* grain_rottenSlew(dl->scrubTap.fadeLength, dl->scrubFadeLengthTarget, dl->scrubFadeLengthCountdown); */
-  /* grain_rottenSlew(dl->scrubTap.lengthNonRandom, dl->scrubLengthTarget, dl->scrubLengthCountdown); */
-  /* //Maybe need the following too... */
+  grain_rottenSlew(dl->scrubTap.fadeLength, dl->scrubFadeLengthTarget, dl->scrubFadeLengthCountdown);
+  grain_rottenSlew(dl->scrubTap.lengthNonRandom, dl->scrubLengthTarget, dl->scrubLengthCountdown);
+  //Maybe need the following too...
   /* grain_rottenSlew(dl->scrubTap.length, dl->scrubLengthTarget, dl->scrubLengthCountdown); */
   
   buffer_tapN_next( &(dl->tapWr) );
@@ -90,16 +90,15 @@ void grain_set_scrubPitch(grain* dl, s32 subsamples) {
   dl->scrubTap.pitch = subsamples;
 }
 
-
 void grain_set_scrubLength(grain* dl, s32 subsamples) {
-  dl->scrubTap.lengthNonRandom = subsamples;
-  dl->scrubTap.length = subsamples;
-  /* param_poke(dl->scrubLengthTarget, dl->scrubLengthCountdown); */
+  /* dl->scrubTap.lengthNonRandom = subsamples; */
+  /* dl->scrubTap.length = subsamples; */
+  param_poke(dl->scrubLengthTarget, dl->scrubLengthCountdown);
 }
 
 void  grain_set_scrubFadeLength(grain* dl, s32 subsamples) {
-  dl->scrubTap.fadeLength = subsamples;
-  /* param_poke(dl->scrubFadeLengthTarget, dl->scrubFadeLengthCountdown); */
+  /* dl->scrubTap.fadeLength = subsamples; */
+  param_poke(dl->scrubFadeLengthTarget, dl->scrubFadeLengthCountdown);
 }
 
 //set randomise (24.8 time in samples)
