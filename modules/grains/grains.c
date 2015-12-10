@@ -65,6 +65,8 @@ ParamValue effectITarget[4];
 grain grains[NGRAINS];
 //Grain mix params
 
+ParamValue sourceG[NGRAINS];
+
 ParamValue faderG[NGRAINS];
 ParamValue faderGTarget[NGRAINS];
 
@@ -144,6 +146,7 @@ void module_init(void) {
   param_setup( 	eParam_aux2_i4,		AUX_DEFAULT );
   param_setup( 	eParam_effect_i4,	EFFECT_DEFAULT );
 
+  param_setup( 	eParam_source_g1,	0);
   param_setup( 	eParam_fader_g1,	FADER_DEFAULT );
   param_setup( 	eParam_pan_g1,		PAN_DEFAULT );
   param_setup( 	eParam_aux1_g1,		AUX_DEFAULT );
@@ -198,6 +201,14 @@ fract32 effectBus;
 fract32 effectBusFeedback;
 fract32 grainOut;
 
+fract32 selectGrainInput(s32 i) {
+  if ( i == 0)
+    return effectBus;
+  else if (i < 5 && i > 0)
+    return in[i-1];
+  else return 0;
+}
+
 void module_process_frame(void) {
 
   u8 i;
@@ -230,7 +241,7 @@ void module_process_frame(void) {
   }
   effectBusFeedback = 0;
   for (i=0;i<NGRAINS;i++) {
-    grainOut=phaseG[i] * grain_next(&(grains[i]), effectBus);
+    grainOut=phaseG[i] * grain_next(&(grains[i]), selectGrainInput(sourceG[i]));
     mix_panned_mono (grainOut, &(out[0]), &(out[1]), panG[i], faderG[i]);
     mix_aux_mono (grainOut, &(out[2]), &(out[3]), aux1G[i], aux2G[i]);
     simple_busmix (effectBusFeedback, grainOut, effectG[i]);
@@ -327,6 +338,9 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   //grain mix params
+  case eParam_source_g1 :
+    sourceG[0] = v/65536;
+    break;
   case eParam_fader_g1 :
     faderGTarget[0] = v;
     break;

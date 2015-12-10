@@ -42,6 +42,9 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_fader (eParam_effect_i4, "effect_i4");
 
   //Grain Mixer Params
+  param_desc_aux(desc, eParam_source_g1, "source_g1",
+		 eParamTypeFix, 0x00000000, 0x00040000,
+		 32);
   param_desc_fader (eParam_fader_g1, "fader_g1");
   param_desc_pan (eParam_pan_g1, "pan_g1");
   param_desc_fader (eParam_aux1_g1, "aux1_g1");

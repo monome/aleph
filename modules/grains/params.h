@@ -93,6 +93,7 @@ enum params {
   eParam_effect_i4,
 
   //grain mix params
+  eParam_source_g1,
   eParam_fader_g1,
   eParam_pan_g1,
   eParam_aux1_g1,
