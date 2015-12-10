@@ -44,7 +44,8 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
 
 }
 
-#define simple_slew(x, y) x = (y + x * 1023) / 1024
+#define simple_slew(x, y) x =add_fr1x32( mult_fr1x32x32 (y, FR32_MAX/1024), \
+					 mult_fr1x32x32 (x, (FR32_MAX/1024) * 1023))
 
 #define grain_rottenSlew(param, target, countdown)	\
   if (countdown > 0) {					\
