@@ -39,6 +39,10 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
 fract32 grain_next(grain* dl, fract32 in) {
   //DEBUG uncomment this line to check plumbing this far...
   //return in;
+  buffer_tapN_next( &(dl->tapWr) );
+  echoTap_next( &(dl->echoTap) );
+  scrubTap_next( &(dl->scrubTap) );
+
   buffer_tapN_write(&(dl->tapWr), in);
 
   fract32 readVal;
@@ -49,10 +53,6 @@ fract32 grain_next(grain* dl, fract32 in) {
 
   /* readVal = echoTap_read_xfade( &(dl->echoTap), 0); */
 
-  buffer_tapN_next( &(dl->tapWr) );
-  echoTap_next( &(dl->echoTap) );
-  scrubTap_next( &(dl->scrubTap) );
-  
   return readVal;
 }
 
@@ -87,7 +87,7 @@ void grain_set_echoSpeed(grain* dl, s32 subsamples) {
   dl->echoTap.speed = subsamples;
 }
 
-void grain_set_echoEdgeBehaviour(grain* dl, u8 edgeBehaviour) {
+void grain_set_echoEdgeBehaviour(grain* dl, s32 edgeBehaviour) {
   dl->echoTap.edgeBehaviour = edgeBehaviour;
 }
 

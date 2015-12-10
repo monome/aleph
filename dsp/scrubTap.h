@@ -48,8 +48,6 @@ typedef struct _scrubTap {
 
 extern s32 scrubTapRandom (scrubTap* tap);
 
-// fixed grain envelope shapes
-s32 scrubTap_envelope(scrubTap *tap);
 // intialize tap
 extern void scrubTap_init(scrubTap* tap, echoTap* echoTap);
 

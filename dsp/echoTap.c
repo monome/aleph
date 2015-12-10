@@ -59,7 +59,7 @@ extern void echoTap_next(echoTap* tap){
   }
 }
     
-s32 echoTap_envelope(echoTap *tap) {
+fract32 echoTap_envelope(echoTap *tap) {
   s32 center = (tap->min + tap->max+1) / 2;
   s32 dist_from_center = tap->time - center;
   if ( dist_from_center < 0 )
@@ -176,7 +176,8 @@ fract32 echoTap_boundToFadeRatio (echoTap* tap, s32 unbounded) {
 }
 
 extern fract32 echoTap_read_xfade(echoTap* echoTap, s32 offset) {
-  s32 time, ret, tapLength, fadeRatio;
+  s32 time, ret, tapLength;
+  fract32 fadeRatio;
   time = echoTap->time + offset;
   ret = echoTap_read_interp(echoTap, time);
   tapLength = echoTap->max - echoTap->min - echoTap->fadeLength;

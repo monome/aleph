@@ -48,7 +48,7 @@ void grain_set_echoTime(grain* dl, s32 subsamples);
 
 void grain_set_echoSpeed(grain* dl, s32 subsamples);
 
-void grain_set_echoEdgeBehaviour(grain* dl, u8 edgeBehaviour);
+void grain_set_echoEdgeBehaviour(grain* dl, s32 edgeBehaviour);
 
 void grain_set_echoMin(grain* dl, s32 subsamples);
 

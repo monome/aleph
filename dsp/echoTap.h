@@ -54,7 +54,7 @@ typedef struct _echoTap {
 #define SHAPE_HALFWAVE 3 //shape fadeshort is FR32_MAX until the edges, then slopes down even slower
 
 // fixed grain envelope shapes
-s32 echoTap_envelope(echoTap *tap);
+fract32 echoTap_envelope(echoTap *tap);
 // intialize tap
 extern void echoTap_init(echoTap* tap, bufferTapN* tapWr);
 
@@ -74,5 +74,4 @@ extern fract32 echoTap_read_interp(echoTap* tap, s32 time);
 
 extern fract32 echoTap_read_xfade(echoTap* echoTap, s32 offset);
 
-s32 echoTap_envelope(echoTap *tap);
 #endif // h guard
