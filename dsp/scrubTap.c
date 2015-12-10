@@ -22,13 +22,13 @@ extern void scrubTap_init(scrubTap* tap, echoTap* echoTap){
 #define simple_slew(x, y) x = (y + x * 50) / 50
 
 extern s32 scrubTapRandom (scrubTap* tap) {
-  return abs(simple_slew(tap->randomBw,
-			 mult_fr1x32x32 (tap->randomise,
-					 lcprng_next( &(tap->randomGenerator)))));
+  return abs( (s32) mult_fr1x32x32 (tap->randomise,
+				    simple_slew(tap->randomBw,
+						lcprng_next( &(tap->randomGenerator)))));
 }
 
 extern void scrubTap_next(scrubTap* tap){
-  s32 tapRange = tap->length - tap->fadeLength;
+  s32 tapRange = abs(tap->length - tap->fadeLength);
   if(tap->time <= tap->length && tap->time >= 0 )
     //We aim to have echoTap->speed control tempo &
     //scrubTap->pitch control musical pitch
@@ -38,7 +38,8 @@ extern void scrubTap_next(scrubTap* tap){
       tap->time -= tapRange;
     else if (tap->time < 0)
       tap->time += tapRange;
-    tap->time += tap->echoTap->speed - tap->pitch;
+    if (tap->time < tap->length && tap->time > 0)
+      tap->time += tap->echoTap->speed - tap->pitch;
     tap->length = tap->lengthNonRandom
       + scrubTapRandom (tap);
   }

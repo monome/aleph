@@ -81,12 +81,13 @@ void  grain_set_scrubFadeLength(grain* dl, s32 subsamples) {
 
 //set randomise (24.8 time in samples)
 void grain_set_scrubRandomise(grain* dl, s32 subsamples) {
-  dl->scrubTap.randomise = subsamples;
+  dl->scrubTap.randomise = (fract32) subsamples;
 }
 
 void grain_set_echoTime(grain* dl, s32 subsamples) {
   dl->echoTapTimeTarget = subsamples;
-  dl->timeNudgeCountdown = 5 * 48000;
+  dl->timeNudgeCountdown = 5 * 48;
+  /* dl->echoTap.time = subsamples; */
 }
 
 void  grain_set_echoFadeLength(grain* dl, s32 subsamples) {

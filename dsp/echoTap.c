@@ -40,20 +40,24 @@ extern void echoTap_next(echoTap* tap){
       }
       break;
     case EDGE_WRAP:
-      echoRange = tap->max - tap->min - tap->fadeLength;
-      if (tap->time > tap->max)
-	tap->time = tap->time - echoRange;
-      else if (tap->time < tap->min)
-	tap->time = tap->time + echoRange;
-      tap->time += tap->tapWr->inc*256 - tap->speed;
+      echoRange = abs(tap->max - tap->min - tap->fadeLength);
+	if (tap->time > tap->max)
+	  tap->time -= echoRange;
+	else if (tap->time < tap->min)
+	  tap->time += echoRange;
+
+	if (tap->time < tap->max && tap->time > tap->min)
+	  tap->time += tap->tapWr->inc*256 - tap->speed;
       break;
     default ://watch out! copy-pasted from edge_wrap
-      echoRange = tap->max - tap->min - tap->fadeLength;
-      if (tap->time > tap->max)
-	tap->time = tap->time - echoRange;
-      else if (tap->time < tap->min)
-	tap->time = tap->time + echoRange;
-      tap->time += tap->tapWr->inc*256 - tap->speed;
+      echoRange = abs(tap->max - tap->min - tap->fadeLength);
+	if (tap->time > tap->max)
+	  tap->time -= echoRange;
+	else if (tap->time < tap->min)
+	  tap->time += echoRange;
+
+	if (tap->time < tap->max && tap->time > tap->min)
+	  tap->time += tap->tapWr->inc*256 - tap->speed;
       break;
     }
   }

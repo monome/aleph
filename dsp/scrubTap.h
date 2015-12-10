@@ -32,8 +32,8 @@ typedef struct _scrubTap {
   s32 length;
   s32 lengthNonRandom;
   lcprng randomGenerator;
-  s32 randomise;// How much to randomise scrubLength
-  s32 randomBw;//LPF of the above quantity
+  fract32 randomise;// How much to randomise scrubLength
+  fract32 randomBw;//LPF of the above quantity
 
   //This flag is used to set the type of grain envelope
   s32 shape;
