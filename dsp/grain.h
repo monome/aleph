@@ -20,6 +20,8 @@ typedef struct _grain {
   //-- audio buffer class
   audioBuffer buffer;
   echoTap echoTap;
+  s32 timeNudgeCountdown;
+  s32 echoTapTimeTarget;
   scrubTap scrubTap;
   bufferTapN tapWr;
 } grain;

@@ -36,9 +36,18 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
 
 }
 
+#define simple_slew(x, y) x = (y + x * 511) / 512
+
 fract32 grain_next(grain* dl, fract32 in) {
   //DEBUG uncomment this line to check plumbing this far...
   //return in;
+
+  //HACK yes, this iir hack is wearing a bit thin...
+  if (dl->timeNudgeCountdown > 0) {
+    simple_slew (dl->echoTap.time, dl->echoTapTimeTarget);
+    dl->timeNudgeCountdown --;
+  }
+  
   buffer_tapN_next( &(dl->tapWr) );
   echoTap_next( &(dl->echoTap) );
   scrubTap_next( &(dl->scrubTap) );
@@ -76,7 +85,8 @@ void grain_set_scrubRandomise(grain* dl, s32 subsamples) {
 }
 
 void grain_set_echoTime(grain* dl, s32 subsamples) {
-  dl->echoTap.time = subsamples;
+  dl->echoTapTimeTarget = subsamples;
+  dl->timeNudgeCountdown = 5 * 48000;
 }
 
 void  grain_set_echoFadeLength(grain* dl, s32 subsamples) {
