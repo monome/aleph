@@ -57,8 +57,8 @@ fract32 grain_next(grain* dl, fract32 in) {
   //return in;
   grain_rottenSlew(dl->echoTap.time, dl->echoTimeTarget, dl->echoTimeCountdown);
   grain_rottenSlew(dl->echoTap.fadeLength, dl->echoFadeLengthTarget, dl->echoFadeLengthCountdown);
-  /* grain_rottenSlew(dl->echoTap.max, dl->echoMaxTarget, dl->echoMaxCountdown); */
-  /* grain_rottenSlew(dl->echoTap.min, dl->echoMinTarget, dl->echoMinCountdown); */
+  grain_rottenSlew(dl->echoTap.max, dl->echoMaxTarget, dl->echoMaxCountdown);
+  grain_rottenSlew(dl->echoTap.min, dl->echoMinTarget, dl->echoMinCountdown);
 
   /* grain_rottenSlew(dl->scrubTap.fadeLength, dl->scrubFadeLengthTarget, dl->scrubFadeLengthCountdown); */
   /* grain_rottenSlew(dl->scrubTap.lengthNonRandom, dl->scrubLengthTarget, dl->scrubLengthCountdown); */
@@ -108,13 +108,13 @@ void grain_set_scrubRandomise(grain* dl, s32 subsamples) {
 }
 
 void grain_set_echoTime(grain* dl, s32 subsamples) {
-  param_poke(dl->echoTimeTarget,  dl->echoTimeCountdown);
   /* dl->echoTap.time = subsamples; */
+  param_poke(dl->echoTimeTarget,  dl->echoTimeCountdown);
 }
 
 void  grain_set_echoFadeLength(grain* dl, s32 subsamples) {
-    /* dl->echoTap.fadeLength = subsamples; */
-    param_poke(dl->echoFadeLengthTarget, dl->echoFadeLengthCountdown);
+  /* dl->echoTap.fadeLength = subsamples; */
+  param_poke(dl->echoFadeLengthTarget, dl->echoFadeLengthCountdown);
 }
 
 void grain_set_echoSpeed(grain* dl, s32 subsamples) {
@@ -126,13 +126,13 @@ void grain_set_echoEdgeBehaviour(grain* dl, s32 edgeBehaviour) {
 }
 
 void grain_set_echoMin(grain* dl, s32 subsamples) {
-  dl->echoTap.min = subsamples;
-  /* param_poke(dl->echoMinTarget, dl->echoMinCountdown); */
+  /* dl->echoTap.min = subsamples; */
+  param_poke(dl->echoMinTarget, dl->echoMinCountdown);
 }
 
 void grain_set_echoMax(grain* dl, s32 subsamples) {
-    dl->echoTap.max = subsamples;
-    /* param_poke(dl->echoMaxTarget, dl->echoMaxCountdown); */
+    /* dl->echoTap.max = subsamples; */
+    param_poke(dl->echoMaxTarget, dl->echoMaxCountdown);
 }
 
 void grain_set_writeEnable(grain* dl, s32 enable) {
