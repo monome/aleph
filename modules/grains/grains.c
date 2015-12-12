@@ -160,18 +160,18 @@ void module_init(void) {
     grain_init(&(grains[i]), pGrainsData->audioBuffer[i], LINES_BUF_FRAMES);
 
   //grain scrubber params
-  param_setup (eParam_scrubPitch_g1, 65536 * 1);
-  param_setup (eParam_scrubLength_g1, 65536 * 256 * 25);
+  param_setup (eParam_scrubPitch_g1, 65536 * 2);
+  param_setup (eParam_scrubLength_g1, 65536 * 256 * 10);
   param_setup (eParam_scrubFadeLength_g1, 65536 * 256 * 5);
-  param_setup (eParam_scrubRandomise_g1, 65536 * 256 * 25);
+  param_setup (eParam_scrubRandomise_g1, 65536 * 256 * 10);
 
   //grain echo params
-  param_setup(eParam_echoTime_g1, 65536 * 50);
-  param_setup(eParam_echoSpeed_g1, 256 * 256);
+  param_setup(eParam_echoTime_g1, 65536 * 15);
+  param_setup(eParam_echoSpeed_g1, 256 * 256 * 1);
   param_setup (eParam_echoEdgeBehaviour_g1, EDGE_WRAP * 65536);
-  param_setup (eParam_echoFadeLength_g1, 0);
+  param_setup (eParam_echoFadeLength_g1, 65536 * 10);
   param_setup (eParam_echoMin_g1, 0);
-  param_setup (eParam_echoMax_g1, 65536 * 1000);
+  param_setup (eParam_echoMax_g1, 65536 * 30);
 
   param_setup (eParam_writeEnable_g1, 1 * 65536);
 

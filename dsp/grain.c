@@ -18,20 +18,20 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   buffer_tapN_init(&(dl->tapWr), &(dl->buffer));
 
   echoTap_init(&(dl->echoTap), &(dl->tapWr));
-  dl->echoTap.time = 256 * 50;
+  dl->echoTap.time = 256 * 15;
   dl->echoTap.speed = 256;
   dl->echoTap.edgeBehaviour = EDGE_WRAP;
-  dl->echoTap.fadeLength = 0;
+  dl->echoTap.fadeLength = 10;
   dl->echoTap.min = 0;
-  dl->echoTap.max = 256 * 1000;
+  dl->echoTap.max = 256 * 30;
   dl->tapWr.inc = 1;
 
   scrubTap_init(&(dl->scrubTap), &(dl->echoTap));
-  dl->scrubTap.pitch = 256;
-  dl->scrubTap.length = 256 * 25;
-  dl->scrubTap.lengthNonRandom = 256 * 25;
-  dl->scrubTap.fadeLength = 256 * 0;
-  dl->scrubTap.randomise = 256 * 25;
+  dl->scrubTap.pitch = 256 * 2;
+  dl->scrubTap.length = 256 * 10;
+  dl->scrubTap.lengthNonRandom = 256 * 10;
+  dl->scrubTap.fadeLength = 256 * 5;
+  dl->scrubTap.randomise = 256 * 10;
   dl->scrubTap.time = 0;
 
   dl->echoTimeCountdown = -1;
