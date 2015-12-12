@@ -53,13 +53,24 @@ fract32 grain_next(grain* dl, fract32 in) {
     dl->echoTimeCountdown--;
   }
 
-  simple_slew(dl->echoTap.fadeLength, dl->echoFadeLengthTarget, dl->slewSpeed);
   simple_slew(dl->echoTap.max, dl->echoMaxTarget, dl->slewSpeed);
   simple_slew(dl->echoTap.min, dl->echoMinTarget, dl->slewSpeed);
 
-  simple_slew(dl->scrubTap.fadeLength, dl->scrubFadeLengthTarget, dl->slewSpeed);
   simple_slew(dl->scrubTap.length, dl->scrubLengthTarget, dl->slewSpeed);
+ dl->scrubTap.fadeLength =
+    simple_slew(dl->scrubTap.fadeLength,
+		mult_fr1x32x32((fract32) dl->scrubFadeLengthTarget,
+			       (fract32) dl->scrubLengthTarget),
+		dl->slewSpeed);
 
+  dl->echoTap.fadeLength =
+    simple_slew(dl->echoTap.fadeLength,
+		mult_fr1x32x32((fract32)dl->echoFadeLengthTarget,
+			       sub_fr1x32((fract32) dl->echoMaxTarget,
+					  (fract32) dl->echoMinTarget)),
+		dl->slewSpeed);
+  
+ 
   buffer_tapN_next( &(dl->tapWr) );
   echoTap_next( &(dl->echoTap) );
   scrubTap_next( &(dl->scrubTap) );
@@ -117,7 +128,7 @@ void grain_set_echoMin(grain* dl, s32 subsamples) {
 }
 
 void grain_set_echoMax(grain* dl, s32 subsamples) {
-    /* dl->echoTap.max = subsamples; */
+  /* dl->echoTap.max = subsamples; */
   dl->echoMaxTarget = subsamples;
 }
 

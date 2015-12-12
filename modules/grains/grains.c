@@ -162,13 +162,13 @@ void module_init(void) {
   //grain scrubber params
   param_setup (eParam_scrubPitch_g1, 65536 * 2);
   param_setup (eParam_scrubLength_g1, 65536 * 256 * 10);
-  param_setup (eParam_scrubFadeLength_g1, 65536 * 256 * 5);
+  param_setup (eParam_scrubFadeLength_g1, FR32_MAX/2);
 
   //grain echo params
   param_setup(eParam_echoTime_g1, 65536 * 15);
   param_setup(eParam_echoSpeed_g1, 256 * 256 * 1);
   param_setup (eParam_echoEdgeBehaviour_g1, EDGE_WRAP * 65536);
-  param_setup (eParam_echoFadeLength_g1, 65536 * 10);
+  param_setup (eParam_echoFadeLength_g1, FR32_MAX/16);
   param_setup (eParam_echoMin_g1, 0);
   param_setup (eParam_echoMax_g1, 65536 * 30);
 
@@ -374,12 +374,12 @@ void module_set_param(u32 idx, ParamValue v) {
     grain_set_scrubLength (&(grains[0]), v/256);
     break;
   case eParam_scrubFadeLength_g1 :
-    grain_set_scrubFadeLength(&(grains[0]), v/256);
+    grain_set_scrubFadeLength(&(grains[0]), v*128);
     break;
     
   //grain echo params
   case eParam_echoFadeLength_g1 :
-    grain_set_echoFadeLength(&(grains[0]), v/4);
+    grain_set_echoFadeLength(&(grains[0]), v*128);
     break;
   case eParam_echoTime_g1 :
     grain_set_echoTime(&(grains[0]),v/4);
