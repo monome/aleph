@@ -30,10 +30,6 @@ typedef struct _scrubTap {
 
   s32 pitch;
   s32 length;
-  s32 lengthNonRandom;
-  lcprng randomGenerator;
-  fract32 randomise;// How much to randomise scrubLength
-  fract32 randomBw;//LPF of the above quantity
 
   //This flag is used to set the type of grain envelope
   s32 shape;
@@ -45,8 +41,6 @@ typedef struct _scrubTap {
 
 //the maximum number of samples to use for antialiased read
 #define MAX_ANTIALIAS 3
-
-extern s32 scrubTapRandom (scrubTap* tap);
 
 // intialize tap
 extern void scrubTap_init(scrubTap* tap, echoTap* echoTap);

@@ -163,7 +163,6 @@ void module_init(void) {
   param_setup (eParam_scrubPitch_g1, 65536 * 2);
   param_setup (eParam_scrubLength_g1, 65536 * 256 * 10);
   param_setup (eParam_scrubFadeLength_g1, 65536 * 256 * 5);
-  param_setup (eParam_scrubRandomise_g1, 65536 * 256 * 0);
 
   //grain echo params
   param_setup(eParam_echoTime_g1, 65536 * 15);
@@ -200,12 +199,15 @@ void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, Par
 fract32 effectBus;
 fract32 effectBusFeedback;
 fract32 grainOut;
+fract32 grainOutFeedback[NGRAINS];
 
 fract32 selectGrainInput(s32 i) {
   if ( i == 0)
     return effectBus;
   else if (i < 5 && i > 0)
     return in[i-1];
+  else if (i < 9 && i > 5)
+    return grainOutFeedback[i - 5];
   else return 0;
 }
 
@@ -242,6 +244,7 @@ void module_process_frame(void) {
   effectBusFeedback = 0;
   for (i=0;i<NGRAINS;i++) {
     grainOut=phaseG[i] * grain_next(&(grains[i]), selectGrainInput(sourceG[i]));
+    grainOutFeedback[i] = grainOut;
     mix_panned_mono (grainOut, &(out[0]), &(out[1]), panG[i], faderG[i]);
     mix_aux_mono (grainOut, &(out[2]), &(out[3]), aux1G[i], aux2G[i]);
     simple_busmix (effectBusFeedback, grainOut, effectG[i]);
@@ -369,9 +372,6 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_scrubLength_g1 :
     grain_set_scrubLength (&(grains[0]), v/256);
-    break;
-  case eParam_scrubRandomise_g1 :
-    grain_set_scrubRandomise (&(grains[0]), v/256);
     break;
   case eParam_scrubFadeLength_g1 :
     grain_set_scrubFadeLength(&(grains[0]), v/256);

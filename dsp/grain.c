@@ -29,9 +29,7 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   scrubTap_init(&(dl->scrubTap), &(dl->echoTap));
   dl->scrubTap.pitch = 256 * 2;
   dl->scrubTap.length = 256 * 10;
-  dl->scrubTap.lengthNonRandom = 256 * 10;
   dl->scrubTap.fadeLength = 256 * 5;
-  dl->scrubTap.randomise = 256 * 0;
   dl->scrubTap.time = 0;
 
   dl->echoTimeCountdown = -1;
@@ -45,25 +43,23 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
 							       sub_fr1x32(x, y) \
 							       ))
 
-#define grain_rottenSlew(param, target, countdown)	\
-  if (countdown > 0) {					\
-    param = simple_slew(param, target, dl->slewSpeed);	\
-    countdown--;					\
-  }
-
 fract32 grain_next(grain* dl, fract32 in) {
   //DEBUG uncomment this line to check plumbing this far...
   //return in;
-  grain_rottenSlew(dl->echoTap.time, dl->echoTimeTarget, dl->echoTimeCountdown);
+  if (dl->echoTimeCountdown > 0) {
+    dl->echoTap.time = simple_slew(dl->echoTap.time,
+				   dl->echoTimeTarget,
+				   FR32_MAX-65536 );
+    dl->echoTimeCountdown--;
+  }
+
   simple_slew(dl->echoTap.fadeLength, dl->echoFadeLengthTarget, dl->slewSpeed);
   simple_slew(dl->echoTap.max, dl->echoMaxTarget, dl->slewSpeed);
   simple_slew(dl->echoTap.min, dl->echoMinTarget, dl->slewSpeed);
 
   simple_slew(dl->scrubTap.fadeLength, dl->scrubFadeLengthTarget, dl->slewSpeed);
-  simple_slew(dl->scrubTap.lengthNonRandom, dl->scrubLengthTarget, dl->slewSpeed);
-  //Maybe need the following too...
-  /* grain_rottenSlew(dl->scrubTap.length, dl->scrubLengthTarget, dl->slewSpeed); */
-  
+  simple_slew(dl->scrubTap.length, dl->scrubLengthTarget, dl->slewSpeed);
+
   buffer_tapN_next( &(dl->tapWr) );
   echoTap_next( &(dl->echoTap) );
   scrubTap_next( &(dl->scrubTap) );
@@ -87,7 +83,6 @@ void grain_set_scrubPitch(grain* dl, s32 subsamples) {
 }
 
 void grain_set_scrubLength(grain* dl, s32 subsamples) {
-  /* dl->scrubTap.lengthNonRandom = subsamples; */
   /* dl->scrubTap.length = subsamples; */
   dl->scrubLengthTarget = subsamples;
 }
@@ -95,11 +90,6 @@ void grain_set_scrubLength(grain* dl, s32 subsamples) {
 void  grain_set_scrubFadeLength(grain* dl, s32 subsamples) {
   /* dl->scrubTap.fadeLength = subsamples; */
   dl->scrubFadeLengthTarget = subsamples;
-}
-
-//set randomise (24.8 time in samples)
-void grain_set_scrubRandomise(grain* dl, s32 subsamples) {
-  dl->scrubTap.randomise = (fract32) subsamples;
 }
 
 void grain_set_echoTime(grain* dl, s32 subsamples) {
