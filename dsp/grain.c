@@ -42,14 +42,18 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   dl->scrubFadeLengthCountdown = -1;
   dl->scrubLengthCountdown = -1;
 
+  dl->slewSpeed = FR32_MAX/1024;
+
 }
 
-#define simple_slew(x, y) x =add_fr1x32( mult_fr1x32x32 (y, FR32_MAX/1024), \
-					 mult_fr1x32x32 (x, (FR32_MAX/1024) * 1023))
+#define simple_slew(x, y, slew) x = add_fr1x32( y,			\
+						mult_fr1x32x32(slew,	\
+							       sub_fr1x32(x, y) \
+							       ))
 
 #define grain_rottenSlew(param, target, countdown)	\
   if (countdown > 0) {					\
-    param = simple_slew(param, target);			\
+    param = simple_slew(param, target, dl->slewSpeed);	\
     countdown--;					\
   }
 
@@ -140,4 +144,8 @@ void grain_set_writeEnable(grain* dl, s32 enable) {
     dl->tapWr.inc = 0;
   else
     dl->tapWr.inc = 1;
+}
+
+void grain_set_slewSpeed(grain* dl, s32 newSpeed) {
+  dl->slewSpeed = (fract32) newSpeed;
 }

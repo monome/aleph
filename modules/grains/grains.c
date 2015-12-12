@@ -398,6 +398,10 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_writeEnable_g1 :
     grain_set_writeEnable(&(grains[0]),v);
+    break;
+  case eParam_slewSpeed_g1 :
+    grain_set_slewSpeed(&(grains[0]),v);
+    break;
   default:
     break;
   }

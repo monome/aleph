@@ -91,6 +91,9 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux(desc, eParam_writeEnable_g1, "writeEnable_g1",
 		 eParamTypeFix, 0x00000000, 0x00010000,
 		 32);
+  param_desc_aux(desc, eParam_slewSpeed_g1, "slewSpeed_g1",
+		 eParamTypeIntegrator, 0x00000000, FR32_MAX,
+		 32);
 
 }
 

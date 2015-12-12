@@ -116,6 +116,7 @@ enum params {
   eParam_echoMax_g1,
 
   //grain writehead params
+  eParam_slewSpeed_g1,
   eParam_writeEnable_g1,
   
   eParamNumParams

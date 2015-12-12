@@ -41,6 +41,8 @@ typedef struct _grain {
   s32 scrubLengthTarget;
   s32 scrubLengthCountdown;
 
+  fract32 slewSpeed;
+
 } grain;
 
 
@@ -74,4 +76,7 @@ void grain_set_echoMin(grain* dl, s32 subsamples);
 void grain_set_echoMax(grain* dl, s32 subsamples);
 
 void grain_set_writeEnable(grain* dl, s32 enable);
+
+void grain_set_slewSpeed(grain* dl, s32 newSpeed);
 #endif // h guard
+
