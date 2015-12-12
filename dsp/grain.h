@@ -27,19 +27,14 @@ typedef struct _grain {
   s32 echoTimeCountdown;
 
   s32 echoMaxTarget;
-  s32 echoMaxCountdown;
 
   s32 echoMinTarget;
-  s32 echoMinCountdown;
 
   s32 echoFadeLengthTarget;
-  s32 echoFadeLengthCountdown;
 
   s32 scrubFadeLengthTarget;
-  s32 scrubFadeLengthCountdown;
 
   s32 scrubLengthTarget;
-  s32 scrubLengthCountdown;
 
   fract32 slewSpeed;
 
