@@ -163,7 +163,7 @@ void module_init(void) {
   param_setup (eParam_scrubPitch_g1, 65536 * 2);
   param_setup (eParam_scrubLength_g1, 65536 * 256 * 10);
   param_setup (eParam_scrubFadeLength_g1, 65536 * 256 * 5);
-  param_setup (eParam_scrubRandomise_g1, 65536 * 256 * 10);
+  param_setup (eParam_scrubRandomise_g1, 65536 * 256 * 0);
 
   //grain echo params
   param_setup(eParam_echoTime_g1, 65536 * 15);

@@ -31,7 +31,7 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   dl->scrubTap.length = 256 * 10;
   dl->scrubTap.lengthNonRandom = 256 * 10;
   dl->scrubTap.fadeLength = 256 * 5;
-  dl->scrubTap.randomise = 256 * 10;
+  dl->scrubTap.randomise = 256 * 0;
   dl->scrubTap.time = 0;
 
   dl->echoTimeCountdown = -1;

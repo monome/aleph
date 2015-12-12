@@ -18,46 +18,47 @@ extern void echoTap_init(echoTap* tap, bufferTapN* tapWr){
 }
 
 extern void echoTap_next(echoTap* tap){
-  if(tap->time <= tap->max && tap->time >= tap->min )
-    tap->time += tap->tapWr->inc*256 - tap->speed;
+  s32 inc = tap->tapWr->inc*256 - tap->speed;
+  if(tap->time + inc <= tap->max && tap->time + inc >= tap->min )
+    tap->time += inc;
   else {
     s32 echoRange;
     switch (tap->edgeBehaviour) {
     case EDGE_ONESHOT:
-      if(tap->time < tap->min)
+      if(tap->time +inc < tap->min)
 	tap->time = tap->min;
       else
 	tap->time = tap->max;
       break;
     case EDGE_BOUNCE:
-      if(tap->time < tap->min) {
+      if(tap->time + inc < tap->min) {
 	tap->speed = abs(tap->speed) * -1;
 	tap->time = tap->min;
       }
-      else if (tap->time > tap->max){
+      else if (tap->time + inc > tap->max){
 	tap->speed = abs(tap->speed) * 1 ;
 	tap->time = tap->max;
       }
       break;
     case EDGE_WRAP:
       echoRange = abs(tap->max - tap->min - tap->fadeLength);
-	if (tap->time > tap->max)
-	  tap->time -= echoRange;
-	else if (tap->time < tap->min)
-	  tap->time += echoRange;
+      if (tap->time + inc > tap->max)
+	tap->time -= echoRange;
+      else if (tap->time + inc < tap->min)
+	tap->time += echoRange;
 
-	if (tap->time < tap->max && tap->time > tap->min)
-	  tap->time += tap->tapWr->inc*256 - tap->speed;
+      if (tap->time <= tap->max && tap->time >= tap->min)
+	tap->time += tap->tapWr->inc*256 - tap->speed;
       break;
     default ://watch out! copy-pasted from edge_wrap
       echoRange = abs(tap->max - tap->min - tap->fadeLength);
-	if (tap->time > tap->max)
-	  tap->time -= echoRange;
-	else if (tap->time < tap->min)
-	  tap->time += echoRange;
+      if (tap->time + inc > tap->max)
+	tap->time -= echoRange;
+      else if (tap->time + inc < tap->min)
+	tap->time += echoRange;
 
-	if (tap->time < tap->max && tap->time > tap->min)
-	  tap->time += tap->tapWr->inc*256 - tap->speed;
+      if (tap->time <= tap->max && tap->time >= tap->min)
+	tap->time += inc;
       break;
     }
   }
@@ -190,26 +191,26 @@ extern fract32 echoTap_read_xfade(echoTap* echoTap, s32 offset) {
     if (time > echoTap->max - echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, echoTap->max - time);
       ret = equalPower_xfade ( 0, ret,
-			    fadeRatio);
+			       fadeRatio);
     } else if (time < echoTap->min + echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, time - echoTap->min);
       ret = equalPower_xfade ( 0, ret,
-			    fadeRatio);
+			       fadeRatio);
     }
     break;
   case EDGE_WRAP :
     if (time > echoTap->max - echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, echoTap->max - time);
       ret = equalPower_xfade ( echoTap_read_interp ( echoTap,
-			    			  time - tapLength ),
-			    ret,
-			    fadeRatio);
+						     time - tapLength ),
+			       ret,
+			       fadeRatio);
     } else if (time < echoTap->min + echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, time - echoTap->min);
       ret = equalPower_xfade ( echoTap_read_interp ( echoTap,
-			    			  time + tapLength ),
-			    ret,
-			    fadeRatio);
+						     time + tapLength ),
+			       ret,
+			       fadeRatio);
     }
     break;
   case EDGE_BOUNCE :

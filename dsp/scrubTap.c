@@ -29,17 +29,18 @@ extern s32 scrubTapRandom (scrubTap* tap) {
 
 extern void scrubTap_next(scrubTap* tap){
   s32 tapRange = abs(tap->length - tap->fadeLength);
-  if(tap->time <= tap->length && tap->time >= 0 )
+  s32 inc = tap->echoTap->speed - tap->pitch;
+  if(tap->time + inc <= tap->length && tap->time >= 0 )
     //We aim to have echoTap->speed control tempo &
     //scrubTap->pitch control musical pitch
-    tap->time += tap->echoTap->speed - tap->pitch;
+    tap->time += inc;
   else {
     if (tap->time > tap->length)
       tap->time -= tapRange;
     else if (tap->time < 0)
       tap->time += tapRange;
-    if (tap->time < tap->length && tap->time > 0)
-      tap->time += tap->echoTap->speed - tap->pitch;
+    if (tap->time <= tap->length && tap->time >= 0)
+      tap->time += inc;
     tap->length = tap->lengthNonRandom
       + scrubTapRandom (tap);
   }
