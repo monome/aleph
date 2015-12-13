@@ -33,6 +33,7 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   dl->scrubTap.time = 0;
 
   dl->echoTimeCountdown = -1;
+  dl->scrubCentrePitch = 256 * 2;
 
   dl->slewSpeed = FR32_MAX/1024;
 
@@ -43,7 +44,7 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
 							       sub_fr1x32(x, y) \
 							       ))
 
-fract32 grain_next(grain* dl, fract32 in) {
+fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   //DEBUG uncomment this line to check plumbing this far...
   //return in;
   if (dl->echoTimeCountdown > 0) {
@@ -54,7 +55,11 @@ fract32 grain_next(grain* dl, fract32 in) {
     /* dl->echoTap.time = dl->echoTimeTarget; */
     dl->echoTimeCountdown--;
   }
+  
+  dl->scrubTap.pitch = (s32) add_fr1x32((fract32)dl->scrubCentrePitch,
+					FM_signal);
 
+  
   simple_slew(dl->echoTap.max, dl->echoMaxTarget, dl->slewSpeed);
   simple_slew(dl->echoTap.min, dl->echoMinTarget, dl->slewSpeed);
 
@@ -92,7 +97,7 @@ fract32 grain_next(grain* dl, fract32 in) {
 
 
 void grain_set_scrubPitch(grain* dl, s32 subsamples) {
-  dl->scrubTap.pitch = subsamples;
+  dl->scrubCentrePitch = subsamples;
 }
 
 void grain_set_scrubLength(grain* dl, s32 subsamples) {

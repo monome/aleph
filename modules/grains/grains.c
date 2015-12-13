@@ -246,7 +246,7 @@ fract32 selectGrainInput(s32 i) {
     return effectBus;
   else if (i < 5 && i > 0)
     return in[i-1];
-  else if (i < 9 && i > 5)
+  else if (i < 5 + NGRAINS && i > 4)
     return grainOutFeedback[i - 5];
   else return 0;
 }
@@ -284,12 +284,16 @@ void module_process_frame(void) {
   effectBusFeedback = 0;
   fract32 grainOut;
   for (i=0;i<NGRAINS;i++) {
-    /* eParam_FM_source_g1, */
-    /* 	eParam_FM_level_g1, */
-    /* 	eParam_AM_source_g1, */
-    /* 	eParam_AM_level_g1, */
-
-    grainOut=phaseG[i] * grain_next(&(grains[i]), selectGrainInput(sourceG[i]));
+    grainOut=phaseG[i] * grain_next(&(grains[i]),
+				    selectGrainInput(sourceG[i]),
+				    mult_fr1x32x32(selectGrainInput(FM_sourceG[i]),
+						   FM_faderG[i] / 65536));
+    //FIXME AM signal coming out too low to be heard...
+    simple_busmix(grainOut,
+		  mult_fr1x32x32 (selectGrainInput(AM_sourceG[i]),
+				  grainOut)  * 40,
+		  AM_faderG[i]);
+    
     grainOutFeedback[i] = grainOut;
     mix_panned_mono (grainOut, &(out[0]), &(out[1]), panG[i], faderG[i]);
     mix_aux_mono (grainOut, &(out[2]), &(out[3]), aux1G[i], aux2G[i]);
@@ -418,12 +422,14 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_FM_source_g1 :
     FM_sourceG[0] = v / 65536;
+    break;
   case eParam_AM_level_g1 :
     AM_faderG[0] = v;
     break;
   case eParam_AM_source_g1 :
     AM_sourceG[0] = v / 65536;
-
+    break;
+    
     //grain scrubber params
   case eParam_scrubPitch_g1 :
     grain_set_scrubPitch(&(grains[0]), v/256);
@@ -494,12 +500,14 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_FM_source_g2 :
     FM_sourceG[1] = v / 65536;
+    break;
   case eParam_AM_level_g2 :
     AM_faderG[1] = v;
     break;
   case eParam_AM_source_g2 :
     AM_sourceG[1] = v / 65536;
-
+    break;
+    
     //grain scrubber params
   case eParam_scrubPitch_g2 :
     grain_set_scrubPitch(&(grains[1]), v/256);

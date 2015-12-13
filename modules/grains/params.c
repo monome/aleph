@@ -123,11 +123,12 @@ extern void fill_param_desc(ParamDesc* desc) {
 		 eParamTypeFix, 0x00000000, 0x00060000,
 		 32);
   param_desc_fader(eParam_FM_level_g2, "FM_level_g2");
+  
   param_desc_aux(desc, eParam_AM_source_g2, "AM_source_g2",
 		 eParamTypeFix, 0x00000000, 0x00060000,
 		 32);
-
-  param_desc_fader(eParam_AM_level_g1, "AM_level_g1");
+  param_desc_fader(eParam_AM_level_g2, "AM_level_g2");
+  
   //Scrub Params
   param_desc_aux (desc, eParam_scrubPitch_g2, "scrubPitch_g2",
 		  SPEED_TYPE, SPEED_MIN, SPEED_MAX,

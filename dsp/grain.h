@@ -23,6 +23,8 @@ typedef struct _grain {
   scrubTap scrubTap;
   bufferTapN tapWr;
 
+  s32 scrubCentrePitch;
+  
   s32 echoTimeTarget;
   s32 echoTimeCountdown;
 
@@ -45,7 +47,7 @@ typedef struct _grain {
 extern void grain_init(grain* dl, fract32* bufData, u32 frames);
 
 // get next value given input
-extern fract32 grain_next(grain* dl, fract32 in);
+extern fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal);
 
 void  grain_set_scrubFadeLength(grain* dl, s32 subsamples) ;
 
