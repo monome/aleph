@@ -282,18 +282,20 @@ void module_process_frame(void) {
     simple_busmix (effectBus, in[i],effectI[i]);
   }
   effectBusFeedback = 0;
+  fract32 AMOut;
   fract32 grainOut;
   for (i=0;i<NGRAINS;i++) {
     grainOut=phaseG[i] * grain_next(&(grains[i]),
 				    selectGrainInput(sourceG[i]),
 				    mult_fr1x32x32(selectGrainInput(FM_sourceG[i]),
 						   FM_faderG[i] / 65536));
-    //FIXME AM signal coming out too low to be heard...
-    simple_busmix(grainOut,
-		  mult_fr1x32x32 (selectGrainInput(AM_sourceG[i]),
-				  grainOut)  * 40,
-		  AM_faderG[i]);
-    
+    // FIXME AM signal comes out very quiet should be preceded by a 50Hz HPF
+    // Then multiplied up by 20dB or so...
+    AMOut = mult_fr1x32x32( mult_fr1x32x32 (selectGrainInput(AM_sourceG[i]),
+					    grainOut),
+			    AM_faderG[i]);
+    grainOut = mult_fr1x32x32(grainOut, sub_fr1x32(FR32_MAX, AM_faderG[i]));
+    simple_busmix (grainOut, AMOut, AM_faderG[i]);
     grainOutFeedback[i] = grainOut;
     mix_panned_mono (grainOut, &(out[0]), &(out[1]), panG[i], faderG[i]);
     mix_aux_mono (grainOut, &(out[2]), &(out[3]), aux1G[i], aux2G[i]);
