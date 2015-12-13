@@ -11,7 +11,7 @@
    Fader from ADC i to DAC4
 * Grain Mix params
 ** source_g<m> i8[1:8]
-   Choose grain input between effect bus, ADC1-4 or grain1-4 (not implemented yet)
+   Choose grain input between effect bus, ADC1-4 or grain1-4
 ** fader_g<m>
    Stereo fader from grain i to DACS 1&2
 ** pan_g<m>
@@ -31,13 +31,11 @@
 ** scrubberFadeLength i16
    length for scrubber crossfades in subsamples (1/256 sample)
 ** scrubLength_g<m> i24
-   length of scrubber read distance from echo readhead before cross-fading
-** scrubRandomise i24
-   randomising scrubLength *should* make phase-modulation distortion
-   less disturbing.
+   length of scrubber read distance from echo readhead before cross-fading.
+   This is expressed as a ratio to the scrubberFadeLength
 * Echo params
 ** echo fade-length i16
-   length for scrubber crossfades in ~ms (64 sample)
+   length for scrubber crossfades.  Again expressed as a ratio to echomax-echomin
 ** echoTime fx24x8
    allows bees to force read head to a point, e.g:
    - set echo time for simple echo fx
