@@ -43,7 +43,7 @@ extern void fill_param_desc(ParamDesc* desc) {
 
   //Grain Mixer Params
   param_desc_aux(desc, eParam_source_g1, "source_g1",
-		 eParamTypeFix, 0x00000000, 0x00040000,
+		 eParamTypeFix, 0x00000000, 0x00060000,
 		 32);
   param_desc_fader (eParam_fader_g1, "fader_g1");
   param_desc_pan (eParam_pan_g1, "pan_g1");
@@ -53,6 +53,17 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux(desc, eParam_phase_g1, "phase_g1",
 		 eParamTypeFix, 0x00000000, 0x00010000,
 		 16);
+  
+  //grain mod params
+  param_desc_aux(desc, eParam_FM_source_g1, "FM_source_g1",
+		 eParamTypeFix, 0x00000000, 0x00060000,
+		 32);
+  param_desc_fader(eParam_FM_level_g1, "FM_level_g1");
+  param_desc_aux(desc, eParam_AM_source_g1, "AM_source_g1",
+		 eParamTypeFix, 0x00000000, 0x00060000,
+		 32);
+
+  param_desc_fader(eParam_AM_level_g1, "AM_level_g1");
 
   //Scrub Params
   param_desc_aux (desc, eParam_scrubPitch_g1, "scrubPitch_g1",
@@ -106,7 +117,17 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux(desc, eParam_phase_g2, "phase_g2",
 		 eParamTypeFix, 0x00000000, 0x00010000,
 		 16);
+  
+  //grain mod params
+  param_desc_aux(desc, eParam_FM_source_g2, "FM_source_g2",
+		 eParamTypeFix, 0x00000000, 0x00060000,
+		 32);
+  param_desc_fader(eParam_FM_level_g2, "FM_level_g2");
+  param_desc_aux(desc, eParam_AM_source_g2, "AM_source_g2",
+		 eParamTypeFix, 0x00000000, 0x00060000,
+		 32);
 
+  param_desc_fader(eParam_AM_level_g1, "AM_level_g1");
   //Scrub Params
   param_desc_aux (desc, eParam_scrubPitch_g2, "scrubPitch_g2",
 		  SPEED_TYPE, SPEED_MIN, SPEED_MAX,

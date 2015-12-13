@@ -82,6 +82,13 @@ ParamValue aux2GTarget[NGRAINS];
 ParamValue effectG[NGRAINS];
 ParamValue effectGTarget[NGRAINS];
 
+ParamValue FM_sourceG[NGRAINS];
+ParamValue FM_faderG[NGRAINS];
+
+ParamValue AM_faderG[NGRAINS];
+ParamValue AM_sourceG[NGRAINS];
+
+
 ParamValue phaseG[NGRAINS];
 
 // data structure of external memory
@@ -159,6 +166,12 @@ void module_init(void) {
   param_setup( 	eParam_effect_g1,	0 );
   param_setup( 	eParam_phase_g1,	65536);
 
+  //grain mod params
+  param_setup (eParam_FM_source_g1, 0);
+  param_setup (eParam_FM_level_g1, 0);
+  param_setup (eParam_AM_source_g1, 0);
+  param_setup (eParam_AM_level_g1, 0);
+
   //grain scrubber params
   param_setup (eParam_scrubPitch_g1, 65536 * 2);
   param_setup (eParam_scrubLength_g1, 65536 * 256 * 10);
@@ -181,6 +194,12 @@ void module_init(void) {
   param_setup( 	eParam_aux2_g2,		AUX_DEFAULT );
   param_setup( 	eParam_effect_g2,	0 );
   param_setup( 	eParam_phase_g2,	65536);
+
+  //grain mod params
+  param_setup (eParam_FM_source_g2, 0);
+  param_setup (eParam_FM_level_g2, 0);
+  param_setup (eParam_AM_source_g2, 0);
+  param_setup (eParam_AM_level_g2, 0);
 
   //grain scrubber params
   param_setup (eParam_scrubPitch_g2, 65536 * 2);
@@ -265,6 +284,11 @@ void module_process_frame(void) {
   effectBusFeedback = 0;
   fract32 grainOut;
   for (i=0;i<NGRAINS;i++) {
+    /* eParam_FM_source_g1, */
+    /* 	eParam_FM_level_g1, */
+    /* 	eParam_AM_source_g1, */
+    /* 	eParam_AM_level_g1, */
+
     grainOut=phaseG[i] * grain_next(&(grains[i]), selectGrainInput(sourceG[i]));
     grainOutFeedback[i] = grainOut;
     mix_panned_mono (grainOut, &(out[0]), &(out[1]), panG[i], faderG[i]);
@@ -388,6 +412,18 @@ void module_set_param(u32 idx, ParamValue v) {
       phaseG[0] = 1;
     break;
 
+    //grain mod params
+  case eParam_FM_level_g1 :
+    FM_faderG[0] = v;
+    break;
+  case eParam_FM_source_g1 :
+    FM_sourceG[0] = v / 65536;
+  case eParam_AM_level_g1 :
+    AM_faderG[0] = v;
+    break;
+  case eParam_AM_source_g1 :
+    AM_sourceG[0] = v / 65536;
+
     //grain scrubber params
   case eParam_scrubPitch_g1 :
     grain_set_scrubPitch(&(grains[0]), v/256);
@@ -451,6 +487,18 @@ void module_set_param(u32 idx, ParamValue v) {
     else
       phaseG[1] = 1;
     break;
+
+    //grain mod params
+  case eParam_FM_level_g2 :
+    FM_faderG[1] = v;
+    break;
+  case eParam_FM_source_g2 :
+    FM_sourceG[1] = v / 65536;
+  case eParam_AM_level_g2 :
+    AM_faderG[1] = v;
+    break;
+  case eParam_AM_source_g2 :
+    AM_sourceG[1] = v / 65536;
 
     //grain scrubber params
   case eParam_scrubPitch_g2 :

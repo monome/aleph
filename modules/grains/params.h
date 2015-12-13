@@ -101,6 +101,12 @@ enum params {
   eParam_effect_g1,
   eParam_phase_g1, //So we can flip the phase back into effect bus for flanging fb
 
+  //grain mod params
+  eParam_FM_source_g1,
+  eParam_FM_level_g1,
+  eParam_AM_source_g1,
+  eParam_AM_level_g1,
+
   //grain scrubber params
   eParam_scrubPitch_g1,
   eParam_scrubLength_g1,
@@ -126,6 +132,12 @@ enum params {
   eParam_aux2_g2,
   eParam_effect_g2,
   eParam_phase_g2, //So we can flip the phase back into effect bus for flanging fb
+
+  //grain mod params
+  eParam_FM_source_g2,
+  eParam_FM_level_g2,
+  eParam_AM_source_g2,
+  eParam_AM_level_g2,
 
   //grain scrubber params
   eParam_scrubPitch_g2,
