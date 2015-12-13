@@ -24,6 +24,7 @@
 
 // audio
 #include "filter_1p.h"
+#include "filter_svf.h"
 #include "module.h"
 #include "grain.h"
 
@@ -87,7 +88,7 @@ ParamValue FM_faderG[NGRAINS];
 
 ParamValue AM_faderG[NGRAINS];
 ParamValue AM_sourceG[NGRAINS];
-
+filter_svf AM_hpf[NGRAINS];
 
 ParamValue phaseG[NGRAINS];
 
@@ -155,8 +156,13 @@ void module_init(void) {
 
   int i;
   //initialise grains
-  for (i=0;i<NGRAINS; i++)
+  for (i=0;i<NGRAINS; i++) {
     grain_init(&(grains[i]), pGrainsData->audioBuffer[i], LINES_BUF_FRAMES);
+    filter_svf_init(&(AM_hpf[i]));
+    filter_svf_set_coeff(&(AM_hpf[i]), FR32_MAX / 1024);//Guessing this comes out aroun 50Hz...
+    filter_svf_set_rq(&(AM_hpf[i]), FR32_MAX / 4);//Guessing this comes out around q=0.5
+    filter_svf_set_high(&(AM_hpf[i]), FR32_MAX);
+  }
   
   param_setup( 	eParam_source_g1,	0);
   param_setup( 	eParam_fader_g1,	FADER_DEFAULT );
@@ -294,8 +300,10 @@ void module_process_frame(void) {
     AMOut = mult_fr1x32x32( mult_fr1x32x32 (selectGrainInput(AM_sourceG[i]),
 					    grainOut),
 			    AM_faderG[i]);
+    AMOut = mult_fr1x32x32(filter_svf_next(&(AM_hpf[i]), AMOut),
+			   AM_faderG[i]);
     grainOut = mult_fr1x32x32(grainOut, sub_fr1x32(FR32_MAX, AM_faderG[i]));
-    simple_busmix (grainOut, AMOut, AM_faderG[i]);
+    grainOut = add_fr1x32(AMOut * 8, grainOut);
     grainOutFeedback[i] = grainOut;
     mix_panned_mono (grainOut, &(out[0]), &(out[1]), panG[i], faderG[i]);
     mix_aux_mono (grainOut, &(out[2]), &(out[3]), aux1G[i], aux2G[i]);
