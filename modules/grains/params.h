@@ -117,6 +117,32 @@ enum params {
   //grain writehead params
   eParam_slewSpeed_g1,
   eParam_writeEnable_g1,
+
+  //grain mix params
+  eParam_source_g2,
+  eParam_fader_g2,
+  eParam_pan_g2,
+  eParam_aux1_g2,
+  eParam_aux2_g2,
+  eParam_effect_g2,
+  eParam_phase_g2, //So we can flip the phase back into effect bus for flanging fb
+
+  //grain scrubber params
+  eParam_scrubPitch_g2,
+  eParam_scrubLength_g2,
+  eParam_scrubFadeLength_g2,
+
+  //grain echo params
+  eParam_echoTime_g2,
+  eParam_echoSpeed_g2,
+  eParam_echoEdgeBehaviour_g2,
+  eParam_echoFadeLength_g2,
+  eParam_echoMin_g2,
+  eParam_echoMax_g2,
+
+  //grain writehead params
+  eParam_slewSpeed_g2,
+  eParam_writeEnable_g2,
   
   eParamNumParams
 };

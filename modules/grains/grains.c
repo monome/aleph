@@ -61,7 +61,7 @@ ParamValue aux2ITarget[4];
 ParamValue effectI[4];
 ParamValue effectITarget[4];
 
-#define NGRAINS 1
+#define NGRAINS 2
 grain grains[NGRAINS];
 //Grain mix params
 
@@ -146,6 +146,11 @@ void module_init(void) {
   param_setup( 	eParam_aux2_i4,		AUX_DEFAULT );
   param_setup( 	eParam_effect_i4,	EFFECT_DEFAULT );
 
+  int i;
+  //initialise grains
+  for (i=0;i<NGRAINS; i++)
+    grain_init(&(grains[i]), pGrainsData->audioBuffer[i], LINES_BUF_FRAMES);
+  
   param_setup( 	eParam_source_g1,	0);
   param_setup( 	eParam_fader_g1,	FADER_DEFAULT );
   param_setup( 	eParam_pan_g1,		PAN_DEFAULT );
@@ -153,11 +158,6 @@ void module_init(void) {
   param_setup( 	eParam_aux2_g1,		AUX_DEFAULT );
   param_setup( 	eParam_effect_g1,	0 );
   param_setup( 	eParam_phase_g1,	65536);
-
-  int i;
-  //initialise grains
-  for (i=0;i<NGRAINS; i++)
-    grain_init(&(grains[i]), pGrainsData->audioBuffer[i], LINES_BUF_FRAMES);
 
   //grain scrubber params
   param_setup (eParam_scrubPitch_g1, 65536 * 2);
@@ -173,7 +173,29 @@ void module_init(void) {
   param_setup (eParam_echoMax_g1, 65536 * 30);
 
   param_setup (eParam_writeEnable_g1, 1 * 65536);
+  
+  param_setup( 	eParam_source_g2,	0);
+  param_setup( 	eParam_fader_g2,	FADER_DEFAULT );
+  param_setup( 	eParam_pan_g2,		PAN_DEFAULT );
+  param_setup( 	eParam_aux1_g2,		AUX_DEFAULT );
+  param_setup( 	eParam_aux2_g2,		AUX_DEFAULT );
+  param_setup( 	eParam_effect_g2,	0 );
+  param_setup( 	eParam_phase_g2,	65536);
 
+  //grain scrubber params
+  param_setup (eParam_scrubPitch_g2, 65536 * 2);
+  param_setup (eParam_scrubLength_g2, 65536 * 256 * 10);
+  param_setup (eParam_scrubFadeLength_g2, 0x00640000);
+
+  //grain echo params
+  param_setup(eParam_echoTime_g2, 65536 * 15);
+  param_setup(eParam_echoSpeed_g2, 256 * 256 * 1);
+  param_setup (eParam_echoEdgeBehaviour_g2, EDGE_WRAP * 65536);
+  param_setup (eParam_echoFadeLength_g2, 0x00320000);
+  param_setup (eParam_echoMin_g2, 0);
+  param_setup (eParam_echoMax_g2, 65536 * 30);
+
+  param_setup (eParam_writeEnable_g2, 1 * 65536);
 
 }
 
@@ -198,7 +220,6 @@ void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, Par
 
 fract32 effectBus;
 fract32 effectBusFeedback;
-fract32 grainOut;
 fract32 grainOutFeedback[NGRAINS];
 
 fract32 selectGrainInput(s32 i) {
@@ -242,6 +263,7 @@ void module_process_frame(void) {
     simple_busmix (effectBus, in[i],effectI[i]);
   }
   effectBusFeedback = 0;
+  fract32 grainOut;
   for (i=0;i<NGRAINS;i++) {
     grainOut=phaseG[i] * grain_next(&(grains[i]), selectGrainInput(sourceG[i]));
     grainOutFeedback[i] = grainOut;
@@ -402,6 +424,73 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_slewSpeed_g1 :
     grain_set_slewSpeed(&(grains[0]),v);
     break;
+
+
+  //grain mix params
+  case eParam_source_g2 :
+    sourceG[1] = v/65536;
+    break;
+  case eParam_fader_g2 :
+    faderGTarget[1] = v;
+    break;
+  case eParam_pan_g2 :
+    panGTarget[1] = v;
+    break;
+  case eParam_aux1_g2 :
+    aux1GTarget[1] = v;
+    break;
+  case eParam_aux2_g2 :
+    aux2GTarget[1] = v;
+    break;
+  case eParam_effect_g2 :
+    effectGTarget[1] = v;
+    break;
+  case eParam_phase_g2 :
+    if (v == 0)
+      phaseG[1] = -1;
+    else
+      phaseG[1] = 1;
+    break;
+
+    //grain scrubber params
+  case eParam_scrubPitch_g2 :
+    grain_set_scrubPitch(&(grains[1]), v/256);
+    break;
+  case eParam_scrubLength_g2 :
+    grain_set_scrubLength (&(grains[1]), v/256);
+    break;
+  case eParam_scrubFadeLength_g2 :
+    grain_set_scrubFadeLength(&(grains[1]), v*128);
+    break;
+    
+  //grain echo params
+  case eParam_echoFadeLength_g2 :
+    grain_set_echoFadeLength(&(grains[1]), v*128);
+    break;
+  case eParam_echoTime_g2 :
+    grain_set_echoTime(&(grains[1]),v/4);
+    break;
+  case eParam_echoSpeed_g2 :
+    grain_set_echoSpeed(&(grains[1]),v/256);
+    break;
+  case eParam_echoEdgeBehaviour_g2 :
+    grain_set_echoEdgeBehaviour(&(grains[1]),v/65536);
+    break;
+  case eParam_echoMin_g2 :
+    grain_set_echoMin(&(grains[1]),v/4);
+    break;
+  case eParam_echoMax_g2 :
+    grain_set_echoMax(&(grains[1]),v/4);
+    break;
+  case eParam_writeEnable_g2 :
+    grain_set_writeEnable(&(grains[1]),v);
+    break;
+  case eParam_slewSpeed_g2 :
+    grain_set_slewSpeed(&(grains[1]),v);
+    break;
+
+
+
   default:
     break;
   }

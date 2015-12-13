@@ -92,6 +92,59 @@ extern void fill_param_desc(ParamDesc* desc) {
 		 eParamTypeIntegrator, 0x00000000, FR32_MAX,
 		 32);
 
+
+  
+  //Grain Mixer Params
+  param_desc_aux(desc, eParam_source_g2, "source_g2",
+		 eParamTypeFix, 0x00000000, 0x00040000,
+		 32);
+  param_desc_fader (eParam_fader_g2, "fader_g2");
+  param_desc_pan (eParam_pan_g2, "pan_g2");
+  param_desc_fader (eParam_aux1_g2, "aux1_g2");
+  param_desc_fader (eParam_aux2_g2, "aux2_g2");
+  param_desc_fader (eParam_effect_g2, "effect_g2");
+  param_desc_aux(desc, eParam_phase_g2, "phase_g2",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 16);
+
+  //Scrub Params
+  param_desc_aux (desc, eParam_scrubPitch_g2, "scrubPitch_g2",
+		  SPEED_TYPE, SPEED_MIN, SPEED_MAX,
+		  SPEED_RADIX);
+  param_desc_aux (desc, eParam_scrubLength_g2, "scrubLength_g2",
+		  TIME_SAMPLE_TYPE, TIME_SAMPLE_MIN, TIME_SAMPLE_MAX,
+		  TIME_SAMPLE_RADIX);
+  param_desc_aux (desc, eParam_scrubFadeLength_g2, "scrubFadeLength_g2",
+		  eParamTypeFix, 0x00000000, FR32_MAX,
+		  8);
+
+  //Echo Params
+  param_desc_aux (desc, eParam_echoFadeLength_g2, "echoFadeLength_g2",
+		  eParamTypeFix, 0x00000000, FR32_MAX,
+		  8);
+
+  param_desc_aux (desc, eParam_echoTime_g2, "echoTime_g2",
+		  TIME_MS_TYPE, TIME_MS_MIN, TIME_MS_MAX,
+		  TIME_MS_RADIX);
+  param_desc_aux (desc, eParam_echoSpeed_g2, "echoSpeed_g2",
+		  SPEED_TYPE, SPEED_MIN, SPEED_MAX,
+		  SPEED_RADIX);
+  param_desc_aux(desc, eParam_echoEdgeBehaviour_g2, "echoEdgeBehaviour_g2",
+		 eParamTypeFix, 0x00000000, 0x00020000,
+		 32);
+  param_desc_aux (desc, eParam_echoMin_g2, "echoMin_g2",
+		  TIME_MS_TYPE, TIME_MS_MIN, TIME_MS_MAX,
+		  TIME_MS_RADIX);
+  param_desc_aux (desc, eParam_echoMax_g2, "echoMax_g2",
+		  TIME_MS_TYPE, TIME_MS_MIN, TIME_MS_MAX,
+		  TIME_MS_RADIX);
+  param_desc_aux(desc, eParam_writeEnable_g2, "writeEnable_g2",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 32);
+  param_desc_aux(desc, eParam_slewSpeed_g2, "slewSpeed_g2",
+		 eParamTypeIntegrator, 0x00000000, FR32_MAX,
+		 32);
+
 }
 
 // EOF
