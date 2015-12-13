@@ -49,7 +49,9 @@ fract32 grain_next(grain* dl, fract32 in) {
   if (dl->echoTimeCountdown > 0) {
     dl->echoTap.time = simple_slew(dl->echoTap.time,
 				   dl->echoTimeTarget,
-				   FR32_MAX-65536 );
+				   FR32_MAX-65536 * 8 );
+    //Debug uncomment the below line to check slew is strong enough
+    /* dl->echoTap.time = dl->echoTimeTarget; */
     dl->echoTimeCountdown--;
   }
 
