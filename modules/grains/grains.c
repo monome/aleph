@@ -297,13 +297,14 @@ void module_process_frame(void) {
 						   FM_faderG[i] / 65536));
     // FIXME AM signal comes out very quiet should be preceded by a 50Hz HPF
     // Then multiplied up by 20dB or so...
+    // This is done now - but not quite sure about the results...
     AMOut = mult_fr1x32x32( mult_fr1x32x32 (selectGrainInput(AM_sourceG[i]),
 					    grainOut),
 			    AM_faderG[i]);
     AMOut = mult_fr1x32x32(filter_svf_next(&(AM_hpf[i]), AMOut),
 			   AM_faderG[i]);
     grainOut = mult_fr1x32x32(grainOut, sub_fr1x32(FR32_MAX, AM_faderG[i]));
-    grainOut = add_fr1x32(AMOut * 8, grainOut);
+    grainOut = add_fr1x32(shl_fr1x32(AMOut, 3), grainOut);
     grainOutFeedback[i] = grainOut;
     mix_panned_mono (grainOut, &(out[0]), &(out[1]), panG[i], faderG[i]);
     mix_aux_mono (grainOut, &(out[2]), &(out[3]), aux1G[i], aux2G[i]);
