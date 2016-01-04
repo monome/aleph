@@ -32,7 +32,7 @@ jack_nframes_t latency = 1024;
  */
 
 #define TWOPI 6
-
+#define PI 3
 typedef int fract32;
 #define FR32_MAX 0x7FFFFFFF
 #define FR32_MIN 0x80000000
@@ -90,16 +90,15 @@ fract32 max (fract32 x, float y) {
 fract32 hpfLastIn = 0;
 fract32 hpfLastOut = 0;
 
-#define SR 48000.0
+#define SR 96000.0
 
 fract32 hpf (fract32 in, fract32 freq) {
-  fract32 alpha =  (FR32_MAX  / freq ) / TWOPI;
-  //FIXME - just fix alpha for now - the above line is not right
-  alpha = (FR32_MAX / 10);
-  hpfLastOut = add_fr1x32 ( mult_fr1x32x32(alpha, hpfLastOut),
+  fract32 alpha =  freq * 4;
+  /* alpha = (FR32_MAX / 50); */
+  hpfLastOut = add_fr1x32 ( mult_fr1x32x32(sub_fr1x32(FR32_MAX, alpha), hpfLastOut),
 			    mult_fr1x32x32(alpha, sub_fr1x32( in, hpfLastIn)));
   hpfLastIn = in ;
-  return hpfLastOut;
+  return hpfLastOut * (FR32_MAX / freq / 4);
 }
 
 #define simple_slew(x, y, slew) x = add_fr1x32( y,		     \
@@ -113,21 +112,44 @@ fract32 lpf (fract32 in, fract32 freq) {
   return lpfLastOut;
 }
 
+fract32 osc (fract32 phase) {
+  if (phase > FR32_MAX / 2 || phase < (fract32) FR32_MIN / 2) {
+    phase = FR32_MAX - phase;
+    return sub_fr1x32(4 * mult_fr1x32x32( phase , phase),
+		     FR32_MAX);
+  }
+  else
+    return sub_fr1x32(FR32_MAX,
+		      4 * mult_fr1x32x32( phase, phase));
+}
+
+/* debug - this is a nice osc using built-in math libs */
+/* fract32 osc (fract32 phase) { */
+/*   float phase_float = 3.141579 * ( (double) phase ) / ( (double) FR32_MAX ); */
+/*   return (double) (cos (phase_float) * ( (double) (FR32_MAX / 16) )); */
+/* } */
+
+fract32 hzToDimensionless (int hz) {
+  return hz * (FR32_MAX / SR);
+}
+
 fract32 pitchTrack (fract32 preIn) {
-  jack_default_audio_sample_t in = hpf(preIn, 80.0 / SR);
-  in = lpf(in , 1 / period);
+  jack_default_audio_sample_t in = hpf(preIn, hzToDimensionless(200));
+  in = lpf(in , FR32_MAX / period / 2);
   if (lastIn <= 0 && in >= 0 && period > 10.0) {
-    period = period * 0.85 +
-      max(min((fract32) nsamples, SR / 70.0),
-	  SR / 2000) * 0.15;
+    simple_slew (period,
+    		 max(min((fract32) nsamples, FR32_MAX / hzToDimensionless(70.0)),
+    		     FR32_MAX / hzToDimensionless(2000)),
+    		 FR32_MAX - 1024);
+    /* period = max(min((fract32) nsamples, FR32_MAX / hzToDimensionless(70.0)), */
+    /* 		 FR32_MAX / hzToDimensionless(2000)); */
     nsamples = 0;
   }
   nsamples += 1;
-  phase = fmod (phase + 1.0 / period, 1.0);
+  phase += FR32_MAX / max(period, 10);
   lastIn = in;
-  return (jack_default_audio_sample_t) cos( phase * TWOPI);
+  return phase;
 }
-
 
 int process (jack_nframes_t nframes, void *arg) {
   jack_default_audio_sample_t *in, *out;
@@ -143,18 +165,18 @@ int process (jack_nframes_t nframes, void *arg) {
     fract32 fr32_in = jack_sample_to_fract32(in[k]);
     fract32 fr32_out;
     
-    /* fr32_out = hpf(f32_in); */
+    /* fr32_out = hpf(fr32_in); */
     /* fr32_out = mult_fr1x32x32(fr32_in, jack_sample_to_fract32(1.0 / 48.0)); */
 
     /* fr32_out = lpf(fr32_in, (FR32_MAX / 12)); */
-    fr32_out = hpf(fr32_in, (FR32_MAX / 48));
+    /* fr32_out = hpf(fr32_in, hzToDimensionless(1000)); */
 
-    /* fr32_out =  pitchTrack( f32_in ); */
+    fr32_out =  pitchTrack( fr32_in );
     
     
     out[k] = fract32_to_jack_sample(fr32_out);
 			     }
-  /* printf("%f\n", period ); */
+  /* printf("%d\n", period ); */
 
   return 0;      
 }
@@ -168,6 +190,16 @@ void arithmetic_tests () {
   printf("max-max = %d\n", sub_fr1x32(FR32_MAX,FR32_MAX));
   printf("max+min = %d\n", add_fr1x32(FR32_MAX,FR32_MIN));
   printf("min+min = %d\n", add_fr1x32(FR32_MIN,FR32_MIN));
+
+  printf("osc(0) = %d\n", osc(0));
+  printf("osc(1) = %d\n", osc(1));
+  printf("osc(-1) = %d\n", osc(-1));
+
+  printf("osc(max-1) = %d\n", osc(FR32_MAX - 1));
+  printf("osc(max) = %d\n", osc(FR32_MAX));
+  printf("osc(max+1) = %d\n", osc(FR32_MAX+1));
+  printf("osc(min) = %d\n", osc(FR32_MIN));
+  printf("osc(min+1) = %d\n", osc(((fract32)FR32_MIN)+1));
   
 }  
 
