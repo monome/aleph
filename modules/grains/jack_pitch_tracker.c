@@ -80,7 +80,7 @@ fract32 min (fract32 x, fract32 y) {
     return y;
 }
 
-fract32 max (fract32 x, float y) {
+fract32 max (fract32 x, fract32 y) {
   if (x > y)
     return x;
   else
@@ -123,7 +123,7 @@ fract32 osc (fract32 phase) {
 		      4 * mult_fr1x32x32( phase, phase));
 }
 
-/* debug - this is a nice osc using built-in math libs */
+/* debug - this is a cleaner osc using floating point math libs (obviously doesn't work on bfin)*/
 /* fract32 osc (fract32 phase) { */
 /*   float phase_float = 3.141579 * ( (double) phase ) / ( (double) FR32_MAX ); */
 /*   return (double) (cos (phase_float) * ( (double) (FR32_MAX / 16) )); */
@@ -133,20 +133,21 @@ fract32 hzToDimensionless (int hz) {
   return hz * (FR32_MAX / SR);
 }
 
+fract32 instantaneousPeriod = 48;
+
 fract32 pitchTrack (fract32 preIn) {
-  jack_default_audio_sample_t in = hpf(preIn, hzToDimensionless(50));
-  in = lpf(in , FR32_MAX / period);
-  if (lastIn <= 0 && in >= 0 && period > 10.0) {
-    simple_slew (period,
-    		 max(min((fract32) nsamples, FR32_MAX / hzToDimensionless(70.0)),
-    		     FR32_MAX / hzToDimensionless(2000)),
-    		 FR32_MAX - 1024);
-    /* period = max(min((fract32) nsamples, FR32_MAX / hzToDimensionless(70.0)), */
-    /* 		 FR32_MAX / hzToDimensionless(2000)); */
+  fract32 in = hpf(preIn, hzToDimensionless(50));
+  in = lpf(in , FR32_MAX / instantaneousPeriod);
+  if (lastIn <= 0 && in >= 0 && nsamples > 10.0) {
+    simple_slew (period, max
+		 (min((fract32) nsamples, FR32_MAX / hzToDimensionless(70.0)),
+		  FR32_MAX / hzToDimensionless(2000)),
+		 FR32_MAX - 1024);
     nsamples = 0;
   }
   nsamples += 1;
-  phase += FR32_MAX / max(period, 10);
+  simple_slew (instantaneousPeriod, period, FR32_MAX - 4096 * 2);
+  phase += FR32_MAX / instantaneousPeriod ;
   lastIn = in;
   return osc(phase);
 }
