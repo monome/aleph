@@ -37,25 +37,26 @@ typedef int fract32;
 #define FR32_MAX 0x7FFFFFFF
 #define FR32_MIN 0x80000000
 
-fract32 clip_fr1x32x32(fract32 x) {
-  if(x>FR32_MAX)
-    FR32_MAX;
-  else if (x<FR32_MIN)
-    FR32_MIN;
-  else x;
+fract32 clip_to_fr32(long x) {
+  if(x <= (long)(fract32)FR32_MAX && x >= (long)(fract32)FR32_MIN)
+    return (fract32) x;
+  if(x > FR32_MAX)
+    return FR32_MAX;
+  else if (x < FR32_MIN)
+    return FR32_MIN;
 }
 
 fract32 mult_fr1x32x32(fract32 x, fract32 y) {
-  return (fract32) ( ((double) x) * ((double) y)
+  return (fract32) ( (((double) x) * ((double) y))
 		     / ((double) FR32_MAX));
 }
 
 fract32 sub_fr1x32(fract32 x, fract32 y) {
-  return (fract32) clip_fr1x32x32((double) x - (double) y);
+  return clip_to_fr32((long) x - (long) y);
 }
 
 fract32 add_fr1x32(fract32 x, fract32 y) {
-  return (fract32) clip_fr1x32x32((double) x + (double) y);
+  return clip_to_fr32((long) x + (long) y);
 }
 
 fract32 jack_sample_to_fract32 (jack_default_audio_sample_t in) {
@@ -98,14 +99,13 @@ fract32 hpf (fract32 in, fract32 freq) {
   return hpfLastOut;
 }
 
-fract32 lpfLastOut = 0;
-#define lpf_raw(x, y, slew) x = add_fr1x32( y,			\
+#define lpf_raw(x, y, slew) x = add_fr1x32( y,				\
 					      mult_fr1x32x32(slew,	\
 							     sub_fr1x32(x, y)))
-
+fract32 lpfLastOut = 0;
 //the frequency unit is fraction of samplerate
 fract32 lpf (fract32 in, fract32 freq) {
-  fract32 beta = TWOPI * freq ;
+  fract32 beta = sub_fr1x32(FR32_MAX, TWOPI * freq);
   lpf_raw(lpfLastOut, in, beta);
   return lpfLastOut;
 }
@@ -129,7 +129,7 @@ fract32 pitchTrack (fract32 preIn) {
 int process (jack_nframes_t nframes, void *arg) {
   jack_default_audio_sample_t *in, *out;
   int k;
-	
+
   in = jack_port_get_buffer (input_port, nframes);
   out = jack_port_get_buffer (output_port, nframes);
 
@@ -140,10 +140,13 @@ int process (jack_nframes_t nframes, void *arg) {
     fract32 fr32_in = jack_sample_to_fract32(in[k]);
     fract32 fr32_out;
     
-    /* fr32_out = fract32_to_jack_sample( pitchTrack( f32_in )); */
     /* fr32_out = hpf(f32_in); */
+    /* fr32_out = mult_fr1x32x32(fr32_in, jack_sample_to_fract32(1.0 / 48.0)); */
+
+    fr32_out = lpf(fr32_in, (FR32_MAX / 24));
     /* fr32_out = lpf(fr32_in, jack_sample_to_fract32(1.0 / 44.1)); */
-    fr32_out = mult_fr1x32x32(fr32_in, FR32_MAX / 10);
+    /* fr32_out =  pitchTrack( f32_in ); */
+    
     
     out[k] = fract32_to_jack_sample(fr32_out);
 			     }
@@ -151,6 +154,18 @@ int process (jack_nframes_t nframes, void *arg) {
 
   return 0;      
 }
+
+void arithmetic_tests () {
+  printf ("1K = %d\n",mult_fr1x32x32( FR32_MAX,
+				      jack_sample_to_fract32(1.0 / 48)));
+  printf("0 clipped = %d\n", clip_to_fr32(0));
+  printf("1+1 = %d\n", add_fr1x32(1, 1));
+  printf("max+max = %d\n", add_fr1x32(FR32_MAX,FR32_MAX));
+  printf("max-max = %d\n", sub_fr1x32(FR32_MAX,FR32_MAX));
+  printf("max+min = %d\n", add_fr1x32(FR32_MAX,FR32_MIN));
+  printf("min+min = %d\n", add_fr1x32(FR32_MIN,FR32_MIN));
+  
+}  
 
 void
 latency_cb (jack_latency_callback_mode_t mode, void *arg)
@@ -188,10 +203,7 @@ main (int argc, char *argv[])
 	const char *server_name = NULL;
 	jack_options_t options = JackNullOption;
 	jack_status_t status;
-
-	printf ("1K = %d\n",mult_fr1x32x32( FR32_MAX,
-					   jack_sample_to_fract32(1.0 / 48)));
-
+	arithmetic_tests();
 	if (argc == 2)
 		latency = atoi(argv[1]);
 
