@@ -40,10 +40,10 @@ typedef int fract32;
 fract32 clip_to_fr32(long x) {
   if(x <= (long)(fract32)FR32_MAX && x >= (long)(fract32)FR32_MIN)
     return (fract32) x;
-  if(x > FR32_MAX)
-    return FR32_MAX;
-  else if (x < FR32_MIN)
-    return FR32_MIN;
+  if(x > (fract32)FR32_MAX)
+    return (fract32)FR32_MAX;
+  else if (x < (fract32)FR32_MIN)
+    return (fract32)FR32_MIN;
 }
 
 fract32 mult_fr1x32x32(fract32 x, fract32 y) {
@@ -93,20 +93,23 @@ fract32 hpfLastOut = 0;
 #define SR 48000.0
 
 fract32 hpf (fract32 in, fract32 freq) {
-  fract32 alpha =  1.0  / ( TWOPI * freq + 1);
-  hpfLastOut = alpha * ( hpfLastOut + in - hpfLastIn);
-  hpfLastIn = in;
+  fract32 alpha =  (FR32_MAX  / freq ) / TWOPI;
+  //FIXME - just fix alpha for now - the above line is not right
+  alpha = (FR32_MAX / 10);
+  hpfLastOut = add_fr1x32 ( mult_fr1x32x32(alpha, hpfLastOut),
+			    mult_fr1x32x32(alpha, sub_fr1x32( in, hpfLastIn)));
+  hpfLastIn = in ;
   return hpfLastOut;
 }
 
-#define lpf_raw(x, y, slew) x = add_fr1x32( y,				\
-					      mult_fr1x32x32(slew,	\
-							     sub_fr1x32(x, y)))
+#define simple_slew(x, y, slew) x = add_fr1x32( y,		     \
+						mult_fr1x32x32(slew, \
+							       sub_fr1x32(x, y)))
 fract32 lpfLastOut = 0;
 //the frequency unit is fraction of samplerate
 fract32 lpf (fract32 in, fract32 freq) {
-  fract32 beta = sub_fr1x32(FR32_MAX, TWOPI * freq);
-  lpf_raw(lpfLastOut, in, beta);
+  fract32 slew = sub_fr1x32(FR32_MAX, TWOPI * freq);
+  simple_slew(lpfLastOut, in, slew);
   return lpfLastOut;
 }
 
@@ -143,8 +146,9 @@ int process (jack_nframes_t nframes, void *arg) {
     /* fr32_out = hpf(f32_in); */
     /* fr32_out = mult_fr1x32x32(fr32_in, jack_sample_to_fract32(1.0 / 48.0)); */
 
-    fr32_out = lpf(fr32_in, (FR32_MAX / 24));
-    /* fr32_out = lpf(fr32_in, jack_sample_to_fract32(1.0 / 44.1)); */
+    /* fr32_out = lpf(fr32_in, (FR32_MAX / 12)); */
+    fr32_out = hpf(fr32_in, (FR32_MAX / 48));
+
     /* fr32_out =  pitchTrack( f32_in ); */
     
     
