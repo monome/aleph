@@ -113,8 +113,8 @@ fract32 lpf (fract32 in, fract32 freq) {
 }
 
 fract32 osc (fract32 phase) {
-  if (phase > FR32_MAX / 2 || phase < (fract32) FR32_MIN / 2) {
-    phase = FR32_MAX - phase;
+  if (phase > FR32_MAX / 2 || phase <= (fract32) FR32_MIN / 2) {
+    phase = FR32_MIN - phase;
     return sub_fr1x32(4 * mult_fr1x32x32( phase , phase),
 		     FR32_MAX);
   }
@@ -134,8 +134,8 @@ fract32 hzToDimensionless (int hz) {
 }
 
 fract32 pitchTrack (fract32 preIn) {
-  jack_default_audio_sample_t in = hpf(preIn, hzToDimensionless(200));
-  in = lpf(in , FR32_MAX / period / 2);
+  jack_default_audio_sample_t in = hpf(preIn, hzToDimensionless(50));
+  in = lpf(in , FR32_MAX / period);
   if (lastIn <= 0 && in >= 0 && period > 10.0) {
     simple_slew (period,
     		 max(min((fract32) nsamples, FR32_MAX / hzToDimensionless(70.0)),
@@ -148,7 +148,7 @@ fract32 pitchTrack (fract32 preIn) {
   nsamples += 1;
   phase += FR32_MAX / max(period, 10);
   lastIn = in;
-  return phase;
+  return osc(phase);
 }
 
 int process (jack_nframes_t nframes, void *arg) {
