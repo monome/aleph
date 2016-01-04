@@ -90,7 +90,7 @@ fract32 max (fract32 x, fract32 y) {
 fract32 hpfLastIn = 0;
 fract32 hpfLastOut = 0;
 
-#define SR 96000.0
+#define SR 96000
 
 fract32 hpf (fract32 in, fract32 freq) {
   fract32 alpha =  freq * 4;
@@ -129,18 +129,16 @@ fract32 osc (fract32 phase) {
 /*   return (double) (cos (phase_float) * ( (double) (FR32_MAX / 16) )); */
 /* } */
 
-fract32 hzToDimensionless (int hz) {
-  return hz * (FR32_MAX / SR);
-}
+#define hzToDimensionless(hz) ((fract32)((fract32)hz * (FR32_MAX / SR)))
 
-fract32 instantaneousPeriod = 48;
+fract32 instantaneousPeriod = hzToDimensionless(1000);
 
 fract32 pitchTrack (fract32 preIn) {
   fract32 in = hpf(preIn, hzToDimensionless(50));
   in = lpf(in , FR32_MAX / period);
   if (lastIn <= 0 && in >= 0 && nsamples > 10.0) {
     simple_slew (period, max
-		 (min((fract32) nsamples, FR32_MAX / hzToDimensionless(70.0)),
+		 (min((fract32) nsamples, FR32_MAX / hzToDimensionless(70)),
 		  FR32_MAX / hzToDimensionless(2000)),
 		 FR32_MAX - 1024);
     nsamples = 0;
