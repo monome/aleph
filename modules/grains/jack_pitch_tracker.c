@@ -31,57 +31,92 @@ jack_nframes_t latency = 1024;
  * the user (e.g. using Ctrl-C on a unix-ish operating system)
  */
 
-#define TWOPI 6.2832
+#define TWOPI 6
 
-jack_default_audio_sample_t lastIn = 0.0;
-float period = 44.1;
-float phase = 0.0;
+typedef int fract32;
+#define FR32_MAX 0x7FFFFFFF
+#define FR32_MIN 0x80000000
+
+fract32 clip_fr1x32x32(fract32 x) {
+  if(x>FR32_MAX)
+    FR32_MAX;
+  else if (x<FR32_MIN)
+    FR32_MIN;
+  else x;
+}
+
+fract32 mult_fr1x32x32(fract32 x, fract32 y) {
+  return (fract32) ( ((double) x) * ((double) y)
+		     / ((double) FR32_MAX));
+}
+
+fract32 sub_fr1x32(fract32 x, fract32 y) {
+  return (fract32) clip_fr1x32x32((double) x - (double) y);
+}
+
+fract32 add_fr1x32(fract32 x, fract32 y) {
+  return (fract32) clip_fr1x32x32((double) x + (double) y);
+}
+
+fract32 jack_sample_to_fract32 (jack_default_audio_sample_t in) {
+  return (fract32) (in * ((jack_default_audio_sample_t) FR32_MAX));
+}
+
+jack_default_audio_sample_t fract32_to_jack_sample (fract32 in) {
+  return ((jack_default_audio_sample_t) in) /
+    ((jack_default_audio_sample_t) FR32_MAX);
+}
+
+fract32 lastIn = 0.0;
+fract32 period = 48;
+fract32 phase = 0.0;
 int nsamples = 0;
 
-float min (float x, float y) {
+fract32 min (fract32 x, fract32 y) {
   if (x < y)
     return x;
   else
     return y;
 }
 
-float max (float x, float y) {
+fract32 max (fract32 x, float y) {
   if (x > y)
     return x;
   else
     return y;
 }
 
-jack_default_audio_sample_t hpfLastIn = 0;
-jack_default_audio_sample_t hpfLastOut = 0;
+fract32 hpfLastIn = 0;
+fract32 hpfLastOut = 0;
 
-#define SR 44100.0
+#define SR 48000.0
 
-#define DT (1.0 / SR)
-
-
-jack_default_audio_sample_t hpf (jack_default_audio_sample_t in, float freq) {
-  float alpha =  1.0  / ( TWOPI * DT * freq + 1);
+fract32 hpf (fract32 in, fract32 freq) {
+  fract32 alpha =  1.0  / ( TWOPI * freq + 1);
   hpfLastOut = alpha * ( hpfLastOut + in - hpfLastIn);
   hpfLastIn = in;
   return hpfLastOut;
 }
 
-jack_default_audio_sample_t lpfLastOut = 0;
+fract32 lpfLastOut = 0;
+#define lpf_raw(x, y, slew) x = add_fr1x32( y,			\
+					      mult_fr1x32x32(slew,	\
+							     sub_fr1x32(x, y)))
 
-jack_default_audio_sample_t lpf (jack_default_audio_sample_t in, float freq) {
-  float beta = (TWOPI * DT * freq) / (TWOPI * DT * freq + 1);
-  lpfLastOut = beta * in + (1 - beta) * lpfLastOut;
+//the frequency unit is fraction of samplerate
+fract32 lpf (fract32 in, fract32 freq) {
+  fract32 beta = TWOPI * freq ;
+  lpf_raw(lpfLastOut, in, beta);
   return lpfLastOut;
 }
 
-jack_default_audio_sample_t pitchTrack (jack_default_audio_sample_t preIn) {
-  jack_default_audio_sample_t in = hpf(preIn, 80.0);
-  in = lpf(in , 1 / (DT * period));
+fract32 pitchTrack (fract32 preIn) {
+  jack_default_audio_sample_t in = hpf(preIn, 80.0 / SR);
+  in = lpf(in , 1 / period);
   if (lastIn <= 0 && in >= 0 && period > 10.0) {
     period = period * 0.85 +
-      max(min((float) nsamples, 881),
-	  10.0) * 0.15;
+      max(min((fract32) nsamples, SR / 70.0),
+	  SR / 2000) * 0.15;
     nsamples = 0;
   }
   nsamples += 1;
@@ -89,6 +124,7 @@ jack_default_audio_sample_t pitchTrack (jack_default_audio_sample_t preIn) {
   lastIn = in;
   return (jack_default_audio_sample_t) cos( phase * TWOPI);
 }
+
 
 int process (jack_nframes_t nframes, void *arg) {
   jack_default_audio_sample_t *in, *out;
@@ -101,13 +137,17 @@ int process (jack_nframes_t nframes, void *arg) {
     /* out[k] = delay_line[delay_index]; */
     /* delay_line[delay_index] = in[k]; */
     /* delay_index = (delay_index + 1) % latency; */
-
-    out[k] = pitchTrack(in[k]);
-    /* out[k] = hpf(in[k]); */
-    /* out[k] = lpf(in[k]); */
-
-  }
-  printf("%f\n", min(period, 441.0) );
+    fract32 fr32_in = jack_sample_to_fract32(in[k]);
+    fract32 fr32_out;
+    
+    /* fr32_out = fract32_to_jack_sample( pitchTrack( f32_in )); */
+    /* fr32_out = hpf(f32_in); */
+    /* fr32_out = lpf(fr32_in, jack_sample_to_fract32(1.0 / 44.1)); */
+    fr32_out = mult_fr1x32x32(fr32_in, FR32_MAX / 10);
+    
+    out[k] = fract32_to_jack_sample(fr32_out);
+			     }
+  /* printf("%f\n", period ); */
 
   return 0;      
 }
@@ -148,7 +188,9 @@ main (int argc, char *argv[])
 	const char *server_name = NULL;
 	jack_options_t options = JackNullOption;
 	jack_status_t status;
-	
+
+	printf ("1K = %d\n",mult_fr1x32x32( FR32_MAX,
+					   jack_sample_to_fract32(1.0 / 48)));
 
 	if (argc == 2)
 		latency = atoi(argv[1]);
