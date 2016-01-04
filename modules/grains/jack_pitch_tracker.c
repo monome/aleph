@@ -137,7 +137,7 @@ fract32 instantaneousPeriod = 48;
 
 fract32 pitchTrack (fract32 preIn) {
   fract32 in = hpf(preIn, hzToDimensionless(50));
-  in = lpf(in , FR32_MAX / instantaneousPeriod);
+  in = lpf(in , FR32_MAX / period);
   if (lastIn <= 0 && in >= 0 && nsamples > 10.0) {
     simple_slew (period, max
 		 (min((fract32) nsamples, FR32_MAX / hzToDimensionless(70.0)),
