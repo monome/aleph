@@ -34,7 +34,6 @@ jack_nframes_t latency = 1024;
 #include "types.h"
 #include "fract32_jack.h"
 #include "ricks_tricks.h"
-#define SR 48000
 
 fract32 jack_sample_to_fract32 (jack_default_audio_sample_t in) {
   return (fract32) (in * ((jack_default_audio_sample_t) FR32_MAX));
@@ -51,7 +50,6 @@ jack_default_audio_sample_t fract32_to_jack_sample (fract32 in) {
 /*   return (double) (cos (phase_float) * ( (double) (FR32_MAX / 16) )); */
 /* } */
 
-#define hzToDimensionless(hz) ((fract32)((fract32)hz * (FR32_MAX / SR)))
 
 fract32 instantaneousPeriod = hzToDimensionless(1000);
 fract32 lastIn = 0.0;
@@ -79,7 +77,20 @@ fract32 pitchTrack (fract32 preIn) {
   return osc(phase);
 }
 
-int process (jack_nframes_t nframes, void *arg) {
+fract32 process_frame (fract32 in) {
+    /* out[k] = delay_line[delay_index]; */
+    /* delay_line[delay_index] = in[k]; */
+    /* delay_index = (delay_index + 1) % latency; */
+    
+    /* fr32_out = hpf(fr32_in); */
+    /* fr32_out = mult_fr1x32x32(fr32_in, jack_sample_to_fract32(1.0 / 48.0)); */
+
+    /* fr32_out = lpf(fr32_in, (FR32_MAX / 12)); */
+    /* fr32_out = hpf(fr32_in, hzToDimensionless(1000)); */
+  return pitchTrack( in );
+}
+
+int process_block (jack_nframes_t nframes, void *arg) {
   jack_default_audio_sample_t *in, *out;
   int k;
 
@@ -87,22 +98,8 @@ int process (jack_nframes_t nframes, void *arg) {
   out = jack_port_get_buffer (output_port, nframes);
 
   for (k=0; k<nframes; k++) {
-    /* out[k] = delay_line[delay_index]; */
-    /* delay_line[delay_index] = in[k]; */
-    /* delay_index = (delay_index + 1) % latency; */
     fract32 fr32_in = jack_sample_to_fract32(in[k]);
-    fract32 fr32_out;
-    
-    /* fr32_out = hpf(fr32_in); */
-    /* fr32_out = mult_fr1x32x32(fr32_in, jack_sample_to_fract32(1.0 / 48.0)); */
-
-    /* fr32_out = lpf(fr32_in, (FR32_MAX / 12)); */
-    /* fr32_out = hpf(fr32_in, hzToDimensionless(1000)); */
-
-    fr32_out =  pitchTrack( fr32_in );
-    
-    
-    out[k] = fract32_to_jack_sample(fr32_out);
+    out[k] = fract32_to_jack_sample( process_frame ( fr32_in));
 			     }
   /* printf("%d\n", period ); */
 
@@ -206,7 +203,7 @@ int main (int argc, char *argv[]) {
      there is work to be done.
   */
 
-  jack_set_process_callback (client, process, 0);
+  jack_set_process_callback (client, process_block, 0);
 
   /* tell the JACK server to call `latency()' whenever
      the latency needs to be recalculated.

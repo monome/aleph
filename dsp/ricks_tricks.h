@@ -23,3 +23,5 @@ fract32 osc (fract32 phase);
 							       sub_fr1x32(x, y)))
 fract32 max (fract32 x, fract32 y);
 fract32 min (fract32 x, fract32 y);
+#define SR 48000
+#define hzToDimensionless(hz) ((fract32)((fract32)hz * (FR32_MAX / SR)))
