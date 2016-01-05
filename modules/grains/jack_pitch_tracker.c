@@ -14,6 +14,7 @@
 #include <jack/jack.h>
 #include <math.h>
 
+
 jack_port_t *input_port;
 jack_port_t *output_port;
 jack_client_t *client;
@@ -30,34 +31,10 @@ jack_nframes_t latency = 1024;
  * port to its output port. It will exit when stopped by 
  * the user (e.g. using Ctrl-C on a unix-ish operating system)
  */
-
-#define TWOPI 6
-#define PI 3
-typedef int fract32;
-#define FR32_MAX 0x7FFFFFFF
-#define FR32_MIN 0x80000000
-
-fract32 clip_to_fr32(long x) {
-  if(x <= (long)(fract32)FR32_MAX && x >= (long)(fract32)FR32_MIN)
-    return (fract32) x;
-  if(x > (fract32)FR32_MAX)
-    return (fract32)FR32_MAX;
-  else if (x < (fract32)FR32_MIN)
-    return (fract32)FR32_MIN;
-}
-
-fract32 mult_fr1x32x32(fract32 x, fract32 y) {
-  return (fract32) ( (((double) x) * ((double) y))
-		     / ((double) FR32_MAX));
-}
-
-fract32 sub_fr1x32(fract32 x, fract32 y) {
-  return clip_to_fr32((long) x - (long) y);
-}
-
-fract32 add_fr1x32(fract32 x, fract32 y) {
-  return clip_to_fr32((long) x + (long) y);
-}
+#include "types.h"
+#include "fract32_jack.h"
+#include "ricks_tricks.h"
+#define SR 48000
 
 fract32 jack_sample_to_fract32 (jack_default_audio_sample_t in) {
   return (fract32) (in * ((jack_default_audio_sample_t) FR32_MAX));
@@ -66,61 +43,6 @@ fract32 jack_sample_to_fract32 (jack_default_audio_sample_t in) {
 jack_default_audio_sample_t fract32_to_jack_sample (fract32 in) {
   return ((jack_default_audio_sample_t) in) /
     ((jack_default_audio_sample_t) FR32_MAX);
-}
-
-fract32 lastIn = 0.0;
-fract32 period = 48;
-fract32 phase = 0.0;
-int nsamples = 0;
-
-fract32 min (fract32 x, fract32 y) {
-  if (x < y)
-    return x;
-  else
-    return y;
-}
-
-fract32 max (fract32 x, fract32 y) {
-  if (x > y)
-    return x;
-  else
-    return y;
-}
-
-fract32 hpfLastIn = 0;
-fract32 hpfLastOut = 0;
-
-#define SR 96000
-
-fract32 hpf (fract32 in, fract32 freq) {
-  fract32 alpha =  freq * 4;
-  /* alpha = (FR32_MAX / 50); */
-  hpfLastOut = add_fr1x32 ( mult_fr1x32x32(sub_fr1x32(FR32_MAX, alpha), hpfLastOut),
-			    mult_fr1x32x32(alpha, sub_fr1x32( in, hpfLastIn)));
-  hpfLastIn = in ;
-  return hpfLastOut * (FR32_MAX / freq / 4);
-}
-
-#define simple_slew(x, y, slew) x = add_fr1x32( y,		     \
-						mult_fr1x32x32(slew, \
-							       sub_fr1x32(x, y)))
-fract32 lpfLastOut = 0;
-//the frequency unit is fraction of samplerate
-fract32 lpf (fract32 in, fract32 freq) {
-  fract32 slew = sub_fr1x32(FR32_MAX, TWOPI * freq);
-  simple_slew(lpfLastOut, in, slew);
-  return lpfLastOut;
-}
-
-fract32 osc (fract32 phase) {
-  if (phase > FR32_MAX / 2 || phase <= (fract32) FR32_MIN / 2) {
-    phase = FR32_MIN - phase;
-    return sub_fr1x32(4 * mult_fr1x32x32( phase , phase),
-		     FR32_MAX);
-  }
-  else
-    return sub_fr1x32(FR32_MAX,
-		      4 * mult_fr1x32x32( phase, phase));
 }
 
 /* debug - this is a cleaner osc using floating point math libs (obviously doesn't work on bfin)*/
@@ -132,9 +54,15 @@ fract32 osc (fract32 phase) {
 #define hzToDimensionless(hz) ((fract32)((fract32)hz * (FR32_MAX / SR)))
 
 fract32 instantaneousPeriod = hzToDimensionless(1000);
+fract32 lastIn = 0.0;
+fract32 period = 48;
+fract32 phase = 0.0;
+int nsamples = 0;
+
+hpf dcBlocker;
 
 fract32 pitchTrack (fract32 preIn) {
-  fract32 in = hpf(preIn, hzToDimensionless(50));
+  fract32 in = hpf_next_dynamic(&dcBlocker, preIn, hzToDimensionless(50));
   in = lpf(in , FR32_MAX / period);
   if (lastIn <= 0 && in >= 0 && nsamples > 10.0) {
     simple_slew (period, max
@@ -230,140 +158,143 @@ jack_shutdown (void *arg)
 	exit (1);
 }
 
-int
-main (int argc, char *argv[])
-{
-	const char **ports;
-	const char *client_name = "latent";
-	const char *server_name = NULL;
-	jack_options_t options = JackNullOption;
-	jack_status_t status;
-	arithmetic_tests();
-	if (argc == 2)
-		latency = atoi(argv[1]);
+void init_dsp () {
+  hpf_init(&dcBlocker);
+}
 
-	delay_line = malloc( latency * sizeof(jack_default_audio_sample_t));
-	if (delay_line == NULL) {
-		fprintf (stderr, "no memory");
-		exit(1);
-	}
+int main (int argc, char *argv[]) {
+  init_dsp();
+  const char **ports;
+  const char *client_name = "latent";
+  const char *server_name = NULL;
+  jack_options_t options = JackNullOption;
+  jack_status_t status;
+  arithmetic_tests();
+  if (argc == 2)
+    latency = atoi(argv[1]);
 
-	memset (delay_line, 0, latency * sizeof(jack_default_audio_sample_t));
+  delay_line = malloc( latency * sizeof(jack_default_audio_sample_t));
+  if (delay_line == NULL) {
+    fprintf (stderr, "no memory");
+    exit(1);
+  }
 
-	/* open a client connection to the JACK server */
+  memset (delay_line, 0, latency * sizeof(jack_default_audio_sample_t));
 
-	client = jack_client_open (client_name, options, &status, server_name);
-	if (client == NULL) {
-		fprintf (stderr, "jack_client_open() failed, "
-			 "status = 0x%2.0x\n", status);
-		if (status & JackServerFailed) {
-			fprintf (stderr, "Unable to connect to JACK server\n");
-		}
-		exit (1);
-	}
-	if (status & JackServerStarted) {
-		fprintf (stderr, "JACK server started\n");
-	}
-	if (status & JackNameNotUnique) {
-		client_name = jack_get_client_name(client);
-		fprintf (stderr, "unique name `%s' assigned\n", client_name);
-	}
+  /* open a client connection to the JACK server */
 
-	/* tell the JACK server to call `process()' whenever
-	   there is work to be done.
-	*/
+  client = jack_client_open (client_name, options, &status, server_name);
+  if (client == NULL) {
+    fprintf (stderr, "jack_client_open() failed, "
+	     "status = 0x%2.0x\n", status);
+    if (status & JackServerFailed) {
+      fprintf (stderr, "Unable to connect to JACK server\n");
+    }
+    exit (1);
+  }
+  if (status & JackServerStarted) {
+    fprintf (stderr, "JACK server started\n");
+  }
+  if (status & JackNameNotUnique) {
+    client_name = jack_get_client_name(client);
+    fprintf (stderr, "unique name `%s' assigned\n", client_name);
+  }
 
-	jack_set_process_callback (client, process, 0);
+  /* tell the JACK server to call `process()' whenever
+     there is work to be done.
+  */
 
-	/* tell the JACK server to call `latency()' whenever
-	   the latency needs to be recalculated.
-	*/
-	if (jack_set_latency_callback)
-		jack_set_latency_callback (client, latency_cb, 0);
+  jack_set_process_callback (client, process, 0);
 
-	/* tell the JACK server to call `jack_shutdown()' if
-	   it ever shuts down, either entirely, or if it
-	   just decides to stop calling us.
-	*/
+  /* tell the JACK server to call `latency()' whenever
+     the latency needs to be recalculated.
+  */
+  if (jack_set_latency_callback)
+    jack_set_latency_callback (client, latency_cb, 0);
 
-	jack_on_shutdown (client, jack_shutdown, 0);
+  /* tell the JACK server to call `jack_shutdown()' if
+     it ever shuts down, either entirely, or if it
+     just decides to stop calling us.
+  */
 
-	/* display the current sample rate. 
-	 */
+  jack_on_shutdown (client, jack_shutdown, 0);
 
-	printf ("engine sample rate: %" PRIu32 "\n",
-		jack_get_sample_rate (client));
+  /* display the current sample rate. 
+   */
 
-	/* create two ports */
+  printf ("engine sample rate: %" PRIu32 "\n",
+	  jack_get_sample_rate (client));
 
-	input_port = jack_port_register (client, "input",
-					 JACK_DEFAULT_AUDIO_TYPE,
-					 JackPortIsInput, 0);
-	output_port = jack_port_register (client, "output",
-					  JACK_DEFAULT_AUDIO_TYPE,
-					  JackPortIsOutput, 0);
+  /* create two ports */
 
-	if ((input_port == NULL) || (output_port == NULL)) {
-		fprintf(stderr, "no more JACK ports available\n");
-		exit (1);
-	}
+  input_port = jack_port_register (client, "input",
+				   JACK_DEFAULT_AUDIO_TYPE,
+				   JackPortIsInput, 0);
+  output_port = jack_port_register (client, "output",
+				    JACK_DEFAULT_AUDIO_TYPE,
+				    JackPortIsOutput, 0);
 
-	/* Tell the JACK server that we are ready to roll.  Our
-	 * process() callback will start running now. */
+  if ((input_port == NULL) || (output_port == NULL)) {
+    fprintf(stderr, "no more JACK ports available\n");
+    exit (1);
+  }
 
-	if (jack_activate (client)) {
-		fprintf (stderr, "cannot activate client");
-		exit (1);
-	}
+  /* Tell the JACK server that we are ready to roll.  Our
+   * process() callback will start running now. */
 
-	/* Connect the ports.  You can't do this before the client is
-	 * activated, because we can't make connections to clients
-	 * that aren't running.  Note the confusing (but necessary)
-	 * orientation of the driver backend ports: playback ports are
-	 * "input" to the backend, and capture ports are "output" from
-	 * it.
-	 */
+  if (jack_activate (client)) {
+    fprintf (stderr, "cannot activate client");
+    exit (1);
+  }
 
-	ports = jack_get_ports (client, NULL, NULL,
-				JackPortIsPhysical|JackPortIsOutput);
-	if (ports == NULL) {
-		fprintf(stderr, "no physical capture ports\n");
-		exit (1);
-	}
+  /* Connect the ports.  You can't do this before the client is
+   * activated, because we can't make connections to clients
+   * that aren't running.  Note the confusing (but necessary)
+   * orientation of the driver backend ports: playback ports are
+   * "input" to the backend, and capture ports are "output" from
+   * it.
+   */
 
-	if (jack_connect (client, ports[0], jack_port_name (input_port))) {
-		fprintf (stderr, "cannot connect input ports\n");
-	}
+  ports = jack_get_ports (client, NULL, NULL,
+			  JackPortIsPhysical|JackPortIsOutput);
+  if (ports == NULL) {
+    fprintf(stderr, "no physical capture ports\n");
+    exit (1);
+  }
 
-	free (ports);
+  if (jack_connect (client, ports[0], jack_port_name (input_port))) {
+    fprintf (stderr, "cannot connect input ports\n");
+  }
+
+  free (ports);
 	
-	ports = jack_get_ports (client, NULL, NULL,
-				JackPortIsPhysical|JackPortIsInput);
-	if (ports == NULL) {
-		fprintf(stderr, "no physical playback ports\n");
-		exit (1);
-	}
+  ports = jack_get_ports (client, NULL, NULL,
+			  JackPortIsPhysical|JackPortIsInput);
+  if (ports == NULL) {
+    fprintf(stderr, "no physical playback ports\n");
+    exit (1);
+  }
 
-	if (jack_connect (client, jack_port_name (output_port), ports[0])) {
-		fprintf (stderr, "cannot connect output ports\n");
-	}
+  if (jack_connect (client, jack_port_name (output_port), ports[0])) {
+    fprintf (stderr, "cannot connect output ports\n");
+  }
 
-	free (ports);
+  free (ports);
 
-	/* keep running until stopped by the user */
+  /* keep running until stopped by the user */
 
 #ifdef WIN32
-	Sleep (-1);
+  Sleep (-1);
 #else
-	sleep (-1);
+  sleep (-1);
 #endif
 
-	/* this is never reached but if the program
-	   had some other way to exit besides being killed,
-	   they would be important to call.
-	*/
+  /* this is never reached but if the program
+     had some other way to exit besides being killed,
+     they would be important to call.
+  */
 
-	jack_client_close (client);
-	exit (0);
+  jack_client_close (client);
+  exit (0);
 }
 
