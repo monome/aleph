@@ -1,4 +1,10 @@
 #include "types.h"
+
+#if ARCH_BFIN
+#include "fix.h"
+#endif
+
+
 #define TWOPI 6
 #define PI 3
 typedef struct {
@@ -25,3 +31,16 @@ fract32 max (fract32 x, fract32 y);
 fract32 min (fract32 x, fract32 y);
 #define SR 48000
 #define hzToDimensionless(hz) ((fract32)((fract32)hz * (FR32_MAX / SR)))
+
+typedef struct {
+  fract32 instantaneousPeriod;
+  fract32 lastIn;
+  fract32 period;
+  fract32 phase;
+  s32 nsamples;
+  hpf dcBlocker;
+  lpf adaptiveFilter;
+} pitchDetector;
+
+void pitchDetector_init (pitchDetector *p);
+fract32 pitchTrack (pitchDetector *p, fract32 preIn);

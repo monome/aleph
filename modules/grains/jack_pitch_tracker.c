@@ -51,31 +51,7 @@ jack_default_audio_sample_t fract32_to_jack_sample (fract32 in) {
 /* } */
 
 
-fract32 instantaneousPeriod = hzToDimensionless(1000);
-fract32 lastIn = 0.0;
-fract32 period = 48;
-fract32 phase = 0.0;
-int nsamples = 0;
-
-hpf dcBlocker;
-lpf adaptiveFilter;
-
-fract32 pitchTrack (fract32 preIn) {
-  fract32 in = hpf_next_dynamic(&dcBlocker, preIn, hzToDimensionless(50));
-  in = lpf_next_dynamic (&adaptiveFilter, in , FR32_MAX / period);
-  if (lastIn <= 0 && in >= 0 && nsamples > 10.0) {
-    simple_slew (period, max
-		 (min((fract32) nsamples, FR32_MAX / hzToDimensionless(70)),
-		  FR32_MAX / hzToDimensionless(2000)),
-		 FR32_MAX - 1024);
-    nsamples = 0;
-  }
-  nsamples += 1;
-  simple_slew (instantaneousPeriod, period, FR32_MAX - 4096 * 2);
-  phase += FR32_MAX / instantaneousPeriod ;
-  lastIn = in;
-  return osc(phase);
-}
+pitchDetector myPitchDetector;
 
 fract32 process_frame (fract32 in) {
     /* out[k] = delay_line[delay_index]; */
@@ -87,7 +63,7 @@ fract32 process_frame (fract32 in) {
 
     /* fr32_out = lpf(fr32_in, (FR32_MAX / 12)); */
     /* fr32_out = hpf(fr32_in, hzToDimensionless(1000)); */
-  return pitchTrack( in );
+  return pitchTrack(&myPitchDetector, in );
 }
 
 int process_block (jack_nframes_t nframes, void *arg) {
@@ -157,8 +133,7 @@ jack_shutdown (void *arg)
 }
 
 void init_dsp () {
-  hpf_init(&dcBlocker);
-  lpf_init(&adaptiveFilter);
+  pitchDetector_init(&myPitchDetector);
 }
 
 int main (int argc, char *argv[]) {

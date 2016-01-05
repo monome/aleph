@@ -1,4 +1,9 @@
+#include "types.h"
 #include "ricks_tricks.h"
+
+#ifdef ARCH_BFIN
+#include "fract_math.h"
+#endif
 
 void hpf_init (hpf *myHpf) {
   myHpf->lastIn = 0;
@@ -50,3 +55,30 @@ fract32 max (fract32 x, fract32 y) {
     return y;
 }
 
+void pitchDetector_init (pitchDetector *p) {
+  p->instantaneousPeriod = 48;
+  p->period = 48;
+  p->lastIn = 0;
+  p->phase = 0;
+  p->nsamples = 0;
+  hpf_init(&(p->dcBlocker));
+  lpf_init(&(p->adaptiveFilter));
+}
+
+fract32 pitchTrack (pitchDetector *p, fract32 preIn) {
+  fract32 in = hpf_next_dynamic(&(p->dcBlocker), preIn, hzToDimensionless(50));
+  in = lpf_next_dynamic (&(p->adaptiveFilter), in , FR32_MAX / p->period);
+  if (p->lastIn <= 0 && in >= 0 && p->nsamples > 10.0) {
+    simple_slew ((p->period), (max (min((fract32) p->nsamples,
+				     FR32_MAX / hzToDimensionless(50)),
+				    FR32_MAX / hzToDimensionless(2000))),
+		 (FR32_MAX / 256));
+    p->nsamples = 0;
+  }
+  p->nsamples += 1;
+  simple_slew (p->instantaneousPeriod, p->period, 128);
+  /* p->instantaneousPeriod = p->period; */
+  p->phase += (FR32_MAX / p->instantaneousPeriod) * 2;
+  p->lastIn = in;
+  return osc(p->phase);
+}
