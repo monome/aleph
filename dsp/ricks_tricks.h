@@ -1,14 +1,20 @@
 #include "types.h"
-
-
+#define TWOPI 6
+#define PI 3
 typedef struct {
   fract32 lastIn;
   fract32 lastOut;
 } hpf;
 
-fract32 hpf_init (hpf *myHpf);
+typedef struct {
+  fract32 lastOut;
+} lpf;
+
+
+void hpf_init (hpf *myHpf);
 fract32 hpf_next_dynamic (hpf *myHpf, fract32 in, fract32 freq);
-fract32 lpf (fract32 in, fract32 freq);
+void lpf_init (lpf *myLpf);
+fract32 lpf_next_dynamic (lpf *myLpf, fract32 in, fract32 freq);
 
 fract32 osc (fract32 phase);
 

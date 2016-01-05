@@ -1,8 +1,12 @@
 #include "ricks_tricks.h"
 
-fract32 hpf_init (hpf *myHpf) {
+void hpf_init (hpf *myHpf) {
   myHpf->lastIn = 0;
   myHpf->lastOut = 0;
+
+}
+void lpf_init (lpf *myLpf) {
+  myLpf->lastOut = 0;
 
 }
 fract32 hpf_next_dynamic (hpf *myHpf, fract32 in, fract32 freq) {
@@ -15,12 +19,10 @@ fract32 hpf_next_dynamic (hpf *myHpf, fract32 in, fract32 freq) {
 }
 
 
-fract32 lpfLastOut = 0;
 //the frequency unit is fraction of samplerate
-fract32 lpf (fract32 in, fract32 freq) {
+fract32 lpf_next_dynamic (lpf *myLpf, fract32 in, fract32 freq) {
   fract32 slew = sub_fr1x32(FR32_MAX, TWOPI * freq);
-  simple_slew(lpfLastOut, in, slew);
-  return lpfLastOut;
+  return simple_slew(myLpf->lastOut, in, slew);
 }
 
 fract32 osc (fract32 phase) {

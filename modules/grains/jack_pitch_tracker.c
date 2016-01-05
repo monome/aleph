@@ -60,10 +60,11 @@ fract32 phase = 0.0;
 int nsamples = 0;
 
 hpf dcBlocker;
+lpf adaptiveFilter;
 
 fract32 pitchTrack (fract32 preIn) {
   fract32 in = hpf_next_dynamic(&dcBlocker, preIn, hzToDimensionless(50));
-  in = lpf(in , FR32_MAX / period);
+  in = lpf_next_dynamic (&adaptiveFilter, in , FR32_MAX / period);
   if (lastIn <= 0 && in >= 0 && nsamples > 10.0) {
     simple_slew (period, max
 		 (min((fract32) nsamples, FR32_MAX / hzToDimensionless(70)),
@@ -160,6 +161,7 @@ jack_shutdown (void *arg)
 
 void init_dsp () {
   hpf_init(&dcBlocker);
+  lpf_init(&adaptiveFilter);
 }
 
 int main (int argc, char *argv[]) {

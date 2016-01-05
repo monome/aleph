@@ -1,5 +1,3 @@
-#define TWOPI 6
-#define PI 3
 typedef int fract32;
 #define FR32_MAX 0x7FFFFFFF
 #define FR32_MIN 0x80000000
