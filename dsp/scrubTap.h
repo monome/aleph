@@ -25,22 +25,12 @@
 // scrubReset is where scrub tap wraps back to
 typedef struct _scrubTap {
   echoTap* echoTap; // pointer to echoTap
-  s32 time; // delay time in subsamples (1/256 sample)
-  s32 idx_last;// last position read from (for antialiasing)
-
-  s32 pitch;
+  quadraturePhasor quadraturePhasor;
   s32 length;
-
-  //This flag is used to set the type of grain envelope
-  s32 shape;
-
-  //This flag sets the boundary behaviour
-  //e.g wrap, oneshot or bounce
-  s32 fadeLength;
+  s32 frequency;
 } scrubTap;
 
 //the maximum number of samples to use for antialiased read
-#define MAX_ANTIALIAS 3
 
 // intialize tap
 extern void scrubTap_init(scrubTap* tap, echoTap* echoTap);

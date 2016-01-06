@@ -30,6 +30,55 @@ fract32 lpf_next_dynamic (lpf *myLpf, fract32 in, fract32 freq) {
   return simple_slew(myLpf->lastOut, in, slew);
 }
 
+s32 phasor_next_dynamic (phasor *phasor, fract32 freq) {
+  phasor->phase += FR32_MAX / freq;
+  return phasor->phase;
+}
+
+s32 phasor_read (phasor *phasor, s32 freq) {
+  return phasor->phase;
+}
+
+s32 phasor_pos_next_dynamic (phasor *phasor, fract32 freq) {
+  phasor->phase += FR32_MAX / freq;
+  return ((u32) phasor->phase) / 2;
+}
+s32 phasor_pos_read(phasor *phasor) {
+  return ((u32) phasor->phase) / 2;
+}
+
+void quadraturePhasor_init (quadraturePhasor *phasor) {
+  phasor->sinPhase = 0;
+  phasor->cosPhase = FR32_MAX / 2;
+}
+
+void quadraturePhasor_pos_next_dynamic (quadraturePhasor *phasor, fract32 freq) {
+    phasor->cosPhase += FR32_MAX / freq;
+    phasor->sinPhase = cosPhase + FR32_MAX / 2;
+}
+
+s32 quadraturePhasor_pos_sinRead(quadraturePhasor *phasor) {
+  return ((u32) phasor->sinPhase) / 2;
+}
+
+s32 quadraturePhasor_pos_cosRead(quadraturePhasor *phasor) {
+  return ((u32) phasor->cosPhase) / 2;
+}
+
+#define fadeOut(x) sub_fr1x32(FR32_MAX, mult_fr1x32x32( x, x))
+#define fadeIn(x) fadeOut(sub_fr1x32(FR32_MAX, x))
+
+//This guy is a tophat with 
+fract32 s32_flatTop_env (s32 pos, s32 fadeRatio) {
+  pos = max(pos, 0);
+  if (pos <= fadeLength)
+    return fadeIn(fadeRatio * pos);
+  else if (FR32_MAX - pos <= fadeLength)
+    return fadeIn(fadeRatio * (FR32_MAX - pos));
+  else
+    return FR32_MAX;
+}
+
 fract32 osc (fract32 phase) {
   if (phase > FR32_MAX / 2 || phase <= (fract32) FR32_MIN / 2) {
     phase = FR32_MIN - phase;
