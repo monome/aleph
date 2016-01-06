@@ -65,9 +65,6 @@ s32 quadraturePhasor_pos_cosRead(quadraturePhasor *phasor) {
   return ((u32) phasor->cosPhase) / 2;
 }
 
-#define fadeOut(x) sub_fr1x32(FR32_MAX, mult_fr1x32x32( x, x))
-#define fadeIn(x) fadeOut(sub_fr1x32(FR32_MAX, x))
-
 //This guy is a tophat with 
 fract32 s32_flatTop_env (s32 pos, s32 fadeRatio) {
   pos = max(pos, 0);
