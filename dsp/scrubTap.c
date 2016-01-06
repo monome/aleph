@@ -8,7 +8,7 @@
 // intialize tap
 extern void scrubTap_init(scrubTap* tap, echoTap* echoTap){
   tap->echoTap = echoTap;
-  quadraturePhasor_init(&(scrubTap->quadraturePhasor));
+  quadraturePhasor_init(&(tap->quadraturePhasor));
   tap->length = 1024;
   tap->frequency = hzToDimensionless (10);
 }
@@ -18,9 +18,8 @@ extern void scrubTap_next(scrubTap* tap){
 }
 
 extern fract32 scrubTap_read_xfade (scrubTap* scrubTap) {
-  s32 sinPos = quadraturePhasor_pos_sinRead(scrubTap->quadraturePhasor);
-  s32 cosPos = quadraturePhasor_pos_cosRead(scrubTap->quadraturePhasor);
-
+  s32 sinPos = quadraturePhasor_pos_sinRead(&(scrubTap->quadraturePhasor));
+  s32 cosPos = quadraturePhasor_pos_cosRead(&(scrubTap->quadraturePhasor));
   fract32 sinHead = echoTap_read_xfade(scrubTap->echoTap,
 				       (mult_fr1x32x32(scrubTap->length,
 						       sinPos)));

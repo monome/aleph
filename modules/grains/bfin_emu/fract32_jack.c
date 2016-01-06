@@ -1,4 +1,4 @@
-#include "types.h"
+#include "fix.h"
 #include <jack/jack.h>
 
 fract32 clip_to_fr32(long x) {

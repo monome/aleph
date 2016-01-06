@@ -1,3 +1,6 @@
+#ifndef RICKS_TRICKS_H
+#define RICKS_TRICKS_H
+
 #include "types.h"
 
 #if ARCH_BFIN
@@ -66,3 +69,5 @@ typedef struct {
 
 void pitchDetector_init (pitchDetector *p);
 fract32 pitchTrack (pitchDetector *p, fract32 preIn);
+
+#endif

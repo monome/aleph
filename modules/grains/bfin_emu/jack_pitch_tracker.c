@@ -31,9 +31,11 @@ jack_nframes_t latency = 1024;
  * port to its output port. It will exit when stopped by 
  * the user (e.g. using Ctrl-C on a unix-ish operating system)
  */
-#include "types.h"
+/* #include "fract32_emu.h" */
+/* #include "types.h" */
+#include "fix.h"
 #include "fract32_jack.h"
-#include "ricks_tricks.h"
+#include "grain.h"
 
 fract32 jack_sample_to_fract32 (jack_default_audio_sample_t in) {
   return (fract32) (in * ((jack_default_audio_sample_t) FR32_MAX));
@@ -44,14 +46,15 @@ jack_default_audio_sample_t fract32_to_jack_sample (fract32 in) {
     ((jack_default_audio_sample_t) FR32_MAX);
 }
 
-/* debug - this is a cleaner osc using floating point math libs (obviously doesn't work on bfin)*/
+/* debug - this is a clean sinosc using floating point math libs (obviously doesn't work on bfin)*/
 /* fract32 osc (fract32 phase) { */
 /*   float phase_float = 3.141579 * ( (double) phase ) / ( (double) FR32_MAX ); */
 /*   return (double) (cos (phase_float) * ( (double) (FR32_MAX / 16) )); */
 /* } */
 
 
-pitchDetector myPitchDetector;
+/* pitchDetector myPitchDetector; */
+grain myGrain;
 
 fract32 process_frame (fract32 in) {
     /* out[k] = delay_line[delay_index]; */
@@ -63,7 +66,7 @@ fract32 process_frame (fract32 in) {
 
     /* fr32_out = lpf(fr32_in, (FR32_MAX / 12)); */
     /* fr32_out = hpf(fr32_in, hzToDimensionless(1000)); */
-  return pitchTrack(&myPitchDetector, in );
+  return grain_next(&myGrain, in, 0);
 }
 
 int process_block (jack_nframes_t nframes, void *arg) {
@@ -84,7 +87,7 @@ int process_block (jack_nframes_t nframes, void *arg) {
 
 void arithmetic_tests () {
   printf ("1K = %d\n",mult_fr1x32x32( FR32_MAX,
-				      jack_sample_to_fract32(1.0 / 48)));
+				      jack_sample_to_fract32(1.0 / 48.0)));
   printf("0 clipped = %d\n", clip_to_fr32(0));
   printf("1+1 = %d\n", add_fr1x32(1, 1));
   printf("max+max = %d\n", add_fr1x32(FR32_MAX,FR32_MAX));
@@ -133,7 +136,9 @@ jack_shutdown (void *arg)
 }
 
 void init_dsp () {
-  pitchDetector_init(&myPitchDetector);
+  printf("trying to initialise grain...\n");
+  grain_init(&myGrain, malloc(0x8000 * sizeof(fract32)), 0x4000);
+  printf("...successfully initialised grain\n");
 }
 
 int main (int argc, char *argv[]) {

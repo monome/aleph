@@ -1,4 +1,4 @@
-#include "types.h"
+#include "fix.h"
 #include "ricks_tricks.h"
 
 #ifdef ARCH_BFIN

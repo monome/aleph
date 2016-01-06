@@ -16,6 +16,7 @@
 #include "buffer.h"
 #include "echoTap.h"
 #include "noise.h"
+#include "ricks_tricks.h"
 
 // ---- scrubTap
 // Data structure for an 'scrub tap'

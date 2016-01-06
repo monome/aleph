@@ -177,7 +177,7 @@ s32 min_num (s32 x, s32 y) {
 fract32 echoTap_boundToFadeRatio (echoTap* tap, s32 unbounded) {
   return (fract32) (max_num (0,
 			     min_num (tap->fadeLength, unbounded))
-		    * (FR32_MAX / tap->fadeLength));
+		    * (FR32_MAX / (max_num (1, tap->fadeLength))));
 }
 
 extern fract32 echoTap_read_xfade(echoTap* echoTap, s32 offset) {

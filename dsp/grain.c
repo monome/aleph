@@ -27,10 +27,6 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   dl->tapWr.inc = 1;
 
   scrubTap_init(&(dl->scrubTap), &(dl->echoTap));
-  dl->scrubTap.pitch = 256 * 2;
-  dl->scrubTap.length = 256 * 10;
-  dl->scrubTap.fadeLength = 256 * 5;
-  dl->scrubTap.time = 0;
 
   dl->echoTimeCountdown = -1;
   dl->scrubCentrePitch = 256 * 2;
@@ -38,11 +34,6 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   dl->slewSpeed = FR32_MAX/1024;
 
 }
-
-#define simple_slew(x, y, slew) x = add_fr1x32( y,			\
-						mult_fr1x32x32(slew,	\
-							       sub_fr1x32(x, y) \
-							       ))
 
 fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   //DEBUG uncomment this line to check plumbing this far...
@@ -55,20 +46,15 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
     /* dl->echoTap.time = dl->echoTimeTarget; */
     dl->echoTimeCountdown--;
   }
-  
-  dl->scrubTap.pitch = (s32) add_fr1x32((fract32)dl->scrubCentrePitch,
-					FM_signal);
+  dl->scrubTap.frequency = (fract32) add_fr1x32((fract32)dl->scrubCentrePitch,
+						FM_signal);
 
   
   simple_slew(dl->echoTap.max, dl->echoMaxTarget, dl->slewSpeed);
   simple_slew(dl->echoTap.min, dl->echoMinTarget, dl->slewSpeed);
 
+
   simple_slew(dl->scrubTap.length, dl->scrubLengthTarget, dl->slewSpeed);
- dl->scrubTap.fadeLength =
-    simple_slew(dl->scrubTap.fadeLength,
-		mult_fr1x32x32((fract32) dl->scrubFadeLengthTarget,
-			       (fract32) dl->scrubLengthTarget),
-		dl->slewSpeed);
 
   dl->echoTap.fadeLength =
     simple_slew(dl->echoTap.fadeLength,
@@ -76,7 +62,6 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 			       sub_fr1x32((fract32) dl->echoMaxTarget,
 					  (fract32) dl->echoMinTarget)),
 		dl->slewSpeed);
-  
  
   buffer_tapN_next( &(dl->tapWr) );
   echoTap_next( &(dl->echoTap) );
@@ -103,11 +88,6 @@ void grain_set_scrubPitch(grain* dl, s32 subsamples) {
 void grain_set_scrubLength(grain* dl, s32 subsamples) {
   /* dl->scrubTap.length = subsamples; */
   dl->scrubLengthTarget = subsamples;
-}
-
-void  grain_set_scrubFadeLength(grain* dl, s32 subsamples) {
-  /* dl->scrubTap.fadeLength = subsamples; */
-  dl->scrubFadeLengthTarget = subsamples;
 }
 
 void grain_set_echoTime(grain* dl, s32 subsamples) {
