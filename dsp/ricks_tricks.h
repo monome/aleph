@@ -22,6 +22,15 @@ fract32 hpf_next_dynamic (hpf *myHpf, fract32 in, fract32 freq);
 void lpf_init (lpf *myLpf);
 fract32 lpf_next_dynamic (lpf *myLpf, fract32 in, fract32 freq);
 
+typedef struct {
+  s32 phase;
+} phasor ;
+
+typedef struct {
+  s32 cosPhase;
+  s32 sinPhase;
+} quadraturePhasor ;
+
 fract32 osc (fract32 phase);
 
 #define simple_slew(x, y, slew) x = add_fr1x32( y,		     \
