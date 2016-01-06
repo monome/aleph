@@ -54,7 +54,7 @@ void quadraturePhasor_init (quadraturePhasor *phasor) {
 
 void quadraturePhasor_pos_next_dynamic (quadraturePhasor *phasor, fract32 freq) {
     phasor->cosPhase += FR32_MAX / freq;
-    phasor->sinPhase = cosPhase + FR32_MAX / 2;
+    phasor->sinPhase = phasor->cosPhase + FR32_MAX / 2;
 }
 
 s32 quadraturePhasor_pos_sinRead(quadraturePhasor *phasor) {
@@ -68,9 +68,9 @@ s32 quadraturePhasor_pos_cosRead(quadraturePhasor *phasor) {
 //This guy is a tophat with 
 fract32 s32_flatTop_env (s32 pos, s32 fadeRatio) {
   pos = max(pos, 0);
-  if (pos <= fadeLength)
+  if (pos <= fadeRatio)
     return fadeIn(fadeRatio * pos);
-  else if (FR32_MAX - pos <= fadeLength)
+  else if (FR32_MAX - pos <= fadeRatio)
     return fadeIn(fadeRatio * (FR32_MAX - pos));
   else
     return FR32_MAX;
