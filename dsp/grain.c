@@ -16,6 +16,7 @@
 void grain_init(grain* dl, fract32* data, u32 frames) {
   buffer_init(&(dl->buffer), data, frames);
   buffer_tapN_init(&(dl->tapWr), &(dl->buffer));
+  dl->tapWr.inc = 1;
 
   echoTap_init(&(dl->echoTap), &(dl->tapWr));
   dl->echoTap.time = 256 * 50;
@@ -24,14 +25,14 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   dl->echoTap.fadeLength = 0;
   dl->echoTap.min = 0;
   dl->echoTap.max = 256 * 100;
-  dl->tapWr.inc = 1;
-  dl->pitchDetection = 1;
+  dl->echoTimeCountdown = -1;
 
   scrubTap_init(&(dl->scrubTap), &(dl->echoTap));
-  pitchDetector_init(&(dl->pitchDetector));
+  dl->scrubCentrePitch = 128;
+  dl->scrubLengthTarget = 256 * 48 * 25;
 
-  dl->echoTimeCountdown = -1;
-  dl->scrubCentrePitch = hzToDimensionless (1000);
+  pitchDetector_init(&(dl->pitchDetector));
+  dl->pitchDetection = 1;
 
   dl->slewSpeed = FR32_MAX/1024;
 
@@ -63,7 +64,7 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   echoTap_next( &(dl->echoTap) );
 
   //DEBUG forcing nominal scrubLength to 50ms
-  dl->scrubLengthTarget = 256 * 48 * 25;
+  /* dl->scrubLengthTarget = 256 * 48 * 25; */
   
   fract32 signalPeriod = pitchTrack(&(dl->pitchDetector),
 				    echoTap_read_xfade( &(dl->echoTap),
@@ -73,9 +74,9 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   fract32 desiredPitchShift = (fract32) add_fr1x32((fract32)dl->scrubCentrePitch,
 					      FM_signal);
   //DEBUG forcing desired pitchShift to 1 sample / sample 
-  desiredPitchShift = 256;
+  /* desiredPitchShift = 128; */
   //DEBUG force pitch detection enabled
-  dl->pitchDetection = 1;
+  /* dl->pitchDetection = 1; */
 
   if (dl->pitchDetection == 1) {
     simple_slew(dl->scrubTap.length,
