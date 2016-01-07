@@ -11,8 +11,8 @@ fract32 clip_to_fr32(long x) {
 }
 
 fract32 mult_fr1x32x32(fract32 x, fract32 y) {
-  return (fract32) ( (((double) x) * ((double) y))
-		     / ((double) FR32_MAX));
+  return (fract32) ( (((long) x) * ((long) y))
+		     / ((long) FR32_MAX));
 }
 
 fract32 sub_fr1x32(fract32 x, fract32 y) {
