@@ -295,7 +295,7 @@ void module_process_frame(void) {
     AMOut = mult_fr1x32x32( mult_fr1x32x32 (selectGrainInput(AM_sourceG[i]),
 					    grainOut),
 			    AM_faderG[i]);
-    AMOut = mult_fr1x32x32(hpf_next(&(AM_hpf[i]), AMOut, hzToDimensionless(50)),
+    AMOut = mult_fr1x32x32(hpf_next_dynamic(&(AM_hpf[i]), AMOut, hzToDimensionless(50)),
 			   AM_faderG[i]);
     grainOut = mult_fr1x32x32(grainOut, sub_fr1x32(FR32_MAX, AM_faderG[i]));
     grainOut = add_fr1x32(shl_fr1x32(AMOut, 3), grainOut);
@@ -442,9 +442,6 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_scrubLength_g1 :
     grain_set_scrubLength (&(grains[0]), v/256);
     break;
-  case eParam_scrubFadeLength_g1 :
-    grain_set_scrubFadeLength(&(grains[0]), v*128);
-    break;
     
   //grain echo params
   case eParam_echoFadeLength_g1 :
@@ -519,9 +516,6 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_scrubLength_g2 :
     grain_set_scrubLength (&(grains[1]), v/256);
-    break;
-  case eParam_scrubFadeLength_g2 :
-    grain_set_scrubFadeLength(&(grains[1]), v*128);
     break;
     
   //grain echo params

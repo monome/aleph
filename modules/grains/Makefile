@@ -9,6 +9,7 @@ ldr_name = $(module_name)-$(version).ldr
 
 module_obj = grains.o \
 	$(audio)/buffer.o \
+	$(audio)/ricks_tricks.o \
 	$(audio)/echoTap.o \
 	$(audio)/scrubTap.o \
 	$(audio)/conversion.o \
