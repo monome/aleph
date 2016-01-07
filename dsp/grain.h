@@ -78,9 +78,9 @@ void grain_set_writeEnable(grain* dl, s32 enable);
 
 void grain_set_slewSpeed(grain* dl, s32 newSpeed);
 
-void grain_disable_PitchDetection(grain* dl);
+void grain_disable_pitchDetection(grain* dl);
 
-void grain_enable_PitchDetection(grain* dl);
+void grain_enable_pitchDetection(grain* dl);
 
 #endif // h guard
 

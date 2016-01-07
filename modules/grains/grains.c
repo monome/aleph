@@ -529,7 +529,6 @@ void module_set_param(u32 idx, ParamValue v) {
     else
       grain_enable_pitchDetection(&(grains[1]));
     break;
-
     
   //grain echo params
   case eParam_echoFadeLength_g2 :

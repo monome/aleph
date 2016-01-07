@@ -170,10 +170,10 @@ void grain_set_slewSpeed(grain* dl, s32 newSpeed) {
   dl->slewSpeed = (fract32) newSpeed;
 }
 
-void grain_disable_PitchDetection(grain* dl) {
+void grain_disable_pitchDetection(grain* dl) {
   dl->pitchDetection = 0;
 }
 
-void grain_enable_PitchDetection(grain* dl) {
+void grain_enable_pitchDetection(grain* dl) {
   dl->pitchDetection = 0;
 }
