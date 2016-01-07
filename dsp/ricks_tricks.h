@@ -48,9 +48,16 @@ s32 quadraturePhasor_cosRead(quadraturePhasor *phasor);
 fract32 s32_flatTop_env (s32 pos, s32 fadeRatio);
 fract32 osc (fract32 phase);
 
-#define simple_slew(x, y, slew) x = add_fr1x32( y,		     \
-						mult_fr1x32x32(slew,	\
-							       sub_fr1x32(x, y)))
+#define simple_slew(x, y, slew)					\
+  x = add_fr1x32( (fract32) (y),				\
+		  mult_fr1x32x32(sub_fr1x32(FR32_MAX,		\
+					    (fract32) (slew)),	\
+				 sub_fr1x32((fract32) (x),	\
+					    (fract32) (y))))
+
+#define simple_lpf(x, y, hz) \
+  simple_slew(x, y, TWOPI * hzToDimensionless(hz))
+
 fract32 max (fract32 x, fract32 y);
 fract32 min (fract32 x, fract32 y);
 #define SR 48000

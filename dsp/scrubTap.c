@@ -28,8 +28,8 @@ extern fract32 scrubTap_read_xfade (scrubTap* scrubTap) {
 				       (mult_fr1x32x32(scrubTap->length,
 						       cosPos)));
 
-  fract32 sinMix = s32_halfWave_env(sinPos) / 4;
-  fract32 cosMix = s32_halfWave_env(cosPos) / 4;
+  fract32 sinMix = s32_halfWave_env(sinPos);
+  fract32 cosMix = s32_halfWave_env(cosPos);
   return  add_fr1x32 (mult_fr1x32x32 (sinHead, sinMix),
 		     mult_fr1x32x32 (cosHead, cosMix));
 }

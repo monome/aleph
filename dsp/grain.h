@@ -22,6 +22,7 @@ typedef struct _grain {
   echoTap echoTap;
   scrubTap scrubTap;
   bufferTapN tapWr;
+  pitchDetector pitchDetector;
 
   s32 scrubCentrePitch;
   

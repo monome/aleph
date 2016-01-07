@@ -56,6 +56,10 @@ jack_default_audio_sample_t fract32_to_jack_sample (fract32 in) {
 /* pitchDetector myPitchDetector; */
 grain myGrain;
 
+lpf myLpf;
+phasor myPhasor;
+fract32 lastVal;
+
 fract32 process_frame (fract32 in) {
     /* out[k] = delay_line[delay_index]; */
     /* delay_line[delay_index] = in[k]; */
@@ -67,6 +71,19 @@ fract32 process_frame (fract32 in) {
     /* fr32_out = lpf(fr32_in, (FR32_MAX / 12)); */
     /* fr32_out = hpf(fr32_in, hzToDimensionless(1000)); */
   return grain_next(&myGrain, in, 0);
+  /* fract32 phasorNext = (fract32) phasor_next_dynamic(&myPhasor, */
+  /* 						     hzToDimensionless(1)); */
+  /* return phasorNext; */
+  /* return simple_slew( lastVal, phasorNext, 10000); */
+}
+
+void init_dsp () {
+  printf("trying to initialise grain...\n");
+  grain_init(&myGrain, malloc(0x8000 * sizeof(fract32)), 0x4000);
+  lpf_init(&myLpf);
+  phasor_init(&myPhasor);
+  lastVal = 0;
+  printf("...successfully initialised grain\n");
 }
 
 int process_block (jack_nframes_t nframes, void *arg) {
@@ -133,12 +150,6 @@ jack_shutdown (void *arg)
 {
 	fprintf(stderr, "JACK shut down, exiting ...\n");
 	exit (1);
-}
-
-void init_dsp () {
-  printf("trying to initialise grain...\n");
-  grain_init(&myGrain, malloc(0x8000 * sizeof(fract32)), 0x4000);
-  printf("...successfully initialised grain\n");
 }
 
 int main (int argc, char *argv[]) {

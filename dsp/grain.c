@@ -27,6 +27,7 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   dl->tapWr.inc = 1;
 
   scrubTap_init(&(dl->scrubTap), &(dl->echoTap));
+  pitchDetector_init(&(dl->pitchDetector));
 
   dl->echoTimeCountdown = -1;
   dl->scrubCentrePitch = hzToDimensionless (1000);
@@ -38,6 +39,7 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
 fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   //DEBUG uncomment this line to check plumbing this far...
   //return in;
+
   if (dl->echoTimeCountdown > 0) {
     dl->echoTap.time = simple_slew(dl->echoTap.time,
 				   dl->echoTimeTarget,
@@ -46,20 +48,9 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
     /* dl->echoTap.time = dl->echoTimeTarget; */
     dl->echoTimeCountdown--;
   }
-  dl->scrubTap.frequency = (fract32) add_fr1x32((fract32)dl->scrubCentrePitch,
-  						FM_signal);
-
-  //DEBUG forcing scrub tap freq for now....
-  dl->scrubTap.frequency =  hzToDimensionless(10);
-
   
   simple_slew(dl->echoTap.max, dl->echoMaxTarget, dl->slewSpeed);
   simple_slew(dl->echoTap.min, dl->echoMinTarget, dl->slewSpeed);
-
-  /* dl->scrubLengthTarget = 4096; */
-  simple_slew(dl->scrubTap.length, dl->scrubLengthTarget, dl->slewSpeed);
-  //DEBUG just fixing a sensible delay length for now...
-  dl->scrubTap.length = 256 * 48 * 20;
 
   dl->echoTap.fadeLength =
     simple_slew(dl->echoTap.fadeLength,
@@ -67,9 +58,22 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 			       sub_fr1x32((fract32) dl->echoMaxTarget,
 					  (fract32) dl->echoMinTarget)),
 		dl->slewSpeed);
- 
   buffer_tapN_next( &(dl->tapWr) );
   echoTap_next( &(dl->echoTap) );
+  
+  fract32 signalFreq = pitchTrack(&(dl->pitchDetector),
+				  echoTap_read_xfade( &(dl->echoTap), 0));
+  fract32 desiredPitch = (fract32) add_fr1x32((fract32)dl->scrubCentrePitch,
+					      FM_signal);
+  desiredPitch = 256;
+  simple_slew(dl->scrubTap.frequency, - signalFreq / 10, 1024);
+  dl->scrubTap.length = desiredPitch * (FR32_MAX / signalFreq) * 10;
+
+  //DEBUG forcing scrub tap freq for now....
+  /* dl->scrubTap.frequency =  hzToDimensionless(-30); */
+  //DEBUG just fixing a sensible delay length for now...
+  /* dl->scrubTap.length = 256 * 48 * 30; */
+
   scrubTap_next( &(dl->scrubTap) );
 
   buffer_tapN_write(&(dl->tapWr), in);
