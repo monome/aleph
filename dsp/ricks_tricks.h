@@ -42,7 +42,9 @@ s32 phasor_pos_read(phasor *phasor);
 void quadraturePhasor_init (quadraturePhasor *phasor);
 void quadraturePhasor_pos_next_dynamic (quadraturePhasor *phasor, fract32 freq);
 s32 quadraturePhasor_pos_sinRead(quadraturePhasor *phasor);
-s32 quadraturePhasor_pos_cosRead(quadraturePhasor *phasor);
+s32 quadraturePhasor_pos_sinRead(quadraturePhasor *phasor);
+s32 quadraturePhasor_sinRead(quadraturePhasor *phasor);
+s32 quadraturePhasor_cosRead(quadraturePhasor *phasor);
 fract32 s32_flatTop_env (s32 pos, s32 fadeRatio);
 fract32 osc (fract32 phase);
 
@@ -69,5 +71,5 @@ typedef struct {
 
 void pitchDetector_init (pitchDetector *p);
 fract32 pitchTrack (pitchDetector *p, fract32 preIn);
-
+fract32 s32_halfWave_env (fract32 pos) ;
 #endif

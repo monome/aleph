@@ -31,7 +31,7 @@ fract32 lpf_next_dynamic (lpf *myLpf, fract32 in, fract32 freq) {
 }
 
 s32 phasor_next_dynamic (phasor *phasor, fract32 freq) {
-  phasor->phase += FR32_MAX / freq;
+  phasor->phase += freq;
   return phasor->phase;
 }
 
@@ -40,7 +40,7 @@ s32 phasor_read (phasor *phasor, s32 freq) {
 }
 
 s32 phasor_pos_next_dynamic (phasor *phasor, fract32 freq) {
-  phasor->phase += FR32_MAX / freq;
+  phasor->phase += freq;
   return ((u32) phasor->phase) / 2;
 }
 s32 phasor_pos_read(phasor *phasor) {
@@ -53,25 +53,43 @@ void quadraturePhasor_init (quadraturePhasor *phasor) {
 }
 
 void quadraturePhasor_pos_next_dynamic (quadraturePhasor *phasor, fract32 freq) {
-    phasor->cosPhase += FR32_MAX / freq;
-    phasor->sinPhase = phasor->cosPhase + FR32_MAX / 2;
+    phasor->cosPhase += freq;
+    phasor->sinPhase = phasor->cosPhase + FR32_MAX;
+}
+
+s32 quadraturePhasor_sinRead(quadraturePhasor *phasor) {
+  return phasor->sinPhase;
+}
+
+s32 quadraturePhasor_cosRead(quadraturePhasor *phasor) {
+  return phasor->cosPhase;
 }
 
 s32 quadraturePhasor_pos_sinRead(quadraturePhasor *phasor) {
-  return ((u32) phasor->sinPhase) / 2;
+  return (s32) (((u32) phasor->sinPhase) / (u32) 2);
 }
 
 s32 quadraturePhasor_pos_cosRead(quadraturePhasor *phasor) {
-  return ((u32) phasor->cosPhase) / 2;
+  return (s32) (((u32) phasor->cosPhase) / (u32) 2);
 }
 
-//This guy is a tophat with 
-fract32 s32_flatTop_env (s32 pos, s32 fadeRatio) {
+//This guy is a tophat with rounded edges
+fract32 s32_flatTop_env (fract32 pos, fract32 fadeRatio) {
   pos = max(pos, 0);
   if (pos <= fadeRatio)
-    return fadeIn(fadeRatio * pos);
+    return fadeIn(mult_fr1x32x32(FR32_MAX / fadeRatio, pos));
   else if (FR32_MAX - pos <= fadeRatio)
-    return fadeIn(fadeRatio * (FR32_MAX - pos));
+    return fadeIn(mult_fr1x32x32(FR32_MAX / fadeRatio, FR32_MAX - pos));
+  else
+    return FR32_MAX;
+}
+
+fract32 s32_halfWave_env (fract32 pos) {
+  pos = max(pos, 0);
+  if (pos <= FR32_MAX / 2)
+    return fadeIn(pos * 2);
+  else if (FR32_MAX - pos <= FR32_MAX / 2)
+    return fadeIn((FR32_MAX - pos) * 2);
   else
     return FR32_MAX;
 }

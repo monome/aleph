@@ -21,7 +21,7 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   dl->echoTap.time = 256 * 15;
   dl->echoTap.speed = 256;
   dl->echoTap.edgeBehaviour = EDGE_WRAP;
-  dl->echoTap.fadeLength = 10;
+  dl->echoTap.fadeLength = 0;
   dl->echoTap.min = 0;
   dl->echoTap.max = 256 * 30;
   dl->tapWr.inc = 1;
@@ -29,7 +29,7 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   scrubTap_init(&(dl->scrubTap), &(dl->echoTap));
 
   dl->echoTimeCountdown = -1;
-  dl->scrubCentrePitch = 256 * 2;
+  dl->scrubCentrePitch = hzToDimensionless (1000);
 
   dl->slewSpeed = FR32_MAX/1024;
 
@@ -47,14 +47,19 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
     dl->echoTimeCountdown--;
   }
   dl->scrubTap.frequency = (fract32) add_fr1x32((fract32)dl->scrubCentrePitch,
-						FM_signal);
+  						FM_signal);
+
+  //DEBUG forcing scrub tap freq for now....
+  dl->scrubTap.frequency =  hzToDimensionless(10);
 
   
   simple_slew(dl->echoTap.max, dl->echoMaxTarget, dl->slewSpeed);
   simple_slew(dl->echoTap.min, dl->echoMinTarget, dl->slewSpeed);
 
-
+  /* dl->scrubLengthTarget = 4096; */
   simple_slew(dl->scrubTap.length, dl->scrubLengthTarget, dl->slewSpeed);
+  //DEBUG just fixing a sensible delay length for now...
+  dl->scrubTap.length = 256 * 48 * 20;
 
   dl->echoTap.fadeLength =
     simple_slew(dl->echoTap.fadeLength,
