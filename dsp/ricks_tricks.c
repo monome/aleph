@@ -128,6 +128,7 @@ void pitchDetector_init (pitchDetector *p) {
   p->lastIn = 0;
   p->phase = 0;
   p->nsamples = 0;
+  p->nFrames = 0;
   hpf_init(&(p->dcBlocker));
   lpf_init(&(p->adaptiveFilter));
 }
@@ -141,16 +142,20 @@ fract32 pitchTrackOsc (pitchDetector *p, fract32 preIn) {
 fract32 pitchTrack (pitchDetector *p, fract32 preIn) {
   fract32 in = hpf_next_dynamic(&(p->dcBlocker), preIn, hzToDimensionless(50));
   in = lpf_next_dynamic (&(p->adaptiveFilter), in ,
-			 FR32_MAX / p->period);
-  if (p->lastIn <= 0 && in >= 0 && p->nsamples > 10.0) {
-    simple_slew ((p->period), (max (min((fract32) p->nsamples,
-				     FR32_MAX / hzToDimensionless(50)),
-				    FR32_MAX / hzToDimensionless(2000))),
-		 1000000);
-    p->nsamples = 0;
+			 FR32_MAX / p->instantaneousPeriod);
+  if (p->lastIn <= 0 && in >= 0 && p->nFrames > 10) {
+   (p->period) += (max (min((fract32) p->nFrames,
+			    FR32_MAX / hzToDimensionless(50)),
+			FR32_MAX / hzToDimensionless(2000)));
+    p->nsamples += 1;
+    p->nFrames = 0;
+    if ( p->nsamples > 9) {
+      p->instantaneousPeriod = p->period / 10;
+      p->period = 0;
+      p->nsamples = 0;
+    }
   }
-  p->nsamples += 1;
-  simple_slew (p->instantaneousPeriod, p->period, 4096);
+  p->nFrames +=1;
   p->lastIn = preIn;
   return (FR32_MAX / p->instantaneousPeriod);
 }

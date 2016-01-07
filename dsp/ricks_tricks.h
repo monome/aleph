@@ -72,6 +72,7 @@ typedef struct {
   fract32 period;
   fract32 phase;
   s32 nsamples;
+  s32 nFrames;
   hpf dcBlocker;
   lpf adaptiveFilter;
 } pitchDetector;

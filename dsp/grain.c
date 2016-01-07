@@ -18,12 +18,12 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   buffer_tapN_init(&(dl->tapWr), &(dl->buffer));
 
   echoTap_init(&(dl->echoTap), &(dl->tapWr));
-  dl->echoTap.time = 256 * 15;
+  dl->echoTap.time = 256 * 0;
   dl->echoTap.speed = 256;
   dl->echoTap.edgeBehaviour = EDGE_WRAP;
   dl->echoTap.fadeLength = 0;
   dl->echoTap.min = 0;
-  dl->echoTap.max = 256 * 30;
+  dl->echoTap.max = 256 * 100;
   dl->tapWr.inc = 1;
 
   scrubTap_init(&(dl->scrubTap), &(dl->echoTap));
@@ -65,9 +65,10 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 				  echoTap_read_xfade( &(dl->echoTap), 0));
   fract32 desiredPitch = (fract32) add_fr1x32((fract32)dl->scrubCentrePitch,
 					      FM_signal);
-  desiredPitch = 256;
-  simple_slew(dl->scrubTap.frequency, - signalFreq / 10, 1024);
-  dl->scrubTap.length = desiredPitch * (FR32_MAX / signalFreq) * 10;
+  desiredPitch = 512;
+  simple_slew(dl->scrubTap.frequency, - signalFreq / 100, 1000);
+  dl->scrubTap.frequency = hzToDimensionless(10);
+  dl->scrubTap.length = desiredPitch * (FR32_MAX / dl->scrubTap.frequency) * 10;
 
   //DEBUG forcing scrub tap freq for now....
   /* dl->scrubTap.frequency =  hzToDimensionless(-30); */
