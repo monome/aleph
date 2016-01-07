@@ -60,20 +60,35 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 		dl->slewSpeed);
   buffer_tapN_next( &(dl->tapWr) );
   echoTap_next( &(dl->echoTap) );
-  
-  fract32 signalFreq = pitchTrack(&(dl->pitchDetector),
-				  echoTap_read_xfade( &(dl->echoTap), 0));
-  fract32 desiredPitch = (fract32) add_fr1x32((fract32)dl->scrubCentrePitch,
-					      FM_signal);
-  desiredPitch = 100000;
-  simple_slew(dl->scrubTap.frequency, - signalFreq / 2, 5000);
-  /* dl->scrubTap.frequency = hzToDimensionless(100); */
-  dl->scrubTap.length = desiredPitch * (FR32_MAX / dl->scrubTap.frequency) / 100;
 
-  //DEBUG forcing scrub tap freq for now....
+  //DEBUG forcing nominal scrubLength to 30ms
+  dl->scrubLengthTarget = 256 * 48 * 50;
+  
+  fract32 signalPeriod = pitchTrack(&(dl->pitchDetector),
+				    echoTap_read_xfade( &(dl->echoTap),
+							0));
+  //DEBUG forcing detected Period to 1ms
+  /* signalPeriod = 48 * 256; */
+  fract32 desiredPitchShift = (fract32) add_fr1x32((fract32)dl->scrubCentrePitch,
+					      FM_signal);
+  //DEBUG forcing desired pitchShift to 1 sample / sample 
+  desiredPitchShift = -128;
+  simple_slew(dl->scrubTap.length,
+	      (dl->scrubLengthTarget / max(256, signalPeriod)) * signalPeriod,
+	      10000);
+  //DEBUG forcing scrub tap length to 10ms
+  /* dl->scrubTap.length = 256 * 48 * 10; */
+
+  
+  dl->scrubTap.frequency = - (FR32_MAX / 256 / 64) * mult_fr1x32x32(desiredPitchShift * (FR32_MAX / 256 / 256),
+
+								FR32_MAX / max(dl->scrubTap.length, 256));
+  //DEBUG with scrub tap length forced to 10ms and pitchshift forced to +1,
+  //Should end up with a scrubTap Frequency of 100Hz
+  /* printf("%d\t%d\t%d\t%d\n", dl->scrubTap.length, desiredPitchShift, dl->scrubTap.frequency, hzToDimensionless(100)); */
+
+  //DEBUG forcing scrub tap rotation freq
   /* dl->scrubTap.frequency =  hzToDimensionless(-30); */
-  //DEBUG just fixing a sensible delay length for now...
-  /* dl->scrubTap.length = 256 * 48 * 30; */
 
   scrubTap_next( &(dl->scrubTap) );
 

@@ -35,6 +35,7 @@ typedef struct {
 } quadraturePhasor ;
 
 fract32 lpf_next_dynamic (lpf *myLpf, fract32 in, fract32 freq);
+void phasor_init (phasor *phasor);
 s32 phasor_next_dynamic (phasor *phasor, fract32 freq);
 s32 phasor_read (phasor *phasor, s32 freq);
 s32 phasor_pos_next_dynamic (phasor *phasor, fract32 freq);
@@ -42,7 +43,7 @@ s32 phasor_pos_read(phasor *phasor);
 void quadraturePhasor_init (quadraturePhasor *phasor);
 void quadraturePhasor_pos_next_dynamic (quadraturePhasor *phasor, fract32 freq);
 s32 quadraturePhasor_pos_sinRead(quadraturePhasor *phasor);
-s32 quadraturePhasor_pos_sinRead(quadraturePhasor *phasor);
+s32 quadraturePhasor_pos_cosRead(quadraturePhasor *phasor);
 s32 quadraturePhasor_sinRead(quadraturePhasor *phasor);
 s32 quadraturePhasor_cosRead(quadraturePhasor *phasor);
 fract32 s32_flatTop_env (s32 pos, s32 fadeRatio);
