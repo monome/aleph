@@ -23,6 +23,7 @@ typedef struct _grain {
   scrubTap scrubTap;
   bufferTapN tapWr;
   pitchDetector pitchDetector;
+  s32 pitchDetection;
 
   s32 scrubCentrePitch;
   
@@ -76,5 +77,10 @@ void grain_set_echoMax(grain* dl, s32 subsamples);
 void grain_set_writeEnable(grain* dl, s32 enable);
 
 void grain_set_slewSpeed(grain* dl, s32 newSpeed);
+
+void grain_disable_PitchDetection(grain* dl);
+
+void grain_enable_PitchDetection(grain* dl);
+
 #endif // h guard
 

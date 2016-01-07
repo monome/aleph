@@ -56,6 +56,8 @@ fract32 osc (fract32 phase);
 				 sub_fr1x32((fract32) (x),	\
 					    (fract32) (y))))
 
+#define SLEW_1MS (TWOPI * hzToDimensionless(1) / 1000)
+#define SLEW_10MS (TWOPI * hzToDimensionless(1) / 100)
 #define SLEW_100MS (TWOPI * hzToDimensionless(1) / 10)
 #define SLEW_1S (TWOPI * hzToDimensionless(1))
 #define SLEW_10S (TWOPI * hzToDimensionless(10))
@@ -73,6 +75,7 @@ fract32 min (fract32 x, fract32 y);
 
 typedef struct {
   fract32 instantaneousPeriod;
+  fract32 currentPeriod;
   fract32 lastIn;
   fract32 period;
   fract32 phase;
@@ -84,5 +87,6 @@ typedef struct {
 
 void pitchDetector_init (pitchDetector *p);
 fract32 pitchTrack (pitchDetector *p, fract32 preIn);
+fract32 pitchTrackOsc (pitchDetector *p);
 fract32 s32_halfWave_env (fract32 pos) ;
 #endif

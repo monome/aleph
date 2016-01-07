@@ -72,6 +72,9 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux (desc, eParam_scrubLength_g1, "scrubLength_g1",
 		  TIME_SAMPLE_TYPE, TIME_SAMPLE_MIN, TIME_SAMPLE_MAX,
 		  TIME_SAMPLE_RADIX);
+  param_desc_aux(desc, eParam_scrubPitchDetection_g1, "scrubPitchDetection_g1",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 16);
 
   //Echo Params
   param_desc_aux (desc, eParam_echoFadeLength_g1, "echoFadeLength_g1",
@@ -133,6 +136,9 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux (desc, eParam_scrubLength_g2, "scrubLength_g2",
 		  TIME_SAMPLE_TYPE, TIME_SAMPLE_MIN, TIME_SAMPLE_MAX,
 		  TIME_SAMPLE_RADIX);
+  param_desc_aux(desc, eParam_scrubPitchDetection_g2, "scrubPitchDetection_g2",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 16);
 
   //Echo Params
   param_desc_aux (desc, eParam_echoFadeLength_g2, "echoFadeLength_g2",

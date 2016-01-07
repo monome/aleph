@@ -110,6 +110,7 @@ enum params {
   //grain scrubber params
   eParam_scrubPitch_g1,
   eParam_scrubLength_g1,
+  eParam_scrubPitchDetection_g1,
 
   //grain echo params
   eParam_echoTime_g1,
@@ -141,6 +142,7 @@ enum params {
   //grain scrubber params
   eParam_scrubPitch_g2,
   eParam_scrubLength_g2,
+  eParam_scrubPitchDetection_g2,
 
   //grain echo params
   eParam_echoTime_g2,

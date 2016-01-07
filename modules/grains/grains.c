@@ -442,7 +442,13 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_scrubLength_g1 :
     grain_set_scrubLength (&(grains[0]), v/256);
     break;
-    
+  case eParam_scrubPitchDetection_g1:
+    if (v == 0)
+      grain_disable_pitchDetection(&(grains[0]));
+    else
+      grain_enable_pitchDetection(&(grains[0]));
+    break;
+
   //grain echo params
   case eParam_echoFadeLength_g1 :
     grain_set_echoFadeLength(&(grains[0]), v*128);
@@ -517,6 +523,13 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_scrubLength_g2 :
     grain_set_scrubLength (&(grains[1]), v/256);
     break;
+  case eParam_scrubPitchDetection_g2:
+    if (v == 0)
+      grain_disable_pitchDetection(&(grains[1]));
+    else
+      grain_enable_pitchDetection(&(grains[1]));
+    break;
+
     
   //grain echo params
   case eParam_echoFadeLength_g2 :

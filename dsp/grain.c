@@ -25,6 +25,7 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   dl->echoTap.min = 0;
   dl->echoTap.max = 256 * 100;
   dl->tapWr.inc = 1;
+  dl->pitchDetection = 1;
 
   scrubTap_init(&(dl->scrubTap), &(dl->echoTap));
   pitchDetector_init(&(dl->pitchDetector));
@@ -62,7 +63,7 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   echoTap_next( &(dl->echoTap) );
 
   //DEBUG forcing nominal scrubLength to 50ms
-  dl->scrubLengthTarget = 256 * 48 * 50;
+  dl->scrubLengthTarget = 256 * 48 * 25;
   
   fract32 signalPeriod = pitchTrack(&(dl->pitchDetector),
 				    echoTap_read_xfade( &(dl->echoTap),
@@ -73,11 +74,20 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 					      FM_signal);
   //DEBUG forcing desired pitchShift to 1 sample / sample 
   desiredPitchShift = 256;
+  //DEBUG force pitch detection enabled
+  dl->pitchDetection = 1;
 
-  simple_slew(dl->scrubTap.length,
-	      signalPeriod * (dl->scrubLengthTarget / max(1, signalPeriod)
-			      + 1),
-	      10000);
+  if (dl->pitchDetection == 1) {
+    simple_slew(dl->scrubTap.length,
+		/* signalPeriod * 10 */
+		signalPeriod * (dl->scrubLengthTarget / max(1, signalPeriod)
+				+ 1),
+		SLEW_1MS);
+  } else {
+    simple_slew(dl->scrubTap.length,
+		dl->scrubLengthTarget,
+		SLEW_1MS);
+  }
   //DEBUG forcing scrub tap length to 10ms
   /* dl->scrubTap.length = 256 * 48 * 10; */
 
@@ -102,9 +112,10 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   readVal = scrubTap_read_xfade( &(dl->scrubTap));
   
   //DEBUG uncomment this line to check echoTap (ignoring any bugs in scrubTap)
-
   /* readVal = echoTap_read_xfade( &(dl->echoTap), 0); */
 
+  //DEBUG uncomment this line to listen to the detected tone from pitch Tracker
+  /* readVal = pitchTrackOsc(&(dl->pitchDetector)) / 10; */
   return readVal;
 }
 
@@ -156,4 +167,12 @@ void grain_set_writeEnable(grain* dl, s32 enable) {
 
 void grain_set_slewSpeed(grain* dl, s32 newSpeed) {
   dl->slewSpeed = (fract32) newSpeed;
+}
+
+void grain_disable_PitchDetection(grain* dl) {
+  dl->pitchDetection = 0;
+}
+
+void grain_enable_PitchDetection(grain* dl) {
+  dl->pitchDetection = 0;
 }

@@ -124,6 +124,7 @@ fract32 max (fract32 x, fract32 y) {
 
 void pitchDetector_init (pitchDetector *p) {
   p->instantaneousPeriod = 48;
+  p->currentPeriod = 48;
   p->period = 48;
   p->lastIn = 0;
   p->phase = 0;
@@ -133,8 +134,7 @@ void pitchDetector_init (pitchDetector *p) {
   lpf_init(&(p->adaptiveFilter));
 }
 
-fract32 pitchTrackOsc (pitchDetector *p, fract32 preIn) {
-  pitchTrack(p, preIn);
+fract32 pitchTrackOsc (pitchDetector *p) {
   p->phase += (FR32_MAX / p->instantaneousPeriod) * 512;
   return osc(p->phase);
 }
@@ -151,11 +151,12 @@ fract32 pitchTrack (pitchDetector *p, fract32 preIn) {
     p->nsamples += 1;
     p->nFrames = 0;
     if ( p->nsamples >= 10) {
-      p->instantaneousPeriod = p->period / 10;
+      p->currentPeriod = p->period / 10;
       p->period = 0;
       p->nsamples = 0;
     }
   }
+  simple_slew(p->instantaneousPeriod, p->currentPeriod, SLEW_1MS);
   p->nFrames +=1;
   p->lastIn = preIn;
   return p->instantaneousPeriod;
