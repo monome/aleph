@@ -72,9 +72,6 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux (desc, eParam_scrubLength_g1, "scrubLength_g1",
 		  TIME_SAMPLE_TYPE, TIME_SAMPLE_MIN, TIME_SAMPLE_MAX,
 		  TIME_SAMPLE_RADIX);
-  param_desc_aux (desc, eParam_scrubFadeLength_g1, "scrubFadeLength_g1",
-		  eParamTypeFix, 0x00000000, FR32_MAX,
-		  8);
 
   //Echo Params
   param_desc_aux (desc, eParam_echoFadeLength_g1, "echoFadeLength_g1",
@@ -136,9 +133,6 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux (desc, eParam_scrubLength_g2, "scrubLength_g2",
 		  TIME_SAMPLE_TYPE, TIME_SAMPLE_MIN, TIME_SAMPLE_MAX,
 		  TIME_SAMPLE_RADIX);
-  param_desc_aux (desc, eParam_scrubFadeLength_g2, "scrubFadeLength_g2",
-		  eParamTypeFix, 0x00000000, FR32_MAX,
-		  8);
 
   //Echo Params
   param_desc_aux (desc, eParam_echoFadeLength_g2, "echoFadeLength_g2",

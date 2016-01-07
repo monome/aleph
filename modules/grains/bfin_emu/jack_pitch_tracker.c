@@ -106,6 +106,9 @@ void arithmetic_tests () {
   printf ("1K = %d\n",mult_fr1x32x32( FR32_MAX,
 				      jack_sample_to_fract32(1.0 / 48.0)));
   printf("0 clipped = %d\n", clip_to_fr32(0));
+  printf("10s slew has const: %d\n", SLEW_10S);
+  printf("1s slew has const: %d\n", SLEW_1S);
+  printf("100ms slew has const: %d\n", SLEW_100MS);
   printf("1+1 = %d\n", add_fr1x32(1, 1));
   printf("max+max = %d\n", add_fr1x32(FR32_MAX,FR32_MAX));
   printf("max-max = %d\n", sub_fr1x32(FR32_MAX,FR32_MAX));

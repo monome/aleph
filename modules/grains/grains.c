@@ -24,9 +24,9 @@
 
 // audio
 #include "filter_1p.h"
-#include "filter_svf.h"
 #include "module.h"
 #include "grain.h"
+#include "ricks_tricks.h"
 
 /// custom
 #include "params.h"
@@ -88,7 +88,7 @@ ParamValue FM_faderG[NGRAINS];
 
 ParamValue AM_faderG[NGRAINS];
 ParamValue AM_sourceG[NGRAINS];
-filter_svf AM_hpf[NGRAINS];
+hpf AM_hpf[NGRAINS];
 
 ParamValue phaseG[NGRAINS];
 
@@ -158,10 +158,7 @@ void module_init(void) {
   //initialise grains
   for (i=0;i<NGRAINS; i++) {
     grain_init(&(grains[i]), pGrainsData->audioBuffer[i], LINES_BUF_FRAMES);
-    filter_svf_init(&(AM_hpf[i]));
-    filter_svf_set_coeff(&(AM_hpf[i]), FR32_MAX / 1024);//Guessing this comes out aroun 50Hz...
-    filter_svf_set_rq(&(AM_hpf[i]), FR32_MAX / 4);//Guessing this comes out around q=0.5
-    filter_svf_set_high(&(AM_hpf[i]), FR32_MAX);
+    hpf_init(&(AM_hpf[i]));
   }
   
   param_setup( 	eParam_source_g1,	0);
@@ -181,7 +178,6 @@ void module_init(void) {
   //grain scrubber params
   param_setup (eParam_scrubPitch_g1, 65536 * 2);
   param_setup (eParam_scrubLength_g1, 65536 * 256 * 10);
-  param_setup (eParam_scrubFadeLength_g1, 0x00640000);
 
   //grain echo params
   param_setup(eParam_echoTime_g1, 65536 * 15);
@@ -210,7 +206,6 @@ void module_init(void) {
   //grain scrubber params
   param_setup (eParam_scrubPitch_g2, 65536 * 2);
   param_setup (eParam_scrubLength_g2, 65536 * 256 * 10);
-  param_setup (eParam_scrubFadeLength_g2, 0x00640000);
 
   //grain echo params
   param_setup(eParam_echoTime_g2, 65536 * 15);
@@ -237,8 +232,7 @@ void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamV
 
 void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
-#define simple_slew(x, y) x = y/100 + x/100 * 99
-//#define simple_slew(x, y) x = y
+#define fader_slew(x, y) simple_slew(x, y, SLEW_100MS)
 
 
 #define simple_busmix(x, y, fact) x = add_fr1x32(x, mult_fr1x32x32(y, fact))
@@ -262,18 +256,18 @@ void module_process_frame(void) {
   u8 i;
   //IIR slew
   for (i=0;i<4;i++) {
-    simple_slew(faderI[i], faderITarget[i]);
-    simple_slew(aux1I[i], aux1ITarget[i]);
-    simple_slew(aux2I[i], aux2ITarget[i]);
-    simple_slew(panI[i], panITarget[i]);
-    simple_slew(effectI[i],effectITarget[i]);
+    fader_slew(faderI[i], faderITarget[i]);
+    fader_slew(aux1I[i], aux1ITarget[i]);
+    fader_slew(aux2I[i], aux2ITarget[i]);
+    fader_slew(panI[i], panITarget[i]);
+    fader_slew(effectI[i],effectITarget[i]);
   }
   for (i=0;i<NGRAINS;i++) {
-    simple_slew(faderG[i], faderGTarget[i]);
-    simple_slew(aux1G[i], aux1GTarget[i]);
-    simple_slew(aux2G[i], aux2GTarget[i]);
-    simple_slew(panG[i], panGTarget[i]);
-    simple_slew(effectG[i],effectGTarget[i]);
+    fader_slew(faderG[i], faderGTarget[i]);
+    fader_slew(aux1G[i], aux1GTarget[i]);
+    fader_slew(aux2G[i], aux2GTarget[i]);
+    fader_slew(panG[i], panGTarget[i]);
+    fader_slew(effectG[i],effectGTarget[i]);
   }
   
   //define delay input & output
@@ -301,7 +295,7 @@ void module_process_frame(void) {
     AMOut = mult_fr1x32x32( mult_fr1x32x32 (selectGrainInput(AM_sourceG[i]),
 					    grainOut),
 			    AM_faderG[i]);
-    AMOut = mult_fr1x32x32(filter_svf_next(&(AM_hpf[i]), AMOut),
+    AMOut = mult_fr1x32x32(hpf_next(&(AM_hpf[i]), AMOut, hzToDimensionless(50)),
 			   AM_faderG[i]);
     grainOut = mult_fr1x32x32(grainOut, sub_fr1x32(FR32_MAX, AM_faderG[i]));
     grainOut = add_fr1x32(shl_fr1x32(AMOut, 3), grainOut);

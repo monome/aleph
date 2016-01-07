@@ -43,7 +43,7 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   if (dl->echoTimeCountdown > 0) {
     dl->echoTap.time = simple_slew(dl->echoTap.time,
 				   dl->echoTimeTarget,
-				   FR32_MAX-65536 * 8 );
+				   SLEW_100MS );
     //Debug uncomment the below line to check slew is strong enough
     /* dl->echoTap.time = dl->echoTimeTarget; */
     dl->echoTimeCountdown--;
@@ -73,6 +73,7 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 					      FM_signal);
   //DEBUG forcing desired pitchShift to 1 sample / sample 
   desiredPitchShift = 256;
+
   simple_slew(dl->scrubTap.length,
 	      (dl->scrubLengthTarget / max(256, signalPeriod)) * signalPeriod,
 	      10000);
