@@ -61,7 +61,7 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   buffer_tapN_next( &(dl->tapWr) );
   echoTap_next( &(dl->echoTap) );
 
-  //DEBUG forcing nominal scrubLength to 30ms
+  //DEBUG forcing nominal scrubLength to 50ms
   dl->scrubLengthTarget = 256 * 48 * 50;
   
   fract32 signalPeriod = pitchTrack(&(dl->pitchDetector),
@@ -72,7 +72,7 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   fract32 desiredPitchShift = (fract32) add_fr1x32((fract32)dl->scrubCentrePitch,
 					      FM_signal);
   //DEBUG forcing desired pitchShift to 1 sample / sample 
-  desiredPitchShift = -128;
+  desiredPitchShift = 256;
   simple_slew(dl->scrubTap.length,
 	      (dl->scrubLengthTarget / max(256, signalPeriod)) * signalPeriod,
 	      10000);
@@ -80,8 +80,7 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   /* dl->scrubTap.length = 256 * 48 * 10; */
 
   
-  dl->scrubTap.frequency = - (FR32_MAX / 256 / 64) * mult_fr1x32x32(desiredPitchShift * (FR32_MAX / 256 / 256),
-
+  dl->scrubTap.frequency = - (FR32_MAX / 256 / 256 / 8) * mult_fr1x32x32((desiredPitchShift) * (FR32_MAX / 8 / 256),
 								FR32_MAX / max(dl->scrubTap.length, 256));
   //DEBUG with scrub tap length forced to 10ms and pitchshift forced to +1,
   //Should end up with a scrubTap Frequency of 100Hz
