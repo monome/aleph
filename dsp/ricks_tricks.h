@@ -50,11 +50,18 @@ fract32 s32_flatTop_env (s32 pos, s32 fadeRatio);
 fract32 osc (fract32 phase);
 
 #define simple_slew(x, y, slew)					\
-  x = add_fr1x32( (fract32) (y),				\
-		  mult_fr1x32x32(sub_fr1x32(FR32_MAX,		\
-					    (fract32) (slew)),	\
-				 sub_fr1x32((fract32) (x),	\
-					    (fract32) (y))))
+  (x = add_fr1x32( (fract32) (y),				\
+		   mult_fr1x32x32(sub_fr1x32(FR32_MAX,		\
+					     (fract32) (slew)),	\
+				  sub_fr1x32((fract32) (x),	\
+					     (fract32) (y)))))
+
+#define simple_slew_cheat(x, y, slew)					\
+  (x = add_fr1x32( (fract32) (y),					\
+		   mult_fr1x32x32_cheat(sub_fr1x32(FR32_MAX,		\
+						   (fract32) (slew)),	\
+					sub_fr1x32((fract32) (x),	\
+						   (fract32) (y)))))
 
 #define SLEW_1MS (TWOPI * hzToDimensionless(1) / 1000)
 #define SLEW_10MS (TWOPI * hzToDimensionless(1) / 100)
