@@ -53,7 +53,7 @@ jack_default_audio_sample_t fract32_to_jack_sample (fract32 in) {
 /* } */
 
 
-/* pitchDetector myPitchDetector; */
+pitchDetector myPitchDetector;
 grain myGrain;
 
 lpf myLpf;
@@ -70,7 +70,9 @@ fract32 process_frame (fract32 in) {
 
     /* fr32_out = lpf(fr32_in, (FR32_MAX / 12)); */
     /* fr32_out = hpf(fr32_in, hzToDimensionless(1000)); */
-  return grain_next(&myGrain, in, 0);
+  pitchTrack(&myPitchDetector, in);
+  return pitchTrackOsc (&myPitchDetector);
+  /* return grain_next(&myGrain, in, 0); */
   /* fract32 phasorNext = (fract32) phasor_next_dynamic(&myPhasor, */
   /* 						     hzToDimensionless(1)); */
   /* return phasorNext; */
@@ -80,6 +82,7 @@ fract32 process_frame (fract32 in) {
 void init_dsp () {
   printf("trying to initialise grain...\n");
   grain_init(&myGrain, malloc(0x8000 * sizeof(fract32)), 0x4000);
+  pitchDetector_init(&myPitchDetector);
   lpf_init(&myLpf);
   phasor_init(&myPhasor);
   lastVal = 0;

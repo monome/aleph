@@ -83,11 +83,11 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 		/* signalPeriod * 10 */
 		signalPeriod * (dl->scrubLengthTarget / max(1, signalPeriod)
 				+ 1),
-		SLEW_1MS);
+		SLEW_10MS);
   } else {
     simple_slew(dl->scrubTap.length,
 		dl->scrubLengthTarget,
-		SLEW_1MS);
+		SLEW_10MS);
   }
   //DEBUG forcing scrub tap length to 10ms
   /* dl->scrubTap.length = 256 * 48 * 10; */

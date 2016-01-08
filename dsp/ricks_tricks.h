@@ -90,5 +90,5 @@ fract32 pitchTrack (pitchDetector *p, fract32 preIn);
 fract32 pitchTrackOsc (pitchDetector *p);
 fract32 s32_halfWave_env (fract32 pos) ;
 float interp_bspline_float (float x, float _y, float y, float y_, float y__);
-float interp_bspline_fract32 (float x, float _y, float y, float y_, float y__);
+fract32 interp_bspline_fract32 (fract32 x, fract32 _y, fract32 y, fract32 y_, fract32 y__);
 #endif

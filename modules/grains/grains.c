@@ -232,7 +232,8 @@ void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamV
 
 void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
-#define fader_slew(x, y) simple_slew(x, y, SLEW_100MS)
+/* #define fader_slew(x, y) simple_slew(x, y, SLEW_100MS) */
+#define fader_slew(x, y) x = y;
 
 
 #define simple_busmix(x, y, fact) x = add_fr1x32(x, mult_fr1x32x32(y, fact))
@@ -284,7 +285,7 @@ void module_process_frame(void) {
   effectBusFeedback = 0;
   fract32 AMOut;
   fract32 grainOut;
-  for (i=0;i<NGRAINS;i++) {
+  for (i=0;i<NGRAINS - 1;i++) {
     grainOut=phaseG[i] * grain_next(&(grains[i]),
 				    selectGrainInput(sourceG[i]),
 				    mult_fr1x32x32(selectGrainInput(FM_sourceG[i]),

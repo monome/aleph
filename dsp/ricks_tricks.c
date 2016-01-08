@@ -123,9 +123,9 @@ fract32 max (fract32 x, fract32 y) {
 }
 
 void pitchDetector_init (pitchDetector *p) {
-  p->instantaneousPeriod = 48;
-  p->currentPeriod = 48;
-  p->period = 48;
+  p->instantaneousPeriod = 48 * 256;
+  p->currentPeriod = 48 * 256;
+  p->period = 48 * 256;
   p->lastIn = 0;
   p->phase = 0;
   p->nsamples = 0;
@@ -141,24 +141,31 @@ fract32 pitchTrackOsc (pitchDetector *p) {
 
 //This guy returns the current measured wave period (in subsamples)
 fract32 pitchTrack (pitchDetector *p, fract32 preIn) {
-  fract32 in = hpf_next_dynamic(&(p->dcBlocker), preIn, hzToDimensionless(50));
+  fract32 in = hpf_next_dynamic(&(p->dcBlocker),
+				preIn - FR32_MAX / 2,
+				hzToDimensionless(50));
   in = lpf_next_dynamic (&(p->adaptiveFilter), in ,
-			 256 * (FR32_MAX / p->instantaneousPeriod));
-  if (p->lastIn <= 0 && in >= 0 && p->nFrames > 10) {
-    p->period += 256 * max (min((fract32) p->nFrames,
-				FR32_MAX / hzToDimensionless(50)),
-			    FR32_MAX / hzToDimensionless(2000));
-    p->nsamples += 1;
+  			 (FR32_MAX / p->currentPeriod) << 8);
+  if (p->lastIn <= 0 && in >= 0 && p->nFrames > 16) {
+    p->currentPeriod = max (min( p->nFrames,
+				  960),
+			     24) << 8;
+    /* p->currentPeriod = p->nFrames << 8; */
+    /* p->nsamples += 1; */
     p->nFrames = 0;
-    if ( p->nsamples >= 10) {
-      p->currentPeriod = p->period / 10;
-      p->period = 0;
-      p->nsamples = 0;
-    }
+    /* if ( p->nsamples >= 16) { */
+    /*   p->currentPeriod = p->period >> 4; */
+    /*   p->period = 0; */
+    /*   p->nsamples = 0; */
+    /* } */
   }
-  simple_slew(p->instantaneousPeriod, p->currentPeriod, SLEW_1MS);
+  /* simple_slew(p->instantaneousPeriod, p->currentPeriod, 256 * 256); */
+  p->instantaneousPeriod =
+    ((p->currentPeriod << 10) +
+     1023 * (p->instantaneousPeriod - p->currentPeriod)) >> 10;
+  /* p->instantaneousPeriod = p->currentPeriod; */
   p->nFrames +=1;
-  p->lastIn = preIn;
+  p->lastIn = in;
   return p->instantaneousPeriod;
 }
 
@@ -173,7 +180,7 @@ float interp_bspline_float (float x, float _y, float y, float y_, float y__) {
   return ((c3*x+c2)*x+c1)*x+c0;
 }
 
-fract32 interp_bspline_fract32 (fract32 x, float _y, float y, float y_, float y__) {
+fract32 interp_bspline_fract32 (fract32 x, fract32 _y, fract32 y, fract32 y_, fract32 y__) {
   fract32 ym1py1 = _y / 256 + y_ / 256;
   fract32 c0 = ym1py1/6 + (y/128)/3;
   fract32 c1 = (y_-_y)/512;
