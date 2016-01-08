@@ -161,3 +161,26 @@ fract32 pitchTrack (pitchDetector *p, fract32 preIn) {
   p->lastIn = preIn;
   return p->instantaneousPeriod;
 }
+
+
+// 4-point, 3rd-order B-spline (x-form) from http://yehar.com/blog/wp-content/uploads/2009/08/deip.pdf
+float interp_bspline_float (float x, float _y, float y, float y_, float y__) {
+  float ym1py1 = _y+y_;
+  float c0 = 1/6.0*ym1py1 + 2/3.0*y;
+  float c1 = 1/2.0*(y_-_y);
+  float c2 = 1/2.0*ym1py1 - y;
+  float c3 = 1/2.0*(y-y_) + 1/6.0*(y__-_y);
+  return ((c3*x+c2)*x+c1)*x+c0;
+}
+
+fract32 interp_bspline_fract32 (fract32 x, float _y, float y, float y_, float y__) {
+  fract32 ym1py1 = _y / 256 + y_ / 256;
+  fract32 c0 = ym1py1/6 + (y/128)/3;
+  fract32 c1 = (y_-_y)/512;
+  fract32 c2 = ym1py1/2 - y/256;
+  fract32 c3 = (y-y_)/512 + ((y__-_y)/512)/3;
+  return
+    256 * (c0 + mult_fr1x32x32(x,
+			       (c1 +
+				mult_fr1x32x32((mult_fr1x32x32(c3,x) + c2),x))));
+}
