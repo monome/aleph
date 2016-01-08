@@ -124,7 +124,8 @@ void arithmetic_tests () {
   printf("osc(max+1) = %d\n", osc(FR32_MAX+1));
   printf("osc(min) = %d\n", osc(FR32_MIN));
   printf("osc(min+1) = %d\n", osc(((fract32)FR32_MIN)+1));
-  
+  fract32 x = 250;
+  printf ("slew 250 to 700 slowly: %d", simple-slew(x, 700, SLEW_1MS));
 }  
 
 void
