@@ -130,29 +130,61 @@ void arithmetic_tests () {
   printf("fract32 0.5 * 0.5 = %f\n",((float)mult_fr1x32x32((FR32_MAX / 2), (FR32_MAX / 2))) / (float) (FR32_MAX));
   fract32 x;
   fract32 y;
+  fract32 slewSpeed;
+  fract32 radix;
   x = 1;
   printf ("shiftleft test: 256 = %d\n", x << 8);
   x = -1;
   printf ("shiftleft test: -256 = %d\n", x << 8);
   x = 256;
-  printf ("shiftright test: 2 = %d\n", x >> 7);
-  x = 250;
-  printf ("slew 250 to 700 slowly: %d\n", simple_slew(x, 700, 1 << 30));
-  printf ("slew 250 to 700 slowly: %d\n", simple_slew(x, 700, 1 << 30));
-  printf ("slew 250 to 700 slowly: %d\n", simple_slew(x, 700, 1 << 30));
+  printf ("shiftright test: 2 = %d\n\n", x >> 7);
+  
+  x = 100;
+  y = 200;
+  slewSpeed = 1 << 30;
+  printf ("slew 100 to 200 quickly: %d\n", simple_slew(x, y, slewSpeed));
+  printf ("slew 100 to 200 quickly: %d\n", simple_slew(x, y, slewSpeed));
+  printf ("slew 100 to 200 quickly: %d\n", simple_slew(x, y, slewSpeed));
+  printf ("...\n\n");
+  
+  x = 100;
+  y = 200;
+  slewSpeed = 1 << 30;
+  printf ("slew 250 to 700 quickly by cheating: %d\n", simple_slew_cheat(x, y, slewSpeed));
+  printf ("slew 250 to 700 quickly by cheating: %d\n", simple_slew_cheat(x, y, slewSpeed));
+  printf ("slew 250 to 700 quickly by cheating: %d\n", simple_slew_cheat(x, y, slewSpeed));
+  printf ("...\n\n");
+
+  radix = 8;
+  x = 100<<radix;
+  y = 200<<radix;
+  slewSpeed = 1 << 30;
+  printf ("slew 100 to 200 quickly by shifting: %d\n", simple_slew(x, y, slewSpeed) >> radix);
+  printf ("slew 100 to 200 quickly by shifting: %d\n", simple_slew(x, y, slewSpeed) >> radix);
+  printf ("slew 100 to 200 quickly by shifting: %d\n", simple_slew(x, y, slewSpeed) >> radix);
+  printf ("...\n\n");
 
   x = 100;
   y = 200;
-  printf ("slew 250 to 700 slowly by cheating: %d\n", simple_slew_cheat(x, y, 1 << 30));
-  printf ("slew 250 to 700 slowly by cheating: %d\n", simple_slew_cheat(x, y, 1 << 30));
-  printf ("slew 250 to 700 slowly by cheating: %d\n", simple_slew_cheat(x, y, 1 << 30));
+  slewSpeed = 1 << 23;
+  printf ("slew 250 to 700 slowly: %d\n", simple_slew(x, y, slewSpeed));
+  printf ("slew 250 to 700 slowly: %d\n", simple_slew(x, y, slewSpeed));
+  printf ("slew 250 to 700 slowly: %d\n", simple_slew(x, y, slewSpeed));
+  printf ("...\n\n");
+  
+  x = 100;
+  printf ("slew 250 to 700 slowly by cheating: %d\n", simple_slew_cheat(x, y, slewSpeed));
+  printf ("slew 250 to 700 slowly by cheating: %d\n", simple_slew_cheat(x, y, slewSpeed));
+  printf ("slew 250 to 700 slowly by cheating: %d\n", simple_slew_cheat(x, y, slewSpeed));
+  printf ("...\n\n");
 
-  s32 radix = 16;
+  radix = 16;
   x = 100<<radix;
   y = 200<<radix;
-  printf ("slew 100 to 200 slowly by shifting: %d\n", simple_slew(x, y, 1 << 30) >> radix);
-  printf ("slew 100 to 200 slowly by shifting: %d\n", simple_slew(x, y, 1 << 30) >> radix);
-  printf ("slew 100 to 200 slowly by shifting: %d\n", simple_slew(x, y, 1 << 30) >> radix);
+  printf ("slew 100 to 200 slowly by shifting: %d\n", simple_slew(x, y, slewSpeed) >> radix);
+  printf ("slew 100 to 200 slowly by shifting: %d\n", simple_slew(x, y, slewSpeed) >> radix);
+  printf ("slew 100 to 200 slowly by shifting: %d\n", simple_slew(x, y, slewSpeed) >> radix);
+  printf ("...\n\n");
 
 }  
 
