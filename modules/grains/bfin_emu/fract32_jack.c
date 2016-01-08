@@ -28,7 +28,7 @@ fract32 add_fr1x32(fract32 x, fract32 y) {
 }
 
 fract32 abs_fr1x32(fract32 x) {
-  if(x = FR32_MIN)
+  if(x == FR32_MIN)
     return FR32_MAX;
   else if ( x >= 0)
     return x;
@@ -51,7 +51,7 @@ fract32 max_fr1x32(fract32 x, fract32 y) {
 }
 
 fract32 negate_fr1x32(fract32 x) {
-  if(x = FR32_MIN)
+  if(x == FR32_MIN)
     return FR32_MAX;
   else if ( x >= 0)
     return - x;

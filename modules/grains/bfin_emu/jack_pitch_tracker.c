@@ -141,7 +141,7 @@ void arithmetic_tests () {
   
   x = 100;
   y = 200;
-  slewSpeed = 1 << 30;
+  slewSpeed = shl_fr1x32(1, 30);
   printf ("slew 100 to 200 quickly: %d\n", simple_slew(x, y, slewSpeed));
   printf ("slew 100 to 200 quickly: %d\n", simple_slew(x, y, slewSpeed));
   printf ("slew 100 to 200 quickly: %d\n", simple_slew(x, y, slewSpeed));
@@ -149,19 +149,17 @@ void arithmetic_tests () {
   
   x = 100;
   y = 200;
-  slewSpeed = 1 << 30;
   printf ("slew 250 to 700 quickly by cheating: %d\n", simple_slew_cheat(x, y, slewSpeed));
   printf ("slew 250 to 700 quickly by cheating: %d\n", simple_slew_cheat(x, y, slewSpeed));
   printf ("slew 250 to 700 quickly by cheating: %d\n", simple_slew_cheat(x, y, slewSpeed));
   printf ("...\n\n");
 
   radix = 8;
-  x = 100<<radix;
-  y = 200<<radix;
-  slewSpeed = 1 << 30;
-  printf ("slew 100 to 200 quickly by shifting: %d\n", simple_slew(x, y, slewSpeed) >> radix);
-  printf ("slew 100 to 200 quickly by shifting: %d\n", simple_slew(x, y, slewSpeed) >> radix);
-  printf ("slew 100 to 200 quickly by shifting: %d\n", simple_slew(x, y, slewSpeed) >> radix);
+  x = shl_fr1x32(100,radix);
+  y = shl_fr1x32(200,radix);
+  printf ("slew 100 to 200 quickly by shifting: %d\n", shl_fr1x32(simple_slew(x, y, slewSpeed), - radix));
+  printf ("slew 100 to 200 quickly by shifting: %d\n", shl_fr1x32(simple_slew(x, y, slewSpeed), - radix));
+  printf ("slew 100 to 200 quickly by shifting: %d\n", shl_fr1x32(simple_slew(x, y, slewSpeed), - radix));
   printf ("...\n\n");
 
   x = 100;
@@ -179,16 +177,35 @@ void arithmetic_tests () {
   printf ("...\n\n");
 
   radix = 16;
-  x = 100<<radix;
-  y = 200<<radix;
-  printf ("slew 100 to 200 slowly by shifting: %d\n", simple_slew(x, y, slewSpeed) >> radix);
-  printf ("slew 100 to 200 slowly by shifting: %d\n", simple_slew(x, y, slewSpeed) >> radix);
-  printf ("slew 100 to 200 slowly by shifting: %d\n", simple_slew(x, y, slewSpeed) >> radix);
+  x = shl_fr1x32(100,radix);
+  y = shl_fr1x32(200,radix);
+  printf ("slew 100 to 200 slowly by shifting: %d\n", shl_fr1x32(simple_slew(x, y, slewSpeed), - radix));
+  printf ("slew 100 to 200 slowly by shifting: %d\n", shl_fr1x32(simple_slew(x, y, slewSpeed), - radix));
+  printf ("slew 100 to 200 slowly by shifting: %d\n", shl_fr1x32(simple_slew(x, y, slewSpeed), - radix));
   printf ("...\n\n");
+
+  printf("abs(256) = %d,\nabs(-256) = %d,\nabs(FR32_MIN) = %d,\nabs(FR32_MIN-1) = %d,\nabs(FR32_MAX) = %d\n",
+	 abs_fr1x32(256), abs_fr1x32(-256), abs_fr1x32(FR32_MIN),
+	 abs_fr1x32(FR32_MIN - 1), abs_fr1x32(FR32_MAX));
+
+  printf("min(FR32_MAX, FR32_MAX -1) = %d,\nmin(FR32_MIN, FR32_MIN -1) = %d,\nmin(0,1) = %d,\nmin(-1, 1) = %d,\nmin(FR32_MAX,\nFR32_MIN = %d\n",
+	 min_fr1x32(FR32_MAX, FR32_MAX -1), min_fr1x32(FR32_MIN, FR32_MIN -1),
+	 min_fr1x32(0,1), min_fr1x32(-1, 1), min_fr1x32(FR32_MAX, FR32_MIN));
+  
+    printf("max(FR32_MAX, FR32_MAX -1) = %d,\nmax(FR32_MIN, FR32_MIN -1) = %d,\nmax(0,1) = %d,\nmax(-1, 1) = %d,\nmax(FR32_MAX,\nFR32_MIN = %d\n",
+	   max_fr1x32(FR32_MAX, FR32_MAX -1), max_fr1x32(FR32_MIN, FR32_MIN -1),
+	   max_fr1x32(0,1), max_fr1x32(-1, 1), max_fr1x32(FR32_MAX, FR32_MIN));
+    
+  printf("negate(256) = %d,\nnegate(-256) = %d,\nnegate(FR32_MIN) = %d,\nnegate(FR32_MIN-1) =\n%d, negate(FR32_MAX) = %d\n",
+	 negate_fr1x32(256), negate_fr1x32(-256), negate_fr1x32(FR32_MIN),
+	 negate_fr1x32(FR32_MIN - 1), negate_fr1x32(FR32_MAX));
+
   printf ("norm(0x40000000) = %d\n", norm_fr1x32(0x40000000));
   printf ("norm(256) = %d\n", norm_fr1x32(256));
   printf ("normalise 0x40 = %#08x\n", shl_fr1x32(0x40, norm_fr1x32(0x40)));
   printf ("normalise 0xFF = %#08x\n", shl_fr1x32(0xFF, norm_fr1x32(0xFF)));
+  printf ("normalise (0 - 0x40) = %#08x\n", shl_fr1x32(0 - 0x40, norm_fr1x32(0 - 0x40)));
+  printf ("normalise (0 - 0xFF) = %#08x\n", shl_fr1x32(0 - 0xFF, norm_fr1x32(0 - 0xFF)));
   printf ("un-normalise -256 = %#08x (%d)\n", shl_fr1x32(shl_fr1x32(-256, norm_fr1x32(-256)),
 							 - norm_fr1x32(-256)),
 	  shl_fr1x32(shl_fr1x32(-256, norm_fr1x32(-256)),
@@ -198,7 +215,7 @@ void arithmetic_tests () {
 	  shl_fr1x32(shl_fr1x32(256, norm_fr1x32(256)),
 		     - norm_fr1x32(256)));
   printf ("un-normalise 0xFF = %#08x (%d)\n", shl_fr1x32(shl_fr1x32(0xFF, norm_fr1x32(0xFF)),
-							- norm_fr1x32(0xFF)),
+							 - norm_fr1x32(0xFF)),
 	  shl_fr1x32(shl_fr1x32(0xFF, norm_fr1x32(0xFF)),
 		     - norm_fr1x32(0xFF)));
 
