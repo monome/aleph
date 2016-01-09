@@ -83,13 +83,13 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 		/* signalPeriod * 10 */
 		signalPeriod * (dl->scrubLengthTarget / max(1, signalPeriod)
 				+ 1),
-		SLEW_10MS);
+		SLEW_100MS);
   } else {
     simple_slew(dl->scrubTap.length,
 		dl->scrubLengthTarget,
-		SLEW_10MS);
+		SLEW_100MS);
   }
-  //DEBUG forcing scrub tap length to 10ms
+  //DEBUG forcing scrub tap length to 100ms
   /* dl->scrubTap.length = 256 * 48 * 10; */
 
   
@@ -97,7 +97,7 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
     - (FR32_MAX / 256 / 256 / 8) *
     mult_fr1x32x32((desiredPitchShift) * (FR32_MAX / 8 / 256),
 		   FR32_MAX / max(dl->scrubTap.length, 1));
-  //DEBUG with scrub tap length forced to 10ms and pitchshift forced to +1,
+  //DEBUG with scrub tap length forced to 100ms and pitchshift forced to +1,
   //Should end up with a scrubTap Frequency of 100Hz
   /* printf("%d\t%d\t%d\t%d\n", dl->scrubTap.length, desiredPitchShift, dl->scrubTap.frequency, hzToDimensionless(100)); */
 

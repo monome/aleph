@@ -104,6 +104,49 @@ int process_block (jack_nframes_t nframes, void *arg) {
 
   return 0;      
 }
+void primitive_tests () {
+  printf("max+max = %d\n", add_fr1x32(FR32_MAX,FR32_MAX));
+  printf("max-max = %d\n", sub_fr1x32(FR32_MAX,FR32_MAX));
+  printf("max+min = %d\n", add_fr1x32(FR32_MAX,FR32_MIN));
+  printf("min+min = %d\n", add_fr1x32(FR32_MIN,FR32_MIN));
+  printf("fract32 0.5 * 0.5 = %f\n",((float)mult_fr1x32x32((FR32_MAX / 2), (FR32_MAX / 2))) / (float) (FR32_MAX));
+
+  printf("abs(256) = %d,\nabs(-256) = %d,\nabs(FR32_MIN) = %d,\nabs(FR32_MIN-1) = %d,\nabs(FR32_MAX) = %d\n",
+	 abs_fr1x32(256), abs_fr1x32(-256), abs_fr1x32(FR32_MIN),
+	 abs_fr1x32(FR32_MIN - 1), abs_fr1x32(FR32_MAX));
+
+  printf("min(FR32_MAX, FR32_MAX -1) = %d,\nmin(FR32_MIN, FR32_MIN -1) = %d,\nmin(0,1) = %d,\nmin(-1, 1) = %d,\nmin(FR32_MAX,\nFR32_MIN = %d\n",
+	 min_fr1x32(FR32_MAX, FR32_MAX -1), min_fr1x32(FR32_MIN, FR32_MIN -1),
+	 min_fr1x32(0,1), min_fr1x32(-1, 1), min_fr1x32(FR32_MAX, FR32_MIN));
+  
+    printf("max(FR32_MAX, FR32_MAX -1) = %d,\nmax(FR32_MIN, FR32_MIN -1) = %d,\nmax(0,1) = %d,\nmax(-1, 1) = %d,\nmax(FR32_MAX,\nFR32_MIN = %d\n",
+	   max_fr1x32(FR32_MAX, FR32_MAX -1), max_fr1x32(FR32_MIN, FR32_MIN -1),
+	   max_fr1x32(0,1), max_fr1x32(-1, 1), max_fr1x32(FR32_MAX, FR32_MIN));
+    
+  printf("negate(256) = %d,\nnegate(-256) = %d,\nnegate(FR32_MIN) = %d,\nnegate(FR32_MIN-1) =\n%d, negate(FR32_MAX) = %d\n",
+	 negate_fr1x32(256), negate_fr1x32(-256), negate_fr1x32(FR32_MIN),
+	 negate_fr1x32(FR32_MIN - 1), negate_fr1x32(FR32_MAX));
+
+  printf ("norm(0x40000000) = %d\n", norm_fr1x32(0x40000000));
+  printf ("norm(256) = %d\n", norm_fr1x32(256));
+  printf ("normalise 0x40 = %#08x\n", shl_fr1x32(0x40, norm_fr1x32(0x40)));
+  printf ("normalise 0xFF = %#08x\n", shl_fr1x32(0xFF, norm_fr1x32(0xFF)));
+  printf ("normalise (0 - 0x40) = %#08x\n", shl_fr1x32(0 - 0x40, norm_fr1x32(0 - 0x40)));
+  printf ("normalise (0 - 0xFF) = %#08x\n", shl_fr1x32(0 - 0xFF, norm_fr1x32(0 - 0xFF)));
+  printf ("un-normalise -256 = %#08x (%d)\n", shl_fr1x32(shl_fr1x32(-256, norm_fr1x32(-256)),
+							 - norm_fr1x32(-256)),
+	  shl_fr1x32(shl_fr1x32(-256, norm_fr1x32(-256)),
+		     - norm_fr1x32(-256)));
+  printf ("un-normalise 256 = %#08x (%d)\n", shl_fr1x32(shl_fr1x32(256, norm_fr1x32(256)),
+							- norm_fr1x32(256)),
+	  shl_fr1x32(shl_fr1x32(256, norm_fr1x32(256)),
+		     - norm_fr1x32(256)));
+  printf ("un-normalise 0xFF = %#08x (%d)\n", shl_fr1x32(shl_fr1x32(0xFF, norm_fr1x32(0xFF)),
+							 - norm_fr1x32(0xFF)),
+	  shl_fr1x32(shl_fr1x32(0xFF, norm_fr1x32(0xFF)),
+		     - norm_fr1x32(0xFF)));
+
+}
 
 void arithmetic_tests () {
   printf ("1K = %d\n",mult_fr1x32x32( FR32_MAX,
@@ -113,10 +156,6 @@ void arithmetic_tests () {
   printf("1s slew has const: %d\n", SLEW_1S);
   printf("100ms slew has const: %d\n", SLEW_100MS);
   printf("1+1 = %d\n", add_fr1x32(1, 1));
-  printf("max+max = %d\n", add_fr1x32(FR32_MAX,FR32_MAX));
-  printf("max-max = %d\n", sub_fr1x32(FR32_MAX,FR32_MAX));
-  printf("max+min = %d\n", add_fr1x32(FR32_MAX,FR32_MIN));
-  printf("min+min = %d\n", add_fr1x32(FR32_MIN,FR32_MIN));
 
   printf("osc(0) = %d\n", osc(0));
   printf("osc(1) = %d\n", osc(1));
@@ -127,7 +166,6 @@ void arithmetic_tests () {
   printf("osc(max+1) = %d\n", osc(FR32_MAX+1));
   printf("osc(min) = %d\n", osc(FR32_MIN));
   printf("osc(min+1) = %d\n", osc(((fract32)FR32_MIN)+1));
-  printf("fract32 0.5 * 0.5 = %f\n",((float)mult_fr1x32x32((FR32_MAX / 2), (FR32_MAX / 2))) / (float) (FR32_MAX));
   fract32 x;
   fract32 y;
   fract32 slewSpeed;
@@ -183,42 +221,6 @@ void arithmetic_tests () {
   printf ("slew 100 to 200 slowly by shifting: %d\n", shl_fr1x32(simple_slew(x, y, slewSpeed), - radix));
   printf ("slew 100 to 200 slowly by shifting: %d\n", shl_fr1x32(simple_slew(x, y, slewSpeed), - radix));
   printf ("...\n\n");
-
-  printf("abs(256) = %d,\nabs(-256) = %d,\nabs(FR32_MIN) = %d,\nabs(FR32_MIN-1) = %d,\nabs(FR32_MAX) = %d\n",
-	 abs_fr1x32(256), abs_fr1x32(-256), abs_fr1x32(FR32_MIN),
-	 abs_fr1x32(FR32_MIN - 1), abs_fr1x32(FR32_MAX));
-
-  printf("min(FR32_MAX, FR32_MAX -1) = %d,\nmin(FR32_MIN, FR32_MIN -1) = %d,\nmin(0,1) = %d,\nmin(-1, 1) = %d,\nmin(FR32_MAX,\nFR32_MIN = %d\n",
-	 min_fr1x32(FR32_MAX, FR32_MAX -1), min_fr1x32(FR32_MIN, FR32_MIN -1),
-	 min_fr1x32(0,1), min_fr1x32(-1, 1), min_fr1x32(FR32_MAX, FR32_MIN));
-  
-    printf("max(FR32_MAX, FR32_MAX -1) = %d,\nmax(FR32_MIN, FR32_MIN -1) = %d,\nmax(0,1) = %d,\nmax(-1, 1) = %d,\nmax(FR32_MAX,\nFR32_MIN = %d\n",
-	   max_fr1x32(FR32_MAX, FR32_MAX -1), max_fr1x32(FR32_MIN, FR32_MIN -1),
-	   max_fr1x32(0,1), max_fr1x32(-1, 1), max_fr1x32(FR32_MAX, FR32_MIN));
-    
-  printf("negate(256) = %d,\nnegate(-256) = %d,\nnegate(FR32_MIN) = %d,\nnegate(FR32_MIN-1) =\n%d, negate(FR32_MAX) = %d\n",
-	 negate_fr1x32(256), negate_fr1x32(-256), negate_fr1x32(FR32_MIN),
-	 negate_fr1x32(FR32_MIN - 1), negate_fr1x32(FR32_MAX));
-
-  printf ("norm(0x40000000) = %d\n", norm_fr1x32(0x40000000));
-  printf ("norm(256) = %d\n", norm_fr1x32(256));
-  printf ("normalise 0x40 = %#08x\n", shl_fr1x32(0x40, norm_fr1x32(0x40)));
-  printf ("normalise 0xFF = %#08x\n", shl_fr1x32(0xFF, norm_fr1x32(0xFF)));
-  printf ("normalise (0 - 0x40) = %#08x\n", shl_fr1x32(0 - 0x40, norm_fr1x32(0 - 0x40)));
-  printf ("normalise (0 - 0xFF) = %#08x\n", shl_fr1x32(0 - 0xFF, norm_fr1x32(0 - 0xFF)));
-  printf ("un-normalise -256 = %#08x (%d)\n", shl_fr1x32(shl_fr1x32(-256, norm_fr1x32(-256)),
-							 - norm_fr1x32(-256)),
-	  shl_fr1x32(shl_fr1x32(-256, norm_fr1x32(-256)),
-		     - norm_fr1x32(-256)));
-  printf ("un-normalise 256 = %#08x (%d)\n", shl_fr1x32(shl_fr1x32(256, norm_fr1x32(256)),
-							- norm_fr1x32(256)),
-	  shl_fr1x32(shl_fr1x32(256, norm_fr1x32(256)),
-		     - norm_fr1x32(256)));
-  printf ("un-normalise 0xFF = %#08x (%d)\n", shl_fr1x32(shl_fr1x32(0xFF, norm_fr1x32(0xFF)),
-							 - norm_fr1x32(0xFF)),
-	  shl_fr1x32(shl_fr1x32(0xFF, norm_fr1x32(0xFF)),
-		     - norm_fr1x32(0xFF)));
-
 }  
 
 void

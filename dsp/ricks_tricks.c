@@ -123,50 +123,43 @@ fract32 max (fract32 x, fract32 y) {
 }
 
 void pitchDetector_init (pitchDetector *p) {
-  p->instantaneousPeriod = 48 * 256;
-  p->currentPeriod = 48 * 256;
-  p->period = 48 * 256;
-  p->lastIn = 0;
+  p->instantaneousPeriod = 48 << PITCH_DETECTOR_RADIX_TOTAL;
+  p->currentPeriod = 48 << PITCH_DETECTOR_RADIX_TOTAL;
+  p->period = 48 << PITCH_DETECTOR_RADIX_TOTAL;
+  p->lastIn = 1;
   p->phase = 0;
-  p->nsamples = 0;
-  p->nFrames = 0;
+  p->nsamples = 100;
+  p->nFrames = 100;
   hpf_init(&(p->dcBlocker));
   lpf_init(&(p->adaptiveFilter));
 }
 
 fract32 pitchTrackOsc (pitchDetector *p) {
-  p->phase += (FR32_MAX / p->instantaneousPeriod) * 512;
+  /* p->instantaneousPeriod = (48 << (PITCH_DETECTOR_RADIX_INTERNAL + PITCH_DETECTOR_RADIX_EXTERNAL)); */
+  p->phase += (FR32_MAX / (p->instantaneousPeriod >> (PITCH_DETECTOR_RADIX_INTERNAL))) << (PITCH_DETECTOR_RADIX_EXTERNAL + 1);
   return osc(p->phase);
 }
 
 //This guy returns the current measured wave period (in subsamples)
 fract32 pitchTrack (pitchDetector *p, fract32 preIn) {
-  fract32 in = hpf_next_dynamic(&(p->dcBlocker),
-				preIn - FR32_MAX / 2,
-				hzToDimensionless(50));
-  in = lpf_next_dynamic (&(p->adaptiveFilter), in ,
-  			 (FR32_MAX / p->currentPeriod) << 8);
+  /* fract32 in = hpf_next_dynamic(&(p->dcBlocker), */
+  /* 				preIn, */
+  /* 				hzToDimensionless(50)); */
+  /* in = lpf_next_dynamic (&(p->adaptiveFilter), in, */
+  /* 			 (FR32_MAX / (p->instantaneousPeriod >> (PITCH_DETECTOR_RADIX_TOTAL)))) ;*/
+  fract32 in = preIn;
   if (p->lastIn <= 0 && in >= 0 && p->nFrames > 16) {
-    p->currentPeriod = max (min( p->nFrames,
-				  960),
-			     24) << 8;
-    /* p->currentPeriod = p->nFrames << 8; */
-    /* p->nsamples += 1; */
+    p->currentPeriod = shl_fr1x32(max_fr1x32 (min_fr1x32 (p->nFrames,
+							  960),
+					      24),
+				  (PITCH_DETECTOR_RADIX_TOTAL));
     p->nFrames = 0;
-    /* if ( p->nsamples >= 16) { */
-    /*   p->currentPeriod = p->period >> 4; */
-    /*   p->period = 0; */
-    /*   p->nsamples = 0; */
-    /* } */
   }
-  /* simple_slew(p->instantaneousPeriod, p->currentPeriod, 256 * 256); */
-  p->instantaneousPeriod =
-    ((p->currentPeriod << 10) +
-     1023 * (p->instantaneousPeriod - p->currentPeriod)) >> 10;
-  /* p->instantaneousPeriod = p->currentPeriod; */
+  /* simple_slew(p->instantaneousPeriod, p->currentPeriod, SLEW_10S); */
+  p->instantaneousPeriod = p->currentPeriod;
   p->nFrames +=1;
   p->lastIn = in;
-  return p->instantaneousPeriod;
+  return (shl_fr1x32(p->instantaneousPeriod, - PITCH_DETECTOR_RADIX_INTERNAL));
 }
 
 

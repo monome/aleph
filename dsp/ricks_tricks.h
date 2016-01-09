@@ -63,8 +63,8 @@ fract32 osc (fract32 phase);
 					sub_fr1x32((fract32) (x),	\
 						   (fract32) (y)))))
 
-#define SLEW_1MS (TWOPI * hzToDimensionless(1) / 1000)
-#define SLEW_10MS (TWOPI * hzToDimensionless(1) / 100)
+#define SLEW_1MS (TWOPI * hzToDimensionless(1) / 10)
+#define SLEW_10MS (TWOPI * hzToDimensionless(1) / 10)
 #define SLEW_100MS (TWOPI * hzToDimensionless(1) / 10)
 #define SLEW_1S (TWOPI * hzToDimensionless(1))
 #define SLEW_10S (TWOPI * hzToDimensionless(10))
@@ -79,6 +79,10 @@ fract32 min (fract32 x, fract32 y);
 
 #define fadeOut(x) sub_fr1x32(FR32_MAX, mult_fr1x32x32( x, x))
 #define fadeIn(x) fadeOut(sub_fr1x32(FR32_MAX, x))
+
+#define PITCH_DETECTOR_RADIX_INTERNAL 6
+#define PITCH_DETECTOR_RADIX_EXTERNAL 8
+#define PITCH_DETECTOR_RADIX_TOTAL (PITCH_DETECTOR_RADIX_INTERNAL + PITCH_DETECTOR_RADIX_EXTERNAL)
 
 typedef struct {
   fract32 instantaneousPeriod;

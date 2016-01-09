@@ -9,5 +9,5 @@ gcc -ljack -lm \
     ../../dsp/pan.c \
     ../../dsp/buffer.c \
         -I ../../dsp -I ./bfin_emu -I ./ -I ../../bfin_lib/src/ -I ../../bfin_lib/src/libfixmath -I ../../common\
-    -o jack_pitch_tracker;
+    -o jack_pitch_tracker -g;
 # ./jack_pitch_tracker
