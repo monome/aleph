@@ -147,10 +147,10 @@ fract32 pitchTrack (pitchDetector *p, fract32 preIn) {
   				preIn,
   				hzToDimensionless(50));
   in = lpf_next_dynamic (&(p->adaptiveFilter), in,
-  				 (FR32_MAX / (p->instantaneousPeriod >> (PITCH_DETECTOR_RADIX_TOTAL)))) ;
+  				 (FR32_MAX / (p->currentPeriod >> (PITCH_DETECTOR_RADIX_TOTAL)))) ;
   if (p->lastIn <= 0 && in >= 0 && p->nFrames > 24) {
     p->period += (min_fr1x32 (p->nFrames, 1024)) << PITCH_DETECTOR_RADIX_EXTERNAL;
-    p->nFrames = 0 ;
+    p->nFrames = 0;
     p->nsamples += 1;
     if (p->nsamples >= (1 << PITCH_DETECTOR_RADIX_INTERNAL)) {
       p->currentPeriod = p->period ;
@@ -158,7 +158,7 @@ fract32 pitchTrack (pitchDetector *p, fract32 preIn) {
       p->nsamples = 0;
     }
   }
-  simple_slew(p->instantaneousPeriod, p->currentPeriod, SLEW_100MS);
+  /* simple_slew(p->instantaneousPeriod, p->currentPeriod, SLEW_1MS); */
   p->instantaneousPeriod = p->currentPeriod;
   p->nFrames +=1;
   p->lastIn = in;
