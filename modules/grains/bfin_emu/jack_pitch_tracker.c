@@ -68,12 +68,12 @@ fract32 process_frame (fract32 in) {
     
   /* fr32_out = hpf(fr32_in); */
   /* fr32_out = mult_fr1x32x32(fr32_in, jack_sample_to_fract32(1.0 / 48.0)); */
-  return simple_slew(myLpf.lastOut, in, SLEW_100MS);
+  /* return simple_slew(myLpf.lastOut, in, SLEW_4S); */
   /* return lpf_next_dynamic(&myLpf, in, hzToDimensionless(1000)); */
   /* return hpf_next_dynamic(&myHpf, in, hzToDimensionless(1000)); */
 
-  /* pitchTrack(&myPitchDetector, in); */
-  /* return pitchTrackOsc (&myPitchDetector); */
+  pitchTrack(&myPitchDetector, in);
+  return pitchTrackOsc (&myPitchDetector);
 
   /* return grain_next(&myGrain, in, 0); */
   /* fract32 phasorNext = (fract32) phasor_next_dynamic(&myPhasor, */
@@ -357,7 +357,7 @@ int main (int argc, char *argv[]) {
     exit (1);
   }
 
-  if (jack_connect (client, "latent-01:output 0", jack_port_name (input_port))) {
+  if (jack_connect (client, "jaaa:out_1", jack_port_name (input_port))) {
     fprintf (stderr, "cannot connect input ports\n");
   }
 
@@ -370,7 +370,7 @@ int main (int argc, char *argv[]) {
     exit (1);
   }
 
-  if (jack_connect (client, jack_port_name (output_port), "latent-01:input 0")) {
+  if (jack_connect (client, jack_port_name (output_port), "jaaa:in_1")) {
     fprintf (stderr, "cannot connect output ports\n");
   }
 

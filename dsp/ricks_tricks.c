@@ -135,33 +135,35 @@ void pitchDetector_init (pitchDetector *p) {
 }
 
 fract32 pitchTrackOsc (pitchDetector *p) {
-  /* p->instantaneousPeriod = (48 << (PITCH_DETECTOR_RADIX_INTERNAL + PITCH_DETECTOR_RADIX_EXTERNAL)); */
+  /* p->instantaneousPeriod = (240 << (PITCH_DETECTOR_RADIX_TOTAL)); */
   p->phase += (FR32_MAX / (p->instantaneousPeriod >> (PITCH_DETECTOR_RADIX_INTERNAL))) << (PITCH_DETECTOR_RADIX_EXTERNAL + 1);
+  /* return p->lastIn; */
   return osc(p->phase);
 }
 
 //This guy returns the current measured wave period (in subsamples)
 fract32 pitchTrack (pitchDetector *p, fract32 preIn) {
-  /* fract32 in = hpf_next_dynamic(&(p->dcBlocker), */
-  /* 				preIn, */
-  /* 				hzToDimensionless(50)); */
-  /* in = lpf_next_dynamic (&(p->adaptiveFilter), in, */
-  /* 			 (FR32_MAX / (p->instantaneousPeriod >> (PITCH_DETECTOR_RADIX_TOTAL)))) ;*/
-  fract32 in = preIn;
-  if (p->lastIn <= 0 && in >= 0 && p->nFrames > 16) {
-    p->currentPeriod = shl_fr1x32(max_fr1x32 (min_fr1x32 (p->nFrames,
-							  960),
-					      24),
-				  (PITCH_DETECTOR_RADIX_TOTAL));
-    p->nFrames = 0;
+  fract32 in = hpf_next_dynamic(&(p->dcBlocker),
+  				preIn,
+  				hzToDimensionless(50));
+  in = lpf_next_dynamic (&(p->adaptiveFilter), in,
+  				 (FR32_MAX / (p->instantaneousPeriod >> (PITCH_DETECTOR_RADIX_TOTAL)))) ;
+  if (p->lastIn <= 0 && in >= 0 && p->nFrames > 24) {
+    p->period += (min_fr1x32 (p->nFrames, 1024)) << PITCH_DETECTOR_RADIX_EXTERNAL;
+    p->nFrames = 0 ;
+    p->nsamples += 1;
+    if (p->nsamples >= (1 << PITCH_DETECTOR_RADIX_INTERNAL)) {
+      p->currentPeriod = p->period ;
+      p->period = 0;
+      p->nsamples = 0;
+    }
   }
-  /* simple_slew(p->instantaneousPeriod, p->currentPeriod, SLEW_10S); */
+  simple_slew(p->instantaneousPeriod, p->currentPeriod, SLEW_100MS);
   p->instantaneousPeriod = p->currentPeriod;
   p->nFrames +=1;
   p->lastIn = in;
   return (shl_fr1x32(p->instantaneousPeriod, - PITCH_DETECTOR_RADIX_INTERNAL));
 }
-
 
 // 4-point, 3rd-order B-spline (x-form) from http://yehar.com/blog/wp-content/uploads/2009/08/deip.pdf
 float interp_bspline_float (float x, float _y, float y, float y_, float y__) {
