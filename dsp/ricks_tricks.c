@@ -135,7 +135,9 @@ void pitchDetector_init (pitchDetector *p) {
 
 fract32 pitchTrackOsc (pitchDetector *p) {
   /* p->currentPeriod = (240 << (PITCH_DETECTOR_RADIX_TOTAL)); */
-  p->phase += (FR32_MAX / (p->currentPeriod >> (PITCH_DETECTOR_RADIX_INTERNAL))) << (PITCH_DETECTOR_RADIX_EXTERNAL + 1);
+  p->phase += shl_fr1x32((FR32_MAX / shl_fr1x32(p->currentPeriod,
+						-PITCH_DETECTOR_RADIX_INTERNAL)),
+			 PITCH_DETECTOR_RADIX_EXTERNAL + 1);
   /* return p->lastIn; */
   return osc(p->phase);
 }
@@ -143,12 +145,14 @@ fract32 pitchTrackOsc (pitchDetector *p) {
 //This guy returns the current measured wave period (in subsamples)
 fract32 pitchTrack (pitchDetector *p, fract32 preIn) {
   fract32 in = lpf_next_dynamic (&(p->adaptiveFilter), in,
-  				 (FR32_MAX / (p->currentPeriod >> (PITCH_DETECTOR_RADIX_TOTAL))));
+  				 FR32_MAX / shl_fr1x32(p->currentPeriod,
+						       - (PITCH_DETECTOR_RADIX_TOTAL)));
   in = hpf_next_dynamic(&(p->dcBlocker),
 			preIn,
 			hzToDimensionless(50));
   if (p->lastIn <= 0 && in >= 0 && p->nFrames > 24) {
-    p->period += (min_fr1x32 (p->nFrames, 1024)) << PITCH_DETECTOR_RADIX_EXTERNAL;
+    p->period += shl_fr1x32(min_fr1x32 (p->nFrames, 1024),
+			    PITCH_DETECTOR_RADIX_EXTERNAL);
     p->nFrames = 0;
     p->nsamples += 1;
     if (p->nsamples >= (1 << PITCH_DETECTOR_RADIX_INTERNAL)) {
