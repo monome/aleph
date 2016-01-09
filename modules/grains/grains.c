@@ -178,6 +178,7 @@ void module_init(void) {
   //grain scrubber params
   param_setup (eParam_scrubPitch_g1, 65536 * 2);
   param_setup (eParam_scrubLength_g1, 65536 * 256 * 10);
+  param_setup (eParam_scrubPitchDetection_g1, 65536);
 
   //grain echo params
   param_setup(eParam_echoTime_g1, 65536 * 15);
@@ -206,6 +207,7 @@ void module_init(void) {
   //grain scrubber params
   param_setup (eParam_scrubPitch_g2, 65536 * 2);
   param_setup (eParam_scrubLength_g2, 65536 * 256 * 10);
+  param_setup (eParam_scrubPitchDetection_g2, 65536);
 
   //grain echo params
   param_setup(eParam_echoTime_g2, 65536 * 15);

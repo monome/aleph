@@ -42,6 +42,8 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   //DEBUG uncomment this line to check plumbing this far...
   //return in;
 
+  //DEBUG uncomment this line to force slew speed to a sensible value
+  /* dl->slewSpeed = SLEW_100MS; */
   if (dl->echoTimeCountdown > 0) {
     dl->echoTap.time = simple_slew(dl->echoTap.time,
 				   dl->echoTimeTarget,
@@ -78,16 +80,16 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   //DEBUG force pitch detection enabled
   /* dl->pitchDetection = 1; */
 
-  if (dl->pitchDetection == 1) {
-    simple_slew(dl->scrubTap.length,
-		/* signalPeriod * 10 */
-		signalPeriod * (dl->scrubLengthTarget / max(1, signalPeriod)
-				+ 1),
-		SLEW_100MS);
-  } else {
+  if (dl->pitchDetection == 0) {
     simple_slew(dl->scrubTap.length,
 		dl->scrubLengthTarget,
 		SLEW_100MS);
+  } else {
+    simple_slew(dl->scrubTap.length,
+		/* signalPeriod * 10 */
+		    signalPeriod * (dl->scrubLengthTarget / max(1, signalPeriod)
+				+ 1),
+		    SLEW_100MS);
   }
   //DEBUG forcing scrub tap length to 100ms
   /* dl->scrubTap.length = 256 * 48 * 10; */
@@ -175,5 +177,5 @@ void grain_disable_pitchDetection(grain* dl) {
 }
 
 void grain_enable_pitchDetection(grain* dl) {
-  dl->pitchDetection = 0;
+  dl->pitchDetection = 1;
 }
