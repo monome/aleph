@@ -68,7 +68,7 @@ fract32 process_frame (fract32 in) {
     
   /* fr32_out = hpf(fr32_in); */
   /* fr32_out = mult_fr1x32x32(fr32_in, jack_sample_to_fract32(1.0 / 48.0)); */
-  return simple_slew(myLpf.lastOut, in, FR32_MAX);
+  return simple_slew(myLpf.lastOut, in, SLEW_100MS);
   /* return lpf_next_dynamic(&myLpf, in, hzToDimensionless(1000)); */
   /* return hpf_next_dynamic(&myHpf, in, hzToDimensionless(1000)); */
 
@@ -156,7 +156,7 @@ void arithmetic_tests () {
   printf ("1K = %d\n",mult_fr1x32x32( FR32_MAX,
 				      jack_sample_to_fract32(1.0 / 48.0)));
   printf("0 clipped = %d\n", clip_to_fr32(0));
-  printf("Absolute slowest acceptable slew is: %d\n", SLEW_MIN);
+  printf("Absolute slowest acceptable slew is: %d\n", SLEW_4S);
   printf("1s slew has const: %d\n", SLEW_1S);
   printf("100ms slew has const: %d\n", SLEW_100MS);
   printf("10ms slew has const: %d\n", SLEW_10MS);
