@@ -123,7 +123,6 @@ fract32 max (fract32 x, fract32 y) {
 }
 
 void pitchDetector_init (pitchDetector *p) {
-  p->instantaneousPeriod = 48 << PITCH_DETECTOR_RADIX_TOTAL;
   p->currentPeriod = 48 << PITCH_DETECTOR_RADIX_TOTAL;
   p->period = 48 << PITCH_DETECTOR_RADIX_TOTAL;
   p->lastIn = 1;
@@ -135,8 +134,8 @@ void pitchDetector_init (pitchDetector *p) {
 }
 
 fract32 pitchTrackOsc (pitchDetector *p) {
-  /* p->instantaneousPeriod = (240 << (PITCH_DETECTOR_RADIX_TOTAL)); */
-  p->phase += (FR32_MAX / (p->instantaneousPeriod >> (PITCH_DETECTOR_RADIX_INTERNAL))) << (PITCH_DETECTOR_RADIX_EXTERNAL + 1);
+  /* p->currentPeriod = (240 << (PITCH_DETECTOR_RADIX_TOTAL)); */
+  p->phase += (FR32_MAX / (p->currentPeriod >> (PITCH_DETECTOR_RADIX_INTERNAL))) << (PITCH_DETECTOR_RADIX_EXTERNAL + 1);
   /* return p->lastIn; */
   return osc(p->phase);
 }
@@ -158,11 +157,9 @@ fract32 pitchTrack (pitchDetector *p, fract32 preIn) {
       p->nsamples = 0;
     }
   }
-  /* simple_slew(p->instantaneousPeriod, p->currentPeriod, SLEW_1MS); */
-  p->instantaneousPeriod = p->currentPeriod;
   p->nFrames +=1;
   p->lastIn = in;
-  return (shl_fr1x32(p->instantaneousPeriod, - PITCH_DETECTOR_RADIX_INTERNAL));
+  return (shl_fr1x32(p->currentPeriod, - PITCH_DETECTOR_RADIX_INTERNAL));
 }
 
 // 4-point, 3rd-order B-spline (x-form) from http://yehar.com/blog/wp-content/uploads/2009/08/deip.pdf

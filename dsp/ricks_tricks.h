@@ -86,7 +86,6 @@ fract32 min (fract32 x, fract32 y);
 #define PITCH_DETECTOR_RADIX_TOTAL (PITCH_DETECTOR_RADIX_INTERNAL + PITCH_DETECTOR_RADIX_EXTERNAL)
 
 typedef struct {
-  fract32 instantaneousPeriod;
   fract32 currentPeriod;
   fract32 lastIn;
   fract32 period;
