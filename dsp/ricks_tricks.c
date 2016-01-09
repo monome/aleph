@@ -143,11 +143,11 @@ fract32 pitchTrackOsc (pitchDetector *p) {
 
 //This guy returns the current measured wave period (in subsamples)
 fract32 pitchTrack (pitchDetector *p, fract32 preIn) {
-  fract32 in = hpf_next_dynamic(&(p->dcBlocker),
-  				preIn,
-  				hzToDimensionless(50));
-  in = lpf_next_dynamic (&(p->adaptiveFilter), in,
-  				 (FR32_MAX / (p->currentPeriod >> (PITCH_DETECTOR_RADIX_TOTAL)))) ;
+  fract32 in = lpf_next_dynamic (&(p->adaptiveFilter), in,
+  				 (FR32_MAX / (p->currentPeriod >> (PITCH_DETECTOR_RADIX_TOTAL))));
+  in = hpf_next_dynamic(&(p->dcBlocker),
+			preIn,
+			hzToDimensionless(50));
   if (p->lastIn <= 0 && in >= 0 && p->nFrames > 24) {
     p->period += (min_fr1x32 (p->nFrames, 1024)) << PITCH_DETECTOR_RADIX_EXTERNAL;
     p->nFrames = 0;
