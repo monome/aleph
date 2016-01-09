@@ -57,21 +57,24 @@ pitchDetector myPitchDetector;
 grain myGrain;
 
 lpf myLpf;
+hpf myHpf;
 phasor myPhasor;
 fract32 lastVal;
 
 fract32 process_frame (fract32 in) {
-    /* out[k] = delay_line[delay_index]; */
-    /* delay_line[delay_index] = in[k]; */
-    /* delay_index = (delay_index + 1) % latency; */
+  /* out[k] = delay_line[delay_index]; */
+  /* delay_line[delay_index] = in[k]; */
+  /* delay_index = (delay_index + 1) % latency; */
     
-    /* fr32_out = hpf(fr32_in); */
-    /* fr32_out = mult_fr1x32x32(fr32_in, jack_sample_to_fract32(1.0 / 48.0)); */
+  /* fr32_out = hpf(fr32_in); */
+  /* fr32_out = mult_fr1x32x32(fr32_in, jack_sample_to_fract32(1.0 / 48.0)); */
+  return simple_slew(myLpf.lastOut, in, FR32_MAX);
+  /* return lpf_next_dynamic(&myLpf, in, hzToDimensionless(1000)); */
+  /* return hpf_next_dynamic(&myHpf, in, hzToDimensionless(1000)); */
 
-    /* fr32_out = lpf(fr32_in, (FR32_MAX / 12)); */
-    /* fr32_out = hpf(fr32_in, hzToDimensionless(1000)); */
-  pitchTrack(&myPitchDetector, in);
-  return pitchTrackOsc (&myPitchDetector);
+  /* pitchTrack(&myPitchDetector, in); */
+  /* return pitchTrackOsc (&myPitchDetector); */
+
   /* return grain_next(&myGrain, in, 0); */
   /* fract32 phasorNext = (fract32) phasor_next_dynamic(&myPhasor, */
   /* 						     hzToDimensionless(1)); */
@@ -104,6 +107,7 @@ int process_block (jack_nframes_t nframes, void *arg) {
 
   return 0;      
 }
+
 void primitive_tests () {
   printf("max+max = %d\n", add_fr1x32(FR32_MAX,FR32_MAX));
   printf("max-max = %d\n", sub_fr1x32(FR32_MAX,FR32_MAX));
@@ -152,9 +156,11 @@ void arithmetic_tests () {
   printf ("1K = %d\n",mult_fr1x32x32( FR32_MAX,
 				      jack_sample_to_fract32(1.0 / 48.0)));
   printf("0 clipped = %d\n", clip_to_fr32(0));
-  printf("10s slew has const: %d\n", SLEW_10S);
+  printf("Absolute slowest acceptable slew is: %d\n", SLEW_MIN);
   printf("1s slew has const: %d\n", SLEW_1S);
   printf("100ms slew has const: %d\n", SLEW_100MS);
+  printf("10ms slew has const: %d\n", SLEW_10MS);
+  printf("1ms slew has const: %d\n", SLEW_1MS);
   printf("1+1 = %d\n", add_fr1x32(1, 1));
 
   printf("osc(0) = %d\n", osc(0));
@@ -163,7 +169,7 @@ void arithmetic_tests () {
 
   printf("osc(max-1) = %d\n", osc(FR32_MAX - 1));
   printf("osc(max) = %d\n", osc(FR32_MAX));
-  printf("osc(max+1) = %d\n", osc(FR32_MAX+1));
+  /* printf("osc(max+1) = %d\n", osc(FR32_MAX+1)); */
   printf("osc(min) = %d\n", osc(FR32_MIN));
   printf("osc(min+1) = %d\n", osc(((fract32)FR32_MIN)+1));
   fract32 x;
@@ -351,7 +357,7 @@ int main (int argc, char *argv[]) {
     exit (1);
   }
 
-  if (jack_connect (client, ports[0], jack_port_name (input_port))) {
+  if (jack_connect (client, "latent-01:output 0", jack_port_name (input_port))) {
     fprintf (stderr, "cannot connect input ports\n");
   }
 
@@ -364,7 +370,7 @@ int main (int argc, char *argv[]) {
     exit (1);
   }
 
-  if (jack_connect (client, jack_port_name (output_port), ports[0])) {
+  if (jack_connect (client, jack_port_name (output_port), "latent-01:input 0")) {
     fprintf (stderr, "cannot connect output ports\n");
   }
 

@@ -63,11 +63,12 @@ fract32 osc (fract32 phase);
 					sub_fr1x32((fract32) (x),	\
 						   (fract32) (y)))))
 
-#define SLEW_1MS (TWOPI * hzToDimensionless(1) / 10)
-#define SLEW_10MS (TWOPI * hzToDimensionless(1) / 10)
-#define SLEW_100MS (TWOPI * hzToDimensionless(1) / 10)
+
+#define SLEW_1MS (TWOPI * hzToDimensionless(1000))
+#define SLEW_10MS (TWOPI * hzToDimensionless(10))
+#define SLEW_100MS (TWOPI * hzToDimensionless(10))
 #define SLEW_1S (TWOPI * hzToDimensionless(1))
-#define SLEW_10S (TWOPI * hzToDimensionless(10))
+#define SLEW_4S  (1 << 16)
 
 #define simple_lpf(x, y, hz) \
   simple_slew(x, y, TWOPI * hzToDimensionless(hz))
