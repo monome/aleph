@@ -135,7 +135,7 @@ extern void fill_param_desc(ParamDesc* desc) {
   //Scrub Params
   param_desc_aux(desc, eParam_scrubEnable_g2, "scrubEnable_g2",
 		 eParamTypeFix, 0x00000000, 0x00010000,
-		 32)
+		 32);
   param_desc_aux (desc, eParam_scrubPitch_g2, "scrubPitch_g2",
 		  SPEED_TYPE, SPEED_MIN, SPEED_MAX,
 		  SPEED_RADIX);
