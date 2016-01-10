@@ -25,6 +25,8 @@ typedef struct _grain {
   pitchDetector pitchDetector;
   s32 pitchDetection;
 
+  s32 scrubTapEnable;
+
   s32 scrubCentrePitch;
   
   s32 echoTimeTarget;

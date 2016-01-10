@@ -421,6 +421,12 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
     
     //grain scrubber params
+  case eParam_scrubEnable_g1 :
+    if(v ==0)
+      grain_enable_scrubTap (&grains[0]);
+    else
+      grain_disable_scrubTap(&grains[0]);
+    break;
   case eParam_scrubPitch_g1 :
     grain_set_scrubPitch(&(grains[0]), v >> 8);
     break;
@@ -502,6 +508,12 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
     
     //grain scrubber params
+  case eParam_scrubEnable_g2 :
+    if(v ==0)
+      grain_enable_scrubTap (&grains[1]);
+    else
+      grain_disable_scrubTap(&grains[1]);
+    break;
   case eParam_scrubPitch_g2 :
     grain_set_scrubPitch(&(grains[1]), v>>8);
     break;

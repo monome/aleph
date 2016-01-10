@@ -28,6 +28,7 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   dl->echoTimeCountdown = -1;
 
   scrubTap_init(&(dl->scrubTap), &(dl->echoTap));
+  dl->scrubTapEnable = 1;
   dl->scrubCentrePitch = 128;
   dl->scrubLengthTarget = 256 * 48 * 25;
 
@@ -67,10 +68,9 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 
   //DEBUG forcing nominal scrubLength to 50ms
   /* dl->scrubLengthTarget = 256 * 48 * 25; */
-  
-  fract32 signalPeriod = pitchTrack(&(dl->pitchDetector),
-				    echoTap_read_xfade( &(dl->echoTap),
-							0));
+  fract32 echoTapOutput = echoTap_read_xfade( &(dl->echoTap),
+					      0);
+  fract32 signalPeriod = pitchTrack(&(dl->pitchDetector), echoTapOutput);
   //DEBUG forcing detected Period to 1ms
   /* signalPeriod = 48 * 256; */
   fract32 desiredPitchShift = sub_fr1x32(add_fr1x32((fract32)dl->scrubCentrePitch,
@@ -113,16 +113,16 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 
   buffer_tapN_write(&(dl->tapWr), in);
 
-  fract32 readVal;
+  fract32 scrubTapOutput;
   
-  readVal = scrubTap_read_xfade( &(dl->scrubTap));
-  
-  //DEBUG uncomment this line to check echoTap (ignoring any bugs in scrubTap)
-  /* readVal = echoTap_read_xfade( &(dl->echoTap), 0); */
+  scrubTapOutput = scrubTap_read_xfade( &(dl->scrubTap));
 
   //DEBUG uncomment this line to listen to the detected tone from pitch Tracker
-  /* readVal = pitchTrackOsc(&(dl->pitchDetector)) / 10; */
-  return readVal;
+  /* return pitchTrackOsc(&(dl->pitchDetector)) / 10; */
+  if (dl->scrubTapEnable == 1)
+    return scrubTapOutput;
+  else
+    return echoTapOutput;
 }
 
 
@@ -181,4 +181,12 @@ void grain_disable_pitchDetection(grain* dl) {
 
 void grain_enable_pitchDetection(grain* dl) {
   dl->pitchDetection = 1;
+}
+
+void grain_disable_scrubTap(grain* dl) {
+  dl->scrubTapEnable = 0;
+}
+
+void grain_enable_scrubTap(grain* dl) {
+  dl->scrubTapEnable = 1;
 }
