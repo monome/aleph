@@ -98,38 +98,6 @@ fract32 echoTap_envelope(echoTap *tap) {
   return amplitude ;
 }
 
-//FIXME done too much hacking around in here for this still to work...
-// antialiased or interpolated read depending speed
-/* extern fract32 echoTap_read_antialias(echoTap* echoTap){ */
-/*     s32 num_samples = (echoTap->speed + 128) / 256; */
-/*     if( num_samples < 2 ) { */
-/*       return echoTap_read_interp(echoTap, echoTap->time); */
-/*     } */
-/*     else if( num_samples >= MAX_ANTIALIAS ) { */
-/*         num_samples = MAX_ANTIALIAS; */
-/*     } */
-
-/*     s32 mix_factor = FR32_MAX / num_samples; */
-/*     fract32 pre_fader = 0; */
-/*     while(num_samples > 0) { */
-/*         s32 loop = echoTap->tapWr->loop * 256; */
-/*         s32 idx = (echoTap->tapWr->idx * 256 + loop */
-/* 		   - echoTap->time */
-/* 		   - (num_samples -1) * 256) */
-/* 	  % loop; */
-/*         u32 samp1_index = idx / 256; */
-/*         fract32 samp1 = echoTap->tapWr->buf->data[samp1_index ]; */
-/*         pre_fader = add_fr1x32 ( pre_fader, mult_fr1x32x32(samp1, mix_factor) ); */
-/*         num_samples--; */
-/*     } */
-/*     //Debug disable envelope for now.  comment out below to re-enable */
-/*     return  pre_fader; */
-    
-/*     s32 fader = echoTap_envelope(echoTap); */
-/*     fract32 post_fader = mult_fr1x32x32 ( pre_fader, fader); */
-/*     return post_fader; */
-/* } */
-
 // interpolated read
 inline extern fract32 echoTap_read_interp(echoTap* echoTap, s32 time){
     s32 loop = echoTap->tapWr->loop << 8;
