@@ -224,7 +224,7 @@ void module_init(void) {
 
   param_setup (eParam_writeEnable_g2, 1 * 65536);
 
-  param_setup (eParam_LFO_speed, hzToDimensionless(1));
+  param_setup (eParam_LFO_speed, hzToDimensionless(1) & 0xFFFF0000);
   phasor_init(&LFO);
 }
 
@@ -561,7 +561,7 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParam_LFO_speed :
-    LFO.freq = v;
+    LFO.freq = shl_fr1x32(v, -4);
     break;
 
 

@@ -174,7 +174,7 @@ extern void fill_param_desc(ParamDesc* desc) {
 		 32);
 
   param_desc_aux(desc, eParam_LFO_speed, "LFO_speed",
-		 eParamTypeFix, 0, 1 << 31,
+		 eParamTypeFix, 0, FR32_MAX,
 		 16);
 
 }
