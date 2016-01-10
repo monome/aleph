@@ -73,8 +73,9 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 							0));
   //DEBUG forcing detected Period to 1ms
   /* signalPeriod = 48 * 256; */
-  fract32 desiredPitchShift = (fract32) add_fr1x32((fract32)dl->scrubCentrePitch,
-					      FM_signal);
+  fract32 desiredPitchShift = sub_fr1x32(add_fr1x32((fract32)dl->scrubCentrePitch,
+						    FM_signal),
+					 dl->echoTap.speed);;
   //DEBUG forcing desired pitchShift to 1 sample / sample 
   /* desiredPitchShift = 128; */
   //DEBUG force pitch detection enabled
