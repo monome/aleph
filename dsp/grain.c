@@ -172,7 +172,7 @@ void grain_set_writeEnable(grain* dl, s32 enable) {
 }
 
 void grain_set_slewSpeed(grain* dl, s32 newSpeed) {
-  dl->slewSpeed = (fract32) newSpeed;
+  dl->slewSpeed = min_fr1x32(SLEW_1S, (fract32) newSpeed);
 }
 
 void grain_disable_pitchDetection(grain* dl) {
