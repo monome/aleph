@@ -80,17 +80,10 @@ fract32 echoTap_envelope(echoTap *tap) {
     amplitude = dist_from_center * scale_factor;
     amplitude = FR32_MAX - amplitude;
   }
-  else if( tap->shape ==SHAPE_LUMP) {
+  else if( tap->shape ==SHAPE_HALFWAVE) {
     amplitude = dist_from_center * scale_factor;
     amplitude = mult_fr1x32x32(amplitude, amplitude);
     amplitude = FR32_MAX - amplitude;
-  }
-  else if (tap->shape == SHAPE_HALFWAVE) {
-    s32 x_1 = dist_from_center * scale_factor;
-    s32 x_2 = mult_fr1x32x32(x_1, x_1);
-    s32 x_4 = mult_fr1x32x32(x_2, x_2);
-    amplitude = (FR32_MAX - x_2) - (x_2 >> 2);
-    amplitude = amplitude + (x_4 >> 2);
   }
   else {
     amplitude = FR32_MAX;
