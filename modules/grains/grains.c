@@ -299,7 +299,7 @@ void module_process_frame(void) {
     grainOut=phaseG[i] * grain_next(&(grains[i]),
 				    selectGrainInput(sourceG[i]),
 				    mult_fr1x32x32(selectGrainInput(FM_sourceG[i]),
-						   shl_fr1x32(FM_faderG[i], - 16)));
+						   shl_fr1x32(FM_faderG[i], - 19)));
     // FIXME AM signal comes out very quiet should be preceded by a 50Hz HPF
     // Then multiplied up by 20dB or so...
     // This is done now - but not quite sure about the results...
