@@ -32,6 +32,7 @@ fract32 lpf_next_dynamic (lpf *myLpf, fract32 in, fract32 freq);
 
 typedef struct {
   s32 phase;
+  fract32 freq;
 } phasor ;
 
 typedef struct {
@@ -42,6 +43,7 @@ typedef struct {
 fract32 lpf_next_dynamic (lpf *myLpf, fract32 in, fract32 freq);
 void phasor_init (phasor *phasor);
 s32 phasor_next_dynamic (phasor *phasor, fract32 freq);
+s32 phasor_next (phasor *phasor);
 s32 phasor_read (phasor *phasor, s32 freq);
 s32 phasor_pos_next_dynamic (phasor *phasor, fract32 freq);
 s32 phasor_pos_read(phasor *phasor);

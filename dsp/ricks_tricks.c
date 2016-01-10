@@ -56,6 +56,11 @@ s32 phasor_next_dynamic (phasor *phasor, fract32 freq) {
   return phasor->phase;
 }
 
+s32 phasor_next (phasor *phasor) {
+  phasor->phase += phasor->freq;
+  return phasor->phase;
+}
+
 s32 phasor_read (phasor *phasor, s32 freq) {
   return phasor->phase;
 }

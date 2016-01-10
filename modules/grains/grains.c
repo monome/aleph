@@ -92,6 +92,9 @@ hpf AM_hpf[NGRAINS];
 
 ParamValue phaseG[NGRAINS];
 
+phasor LFO;
+fract32 LFO_bus;
+
 // data structure of external memory
 typedef struct _grainsData {
   ModuleData super;
@@ -222,6 +225,7 @@ void module_init(void) {
   param_setup (eParam_writeEnable_g2, 1 * 65536);
 
   param_setup (eParam_LFO_speed, hzToDimensionless(1));
+  phasor_init(&LFO);
 }
 
 // de-init
@@ -252,6 +256,8 @@ fract32 selectGrainInput(s32 i) {
     return in[i-1];
   else if (i < 5 + NGRAINS && i > 4)
     return grainOutFeedback[i - 5];
+  else if (i == 5 + NGRAINS)
+    return LFO_bus;
   else return 0;
 }
 
@@ -279,6 +285,7 @@ void module_process_frame(void) {
   out[1] = 0;
   out[2] = 0;
   out[3] = 0;
+  LFO_bus = osc(phasor_next(&LFO));
   effectBus = effectBusFeedback;
   for (i=0;i<4;i++) {
     mix_panned_mono (in[i], &(out[0]), &(out[1]), panI[i], faderI[i]);
@@ -553,6 +560,9 @@ void module_set_param(u32 idx, ParamValue v) {
     grain_set_slewSpeed(&(grains[1]),v);
     break;
 
+  case eParam_LFO_speed :
+    LFO.freq = v;
+    break;
 
 
   default:
