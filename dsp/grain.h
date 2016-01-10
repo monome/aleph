@@ -84,5 +84,9 @@ void grain_disable_pitchDetection(grain* dl);
 
 void grain_enable_pitchDetection(grain* dl);
 
+void grain_disable_scrubTap(grain* dl);
+
+void grain_enable_scrubTap(grain* dl);
+
 #endif // h guard
 
