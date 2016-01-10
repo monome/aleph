@@ -119,10 +119,10 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 
   //DEBUG uncomment this line to listen to the detected tone from pitch Tracker
   /* return pitchTrackOsc(&(dl->pitchDetector)) / 10; */
-  if (dl->scrubTapEnable == 1)
-    return scrubTapOutput;
-  else
+  if (dl->scrubTapEnable == 0)
     return echoTapOutput;
+  else
+    return scrubTapOutput;
 }
 
 
