@@ -176,6 +176,7 @@ void module_init(void) {
   param_setup (eParam_AM_level_g1, 0);
 
   //grain scrubber params
+  param_setup (eParam_scrubEnable_g1, 1 << 16);
   param_setup (eParam_scrubPitch_g1, 65536 * 2);
   param_setup (eParam_scrubLength_g1, 65536 * 256 * 10);
   param_setup (eParam_scrubPitchDetection_g1, 65536);
@@ -205,6 +206,7 @@ void module_init(void) {
   param_setup (eParam_AM_level_g2, 0);
 
   //grain scrubber params
+  param_setup (eParam_scrubEnable_g2, 1 << 16);
   param_setup (eParam_scrubPitch_g2, 65536 * 2);
   param_setup (eParam_scrubLength_g2, 65536 * 256 * 10);
   param_setup (eParam_scrubPitchDetection_g2, 65536);
@@ -219,6 +221,7 @@ void module_init(void) {
 
   param_setup (eParam_writeEnable_g2, 1 * 65536);
 
+  param_setup (eParam_LFO_speed, hzToDimensionless(1));
 }
 
 // de-init

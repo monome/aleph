@@ -108,6 +108,7 @@ enum params {
   eParam_AM_level_g1,
 
   //grain scrubber params
+  eParam_scrubEnable_g1,
   eParam_scrubPitch_g1,
   eParam_scrubLength_g1,
   eParam_scrubPitchDetection_g1,
@@ -140,6 +141,7 @@ enum params {
   eParam_AM_level_g2,
 
   //grain scrubber params
+  eParam_scrubEnable_g2,
   eParam_scrubPitch_g2,
   eParam_scrubLength_g2,
   eParam_scrubPitchDetection_g2,
@@ -155,6 +157,8 @@ enum params {
   //grain writehead params
   eParam_slewSpeed_g2,
   eParam_writeEnable_g2,
+
+  eParam_LFO_speed,
   
   eParamNumParams
 };
