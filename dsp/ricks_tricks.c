@@ -5,6 +5,24 @@
 #include "fract_math.h"
 #endif
 
+inline void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, fract32 left_value, fract32 right_value) {
+    *out_right = add_fr1x32(*out_right,mult_fr1x32x32(in_mono, right_value));
+    *out_left = add_fr1x32(*out_left,mult_fr1x32x32(in_mono, left_value));
+}
+
+inline void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, fract32 pan, fract32 fader) {
+    fract32 pan_factor, post_fader;
+
+    pan_factor = (fract32) ( pan );
+    post_fader = mult_fr1x32x32(pan_factor, fader);
+    *out_left = add_fr1x32(*out_left, mult_fr1x32x32(in_mono, post_fader));
+
+    pan_factor = (fract32) ( FR32_MAX - pan );
+    post_fader = mult_fr1x32x32(pan_factor, fader);
+    *out_right = add_fr1x32(*out_right, mult_fr1x32x32(in_mono, post_fader));
+
+}
+
 void hpf_init (hpf *myHpf) {
   myHpf->lastIn = 0;
   myHpf->lastOut = 0;
@@ -78,7 +96,7 @@ s32 quadraturePhasor_pos_cosRead(quadraturePhasor *phasor) {
 
 //This guy is a tophat with rounded edges
 fract32 s32_flatTop_env (fract32 pos, fract32 fadeRatio) {
-  pos = max(pos, 0);
+  pos = max_fr1x32(pos, 0);
   if (pos <= fadeRatio)
     return fadeIn(mult_fr1x32x32(FR32_MAX / fadeRatio, pos));
   else if (FR32_MAX - pos <= fadeRatio)
@@ -88,7 +106,7 @@ fract32 s32_flatTop_env (fract32 pos, fract32 fadeRatio) {
 }
 
 fract32 s32_halfWave_env (fract32 pos) {
-  pos = max(pos, 0);
+  pos = max_fr1x32(pos, 0);
   if (pos <= FR32_MAX / 2)
     return fadeIn(pos * 2);
   else if (FR32_MAX - pos <= FR32_MAX / 2)
@@ -106,20 +124,6 @@ fract32 osc (fract32 phase) {
   else
     return sub_fr1x32(FR32_MAX,
 		      4 * mult_fr1x32x32( phase, phase));
-}
-
-fract32 min (fract32 x, fract32 y) {
-  if (x < y)
-    return x;
-  else
-    return y;
-}
-
-fract32 max (fract32 x, fract32 y) {
-  if (x > y)
-    return x;
-  else
-    return y;
 }
 
 void pitchDetector_init (pitchDetector *p) {

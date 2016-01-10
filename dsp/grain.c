@@ -34,7 +34,7 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   pitchDetector_init(&(dl->pitchDetector));
   dl->pitchDetection = 1;
 
-  dl->slewSpeed = FR32_MAX/1024;
+  dl->slewSpeed = 1 << 21;
 
 }
 
@@ -88,7 +88,7 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   } else {
     simple_slew(dl->scrubTap.length,
 		/* signalPeriod * 10 */
-		    signalPeriod * (dl->scrubLengthTarget / max(1, signalPeriod)
+		signalPeriod * (dl->scrubLengthTarget / max_fr1x32(1, signalPeriod)
 				+ 1),
 		    SLEW_100MS);
   }
@@ -97,9 +97,11 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 
   
   dl->scrubTap.frequency =
-    - (FR32_MAX / 256 / 256 / 8) *
-    mult_fr1x32x32((desiredPitchShift) * (FR32_MAX / 8 / 256),
-		   FR32_MAX / max(dl->scrubTap.length, 1));
+    negate_fr1x32(shl_fr1x32(mult_fr1x32x32(shl_fr1x32((desiredPitchShift), 20),
+					    FR32_MAX /
+					    max_fr1x32(dl->scrubTap.length, 1)),
+			     12));
+
   //DEBUG with scrub tap length forced to 100ms and pitchshift forced to +1,
   //Should end up with a scrubTap Frequency of 100Hz
   /* printf("%d\t%d\t%d\t%d\n", dl->scrubTap.length, desiredPitchShift, dl->scrubTap.frequency, hzToDimensionless(100)); */

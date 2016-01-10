@@ -58,20 +58,17 @@ fract32 echoTap_envelope(echoTap *tap);
 // intialize tap
 extern void echoTap_init(echoTap* tap, bufferTapN* tapWr);
 
-extern s32 min_num (s32 x, s32 y);
-extern s32 max_num (s32 x, s32 y);
-
-extern s32 equalPower_xfade (s32 x, s32 y, s32 pos);
+inline extern s32 equalPower_xfade (s32 x, s32 y, s32 pos);
 
 // increment the index in an echo
 extern void echoTap_next(echoTap* tap);
 
 // antialiased read
-extern fract32 echoTap_read_antialias(echoTap* echoTap);
+inline fract32 echoTap_read_antialias(echoTap* echoTap);
 
 // interpolated read
-extern fract32 echoTap_read_interp(echoTap* tap, s32 time);
+inline fract32 echoTap_read_interp(echoTap* tap, s32 time);
 
-extern fract32 echoTap_read_xfade(echoTap* echoTap, s32 offset);
+inline fract32 echoTap_read_xfade(echoTap* echoTap, s32 offset);
 
 #endif // h guard

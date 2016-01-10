@@ -230,9 +230,7 @@ u32 module_get_num_params(void) {
   return eParamNumParams;
 }
 
-void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
-void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
 /* #define fader_slew(x, y) simple_slew(x, y, SLEW_100MS) */
 #define fader_slew(x, y) x = y;
@@ -291,7 +289,7 @@ void module_process_frame(void) {
     grainOut=phaseG[i] * grain_next(&(grains[i]),
 				    selectGrainInput(sourceG[i]),
 				    mult_fr1x32x32(selectGrainInput(FM_sourceG[i]),
-						   FM_faderG[i] / 65536));
+						   shl_fr1x32(FM_faderG[i], - 16)));
     // FIXME AM signal comes out very quiet should be preceded by a 50Hz HPF
     // Then multiplied up by 20dB or so...
     // This is done now - but not quite sure about the results...
@@ -307,25 +305,6 @@ void module_process_frame(void) {
     mix_aux_mono (grainOut, &(out[2]), &(out[3]), aux1G[i], aux2G[i]);
     simple_busmix (effectBusFeedback, grainOut, effectG[i]);
   }
-}
-
-void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue left_value, ParamValue right_value) {
-    *out_right = add_fr1x32(*out_right,mult_fr1x32x32(in_mono, right_value));
-    *out_left = add_fr1x32(*out_left,mult_fr1x32x32(in_mono, left_value));
-}
-
-
-void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) {
-    fract32 pan_factor, post_fader;
-
-    pan_factor = (fract32) ( pan );
-    post_fader = mult_fr1x32x32(pan_factor, fader);
-    *out_left = add_fr1x32(*out_left, mult_fr1x32x32(in_mono, post_fader));
-
-    pan_factor = (fract32) ( PAN_MAX - pan );
-    post_fader = mult_fr1x32x32(pan_factor, fader);
-    *out_right = add_fr1x32(*out_right, mult_fr1x32x32(in_mono, post_fader));
-
 }
 
 
@@ -400,7 +379,7 @@ void module_set_param(u32 idx, ParamValue v) {
 
   //grain mix params
   case eParam_source_g1 :
-    sourceG[0] = v/65536;
+    sourceG[0] = v >> 16;
     break;
   case eParam_fader_g1 :
     faderGTarget[0] = v;
@@ -429,21 +408,21 @@ void module_set_param(u32 idx, ParamValue v) {
     FM_faderG[0] = v;
     break;
   case eParam_FM_source_g1 :
-    FM_sourceG[0] = v / 65536;
+    FM_sourceG[0] = v >> 16;
     break;
   case eParam_AM_level_g1 :
     AM_faderG[0] = v;
     break;
   case eParam_AM_source_g1 :
-    AM_sourceG[0] = v / 65536;
+    AM_sourceG[0] = v >> 16;
     break;
     
     //grain scrubber params
   case eParam_scrubPitch_g1 :
-    grain_set_scrubPitch(&(grains[0]), v/256);
+    grain_set_scrubPitch(&(grains[0]), v >> 8);
     break;
   case eParam_scrubLength_g1 :
-    grain_set_scrubLength (&(grains[0]), v/256);
+    grain_set_scrubLength (&(grains[0]), v >> 8);
     break;
   case eParam_scrubPitchDetection_g1:
     if (v == 0)
@@ -454,22 +433,22 @@ void module_set_param(u32 idx, ParamValue v) {
 
   //grain echo params
   case eParam_echoFadeLength_g1 :
-    grain_set_echoFadeLength(&(grains[0]), v*128);
+    grain_set_echoFadeLength(&(grains[0]), v << 7);
     break;
   case eParam_echoTime_g1 :
-    grain_set_echoTime(&(grains[0]),v/4);
+    grain_set_echoTime(&(grains[0]),v >> 2);
     break;
   case eParam_echoSpeed_g1 :
-    grain_set_echoSpeed(&(grains[0]),v/256);
+    grain_set_echoSpeed(&(grains[0]),v >> 8);
     break;
   case eParam_echoEdgeBehaviour_g1 :
-    grain_set_echoEdgeBehaviour(&(grains[0]),v/65536);
+    grain_set_echoEdgeBehaviour(&(grains[0]),v >> 16);
     break;
   case eParam_echoMin_g1 :
-    grain_set_echoMin(&(grains[0]),v/4);
+    grain_set_echoMin(&(grains[0]),v >> 2);
     break;
   case eParam_echoMax_g1 :
-    grain_set_echoMax(&(grains[0]),v/4);
+    grain_set_echoMax(&(grains[0]),v >> 2);
     break;
   case eParam_writeEnable_g1 :
     grain_set_writeEnable(&(grains[0]),v);
@@ -481,7 +460,7 @@ void module_set_param(u32 idx, ParamValue v) {
 
   //grain mix params
   case eParam_source_g2 :
-    sourceG[1] = v/65536;
+    sourceG[1] = v >> 16;
     break;
   case eParam_fader_g2 :
     faderGTarget[1] = v;
@@ -510,21 +489,21 @@ void module_set_param(u32 idx, ParamValue v) {
     FM_faderG[1] = v;
     break;
   case eParam_FM_source_g2 :
-    FM_sourceG[1] = v / 65536;
+    FM_sourceG[1] = v >> 16;
     break;
   case eParam_AM_level_g2 :
     AM_faderG[1] = v;
     break;
   case eParam_AM_source_g2 :
-    AM_sourceG[1] = v / 65536;
+    AM_sourceG[1] = v >> 16;
     break;
     
     //grain scrubber params
   case eParam_scrubPitch_g2 :
-    grain_set_scrubPitch(&(grains[1]), v/256);
+    grain_set_scrubPitch(&(grains[1]), v>>8);
     break;
   case eParam_scrubLength_g2 :
-    grain_set_scrubLength (&(grains[1]), v/256);
+    grain_set_scrubLength (&(grains[1]), v>>8);
     break;
   case eParam_scrubPitchDetection_g2:
     if (v == 0)
@@ -535,22 +514,22 @@ void module_set_param(u32 idx, ParamValue v) {
     
   //grain echo params
   case eParam_echoFadeLength_g2 :
-    grain_set_echoFadeLength(&(grains[1]), v*128);
+    grain_set_echoFadeLength(&(grains[1]), v<<7);
     break;
   case eParam_echoTime_g2 :
-    grain_set_echoTime(&(grains[1]),v/4);
+    grain_set_echoTime(&(grains[1]),v>>2);
     break;
   case eParam_echoSpeed_g2 :
-    grain_set_echoSpeed(&(grains[1]),v/256);
+    grain_set_echoSpeed(&(grains[1]),v>>8);
     break;
   case eParam_echoEdgeBehaviour_g2 :
-    grain_set_echoEdgeBehaviour(&(grains[1]),v/65536);
+    grain_set_echoEdgeBehaviour(&(grains[1]),v>>16);
     break;
   case eParam_echoMin_g2 :
-    grain_set_echoMin(&(grains[1]),v/4);
+    grain_set_echoMin(&(grains[1]),v>>2);
     break;
   case eParam_echoMax_g2 :
-    grain_set_echoMax(&(grains[1]),v/4);
+    grain_set_echoMax(&(grains[1]),v>>2);
     break;
   case eParam_writeEnable_g2 :
     grain_set_writeEnable(&(grains[1]),v);
