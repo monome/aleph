@@ -90,8 +90,9 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux (desc, eParam_echoSpeed_g1, "echoSpeed_g1",
 		  SPEED_TYPE, SPEED_MIN, SPEED_MAX,
 		  SPEED_RADIX);
-  param_desc_aux(desc, eParam_echoEdgeBehaviour_g1, "echoEdgeBehaviour_g1",
-		 eParamTypeFix, 0x00000000, 0x00020000,
+  //FIXME - edge bounce is currently pretty useless so disable for now
+  param_desc_aux(desc, eParam_echoEdgeBehaviour_g1, "echoWrap_g1",
+		 eParamTypeFix, 0x00000000, 0x00010000,
 		 32);
   param_desc_aux (desc, eParam_echoMin_g1, "echoMin_g1",
 		  TIME_MS_TYPE, TIME_MS_MIN, TIME_MS_MAX,
@@ -157,8 +158,9 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux (desc, eParam_echoSpeed_g2, "echoSpeed_g2",
 		  SPEED_TYPE, SPEED_MIN, SPEED_MAX,
 		  SPEED_RADIX);
-  param_desc_aux(desc, eParam_echoEdgeBehaviour_g2, "echoEdgeBehaviour_g2",
-		 eParamTypeFix, 0x00000000, 0x00020000,
+  //FIXME - edge bounce is currently pretty useless so disable for now
+  param_desc_aux(desc, eParam_echoEdgeBehaviour_g2, "echoWrap_g2",
+		 eParamTypeFix, 0x00000000, 0x00010000,
 		 32);
   param_desc_aux (desc, eParam_echoMin_g2, "echoMin_g2",
 		  TIME_MS_TYPE, TIME_MS_MIN, TIME_MS_MAX,
