@@ -135,6 +135,7 @@ inline fract32 echoTap_read_xfade(echoTap* echoTap, s32 offset) {
   tapLength = echoTap->max - echoTap->min - echoTap->fadeLength;
   switch (echoTap->edgeBehaviour) {
   case EDGE_ONESHOT :
+    time = echoTap->time;
     if (time > echoTap->max - echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, echoTap->max - time);
       ret = equalPower_xfade ( 0, ret,
