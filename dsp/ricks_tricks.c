@@ -17,6 +17,7 @@ void lpf_init (lpf *myLpf) {
 
 }
 fract32 hpf_next_dynamic (hpf *myHpf, fract32 in, fract32 freq) {
+  //Should be 1 / (2 pi dt fc + 1)
   fract32 alpha =  freq * 4;
   /* alpha = (FR32_MAX / 50); */
   myHpf->lastOut = add_fr1x32 ( mult_fr1x32x32(sub_fr1x32(FR32_MAX, alpha), myHpf->lastOut),
@@ -165,7 +166,9 @@ fract32 pitchTrack (pitchDetector *p, fract32 in) {
 				     //if you key lpf straight off detected frequency
 				     //the whole thing blows up. Probably can further improve
 				     //tracking by shifting RADIX_INTERNAL up/down, then
-				     //fiddling with panning factor
+				     //fiddling with panning factor.
+				     //Another approach would be more accurate calculation of
+				     // 1 / (2 pi dt fc + 1)
 				     ));
   if (p->lastIn <= 0 && in >= 0 && p->nFrames > 24) {
     p->period = add_fr1x32(p->period,
