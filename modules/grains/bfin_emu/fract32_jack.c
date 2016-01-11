@@ -74,5 +74,5 @@ fract32 shl_fr1x32 (fract32 x, int shft) {
   if (shft >= 0)
     return clip_to_fr32(((long) x) << shft);
   else
-    return clip_to_fr32(((long) x) << -shft);
+    return clip_to_fr32(((long) x) >> -shft);
 }
