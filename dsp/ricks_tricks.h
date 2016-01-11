@@ -100,7 +100,7 @@ fract32 osc_triangle (fract32 phase);
 #define fadeOut(x) sub_fr1x32(FR32_MAX, mult_fr1x32x32( x, x))
 #define fadeIn(x) fadeOut(sub_fr1x32(FR32_MAX, x))
 
-#define PITCH_DETECTOR_RADIX_INTERNAL 5
+#define PITCH_DETECTOR_RADIX_INTERNAL 4
 #define PITCH_DETECTOR_RADIX_EXTERNAL 8
 #define PITCH_DETECTOR_RADIX_TOTAL (PITCH_DETECTOR_RADIX_INTERNAL + PITCH_DETECTOR_RADIX_EXTERNAL)
 
