@@ -1,5 +1,6 @@
 #include "fix.h"
 #include "ricks_tricks.h"
+#include "pan.h"
 
 #ifdef ARCH_BFIN
 #include "fract_math.h"
@@ -143,26 +144,30 @@ void pitchDetector_init (pitchDetector *p) {
 }
 
 fract32 pitchTrackOsc (pitchDetector *p) {
-  /* p->currentPeriod = (240 << (PITCH_DETECTOR_RADIX_TOTAL)); */
-  p->phase += shl_fr1x32((FR32_MAX / shl_fr1x32(p->currentPeriod,
-						-PITCH_DETECTOR_RADIX_INTERNAL)),
-			 PITCH_DETECTOR_RADIX_EXTERNAL + 1);
-  /* return p->lastIn; */
+  //Debug uncomment the line below to force 1k tone
+  /* p->currentPeriod = (48 << (PITCH_DETECTOR_RADIX_INTERNAL)); */
+  p->phase += FR32_MAX / shl_fr1x32(p->currentPeriod,
+				    -1 - PITCH_DETECTOR_RADIX_INTERNAL);
   return osc(p->phase);
 }
 
 //This guy returns the current measured wave period (in subsamples)
-fract32 pitchTrack (pitchDetector *p, fract32 preIn) {
-  //XXX FIXME the lpf seems to be disengaged!!!
-  fract32 in = lpf_next_dynamic (&(p->adaptiveFilter), preIn,
-  				 FR32_MAX / shl_fr1x32(p->currentPeriod,
-						       - (PITCH_DETECTOR_RADIX_TOTAL)));
+fract32 pitchTrack (pitchDetector *p, fract32 in) {
   in = hpf_next_dynamic(&(p->dcBlocker),
-			preIn,
-			hzToDimensionless(50));
+  			in,
+  			hzToDimensionless(50));
+  in = lpf_next_dynamic (&(p->adaptiveFilter), in,
+			 pan_lin_mix(hzToDimensionless(5000),
+				     shl_fr1x32(FR32_MAX / p->currentPeriod,
+						PITCH_DETECTOR_RADIX_INTERNAL),
+				     (200 << 23)
+				     //this fudge factor is required!
+				     //if you key lpf straight off detected frequency
+				     //the whole thing blows up...
+				     ));
   if (p->lastIn <= 0 && in >= 0 && p->nFrames > 24) {
-    p->period += shl_fr1x32(min_fr1x32 (p->nFrames, 1024),
-			    PITCH_DETECTOR_RADIX_EXTERNAL);
+    p->period = add_fr1x32(p->period,
+			   min_fr1x32 (p->nFrames, 1024));
     p->nFrames = 0;
     p->nsamples += 1;
     if (p->nsamples >= (1 << PITCH_DETECTOR_RADIX_INTERNAL)) {
@@ -173,7 +178,7 @@ fract32 pitchTrack (pitchDetector *p, fract32 preIn) {
   }
   p->nFrames +=1;
   p->lastIn = in;
-  return (shl_fr1x32(p->currentPeriod, - PITCH_DETECTOR_RADIX_INTERNAL));
+  return (shl_fr1x32(p->currentPeriod, PITCH_DETECTOR_RADIX_EXTERNAL - PITCH_DETECTOR_RADIX_INTERNAL));
 }
 
 // 4-point, 3rd-order B-spline (x-form) from http://yehar.com/blog/wp-content/uploads/2009/08/deip.pdf

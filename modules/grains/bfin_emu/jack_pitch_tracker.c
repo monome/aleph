@@ -72,21 +72,21 @@ fract32 process_frame (fract32 in) {
   /* return lpf_next_dynamic(&myLpf, in, hzToDimensionless(1000)); */
   /* return hpf_next_dynamic(&myHpf, in, hzToDimensionless(1000)); */
 
-  /* pitchTrack(&myPitchDetector, in); */
-  /* return pitchTrackOsc (&myPitchDetector); */
+  pitchTrack(&myPitchDetector, in);
+  return pitchTrackOsc (&myPitchDetector);
 
   /* return grain_next(&myGrain, in, 0); */
-  fract32 phasorNext = (fract32) phasor_next_dynamic(&myPhasor,
-  						     hzToDimensionless(1));
+  /* fract32 phasorNext = (fract32) phasor_next_dynamic(&myPhasor, */
+  /* 						     hzToDimensionless(1)); */
   /* return osc(phasorNext); */
   /* return osc_triangle(phasorNext); */
-  fract32 LFO_shape = (1 << 30) + (1 << 29) + (1 << 28);
-  return add_fr1x32(mult_fr1x32x32(LFO_shape,
-				   osc(phasorNext)),
-		    mult_fr1x32x32(sub_fr1x32(FR32_MAX,LFO_shape),
-				   osc_triangle(phasorNext)));
+  /* fract32 LFO_shape = (1 << 30) + (1 << 29) + (1 << 28); */
+  /* return add_fr1x32(mult_fr1x32x32(LFO_shape, */
+  /* 				   osc(phasorNext)), */
+  /* 		    mult_fr1x32x32(sub_fr1x32(FR32_MAX,LFO_shape), */
+  /* 				   osc_triangle(phasorNext))); */
 
-  return osc(phasorNext);
+  /* return osc(phasorNext); */
   /* return phasorNext; */
   /* return simple_slew( lastVal, phasorNext, 10000); */
 }
@@ -282,6 +282,7 @@ int main (int argc, char *argv[]) {
   jack_options_t options = JackNullOption;
   jack_status_t status;
   arithmetic_tests();
+  primitive_tests();
   if (argc == 2)
     latency = atoi(argv[1]);
 
@@ -374,7 +375,10 @@ int main (int argc, char *argv[]) {
     exit (1);
   }
 
-  if (jack_connect (client, "latent:output 0", jack_port_name (input_port))) {
+  if (jack_connect (client, "jaaa:out_1", jack_port_name (input_port))) {
+    fprintf (stderr, "cannot connect input ports\n");
+  }
+  if (jack_connect (client, "lisp-scope:out_1", jack_port_name (input_port))) {
     fprintf (stderr, "cannot connect input ports\n");
   }
 
@@ -387,7 +391,10 @@ int main (int argc, char *argv[]) {
     exit (1);
   }
 
-  if (jack_connect (client, jack_port_name (output_port), "latent:input 0")) {
+  if (jack_connect (client, jack_port_name (output_port), "jaaa:in_1")) {
+    fprintf (stderr, "cannot connect output ports\n");
+  }
+  if (jack_connect (client, jack_port_name (output_port), "lisp-scope:in_1")) {
     fprintf (stderr, "cannot connect output ports\n");
   }
 
