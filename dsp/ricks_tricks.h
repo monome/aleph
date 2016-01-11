@@ -38,6 +38,19 @@ typedef struct {
 } lpf;
 
 
+//Takes a fraction in 16_16 radix, returns it in 0_32
+static inline fract32 one_over_x_16_16 (fract32 x_16_16) {
+  return shl_fr1x32(FR32_MAX / x_16_16, 16);
+}
+
+#define TWO_PI_16_16 411775
+static inline fract32 hpf_freq_calc (fract32 freq) {
+  // 1.0 / (2.0 * pi * dt * fc + 1.0)
+
+  return one_over_x_16_16(add_fr1x32(mult_fr1x32x32(TWO_PI_16_16, freq),
+				     1 << 16));
+}
+
 void hpf_init (hpf *myHpf);
 fract32 hpf_next_dynamic (hpf *myHpf, fract32 in, fract32 freq);
 void lpf_init (lpf *myLpf);

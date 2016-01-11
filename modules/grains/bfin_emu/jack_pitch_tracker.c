@@ -117,7 +117,18 @@ int process_block (jack_nframes_t nframes, void *arg) {
   return 0;      
 }
 
+double alpha_check (double freq) {
+  return 1.0 / (1 + (freq * 2 * 3.1415));
+}
+
 void primitive_tests () {
+  printf("1K -> alpha=%f (check %f) \n",
+	 fract32_to_jack_sample(hpf_freq_calc(jack_sample_to_fract32(1.0 / 48.0))),
+	 alpha_check(1.0/48.0));
+
+  printf("100Hx -> alpha=%f (check %f) \n",
+	 fract32_to_jack_sample(hpf_freq_calc(jack_sample_to_fract32(0.1 / 48.0))),
+	 alpha_check(0.1/48.0));
   printf("max+max = %d\n", add_fr1x32(FR32_MAX,FR32_MAX));
   printf("max-max = %d\n", sub_fr1x32(FR32_MAX,FR32_MAX));
   printf("max+min = %d\n", add_fr1x32(FR32_MAX,FR32_MIN));
