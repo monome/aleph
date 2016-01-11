@@ -159,6 +159,7 @@ enum params {
   eParam_writeEnable_g2,
 
   eParam_LFO_speed,
+  eParam_LFO_shape,
   
   eParamNumParams
 };

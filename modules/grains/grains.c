@@ -90,12 +90,13 @@ ParamValue AM_faderG[NGRAINS];
 ParamValue AM_sourceG[NGRAINS];
 hpf AM_hpf[NGRAINS];
 hpf effect_hpf;
-hpf effect_lpf;
+lpf effect_lpf;
 
 ParamValue phaseG[NGRAINS];
 
 phasor LFO;
 fract32 LFO_bus;
+fract32 LFO_shape;
 
 // data structure of external memory
 typedef struct _grainsData {
@@ -161,7 +162,7 @@ void module_init(void) {
 
   //initialise effect bus feedback DC block filter
   hpf_init(&effect_hpf);
-  hpf_init(&effect_lpf);
+  lpf_init(&effect_lpf);
   int i;
   //initialise grains
   for (i=0;i<NGRAINS; i++) {
@@ -230,6 +231,7 @@ void module_init(void) {
   param_setup (eParam_writeEnable_g2, 1 * 65536);
 
   param_setup (eParam_LFO_speed, hzToDimensionless(1) & 0xFFFF0000);
+  param_setup (eParam_LFO_shape, PAN_DEFAULT);
   phasor_init(&LFO);
 }
 
@@ -290,7 +292,13 @@ void module_process_frame(void) {
   out[1] = 0;
   out[2] = 0;
   out[3] = 0;
-  LFO_bus = shl_fr1x32(osc(phasor_next(&LFO)), -3);
+  fract32 phase_next = phasor_next(&LFO);
+  LFO_bus = shl_fr1x32(mult_fr1x32x32(LFO_shape,osc(phase_next)),
+		       -3);
+  LFO_bus = add_fr1x32(LFO_bus,
+		       shl_fr1x32(mult_fr1x32x32(sub_fr1x32(FR32_MAX,LFO_shape),
+						 osc_triangle(phase_next)),
+				  -3));
   effectBus = lpf_next_dynamic(&effect_lpf,
 			       hpf_next_dynamic(&effect_hpf,
 						effectBusFeedback,
@@ -573,6 +581,9 @@ void module_set_param(u32 idx, ParamValue v) {
 
   case eParam_LFO_speed :
     LFO.freq = shl_fr1x32(v, -4);
+    break;
+  case eParam_LFO_shape :
+    LFO_shape = v;
     break;
 
 
