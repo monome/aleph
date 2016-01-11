@@ -46,9 +46,13 @@ static inline fract32 one_over_x_16_16 (fract32 x_16_16) {
 #define TWO_PI_16_16 411775
 static inline fract32 hpf_freq_calc (fract32 freq) {
   // 1.0 / (2.0 * pi * dt * fc + 1.0)
-
   return one_over_x_16_16(add_fr1x32(mult_fr1x32x32(TWO_PI_16_16, freq),
 				     1 << 16));
+}
+static inline fract32 lpf_freq_calc (fract32 freq) {
+  // 1.0 / ((1 / 2.0 * pi * dt * fc) + 1.0)
+  fract32 temp = mult_fr1x32x32(TWO_PI_16_16, freq);
+  return ((temp << 12) / ((1 << 16) + temp)) << 19;
 }
 
 fract32 hpf_next_dynamic_precise (hpf *myHpf, fract32 in, fract32 freq);
@@ -56,6 +60,7 @@ void hpf_init (hpf *myHpf);
 fract32 hpf_next_dynamic (hpf *myHpf, fract32 in, fract32 freq);
 void lpf_init (lpf *myLpf);
 fract32 lpf_next_dynamic (lpf *myLpf, fract32 in, fract32 freq);
+fract32 lpf_next_dynamic_precise (lpf *myLpf, fract32 in, fract32 freq);
 
 typedef struct {
   s32 phase;

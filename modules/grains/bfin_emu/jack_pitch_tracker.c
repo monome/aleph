@@ -66,7 +66,7 @@ fract32 process_frame (fract32 in) {
   /* delay_line[delay_index] = in[k]; */
   /* delay_index = (delay_index + 1) % latency; */
     
-  return hpf_next_dynamic_precise(&myHpf, in, FR32_MAX / 480);
+  return lpf_next_dynamic_precise(&myLpf, in, FR32_MAX / 24);
   /* fr32_out = mult_fr1x32x32(fr32_in, jack_sample_to_fract32(1.0 / 48.0)); */
   /* return simple_slew(myLpf.lastOut, in, SLEW_4S); */
   /* return lpf_next_dynamic(&myLpf, in, hzToDimensionless(1000)); */
@@ -117,18 +117,31 @@ int process_block (jack_nframes_t nframes, void *arg) {
   return 0;      
 }
 
-double alpha_check (double freq) {
+double lpf_alpha_check (double freq) {
+  return (freq * 2 * 3.1415) / (1 + (freq * 2 * 3.1415));
+}
+
+double hpf_alpha_check (double freq) {
   return 1.0 / (1 + (freq * 2 * 3.1415));
 }
 
 void primitive_tests () {
-  printf("1K -> alpha=%f (check %f) \n",
+  printf("HPF 1K -> alpha=%f (check %f) \n",
 	 fract32_to_jack_sample(hpf_freq_calc(jack_sample_to_fract32(1.0 / 48.0))),
-	 alpha_check(1.0/48.0));
+	 hpf_alpha_check(1.0/48.0));
 
-  printf("100Hx -> alpha=%f (check %f) \n",
+  printf("HPF 100Hx -> alpha=%f (check %f) \n",
 	 fract32_to_jack_sample(hpf_freq_calc(jack_sample_to_fract32(0.1 / 48.0))),
-	 alpha_check(0.1/48.0));
+	 hpf_alpha_check(0.1/48.0));
+
+  printf("LPF 1K -> alpha=%f (check %f) \n",
+	 fract32_to_jack_sample(lpf_freq_calc(jack_sample_to_fract32(1.0 / 48.0))),
+	 lpf_alpha_check(1.0/48.0));
+
+  printf("LPF 100Hx -> alpha=%f (check %f) \n",
+	 fract32_to_jack_sample(lpf_freq_calc(jack_sample_to_fract32(0.1 / 48.0))),
+	 lpf_alpha_check(0.1/48.0));
+
   printf("max+max = %d\n", add_fr1x32(FR32_MAX,FR32_MAX));
   printf("max-max = %d\n", sub_fr1x32(FR32_MAX,FR32_MAX));
   printf("max+min = %d\n", add_fr1x32(FR32_MAX,FR32_MIN));

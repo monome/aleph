@@ -43,6 +43,15 @@ fract32 lpf_next_dynamic (lpf *myLpf, fract32 in, fract32 freq) {
   return simple_slew(myLpf->lastOut, in, TWOPI * freq);
 }
 
+fract32 lpf_next_dynamic_precise (lpf *myLpf, fract32 in, fract32 freq) {
+  fract32 alpha = lpf_freq_calc(freq);
+  fract32 out = add_fr1x32(mult_fr1x32x32(alpha, in),
+			   mult_fr1x32x32(sub_fr1x32(FR32_MAX, alpha),
+					  myLpf->lastOut));
+  myLpf->lastOut = out;
+  return out;
+}
+
 void phasor_init (phasor *phasor) {
   phasor->phase = 0;
 }
