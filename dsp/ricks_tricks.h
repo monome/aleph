@@ -10,10 +10,23 @@
 
 #define TWOPI 6
 #define PI 3
+static inline void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, fract32 left_value, fract32 right_value) {
+    *out_right = add_fr1x32(*out_right,mult_fr1x32x32(in_mono, right_value));
+    *out_left = add_fr1x32(*out_left,mult_fr1x32x32(in_mono, left_value));
+}
 
-inline void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, fract32 pan, fract32 fader) ;
+static inline void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, fract32 pan, fract32 fader) {
+    fract32 pan_factor, post_fader;
 
-inline void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, fract32 pan, fract32 fader) ;
+    pan_factor = (fract32) ( pan );
+    post_fader = mult_fr1x32x32(pan_factor, fader);
+    *out_left = add_fr1x32(*out_left, mult_fr1x32x32(in_mono, post_fader));
+
+    pan_factor = (fract32) ( FR32_MAX - pan );
+    post_fader = mult_fr1x32x32(pan_factor, fader);
+    *out_right = add_fr1x32(*out_right, mult_fr1x32x32(in_mono, post_fader));
+
+}
 
 typedef struct {
   fract32 lastIn;

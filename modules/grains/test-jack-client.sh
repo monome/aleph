@@ -1,5 +1,5 @@
 # ../../common/fract32_emu.c 
-gcc -ljack -lm \
+gcc -ljack -lm -Wall\
     bfin_emu/fract32_jack.c \
     bfin_emu/jack_pitch_tracker.c \
     ../../dsp/grain.c \

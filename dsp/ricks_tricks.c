@@ -5,23 +5,6 @@
 #include "fract_math.h"
 #endif
 
-inline void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, fract32 left_value, fract32 right_value) {
-    *out_right = add_fr1x32(*out_right,mult_fr1x32x32(in_mono, right_value));
-    *out_left = add_fr1x32(*out_left,mult_fr1x32x32(in_mono, left_value));
-}
-
-inline void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, fract32 pan, fract32 fader) {
-    fract32 pan_factor, post_fader;
-
-    pan_factor = (fract32) ( pan );
-    post_fader = mult_fr1x32x32(pan_factor, fader);
-    *out_left = add_fr1x32(*out_left, mult_fr1x32x32(in_mono, post_fader));
-
-    pan_factor = (fract32) ( FR32_MAX - pan );
-    post_fader = mult_fr1x32x32(pan_factor, fader);
-    *out_right = add_fr1x32(*out_right, mult_fr1x32x32(in_mono, post_fader));
-
-}
 
 void hpf_init (hpf *myHpf) {
   myHpf->lastIn = 0;
@@ -170,7 +153,8 @@ fract32 pitchTrackOsc (pitchDetector *p) {
 
 //This guy returns the current measured wave period (in subsamples)
 fract32 pitchTrack (pitchDetector *p, fract32 preIn) {
-  fract32 in = lpf_next_dynamic (&(p->adaptiveFilter), in,
+  //XXX FIXME the lpf seems to be disengaged!!!
+  fract32 in = lpf_next_dynamic (&(p->adaptiveFilter), preIn,
   				 FR32_MAX / shl_fr1x32(p->currentPeriod,
 						       - (PITCH_DETECTOR_RADIX_TOTAL)));
   in = hpf_next_dynamic(&(p->dcBlocker),

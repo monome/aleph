@@ -8,6 +8,7 @@ fract32 clip_to_fr32(long x) {
     return (fract32)FR32_MAX;
   else if (x < (fract32)FR32_MIN)
     return (fract32)FR32_MIN;
+  else return 0;
 }
 
 fract32 mult_fr1x32x32_cheat(fract32 x, fract32 y) {

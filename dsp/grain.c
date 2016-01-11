@@ -10,6 +10,7 @@
 
 #include "conversion.h"
 #include "grain.h"
+#include "echoTap.h"
 #include <stdlib.h>
 
 // initialize with pointer to audio buffer
@@ -46,9 +47,9 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   //DEBUG uncomment this line to force slew speed to a sensible value
   /* dl->slewSpeed = SLEW_100MS; */
   if (dl->echoTimeCountdown > 0) {
-    dl->echoTap.time = simple_slew(dl->echoTap.time,
-				   dl->echoTimeTarget,
-				   SLEW_100MS );
+    simple_slew(dl->echoTap.time,
+		dl->echoTimeTarget,
+		SLEW_100MS );
     //Debug uncomment the below line to check slew is strong enough
     /* dl->echoTap.time = dl->echoTimeTarget; */
     dl->echoTimeCountdown--;
@@ -57,12 +58,11 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   simple_slew(dl->echoTap.max, dl->echoMaxTarget, dl->slewSpeed);
   simple_slew(dl->echoTap.min, dl->echoMinTarget, dl->slewSpeed);
 
-  dl->echoTap.fadeLength =
-    simple_slew(dl->echoTap.fadeLength,
-		mult_fr1x32x32((fract32)dl->echoFadeLengthTarget,
-			       sub_fr1x32((fract32) dl->echoMaxTarget,
-					  (fract32) dl->echoMinTarget)),
-		dl->slewSpeed);
+  simple_slew(dl->echoTap.fadeLength,
+	      mult_fr1x32x32((fract32)dl->echoFadeLengthTarget,
+			     sub_fr1x32((fract32) dl->echoMaxTarget,
+					(fract32) dl->echoMinTarget)),
+	      dl->slewSpeed);
   buffer_tapN_next( &(dl->tapWr) );
   echoTap_next( &(dl->echoTap) );
 
