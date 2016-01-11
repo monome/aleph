@@ -177,19 +177,11 @@ fract32 pitchTrack (pitchDetector *p, fract32 in) {
   in = hpf_next_dynamic(&(p->dcBlocker),
   			in,
   			hzToDimensionless(50));
-  in = lpf_next_dynamic (&(p->adaptiveFilter), in,
-			 pan_lin_mix(hzToDimensionless(5000),
-				     shl_fr1x32(FR32_MAX / p->currentPeriod,
-						PITCH_DETECTOR_RADIX_INTERNAL - 4),
-				     (200 << 23)
-				     //this fudge factor is required!
-				     //if you key lpf straight off detected frequency
-				     //the whole thing blows up. Probably can further improve
-				     //tracking by shifting RADIX_INTERNAL up/down, then
-				     //fiddling with panning factor.
-				     //Another approach would be more accurate calculation of
-				     // 1 / (2 pi dt fc + 1)
-				     ));
+  in = lpf_next_dynamic_precise (&(p->adaptiveFilter), in,
+  				 max_fr1x32(add_fr1x32(shl_fr1x32 (FR32_MAX / p->currentPeriod,
+								   PITCH_DETECTOR_RADIX_INTERNAL),
+						       hzToDimensionless(500)),
+					    hzToDimensionless(50)));
   if (p->lastIn <= 0 && in >= 0 && p->nFrames > 24) {
     p->period = add_fr1x32(p->period,
 			   min_fr1x32 (p->nFrames, 1024));
