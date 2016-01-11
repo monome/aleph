@@ -97,10 +97,10 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 
   
   dl->scrubTap.frequency =
-    negate_fr1x32(shl_fr1x32(mult_fr1x32x32(shl_fr1x32((desiredPitchShift), 20),
+    negate_fr1x32(shl_fr1x32(mult_fr1x32x32(shl_fr1x32((desiredPitchShift), 16),
 					    FR32_MAX /
 					    max_fr1x32(dl->scrubTap.length, 1)),
-			     12));
+			     16));
 
   //DEBUG with scrub tap length forced to 100ms and pitchshift forced to +1,
   //Should end up with a scrubTap Frequency of 100Hz
