@@ -74,8 +74,8 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   //DEBUG forcing detected Period to 1ms
   /* signalPeriod = 48 * 256; */
   fract32 desiredPitchShift = sub_fr1x32(add_fr1x32((fract32)dl->scrubCentrePitch,
-						    FM_signal),
-					 dl->echoTap.speed);;
+						    shl_fr1x32(FM_signal, -18)),
+					 dl->echoTap.speed);
   //DEBUG forcing desired pitchShift to 1 sample / sample 
   /* desiredPitchShift = 128; */
   //DEBUG force pitch detection enabled
@@ -120,7 +120,11 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   //DEBUG uncomment this line to listen to the detected tone from pitch Tracker
   /* return pitchTrackOsc(&(dl->pitchDetector)) / 10; */
   if (dl->scrubTapEnable == 0)
-    return echoTapOutput;
+    return echoTap_read_xfade( &(dl->echoTap),
+			       add_fr1x32(dl->scrubTap.length,
+					  mult_fr1x32x32(add_fr1x32(dl->scrubTap.length,
+								     dl->echoTap.time),
+							 FM_signal)));
   else
     return scrubTapOutput;
 }

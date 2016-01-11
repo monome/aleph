@@ -89,6 +89,8 @@ ParamValue FM_faderG[NGRAINS];
 ParamValue AM_faderG[NGRAINS];
 ParamValue AM_sourceG[NGRAINS];
 hpf AM_hpf[NGRAINS];
+hpf effect_hpf;
+hpf effect_lpf;
 
 ParamValue phaseG[NGRAINS];
 
@@ -157,6 +159,9 @@ void module_init(void) {
   param_setup( 	eParam_aux2_i4,		AUX_DEFAULT );
   param_setup( 	eParam_effect_i4,	EFFECT_DEFAULT );
 
+  //initialise effect bus feedback DC block filter
+  hpf_init(&effect_hpf);
+  hpf_init(&effect_lpf);
   int i;
   //initialise grains
   for (i=0;i<NGRAINS; i++) {
@@ -285,8 +290,12 @@ void module_process_frame(void) {
   out[1] = 0;
   out[2] = 0;
   out[3] = 0;
-  LFO_bus = osc(phasor_next(&LFO));
-  effectBus = effectBusFeedback;
+  LFO_bus = shl_fr1x32(osc(phasor_next(&LFO)), -3);
+  effectBus = lpf_next_dynamic(&effect_lpf,
+			       hpf_next_dynamic(&effect_hpf,
+						effectBusFeedback,
+						hzToDimensionless(50)),
+			       hzToDimensionless(4000));
   for (i=0;i<4;i++) {
     mix_panned_mono (in[i], &(out[0]), &(out[1]), panI[i], faderI[i]);
     mix_aux_mono (in[i], &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
@@ -299,7 +308,7 @@ void module_process_frame(void) {
     grainOut=phaseG[i] * grain_next(&(grains[i]),
 				    selectGrainInput(sourceG[i]),
 				    mult_fr1x32x32(selectGrainInput(FM_sourceG[i]),
-						   shl_fr1x32(FM_faderG[i], - 19)));
+						   FM_faderG[i]));
     // FIXME AM signal comes out very quiet should be preceded by a 50Hz HPF
     // Then multiplied up by 20dB or so...
     // This is done now - but not quite sure about the results...
@@ -313,7 +322,9 @@ void module_process_frame(void) {
     grainOutFeedback[i] = grainOut;
     mix_panned_mono (grainOut, &(out[0]), &(out[1]), panG[i], faderG[i]);
     mix_aux_mono (grainOut, &(out[2]), &(out[3]), aux1G[i], aux2G[i]);
-    simple_busmix (effectBusFeedback, grainOut, effectG[i]);
+    simple_busmix (effectBusFeedback,
+		   grainOut,
+		   effectG[i]);
   }
 }
 
