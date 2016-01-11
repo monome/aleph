@@ -80,6 +80,12 @@ fract32 process_frame (fract32 in) {
   						     hzToDimensionless(1));
   /* return osc(phasorNext); */
   /* return osc_triangle(phasorNext); */
+  fract32 LFO_shape = (1 << 30) + (1 << 29) + (1 << 28);
+  return add_fr1x32(mult_fr1x32x32(LFO_shape,
+				   osc(phasorNext)),
+		    mult_fr1x32x32(sub_fr1x32(FR32_MAX,LFO_shape),
+				   osc_triangle(phasorNext)));
+
   return osc(phasorNext);
   /* return phasorNext; */
   /* return simple_slew( lastVal, phasorNext, 10000); */

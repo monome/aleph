@@ -293,12 +293,11 @@ void module_process_frame(void) {
   out[2] = 0;
   out[3] = 0;
   fract32 phase_next = phasor_next(&LFO);
-  LFO_bus = shl_fr1x32(mult_fr1x32x32(LFO_shape,osc(phase_next)),
-		       -1);
-  LFO_bus = add_fr1x32(LFO_bus,
-		       shl_fr1x32(mult_fr1x32x32(sub_fr1x32(FR32_MAX,LFO_shape),
-						 osc_triangle(phase_next)),
-				  -1));
+  LFO_bus =
+    add_fr1x32(mult_fr1x32x32(LFO_shape,
+			      osc(phase_next)),
+	       mult_fr1x32x32(sub_fr1x32(FR32_MAX,LFO_shape),
+			      osc_triangle(phase_next)));
   effectBus = lpf_next_dynamic(&effect_lpf,
 			       hpf_next_dynamic(&effect_hpf,
 						effectBusFeedback,
