@@ -16,7 +16,7 @@ fract32 mult_fr1x32x32_cheat(fract32 x, fract32 y) {
 
 fract32 mult_fr1x32x32(fract32 x, fract32 y) {
   long res_40_bit = ((long)(x)>>12) * (((long) y) >>12);
-  return (res_40_bit + (1 << 7) - 1) >> 7;
+  return clip_to_fr32((res_40_bit + (1 << 7) - 1) >> 7);
 }
 
 fract32 sub_fr1x32(fract32 x, fract32 y) {
@@ -71,7 +71,7 @@ int norm_fr1x32(fract32 x) {
 
 fract32 shl_fr1x32 (fract32 x, int shft) {
   if (shft >= 0)
-    return x << shft;
+    return clip_to_fr32(((long) x) << shft);
   else
-    return x >> -shft;
+    return clip_to_fr32(((long) x) << -shft);
 }
