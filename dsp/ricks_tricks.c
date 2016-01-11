@@ -163,7 +163,9 @@ fract32 pitchTrack (pitchDetector *p, fract32 in) {
 				     (200 << 23)
 				     //this fudge factor is required!
 				     //if you key lpf straight off detected frequency
-				     //the whole thing blows up...
+				     //the whole thing blows up. Probably can further improve
+				     //tracking by shifting RADIX_INTERNAL up/down, then
+				     //fiddling with panning factor
 				     ));
   if (p->lastIn <= 0 && in >= 0 && p->nFrames > 24) {
     p->period = add_fr1x32(p->period,
