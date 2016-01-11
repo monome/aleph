@@ -19,9 +19,12 @@ void lpf_init (lpf *myLpf) {
 
 fract32 hpf_next_dynamic_precise (hpf *myHpf, fract32 in, fract32 freq) {
   //Should be 1 / (2 pi dt fc + 1)
-  fract32 alpha =  hpf_freq_calc(freq);
-  return add_fr1x32(mult_fr1x32x32(alpha, myHpf->lastOut),
-		    mult_fr1x32x32(alpha, (sub_fr1x32(in, myHpf->lastIn))));
+  fract32 alpha = hpf_freq_calc(freq);
+  fract32 out = add_fr1x32(mult_fr1x32x32(alpha, myHpf->lastOut),
+			   mult_fr1x32x32(alpha, (sub_fr1x32(in, myHpf->lastIn))));
+  myHpf->lastOut = out;
+  myHpf->lastIn = in;
+  return out;
 }
 
 fract32 hpf_next_dynamic (hpf *myHpf, fract32 in, fract32 freq) {

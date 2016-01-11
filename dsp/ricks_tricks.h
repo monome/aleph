@@ -51,6 +51,7 @@ static inline fract32 hpf_freq_calc (fract32 freq) {
 				     1 << 16));
 }
 
+fract32 hpf_next_dynamic_precise (hpf *myHpf, fract32 in, fract32 freq);
 void hpf_init (hpf *myHpf);
 fract32 hpf_next_dynamic (hpf *myHpf, fract32 in, fract32 freq);
 void lpf_init (lpf *myLpf);
