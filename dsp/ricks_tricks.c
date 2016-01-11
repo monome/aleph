@@ -159,8 +159,8 @@ fract32 pitchTrack (pitchDetector *p, fract32 in) {
   in = lpf_next_dynamic (&(p->adaptiveFilter), in,
 			 pan_lin_mix(hzToDimensionless(5000),
 				     shl_fr1x32(FR32_MAX / p->currentPeriod,
-						PITCH_DETECTOR_RADIX_INTERNAL >> 2),
-				     (230 << 23)
+						PITCH_DETECTOR_RADIX_INTERNAL - 4),
+				     (200 << 23)
 				     //this fudge factor is required!
 				     //if you key lpf straight off detected frequency
 				     //the whole thing blows up. Probably can further improve
