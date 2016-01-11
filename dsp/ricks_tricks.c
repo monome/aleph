@@ -121,25 +121,31 @@ fract32 s32_halfWave_env (fract32 pos) {
 }
 
 fract32 osc (fract32 phase) {
-  if (phase > FR32_MAX / 2 || phase <= (fract32) FR32_MIN / 2) {
+  if (phase > (1 << 30) || phase < (-1 << 30)) {
     phase = FR32_MIN - phase;
-    return sub_fr1x32(4 * mult_fr1x32x32( phase , phase),
+    return sub_fr1x32(shl_fr1x32(mult_fr1x32x32( phase , phase), 2),
 		     FR32_MAX);
   }
-  else
+  else if (phase < (1 << 30) || phase <= (-1 << 30)) {
     return sub_fr1x32(FR32_MAX,
-		      4 * mult_fr1x32x32( phase, phase));
+  		      shl_fr1x32(mult_fr1x32x32( phase, phase), 2));
+  }
+  else
+    return 0;
 }
 
 fract32 osc_triangle (fract32 phase) {
-  if (phase > FR32_MAX / 2 || phase <= (fract32) FR32_MIN / 2) {
+  if (phase > (1 << 30) || phase < (-1 << 30)) {
     phase = FR32_MIN - phase;
-    return sub_fr1x32(2 * abs_fr1x32(phase),
-		     FR32_MAX);
+    return sub_fr1x32 (shl_fr1x32(abs_fr1x32(phase), 1),
+		       FR32_MAX);
   }
-  else
+  else if (phase < (1 << 30) || phase <= (-1 << 30))
     return sub_fr1x32(FR32_MAX,
-		      2 * abs_fr1x32(phase));
+		      shl_fr1x32(abs_fr1x32(phase), 1));
+  else
+    return 0;
+
 }
 
 void pitchDetector_init (pitchDetector *p) {

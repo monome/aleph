@@ -72,12 +72,15 @@ fract32 process_frame (fract32 in) {
   /* return lpf_next_dynamic(&myLpf, in, hzToDimensionless(1000)); */
   /* return hpf_next_dynamic(&myHpf, in, hzToDimensionless(1000)); */
 
-  pitchTrack(&myPitchDetector, in);
-  return pitchTrackOsc (&myPitchDetector);
+  /* pitchTrack(&myPitchDetector, in); */
+  /* return pitchTrackOsc (&myPitchDetector); */
 
   /* return grain_next(&myGrain, in, 0); */
-  /* fract32 phasorNext = (fract32) phasor_next_dynamic(&myPhasor, */
-  /* 						     hzToDimensionless(1)); */
+  fract32 phasorNext = (fract32) phasor_next_dynamic(&myPhasor,
+  						     hzToDimensionless(1));
+  /* return osc(phasorNext); */
+  /* return osc_triangle(phasorNext); */
+  return osc(phasorNext);
   /* return phasorNext; */
   /* return simple_slew( lastVal, phasorNext, 10000); */
 }
@@ -166,6 +169,14 @@ void arithmetic_tests () {
   printf("osc(0) = %d\n", osc(0));
   printf("osc(1) = %d\n", osc(1));
   printf("osc(-1) = %d\n", osc(-1));
+  printf("osc(0.49) = %d\n", osc((1<< 30) - 1));
+  printf("osc(0.51) = %d\n", osc((1<< 30) + 1));
+  printf("osc(0.50) = %d\n", osc(1<< 30));
+
+  printf("osc(-0.49) = %d\n", osc((-1<< 30) + 1024));
+  printf("osc(-0.51) = %d\n", osc((-1<< 30) - 1024));
+  printf("osc(-0.50) = %d\n", osc(-1<< 30));
+
 
   printf("osc(max-1) = %d\n", osc(FR32_MAX - 1));
   printf("osc(max) = %d\n", osc(FR32_MAX));
@@ -357,7 +368,7 @@ int main (int argc, char *argv[]) {
     exit (1);
   }
 
-  if (jack_connect (client, "jaaa:out_1", jack_port_name (input_port))) {
+  if (jack_connect (client, "latent:output 0", jack_port_name (input_port))) {
     fprintf (stderr, "cannot connect input ports\n");
   }
 
@@ -370,7 +381,7 @@ int main (int argc, char *argv[]) {
     exit (1);
   }
 
-  if (jack_connect (client, jack_port_name (output_port), "jaaa:in_1")) {
+  if (jack_connect (client, jack_port_name (output_port), "latent:input 0")) {
     fprintf (stderr, "cannot connect output ports\n");
   }
 
