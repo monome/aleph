@@ -68,15 +68,15 @@ fract32 process_frame (fract32 in) {
   /* delay_index = (delay_index + 1) % latency; */
     
   /* return lpf_next_dynamic_precise(&myLpf, in, FR32_MAX / 24); */
-  return bpf_next_dynamic_precise(&myBpf, in, hzToDimensionless(2000));
+  /* return bpf_next_dynamic_precise(&myBpf, in, hzToDimensionless(2000)); */
 
   /* fr32_out = mult_fr1x32x32(fr32_in, jack_sample_to_fract32(1.0 / 48.0)); */
   /* return simple_slew(myLpf.lastOut, in, SLEW_4S); */
   /* return lpf_next_dynamic(&myLpf, in, hzToDimensionless(1000)); */
   /* return hpf_next_dynamic(&myHpf, in, hzToDimensionless(1000)); */
 
-  /* pitchTrack(&myPitchDetector, in); */
-  /* return pitchTrackOsc (&myPitchDetector); */
+  pitchTrack(&myPitchDetector, in);
+  return pitchTrackOsc (&myPitchDetector);
 
   /* return grain_next(&myGrain, in, 0); */
   /* fract32 phasorNext = (fract32) phasor_next_dynamic(&myPhasor, */

@@ -56,10 +56,10 @@ fract32 lpf_next_dynamic_precise (lpf *myLpf, fract32 in, fract32 freq) {
   return out;
 }
 
-fract32 bpf_next_dynamic_precise (bpf *myBpf, fract32 in, fract32 freq) {
+fract32 bpf_next_dynamic_precise (bpf *myBpf, fract32 in, fract32 hpf_freq, fract32 lpf_freq) {
   return lpf_next_dynamic_precise(&(myBpf->lpf),
-				  hpf_next_dynamic_precise(&(myBpf->hpf),in, freq),
-				  freq);
+				  hpf_next_dynamic_precise(&(myBpf->hpf),in, hpf_freq),
+				  lpf_freq);
 }
 
 void phasor_init (phasor *phasor) {
@@ -184,14 +184,13 @@ fract32 pitchTrackOsc (pitchDetector *p) {
 
 //This guy returns the current measured wave period (in subsamples)
 fract32 pitchTrack (pitchDetector *p, fract32 in) {
-  in = hpf_next_dynamic(&(p->dcBlocker),
-  			in,
-  			hzToDimensionless(50));
-  in = lpf_next_dynamic_precise (&(p->adaptiveFilter), in,
-  				 max_fr1x32(add_fr1x32(shl_fr1x32 (FR32_MAX / p->currentPeriod,
-								   PITCH_DETECTOR_RADIX_INTERNAL),
-						       hzToDimensionless(500)),
-					    hzToDimensionless(50)));
+  in = lpf_next_dynamic_precise(&(p->adaptiveFilter), in,
+				shl_fr1x32 (FR32_MAX / p->currentPeriod,
+  					     PITCH_DETECTOR_RADIX_INTERNAL + 3));
+  in = hpf_next_dynamic_precise(&(p->dcBlocker),
+				in,
+				shl_fr1x32 (FR32_MAX / p->currentPeriod,
+					    PITCH_DETECTOR_RADIX_INTERNAL - 3));
   if (p->lastIn <= 0 && in >= 0 && p->nFrames > 24) {
     p->period = add_fr1x32(p->period,
 			   min_fr1x32 (p->nFrames, 1024));

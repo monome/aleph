@@ -68,7 +68,7 @@ fract32 lpf_next_dynamic (lpf *myLpf, fract32 in, fract32 freq);
 fract32 lpf_next_dynamic_precise (lpf *myLpf, fract32 in, fract32 freq);
 
 void bpf_init (bpf *myBpf);
-fract32 bpf_next_dynamic_precise (bpf *myBpf, fract32 in, fract32 freq) ;
+fract32 bpf_next_dynamic_precise (bpf *myBpf, fract32 in, fract32 hpf_freq, fract32 lpf_freq) ;
 
 typedef struct {
   s32 phase;
