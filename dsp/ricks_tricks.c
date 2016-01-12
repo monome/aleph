@@ -224,7 +224,10 @@ fract32 interp_bspline_fract32 (fract32 x, fract32 _y, fract32 y, fract32 y_, fr
   fract32 c2 = ym1py1/2 - y/256;
   fract32 c3 = (y-y_)/512 + ((y__-_y)/512)/3;
   return
-    256 * (c0 + mult_fr1x32x32(x,
-			       (c1 +
-				mult_fr1x32x32((mult_fr1x32x32(c3,x) + c2),x))));
+    shl_fr1x32(add_fr1x32 (c0,
+			   mult_fr1x32x32(x,
+					  add_fr1x32(c1,
+						     mult_fr1x32x32((mult_fr1x32x32(c3,x) + c2),
+								    x)))),
+	       8);
 }

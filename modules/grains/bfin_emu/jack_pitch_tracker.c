@@ -190,6 +190,35 @@ void primitive_tests () {
 
 }
 
+void interpolation_test () {
+  int i, j;
+  phasor myPhasor;
+  FILE *fh = fopen("/home/rick/foo.csv", "w");
+  fract32 samples[480];
+  for (i=0; i<480; i++) {
+    samples[i] = osc(phasor_next_dynamic(&myPhasor, FR32_MAX / 48));
+  }
+  for (i=1; i<479; i++) {
+    for (j=0; j<256; j++) {
+      fprintf (fh, "%f\t%d\t%d\t%d\n",
+	       (float) i / 48000.0 + (float)j / 256.0 / 48000,
+	       samples[i],
+	       (fract32) interp_bspline_float((float) j / 256,
+					      samples[i - 1],
+					      samples[i],
+					      samples[i + 1],
+					      samples[i + 2]),
+	       interp_bspline_fract32(shl_fr1x32(j, 23),
+					  samples[i - 1],
+					  samples[i],
+					  samples[i + 1],
+					  samples[i + 2]));
+    }
+  }
+  fclose(fh);
+  printf ("alldone...\n");
+}
+
 void arithmetic_tests () {
   printf ("1K = %d\n",mult_fr1x32x32( FR32_MAX,
 				      jack_sample_to_fract32(1.0 / 48.0)));
@@ -312,6 +341,7 @@ int main (int argc, char *argv[]) {
   jack_status_t status;
   arithmetic_tests();
   primitive_tests();
+  interpolation_test();
   if (argc == 2)
     latency = atoi(argv[1]);
 
