@@ -1,5 +1,6 @@
 #include "fix.h"
 #include <jack/jack.h>
+#include <assert.h>
 
 fract32 clip_to_fr32(long x) {
   if(x <= (long)(fract32)FR32_MAX && x >= (long)(fract32)FR32_MIN)
@@ -79,4 +80,9 @@ fract32 shl_fr1x32 (fract32 x, int shft) {
     return clip_to_fr32(((long) x) << shft);
   else
     return clip_to_fr32(((long) x) >> -shft);
+}
+void* __builtin_bfin_circptr(void* ptr, long unsigned int wordLength, void* buf, long unsigned int bufLength) {
+  assert(ptr >= buf);
+  long unsigned int idx = (long unsigned int)(ptr - buf);
+  return (void*)( (idx + wordLength) % bufLength);
 }

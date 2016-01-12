@@ -16,5 +16,5 @@ fract32 max_fr1x32(fract32 x, fract32 y);
 fract32 negate_fr1x32(fract32 x);
 int norm_fr1x32(fract32 x);
 fract32 shl_fr1x32 (fract32 x, int shft);
-
+void* __builtin_bfin_circptr(void* ptr, long unsigned int wordLength, void* buf, long unsigned int bufLength);
 #endif
