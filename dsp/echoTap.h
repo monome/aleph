@@ -15,6 +15,7 @@
 #include "types.h"
 #include "buffer.h"
 #include "pan.h"
+#include "ricks_tricks.h"
 // ---- echoTap
 // Data structure for an 'echo tap'
 // echo is position relative to write tap
@@ -66,16 +67,21 @@ static inline fract32 echoTap_read_interp(echoTap* echoTap, s32 time) {
     s32 loop = echoTap->tapWr->loop << 8;
     s32 idx = ((echoTap->tapWr->idx << 8) + loop - time) % loop;
 
-    u32 samp1_index = idx / 256;
-    u32 samp2_index = ( (idx + 256) % loop ) / 256 ;
+    u32 samp0_index = shl_fr1x32(((idx - 256) % loop), -8);
+    u32 samp1_index = shl_fr1x32(((idx + 0) % loop), -8);
+    u32 samp2_index = shl_fr1x32(((idx + 256) % loop), -8);
+    u32 samp3_index = shl_fr1x32(((idx + 512) % loop), -8);
 
-    fract32 samp1 = echoTap->tapWr->buf->data[samp1_index ];
-    fract32 samp2 = echoTap->tapWr->buf->data[samp2_index ];
-    fract32 inter_sample = FR32_MAX/256 * (idx % 256);
+    fract32 samp0 = echoTap->tapWr->buf->data[samp0_index];
+    fract32 samp1 = echoTap->tapWr->buf->data[samp1_index];
+    fract32 samp2 = echoTap->tapWr->buf->data[samp2_index];
+    fract32 samp3 = echoTap->tapWr->buf->data[samp3_index];
+    fract32 inter_sample = (idx % 256) << 23;
 
-    fract32 pre_fader = pan_lin_mix(samp1, samp2, inter_sample)   ;
-    /* fract32 fader = echoTap_envelope(echoTap); */
-    /* fract32 post_fader = mult_fr1x32x32 ( pre_fader, fader); */
+    fract32 pre_fader;
+    //Pick an interpolation method! - linear or cubic?
+    /* pre_fader = pan_lin_mix(samp1, samp2, inter_sample); */
+    pre_fader = interp_bspline_fract32(inter_sample, samp0, samp1, samp2, samp3);
     return pre_fader;
 }
 
