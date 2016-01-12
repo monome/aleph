@@ -16,6 +16,10 @@ void lpf_init (lpf *myLpf) {
   myLpf->lastOut = 0;
 
 }
+void bpf_init (bpf *myBpf) {
+  hpf_init(&(myBpf->hpf));
+  lpf_init(&(myBpf->lpf));
+}
 
 fract32 hpf_next_dynamic_precise (hpf *myHpf, fract32 in, fract32 freq) {
   //Should be 1 / (2 pi dt fc + 1)
@@ -50,6 +54,12 @@ fract32 lpf_next_dynamic_precise (lpf *myLpf, fract32 in, fract32 freq) {
 					  myLpf->lastOut));
   myLpf->lastOut = out;
   return out;
+}
+
+fract32 bpf_next_dynamic_precise (bpf *myBpf, fract32 in, fract32 freq) {
+  return lpf_next_dynamic_precise(&(myBpf->lpf),
+				  hpf_next_dynamic_precise(&(myBpf->hpf),in, freq),
+				  freq);
 }
 
 void phasor_init (phasor *phasor) {

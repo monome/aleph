@@ -37,6 +37,10 @@ typedef struct {
   fract32 lastOut;
 } lpf;
 
+typedef struct {
+  lpf lpf;
+  hpf hpf;
+} bpf;
 
 //Takes a fraction in 16_16 radix, returns it in 0_32
 static inline fract32 one_over_x_16_16 (fract32 x_16_16) {
@@ -61,6 +65,9 @@ fract32 hpf_next_dynamic (hpf *myHpf, fract32 in, fract32 freq);
 void lpf_init (lpf *myLpf);
 fract32 lpf_next_dynamic (lpf *myLpf, fract32 in, fract32 freq);
 fract32 lpf_next_dynamic_precise (lpf *myLpf, fract32 in, fract32 freq);
+
+void bpf_init (bpf *myBpf);
+fract32 bpf_next_dynamic_precise (bpf *myBpf, fract32 in, fract32 freq) ;
 
 typedef struct {
   s32 phase;

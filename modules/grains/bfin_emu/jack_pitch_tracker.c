@@ -58,6 +58,7 @@ grain myGrain;
 
 lpf myLpf;
 hpf myHpf;
+bpf myBpf;
 phasor myPhasor;
 fract32 lastVal;
 
@@ -66,7 +67,9 @@ fract32 process_frame (fract32 in) {
   /* delay_line[delay_index] = in[k]; */
   /* delay_index = (delay_index + 1) % latency; */
     
-  return lpf_next_dynamic_precise(&myLpf, in, FR32_MAX / 24);
+  /* return lpf_next_dynamic_precise(&myLpf, in, FR32_MAX / 24); */
+  return bpf_next_dynamic_precise(&myBpf, in, hzToDimensionless(2000));
+
   /* fr32_out = mult_fr1x32x32(fr32_in, jack_sample_to_fract32(1.0 / 48.0)); */
   /* return simple_slew(myLpf.lastOut, in, SLEW_4S); */
   /* return lpf_next_dynamic(&myLpf, in, hzToDimensionless(1000)); */
@@ -96,6 +99,8 @@ void init_dsp () {
   grain_init(&myGrain, malloc(0x8000 * sizeof(fract32)), 0x4000);
   pitchDetector_init(&myPitchDetector);
   lpf_init(&myLpf);
+  bpf_init(&myBpf);
+  hpf_init(&myHpf);
   phasor_init(&myPhasor);
   lastVal = 0;
   printf("...successfully initialised grain\n");
