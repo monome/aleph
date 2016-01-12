@@ -5,6 +5,7 @@
 
 #if ARCH_BFIN
 #include "fix.h"
+#include "fract_math.h"
 #endif
 
 
