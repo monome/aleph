@@ -183,6 +183,7 @@ typedef struct {
   fract32 val;
   fract32 up;
   fract32 down;
+  fract32 gate;
 } trackingEnvelopeLog;
 
 void radixLinSlew_init (radixLinSlew* slew, unsigned short radix);

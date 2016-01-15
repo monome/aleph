@@ -351,8 +351,9 @@ fract32 trackingEnvelopeLin_next (trackingEnvelopeLin* env, fract32 in) {
 
 void trackingEnvelopeLog_init (trackingEnvelopeLog* env) {
   env->val = 0;
-  env->up = SLEW_10MS;
-  env->down = SLEW_1S;
+  env->up = SLEW_1MS;
+  env->down = SLEW_1MS;
+  env->gate = FR32_MAX /1000;
 }
 
 fract32 trackingEnvelopeLog_next (trackingEnvelopeLog* env, fract32 in) {
@@ -361,5 +362,8 @@ fract32 trackingEnvelopeLog_next (trackingEnvelopeLog* env, fract32 in) {
     coarse_logSlew(&(env->val), target, env->up);
   else if (target < env->val)
     coarse_logSlew(&(env->val), target, env->down);
-  return env->val;
+  if (env->val < env->gate)
+    return env->val = 0;
+  else
+    return env->val;
 }
