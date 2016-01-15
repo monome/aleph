@@ -163,52 +163,10 @@ static const fract32 LINSLEW_100MS = FR32_MAX / 48 / 100;
 static const fract32 LINSLEW_1S = FR32_MAX / 48 / 1000;
 static const fract32 LINSLEW_10S = FR32_MAX / 48 / 10000;
 
-static inline void radixLinSlew_init (radixLinSlew* slew, unsigned short radix) {
-  slew->radix = radix;
-  slew->remainder = 0;
-  slew->slewRate = LINSLEW_100MS;
-}
-
-//This guy slews between target and current at *fractional* constant speed
-static inline void radixLinSlew_next (fract32* current, fract32 target, radixLinSlew *slew) {
-  fract32 difference = abs_fr1x32(sub_fr1x32(target, *current));
-  fract32 fract_slew = min_fr1x32(shl_fr1x32(difference, slew->radix),
-				  slew->slewRate);
-  fract_slew += slew->remainder;
-  u32 remainderMask = ~(0xFFFFFFFF << slew->radix);
-  slew->remainder = remainderMask & fract_slew;
-  u32 inc = shl_fr1x32(fract_slew, - slew->radix);
-  if (*current > target)
-    *current -= inc;
-  else if (*current < target)
-    *current += inc;
-}
-
-//This guy slews between target and current at constant speed
-static inline void linSlew_next (fract32* current, fract32 target, fract32 slewRate) {
-  if (*current > target)
-    *current -= min_fr1x32 (abs_fr1x32(target - *current), slewRate);
-  else if (*current < target)
-    *current += min_fr1x32 (abs_fr1x32(target - *current), slewRate);
-}
-
 typedef struct {
   fract32 up;
   fract32 down;
 } asymLinSlew;
-
-static inline void asymLinSlew_init (asymLinSlew* slew) {
-  slew->up = LINSLEW_10MS;
-  slew->down = LINSLEW_100MS;
-}
-
-//This guy slews between target and current at constant speed
-static inline void asymLinSlew_next (fract32* current, fract32 target, asymLinSlew* slew) {
-  if (*current > target)
-    *current -= min_fr1x32 (abs_fr1x32(target - *current), slew->down);
-  else if (*current < target)
-    *current += min_fr1x32 (abs_fr1x32(target - *current), slew->up);
-}
 
 typedef struct {
   unsigned short radix;
@@ -216,68 +174,10 @@ typedef struct {
   fract32 speed;
 } logSlew;
 
-static inline void radixLogSlew_init (logSlew *slew, unsigned short radix) {
-  slew->radix = radix;
-  slew->remainder = 0;
-  slew->speed = SLEW_1S;
-}
-
-// This guy slews correctly when the slew rate is less than 1 per audio frame
-static inline void radixLogSlew_next (fract32* current, fract32 target, logSlew* slew) {
-  fract32 ratio = slew->speed;
-  fract32 difference = abs_fr1x32(sub_fr1x32(target, *current));
-  fract32 fract_slew = mult_fr1x32x32(shl_fr1x32(difference,slew->radix),
-				      ratio);
-  fract_slew = add_fr1x32(fract_slew, slew->remainder);
-  u32 remainderMask = ~(0xFFFFFFFF << slew->radix);
-  slew->remainder = remainderMask & fract_slew;
-  u32 inc = shl_fr1x32(fract_slew, - slew->radix);
-  if (target > *current)
-    *current = add_fr1x32(*current, inc);
-  else if (target < *current)
-    *current = sub_fr1x32(*current, inc);
-}
-
-// This guy slews correctly between *small* parameters
-static inline void fine_logSlew(fract32* current, fract32 target, fract32 speed) {
-  fract32 ratio = FR32_MAX - speed;
-  fract32 difference = sub_fr1x32(*current, target);
-  fract32 inc = mult_fr1x32x32(ratio, shl_fr1x32(difference, 12));
-  *current = add_fr1x32(target,
-			shl_fr1x32(inc, -12));
-}
-
-//This guy slews correctly between *large* parameters
-static inline void coarse_logSlew(fract32* current, fract32 target, fract32 speed) {
-  fract32 ratio = FR32_MAX - speed;
-  fract32 inc = mult_fr1x32x32(ratio, sub_fr1x32(*current, target));
-  *current = add_fr1x32(target, inc);
-}
-
-//This guy auto-adjusts the radix - poor man's float I guess...
-static inline void normalised_logSlew(fract32* current, fract32 target, fract32 speed) {
-  fract32 ratio = speed;
-  fract32 difference = sub_fr1x32(target, *current);
-  int radix = norm_fr1x32(difference);
-  fract32 inc = mult_fr1x32x32(ratio, shl_fr1x32(difference, radix));
-  *current = add_fr1x32(*current,
-			shl_fr1x32(inc, - radix));
-}
-
 typedef struct {
   fract32 val;
   asymLinSlew slew;
 } trackingEnvelopeLin;
-
-static inline void trackingEnvelopeLin_init (trackingEnvelopeLin* env) {
-  env->val = 0;
-  asymLinSlew_init(&(env->slew));
-}
-
-static inline fract32 trackingEnvelopeLin_next (fract32 in, trackingEnvelopeLin* env) {
-  asymLinSlew_next(&(env->val), abs_fr1x32(in), &(env->slew));
-  return env->val;
-}
 
 typedef struct {
   fract32 val;
@@ -285,18 +185,21 @@ typedef struct {
   fract32 down;
 } trackingEnvelopeLog;
 
-static inline void trackingEnvelopeLog_init (trackingEnvelopeLog* env) {
-  env->val = 0;
-  env->up = SLEW_10MS;
-  env->down = SLEW_1S;
-}
+void radixLinSlew_init (radixLinSlew* slew, unsigned short radix);
+void radixLinSlew_next (fract32* current, fract32 target, radixLinSlew *slew);
+void linSlew_next (fract32* current, fract32 target, fract32 slewRate);
+void asymLinSlew_init (asymLinSlew* slew);
+void asymLinSlew_next (fract32* current, fract32 target, asymLinSlew* slew);
+void radixLogSlew_init (logSlew *slew, unsigned short radix);
+void radixLogSlew_next (fract32* current, fract32 target, logSlew* slew);
+void fine_logSlew(fract32* current, fract32 target, fract32 speed);
+void coarse_logSlew(fract32* current, fract32 target, fract32 speed);
+void normalised_logSlew(fract32* current, fract32 target, fract32 speed);
+void trackingEnvelopeLin_init (trackingEnvelopeLin* env);
+fract32 trackingEnvelopeLin_next (trackingEnvelopeLin* env, fract32 in);
+void trackingEnvelopeLog_init (trackingEnvelopeLog* env);
+fract32 trackingEnvelopeLog_next (trackingEnvelopeLog* env, fract32 in);
 
-static inline fract32 trackingEnvelopeLog_next (fract32 in, trackingEnvelopeLog* env) {
-  fract32 target = abs_fr1x32(in);
-  if (target > env->val)
-    coarse_logSlew(&(env->val), target, env->up);
-  else if (target < env->val)
-    coarse_logSlew(&(env->val), target, env->down);
-  return env->val;
-}
+
+
 #endif

@@ -104,8 +104,8 @@ fract32 process_frame (fract32 in) {
   /* fine_logSlew(&outVal, envNext, SLEW_4S); */
   /* normalised_logSlew(&outVal, envNext, SLEW_4S); */
   return outVal << sf;
-  return trackingEnvelopeLog_next(signalNext, &myLogEnv);
-  return trackingEnvelopeLin_next(signalNext, &myLinEnv);
+  return trackingEnvelopeLog_next(&myLogEnv, signalNext);
+  return trackingEnvelopeLin_next(&myLinEnv, signalNext);
   /* return osc_triangle(phasorNext); */
   /* fract32 LFO_shape = (1 << 30) + (1 << 29) + (1 << 28); */
   /* return add_fr1x32(mult_fr1x32x32(LFO_shape, */

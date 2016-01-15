@@ -23,6 +23,7 @@ typedef struct _grain {
   scrubTap scrubTap;
   bufferTapN tapWr;
   pitchDetector pitchDetector;
+  trackingEnvelopeLog env;
   s32 pitchDetection;
 
   s32 scrubTapEnable;

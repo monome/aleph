@@ -35,6 +35,7 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
 
   pitchDetector_init(&(dl->pitchDetector));
   dl->pitchDetection = 1;
+  trackingEnvelopeLog_init(&dl->env);
 
   dl->slewSpeed = 1 << 21;
 
@@ -118,7 +119,9 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   scrubTapOutput = scrubTap_read_xfade( &(dl->scrubTap));
 
   //DEBUG uncomment this line to listen to the detected tone from pitch Tracker
-  /* return pitchTrackOsc(&(dl->pitchDetector)) / 10; */
+  return mult_fr1x32x32(trackingEnvelopeLog_next(&(dl->env),
+						 echoTapOutput),
+			pitchTrackOsc(&(dl->pitchDetector)));
   if (dl->scrubTapEnable == 0) {
     fract32 combinedLength = dl->scrubTap.length + dl->echoTap.time;
     int norm = norm_fr1x32(combinedLength);
