@@ -69,9 +69,9 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 
   //DEBUG forcing nominal scrubLength to 50ms
   /* dl->scrubLengthTarget = 256 * 48 * 25; */
-  fract32 echoTapOutput = echoTap_read_xfade( &(dl->echoTap),
-					      0);
-  fract32 signalPeriod = pitchTrack(&(dl->pitchDetector), echoTapOutput);
+  dl->echoTapOutput = echoTap_read_xfade( &(dl->echoTap),
+					  0);
+  fract32 signalPeriod = pitchTrack(&(dl->pitchDetector), dl->echoTapOutput);
   //DEBUG forcing detected Period to 1ms
   /* signalPeriod = 48 * 256; */
   fract32 desiredPitchShift = sub_fr1x32(add_fr1x32((fract32)dl->scrubCentrePitch,
@@ -119,9 +119,9 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   scrubTapOutput = scrubTap_read_xfade( &(dl->scrubTap));
 
   //DEBUG uncomment this line to listen to the detected tone from pitch Tracker
-  return mult_fr1x32x32(trackingEnvelopeLog_next(&(dl->env),
-						 echoTapOutput),
-			pitchTrackOsc(&(dl->pitchDetector)));
+  /* return pitchTrackOsc(&(dl->pitchDetector)) >> 3; */
+
+
   if (dl->scrubTapEnable == 0) {
     fract32 combinedLength = dl->scrubTap.length + dl->echoTap.time;
     int norm = norm_fr1x32(combinedLength);
@@ -135,6 +135,11 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
     return scrubTapOutput;
 }
 
+fract32 read_pitchTrackOsc (grain *dl) {
+  return mult_fr1x32x32(trackingEnvelopeLog_next(&(dl->env),
+						 dl->echoTapOutput),
+			pitchTrackOsc(&(dl->pitchDetector)));
+}
 
 void grain_set_scrubPitch(grain* dl, s32 subsamples) {
   dl->scrubCentrePitch = subsamples;

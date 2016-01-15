@@ -24,6 +24,7 @@ typedef struct _grain {
   bufferTapN tapWr;
   pitchDetector pitchDetector;
   trackingEnvelopeLog env;
+  fract32 echoTapOutput;
   s32 pitchDetection;
 
   s32 scrubTapEnable;
@@ -53,6 +54,8 @@ extern void grain_init(grain* dl, fract32* bufData, u32 frames);
 
 // get next value given input
 extern fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal);
+
+fract32 read_pitchTrackOsc (grain *dl);
 
 void  grain_set_scrubFadeLength(grain* dl, s32 subsamples) ;
 
