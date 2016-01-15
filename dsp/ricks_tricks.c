@@ -191,9 +191,9 @@ fract32 pitchTrack (pitchDetector *p, fract32 in) {
 				in,
 				shl_fr1x32 (FR32_MAX / p->currentPeriod,
 					    PITCH_DETECTOR_RADIX_INTERNAL - 3));
-  if (p->lastIn <= 0 && in >= 0 && p->nFrames > 24) {
+  if (p->lastIn <= 0 && in >= 0 && p->nFrames > 12) {
     p->period = add_fr1x32(p->period,
-			   min_fr1x32 (p->nFrames, 1024));
+			   min_fr1x32 (p->nFrames, 2048));
     p->nFrames = 0;
     p->nsamples += 1;
     if (p->nsamples >= (1 << PITCH_DETECTOR_RADIX_INTERNAL)) {
