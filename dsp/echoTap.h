@@ -83,23 +83,22 @@ extern void echoTap_init(echoTap* tap, bufferTapN* tapWr);
 // interpolated read
 static inline fract32 echoTap_read_interp(echoTap* echoTap, s32 time) {
     s32 loop = echoTap->tapWr->loop << 8;
-    s32 idx = ((echoTap->tapWr->idx << 8) + loop - time - 768) % loop;
+    s32 idx = ((echoTap->tapWr->idx << 8) + loop - time - 512) % loop;
+    u32 samp0_index = shl_fr1x32(((idx - 256 + loop) % loop), -8);
+    fract32 *samp0 = (fract32*)echoTap->tapWr->buf->data + samp0_index;
+    u32 samp1_index = (samp0_index + 1) % echoTap->tapWr->loop;
+    fract32 *samp1 = (fract32*)echoTap->tapWr->buf->data + samp1_index;
+    u32 samp2_index = (samp1_index + 1) % echoTap->tapWr->loop;
+    fract32 *samp2 = (fract32*)echoTap->tapWr->buf->data + samp2_index;
+    u32 samp3_index = (samp2_index + 1) % echoTap->tapWr->loop;
+    fract32 *samp3 = (fract32*)echoTap->tapWr->buf->data + samp3_index;
 
-    u32 samp0_index = shl_fr1x32(((idx ) % loop), -8);
-    u32 samp1_index = shl_fr1x32(((idx + 256) % loop), -8);
-    u32 samp2_index = shl_fr1x32(((idx + 512) % loop), -8);
-    u32 samp3_index = shl_fr1x32(((idx + 768) % loop), -8);
-
-    fract32 samp0 = echoTap->tapWr->buf->data[samp0_index];
-    fract32 samp1 = echoTap->tapWr->buf->data[samp1_index];
-    fract32 samp2 = echoTap->tapWr->buf->data[samp2_index];
-    fract32 samp3 = echoTap->tapWr->buf->data[samp3_index];
     fract32 inter_sample = (idx % 256) << 23;
 
     fract32 pre_fader;
     //Pick an interpolation method! - linear or cubic?
-    /* pre_fader = pan_lin_mix(samp1, samp2, inter_sample); */
-    pre_fader = interp_bspline_fract32(inter_sample, samp0, samp1, samp2, samp3);
+    /* pre_fader = pan_lin_mix(*samp1, *samp2, inter_sample); */
+    pre_fader = interp_bspline_fract32(inter_sample, *samp0, *samp1, *samp2, *samp3);
     return pre_fader;
 }
 
