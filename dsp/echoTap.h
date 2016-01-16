@@ -62,15 +62,33 @@ fract32 echoTap_envelope(echoTap *tap);
 // intialize tap
 extern void echoTap_init(echoTap* tap, bufferTapN* tapWr);
 
+/* void *samp0_void = (void *) echoTap->tapWr->buf->data; */
+    /* samp0_void += (idx / 256) * sizeof(fract32); */
+    /* fract32 *samp0 = (fract32*) samp0_void; */
+    /* u32 buffSize = sizeof (fract32) * (u32) echoTap->tapWr->loop; */
+    /* fract32 *buffer = (fract32*)echoTap->tapWr->buf->data; */
+    /* fract32 *samp1 = (fract32*)__builtin_bfin_circptr (samp0, */
+    /* 						       sizeof (fract32), */
+    /* 						       buffer, */
+    /* 						       buffSize); */
+    /* fract32 *samp2 = (fract32*)__builtin_bfin_circptr (samp1, */
+    /* 						       sizeof (fract32), */
+    /* 						       buffer, */
+    /* 						       buffSize); */
+    /* fract32 *samp3 = (fract32*)__builtin_bfin_circptr (samp2, */
+    /* 						       sizeof (fract32), */
+    /* 						       buffer, */
+    /* 						       buffSize); */
+
 // interpolated read
 static inline fract32 echoTap_read_interp(echoTap* echoTap, s32 time) {
     s32 loop = echoTap->tapWr->loop << 8;
-    s32 idx = ((echoTap->tapWr->idx << 8) + loop - time) % loop;
+    s32 idx = ((echoTap->tapWr->idx << 8) + loop - time - 768) % loop;
 
-    u32 samp0_index = shl_fr1x32(((idx - 256) % loop), -8);
-    u32 samp1_index = shl_fr1x32(((idx + 0) % loop), -8);
-    u32 samp2_index = shl_fr1x32(((idx + 256) % loop), -8);
-    u32 samp3_index = shl_fr1x32(((idx + 512) % loop), -8);
+    u32 samp0_index = shl_fr1x32(((idx ) % loop), -8);
+    u32 samp1_index = shl_fr1x32(((idx + 256) % loop), -8);
+    u32 samp2_index = shl_fr1x32(((idx + 512) % loop), -8);
+    u32 samp3_index = shl_fr1x32(((idx + 768) % loop), -8);
 
     fract32 samp0 = echoTap->tapWr->buf->data[samp0_index];
     fract32 samp1 = echoTap->tapWr->buf->data[samp1_index];
