@@ -285,7 +285,7 @@ fract32 selectGrainInput(s32 i) {
 
 void module_process_frame(void) {
 
-  noiseBurstEnv = mult_fr1x32x32(noiseBurstEnv, FR32_MAX - ( 1 << 16));
+  noiseBurstEnv = mult_fr1x32x32(noiseBurstEnv, FR32_MAX - ( 1 << 24));
   u8 i;
   //IIR slew
   for (i=0;i<4;i++) {
