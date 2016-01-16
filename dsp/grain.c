@@ -113,10 +113,6 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 
   buffer_tapN_write(&(dl->tapWr), in);
 
-  fract32 scrubTapOutput;
-  
-  scrubTapOutput = scrubTap_read_xfade( &(dl->scrubTap));
-
   //DEBUG uncomment this line to listen to the detected tone from pitch Tracker
   /* return pitchTrackOsc(&(dl->pitchDetector)) >> 3; */
 
@@ -130,8 +126,9 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
     return echoTap_read_xfade( &(dl->echoTap),
 			       max_fr1x32(0, wiggledLength));
   }
-  else
-    return scrubTapOutput;
+  else {
+    return scrubTap_read_xfade( &(dl->scrubTap));
+  }
 }
 
 fract32 read_pitchTrackOsc (grain *dl) {
