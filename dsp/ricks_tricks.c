@@ -190,12 +190,13 @@ fract32 pitchTrackOsc (pitchDetector *p) {
 
 //This guy returns the current measured wave period (in subsamples)
 fract32 pitchTrack (pitchDetector *p, fract32 in) {
+  fract32 centreFreq = FR32_MAX / p->currentPeriod;
   in = lpf_next_dynamic_precise(&(p->adaptiveFilter), in,
-				shl_fr1x32 (FR32_MAX / p->currentPeriod,
+				shl_fr1x32 (centreFreq,
   					     PITCH_DETECTOR_RADIX_INTERNAL + 3));
   in = hpf_next_dynamic_precise(&(p->dcBlocker),
 				in,
-				shl_fr1x32 (FR32_MAX / p->currentPeriod,
+				shl_fr1x32 (centreFreq,
 					    PITCH_DETECTOR_RADIX_INTERNAL - 3));
   if (p->lastIn <= 0 && in >= 0 && p->nFrames > 12) {
     p->period = add_fr1x32(p->period,
@@ -353,7 +354,7 @@ void trackingEnvelopeLog_init (trackingEnvelopeLog* env) {
   env->val = 0;
   env->up = SLEW_1MS;
   env->down = SLEW_1MS;
-  env->gate = FR32_MAX /1000;
+  env->gate = FR32_MAX / 500;
 }
 
 fract32 trackingEnvelopeLog_next (trackingEnvelopeLog* env, fract32 in) {
@@ -362,8 +363,5 @@ fract32 trackingEnvelopeLog_next (trackingEnvelopeLog* env, fract32 in) {
     coarse_logSlew(&(env->val), target, env->up);
   else if (target < env->val)
     coarse_logSlew(&(env->val), target, env->down);
-  if (env->val < env->gate)
-    return env->val = 0;
-  else
-    return env->val;
+  return shl_fr1x32(env->val, 1);
 }
