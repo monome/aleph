@@ -56,14 +56,13 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
     dl->echoTimeCountdown--;
   }
   
-  simple_slew(dl->echoTap.max, dl->echoMaxTarget, dl->slewSpeed);
-  simple_slew(dl->echoTap.min, dl->echoMinTarget, dl->slewSpeed);
+  dl->echoTap.max = dl->echoMaxTarget;
+  dl->echoTap.min = dl->echoMinTarget;
 
-  simple_slew(dl->echoTap.fadeLength,
-	      mult_fr1x32x32((fract32)dl->echoFadeLengthTarget,
-			     sub_fr1x32((fract32) dl->echoMaxTarget,
-					(fract32) dl->echoMinTarget)),
-	      dl->slewSpeed);
+  dl->echoTap.fadeLength =
+    mult_fr1x32x32((fract32)dl->echoFadeLengthTarget,
+		   sub_fr1x32((fract32) dl->echoMaxTarget,
+			      (fract32) dl->echoMinTarget));
   buffer_tapN_next( &(dl->tapWr) );
   echoTap_next( &(dl->echoTap) );
 
