@@ -60,7 +60,16 @@ lpf myLpf;
 hpf myHpf;
 bpf myBpf;
 phasor myPhasor;
+phasor myPhasor2;
 fract32 lastVal;
+trackingEnvelopeLin myLinEnv;
+trackingEnvelopeLog myLogEnv;
+
+fract32 slewNum;
+asymLinSlew mySlew;
+radixLinSlew myRadixSlew;
+logSlew myRadixLogSlew;
+fract32 outVal;
 
 fract32 process_frame (fract32 in) {
   /* out[k] = delay_line[delay_index]; */
@@ -77,11 +86,26 @@ fract32 process_frame (fract32 in) {
 
   pitchTrack(&myPitchDetector, in);
   return pitchTrackOsc (&myPitchDetector);
+  /* return grain_next(&myGrain, in, 256); */
+  unsigned short sf = 12;
+  fract32 carrierNext = phasor_next_dynamic(&myPhasor2, hzToDimensionless(1000));
+  fract32 envNext = phasor_next_dynamic(&myPhasor,
+					hzToDimensionless(1));
+  envNext = ((envNext >> 1) + (1 << 30)) >> sf;
+  fract32 signalNext = mult_fr1x32x32(envNext, carrierNext);
+  /* radixLinSlew_next(&outVal, envNext, &myRadixSlew); */
+  /* radixLinSlew_next(&outVal, envNext, &myRadixSlew); */
+  /* radixLinSlew_next(&outVal, envNext, &myRadixSlew); */
 
-  /* return grain_next(&myGrain, in, 0); */
-  /* fract32 phasorNext = (fract32) phasor_next_dynamic(&myPhasor, */
-  /* 						     hzToDimensionless(1)); */
-  /* return osc(phasorNext); */
+  myRadixLogSlew.speed = 1 << 12;
+  radixLogSlew_next(&outVal, envNext, &myRadixLogSlew);
+
+  /* radixLinSlew_next(&outVal, envNext, &myRadixSlew); */
+  /* fine_logSlew(&outVal, envNext, SLEW_4S); */
+  /* normalised_logSlew(&outVal, envNext, SLEW_4S); */
+  return outVal << sf;
+  return trackingEnvelopeLog_next(signalNext, &myLogEnv);
+  return trackingEnvelopeLin_next(signalNext, &myLinEnv);
   /* return osc_triangle(phasorNext); */
   /* fract32 LFO_shape = (1 << 30) + (1 << 29) + (1 << 28); */
   /* return add_fr1x32(mult_fr1x32x32(LFO_shape, */
@@ -98,10 +122,17 @@ void init_dsp () {
   printf("trying to initialise grain...\n");
   grain_init(&myGrain, malloc(0x8000 * sizeof(fract32)), 0x4000);
   pitchDetector_init(&myPitchDetector);
+  asymLinSlew_init (&mySlew);
+  radixLinSlew_init (&myRadixSlew, 0);
+  radixLogSlew_init (&myRadixLogSlew, 10);
+  slewNum = LINSLEW_100MS;
   lpf_init(&myLpf);
   bpf_init(&myBpf);
   hpf_init(&myHpf);
+  trackingEnvelopeLog_init(&myLogEnv);
+  trackingEnvelopeLin_init(&myLinEnv);
   phasor_init(&myPhasor);
+  phasor_init(&myPhasor2);
   lastVal = 0;
   printf("...successfully initialised grain\n");
 }
@@ -335,7 +366,7 @@ jack_shutdown (void *arg)
 int main (int argc, char *argv[]) {
   init_dsp();
   const char **ports;
-  const char *client_name = "latent";
+  const char *client_name = "aleph_sim";
   const char *server_name = NULL;
   jack_options_t options = JackNullOption;
   jack_status_t status;
@@ -437,7 +468,7 @@ int main (int argc, char *argv[]) {
   if (jack_connect (client, "jaaa:out_1", jack_port_name (input_port))) {
     fprintf (stderr, "cannot connect input ports\n");
   }
-  if (jack_connect (client, "lisp-scope:out_1", jack_port_name (input_port))) {
+  if (jack_connect (client, "latent:input 1", jack_port_name (input_port))) {
     fprintf (stderr, "cannot connect input ports\n");
   }
 
@@ -453,7 +484,7 @@ int main (int argc, char *argv[]) {
   if (jack_connect (client, jack_port_name (output_port), "jaaa:in_1")) {
     fprintf (stderr, "cannot connect output ports\n");
   }
-  if (jack_connect (client, jack_port_name (output_port), "lisp-scope:in_1")) {
+  if (jack_connect (client, jack_port_name (output_port), "latent:input 0")) {
     fprintf (stderr, "cannot connect output ports\n");
   }
 

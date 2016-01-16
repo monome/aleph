@@ -162,6 +162,12 @@ fract32 osc_triangle (fract32 phase) {
     return 0;
 
 }
+fract32 osc_square (fract32 phase) {
+  if (phase > (1 << 30) || phase < (-1 << 30))
+    return FR32_MAX;
+  else
+    return FR32_MIN;
+}
 
 void pitchDetector_init (pitchDetector *p) {
   p->currentPeriod = 48 << PITCH_DETECTOR_RADIX_TOTAL;

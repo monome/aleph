@@ -61,13 +61,17 @@ fract32 negate_fr1x32(fract32 x) {
 }
 
 int norm_fr1x32(fract32 x) {
-  int i = 0;
-  while ((x < (1 << 30)) &&
-	 (x > ( -1 << 30))) {
-    x = x << 1;
-    i++;
+  int i;
+  for (i= 0; i < 32; i++) {
+    if (x > (1 << 30) ||
+	x < ( -1 << 30)) {
+      return i;
+    }
+    else {
+      x = x * 2;
+    }
   }
-  return i;
+  return FR32_MAX;
 }
 
 fract32 shl_fr1x32 (fract32 x, int shft) {
