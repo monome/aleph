@@ -84,12 +84,12 @@ static inline fract32 echoTap_read_interp(echoTap* echoTap, s32 time) {
     						       buffer,
     						       buffSize);
 
-    fract32 inter_sample = (negate_f1x32(time) & 0xFF) << 23;
+    fract32 inter_sample = (time & 0xFF) << 23;
 
     fract32 pre_fader;
     //Pick an interpolation method! - linear or cubic?
     /* pre_fader = pan_lin_mix(*samp1, *samp2, inter_sample); */
-    pre_fader = interp_bspline_fract32(inter_sample, *samp0, *samp1, *samp2, *samp3);
+    pre_fader = interp_bspline_fract32(inter_sample, *samp3, *samp2, *samp1, *samp0);
     return pre_fader;
 }
 
