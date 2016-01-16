@@ -29,12 +29,18 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_fader (eParam_aux2_i2, "aux2_i2");
   param_desc_fader (eParam_effect_i2, "effect_i2");
 
+  param_desc_aux(desc, eParam_source_i3, "source_i3",
+		 eParamTypeFix, 0x00000000, 0x00090000,
+		 32);
   param_desc_fader (eParam_fader_i3, "fader_i3");
   param_desc_pan (eParam_pan_i3, "pan_i3");
   param_desc_fader (eParam_aux1_i3, "aux1_i3");
   param_desc_fader (eParam_aux2_i3, "aux2_i3");
   param_desc_fader (eParam_effect_i3, "effect_i3");
 
+  param_desc_aux(desc, eParam_source_i4, "source_i4",
+		 eParamTypeFix, 0x00000000, 0x00090000,
+		 32);
   param_desc_fader (eParam_fader_i4, "fader_i4");
   param_desc_pan (eParam_pan_i4, "pan_i4");
   param_desc_fader (eParam_aux1_i4, "aux1_i4");

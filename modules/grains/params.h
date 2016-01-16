@@ -80,12 +80,14 @@ enum params {
   eParam_aux2_i2,
   eParam_effect_i2,
 
+  eParam_source_i3,
   eParam_fader_i3,
   eParam_pan_i3,
   eParam_aux1_i3,
   eParam_aux2_i3,
   eParam_effect_i3,
 
+  eParam_source_i4,
   eParam_fader_i4,
   eParam_pan_i4,
   eParam_aux1_i4,

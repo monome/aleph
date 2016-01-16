@@ -65,6 +65,8 @@ ParamValue effectITarget[4];
 #define NGRAINS 2
 grain grains[NGRAINS];
 //Grain mix params
+ParamValue sourceMixer3;
+ParamValue sourceMixer4;
 
 ParamValue sourceG[NGRAINS];
 
@@ -148,12 +150,14 @@ void module_init(void) {
   param_setup( 	eParam_aux2_i2,		AUX_DEFAULT );
   param_setup( 	eParam_effect_i2,	EFFECT_DEFAULT );
 
+  param_setup( 	eParam_source_i3,	3);
   param_setup( 	eParam_fader_i3,	FADER_DEFAULT );
   param_setup( 	eParam_pan_i3,		PAN_DEFAULT );
   param_setup( 	eParam_aux1_i3,		AUX_DEFAULT );
   param_setup( 	eParam_aux2_i3,		AUX_DEFAULT );
   param_setup( 	eParam_effect_i3,	EFFECT_DEFAULT );
 
+  param_setup( 	eParam_source_i4,	4);
   param_setup( 	eParam_fader_i4,	FADER_DEFAULT );
   param_setup( 	eParam_pan_i4,		PAN_DEFAULT );
   param_setup( 	eParam_aux1_i4,		AUX_DEFAULT );
@@ -305,11 +309,21 @@ void module_process_frame(void) {
 						effectBusFeedback,
 						hzToDimensionless(50)),
 			       hzToDimensionless(4000));
-  for (i=0;i<4;i++) {
+  for (i=0;i<2;i++) {
     mix_panned_mono (in[i], &(out[0]), &(out[1]), panI[i], faderI[i]);
     mix_aux_mono (in[i], &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
     simple_busmix (effectBus, in[i],effectI[i]);
   }
+
+  i=2;
+  mix_panned_mono (selectGrainInput(sourceMixer3), &(out[0]), &(out[1]), panI[i], faderI[i]);
+    mix_aux_mono (selectGrainInput(sourceMixer3), &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
+    simple_busmix (effectBus, selectGrainInput(sourceMixer3),effectI[i]);
+  i=3;
+  mix_panned_mono (selectGrainInput(sourceMixer4), &(out[0]), &(out[1]), panI[i], faderI[i]);
+    mix_aux_mono (selectGrainInput(sourceMixer4), &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
+    simple_busmix (effectBus, selectGrainInput(sourceMixer4),effectI[i]);
+
   effectBusFeedback = 0;
   fract32 AMOut;
   fract32 grainOut;
@@ -375,6 +389,9 @@ void module_set_param(u32 idx, ParamValue v) {
     effectITarget[1] = v;
     break;
 
+  case eParam_source_i3 :
+    sourceMixer3 = v >> 16;
+    break;
   case eParam_fader_i3 :
     faderITarget[2] = v;
     break;
@@ -391,6 +408,9 @@ void module_set_param(u32 idx, ParamValue v) {
     effectITarget[2] = v;
     break;
 
+  case eParam_source_i4 :
+    sourceMixer4 = v >> 16;
+    break;
   case eParam_fader_i4 :
     faderITarget[3] = v;
     break;
