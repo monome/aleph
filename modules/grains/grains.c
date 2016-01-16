@@ -1,7 +1,7 @@
 /* dacs.c
    aleph-bfin
 
-   pitchshift module with 4 'grains'
+   pitchshift module with 2 'grains'
 
 */
 
@@ -263,7 +263,9 @@ fract32 selectGrainInput(s32 i) {
     return in[i-1];
   else if (i < 5 + NGRAINS && i > 4)
     return grainOutFeedback[i - 5];
-  else if (i == 5 + NGRAINS)
+  else if (i < 5 + NGRAINS + NGRAINS && i >4 + NGRAINS)
+    return read_pitchTrackOsc(&(grains[i - 5 - NGRAINS]));
+  else if (i == 5 + NGRAINS + NGRAINS)
     return LFO_bus;
   else return 0;
 }
