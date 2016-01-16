@@ -100,6 +100,9 @@ phasor LFO;
 fract32 LFO_bus;
 fract32 LFO_shape;
 
+fract32 noiseBurstEnv;
+lcprng noiseBurstSource;
+
 // data structure of external memory
 typedef struct _grainsData {
   ModuleData super;
@@ -237,6 +240,9 @@ void module_init(void) {
   param_setup (eParam_LFO_speed, hzToDimensionless(1) & 0xFFFF0000);
   param_setup (eParam_LFO_shape, PAN_DEFAULT);
   phasor_init(&LFO);
+
+  param_setup (eParam_noiseBurst, 0);
+  lcprng_reset(&noiseBurstSource, 1);
 }
 
 // de-init
@@ -271,11 +277,15 @@ fract32 selectGrainInput(s32 i) {
     return read_pitchTrackOsc(&(grains[i - 5 - NGRAINS]));
   else if (i == 5 + NGRAINS + NGRAINS)
     return LFO_bus;
+  else if (i == 6 + NGRAINS + NGRAINS)
+    return abs_fr1x32(mult_fr1x32x32(noiseBurstEnv,
+				     lcprng_next (&noiseBurstSource)));
   else return 0;
 }
 
 void module_process_frame(void) {
 
+  noiseBurstEnv = mult_fr1x32x32(noiseBurstEnv, FR32_MAX - ( 1 << 16));
   u8 i;
   //IIR slew
   for (i=0;i<4;i++) {
@@ -607,6 +617,9 @@ void module_set_param(u32 idx, ParamValue v) {
     LFO_shape = v;
     break;
 
+  case eParam_noiseBurst :
+    noiseBurstEnv = FR32_MAX >> 1;
+    break;
 
   default:
     break;

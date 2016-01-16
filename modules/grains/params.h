@@ -162,6 +162,8 @@ enum params {
 
   eParam_LFO_speed,
   eParam_LFO_shape,
+
+  eParam_noiseBurst,
   
   eParamNumParams
 };
