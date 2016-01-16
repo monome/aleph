@@ -148,8 +148,30 @@ fract32 pitchTrack (pitchDetector *p, fract32 preIn);
 fract32 pitchTrackOsc (pitchDetector *p);
 fract32 s32_halfWave_env (fract32 pos) ;
 float interp_bspline_float (float x, float _y, float y, float y_, float y__);
-fract32 interp_bspline_fract32 (fract32 x, fract32 _y, fract32 y, fract32 y_, fract32 y__);
 
+static const fract32 FR32_1_OVER_3 = FR32_MAX / 3;
+
+static inline fract32 interp_bspline_fract32 (fract32 x, fract32 _y, fract32 y, fract32 y_, fract32 y__) {
+  fract32 ym1py1 = add_fr1x32(shl_fr1x32(_y, -4),
+			      shl_fr1x32(y_, -4));
+  fract32 c0 = mult_fr1x32x32(add_fr1x32(shl_fr1x32(ym1py1, -1),
+					 shl_fr1x32(y, -3)),
+			      FR32_1_OVER_3);
+  fract32 c1 = shl_fr1x32(sub_fr1x32(y_,_y),
+			  -5);
+  fract32 c2 = sub_fr1x32(shl_fr1x32(ym1py1,-1),
+			  shl_fr1x32(y, -4));
+  fract32 c3 = add_fr1x32(shl_fr1x32(y-y_,-5),
+			  mult_fr1x32x32(shl_fr1x32(y__-_y,-5),
+					 FR32_1_OVER_3));
+  return
+    shl_fr1x32(add_fr1x32 (c0,
+			   mult_fr1x32x32(x,
+					  add_fr1x32(c1,
+						     mult_fr1x32x32((mult_fr1x32x32(c3,x) + c2),
+								    x)))),
+	       4);
+}
 
 typedef struct {
   unsigned short radix;
