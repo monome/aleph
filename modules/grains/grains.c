@@ -510,7 +510,7 @@ void module_set_param(u32 idx, ParamValue v) {
     grain_set_echoFadeLength(&(grains[0]), v << 7);
     break;
   case eParam_echoTime_g1 :
-    grain_set_echoTime(&(grains[0]),v >> 2);
+    grain_set_echoTime(&(grains[0]),v >> 4);
     break;
   case eParam_echoSpeed_g1 :
     grain_set_echoSpeed(&(grains[0]),v >> 8);
@@ -519,10 +519,10 @@ void module_set_param(u32 idx, ParamValue v) {
     grain_set_echoEdgeBehaviour(&(grains[0]),v >> 16);
     break;
   case eParam_echoMin_g1 :
-    grain_set_echoMin(&(grains[0]),v >> 2);
+    grain_set_echoMin(&(grains[0]),v >> 4);
     break;
   case eParam_echoMax_g1 :
-    grain_set_echoMax(&(grains[0]),v >> 2);
+    grain_set_echoMax(&(grains[0]),v >> 4);
     break;
   case eParam_writeEnable_g1 :
     grain_set_writeEnable(&(grains[0]),v);
@@ -606,7 +606,7 @@ void module_set_param(u32 idx, ParamValue v) {
     grain_set_echoFadeLength(&(grains[1]), v<<7);
     break;
   case eParam_echoTime_g2 :
-    grain_set_echoTime(&(grains[1]),v>>2);
+    grain_set_echoTime(&(grains[1]),v>>4);
     break;
   case eParam_echoSpeed_g2 :
     grain_set_echoSpeed(&(grains[1]),v>>8);
@@ -615,10 +615,10 @@ void module_set_param(u32 idx, ParamValue v) {
     grain_set_echoEdgeBehaviour(&(grains[1]),v>>16);
     break;
   case eParam_echoMin_g2 :
-    grain_set_echoMin(&(grains[1]),v>>2);
+    grain_set_echoMin(&(grains[1]),v>>4);
     break;
   case eParam_echoMax_g2 :
-    grain_set_echoMax(&(grains[1]),v>>2);
+    grain_set_echoMax(&(grains[1]),v>>4);
     break;
   case eParam_writeEnable_g2 :
     grain_set_writeEnable(&(grains[1]),v);
