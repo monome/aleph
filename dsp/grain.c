@@ -36,6 +36,7 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   pitchDetector_init(&(dl->pitchDetector));
   dl->pitchDetection = 1;
   trackingEnvelopeLog_init(&dl->env);
+  dl->envEnable = 1;
 
   dl->slewSpeed = 1 << 21;
 
@@ -132,10 +133,26 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 }
 
 fract32 read_pitchTrackOsc (grain *dl) {
-  return mult_fr1x32x32(trackingEnvelopeLog_next(&(dl->env),
-						 dl->echoTapOutput),
-			pitchTrackOsc(&(dl->pitchDetector)));
+  if (dl->envEnable)
+    return mult_fr1x32x32(trackingEnvelopeLog_next(&(dl->env),
+						   dl->echoTapOutput),
+			  pitchTrackOsc(&(dl->pitchDetector)));
+  else
+    return pitchTrackOsc(&(dl->pitchDetector));
 }
+
+void grain_set_pitchOffset(grain *dl, fract32 po) {
+  dl->pitchDetector.pitchOffset = po;
+}
+
+void grain_disable_trackingEnv(grain *dl) {
+  dl->envEnable = 0;
+}
+
+void grain_enable_trackingEnv(grain *dl) {
+  dl->envEnable = 1;
+}
+
 
 void grain_set_scrubPitch(grain* dl, s32 subsamples) {
   dl->scrubCentrePitch = subsamples;

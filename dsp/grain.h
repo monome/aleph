@@ -26,6 +26,7 @@ typedef struct _grain {
   trackingEnvelopeLog env;
   fract32 echoTapOutput;
   s32 pitchDetection;
+  s32 envEnable;
 
   s32 scrubTapEnable;
 
@@ -91,6 +92,12 @@ void grain_enable_pitchDetection(grain* dl);
 void grain_disable_scrubTap(grain* dl);
 
 void grain_enable_scrubTap(grain* dl);
+
+void grain_disable_trackingEnv(grain* dl);
+
+void grain_enable_trackingEnv(grain* dl);
+
+void grain_set_PitchOffset(grain* dl, fract32 po);
 
 #endif // h guard
 

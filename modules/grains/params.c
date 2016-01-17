@@ -113,7 +113,13 @@ extern void fill_param_desc(ParamDesc* desc) {
 		 eParamTypeIntegrator, 0x00000000, FR32_MAX,
 		 32);
 
-
+  //Tracking Oscillator Params
+  param_desc_aux(desc, eParam_trackingEnv_g1, "trackingEnv_g1",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 32);
+  param_desc_aux (desc, eParam_trackingPitch_g1, "trackingPitch_g1",
+		  SPEED_TYPE, SPEED_MIN, SPEED_MAX,
+		  SPEED_RADIX);
   
   //Grain Mixer Params
   param_desc_aux(desc, eParam_source_g2, "source_g2",
@@ -180,6 +186,14 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux(desc, eParam_slewSpeed_g2, "slewSpeed_g2",
 		 eParamTypeIntegrator, 0x00000000, FR32_MAX,
 		 32);
+
+  //Tracking Oscillator Params
+  param_desc_aux(desc, eParam_trackingEnv_g2, "trackingEnv_g2",
+		 eParamTypeFix, 0x00000000, 0x00010000,
+		 32);
+  param_desc_aux (desc, eParam_trackingPitch_g2, "trackingPitch_g2",
+		  SPEED_TYPE, SPEED_MIN, SPEED_MAX,
+		  SPEED_RADIX);
 
   param_desc_aux(desc, eParam_LFO_speed, "LFO_speed",
 		 eParamTypeFix, 0, FR32_MAX,

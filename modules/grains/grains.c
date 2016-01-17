@@ -206,6 +206,10 @@ void module_init(void) {
   param_setup (eParam_echoMax_g1, 65536 * 30);
 
   param_setup (eParam_writeEnable_g1, 1 * 65536);
+
+  //PitchTrack oscillator params
+  param_setup (eParam_trackingEnv_g1, 1 * 655361);
+  param_setup (eParam_scrubPitch_g1, 1 * 65536);
   
   param_setup( 	eParam_source_g2,	0);
   param_setup( 	eParam_fader_g2,	FADER_DEFAULT );
@@ -236,6 +240,10 @@ void module_init(void) {
   param_setup (eParam_echoMax_g2, 65536 * 30);
 
   param_setup (eParam_writeEnable_g2, 1 * 65536);
+
+  //PitchTrack oscillator params
+  param_setup (eParam_trackingEnv_g1, 1 * 655361);
+  param_setup (eParam_scrubPitch_g1, 1 * 65536);
 
   param_setup (eParam_LFO_speed, hzToDimensionless(1) & 0xFFFF0000);
   param_setup (eParam_LFO_shape, PAN_DEFAULT);
@@ -523,6 +531,15 @@ void module_set_param(u32 idx, ParamValue v) {
     grain_set_slewSpeed(&(grains[0]),v);
     break;
 
+  case eParam_trackingEnv_g1 :
+    if (v == 0)
+      grain_disable_trackingEnv(&(grains[0]));
+    else
+      grain_enable_trackingEnv(&(grains[0]));
+    break;
+  case eParam_trackingPitch_g1 :
+    grain_set_pitchOffset(&(grains[0]), shl_fr1x32(v, 5));
+    break;
 
   //grain mix params
   case eParam_source_g2 :
@@ -608,6 +625,16 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_slewSpeed_g2 :
     grain_set_slewSpeed(&(grains[1]),v);
+    break;
+
+  case eParam_trackingEnv_g2 :
+    if (v == 0)
+      grain_disable_trackingEnv(&(grains[1]));
+    else
+      grain_enable_trackingEnv(&(grains[1]));
+    break;
+  case eParam_trackingPitch_g2 :
+    grain_set_pitchOffset(&(grains[1]), shl_fr1x32(v, 5));
     break;
 
   case eParam_LFO_speed :

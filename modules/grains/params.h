@@ -127,6 +127,10 @@ enum params {
   eParam_slewSpeed_g1,
   eParam_writeEnable_g1,
 
+  //grain tracking osc params
+  eParam_trackingEnv_g1,
+  eParam_trackingPitch_g1,
+
   //grain mix params
   eParam_source_g2,
   eParam_fader_g2,
@@ -159,6 +163,10 @@ enum params {
   //grain writehead params
   eParam_slewSpeed_g2,
   eParam_writeEnable_g2,
+
+  //grain tracking osc params
+  eParam_trackingEnv_g2,
+  eParam_trackingPitch_g2,
 
   eParam_LFO_speed,
   eParam_LFO_shape,
