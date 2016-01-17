@@ -97,7 +97,7 @@ void grain_disable_trackingEnv(grain* dl);
 
 void grain_enable_trackingEnv(grain* dl);
 
-void grain_set_PitchOffset(grain* dl, fract32 po);
+void grain_set_pitchOffset(grain* dl, fract32 po);
 
 #endif // h guard
 
