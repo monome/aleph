@@ -93,7 +93,8 @@ ParamValue AM_faderG[NGRAINS];
 ParamValue AM_sourceG[NGRAINS];
 hpf AM_hpf[NGRAINS];
 hpf effect_hpf;
-lpf effect_lpf;
+lpf grain_lpf[NGRAINS];
+fract32 grain_lpf_freq[NGRAINS];
 
 ParamValue phaseG[NGRAINS];
 
@@ -171,12 +172,13 @@ void module_init(void) {
 
   //initialise effect bus feedback DC block filter
   hpf_init(&effect_hpf);
-  lpf_init(&effect_lpf);
   int i;
   //initialise grains
   for (i=0;i<NGRAINS; i++) {
     grain_init(&(grains[i]), pGrainsData->audioBuffer[i], LINES_BUF_FRAMES);
     hpf_init(&(AM_hpf[i]));
+    lpf_init(&(grain_lpf[i]));
+    grain_lpf_freq[i] = hzToDimensionless(4000);
   }
   
   param_setup( 	eParam_source_g1,	0);
@@ -186,6 +188,7 @@ void module_init(void) {
   param_setup( 	eParam_aux2_g1,		AUX_DEFAULT );
   param_setup( 	eParam_effect_g1,	0 );
   param_setup( 	eParam_phase_g1,	65536);
+  param_setup( 	eParam_lpf_g1,          4000 << 16);
 
   //grain mod params
   param_setup (eParam_FM_source_g1, 0);
@@ -221,6 +224,7 @@ void module_init(void) {
   param_setup( 	eParam_aux2_g2,		AUX_DEFAULT );
   param_setup( 	eParam_effect_g2,	0 );
   param_setup( 	eParam_phase_g2,	65536);
+  param_setup( 	eParam_lpf_g1,          4000 << 16);
 
   //grain mod params
   param_setup (eParam_FM_source_g2, 0);
@@ -349,11 +353,9 @@ void module_process_frame(void) {
 			      osc(phase_next)),
 	       mult_fr1x32x32(sub_fr1x32(FR32_MAX,LFO_shape),
 			      osc_triangle(phase_next)));
-  effectBus = lpf_next_dynamic(&effect_lpf,
-			       hpf_next_dynamic(&effect_hpf,
-						effectBusFeedback,
-						hzToDimensionless(50)),
-			       hzToDimensionless(4000));
+  effectBus = hpf_next_dynamic(&effect_hpf,
+			       effectBusFeedback,
+			       hzToDimensionless(50));
   for (i=0;i<2;i++) {
     mix_panned_mono (in[i], &(out[0]), &(out[1]), panI[i], faderI[i]);
     mix_aux_mono (in[i], &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
@@ -377,6 +379,10 @@ void module_process_frame(void) {
 				    selectGrainInput(sourceG[i]),
 				    mult_fr1x32x32(selectGrainInput(FM_sourceG[i]),
 						   FM_faderG[i]));
+    grainOut = lpf_next_dynamic(&(grain_lpf[i]),
+				  grainOut,
+				  grain_lpf_freq[i]);
+
     // FIXME AM signal comes out very quiet should be preceded by a 50Hz HPF
     // Then multiplied up by 20dB or so...
     // This is done now - but not quite sure about the results...
@@ -512,6 +518,9 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_AM_source_g1 :
     AM_sourceG[0] = v >> 16;
     break;
+  case eParam_lpf_g1 :
+    grain_lpf_freq[0] = hzToDimensionless((v >> 16));
+    break;
     
     //grain scrubber params
   case eParam_scrubEnable_g1 :
@@ -607,6 +616,9 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_AM_source_g2 :
     AM_sourceG[1] = v >> 16;
+    break;
+  case eParam_lpf_g2 :
+    grain_lpf_freq[1] = hzToDimensionless((v >> 16));
     break;
     
     //grain scrubber params

@@ -59,6 +59,8 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux(desc, eParam_phase_g1, "phase_g1",
 		 eParamTypeFix, 0x00000000, 0x00010000,
 		 16);
+  param_desc_aux (desc, eParam_lpf_g1, "lpf_g1",
+		  eParamTypeFix, 50 << 16, 7000 << 16, 16);
   
   //grain mod params
   param_desc_aux(desc, eParam_FM_source_g1, "FM_source_g1",
@@ -133,6 +135,8 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux(desc, eParam_phase_g2, "phase_g2",
 		 eParamTypeFix, 0x00000000, 0x00010000,
 		 16);
+  param_desc_aux (desc, eParam_lpf_g2, "lpf_g2",
+		  eParamTypeFix, 50 << 16, 7000 << 16, 16);
   
   //grain mod params
   param_desc_aux(desc, eParam_FM_source_g2, "FM_source_g2",

@@ -102,6 +102,7 @@ enum params {
   eParam_aux2_g1,
   eParam_effect_g1,
   eParam_phase_g1, //So we can flip the phase back into effect bus for flanging fb
+  eParam_lpf_g1,
 
   //grain mod params
   eParam_FM_source_g1,
@@ -139,6 +140,7 @@ enum params {
   eParam_aux2_g2,
   eParam_effect_g2,
   eParam_phase_g2, //So we can flip the phase back into effect bus for flanging fb
+  eParam_lpf_g2,
 
   //grain mod params
   eParam_FM_source_g2,
