@@ -186,9 +186,9 @@ fract32 pitchTrackOsc (pitchDetector *p) {
   //Debug uncomment the line below to force 1k tone
   /* p->currentPeriod = (48 << (PITCH_DETECTOR_RADIX_INTERNAL)); */
   p->phase +=
-    p->pitchOffset
-    / shl_fr1x32(p->currentPeriod,
-		 - PITCH_DETECTOR_RADIX_INTERNAL);
+    (p->pitchOffset
+     / shl_fr1x32(p->currentPeriod,
+		  - PITCH_DETECTOR_RADIX_INTERNAL)) << 1;
   return osc(p->phase);
 }
 
