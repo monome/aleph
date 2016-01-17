@@ -345,7 +345,7 @@ void module_process_frame(void) {
   effectBusFeedback = 0;
   fract32 AMOut;
   fract32 grainOut;
-  for (i=0;i<NGRAINS-1;i++) {
+  for (i=0;i<NGRAINS;i++) {
     grainOut=phaseG[i] * grain_next(&(grains[i]),
 				    selectGrainInput(sourceG[i]),
 				    mult_fr1x32x32(selectGrainInput(FM_sourceG[i]),
