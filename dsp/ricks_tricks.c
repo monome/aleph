@@ -176,6 +176,8 @@ void pitchDetector_init (pitchDetector *p) {
   p->phase = 0;
   p->nsamples = 100;
   p->nFrames = 100;
+  p->pitchOffset = FR32_MAX >> 2;
+  /* p->pitchOffset = FR32_MAX / 2; */
   hpf_init(&(p->dcBlocker));
   lpf_init(&(p->adaptiveFilter));
 }
@@ -183,8 +185,10 @@ void pitchDetector_init (pitchDetector *p) {
 fract32 pitchTrackOsc (pitchDetector *p) {
   //Debug uncomment the line below to force 1k tone
   /* p->currentPeriod = (48 << (PITCH_DETECTOR_RADIX_INTERNAL)); */
-  p->phase += FR32_MAX / shl_fr1x32(p->currentPeriod,
-				    -1 - PITCH_DETECTOR_RADIX_INTERNAL);
+  p->phase +=
+    p->pitchOffset
+    / shl_fr1x32(p->currentPeriod,
+		 - PITCH_DETECTOR_RADIX_INTERNAL);
   return osc(p->phase);
 }
 

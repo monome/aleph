@@ -141,6 +141,7 @@ typedef struct {
   s32 nFrames;
   hpf dcBlocker;
   lpf adaptiveFilter;
+  fract32 pitchOffset;
 } pitchDetector;
 
 void pitchDetector_init (pitchDetector *p);
