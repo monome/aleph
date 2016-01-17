@@ -68,11 +68,6 @@ so a grain consists a buffer, a write head running at 1x, an 'echoTap'
     finer grained than the echoTap.
 
 Well - this all makes a twisted kind of sense to me at least anyway!
-* How to implement pitchshift on top of echoTap
-** Decoupling scrubberhead from echo-tap
-   Echotap wrap behaviour should be abstracted from the scrubberhead.
-   so the scrubberhead 'requests' samples in the echoTap time
-   coordinate this way if echoTap is currently wrapping (e.g repeating
-   sampler application) the scrubberhead can pitchshift without
-   knowledge of echoTap internal state.
-
+* Bugggzzzz
+Not sure if pitch offset is translating 1 on screen (bees value) to
+oscillator at the detected frequency

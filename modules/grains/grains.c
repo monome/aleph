@@ -634,7 +634,7 @@ void module_set_param(u32 idx, ParamValue v) {
       grain_enable_trackingEnv(&(grains[1]));
     break;
   case eParam_trackingPitch_g2 :
-    grain_set_pitchOffset(&(grains[1]), shl_fr1x32(v, 5));
+    grain_set_pitchOffset(&(grains[1]), shl_fr1x32(v, 13));
     break;
 
   case eParam_LFO_speed :
