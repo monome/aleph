@@ -17,6 +17,7 @@
 
 // aleph-bfin
 #include "bfin_core.h"
+#include "cv.h"
 //#include "dac.h"
 #include "gpio.h"
 #include "fract_math.h"
@@ -252,6 +253,11 @@ void module_init(void) {
   param_setup (eParam_LFO_shape, PAN_DEFAULT);
   phasor_init(&LFO);
 
+  param_setup (eParam_cvPatch1, 0);
+  param_setup (eParam_cvPatch2, 0);
+  param_setup (eParam_cvPatch3, 0);
+  param_setup (eParam_cvPatch4, 0);
+
   param_setup (eParam_noiseBurst, 0);
   param_setup (eParam_noiseBurstDecay, (1 << 24));
   lcprng_reset(&noiseBurstSource, 1);
@@ -278,6 +284,11 @@ fract32 effectBus;
 fract32 effectBusFeedback;
 fract32 grainOutFeedback[NGRAINS];
 
+
+// dac values (u16, but use fract32 and audio integrators)
+static u8 cvPatch[4];
+static u8 cvChan = 0;
+
 fract32 selectGrainInput(s32 i) {
   if ( i == 0)
     return effectBus;
@@ -295,6 +306,16 @@ fract32 selectGrainInput(s32 i) {
     return abs_fr1x32(mult_fr1x32x32(noiseBurstEnv,
 				     lcprng_next (&noiseBurstSource)));
   else return 0;
+}
+
+void process_cv (void) {
+  cv_update(cvChan, selectGrainInput(cvPatch[cvChan]));
+
+  // Queue up the next CV output for processing next audio frame
+  if(++cvChan == 4) {
+    cvChan = 0;
+  }
+  /* cvChan = (cvChan + 1) & 3 */
 }
 
 void module_process_frame(void) {
@@ -372,6 +393,7 @@ void module_process_frame(void) {
     simple_busmix (effectBusFeedback,
 		   grainOut,
 		   effectG[i]);
+    process_cv();
   }
 }
 
@@ -656,6 +678,20 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_noiseBurstDecay :
     noiseBurstDecay = v;
     break;
+
+  case eParam_cvPatch1 :
+    cvPatch[0] = v >> 16;
+    break;
+  case eParam_cvPatch2 :
+    cvPatch[1] = v >> 16;
+    break;
+  case eParam_cvPatch3 :
+    cvPatch[2] = v >> 16;
+    break;
+  case eParam_cvPatch4 :
+    cvPatch[3] = v >> 16;
+    break;
+
 
   default:
     break;

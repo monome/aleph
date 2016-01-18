@@ -207,6 +207,20 @@ extern void fill_param_desc(ParamDesc* desc) {
 		 eParamTypeFix, 0, FR32_MAX,
 		 16);
 
+  //CV Sources
+  param_desc_aux(desc, eParam_cvPatch1, "eParam_cvPatch1",
+		 eParamTypeFix, 0x00000000, 0x000C0000,
+		 32);
+  param_desc_aux(desc, eParam_cvPatch2, "eParam_cvPatch2",
+		 eParamTypeFix, 0x00000000, 0x000C0000,
+		 32);
+  param_desc_aux(desc, eParam_cvPatch3, "eParam_cvPatch3",
+		 eParamTypeFix, 0x00000000, 0x000C0000,
+		 32);
+  param_desc_aux(desc, eParam_cvPatch4, "eParam_cvPatch4",
+		 eParamTypeFix, 0x00000000, 0x000C0000,
+		 32);
+
 
 }
 
