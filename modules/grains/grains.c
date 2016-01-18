@@ -101,6 +101,7 @@ fract32 LFO_bus;
 fract32 LFO_shape;
 
 fract32 noiseBurstEnv;
+fract32 noiseBurstDecay;
 lcprng noiseBurstSource;
 
 // data structure of external memory
@@ -250,6 +251,7 @@ void module_init(void) {
   phasor_init(&LFO);
 
   param_setup (eParam_noiseBurst, 0);
+  param_setup (eParam_noiseBurstDecay, (1 << 24));
   lcprng_reset(&noiseBurstSource, 1);
 }
 
@@ -293,7 +295,7 @@ fract32 selectGrainInput(s32 i) {
 
 void module_process_frame(void) {
 
-  noiseBurstEnv = mult_fr1x32x32(noiseBurstEnv, FR32_MAX - ( 1 << 24));
+  noiseBurstEnv = mult_fr1x32x32(noiseBurstEnv, FR32_MAX - noiseBurstDecay);
   u8 i;
   //IIR slew
   for (i=0;i<4;i++) {
@@ -646,6 +648,9 @@ void module_set_param(u32 idx, ParamValue v) {
 
   case eParam_noiseBurst :
     noiseBurstEnv = FR32_MAX >> 1;
+    break;
+  case eParam_noiseBurstDecay :
+    noiseBurstDecay = v;
     break;
 
   default:

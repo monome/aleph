@@ -172,6 +172,12 @@ enum params {
   eParam_LFO_shape,
 
   eParam_noiseBurst,
+  eParam_noiseBurstDecay,
+
+  eParam_cvPatch1,
+  eParam_cvPatch2,
+  eParam_cvPatch3,
+  eParam_cvPatch4,
   
   eParamNumParams
 };

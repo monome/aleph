@@ -203,6 +203,9 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux(desc, eParam_noiseBurst, "noiseBurst",
 		 eParamTypeFix, 0x00000000, 0x00010000,
 		 32);
+  param_desc_aux(desc, eParam_noiseBurstDecay, "noiseBurstDecay",
+		 eParamTypeFix, 0, FR32_MAX,
+		 16);
 
 
 }
