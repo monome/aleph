@@ -224,7 +224,7 @@ void module_init(void) {
   param_setup( 	eParam_aux2_g2,		AUX_DEFAULT );
   param_setup( 	eParam_effect_g2,	0 );
   param_setup( 	eParam_phase_g2,	65536);
-  param_setup( 	eParam_lpf_g1,          4000 << 16);
+  param_setup( 	eParam_lpf_g2,          4000 << 16);
 
   //grain mod params
   param_setup (eParam_FM_source_g2, 0);
