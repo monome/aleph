@@ -185,6 +185,14 @@ void grain_set_echoSpeed(grain* dl, s32 subsamples) {
 }
 
 void grain_set_echoEdgeBehaviour(grain* dl, s32 edgeBehaviour) {
+  if (dl->echoTap.edgeBehaviour == EDGE_ONESHOT
+      && edgeBehaviour == EDGE_ONESHOT) {
+    if (dl->echoTap.time == dl->echoTap.min)
+      dl->echoTap.time = dl->echoTap.max;
+    else if (dl->echoTap.time == dl->echoTap.max)
+      dl->echoTap.time = dl->echoTap.min;
+  }
+
   dl->echoTap.edgeBehaviour = edgeBehaviour;
 }
 
