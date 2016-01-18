@@ -17,6 +17,22 @@ void param_desc_aux (ParamDesc* desc,int param_idx,
 #define param_desc_pan(param_idx, desc_string)  param_desc_aux (desc, param_idx, desc_string, PAN_TYPE, PAN_MIN, PAN_MAX, PAN_RADIX)
 
 extern void fill_param_desc(ParamDesc* desc) {
+
+  //CV Sources
+  param_desc_aux(desc, eParam_cvPatch1, "source_cv1",
+		 eParamTypeFix, 0x00000000, 0x000C0000,
+		 32);
+  param_desc_aux(desc, eParam_cvPatch2, "source_cv2",
+		 eParamTypeFix, 0x00000000, 0x000C0000,
+		 32);
+  param_desc_aux(desc, eParam_cvPatch3, "source_cv3",
+		 eParamTypeFix, 0x00000000, 0x000C0000,
+		 32);
+  param_desc_aux(desc, eParam_cvPatch4, "source_cv4",
+		 eParamTypeFix, 0x00000000, 0x000C0000,
+		 32);
+
+
   param_desc_fader (eParam_fader_i1, "fader_i1");
   param_desc_pan (eParam_pan_i1, "pan_i1");
   param_desc_fader (eParam_aux1_i1, "aux1_i1");
@@ -210,21 +226,6 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux(desc, eParam_noiseBurstDecay, "noiseBurstDecay",
 		 eParamTypeFix, 0, FR32_MAX,
 		 16);
-
-  //CV Sources
-  param_desc_aux(desc, eParam_cvPatch1, "eParam_cvPatch1",
-		 eParamTypeFix, 0x00000000, 0x000C0000,
-		 32);
-  param_desc_aux(desc, eParam_cvPatch2, "eParam_cvPatch2",
-		 eParamTypeFix, 0x00000000, 0x000C0000,
-		 32);
-  param_desc_aux(desc, eParam_cvPatch3, "eParam_cvPatch3",
-		 eParamTypeFix, 0x00000000, 0x000C0000,
-		 32);
-  param_desc_aux(desc, eParam_cvPatch4, "eParam_cvPatch4",
-		 eParamTypeFix, 0x00000000, 0x000C0000,
-		 32);
-
 
 }
 

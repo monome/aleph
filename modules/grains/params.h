@@ -67,6 +67,12 @@
 
 // enumerate parameters
 enum params {
+  //CV params
+  eParam_cvPatch1,
+  eParam_cvPatch2,
+  eParam_cvPatch3,
+  eParam_cvPatch4,
+
   //adc mix params
   eParam_fader_i1,
   eParam_pan_i1,
@@ -175,11 +181,6 @@ enum params {
 
   eParam_noiseBurst,
   eParam_noiseBurstDecay,
-
-  eParam_cvPatch1,
-  eParam_cvPatch2,
-  eParam_cvPatch3,
-  eParam_cvPatch4,
   
   eParamNumParams
 };
