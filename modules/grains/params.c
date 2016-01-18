@@ -130,7 +130,7 @@ extern void fill_param_desc(ParamDesc* desc) {
 
   //Tracking Oscillator Params
   param_desc_aux(desc,   eParam_envAttack_g1, "envAttack_g1",
-		 eParamTypeFix, 0x00000000, 0x00960000,
+		 eParamTypeFix, 0x00010000, 0x00960000,
 		 32);
   param_desc_aux(desc, eParam_trackingEnv_g1, "trackingEnv_g1",
 		 eParamTypeFix, 0x00000000, 0x00010000,
@@ -206,7 +206,7 @@ extern void fill_param_desc(ParamDesc* desc) {
 
   //Tracking Oscillator Params
   param_desc_aux(desc,   eParam_envAttack_g2, "envAttack_g2",
-		 eParamTypeFix, 0x00000000, 0x00960000,
+		 eParamTypeFix, 0x00010000, 0x00960000,
 		 32);
   param_desc_aux(desc, eParam_trackingEnv_g2, "trackingEnv_g2",
 		 eParamTypeFix, 0x00000000, 0x00010000,
