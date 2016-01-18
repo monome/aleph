@@ -193,17 +193,17 @@ void module_init(void) {
 
   //grain scrubber params
   param_setup (eParam_scrubEnable_g1, 1 << 16);
-  param_setup (eParam_scrubPitch_g1, 65536 * 2);
-  param_setup (eParam_scrubLength_g1, 65536 * 256 * 10);
-  param_setup (eParam_scrubPitchDetection_g1, 65536);
+  param_setup (eParam_scrubPitch_g1, 2 << 16);
+  param_setup (eParam_scrubLength_g1, 1000 << 16);
+  param_setup (eParam_scrubPitchDetection_g1, 1 << 16);
 
   //grain echo params
   param_setup(eParam_echoTime_g1, 65536 * 15);
   param_setup(eParam_echoSpeed_g1, 256 * 256 * 1);
   param_setup (eParam_echoEdgeBehaviour_g1, EDGE_WRAP * 65536);
-  param_setup (eParam_echoFadeLength_g1, 0x00320000);
+  param_setup (eParam_echoFadeLength_g1, 0);
   param_setup (eParam_echoMin_g1, 0);
-  param_setup (eParam_echoMax_g1, 65536 * 30);
+  param_setup (eParam_echoMax_g1, 65536 * 100);
 
   param_setup (eParam_writeEnable_g1, 1 * 65536);
 
@@ -227,17 +227,17 @@ void module_init(void) {
 
   //grain scrubber params
   param_setup (eParam_scrubEnable_g2, 1 << 16);
-  param_setup (eParam_scrubPitch_g2, 65536 * 2);
-  param_setup (eParam_scrubLength_g2, 65536 * 256 * 10);
-  param_setup (eParam_scrubPitchDetection_g2, 65536);
+  param_setup (eParam_scrubPitch_g2, 2 << 16);
+  param_setup (eParam_scrubLength_g2, 1000 << 16 );
+  param_setup (eParam_scrubPitchDetection_g2, 1 << 16);
 
   //grain echo params
   param_setup(eParam_echoTime_g2, 65536 * 15);
   param_setup(eParam_echoSpeed_g2, 256 * 256 * 1);
   param_setup (eParam_echoEdgeBehaviour_g2, EDGE_WRAP * 65536);
-  param_setup (eParam_echoFadeLength_g2, 0x00320000);
+  param_setup (eParam_echoFadeLength_g2, 0);
   param_setup (eParam_echoMin_g2, 0);
-  param_setup (eParam_echoMax_g2, 65536 * 30);
+  param_setup (eParam_echoMax_g2, 65536 * 100);
 
   param_setup (eParam_writeEnable_g2, 1 * 65536);
 
