@@ -341,5 +341,5 @@ fract32 trackingEnvelopeLog_next (trackingEnvelopeLog* env, fract32 in) {
     simple_slew(env->val, target, env->up);
   else if (target < env->val)
     simple_slew(env->val, target, env->down);
-  return shl_fr1x32(env->val, 1);
+  return shl_fr1x32(env->val, 2);
 }
