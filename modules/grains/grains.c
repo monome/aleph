@@ -213,7 +213,7 @@ void module_init(void) {
   param_setup (eParam_writeEnable_g1, 1 * 65536);
 
   //PitchTrack oscillator params
-  param_setup (eParam_envAttack_g1, SLEW_1MS);
+  param_setup (eParam_envAttack_g1, 0x00320000);
   param_setup (eParam_trackingEnv_g1, 1 * 65536);
   param_setup (eParam_trackingPitch_g1, 1 * 65536);
   
@@ -249,7 +249,7 @@ void module_init(void) {
   param_setup (eParam_writeEnable_g2, 1 * 65536);
 
   //PitchTrack oscillator params
-  param_setup (eParam_envAttack_g2, SLEW_1MS);
+  param_setup (eParam_envAttack_g2, 0x00320000);
   param_setup (eParam_trackingEnv_g2, 1 * 65536);
   param_setup (eParam_trackingPitch_g2, 1 * 65536);
 
