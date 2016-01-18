@@ -253,7 +253,7 @@ void module_init(void) {
   param_setup (eParam_trackingEnv_g2, 1 * 65536);
   param_setup (eParam_trackingPitch_g2, 1 * 65536);
 
-  param_setup (eParam_LFO_speed, hzToDimensionless(1) & 0xFFFF0000);
+  param_setup (eParam_LFO_speed, 0x00640000);
   param_setup (eParam_LFO_shape, PAN_DEFAULT);
   phasor_init(&LFO);
 
