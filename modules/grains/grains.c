@@ -565,7 +565,7 @@ void module_set_param(u32 idx, ParamValue v) {
     grain_set_writeEnable(&(grains[0]),v);
     break;
   case eParam_envAttack_g1 :
-    grain_set_envAttack(&(grains[0]),v);
+    grain_set_envAttack(&(grains[0]),v >> 5);
     break;
 
   case eParam_trackingEnv_g1 :
@@ -664,7 +664,7 @@ void module_set_param(u32 idx, ParamValue v) {
     grain_set_writeEnable(&(grains[1]),v);
     break;
   case eParam_envAttack_g2 :
-    grain_set_envAttack(&(grains[1]),v);
+    grain_set_envAttack(&(grains[1]),v >> 5);
     break;
 
   case eParam_trackingEnv_g2 :
