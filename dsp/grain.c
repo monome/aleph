@@ -117,6 +117,8 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   //DEBUG uncomment this line to listen to the detected tone from pitch Tracker
   /* return pitchTrackOsc(&(dl->pitchDetector)) >> 3; */
 
+  trackingEnvelopeLog_next(&(dl->env),
+			   dl->echoTapOutput);
 
   if (dl->scrubTapEnable == 0) {
     fract32 combinedLength = dl->scrubTap.length + dl->echoTap.time;
@@ -132,10 +134,13 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   }
 }
 
+fract32 read_grainEnv (grain *dl) {
+  return dl->env.val;
+}
+
 fract32 read_pitchTrackOsc (grain *dl) {
   if (dl->envEnable)
-    return mult_fr1x32x32(trackingEnvelopeLog_next(&(dl->env),
-						   dl->echoTapOutput),
+    return mult_fr1x32x32(dl->env.val,
 			  pitchTrackOsc(&(dl->pitchDetector)));
   else
     return pitchTrackOsc(&(dl->pitchDetector));

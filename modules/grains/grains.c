@@ -287,9 +287,11 @@ fract32 selectGrainInput(s32 i) {
     return grainOutFeedback[i - 5];
   else if (i < 5 + NGRAINS + NGRAINS && i >4 + NGRAINS)
     return read_pitchTrackOsc(&(grains[i - 5 - NGRAINS]));
-  else if (i == 5 + NGRAINS + NGRAINS)
+  else if (i < 5 + NGRAINS + NGRAINS + NGRAINS && i >4 + NGRAINS + NGRAINS)
+    return read_grainEnv(&(grains[i - 5 - NGRAINS - NGRAINS]));
+  else if (i == 5 + NGRAINS + NGRAINS + NGRAINS)
     return LFO_bus;
-  else if (i == 6 + NGRAINS + NGRAINS)
+  else if (i == 6 + NGRAINS + NGRAINS + NGRAINS)
     return abs_fr1x32(mult_fr1x32x32(noiseBurstEnv,
 				     lcprng_next (&noiseBurstSource)));
   else return 0;
