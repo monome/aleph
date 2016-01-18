@@ -209,7 +209,7 @@ void module_init(void) {
 
   //PitchTrack oscillator params
   param_setup (eParam_trackingEnv_g1, 1 * 655361);
-  param_setup (eParam_scrubPitch_g1, 1 * 65536);
+  param_setup (eParam_trackingPitch_g1, 1 * 65536);
   
   param_setup( 	eParam_source_g2,	0);
   param_setup( 	eParam_fader_g2,	FADER_DEFAULT );
@@ -242,8 +242,8 @@ void module_init(void) {
   param_setup (eParam_writeEnable_g2, 1 * 65536);
 
   //PitchTrack oscillator params
-  param_setup (eParam_trackingEnv_g1, 1 * 655361);
-  param_setup (eParam_scrubPitch_g1, 1 * 65536);
+  param_setup (eParam_trackingEnv_g2, 1 * 65536);
+  param_setup (eParam_trackingPitch_g2, 1 * 65536);
 
   param_setup (eParam_LFO_speed, hzToDimensionless(1) & 0xFFFF0000);
   param_setup (eParam_LFO_shape, PAN_DEFAULT);
