@@ -124,10 +124,10 @@ enum params {
   eParam_echoMax_g1,
 
   //grain writehead params
-  eParam_slewSpeed_g1,
   eParam_writeEnable_g1,
 
   //grain tracking osc params
+  eParam_envAttack_g1,
   eParam_trackingEnv_g1,
   eParam_trackingPitch_g1,
 
@@ -161,10 +161,10 @@ enum params {
   eParam_echoMax_g2,
 
   //grain writehead params
-  eParam_slewSpeed_g2,
   eParam_writeEnable_g2,
 
   //grain tracking osc params
+  eParam_envAttack_g2,
   eParam_trackingEnv_g2,
   eParam_trackingPitch_g2,
 

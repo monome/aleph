@@ -83,7 +83,7 @@ void grain_set_echoMax(grain* dl, s32 subsamples);
 
 void grain_set_writeEnable(grain* dl, s32 enable);
 
-void grain_set_slewSpeed(grain* dl, s32 newSpeed);
+void grain_set_envAttack(grain* dl, s32 newSpeed);
 
 void grain_disable_pitchDetection(grain* dl);
 

@@ -38,7 +38,7 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   trackingEnvelopeLog_init(&dl->env);
   dl->envEnable = 1;
 
-  dl->slewSpeed = 1 << 21;
+  dl->env.up = 1 << 21;
 
 }
 
@@ -199,8 +199,8 @@ void grain_set_writeEnable(grain* dl, s32 enable) {
     dl->tapWr.inc = 1;
 }
 
-void grain_set_slewSpeed(grain* dl, s32 newSpeed) {
-  dl->slewSpeed = min_fr1x32(SLEW_1S, (fract32) newSpeed);
+void grain_set_envAttack(grain* dl, s32 newSpeed) {
+  dl->env.up = min_fr1x32(SLEW_4S, (fract32) newSpeed);
 }
 
 void grain_disable_pitchDetection(grain* dl) {

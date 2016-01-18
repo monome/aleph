@@ -209,6 +209,7 @@ void module_init(void) {
   param_setup (eParam_writeEnable_g1, 1 * 65536);
 
   //PitchTrack oscillator params
+  param_setup (eParam_envAttack_g1, SLEW_1MS);
   param_setup (eParam_trackingEnv_g1, 1 * 655361);
   param_setup (eParam_trackingPitch_g1, 1 * 65536);
   
@@ -243,6 +244,7 @@ void module_init(void) {
   param_setup (eParam_writeEnable_g2, 1 * 65536);
 
   //PitchTrack oscillator params
+  param_setup (eParam_envAttack_g2, SLEW_1MS);
   param_setup (eParam_trackingEnv_g2, 1 * 65536);
   param_setup (eParam_trackingPitch_g2, 1 * 65536);
 
@@ -529,8 +531,8 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_writeEnable_g1 :
     grain_set_writeEnable(&(grains[0]),v);
     break;
-  case eParam_slewSpeed_g1 :
-    grain_set_slewSpeed(&(grains[0]),v);
+  case eParam_envAttack_g1 :
+    grain_set_envAttack(&(grains[0]),v);
     break;
 
   case eParam_trackingEnv_g1 :
@@ -625,8 +627,8 @@ void module_set_param(u32 idx, ParamValue v) {
   case eParam_writeEnable_g2 :
     grain_set_writeEnable(&(grains[1]),v);
     break;
-  case eParam_slewSpeed_g2 :
-    grain_set_slewSpeed(&(grains[1]),v);
+  case eParam_envAttack_g2 :
+    grain_set_envAttack(&(grains[1]),v);
     break;
 
   case eParam_trackingEnv_g2 :

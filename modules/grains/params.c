@@ -109,11 +109,11 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux(desc, eParam_writeEnable_g1, "writeEnable_g1",
 		 eParamTypeFix, 0x00000000, 0x00010000,
 		 32);
-  param_desc_aux(desc, eParam_slewSpeed_g1, "slewSpeed_g1",
-		 eParamTypeIntegrator, 0x00000000, FR32_MAX,
-		 32);
 
   //Tracking Oscillator Params
+  param_desc_aux(desc,   eParam_envAttack_g1, "envAttack_g1",
+		 eParamTypeIntegrator, 0x00000000, FR32_MAX,
+		 32);
   param_desc_aux(desc, eParam_trackingEnv_g1, "trackingEnv_g1",
 		 eParamTypeFix, 0x00000000, 0x00010000,
 		 32);
@@ -183,11 +183,11 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_aux(desc, eParam_writeEnable_g2, "writeEnable_g2",
 		 eParamTypeFix, 0x00000000, 0x00010000,
 		 32);
-  param_desc_aux(desc, eParam_slewSpeed_g2, "slewSpeed_g2",
-		 eParamTypeIntegrator, 0x00000000, FR32_MAX,
-		 32);
 
   //Tracking Oscillator Params
+  param_desc_aux(desc,   eParam_envAttack_g2, "envAttack_g2",
+		 eParamTypeIntegrator, 0x00000000, FR32_MAX,
+		 32);
   param_desc_aux(desc, eParam_trackingEnv_g2, "trackingEnv_g2",
 		 eParamTypeFix, 0x00000000, 0x00010000,
 		 32);
