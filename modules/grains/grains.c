@@ -263,7 +263,7 @@ void module_init(void) {
   param_setup (eParam_cvPatch4, 0);
 
   param_setup (eParam_noiseBurst, 0);
-  param_setup (eParam_noiseBurstDecay, (1 << 24));
+  param_setup (eParam_noiseBurstDecay, 0x01F40000);
   lcprng_reset(&noiseBurstSource, 1);
 }
 
