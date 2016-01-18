@@ -122,10 +122,10 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 			   dl->echoTapOutput);
 
   if (dl->scrubTapEnable == 0) {
-    fract32 combinedLength = dl->scrubTap.length + dl->echoTap.time;
-    int norm = norm_fr1x32(combinedLength);
-    fract32 wiggledLength = add_fr1x32(combinedLength,
-				       mult_fr1x32x32(combinedLength << norm,
+    fract32 scrubLen = dl->scrubTap.length;
+    int norm = norm_fr1x32(scrubLen);
+    fract32 wiggledLength = add_fr1x32(scrubLen,
+				       mult_fr1x32x32(scrubLen << norm,
 						      FM_signal) >>norm);
     return echoTap_read_xfade( &(dl->echoTap),
 			       max_fr1x32(0, wiggledLength));
