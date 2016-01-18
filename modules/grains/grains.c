@@ -214,7 +214,7 @@ void module_init(void) {
 
   //PitchTrack oscillator params
   param_setup (eParam_envAttack_g1, SLEW_1MS);
-  param_setup (eParam_trackingEnv_g1, 1 * 655361);
+  param_setup (eParam_trackingEnv_g1, 1 * 65536);
   param_setup (eParam_trackingPitch_g1, 1 * 65536);
   
   param_setup( 	eParam_source_g2,	0);
