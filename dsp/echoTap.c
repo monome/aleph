@@ -93,50 +93,40 @@ fract32 echoTap_envelope(echoTap *tap) {
 
 
 fract32 echoTap_read_xfade(echoTap* echoTap, s32 offset) {
-  s32 time, ret, tapLength;
+  s32 time, tapLength;
   fract32 fadeRatio;
   time = echoTap->time + offset;
-  ret = echoTap_read_interp_cubic(echoTap, time);
   tapLength = echoTap->max - echoTap->min - echoTap->fadeLength;
   switch (echoTap->edgeBehaviour) {
   case EDGE_ONESHOT :
     time = echoTap->time;
     if (time > echoTap->max - echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, echoTap->max - time);
-      ret = equalPower_xfade ( 0, ret,
+      return equalPower_xfade ( 0, echoTap_read_interp_cubic(echoTap, time),
 			       fadeRatio);
     } else if (time < echoTap->min + echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, time - echoTap->min);
-      ret = equalPower_xfade ( 0, ret,
-			       fadeRatio);
+      return equalPower_xfade ( 0, echoTap_read_interp_cubic(echoTap, time),
+				fadeRatio);
     }
     break;
   case EDGE_WRAP :
     if (time > echoTap->max - echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, echoTap->max - time);
-      ret = equalPower_xfade ( echoTap_read_interp_linear ( echoTap,
-						     time - tapLength ),
-			       ret,
-			       fadeRatio);
+      return equalPower_xfade ( echoTap_read_interp_linear ( echoTap,
+							     time - tapLength ),
+				echoTap_read_interp_linear(echoTap, time),
+				fadeRatio);
     } else if (time < echoTap->min + echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, time - echoTap->min);
-      ret = equalPower_xfade ( echoTap_read_interp_linear ( echoTap,
-						     time + tapLength ),
-			       ret,
-			       fadeRatio);
-    }
-    break;
-  case EDGE_BOUNCE :
-    if (time > echoTap->max - echoTap->fadeLength) {
-      fadeRatio = echoTap_boundToFadeRatio (echoTap, echoTap->max - time);
-      ret = equalPower_xfade (0, ret, fadeRatio);
-    } else if (time < echoTap->min + echoTap->fadeLength) {
-      fadeRatio = echoTap_boundToFadeRatio (echoTap, time - echoTap->min);
-      ret = equalPower_xfade (0, ret, fadeRatio);
+      return equalPower_xfade ( echoTap_read_interp_linear ( echoTap,
+							     time + tapLength ),
+				echoTap_read_interp_linear(echoTap, time),
+				fadeRatio);
     }
     break;
   }
-  return ret;
+  return echoTap_read_interp_cubic(echoTap, time);
 }
 
 // set echo time directly in subsamples
