@@ -301,27 +301,10 @@ fract32 grainOutFeedback[NGRAINS];
 static u8 cvPatch[4];
 static u8 cvChan = 0;
 
-fract32 selectGrainInput(s32 i) {
-  if ( i == 0)
-    return effectBus;
-  else if (i < 5 && i > 0)
-    return in[i-1];
-  else if (i < 5 + NGRAINS && i > 4)
-    return grainOutFeedback[i - 5];
-  else if (i < 5 + NGRAINS + NGRAINS && i >4 + NGRAINS)
-    return read_pitchTrackOsc(&(grains[i - 5 - NGRAINS]));
-  else if (i < 5 + NGRAINS + NGRAINS + NGRAINS && i >4 + NGRAINS + NGRAINS)
-    return read_grainEnv(&(grains[i - 5 - NGRAINS - NGRAINS]));
-  else if (i == 5 + NGRAINS + NGRAINS + NGRAINS)
-    return LFO_bus;
-  else if (i == 6 + NGRAINS + NGRAINS + NGRAINS)
-    return abs_fr1x32(mult_fr1x32x32(noiseBurstEnv,
-				     lcprng_next (&noiseBurstSource)));
-  else if (i == 7 + NGRAINS + NGRAINS + NGRAINS)
-    return CV_gen1;
-  else if (i == 8 + NGRAINS + NGRAINS + NGRAINS)
-    return CV_gen2;
-  else return 0;
+fract32 patchMatrix[100];
+
+static inline fract32 selectGrainInput(s32 i) {
+  return patchMatrix[i];
 }
 
 void process_cv (void) {
@@ -336,7 +319,6 @@ void process_cv (void) {
 
 void module_process_frame(void) {
 
-  noiseBurstEnv = mult_fr1x32x32(noiseBurstEnv, FR32_MAX - noiseBurstDecay);
   u8 i;
   //IIR slew
   for (i=0;i<4;i++) {
@@ -345,6 +327,7 @@ void module_process_frame(void) {
     fader_slew(aux2I[i], aux2ITarget[i]);
     fader_slew(panI[i], panITarget[i]);
     fader_slew(effectI[i],effectITarget[i]);
+    patchMatrix[i+1] = in[i];
   }
   for (i=0;i<NGRAINS;i++) {
     fader_slew(faderG[i], faderGTarget[i]);
@@ -359,12 +342,6 @@ void module_process_frame(void) {
   out[1] = 0;
   out[2] = 0;
   out[3] = 0;
-  fract32 phase_next = phasor_next(&LFO);
-  LFO_bus =
-    add_fr1x32(mult_fr1x32x32(LFO_shape,
-			      osc(phase_next)),
-	       mult_fr1x32x32(sub_fr1x32(FR32_MAX,LFO_shape),
-			      osc_triangle(phase_next)));
   effectBus = hpf_next_dynamic(&effect_hpf,
 			       effectBusFeedback,
 			       hzToDimensionless(50));
@@ -376,12 +353,12 @@ void module_process_frame(void) {
 
   i=2;
   mix_panned_mono (selectGrainInput(sourceMixer3), &(out[0]), &(out[1]), panI[i], faderI[i]);
-    mix_aux_mono (selectGrainInput(sourceMixer3), &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
-    simple_busmix (effectBus, selectGrainInput(sourceMixer3),effectI[i]);
+  mix_aux_mono (selectGrainInput(sourceMixer3), &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
+  simple_busmix (effectBus, selectGrainInput(sourceMixer3),effectI[i]);
   i=3;
   mix_panned_mono (selectGrainInput(sourceMixer4), &(out[0]), &(out[1]), panI[i], faderI[i]);
-    mix_aux_mono (selectGrainInput(sourceMixer4), &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
-    simple_busmix (effectBus, selectGrainInput(sourceMixer4),effectI[i]);
+  mix_aux_mono (selectGrainInput(sourceMixer4), &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
+  simple_busmix (effectBus, selectGrainInput(sourceMixer4),effectI[i]);
 
   effectBusFeedback = 0;
   fract32 AMOut;
@@ -405,15 +382,36 @@ void module_process_frame(void) {
 			   AM_faderG[i]);
     grainOut = mult_fr1x32x32(grainOut, sub_fr1x32(FR32_MAX, AM_faderG[i]));
     grainOut = add_fr1x32(shl_fr1x32(AMOut, 3), grainOut);
+
     grainOutFeedback[i] = grainOut;
+
+    patchMatrix[5+i] = grainOut;
+    patchMatrix[5+i+NGRAINS] = read_pitchTrackOsc(&(grains[i]));
+    patchMatrix[5+i+NGRAINS+NGRAINS] = read_grainEnv(&(grains[i]));
     mix_panned_mono (grainOut, &(out[0]), &(out[1]), panG[i], faderG[i]);
     mix_aux_mono (grainOut, &(out[2]), &(out[3]), aux1G[i], aux2G[i]);
     simple_busmix (effectBusFeedback,
 		   grainOut,
 		   effectG[i]);
   }
+  patchMatrix[0] = effectBus;
+
+  fract32 phase_next = phasor_next(&LFO);
+  patchMatrix[5+NGRAINS+NGRAINS+NGRAINS] =
+    add_fr1x32(mult_fr1x32x32(LFO_shape,
+			      osc(phase_next)),
+	       mult_fr1x32x32(sub_fr1x32(FR32_MAX,LFO_shape),
+			      osc_triangle(phase_next)));
+
+  noiseBurstEnv = mult_fr1x32x32(noiseBurstEnv, FR32_MAX - noiseBurstDecay);
+  patchMatrix[6+NGRAINS+NGRAINS+NGRAINS] =
+    abs_fr1x32(mult_fr1x32x32(noiseBurstEnv,
+			      lcprng_next (&noiseBurstSource)));
+
   simple_slew(CV_gen1, CV_gen1Target, SLEW_100MS);
   simple_slew(CV_gen2, CV_gen2Target, SLEW_100MS);
+  patchMatrix[7+NGRAINS+NGRAINS+NGRAINS] = CV_gen1;
+  patchMatrix[8+NGRAINS+NGRAINS+NGRAINS] = CV_gen2;
   process_cv();
 }
 
