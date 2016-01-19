@@ -32,6 +32,7 @@ void grain_init(grain* dl, fract32* data, u32 frames) {
   dl->scrubTapEnable = 1;
   dl->scrubCentrePitch = 128;
   dl->scrubLengthTarget = 256 * 48 * 25;
+  dl->wiggledLength = dl->scrubLengthTarget;
 
   pitchDetector_init(&(dl->pitchDetector));
   dl->pitchDetection = 1;
@@ -124,11 +125,13 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
   if (dl->scrubTapEnable == 0) {
     fract32 scrubLen = dl->scrubTap.length;
     int norm = norm_fr1x32(scrubLen);
-    fract32 wiggledLength = add_fr1x32(scrubLen,
-				       mult_fr1x32x32(scrubLen << norm,
-						      FM_signal) >>norm);
+    simple_slew(dl->wiggledLength,
+		add_fr1x32(scrubLen,
+			   mult_fr1x32x32(scrubLen << norm,
+					  FM_signal) >>norm),
+		SLEW_100MS);
     return echoTap_read_xfade( &(dl->echoTap),
-			       max_fr1x32(0, wiggledLength));
+			       max_fr1x32(0, dl->wiggledLength));
   }
   else {
     return scrubTap_read_xfade( &(dl->scrubTap));

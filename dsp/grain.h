@@ -45,6 +45,8 @@ typedef struct _grain {
 
   s32 scrubLengthTarget;
 
+  s32 wiggledLength;
+
   fract32 slewSpeed;
 
 } grain;
