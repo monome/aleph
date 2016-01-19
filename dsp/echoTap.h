@@ -62,8 +62,8 @@ fract32 echoTap_envelope(echoTap *tap);
 // intialize tap
 extern void echoTap_init(echoTap* tap, bufferTapN* tapWr);
 
-// interpolated read
-static inline fract32 echoTap_read_interp(echoTap* echoTap, s32 time) {
+// interpolated cubic read
+static inline fract32 echoTap_read_interp_cubic(echoTap* echoTap, s32 time) {
     u32 samp0_index = (echoTap->tapWr->idx
 		       + echoTap->tapWr->loop - 3 - (time >> 8));
     samp0_index = samp0_index % echoTap->tapWr->loop;
@@ -90,6 +90,27 @@ static inline fract32 echoTap_read_interp(echoTap* echoTap, s32 time) {
     //Pick an interpolation method! - linear or cubic?
     /* pre_fader = pan_lin_mix(*samp1, *samp2, inter_sample); */
     pre_fader = interp_bspline_fract32(inter_sample, *samp3, *samp2, *samp1, *samp0);
+    return pre_fader;
+}
+
+// interpolated linear read
+static inline fract32 echoTap_read_interp_linear(echoTap* echoTap, s32 time) {
+    u32 samp1_index = (echoTap->tapWr->idx
+		       + echoTap->tapWr->loop - 1 - (time >> 8));
+    samp1_index = samp1_index % echoTap->tapWr->loop;
+    fract32 *samp1 = (fract32*)echoTap->tapWr->buf->data + samp1_index;
+
+    u32 buffSize = sizeof (fract32) * (u32) echoTap->tapWr->loop;
+    fract32 *buffer = (fract32*)echoTap->tapWr->buf->data;
+    fract32 *samp2 = (fract32*)__builtin_bfin_circptr (samp1,
+    						       sizeof (fract32),
+    						       buffer,
+    						       buffSize);
+
+    fract32 inter_sample = shl_fr1x32((time & 0xFF), 23);
+
+    fract32 pre_fader;
+    pre_fader = pan_lin_mix(*samp2, *samp1, inter_sample);
     return pre_fader;
 }
 

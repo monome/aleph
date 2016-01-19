@@ -96,7 +96,7 @@ fract32 echoTap_read_xfade(echoTap* echoTap, s32 offset) {
   s32 time, ret, tapLength;
   fract32 fadeRatio;
   time = echoTap->time + offset;
-  ret = echoTap_read_interp(echoTap, time);
+  ret = echoTap_read_interp_cubic(echoTap, time);
   tapLength = echoTap->max - echoTap->min - echoTap->fadeLength;
   switch (echoTap->edgeBehaviour) {
   case EDGE_ONESHOT :
@@ -114,13 +114,13 @@ fract32 echoTap_read_xfade(echoTap* echoTap, s32 offset) {
   case EDGE_WRAP :
     if (time > echoTap->max - echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, echoTap->max - time);
-      ret = equalPower_xfade ( echoTap_read_interp ( echoTap,
+      ret = equalPower_xfade ( echoTap_read_interp_linear ( echoTap,
 						     time - tapLength ),
 			       ret,
 			       fadeRatio);
     } else if (time < echoTap->min + echoTap->fadeLength) {
       fadeRatio = echoTap_boundToFadeRatio (echoTap, time - echoTap->min);
-      ret = equalPower_xfade ( echoTap_read_interp ( echoTap,
+      ret = equalPower_xfade ( echoTap_read_interp_linear ( echoTap,
 						     time + tapLength ),
 			       ret,
 			       fadeRatio);
