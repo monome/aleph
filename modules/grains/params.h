@@ -181,6 +181,9 @@ enum params {
 
   eParam_noiseBurst,
   eParam_noiseBurstDecay,
+
+  eParam_CV_gen1,
+  eParam_CV_gen2,
   
   eParamNumParams
 };

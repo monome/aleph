@@ -106,6 +106,11 @@ fract32 noiseBurstEnv;
 fract32 noiseBurstDecay;
 lcprng noiseBurstSource;
 
+fract32 CV_gen1Target;
+fract32 CV_gen2Target;
+fract32 CV_gen1;
+fract32 CV_gen2;
+
 // data structure of external memory
 typedef struct _grainsData {
   ModuleData super;
@@ -265,6 +270,9 @@ void module_init(void) {
   param_setup (eParam_noiseBurst, 0);
   param_setup (eParam_noiseBurstDecay, 0x01F40000);
   lcprng_reset(&noiseBurstSource, 1);
+
+  param_setup (eParam_CV_gen1, 0);
+  param_setup (eParam_CV_gen2, 0);
 }
 
 // de-init
@@ -309,10 +317,16 @@ fract32 selectGrainInput(s32 i) {
   else if (i == 6 + NGRAINS + NGRAINS + NGRAINS)
     return abs_fr1x32(mult_fr1x32x32(noiseBurstEnv,
 				     lcprng_next (&noiseBurstSource)));
+  else if (i == 7 + NGRAINS + NGRAINS + NGRAINS)
+    return CV_gen1;
+  else if (i == 8 + NGRAINS + NGRAINS + NGRAINS)
+    return CV_gen2;
   else return 0;
 }
 
 void process_cv (void) {
+  simple_slew(CV_gen1, CV_gen1Target, SLEW_100MS);
+  simple_slew(CV_gen2, CV_gen2Target, SLEW_100MS);
   cv_update(cvChan, selectGrainInput(cvPatch[cvChan]));
 
   // Queue up the next CV output for processing next audio frame
@@ -704,6 +718,12 @@ void module_set_param(u32 idx, ParamValue v) {
     cvPatch[3] = v >> 16;
     break;
 
+  case eParam_CV_gen1 :
+    CV_gen1Target = v ;
+    break;
+  case eParam_CV_gen2 :
+    CV_gen2Target = v ;
+    break;
 
   default:
     break;
