@@ -188,7 +188,7 @@ fract32 pitchTrackOsc (pitchDetector *p) {
   p->phase +=
     (p->pitchOffset
      / shl_fr1x32(p->currentPeriod,
-		  - PITCH_DETECTOR_RADIX_INTERNAL)) << 1;
+		  - PITCH_DETECTOR_RADIX_INTERNAL)) << 3;
   return osc(p->phase);
 }
 
