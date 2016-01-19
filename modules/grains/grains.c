@@ -325,8 +325,6 @@ fract32 selectGrainInput(s32 i) {
 }
 
 void process_cv (void) {
-  simple_slew(CV_gen1, CV_gen1Target, SLEW_100MS);
-  simple_slew(CV_gen2, CV_gen2Target, SLEW_100MS);
   cv_update(cvChan, selectGrainInput(cvPatch[cvChan]));
 
   // Queue up the next CV output for processing next audio frame
@@ -413,8 +411,10 @@ void module_process_frame(void) {
     simple_busmix (effectBusFeedback,
 		   grainOut,
 		   effectG[i]);
-    process_cv();
   }
+  simple_slew(CV_gen1, CV_gen1Target, SLEW_100MS);
+  simple_slew(CV_gen2, CV_gen2Target, SLEW_100MS);
+  process_cv();
 }
 
 
