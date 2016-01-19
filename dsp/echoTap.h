@@ -84,7 +84,7 @@ static inline fract32 echoTap_read_interp(echoTap* echoTap, s32 time) {
     						       buffer,
     						       buffSize);
 
-    fract32 inter_sample = (time & 0xFF) << 23;
+    fract32 inter_sample = shl_fr1x32((time & 0xFF), 23);
 
     fract32 pre_fader;
     //Pick an interpolation method! - linear or cubic?
