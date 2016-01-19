@@ -213,7 +213,7 @@ void module_init(void) {
   param_setup (eParam_echoEdgeBehaviour_g1, EDGE_WRAP * 65536);
   param_setup (eParam_echoFadeLength_g1, 0);
   param_setup (eParam_echoMin_g1, 0);
-  param_setup (eParam_echoMax_g1, 65536 * 100);
+  param_setup (eParam_echoMax_g1, 65536 * 1000);
 
   param_setup (eParam_writeEnable_g1, 1 * 65536);
 
@@ -249,7 +249,7 @@ void module_init(void) {
   param_setup (eParam_echoEdgeBehaviour_g2, EDGE_WRAP * 65536);
   param_setup (eParam_echoFadeLength_g2, 0);
   param_setup (eParam_echoMin_g2, 0);
-  param_setup (eParam_echoMax_g2, 65536 * 100);
+  param_setup (eParam_echoMax_g2, 65536 * 1000);
 
   param_setup (eParam_writeEnable_g2, 1 * 65536);
 
