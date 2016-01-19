@@ -2,7 +2,9 @@
 #define _ALEPH_DSP_PAN_H_
 
 #include "types.h"
+#ifdef ARCH_BFIN
 #include "fract_math.h"
+#endif
 
 //--------------------------------
 // --- simple linear pan
