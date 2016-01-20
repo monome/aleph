@@ -1,4 +1,14 @@
+* CV Params
+** Source_cv1
+   Choose source for CV out 1 from patch matrix
+** Source_cv2
+   Choose source for CV out 2 from patch matrix
+** Source_cv3
+   Choose source for CV out 3 from patch matrix
+** Source_cv4
+   Choose source for CV out 4 from patch matrix
 * ADC mix params
+  ADCs 1&2 are hard-wired to dedicated mixer channel:
 ** fader_i<n>
    Stereo fader from ADC i to DACS 1&2
 ** pan_i<n>
@@ -9,50 +19,99 @@
    Fader from ADC i to DAC3
 ** aux1_i<n>
    Fader from ADC i to DAC4
+   Mixer channels 3 & 4 have an additional control:
+** source_i<n>
+   Choose mixer channel input from patch matrix
 * Grain Mix params
-** source_g<m> i8[1:8]
-   Choose grain input between effect bus, ADC1-4 or grain1-4
+** source_g<m> [1:14]
+   Choose grain input from patch matrix
 ** fader_g<m>
    Stereo fader from grain i to DACS 1&2
 ** pan_g<m>
    Stereo pan from grain i between DACS 1&2
-** effect_g<m>
+** effect_g<m>p
    Send from grain i to effect bus
 ** aux0_g<m>
    Fader from grain i to DAC3
 ** aux1_g<m>
    Fader from grain i to DAC4
-** phase_g<m> bool
+** phase_g<m>
    phase of grain i (+ve or -ve)
-* Scrub params
+** lpf_g<m>
+   Cutoff frequency (in Hz) for grain output (low-pass filter)
+* Grain Modulation Params
+** FM_source_g<m>
+   Choose a signal from patch matrix to modulate scrubPitch of grain.
+   If scrubbing disabled, FM becomes PM (modulating read position
+   relative to echotap.
+** FM_level_g<m>
+   Set depth of modulation induced by FM_source
+** AM_source
+   Choose a signal from patch matrix to modulate amplitude of grain
+   output.
+** AM_level_g<m>
+   Pan between modulated and unmodulated grain output.
+* Grain Scrub params
+** scrubEnable_g<m>
+   enable scrubbing behaviour for this grain (pitch control
+   independent of echo speed).
 ** scrubPitch_g<m> f8x8[0:7]
    speed of scrubber read tap in subsamples (1/256 sample) - bees
    displays 1.000 at speed = 1 sample/sample
-** scrubberFadeLength i16
-   length for scrubber crossfades in subsamples (1/256 sample)
 ** scrubLength_g<m> i24
    length of scrubber read distance from echo readhead before cross-fading.
    This is expressed as a ratio to the scrubberFadeLength
-* Echo params
-** echo fade-length i16
+** scrubPitchDetection_g<m>
+   When this is enabled, scrublength 'snaps' to an even multiple of
+   grain input signal.  Zero crossing pitch detection with adaptive
+   filter.
+* Grain Echo params
+** echoFadeLength_g<m>
    length for scrubber crossfades.  Again expressed as a ratio to echomax-echomin
-** echoTime fx24x8
+** echoTime_g<m>
    allows bees to force read head to a point, e.g:
    - set echo time for simple echo fx
    - trigger one-shot sample for pre-recorded audio
-** echoSpeed f8x8
+** echoSpeed_g<m>
    For canonical realtime FX like this guy should be 1, so the
    echo-tap stays in sync with write head. When a sample is loaded
    into the fifo this guy replays the sample.  See echoEdgeBehaviour
    for playback modes.  If you're feeling crazy unglue the echo tap
    from writing head while write head runs by setting this value != 1
-** echoEdgeBehaviour i8[0:2]
-   set this to either 0, 1 or 2 to control does echo-tap head stall,
-   bounce or wrap at echo boundary?
-** echoMin f24x8
+** echoEdgeBehaviour_g<m>
+   set this to 0 or 1 to control does echo-tap head stall, or wrap at
+   echo boundary respectively?  Also possible to retrigger one-shot samples by
+   resending 0.
+** echoMin_g<m>
    echo boundary nearest to write-head
-** echoMax f24x8
+** echoMax_g<m>
    echo boundary furthest from write-head
+** writeEnable_g<m>
+   Choose between constantly writing new data into echotap or simply
+   re-playing already-recorded audio in the underlying buffer.
+* Grain Pitch & Amplitude Analysis / Tracking
+** envAttack_g<m>
+   Attack of the envelope detector - bit rough atm but smaller number
+   -> slower attack
+** trackingEnv_g<m>
+   Multiply PitchTracking Oscillator by grain envelope befre sending
+   it to patch matrix.
+** trackingPitch_g<m>
+   Frequency Offset factor for pitchTracking oscillator/synth
+* Grains Utilities
+** LFO_speed
+   Speed of LFO (smaller number = slower oscillation down to very slow
+   oscillations.  LFO signal is output to patch matrix.
+** LFO_shape
+   Blend between a triangular LFO shape (0) and sinusoid shape (max)
+** noiseBurst
+   Trigger a noise burst impulse into patch matrix
+** noiseBurstDecay
+   How quickly does noise burst impulse decay (small number = long burst)
+** static_CV1
+   Set a DC value from BEES on static_CV1 slot in patch matrix
+** static_CV2
+   Set a DC value from BEES on static_CV2 slot in patch matrix
 * What is a grain?
 so a grain consists a buffer, a write head running at 1x, an 'echoTap'
 & a 'scrubTap'.
@@ -67,7 +126,9 @@ so a grain consists a buffer, a write head running at 1x, an 'echoTap'
     time coord is relative to the echoTap, and it's time coord is much
     finer grained than the echoTap.
 
-Well - this all makes a twisted kind of sense to me at least anyway!
 * Bugggzzzz
-Not sure if pitch offset is translating 1 on screen (bees value) to
-oscillator at the detected frequency
+  Please send bug reports / patches to sasquatch@rickvenn.com or
+  github.com/rick-monster/aleph I will be happy to hear from you
+  whether something is wrong with the module, you want to send me beer
+  or music you have made using this software or just to say hello.  I
+  might even *fix* any bugs that crop up...
