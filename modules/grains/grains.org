@@ -1,3 +1,25 @@
+* Note on patch matrix
+  The astute reader will notice a number of cryptic references to a
+  so-called 'patch matrix'.  This allows the program to be internally
+  re-wired like patching a modular synth.  Patch index denotes an
+  output & each patch-matrix-enabled input may choose one and only one
+  source from the patch matrix.
+** Patch matrix Cheatsheet:
+0. Effect Bus
+1. ADC 1
+2. ADC 2
+3. ADC 3
+4. ADC 4
+5. grain1 output
+6. grain2 output
+7. grain1 echoTap pitchtrack oscillator
+8. grain2 echoTap pitchtrack oscillator
+9. grain1 echoTap envelope
+10. grain2 echoTap envelope
+11. LFO
+12. noise burst
+13. static_CV1
+14. static_CV2
 * CV Params
 ** Source_cv1
    Choose source for CV out 1 from patch matrix
