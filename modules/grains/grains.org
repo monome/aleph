@@ -148,9 +148,9 @@ so a grain consists a buffer, a write head running at 1x, an 'echoTap'
     time coord is relative to the echoTap, and it's time coord is much
     finer grained than the echoTap.
 
-* Bugggzzzz
+* Bugs!?  (By definition there are no bugs)
   Please send bug reports / patches to sasquatch@rickvenn.com or
   github.com/rick-monster/aleph I will be happy to hear from you
-  whether something is wrong with the module, you want to send me beer
-  or music you have made using this software or just to say hello.  I
-  might even *fix* any bugs that crop up...
+  whether something is wrong with the module, you want to send me
+  beer, music you have made using this software or just to say hello.
+  I might even *fix* any bugs that crop up...
