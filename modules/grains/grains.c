@@ -288,6 +288,8 @@ u32 module_get_num_params(void) {
 
 /* #define fader_slew(x, y) simple_slew(x, y, SLEW_100MS) */
 #define fader_slew(x, y) x = y;
+#define grain_slew(x, y) simple_slew(x, y, SLEW_100MS)
+/* #define grain_slew(x, y) x = y; */
 
 
 #define simple_busmix(x, y, fact) x = add_fr1x32(x, mult_fr1x32x32(y, fact))
@@ -330,11 +332,11 @@ void module_process_frame(void) {
     patchMatrix[i+1] = in[i];
   }
   for (i=0;i<NGRAINS;i++) {
-    fader_slew(faderG[i], faderGTarget[i]);
-    fader_slew(aux1G[i], aux1GTarget[i]);
-    fader_slew(aux2G[i], aux2GTarget[i]);
-    fader_slew(panG[i], panGTarget[i]);
-    fader_slew(effectG[i],effectGTarget[i]);
+    grain_slew(faderG[i], faderGTarget[i]);
+    grain_slew(aux1G[i], aux1GTarget[i]);
+    grain_slew(aux2G[i], aux2GTarget[i]);
+    grain_slew(panG[i], panGTarget[i]);
+    grain_slew(effectG[i],effectGTarget[i]);
   }
   
   //define delay input & output
