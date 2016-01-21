@@ -1,10 +1,155 @@
-* Note on patch matrix
+#   ________             .__               
+#  /  _____/___________  |__| ____   ______
+# /   \  __\_  __ \__  \ |  |/    \ /  ___/
+# \    \_\  \  | \// __ \|  |   |  \\___ \ 
+#  \______  /__|  (____  /__|___|  /____  >
+#         \/           \/        \/     \/
+
+DSP Module for Aleph Sound Computer
+
+With this program loaded onto the blackfin dsp, an aleph can quickly
+transform between any of the following digital music devices:
+
+- dual-voice pitchshifter effect
+- chorus/flanger effect
+- rudimentary Karplus-Strong resonator
+- live performance sampler with independent speed & pitch
+- echo effect
+- pitch-tracking re-synthesizer for monophonic audio input
+- pitch/volume tremolo
+- ring Modulator effect
+- FM-synth-like effect for arbitrary audio input
+
+A great number of permutations and combinations of these basic
+functions may be realised through careful manipulation of grains' 84
+control & patch parameters from BEES.
+
+The remainder of this document is given over to a detailed description
+of grains' parameters.
+
+* CV Params
+** Source-cv1
+   Choose source for CV out 1 from patch matrix
+** Source-cv2
+   Choose source for CV out 2 from patch matrix
+** Source-cv3
+   Choose source for CV out 3 from patch matrix
+** Source-cv4
+   Choose source for CV out 4 from patch matrix
+* ADC mix params
+  ADCs 1 & 2 are hard-wired to mixer channels 1 & 2, whereas mixer
+  channels 3 & 4 select their source from the patch matrix.
+** fader-i[n]
+   Stereo fader from mixer chan n to DACS 1&2
+** pan-i[n]
+   Stereo pan from mixer chan n between DACS 1&2
+** effect-i[n]
+   Send from mixer chan n to effect bus
+** aux0-i[n]
+   Fader from mixer chan n to DAC3
+** aux1-i[n]
+   Fader from mixer chan n to DAC4
+** source-i[n]
+   Choose mixer channel input from patch matrix
+* Grain Mix params
+** source-g[m]
+   Choose grain input from patch matrix
+** fader-g[m]
+   Stereo fader from grain m to DACS 1&2
+** pan-g[m]
+   Stereo pan from grain m between DACS 1&2
+** effect-g[m]
+   Send from grain m to effect bus
+** aux0-g[m]
+   Fader from grain m to DAC3
+** aux1-g[m]
+   Fader from grain m to DAC4
+** phase-g[m]
+   phase of grain m (+ve or -ve)
+** lpf-g[m]
+   Cutoff frequency (in Hz) for grain output (low-pass filter)
+* Grain Modulation Params
+** FM-source-g[m]
+   Choose a signal from patch matrix to modulate scrubPitch of grain.
+   If scrubbing disabled, FM becomes PM (modulating read position
+   relative to echotap).
+** FM-level-g[m]
+   Set depth of modulation induced by FM-source
+** AM-source
+   Choose a signal from patch matrix to modulate amplitude of grain
+   output.
+** AM-level-g[m]
+   Pan between modulated and unmodulated grain output.
+* Grain Scrub params
+** scrubEnabfle-g[m]
+   enable scrubbing behaviour for this grain (pitch control
+   independent of echo speed).
+** scrubPitch-g[m]
+   speed of scrubber read tap in subsamples (1/256 sample) - bees
+   displays 1.000 at speed = 1 sample/sample
+** scrubLength-g[m]
+   length of scrubber read distance from echo readhead before cross-fading.
+   This is expressed as a ratio to the scrubberFadeLength
+** scrubPitchDetection-g[m]
+   When this is enabled, scrublength 'snaps' to an even multiple of
+   grain input signal.  Zero crossing pitch detection with adaptive
+   filter.
+* Grain Echo params
+** echoFadeLength-g[m]
+   length for scrubber crossfades.  Again expressed as a ratio to echomax-echomin
+** echoTime-g[m]
+   allows bees to force read head to a point, e.g:
+   - set echo time for simple echo fx
+   - trigger one-shot (stalled) sample for pre-recorded audio
+** echoSpeed-g[m]
+   For canonical realtime FX like this guy should be 1, so the
+   echo-tap stays in sync with write head. When a sample is loaded
+   into the fifo this guy replays the sample.  See echoEdgeBehaviour
+   for playback modes.  If you're feeling crazy unglue the echo tap
+   from writing head while write head runs by setting this value != 1
+** echoEdgeBehaviour-g[m]
+   set this to 0 or 1 to control does echo-tap head stall, or wrap at
+   echo boundary respectively?  Also possible to retrigger one-shot samples by
+   resending 0.
+** echoMin-g[m]
+   echo boundary nearest to write-head
+** echoMax-g[m]
+   echo boundary furthest from write-head
+** writeEnable-g[m]
+   Choose between constantly writing new data into echotap or simply
+   re-playing already-recorded audio in the underlying buffer.
+* Grain Pitch & Amplitude Analysis / Tracking
+** envAttack-g[m]
+   Attack of the envelope detector - this control is a little rough
+   round the edges but it kinda works.  Broadly speaking smaller
+   number -> slower attack.
+** trackingEnv-g[m]
+   Multiply PitchTracking Oscillator by grain envelope befre sending
+   it to patch matrix.
+** trackingPitch-g[m]
+   Frequency Offset factor for pitchTracking oscillator/synth
+* Grains Utilities
+** LFO-speed
+   Speed of LFO (smaller number = slower oscillation down to very slow
+   oscillations.  LFO signal is output to patch matrix.
+** LFO-shape
+   Blend between a triangular LFO shape (0) and sinusoid shape (max)
+** noiseBurst
+   Trigger a noise burst impulse into patch matrix
+** noiseBurstDecay
+   How quickly does noise burst impulse decay (small number = long burst)
+** static-CV1
+   Set a DC value from BEES on static-CV1 slot in patch matrix
+** static-CV2
+   Set a DC value from BEES on static-CV2 slot in patch matrix
+* Patch Matrix
   The astute reader will notice a number of cryptic references to a
   so-called 'patch matrix'.  This allows the program to be internally
-  re-wired like patching a modular synth.  Patch index denotes an
-  output & each patch-matrix-enabled input may choose one and only one
-  source from the patch matrix.
+  re-wired like patching a modular synthesizer.  Patch index denotes
+  an output & each patch-matrix-enabled input may choose one and only
+  one source from the patch matrix.
 ** Patch matrix Cheatsheet:
+
 0. Effect Bus
 1. ADC 1
 2. ADC 2
@@ -18,125 +163,12 @@
 10. grain2 echoTap envelope
 11. LFO
 12. noise burst
-13. static_CV1
-14. static_CV2
-* CV Params
-** Source_cv1
-   Choose source for CV out 1 from patch matrix
-** Source_cv2
-   Choose source for CV out 2 from patch matrix
-** Source_cv3
-   Choose source for CV out 3 from patch matrix
-** Source_cv4
-   Choose source for CV out 4 from patch matrix
-* ADC mix params
-  ADCs 1&2 are hard-wired to dedicated mixer channel:
-** fader_i<n>
-   Stereo fader from ADC i to DACS 1&2
-** pan_i<n>
-   Stereo pan from ADC i between DACS 1&2
-** effect_i<n>
-   Send from ADC i to effect bus
-** aux0_i<n>
-   Fader from ADC i to DAC3
-** aux1_i<n>
-   Fader from ADC i to DAC4
-   Mixer channels 3 & 4 have an additional control:
-** source_i<n>
-   Choose mixer channel input from patch matrix
-* Grain Mix params
-** source_g<m> [1:14]
-   Choose grain input from patch matrix
-** fader_g<m>
-   Stereo fader from grain i to DACS 1&2
-** pan_g<m>
-   Stereo pan from grain i between DACS 1&2
-** effect_g<m>p
-   Send from grain i to effect bus
-** aux0_g<m>
-   Fader from grain i to DAC3
-** aux1_g<m>
-   Fader from grain i to DAC4
-** phase_g<m>
-   phase of grain i (+ve or -ve)
-** lpf_g<m>
-   Cutoff frequency (in Hz) for grain output (low-pass filter)
-* Grain Modulation Params
-** FM_source_g<m>
-   Choose a signal from patch matrix to modulate scrubPitch of grain.
-   If scrubbing disabled, FM becomes PM (modulating read position
-   relative to echotap.
-** FM_level_g<m>
-   Set depth of modulation induced by FM_source
-** AM_source
-   Choose a signal from patch matrix to modulate amplitude of grain
-   output.
-** AM_level_g<m>
-   Pan between modulated and unmodulated grain output.
-* Grain Scrub params
-** scrubEnable_g<m>
-   enable scrubbing behaviour for this grain (pitch control
-   independent of echo speed).
-** scrubPitch_g<m> f8x8[0:7]
-   speed of scrubber read tap in subsamples (1/256 sample) - bees
-   displays 1.000 at speed = 1 sample/sample
-** scrubLength_g<m> i24
-   length of scrubber read distance from echo readhead before cross-fading.
-   This is expressed as a ratio to the scrubberFadeLength
-** scrubPitchDetection_g<m>
-   When this is enabled, scrublength 'snaps' to an even multiple of
-   grain input signal.  Zero crossing pitch detection with adaptive
-   filter.
-* Grain Echo params
-** echoFadeLength_g<m>
-   length for scrubber crossfades.  Again expressed as a ratio to echomax-echomin
-** echoTime_g<m>
-   allows bees to force read head to a point, e.g:
-   - set echo time for simple echo fx
-   - trigger one-shot sample for pre-recorded audio
-** echoSpeed_g<m>
-   For canonical realtime FX like this guy should be 1, so the
-   echo-tap stays in sync with write head. When a sample is loaded
-   into the fifo this guy replays the sample.  See echoEdgeBehaviour
-   for playback modes.  If you're feeling crazy unglue the echo tap
-   from writing head while write head runs by setting this value != 1
-** echoEdgeBehaviour_g<m>
-   set this to 0 or 1 to control does echo-tap head stall, or wrap at
-   echo boundary respectively?  Also possible to retrigger one-shot samples by
-   resending 0.
-** echoMin_g<m>
-   echo boundary nearest to write-head
-** echoMax_g<m>
-   echo boundary furthest from write-head
-** writeEnable_g<m>
-   Choose between constantly writing new data into echotap or simply
-   re-playing already-recorded audio in the underlying buffer.
-* Grain Pitch & Amplitude Analysis / Tracking
-** envAttack_g<m>
-   Attack of the envelope detector - bit rough atm but smaller number
-   -> slower attack
-** trackingEnv_g<m>
-   Multiply PitchTracking Oscillator by grain envelope befre sending
-   it to patch matrix.
-** trackingPitch_g<m>
-   Frequency Offset factor for pitchTracking oscillator/synth
-* Grains Utilities
-** LFO_speed
-   Speed of LFO (smaller number = slower oscillation down to very slow
-   oscillations.  LFO signal is output to patch matrix.
-** LFO_shape
-   Blend between a triangular LFO shape (0) and sinusoid shape (max)
-** noiseBurst
-   Trigger a noise burst impulse into patch matrix
-** noiseBurstDecay
-   How quickly does noise burst impulse decay (small number = long burst)
-** static_CV1
-   Set a DC value from BEES on static_CV1 slot in patch matrix
-** static_CV2
-   Set a DC value from BEES on static_CV2 slot in patch matrix
+13. static-CV1
+14. static-CV2
+
 * What is a grain?
-so a grain consists a buffer, a write head running at 1x, an 'echoTap'
-& a 'scrubTap'.
+  A grain consists a buffer, a write head running at 1x, an
+  'echoTap' & a 'scrubTap'.
 
     The write head is the same as the one in lines - I set the
     underlying buffer to be very long.  The echoTap is like a lines
@@ -148,9 +180,6 @@ so a grain consists a buffer, a write head running at 1x, an 'echoTap'
     time coord is relative to the echoTap, and it's time coord is much
     finer grained than the echoTap.
 
-* Bugs!?  (By definition there are no bugs)
-  Please send bug reports / patches to sasquatch@rickvenn.com or
-  github.com/rick-monster/aleph I will be happy to hear from you
-  whether something is wrong with the module, you want to send me
-  beer, music you have made using this software or just to say hello.
-  I might even *fix* any bugs that crop up...
+* Bugs!?
+  Please send bug reports and/or patches to sasquatch@rickvenn.com or
+  github.com/rick-monster/aleph.
