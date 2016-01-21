@@ -140,12 +140,12 @@ fract32 grain_next(grain* dl, fract32 in, fract32 FM_signal) {
 }
 
 fract32 read_grainEnv (grain *dl) {
-  return shl_fr1x32(dl->env.val,3);
+  return shl_fr1x32(dl->env.val,2);
 }
 
 fract32 read_pitchTrackOsc (grain *dl) {
   if (dl->envEnable)
-    return mult_fr1x32x32(shl_fr1x32(dl->env.val, 3),
+    return mult_fr1x32x32(shl_fr1x32(dl->env.val, 2),
 			  pitchTrackOsc(&(dl->pitchDetector)));
   else
     return pitchTrackOsc(&(dl->pitchDetector));
@@ -218,7 +218,7 @@ void grain_set_writeEnable(grain* dl, s32 enable) {
 }
 
 void grain_set_envAttack(grain* dl, s32 newSpeed) {
-  dl->env.up = min_fr1x32(SLEW_4S, (fract32) newSpeed);
+  dl->env.up = newSpeed;
 }
 
 void grain_disable_pitchDetection(grain* dl) {

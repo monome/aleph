@@ -114,7 +114,7 @@ fract32 osc_square (fract32 phase);
 
 
 #define SLEW_1MS (TWOPI * hzToDimensionless(1000))
-#define SLEW_10MS (TWOPI * hzToDimensionless(10))
+#define SLEW_10MS (TWOPI * hzToDimensionless(100))
 #define SLEW_100MS (TWOPI * hzToDimensionless(10))
 #define SLEW_1S (TWOPI * hzToDimensionless(1))
 #define SLEW_4S  (1 << 16)
