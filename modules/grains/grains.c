@@ -239,7 +239,7 @@ void module_init(void) {
 
   //grain scrubber params
   param_setup (eParam_scrubEnable_g2, 1 << 16);
-  param_setup (eParam_scrubPitch_g2, 2 << 16);
+  param_setup (eParam_scrubPitch_g2, 3 << 15);
   param_setup (eParam_scrubLength_g2, 1000 << 16 );
   param_setup (eParam_scrubPitchDetection_g2, 1 << 16);
 
