@@ -7,36 +7,27 @@
 
 DSP Module for Aleph Sound Computer
 
-With this program loaded onto the blackfin dsp, an aleph can quickly
-transform between any of the following digital music devices:
+With this program loaded onto the blackfin dsp, the aleph readily
+transforms between any of the following digital music devices:
 
-- dual-voice pitchshifter effect
-- chorus/flanger effect
+- live performance sampler
+- pitchshifter
+- chorus/flanger
 - rudimentary Karplus-Strong resonator
-- live performance sampler with independent speed & pitch
-- echo effect
-- pitch-tracking re-synthesizer for monophonic audio input
+- echo
+- pitch & amplitude tracking synthesizer for monophonic signals
 - pitch/volume tremolo
-- ring Modulator effect
-- FM-synth-like effect for arbitrary audio input
+- ring modulator
+- FM-synth-like processing of monophonic signals
 
-A great number of permutations and combinations of these basic
-functions may be realised through careful manipulation of grains' 84
-control & patch parameters from BEES.
+Many variations, permutations and combinations of these basic
+functions may be realised through static combinations of grains' 84
+parameters.  The specification of these parameters is given below:
 
-The remainder of this document is given over to a detailed description
-of grains' parameters.
-
-* CV Params
-** Source-cv1
-   Choose source for CV out 1 from patch matrix
-** Source-cv2
-   Choose source for CV out 2 from patch matrix
-** Source-cv3
-   Choose source for CV out 3 from patch matrix
-** Source-cv4
-   Choose source for CV out 4 from patch matrix
-* ADC mix params
+* CV Params {1, 2, 3, 4}
+** Source-cv-[n]
+   Choose source for CV out n from patch matrix
+* ADC mix params {1, 2, 3, 4}
   ADCs 1 & 2 are hard-wired to mixer channels 1 & 2, whereas mixer
   channels 3 & 4 select their source from the patch matrix.
 ** fader-i[n]
@@ -51,7 +42,7 @@ of grains' parameters.
    Fader from mixer chan n to DAC4
 ** source-i[n]
    Choose mixer channel input from patch matrix
-* Grain Mix params
+* Grain Mix params {1, 2}
 ** source-g[m]
    Choose grain input from patch matrix
 ** fader-g[m]
@@ -68,7 +59,7 @@ of grains' parameters.
    phase of grain m (+ve or -ve)
 ** lpf-g[m]
    Cutoff frequency (in Hz) for grain output (low-pass filter)
-* Grain Modulation Params
+* Grain Modulation Params {1, 2}
 ** FM-source-g[m]
    Choose a signal from patch matrix to modulate scrubPitch of grain.
    If scrubbing disabled, FM becomes PM (modulating read position
@@ -80,7 +71,7 @@ of grains' parameters.
    output.
 ** AM-level-g[m]
    Pan between modulated and unmodulated grain output.
-* Grain Scrub params
+* Grain Scrub params {1, 2}
 ** scrubEnabfle-g[m]
    enable scrubbing behaviour for this grain (pitch control
    independent of echo speed).
@@ -94,7 +85,7 @@ of grains' parameters.
    When this is enabled, scrublength 'snaps' to an even multiple of
    grain input signal.  Zero crossing pitch detection with adaptive
    filter.
-* Grain Echo params
+* Grain Echo params {1, 2}
 ** echoFadeLength-g[m]
    length for scrubber crossfades.  Again expressed as a ratio to echomax-echomin
 ** echoTime-g[m]
@@ -118,7 +109,7 @@ of grains' parameters.
 ** writeEnable-g[m]
    Choose between constantly writing new data into echotap or simply
    re-playing already-recorded audio in the underlying buffer.
-* Grain Pitch & Amplitude Analysis / Tracking
+* Grain Pitch & Amplitude Analysis / Tracking {1, 2}
 ** envAttack-g[m]
    Attack of the envelope detector - this control is a little rough
    round the edges but it kinda works.  Broadly speaking smaller
@@ -145,9 +136,9 @@ of grains' parameters.
 * Patch Matrix
   The astute reader will notice a number of cryptic references to a
   so-called 'patch matrix'.  This allows the program to be internally
-  re-wired like patching a modular synthesizer.  Patch index denotes
-  an output & each patch-matrix-enabled input may choose one and only
-  one source from the patch matrix.
+  re-wired, much like patching a modular synthesizer.  Patch index
+  denotes an output & each patch-matrix-enabled input may choose one
+  source from the patch matrix.
 ** Patch matrix Cheatsheet:
 
 0. Effect Bus
@@ -166,19 +157,27 @@ of grains' parameters.
 13. static-CV1
 14. static-CV2
 
-* What is a grain?
+* Grain Anatomy
   A grain consists a buffer, a write head running at 1x, an
   'echoTap' & a 'scrubTap'.
 
-    The write head is the same as the one in lines - I set the
-    underlying buffer to be very long.  The echoTap is like a lines
-    read head but it can run at non-integer speeds, it's time coord is
-    relative to the write head (wrapping round the underlying buffer
-    is hidden) but playback speed is relative to the underlying buffer
-    (though think there's a subtle bug in this respect with current
-    release).  The scrubTap is kind of similar to an echoTap but it's
-    time coord is relative to the echoTap, and it's time coord is much
-    finer grained than the echoTap.
+  The echoTap is like a lines read head but it can run at non-integer
+  speeds, it's time coord is relative to the write head (wrapping
+  round the underlying buffer is hidden). However playback speed
+  remains relative to the underlying buffer.  The echoTap also
+  functions like a live performance sampler - writeEnable=0 allows to
+  'freeze' the current contents of the echotap buffer, enabling sampler
+  playback, which can be looping or one-shot.
+
+  The scrubTap is a classic rotating-head pitch shifter temporally
+  indexed relative to the scrub tap and with a fine-grained time
+  coordinate. When 'scrubbing' is disabled, the scrubTap becomes
+  simply a fine-grained delay.  'FM' becomes 'PM' in this case,
+  modulating by some proportion of the scrubLength.
+  
+  Also bolted on to each 'grain' for good measure is a built in
+  pitch-tracker, envelope detector & a monophonic tracking synthesiser
+  harnessing these two signals.
 
 * Bugs!?
   Please send bug reports and/or patches to sasquatch@rickvenn.com or
