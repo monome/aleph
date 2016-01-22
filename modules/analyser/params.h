@@ -18,13 +18,13 @@
 
 // enumerate parameters
 enum params {
-  eParam_cvVal0,
-  eParam_cvVal1,
-  eParam_cvVal2,
+  eParam_linAttack,
+  eParam_linDecay,
+
+  eParam_logAttack,
+  eParam_logDecay,
+
   eParam_cvVal3,
-  eParam_cvSlew0,
-  eParam_cvSlew1,
-  eParam_cvSlew2,
   eParam_cvSlew3,
 
   eParamNumParams

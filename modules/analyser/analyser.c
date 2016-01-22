@@ -74,15 +74,15 @@ void module_init(void) {
   filter_1p_lo_init( &(cvSlew[2]), 0 );
   filter_1p_lo_init( &(cvSlew[3]), 0 );
 
-  param_setup( eParam_cvSlew0, PARAM_CV_SLEW_DEFAULT );
-  param_setup( eParam_cvSlew1, PARAM_CV_SLEW_DEFAULT );
-  param_setup( eParam_cvSlew2, PARAM_CV_SLEW_DEFAULT );
   param_setup( eParam_cvSlew3, PARAM_CV_SLEW_DEFAULT );
 
-  param_setup( eParam_cvVal0, PARAM_CV_VAL_DEFAULT );
-  param_setup( eParam_cvVal1, PARAM_CV_VAL_DEFAULT );
-  param_setup( eParam_cvVal2, PARAM_CV_VAL_DEFAULT );
   param_setup( eParam_cvVal3, PARAM_CV_VAL_DEFAULT );
+
+  param_setup( eParam_linAttack, LINSLEW_10MS);
+  param_setup( eParam_linDecay, LINSLEW_100MS);
+
+  param_setup( eParam_logAttack, SLEW_10MS);
+  param_setup( eParam_logDecay, SLEW_100MS);
 }
 
 // de-init
@@ -135,6 +135,18 @@ void module_set_param(u32 idx, ParamValue v) {
 
   case eParam_cvSlew3 :
     filter_1p_lo_set_slew(&(cvSlew[3]), v);
+    break;
+  case eParam_linAttack :
+    line.slew.up = v;
+    break;
+  case eParam_linDecay :
+    line.slew.down = v;
+    break;
+  case eParam_logAttack :
+    loge.up = v;
+    break;
+  case eParam_logDecay :
+    loge.down = v;
     break;
   default:
     break;
