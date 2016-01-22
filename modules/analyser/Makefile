@@ -9,6 +9,7 @@ version = $(maj).$(min).$(rev)
 ldr_name = $(prefix)$(module_name)-$(version).ldr
 
 module_obj = analyser.o \
+	$(audio)/ricks_tricks.o \
 	$(audio)/filter_1p.o \
 
 all: $(prefix)$(module_name).ldr

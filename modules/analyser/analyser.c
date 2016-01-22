@@ -16,6 +16,7 @@
 
 // aleph-bfin
 #include "bfin_core.h"
+#include "ricks_tricks.h"
 #include "cv.h"
 #include "gpio.h"
 #include "fract_math.h"
@@ -101,12 +102,19 @@ u32 module_get_num_params(void) {
    - last thing audio ISR does is call the first DAC channel to be loaded
    - dac_update writes to 4x16 volatile buffer
 */
+trackingEnvelopeLin line;
+trackingEnvelopeLog loge;
+pitchDetector pd;
 
 void module_process_frame(void) {
+  fract32 sig_bus = add_fr1x32(in[0], in[1]);
+  cvVal[0] = trackingEnvelopeLin_next(&line, sig_bus);
+  cvVal[1] = trackingEnvelopeLog_next(&loge, sig_bus);
+  cvVal[2] = pitchTrack(&pd, sig_bus);
+  cvVal[3] = filter_1p_lo_next(&(cvSlew[3]));
 
   // Update one of the CV outputs
   if(filter_1p_sync(&(cvSlew[cvChan]))) { ;; } else {
-    cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
     cv_update(cvChan, cvVal[cvChan]);
   }
 
@@ -121,28 +129,10 @@ void module_set_param(u32 idx, ParamValue v) {
   LED4_TOGGLE; // which one it this?
   switch(idx) {
 
-  case eParam_cvVal0 :
-    filter_1p_lo_in(&(cvSlew[0]), v);
-    break;
-  case eParam_cvVal1 :
-    filter_1p_lo_in(&(cvSlew[1]), v);
-    break;
-  case eParam_cvVal2 :
-    filter_1p_lo_in(&(cvSlew[2]), v);
-    break;
   case eParam_cvVal3 :
     filter_1p_lo_in(&(cvSlew[3]), v);
     break;
 
-  case eParam_cvSlew0 :
-    filter_1p_lo_set_slew(&(cvSlew[0]), v);
-    break;
-  case eParam_cvSlew1 :
-    filter_1p_lo_set_slew(&(cvSlew[1]), v);
-    break;
-  case eParam_cvSlew2 :
-    filter_1p_lo_set_slew(&(cvSlew[2]), v);
-    break;
   case eParam_cvSlew3 :
     filter_1p_lo_set_slew(&(cvSlew[3]), v);
     break;
