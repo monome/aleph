@@ -113,13 +113,11 @@ void module_process_frame(void) {
   fract32 sig_bus = add_fr1x32(in[0], in[1]);
   cvVal[0] = trackingEnvelopeLin_next(&line, sig_bus);
   cvVal[1] = trackingEnvelopeLog_next(&loge, sig_bus);
-  cvVal[2] = pitchTrack(&pd, sig_bus);
+  cvVal[2] = shl_fr1x32(pitchTrack(&pd, sig_bus), 14);;
   cvVal[3] = filter_1p_lo_next(&(cvSlew[3]));
 
   // Update one of the CV outputs
-  if(filter_1p_sync(&(cvSlew[cvChan]))) { ;; } else {
-    cv_update(cvChan, cvVal[cvChan]);
-  }
+  cv_update(cvChan, cvVal[cvChan]);
 
   // Queue up the next CV output for processing next audio frame
   if(++cvChan == 4) {
