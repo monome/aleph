@@ -1,30 +1,30 @@
 #include <string.h>
 
 #include "module.h"
-#include "params.h" 
+#include "params.h"
 
 extern void fill_param_desc(ParamDesc* desc) {
 
   strcpy(desc[eParam_linAttack].label, "linAttack");
   desc[eParam_linAttack].type = eParamTypeFix;
-  desc[eParam_linAttack].min = LINSLEW_1S;
-  desc[eParam_linAttack].max = LINSLEW_1MS;
+  desc[eParam_linAttack].min = FR32_MAX / 48 / 1000;
+  desc[eParam_linAttack].max = FR32_MAX / 48;
   desc[eParam_linAttack].radix = 16;
   strcpy(desc[eParam_linDecay].label, "linDecay");
   desc[eParam_linDecay].type = eParamTypeFix;
-  desc[eParam_linDecay].min = LINSLEW_1S;
-  desc[eParam_linDecay].max = LINSLEW_1MS;
+  desc[eParam_linDecay].min = FR32_MAX / 48 / 1000;
+  desc[eParam_linDecay].max = FR32_MAX / 48;
   desc[eParam_linDecay].radix = 16;
 
   strcpy(desc[eParam_logAttack].label, "logAttack");
   desc[eParam_logAttack].type = eParamTypeFix;
-  desc[eParam_logAttack].min = LOGSLEW_1S;
-  desc[eParam_logAttack].max = LOGSLEW_1MS;
+  desc[eParam_logAttack].min = 268434;
+  desc[eParam_logAttack].max = 268434000;
   desc[eParam_logAttack].radix = 16;
   strcpy(desc[eParam_logDecay].label, "logDecay");
   desc[eParam_logDecay].type = eParamTypeFix;
-  desc[eParam_logDecay].min = LOGSLEW_1S;
-  desc[eParam_logDecay].max = LOGSLEW_1MS;
+  desc[eParam_logDecay].min = 268434;
+  desc[eParam_logDecay].max = 268434000;
   desc[eParam_logDecay].radix = 16;
 
   strcpy(desc[eParam_cvVal3].label, "cv3");
