@@ -59,6 +59,10 @@ static inline void param_setup(u32 id, ParamValue v) {
   module_set_param(id, v);
 }
 
+trackingEnvelopeLin line;
+trackingEnvelopeLog loge;
+pitchDetector pd;
+
 void module_init(void) {
   // init module/param descriptor
   pAnalyserData = (analyserData*)SDRAM_ADDRESS;
@@ -83,6 +87,9 @@ void module_init(void) {
 
   param_setup( eParam_logAttack, SLEW_10MS);
   param_setup( eParam_logDecay, SLEW_100MS);
+  pitchDetector_init(&pd);
+  trackingEnvelopeLin_init(&line);
+  trackingEnvelopeLog_init(&loge);
 }
 
 // de-init
@@ -102,10 +109,6 @@ u32 module_get_num_params(void) {
    - last thing audio ISR does is call the first DAC channel to be loaded
    - dac_update writes to 4x16 volatile buffer
 */
-trackingEnvelopeLin line;
-trackingEnvelopeLog loge;
-pitchDetector pd;
-
 void module_process_frame(void) {
   fract32 sig_bus = add_fr1x32(in[0], in[1]);
   cvVal[0] = trackingEnvelopeLin_next(&line, sig_bus);
