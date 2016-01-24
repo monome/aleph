@@ -21,19 +21,9 @@ static fract32 sineTab[PAN_SINE_BUF_SIZE] = {
 
 // return balanced sum of two inputs 
 // given pan coefficient in [0,1]
-fract32 pan_lin_mix(fract32 inX, fract32 inY, fract32 pan) {
-  fract32 ymul = pan;
-  fract32 xmul = sub_fr1x32(FR32_MAX, ymul);
-  return add_fr1x32( mult_fr1x32x32(inX, xmul), mult_fr1x32x32(inY, ymul) ); 
-}
 
 // just calculate balanced coefficients 
 // given pan coefficient in [0,1]
-void pan_lin_coeff(fract32* a, fract32* b, fract32 pan) {
-    // simple linear pan
-    *a = pan;
-    *b = sub_fr1x32(FR32_MAX, pan);
-}
 
 //----------------------
 //--- equal-power balanced pan

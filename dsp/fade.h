@@ -34,5 +34,6 @@ extern fract32 fade_lin_calc(fadeLin* fade);
 extern fract32 fade_ep_x(fadeEP* fade, fract32 v);
 extern fract32 fade_ep_y(fadeEP* fade, fract32 v);
 extern fract32 fade_ep_pos(fadeEP* fade, fract32 v);
+extern fract32 fade_ep_x_y_pos(fadeEP* fade, fract32 x, fract32 y, fract32 pos);
 // recalculate without input
 extern fract32 fade_ep_calc(fadeEP* fade);
