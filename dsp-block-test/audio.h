@@ -11,7 +11,9 @@
 #include "types.h"
 
 //! block size
-#define BLOCKSIZE 8
+#define CHANNELS 4
+#define BLOCKSIZE 16
+#define SAMPLESIZE 4 // sizeof(fract32)
 
 //! positions in audio frame
 #define AUDIO_FRAME_L0 0
@@ -23,20 +25,40 @@
 extern volatile u8 audioRxDone;
 extern volatile u8 audioTxDone;
 
+//! current pointers to audio buffers
+fract32** audioIn;
+fract32** audioOut;
+
 //! I/O buffers
 __attribute__((l1_data_A))
 __attribute__((aligned(32)))
-extern fract32 audioRxBuf[BLOCKSIZE*4];
+fract32 inputChannels0[CHANNELS][BLOCKSIZE];
 
-__attribute__((l1_data_B))
+__attribute__((l1_data_A))
 __attribute__((aligned(32)))
-extern fract32 audioTxBuf[BLOCKSIZE*4];
+fract32 inputChannels1[CHANNELS][BLOCKSIZE];
 
-//! process buffers
+__attribute__((l1_data_A))
 __attribute__((aligned(32)))
-extern fract32 audioProcessInBuf[BLOCKSIZE*4];
+fract32 outputChannels0[CHANNELS][BLOCKSIZE];
 
+__attribute__((l1_data_A))
 __attribute__((aligned(32)))
-extern fract32 audioProcessOutBuf[BLOCKSIZE*4];
+fract32 outputChannels1[CHANNELS][BLOCKSIZE];
+
+/* __attribute__((l1_data_A)) */
+/* __attribute__((aligned(32))) */
+/* extern fract32 audioRxBuf[BLOCKSIZE*4]; */
+
+/* __attribute__((l1_data_B)) */
+/* __attribute__((aligned(32))) */
+/* extern fract32 audioTxBuf[BLOCKSIZE*4]; */
+
+/* //! process buffers */
+/* __attribute__((aligned(32))) */
+/* extern fract32 audioProcessInBuf[BLOCKSIZE*4]; */
+
+/* __attribute__((aligned(32))) */
+/* extern fract32 audioProcessOutBuf[BLOCKSIZE*4]; */
 
 #endif

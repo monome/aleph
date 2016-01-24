@@ -20,8 +20,8 @@ void osc_set_amp(fract32 _amp) {
   amp = _amp;
 }
 
-void osc_process_block(fract32* dst) {
-  u16 i;
+void osc_process_block(fract32 dst[][], u8 channels, u8 frames) {
+  u16 frame, channel;
   fract32 val;
 
   u32 idxA;
@@ -31,9 +31,9 @@ void osc_process_block(fract32* dst) {
   fract32 waveA;
   fract32 waveB;
   
-  fract32* p = dst;
+  //  fract32* p = dst;
   
-  for(i=0; i<BLOCKSIZE; i++) {
+  for(frame=0; frame<frames; frame++) {
 
     // phase is unsigned 32b
     // allow overflow
@@ -61,15 +61,17 @@ void osc_process_block(fract32* dst) {
     				 )
     		      );
 
-    // mix to output buffer (all channels)
-    *p = add_fr1x32(*p, val);
-    p++;
-    *p = add_fr1x32(*p, val);
-    p++;
-    *p = add_fr1x32(*p, val);
-    p++;
-    *p = add_fr1x32(*p, val);
-    p++;
+    for(chan=0; chan<channels; chan++) { 
+      dst[chan][frame] = add_fr1x32(dst[chan][frame], val);
+      /* // mix to output buffer (all channels) */
+      /* *p = add_fr1x32(*p, val); */
+      /* p++; */
+      /* *p = add_fr1x32(*p, val); */
+      /* p++; */
+      /* *p = add_fr1x32(*p, val); */
+      /* p++; */
+      /* *p = add_fr1x32(*p, val); */
+      /* p++; */
   }
 }
 

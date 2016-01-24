@@ -11,14 +11,27 @@
 long long unsigned int ledCounterRx = 0;
 long long unsigned int ledCounterTx = 0;
 
+// flags for pingpong processing
+static volatile u8 inBufFlag = 0;
+static volatile u8 outBufFlag = 0;
+
 __attribute((interrupt_handler)) 
 void sport0_rx_isr(void) {
-  u16 i;
-  // copy input for new block
-  for(i=0; i<BLOCKSIZE*4; i++) { 
-    audioProcessInBuf[i] = audioRxBuf[i] << 8;
-  }
+  // u16 i;
 
+  // copy input for new block
+  /* for(i=0; i<BLOCKSIZE*4; i++) {  */
+  /*   audioProcessInBuf[i] = audioRxBuf[i] << 8; */
+  /* } */
+
+  if(inBufFlag) {
+    audioIn = inputChannels1;
+    inBufFlag = 0;
+  } else {
+    audioIn = inputChannels0;
+    inBufFlag = 1;
+  }
+  
   if (++ledCounterRx > 4000) {
     ledCounterRx = 0;
     LED3_TOGGLE;
@@ -33,7 +46,15 @@ void sport0_rx_isr(void) {
 
 __attribute((interrupt_handler)) 
 void sport0_tx_isr(void) {
-  u16 i;
+  // u16 i;
+  
+  if(outBufFlag) {
+    audioOut = outputChannels1;
+    outBufFlag = 0;
+  } else {
+    audioOut = outputChannels0;
+    outBufFlag = 0;
+  }
 
   if (++ledCounterTx > 6000) {
     ledCounterTx = 0;
@@ -41,9 +62,9 @@ void sport0_tx_isr(void) {
   }
   
   // copy output from last block
-  for(i=0; i<BLOCKSIZE*4; i++) {
-    audioTxBuf[i] = audioProcessOutBuf[i] >> 8;
-  }
+  /* for(i=0; i<BLOCKSIZE*4; i++) { */
+  /*   audioTxBuf[i] = audioProcessOutBuf[i] >> 8; */
+  /* } */
 
   audioTxDone = 1;
   

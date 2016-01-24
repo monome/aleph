@@ -109,7 +109,7 @@ int main(void) {
   while(1) { 
 
     if(audioTxDone && audioRxDone) {
-      module_process_block();
+      module_process_block(audioIn, audioOut, BLOCKSIZE);
       audioTxDone = 0;
       audioRxDone = 0;
     }

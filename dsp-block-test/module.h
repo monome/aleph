@@ -14,5 +14,8 @@
 extern void module_init(void);
 //! process a block of samples
 extern void module_process_block(void);
+//! process a block of samples
+extern void module_process_block(fract32** inChannels, fract32** outChannels, );
+
 
 #endif
