@@ -61,6 +61,7 @@
 #include "ops/op_timer.h"
 #include "ops/op_tog.h"
 #include "ops/op_ww.h"
+#include "ops/op_param.h"
 
 // let's keep this list alphabetical so we can easily see whether something is included.
  

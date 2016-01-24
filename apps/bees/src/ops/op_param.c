@@ -8,6 +8,7 @@
 #include "net_protected.h"
 #include "pickle.h"
 #include "op_param.h"
+#include "bfin.h"
 
 //-------------------------------------------------
 //----- descriptor
@@ -59,8 +60,6 @@ void op_param_init(void* op) {
 
   // class state
   param->event = 0;
-  param->ticks = tcTicks;
-  param->interval = 1000;
 }
 
 //-------------------------------------------------
