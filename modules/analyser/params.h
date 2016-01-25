@@ -18,12 +18,19 @@
 
 // enumerate parameters
 enum params {
+  //these are the results of pitch/amplitude analysis
+  eParam_linEnv,
+  eParam_logEnv,
+  eParam_pitch,
+
+  //these are the envelope params for amplitude analysis
   eParam_linAttack,
   eParam_linDecay,
 
   eParam_logAttack,
   eParam_logDecay,
 
+  //standard DC CV param on the last CV output
   eParam_cvVal3,
   eParam_cvSlew3,
 
