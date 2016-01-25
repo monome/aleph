@@ -1,7 +1,7 @@
 /* dacs.c
    aleph-bfin
 
-   pitchshift module with 4 'grains'
+   pitchshift module with 2 'grains'
 
 */
 
@@ -17,6 +17,7 @@
 
 // aleph-bfin
 #include "bfin_core.h"
+#include "cv.h"
 //#include "dac.h"
 #include "gpio.h"
 #include "fract_math.h"
@@ -26,6 +27,7 @@
 #include "filter_1p.h"
 #include "module.h"
 #include "grain.h"
+#include "ricks_tricks.h"
 
 /// custom
 #include "params.h"
@@ -61,9 +63,13 @@ ParamValue aux2ITarget[4];
 ParamValue effectI[4];
 ParamValue effectITarget[4];
 
-#define NGRAINS 1
+#define NGRAINS 2
 grain grains[NGRAINS];
 //Grain mix params
+ParamValue sourceMixer3;
+ParamValue sourceMixer4;
+
+ParamValue sourceG[NGRAINS];
 
 ParamValue faderG[NGRAINS];
 ParamValue faderGTarget[NGRAINS];
@@ -80,7 +86,30 @@ ParamValue aux2GTarget[NGRAINS];
 ParamValue effectG[NGRAINS];
 ParamValue effectGTarget[NGRAINS];
 
+ParamValue FM_sourceG[NGRAINS];
+ParamValue FM_faderG[NGRAINS];
+
+ParamValue AM_faderG[NGRAINS];
+ParamValue AM_sourceG[NGRAINS];
+hpf AM_hpf[NGRAINS];
+hpf effect_hpf;
+lpf grain_lpf[NGRAINS];
+fract32 grain_lpf_freq[NGRAINS];
+
 ParamValue phaseG[NGRAINS];
+
+phasor LFO;
+fract32 LFO_bus;
+fract32 LFO_shape;
+
+fract32 noiseBurstEnv;
+fract32 noiseBurstDecay;
+lcprng noiseBurstSource;
+
+fract32 CV_gen1Target;
+fract32 CV_gen2Target;
+fract32 CV_gen1;
+fract32 CV_gen2;
 
 // data structure of external memory
 typedef struct _grainsData {
@@ -132,31 +161,118 @@ void module_init(void) {
   param_setup( 	eParam_aux2_i2,		AUX_DEFAULT );
   param_setup( 	eParam_effect_i2,	EFFECT_DEFAULT );
 
+  param_setup( 	eParam_source_i3,	3 << 16);
   param_setup( 	eParam_fader_i3,	FADER_DEFAULT );
   param_setup( 	eParam_pan_i3,		PAN_DEFAULT );
   param_setup( 	eParam_aux1_i3,		AUX_DEFAULT );
   param_setup( 	eParam_aux2_i3,		AUX_DEFAULT );
-  param_setup( 	eParam_effect_i3,	EFFECT_DEFAULT );
+  param_setup( 	eParam_effect_i3,	0 );
 
+  param_setup( 	eParam_source_i4,	4 << 16);
   param_setup( 	eParam_fader_i4,	FADER_DEFAULT );
   param_setup( 	eParam_pan_i4,		PAN_DEFAULT );
   param_setup( 	eParam_aux1_i4,		AUX_DEFAULT );
   param_setup( 	eParam_aux2_i4,		AUX_DEFAULT );
-  param_setup( 	eParam_effect_i4,	EFFECT_DEFAULT );
+  param_setup( 	eParam_effect_i4,	0 );
 
-  param_setup (eParam_scrubFadeLength,  45);
-  param_setup (eParam_echoFadeLength,   45);
-
+  //initialise effect bus feedback DC block filter
+  hpf_init(&effect_hpf);
+  int i;
+  //initialise grains
+  for (i=0;i<NGRAINS; i++) {
+    grain_init(&(grains[i]), pGrainsData->audioBuffer[i], LINES_BUF_FRAMES);
+    hpf_init(&(AM_hpf[i]));
+    lpf_init(&(grain_lpf[i]));
+    grain_lpf_freq[i] = hzToDimensionless(4000);
+  }
+  
+  param_setup( 	eParam_source_g1,	0);
   param_setup( 	eParam_fader_g1,	FADER_DEFAULT );
   param_setup( 	eParam_pan_g1,		PAN_DEFAULT );
   param_setup( 	eParam_aux1_g1,		AUX_DEFAULT );
   param_setup( 	eParam_aux2_g1,		AUX_DEFAULT );
-  param_setup( 	eParam_effect_g1,	EFFECT_DEFAULT );
+  param_setup( 	eParam_effect_g1,	0 );
+  param_setup( 	eParam_phase_g1,	65536);
+  param_setup( 	eParam_lpf_g1,          4000 << 16);
 
-  param_setup (eParam_scrubPitch_g1,    256);
-  param_setup (eParam_echoSpeed_g1,    256);
-  grain_init(&(grains[0]), pGrainsData->audioBuffer[0], LINES_BUF_FRAMES);
+  //grain mod params
+  param_setup (eParam_FM_source_g1, 0);
+  param_setup (eParam_FM_level_g1, 0);
+  param_setup (eParam_AM_source_g1, 0);
+  param_setup (eParam_AM_level_g1, 0);
 
+  //grain scrubber params
+  param_setup (eParam_scrubEnable_g1, 1 << 16);
+  param_setup (eParam_scrubPitch_g1, 2 << 16);
+  param_setup (eParam_scrubLength_g1, 1000 << 16);
+  param_setup (eParam_scrubPitchDetection_g1, 1 << 16);
+
+  //grain echo params
+  param_setup(eParam_echoTime_g1, 65536 * 15);
+  param_setup(eParam_echoSpeed_g1, 256 * 256 * 1);
+  param_setup (eParam_echoEdgeBehaviour_g1, EDGE_WRAP * 65536);
+  param_setup (eParam_echoFadeLength_g1, 0);
+  param_setup (eParam_echoMin_g1, 0);
+  param_setup (eParam_echoMax_g1, 65536 * 1000);
+
+  param_setup (eParam_writeEnable_g1, 1 * 65536);
+
+  //PitchTrack oscillator params
+  param_setup (eParam_envAttack_g1, 0x00320000);
+  param_setup (eParam_trackingEnv_g1, 1 * 65536);
+  param_setup (eParam_trackingPitch_g1, 1 * 65536);
+  
+  param_setup( 	eParam_source_g2,	0);
+  param_setup( 	eParam_fader_g2,	FADER_DEFAULT );
+  param_setup( 	eParam_pan_g2,		PAN_DEFAULT );
+  param_setup( 	eParam_aux1_g2,		AUX_DEFAULT );
+  param_setup( 	eParam_aux2_g2,		AUX_DEFAULT );
+  param_setup( 	eParam_effect_g2,	0 );
+  param_setup( 	eParam_phase_g2,	65536);
+  param_setup( 	eParam_lpf_g2,          4000 << 16);
+
+  //grain mod params
+  param_setup (eParam_FM_source_g2, 0);
+  param_setup (eParam_FM_level_g2, 0);
+  param_setup (eParam_AM_source_g2, 0);
+  param_setup (eParam_AM_level_g2, 0);
+
+  //grain scrubber params
+  param_setup (eParam_scrubEnable_g2, 1 << 16);
+  param_setup (eParam_scrubPitch_g2, 3 << 15);
+  param_setup (eParam_scrubLength_g2, 1000 << 16 );
+  param_setup (eParam_scrubPitchDetection_g2, 1 << 16);
+
+  //grain echo params
+  param_setup(eParam_echoTime_g2, 65536 * 15);
+  param_setup(eParam_echoSpeed_g2, 256 * 256 * 1);
+  param_setup (eParam_echoEdgeBehaviour_g2, EDGE_WRAP * 65536);
+  param_setup (eParam_echoFadeLength_g2, 0);
+  param_setup (eParam_echoMin_g2, 0);
+  param_setup (eParam_echoMax_g2, 65536 * 1000);
+
+  param_setup (eParam_writeEnable_g2, 1 * 65536);
+
+  //PitchTrack oscillator params
+  param_setup (eParam_envAttack_g2, 0x00320000);
+  param_setup (eParam_trackingEnv_g2, 1 * 65536);
+  param_setup (eParam_trackingPitch_g2, 1 * 65536);
+
+  param_setup (eParam_LFO_speed, 0x00640000);
+  param_setup (eParam_LFO_shape, PAN_DEFAULT);
+  phasor_init(&LFO);
+
+  param_setup (eParam_cvPatch1, 0);
+  param_setup (eParam_cvPatch2, 0);
+  param_setup (eParam_cvPatch3, 0);
+  param_setup (eParam_cvPatch4, 0);
+
+  param_setup (eParam_noiseBurst, 0);
+  param_setup (eParam_noiseBurstDecay, 0x01F40000);
+  lcprng_reset(&noiseBurstSource, 1);
+
+  param_setup (eParam_CV_gen1, 0);
+  param_setup (eParam_CV_gen2, 0);
 }
 
 // de-init
@@ -168,78 +284,137 @@ u32 module_get_num_params(void) {
   return eParamNumParams;
 }
 
-void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
-void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) ;
 
-#define simple_slew(x, y) x = y/100 + x/100 * 99
-//#define simple_slew(x, y) x = y
+/* #define fader_slew(x, y) simple_slew(x, y, SLEW_100MS) */
+#define fader_slew(x, y) x = y;
+#define grain_slew(x, y) simple_slew(x, y, SLEW_100MS)
+/* #define grain_slew(x, y) x = y; */
 
 
 #define simple_busmix(x, y, fact) x = add_fr1x32(x, mult_fr1x32x32(y, fact))
 
 fract32 effectBus;
 fract32 effectBusFeedback;
-fract32 grainOut;
+fract32 grainOutFeedback[NGRAINS];
+
+
+// dac values (u16, but use fract32 and audio integrators)
+static u8 cvPatch[4];
+static u8 cvChan = 0;
+
+fract32 patchMatrix[100];
+
+static inline fract32 selectGrainInput(s32 i) {
+  return patchMatrix[i];
+}
+
+void process_cv (void) {
+  cv_update(cvChan, selectGrainInput(cvPatch[cvChan]));
+
+  // Queue up the next CV output for processing next audio frame
+  if(++cvChan == 4) {
+    cvChan = 0;
+  }
+  /* cvChan = (cvChan + 1) & 3 */
+}
 
 void module_process_frame(void) {
 
   u8 i;
   //IIR slew
   for (i=0;i<4;i++) {
-    simple_slew(faderI[i], faderITarget[i]);
-    simple_slew(aux1I[i], aux1ITarget[i]);
-    simple_slew(aux2I[i], aux2ITarget[i]);
-    simple_slew(panI[i], panITarget[i]);
-    simple_slew(effectI[i],effectITarget[i]);
+    fader_slew(faderI[i], faderITarget[i]);
+    fader_slew(aux1I[i], aux1ITarget[i]);
+    fader_slew(aux2I[i], aux2ITarget[i]);
+    fader_slew(panI[i], panITarget[i]);
+    fader_slew(effectI[i],effectITarget[i]);
+    patchMatrix[i+1] = in[i];
   }
   for (i=0;i<NGRAINS;i++) {
-    simple_slew(faderG[i], faderGTarget[i]);
-    simple_slew(aux1G[i], aux1GTarget[i]);
-    simple_slew(aux2G[i], aux2GTarget[i]);
-    simple_slew(panG[i], panGTarget[i]);
-    simple_slew(effectG[i],effectGTarget[i]);
-
+    grain_slew(faderG[i], faderGTarget[i]);
+    grain_slew(aux1G[i], aux1GTarget[i]);
+    grain_slew(aux2G[i], aux2GTarget[i]);
+    grain_slew(panG[i], panGTarget[i]);
+    grain_slew(effectG[i],effectGTarget[i]);
   }
   
   //define delay input & output
-
   out[0] = 0;
   out[1] = 0;
   out[2] = 0;
   out[3] = 0;
-  effectBus = effectBusFeedback;
-  for (i=0;i<4;i++) {
+  effectBus = hpf_next_dynamic(&effect_hpf,
+			       effectBusFeedback,
+			       hzToDimensionless(50));
+  for (i=0;i<2;i++) {
     mix_panned_mono (in[i], &(out[0]), &(out[1]), panI[i], faderI[i]);
     mix_aux_mono (in[i], &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
     simple_busmix (effectBus, in[i],effectI[i]);
   }
+
+  i=2;
+  mix_panned_mono (selectGrainInput(sourceMixer3), &(out[0]), &(out[1]), panI[i], faderI[i]);
+  mix_aux_mono (selectGrainInput(sourceMixer3), &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
+  simple_busmix (effectBus, selectGrainInput(sourceMixer3),effectI[i]);
+  i=3;
+  mix_panned_mono (selectGrainInput(sourceMixer4), &(out[0]), &(out[1]), panI[i], faderI[i]);
+  mix_aux_mono (selectGrainInput(sourceMixer4), &(out[2]), &(out[3]), aux1I[i], aux2I[i]);
+  simple_busmix (effectBus, selectGrainInput(sourceMixer4),effectI[i]);
+
   effectBusFeedback = 0;
+  fract32 AMOut;
+  fract32 grainOut;
   for (i=0;i<NGRAINS;i++) {
-    grainOut=phaseG[i] * grain_next(&(grains[i]), effectBus);
+    grainOut=phaseG[i] * grain_next(&(grains[i]),
+				    selectGrainInput(sourceG[i]),
+				    mult_fr1x32x32(selectGrainInput(FM_sourceG[i]),
+						   FM_faderG[i]));
+    grainOut = lpf_next_dynamic(&(grain_lpf[i]),
+				  grainOut,
+				  grain_lpf_freq[i]);
+
+    // FIXME AM signal comes out very quiet should be preceded by a 50Hz HPF
+    // Then multiplied up by 20dB or so...
+    // This is done now - but not quite sure about the results...
+    AMOut = mult_fr1x32x32( mult_fr1x32x32 (selectGrainInput(AM_sourceG[i]),
+					    grainOut),
+			    AM_faderG[i]);
+    AMOut = mult_fr1x32x32(hpf_next_dynamic(&(AM_hpf[i]), AMOut, hzToDimensionless(50)),
+			   AM_faderG[i]);
+    grainOut = mult_fr1x32x32(grainOut, sub_fr1x32(FR32_MAX, AM_faderG[i]));
+    grainOut = add_fr1x32(shl_fr1x32(AMOut, 3), grainOut);
+
+    grainOutFeedback[i] = grainOut;
+
+    patchMatrix[5+i] = grainOut;
+    patchMatrix[5+i+NGRAINS] = read_pitchTrackOsc(&(grains[i]));
+    patchMatrix[5+i+NGRAINS+NGRAINS] = read_grainEnv(&(grains[i]));
     mix_panned_mono (grainOut, &(out[0]), &(out[1]), panG[i], faderG[i]);
     mix_aux_mono (grainOut, &(out[2]), &(out[3]), aux1G[i], aux2G[i]);
-    simple_busmix (effectBusFeedback, in[i], effectG[i]);
+    simple_busmix (effectBusFeedback,
+		   grainOut,
+		   effectG[i]);
   }
-}
+  patchMatrix[0] = effectBus;
 
-void mix_aux_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue left_value, ParamValue right_value) {
-    *out_right = add_fr1x32(*out_right,mult_fr1x32x32(in_mono, right_value));
-    *out_left = add_fr1x32(*out_left,mult_fr1x32x32(in_mono, left_value));
-}
+  fract32 phase_next = phasor_next(&LFO);
+  patchMatrix[5+NGRAINS+NGRAINS+NGRAINS] =
+    add_fr1x32(mult_fr1x32x32(LFO_shape,
+			      osc(phase_next)),
+	       mult_fr1x32x32(sub_fr1x32(FR32_MAX,LFO_shape),
+			      osc_triangle(phase_next)));
 
+  noiseBurstEnv = mult_fr1x32x32(noiseBurstEnv, FR32_MAX - noiseBurstDecay);
+  patchMatrix[6+NGRAINS+NGRAINS+NGRAINS] =
+    abs_fr1x32(mult_fr1x32x32(noiseBurstEnv,
+			      lcprng_next (&noiseBurstSource)));
 
-void mix_panned_mono(fract32 in_mono, fract32* out_left, fract32* out_right, ParamValue pan, ParamValue fader) {
-    fract32 pan_factor, post_fader;
-
-    pan_factor = (fract32) ( pan );
-    post_fader = mult_fr1x32x32(pan_factor, fader);
-    *out_left = add_fr1x32(*out_left, mult_fr1x32x32(in_mono, post_fader));
-
-    pan_factor = (fract32) ( PAN_MAX - pan );
-    post_fader = mult_fr1x32x32(pan_factor, fader);
-    *out_right = add_fr1x32(*out_right, mult_fr1x32x32(in_mono, post_fader));
-
+  simple_slew(CV_gen1, CV_gen1Target, SLEW_100MS);
+  simple_slew(CV_gen2, CV_gen2Target, SLEW_100MS);
+  patchMatrix[7+NGRAINS+NGRAINS+NGRAINS] = CV_gen1;
+  patchMatrix[8+NGRAINS+NGRAINS+NGRAINS] = CV_gen2;
+  process_cv();
 }
 
 
@@ -280,6 +455,9 @@ void module_set_param(u32 idx, ParamValue v) {
     effectITarget[1] = v;
     break;
 
+  case eParam_source_i3 :
+    sourceMixer3 = v >> 16;
+    break;
   case eParam_fader_i3 :
     faderITarget[2] = v;
     break;
@@ -296,6 +474,9 @@ void module_set_param(u32 idx, ParamValue v) {
     effectITarget[2] = v;
     break;
 
+  case eParam_source_i4 :
+    sourceMixer4 = v >> 16;
+    break;
   case eParam_fader_i4 :
     faderITarget[3] = v;
     break;
@@ -312,17 +493,10 @@ void module_set_param(u32 idx, ParamValue v) {
     effectITarget[3] = v;
     break;
 
-    //global grain params
-  case eParam_scrubFadeLength :
-    //FIXME - should apply across all grains -hmmm...
-    grain_set_scrubFadeLength(&(grains[0]), v);
-    break;
-  case eParam_echoFadeLength :
-    //FIXME - should apply across all grains -hmmm...
-    grain_set_echoFadeLength(&(grains[0]), v);
-    break;
-
   //grain mix params
+  case eParam_source_g1 :
+    sourceG[0] = v >> 16;
+    break;
   case eParam_fader_g1 :
     faderGTarget[0] = v;
     break;
@@ -344,43 +518,213 @@ void module_set_param(u32 idx, ParamValue v) {
     else
       phaseG[0] = 1;
     break;
-  //grain scrubber params
-  case eParam_scrubPitch_g1 :
-    grain_set_scrubPitch(&(grains[0]), v/256);
-    break;
 
+    //grain mod params
+  case eParam_FM_level_g1 :
+    FM_faderG[0] = v;
+    break;
+  case eParam_FM_source_g1 :
+    FM_sourceG[0] = v >> 16;
+    break;
+  case eParam_AM_level_g1 :
+    AM_faderG[0] = v;
+    break;
+  case eParam_AM_source_g1 :
+    AM_sourceG[0] = v >> 16;
+    break;
+  case eParam_lpf_g1 :
+    grain_lpf_freq[0] = hzToDimensionless((v >> 16));
+    break;
+    
+    //grain scrubber params
+  case eParam_scrubEnable_g1 :
+    if(v ==0)
+      grain_disable_scrubTap (&grains[0]);
+    else
+      grain_enable_scrubTap(&grains[0]);
+    break;
+  case eParam_scrubPitch_g1 :
+    grain_set_scrubPitch(&(grains[0]), v >> 8);
+    break;
   case eParam_scrubLength_g1 :
-    grain_set_scrubLength (&(grains[0]), v/256);
+    grain_set_scrubLength (&(grains[0]), v >> 8);
     break;
-  case eParam_scrubRandomise_g1 :
-    grain_set_scrubRandomise (&(grains[0]), v/256);
-    break;
-  case eParam_scrubEdgeBehaviour_g1 :
-    grain_set_scrubEdgeBehaviour (&(grains[0]), v/65536);
+  case eParam_scrubPitchDetection_g1:
+    if (v == 0)
+      grain_disable_pitchDetection(&(grains[0]));
+    else
+      grain_enable_pitchDetection(&(grains[0]));
     break;
 
   //grain echo params
+  case eParam_echoFadeLength_g1 :
+    grain_set_echoFadeLength(&(grains[0]), v << 7);
+    break;
   case eParam_echoTime_g1 :
-    grain_set_echoTime(&(grains[0]),v/4);
+    grain_set_echoTime(&(grains[0]),v >> 4);
     break;
   case eParam_echoSpeed_g1 :
-    grain_set_echoSpeed(&(grains[0]),v/256);
+    grain_set_echoSpeed(&(grains[0]),v >> 8);
     break;
   case eParam_echoEdgeBehaviour_g1 :
-    grain_set_echoEdgeBehaviour(&(grains[0]),v/65536);
+    grain_set_echoEdgeBehaviour(&(grains[0]),v >> 16);
     break;
   case eParam_echoMin_g1 :
-    grain_set_echoMin(&(grains[0]),v/4);
+    grain_set_echoMin(&(grains[0]),v >> 4);
     break;
   case eParam_echoMax_g1 :
-    grain_set_echoMax(&(grains[0]),v/4);
+    grain_set_echoMax(&(grains[0]),v >> 4);
     break;
-  case eParam_echoLFOAmp_g1 :
-    grain_set_echoLFOAmp(&(grains[0]),v/65536);//FIXME figure out a good scaling const
+  case eParam_writeEnable_g1 :
+    grain_set_writeEnable(&(grains[0]),v);
     break;
-  case eParam_echoLFOSpeed_g1 :
-    grain_set_echoLFOSpeed(&(grains[0]),v/256);
+  case eParam_envAttack_g1 :
+    grain_set_envAttack(&(grains[0]),shl_fr1x32(v, 4));
     break;
+
+  case eParam_trackingEnv_g1 :
+    if (v == 0)
+      grain_disable_trackingEnv(&(grains[0]));
+    else
+      grain_enable_trackingEnv(&(grains[0]));
+    break;
+  case eParam_trackingPitch_g1 :
+    grain_set_pitchOffset(&(grains[0]), shl_fr1x32(v, 13));
+    break;
+
+  //grain mix params
+  case eParam_source_g2 :
+    sourceG[1] = v >> 16;
+    break;
+  case eParam_fader_g2 :
+    faderGTarget[1] = v;
+    break;
+  case eParam_pan_g2 :
+    panGTarget[1] = v;
+    break;
+  case eParam_aux1_g2 :
+    aux1GTarget[1] = v;
+    break;
+  case eParam_aux2_g2 :
+    aux2GTarget[1] = v;
+    break;
+  case eParam_effect_g2 :
+    effectGTarget[1] = v;
+    break;
+  case eParam_phase_g2 :
+    if (v == 0)
+      phaseG[1] = -1;
+    else
+      phaseG[1] = 1;
+    break;
+
+    //grain mod params
+  case eParam_FM_level_g2 :
+    FM_faderG[1] = v;
+    break;
+  case eParam_FM_source_g2 :
+    FM_sourceG[1] = v >> 16;
+    break;
+  case eParam_AM_level_g2 :
+    AM_faderG[1] = v;
+    break;
+  case eParam_AM_source_g2 :
+    AM_sourceG[1] = v >> 16;
+    break;
+  case eParam_lpf_g2 :
+    grain_lpf_freq[1] = hzToDimensionless((v >> 16));
+    break;
+    
+    //grain scrubber params
+  case eParam_scrubEnable_g2 :
+    if(v ==0)
+      grain_disable_scrubTap (&grains[1]);
+    else
+      grain_enable_scrubTap(&grains[1]);
+    break;
+  case eParam_scrubPitch_g2 :
+    grain_set_scrubPitch(&(grains[1]), v>>8);
+    break;
+  case eParam_scrubLength_g2 :
+    grain_set_scrubLength (&(grains[1]), v>>8);
+    break;
+  case eParam_scrubPitchDetection_g2:
+    if (v == 0)
+      grain_disable_pitchDetection(&(grains[1]));
+    else
+      grain_enable_pitchDetection(&(grains[1]));
+    break;
+    
+  //grain echo params
+  case eParam_echoFadeLength_g2 :
+    grain_set_echoFadeLength(&(grains[1]), v<<7);
+    break;
+  case eParam_echoTime_g2 :
+    grain_set_echoTime(&(grains[1]),v>>4);
+    break;
+  case eParam_echoSpeed_g2 :
+    grain_set_echoSpeed(&(grains[1]),v>>8);
+    break;
+  case eParam_echoEdgeBehaviour_g2 :
+    grain_set_echoEdgeBehaviour(&(grains[1]),v>>16);
+    break;
+  case eParam_echoMin_g2 :
+    grain_set_echoMin(&(grains[1]),v>>4);
+    break;
+  case eParam_echoMax_g2 :
+    grain_set_echoMax(&(grains[1]),v>>4);
+    break;
+  case eParam_writeEnable_g2 :
+    grain_set_writeEnable(&(grains[1]),v);
+    break;
+  case eParam_envAttack_g2 :
+    grain_set_envAttack(&(grains[1]),shl_fr1x32(v, 4));
+    break;
+
+  case eParam_trackingEnv_g2 :
+    if (v == 0)
+      grain_disable_trackingEnv(&(grains[1]));
+    else
+      grain_enable_trackingEnv(&(grains[1]));
+    break;
+  case eParam_trackingPitch_g2 :
+    grain_set_pitchOffset(&(grains[1]), shl_fr1x32(v, 13));
+    break;
+
+  case eParam_LFO_speed :
+    LFO.freq = shl_fr1x32(v, -4);
+    break;
+  case eParam_LFO_shape :
+    LFO_shape = v;
+    break;
+
+  case eParam_noiseBurst :
+    noiseBurstEnv = FR32_MAX >> 1;
+    break;
+  case eParam_noiseBurstDecay :
+    noiseBurstDecay = v;
+    break;
+
+  case eParam_cvPatch1 :
+    cvPatch[0] = v >> 16;
+    break;
+  case eParam_cvPatch2 :
+    cvPatch[1] = v >> 16;
+    break;
+  case eParam_cvPatch3 :
+    cvPatch[2] = v >> 16;
+    break;
+  case eParam_cvPatch4 :
+    cvPatch[3] = v >> 16;
+    break;
+
+  case eParam_CV_gen1 :
+    CV_gen1Target = v ;
+    break;
+  case eParam_CV_gen2 :
+    CV_gen2Target = v ;
+    break;
+
   default:
     break;
   }

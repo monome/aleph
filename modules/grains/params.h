@@ -56,7 +56,7 @@
 #define TIME_SUBSAMPLE_RADIX 8
 
 #define SPEED_TYPE TIME_SUBSAMPLE
-#define SPEED_MIN TIME_SUBSAMPLE_MIN
+#define SPEED_MIN (- TIME_SUBSAMPLE_MAX)
 #define SPEED_MAX TIME_SUBSAMPLE_MAX
 #define SPEED_RADIX TIME_SUBSAMPLE_RADIX
 
@@ -67,6 +67,12 @@
 
 // enumerate parameters
 enum params {
+  //CV params
+  eParam_cvPatch1,
+  eParam_cvPatch2,
+  eParam_cvPatch3,
+  eParam_cvPatch4,
+
   //adc mix params
   eParam_fader_i1,
   eParam_pan_i1,
@@ -80,44 +86,104 @@ enum params {
   eParam_aux2_i2,
   eParam_effect_i2,
 
+  eParam_source_i3,
   eParam_fader_i3,
   eParam_pan_i3,
   eParam_aux1_i3,
   eParam_aux2_i3,
   eParam_effect_i3,
 
+  eParam_source_i4,
   eParam_fader_i4,
   eParam_pan_i4,
   eParam_aux1_i4,
   eParam_aux2_i4,
   eParam_effect_i4,
 
-  //global grain params
-  eParam_scrubFadeLength,
-  eParam_echoFadeLength,
-
   //grain mix params
+  eParam_source_g1,
   eParam_fader_g1,
   eParam_pan_g1,
   eParam_aux1_g1,
   eParam_aux2_g1,
   eParam_effect_g1,
   eParam_phase_g1, //So we can flip the phase back into effect bus for flanging fb
+  eParam_lpf_g1,
+
+  //grain mod params
+  eParam_FM_source_g1,
+  eParam_FM_level_g1,
+  eParam_AM_source_g1,
+  eParam_AM_level_g1,
 
   //grain scrubber params
+  eParam_scrubEnable_g1,
   eParam_scrubPitch_g1,
   eParam_scrubLength_g1,
-  eParam_scrubRandomise_g1,
-  eParam_scrubEdgeBehaviour_g1,
+  eParam_scrubPitchDetection_g1,
 
   //grain echo params
   eParam_echoTime_g1,
   eParam_echoSpeed_g1,
   eParam_echoEdgeBehaviour_g1,
+  eParam_echoFadeLength_g1,
   eParam_echoMin_g1,
   eParam_echoMax_g1,
-  eParam_echoLFOAmp_g1,
-  eParam_echoLFOSpeed_g1,
+
+  //grain writehead params
+  eParam_writeEnable_g1,
+
+  //grain tracking osc params
+  eParam_envAttack_g1,
+  eParam_trackingEnv_g1,
+  eParam_trackingPitch_g1,
+
+  //grain mix params
+  eParam_source_g2,
+  eParam_fader_g2,
+  eParam_pan_g2,
+  eParam_aux1_g2,
+  eParam_aux2_g2,
+  eParam_effect_g2,
+  eParam_phase_g2, //So we can flip the phase back into effect bus for flanging fb
+  eParam_lpf_g2,
+
+  //grain mod params
+  eParam_FM_source_g2,
+  eParam_FM_level_g2,
+  eParam_AM_source_g2,
+  eParam_AM_level_g2,
+
+  //grain scrubber params
+  eParam_scrubEnable_g2,
+  eParam_scrubPitch_g2,
+  eParam_scrubLength_g2,
+  eParam_scrubPitchDetection_g2,
+
+  //grain echo params
+  eParam_echoTime_g2,
+  eParam_echoSpeed_g2,
+  eParam_echoEdgeBehaviour_g2,
+  eParam_echoFadeLength_g2,
+  eParam_echoMin_g2,
+  eParam_echoMax_g2,
+
+  //grain writehead params
+  eParam_writeEnable_g2,
+
+  //grain tracking osc params
+  eParam_envAttack_g2,
+  eParam_trackingEnv_g2,
+  eParam_trackingPitch_g2,
+
+  eParam_LFO_speed,
+  eParam_LFO_shape,
+
+  eParam_noiseBurst,
+  eParam_noiseBurstDecay,
+
+  eParam_CV_gen1,
+  eParam_CV_gen2,
   
   eParamNumParams
 };
