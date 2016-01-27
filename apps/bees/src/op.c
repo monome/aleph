@@ -282,11 +282,6 @@ const op_desc_t op_registry[numOpClasses] = {
     .init = &op_ww_init,
     .deinit = &op_ww_deinit
   }, {
-    .name = "PARAM",
-    .size = sizeof(op_param_t),
-    .init = &op_param_init,
-    .deinit = NULL
-  }, {
     .name = "ARC",
     .size = sizeof(op_marc_t),
     .init = &op_marc_init,
@@ -330,6 +325,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "MOUT_CC",
     .size = sizeof(op_midi_out_cc_t),
     .init = &op_midi_out_cc_init,
+    .deinit = NULL
+  }, {
+    .name = "PARAM",
+    .size = sizeof(op_param_t),
+    .init = &op_param_init,
     .deinit = NULL
   },
 };
