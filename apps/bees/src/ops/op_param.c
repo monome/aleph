@@ -69,18 +69,22 @@ void op_param_init(void* op) {
 
 // input event
 static void op_param_in_event(op_param_t* param, const io_t v) {
-  param->event = v;
-  /* print_dbg("\r\n requesting param "); */
-  /* print_dbg_ulong(v); */
-  s32 bfinPval = bfin_get_param(v);
-  /* print_dbg("\r\n read back value "); */
-  /* print_dbg_ulong( bfinPval); */
-  io_t beesPval = scaler_get_in( &(net->params[v].scaler), bfinPval);
-  /* print_dbg("\r\n passing beesval "); */
-  /* print_dbg_ulong(beesPval); */
-  net_activate(param->outs[0], beesPval, param);
+  if (v > 0 && v < net->numParams) {
+    param->event = v;
+    /* print_dbg("\r\n requesting param "); */
+    /* print_dbg_ulong(v); */
+    s32 bfinPval = bfin_get_param(v);
+    /* print_dbg("\r\n read back value "); */
+    /* print_dbg_ulong( bfinPval); */
+    io_t beesPval = scaler_get_in( &(net->params[v].scaler), bfinPval);
+    /* print_dbg("\r\n passing beesval "); */
+    /* print_dbg_ulong(beesPval); */
+    net_activate(param->outs[0], beesPval, param);
+  } else {
+    print_dbg("\r \n no such param ");
+    print_dbg_ulong(v);
+  }
 }
-
 
 // serialization
 u8* op_param_pickle(op_param_t* param, u8* dst) {
