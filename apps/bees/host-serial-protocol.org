@@ -1,3 +1,5 @@
+* bees sends debug message
+  framed[SERIAL_DEBUG, "some debug message"]
 * serial operator pings host
   framed[OP_SERIAL,addr_hi,addr_lo,val_hi,val_lo]
 * host requests all bees inputs:
