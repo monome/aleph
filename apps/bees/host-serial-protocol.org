@@ -1,3 +1,7 @@
+Here's how to access serial terminal from lisp on linux:
+
+http://ryepup.unwashedmeme.com/blog/2009/09/28/talking-usb-serial-to-my-arduino-from-lisp-sbcl-on-linux/
+
 * bees sends debug message
   framed[SERIAL_DEBUG, "some debug message"]
 * serial operator pings host
