@@ -1,0 +1,29 @@
+* serial operator
+ sends message to host containing it's address (first in of serial op)
+ & it's value (second in of serial op):
+** framed[OP_SERIAL,addr_hi,addr_lo,val_hi,val_lo]
+
+* host requests all bees inputs:
+** framed[DUMP_INS]
+* bees replies with delimited list of namestrings :
+** framed[INS_DUMP, "in_one,in_two..."] (not necessarily comma-delimited)
+
+* host requests list of all DSP params:
+** framed[DUMP_PARAMS]
+* bees replies with delimited list of namestrings:
+** framed[INS_DUMP,"param_one,param_two..."]
+
+* host triggers any dsp input:
+** framed[TRIGGER_PARAM, addr_hi,addr_lo,val_hi,val_lo]
+* host triggers any bees input:
+** framed[TRIGGER_IN,addr_hi,addr_lo,val_hi,val_lo]
+
+* host queries some bees input by index:
+** framed[QUERY_IN,addr_hi,addr_lo]
+* bees responds with current value on bees input:
+** framed[IN_VAL, addr_hi,addr_lo,val_hi,val_lo]
+
+* host queries some DSP param by index:
+** framed[QUERY_PARAM,addr_hi,addr_lo]
+* bees responds with current value of DSP value:
+** framed[PARAM_VAL,addr_hi,addr_lo,val_hi,val_lo]
