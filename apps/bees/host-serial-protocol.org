@@ -8,7 +8,7 @@
 * host requests list of all DSP params:
   framed[DUMP_PARAMS]
 * bees replies with delimited list of namestrings:
-  framed[INS_DUMP,"param_one,param_two..."]
+  framed[PARAMS_DUMP,"param_one,param_two..."]
 
 * host triggers any dsp input:
   framed[TRIGGER_PARAM, addr_hi,addr_lo,val_hi,val_lo]
