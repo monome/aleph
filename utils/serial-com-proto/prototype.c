@@ -10,7 +10,14 @@
 void serial_putc(char c) {
   usart_putchar(DEV_USART, c);
 }
+void proto_debug(char* c) {
+}
+
 #else
+void proto_debug(char* c) {
+  fprintf(stderr,c);
+  fprintf(stderr,"\n");
+}
 
 void serial_putc(int c) {
   putc(c, stdout);
@@ -138,6 +145,7 @@ s16 charsToS16 (char hi, char lo) {
 }
 
 void processMessage (char* c, int len) {
+  proto_debug("actually got some message");
   switch (c[0]) {
   case eSerialMsg_dumpIns :
     serial_insDump ();
@@ -189,26 +197,38 @@ char inBuf[MSG_MAX];
 
 
 void recv_char (char c) {
+  if (msgPointer > MSG_MAX) {
+    serialState = eSerialState_waiting;
+    msgPointer = 0;
+    proto_debug("resetting overflowing msgPointer");
+
+  }
   switch (serialState) {
   case eSerialState_waiting :
-    if (c == START_FLAG)
+    if (c == START_FLAG) {
       serialState = eSerialState_started;
+      proto_debug("resetting serialState");
+    }
     break;
   case eSerialState_started :
     if (c == END_FLAG) {
       processMessage(inBuf, msgPointer);
       serialState = eSerialState_waiting;
       msgPointer = 0;
+      proto_debug("actually received a message");
     }
     else if (c == DLE) {
+      proto_debug("received an escape char");
       serialState = eSerialState_escaping;
     }
     else {
+      proto_debug("writing to inBuf");
       inBuf[msgPointer] = c;
       msgPointer++;
     }
     break;
   case eSerialState_escaping :
+    proto_debug("writing escaped char to inBuf");
     inBuf[msgPointer] = c;
     break;
   }
@@ -216,8 +236,7 @@ void recv_char (char c) {
 
 #ifndef BEES
 int main () {
-  while(1) {
+  while (1)
     recv_char(getchar());
-  }
 }
 #endif
