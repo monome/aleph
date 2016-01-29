@@ -6,8 +6,10 @@
 #include "bfin.h"
 #include "events.h"
 #include "event_types.h"
+
 #include "ser.h"
 
+extern op_serial_t* last_serial_op = NULL;
 // SERIAL DESCRIPTION:
 // escape character is 27 (ESC)
 // unit separator is 31 (for end-of variable-length params)
@@ -63,10 +65,14 @@ void serial_process(s32 data) {
     //////////////////
     //// TEST: loopback
     print_dbg_char(serial_buffer[serial_read_pos]);
+
+    if (last_serial_op != NULL) {
+      op_serial_out(last_serial_op, serial_buffer[serial_read_pos]);
+    }
+
     serial_read_pos++;
     if(serial_read_pos == SERIAL_BUFFER_SIZE) serial_read_pos = 0;
   }
-
   // testing///
   // serial_send_start(2);
   // serial_send_byte(10);

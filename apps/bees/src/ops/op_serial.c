@@ -11,6 +11,7 @@
 // bees
 #include "net_protected.h"
 #include "op_is.h"
+#include "ser.h"
 
 //-------------------------------------------------
 //----- static function declaration
@@ -61,6 +62,7 @@ static const char* op_serial_opstring  = "SERIAL";
 //----- external function definitions
 void op_serial_init(void* mem) {
   op_serial_t* op = (op_serial_t*)mem;
+  last_serial_op = op;
   op->super.numInputs = 2;
   op->super.numOutputs = 2;
   op->outs[0] = -1;
@@ -103,6 +105,9 @@ static void op_serial_in_b(op_serial_t* op, const io_t v) {
   op_serial_tx(op);
 }
 
+void op_serial_out (op_serial_t* op, const io_t v) {
+  net_activate(op->outs[0], v, op);
+}
 
 // pickle / unpickle
 u8* op_serial_pickle(op_serial_t* op, u8* dst) {

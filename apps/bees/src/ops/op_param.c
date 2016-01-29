@@ -9,6 +9,7 @@
 #include "pickle.h"
 #include "op_param.h"
 #include "bfin.h"
+#include "ser.h"
 
 //-------------------------------------------------
 //----- descriptor
