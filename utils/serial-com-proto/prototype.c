@@ -59,14 +59,14 @@ enum serialMsgTypes {
 
 void serial_debug(const char *str) {
   serial_startTx ();
-  serial_putc(eSerialMsg_debug);
+  serial_framedPutc(eSerialMsg_debug);
   serial_puts(str);
   serial_endTx();
 }
 
 void serial_insDump () {
   serial_startTx ();
-  serial_putc(eSerialMsg_insDump);
+  serial_framedPutc(eSerialMsg_insDump);
   //Code goes here to dump all ins to serial port
   serial_puts("monkey,badger,weasel");
   serial_endTx();
@@ -74,7 +74,7 @@ void serial_insDump () {
 
 void serial_paramsDump () {
   serial_startTx ();
-  serial_putc(eSerialMsg_paramsDump);
+  serial_framedPutc(eSerialMsg_paramsDump);
   //Code goes here to dump all params to serial port
   serial_puts("ferret,marmoset,squirrel");
   serial_endTx();
@@ -90,11 +90,11 @@ char loByte (int x) {
 
 void serial_outVal (int addr, int data) {
   serial_startTx ();
-  serial_putc(eSerialMsg_outVal);
-  serial_putc(hiByte(addr));
-  serial_putc(loByte(addr));
-  serial_putc(hiByte(data));
-  serial_putc(loByte(data));
+  serial_framedPutc(eSerialMsg_outVal);
+  serial_framedPutc(hiByte(addr));
+  serial_framedPutc(loByte(addr));
+  serial_framedPutc(hiByte(data));
+  serial_framedPutc(loByte(data));
   serial_endTx();
 }
 
@@ -109,23 +109,23 @@ void serial_triggerIn (s16 idx, s16 data) {
 
 void serial_inVal (s16 idx) {
   serial_startTx ();
-  serial_putc(eSerialMsg_inVal);
-  serial_putc(hiByte(idx));
-  serial_putc(loByte(idx));
+  serial_framedPutc(eSerialMsg_inVal);
+  serial_framedPutc(hiByte(idx));
+  serial_framedPutc(loByte(idx));
   //beesIn reading code goes here
-  serial_putc(hiByte(43));
-  serial_putc(loByte(43));
+  serial_framedPutc(hiByte(43));
+  serial_framedPutc(loByte(43));
   serial_endTx();
 }
 
 void serial_paramVal (s16 idx) {
   serial_startTx ();
-  serial_putc(eSerialMsg_paramVal);
-  serial_putc(hiByte(idx));
-  serial_putc(loByte(idx));
+  serial_framedPutc(eSerialMsg_paramVal);
+  serial_framedPutc(hiByte(idx));
+  serial_framedPutc(loByte(idx));
   //param reading code goes here
-  serial_putc(hiByte(43));
-  serial_putc(loByte(43));
+  serial_framedPutc(hiByte(43));
+  serial_framedPutc(loByte(43));
   serial_endTx();
 }
 
