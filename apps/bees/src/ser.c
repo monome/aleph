@@ -241,6 +241,7 @@ void recv_char (char c) {
   case eSerialState_escaping :
     proto_debug("writing escaped char to inBuf");
     inBuf[msgPointer] = c;
+    msgPointer++;
     serialState = eSerialState_started;
     break;
   default :
