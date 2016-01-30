@@ -24,7 +24,7 @@ static u16 serial_read_pos = 0;
 void serial_putc(char c) {
   usart_putchar(DEV_USART, c);
 }
-void proto_debug(char* c) {
+void proto_debug(const char* c) {
   /* print_dbg(c); */
 }
 
@@ -42,7 +42,7 @@ void serial_framedPutc (char x) {
   serial_putc(x);
 }
 
-void serial_puts(char *str) {
+void serial_puts(const char *str) {
   int i;
   for(i=0;i<strlen(str);i++) {
     serial_framedPutc(str[i]);
@@ -66,7 +66,7 @@ enum serialMsgTypes {
   eSerialMsg_numParams
 };
 
-void serial_debug(char *str) {
+void serial_debug(const char *str) {
   serial_startTx ();
   serial_framedPutc(eSerialMsg_debug);
   serial_puts(str);
@@ -79,7 +79,7 @@ void serial_insDump () {
   //Code goes here to dump all ins to serial port
   int i;
   for (i=0;i<net->numOps;i++) {
-    serial_puts((char*)net->ops[i]->inString);
+    serial_puts(net->ops[i]->inString);
     serial_puts(",");
   }
   serial_endTx();
