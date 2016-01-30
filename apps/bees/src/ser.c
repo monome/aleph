@@ -7,6 +7,7 @@
 #include "bfin.h"
 #include "events.h"
 #include "event_types.h"
+#include "net_protected.h"
 
 #include "ser.h"
 
@@ -76,7 +77,11 @@ void serial_insDump () {
   serial_startTx ();
   serial_framedPutc(eSerialMsg_insDump);
   //Code goes here to dump all ins to serial port
-  serial_puts("monkey,badger,weasel");
+  int i;
+  for (i=0;i<net->numOps;i++) {
+    serial_puts((char*)net->ops[i]->inString);
+    serial_puts(",");
+  }
   serial_endTx();
 }
 
