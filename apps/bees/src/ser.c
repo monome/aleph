@@ -79,8 +79,13 @@ void serial_insDump () {
   //Code goes here to dump all ins to serial port
   int i;
   for (i=0;i<net->numOps;i++) {
-    serial_puts(net->ops[i]->inString);
-    serial_puts(",");
+    int j;
+    for (j=0; j<net->ops[i]->numInputs; j++) {
+      serial_puts(net->ops[i]->opString);
+      serial_puts("/");
+      serial_puts(net->ops[i]->inString + (j * 8));
+      serial_puts(",");
+    }
   }
   serial_endTx();
 }
