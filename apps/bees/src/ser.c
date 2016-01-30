@@ -42,7 +42,7 @@ void serial_framedPutc (char x) {
   serial_putc(x);
 }
 
-void serial_puts(const char *str) {
+void serial_puts(char *str) {
   int i;
   for(i=0;i<strlen(str);i++) {
     serial_framedPutc(str[i]);
@@ -66,7 +66,7 @@ enum serialMsgTypes {
   eSerialMsg_numParams
 };
 
-void serial_debug(const char *str) {
+void serial_debug(char *str) {
   serial_startTx ();
   serial_framedPutc(eSerialMsg_debug);
   serial_puts(str);

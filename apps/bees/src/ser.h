@@ -21,11 +21,11 @@ typedef struct op_serial_struct {
 
 
 extern op_serial_t* last_serial_op;
-void op_serial_out (op_serial_t* op, const io_t v);
+void op_serial_out (op_serial_t* op, io_t v);
 void serial_putc(char c);
-void serial_puts(const char *str);
+void serial_puts(char *str);
 void serial_framedPutc (char x);
-void serial_debug(const char *str);
+void serial_debug(char *str);
 void proto_debug(char *c);
 void serial_startTx(void);
 void serial_endTx(void);
