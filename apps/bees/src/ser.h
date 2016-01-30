@@ -22,7 +22,25 @@ typedef struct op_serial_struct {
 
 extern op_serial_t* last_serial_op;
 void op_serial_out (op_serial_t* op, const io_t v);
-
+void serial_putc(char c);
+void serial_puts(const char *str);
+void serial_framedPutc (char x);
+void serial_debug(const char *str);
+void proto_debug(char *c);
+void serial_startTx(void);
+void serial_endTx(void);
+char hiByte (int x);
+char loByte (int x);
+void serial_insDump (void);
+void serial_paramsDump (void);
+void serial_outVal (int addr, int data);
+void serial_triggerParam (s16 idx, s16 data);
+void serial_triggerIn (s16 idx, s16 data);
+void serial_inVal (s16 idx);
+void serial_paramVal (s16 idx);
+s16 charsToS16 (char hi, char lo);
+void processMessage (char* c, int len);
+void recv_char (char c);
 // typedef void(*process_serial_t)(u16);
 
 // extern void serial_param_num(s32 data);
