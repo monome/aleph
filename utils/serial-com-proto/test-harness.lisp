@@ -44,14 +44,14 @@
 (defvar *char-max* #xFF)
 
 (defun s16-chars (s16)
-  (assert (< s16 *s16-max*))
+  (assert (<= s16 *s16-max*))
   (list (ash s16 -8)
 	(logand s16
 		#x00FF)))
 
 (defun chars-s16 (hi lo)
-  (assert (<  hi *char-max*))
-  (assert (<  lo *char-max*))
+  (assert (<=  hi *char-max*))
+  (assert (<=  lo *char-max*))
   (+ lo (ash hi 8)))
 
 (defun serial-debug (stream control-string &rest format-arguments)
