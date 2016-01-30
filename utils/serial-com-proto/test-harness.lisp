@@ -125,13 +125,13 @@
 				     '(vector (unsigned-byte 8))))))
     ((cons #.(foreign-enum-value 'serial-msg-types :eSerialMsg_insDump)
 	   octets)
-     (list :ins-dump
+     (cons :ins-dump
 	   (ppcre:split ","
 			(octets-to-string (coerce octets
 						  '(vector (unsigned-byte 8)))))))
     ((cons #.(foreign-enum-value 'serial-msg-types :eSerialMsg_paramsDump)
 	   octets)
-     (list :paramsDump
+     (cons :paramsDump
 	   (ppcre:split ","
 			(octets-to-string (coerce octets
 						  '(vector (unsigned-byte 8)))))))
