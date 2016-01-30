@@ -1,6 +1,7 @@
-(ql:quickload '(:optima :cl-ppcre :cffi :iterate :external-program))
-(in-package :cl-user)
-(use-package '(:optima :cffi :iterate))
+(eval-when (:compile-toplevel :load-toplevel)
+  (ql:quickload '(:optima :cl-ppcre :cffi :iterate :external-program))
+  (in-package :cl-user)
+  (use-package '(:optima :cffi :iterate)))
 
 (defparameter *start-flag* #x12)
 (defparameter *end-flag* #x13)
