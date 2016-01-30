@@ -115,6 +115,36 @@
 		 (otherwise (error "indeterminate state")))))
     (reverse bytes)))
 
+(defun serial-unpack-message (bytes)
+  (match bytes
+    ((cons #.(foreign-enum-value 'serial-msg-types :eSerialMsg_debug)
+	   octets)
+     (list :debug
+	   (octets-to-string (coerce octets
+				     '(vector (unsigned-byte 8))))))
+    ((cons #.(foreign-enum-value 'serial-msg-types :eSerialMsg_insDump)
+	   octets)
+     (list :ins-dump
+	   (ppcre:split ","
+			(octets-to-string (coerce octets
+						  '(vector (unsigned-byte 8)))))))
+    ((cons #.(foreign-enum-value 'serial-msg-types :eSerialMsg_paramsDump)
+	   octets)
+     (list :paramsDump
+	   (ppcre:split ","
+			(octets-to-string (coerce octets
+						  '(vector (unsigned-byte 8)))))))
+    ((list* #.(foreign-enum-value 'serial-msg-types :eSerialMsg_inVal)
+	    addr-hi addr-lo val-hi val-lo _)
+     (list :in-val (chars-s16 addr-hi addr-lo) (chars-s16 val-hi val-lo)))
+    ((list* #.(foreign-enum-value 'serial-msg-types :eSerialMsg_paramVal)
+	    addr-hi addr-lo val-hi val-lo _)
+     (list :param-val (chars-s16 addr-hi addr-lo) (chars-s16 val-hi val-lo)))
+    ((list* #.(foreign-enum-value 'serial-msg-types :eSerialMsg_outVal)
+	    addr-hi addr-lo val-hi val-lo _)
+     (list :out-val (chars-s16 addr-hi addr-lo) (chars-s16 val-hi val-lo)))
+    (otherwise (break "unknown message: ~A" bytes))))
+
 #+nil
 (with-open-file (stream "/home/rick/foo"
 			:direction :output;:io
