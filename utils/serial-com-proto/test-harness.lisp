@@ -1,6 +1,6 @@
-(ql:quickload :cffi)
+(ql:quickload '(:optima :cl-ppcre :cffi))
 (in-package :cl-user)
-(use-package :cffi)
+(use-package '(:optima :cffi))
 
 (defparameter *start-flag* #x12)
 (defparameter *end-flag* #x13)
