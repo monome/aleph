@@ -6,19 +6,24 @@ void module_init(void) {
   osc_set_amp(0x3fffffff);
 }
 
-void module_process_block(fract32** inChannels, fract32** outChannels, u8 numChannels, u8 numFrames) {
+void module_process_block(buffer_t *inChannels, buffer_t *outChannels,
+			  const u8 numChannels, const u8 numFrames) {
   u16 i, j;
   
-  fract32* src = audioProcessInBuf;
-  fract32* dst = audioProcessOutBuf;
+  /* fract32* src = inC; */
+  /* fract32* dst = audioProcessOutBuf; */
   
-  for(i=0; i<BLOCKSIZE; i++) {
-    for(j=0; j<CHANNELS
-    *dst++ = *src++;
-    *dst++ = *src++;
-    *dst++ = *src++;
-    *dst++ = *src++;
+  /* for(i=0; i<BLOCKSIZE; i++) { */
+  /*   for(j=0; j<CHANNELS */
+  /* 	  *dst++ = *src++; */
+  /* 	} */
+  /* } */
+
+  for(i=0; i<numChannels; i++) {
+    for(j=0; j<numFrames; j++) {
+      (*outChannels)[i][j] = (*inChannels)[i][j];
+    }
   }
   
-  osc_process_block(audioProcessOutBuf);
+  osc_process_block(outChannels, numChannels, numFrames);
 }

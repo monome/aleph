@@ -13,9 +13,7 @@
 //! initialize the module
 extern void module_init(void);
 //! process a block of samples
-extern void module_process_block(void);
-//! process a block of samples
-extern void module_process_block(fract32** inChannels, fract32** outChannels, );
-
+extern void module_process_block(buffer_t *inChannels, buffer_t *outChannels,
+				 const u8 numChannels, const u8 numFrames);
 
 #endif

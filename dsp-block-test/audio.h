@@ -10,55 +10,66 @@
 
 #include "types.h"
 
-//! block size
-#define CHANNELS 4
-#define BLOCKSIZE 16
-#define SAMPLESIZE 4 // sizeof(fract32)
+/** if this flag is set, attempt to use DMA descriptors
+ * to switch buffers and perform deinterleaving.
+ * otherwise, copy and deinterleave in the ISR
+ */
+#define DMA_DEINTERLEAVE_PINGPONG 0
 
-//! positions in audio frame
-#define AUDIO_FRAME_L0 0
-#define AUDIO_FRAME_L1 1
-#define AUDIO_FRAME_R0 2
-#define AUDIO_FRAME_R1 3
+//! channel count
+#define CHANNELS 4
+//! block size
+#define BLOCKSIZE 16
+//! bytes per sample
+#define SAMPLESIZE 4 // sizeof(fract32)
 
 //! I/O flags
 extern volatile u8 audioRxDone;
 extern volatile u8 audioTxDone;
 
-//! current pointers to audio buffers
-fract32** audioIn;
-fract32** audioOut;
+//! type for de-interleaved audio buffers
+typedef fract32 buffer_t[CHANNELS][BLOCKSIZE];
+
+#if DMA_DEINTERLEAVE_PINGPONG
+
+//! current pointers to processing buffers
+buffer_t *audioIn;
+buffer_t *audioOut;
 
 //! I/O buffers
 __attribute__((l1_data_A))
 __attribute__((aligned(32)))
-fract32 inputChannels0[CHANNELS][BLOCKSIZE];
+extern buffer_t inputChannels0;
+
+__attribute__((l1_data_B))
+__attribute__((aligned(32)))
+extern buffer_t inputChannels1;
 
 __attribute__((l1_data_A))
 __attribute__((aligned(32)))
-fract32 inputChannels1[CHANNELS][BLOCKSIZE];
+extern buffer_t outputChannels0;
 
+__attribute__((l1_data_B))
+__attribute__((aligned(32)))
+extern buffer_t outputChannels1;
+
+#else
+//! I/O buffers
 __attribute__((l1_data_A))
 __attribute__((aligned(32)))
-fract32 outputChannels0[CHANNELS][BLOCKSIZE];
+extern fract32 audioRxBuf[BLOCKSIZE*CHANNELS];
 
-__attribute__((l1_data_A))
+__attribute__((l1_data_B))
 __attribute__((aligned(32)))
-fract32 outputChannels1[CHANNELS][BLOCKSIZE];
+extern fract32 audioTxBuf[BLOCKSIZE*CHANNELS];
 
-/* __attribute__((l1_data_A)) */
-/* __attribute__((aligned(32))) */
-/* extern fract32 audioRxBuf[BLOCKSIZE*4]; */
+//! separate process buffers
+__attribute__((aligned(32)))
+extern buffer_t audioIn;
 
-/* __attribute__((l1_data_B)) */
-/* __attribute__((aligned(32))) */
-/* extern fract32 audioTxBuf[BLOCKSIZE*4]; */
+__attribute__((aligned(32)))
+extern buffer_t audioOut;
 
-/* //! process buffers */
-/* __attribute__((aligned(32))) */
-/* extern fract32 audioProcessInBuf[BLOCKSIZE*4]; */
+#endif // DMA_DEINTERLEAVE_PINGPONG
 
-/* __attribute__((aligned(32))) */
-/* extern fract32 audioProcessOutBuf[BLOCKSIZE*4]; */
-
-#endif
+#endif // header guard 
