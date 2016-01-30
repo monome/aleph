@@ -1,6 +1,6 @@
-(ql:quickload '(:optima :cl-ppcre :cffi))
+(ql:quickload '(:optima :cl-ppcre :cffi :iterate))
 (in-package :cl-user)
-(use-package '(:optima :cffi))
+(use-package '(:optima :cffi :iterate))
 
 (defparameter *start-flag* #x12)
 (defparameter *end-flag* #x13)
@@ -187,3 +187,23 @@
 			:direction :input
 			:element-type '(unsigned-byte 8))
   (loop (print (serial-recv-msg stream))))
+
+#+nil
+(bt:make-thread (lambda ()
+		  (with-open-file (stream "/dev/ttyACM0"
+					  :direction :io
+					  :if-exists :overwrite
+					  :element-type '(unsigned-byte 8))
+		    (loop (print (serial-unpack-message (serial-recv-msg stream)))))))
+
+#+nil
+(with-open-file (stream "/dev/ttyACM0"
+			:direction :output
+			:if-exists :overwrite
+			:element-type '(unsigned-byte 8))
+  (serial-dumpIns stream)
+  (serial-dumpParams stream)
+  (serial-trigger-param stream 3 3)
+  (serial-trigger-in stream 4 4)
+  (serial-query-in stream 4)
+  (serial-query-param stream 5))
