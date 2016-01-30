@@ -1,3 +1,4 @@
+#include <string.h>
 #include "print_funcs.h"
 
 #include "usart.h"
@@ -9,52 +10,238 @@
 
 #include "ser.h"
 
+#define START_FLAG 0x12
+#define END_FLAG 0x13
+#define DLE 0x7D
+
+
+/////TEST let's put op_serial to bed now...
 extern op_serial_t* last_serial_op = NULL;
-// SERIAL DESCRIPTION:
-// escape character is 27 (ESC)
-// unit separator is 31 (for end-of variable-length params)
-// end-of-packet is 0 (NULL)
-
-//----------------------------
-//----- extern vatrs
-// volatile u8 serial_buffer[SERIAL_BUFFER_SIZE];
-
-
-//----------------------------
-//-- static vars / types
-
-// typedef enum {
-//   eComNull,
-//   eComSetDebug,
-//   eComReqNumParams,
-//   eComReqParamInfo,
-//   eComGetParamVal,
-//   eComSetParamVal,
-//   eComNumCommands
-// } eSerialCommands;
 
 static u16 serial_read_pos = 0;
-// static u16 serial_write_pos = 0;
-// static u8 escape = 0;
-// static event_t e;
 
-//--------------------------------
-//---- static funcs
-// static void com_req_num_params(u16);
-// static void com_req_param_info(u16);
-// static void com_get_param(u16);
-// static void com_set_param(u16);
+void serial_putc(char c) {
+  usart_putchar(DEV_USART, c);
+}
+void proto_debug(char* c) {
+}
 
-// static void serial_decode_dummy(u16 pos) { return; }
+void serial_startTx () {
+  serial_putc(START_FLAG);
+}
 
-// static const process_serial_t serialFuncs[eComNumCommands] = {
-//   &serial_decode_dummy,
-//   &serial_decode_dummy,
-//   &com_req_num_params,
-//   &com_req_param_info,
-//   &com_get_param,
-//   &com_set_param
-// };
+void serial_endTx () {
+  serial_putc(END_FLAG);
+}
+
+void serial_framedPutc (char x) {
+  if (x == DLE || x == START_FLAG || x == END_FLAG)
+    serial_putc(DLE);
+  serial_putc(x);
+}
+
+void serial_puts(const char *str) {
+  u16 i;
+  for(i=0;i<strlen(str);i++) {
+    serial_framedPutc(str[i]);
+  }
+}
+
+
+enum serialMsgTypes {
+  eSerialMsg_debug,
+  eSerialMsg_dumpIns,
+  eSerialMsg_insDump,
+  eSerialMsg_dumpParams,
+  eSerialMsg_paramsDump,
+  eSerialMsg_triggerParam,
+  eSerialMsg_triggerIn,
+  eSerialMsg_queryIn,
+  eSerialMsg_inVal,
+  eSerialMsg_queryParam,
+  eSerialMsg_paramVal,
+  eSerialMsg_outVal,
+  eSerialMsg_numParams
+};
+
+void serial_debug(const char *str) {
+  serial_startTx ();
+  serial_framedPutc(eSerialMsg_debug);
+  serial_puts(str);
+  serial_endTx();
+}
+
+void serial_insDump () {
+  serial_startTx ();
+  serial_framedPutc(eSerialMsg_insDump);
+  //Code goes here to dump all ins to serial port
+  serial_puts("monkey,badger,weasel");
+  serial_endTx();
+}
+
+void serial_paramsDump () {
+  serial_startTx ();
+  serial_framedPutc(eSerialMsg_paramsDump);
+  //Code goes here to dump all params to serial port
+  serial_puts("ferret,marmoset,squirrel");
+  serial_endTx();
+}
+
+char hiByte (s16 x) {
+  return x >> 8;
+}
+
+char loByte (s16 x) {
+  return x & 0x00FF;
+}
+
+void serial_outVal (u16 addr, s16 data) {
+  serial_startTx ();
+  serial_framedPutc(eSerialMsg_outVal);
+  serial_framedPutc(hiByte(addr));
+  serial_framedPutc(loByte(addr));
+  serial_framedPutc(hiByte(data));
+  serial_framedPutc(loByte(data));
+  serial_endTx();
+}
+
+void serial_triggerParam (s16 idx, s16 data) {
+  //param thwacking code goes here
+}
+
+void serial_triggerIn (s16 idx, s16 data) {
+  //bees thwacking code goes here
+}
+
+
+void serial_inVal (s16 idx) {
+  serial_startTx ();
+  serial_framedPutc(eSerialMsg_inVal);
+  serial_framedPutc(hiByte(idx));
+  serial_framedPutc(loByte(idx));
+  //beesIn reading code goes here
+  serial_framedPutc(hiByte(43));
+  serial_framedPutc(loByte(43));
+  serial_endTx();
+}
+
+void serial_paramVal (s16 idx) {
+  serial_startTx ();
+  serial_framedPutc(eSerialMsg_paramVal);
+  serial_framedPutc(hiByte(idx));
+  serial_framedPutc(loByte(idx));
+  //param reading code goes here
+  serial_framedPutc(hiByte(43));
+  serial_framedPutc(loByte(43));
+  serial_endTx();
+}
+
+
+s16 charsToS16 (char hi, char lo) {
+  s16 ret = hi;
+  ret = ret << 8;
+  ret += lo;
+  return ret;
+}
+
+void processMessage (char* c, u16 len) {
+  switch (c[0]) {
+  case eSerialMsg_dumpIns :
+    serial_debug("dumping inputs...");
+    serial_insDump ();
+    break;
+  case eSerialMsg_dumpParams :
+    serial_debug("dumping params...");
+    serial_paramsDump ();
+    break;
+  case eSerialMsg_triggerParam :
+    if(len < 5)
+      serial_debug ("triggerParam requires 16 bit bfin address & 16 bit data");
+    else  {
+      serial_triggerParam(charsToS16(c[1],c[2]),
+			  charsToS16(c[3],c[4]));
+      serial_debug("triggered param");
+    }
+    break;
+  case eSerialMsg_triggerIn :
+    if(len < 5)
+      serial_debug ("triggerIn requires 16 bit bees address & 16 bit data");
+    else {
+      serial_triggerIn(charsToS16(c[1],c[2]),
+		       charsToS16(c[3],c[4]));
+      serial_debug("triggered in");
+    }
+    break;
+  case eSerialMsg_queryIn :
+    if(len < 3)
+      serial_debug ("queryIn requires 16 bit bees address");
+    else {
+      serial_inVal(charsToS16(c[1],c[2]));
+      serial_debug("queried ins");
+    }
+    break;
+  case eSerialMsg_queryParam :
+    if(len < 3)
+      serial_debug ("queryParam requires 16 bit bees address");
+    else {
+      serial_paramVal(charsToS16(c[1],c[2]));
+      serial_debug("queried params");
+    }
+    break;
+  default :
+    serial_debug ("Unknown serial command issued to bees");
+  }
+}
+
+enum serialRecvStates {
+  eSerialState_waiting,
+  eSerialState_escaping,
+  eSerialState_started
+};
+
+#define MSG_MAX 4096
+char serialState = eSerialState_waiting;
+u16 msgPointer = 0;
+char inBuf[MSG_MAX];
+
+
+void recv_char (char c) {
+  if (msgPointer > MSG_MAX) {
+    serialState = eSerialState_waiting;
+    msgPointer = 0;
+    proto_debug("resetting overflowing msgPointer");
+
+  }
+  switch (serialState) {
+  case eSerialState_waiting :
+    if (c == START_FLAG) {
+      serialState = eSerialState_started;
+      proto_debug("resetting serialState");
+    }
+    break;
+  case eSerialState_started :
+    if (c == END_FLAG) {
+      processMessage(inBuf, msgPointer);
+      serialState = eSerialState_waiting;
+      msgPointer = 0;
+      proto_debug("actually received a message");
+    }
+    else if (c == DLE) {
+      proto_debug("received an escape char");
+      serialState = eSerialState_escaping;
+    }
+    else {
+      proto_debug("writing to inBuf");
+      inBuf[msgPointer] = c;
+      msgPointer++;
+    }
+    break;
+  case eSerialState_escaping :
+    proto_debug("writing escaped char to inBuf");
+    inBuf[msgPointer] = c;
+    break;
+  }
+}
 
 
 void serial_process(s32 data) {
@@ -64,156 +251,16 @@ void serial_process(s32 data) {
   while(serial_read_pos != c) {
     //////////////////
     //// TEST: loopback
-    print_dbg_char(serial_buffer[serial_read_pos]);
+    /* print_dbg_char(serial_buffer[serial_read_pos]); */
 
-    if (last_serial_op != NULL) {
-      op_serial_out(last_serial_op, serial_buffer[serial_read_pos]);
-    }
+    //// TEST: skanky hacked-to-bits op_serial 
+    /* if (last_serial_op != NULL) { */
+    /*   op_serial_out(last_serial_op, serial_buffer[serial_read_pos]); */
+    /* } */
 
+    recv_char (c);
     serial_read_pos++;
     if(serial_read_pos == SERIAL_BUFFER_SIZE) serial_read_pos = 0;
   }
-  // testing///
-  // serial_send_start(2);
-  // serial_send_byte(10);
-  // serial_send_end();
-
-    // ///////////////////
-/*
-    // DONE: implement proper framing, ie: http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
-    // code 27 is escape
-    if(c == 27 && escape == 0) escape = 1;
-    // check for null, indicating complete packet
-    else if(c == 0 && escape == 0) {
-      if(serial_buffer[0] >= eComNumCommands) {		// check for garbage command
-      	print_dbg("bad serial command.");
-      	serial_write_pos++;
-      } else {
-      	serial_decode = serialFuncs[serial_buffer[serial_read_pos]];			// first byte is index
-      	(*serial_decode)(serial_read_pos);			// do the thing according to command index
-      	serial_write_pos++;
-      	if(serial_write_pos == SERIAL_BUFFER_SIZE) serial_write_pos = 0;	// wrap
-      	serial_read_pos = serial_write_pos;			// start of next packet
-      }
-      // normal data copy
-    } else {
-      serial_buffer[serial_write_pos] = c;
-      serial_write_pos++;
-      if(serial_write_pos == SERIAL_BUFFER_SIZE) serial_write_pos = 0;
-      escape = 0;
-    }
-  }*/
 }
 
-
-/*
-// from handler
-void serial_param_num(s32 data) {
-  u32 num;
-  bfin_get_num_params(&num);
-  serial_send_start(2);
-  serial_send_byte(num);
-  serial_send_end();
-}
-
-
-
-void serial_param_info(s32 data) {
-    // TODO check out of bounds index
-  static ParamDesc p;
-  u8 idx = serial_buffer[data+1];
-  u8 c = 1, n = 0;
-
-  /////
-  //  bfin_get_param_desc(idx, &p);
-
-
-  serial_send_start(3);
-  serial_send_byte(idx);
-  while(c != 0 && n < PARAM_LABEL_LEN) {
-    c = p.label[n];
-    serial_send_byte(c);
-    n++;
-  }
-  serial_send_separator();
-  serial_send_end();
-}
-
-void serial_param_get(s32 data) {
-  u32 val;
-  u8 idx = serial_buffer[data+1];
-
-  // index check for bounds?
-  val = bfin_get_param(idx);
-  // print_dbg("\nvalue: ");
-  // print_dbg_ulong(val);
-  // print_dbg(" : ");
-  // print_dbg_ulong((u8)(val>>24 & 0xff));
-  // print_dbg(" ");
-  // print_dbg_ulong((u8)(val>>16 & 0xff));
-  // print_dbg(" ");
-  // print_dbg_ulong((u8)(val>>8 & 0xff));
-  // print_dbg(" ");
-  // print_dbg_ulong((u8)val & 0xff);
-
-  serial_send_start(4);
-  serial_send_byte(idx);
-  serial_send_byte((u8)(val>>24 & 0xff));
-  serial_send_byte((u8)(val>>16 & 0xff));
-  serial_send_byte((u8)(val>>8 & 0xff));
-  serial_send_byte((u8)val & 0xff);
-  serial_send_end();
-}
-
-void serial_param_set(s32 data) {
-  u8 idx = serial_buffer[data+1];
-  s32 val = (serial_buffer[data+2]<<24) + (serial_buffer[data+3]<<16) + (serial_buffer[data+4]<<8) + (serial_buffer[data+5]);
-  bfin_set_param(idx, val);
-}
-
-
-
-
-
-// packet parsing called from serial_process according to index
-
-void com_req_num_params(u16 pos) {
-  e.type = kEventSerialParamNum;
-  e.data = pos; 
-  event_post(&e);
-
-  // print_dbg("req_num_params:");
-  // print_dbg_ulong(serial_buffer[pos]);
-}
-
-void com_req_param_info(u16 pos) {
-  // print_dbg("req_param_info:");
-  // print_dbg_ulong(serial_buffer[pos]);
-  // print_dbg_ulong(serial_buffer[pos+1]);
-  e.type = kEventSerialParamInfo;
-  e.data = pos; 
-  event_post(&e);	
-}
-
-void com_get_param(u16 pos) {
-  // print_dbg("get_param:");
-  // print_dbg_ulong(serial_buffer[pos]);
-  // print_dbg_ulong(serial_buffer[pos+1]);
-  e.type = kEventSerialParamGet;
-  e.data = pos; 
-  event_post(&e);
-}
-
-void com_set_param(u16 pos) {
-  // print_dbg("set_param:");
-  // print_dbg_ulong(serial_buffer[pos]);
-  // print_dbg_ulong(serial_buffer[pos+1]);
-  // print_dbg_ulong(serial_buffer[pos+2]);
-  // print_dbg_ulong(serial_buffer[pos+3]);
-  // print_dbg_ulong(serial_buffer[pos+4]);
-  // print_dbg_ulong(serial_buffer[pos+5]);
-  e.type = kEventSerialParamSet;
-  e.data = pos; 
-  event_post(&e);
-}
-*/
