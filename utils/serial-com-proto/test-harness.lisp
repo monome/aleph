@@ -33,15 +33,85 @@
 	    (write-byte byte stream)))
   (write-byte *end-flag* stream))
 
-(defun debug-test (stream msg-type params)
+(defun send-serial-command (stream msg-type params)
   (prog1 (send-framed-message (cons (foreign-enum-value
 				     'serial-msg-types msg-type)
 				    params)
 			      stream)
     (force-output stream)))
+
+(defvar *s16-max* #xFFFF)
+(defvar *char-max* #xFF)
+
+(defun s16-chars (s16)
+  (assert (< s16 *s16-max*))
+  (list (ash s16 -8)
+	(logand s16
+		#x00FF)))
+
+(defun chars-s16 (hi lo)
+  (assert (<  hi *char-max*))
+  (assert (<  lo *char-max*))
+  (+ lo (ash hi 8)))
+
+(defun serial-debug (stream control-string &rest format-arguments)
+  (send-serial-command stream
+		       :eSerialMsg_debug
+		       (coerce (string-to-octets
+				(apply #'format nil control-string
+				       format-arguments)
+				:external-format :ascii)
+			       'list)))
+
+(defun serial-dumpIns (stream)
+  (send-serial-command stream
+		       :eSerialMsg_dumpIns
+		       '()))
+
+(defun serial-dumpParams (stream)
+  (send-serial-command stream
+		       :eSerialMsg_dumpParams
+		       '()))
+
+(defun serial-trigger-param (stream addr val)
+  (send-serial-command stream
+		       :eSerialMsg_triggerParam
+		       (append (s16-chars addr)
+			       (s16-chars val))))
+
+(defun serial-trigger-in (stream addr val)
+  (send-serial-command stream
+		       :eSerialMsg_triggerIn
+		       (append (s16-chars addr)
+			       (s16-chars val))))
+
+(defun serial-query-in (stream addr)
+  (send-serial-command stream
+		       :eSerialMsg_queryIn
+		       (s16-chars addr)))
+
+(defun serial-query-param (stream addr)
+  (send-serial-command stream
+		       :eSerialMsg_queryParam
+		       (s16-chars addr)))
+
 #+nil
 (with-open-file (stream "/home/rick/foo"
 			:direction :output;:io
 			:if-exists :overwrite
 			:external-format :ascii)
-  (serial-debug stream))
+  (serial-debug stream "noshrats ~A" 'woohoo))
+
+#+nil
+(with-open-file (stream "/home/rick/foo"
+			:direction :output;:io
+			:if-exists :overwrite
+			:element-type '(unsigned-byte 8))
+  (serial-debug stream "noshrats ~A" 'woohoo)
+  (serial-dumpIns stream)
+  (serial-dumpParams stream)
+  (serial-trigger-param stream 3 3)
+  (serial-trigger-in stream 4 4)
+  (serial-query-in stream 4)
+  (serial-query-param stream 5))
+
