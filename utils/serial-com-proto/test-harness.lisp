@@ -95,6 +95,26 @@
 		       :eSerialMsg_queryParam
 		       (s16-chars addr)))
 
+(defun serial-recv-msg (stream)
+  (let ((state :waiting)
+	(bytes nil))
+    (iterate (until (eq state :done))
+	     (if (> (length bytes)
+		    4096)
+		 (error "why the long message?"))
+	     (let ((new-byte (read-byte stream)))
+	       (match state
+		 (:waiting (if (= new-byte *start-flag*)
+			       (setf state :receiving)))
+		 (:receiving (cond
+			       ((= new-byte *end-flag*) (setf state :done))
+			       ((= new-byte *dle*) (setf state :escaping))
+			       (t (push new-byte bytes))))
+		 (:escaping (push new-byte bytes)
+			    (setf state :receiving))
+		 (otherwise (error "indeterminate state")))))
+    (reverse bytes)))
+
 #+nil
 (with-open-file (stream "/home/rick/foo"
 			:direction :output;:io
@@ -115,3 +135,25 @@
   (serial-query-in stream 4)
   (serial-query-param stream 5))
 
+#+nil
+(bt:make-thread
+ (lambda ()
+   (with-open-file (stream "/home/rick/foo"
+			   :direction :output;:io
+			   :if-exists :overwrite
+			   :element-type '(unsigned-byte 8))
+
+     (loop (sleep 1)
+	(serial-debug stream "noshrats ~A" 'woohoo)
+	(serial-dumpIns stream)
+	(serial-dumpParams stream)
+	(serial-trigger-param stream 3 3)
+	(serial-trigger-in stream 4 4)
+	(serial-query-in stream 4)
+	(serial-query-param stream 5)))))
+
+#+nil
+(with-open-file (stream "/home/rick/bar"
+			:direction :input
+			:element-type '(unsigned-byte 8))
+  (loop (print (serial-recv-msg stream))))
