@@ -24,6 +24,7 @@ void serial_putc(char c) {
   usart_putchar(DEV_USART, c);
 }
 void proto_debug(char* c) {
+  /* print_dbg(c); */
 }
 
 void serial_startTx () {
@@ -41,7 +42,7 @@ void serial_framedPutc (char x) {
 }
 
 void serial_puts(const char *str) {
-  u16 i;
+  int i;
   for(i=0;i<strlen(str);i++) {
     serial_framedPutc(str[i]);
   }
@@ -87,15 +88,15 @@ void serial_paramsDump () {
   serial_endTx();
 }
 
-char hiByte (s16 x) {
+char hiByte (int x) {
   return x >> 8;
 }
 
-char loByte (s16 x) {
+char loByte (int x) {
   return x & 0x00FF;
 }
 
-void serial_outVal (u16 addr, s16 data) {
+void serial_outVal (int addr, int data) {
   serial_startTx ();
   serial_framedPutc(eSerialMsg_outVal);
   serial_framedPutc(hiByte(addr));
@@ -144,7 +145,8 @@ s16 charsToS16 (char hi, char lo) {
   return ret;
 }
 
-void processMessage (char* c, u16 len) {
+void processMessage (char* c, int len) {
+  proto_debug("actually got some message");
   switch (c[0]) {
   case eSerialMsg_dumpIns :
     serial_debug("dumping inputs...");
@@ -200,8 +202,8 @@ enum serialRecvStates {
 };
 
 #define MSG_MAX 4096
-char serialState = eSerialState_waiting;
-u16 msgPointer = 0;
+int serialState = eSerialState_waiting;
+int msgPointer = 0;
 char inBuf[MSG_MAX];
 
 
@@ -240,6 +242,10 @@ void recv_char (char c) {
     proto_debug("writing escaped char to inBuf");
     inBuf[msgPointer] = c;
     break;
+  default :
+    proto_debug("undefined serial state -whaaaaat!?");
+    serialState = eSerialState_waiting;
+    break;
   }
 }
 
@@ -258,7 +264,7 @@ void serial_process(s32 data) {
     /*   op_serial_out(last_serial_op, serial_buffer[serial_read_pos]); */
     /* } */
 
-    recv_char (c);
+    recv_char (serial_buffer[serial_read_pos]);
     serial_read_pos++;
     if(serial_read_pos == SERIAL_BUFFER_SIZE) serial_read_pos = 0;
   }
