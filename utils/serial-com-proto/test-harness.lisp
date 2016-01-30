@@ -1,4 +1,4 @@
-(ql:quickload '(:optima :cl-ppcre :cffi :iterate))
+(ql:quickload '(:optima :cl-ppcre :cffi :iterate :external-program))
 (in-package :cl-user)
 (use-package '(:optima :cffi :iterate))
 
@@ -187,6 +187,9 @@
 			:direction :input
 			:element-type '(unsigned-byte 8))
   (loop (print (serial-recv-msg stream))))
+
+#+nil
+(external-program:run "stty" '("-F" "/dev/ttyACM0" "raw"))
 
 #+nil
 (bt:make-thread (lambda ()
