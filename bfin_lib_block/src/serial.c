@@ -12,7 +12,7 @@
 //--------------------------------------------------------------------//
 // init_spi_slave()
 // (re-)configure spi in slave mode to receive control data from avr32 
-// FIXME: using pingpong DMA could halve the number of interrupts?
+// FIXME: using pingpong DMA could halve the number of interrupts
 void init_spi_slave(void) {
   int j;
   // don't attempt to drive the clock

@@ -1,4 +1,4 @@
-# makefile for aleph-blackfin core objects.
+# makefile for aleph-blackfin core objects. (block-processing version)
 #
 # this should be included from module makefiles.
 
@@ -11,14 +11,10 @@ audio_dir = $(bfin_lib_dir)/../dsp
 module_dir = ./
 
 bfin_lib_src = audio.c \
-	control.c \
-	cv.c \
 	dma.c \
 	isr.c \
 	main.c \
-	serial.c \
-	spi.c \
-	util.c
+	serial.c
 
 bfin_lib_obj = $(patsubst %.c, %.o, $(bfin_lib_src))
 

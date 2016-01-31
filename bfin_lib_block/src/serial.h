@@ -1,12 +1,3 @@
-/*!
-  serial.h
-  bfin_lib
-  aleph
-
-  configuration for SPORT and SPI
-
- */
-
 #ifndef _BFIN_SERIAL_H_
 #define _BFIN_SERIAL_H_
 

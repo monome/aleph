@@ -44,6 +44,9 @@ void init_ebiu(void) {
   ssync();
 }
 
+
+
+
 // initialize programmable flags
 void init_flags(void) {
   // outputs
@@ -90,6 +93,7 @@ int main(void) {
   init_interrupts();
   init_dma();
 
+
   module_init();
   
   enable_dma_sport0();
@@ -104,12 +108,15 @@ int main(void) {
 
   while(1) { 
 
-    if(processAudio) { 
-      if(audioTxDone && audioRxDone) {
-	module_process_block();
-	audioTxDone = 0;
-	audioRxDone = 0;
-      }
+    if(audioTxDone && audioRxDone) {
+      
+#if DMA_DEINTERLEAVE_PINGPONG
+      module_process_block(audioIn, audioOut, CHANNELS, BLOCKSIZE);
+#else
+      module_process_block(&audioIn, &audioOut, CHANNELS, BLOCKSIZE);
+#endif
+      audioTxDone = 0;
+      audioRxDone = 0;
     }
   }
   
