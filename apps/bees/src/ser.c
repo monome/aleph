@@ -135,8 +135,9 @@ void serial_inVal (s16 idx) {
   serial_framedPutc(hiByte(idx));
   serial_framedPutc(loByte(idx));
   //beesIn reading code goes here
-  /* io_t inVal = op_get_in_val(op, idx); */
-  io_t inVal = 43;
+  inode_t* pIn = &(net->ins[idx]);
+  io_t inVal = op_get_in_val(net->ops[pIn->opIdx],
+			     pIn->opInIdx);
   serial_framedPutc(hiByte(inVal));
   serial_framedPutc(loByte(inVal));
   serial_endTx();
