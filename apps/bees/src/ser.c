@@ -147,8 +147,10 @@ void serial_paramVal (s16 idx) {
   serial_framedPutc(hiByte(idx));
   serial_framedPutc(loByte(idx));
   //param reading code goes here
-  serial_framedPutc(hiByte(43));
-  serial_framedPutc(loByte(43));
+  s32 bfinPval = bfin_get_param(idx);
+  io_t beesPval = scaler_get_in( &(net->params[idx].scaler), bfinPval);
+  serial_framedPutc(hiByte(beesPval));
+  serial_framedPutc(loByte(beesPval));
   serial_endTx();
 }
 
