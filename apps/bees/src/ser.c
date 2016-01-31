@@ -94,7 +94,6 @@ void serial_paramsDump () {
   serial_startTx ();
   serial_framedPutc(eSerialMsg_paramsDump);
   //Code goes here to dump all params to serial port
-  /* serial_puts("ferret,marmoset,squirrel"); */
   int i;
   for (i=0;i<net->numParams;i++) {
     serial_puts(net->params[i].desc.label);
