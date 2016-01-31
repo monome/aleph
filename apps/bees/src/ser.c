@@ -120,12 +120,14 @@ void serial_outVal (int addr, int data) {
   serial_endTx();
 }
 
-void serial_triggerParam (s16 idx, s16 data) {
+void serial_triggerParam (s16 idx, io_t data) {
   //param thwacking code goes here
+  net_activate(idx+net->numIns, data, NULL);
 }
 
-void serial_triggerIn (s16 idx, s16 data) {
+void serial_triggerIn (s16 idx, io_t data) {
   //bees thwacking code goes here
+  net_activate(idx, data, NULL);
 }
 
 
