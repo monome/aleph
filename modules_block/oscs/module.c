@@ -24,6 +24,9 @@ void module_process_block(buffer_t *inChannels, buffer_t *outChannels,
 }
 
 void module_set_param(u32 idx, ParamValue val) {
+  /// test
+  return;
+  
     switch(idx) {
 
     case eParamAmp0:

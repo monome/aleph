@@ -110,7 +110,9 @@ int main(void) {
 
   while(1) { 
 
-    if(audioTxDone && audioRxDone && processAudio) {
+    //    if(audioTxDone && audioRxDone && processAudio) {
+    // hm...
+      if(audioTxDone && audioRxDone) {
       
 #if DMA_DEINTERLEAVE_PINGPONG
       module_process_block(audioIn, audioOut, CHANNELS, BLOCKSIZE);

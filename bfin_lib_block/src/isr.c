@@ -113,6 +113,6 @@ void init_interrupts(void) {
   *pSIC_IMASK=0x00002600;
   
   // unmask vectors in the core event processor
-  asm volatile ("cli %0; bitset(%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
+  asm volatile ("cli %0; bitset(%0, 9); bitset(%0, 10); bitset(%0, 11); sti %0; csync;": "+d"(i));
 
 }
