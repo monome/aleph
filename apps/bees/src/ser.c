@@ -130,6 +130,10 @@ void serial_triggerIn (s16 idx, s16 data) {
 
 
 void serial_inVal (s16 idx) {
+  if (idx >= net->numIns || idx < 0) {
+    serial_debug("Index out of range");
+    return;
+  }
   serial_startTx ();
   serial_framedPutc(eSerialMsg_inVal);
   serial_framedPutc(hiByte(idx));
@@ -144,6 +148,10 @@ void serial_inVal (s16 idx) {
 }
 
 void serial_paramVal (s16 idx) {
+  if (idx >= net->numParams || idx < 0) {
+    serial_debug("Index out of range");
+    return;
+  }
   serial_startTx ();
   serial_framedPutc(eSerialMsg_paramVal);
   serial_framedPutc(hiByte(idx));
