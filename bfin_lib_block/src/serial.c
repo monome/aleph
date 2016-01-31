@@ -25,7 +25,7 @@ void init_spi_slave(void) {
   *pSPI_STAT |= 0x10;  
 
   // slave mode, 
-  // 8 bit transfers (, MSB first, non-dma rx mode, 
+  // 8 bit transfers (MSB first, non-dma rx mode, 
   // overwrite (interrupt when SPI_RDBR is full),
   // phase: seems crazy but bfin and avr32 have opposite definitions of clock phase!
   *pSPI_CTL = CPHA | GM | SZ;

@@ -14,7 +14,8 @@ bfin_lib_src = audio.c \
 	dma.c \
 	isr.c \
 	main.c \
-	serial.c
+	serial.c \
+	spi.c
 
 bfin_lib_obj = $(patsubst %.c, %.o, $(bfin_lib_src))
 

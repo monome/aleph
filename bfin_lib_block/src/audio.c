@@ -5,6 +5,8 @@
 volatile u8 audioRxDone = 0;
 volatile u8 audioTxDone = 0;
 
+volatile u8 processAudio = 0;
+
 
 #if DMA_DEINTERLEAVE_PINGPONG
 

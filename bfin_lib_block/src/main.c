@@ -89,6 +89,8 @@ int main(void) {
 
   init_flags();
 
+  init_spi_slave();
+    
   init_sport0();
   init_interrupts();
   init_dma();
@@ -108,7 +110,7 @@ int main(void) {
 
   while(1) { 
 
-    if(audioTxDone && audioRxDone) {
+    if(audioTxDone && audioRxDone && processAudio) {
       
 #if DMA_DEINTERLEAVE_PINGPONG
       module_process_block(audioIn, audioOut, CHANNELS, BLOCKSIZE);

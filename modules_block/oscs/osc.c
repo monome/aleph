@@ -4,7 +4,7 @@
 #include "audio.h"
 #include "osc.h"
 
-const fract32 sine_table[WAVE_TAB_SIZE] = {
+const fract32 sine_table[1024] = {
 #include "sine_table_inc.c"
 };
 

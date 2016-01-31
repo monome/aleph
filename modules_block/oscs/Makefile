@@ -5,6 +5,10 @@ module_name = oscs
 audio = ../../dsp
 bfin = ../../bfin_lib_block/src
 
+# define version ids
+include version.mk
+version = $(maj).$(min).$(rev)
+ldr_name = $(module_name)-$(version).ldr
 
 # add sources from here/audio library.
 module_obj = osc.o module.o

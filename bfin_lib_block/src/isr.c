@@ -85,21 +85,32 @@ void sport0_tx_isr(void) {
   *pDMA2_IRQ_STATUS = 0x0001;
   ssync();
 }
-  
+
+
+__attribute((interrupt_handler)) 
+void spi_isr(void) {
+   READY_LO;
+  *pSPI_TDBR = spi_process(*pSPI_RDBR);
+  READY_HI; 
+}
+
+
 // assign interrupts
 void init_interrupts(void) {
   int i=0;
 
   // sport0 rx (dma1) -> ID3 = IVG10
   // sport1 tx (dma2) -> ID2 = IVG9
-  *pSIC_IAR1 = 0x33322231;
+  // spi (dma5) -> ID4 = IVG11
+  *pSIC_IAR1 = 0x33422231;
 
   // assign handlers to vectors
   *pEVT10 = sport0_rx_isr;
   *pEVT9 = sport0_tx_isr;
-
-  // unmask DMA1 and DMA2
-  *pSIC_IMASK=0x00000600;
+  *pEVT11 = spi_isr;
+  
+  // unmask DMA1, DMA2, DMA5
+  *pSIC_IMASK=0x00002600;
   
   // unmask vectors in the core event processor
   asm volatile ("cli %0; bitset(%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));

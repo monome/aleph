@@ -27,6 +27,9 @@
 extern volatile u8 audioRxDone;
 extern volatile u8 audioTxDone;
 
+//! audio process flag
+extern volatile u8 processAudio;
+
 //! type for de-interleaved audio buffers
 typedef fract32 buffer_t[CHANNELS][BLOCKSIZE];
 
