@@ -8,12 +8,14 @@
 #include "isr.h"
 
 // TEST: flip leds
-long long unsigned int ledCounterRx = 0;
-long long unsigned int ledCounterTx = 0;
+/* long long unsigned int ledCounterRx = 0; */
+/* long long unsigned int ledCounterTx = 0; */
 
+#if DMA_DEINTERLEAVE_PINGPONG
 // flags for pingpong processing
 static volatile u8 inBufFlag = 0;
 static volatile u8 outBufFlag = 0;
+#endif
 
 __attribute((interrupt_handler)) 
 void sport0_rx_isr(void) {
@@ -40,10 +42,10 @@ void sport0_rx_isr(void) {
   } 
 #endif
 
-  if (++ledCounterRx > 4000) {
-    ledCounterRx = 0;
-    LED3_TOGGLE;
-  }
+  /* if (++ledCounterRx > 4000) { */
+  /*   ledCounterRx = 0; */
+  /*   LED3_TOGGLE; */
+  /* } */
 
   audioRxDone = 1;
 
@@ -76,12 +78,15 @@ void sport0_tx_isr(void) {
    } 
 #endif
    
-  if (++ledCounterTx > 6000) {
-    ledCounterTx = 0;
-    LED4_TOGGLE;
-  }
+  /* if (++ledCounterTx > 6000) { */
+  /*   ledCounterTx = 0; */
+  /*   LED4_TOGGLE; */
+  /* } */
   
   audioTxDone = 1;
+
+  // process pending param changes
+  control_process();
   
   *pDMA2_IRQ_STATUS = 0x0001;
   ssync();
@@ -96,7 +101,9 @@ void spi_isr(void) {
   READY_LO;
 
   rx = *pSPI_RDBR;
-  tx = spi_process(rx);
+  // process the lsat byte.
+  // if this completes a param change command, it will be queued.
+  tx = spi_handle_byte(rx);
   *pSPI_TDBR = tx;
   
   READY_HI; 
@@ -131,7 +138,7 @@ void init_interrupts(void) {
   // no interrupts in IAR0
   *pSIC_IAR0 = 0x88888888;
   // sport0 rx (dma1) -> ID3 = IVG10
-  // sport1 tx (dma2) -> ID2 = IVG9
+  // sport0 tx (dma2) -> ID2 = IVG9
   // spi (dma5) -> ID4 = IVG11
   *pSIC_IAR1 = 0x88488238;
   // no interrupts in IAR2
@@ -147,9 +154,6 @@ void init_interrupts(void) {
   
   // unmask vectors in the core event processor
     asm volatile ("cli %0; bitset(%0, 9); bitset(%0, 10); bitset(%0, 11); sti %0; csync;": "+d"(i));
-
-  // hm... 
-  //    asm volatile ("cli %0; bitset(%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
 
   
 

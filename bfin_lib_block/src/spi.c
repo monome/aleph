@@ -4,29 +4,32 @@
 
 // bfin_lib
 #include "audio.h"
+#include "control.h"
 #include "module.h"
 #include "types.h"
 #include "spi.h"
 
-//----- static variables
+//! -- static variables:
 
-// byte to process
+//! byte to process
 static eSpiByte byte = eCom;
-// current command
+//! current command
 static u8 com;
-// current param index
+//! current param index
 static u8 idx;
 
-//------ static functions
+
+//! -- static functions:
 static void spi_set_param(u32 idx, ParamValue pv) {
-  gModuleData->paramData[idx].value = pv;
-  module_set_param(idx, pv);
+  /* gModuleData->paramData[idx].value = pv; */
+  /* module_set_param(idx, pv); */
+  control_add(idx, pv);
 }
 
 //------- function definitions
 // deal with new data in the spi rx ringbuffer
 // return byte to load for next MISO
-u8 spi_process(u8 rx) {
+u8 spi_handle_byte(u8 rx) {
   static ParamValueSwap pval;
   switch(byte) {
     /// caveman style case statement
