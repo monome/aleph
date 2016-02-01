@@ -56,7 +56,7 @@ void sport0_tx_isr(void) {
     outBufFlag = 0;
   } else {
     audioOut = &outputChannels0;
-    outBufFlag = 0;
+    outBufFlag = 1;
   }
 #else
   u16 i;

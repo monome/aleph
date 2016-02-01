@@ -14,7 +14,7 @@
  * to switch buffers and perform deinterleaving.
  * otherwise, copy and deinterleave in the ISR
  */
-#define DMA_DEINTERLEAVE_PINGPONG 0
+#define DMA_DEINTERLEAVE_PINGPONG 1
 
 //! channel count
 #define CHANNELS 4

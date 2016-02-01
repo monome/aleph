@@ -6,16 +6,11 @@
 #include "dma.h"
 
 #if DMA_DEINTERLEAVE_PINGPONG
-// use descriptor mode to perform pingpong and deinterleave
+// use large descriptor mode to perform pingpong and deinterleave
 
 typedef struct {
-   void *next;
-   void *start;
-   short config;
-   short x_count;
-   short x_mod;
-   short y_count;
-   short y_mod;
+  void *next;        // NDPL, NDPH
+  void *start;       // SAL, SAH
 } dma_desc_t;
 
 // for deinterleaving, inner loop over number of channels
@@ -27,15 +22,15 @@ typedef struct {
 // each outer-loop increment, jump back to the next frame in the first channel
 #define Y_MOD (((1 - AUDIO_CHANNELS) * AUDIO_FRAMES + 1) * AUDIO_SAMPLESIZE)
 
-#define DMA_FLOW_DESC 0x7700
+// large descriptor list, first 4 registers only (NDPL, NDPH, SAL, SAH)
+#define DMA_FLOW_DESC 0x7400
 // NB: need interrupt on both TX and RX to ensure correct process order 
-#define DMA_CONFIG ( WDSIZE_32 | DMA_FLOW_DESC | DI_EN | DMA2D )
+#define DMA_CONFIG ( DMA_FLOW_DESC | WDSIZE_32 | DI_EN | DMA2D )
 
-dma_desc_t descRx1 = { NULL, inputChannels1, WNR | DMA_CONFIG, X_COUNT, X_MOD, Y_COUNT, Y_MOD };
-dma_desc_t descRx0 = { &descRx1, inputChannels0, WNR | DMA_CONFIG, X_COUNT, X_MOD, Y_COUNT, Y_MOD };
-
-dma_desc_t descTx1 = { NULL, outputChannels1, DMA_CONFIG, X_COUNT, X_MOD, Y_COUNT, Y_MOD };
-dma_desc_t descTx0 = { &descTx1, outputChannels0, DMA_CONFIG, X_COUNT, X_MOD, Y_COUNT, Y_MOD };
+dma_desc_t descRx1 = { NULL, inputChannels1 };
+dma_desc_t descRx0 = { &descRx1, inputChannels0 };
+dma_desc_t descTx1 = { NULL, outputChannels1 };
+dma_desc_t descTx0 = { &descTx1, outputChannels0 };
 
 
 void init_dma(void) {
@@ -49,8 +44,19 @@ void init_dma(void) {
   descRx1.next = &descRx0;
   descTx1.next = &descTx0;
 
+  *pDMA1_X_COUNT = X_COUNT;
+  *pDMA1_X_MODIFY = X_MOD;
+  *pDMA1_Y_COUNT = Y_COUNT;
+  *pDMA1_Y_MODIFY = Y_MOD;
   *pDMA1_NEXT_DESC_PTR = &descRx0;
+  *pDMA1_CONFIG = DMA_CONFIG | WNR;
+
+  *pDMA2_X_COUNT = X_COUNT;
+  *pDMA2_X_MODIFY = X_MOD;
+  *pDMA2_Y_COUNT = Y_COUNT;
+  *pDMA2_Y_MODIFY = Y_MOD;
   *pDMA2_NEXT_DESC_PTR = &descTx0;
+  *pDMA2_CONFIG = DMA_CONFIG;
 }
 
 #else // 1d, autobuffer mode (no de-interleave, no pingpong
