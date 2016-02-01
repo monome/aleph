@@ -17,11 +17,11 @@
 #define DMA_DEINTERLEAVE_PINGPONG 0
 
 //! channel count
-#define CHANNELS 4
+#define AUDIO_CHANNELS 4
 //! block size
-#define BLOCKSIZE 16
+#define AUDIO_FRAMES 16
 //! bytes per sample
-#define SAMPLESIZE 4 // sizeof(fract32)
+#define AUDIO_SAMPLESIZE 4 // sizeof(fract32)
 
 //! I/O flags
 extern volatile u8 audioRxDone;
@@ -31,7 +31,7 @@ extern volatile u8 audioTxDone;
 extern volatile u8 processAudio;
 
 //! type for de-interleaved audio buffers
-typedef fract32 buffer_t[CHANNELS][BLOCKSIZE];
+typedef fract32 buffer_t[AUDIO_CHANNELS][AUDIO_FRAMES];
 
 #if DMA_DEINTERLEAVE_PINGPONG
 
@@ -60,11 +60,11 @@ extern buffer_t outputChannels1;
 //! I/O buffers
 __attribute__((l1_data_A))
 __attribute__((aligned(32)))
-extern fract32 audioRxBuf[BLOCKSIZE*CHANNELS];
+extern fract32 audioRxBuf[AUDIO_CHANNELS * AUDIO_FRAMES];
 
 __attribute__((l1_data_B))
 __attribute__((aligned(32)))
-extern fract32 audioTxBuf[BLOCKSIZE*CHANNELS];
+extern fract32 audioTxBuf[AUDIO_CHANNELS * AUDIO_FRAMES];
 
 //! separate process buffers
 __attribute__((aligned(32)))

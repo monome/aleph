@@ -19,13 +19,13 @@ typedef struct {
 } dma_desc_t;
 
 // for deinterleaving, inner loop over number of channels
-#define X_COUNT CHANNELS
+#define X_COUNT AUDIO_CHANNELS
 // each inner-loop increment, jump forward to the same frame in the next channel
-#define X_MOD (SAMPLESIZE * BLOCKSIZE)
+#define X_MOD (AUDIO_SAMPLESIZE * AUDIO_FRAMES)
 // outer loop over number of frames in a block
-#define Y_COUNT BLOCKSIZE
+#define Y_COUNT AUDIO_FRAMES
 // each outer-loop increment, jump back to the next frame in the first channel
-#define Y_MOD (((1 - CHANNELS) * BLOCKSIZE + 1) * SAMPLESIZE)
+#define Y_MOD (((1 - AUDIO_CHANNELS) * AUDIO_FRAMES + 1) * AUDIO_SAMPLESIZE)
 
 #define DMA_FLOW_DESC 0x7700
 // NB: need interrupt on both TX and RX to ensure correct process order 
@@ -69,14 +69,14 @@ void init_dma(void) {
    // dma1: rx 
    *pDMA1_CONFIG = WNR | WDSIZE_32 | DI_EN | FLOW_AUTO; 
    *pDMA1_START_ADDR = (void *)audioRxBuf; 
-   *pDMA1_X_COUNT = CHANNELS * BLOCKSIZE; 
-   *pDMA1_X_MODIFY = SAMPLESIZE; 
+   *pDMA1_X_COUNT = AUDIO_CHANNELS * AUDIO_FRAMES; 
+   *pDMA1_X_MODIFY = AUDIO_SAMPLESIZE; 
   
    // dma 2: tx 
    *pDMA2_CONFIG = WDSIZE_32 | DI_EN | FLOW_AUTO; 
    *pDMA2_START_ADDR = (void *)audioTxBuf; 
-   *pDMA2_X_COUNT = CHANNELS * BLOCKSIZE; 
-   *pDMA2_X_MODIFY = SAMPLESIZE; 
+   *pDMA2_X_COUNT = AUDIO_CHANNELS * AUDIO_FRAMES; 
+   *pDMA2_X_MODIFY = AUDIO_SAMPLESIZE; 
 
  } 
 

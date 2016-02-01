@@ -1,5 +1,5 @@
 
-module_name = oscs
+module_name = rawsc
 
 # paths to aleph repository sources
 audio = ../../dsp

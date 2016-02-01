@@ -34,11 +34,11 @@ void sport0_rx_isr(void) {
 #else
   u16 i;
   // copy input for new block
-  for(i=0; i<BLOCKSIZE; i++) {  
-    audioIn[0][i] = audioRxBuf[i * SAMPLESIZE] << 8;
-    audioIn[1][i] = audioRxBuf[i * SAMPLESIZE + 1] << 8;
-    audioIn[2][i] = audioRxBuf[i * SAMPLESIZE + 2] << 8;
-    audioIn[3][i] = audioRxBuf[i * SAMPLESIZE + 3] << 8;
+  for(i=0; i<AUDIO_FRAMES; i++) {  
+    audioIn[0][i] = audioRxBuf[i * AUDIO_SAMPLESIZE] << 8;
+    audioIn[1][i] = audioRxBuf[i * AUDIO_SAMPLESIZE + 1] << 8;
+    audioIn[2][i] = audioRxBuf[i * AUDIO_SAMPLESIZE + 2] << 8;
+    audioIn[3][i] = audioRxBuf[i * AUDIO_SAMPLESIZE + 3] << 8;
   } 
 #endif
 
@@ -70,11 +70,11 @@ void sport0_tx_isr(void) {
 #else
   u16 i;
   // copy output from last block
-   for(i=0; i<BLOCKSIZE; i++) { 
-     audioTxBuf[i * SAMPLESIZE] = audioOut[0][i] >> 8;
-     audioTxBuf[i * SAMPLESIZE + 1] = audioOut[1][i] >> 8;
-     audioTxBuf[i * SAMPLESIZE + 2] = audioOut[2][i] >> 8;
-     audioTxBuf[i * SAMPLESIZE + 3] = audioOut[3][i] >> 8; 
+   for(i=0; i<AUDIO_FRAMES; i++) { 
+     audioTxBuf[i * AUDIO_SAMPLESIZE] = audioOut[0][i] >> 8;
+     audioTxBuf[i * AUDIO_SAMPLESIZE + 1] = audioOut[1][i] >> 8;
+     audioTxBuf[i * AUDIO_SAMPLESIZE + 2] = audioOut[2][i] >> 8;
+     audioTxBuf[i * AUDIO_SAMPLESIZE + 3] = audioOut[3][i] >> 8; 
    } 
 #endif
    

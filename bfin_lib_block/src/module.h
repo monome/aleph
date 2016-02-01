@@ -27,8 +27,7 @@ extern ModuleData* gModuleData;
 extern void module_init(void);
 
 //! process a block of frames
-extern void module_process_block(buffer_t *inChannels, buffer_t *outChannels,
-				 const u8 numChannels, const u8 numFrames);
+extern void module_process_block(buffer_t *inChannels, buffer_t *outChannels);
 
 //! set parameter  
 extern void module_set_param(u32 idx, ParamValue val);
