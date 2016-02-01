@@ -41,19 +41,38 @@
 			      stream)
     (force-output stream)))
 
-(defvar *s16-max* #xFFFF)
+(defparameter *s16-max* #x7FFF)
+(defparameter *s16-min* (- #x8000))
 (defvar *char-max* #xFF)
+
+(defun u16-s16 (unsigned)
+  (assert (<= unsigned  #xFFFF))
+  (assert (>= unsigned 0))
+  (if (> unsigned #x7FFF)
+      (+ (- #x10000)
+	 unsigned)
+      unsigned))
+
+(defun s16-u16 (signed)
+  (assert (<= signed  #x7FFF))
+  (assert (>= signed (- #x8000)))
+  (if (< signed 0)
+      (+ #x10000
+	 signed)
+      signed))
 
 (defun s16-chars (s16)
   (assert (<= s16 *s16-max*))
-  (list (ash s16 -8)
-	(logand s16
-		#x00FF)))
+  (assert (>= s16 *s16-min*))
+  (let ((u16 (s16-u16 s16)))
+    (list (ash u16 -8)
+	  (logand u16
+		  #x00FF))))
 
 (defun chars-s16 (hi lo)
   (assert (<=  hi *char-max*))
   (assert (<=  lo *char-max*))
-  (+ lo (ash hi 8)))
+  (u16-s16 (+ lo (ash hi 8))))
 
 (defun serial-debug (stream control-string &rest format-arguments)
   (send-serial-command stream
