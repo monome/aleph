@@ -17,7 +17,6 @@
 
 
 /////TEST let's put op_serial to bed now...
-extern op_serial_t* last_serial_op = NULL;
 
 static u16 serial_read_pos = 0;
 
@@ -289,11 +288,6 @@ void serial_process(s32 data) {
     //////////////////
     //// TEST: loopback
     /* print_dbg_char(serial_buffer[serial_read_pos]); */
-
-    //// TEST: skanky hacked-to-bits op_serial 
-    /* if (last_serial_op != NULL) { */
-    /*   op_serial_out(last_serial_op, serial_buffer[serial_read_pos]); */
-    /* } */
 
     recv_char (serial_buffer[serial_read_pos]);
     serial_read_pos++;
