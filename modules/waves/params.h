@@ -10,7 +10,12 @@
 // radix should be minimal bits to accommodate entire integer range.
 // note that this includes an obligatory sign bit, even if min >= 0
 
-#define PARAM_HZ_MIN OSC_FREQ_MIN
+// base-frequency limits in fix16
+#define OSC_HZ_MIN 0x00010000      // 1 hz
+#define OSC_HZ_MAX 0x40000000    // 16384 hz
+#define OSC_HZ_RADIX 15
+
+#define PARAM_HZ_MIN OSC_FREQ_MIN //???
 #define PARAM_HZ_MAX OSC_FREQ_MAX
 #define PARAM_HZ_DEFAULT (OSC_FREQ_MIN * 16)
 
@@ -54,12 +59,6 @@
 #define PARAM_MODE_MIN 0
 #define PARAM_MODE_MAX 0x30000
 #define PARAM_MODE_RADIX 3
-
-
-// base-frequency limits in fix16
-#define OSC_HZ_MIN 0x00010000      // 1 hz
-#define OSC_HZ_MAX 0x40000000    // 16384 hz
-#define OSC_HZ_RADIX 15
 
 
 #define NUM_PARAMS eParamNumParams

@@ -17,7 +17,7 @@
 #define SDRAM_ADDRESS 0x00000000
 #define SDRAM_SIZE    0x07ffffff
 #ifndef SAMPLERATE
-  #define SAMPLERATE    48000
+#define SAMPLERATE    48000
 #endif
 
 //#endif
@@ -43,7 +43,6 @@ extern void module_init(void);
 // de-init
 extern void module_deinit(void);
 // callback
-
 extern void module_process_frame(void);
 
 // set parameter  
