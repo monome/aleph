@@ -104,22 +104,22 @@ int main(void) {
   // reset the codec
   init_codec();
 
-  READY_HI;
 
   LED3_HI;
   LED4_HI;
 
+  READY_HI;
+  
   while(1) { 
 
-    #if 1
-    //    if(audioTxDone && audioRxDone && processAudio) {
-    // test...
-      if(audioTxDone && audioRxDone) {
+    if(audioTxDone && audioRxDone && processAudio) {
 
       READY_LO;
-      //// actually this doesn't work in User mode.
-      //// we could move block processing to an interrupt
-      // disable interrupts...
+      // actually this doesn't work in User mode.
+      // could move block processing to an interrupt if we really want to do this.
+      // but if possible it would be better to allow SPI interrupts to happen
+
+      // disable interrupts:
       // int i=0; 
       // asm volatile ("cli %0; csync;" : "+d"(i));
 	
@@ -135,7 +135,6 @@ int main(void) {
       //      asm volatile ("sti %0; csync;" : "+d"(i));
       READY_HI;
     }
-    #endif
   }
   
   return 0;

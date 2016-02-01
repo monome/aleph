@@ -2,6 +2,7 @@
 #include "gpio.h"
 #include "module.h"
 
+// ... hm...
 #define CONTROL_Q_SIZE 64
 
 typedef struct {
@@ -31,12 +32,13 @@ void control_process(void) {
   u16 i;
   ParamValue val;
   u32 idx;
+  //  LED4_LO; 
   for(i=0; i<qCount; i++) {
     idx = q[qIdxRd].idx;
     val = q[qIdxRd].val;
-    gModuleData->paramData[idx].value = val;
     module_set_param(idx, val);
     qIdxRd = (qIdxRd + 1) & (CONTROL_Q_SIZE - 1);
   }
   qCount = 0;
+  //  LED4_HI; 
 }

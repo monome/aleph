@@ -2,8 +2,8 @@
 //--- a basic oscillator
 //--- no modulation
 
-#ifndef _OSC_H_
-#define _OSC_H_
+#ifndef _ALEPH_RAWSC_OSC_H_
+#define _ALEPH_RAWSC_OSC_H_
 
 #include "types.h"
 

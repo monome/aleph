@@ -1,5 +1,5 @@
-#ifndef _ALEPH_OSCS_PARAMS_H_
-#define _ALEPH_OSCS_PARAMS_H_
+#ifndef _ALEPH_RAWSC_PARAMS_H_
+#define _ALEPH_RAWSC_PARAMS_H_
 
 
 #include "param_common.h"

@@ -21,7 +21,9 @@ static u8 idx;
 
 //! -- static functions:
 static void spi_set_param(u32 idx, ParamValue pv) {
-  /* gModuleData->paramData[idx].value = pv; */
+  // set the raw value here,
+  // in case avr32 reads it back immediately...
+  gModuleData->paramData[idx].value = pv;
   /* module_set_param(idx, pv); */
   control_add(idx, pv);
 }
