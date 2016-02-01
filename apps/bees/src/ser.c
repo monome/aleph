@@ -98,7 +98,7 @@ void serial_insDump () {
       serial_puts(net->ops[i]->opString);
       serial_puts("/");
       serial_puts(net->ops[i]->inString + (j * 8));
-      serial_puts(",");
+      serial_framedPutc(0);
     }
   }
   serial_endTx();
@@ -111,7 +111,7 @@ void serial_paramsDump () {
   int i;
   for (i=0;i<net->numParams;i++) {
     serial_puts(net->params[i].desc.label);
-    serial_puts(",");
+    serial_framedPutc(0);
   }
   serial_endTx();
 }
@@ -120,7 +120,8 @@ void serial_opDescriptionsDump () {
   serial_startTx ();
   serial_framedPutc(eSerialMsg_opDescriptionsDump);
   //DEBUG return a single op type with 1 in, 2 outs
-  serial_puts("opType1,");
+  serial_puts("opType1");
+  serial_framedPutc(0);
   serial_framedPutc(hiByte(1));
   serial_framedPutc(hiByte(1));
   serial_framedPutc(hiByte(2));
@@ -140,7 +141,12 @@ void serial_connectionsDump () {
 void serial_outputsDump () {
   serial_startTx ();
   serial_framedPutc(eSerialMsg_outputsDump);
-  serial_puts("out1,out2,out3");
+  serial_puts("out1");
+  serial_framedPutc(0);
+  serial_puts("out2");
+  serial_framedPutc(0);
+  serial_puts("out3");
+  serial_framedPutc(0);
   serial_endTx();
 }
 
@@ -148,7 +154,8 @@ void serial_opsDump () {
   serial_startTx ();
   serial_framedPutc(eSerialMsg_opsDump);
   //DEBUG return a single op of type 1
-  serial_puts("op1,");
+  serial_puts("op1");
+  serial_framedPutc(0);
   serial_framedPutc(hiByte(1));
   serial_framedPutc(hiByte(1));
   serial_endTx();

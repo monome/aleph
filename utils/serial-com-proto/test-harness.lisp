@@ -20,7 +20,21 @@
   :eSerialMsg_queryParam
   :eSerialMsg_paramVal
   :eSerialMsg_outVal
-  :eSerialMsg_numParams)
+  :eSerialMsg_numParams
+
+  :eSerialMsg_dumpOutputs
+  :eSerialMsg_outputsDump
+  :eSerialMsg_dumpConnections
+  :eSerialMsg_connectionsDump
+  :eSerialMsg_connect
+  :eSerialMsg_disconnect
+  :eSerialMsg_dumpOps
+  :eSerialMsg_opsDump
+  :eSerialMsg_dumpOpDescriptions
+  :eSerialMsg_opDescriptionsDump
+  :eSerialMsg_newOp
+  :eSerialMsg_deleteOp
+  )
 
 
 (defun send-framed-message (bytes stream)
@@ -92,6 +106,23 @@
   (send-serial-command stream
 		       :eSerialMsg_dumpParams
 		       '()))
+(defun serial-dumpOutputs (stream)
+  (send-serial-command stream
+		       :eSerialMsg_dumpOutputs
+		       '()))
+(defun serial-dumpConnections (stream)
+  (send-serial-command stream
+		       :eSerialMsg_dumpConnections
+		       '()))
+(defun serial-dumpOps (stream)
+  (send-serial-command stream
+		       :eSerialMsg_dumpOps
+		       '()))
+(defun serial-dumpOpDescriptions (stream)
+  (send-serial-command stream
+		       :eSerialMsg_dumpOpDescriptions
+		       '()))
+
 
 (defun serial-trigger-param (stream addr val)
   (send-serial-command stream
@@ -114,6 +145,77 @@
   (send-serial-command stream
 		       :eSerialMsg_queryParam
 		       (s16-chars addr)))
+(defun serial-connect (stream out in)
+  (send-serial-command stream
+		       :eSerialMsg_connect
+		       (append (s16-chars out)
+			       (s16-chars in))))
+(defun serial-disconnect (stream out)
+  (send-serial-command stream
+		       :eSerialMsg_disconnect
+		       (s16-chars out)))
+(defun serial-newOp (stream type)
+  (send-serial-command stream
+		       :eSerialMsg_newOp
+		       (s16-chars type)))
+(defun serial-deleteOp (stream op)
+  (send-serial-command stream
+		       :eSerialMsg_deleteOp
+		       (s16-chars op)))
+
+(defun eat-leading-string (chars)
+  (iterate (for remaining on chars)
+	   (until (= 0 (car remaining)))
+	   (collect (car remaining) into octets)
+	   (finally (return (cons (octets-to-string (coerce octets
+							    '(vector (unsigned-byte 8))))
+				  (cdr remaining))))))
+
+(defun unpack-string-s16-s16-xN (connections-dump)
+  (destructuring-bind (string . rest) (eat-leading-string connections-dump)
+    (when (and string
+	       (car rest)
+	       (cadr rest)
+	       (caddr rest)
+	       (cadddr rest))
+      (cons (list string
+		  (chars-s16 (car rest)
+			     (cadr rest))
+		  (chars-s16 (caddr rest)
+			     (cadddr rest)))
+	    (unpack-string-s16-s16-xN (cddddr rest))))))
+#+nil
+(unpack-string-s16-s16-xN '(44 45 46 0 5 6 7 8 44 45 46 0 5 6 7 8))
+
+(defun unpack-string-s16-xN (connections-dump)
+  (destructuring-bind (string . rest) (eat-leading-string connections-dump)
+    (when (and string
+	       (car rest)
+	       (cadr rest))
+      (cons (list string
+		  (chars-s16 (car rest)
+			     (cadr rest)))
+	    (unpack-string-s16-xN (cddr rest))))))
+#+nil
+(unpack-string-s16-xN '(44 45 46 0 5 6 44 45 46 0 5 6))
+
+(defun unpack-s16-s16-xN (dump)
+  (when (and (car dump)
+	     (cadr dump)
+	     (caddr dump)
+	     (cadddr dump))
+  (cons (list (chars-s16 (car dump)
+			 (cadr dump))
+	      (chars-s16 (caddr dump)
+			 (cadddr dump)))
+	(unpack-s16-s16-xN (cddddr dump)))))
+
+(defun unpack-string-xN (octets)
+  (ppcre:split "\0"
+	       (octets-to-string (coerce octets
+					 '(vector (unsigned-byte 8))))))
+#+nil
+(unpack-s16-s16-xN '(5 6 7 8 5 6 7 8))
 
 (defun serial-recv-msg (stream)
   (let ((state :waiting)
@@ -145,15 +247,11 @@
     ((cons #.(foreign-enum-value 'serial-msg-types :eSerialMsg_insDump)
 	   octets)
      (cons :ins-dump
-	   (ppcre:split ","
-			(octets-to-string (coerce octets
-						  '(vector (unsigned-byte 8)))))))
+	   (unpack-string-xN octets)))
     ((cons #.(foreign-enum-value 'serial-msg-types :eSerialMsg_paramsDump)
 	   octets)
      (cons :paramsDump
-	   (ppcre:split ","
-			(octets-to-string (coerce octets
-						  '(vector (unsigned-byte 8)))))))
+	   (unpack-string-xN octets)))
     ((list* #.(foreign-enum-value 'serial-msg-types :eSerialMsg_inVal)
 	    addr-hi addr-lo val-hi val-lo _)
      (list :in-val (chars-s16 addr-hi addr-lo) (chars-s16 val-hi val-lo)))
@@ -163,6 +261,18 @@
     ((list* #.(foreign-enum-value 'serial-msg-types :eSerialMsg_outVal)
 	    addr-hi addr-lo val-hi val-lo _)
      (list :out-val (chars-s16 addr-hi addr-lo) (chars-s16 val-hi val-lo)))
+    ((list* #.(foreign-enum-value 'serial-msg-types :eSerialMsg_opDescriptionsDump)
+	    op-descriptions)
+     (list :op-descriptions (unpack-string-s16-s16-xN op-descriptions)))
+    ((list* #.(foreign-enum-value 'serial-msg-types :eSerialMsg_opsDump)
+	    ops-dump)
+     (list :ops-dump (unpack-string-s16-xN ops-dump)))
+    ((list* #.(foreign-enum-value 'serial-msg-types :eSerialMsg_connectionsDump)
+	    connections-dump)
+     (list :connections-dump (unpack-s16-s16-xN connections-dump)))
+    ((list* #.(foreign-enum-value 'serial-msg-types :eSerialMsg_outputsDump)
+	    outputs-dump)
+     (list :outputs-dump (unpack-string-xN outputs-dump)))
     (otherwise (break "unknown message: ~A" bytes))))
 
 #+nil
