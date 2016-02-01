@@ -40,6 +40,15 @@ void serial_paramVal (s16 idx);
 s16 charsToS16 (char hi, char lo);
 void processMessage (char* c, int len);
 void recv_char (char c);
+
+void serial_disconnect (s16 idx);
+void serial_deleteOp (s16 idx);
+void serial_newOp (s16 idx);
+void serial_connect (s16 outIdx, s16 inIdx);
+void serial_opDescriptionsDump (void);
+void serial_connectionsDump (void);
+void serial_outputsDump (void);
+void serial_opsDump (void);
 // typedef void(*process_serial_t)(u16);
 
 // extern void serial_param_num(s32 data);

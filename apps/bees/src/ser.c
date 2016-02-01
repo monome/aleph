@@ -62,6 +62,21 @@ enum serialMsgTypes {
   eSerialMsg_queryParam,
   eSerialMsg_paramVal,
   eSerialMsg_outVal,
+
+  //messages for patching bees
+  eSerialMsg_dumpOutputs,
+  eSerialMsg_outputsDump,
+  eSerialMsg_dumpConnections,
+  eSerialMsg_connectionsDump,
+  eSerialMsg_connect,
+  eSerialMsg_disconnect,
+  eSerialMsg_dumpOps,
+  eSerialMsg_opsDump,
+  eSerialMsg_dumpOpDescriptions,
+  eSerialMsg_opDescriptionsDump,
+  eSerialMsg_newOp,
+  eSerialMsg_deleteOp,
+
   eSerialMsg_numParams
 };
 
@@ -98,6 +113,44 @@ void serial_paramsDump () {
     serial_puts(net->params[i].desc.label);
     serial_puts(",");
   }
+  serial_endTx();
+}
+
+void serial_opDescriptionsDump () {
+  serial_startTx ();
+  serial_framedPutc(eSerialMsg_opDescriptionsDump);
+  //DEBUG return a single op type with 1 in, 2 outs
+  serial_puts("opType1,");
+  serial_framedPutc(hiByte(1));
+  serial_framedPutc(hiByte(1));
+  serial_framedPutc(hiByte(2));
+  serial_framedPutc(hiByte(2));
+  serial_endTx();
+}
+void serial_connectionsDump () {
+  serial_startTx ();
+  serial_framedPutc(eSerialMsg_connectionsDump);
+  //DEBUG return a single connection 1:2
+  serial_framedPutc(hiByte(1));
+  serial_framedPutc(loByte(1));
+  serial_framedPutc(hiByte(2));
+  serial_framedPutc(loByte(2));
+  serial_endTx();
+}
+void serial_outputsDump () {
+  serial_startTx ();
+  serial_framedPutc(eSerialMsg_outputsDump);
+  serial_puts("out1,out2,out3");
+  serial_endTx();
+}
+
+void serial_opsDump () {
+  serial_startTx ();
+  serial_framedPutc(eSerialMsg_opsDump);
+  //DEBUG return a single op of type 1
+  serial_puts("op1,");
+  serial_framedPutc(hiByte(1));
+  serial_framedPutc(hiByte(1));
   serial_endTx();
 }
 
@@ -165,6 +218,33 @@ void serial_paramVal (s16 idx) {
   serial_endTx();
 }
 
+void serial_disconnect (s16 idx) {
+  serial_startTx ();
+  serial_framedPutc(eSerialMsg_disconnect);
+  //FIXME actually do something here
+  serial_endTx();
+}
+
+void serial_deleteOp (s16 idx) {
+  serial_startTx ();
+  serial_framedPutc(eSerialMsg_deleteOp);
+  //FIXME actually do something here
+  serial_endTx();
+}
+
+void serial_newOp (s16 idx) {
+  serial_startTx ();
+  serial_framedPutc(eSerialMsg_newOp);
+  //FIXME actually do something here
+  serial_endTx();
+}
+
+void serial_connect (s16 outIdx, s16 inIdx) {
+  serial_startTx ();
+  serial_framedPutc(eSerialMsg_connect);
+  //FIXME actually do something here
+  serial_endTx();
+}
 
 s16 charsToS16 (char hi, char lo) {
   s16 ret = hi;
@@ -183,6 +263,22 @@ void processMessage (char* c, int len) {
   case eSerialMsg_dumpParams :
     serial_debug("dumping params...");
     serial_paramsDump ();
+    break;
+  case eSerialMsg_dumpOps :
+    serial_debug("dumping ops...");
+    serial_opsDump ();
+    break;
+  case eSerialMsg_dumpOutputs :
+    serial_debug("dumping outputs...");
+    serial_outputsDump ();
+    break;
+  case eSerialMsg_dumpConnections :
+    serial_debug("dumping connections...");
+    serial_connectionsDump ();
+    break;
+  case eSerialMsg_dumpOpDescriptions :
+    serial_debug("dumping opDescriptions...");
+    serial_opDescriptionsDump ();
     break;
   case eSerialMsg_triggerParam :
     if(len < 5)
@@ -217,6 +313,36 @@ void processMessage (char* c, int len) {
       serial_paramVal(charsToS16(c[1],c[2]));
       serial_debug("queried params");
     }
+    break;
+  case eSerialMsg_disconnect :
+    if(len < 3)
+      serial_debug ("disconnect requires 16 bit bees address");
+    else {
+      serial_disconnect(charsToS16(c[1],c[2]));
+      serial_debug("broke a connection");
+    }
+    break;
+  case eSerialMsg_newOp :
+    if(len < 3)
+      serial_debug ("newOp requires 16 bit bees address");
+    else {
+      serial_newOp(charsToS16(c[1],c[2]));
+      serial_debug("added an op");
+    }
+    break;
+  case eSerialMsg_deleteOp :
+    if(len < 3)
+      serial_debug ("deleteOp requires 16 bit bees address");
+    else {
+      serial_deleteOp(charsToS16(c[1],c[2]));
+      serial_debug("deleted an op");
+    }
+    break;
+  case eSerialMsg_connect :
+    if(len < 5)
+      serial_debug ("connect requires 2 x 16 bit bees address");
+    serial_connect(charsToS16(c[1],c[2]), charsToS16(c[3],c[4]));
+    serial_debug("made a connection");
     break;
   default :
     serial_debug ("Unknown serial command issued to bees");
