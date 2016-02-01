@@ -35,6 +35,10 @@
 #define READY_LO 	*pFIO_FLAG_D &= READY_MASK
 #define READY_HI 	*pFIO_FLAG_D |= READY_UNMASK
 
+//// TEST! never be ready
+//#define READY_HI ;
+
+
 // "request" pin - pf13
 // should it prove necessary, bfin will use this pin
 // to trigger interrupts on avr32.

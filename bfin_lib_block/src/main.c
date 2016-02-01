@@ -85,9 +85,10 @@ void enable_dma_sport0(void) {
 int main(void) { 
 
   init_clock();
-  init_ebiu();
-
   init_flags();
+  READY_LO;
+  
+  init_ebiu();
 
   init_spi_slave();
     
@@ -110,10 +111,18 @@ int main(void) {
 
   while(1) { 
 
+    #if 1
     //    if(audioTxDone && audioRxDone && processAudio) {
-    // hm...
+    // test...
       if(audioTxDone && audioRxDone) {
-      
+
+      READY_LO;
+      //// actually this doesn't work in User mode.
+      //// we could move block processing to an interrupt
+      // disable interrupts...
+      // int i=0; 
+      // asm volatile ("cli %0; csync;" : "+d"(i));
+	
 #if DMA_DEINTERLEAVE_PINGPONG
       module_process_block(audioIn, audioOut, CHANNELS, BLOCKSIZE);
 #else
@@ -121,7 +130,12 @@ int main(void) {
 #endif
       audioTxDone = 0;
       audioRxDone = 0;
+
+      // reenable interrupts
+      //      asm volatile ("sti %0; csync;" : "+d"(i));
+      READY_HI;
     }
+    #endif
   }
   
   return 0;

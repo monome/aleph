@@ -18,7 +18,7 @@ static volatile u8 outBufFlag = 0;
 __attribute((interrupt_handler)) 
 void sport0_rx_isr(void) {
 
-
+  READY_LO;
 #if DMA_DEINTERLEAVE_PINGPONG
   // FIXME: need to convert from 24b to 32b
   if(inBufFlag) {
@@ -46,15 +46,16 @@ void sport0_rx_isr(void) {
   }
 
   audioRxDone = 1;
-  
+
   *pDMA1_IRQ_STATUS = 0x0001;
   ssync();
+  READY_HI;
 }
 
 
 __attribute((interrupt_handler)) 
 void sport0_tx_isr(void) {
-  
+  READY_LO;
 #if DMA_DEINTERLEAVE_PINGPONG
   // FIXME: need to convert from 32b to 24b
   if(outBufFlag) {
@@ -84,35 +85,74 @@ void sport0_tx_isr(void) {
   
   *pDMA2_IRQ_STATUS = 0x0001;
   ssync();
+
+  READY_HI;
 }
 
 
 __attribute((interrupt_handler)) 
 void spi_isr(void) {
-   READY_LO;
-  *pSPI_TDBR = spi_process(*pSPI_RDBR);
+  u8 rx, tx;
+  READY_LO;
+
+  rx = *pSPI_RDBR;
+  tx = spi_process(rx);
+  *pSPI_TDBR = tx;
+  
   READY_HI; 
 }
 
 
 // assign interrupts
 void init_interrupts(void) {
+  
+#if 0 // test without SPI interrupts...
+  /* int i; */
+  
+  /* // sport0 rx (dma1) -> ID3 = IVG10 */
+  /* // sport1 tx (dma2) -> ID2 = IVG9 */
+  /* *pSIC_IAR1 = 0x33322231; */
+
+  /* // assign handlers to vectors */
+  /* *pEVT10 = sport0_rx_isr; */
+  /* *pEVT9 = sport0_tx_isr; */
+
+  /* // unmask DMA1 and DMA2 */
+  /* *pSIC_IMASK=0x00000600; */
+  
+  /* // unmask vectors in the core event processor */
+  /* asm volatile ("cli %0; bitset(%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i)); */
+
+  #else
+
   int i=0;
 
+
+  // no interrupts in IAR0
+  *pSIC_IAR0 = 0x88888888;
   // sport0 rx (dma1) -> ID3 = IVG10
   // sport1 tx (dma2) -> ID2 = IVG9
   // spi (dma5) -> ID4 = IVG11
-  *pSIC_IAR1 = 0x33422231;
+  *pSIC_IAR1 = 0x88488238;
+  // no interrupts in IAR2
+  *pSIC_IAR2 = 0x88888888;
 
   // assign handlers to vectors
   *pEVT10 = sport0_rx_isr;
   *pEVT9 = sport0_tx_isr;
   *pEVT11 = spi_isr;
   
-  // unmask DMA1, DMA2, DMA5
+  // unmask peripherals
   *pSIC_IMASK=0x00002600;
   
   // unmask vectors in the core event processor
-  asm volatile ("cli %0; bitset(%0, 9); bitset(%0, 10); bitset(%0, 11); sti %0; csync;": "+d"(i));
+    asm volatile ("cli %0; bitset(%0, 9); bitset(%0, 10); bitset(%0, 11); sti %0; csync;": "+d"(i));
 
+  // hm... 
+  //    asm volatile ("cli %0; bitset(%0, 9); bitset(%0, 10); sti %0; csync;": "+d"(i));
+
+  
+
+#endif
+  
 }
