@@ -72,6 +72,8 @@ void osc_process_block(u16 idx, buffer_t *outChannels) {
     				 mult_fr1x32x32(waveB, mulB)
     				 )
     		      );
+    // shift down to 24b
+    val >>= 8;
 
     // mix to output buffer (all channels)
     for(channel=0; channel<AUDIO_CHANNELS; channel++) { 
