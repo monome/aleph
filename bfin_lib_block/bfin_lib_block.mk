@@ -34,6 +34,9 @@ CFLAGS += -Wall -mcpu=$(CPU) $(INC)
 # CFLAGS += -00 -g # debug
 # CFLAGS += -02
 CFLAGS += -03
+CFLAGS += -funsafe-loop-optimizations
+CFLAGS += -funsafe-math-optimizations
+CFLAGS += -mfast-fp
 
 LDFLAGS += -mcpu=$(CPU)
 LDRFLAGS += --bits 16 --dma 8
