@@ -9,14 +9,9 @@ static ModuleData super;
 static ParamData mParamData[eParamNumParams];
 
 static inline void param_setup(u32 id, ParamValue v) {
-  // set the input data so that bfin core will report it
-  // back to the controller via SPI, when requested. 
-  // (bees will make such a request of each param at launch to sync with network.)
-  // this is also how a polled analysis parameter would work.
   gModuleData->paramData[id].value = v;
   module_set_param(id, v);
 }
-
 
 void module_init(void) {
   u16 i;
@@ -76,7 +71,6 @@ void module_set_param(u32 idx, ParamValue val) {
     case eParamFreqFine0:
       osc_set_phi_lower(0, val );
       break;
-
       
     case eParamAmp1:
       osc_set_amp(1, val );
@@ -89,7 +83,6 @@ void module_set_param(u32 idx, ParamValue val) {
     case eParamFreqFine1:
       osc_set_phi_lower(1, val );
       break;
-
       
     case eParamAmp2:
       osc_set_amp(2, val );
@@ -103,7 +96,6 @@ void module_set_param(u32 idx, ParamValue val) {
       osc_set_phi_lower(2, val );
       break;
 
-      
     case eParamAmp3:
       osc_set_amp(3, val );
       break;
@@ -115,7 +107,6 @@ void module_set_param(u32 idx, ParamValue val) {
     case eParamFreqFine3:
       osc_set_phi_lower(3, val );
       break;
-
 
     }
 

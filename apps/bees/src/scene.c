@@ -311,22 +311,15 @@ void scene_read_buf(void) {
     sceneData->desc.moduleVersion.min = moduleVersion.min;
     sceneData->desc.moduleVersion.rev = moduleVersion.rev;
     strcpy(sceneData->desc.moduleName, (const char*)moduleName);
-#endif
+#endif // BEEKEEP
 
-#endif
+#endif // RELEASEBUILD==1
 
   } // load-module case
-
-  /// don't have to do this b/c net_unpickle will deinit anyways
-  /*
-  print_dbg("\r\n clearing operator list...");
-  net_clear_user_ops();
-  */
 
 
   /// FIXME:
   /// check the module version and warn if different!
-  // there could also be a check here for mismatched parameter list.
 
   // unpickle network 
   render_boot("reading network");
@@ -341,22 +334,8 @@ void scene_read_buf(void) {
   render_boot("scene data stored in RAM");
   print_dbg("\r\n copied stored network and presets to RAM ");
 
-  /* for(i=0; i<net->numParams; i++) { */
-  /*   print_dbg("\r\n param "); */
-  /*   print_dbg_ulong(i); */
-  /*   print_dbg(" : "); */
-  /*   print_dbg(net->params[i].desc.label); */
-  /*   print_dbg(" ; val "); */
-  /*   print_dbg_hex((u32)net->params[i].data.value); */
-  /* } */
-
   render_boot("waiting for DSP");
   bfin_wait_ready();
-  // update bfin parameters
-  //  if(net->numParams != paramsReported) {
-  //    print_dbg("\r\n !!!!!! WARNING ! param count from scene does not match reported count from DSP");
-  //    render_boot("warning: param count mismatch!");
-  //  } else {
 
 #ifdef BEEKEEP
 #else
@@ -364,12 +343,9 @@ void scene_read_buf(void) {
   net_send_params();
 #endif
 
-  //  }
-
   print_dbg("\r\n sent new parameter values");
 
   delay_ms(5);
-
 
   render_boot("enabling audio");  // enable audio processing
   bfin_enable();

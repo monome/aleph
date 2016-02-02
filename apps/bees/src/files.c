@@ -205,16 +205,8 @@ u8 files_load_dsp_name(const char* name) {
       free_mem(bfinLdrData);
 
       // write module name in global scene data
-
-      /////////////////
-      /// FIXME: filename and reported modulename should be decoupled
-      /// bees should search for aleph-module-x.y.z.ldr
-      /// but try aleph-module*.ldr on failure, etc
-      ////
-      /// query name and version to the scene data
-      //      scene_query_module();
       scene_set_module_name(name);
-      ///////////////////////////
+
       render_boot("loading module descriptor...");
 
       ret = files_load_desc(name);
@@ -556,7 +548,7 @@ extern u8 files_load_desc(const char* name) {
     // module_init() is called. since net_add_param() below ultimately
     // gets the default values from the module via spi we wait for the
     // bfin to be ready thus ensuring that module_init() has actually
-    // had time to sets the parameter defaults.
+    // had time to set the parameter defaults.
     print_dbg("\r\n file_load_desc(): waiting for bfin to be ready before quering parameters");
     bfin_wait_ready();
 

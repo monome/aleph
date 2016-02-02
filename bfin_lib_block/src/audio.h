@@ -44,11 +44,11 @@ __attribute__((l1_data_A))
 __attribute__((aligned(32)))
 extern buffer_t inputChannels0;
 
-__attribute__((l1_data_B))
+__attribute__((l1_data_A))
 __attribute__((aligned(32)))
 extern buffer_t inputChannels1;
 
-__attribute__((l1_data_A))
+__attribute__((l1_data_B))
 __attribute__((aligned(32)))
 extern buffer_t outputChannels0;
 
@@ -67,9 +67,11 @@ __attribute__((aligned(32)))
 extern fract32 audioTxBuf[AUDIO_CHANNELS * AUDIO_FRAMES];
 
 //! separate process buffers
+__attribute__((l1_data_A))
 __attribute__((aligned(32)))
 extern buffer_t audioIn;
 
+__attribute__((l1_data_B))
 __attribute__((aligned(32)))
 extern buffer_t audioOut;
 
