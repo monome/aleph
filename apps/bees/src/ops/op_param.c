@@ -70,7 +70,7 @@ void op_param_init(void* op) {
 
 // input event
 static void op_param_in_event(op_param_t* param, const io_t v) {
-  if (v > 0 && v < net->numParams) {
+  if (v >= 0 && v < net->numParams) {
     param->event = v;
     /* print_dbg("\r\n requesting param "); */
     /* print_dbg_ulong(v); */
