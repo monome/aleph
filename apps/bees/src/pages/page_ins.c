@@ -4,6 +4,7 @@
 
 // asf
 #include "print_funcs.h"
+#include <string.h>
 
 // common
 #include "fix.h"
@@ -17,6 +18,7 @@
 #include "pages.h"
 #include "preset.h"
 #include "render.h"
+#include "net_protected.h"
 
 //-------------------------
 //---- static variables
@@ -74,10 +76,21 @@ static void render_line(s16 idx, u8 fg) {
 
     font_string_region_clip(lineRegion, lineBuf, 4, 0, fg, 0);
     clearln();
- 
-    op_print(lineBuf, net_get_in_value(idx));
 
-    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_SHORT, 0, fg, 0);
+
+    if ( net->ops[opIdx]->type == (u32) eOpParam) {
+      char* paramName = net->params[net_get_in_value(idx)].desc.label;
+      int rjustifypos = 10 - strlen(paramName);
+      if(rjustifypos < 0)
+	rjustifypos = 0;
+      println(paramName,rjustifypos);
+      font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, fg, 0);
+
+    } else {
+      op_print(lineBuf, net_get_in_value(idx));
+      font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_SHORT, 0, fg, 0);
+    }
+
   } else {
     // parameter input    
     clearln();
