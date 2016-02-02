@@ -25,5 +25,5 @@ void module_process_block(buffer_t *inChannels, buffer_t *outChannels,
     }
   }
   
-  osc_process_block(outChannels, numChannels, numFrames);
+  //osc_process_block(outChannels, numChannels, numFrames);
 }
