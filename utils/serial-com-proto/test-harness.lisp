@@ -1,5 +1,5 @@
 (eval-when (:compile-toplevel :load-toplevel)
-  (ql:quickload '(:optima :cl-ppcre :cffi :iterate :external-program))
+  (ql:quickload '(:optima :cffi :iterate :external-program))
   (in-package :cl-user)
   (use-package '(:optima :cffi :iterate)))
 
@@ -211,9 +211,9 @@
 	(unpack-s16-s16-xN (cddddr dump)))))
 
 (defun unpack-string-xN (octets)
-  (ppcre:split "\0"
-	       (octets-to-string (coerce octets
-					 '(vector (unsigned-byte 8))))))
+  (when octets
+    (destructuring-bind (str . rest) (eat-leading-string octets)
+      (cons str (unpack-string-xN rest)))))
 #+nil
 (unpack-s16-s16-xN '(5 6 7 8 5 6 7 8))
 
