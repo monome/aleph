@@ -226,31 +226,19 @@ void serial_paramVal (s16 idx) {
 }
 
 void serial_disconnect (s16 idx) {
-  serial_startTx ();
-  serial_framedPutc(eSerialMsg_disconnect);
   //FIXME actually do something here
-  serial_endTx();
 }
 
 void serial_deleteOp (s16 idx) {
-  serial_startTx ();
-  serial_framedPutc(eSerialMsg_deleteOp);
   //FIXME actually do something here
-  serial_endTx();
 }
 
 void serial_newOp (s16 idx) {
-  serial_startTx ();
-  serial_framedPutc(eSerialMsg_newOp);
   //FIXME actually do something here
-  serial_endTx();
 }
 
 void serial_connect (s16 outIdx, s16 inIdx) {
-  serial_startTx ();
-  serial_framedPutc(eSerialMsg_connect);
   //FIXME actually do something here
-  serial_endTx();
 }
 
 s16 charsToS16 (char hi, char lo) {
