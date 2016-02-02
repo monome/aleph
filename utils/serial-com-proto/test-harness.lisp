@@ -46,7 +46,8 @@
 	    (progn (write-byte *dle* stream)
 		   (write-byte byte stream))
 	    (write-byte byte stream)))
-  (write-byte *end-flag* stream))
+  (write-byte *end-flag* stream)
+  (sleep 0.010))
 
 (defun send-serial-command (stream msg-type params)
   (prog1 (send-framed-message (cons (foreign-enum-value
