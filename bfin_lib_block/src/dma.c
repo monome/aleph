@@ -15,11 +15,11 @@ typedef struct {
 // for deinterleaving, inner loop over number of channels
 #define X_COUNT AUDIO_CHANNELS
 // each inner-loop increment, jump forward to the same frame in the next channel
-#define X_MOD (AUDIO_SAMPLESIZE * AUDIO_FRAMES)
+#define X_MOD (AUDIO_SAMPLESIZE * MODULE_BLOCKSIZE)
 // outer loop over number of frames in a block
-#define Y_COUNT AUDIO_FRAMES
+#define Y_COUNT MODULE_BLOCKSIZE
 // each outer-loop increment, jump back to the next frame in the first channel
-#define Y_MOD (((1 - AUDIO_CHANNELS) * AUDIO_FRAMES + 1) * AUDIO_SAMPLESIZE)
+#define Y_MOD (((1 - AUDIO_CHANNELS) * MODULE_BLOCKSIZE + 1) * AUDIO_SAMPLESIZE)
 
 // large descriptor list, first 4 registers only (NDPL, NDPH, SAL, SAH)
 #define DMA_FLOW_DESC 0x7400

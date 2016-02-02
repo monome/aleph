@@ -47,7 +47,7 @@ void module_process_block(buffer_t *inChannels, buffer_t *outChannels) {
   u16 i, j;
   
   for(i=0; i<AUDIO_CHANNELS; i++) {
-    for(j=0; j<AUDIO_FRAMES; j++) {
+    for(j=0; j<MODULE_BLOCKSIZE; j++) {
       (*outChannels)[i][j] = (*inChannels)[i][j];
     }
   }

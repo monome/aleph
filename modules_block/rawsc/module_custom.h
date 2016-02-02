@@ -15,6 +15,8 @@
 
 #include "params.h"
 
+#define MODULE_BLOCKSIZE 16
+
 #define NUM_PARAMS eParamNumParams
 
 #endif // h guard

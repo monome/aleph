@@ -11,6 +11,9 @@
 #include "serial.h"
 #include "types.h"
 
+#ifndef MODULE_BLOCKSIZE
+#error "MODULE_BLOCKSIZE not defined!"
+#endif
 
 void init_clock(void) { 
   // VCO = MSEL * CLKIN

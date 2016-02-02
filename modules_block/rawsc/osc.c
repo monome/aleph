@@ -45,7 +45,7 @@ void osc_process_block(u16 idx, buffer_t *outChannels) {
   fract32 waveA;
   fract32 waveB;
   
-  for(frame=0; frame<AUDIO_FRAMES; frame++) {
+  for(frame=0; frame<MODULE_BLOCKSIZE; frame++) {
 
     // phase is unsigned 32b
     // allow overflow
