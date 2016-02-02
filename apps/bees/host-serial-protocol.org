@@ -1,3 +1,18 @@
+This is the text specification for a new bees serial protocol allowing
+communication between aleph and a host over usb serial.
+
+WARNING this document is now somewhat out of date.  Since the protocol
+will be in a state of flux while I build serial support into my host
+app, I defer updating this document until there is some stability.
+Until then what is here is probably mostly correct but incomplete. For
+anyone fluent in lisp check the file
+utils/serial-com-proto/test-harness.lisp - that should be considered
+the reference implementation for now...
+
+sorry!
+
+rick
+
 Here's how to access serial terminal from lisp on linux:
 
 http://ryepup.unwashedmeme.com/blog/2009/09/28/talking-usb-serial-to-my-arduino-from-lisp-sbcl-on-linux/
