@@ -123,11 +123,7 @@ int main(void) {
       // int i=0; 
       // asm volatile ("cli %0; csync;" : "+d"(i));
 	
-#if DMA_DEINTERLEAVE_PINGPONG
       module_process_block(audioIn, audioOut);
-#else
-      module_process_block(&audioIn, &audioOut);
-#endif
       audioTxDone = 0;
       audioRxDone = 0;
 

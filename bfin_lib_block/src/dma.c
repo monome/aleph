@@ -5,7 +5,6 @@
 #include "audio.h"
 #include "dma.h"
 
-#if DMA_DEINTERLEAVE_PINGPONG
 // use large descriptor mode to perform pingpong and deinterleave
 
 typedef struct {
@@ -58,32 +57,3 @@ void init_dma(void) {
   *pDMA2_NEXT_DESC_PTR = &descTx0;
   *pDMA2_CONFIG = DMA_CONFIG;
 }
-
-#else // 1d, autobuffer mode (no de-interleave, no pingpong
-
-// DMA flow modes
- #define FLOW_AUTO 0x1000 
-
- void init_dma(void) {  
-  
-   // map DMA1 to Sport0 RX 
-   *pDMA1_PERIPHERAL_MAP = 0x1000;   
-   // map DMA2 to Sport0 TX 
-   *pDMA2_PERIPHERAL_MAP = 0x2000; 
-
-   // NB: need interrupt on both TX and RX to ensure correct process order 
-   // dma1: rx 
-   *pDMA1_CONFIG = WNR | WDSIZE_32 | DI_EN | FLOW_AUTO; 
-   *pDMA1_START_ADDR = (void *)audioRxBuf; 
-   *pDMA1_X_COUNT = AUDIO_CHANNELS * AUDIO_FRAMES; 
-   *pDMA1_X_MODIFY = AUDIO_SAMPLESIZE; 
-  
-   // dma 2: tx 
-   *pDMA2_CONFIG = WDSIZE_32 | DI_EN | FLOW_AUTO; 
-   *pDMA2_START_ADDR = (void *)audioTxBuf; 
-   *pDMA2_X_COUNT = AUDIO_CHANNELS * AUDIO_FRAMES; 
-   *pDMA2_X_MODIFY = AUDIO_SAMPLESIZE; 
-
- } 
-
-#endif

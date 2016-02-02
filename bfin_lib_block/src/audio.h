@@ -14,7 +14,7 @@
  * to switch buffers and perform deinterleaving.
  * otherwise, copy and deinterleave in the ISR
  */
-#define DMA_DEINTERLEAVE_PINGPONG 0
+//#define DMA_DEINTERLEAVE_PINGPONG 1
 
 //! channel count
 #define AUDIO_CHANNELS 4
@@ -32,8 +32,6 @@ extern volatile u8 processAudio;
 
 //! type for de-interleaved audio buffers
 typedef fract32 buffer_t[AUDIO_CHANNELS][AUDIO_FRAMES];
-
-#if DMA_DEINTERLEAVE_PINGPONG
 
 //! current pointers to processing buffers
 buffer_t *audioIn;
@@ -56,25 +54,5 @@ __attribute__((l1_data_B))
 __attribute__((aligned(32)))
 extern buffer_t outputChannels1;
 
-#else
-//! I/O buffers
-__attribute__((l1_data_A))
-__attribute__((aligned(32)))
-extern fract32 audioRxBuf[AUDIO_CHANNELS * AUDIO_FRAMES];
-
-__attribute__((l1_data_B))
-__attribute__((aligned(32)))
-extern fract32 audioTxBuf[AUDIO_CHANNELS * AUDIO_FRAMES];
-
-//! separate process buffers
-__attribute__((l1_data_A))
-__attribute__((aligned(32)))
-extern buffer_t audioIn;
-
-__attribute__((l1_data_B))
-__attribute__((aligned(32)))
-extern buffer_t audioOut;
-
-#endif // DMA_DEINTERLEAVE_PINGPONG
 
 #endif // header guard 
