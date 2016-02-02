@@ -33,6 +33,8 @@
   :eSerialMsg_opDescriptionsDump
   :eSerialMsg_newOp
   :eSerialMsg_deleteOp
+  :eSerialMsg_storePreset
+  :eSerialMsg_recallPreset
   :eSerialMsg_numParams
   )
 
@@ -163,6 +165,14 @@
   (send-serial-command stream
 		       :eSerialMsg_deleteOp
 		       (s16-chars op)))
+(defun serial-storePreset (stream preset)
+  (send-serial-command stream
+		       :eSerialMsg_storePreset
+		       (s16-chars preset)))
+(defun serial-recallPreset (stream preset)
+  (send-serial-command stream
+		       :eSerialMsg_recallPreset
+		       (s16-chars preset)))
 
 (defun eat-leading-string (chars)
   (iterate (for remaining on chars)
@@ -306,6 +316,8 @@
     (serial-disconnect stream 1)
     (serial-newOp stream 1)
     (serial-deleteop stream 1)
+    (serial-recallPreset stream 1)
+    (serial-storePreset stream 1)
     ))
 
 

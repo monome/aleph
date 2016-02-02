@@ -77,6 +77,8 @@ enum serialMsgTypes {
   eSerialMsg_newOp,
   eSerialMsg_deleteOp,
 
+  eSerialMsg_storePreset,
+  eSerialMsg_recallPreset,
   eSerialMsg_numParams
 };
 
@@ -241,6 +243,13 @@ void serial_connect (s16 outIdx, s16 inIdx) {
   //FIXME actually do something here
 }
 
+void serial_storePreset (s16 idx) {
+  //FIXME actually do something here
+}
+void serial_recallPreset (s16 idx) {
+  //FIXME actually do something here
+}
+
 s16 charsToS16 (char hi, char lo) {
   s16 ret = hi;
   ret = ret << 8;
@@ -338,6 +347,22 @@ void processMessage (char* c, int len) {
       serial_debug ("connect requires 2 x 16 bit bees address");
     serial_connect(charsToS16(c[1],c[2]), charsToS16(c[3],c[4]));
     serial_debug("made a connection");
+    break;
+  case eSerialMsg_storePreset :
+    if(len < 3)
+      serial_debug ("storePreset requires 16 bit bees address");
+    else {
+      serial_storePreset(charsToS16(c[1],c[2]));
+      serial_debug("stored a preset");
+    }
+    break;
+  case eSerialMsg_recallPreset :
+    if(len < 3)
+      serial_debug ("recallPreset requires 16 bit bees address");
+    else {
+      serial_recallPreset(charsToS16(c[1],c[2]));
+      serial_debug("recalled a preset");
+    }
     break;
   default :
     serial_debug ("Unknown serial command issued to bees");

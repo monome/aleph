@@ -37,6 +37,8 @@ void serial_triggerParam (s16 idx, s16 data);
 void serial_triggerIn (s16 idx, s16 data);
 void serial_inVal (s16 idx);
 void serial_paramVal (s16 idx);
+void serial_storePreset (s16 idx);
+void serial_recallPreset (s16 idx);
 s16 charsToS16 (char hi, char lo);
 void processMessage (char* c, int len);
 void recv_char (char c);
