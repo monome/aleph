@@ -20,7 +20,6 @@
   :eSerialMsg_queryParam
   :eSerialMsg_paramVal
   :eSerialMsg_outVal
-  :eSerialMsg_numParams
 
   :eSerialMsg_dumpOutputs
   :eSerialMsg_outputsDump
@@ -34,6 +33,7 @@
   :eSerialMsg_opDescriptionsDump
   :eSerialMsg_newOp
   :eSerialMsg_deleteOp
+  :eSerialMsg_numParams
   )
 
 
