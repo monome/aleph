@@ -11,6 +11,7 @@
 // bees
 #include "net_protected.h"
 #include "op_is.h"
+#include "ser.h"
 
 //-------------------------------------------------
 //----- static function declaration
@@ -53,8 +54,7 @@ static op_in_fn op_serial_in_fn[2] = {
   (op_in_fn)&op_serial_in_b,
 };
 
-static const char* op_serial_instring  = "A\0      B\0      ";
-static const char* op_serial_outstring = "A\0      B\0      ";
+static const char* op_serial_instring  = "ADDR\0   DATA\0   ";
 static const char* op_serial_opstring  = "SERIAL";
 
 //-------------------------------------------------
@@ -62,9 +62,7 @@ static const char* op_serial_opstring  = "SERIAL";
 void op_serial_init(void* mem) {
   op_serial_t* op = (op_serial_t*)mem;
   op->super.numInputs = 2;
-  op->super.numOutputs = 2;
-  op->outs[0] = -1;
-  op->outs[1] = -1;
+  op->super.numOutputs = 0;
 
   op->super.in_fn = op_serial_in_fn;
   op->super.pickle = (op_pickle_fn) (&op_serial_pickle);
@@ -74,7 +72,6 @@ void op_serial_init(void* mem) {
   op->super.out = op->outs;
   op->super.opString = op_serial_opstring;
   op->super.inString = op_serial_instring;
-  op->super.outString = op_serial_outstring;
 
   op->super.type = eOpSerial;  
 
@@ -82,7 +79,7 @@ void op_serial_init(void* mem) {
   op->in_val[1] = &(op->b);
 
   op->a = 0;
-  op->b = 1;
+  op->b = 0;
 }
 
 void op_serial_deinit(void* op) {
@@ -94,15 +91,20 @@ void op_serial_deinit(void* op) {
 // set operand A
 static void op_serial_in_a(op_serial_t* op, const io_t v) {
   op->a = v;
-  op_serial_tx(op);
 }
 
 // set operand B
 static void op_serial_in_b(op_serial_t* op, const io_t v) {
   op->b = v;
-  op_serial_tx(op);
+#ifdef BEEKEEP
+#else
+  serial_outVal(op->a, op->b);
+#endif
 }
 
+/* void op_serial_out (op_serial_t* op, const io_t v) { */
+/*   net_activate(op->outs[0], v, op); */
+/* } */
 
 // pickle / unpickle
 u8* op_serial_pickle(op_serial_t* op, u8* dst) {

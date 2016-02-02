@@ -74,9 +74,6 @@ void module_init(void) {
   gModuleData->numParams = eParamNumParams;
 
   filter_1p_lo_init( &(cvSlew[0]), 0 );
-  filter_1p_lo_init( &(cvSlew[1]), 0 );
-  filter_1p_lo_init( &(cvSlew[2]), 0 );
-  filter_1p_lo_init( &(cvSlew[3]), 0 );
 
   param_setup( eParam_cvSlew3, PARAM_CV_SLEW_DEFAULT );
 
@@ -112,8 +109,12 @@ u32 module_get_num_params(void) {
 void module_process_frame(void) {
   fract32 sig_bus = add_fr1x32(in[0], in[1]);
   cvVal[0] = trackingEnvelopeLin_next(&line, sig_bus);
+  param_setup( eParam_linEnv, cvVal[0] );
+
   cvVal[1] = trackingEnvelopeLog_next(&loge, sig_bus);
+  param_setup(eParam_logEnv, cvVal[1]);
   cvVal[2] = shl_fr1x32(pitchTrack(&pd, sig_bus), 14);;
+  param_setup(eParam_pitch, cvVal[2]);
   cvVal[3] = filter_1p_lo_next(&(cvSlew[3]));
 
   // Update one of the CV outputs

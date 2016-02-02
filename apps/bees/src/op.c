@@ -66,7 +66,8 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpThresh,
   eOpTimer,
   eOpTog,
-  eOpWW
+  eOpWW,
+  eOpParam
 };
 
 
@@ -279,7 +280,7 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "WW",
     .size = sizeof(op_ww_t),
     .init = &op_ww_init,
-    .deinit = &op_ww_deinit   
+    .deinit = &op_ww_deinit
   }, {
     .name = "ARC",
     .size = sizeof(op_marc_t),
@@ -324,6 +325,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "MOUT_CC",
     .size = sizeof(op_midi_out_cc_t),
     .init = &op_midi_out_cc_init,
+    .deinit = NULL
+  }, {
+    .name = "PARAM",
+    .size = sizeof(op_param_t),
+    .init = &op_param_init,
     .deinit = NULL
   },
 };
