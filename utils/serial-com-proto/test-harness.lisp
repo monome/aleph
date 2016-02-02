@@ -276,6 +276,40 @@
      (list :outputs-dump (unpack-string-xN outputs-dump)))
     (otherwise (break "unknown message: ~A" bytes))))
 
+
+;;;Some stinky debug stuff follows...
+(defun start-debug-listener ()
+  (list (external-program:run "stty" '("-F" "/dev/ttyACM0" "raw"))
+	(bt:make-thread
+	 (lambda ()
+	   (with-open-file (stream "/dev/ttyACM0"
+				   :direction :io
+				   :if-exists :overwrite
+				   :element-type '(unsigned-byte 8))
+	     (loop (print (serial-unpack-message (serial-recv-msg stream)))))))))
+
+(defun test-all-commands ()
+  (with-open-file (stream "/dev/ttyACM0"
+			  :direction :output
+			  :if-exists :overwrite
+			  :element-type '(unsigned-byte 8))
+    (serial-dumpIns stream)
+    (serial-dumpParams stream)
+    (serial-trigger-param stream 3 3)
+    (serial-trigger-in stream 4 4)
+    (serial-query-in stream 4)
+    (serial-query-param stream 5)(serial-dumpoutputs stream)
+    (serial-dumpconnections stream)
+    (serial-dumpops stream)(sleep 1)
+    (serial-dumpopdescriptions stream)
+    (serial-connect stream 1 1)
+    (serial-disconnect stream 1)
+    (serial-newOp stream 1)
+    (serial-deleteop stream 1)
+    ))
+
+
+;;Some even stinkier debug stuff used to query fifo ~/foo
 #+nil
 (with-open-file (stream "/home/rick/foo"
 			:direction :output;:io
@@ -319,25 +353,3 @@
 			:element-type '(unsigned-byte 8))
   (loop (print (serial-recv-msg stream))))
 
-#+nil
-(external-program:run "stty" '("-F" "/dev/ttyACM0" "raw"))
-
-#+nil
-(bt:make-thread (lambda ()
-		  (with-open-file (stream "/dev/ttyACM0"
-					  :direction :io
-					  :if-exists :overwrite
-					  :element-type '(unsigned-byte 8))
-		    (loop (print (serial-unpack-message (serial-recv-msg stream)))))))
-
-#+nil
-(with-open-file (stream "/dev/ttyACM0"
-			:direction :output
-			:if-exists :overwrite
-			:element-type '(unsigned-byte 8))
-  (serial-dumpIns stream)
-  (serial-dumpParams stream)
-  (serial-trigger-param stream 3 3)
-  (serial-trigger-in stream 4 4)
-  (serial-query-in stream 4)
-  (serial-query-param stream 5))
