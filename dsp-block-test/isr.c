@@ -28,7 +28,6 @@ void sport0_rx_isr(void) {
     audioIn = &inputChannels0;
     inBufFlag = 1;
   }
-  
 #else
   u16 i;
   // copy input for new block
@@ -62,7 +61,7 @@ void sport0_tx_isr(void) {
     outBufFlag = 0;
   } else {
     audioOut = &outputChannels0;
-    outBufFlag = 0;
+    outBufFlag = 1;
   }
 #else
   u16 i;
