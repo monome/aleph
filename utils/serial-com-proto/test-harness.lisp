@@ -224,7 +224,7 @@
     (iterate (until (eq state :done))
 	     (if (> (length bytes)
 		    4096)
-		 (error "why the long message?"))
+		 (break "why the long message?"))
 	     (let ((new-byte (read-byte stream)))
 	       (match state
 		 (:waiting (if (= new-byte *start-flag*)
