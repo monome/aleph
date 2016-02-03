@@ -11,12 +11,6 @@
 #include "module_custom.h"
 #include "types.h"
 
-/** if this flag is set, attempt to use DMA descriptors
- * to switch buffers and perform deinterleaving.
- * otherwise, copy and deinterleave in the ISR
- */
-//#define DMA_DEINTERLEAVE_PINGPONG 1
-
 //! channel count
 #define AUDIO_CHANNELS 4
 //! bytes per sample
