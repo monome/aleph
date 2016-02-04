@@ -312,7 +312,6 @@ void font_string_region_wrap(region* reg, const char* str, u8 xoff, u8 yoff, u8 
     if(xoff > xmax) { 
       xoff = 0; 
       buf += (reg->w - xoff); 
-      print_dbg("\r\n font_string_region: wrapped line");
     }
   } 
 }
@@ -375,11 +374,6 @@ u8* font_string_bigbig(const char* str, u8* buf, u32 size, u8 w, u8 a, u8 b) {
   }
   return buf;
 }
-
-
-
-
-
 
 //-------------
 //----- anti-aliased fonts (bitmaps)

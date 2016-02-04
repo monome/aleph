@@ -35,7 +35,7 @@ void sport0_rx_isr() {
   }
 
   // copy input data from dma input buffer 
-  // shift left fr21om 24-bit
+  // shift left from 24-bit
   in[0] = ( iRxBuf[INTERNAL_ADC_L0] << 8 ) & 0xffffff00;
   in[1] = ( iRxBuf[INTERNAL_ADC_R0] << 8 ) & 0xffffff00;
   in[2] = ( iRxBuf[INTERNAL_ADC_L1] << 8 ) & 0xffffff00;
@@ -72,18 +72,14 @@ void sport0_rx_isr() {
 
 // ISR on sport1 tx completion
 void sport1_tx_isr() {
-  //  u32 stat;
   // clear the interrupt flag, leave enabled
   *pDMA4_IRQ_STATUS = 0x0001;
-  //  stat = *pSPORT1_STAT ;
 }
 
 
 // spi receive interrupt (from avr32)
 void spi_rx_isr() {
-  //  BUSY_HI;
   READY_LO;
   *pSPI_TDBR = spi_process(*pSPI_RDBR);
   READY_HI;
-  //  BUSY_LO;
 }

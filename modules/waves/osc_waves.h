@@ -55,11 +55,6 @@ typedef struct _osc {
   // tuning ratio
   fix16 ratio;
 
-  // base phase as fractional index
-  //  fix16 idx;
-  // modulated phase
-  //  fix16 idxMod;
-
   // base phase, normalized fract32 in [0, 1)
   fract32 phase;
   // modulated phase

@@ -28,6 +28,7 @@
 #include "net_protected.h"
 #include "pages.h"
 #include "param.h"
+#include "render.h"
 #include "scene.h"
 
 // ---- directory list class
@@ -176,6 +177,7 @@ u8 files_load_dsp(u8 idx) {
 }
 
 // search for specified dsp file and load it
+// return 1 on success, 0 on failure
 u8 files_load_dsp_name(const char* name) {
   void* fp;
   u32 size = 0;
@@ -203,20 +205,12 @@ u8 files_load_dsp_name(const char* name) {
       free_mem(bfinLdrData);
 
       // write module name in global scene data
-
-      /////////////////
-      /// FIXME: filename and reported modulename should be decoupled
-      /// bees should search for aleph-module-x.y.z.ldr
-      /// but try aleph-module*.ldr on failure, etc
-      ////
-      /// query name and version to the scene data
-      //      scene_query_module();
       scene_set_module_name(name);
-      ///////////////////////////
+
+      render_boot("loading module descriptor...");
 
       ret = files_load_desc(name);
-      //???
-      ret = 1;
+
     } else {
       ret = 0;
     }
@@ -510,6 +504,7 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
 }
 
 // search for named .dsc file and load into network param desc memory
+// return 1 on success, 0 on failure
 extern u8 files_load_desc(const char* name) {
   char path[64] = DSP_PATH;
   void * fp;
@@ -521,7 +516,7 @@ extern u8 files_load_desc(const char* name) {
   // unpacked descriptor
   ParamDesc desc;
   int i;
-  u8 ret = 0;
+  u8 ret = 1;
 
   app_pause();
 
@@ -539,7 +534,7 @@ extern u8 files_load_desc(const char* name) {
   fp = fl_fopen(path, "r");
   if(fp == NULL) {
     print_dbg("\r\n file_load_desc(): fl_fopen(...) => NULL");
-    ret = 1;
+    ret = 0;
   } else {
 
     // get number of parameters
@@ -553,7 +548,7 @@ extern u8 files_load_desc(const char* name) {
     // module_init() is called. since net_add_param() below ultimately
     // gets the default values from the module via spi we wait for the
     // bfin to be ready thus ensuring that module_init() has actually
-    // had time to sets the parameter defaults.
+    // had time to set the parameter defaults.
     print_dbg("\r\n file_load_desc(): waiting for bfin to be ready before quering parameters");
     bfin_wait_ready();
 
@@ -572,10 +567,10 @@ extern u8 files_load_desc(const char* name) {
 	pdesc_unpickle( &desc, dbuf );
 	// copy descriptor to network and increment count
 	net_add_param(i, (const ParamDesc*)(&desc));     
- 
+	ret = 1;
       }
     } else {
-      ret = 1;
+      ret = 0;
     }
   }
   fl_fclose(fp);

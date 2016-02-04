@@ -1,0 +1,22 @@
+varying running last param to simple slew.  Input waveform is a 1Hz sawtooth.
+
+Visually inspecting the results...
+
+
+Param
+1 << 11 goes negative - total craziness I guess...
+1 << 12 starts negative - gradually settles towards the origin (looking somewhat triangular)
+1 << 13 starts negative - gradually settles toward a +ve value but still with spiky triangular thingy on top
+1 << 14 starts to have somewhat more of a smooth character - settles on roughly double the +ve value of 13
+1 << 15 the curve starts to come out properly and only a little higher than 14
+1 << 16 looks properly curvy now - a little higher again...
+1 << 17 roughly the same DC value as 16 but peaks are more pronounced
+1 << 18 very curvy, roughly twice as much AC
+1 << 19 again more AC, more spiky wave bottom
+1 << 20 at this stage it's more or less a sawtooth with a bit of smoothing
+1 << 21 spikier still...
+...
+1 << 29 can see a tiny bit of rounding of edges - otherwise signal looks good
+1 << 30 the tiniest bit of edge rounding still remaining - signal integrity good.
+FR32_MAX seems to give back more or less what you put in...
+1 << 31 once again it goes crazy - obviously not allowed to go -ve

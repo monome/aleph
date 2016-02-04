@@ -21,6 +21,7 @@
 #include "play.h"
 #include "preset.h"
 #include "render.h"
+#include "net_protected.h"
 
 // scroll regionsrc/
 static region scrollRegion = { .w = 128, .h = 64, .x = 0, .y = 0 };
@@ -62,9 +63,18 @@ extern void play_input(u16 idx) {
     font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
     clearln();
 
-    op_print(lineBuf, net_get_in_value(idx));
+    if ( net->ops[opIdx]->type == (u32) eOpParam) {
+      char* paramName = net->params[net_get_in_value(idx)].desc.label;
+      int rjustifypos = 10 - strlen(paramName);
+      if(rjustifypos < 0)
+	rjustifypos = 0;
+      println(paramName,rjustifypos);
+      font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, 0xa, 0);
+    } else {
+      op_print(lineBuf, net_get_in_value(idx));
+      font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_SHORT, 0, 0xa, 0);
 
-    font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_SHORT, 0, 0xa, 0);
+    }
   } else {
     // parameter input    
     clearln();

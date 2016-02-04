@@ -17,6 +17,7 @@
 // bfin
 #include "bfin_core.h"
 #include "cv.h"
+#include "gpio.h"
 #include "fract_math.h"
 #include <fract2float_conv.h>
 
@@ -100,9 +101,9 @@ wavesVoice voice[WAVES_NVOICES];
 //-------------------------
 //----- extern vars (initialized here)
 ModuleData * gModuleData; // module data
+
 //-----------------------
 //------ static variables
-
 // pointer to local module data, initialize at top of SDRAM
 static wavesData * data;
 
@@ -116,7 +117,7 @@ static const fract32 wavtab[WAVE_SHAPE_NUM][WAVE_TAB_SIZE] = {
 
 // additional busses
 static fract32 voiceOut[WAVES_NVOICES] = { 0, 0, };
-
+par
 
 // FIXME: (?)
 // using patch points instead of mix points 
@@ -339,6 +340,7 @@ void module_init(void) {
   param_setup(  eParamWave0, 	0 );
   param_setup(  eParamAmp1, 	PARAM_AMP_6 );
   param_setup(  eParamAmp0, 	PARAM_AMP_6 );
+
   param_setup(  eParamPm10, 	0 );
   param_setup(  eParamPm01, 	0 );
   param_setup(  eParamWm10, 	0 );
@@ -400,6 +402,19 @@ extern u32 module_get_num_params(void) {
 
 // frame callback
 void module_process_frame(void) {
+
+//--------
+// -- testing leds...
+static long int ledCount = 0;
+
+  if(ledCount > 6000) {
+    LED3_TOGGLE;
+    LED4_TOGGLE;
+    ledCount = 0;
+  }
+  ledCount++;
+ 
+//-------
 
   calc_frame();
 

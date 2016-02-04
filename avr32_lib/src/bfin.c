@@ -352,6 +352,7 @@ s32 bfin_get_param(u8 idx) {
   u16 x;
   
   app_pause();
+  bfin_wait();
 
   // command
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);

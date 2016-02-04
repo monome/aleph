@@ -61,6 +61,13 @@ fract32 fade_ep_pos(fadeEP* fade, fract32 v) {
   return fade_ep_calc(fade);
 }
 
+fract32 fade_ep_x_y_pos(fadeEP* fade, fract32 x, fract32 y, fract32 pos) {
+  fade->x = x;
+  fade->y = y;
+  fade->pos = pos;
+  return fade_ep_calc(fade);
+}
+
 // recalculate without input
 fract32 fade_ep_calc(fadeEP* fade) {
   // FIXME: far from optimal.

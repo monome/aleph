@@ -41,7 +41,7 @@ void app_init(void) {
 
 // this is called from the event queue to start the app 
 // return >0 if there is an error doing firstrun init
-u8 app_launch(u8 firstrun) {
+u8 app_launch(eLaunchState firstrun) {
   print_dbg("\r\n mix; app_launch, firstrun: ");
   print_dbg_ulong(firstrun);
 
