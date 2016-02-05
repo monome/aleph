@@ -83,6 +83,7 @@ enum serialMsgTypes {
 };
 
 void serial_debug(const char *str) {
+  return;
   serial_startTx ();
   serial_framedPutc(eSerialMsg_debug);
   serial_puts(str);
@@ -194,7 +195,7 @@ void serial_triggerIn (s16 idx, io_t data) {
 
 void serial_inVal (s16 idx) {
   if (idx >= net->numIns || idx < 0) {
-    serial_debug("Index out of range");
+    /* serial_debug("Index out of range"); */
     return;
   }
   serial_startTx ();
@@ -212,7 +213,7 @@ void serial_inVal (s16 idx) {
 
 void serial_paramVal (s16 idx) {
   if (idx >= net->numParams || idx < 0) {
-    serial_debug("Index out of range");
+    /* serial_debug("Index out of range"); */
     return;
   }
   serial_startTx ();
@@ -258,30 +259,30 @@ s16 charsToS16 (char hi, char lo) {
 }
 
 void processMessage (char* c, int len) {
-  proto_debug("actually got some message");
+  /* proto_debug("actually got some message"); */
   switch (c[0]) {
   case eSerialMsg_dumpIns :
-    serial_debug("dumping inputs...");
+    /* serial_debug("dumping inputs..."); */
     serial_insDump ();
     break;
   case eSerialMsg_dumpParams :
-    serial_debug("dumping params...");
+    /* serial_debug("dumping params..."); */
     serial_paramsDump ();
     break;
   case eSerialMsg_dumpOps :
-    serial_debug("dumping ops...");
+    /* serial_debug("dumping ops..."); */
     serial_opsDump ();
     break;
   case eSerialMsg_dumpOutputs :
-    serial_debug("dumping outputs...");
+    /* serial_debug("dumping outputs..."); */
     serial_outputsDump ();
     break;
   case eSerialMsg_dumpConnections :
-    serial_debug("dumping connections...");
+    /* serial_debug("dumping connections..."); */
     serial_connectionsDump ();
     break;
   case eSerialMsg_dumpOpDescriptions :
-    serial_debug("dumping opDescriptions...");
+    /* serial_debug("dumping opDescriptions..."); */
     serial_opDescriptionsDump ();
     break;
   case eSerialMsg_triggerParam :
@@ -290,7 +291,7 @@ void processMessage (char* c, int len) {
     else  {
       serial_triggerParam(charsToS16(c[1],c[2]),
 			  charsToS16(c[3],c[4]));
-      serial_debug("triggered param");
+      /* serial_debug("triggered param"); */
     }
     break;
   case eSerialMsg_triggerIn :
@@ -299,7 +300,7 @@ void processMessage (char* c, int len) {
     else {
       serial_triggerIn(charsToS16(c[1],c[2]),
 		       charsToS16(c[3],c[4]));
-      serial_debug("triggered in");
+      /* serial_debug("triggered in"); */
     }
     break;
   case eSerialMsg_queryIn :
@@ -307,7 +308,7 @@ void processMessage (char* c, int len) {
       serial_debug ("queryIn requires 16 bit bees address");
     else {
       serial_inVal(charsToS16(c[1],c[2]));
-      serial_debug("queried ins");
+      /* serial_debug("queried ins"); */
     }
     break;
   case eSerialMsg_queryParam :
@@ -315,7 +316,7 @@ void processMessage (char* c, int len) {
       serial_debug ("queryParam requires 16 bit bees address");
     else {
       serial_paramVal(charsToS16(c[1],c[2]));
-      serial_debug("queried params");
+      /* serial_debug("queried params"); */
     }
     break;
   case eSerialMsg_disconnect :
@@ -323,7 +324,7 @@ void processMessage (char* c, int len) {
       serial_debug ("disconnect requires 16 bit bees address");
     else {
       serial_disconnect(charsToS16(c[1],c[2]));
-      serial_debug("broke a connection");
+      /* serial_debug("broke a connection"); */
     }
     break;
   case eSerialMsg_newOp :
@@ -331,7 +332,7 @@ void processMessage (char* c, int len) {
       serial_debug ("newOp requires 16 bit bees address");
     else {
       serial_newOp(charsToS16(c[1],c[2]));
-      serial_debug("added an op");
+      /* serial_debug("added an op"); */
     }
     break;
   case eSerialMsg_deleteOp :
@@ -339,21 +340,21 @@ void processMessage (char* c, int len) {
       serial_debug ("deleteOp requires 16 bit bees address");
     else {
       serial_deleteOp(charsToS16(c[1],c[2]));
-      serial_debug("deleted an op");
+      /* serial_debug("deleted an op"); */
     }
     break;
   case eSerialMsg_connect :
     if(len < 5)
       serial_debug ("connect requires 2 x 16 bit bees address");
     serial_connect(charsToS16(c[1],c[2]), charsToS16(c[3],c[4]));
-    serial_debug("made a connection");
+    /* serial_debug("made a connection"); */
     break;
   case eSerialMsg_storePreset :
     if(len < 3)
       serial_debug ("storePreset requires 16 bit bees address");
     else {
       serial_storePreset(charsToS16(c[1],c[2]));
-      serial_debug("stored a preset");
+      /* serial_debug("stored a preset"); */
     }
     break;
   case eSerialMsg_recallPreset :
@@ -361,7 +362,7 @@ void processMessage (char* c, int len) {
       serial_debug ("recallPreset requires 16 bit bees address");
     else {
       serial_recallPreset(charsToS16(c[1],c[2]));
-      serial_debug("recalled a preset");
+      /* serial_debug("recalled a preset"); */
     }
     break;
   default :
@@ -381,54 +382,59 @@ int msgPointer = 0;
 char inBuf[MSG_MAX];
 
 
+char chunks_per_message = 0;
+
 void recv_char (char c) {
   if (msgPointer > MSG_MAX) {
     serialState = eSerialState_waiting;
     msgPointer = 0;
-    proto_debug("resetting overflowing msgPointer");
+    /* proto_debug("resetting overflowing msgPointer"); */
 
   }
   switch (serialState) {
   case eSerialState_waiting :
     if (c == START_FLAG) {
       serialState = eSerialState_started;
-      proto_debug("resetting serialState");
+      /* proto_debug("resetting serialState"); */
     }
     break;
   case eSerialState_started :
     if (c == END_FLAG) {
+      print_dbg("\r\n chunks per message: ");
+      print_dbg_ulong(chunks_per_message);
+      
+      chunks_per_message = 0;
       processMessage(inBuf, msgPointer);
       serialState = eSerialState_waiting;
       msgPointer = 0;
-      proto_debug("actually received a message");
+      /* proto_debug("actually received a message"); */
     }
     else if (c == DLE) {
-      proto_debug("received an escape char");
+      /* proto_debug("received an escape char"); */
       serialState = eSerialState_escaping;
     }
     else {
-      proto_debug("writing to inBuf");
+      /* proto_debug("writing to inBuf"); */
       inBuf[msgPointer] = c;
       msgPointer++;
     }
     break;
   case eSerialState_escaping :
-    proto_debug("writing escaped char to inBuf");
+    /* proto_debug("writing escaped char to inBuf"); */
     inBuf[msgPointer] = c;
     msgPointer++;
     serialState = eSerialState_started;
     break;
   default :
-    proto_debug("undefined serial state -whaaaaat!?");
+    /* proto_debug("undefined serial state -whaaaaat!?"); */
     serialState = eSerialState_waiting;
     break;
   }
 }
-
-
 void serial_process(s32 data) {
   // process_serial_t serial_decode = &serial_decode_dummy;
   u16 c = (u16)data;
+  chunks_per_message++;
 
   while(serial_read_pos != c) {
     //////////////////
