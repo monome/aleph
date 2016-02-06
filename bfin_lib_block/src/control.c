@@ -1,9 +1,18 @@
+#include "cycle_count_aleph.h"
+
 #include "control.h"
 #include "gpio.h"
 #include "module.h"
 
-// ... hm...
+// size of control change FIFO...
+// FIXME: should this be module-defined?
+// how to choose a good value?
 #define CONTROL_Q_SIZE 64
+
+// globally visible cycle count result
+volatile u32 controlCycleCount;
+// temp
+static volatile u32 startCycleCount;
 
 typedef struct {
   u32 idx;
@@ -32,6 +41,9 @@ void control_process(void) {
   u16 i;
   ParamValue val;
   u32 idx;
+
+  START_CYCLE_COUNT(startCycleCount);
+ 
   //  LED4_LO; 
   for(i=0; i<qCount; i++) {
     idx = q[qIdxRd].idx;
@@ -40,5 +52,7 @@ void control_process(void) {
     qIdxRd = (qIdxRd + 1) & (CONTROL_Q_SIZE - 1);
   }
   qCount = 0;
-  //  LED4_HI; 
+  //  LED4_HI;
+
+  STOP_CYCLE_COUNT(controlCycleCount, startCycleCount);
 }

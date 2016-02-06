@@ -35,10 +35,6 @@
 #define READY_LO 	*pFIO_FLAG_D &= READY_MASK
 #define READY_HI 	*pFIO_FLAG_D |= READY_UNMASK
 
-//// TEST! never be ready
-//#define READY_HI ;
-
-
 // "request" pin - pf13
 // should it prove necessary, bfin will use this pin
 // to trigger interrupts on avr32.
@@ -63,5 +59,10 @@
 #define LED4_HI 	*pFIO_FLAG_D |= LED4_UNMASK
 #define LED4_TOGGLE	*pFIO_FLAG_D ^= LED4_UNMASK
 
+//! initialize programmable flags
+extern void init_flags(void);
+
+//! initialize (reset) the audio codec
+extern void init_codec(void);
 
 #endif // h guard
