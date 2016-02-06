@@ -295,26 +295,15 @@ s32 bfin_get_param(u8 idx) {
 
 
 // get audio cpu usage
-s32 bfin_get_audio_cpu(u8 idx) {
+s32 bfin_get_audio_cpu(void) {
   ParamValueSwap pval;
   u16 x;
   
   app_pause();
   bfin_wait();
 
-  // command
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, MSG_GET_AUDIO_CPU_COM);
-  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-
-  // idx
-  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  spi_write(BFIN_SPI, idx);
-  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-
-  /// read value
-  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  spi_write(BFIN_SPI, 0); // don't care
   spi_read(BFIN_SPI, &x);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   pval.asByte[0] = (u8)x;
@@ -343,27 +332,16 @@ s32 bfin_get_audio_cpu(u8 idx) {
   
 }
 
-// get param change cpu usage
-s32 bfin_get_control_cpu(u8 idx) {
+//! get param change cpu usage
+s32 bfin_get_control_cpu(void) {
   ParamValueSwap pval;
   u16 x;
   
   app_pause();
   bfin_wait();
 
-  // command
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, MSG_GET_CONTROL_CPU_COM);
-  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-
-  // idx
-  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  spi_write(BFIN_SPI, idx);
-  spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
-
-  /// read value
-  spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
-  spi_write(BFIN_SPI, 0); // don't care
   spi_read(BFIN_SPI, &x);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   pval.asByte[0] = (u8)x;

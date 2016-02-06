@@ -28,9 +28,9 @@
 // fill buffer
 #define MSG_FILL_BUFFER_COM	    8
 // get audio CPU use (0-0x7fffffff)
-#define MSG_AUDIO_CPU_COM           9
+#define MSG_GET_AUDIO_CPU_COM           9
 // get param change CPU use (0 - 0x7fffffff)
-#define MSG_CONTROL_CPU_COM         10
+#define MSG_GET_CONTROL_CPU_COM         10
 
 // enumerate state-machine nodes for sending and receiving SPI.
 

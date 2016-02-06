@@ -10,19 +10,19 @@
 #include "types.h"
 #include "spi.h"
 
-//! -- static variables:
+// -- static variables:
 
-//! byte to process
+// byte to process
 static eSpiByte byte = eCom;
-//! current command
+// current command
 static u8 com;
-//! current param index
+// current param index
 static u8 idx;
 
-//! temp value
+// temp value
 static ParamValueSwap pval;
 
-//! -- static functions:
+// -- static functions:
 static void spi_set_param(u32 idx, ParamValue pv) {
   // set the raw value here,
   // in case avr32 reads it back immediately...
@@ -68,13 +68,13 @@ u8 spi_handle_byte(u8 rx) {
       return processAudio;
       break;
 
-    case MSG_AUDIO_CPU_COM:
+    case MSG_GET_AUDIO_CPU_COM:
       byte = eGetAudioCpuData0;
       pval.asInt = COMPUTE_CPU_USE(audioCycleCount);
       return pval.asByte[3]; // byte-swap from BE on avr32
       break;
 
-    case MSG_CONTROL_CPU_COM:
+    case MSG_GET_CONTROL_CPU_COM:
       byte = eGetControlCpuData0;
       pval.asInt = COMPUTE_CPU_USE(controlCycleCount);
       return pval.asByte[3]; // byte-swap from BE on avr32
