@@ -6,6 +6,7 @@
 
 #include "audio.h"
 #include "clock_ebiu.h"
+#include "cycle_count_aleph.h"
 #include "dma.h"
 #include "gpio.h"
 #include "isr.h"
@@ -62,13 +63,13 @@ int main(void) {
       // int i=0; 
       // asm volatile ("cli %0; csync;" : "+d"(i));
 
-      _START_CYCLE_COUNT(startCycleCount);
+      START_CYCLE_COUNT(startCycleCount);
       
       module_process_block(audioIn, audioOut);
       audioTxDone = 0;
       audioRxDone = 0;
 
-      _STOP_CYCLE_COUNT(audioCycleCount, startCycleCount);
+      STOP_CYCLE_COUNT(audioCycleCount, startCycleCount);
 
       // reenable interrupts
       //      asm volatile ("sti %0; csync;" : "+d"(i));

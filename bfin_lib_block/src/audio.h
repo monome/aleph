@@ -15,6 +15,8 @@
 #define AUDIO_CHANNELS 4
 //! bytes per sample
 #define AUDIO_SAMPLESIZE 4 // sizeof(fract32)
+//! samples per second
+#define AUDIO_SAMPLERATE 48000
 
 //! I/O flags
 extern volatile u8 audioRxDone;

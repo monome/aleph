@@ -3,6 +3,7 @@
 #include "protocol.h"
 
 // bfin_lib
+#include "cycle_count_aleph.h"
 #include "audio.h"
 #include "control.h"
 #include "module.h"
@@ -18,13 +19,14 @@ static u8 com;
 //! current param index
 static u8 idx;
 
+//! temp value
+static ParamValueSwap pval;
 
 //! -- static functions:
 static void spi_set_param(u32 idx, ParamValue pv) {
   // set the raw value here,
   // in case avr32 reads it back immediately...
   gModuleData->paramData[idx].value = pv;
-  /* module_set_param(idx, pv); */
   control_add(idx, pv);
 }
 
@@ -32,9 +34,7 @@ static void spi_set_param(u32 idx, ParamValue pv) {
 // deal with new data in the spi rx ringbuffer
 // return byte to load for next MISO
 u8 spi_handle_byte(u8 rx) {
-  static ParamValueSwap pval;
   switch(byte) {
-    /// caveman style case statement
   case eCom :
     com = rx;
     switch(com) {
@@ -48,11 +48,7 @@ u8 spi_handle_byte(u8 rx) {
       byte = eNumParamsVal;
       return gModuleData->numParams; // load num params
       break;
-      /*
-    case MSG_GET_PARAM_DESC_COM:
-      byte = eParamDescIdx;
-      break;
-      */
+      
     case MSG_GET_MODULE_NAME_COM:
       byte = eModuleName0;
       return gModuleData->name[0];
@@ -71,6 +67,20 @@ u8 spi_handle_byte(u8 rx) {
       processAudio = 0;
       return processAudio;
       break;
+
+    case MSG_AUDIO_CPU_COM:
+      byte = eGetAudioCpuData0;
+      pval.asInt = COMPUTE_CPU_USE(audioCycleCount);
+      return pval.asByte[3]; // byte-swap from BE on avr32
+      break;
+
+    case MSG_CONTROL_CPU_COM:
+      byte = eGetControlCpuData0;
+      pval.asInt = COMPUTE_CPU_USE(controlCycleCount);
+      return pval.asByte[3]; // byte-swap from BE on avr32
+
+      break;
+
     default:
       break;
     }
@@ -85,24 +95,20 @@ u8 spi_handle_byte(u8 rx) {
     break;
   case eSetParamData0 :
     byte = eSetParamData1;
-    // byte-swap from BE on avr32
-    pval.asByte[3] = rx; // set paramval
+    pval.asByte[3] = rx; // set paramval, byte-swap from BE on avr32
     return 0; // don't care
     break;
   case eSetParamData1 :
     byte = eSetParamData2;
-    // byte-swap from BE on avr32
     pval.asByte[2] = rx; // set paramval
     return 0; // don't care
     break;
   case eSetParamData2 :
     byte = eSetParamData3;
-    // byte-swap from BE on avr32
     pval.asByte[1] = rx; // set paramval
     return 0; // don't care
     break;
   case eSetParamData3 :
-    // byte-swap from BE on avr32
     pval.asByte[0] = rx; // set paramval
     spi_set_param(idx, pval.asInt);
     byte = eCom; //reset
@@ -115,23 +121,18 @@ u8 spi_handle_byte(u8 rx) {
     idx = rx; // set index
     byte = eGetParamData0;
     pval.asInt = gModuleData->paramData[idx].value;
-    // byte-swap from BE on avr32
-    return pval.asByte[3];
+    return pval.asByte[3]; // byte-swap from BE on avr32
     break;
-
   case eGetParamData0 :
     byte = eGetParamData1;
-    // byte-swap from BE on avr32
     return pval.asByte[2];
     break;
   case eGetParamData1 :
     byte = eGetParamData2;
-    // byte-swap from BE on avr32
     return pval.asByte[1];
     break;
   case eGetParamData2 :
     byte = eGetParamData3;
-    // byte-swap from BE on avr32
     return pval.asByte[0];
     break;
   case eGetParamData3 :
@@ -244,7 +245,7 @@ u8 spi_handle_byte(u8 rx) {
     return 0;    // don't care
     break;
 
-    /// version
+    //--- version
   case eModuleVersionMaj :
     byte = eModuleVersionMin;
     return MIN; 
@@ -267,6 +268,34 @@ u8 spi_handle_byte(u8 rx) {
     return 0;    // don't care
     break;
 
+
+    //----- audio cpu use
+  case eGetAudioCpuData0:
+    byte = eGetAudioCpuData1;
+    return pval.asByte[2];
+    break;
+  case eGetAudioCpuData1:
+    byte = eGetAudioCpuData2;
+    return pval.asByte[1];
+    break;
+  case eGetAudioCpuData2:
+    byte = eCom; // reset
+    return pval.asByte[0];
+    break;
+    //---- param change cpu use
+  case eGetControlCpuData0:
+    byte = eGetControlCpuData0;
+    return pval.asByte[2];
+    break;
+  case eGetControlCpuData1:
+    byte = eGetControlCpuData0;
+    return pval.asByte[1];
+    break;
+  case eGetControlCpuData2:
+    byte = eCom; // reset
+    return pval.asByte[0];
+    break;
+    
   default:
     byte = eCom; // reset
     return 0;

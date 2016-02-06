@@ -7,12 +7,20 @@ in any case, there are some strange keywords in there. so putting the relevant m
 #ifndef _ALEPH_BFIN_CYCLE_COUNT_H_
 #define _ALEPH_BFIN_CYCLE_COUNT_H_
 
+#include "audio.h"
+#include "module_custom.h"
+#include "types.h"
+
 // theoretically we should be able to get this?
 // #define __PROCESSOR_SPEED__ 594000000
 // but at the moment we have this:
-#define __PROCESSOR_SPEED__ 512000000
+#define PROCESSOR_CLOCK_HZ 512000000
 
-typedef  volatile unsigned long _cycle_t;
+
+typedef volatile unsigned long cycle_t;
+
+#define COMPUTE_CPU_USE( CYCLES ) ( (u32)((u64)0x7fffffff * (u64)(CYCLES * AUDIO_SAMPLERATE) / (u64)(MODULE_BLOCKSIZE * PROCESSOR_CLOCK_HZ)) )
+
 
 //! start a cycle counter by storing current cycles in supplied integer
 #define START_CYCLE_COUNT( _CURR_COUNT )          \

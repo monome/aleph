@@ -19,20 +19,24 @@
 #define MSG_SET_PARAM_COM           0 
 #define MSG_GET_PARAM_COM           1
 #define MSG_GET_NUM_PARAMS_COM      2
-#define MSG_GET_PARAM_DESC_COM      3 // not using, but leave reserved
+#define MSG_GET_PARAM_DESC_COM      3 // not using, but leave reserved?
 #define MSG_GET_MODULE_NAME_COM     4
 // get 4-byte version packet
 #define MSG_GET_MODULE_VERSION_COM  5
-#define MSG_ENABLE_AUDIO           6
+#define MSG_ENABLE_AUDIO            6
 #define MSG_DISABLE_AUDIO           7
 // fill buffer
 #define MSG_FILL_BUFFER_COM	    8
+// get audio CPU use (0-0x7fffffff)
+#define MSG_AUDIO_CPU_COM           9
+// get param change CPU use (0 - 0x7fffffff)
+#define MSG_CONTROL_CPU_COM         10
 
 // enumerate state-machine nodes for sending and receiving SPI.
 
 /// WARNING!
 /// the order of this enum is assumed by state machines
-// in avr32 and aleph.
+/// in avr32 and aleph.
 /// do not change order without updating the logic as well!
 typedef enum {
   //---- command
@@ -93,6 +97,16 @@ typedef enum {
   eBufferNumBytes2,
   eBufferNumBytes3,
   eBufferNumData,
+
+  // get audio cpu usage
+  eGetAudioCpuData0,
+  eGetAudioCpuData1,
+  eGetAudioCpuData2,
+
+  // get control change cpu usage
+  eGetControlCpuData0,
+  eGetControlCpuData1,
+  eGetControlCpuData2,
   
   eNumSpiBytes
 } eSpiByte;
