@@ -142,7 +142,10 @@ extern void render_boot(const char* str) {
 
 // update
 void render_update(void) {
-  app_pause();
+  // XXX don't know why this function needs
+  // to be interrupt-protected but it does
+  // seem to conflict with serial comms.
+  /* app_pause(); */
 
   // scrolling region
   if((pageCenterScroll->reg)->dirty) {
@@ -155,7 +158,7 @@ void render_update(void) {
   region_update(footRegion[2]);
   region_update(footRegion[3]);
 
-  app_resume();
+  /* app_resume(); */
 }
 
 // set current header region
