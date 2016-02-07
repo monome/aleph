@@ -61,7 +61,7 @@ int main(void) {
       // LO/HI block probably has the result of stalling param changes anyway..
       // we're getting worse occurences of avr32 event queue stalls,
       // so try not stalling it at all...
-      READY_LO;
+      //READY_LO;
       
       /**
 	 actually, we can't manipulate CLI/STI in User mode.
@@ -94,7 +94,7 @@ int main(void) {
       //      asm volatile ("sti %0; csync;" : "+d"(i));
 
       // hm...
-      READY_HI;
+      //READY_HI;
     }
   }
   
