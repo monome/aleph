@@ -93,16 +93,16 @@ const u8* param_unpickle(pnode_t* pnode, const u8* src) {
   src = unpickle_32(src, &val);
   pnode->data.value = (ParamValue)val;
 
-  print_dbg("\r\n unpickling param, val: 0x"); 
-  print_dbg_hex(val);
+  // print_dbg("\r\n unpickling param, val: 0x"); 
+  // print_dbg_hex(val);
 
   // load play-inclusion 
   src = unpickle_32(src, &val);
   pnode->play = (u8)val;
 
 
-  print_dbg(" , play: 0x"); 
-  print_dbg_hex(val);
+  // print_dbg(" , play: 0x"); 
+  // print_dbg_hex(val);
 
   // load descriptor
   src = pdesc_unpickle(&(pnode->desc), src);
@@ -136,7 +136,7 @@ const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
   u32 val;
   u32 i;
 
-  print_dbg(", descriptor: ");
+  // print_dbg(", descriptor: ");
 
   // store label string
   for(i=0; i<PARAM_LABEL_LEN; ++i) {
@@ -144,35 +144,35 @@ const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
     ++src;
   }
 
-  print_dbg(" , label: ");
-  print_dbg(pdesc->label);
+  // print_dbg(" , label: ");
+  // print_dbg(pdesc->label);
 
   // store type
   // pad for alignment
   src = unpickle_32(src, &val);
   pdesc->type = (u8)val;
-  print_dbg(" \t, type: ");
-  print_dbg_ulong(pdesc->type);
+  // print_dbg(" \t, type: ");
+  // print_dbg_ulong(pdesc->type);
   
   // min
   src = unpickle_32(src, &val);
   pdesc->min = val;
-  print_dbg(" \t, min: ");
-  print_dbg_hex(pdesc->min);
+  // print_dbg(" \t, min: ");
+  // print_dbg_hex(pdesc->min);
 
   // max
   src = unpickle_32(src, &val);
   pdesc->max = val;
-  print_dbg(" , max: ");
-  print_dbg_ulong(pdesc->max);
+  // print_dbg(" , max: ");
+  // print_dbg_ulong(pdesc->max);
 
   // store radix
   // pad for alignment
   src = unpickle_32(src, &val);
   pdesc->radix = (u8)val;
 
-  print_dbg(" , radix: ");
-  print_dbg_ulong(pdesc->radix);
+  // print_dbg(" , radix: ");
+  // print_dbg_ulong(pdesc->radix);
 
   return src;
 }
@@ -183,27 +183,27 @@ io_t inc_param_value(u32 idx,  io_t inc) {
   io_t in;
   s32 scaled;
 
-  print_dbg("\r\n inc_param_value, index: ");
-  print_dbg_ulong(idx);
+  // print_dbg("\r\n inc_param_value, index: ");
+  // print_dbg_ulong(idx);
 
-  print_dbg(" , input: 0x");
-  print_dbg_hex(get_param_value(idx));
+  // print_dbg(" , input: 0x");
+  // print_dbg_hex(get_param_value(idx));
 
-  print_dbg(" , increment: 0x");
-  print_dbg_hex(inc);
+  // print_dbg(" , increment: 0x");
+  // print_dbg_hex(inc);
 
 
   in = get_param_value(idx);
   // use scaler to increment and lookup
   scaled = scaler_inc( &(net->params[idx].scaler), &in, inc);
 
-  print_dbg(" , new input: 0x");
-  print_dbg_hex(in);
+  // print_dbg(" , new input: 0x");
+  // print_dbg_hex(in);
 
-  print_dbg(" , scaled: 0x");
-  print_dbg_hex(scaled);
+  // print_dbg(" , scaled: 0x");
+  // print_dbg_hex(scaled);
 
-  print_dbg("\r\n\r\n ");
+  // print_dbg("\r\n\r\n ");
 
   // store input value in pnode
   net->params[idx].data.value = in;

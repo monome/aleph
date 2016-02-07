@@ -26,9 +26,8 @@ int main(void) {
   //  __asm__ __volatile__("R0 = 0x32; SYSCFG = R0; CSYNC;":::"R0");
   
   init_clock();
-
-  
   init_flags();
+  
   READY_LO;
   
   init_ebiu();
@@ -39,8 +38,8 @@ int main(void) {
   init_interrupts();
   init_dma();
 
-
   module_init();
+  //  isModuleInit = 1;
   
   enable_dma_sport0();
 
@@ -49,9 +48,9 @@ int main(void) {
 
   LED3_HI;
   LED4_HI;
-
+  
   READY_HI;
-
+  
   while(1) { 
 
     if(audioTxDone && audioRxDone && processAudio) {
@@ -69,7 +68,6 @@ int main(void) {
 	 but if it is feasible, would be good to continue collecting SPI changes
 	 during the block process routine.
       */
-
      
       // disable interrupts:
       // int i=0; 

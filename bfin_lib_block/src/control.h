@@ -22,4 +22,7 @@ extern void control_add(u32 idx, ParamValue val);
 //! should be called with interrupts disabled (e.g. from an ISR)
 extern void control_process(void);
 
+//! reset the control change queue
+extern void control_reset(void);
+
 #endif

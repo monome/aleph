@@ -25,6 +25,8 @@ static u16 qIdxRd = 0;
 static u16 qCount = 0;
 
 void control_add(u32 idx, ParamValue val) {
+  // shouldn't happen..
+  //  if(!isModuleInit) { return; }
   if(qCount >= CONTROL_Q_SIZE) {
     // queue is full! indicate with LED3
     LED3_LO; 
@@ -53,4 +55,11 @@ void control_process(void) {
   qCount = 0;
 
   //  STOP_CYCLE_COUNT(controlCycleCount, startCycleCount);
+}
+
+
+void control_reset(void) {
+  qIdxWr = 0;
+  qIdxRd = 0;
+  qCount = 0;
 }

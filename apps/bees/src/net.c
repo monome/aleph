@@ -974,7 +974,7 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
 
   // query initial value
   val = bfin_get_param(idx);
-
+  
   net->params[net->numParams - 1].data.value = 
     scaler_get_in( &(net->params[net->numParams - 1].scaler), val);
 

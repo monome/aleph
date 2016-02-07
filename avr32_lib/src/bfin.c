@@ -52,11 +52,17 @@ void bfin_wait(void) {
 void bfin_load_buf(const u8* data, const u32 size) {
   u64 i; 
 
+  
+  print_dbg("\r\n loading dsp...");
+  
   app_pause();
 
   ldrCurrentByte = 0;
   bfin_start_transfer();
 
+
+    print_dbg("\r\n sending data....");
+  
   for(i=0; i<size; i++) {
     bfin_transfer_byte(data[ldrCurrentByte]);
     ldrCurrentByte++;
@@ -65,14 +71,21 @@ void bfin_load_buf(const u8* data, const u32 size) {
   bfin_end_transfer();
  
   app_resume();
+    print_dbg("\r\n ... done loading.");
 }
 
 void bfin_set_param(u8 idx, fix16_t x ) {
-  //static u32 ticks = 0;
+  
   ParamValueSwap pval;
   pval.asInt = (s32)x;
-  //  app_pause();
 
+  print_dbg("\r\n bfin_set_param; idx: ");
+  print_dbg_hex(idx);
+  print_dbg(" ; val: ");
+  print_dbg_hex(x);
+  
+  //  app_pause();
+  
   // command
   bfin_wait();
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
@@ -223,6 +236,7 @@ static void bfin_transfer_byte(u8 data) {
 }
 
 void bfin_start_transfer(void) {
+  print_dbg("\r\n resetting blackfin...");
   gpio_set_gpio_pin(BFIN_RESET_PIN);  
   delay_ms(1);
   gpio_clr_gpio_pin(BFIN_RESET_PIN);
@@ -287,7 +301,14 @@ s32 bfin_get_param(u8 idx) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   pval.asByte[3] = (u8)x;
 
+  
+  print_dbg("\r\n bfin_get_param; idx: ");
+  print_dbg_hex(idx);
+  print_dbg(" ; val: ");
+  print_dbg_hex(pval.asInt);
+
   app_resume();
+
 
   return pval.asInt;
   

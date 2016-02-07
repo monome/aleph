@@ -23,6 +23,9 @@ typedef struct _moduleData {
 //! global pointer to module data
 extern ModuleData* gModuleData;
 
+//! module init flag
+// extern volatile u8 isModuleInit;
+
 //! initialize the module
 extern void module_init(void);
 
