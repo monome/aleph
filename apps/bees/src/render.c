@@ -224,8 +224,6 @@ void render_set_scroll(scroll* scr) {
 
 // append to line buffer
  inline void appendln(const char* str) {
-  //  print_dbg("\n\r line buffer start: ");
-  //  print_dbg_hex(pline);
   while((*str != 0) && (pline <= pLineEnd)) {
     *pline = *str;
     ++pline;
@@ -288,18 +286,6 @@ inline void clearln(void) {
  inline void endln(void) {
   *(pline) = '\0';
 }
-
-// get current y-offset for center line in scroll
-/*
-u8 get_yoff(void) {
-   u8 ret = pageCenterScroll->yOff + SCROLL_CENTER_Y_OFFSET;
-   if(ret > pageCenterScroll->reg->h) {
-     ret -= pageCenterScroll->reg->h;
-   }
-   return ret;
-}
-*/
-
 
 // copy temp data to selection (adding highlight)
 void render_to_select(void) {
@@ -490,8 +476,6 @@ void render_edit_string(region* reg, char* str, u8 len, u8 cursor) {
     }
   }
   reg->dirty = 1;
-  print_dbg("\r\n edited string: ");
-  print_dbg(str);
 }
 
 

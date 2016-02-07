@@ -10,14 +10,14 @@
 
 #include "types.h"
 
-// global flag, set if op is focused.
+//! global flag, set if op is focused.
 extern u8 opPlay;
 
-// operator enabled
+//! operator enabled
 extern void op_gfx_enable(void);
-// operator disabled
+//! operator disabled
 extern void op_gfx_disable(void);
-
+//! clear the list of graphics ops
 extern void op_gfx_reset(void);
 
 #endif

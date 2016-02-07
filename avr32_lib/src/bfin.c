@@ -79,10 +79,10 @@ void bfin_set_param(u8 idx, fix16_t x ) {
   ParamValueSwap pval;
   pval.asInt = (s32)x;
 
-  print_dbg("\r\n bfin_set_param; idx: ");
-  print_dbg_hex(idx);
-  print_dbg(" ; val: ");
-  print_dbg_hex(x);
+  /* print_dbg("\r\n bfin_set_param; idx: "); */
+  /* print_dbg_hex(idx); */
+  /* print_dbg(" ; val: "); */
+  /* print_dbg_hex(x); */
   
   //  app_pause();
   
@@ -302,10 +302,10 @@ s32 bfin_get_param(u8 idx) {
   pval.asByte[3] = (u8)x;
 
   
-  print_dbg("\r\n bfin_get_param; idx: ");
-  print_dbg_hex(idx);
-  print_dbg(" ; val: ");
-  print_dbg_hex(pval.asInt);
+  /* print_dbg("\r\n bfin_get_param; idx: "); */
+  /* print_dbg_hex(idx); */
+  /* print_dbg(" ; val: "); */
+  /* print_dbg_hex(pval.asInt); */
 
   app_resume();
 
