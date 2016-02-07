@@ -13,10 +13,10 @@
 //------------
 //-- define
 
-// number of pages (including modal pages)
+//! number of pages (including modal pages)
 #define NUM_PAGES 8
 
-// enum of key handlers per menu page
+//! enum of key handlers per menu page
 typedef enum {
   ePageHandleEnc0,
   ePageHandleEnc1,
@@ -29,7 +29,7 @@ typedef enum {
   eNumPageHandlers
 } eKeyHandler;
 
-// top-level state
+//! top-level state
 typedef enum {
   ePageIns,
   ePageOuts,
@@ -41,25 +41,25 @@ typedef enum {
   ePagePlay,
 } ePage;
 
-// function pointers for input handling on a given page
+//! function pointers for input handling on a given page
 typedef void(*page_handler_t)(s32 val);
-// function pointer for refresh (selection) on a given page
+//! function pointer for refresh (selection) on a given page
 typedef void(*page_select_t)(void);
 
-// class representing a page in a menu
-// includes a title and a key input handler (function pointer)
+//! class representing a page in a menu
+//! includes a title and a key input handler (function pointer)
 typedef struct page_struct {
-  // page title
+  //! page title
   const char* name;
-  // refresh function (call on selection)
+  //! refresh function (call on selection)
   const page_select_t select_fn;
-  // key handler functions
+  //! key handler functions
   const page_handler_t * handler;
-  // current row selection
+  //! current row selection
   s16 select;
-  // cursor position
+  //! cursor position
   s8 cursor;
-  // knob sensitivities for this page
+  //! knob sensitivities for this page
   s8 encSens[4];
 } page_t;
 
@@ -68,32 +68,22 @@ typedef struct page_struct {
 //--- extern variables
 
 
-// page structures
+//! page structures
 extern page_t pages[NUM_PAGES];
-// pointer to current page
+//! pointer to current page
 extern page_t* curPage;
-// idx of current page
+//! idx of current page
 extern s8 pageIdx;
-// last pressed key
+//! last pressed key
 extern u8 keyPressed;
-// alt-mode flag
+//! alt-mode flag
 extern u8 altMode;
 
 
 //-----------------------
 //--- extern functions
 
-// handles
-/* extern const page_handler_t handler_ins[eNumPageHandlers]; */
-/* extern const page_handler_t handler_outs[eNumPageHandlers]; */
-/* extern const page_handler_t handler_presets[eNumPageHandlers]; */
-/* extern const page_handler_t handler_ops[eNumPageHandlers]; */
-/* extern const page_handler_t handler_scenes[eNumPageHandlers]; */
-/* extern const page_handler_t handler_dsp[eNumPageHandlers]; */
-/* extern const page_handler_t handler_gathered[eNumPageHandlers]; */
-/* extern const page_handler_t handler_play[eNumPageHandlers]; */
-
-// init functions
+//! init functions
 extern void init_page_ins(void);
 extern void init_page_outs(void);
 extern void init_page_presets(void);
@@ -103,7 +93,7 @@ extern void init_page_dsp(void);
 extern void init_page_gathered(void);
 extern void init_page_play(void);
 
-// select functions
+//! select functions
 extern void select_ins(void);
 extern void select_outs(void);
 extern void select_presets(void);
@@ -114,7 +104,7 @@ extern void select_gathered(void);
 extern void select_play(void);
 
 
-// redraw functions
+//! redraw functions
 extern void redraw_ins(void);
 extern void redraw_outs(void);
 extern void redraw_presets(void);
@@ -125,29 +115,29 @@ extern void redraw_gathered(void);
 extern void redraw_play(void);
 
 //----- public functions
-// init all pages
+//! init all pages
 extern void pages_init(void);
-// de-init
+//! de-init
 extern void pages_deinit(void);
-// refresh
+//! refresh
 extern void pages_reselect(void);
-// set page
+//! set page
 extern void set_page(ePage n);
-// check key against last pressed
+//! check key against last pressed
 extern u8 check_key(u8 key);
-// toggle play mode
+//! toggle play mode
 extern u8 pages_toggle_play(void);
 
- // toggle alt mode
+ //! toggle alt mode
 extern u8 pages_set_alt(bool val);
 
-// reset key pressed to cancel any ongoing actions
+//! reset key pressed to cancel any ongoing actions
 extern void pages_reset_keypressed(void);
 
-// scroll cursor position in editable string
+//! scroll cursor position in editable string
 extern void pages_edit_cursor(s32 val, char* buf, s8* cursor, u16 len);
 
-// scroll character at cursor position in editable string
+//! scroll character at cursor position in editable string
 extern void pages_edit_char_inc(char* str, u8 pos);
 extern void pages_edit_char_dec(char* str, u8 pos);
 

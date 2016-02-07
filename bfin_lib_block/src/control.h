@@ -12,7 +12,7 @@
 
 
 //! keep track of cycles spent processing each param change block
-extern volatile u32 controlCycleCount;
+// extern volatile u64 controlCycleCount;
 
 //! add a parameter change to the queue
 //! should be called with interrupts disabled (e.g. from an ISR)

@@ -29,6 +29,8 @@
 #include "net_poll.h"
 #include "render.h"
 
+
+
 //---------------------------
 //---- static variables
 
@@ -61,7 +63,6 @@ static softTimer_t adcPollTimer = { .next = NULL, .prev = NULL };
 // poll hid
 static softTimer_t hidPollTimer = { .next = NULL, .prev = NULL };
 
-
 //--------------------------
 //----- static functions
 
@@ -71,8 +72,6 @@ static softTimer_t hidPollTimer = { .next = NULL, .prev = NULL };
 // event data is a pointer to an arbitrary object/
 // here we use it for polled operators like op_metro.
 static void app_custom_event_callback(void* obj) {
-  // print_dbg("\r\n bees, app_custom_event_callback, obj: 0x");
-  // print_dbg_hex((u32)obj);
   e.type = kEventAppCustom;
   // post the object's address in the event data field
   e.data = (s32)obj;
@@ -127,7 +126,6 @@ static void monome_poll_timer_callback(void* obj) {
 // monome refresh callback
 static void monome_refresh_timer_callback(void* obj) {
   //  if (monomeConnect) {
-  //    print_dbg("\r\n posting monome refresh event");
   if(monomeFrameDirty > 0) {
     e.type = kEventMonomeRefresh;
     event_post(&e);
@@ -153,45 +151,38 @@ void init_app_timers(void) {
 
 // monome: start polling
 void timers_set_monome(void) {
-  print_dbg("\r\n setting monome timers");
   timer_add(&monomePollTimer, 	 20, &monome_poll_timer_callback, NULL );
   timer_add(&monomeRefreshTimer, 50, &monome_refresh_timer_callback, NULL );
 }
 
 // monome stop polling
 void timers_unset_monome(void) {
-  print_dbg("\r\n unsetting monome timers");
   timer_remove( &monomePollTimer );
   timer_remove( &monomeRefreshTimer ); 
 }
 
 // midi : start polling
 void timers_set_midi(void) {
-  print_dbg("\r\n setting midi timers");
   /// FIXME: where should default periods be defined...
   timer_add( &midiPollTimer, 20, &midi_poll_timer_callback, NULL );
-  // TODO:
+  // TODO??
   //  timer_add(&midiRefreshTimer, eMidiRefreshTimerTag, 50,  &midi_refresh_timer_callback, NULL, 1);
 }
 
 // midi : stop polling
 void timers_unset_midi(void) {
-  print_dbg("\r\n unsetting midi timers");
   timer_remove( &midiPollTimer );
-  // TODO:
+  // TODO??
   //  timer_remove(eMidiRefreshTimerTag); 
 }
 
 // adc : start polling
 void timers_set_adc(u32 period) {
-  print_dbg("\r\n setting adc timers, period: ");
-  print_dbg_ulong(period);
   timer_add(&adcPollTimer, period, &adc_poll_timer_callback, NULL );
 }
 
 // adc : stop polling
 void timers_unset_adc(void) {
-  print_dbg("\r\n unsetting adc timers");
   timer_remove( &adcPollTimer );
 } 
 
@@ -203,13 +194,11 @@ void timers_set_adc_period(u32 period) {
 
 // hid : start polling
 void timers_set_hid(void) {
-  print_dbg("\r\n setting hid timers"); 
   timer_add(&hidPollTimer, 20, &hid_poll_timer_callback, NULL );
 }
 
 // hid : stop polling
 void timers_unset_hid(void) {
-  print_dbg("\r\n unsetting hid timers");
   timer_remove( &hidPollTimer );
 } 
 
@@ -218,15 +207,13 @@ void timers_set_hid_period(u32 period) {
   hidPollTimer.ticks = period;
 }
 
-
 // set custom callback
-// the callback is simply resonsible for pushing timer interrupts back into the event queue.
+// the callback just pushes timer interrupts back into the event queue.
 // this is to keep network processing out of the timer IRQ itself...
 void timers_set_custom(softTimer_t* timer, u32 period, void* obj) {
-  print_dbg("\r\n set custom timer, period: ");
-  print_dbg_ulong(period);
   timer_add(timer, period, &app_custom_event_callback, obj );
 }
+
 
 /* // unset metro callback */
 /* void timers_unset_custom(softTimer_t* timer) { */

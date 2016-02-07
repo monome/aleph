@@ -32,6 +32,11 @@ compile with
 
 ParamDesc desc[eParamNumParams];
 
+#ifdef PARAM_TEXT
+#define TEXT_BUF_SIZE 256
+char text[eParamNumParams][TEXT_BUF_SIZE];
+#endif
+
 //char str[64] = "aleph-";
 char str[64] = "";
 

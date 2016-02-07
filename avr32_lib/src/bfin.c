@@ -298,8 +298,9 @@ s32 bfin_get_param(u8 idx) {
 s32 bfin_get_audio_cpu(void) {
   ParamValueSwap pval;
   u16 x;
+
+  print_dbg("\r\n requesting audio cpu use...");
   
-  app_pause();
   bfin_wait();
 
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
@@ -308,17 +309,29 @@ s32 bfin_get_audio_cpu(void) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   pval.asByte[0] = (u8)x;
 
+
+  print_dbg("\r\n first byte: ");
+  print_dbg_hex((u32)x);
+
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, 0); // don't care
   spi_read(BFIN_SPI, &x);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   pval.asByte[1] = (u8)x;
 
+  print_dbg("\r\n 2nd byte: ");
+  print_dbg_hex((u32)x);
+
+  
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, 0); // don't care
   spi_read(BFIN_SPI, &x);
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   pval.asByte[2] = (u8)x;
+  
+  print_dbg("\r\n 3rd byte: ");
+  print_dbg_hex((u32)x);
+
 
   spi_selectChip(BFIN_SPI, BFIN_SPI_NPCS);
   spi_write(BFIN_SPI, 0); // don't care
@@ -326,7 +339,11 @@ s32 bfin_get_audio_cpu(void) {
   spi_unselectChip(BFIN_SPI, BFIN_SPI_NPCS);
   pval.asByte[3] = (u8)x;
 
-  app_resume();
+  print_dbg("\r\n 4th byte: ");
+  print_dbg_hex((u32)x);
+
+  print_dbg("\r\n value: ");
+  print_dbg_hex(pval.asInt);
 
   return pval.asInt;
   

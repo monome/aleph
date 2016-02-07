@@ -26,7 +26,7 @@ extern volatile u8 audioTxDone;
 extern volatile u8 processAudio;
 
 //! keep track of cycles spent processing each audio block
-extern volatile u32 audioCycleCount;
+// extern volatile u64 audioCycleCount;
 
 //! type for de-interleaved audio buffers
 typedef fract32 buffer_t[AUDIO_CHANNELS][MODULE_BLOCKSIZE];

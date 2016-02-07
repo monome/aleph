@@ -2,8 +2,6 @@
 #include "param_common.h"
 #include "params.h"
 
-
-
 /**
  * frequencies are expressed as raw, linear phase increment!
  * 
@@ -15,6 +13,7 @@
 
 void fill_param_desc(ParamDesc* desc) {
 
+  //! fill descriptor tables for avr32-readable .dsc file
   // 0
   strcpy(desc[eParamAmp0].label, "amp0");
   desc[eParamAmp0].type = eParamTypeAmp;
@@ -91,4 +90,8 @@ void fill_param_desc(ParamDesc* desc) {
   desc[eParamFreqFine3].min = 0;
   desc[eParamFreqFine3].max = 0x7fffffff;
   desc[eParamFreqFine3].radix = 16;
+  
+}
+
+void fill_param_text(char** txt) {
 }

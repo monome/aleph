@@ -68,18 +68,24 @@ u8 spi_handle_byte(u8 rx) {
       return processAudio;
       break;
 
+      // disabling until we know what's up with cycle counter
+      /*
     case MSG_GET_AUDIO_CPU_COM:
       byte = eGetAudioCpuData0;
-      pval.asInt = COMPUTE_CPU_USE(audioCycleCount);
+      //      pval.asInt = COMPUTE_CPU_USE(audioCycleCount);
+      // test:
+      pval.asInt = audioCycleCount;
       return pval.asByte[3]; // byte-swap from BE on avr32
       break;
 
     case MSG_GET_CONTROL_CPU_COM:
       byte = eGetControlCpuData0;
-      pval.asInt = COMPUTE_CPU_USE(controlCycleCount);
+      //      pval.asInt = COMPUTE_CPU_USE(controlCycleCount);
+      // test:
+      pval.asInt = controlCycleCount;
       return pval.asByte[3]; // byte-swap from BE on avr32
-
       break;
+      */
 
     default:
       break;
@@ -268,7 +274,7 @@ u8 spi_handle_byte(u8 rx) {
     return 0;    // don't care
     break;
 
-
+    /*
     //----- audio cpu use
   case eGetAudioCpuData0:
     byte = eGetAudioCpuData1;
@@ -282,6 +288,7 @@ u8 spi_handle_byte(u8 rx) {
     byte = eCom; // reset
     return pval.asByte[0];
     break;
+
     //---- param change cpu use
   case eGetControlCpuData0:
     byte = eGetControlCpuData0;
@@ -295,6 +302,7 @@ u8 spi_handle_byte(u8 rx) {
     byte = eCom; // reset
     return pval.asByte[0];
     break;
+    */
     
   default:
     byte = eCom; // reset

@@ -23,8 +23,6 @@
 #include "timers.h"
 #include "types.h"
 
-//#define UI_IRQ_PRIORITY AVR32_INTC_INT2
-
 //------------------------
 //----- variables
 // timer tick counter
@@ -34,8 +32,6 @@ static const u64 tcMax = (U64)0x7fffffff;
 static const u64 tcMaxInv = (u64)0x10000000;
 // screen refresh flag
 volatile u8 refresh = 0;
-// end of PDCA transfer
-//volatile bool end_of_transfer;
 
 //----------------------
 //---- static functions 

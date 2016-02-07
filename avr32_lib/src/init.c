@@ -138,8 +138,7 @@ void init_ftdi_usart (void) {
   // Initialize in RS232 mode.
   usart_init_rs232(DEV_USART, &DEV_USART_OPTIONS, FPBA_HZ);
 
-  // atmel example actually sets this after registering the interrupt handler.
-  // not sure this matters.
+  /// FIXME: we really should set this *after* registering the interrupt handler.
   DEV_USART->ier = AVR32_USART_IER_RXRDY_MASK;
 }
 

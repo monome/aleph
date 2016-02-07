@@ -1,7 +1,7 @@
 #include "audio.h"
 
 // globally visible cycle count result
-volatile u32 audioCycleCount;
+// volatile u64 audioCycleCount;
 
 
 // I/O flags

@@ -195,9 +195,6 @@ void scaler_init(ParamScaler* sc, const ParamDesc* const desc) {
 
 // get DSP value given input
 s32 scaler_get_value(ParamScaler* sc, io_t in) {
-  print_dbg("\r\n scaler_get_value; type: ");
-  print_dbg_ulong(sc->desc->type);
-
   scaler_get_value_fn fn = scaler_get_val_pr[sc->desc->type];
   if(fn != NULL) {
     return (*fn)(sc, in);
@@ -222,14 +219,6 @@ io_t scaler_get_in(ParamScaler* sc, s32 value) {
   scaler_get_in_fn fn =  scaler_get_in_pr[sc->desc->type];
   if( fn != NULL) {
     val = (*fn)(sc, value);
-    print_dbg("\r\n getting input value for scaler. ");
-    print_dbg(" param type from desc: ");
-    print_dbg_ulong(sc->desc->type);
-    print_dbg(", default DSP value: 0x");
-    print_dbg_hex(value);
-    print_dbg(", setting input node: 0x");
-    print_dbg_hex(val);
-
     return val;
   } else {
     return 0;
@@ -239,13 +228,6 @@ io_t scaler_get_in(ParamScaler* sc, s32 value) {
 // increment input
 extern s32 scaler_inc(ParamScaler* sc, io_t * pin, io_t inc ) {
   scaler_inc_fn fn =  scaler_inc_pr[sc->desc->type];
-  print_dbg("\r\n incrementing scaler at address 0x");
-  print_dbg_hex((u32)sc);
-  print_dbg(" ; type: ");
-  print_dbg_ulong((u32)sc->desc->type);
-  print_dbg(" ; inc function pointer: 0x");
-  print_dbg_hex((u32)fn);
-
   if( fn != NULL) {
     return (*fn)(sc, pin, inc);
   } else {
@@ -287,14 +269,10 @@ u32 scaler_get_rep_offset(ParamType p) {
 // get pointers to NV memory for table assignment
 const s32* scaler_get_nv_data(ParamType p) {
   void* scalerBytes = (void*)&(((beesFlashData*)(flash_app_data()))->scalerBytes);
-  //  print_dbg("\r\n param_scaler:scaler_get_nv_data, result: 0x");
-  //  print_dbg_hex((u32)((s32*)scalerBytes + scaler_get_data_offset(p)));
   return (s32*)scalerBytes + scaler_get_data_offset(p);
 }
 
 const s32* scaler_get_nv_rep(ParamType p) {
   void* scalerBytes = (void*)&(((beesFlashData*)(flash_app_data()))->scalerBytes);
-  //  print_dbg("\r\n param_scaler:scaler_get_nv_rep, result: 0x");
-  //  print_dbg_hex((u32)((s32*)scalerBytes + scaler_get_rep_offset(p)));
   return (s32*)scalerBytes + scaler_get_rep_offset(p);
 }

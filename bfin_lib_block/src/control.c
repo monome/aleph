@@ -10,9 +10,9 @@
 #define CONTROL_Q_SIZE 64
 
 // globally visible cycle count result
-volatile u32 controlCycleCount;
+// volatile u64 controlCycleCount;
 // temp
-static volatile u32 startCycleCount;
+// static volatile u64 startCycleCount;
 
 typedef struct {
   u32 idx;
@@ -42,9 +42,8 @@ void control_process(void) {
   ParamValue val;
   u32 idx;
 
-  START_CYCLE_COUNT(startCycleCount);
+  //  START_CYCLE_COUNT(startCycleCount);
  
-  //  LED4_LO; 
   for(i=0; i<qCount; i++) {
     idx = q[qIdxRd].idx;
     val = q[qIdxRd].val;
@@ -52,7 +51,6 @@ void control_process(void) {
     qIdxRd = (qIdxRd + 1) & (CONTROL_Q_SIZE - 1);
   }
   qCount = 0;
-  //  LED4_HI;
 
-  STOP_CYCLE_COUNT(controlCycleCount, startCycleCount);
+  //  STOP_CYCLE_COUNT(controlCycleCount, startCycleCount);
 }

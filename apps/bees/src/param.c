@@ -40,16 +40,7 @@ const char* get_param_name(u32 idx) {
 // return sign of clamping operation, if clamped
 void set_param_value(u32 idx, io_t val) {
   s32 scaled;
-
-  print_dbg("\r\n set_param_value, index: ");
-  print_dbg_ulong(idx);
-  print_dbg(" , value: 0x");
-  print_dbg_hex(val);
-
   scaled = scaler_get_value( &(net->params[idx].scaler), val);
-
-  print_dbg(" , scaled: 0x");
-  print_dbg_hex(scaled);
     
   // network data holds linear input value
   net->params[idx].data.value = val;
@@ -67,16 +58,11 @@ u8* param_pickle(pnode_t* pnode, u8* dst) {
   /// wasting some space to preserve 4-byte alignment
   // store idx
 
-
   //// TEST: don't
   //dst = pickle_32((u32)pnode->idx, dst);
   //// TEST: keep as dummy for compatibility
   dst = pickle_32(0, dst);
   ////
-
-
-  // print_dbg("\r\n pickling param node, value: 0x");
-  // print_dbg_hex(pnode->data.value.asUint);
 
   // store value
   val = (u32)(pnode->data.value);
@@ -110,13 +96,6 @@ const u8* param_unpickle(pnode_t* pnode, const u8* src) {
   print_dbg("\r\n unpickling param, val: 0x"); 
   print_dbg_hex(val);
 
-  //  print_dbg(" , val: ");
-  //  print_dbg_ulong(val);
-  //  src = unpickle_32(src, &(pnode->data.value.asUint));
-
-  // print_dbg("\r\n unpickled param value: ");
-  // print_dbg_ulong(val);
-
   // load play-inclusion 
   src = unpickle_32(src, &val);
   pnode->play = (u8)val;
@@ -124,10 +103,6 @@ const u8* param_unpickle(pnode_t* pnode, const u8* src) {
 
   print_dbg(" , play: 0x"); 
   print_dbg_hex(val);
-
-
-  // print_dbg("\r\n unpickled param preset flag: ");
-  // print_dbg_ulong(val);
 
   // load descriptor
   src = pdesc_unpickle(&(pnode->desc), src);
@@ -202,12 +177,6 @@ const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
   return src;
 }
 
-
-// fill buffer with readable value string
-/* ???
-void get_param_string(char* dst, u32 idx) {
-}
-*/
 
 // increment value
 io_t inc_param_value(u32 idx,  io_t inc) {
