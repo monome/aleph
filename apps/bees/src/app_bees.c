@@ -33,6 +33,7 @@
 #include "play.h"
 #include "render.h"
 #include "scene.h"
+#include "serial.h"
 
 //-------------------------------------------
 //-- extern vars (here)
@@ -74,6 +75,9 @@ void app_init(void) {
   // initialize flash-management buffers
   print_dbg("\r\n flash_bees_init...");
   flash_bees_init();
+
+  print_dbg("\r\n serial_init...");
+  serial_init ();
 }
 
 // this is called from main event handler

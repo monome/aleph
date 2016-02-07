@@ -19,6 +19,10 @@
 /////TEST let's put op_serial to bed now...
 
 static u16 serial_read_pos = 0;
+void serial_init(void) {
+  serial_rx_flow_control = true;
+  serial_delimiter = END_FLAG;
+}
 
 void serial_putc(char c) {
   usart_putchar(DEV_USART, c);

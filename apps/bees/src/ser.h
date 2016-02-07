@@ -19,7 +19,7 @@ typedef struct op_serial_struct {
   op_out_t outs[];
 } op_serial_t;
 
-
+void serial_init(void);
 void op_serial_out (op_serial_t* op, io_t v);
 void serial_putc(char c);
 void serial_puts(const char *str);
