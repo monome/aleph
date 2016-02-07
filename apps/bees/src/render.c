@@ -157,7 +157,7 @@ extern void render_boot(const char* str) {
 
 // update
 void render_update(void) {
-  app_pause();
+  //  app_pause();
 
 #if 0 // POLL_DSP_CPU==1
   static char buf[16];
@@ -185,7 +185,7 @@ void render_update(void) {
   region_update(footRegion[2]);
   region_update(footRegion[3]);
 
-  app_resume();
+  //  app_resume();
 }
 
 // set current header region
