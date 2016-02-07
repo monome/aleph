@@ -40,6 +40,11 @@ void serial_paramVal (s16 idx);
 void serial_storePreset (s16 idx);
 void serial_recallPreset (s16 idx);
 s16 charsToS16 (char hi, char lo);
+void serial_bfinProgStart(void);
+void serial_bfinHexChunk(char* c, int len);
+void serial_bfinDscChunk(char* c, int len);
+void serial_bfinProgEnd(void);
+
 void processMessage (char* c, int len);
 void recv_char (char c);
 

@@ -3,6 +3,8 @@
 
 #include "usart.h"
 #include "serial.h"
+#include "memory.h"
+#include "delay.h"
 
 #include "bfin.h"
 #include "events.h"
@@ -12,6 +14,7 @@
 #include "ser.h"
 #include "op.h"
 #include "preset.h"
+#include "app.h"
 
 #define START_FLAG 0x12
 #define END_FLAG 0x13
@@ -83,8 +86,15 @@ enum serialMsgTypes {
   eSerialMsg_newOp,
   eSerialMsg_deleteOp,
 
+  //Messages for preset store/recall
   eSerialMsg_storePreset,
   eSerialMsg_recallPreset,
+
+  //Messages for serial bfin prog
+  eSerialMsg_bfinProgStart,
+  eSerialMsg_bfinHexChunk,
+  eSerialMsg_bfinDscChunk,
+  eSerialMsg_bfinProgEnd,
   eSerialMsg_numParams
 };
 
@@ -279,6 +289,55 @@ s16 charsToS16 (char hi, char lo) {
   return ret;
 }
 
+volatile u8* serial_bfinHexBuf = NULL;
+volatile u8* serial_bfinDscBuf = NULL;
+int serial_bfinHexBuf_idx;
+int serial_bfinDscBuf_idx;
+// 256kb max module size
+#define MAX_SERIAL_HEX_SIZE (256 * 1024)
+// 16kb max module description size
+#define MAX_SERIAL_DSC_SIZE (16 * 1024)
+
+void serial_bfinProgStart() {
+  if(serial_bfinHexBuf == NULL)
+    serial_bfinHexBuf = alloc_mem(MAX_SERIAL_HEX_SIZE);
+  serial_bfinHexBuf_idx = 0;
+  if(serial_bfinDscBuf == NULL)
+    serial_bfinHexBuf = alloc_mem(MAX_SERIAL_DSC_SIZE);
+  serial_bfinDscBuf_idx = 0;
+}
+void serial_bfinHexChunk(char* c, int len) {
+  if (serial_bfinHexBuf_idx + len >= MAX_SERIAL_HEX_SIZE) {
+    serial_debug("bfin hex buffer full - 256kb is max size for bfin prog!");
+    return;
+  }
+  int i;
+  for (i = 0; i < len; i++) {
+    serial_bfinHexBuf[serial_bfinHexBuf_idx + i] = c[i];
+  }
+  serial_bfinHexBuf_idx += len;
+}
+void serial_bfinDscChunk(char* c, int len) {
+  if (serial_bfinDscBuf_idx + len >= MAX_SERIAL_DSC_SIZE) {
+    serial_debug("bfin dsc buffer full - 256kb is max size for bfin prog!");
+    return;
+  }
+  int i;
+  for (i = 0; i < len; i++) {
+    serial_bfinDscBuf[serial_bfinDscBuf_idx + i] = c[i];
+  }
+  serial_bfinDscBuf_idx += len;
+}
+void serial_bfinProgEnd() {
+  app_pause();
+  delay_ms(2);
+  bfin_load_buf((const u8*) serial_bfinHexBuf, serial_bfinHexBuf_idx);
+  free_mem(serial_bfinDscBuf);
+  serial_bfinDscBuf = NULL;
+  app_resume();
+}
+
+
 void processMessage (char* c, int len) {
   /* proto_debug("actually got some message"); */
   switch (c[0]) {
@@ -385,6 +444,18 @@ void processMessage (char* c, int len) {
       serial_recallPreset(charsToS16(c[1],c[2]));
       /* serial_debug("recalled a preset"); */
     }
+    break;
+  case eSerialMsg_bfinProgStart :
+    serial_bfinProgStart();
+    break;
+  case eSerialMsg_bfinHexChunk :
+    serial_bfinHexChunk(c, len);
+    break;
+  case eSerialMsg_bfinDscChunk :
+    serial_bfinDscChunk(c, len);
+    break;
+  case eSerialMsg_bfinProgEnd :
+    serial_bfinProgEnd();
     break;
   default :
     serial_debug ("Unknown serial command issued to bees");
