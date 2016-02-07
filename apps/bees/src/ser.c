@@ -10,6 +10,8 @@
 #include "net_protected.h"
 
 #include "ser.h"
+#include "op.h"
+#include "preset.h"
 
 #define START_FLAG 0x12
 #define END_FLAG 0x13
@@ -126,45 +128,59 @@ void serial_paramsDump () {
 void serial_opDescriptionsDump () {
   serial_startTx ();
   serial_framedPutc(eSerialMsg_opDescriptionsDump);
-  //DEBUG return a single op type with 1 in, 2 outs
-  serial_puts("opType1");
-  serial_framedPutc(0);
-  serial_framedPutc(hiByte(1));
-  serial_framedPutc(hiByte(1));
-  serial_framedPutc(hiByte(2));
-  serial_framedPutc(hiByte(2));
+  int i;
+  for (i=0; i < NUM_USER_OP_TYPES; i++) {
+    serial_puts(op_registry[userOpTypes[i]].name);
+    serial_framedPutc(0);
+  }
   serial_endTx();
 }
 void serial_connectionsDump () {
   serial_startTx ();
   serial_framedPutc(eSerialMsg_connectionsDump);
-  //DEBUG return a single connection 1:2
-  serial_framedPutc(hiByte(1));
-  serial_framedPutc(loByte(1));
-  serial_framedPutc(hiByte(2));
-  serial_framedPutc(loByte(2));
+  int i;
+  for(i=0; i < net->numOuts; i++) {
+    int opIdx = net->outs[i].opIdx;
+    int opOutIdx = net->outs[i].opOutIdx;
+    int outDest = net->ops[opIdx]->out[opOutIdx];
+    serial_framedPutc(hiByte(i));
+    serial_framedPutc(loByte(i));
+    serial_framedPutc(hiByte(outDest));
+    serial_framedPutc(loByte(outDest));
+  }
   serial_endTx();
 }
 void serial_outputsDump () {
   serial_startTx ();
   serial_framedPutc(eSerialMsg_outputsDump);
-  serial_puts("out1");
-  serial_framedPutc(0);
-  serial_puts("out2");
-  serial_framedPutc(0);
-  serial_puts("out3");
-  serial_framedPutc(0);
+
+  int i;
+  for (i=0;i<net->numOps;i++) {
+    int j;
+    for (j=0; j<net->ops[i]->numOutputs; j++) {
+      serial_puts(net->ops[i]->opString);
+      serial_puts("/");
+      serial_puts(net->ops[i]->outString + (j * 8));
+      serial_framedPutc(0);
+    }
+  }
   serial_endTx();
 }
 
 void serial_opsDump () {
   serial_startTx ();
   serial_framedPutc(eSerialMsg_opsDump);
-  //DEBUG return a single op of type 1
-  serial_puts("op1");
-  serial_framedPutc(0);
-  serial_framedPutc(hiByte(1));
-  serial_framedPutc(hiByte(1));
+  int i;
+  for (i=0;i<net->numOps;i++) {
+    int nIns = net->ops[i]->numInputs;
+    int nOuts = net->ops[i]->numOutputs;
+    serial_puts(net->ops[i]->opString);
+    serial_framedPutc(0);
+    serial_framedPutc(hiByte(nIns));
+    serial_framedPutc(loByte(nIns));
+    serial_framedPutc(hiByte(nOuts));
+    serial_framedPutc(loByte(nOuts));
+  }
   serial_endTx();
 }
 
@@ -233,26 +249,27 @@ void serial_paramVal (s16 idx) {
 }
 
 void serial_disconnect (s16 idx) {
-  //FIXME actually do something here
+  net_disconnect(idx);
 }
 
 void serial_deleteOp (s16 idx) {
-  //FIXME actually do something here
+  net_pop_op();
+  serial_debug("deleting last op - arbitrary op deletion not yet supported...");
 }
 
 void serial_newOp (s16 idx) {
-  //FIXME actually do something here
+  net_add_op(userOpTypes[idx]);
 }
 
 void serial_connect (s16 outIdx, s16 inIdx) {
-  //FIXME actually do something here
+  net_connect(outIdx, inIdx);
 }
 
 void serial_storePreset (s16 idx) {
-  //FIXME actually do something here
+  preset_store(idx);
 }
 void serial_recallPreset (s16 idx) {
-  //FIXME actually do something here
+  preset_recall(idx);
 }
 
 s16 charsToS16 (char hi, char lo) {
