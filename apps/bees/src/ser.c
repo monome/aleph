@@ -354,6 +354,11 @@ void serial_bfinProgEnd() {
   free_mem(serial_bfinHexBuf);
   serial_bfinDscBuf = NULL;
   serial_bfinHexBuf = NULL;
+  bfin_wait_ready();
+  bfin_enable();
+  /* redraw_ins(); */
+  /* redraw_dsp(); */
+
   app_resume();
 }
 
