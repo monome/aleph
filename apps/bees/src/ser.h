@@ -33,6 +33,7 @@ char loByte (int x);
 void serial_insDump (void);
 void serial_paramsDump (void);
 void serial_outVal (int addr, int data);
+void serial_bfinProgEcho (volatile u8* buf, int len);
 void serial_triggerParam (s16 idx, s16 data);
 void serial_triggerIn (s16 idx, s16 data);
 void serial_inVal (s16 idx);

@@ -594,6 +594,7 @@ extern u8 buf_load_desc(u8* inbuf) {
   int i;
   u8 ret = 0;
 
+  serial_debug("\r\nPrepare to unpickle!");
     // get number of parameters
   nbuf=inbuf;
   unpickle_32(nbuf, (u32*)&nparams);
@@ -606,8 +607,9 @@ extern u8 buf_load_desc(u8* inbuf) {
   // gets the default values from the module via spi we wait for the
   // bfin to be ready thus ensuring that module_init() has actually
   // had time to sets the parameter defaults.
-  print_dbg("\r\n file_load_desc(): waiting for bfin to be ready before quering parameters");
+  serial_debug("\r\n file_load_desc(): waiting for bfin to be ready before quering parameters");
   bfin_wait_ready();
+  serial_debug("\r\n blackfin ready.  Attempting param load...");
   dbuf = inbuf + 4;
   /// loop over params
   if(nparams > 0) {
@@ -617,15 +619,19 @@ extern u8 buf_load_desc(u8* inbuf) {
       //  FIXME: a little gross,
       // to be interleaving network and file manipulation like this...
       ///....
-      // read into desc buffer
-      dbuf += PARAM_DESC_PICKLE_BYTES;
       // unpickle directly into network descriptor memory
       pdesc_unpickle( &desc, dbuf );
       // copy descriptor to network and increment count
       net_add_param(i, (const ParamDesc*)(&desc));
-    }
+      // read into desc buffer
+      dbuf += PARAM_DESC_PICKLE_BYTES;
+      serial_debug("\r\n Added a param");
+
+     }
   } else {
     ret = 1;
   }
+  serial_debug("\r\n Finished adding params");
+
   return ret;
 }

@@ -39,6 +39,7 @@
   :eSerialMsg_bfinHexChunk
   :eSerialMsg_bfinDscChunk
   :eSerialMsg_bfinProgEnd
+  :eSerialMsg_bfinProgEcho;;DEBUG - can we round-trip the hex?
 
   :eSerialMsg_numParams
   )
@@ -329,6 +330,9 @@
     ((list* #.(foreign-enum-value 'serial-msg-types :eSerialMsg_outputsDump)
 	    outputs-dump)
      (cons :outputs-dump (unpack-string-xN outputs-dump)))
+    ((list* #.(foreign-enum-value 'serial-msg-types :eSerialMsg_bfinProgEcho)
+	    outputs-dump)
+     (cons :bfin-echo outputs-dump))
     (otherwise (break "unknown message: ~A" bytes))))
 
 
@@ -365,6 +369,15 @@
     (serial-recallPreset stream 1)
     (serial-storePreset stream 1)
     ))
+
+(defun test-bfin-module-load ()
+  (with-open-file (stream "/dev/ttyACM0"
+			  :direction :output
+			  :if-exists :overwrite
+			  :element-type '(unsigned-byte 8))
+    (serial-send-aleph-module stream
+			      "/home/rick/git_checkouts/aleph/modules/grains/grains"
+			      "/home/rick/git_checkouts/aleph/modules/grains/grains.dsc" 0.001)))
 
 
 ;;Some even stinkier debug stuff used to query fifo ~/foo

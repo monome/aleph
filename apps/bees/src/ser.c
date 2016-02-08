@@ -16,6 +16,7 @@
 #include "preset.h"
 #include "app.h"
 #include "files.h"
+#include "scene.h"
 
 #define START_FLAG 0x12
 #define END_FLAG 0x13
@@ -96,11 +97,11 @@ enum serialMsgTypes {
   eSerialMsg_bfinHexChunk,
   eSerialMsg_bfinDscChunk,
   eSerialMsg_bfinProgEnd,
+  eSerialMsg_bfinProgEcho,
   eSerialMsg_numParams
 };
 
 void serial_debug(const char *str) {
-  return;
   serial_startTx ();
   serial_framedPutc(eSerialMsg_debug);
   serial_puts(str);
@@ -213,6 +214,15 @@ void serial_outVal (int addr, int data) {
   serial_endTx();
 }
 
+void serial_bfinProgEcho (volatile u8* buf, int len) {
+  serial_startTx ();
+  serial_framedPutc(eSerialMsg_bfinProgEcho);
+  int i;
+  for (i=0; i < len; i++)
+    serial_framedPutc(buf[i]);
+  serial_endTx();
+}
+
 void serial_triggerParam (s16 idx, io_t data) {
   //param thwacking code goes here
   net_activate(idx+net->numIns, data, NULL);
@@ -296,44 +306,50 @@ int serial_bfinHexBuf_idx;
 int serial_bfinDscBuf_idx;
 // 256kb max module size
 #define MAX_SERIAL_HEX_SIZE (256 * 1024)
-// 16kb max module description size
-#define MAX_SERIAL_DSC_SIZE (16 * 1024)
+// 256kb max module description size
+#define MAX_SERIAL_DSC_SIZE (256 * 1024)
 
 void serial_bfinProgStart() {
   if(serial_bfinHexBuf == NULL)
     serial_bfinHexBuf = alloc_mem(MAX_SERIAL_HEX_SIZE);
   serial_bfinHexBuf_idx = 0;
+
   if(serial_bfinDscBuf == NULL)
-    serial_bfinHexBuf = alloc_mem(MAX_SERIAL_DSC_SIZE);
+    serial_bfinDscBuf = alloc_mem(MAX_SERIAL_DSC_SIZE);
   serial_bfinDscBuf_idx = 0;
 }
 void serial_bfinHexChunk(char* c, int len) {
-  if (serial_bfinHexBuf_idx + len >= MAX_SERIAL_HEX_SIZE) {
+  if (serial_bfinHexBuf_idx + len - 1 >= MAX_SERIAL_HEX_SIZE) {
     serial_debug("bfin hex buffer full - 256kb is max size for bfin prog!");
     return;
   }
   int i;
-  for (i = 0; i < len; i++) {
-    serial_bfinHexBuf[serial_bfinHexBuf_idx + i] = c[i];
+  for (i = 1; i < len; i++) {
+    serial_bfinHexBuf[serial_bfinHexBuf_idx + i - 1] = c[i];
   }
-  serial_bfinHexBuf_idx += len;
+  serial_bfinHexBuf_idx += len - 1;
 }
 void serial_bfinDscChunk(char* c, int len) {
-  if (serial_bfinDscBuf_idx + len >= MAX_SERIAL_DSC_SIZE) {
-    serial_debug("bfin dsc buffer full - 256kb is max size for bfin prog!");
+  if (serial_bfinDscBuf_idx + len - 1 >= MAX_SERIAL_DSC_SIZE) {
+    serial_debug("bfin dsc buffer full - 256kb is max size for Dsc file!");
     return;
   }
   int i;
-  for (i = 0; i < len; i++) {
-    serial_bfinDscBuf[serial_bfinDscBuf_idx + i] = c[i];
+  for (i = 1; i < len; i++) {
+    serial_bfinDscBuf[serial_bfinDscBuf_idx + i - 1] = c[i];
   }
-  serial_bfinDscBuf_idx += len;
+  serial_bfinDscBuf_idx += len - 1;
 }
 void serial_bfinProgEnd() {
   app_pause();
   delay_ms(2);
-  bfin_load_buf((const u8*) serial_bfinHexBuf, serial_bfinHexBuf_idx);
-  buf_load_desc((const u8*) serial_bfinDscBuf);
+  bfin_load_buf((u8*) serial_bfinHexBuf, serial_bfinHexBuf_idx);
+  delay_ms(2);
+  scene_set_module_name("serialdump");
+  buf_load_desc((u8*) serial_bfinDscBuf);
+
+  /* serial_bfinProgEcho(serial_bfinHexBuf, serial_bfinHexBuf_idx); */
+  /* serial_bfinProgEcho(serial_bfinDscBuf, serial_bfinDscBuf_idx); */
   free_mem(serial_bfinDscBuf);
   free_mem(serial_bfinHexBuf);
   serial_bfinDscBuf = NULL;
