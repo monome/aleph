@@ -91,7 +91,7 @@ int main() {
 
   fill_param_desc(desc);
   printf("\r\n %s_desc_build ... ", NAME);
-  printf("\r\n filled param descripor table... \r\n");
+  printf("\r\n filled param descriptor table... \r\n");
   
   out = fopen(str, "w");
 
@@ -111,7 +111,7 @@ int main() {
   printf("\r\n wrote %d bytes... \r\n", (int) ((size_t)pwr - (size_t)&buf));
   
   fclose(out);
-  printf("\r\n done. \r\n");
+  printf("done. \r\n");
   
 
   return 0;

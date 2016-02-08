@@ -16,8 +16,7 @@
 #include "delay.h"
 #endif
 
-// aleph-avr32?
-
+// aleph-avr32
 #include "app.h"
 #include "bfin.h"
 #include "control.h"
@@ -274,7 +273,7 @@ void net_deinit(void) {
 
 // clear ops and i/o
 void net_clear_user_ops(void) {
-  /// no...
+  /// no... this seems wrong.
   net_deinit();
   add_sys_ops();
 }
@@ -960,16 +959,13 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
   // copy descriptor, hm
   memcpy( &(net->params[net->numParams].desc), (const void*)pdesc, sizeof(ParamDesc) );
 
-  ///////////////
   // initialize scaler
   scaler_init(&(net->params[net->numParams].scaler), 
 	      &(net->params[net->numParams].desc));
-  ////////////
   print_dbg("\r\n finished initializing param scaler.");
 
-  //// TEST: don't
-  //  net->params[net->numParams].idx = idx; 
-  /////
+  //... FIXME: can't remember what this is about.
+  // net->params[net->numParams].idx = idx; 
 
   net->params[net->numParams].play = 1;
 
@@ -1000,102 +996,14 @@ void net_send_params(void) {
 }
 
 // retrigger all inputs
-void net_retrigger_ins(void) {
-  u32 i;
-  netActive = 0;
-  for(i=0; i<net->numIns; i++) {
-    net_activate(i, net_get_in_value(i), NULL);
-  }
-  netActive = 1;
-}
-
-
-///////////////
-///////////////
-/// moving param descriptor offline
-#if 0
-/* // query the blackfin for parameter list and populate pnodes */
-/* u8 net_report_params(void) { */
-/*   volatile char buf[64]; */
-/*   volatile ParamDesc pdesc; */
-/*   volatile u32 numParams; */
-/*   s32 val; */
-/*   u8 i; */
- 
-/*   bfin_get_num_params(&numParams); */
-  
-/*   print_dbg("\r\nnumparams: "); */
-/*   print_dbg_ulong(numParams); */
-
-/*   if(numParams == 255) { */
-/*     print_dbg("\r\n report_params fail (255)"); */
-/*     return 0; */
+/* void net_retrigger_ins(void) { */
+/*   u32 i; */
+/*   netActive = 0; */
+/*   for(i=0; i<net->numIns; i++) { */
+/*     net_activate(i, net_get_in_value(i), NULL); */
 /*   } */
-  
-/*   if(numParams > 0) { */
-
-/*     net_clear_params(); */
-
-/*     for(i=0; i<numParams; i++) { */
-
-      
-/*       /////// */
-/*       /////// */
-/*       // TODO: offline param descriptor */
-/*       //      bfin_get_param_desc(i, &pdesc); */
-/*       ///////  */
-/*       ///// */
-
-
-/*       print_dbg("\r\n received descriptor for param, index : "); */
-/*       print_dbg_ulong(i); */
-/*       print_dbg(" , label : "); */
-/*       print_dbg((const char* )pdesc.label); */
-
-/*       print_dbg(" ; \t initial value: 0x"); */
-/*       val = bfin_get_param(i); */
-/*       print_dbg_hex(val); */
-
-/*       net_add_param(i, (const ParamDesc*)&pdesc); */
-/*       print_dbg("\r\n finished adding parameter."); */
-
-/*       //      net->params[net->numParams - 1].data.value = val;  */
-/*       //// use reverse-lookup method from scaler       */
-/*       net->params[net->numParams - 1].data.value =  */
-/* 	scaler_get_in( &(net->params[net->numParams - 1].scaler), val); */
-
-/*       net->params[net->numParams - 1].data.changed = 0;  */
-
-/*     } */
-/*   } else { */
-/*     print_dbg("\r\n bfin: no parameters reported"); */
-/*     return 0; */
-/*   } */
-  
-/*   delay_ms(100); */
-
-/*   print_dbg("\r\n checking module label "); */
-/*   bfin_get_module_name(buf); */
-
-/*   delay_ms(10); */
-
-/*   print_dbg("\r\n bfin module name: "); */
-/*   print_dbg((const char*)buf); */
-
-
-/*   //  if(numParams > 0 && numParams != 255) { */
-/*     /// test bfin_get_param on initial values */
-/*     //    print_dbg("\r\n reporting inital param values: "); */
-/*     //    for(i=0; i<numParams; ++i) { */
-/*     //  print_dbg("\r\n 0x"); */
-/*   //      val = bfin_get_param(i); */
-/*   //      print_dbg_hex(val); */
-/*       //    } */
-/*       //  } */
-/*   return (u8)numParams; */
-
+/*   netActive = 1; */
 /* } */
-#endif
 
 // pickle the network!
 u8* net_pickle(u8* dst) {
@@ -1166,7 +1074,6 @@ u8* net_unpickle(const u8* src) {
   // confusingly though, we don't call deinit() after this.
   // system ops are in the pickled scene data along with everything else.
   // net_deinit() should maybe be renamed.
-
 
   // get count of operators
   // (use 4 bytes for alignment)
