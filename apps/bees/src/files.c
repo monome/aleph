@@ -609,7 +609,6 @@ extern u8 buf_load_desc(u8* inbuf) {
   // bfin to be ready thus ensuring that module_init() has actually
   // had time to sets the parameter defaults.
   serial_debug("file_load_desc(): waiting for bfin to be ready before quering parameters");
-  bfin_wait_ready();
   serial_debug("blackfin ready.  Attempting param load...");
   dbuf = inbuf + 4;
   /// loop over params
@@ -617,6 +616,8 @@ extern u8 buf_load_desc(u8* inbuf) {
     net_clear_params();
     //    net->numParams = nparams;
     for(i=0; i<nparams; i++) {
+      bfin_wait_ready();
+
       //  FIXME: a little gross,
       // to be interleaving network and file manipulation like this...
       ///....
