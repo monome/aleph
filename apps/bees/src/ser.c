@@ -15,6 +15,7 @@
 #include "op.h"
 #include "preset.h"
 #include "app.h"
+#include "files.h"
 
 #define START_FLAG 0x12
 #define END_FLAG 0x13
@@ -332,8 +333,11 @@ void serial_bfinProgEnd() {
   app_pause();
   delay_ms(2);
   bfin_load_buf((const u8*) serial_bfinHexBuf, serial_bfinHexBuf_idx);
+  buf_load_desc((const u8*) serial_bfinDscBuf);
   free_mem(serial_bfinDscBuf);
+  free_mem(serial_bfinHexBuf);
   serial_bfinDscBuf = NULL;
+  serial_bfinHexBuf = NULL;
   app_resume();
 }
 
