@@ -594,7 +594,6 @@ extern u8 buf_load_desc(u8* inbuf) {
   int i;
   u8 ret = 0;
 
-  app_pause();
     // get number of parameters
   nbuf=inbuf;
   unpickle_32(nbuf, (u32*)&nparams);
@@ -628,6 +627,5 @@ extern u8 buf_load_desc(u8* inbuf) {
   } else {
     ret = 1;
   }
-  app_resume();
   return ret;
 }
