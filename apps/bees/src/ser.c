@@ -341,11 +341,14 @@ void serial_bfinDscChunk(char* c, int len) {
   serial_bfinDscBuf_idx += len - 1;
 }
 void serial_bfinProgEnd() {
+  net_disconnect_params();
+  delay_ms(2);
+
   app_pause();
-  delay_ms(2);
   bfin_load_buf((u8*) serial_bfinHexBuf, serial_bfinHexBuf_idx);
-  delay_ms(2);
   scene_set_module_name("serialdump");
+  app_resume();
+
   buf_load_desc((u8*) serial_bfinDscBuf);
 
   /* serial_bfinProgEcho(serial_bfinHexBuf, serial_bfinHexBuf_idx); */
@@ -356,10 +359,7 @@ void serial_bfinProgEnd() {
   serial_bfinHexBuf = NULL;
   bfin_wait_ready();
   bfin_enable();
-  /* redraw_ins(); */
-  /* redraw_dsp(); */
 
-  app_resume();
 }
 
 

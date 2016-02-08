@@ -594,6 +594,7 @@ extern u8 buf_load_desc(u8* inbuf) {
   int i;
   u8 ret = 0;
 
+  app_pause();
   serial_debug("Prepare to unpickle!");
     // get number of parameters
   nbuf=inbuf;
@@ -632,6 +633,6 @@ extern u8 buf_load_desc(u8* inbuf) {
     ret = 1;
   }
   serial_debug("Finished adding params");
-
+  app_resume ();
   return ret;
 }
