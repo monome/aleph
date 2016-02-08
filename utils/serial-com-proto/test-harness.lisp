@@ -278,9 +278,9 @@
   (let ((state :waiting)
 	(bytes nil))
     (iterate (until (eq state :done))
-	     (if (> (length bytes)
-		    4096)
-		 (break "why the long message?"))
+	     ;; (if (> (length bytes)
+	     ;; 	    4096)
+	     ;; 	 (break "why the long message?"))
 	     (let ((new-byte (read-byte stream)))
 	       (match state
 		 (:waiting (if (= new-byte *start-flag*)
@@ -293,6 +293,8 @@
 			    (setf state :receiving))
 		 (otherwise (error "indeterminate state")))))
     (reverse bytes)))
+
+(defvar *echo-bfin-prog* nil)
 
 (defun serial-unpack-message (bytes)
   (match bytes
@@ -332,7 +334,8 @@
      (cons :outputs-dump (unpack-string-xN outputs-dump)))
     ((list* #.(foreign-enum-value 'serial-msg-types :eSerialMsg_bfinProgEcho)
 	    outputs-dump)
-     (cons :bfin-echo outputs-dump))
+     (setf *echo-bfin-prog* outputs-dump)
+     (list :bfin-echo-received))
     (otherwise (break "unknown message: ~A" bytes))))
 
 
@@ -378,6 +381,17 @@
     (serial-send-aleph-module stream
 			      "/home/rick/git_checkouts/aleph/modules/grains/grains"
 			      "/home/rick/git_checkouts/aleph/modules/grains/grains.dsc" 0.001)))
+
+(defun hex-loopback-test ()
+  (let ((buf (make-array (length *echo-bfin-prog*))))
+    (with-open-file (module-stream "/home/rick/git_checkouts/aleph/modules/grains/grains"
+				   :direction :input
+				   :element-type '(unsigned-byte 8))
+      (read-sequence buf module-stream)
+      (let ((local-hex-buf (coerce buf 'list)))
+	(loop for c1 in local-hex-buf
+	   for c2 in *echo-bfin-prog*
+	   do (assert (= c1 c2)))))))
 
 
 ;;Some even stinkier debug stuff used to query fifo ~/foo

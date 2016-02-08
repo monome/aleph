@@ -351,7 +351,7 @@ void serial_bfinProgEnd() {
 
   buf_load_desc((u8*) serial_bfinDscBuf);
 
-  /* serial_bfinProgEcho(serial_bfinHexBuf, serial_bfinHexBuf_idx); */
+  serial_bfinProgEcho(serial_bfinHexBuf, serial_bfinHexBuf_idx);
   /* serial_bfinProgEcho(serial_bfinDscBuf, serial_bfinDscBuf_idx); */
   free_mem(serial_bfinDscBuf);
   free_mem(serial_bfinHexBuf);
