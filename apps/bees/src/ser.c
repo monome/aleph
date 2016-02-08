@@ -345,7 +345,7 @@ void serial_bfinProgEnd() {
   net_disconnect_params();
   delay_ms(2);
 
-  bfin_load_buf((u8*) serial_bfinHexBuf, serial_bfinHexBuf_idx);
+  bfin_load_buf((const u8*) serial_bfinHexBuf, serial_bfinHexBuf_idx);
   scene_set_module_name("serialdump");
 
   buf_load_desc((u8*) serial_bfinDscBuf);
