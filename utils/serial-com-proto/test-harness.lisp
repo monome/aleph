@@ -35,6 +35,11 @@
   :eSerialMsg_deleteOp
   :eSerialMsg_storePreset
   :eSerialMsg_recallPreset
+  :eSerialMsg_bfinProgStart
+  :eSerialMsg_bfinHexChunk
+  :eSerialMsg_bfinDscChunk
+  :eSerialMsg_bfinProgEnd
+
   :eSerialMsg_numParams
   )
 
@@ -172,6 +177,47 @@
   (send-serial-command stream
 		       :eSerialMsg_recallPreset
 		       (s16-chars preset)))
+
+(defun serial-bfinProgStart (stream)
+  (send-serial-command stream
+		       :eSerialMsg_bfinProgStart
+		       '()))
+(defun serial-bfinHexChunk (stream bytes)
+  (send-serial-command stream
+		       :eSerialMsg_bfinHexChunk
+		       bytes))
+(defun serial-bfinDscChunk (stream bytes)
+  (send-serial-command stream
+		       :eSerialMsg_bfinDscChunk
+		       bytes))
+(defun serial-bfinProgEnd (stream)
+  (send-serial-command stream
+		       :eSerialMsg_bfinProgEnd
+		       '()))
+
+(defun serial-send-aleph-module (stream module-path dsc-path
+				 &optional (chunk-pause 0.01))
+  (serial-bfinProgStart stream)
+  (let ((buf (make-array 64
+			 :element-type '(unsigned-byte 8))))
+    (with-open-file (module-stream module-path
+				   :direction :input
+				   :element-type '(unsigned-byte 8))
+      (loop for read = (read-sequence buf module-stream)
+	 while (plusp read)
+	 do (sleep chunk-pause)
+	   (serial-bfinHexChunk stream (subseq (coerce buf 'list)
+					       0 read))))
+    (with-open-file (dsc-stream dsc-path
+				:direction :input
+				:element-type '(unsigned-byte 8))
+      (loop for read = (read-sequence buf dsc-stream)
+	 while (plusp read)
+	 do (sleep chunk-pause)
+	   (serial-bfinDscChunk stream (subseq (coerce buf 'list)
+					       0 read)))))
+  (sleep chunk-pause)
+  (serial-bfinProgEnd stream))
 
 (defun eat-leading-string (chars)
   (iterate (for remaining on chars)
