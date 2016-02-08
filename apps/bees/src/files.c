@@ -594,7 +594,7 @@ extern u8 buf_load_desc(u8* inbuf) {
   int i;
   u8 ret = 0;
 
-  serial_debug("\r\nPrepare to unpickle!");
+  serial_debug("Prepare to unpickle!");
     // get number of parameters
   nbuf=inbuf;
   unpickle_32(nbuf, (u32*)&nparams);
@@ -607,9 +607,9 @@ extern u8 buf_load_desc(u8* inbuf) {
   // gets the default values from the module via spi we wait for the
   // bfin to be ready thus ensuring that module_init() has actually
   // had time to sets the parameter defaults.
-  serial_debug("\r\n file_load_desc(): waiting for bfin to be ready before quering parameters");
+  serial_debug("file_load_desc(): waiting for bfin to be ready before quering parameters");
   bfin_wait_ready();
-  serial_debug("\r\n blackfin ready.  Attempting param load...");
+  serial_debug("blackfin ready.  Attempting param load...");
   dbuf = inbuf + 4;
   /// loop over params
   if(nparams > 0) {
@@ -625,13 +625,13 @@ extern u8 buf_load_desc(u8* inbuf) {
       net_add_param(i, (const ParamDesc*)(&desc));
       // read into desc buffer
       dbuf += PARAM_DESC_PICKLE_BYTES;
-      serial_debug("\r\n Added a param");
+      serial_debug("Added a param");
 
      }
   } else {
     ret = 1;
   }
-  serial_debug("\r\n Finished adding params");
+  serial_debug("Finished adding params");
 
   return ret;
 }
