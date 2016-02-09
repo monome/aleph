@@ -379,20 +379,30 @@
 			  :if-exists :overwrite
 			  :element-type '(unsigned-byte 8))
     (serial-send-aleph-module stream
-			      "/home/rick/git_checkouts/aleph/modules/grains/grains"
+			      "/home/rick/git_checkouts/aleph/modules/grains/grains.ldr"
 			      "/home/rick/git_checkouts/aleph/modules/grains/grains.dsc" 0.001)))
 
+(defvar *local-hex-buf* nil)
+
 (defun hex-loopback-test ()
-  (let ((buf (make-array (length *echo-bfin-prog*))))
-    (with-open-file (module-stream "/home/rick/git_checkouts/aleph/modules/grains/grains"
+  (let ((buf (make-array (* 1024 256) :initial-element nil
+			 :fill-pointer (* 1024 256))))
+    (with-open-file (module-stream "/home/rick/git_checkouts/aleph/modules/analyser/analyser.ldr"
 				   :direction :input
 				   :element-type '(unsigned-byte 8))
-      (read-sequence buf module-stream)
-      (let ((local-hex-buf (coerce buf 'list)))
-	(loop for c1 in local-hex-buf
+      (setf (fill-pointer buf)
+	    (read-sequence buf module-stream))
+      (setf *local-hex-buf* (coerce buf 'list))
+      (let ((i 0))
+	(loop for c1 in *local-hex-buf*
 	   for c2 in *echo-bfin-prog*
-	   do (assert (= c1 c2)))))))
+	   do (unless (= c1 c2)
+		(break "~Ath char doesn't match" i))
+	     (incf i))))))
 
+(defun hexdump (li &optional)
+  (loop for el in li
+     collect (format nil "~X" el)))
 
 ;;Some even stinkier debug stuff used to query fifo ~/foo
 #+nil
