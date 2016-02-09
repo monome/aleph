@@ -199,6 +199,13 @@ u8 files_load_dsp_name(const char* name) {
 
       // reboot the dsp with new firmware in RAM
       bfin_load_buf((const u8*)bfinLdrData, size);
+
+      // DEBUG uncomment this to send the loaded module back
+      // over serial connection
+      /* app_pause(); */
+      /* serial_bfinProgEcho(bfinLdrData, size); */
+      /* app_resume(); */
+
       // free the buffer!
       free_mem(bfinLdrData);
 
@@ -583,57 +590,4 @@ extern u8 files_load_desc(const char* name) {
   return ret;
 }
 
-extern u8 buf_load_desc(u8* inbuf) {
-  int nparams = -1;
-  // word buffer for 4-byte unpickling
-  u8* nbuf ;
-  // buffer for binary blob of single descriptor
-  u8* dbuf ;
-  // unpacked descriptor
-  ParamDesc desc;
-  int i;
-  u8 ret = 0;
 
-  app_pause();
-  serial_debug("Prepare to unpickle!");
-    // get number of parameters
-  nbuf=inbuf;
-  unpickle_32(nbuf, (u32*)&nparams);
-
-  print_dbg("\r\n file_load_desc(): nparams = 0x");
-  print_dbg_hex(nparams);
-
-  // on boot the bfin is put back into spi slave mode before the
-  // module_init() is called. since net_add_param() below ultimately
-  // gets the default values from the module via spi we wait for the
-  // bfin to be ready thus ensuring that module_init() has actually
-  // had time to sets the parameter defaults.
-  serial_debug("file_load_desc(): waiting for bfin to be ready before quering parameters");
-  serial_debug("blackfin ready.  Attempting param load...");
-  dbuf = inbuf + 4;
-  /// loop over params
-  if(nparams > 0) {
-    net_clear_params();
-    //    net->numParams = nparams;
-    for(i=0; i<nparams; i++) {
-      bfin_wait_ready();
-
-      //  FIXME: a little gross,
-      // to be interleaving network and file manipulation like this...
-      ///....
-      // unpickle directly into network descriptor memory
-      pdesc_unpickle( &desc, dbuf );
-      // copy descriptor to network and increment count
-      net_add_param(i, (const ParamDesc*)(&desc));
-      // read into desc buffer
-      dbuf += PARAM_DESC_PICKLE_BYTES;
-      serial_debug("Added a param");
-
-     }
-  } else {
-    ret = 1;
-  }
-  serial_debug("Finished adding params");
-  app_resume ();
-  return ret;
-}

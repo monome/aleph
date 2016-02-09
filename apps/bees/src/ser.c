@@ -15,7 +15,7 @@
 #include "op.h"
 #include "preset.h"
 #include "app.h"
-#include "files.h"
+#include "param.h"
 #include "scene.h"
 
 #define START_FLAG 0x12
@@ -350,7 +350,9 @@ void serial_bfinProgEnd() {
 
   buf_load_desc((u8*) serial_bfinDscBuf);
 
-  serial_bfinProgEcho(serial_bfinHexBuf, serial_bfinHexBuf_idx);
+  // DEBUG uncomment this to send the loaded module back
+  // over serial connection
+  /* serial_bfinProgEcho(serial_bfinHexBuf, serial_bfinHexBuf_idx); */
   /* serial_bfinProgEcho(serial_bfinDscBuf, serial_bfinDscBuf_idx); */
   free_mem(serial_bfinDscBuf);
   free_mem(serial_bfinHexBuf);
