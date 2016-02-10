@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>D38C8989-7DEE-41DC-AE71-2D924B93959C</string>
+	<key>IDESourceControlProjectName</key>
+	<string>beekeep</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>D34667A688C80A871C486C95B9D3EBC2953B7FA0</key>
+		<string>https://github.com/catfact/aleph.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>utils/beekeep_juce/Builds/MacOSX/beekeep.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>D34667A688C80A871C486C95B9D3EBC2953B7FA0</key>
+		<string>../../../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/catfact/aleph.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>D34667A688C80A871C486C95B9D3EBC2953B7FA0</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>D34667A688C80A871C486C95B9D3EBC2953B7FA0</string>
+			<key>IDESourceControlWCCName</key>
+			<string>aleph</string>
+		</dict>
+	</array>
+</dict>
+</plist>

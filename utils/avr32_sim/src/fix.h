@@ -7,6 +7,10 @@
 #ifndef _ALEPH_FIX_H_
 #define _ALEPH_FIX_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "libfixmath/fix16.h"
 #include "types.h"
 //#include "fract32_emu.h"
@@ -55,6 +59,10 @@ extern int itoa_whole_lj(int val, char* buf);
 
 // fractional part to ascii, fixed length
 extern void itoa_fract(int val, char* buf);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

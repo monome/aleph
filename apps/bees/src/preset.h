@@ -6,6 +6,10 @@
 #ifndef _PRESET_H_
 #define _PRESET_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "net.h"
 #include "op_math.h"
 
@@ -93,6 +97,9 @@ extern u8 preset_out_enabled(u32 preIdx, u32 inIdx);
 // clear a given preset
 extern void preset_clear(int idx);
 
+#ifdef __cplusplus
+}
+#endif
 
 
 

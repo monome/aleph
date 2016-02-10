@@ -3,6 +3,11 @@
 
 #include "types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 /*! \brief Prints a string of characters to DBG_USART.
  *
  * \param str The string of characters to print.
@@ -87,6 +92,10 @@ extern void print_byte_array (u8* data, u32 size, u32 linebreak);
 
 // print a unicode string (stripping to ascii)
 void print_unicode_string(char* str, u32 len);
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif

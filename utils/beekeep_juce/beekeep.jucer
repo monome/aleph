@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="KyPOZQ" name="beekeep" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.beekeep" includeBinaryInAppConfig="1"
+              jucerVersion="4.1.0">
+  <MAINGROUP id="qrFqYg" name="beekeep">
+    <GROUP id="{20D0B394-6D19-B446-C16A-8FE43DC7C723}" name="Source">
+      <FILE id="SyFN0X" name="MainWindow.cpp" compile="1" resource="0" file="Source/MainWindow.cpp"/>
+      <FILE id="WF3wGW" name="MainWindow.h" compile="0" resource="0" file="Source/MainWindow.h"/>
+      <FILE id="OgLRI0" name="OpComponent.cpp" compile="1" resource="0" file="Source/OpComponent.cpp"/>
+      <FILE id="ArQFS6" name="OpComponent.h" compile="0" resource="0" file="Source/OpComponent.h"/>
+      <FILE id="qaPKMR" name="OpGraph.cpp" compile="1" resource="0" file="Source/OpGraph.cpp"/>
+      <FILE id="ucnqZk" name="OpGraph.h" compile="0" resource="0" file="Source/OpGraph.h"/>
+      <FILE id="N3YWQc" name="flash_beekeep.c" compile="1" resource="0" file="Source/flash_beekeep.c"/>
+      <FILE id="a645Xd" name="app_beekeep.c" compile="1" resource="0" file="Source/app_beekeep.c"/>
+      <FILE id="HxnltQ" name="files.c" compile="1" resource="0" file="Source/files.c"/>
+      <FILE id="LMZF7C" name="handler.c" compile="1" resource="0" file="Source/handler.c"/>
+      <GROUP id="{2A2683C3-A265-B5AB-66F4-77AC38CFFF51}" name="common">
+        <FILE id="NrGacW" name="buffer_common.h" compile="0" resource="0" file="../../common/buffer_common.h"/>
+        <FILE id="Nimdvy" name="fixtest.c" compile="1" resource="0" file="../../common/fixtest.c"/>
+        <FILE id="dZLyqo" name="fract32_emu.c" compile="1" resource="0" file="../../common/fract32_emu.c"/>
+        <FILE id="BsvWJ9" name="fract32_emu.h" compile="0" resource="0" file="../../common/fract32_emu.h"/>
+        <FILE id="GjT9Qn" name="module_common.h" compile="0" resource="0" file="../../common/module_common.h"/>
+        <FILE id="wduVYp" name="param_common.h" compile="0" resource="0" file="../../common/param_common.h"/>
+        <FILE id="nfBDVd" name="protocol.h" compile="0" resource="0" file="../../common/protocol.h"/>
+        <FILE id="ZLqdVS" name="types.h" compile="0" resource="0" file="../../common/types.h"/>
+      </GROUP>
+      <GROUP id="{BA9FAF47-7EBD-677A-2988-295EB4124311}" name="avr32_sim">
+        <GROUP id="{94E58F38-CEDF-95E6-E9B7-B4B4BB5638BE}" name="src">
+          <FILE id="ZRX0rd" name="adc.c" compile="1" resource="0" file="../avr32_sim/src/adc.c"/>
+          <FILE id="ZPErta" name="adc.h" compile="0" resource="0" file="../avr32_sim/src/adc.h"/>
+          <FILE id="SqFZ0P" name="app.c" compile="1" resource="0" file="../avr32_sim/src/app.c"/>
+          <FILE id="L8kAcQ" name="app.h" compile="0" resource="0" file="../avr32_sim/src/app.h"/>
+          <FILE id="dvHAgA" name="bfin.c" compile="1" resource="0" file="../avr32_sim/src/bfin.c"/>
+          <FILE id="XGbWca" name="bfin.h" compile="0" resource="0" file="../avr32_sim/src/bfin.h"/>
+          <FILE id="BpvEXs" name="control.c" compile="1" resource="0" file="../avr32_sim/src/control.c"/>
+          <FILE id="Q8L8UV" name="control.h" compile="0" resource="0" file="../avr32_sim/src/control.h"/>
+          <FILE id="dCuikU" name="delay.c" compile="1" resource="0" file="../avr32_sim/src/delay.c"/>
+          <FILE id="yEMvqn" name="delay.h" compile="0" resource="0" file="../avr32_sim/src/delay.h"/>
+          <FILE id="NMNjYt" name="encoders.c" compile="1" resource="0" file="../avr32_sim/src/encoders.c"/>
+          <FILE id="xAPFpP" name="encoders.h" compile="0" resource="0" file="../avr32_sim/src/encoders.h"/>
+          <FILE id="fD4Ref" name="event_types.h" compile="0" resource="0" file="../avr32_sim/src/event_types.h"/>
+          <FILE id="bcedUx" name="events.c" compile="1" resource="0" file="../avr32_sim/src/events.c"/>
+          <FILE id="BSGThy" name="events.h" compile="0" resource="0" file="../avr32_sim/src/events.h"/>
+          <FILE id="d8ETbZ" name="filesystem.c" compile="1" resource="0" file="../avr32_sim/src/filesystem.c"/>
+          <FILE id="thRsxs" name="filesystem.h" compile="0" resource="0" file="../avr32_sim/src/filesystem.h"/>
+          <FILE id="f3MgPI" name="fix.c" compile="1" resource="0" file="../avr32_sim/src/fix.c"/>
+          <FILE id="dcayTk" name="fix.h" compile="0" resource="0" file="../avr32_sim/src/fix.h"/>
+          <FILE id="odkjlH" name="flash.c" compile="1" resource="0" file="../avr32_sim/src/flash.c"/>
+          <FILE id="g6F061" name="flash.h" compile="0" resource="0" file="../avr32_sim/src/flash.h"/>
+          <FILE id="Dbisa4" name="font.c" compile="1" resource="0" file="../avr32_sim/src/font.c"/>
+          <FILE id="F1VCee" name="font.h" compile="0" resource="0" file="../avr32_sim/src/font.h"/>
+          <GROUP id="{9BFEEFD6-35AC-D7F9-D110-51C8D76D6BF2}" name="fonts">
+            <FILE id="w5C8so" name="dejavu_numerals_24.c" compile="1" resource="0"
+                  file="../avr32_sim/src/fonts/dejavu_numerals_24.c"/>
+            <FILE id="t3xwE2" name="dejavu_numerals_24.h" compile="0" resource="0"
+                  file="../avr32_sim/src/fonts/dejavu_numerals_24.h"/>
+            <FILE id="c0ioUW" name="ume_tgo5_18.c" compile="1" resource="0" file="../avr32_sim/src/fonts/ume_tgo5_18.c"/>
+            <FILE id="F4MMGM" name="ume_tgo5_18.h" compile="0" resource="0" file="../avr32_sim/src/fonts/ume_tgo5_18.h"/>
+          </GROUP>
+          <FILE id="t9IAJV" name="i2c.c" compile="1" resource="0" file="../avr32_sim/src/i2c.c"/>
+          <FILE id="yjSAcv" name="i2c.h" compile="0" resource="0" file="../avr32_sim/src/i2c.h"/>
+          <FILE id="eSbFqH" name="init.c" compile="1" resource="0" file="../avr32_sim/src/init.c"/>
+          <FILE id="SEq4Bd" name="init.h" compile="0" resource="0" file="../avr32_sim/src/init.h"/>
+          <FILE id="oaBkDJ" name="interrupts.c" compile="1" resource="0" file="../avr32_sim/src/interrupts.c"/>
+          <FILE id="x1Mv1J" name="interrupts.h" compile="0" resource="0" file="../avr32_sim/src/interrupts.h"/>
+          <GROUP id="{26CBB7F3-ED77-A70B-37B4-66B7785A6576}" name="libfixmath">
+            <FILE id="g0chEl" name="fix16.c" compile="1" resource="0" file="../avr32_sim/src/libfixmath/fix16.c"/>
+            <FILE id="QGLCMZ" name="fix16.h" compile="0" resource="0" file="../avr32_sim/src/libfixmath/fix16.h"/>
+            <FILE id="qBTEdT" name="fix16.hpp" compile="0" resource="0" file="../avr32_sim/src/libfixmath/fix16.hpp"/>
+            <FILE id="wwj6uf" name="fix16_exp.c" compile="1" resource="0" file="../avr32_sim/src/libfixmath/fix16_exp.c"/>
+            <FILE id="k05uj2" name="fix16_sqrt.c" compile="1" resource="0" file="../avr32_sim/src/libfixmath/fix16_sqrt.c"/>
+            <FILE id="JNfPya" name="fix16_trig.c" compile="1" resource="0" file="../avr32_sim/src/libfixmath/fix16_trig.c"/>
+            <FILE id="KBTS3Y" name="fix16_trig_sin_lut.h" compile="0" resource="0"
+                  file="../avr32_sim/src/libfixmath/fix16_trig_sin_lut.h"/>
+            <FILE id="xyvZCy" name="fix32.c" compile="1" resource="0" file="../avr32_sim/src/libfixmath/fix32.c"/>
+            <FILE id="FpEg3X" name="fix32.h" compile="0" resource="0" file="../avr32_sim/src/libfixmath/fix32.h"/>
+            <FILE id="nDNwzm" name="fixmath.h" compile="0" resource="0" file="../avr32_sim/src/libfixmath/fixmath.h"/>
+            <FILE id="Nw8DRr" name="fract32.c" compile="1" resource="0" file="../avr32_sim/src/libfixmath/fract32.c"/>
+            <FILE id="C6TDt2" name="fract32.h" compile="0" resource="0" file="../avr32_sim/src/libfixmath/fract32.h"/>
+            <FILE id="hJVKD3" name="int64.h" compile="0" resource="0" file="../avr32_sim/src/libfixmath/int64.h"/>
+            <FILE id="sLjIFL" name="libfixmath.cbp" compile="0" resource="1" file="../avr32_sim/src/libfixmath/libfixmath.cbp"/>
+            <FILE id="vDnF5k" name="license.txt" compile="0" resource="1" file="../avr32_sim/src/libfixmath/license.txt"/>
+            <FILE id="XdaaKb" name="Makefile" compile="0" resource="1" file="../avr32_sim/src/libfixmath/Makefile"/>
+            <FILE id="d12X8a" name="uint32.c" compile="1" resource="0" file="../avr32_sim/src/libfixmath/uint32.c"/>
+            <FILE id="JSXWZY" name="uint32.h" compile="0" resource="0" file="../avr32_sim/src/libfixmath/uint32.h"/>
+          </GROUP>
+          <FILE id="KqtFgm" name="memory.c" compile="1" resource="0" file="../avr32_sim/src/memory.c"/>
+          <FILE id="RJK55m" name="memory.h" compile="0" resource="0" file="../avr32_sim/src/memory.h"/>
+          <FILE id="YH60cR" name="monome.c" compile="1" resource="0" file="../avr32_sim/src/monome.c"/>
+          <FILE id="BEiJEC" name="monome.h" compile="0" resource="0" file="../avr32_sim/src/monome.h"/>
+          <FILE id="VVw5af" name="print_funcs.c" compile="1" resource="0" file="../avr32_sim/src/print_funcs.c"/>
+          <FILE id="TIQD3r" name="print_funcs.h" compile="0" resource="0" file="../avr32_sim/src/print_funcs.h"/>
+          <FILE id="yz0qGd" name="region.c" compile="1" resource="0" file="../avr32_sim/src/region.c"/>
+          <FILE id="DQ495d" name="region.h" compile="0" resource="0" file="../avr32_sim/src/region.h"/>
+          <FILE id="ClL5Fj" name="screen.c" compile="1" resource="0" file="../avr32_sim/src/screen.c"/>
+          <FILE id="RQWyLl" name="screen.h" compile="0" resource="0" file="../avr32_sim/src/screen.h"/>
+          <FILE id="mpjsf1" name="serial.c" compile="1" resource="0" file="../avr32_sim/src/serial.c"/>
+          <FILE id="uOkczo" name="serial.h" compile="0" resource="0" file="../avr32_sim/src/serial.h"/>
+          <FILE id="v4VoET" name="simple_string.c" compile="1" resource="0" file="../avr32_sim/src/simple_string.c"/>
+          <FILE id="oQwisV" name="simple_string.h" compile="0" resource="0" file="../avr32_sim/src/simple_string.h"/>
+          <FILE id="qJp2Am" name="switches.c" compile="1" resource="0" file="../avr32_sim/src/switches.c"/>
+          <FILE id="SbLQEX" name="switches.h" compile="0" resource="0" file="../avr32_sim/src/switches.h"/>
+          <FILE id="rTV14q" name="timers.c" compile="1" resource="0" file="../avr32_sim/src/timers.c"/>
+          <FILE id="H6S3hu" name="timers.h" compile="0" resource="0" file="../avr32_sim/src/timers.h"/>
+          <FILE id="vSRL4G" name="types.h" compile="0" resource="0" file="../avr32_sim/src/types.h"/>
+          <GROUP id="{1F93093E-93CE-77D0-000E-EED9C22BF231}" name="usb">
+            <GROUP id="{53110B86-15D9-C861-E6B2-7C0856A1F850}" name="ftdi">
+              <FILE id="u6ieEX" name="ftdi.c" compile="1" resource="0" file="../avr32_sim/src/usb/ftdi/ftdi.c"/>
+              <FILE id="eYY6Us" name="ftdi.h" compile="0" resource="0" file="../avr32_sim/src/usb/ftdi/ftdi.h"/>
+            </GROUP>
+            <GROUP id="{33C1D158-5457-D837-ECEA-FD709C114DAB}" name="hid">
+              <FILE id="Nk2PcR" name="hid.c" compile="1" resource="0" file="../avr32_sim/src/usb/hid/hid.c"/>
+              <FILE id="xenhvp" name="hid.h" compile="0" resource="0" file="../avr32_sim/src/usb/hid/hid.h"/>
+            </GROUP>
+            <GROUP id="{3D8FF29E-698C-D3DA-33CC-B71CFE408872}" name="midi">
+              <FILE id="vD90dP" name="midi.c" compile="1" resource="0" file="../avr32_sim/src/usb/midi/midi.c"/>
+              <FILE id="DApGEz" name="midi.h" compile="0" resource="0" file="../avr32_sim/src/usb/midi/midi.h"/>
+            </GROUP>
+          </GROUP>
+          <FILE id="JxwryW" name="usb.c" compile="1" resource="0" file="../avr32_sim/src/usb.c"/>
+          <FILE id="U3Wa2f" name="usb.h" compile="0" resource="0" file="../avr32_sim/src/usb.h"/>
+        </GROUP>
+        <FILE id="OdItvf" name="avr32_sim.mk" compile="0" resource="1" file="../avr32_sim/avr32_sim.mk"/>
+      </GROUP>
+      <GROUP id="{1969A1A1-D8F1-6786-A54E-C6D863E371CA}" name="bees">
+        <FILE id="G26rR5" name="app_timers.c" compile="1" resource="0" file="../../apps/bees/src/app_timers.c"/>
+        <FILE id="l26oir" name="app_timers.h" compile="0" resource="0" file="../../apps/bees/src/app_timers.h"/>
+        <FILE id="Y9n150" name="net.c" compile="1" resource="0" file="../../apps/bees/src/net.c"/>
+        <FILE id="vZb2mk" name="net.h" compile="0" resource="0" file="../../apps/bees/src/net.h"/>
+        <FILE id="ywJAqo" name="net_hid.c" compile="1" resource="0" file="../../apps/bees/src/net_hid.c"/>
+        <FILE id="hVUzMp" name="net_hid.h" compile="0" resource="0" file="../../apps/bees/src/net_hid.h"/>
+        <FILE id="O0BYvz" name="net_midi.c" compile="1" resource="0" file="../../apps/bees/src/net_midi.c"/>
+        <FILE id="c9YtPK" name="net_midi.h" compile="0" resource="0" file="../../apps/bees/src/net_midi.h"/>
+        <FILE id="vyygKn" name="net_monome.c" compile="1" resource="0" file="../../apps/bees/src/net_monome.c"/>
+        <FILE id="ALt2Hv" name="net_monome.h" compile="0" resource="0" file="../../apps/bees/src/net_monome.h"/>
+        <FILE id="QeKhJ0" name="net_poll.c" compile="1" resource="0" file="../../apps/bees/src/net_poll.c"/>
+        <FILE id="xAOYFM" name="net_poll.h" compile="0" resource="0" file="../../apps/bees/src/net_poll.h"/>
+        <FILE id="x3NMQX" name="net_protected.h" compile="0" resource="0" file="../../apps/bees/src/net_protected.h"/>
+        <FILE id="avO4zp" name="op.c" compile="1" resource="0" file="../../apps/bees/src/op.c"/>
+        <FILE id="LNnPxo" name="op.h" compile="0" resource="0" file="../../apps/bees/src/op.h"/>
+        <FILE id="twjThq" name="op_derived.h" compile="0" resource="0" file="../../apps/bees/src/op_derived.h"/>
+        <FILE id="BNAMGn" name="op_gfx.c" compile="1" resource="0" file="../../apps/bees/src/op_gfx.c"/>
+        <FILE id="TrJ20W" name="op_gfx.h" compile="0" resource="0" file="../../apps/bees/src/op_gfx.h"/>
+        <FILE id="A42veD" name="op_math.c" compile="1" resource="0" file="../../apps/bees/src/op_math.c"/>
+        <FILE id="xSZ7K1" name="op_math.h" compile="0" resource="0" file="../../apps/bees/src/op_math.h"/>
+        <GROUP id="{43802E87-B5FD-DDD0-E8A1-8A995E5F46EC}" name="ops">
+          <FILE id="dnSX3L" name="op_accum.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_accum.c"/>
+          <FILE id="MBrkv1" name="op_accum.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_accum.h"/>
+          <FILE id="f4v0MP" name="op_accum.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_accum.o"/>
+          <FILE id="IAxqoC" name="op_adc.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_adc.c"/>
+          <FILE id="xuNtFa" name="op_adc.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_adc.h"/>
+          <FILE id="jmn5yI" name="op_adc.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_adc.o"/>
+          <FILE id="uHGXbs" name="op_add.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_add.c"/>
+          <FILE id="DfGPXj" name="op_add.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_add.h"/>
+          <FILE id="ERhMQt" name="op_add.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_add.o"/>
+          <FILE id="avbQlm" name="op_bars.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_bars.c"/>
+          <FILE id="PKpKDT" name="op_bars.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_bars.h"/>
+          <FILE id="nG1rAx" name="op_bars.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_bars.o"/>
+          <FILE id="kbNl2u" name="op_bars8.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_bars8.c"/>
+          <FILE id="feROTh" name="op_bars8.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_bars8.h"/>
+          <FILE id="gK6F1q" name="op_bignum.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_bignum.c"/>
+          <FILE id="oyOAwf" name="op_bignum.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_bignum.h"/>
+          <FILE id="mz5ygJ" name="op_bignum.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_bignum.o"/>
+          <FILE id="cC3KwS" name="op_bits.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_bits.c"/>
+          <FILE id="nEFZdl" name="op_bits.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_bits.h"/>
+          <FILE id="KQyrPS" name="op_bits.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_bits.o"/>
+          <FILE id="In8qKK" name="op_cascades.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_cascades.c"/>
+          <FILE id="JGmcEv" name="op_cascades.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_cascades.h"/>
+          <FILE id="OReZly" name="op_cascades.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_cascades.o"/>
+          <FILE id="AY8q3K" name="op_change.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_change.c"/>
+          <FILE id="KeQTRI" name="op_change.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_change.h"/>
+          <FILE id="QnhuG1" name="op_delay.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_delay.c"/>
+          <FILE id="JCjQL6" name="op_delay.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_delay.h"/>
+          <FILE id="dPtNF7" name="op_delay.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_delay.o"/>
+          <FILE id="g9qiTO" name="op_div.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_div.c"/>
+          <FILE id="Nyy6ts" name="op_div.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_div.h"/>
+          <FILE id="OvaTD4" name="op_div.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_div.o"/>
+          <FILE id="GFcxb0" name="op_divr.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_divr.c"/>
+          <FILE id="YDiXTu" name="op_divr.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_divr.h"/>
+          <FILE id="srtM9e" name="op_divr.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_divr.o"/>
+          <FILE id="rdYQBz" name="op_enc.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_enc.c"/>
+          <FILE id="Vc7xnQ" name="op_enc.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_enc.h"/>
+          <FILE id="ruOYGX" name="op_enc.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_enc.o"/>
+          <FILE id="hX3bUA" name="op_fade.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_fade.c"/>
+          <FILE id="GXWwSa" name="op_fade.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_fade.h"/>
+          <FILE id="JORV45" name="op_fade.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_fade.o"/>
+          <FILE id="geX1mR" name="op_gate.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_gate.c"/>
+          <FILE id="fRADsr" name="op_gate.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_gate.h"/>
+          <FILE id="y06kkZ" name="op_gate.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_gate.o"/>
+          <FILE id="XzGI3W" name="op_hid_word.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_hid_word.c"/>
+          <FILE id="NTjgfM" name="op_hid_word.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_hid_word.h"/>
+          <FILE id="nnl10o" name="op_hid_word.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_hid_word.o"/>
+          <FILE id="ZcNhON" name="op_history.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_history.c"/>
+          <FILE id="IXUlNo" name="op_history.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_history.h"/>
+          <FILE id="Q0mVya" name="op_history.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_history.o"/>
+          <FILE id="IVZzji" name="op_is.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_is.c"/>
+          <FILE id="qAXfkf" name="op_is.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_is.h"/>
+          <FILE id="TsvDVf" name="op_is.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_is.o"/>
+          <FILE id="ozPnmu" name="op_life.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_life.c"/>
+          <FILE id="DogyhT" name="op_life.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_life.h"/>
+          <FILE id="QN8WUx" name="op_life.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_life.o"/>
+          <FILE id="pQjfCf" name="op_list2.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_list2.c"/>
+          <FILE id="BH4RNG" name="op_list2.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_list2.h"/>
+          <FILE id="am44Hl" name="op_list2.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_list2.o"/>
+          <FILE id="xaUnc9" name="op_list8.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_list8.c"/>
+          <FILE id="dyfgha" name="op_list8.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_list8.h"/>
+          <FILE id="WhQ3jZ" name="op_list8.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_list8.o"/>
+          <FILE id="bzuWfs" name="op_list16.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_list16.c"/>
+          <FILE id="CD6AY7" name="op_list16.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_list16.h"/>
+          <FILE id="MZTLBQ" name="op_list16.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_list16.o"/>
+          <FILE id="mnBAsj" name="op_logic.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_logic.c"/>
+          <FILE id="o5Xxp1" name="op_logic.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_logic.h"/>
+          <FILE id="Dw2vpr" name="op_logic.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_logic.o"/>
+          <FILE id="mazxas" name="op_metro.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_metro.c"/>
+          <FILE id="YTmUOi" name="op_metro.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_metro.h"/>
+          <FILE id="yD0dNd" name="op_metro.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_metro.o"/>
+          <FILE id="ojgLbe" name="op_midi_cc.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_midi_cc.c"/>
+          <FILE id="mDLcY0" name="op_midi_cc.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_midi_cc.h"/>
+          <FILE id="fx7FMq" name="op_midi_cc.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_midi_cc.o"/>
+          <FILE id="Y80zEV" name="op_midi_note.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_midi_note.c"/>
+          <FILE id="EW9OtW" name="op_midi_note.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_midi_note.h"/>
+          <FILE id="ozq0p4" name="op_midi_note.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_midi_note.o"/>
+          <FILE id="q4qcw6" name="op_midi_out_cc.c" compile="1" resource="0"
+                file="../../apps/bees/src/ops/op_midi_out_cc.c"/>
+          <FILE id="uZM6Bp" name="op_midi_out_cc.h" compile="0" resource="0"
+                file="../../apps/bees/src/ops/op_midi_out_cc.h"/>
+          <FILE id="Ye9Au2" name="op_midi_out_note.c" compile="1" resource="0"
+                file="../../apps/bees/src/ops/op_midi_out_note.c"/>
+          <FILE id="znKQgy" name="op_midi_out_note.h" compile="0" resource="0"
+                file="../../apps/bees/src/ops/op_midi_out_note.h"/>
+          <FILE id="rlCFrj" name="op_midi_out_note.o" compile="0" resource="1"
+                file="../../apps/bees/src/ops/op_midi_out_note.o"/>
+          <FILE id="hO65Lb" name="op_mod.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_mod.c"/>
+          <FILE id="qZ5JUx" name="op_mod.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_mod.h"/>
+          <FILE id="qJYqZ7" name="op_mod.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_mod.o"/>
+          <FILE id="hAvyip" name="op_monome_arc.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_monome_arc.c"/>
+          <FILE id="GS0FE0" name="op_monome_arc.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_monome_arc.h"/>
+          <FILE id="RvuFZV" name="op_monome_arc.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_monome_arc.o"/>
+          <FILE id="h4nHq5" name="op_monome_grid_raw.c" compile="1" resource="0"
+                file="../../apps/bees/src/ops/op_monome_grid_raw.c"/>
+          <FILE id="xqbZpT" name="op_monome_grid_raw.h" compile="0" resource="0"
+                file="../../apps/bees/src/ops/op_monome_grid_raw.h"/>
+          <FILE id="eajl5M" name="op_monome_grid_raw.o" compile="0" resource="1"
+                file="../../apps/bees/src/ops/op_monome_grid_raw.o"/>
+          <FILE id="ocZ0ca" name="op_mul.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_mul.c"/>
+          <FILE id="UMRuDC" name="op_mul.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_mul.h"/>
+          <FILE id="C5sBsL" name="op_mul.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_mul.o"/>
+          <FILE id="ii4ZLk" name="op_param.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_param.c"/>
+          <FILE id="sp5fPu" name="op_param.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_param.h"/>
+          <FILE id="k6PRTz" name="op_preset.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_preset.c"/>
+          <FILE id="zamRlv" name="op_preset.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_preset.h"/>
+          <FILE id="rhPvut" name="op_preset.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_preset.o"/>
+          <FILE id="vOizuj" name="op_random.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_random.c"/>
+          <FILE id="xmfenv" name="op_random.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_random.h"/>
+          <FILE id="Z1oEE2" name="op_random.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_random.o"/>
+          <FILE id="Ve2FWX" name="op_route.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_route.c"/>
+          <FILE id="Eenfle" name="op_route.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_route.h"/>
+          <FILE id="P8XFhp" name="op_route.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_route.o"/>
+          <FILE id="XepPEi" name="op_route8.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_route8.c"/>
+          <FILE id="Z8HGwj" name="op_route8.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_route8.h"/>
+          <FILE id="bt3Wsu" name="op_route8.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_route8.o"/>
+          <FILE id="HxRRyt" name="op_route16.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_route16.c"/>
+          <FILE id="y7vl4x" name="op_route16.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_route16.h"/>
+          <FILE id="HtRrxP" name="op_screen.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_screen.c"/>
+          <FILE id="U1ZhS8" name="op_screen.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_screen.h"/>
+          <FILE id="s2l77z" name="op_screen.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_screen.o"/>
+          <FILE id="tEilYG" name="op_serial.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_serial.c"/>
+          <FILE id="Oy9j34" name="op_serial.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_serial.h"/>
+          <FILE id="NIOY4M" name="op_serial.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_serial.o"/>
+          <FILE id="kYPdkP" name="op_shl.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_shl.c"/>
+          <FILE id="oKnibo" name="op_shl.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_shl.h"/>
+          <FILE id="UdtOBP" name="op_shr.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_shr.c"/>
+          <FILE id="m6YoF3" name="op_shr.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_shr.h"/>
+          <FILE id="W6Q3PR" name="op_split.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_split.c"/>
+          <FILE id="Kz7Vaj" name="op_split.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_split.h"/>
+          <FILE id="qRrDth" name="op_split.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_split.o"/>
+          <FILE id="PaycsZ" name="op_split4.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_split4.c"/>
+          <FILE id="q4qyZe" name="op_split4.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_split4.h"/>
+          <FILE id="CbbGTL" name="op_split4.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_split4.o"/>
+          <FILE id="UeYsYS" name="op_step.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_step.c"/>
+          <FILE id="I88xIp" name="op_step.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_step.h"/>
+          <FILE id="OB27kn" name="op_step.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_step.o"/>
+          <FILE id="LbKEwZ" name="op_sub.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_sub.c"/>
+          <FILE id="UgFv9X" name="op_sub.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_sub.h"/>
+          <FILE id="OCYgN7" name="op_sub.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_sub.o"/>
+          <FILE id="UJiPhD" name="op_sw.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_sw.c"/>
+          <FILE id="rYD8t7" name="op_sw.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_sw.h"/>
+          <FILE id="A3QMHr" name="op_sw.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_sw.o"/>
+          <FILE id="gt8Bbb" name="op_thresh.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_thresh.c"/>
+          <FILE id="CpQjuC" name="op_thresh.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_thresh.h"/>
+          <FILE id="CdDZPD" name="op_thresh.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_thresh.o"/>
+          <FILE id="OAWp90" name="op_timer.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_timer.c"/>
+          <FILE id="OWW0I9" name="op_timer.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_timer.h"/>
+          <FILE id="sFJI7j" name="op_timer.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_timer.o"/>
+          <FILE id="wmG793" name="op_tog.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_tog.c"/>
+          <FILE id="TM24oW" name="op_tog.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_tog.h"/>
+          <FILE id="P17Xfk" name="op_tog.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_tog.o"/>
+          <FILE id="iNyYa1" name="op_ww.c" compile="1" resource="0" file="../../apps/bees/src/ops/op_ww.c"/>
+          <FILE id="vghyzY" name="op_ww.h" compile="0" resource="0" file="../../apps/bees/src/ops/op_ww.h"/>
+          <FILE id="uGn9n9" name="op_ww.o" compile="0" resource="1" file="../../apps/bees/src/ops/op_ww.o"/>
+        </GROUP>
+        <GROUP id="{10A0FD06-4179-A2C7-DFC4-CB4C2AD14771}" name="pages">
+          <FILE id="euqVOZ" name="page_dsp.c" compile="1" resource="0" file="../../apps/bees/src/pages/page_dsp.c"/>
+          <FILE id="RqiqXy" name="page_dsp.o" compile="0" resource="1" file="../../apps/bees/src/pages/page_dsp.o"/>
+          <FILE id="DsnSMr" name="page_gathered.c" compile="1" resource="0" file="../../apps/bees/src/pages/page_gathered.c"/>
+          <FILE id="KpbMGT" name="page_gathered.o" compile="0" resource="1" file="../../apps/bees/src/pages/page_gathered.o"/>
+          <FILE id="mAQ59r" name="page_ins.c" compile="1" resource="0" file="../../apps/bees/src/pages/page_ins.c"/>
+          <FILE id="ZvoPBL" name="page_ins.o" compile="0" resource="1" file="../../apps/bees/src/pages/page_ins.o"/>
+          <FILE id="Cbn9CU" name="page_ops.c" compile="1" resource="0" file="../../apps/bees/src/pages/page_ops.c"/>
+          <FILE id="cuBGES" name="page_ops.o" compile="0" resource="1" file="../../apps/bees/src/pages/page_ops.o"/>
+          <FILE id="uqboP1" name="page_outs.c" compile="1" resource="0" file="../../apps/bees/src/pages/page_outs.c"/>
+          <FILE id="rvfSoX" name="page_outs.o" compile="0" resource="1" file="../../apps/bees/src/pages/page_outs.o"/>
+          <FILE id="Ci0LqF" name="page_play.c" compile="1" resource="0" file="../../apps/bees/src/pages/page_play.c"/>
+          <FILE id="Wge8Nw" name="page_play.o" compile="0" resource="1" file="../../apps/bees/src/pages/page_play.o"/>
+          <FILE id="PnHgHZ" name="page_presets.c" compile="1" resource="0" file="../../apps/bees/src/pages/page_presets.c"/>
+          <FILE id="UjlKJv" name="page_presets.o" compile="0" resource="1" file="../../apps/bees/src/pages/page_presets.o"/>
+          <FILE id="SooBGN" name="page_scenes.c" compile="1" resource="0" file="../../apps/bees/src/pages/page_scenes.c"/>
+          <FILE id="nzSMuU" name="page_scenes.o" compile="0" resource="1" file="../../apps/bees/src/pages/page_scenes.o"/>
+        </GROUP>
+        <FILE id="AQpZSt" name="pages.c" compile="1" resource="0" file="../../apps/bees/src/pages.c"/>
+        <FILE id="rl4MKZ" name="pages.h" compile="0" resource="0" file="../../apps/bees/src/pages.h"/>
+        <FILE id="CuUvZb" name="param.c" compile="1" resource="0" file="../../apps/bees/src/param.c"/>
+        <FILE id="JbT9PL" name="param.h" compile="0" resource="0" file="../../apps/bees/src/param.h"/>
+        <FILE id="jjKKdJ" name="param_scaler.c" compile="1" resource="0" file="../../apps/bees/src/param_scaler.c"/>
+        <FILE id="Roa520" name="param_scaler.h" compile="0" resource="0" file="../../apps/bees/src/param_scaler.h"/>
+        <FILE id="U7pT1D" name="pickle.c" compile="1" resource="0" file="../../apps/bees/src/pickle.c"/>
+        <FILE id="O4SsrB" name="pickle.h" compile="0" resource="0" file="../../apps/bees/src/pickle.h"/>
+        <FILE id="OAd2Cf" name="play.c" compile="1" resource="0" file="../../apps/bees/src/play.c"/>
+        <FILE id="gck3EW" name="play.h" compile="0" resource="0" file="../../apps/bees/src/play.h"/>
+        <FILE id="FzVFJt" name="preset.c" compile="1" resource="0" file="../../apps/bees/src/preset.c"/>
+        <FILE id="s1PO6q" name="preset.h" compile="0" resource="0" file="../../apps/bees/src/preset.h"/>
+        <FILE id="UN6xIy" name="render.c" compile="1" resource="0" file="../../apps/bees/src/render.c"/>
+        <FILE id="lOBJjp" name="render.h" compile="0" resource="0" file="../../apps/bees/src/render.h"/>
+        <GROUP id="{126D29C8-F322-81C0-09CB-567E97E398A0}" name="scalers">
+          <FILE id="FjJWJC" name="scaler_amp.c" compile="1" resource="0" file="../../apps/bees/src/scalers/scaler_amp.c"/>
+          <FILE id="DQWq9N" name="scaler_amp.h" compile="0" resource="0" file="../../apps/bees/src/scalers/scaler_amp.h"/>
+          <FILE id="Q6Nh9T" name="scaler_amp.o" compile="0" resource="1" file="../../apps/bees/src/scalers/scaler_amp.o"/>
+          <FILE id="yceKdw" name="scaler_bool.c" compile="1" resource="0" file="../../apps/bees/src/scalers/scaler_bool.c"/>
+          <FILE id="lUGZ6l" name="scaler_bool.h" compile="0" resource="0" file="../../apps/bees/src/scalers/scaler_bool.h"/>
+          <FILE id="oQHQcU" name="scaler_bool.o" compile="0" resource="1" file="../../apps/bees/src/scalers/scaler_bool.o"/>
+          <FILE id="gYfMX5" name="scaler_fix.c" compile="1" resource="0" file="../../apps/bees/src/scalers/scaler_fix.c"/>
+          <FILE id="n7qrzJ" name="scaler_fix.h" compile="0" resource="0" file="../../apps/bees/src/scalers/scaler_fix.h"/>
+          <FILE id="eqhIys" name="scaler_fix.o" compile="0" resource="1" file="../../apps/bees/src/scalers/scaler_fix.o"/>
+          <FILE id="lG1HMm" name="scaler_fract.c" compile="1" resource="0" file="../../apps/bees/src/scalers/scaler_fract.c"/>
+          <FILE id="gUqQ9j" name="scaler_fract.h" compile="0" resource="0" file="../../apps/bees/src/scalers/scaler_fract.h"/>
+          <FILE id="eL304H" name="scaler_fract.o" compile="0" resource="1" file="../../apps/bees/src/scalers/scaler_fract.o"/>
+          <FILE id="jcZSh4" name="scaler_integrator.c" compile="1" resource="0"
+                file="../../apps/bees/src/scalers/scaler_integrator.c"/>
+          <FILE id="Frk3X0" name="scaler_integrator.h" compile="0" resource="0"
+                file="../../apps/bees/src/scalers/scaler_integrator.h"/>
+          <FILE id="aMwgHb" name="scaler_integrator.o" compile="0" resource="1"
+                file="../../apps/bees/src/scalers/scaler_integrator.o"/>
+          <FILE id="YSE8sj" name="scaler_integrator_short.c" compile="1" resource="0"
+                file="../../apps/bees/src/scalers/scaler_integrator_short.c"/>
+          <FILE id="ooTbh2" name="scaler_integrator_short.h" compile="0" resource="0"
+                file="../../apps/bees/src/scalers/scaler_integrator_short.h"/>
+          <FILE id="ZtGM7G" name="scaler_integrator_short.o" compile="0" resource="1"
+                file="../../apps/bees/src/scalers/scaler_integrator_short.o"/>
+          <FILE id="n7slKw" name="scaler_note.c" compile="1" resource="0" file="../../apps/bees/src/scalers/scaler_note.c"/>
+          <FILE id="AuAkfN" name="scaler_note.h" compile="0" resource="0" file="../../apps/bees/src/scalers/scaler_note.h"/>
+          <FILE id="Xlg853" name="scaler_note.o" compile="0" resource="1" file="../../apps/bees/src/scalers/scaler_note.o"/>
+          <FILE id="sAN4tz" name="scaler_short.c" compile="1" resource="0" file="../../apps/bees/src/scalers/scaler_short.c"/>
+          <FILE id="Dtik1o" name="scaler_short.h" compile="0" resource="0" file="../../apps/bees/src/scalers/scaler_short.h"/>
+          <FILE id="EJlTFo" name="scaler_short.o" compile="0" resource="1" file="../../apps/bees/src/scalers/scaler_short.o"/>
+          <FILE id="vskC3W" name="scaler_svf_fc.c" compile="1" resource="0" file="../../apps/bees/src/scalers/scaler_svf_fc.c"/>
+          <FILE id="mRSC33" name="scaler_svf_fc.h" compile="0" resource="0" file="../../apps/bees/src/scalers/scaler_svf_fc.h"/>
+          <FILE id="Qy1Kkf" name="scaler_svf_fc.o" compile="0" resource="1" file="../../apps/bees/src/scalers/scaler_svf_fc.o"/>
+        </GROUP>
+        <FILE id="rmK1UY" name="scene.c" compile="1" resource="0" file="../../apps/bees/src/scene.c"/>
+        <FILE id="xrabfh" name="scene.h" compile="0" resource="0" file="../../apps/bees/src/scene.h"/>
+        <FILE id="UZj1hp" name="util.c" compile="1" resource="0" file="../../apps/bees/src/util.c"/>
+        <FILE id="frKoXC" name="util.h" compile="0" resource="0" file="../../apps/bees/src/util.h"/>
+      </GROUP>
+      <FILE id="vmIlh7" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="Wyqpq3" name="GraphEditorComponent.cpp" compile="1" resource="0"
+            file="Source/GraphEditorComponent.cpp"/>
+      <FILE id="f3JoGN" name="GraphEditorComponent.h" compile="0" resource="0"
+            file="Source/GraphEditorComponent.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
+                       isDebug="1" optimisation="1" targetName="beekeep" headerPath="../../../../apps/bees/src&#10;../../../../utils/avr32_sim/src&#10;../../../../common/"
+                       defines="BEEKEEP=1"/>
+        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
+                       isDebug="0" optimisation="3" targetName="beekeep" defines="-D BEEKEEP=1"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_events" path="../../../juce-grapefruit-osx/modules"/>
+        <MODULEPATH id="juce_core" path="../../../juce-grapefruit-osx/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../juce-grapefruit-osx/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../juce-grapefruit-osx/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../juce-grapefruit-osx/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../juce-grapefruit-osx/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
+                       targetName="beekeep" defines="-D BEEKEEP=1"/>
+        <CONFIGURATION name="Release" libraryPath="/usr/X11R6/lib/" isDebug="0" optimisation="3"
+                       targetName="beekeep" defines="-D BEEKEEP=1"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_events" path="../../../juce-grapefruit-osx/modules"/>
+        <MODULEPATH id="juce_core" path="../../../juce-grapefruit-osx/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../juce-grapefruit-osx/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../juce-grapefruit-osx/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../juce-grapefruit-osx/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../juce-grapefruit-osx/modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1"/>
+  </MODULES>
+  <JUCEOPTIONS/>
+</JUCERPROJECT>

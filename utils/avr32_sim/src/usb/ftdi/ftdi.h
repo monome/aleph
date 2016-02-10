@@ -3,8 +3,12 @@
    ftdi driver for monome aleph
  */
 
-#ifndef _ALEPH_FTD_H_
+#ifndef _ALEPH_FTDI_H_
 #define _ALEPH_FTDI_H_
+
+#ifdef __cplusplus
+extern "C" { 
+#endif
 
 #include "types.h"
 //#include "uhc.h"
@@ -47,5 +51,8 @@ extern volatile u8 ftdi_rx_busy(void);
 extern volatile u8 ftdi_tx_busy(void);
 // device connected flag
 extern u8 ftdi_connected(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif // h guard

@@ -9,6 +9,10 @@
 #ifndef __ALEPH_FLASH_H__
 #define __ALEPH_FLASH_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //#include "filesystem.h"
 #include "bfin.h"
 #include "types.h"
@@ -60,5 +64,9 @@ extern u8 flash_write_hex_record(u8* data);
 
 /// get pointer to application data in flash
 extern void* flash_app_data(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // h guard

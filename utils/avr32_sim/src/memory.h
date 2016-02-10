@@ -8,6 +8,10 @@
 #ifndef _ALEPH_MEM_H_
 #define _ALEPH_MEM_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "types.h"
 
 #define ALLOC_FAIL 0xffffffff
@@ -21,5 +25,9 @@ extern void init_mem(void);
 extern heap_t alloc_mem(u32 bytes);
 // test sram
 extern void sram_test(u32 sizeDiv, u32 offset);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

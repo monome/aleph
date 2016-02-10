@@ -36,6 +36,7 @@ volatile u8 fsEndTransfer;
 int media_read(unsigned long sector, unsigned char *buffer, unsigned long sector_count);
 int media_read(unsigned long sector, unsigned char *buffer, unsigned long sector_count) {
 #if 1
+    return 1;
 #else
   unsigned long i;
 
@@ -80,6 +81,7 @@ int media_read(unsigned long sector, unsigned char *buffer, unsigned long sector
 int media_write(unsigned long sector, unsigned char *buffer, unsigned long sector_count);
 int media_write(unsigned long sector, unsigned char *buffer, unsigned long sector_count) {
 #if 1
+    return 1;
 #else
   unsigned long i;
   bool status;
@@ -117,6 +119,7 @@ int media_write(unsigned long sector, unsigned char *buffer, unsigned long secto
 
 int fat_init(void) {
 #if 1
+    return 0;
 #else
   // Initialise File IO Library
   print_dbg("\r\n beginning FAT library init.");

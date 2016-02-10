@@ -7,6 +7,10 @@
 #ifndef _INIT_H_
 #define _INIT_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 // initialize clocks
 //extern void init_clocks(void);
@@ -29,5 +33,9 @@ extern void init_twi(void);
 extern void init_sd_mmc_resources(void);
 // initialize USB host stack
 void init_usb_host (void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

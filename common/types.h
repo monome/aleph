@@ -41,7 +41,9 @@ typedef int32_t fix16;
 typedef int32_t  fract32;
 
 #ifdef BEEKEEP
+#ifndef __cplusplus
 typedef unsigned char bool;
+#endif
 #endif
 
 #endif // header guard

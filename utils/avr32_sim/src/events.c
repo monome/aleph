@@ -24,11 +24,11 @@
 #define INCR_EVENT_INDEX( x )  { if ( ++x == MAX_EVENTS ) x = 0; }
 
 // et/Put indexes inxto sysEvents[] array
-static int putIdx = 0;
-static int getIdx = 0;
-
-// The system event queue is a circular array of event records.
-static event_t sysEvents[ MAX_EVENTS ];
+//static int putIdx = 0;
+//static int getIdx = 0;
+//
+//// The system event queue is a circular array of event records.
+//static event_t sysEvents[ MAX_EVENTS ];
 
 // initializes (or re-initializes)  the system event queue.
 void init_events( void ) {
@@ -52,6 +52,7 @@ void init_events( void ) {
 // Returns non-zero if an event was available
 u8 event_next( event_t *e ) {
 #if 1
+    return 0;
 #else
   u8 status;
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
@@ -77,6 +78,7 @@ u8 event_next( event_t *e ) {
 // add event to queue, return success status
 u8 event_post( event_t *e ) {
 #if 1
+    return 0;
 #else
   u8 status = false;
   int saveIndex;

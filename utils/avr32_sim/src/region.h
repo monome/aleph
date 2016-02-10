@@ -7,6 +7,10 @@
 #ifndef _ALEPH_AVR32_SCREEN_REGION_H_
 #define _ALEPH_AVR32_SCREEN_REGION_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "types.h"
 
 // data type for screen regions
@@ -98,5 +102,9 @@ extern void region_fill_part(region* reg, u32 start, u32 len, u8 color );
 // hilight a region with given color and threshold
 extern void region_hl(region* reg, u8 c, u8 thresh);
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // h guard

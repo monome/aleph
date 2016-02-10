@@ -6,6 +6,10 @@
 #ifndef _ALEPH_USB_H_
 #define _ALEPH_USB_H_
 
+#ifdef __cplusplus
+extern "C" { 
+#endif
+
 //#include "compiler.h"
 //#include "uhc.h"
 
@@ -30,5 +34,8 @@ void usb_sof(void);
 // usb end-of-enumeration callback
 //void usb_enum(uhc_device_t *dev, uhc_enum_status_t status);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif // header guard
