@@ -29,7 +29,6 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpBignum,
   eOpBits,
   eOpChange,
-  eOpCpu,
   eOpDelay,
   eOpDiv,
   eOpDivr,
@@ -332,12 +331,7 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_param_t),
     .init = &op_param_init,
     .deinit = NULL
-  }, {
-    .name = "CPU",
-    .size = sizeof(op_cpu_t),
-    .init = &op_cpu_init,
-    .deinit = NULL
-  },
+  }
 };
 
 
