@@ -8,7 +8,7 @@
 #ifndef _NET_PROTECTED_H_
 #define _NET_PROTECTED_H_
 
-// use dynamically allocated memory and vectors 
+//! use dynamically allocated memory and vectors 
 #define NET_USE_MALLOC 0
 
 #if NET_USE_MALLOC
@@ -25,7 +25,7 @@
 
 #if NET_USE_MALLOC
 #else
-// size of operator pool in bytes
+//! size of operator pool in bytes
 #define NET_OP_POOL_SIZE 0x40000 // 256K
 //#define NET_OP_POOL_SIZE 0x20000 // 128K
 //#define NET_OP_POOL_SIZE 0x10000 // 64K
@@ -35,96 +35,88 @@
 
 #endif
 
-// input node type
+//! input node type
 typedef struct _inode {
-  // parent op index in net list
+  //! parent op index in net list
   s32 opIdx;
-  // input index in parent op list
+  //! input index in parent op list
   u8 opInIdx;
-  // preset inclusion flag
-  //  u8 preset;
-  // play inclusion flag
+  //! play inclusion flag
   u8 play;
-  //} __attribute__((packed)) inode_t;
 } inode_t;
 
-// output node type (index into inode list)
+//! output node type (index into inode list)
 typedef struct _onode {
-  // preset inclusion flag
-  //  u8 preset;
-  // output idx in parent op's output list
+  //! output idx in parent op's output list
   u8 opOutIdx;
-  // target input idx in net list
+  //! target input idx in net list
   s16 target;
-  // parent op's index in net list
+  //! parent op's index in net list
   s32 opIdx;
-  //} __attribute__((packed)) onode_t;
 } onode_t;
 
-// parameter I/O node
+//! parameter I/O node
 typedef struct _pnode {
   ParamDesc desc;
   ParamData data;
   ParamScaler scaler;
-  /// why idx?
-  //  u8 idx;
-  // play inclusion flag
+  //! play inclusion flag
   /// must be separate from inputs list for large input counts!
   u8 play;
-  //} __attribute__((packed)) pnode_t;
 } pnode_t;
 
 
-// big old class for the network
+//! big old class for the network
 typedef struct _ctlnet {
-  //  op pointers
+  //!  op pointers
   op_t * ops[NET_OPS_MAX];
 #if NET_USE_MALLOC
-  // bitfields for operator allocation
+  //! bitfields for operator allocation
   u8 opsUsed[BITNSLOTS(NET_OPS_MAX)];
 #else
-  // operator memory, statically allocated as char array
+  //! operator memory, statically allocated as char array
   u8 opPoolMem[NET_OP_POOL_SIZE];
-  // pointer to managed op memory
+  //! pointer to managed op memory
   u8 * opPool;
-  // current offset into op memory
+  //! current offset into op memory
   u32 opPoolOffset;
 #endif
-  // number of instantiated operators
+  //! number of instantiated operators
   u16 numOps;
-  // number of instantiated inputs
+  //! number of instantiated inputs
   u16 numIns;
-  // number of instantiated outputs
+  //! number of instantiated outputs
   u16 numOuts;
-  // number of instantiated params
+  //! number of instantiated params
   u16 numParams;
 
-  // inputs
+  //! inputs
   inode_t ins[NET_INS_MAX];
-  // outputs
+  //! outputs
   onode_t outs[NET_OUTS_MAX];
-  // DSP params
+  //! DSP params
   pnode_t params[NET_PARAMS_MAX];
 
 } ctlnet_t;
 
-//// external variables
+////! external variables
 
-// pointer to network!
+//! pointer to network!
 extern ctlnet_t* net;
 
 
-// pointers to system-created ops
-// encoders
+//! --- pointers to system-created ops
+
+//! encoders
 extern op_enc_t* opSysEnc[4];
-// function keys and footswitches
+//! function keys and footswitches
 extern op_sw_t* opSysSw[6];
-// adc
+//! adc
 extern op_adc_t* opSysAdc;
-// preset
+//! preset
 extern op_preset_t* opSysPreset;
 
-// set active
+//! set active
 extern void net_set_active(bool v);
 
 #endif // header guard

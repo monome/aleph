@@ -1,3 +1,4 @@
+
 /* ctl_op.h
  * aleph-avr32
  *
@@ -200,3 +201,4 @@ extern const u8* op_unpickle(op_t* op, const u8* src);
     
 
 #endif // header guard
+

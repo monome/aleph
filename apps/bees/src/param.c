@@ -22,14 +22,6 @@ io_t get_param_value(u32 idx) {
   return (io_t)(net->params[idx].data.value); 
 }
 
-///// preset-enabled is stored by input node
-//// network 
-// get preset-enabled flag for param at given idx
-/* u8 get_param_preset(u32 idx) { */
-/*   return net->params[idx].preset; */
-/* } */
-
-
 // get name (label) for param at given idx
 const char* get_param_name(u32 idx) {
   return net->params[idx].desc.label;
@@ -75,9 +67,6 @@ u8* param_pickle(pnode_t* pnode, u8* dst) {
   ////
 
 
-  // print_dbg("\r\n pickling param node, value: 0x");
-  // print_dbg_hex(pnode->data.value.asUint);
-
   // store value
   val = (u32)(pnode->data.value);
   dst = pickle_32(val, dst);
@@ -96,10 +85,6 @@ const u8* param_unpickle(pnode_t* pnode, const u8* src) {
   // TEST: keep as dummy for compatibility
   src = unpickle_32(src, &val);
 
-  // print_dbg("\r\n unpickled param index: ");
-  // print_dbg_ulong(val);
-
-
   ///// TEST: don't
   //  pnode->idx = (u8)val;
   ////
@@ -110,12 +95,6 @@ const u8* param_unpickle(pnode_t* pnode, const u8* src) {
   print_dbg("\r\n unpickling param, val: 0x"); 
   print_dbg_hex(val);
 
-  //  print_dbg(" , val: ");
-  //  print_dbg_ulong(val);
-  //  src = unpickle_32(src, &(pnode->data.value.asUint));
-
-  // print_dbg("\r\n unpickled param value: ");
-  // print_dbg_ulong(val);
 
   // load play-inclusion 
   src = unpickle_32(src, &val);
@@ -201,13 +180,6 @@ const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src) {
 
   return src;
 }
-
-
-// fill buffer with readable value string
-/* ???
-void get_param_string(char* dst, u32 idx) {
-}
-*/
 
 // increment value
 io_t inc_param_value(u32 idx,  io_t inc) {

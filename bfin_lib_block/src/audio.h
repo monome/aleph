@@ -15,6 +15,8 @@
 #define AUDIO_CHANNELS 4
 //! bytes per sample
 #define AUDIO_SAMPLESIZE 4 // sizeof(fract32)
+//! samples per second
+#define AUDIO_SAMPLERATE 48000
 
 //! I/O flags
 extern volatile u8 audioRxDone;
@@ -22,6 +24,9 @@ extern volatile u8 audioTxDone;
 
 //! audio process flag
 extern volatile u8 processAudio;
+
+//! keep track of cycles spent processing each audio block
+// extern volatile u64 audioCycleCount;
 
 //! type for de-interleaved audio buffers
 typedef fract32 buffer_t[AUDIO_CHANNELS][MODULE_BLOCKSIZE];

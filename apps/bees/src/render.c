@@ -6,7 +6,6 @@
 
  */
 
-
 // std
 #include <string.h>
 
@@ -26,6 +25,22 @@
 
 // bees
 #include "render.h"
+
+
+//! if set, poll and display CPU use of DSP, on every redraw
+#if RELEASEBULD==1
+#define POLL_DSP_CPU 0
+#else
+#define POLL_DSP_CPU 1
+#endif
+
+#if POLL_DSP_CPU==1
+#include "bfin.h"
+#include "pages.h"
+#include "util.h"
+#endif
+
+
 
 //---- extern vars
 region* headRegion = NULL;
@@ -142,7 +157,22 @@ extern void render_boot(const char* str) {
 
 // update
 void render_update(void) {
-  app_pause();
+  //  app_pause();
+
+#if 0 // POLL_DSP_CPU==1
+  static char buf[16];
+  s32 val;
+
+  if(pageIdx == ePagePlay) {
+    region_fill(headRegion, 0x0);
+    val = bfin_get_audio_cpu();
+    uint_to_hex_ascii(buf, (u32)val);
+    font_string_region_clip(headRegion, buf, 0, 0, 0xf, 0x1);
+    val = bfin_get_control_cpu();
+    uint_to_hex_ascii(buf, (u32)val);
+    font_string_region_clip(headRegion, buf, 64, 0, 0xf, 0x1);
+  }
+#endif
 
   // scrolling region
   if((pageCenterScroll->reg)->dirty) {
@@ -155,7 +185,7 @@ void render_update(void) {
   region_update(footRegion[2]);
   region_update(footRegion[3]);
 
-  app_resume();
+  //  app_resume();
 }
 
 // set current header region
@@ -194,8 +224,6 @@ void render_set_scroll(scroll* scr) {
 
 // append to line buffer
  inline void appendln(const char* str) {
-  //  print_dbg("\n\r line buffer start: ");
-  //  print_dbg_hex(pline);
   while((*str != 0) && (pline <= pLineEnd)) {
     *pline = *str;
     ++pline;
@@ -258,18 +286,6 @@ inline void clearln(void) {
  inline void endln(void) {
   *(pline) = '\0';
 }
-
-// get current y-offset for center line in scroll
-/*
-u8 get_yoff(void) {
-   u8 ret = pageCenterScroll->yOff + SCROLL_CENTER_Y_OFFSET;
-   if(ret > pageCenterScroll->reg->h) {
-     ret -= pageCenterScroll->reg->h;
-   }
-   return ret;
-}
-*/
-
 
 // copy temp data to selection (adding highlight)
 void render_to_select(void) {
@@ -460,8 +476,6 @@ void render_edit_string(region* reg, char* str, u8 len, u8 cursor) {
     }
   }
   reg->dirty = 1;
-  print_dbg("\r\n edited string: ");
-  print_dbg(str);
 }
 
 

@@ -38,7 +38,7 @@
 
 #define DEFAULT_SCENE_NAME "default"
 #define CLEAN_SCENE_NAME "clean"
-/// FIXME: this is retarded, 
+/// FIXME: this is silly, 
 // but sometimes the name needs to have extension and sometimes not.
 // #define DEFAULT_SCENE_NAME_EXT "default.scn"
 
@@ -89,9 +89,7 @@ void scene_init(void) {
   for(i=0; i<SCENE_NAME_LEN; i++) {
     (sceneData->desc.sceneName)[i] = '\0';
   }
-  /* for(i=0; i<MODULE_NAME_LEN; i++) { */
-  /*   (sceneData->desc.moduleName)[i] = '\0'; */
-  /* } */
+
   strcpy(sceneData->desc.moduleName, "NONE");
   strcpy(sceneData->desc.sceneName, "_");
 
@@ -107,21 +105,8 @@ void scene_write_buf(void) {
   u32 bytes = 0;
   u8* newDst = NULL;
   int i;
-    
-  ///// print paramameters
-  //  u32 i;
 
   print_dbg("\r\n writing scene data... ");
-
-  /*  for(i=0; i<net->numParams; i++) {
-      print_dbg("\r\n param ");
-      print_dbg_ulong(i);
-      print_dbg(" : ");
-      print_dbg(net->params[i].desc.label);
-      print_dbg(" ; val ");
-      print_dbg_hex((u32)net->params[i].data.value.asInt);
-      }
-  */
 
   // write name
   for(i=0; i<SCENE_NAME_LEN; i++) {
