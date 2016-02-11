@@ -8,8 +8,6 @@
 #include <jack/jack.h>
 #include <math.h>
 
-jack_port_t *input_port;
-jack_port_t *output_port;
 jack_client_t *client;
 
 jack_default_audio_sample_t *delay_line;
@@ -51,7 +49,8 @@ fract32 out[OUT_PORTS];
 
 int process_block (jack_nframes_t nframes, void *arg) {
 
-  jack_default_audio_sample_t *jack_in[IN_PORTS], *jack_out[OUT_PORTS];
+  jack_default_audio_sample_t* jack_in[IN_PORTS];
+  jack_default_audio_sample_t* jack_out[OUT_PORTS];
   int i, j;
   //First get an input buffer for each jack input
   for (j=0; j < IN_PORTS; j++) {
@@ -66,11 +65,13 @@ int process_block (jack_nframes_t nframes, void *arg) {
   //outs back to jack_out
   for (i=0; i < nframes; i++) {
     for (j=0; j < IN_PORTS; j++) {
-      in[j] = jack_in[j][i];
+      /* in[j] = *(jack_in[j] + i); */
+      in[j] = 0;
     }
     module_process_frame();
     for (j=0; j < OUT_PORTS; j++) {
-      jack_out[j][i] = out[j];
+      /* *(jack_out[j] + i) = out[j]; */
+      out[j] = 0;
     }
   }
   return 0;      
@@ -82,7 +83,7 @@ void jack_shutdown (void *arg) {
 }
 
 int main (int argc, char *argv[]) {
-  module_init();
+  /* module_init(); */
   const char **ports;
   const char *client_name = "aleph_sim";
   const char *server_name = NULL;
@@ -142,27 +143,37 @@ int main (int argc, char *argv[]) {
   printf ("engine sample rate: %" PRIu32 "\n",
 	  jack_get_sample_rate (client));
 
-  /* create two ports */
-
-  input_port = jack_port_register (client, "input",
-				   JACK_DEFAULT_AUDIO_TYPE,
-				   JackPortIsInput, 0);
-  output_port = jack_port_register (client, "output",
-				    JACK_DEFAULT_AUDIO_TYPE,
-				    JackPortIsOutput, 0);
-
-  if ((input_port == NULL) || (output_port == NULL)) {
-    fprintf(stderr, "no more JACK ports available\n");
-    exit (1);
+  /* create the ports */
+  int j;
+  for (j=0; j < IN_PORTS; j++) {
+    char foo[100];
+    sprintf(foo, "input%d", j);
+    input_ports[j] = jack_port_register (client, foo,
+					 JACK_DEFAULT_AUDIO_TYPE,
+					 JackPortIsInput, 0);
+    if (input_ports[j] == NULL) {
+      fprintf(stderr, "no more JACK ports available\n");
+      exit (1);
+    }
   }
-
-  /* Tell the JACK server that we are ready to roll.  Our
-   * process() callback will start running now. */
-
+  for (j=0; j < IN_PORTS; j++) {
+    char foo[100];
+    sprintf(foo, "output%d", j);
+    output_ports[j] = jack_port_register (client, foo,
+					  JACK_DEFAULT_AUDIO_TYPE,
+					  JackPortIsOutput, 0);
+    
+    if (output_ports[j] == NULL) {
+      fprintf(stderr, "no more JACK ports available\n");
+      exit (1);
+    }
+  }
+    
   if (jack_activate (client)) {
     fprintf (stderr, "cannot activate client");
     exit (1);
   }
+
 
   /* Connect the ports.  You can't do this before the client is
    * activated, because we can't make connections to clients
@@ -172,37 +183,37 @@ int main (int argc, char *argv[]) {
    * it.
    */
 
-  ports = jack_get_ports (client, NULL, NULL,
-			  JackPortIsPhysical|JackPortIsOutput);
-  if (ports == NULL) {
-    fprintf(stderr, "no physical capture ports\n");
-    exit (1);
-  }
+  /* ports = jack_get_ports (client, NULL, NULL, */
+  /* 			  JackPortIsPhysical|JackPortIsOutput); */
+  /* if (ports == NULL) { */
+  /*   fprintf(stderr, "no physical capture ports\n"); */
+  /*   exit (1); */
+  /* } */
 
-  if (jack_connect (client, "jaaa:out_1", jack_port_name (input_port))) {
-    fprintf (stderr, "cannot connect input ports\n");
-  }
-  if (jack_connect (client, "latent:input 1", jack_port_name (input_port))) {
-    fprintf (stderr, "cannot connect input ports\n");
-  }
+  /* if (jack_connect (client, "jaaa:out_1", jack_port_name (input_port))) { */
+  /*   fprintf (stderr, "cannot connect input ports\n"); */
+  /* } */
+  /* if (jack_connect (client, "latent:input 1", jack_port_name (input_port))) { */
+  /*   fprintf (stderr, "cannot connect input ports\n"); */
+  /* } */
 
-  free (ports);
+  /* free (ports); */
 	
-  ports = jack_get_ports (client, NULL, NULL,
-			  JackPortIsPhysical|JackPortIsInput);
-  if (ports == NULL) {
-    fprintf(stderr, "no physical playback ports\n");
-    exit (1);
-  }
+  /* ports = jack_get_ports (client, NULL, NULL, */
+  /* 			  JackPortIsPhysical|JackPortIsInput); */
+  /* if (ports == NULL) { */
+  /*   fprintf(stderr, "no physical playback ports\n"); */
+  /*   exit (1); */
+  /* } */
 
-  if (jack_connect (client, jack_port_name (output_port), "jaaa:in_1")) {
-    fprintf (stderr, "cannot connect output ports\n");
-  }
-  if (jack_connect (client, jack_port_name (output_port), "latent:input 0")) {
-    fprintf (stderr, "cannot connect output ports\n");
-  }
+  /* if (jack_connect (client, jack_port_name (output_port), "jaaa:in_1")) { */
+  /*   fprintf (stderr, "cannot connect output ports\n"); */
+  /* } */
+  /* if (jack_connect (client, jack_port_name (output_port), "latent:input 0")) { */
+  /*   fprintf (stderr, "cannot connect output ports\n"); */
+  /* } */
 
-  free (ports);
+  /* free (ports); */
 
   /* keep running until stopped by the user */
 
