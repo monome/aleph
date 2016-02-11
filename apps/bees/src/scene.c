@@ -38,7 +38,7 @@
 
 #define DEFAULT_SCENE_NAME "default"
 #define CLEAN_SCENE_NAME "clean"
-/// FIXME: this is retarded, 
+/// FIXME: this is silly, 
 // but sometimes the name needs to have extension and sometimes not.
 // #define DEFAULT_SCENE_NAME_EXT "default.scn"
 
@@ -89,6 +89,7 @@ void scene_init(void) {
   for(i=0; i<SCENE_NAME_LEN; i++) {
     (sceneData->desc.sceneName)[i] = '\0';
   }
+
   strcpy(sceneData->desc.moduleName, "NONE");
   strcpy(sceneData->desc.sceneName, "_");
 
@@ -104,7 +105,7 @@ void scene_write_buf(void) {
   u32 bytes = 0;
   u8* newDst = NULL;
   int i;
-    
+
   print_dbg("\r\n writing scene data... ");
 
   // write name
@@ -165,10 +166,10 @@ for(i=0; i<MODULE_NAME_LEN; i++) {
 #if RELEASEBUILD==1
 #else
   if(bytes > SCENE_PICKLE_SIZE - 0x800) {
-    print_dbg(" !!!!! warning: serialized scene data approaching allocated bounds !!!!! ");
+    print_dbg(" !!!!!!!! warning: serialized scene data approaching allocated bounds !!!!! ");
   }
   if(bytes > SCENE_PICKLE_SIZE) {
-    print_dbg(" !!!!! error: serialized scene data exceeded allocated bounds !!!!! ");
+    print_dbg(" !!!!!!!! error: serialized scene data exceeded allocated bounds !!!!! ");
   }
 #endif
 }
@@ -178,7 +179,8 @@ void scene_read_buf(void) {
   /// pointer to serial blob
   const u8* src = (u8*)&(sceneData->pickle);
   int i;
-
+  // param count reported from dsp
+  //  u32 paramsReported;
   //// TEST
   char moduleName[MODULE_NAME_LEN];
   ModuleVersion moduleVersion;

@@ -18,6 +18,10 @@
 #include "types.h"
 #include "memory.h"
 
+#ifdef BEEKEEP
+#include <stdlib.h>
+#endif
+
 
 //  SRAM base address
 #define SRAM              ((void *)AVR32_EBI_CS1_ADDRESS)
@@ -26,11 +30,11 @@
 
 
 // pointers to heap-ish
-static heap_t pHeapStart;
-static heap_t  pHeapEnd;
-static u32 heapOffset = 0;
-// bytes in sram hardware
-static u32 heapSize;
+//static heap_t pHeapStart;
+//static heap_t  pHeapEnd;
+//static u32 heapOffset = 0;
+//// bytes in sram hardware
+//static u32 heapSize;
 
 
 // setup heap-ish

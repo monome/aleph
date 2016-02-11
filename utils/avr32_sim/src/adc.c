@@ -26,12 +26,12 @@
 #define AD7923_CMD_BASE ( AD7923_CTL_WRITE | AD7923_CTL_PM0 | AD7923_CTL_PM1 | AD7923_CTL_CODING)
 
 // adc events
-static const etype adctypes[4] = { 
-  kEventAdc0 ,
-  kEventAdc1 ,
-  kEventAdc2 ,
-  kEventAdc3 ,
-};
+//static const etype adctypes[4] = { 
+//  kEventAdc0 ,
+//  kEventAdc1 ,
+//  kEventAdc2 ,
+//  kEventAdc3 ,
+//};
 
 // perform a conversion on all 4 channels
 static void adc_convert(u16 (*dst)[4]) {

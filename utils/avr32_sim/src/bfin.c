@@ -391,6 +391,7 @@ void bfin_wait_ready(void) {
 // get parameter value
 s32 bfin_get_param(u8 idx) {
 #if 1
+    return 0;
 #else
   ParamValueCommon pval;
   u16 x;

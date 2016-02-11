@@ -38,23 +38,28 @@ u8 midiConnect = 0;
 
 //------------------------------------
 //------ static variables
+#if 0
 static u8 rxBuf[MIDI_RX_BUF_SIZE];
 static u32 rxBytes = 0;
 static u8 rxBusy = 0;
 static u8 txBusy = 0;
+#endif
 
 // current packet data
 //union { u8 buf[MIDI_MAX_PACKET_SIZE]; s32 data; } packet;
 // address of last packet byte
 //u8* packetEnd = &(packet.buf[3]);
 // event
-static event_t ev = { .type = kEventMidiPacket, .data = 0x00000000 };
+
+#if 0
 static union { u8 buf[4]; u32 data; s32 sdata; } packet;
+static event_t ev = { .type = kEventMidiPacket, .data = 0x00000000 };
 // pointers into the event data (hacky)
 //static u8* const packetStart = (u8*)&(ev.data);
 //static u8* const packetEnd = (u8*)&(ev.data) + 3;
 static u8* const packetStart = &(packet.buf[0]);
 static u8* const packetEnd = &(packet.buf[3]);
+#endif
 
 //------------------------------------
 //----- static functions

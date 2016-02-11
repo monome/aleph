@@ -1,6 +1,10 @@
 #ifndef _ALEPH_AVR32_APP_TIMERS_H_
 #define _ALEPH_AVR32_APP_TIMERS_H_
 
+#ifdef __cplusplus
+extern "C" { 
+#endif
+
 #include "timers.h"
 #include "types.h"
 
@@ -54,6 +58,9 @@ extern void timers_set_custom(softTimer_t* timer, u32 period, void* obj);
 //! unset metro timer
 extern void timers_unset_custom(softTimer_t* timer);
 
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif

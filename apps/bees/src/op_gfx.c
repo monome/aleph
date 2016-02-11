@@ -4,7 +4,7 @@
 
 u8 opPlay = 0;
 
-static u32 opPlayCount = 0;
+static s32 opPlayCount = 0;
 
 // operator enabled
 void op_gfx_enable(void) {

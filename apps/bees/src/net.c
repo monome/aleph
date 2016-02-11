@@ -11,10 +11,8 @@
 #include <string.h>
 
 // asf
-#ifdef ARCH_AVR32
 #include "print_funcs.h"
 #include "delay.h"
-#endif
 
 // aleph-avr32
 #include "app.h"

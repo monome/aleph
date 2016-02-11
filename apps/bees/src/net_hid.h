@@ -9,6 +9,10 @@
 #ifndef _ALEPH_BEES_NET_HID_H_
 #define _ALEPH_BEES_NET_HID_H_
 
+#ifdef __cplusplus
+extern "C" { 
+#endif
+
 #include "types.h"
 
 //-----------------------
@@ -37,5 +41,9 @@ extern void net_hid_list_push(op_hid_t* op);
 extern void net_hid_list_remove(op_hid_t* op);
 // handle incoming hid packet
 extern void net_handle_hid_packet(void); //u32 data);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // h guard

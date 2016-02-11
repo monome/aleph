@@ -16,7 +16,10 @@
 #ifndef _ALEPH_BFIN_CONTROL_H_
 #define _ALEPH_BFIN_CONTROL_H_
 
-//#include "module_custom.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "param_common.h"
 #include "types.h"
 
@@ -26,5 +29,9 @@
 // add param change to buffer
 /// FIXME: uh will this work for params < 0 ?
 extern u8 ctl_param_change(u32 param, u32 value);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // h guard

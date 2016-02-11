@@ -5,6 +5,10 @@
 #ifndef _ALEPH_BEES_SCALER_AMP_H_
 #define _ALEPH_BEES_SCALER_AMP_H_
 
+#ifdef __cplusplus
+extern "C" { 
+#endif
+
 #include "param_scaler.h"
 #include "types.h"
 
@@ -15,5 +19,8 @@ extern s32 scaler_amp_val(void* scaler, io_t in);
 extern void scaler_amp_str(char* dst, void* scaler, io_t in);
 extern io_t scaler_amp_in(void* scaler, s32 val);
 extern s32 scaler_amp_inc(void* sc, io_t *pin, io_t inc );
+#ifdef __cplusplus
+}
+#endif
 
 #endif

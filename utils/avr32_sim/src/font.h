@@ -1,6 +1,10 @@
 #ifndef _FONT_H_
 #define _FONT_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //#include "compiler.h"
 //#include "fonts/dejavu_numerals_24.h"
 #include "fonts/ume_tgo5_18.h"
@@ -67,5 +71,9 @@ extern u8* font_glyph_aa(char ch, u8* buf, u8 w, u8 invert);
 
 // render a string of ant-aliased glyphs to a buffer
 extern u8* font_string_aa(const char* str, u8* buf, u32 size, u8 w, u8 invert);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // header guard

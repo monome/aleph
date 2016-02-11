@@ -20,6 +20,10 @@
 #ifndef _ALEPH_AVR32_BEES_SCALER_H_
 #define _ALEPH_AVR32_BEES_SCALER_H_
 
+#ifdef __cplusplus
+extern "C" { 
+#endif
+
 
 #include "op_math.h"
 #include "param_common.h"
@@ -106,5 +110,9 @@ extern u32 scaler_get_rep_offset(ParamType p);
 //! get pointers to NV memory for table assignment
 extern const s32* scaler_get_nv_data(ParamType p);
 extern const s32* scaler_get_nv_rep(ParamType p);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -9,6 +9,10 @@
 #ifndef _GLOBAL_H_
 #define _GLOBAL_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "types.h"
 //#include "net_protected.h"
 // extern extlnet_t* ctlnet;
@@ -29,5 +33,9 @@ extern s32 encVal[4];
 
 // FTDI connection flag
 extern u8 ftdiPlug;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -1,6 +1,10 @@
 #ifndef _FILES_H_
 #define _FILES_H_
 
+#ifdef __cplusplus
+extern "C" { 
+#endif
+
 #include "types.h"
 
 // initialize filesystem navigation
@@ -70,5 +74,8 @@ extern bool check_ext(char* str, const char* ext );
 
 // strip extension from the end of a string
 extern bool strip_ext(char* str);
+#ifdef __cplusplus
+}
+#endif
 
 #endif // header guard 
