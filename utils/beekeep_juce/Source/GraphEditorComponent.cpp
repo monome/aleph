@@ -93,7 +93,7 @@ OpComponent* GraphEditorComponent::getComponentForOp (const int op_idx) const
     for (int i = getNumChildComponents(); --i >= 0;)
     {
         if (OpComponent* const c = dynamic_cast<OpComponent*> (getChildComponent (i)))
-            if (c->op_idx_ == op_idx)
+            if (c->getIdx() == op_idx)
                 return c;
     }
     

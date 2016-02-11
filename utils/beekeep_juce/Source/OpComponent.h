@@ -27,21 +27,25 @@ public:
     void mouseDrag (const MouseEvent& e) override;
     void mouseUp (const MouseEvent& e) override;
     
-    // TODO: override thist to include pin children
+    // TODO: override this to include pin children
     //bool hitTest (int x, int y) override;
     
     void paint (Graphics& g) override;
     void update(void);
     
-    
-    // row width and height specified as proportion of screen
+    // row width and height in screen units
     static const double ROW_W;
     static const double ROW_H;
     
-    // get required component height for gicven op, as proportion of screen height
+    // get required component height for given op, in screen units
     static double getScreenHeight(op_t* op);
     static double getScreenWidth(void) { return ROW_W; }
 
+private:
+    void addInputComponent(int idx);
+    void addOutputComponent(int idx);
+    void addNameComponent(void);
+    
     GraphEditorComponent* getGraphEditor() const noexcept
     {
         return findParentComponentOfClass<GraphEditorComponent>();
@@ -58,6 +62,9 @@ public:
     Font font_ ;
     
     Point<int> pos0_;
+    
+public:
+    int getIdx(void) { return op_idx_; }
     
 };
 
