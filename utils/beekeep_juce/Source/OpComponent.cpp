@@ -89,6 +89,7 @@ void OpComponent::mouseDrag (const MouseEvent& e)
         printf("\r\n new pos: %d, %d", pos.x, pos.y);
         
         pos = getParentComponent()->getLocalPoint (nullptr, pos);
+        pos = pos + Point<int>(getWidth() / 2, getHeight() / 2);
 
         printf("\r\n new pos relative to parent: %d, %d", pos.x, pos.y);
 
