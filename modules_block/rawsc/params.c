@@ -90,8 +90,14 @@ void fill_param_desc(ParamDesc* desc) {
   desc[eParamFreqFine3].min = 0;
   desc[eParamFreqFine3].max = 0x7fffffff;
   desc[eParamFreqFine3].radix = 16;
+
+
   
 }
 
+
+
+
 void fill_param_text(char** txt) {
+  
 }

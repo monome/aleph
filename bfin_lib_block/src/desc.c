@@ -47,7 +47,7 @@ char buf[MAXBYTES];
 //--------------------
 //---- static func
 
-////////////////////////////////x
+////////////////////////////////
 //// FIXME:
 /* copying these functions from BEES. dirty
 */
@@ -85,7 +85,7 @@ u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
 
 //---- main function
 int main() {
-  FILE* out;
+  FILE* out_dsc;
   int i, j;
   // write pointer
   u8* pwr;
@@ -98,7 +98,7 @@ int main() {
   printf("\r\n %s_desc_build ... ", NAME);
   printf("\r\n filled param descripor table... \r\n");
   
-  out = fopen(str, "w");
+  out_dsc = fopen(str, "w");
 
   pwr = buf;
 
@@ -111,11 +111,11 @@ int main() {
   }
 
   // write to file
-  fwrite(buf, 1, (size_t)((size_t)pwr - (size_t)&buf), out);
+  fwrite(buf, 1, (size_t)((size_t)pwr - (size_t)&buf), out_dsc);
 
   printf("\r\n wrote %d bytes... \r\n", (int) ((size_t)pwr - (size_t)&buf));
   
-  fclose(out);
+  fclose(out_dsc);
   printf("\r\n done. \r\n");
   
 

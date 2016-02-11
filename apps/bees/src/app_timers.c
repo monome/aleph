@@ -34,9 +34,6 @@
 //---------------------------
 //---- static variables
 
-// event 
-static event_t e;
-
 //------ timers
 // refresh screen
 static softTimer_t screenTimer = { .next = NULL, .prev = NULL };
@@ -72,6 +69,7 @@ static softTimer_t hidPollTimer = { .next = NULL, .prev = NULL };
 // event data is a pointer to an arbitrary object/
 // here we use it for polled operators like op_metro.
 static void app_custom_event_callback(void* obj) {
+  event_t e = { .type=kEventAppCustom, .data=(s32)obj };
   e.type = kEventAppCustom;
   // post the object's address in the event data field
   e.data = (s32)obj;
@@ -79,15 +77,20 @@ static void app_custom_event_callback(void* obj) {
 }
 
 // screen refresh callback
-static void screen_timer_callback(void* obj) {  
-  render_update();
+static void screen_timer_callback(void* obj) {
+  // no! raise an event and do this in the main loop
+  // (worth a try)
+  //  render_update();
+  event_t e = { .type = kEventScreenRefresh, .data = (s32)obj };
+  event_post(&e);
+  
 }
 
 // encoder accumulator polling callback
 static void enc_timer_callback(void* obj) {
   static s16 val, valAbs;
   u8 i;
-
+  event_t e;
   for(i=0; i<NUM_ENC; i++) {
     val = enc[i].val;
     valAbs = (val & 0x8000 ? (val ^ 0xffff) + 1 : val);
@@ -125,12 +128,10 @@ static void monome_poll_timer_callback(void* obj) {
 
 // monome refresh callback
 static void monome_refresh_timer_callback(void* obj) {
-  //  if (monomeConnect) {
   if(monomeFrameDirty > 0) {
-    e.type = kEventMonomeRefresh;
+    event_t e = { .type = kEventMonomeRefresh };
     event_post(&e);
   }
-  //  }
 }
 
 // hid polling callback
@@ -144,6 +145,7 @@ static void hid_poll_timer_callback(void* obj) {
 //----------------------------
 //---- external functions
 
+// order matters here...
 void init_app_timers(void) {
   timer_add(&screenTimer, 50, &screen_timer_callback, NULL );
   timer_add(&encTimer, 50, &enc_timer_callback, NULL );
