@@ -33,20 +33,15 @@ public:
     void paint (Graphics& g) override;
     void update(void);
     
-    // return number of vertical pixels needed for op
-    static const int ROW_W = 200;
-    static const int ROW_H = 20;
-    static int getPixelHeight(op_t* op);
     
-    const int getCanvasWidth(void) {
-        //return GraphEditorComponent::CANVAS_W;
-        return getParentWidth();
-    }
-    const int getCanvasHeight(void) {
-        //return GraphEditorComponent::CANVAS_H;
-        return getParentHeight();
-    }
+    // row width and height specified as proportion of screen
+    static const double ROW_W;
+    static const double ROW_H;
     
+    // get required component height for gicven op, as proportion of screen height
+    static double getScreenHeight(op_t* op);
+    static double getScreenWidth(void) { return ROW_W; }
+
     GraphEditorComponent* getGraphEditor() const noexcept
     {
         return findParentComponentOfClass<GraphEditorComponent>();

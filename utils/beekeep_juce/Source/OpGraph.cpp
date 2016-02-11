@@ -30,10 +30,15 @@ int OpGraph::getNumOps(void) {
     return nodes_.size();
 }
 
+void OpGraph::setNodePosition (uint32 nodeId, Point<double> pos) {
+    nodes_[nodeId]->x_ = pos.x;
+    nodes_[nodeId]->y_ = pos.y;
+}
+
+
 void OpGraph::setNodePosition (uint32 nodeId, double x, double y) {
     nodes_[nodeId]->x_ = x;
     nodes_[nodeId]->y_ = y;
-    
 }
 
 Point<double> OpGraph::getNodePosition (uint32 nodeId) const {

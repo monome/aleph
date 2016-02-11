@@ -30,17 +30,16 @@ public:
     
     void updateComponents();
     
-    static const int CANVAS_W = 10000;
-    static const int CANVAS_H = 10000;
-    const int getCanvasWidth(void) {
-        // FIXME
-        // return CANVAS_W;
-        return getWidth();
-    }
-    const int getCanvasHeight(void) {
-        // return CANVAS_H;
-        return getHeight();
-    }
+//    
+//    const int getCanvasWidth(void) {
+//        // FIXME
+//        // return CANVAS_W;
+//        return getWidth();
+//    }
+//    const int getCanvasHeight(void) {
+//        // return CANVAS_H;
+//        return getHeight();
+//    }
 
     
 private:

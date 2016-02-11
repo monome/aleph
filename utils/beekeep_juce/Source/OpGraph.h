@@ -34,6 +34,7 @@ public:
     int getNumOps(void);
     
     void setNodePosition (uint32 nodeId, double x, double y);
+    void setNodePosition (uint32 nodeId, Point<double> pos);
     Point<double> getNodePosition (uint32 nodeId) const;
     
     void clear();

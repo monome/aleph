@@ -2,6 +2,8 @@
 #include "GraphEditorComponent.h"
 #include "OpComponent.h"
 
+#include "GfxUtil.h"
+
 #include "net.h"
 #include "net_protected.h"
 #include "op.h"
@@ -9,18 +11,17 @@
 GraphEditorComponent::GraphEditorComponent()
 
 {
-    setSize (CANVAS_W, CANVAS_H);
+    setSize (GfxUtil::CANVAS_W, GfxUtil::CANVAS_H);
     graph.addChangeListener (this);
     
     // build initial graph from system operators
     graph.repopulate();
     // set initial node positions
     double y = 0;
-    double x = OpComponent::ROW_W / (double)getCanvasWidth() * 0.5;
+    double x = OpComponent::getScreenWidth() * 0.5;
     for(int i=0; i<graph.getNumOps(); i++){
         OpGraph::Node* node = graph.getNode(i);
-        int hpx = OpComponent::getPixelHeight(node->op_) + 10;
-        double h = hpx / (double)getCanvasHeight();
+        double h = OpComponent::getScreenHeight(node->op_) + 0.001;
         if(i==0) {
             y = h * 0.5;
         } else {
@@ -28,7 +29,7 @@ GraphEditorComponent::GraphEditorComponent()
         }
         while(y > 1.0) {
             y -= 1.0;
-            x += OpComponent::ROW_W / (double)getCanvasWidth() * 1.2;
+            x += OpComponent::getScreenWidth() * 1.1;
         }
         if(y < (h*0.5)) { y = h*0.5; }
         node->x_ = x;
@@ -76,8 +77,11 @@ void GraphEditorComponent::mouseDown (const MouseEvent& e)
         if(r > 0) {
             // add selected operator
             graph.addOpNode((op_id_t)(r - 1),
-                            e.x / (double)getCanvasWidth(),
-                            e.y / (double)getCanvasHeight());
+//                            e.x / (double)getCanvasWidth(),
+//                            e.y / (double)getCanvasHeight());
+                            GfxUtil::pixToScreen(e.x),
+                            GfxUtil::pixToScreen(e.y) );
+            
         }
     }
 }
