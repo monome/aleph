@@ -8,6 +8,7 @@
 #include <jack/jack.h>
 #include <math.h>
 #include "module.h"
+#include "lo/lo.h"
 
 #define SDRAM_SIZE 0x07ffffff
 jack_client_t *client;
@@ -85,12 +86,22 @@ void jack_shutdown (void *arg) {
 	fprintf(stderr, "JACK shut down, exiting ...\n");
 	exit (1);
 }
+int foo_handler(const char *path, const char *types, lo_arg ** argv,
+                int argc, void *data, void *user_data);
+void error(int num, const char *m, const char *path);
+
 
 void module_init(void);
 
 int main (int argc, char *argv[]) {
+  //Allocate module memory & initialise
   SDRAM_ADDRESS = malloc(SDRAM_SIZE);
   module_init();
+
+  //fire up osc server for module
+  lo_server_thread st = lo_server_thread_new("7770", error);
+  lo_server_thread_add_method(st, "/param", "i", foo_handler, NULL);
+
   const char **ports;
   const char *client_name = "aleph_sim";
   const char *server_name = NULL;
@@ -239,3 +250,15 @@ int main (int argc, char *argv[]) {
   exit (0);
 }
 
+int foo_handler(const char *path, const char *types, lo_arg ** argv,
+                int argc, void *data, void *user_data) {
+  module_set_param(argv[0]->i, argv[1]->i);
+  return 0;
+}
+
+
+void error(int num, const char *msg, const char *path)
+{
+    printf("liblo server error %d in path %s: %s\n", num, path, msg);
+    fflush(stdout);
+}
