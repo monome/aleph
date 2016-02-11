@@ -10,15 +10,11 @@
 #include "module.h"
 #include "lo/lo.h"
 
-#define SDRAM_SIZE 0x07ffffff
 jack_client_t *client;
 
 jack_default_audio_sample_t *delay_line;
 jack_nframes_t delay_index;
 jack_nframes_t latency = 1024;
-
-#define IN_PORTS 4
-#define OUT_PORTS 4
 
 jack_port_t *input_ports[IN_PORTS];
 jack_port_t *output_ports[OUT_PORTS];
@@ -46,11 +42,6 @@ jack_default_audio_sample_t fract32_to_jack_sample (fract32 in) {
   return ((jack_default_audio_sample_t) in) /
     ((jack_default_audio_sample_t) FR32_MAX);
 }
-
-fract32 in[IN_PORTS];
-fract32 out[OUT_PORTS];
-
-void module_process_frame(void);
 
 int process_block (jack_nframes_t nframes, void *arg) {
 
@@ -88,10 +79,11 @@ void jack_shutdown (void *arg) {
 }
 int foo_handler(const char *path, const char *types, lo_arg ** argv,
                 int argc, void *data, void *user_data);
+int generic_handler(const char *path, const char *types, lo_arg ** argv,
+                    int argc, void *data, void *user_data);
+
 void error(int num, const char *m, const char *path);
 
-
-void module_init(void);
 
 int main (int argc, char *argv[]) {
   //Allocate module memory & initialise
@@ -100,7 +92,9 @@ int main (int argc, char *argv[]) {
 
   //fire up osc server for module
   lo_server_thread st = lo_server_thread_new("7770", error);
+  lo_server_thread_add_method(st, NULL, NULL, generic_handler, NULL);
   lo_server_thread_add_method(st, "/param", "ii", foo_handler, NULL);
+  lo_server_thread_start(st);
 
   const char **ports;
   const char *client_name = "aleph_sim";
@@ -249,9 +243,28 @@ int main (int argc, char *argv[]) {
   jack_client_close (client);
   exit (0);
 }
+/* catch any incoming messages and display them. returning 1 means that the
+ * message has not been fully handled and the server should try other methods */
+int generic_handler(const char *path, const char *types, lo_arg ** argv,
+                    int argc, void *data, void *user_data)
+{
+    int i;
+
+    printf("path: <%s>\n", path);
+    for (i = 0; i < argc; i++) {
+        printf("arg %d '%c' ", i, types[i]);
+        lo_arg_pp((lo_type)types[i], argv[i]);
+        printf("\n");
+    }
+    printf("\n");
+    fflush(stdout);
+
+    return 1;
+}
 
 int foo_handler(const char *path, const char *types, lo_arg ** argv,
                 int argc, void *data, void *user_data) {
+  printf("received param %d %d\n", argv[0]->i, argv[1]->i);
   module_set_param(argv[0]->i, argv[1]->i);
   return 0;
 }

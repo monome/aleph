@@ -12,10 +12,6 @@
 
 */
 
-//-- blackfin toolchain headers
-// 1.32 and 1.15 fixed-point arithmeti
-#include "fract_math.h"
-
 //-- aleph/common headers
 #include "types.h"
 

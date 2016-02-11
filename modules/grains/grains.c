@@ -17,13 +17,10 @@
 
 
 // aleph-bfin
-#ifdef ARCH_BFIN
 #include "bfin_core.h"
 #include "cv.h"
 #include "gpio.h"
 #include "fract_math.h"
-#include <fract2float_conv.h>
-#endif
 
 //#include "dac.h"
 

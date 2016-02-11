@@ -22,6 +22,17 @@
 
 #else
 void *SDRAM_ADDRESS;
+#define IN_PORTS 4
+#define OUT_PORTS 4
+#define SDRAM_SIZE 0x07ffffff
+
+fract32 in[IN_PORTS];
+fract32 out[OUT_PORTS];
+
+void module_init(void);
+void module_process_frame(void);
+
+
 #endif
 
 

@@ -68,7 +68,8 @@ deploy: $(module_name).ldr
 .PHONY: clean
 	deploy
 
-sim_sourcefiles = grains.c \
+sim_sourcefiles = ../../utils/bfin_sim/main.c \
+	grains.c \
 	$(audio)/buffer.c \
 	$(audio)/ricks_tricks.c \
 	$(audio)/echoTap.c \
@@ -76,17 +77,17 @@ sim_sourcefiles = grains.c \
 	$(audio)/grain.c \
 	$(audio)/filter_1p.c \
 	$(audio)/filter_ramp.c \
-	$(audio)/filter_svf.c \
 	$(audio)/noise.c \
 	$(audio)/pan.c \
-	$(audio)/table.c \
-	bfin_emu/main.c
+	../../utils/bfin_sim/src/cv.c \
+	../../utils/bfin_sim/fract32_jack.c \
+	params.c
 
 sim_inc = -I ../../dsp \
-	-I ./bfin_emu \
+	-I ../../utils/bfin_sim/src \
+	-I ../../utils/bfin_sim/ \
+	-I ../../utils/bfin_sim/src/libfixmath \
 	-I ./ \
-	-I ../../bfin_lib/src/ \
-	-I ../../bfin_lib/src/libfixmath \
 	-I ../../common\
 
 sim_outfile = grains_jack
@@ -96,4 +97,4 @@ sim_flags = -ljack -llo
 sim:
 	touch $(sim_outfile)
 	rm ./$(sim_outfile)
-	gcc $(sim_sourcefiles) $(flags) $(sim_inc) -o $(sim_outfile) -g
+	gcc $(sim_sourcefiles) $(sim_flags) $(sim_inc) -o $(sim_outfile) -g
