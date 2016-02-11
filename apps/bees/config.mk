@@ -50,7 +50,6 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_bits.c \
 	$(APP_DIR)/src/ops/op_cascades.c \
 	$(APP_DIR)/src/ops/op_change.c \
-	$(APP_DIR)/src/ops/op_cpu.c \
 	$(APP_DIR)/src/ops/op_delay.c \
 	$(APP_DIR)/src/ops/op_div.c \
 	$(APP_DIR)/src/ops/op_divr.c \
