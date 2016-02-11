@@ -26,7 +26,8 @@ typedef struct _AppVersion {
   u16 rev;
 } AppVersion;
 
-extern AppVersion  beesVersion;
+extern const AppVersion  beesVersion;
+  
 #ifdef __cplusplus
 }
 #endif
