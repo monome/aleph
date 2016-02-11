@@ -12,15 +12,19 @@
 #include "param_common.h"
 #include "types.h"
 
-//#if ARCH_BFIN
+#if ARCH_BFIN
 
 #define SDRAM_ADDRESS 0x00000000
 #define SDRAM_SIZE    0x07ffffff
 #ifndef SAMPLERATE
-  #define SAMPLERATE    48000
+#define SAMPLERATE    48000
 #endif
 
-//#endif
+#else
+void *SDRAM_ADDRESS;
+#endif
+
+
 
 //-----------------------
 //---- module descriptor

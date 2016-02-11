@@ -7,7 +7,9 @@
 
 #include <jack/jack.h>
 #include <math.h>
+#include "module.h"
 
+#define SDRAM_SIZE 0x07ffffff
 jack_client_t *client;
 
 jack_default_audio_sample_t *delay_line;
@@ -84,8 +86,11 @@ void jack_shutdown (void *arg) {
 	exit (1);
 }
 
+void module_init(void);
+
 int main (int argc, char *argv[]) {
-  /* module_init(); */
+  SDRAM_ADDRESS = malloc(SDRAM_SIZE);
+  module_init();
   const char **ports;
   const char *client_name = "aleph_sim";
   const char *server_name = NULL;
