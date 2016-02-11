@@ -100,7 +100,7 @@ int main (int argc, char *argv[]) {
 
   //fire up osc server for module
   lo_server_thread st = lo_server_thread_new("7770", error);
-  lo_server_thread_add_method(st, "/param", "i", foo_handler, NULL);
+  lo_server_thread_add_method(st, "/param", "ii", foo_handler, NULL);
 
   const char **ports;
   const char *client_name = "aleph_sim";
