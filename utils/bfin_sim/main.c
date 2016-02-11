@@ -67,13 +67,13 @@ int process_block (jack_nframes_t nframes, void *arg) {
   //outs back to jack_out
   for (i=0; i < nframes; i++) {
     for (j=0; j < IN_PORTS; j++) {
-      /* in[j] = *(jack_in[j] + i); */
-      in[j] = 0;
+      in[j] = jack_sample_to_fract32(*(jack_in[j] + i));
+      /* in[j] = 0; */
     }
     module_process_frame();
     for (j=0; j < OUT_PORTS; j++) {
-      /* *(jack_out[j] + i) = out[j]; */
-      out[j] = 0;
+      *(jack_out[j] + i) = fract32_to_jack_sample(out[j]);
+      /* out[j] = 0; */
     }
   }
   return 0;      
