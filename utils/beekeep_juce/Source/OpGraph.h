@@ -24,8 +24,8 @@ public:
         op_id_t id_;
         int idx_;
         op_t* op_;
-        // scaled position in parent,
-        // relative to upper left
+        // position in parent, relative to upper left
+        // expressed in screen coordinates
         double x_;
         double y_;
     };
@@ -42,7 +42,11 @@ public:
     
     OpGraph::Node* getNode(int idx) {
         return nodes_[idx];
-    }
+    };
+    
+    class Edge : public ReferenceCountedObject {
+        // TODO
+    };
 
 private:
     ReferenceCountedArray<OpGraph::Node> nodes_;

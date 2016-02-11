@@ -13,6 +13,8 @@
 
 #include "GfxUtil.h"
 
+#include "net.h"
+
 const double OpComponent::ROW_W = 0.06;
 const double OpComponent::ROW_H = 0.008;
 
@@ -37,7 +39,7 @@ public:
         if (e.mods.isPopupMenu())
         {
             PopupMenu m;
-//            m.addItem (1, "delete");
+            m.addItem (1, "delete");
             m.addItem (2, "duplicate");
             m.addItem (3, "disconnect all inputs");
             m.addItem (4, "disconnect all outputs");
@@ -100,7 +102,7 @@ public:
         const Rectangle<int>r(0, 0, getWidth(), getHeight());
         g.setColour(hover_? Colours::lightcyan : Colours::whitesmoke);
         g.fillRect(r);
-        g.setColour(Colours::lightgrey);
+        g.setColour(net_in_connected(idx_) ? Colours::lightcyan : Colours::lightgrey);
         g.drawRect(r);
         g.setColour(Colours::black);
         g.drawFittedText(getLabel(), r, Justification::left, 1);
@@ -145,7 +147,7 @@ public:
         const Rectangle<int>r(0, 0, getWidth(), getHeight());
         g.setColour(hover_? Colours::lightcyan : Colours::whitesmoke);
         g.fillRect(r);
-        g.setColour(Colours::lightgrey);
+        g.setColour(net_get_target(idx_) != -1 ? Colours::lightcyan : Colours::lightgrey);
         g.drawRect(r);
         g.setColour(Colours::black);
         g.drawFittedText(getLabel(), r, Justification::left, 1);
@@ -197,8 +199,6 @@ OpComponent::OpComponent (OpGraph* graph, op_t* op, u16 idx) :
         addOutputComponent(i);
     }
     
-    // addMouseListener(this, false);
-    
 }
 
 OpComponent::~OpComponent()
@@ -244,45 +244,6 @@ void OpComponent::mouseUp (const MouseEvent& e)
 void OpComponent::paint (Graphics& g)
 {
     g.fillAll(Colours::whitesmoke);
-    
-#if 0
-    /// just testing... now in child components. that RECT macro tho!
-//    const int h = GfxUtil::screenToPix(ROW_H);
-//    const int w = getWidth();
-//    Rectangle<int> r(0, 0, w, h);
-//    String s;
-//    g.setFont (font_);
-//    
-//#define RECT(color) \
-//    g.setColour((color)); \
-//    g.fillRect(r); \
-//    g.setColour(Colours::black); \
-//    g.drawRect(r)
-//    
-//    RECT(Colours::lightblue);
-//    // op name
-//    s = String(op_idx_) + "." + getName();
-//    g.drawFittedText(s, r, Justification::centred, 1);
-//    r += (Point<int>(0, h));
-//    // inputs
-//    r.setWidth(w / 2);
-//    for(int i=0; i<op_->numInputs; i++) {
-//        RECT(Colours::lightgrey);
-//        s = String(i) + "." + String(op_->inString + i*8);
-//        g.drawFittedText(s, r, Justification::left, 1);
-//        r += (Point<int>(0, h));
-//    }
-//    // outputs
-//    r.setY(h);
-//    r.setX(w/2);
-//    for(int i=0; i<op_->numOutputs; i++) {
-//        RECT(Colours::lightgrey);
-//        s = String(i) + "." + String(op_->outString + i*8);
-//        g.drawFittedText(s, r, Justification::right, 1);
-//        r += (Point<int>(0, h));
-//    }
-//#undef RECT
-#endif
 }
 
 void OpComponent::update(void) {
@@ -302,9 +263,22 @@ void OpComponent::update(void) {
     setCentreRelative(p.x, p.y);
 }
 
+
 double OpComponent::getScreenHeight(op_t* op) {
     int num = (op->numInputs > op->numOutputs) ? op->numInputs : op->numOutputs;
     return (num+1) * ROW_H;
+}
+
+Point<double> OpComponent::getInputScreenPos(int idx) {
+    Point<int> pos( getBounds().getX(), getBounds().getY());
+    Point<double> in = GfxUtil::pixToScreen(pos);
+    return in + Point<double>(0, (idx+1.5)*ROW_H);
+}
+
+Point<double> OpComponent::getOutputScreenPos(int idx) {
+    Point<int> pos( getBounds().getX(), getBounds().getY());
+    Point<double> in = GfxUtil::pixToScreen(pos);
+    return in + Point<double>(ROW_W, (idx+1.5)*ROW_H);
 }
 
 void OpComponent::addInputComponent(int idx) {

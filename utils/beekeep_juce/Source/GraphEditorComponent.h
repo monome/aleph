@@ -6,6 +6,7 @@
 
 #include "op.h"
 #include "OpGraph.h"
+#include "ConnectorComponent.h"
 
 class OpComponent;
 
@@ -30,18 +31,9 @@ public:
     
     void updateComponents();
     
-//    
-//    const int getCanvasWidth(void) {
-//        // FIXME
-//        // return CANVAS_W;
-//        return getWidth();
-//    }
-//    const int getCanvasHeight(void) {
-//        // return CANVAS_H;
-//        return getHeight();
-//    }
+    ConnectorComponent* getConnectorForInput(int op_idx, int in_idx);
+    ConnectorComponent* getConnectorForOutput(int op_idx, int out_idx);
 
-    
 private:
     OpGraph graph;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GraphEditorComponent)

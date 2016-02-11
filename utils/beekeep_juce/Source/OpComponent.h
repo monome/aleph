@@ -20,19 +20,6 @@
 class OpComponent : public Component
 {
 public:
-    OpComponent (OpGraph* graph_, op_t* op, u16 idx);
-    ~OpComponent();
-    
-    void mouseDown (const MouseEvent& e) override;
-    void mouseDrag (const MouseEvent& e) override;
-    void mouseUp (const MouseEvent& e) override;
-    
-    // TODO: override this to include pin children, maybe
-    //bool hitTest (int x, int y) override;
-    
-    void paint (Graphics& g) override;
-    void update(void);
-    
     // row width and height in screen units
     static const double ROW_W;
     static const double ROW_H;
@@ -40,6 +27,26 @@ public:
     // get required component height for given op, in screen units
     static double getScreenHeight(op_t* op);
     static double getScreenWidth(void) { return ROW_W; }
+    
+public:
+    OpComponent (OpGraph* graph_, op_t* op, u16 idx);
+    ~OpComponent();
+    
+    void mouseDown (const MouseEvent& e) override;
+    void mouseDrag (const MouseEvent& e) override;
+    void mouseUp (const MouseEvent& e) override;
+    
+    void paint (Graphics& g) override;
+    void update(void);
+    
+    // get position in screen coordinates for input connection point
+    // relative to parent
+    Point<double> getInputScreenPos(int idx);
+    
+    // get position in screen coordinates for outptu connection point
+    // relative to parent
+    Point<double> getOutputScreenPos(int idx);
+
 
 private:
     void addInputComponent(int idx);

@@ -49,6 +49,7 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS := \
+  $(OBJDIR)/ConnectorComponent_91ce38b9.o \
   $(OBJDIR)/GfxUtil_f10ed9fc.o \
   $(OBJDIR)/OpComponent_79d4687d.o \
   $(OBJDIR)/OpGraph_a51ed9ce.o \
@@ -206,6 +207,11 @@ clean:
 strip:
 	@echo Stripping beekeep
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
+
+$(OBJDIR)/ConnectorComponent_91ce38b9.o: ../../Source/ConnectorComponent.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ConnectorComponent.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/GfxUtil_f10ed9fc.o: ../../Source/GfxUtil.cpp
 	-@mkdir -p $(OBJDIR)
