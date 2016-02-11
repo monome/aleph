@@ -27,7 +27,7 @@ public:
     void mouseDrag (const MouseEvent& e) override;
     void mouseUp (const MouseEvent& e) override;
     
-    // TODO: override this to include pin children
+    // TODO: override this to include pin children, maybe
     //bool hitTest (int x, int y) override;
     
     void paint (Graphics& g) override;

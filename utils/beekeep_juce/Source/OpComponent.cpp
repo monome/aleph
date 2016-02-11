@@ -23,10 +23,7 @@ private:
     op_t* op_;
     int idx_;
 public:
-    OpNameComponent(op_t* op, int idx) {
-        op_ = op;
-        idx_ = idx;
-    }
+    OpNameComponent(op_t* op, int idx)  : op_(op), idx_(idx) {}
     
     const int getIdx() { return idx_; }
     const String getLabel() {
@@ -40,7 +37,7 @@ public:
         if (e.mods.isPopupMenu())
         {
             PopupMenu m;
-            m.addItem (1, "delete");
+//            m.addItem (1, "delete");
             m.addItem (2, "duplicate");
             m.addItem (3, "disconnect all inputs");
             m.addItem (4, "disconnect all outputs");
@@ -65,6 +62,8 @@ public:
             getParentComponent()->mouseDown(e);
         }
     }
+    
+    
 
     virtual void mouseDrag (const MouseEvent& e) override
     {
@@ -88,11 +87,9 @@ class OpInputComponent : public Component {
 private:
     op_t* op_;
     int idx_;
+    bool hover_;
 public:
-    OpInputComponent(op_t* op, int idx) {
-        op_ = op;
-        idx_ = idx;
-    }
+    OpInputComponent(op_t* op, int idx) : op_(op), idx_(idx), hover_(false) {}
     
     const int getIdx() { return idx_; }
     const String getLabel() {
@@ -101,7 +98,7 @@ public:
     
     void paint (Graphics& g) {
         const Rectangle<int>r(0, 0, getWidth(), getHeight());
-        g.setColour(Colours::oldlace);
+        g.setColour(hover_? Colours::lightcyan : Colours::whitesmoke);
         g.fillRect(r);
         g.setColour(Colours::lightgrey);
         g.drawRect(r);
@@ -118,6 +115,15 @@ public:
     virtual void mouseDrag (const MouseEvent& e) override
     {
         getParentComponent()->mouseDrag(e);
+    }
+    
+    virtual void mouseEnter(const MouseEvent& e) override
+    {
+        hover_ = true; repaint();
+    }
+    virtual void mouseExit(const MouseEvent& e) override
+    {
+        hover_ = false; repaint();
     }
 };
 
@@ -126,11 +132,9 @@ class OpOutputComponent : public Component  {
 private:
     op_t* op_;
     int idx_;
+    bool hover_;
 public:
-    OpOutputComponent(op_t* op, int idx) {
-        op_ = op;
-        idx_ = idx;
-    }
+    OpOutputComponent(op_t* op, int idx) : op_(op), idx_(idx), hover_(false) {}
     
     const int getIdx() { return idx_; }
     const String getLabel() {
@@ -139,7 +143,7 @@ public:
     
     void paint (Graphics& g) {
         const Rectangle<int>r(0, 0, getWidth(), getHeight());
-        g.setColour(Colours::oldlace);
+        g.setColour(hover_? Colours::lightcyan : Colours::whitesmoke);
         g.fillRect(r);
         g.setColour(Colours::lightgrey);
         g.drawRect(r);
@@ -155,6 +159,15 @@ public:
     virtual void mouseDrag (const MouseEvent& e) override
     {
         getParentComponent()->mouseDrag(e);
+    }
+    
+    virtual void mouseEnter(const MouseEvent& e) override
+    {
+        hover_ = true; repaint();
+    }
+    virtual void mouseExit(const MouseEvent& e) override
+    {
+        hover_ = false; repaint();
     }
 };
 
@@ -231,7 +244,9 @@ void OpComponent::mouseUp (const MouseEvent& e)
 void OpComponent::paint (Graphics& g)
 {
     g.fillAll(Colours::whitesmoke);
+    
 #if 0
+    /// just testing... now in child components. that RECT macro tho!
 //    const int h = GfxUtil::screenToPix(ROW_H);
 //    const int w = getWidth();
 //    Rectangle<int> r(0, 0, w, h);
