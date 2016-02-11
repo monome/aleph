@@ -47,6 +47,8 @@ jack_default_audio_sample_t fract32_to_jack_sample (fract32 in) {
 fract32 in[IN_PORTS];
 fract32 out[OUT_PORTS];
 
+void module_process_frame(void);
+
 int process_block (jack_nframes_t nframes, void *arg) {
 
   jack_default_audio_sample_t* jack_in[IN_PORTS];
