@@ -50,25 +50,29 @@ fract32 in[IN_PORTS];
 fract32 out[OUT_PORTS];
 
 int process_block (jack_nframes_t nframes, void *arg) {
-  jack_default_audio_sample_t *in_jack_block, *out_jack_block;
-  int k;
 
-  in_jack_block = jack_port_get_buffer (input_port, nframes);
-  out_jack_block = jack_port_get_buffer (output_port, nframes);
-
-  for (i=0; i < IN_PORTS; i++) {
-    
+  jack_default_audio_sample_t *jack_in[IN_PORTS], *jack_out[OUT_PORTS];
+  int i, j;
+  //First get an input buffer for each jack input
+  for (j=0; j < IN_PORTS; j++) {
+    jack_out[j] = jack_port_get_buffer (output_ports[j], nframes);
   }
-  
-  for (k=0; k<nframes; k++) {
-    int i;
-    for(i=0; i < 4; i++)
-      in[0] = jack_sample_to_fract32(in[k]);
-      module_process_frame();
-    out_jack_block[k] = fract32_to_jack_sample(out[0]);
-			     }
-  /* printf("%d\n", period ); */
+  //Then get an output buffer for each jack input
+  for (j=0; j < OUT_PORTS; j++) {
+      jack_in[j] = jack_port_get_buffer (input_ports[j], nframes);
+  }
 
+  //Then run module_process_frame, priming ins from jack_in, copying
+  //outs back to jack_out
+  for (i=0; i < nframes; i++) {
+    for (j=0; j < IN_PORTS; j++) {
+      in[j] = jack_in[j][i];
+    }
+    module_process_frame();
+    for (j=0; j < OUT_PORTS; j++) {
+      jack_out[j][i] = out[j];
+    }
+  }
   return 0;      
 }
 

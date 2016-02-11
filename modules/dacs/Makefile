@@ -57,7 +57,9 @@ deploy: $(prefix)$(module_name).ldr
 
 sim_sourcefiles = dacs.c \
 	$(audio)/filter_1p.c \
+	params.c \
 	../../utils/bfin_sim/main.c \
+	../../utils/bfin_sim/src/cv.c \
 	../../utils/bfin_sim/fract32_jack.c
 
 sim_inc = -I ../../dsp \
@@ -74,4 +76,4 @@ sim_flags = -ljack -llo
 sim:
 	touch $(sim_outfile)
 	rm ./$(sim_outfile)
-	gcc $(sim_sourcefiles) $(flags) $(sim_inc) -o $(sim_outfile) -g
+	gcc $(sim_sourcefiles) $(sim_flags) $(sim_inc) -o $(sim_outfile) -g
