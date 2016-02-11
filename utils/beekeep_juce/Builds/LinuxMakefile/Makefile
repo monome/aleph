@@ -49,7 +49,6 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS := \
-  $(OBJDIR)/MainWindow_499ac812.o \
   $(OBJDIR)/OpComponent_79d4687d.o \
   $(OBJDIR)/OpGraph_a51ed9ce.o \
   $(OBJDIR)/flash_beekeep_c1a02d79.o \
@@ -206,11 +205,6 @@ clean:
 strip:
 	@echo Stripping beekeep
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
-
-$(OBJDIR)/MainWindow_499ac812.o: ../../Source/MainWindow.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling MainWindow.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/OpComponent_79d4687d.o: ../../Source/OpComponent.cpp
 	-@mkdir -p $(OBJDIR)

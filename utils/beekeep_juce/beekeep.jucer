@@ -5,8 +5,6 @@
               jucerVersion="4.1.0">
   <MAINGROUP id="qrFqYg" name="beekeep">
     <GROUP id="{20D0B394-6D19-B446-C16A-8FE43DC7C723}" name="Source">
-      <FILE id="SyFN0X" name="MainWindow.cpp" compile="1" resource="0" file="Source/MainWindow.cpp"/>
-      <FILE id="WF3wGW" name="MainWindow.h" compile="0" resource="0" file="Source/MainWindow.h"/>
       <FILE id="OgLRI0" name="OpComponent.cpp" compile="1" resource="0" file="Source/OpComponent.cpp"/>
       <FILE id="ArQFS6" name="OpComponent.h" compile="0" resource="0" file="Source/OpComponent.h"/>
       <FILE id="qaPKMR" name="OpGraph.cpp" compile="1" resource="0" file="Source/OpGraph.cpp"/>

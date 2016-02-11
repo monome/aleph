@@ -73,11 +73,12 @@ void GraphEditorComponent::mouseDown (const MouseEvent& e)
         }
         
         const int r = m.show();
-        
-        // add selected operator
-        graph.addOpNode((op_id_t)(r - 1),
-                        e.x / (double)getCanvasWidth(),
-                        e.y / (double)getCanvasHeight());
+        if(r > 0) {
+            // add selected operator
+            graph.addOpNode((op_id_t)(r - 1),
+                            e.x / (double)getCanvasWidth(),
+                            e.y / (double)getCanvasHeight());
+        }
     }
 }
 

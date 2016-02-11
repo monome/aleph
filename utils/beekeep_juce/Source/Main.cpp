@@ -54,7 +54,7 @@ public:
     {
         quit();
     }
-
+	
     void anotherInstanceStarted (const String& commandLine) override
     {}
 
