@@ -18,6 +18,7 @@
 #include "bfin_core.h"
 #include "cv.h"
 #include "gpio.h"
+#include "fract_math.h"
 
 // audio
 #include "filter_1p.h"

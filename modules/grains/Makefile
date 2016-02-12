@@ -80,7 +80,7 @@ sim_sourcefiles = ../../utils/bfin_sim/main.c \
 	$(audio)/noise.c \
 	$(audio)/pan.c \
 	../../utils/bfin_sim/src/cv.c \
-	../../utils/bfin_sim/fract32_jack.c \
+	../../utils/bfin_sim/fract_math.c \
 	params.c
 
 sim_inc = -I ../../dsp \

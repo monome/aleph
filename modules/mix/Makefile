@@ -72,7 +72,7 @@ sim_sourcefiles = mix.c \
 	params.c \
 	../../utils/bfin_sim/main.c \
 	../../utils/bfin_sim/src/cv.c \
-	../../utils/bfin_sim/fract32_jack.c
+	../../utils/bfin_sim/fract_math.c
 
 sim_inc = -I ../../dsp \
 	-I ../../utils/bfin_sim/src \

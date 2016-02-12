@@ -82,7 +82,8 @@ fract32 shl_fr1x32 (fract32 x, int shft) {
     return clip_to_fr32(((long) x) >> -shft);
 }
 void* __builtin_bfin_circptr(void* ptr, long unsigned int wordLength, void* buf, long unsigned int bufLength) {
-  assert(ptr >= buf);
-  long unsigned int idx = (long unsigned int)(ptr - buf);
-  return (void*)((idx + wordLength) % bufLength + buf);
+  int idx = ptr - buf;
+  idx += wordLength;
+  idx = idx % bufLength;
+  return buf + idx;
 }
