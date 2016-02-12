@@ -14,11 +14,18 @@
 #include "conf_tc_irq.h"
 #include "events.h"
 #include "event_types.h"
+#include "screen.h"
 
 
 /// NOTE: if we are ever over-filling the event queue, we have problems.
 /// making the event queue bigger not likely to solve the problems.
 #define MAX_EVENTS   32
+
+// keep track of how many events we've rejected,
+// and allow the queue to wrap after some number
+#define MAX_EVENT_FULL_COUNT 2
+static int fullCount = 0;
+
 
 // macro for incrementing an index into a circular buffer.
 #define INCR_EVENT_INDEX( x )  { if ( ++x == MAX_EVENTS ) x = 0; }
@@ -26,6 +33,7 @@
 // et/Put indexes inxto sysEvents[] array
 static int putIdx = 0;
 static int getIdx = 0;
+
 
 // The system event queue is a circular array of event records.
 static event_t sysEvents[ MAX_EVENTS ];
@@ -68,13 +76,16 @@ u8 event_next( event_t *e ) {
 }
 
 
+static inline void write_event(event_t* e) { 
+  sysEvents[ putIdx ].type = e->type;
+  sysEvents[ putIdx ].data = e->data;
+  fullCount = 0;
+}
+
 // add event to queue, return success status
 u8 event_post( event_t *e ) {
   u8 status = false;
   int saveIndex;
-
-  //  print_dbg("\r\n posting event, type: ");
-  //  print_dbg_ulong(e->type);
 
   cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
   
@@ -82,13 +93,19 @@ u8 event_post( event_t *e ) {
   saveIndex = putIdx;
   INCR_EVENT_INDEX( putIdx );
   if ( putIdx != getIdx  ) {
-    sysEvents[ putIdx ].type = e->type;
-    sysEvents[ putIdx ].data = e->data;
+    write_event(e);
     status = true;
   } else {
-    // idx wrapped, so queue is full, restore idx
-    putIdx = saveIndex;
-    print_dbg("\r\n event queue full!");
+    // if queue stays full for too long, let it wrap
+    if(fullCount++ < MAX_EVENT_FULL_COUNT) { 
+      putIdx = saveIndex;
+      print_dbg("\r\n event queue full!");
+    } else {
+      write_event(e);
+      status = true;
+    }
+    // show the user that bad things are happening
+    screen_flash();
   } 
 
   cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);

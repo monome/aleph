@@ -13,6 +13,9 @@
 #include "param_common.h"
 #include "types.h"
 
+#define SDRAM_ADDRESS 0x00000000
+#define SDRAM_SIZE    0x07ffffff
+
 //! global module data type
 typedef struct _moduleData {
   char name[MODULE_NAME_LEN];

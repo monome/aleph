@@ -159,21 +159,6 @@ extern void render_boot(const char* str) {
 void render_update(void) {
   //  app_pause();
 
-#if 0 // POLL_DSP_CPU==1
-  static char buf[16];
-  s32 val;
-
-  if(pageIdx == ePagePlay) {
-    region_fill(headRegion, 0x0);
-    val = bfin_get_audio_cpu();
-    uint_to_hex_ascii(buf, (u32)val);
-    font_string_region_clip(headRegion, buf, 0, 0, 0xf, 0x1);
-    val = bfin_get_control_cpu();
-    uint_to_hex_ascii(buf, (u32)val);
-    font_string_region_clip(headRegion, buf, 64, 0, 0xf, 0x1);
-  }
-#endif
-
   // scrolling region
   if((pageCenterScroll->reg)->dirty) {
     scroll_draw(pageCenterScroll);

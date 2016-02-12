@@ -85,7 +85,7 @@ u8* pdesc_pickle(ParamDesc* pdesc, u8* dst) {
 
 //---- main function
 int main() {
-  FILE* out_dsc;
+  FILE* out;
   int i, j;
   // write pointer
   u8* pwr;
@@ -98,7 +98,7 @@ int main() {
   printf("\r\n %s_desc_build ... ", NAME);
   printf("\r\n filled param descripor table... \r\n");
   
-  out_dsc = fopen(str, "w");
+  out = fopen(str, "w");
 
   pwr = buf;
 
@@ -111,12 +111,17 @@ int main() {
   }
 
   // write to file
-  fwrite(buf, 1, (size_t)((size_t)pwr - (size_t)&buf), out_dsc);
+  fwrite(buf, 1, (size_t)((size_t)pwr - (size_t)&buf), out);
 
   printf("\r\n wrote %d bytes... \r\n", (int) ((size_t)pwr - (size_t)&buf));
+
+  fclose(out);
+  printf("\r\n done writing descriptor. \r\n");
+
+
+  //------
+  // write human-readable text description...
   
-  fclose(out_dsc);
-  printf("\r\n done. \r\n");
   
 
   return 0;
