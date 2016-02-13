@@ -12,13 +12,15 @@
 #include "param_common.h"
 #include "types.h"
 
+#ifndef SAMPLERATE
+#define SAMPLERATE    48000
+#endif
+
 #if ARCH_BFIN
 
 #define SDRAM_ADDRESS 0x00000000
 #define SDRAM_SIZE    0x07ffffff
-#ifndef SAMPLERATE
-#define SAMPLERATE    48000
-#endif
+
 
 #else
 void *SDRAM_ADDRESS;
