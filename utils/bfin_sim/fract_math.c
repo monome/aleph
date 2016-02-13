@@ -95,6 +95,11 @@ fract32 mult_fr1x32(fract16 x, fract16 y) {
   return x * y;
 }
 
+fract16 trunc_fr1x32(fract32 x) {
+  x = x & 0xFFFF0000;
+  return (fract16) (x >> 16);
+}
+
 void* __builtin_bfin_circptr(void* ptr, long unsigned int wordLength, void* buf, long unsigned int bufLength) {
   int idx = ptr - buf;
   idx += wordLength;
@@ -102,8 +107,25 @@ void* __builtin_bfin_circptr(void* ptr, long unsigned int wordLength, void* buf,
   return buf + idx;
 }
 
+fract16 add_fr1x16(fract16 _x, fract16 _y) {
+  return _x + _y ;
+}
 
-fract16 trunc_fr1x32(fract32 x) {
-  x = x & 0xFFFF0000;
-  return (fract16) (x >> 16);
+fract16 sub_fr1x16(fract16 _x, fract16 _y) {
+  return _x - _y ;
+}
+
+fract16 mult_fr1x16(fract16 _x, fract16 _y) {
+  fract32 x = _x;
+  fract32 y = _y;
+  return (x * y) >> 16;
+}
+
+fract16 abs_fr1x16 (fract16 x) {
+  if(x == FR16_MIN)
+    return FR16_MAX;
+  else if ( x >= 0)
+    return x;
+  else
+    return - x;
 }

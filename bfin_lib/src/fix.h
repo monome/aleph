@@ -13,6 +13,8 @@
 // constants
 #define FR32_MAX  0x7fffffff
 #define FR32_MIN  0x80000000
+#define FR16_MAX  0x7fff
+#define FR16_MIN  0x8000
 
 #define FIX16_ONE 0x00010000
 
