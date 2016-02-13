@@ -10,6 +10,7 @@
 #include <stdio.h>
 
 #include "table.h"
+#include "fract_math.h"
 
 //----- help
 typedef union { f32 fl; fract32 fr; } fu;

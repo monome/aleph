@@ -19,7 +19,6 @@
 #include "cv.h"
 #include "gpio.h"
 #include "fract_math.h"
-#include <fract2float_conv.h>
 
 // audio
 #include "filter_1p.h"

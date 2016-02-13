@@ -54,3 +54,27 @@ deploy: $(prefix)$(module_name).ldr
 
 .PHONY: clean
 	deploy
+
+sim_sourcefiles = dacs.c \
+	$(audio)/filter_1p.c \
+	params.c \
+	../../utils/bfin_sim/main.c \
+	../../utils/bfin_sim/src/cv.c \
+	../../utils/bfin_sim/fract_math.c
+
+sim_inc = -I ../../dsp \
+	-I ../../utils/bfin_sim/src \
+	-I ../../utils/bfin_sim/ \
+	../../utils/bfin_sim/fract2float_conv.c \
+	-I ../../utils/bfin_sim/src/libfixmath \
+	-I ./ \
+	-I ../../common\
+
+sim_outfile = dacs_jack
+
+sim_flags = -ljack -llo -D ARCH_LINUX=1
+
+sim:
+	touch $(sim_outfile)
+	rm ./$(sim_outfile)
+	gcc $(sim_sourcefiles) $(sim_flags) $(sim_inc) -o $(sim_outfile) -g

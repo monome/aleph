@@ -2,9 +2,7 @@
 #include "ricks_tricks.h"
 #include "pan.h"
 
-#ifdef ARCH_BFIN
 #include "fract_math.h"
-#endif
 
 
 void hpf_init (hpf *myHpf) {

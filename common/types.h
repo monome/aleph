@@ -34,6 +34,8 @@ typedef s64 S64;  //!< 64-bit signed integer.
 typedef u64 U64;  //!< 64-bit unsigned integer.
 typedef f32 F32;  //!< 32-bit floating-point number.
 typedef f64 F64;  //!< 64-bit floating-point number.
+typedef int16_t fract16;
+typedef int32_t fract2x16;
 #endif
 
 // fract

@@ -67,3 +67,35 @@ deploy: $(module_name).ldr
 
 .PHONY: clean
 	deploy
+
+sim_sourcefiles = ../../utils/bfin_sim/main.c \
+	grains.c \
+	$(audio)/buffer.c \
+	$(audio)/ricks_tricks.c \
+	$(audio)/echoTap.c \
+	$(audio)/scrubTap.c \
+	$(audio)/grain.c \
+	$(audio)/filter_1p.c \
+	$(audio)/filter_ramp.c \
+	$(audio)/noise.c \
+	$(audio)/pan.c \
+	../../utils/bfin_sim/fract2float_conv.c \
+	../../utils/bfin_sim/src/cv.c \
+	../../utils/bfin_sim/fract_math.c \
+	params.c
+
+sim_inc = -I ../../dsp \
+	-I ../../utils/bfin_sim/src \
+	-I ../../utils/bfin_sim/ \
+	-I ../../utils/bfin_sim/src/libfixmath \
+	-I ./ \
+	-I ../../common\
+
+sim_outfile = grains_jack
+
+sim_flags = -ljack -llo -D ARCH_LINUX=1
+
+sim:
+	touch $(sim_outfile)
+	rm ./$(sim_outfile)
+	gcc $(sim_sourcefiles) $(sim_flags) $(sim_inc) -o $(sim_outfile) -g
