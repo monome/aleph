@@ -38,6 +38,8 @@ typedef f64 F64;  //!< 64-bit floating-point number.
 
 // fract
 typedef int32_t fix16;
+typedef int16_t fract16;
+typedef int32_t fract2x16;
 typedef int32_t  fract32;
 
 #ifdef BEEKEEP
