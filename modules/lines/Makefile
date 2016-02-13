@@ -91,7 +91,7 @@ sim_inc = -I ../../dsp \
 
 sim_outfile = lines_jack
 
-sim_flags = -ljack -llo
+sim_flags = -ljack -llo -D ARCH_LINUX=1
 
 sim:
 	touch $(sim_outfile)

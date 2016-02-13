@@ -69,8 +69,8 @@ sim_sourcefiles = ../../utils/bfin_sim/main.c \
 	$(audio_dir)/table.c \
 	$(bfin_lib_srcdir)/libfixmath/fix32.c \
 	$(bfin_lib_srcdir)/libfixmath/fix16.c \
-	../../utils/bfin_sim/fract_math.c \
-	params.c
+	../../utils/bfin_sim/fract2float_conv.c \
+	../../utils/bfin_sim/fract_math.c
 
 sim_inc = -I ../../dsp \
 	-I ../../utils/bfin_sim/src \
@@ -81,7 +81,7 @@ sim_inc = -I ../../dsp \
 
 sim_outfile = waves_jack
 
-sim_flags = -ljack -llo
+sim_flags = -ljack -llo -D ARCH_LINUX=1
 
 sim:
 	touch $(sim_outfile)

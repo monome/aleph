@@ -65,13 +65,14 @@ sim_sourcefiles = dacs.c \
 sim_inc = -I ../../dsp \
 	-I ../../utils/bfin_sim/src \
 	-I ../../utils/bfin_sim/ \
+	../../utils/bfin_sim/fract2float_conv.c \
 	-I ../../utils/bfin_sim/src/libfixmath \
 	-I ./ \
 	-I ../../common\
 
 sim_outfile = dacs_jack
 
-sim_flags = -ljack -llo
+sim_flags = -ljack -llo -D ARCH_LINUX=1
 
 sim:
 	touch $(sim_outfile)

@@ -9,6 +9,7 @@
 #include <math.h>
 #include "module.h"
 #include "lo/lo.h"
+#include "fract2float_conv.h"
 
 jack_client_t *client;
 

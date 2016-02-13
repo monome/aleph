@@ -79,6 +79,7 @@ sim_sourcefiles = ../../utils/bfin_sim/main.c \
 	$(audio)/filter_ramp.c \
 	$(audio)/noise.c \
 	$(audio)/pan.c \
+	../../utils/bfin_sim/fract2float_conv.c \
 	../../utils/bfin_sim/src/cv.c \
 	../../utils/bfin_sim/fract_math.c \
 	params.c
@@ -92,7 +93,7 @@ sim_inc = -I ../../dsp \
 
 sim_outfile = grains_jack
 
-sim_flags = -ljack -llo
+sim_flags = -ljack -llo -D ARCH_LINUX=1
 
 sim:
 	touch $(sim_outfile)
