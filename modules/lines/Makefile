@@ -62,3 +62,36 @@ deploy: $(module_name).ldr
 
 .PHONY: clean
 	deploy
+
+sim_sourcefiles = ../../utils/bfin_sim/main.c \
+	lines.c \
+	$(audio)/buffer.c \
+	$(audio)/conversion.c \
+	$(audio)/delayFadeN.c \
+	$(audio)/filter_1p.c \
+	$(audio)/filter_ramp.c \
+	$(audio)/filter_svf.c \
+	$(audio)/noise.c \
+	$(audio)/pan.c \
+	$(audio)/table.c \
+	$(bfin)/libfixmath/fix32.c \
+	$(bfin)/libfixmath/fix16.c \
+	$(bfin)/libfixmath/fix16_sqrt.c \
+	../../utils/bfin_sim/fract_math.c \
+	params.c
+
+sim_inc = -I ../../dsp \
+	-I ../../utils/bfin_sim/src \
+	-I ../../utils/bfin_sim/ \
+	-I ../../utils/bfin_sim/src/libfixmath \
+	-I ./ \
+	-I ../../common\
+
+sim_outfile = lines_jack
+
+sim_flags = -ljack -llo
+
+sim:
+	touch $(sim_outfile)
+	rm ./$(sim_outfile)
+	gcc $(sim_sourcefiles) $(sim_flags) $(sim_inc) -o $(sim_outfile) -g
