@@ -81,9 +81,29 @@ fract32 shl_fr1x32 (fract32 x, int shft) {
   else
     return clip_to_fr32(((long) x) >> -shft);
 }
+
+fract32 shr_fr1x32 (fract32 x, int shft) {
+  if (shft >= 0)
+    return clip_to_fr32(((long) x) << -shft);
+  else
+    return clip_to_fr32(((long) x) >> shft);
+}
+
+fract32 mult_fr1x32(fract16 x, fract16 y) {
+  fract32 x_32 = x;
+  fract32 y_32 = y;
+  return x * y;
+}
+
 void* __builtin_bfin_circptr(void* ptr, long unsigned int wordLength, void* buf, long unsigned int bufLength) {
   int idx = ptr - buf;
   idx += wordLength;
   idx = idx % bufLength;
   return buf + idx;
+}
+
+
+fract16 trunc_fr1x32(fract32 x) {
+  x = x & 0xFFFF0000;
+  return (fract16) (x >> 16);
 }

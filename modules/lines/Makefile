@@ -77,6 +77,8 @@ sim_sourcefiles = ../../utils/bfin_sim/main.c \
 	$(bfin)/libfixmath/fix32.c \
 	$(bfin)/libfixmath/fix16.c \
 	$(bfin)/libfixmath/fix16_sqrt.c \
+	../../utils/bfin_sim/fract2float_conv.c \
+	../../utils/bfin_sim/src/cv.c \
 	../../utils/bfin_sim/fract_math.c \
 	params.c
 

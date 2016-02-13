@@ -34,15 +34,6 @@ jack_port_t *output_ports[OUT_PORTS];
 /* #include "grain.h" */
 
 
-fract32 jack_sample_to_fract32 (jack_default_audio_sample_t in) {
-  return (fract32) (in * ((jack_default_audio_sample_t) FR32_MAX));
-}
-
-jack_default_audio_sample_t fract32_to_jack_sample (fract32 in) {
-  return ((jack_default_audio_sample_t) in) /
-    ((jack_default_audio_sample_t) FR32_MAX);
-}
-
 int process_block (jack_nframes_t nframes, void *arg) {
 
   jack_default_audio_sample_t* jack_in[IN_PORTS];
@@ -61,12 +52,12 @@ int process_block (jack_nframes_t nframes, void *arg) {
   //outs back to jack_out
   for (i=0; i < nframes; i++) {
     for (j=0; j < IN_PORTS; j++) {
-      in[j] = jack_sample_to_fract32(*(jack_in[j] + i));
+      in[j] = float_to_fr32(*(jack_in[j] + i));
       /* in[j] = 0; */
     }
     module_process_frame();
     for (j=0; j < OUT_PORTS; j++) {
-      *(jack_out[j] + i) = fract32_to_jack_sample(out[j]);
+      *(jack_out[j] + i) = fr32_to_float(out[j]);
       /* out[j] = 0; */
     }
   }
