@@ -191,5 +191,4 @@ target: $(obj)
 all: beekeep
 
 clean:
-#	rm $(obj) $(pyaleph)/pyaleph.pyc
 	rm $(obj)

@@ -1,8 +1,16 @@
 #ifndef _MONOME_H_
 #define _MONOME_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "events.h"
+    
+#ifndef BEEKEEP
 #include "ftdi.h"
+#endif
+    
 #include "types.h"
 
 //--------------------------------
@@ -198,5 +206,9 @@ extern u8 monome_is_vari(void);
 
 extern eMonomeDevice monome_dev_type(void);
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // h guard

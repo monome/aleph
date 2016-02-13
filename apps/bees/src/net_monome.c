@@ -22,27 +22,6 @@ bool monomeConnect = 0;
 // dummy handler
 static void dummyHandler(void* op, u32 edata) { return; }
 
-// use led state buffer and dirty flags
-/* static void monome_grid_key_loopback(void* op, u32 edata) { */
-/*   u8 x, y, z; */
-/*   /// FIXME: this stuff should really be abstracted */
-/*   monome_grid_key_parse_event_data(edata, &x, &y, &z); */
-/*   monomeLedBuffer[x | (y << 4)] = z; */
-/*   monome_calc_quadrant_flag(x, y); */
-/* } */
-
-/* // use led state buffer and dirty flags */
-/* static void monome_ring_enc_loopback(void* op, u32 edata) { */
-/*   u8 n; */
-/*   s8 val; */
-/*   monome_ring_enc_parse_event_data(edata, &n, &val); */
-/*   if(val > 0) { */
-/*     // FIXME: not sure if this is useful? */
-/*     monomeLedBuffer[val + (n<<6)] = 15; */
-/*     monomeFrameDirty |= (1<<n); */
-/*   } */
-/* } */
-
 //---------------------------------
 // extern variables, initialized here.
 
@@ -64,18 +43,6 @@ op_monome_t* monomeOpFocus = NULL;
 //// have system create additional instances of adc/sw ?? hm
 //monome_handler_t monome_grid_tilt_handler = NULL;
 //monome_handler_t monome_ring_key_handler = NULL;
-
-//--------------------------
-//---- extern functions
-// init
-/* void net_monome_init(void) { */
-/*   //// ok, this is never called... */
-/*   int i; */
-/*   for(i=0; i<100; i++) { */
-/*     print_dbg("\r\n !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); */
-/*   } */
-/*   monomeOpFocus = NULL; */
-/* } */
 
 // set focus
 void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
@@ -144,7 +111,7 @@ void net_monome_grid_clear(void) {
 
 // set operator attributes from connected grid device .. ??
 void net_monome_set_attributes() {
-  //... TODO
+  //... TODO... 
 }
 
 void net_monome_connect(void) {
@@ -161,7 +128,5 @@ void net_monome_connect(void) {
 void net_monome_disconnect(void) {
   print_dbg("\r\n net_monome_disconnect");
   monomeConnect = 0;
-  //  monomeOpFocus = NULL;
-  //  monome_grid_key_handler = (monome_handler_t)&dummyHandler;
   timers_unset_monome();
 }

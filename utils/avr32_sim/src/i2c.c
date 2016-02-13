@@ -8,12 +8,14 @@
 //=========================================
 //==== static variables
 
+#if 0
 // this module's chip address.
 static u8 addr;
 // twi options
 //static twi_options_t opt;
 // status flag
 static u8 status;
+#endif
 
 //======================================
 //=== static function declarations
@@ -87,6 +89,7 @@ extern void i2c_tx(u8 chip, u32 addr, u8 addr_len, u32 data_len, void* data) {
 
 u8 init_master() {
 #if 1
+    return 1;
 #else
   // options settings
   opt.pba_hz = FPBA_HZ;
@@ -99,6 +102,7 @@ u8 init_master() {
 
 u8 send_master(u8 chip, u32 addr, u8 addr_len, u32 data_len, void* data) {
 #if 1
+    return 1;
 #else
   static twi_package_t pac;
   // TWI chip address to communicate with
@@ -118,6 +122,7 @@ u8 send_master(u8 chip, u32 addr, u8 addr_len, u32 data_len, void* data) {
 
 u8 init_slave(void) {
 #if 1
+    return 1;
 #else
   static twi_slave_fct_t twi_slave_fct;
   opt.pba_hz = FPBA_HZ;
@@ -140,6 +145,7 @@ void slave_rx(u8 val) {
 
 u8 slave_tx(void) {
 #if 1
+    return 1;
 #else
   //...
   return 0;

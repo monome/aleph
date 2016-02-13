@@ -31,10 +31,12 @@ typedef enum {
   eComNumCommands
 } eSerialCommands;
 
+#if 0
 static u16 serial_read_pos = 0;
 static u16 serial_write_pos = 0;
 static u8 escape = 0;
 static event_t e;
+#endif
 
 //--------------------------------
 //---- static funcs
@@ -43,6 +45,7 @@ static void com_req_param_info(u16);
 static void com_get_param(u16);
 static void com_set_param(u16);
 
+#if 0
 static void serial_decode_dummy(u16 pos) { return; }
 
 static const process_serial_t serialFuncs[eComNumCommands] = {
@@ -53,6 +56,7 @@ static const process_serial_t serialFuncs[eComNumCommands] = {
   &com_get_param,
   &com_set_param
 };
+#endif
 
 void serial_send_start(u8 index) {
   //  usart_putchar(DBG_USART,index);

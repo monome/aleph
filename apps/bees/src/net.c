@@ -11,10 +11,8 @@
 #include <string.h>
 
 // asf
-#ifdef ARCH_AVR32
 #include "print_funcs.h"
 #include "delay.h"
-#endif
 
 // aleph-avr32
 #include "app.h"
@@ -321,15 +319,11 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
   }
 
   vis = net_get_in_play(inIdx);
-  /* print_dbg(" , play visibility flag : "); */
-  /* print_dbg_ulong(vis); */
 
   if(inIdx < net->numIns) {      
     // this is an op input
     pIn = &(net->ins[inIdx]);
     
-    //    print_dbg(" ; input node pointer: 0x"); print_dbg_hex((u32)pIn);
-
     op_set_in_val(net->ops[pIn->opIdx],
 		  pIn->opInIdx,
 		  val);
@@ -339,20 +333,16 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
     //// FIXME this is horrible
     pIndex = inIdx - net->numIns;
     if (pIndex >= net->numParams) { return; }
-    //    print_dbg(" ; param index: 0x"); print_dbg_ulong(pIndex);
     set_param_value(pIndex, val);
   }
 
   /// only process for play mode if we're in play mode
   if(pageIdx == ePagePlay) {
-    //    print_dbg(" , play mode ");
     if(opPlay) {
-      //      operators have focus, do nothing
-      //      print_dbg(" , op focus mode");
+      // operators have focus, do nothing
     } else {
       // process if play-mode-visibility is set on this input
       if(vis) {
-	//	print_dbg(" , input enabled");
 	play_input(inIdx);
       }
     }
@@ -428,23 +418,8 @@ s16 net_add_op(op_id_t opId) {
 
   if(net->numOps > 0) {
     // if we added input nodes, need to adjust connections to DSP params
-    for(i=0; i < numOutsSave; i++) {
-
-      /* print_dbg("\r\n checking output no. "); */
-      /* print_dbg_ulong(i); */
-      /* print_dbg(" ; target: "); */
-      /* print_dbg_ulong(net->outs[i].target); */
-            
+    for(i=0; i < numOutsSave; i++) {            
       if(net->outs[i].target >= numInsSave) {
-	/* print_dbg("\r\n adjusting target after op creation; old op count: "); */
-	/* print_dbg_ulong(net->numOps); */
-	/* print_dbg(" , output index: "); */
-	/* print_dbg_ulong(i); */
-	/* print_dbg(" , current target "); */
-	/* print_dbg_ulong(net->outs[i].target); */
-	/* print_dbg(" , count of inputs in new op: "); */
-	/* print_dbg_ulong(ins); */
-
 	// preset target, add offset for new inputs
 	net_connect(i, net->outs[i].target + ins);
       }
@@ -962,7 +937,6 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
   // initialize scaler
   scaler_init(&(net->params[net->numParams].scaler), 
 	      &(net->params[net->numParams].desc));
-  print_dbg("\r\n finished initializing param scaler.");
 
   //... FIXME: can't remember what this is about.
   // net->params[net->numParams].idx = idx; 
@@ -974,7 +948,7 @@ void net_add_param(u32 idx, const ParamDesc * pdesc) {
 
   // query initial value
   val = bfin_get_param(idx);
-
+  
   net->params[net->numParams - 1].data.value = 
     scaler_get_in( &(net->params[net->numParams - 1].scaler), val);
 
@@ -1027,7 +1001,6 @@ u8* net_pickle(u8* dst) {
   }
 
   // write input nodes
-#if 1
   //// all nodes, even unused
   for(i=0; i < (NET_INS_MAX); ++i) {
     dst = inode_pickle(&(net->ins[i]), dst);
@@ -1037,16 +1010,6 @@ u8* net_pickle(u8* dst) {
   for(i=0; i < NET_OUTS_MAX; ++i) {
     dst = onode_pickle(&(net->outs[i]), dst);
   }
-#else
-  /* for(i=0; i < (net->numIns); ++i) { */
-  /*   dst = inode_pickle(&(net->ins[i]), dst); */
-  /* } */
-
-  /* // write output nodes */
-  /* for(i=0; i < net->numOuts; ++i) { */
-  /*   dst = onode_pickle(&(net->outs[i]), dst); */
-  /* } */
-#endif
 
   // write count of parameters
   // 4 bytes for alignment
@@ -1115,24 +1078,11 @@ u8* net_unpickle(const u8* src) {
   print_dbg("\r\n reading all input nodes ");
   
   for(i=0; i < (NET_INS_MAX); ++i) {
-#ifdef PRINT_PICKLE
-    print_dbg("\r\n unpickling input node, idx: ");
-    print_dbg_ulong(i);
-#endif
-
     src = inode_unpickle(src, &(net->ins[i]));
   }
 
-#ifdef PRINT_PICKLE
-  print_dbg("\r\n reading all output nodes");
-#endif
   // read output nodes
   for(i=0; i < NET_OUTS_MAX; ++i) {
-#ifdef PRINT_PICKLE
-    print_dbg("\r\n unpickling output node, idx: ");
-    print_dbg_ulong(i);
-#endif 
-
     src = onode_unpickle(src, &(net->outs[i]));
     if(i < net->numOuts) {
       if(net->outs[i].target >= 0) {
@@ -1227,7 +1177,6 @@ s16 net_split_out(s16 outIdx) {
   } else {
     // had target; reroute
     split = net_add_op(eOpSplit);
-    // fix for github issue #219
     // get the target again, because maybe it was a DSP param
     // (if it was, its index will have shifted. 
     // patch and presets have been updated, but local var has not.)
@@ -1246,7 +1195,7 @@ s16 net_split_out(s16 outIdx) {
 
 /////////////// 
 // test / dbg
-#if 1
+#if 0
 void net_print(void) {
   print_dbg("\r\n net address: 0x");
   print_dbg_hex((u32)(net));

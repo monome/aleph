@@ -32,6 +32,11 @@ compile with
 
 ParamDesc desc[eParamNumParams];
 
+#ifdef PARAM_TEXT
+#define TEXT_BUF_SIZE 256
+char text[eParamNumParams][TEXT_BUF_SIZE];
+#endif
+
 //char str[64] = "aleph-";
 char str[64] = "";
 
@@ -42,7 +47,7 @@ char buf[MAXBYTES];
 //--------------------
 //---- static func
 
-////////////////////////////////x
+////////////////////////////////
 //// FIXME:
 /* copying these functions from BEES. dirty
 */
@@ -109,9 +114,14 @@ int main() {
   fwrite(buf, 1, (size_t)((size_t)pwr - (size_t)&buf), out);
 
   printf("\r\n wrote %d bytes... \r\n", (int) ((size_t)pwr - (size_t)&buf));
-  
+
   fclose(out);
-  printf("\r\n done. \r\n");
+  printf("\r\n done writing descriptor. \r\n");
+
+
+  //------
+  // write human-readable text description...
+  
   
 
   return 0;

@@ -30,8 +30,8 @@
 // timer tick counter
 volatile u64 tcTicks = 0;
 volatile u8 tcOverflow = 0;
-static const u64 tcMax = (U64)0x7fffffff;
-static const u64 tcMaxInv = (u64)0x10000000;
+// static const u64 tcMax = (U64)0x7fffffff;
+// static const u64 tcMaxInv = (u64)0x10000000;
 // screen refresh flag
 volatile u8 refresh = 0;
 // end of PDCA transfer

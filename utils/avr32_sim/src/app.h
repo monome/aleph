@@ -9,6 +9,10 @@
 #ifndef _ALEPH_AVR32_APP_H_
 #define _ALEPH_AVR32_APP_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "event_types.h"
 #include "events.h"
 #include "types.h"
@@ -38,5 +42,10 @@ extern void app_pause(void);
 extern void app_notify(const char* msg);
 // resume UI
 extern void app_resume(void);
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif // h guard

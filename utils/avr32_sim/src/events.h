@@ -5,6 +5,10 @@
 #ifndef _EVENTS_H_
 #define _EVENTS_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "event_types.h"
 #include "types.h"
 
@@ -26,5 +30,9 @@ u8 event_next( event_t *e );
 // add event to tail of queue
 // return 1 if success
 u8 event_post( event_t *e );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // header guard

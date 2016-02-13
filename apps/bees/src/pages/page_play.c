@@ -24,18 +24,6 @@
 //-------------------------
 //---- static
 
-
-// indices of system operator inputs
-// set them in page_init
-/* static s16 sw0_idx; */
-/* static s16 sw1_idx; */
-/* static s16 sw2_idx; */
-/* static s16 sw3_idx; */
-/* static s16 enc0_idx; */
-/* static s16 enc1_idx; */
-/* static s16 enc2_idx; */
-/* static s16 enc3_idx; */
-
 // handler declarations
 static void handle_enc_3(s32 val);
 static void handle_enc_2(s32 val);

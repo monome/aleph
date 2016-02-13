@@ -4,5 +4,6 @@
 #include "types.h"
 
 extern void init_dma(void);
+extern void enable_dma_sport0(void);
 
 #endif

@@ -29,12 +29,14 @@
 // const U8 lines[CHAR_ROWS] = { 0, 8, 16, 24, 32, 40, 48, 56 };
 
 // screen buffer
-static U8 screenBuf[GRAM_BYTES];
+// static U8 screenBuf[GRAM_BYTES];
 
 // common temp vars
+#if 0
 static u32 i, j;
 static u8* pScr; // movable pointer to screen buf
 static u32 nb; // count of destination bytes
+#endif
 
 //static u32 pos;
 // fixed-point text buffer

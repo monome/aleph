@@ -10,6 +10,10 @@
 #include "param_common.h"
 #include "types.h"
 
+
+//! keep track of cycles spent processing each param change block
+// extern volatile u64 controlCycleCount;
+
 //! add a parameter change to the queue
 //! should be called with interrupts disabled (e.g. from an ISR)
 extern void control_add(u32 idx, ParamValue val);
@@ -17,5 +21,8 @@ extern void control_add(u32 idx, ParamValue val);
 //! process pending param changes.
 //! should be called with interrupts disabled (e.g. from an ISR)
 extern void control_process(void);
+
+//! reset the control change queue
+extern void control_reset(void);
 
 #endif

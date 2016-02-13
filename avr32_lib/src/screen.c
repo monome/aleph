@@ -256,18 +256,13 @@ void screen_startup(void) {
 
 #include "startup_glyph.c"
 
-  // print_dbg("\r\n screen_startup");
-
   // fill screenbuffer with solid background
   for(i=0; i<GRAM_BYTES; i++) {
     screenBuf[i] = 0;
   }
 
-  // send screenbuffer
   spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
-  // register select high for data
   gpio_set_gpio_pin(OLED_REGISTER_PIN);
-  // send data
   for(i=0; i<GRAM_BYTES; i++) {
     spi_write(OLED_SPI, screenBuf[i]);
   }
@@ -276,4 +271,15 @@ void screen_startup(void) {
 
   /// draw the glyph
   screen_draw_region(128-24 - 1, 64-32 - 1, 24, 32, (u8*)aleph_hebrew_glyph);
+}
+
+
+void screen_flash(void) {
+  //  screen_set_rect(0, 0, 128, 2);
+  spi_selectChip(OLED_SPI, OLED_SPI_NPCS);
+  gpio_set_gpio_pin(OLED_REGISTER_PIN);
+  for(i=0; i<GRAM_BYTES; i++) {
+    spi_write(OLED_SPI, 0xff);
+  }
+  spi_unselectChip(OLED_SPI, OLED_SPI_NPCS); 
 }

@@ -176,8 +176,8 @@ static inline void assign_main_event_handlers(void) {
   app_event_handlers[ kEventHidConnect ]	= &handler_HidConnect ;
   app_event_handlers[ kEventHidDisconnect ]	= &dummy_handler ;
   app_event_handlers[ kEventHidPacket ]	= &dummy_handler ;
-
   app_event_handlers[ kEventSerial ] = &handler_Serial;
+  app_event_handlers[ kEventScreenRefresh ] = &dummy_handler;
 }
 
 //=================================================
@@ -392,8 +392,6 @@ int main (void) {
 
   // assign default event handlers
   assign_main_event_handlers();
-  // assign default screen render
-  //  app_render_screen = &(dummy_render);
   print_dbg("\r\n assigned default/dummy event handlers");
   
 

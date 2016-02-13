@@ -172,6 +172,10 @@ static void handle_Serial(s32 data) {
   serial_process(data);
 }
 
+static void handle_ScreenRefresh(s32 data) {
+  render_update();
+}
+
 //-------------------------------------
 //---- extern
 
@@ -205,8 +209,8 @@ void assign_bees_event_handlers(void) {
   app_event_handlers[ kEventHidConnect ]	= &handle_HidConnect ;
   app_event_handlers[ kEventHidDisconnect ]	= &handle_HidDisconnect ;
   app_event_handlers[ kEventHidPacket ]	= &handle_HidPacket ;
-
   app_event_handlers[ kEventSerial ] = &handle_Serial ;
+  app_event_handlers[ kEventScreenRefresh ] = &handle_ScreenRefresh ;
 }
 
 //------------------------

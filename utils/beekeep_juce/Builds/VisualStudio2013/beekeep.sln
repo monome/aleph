@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2013
+Project("{F1D26C46-18ED-278F-16DE-E3084671DE75}") = "beekeep", "beekeep.vcxproj", "{81A3D6CE-12FF-66C9-0E69-7120B5C3A4F2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{81A3D6CE-12FF-66C9-0E69-7120B5C3A4F2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{81A3D6CE-12FF-66C9-0E69-7120B5C3A4F2}.Debug|Win32.Build.0 = Debug|Win32
+		{81A3D6CE-12FF-66C9-0E69-7120B5C3A4F2}.Release|Win32.ActiveCfg = Release|Win32
+		{81A3D6CE-12FF-66C9-0E69-7120B5C3A4F2}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

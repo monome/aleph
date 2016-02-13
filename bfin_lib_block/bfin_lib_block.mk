@@ -11,7 +11,9 @@ audio_dir = $(bfin_lib_dir)/../dsp
 module_dir = ./
 
 bfin_lib_src = audio.c \
+	clock_ebiu.c \
 	control.c \
+	gpio.c \
 	dma.c \
 	isr.c \
 	main.c \
@@ -34,9 +36,9 @@ CFLAGS += -Wall -mcpu=$(CPU) $(INC)
 # CFLAGS += -00 -g # debug
 # CFLAGS += -02
 CFLAGS += -03
-CFLAGS += -funsafe-loop-optimizations
-CFLAGS += -funsafe-math-optimizations
-CFLAGS += -mfast-fp
+#CFLAGS += -funsafe-loop-optimizations
+#CFLAGS += -funsafe-math-optimizations
+#CFLAGS += -mfast-fp
 
 LDFLAGS += -mcpu=$(CPU)
 LDRFLAGS += --bits 16 --dma 8

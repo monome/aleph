@@ -2,7 +2,9 @@
 #include "print_funcs.h"
 
 // avr32 lib
+#ifndef BEEKEEP
 #include "hid.h"
+#endif
 
 // bees
 #include "net_protected.h"

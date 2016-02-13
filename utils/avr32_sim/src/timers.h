@@ -8,6 +8,10 @@
 #ifndef _TIMERS_H_
 #define _TIMERS_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "types.h"
 
 //------------------------------
@@ -44,5 +48,9 @@ u8 timer_add( softTimer_t* timer, u32 ticks, timer_callback_t callback, void* va
 u8 timer_remove( softTimer_t* timer );
 // process the timer list; call this on each tick.
 void process_timers( void );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // header guard

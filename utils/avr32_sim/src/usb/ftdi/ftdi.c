@@ -30,7 +30,10 @@ static u32 rxBytes = 0;
 static u8 rxBusy = 0;
 static u8 txBusy = 0;
 //static uhd_trans_status_t status = 0;
+
+#if 0
 static event_t e;
+#endif
 
 //------- static functions
 

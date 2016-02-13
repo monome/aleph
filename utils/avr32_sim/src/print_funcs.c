@@ -9,7 +9,7 @@ void print_dbg(const char* str) {
 void print_dbg_char(int c) { ;; }
 
 void print_dbg_ulong(unsigned long n) { 
-  printf("%d", n);
+  printf("%ul", (unsigned int)n);
 }
 
 void print_dbg_char_hex(unsigned char n) { ;; }
@@ -18,7 +18,7 @@ void print_dbg_char_hex(unsigned char n) { ;; }
 void print_dbg_short_hex(unsigned short n) { ;; }
 
 void print_dbg_hex(unsigned long n) { 
-  printf("%08x", n);
+  printf("%08x", (unsigned int)n);
  }
 
 /* void print(volatile avr32_usart_t *usart, const char *str) { ;; } */

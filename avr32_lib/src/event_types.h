@@ -50,6 +50,7 @@ typedef enum {
   kEventHidPacket,
   /// incoming serial from computer (usb)
   kEventSerial,
+  kEventScreenRefresh,
   //// better?
   // kEventAppTimer
   // kEventApp...

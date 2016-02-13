@@ -55,4 +55,7 @@ extern void screen_clear(void);
 // show startup screen
 void screen_startup(void);
 
+// flash white
+void screen_flash(void);
+
 #endif // header guard

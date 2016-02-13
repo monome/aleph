@@ -54,6 +54,7 @@ volatile u32 bfinLdrSize = 0;
 // intiailize (alloc mem, check/set firstrun bytes)
 u8 init_flash() {
 #if 1
+    return 1;
 #else
   u32 i;
 
@@ -140,6 +141,7 @@ void flash_write_ldr(void) {
 // read firstrun status
 u8 flash_read_firstrun(void) {
 #if 1
+    return 0;
 #else
   return (flash_nvram_data.firstRun == FIRSTRUN_MAGIC);
 #endif
@@ -164,6 +166,7 @@ void flash_clear_firstrun(void) {
 /// get pointer to application data in flash
 void* flash_app_data(void) {
 #if 1
+    return NULL;
 #else
   return (void*)(&(flash_nvram_data.appData));
 #endif

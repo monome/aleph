@@ -6,7 +6,7 @@
 void str_copy(char* dst, const char * src, s8 len) {
   u8 i=0;
   if(len < 0) {
-    while(i < SMPSTR_MAX_LEN) {
+      while(1) { // (i < SMPSTR_MAX_LEN) {
       if(src[i] == 0) {
 	break;
       }

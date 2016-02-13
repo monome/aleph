@@ -1,3 +1,4 @@
+
 /* ctl_op.h
  * aleph-avr32
  *
@@ -21,6 +22,11 @@
 
 // const array of user-creatable operator types
 #define NUM_USER_OP_TYPES 47
+
+#ifdef __cplusplus 
+    extern "C" { 
+#endif
+    
 
 //---- flags enum; 
 typedef enum {
@@ -188,4 +194,11 @@ extern u8* op_pickle(op_t* op, u8* dst);
 // unpickle
 extern const u8* op_unpickle(op_t* op, const u8* src);
 
+
+#ifdef __cplusplus 
+    }
+#endif
+    
+
 #endif // header guard
+
