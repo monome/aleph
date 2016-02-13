@@ -201,6 +201,13 @@ u8 files_load_dsp_name(const char* name) {
 
       // reboot the dsp with new firmware in RAM
       bfin_load_buf((const u8*)bfinLdrData, size);
+
+      // DEBUG uncomment this to send the loaded module back
+      // over serial connection
+      /* app_pause(); */
+      /* serial_bfinProgEcho(bfinLdrData, size); */
+      /* app_resume(); */
+
       // free the buffer!
       free_mem(bfinLdrData);
 
@@ -576,3 +583,5 @@ extern u8 files_load_desc(const char* name) {
   app_resume();
   return ret;
 }
+
+

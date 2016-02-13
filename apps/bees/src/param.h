@@ -47,5 +47,8 @@ extern const u8* param_unpickle( pnode_t* pnode, const u8* src);
 extern u8* pdesc_pickle(ParamDesc* pdesc, u8* dst);
 extern const u8* pdesc_unpickle(ParamDesc* pdesc, const u8* src);
 
+// load param descriptors from in-memory buffer
+extern u8 buf_load_desc(u8* inbuf);
+
 
 #endif // header guard
