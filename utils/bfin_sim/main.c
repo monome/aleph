@@ -30,7 +30,7 @@ jack_port_t *output_ports[OUT_PORTS];
 /* #include "fract32_emu.h" */
 /* #include "types.h" */
 #include "fix.h"
-#include "fract32_jack.h"
+#include "fract_math.h"
 /* #include "grain.h" */
 
 
