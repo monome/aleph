@@ -51,7 +51,7 @@
 #define LED3_MASK       (0xffff ^ LED3_UNMASK)
 #define LED3_LO		*pFIO_FLAG_D &= LED3_MASK
 #define LED3_HI 	*pFIO_FLAG_D |= LED3_UNMASK
-#define LED3_TOGGLE	*pFIO_FLAG_D ^= LED3_UNMASK
+#define LED3_TOGGLE	;
 
 #define LED4_PIN 	15
 #define LED4_UNMASK     (1 << LED4_PIN)
