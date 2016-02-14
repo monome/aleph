@@ -47,5 +47,7 @@ void process_timers( void );
 
 // clear the list
 extern void timers_clear(void) ;
+void start_timers (void);
+void pause_timers (void);
 
 #endif // header guard
