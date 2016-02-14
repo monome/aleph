@@ -1,6 +1,10 @@
 
 module_name = waves
 
+# paths to aleph repository sources
+audio_dir = ../../dsp
+bfin_lib_srcdir = ../../bfin_lib/src
+
 include version.mk
 version = $(maj).$(min).$(rev)
 ldr_name = $(module_name)-$(version).ldr

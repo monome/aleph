@@ -4,6 +4,11 @@
 #include "module.h"
 
 
+#ifndef SAMPLERATE
+#include "audio.h"
+#define SAMPLERATE AUDIO_SAMPLERATE
+#endif
+
 /// convert fix16 seconds to u32 frames, truncating
 
 // convert seconds in 16.16 to samples in 32.32

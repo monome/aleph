@@ -9,6 +9,10 @@
 #ifndef _UHI_FTDI_H_
 #define _UHI_FTDI_H_
 
+#ifdef __cplusplus
+extern "C" { 
+#endif
+
 //#include "conf_usb_host.h"
 //#include "usb_protocol.h"
 //#include "uhi.h"
@@ -39,5 +43,8 @@ extern bool uhi_ftdi_out_run(uint8_t * buf, iram_size_t buf_size,
 
 // get string descriptions
 extern void ftdi_get_strings(char** pManufacturer, char** pProduct, char** pSerial);
+#ifdef __cplusplus
+}
+#endif
 
 #endif // _UHI_FTDI_H_

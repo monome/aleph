@@ -1,6 +1,10 @@
 #ifndef _ALEPH_AVR32_USB_UHI_HID_H_
 #define _ALEPH_AVR32_USB_UHI_HID_H_
 
+#ifdef __cplusplus
+extern "C" { 
+#endif
+
 #include "conf_usb_host.h"
 #include "usb_protocol.h"
 #include "usb_protocol_hid.h"
@@ -17,5 +21,9 @@
 extern uhc_enum_status_t uhi_hid_install(uhc_device_t* dev);
 extern void uhi_hid_enable(uhc_device_t* dev);
 extern void uhi_hid_uninstall(uhc_device_t* dev);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

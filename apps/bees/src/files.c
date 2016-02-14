@@ -530,7 +530,6 @@ extern u8 files_load_desc(const char* name) {
   print_dbg("\r\n ...path = ");
   print_dbg(path);
 
-
   fp = fl_fopen(path, "r");
   if(fp == NULL) {
     print_dbg("\r\n file_load_desc(): fl_fopen(...) => NULL");
@@ -549,7 +548,7 @@ extern u8 files_load_desc(const char* name) {
     // gets the default values from the module via spi we wait for the
     // bfin to be ready thus ensuring that module_init() has actually
     // had time to set the parameter defaults.
-    print_dbg("\r\n file_load_desc(): waiting for bfin to be ready before quering parameters");
+    print_dbg("\r\n file_load_desc(): waiting for bfin to be ready before querying parameters");
     bfin_wait_ready();
 
     /// loop over params

@@ -1,6 +1,10 @@
 #ifndef _ALEPH_TYPES_H_
 #define _ALEPH_TYPES_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 
 #ifdef ARCH_AVR32
@@ -42,5 +46,9 @@ typedef int32_t fix16;
 typedef int32_t  fract32;
 
 typedef unsigned char bool;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // header guard

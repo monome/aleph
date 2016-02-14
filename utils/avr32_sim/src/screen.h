@@ -6,6 +6,10 @@
 #ifndef _SCREEN_H_
 #define _SCREEN_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if ARCH_AVR32
 #include "compiler.h"
 #endif
@@ -55,5 +59,9 @@ extern void screen_clear(void);
 
 // show startup screen
 void screen_startup(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // header guard

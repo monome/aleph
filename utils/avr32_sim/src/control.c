@@ -13,5 +13,6 @@ extern u8 ctl_param_change(u32 idx, u32 val) {
   bfin_set_param(idx, val);
   return 0;
 #endif
+    return 0;
 }
 

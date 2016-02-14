@@ -57,3 +57,11 @@ void init_dma(void) {
   *pDMA2_NEXT_DESC_PTR = &descTx0;
   *pDMA2_CONFIG = DMA_CONFIG;
 }
+
+
+void enable_dma_sport0(void) { 
+  *pDMA2_CONFIG	= (*pDMA2_CONFIG | DMAEN);
+  *pDMA1_CONFIG	= (*pDMA1_CONFIG | DMAEN);
+  *pSPORT0_TCR1 	= (*pSPORT0_TCR1 | TSPEN);
+  *pSPORT0_RCR1 	= (*pSPORT0_RCR1 | RSPEN);
+}

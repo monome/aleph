@@ -7,6 +7,10 @@
 #ifndef _EVENT_TYPES_H_
 #define _EVENT_TYPES_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // enumerate event types
 typedef enum {
   kEventAdc0 , 	// receive values from polled ADC channels
@@ -74,5 +78,9 @@ typedef enum {
   /// dummy/count
   kNumEventTypes,
 } etype;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

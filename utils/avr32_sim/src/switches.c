@@ -25,6 +25,7 @@
 /*   FS1_PIN, */
 /* }; */
 
+#if 0
 static const etype kSwitchEvents[NUM_SW] = {
   kEventSwitch0, 
   kEventSwitch1,
@@ -35,7 +36,7 @@ static const etype kSwitchEvents[NUM_SW] = {
   kEventSwitch6,
   kEventSwitch7,
 };
-
+#endif
 
 // generate events from switch interrupts
 void process_sw( const U8 swIdx )  {

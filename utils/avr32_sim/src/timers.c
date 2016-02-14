@@ -34,6 +34,7 @@ void init_timers(void) {
 // return 1 if set, 0 if not
 u8 timer_add( softTimer_t* t, u32 ticks, timer_callback_t callback, void* obj) {
 #if 1
+    return 0;
 #else
   if (ticks == 0) { 
     ticks = 1;
@@ -77,6 +78,7 @@ u8 timer_add( softTimer_t* t, u32 ticks, timer_callback_t callback, void* obj) {
 // return 1 if removed, 0 if not found
 u8 timer_remove( softTimer_t* t) {
 #if 1
+    return 0;
 #else
   softTimer_t* cur = top;
   softTimer_t* last = NULL;

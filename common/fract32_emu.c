@@ -110,4 +110,5 @@ fract32 shr_fr1x32_clip(fract32 _x, int _y) {
 // normalize ( to [0x40000000, 0x7fffffff] or [0x80000000, 0xc0000000] )
 int norm_fr1x32(fract32 _x) {
   // don't really need...?
+    return 0;
 }

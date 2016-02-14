@@ -38,7 +38,6 @@
 //-- extern vars (here)
 
 // maj = 1byte, min = 1byte, rev = 2byte
-//const u32 beesVersion = (MAJ << 24) | (MIN << 16) | (REV << 8);
 const AppVersion beesVersion = { .min = MIN , .maj = MAJ , .rev = REV };
 
 //--------------------------------
@@ -78,6 +77,11 @@ void app_init(void) {
 
 // this is called from main event handler
 u8 app_launch(eLaunchState state) {
+#if RELEASEBUILD==1
+#else
+  char buf[32] = "baudrate: ";  
+  itoa_whole(DEV_USART_BAUDRATE, buf + 10, 8); 
+#endif
 
   
   print_dbg("\r\n launching app with state: ");
@@ -88,6 +92,12 @@ u8 app_launch(eLaunchState state) {
   render_boot("BEES");
   render_boot(versionString);
 
+#if RELEASEBUILD==1
+#else
+  render_boot(buf);
+#endif
+
+  
   while (!sd_mmc_spi_mem_check()) {
     render_boot("waiting for SD card...");
   }
@@ -156,9 +166,6 @@ u8 app_launch(eLaunchState state) {
   print_dbg("\r\n enable app timers...");
   render_boot("enabling app timers");
   init_app_timers();
-
-  // pull up power control pin, enabling soft-powerdown
-  //  gpio_set_gpio_pin(POWER_CTL_PIN);
 
   // assign app event handlers
   print_dbg("\r\n assigning handlers... ");

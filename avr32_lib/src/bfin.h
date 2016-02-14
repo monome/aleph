@@ -13,62 +13,50 @@
 #include "param_common.h"
 #include "types.h"
 
-// blackfin HWAIT status
-// extern volatile U8 hwait;
 
-// 64k is max size of blackfin ldr file
-//#define BFIN_LDR_MAX_BYTES 0x10000 
-//// actually, the ldr itself can be bigger than the bfin's sram...??
+//! max size of blackfin ldr file
 #define BFIN_LDR_MAX_BYTES 0x12000
 
-/* // RAM buffer for blackfin firmware (.ldr) */
-/* extern volatile u8 *bfinLdrData; */
-/* // size of current bfin firmware */
-/* extern volatile u32 bfinLdrSize; */
-
-// wait for busy pin to clear
+//! wait for busy pin to clear
 void bfin_wait(void);
 
-// load bfin from RAM buffer
+//! load bfin from RAM buffer
 void bfin_load_buf(const u8* data, const u32 size);
 
-// set a parameter
+//! set a parameter value
 void bfin_set_param(U8 idx, fix16_t val);
 
-//// UNTESTED:
+//! get a parameter value
 fix16_t bfin_get_param(u8 idx);
 
-// get number of parameters 
+//! get number of parameters 
 void bfin_get_num_params(volatile u32* num);
-// get a parameter name
-// void bfin_get_param_name(u16 paramIdx, volatile char* name);
-// get parameter descriptor
-void bfin_get_param_desc(u16 paramIdx, volatile ParamDesc* pDesc);
-// get load module name
+
+//! get load module name
 void bfin_get_module_name(volatile char* buf);
-// get loaded module version
+
+//! get loaded module version
 void bfin_get_module_version(ModuleVersion* vers);
 
-// clear and add params to ctl network
-//void bfin_report_params(void);
-
-// become slave on spi bus
-//extern void bfin_spi_slave(void);
-
-// become master on spi bus
-extern void bfin_spi_master(void);
-// enable audio processing
+//! enable audio processing
 extern void bfin_enable(void);
-// disable audio processing
+
+//! disable audio processing
 extern void bfin_disable(void);
 
-// wait for ready status (e.g. after module init)
+//! wait for ready status (e.g. after module init)
 extern void bfin_wait_ready(void);
 
-// get param value
+//! get param value
 extern s32 bfin_get_param(u8 idx);
 
-// fill a buffer on the blackfin with arbitrary data
+//! get audio change cpu usage
+extern s32 bfin_get_audio_cpu(void);
+
+//! get param change cpu usage
+extern s32 bfin_get_control_cpu(void);
+
+//! fill a buffer on the blackfin with arbitrary data
 extern void bfin_fill_buffer(const s32* src, u32 bytes);
 
 #endif // header guard

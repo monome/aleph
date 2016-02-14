@@ -1,5 +1,8 @@
 #include "audio.h"
 
+// globally visible cycle count result
+// volatile u64 audioCycleCount;
+
 
 // I/O flags
 volatile u8 audioRxDone = 0;

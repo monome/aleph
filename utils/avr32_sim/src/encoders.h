@@ -5,6 +5,10 @@
 #ifndef _ENCODERS_H_
 #define _ENCODERS_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //#include "compiler.h"
 #include "event_types.h"
 #include "types.h"
@@ -32,5 +36,9 @@ extern void process_enc( const U8 enc );
 extern void init_encoders(void);
 // set threshold of encoder at given idx
 extern void set_enc_thresh( const u8 idx, const u8 v );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // header guard

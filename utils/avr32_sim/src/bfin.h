@@ -7,6 +7,10 @@
 #ifndef _BFIN_H_
 #define _BFIN_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //#include "compiler.h"
 #include "fix.h"
 #include "module_common.h"
@@ -63,5 +67,9 @@ extern void bfin_wait_ready(void);
 // get param value
 extern s32 bfin_get_param(u8 idx);
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // header guard

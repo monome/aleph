@@ -5,6 +5,8 @@
 #include "params.h"
 
 ModuleData* gModuleData;
+volatile u8 isModuleInit = 0;
+
 static ModuleData super;
 static ParamData mParamData[eParamNumParams];
 
@@ -15,6 +17,11 @@ static inline void param_setup(u32 id, ParamValue v) {
 
 void module_init(void) {
   u16 i;
+
+  gModuleData = &super;
+  strcpy(gModuleData->name, "rawsc");
+  gModuleData->paramData = mParamData;
+  gModuleData->numParams = eParamNumParams;
 
   // detune!
   param_setup( eParamFreqFine0, 0x00000000);
@@ -36,11 +43,6 @@ void module_init(void) {
   for(i=0; i<NUM_OSCS; i++) { 
     osc_set_phase(i, 0);
   }
-
-  gModuleData = &super;
-  strcpy(gModuleData->name, "rawsc");
-  gModuleData->paramData = mParamData;
-  gModuleData->numParams = eParamNumParams;
 }
 
 void module_process_block(buffer_t *inChannels, buffer_t *outChannels) { 

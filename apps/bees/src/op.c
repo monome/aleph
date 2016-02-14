@@ -331,7 +331,7 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_param_t),
     .init = &op_param_init,
     .deinit = NULL
-  },
+  }
 };
 
 

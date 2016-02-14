@@ -1,6 +1,10 @@
 #ifndef _ALEPH_AVR32_FILESYSTEM_H_
 #define _ALEPH_AVR32_FILESYSTEM_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "types.h"
 //#include "fat_filelib.h"
 
@@ -20,5 +24,9 @@ extern volatile u8 pdcaTxBuf[FS_BUF_SIZE];
 //====================================
 //==== funcs
 extern int fat_init(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // h guard
