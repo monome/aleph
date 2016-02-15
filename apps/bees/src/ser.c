@@ -506,7 +506,7 @@ char inBuf[MSG_MAX];
 char chunks_per_message = 0;
 
 void recv_char (char c) {
-  if (msgPointer > MSG_MAX) {
+  if (msgPointer >= MSG_MAX) {
     serialState = eSerialState_waiting;
     msgPointer = 0;
     /* proto_debug("resetting overflowing msgPointer"); */
