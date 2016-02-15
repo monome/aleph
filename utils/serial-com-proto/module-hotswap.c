@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <termios.h>
@@ -86,6 +87,14 @@ enum serialMsgTypes {
   eSerialMsg_numParams
 };
 
+void serial_send_chunk (char* buf, int len, char chunkType) {
+  serial_putc(START_FLAG);
+  serial_framedPutc(chunkType);
+  int i;
+  for (i=0; i < len; i++)
+    serial_framedPutc(buf[i]);
+  serial_putc(END_FLAG);
+}
 
 int main (int argc, char *argv[]) {
   if (argc != 4) {
@@ -114,14 +123,72 @@ int main (int argc, char *argv[]) {
 
   cfmakeraw(&ser_termios);
   tcsetattr(ser_fd, TCSANOW, &ser_termios);
+
+
+  //DEBUG just trigger a param
+  /* serial_putc(START_FLAG); */
+  /* serial_framedPutc(eSerialMsg_triggerParam); */
+  /* serial_framedPutc(0); */
+  /* serial_framedPutc(0); */
+  /* serial_framedPutc(0); */
+  /* serial_framedPutc(0); */
+  /* serial_putc(END_FLAG); */
+
   serial_putc(START_FLAG);
-  
-  serial_framedPutc(eSerialMsg_triggerParam);
-  serial_framedPutc(0);
-  serial_framedPutc(0);
-  serial_framedPutc(0);
-  serial_framedPutc(0);
+  serial_framedPutc(eSerialMsg_bfinProgStart);
   serial_putc(END_FLAG);
+
+  FILE* inFile;
+  long fSize;
+  char* inBuf;
+  int chunkLength;
+
+  inFile = fopen(argv[1], "r");
+  fseek(inFile, 0, SEEK_END);
+  fSize = ftell(inFile);
+  fseek(inFile, 0, SEEK_SET);
+  inBuf = malloc(fSize);
+  printf("file length = %d\n", fSize);
+  chunkLength = 0;
+  while(fSize > 0) {
+    chunkLength = fread(inBuf, 1, 128, inFile); 
+    /* serial_send_chunk(inBuf, chunkLength, eSerialMsg_bfinHexChunk); */
+   int i;
+    for (i=0; i < chunkLength; i++)
+      serial_putc(inBuf[i]);
+    fSize -= chunkLength;
+    /* printf ("%d bytes to go...\n", fSize); */
+  }
+  fclose(inFile);
+
+  inFile = fopen(argv[2], "r");
+  fseek(inFile, 0, SEEK_END);
+  fSize = ftell(inFile);
+  fseek(inFile, 0, SEEK_SET);
+  inBuf = malloc(fSize);
+  printf("file length = %d\n", fSize);
+  chunkLength = 0;
+  while(fSize > 0) {
+    chunkLength = fread(inBuf, 1, 64, inFile);
+    /* serial_send_chunk(inBuf, chunkLength, eSerialMsg_bfinDscChunk); */
+    int i;
+    for (i=0; i < chunkLength; i++)
+      serial_putc(inBuf[i]);
+    fSize -= chunkLength;
+    /* printf ("%d bytes to go...\n", fSize); */
+  }
+  fclose(inFile);
+
+  /*  */
+/*   , */
+/*   eSerialMsg_bfinDscChunk, */
+/*   eSerialMsg_bfinProgEnd, */
+  
+  serial_putc(START_FLAG);
+  serial_framedPutc(eSerialMsg_bfinProgEnd);
+  serial_putc(END_FLAG);
+
+
   fflush(ser);
   close(ser_fd);
 }
