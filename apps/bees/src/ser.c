@@ -310,6 +310,7 @@ int serial_bfinDscBuf_idx;
 #define MAX_SERIAL_DSC_SIZE (256 * 1024)
 
 void serial_bfinProgStart() {
+  pause_timers();
   if(serial_bfinHexBuf == NULL)
     serial_bfinHexBuf = alloc_mem(MAX_SERIAL_HEX_SIZE);
   serial_bfinHexBuf_idx = 0;
@@ -362,6 +363,7 @@ void serial_bfinProgEnd() {
   bfin_enable();
   app_resume();
 
+  start_timers();
 }
 
 
@@ -504,7 +506,7 @@ char inBuf[MSG_MAX];
 char chunks_per_message = 0;
 
 void recv_char (char c) {
-  if (msgPointer > MSG_MAX) {
+  if (msgPointer >= MSG_MAX) {
     serialState = eSerialState_waiting;
     msgPointer = 0;
     /* proto_debug("resetting overflowing msgPointer"); */

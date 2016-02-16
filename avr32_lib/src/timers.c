@@ -77,6 +77,14 @@ u8 timer_add( softTimer_t* t, u32 ticks, timer_callback_t callback, void* obj) {
   return ret;
 }
 
+void pause_timers (void) {
+  cpu_irq_disable_level(APP_TC_IRQ_PRIORITY);
+}
+
+void start_timers (void) {
+  cpu_irq_enable_level(APP_TC_IRQ_PRIORITY);
+}
+
 // remove a timer from the list
 // return 1 if removed, 0 if not found
 u8 timer_remove( softTimer_t* t) {
