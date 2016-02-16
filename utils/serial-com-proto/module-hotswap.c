@@ -151,15 +151,12 @@ int main (int argc, char *argv[]) {
   printf("file length = %d\n", fSize);
   chunkLength = 0;
   while(fSize > 0) {
-    chunkLength = fread(inBuf, 1, 128, inFile); 
-    /* serial_send_chunk(inBuf, chunkLength, eSerialMsg_bfinHexChunk); */
-   int i;
-    for (i=0; i < chunkLength; i++)
-      serial_putc(inBuf[i]);
+    chunkLength = fread(inBuf, 1, 64, inFile);
+    serial_send_chunk(inBuf, chunkLength, eSerialMsg_bfinHexChunk);
     fSize -= chunkLength;
-    /* printf ("%d bytes to go...\n", fSize); */
   }
   fclose(inFile);
+  free(inBuf);
 
   inFile = fopen(argv[2], "r");
   fseek(inFile, 0, SEEK_END);
@@ -170,24 +167,15 @@ int main (int argc, char *argv[]) {
   chunkLength = 0;
   while(fSize > 0) {
     chunkLength = fread(inBuf, 1, 64, inFile);
-    /* serial_send_chunk(inBuf, chunkLength, eSerialMsg_bfinDscChunk); */
-    int i;
-    for (i=0; i < chunkLength; i++)
-      serial_putc(inBuf[i]);
+    serial_send_chunk(inBuf, chunkLength, eSerialMsg_bfinDscChunk);
     fSize -= chunkLength;
-    /* printf ("%d bytes to go...\n", fSize); */
   }
   fclose(inFile);
+  free(inBuf);
 
-  /*  */
-/*   , */
-/*   eSerialMsg_bfinDscChunk, */
-/*   eSerialMsg_bfinProgEnd, */
-  
   serial_putc(START_FLAG);
   serial_framedPutc(eSerialMsg_bfinProgEnd);
   serial_putc(END_FLAG);
-
 
   fflush(ser);
   close(ser_fd);
