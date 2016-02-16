@@ -62,3 +62,33 @@ deploy: $(module_name).ldr
 
 .PHONY: clean
 	deploy
+
+sim_sourcefiles = ../../utils/bfin_sim/main.c \
+	waves.c  \
+	osc_waves.c \
+	svf_waves.c \
+	$(audio_dir)/conversion.c \
+	$(audio_dir)/filter_1p.c \
+	$(audio_dir)/interpolate.c \
+	$(audio_dir)/table.c \
+	$(bfin_lib_srcdir)/libfixmath/fix32.c \
+	$(bfin_lib_srcdir)/libfixmath/fix16.c \
+	../../utils/bfin_sim/src/cv.c \
+	../../utils/bfin_sim/fract2float_conv.c \
+	../../utils/bfin_sim/fract_math.c
+
+sim_inc = -I ../../dsp \
+	-I ../../utils/bfin_sim/src \
+	-I ../../utils/bfin_sim/ \
+	-I ../../utils/bfin_sim/src/libfixmath \
+	-I ./ \
+	-I ../../common
+
+sim_outfile = waves_jack
+
+sim_flags = -ljack -llo -D ARCH_LINUX=1
+
+sim:
+	touch $(sim_outfile)
+	rm ./$(sim_outfile)
+	gcc $(sim_sourcefiles) $(sim_flags) $(sim_inc) -o $(sim_outfile) -g

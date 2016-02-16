@@ -107,6 +107,19 @@ u32 module_get_num_params(void) {
    - dac_update writes to 4x16 volatile buffer
 */
 void module_process_frame(void) {
+  static long int ledCount = 0;
+
+  if(ledCount > 6000) {
+    LED3_TOGGLE;
+    LED4_TOGGLE;
+    ledCount = 0;
+  }
+  ledCount++;
+  out[0] = in[0];
+  out[1] = in[1];
+  out[2] = in[2];
+  out[3] = in[3];
+
   fract32 sig_bus = add_fr1x32(in[0], in[1]);
   cvVal[0] = trackingEnvelopeLin_next(&line, sig_bus);
   param_setup( eParam_linEnv, cvVal[0] );

@@ -1,10 +1,14 @@
 #include "types.h"
+#include <stdbool.h>
 
-#define SERIAL_BUFFER_SIZE		64
+#define SERIAL_BUFFER_SIZE		256
 
 // typedef void(*process_serial_t)(u16);
 
 extern volatile u8 serial_buffer[SERIAL_BUFFER_SIZE];
+extern volatile char serial_delimiter;
+extern volatile bool serial_rx_flow_control;
+
 // extern volatile u16 serial_read_pos;
 
 extern void serial_store(void);

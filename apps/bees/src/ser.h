@@ -19,7 +19,7 @@ typedef struct op_serial_struct {
   op_out_t outs[];
 } op_serial_t;
 
-
+void serial_init(void);
 void op_serial_out (op_serial_t* op, io_t v);
 void serial_putc(char c);
 void serial_puts(const char *str);
@@ -33,6 +33,7 @@ char loByte (int x);
 void serial_insDump (void);
 void serial_paramsDump (void);
 void serial_outVal (int addr, int data);
+void serial_bfinProgEcho (volatile u8* buf, int len);
 void serial_triggerParam (s16 idx, s16 data);
 void serial_triggerIn (s16 idx, s16 data);
 void serial_inVal (s16 idx);
@@ -40,6 +41,11 @@ void serial_paramVal (s16 idx);
 void serial_storePreset (s16 idx);
 void serial_recallPreset (s16 idx);
 s16 charsToS16 (char hi, char lo);
+void serial_bfinProgStart(void);
+void serial_bfinHexChunk(char* c, int len);
+void serial_bfinDscChunk(char* c, int len);
+void serial_bfinProgEnd(void);
+
 void processMessage (char* c, int len);
 void recv_char (char c);
 

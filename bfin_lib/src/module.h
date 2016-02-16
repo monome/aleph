@@ -12,15 +12,32 @@
 #include "param_common.h"
 #include "types.h"
 
-//#if ARCH_BFIN
-
-#define SDRAM_ADDRESS 0x00000000
-#define SDRAM_SIZE    0x07ffffff
 #ifndef SAMPLERATE
 #define SAMPLERATE    48000
 #endif
 
-//#endif
+#if ARCH_BFIN
+
+#define SDRAM_ADDRESS 0x00000000
+#define SDRAM_SIZE    0x07ffffff
+
+
+#else
+void *SDRAM_ADDRESS;
+#define IN_PORTS 4
+#define OUT_PORTS 4
+#define SDRAM_SIZE 0x07ffffff
+
+fract32 in[IN_PORTS];
+fract32 out[OUT_PORTS];
+
+void module_init(void);
+void module_process_frame(void);
+
+
+#endif
+
+
 
 //-----------------------
 //---- module descriptor
