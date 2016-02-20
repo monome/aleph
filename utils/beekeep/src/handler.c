@@ -29,6 +29,7 @@
 #include "app_timers.h"
 #include "files.h"
 #include "handler.h"
+#include "net_hid.h"
 #include "net_midi.h"
 #include "net_monome.h"
 #include "net_poll.h"
@@ -36,6 +37,7 @@
 #include "pages.h"
 #include "render.h"
 #include "scene.h"
+#include "ser.h"
 
 ///-------------------------------------
 ///---- static event handlers
@@ -158,8 +160,17 @@ static void handle_HidDisconnect(s32 data) {
   // nothing to do... ?
 }
 
-static void handle_HidByte(s32 data) {
-  // TODO: update ops
+static void handle_HidPacket(s32 data) {
+  // update HID op list
+  net_handle_hid_packet();
+}
+
+static void handle_Serial(s32 data) {
+  serial_process(data);
+}
+
+static void handle_ScreenRefresh(s32 data) {
+  render_update();
 }
 
 //-------------------------------------
@@ -193,7 +204,9 @@ void assign_bees_event_handlers(void) {
   app_event_handlers[ kEventMidiPacket ]	= &handle_MidiPacket ;
   app_event_handlers[ kEventHidConnect ]	= &handle_HidConnect ;
   app_event_handlers[ kEventHidDisconnect ]	= &handle_HidDisconnect ;
-  app_event_handlers[ kEventHidByte ]	= &handle_HidByte ;
+  app_event_handlers[ kEventHidPacket ]	= &handle_HidPacket ;
+  app_event_handlers[ kEventSerial ] = &handle_Serial ;
+  app_event_handlers[ kEventScreenRefresh ] = &handle_ScreenRefresh ;
 }
 
 //------------------------
