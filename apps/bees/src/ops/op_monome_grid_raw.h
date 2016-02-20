@@ -10,10 +10,10 @@
 typedef struct op_mgrid_raw_struct {
   op_t super;
   op_monome_t monome;
+  volatile io_t x;
+  volatile io_t y;
+  volatile io_t ledState;
   // inputs: toggle mode, focus
-  volatile io_t focus;
-  volatile io_t tog;
-  volatile io_t mono;
   volatile io_t* in_val[3];
   // outputs: x , y, z
   op_out_t outs[3];
