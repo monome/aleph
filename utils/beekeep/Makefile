@@ -16,6 +16,7 @@ target = $(name)-$(version)
 src += \
 	$(bees)/src/app_timers.c \
 	$(bees)/src/net.c \
+	$(bees)/src/net_hid.c \
 	$(bees)/src/net_midi.c \
 	$(bees)/src/net_monome.c \
 	$(bees)/src/net_poll.c \
@@ -144,6 +145,7 @@ src += \
 	$(sim)/src/usb.c \
 	$(sim)/src/usb/midi/midi.c \
 	$(sim)/src/usb/ftdi/ftdi.c \
+	$(sim)/src/usb/hid/hid.c \
 	$(sim)/src/fonts/ume_tgo5_18.c \
 	$(sim)/src/fix.c \
 	$(sim)/src/libfixmath/fix16.c
