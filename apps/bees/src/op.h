@@ -21,7 +21,7 @@
 #define OP_OUTS_MAX 32
 
 // const array of user-creatable operator types
-#define NUM_USER_OP_TYPES 47
+#define NUM_USER_OP_TYPES 48
 
 #ifdef __cplusplus 
     extern "C" { 
@@ -96,6 +96,7 @@ typedef enum {
   eOpBars8,
   eOpMidiOutCC,
   eOpParam,
+  eOpMem2d,
   //  eOpMidiBend,
   //  eOpMidiTouch,
   numOpClasses // dummy/count 
