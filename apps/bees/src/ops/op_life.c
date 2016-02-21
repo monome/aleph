@@ -251,19 +251,25 @@ static u8 neighbors(u8 x, u8 y, u8 xsize, u8 ysize) {
 
 // pickle / unpickle
 u8* op_life_pickle(op_life_t* op, u8* dst) {
-  dst = pickle_io(op->xsize, dst);
-  dst = pickle_io(op->ysize, dst);
   dst = pickle_io(op->x, dst);
   dst = pickle_io(op->y, dst);
+  dst = pickle_io(op->set, dst);
+  dst = pickle_io(op->tog, dst);
+  dst = pickle_io(op->next, dst);
+  dst = pickle_io(op->xsize, dst);
+  dst = pickle_io(op->ysize, dst);
   dst = pickle_io(op->rules, dst);
   return dst;
 }
 
 const u8* op_life_unpickle(op_life_t* op, const u8* src ) {
-  src = unpickle_io(src, &(op->xsize));
-  src = unpickle_io(src, &(op->ysize));
   src = unpickle_io(src, &(op->x));
   src = unpickle_io(src, &(op->y));
+  src = unpickle_io(src, &(op->set));
+  src = unpickle_io(src, &(op->tog));
+  src = unpickle_io(src, &(op->next));
+  src = unpickle_io(src, &(op->xsize));
+  src = unpickle_io(src, &(op->ysize));
   src = unpickle_io(src, &(op->rules));
   return src;
 }
