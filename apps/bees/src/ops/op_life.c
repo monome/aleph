@@ -27,7 +27,7 @@ static const u8* op_life_unpickle(op_life_t* op, const u8* src);
 
 //-------------------------------------------------
 //----- static vars
-static op_in_fn op_life_in_fn[9] = {
+static op_in_fn op_life_in_fn[8] = {
   (op_in_fn)&op_life_in_next,
   (op_in_fn)&op_life_in_xsize,
   (op_in_fn)&op_life_in_ysize,
@@ -52,7 +52,7 @@ void op_life_init(void* mem) {
   op_life_t* life = (op_life_t*)mem;
 
   //--- monome
-  life->super.numInputs = 9;
+  life->super.numInputs = 8;
   life->super.numOutputs = 6;
   life->outs[0] = -1;
   life->outs[1] = -1;
@@ -114,30 +114,24 @@ static void op_life_in_next(op_life_t* life, const io_t v) {
     life->next = 1;
     u8 x, y, count;
     for(x=0; x < life->xsize; x++)
-    {
-      for(y=0; y < life->ysize; y++)
-      {
-        if(lifenext[x][y]==1)
-        {
-          lifenow[x][y]=1;
-        }
-        else if(lifenext[x][y]==-1)
-        {
-          lifenow[x][y]=0;
-        }
-        lifenext[x][y]=0;
-      }
-    }
-    for(x=0; x < life->xsize; x++)
     { 
       for(y=0; y < life->ysize; y++) 
       { 
         count = neighbors(x, y, life->xsize, life->ysize);
 
-        if (count == 3 && lifenow[x][y] == 0 && life->rules != 2) 
+	//Any dead cell with exactly 3 neighors comes alive
+        if (count == 3 &&
+	    lifenow[x][y] == 0 &&
+	    life->rules != 2)
           lifenext[x][y]=1;
-        if ((count < 2 || count > 3) && lifenow[x][y] == 1 && life->rules != 1) 
-	  lifenext[x][y]=0 ;
+	//Any live cell with < 2 neighbors or > 3 neighbors dies
+        else if ((count < 2 || count > 3) &&
+		 lifenow[x][y] == 1 &&
+		 life->rules != 1)
+	  lifenext[x][y] = 0 ;
+	//Any other cell stays the same
+	else
+	  lifenext[x][y] = lifenow[x][y];
       } 
     } 
     op_life_output(life);
@@ -147,13 +141,16 @@ static void op_life_in_next(op_life_t* life, const io_t v) {
 }
 
 static void op_life_in_xsize(op_life_t* life, const io_t v) {
-  if(v < 9) life->xsize = 8;
+  if(v <= 8)
+    life->xsize = 8;
   else life->xsize = 16;
 }
 
 static void op_life_in_ysize(op_life_t* life, const io_t v) {
-  if(v < 9) life->ysize = 8;
-  else life->ysize = 16;
+  if(v <= 8)
+    life->ysize = 8;
+  else
+    life->ysize = 16;
 }
 
 static void op_life_in_x(op_life_t* life, const io_t v) {
@@ -165,9 +162,6 @@ static void op_life_in_x(op_life_t* life, const io_t v) {
     life->x = v;
 }
 
-// Hmm....
-//net_activate(life->outs[0], lifenow[life->x + (life->y << 4)], life);
-
 static void op_life_in_y(op_life_t* life, const io_t v) {
   if(v < 0)
     life->y = 0;
@@ -175,10 +169,7 @@ static void op_life_in_y(op_life_t* life, const io_t v) {
     life->y = life->ysize;
   else
     life->y = v;
-
 }
-//Hmmm....
-//net_activate(life->outs[0], lifenow[life->x + (life->y << 4)], life);
 
 
 static void op_life_in_set(op_life_t* life, const io_t v) {
@@ -205,22 +196,15 @@ static void op_life_in_rules(op_life_t* life, const io_t v) {
 }
 
 static void op_life_output(op_life_t* life) {
-  /* net_activate(life->outs[0], lifenow[life->x + (life->y << 4)], life); */
-
-  /* life->lpop = life->pop; */
-  /* life->pop = 0; */
-  /* for(u16 i=0;i<256;i++) */
-  /*   life->pop += lifenow[i]; */
-  /* net_activate(life->outs[1], life->pop, life); */
-  /* net_activate(life->outs[2], (life->pop - life->lpop), life); */
-
   int x, y;
   for(x = 0; x < life->xsize; x++) {
-    for(y = 0; x < life->ysize; y++) {
-      /* life->x + (life->y << 4) */
-      net_activate(life->outs[3], x, life);
-      net_activate(life->outs[4], y, life);
-      net_activate(life->outs[5], lifenow[x][y] * 15, life);
+    for(y = 0; y < life->ysize; y++) {
+      if (lifenext[x][y] != lifenow[x][y]) {
+	net_activate(life->outs[3], x, life);
+	net_activate(life->outs[4], y, life);
+	net_activate(life->outs[5], lifenext[x][y] * 15, life);
+      }
+      lifenow[x][y] = lifenext[x][y];
     }
   }
 }
@@ -237,9 +221,9 @@ static void life_init(void) {
 
 static u8 neighbors(u8 x, u8 y, u8 xsize, u8 ysize) {
   u8 x_ = (x + 1) % xsize;
-  u8 _x = (x - 1 + xsize) % xsize;
+  u8 _x = ((x + xsize) - 1) % xsize;
   u8 y_ = (y + 1) % ysize;
-  u8 _y = (y - 1 + ysize) % ysize;  
+  u8 _y = ((y + ysize) - 1) % ysize;
 
   //Round the clock
   return lifenow[x][_y] +
