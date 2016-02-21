@@ -11,7 +11,7 @@ static void op_life_in_ysize(op_life_t* life, const io_t v);
 static void op_life_in_x(op_life_t* life, const io_t v);
 static void op_life_in_y(op_life_t* life, const io_t v);
 static void op_life_in_set(op_life_t* life, const io_t v);
-static void op_life_in_noise(op_life_t* life, const io_t v);
+static void op_life_in_tog(op_life_t* life, const io_t v);
 static void op_life_in_rules(op_life_t* life, const io_t v);
 
 static void op_life_output(op_life_t* life);
@@ -28,18 +28,18 @@ static const u8* op_life_unpickle(op_life_t* op, const u8* src);
 //-------------------------------------------------
 //----- static vars
 static op_in_fn op_life_in_fn[8] = {
-  (op_in_fn)&op_life_in_next,
-  (op_in_fn)&op_life_in_xsize,
-  (op_in_fn)&op_life_in_ysize,
   (op_in_fn)&op_life_in_x,
   (op_in_fn)&op_life_in_y,
   (op_in_fn)&op_life_in_set,
-  (op_in_fn)&op_life_in_noise,
+  (op_in_fn)&op_life_in_tog,
+  (op_in_fn)&op_life_in_next,
+  (op_in_fn)&op_life_in_xsize,
+  (op_in_fn)&op_life_in_ysize,
   (op_in_fn)&op_life_in_rules,
 };
 
-static const char* op_life_instring  = "NEXT\0   XSIZE\0  YSIZE\0  X\0      Y\0      SET\0    NOISE\0  RULES\0  ";
-static const char* op_life_outstring = "VAL\0    POP\0    DELTA\0  X\0      Y\0      LED\0    ";
+static const char* op_life_instring  = "X\0      Y\0      SET\0    TOG\0    NEXT\0   XSIZE\0  YSIZE\0  RULES\0  ";
+static const char* op_life_outstring = "X\0      Y\0      VAL\0    POP\0    ";
 static const char* op_life_opstring  = "LIFE";
 
 
@@ -53,13 +53,11 @@ void op_life_init(void* mem) {
 
   //--- monome
   life->super.numInputs = 8;
-  life->super.numOutputs = 6;
+  life->super.numOutputs = 4;
   life->outs[0] = -1;
   life->outs[1] = -1;
   life->outs[2] = -1;
   life->outs[3] = -1;
-  life->outs[4] = -1;
-  life->outs[5] = -1;
 
   life->super.in_fn = op_life_in_fn;
   life->super.pickle = (op_pickle_fn) (&op_life_pickle);
@@ -73,13 +71,13 @@ void op_life_init(void* mem) {
   life->super.type = eOpLife;
   life->super.flags |= (1 << eOpFlagMonomeGrid);
   
-  life->in_val[0] = &(life->next);
-  life->in_val[1] = &(life->xsize);
-  life->in_val[2] = &(life->ysize);
-  life->in_val[3] = &(life->x);
-  life->in_val[4] = &(life->y);
-  life->in_val[5] = &(life->set);
-  life->in_val[6] = &(life->noise);
+  life->in_val[0] = &(life->x);
+  life->in_val[1] = &(life->y);
+  life->in_val[2] = &(life->set);
+  life->in_val[3] = &(life->tog);
+  life->in_val[4] = &(life->next);
+  life->in_val[5] = &(life->xsize);
+  life->in_val[6] = &(life->ysize);
   life->in_val[7] = &(life->rules);
 
   life->next = 0;
@@ -93,7 +91,7 @@ void op_life_init(void* mem) {
   life->x = 0;
   life->y = 0;
   life->set = 0;
-  life->noise = 0;
+  life->tog = 0;
   life->rules = 0;
 
   life->pop = life->lpop = 0;
@@ -110,7 +108,8 @@ void op_life_deinit(void* op) {
 //----- static function definitions
 
 static void op_life_in_next(op_life_t* life, const io_t v) {
-  if(v!=0) {
+  u8 pop = 0;
+  if(v != 0) {
     life->next = 1;
     u8 x, y, count;
     for(x=0; x < life->xsize; x++)
@@ -132,58 +131,63 @@ static void op_life_in_next(op_life_t* life, const io_t v) {
 	//Any other cell stays the same
 	else
 	  lifenext[x][y] = lifenow[x][y];
-      } 
+	pop += lifenext[x][y];
+      }
     } 
     op_life_output(life);
+    net_activate(life->outs[3], pop, life);
   }
   else
     life->next = 0;
 }
 
 static void op_life_in_xsize(op_life_t* life, const io_t v) {
-  if(v <= 8)
-    life->xsize = 8;
-  else life->xsize = 16;
+  if(v > 15)
+    life->xsize = 15;
+  if (v < 0)
+    life->xsize = 0;
+  else
+    life->xsize = v;
 }
 
 static void op_life_in_ysize(op_life_t* life, const io_t v) {
-  if(v <= 8)
-    life->ysize = 8;
+  if(v > 15)
+    life->ysize = 15;
+  if (v < 0)
+    life->ysize = 0;
   else
-    life->ysize = 16;
+    life->ysize = v;
 }
 
-static void op_life_in_x(op_life_t* life, const io_t v) {
-  if(v < 0)
-    life->x = 0;
-  else if(v > life->xsize)
-    life->x = life->xsize;
-  else
-    life->x = v;
+static void op_life_in_x(op_life_t* life, io_t v) {
+  v = v % life->xsize;
+  life->x = v;
 }
 
-static void op_life_in_y(op_life_t* life, const io_t v) {
-  if(v < 0)
-    life->y = 0;
-  else if (v > life->ysize)
-    life->y = life->ysize;
-  else
-    life->y = v;
+static void op_life_in_y(op_life_t* life, io_t v) {
+  v = v % life->ysize;
+  life->y = v;
 }
 
+static inline void output_cell (op_life_t* life, u8 x, u8 y) {
+  net_activate(life->outs[0], x, life);
+  net_activate(life->outs[1], y, life);
+  net_activate(life->outs[2], lifenow[x][y], life);
+}
 
 static void op_life_in_set(op_life_t* life, const io_t v) {
-  if (v == 0)
+  if (v <= 0)
     lifenow[life->x][life->y] = 0;
   else
     lifenow[life->x][life->y] = 1;
-  net_activate(life->outs[3], life->x, life);
-  net_activate(life->outs[4], life->y, life);
-  net_activate(life->outs[5], lifenow[life->x][life->y] * 15, life);
+  output_cell(life, life->x, life->y);
 }
 
-static void op_life_in_noise(op_life_t* life, const io_t v) {
-  return;
+static void op_life_in_tog(op_life_t* life, const io_t v) {
+  if (v != 0) {
+    lifenow[life->x][life->y] = ! lifenow[life->x][life->y];
+    output_cell(life, life->x, life->y);
+  }
 }
 
 static void op_life_in_rules(op_life_t* life, const io_t v) {
@@ -199,11 +203,8 @@ static void op_life_output(op_life_t* life) {
   int x, y;
   for(x = 0; x < life->xsize; x++) {
     for(y = 0; y < life->ysize; y++) {
-      if (lifenext[x][y] != lifenow[x][y]) {
-	net_activate(life->outs[3], x, life);
-	net_activate(life->outs[4], y, life);
-	net_activate(life->outs[5], lifenext[x][y] * 15, life);
-      }
+      if (lifenext[x][y] != lifenow[x][y])
+	output_cell(life, x, y);
       lifenow[x][y] = lifenext[x][y];
     }
   }

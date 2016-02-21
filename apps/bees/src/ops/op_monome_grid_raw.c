@@ -88,20 +88,30 @@ void op_mgrid_raw_deinit(void* op) {
 
 //--- network input functions
 static void op_mgrid_raw_in_x(op_mgrid_raw_t* op, const io_t v) {
-  if (v < 16 && v >= 0)
+  if(v > 15)
+    op->x = 15;
+  if (v < 0)
+    op->x = 0;
+  else
     op->x = v;
 }
 
 static void op_mgrid_raw_in_y(op_mgrid_raw_t* op, const io_t v) {
-  if (v < 16 && v >= 0)
+  if(v > 15)
+    op->y = 15;
+  if (v < 0)
+    op->y = 0;
+  else
     op->y = v;
 }
 
-static void op_mgrid_raw_in_led(op_mgrid_raw_t* op, const io_t v) {
-  if (v < 16 && v >= 0) {
-    monome_grid_led_set(op->x, op->y, v);
-    op->ledState = v;
-  }
+static void op_mgrid_raw_in_led(op_mgrid_raw_t* op, io_t v) {
+  if(v > 15)
+    v = 15;
+  else if (v < 0)
+    v = 0;
+  op->ledState = v;
+  monome_grid_led_set(op->x, op->y, v);
 }
 
 static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
