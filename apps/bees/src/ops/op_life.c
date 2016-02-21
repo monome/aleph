@@ -172,25 +172,42 @@ static void op_life_in_ysize(op_life_t* life, const io_t v) {
 }
 
 static void op_life_in_x(op_life_t* life, const io_t v) {
-  if (v >= 0 && v < life->xsize)
+  if(v > 16)
+    life->x = 16;
+  if (v < 0)
+    life->x = 0;
+  else
     life->x = v;
 }
 
 static void op_life_in_y(op_life_t* life, const io_t v) {
-  if (v >= 0 && v < life->ysize)
-  life->y = v;
+  if(v > 16)
+    life->y = 16;
+  if (v < 0)
+    life->y = 0;
+  else
+    life->y = v;
 }
 
 static void op_life_in_set(op_life_t* life, const io_t v) {
-  if (v <= 0)
-    lifenow[life->x][life->y] = 0;
-  else
-    lifenow[life->x][life->y] = 1;
-  output_cell(life, life->x, life->y, lifenow[life->x][life->y]);
+  if (life->x < life->xsize &&
+      life->y < life->ysize) {
+    if (v <= 0) {
+      lifenow[life->x][life->y] = 0;
+      life->set = 0;
+    }
+    else {
+      lifenow[life->x][life->y] = 1;
+      life->set = 1;
+    }
+    output_cell(life, life->x, life->y, lifenow[life->x][life->y]);
+  }
 }
 
 static void op_life_in_tog(op_life_t* life, const io_t v) {
-  if (v != 0) {
+  if (v != 0 &&
+      life->x < life->xsize &&
+      life->y < life->ysize) {
     lifenow[life->x][life->y] = ! lifenow[life->x][life->y];
     output_cell(life, life->x, life->y, lifenow[life->x][life->y]);
   }
