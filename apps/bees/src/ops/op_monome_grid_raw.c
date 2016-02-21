@@ -8,7 +8,7 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_mgrid_raw_instring  = "X\0      Y\0      LED\0    ";
+static const char* op_mgrid_raw_instring  = "X\0      Y\0      VAL\0    ON\0     ";
 static const char* op_mgrid_raw_outstring = "X\0      Y\0      BUT\0    ";
 static const char* op_mgrid_raw_opstring  = "GRID";
 
@@ -20,7 +20,8 @@ static const char* op_mgrid_raw_opstring  = "GRID";
 //// network inputs: 
 static void op_mgrid_raw_in_x(op_mgrid_raw_t* grid, const io_t val);
 static void op_mgrid_raw_in_y(op_mgrid_raw_t* grid, const io_t val);
-static void op_mgrid_raw_in_led(op_mgrid_raw_t* grid, const io_t val);
+static void op_mgrid_raw_in_val(op_mgrid_raw_t* grid, const io_t val);
+static void op_mgrid_raw_in_on(op_mgrid_raw_t* grid, const io_t val);
 
 // pickles
 static u8* op_mgrid_raw_pickle(op_mgrid_raw_t* enc, u8* dst);
@@ -30,10 +31,11 @@ static const u8* op_mgrid_raw_unpickle(op_mgrid_raw_t* enc, const u8* src);
 static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 data);
 
 // input func pointer array
-static op_in_fn op_mgrid_raw_in_fn[3] = {
+static op_in_fn op_mgrid_raw_in_fn[4] = {
   (op_in_fn)&op_mgrid_raw_in_x,
   (op_in_fn)&op_mgrid_raw_in_y,
-  (op_in_fn)&op_mgrid_raw_in_led,
+  (op_in_fn)&op_mgrid_raw_in_val,
+  (op_in_fn)&op_mgrid_raw_in_on,
 };
 
 //-------------------------------------------------
@@ -57,7 +59,7 @@ void op_mgrid_raw_init(void* mem) {
   op->super.type = eOpMonomeGridRaw;
   op->super.flags |= (1 << eOpFlagMonomeGrid);
 
-  op->super.numInputs = 3;
+  op->super.numInputs = 4;
   op->super.numOutputs = 3;
 
   op->super.in_val = op->in_val;
@@ -69,7 +71,8 @@ void op_mgrid_raw_init(void* mem) {
 
   op->in_val[0] = &(op->x);
   op->in_val[1] = &(op->y);
-  op->in_val[2] = &(op->ledState);
+  op->in_val[2] = &(op->ledVal);
+  op->in_val[3] = &(op->ledOn);
   op->outs[0] = -1;
   op->outs[1] = -1;
   op->outs[2] = -1;
@@ -105,13 +108,32 @@ static void op_mgrid_raw_in_y(op_mgrid_raw_t* op, const io_t v) {
     op->y = v;
 }
 
-static void op_mgrid_raw_in_led(op_mgrid_raw_t* op, io_t v) {
-  if(v > 15)
-    v = 15;
-  else if (v < 0)
-    v = 0;
-  op->ledState = v;
-  monome_grid_led_set(op->x, op->y, v);
+static void op_mgrid_raw_in_val(op_mgrid_raw_t* op, io_t v) {
+  if(v > 15) {
+    op->ledVal = 15;
+    op->ledOn = 1;
+  }
+  else if (v <= 0) {
+    op->ledVal = 0;
+    op->ledOn = 0;
+  }
+  else {
+    op->ledVal = v;
+    op->ledOn = 1;
+  }
+  monome_grid_led_set(op->x, op->y, op->ledVal);
+}
+
+static void op_mgrid_raw_in_on(op_mgrid_raw_t* op, io_t v) {
+  if(v <= 0) {
+    op->ledVal = 0;
+    op->ledOn = 0;
+  }
+  else {
+    op->ledVal = 15;
+    op->ledOn = 1;
+  }
+  monome_grid_led_set(op->x, op->y, op->ledVal);
 }
 
 static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {

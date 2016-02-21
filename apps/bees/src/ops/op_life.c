@@ -14,8 +14,6 @@ static void op_life_in_set(op_life_t* life, const io_t v);
 static void op_life_in_tog(op_life_t* life, const io_t v);
 static void op_life_in_rules(op_life_t* life, const io_t v);
 
-static void op_life_output(op_life_t* life);
-
 // life
 static void life_init(void);
 static u8 neighbors(u8,u8,u8,u8);
@@ -107,15 +105,18 @@ void op_life_deinit(void* op) {
 //-------------------------------------------------
 //----- static function definitions
 
+static inline void output_cell (op_life_t* life, u8 x, u8 y, u8 z) {
+  net_activate(life->outs[0], x, life);
+  net_activate(life->outs[1], y, life);
+  net_activate(life->outs[2], z, life);
+}
+
 static void op_life_in_next(op_life_t* life, const io_t v) {
-  u8 pop = 0;
   if(v != 0) {
     life->next = 1;
     u8 x, y, count;
-    for(x=0; x < life->xsize; x++)
-    { 
-      for(y=0; y < life->ysize; y++) 
-      { 
+    for(x=0; x < life->xsize; x++) {
+      for(y=0; y < life->ysize; y++) {
         count = neighbors(x, y, life->xsize, life->ysize);
 
 	//Any dead cell with exactly 3 neighors comes alive
@@ -131,10 +132,21 @@ static void op_life_in_next(op_life_t* life, const io_t v) {
 	//Any other cell stays the same
 	else
 	  lifenext[x][y] = lifenow[x][y];
+      }
+    }
+    u8 pop = 0;
+    for(x=0; x < life->xsize; x++) {
+      for(y=0; y < life->ysize; y++) {
+    	//Draw cells that have changed
+	if (lifenext[x][y] != lifenow[x][y])
+	  output_cell(life, x, y, lifenext[x][y]);
+	lifenow[x][y] = lifenext[x][y];
+
+	//increment population counter
 	pop += lifenext[x][y];
       }
-    } 
-    op_life_output(life);
+    }
+
     net_activate(life->outs[3], pop, life);
   }
   else
@@ -142,8 +154,8 @@ static void op_life_in_next(op_life_t* life, const io_t v) {
 }
 
 static void op_life_in_xsize(op_life_t* life, const io_t v) {
-  if(v > 15)
-    life->xsize = 15;
+  if(v > 16)
+    life->xsize = 16;
   if (v < 0)
     life->xsize = 0;
   else
@@ -151,28 +163,22 @@ static void op_life_in_xsize(op_life_t* life, const io_t v) {
 }
 
 static void op_life_in_ysize(op_life_t* life, const io_t v) {
-  if(v > 15)
-    life->ysize = 15;
+  if(v > 16)
+    life->ysize = 16;
   if (v < 0)
     life->ysize = 0;
   else
     life->ysize = v;
 }
 
-static void op_life_in_x(op_life_t* life, io_t v) {
-  v = v % life->xsize;
-  life->x = v;
+static void op_life_in_x(op_life_t* life, const io_t v) {
+  if (v >= 0 && v < life->xsize)
+    life->x = v;
 }
 
-static void op_life_in_y(op_life_t* life, io_t v) {
-  v = v % life->ysize;
+static void op_life_in_y(op_life_t* life, const io_t v) {
+  if (v >= 0 && v < life->ysize)
   life->y = v;
-}
-
-static inline void output_cell (op_life_t* life, u8 x, u8 y) {
-  net_activate(life->outs[0], x, life);
-  net_activate(life->outs[1], y, life);
-  net_activate(life->outs[2], lifenow[x][y], life);
 }
 
 static void op_life_in_set(op_life_t* life, const io_t v) {
@@ -180,13 +186,13 @@ static void op_life_in_set(op_life_t* life, const io_t v) {
     lifenow[life->x][life->y] = 0;
   else
     lifenow[life->x][life->y] = 1;
-  output_cell(life, life->x, life->y);
+  output_cell(life, life->x, life->y, lifenow[life->x][life->y]);
 }
 
 static void op_life_in_tog(op_life_t* life, const io_t v) {
   if (v != 0) {
     lifenow[life->x][life->y] = ! lifenow[life->x][life->y];
-    output_cell(life, life->x, life->y);
+    output_cell(life, life->x, life->y, lifenow[life->x][life->y]);
   }
 }
 
@@ -197,17 +203,6 @@ static void op_life_in_rules(op_life_t* life, const io_t v) {
     life->rules = 2;
   else
     life->rules = v;
-}
-
-static void op_life_output(op_life_t* life) {
-  int x, y;
-  for(x = 0; x < life->xsize; x++) {
-    for(y = 0; y < life->ysize; y++) {
-      if (lifenext[x][y] != lifenow[x][y])
-	output_cell(life, x, y);
-      lifenow[x][y] = lifenext[x][y];
-    }
-  }
 }
 
 static void life_init(void) {
