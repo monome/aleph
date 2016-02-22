@@ -100,63 +100,54 @@ static void op_mem2d_in_write(op_mem2d_t* mem2d, const io_t v) {
 }
 
 static void op_mem2d_in_read(op_mem2d_t* mem2d, const io_t v) {
-  if (v > 0) {
-    mem2d->read = 1;
-    net_activate(mem2d->outs[0], mem2d->x, mem2d);
-    net_activate(mem2d->outs[1], mem2d->y, mem2d);
-    net_activate(mem2d->outs[2], mem[mem2d->x][mem2d->y], mem2d);
-  }
-  else
-    mem2d->read = 0;
+  net_activate(mem2d->outs[0], mem2d->x, mem2d);
+  net_activate(mem2d->outs[1], mem2d->y, mem2d);
+  net_activate(mem2d->outs[2], mem[mem2d->x][mem2d->y], mem2d);
 }
 
 static void op_mem2d_in_tog(op_mem2d_t* mem2d, const io_t v) {
   if (v > 0) {
     mem2d->tog = 1;
-    mem2d->write = ! mem[mem2d->x][mem2d->y];
+    mem2d->write = 1;
+    mem[mem2d->x][mem2d->y] = ! mem[mem2d->x][mem2d->y];
   }
-  else
+  else {
     mem2d->tog = 0;
+    mem2d->write = 0;
+  }
 }
 
 static void op_mem2d_in_rowsel(op_mem2d_t* mem2d, const io_t v) {
-  if (v >= 0) {
-    mem2d->rowsel = v;
-    net_activate(mem2d->outs[1], mem2d->y, mem2d);
-    u8 x;
-    for (x=0; x < 16; x++) {
-      if (x == v) {
-	mem[x][mem2d->y] = 1;
-	net_activate(mem2d->outs[0], x, mem2d);
-	net_activate(mem2d->outs[2], mem[x][mem2d->y], mem2d);
-      } else if ( mem[x][mem2d->y] != 0) {
-	mem[x][mem2d->y] = 0;
-	net_activate(mem2d->outs[0], x, mem2d);
-	net_activate(mem2d->outs[2], mem[x][mem2d->y], mem2d);
-      }
+  net_activate(mem2d->outs[1], mem2d->y, mem2d);
+  u8 x;
+  for (x=0; x < 16; x++) {
+    if (x == mem2d->x) {
+      mem[x][mem2d->y] = 1;
+      net_activate(mem2d->outs[0], x, mem2d);
+      net_activate(mem2d->outs[2], mem[x][mem2d->y], mem2d);
+    } else if ( mem[x][mem2d->y] != 0) {
+      mem[x][mem2d->y] = 0;
+      net_activate(mem2d->outs[0], x, mem2d);
+      net_activate(mem2d->outs[2], mem[x][mem2d->y], mem2d);
     }
   }
 }
 
 static void op_mem2d_in_colsel(op_mem2d_t* mem2d, const io_t v) {
-  if (v >= 0) {
-    mem2d->colsel = v;
-    net_activate(mem2d->outs[0], mem2d->x, mem2d);
-    u8 y;
-    for (y=0; y < 16; y++) {
-      if (y == v) {
-	mem[y][mem2d->x] = 1;
-	net_activate(mem2d->outs[1], y, mem2d);
-	net_activate(mem2d->outs[2], mem[mem2d->x][y], mem2d);
-      } else if ( mem[mem2d->x][y] != 0) {
-	mem[mem2d->x][y] = 0;
-	net_activate(mem2d->outs[1], y, mem2d);
-	net_activate(mem2d->outs[2], mem[mem2d->x][y], mem2d);
-      }
+  net_activate(mem2d->outs[0], mem2d->x, mem2d);
+  u8 y;
+  for (y=0; y < 16; y++) {
+    if (y == mem2d->y) {
+      mem[mem2d->x][y] = 1;
+      net_activate(mem2d->outs[1], y, mem2d);
+      net_activate(mem2d->outs[2], mem[mem2d->x][y], mem2d);
+    } else if ( mem[mem2d->x][y] != 0) {
+      mem[mem2d->x][y] = 0;
+      net_activate(mem2d->outs[1], y, mem2d);
+      net_activate(mem2d->outs[2], mem[mem2d->x][y], mem2d);
     }
   }
 }
-
 
 
 // pickle / unpickle
