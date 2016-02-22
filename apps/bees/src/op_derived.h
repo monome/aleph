@@ -29,11 +29,14 @@
 #include "ops/op_hid_word.h"
 #include "ops/op_history.h"
 #include "ops/op_is.h"
+#include "ops/op_iter.h"
 #include "ops/op_life.h"
 #include "ops/op_list2.h"
 #include "ops/op_list8.h"
 #include "ops/op_list16.h"
 #include "ops/op_logic.h"
+#include "ops/op_mem1d.h"
+#include "ops/op_mem2d.h"
 #include "ops/op_metro.h"
 #include "ops/op_midi_cc.h"
 #include "ops/op_midi_note.h"
@@ -43,6 +46,7 @@
 #include "ops/op_monome_arc.h"
 #include "ops/op_monome_grid_raw.h"
 #include "ops/op_mul.h"
+#include "ops/op_param.h"
 #include "ops/op_preset.h"
 #include "ops/op_serial.h"
 #include "ops/op_shl.h"
@@ -62,8 +66,6 @@
 #include "ops/op_timer.h"
 #include "ops/op_tog.h"
 #include "ops/op_ww.h"
-#include "ops/op_param.h"
-#include "ops/op_mem2d.h"
 
 // let's keep this list alphabetical so we can easily see whether something is included.
  

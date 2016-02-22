@@ -38,11 +38,13 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpHid,
   eOpHistory,
   eOpIs,
+  eOpIter,
   eOpLife,
   eOpList2,
   eOpList8,
   eOpList16,
   eOpLogic,
+  eOpMem1d,
   eOpMem2d,
   eOpMetro,
   eOpCascades, // "mp"
@@ -333,9 +335,19 @@ const op_desc_t op_registry[numOpClasses] = {
     .init = &op_param_init,
     .deinit = NULL
   }, {
+    .name = "MEM1D",
+    .size = sizeof(op_mem1d_t),
+    .init = &op_mem1d_init,
+    .deinit = NULL
+  }, {
     .name = "MEM2D",
     .size = sizeof(op_mem2d_t),
     .init = &op_mem2d_init,
+    .deinit = NULL
+  }, {
+    .name = "ITER",
+    .size = sizeof(op_iter_t),
+    .init = &op_iter_init,
     .deinit = NULL
   }
 };
