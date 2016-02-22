@@ -3,8 +3,8 @@
 
 //-------------------------------------------------
 //---- static func declare
-static void op_mem2d_in_colsel(op_mem2d_t* mem2d, const io_t v) ;
-static void op_mem2d_in_rowsel(op_mem2d_t* mem2d, const io_t v) ;
+/* static void op_mem2d_in_colsel(op_mem2d_t* mem2d, const io_t v) ; */
+/* static void op_mem2d_in_rowsel(op_mem2d_t* mem2d, const io_t v) ; */
 static void op_mem2d_in_tog(op_mem2d_t* mem2d, const io_t v) ;
 static void op_mem2d_in_read(op_mem2d_t* mem2d, const io_t v) ;
 static void op_mem2d_in_write(op_mem2d_t* mem2d, const io_t v) ;
@@ -17,25 +17,29 @@ static const u8* op_mem2d_unpickle(op_mem2d_t* op, const u8* src);
 
 //-------------------------------------------------
 //---- static vars
-static const char* op_mem2d_instring  = "X\0      Y\0      WRITE\0  READ\0   TOG\0    ROWSEL \0COLSEL \0";
+static const char* op_mem2d_instring  = "X\0      Y\0      WRITE\0  READ\0   TOG\0    ";
+// Note: commented lines in this file are to enable using this 2D array
+// to represent 1D data. Disabled but leaving in place for now...
+/* static const char* op_mem2d_instring  = "X\0      Y\0      WRITE\0  READ\0   TOG\0    ROWSEL \0COLSEL \0"; */
+
 static const char* op_mem2d_outstring = "X\0      Y\0      VAL\0    ";
 static const char* op_mem2d_opstring = "MEM2D";
 
-static op_in_fn op_mem2d_in_fn[7] = {
+static op_in_fn op_mem2d_in_fn[5] = {
   (op_in_fn)&op_mem2d_in_x,
   (op_in_fn)&op_mem2d_in_y,
   (op_in_fn)&op_mem2d_in_write,
   (op_in_fn)&op_mem2d_in_read,
-  (op_in_fn)&op_mem2d_in_tog,
-  (op_in_fn)&op_mem2d_in_rowsel,
-  (op_in_fn)&op_mem2d_in_colsel
+  (op_in_fn)&op_mem2d_in_tog
+  /* (op_in_fn)&op_mem2d_in_rowsel, */
+  /* (op_in_fn)&op_mem2d_in_colsel */
 };
 
 //-------------------------------------------------
 //---- external func define
 void op_mem2d_init(void* mem) {
   op_mem2d_t* mem2d = (op_mem2d_t*)mem;
-  mem2d->super.numInputs = 7;
+  mem2d->super.numInputs = 5;
   mem2d->super.numOutputs = 3;
   mem2d->outs[0] = -1;
   mem2d->outs[1] = -1;
@@ -57,8 +61,8 @@ void op_mem2d_init(void* mem) {
   mem2d->in_val[2] = &(mem2d->write);
   mem2d->in_val[3] = &(mem2d->read);
   mem2d->in_val[4] = &(mem2d->tog);
-  mem2d->in_val[5] = &(mem2d->rowsel);
-  mem2d->in_val[6] = &(mem2d->colsel);
+  /* mem2d->in_val[5] = &(mem2d->rowsel); */
+  /* mem2d->in_val[6] = &(mem2d->colsel); */
 
   mem2d->x = 0;
   mem2d->y = 0;
@@ -70,7 +74,7 @@ void op_mem2d_init(void* mem) {
 
 }
 
-io_t mem[16][16];
+io_t globalMem2d[16][16];
 
 //-------------------------------------------------
 //---- static func define
@@ -96,20 +100,20 @@ static void op_mem2d_in_y(op_mem2d_t* mem2d, const io_t v) {
 }
 
 static void op_mem2d_in_write(op_mem2d_t* mem2d, const io_t v) {
-  mem2d->write = mem[mem2d->x][mem2d->y] = v;
+  mem2d->write = globalMem2d[mem2d->x][mem2d->y] = v;
 }
 
 static void op_mem2d_in_read(op_mem2d_t* mem2d, const io_t v) {
   net_activate(mem2d->outs[0], mem2d->x, mem2d);
   net_activate(mem2d->outs[1], mem2d->y, mem2d);
-  net_activate(mem2d->outs[2], mem[mem2d->x][mem2d->y], mem2d);
+  net_activate(mem2d->outs[2], globalMem2d[mem2d->x][mem2d->y], mem2d);
 }
 
 static void op_mem2d_in_tog(op_mem2d_t* mem2d, const io_t v) {
   if (v > 0) {
     mem2d->tog = 1;
     mem2d->write = 1;
-    mem[mem2d->x][mem2d->y] = ! mem[mem2d->x][mem2d->y];
+    globalMem2d[mem2d->x][mem2d->y] = ! globalMem2d[mem2d->x][mem2d->y];
   }
   else {
     mem2d->tog = 0;
@@ -117,37 +121,37 @@ static void op_mem2d_in_tog(op_mem2d_t* mem2d, const io_t v) {
   }
 }
 
-static void op_mem2d_in_rowsel(op_mem2d_t* mem2d, const io_t v) {
-  net_activate(mem2d->outs[1], mem2d->y, mem2d);
-  u8 x;
-  for (x=0; x < 16; x++) {
-    if (x == mem2d->x) {
-      mem[x][mem2d->y] = 1;
-      net_activate(mem2d->outs[0], x, mem2d);
-      net_activate(mem2d->outs[2], mem[x][mem2d->y], mem2d);
-    } else if ( mem[x][mem2d->y] != 0) {
-      mem[x][mem2d->y] = 0;
-      net_activate(mem2d->outs[0], x, mem2d);
-      net_activate(mem2d->outs[2], mem[x][mem2d->y], mem2d);
-    }
-  }
-}
+/* static void op_mem2d_in_rowsel(op_mem2d_t* mem2d, const io_t v) { */
+/*   net_activate(mem2d->outs[1], mem2d->y, mem2d); */
+/*   u8 x; */
+/*   for (x=0; x < 16; x++) { */
+/*     if (x == mem2d->x) { */
+/*       mem[x][mem2d->y] = 1; */
+/*       net_activate(mem2d->outs[0], x, mem2d); */
+/*       net_activate(mem2d->outs[2], mem[x][mem2d->y], mem2d); */
+/*     } else if ( mem[x][mem2d->y] != 0) { */
+/*       mem[x][mem2d->y] = 0; */
+/*       net_activate(mem2d->outs[0], x, mem2d); */
+/*       net_activate(mem2d->outs[2], mem[x][mem2d->y], mem2d); */
+/*     } */
+/*   } */
+/* } */
 
-static void op_mem2d_in_colsel(op_mem2d_t* mem2d, const io_t v) {
-  net_activate(mem2d->outs[0], mem2d->x, mem2d);
-  u8 y;
-  for (y=0; y < 16; y++) {
-    if (y == mem2d->y) {
-      mem[mem2d->x][y] = 1;
-      net_activate(mem2d->outs[1], y, mem2d);
-      net_activate(mem2d->outs[2], mem[mem2d->x][y], mem2d);
-    } else if ( mem[mem2d->x][y] != 0) {
-      mem[mem2d->x][y] = 0;
-      net_activate(mem2d->outs[1], y, mem2d);
-      net_activate(mem2d->outs[2], mem[mem2d->x][y], mem2d);
-    }
-  }
-}
+/* static void op_mem2d_in_colsel(op_mem2d_t* mem2d, const io_t v) { */
+/*   net_activate(mem2d->outs[0], mem2d->x, mem2d); */
+/*   u8 y; */
+/*   for (y=0; y < 16; y++) { */
+/*     if (y == mem2d->y) { */
+/*       mem[mem2d->x][y] = 1; */
+/*       net_activate(mem2d->outs[1], y, mem2d); */
+/*       net_activate(mem2d->outs[2], mem[mem2d->x][y], mem2d); */
+/*     } else if ( mem[mem2d->x][y] != 0) { */
+/*       mem[mem2d->x][y] = 0; */
+/*       net_activate(mem2d->outs[1], y, mem2d); */
+/*       net_activate(mem2d->outs[2], mem[mem2d->x][y], mem2d); */
+/*     } */
+/*   } */
+/* } */
 
 
 // pickle / unpickle
@@ -157,8 +161,8 @@ u8* op_mem2d_pickle(op_mem2d_t* op, u8* dst) {
   dst = pickle_io(op->write, dst);
   dst = pickle_io(op->read, dst);
   dst = pickle_io(op->tog, dst);
-  dst = pickle_io(op->rowsel, dst);
-  dst = pickle_io(op->colsel, dst);
+  /* dst = pickle_io(op->rowsel, dst); */
+  /* dst = pickle_io(op->colsel, dst); */
   return dst;
 }
 
@@ -168,7 +172,7 @@ const u8* op_mem2d_unpickle(op_mem2d_t* op, const u8* src) {
   src = unpickle_io(src, &(op->write));
   src = unpickle_io(src, &(op->read));
   src = unpickle_io(src, &(op->tog));
-  src = unpickle_io(src, &(op->rowsel));
-  src = unpickle_io(src, &(op->colsel));
+  /* src = unpickle_io(src, &(op->rowsel)); */
+  /* src = unpickle_io(src, &(op->colsel)); */
   return src;
 }

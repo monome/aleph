@@ -16,7 +16,7 @@ typedef struct op_mem2d_struct {
   volatile io_t rowsel;
   volatile io_t colsel;
 
-  volatile io_t * in_val[7];
+  volatile io_t * in_val[5];
   op_out_t outs[3];
 } op_mem2d_t;
 void op_mem2d_init(void* mem);
