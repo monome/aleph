@@ -10,7 +10,8 @@ static void op_life_in_xsize(op_life_t* life, const io_t v);
 static void op_life_in_ysize(op_life_t* life, const io_t v);
 static void op_life_in_x(op_life_t* life, const io_t v);
 static void op_life_in_y(op_life_t* life, const io_t v);
-static void op_life_in_set(op_life_t* life, const io_t v);
+static void op_life_in_write(op_life_t* life, const io_t v);
+static void op_life_in_read(op_life_t* life, const io_t v);
 static void op_life_in_tog(op_life_t* life, const io_t v);
 static void op_life_in_rules(op_life_t* life, const io_t v);
 
@@ -25,10 +26,11 @@ static const u8* op_life_unpickle(op_life_t* op, const u8* src);
 
 //-------------------------------------------------
 //----- static vars
-static op_in_fn op_life_in_fn[8] = {
+static op_in_fn op_life_in_fn[9] = {
   (op_in_fn)&op_life_in_x,
   (op_in_fn)&op_life_in_y,
-  (op_in_fn)&op_life_in_set,
+  (op_in_fn)&op_life_in_write,
+  (op_in_fn)&op_life_in_read,
   (op_in_fn)&op_life_in_tog,
   (op_in_fn)&op_life_in_next,
   (op_in_fn)&op_life_in_xsize,
@@ -36,7 +38,7 @@ static op_in_fn op_life_in_fn[8] = {
   (op_in_fn)&op_life_in_rules,
 };
 
-static const char* op_life_instring  = "X\0      Y\0      SET\0    TOG\0    NEXT\0   XSIZE\0  YSIZE\0  RULES\0  ";
+static const char* op_life_instring  = "X\0      Y\0      WRITE\0  READ\0   TOG\0    NEXT\0   XSIZE\0  YSIZE\0  RULES\0  ";
 static const char* op_life_outstring = "X\0      Y\0      VAL\0    POP\0    ";
 static const char* op_life_opstring  = "LIFE";
 
@@ -71,12 +73,13 @@ void op_life_init(void* mem) {
   
   life->in_val[0] = &(life->x);
   life->in_val[1] = &(life->y);
-  life->in_val[2] = &(life->set);
-  life->in_val[3] = &(life->tog);
-  life->in_val[4] = &(life->next);
-  life->in_val[5] = &(life->xsize);
-  life->in_val[6] = &(life->ysize);
-  life->in_val[7] = &(life->rules);
+  life->in_val[2] = &(life->write);
+  life->in_val[3] = &(life->read);
+  life->in_val[4] = &(life->tog);
+  life->in_val[5] = &(life->next);
+  life->in_val[6] = &(life->xsize);
+  life->in_val[7] = &(life->ysize);
+  life->in_val[8] = &(life->rules);
 
   life->next = 0;
   //??? FIXME
@@ -88,7 +91,8 @@ void op_life_init(void* mem) {
 
   life->x = 0;
   life->y = 0;
-  life->set = 0;
+  life->write = 0;
+  life->read = 0;
   life->tog = 0;
   life->rules = 0;
 
@@ -189,17 +193,26 @@ static void op_life_in_y(op_life_t* life, const io_t v) {
     life->y = v;
 }
 
-static void op_life_in_set(op_life_t* life, const io_t v) {
+static void op_life_in_write(op_life_t* life, const io_t v) {
   if (life->x < life->xsize &&
       life->y < life->ysize) {
     if (v <= 0) {
       lifenow[life->x][life->y] = 0;
-      life->set = 0;
+      life->write = 0;
     }
     else {
       lifenow[life->x][life->y] = 1;
-      life->set = 1;
+      life->write = 1;
     }
+    output_cell(life, life->x, life->y, lifenow[life->x][life->y]);
+  }
+}
+
+static void op_life_in_read(op_life_t* life, const io_t v) {
+  if (v != 0 &&
+      life->x < life->xsize &&
+      life->y < life->ysize) {
+    life->read = 1;
     output_cell(life, life->x, life->y, lifenow[life->x][life->y]);
   }
 }
@@ -253,7 +266,8 @@ static u8 neighbors(u8 x, u8 y, u8 xsize, u8 ysize) {
 u8* op_life_pickle(op_life_t* op, u8* dst) {
   dst = pickle_io(op->x, dst);
   dst = pickle_io(op->y, dst);
-  dst = pickle_io(op->set, dst);
+  dst = pickle_io(op->write, dst);
+  dst = pickle_io(op->read, dst);
   dst = pickle_io(op->tog, dst);
   dst = pickle_io(op->next, dst);
   dst = pickle_io(op->xsize, dst);
@@ -265,7 +279,8 @@ u8* op_life_pickle(op_life_t* op, u8* dst) {
 const u8* op_life_unpickle(op_life_t* op, const u8* src ) {
   src = unpickle_io(src, &(op->x));
   src = unpickle_io(src, &(op->y));
-  src = unpickle_io(src, &(op->set));
+  src = unpickle_io(src, &(op->write));
+  src = unpickle_io(src, &(op->read));
   src = unpickle_io(src, &(op->tog));
   src = unpickle_io(src, &(op->next));
   src = unpickle_io(src, &(op->xsize));

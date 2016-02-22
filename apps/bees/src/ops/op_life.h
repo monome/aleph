@@ -32,10 +32,11 @@ typedef struct op_life_struct {
   volatile io_t ysize;
   volatile io_t x;
   volatile io_t y;
-  volatile io_t set;
+  volatile io_t write;
+  volatile io_t read;
   volatile io_t tog;
   volatile io_t rules;
-  volatile io_t* in_val[8];
+  volatile io_t* in_val[9];
   op_out_t outs[4];
 } op_life_t;
 
