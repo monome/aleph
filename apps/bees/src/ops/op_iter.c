@@ -58,12 +58,13 @@ void op_iter_init(void* mem) {
 //---- static func define
 
 static void op_iter_in_times(op_iter_t* iter, const io_t v) {
-  if (v >= 0 && v < 16)
+  if (v >= 0 && v <= 16)
     iter->times = v;
 }
 
 static void op_iter_in_val(op_iter_t* iter, const io_t v) {
   u8 i = 0;
+  iter->val = v;
   iter->stop = 0;
   for (i=0; i < iter->times; i++) {
     if ( iter->stop == 1)
