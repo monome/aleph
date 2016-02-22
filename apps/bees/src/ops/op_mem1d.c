@@ -33,7 +33,7 @@ static op_in_fn op_mem1d_in_fn[4] = {
 void op_mem1d_init(void* mem) {
   op_mem1d_t* mem1d = (op_mem1d_t*)mem;
   mem1d->super.numInputs = 4;
-  mem1d->super.numOutputs = 3;
+  mem1d->super.numOutputs = 2;
   mem1d->outs[0] = -1;
   mem1d->outs[1] = -1;
 
