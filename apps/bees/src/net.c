@@ -612,6 +612,12 @@ s16 net_remove_op(const u32 opIdx) {
     bytePtr = (u8*) net->ops[i+1];
     bytePtr -= opSize;
     net->ops[i] = (op_t*) bytePtr;
+
+    for (j=0; j < net->ops[i]->numInputs; j++) {
+      bytePtr = (u8*) (net->ops[i]->in_val)[j];
+      bytePtr -= opSize;
+      (net->ops[i]->in_val)[j] = (io_t*) bytePtr;
+    }
   }
 
   net->numOps -= 1;
