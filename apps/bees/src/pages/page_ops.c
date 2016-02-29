@@ -250,12 +250,10 @@ void handle_key_2(s32 val) {
   if(check_key(2)) { 
     if(altMode) {
       // delete last created operator
-      net_remove_op(12);
+      net_remove_op(*pageSelect);
     } else {
       // create new operator of selected type
       net_add_op(userOpTypes[newOpType]);
-      // change selection to last op
-      *pageSelect = net_num_ops() - 1;
 
     }
     redraw_ins();
