@@ -569,9 +569,9 @@ s16 net_remove_op(const u32 opIdx) {
   for(i=0; i<net->numOuts; i++) {
     // break connections to removed op
     if( net->outs[i].target >= opFirstIn &&
-	net->outs[i].target < opFirstIn + opNumOutputs) {
+	net->outs[i].target < opFirstIn + opNumInputs) {
       net_disconnect(i);
-    } else if (net->outs[i].target >= opFirstIn + opNumOutputs) {
+    } else if (net->outs[i].target >= opFirstIn + opNumInputs) {
       /// shuffle op indexes down past removed op
       net_connect(i, net->outs[i].target - opNumInputs);
     }
@@ -605,26 +605,35 @@ s16 net_remove_op(const u32 opIdx) {
     *((u8*)(pMem - opSize)) = *((u8*)pMem);
   }
 
-  //... and update the array of op_pointers
-  net->opPoolOffset -= opSize;
+  // Then update op pointers in net->ops
   u8* bytePtr;
-  for(i=opIdx; i < net->numOps - 1; i++){
+  for(i=opIdx; i < net->numOps - 1; i++) {
     bytePtr = (u8*) net->ops[i+1];
     bytePtr -= opSize;
     net->ops[i] = (op_t*) bytePtr;
+  }
+  net->numOps -= 1;
+  net->opPoolOffset -= opSize;
 
+  //... and update all pointers referencing
+  //    the memory that's been moved
+  for(i=opIdx; i < net->numOps; i++) {
     bytePtr = (u8*) (net->ops[i]->in_val);
     bytePtr -= opSize;
     net->ops[i]->in_val = (void*) bytePtr;
+
+    bytePtr = (u8*) net->ops[i]->out;
+    bytePtr -= opSize;
+    net->ops[i]->out = (op_out_t*) bytePtr;
 
     for (j=0; j < net->ops[i]->numInputs; j++) {
       bytePtr = (u8*) (net->ops[i]->in_val)[j];
       bytePtr -= opSize;
       (net->ops[i]->in_val)[j] = (io_t*) bytePtr;
     }
+
   }
 
-  net->numOps -= 1;
 
   // FIXME: shift preset param data and connections to params, 
   // since they share an indexing list with inputs and we just changed it.
