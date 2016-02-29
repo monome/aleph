@@ -613,6 +613,10 @@ s16 net_remove_op(const u32 opIdx) {
     bytePtr -= opSize;
     net->ops[i] = (op_t*) bytePtr;
 
+    bytePtr = (u8*) (net->ops[i]->in_val);
+    bytePtr -= opSize;
+    net->ops[i]->in_val = (void*) bytePtr;
+
     for (j=0; j < net->ops[i]->numInputs; j++) {
       bytePtr = (u8*) (net->ops[i]->in_val)[j];
       bytePtr -= opSize;
