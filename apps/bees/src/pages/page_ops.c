@@ -250,7 +250,7 @@ void handle_key_2(s32 val) {
   if(check_key(2)) { 
     if(altMode) {
       // delete last created operator
-      net_pop_op();
+      net_remove_op(12);
     } else {
       // create new operator of selected type
       net_add_op(userOpTypes[newOpType]);

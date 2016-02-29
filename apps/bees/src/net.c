@@ -541,6 +541,104 @@ s16 net_pop_op(void) {
 
 }
 
+//second attempt
+s16 net_remove_op(const u32 opIdx) {
+  op_t* op = net->ops[opIdx];
+  int opNumInputs = op->numInputs;
+  int opNumOutputs = op->numOutputs;
+  int i, j;
+  int numInsSave = net->numIns;
+  int idxOld, idxNew;
+  u8* pMem; // raw pointer to op pool memory
+
+  app_pause();
+  // bail if system op
+  if(net_op_flag (opIdx, eOpFlagSys)) {
+    app_resume();
+    return 1;
+  }
+
+  // de-init
+  op_deinit(op);
+
+  // store the global index of the first input
+  int opFirstIn = net_op_in_idx(opIdx, 0);
+
+  // check each output, break connections to removed op,
+  // adjust output indices after removed op down for the gap
+  for(i=0; i<net->numOuts; i++) {
+    // break connections to removed op
+    if( net->outs[i].target >= opFirstIn &&
+	net->outs[i].target < opFirstIn + opNumOutputs) {
+      net_disconnect(i);
+    } else if (net->outs[i].target >= opFirstIn + opNumOutputs) {
+      /// shuffle op indexes down past removed op
+      net_connect(i, net->outs[i].target - opNumInputs);
+    }
+  }
+  
+  // reshuffle input indices & associated op indices above
+  // the removed op
+  for(i = opFirstIn; i < net->numIns - opNumInputs; i++) {
+    net->ins[i] = net->ins[i + opNumInputs];
+    net->ins[i].opIdx -= 1;
+  }
+
+  // store the global index of the first output
+  int opFirstOut = net_op_out_idx(opIdx, 0);
+  // reshuffle output indices & associated op indices above
+  // the removed op
+  for(i = opFirstOut; i < net->numOuts - opNumOutputs; i++) {
+    net->outs[i] = net->outs[i + opNumOutputs];
+    net->outs[i].opIdx -= 1;
+  }
+
+  net->numIns -= opNumInputs;
+  net->numOuts -= opNumOutputs;
+
+  // VERY DANGEROUSly move all the op memory above this, byte by byte
+  u32 opSize = op_registry[op->type].size;
+
+  for( pMem = (u8*)op + opSize;
+       (u32)pMem < ((u32)(net->opPool) + net->opPoolOffset);
+       pMem++ ) {
+    *((u8*)(pMem - opSize)) = *((u8*)pMem);
+  }
+
+  //... and update the array of op_pointers
+  net->opPoolOffset -= opSize;
+  u8* bytePtr;
+  for(i=opIdx; i < net->numOps - 1; i++){
+    bytePtr = (u8*) net->ops[i+1];
+    bytePtr -= opSize;
+    net->ops[i] = (op_t*) bytePtr;
+  }
+
+  net->numOps -= 1;
+
+  // FIXME: shift preset param data and connections to params, 
+  // since they share an indexing list with inputs and we just changed it.
+
+  for(i=0; i<NET_PRESETS_MAX; ++i) {
+    // shift parameter nodes in preset data
+    for(j=0; j<net->numParams; ++j) {
+      // this was the old param index
+      idxOld = j + numInsSave;
+      // copy to new param index
+      idxNew = idxOld - opNumInputs;
+      presets[i].ins[idxNew].value = presets[i].ins[idxOld].value;
+      presets[i].ins[idxNew].enabled = presets[i].ins[idxOld].enabled;
+      // clear the old data.
+      presets[i].ins[idxOld].enabled = 0;
+      presets[i].ins[idxOld].value = 0;
+    }
+  }
+
+  app_resume();
+  return 0;
+
+}
+
 #if 0 // FIXME: this is not called and not tested. it would obvs be a good feature though.
 /// delete an arbitrary operator, and do horrible ugly management stuff
 void net_remove_op(const u32 idx) {
