@@ -6,10 +6,8 @@
 #include "module_common.h"
 #include "preset.h"
 #include "types.h"
+EXTERN_C_BEGIN
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #define SCENE_DESC_COUNT 24
 #define SCENE_NAME_LEN 24
@@ -98,9 +96,6 @@ extern const char* scene_get_name(void);
 // get module name
 extern const char* scene_get_module_name(void);
 
-#ifdef __cplusplus
-}
-#endif
-
+EXTERN_C_END
  
 #endif

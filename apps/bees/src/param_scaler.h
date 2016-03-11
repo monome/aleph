@@ -20,11 +20,8 @@
 #ifndef _ALEPH_AVR32_BEES_SCALER_H_
 #define _ALEPH_AVR32_BEES_SCALER_H_
 
-#ifdef __cplusplus
-extern "C" { 
-#endif
 
-
+#include "util.h"
 #include "op_math.h"
 #include "param_common.h"
 
@@ -39,6 +36,8 @@ extern "C" {
 #include "scalers/scaler_note.h"
 #include "scalers/scaler_short.h"
 #include "scalers/scaler_svf_fc.h"
+
+EXTERN_C_BEGIN
 
 //----------------------
 //---- defines
@@ -111,8 +110,5 @@ extern u32 scaler_get_rep_offset(ParamType p);
 extern const s32* scaler_get_nv_data(ParamType p);
 extern const s32* scaler_get_nv_rep(ParamType p);
 
-#ifdef __cplusplus
-}
-#endif
-
+EXTERN_C_END
 #endif

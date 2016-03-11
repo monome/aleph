@@ -5,12 +5,10 @@
 #ifndef _ALEPH_BEES_SCALER_SHORT_H_
 #define _ALEPH_BEES_SCALER_SHORT_H_
 
-#ifdef __cplusplus
-extern "C" { 
-#endif
 
 #include "param_scaler.h"
 #include "types.h"
+EXTERN_C_BEGIN
 
 #define PARAM_SCALER_SHORT_DATA_SIZE 0
 
@@ -19,8 +17,5 @@ extern s32 scaler_short_val(void* scaler, io_t in);
 extern void scaler_short_str(char* dst, void* scaler, io_t in);
 extern io_t scaler_short_in(void* scaler, s32 val);
 extern s32 scaler_short_inc(void* sc, io_t *pin, io_t inc );
-#ifdef __cplusplus
-}
-#endif
-
+EXTERN_C_END
 #endif
