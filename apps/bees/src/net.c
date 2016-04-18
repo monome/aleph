@@ -212,12 +212,6 @@ void net_init(void) {
   u32 i;
   net = (ctlnet_t*)alloc_mem(sizeof(ctlnet_t));
 
-  for(i=0; i<NET_OP_POOL_SIZE; i++) {
-    net->opPoolMem[i] = 0x00;
-  }
-
-  net->opPool = (void*)&(net->opPoolMem);
-  net->opPoolOffset = 0;
   net->numOps = 0;
   net->numIns = 0;
   net->numOuts = 0;
@@ -249,7 +243,6 @@ void net_deinit(void) {
   
   print_dbg("\r\n finished de-initializing network");
 
-  net->opPoolOffset = 0;
   net->numOps = 0;
   net->numIns = 0;
   net->numOuts = 0;
@@ -371,17 +364,8 @@ s16 net_add_op(op_id_t opId) {
   print_dbg_ulong(op_registry[opId].size);
 
 
-  if (op_registry[opId].size > NET_OP_POOL_SIZE - net->opPoolOffset) {
-    print_dbg("\r\n op creation failed; op memory pool is exhausted.");
-    return -1;
-  }
-
   print_dbg(" ; allocating... ");
-  op = (op_t*)((u8*)net->opPool + net->opPoolOffset);
-  // use the class ID to initialize a new object in scratch
-  print_dbg(" ; op address: 0x");
-  print_dbg_hex((u32)op);
-  print_dbg(" ;  initializing... ");
+  op = (op_t*)alloc_mem(op_registry[opId].size);
   op_init(op, opId);
 
   ins = op->numInputs;
@@ -400,7 +384,6 @@ s16 net_add_op(op_id_t opId) {
   // add op pointer to list
   net->ops[net->numOps] = op;
   // advance offset for next allocation
-  net->opPoolOffset += op_registry[opId].size;
 
   //---- add inputs and outputs to node list
     for(i=0; i<ins; ++i) {
@@ -481,6 +464,7 @@ s16 net_pop_op(void) {
   
   // de-init
   op_deinit(op);
+  free_mem((u8*)op);
   ins = op->numInputs;
   // store the global index of the first input
   x = net_op_in_idx(opIdx, 0);
@@ -513,7 +497,6 @@ s16 net_pop_op(void) {
   net->numIns -= op->numInputs;
   net->numOuts -= op->numOutputs;
 
-  net->opPoolOffset -= op_registry[op->type].size;
   net->numOps -= 1;
 
   // FIXME: shift preset param data and connections to params, 
