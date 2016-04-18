@@ -343,7 +343,8 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
   
 }
 
-#define MIN_OP_MEM_ALLOCATION 128
+#define SMALL_OP_MEM_ALLOCATION 128 // small_ops are 128 bytes
+#define BIG_OP_MEM_ALLOCATION (16 * 1024) // big_ops are 16kB
 
 // attempt to allocate a new operator from the static memory pool, return index
 s16 net_add_op(op_id_t opId) {
@@ -366,10 +367,20 @@ s16 net_add_op(op_id_t opId) {
   print_dbg_ulong(op_registry[opId].size);
 
 
+  // FIXME for now malloc/free is ok but should
+  // be 2 mempools for big/small ops implemented
+  // as linked list.  One-off huge ops can get
+  // malloc-ed, then we keep mem management out
+  // of the ops themselves...
   print_dbg(" ; allocating... ");
   size_t opChunk = op_registry[opId].size;
-  if (opChunk < MIN_OP_MEM_ALLOCATION)
-    opChunk = MIN_OP_MEM_ALLOCATION;
+  if (opChunk <= SMALL_OP_MEM_ALLOCATION) {
+    opChunk = SMALL_OP_MEM_ALLOCATION;
+  }
+  else if (opChunk <= BIG_OP_MEM_ALLOCATION) {
+    opChunk = BIG_OP_MEM_ALLOCATION;
+  }
+
   op = (op_t*)alloc_mem(opChunk);
   op_init(op, opId);
 
