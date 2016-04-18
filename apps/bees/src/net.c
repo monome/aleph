@@ -343,6 +343,8 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
   
 }
 
+#define MIN_OP_MEM_ALLOCATION 128
+
 // attempt to allocate a new operator from the static memory pool, return index
 s16 net_add_op(op_id_t opId) {
   u16 ins, outs;
@@ -365,7 +367,10 @@ s16 net_add_op(op_id_t opId) {
 
 
   print_dbg(" ; allocating... ");
-  op = (op_t*)alloc_mem(op_registry[opId].size);
+  size_t opChunk = op_registry[opId].size;
+  if (opChunk < MIN_OP_MEM_ALLOCATION)
+    opChunk = MIN_OP_MEM_ALLOCATION;
+  op = (op_t*)alloc_mem(opChunk);
   op_init(op, opId);
 
   ins = op->numInputs;
@@ -524,99 +529,108 @@ s16 net_pop_op(void) {
 
 }
 
-#if 0 // FIXME: this is not called and not tested. it would obvs be a good feature though.
-/// delete an arbitrary operator, and do horrible ugly management stuff
-void net_remove_op(const u32 idx) {
-  /// FIXME: network processing must be halted during this procedure!
-  op_t* op = net->ops[idx];
-  u8 nIns = op->numInputs;
-  u8 nOuts = op->numOutputs;
-  s16 firstIn, lastIn;
-  s16 firstOut, lastOut;
-  u32 opSize;
-  u32 i;
-  u8* pMem; // raw pointer to op pool memory
+s16 net_remove_op(const u32 opIdx) {
+  op_t* op = net->ops[opIdx];
+  int opNumInputs = op->numInputs;
+  int opNumOutputs = op->numOutputs;
+  int i, j;
+  int numInsSave = net->numIns;
+  int idxOld, idxNew;
 
-  opSize = op_registry[op->type].size;
+  app_pause();
+  // bail if system op
+  if(net_op_flag (opIdx, eOpFlagSys)) {
+    app_resume();
+    return 1;
+  }
+  // bail if out of range
+  if(opIdx < 0 || opIdx >= net->numOps) {
+    print_dbg("\r\nout-of-range op deletion requested");
+    app_resume();
+    return 1;
+  }
 
-  if ( nIns > 0 ) {
-    /// find the first input idx
-    firstIn = -1;
-    for(i=0; i<net->numIns; i++) {
-      if (net->ins[i].opIdx == idx) {
-	firstIn = i;
-	break;
-      }
-    }
-    if(firstIn == -1 ) {
-      // supposed to be a first inlet but we couldn't find it; we are fucked
-      print_dbg("\r\n oh dang! couldn't find first inlet for deleted operator! \r\n");
-    }
-    lastIn = firstIn + nIns - 1;
-    // check if anything connects here
-    for(i=0; i<net->numOuts; i++) {
-      if( net->outs[i].target >= firstIn ) {
-	if( net->outs[i].target > lastIn ) {
-	  // connections to higher inlets get moved down
-	  net->outs[i].target -= nIns;
-	} else {
-	  // disconnect from this op's inputs
-	  net->outs[i].target =  -1;
-	}
-      }
-    }
-    // if higher input nodes are used...
-    for(i=(lastIn + 1); i<net->numIns; i++) {
-      /// revise op Idx
-      net->ins[i].opIdx -= 1;
-      /// copy all the data down
-      net->ins[i - nIns] = net->ins[i];
-      /// then erase
-      net_init_inode(i);
+  print_dbg("\r\ndeinit-ing op");
+  // de-init
+  op_deinit(op);
+  free_mem((u8*)op);
+  print_dbg("\r\nde-inited op");
+  // store the global index of the first input
+  int opFirstIn = net_op_in_idx(opIdx, 0);
+
+  // check each output, break connections to removed op,
+  // adjust output indices after removed op down for the gap
+  for(i=0; i<net->numOuts; i++) {
+    print_dbg("\r\nmonkey");
+    // break connections to removed op
+    if( net->outs[i].target >= opFirstIn &&
+	net->outs[i].target < opFirstIn + opNumInputs) {
+      print_dbg("\r\nbadger");
+      net_disconnect(i);
+    } else if (net->outs[i].target >= opFirstIn + opNumInputs) {
+      /// shuffle op indexes down past removed op
+      print_dbg("\r\nrat");
+      net_connect(i, net->outs[i].target - opNumInputs);
     }
   }
 
-  /// update output nodes for this op and higher
-  firstOut = -1;
-  lastOut = NET_OUTS_MAX;
-  if ( nOuts > 0 ) {
-    for(i=0; i<net->numOuts; i++) {
-      if (net->outs[i].opIdx == idx) {
-	if(firstOut == -1) {
-	  firstOut = i;
-	  lastOut = firstOut + nOuts - 1;
-	}
-	// deleted op owns this outlet, so erase it
-	net_init_onode(i);
-      }
-      if( i > lastOut ) {
-	/// for onodes above...
-	/// revise op Idx
-	net->outs[i].opIdx -= 1;
-	/// copy all the data down
-	net->outs[i - nOuts] = net->outs[i];
-	/// then erase
-	net_init_onode(i);
-      }
+  print_dbg("\r\nreshuffling...");
+  // reshuffle input indices & associated op indices above
+  // the removed op
+  for(i = opFirstIn; i < net->numIns - opNumInputs; i++) {
+    print_dbg("\r\nshuffle shuffle...");
+    net->ins[i] = net->ins[i + opNumInputs];
+    net->ins[i].opIdx -= 1;
+  }
+
+  // reshuffle output indices & associated op indices above
+  // the removed op
+  for(i = 0; i < net->numOuts - opNumOutputs; i++) {
+    if (net->outs[i].opIdx >= opIdx) {
+      print_dbg("\r\nshiffle shiffle");
+      net->outs[i] = net->outs[i + opNumOutputs];
+      net->outs[i].opIdx -= 1;
     }
   }
 
-  //// VERY DANGEROUSly move all the op memory above this, byte by byte
-  for( pMem = (u8*)op + opSize; 
-       (u32)pMem < ((u32)(net->opPool) + net->opPoolOffset);
-       pMem++
-       ) {
-    *((u8*)(pMem - opSize)) = *((u8*)pMem);
-  }
-  /// move the memory offset back
-  net->opPoolOffset -= opSize;
-  /// update node and op counts
-  net->numIns -= nIns;
-  net->numOuts -= nOuts;
+  net->numIns -= opNumInputs;
+  net->numOuts -= opNumOutputs;
   net->numOps -= 1;
-  //... and, uh, don't crash?
+
+  for(i=opIdx; i < net->numOps; i++) {
+    print_dbg("\r\nshuffling superior op-idx");
+    net->ops[i] = net->ops[i+1];
+  }
+
+  //HACK try re-indexing all outputs
+  for(i=0; i<net->numOuts; i++) {
+    net_connect(i, net->outs[i].target);
+  }
+
+  // FIXME: shift preset param data and connections to params,
+  // since they share an indexing list with inputs and we just changed it.
+  print_dbg("\r\nwhatever...");
+  for(i=0; i<NET_PRESETS_MAX; ++i) {
+    // shift parameter nodes in preset data
+    for(j=0; j<net->numParams; ++j) {
+      // this was the old param index
+      idxOld = j + numInsSave;
+      // copy to new param index
+      idxNew = idxOld - opNumInputs;
+      presets[i].ins[idxNew].value = presets[i].ins[idxOld].value;
+      presets[i].ins[idxNew].enabled = presets[i].ins[idxOld].enabled;
+      // clear the old data.
+      presets[i].ins[idxOld].enabled = 0;
+      presets[i].ins[idxOld].value = 0;
+    }
+  }
+  print_dbg("\r\nresume app...");
+  app_resume();
+  print_dbg("\r\nresumed app no probbers...");
+
+  return 0;
+
 }
-#endif
 
 // create a connection between given idx pairs
 void net_connect(u32 oIdx, u32 iIdx) {
