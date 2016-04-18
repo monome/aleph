@@ -72,9 +72,16 @@ void op_mem2d_init(void* mem) {
   mem2d->rowsel = 0;
   mem2d->colsel = 0;
 
+  int i;
+  int j;
+  for (i=0; i < MEM_2D_DATA_LENGTH; i++) {
+    for (j=0; j < MEM_2D_DATA_LENGTH; j++) {
+      mem2d->data[i][j] = 0;
+    }
+  }
+
 }
 
-io_t globalMem2d[16][16];
 
 //-------------------------------------------------
 //---- static func define
@@ -100,20 +107,20 @@ static void op_mem2d_in_y(op_mem2d_t* mem2d, const io_t v) {
 }
 
 static void op_mem2d_in_write(op_mem2d_t* mem2d, const io_t v) {
-  mem2d->write = globalMem2d[mem2d->x][mem2d->y] = v;
+  mem2d->write = mem2d->data[mem2d->x][mem2d->y] = v;
 }
 
 static void op_mem2d_in_read(op_mem2d_t* mem2d, const io_t v) {
   net_activate(mem2d->outs[0], mem2d->x, mem2d);
   net_activate(mem2d->outs[1], mem2d->y, mem2d);
-  net_activate(mem2d->outs[2], globalMem2d[mem2d->x][mem2d->y], mem2d);
+  net_activate(mem2d->outs[2], mem2d->data[mem2d->x][mem2d->y], mem2d);
 }
 
 static void op_mem2d_in_tog(op_mem2d_t* mem2d, const io_t v) {
   if (v > 0) {
     mem2d->tog = 1;
     mem2d->write = 1;
-    globalMem2d[mem2d->x][mem2d->y] = ! globalMem2d[mem2d->x][mem2d->y];
+    mem2d->data[mem2d->x][mem2d->y] = ! mem2d->data[mem2d->x][mem2d->y];
   }
   else {
     mem2d->tog = 0;
@@ -163,6 +170,13 @@ u8* op_mem2d_pickle(op_mem2d_t* op, u8* dst) {
   dst = pickle_io(op->tog, dst);
   /* dst = pickle_io(op->rowsel, dst); */
   /* dst = pickle_io(op->colsel, dst); */
+  int i, j;
+  for (i=0; i < MEM_2D_DATA_LENGTH; i++) {
+    for (j=0; j < MEM_2D_DATA_LENGTH; j++) {
+      dst = pickle_io(op->data[i][j], dst);
+    }
+  }
+
   return dst;
 }
 
@@ -174,5 +188,12 @@ const u8* op_mem2d_unpickle(op_mem2d_t* op, const u8* src) {
   src = unpickle_io(src, &(op->tog));
   /* src = unpickle_io(src, &(op->rowsel)); */
   /* src = unpickle_io(src, &(op->colsel)); */
+  int i, j;
+  for (i=0; i < MEM_2D_DATA_LENGTH; i++) {
+    for (j=0; j < MEM_2D_DATA_LENGTH; j++) {
+      src = unpickle_io(src, &(op->data[i][j]));
+    }
+  }
+
   return src;
 }

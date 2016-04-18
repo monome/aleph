@@ -6,7 +6,6 @@
 static void op_mem0d_in_tog(op_mem0d_t* mem0d, const io_t v) ;
 static void op_mem0d_in_read(op_mem0d_t* mem0d, const io_t v) ;
 static void op_mem0d_in_write(op_mem0d_t* mem0d, const io_t v) ;
-static void op_mem0d_in_n(op_mem0d_t* mem0d, const io_t v) ;
 
 // pickle / unpickle
 static u8* op_mem0d_pickle(op_mem0d_t* op, u8* dst);

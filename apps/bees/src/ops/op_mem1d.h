@@ -5,6 +5,8 @@
 #include "op.h"
 #include "op_math.h"
 
+#define MEM_1D_DATA_LENGTH 16
+
 //--- op_mem1d_t : mem1dition
 typedef struct op_mem1d_struct {
   op_t super;
@@ -14,6 +16,7 @@ typedef struct op_mem1d_struct {
   volatile io_t tog;
   volatile io_t rowsel;
   volatile io_t colsel;
+  volatile io_t data[MEM_1D_DATA_LENGTH];
 
   volatile io_t * in_val[4];
   op_out_t outs[2];

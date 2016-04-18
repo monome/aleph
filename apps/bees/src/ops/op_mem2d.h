@@ -5,6 +5,8 @@
 #include "op.h"
 #include "op_math.h"
 
+#define MEM_2D_DATA_LENGTH 16
+
 //--- op_mem2d_t : mem2dition
 typedef struct op_mem2d_struct {
   op_t super;
@@ -15,6 +17,7 @@ typedef struct op_mem2d_struct {
   volatile io_t tog;
   volatile io_t rowsel;
   volatile io_t colsel;
+  io_t data[MEM_2D_DATA_LENGTH][MEM_2D_DATA_LENGTH];
 
   volatile io_t * in_val[5];
   op_out_t outs[3];

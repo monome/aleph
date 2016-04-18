@@ -60,9 +60,12 @@ void op_mem1d_init(void* mem) {
   mem1d->rowsel = 0;
   mem1d->colsel = 0;
 
+  int i;
+  for (i=0; i<MEM_1D_DATA_LENGTH; i++) {
+    mem1d->data[i] = 0;
+  }
 }
 
-io_t globalMem1d[16];
 
 //-------------------------------------------------
 //---- static func define
@@ -77,19 +80,19 @@ static void op_mem1d_in_n(op_mem1d_t* mem1d, const io_t v) {
 }
 
 static void op_mem1d_in_write(op_mem1d_t* mem1d, const io_t v) {
-  mem1d->write = globalMem1d[mem1d->n] = v;
+  mem1d->write = mem1d->data[mem1d->n] = v;
 }
 
 static void op_mem1d_in_read(op_mem1d_t* mem1d, const io_t v) {
   net_activate(mem1d->outs[0], mem1d->n, mem1d);
-  net_activate(mem1d->outs[1], globalMem1d[mem1d->n], mem1d);
+  net_activate(mem1d->outs[1], mem1d->data[mem1d->n], mem1d);
 }
 
 static void op_mem1d_in_tog(op_mem1d_t* mem1d, const io_t v) {
   if (v > 0) {
     mem1d->tog = 1;
     mem1d->write = 1;
-    globalMem1d[mem1d->n] = ! globalMem1d[mem1d->n];
+    mem1d->data[mem1d->n] = ! mem1d->data[mem1d->n];
   }
   else {
     mem1d->tog = 0;
@@ -103,6 +106,11 @@ u8* op_mem1d_pickle(op_mem1d_t* op, u8* dst) {
   dst = pickle_io(op->write, dst);
   dst = pickle_io(op->read, dst);
   dst = pickle_io(op->tog, dst);
+  int i;
+  for (i=0; i<MEM_1D_DATA_LENGTH; i++) {
+    dst = pickle_io(op->data[i], dst);
+  }
+  
   return dst;
 }
 
@@ -111,5 +119,10 @@ const u8* op_mem1d_unpickle(op_mem1d_t* op, const u8* src) {
   src = unpickle_io(src, &(op->write));
   src = unpickle_io(src, &(op->read));
   src = unpickle_io(src, &(op->tog));
+  int i;
+  for (i=0; i<MEM_1D_DATA_LENGTH; i++) {
+    src = unpickle_io(src, &(op->data[i]));
+  }
+
   return src;
 }
