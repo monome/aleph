@@ -239,6 +239,7 @@ void net_deinit(void) {
   print_dbg("\r\n deinitializing network");
   for(i=0; i<net->numOps; i++) {
     op_deinit(net->ops[i]);
+    free_mem((u8*)net->ops[i]);
   }
   
   print_dbg("\r\n finished de-initializing network");
