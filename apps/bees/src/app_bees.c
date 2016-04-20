@@ -34,6 +34,7 @@
 #include "render.h"
 #include "scene.h"
 #include "serial.h"
+#include "op_pool.h"
 
 //-------------------------------------------
 //-- extern vars (here)
@@ -77,6 +78,10 @@ void app_init(void) {
 
   print_dbg("\r\n serial_init...");
   serial_init ();
+
+  print_dbg("\r\n initialise mempools...");
+  initBigMemPool();
+  initSmallMemPool();
 }
 
 // this is called from main event handler

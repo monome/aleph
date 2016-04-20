@@ -32,6 +32,7 @@
 #include "play.h"
 #include "preset.h"
 #include "util.h"
+#include "op_pool.h"
 
 
 //=========================================
@@ -239,7 +240,7 @@ void net_deinit(void) {
   print_dbg("\r\n deinitializing network");
   for(i=0; i<net->numOps; i++) {
     op_deinit(net->ops[i]);
-    free_mem((u8*)net->ops[i]);
+    freeOp((u8*)net->ops[i]);
   }
   
   print_dbg("\r\n finished de-initializing network");
@@ -344,9 +345,6 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
   
 }
 
-#define SMALL_OP_MEM_ALLOCATION 128 // small_ops are 128 bytes
-#define BIG_OP_MEM_ALLOCATION (16 * 1024) // big_ops are 16kB
-
 // attempt to allocate a new operator from the static memory pool, return index
 s16 net_add_op(op_id_t opId) {
   u16 ins, outs;
@@ -368,21 +366,21 @@ s16 net_add_op(op_id_t opId) {
   print_dbg_ulong(op_registry[opId].size);
 
 
-  // FIXME for now malloc/free is ok but should
-  // be 2 mempools for big/small ops implemented
-  // as linked list.  One-off huge ops can get
-  // malloc-ed, then we keep mem management out
-  // of the ops themselves...
   print_dbg(" ; allocating... ");
   size_t opChunk = op_registry[opId].size;
-  if (opChunk <= SMALL_OP_MEM_ALLOCATION) {
-    opChunk = SMALL_OP_MEM_ALLOCATION;
+  if (opChunk <= SMALL_OP_SIZE) {
+    op = (op_t*)allocSmallOp();
   }
-  else if (opChunk <= BIG_OP_MEM_ALLOCATION) {
-    opChunk = BIG_OP_MEM_ALLOCATION;
+  else if (opChunk <= BIG_OP_SIZE) {
+    op = (op_t*)allocBigOp();
+  } else {
+    op = (op_t*)alloc_mem(opChunk);
   }
 
-  op = (op_t*)alloc_mem(opChunk);
+  if (op == NULL) {
+    print_dbg("\r\ncouldn't get enough memory for new op");
+    return -1;
+  }
   op_init(op, opId);
 
   ins = op->numInputs;
@@ -481,7 +479,7 @@ s16 net_pop_op(void) {
   
   // de-init
   op_deinit(op);
-  free_mem((u8*)op);
+  freeOp((u8*)op);
   ins = op->numInputs;
   // store the global index of the first input
   x = net_op_in_idx(opIdx, 0);
@@ -565,7 +563,7 @@ s16 net_remove_op(const u32 opIdx) {
   print_dbg("\r\ndeinit-ing op");
   // de-init
   op_deinit(op);
-  free_mem((u8*)op);
+  freeOp((u8*)op);
   print_dbg("\r\nde-inited op");
   // store the global index of the first input
   int opFirstIn = net_op_in_idx(opIdx, 0);
