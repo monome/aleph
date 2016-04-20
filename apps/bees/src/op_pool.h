@@ -40,7 +40,8 @@ u8* allocBigOp(void);
 void initSmallMemPool (void);
 u8* allocSmallOp(void);
 
-
+int freeBigOp(u8* region);
+int freeSmallOp(u8* region);
 int freeOp(u8* region);
 
 #endif

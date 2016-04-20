@@ -2,10 +2,11 @@
 #include <string.h>
 #include "op_pool.h"
 #include "print_funcs.h"
+#include "memory.h"
 
 
 void initBigMemPool (void) {
-  bigOpData = malloc(BIG_OP_SIZE * MAX_BIG_OPS);
+  bigOpData = (u8*)alloc_mem(BIG_OP_SIZE * MAX_BIG_OPS);
   int i;
   for(i=0; i < MAX_BIG_OPS-1; i++) {
     bigOpPool[i].head = bigOpData + i * BIG_OP_SIZE;
@@ -46,7 +47,7 @@ int freeBigOp(u8* region) {
 
 
 void initSmallMemPool (void) {
-  smallOpData = malloc(SMALL_OP_SIZE * MAX_SMALL_OPS);
+  smallOpData = (u8*)alloc_mem(SMALL_OP_SIZE * MAX_SMALL_OPS);
   int i;
   for(i=0; i < MAX_SMALL_OPS-1; i++) {
     smallOpPool[i].head = smallOpData + i * SMALL_OP_SIZE;
@@ -90,5 +91,10 @@ int freeOp (u8* region) {
   if (ret != -1) {
     return ret;
   }
-  return freeBigOp(region);
+  ret = freeBigOp(region);
+  if (ret != -1) {
+    return ret;
+  }
+  free_mem(region);
+  return 0;
 }
