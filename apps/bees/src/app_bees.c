@@ -52,6 +52,10 @@ static char versionString[12] = VERSIONSTRING;
 // this is called during hardware initialization.
 // allocate memory.
 void app_init(void) {
+  // should be before preset and op init
+  print_dbg("\r\n initialise mempools...");
+  initBigMemPool();
+  initSmallMemPool();
 
   print_dbg("\r\n preset_init...");  
   presets_init();
@@ -79,9 +83,6 @@ void app_init(void) {
   print_dbg("\r\n serial_init...");
   serial_init ();
 
-  print_dbg("\r\n initialise mempools...");
-  initBigMemPool();
-  initSmallMemPool();
 }
 
 // this is called from main event handler
