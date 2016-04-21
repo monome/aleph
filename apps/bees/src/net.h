@@ -54,6 +54,9 @@ extern void net_init_onode(u16 idx);
 //! create a new operator given class ID, return index (-1 == fail)
 extern s16 net_add_op(op_id_t opId);
 
+//! arbitrary op insertion
+s16 net_add_op_at(op_id_t opId, int opIdx);
+
 //! remove the last created operator
 extern s16 net_pop_op(void);
 

@@ -460,6 +460,148 @@ s16 net_add_op(op_id_t opId) {
   return net->numOps - 1;
 }
 
+// attempt to allocate a new operator from the static memory pool, return index
+s16 net_add_op_at(op_id_t opId, int opIdx) {
+  u16 ins, outs;
+  int i, j;
+  int idxOld, idxNew;
+  op_t* op;
+  s32 numInsSave = net->numIns;
+  s32 numOutsSave = net->numOuts;
+
+  print_dbg("\r\n adding operator; old input count: ");
+  print_dbg_ulong(numInsSave);
+
+  if (net->numOps >= NET_OPS_MAX) {
+    return -1;
+  }
+  /* print_dbg(" , op class: "); */
+  /* print_dbg_ulong(opId); */
+  /* print_dbg(" , size: "); */
+  /* print_dbg_ulong(op_registry[opId].size); */
+
+
+  print_dbg(" ; allocating... ");
+  size_t opChunk = op_registry[opId].size;
+  if (opChunk <= SMALL_OP_SIZE) {
+    op = (op_t*)allocSmallOp();
+  }
+  else if (opChunk <= BIG_OP_SIZE) {
+    op = (op_t*)allocBigOp();
+  } else {
+    op = (op_t*)alloc_mem(opChunk);
+  }
+
+  if (op == NULL) {
+    print_dbg("\r\ncouldn't get enough memory for new op");
+    return -1;
+  }
+  op_init(op, opId);
+
+  ins = op->numInputs;
+  outs = op->numOutputs;
+  int opFirstIn =0;
+  int opFirstOut = 0;
+  i=0;
+  while (i < opIdx) {
+    opFirstIn += net->ops[i]->numInputs;
+    opFirstOut += net->ops[i]->numOutputs;
+    i++;
+  }
+
+  if (ins > (NET_INS_MAX - net->numIns)) {
+    print_dbg("\r\n op creation failed; too many inputs in network.");
+    return -1;
+  }
+
+  if (outs > (NET_OUTS_MAX - net->numOuts)) {
+    print_dbg("\r\n op creation failed; too many outputs in network.");
+    return -1;
+  }
+
+  net->numIns +=ins;
+  net->numOuts += outs;
+  net->numOps += 1;
+
+  for(i=net->numOps - 1; i>opIdx; i--) {
+    net->ops[i] = net->ops[i-1];
+  }
+  for(i=net->numOuts - 1; i > opFirstOut; i++) {
+    net->outs[i] = net->outs[i-outs];
+    net->outs[i].opIdx += 1;
+  }
+  for(i=net->numIns - 1; i > opFirstIn; i++) {
+    net->ins[i] = net->ins[i-ins];
+    net->ins[i].opIdx += 1;
+  }
+  for (i=0; i < net->numOps; i++) {
+    if( net->outs[i].target >= opFirstIn) {
+      net_connect(i, net->outs[i].target + ins);
+    }
+  }
+  
+  // add op pointer to list
+  // advance offset for next allocation
+  net->ops[opIdx] = op;
+  //---- add inputs and outputs to node list
+  for (i=0; i<ins; ++i) {
+    net->ins[opFirstIn + i].opIdx = net->numOps;
+    net->ins[opFirstIn + i].opInIdx = i;
+  }
+  
+  for (i=0; i<outs; i++) {
+    net->outs[opFirstOut + i].opIdx = net->numOps;
+    net->outs[opFirstOut + i].opOutIdx = i;
+    net->outs[opFirstOut + i].target = -1;
+    ++(net->numOuts);
+  }
+
+  if(net->numOps > 0) {
+    // if we added input nodes, need to adjust connections to DSP params
+    for(i=0; i < numOutsSave; i++) {            
+      if(net->outs[i].target >= numInsSave) {
+	// preset target, add offset for new inputs
+	net_connect(i, net->outs[i].target + ins);
+      }
+
+      /// do the same in all presets!
+      for(j=0; j<NET_PRESETS_MAX; j++) {
+	if(preset_out_enabled(j, i)) {
+	  s16 tar = presets[j].outs[i].target;
+	  if(tar >= numInsSave) {
+	    tar = tar + ins;
+	    presets[j].outs[i].target = tar;
+	  }
+	}
+      } // preset loop
+    } // outs loop
+    
+    for(i=0; i<NET_PRESETS_MAX; i++) {
+      // shift parameter nodes in preset data
+      for(j=net->numParams - 1; j>=0; j--) {
+	// this was the old param index
+	idxOld = j + numInsSave;
+	// copy to new param index
+	idxNew = idxOld + ins;
+	if(idxNew >= PRESET_INODES_COUNT) {
+	  print_dbg("\r\n out of preset input nodes in new op creation! ");
+	  continue;
+	} else {
+	  presets[i].ins[idxNew].value = presets[i].ins[idxOld].value;
+	  presets[i].ins[idxNew].enabled = presets[i].ins[idxOld].enabled;
+	  // clear the old data. it may correspond to new operator inputs.
+	  presets[i].ins[idxOld].enabled = 0;
+	  presets[i].ins[idxOld].value = 0;
+	}
+      }
+    }
+    
+  }
+
+  ++(net->numOps);
+  return net->numOps - 1;
+}
+
 // destroy last operator created
 s16 net_pop_op(void) {
   const s16 opIdx = net->numOps - 1;

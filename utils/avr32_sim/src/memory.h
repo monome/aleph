@@ -23,6 +23,7 @@ typedef volatile u8 * heap_t;
 extern void init_mem(void);
 // allocate and return pointer
 extern heap_t alloc_mem(u32 bytes);
+extern void free_mem(heap_t mem_ptr);
 // test sram
 extern void sram_test(u32 sizeDiv, u32 offset);
 
