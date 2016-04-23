@@ -762,7 +762,9 @@ s16 net_remove_op(const u32 opIdx) {
 
   //HACK try re-indexing all outputs
   for(i=0; i<net->numOuts; i++) {
-    net_connect(i, net->outs[i].target);
+    if (net->outs[i].target >= 0) {
+      net_connect(i, net->outs[i].target);
+    }
   }
 
   // FIXME: shift preset param data and connections to params,
