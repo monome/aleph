@@ -373,8 +373,9 @@ s16 net_add_op(op_id_t opId) {
   }
   else if (opChunk <= BIG_OP_SIZE) {
     op = (op_t*)allocBigOp();
-  } else {
-    op = (op_t*)alloc_mem(opChunk);
+  }
+  if (op == NULL){
+    op = (op_t*)malloc(opChunk);
   }
 
   if (op == NULL) {
@@ -495,8 +496,9 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
   }
   else if (opChunk <= BIG_OP_SIZE) {
     op = (op_t*)allocBigOp();
-  } else {
-    op = (op_t*)alloc_mem(opChunk);
+  }
+  if (op == NULL){
+    op = (op_t*)malloc(opChunk);
   }
 
   if (op == NULL) {
