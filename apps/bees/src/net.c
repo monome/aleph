@@ -350,7 +350,7 @@ s16 net_add_op(op_id_t opId) {
   u16 ins, outs;
   int i, j;
   int idxOld, idxNew;
-  op_t* op;
+  op_t* op = NULL;
   s32 numInsSave = net->numIns;
   s32 numOutsSave = net->numOuts;
 
@@ -466,9 +466,8 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
   u16 ins, outs;
   int i, j;
   int idxOld, idxNew;
-  op_t* op;
+  op_t* op = NULL;
   s32 numInsSave = net->numIns;
-  s32 numOutsSave = net->numOuts;
   opIdx +=1;
   if (opIdx < 12) {
     opIdx = 12;
@@ -476,9 +475,6 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
   if (opIdx > net->numOps) {
     opIdx = net->numOps;
   }
-
-  print_dbg("\r\n adding operator; old input count: ");
-  print_dbg_ulong(numInsSave);
 
   if (net->numOps >= NET_OPS_MAX) {
     return -1;
