@@ -178,7 +178,7 @@ void ui_connect_param(void) {
   scroll_box_clear(&boxOuts);
   scroll_box_clear(&boxIns);
 
-  net_pop_op();
+  net_remove_op(opSelect);
 
   fill_ops(GTK_LIST_BOX(boxOps.list));
   fill_outs(GTK_LIST_BOX(boxOuts.list));
