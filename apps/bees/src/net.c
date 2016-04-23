@@ -469,16 +469,23 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
   s32 numInsSave = net->numIns;
   s32 numOutsSave = net->numOuts;
 
+  if (opIdx < 12) {
+    opIdx = 12;
+  }
+  if (opIdx > net->numOps) {
+    opIdx = net->numOps;
+  }
+
   print_dbg("\r\n adding operator; old input count: ");
   print_dbg_ulong(numInsSave);
 
   if (net->numOps >= NET_OPS_MAX) {
     return -1;
   }
-  /* print_dbg(" , op class: "); */
-  /* print_dbg_ulong(opId); */
-  /* print_dbg(" , size: "); */
-  /* print_dbg_ulong(op_registry[opId].size); */
+  print_dbg(" , op class: ");
+  print_dbg_ulong(opId);
+  print_dbg(" , size: ");
+  print_dbg_ulong(op_registry[opId].size);
 
 
   print_dbg(" ; allocating... ");
@@ -523,14 +530,14 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
   net->numOuts += outs;
   net->numOps += 1;
 
-  for(i=net->numOps - 1; i>opIdx; i--) {
+  for(i=net->numOps - 1; i >= opIdx; i--) {
     net->ops[i] = net->ops[i-1];
   }
-  for(i=net->numOuts - 1; i > opFirstOut; i++) {
+  for(i=net->numOuts - 1; i >= opFirstOut; i--) {
     net->outs[i] = net->outs[i-outs];
     net->outs[i].opIdx += 1;
   }
-  for(i=net->numIns - 1; i > opFirstIn; i++) {
+  for(i=net->numIns - 1; i >= opFirstIn; i--) {
     net->ins[i] = net->ins[i-ins];
     net->ins[i].opIdx += 1;
   }
@@ -545,15 +552,14 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
   net->ops[opIdx] = op;
   //---- add inputs and outputs to node list
   for (i=0; i<ins; ++i) {
-    net->ins[opFirstIn + i].opIdx = net->numOps;
+    net->ins[opFirstIn + i].opIdx = opIdx;
     net->ins[opFirstIn + i].opInIdx = i;
   }
   
   for (i=0; i<outs; i++) {
-    net->outs[opFirstOut + i].opIdx = net->numOps;
+    net->outs[opFirstOut + i].opIdx = opIdx;
     net->outs[opFirstOut + i].opOutIdx = i;
     net->outs[opFirstOut + i].target = -1;
-    ++(net->numOuts);
   }
 
   if(net->numOps > 0) {
@@ -598,7 +604,6 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
     
   }
 
-  ++(net->numOps);
   return net->numOps - 1;
 }
 
