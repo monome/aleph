@@ -468,7 +468,7 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
   op_t* op;
   s32 numInsSave = net->numIns;
   s32 numOutsSave = net->numOuts;
-
+  opIdx +=1;
   if (opIdx < 12) {
     opIdx = 12;
   }
@@ -564,9 +564,8 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
 
   if(net->numOps > 0) {
     // if we added input nodes, need to adjust connections to DSP params
-    for(i=0; i < numOutsSave; i++) {            
-      if(net->outs[i].target >= numInsSave) {
-	// preset target, add offset for new inputs
+    for(i=0; i < net->numOuts; i++) {
+      if (net->outs[i].target >= opFirstIn) {
 	net_connect(i, net->outs[i].target + ins);
       }
 
@@ -574,7 +573,7 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
       for(j=0; j<NET_PRESETS_MAX; j++) {
 	if(preset_out_enabled(j, i)) {
 	  s16 tar = presets[j].outs[i].target;
-	  if(tar >= numInsSave) {
+	  if(tar >= opFirstIn) {
 	    tar = tar + ins;
 	    presets[j].outs[i].target = tar;
 	  }
