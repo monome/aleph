@@ -539,11 +539,6 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
     net->ins[i] = net->ins[i-ins];
     net->ins[i].opIdx += 1;
   }
-  for (i=0; i < net->numOps; i++) {
-    if( net->outs[i].target >= opFirstIn) {
-      net_connect(i, net->outs[i].target + ins);
-    }
-  }
   
   // add op pointer to list
   // advance offset for next allocation
@@ -561,8 +556,9 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
   }
 
   if(net->numOps > 0) {
-    // if we added input nodes, need to adjust connections to DSP params
     for(i=0; i < net->numOuts; i++) {
+      // if we added input nodes, need to adjust connections to
+      // subsequent ins (including DSP params)
       if (net->outs[i].target >= opFirstIn) {
 	net_connect(i, net->outs[i].target + ins);
       }
