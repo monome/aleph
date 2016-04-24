@@ -222,6 +222,8 @@ void op_ww_init(void* mem) {
 
 
   op->focus = 0;
+  op->clk = 0;
+  op->param = 0;
 
   re = &ww_refresh;
 
