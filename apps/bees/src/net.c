@@ -83,6 +83,7 @@ static inline int in_get_switch_index(s16 in) {
 
 // create all system operators
 static void add_sys_ops(void);
+static void update_sys_op_pointers(void);
 static void add_sys_ops(void) {
   /// FIXME: 
   /* dangerous for scene storage, 
@@ -97,33 +98,42 @@ static void add_sys_ops(void) {
 
   // 4 encoders
   net_add_op(eOpEnc);
-  opSysEnc[0] = (op_enc_t*)net->ops[net->numOps - 1];
   net_add_op(eOpEnc);
-  opSysEnc[1] = (op_enc_t*)net->ops[net->numOps - 1];
   net_add_op(eOpEnc);
-  opSysEnc[2] = (op_enc_t*)net->ops[net->numOps - 1];
   net_add_op(eOpEnc);
-  opSysEnc[3] = (op_enc_t*)net->ops[net->numOps - 1];
   // 4 function switches
   net_add_op(eOpSwitch);
-  opSysSw[0] = (op_sw_t*)net->ops[net->numOps - 1];
   net_add_op(eOpSwitch);
-  opSysSw[1] = (op_sw_t*)net->ops[net->numOps - 1];
   net_add_op(eOpSwitch);
-  opSysSw[2] = (op_sw_t*)net->ops[net->numOps - 1];
   net_add_op(eOpSwitch);
-  opSysSw[3] = (op_sw_t*)net->ops[net->numOps - 1];
   // 2 footswitches  
   net_add_op(eOpSwitch);
-  opSysSw[4] = (op_sw_t*)net->ops[net->numOps - 1];
   net_add_op(eOpSwitch);
-  opSysSw[5] = (op_sw_t*)net->ops[net->numOps - 1];
   // 1 adc
   net_add_op(eOpAdc);
-  opSysAdc = (op_adc_t*)net->ops[net->numOps -1];
   // 1 preset receiver
   net_add_op(eOpPreset);
-  opSysPreset = (op_preset_t*)net->ops[net->numOps -1];
+  update_sys_op_pointers();
+}
+
+static void update_sys_op_pointers(void) {
+  // 4 encoders
+  opSysEnc[0] = (op_enc_t*)net->ops[0];
+  opSysEnc[1] = (op_enc_t*)net->ops[1];
+  opSysEnc[2] = (op_enc_t*)net->ops[2];
+  opSysEnc[3] = (op_enc_t*)net->ops[3];
+  // 4 function switches
+  opSysSw[0] = (op_sw_t*)net->ops[4];
+  opSysSw[1] = (op_sw_t*)net->ops[5];
+  opSysSw[2] = (op_sw_t*)net->ops[6];
+  opSysSw[3] = (op_sw_t*)net->ops[7];
+  net_add_op(eOpSwitch);
+  opSysSw[4] = (op_sw_t*)net->ops[8];
+  opSysSw[5] = (op_sw_t*)net->ops[9];
+  net_add_op(eOpAdc);
+  opSysAdc = (op_adc_t*)net->ops[10];
+  net_add_op(eOpPreset);
+  opSysPreset = (op_preset_t*)net->ops[11];
 }
 
 ///----- node pickling
@@ -1254,7 +1264,8 @@ u8* net_unpickle(const u8* src) {
 
     src = param_unpickle(&(net->params[i]), src);
   }
-  
+
+  update_sys_op_pointers();
   return (u8*)src;
 }
 
