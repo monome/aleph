@@ -711,15 +711,12 @@ s16 net_remove_op(const u32 opIdx) {
   // check each output, break connections to removed op,
   // adjust output indices after removed op down for the gap
   for(i=0; i<net->numOuts; i++) {
-    print_dbg("\r\nmonkey");
     // break connections to removed op
     if( net->outs[i].target >= opFirstIn &&
 	net->outs[i].target < opFirstIn + opNumInputs) {
-      print_dbg("\r\nbadger");
       net_disconnect(i);
     } else if (net->outs[i].target >= opFirstIn + opNumInputs) {
       /// shuffle op indexes down past removed op
-      print_dbg("\r\nrat");
       net_connect(i, net->outs[i].target - opNumInputs);
     }
   }
@@ -728,7 +725,6 @@ s16 net_remove_op(const u32 opIdx) {
   // reshuffle input indices & associated op indices above
   // the removed op
   for(i = opFirstIn; i < net->numIns - opNumInputs; i++) {
-    print_dbg("\r\nshuffle shuffle...");
     net->ins[i] = net->ins[i + opNumInputs];
     net->ins[i].opIdx -= 1;
   }
@@ -737,7 +733,6 @@ s16 net_remove_op(const u32 opIdx) {
   // the removed op
   for(i = 0; i < net->numOuts - opNumOutputs; i++) {
     if (net->outs[i].opIdx >= opIdx) {
-      print_dbg("\r\nshiffle shiffle");
       net->outs[i] = net->outs[i + opNumOutputs];
       net->outs[i].opIdx -= 1;
     }
@@ -748,7 +743,6 @@ s16 net_remove_op(const u32 opIdx) {
   net->numOps -= 1;
 
   for(i=opIdx; i < net->numOps; i++) {
-    print_dbg("\r\nshuffling superior op-idx");
     net->ops[i] = net->ops[i+1];
   }
 
@@ -761,7 +755,6 @@ s16 net_remove_op(const u32 opIdx) {
 
   // FIXME: shift preset param data and connections to params,
   // since they share an indexing list with inputs and we just changed it.
-  print_dbg("\r\nwhatever...");
   for(i=0; i<NET_PRESETS_MAX; ++i) {
     // shift parameter nodes in preset data
     for(j=opFirstIn; j<net->numParams + net->numIns; ++j) {
@@ -773,9 +766,7 @@ s16 net_remove_op(const u32 opIdx) {
       presets[i].outs[j].enabled = presets[i].outs[j + opNumOutputs].enabled;
     }
   }
-  print_dbg("\r\nresume app...");
   app_resume();
-  print_dbg("\r\nresumed app no probbers...");
 
   return 0;
 
