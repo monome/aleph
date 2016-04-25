@@ -127,12 +127,9 @@ static void update_sys_op_pointers(void) {
   opSysSw[1] = (op_sw_t*)net->ops[5];
   opSysSw[2] = (op_sw_t*)net->ops[6];
   opSysSw[3] = (op_sw_t*)net->ops[7];
-  net_add_op(eOpSwitch);
   opSysSw[4] = (op_sw_t*)net->ops[8];
   opSysSw[5] = (op_sw_t*)net->ops[9];
-  net_add_op(eOpAdc);
   opSysAdc = (op_adc_t*)net->ops[10];
-  net_add_op(eOpPreset);
   opSysPreset = (op_preset_t*)net->ops[11];
 }
 
