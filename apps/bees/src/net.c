@@ -465,9 +465,7 @@ s16 net_add_op(op_id_t opId) {
 s16 net_add_op_at(op_id_t opId, int opIdx) {
   u16 ins, outs;
   int i, j;
-  int idxOld, idxNew;
   op_t* op = NULL;
-  s32 numInsSave = net->numIns;
   opIdx +=1;
   if (opIdx < 12) {
     opIdx = 12;
@@ -577,20 +575,16 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
     
     for(i=0; i<NET_PRESETS_MAX; i++) {
       // shift parameter nodes in preset data
-      for(j=net->numParams - 1; j>=0; j--) {
-	// this was the old param index
-	idxOld = j + numInsSave;
-	// copy to new param index
-	idxNew = idxOld + ins;
-	if(idxNew >= PRESET_INODES_COUNT) {
+      for(j=net->numParams + net->numIns - 1; j>=opFirstIn + ins; j--) {
+	if(j >= PRESET_INODES_COUNT) {
 	  print_dbg("\r\n out of preset input nodes in new op creation! ");
 	  continue;
 	} else {
-	  presets[i].ins[idxNew].value = presets[i].ins[idxOld].value;
-	  presets[i].ins[idxNew].enabled = presets[i].ins[idxOld].enabled;
+	  presets[i].ins[j].value = presets[i].ins[j - ins].value;
+	  presets[i].ins[j].enabled = presets[i].ins[j - ins].enabled;
 	  // clear the old data. it may correspond to new operator inputs.
-	  presets[i].ins[idxOld].enabled = 0;
-	  presets[i].ins[idxOld].value = 0;
+	  presets[i].ins[j - ins].enabled = 0;
+	  presets[i].ins[j - ins].value = 0;
 	}
       }
     }
