@@ -685,8 +685,6 @@ s16 net_remove_op(const u32 opIdx) {
   int opNumInputs = op->numInputs;
   int opNumOutputs = op->numOutputs;
   int i, j;
-  int numInsSave = net->numIns;
-  int idxOld, idxNew;
 
   app_pause();
   // bail if system op
@@ -708,6 +706,7 @@ s16 net_remove_op(const u32 opIdx) {
   print_dbg("\r\nde-inited op");
   // store the global index of the first input
   int opFirstIn = net_op_in_idx(opIdx, 0);
+  int opFirstOut = net_op_out_idx(opIdx, 0);
 
   // check each output, break connections to removed op,
   // adjust output indices after removed op down for the gap
@@ -765,16 +764,13 @@ s16 net_remove_op(const u32 opIdx) {
   print_dbg("\r\nwhatever...");
   for(i=0; i<NET_PRESETS_MAX; ++i) {
     // shift parameter nodes in preset data
-    for(j=0; j<net->numParams; ++j) {
-      // this was the old param index
-      idxOld = j + numInsSave;
-      // copy to new param index
-      idxNew = idxOld - opNumInputs;
-      presets[i].ins[idxNew].value = presets[i].ins[idxOld].value;
-      presets[i].ins[idxNew].enabled = presets[i].ins[idxOld].enabled;
-      // clear the old data.
-      presets[i].ins[idxOld].enabled = 0;
-      presets[i].ins[idxOld].value = 0;
+    for(j=opFirstIn; j<net->numParams + net->numIns; ++j) {
+      presets[i].ins[j].value = presets[i].ins[j + opNumInputs].value;
+      presets[i].ins[j].enabled = presets[i].ins[j + opNumInputs].enabled;
+    }
+    for(j=opFirstOut; j < net->numOuts; ++j) {
+      presets[i].outs[j].target = presets[i].outs[j + opNumOutputs].target;
+      presets[i].outs[j].enabled = presets[i].outs[j + opNumOutputs].enabled;
     }
   }
   print_dbg("\r\nresume app...");
