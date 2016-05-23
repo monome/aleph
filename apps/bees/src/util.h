@@ -14,7 +14,13 @@
 #define BITTEST(a, b) (((a)[BITSLOT(b)] & BITMASK(b)) > 0)
 #define BITNSLOTS(nb) ((nb + BITS_PER_BYTE - 1) / BITS_PER_BYTE)
 
-
+#ifdef __cplusplus
+#define EXTERN_C_BEGIN  extern "C" {
+#define EXTERN_C_END    }
+#else
+#define EXTERN_C_BEGIN
+#define EXTERN_C_END
+#endif
 
 // convert data byte to hex characters
 extern char* byte_to_hex_ascii(char* dst, u8 byte);

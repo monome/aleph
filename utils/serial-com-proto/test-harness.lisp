@@ -342,7 +342,7 @@
 ;;;Some stinky debug stuff follows...
 (defun start-debug-listener ()
   (list (multiple-value-list
-	 (external-program:run "stty" '("-F" "/dev/ttyACM0" "raw")))
+	 (external-program:run "stty" '("-F" "/dev/ttyACM0" "115200" "raw")))
 	(bt:make-thread
 	 (lambda ()
 	   (with-open-file (stream "/dev/ttyACM0"

@@ -11,14 +11,13 @@
 
 
 #include "types.h"
+#include "util.h"
 #ifndef BEEKEEP
 #include "midi.h"
 #endif
 
+EXTERN_C_BEGIN
 
-#ifdef __cplusplus
-extern "C" { 
-#endif
 
 
 //-----------------------
@@ -49,8 +48,5 @@ extern void net_midi_list_remove(op_midi_t* op);
 // handle incoming midi packet
 extern void net_handle_midi_packet(u32 data);
 
-#ifdef __cplusplus
-}
-#endif
-
+EXTERN_C_END
 #endif // h guard

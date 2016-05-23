@@ -1,12 +1,11 @@
 #ifndef _ALEPH_AVR32_APPS_BEES_FLASH_H_
 #define _ALEPH_AVR32_APPS_BEES_FLASH_H_
 
-#ifdef __cplusplus
-extern "C" { 
-#endif
 
 #include "param_scaler.h"
 #include "scene.h"
+#include "util.h"
+EXTERN_C_BEGIN
 
 // bees-specific NV data structure
 typedef struct {
@@ -29,8 +28,5 @@ extern void flash_write_scene(void);
 // read/write scaler data with arbitrary offset
 extern void flash_read_scaler(u32 offset); 
 extern void flash_write_scaler(u32 offset); 
-#ifdef __cplusplus
-}
-#endif
-
+EXTERN_C_END
 #endif // h guard

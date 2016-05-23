@@ -1,9 +1,7 @@
 #ifndef _ALEPH_BEES_APP_BEES_H_
 #define _ALEPH_BEES_APP_BEES_H_
-
-#ifdef __cplusplus
-extern "C" { 
-#endif
+#include "util.h"
+EXTERN_C_BEGIN
 
 
 #ifndef MIN
@@ -28,8 +26,5 @@ typedef struct _AppVersion {
 
 extern const AppVersion  beesVersion;
   
-#ifdef __cplusplus
-}
-#endif
-
+EXTERN_C_END
 #endif

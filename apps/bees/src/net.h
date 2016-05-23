@@ -8,9 +8,6 @@
 #ifndef _CTL_INTERFACE_H_
 #define _CTL_INTERFACE_H_
 
-#ifdef __cplusplus
-extern "C" { 
-#endif
 
 ////////////////////////////////
 //////  uhh it is easiest to just put these here. sorry. suggestions welcome...
@@ -36,6 +33,10 @@ extern "C" {
 #include "types.h"
 #include "op.h"
 #include "op_math.h"
+#include "util.h"
+EXTERN_C_BEGIN
+
+
 //---- public functions
 
 //! initialize the network 
@@ -194,10 +195,7 @@ extern s16 net_split_out(s16 outIdx);
 ///! test/dbg
 void net_print(void);
 
-#ifdef __cplusplus
-}
-#endif
-
+EXTERN_C_END
 #endif // header guard
 
 

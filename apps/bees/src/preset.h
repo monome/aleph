@@ -6,12 +6,10 @@
 #ifndef _PRESET_H_
 #define _PRESET_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #include "net.h"
 #include "op_math.h"
+EXTERN_C_BEGIN
 
 #define PRESET_NAME_LEN 16
 #define PRESET_INODES_COUNT (NET_INS_MAX + NET_PARAMS_MAX)
@@ -97,10 +95,7 @@ extern u8 preset_out_enabled(u32 preIdx, u32 inIdx);
 // clear a given preset
 extern void preset_clear(int idx);
 
-#ifdef __cplusplus
-}
-#endif
-
+EXTERN_C_END
 
 
 #endif
