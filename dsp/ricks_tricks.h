@@ -92,6 +92,17 @@ s32 quadraturePhasor_pos_cosRead(quadraturePhasor *phasor);
 s32 quadraturePhasor_sinRead(quadraturePhasor *phasor);
 s32 quadraturePhasor_cosRead(quadraturePhasor *phasor);
 fract32 s32_flatTop_env (s32 pos, s32 fadeRatio);
+
+#define WAVE_IPS_NORM 0xae3c
+static inline fract32 freq_to_phase(fix16 freq) {
+  return add_fr1x32(
+		    // int part
+		    (fract32)( ((int)(freq >> 16) * (int)(WAVE_IPS_NORM) ) ),
+		    // fract part
+		    mult_fr1x32x32( (freq & 0xffff) >> 1, (fract16)(WAVE_IPS_NORM) )
+		    );
+}
+
 fract32 osc (fract32 phase);
 fract32 osc_triangle (fract32 phase);
 fract32 osc_square (fract32 phase);
