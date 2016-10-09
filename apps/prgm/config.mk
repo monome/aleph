@@ -6,6 +6,9 @@
 # app name
 APP = prgm
 
+# baudrate! can override in make invocation
+# BAUD = 115200
+
 # boilerplate avr32 configuration
 include ../../avr32_lib/avr32_lib_config.mk
 # boilerplate avr32 sources
@@ -18,13 +21,19 @@ CSRCS += \
 	$(APP_DIR)/src/ctl.c \
 	$(APP_DIR)/src/files.c \
 	$(APP_DIR)/src/handler.c \
+    $(APP_DIR)/src/page_trk_pdx.c \
+    $(APP_DIR)/src/page_trk_crd.c \
+    $(APP_DIR)/src/page_ctrl_pdx.c \
 	$(APP_DIR)/src/page_trk.c \
-	$(APP_DIR)/src/page_mix.c \
-	$(APP_DIR)/src/page_seq.c \
-	$(APP_DIR)/src/page_cut.c \
+    $(APP_DIR)/src/page_compose.c \
+    $(APP_DIR)/src/page_chn_cv.c \
+    $(APP_DIR)/src/page_chn.c \
+	$(APP_DIR)/src/page_master.c \
+    $(APP_DIR)/src/page_scn.c \
 	$(APP_DIR)/src/pages.c \
 	$(APP_DIR)/src/render.c \
 	$(APP_DIR)/src/tracker.c \
+    $(APP_DIR)/src/flash_prgm.c \
     $(APP_DIR)/src/util.c
 
 # List of assembler source files.
