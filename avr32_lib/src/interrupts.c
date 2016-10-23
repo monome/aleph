@@ -8,6 +8,7 @@
 #include "sd_mmc_spi.h"
 #include "tc.h"
 #include "usart.h"
+#include "twi.h"
 // aleph
 #include "aleph_board.h"
 #include "bfin.h"
@@ -18,12 +19,10 @@
 #include "filesystem.h"
 #include "global.h"
 #include "interrupts.h"
-#include "serial.h"
+//#include "serial.h"
 #include "switches.h"
 #include "timers.h"
 #include "types.h"
-
-//#define UI_IRQ_PRIORITY AVR32_INTC_INT2
 
 //------------------------
 //----- variables
@@ -34,8 +33,8 @@ static const u64 tcMax = (U64)0x7fffffff;
 static const u64 tcMaxInv = (u64)0x10000000;
 // screen refresh flag
 volatile u8 refresh = 0;
-// end of PDCA transfer
-//volatile bool end_of_transfer;
+// twi interrupt mask
+//static volatile unsigned long twi_it_mask;
 
 //----------------------
 //---- static functions 
@@ -69,14 +68,9 @@ static void irq_port1_line2(void);
 __attribute__((__interrupt__))
 static void irq_port1_line3(void);
 
-// irq for uart
+// irq for twi
 __attribute__((__interrupt__))
-static void irq_usart(void);
-
-//TEST!!!
-// irq for twi/i2c
-//__attribute__((__interrupt__))
-//static void irq_i2c(void);
+static void irq_twi(void);
 
 
 //---------------------------------
@@ -244,22 +238,56 @@ static void irq_port1_line3(void) {
     process_sw(7);
   }
 }
-
-// interrupt handler for uart
+ 
 __attribute__((__interrupt__))
-static void irq_usart(void) {
-  serial_store();
-  // gpio_toggle_pin(LED_MODE_PIN);
-}
+static void irq_twi(void)
+{
+    avr32_twi_t *twi = ((avr32_twi_t*)AVR32_TWI_ADDRESS);
+    
+    // get masked status register value
+    unsigned long twi_sr = twi->sr;
 
-/*
-__attribute__((__interrupt__))
-static void irq_i2c(void) {
-    print_dbg("\r\n slave rx: ");
-//    print_dbg_char_hex(value);
-//    gpio_toggle_pin(TWI_DATA_PIN);
+    // get masked interrupt register value
+    unsigned long twi_it_mask = twi->imr;
+
+    //  end of slave access
+    if ((twi_it_mask & AVR32_TWI_IER_EOSACC_MASK) && (twi_sr & AVR32_TWI_SR_EOSACC_MASK))
+    {
+        // Disable All interrupts
+        twi->idr = AVR32_TWI_IDR_TXRDY_MASK
+        | AVR32_TWI_IDR_RXRDY_MASK
+        | AVR32_TWI_IER_EOSACC_MASK;
+        
+        // Re-enable detection slave access
+        twi->ier = AVR32_TWI_IER_SVACC_MASK;
+    }
+    //  start of slave access
+    else if ((twi_it_mask & AVR32_TWI_IER_SVACC_MASK) && (twi_sr & AVR32_TWI_SR_SVACC_MASK))
+    {
+        // clear SVACC interrupt
+        twi->idr = AVR32_TWI_IDR_SVACC_MASK;
+        
+        // enable flag to signal data reception
+        twi->ier = AVR32_TWI_IER_RXRDY_MASK | AVR32_TWI_IER_EOSACC_MASK;
+    }
+    //  receive holding register ready, receiving data...
+    else if((twi_it_mask & AVR32_TWI_IER_RXRDY_MASK) && (twi_sr & AVR32_TWI_SR_RXRDY_MASK))
+    {
+        // Re-enable IT select slave
+        twi->ier = AVR32_TWI_IER_EOSACC_MASK;
+
+        // Get data from Receive Holding Register and post event
+        static event_t e;
+        e.type = kEventTwi;
+        e.data = twi->rhr;
+        event_post(&e);
+    }
+    else ; //error handling...
+    
+    
+    
+    return;
 }
-*/
 
 //-----------------------------
 //---- external function definitions
@@ -272,27 +300,27 @@ void register_interrupts(void) {
   gpio_enable_pin_interrupt( BFIN_HWAIT_PIN, GPIO_RISING_EDGE);
 
   // encoders
-  gpio_enable_pin_interrupt( ENC0_S0_PIN,	GPIO_PIN_CHANGE);
-  gpio_enable_pin_interrupt( ENC0_S1_PIN,	GPIO_PIN_CHANGE);
-  gpio_enable_pin_interrupt( ENC1_S0_PIN,	GPIO_PIN_CHANGE);
-  gpio_enable_pin_interrupt( ENC1_S1_PIN,	GPIO_PIN_CHANGE);
-  gpio_enable_pin_interrupt( ENC2_S0_PIN,	GPIO_PIN_CHANGE);
-  gpio_enable_pin_interrupt( ENC2_S1_PIN,	GPIO_PIN_CHANGE);
-  gpio_enable_pin_interrupt( ENC3_S0_PIN,	GPIO_PIN_CHANGE);
-  gpio_enable_pin_interrupt( ENC3_S1_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC0_S0_PIN, GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC0_S1_PIN, GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC1_S0_PIN, GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC1_S1_PIN, GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC2_S0_PIN, GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC2_S1_PIN, GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC3_S0_PIN, GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( ENC3_S1_PIN, GPIO_PIN_CHANGE);
 
   // switches
-  gpio_enable_pin_interrupt( SW0_PIN,	        GPIO_PIN_CHANGE);
-  gpio_enable_pin_interrupt( SW1_PIN,	        GPIO_PIN_CHANGE);
-  gpio_enable_pin_interrupt( SW2_PIN,	        GPIO_PIN_CHANGE);
-  gpio_enable_pin_interrupt( SW3_PIN,	        GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW0_PIN, GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW1_PIN, GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW2_PIN,GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW3_PIN, GPIO_PIN_CHANGE);
 
-  gpio_enable_pin_interrupt( FS0_PIN,	GPIO_PIN_CHANGE);
-  gpio_enable_pin_interrupt( FS1_PIN,	GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( FS0_PIN, GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( FS1_PIN, GPIO_PIN_CHANGE);
 
-  gpio_enable_pin_interrupt( SW_MODE_PIN,	GPIO_PIN_CHANGE);
-  gpio_enable_pin_interrupt( SW_POWER_PIN,	GPIO_PIN_CHANGE);
- 
+  gpio_enable_pin_interrupt( SW_MODE_PIN, GPIO_PIN_CHANGE);
+  gpio_enable_pin_interrupt( SW_POWER_PIN, GPIO_PIN_CHANGE);
+    
   // PA24 - PA31
   INTC_register_interrupt( &irq_port0_line3, AVR32_GPIO_IRQ_0 + (AVR32_PIN_PA24 / 8), UI_IRQ_PRIORITY);
 
@@ -314,10 +342,6 @@ void register_interrupts(void) {
   // register TC interrupt
   INTC_register_interrupt(&irq_tc, APP_TC_IRQ, APP_TC_IRQ_PRIORITY);
 
-  // register uart interrupt
-  INTC_register_interrupt(&irq_usart, AVR32_USART0_IRQ, UI_IRQ_PRIORITY);
-  
-  //i2c TEST!!!
-  // register i2c interrupt
-//  INTC_register_interrupt(&irq_i2c, AVR32_TWI_IRQ, SYS_IRQ_PRIORITY);
+  // register TWI interrupt
+  INTC_register_interrupt(&irq_twi, AVR32_TWI_IRQ, CONF_TWI_IRQ_LEVEL);
 }
