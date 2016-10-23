@@ -50,11 +50,16 @@
 
 #include "print_funcs.h"
 
+//DEBUG
+#include "gpio.h"
+#include "delay.h"
+
 //! Pointer to the instance of the TWI registers for IT.
 static volatile avr32_twi_t *twi_inst;
 
 //! Pointer to the applicative TWI transmit buffer.
 static const unsigned char *volatile twi_tx_data = NULL;
+
 //! Pointer to the applicative TWI receive buffer.
 static volatile unsigned char *volatile twi_rx_data = NULL;
 
@@ -75,8 +80,8 @@ static volatile unsigned long twi_it_mask;
 
 #ifndef AVR32_TWI_180_H_INCLUDED
 
-//! Pointer on TWI slave application routines
-static twi_slave_fct_t twi_slave_fct;
+//! Pointer to TWI slave application routines
+//static twi_slave_fct_t twi_slave_fct;
 
 #endif
 
@@ -85,9 +90,10 @@ static twi_slave_fct_t twi_slave_fct;
 
 
 /*! \brief TWI interrupt handler.
- */
 ISR(twi_master_interrupt_handler, CONF_TWI_IRQ_GROUP, CONF_TWI_IRQ_LEVEL)
 {
+//    gpio_toggle_pin(LED_MODE_PIN);
+
 	// get masked status register value
 	int status = twi_inst->sr & twi_it_mask;
 
@@ -148,13 +154,15 @@ complete:
 
 	return;
 }
-
+*/
 
 #ifndef AVR32_TWI_180_H_INCLUDED
 
 /*! \brief TWI interrupt handler.
- */
-ISR(twi_slave_interrupt_handler, AVR32_TWI_IRQ_GROUP, CONF_TWI_IRQ_LEVEL)
+
+//ISR(twi_slave_interrupt_handler, AVR32_TWI_IRQ_GROUP, CONF_TWI_IRQ_LEVEL)
+__attribute__((__interrupt__))
+static void twi_slave_interrupt_handler(void)
 {
 	// get masked status register value
 	int status = twi_inst->sr;
@@ -175,7 +183,7 @@ ISR(twi_slave_interrupt_handler, AVR32_TWI_IRQ_GROUP, CONF_TWI_IRQ_LEVEL)
 		twi_inst->ier = twi_it_mask;
 
 		// Signal EOF access
-		twi_slave_fct.stop();
+//		twi_slave_fct.stop();
 
 	} else if( (twi_it_mask & AVR32_TWI_IER_SVACC_MASK)
 			&&  (status & AVR32_TWI_SR_SVACC_MASK ) ) {
@@ -186,7 +194,7 @@ ISR(twi_slave_interrupt_handler, AVR32_TWI_IRQ_GROUP, CONF_TWI_IRQ_LEVEL)
 			twi_it_mask = AVR32_TWI_IER_TXRDY_MASK;
 			twi_inst->ier = twi_it_mask;
 			// Transmit a data to master
-			twi_inst->thr = twi_slave_fct.tx();
+//			twi_inst->thr = twi_slave_fct.tx();
 		} else {
 			// enable flag to signal data reception
 			twi_it_mask = AVR32_TWI_IER_RXRDY_MASK
@@ -198,7 +206,7 @@ ISR(twi_slave_interrupt_handler, AVR32_TWI_IRQ_GROUP, CONF_TWI_IRQ_LEVEL)
 	} else if( (twi_it_mask & AVR32_TWI_IER_RXRDY_MASK)
 			&&  (status & AVR32_TWI_SR_RXRDY_MASK ) ) {
 		// Get data from Receive Holding Register
-		twi_slave_fct.rx( twi_inst->rhr );
+//		twi_slave_fct.rx( twi_inst->rhr );
 
 	// this is a TXRDY
 	} else if( (twi_it_mask & AVR32_TWI_IER_TXRDY_MASK)
@@ -213,11 +221,12 @@ ISR(twi_slave_interrupt_handler, AVR32_TWI_IRQ_GROUP, CONF_TWI_IRQ_LEVEL)
 			twi_inst->ier = twi_it_mask;
 		} else {
 			// Transmit a data to master
-			twi_inst->thr = twi_slave_fct.tx();
+//			twi_inst->thr = twi_slave_fct.tx();
 		}
 	}
 	return;
 }
+*/
 
 #endif
 
@@ -258,8 +267,8 @@ static int twi_set_speed(volatile avr32_twi_t *twi, unsigned int speed,
 int twi_master_init(volatile avr32_twi_t *twi, const twi_options_t *opt)
 {
 	irqflags_t flags = sysreg_read(AVR32_SR);
-	int status = TWI_SUCCESS;
-
+    int status = TWI_SUCCESS;
+    
 	// Set pointer to TWIM instance for IT
 	twi_inst = twi;
 
@@ -277,10 +286,10 @@ int twi_master_init(volatile avr32_twi_t *twi, const twi_options_t *opt)
 
 	// register Register twim_master_interrupt_handler interrupt
 	// on level CONF_TWI_IRQ_LEVEL
-	flags = cpu_irq_save();
-	irq_register_handler(&twi_master_interrupt_handler, CONF_TWI_IRQ_LINE,
-			CONF_TWI_IRQ_LEVEL);
-	cpu_irq_restore(flags);
+//	flags = cpu_irq_save();
+//    INTC_register_interrupt(&twi_master_interrupt_handler, AVR32_TWI_IRQ, CONF_TWI_IRQ_LEVEL);
+//	irq_register_handler(&twi_master_interrupt_handler, CONF_TWI_IRQ_LINE, CONF_TWI_IRQ_LEVEL);
+//	cpu_irq_restore(flags);
 
 	// Select the speed
 	twi_set_speed(twi, opt->speed, opt->pba_hz);
@@ -294,50 +303,33 @@ int twi_master_init(volatile avr32_twi_t *twi, const twi_options_t *opt)
 
 #ifndef AVR32_TWI_180_H_INCLUDED
 
-int twi_slave_init(volatile avr32_twi_t *twi, const twi_options_t *opt,
-		const twi_slave_fct_t *slave_fct)
+int twi_slave_init(volatile avr32_twi_t *twi, const twi_options_t *opt)
 {
-	irqflags_t flags = sysreg_read(AVR32_SR);
+    // disable TWI interrupts
+    twi->idr = ~0UL;
+    twi->sr;
 
-	// Set pointer to TWIM instance for IT
-	twi_inst = twi;
+    // reset TWI
+    twi->cr = AVR32_TWI_CR_SWRST_MASK;
+    
+    // dummy read in SR
+    twi->sr;
+    
+    // set speed (for master write)
+    twi_set_speed(twi, opt->speed, opt->pba_hz);
+    
+    // set slave address
+    twi->smr = (opt->chip << AVR32_TWI_SMR_SADR_OFFSET);
+    
+	// disable master transfer
+    twi->cr = AVR32_TWI_CR_MSDIS_MASK;
+    
+    // enable slave
+    twi->cr = AVR32_TWI_CR_SVEN_MASK;
 
-	// Disable TWI interrupts
-	cpu_irq_disable();
-	twi->idr = ~0UL;
-	twi->sr;
-
-	// Reset TWI
-	twi->cr = AVR32_TWI_CR_SWRST_MASK;
-	cpu_irq_restore(flags);
-
-	// Dummy read in SR
-	twi->sr;
-
-	// register Register twim_master_interrupt_handler interrupt
-	// on level CONF_TWI_IRQ_LEVEL
-	flags = cpu_irq_save();
-	irq_register_handler(&twi_slave_interrupt_handler, CONF_TWI_IRQ_LINE,
-			CONF_TWI_IRQ_LEVEL);
-	cpu_irq_restore(flags);
-
-	// Set slave address
-	twi->smr = (opt->chip << AVR32_TWI_SMR_SADR_OFFSET);
-
-	// Disable master transfer
-	twi->cr = AVR32_TWI_CR_MSDIS_MASK;
-
-	// Enable slave
-	twi->cr = AVR32_TWI_CR_SVEN_MASK;
-
-	// get a pointer to applicative routines
-	twi_slave_fct = *slave_fct;
-
-	// Slave Access Interrupt Enable
-	twi_it_mask = AVR32_TWI_IER_SVACC_MASK;
-	twi->ier = twi_it_mask;
-
-	// Everything went ok
+	// slave Access Interrupt Enable
+	twi->ier = AVR32_TWI_IER_SVACC_MASK;
+    
 	return TWI_SUCCESS;
 }
 
@@ -400,6 +392,7 @@ static uint32_t twi_mk_addr(const uint8_t *addr, int len)
 	return val;
 }
 
+
 int twi_master_read(volatile avr32_twi_t *twi, const twi_package_t *package)
 {
 	// check argument
@@ -432,7 +425,7 @@ int twi_master_read(volatile avr32_twi_t *twi, const twi_package_t *package)
 	twi_rx_nb_bytes = package->length;
 
 	// Enable master transfer
-	twi->cr =  AVR32_TWI_CR_MSEN_MASK;
+	twi->cr = AVR32_TWI_CR_MSEN_MASK;
 
 	// Send start condition
 	twi->cr = AVR32_TWI_START_MASK;
@@ -455,7 +448,7 @@ int twi_master_read(volatile avr32_twi_t *twi, const twi_package_t *package)
 	}
 
 	// Disable master transfer
-	twi->cr =  AVR32_TWI_CR_MSDIS_MASK;
+	twi->cr = AVR32_TWI_CR_MSDIS_MASK;
 
 	if (twi_nack) {
 		return TWI_RECEIVE_NACK;
@@ -467,89 +460,85 @@ int twi_master_read(volatile avr32_twi_t *twi, const twi_package_t *package)
 
 int twi_master_write(volatile avr32_twi_t *twi, const twi_package_t *package)
 {
+    volatile uint32_t dummy = 0x00;
 
-  // print_dbg("\r\n twi_master_write... WTF");
-	// No data to send
-	if (package->length == 0) {
-	  // print_dbg("\r\n twi_master_write, 0-length packet");
-		return TWI_INVALID_ARGUMENT;
-	}
+    //  disable slave access interrupt
+    twi->IER.svacc &= ~AVR32_TWI_IER_SVACC_MASK;
+    
+    if(package->buffer == NULL || package->length == 0)
+    {
+        return TWI_INVALID_ARGUMENT;
+    }
+    
+    //  wait until busy flag is reset
+    if (twi_busy)
+    {
+        return TWI_BUSY;
+    }
+    
+    //  disable pos CR1?
+    twi->cr = AVR32_TWI_CR_MSEN_MASK | AVR32_TWI_CR_SVDIS_MASK;
+    twi_busy = true;
 
+    //  generate start
+    twi->CR.start |= AVR32_TWI_CR_START_MASK;
+    
+    //  set address size, set write mode, send address
+    twi->MMR.iadrsz &= ~AVR32_TWI_MMR_IADRSZ_MASK;
+    twi->MMR.mread &= ~AVR32_TWI_MMR_MREAD_MASK;
+    twi->MMR.dadr = ((uint8_t)(package->chip & (~AVR32_TWI_MMR_DADR_MASK)));
+    
+    //  clear address flag
+    dummy = twi->sr;
 
-
-	// print_dbg("\r\n twi_master_write, waiting on TWI not-busy...");
-	while (twi_is_busy()) {
-		cpu_relax();
-	};
-
-	twi_nack = false;
-	twi_busy = true;
-
-	// Enable master transfer, disable slave
-	twi->cr =   AVR32_TWI_CR_MSEN_MASK
-#ifndef AVR32_TWI_180_H_INCLUDED
-			| AVR32_TWI_CR_SVDIS_MASK
-#endif
-			;
-
-	// set write mode, slave address and 3 internal address byte length
-	twi->mmr = (0 << AVR32_TWI_MMR_MREAD_OFFSET) |
-			(package->chip << AVR32_TWI_MMR_DADR_OFFSET) |
-			((package->addr_length << AVR32_TWI_MMR_IADRSZ_OFFSET) & AVR32_TWI_MMR_IADRSZ_MASK);
-
-	// Set pointer to TWI instance for IT
-	twi_inst = twi;
-
-	// set internal address for remote chip
-	twi->iadr = twi_mk_addr(package->addr, package->addr_length);
-
-	// print_dbg("\r\n twi_master_write, final address field: 0x");
-	// print_dbg_hex((u32)(twi->iadr));
-
-	// get a pointer to applicative data
-	twi_tx_data = package->buffer;
-	// print_dbg("\r\n twi_master_write, final data address: 0x");
-	// print_dbg_hex((u32)(twi_tx_data));
-
-	// print_dbg("\r\n twi_master_write, final data paylod: 0x");
-	// print_dbg_hex((u32)(*twi_tx_data));
-
-
-	// get a copy of nb bytes to write
-	// print_dbg("\r\n twi_master_write, get packet length: ");
-	// print_dbg_char_hex(package->length);
-
-	twi_tx_nb_bytes = package->length;
-
-	// put the first byte in the Transmit Holding Register
-	// print_dbg("\r\n twi_master_write, write data to holding register...");
-	twi->thr = *twi_tx_data++;
-
-	// mask NACK and TXRDY interrupts
-	// print_dbg("\r\n twi_master_write, mask NACK and TXRDY...");
-	twi_it_mask = AVR32_TWI_IER_NACK_MASK | AVR32_TWI_IER_TXRDY_MASK;
-
-	// print_dbg("\r\n twi_master_write, set IER...");
-	// update IMR through IER
-	twi->ier = twi_it_mask;
-
-	// print_dbg("\r\n twi_master_write, waiting on TWI not-busy...");
-	// send data
-	while (twi_is_busy()) {
-		cpu_relax();
-	}
-
-	// Disable master transfer
-	twi->cr =  AVR32_TWI_CR_MSDIS_MASK;
-
-	if (twi_nack) {
-	  // print_dbg("\r\n twi_master_write() : NACK");
-		return TWI_RECEIVE_NACK;
-	}
-
-	return TWI_SUCCESS;
+    // get pointer to data
+    twi_tx_data = package->buffer;
+    
+    // set nb bytes to write
+    twi_tx_nb_bytes = package->length;
+    
+    //  send bytes
+    while (twi_tx_nb_bytes)
+    {
+        //  wait for TXRDY
+        if (twi->SR.txrdy)
+        {
+            //  write data to transmission holding register
+            twi->thr = *twi_tx_data++;
+            twi_tx_nb_bytes--;
+            
+            //  wait for BTF?!
+        }
+    }
+    
+    //  wait for TXDATA, THIS LOOP IS NOT ENTERED, or could it be?!
+    /*
+    while (twi->THR.txdata)
+    {
+        ;
+    }
+    */
+    
+    //  generate stop
+    twi->CR.stop |= AVR32_TWI_CR_STOP_MASK;
+    
+    //  wait for TXCOMP
+    while (!(twi->SR.txcomp))
+    {
+        ;
+    }
+    
+    // disable master transfer, enable slave
+    twi->cr = AVR32_TWI_CR_MSDIS_MASK | AVR32_TWI_CR_SVEN_MASK;
+   
+    // enable slave access interrupt
+    twi->IER.svacc |= AVR32_TWI_IER_SVACC_MASK;
+    
+    twi_busy = false;
+    
+    return TWI_SUCCESS;
 }
-
+    
 
 //! This function is not blocking.
 int twi_master_write_ex(volatile avr32_twi_t *twi, const twi_package_t *package)
@@ -563,14 +552,14 @@ int twi_master_write_ex(volatile avr32_twi_t *twi, const twi_package_t *package)
 		return TWI_BUSY;          // Still transmitting...
 	}
 
-	// No data to send
+	// no data to send
 	if (package->length == 0) {
 		return TWI_INVALID_ARGUMENT;
 	}
 
 	twi_nack = false;
 
-	// Enable master transfer, disable slave
+	// enable master transfer, disable slave
 	twi->cr =   AVR32_TWI_CR_MSEN_MASK
 #ifndef AVR32_TWI_180_H_INCLUDED
 			| AVR32_TWI_CR_SVDIS_MASK
@@ -582,7 +571,7 @@ int twi_master_write_ex(volatile avr32_twi_t *twi, const twi_package_t *package)
 			(package->chip << AVR32_TWI_MMR_DADR_OFFSET) |
 			((package->addr_length << AVR32_TWI_MMR_IADRSZ_OFFSET) & AVR32_TWI_MMR_IADRSZ_MASK);
 
-	// Set pointer to TWIM instance for IT
+	// set pointer to TWIM instance for IT
 	twi_inst = twi;
 
 	// set internal address for remote chip
