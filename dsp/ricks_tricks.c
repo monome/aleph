@@ -316,6 +316,15 @@ void normalised_logSlew(fract32* current, fract32 target, fract32 speed) {
 			shl_fr1x32(inc, - radix));
 }
 
+void normalised_logSlew_16(fract16* current, fract16 target, fract16 speed) {
+  fract16 ratio = speed;
+  fract16 difference = sub_fr1x16(target, *current);
+  int radix = norm_fr1x16(difference);
+  fract16 inc = mult_fr1x16(ratio, shl_fr1x16(difference, radix));
+  *current = add_fr1x16(*current,
+			shr_fr1x16(inc, radix));
+}
+
 void trackingEnvelopeLin_init (trackingEnvelopeLin* env) {
   env->val = 0;
   asymLinSlew_init(&(env->slew));
