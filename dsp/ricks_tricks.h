@@ -242,5 +242,7 @@ void trackingEnvelopeLog_init (trackingEnvelopeLog* env);
 fract32 trackingEnvelopeLog_next (trackingEnvelopeLog* env, fract32 in);
 
 
+fract32 dc_block (hpf *myHpf, fract32 in);
+fract32 dc_block2 (hpf *myHpf, fract32 in);
 
 #endif

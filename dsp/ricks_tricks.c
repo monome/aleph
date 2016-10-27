@@ -350,3 +350,20 @@ fract32 trackingEnvelopeLog_next (trackingEnvelopeLog* env, fract32 in) {
     simple_slew(env->val, target, env->down);
   return env->val;
 }
+
+fract32 dc_block (hpf *myHpf, fract32 in) {
+  fract32 in_scaled = shr_fr1x32(in, 3);
+  fract32 aux = sub_fr1x32(in_scaled, myHpf->lastIn);
+  myHpf->lastOut = add_fr1x32(aux, mult_fr1x32x32(0x7F600000, myHpf->lastOut));
+  myHpf->lastIn = in_scaled;
+  return shl_fr1x32(myHpf->lastOut, 3);
+}
+
+fract32 dc_block2 (hpf *myHpf, fract32 in) {
+  fract32 in_scaled = shr_fr1x32(in, 3);
+  myHpf->lastOut = mult_fr1x32x32(sub_fr1x32(add_fr1x32(in_scaled, myHpf->lastOut),
+					     myHpf->lastIn),
+				  0x7F600000);
+  myHpf->lastIn = in_scaled;
+  return shl_fr1x32(myHpf->lastOut, 3);
+}
