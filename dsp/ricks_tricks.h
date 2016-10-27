@@ -241,7 +241,9 @@ fract32 trackingEnvelopeLin_next (trackingEnvelopeLin* env, fract32 in);
 void trackingEnvelopeLog_init (trackingEnvelopeLog* env);
 fract32 trackingEnvelopeLog_next (trackingEnvelopeLog* env, fract32 in);
 
-
+fract32 soft_clip (fract32 lim, fract32 in);
+fract32 soft_clip_norm (fract32 lim, fract32 in);
+fract32 soft_clip_asym (fract32 lim_pos, fract32 lim_neg, fract32 in);
 fract32 dc_block (hpf *myHpf, fract32 in);
 fract32 dc_block2 (hpf *myHpf, fract32 in);
 
