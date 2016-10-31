@@ -20,7 +20,7 @@
 
 //// aleph
 // avr32
-#include "aleph_board.h"
+#include "board.h"
 #include "conf_tc_irq.h"
 #include "global.h"
 #include "i2c.h"
