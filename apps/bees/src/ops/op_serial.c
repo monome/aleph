@@ -3,8 +3,8 @@
 
 #ifdef BEEKEEP
 #else
+#include "conf_board.h"
 #include "usart.h"
-#include "aleph_board.h"
 #endif
 
 // avr32 lib

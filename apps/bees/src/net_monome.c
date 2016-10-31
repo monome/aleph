@@ -46,7 +46,7 @@ op_monome_t* monomeOpFocus = NULL;
 
 // set focus
 void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
-  eMonomeDevice dev = monome_dev_type();
+  eMonomeDevice dev = monome_device();
 
   print_dbg("\r\n setting monome grid focus, op pointer: 0x");
   print_dbg_hex((u32)op_monome);

@@ -10,7 +10,6 @@
 #include "events.h"
 #include "event_types.h"
 #include "net_protected.h"
-
 #include "ser.h"
 #include "op.h"
 #include "preset.h"
