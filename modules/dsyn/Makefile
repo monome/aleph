@@ -16,6 +16,7 @@ module_obj = dsyn.o \
 	$(audio_dir)/filter_1p.o \
 	$(audio_dir)/filter_2p.o \
 	$(audio_dir)/filter_svf.o \
+	$(audio)/ricks_tricks.o \
 	$(bfin_lib_srcdir)/libfixmath/fix32.o \
 	$(bfin_lib_srcdir)/libfixmath/fix16.o \
 	$(bfin_lib_srcdir)/libfixmath/fix16_sqrt.o
