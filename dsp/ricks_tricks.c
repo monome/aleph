@@ -316,6 +316,15 @@ void normalised_logSlew(fract32* current, fract32 target, fract32 speed) {
 			shl_fr1x32(inc, - radix));
 }
 
+void normalised_logSlew_16(fract16* current, fract16 target, fract16 speed) {
+  fract16 ratio = speed;
+  fract16 difference = sub_fr1x16(target, *current);
+  int radix = norm_fr1x16(difference);
+  fract16 inc = mult_fr1x16(ratio, shl_fr1x16(difference, radix));
+  *current = add_fr1x16(*current,
+			shr_fr1x16(inc, radix));
+}
+
 void trackingEnvelopeLin_init (trackingEnvelopeLin* env) {
   env->val = 0;
   asymLinSlew_init(&(env->slew));
@@ -340,4 +349,107 @@ fract32 trackingEnvelopeLog_next (trackingEnvelopeLog* env, fract32 in) {
   else if (target < env->val)
     simple_slew(env->val, target, env->down);
   return env->val;
+}
+
+fract32 soft_clip (fract32 lim, fract32 in) {
+  fract32 b = FR32_MAX / shr_fr1x32(FR32_MAX-lim, 24);
+  fract32 a = negate_fr1x32(shr_fr1x32(b, 1));
+  fract32 c = mult_fr1x32x32(lim,
+			     shr_fr1x32(FR32_MAX, 7) - b
+			     - mult_fr1x32x32(lim, a));
+  if (in >= lim) {
+    fract32 ret = c;
+    ret = add_fr1x32(ret,
+		     mult_fr1x32x32(b, in));
+    ret = add_fr1x32(ret,
+		     mult_fr1x32x32(a, mult_fr1x32x32(in, in)));
+    return shl_fr1x32(ret, 7);
+  } else if (in <= negate_fr1x32(lim)) {
+    fract32 ret = negate_fr1x32(c);
+    ret = add_fr1x32(ret,
+		     mult_fr1x32x32(b, in));
+    ret = sub_fr1x32(ret,
+		     mult_fr1x32x32(a, mult_fr1x32x32(in, in)));
+    return shl_fr1x32(ret, 7);
+  } else {
+    return in;
+  }
+}
+
+fract32 soft_clip_asym (fract32 lim_pos, fract32 lim_neg, fract32 in) {
+  fract32 lim;
+  if (in >= lim_pos) {
+    lim = lim_pos;
+    fract32 b = FR32_MAX / shr_fr1x32(FR32_MAX-lim, 24);
+    fract32 a = negate_fr1x32(shr_fr1x32(b, 1));
+    fract32 c = mult_fr1x32x32(lim,
+			       shr_fr1x32(FR32_MAX, 7) - b
+			       - mult_fr1x32x32(lim, a));
+
+    fract32 ret = c;
+    ret = add_fr1x32(ret,
+		     mult_fr1x32x32(b, in));
+    ret = add_fr1x32(ret,
+		     mult_fr1x32x32(a, mult_fr1x32x32(in, in)));
+    return shl_fr1x32(ret, 7);
+  } else if (in <= lim_neg) {
+    lim = negate_fr1x32(lim_neg);
+    fract32 b = FR32_MAX / shr_fr1x32(FR32_MAX-lim, 24);
+    fract32 a = negate_fr1x32(shr_fr1x32(b, 1));
+    fract32 c = mult_fr1x32x32(lim,
+			       shr_fr1x32(FR32_MAX, 7) - b
+			       - mult_fr1x32x32(lim, a));
+
+    fract32 ret = negate_fr1x32(c);
+    ret = add_fr1x32(ret,
+		     mult_fr1x32x32(b, in));
+    ret = sub_fr1x32(ret,
+		     mult_fr1x32x32(a, mult_fr1x32x32(in, in)));
+    return shl_fr1x32(ret, 7);
+  } else {
+    return in;
+  }
+}
+
+fract32 soft_clip_norm (fract32 lim, fract32 in) {
+  fract32 b = FR32_MAX / shr_fr1x32(FR32_MAX-lim, 24);
+  fract32 a = negate_fr1x32(shr_fr1x32(b, 1));
+  fract32 c = mult_fr1x32x32(lim,
+			     shr_fr1x32(FR32_MAX, 7) - b
+			     - mult_fr1x32x32(lim, a));
+  fract32 norm = FR32_MAX / shr_fr1x32(a + b + c, 20);
+  if (in >= lim) {
+    fract32 ret = c;
+    ret = add_fr1x32(ret,
+		     mult_fr1x32x32(b, in));
+    ret = add_fr1x32(ret,
+		     mult_fr1x32x32(a, mult_fr1x32x32(in, in)));
+    return shl_fr1x32(mult_fr1x32x32(ret, norm), 11);
+  } else if (in <= negate_fr1x32(lim)) {
+    fract32 ret = negate_fr1x32(c);
+    ret = add_fr1x32(ret,
+		     mult_fr1x32x32(b, in));
+    ret = sub_fr1x32(ret,
+		     mult_fr1x32x32(a, mult_fr1x32x32(in, in)));
+    return shl_fr1x32(mult_fr1x32x32(ret, norm), 11);
+  } else {
+    return shl_fr1x32(mult_fr1x32x32(in, norm), 4);
+  }
+}
+
+fract32 dc_block (hpf *myHpf, fract32 in) {
+  fract32 in_scaled = shr_fr1x32(in, 3);
+  fract32 aux = sub_fr1x32(in_scaled, myHpf->lastIn);
+  myHpf->lastOut = add_fr1x32(aux, mult_fr1x32x32(0x7F600000, myHpf->lastOut));
+  myHpf->lastIn = in_scaled;
+  return shl_fr1x32(myHpf->lastOut, 3);
+}
+
+fract32 dc_block2 (hpf *myHpf, fract32 in) {
+  fract32 in_scaled = shr_fr1x32(in, 3);
+  myHpf->lastOut = mult_fr1x32x32(sub_fr1x32(add_fr1x32(in_scaled, myHpf->lastOut),
+					     myHpf->lastIn),
+				  0x7F600000);
+  myHpf->lastIn = in_scaled;
+  return shl_fr1x32(myHpf->lastOut, 3);
 }

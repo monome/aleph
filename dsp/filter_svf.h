@@ -57,5 +57,14 @@ extern void filter_svf_set_notch ( filter_svf* f, fract32 mix );
 extern void filter_svf_set_peak ( filter_svf* f, fract32 mix );
 // get next value (with input)
 extern fract32 filter_svf_next( filter_svf* f, fract32 in );
+extern fract32 filter_svf_hpf_next( filter_svf* f, fract32 in);
+extern fract32 filter_svf_bpf_next( filter_svf* f, fract32 in);
+extern fract32 filter_svf_lpf_next( filter_svf* f, fract32 in);
+extern fract32 filter_svf_softclip_hpf_next( filter_svf* f, fract32 in);
+extern fract32 filter_svf_softclip_bpf_next( filter_svf* f, fract32 in);
+extern fract32 filter_svf_softclip_lpf_next( filter_svf* f, fract32 in);
+extern fract32 filter_svf_softclip_asym_lpf_next( filter_svf* f, fract32 in);
+extern fract32 filter_svf_softclip_asym_bpf_next( filter_svf* f, fract32 in);
+extern fract32 filter_svf_softclip_asym_hpf_next( filter_svf* f, fract32 in);
 
 #endif // h guard

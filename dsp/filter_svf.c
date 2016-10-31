@@ -19,6 +19,7 @@
 //#include "sin_fr32.h"
 #include "table.h"
 #include "filter_svf.h"
+#include "ricks_tricks.h"
 
 //=======================================================
 //===== static variables
@@ -26,32 +27,65 @@
 //=====================================================
 //===== static functions
 
-static fract32 filter_svf_calc_frame( filter_svf* f, fract32 in) { 
+static void filter_svf_calc_frame( filter_svf* f, fract32 in) {
   fract32 out;
   f->low = add_fr1x32(f->low, 
 		      mult_fr1x32x32(f->freq, f->band));
 
-  f->high = sub_fr1x32(
-		       sub_fr1x32(
-				  // mult_fr1x32x32(in, f->scale),
-				  in, 
-				  shl_fr1x32(mult_fr1x32x32(f->rq, f->band), f->rqShift)
-				  ),
-		       f->low
-		       );
+  f->high = sub_fr1x32(sub_fr1x32(in,
+				  shr_fr1x32(mult_fr1x32x32(f->rq, f->band),
+					     f->rqShift)),
+		       f->low);
 
   f->band = add_fr1x32(f->band, 
-		       mult_fr1x32x32(f->freq, f->high) );
+		       mult_fr1x32x32(f->freq, f->high));
 
-  f->notch = add_fr1x32(f->low, f->high);
+}
 
-  out = mult_fr1x32x32(f->low, f->lowMix);
-  out = add_fr1x32(out, mult_fr1x32x32(f->low, f->lowMix));
-  out = add_fr1x32(out, mult_fr1x32x32(f->high, f->highMix));
-  out = add_fr1x32(out, mult_fr1x32x32(f->band, f->bandMix));
-  out = add_fr1x32(out, mult_fr1x32x32(f->notch, f->notchMix));
+static void filter_svf_softclip_calc_frame( filter_svf* f, fract32 in) {
+  fract32 out;
+  char clip_radix = 0;
+  f->low = shr_fr1x32(soft_clip(FR32_MAX/2,
+				shl_fr1x32(add_fr1x32(f->low,
+						      mult_fr1x32x32(f->freq, f->band)),
+					   clip_radix)),
+		      clip_radix);
+  f->high = shr_fr1x32(soft_clip(FR32_MAX/2,
+				 shl_fr1x32(sub_fr1x32(sub_fr1x32(in,
+								  shr_fr1x32(mult_fr1x32x32(f->rq, f->band),
+									     f->rqShift)),
+						       f->low),
+					    clip_radix)),
+		       clip_radix);
+  f->band = shr_fr1x32(soft_clip(FR32_MAX/2,
+				 shl_fr1x32(add_fr1x32(f->band,
+						       mult_fr1x32x32(f->freq, f->high)),
+					    clip_radix)),
+		       clip_radix);
+}
 
-  return out;
+static void filter_svf_softclip_asym_calc_frame( filter_svf* f, fract32 in) {
+  fract32 out;
+  char clip_radix = 0;
+
+  f->low = shr_fr1x32(soft_clip(FR32_MAX/4,
+				shl_fr1x32(add_fr1x32(f->low,
+						      mult_fr1x32x32(f->freq, f->band)),
+					   clip_radix)),
+		      clip_radix);
+  f->high = shr_fr1x32(soft_clip(FR32_MAX/8,
+				 shl_fr1x32(sub_fr1x32(sub_fr1x32(in,
+								  shr_fr1x32(mult_fr1x32x32(f->rq, f->band),
+									     f->rqShift)),
+						       f->low),
+					    clip_radix)),
+		       clip_radix);
+  f->band = shr_fr1x32(soft_clip_asym(FR32_MAX/4,
+				      FR32_MAX/-8,
+				      shl_fr1x32(add_fr1x32(f->band,
+							    mult_fr1x32x32(f->freq, f->high)),
+						 clip_radix)),
+		       clip_radix);
 }
 
 
@@ -64,31 +98,20 @@ extern void filter_svf_init ( filter_svf* f ) {
   f->lowMix = f->highMix = f->bandMix = f->notchMix = f->peakMix = 0;
 }
 
-// set cutoff coefficient directly
-extern void filter_svf_set_coeff( filter_svf* f, fract32 coeff ) {
-  if(f->freq != coeff) {
-    f->freq = coeff;
-    //    filter_svf_calc_freq(f);
-  }
-}
-				       				       
-
 // set reciprocal of Q
 extern void filter_svf_set_rq( filter_svf* f, fract32 rq) {
-  /// FIXME: want additional kind of scale/tune here?
-  // ok, this is kind of weird
   // rq range is [0, 2], 
   // fract32 positive range is [0, .9999...]
-  // so: move the radix to interpret rq as 2.30 
-  // and store lshift value
-  if(rq > 0x3fffffff) {
-    f->rqShift = 1;
-    // clear the highest non-sign bit before shifting? (probably doesn't matter)
-    f->rq = shl_fr1x32(rq & 0xbfffffff, 1);
-  } else {
-    f->rqShift = 0;
-    f->rq = shl_fr1x32(rq, 1);
-  }
+  // so: move the radix to interpret rq as 2.0
+
+  f->rqShift = norm_fr1x32(rq);
+  f->rq = shl_fr1x32(rq, f->rqShift);
+}
+
+
+// set cutoff coefficient directly
+extern void filter_svf_set_coeff( filter_svf* f, fract32 coeff ) {
+  f->freq = coeff;
 }
 
 // set output mixes
@@ -112,10 +135,68 @@ extern void filter_svf_set_peak ( filter_svf* f, fract32 mix) {
   f->peakMix = mix;
 }
 
+extern fract32 filter_svf_mix_outputs (filter_svf* f) {
+
+  f->notch = add_fr1x32(f->low, f->high);
+
+  fract32 out = mult_fr1x32x32(f->low, f->lowMix);
+  out = add_fr1x32(out, mult_fr1x32x32(f->low, f->lowMix));
+  out = add_fr1x32(out, mult_fr1x32x32(f->high, f->highMix));
+  out = add_fr1x32(out, mult_fr1x32x32(f->band, f->bandMix));
+  out = add_fr1x32(out, mult_fr1x32x32(f->notch, f->notchMix));
+}
+
 // get next value (with input)
 extern fract32 filter_svf_next( filter_svf* f, fract32 in) {
   // process 2x and average
-  fract32 out = shr_fr1x32(filter_svf_calc_frame(f, in), 1);
-  out = add_fr1x32(out, shr_fr1x32(filter_svf_calc_frame(f, in), 1));
+  filter_svf_calc_frame(f, in);
+  fract32 out = shr_fr1x32(filter_svf_mix_outputs(f), 1);
+  filter_svf_calc_frame(f, in);
+  out = add_fr1x32(out, shr_fr1x32(filter_svf_mix_outputs(f), 1));
   return out;
+}
+
+extern fract32 filter_svf_lpf_next( filter_svf* f, fract32 in) {
+  filter_svf_calc_frame(f, in);
+  return f->low;
+}
+
+extern fract32 filter_svf_bpf_next( filter_svf* f, fract32 in) {
+  filter_svf_calc_frame(f, in);
+  return f->band;
+}
+
+extern fract32 filter_svf_hpf_next( filter_svf* f, fract32 in) {
+  filter_svf_calc_frame(f, in);
+  return f->high;
+}
+
+extern fract32 filter_svf_softclip_lpf_next( filter_svf* f, fract32 in) {
+  filter_svf_softclip_calc_frame(f, in);
+  return f->low;
+}
+
+extern fract32 filter_svf_softclip_bpf_next( filter_svf* f, fract32 in) {
+  filter_svf_softclip_calc_frame(f, in);
+  return f->band;
+}
+
+extern fract32 filter_svf_softclip_hpf_next( filter_svf* f, fract32 in) {
+  filter_svf_softclip_calc_frame(f, in);
+  return f->high;
+}
+
+extern fract32 filter_svf_softclip_asym_lpf_next( filter_svf* f, fract32 in) {
+  filter_svf_softclip_asym_calc_frame(f, in);
+  return f->low;
+}
+
+extern fract32 filter_svf_softclip_asym_bpf_next( filter_svf* f, fract32 in) {
+  filter_svf_softclip_asym_calc_frame(f, in);
+  return f->band;
+}
+
+extern fract32 filter_svf_softclip_asym_hpf_next( filter_svf* f, fract32 in) {
+  filter_svf_softclip_asym_calc_frame(f, in);
+  return f->high;
 }

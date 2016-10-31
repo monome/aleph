@@ -1,0 +1,4 @@
+* Params
+- Spectrum keys 0-9
+- pitch bias
+- wrist bar

@@ -1,4 +1,4 @@
-module_name = lines
+module_name = voder
 
 audio = ../../dsp
 bfin = ../../bfin_lib/src
@@ -7,16 +7,21 @@ include version.mk
 version = $(maj).$(min).$(rev)
 ldr_name = $(module_name)-$(version).ldr
 
-module_obj = lines.o \
+module_obj = voder.o \
 	$(audio)/buffer.o \
+	$(audio)/ricks_tricks.o \
+	$(audio)/echoTap.o \
+	$(audio)/scrubTap.o \
 	$(audio)/conversion.o \
-	$(audio)/delayFadeN.o \
+	$(audio)/grain.o \
 	$(audio)/filter_1p.o \
 	$(audio)/filter_ramp.o \
 	$(audio)/filter_svf.o \
+	$(audio)/biquad.o \
+	$(audio)/osc_polyblep.o \
+	$(audio)/filter_crossover.o \
 	$(audio)/noise.o \
 	$(audio)/pan.o \
-	$(audio)/ricks_tricks.o \
 	$(audio)/table.o \
 	$(bfin)/libfixmath/fix32.o \
 	$(bfin)/libfixmath/fix16.o \
@@ -55,6 +60,8 @@ clean: bfin_lib_clean
 	rm $(module_obj)
 	rm $(module_name).ldr 
 	rm $(module_name)
+	rm voder.dsc
+	rm voder_desc_build
 
 deploy: $(module_name).ldr
 	make desc
@@ -65,22 +72,23 @@ deploy: $(module_name).ldr
 	deploy
 
 sim_sourcefiles = ../../utils/bfin_sim/main.c \
-	lines.c \
+	voder.c \
 	$(audio)/buffer.c \
-	$(audio)/conversion.c \
-	$(audio)/delayFadeN.c \
+	$(audio)/ricks_tricks.c \
+	$(audio)/osc_polyblep.c \
+	$(audio)/echoTap.c \
+	$(audio)/scrubTap.c \
+	$(audio)/grain.c \
 	$(audio)/filter_1p.c \
 	$(audio)/filter_ramp.c \
-	$(audio)/filter_svf.c \
+	$(audio)/biquad.c \
+	$(audio)/filter_crossover.c \
 	$(audio)/noise.c \
 	$(audio)/pan.c \
-	$(audio)/table.c \
-	$(bfin)/libfixmath/fix32.c \
-	$(bfin)/libfixmath/fix16.c \
-	$(bfin)/libfixmath/fix16_sqrt.c \
 	../../utils/bfin_sim/fract2float_conv.c \
 	../../utils/bfin_sim/src/cv.c \
 	../../utils/bfin_sim/fract_math.c \
+	../../utils/bfin_sim/src/fix16.c \
 	params.c
 
 sim_inc = -I ../../dsp \
@@ -90,9 +98,9 @@ sim_inc = -I ../../dsp \
 	-I ./ \
 	-I ../../common\
 
-sim_outfile = lines_jack
+sim_outfile = voder_jack
 
-sim_flags = -ljack -llo -D ARCH_LINUX=1
+sim_flags = -lm -ljack -llo -D ARCH_LINUX=1
 
 sim:
 	touch $(sim_outfile)

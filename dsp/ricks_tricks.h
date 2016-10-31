@@ -92,6 +92,17 @@ s32 quadraturePhasor_pos_cosRead(quadraturePhasor *phasor);
 s32 quadraturePhasor_sinRead(quadraturePhasor *phasor);
 s32 quadraturePhasor_cosRead(quadraturePhasor *phasor);
 fract32 s32_flatTop_env (s32 pos, s32 fadeRatio);
+
+#define WAVE_IPS_NORM 0xae3c
+static inline fract32 freq_to_phase(fix16 freq) {
+  return add_fr1x32(
+		    // int part
+		    (fract32)( ((int)(freq >> 16) * (int)(WAVE_IPS_NORM) ) ),
+		    // fract part
+		    mult_fr1x32x32( (freq & 0xffff) >> 1, (fract16)(WAVE_IPS_NORM) )
+		    );
+}
+
 fract32 osc (fract32 phase);
 fract32 osc_triangle (fract32 phase);
 fract32 osc_square (fract32 phase);
@@ -117,11 +128,18 @@ fract32 osc_square (fract32 phase);
 #define SLEW_1S (TWOPI * hzToDimensionless(1))
 #define SLEW_4S  (1 << 16)
 
+#define SLEW_1MS_16 1024
+#define SLEW_10MS_16 180
+#define SLEW_100MS_16 8
+#define SLEW_1S_16 1
+
+
 #define simple_lpf(x, y, hz) \
   simple_slew(x, y, TWOPI * hzToDimensionless(hz))
 
 #define SR 48000
 #define hzToDimensionless(hz) ((fract32)((fract32)hz * (FR32_MAX / SR)))
+#define hzToDimensionless16(hz) ((fract16)((fract16)hz * (FR16_MAX / SR)))
 
 #define fadeOut(x) sub_fr1x32(FR32_MAX, mult_fr1x32x32( x, x))
 #define fadeIn(x) fadeOut(sub_fr1x32(FR32_MAX, x))
@@ -217,11 +235,16 @@ void radixLogSlew_next (fract32* current, fract32 target, logSlew* slew);
 void fine_logSlew(fract32* current, fract32 target, fract32 speed);
 void coarse_logSlew(fract32* current, fract32 target, fract32 speed);
 void normalised_logSlew(fract32* current, fract32 target, fract32 speed);
+void normalised_logSlew_16(fract16* current, fract16 target, fract16 speed);
 void trackingEnvelopeLin_init (trackingEnvelopeLin* env);
 fract32 trackingEnvelopeLin_next (trackingEnvelopeLin* env, fract32 in);
 void trackingEnvelopeLog_init (trackingEnvelopeLog* env);
 fract32 trackingEnvelopeLog_next (trackingEnvelopeLog* env, fract32 in);
 
-
+fract32 soft_clip (fract32 lim, fract32 in);
+fract32 soft_clip_norm (fract32 lim, fract32 in);
+fract32 soft_clip_asym (fract32 lim_pos, fract32 lim_neg, fract32 in);
+fract32 dc_block (hpf *myHpf, fract32 in);
+fract32 dc_block2 (hpf *myHpf, fract32 in);
 
 #endif
