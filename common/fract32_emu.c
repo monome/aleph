@@ -1,6 +1,10 @@
 /* fract32_emu.c
  *
+<<<<<<< HEAD
+ *
+=======
  * 
+>>>>>>> upstream/master
  */
 
 #include <stdio.h>
@@ -38,7 +42,6 @@ fract32 float_to_fr32(f32 x) {
   }
 }
 
-
 //-------------------------
 //----- arithmetic
 
@@ -46,7 +49,6 @@ fract32 float_to_fr32(f32 x) {
 fract32 add_fr1x32(fract32 _x, fract32 _y) {
   return _x + _y;
 }
-
 
 /* Performs 32-bit subtraction of the two input parameters (_x-_y). */
 fract32 sub_fr1x32(fract32 _x, fract32 _y) {
@@ -58,7 +60,6 @@ fract32 sub_fr1x32(fract32 _x, fract32 _y) {
 // need a 40-bit accumulator with both saturating and NS flavors...
 fract32 mult_fr1x32x32(fract32 _x, fract32 _y) {
     return ( ( (s64)_x * (s64)_y ) ) >> 31;
-  //    return ( ( (s64)_x * (s64)_y ) ) >> 32;
 }
 
 // 32-bit divide

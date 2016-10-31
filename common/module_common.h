@@ -15,4 +15,3 @@ typedef struct _ModuleVersion {
 } ModuleVersion;
 
 #endif
-

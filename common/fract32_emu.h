@@ -1,5 +1,9 @@
 /* fract32.h
+<<<<<<< HEAD
+ *
+=======
  * 
+>>>>>>> upstream/master
  * float-conversion and arithmetic functions for fract32 on linux.
  * these should allow compatibility with blackfin bf5xx intrinsics.
  *
