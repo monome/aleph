@@ -13,8 +13,7 @@
 //--- asf headers
 #include "print_funcs.h"
 
-//--- avr32-lib headers
-#include "app.h"
+//--- libavr32 headers
 // font-rendering functions
 #include "font.h"
 // region class
@@ -22,7 +21,13 @@
 // screen refresh function
 #include "screen.h"
 
-//--- application headers
+//--- aleph-specific headers
+// application framework
+#include "app.h"
+// extra drawing routines
+#include "region_extra.h"
+
+//--- app-specific headers
 #include "ctl.h"
 #include "render.h"
 
