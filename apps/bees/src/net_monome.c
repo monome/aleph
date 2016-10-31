@@ -65,21 +65,10 @@ op_monome_t* monomeOpFocus = NULL;
 //monome_handler_t monome_grid_tilt_handler = NULL;
 //monome_handler_t monome_ring_key_handler = NULL;
 
-//--------------------------
-//---- extern functions
-// init
-/* void net_monome_init(void) { */
-/*   //// ok, this is never called... */
-/*   int i; */
-/*   for(i=0; i<100; i++) { */
-/*     print_dbg("\r\n !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); */
-/*   } */
-/*   monomeOpFocus = NULL; */
-/* } */
 
 // set focus
 void net_monome_set_focus(op_monome_t* op_monome, u8 focus) {
-  eMonomeDevice dev = monome_dev_type();
+  eMonomeDevice dev = monome_device();
 
   print_dbg("\r\n setting monome grid focus, op pointer: 0x");
   print_dbg_hex((u32)op_monome);

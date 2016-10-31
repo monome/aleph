@@ -12,7 +12,6 @@
 
 #include "compiler.h"
 #include "conf_sd_mmc_spi.h"
-#include "util.h"
 #include "gpio.h"
 #include "power_clocks_lib.h"
 #include "print_funcs.h"
@@ -23,7 +22,7 @@
 
 // aleph
 //#include "conf_aleph.h"
-#include "aleph_board.h"
+#include "board.h"
 #include "conf_tc_irq.h"
 #include "init.h"
 #include "i2c.h"

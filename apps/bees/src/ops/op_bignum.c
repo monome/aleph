@@ -1,5 +1,6 @@
 // avr32-lib
 #include "region.h"
+#include "region_extra.h"
 #include "screen.h"
 
 // bees
