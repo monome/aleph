@@ -20,10 +20,12 @@
 #include "delay.h"
 #include "print_funcs.h"
 
+// libavr32
+#include "events.h"
+
 // aleph-avr32
-#include "aleph_board.h"
 #include "app.h"
-#include "event_types.h"
+#include "conf_board.h"
 
 // bees
 #include "app_timers.h"
@@ -131,17 +133,17 @@ static void handle_MonomeGridKey(s32 data) {
   (*monome_grid_key_handler)(monomeOpFocus, data);
 }
 
-static void handle_MonomeGridTilt(s32 data) { 
-  // TODO: update ops
-}
+/* static void handle_MonomeGridTilt(s32 data) {  */
+/*   // TODO: update ops */
+/* } */
 
 static void handle_MonomeRingEnc(s32 data) {
   (*monome_ring_enc_handler)(monomeOpFocus, data);
 }
 
-static void handle_MonomeRingKey(s32 data) { 
-  // TODO: update ops
-}
+/* static void handle_MonomeRingKey(s32 data) {  */
+/*   // TODO: update ops */
+/* } */
 
 static void handle_MidiConnect(s32 data) {
   timers_set_midi();
@@ -196,9 +198,9 @@ void assign_bees_event_handlers(void) {
   app_event_handlers[ kEventMonomeConnect ]	= &handle_MonomeConnect ;
   app_event_handlers[ kEventMonomeDisconnect ]	= &handle_MonomeDisconnect ;
   app_event_handlers[ kEventMonomeGridKey ]	= &handle_MonomeGridKey ;
-  app_event_handlers[ kEventMonomeGridTilt ]	= &handle_MonomeGridTilt ;
   app_event_handlers[ kEventMonomeRingEnc ]	= &handle_MonomeRingEnc ;
-  app_event_handlers[ kEventMonomeRingKey ]	= &handle_MonomeRingKey ;
+  //  app_event_handlers[ kEventMonomeGridTilt ]	= &handle_MonomeGridTilt ;
+  //  app_event_handlers[ kEventMonomeRingKey ]	= &handle_MonomeRingKey ;
   app_event_handlers[ kEventMidiConnect ]	= &handle_MidiConnect ;
   app_event_handlers[ kEventMidiDisconnect ]	= &handle_MidiDisconnect ;
   app_event_handlers[ kEventMidiPacket ]	= &handle_MidiPacket ;
