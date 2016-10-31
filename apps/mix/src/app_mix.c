@@ -41,9 +41,11 @@ void app_init(void) {
 
 // this is called from the event queue to start the app 
 // return >0 if there is an error doing firstrun init
-u8 app_launch(u8 firstrun) {
-  print_dbg("\r\n mix; app_launch, firstrun: ");
-  print_dbg_ulong(firstrun);
+u8 app_launch(eLaunchState state) {
+  
+  print_dbg("\r\n launching app with state: ");
+  print_dbg_ulong(state);
+
 
   //=============================
   /* load the DSP module!
@@ -74,12 +76,18 @@ u8 app_launch(u8 firstrun) {
   // set hardcoded default values 
   ctl_init();
 
-  if(firstrun) { 
-    // first run since module was flashed.
+  if(state == eLaunchStateFirstRun) {
+	// this was the first run since firwmare was flashed.
+	// do any necessary flash initialization here.
   } else {
-    // this wasn't the first run, so try and load last saved settings
-    //... TODO...
+	if(state == eLaunchStateClean) {
+	  // use this condition to launch in a "default" or "clean" mode,
+	  // with known settings
+	} else {
+	  // go ahead and load stored state from flash... 
+	}
   }
+
 
   // set app event handlers
   assign_event_handlers();
