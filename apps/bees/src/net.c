@@ -695,6 +695,8 @@ s16 net_remove_op(const u32 opIdx) {
   // bail if out of range
   if(opIdx < 0 || opIdx >= net->numOps) {
     print_dbg("\r\nout-of-range op deletion requested");
+    print_dbg("\r\nnumOps = ");
+    print_dbg_ulong(net->numOps);
     app_resume();
     return 1;
   }
