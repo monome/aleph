@@ -387,6 +387,16 @@
        do (serial-deleteOp stream (random 100))
     	 (sleep 0.05))))
 
+(defun recreateable-patching-bug ()
+  (with-open-file (stream "/dev/ttyACM0"
+			  :direction :output
+			  :if-exists :overwrite
+			  :element-type '(unsigned-byte 8))
+    (loop for i below 20
+       do (sleep 0.05)
+    	 (print i)
+    	 (serial-newOp stream 34 12))))
+
 (defun test-bfin-module-load ()
   (with-open-file (stream "/dev/ttyACM0"
 			  :direction :output
