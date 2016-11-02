@@ -18,7 +18,7 @@ void initBigMemPool (void) {
 
 u8* allocBigOp(void) {
   if (bigOpHead == NULL) {
-    print_dbg("all out of memory\n");
+    print_dbg("\r\nbigOpPool exhausted");
     return NULL;
   }
   u8* region = bigOpHead->head;
@@ -29,14 +29,14 @@ u8* allocBigOp(void) {
 int freeBigOp(u8* region) {
   int idx = region - bigOpData;
   if(idx % BIG_OP_SIZE !=0) {
-    print_dbg("Warning non-snapping chunk pointer (idx = ");
+    print_dbg("\r\nWarning non-snapping chunk pointer (idx = ");
     print_dbg_ulong(idx);
-    print_dbg(") passed to freeBigOp\n");
+    print_dbg(") passed to freeBigOp");
     return -1;
   }
   idx = idx / BIG_OP_SIZE;
   if (idx >= MAX_BIG_OPS || idx < 0) {
-    print_dbg("Warning out-of-range chunk pointer passed to freeBigOp\n");
+    print_dbg("\r\nWarning out-of-range chunk pointer passed to freeBigOp");
     return -1;
   }
   
@@ -59,7 +59,7 @@ void initSmallMemPool (void) {
 
 u8* allocSmallOp(void) {
   if (smallOpHead == NULL) {
-    print_dbg("all out of memory\n");
+    print_dbg("\r\nsmallOpPool exhausted\n");
     return NULL;
   }
   u8* region = smallOpHead->head;
@@ -70,14 +70,14 @@ u8* allocSmallOp(void) {
 int freeSmallOp(u8* region) {
   int idx = region - smallOpData;
   if(idx % SMALL_OP_SIZE !=0) {
-    print_dbg("Warning non-snapping chunk pointer (idx = ");
+    print_dbg("\r\nWarning non-snapping chunk pointer (idx = ");
     print_dbg_ulong(idx);
-    print_dbg(") passed to freeSmallOp\n");
+    print_dbg(") passed to freeSmallOp");
     return -1;
   }
   idx = idx / SMALL_OP_SIZE;
   if (idx >= MAX_SMALL_OPS || idx < 0) {
-    print_dbg("Warning out-of-range chunk pointer passed to freeSmallOp\n");
+    print_dbg("\r\nWarning out-of-range chunk pointer passed to freeSmallOp");
     return -1;
   }
   
