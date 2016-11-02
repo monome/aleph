@@ -382,7 +382,9 @@ s16 net_add_op(op_id_t opId) {
     op = (op_t*)allocBigOp();
   }
   if (op == NULL){
+    app_pause ();
     op = (op_t*)malloc(opChunk);
+    app_resume();
   }
 
   if (op == NULL) {
@@ -503,7 +505,9 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
     op = (op_t*)allocBigOp();
   }
   if (op == NULL){
+    app_pause ();
     op = (op_t*)malloc(opChunk);
+    app_resume();
   }
 
   if (op == NULL) {
