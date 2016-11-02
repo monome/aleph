@@ -3,6 +3,10 @@
   (in-package :cl-user)
   (use-package '(:optima :cffi :iterate)))
 (in-package :cl-user)
+
+(defun setup-aleph-dev (&optional (dev-file "/dev/ttyACM0"))
+  (external-program:run "stty" (list "-F" dev-file "115200" "sane" "-brkint" "-icrnl" "-opost" "-onlcr" "-isig" "-icanon" "-iexten" "-echo" "-echoe")))
+
 (defparameter *start-flag* #x12)
 (defparameter *end-flag* #x13)
 (defparameter *dle* #x7D)
@@ -343,7 +347,7 @@
 ;;;Some stinky debug stuff follows...
 (defun start-debug-listener ()
   (list (multiple-value-list
-	 (external-program:run "stty" '("-F" "/dev/ttyACM0" "115200" "raw")))
+	 (setup-aleph-dev))
 	(bt:make-thread
 	 (lambda ()
 	   (with-open-file (stream "/dev/ttyACM0"
@@ -373,6 +377,87 @@
     (serial-recallPreset stream 1)
     (serial-storePreset stream 1)
     ))
+
+(defun stress-test-every-op ()
+  (with-open-file (stream "/dev/ttyACM0"
+			  :direction :output
+			  :if-exists :overwrite
+			  :element-type '(unsigned-byte 8))
+    ;; (setup-aleph-dev)
+    (loop for i below 47
+       do (sleep 0.1)
+    	 (print i)
+    	 (unless (= i 35) ;; don't stress test serial op over serial
+	   (serial-newOp stream (random (+ i 1)) 12)))
+    (sleep 1)
+    (loop for i below 47
+       do (sleep 0.1)
+    	 (print i)
+	 (serial-deleteOp stream 12));;67 blows up everything!?
+    ))
+
+(defun stress-test-one-op ()
+  (with-open-file (stream "/dev/ttyACM0"
+			  :direction :output
+			  :if-exists :overwrite
+			  :element-type '(unsigned-byte 8))
+    (let ((op-type (random 47)))
+      (unless (= op-type 35)
+	(loop repeat 100
+	   do (serial-newOp stream op-type 12)
+	     (sleep 0.05))
+	(loop repeat 100
+	   do (serial-deleteop stream 12)
+	     (sleep 0.05))))))
+
+(defun stress-test-uzi ()
+  (with-open-file (stream "/dev/ttyACM0"
+			  :direction :output
+			  :if-exists :overwrite
+			  :element-type '(unsigned-byte 8))
+    (loop for i below 256
+       do (sleep 0.05)
+	 (let ((op-type (random 50)))
+	   (unless (= op-type 35) ;; opSerial
+	     (serial-newOp stream op-type (random 100)))))
+    (sleep 0.2)
+    (loop for i below 256
+       do (sleep 0.05)
+	 (serial-trigger-in stream (random 256) (random 3000)))
+    (loop for i below 256
+       do (sleep 0.05)
+	 (serial-deleteOp stream (random 50)))))
+
+(defun pick-buggy-op ()
+  (nth (random 2)
+       '(24 25 14)))
+
+(defun stress-test-buggy-ops (op-min op-max)
+  (with-open-file (stream "/dev/ttyACM0"
+			  :direction :output
+			  :if-exists :overwrite
+			  :element-type '(unsigned-byte 8))
+    (setf *random-state* (make-random-state t))
+    (loop repeat 256
+       do (serial-newop stream (pick-buggy-op) 11)
+	 (sleep 0.05)
+	 (serial-newop stream (+ op-min
+				 (random (- op-max op-min)))
+		       11))
+    (loop repeat 256
+       do (sleep 0.05)
+    	 (serial-deleteop stream 12))
+    ))
+
+(defun recreateable-patching-bug ()
+  (with-open-file (stream "/dev/ttyACM0"
+			  :direction :output
+			  :if-exists :overwrite
+			  :element-type '(unsigned-byte 8))
+    (loop for i below 20
+       do (sleep 0.05)
+    	 (print i)
+    	 (serial-newOp stream 34 12))))
 
 (defun test-bfin-module-load ()
   (with-open-file (stream "/dev/ttyACM0"
