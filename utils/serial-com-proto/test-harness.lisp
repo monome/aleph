@@ -374,6 +374,19 @@
     (serial-storePreset stream 1)
     ))
 
+(defun stress-test-bees-patching ()
+  (with-open-file (stream "/dev/ttyACM0"
+			  :direction :output
+			  :if-exists :overwrite
+			  :element-type '(unsigned-byte 8))
+    (loop for i below 50
+       do (sleep 0.05)
+    	 (print i)
+    	 (serial-newOp stream i 12))
+    (loop repeat 50
+       do (serial-deleteOp stream (random 100))
+    	 (sleep 0.05))))
+
 (defun test-bfin-module-load ()
   (with-open-file (stream "/dev/ttyACM0"
 			  :direction :output
