@@ -396,11 +396,15 @@ s16 net_add_op(op_id_t opId) {
 
   if (ins > (NET_INS_MAX - net->numIns)) {
     print_dbg("\r\n op creation failed; too many inputs in network.");
+    op_deinit(op);
+    freeOp((u8*)op);
     return -1;
   }
 
   if (outs > (NET_OUTS_MAX - net->numOuts)) {
     print_dbg("\r\n op creation failed; too many outputs in network.");
+    op_deinit(op);
+    freeOp((u8*)op);
     return -1;
   }
 
@@ -521,11 +525,15 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
 
   if (ins > (NET_INS_MAX - net->numIns)) {
     print_dbg("\r\n op creation failed; too many inputs in network.");
+    op_deinit(op);
+    freeOp((u8*)op);
     return -1;
   }
 
   if (outs > (NET_OUTS_MAX - net->numOuts)) {
     print_dbg("\r\n op creation failed; too many outputs in network.");
+    op_deinit(op);
+    freeOp((u8*)op);
     return -1;
   }
 
