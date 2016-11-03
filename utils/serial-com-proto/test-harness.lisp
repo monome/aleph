@@ -383,9 +383,10 @@
        do (sleep 0.05)
     	 (print i)
     	 (serial-newOp stream i 12))
-    (loop repeat 50
-       do (serial-deleteOp stream (random 100))
-    	 (sleep 0.05))))
+    (loop for i below 50
+       do (sleep 0.05)
+	 (print i)
+       do (serial-deleteOp stream (random 100)))))
 
 (defun recreateable-patching-bug ()
   (with-open-file (stream "/dev/ttyACM0"
