@@ -12,7 +12,8 @@ void initBigMemPool (void) {
     bigOpPool[i].head = bigOpData + i * BIG_OP_SIZE;
     bigOpPool[i].tail = &(bigOpPool[i+1]);
   }
-  bigOpPool[MAX_BIG_OPS-1].head = NULL;
+  bigOpPool[MAX_BIG_OPS-1].head = bigOpData + (MAX_BIG_OPS-1) * BIG_OP_SIZE;
+  bigOpPool[MAX_BIG_OPS-1].tail = NULL;
   bigOpHead = bigOpPool;
 }
 
@@ -53,7 +54,8 @@ void initSmallMemPool (void) {
     smallOpPool[i].head = smallOpData + i * SMALL_OP_SIZE;
     smallOpPool[i].tail = &(smallOpPool[i+1]);
   }
-  smallOpPool[MAX_SMALL_OPS-1].head = NULL;
+  smallOpPool[MAX_SMALL_OPS-1].head = smallOpData + (MAX_SMALL_OPS-1) * SMALL_OP_SIZE;
+  smallOpPool[MAX_SMALL_OPS-1].tail = NULL;
   smallOpHead = smallOpPool;
 }
 
