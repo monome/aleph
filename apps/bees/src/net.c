@@ -381,11 +381,12 @@ s16 net_add_op(op_id_t opId) {
   else if (opChunk <= BIG_OP_SIZE) {
     op = (op_t*)allocBigOp();
   }
-  if (op == NULL){
-    app_pause ();
-    op = (op_t*)malloc(opChunk);
-    app_resume();
-  }
+  // for now disable failover to malloc
+  /* if (op == NULL){ */
+  /*   app_pause (); */
+  /*   op = (op_t*)alloc_mem(opChunk); */
+  /*   app_resume(); */
+  /* } */
 
   if (op == NULL) {
     print_dbg("\r\ncouldn't get enough memory for new op");
@@ -504,11 +505,12 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
   else if (opChunk <= BIG_OP_SIZE) {
     op = (op_t*)allocBigOp();
   }
-  if (op == NULL){
-    app_pause ();
-    op = (op_t*)malloc(opChunk);
-    app_resume();
-  }
+  // for now disable failover to malloc
+  /* if (op == NULL){ */
+  /*   app_pause (); */
+  /*   op = (op_t*)alloc_mem(opChunk); */
+  /*   app_resume(); */
+  /* } */
 
   if (op == NULL) {
     print_dbg("\r\ncouldn't get enough memory for new op");

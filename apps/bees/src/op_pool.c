@@ -97,6 +97,6 @@ int freeOp (u8* region) {
   if (ret != -1) {
     return ret;
   }
-  free_mem(region);
+  /* free_mem(region); */
   return 0;
 }
