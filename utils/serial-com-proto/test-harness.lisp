@@ -3,6 +3,10 @@
   (in-package :cl-user)
   (use-package '(:optima :cffi :iterate)))
 (in-package :cl-user)
+
+(defun setup-aleph-dev (&optional (dev-file "/dev/ttyACM0"))
+  (external-program:run "stty" (list "-F" dev-file "115200" "sane" "-brkint" "-icrnl" "-opost" "-onlcr" "-isig" "-icanon" "-iexten" "-echo" "-echoe")))
+
 (defparameter *start-flag* #x12)
 (defparameter *end-flag* #x13)
 (defparameter *dle* #x7D)
@@ -343,7 +347,7 @@
 ;;;Some stinky debug stuff follows...
 (defun start-debug-listener ()
   (list (multiple-value-list
-	 (external-program:run "stty" '("-F" "/dev/ttyACM0" "115200" "raw")))
+	 (setup-aleph-dev))
 	(bt:make-thread
 	 (lambda ()
 	   (with-open-file (stream "/dev/ttyACM0"
