@@ -374,19 +374,55 @@
     (serial-storePreset stream 1)
     ))
 
-(defun stress-test-bees-patching ()
+(defun stress-test-every-op ()
   (with-open-file (stream "/dev/ttyACM0"
 			  :direction :output
 			  :if-exists :overwrite
 			  :element-type '(unsigned-byte 8))
-    (loop for i below 50
-       do (sleep 0.05)
+    ;; (setup-aleph-dev)
+    (loop for i below 47
+       do (sleep 0.1)
     	 (print i)
-    	 (serial-newOp stream i 12))
-    (loop for i below 50
+    	 (unless (= i 35) ;; don't stress test serial op over serial
+	   (serial-newOp stream (random (+ i 1)) 12)))
+    (sleep 1)
+    (loop for i below 47
+       do (sleep 0.1)
+    	 (print i)
+	 (serial-deleteOp stream 12));;67 blows up everything!?
+    ))
+
+(defun stress-test-one-op ()
+  (with-open-file (stream "/dev/ttyACM0"
+			  :direction :output
+			  :if-exists :overwrite
+			  :element-type '(unsigned-byte 8))
+    (let ((op-type (random 47)))
+      (unless (= op-type 35)
+	(loop repeat 100
+	   do (serial-newOp stream op-type 12)
+	     (sleep 0.05))
+	(loop repeat 100
+	   do (serial-deleteop stream 12)
+	     (sleep 0.05))))))
+
+(defun stress-test-uzi ()
+  (with-open-file (stream "/dev/ttyACM0"
+			  :direction :output
+			  :if-exists :overwrite
+			  :element-type '(unsigned-byte 8))
+    (loop for i below 256
        do (sleep 0.05)
-	 (print i)
-       do (serial-deleteOp stream (random 100)))))
+    	 (unless (= i 35) ;; don't stress test serial op over serial
+	   (serial-newOp stream (random 100) (random 100))))
+    (sleep 0.1)
+    (loop for i below 256
+       do (sleep 0.05)
+	 (serial-trigger-in stream (random 256) (random 3000)))
+    (loop for i below 256
+       do (sleep 0.05)
+	 (serial-deleteOp stream (random 100)))
+    ))
 
 (defun recreateable-patching-bug ()
   (with-open-file (stream "/dev/ttyACM0"
