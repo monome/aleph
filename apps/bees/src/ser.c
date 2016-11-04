@@ -276,13 +276,22 @@ void serial_disconnect (s16 idx) {
 }
 
 void serial_deleteOp (s16 opIdx) {
-  net_remove_op(opIdx);
+  if (opIdx >= net->numOps || opIdx < 0) {
+    print_dbg("\r\n out-of-range op deletion requested: ");
+    print_dbg_ulong(opIdx);
+  }
+  else {
+    net_remove_op(opIdx);
+  }
 }
 
 void serial_newOp (s16 opType, s16 opIdx) {
   if (opType >= NUM_USER_OP_TYPES || opType < 0) {
     print_dbg("\r\n invalid opType requested: ");
     print_dbg_ulong(opType);
+  } else if (opIdx >= net->numOps || opIdx < 0) {
+    print_dbg("\r\n Out of range op insertion requested: ");
+    print_dbg_ulong(opIdx);
   }
   else {
     net_add_op_at(userOpTypes[opType], opIdx);
