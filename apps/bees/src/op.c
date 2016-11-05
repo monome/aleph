@@ -44,13 +44,14 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpList16,
   eOpLogic,
   eOpMetro,
-  eOpCascades, // "mp"
   eOpMidiCC,
   eOpMidiNote,
   eOpMidiOutCC,
   eOpMidiOutNote,
   eOpMod,
+  eOpCascades, // "mp"
   eOpMul,
+  eOpParam,
   eOpRandom,
   eOpRoute,
   eOpRoute8,
@@ -66,8 +67,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpThresh,
   eOpTimer,
   eOpTog,
-  eOpWW,
-  eOpParam
+  eOpWW
 };
 
 
