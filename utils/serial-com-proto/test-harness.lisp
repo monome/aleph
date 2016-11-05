@@ -417,16 +417,19 @@
 			  :element-type '(unsigned-byte 8))
     (loop for i below 256
        do (sleep 0.05)
-    	 (unless (= i 35) ;; don't stress test serial op over serial
-	   (serial-newOp stream (random 100) (random 100))))
-    (sleep 0.1)
+	 (let ((op-type (random 50)))
+	   (unless (or (= op-type 35) ;; opSerial
+		       (= op-type 25) ;; opMidiCC
+		       (= op-type 24) ;; opMidiNote
+		       (= op-type 14)) ;; opHid
+	     (serial-newOp stream op-type (random 100)))))
+    (sleep 0.2)
     (loop for i below 256
        do (sleep 0.05)
 	 (serial-trigger-in stream (random 256) (random 3000)))
     (loop for i below 256
        do (sleep 0.05)
-	 (serial-deleteOp stream (random 100)))
-    ))
+	 (serial-deleteOp stream (random 50)))))
 
 (defun recreateable-patching-bug ()
   (with-open-file (stream "/dev/ttyACM0"
