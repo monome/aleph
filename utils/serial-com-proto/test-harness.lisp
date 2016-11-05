@@ -431,6 +431,27 @@
        do (sleep 0.05)
 	 (serial-deleteOp stream (random 50)))))
 
+(defun pick-buggy-op ()
+  (nth (random 3)
+       '(24 25 14)))
+
+(defun stress-test-buggy-ops (op-min op-max)
+  (with-open-file (stream "/dev/ttyACM0"
+			  :direction :output
+			  :if-exists :overwrite
+			  :element-type '(unsigned-byte 8))
+    (setf *random-state* (make-random-state t))
+    (loop repeat 256
+       do (serial-newop stream (pick-buggy-op) 11)
+	 (sleep 0.05)
+	 (serial-newop stream (+ op-min
+				 (random (- op-max op-min)))
+		       11))
+    (loop repeat 256
+       do (sleep 0.05)
+    	 (serial-deleteop stream 12))
+    ))
+
 (defun recreateable-patching-bug ()
   (with-open-file (stream "/dev/ttyACM0"
 			  :direction :output
