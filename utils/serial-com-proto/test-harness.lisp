@@ -432,8 +432,9 @@
 	 (serial-deleteOp stream (random 50)))))
 
 (defun pick-buggy-op ()
-  (nth (random 3)
-       '(24 25 14)))
+  (nth (random 2)
+       '(24 25 ;; 14
+	 )))
 
 (defun stress-test-buggy-ops (op-min op-max)
   (with-open-file (stream "/dev/ttyACM0"
