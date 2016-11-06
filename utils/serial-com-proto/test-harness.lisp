@@ -418,10 +418,7 @@
     (loop for i below 256
        do (sleep 0.05)
 	 (let ((op-type (random 50)))
-	   (unless (or (= op-type 35) ;; opSerial
-		       (= op-type 25) ;; opMidiCC
-		       (= op-type 24) ;; opMidiNote
-		       (= op-type 14)) ;; opHid
+	   (unless (= op-type 35) ;; opSerial
 	     (serial-newOp stream op-type (random 100)))))
     (sleep 0.2)
     (loop for i below 256
