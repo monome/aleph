@@ -36,7 +36,7 @@ void net_midi_list_push(op_midi_t* op) {
   op_midi_t* p = ml.top;
   for(i=0; i<ml.num; ++i) {
     if(op == p) {
-      // already in list, so bail
+      print_dbg("\r\nrequested push of midi op already in list - bailing");
       return;
     }
     p = p->next;
@@ -59,7 +59,20 @@ void net_midi_list_push(op_midi_t* op) {
 
 // remove an operator
 void net_midi_list_remove(op_midi_t* op) {
-  // FIXME: should sanity-check that op is actually in the list
+  int i;
+  op_midi_t* p = ml.top;
+  u8 opInList = 0;
+  for(i=0; i<ml.num; ++i) {
+    if(op == p) {
+      opInList = 1;
+    }
+    p = p->next;
+  }
+  if(! opInList) {
+    print_dbg("\r\nrequested deletion of midi op not in list - bailing");
+    return;
+  }
+
   if(ml.num == 1) {
     ml.top = NULL;
     ml.num = 0;
