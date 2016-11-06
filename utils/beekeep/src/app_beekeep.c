@@ -32,7 +32,7 @@
 #include "play.h"
 #include "render.h"
 #include "scene.h"
-
+#include "op_pool.h"
 //-------------------------------------------
 //-- extern vars (here)
 
@@ -80,6 +80,9 @@ void test_net (void) {
 // this is called during hardware initialization.
 // allocate memory.
 void app_init(void) {
+
+  initBigMemPool();
+  initSmallMemPool();
 
   //hm
   print_dbg("\r\n preset_init...");  

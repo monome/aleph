@@ -32,6 +32,7 @@
 #include "play.h"
 #include "preset.h"
 #include "util.h"
+#include "op_pool.h"
 
 
 //=========================================
@@ -82,6 +83,7 @@ static inline int in_get_switch_index(s16 in) {
 
 // create all system operators
 static void add_sys_ops(void);
+static void update_sys_op_pointers(void);
 static void add_sys_ops(void) {
   /// FIXME: 
   /* dangerous for scene storage, 
@@ -96,33 +98,39 @@ static void add_sys_ops(void) {
 
   // 4 encoders
   net_add_op(eOpEnc);
-  opSysEnc[0] = (op_enc_t*)net->ops[net->numOps - 1];
   net_add_op(eOpEnc);
-  opSysEnc[1] = (op_enc_t*)net->ops[net->numOps - 1];
   net_add_op(eOpEnc);
-  opSysEnc[2] = (op_enc_t*)net->ops[net->numOps - 1];
   net_add_op(eOpEnc);
-  opSysEnc[3] = (op_enc_t*)net->ops[net->numOps - 1];
   // 4 function switches
   net_add_op(eOpSwitch);
-  opSysSw[0] = (op_sw_t*)net->ops[net->numOps - 1];
   net_add_op(eOpSwitch);
-  opSysSw[1] = (op_sw_t*)net->ops[net->numOps - 1];
   net_add_op(eOpSwitch);
-  opSysSw[2] = (op_sw_t*)net->ops[net->numOps - 1];
   net_add_op(eOpSwitch);
-  opSysSw[3] = (op_sw_t*)net->ops[net->numOps - 1];
   // 2 footswitches  
   net_add_op(eOpSwitch);
-  opSysSw[4] = (op_sw_t*)net->ops[net->numOps - 1];
   net_add_op(eOpSwitch);
-  opSysSw[5] = (op_sw_t*)net->ops[net->numOps - 1];
   // 1 adc
   net_add_op(eOpAdc);
-  opSysAdc = (op_adc_t*)net->ops[net->numOps -1];
   // 1 preset receiver
   net_add_op(eOpPreset);
-  opSysPreset = (op_preset_t*)net->ops[net->numOps -1];
+  update_sys_op_pointers();
+}
+
+static void update_sys_op_pointers(void) {
+  // 4 encoders
+  opSysEnc[0] = (op_enc_t*)net->ops[0];
+  opSysEnc[1] = (op_enc_t*)net->ops[1];
+  opSysEnc[2] = (op_enc_t*)net->ops[2];
+  opSysEnc[3] = (op_enc_t*)net->ops[3];
+  // 4 function switches
+  opSysSw[0] = (op_sw_t*)net->ops[4];
+  opSysSw[1] = (op_sw_t*)net->ops[5];
+  opSysSw[2] = (op_sw_t*)net->ops[6];
+  opSysSw[3] = (op_sw_t*)net->ops[7];
+  opSysSw[4] = (op_sw_t*)net->ops[8];
+  opSysSw[5] = (op_sw_t*)net->ops[9];
+  opSysAdc = (op_adc_t*)net->ops[10];
+  opSysPreset = (op_preset_t*)net->ops[11];
 }
 
 ///----- node pickling
@@ -212,12 +220,6 @@ void net_init(void) {
   u32 i;
   net = (ctlnet_t*)alloc_mem(sizeof(ctlnet_t));
 
-  for(i=0; i<NET_OP_POOL_SIZE; i++) {
-    net->opPoolMem[i] = 0x00;
-  }
-
-  net->opPool = (void*)&(net->opPoolMem);
-  net->opPoolOffset = 0;
   net->numOps = 0;
   net->numIns = 0;
   net->numOuts = 0;
@@ -245,11 +247,11 @@ void net_deinit(void) {
   print_dbg("\r\n deinitializing network");
   for(i=0; i<net->numOps; i++) {
     op_deinit(net->ops[i]);
+    freeOp((u8*)net->ops[i]);
   }
   
   print_dbg("\r\n finished de-initializing network");
 
-  net->opPoolOffset = 0;
   net->numOps = 0;
   net->numIns = 0;
   net->numOuts = 0;
@@ -355,7 +357,7 @@ s16 net_add_op(op_id_t opId) {
   u16 ins, outs;
   int i, j;
   int idxOld, idxNew;
-  op_t* op;
+  op_t* op = NULL;
   s32 numInsSave = net->numIns;
   s32 numOutsSave = net->numOuts;
 
@@ -371,17 +373,19 @@ s16 net_add_op(op_id_t opId) {
   print_dbg_ulong(op_registry[opId].size);
 
 
-  if (op_registry[opId].size > NET_OP_POOL_SIZE - net->opPoolOffset) {
-    print_dbg("\r\n op creation failed; op memory pool is exhausted.");
-    return -1;
+  print_dbg(" ; allocating... ");
+  size_t opChunk = op_registry[opId].size;
+  if (opChunk <= SMALL_OP_SIZE) {
+    op = (op_t*)allocSmallOp();
+  }
+  else if (opChunk <= BIG_OP_SIZE) {
+    op = (op_t*)allocBigOp();
   }
 
-  print_dbg(" ; allocating... ");
-  op = (op_t*)((u8*)net->opPool + net->opPoolOffset);
-  // use the class ID to initialize a new object in scratch
-  print_dbg(" ; op address: 0x");
-  print_dbg_hex((u32)op);
-  print_dbg(" ;  initializing... ");
+  if (op == NULL) {
+    print_dbg("\r\ncouldn't get enough memory for new op");
+    return -1;
+  }
   op_init(op, opId);
 
   ins = op->numInputs;
@@ -389,18 +393,21 @@ s16 net_add_op(op_id_t opId) {
 
   if (ins > (NET_INS_MAX - net->numIns)) {
     print_dbg("\r\n op creation failed; too many inputs in network.");
+    op_deinit(op);
+    freeOp((u8*)op);
     return -1;
   }
 
   if (outs > (NET_OUTS_MAX - net->numOuts)) {
     print_dbg("\r\n op creation failed; too many outputs in network.");
+    op_deinit(op);
+    freeOp((u8*)op);
     return -1;
   }
 
   // add op pointer to list
   net->ops[net->numOps] = op;
   // advance offset for next allocation
-  net->opPoolOffset += op_registry[opId].size;
 
   //---- add inputs and outputs to node list
     for(i=0; i<ins; ++i) {
@@ -481,6 +488,7 @@ s16 net_pop_op(void) {
   
   // de-init
   op_deinit(op);
+  freeOp((u8*)op);
   ins = op->numInputs;
   // store the global index of the first input
   x = net_op_in_idx(opIdx, 0);
@@ -513,7 +521,6 @@ s16 net_pop_op(void) {
   net->numIns -= op->numInputs;
   net->numOuts -= op->numOutputs;
 
-  net->opPoolOffset -= op_registry[op->type].size;
   net->numOps -= 1;
 
   // FIXME: shift preset param data and connections to params, 
@@ -1111,7 +1118,8 @@ u8* net_unpickle(const u8* src) {
 
     src = param_unpickle(&(net->params[i]), src);
   }
-  
+
+  update_sys_op_pointers();
   return (u8*)src;
 }
 

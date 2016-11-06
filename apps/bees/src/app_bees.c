@@ -34,6 +34,7 @@
 #include "render.h"
 #include "scene.h"
 #include "serial.h"
+#include "op_pool.h"
 
 //-------------------------------------------
 //-- extern vars (here)
@@ -51,6 +52,10 @@ static char versionString[12] = VERSIONSTRING;
 // this is called during hardware initialization.
 // allocate memory.
 void app_init(void) {
+  // should be before preset and op init
+  print_dbg("\r\n initialise mempools...");
+  initBigMemPool();
+  initSmallMemPool();
 
   print_dbg("\r\n preset_init...");  
   presets_init();
