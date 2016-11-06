@@ -89,6 +89,9 @@ void net_midi_list_remove(op_midi_t* op) {
     }
     op->prev->next = op->next;
     op->next->prev = op->prev;
+    if(ml.top == op) {
+      ml.top = op->next;
+    }
     op->next = NULL;
     op->prev = NULL;
     ml.num -= 1;

@@ -433,8 +433,7 @@
 
 (defun pick-buggy-op ()
   (nth (random 2)
-       '(24 25 ;; 14
-	 )))
+       '(24 25 14)))
 
 (defun stress-test-buggy-ops (op-min op-max)
   (with-open-file (stream "/dev/ttyACM0"
