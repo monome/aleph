@@ -285,8 +285,17 @@ void serial_deleteOp (s16 opIdx) {
   }
 }
 
-void serial_newOp (s16 idx) {
-  net_add_op(userOpTypes[idx]);
+void serial_newOp (s16 opType, s16 opIdx) {
+  if (opType >= NUM_USER_OP_TYPES || opType < 0) {
+    print_dbg("\r\n invalid opType requested: ");
+    print_dbg_ulong(opType);
+  } else if (opIdx >= net->numOps || opIdx < 0) {
+    print_dbg("\r\n Out of range op insertion requested: ");
+    print_dbg_ulong(opIdx);
+  }
+  else {
+    net_add_op_at(userOpTypes[opType], opIdx);
+  }
 }
 
 void serial_connect (s16 outIdx, s16 inIdx) {
@@ -447,7 +456,7 @@ void processMessage (char* c, int len) {
     if(len < 3)
       serial_debug ("newOp requires 16 bit bees address");
     else {
-      serial_newOp(charsToS16(c[1],c[2]));
+      serial_newOp(charsToS16(c[1],c[2]), charsToS16(c[3],c[4]));
       /* serial_debug("added an op"); */
     }
     break;

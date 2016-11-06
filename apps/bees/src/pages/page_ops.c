@@ -252,11 +252,8 @@ void handle_key_2(s32 val) {
       // remove operator at cursor
       net_remove_op(*pageSelect);
     } else {
-      // create new operator of selected type
-      net_add_op(userOpTypes[newOpType]);
-      // change selection to last op
-      *pageSelect = net_num_ops() - 1;
-
+      // create new operator of selected type at cursor
+      net_add_op_at(userOpTypes[newOpType], *pageSelect);
     }
     redraw_ins();
     redraw_outs();
