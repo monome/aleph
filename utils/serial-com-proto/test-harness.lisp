@@ -166,10 +166,10 @@
   (send-serial-command stream
 		       :eSerialMsg_newOp
 		       (s16-chars type)))
-(defun serial-deleteOp (stream op)
+(defun serial-deleteOp (stream op-idx)
   (send-serial-command stream
 		       :eSerialMsg_deleteOp
-		       (s16-chars op)))
+		       (s16-chars op-idx)))
 (defun serial-storePreset (stream preset)
   (send-serial-command stream
 		       :eSerialMsg_storePreset
@@ -368,7 +368,7 @@
     (serial-connect stream 1 1)
     (serial-disconnect stream 1)
     (serial-newOp stream 1)
-    (serial-deleteop stream 1)
+    (serial-deleteop stream 12)
     (serial-recallPreset stream 1)
     (serial-storePreset stream 1)
     ))

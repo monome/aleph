@@ -275,9 +275,14 @@ void serial_disconnect (s16 idx) {
   net_disconnect(idx);
 }
 
-void serial_deleteOp (s16 idx) {
-  net_pop_op();
-  serial_debug("deleting last op - arbitrary op deletion not yet supported...");
+void serial_deleteOp (s16 opIdx) {
+  if (opIdx >= net->numOps || opIdx < 0) {
+    print_dbg("\r\n out-of-range op deletion requested: ");
+    print_dbg_ulong(opIdx);
+  }
+  else {
+    net_remove_op(opIdx);
+  }
 }
 
 void serial_newOp (s16 idx) {
