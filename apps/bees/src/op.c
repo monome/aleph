@@ -44,6 +44,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpList8,
   eOpList16,
   eOpLogic,
+  eOpMem1d,
   eOpMem2d,
   eOpMetro,
   eOpMidiCC,
@@ -332,6 +333,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "PARAM",
     .size = sizeof(op_param_t),
     .init = &op_param_init,
+    .deinit = NULL
+  }, {
+    .name = "MEM1D",
+    .size = sizeof(op_mem1d_t),
+    .init = &op_mem1d_init,
     .deinit = NULL
   }, {
     .name = "MEM2D",
