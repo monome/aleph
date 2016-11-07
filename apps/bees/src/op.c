@@ -34,7 +34,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpDivr,
   eOpFade,
   eOpGate,
-  eOpMonomeGridRaw, // "grid"
+  eOpMonomeGridClassic, // "grid"
   eOpHid,
   eOpHistory,
   eOpIs,
@@ -107,9 +107,9 @@ const op_desc_t op_registry[numOpClasses] = {
     .deinit = NULL
   }, {
     .name = "GRID",
-    .size = sizeof(op_mgrid_raw_t),
-    .init = &op_mgrid_raw_init,
-    .deinit = &op_mgrid_raw_deinit
+    .size = sizeof(op_mgrid_classic_t),
+    .init = &op_mgrid_classic_init,
+    .deinit = &op_mgrid_classic_deinit
   }, {
     .name = "MIDINOTE",
     .size = sizeof(op_midi_note_t),
