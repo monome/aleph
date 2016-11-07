@@ -99,6 +99,7 @@ typedef enum {
   eOpMem2d,
   eOpIter,
   eOpMonomeGridRaw,
+  eOpLifeRaw,
   //  eOpMidiBend,
   //  eOpMidiTouch,
   numOpClasses // dummy/count 
