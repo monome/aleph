@@ -60,6 +60,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_hid_word.c \
 	$(APP_DIR)/src/ops/op_history.c \
 	$(APP_DIR)/src/ops/op_is.c \
+	$(APP_DIR)/src/ops/op_iter.c \
 	$(APP_DIR)/src/ops/op_life.c \
 	$(APP_DIR)/src/ops/op_list2.c \
 	$(APP_DIR)/src/ops/op_list8.c \
