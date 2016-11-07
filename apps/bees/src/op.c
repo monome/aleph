@@ -39,7 +39,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpHistory,
   eOpIs,
   eOpIter,
-  eOpLife,
+  eOpLifeClassic,
   eOpList2,
   eOpList8,
   eOpList16,
@@ -202,9 +202,9 @@ const op_desc_t op_registry[numOpClasses] = {
     .deinit = NULL    
   }, {
     .name = "LIFE",
-    .size = sizeof(op_life_t),
-    .init = &op_life_init,
-    .deinit = &op_life_deinit
+    .size = sizeof(op_life_classic_t),
+    .init = &op_life_classic_init,
+    .deinit = &op_life_classic_deinit
   }, {
     .name = "HISTORY",
     .size = sizeof(op_history_t),
