@@ -2,15 +2,15 @@
 #include "print_funcs.h"
 // bees
 #include "net_protected.h"
-#include "op_monome_grid_raw.h"
+#include "op_monome_grid_classic.h"
 
 //-------------------------------------------------
 //----- static variables
 
 //---- descriptor strings
-static const char* op_mgrid_raw_instring = "FOCUS\0  TOG\0    MONO\0   ";
-static const char* op_mgrid_raw_outstring = "COL\0    ROW\0    VAL\0    ";
-static const char* op_mgrid_raw_opstring = "GRID";
+static const char* op_mgrid_classic_instring = "FOCUS\0  TOG\0    MONO\0   ";
+static const char* op_mgrid_classic_outstring = "COL\0    ROW\0    VAL\0    ";
+static const char* op_mgrid_classic_opstring = "GRID";
 
 //-------------------------------------------------
 //----- static function declaration
@@ -18,43 +18,43 @@ static const char* op_mgrid_raw_opstring = "GRID";
 //---- input functions
 
 //// network inputs: 
-static void op_mgrid_raw_in_focus(op_mgrid_raw_t* grid, const io_t val);
-static void op_mgrid_raw_in_tog(op_mgrid_raw_t* grid, const io_t val);
-static void op_mgrid_raw_in_mono(op_mgrid_raw_t* grid, const io_t val);
+static void op_mgrid_classic_in_focus(op_mgrid_classic_t* grid, const io_t val);
+static void op_mgrid_classic_in_tog(op_mgrid_classic_t* grid, const io_t val);
+static void op_mgrid_classic_in_mono(op_mgrid_classic_t* grid, const io_t val);
 
 // pickles
-static u8* op_mgrid_raw_pickle(op_mgrid_raw_t* enc, u8* dst);
-static const u8* op_mgrid_raw_unpickle(op_mgrid_raw_t* enc, const u8* src);
+static u8* op_mgrid_classic_pickle(op_mgrid_classic_t* enc, u8* dst);
+static const u8* op_mgrid_classic_unpickle(op_mgrid_classic_t* enc, const u8* src);
 
 /// monome event handler
-static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 data);
+static void op_mgrid_classic_handler(op_monome_t* op_monome, u32 data);
 
 // input func pointer array
-static op_in_fn op_mgrid_raw_in_fn[3] = {
-  (op_in_fn)&op_mgrid_raw_in_focus,
-  (op_in_fn)&op_mgrid_raw_in_tog,
-  (op_in_fn)&op_mgrid_raw_in_mono,
+static op_in_fn op_mgrid_classic_in_fn[3] = {
+  (op_in_fn)&op_mgrid_classic_in_focus,
+  (op_in_fn)&op_mgrid_classic_in_tog,
+  (op_in_fn)&op_mgrid_classic_in_mono,
 };
 
 //-------------------------------------------------
 //----- extern function definition
-void op_mgrid_raw_init(void* mem) {
-  //  print_dbg("\r\n op_mgrid_raw_init ");
-  op_mgrid_raw_t* op = (op_mgrid_raw_t*)mem;
+void op_mgrid_classic_init(void* mem) {
+  //  print_dbg("\r\n op_mgrid_classic_init ");
+  op_mgrid_classic_t* op = (op_mgrid_classic_t*)mem;
 
   // superclass functions
   //--- op
-  op->super.in_fn = op_mgrid_raw_in_fn;
-  op->super.pickle = (op_pickle_fn) (&op_mgrid_raw_pickle);
-  op->super.unpickle = (op_unpickle_fn) (&op_mgrid_raw_unpickle);
+  op->super.in_fn = op_mgrid_classic_in_fn;
+  op->super.pickle = (op_pickle_fn) (&op_mgrid_classic_pickle);
+  op->super.unpickle = (op_unpickle_fn) (&op_mgrid_classic_unpickle);
 
   //--- monome
-  op->monome.handler = (monome_handler_t)&op_mgrid_raw_handler;
+  op->monome.handler = (monome_handler_t)&op_mgrid_classic_handler;
   net_monome_init(&op->monome, op);
 
   // superclass state
 
-  op->super.type = eOpMonomeGridRaw;
+  op->super.type = eOpMonomeGridClassic;
   op->super.flags |= (1 << eOpFlagMonomeGrid);
 
   op->super.numInputs = 3;
@@ -63,9 +63,9 @@ void op_mgrid_raw_init(void* mem) {
   op->super.in_val = op->in_val;
   op->super.out = op->outs;
 
-  op->super.opString = op_mgrid_raw_opstring;
-  op->super.inString = op_mgrid_raw_instring;
-  op->super.outString = op_mgrid_raw_outstring;
+  op->super.opString = op_mgrid_classic_opstring;
+  op->super.inString = op_mgrid_classic_instring;
+  op->super.outString = op_mgrid_classic_outstring;
 
   op->in_val[0] = &(op->focus);
   op->monome.focus = &(op->focus);
@@ -81,44 +81,44 @@ void op_mgrid_raw_init(void* mem) {
 }
 
 // de-init
-void op_mgrid_raw_deinit(void* op) {
+void op_mgrid_classic_deinit(void* op) {
   // release focus
-  net_monome_set_focus(&(((op_mgrid_raw_t*)op)->monome), 0);
+  net_monome_set_focus(&(((op_mgrid_classic_t*)op)->monome), 0);
 }
 
 //-------------------------------------------------
 //----- static function definition
 
 //--- network input functions
-static void op_mgrid_raw_in_focus(op_mgrid_raw_t* op, const io_t v) {
+static void op_mgrid_classic_in_focus(op_mgrid_classic_t* op, const io_t v) {
   if((v) > 0) {
     op->focus = OP_ONE;
   } else {
-    if(op->focus > 0) { net_monome_grid_clear(); }
+    // if(op->focus > 0) { net_monome_grid_clear(); }
     op->focus = 0;
   }
   net_monome_set_focus( &(op->monome), op->focus > 0);
 }
 
-static void op_mgrid_raw_in_tog(op_mgrid_raw_t* op, const io_t v) {
+static void op_mgrid_classic_in_tog(op_mgrid_classic_t* op, const io_t v) {
   op->tog  = (v > 0) ? OP_ONE : 0;
 }
 
-static void op_mgrid_raw_in_mono(op_mgrid_raw_t* op, const io_t v) {
+static void op_mgrid_classic_in_mono(op_mgrid_classic_t* op, const io_t v) {
   op->mono  = (v > 0) ? OP_ONE : 0;
 }
 
-static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
+static void op_mgrid_classic_handler(op_monome_t* op_monome, u32 edata) {
   static u8 x, y, z;
   static u32 pos;
   static u8 val;
 
-  op_mgrid_raw_t* op = (op_mgrid_raw_t*)(op_monome->op);
+  op_mgrid_classic_t* op = (op_mgrid_classic_t*)(op_monome->op);
 
 
   monome_grid_key_parse_event_data(edata, &x, &y, &z);
 
-  /* print_dbg("\r\n op_mgrid_raw_handler received event; x: 0x"); */
+  /* print_dbg("\r\n op_mgrid_classic_handler received event; x: 0x"); */
   /* print_dbg_hex(x); */
   /* print_dbg("; y: 0x"); */
   /* print_dbg_hex(y); */
@@ -185,17 +185,28 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
 
 
 // pickle / unpickle
-u8* op_mgrid_raw_pickle(op_mgrid_raw_t* mgrid, u8* dst) {
+u8* op_mgrid_classic_pickle(op_mgrid_classic_t* mgrid, u8* dst) {
   dst = pickle_io(mgrid->focus, dst);
   dst = pickle_io(mgrid->tog, dst);
   dst = pickle_io(mgrid->mono, dst);
+  int i;
+  for (i=0; i < MONOME_MAX_LED_BYTES; i++) {
+    *dst = mgrid->monome.opLedBuffer[i];
+    dst++;
+  }
   return dst;
 }
 
-const u8* op_mgrid_raw_unpickle(op_mgrid_raw_t* mgrid, const u8* src) {
+const u8* op_mgrid_classic_unpickle(op_mgrid_classic_t* mgrid, const u8* src) {
   src = unpickle_io(src, (u32*)&(mgrid->focus));
   src = unpickle_io(src, (u32*)&(mgrid->tog));
   src = unpickle_io(src, (u32*)&(mgrid->mono));
+  int i;
+  for (i=0; i < MONOME_MAX_LED_BYTES; i++) {
+    mgrid->monome.opLedBuffer[i] = *src;
+    src++;
+  }
+
   net_monome_set_focus( &(mgrid->monome), mgrid->focus > 0);
   return src;
 }

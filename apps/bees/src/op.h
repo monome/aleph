@@ -48,7 +48,7 @@ typedef enum {
   eOpAdd,
   eOpMul,
   eOpGate,
-  eOpMonomeGridRaw,
+  eOpMonomeGridClassic,
   eOpMidiNote,
   eOpAdc,
   eOpMetro,
