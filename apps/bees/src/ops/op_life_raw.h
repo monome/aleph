@@ -1,13 +1,11 @@
-#ifndef _op_life_H_
-#define _op_life_H_
+#ifndef _op_life_raw_H_
+#define _op_life_raw_H_
 
 #include "op.h"
 #include "op_math.h"
 #include "types.h"
-#include "net_monome.h"
 
-
-//--- op_life_t : conways life
+//--- op_life_raw_t : conways life
 // next
 // size x (8/16)
 // sixe y (8/16)
@@ -24,9 +22,8 @@
 // val @ in x/y
 
 
-typedef struct op_life_struct {
+typedef struct op_life_raw_struct {
   op_t super;
-  op_monome_t monome; 
 
   volatile u16 pop, lpop;
 
@@ -35,15 +32,15 @@ typedef struct op_life_struct {
   volatile io_t ysize;
   volatile io_t x;
   volatile io_t y;
-  volatile io_t set;
-  volatile io_t noise;
+  volatile io_t write;
+  volatile io_t read;
+  volatile io_t tog;
   volatile io_t rules;
-  volatile io_t focus;
   volatile io_t* in_val[9];
-  op_out_t outs[3];
-} op_life_t;
+  op_out_t outs[4];
+} op_life_raw_t;
 
-void op_life_init(void* life);
-void op_life_deinit(void* life);
+void op_life_raw_init(void* life);
+void op_life_raw_deinit(void* life);
 
 #endif // header guard

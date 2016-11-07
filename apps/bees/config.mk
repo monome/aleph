@@ -60,11 +60,16 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_hid_word.c \
 	$(APP_DIR)/src/ops/op_history.c \
 	$(APP_DIR)/src/ops/op_is.c \
-	$(APP_DIR)/src/ops/op_life.c \
+	$(APP_DIR)/src/ops/op_iter.c \
+	$(APP_DIR)/src/ops/op_life_classic.c \
+	$(APP_DIR)/src/ops/op_life_raw.c \
 	$(APP_DIR)/src/ops/op_list2.c \
 	$(APP_DIR)/src/ops/op_list8.c \
 	$(APP_DIR)/src/ops/op_list16.c \
 	$(APP_DIR)/src/ops/op_logic.c \
+	$(APP_DIR)/src/ops/op_mem0d.c \
+	$(APP_DIR)/src/ops/op_mem1d.c \
+	$(APP_DIR)/src/ops/op_mem2d.c \
 	$(APP_DIR)/src/ops/op_metro.c \
 	$(APP_DIR)/src/ops/op_midi_cc.c \
 	$(APP_DIR)/src/ops/op_midi_out_note.c \
@@ -73,6 +78,7 @@ CSRCS += \
 	$(APP_DIR)/src/ops/op_mod.c \
 	$(APP_DIR)/src/ops/op_mul.c \
 	$(APP_DIR)/src/ops/op_monome_arc.c \
+	$(APP_DIR)/src/ops/op_monome_grid_classic.c \
 	$(APP_DIR)/src/ops/op_monome_grid_raw.c \
 	$(APP_DIR)/src/ops/op_preset.c \
 	$(APP_DIR)/src/ops/op_random.c \

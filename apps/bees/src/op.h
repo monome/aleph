@@ -21,7 +21,7 @@
 #define OP_OUTS_MAX 32
 
 // const array of user-creatable operator types
-#define NUM_USER_OP_TYPES 47
+#define NUM_USER_OP_TYPES 53
 
 EXTERN_C_BEGIN
     
@@ -48,7 +48,7 @@ typedef enum {
   eOpAdd,
   eOpMul,
   eOpGate,
-  eOpMonomeGridRaw,
+  eOpMonomeGridClassic,
   eOpMidiNote,
   eOpAdc,
   eOpMetro,
@@ -67,7 +67,7 @@ typedef enum {
   eOpIs,
   eOpLogic,
   eOpList2,
-  eOpLife,
+  eOpLifeClassic,
   eOpHistory,
   eOpBignum,
   eOpScreen,
@@ -94,6 +94,12 @@ typedef enum {
   eOpBars8,
   eOpMidiOutCC,
   eOpParam,
+  eOpMem0d,
+  eOpMem1d,
+  eOpMem2d,
+  eOpIter,
+  eOpMonomeGridRaw,
+  eOpLifeRaw,
   //  eOpMidiBend,
   //  eOpMidiTouch,
   numOpClasses // dummy/count 
