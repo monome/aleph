@@ -35,11 +35,13 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpFade,
   eOpGate,
   eOpMonomeGridClassic, // "grid"
+  eOpMonomeGridRaw, // "gridraw"
   eOpHid,
   eOpHistory,
   eOpIs,
   eOpIter,
   eOpLifeClassic,
+  eOpLifeRaw,
   eOpList2,
   eOpList8,
   eOpList16,
@@ -354,6 +356,16 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "ITER",
     .size = sizeof(op_iter_t),
     .init = &op_iter_init,
+    .deinit = NULL
+  }, {
+    .name = "GRIDRAW",
+    .size = sizeof(op_mgrid_raw_t),
+    .init = &op_mgrid_raw_init,
+    .deinit = &op_mgrid_raw_deinit
+  }, {
+    .name = "LIFERAW",
+    .size = sizeof(op_life_raw_t),
+    .init = &op_life_raw_init,
     .deinit = NULL
   }
 };
