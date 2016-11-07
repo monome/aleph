@@ -21,7 +21,7 @@
 #define OP_OUTS_MAX 32
 
 // const array of user-creatable operator types
-#define NUM_USER_OP_TYPES 48
+#define NUM_USER_OP_TYPES 49
 
 EXTERN_C_BEGIN
     
@@ -94,6 +94,7 @@ typedef enum {
   eOpBars8,
   eOpMidiOutCC,
   eOpParam,
+  eOpMem2d,
   eOpIter,
   //  eOpMidiBend,
   //  eOpMidiTouch,
