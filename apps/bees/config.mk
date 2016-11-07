@@ -41,6 +41,7 @@ CSRCS += \
 	$(APP_DIR)/src/scene.c \
 	$(APP_DIR)/src/ser.c \
 	$(APP_DIR)/src/util.c \
+	$(APP_DIR)/src/op_pool.c \
 	$(APP_DIR)/src/ops/op_add.c \
 	$(APP_DIR)/src/ops/op_accum.c \
 	$(APP_DIR)/src/ops/op_adc.c \

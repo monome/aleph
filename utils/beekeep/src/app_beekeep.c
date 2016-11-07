@@ -32,7 +32,7 @@
 #include "play.h"
 #include "render.h"
 #include "scene.h"
-
+#include "op_pool.h"
 //-------------------------------------------
 //-- extern vars (here)
 
@@ -50,9 +50,39 @@ const AppVersion beesVersion = { .min = MIN , .maj = MAJ , .rev = REV };
 //--- static vars
 static char versionString[12] = VERSIONSTRING;
 
+#include <stdio.h>
+#include "net.h"
+void print_net () {
+  int i;
+  for (i=0; i < net->numOps; i++) {
+    printf("printing op %d (%s)\n", i, net_op_name(i));
+  }
+  for(i=0; i < net->numIns; i++) {
+    printf("printing in %d (%s) from op %d, %d\n",
+	   i, net_in_name(i), net->ins[i].opIdx, net->ins[i].opInIdx);
+  }
+  for(i=0; i < net->numOuts; i++) {
+    printf("printing out %d (%s) from op %d, %d\n",
+	   i, net_out_name(i), net->outs[i].opIdx, net->outs[i].opOutIdx);
+  }
+}
+
+void test_net (void) {
+  print_net();
+  net_add_op_at(12, net->numOps);
+  net_add_op_at(13, net->numOps-1);
+  /* net_add_op_at(12, net->numOps); */
+  /* net_add_op_at(12, net->numOps); */
+  /* net_add_op_at(12, net->numOps); */
+  print_net();
+}
+
 // this is called during hardware initialization.
 // allocate memory.
 void app_init(void) {
+
+  initBigMemPool();
+  initSmallMemPool();
 
   //hm
   print_dbg("\r\n preset_init...");  
@@ -80,6 +110,7 @@ void app_init(void) {
 // this is called from main event handler
 u8 app_launch(u8 firstrun) {
 
+  /* test_net(); */
 
   print_dbg("\r\n launching app with firstrun: ");
   print_dbg_ulong(firstrun);

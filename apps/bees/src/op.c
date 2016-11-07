@@ -44,13 +44,14 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpList16,
   eOpLogic,
   eOpMetro,
-  eOpCascades, // "mp"
   eOpMidiCC,
   eOpMidiNote,
   eOpMidiOutCC,
   eOpMidiOutNote,
   eOpMod,
+  eOpCascades, // "mp"
   eOpMul,
+  eOpParam,
   eOpRandom,
   eOpRoute,
   eOpRoute8,
@@ -66,8 +67,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpThresh,
   eOpTimer,
   eOpTog,
-  eOpWW,
-  eOpParam
+  eOpWW
 };
 
 
@@ -351,6 +351,14 @@ s16 op_init(op_t* op, op_id_t opId) {
   // set function pointers to NULL
   op->pickle = NULL;
   op->unpickle = NULL;
+
+  // Zero all the memory for new op for extra paranoia
+  int i;
+  u8* mem = (u8*)op;
+  for (i=0; i < op_registry[opId].size; i++) {
+    *(mem + i) = 0;
+  }
+
   // run class init function
   (*(op_registry[opId].init))(op);
   return 0;

@@ -70,6 +70,9 @@ void net_hid_list_remove(op_hid_t* op) {
     }
     op->prev->next = op->next;
     op->next->prev = op->prev;
+    if(hl.top == op) {
+      hl.top = op->next;
+    }
     op->next = NULL;
     op->prev = NULL;
     hl.num -= 1;

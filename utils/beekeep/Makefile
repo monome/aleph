@@ -15,6 +15,7 @@ target = $(name)-$(version)
 # instead of switching on BEEKEEP in the production code
 src += \
 	$(bees)/src/app_timers.c \
+	$(bees)/src/op_pool.c \
 	$(bees)/src/net.c \
 	$(bees)/src/net_hid.c \
 	$(bees)/src/net_midi.c \

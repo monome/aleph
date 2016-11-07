@@ -249,14 +249,11 @@ void handle_key_2(s32 val) {
   if(val == 0) { return; }
   if(check_key(2)) { 
     if(altMode) {
-      // delete last created operator
-      net_pop_op();
+      // remove operator at cursor
+      net_remove_op(*pageSelect);
     } else {
-      // create new operator of selected type
-      net_add_op(userOpTypes[newOpType]);
-      // change selection to last op
-      *pageSelect = net_num_ops() - 1;
-
+      // create new operator of selected type at cursor
+      net_add_op_at(userOpTypes[newOpType], *pageSelect);
     }
     redraw_ins();
     redraw_outs();
