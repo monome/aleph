@@ -67,7 +67,7 @@ typedef enum {
   eOpIs,
   eOpLogic,
   eOpList2,
-  eOpLife,
+  eOpLifeClassic,
   eOpHistory,
   eOpBignum,
   eOpScreen,
