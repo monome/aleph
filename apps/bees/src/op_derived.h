@@ -43,6 +43,7 @@
 #include "ops/op_monome_arc.h"
 #include "ops/op_monome_grid_raw.h"
 #include "ops/op_mul.h"
+#include "ops/op_param.h"
 #include "ops/op_preset.h"
 #include "ops/op_serial.h"
 #include "ops/op_shl.h"
@@ -62,7 +63,6 @@
 #include "ops/op_timer.h"
 #include "ops/op_tog.h"
 #include "ops/op_ww.h"
-#include "ops/op_param.h"
 
 // let's keep this list alphabetical so we can easily see whether something is included.
  
