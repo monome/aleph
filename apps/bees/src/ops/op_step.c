@@ -98,10 +98,7 @@ void op_step_init(void* mem) {
     op->steps[3][i] = 0;
   }
 
-#ifdef BEEKEEP
-#else
   op->size = monome_size_x();
-#endif
 
   op->focus = 0; //OP_ONE;
   //net_monome_set_focus(&(op->monome), 1);
@@ -196,18 +193,18 @@ static void op_step_in_step(op_step_t* op, const io_t v) {
   op->s_cut = 0;
   op->s_cut2 = 0;
 
-  net_activate(op->outs[0], op->steps[0][op->s_now], op);
-  net_activate(op->outs[1], op->steps[1][op->s_now], op);
-  net_activate(op->outs[2], op->steps[2][op->s_now], op);
-  net_activate(op->outs[3], op->steps[3][op->s_now], op);
+  net_activate(op, 0, op->steps[0][op->s_now]);
+  net_activate(op, 1, op->steps[1][op->s_now]);
+  net_activate(op, 2, op->steps[2][op->s_now]);
+  net_activate(op, 3, op->steps[3][op->s_now]);
 
   i = (op->steps[0][op->s_now]) + (op->steps[1][op->s_now] << 1) + (op->steps[2][op->s_now] << 2) + (op->steps[3][op->s_now] << 3);
-  net_activate(op->outs[4], i, op);
-  net_activate(op->outs[5], op->s_now, op);
+  net_activate(op, 4, i);
+  net_activate(op, 5, op->s_now);
 
   i = (op->steps[0][op->s_now2]) + (op->steps[1][op->s_now2] << 1) + (op->steps[2][op->s_now2] << 2) + (op->steps[3][op->s_now2] << 3);
-  net_activate(op->outs[6], i, op);
-  net_activate(op->outs[7], op->s_now2, op);
+  net_activate(op, 6, i);
+  net_activate(op, 7, op->s_now2);
 }
 
 static void op_step_handler(op_monome_t* op_monome, u32 edata) {

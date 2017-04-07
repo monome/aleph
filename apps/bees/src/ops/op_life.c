@@ -91,11 +91,8 @@ void op_life_init(void* mem) {
 
   life->next = 0;
   //??? FIXME
-#ifdef BEEKEEP
-#else
   life->xsize = monome_size_x();
   life->ysize = monome_size_y();
-#endif
 
   life->x = 0;
   life->y = 0;
@@ -191,7 +188,7 @@ static void op_life_in_x(op_life_t* life, const io_t v) {
   else if(v > life->xsize) life->x = life->xsize;
   else life->x = v;
 
-  net_activate(life->outs[0], lifenow[life->x + (life->y << 4)], life);
+  net_activate(life, 0, lifenow[life->x + (life->y << 4)]);
 }
 
 static void op_life_in_y(op_life_t* life, const io_t v) {
@@ -199,7 +196,7 @@ static void op_life_in_y(op_life_t* life, const io_t v) {
   else if(v > life->ysize) life->y = life->ysize;
   else life->y = v;
 
-  net_activate(life->outs[0], lifenow[life->x + (life->y << 4)], life);
+  net_activate(life, 0, lifenow[life->x + (life->y << 4)]);
 }
 
 static void op_life_in_set(op_life_t* life, const io_t v) {
@@ -236,13 +233,13 @@ static void op_life_handler(op_monome_t* op_monome, u32 edata) {
 
 
 static void op_life_output(op_life_t* life) {
-  net_activate(life->outs[0], lifenow[life->x + (life->y << 4)], life);
+  net_activate(life, 0, lifenow[life->x + (life->y << 4)]);
 
   life->lpop = life->pop;
   life->pop = 0;
   for(u16 i=0;i<256;i++) life->pop += lifenow[i];
-  net_activate(life->outs[1], life->pop, life);
-  net_activate(life->outs[2], (life->pop - life->lpop), life);
+  net_activate(life, 1, life->pop);
+  net_activate(life, 2, (life->pop - life->lpop));
 }
 
 

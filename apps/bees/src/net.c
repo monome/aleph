@@ -289,9 +289,73 @@ void net_init_onode(u16 idx) {
   net->outs[idx].opIdx = -1;
   net->outs[idx].target = -1;
 }
+#ifndef PD
+// activate an input node with a value
+void net_activate(void *op_void, s16 outIdx, const io_t val) {
+  static inode_t* pIn;
+  s16 pIndex;
+  u8 vis;
+  op_t *op = (op_t *)op_void;
+  s16 inIdx = op->out[outIdx];
+
+  /* print_dbg("\r\n net_activate, input idx: "); */
+  /* print_dbg_hex(inIdx); */
+  /* print_dbg(" , value: "); */
+  /* print_dbg_hex(val); */
+
+  /* print_dbg(" , op index: "); */
+  /* print_dbg_ulong(net->ins[inIdx].opIdx); */
+  /* print_dbg(" , input idx: "); */
+  /* print_dbg_ulong(net->ins[inIdx].opInIdx); */
+
+  if(!netActive) {
+    if(op != NULL) {
+      // if the net isn't active, dont respond to requests from operators
+      print_dbg(" ... ignoring node activation from op.");
+      return;
+    }
+  }
+
+
+
+  if(inIdx < 0) {
+    return;
+  }
+
+  vis = net_get_in_play(inIdx);
+
+  if(inIdx < net->numIns) {      
+    // this is an op input
+    pIn = &(net->ins[inIdx]);
+    
+    op_set_in_val(net->ops[pIn->opIdx],
+		  pIn->opInIdx,
+		  val);
+    
+  } else { 
+    // this is a parameter
+    //// FIXME this is horrible
+    pIndex = inIdx - net->numIns;
+    if (pIndex >= net->numParams) { return; }
+    set_param_value(pIndex, val);
+  }
+
+  /// only process for play mode if we're in play mode
+  if(pageIdx == ePagePlay) {
+    if(opPlay) {
+      // operators have focus, do nothing
+    } else {
+      // process if play-mode-visibility is set on this input
+      if(vis) {
+	play_input(inIdx);
+      }
+    }
+  }  
+  
+}
 
 // activate an input node with a value
-void net_activate(s16 inIdx, const io_t val, void* op) {
+void net_activate_in(s16 inIdx, const io_t val, void* op) {
   static inode_t* pIn;
   s16 pIndex;
   u8 vis;
@@ -351,6 +415,7 @@ void net_activate(s16 inIdx, const io_t val, void* op) {
   }  
   
 }
+#endif
 
 // attempt to allocate a new operator from the static memory pool, return index
 s16 net_add_op(op_id_t opId) {

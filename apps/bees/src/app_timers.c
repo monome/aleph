@@ -69,11 +69,18 @@ static softTimer_t hidPollTimer = { .next = NULL, .prev = NULL };
 // event data is a pointer to an arbitrary object/
 // here we use it for polled operators like op_metro.
 static void app_custom_event_callback(void* obj) {
+  // XXX look out - PD/beekeep has no event loop, so directly call
+  // from the timer thread into the poll handler (not very threadsafe)
+#ifdef BEEKEEP
+  op_poll_t* op_poll = (op_poll_t*)obj;
+  (*(op_poll->handler))(op_poll->op);
+#else
   event_t e = { .type=kEventAppCustom, .data=(s32)obj };
   e.type = kEventAppCustom;
   // post the object's address in the event data field
   e.data = (s32)obj;
   event_post(&e);
+#endif
 }
 
 // screen refresh callback

@@ -111,7 +111,7 @@ static void op_list8_in_index(op_list8_t* list8, const io_t val) {
       break;
   }
 
-  net_activate(list8->outs[0], list8->val, list8);
+  net_activate(list8, 0, list8->val);
 }
 
 static void op_list8_in_i0(op_list8_t* list8, const io_t val) {

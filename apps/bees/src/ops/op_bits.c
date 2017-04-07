@@ -96,7 +96,7 @@ static void op_bits_in_index(op_bits_t* bits, const io_t val) {
   
 
   for(u8 i=0;i<8;i++) {
-      net_activate(bits->outs[i+1], !!(bits->index & (1<<i)), bits);    // !! turns num into 0 or 1
+    net_activate(bits, i, !!(bits->index & (1<<i)));    // !! turns num into 0 or 1
   }
 }
 
@@ -153,7 +153,7 @@ static void op_bits_output(op_bits_t* bits) {
   val += bits->i6 << 6;
   val += bits->i7 << 7;
 
-  net_activate(bits->outs[0], val, bits);
+  net_activate(bits, 0, val);
 }
 
 
