@@ -183,11 +183,11 @@ static void op_enc_perform(op_enc_t* enc) {
   // }
 
   // output the value
-  net_activate(enc->outs[0], enc->val, enc);
+    net_activate(enc, 0, enc->val);
 
   // output the wrap amount
   // if (dif != 0) {
-    // net_activate(enc->outs[1], op_from_int(wrap), enc);  
+    // net_activate(enc, 1, op_from_int(wrap));
   // }
 }
 
@@ -227,5 +227,5 @@ void op_enc_sys_input(op_enc_t* enc, s8 v) {
 
   enc->val32 = (s32)(enc->val) + (s32)(op_mul(enc->step, op_from_int(v)));
   op_enc_perform(enc);
-  net_activate(enc->outs[1], op_from_int(v), enc); 
+  net_activate(enc, 1, op_from_int(v));
 }

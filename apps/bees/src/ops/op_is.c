@@ -71,35 +71,35 @@ static void op_is_in_a(op_is_t* is, const io_t v) {
     i = is->eq;
     is->eq = (is->a == is->b);
     if(i != is->eq)
-      net_activate(is->outs[0], is->eq, is);
+      net_activate(is, 0, is->eq);
 
     i = is->ne;
     is->ne = (is->a != is->b);
     if(i != is->ne)
-      net_activate(is->outs[1], is->ne, is);
+      net_activate(is, 1, is->ne);
 
     i = is->gt;
     is->gt = (is->a > is->b);
     if(i != is->gt)
-      net_activate(is->outs[2], is->gt, is);
+      net_activate(is, 2, is->gt);
 
     i = is->lt;
     is->lt = (is->a < is->b);
     if(i != is->lt)
-      net_activate(is->outs[3], is->lt, is);
+      net_activate(is, 3, is->lt);
   } 
   else {
     is->eq = (is->a == is->b);
-    net_activate(is->outs[0], is->eq, is);
+    net_activate(is, 0, is->eq);
 
     is->ne = (is->a != is->b);
-    net_activate(is->outs[1], is->ne, is);
+    net_activate(is, 1, is->ne);
 
     is->gt = (is->a > is->b);
-    net_activate(is->outs[2], is->gt, is);
+    net_activate(is, 2, is->gt);
 
     is->lt = (is->a < is->b);
-    net_activate(is->outs[3], is->lt, is);
+    net_activate(is, 3, is->lt);
   }
 }
 

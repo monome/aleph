@@ -91,7 +91,7 @@ static void op_timer_in_event(op_timer_t* timer, const io_t v) {
   /// for now let's pretend timer interval is 1/1024
   /// reported intervals will be fast by a ratio of 1.024,
   /// in the example above.
-  net_activate(timer->outs[0], timer->interval, timer);   
+  net_activate(timer, 0, timer->interval);
 }
 
 

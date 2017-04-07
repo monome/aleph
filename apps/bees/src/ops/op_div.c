@@ -58,7 +58,7 @@ static void op_div_in_a(op_div_t* div, const io_t v) {
   // printf("div at %d received A %d\n", (int)div, (int)*v);
   div->a = v;
   div->val = op_div(div->a, div->b);
-  net_activate(div->outs[0], div->val, div);
+  net_activate(div, 0, div->val);
 }
 
 // set operand B
@@ -69,7 +69,7 @@ static void op_div_in_b(op_div_t* div, const io_t v) {
   }
   div->val = op_div(div->a, div->b);
   if(div->btrig) {
-    net_activate(div->outs[0], div->val, div);
+    net_activate(div, 0, div->val);
   }
 }
 

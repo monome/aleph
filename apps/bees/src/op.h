@@ -147,6 +147,10 @@ typedef struct op_struct {
   u32 type;
   // behavior flags
   u32 flags;
+#ifdef BEEKEEP
+  // pointer to puredata bees object
+  void* bees_pd_object;
+#endif
   // pointer to child class
   void* child;
 } op_t;

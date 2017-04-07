@@ -81,7 +81,7 @@ void op_route16_init(void* op) {
 // input state
 static void op_route16_in_val(op_route16_t* route, const io_t v) {
   route->val = v;
-  net_activate(route->outs[route->to], route->val, route);
+  net_activate(route, route->to, route->val);
 }
 
 // to where

@@ -64,9 +64,9 @@ void op_thresh_init(void* op) {
 
 static void op_thresh_update(op_thresh_t* thresh) {
   if(thresh->state < thresh->lim) {
-    net_activate(thresh->outs[0], thresh->state, thresh);
+    net_activate(thresh, 0, thresh->state);
   } else {
-    net_activate(thresh->outs[1], thresh->state, thresh);
+    net_activate(thresh, 1, thresh->state);
   }
 }
 

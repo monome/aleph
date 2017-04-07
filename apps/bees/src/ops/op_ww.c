@@ -305,17 +305,11 @@ static void op_ww_in_focus(op_ww_t* op, const io_t v) {
   // print_dbg("\r\n// monome connect /////////////////"); 
   keycount_pos = 0;
   key_count = 0;
-#if BEEKEEP
-#else
   SIZE = monome_size_x();
-#endif
   LENGTH = SIZE - 1;
   // print_dbg("\r monome size: ");
   // print_dbg_ulong(SIZE);
-#if BEEKEEP
-#else
   VARI = monome_is_vari();
-#endif
   // print_dbg("\r monome vari: ");
   // print_dbg_ulong(VARI);
 
@@ -565,15 +559,15 @@ static void op_ww_in_clock(op_ww_t* op, const io_t v) {
 
 
 
-  if(tr[0] != op->outs[0]) net_activate(op->outs[0], tr[0], op);
-  if(tr[1] != op->outs[1]) net_activate(op->outs[1], tr[1], op);
-  if(tr[2] != op->outs[2]) net_activate(op->outs[2], tr[2], op);
-  if(tr[3] != op->outs[3]) net_activate(op->outs[3], tr[3], op);
-  if(cv0 != op->outs[4]) net_activate(op->outs[4], cv0, op);
-  if(cv1 != op->outs[5]) net_activate(op->outs[5], cv1, op);
+  if(tr[0] != op->outs[0]) net_activate(op, 0, tr[0]);
+  if(tr[1] != op->outs[1]) net_activate(op, 1, tr[1]);
+  if(tr[2] != op->outs[2]) net_activate(op, 2, tr[2]);
+  if(tr[3] != op->outs[3]) net_activate(op, 3, tr[3]);
+  if(cv0 != op->outs[4]) net_activate(op, 4, cv0);
+  if(cv1 != op->outs[5]) net_activate(op, 5, cv1);
   // print_dbg("\r\n pos: ");
   // print_dbg_ulong(pos);
-  net_activate(op->outs[6], pos, op);
+  net_activate(op, 6, pos);
 }
 
 static void op_ww_in_param(op_ww_t* op, const io_t v) {
@@ -610,7 +604,7 @@ static void op_ww_in_param(op_ww_t* op, const io_t v) {
 
 
 
-// net_activate(op->outs[i], 1, op);
+// net_activate(op, i, 1);
 }
 
 
