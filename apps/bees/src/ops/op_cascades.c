@@ -135,10 +135,7 @@ void op_cascades_init(void* mem) {
 
   edit_row = key_count = mode = prev_mode = 0;
 
-#ifdef BEEKEEP
-#else
   op->size = monome_size_x();
-#endif
 
   op->focus = OP_ONE;
   net_monome_set_focus(&(op->monome), 1);
@@ -194,7 +191,7 @@ static void op_cascades_in_step(op_cascades_t* op, const io_t v) {
 
     // send out
     if(triggers[i]) {
-      net_activate(op->outs[i], 1, op);
+      net_activate(op, i, 1);
     }
   }
 

@@ -67,7 +67,8 @@ extern u8 monomeFrameDirty;
 
 // a buffer big enough to hold all led data for 256 or arc4
 // each led gets a full byte
-extern u8 monomeLedBuffer[MONOME_MAX_LED_BYTES];
+extern u8 dummyLedBuffer[MONOME_MAX_LED_BYTES];
+extern u8 *monomeLedBuffer;
 
 //---- function types
 /*
@@ -115,6 +116,9 @@ extern refresh_t monome_refresh;
 
 // initialize
 extern void init_monome(void);
+// XXX hack - set some dummy values when we're calling from pd
+// external
+void set_monome_device_desc_osc_dummy(u8 cols, u8 rows);
 // check monome device  from FTDI string descriptors
 extern u8 check_monome_device_desc(char* mstr, char* pstr, char* sstr);
 

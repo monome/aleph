@@ -135,9 +135,9 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
 	if(pos != op->lastPos) {
 	  monomeLedBuffer[op->lastPos] = 0;
 	}
-	net_activate(op->outs[0], op_from_int(x), op);
-	net_activate(op->outs[1], op_from_int(y), op);
-	net_activate(op->outs[2], op_from_int(val), op);
+	net_activate(op, 0, op_from_int(x));
+	net_activate(op, 1, op_from_int(y));
+	net_activate(op, 2, op_from_int(val));
 	// refresh flag for current quadrant
 	monome_calc_quadrant_flag(x, y);
 	// refresh flag for previous quadrant
@@ -148,9 +148,9 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
       val = z;
       monomeLedBuffer[pos] =  val * 15;
       monomeLedBuffer[op->lastPos] = 0;
-      net_activate(op->outs[0], op_from_int(x), op);
-      net_activate(op->outs[1], op_from_int(y), op);
-      net_activate(op->outs[2], op_from_int(val), op);
+      net_activate(op, 0, op_from_int(x));
+      net_activate(op, 1, op_from_int(y));
+      net_activate(op, 2, op_from_int(val));
       // refresh flag for current quadrant
       monome_calc_quadrant_flag(x, y);
       // refresh flag for previous quadrant
@@ -162,18 +162,18 @@ static void op_mgrid_raw_handler(op_monome_t* op_monome, u32 edata) {
       if(z > 0) {      /// ignore lift
 	val = ( monomeLedBuffer[pos] == 0 );
 	monomeLedBuffer[pos] = val * 15;
-	net_activate(op->outs[0], op_from_int(x), op);
-	net_activate(op->outs[1], op_from_int(y), op);
-	net_activate(op->outs[2], op_from_int(val), op);
+	net_activate(op, 0, op_from_int(x));
+	net_activate(op, 1, op_from_int(y));
+	net_activate(op, 2, op_from_int(val));
 	// refresh flag for current quadrant
 	monome_calc_quadrant_flag(x, y);
       }
     } else {   // poly, momentary
       val = z;
       monomeLedBuffer[pos] = val * 15;
-      net_activate(op->outs[0], op_from_int(x), op);
-      net_activate(op->outs[1], op_from_int(y), op);
-      net_activate(op->outs[2], op_from_int(val), op);
+      net_activate(op, 0, op_from_int(x));
+      net_activate(op, 1, op_from_int(y));
+      net_activate(op, 2, op_from_int(val));
       // refresh flag for current quadrant
       monome_calc_quadrant_flag(x, y);
     }

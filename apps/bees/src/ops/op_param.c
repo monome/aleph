@@ -80,7 +80,7 @@ static void op_param_in_event(op_param_t* param, const io_t v) {
     io_t beesPval = scaler_get_in( &(net->params[v].scaler), bfinPval);
     /* print_dbg("\r\n passing beesval "); */
     /* print_dbg_ulong(beesPval); */
-    net_activate(param->outs[0], beesPval, param);
+    net_activate(param, 0, beesPval);
   } else {
     print_dbg("\r \n no such param ");
     print_dbg_ulong(v);

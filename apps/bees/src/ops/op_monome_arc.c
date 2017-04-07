@@ -158,8 +158,8 @@ static void op_marc_handler(op_monome_t* op_monome, u32 data) {
   print_dbg("; v: 0x");
   print_dbg_hex(v);
 
-  net_activate(op->outs[0], (io_t)n, op);
-  net_activate(op->outs[1], (io_t)v, op);
+  net_activate(op, 0, (io_t)n);
+  net_activate(op, 1, (io_t)v);
 
     if(op->loop) {
     a = op->vals[n] + v;
@@ -169,7 +169,7 @@ static void op_marc_handler(op_monome_t* op_monome, u32 data) {
     monome_arc_led_set(n, op->vals[n]/4, 0);
     op->vals[n] = a;
     monome_arc_led_set(n, op->vals[n]/4, 15);
-    net_activate(op->outs[2], (io_t)op->vals[n], op);
+    net_activate(op, 2, (io_t)op->vals[n]);
   }
 }
 

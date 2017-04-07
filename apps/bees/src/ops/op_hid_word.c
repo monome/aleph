@@ -148,7 +148,7 @@ static void op_hid_word_handler(op_hid_t* op_hid) {
       /* print_dbg_hex( (int) ((io_t) (frame[byte])) ); */
       val = (io_t)(frame[byte]);
     }
-    net_activate(op->outs[0], val, op);
+    net_activate(op, 0, val);
   }
 #endif
 }
