@@ -42,7 +42,7 @@ static const u8* op_cascades_unpickle(op_cascades_t* enc, const u8* src);
 /// monome event handler
 static void op_cascades_handler(op_monome_t* op_monome, u32 data);
 
-static void op_cascades_redraw(void);
+static void op_cascades_redraw(op_monome_t* op_monome);
 static void op_cascades_trigger(u8 n);
 
 static u32 rnd(void);
@@ -100,7 +100,7 @@ void op_cascades_init(void* mem) {
 
   //--- monome
   op->monome.handler = (monome_handler_t)&op_cascades_handler;
-  op->monome.op = op;
+  net_monome_init(&op->monome, op);
 
   // superclass state
 
@@ -118,6 +118,7 @@ void op_cascades_init(void* mem) {
   op->super.outString = op_cascades_outstring;
 
   op->in_val[0] = &(op->focus);
+  op->monome.focus = &(op->focus);
   op->in_val[1] = &(op->size);  
   ///////////////////
   // FIXME
@@ -141,7 +142,7 @@ void op_cascades_init(void* mem) {
   net_monome_set_focus(&(op->monome), 1);
 
   // init monome drawing
-  op_cascades_redraw();
+  op_cascades_redraw(&(op->monome));
 }
 
 // de-init
@@ -195,7 +196,7 @@ static void op_cascades_in_step(op_cascades_t* op, const io_t v) {
     }
   }
 
-  op_cascades_redraw();
+  op_cascades_redraw(&op->monome);
 }
 
 static void op_cascades_trigger(u8 n) {
@@ -329,63 +330,63 @@ static void op_cascades_handler(op_monome_t* op_monome, u32 edata) {
   }
 
   if(dirty_grid)
-    op_cascades_redraw();
+    op_cascades_redraw(op_monome);
 
 }
 
 // redraw monome grid
-static void op_cascades_redraw() {
+static void op_cascades_redraw(op_monome_t* op_monome) {
   u8 i1, i2, i3;
 
   // clear grid
   for(i1=0;i1<128;i1++)
-    monomeLedBuffer[i1] = 0;
+    op_monome->opLedBuffer[i1] = 0;
 
   // SET POSITIONS
   if(mode == 0) {
     for(i1=0;i1<8;i1++) {
       for(i2=positions[i1];i2<=points[i1];i2++)
-        monomeLedBuffer[i1*16 + i2] = L1;
+        op_monome->opLedBuffer[i1*16 + i2] = L1;
 
-      monomeLedBuffer[i1*16 + positions[i1]] = L2;
+      op_monome->opLedBuffer[i1*16 + positions[i1]] = L2;
     }
   }
   // SET ROUTING
   else if(mode == 1) {
-    monomeLedBuffer[edit_row * 16] = L1;
-    monomeLedBuffer[edit_row * 16 + 1] = L1;
+    op_monome->opLedBuffer[edit_row * 16] = L1;
+    op_monome->opLedBuffer[edit_row * 16 + 1] = L1;
 
     for(i1=0;i1<8;i1++) {
       if((trig_dests[edit_row] & (1<<i1)) != 0) {
         for(i2=0;i2<=points[i1];i2++)
-          monomeLedBuffer[i1*16 + i2] = L2;
+          op_monome->opLedBuffer[i1*16 + i2] = L2;
       }
-      monomeLedBuffer[i1*16 + positions[i1]] = L0;
+      op_monome->opLedBuffer[i1*16 + positions[i1]] = L0;
     }
   }
   // SET RULES
   else if(mode == 2) {
-    monomeLedBuffer[edit_row * 16] = L1;
-    monomeLedBuffer[edit_row * 16 + 1] = L1;
+    op_monome->opLedBuffer[edit_row * 16] = L1;
+    op_monome->opLedBuffer[edit_row * 16 + 1] = L1;
 
     for(i1=2;i1<7;i1++)
-      monomeLedBuffer[rule_dests[edit_row] * 16 + i1] = L2;
+      op_monome->opLedBuffer[rule_dests[edit_row] * 16 + i1] = L2;
 
     for(i1=8;i1<16;i1++)
-      monomeLedBuffer[rules[edit_row] * 16 + i1] = L0;
+      op_monome->opLedBuffer[rules[edit_row] * 16 + i1] = L0;
 
     for(i1=0;i1<8;i1++) 
-      monomeLedBuffer[i1*16 + positions[i1]] = L0;
+      op_monome->opLedBuffer[i1*16 + positions[i1]] = L0;
 
     for(i1=0;i1<8;i1++) {
       i3 = glyph[rules[edit_row]][i1];
       for(i2=0;i2<8;i2++) {
         if((i3 & (1<<i2)) != 0)
-          monomeLedBuffer[i1*16 + 8 + i2] = L2;
+          op_monome->opLedBuffer[i1*16 + 8 + i2] = L2;
       }
     }
 
-    monomeLedBuffer[rules[edit_row] * 16 + 7] = L2;
+    op_monome->opLedBuffer[rules[edit_row] * 16 + 7] = L2;
   }
 
   monome_set_quadrant_flag(0);
