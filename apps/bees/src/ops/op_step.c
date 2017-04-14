@@ -51,7 +51,7 @@ void op_step_init(void* mem) {
 
   //--- monome
   op->monome.handler = (monome_handler_t)&op_step_handler;
-  op->monome.op = op;
+  net_monome_init(&op->monome, op);
 
   // superclass state
 
@@ -69,6 +69,7 @@ void op_step_init(void* mem) {
   op->super.outString = op_step_outstring;
 
   op->in_val[0] = &(op->focus);
+  op->monome.focus = &(op->focus);
   op->in_val[1] = &(op->size);  
   op->outs[0] = -1;
   op->outs[1] = -1;
@@ -101,14 +102,14 @@ void op_step_init(void* mem) {
   op->size = monome_size_x();
 
   op->focus = 0; //OP_ONE;
-  //net_monome_set_focus(&(op->monome), 1);
+  net_monome_set_focus(&(op->monome), 1);
 
   // init monome drawing, maybe should clear first
-  monomeLedBuffer[monome_xy_idx(0, 0)] = 15;
-  monomeLedBuffer[monome_xy_idx(0, 2)] = 15;
+  op->monome.opLedBuffer[monome_xy_idx(0, 0)] = 15;
+  op->monome.opLedBuffer[monome_xy_idx(0, 2)] = 15;
   for(i=0;i<op->size;i++) {
-    monomeLedBuffer[monome_xy_idx(i, 1)] = 15;
-    monomeLedBuffer[monome_xy_idx(i, 3)] = 15;
+    op->monome.opLedBuffer[monome_xy_idx(i, 1)] = 15;
+    op->monome.opLedBuffer[monome_xy_idx(i, 3)] = 15;
   }
   monome_set_quadrant_flag(0);
 
@@ -143,7 +144,7 @@ static void op_step_in_step(op_step_t* op, const io_t v) {
   s8 i;
 
   if(op->s_cut == 0) {
-    monomeLedBuffer[monome_xy_idx(op->s_now, 0)] = 0;
+    op->monome.opLedBuffer[monome_xy_idx(op->s_now, 0)] = 0;
 
     if(v > 0) {
       for(i=0;i<v;i++) {
@@ -161,13 +162,13 @@ static void op_step_in_step(op_step_t* op, const io_t v) {
       }
     }
 
-    monomeLedBuffer[monome_xy_idx(op->s_now, 0)] = 15;
+    op->monome.opLedBuffer[monome_xy_idx(op->s_now, 0)] = 15;
     monome_set_quadrant_flag(0);
     monome_set_quadrant_flag(1);
   }
 
   if(op->s_cut2 == 0) {
-    monomeLedBuffer[monome_xy_idx(op->s_now2, 2)] = 0;
+    op->monome.opLedBuffer[monome_xy_idx(op->s_now2, 2)] = 0;
 
     if(v > 0) {
       for(i=0;i<v;i++) {
@@ -185,7 +186,7 @@ static void op_step_in_step(op_step_t* op, const io_t v) {
       }
     }
 
-    monomeLedBuffer[monome_xy_idx(op->s_now2, 2)] = 15;
+    op->monome.opLedBuffer[monome_xy_idx(op->s_now2, 2)] = 15;
     monome_set_quadrant_flag(0);
     monome_set_quadrant_flag(1);
   }
@@ -221,20 +222,20 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
     // row 0 = postion cut, set start point
     if(y==0) {
       op->s_start = x;
-      monomeLedBuffer[monome_xy_idx(op->s_now, 0)] = 0;
+      op_monome->opLedBuffer[monome_xy_idx(op->s_now, 0)] = 0;
       op->s_now = x;
-      monomeLedBuffer[monome_xy_idx(op->s_now, 0)] = 15;
+      op_monome->opLedBuffer[monome_xy_idx(op->s_now, 0)] = 15;
 
       op->s_end = op->s_start + op->s_length;
       if(op->s_end > (op->size-1)) op->s_end -= op->size;
 
       if(op->s_end >= op->s_start)
         for(i=0;i<op->size;i++) {
-          monomeLedBuffer[monome_xy_idx(i, 1)] = (i >= op->s_start && i <= op->s_end) * 15;
+          op_monome->opLedBuffer[monome_xy_idx(i, 1)] = (i >= op->s_start && i <= op->s_end) * 15;
         }
       else {
         for(i=0;i<op->size;i++) {
-          monomeLedBuffer[monome_xy_idx(i, 1)] = (i >= op->s_start || i <= op->s_end) * 15;
+          op_monome->opLedBuffer[monome_xy_idx(i, 1)] = (i >= op->s_start || i <= op->s_end) * 15;
         }
       }
 
@@ -252,11 +253,11 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
 
       if(op->s_end >= op->s_start)
         for(i=0;i<op->size;i++) {
-          monomeLedBuffer[monome_xy_idx(i, 1)] = (i >= op->s_start && i <= op->s_end) * 15;
+          op_monome->opLedBuffer[monome_xy_idx(i, 1)] = (i >= op->s_start && i <= op->s_end) * 15;
         }
       else {
         for(i=0;i<op->size;i++) {
-          monomeLedBuffer[monome_xy_idx(i, 1)] = (i >= op->s_start || i <= op->s_end) * 15;
+          op_monome->opLedBuffer[monome_xy_idx(i, 1)] = (i >= op->s_start || i <= op->s_end) * 15;
         }
       }
 
@@ -266,20 +267,20 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
     // set loop start 2
     } else if(y==2) {
       op->s_start2 = x;
-      monomeLedBuffer[monome_xy_idx(op->s_now2, 2)] = 0;
+      op_monome->opLedBuffer[monome_xy_idx(op->s_now2, 2)] = 0;
       op->s_now2 = x;
-      monomeLedBuffer[monome_xy_idx(op->s_now2, 2)] = 15;
+      op_monome->opLedBuffer[monome_xy_idx(op->s_now2, 2)] = 15;
 
       op->s_end2 = op->s_start2 + op->s_length2;
       if(op->s_end2 > (op->size-1)) op->s_end2 -= op->size;
 
       if(op->s_end2 >= op->s_start2)
         for(i=0;i<op->size;i++) {
-          monomeLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 && i <= op->s_end2) * 15;
+          op_monome->opLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 && i <= op->s_end2) * 15;
         }
       else {
         for(i=0;i<op->size;i++) {
-          monomeLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 || i <= op->s_end2) * 15;
+          op_monome->opLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 || i <= op->s_end2) * 15;
         }
       }
 
@@ -297,11 +298,11 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
 
       if(op->s_end2 >= op->s_start2)
         for(i=0;i<op->size;i++) {
-          monomeLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 && i <= op->s_end2) * 15;
+          op_monome->opLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 && i <= op->s_end2) * 15;
         }
       else {
         for(i=0;i<op->size;i++) {
-          monomeLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 || i <= op->s_end2) * 15;
+          op_monome->opLedBuffer[monome_xy_idx(i, 3)] = (i >= op->s_start2 || i <= op->s_end2) * 15;
         }
       }
 
@@ -312,7 +313,7 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
     // rows 4-7: set steps
     } else if(y>3 && y<8) {
       op->steps[y-4][x] ^= 1;
-      monomeLedBuffer[monome_xy_idx(x, y)] = op->steps[y-4][x] * 15;
+      op_monome->opLedBuffer[monome_xy_idx(x, y)] = op->steps[y-4][x] * 15;
       monome_calc_quadrant_flag(x, y);
     }
   }

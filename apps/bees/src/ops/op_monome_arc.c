@@ -55,7 +55,7 @@ void op_marc_init(void* mem) {
 
   //--- monome
   op->monome.handler = (monome_handler_t)&op_marc_handler;
-  op->monome.op = op;
+  net_monome_init(&op->monome, op);
 
   // superclass state
 
@@ -73,6 +73,7 @@ void op_marc_init(void* mem) {
   op->super.outString = op_marc_outstring;
 
   op->in_val[0] = &(op->focus);
+  op->monome.focus = &(op->focus);
   op->in_val[1] = &(op->loop);  
   op->in_val[2] = &(op->ring);
   op->in_val[3] = &(op->pos);
