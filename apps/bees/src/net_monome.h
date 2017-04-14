@@ -13,6 +13,7 @@
 #include "types.h"
 // avr32
 #include "monome.h"
+#include "op_math.h"
 // bees
 // #include "ops/op_monome.h"
 
@@ -26,7 +27,8 @@ typedef struct _op_monome {
   // handler function, will connect to app event handler
   monome_handler_t handler;
   // focus flag
-  u8 focus;
+  volatile io_t *focus;
+  u8 opLedBuffer[MONOME_MAX_LED_BYTES];
   // pointer to operator subclass
   void* op;
 } op_monome_t;
@@ -45,7 +47,7 @@ extern bool monomeConnect;
 //----- functions
 
 // initialize
-void net_monome_init(void);
+void net_monome_init(op_monome_t *op_monome, void *op);
 
 // set/release focus
 extern void net_monome_set_focus(op_monome_t* grid, u8 focus);
