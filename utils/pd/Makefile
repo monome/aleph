@@ -49,7 +49,9 @@ beekeep_src += \
 	$(bees)/src/ops/op_hid_word.c \
 	$(bees)/src/ops/op_history.c \
 	$(bees)/src/ops/op_is.c \
-	$(bees)/src/ops/op_life.c \
+	$(bees)/src/ops/op_iter.c \
+	$(bees)/src/ops/op_life_classic.c \
+	$(bees)/src/ops/op_life_raw.c \
 	$(bees)/src/ops/op_list2.c \
 	$(bees)/src/ops/op_list8.c \
 	$(bees)/src/ops/op_list16.c \
@@ -61,6 +63,7 @@ beekeep_src += \
 	$(bees)/src/ops/op_midi_out_note.c \
 	$(bees)/src/ops/op_mul.c \
 	$(bees)/src/ops/op_monome_grid_raw.c \
+	$(bees)/src/ops/op_monome_grid_classic.c \
 	$(bees)/src/ops/op_monome_arc.c \
 	$(bees)/src/ops/op_preset.c \
 	$(bees)/src/ops/op_screen.c \
@@ -79,6 +82,9 @@ beekeep_src += \
 	$(bees)/src/ops/op_route.c \
 	$(bees)/src/ops/op_route8.c \
 	$(bees)/src/ops/op_route16.c \
+	$(bees)/src/ops/op_mem0d.c \
+	$(bees)/src/ops/op_mem1d.c \
+	$(bees)/src/ops/op_mem2d.c \
 	$(bees)/src/ops/op_mod.c \
 	$(bees)/src/ops/op_ww.c \
 	$(bees)/src/ops/op_param.c \
