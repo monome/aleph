@@ -76,11 +76,33 @@ void test_net (void) {
   /* net_add_op_at(12, net->numOps); */
   print_net();
 }
+void t1_callback(void) {
+  printf("\r\nt1_callback");
+}
+void t2_callback(void) {
+  printf("\r\nt2_callback");
+}
 
+void beekeep_test_timers(void) {
+  softTimer_t t1;
+  softTimer_t t2;
+  timer_add(&t1, 10, &t1_callback, NULL);
+  timer_add(&t1, 10, &t1_callback, NULL);
+  timer_remove(&t1);
+  timer_add(&t1, 10, &t1_callback, NULL);
+  timer_add(&t2, 20, &t2_callback, NULL);
+
+  int i;
+  for(i=0; i < 50; i++) {
+    process_timers();
+  }
+  timer_remove(&t1);
+  timer_remove(&t2);
+}
 // this is called during hardware initialization.
 // allocate memory.
 void app_init(void) {
-
+  //  beekeep_test_timers();
   initBigMemPool();
   initSmallMemPool();
 
