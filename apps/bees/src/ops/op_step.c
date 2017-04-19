@@ -325,6 +325,12 @@ static void op_step_handler(op_monome_t* op_monome, u32 edata) {
 u8* op_step_pickle(op_step_t* mgrid, u8* dst) {
   dst = pickle_io(mgrid->focus, dst);
   dst = pickle_io(mgrid->size, dst);
+  u32 *step_state = (u32*)&mgrid->s_start;
+  while ((u8*)step_state <= (u8*) &(mgrid->steps[3][15])) {
+    dst = pickle_32(*step_state, dst);
+    step_state +=1;
+  }
+
   /// no state...???
   return dst;
 }
@@ -332,6 +338,12 @@ u8* op_step_pickle(op_step_t* mgrid, u8* dst) {
 const u8* op_step_unpickle(op_step_t* mgrid, const u8* src) {
   src = unpickle_io(src, (u32*)&(mgrid->focus));
   src = unpickle_io(src, (u32*)&(mgrid->size));
+  u32 *step_state = (u32*)&mgrid->s_start;
+  while ((u8*)step_state <= (u8*) &(mgrid->steps[3][15])) {
+    src = unpickle_32(src, step_state);
+    step_state +=1;
+  }
+
   /*
     probably shouldn't call this here...
    if we assume that network monome device focus is null during unpickling,
