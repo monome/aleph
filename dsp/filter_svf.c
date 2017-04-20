@@ -28,7 +28,6 @@
 //===== static functions
 
 static void filter_svf_calc_frame( filter_svf* f, fract32 in) {
-  fract32 out;
   f->low = add_fr1x32(f->low, 
 		      mult_fr1x32x32(f->freq, f->band));
 
@@ -43,7 +42,6 @@ static void filter_svf_calc_frame( filter_svf* f, fract32 in) {
 }
 
 static void filter_svf_softclip_calc_frame( filter_svf* f, fract32 in) {
-  fract32 out;
   char clip_radix = 0;
   f->low = shr_fr1x32(soft_clip(FR32_MAX/2,
 				shl_fr1x32(add_fr1x32(f->low,
@@ -65,7 +63,6 @@ static void filter_svf_softclip_calc_frame( filter_svf* f, fract32 in) {
 }
 
 static void filter_svf_softclip_asym_calc_frame( filter_svf* f, fract32 in) {
-  fract32 out;
   char clip_radix = 0;
 
   f->low = shr_fr1x32(soft_clip(FR32_MAX/4,
@@ -144,6 +141,7 @@ extern fract32 filter_svf_mix_outputs (filter_svf* f) {
   out = add_fr1x32(out, mult_fr1x32x32(f->high, f->highMix));
   out = add_fr1x32(out, mult_fr1x32x32(f->band, f->bandMix));
   out = add_fr1x32(out, mult_fr1x32x32(f->notch, f->notchMix));
+  return out;
 }
 
 // get next value (with input)
