@@ -17,6 +17,7 @@ module_obj = waves.o  \
 	$(audio_dir)/interpolate.o \
 	$(audio_dir)/table.o \
 	$(bfin_lib_srcdir)/libfixmath/fix32.o \
+	$(bfin_lib_srcdir)/libfixmath/fix16_fract.o \
 	$(bfin_lib_srcdir)/libfixmath/fix16.o
 
 all: $(module_name).ldr
@@ -73,6 +74,7 @@ sim_sourcefiles = ../../utils/bfin_sim/main.c \
 	$(audio_dir)/table.c \
 	$(bfin_lib_srcdir)/libfixmath/fix32.c \
 	$(bfin_lib_srcdir)/libfixmath/fix16.c \
+	$(bfin_lib_srcdir)/libfixmath/fix16_fract.c \
 	../../utils/bfin_sim/src/cv.c \
 	../../utils/bfin_sim/fract2float_conv.c \
 	../../utils/bfin_sim/fract_math.c

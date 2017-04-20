@@ -3,22 +3,23 @@
 #include "fix.h"
 #include "ricks_tricks.h"
 #include "biquad.h"
+#include "libfixmath/fix16_fract.h"
 
 fract32 polyblep (fract32 p, fract32 dp) {
   fract32 dp_inv = FR32_MAX / shr_fr1x32(dp, 16);
 
-  fract32 p_by_dp = fix16_mul(dp_inv, shr_fr1x32(p, 15));
+  fract32 p_by_dp = fix16_mul_fract(dp_inv, shr_fr1x32(p, 15));
   fract32 p_plus_one_by_dp = dp_inv + p_by_dp;
   fract32 one_minus_p_by_dp = dp_inv - p_by_dp;
 
   if (p < add_fr1x32(dp, FR32_MIN))
     return shl_fr1x32(p_plus_one_by_dp, 1)
-      - fix16_mul(p_plus_one_by_dp, p_plus_one_by_dp)
+      - fix16_mul_fract(p_plus_one_by_dp, p_plus_one_by_dp)
       - 0x10000;
 
   if (p > sub_fr1x32(FR32_MAX, dp))
     return negate_fr1x32(shl_fr1x32(one_minus_p_by_dp, 1)
-			 - fix16_mul(one_minus_p_by_dp, one_minus_p_by_dp)
+			 - fix16_mul_fract(one_minus_p_by_dp, one_minus_p_by_dp)
 			 - 0x10000);
   return 0;
 }
