@@ -387,9 +387,13 @@ s16 op_init(op_t* op, op_id_t opId) {
   // set function pointers to NULL
   op->pickle = NULL;
   op->unpickle = NULL;
-
-  // Zero all the memory for new op for extra paranoia
   int i;
+  for(i=0; i < MAX_PLAY_OUTS; i++) {
+    op->playOuts[i] = 0;
+  }
+
+  // Zero all the memory for new op for extra paranoia (makes the
+  // above redundant I guess)
   u8* mem = (u8*)op;
   for (i=0; i < op_registry[opId].size; i++) {
     *(mem + i) = 0;

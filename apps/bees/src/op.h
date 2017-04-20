@@ -125,6 +125,12 @@ typedef u8* (*op_unpickle_fn)(void* op, const u8* src);
 // a negative index is not evaluated
 typedef s16 op_out_t; 
 
+// XXX FIXME
+// because BEES net representation is inherently somewhat insane we
+// have to specify a max number of outs which can display on the play
+// screen
+#define MAX_PLAY_OUTS 16
+
 // ---- op_t
 // base class for all processors in a control network
 // exposes a set of IO points and takes action when (some) inputs are activated
@@ -153,6 +159,9 @@ typedef struct op_struct {
   u32 type;
   // behavior flags
   u32 flags;
+
+  // display operator output bangs on play screen
+  u8 playOuts[MAX_PLAY_OUTS];
 #ifdef BEEKEEP
   // pointer to puredata bees object
   void* bees_pd_object;

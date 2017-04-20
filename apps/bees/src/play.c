@@ -91,6 +91,25 @@ extern void play_input(u16 idx) {
    render_to_scroll_bottom();
 }
 
+// process input in play mode
+extern void play_output(op_t* op, u16 opOutIdx, io_t bang_value) {
+  region_fill(lineRegion, 0x0);
+  // operator input
+  // build descriptor string
+  clearln();
+  appendln( op->opString );
+  appendln_char('/');
+  appendln( op_out_name(op, opOutIdx) );
+  endln();
+
+  font_string_region_clip(lineRegion, lineBuf, 0, 0, 0xa, 0);
+  clearln();
+
+  op_print(lineBuf, bang_value);
+  font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_SHORT, 0, 0xa, 0);
+  render_to_scroll_bottom();
+}
+
 
 // process preset change in play mode
 void play_preset(u16 idx) {
