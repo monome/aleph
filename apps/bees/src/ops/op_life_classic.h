@@ -41,6 +41,8 @@ typedef struct op_life_classic_struct {
   volatile io_t focus;
   volatile io_t* in_val[9];
   op_out_t outs[3];
+  s8 lifenow[256];
+  s8 lifenext[256];
 } op_life_classic_t;
 
 void op_life_classic_init(void* life);
