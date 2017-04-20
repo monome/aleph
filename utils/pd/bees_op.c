@@ -97,10 +97,8 @@ beesbang_func_t beesbang_func[] = {
   bees_op_in_9
 };
 void *bees_op_free(t_bees_pd_class *bees_pd_obj) {
-  int i = bees_pd_obj->bees_op->type;
-  if (op_registry[i].deinit) {
-    op_registry[i].deinit(bees_pd_obj->bees_op);
-  }
+  op_deinit(bees_pd_obj->bees_op);
+  free(bees_pd_obj->bees_op);
 }
 
 void *bees_op_new(t_symbol *s, int argc, t_atom *argv) {
@@ -116,7 +114,7 @@ void *bees_op_new(t_symbol *s, int argc, t_atom *argv) {
     if(s == gensym(pd_op_names[i])) {
       t_bees_pd_class *x = (t_bees_pd_class *)pd_new(bees_pd_classes[i]);
       x->bees_op = malloc(op_registry[i].size);
-      op_registry[i].init(x->bees_op);
+      op_init(x->bees_op, i);
       x->bees_op->bees_pd_object = (void*)x;
 
       /* printf("mwahahaha we godda %s @ %d & %d with %d inputs & %d outputs\n", */

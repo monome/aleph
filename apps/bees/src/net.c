@@ -294,7 +294,7 @@ void net_init_onode(u16 idx) {
 void net_activate(void *op_void, s16 outIdx, const io_t val) {
   static inode_t* pIn;
   s16 pIndex;
-  u8 vis;
+  u8 visIn, visOut;
   op_t *op = (op_t *)op_void;
   s16 inIdx = op->out[outIdx];
 
@@ -316,13 +316,28 @@ void net_activate(void *op_void, s16 outIdx, const io_t val) {
     }
   }
 
+  if(outIdx < MAX_PLAY_OUTS) {
+    visOut = op->playOuts[outIdx];
+  }
+  else {
+    visOut = 0;
+  }
 
+  if(pageIdx == ePagePlay) {
+    if(opPlay) {
+      // operators have focus, do nothing
+    } else {
+      if(visOut) {
+	play_output(op, outIdx, val);
+      }
+    }
+  }
 
   if(inIdx < 0) {
     return;
   }
 
-  vis = net_get_in_play(inIdx);
+  visIn = net_get_in_play(inIdx);
 
   if(inIdx < net->numIns) {      
     // this is an op input
@@ -346,12 +361,11 @@ void net_activate(void *op_void, s16 outIdx, const io_t val) {
       // operators have focus, do nothing
     } else {
       // process if play-mode-visibility is set on this input
-      if(vis) {
+      if(visIn) {
 	play_input(inIdx);
       }
     }
   }  
-  
 }
 
 // activate an input node with a value
@@ -1127,6 +1141,62 @@ u8 net_get_in_play(u32 inIdx) {
     return net->ins[inIdx].play;
   } else {
     return net->params[inIdx - net->numIns].play;
+  }
+}
+
+
+// toggle play inclusion for output
+u8 net_toggle_out_play(u32 outIdx) {
+  if(outIdx > net->numOuts) {
+    print_dbg("\r\nrequested out-of-range output for play screen display toggling");
+    return 0;
+  }
+  else {
+    s32 opIdx = net->outs[outIdx].opIdx;
+    s32 opOutIdx = net->outs[outIdx].opOutIdx;
+    if(opOutIdx < MAX_PLAY_OUTS) {
+      net->ops[opIdx]->playOuts[opOutIdx] ^= 1;
+    } else {
+      print_dbg("\r\nrequested out-of-range op output for play screen display toggling");
+      return 0;
+    }
+  }
+  return 0;
+}
+
+// set play inclusion for output
+void net_set_out_play(u32 outIdx, u8 val) {
+  if(outIdx > net->numOuts) {
+    print_dbg("\r\nrequested out-of-range output for play screen display setting");
+    return;
+  }
+  else {
+    s32 opIdx = net->outs[outIdx].opIdx;
+    s32 opOutIdx = net->outs[outIdx].opOutIdx;
+    if(opOutIdx < MAX_PLAY_OUTS) {
+      net->ops[opIdx]->playOuts[opOutIdx] = val;
+    }
+    else {
+      print_dbg("\r\nrequested out-of-range op output for play screen display setting");
+    }
+  }
+}
+
+// get play inclusion for output
+u8 net_get_out_play(u32 outIdx) {
+  if(outIdx > net->numOuts) {
+    print_dbg("\r\nrequested out-of-range output for play screen display getting");
+    return 0;
+  }
+  else {
+    s32 opIdx = net->outs[outIdx].opIdx;
+    s32 opOutIdx = net->outs[outIdx].opOutIdx;
+    if(opOutIdx < MAX_PLAY_OUTS) {
+      return net->ops[opIdx]->playOuts[opOutIdx];
+    } else {
+      print_dbg("\r\nrequested out-of-range op output for play screen display getting");
+      return 0;
+    }
   }
 }
 

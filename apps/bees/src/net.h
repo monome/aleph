@@ -153,6 +153,15 @@ extern void net_set_in_play(u32 inIdx, u8 val);
 //! get play inclusion for input 
 extern u8 net_get_in_play(u32 inIdx);
 
+//! toggle play inclusion for output
+extern u8 net_toggle_out_play(u32 outIdx);
+
+//! set play inclusion for output
+extern void net_set_out_play(u32 outIdx, u8 val);
+
+//! get play inclusion for output
+extern u8 net_get_out_play(u32 outIdx);
+
 //! add a new parameter
 extern void net_add_param(u32 idx, const ParamDesc* pdesc);
 
