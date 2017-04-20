@@ -13,6 +13,7 @@
 // aleph-common
 #include "fix.h"
 #include "types.h"
+#include "libfixmath/fix16_fract.h"
 
 // aleph-bfin
 #include "bfin_core.h"
@@ -155,21 +156,20 @@ void module_init(void) {
   phasor_init (&vocalOsc);
   /* vocalOsc.freq = FR32_MAX / 48; */
   lcprng_reset(&hissSource, 1);
-  int i;
+  fract32 i;
   for(i = 0; i < 8; i++) {
     trackingEnvelopeLog_init(&(formantEnvs[i]));
     formantEnvs[i].up = SLEW_1MS;
     formantEnvs[i].down = SLEW_10MS;
   }
 #ifndef ARCH_BFIN
-  printf("%d x %d = %d\n", 0x10000, 0x10000, fix16_mul(0x10000, 0x10000));
-  printf("%d x %d = %d\n", FR32_MAX, FR32_MAX, fix16_mul(FR32_MAX, FR32_MAX));
+  printf("%d x %d = %d\n", 0x10000, 0x10000, fix16_mul_fract(0x10000, 0x10000));
+  printf("%d x %d = %d\n", FR32_MAX, FR32_MAX, fix16_mul_fract(FR32_MAX, FR32_MAX));
 
   fix16 one_half = float_to_radix32(1.0, 7);
   /* printf("0.5*0.5=%d\n", (one_half * one_half) >> 7); */
   printf("%d^2=%d\n", one_half, mult_fr7_24(one_half, one_half));
 
-  fract32 i;
   FILE *foo;
   foo = fopen("foo", "w");
   for (i=FR32_MIN;i<FR32_MAX;i = add_fr1x32(i,FR32_MAX / 1000)) {
@@ -326,11 +326,11 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
   case eParam_vowelHz :
     vowelHz = v;
-    vocalOsc.freq = fix16_mul(vowelTune, vowelHz);
+    vocalOsc.freq = fix16_mul_fract(vowelTune, vowelHz);
     break;
   case eParam_vowelTune :
     vowelTune = v;
-    vocalOsc.freq = fix16_mul(vowelTune, vowelHz);
+    vocalOsc.freq = fix16_mul_fract(vowelTune, vowelHz);
     break;
   default:
     break;

@@ -66,17 +66,17 @@ static inline void osc_calc_wm(osc* osc) {
 
 // calculate phase incremnet
 static inline void osc_calc_inc( osc* osc) {
-  filter_1p_lo_in( &(osc->lpInc), fix16_mul(osc->ratio, fix16_mul(osc->hz, ips)) );
+  filter_1p_lo_in( &(osc->lpInc), fix16_mul_fract(osc->ratio, fix16_mul(osc->hz, ips)) );
 
   /// TEST:
-  //  osc->inc = fix16_mul(osc->ratio, fix16_mul(osc->hz, ips));
+  //  osc->inc = fix16_mul_fract(osc->ratio, fix16_mul(osc->hz, ips));
  
 }
 
 // calculate phase
 static inline void osc_calc_pm(osc* osc) {
   osc->idxMod = fix16_add( osc->idx, 
-			   fix16_mul( FRACT_FIX16( mult_fr1x32x32( osc->pmIn, 
+			   fix16_mul_fract( FRACT_FIX16( mult_fr1x32x32( osc->pmIn, 
 								   osc->pmAmt ) ),
 				      WAVE_TAB_MAX16
 				      ) );
@@ -129,8 +129,8 @@ void osc_init(osc* osc, wavtab_t tab, u32 sr) {
   ips = fix16_from_float( (f32)WAVE_TAB_SIZE / (f32)sr );
 
 #ifdef OSC_SHAPE_LIMIT
-  incMin = fix16_mul(ips, OSC_HZ_MIN);
-  incMax = fix16_mul(ips, OSC_HZ_MAX);
+  incMin = fix16_mul_fract(ips, OSC_HZ_MIN);
+  incMax = fix16_mul_fract(ips, OSC_HZ_MAX);
   incRange = (u32)incMax - (u32)incMin;
   shapeLimMul = 0x7fffffff / incRange;
 #endif

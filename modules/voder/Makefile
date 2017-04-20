@@ -25,6 +25,7 @@ module_obj = voder.o \
 	$(audio)/table.o \
 	$(bfin)/libfixmath/fix32.o \
 	$(bfin)/libfixmath/fix16.o \
+	$(bfin)/libfixmath/fix16_fract.o \
 	$(bfin)/libfixmath/fix16_sqrt.o
 
 
@@ -89,6 +90,7 @@ sim_sourcefiles = ../../utils/bfin_sim/main.c \
 	../../utils/bfin_sim/src/cv.c \
 	../../utils/bfin_sim/fract_math.c \
 	../../utils/bfin_sim/src/fix16.c \
+	$(bfin_lib_srcdir)/libfixmath/fix16_fract.c \
 	params.c
 
 sim_inc = -I ../../dsp \

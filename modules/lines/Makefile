@@ -74,6 +74,7 @@ sim_sourcefiles = ../../utils/bfin_sim/main.c \
 	$(audio)/filter_svf.c \
 	$(audio)/noise.c \
 	$(audio)/pan.c \
+	$(audio)/ricks_tricks.c \
 	$(audio)/table.c \
 	$(bfin)/libfixmath/fix32.c \
 	$(bfin)/libfixmath/fix16.c \

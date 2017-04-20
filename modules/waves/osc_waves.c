@@ -1,6 +1,7 @@
 // bfin
 #include <fract2float_conv.h>
 #include "fract_math.h"
+#include "libfixmath/fix16_fract.h"
 
 // aleph/dsp
 #include "interpolate.h"
@@ -59,7 +60,7 @@ static inline void osc_calc_wm(osc* osc) {
 
 // calculate phase incremnet
 static inline void osc_calc_inc( osc* osc) {
-  osc->incSlew.x = freq_to_phase( fix16_mul(osc->ratio, osc->hz) ); 
+  osc->incSlew.x = freq_to_phase( fix16_mul_fract(osc->ratio, osc->hz) ); 
 }
 
 // calculate phase
@@ -160,8 +161,8 @@ void osc_init(osc* osc, wavtab_t tab, u32 sr) {
   //  ips = fix16_from_float( (f32)WAVE_TAB_SIZE / (f32)sr );
 
 #ifdef OSC_SHAPE_LIMIT
-  /* incMin = fix16_mul(ips, OSC_HZ_MIN); */
-  /* incMax = fix16_mul(ips, OSC_HZ_MAX); */
+  /* incMin = fix16_mul_fract(ips, OSC_HZ_MIN); */
+  /* incMax = fix16_mul_fract(ips, OSC_HZ_MAX); */
   /* incRange = (u32)incMax - (u32)incMin; */
   /* shapeLimMul = 0x7fffffff / incRange; */
 #endif
