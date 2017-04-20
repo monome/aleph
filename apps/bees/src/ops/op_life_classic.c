@@ -19,8 +19,8 @@ static void op_life_classic_output(op_life_classic_t* life);
 
 // life
 static void life_change(op_monome_t *op_monome, u8 x,u8 y);
-static void life_init(void);
-static u8 neighbors(u8,u8,u16);
+static void life_init(op_life_classic_t *life);
+static u8 neighbors(op_life_classic_t *life, u8,u8,u16);
 
 // monome event handler
 static void op_life_classic_handler(op_monome_t* op_monome, u32 data);
@@ -48,9 +48,6 @@ static const char* op_life_classic_instring  = "NEXT\0   XSIZE\0  YSIZE\0  X\0  
 static const char* op_life_classic_outstring = "VAL\0    POP\0    DELTA\0  ";
 static const char* op_life_classic_opstring  = "LIFE";
 
-
-s8 lifenow[256];
-s8 lifenext[256];
 
 //-------------------------------------------------
 //----- external function definitions
@@ -104,7 +101,7 @@ void op_life_classic_init(void* mem) {
 
   life->pop = life->lpop = 0;
 
-  life_init();
+  life_init(life);
 
   net_monome_set_focus(&(life->monome), 1);
 }
@@ -136,17 +133,17 @@ static void op_life_classic_in_next(op_life_classic_t* life, const io_t v) {
       for(y=0;y<life->ysize;y++)
       {
         i = x+(y<<4);
-        if(lifenext[i]==1)
+        if(life->lifenext[i]==1)
         {
-          lifenow[i]=1;
+          life->lifenow[i]=1;
           p[i]=15;
         }
-        else if(lifenext[i]==-1)
+        else if(life->lifenext[i]==-1)
         {
-          lifenow[i]=0;
+          life->lifenow[i]=0;
           p[i]=0;
         }
-        lifenext[i]=0;
+        life->lifenext[i]=0;
       }
     }
 
@@ -155,12 +152,12 @@ static void op_life_classic_in_next(op_life_classic_t* life, const io_t v) {
       for(y=0; y < life->ysize; y++) 
       { 
         i = x+(y<<4);
-        count = neighbors(x, y, life->xsize * life->ysize);
+        count = neighbors(life, x, y, life->xsize * life->ysize);
 
-        if (count == 3 && lifenow[i] == 0 && life->rules != 2) 
-          lifenext[i]=1;
-        if ((count < 2 || count > 3) && lifenow[i] == 1 && life->rules != 1) 
-        lifenext[i]=-1;  
+        if (count == 3 && life->lifenow[i] == 0 && life->rules != 2) 
+          life->lifenext[i]=1;
+        if ((count < 2 || count > 3) && life->lifenow[i] == 1 && life->rules != 1) 
+        life->lifenext[i]=-1;  
       } 
     } 
 
@@ -189,7 +186,7 @@ static void op_life_classic_in_x(op_life_classic_t* life, const io_t v) {
   else if(v > life->xsize) life->x = life->xsize;
   else life->x = v;
 
-  net_activate(life, 0, lifenow[life->x + (life->y << 4)]);
+  net_activate(life, 0, life->lifenow[life->x + (life->y << 4)]);
 }
 
 static void op_life_classic_in_y(op_life_classic_t* life, const io_t v) {
@@ -197,17 +194,17 @@ static void op_life_classic_in_y(op_life_classic_t* life, const io_t v) {
   else if(v > life->ysize) life->y = life->ysize;
   else life->y = v;
 
-  net_activate(life, 0, lifenow[life->x + (life->y << 4)]);
+  net_activate(life, 0, life->lifenow[life->x + (life->y << 4)]);
 }
 
-static void op_life_in_set(op_life_classic_t* life, const io_t v) {
+static void op_life_classic_in_set(op_life_classic_t* life, const io_t v) {
   u8 *p = life->monome.opLedBuffer;
   u8 i = life->x+(life->y<<4);
 
-  if(v == 0) lifenow[i] = 0;
-  else lifenow[i] = 1;
+  if(v == 0) life->lifenow[i] = 0;
+  else life->lifenow[i] = 1;
 
-  p[i]=lifenow[i] * 15;
+  p[i]=life->lifenow[i] * 15;
   monome_calc_quadrant_flag(life->x, life->y);
 
   op_life_classic_output(life);
@@ -234,62 +231,63 @@ static void op_life_classic_handler(op_monome_t* op_monome, u32 edata) {
 
 
 static void op_life_classic_output(op_life_classic_t* life) {
-  net_activate(life, 0, lifenow[life->x + (life->y << 4)]);
+  net_activate(life, 0, life->lifenow[life->x + (life->y << 4)]);
 
   life->lpop = life->pop;
   life->pop = 0;
-  for(u16 i=0;i<256;i++) life->pop += lifenow[i];
+  for(u16 i=0;i<256;i++) life->pop += life->lifenow[i];
   net_activate(life, 1, life->pop);
   net_activate(life, 2, (life->pop - life->lpop));
 }
 
 
-static void life_init(void) {
+static void life_init(op_life_classic_t *life) {
   u16 i;
   for(i=0;i<256;i++)
   {
-    lifenow[i] = 0;
-    lifenext[i] = 0;  
+    life->lifenow[i] = 0;
+    life->lifenext[i] = 0;  
   }
 }
 
 static void life_change(op_monome_t *op_monome, u8 x,u8 y) {
+  op_life_classic_t *life = (op_life_classic_t *)op_monome->op;
   u8 *p = op_monome->opLedBuffer;
   u8 i = x+(y<<4);
-  lifenow[i] ^= 1;
-  p[i]=lifenow[i] * 15;
+  life->lifenow[i] ^= 1;
+  p[i]=life->lifenow[i] * 15;
   monome_calc_quadrant_flag(x, y);
 }
 
-static u8 neighbors(u8 x, u8 y, u16 s)
+static u8 neighbors(op_life_classic_t *life, u8 x, u8 y, u16 s)
 {
   if(s==64)
-    return lifenow[((x + 1) % 8) + ((y)<<4)] + 
-      lifenow[(x) + (((y + 1) % 8)<<4)] + 
-      lifenow[((x + 8 - 1) % 8) + ((y)<<4)] + 
-      lifenow[(x) + (((y + 8 - 1) % 8)<<4)] + 
-      lifenow[((x + 1) % 8) + (((y + 1) % 8)<<4)] + 
-      lifenow[((x + 8 - 1) % 8) + (((y + 1) % 8)<<4)] + 
-      lifenow[((x + 8 - 1) % 8) + (((y + 8 - 1) % 8)<<4)] + 
-      lifenow[((x + 1) % 8) + (((y + 8 - 1) % 8)<<4)];
+    return life->lifenow[((x + 1) % 8) + ((y)<<4)] + 
+      life->lifenow[(x) + (((y + 1) % 8)<<4)] + 
+      life->lifenow[((x + 8 - 1) % 8) + ((y)<<4)] + 
+      life->lifenow[(x) + (((y + 8 - 1) % 8)<<4)] + 
+      life->lifenow[((x + 1) % 8) + (((y + 1) % 8)<<4)] + 
+      life->lifenow[((x + 8 - 1) % 8) + (((y + 1) % 8)<<4)] + 
+      life->lifenow[((x + 8 - 1) % 8) + (((y + 8 - 1) % 8)<<4)] + 
+      life->lifenow[((x + 1) % 8) + (((y + 8 - 1) % 8)<<4)];
   else if(s==256)
-    return lifenow[((x + 1) % 16) + ((y)<<4)] + 
-      lifenow[(x) + (((y + 1) % 16)<<4)] + 
-      lifenow[((x + 16 - 1) % 16) + ((y)<<4)] + 
-      lifenow[(x) + (((y + 16 - 1) % 16)<<4)] + 
-      lifenow[((x + 1) % 16) + (((y + 1) % 16)<<4)] + 
-      lifenow[((x + 16 - 1) % 16) + (((y + 1) % 16)<<4)] + 
-      lifenow[((x + 16 - 1) % 16) + (((y + 16 - 1) % 16)<<4)] + 
-      lifenow[((x + 1) % 16) + (((y + 16 - 1) % 16)<<4)];
+    return life->lifenow[((x + 1) % 16) + ((y)<<4)] + 
+      life->lifenow[(x) + (((y + 1) % 16)<<4)] + 
+      life->lifenow[((x + 16 - 1) % 16) + ((y)<<4)] + 
+      life->lifenow[(x) + (((y + 16 - 1) % 16)<<4)] + 
+      life->lifenow[((x + 1) % 16) + (((y + 1) % 16)<<4)] + 
+      life->lifenow[((x + 16 - 1) % 16) + (((y + 1) % 16)<<4)] + 
+      life->lifenow[((x + 16 - 1) % 16) + (((y + 16 - 1) % 16)<<4)] + 
+      life->lifenow[((x + 1) % 16) + (((y + 16 - 1) % 16)<<4)];
   else
-    return lifenow[((x + 1) % 16) + ((y)<<4)] + 
-      lifenow[(x) + (((y + 1) % 8)<<4)] + 
-      lifenow[((x + 16 - 1) % 16) + ((y)<<4)] + 
-      lifenow[(x) + (((y + 8 - 1) % 8)<<4)] + 
-      lifenow[((x + 1) % 16) + (((y + 1) % 8)<<4)] + 
-      lifenow[((x + 16 - 1) % 16) + (((y + 1) % 8)<<4)] + 
-      lifenow[((x + 16 - 1) % 16) + (((y + 8 - 1) % 8)<<4)] + 
-      lifenow[((x + 1) % 16) + (((y + 8 - 1) % 8)<<4)];
+    return life->lifenow[((x + 1) % 16) + ((y)<<4)] + 
+      life->lifenow[(x) + (((y + 1) % 8)<<4)] + 
+      life->lifenow[((x + 16 - 1) % 16) + ((y)<<4)] + 
+      life->lifenow[(x) + (((y + 8 - 1) % 8)<<4)] + 
+      life->lifenow[((x + 1) % 16) + (((y + 1) % 8)<<4)] + 
+      life->lifenow[((x + 16 - 1) % 16) + (((y + 1) % 8)<<4)] + 
+      life->lifenow[((x + 16 - 1) % 16) + (((y + 8 - 1) % 8)<<4)] + 
+      life->lifenow[((x + 1) % 16) + (((y + 8 - 1) % 8)<<4)];
 }
 
 // pickle / unpickle
@@ -300,6 +298,12 @@ u8* op_life_classic_pickle(op_life_classic_t* op, u8* dst) {
   dst = pickle_io(op->y, dst);
   dst = pickle_io(op->rules, dst);
   dst = pickle_io(op->focus, dst);
+  int i;
+  for (i=0; i < 256; i++) {
+    *dst = op->lifenow[i];
+    dst++;
+  }
+
   return dst;
 }
 
@@ -310,5 +314,11 @@ const u8* op_life_classic_unpickle(op_life_classic_t* op, const u8* src ) {
   src = unpickle_io(src, &(op->y));
   src = unpickle_io(src, &(op->rules));
   src = unpickle_io(src, &(op->focus));
+  int i;
+  for (i=0; i < 256; i++) {
+    op->lifenow[i] = *src;
+    op->monome.opLedBuffer[i] = *src * 15;
+    src++;
+  }
   return src;
 }
