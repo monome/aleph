@@ -679,7 +679,7 @@ s16 net_add_op_at(op_id_t opId, int opIdx) {
 
   }
 
-  return net->numOps - 1;
+  return opIdx;
 }
 
 // destroy last operator created
@@ -1438,11 +1438,12 @@ void net_disconnect_params(void) {
 s16 net_split_out(s16 outIdx) {
   // saved target
   s16 target =   net->outs[outIdx].target;
+  s16 opIdx = net->outs[outIdx].opIdx;
   // index of added split operator
   s16 split;
   if( target < 0) {
     // no target
-    split = net_add_op(eOpSplit);
+    split = net_add_op_at(eOpSplit, opIdx);
     if(split < 0) {
       // failed to add, do nothing
       return outIdx; 
@@ -1453,7 +1454,7 @@ s16 net_split_out(s16 outIdx) {
     } // add ok
   } else {
     // had target; reroute
-    split = net_add_op(eOpSplit);
+    split = net_add_op_at(eOpSplit, opIdx);
     // get the target again, because maybe it was a DSP param
     // (if it was, its index will have shifted. 
     // patch and presets have been updated, but local var has not.)
