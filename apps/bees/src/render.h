@@ -40,7 +40,7 @@
 
 //================================
 //===== extern vars
-char lineBuf[LINEBUF_LEN];
+extern char lineBuf[LINEBUF_LEN];
 
 // screen regions
 extern region* headRegion;
