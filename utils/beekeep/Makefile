@@ -184,8 +184,10 @@ cflags += $(foreach path,$(inc),-I$(path))
 cflags += -std=gnu99
 cflags += -D BEEKEEP=1
 cflags += -g -O0
+cflags += -Wall
 
 lflags += -Bstatic -ljansson
+lflags += -fno-common
 
 cflags += $(shell pkg-config --cflags gtk+-3.0)
 lflags += -Bdynamic $(shell pkg-config --libs gtk+-3.0)
