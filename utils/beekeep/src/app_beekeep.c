@@ -76,10 +76,10 @@ void test_net (void) {
   /* net_add_op_at(12, net->numOps); */
   print_net();
 }
-void t1_callback(void) {
+void t1_callback(void *foo) {
   printf("\r\nt1_callback");
 }
-void t2_callback(void) {
+void t2_callback(void *foo) {
   printf("\r\nt2_callback");
 }
 

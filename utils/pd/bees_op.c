@@ -99,6 +99,7 @@ beesbang_func_t beesbang_func[] = {
 void *bees_op_free(t_bees_pd_class *bees_pd_obj) {
   op_deinit(bees_pd_obj->bees_op);
   free(bees_pd_obj->bees_op);
+  return NULL;
 }
 
 void *bees_op_new(t_symbol *s, int argc, t_atom *argv) {
