@@ -485,13 +485,21 @@ static void op_ww_in_clock(op_ww_t* op, const io_t v) {
   }
 
 
+  // cv is a 'continuous quantity' - so output CV *every* bang, also
+  // *before* outputting any triggers
+  net_activate(op, 4, op->x.cv0);
+  net_activate(op, 5, op->x.cv1);
 
-  if(op->x.tr[0] != op->outs[0]) net_activate(op, 0, op->x.tr[0]);
-  if(op->x.tr[1] != op->outs[1]) net_activate(op, 1, op->x.tr[1]);
-  if(op->x.tr[2] != op->outs[2]) net_activate(op, 2, op->x.tr[2]);
-  if(op->x.tr[3] != op->outs[3]) net_activate(op, 3, op->x.tr[3]);
-  if(op->x.cv0 != op->outs[4]) net_activate(op, 4, op->x.cv0);
-  if(op->x.cv1 != op->outs[5]) net_activate(op, 5, op->x.cv1);
+  if(op->x.tr[0]) net_activate(op, 0, 1);
+  if(op->x.tr[1]) net_activate(op, 1, 1);
+  if(op->x.tr[2]) net_activate(op, 2, 1);
+  if(op->x.tr[3]) net_activate(op, 3, 1);
+  op->x.tr[0] = 0;
+  op->x.tr[1] = 0;
+  op->x.tr[2] = 0;
+  op->x.tr[3] = 0;
+
+
   // print_dbg("\r\n pos: ");
   // print_dbg_ulong(pos);
   net_activate(op, 6, op->x.pos);
