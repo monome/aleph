@@ -12,26 +12,18 @@ void param_desc_aux (ParamDesc* desc,int param_idx,
   desc[param_idx].max = max;
   desc[param_idx].radix = radix;
 }
-
+#define GRAINS_PATCHPOINTS 15
+#define param_desc_patch(param_idx, desc_string) param_desc_aux (desc, param_idx, desc_string, eParamTypePatchMatrix, 0, GRAINS_PATCHPOINTS-1, 1)
 #define param_desc_fader(param_idx, desc_string)  param_desc_aux (desc, param_idx, desc_string, FADER_TYPE, FADER_MIN, FADER_MAX, FADER_RADIX)
 #define param_desc_pan(param_idx, desc_string)  param_desc_aux (desc, param_idx, desc_string, PAN_TYPE, PAN_MIN, PAN_MAX, PAN_RADIX)
 
 extern void fill_param_desc(ParamDesc* desc) {
 
   //CV Sources
-  param_desc_aux(desc, eParam_cvPatch1, "source_cv1",
-		 eParamTypePatchMatrix, 0x00000000, 0x0000000E,
-		 32);
-  param_desc_aux(desc, eParam_cvPatch2, "source_cv2",
-		 eParamTypePatchMatrix, 0x00000000, 0x0000000E,
-		 32);
-  param_desc_aux(desc, eParam_cvPatch3, "source_cv3",
-		 eParamTypePatchMatrix, 0x00000000, 0x0000000E,
-		 32);
-  param_desc_aux(desc, eParam_cvPatch4, "source_cv4",
-		 eParamTypePatchMatrix, 0x00000000, 0x0000000E,
-		 32);
-
+  param_desc_patch(eParam_cvPatch1, "source_cv1");
+  param_desc_patch(eParam_cvPatch2, "source_cv2");
+  param_desc_patch(eParam_cvPatch3, "source_cv3");
+  param_desc_patch(eParam_cvPatch4, "source_cv4");
 
   param_desc_fader (eParam_fader_i1, "fader_i1");
   param_desc_pan (eParam_pan_i1, "pan_i1");
@@ -45,18 +37,14 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_fader (eParam_aux2_i2, "aux2_i2");
   param_desc_fader (eParam_effect_i2, "effect_i2");
 
-  param_desc_aux(desc, eParam_source_i3, "source_i3",
-		 eParamTypePatchMatrix, 0x00000000, 0x0000000E,
-		 32);
+  param_desc_patch(eParam_source_i3, "source_i3");
   param_desc_fader (eParam_fader_i3, "fader_i3");
   param_desc_pan (eParam_pan_i3, "pan_i3");
   param_desc_fader (eParam_aux1_i3, "aux1_i3");
   param_desc_fader (eParam_aux2_i3, "aux2_i3");
   param_desc_fader (eParam_effect_i3, "effect_i3");
 
-  param_desc_aux(desc, eParam_source_i4, "source_i4",
-		 eParamTypePatchMatrix, 0x00000000, 0x0000000E,
-		 32);
+  param_desc_patch(eParam_source_i4, "source_i4");
   param_desc_fader (eParam_fader_i4, "fader_i4");
   param_desc_pan (eParam_pan_i4, "pan_i4");
   param_desc_fader (eParam_aux1_i4, "aux1_i4");
@@ -64,9 +52,7 @@ extern void fill_param_desc(ParamDesc* desc) {
   param_desc_fader (eParam_effect_i4, "effect_i4");
 
   //Grain Mixer Params
-  param_desc_aux(desc, eParam_source_g1, "source_g1",
-		 eParamTypePatchMatrix, 0x00000000, 0x0000000E,
-		 32);
+  param_desc_patch(eParam_source_g1, "source_g1");
   param_desc_fader (eParam_fader_g1, "fader_g1");
   param_desc_pan (eParam_pan_g1, "pan_g1");
   param_desc_fader (eParam_aux1_g1, "aux1_g1");
@@ -79,14 +65,9 @@ extern void fill_param_desc(ParamDesc* desc) {
 		  eParamTypeFix, 50 << 16, 8000 << 16, 16);
   
   //grain mod params
-  param_desc_aux(desc, eParam_FM_source_g1, "FM_source_g1",
-		 eParamTypePatchMatrix, 0x00000000, 0x0000000E,
-		 32);
+  param_desc_patch(eParam_FM_source_g1, "FM_source_g1");
   param_desc_fader(eParam_FM_level_g1, "FM_level_g1");
-  param_desc_aux(desc, eParam_AM_source_g1, "AM_source_g1",
-		 eParamTypePatchMatrix, 0x00000000, 0x0000000E,
-		 32);
-
+  param_desc_patch(eParam_AM_source_g1, "AM_source_g1");
   param_desc_pan(eParam_AM_level_g1, "AM_level_g1");
 
   //Scrub Params
@@ -140,9 +121,7 @@ extern void fill_param_desc(ParamDesc* desc) {
 		  SPEED_RADIX);
   
   //Grain Mixer Params
-  param_desc_aux(desc, eParam_source_g2, "source_g2",
-		 eParamTypePatchMatrix, 0x00000000, 0x0000000E,
-		 32);
+  param_desc_patch(eParam_source_g2, "source_g2");
   param_desc_fader (eParam_fader_g2, "fader_g2");
   param_desc_pan (eParam_pan_g2, "pan_g2");
   param_desc_fader (eParam_aux1_g2, "aux1_g2");
@@ -155,14 +134,9 @@ extern void fill_param_desc(ParamDesc* desc) {
 		  eParamTypeFix, 50 << 16, 8000 << 16, 16);
   
   //grain mod params
-  param_desc_aux(desc, eParam_FM_source_g2, "FM_source_g2",
-		 eParamTypePatchMatrix, 0x00000000, 0x0000000E,
-		 32);
+  param_desc_patch(eParam_FM_source_g2, "FM_source_g2");
   param_desc_fader(eParam_FM_level_g2, "FM_level_g2");
-  
-  param_desc_aux(desc, eParam_AM_source_g2, "AM_source_g2",
-		 eParamTypePatchMatrix, 0x00000000, 0x0000000E,
-		 32);
+  param_desc_patch(eParam_AM_source_g2, "AM_source_g2");
   param_desc_pan(eParam_AM_level_g2, "AM_level_g2");;
   
   //Scrub Params

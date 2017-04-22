@@ -162,14 +162,14 @@ void module_init(void) {
   param_setup( 	eParam_aux2_i2,		AUX_DEFAULT );
   param_setup( 	eParam_effect_i2,	EFFECT_DEFAULT );
 
-  param_setup( 	eParam_source_i3,	3 << 16);
+  param_setup( 	eParam_source_i3,	3);
   param_setup( 	eParam_fader_i3,	FADER_DEFAULT );
   param_setup( 	eParam_pan_i3,		PAN_DEFAULT );
   param_setup( 	eParam_aux1_i3,		AUX_DEFAULT );
   param_setup( 	eParam_aux2_i3,		AUX_DEFAULT );
   param_setup( 	eParam_effect_i3,	0 );
 
-  param_setup( 	eParam_source_i4,	4 << 16);
+  param_setup( 	eParam_source_i4,	4);
   param_setup( 	eParam_fader_i4,	FADER_DEFAULT );
   param_setup( 	eParam_pan_i4,		PAN_DEFAULT );
   param_setup( 	eParam_aux1_i4,		AUX_DEFAULT );
