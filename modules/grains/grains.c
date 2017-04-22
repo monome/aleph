@@ -457,7 +457,7 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParam_source_i3 :
-    sourceMixer3 = v >> 16;
+    sourceMixer3 = v;
     break;
   case eParam_fader_i3 :
     faderITarget[2] = v;
@@ -476,7 +476,7 @@ void module_set_param(u32 idx, ParamValue v) {
     break;
 
   case eParam_source_i4 :
-    sourceMixer4 = v >> 16;
+    sourceMixer4 = v;
     break;
   case eParam_fader_i4 :
     faderITarget[3] = v;
@@ -496,7 +496,7 @@ void module_set_param(u32 idx, ParamValue v) {
 
   //grain mix params
   case eParam_source_g1 :
-    sourceG[0] = v >> 16;
+    sourceG[0] = v;
     break;
   case eParam_fader_g1 :
     faderGTarget[0] = v;
@@ -525,13 +525,13 @@ void module_set_param(u32 idx, ParamValue v) {
     FM_faderG[0] = v;
     break;
   case eParam_FM_source_g1 :
-    FM_sourceG[0] = v >> 16;
+    FM_sourceG[0] = v;
     break;
   case eParam_AM_level_g1 :
     AM_faderG[0] = v;
     break;
   case eParam_AM_source_g1 :
-    AM_sourceG[0] = v >> 16;
+    AM_sourceG[0] = v;
     break;
   case eParam_lpf_g1 :
     grain_lpf_freq[0] = hzToDimensionless((v >> 16));
@@ -595,7 +595,7 @@ void module_set_param(u32 idx, ParamValue v) {
 
   //grain mix params
   case eParam_source_g2 :
-    sourceG[1] = v >> 16;
+    sourceG[1] = v;
     break;
   case eParam_fader_g2 :
     faderGTarget[1] = v;
@@ -624,13 +624,13 @@ void module_set_param(u32 idx, ParamValue v) {
     FM_faderG[1] = v;
     break;
   case eParam_FM_source_g2 :
-    FM_sourceG[1] = v >> 16;
+    FM_sourceG[1] = v;
     break;
   case eParam_AM_level_g2 :
     AM_faderG[1] = v;
     break;
   case eParam_AM_source_g2 :
-    AM_sourceG[1] = v >> 16;
+    AM_sourceG[1] = v;
     break;
   case eParam_lpf_g2 :
     grain_lpf_freq[1] = hzToDimensionless((v >> 16));

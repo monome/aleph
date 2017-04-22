@@ -27,6 +27,7 @@ static u32 scalerDataWords[eParamNumTypes] = {
   0,//  eParamTypeFract,
   0, // eParamTypeShort,   
   0, // eParamTypeIntegratorShort,  
+  0, // eParamTypePatchMatrix,  
 
 };
 
@@ -35,13 +36,13 @@ static u32 scalerRepWords[eParamNumTypes] = {
   0, 	//  eParamTypeBool,
   0, 	//  eParamTypeFix,
   1024, 	//  eParamTypeAmp,
-  //  1024, 	//  eParamTypeIntegrator,
   0, 	//  eParamTypeIntegrator,
   0, 	//  eParamTypeNote,
   0, 	//  eParamTypeSvfFreq,
   0,//  eParamTypeFract,
   0, // eParamTypeShort,   
-  0, // eParamTypeIntegratorShort,  
+  0, // eParamTypeIntegratorShort,
+  0, // eParamTypePatchMatrix,  
 
 };
 
@@ -55,7 +56,9 @@ static const char scalerDataPath[eParamNumTypes][32] = {
   "scaler_svf_fc_val.dat", 	//  eParamTypeSvfFreq,
   "",//  eParamTypeFract,
   "", // eParamTypeShort,   
-  "", // eParamTypeIntegratorShort,  
+  "", // eParamTypeIntegratorShort,
+  "", // eParamTypePatchMatrix,  
+
 
 };
 
@@ -64,13 +67,13 @@ static const char scalerRepPath[eParamNumTypes][32] = {
   "", 	//  eParamTypeBool,
   "", 	//  eParamTypeFix,
   "scaler_amp_rep.dat", 	//  eParamTypeAmp,
-  //  "scaler_integrator_rep.dat", 	//  eParamTypeIntegrator,
   "", 	//  eParamTypeIntegrator,
   "", 	//  eParamTypeNote,
   "", 	//  eParamTypeSvfFreq,
   "",//  eParamTypeFract,
   "", // eParamTypeShort,   
   "", // eParamTypeIntegratorShort,  
+  "", // eParamTypePatchMatrix,  
 
 };
 
@@ -83,9 +86,10 @@ static const u32 scalerDataOffset[eParamNumTypes] = {
     1024, 	//  eParamTypeIntegrator,
     2048, 	//  eParamTypeNote,
     3072, 	//  eParamTypeSvfFreq,
-  0,//  eParamTypeFract,
-  0, // eParamTypeShort,   
-  0, // eParamTypeIntegratorShort,  
+    0,//  eParamTypeFract,
+    0, // eParamTypeShort,   
+    0, // eParamTypeIntegratorShort,  
+    0, // eParamTypePatchMatrix,  
 
 };
 // put rep data after value data, just easier to check visually
@@ -93,13 +97,13 @@ static const u32 scalerRepOffset[eParamNumTypes] = {
   0, 	//  eParamTypeBool,
   0, 	//  eParamTypeFix,
   4096, 	//  eParamTypeAmp,
-  //  5120, 	//  eParamTypeIntegrator,
   0, 	//  eParamTypeIntegrator,
   0, 	//  eParamTypeNote,
   0, 	//  eParamTypeSvfFreq,
   0,//  eParamTypeFract,
   0, // eParamTypeShort,   
   0, // eParamTypeIntegratorShort,  
+  0, // eParamTypePatchMatrix,  
 
 };
 
@@ -112,9 +116,10 @@ scaler_init_fn scaler_init_pr[eParamNumTypes] = {
   &scaler_integrator_init,
   &scaler_note_init,
   &scaler_svf_fc_init,
-  scaler_fract_init,//  eParamTypeFract,
-  scaler_short_init, // eParamTypeShort,   
-  scaler_integrator_short_init, // eParamTypeIntegratorShort,  
+  &scaler_fract_init,//  eParamTypeFract,
+  &scaler_short_init, // eParamTypeShort,   
+  &scaler_integrator_short_init, // eParamTypeIntegratorShort,  
+  &scaler_patch_init, // eParamTypePatchMatrix
 
 };
 
@@ -133,9 +138,11 @@ scaler_get_value_fn scaler_get_val_pr[eParamNumTypes] = {
   &scaler_integrator_val,
   &scaler_note_val,
   &scaler_svf_fc_val,
-  scaler_fract_val,//  eParamTypeFract,
-  scaler_short_val, // eParamTypeShort,   
-  scaler_integrator_short_val, // eParamTypeIntegratorShort,  
+  &scaler_fract_val,//  eParamTypeFract,
+  &scaler_short_val, // eParamTypeShort,   
+  &scaler_integrator_short_val, // eParamTypeIntegratorShort,  
+  &scaler_patch_val, // eParamTypePatchMatrix
+
 };
 
 // array of pointers to get_str functions.
@@ -146,9 +153,11 @@ scaler_get_str_fn scaler_get_str_pr[eParamNumTypes] = {
   &scaler_integrator_str,
   &scaler_note_str,
   &scaler_svf_fc_str,
-  scaler_fract_str,//  eParamTypeFract,
-  scaler_short_str, // eParamTypeShort,   
-  scaler_integrator_short_str, // eParamTypeIntegratorShort,  
+  &scaler_fract_str,//  eParamTypeFract,
+  &scaler_short_str, // eParamTypeShort,   
+  &scaler_integrator_short_str, // eParamTypeIntegratorShort,  
+  &scaler_patch_str, // eParamTypePatchMatrix
+
 };
 
 
@@ -160,9 +169,11 @@ scaler_get_in_fn scaler_get_in_pr[eParamNumTypes] = {
   &scaler_integrator_in,
   &scaler_note_in,
   &scaler_svf_fc_in,
-  scaler_fract_in,//  eParamTypeFract,
-  scaler_short_in, // eParamTypeShort,   
-  scaler_integrator_short_in, // eParamTypeIntegratorShort,  
+  &scaler_fract_in,//  eParamTypeFract,
+  &scaler_short_in, // eParamTypeShort,   
+  &scaler_integrator_short_in, // eParamTypeIntegratorShort,  
+  &scaler_patch_in, // eParamTypePatchMatrix
+
 };
 
 // array of pointers to inc functions.
@@ -173,9 +184,10 @@ scaler_inc_fn scaler_inc_pr[eParamNumTypes] = {
   &scaler_integrator_inc,
   &scaler_note_inc,
   &scaler_svf_fc_inc,
-  scaler_fract_inc,//  eParamTypeFract,
-  scaler_short_inc, // eParamTypeShort,   
-  scaler_integrator_short_inc, // eParamTypeIntegratorShort,  
+  &scaler_fract_inc,//  eParamTypeFract,
+  &scaler_short_inc, // eParamTypeShort,   
+  &scaler_integrator_short_inc, // eParamTypeIntegratorShort,  
+  &scaler_patch_inc, // eParamTypePatchMatrix
 
 };
 
@@ -199,7 +211,7 @@ s32 scaler_get_value(ParamScaler* sc, io_t in) {
   if(fn != NULL) {
     return (*fn)(sc, in);
   } else {
-    print_dbg("\r\n null function pointer in scaler_get_value");
+    /* print_dbg("\r\n null function pointer in scaler_get_value"); */
     return 0;
   }
 }
@@ -231,7 +243,7 @@ extern s32 scaler_inc(ParamScaler* sc, io_t * pin, io_t inc ) {
   if( fn != NULL) {
     return (*fn)(sc, pin, inc);
   } else {
-    print_dbg("\r\n error, null scaler increment");
+    /* print_dbg("\r\n error, null scaler increment"); */
     return 0;
   }
 }
