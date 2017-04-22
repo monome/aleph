@@ -104,7 +104,10 @@ static void render_line(s16 idx, u8 fg) {
     //    op_print(lineBuf, net_get_in_value(idx));
     /// FIXME: this is pretty dumb, 
     // params and inputs should just be on separate pages i guess
+    print_dbg("\r\ngetting param value string...");
     net_get_param_value_string(lineBuf, idx);
+    print_dbg("\r\ngot param value string: ");
+    print_dbg(lineBuf);
 
     font_string_region_clip(lineRegion, lineBuf, LINE_VAL_POS_LONG, 0, fg, 0);
   }

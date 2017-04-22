@@ -104,6 +104,7 @@ src += \
 	$(bees)/src/scalers/scaler_integrator.c \
 	$(bees)/src/scalers/scaler_integrator_short.c \
 	$(bees)/src/scalers/scaler_note.c \
+	$(bees)/src/scalers/scaler_patch.c \
 	$(bees)/src/scalers/scaler_short.c \
 	$(bees)/src/scalers/scaler_svf_fc.c
 
@@ -206,4 +207,4 @@ clean:
 	rm $(obj)
 
 tags:
-	find . ../avr32_sim/ ../../common -name '*.[ch]' | etags -
+	find . ../avr32_sim/ ../../common ../../apps/bees -name '*.[ch]' | etags -
