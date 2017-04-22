@@ -53,9 +53,12 @@ void scaler_parse_patchname_char (char c) {
     patchPointWriteHead = &scaler_patch_patchPoints[scaler_n_patchPoints][0];
     *patchPointWriteHead = 0;
     scaler_n_patchPoints++;
-  } else {
+  } else if(c == 255) {
+    *patchPointWriteHead = 0;
+  }else {
     *patchPointWriteHead = c;
     patchPointWriteHead++;
+    *patchPointWriteHead = 0;
   }
 }
 
