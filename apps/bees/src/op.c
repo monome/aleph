@@ -46,6 +46,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpList8,
   eOpList16,
   eOpLogic,
+  eOpMaginc,
   eOpMem0d,
   eOpMem1d,
   eOpMem2d,
@@ -366,6 +367,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .name = "LIFERAW",
     .size = sizeof(op_life_raw_t),
     .init = &op_life_raw_init,
+    .deinit = NULL
+  }, {
+    .name = "MAGINC",
+    .size = sizeof(op_maginc_t),
+    .init = &op_maginc_init,
     .deinit = NULL
   }
 };
