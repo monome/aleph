@@ -254,6 +254,7 @@ void handle_key_2(s32 val) {
     } else {
       // create new operator of selected type at cursor
       net_add_op_at(userOpTypes[newOpType], *pageSelect);
+      select_scroll(1);
     }
     redraw_ins();
     redraw_outs();
