@@ -115,7 +115,7 @@ CSRCS += \
 	$(APP_DIR)/src/scalers/scaler_integrator.c \
 	$(APP_DIR)/src/scalers/scaler_integrator_short.c \
 	$(APP_DIR)/src/scalers/scaler_note.c \
-	$(APP_DIR)/src/scalers/scaler_patch.c \
+	$(APP_DIR)/src/scalers/scaler_label.c \
 	$(APP_DIR)/src/scalers/scaler_short.c \
 	$(APP_DIR)/src/scalers/scaler_svf_fc.c
 

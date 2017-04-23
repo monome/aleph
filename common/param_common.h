@@ -41,7 +41,7 @@ typedef enum {
   // 8 16b integrator time/coefficient
   eParamTypeIntegratorShort,
   // Patch Matrix labels
-  eParamTypePatchMatrix,
+  eParamTypeLabel,
 
   eParamNumTypes
 } ParamType;

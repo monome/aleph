@@ -119,7 +119,7 @@ scaler_init_fn scaler_init_pr[eParamNumTypes] = {
   &scaler_fract_init,//  eParamTypeFract,
   &scaler_short_init, // eParamTypeShort,   
   &scaler_integrator_short_init, // eParamTypeIntegratorShort,  
-  &scaler_patch_init, // eParamTypePatchMatrix
+  &scaler_labels_init, // eParamTypePatchMatrix
 
 };
 
@@ -141,7 +141,7 @@ scaler_get_value_fn scaler_get_val_pr[eParamNumTypes] = {
   &scaler_fract_val,//  eParamTypeFract,
   &scaler_short_val, // eParamTypeShort,   
   &scaler_integrator_short_val, // eParamTypeIntegratorShort,  
-  &scaler_patch_val, // eParamTypePatchMatrix
+  &scaler_labels_val, // eParamTypePatchMatrix
 
 };
 
@@ -156,7 +156,7 @@ scaler_get_str_fn scaler_get_str_pr[eParamNumTypes] = {
   &scaler_fract_str,//  eParamTypeFract,
   &scaler_short_str, // eParamTypeShort,   
   &scaler_integrator_short_str, // eParamTypeIntegratorShort,  
-  &scaler_patch_str, // eParamTypePatchMatrix
+  &scaler_labels_str, // eParamTypePatchMatrix
 
 };
 
@@ -172,7 +172,7 @@ scaler_get_in_fn scaler_get_in_pr[eParamNumTypes] = {
   &scaler_fract_in,//  eParamTypeFract,
   &scaler_short_in, // eParamTypeShort,   
   &scaler_integrator_short_in, // eParamTypeIntegratorShort,  
-  &scaler_patch_in, // eParamTypePatchMatrix
+  &scaler_labels_in, // eParamTypePatchMatrix
 
 };
 
@@ -187,7 +187,7 @@ scaler_inc_fn scaler_inc_pr[eParamNumTypes] = {
   &scaler_fract_inc,//  eParamTypeFract,
   &scaler_short_inc, // eParamTypeShort,   
   &scaler_integrator_short_inc, // eParamTypeIntegratorShort,  
-  &scaler_patch_inc, // eParamTypePatchMatrix
+  &scaler_labels_inc, // eParamTypePatchMatrix
 
 };
 

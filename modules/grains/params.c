@@ -13,7 +13,7 @@ void param_desc_aux (ParamDesc* desc,int param_idx,
   desc[param_idx].radix = radix;
 }
 #define GRAINS_PATCHPOINTS 15
-#define param_desc_patch(param_idx, desc_string) param_desc_aux (desc, param_idx, desc_string, eParamTypePatchMatrix, 0, GRAINS_PATCHPOINTS-1, 1)
+#define param_desc_patch(param_idx, desc_string) param_desc_aux (desc, param_idx, desc_string, eParamTypeLabel, 0, GRAINS_PATCHPOINTS-1, 1)
 #define param_desc_fader(param_idx, desc_string)  param_desc_aux (desc, param_idx, desc_string, FADER_TYPE, FADER_MIN, FADER_MAX, FADER_RADIX)
 #define param_desc_pan(param_idx, desc_string)  param_desc_aux (desc, param_idx, desc_string, PAN_TYPE, PAN_MIN, PAN_MAX, PAN_RADIX)
 
