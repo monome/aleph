@@ -11,6 +11,7 @@
 #include "pages.h"
 #include "preset.h"
 #include "render.h"
+#include "net_protected.h"
 
 //====================================
 //==== static variables
@@ -654,9 +655,29 @@ void handle_enc_0(s32 val) {
     redraw_outs();
   }
   if(altMode) {
-    // alt: page selection			
-    select_scroll(val > 0 ? 7 : -7);
-    //    redraw_ins();
+    // don't blow up if *pageSelect is insane
+    if(*pageSelect >= net->numOuts || *pageSelect < 0) {
+      select_scroll(val > 0 ? 1 : -1);
+      return;
+    }
+    // alt: warp to next op input
+    s16 current_opIdx = net->outs[*pageSelect].opIdx;
+    s16 target_opIdx = current_opIdx + (val > 0 ? 1 : -1);
+    if(target_opIdx < 0 || target_opIdx >= net_num_ops()) {
+      // if can't zoom to next op, zoom 1 out up/down
+      select_scroll(val > 0 ? 1 : -1);
+    } else {
+      s16 scroll_opIdx = current_opIdx;
+      int offset = 0;
+      int scroll_opOutIdx = 0;
+      while(scroll_opIdx == current_opIdx || scroll_opOutIdx != 0) {
+	offset += (val > 0 ? 1 : -1);
+	scroll_opIdx = net->outs[*pageSelect+offset].opIdx;
+	scroll_opOutIdx = net->outs[*pageSelect+offset].opOutIdx;
+      }
+      select_scroll(offset);
+    }
+
   } else {
     // scroll selection
     select_scroll(val > 0 ? 1 : -1);
