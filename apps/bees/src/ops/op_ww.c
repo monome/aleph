@@ -865,7 +865,7 @@ static void op_ww_handler(op_monome_t* op_monome, u32 edata) {
         else if(y == 7) {
           if(ww->x.key_alt && z) {
             ww->x.param_dest = &ww->w.wp[ww->x.pattern].cv_curves[ww->x.edit_cv_ch][ww->x.pos];
-            ww->w.wp[ww->x.pattern].cv_curves[ww->x.edit_cv_ch][ww->x.pos] = ww->x.param;
+	    ww->x.param = ww->w.wp[ww->x.pattern].cv_curves[ww->x.edit_cv_ch][ww->x.pos];
             ww->x.param_accept = 1;
             ww->x.live_in = 1;
           }
