@@ -516,14 +516,7 @@ void* list_open_file_name(dirList_t* list, const char* name, const char* mode, u
 extern u8 files_load_labels(const char* name) {
   char path[64] = DSP_PATH;
   void * fp;
-  int nparams = -1;
-  // word buffer for 4-byte unpickling
   u8 nbuf;
-  // buffer for binary blob of single descriptor
-  u8 dbuf[PARAM_DESC_PICKLE_BYTES];
-  // unpacked descriptor
-  ParamDesc desc;
-  int i;
   u8 ret = 1;
 
   app_pause();
