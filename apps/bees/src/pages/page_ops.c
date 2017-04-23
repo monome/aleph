@@ -251,6 +251,7 @@ void handle_key_2(s32 val) {
     if(altMode) {
       // remove operator at cursor
       net_remove_op(*pageSelect);
+      select_scroll(-1);
     } else {
       // create new operator of selected type at cursor
       net_add_op_at(userOpTypes[newOpType], *pageSelect);
