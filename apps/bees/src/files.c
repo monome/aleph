@@ -214,7 +214,7 @@ u8 files_load_dsp_name(const char* name) {
       // write module name in global scene data
       scene_set_module_name(name);
 
-      render_boot("loading patchmatrix descriptor...");
+      render_boot("loading labels descriptor...");
       files_load_labels(name);
       render_boot("loading module descriptor...");
       ret = files_load_desc(name);
@@ -537,10 +537,10 @@ extern u8 files_load_labels(const char* name) {
     ret = 0;
   } else {
     // get number of parameters
-    scaler_start_parse_patchnames();
+    scaler_start_parse_labels();
     do {
       fake_fread(&nbuf, 1, fp);
-      scaler_parse_patchname_char(nbuf);
+      scaler_parse_labels_char(nbuf);
     } while (nbuf != 255);
   }
   fl_fclose(fp);
