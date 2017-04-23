@@ -36,6 +36,7 @@
 #include "ops/op_list8.h"
 #include "ops/op_list16.h"
 #include "ops/op_logic.h"
+#include "ops/op_maginc.h"
 #include "ops/op_mem0d.h"
 #include "ops/op_mem1d.h"
 #include "ops/op_mem2d.h"
