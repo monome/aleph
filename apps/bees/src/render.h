@@ -61,6 +61,8 @@ extern void render_boot(const char* str);
 extern void render_update(void);
 // set current header region
 extern void render_set_head_region(region* reg);
+extern void render_set_custom_region(region* reg);
+extern void render_reset_custom_region(void);
 // set current footer region
 extern void render_set_foot_region(region* reg[4]);
 // set current scroll region

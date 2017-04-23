@@ -100,6 +100,7 @@ void select_play(void) {
   region_fill(footRegion[1], 0x0);
   region_fill(footRegion[2], 0x0);
   region_fill(footRegion[3], 0x0);
+  render_reset_custom_region();
   region_fill(headRegion, 0x0);
 
   play_enable_render();
