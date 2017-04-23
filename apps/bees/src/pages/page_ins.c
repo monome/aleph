@@ -534,9 +534,29 @@ void handle_enc_1(s32 val) {
 
 void handle_enc_0(s32 val) {
   if(altMode) {
-    // alt: page selection			
-    select_scroll(val > 0 ? 7 : -7);
-    //    redraw_ins();
+    // don't explode if *pageSelect is insane (including the gross
+    // param representation)
+    if(*pageSelect >= net->numIns || *pageSelect < 0) {
+      select_scroll(val > 0 ? 7 : -7);
+      return;
+    }
+    // alt: warp to next op input
+    s16 current_opIdx = net->ins[*pageSelect].opIdx;
+    s16 target_opIdx = current_opIdx + (val > 0 ? 1 : -1);
+    if(target_opIdx < 0 || target_opIdx >= net_num_ops()) {
+      // if can't zoom to next op, zoom 7 ins up/down
+      select_scroll(val > 0 ? 7 : -7);
+    } else {
+      s16 scroll_opIdx = current_opIdx;
+      int offset = 0;
+      int scroll_opInIdx = 0;
+      while(scroll_opIdx == current_opIdx || scroll_opInIdx != 0) {
+	offset += (val > 0 ? 1 : -1);
+	scroll_opIdx = net->ins[*pageSelect+offset].opIdx;
+	scroll_opInIdx = net->ins[*pageSelect+offset].opInIdx;
+      }
+      select_scroll(offset);
+    }
   } else {
     // scroll selection
     select_scroll(val > 0 ? 1 : -1);
