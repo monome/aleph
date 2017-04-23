@@ -227,5 +227,5 @@ void op_enc_sys_input(op_enc_t* enc, s8 v) {
 
   enc->val32 = (s32)(enc->val) + (s32)(op_mul(enc->step, op_from_int(v)));
   op_enc_perform(enc);
-  net_activate(enc, 1, op_from_int(v)); 
+  net_activate(enc, 1, op_mul(v, enc->step));
 }
