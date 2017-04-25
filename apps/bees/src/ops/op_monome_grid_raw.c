@@ -107,7 +107,7 @@ static void op_mgrid_raw_in_focus(op_mgrid_classic_t* op, const io_t v) {
 static void op_mgrid_raw_in_x(op_mgrid_raw_t* op, const io_t v) {
   if(v > 15)
     op->x = 15;
-  if (v < 0)
+  else if (v < 0)
     op->x = 0;
   else
     op->x = v;
@@ -116,7 +116,7 @@ static void op_mgrid_raw_in_x(op_mgrid_raw_t* op, const io_t v) {
 static void op_mgrid_raw_in_y(op_mgrid_raw_t* op, const io_t v) {
   if(v > 15)
     op->y = 15;
-  if (v < 0)
+  else if (v < 0)
     op->y = 0;
   else
     op->y = v;
