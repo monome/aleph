@@ -40,6 +40,7 @@ const op_id_t userOpTypes[NUM_USER_OP_TYPES] = {
   eOpHistory,
   eOpIs,
   eOpIter,
+  eOpKria,
   eOpLifeClassic,
   eOpLifeRaw,
   eOpList2,
@@ -373,6 +374,11 @@ const op_desc_t op_registry[numOpClasses] = {
     .size = sizeof(op_maginc_t),
     .init = &op_maginc_init,
     .deinit = NULL
+  }, {
+    .name = "KRIA",
+    .size = sizeof(op_kria_t),
+    .init = &op_kria_init,
+    .deinit = &op_kria_deinit
   }
 };
 
